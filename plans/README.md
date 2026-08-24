@@ -4,7 +4,7 @@ Plans é um sistema de gestão de atividades com **três funcionalidades princip
 
 ## Visão geral
 
-O objetivo do Plans é organizar, acompanhar e visualizar o trabalho de um projeto sem os modelos rígidos de hierarquia comuns em ferramentas tradicionais (épicos, histórias, subtarefas etc.). No Plans, **tudo é tarefa** — e a hierarquia entre tarefas pode crescer de forma **infinita**. Além disso, o Plans atua como **orquestrador de AIs**, permitindo automatizar processos e executar planos.
+O objetivo do Plans é organizar, acompanhar e visualizar o trabalho de um projeto sem os modelos rígidos de hierarquia comuns em ferramentas tradicionais (épicos, histórias, subtarefas etc.). No Plans, **tudo é tarefa** — e a hierarquia entre tarefas pode crescer de forma **infinita**. Além disso, o Plans atua como **orquestrador de AIs**, permitindo automatizar processos e executar planos, e também como **orquestrador de atividades de prestadores de serviços**, conectando necessidades do usuário final a quem pode realizá-las.
 
 ## Ritmo do Plans
 
@@ -59,6 +59,7 @@ Visão em árvore das atividades do projeto, mostrando todas as tarefas que faze
 
 - uma **pessoa**
 - uma **IA**
+- um **prestador de serviço**
 
 Quando o responsável é uma IA e a atividade é **movida para uma coluna de execução** no board, a IA realiza o trabalho automaticamente.
 
@@ -72,15 +73,13 @@ O Plans também funciona como **orquestrador de AIs**. O gestor pode:
 
 Assim, planejamento e execução ficam no mesmo sistema: o humano define o rumo; as AIs ajudam a realizar o trabalho.
 
-## Resumo das capacidades
+### Orquestração de prestadores de serviços
 
-| Capacidade              | Descrição                                              |
-|-------------------------|--------------------------------------------------------|
-| Board                   | Colunas e raias; cadastrar, atribuir e mover tarefas   |
-| Gantt                   | Ordens, entradas/saídas e responsáveis no tempo        |
-| Árvore de execução      | Visão hierárquica de todas as atividades do projeto    |
-| Hierarquia infinita     | No board, Gantt e árvore — sem limite de profundidade  |
-| Atribuição              | Responsáveis por atividade (humano ou IA)              |
-| Coluna de execução      | Ao receber a tarefa, a IA responsável executa o trabalho |
-| Modelo unificado        | Somente tarefas — sem épicos, histórias ou subtarefas  |
-| Orquestração de AIs     | IA como responsável; execução ao entrar na coluna      |
+O Plans também serve como **orquestrador de atividades de prestadores de serviços**. Dada uma determinada necessidade:
+
+1. O usuário cria um **card (chamado)** descrevendo a necessidade e o serviço desejado
+2. Algum **prestador de serviço** pode assumir a responsabilidade da atividade
+3. O prestador **executa** a atividade
+4. A necessidade do **usuário final** é atendida
+
+Desse modo, o Plans intermedia o fluxo entre quem precisa do serviço e quem o realiza — no mesmo modelo de tarefas, board e responsáveis.

@@ -21,6 +21,7 @@ Quadro com **colunas** e **raias (swimlanes)** onde as tarefas podem ser:
 - **Cadastradas** no fluxo de trabalho
 - **Atribuídas** a responsáveis (humano ou IA)
 - **Movidas** entre colunas ou raias conforme o andamento
+- **Aninhadas** em qualquer profundidade (hierarquia infinita)
 
 Colunas e raias têm quantidade livre, conforme o processo do time e os critérios do projeto. Uma ou mais colunas podem ser marcadas como **colunas de execução**: ao mover uma tarefa para uma delas, se o responsável for uma IA, ela executa o trabalho automaticamente.
 
@@ -41,7 +42,7 @@ A divisão fundamental é entre **estado** e **função/tarefa**.
 
 ### 3. Árvore de execução
 
-Visão em árvore das atividades do projeto, mostrando todas as tarefas que fazem parte da execução e como elas se relacionam hierarquicamente.
+Visão em árvore das atividades do projeto, mostrando todas as tarefas que fazem parte da execução e como elas se relacionam hierarquicamente — com **hierarquia infinita**, sem limite de profundidade.
 
 ## Conceitos transversais
 
@@ -49,7 +50,8 @@ Visão em árvore das atividades do projeto, mostrando todas as tarefas que faze
 
 - Não existem épicos, histórias ou subtarefas como tipos distintos.
 - Todas as unidades de trabalho são **tarefas**.
-- Uma tarefa pode conter outras tarefas em qualquer profundidade (hierarquia infinita).
+- Uma tarefa pode conter outras tarefas em qualquer profundidade (**hierarquia infinita**).
+- Essa hierarquia vale **no board, no Gantt e na árvore de execução** — as três visões compartilham o mesmo modelo.
 
 ### Responsáveis
 
@@ -77,7 +79,7 @@ Assim, planejamento e execução ficam no mesmo sistema: o humano define o rumo;
 | Board                   | Colunas e raias; cadastrar, atribuir e mover tarefas   |
 | Gantt                   | Ordens, entradas/saídas e responsáveis no tempo        |
 | Árvore de execução      | Visão hierárquica de todas as atividades do projeto    |
-| Hierarquia infinita     | Tarefas aninhadas sem limite de profundidade           |
+| Hierarquia infinita     | No board, Gantt e árvore — sem limite de profundidade  |
 | Atribuição              | Responsáveis por atividade (humano ou IA)              |
 | Coluna de execução      | Ao receber a tarefa, a IA responsável executa o trabalho |
 | Modelo unificado        | Somente tarefas — sem épicos, histórias ou subtarefas  |

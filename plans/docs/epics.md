@@ -2,6 +2,17 @@
 
 Épicos que contemplam as funcionalidades descritas em [`plans/README.md`](../README.md).
 
+Histórias: [`stories/`](stories/) · Técnico: [`tech/`](tech/) · Índice da esteira: [`README.md`](README.md)
+
+| ID | Épico | Histórias |
+|----|-------|-----------|
+| EP-01 | Board | [`stories/ep-01-board/`](stories/ep-01-board/) |
+| EP-02 | Gantt | [`stories/ep-02-gantt/`](stories/ep-02-gantt/) |
+| EP-03 | Árvore de execução | [`stories/ep-03-arvore/`](stories/ep-03-arvore/) |
+| EP-04 | Explorar | [`stories/ep-04-explorar/`](stories/ep-04-explorar/) |
+
+---
+
 ## EP-01 — Board
 
 - Configurar **colunas** e **raias (swimlanes)** com quantidade livre, conforme o processo do time

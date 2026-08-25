@@ -1,5 +1,15 @@
 # Plans
 
+Definições **de negócio** do produto. Épicos, histórias e refinamento técnico ficam em [`docs/`](docs/).
+
+## Esteira de documentação
+
+```text
+README (este arquivo) → docs/epics.md → docs/stories/ → docs/tech/
+```
+
+Detalhes: [`docs/README.md`](docs/README.md).
+
 ## Contexto
 
 Organizar-se é essencial: precisamos conhecer nossas metas e como chegaremos a elas — definir o **quê** e o **como**.

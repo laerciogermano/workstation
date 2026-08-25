@@ -8,6 +8,8 @@ Isso importa para toda pessoa. Organização dá norte e objetivo: saber para on
 
 Ferramentas tradicionais de gestão de trabalho costumam impor modelos rígidos de hierarquia (épicos, histórias, subtarefas etc.). O Plans parte de outro princípio: a unidade de trabalho é uma só e a hierarquia pode crescer de forma **infinita**.
 
+Há também o objetivo de **desenvolver sistemas utilizando diferentes linguagens** de forma redundante. Com **Flow Oriented Programming**, uma **linguagem visual** reúne a compilação de todas as linguagens em **uma só linguagem**, que pode ser **exportada para as demais** — uma **estrutura unificada de desenvolvimento de software**.
+
 No Plans, a mesma unidade aparece de formas distintas conforme a visão:
 
 - no **board**, como **card**
@@ -18,7 +20,7 @@ Cada **card**, **tarefa** ou **nó** deve ser representado por um **arquivo** na
 
 ## Objetivo
 
-Organizar, acompanhar e visualizar o trabalho de um projeto por meio de **três funcionalidades principais** — board, Gantt e árvore de execução — permitindo atribuir responsáveis (**pessoa**, **IA** ou **prestador de serviço**), orquestrar AIs e intermediar necessidades do usuário final a prestadores de serviços. Toda unidade de trabalho (card, tarefa ou nó) persiste como arquivo na seção Explorar.
+Organizar, acompanhar e visualizar o trabalho de um projeto por meio de **três funcionalidades principais** — board, Gantt e árvore de execução — permitindo atribuir responsáveis (**pessoa**, **IA**, **prestador de serviço** ou **máquina**), orquestrar AIs e intermediar necessidades do usuário final a prestadores de serviços. Toda unidade de trabalho (card, tarefa ou nó) persiste como arquivo na seção Explorar. Quando a responsabilidade for **máquina**, o **Gantt** / a **atividade** deve ser tratado como **linguagem de programação**.
 
 ## Épicos
 
@@ -27,7 +29,7 @@ Organizar, acompanhar e visualizar o trabalho de um projeto por meio de **três 
 - Configurar **colunas** e **raias (swimlanes)** com quantidade livre, conforme o processo do time
 - **Cadastrar cards** no fluxo de trabalho
 - Representar cada **card** por um **arquivo** na seção **Explorar**
-- **Atribuir** responsáveis (**pessoa**, **IA** ou **prestador de serviço**)
+- **Atribuir** responsáveis (**pessoa**, **IA**, **prestador de serviço** ou **máquina**)
 - **Mover** cards entre colunas e raias conforme o andamento
 - **Aninhar** cards em qualquer profundidade (**hierarquia infinita**)
 - Marcar uma ou mais **colunas de execução**
@@ -40,12 +42,12 @@ Organizar, acompanhar e visualizar o trabalho de um projeto por meio de **três 
 - Visualizar **ordens** (**tarefas** no tempo)
 - Visualizar **entradas e saídas** (artefatos de **estado** dos processos)
 - Representar cada **tarefa** por um **arquivo** na seção **Explorar**
-- Visualizar e atribuir **responsáveis** (**pessoa**, **IA** ou **prestador de serviço**)
+- Visualizar e atribuir **responsáveis** (**pessoa**, **IA**, **prestador de serviço** ou **máquina**)
 - Definir tarefas **sequenciais** (ordem e dependência no tempo)
 - Definir tarefas **paralelas** (execução ao mesmo tempo)
 - Usar **hierarquia infinita** de tarefas no Gantt
-- Utilizar **bibliotecas de programação** no Gantt
-- Tratar o Gantt como **representação de uma linguagem de programação**, com:
+- Se o responsável for **máquina**, tratar o Gantt / a tarefa como **linguagem de programação**, com:
+  - uso de **bibliotecas de programação**
   - **laços de repetição** / **loops**
   - **estados**, expressos como **entradas e saídas**
 - Aplicar o conceito de **Flow Oriented Programming**:
@@ -62,4 +64,5 @@ Organizar, acompanhar e visualizar o trabalho de um projeto por meio de **três 
 - Navegar o relacionamento hierárquico entre nós
 - **Criar atividades filhas** (nós filhos) a partir de qualquer atividade
 - Decompor o trabalho com **hierarquia infinita** (sem limite de profundidade)
-- Atribuir e visualizar **responsáveis** (**pessoa**, **IA** ou **prestador de serviço**)
+- Atribuir e visualizar **responsáveis** (**pessoa**, **IA**, **prestador de serviço** ou **máquina**)
+- Se o responsável for **máquina**, tratar a **atividade** como **linguagem de programação**

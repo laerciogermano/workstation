@@ -1,15 +1,12 @@
 # Épicos — Plans
 
-Documento espelhado a partir de [`plans/README.md`](../README.md) (contexto e objetivo do produto).
-
-Toda atividade é **arquivo**, **tarefa**, **nó** ou **card**. Seção **Explorar**: **explorador de arquivos em lista** com **navegação por profundidade**. Responsáveis: **pessoa**, **IA**, **prestador de serviço** ou **máquina**. Se o responsável for **máquina**, o Gantt / a atividade é tratado como **linguagem de programação**.
+Épicos que contemplam as funcionalidades descritas em [`plans/README.md`](../README.md).
 
 ## EP-01 — Board
 
 - Configurar **colunas** e **raias (swimlanes)** com quantidade livre, conforme o processo do time
 - **Cadastrar cards** no fluxo de trabalho
-- Representar cada **card** por um **arquivo** na seção **Explorar**
-- Navegar cards no **explorador de arquivos em lista**, com **navegação por profundidade**
+- Representar cada **card** como a mesma unidade de trabalho (**arquivo** / **tarefa** / **nó** / **card**)
 - **Atribuir** responsáveis (**pessoa**, **IA**, **prestador de serviço** ou **máquina**)
 - **Mover** cards entre colunas e raias conforme o andamento
 - **Aninhar** cards em qualquer profundidade (**hierarquia infinita**)
@@ -22,30 +19,36 @@ Toda atividade é **arquivo**, **tarefa**, **nó** ou **card**. Seção **Explor
 
 - Visualizar **ordens** (**tarefas** no tempo)
 - Visualizar **entradas e saídas** (artefatos de **estado** dos processos)
-- Representar cada **tarefa** por um **arquivo** na seção **Explorar**
-- Navegar tarefas no **explorador de arquivos em lista**, com **navegação por profundidade**
+- Representar cada **tarefa** como a mesma unidade de trabalho (**arquivo** / **tarefa** / **nó** / **card**)
 - Visualizar e atribuir **responsáveis** (**pessoa**, **IA**, **prestador de serviço** ou **máquina**)
 - Definir tarefas **sequenciais** (ordem e dependência no tempo)
 - Definir tarefas **paralelas** (execução ao mesmo tempo)
 - Usar **hierarquia infinita** de tarefas no Gantt
+- **Criar planos** no Gantt
+- **Orquestrar AIs**: executar planos via AIs (humano define o rumo; AIs ajudam a realizar o trabalho)
+- Aplicar **Flow Oriented Programming**:
+  - **Estado** — entradas e saídas dos processos
+  - **Procedimentos** — funções e tarefas
 - Se o responsável for **máquina**, tratar o Gantt / a tarefa como **linguagem de programação**, com:
   - uso de **bibliotecas de programação**
   - **laços de repetição** / **loops**
   - **estados**, expressos como **entradas e saídas**
-- Aplicar o conceito de **Flow Oriented Programming**:
-  - **Estado** — entradas e saídas dos processos
-  - **Procedimentos** — funções e tarefas
-- **Criar planos** no Gantt
-- **Orquestrar AIs**: executar planos via AIs (humano define o rumo; AIs ajudam a realizar o trabalho)
 - **Exportar o Gantt como código** e utilizá-lo como código, seguindo **Flow Oriented Programming**
+- Suportar a visão de **linguagem visual** unificada: compilação em uma só linguagem e exportação para demais linguagens (estrutura unificada de desenvolvimento)
 
 ## EP-03 — Árvore de execução
 
 - Visualizar em árvore todas as **atividades** (**nós**) da execução
-- Representar cada **nó** por um **arquivo** na seção **Explorar**
-- Navegar atividades no **explorador de arquivos em lista**, com **navegação por profundidade**
+- Representar cada **nó** como a mesma unidade de trabalho (**arquivo** / **tarefa** / **nó** / **card**)
 - Navegar o relacionamento hierárquico entre nós
 - **Criar atividades filhas** (nós filhos) a partir de qualquer atividade
 - Decompor o trabalho com **hierarquia infinita** (sem limite de profundidade)
 - Atribuir e visualizar **responsáveis** (**pessoa**, **IA**, **prestador de serviço** ou **máquina**)
 - Se o responsável for **máquina**, tratar a **atividade** como **linguagem de programação**
+
+## EP-04 — Explorar
+
+- Persistir toda atividade como **arquivo** na seção **Explorar**
+- Disponibilizar **explorador de arquivos em lista**
+- Permitir **navegação por profundidade** (hierarquia infinita)
+- Expor a mesma unidade independentemente da visão de origem (**card**, **tarefa** ou **nó**)

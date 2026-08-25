@@ -10,63 +10,58 @@ Ferramentas tradicionais de gestão de trabalho costumam impor modelos rígidos 
 
 Há também o objetivo de **desenvolver sistemas utilizando diferentes linguagens** de forma redundante. Com **Flow Oriented Programming**, uma **linguagem visual** reúne a compilação de todas as linguagens em **uma só linguagem**, que pode ser **exportada para as demais** — uma **estrutura unificada de desenvolvimento de software**.
 
-No Plans, **toda atividade é arquivo, tarefa, nó ou card** — a mesma unidade, nomeada conforme a visão:
-
-- no **board**, como **card**
-- no **Gantt**, como **tarefa**
-- na **árvore de execução**, como **atividade** (**nó**)
-- na seção **Explorar**, como **arquivo**
-
-Por isso deve existir um **explorador de arquivos em lista**, com **navegação por profundidade**, na seção **Explorar**.
-
 ## Objetivo
 
-Organizar, acompanhar e visualizar o trabalho de um projeto por meio de **três funcionalidades principais** — board, Gantt e árvore de execução — permitindo atribuir responsáveis (**pessoa**, **IA**, **prestador de serviço** ou **máquina**), orquestrar AIs e intermediar necessidades do usuário final a prestadores de serviços. Toda atividade é **arquivo**, **tarefa**, **nó** ou **card** e é navegável no **explorador de arquivos em lista** (seção **Explorar**), com **navegação por profundidade**. Quando a responsabilidade for **máquina**, o **Gantt** / a **atividade** deve ser tratado como **linguagem de programação**.
+Organizar, acompanhar e visualizar o trabalho de um projeto por meio de **três funcionalidades principais** — **board**, **Gantt** e **árvore de execução** — permitindo atribuir responsáveis, orquestrar AIs, intermediar necessidades do usuário final a prestadores de serviços e, quando couber, tratar planos como linguagem de programação exportável.
 
-## Épicos
+## Definições
 
-### EP-01 — Board
+### Unidade de trabalho
 
-- Configurar **colunas** e **raias (swimlanes)** com quantidade livre, conforme o processo do time
-- **Cadastrar cards** no fluxo de trabalho
-- Representar cada **card** por um **arquivo** na seção **Explorar**
-- Navegar cards no **explorador de arquivos em lista**, com **navegação por profundidade**
-- **Atribuir** responsáveis (**pessoa**, **IA**, **prestador de serviço** ou **máquina**)
-- **Mover** cards entre colunas e raias conforme o andamento
-- **Aninhar** cards em qualquer profundidade (**hierarquia infinita**)
-- Marcar uma ou mais **colunas de execução**
-- **Orquestrar AIs**: ao mover um card para coluna de execução, se o responsável for uma IA, ela executa o trabalho automaticamente
-- Criar **card (chamado)** descrevendo a necessidade e o serviço desejado
-- **Orquestrar prestadores de serviços**: prestador assume a responsabilidade, executa e atende a necessidade do usuário final
+**Toda atividade é arquivo, tarefa, nó ou card** — a mesma unidade, nomeada conforme a visão:
 
-### EP-02 — Gantt
+| Visão | Nome |
+|-------|------|
+| Board | **card** |
+| Gantt | **tarefa** |
+| Árvore de execução | **atividade** (**nó**) |
+| Explorar | **arquivo** |
 
-- Visualizar **ordens** (**tarefas** no tempo)
-- Visualizar **entradas e saídas** (artefatos de **estado** dos processos)
-- Representar cada **tarefa** por um **arquivo** na seção **Explorar**
-- Navegar tarefas no **explorador de arquivos em lista**, com **navegação por profundidade**
-- Visualizar e atribuir **responsáveis** (**pessoa**, **IA**, **prestador de serviço** ou **máquina**)
-- Definir tarefas **sequenciais** (ordem e dependência no tempo)
-- Definir tarefas **paralelas** (execução ao mesmo tempo)
-- Usar **hierarquia infinita** de tarefas no Gantt
-- Se o responsável for **máquina**, tratar o Gantt / a tarefa como **linguagem de programação**, com:
-  - uso de **bibliotecas de programação**
-  - **laços de repetição** / **loops**
-  - **estados**, expressos como **entradas e saídas**
-- Aplicar o conceito de **Flow Oriented Programming**:
-  - **Estado** — entradas e saídas dos processos
-  - **Procedimentos** — funções e tarefas
-- **Criar planos** no Gantt
-- **Orquestrar AIs**: executar planos via AIs (humano define o rumo; AIs ajudam a realizar o trabalho)
-- **Exportar o Gantt como código** e utilizá-lo como código, seguindo **Flow Oriented Programming**
+### Responsáveis
 
-### EP-03 — Árvore de execução
+Uma unidade pode ter como responsável:
 
-- Visualizar em árvore todas as **atividades** (**nós**) da execução
-- Representar cada **nó** por um **arquivo** na seção **Explorar**
-- Navegar atividades no **explorador de arquivos em lista**, com **navegação por profundidade**
-- Navegar o relacionamento hierárquico entre nós
-- **Criar atividades filhas** (nós filhos) a partir de qualquer atividade
-- Decompor o trabalho com **hierarquia infinita** (sem limite de profundidade)
-- Atribuir e visualizar **responsáveis** (**pessoa**, **IA**, **prestador de serviço** ou **máquina**)
-- Se o responsável for **máquina**, tratar a **atividade** como **linguagem de programação**
+- **pessoa**
+- **IA**
+- **prestador de serviço**
+- **máquina**
+
+Quando o responsável for **máquina**, o **Gantt** / a **atividade** deve ser tratado como **linguagem de programação**.
+
+### Explorar
+
+Toda unidade persiste como **arquivo**. Deve existir um **explorador de arquivos em lista**, com **navegação por profundidade**, na seção **Explorar**.
+
+## Funcionalidades principais
+
+### Board
+
+Quadro com **colunas** e **raias (swimlanes)** de quantidade livre, conforme o processo do time, onde **cards** podem ser cadastrados, atribuídos, movidos e aninhados em qualquer profundidade (**hierarquia infinita**).
+
+Uma ou mais colunas podem ser **colunas de execução**: ao mover um card para elas, se o responsável for uma **IA**, a IA executa o trabalho automaticamente.
+
+O board também orquestra **prestadores de serviços**: o usuário cria um **card (chamado)** descrevendo a necessidade e o serviço desejado; um prestador assume a responsabilidade, executa e atende a necessidade do usuário final.
+
+### Gantt
+
+Visão temporal das **tarefas** (**ordens**), com **entradas e saídas** (artefatos de **estado**), responsáveis e suporte a tarefas **sequenciais** ou **paralelas**, com **hierarquia infinita**.
+
+O Gantt aplica **Flow Oriented Programming** — **estado** (entradas e saídas) e **procedimentos** (funções e tarefas). Nele é possível criar planos e executá-los via **AIs**.
+
+Quando o responsável for **máquina**, o Gantt / a tarefa é tratado como **linguagem de programação**, com **bibliotecas de programação**, **laços de repetição** / **loops** e **estados** como entradas e saídas. O Gantt pode ser **exportado como código** e utilizado como código nesse paradigma.
+
+### Árvore de execução
+
+Visão em árvore das **atividades** (**nós**) da execução, com criação de **atividades filhas**, relacionamento hierárquico e **hierarquia infinita** (sem limite de profundidade).
+
+Responsáveis (**pessoa**, **IA**, **prestador de serviço** ou **máquina**) podem ser atribuídos e visualizados. Se o responsável for **máquina**, a **atividade** é tratada como **linguagem de programação**.

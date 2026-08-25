@@ -44,7 +44,7 @@ Organizar, acompanhar e visualizar o trabalho de um projeto por meio de **três 
 - Definir tarefas **sequenciais** (ordem e dependência no tempo)
 - Definir tarefas **paralelas** (execução ao mesmo tempo)
 - Usar **hierarquia infinita** de tarefas no Gantt
-- Utilizar **bibliotecas** no Gantt
+- Utilizar **bibliotecas de programação** no Gantt
 - Tratar o Gantt como **representação de uma linguagem de programação**, com:
   - **laços de repetição** / **loops**
   - **estados**, expressos como **entradas e saídas**

@@ -1,57 +1,38 @@
 # Épicos — Plans
 
-Épicos das **três funcionalidades principais** do Plans: board, Gantt e árvore de execução.
-
-Conceitos transversais (tarefa única com hierarquia infinita, responsáveis humano/IA e orquestração de AIs) fazem parte do escopo dessas funcionalidades — não são épicos à parte.
-
----
+Documento espelhado a partir de [`plans/README.md`](../README.md) (contexto e objetivo do produto).
 
 ## EP-01 — Board
 
-**Objetivo:** Organizar o trabalho em um quadro com colunas e raias (swimlanes).
-
-**Escopo:**
-- Colunas e raias com quantidade livre, conforme o processo do time
-- Cadastro de tarefas no fluxo
-- Atribuição de responsáveis (pessoa ou IA)
-- Movimentação entre colunas e raias
-- Aninhamento de tarefas em qualquer profundidade (hierarquia infinita)
-- Uma ou mais **colunas de execução**: ao mover uma tarefa para elas, se o responsável for uma IA, ela executa o trabalho automaticamente
-
-**Critérios de sucesso:**
-- Tarefas podem ser cadastradas, atribuídas, movidas e aninhadas no board
-- Colunas de execução disparam a IA quando ela é a responsável
-
----
+- Configurar **colunas** e **raias (swimlanes)** com quantidade livre, conforme o processo do time
+- **Cadastrar** tarefas no fluxo de trabalho
+- **Atribuir** responsáveis (**pessoa**, **IA** ou **prestador de serviço**)
+- **Mover** tarefas entre colunas e raias conforme o andamento
+- **Aninhar** tarefas em qualquer profundidade (**hierarquia infinita**; tudo é tarefa)
+- Marcar uma ou mais **colunas de execução**
+- **Orquestrar AIs**: ao mover uma tarefa para coluna de execução, se o responsável for uma IA, ela executa o trabalho automaticamente
+- Criar **card (chamado)** descrevendo a necessidade e o serviço desejado
+- **Orquestrar prestadores de serviços**: prestador assume a responsabilidade, executa a atividade e atende a necessidade do usuário final
 
 ## EP-02 — Gantt
 
-**Objetivo:** Visualizar e planejar atividades no tempo, com entradas, saídas e responsáveis.
-
-**Escopo:**
-- Visualização das **ordens** (atividades no tempo)
-- **Entradas e saídas** (artefatos de estado dos processos)
-- **Responsáveis** por cada atividade (pessoa ou IA)
-- Hierarquia infinita de tarefas no Gantt
-- Modelo Flow-Integrated Program: **estado** (artefatos) e **procedimentos** (funções/tarefas)
-- Criação de planos no Gantt para execução via AIs
-
-**Critérios de sucesso:**
-- Usuário vê ordens, artefatos de estado e responsáveis no eixo temporal
-- Planos criados no Gantt podem ser executados por AIs
-
----
+- Visualizar **ordens** (atividades no tempo)
+- Visualizar **entradas e saídas** (artefatos de estado dos processos)
+- Visualizar e atribuir **responsáveis** (**pessoa**, **IA** ou **prestador de serviço**)
+- Definir atividades **sequenciais** (ordem e dependência no tempo)
+- Definir atividades **paralelas** (execução ao mesmo tempo)
+- Usar **hierarquia infinita** de tarefas no Gantt
+- Aplicar o modelo **Flow-Integrated Program**:
+  - **Estado** — artefatos de entrada e saída dos processos
+  - **Procedimentos** — funções e tarefas
+- **Criar planos** no Gantt
+- **Orquestrar AIs**: executar planos via AIs (humano define o rumo; AIs ajudam a realizar o trabalho)
 
 ## EP-03 — Árvore de execução
 
-**Objetivo:** Mostrar as atividades do projeto e como se relacionam hierarquicamente.
-
-**Escopo:**
-- Visão em árvore de todas as tarefas da execução
-- Hierarquia infinita (sem limite de profundidade)
-- Relacionamento entre tarefas pai e filhas
-- Atribuição/visualização de responsáveis (pessoa ou IA) na árvore
-
-**Critérios de sucesso:**
-- Toda a estrutura de execução é navegável em árvore
-- A hierarquia infinita é suportada sem tipos distintos de trabalho (tudo é tarefa)
+- Visualizar em árvore todas as tarefas da execução
+- Navegar o relacionamento hierárquico entre tarefas
+- Tratar **tudo como tarefa** (sem tipos distintos de épico, história ou subtarefa)
+- **Criar atividades filhas** a partir de qualquer tarefa
+- Decompor o trabalho com **hierarquia infinita** (sem limite de profundidade)
+- Atribuir e visualizar **responsáveis** (**pessoa**, **IA** ou **prestador de serviço**)

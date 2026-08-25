@@ -1,85 +1,50 @@
 # Plans
 
-Plans é um sistema de gestão de atividades com **três funcionalidades principais**: board, Gantt e árvore de execução.
-
-## Visão geral
-
-O objetivo do Plans é organizar, acompanhar e visualizar o trabalho de um projeto sem os modelos rígidos de hierarquia comuns em ferramentas tradicionais (épicos, histórias, subtarefas etc.). No Plans, **tudo é tarefa** — e a hierarquia entre tarefas pode crescer de forma **infinita**. Além disso, o Plans atua como **orquestrador de AIs**, permitindo automatizar processos e executar planos, e também como **orquestrador de atividades de prestadores de serviços**, conectando necessidades do usuário final a quem pode realizá-las.
-
-## Ritmo do Plans
+## Contexto
 
 Organizar-se é essencial: precisamos conhecer nossas metas e como chegaremos a elas — definir o **quê** e o **como**.
 
 Isso importa para toda pessoa. Organização dá norte e objetivo: saber para onde se vai, onde se está, o que já foi feito e o que ainda precisa ser feito para alcançar os objetivos.
 
-## As três funcionalidades principais
+Ferramentas tradicionais de gestão de trabalho costumam impor modelos rígidos de hierarquia (épicos, histórias, subtarefas etc.). O Plans parte de outro princípio: **tudo é tarefa**, e a hierarquia entre tarefas pode crescer de forma **infinita**.
 
-### 1. Board
+## Objetivo
 
-Quadro com **colunas** e **raias (swimlanes)** onde as tarefas podem ser:
+Organizar, acompanhar e visualizar o trabalho de um projeto por meio de **três funcionalidades principais** — board, Gantt e árvore de execução — permitindo atribuir responsáveis (**pessoa**, **IA** ou **prestador de serviço**), orquestrar AIs e intermediar necessidades do usuário final a prestadores de serviços.
 
-- **Cadastradas** no fluxo de trabalho
-- **Atribuídas** a responsáveis (humano ou IA)
-- **Movidas** entre colunas ou raias conforme o andamento
-- **Aninhadas** em qualquer profundidade (hierarquia infinita)
+## Épicos
 
-Colunas e raias têm quantidade livre, conforme o processo do time e os critérios do projeto. Uma ou mais colunas podem ser marcadas como **colunas de execução**: ao mover uma tarefa para uma delas, se o responsável for uma IA, ela executa o trabalho automaticamente.
+### EP-01 — Board
 
-### 2. Gantt
+- Configurar **colunas** e **raias (swimlanes)** com quantidade livre, conforme o processo do time
+- **Cadastrar** tarefas no fluxo de trabalho
+- **Atribuir** responsáveis (**pessoa**, **IA** ou **prestador de serviço**)
+- **Mover** tarefas entre colunas e raias conforme o andamento
+- **Aninhar** tarefas em qualquer profundidade (**hierarquia infinita**; tudo é tarefa)
+- Marcar uma ou mais **colunas de execução**
+- **Orquestrar AIs**: ao mover uma tarefa para coluna de execução, se o responsável for uma IA, ela executa o trabalho automaticamente
+- Criar **card (chamado)** descrevendo a necessidade e o serviço desejado
+- **Orquestrar prestadores de serviços**: prestador assume a responsabilidade, executa a atividade e atende a necessidade do usuário final
 
-Quadro Gantt onde são visualizadas:
+### EP-02 — Gantt
 
-- As **ordens** (atividades no tempo)
-- As **entradas e saídas** (artefatos de estado dos processos)
-- Os **responsáveis** por cada atividade
+- Visualizar **ordens** (atividades no tempo)
+- Visualizar **entradas e saídas** (artefatos de estado dos processos)
+- Visualizar e atribuir **responsáveis** (**pessoa**, **IA** ou **prestador de serviço**)
+- Definir atividades **sequenciais** (ordem e dependência no tempo)
+- Definir atividades **paralelas** (execução ao mesmo tempo)
+- Usar **hierarquia infinita** de tarefas no Gantt
+- Aplicar o modelo **Flow-Integrated Program**:
+  - **Estado** — artefatos de entrada e saída dos processos
+  - **Procedimentos** — funções e tarefas
+- **Criar planos** no Gantt
+- **Orquestrar AIs**: executar planos via AIs (humano define o rumo; AIs ajudam a realizar o trabalho)
 
-O Gantt segue o modelo de tarefas com hierarquia infinita e utiliza conceitos do **Flow-Integrated Program**. Nesse paradigma, os elementos se separam em duas substâncias:
+### EP-03 — Árvore de execução
 
-1. **Estado** — artefatos de entrada e saída dos processos
-2. **Procedimentos** — funções e tarefas
-
-A divisão fundamental é entre **estado** e **função/tarefa**.
-
-### 3. Árvore de execução
-
-Visão em árvore das atividades do projeto, mostrando todas as tarefas que fazem parte da execução e como elas se relacionam hierarquicamente — com **hierarquia infinita**, sem limite de profundidade.
-
-## Conceitos transversais
-
-### Tarefas e hierarquia
-
-- Não existem épicos, histórias ou subtarefas como tipos distintos.
-- Todas as unidades de trabalho são **tarefas**.
-- Uma tarefa pode conter outras tarefas em qualquer profundidade (**hierarquia infinita**).
-- Essa hierarquia vale **no board, no Gantt e na árvore de execução** — as três visões compartilham o mesmo modelo.
-
-### Responsáveis
-
-É possível **atribuir responsáveis** às atividades — no board, no Gantt e na árvore — para deixar claro quem executa cada tarefa. O responsável pode ser:
-
-- uma **pessoa**
-- uma **IA**
-- um **prestador de serviço**
-
-Quando o responsável é uma IA e a atividade é **movida para uma coluna de execução** no board, a IA realiza o trabalho automaticamente.
-
-### Orquestração de AIs
-
-O Plans também funciona como **orquestrador de AIs**. O gestor pode:
-
-- **Atribuir a IA** como responsável de uma atividade
-- **Disparar a execução** ao mover a tarefa para uma coluna de execução
-- **Criar planos** por meio do Gantt e executá-los via AIs
-
-Assim, planejamento e execução ficam no mesmo sistema: o humano define o rumo; as AIs ajudam a realizar o trabalho.
-
-### Orquestração de prestadores de serviços
-
-O Plans também serve como **orquestrador de atividades de prestadores de serviços**. Dada uma determinada necessidade:
-
-1. O usuário cria um **card (chamado)** descrevendo a necessidade e o serviço desejado
-2. Algum **prestador de serviço** pode assumir a responsabilidade da atividade
-3. O prestador **executa** a atividade
-4. A necessidade do **usuário final** é atendida
-
-Desse modo, o Plans intermedia o fluxo entre quem precisa do serviço e quem o realiza — no mesmo modelo de tarefas, board e responsáveis.
+- Visualizar em árvore todas as tarefas da execução
+- Navegar o relacionamento hierárquico entre tarefas
+- Tratar **tudo como tarefa** (sem tipos distintos de épico, história ou subtarefa)
+- **Criar atividades filhas** a partir de qualquer tarefa
+- Decompor o trabalho com **hierarquia infinita** (sem limite de profundidade)
+- Atribuir e visualizar **responsáveis** (**pessoa**, **IA** ou **prestador de serviço**)

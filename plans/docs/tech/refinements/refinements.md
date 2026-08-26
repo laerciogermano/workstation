@@ -128,7 +128,7 @@ flowchart TB
 |-------|-------|
 | História | [`US-01`](../../stories/user-stories.md) · rastreio [`epics.md`](../../epics.md) |
 | Versão | v1 |
-| Status | ready-for-dev |
+| Status | done |
 
 ### Escopo técnico
 
@@ -158,19 +158,19 @@ Projeções/views **não** duplicam entidade: Board/Gantt/Árvore/Explorar leem 
 
 ### Tarefas
 
-- [ ] Definir persistência de `WorkUnit` (schema + repositório)
-- [ ] Gerar UUID na criação; garantir imutabilidade do id
-- [ ] Validar título obrigatório
-- [ ] Implementar archive / unarchive (fluxo ativo vs Explorar)
-- [ ] Implementar delete com cascata de filhos
-- [ ] Camada de projeção: mapear visão → rótulo (card | tarefa | atividade/nó | arquivo)
-- [ ] Rejeitar/omitir operação de merge (fora de escopo v1)
-- [ ] Testes alinhados aos critérios de aceite da US-01
+- [x] Definir persistência de `WorkUnit` (schema + repositório)
+- [x] Gerar UUID na criação; garantir imutabilidade do id
+- [x] Validar título obrigatório
+- [x] Implementar archive / unarchive (fluxo ativo vs Explorar)
+- [x] Implementar delete com cascata de filhos
+- [x] Camada de projeção: mapear visão → rótulo (card | tarefa | atividade/nó | arquivo)
+- [x] Rejeitar/omitir operação de merge (fora de escopo v1)
+- [x] Testes alinhados aos critérios de aceite da US-01
 
 ### Dependências
 
 - Nenhuma história anterior; **base** das demais US v1
-- ADR opcional: soft delete vs hard delete
+- ADR opcional: soft delete vs hard delete — v1 usa soft delete (`deletedAt`)
 
 ### Riscos
 

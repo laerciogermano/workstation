@@ -28,7 +28,7 @@ Status: `draft` → `ready` → `in-progress` → `done`. Quando `ready`: breakd
 
 | ID | Título | Status | Persona |
 |----|--------|--------|----------|
-| [US-01](stories/user-stories.md) | Mesma unidade, vocabulário e ciclo de vida | ready | usuário |
+| [US-01](stories/user-stories.md) | Mesma unidade, vocabulário e ciclo de vida | done | usuário |
 | [US-02](stories/user-stories.md) | Atribuir responsável tipado | ready | usuário |
 | [US-03](stories/user-stories.md) | Gerenciar catálogo de responsáveis | ready | administrador do projeto |
 

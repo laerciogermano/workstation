@@ -8,27 +8,29 @@ Quando `ready`: breakdown em [`../tech/refinements/`](../tech/refinements/).
 
 ## Índice
 
-| Épico | ID | História |
-|-------|-----|----------|
-| [EP-00 — Fundamentos](#ep-00--fundamentos) | [US-01](#us-01--mesma-unidade-vocabulário-e-ciclo-de-vida) | Mesma unidade, vocabulário e ciclo de vida |
-| EP-00 | [US-02](#us-02--atribuir-responsável-tipado) | Atribuir responsável tipado |
-| EP-00 | [US-03](#us-03--gerenciar-catálogo-de-responsáveis) | Gerenciar catálogo de responsáveis |
-| [EP-01 — Board](#ep-01--board) | [US-04](#us-04--configurar-colunas-e-raias) | Configurar colunas e raias |
-| EP-01 | [US-05](#us-05--cadastrar-e-mover-cards) | Cadastrar e mover cards |
-| EP-01 | [US-06](#us-06--aninhar-e-mover-hierarquia-de-cards) | Aninhar e mover hierarquia de cards |
-| EP-01 | [US-07](#us-07--colunas-de-execução-e-orquestração-de-ia) | Colunas de execução e orquestração de IA |
-| EP-01 | [US-08](#us-08--chamado-e-prestador-de-serviço) | Chamado e prestador de serviço |
-| [EP-02 — Gantt](#ep-02--gantt) | [US-09](#us-09--planos-ordens-e-datas) | Planos, ordens e datas |
-| EP-02 | [US-10](#us-10--tarefas-sequenciais-e-paralelas) | Tarefas sequenciais e paralelas |
-| EP-02 | [US-11](#us-11--aninhar-tarefas-e-roll-up) | Aninhar tarefas e roll-up |
-| EP-02 | [US-12](#us-12--execução-de-planos-via-ais) | Execução de planos via AIs |
-| EP-02 | [US-13](#us-13--flow-oriented-programming) | Flow Oriented Programming |
-| EP-02 | [US-14](#us-14--máquina-como-linguagem-no-gantt) | Máquina como linguagem no Gantt |
-| EP-02 | [US-15](#us-15--exportar-código-e-linguagem-visual-unificada) | Exportar código e linguagem visual unificada |
-| [EP-03 — Árvore de execução](#ep-03--árvore-de-execução) | [US-16](#us-16--visualizar-árvore-e-responsáveis) | Visualizar árvore e responsáveis |
-| EP-03 | [US-17](#us-17--criar-atividades-e-hierarquia-infinita) | Criar atividades e hierarquia infinita |
-| [EP-04 — Explorar](#ep-04--explorar) | [US-18](#us-18--persistir-e-abrir-no-explorar) | Persistir e abrir no Explorar |
-| EP-04 | [US-19](#us-19--lista-busca-e-navegação-por-profundidade) | Lista, busca e navegação por profundidade |
+| Épico | ID | História | Corte |
+|-------|-----|----------|-------|
+| [EP-00 — Fundamentos](#ep-00--fundamentos) | [US-01](#us-01--mesma-unidade-vocabulário-e-ciclo-de-vida) | Mesma unidade, vocabulário e ciclo de vida | **MVP** |
+| EP-00 | [US-02](#us-02--atribuir-responsável-tipado) | Atribuir responsável tipado | **MVP** |
+| EP-00 | [US-03](#us-03--gerenciar-catálogo-de-responsáveis) | Gerenciar catálogo de responsáveis | **MVP** |
+| [EP-01 — Board](#ep-01--board) | [US-04](#us-04--configurar-colunas-e-raias) | Configurar colunas e raias | **MVP** |
+| EP-01 | [US-05](#us-05--cadastrar-e-mover-cards) | Cadastrar e mover cards | **MVP** |
+| EP-01 | [US-06](#us-06--aninhar-e-mover-hierarquia-de-cards) | Aninhar e mover hierarquia de cards | Leva 2 |
+| EP-01 | [US-07](#us-07--colunas-de-execução-e-orquestração-de-ia) | Colunas de execução e orquestração de IA | Leva 3 |
+| EP-01 | [US-08](#us-08--chamado-e-prestador-de-serviço) | Chamado e prestador de serviço | Leva 3 |
+| [EP-02 — Gantt](#ep-02--gantt) | [US-09](#us-09--planos-ordens-e-datas) | Planos, ordens e datas | Leva 4 |
+| EP-02 | [US-10](#us-10--tarefas-sequenciais-e-paralelas) | Tarefas sequenciais e paralelas | Leva 4 |
+| EP-02 | [US-11](#us-11--aninhar-tarefas-e-roll-up) | Aninhar tarefas e roll-up | Leva 4 |
+| EP-02 | [US-12](#us-12--execução-de-planos-via-ais) | Execução de planos via AIs | Leva 5 |
+| EP-02 | [US-13](#us-13--flow-oriented-programming) | Flow Oriented Programming | Leva 5 |
+| EP-02 | [US-14](#us-14--máquina-como-linguagem-no-gantt) | Máquina como linguagem no Gantt | Leva 5 |
+| EP-02 | [US-15](#us-15--exportar-código-e-linguagem-visual-unificada) | Exportar código e linguagem visual unificada | Leva 5 |
+| [EP-03 — Árvore de execução](#ep-03--árvore-de-execução) | [US-16](#us-16--visualizar-árvore-e-responsáveis) | Visualizar árvore e responsáveis | Leva 6 |
+| EP-03 | [US-17](#us-17--criar-atividades-e-hierarquia-infinita) | Criar atividades e hierarquia infinita | Leva 6 |
+| [EP-04 — Explorar](#ep-04--explorar) | [US-18](#us-18--persistir-e-abrir-no-explorar) | Persistir e abrir no Explorar | **MVP** |
+| EP-04 | [US-19](#us-19--lista-busca-e-navegação-por-profundidade) | Lista, busca e navegação por profundidade | Leva 2 |
+
+Detalhe do corte: [`README.md`](README.md#corte-mvp-entrega-1).
 
 ### Por épico
 

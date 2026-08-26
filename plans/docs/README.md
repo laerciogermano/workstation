@@ -14,7 +14,7 @@ Negócio (README)
 |--------|------|--------|------------|
 | Negócio | [`../README.md`](../README.md) | Contexto, objetivo, definições, capacidades | Épicos, tickets, stack |
 | Épicos | [`epics.md`](epics.md) | Capacidades de negócio e funcionalidades | API, schema, libs |
-| Histórias | [`stories/`](stories/) | Valor entregável + critérios de aceite | Detalhe de implementação |
+| Histórias | [`stories/`](stories/) · [`stories/user-stories.md`](stories/user-stories.md) | Valor entregável + critérios de aceite · [corte MVP](stories/README.md#corte-mvp-entrega-1) | Detalhe de implementação |
 | Técnico | [`tech/`](tech/) | ADRs, spikes, breakdown de tarefas | Regras de negócio novas |
 
 ## Fluxo de trabalho

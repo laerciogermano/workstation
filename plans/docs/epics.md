@@ -6,11 +6,11 @@ Histórias: [`stories/user-stories.md`](stories/user-stories.md) · Técnico: [`
 
 | ID | Épico | Histórias |
 |----|-------|-----------|
-| EP-00 | Fundamentos | US-01 … US-02 |
-| EP-01 | Board | US-03 … US-07 |
-| EP-02 | Gantt | US-08 … US-14 |
-| EP-03 | Árvore de execução | US-15 … US-16 |
-| EP-04 | Explorar | US-17 … US-18 |
+| EP-00 | Fundamentos | US-01 … US-03 |
+| EP-01 | Board | US-04 … US-08 |
+| EP-02 | Gantt | US-09 … US-15 |
+| EP-03 | Árvore de execução | US-16 … US-17 |
+| EP-04 | Explorar | US-18 … US-19 |
 
 ---
 

@@ -16,7 +16,7 @@ Status da versão: `planned` → `in-progress` → `released`.
 
 ## Mapa rápido
 
-### v1 — Núcleo (`planned`)
+### v1 — Núcleo (`in-progress`)
 
 - Unidade única com UUID, vocabulário por visão, excluir/arquivar
 - Catálogo de pessoas, IAs, prestadores e máquinas
@@ -59,7 +59,7 @@ Status da versão: `planned` → `in-progress` → `released`.
 
 | Campo | Valor |
 |-------|-------|
-| Status | planned |
+| Status | in-progress |
 | Objetivo | Identidade da unidade, catálogo/responsáveis, board básico e persistência |
 
 Histórias: [`stories/user-stories.md`](stories/user-stories.md)
@@ -81,7 +81,7 @@ Histórias: [`stories/user-stories.md`](stories/user-stories.md)
 
 **DoR:** US-01, US-02, US-03, US-04, US-05 e US-18 com status `ready` em [`epics.md`](epics.md).
 
-**Próximo passo:** refinamento técnico em [`tech/refinements/README.md`](tech/refinements/README.md).
+**Próximo passo:** implementação validada contra os BDD das US v1 (refinamentos em [`tech/refinements/`](tech/refinements/)).
 
 ---
 

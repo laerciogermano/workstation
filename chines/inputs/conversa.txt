@@ -1,0 +1,115 @@
+DESCRITIVO DA REUNIÃO — PLATAFORMA DE MONITORAMENTO DE MAP
+
+LARRCIO
+
+O principal ponto levantado é a necessidade de começar a realizar um acompanhamento mais rigoroso do MAP (Minimum Advertised Price) dos produtos no Brasil.
+
+Foi comentada a necessidade de realizar uma campanha/estrutura de monitoramento até que seja possível ter alguém ou um setor dedicado especificamente a essa atividade.
+
+Foi citado o setor/ferramenta “Promo”, que permite visualizar diversos anúncios de eletrônicos em promoção e identificar os menores preços praticados no mercado.
+
+A referência apresentada foi o funcionamento de ferramentas como o Buscapé, que conseguem realizar pesquisas em diferentes plataformas de venda e apresentar uma visão geral dos preços encontrados.
+
+A necessidade seria utilizar uma solução com funcionamento semelhante, realizando uma busca ampla nos canais de venda online.
+
+Atualmente existem aproximadamente 12 SKUs que precisam ser monitorados.
+
+Esses 12 SKUs deverão ser pesquisados nas diferentes plataformas de venda online para verificar quais valores estão sendo praticados no mercado.
+
+Para cada SKU existe um valor mínimo de preço previamente estipulado.
+
+A plataforma deverá realizar um mapeamento dos preços encontrados para esses produtos.
+
+Depois de realizar o mapeamento, o sistema deverá gerar um relatório diário.
+
+O relatório deverá identificar especificamente as pessoas, empresas ou anúncios que estiverem praticando preços fora do valor mínimo estabelecido.
+
+A ideia é que a ferramenta faça uma busca parametrizada com base nos SKUs cadastrados.
+
+O sistema deverá utilizar os SKUs existentes como parâmetro de pesquisa e, a partir deles, localizar os anúncios e preços correspondentes nas plataformas.
+
+O resultado esperado é um relatório diário de MAP de preços, mostrando quais anúncios ou vendedores estão praticando preços abaixo do valor mínimo estabelecido.
+
+GABRIEL
+
+A necessidade apresentada é utilizar uma ferramenta de monitoramento que permita acompanhar os preços praticados no mercado brasileiro de forma automática.
+
+A ferramenta deverá funcionar de maneira semelhante a ferramentas de comparação de preços, como o Buscapé, realizando pesquisas em diferentes plataformas.
+
+O objetivo é não precisar realizar manualmente a pesquisa de cada marketplace todos os dias.
+
+A plataforma deverá receber os SKUs dos produtos que precisam ser monitorados e utilizar esses dados para realizar as pesquisas automaticamente.
+
+Atualmente são aproximadamente 12 SKUs que precisam ser acompanhados.
+
+Cada SKU possui um preço mínimo estipulado.
+
+A plataforma deverá comparar os preços encontrados com esse valor mínimo.
+
+Quando encontrar um anúncio abaixo do valor estipulado, deverá identificar essa situação no relatório.
+
+O relatório deverá ser enviado diariamente, permitindo que a equipe responsável acompanhe quais empresas ou vendedores estão fora do MAP.
+
+O objetivo final é utilizar essas informações para realizar a cobrança dos revendedores que estiverem praticando preços abaixo do mínimo estabelecido.
+
+PONTOS DEFINIDOS NA CONVERSA
+
+ 1.⁠ ⁠Existe a necessidade de monitorar o MAP dos produtos no Brasil.
+
+ 2.⁠ ⁠Inicialmente serão monitorados aproximadamente 12 SKUs.
+
+ 3.⁠ ⁠Os SKUs serão utilizados como parâmetros para as pesquisas.
+
+ 4.⁠ ⁠A ferramenta deverá pesquisar os preços praticados em diferentes plataformas de venda online.
+
+ 5.⁠ ⁠Cada SKU terá um preço mínimo previamente definido.
+
+ 6.⁠ ⁠A plataforma deverá comparar automaticamente os preços encontrados com o preço mínimo.
+
+ 7.⁠ ⁠O sistema deverá identificar os anúncios que estiverem abaixo do MAP.
+
+ 8.⁠ ⁠Deverá existir um mapeamento dos preços encontrados no mercado.
+
+ 9.⁠ ⁠A ferramenta deverá gerar um relatório diário.
+
+10.⁠ ⁠O relatório deverá indicar quais vendedores, empresas ou anúncios estão praticando preços fora do valor estipulado.
+
+11.⁠ ⁠A finalidade do monitoramento é permitir que a equipe comercial faça a cobrança dos revendedores que estiverem fora do MAP.
+
+12.⁠ ⁠A solução desejada possui como referência o funcionamento de ferramentas de comparação e busca de preços, como o Buscapé, nas quais é possível ter uma visão geral dos preços praticados em diferentes plataformas.
+
+PENDÊNCIAS / PONTOS QUE AINDA PRECISAM SER DEFINIDOS
+
+ 1.⁠ ⁠Quais marketplaces e plataformas serão obrigatoriamente monitorados.
+
+ 2.⁠ ⁠Se a pesquisa será feita apenas por SKU ou também por nome do produto, modelo, EAN e outras informações.
+
+ 3.⁠ ⁠Qual será a frequência exata das pesquisas.
+
+ 4.⁠ ⁠Como o relatório diário será enviado e para quais e-mails.
+
+ 5.⁠ ⁠Qual será o formato do relatório.
+
+ 6.⁠ ⁠Se o sistema deverá armazenar o histórico dos preços encontrados.
+
+ 7.⁠ ⁠Se será necessário registrar evidências dos anúncios encontrados.
+
+ 8.⁠ ⁠Como serão tratados anúncios promocionais autorizados.
+
+ 9.⁠ ⁠Como será feita a identificação do vendedor ou empresa responsável pelo anúncio.
+
+10.⁠ ⁠Como serão tratados anúncios que não possuem o SKU no título.
+
+11.⁠ ⁠Como serão evitados resultados incorretos, como acessórios, produtos usados, modelos diferentes ou produtos similares.
+
+12.⁠ ⁠Se a plataforma deverá apenas identificar as irregularidades ou também controlar posteriormente o processo de advertência e cobrança dos revendedores.
+
+13.⁠ ⁠Se haverá integração futura com e-mail, CRM, WhatsApp ou outras ferramentas.
+
+14.⁠ ⁠Como será feita a atualização dos valores mínimos de MAP quando houver alteração de preço.
+
+OBJETIVO PRINCIPAL
+
+Criar uma ferramenta automatizada de monitoramento de MAP que pesquise diariamente os aproximadamente 12 SKUs cadastrados em diferentes plataformas de venda online, mapeie os preços encontrados, compare cada preço com o valor mínimo estipulado e gere automaticamente um relatório diário indicando quais vendedores ou empresas estão praticando preços abaixo do MAP.
+
+A finalidade da ferramenta é transformar uma atividade que hoje precisaria ser feita manualmente em um processo automatizado de monitoramento, permitindo que a equipe comercial tenha diariamente uma visão clara de quem está praticando preços fora da política estabelecida e possa realizar a cobrança necessária.

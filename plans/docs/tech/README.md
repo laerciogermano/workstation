@@ -15,7 +15,7 @@ Aqui entram o **como** construir — sem redefinir regra de negócio (isso vive 
 
 ## Quando usar
 
-1. História em `stories/` com status `ready` e aceite testável
+1. História em `stories/` com status `ready` no [`../board.md`](../board.md) e aceite testável
 2. Spike se houver incerteza técnica material
 3. ADR se a decisão arquitetural for duradoura
 4. Refinement com tarefas técnicas (front, back, dados, infra)

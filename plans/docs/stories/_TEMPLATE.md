@@ -11,4 +11,4 @@ Como **[persona]**, quero **[ação]**, para **[benefício]**.
 
 - Regras de negócio ainda abertas, se houver.
 
-Registrar **épico, status e persona** em [`../epics.md`](../epics.md). Inserir o texto da história em [`user-stories.md`](user-stories.md).
+Registrar **épico** em [`../epics.md`](../epics.md). Registrar **status, persona e versão** no board [`../board.md`](../board.md). Inserir o texto da história em [`user-stories.md`](user-stories.md).

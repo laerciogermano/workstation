@@ -6,7 +6,7 @@ Esteira de documentação do produto. Cada camada só avança quando a anterior 
 Negócio (README)
   → Épicos
     → Histórias (+ critérios de aceite)
-      → Versões (empacotamento de entrega)
+      → Board (status / persona / versão)
         → Refinamento técnico
           → Implementação / validação
 ```
@@ -14,9 +14,9 @@ Negócio (README)
 | Camada | Onde | Contém | Não contém |
 |--------|------|--------|------------|
 | Negócio | [`../README.md`](../README.md) | Contexto, objetivo, definições, capacidades | Épicos, tickets, stack |
-| Épicos | [`epics.md`](epics.md) | Capacidades de negócio e funcionalidades | API, schema, libs |
-| Histórias | [`stories/user-stories.md`](stories/user-stories.md) | Valor entregável + critérios de aceite | Plano de release |
-| Versões | [`versions.md`](versions.md) | Empacotamento épico/US por versão (`v1`…) | Texto das histórias |
+| Épicos | [`epics.md`](epics.md) | Capacidades de negócio e funcionalidades | Status de US, API, schema |
+| Histórias | [`stories/user-stories.md`](stories/user-stories.md) | Valor entregável + critérios de aceite | Status, versão, stack |
+| Board | [`board.md`](board.md) | Status, persona e versão das US (kanban) | Texto de aceite, stack |
 | Técnico | [`tech/`](tech/) | ADRs, spikes, breakdown de tarefas | Regras de negócio novas |
 
 ## Fluxo de trabalho
@@ -24,7 +24,7 @@ Negócio (README)
 1. Congelar / atualizar definições em [`../README.md`](../README.md)
 2. Derivar ou ajustar épicos em [`epics.md`](epics.md)
 3. Manter histórias em [`stories/user-stories.md`](stories/user-stories.md)
-4. Empacotar entregas em [`versions.md`](versions.md)
+4. Mover status e versão no board [`board.md`](board.md)
 5. Refinar tecnicamente histórias `ready` (DoR) em `tech/`
 6. Implementar, validar contra aceite e realimentar o negócio se a regra mudar
 
@@ -33,5 +33,5 @@ Negócio (README)
 - **Negócio pronto o bastante** — glossário e regras principais estáveis
 - **Épico pronto** — dá para listar histórias sem inventar regra nova
 - **História pronta (DoR)** — aceite claro e testável
-- **Versão planejada** — conjunto de US fechado para a entrega
+- **Versão no board** — cada US com `vN` preenchida
 - **Refinamento pronto** — tarefas técnicas sem descobrir “o que o produto é”

@@ -1,8 +1,8 @@
 # User stories — Plans
 
-Valor e critérios de aceite das histórias. Empacotamento e rastreio (épico, status, persona) ficam em [`../epics.md`](../epics.md).
+Valor e critérios de aceite das histórias. Épicos: [`../epics.md`](../epics.md). Status, persona e versão: board [`../board.md`](../board.md).
 
-Negócio: [`../../README.md`](../../README.md) · Versões: [`../versions.md`](../versions.md)
+Negócio: [`../../README.md`](../../README.md)
 
 ## Índice
 

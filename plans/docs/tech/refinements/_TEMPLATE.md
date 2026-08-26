@@ -2,7 +2,7 @@
 
 | Campo | Valor |
 |-------|-------|
-| História | US-XX · rastreio em `epics.md` |
+| História | US-XX · board `board.md` · épico em `epics.md` |
 | Versão | vN |
 | Status | draft \| ready-for-dev \| done |
 

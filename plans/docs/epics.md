@@ -1,10 +1,9 @@
 # Épicos — Plans
 
-Épicos e **rastreio das histórias** (status, persona). O texto das US fica em [`stories/user-stories.md`](stories/user-stories.md).
+Capacidades de negócio agrupadas. O texto das US fica em [`stories/user-stories.md`](stories/user-stories.md).  
+**Status e persona** das histórias: board [`board.md`](board.md).
 
-Negócio: [`../README.md`](../README.md) · Versões: [`versions.md`](versions.md) · Técnico: [`tech/`](tech/)
-
-Status: `draft` → `ready` → `in-progress` → `done`. Quando `ready`: breakdown em [`tech/refinements/`](tech/refinements/).
+Negócio: [`../README.md`](../README.md) · Board: [`board.md`](board.md) · Técnico: [`tech/`](tech/)
 
 | ID | Épico | Histórias |
 |----|-------|-----------|
@@ -26,11 +25,11 @@ Status: `draft` → `ready` → `in-progress` → `done`. Quando `ready`: breakd
 
 ### Histórias
 
-| ID | Título | Status | Persona |
-|----|--------|--------|----------|
-| [US-01](stories/user-stories.md) | Mesma unidade, vocabulário e ciclo de vida | done | usuário |
-| [US-02](stories/user-stories.md) | Atribuir responsável tipado | ready | usuário |
-| [US-03](stories/user-stories.md) | Gerenciar catálogo de responsáveis | ready | administrador do projeto |
+| ID | Título |
+|----|--------|
+| [US-01](stories/user-stories.md) | Mesma unidade, vocabulário e ciclo de vida |
+| [US-02](stories/user-stories.md) | Atribuir responsável tipado |
+| [US-03](stories/user-stories.md) | Gerenciar catálogo de responsáveis |
 
 ---
 
@@ -43,13 +42,13 @@ Status: `draft` → `ready` → `in-progress` → `done`. Quando `ready`: breakd
 
 ### Histórias
 
-| ID | Título | Status | Persona |
-|----|--------|--------|----------|
-| [US-04](stories/user-stories.md) | Configurar colunas e raias | ready | membro do time |
-| [US-05](stories/user-stories.md) | Cadastrar e mover cards | ready | usuário |
-| [US-06](stories/user-stories.md) | Aninhar e mover hierarquia de cards | draft | usuário |
-| [US-07](stories/user-stories.md) | Colunas de execução e orquestração de IA | draft | usuário |
-| [US-08](stories/user-stories.md) | Chamado e prestador de serviço | draft | usuário final / prestador de serviço |
+| ID | Título |
+|----|--------|
+| [US-04](stories/user-stories.md) | Configurar colunas e raias |
+| [US-05](stories/user-stories.md) | Cadastrar e mover cards |
+| [US-06](stories/user-stories.md) | Aninhar e mover hierarquia de cards |
+| [US-07](stories/user-stories.md) | Colunas de execução e orquestração de IA |
+| [US-08](stories/user-stories.md) | Chamado e prestador de serviço |
 
 ---
 
@@ -63,15 +62,15 @@ Status: `draft` → `ready` → `in-progress` → `done`. Quando `ready`: breakd
 
 ### Histórias
 
-| ID | Título | Status | Persona |
-|----|--------|--------|----------|
-| [US-09](stories/user-stories.md) | Planos, ordens e datas | draft | usuário |
-| [US-10](stories/user-stories.md) | Tarefas sequenciais e paralelas | draft | usuário |
-| [US-11](stories/user-stories.md) | Aninhar tarefas e roll-up | draft | usuário |
-| [US-12](stories/user-stories.md) | Execução de planos via AIs | draft | usuário |
-| [US-13](stories/user-stories.md) | Flow Oriented Programming | draft | usuário |
-| [US-14](stories/user-stories.md) | Máquina como linguagem no Gantt | draft | usuário |
-| [US-15](stories/user-stories.md) | Exportar código e linguagem visual unificada | draft | usuário |
+| ID | Título |
+|----|--------|
+| [US-09](stories/user-stories.md) | Planos, ordens e datas |
+| [US-10](stories/user-stories.md) | Tarefas sequenciais e paralelas |
+| [US-11](stories/user-stories.md) | Aninhar tarefas e roll-up |
+| [US-12](stories/user-stories.md) | Execução de planos via AIs |
+| [US-13](stories/user-stories.md) | Flow Oriented Programming |
+| [US-14](stories/user-stories.md) | Máquina como linguagem no Gantt |
+| [US-15](stories/user-stories.md) | Exportar código e linguagem visual unificada |
 
 ---
 
@@ -83,10 +82,10 @@ Status: `draft` → `ready` → `in-progress` → `done`. Quando `ready`: breakd
 
 ### Histórias
 
-| ID | Título | Status | Persona |
-|----|--------|--------|----------|
-| [US-16](stories/user-stories.md) | Visualizar árvore e responsáveis | draft | usuário |
-| [US-17](stories/user-stories.md) | Criar atividades e hierarquia infinita | draft | usuário |
+| ID | Título |
+|----|--------|
+| [US-16](stories/user-stories.md) | Visualizar árvore e responsáveis |
+| [US-17](stories/user-stories.md) | Criar atividades e hierarquia infinita |
 
 ---
 
@@ -97,8 +96,7 @@ Status: `draft` → `ready` → `in-progress` → `done`. Quando `ready`: breakd
 
 ### Histórias
 
-| ID | Título | Status | Persona |
-|----|--------|--------|----------|
-| [US-18](stories/user-stories.md) | Persistir e abrir no Explorar | ready | usuário |
-| [US-19](stories/user-stories.md) | Lista, busca e navegação por profundidade | draft | usuário |
-
+| ID | Título |
+|----|--------|
+| [US-18](stories/user-stories.md) | Persistir e abrir no Explorar |
+| [US-19](stories/user-stories.md) | Lista, busca e navegação por profundidade |

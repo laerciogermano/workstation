@@ -1,6 +1,6 @@
 # Refinements — Plans (v1)
 
-Breakdown técnico das histórias `ready` da **v1**. Rastreio em [`../../epics.md`](../../epics.md) · Histórias em [`../../stories/user-stories.md`](../../stories/user-stories.md) · Versões em [`../../versions.md`](../../versions.md).
+Breakdown técnico das histórias `ready` da **v1**. Board [`../../board.md`](../../board.md) · Épicos [`../../epics.md`](../../epics.md) · Histórias [`../../stories/user-stories.md`](../../stories/user-stories.md).
 
 Negócio (não redefinir aqui): [`../../../README.md`](../../../README.md).
 
@@ -126,7 +126,7 @@ flowchart TB
 
 | Campo | Valor |
 |-------|-------|
-| História | [`US-01`](../../stories/user-stories.md) · rastreio [`epics.md`](../../epics.md) |
+| História | [`US-01`](../../stories/user-stories.md) · board [`board.md`](../../board.md) |
 | Versão | v1 |
 | Status | done |
 
@@ -189,7 +189,7 @@ Projeções/views **não** duplicam entidade: Board/Gantt/Árvore/Explorar leem 
 
 | Campo | Valor |
 |-------|-------|
-| História | [`US-03`](../../stories/user-stories.md) · rastreio [`epics.md`](../../epics.md) |
+| História | [`US-03`](../../stories/user-stories.md) · board [`board.md`](../../board.md) |
 | Versão | v1 |
 | Status | ready-for-dev |
 
@@ -245,7 +245,7 @@ CatalogEntry
 
 | Campo | Valor |
 |-------|-------|
-| História | [`US-02`](../../stories/user-stories.md) · rastreio [`epics.md`](../../epics.md) |
+| História | [`US-02`](../../stories/user-stories.md) · board [`board.md`](../../board.md) |
 | Versão | v1 |
 | Status | ready-for-dev |
 
@@ -299,7 +299,7 @@ WorkUnit (extensão)
 
 | Campo | Valor |
 |-------|-------|
-| História | [`US-04`](../../stories/user-stories.md) · rastreio [`epics.md`](../../epics.md) |
+| História | [`US-04`](../../stories/user-stories.md) · board [`board.md`](../../board.md) |
 | Versão | v1 |
 | Status | ready-for-dev |
 
@@ -364,7 +364,7 @@ BoardLane
 
 | Campo | Valor |
 |-------|-------|
-| História | [`US-05`](../../stories/user-stories.md) · rastreio [`epics.md`](../../epics.md) |
+| História | [`US-05`](../../stories/user-stories.md) · board [`board.md`](../../board.md) |
 | Versão | v1 |
 | Status | ready-for-dev |
 
@@ -424,7 +424,7 @@ Card **é** a unidade com projeção board + `BoardPlacement`.
 
 | Campo | Valor |
 |-------|-------|
-| História | [`US-18`](../../stories/user-stories.md) · rastreio [`epics.md`](../../epics.md) |
+| História | [`US-18`](../../stories/user-stories.md) · board [`board.md`](../../board.md) |
 | Versão | v1 |
 | Status | ready-for-dev |
 

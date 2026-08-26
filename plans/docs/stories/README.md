@@ -20,7 +20,7 @@ Usar [`_TEMPLATE.md`](_TEMPLATE.md) ao acrescentar histórias em `user-stories.m
 
 ## Convenções
 
-- ID global: `US-XX` (18 histórias, sem redundância por tipo de responsável ou por visão)
+- ID global: `US-XX`
 - Status: `draft` → `ready` → `in-progress` → `done`
 - Só refinar tecnicamente histórias `ready` (DoR) em [`../tech/refinements/`](../tech/refinements/)
 
@@ -29,5 +29,5 @@ Usar [`_TEMPLATE.md`](_TEMPLATE.md) ao acrescentar histórias em `user-stories.m
 - Épico pai identificado
 - Valor e persona claros
 - Critérios de aceite testáveis (incluindo borda/negativo quando couber)
-- Notas com regras de negócio ainda abertas, se houver
+- Notas sem lacuna bloqueante no README de negócio
 - Sem dependência de regra de negócio indefinida bloqueante no README

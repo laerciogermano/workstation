@@ -32,18 +32,24 @@ Organizar, acompanhar e visualizar o trabalho do projeto em **Board**, **Gantt**
 | Árvore de execução | **atividade** (**nó**) |
 | Explorar | **arquivo** |
 
-Alteração em uma visão reflete nas demais. Toda unidade persiste como **arquivo** no Explorar.
+Toda unidade tem **id canônico (UUID)** estável. Alteração em uma visão reflete nas demais. Toda unidade persiste como **arquivo** no Explorar.
+
+**Campos mínimos:** **título** obrigatório em qualquer unidade. **Chamado** exige também **necessidade** e **serviço desejado**.
+
+**Ciclo de vida:** **excluir** remove a unidade em todas as visões. **Arquivar** oculta do fluxo ativo e mantém no Explorar. **Merge** fora de escopo v1.
 
 ### Responsáveis
 
-Um responsável por unidade:
+**Um** responsável por unidade (ou nenhum). Filho **não herda** responsável do pai.
+
+Catálogo do projeto: **pessoas** (membros), **IAs** (agentes), **prestadores**, **máquinas** (runtimes). Só itens do catálogo são atribuíveis.
 
 | Tipo | Comportamento |
 |------|----------------|
 | **Pessoa** | Execução humana |
-| **IA** | Execução automática ao entrar em **coluna de execução** no board; execução de planos no Gantt |
-| **Prestador de serviço** | Assume, executa e atende **chamado** (necessidade + serviço) do usuário final |
-| **Máquina** | Unidade como **linguagem de programação** (no Gantt: bibliotecas, loops, estados) |
+| **IA** | Executa no board (coluna de execução) e em planos no Gantt; produz/atualiza saídas; estados `pendente` → `em execução` → `concluída` \| `falhou` \| `cancelada`; **retry** só por ação explícita |
+| **Prestador de serviço** | Assume, executa e conclui **chamado**; usuário final **aceita** → `atendido` |
+| **Máquina** | Linguagem de programação; no **Gantt**: bibliotecas, loops e estados; na **árvore**: procedimento editável (sem exigir paridade total de libs/loops em v1) |
 
 ### Glossário
 
@@ -52,8 +58,9 @@ Um responsável por unidade:
 | **Coluna / raia** | Estágio e faixa do board (quantidade livre) |
 | **Coluna de execução** | Dispara IA ao receber card com responsável IA |
 | **Chamado** | Card com necessidade e serviço desejado |
-| **Entrada / saída** | Artefatos de estado de uma tarefa (FOP) |
-| **Plano** | Conjunto de tarefas no Gantt para execução |
+| **Entrada / saída** | Artefato de estado: **nome + referência** |
+| **Plano** | Contêiner nomeado de tarefas + execução no Gantt |
+| **FOP-IR** | Representação intermediária do fluxo para exportação |
 
 ## Capacidades
 
@@ -63,85 +70,48 @@ Configurar colunas e raias; cadastrar, atribuir, mover e aninhar cards; marcar c
 
 ### Gantt
 
-Visualizar ordens no tempo com entradas/saídas e responsáveis; sequencial e paralelo; aninhar; criar planos e executar via AIs; FOP; com máquina, programar e **exportar como código**; compilar/exportar na linguagem visual unificada.
+Visualizar e cadastrar ordens no tempo; entradas/saídas; sequencial/paralelo; aninhar; planos e execução via AIs; FOP; máquina como linguagem; exportar código / linguagem visual unificada.
 
 ### Árvore de execução
 
-Visualizar nós; criar filhas a partir de qualquer atividade; atribuir e ver responsáveis.
+Floresta (**múltiplas raízes**); criar raiz e filhas; ver responsáveis; hierarquia infinita.
 
 ### Explorar
 
-Lista de arquivos com navegação por profundidade na hierarquia.
+Persistir arquivos; abrir a partir de outras visões; lista ordenada por título com busca; drill-down + caminho (breadcrumb).
 
-## Regras
+## Regras (v1)
 
-- Só **coluna de execução** + responsável **IA** dispara execução automática no board.
-- Chamado válido exige **necessidade** e **serviço desejado**.
-- Exportação/compilação FOP exige plano consistente (estado + procedimentos).
+### Transversais
 
-## Aberto
-
-Lacunas de negócio ainda sem regra. Histórias podem registrá-las em **Notas**, mas **não inventar** comportamento até fechar aqui. Cada item indica *o que falta* e *por que importa*.
-
-### Identidade e ciclo de vida da unidade
-
-| Falta | Por quê |
-|-------|---------|
-| Id canônico da unidade entre visões | Sem isso, “mesma entidade” no board/Gantt/árvore/Explorar fica ambíguo |
-| Regras de exclusão, arquivamento e merge | Evitar unidade “fantasma” em uma visão e viva em outra |
-| Campos mínimos comuns (ex.: título) vs. específicos por visão | Critérios de cadastro/rejeição nas US |
-
-### Responsáveis e cadastros
-
-| Falta | Por quê |
-|-------|---------|
-| Fonte de pessoas, IAs, prestadores e máquinas (conta, time, catálogo) | Sem cadastro válido, atribuição e rejeição não têm critério |
-| O que é “executar o trabalho” para IA (escopo, artefatos, conclusão) | Board (coluna de execução) e Gantt (planos) dependem disso |
-| Sucesso, falha, retry e estado visível após falha da IA | Orquestração automática sem definição de término |
-| Herança de responsável pai→filho (sim/não) | Árvore e aninhamento no board/Gantt |
-| Confirmado neste doc: **um** responsável por unidade | Manter; só revisitar se o negócio pedir múltiplos |
+- Id canônico UUID; exclusão global; arquivar ≠ excluir; merge fora de escopo.
+- Título obrigatório; chamado: + necessidade e serviço.
+- Um responsável; sem herança pai→filho; só catálogo do projeto.
+- Hierarquia sem ciclos.
 
 ### Board
 
-| Falta | Por quê |
-|-------|---------|
-| Política ao remover coluna/raia com cards (bloquear vs. exigir destino) | Configuração do quadro sem regra destrutiva |
-| Comportamento ao mover card pai com filhos | Hierarquia infinita no fluxo |
-| Restrições de transição (WIP, permissões, caminhos válidos) | Mover card além do “qualquer coluna/raia” |
-| Campos obrigatórios do **chamado**; quem vê o chamado | Mercado prestador |
-| Definição de “atendido”; aceite do usuário final; transferência entre prestadores | Fechamento do chamado |
+- Remover coluna/raia **bloqueada** se houver cards (esvaziar antes).
+- Mover pai move a **subárvore** (pai + descendentes).
+- Sem WIP / permissões de caminho em v1: qualquer coluna/raia válida.
+- Só **coluna de execução** + responsável **IA** dispara execução automática.
+- Chamado visível a **todos os prestadores** do catálogo.
+- Prestador conclui → `aguardando aceite`; usuário final aceita → `atendido`.
+- Transferência: responsável atual **libera** ou admin **reatribui**.
 
-### Gantt e FOP
+### Gantt / FOP / IA
 
-| Falta | Por quê |
-|-------|---------|
-| Diferença operacional entre **plano** e “conjunto de tarefas” | Criar/executar planos |
-| Modelo temporal (início, fim, duração, fuso); tarefa sem data | Posicionamento no eixo |
-| Semântica sequencial (finish-to-start vs. só ordem visual) | Dependências |
-| Conflito paralelo × sequencial (rejeitar vs. sobrescrever) | Modelagem consistente |
-| Roll-up de datas/estado do pai a partir dos filhos | Hierarquia no tempo |
-| Tipo/formato dos artefatos de **entrada/saída**; obrigatoriedade de ligar saídas | FOP validável |
-| Catálogo de bibliotecas e sintaxe de loops (responsável máquina) | Linguagem no Gantt |
-| Formato do código exportado; linguagens de destino suportadas | Exportação e linguagem visual unificada |
-| Orquestração parcial (só tarefas com IA) e cancelamento de execução | Executar planos via AIs |
+- Tarefa pertence a um **plano** (plano padrão do projeto se não informado).
+- Datas: **início + fim** (fuso do projeto); duração derivada; sem datas → listada, não posicionada (sinalizada).
+- Sequencial = **finish-to-start**.
+- Paralelo com dependência sequencial existente → **rejeitar** até remover a dependência.
+- Roll-up: pai = min(início)…max(fim) dos filhos com data; estado agrega falha se algum filho falhou.
+- Artefato = nome + referência; ligar saídas **opcional**; ciclo de estado bloqueia; órfãos geram **aviso** na exportação.
+- Bibliotecas v1: `stdio`, `fs`, `http`; loops: `for`, `while`.
+- Exportação: **FOP-IR**; destinos v1: **TypeScript**, **Python**.
+- Execução via AIs: só tarefas com responsável IA; **cancelar** → `cancelada`.
 
-### Árvore de execução
+### Árvore / Explorar
 
-| Falta | Por quê |
-|-------|---------|
-| Raiz única vs. múltiplas raízes | Forma da árvore vazia/inicial |
-| Paridade máquina com o Gantt (bibliotecas/loops na árvore ou só “procedimento”) | Responsável máquina na árvore |
-| Campos mínimos da atividade | Criar filhas |
-
-### Explorar
-
-| Falta | Por quê |
-|-------|---------|
-| Ordenação, filtros e busca na lista | Navegação além de “existe lista” |
-| Forma da navegação por profundidade (drill-down, caminho, etc.) | Pode ficar em UI; a regra de negócio já exige percorrer a hierarquia |
-
-### Como fechar
-
-1. Decidir cada linha acima neste README (regra explícita ou “fora de escopo v1”).
-2. Atualizar histórias afetadas (aceite + remover Nota correspondente).
-3. Só então marcar a US como `ready` (DoR).
+- Múltiplas raízes permitidas.
+- Explorar: ordenação por **título**; busca por título; drill-down + breadcrumb.

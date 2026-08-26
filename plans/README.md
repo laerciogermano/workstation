@@ -1,7 +1,7 @@
 # Plans
 
 Documento de **negócio** do produto — fonte do *quê* e das regras.  
-Derivados: [`docs/`](docs/) (`epics` → `stories` → `tech`). Esteira: [`docs/README.md`](docs/README.md).
+Derivados: [`docs/`](docs/) (`epics` → `stories` → `versions` → `tech`). Esteira: [`docs/README.md`](docs/README.md).
 
 ---
 

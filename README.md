@@ -9,5 +9,5 @@
 ### Esteira (Plans)
 
 ```text
-Negócio → Épicos → Histórias → Refinamento técnico
+Negócio → Épicos → Histórias → Versões → Refinamento técnico
 ```

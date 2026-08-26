@@ -2,7 +2,7 @@
 
 Épicos que contemplam as funcionalidades descritas em [`plans/README.md`](../README.md).
 
-Histórias: [`stories/user-stories.md`](stories/user-stories.md) · Técnico: [`tech/`](tech/) · Índice: [`stories/README.md`](stories/README.md)
+Histórias: [`stories/user-stories.md`](stories/user-stories.md) · Versões: [`versions.md`](versions.md) · Técnico: [`tech/`](tech/)
 
 | ID | Épico | Histórias |
 |----|-------|-----------|

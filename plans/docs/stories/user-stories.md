@@ -27,6 +27,9 @@ Negócio: [`../../README.md`](../../README.md)
 | US-17 | Criar atividades e hierarquia infinita |
 | US-18 | Persistir e abrir no Explorar |
 | US-19 | Lista, busca e navegação por profundidade |
+| US-20 | Registrar atividade com objetivo e contexto |
+| US-21 | Pesquisar opções com IA |
+| US-22 | Registrar decisão na atividade |
 
 ---
 
@@ -353,4 +356,60 @@ Como **usuário**, quero **lista ordenada por título, busca e drill-down com ca
 - [ ] Dado que há aninhamento, quando faço drill-down, então entro/saio dos níveis sem limite de profundidade e vejo o **caminho (breadcrumb)**.
 - [ ] Dado que uso o breadcrumb, quando seleciono um nível ancestral, então volto àquele nível.
 - [ ] Dado que o caminho não existe ou a lista está vazia, quando navego, então o sistema informa ausência / lista vazia utilizável.
+
+---
+
+<a id="us-20"></a>
+## US-20 — Registrar atividade com objetivo e contexto
+
+Como **usuário**, quero **registrar uma atividade com título e contexto opcional**, para **capturar o que preciso fazer e orientar minha execução ou a da IA**.
+
+### Critérios de aceite
+
+- [ ] Dado que informo título, quando crio a atividade, então ela é registrada com lifecycle `active` (US-01).
+- [ ] Dado que informo **contexto** (*ex.: orçamento, preferências, restrições*), quando salvo, então o contexto fica associado à unidade e visível nas visões.
+- [ ] Dado que não informo contexto, quando crio a atividade, então ela é válida só com título.
+- [ ] Dado que altero o contexto, quando salvo, então a alteração reflete em todas as visões (mesmo UUID).
+- [ ] Dado que tento criar sem título, quando confirmo, então a criação é rejeitada.
+
+### Notas
+
+- Ex.: *Comprar fone de ouvido* + contexto *uso diário, cancelamento de ruído, até R$ 500*. Regras em [`plans/README.md`](../../README.md).
+
+---
+
+<a id="us-21"></a>
+## US-21 — Pesquisar opções com IA
+
+Como **usuário**, quero **solicitar pesquisa assistida por IA a partir de uma atividade**, para **obter comparativo estruturado de opções, benefícios e preços antes de decidir**.
+
+### Critérios de aceite
+
+- [ ] Dado que a unidade tem responsável **IA** do catálogo, quando solicito **pesquisa assistida**, então a IA inicia usando título e contexto da atividade.
+- [ ] Dado que a pesquisa conclui com sucesso, quando consulto a unidade, então existe **saída estruturada** com comparativo (opções, benefícios, faixas de preço; fontes quando disponíveis).
+- [ ] Dado que a pesquisa falha, quando consulto a unidade, então o status é `falhou` e a falha é visível; posso solicitar **retry** (US-07).
+- [ ] Dado que a unidade **não** tem responsável IA, quando solicito pesquisa assistida, então a operação é rejeitada.
+- [ ] Dado que o comparativo foi gerado, quando abro board ou Explorar, então a saída permanece ligada à mesma unidade (UUID).
+
+### Notas
+
+- Ex.: *Comprar celular* → lista de melhores aparelhos, benefícios de anúncios/reviews, melhores preços. Atribuição: US-02; catálogo: US-03; orquestração IA: US-07.
+
+---
+
+<a id="us-22"></a>
+## US-22 — Registrar decisão na atividade
+
+Como **usuário**, quero **registrar a opção escolhida em uma atividade**, para **encerrar a etapa de decisão e saber o que foi definido**.
+
+### Critérios de aceite
+
+- [ ] Dado que existe comparativo de pesquisa (US-21) ou contexto manual, quando registro uma **decisão** (opção escolhida + observação opcional), então fica persistida na unidade.
+- [ ] Dado que registro decisão, quando consulto a atividade, então vejo título, contexto, comparativo (se houver) e decisão.
+- [ ] Dado que altero a decisão antes de concluir, quando salvo, então a decisão anterior é substituída.
+- [ ] Dado que registro decisão, quando **arquivo** a unidade, então decisão e comparativo permanecem acessíveis no Explorar.
+
+### Notas
+
+- Complementa US-20/US-21; não exige pesquisa prévia (decisão manual é válida).
 

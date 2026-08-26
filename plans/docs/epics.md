@@ -12,6 +12,7 @@ Negócio: [`../README.md`](../README.md) · Board: [`board.md`](board.md) · Té
 | EP-02 | Gantt | US-09 … US-15 |
 | EP-03 | Árvore de execução | US-16 … US-17 |
 | EP-04 | Explorar | US-18 … US-19 |
+| EP-05 | Gestão de atividades | US-20 … US-22 |
 
 ---
 
@@ -100,3 +101,19 @@ Negócio: [`../README.md`](../README.md) · Board: [`board.md`](board.md) · Té
 |----|--------|
 | [US-18](stories/user-stories.md) | Persistir e abrir no Explorar |
 | [US-19](stories/user-stories.md) | Lista, busca e navegação por profundidade |
+
+---
+
+## EP-05 — Gestão de atividades
+
+- Registrar atividade com **objetivo** (título + contexto opcional)
+- Solicitar **pesquisa assistida por IA** e obter comparativo estruturado
+- Registrar **decisão** e encerrar a atividade
+
+### Histórias
+
+| ID | Título |
+|----|--------|
+| [US-20](stories/user-stories.md) | Registrar atividade com objetivo e contexto |
+| [US-21](stories/user-stories.md) | Pesquisar opções com IA |
+| [US-22](stories/user-stories.md) | Registrar decisão na atividade |

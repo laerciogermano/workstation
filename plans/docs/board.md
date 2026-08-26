@@ -17,6 +17,7 @@ Negócio: [`../README.md`](../README.md) · Épicos: [`epics.md`](epics.md) · H
 | v4 | Gantt básico | planned |
 | v5 | Gantt avançado | planned |
 | v6 | Árvore de execução | planned |
+| v7 | Gestão de atividades | planned |
 
 **v1 ordem sugerida:** US-01 → US-03 → US-02 → US-04 → US-05 → US-18.
 
@@ -66,3 +67,6 @@ _Nenhuma._
 | [US-15](stories/user-stories.md) | Exportar código e linguagem visual unificada | EP-02 | usuário | v5 |
 | [US-16](stories/user-stories.md) | Visualizar árvore e responsáveis | EP-03 | usuário | v6 |
 | [US-17](stories/user-stories.md) | Criar atividades e hierarquia infinita | EP-03 | usuário | v6 |
+| [US-20](stories/user-stories.md) | Registrar atividade com objetivo e contexto | EP-05 | usuário | v7 |
+| [US-21](stories/user-stories.md) | Pesquisar opções com IA | EP-05 | usuário | v7 |
+| [US-22](stories/user-stories.md) | Registrar decisão na atividade | EP-05 | usuário | v7 |

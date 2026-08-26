@@ -13,6 +13,34 @@ Ferramentas de gestão impõem hierarquias rígidas e fragmentam a mesma ativida
 
 Organizar, acompanhar e visualizar o trabalho do projeto em **Board**, **Gantt**, **Árvore de execução** e **Explorar**, com responsáveis tipados (pessoa, IA, prestador, máquina) e planos tratáveis como linguagem de programação exportável (FOP).
 
+## Gestão de atividades
+
+O Plans ajuda a **registrar, acompanhar e decidir** atividades — pessoais ou de projeto — na mesma unidade de trabalho, sem trocar de ferramenta conforme a etapa.
+
+### Exemplos
+
+**Registrar uma intenção**
+
+- Ex.: *Comprar fone de ouvido* — você cria a atividade com **título** e, se quiser, **contexto** (*uso diário, cancelamento de ruído, até R$ 500*). Ela aparece no board (ou em outra visão) para você não perder o que precisa fazer.
+
+**Pesquisar antes de decidir**
+
+- Ex.: *Comprar celular* — você registra a atividade, atribui uma **IA** do catálogo e solicita **pesquisa assistida**: extrair lista dos melhores aparelhos, **benefícios** citados em anúncios e reviews, **faixas de preço** e **melhores ofertas** encontradas.
+- O resultado vira **saída estruturada** (comparativo) ligada à mesma unidade — consultável no board e no Explorar — para apoiar a decisão sem sair do fluxo.
+
+**Decompor quando fizer sentido**
+
+- *Comprar celular* pode virar sub-atividades: *Definir orçamento*, *Comparar modelos*, *Escolher loja*, *Comprar* — mesma unidade, hierarquia infinita, progresso visível.
+
+### Como o produto ajuda
+
+| Necessidade | O que o Plans faz |
+|-------------|-------------------|
+| Lembrar o que fazer | Registrar atividade com título (e contexto opcional) |
+| Entender opções antes de agir | IA pesquisa e consolida comparativo estruturado |
+| Acompanhar progresso | Board, Gantt, árvore ou Explorar sobre a **mesma** unidade |
+| Decidir e encerrar | Registrar escolha na atividade e arquivar ou concluir |
+
 ## Princípios
 
 1. **Uma unidade** — mesma entidade em todas as visões; só muda o nome.
@@ -34,7 +62,7 @@ Organizar, acompanhar e visualizar o trabalho do projeto em **Board**, **Gantt**
 
 Toda unidade tem **id canônico (UUID)** estável. Alteração em uma visão reflete nas demais. Toda unidade persiste como **arquivo** no Explorar.
 
-**Campos mínimos:** **título** obrigatório em qualquer unidade. **Chamado** exige também **necessidade** e **serviço desejado**.
+**Campos mínimos:** **título** obrigatório em qualquer unidade. **Contexto** (descrição opcional) orienta execução humana ou IA (*ex.: orçamento, preferências, restrições*). **Chamado** exige também **necessidade** e **serviço desejado**.
 
 **Ciclo de vida:** **excluir** remove a unidade em todas as visões. **Arquivar** oculta do fluxo ativo e mantém no Explorar. **Merge** fora de escopo v1.
 
@@ -47,7 +75,7 @@ Catálogo do projeto: **pessoas** (membros), **IAs** (agentes), **prestadores**,
 | Tipo | Comportamento |
 |------|----------------|
 | **Pessoa** | Execução humana |
-| **IA** | Executa no board (coluna de execução) e em planos no Gantt; produz/atualiza saídas; estados `pendente` → `em execução` → `concluída` \| `falhou` \| `cancelada`; **retry** só por ação explícita |
+| **IA** | Executa no board (coluna de execução) e em planos no Gantt; produz/atualiza saídas; **pesquisa assistida** sob demanda (comparativo estruturado); estados `pendente` → `em execução` → `concluída` \| `falhou` \| `cancelada`; **retry** só por ação explícita |
 | **Prestador de serviço** | Assume, executa e conclui **chamado**; usuário final **aceita** → `atendido` |
 | **Máquina** | Linguagem de programação; no **Gantt**: bibliotecas, loops e estados; na **árvore**: procedimento editável (sem exigir paridade total de libs/loops em v1) |
 
@@ -58,11 +86,15 @@ Catálogo do projeto: **pessoas** (membros), **IAs** (agentes), **prestadores**,
 | **Coluna / raia** | Estágio e faixa do board (quantidade livre) |
 | **Coluna de execução** | Dispara IA ao receber card com responsável IA |
 | **Chamado** | Card com necessidade e serviço desejado |
-| **Entrada / saída** | Artefato de estado: **nome + referência** |
+| **Entrada / saída** | Artefato de estado: **nome + referência**; saída de **pesquisa assistida** = comparativo (opções, benefícios, preços, fontes quando disponíveis) |
 | **Plano** | Contêiner nomeado de tarefas + execução no Gantt |
 | **FOP-IR** | Representação intermediária do fluxo para exportação |
 
 ## Capacidades
+
+### Gestão de atividades
+
+Registrar atividade com **contexto** opcional; solicitar **pesquisa assistida por IA** (comparativo estruturado); registrar **decisão** escolhida na unidade.
 
 ### Board
 
@@ -85,7 +117,7 @@ Persistir arquivos; abrir a partir de outras visões; lista ordenada por título
 ### Transversais
 
 - Id canônico UUID; exclusão global; arquivar ≠ excluir; merge fora de escopo.
-- Título obrigatório; chamado: + necessidade e serviço.
+- Título obrigatório; contexto opcional; chamado: + necessidade e serviço.
 - Um responsável; sem herança pai→filho; só catálogo do projeto.
 - Hierarquia sem ciclos.
 

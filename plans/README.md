@@ -1,77 +1,148 @@
 # Plans
 
-Definições **de negócio** do produto. Épicos, histórias e refinamento técnico ficam em [`docs/`](docs/).
+Documento de **negócio** do produto. Fonte de verdade do *quê* o Plans é e das regras que o sistema deve respeitar.
 
-## Esteira de documentação
+Camadas derivadas: [`docs/`](docs/) — épicos → histórias → refinamento técnico.  
+Esteira: [`docs/README.md`](docs/README.md).
 
 ```text
-README (este arquivo) → docs/epics.md → docs/stories/ → docs/tech/
+Negócio (este arquivo) → Épicos → Histórias → Técnico
 ```
 
-Detalhes: [`docs/README.md`](docs/README.md).
+---
 
-## Contexto
+## Problema
 
-Organizar-se é essencial: precisamos conhecer nossas metas e como chegaremos a elas — definir o **quê** e o **como**.
+Ferramentas de gestão de trabalho costumam impor hierarquias rígidas e fragmentar a mesma atividade em conceitos diferentes conforme a tela.
 
-Isso importa para toda pessoa. Organização dá norte e objetivo: saber para onde se vai, onde se está, o que já foi feito e o que ainda precisa ser feito para alcançar os objetivos.
+Quem trabalha precisa saber: para onde vai, onde está, o que já foi feito e o que falta — sem perder o fio entre planejar, executar e explorar o trabalho.
 
-Ferramentas tradicionais de gestão de trabalho costumam impor modelos rígidos de hierarquia (épicos, histórias, subtarefas etc.). O Plans parte de outro princípio: a unidade de trabalho é uma só e a hierarquia pode crescer de forma **infinita**.
-
-Há também o objetivo de **desenvolver sistemas utilizando diferentes linguagens** de forma redundante. Com **Flow Oriented Programming**, uma **linguagem visual** reúne a compilação de todas as linguagens em **uma só linguagem**, que pode ser **exportada para as demais** — uma **estrutura unificada de desenvolvimento de software**.
+Há também a necessidade de desenvolver de forma **redundante em múltiplas linguagens**, a partir de uma **estrutura unificada** (linguagem visual → compilação → exportação).
 
 ## Objetivo
 
-Organizar, acompanhar e visualizar o trabalho de um projeto por meio de **três funcionalidades principais** — **board**, **Gantt** e **árvore de execução** — permitindo atribuir responsáveis, orquestrar AIs, intermediar necessidades do usuário final a prestadores de serviços e, quando couber, tratar planos como linguagem de programação exportável.
+O Plans organiza, acompanha e visualiza o trabalho de um projeto por meio de **quatro superfícies**:
 
-## Definições
+| Superfície | Papel |
+|------------|--------|
+| **Board** | Fluxo de trabalho (colunas e raias) |
+| **Gantt** | Planejamento e execução no tempo (ordens, estado, FOP) |
+| **Árvore de execução** | Decomposição hierárquica da execução |
+| **Explorar** | Persistência e navegação das unidades como arquivos |
 
-### Unidade de trabalho
+Nas superfícies é possível **atribuir responsáveis**, **orquestrar AIs**, **intermediar usuário final e prestadores de serviço** e, quando o responsável for **máquina**, tratar o trabalho como **linguagem de programação** (exportável a partir do Gantt / FOP).
 
-**Toda atividade é arquivo, tarefa, nó ou card** — a mesma unidade, nomeada conforme a visão:
+## Princípios
 
-| Visão | Nome |
-|-------|------|
+1. **Uma unidade** — toda atividade é a mesma entidade, apenas nomeada conforme a visão.
+2. **Hierarquia infinita** — aninhamento sem limite de profundidade (board, Gantt, árvore, Explorar).
+3. **Responsável tipado** — pessoa, IA, prestador de serviço ou máquina; o tipo altera o comportamento permitido.
+4. **Flow Oriented Programming (FOP)** — no Gantt, o plano combina **estado** (entradas e saídas) e **procedimentos** (funções e tarefas).
+5. **Linguagem visual unificada** — o modelo pode ser compilado em uma representação única e exportado para outras linguagens.
+
+## Glossário
+
+| Termo | Significado |
+|-------|-------------|
+| **Unidade de trabalho** | Entidade única do trabalho no Plans |
+| **Card** | Unidade vista no board |
+| **Tarefa** / **ordem** | Unidade vista no Gantt |
+| **Atividade** / **nó** | Unidade vista na árvore de execução |
+| **Arquivo** | Unidade vista e persistida no Explorar |
+| **Coluna** | Estágio do fluxo no board |
+| **Raia (swimlane)** | Faixa transversal de organização no board |
+| **Coluna de execução** | Coluna que dispara execução automática ao receber card com responsável IA |
+| **Chamado** | Card que descreve necessidade e serviço desejado para prestadores |
+| **Entrada / saída** | Artefatos de **estado** ligados a uma tarefa (FOP) |
+| **Plano** | Conjunto de tarefas no Gantt organizado para execução |
+| **Máquina** | Tipo de responsável que trata a unidade como linguagem de programação |
+
+## Unidade de trabalho
+
+Toda atividade é **arquivo**, **tarefa**, **nó** ou **card** — a mesma unidade:
+
+| Visão | Nome da unidade |
+|-------|-----------------|
 | Board | **card** |
 | Gantt | **tarefa** |
 | Árvore de execução | **atividade** (**nó**) |
 | Explorar | **arquivo** |
 
-### Responsáveis
+Alterações na unidade em uma visão refletem nas demais. Não há entidades paralelas para o mesmo trabalho.
 
-Uma unidade pode ter como responsável:
+## Responsáveis
 
-- **pessoa**
-- **IA**
-- **prestador de serviço**
-- **máquina**
+Toda unidade pode ter **um** responsável, de um destes tipos:
 
-Quando o responsável for **máquina**, o **Gantt** / a **atividade** deve ser tratado como **linguagem de programação**.
+| Tipo | Efeito |
+|------|--------|
+| **Pessoa** | Execução humana |
+| **IA** | Delegação a inteligência artificial; no board, dispara execução automática em **coluna de execução** |
+| **Prestador de serviço** | Atendimento intermediado à necessidade do usuário final |
+| **Máquina** | A unidade é tratada como **linguagem de programação** |
 
-### Explorar
+Regra: se o responsável for **máquina**, Gantt/tarefa e árvore/atividade são tratados como linguagem de programação. No Gantt isso inclui **bibliotecas**, **laços / loops** e **estados** (entradas e saídas).
 
-Toda unidade persiste como **arquivo**. Deve existir um **explorador de arquivos em lista**, com **navegação por profundidade**, na seção **Explorar**.
-
-## Funcionalidades principais
+## Capacidades
 
 ### Board
 
-Quadro com **colunas** e **raias (swimlanes)** de quantidade livre, conforme o processo do time, onde **cards** podem ser cadastrados, atribuídos, movidos e aninhados em qualquer profundidade (**hierarquia infinita**).
-
-Uma ou mais colunas podem ser **colunas de execução**: ao mover um card para elas, se o responsável for uma **IA**, a IA executa o trabalho automaticamente.
-
-O board também orquestra **prestadores de serviços**: o usuário cria um **card (chamado)** descrevendo a necessidade e o serviço desejado; um prestador assume a responsabilidade, executa e atende a necessidade do usuário final.
+- Configurar **colunas** e **raias** em quantidade livre, conforme o processo do time.
+- **Cadastrar**, **atribuir responsável**, **mover** e **aninhar** cards em qualquer profundidade.
+- Marcar uma ou mais **colunas de execução**.
+- Ao mover um card para coluna de execução, se o responsável for **IA**, a IA **executa automaticamente** o trabalho.
+- Orquestrar prestadores: o usuário final cria um **chamado** (necessidade + serviço desejado); o prestador **assume**, **executa** e **atende**.
 
 ### Gantt
 
-Visão temporal das **tarefas** (**ordens**), com **entradas e saídas** (artefatos de **estado**), responsáveis e suporte a tarefas **sequenciais** ou **paralelas**, com **hierarquia infinita**.
-
-O Gantt aplica **Flow Oriented Programming** — **estado** (entradas e saídas) e **procedimentos** (funções e tarefas). Nele é possível criar planos e executá-los via **AIs**.
-
-Quando o responsável for **máquina**, o Gantt / a tarefa é tratado como **linguagem de programação**, com **bibliotecas de programação**, **laços de repetição** / **loops** e **estados** como entradas e saídas. O Gantt pode ser **exportado como código** e utilizado como código nesse paradigma.
+- Visualizar **tarefas (ordens)** no tempo, com **responsáveis**.
+- Visualizar **entradas e saídas** (artefatos de estado).
+- Definir tarefas **sequenciais** (ordem/dependência) e **paralelas** (simultâneas).
+- Aninhar tarefas em qualquer profundidade.
+- **Criar planos** e **executá-los via AIs**.
+- Aplicar **FOP**: estado (entradas/saídas) e procedimentos (funções/tarefas).
+- Com responsável **máquina**: bibliotecas, loops e estados; **exportar o Gantt como código**.
+- Operar como **linguagem visual unificada**: compilar e exportar para demais linguagens suportadas.
 
 ### Árvore de execução
 
-Visão em árvore das **atividades** (**nós**) da execução, com criação de **atividades filhas**, relacionamento hierárquico e **hierarquia infinita** (sem limite de profundidade).
+- Visualizar atividades (**nós**) em árvore.
+- Criar **atividades filhas** a partir de qualquer atividade.
+- Manter **hierarquia infinita** e relacionamento pai–filho íntegro.
+- Atribuir e visualizar responsáveis (pessoa, IA, prestador, máquina).
+- Com responsável **máquina**, tratar a atividade como linguagem de programação.
 
-Responsáveis (**pessoa**, **IA**, **prestador de serviço** ou **máquina**) podem ser atribuídos e visualizados. Se o responsável for **máquina**, a **atividade** é tratada como **linguagem de programação**.
+### Explorar
+
+- Persistir **toda** unidade como **arquivo**.
+- Disponibilizar **explorador em lista**.
+- Permitir **navegação por profundidade** na hierarquia infinita.
+- Expor a mesma unidade independentemente da visão de origem.
+
+## Regras transversais
+
+- Hierarquia infinita não admite **ciclos** (aninhamento ou dependência).
+- Coluna que **não** é de execução **não** dispara execução automática por si só.
+- Card com responsável **que não é IA**, ao entrar em coluna de execução, **não** dispara execução por IA.
+- Chamado válido exige descrição da **necessidade** e do **serviço desejado**.
+- Exportação / compilação FOP só produz artefato útil a partir de plano modelado de forma consistente com estado e procedimentos.
+
+## Aberto (a fechar no negócio antes do DoR)
+
+Itens ainda sem regra fechada neste documento — histórias podem listá-los em **Notas**, mas não inventar comportamento:
+
+- Campos mínimos de card, tarefa, atividade e chamado
+- Política ao remover coluna/raia que contém cards
+- Critério de conclusão / falha / retry da execução por IA
+- Aceite do usuário final ao fechar chamado; transferência entre prestadores
+- Modelo de datas no Gantt; roll-up de pai a partir de filhos
+- Formato do código exportado e lista de linguagens de destino
+- Fonte cadastral de pessoas, IAs, prestadores e máquinas
+
+## Documentação derivada
+
+| Camada | Onde |
+|--------|------|
+| Épicos | [`docs/epics.md`](docs/epics.md) |
+| Histórias | [`docs/stories/`](docs/stories/) |
+| Técnico | [`docs/tech/`](docs/tech/) |

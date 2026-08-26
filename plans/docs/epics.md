@@ -2,15 +2,15 @@
 
 Épicos que contemplam as funcionalidades descritas em [`plans/README.md`](../README.md).
 
-Histórias: [`stories/`](stories/) · Técnico: [`tech/`](tech/) · Índice da esteira: [`README.md`](README.md)
+Histórias: [`stories/user-stories.md`](stories/user-stories.md) · Técnico: [`tech/`](tech/) · Índice: [`stories/README.md`](stories/README.md)
 
 | ID | Épico | Histórias |
 |----|-------|-----------|
-| EP-00 | Fundamentos | [`stories/ep-00-fundamentos/`](stories/ep-00-fundamentos/) |
-| EP-01 | Board | [`stories/ep-01-board/`](stories/ep-01-board/) |
-| EP-02 | Gantt | [`stories/ep-02-gantt/`](stories/ep-02-gantt/) |
-| EP-03 | Árvore de execução | [`stories/ep-03-arvore/`](stories/ep-03-arvore/) |
-| EP-04 | Explorar | [`stories/ep-04-explorar/`](stories/ep-04-explorar/) |
+| EP-00 | Fundamentos | US-01 … US-06 |
+| EP-01 | Board | US-07 … US-16 |
+| EP-02 | Gantt | US-17 … US-28 |
+| EP-03 | Árvore de execução | US-29 … US-33 |
+| EP-04 | Explorar | US-34 … US-36 |
 
 ---
 

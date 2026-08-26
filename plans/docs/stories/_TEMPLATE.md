@@ -21,4 +21,6 @@ Como **[persona]**, quero **[ação]**, para **[benefício]**.
 
 ## Refinamento técnico
 
-Quando `ready`: criar breakdown em [`../../tech/refinements/`](../../tech/refinements/).
+Quando `ready`: criar breakdown em [`../tech/refinements/`](../tech/refinements/).
+
+Inserir a nova história em [`user-stories.md`](user-stories.md), na seção do épico correspondente.

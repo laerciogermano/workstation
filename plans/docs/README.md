@@ -21,7 +21,7 @@ Negócio (README)
 
 1. Congelar / atualizar definições em [`../README.md`](../README.md)
 2. Derivar ou ajustar épicos em [`epics.md`](epics.md)
-3. Fatiar o épico prioritário em histórias em `stories/ep-XX-.../`
+3. Fatiar o épico prioritário em histórias em [`stories/user-stories.md`](stories/user-stories.md)
 4. Refinar tecnicamente histórias prontas (Definition of Ready) em `tech/`
 5. Implementar, validar contra aceite e realimentar o negócio se a regra mudar
 

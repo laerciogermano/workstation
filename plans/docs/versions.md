@@ -81,7 +81,7 @@ Histórias: [`stories/user-stories.md`](stories/user-stories.md)
 
 **DoR:** US-01, US-02, US-03, US-04, US-05 e US-18 com status `ready` em [`epics.md`](epics.md).
 
-**Próximo passo:** implementação validada contra os BDD das US v1 (refinamentos em [`tech/refinements/`](tech/refinements/)).
+**Próximo passo:** implementação validada contra os BDD das US v1 ([`tech/refinements/refinements.md`](tech/refinements/refinements.md)).
 
 ---
 
@@ -182,7 +182,7 @@ Histórias: [`stories/user-stories.md`](stories/user-stories.md)
 
 1. Definir ou ajustar escopo da versão neste arquivo (épico + US).
 2. Marcar as US da versão alvo como `ready` em [`epics.md`](epics.md).
-3. Abrir refinamentos em [`tech/refinements/README.md`](tech/refinements/README.md).
+3. Abrir refinamentos em [`tech/refinements/refinements.md`](tech/refinements/refinements.md).
 4. Ao concluir a entrega, mudar o status da versão para `released` e anotar data se desejado.
 
 Não duplicar o texto das histórias aqui — apenas o **empacotamento por versão**.

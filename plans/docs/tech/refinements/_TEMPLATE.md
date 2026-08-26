@@ -2,7 +2,7 @@
 
 | Campo | Valor |
 |-------|-------|
-| História | link para `stories/user-stories.md` · rastreio `epics.md` |
+| História | US-XX · rastreio em `epics.md` |
 | Versão | vN |
 | Status | draft \| ready-for-dev \| done |
 
@@ -25,7 +25,7 @@ O que será implementado nesta fatia.
 
 ## Dependências
 
-- Spikes / ADRs / outras histórias:
+-
 
 ## Riscos
 
@@ -34,3 +34,5 @@ O que será implementado nesta fatia.
 ## Fora de escopo
 
 -
+
+Inserir a nova seção em [`refinements.md`](refinements.md).

@@ -10,7 +10,8 @@ Aqui entram o **como** construir — sem redefinir regra de negócio (isso vive 
 |-------|-----|
 | [`adr/`](adr/) | Architecture Decision Records |
 | [`spikes/`](spikes/) | Investigações / provas de conceito |
-| [`refinements/`](refinements/) | Breakdown técnico por história |
+| [`refinements/`](refinements/) | Breakdown técnico — [`refinements/refinements.md`](refinements/refinements.md) |
+
 
 ## Quando usar
 

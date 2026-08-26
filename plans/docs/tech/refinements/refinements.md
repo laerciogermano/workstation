@@ -15,6 +15,111 @@ Negócio (não redefinir aqui): [`../../../README.md`](../../../README.md).
 | 5 | REF-EP01-US05 | US-05 | Cadastrar e mover cards |
 | 6 | REF-EP04-US18 | US-18 | Persistir e abrir no Explorar |
 
+## Cronograma (Gantt)
+
+Mermaid Gantt das tarefas técnicas da v1 (durações relativas; ordem respeita dependências).
+
+```mermaid
+gantt
+    title Plans v1 — refinements
+    dateFormat  YYYY-MM-DD
+    axisFormat  %d/%m
+    tickInterval 1day
+
+    section US-01 Unidade
+    Persistencia WorkUnit           :us01a, 2026-01-01, 2d
+    UUID imutavel                   :us01b, after us01a, 1d
+    Validar titulo                  :us01c, after us01a, 1d
+    Archive e unarchive             :us01d, after us01b, 2d
+    Delete em cascata               :us01e, after us01d, 2d
+    Projecao rotulos por visao      :us01f, after us01b, 1d
+    Omitir merge                    :us01g, after us01a, 1d
+    Testes US-01                    :us01t, after us01e, 2d
+
+    section US-03 Catalogo
+    Schema CatalogEntry             :us03a, after us01a, 2d
+    Incluir entradas por tipo       :us03b, after us03a, 1d
+    Listar para atribuicao          :us03c, after us03b, 1d
+    Remover sem referencias         :us03d, after us03c, 1d
+    Bloquear remocao referenciada   :us03e, after us03d, 1d
+    Catalogo vazio por tipo         :us03f, after us03c, 1d
+    Testes US-03                    :us03t, after us03e, 1d
+
+    section US-02 Responsavel
+    Campo assignee no WorkUnit      :us02a, after us01t, 1d
+    Assign com validacao catalogo   :us02b, after us02a, 2d
+    Reject entry invalida           :us02c, after us02b, 1d
+    Troca atomica A para B          :us02d, after us02b, 1d
+    Clear responsavel               :us02e, after us02b, 1d
+    Filho sem heranca               :us02f, after us02a, 1d
+    Expor tipo maquina              :us02g, after us02a, 1d
+    Testes US-02                    :us02t, after us02d, 2d
+
+    section US-04 Board config
+    Schema Board Column Lane        :us04a, after us01t, 2d
+    Bootstrap board vazio           :us04b, after us04a, 1d
+    CRUD add reorder remove         :us04c, after us04b, 2d
+    Contagem cards antes remove     :us04d, after us04c, 1d
+    Bloquear remove com cards       :us04e, after us04d, 1d
+    UI minima configuracao          :us04f, after us04c, 2d
+    Testes US-04                    :us04t, after us04e, 1d
+
+    section US-05 Cards
+    Schema BoardPlacement           :us05a, after us04t, 1d
+    Create card com titulo          :us05b, after us05a, 2d
+    Reject sem titulo               :us05c, after us05b, 1d
+    Update titulo                   :us05d, after us05b, 1d
+    Move coluna raia                :us05e, after us05b, 2d
+    Reject destino invalido         :us05f, after us05e, 1d
+    Listar grid board               :us05g, after us05e, 1d
+    Testes US-05                    :us05t, after us05f, 2d
+
+    section US-18 Explorar
+    Lista Explorar via WorkUnit     :us18a, after us01t, 2d
+    Archived no Explorar            :us18b, after us18a, 1d
+    Board para Explorar             :us18c, after us05t, 2d
+    Explorar para Board             :us18d, after us18c, 1d
+    Falha persistencia na UI        :us18e, after us18a, 1d
+    Create materializa Explorar     :us18f, after us05b, 1d
+    Testes US-18                    :us18t, after us18d, 2d
+```
+
+## Dependências (árvore)
+
+```mermaid
+flowchart TB
+    V1[Plans v1]
+    V1 --> US01[US-01 Unidade]
+    V1 --> US03[US-03 Catalogo]
+    V1 --> US04[US-04 Colunas e raias]
+
+    US01 --> US01a[Persistencia + UUID + titulo]
+    US01a --> US01b[Archive / Delete / Rotulos]
+    US01b --> US01t[Testes US-01]
+
+    US03 --> US03a[Schema CatalogEntry]
+    US03a --> US03b[CRUD + bloqueio referencias]
+    US01a -.-> US03b
+    US03b --> US03t[Testes US-03]
+
+    US01t --> US02[US-02 Responsavel]
+    US03t --> US02
+    US02 --> US02t[Testes US-02]
+
+    US01t --> US04
+    US04 --> US04a[Schema Board]
+    US04a --> US04b[CRUD + bloqueio remove]
+    US04b --> US04t[Testes US-04]
+
+    US04t --> US05[US-05 Cards]
+    US01t --> US05
+    US05 --> US05t[Testes US-05]
+
+    US01t --> US18[US-18 Explorar]
+    US05t --> US18
+    US18 --> US18t[Testes US-18]
+```
+
 ---
 
 ## REF-EP00-US01 — Unidade, vocabulário e ciclo de vida

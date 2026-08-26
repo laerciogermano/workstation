@@ -190,3 +190,35 @@ Como **analista comercial**, quero **identificar os menores preços praticados p
 ## ST-45 — Relatório padrão a cada 5 horas
 
 Como **analista comercial**, quero **receber o relatório de irregularidades a cada 5 horas por padrão**, para que **eu consiga contatar as empresas ainda no mesmo dia em que o preço irregular aparecer**.
+
+## ST-46 — Registrar status do anúncio
+
+Como **analista comercial**, quero **ver se o anúncio coletado está ativo, pausado ou encerrado**, para que **eu não cobre irregularidade de anúncio que já saiu do ar**.
+
+## ST-47 — Registrar detalhes da advertência
+
+Como **analista comercial**, quero **registrar na advertência a data, o responsável, as observações, o prazo, a data de correção, as evidências e o número da ocorrência**, para que **cada cobrança fique auditável de ponta a ponta**.
+
+## ST-48 — Exportar por CNPJ e tipo de ocorrência
+
+Como **analista comercial**, quero **exportar dados filtrando também por CNPJ e tipo de ocorrência**, para que **eu separe irregularidades, reincidentes e casos resolvidos por empresa**.
+
+## ST-49 — Consultar anúncios regulares e irregulares
+
+Como **analista comercial**, quero **consultar a lista completa de anúncios classificados como regulares e irregulares**, para que **eu analise o mercado além das violações do relatório**.
+
+## ST-50 — Reimportar e atualizar a central de dados
+
+Como **analista comercial**, quero **reimportar a planilha central de dados para atualizar SKUs e preços Premium/Clássico**, para que **mudanças de tabela reflitam no monitoramento sem recadastro manual**.
+
+## ST-51 — Classificar irregularidade considerando o parcelamento
+
+Como **analista comercial**, quero **que a comparação de preço no Mercado Livre considere o efeito do parcelamento (Clássico parcelado equivalendo ao Premium)**, para que **a irregularidade reflita a regra real do canal**.
+
+## ST-52 — Filtrar o dashboard por produto, marketplace e período
+
+Como **gestor comercial**, quero **filtrar o painel por produto, marketplace, empresa e período**, para que **eu isole onde estão concentradas as violações**.
+
+## ST-53 — Notificar quando a irregularidade for corrigida
+
+Como **analista comercial**, quero **ser notificado quando um anúncio irregular voltar ao PMA**, para que **eu feche a ocorrência e pare de cobrar o revendedor**.

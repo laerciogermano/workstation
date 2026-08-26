@@ -33,7 +33,7 @@ Como **gestor comercial**, quero **configurar a frequência de pesquisa (1h, 3h,
 
 ## US-06 — Aplicar PMA por canal e modalidade
 
-Como **analista comercial**, quero **que o sistema reconheça a modalidade do anúncio (ex.: Mercado Livre Premium/Clássico) e aplique o PMA correto — incluindo Shopee com 18%, Magalu no Clássico e o efeito do parcelamento**, para que **a comparação respeite a regra real de cada canal**.
+Como **analista comercial**, quero **que o sistema reconheça a modalidade do anúncio (ex.: Mercado Livre Premium/Clássico) e aplique o PMA correto — incluindo Shopee com 8%, Magalu no Clássico e o efeito do parcelamento**, para que **a comparação respeite a regra real de cada canal**.
 
 ## US-07 — Identificar anúncios coletados
 

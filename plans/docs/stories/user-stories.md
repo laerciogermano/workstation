@@ -10,25 +10,25 @@ Quando `ready`: breakdown em [`../tech/refinements/`](../tech/refinements/).
 
 | Épico | ID | História |
 |-------|-----|----------|
-| [EP-00 — Fundamentos](#ep-00--fundamentos) | [US-01](#us-01--mesma-unidade-vocabulário-e-ciclo-de-vida) | Mesma unidade, vocabulário e ciclo de vida |
-| EP-00 | [US-02](#us-02--atribuir-responsável-tipado) | Atribuir responsável tipado |
-| EP-00 | [US-03](#us-03--gerenciar-catálogo-de-responsáveis) | Gerenciar catálogo de responsáveis |
-| [EP-01 — Board](#ep-01--board) | [US-04](#us-04--configurar-colunas-e-raias) | Configurar colunas e raias |
-| EP-01 | [US-05](#us-05--cadastrar-e-mover-cards) | Cadastrar e mover cards |
-| EP-01 | [US-06](#us-06--aninhar-e-mover-hierarquia-de-cards) | Aninhar e mover hierarquia de cards |
-| EP-01 | [US-07](#us-07--colunas-de-execução-e-orquestração-de-ia) | Colunas de execução e orquestração de IA |
-| EP-01 | [US-08](#us-08--chamado-e-prestador-de-serviço) | Chamado e prestador de serviço |
-| [EP-02 — Gantt](#ep-02--gantt) | [US-09](#us-09--planos-ordens-e-datas) | Planos, ordens e datas |
-| EP-02 | [US-10](#us-10--tarefas-sequenciais-e-paralelas) | Tarefas sequenciais e paralelas |
-| EP-02 | [US-11](#us-11--aninhar-tarefas-e-roll-up) | Aninhar tarefas e roll-up |
-| EP-02 | [US-12](#us-12--execução-de-planos-via-ais) | Execução de planos via AIs |
-| EP-02 | [US-13](#us-13--flow-oriented-programming) | Flow Oriented Programming |
-| EP-02 | [US-14](#us-14--máquina-como-linguagem-no-gantt) | Máquina como linguagem no Gantt |
-| EP-02 | [US-15](#us-15--exportar-código-e-linguagem-visual-unificada) | Exportar código e linguagem visual unificada |
-| [EP-03 — Árvore de execução](#ep-03--árvore-de-execução) | [US-16](#us-16--visualizar-árvore-e-responsáveis) | Visualizar árvore e responsáveis |
-| EP-03 | [US-17](#us-17--criar-atividades-e-hierarquia-infinita) | Criar atividades e hierarquia infinita |
-| [EP-04 — Explorar](#ep-04--explorar) | [US-18](#us-18--persistir-e-abrir-no-explorar) | Persistir e abrir no Explorar |
-| EP-04 | [US-19](#us-19--lista-busca-e-navegação-por-profundidade) | Lista, busca e navegação por profundidade |
+| EP-00 — Fundamentos | US-01 | Mesma unidade, vocabulário e ciclo de vida |
+| EP-00 | US-02 | Atribuir responsável tipado |
+| EP-00 | US-03 | Gerenciar catálogo de responsáveis |
+| EP-01 — Board | US-04 | Configurar colunas e raias |
+| EP-01 | US-05 | Cadastrar e mover cards |
+| EP-01 | US-06 | Aninhar e mover hierarquia de cards |
+| EP-01 | US-07 | Colunas de execução e orquestração de IA |
+| EP-01 | US-08 | Chamado e prestador de serviço |
+| EP-02 — Gantt | US-09 | Planos, ordens e datas |
+| EP-02 | US-10 | Tarefas sequenciais e paralelas |
+| EP-02 | US-11 | Aninhar tarefas e roll-up |
+| EP-02 | US-12 | Execução de planos via AIs |
+| EP-02 | US-13 | Flow Oriented Programming |
+| EP-02 | US-14 | Máquina como linguagem no Gantt |
+| EP-02 | US-15 | Exportar código e linguagem visual unificada |
+| EP-03 — Árvore de execução | US-16 | Visualizar árvore e responsáveis |
+| EP-03 | US-17 | Criar atividades e hierarquia infinita |
+| EP-04 — Explorar | US-18 | Persistir e abrir no Explorar |
+| EP-04 | US-19 | Lista, busca e navegação por profundidade |
 
 Versões de entrega: [`../versions.md`](../versions.md).
 
@@ -42,8 +42,10 @@ Versões de entrega: [`../versions.md`](../versions.md).
 
 ---
 
+<a id="ep-00"></a>
 ## EP-00 — Fundamentos
 
+<a id="us-01"></a>
 ### US-01 — Mesma unidade, vocabulário e ciclo de vida
 
 | Campo | Valor |
@@ -77,6 +79,7 @@ Quando `ready`: criar breakdown em [`../tech/refinements/`](../tech/refinements/
 
 ---
 
+<a id="us-02"></a>
 ### US-02 — Atribuir responsável tipado
 
 | Campo | Valor |
@@ -108,6 +111,7 @@ Quando `ready`: criar breakdown em [`../tech/refinements/`](../tech/refinements/
 
 ---
 
+<a id="us-03"></a>
 ### US-03 — Gerenciar catálogo de responsáveis
 
 | Campo | Valor |
@@ -137,8 +141,10 @@ Quando `ready`: criar breakdown em [`../tech/refinements/`](../tech/refinements/
 
 ---
 
+<a id="ep-01"></a>
 ## EP-01 — Board
 
+<a id="us-04"></a>
 ### US-04 — Configurar colunas e raias
 
 | Campo | Valor |
@@ -169,6 +175,7 @@ Quando `ready`: criar breakdown em [`../tech/refinements/`](../tech/refinements/
 
 ---
 
+<a id="us-05"></a>
 ### US-05 — Cadastrar e mover cards
 
 | Campo | Valor |
@@ -199,6 +206,7 @@ Quando `ready`: criar breakdown em [`../tech/refinements/`](../tech/refinements/
 
 ---
 
+<a id="us-06"></a>
 ### US-06 — Aninhar e mover hierarquia de cards
 
 | Campo | Valor |
@@ -229,6 +237,7 @@ Quando `ready`: criar breakdown em [`../tech/refinements/`](../tech/refinements/
 
 ---
 
+<a id="us-07"></a>
 ### US-07 — Colunas de execução e orquestração de IA
 
 | Campo | Valor |
@@ -262,6 +271,7 @@ Quando `ready`: criar breakdown em [`../tech/refinements/`](../tech/refinements/
 
 ---
 
+<a id="us-08"></a>
 ### US-08 — Chamado e prestador de serviço
 
 | Campo | Valor |
@@ -295,8 +305,10 @@ Quando `ready`: criar breakdown em [`../tech/refinements/`](../tech/refinements/
 
 ---
 
+<a id="ep-02"></a>
 ## EP-02 — Gantt
 
+<a id="us-09"></a>
 ### US-09 — Planos, ordens e datas
 
 | Campo | Valor |
@@ -331,6 +343,7 @@ Quando `ready`: criar breakdown em [`../tech/refinements/`](../tech/refinements/
 
 ---
 
+<a id="us-10"></a>
 ### US-10 — Tarefas sequenciais e paralelas
 
 | Campo | Valor |
@@ -361,6 +374,7 @@ Quando `ready`: criar breakdown em [`../tech/refinements/`](../tech/refinements/
 
 ---
 
+<a id="us-11"></a>
 ### US-11 — Aninhar tarefas e roll-up
 
 | Campo | Valor |
@@ -392,6 +406,7 @@ Quando `ready`: criar breakdown em [`../tech/refinements/`](../tech/refinements/
 
 ---
 
+<a id="us-12"></a>
 ### US-12 — Execução de planos via AIs
 
 | Campo | Valor |
@@ -423,6 +438,7 @@ Quando `ready`: criar breakdown em [`../tech/refinements/`](../tech/refinements/
 
 ---
 
+<a id="us-13"></a>
 ### US-13 — Flow Oriented Programming
 
 | Campo | Valor |
@@ -455,6 +471,7 @@ Quando `ready`: criar breakdown em [`../tech/refinements/`](../tech/refinements/
 
 ---
 
+<a id="us-14"></a>
 ### US-14 — Máquina como linguagem no Gantt
 
 | Campo | Valor |
@@ -485,6 +502,7 @@ Quando `ready`: criar breakdown em [`../tech/refinements/`](../tech/refinements/
 
 ---
 
+<a id="us-15"></a>
 ### US-15 — Exportar código e linguagem visual unificada
 
 | Campo | Valor |
@@ -516,8 +534,10 @@ Quando `ready`: criar breakdown em [`../tech/refinements/`](../tech/refinements/
 
 ---
 
+<a id="ep-03"></a>
 ## EP-03 — Árvore de execução
 
+<a id="us-16"></a>
 ### US-16 — Visualizar árvore e responsáveis
 
 | Campo | Valor |
@@ -549,6 +569,7 @@ Quando `ready`: criar breakdown em [`../tech/refinements/`](../tech/refinements/
 
 ---
 
+<a id="us-17"></a>
 ### US-17 — Criar atividades e hierarquia infinita
 
 | Campo | Valor |
@@ -580,8 +601,10 @@ Quando `ready`: criar breakdown em [`../tech/refinements/`](../tech/refinements/
 
 ---
 
+<a id="ep-04"></a>
 ## EP-04 — Explorar
 
+<a id="us-18"></a>
 ### US-18 — Persistir e abrir no Explorar
 
 | Campo | Valor |
@@ -612,6 +635,7 @@ Quando `ready`: criar breakdown em [`../tech/refinements/`](../tech/refinements/
 
 ---
 
+<a id="us-19"></a>
 ### US-19 — Lista, busca e navegação por profundidade
 
 | Campo | Valor |

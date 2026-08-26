@@ -1,36 +1,24 @@
 # Histórias — Plans
 
-Todas as user stories estão em um único arquivo, separadas por épico:
+Texto das user stories (valor + aceite):
 
 **[`user-stories.md`](user-stories.md)**
 
-Fonte de negócio: [`plans/README.md`](../../README.md) · Épicos: [`../epics.md`](../epics.md)
+Rastreio (**épico, status, persona**): [`../epics.md`](../epics.md)  
+Versões de entrega: [`../versions.md`](../versions.md)  
+Negócio: [`../../README.md`](../../README.md)
 
-**Versões de entrega:** [`../versions.md`](../versions.md) (gerenciador de versões — não fica neste arquivo nem em `user-stories.md`).
-
-Usar [`_TEMPLATE.md`](_TEMPLATE.md) ao acrescentar histórias em `user-stories.md`.
-
-## Épicos no arquivo
-
-| Épico | Seção |
-|-------|-------|
-| EP-00 Fundamentos | US-01 … US-03 |
-| EP-01 Board | US-04 … US-08 |
-| EP-02 Gantt | US-09 … US-15 |
-| EP-03 Árvore de execução | US-16 … US-17 |
-| EP-04 Explorar | US-18 … US-19 |
+Usar [`_TEMPLATE.md`](_TEMPLATE.md) para novas histórias.
 
 ## Convenções
 
-- ID global: `US-XX`
-- Empacotamento em versões (`v1` …): [`../versions.md`](../versions.md)
-- Status: `draft` → `ready` → `in-progress` → `done`
-- Só refinar tecnicamente histórias `ready` (DoR) em [`../tech/refinements/`](../tech/refinements/)
+- Arquivo de texto: `user-stories.md` — só enunciado, critérios e notas
+- Empacotamento estrutural: `epics.md` + `versions.md`
+- Status (`draft` → `ready` → …): apenas em `epics.md`
+- Só refinar tecnicamente histórias `ready` em [`../tech/refinements/`](../tech/refinements/)
 
 ## Definition of Ready (DoR)
 
-- Épico pai identificado
-- Valor e persona claros
-- Critérios de aceite testáveis (incluindo borda/negativo quando couber)
-- Notas sem lacuna bloqueante no README de negócio
+- Épico, persona e status registrados em [`../epics.md`](../epics.md)
+- Valor e critérios de aceite testáveis em `user-stories.md`
 - Sem dependência de regra de negócio indefinida bloqueante no README

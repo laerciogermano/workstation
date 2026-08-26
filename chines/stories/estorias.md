@@ -138,3 +138,55 @@ Como **gestor comercial**, quero **ver relatórios e ranking de conformidade dos
 ## ST-32 — Integrar alertas com WhatsApp, Teams ou CRM
 
 Como **analista comercial**, quero **receber alertas e acompanhar ocorrências também via WhatsApp, Telegram, Microsoft Teams ou CRM**, para que **a fiscalização rode nos canais que a equipe já usa no dia a dia**.
+
+## ST-33 — Monitorar SKUs 127V e 220V separadamente
+
+Como **analista comercial**, quero **tratar as variantes 127V e 220V como SKUs distintos no monitoramento**, para que **cada voltagem seja pesquisada e comparada com o PMA correto**.
+
+## ST-34 — Identificar modalidade Premium ou Clássico no Mercado Livre
+
+Como **analista comercial**, quero **que o sistema reconheça se o anúncio do Mercado Livre é Premium ou Clássico**, para que **o PMA aplicado seja o da modalidade correta**.
+
+## ST-35 — Vincular anúncio ao revendedor cadastrado
+
+Como **analista comercial**, quero **que o sistema associe automaticamente o vendedor do anúncio ao parceiro cadastrado (nome, empresa ou CNPJ)**, para que **eu saiba quem cobrar sem identificar manualmente cada loja**.
+
+## ST-36 — Cadastrar sites próprios de revendedores
+
+Como **gestor comercial**, quero **cadastrar URLs de sites próprios de revendedores para monitoramento**, para que **a varredura não fique só nos marketplaces**.
+
+## ST-37 — Associar produtos comercializados ao parceiro
+
+Como **analista comercial**, quero **vincular quais produtos cada revendedor comercializa e o status do parceiro**, para que **eu cruze o portfólio oficial com os anúncios encontrados**.
+
+## ST-38 — Validar o match do anúncio com o produto cadastrado
+
+Como **analista comercial**, quero **que o sistema valide o anúncio contra o produto cadastrado antes de classificar o preço**, para que **só anúncios confirmados gerem irregularidade**.
+
+## ST-39 — Ver diferença percentual e absoluta em relação ao PMA
+
+Como **analista comercial**, quero **ver a diferença absoluta e percentual entre o preço anunciado e o PMA em cada ocorrência**, para que **eu priorize as violações mais graves**.
+
+## ST-40 — Relatório com resumo quantitativo e links
+
+Como **analista comercial**, quero **um relatório com totais de anúncios encontrados, regulares e irregulares, empresas em falta e links diretos para cada anúncio**, para que **eu abra e aja a partir do próprio relatório**.
+
+## ST-41 — Alertar vencimento de prazo e escalonar reincidência
+
+Como **analista comercial**, quero **ser alertado quando o prazo de correção vencer sem ajuste e escalonar reincidências**, para que **casos sem resposta não fiquem parados**.
+
+## ST-42 — Histórico de alterações de PMA
+
+Como **gestor comercial**, quero **consultar o histórico de alterações dos valores de PMA**, para que **eu saiba qual mínimo valia em cada período analisado**.
+
+## ST-43 — Capturar imagem do anúncio na coleta
+
+Como **analista comercial**, quero **que a coleta registre a imagem do anúncio sempre que possível**, para que **eu tenha evidência visual imediata do preço praticado**.
+
+## ST-44 — Ver menores preços praticados no mercado
+
+Como **analista comercial**, quero **identificar os menores preços praticados por produto entre as plataformas**, para que **eu tenha a mesma visão rápida de ferramentas como Promo/Buscapé**.
+
+## ST-45 — Relatório padrão a cada 5 horas
+
+Como **analista comercial**, quero **receber o relatório de irregularidades a cada 5 horas por padrão**, para que **eu consiga contatar as empresas ainda no mesmo dia em que o preço irregular aparecer**.

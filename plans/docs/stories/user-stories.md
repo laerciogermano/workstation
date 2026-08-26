@@ -49,7 +49,7 @@ Versões de entrega: [`../versions.md`](../versions.md).
 | Campo | Valor |
 |-------|-------|
 | Épico | EP-00 — Fundamentos |
-| Status | draft |
+| Status | ready |
 | Persona | usuário |
 
 #### História
@@ -82,7 +82,7 @@ Quando `ready`: criar breakdown em [`../tech/refinements/`](../tech/refinements/
 | Campo | Valor |
 |-------|-------|
 | Épico | EP-00 — Fundamentos |
-| Status | draft |
+| Status | ready |
 | Persona | usuário |
 
 #### História
@@ -113,7 +113,7 @@ Quando `ready`: criar breakdown em [`../tech/refinements/`](../tech/refinements/
 | Campo | Valor |
 |-------|-------|
 | Épico | EP-00 — Fundamentos |
-| Status | draft |
+| Status | ready |
 | Persona | administrador do projeto |
 
 #### História
@@ -144,7 +144,7 @@ Quando `ready`: criar breakdown em [`../tech/refinements/`](../tech/refinements/
 | Campo | Valor |
 |-------|-------|
 | Épico | EP-01 — Board |
-| Status | draft |
+| Status | ready |
 | Persona | membro do time |
 
 #### História
@@ -174,7 +174,7 @@ Quando `ready`: criar breakdown em [`../tech/refinements/`](../tech/refinements/
 | Campo | Valor |
 |-------|-------|
 | Épico | EP-01 — Board |
-| Status | draft |
+| Status | ready |
 | Persona | usuário |
 
 #### História
@@ -587,7 +587,7 @@ Quando `ready`: criar breakdown em [`../tech/refinements/`](../tech/refinements/
 | Campo | Valor |
 |-------|-------|
 | Épico | EP-04 — Explorar |
-| Status | draft |
+| Status | ready |
 | Persona | usuário |
 
 #### História

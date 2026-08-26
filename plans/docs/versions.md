@@ -47,6 +47,10 @@ Status da versão: `planned` → `in-progress` → `released`.
 
 **Dependências:** US-03 antes de US-02; US-01 antes de US-18; US-04 antes de US-05.
 
+**DoR:** US-01, US-02, US-03, US-04, US-05 e US-18 marcadas como `ready` em [`stories/user-stories.md`](stories/user-stories.md).
+
+**Próximo passo:** refinamento técnico em [`tech/refinements/`](tech/refinements/).
+
 ---
 
 ## v2 — Hierarquia e Explorar

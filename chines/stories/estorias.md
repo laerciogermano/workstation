@@ -86,3 +86,55 @@ Como **analista comercial**, quero **que a busca valide modelo/SKU/EAN e ignore 
 ## ST-19 — Armazenar evidências das ocorrências
 
 Como **analista comercial**, quero **guardar evidências de cada irregularidade (screenshot, URL, preço, data, horário, produto e vendedor)**, para que **eu comprove a violação mesmo depois que o anúncio mudar**.
+
+## ST-20 — Pesquisar por nome, modelo, EAN e palavras-chave
+
+Como **analista comercial**, quero **que a busca use também nome do produto, modelo, EAN e palavras-chave — não só o SKU**, para que **anúncios sem SKU no título ainda sejam encontrados**.
+
+## ST-21 — Atualizar valores de PMA/MAP
+
+Como **gestor comercial**, quero **atualizar o preço mínimo de um produto ou SKU quando a política de preço mudar**, para que **as próximas comparações usem o valor vigente**.
+
+## ST-22 — Configurar marketplaces monitorados
+
+Como **gestor comercial**, quero **definir quais canais serão monitorados (Mercado Livre, Shopee, Magalu, Amazon, Carrefour, Casas Bahia, KaBuM, AliExpress, Google Shopping, sites próprios etc.)**, para que **a varredura cubra exatamente os marketplaces acordados**.
+
+## ST-23 — Configurar destinatários e formato do relatório
+
+Como **gestor comercial**, quero **definir para quais e-mails o relatório vai e em qual formato**, para que **a equipe certa receba a informação no formato útil para a cobrança**.
+
+## ST-24 — Visão consolidada de preços por produto
+
+Como **analista comercial**, quero **ver um mapeamento consolidado dos preços encontrados por SKU em cada plataforma (visão tipo Buscapé)**, para que **eu entenda o panorama do mercado além das irregularidades**.
+
+## ST-25 — Considerar frete e parcelamento no anúncio
+
+Como **analista comercial**, quero **ver frete, preço promocional e parcelamento junto ao preço anunciado**, para que **eu avalie corretamente casos como Mercado Livre Clássico vs Premium ao parcelar**.
+
+## ST-26 — Cadastrar variações e palavras-chave do produto
+
+Como **analista comercial**, quero **cadastrar variações, código interno, preço recomendado e palavras-chave de cada produto**, para que **a identificação dos anúncios seja mais precisa**.
+
+## ST-27 — Ativar, pausar e agendar o monitoramento por produto
+
+Como **gestor comercial**, quero **ativar ou pausar o monitoramento de um produto e definir a data de início**, para que **eu controle quais SKUs entram na varredura e quando**.
+
+## ST-28 — Detectar reincidência após correção
+
+Como **analista comercial**, quero **que o sistema marque a ocorrência como corrigida e detecte automaticamente se o mesmo vendedor voltar a anunciar abaixo do PMA**, para que **eu escale reincidentes com base em histórico**.
+
+## ST-29 — Registrar cobrança a partir da ocorrência
+
+Como **analista comercial**, quero **registrar o contato/cobrança feito a um revendedor a partir de uma irregularidade do relatório**, para que **a ação comercial fique vinculada à ocorrência encontrada**.
+
+## ST-30 — Gerar e enviar advertência automaticamente
+
+Como **gestor comercial**, quero **gerar e enviar automaticamente a comunicação de advertência ao revendedor com prazo de correção**, para que **a fiscalização não dependa só do envio manual**.
+
+## ST-31 — Relatório e ranking de conformidade por distribuidor
+
+Como **gestor comercial**, quero **ver relatórios e ranking de conformidade dos revendedores por distribuidor**, para que **eu acompanhe quem mais viola e quem mantém a política de preço**.
+
+## ST-32 — Integrar alertas com WhatsApp, Teams ou CRM
+
+Como **analista comercial**, quero **receber alertas e acompanhar ocorrências também via WhatsApp, Telegram, Microsoft Teams ou CRM**, para que **a fiscalização rode nos canais que a equipe já usa no dia a dia**.

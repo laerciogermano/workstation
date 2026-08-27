@@ -2,12 +2,12 @@
 
 ## Projetos
 
-| Projeto | Negócio | Documentação |
-|---------|---------|--------------|
+| Projeto | Visão | Documentação |
+|---------|-------|--------------|
 | [Plans](plans/) | [`plans/README.md`](plans/README.md) | [`plans/docs/`](plans/docs/) |
 
 ### Esteira (Plans)
 
 ```text
-Negócio → Épicos → Histórias → Versões → Refinamento técnico
+Visão → Épicos → Histórias → Versões → Refinamento técnico
 ```

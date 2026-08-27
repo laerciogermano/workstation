@@ -7,7 +7,7 @@ Histórias derivadas dos documentos em [`../inputs/`](../inputs/):
 - `transcricao.txt` (transcrição do meet)
 - `Central de dados Bluetti - EQP.xlsx` (SKUs e preços Premium/Clássico)
 
-Apenas a descrição no formato **Como… quero… para…**. Cenários / critérios de aceite ficam para um refinamento posterior.
+Apenas a descrição no formato **Como… quero… para…**. Cenários BDD: [`bdd.md`](bdd.md).
 
 ---
 

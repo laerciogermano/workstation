@@ -535,3 +535,7 @@ Disponível nas telas de lista (TELA-02, TELA-08, TELA-10, TELA-11, TELA-12, TEL
 - Badge no menu para ocorrências novas, prazos vencidos e falhas de varredura.
 - Centro de notificações com link direto para TELA-13 ou TELA-18.
 
+## Próximos passos
+
+→ [`components.md`](components.md)
+

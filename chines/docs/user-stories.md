@@ -109,3 +109,7 @@ Como **gestor comercial**, quero **ver relatórios e ranking de conformidade dos
 ## US-23 — Exportar dados filtrados
 
 Como **analista comercial**, quero **exportar ocorrências e anúncios em Excel, CSV ou PDF com filtros por produto, empresa, CNPJ, marketplace, período, status e tipo de ocorrência**, para que **eu compartilhe e analise os dados fora da plataforma**.
+
+## Próximos passos
+
+→ [`bdd.md`](bdd.md)

@@ -336,3 +336,7 @@ Legenda de tipos: **Filtro** · **Tabela** · **Card** · **Gráfico** · **Form
 | Modal de confirmação | Modal | Ações destrutivas e envio em lote |
 | Empty state | Indicador | Listas sem resultados |
 | Toast / snackbar | Indicador | Feedback de salvar, exportar, erro |
+
+## Próximos passos
+
+→ [`prototype.html`](prototype.html)

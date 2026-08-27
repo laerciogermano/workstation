@@ -312,3 +312,7 @@ Como **analista comercial**, quero **exportar ocorrências e anúncios em Excel,
 - [ ] Dado a escolha de formato Excel, CSV ou PDF, quando confirmo a exportação, então recebo o arquivo no formato selecionado com colunas equivalentes à visão filtrada.
 - [ ] Dado um conjunto grande de registros, quando exporto, então a operação conclui com arquivo íntegro ou informa limite/ paginação conforme política do sistema.
 - [ ] Dado nenhum registro para os filtros escolhidos, quando exporto, então informo que não há dados e não gero arquivo vazio enganoso.
+
+## Próximos passos
+
+→ [`screens.md`](screens.md)

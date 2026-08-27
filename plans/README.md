@@ -10,6 +10,8 @@ Fundamentos de fluxo: [`inputs/`](inputs/) (FOP — Flow Oriented Programming).
 
 O Plans é o lugar único onde **intenções** e **roteiros** viram trabalho acompanhável: a **mesma unidade** aparece no Board, no Gantt, na Árvore de execução e no Explorar — com responsáveis tipados (pessoa, IA, máquina) e planos modelados como **linguagem visual de fluxo (FOP)** exportável para código.
 
+**Toda atividade também é um arquivo** na seção **Explorar**, um painel transversal no **estilo de explorador de IDE** (como o do VS Code): a hierarquia de trabalho é navegável como árvore de arquivos, sem duplicar a entidade.
+
 No Gantt, o plano é um **roteiro de mudanças de estado** (Gantt Flow): **dados** (estado) e **funções** (procedimentos) compostos em sequência, paralelo, seleção e repetição — compiláveis via FOP-IR sem reescrever o fluxo em cada linguagem.
 
 ## Problema
@@ -53,7 +55,7 @@ O Plans ajuda a **registrar e acompanhar** atividades — pessoais ou de projeto
 
 ## Princípios
 
-1. **Uma unidade** — mesma entidade em todas as visões; só muda o nome.
+1. **Uma unidade** — mesma entidade em todas as visões; só muda o nome. **Toda atividade é também um arquivo** no Explorar (estilo IDE).
 2. **Hierarquia infinita** — aninhamento sem limite de profundidade, sem ciclos.
 3. **Responsável tipado** — o tipo define o comportamento permitido; o responsável é o *quem*, não o roteiro.
 4. **Roteiro × ator** — o fluxo (o quê / quando / para quê) permanece estável quando se troca pessoa, IA ou máquina.

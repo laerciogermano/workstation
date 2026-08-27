@@ -68,10 +68,8 @@ Dashboard
 
 ## TELA-01 — Dashboard
 
-| | |
-|---|---|
-| **Personas** | Gestor comercial, analista comercial |
-| **Objetivo** | Visão geral do monitoramento e das violações em andamento. |
+- **Personas:** Gestor comercial, analista comercial
+- **Objetivo:** Visão geral do monitoramento e das violações em andamento.
 
 ### Conteúdo
 
@@ -94,10 +92,8 @@ Dashboard
 
 ## TELA-02 — Lista de produtos
 
-| | |
-|---|---|
-| **Personas** | Analista comercial, gestor comercial |
-| **Objetivo** | Consultar e gerenciar a base de produtos monitorados. |
+- **Personas:** Analista comercial, gestor comercial
+- **Objetivo:** Consultar e gerenciar a base de produtos monitorados.
 
 ### Conteúdo
 
@@ -122,10 +118,8 @@ Dashboard
 
 ## TELA-03 — Cadastro / edição de produto
 
-| | |
-|---|---|
-| **Personas** | Analista comercial |
-| **Objetivo** | Cadastrar ou atualizar um produto e sua configuração de monitoramento. |
+- **Personas:** Analista comercial
+- **Objetivo:** Cadastrar ou atualizar um produto e sua configuração de monitoramento.
 
 ### Conteúdo
 
@@ -150,10 +144,8 @@ Dashboard
 
 ## TELA-04 — Importação da central de dados
 
-| | |
-|---|---|
-| **Personas** | Analista comercial |
-| **Objetivo** | Importar ou reimportar a planilha de SKUs, voltagens e PMAs Premium/Clássico. |
+- **Personas:** Analista comercial
+- **Objetivo:** Importar ou reimportar a planilha de SKUs, voltagens e PMAs Premium/Clássico.
 
 ### Conteúdo
 
@@ -176,10 +168,8 @@ Dashboard
 
 ## TELA-05 — Canais de monitoramento
 
-| | |
-|---|---|
-| **Personas** | Gestor comercial |
-| **Objetivo** | Definir onde o sistema deve pesquisar anúncios. |
+- **Personas:** Gestor comercial
+- **Objetivo:** Definir onde o sistema deve pesquisar anúncios.
 
 ### Conteúdo
 
@@ -201,10 +191,8 @@ Dashboard
 
 ## TELA-06 — Regras de PMA e exceções
 
-| | |
-|---|---|
-| **Personas** | Gestor comercial, analista comercial |
-| **Objetivo** | Configurar PMA por contexto e exceções que evitem falsas irregularidades. |
+- **Personas:** Gestor comercial, analista comercial
+- **Objetivo:** Configurar PMA por contexto e exceções que evitem falsas irregularidades.
 
 ### Conteúdo
 
@@ -228,10 +216,8 @@ Dashboard
 
 ## TELA-07 — Relatórios, alertas e advertências
 
-| | |
-|---|---|
-| **Personas** | Gestor comercial, analista comercial |
-| **Objetivo** | Configurar envios automáticos de relatório, alertas e advertências. |
+- **Personas:** Gestor comercial, analista comercial
+- **Objetivo:** Configurar envios automáticos de relatório, alertas e advertências.
 
 ### Conteúdo
 
@@ -254,10 +240,8 @@ Dashboard
 
 ## TELA-08 — Anúncios coletados
 
-| | |
-|---|---|
-| **Personas** | Analista comercial |
-| **Objetivo** | Listar e filtrar todos os anúncios encontrados na varredura. |
+- **Personas:** Analista comercial
+- **Objetivo:** Listar e filtrar todos os anúncios encontrados na varredura.
 
 ### Conteúdo
 
@@ -281,10 +265,8 @@ Dashboard
 
 ## TELA-09 — Detalhe do anúncio
 
-| | |
-|---|---|
-| **Personas** | Analista comercial |
-| **Objetivo** | Inspecionar um anúncio coletado e entender a classificação de PMA. |
+- **Personas:** Analista comercial
+- **Objetivo:** Inspecionar um anúncio coletado e entender a classificação de PMA.
 
 ### Conteúdo
 
@@ -310,10 +292,8 @@ Dashboard
 
 ## TELA-10 — Mapeamento de preços (visão consolidada)
 
-| | |
-|---|---|
-| **Personas** | Analista comercial, gestor comercial |
-| **Objetivo** | Visão tipo Buscapé/Promo dos preços praticados por SKU no mercado. |
+- **Personas:** Analista comercial, gestor comercial
+- **Objetivo:** Visão tipo Buscapé/Promo dos preços praticados por SKU no mercado.
 
 ### Conteúdo
 
@@ -339,10 +319,8 @@ Dashboard
 
 ## TELA-11 — Histórico de pesquisas e preços
 
-| | |
-|---|---|
-| **Personas** | Analista comercial, gestor comercial |
-| **Objetivo** | Analisar tendências, reincidência e evolução de preços no tempo. |
+- **Personas:** Analista comercial, gestor comercial
+- **Objetivo:** Analisar tendências, reincidência e evolução de preços no tempo.
 
 ### Conteúdo
 
@@ -366,10 +344,8 @@ Dashboard
 
 ## TELA-12 — Lista de ocorrências
 
-| | |
-|---|---|
-| **Personas** | Analista comercial, gestor comercial |
-| **Objetivo** | Acompanhar todas as violações de MAP identificadas. |
+- **Personas:** Analista comercial, gestor comercial
+- **Objetivo:** Acompanhar todas as violações de MAP identificadas.
 
 ### Conteúdo
 
@@ -393,10 +369,8 @@ Dashboard
 
 ## TELA-13 — Detalhe da ocorrência
 
-| | |
-|---|---|
-| **Personas** | Analista comercial, gestor comercial |
-| **Objetivo** | Conduzir a cobrança/advertência com trilha auditável. |
+- **Personas:** Analista comercial, gestor comercial
+- **Objetivo:** Conduzir a cobrança/advertência com trilha auditável.
 
 ### Conteúdo
 
@@ -424,10 +398,8 @@ Dashboard
 
 ## TELA-14 — Lista de parceiros
 
-| | |
-|---|---|
-| **Personas** | Analista comercial |
-| **Objetivo** | Manter a base oficial de revendedores e parceiros. |
+- **Personas:** Analista comercial
+- **Objetivo:** Manter a base oficial de revendedores e parceiros.
 
 ### Conteúdo
 
@@ -450,10 +422,8 @@ Dashboard
 
 ## TELA-15 — Cadastro / edição de parceiro
 
-| | |
-|---|---|
-| **Personas** | Analista comercial |
-| **Objetivo** | Cadastrar ou atualizar dados de revendedor/parceiro. |
+- **Personas:** Analista comercial
+- **Objetivo:** Cadastrar ou atualizar dados de revendedor/parceiro.
 
 ### Conteúdo
 
@@ -477,10 +447,8 @@ Dashboard
 
 ## TELA-16 — Vendedores não cadastrados
 
-| | |
-|---|---|
-| **Personas** | Analista comercial, gestor comercial |
-| **Objetivo** | Analisar possível canal paralelo ou distribuição não autorizada. |
+- **Personas:** Analista comercial, gestor comercial
+- **Objetivo:** Analisar possível canal paralelo ou distribuição não autorizada.
 
 ### Conteúdo
 
@@ -504,10 +472,8 @@ Dashboard
 
 ## TELA-17 — Ranking de conformidade
 
-| | |
-|---|---|
-| **Personas** | Gestor comercial |
-| **Objetivo** | Comparar revendedores por distribuidor e identificar os mais conformes ou reincidentes. |
+- **Personas:** Gestor comercial
+- **Objetivo:** Comparar revendedores por distribuidor e identificar os mais conformes ou reincidentes.
 
 ### Conteúdo
 
@@ -532,10 +498,8 @@ Dashboard
 
 ## TELA-18 — Log de varreduras
 
-| | |
-|---|---|
-| **Personas** | Analista comercial, gestor comercial |
-| **Objetivo** | Auditar execuções automáticas de pesquisa e falhas por canal. |
+- **Personas:** Analista comercial, gestor comercial
+- **Objetivo:** Auditar execuções automáticas de pesquisa e falhas por canal.
 
 ### Conteúdo
 

@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "build:single": "tsc -b && vite build --config vite.config.single.ts && cp dist-single/index.html ../docs/bluetti-map.html",
+    "build:prototype": "tsc -b && vite build --config vite.config.single.ts && cp prototype/index.html ../docs/prototype.html",
     "lint": "oxlint",
     "preview": "vite preview"
   },

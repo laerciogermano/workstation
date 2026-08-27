@@ -2,7 +2,7 @@
 
 Prototype React com todas as telas e componentes descritos em [`../docs/screens.md`](../docs/screens.md) e [`../docs/components.md`](../docs/components.md).
 
-## Executar (desenvolvimento)
+## Desenvolvimento
 
 ```bash
 cd chines/frontend
@@ -12,53 +12,45 @@ npm run dev
 
 Abrir http://localhost:5173
 
-## Gerar HTML único para o cliente
+## Protótipo navegável (HTML único)
 
-Um único arquivo com todo o JS/CSS embutido — abre direto no navegador (duplo clique):
+Gera um arquivo de **alta fidelidade** com JS/CSS embutidos, exportado para `docs/`:
 
 ```bash
-cd chines/frontend
-npm run build:single
+npm run build:prototype
 ```
 
 Saída:
-- `frontend/dist-single/index.html`
-- `docs/bluetti-map.html` (cópia pronta para envio)
+- **`../docs/prototype.html`** — enviar ao cliente (abre com duplo clique)
+- `prototype/index.html` — cópia intermediária do build
 
-O cliente abre `bluetti-map.html` no Chrome/Safari. As rotas usam `#` (ex.: `bluetti-map.html#/produtos`).
+Rotas via hash: `prototype.html#/produtos`, `prototype.html#/monitoramento/anuncios`, etc.
 
 ## Telas (TELA-01 a TELA-18)
 
 | Rota | Tela |
 |------|------|
-| `/` | Dashboard |
-| `/produtos` | Lista de produtos |
-| `/produtos/novo`, `/produtos/:id` | Cadastro / edição |
-| `/produtos/importacao` | Importação EQP |
-| `/monitoramento/anuncios` | Anúncios coletados |
-| `/monitoramento/anuncios/:id` | Detalhe do anúncio |
-| `/monitoramento/mapeamento` | Mapeamento de preços |
-| `/monitoramento/historico` | Histórico |
-| `/monitoramento/log` | Log de varreduras |
-| `/fiscalizacao/ocorrencias` | Ocorrências |
-| `/fiscalizacao/ocorrencias/:id` | Detalhe ocorrência |
-| `/fiscalizacao/nao-cadastrados` | Não cadastrados |
-| `/parceiros` | Parceiros |
-| `/parceiros/novo`, `/parceiros/:id` | Cadastro parceiro |
-| `/relatorios/ranking` | Ranking conformidade |
-| `/configuracoes/canais` | Canais |
-| `/configuracoes/pma` | Regras PMA |
-| `/configuracoes/alertas` | Relatórios e alertas |
+| `#/` | Dashboard |
+| `#/produtos` | Lista de produtos |
+| `#/produtos/novo`, `#/produtos/:id` | Cadastro / edição |
+| `#/produtos/importacao` | Importação EQP |
+| `#/monitoramento/anuncios` | Anúncios coletados |
+| `#/monitoramento/anuncios/:id` | Detalhe do anúncio |
+| `#/monitoramento/mapeamento` | Mapeamento de preços |
+| `#/monitoramento/historico` | Histórico |
+| `#/monitoramento/log` | Log de varreduras |
+| `#/fiscalizacao/ocorrencias` | Ocorrências |
+| `#/fiscalizacao/ocorrencias/:id` | Detalhe ocorrência |
+| `#/fiscalizacao/nao-cadastrados` | Não cadastrados |
+| `#/parceiros` | Parceiros |
+| `#/parceiros/novo`, `#/parceiros/:id` | Cadastro parceiro |
+| `#/relatorios/ranking` | Ranking conformidade |
+| `#/configuracoes/canais` | Canais |
+| `#/configuracoes/pma` | Regras PMA |
+| `#/configuracoes/alertas` | Relatórios e alertas |
 
 ## Stack
 
-- React 19 + TypeScript + Vite
-- React Router
+- React + TypeScript + Vite
+- React Router (HashRouter no build de protótipo)
 - Dados mock em `src/data/mockData.ts`
-- Componentes compartilhados em `src/components/ui/`
-
-## Componentes transversais
-
-- Exportação (modal Excel/CSV/PDF)
-- Notificações in-app (header)
-- Layout com sidebar e breadcrumb

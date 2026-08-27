@@ -1,6 +1,6 @@
 # Telas do sistema — Bluetti MAP
 
-Descrição funcional das telas derivadas das histórias em [`user-stories.md`](user-stories.md) e cenários em [`bdd.md`](bdd.md).
+Descrição funcional das telas derivadas das histórias em [`user-stories.md`](user-stories.md) e cenários em [`bdd.md`](bdd.md). Componentes: [`components.md`](components.md).
 
 Personas principais: **analista comercial**, **gestor comercial**.
 

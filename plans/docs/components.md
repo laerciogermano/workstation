@@ -15,7 +15,7 @@ Legenda de tipos: **Filtro** · **Tabela** · **Card** · **Formulário** · **L
 | [TELA-03](#tela-03--plano--gantt) | eixo temporal, FOP, máquina, exportação, dependências, AIs |
 | [TELA-04](#tela-04--árvore-de-execução) | floresta, nós, responsáveis, procedimento máquina |
 | [TELA-05](#tela-05--catálogo-de-responsáveis) | abas por tipo, tabela catálogo, CRUD, bloqueio remoção |
-| [Transversais](#componentes-transversais) | detalhe, Explorar (lista em árvore embutida), configurações |
+| [Transversais](#componentes-transversais) | Visões (acima das telas), detalhe, Explorar, configurações |
 
 ---
 
@@ -119,10 +119,19 @@ Legenda de tipos: **Filtro** · **Tabela** · **Card** · **Formulário** · **L
 
 | Componente | Tipo | Telas |
 |------------|------|-------|
-| Menu principal (visões) | Navegação | Board, Gantt, Árvore |
+| **Visões** (seletor de tipo) | Navegação | Transversal **acima** do conteúdo; navega Board · Gantt · Árvore |
+| Área de conteúdo da tela ativa | Canvas | TELA-01 / TELA-03 / TELA-04 abaixo das Visões |
 | Painel Explorar (rodapé da nav) | Navegação | Sempre visível (estilo IDE) |
 | Breadcrumb / título da tela | Navegação | Telas internas |
 | Cabeçalho com persona | Navegação | Todas |
+
+### Visões (transversal, acima das telas) — US-01
+
+| Componente | Tipo | Descrição |
+|------------|------|-----------|
+| Seletor / abas de visão | Navegação | Troca entre Board, Gantt e Árvore sem ser uma tela própria |
+| Indicador da visão ativa | Indicador | Qual tipo está preenchendo a área abaixo |
+| Persistência de contexto | Indicador | Projeto (e unidade, se houver) permanece ao trocar de tipo |
 
 ### Detalhe da unidade (US-01, US-02)
 
@@ -151,8 +160,8 @@ Legenda de tipos: **Filtro** · **Tabela** · **Card** · **Formulário** · **L
 
 | Componente | Tipo | Telas |
 |------------|------|-------|
-| Botões “Abrir no…” | Navegação | Board, Gantt, Árvore; Explorar = destacar no painel |
-| Preservação de UUID | Indicador | Mesma entidade em todas as superfícies |
+| Botões “Abrir no…” | Navegação | Board, Gantt, Árvore, detalhe; Explorar = destacar no painel |
+| Preservação de UUID | Indicador | Mesma entidade ao mudar o tipo via Visões ou “Abrir no…” |
 
 ### Componentes reutilizados
 

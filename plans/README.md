@@ -67,6 +67,7 @@ O Plans ajuda a **registrar e acompanhar** atividades — pessoais ou de projeto
 
 | Área | Em escopo |
 |------|-----------|
+| **Visões** | Componente transversal **acima das telas**; navegação entre Board, Gantt e Árvore |
 | **Gestão de atividades** | Cards no board (título + contexto) |
 | **Board** | Colunas e raias; cards; coluna de execução |
 | **Gantt** | Ordens no tempo; sequencial/paralelo/seleção/repetição; planos; FOP; exportação |

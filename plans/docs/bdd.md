@@ -256,25 +256,23 @@ Como **organizador**, quero **que toda unidade persista como arquivo no Explorar
 ### Cenários
 
 - [ ] Dado que crio unidade em qualquer visão, quando consulto o Explorar, então o arquivo existe com o mesmo UUID.
-- [ ] Dado que estou no Board, Gantt ou Árvore, quando peço abrir no Explorar, então chego ao mesmo arquivo.
+- [ ] Dado que estou no Board, Gantt ou Árvore, quando peço abrir no Explorar, então o arquivo é revelado/destacado na lista em árvore do painel (sem tela própria).
 - [ ] Dado que a unidade foi arquivada, quando abro o Explorar, então o arquivo ainda está acessível.
-- [ ] Dado que estou no Explorar em um arquivo, quando peço abrir no Board, Gantt ou Árvore, então chego à mesma unidade na visão pedida.
+- [ ] Dado que estou no Explorar, quando peço abrir um arquivo no Board, Gantt ou Árvore, então chego à mesma unidade na visão pedida.
 - [ ] Dado que a persistência falha, quando crio/atualizo, então sou informado e não fica como sucesso.
 
 ---
 
-## US-18 — Lista, busca e navegação por profundidade
+## US-18 — Lista em árvore e drill-down infinito
 
-Como **organizador**, quero **listar arquivos ordenados por título, buscar por título e navegar em profundidade com drill-down e breadcrumb**, para que **eu percorra a hierarquia persistida de forma previsível, mesmo com aninhamento infinito**.
+Como **organizador**, quero **ver os arquivos numa lista em árvore (componente do painel Explorar, estilo IDE) ordenada por título e expandir níveis sem limite de profundidade**, para que **eu percorra a hierarquia persistida de forma previsível, mesmo com aninhamento infinito**.
 
 ### Cenários
 
-- [ ] Dado que existem unidades, quando abro o Explorar, então a lista está ordenada por **título**.
-- [ ] Dado que busco por texto do título, quando executo a busca, então vejo os arquivos correspondentes.
-- [ ] Dado que a busca não encontra título, quando executo, então a lista de resultados fica vazia com indicação clara.
-- [ ] Dado que há aninhamento, quando faço drill-down, então entro/saio dos níveis sem limite de profundidade e vejo o **caminho (breadcrumb)**.
-- [ ] Dado que uso o breadcrumb, quando seleciono um nível ancestral, então volto àquele nível.
-- [ ] Dado que o caminho não existe ou a lista está vazia, quando navego, então o sistema informa ausência / lista vazia utilizável.
+- [ ] Dado que existem unidades, quando uso o sistema, então a lista em árvore do painel Explorar está ordenada por **título** em cada nível (componente embutido, não uma tela).
+- [ ] Dado que há aninhamento, quando faço drill-down (expandir/recolher) no Explorar, então entro/saio dos níveis sem limite de profundidade.
+- [ ] Dado que peço abrir no Explorar a partir de outra visão, quando a ação conclui, então o arquivo é revelado/destacado na lista em árvore do painel (sem abrir tela de detalhe).
+- [ ] Dado que a árvore está vazia, quando navego, então o sistema informa ausência / árvore vazia utilizável.
 
 ---
 

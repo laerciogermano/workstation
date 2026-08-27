@@ -88,9 +88,9 @@ Como **condutor de projetos**, quero **criar atividades raiz e filhas com títul
 
 Como **organizador**, quero **que toda unidade persista como arquivo no Explorar e possa ser aberta a partir do Board, Gantt ou Árvore (e vice-versa)**, para que **a mesma entidade seja navegável como arquivo sem duplicar dados**.
 
-## US-18 — Lista, busca e navegação por profundidade
+## US-18 — Lista em árvore e drill-down infinito
 
-Como **organizador**, quero **listar arquivos ordenados por título, buscar por título e navegar em profundidade com drill-down e breadcrumb**, para que **eu percorra a hierarquia persistida de forma previsível, mesmo com aninhamento infinito**.
+Como **organizador**, quero **ver os arquivos numa lista em árvore (componente do painel Explorar, estilo IDE) ordenada por título e expandir níveis sem limite de profundidade**, para que **eu percorra a hierarquia persistida de forma previsível, mesmo com aninhamento infinito**.
 
 ## US-19 — Seleção, repetição, camadas e contexto
 

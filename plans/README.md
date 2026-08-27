@@ -71,7 +71,7 @@ O Plans ajuda a **registrar e acompanhar** atividades — pessoais ou de projeto
 | **Board** | Colunas e raias; cards; coluna de execução |
 | **Gantt** | Ordens no tempo; sequencial/paralelo/seleção/repetição; planos; FOP; exportação |
 | **Árvore de execução** | Floresta (múltiplas raízes); hierarquia infinita; responsáveis |
-| **Explorar** | Persistência como arquivo; busca; drill-down e breadcrumb |
+| **Explorar** | Painel transversal (estilo IDE); lista em árvore embutida (não é tela); Configurações fixas embaixo |
 
 ### Fora de escopo (v1)
 
@@ -186,4 +186,4 @@ Detalhamento operacional que épicos e stories devem respeitar. Não redefine a 
 ### Árvore / Explorar
 
 - Múltiplas raízes permitidas.
-- Explorar: ordenação por **título**; busca por título; drill-down + breadcrumb.
+- Explorar: painel estilo IDE; lista em **árvore** embutida (não é tela); drill-down infinito; Configurações fixas embaixo.

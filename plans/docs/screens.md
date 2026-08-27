@@ -14,19 +14,17 @@ Plans
 ├── Gantt (plano / Gantt)
 ├── Árvore de execução
 │
-└── Transversais (rodapé da navegação)
-    ├── Explorar
-    │   ├── Lista, busca e drill-down
-    │   └── Detalhe do arquivo
-    └── Configurações
+└── Explorar (painel transversal — estilo explorador de IDE)
+    ├── Lista em árvore (componente embutido, sempre visível)
+    └── Configurações (fixo embaixo)
         └── Catálogo de responsáveis
 ```
 
 **Transversais:**
 
-- **Detalhe da unidade** (drawer/painel) — acessível a partir de Board, Gantt, Árvore e Explorar; mesma entidade (UUID), vocabulário por visão — US-01, US-02.
-- **Explorar** — persistência e navegação por arquivos, disponível de qualquer visão.
-- **Configurações** — abaixo do Explorar na navegação; catálogo de responsáveis do projeto.
+- **Detalhe da unidade** (drawer/painel) — acessível a partir de Board, Gantt e Árvore; mesma entidade (UUID), vocabulário por visão — US-01, US-02.
+- **Explorar** — painel transversal (como o explorador de arquivos de uma IDE): a **lista em árvore não é uma tela**; é um **componente** já visível dentro do Explorar, com drill-down infinito. Persistência como arquivos; **sem** detalhe de arquivo.
+- **Configurações** — faixa **fixa embaixo** do Explorar; em v1 o catálogo de responsáveis.
 
 ---
 
@@ -38,12 +36,10 @@ Plans
 | TELA-02 — Detalhe da unidade | US-01, US-02 |
 | TELA-03 — Plano / Gantt | US-08, US-09, US-10, US-11, US-12, US-13, US-14, US-19 |
 | TELA-04 — Árvore de execução | US-15, US-16 |
-| TELA-05 — Explorar (lista e navegação) | US-17, US-18 |
-| TELA-06 — Detalhe do arquivo no Explorar | US-01, US-17 |
-| TELA-07 — Catálogo de responsáveis | US-03 |
+| TELA-05 — Catálogo de responsáveis | US-03 |
 | Detalhe da unidade (transversal) | US-01, US-02 |
-| Explorar (transversal) | US-17, US-18 |
-| Configurações (transversal) | US-03 |
+| Explorar (painel transversal + lista em árvore) | US-17, US-18 |
+| Configurações (fixo sob Explorar) | US-03 |
 | Troca de visão (transversal) | US-01, US-17 |
 
 ---
@@ -171,57 +167,7 @@ Plans
 
 ---
 
-## TELA-05 — Explorar (lista e navegação)
-
-- **Personas:** Organizador, condutor de projetos
-- **Objetivo:** Percorrer unidades persistidas como arquivos, com busca e profundidade.
-
-### Conteúdo
-
-- **Lista** ordenada por **título**.
-- **Busca** por título; estado vazio claro quando não há resultados.
-- **Drill-down** na hierarquia e **breadcrumb** do caminho.
-- Indicação de unidades arquivadas ainda acessíveis.
-
-### Ações
-
-- Buscar e filtrar por título.
-- Entrar/sair de níveis; saltar via breadcrumb.
-- Abrir detalhe do arquivo → TELA-06.
-- Abrir a mesma unidade no Board, Gantt ou Árvore — US-17.
-
-### Navegação
-
-- Entrada **transversal** no rodapé da navegação (Explorar).
-- Lista vazia permanece utilizável (criar / voltar).
-
----
-
-## TELA-06 — Detalhe do arquivo no Explorar
-
-- **Personas:** Organizador
-- **Objetivo:** Consultar a unidade persistida como arquivo e espelhar o ciclo de vida.
-
-### Conteúdo
-
-- Mesmos campos canônicos da TELA-02 (UUID, título, contexto, responsável, saídas).
-- Metadados de persistência / arquivamento.
-- Atalhos para as outras visões da mesma unidade.
-
-### Ações
-
-- Editar campos permitidos (reflete em todas as visões).
-- Desarquivar se arquivada.
-- Abrir no Board / Gantt / Árvore.
-
-### Navegação
-
-- A partir da lista do Explorar (TELA-05).
-- Equivalente visual ao detalhe transversal, rotulado como **arquivo**.
-
----
-
-## TELA-07 — Catálogo de responsáveis
+## TELA-05 — Catálogo de responsáveis
 
 - **Personas:** Administrador do projeto
 - **Objetivo:** Controlar quem pode ser atribuído como pessoa, IA ou máquina.
@@ -239,7 +185,7 @@ Plans
 
 ### Navegação
 
-- Entrada **transversal** no rodapé da navegação, **abaixo do Explorar**.
+- **Fixo embaixo** do painel Explorar (não é visão principal).
 - Usado indiretamente por TELA-02 (atribuição).
 
 ---
@@ -248,16 +194,20 @@ Plans
 
 ### Detalhe da unidade
 
-Painel/drawer compartilhado (TELA-02) que garante **uma unidade / um UUID** ao trocar de Board, Gantt, Árvore ou Explorar — US-01, US-02.
+Painel/drawer compartilhado (TELA-02) a partir de Board, Gantt e Árvore — US-01, US-02. O Explorar **não** tem detalhe de arquivo.
 
-### Explorar
+### Explorar (painel transversal)
 
-Área transversal na **parte inferior** da navegação: lista/busca/drill-down (TELA-05) e detalhe do arquivo (TELA-06). Acessível a partir de Board, Gantt e Árvore — US-17, US-18.
+Painel sempre presente na navegação, no padrão de um **explorador de IDE** — US-17, US-18.
+
+- A **lista em árvore não é uma tela**: é um **componente embutido** no próprio Explorar, já visível ao usar o sistema.
+- Drill-down infinito (expandir/recolher); ordenação por título em cada nível; arquivos arquivados acessíveis.
+- Sem detalhe de arquivo nesta superfície; atalhos levam à unidade no Board, Gantt ou Árvore.
 
 ### Configurações
 
-Ficam **abaixo do Explorar** na navegação. Em v1: catálogo de responsáveis (TELA-07) — US-03.
+**Fixas embaixo** do Explorar. Em v1: catálogo de responsáveis (TELA-05) — US-03.
 
 ### Troca de visão
 
-Ações “Abrir no Board / Gantt / Árvore / Explorar” presentes nas telas principais; a entidade permanece a mesma — US-01, US-17.
+Ações “Abrir no Board / Gantt / Árvore / Explorar” presentes nas telas principais; a entidade permanece a mesma — US-01, US-17. “Abrir no Explorar” revela/destaca o arquivo na lista em árvore do painel (não abre outra tela).

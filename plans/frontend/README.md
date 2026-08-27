@@ -27,6 +27,6 @@ Saída: **`../docs/prototype.html`**
 | `#/` | Board |
 | `#/gantt` | Plano / Gantt |
 | `#/arvore` | Árvore de execução |
-| `#/explorar` | Explorar (transversal) |
-| `#/explorar/:id` | Detalhe do arquivo |
-| `#/configuracoes/catalogo` | Configurações — catálogo (abaixo do Explorar) |
+| `#/configuracoes/catalogo` | Configurações (fixo sob Explorar) |
+
+O **Explorar** não tem rota própria: é o painel da sidebar com a lista em árvore embutida (estilo IDE), sempre visível.

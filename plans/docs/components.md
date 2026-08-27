@@ -14,10 +14,8 @@ Legenda de tipos: **Filtro** · **Tabela** · **Card** · **Formulário** · **L
 | [TELA-02](#tela-02--detalhe-da-unidade) | drawer identidade, formulário, responsável, ciclo de vida, troca de visão |
 | [TELA-03](#tela-03--plano--gantt) | eixo temporal, FOP, máquina, exportação, dependências, AIs |
 | [TELA-04](#tela-04--árvore-de-execução) | floresta, nós, responsáveis, procedimento máquina |
-| [TELA-05](#tela-05--explorar-lista-e-navegação) | busca, lista, breadcrumb, drill-down |
-| [TELA-06](#tela-06--detalhe-do-arquivo-no-explorar) | formulário arquivo, metadados, atalhos de visão |
-| [TELA-07](#tela-07--catálogo-de-responsáveis) | abas por tipo, tabela catálogo, CRUD, bloqueio remoção |
-| [Transversais](#componentes-transversais) | detalhe unidade, explorar, configurações, troca de visão |
+| [TELA-05](#tela-05--catálogo-de-responsáveis) | abas por tipo, tabela catálogo, CRUD, bloqueio remoção |
+| [Transversais](#componentes-transversais) | detalhe, Explorar (lista em árvore embutida), configurações |
 
 ---
 
@@ -101,36 +99,7 @@ Legenda de tipos: **Filtro** · **Tabela** · **Card** · **Formulário** · **L
 
 ---
 
-## TELA-05 — Explorar (lista e navegação)
-
-| Componente | Tipo | Descrição |
-|------------|------|-----------|
-| Busca por título | Filtro | Filtra arquivos pelo título |
-| Lista de arquivos | Lista | Ordenada por título |
-| Badge arquivado | Badge | Unidades arquivadas ainda acessíveis |
-| Breadcrumb | Navegação | Caminho da hierarquia atual |
-| Drill-down | Navegação | Entrar/sair de níveis sem limite de profundidade |
-| Empty state de busca | Indicador | Sem resultados com indicação clara |
-| Empty state lista | Indicador | Lista vazia utilizável |
-| Abrir arquivo | Navegação | TELA-06 |
-| Atalhos de visão | Navegação | Board, Gantt, Árvore na mesma unidade |
-
----
-
-## TELA-06 — Detalhe do arquivo no Explorar
-
-| Componente | Tipo | Descrição |
-|------------|------|-----------|
-| Formulário canônico | Formulário | UUID, título, contexto, responsável, saídas (espelho TELA-02) |
-| Metadados de persistência | Indicador | Arquivamento, timestamps |
-| Botão desarquivar | Ação | Se unidade arquivada |
-| Botões salvar campos | Ação | Reflete em todas as visões |
-| Grupo troca de visão | Navegação | Board, Gantt, Árvore |
-| Voltar à lista | Navegação | TELA-05 |
-
----
-
-## TELA-07 — Catálogo de responsáveis
+## TELA-05 — Catálogo de responsáveis
 
 | Componente | Tipo | Descrição |
 |------------|------|-----------|
@@ -151,7 +120,7 @@ Legenda de tipos: **Filtro** · **Tabela** · **Card** · **Formulário** · **L
 | Componente | Tipo | Telas |
 |------------|------|-------|
 | Menu principal (visões) | Navegação | Board, Gantt, Árvore |
-| Bloco transversal (rodapé) | Navegação | Explorar + Configurações |
+| Painel Explorar (rodapé da nav) | Navegação | Sempre visível (estilo IDE) |
 | Breadcrumb / título da tela | Navegação | Telas internas |
 | Cabeçalho com persona | Navegação | Todas |
 
@@ -159,36 +128,37 @@ Legenda de tipos: **Filtro** · **Tabela** · **Card** · **Formulário** · **L
 
 | Componente | Tipo | Telas |
 |------------|------|-------|
-| Drawer compartilhado (TELA-02) | Drawer | Board, Gantt, Árvore, Explorar |
-| Seletor de responsável tipado | Seletor | Drawer; catálogo (TELA-07) alimenta opções |
+| Drawer compartilhado (TELA-02) | Drawer | Board, Gantt, Árvore |
+| Seletor de responsável tipado | Seletor | Drawer; catálogo (TELA-05) alimenta opções |
 
-### Explorar (transversal)
+### Explorar (painel transversal — não é tela de lista)
+
+| Componente | Tipo | Onde |
+|------------|------|------|
+| Painel Explorar | Navegação | Layout global |
+| Lista em árvore (embutida) | Árvore | **Componente** dentro do Explorar; sempre visível; drill-down infinito; **não** é tela |
+| Badge / meta arquivado | Indicador | Nó da árvore |
+| Empty state | Indicador | Árvore vazia utilizável |
+
+### Configurações (fixas embaixo do Explorar)
 
 | Componente | Tipo | Telas |
 |------------|------|-------|
-| Entrada Explorar no rodapé da nav | Navegação | Global |
-| Lista / busca / breadcrumb | Lista | TELA-05 |
-| Detalhe do arquivo | Formulário | TELA-06 |
-
-### Configurações (transversal, abaixo do Explorar)
-
-| Componente | Tipo | Telas |
-|------------|------|-------|
-| Entrada Configurações no rodapé da nav | Navegação | Global, abaixo de Explorar |
-| Catálogo de responsáveis | Tabela | TELA-07 |
+| Entrada Configurações fixa sob a árvore | Navegação | Global |
+| Catálogo de responsáveis | Tabela | TELA-05 |
 
 ### Troca de visão (US-01, US-17)
 
 | Componente | Tipo | Telas |
 |------------|------|-------|
-| Botões “Abrir no…” | Navegação | Board, Gantt, Árvore, Explorar, detalhe |
+| Botões “Abrir no…” | Navegação | Board, Gantt, Árvore; Explorar = destacar no painel |
 | Preservação de UUID | Indicador | Mesma entidade em todas as superfícies |
 
 ### Componentes reutilizados
 
 | Componente | Tipo | Onde aparece |
 |------------|------|--------------|
-| Badge de responsável | Badge | Board, Gantt, Árvore, Explorar, detalhe |
+| Badge de responsável | Badge | Board, Gantt, Árvore, detalhe |
 | Badge de status IA | Badge | Board, Gantt |
 | Modal de confirmação | Modal | Excluir unidade, remover coluna/raia, excluir plano |
 | Empty state | Indicador | Listas e árvores sem itens |

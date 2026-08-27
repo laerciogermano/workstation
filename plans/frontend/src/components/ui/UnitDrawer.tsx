@@ -6,7 +6,6 @@ const viewLabel: Record<string, string> = {
   board: 'card',
   gantt: 'tarefa',
   tree: 'atividade',
-  explore: 'arquivo',
 };
 
 export function UnitDrawer({
@@ -78,7 +77,7 @@ export function UnitDrawer({
             <Link to="/">Board</Link>
             <Link to="/gantt">Gantt</Link>
             <Link to="/arvore">Árvore</Link>
-            <Link to={`/explorar/${unit.id}`}>Explorar</Link>
+            <span className="muted">Explorar (painel)</span>
           </div>
           <div className="row gap">
             <button type="button" className="btn">

@@ -3,8 +3,6 @@ import { AppLayout } from './components/layout/AppLayout';
 import { BoardPage } from './pages/board/BoardPage';
 import { GanttPage } from './pages/gantt/GanttPage';
 import { TreePage } from './pages/tree/TreePage';
-import { ExploreListPage } from './pages/explore/ExploreListPage';
-import { ExploreDetailPage } from './pages/explore/ExploreDetailPage';
 import { CatalogPage } from './pages/settings/CatalogPage';
 
 export default function App() {
@@ -15,8 +13,8 @@ export default function App() {
           <Route index element={<BoardPage />} />
           <Route path="gantt" element={<GanttPage />} />
           <Route path="arvore" element={<TreePage />} />
-          <Route path="explorar" element={<ExploreListPage />} />
-          <Route path="explorar/:id" element={<ExploreDetailPage />} />
+          <Route path="explorar" element={<Navigate to="/" replace />} />
+          <Route path="explorar/:id" element={<Navigate to="/" replace />} />
           <Route path="configuracoes/catalogo" element={<CatalogPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>

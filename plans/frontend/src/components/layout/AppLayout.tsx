@@ -1,4 +1,5 @@
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
+import { ExploreTreePanel } from '../explore/ExploreTreePanel';
 
 const primaryNav = [
   { to: '/', label: 'Board', end: true },
@@ -6,20 +7,13 @@ const primaryNav = [
   { to: '/arvore', label: 'Árvore de execução' },
 ];
 
-const transversalNav = [
-  { to: '/explorar', label: 'Explorar' },
-  { to: '/configuracoes/catalogo', label: 'Configurações' },
-];
-
 function titleFromPath(path: string) {
   const map: Record<string, string> = {
     '/': 'Board',
     '/gantt': 'Plano / Gantt',
     '/arvore': 'Árvore de execução',
-    '/explorar': 'Explorar',
     '/configuracoes/catalogo': 'Configurações',
   };
-  if (path.startsWith('/explorar/')) return 'Detalhe do arquivo';
   return map[path] ?? 'Plans';
 }
 
@@ -45,18 +39,10 @@ export function AppLayout() {
             </NavLink>
           ))}
         </nav>
-        <nav className="sidebar-nav sidebar-nav-bottom">
-          <div className="nav-group-title">Transversais</div>
-          {transversalNav.map((l) => (
-            <NavLink
-              key={l.to}
-              to={l.to}
-              className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
-            >
-              {l.label}
-            </NavLink>
-          ))}
-        </nav>
+        <div className="sidebar-explore">
+          <div className="nav-group-title">Explorar</div>
+          <ExploreTreePanel />
+        </div>
       </aside>
       <div className="main-area">
         <header className="topbar">

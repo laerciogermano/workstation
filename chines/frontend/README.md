@@ -2,7 +2,7 @@
 
 Prototype React com todas as telas e componentes descritos em [`../docs/screens.md`](../docs/screens.md) e [`../docs/components.md`](../docs/components.md).
 
-## Executar
+## Executar (desenvolvimento)
 
 ```bash
 cd chines/frontend
@@ -11,6 +11,21 @@ npm run dev
 ```
 
 Abrir http://localhost:5173
+
+## Gerar HTML único para o cliente
+
+Um único arquivo com todo o JS/CSS embutido — abre direto no navegador (duplo clique):
+
+```bash
+cd chines/frontend
+npm run build:single
+```
+
+Saída:
+- `frontend/dist-single/index.html`
+- `docs/bluetti-map.html` (cópia pronta para envio)
+
+O cliente abre `bluetti-map.html` no Chrome/Safari. As rotas usam `#` (ex.: `bluetti-map.html#/produtos`).
 
 ## Telas (TELA-01 a TELA-18)
 

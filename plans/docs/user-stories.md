@@ -12,10 +12,10 @@ Apenas a descrição no formato **Como… quero… para…**. Cenários BDD: [`b
 
 | Persona | Papel | Histórias |
 |---------|-------|-----------|
-| **Organizador** | Registra intenções pessoais, acompanha progresso, pesquisa com IA, registra decisões e navega pelo Explorar. | US-01, US-05, US-17, US-18, US-19, US-20, US-21 |
-| **Condutor de projetos** | Configura o board, planeja ordens no Gantt, decompõe hierarquias e acompanha a mesma unidade em board, tempo, árvore e arquivos. | US-01, US-04, US-05, US-06, US-08, US-09, US-10, US-15, US-16, US-17, US-18, US-22 |
-| **Orquestrador** | Atribui responsáveis tipados e dispara execução de IAs no board e no Gantt. | US-02, US-07, US-11, US-20 |
-| **Modelador de fluxo** | Modela roteiros FOP no Gantt, programa tarefas máquina, compila FOP-IR e exporta TypeScript ou Python. | US-08, US-09, US-10, US-12, US-13, US-14, US-22 |
+| **Organizador** | Registra intenções no board, acompanha progresso e navega pelo Explorar. | US-01, US-05, US-17, US-18 |
+| **Condutor de projetos** | Configura o board, planeja ordens no Gantt, decompõe hierarquias e acompanha a mesma unidade em board, tempo, árvore e arquivos. | US-01, US-04, US-05, US-06, US-08, US-09, US-10, US-15, US-16, US-17, US-18, US-19 |
+| **Orquestrador** | Atribui responsáveis tipados e dispara execução de IAs no board e no Gantt. | US-02, US-07, US-11 |
+| **Modelador de fluxo** | Modela roteiros FOP no Gantt, programa tarefas máquina, compila FOP-IR e exporta TypeScript ou Python. | US-08, US-09, US-10, US-12, US-13, US-14, US-19 |
 | **Administrador do projeto** | Mantém o catálogo de pessoas, IAs e máquinas atribuíveis no projeto. | US-03 |
 
 ---
@@ -38,7 +38,7 @@ Como **condutor de projetos**, quero **configurar colunas e raias (swimlanes) em
 
 ## US-05 — Cadastrar e mover cards
 
-Como **organizador**, quero **cadastrar cards com título obrigatório e movê-los entre qualquer coluna e raia válida**, para que **eu registre e acompanhe o fluxo de trabalho no board sem restrições de WIP ou caminho em v1**.
+Como **organizador**, quero **cadastrar cards no board com título obrigatório e contexto opcional (orçamento, preferências, restrições) e movê-los entre qualquer coluna e raia válida**, para que **todas as intenções nasçam e sejam acompanhadas no board, sem restrições de WIP ou caminho em v1**.
 
 ## US-06 — Aninhar e mover hierarquia de cards
 
@@ -92,18 +92,6 @@ Como **organizador**, quero **que toda unidade persista como arquivo no Explorar
 
 Como **organizador**, quero **listar arquivos ordenados por título, buscar por título e navegar em profundidade com drill-down e breadcrumb**, para que **eu percorra a hierarquia persistida de forma previsível, mesmo com aninhamento infinito**.
 
-## US-19 — Registrar atividade com objetivo e contexto
-
-Como **organizador**, quero **registrar uma atividade com título obrigatório e contexto opcional (orçamento, preferências, restrições)**, para que **a intenção fique capturada e oriente minha execução ou a de uma IA atribuída**.
-
-## US-20 — Pesquisar opções com IA
-
-Como **organizador**, quero **solicitar pesquisa assistida por IA a partir de uma atividade com responsável IA, usando título e contexto, e receber comparativo estruturado (opções, benefícios, faixas de preço) como saída ligada à mesma unidade**, para que **eu decida com base em evidências sem sair do Plans**.
-
-## US-21 — Registrar decisão na atividade
-
-Como **organizador**, quero **registrar a opção escolhida em uma atividade (com observação opcional), alterá-la antes de concluir e manter decisão e comparativo acessíveis após arquivar**, para que **a etapa de decisão fique documentada e eu saiba o que foi definido**.
-
-## US-22 — Seleção, repetição, camadas e contexto
+## US-19 — Seleção, repetição, camadas e contexto
 
 Como **modelador de fluxo**, quero **compor estruturas de seleção (condicionais) e repetição no roteiro do plano, organizar endereços em camadas substituíveis e garantir que a execução só ocorra com contexto completo**, para que **fluxos condicionais, iterativos e desacoplados (roteiro × ator) sejam modelados no Gantt Flow sem acoplar regras de negócio a hardware ou linguagem de destino**.

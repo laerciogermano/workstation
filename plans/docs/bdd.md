@@ -67,13 +67,15 @@ Como **condutor de projetos**, quero **configurar colunas e raias (swimlanes) em
 
 ## US-05 — Cadastrar e mover cards
 
-Como **organizador**, quero **cadastrar cards com título obrigatório e movê-los entre qualquer coluna e raia válida**, para que **eu registre e acompanhe o fluxo de trabalho no board sem restrições de WIP ou caminho em v1**.
+Como **organizador**, quero **cadastrar cards no board com título obrigatório e contexto opcional (orçamento, preferências, restrições) e movê-los entre qualquer coluna e raia válida**, para que **todas as intenções nasçam e sejam acompanhadas no board, sem restrições de WIP ou caminho em v1**.
 
 ### Cenários
 
 - [ ] Dado que informo **título**, quando crio o card em coluna e raia, então ele aparece nessa posição.
+- [ ] Dado que informo **contexto** opcional, quando salvo o card, então o contexto fica associado à unidade e visível nas visões.
+- [ ] Dado que não informo contexto, quando crio o card, então ele é válido só com título.
 - [ ] Dado que não informo título, quando tento criar, então a criação é rejeitada.
-- [ ] Dado que o card existe, quando altero o título, então o novo título aparece no board e nas demais visões.
+- [ ] Dado que o card existe, quando altero o título ou o contexto, então a alteração aparece no board e nas demais visões.
 - [ ] Dado que o destino é coluna/raia válida, quando movo o card, então ele fica só no destino (sem restrição WIP/caminho em v1).
 - [ ] Dado que o destino é inválido, quando tento mover, então o card permanece na origem.
 
@@ -276,49 +278,7 @@ Como **organizador**, quero **listar arquivos ordenados por título, buscar por 
 
 ---
 
-## US-19 — Registrar atividade com objetivo e contexto
-
-Como **organizador**, quero **registrar uma atividade com título obrigatório e contexto opcional (orçamento, preferências, restrições)**, para que **a intenção fique capturada e oriente minha execução ou a de uma IA atribuída**.
-
-### Cenários
-
-- [ ] Dado que informo título, quando crio a atividade, então ela é registrada e permanece ativa (US-01).
-- [ ] Dado que informo **contexto** (*ex.: orçamento, preferências, restrições*), quando salvo, então o contexto fica associado à unidade e visível nas visões.
-- [ ] Dado que não informo contexto, quando crio a atividade, então ela é válida só com título.
-- [ ] Dado que altero o contexto, quando salvo, então a alteração reflete em todas as visões (mesmo UUID).
-- [ ] Dado que tento criar sem título, quando confirmo, então a criação é rejeitada.
-
----
-
-## US-20 — Pesquisar opções com IA
-
-Como **organizador**, quero **solicitar pesquisa assistida por IA a partir de uma atividade com responsável IA, usando título e contexto, e receber comparativo estruturado (opções, benefícios, faixas de preço) como saída ligada à mesma unidade**, para que **eu decida com base em evidências sem sair do Plans**.
-
-### Cenários
-
-- [ ] Dado que a unidade tem responsável **IA** do catálogo, quando solicito **pesquisa assistida**, então a IA inicia usando título e contexto da atividade.
-- [ ] Dado que a pesquisa conclui com sucesso, quando consulto a unidade, então existe **saída estruturada** com comparativo (opções, benefícios, faixas de preço; fontes quando disponíveis).
-- [ ] Dado que a pesquisa falha, quando consulto a unidade, então o status é `falhou` e a falha é visível; posso solicitar **retry** (US-07).
-- [ ] Dado que a unidade **não** tem responsável IA, quando solicito pesquisa assistida, então a operação é rejeitada.
-- [ ] Dado que o comparativo foi gerado, quando abro Board ou Explorar, então a saída permanece ligada à mesma unidade (UUID).
-
----
-
-## US-21 — Registrar decisão na atividade
-
-Como **organizador**, quero **registrar a opção escolhida em uma atividade (com observação opcional), alterá-la antes de concluir e manter decisão e comparativo acessíveis após arquivar**, para que **a etapa de decisão fique documentada e eu saiba o que foi definido**.
-
-### Cenários
-
-- [ ] Dado que existe comparativo de pesquisa (US-20) ou contexto manual, quando registro uma **decisão** (opção escolhida + observação opcional), então fica persistida na unidade.
-- [ ] Dado que registro decisão, quando consulto a atividade, então vejo título, contexto, comparativo (se houver) e decisão.
-- [ ] Dado que altero a decisão antes de concluir, quando salvo, então a decisão anterior é substituída.
-- [ ] Dado que registro decisão, quando **arquivo** a unidade, então decisão e comparativo permanecem acessíveis no Explorar.
-- [ ] Dado que não houve pesquisa prévia, quando registro decisão manual, então a operação é aceita.
-
----
-
-## US-22 — Seleção, repetição, camadas e contexto
+## US-19 — Seleção, repetição, camadas e contexto
 
 Como **modelador de fluxo**, quero **compor estruturas de seleção (condicionais) e repetição no roteiro do plano, organizar endereços em camadas substituíveis e garantir que a execução só ocorra com contexto completo**, para que **fluxos condicionais, iterativos e desacoplados (roteiro × ator) sejam modelados no Gantt Flow sem acoplar regras de negócio a hardware ou linguagem de destino**.
 

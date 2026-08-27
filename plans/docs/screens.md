@@ -23,10 +23,6 @@ Plans
 ├── Explorar
 │   ├── Lista, busca e drill-down
 │   └── Detalhe do arquivo
-├── Atividades
-│   ├── Registrar atividade
-│   ├── Pesquisa assistida (comparativo)
-│   └── Registrar decisão
 └── Configurações
     └── Catálogo de responsáveis
 ```
@@ -41,18 +37,15 @@ Plans
 |------|------------------------|
 | TELA-01 — Board (kanban) | US-01, US-05, US-06, US-07 |
 | TELA-02 — Configuração de colunas e raias | US-04 |
-| TELA-03 — Detalhe da unidade | US-01, US-02, US-19, US-20, US-21 |
+| TELA-03 — Detalhe da unidade | US-01, US-02 |
 | TELA-04 — Plano / Gantt | US-08, US-09, US-10, US-11 |
-| TELA-05 — Editor FOP | US-12, US-22 |
-| TELA-06 — Editor máquina | US-13, US-22 |
+| TELA-05 — Editor FOP | US-12, US-19 |
+| TELA-06 — Editor máquina | US-13, US-19 |
 | TELA-07 — Exportar código | US-14 |
 | TELA-08 — Árvore de execução | US-15, US-16 |
 | TELA-09 — Explorar (lista e navegação) | US-17, US-18 |
 | TELA-10 — Detalhe do arquivo no Explorar | US-01, US-17 |
-| TELA-11 — Registrar atividade | US-19 |
-| TELA-12 — Pesquisa assistida (comparativo) | US-20 |
-| TELA-13 — Registrar decisão | US-21 |
-| TELA-14 — Catálogo de responsáveis | US-03 |
+| TELA-11 — Catálogo de responsáveis | US-03 |
 | Detalhe da unidade (transversal) | US-01, US-02 |
 | Troca de visão (transversal) | US-01, US-17 |
 
@@ -72,7 +65,7 @@ Plans
 
 ### Ações
 
-- Criar card com título (contexto opcional via TELA-03 / TELA-11).
+- Criar card com título e contexto opcional no próprio board — US-05.
 - Mover card entre qualquer coluna/raia válida (sem WIP em v1).
 - Aninhar, desaninhar e mover subárvore — US-06.
 - Abrir detalhe da unidade → TELA-03.
@@ -121,16 +114,13 @@ Plans
 - **Identidade:** UUID, título, vocabulário da visão de origem (card / tarefa / atividade / arquivo).
 - **Campos:** título (obrigatório), contexto (opcional).
 - **Responsável tipado:** pessoa, IA ou máquina (ou nenhum) — só itens do catálogo.
-- **Saídas / artefatos** ligados (ex.: comparativo de pesquisa).
-- **Decisão** registrada, se houver.
+- **Saídas / artefatos** ligados à unidade (quando existirem).
 - **Ciclo de vida:** ativa, arquivada; ações excluir / arquivar / desarquivar.
 
 ### Ações
 
 - Editar título e contexto.
 - Atribuir, trocar ou remover responsável — US-02.
-- Solicitar pesquisa assistida (se responsável IA) → TELA-12.
-- Registrar / alterar decisão → TELA-13.
 - Abrir na visão pedida (Board, Gantt, Árvore, Explorar).
 - Excluir (global) ou arquivar / desarquivar — US-01.
 
@@ -183,7 +173,7 @@ Plans
 - **Canvas / lista do fluxo** do plano selecionado.
 - **Artefatos de estado:** entradas e saídas (nome + referência) por tarefa/procedimento.
 - **Ligações** saída → entrada evidentes no fluxo.
-- **Estruturas:** sequência, paralelo, seleção (condicional), repetição — US-22.
+- **Estruturas:** sequência, paralelo, seleção (condicional), repetição — US-19.
 - **Camadas** e indicação de **contexto** completo/incompleto.
 - **Validação:** avisos (órfãos) e bloqueios (ciclo de estado).
 
@@ -313,7 +303,7 @@ Plans
 
 ### Conteúdo
 
-- Mesmos campos canônicos da TELA-03 (UUID, título, contexto, responsável, saídas, decisão).
+- Mesmos campos canônicos da TELA-03 (UUID, título, contexto, responsável, saídas).
 - Metadados de persistência / arquivamento.
 - Atalhos para as outras visões da mesma unidade.
 
@@ -330,79 +320,7 @@ Plans
 
 ---
 
-## TELA-11 — Registrar atividade
-
-- **Personas:** Organizador
-- **Objetivo:** Capturar intenção com título e contexto opcional sem trocar de ferramenta.
-
-### Conteúdo
-
-- **Formulário:** título (obrigatório), contexto (opcional — orçamento, preferências, restrições).
-- **Pré-visualização** de onde a atividade aparecerá (Board / outras visões).
-
-### Ações
-
-- Salvar atividade (rejeitar sem título).
-- Opcional: atribuir responsável IA e seguir para pesquisa — TELA-12.
-- Ir ao Board ou Detalhe após criar.
-
-### Navegação
-
-- Ação rápida global (“Nova atividade”) ou a partir do Board.
-- Exemplos de uso alinhados à visão (*Comprar fone…*).
-
----
-
-## TELA-12 — Pesquisa assistida (comparativo)
-
-- **Personas:** Organizador, orquestrador
-- **Objetivo:** Obter comparativo estruturado gerado por IA ligado à mesma unidade.
-
-### Conteúdo
-
-- **Contexto da solicitação:** título e contexto da atividade; IA responsável.
-- **Status** da pesquisa (`em execução`, `concluída`, `falhou`).
-- **Comparativo estruturado:** opções, benefícios, faixas de preço; fontes quando disponíveis.
-- Saída persistida como artefato da unidade (visível no Board e Explorar).
-
-### Ações
-
-- Solicitar pesquisa (somente com responsável IA).
-- Retry se `falhou`.
-- Seguir para registrar decisão → TELA-13.
-- Abrir detalhe da unidade → TELA-03.
-
-### Navegação
-
-- A partir do Detalhe (TELA-03) ou após Registrar atividade (TELA-11).
-
----
-
-## TELA-13 — Registrar decisão
-
-- **Personas:** Organizador
-- **Objetivo:** Documentar a opção escolhida e encerrar a etapa de decisão.
-
-### Conteúdo
-
-- **Resumo:** título, contexto, comparativo (se houver).
-- **Formulário:** opção escolhida + observação opcional.
-- Histórico da decisão atual (substitui a anterior ao salvar).
-
-### Ações
-
-- Salvar decisão (manual válida mesmo sem pesquisa prévia).
-- Alterar decisão antes de concluir.
-- Arquivar unidade mantendo decisão e comparativo no Explorar.
-
-### Navegação
-
-- A partir do Detalhe ou após Pesquisa assistida.
-- Retorno ao Board / Explorar.
-
----
-
-## TELA-14 — Catálogo de responsáveis
+## TELA-11 — Catálogo de responsáveis
 
 - **Personas:** Administrador do projeto
 - **Objetivo:** Controlar quem pode ser atribuído como pessoa, IA ou máquina.

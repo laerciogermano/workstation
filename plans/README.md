@@ -22,7 +22,7 @@ Ferramentas de desenvolvimento e automação, por sua vez, acoplam **roteiro** e
 
 | Persona | Necessidade |
 |---------|-------------|
-| Quem organiza o próprio trabalho | Registrar intenções, acompanhar e decidir sem trocar de ferramenta |
+| Quem organiza o próprio trabalho | Registrar intenções e acompanhar sem trocar de ferramenta |
 | Quem conduz projetos | Ver a mesma unidade em board, tempo (Gantt), hierarquia e arquivos |
 | Quem orquestra IAs | Atribuir responsáveis tipados e acompanhar execução de IAs |
 | Quem modela e exporta fluxo como código | Tratar planos como FOP (roteiro) e gerar TypeScript / Python |
@@ -33,25 +33,21 @@ Organizar, acompanhar e visualizar o trabalho do projeto em **Board**, **Gantt**
 
 ## Proposta de valor
 
-O Plans ajuda a **registrar, acompanhar e decidir** atividades — pessoais ou de projeto — na mesma unidade de trabalho, sem trocar de ferramenta conforme a etapa. Quando o trabalho é fluxo, o Gantt deixa de ser só cronograma: vira **linguagem visual de programação orientada a fluxo**.
+O Plans ajuda a **registrar e acompanhar** atividades — pessoais ou de projeto — na mesma unidade de trabalho, sem trocar de ferramenta conforme a etapa. Quando o trabalho é fluxo, o Gantt deixa de ser só cronograma: vira **linguagem visual de programação orientada a fluxo**.
 
 | Necessidade | O que o Plans faz |
 |-------------|-------------------|
-| Lembrar o que fazer | Registrar atividade com título (e contexto opcional) |
-| Entender opções antes de agir | IA pesquisa e consolida comparativo estruturado |
+| Lembrar o que fazer | Registrar card no board com título (e contexto opcional) |
 | Acompanhar progresso | Board, Gantt, árvore ou Explorar sobre a **mesma** unidade |
 | Modelar o *como* do fluxo | Compor dados e funções (FOP) no Gantt, com ligações de estado |
 | Trocar quem executa sem reescrever o fluxo | Responsável tipado separado do roteiro |
-| Decidir e encerrar | Registrar escolha na atividade e arquivar ou concluir |
 | Reusar o fluxo em código | Compilar FOP-IR e exportar TypeScript / Python |
 
 ### Exemplos
 
-**Registrar uma intenção** — *Comprar fone de ouvido*: cria a atividade com **título** e, se quiser, **contexto** (*uso diário, cancelamento de ruído, até R$ 500*). Ela aparece no board (ou em outra visão) para não se perder o que precisa ser feito.
+**Registrar uma intenção** — *Comprar fone de ouvido*: cria o **card** no board com **título** e, se quiser, **contexto** (*uso diário, cancelamento de ruído, até R$ 500*). A mesma unidade aparece nas demais visões para não se perder o que precisa ser feito.
 
-**Pesquisar antes de decidir** — *Comprar celular*: registra a atividade, atribui uma **IA** do catálogo e solicita **pesquisa assistida** (melhores aparelhos, benefícios, faixas de preço, ofertas). O resultado vira **saída estruturada** (comparativo) ligada à mesma unidade — no board e no Explorar — para apoiar a decisão sem sair do fluxo.
-
-**Decompor quando fizer sentido** — *Comprar celular* pode virar sub-atividades (*Definir orçamento*, *Comparar modelos*, *Escolher loja*, *Comprar*): mesma unidade, hierarquia infinita, progresso visível.
+**Decompor quando fizer sentido** — *Comprar celular* pode virar sub-cards (*Definir orçamento*, *Comparar modelos*, *Escolher loja*, *Comprar*): mesma unidade, hierarquia infinita, progresso visível.
 
 **Modelar e exportar um roteiro** — um plano no Gantt liga **saídas** de uma tarefa às **entradas** de outra (sequencial ou paralelo; com seleção e repetição quando couber). O mesmo roteiro compila em **FOP-IR** e exporta para TypeScript ou Python sem redesenhar o fluxo.
 
@@ -71,7 +67,7 @@ O Plans ajuda a **registrar, acompanhar e decidir** atividades — pessoais ou d
 
 | Área | Em escopo |
 |------|-----------|
-| **Gestão de atividades** | Registrar com contexto; pesquisa assistida por IA; registrar decisão |
+| **Gestão de atividades** | Cards no board (título + contexto) |
 | **Board** | Colunas e raias; cards; coluna de execução |
 | **Gantt** | Ordens no tempo; sequencial/paralelo/seleção/repetição; planos; FOP; exportação |
 | **Árvore de execução** | Floresta (múltiplas raízes); hierarquia infinita; responsáveis |
@@ -112,7 +108,7 @@ O responsável é o **ator** do roteiro: trocar o ator não redefine o fluxo —
 | Tipo | Comportamento |
 |------|----------------|
 | **Pessoa** | Execução humana |
-| **IA** | Executa no board e no Gantt; pesquisa assistida; estados `pendente` → `em execução` → `concluída` \| `falhou` \| `cancelada`; retry só por ação explícita |
+| **IA** | Executa no board e no Gantt; estados `pendente` → `em execução` → `concluída` \| `falhou` \| `cancelada`; retry só por ação explícita |
 | **Máquina** | Linguagem de programação no Gantt (libs, loops, estados); procedimento editável na árvore |
 
 ### Fluxo (FOP)
@@ -134,7 +130,7 @@ Um **roteiro** (plano no Gantt) descreve mudanças de estado:
 ## Critérios de sucesso
 
 - Uma intenção registrada permanece a **mesma unidade** ao mudar de Board ↔ Gantt ↔ Árvore ↔ Explorar.
-- É possível ir de intenção → pesquisa assistida → decisão → conclusão/arquivo **sem trocar de ferramenta**.
+- É possível ir de intenção → conclusão/arquivo **sem trocar de ferramenta**.
 - Um plano no Gantt expressa FOP (estado + procedimentos + ligações) e exporta via **FOP-IR** para TypeScript e Python.
 - Trocar o responsável tipado **não exige redesenhar** o roteiro.
 - Responsáveis tipados se comportam conforme o catálogo (IA dispara só em coluna de execução).
@@ -145,7 +141,7 @@ Um **roteiro** (plano no Gantt) descreve mudanças de estado:
 |-------|-------------|
 | **Coluna / raia** | Estágio e faixa do board (quantidade livre) |
 | **Coluna de execução** | Dispara IA ao receber card com responsável IA |
-| **Entrada / saída** | Artefato de estado: **nome + referência**; saída de pesquisa assistida = comparativo |
+| **Entrada / saída** | Artefato de estado: **nome + referência** |
 | **Plano** | Contêiner nomeado de tarefas + execução no Gantt; o **roteiro** do fluxo |
 | **Roteiro** | Descrição de mudanças de estado (dados + funções) independente do ator |
 | **FOP** | Flow Oriented Programming — programação orientada a fluxo |

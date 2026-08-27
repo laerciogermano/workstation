@@ -55,7 +55,9 @@ function FileNode({
 
 /** Lista em árvore embutida no painel Explorar (estilo explorador de IDE) — não é tela. */
 export function ExploreTreePanel() {
-  const [expanded, setExpanded] = useState<Set<string>>(() => new Set());
+  const [expanded, setExpanded] = useState<Set<string>>(
+    () => new Set(Array.from({ length: 21 }, (_, i) => `deep-${i + 1}`)),
+  );
   const forest = sortedChildren();
 
   return (

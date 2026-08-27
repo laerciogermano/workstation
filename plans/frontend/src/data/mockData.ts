@@ -138,7 +138,27 @@ export const units: WorkUnit[] = [
     archived: false,
     planId: 'plan-default',
   },
+  ...deepChainUnits(22),
 ];
+
+/** Cadeia linear de N níveis (raiz + N−1 filhos) para demonstrar drill-down profundo no Explorar. */
+function deepChainUnits(levels: number): WorkUnit[] {
+  const chain: WorkUnit[] = [];
+  for (let i = 1; i <= levels; i++) {
+    const id = `deep-${i}`;
+    chain.push({
+      id,
+      title: i === 1 ? `Cadeia profunda (${levels} níveis)` : `Nível ${i} / ${levels}`,
+      parentId: i === 1 ? undefined : `deep-${i - 1}`,
+      columnId: 'c1',
+      laneId: 'l2',
+      archived: false,
+      planId: 'plan-default',
+      responsibleId: i === levels ? 'p1' : undefined,
+    });
+  }
+  return chain;
+}
 
 export const dependencies: Dependency[] = [
   { fromId: 'u2', toId: 'u3', kind: 'sequential' },

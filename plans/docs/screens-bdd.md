@@ -1,5 +1,9 @@
 # Screens BDD — Plans
 
+**Por quê:** validar o comportamento **por tela**, não só por história.  
+**Importante:** quem implementa ou testa uma superfície precisa ver só os cenários daquela tela — reduz ruído e buracos de cobertura.  
+**No fluxo:** [`screens.md`](screens.md) → **este documento** → [`components.md`](components.md). Espelha o BDD de [`bdd.md`](bdd.md) reorganizado por Board, Gantt, Árvore, Explorar etc.
+
 Cenários BDD organizados por tela. Telas: [`screens.md`](screens.md) · Histórias: [`user-stories.md`](user-stories.md) · BDD por história: [`bdd.md`](bdd.md).
 
 Cada seção de tela lista **somente as histórias daquela tela**, com enunciado e cenários **Dado / Quando / Então**.

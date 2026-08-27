@@ -1,5 +1,9 @@
 # Componentes por tela — Plans
 
+**Por quê:** transformar telas em peças de UI nomeadas e tipadas.  
+**Importante:** é a ponte entre especificação e implementação — sem inventário, o protótipo e o front inventam estrutura.  
+**No fluxo:** [`screens-bdd.md`](screens-bdd.md) → **este documento** → [`prototype.html`](prototype.html). Lista o que compõe cada superfície; não substitui o protótipo interativo.
+
 Inventário de telas e componentes de interface derivado de [`screens.md`](screens.md).
 
 Legenda de tipos: **Filtro** · **Tabela** · **Card** · **Formulário** · **Lista** · **Indicador** · **Badge** · **Ação** · **Modal** · **Preview** · **Seletor** · **Grade** · **Canvas** · **Árvore** · **Editor** · **Navegação** · **Drawer**

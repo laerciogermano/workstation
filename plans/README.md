@@ -1,7 +1,10 @@
 # Plans — Documento de visão
 
-Fonte do *quê* e do *porquê* do produto.  
-Derivados: [`docs/`](docs/) (`user-stories` → `bdd` → `screens` → `components` → `prototype`).  
+**Por quê:** fixar o *quê* e o *porquê* do produto antes de qualquer história, tela ou código.  
+**Importante:** é a fonte de verdade do produto — sem ela, derivados divergem e o time perde o norte.  
+**No fluxo:** **este documento** → [`docs/`](docs/) (`user-stories` → `bdd` → `screens` → `screens-bdd` → `components` → `prototype`). Orienta toda a esteira; não substitui BDD nem UI.
+
+Derivados: [`docs/`](docs/).  
 Fundamentos de fluxo: [`inputs/`](inputs/) (FOP — Flow Oriented Programming).
 
 ---
@@ -22,12 +25,13 @@ Ferramentas de desenvolvimento e automação, por sua vez, acoplam **roteiro** e
 
 ## Para quem
 
-| Persona | Necessidade |
-|---------|-------------|
-| Quem organiza o próprio trabalho | Registrar intenções e acompanhar sem trocar de ferramenta |
-| Quem conduz projetos | Ver a mesma unidade em board, tempo (Gantt), hierarquia e arquivos |
-| Quem orquestra IAs | Atribuir responsáveis tipados e acompanhar execução de IAs |
-| Quem modela e exporta fluxo como código | Tratar planos como FOP (roteiro) e gerar TypeScript / Python |
+| Persona | Para quem | Necessidade |
+|---------|-----------|-------------|
+| **Organizador** | Quem organiza o próprio trabalho | Registrar intenções e acompanhar sem trocar de ferramenta |
+| **Condutor de projetos** | Quem conduz projetos | Ver a mesma unidade em board, tempo (Gantt), hierarquia e arquivos |
+| **Orquestrador** | Quem orquestra IAs | Atribuir responsáveis tipados e acompanhar execução de IAs |
+| **Modelador de fluxo** | Quem modela e exporta fluxo como código | Tratar planos como FOP (roteiro) e gerar TypeScript / Python |
+| **Administrador do projeto** | Quem mantém o catálogo de atores | Incluir e remover pessoas, IAs e máquinas atribuíveis no projeto |
 
 ## Objetivo
 

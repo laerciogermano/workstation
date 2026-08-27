@@ -1,5 +1,9 @@
 # Histórias de usuário — Plans
 
+**Por quê:** traduzir a visão em intenções concretas de quem usa o sistema.  
+**Importante:** define o escopo negociável do produto — sem histórias claras, BDD e telas inventam comportamento.  
+**No fluxo:** [`visão`](../README.md) → **este documento** → [`bdd.md`](bdd.md). É o contrato funcional em formato **Como… quero… para…**; não detalha cenários nem UI.
+
 Histórias derivadas do [documento de visão](../README.md) e dos fundamentos FOP em [`../inputs/`](../inputs/):
 
 - `Programação Orientada a Fluxo.docx` / `.pdf`

@@ -2,7 +2,7 @@
 
 Anotações e regras pré-determinadas que a IA deve seguir ao trabalhar neste projeto.
 
-Fontes da esteira: [`README.md`](README.md).
+Fontes da esteira: [`../docs/README.md`](../docs/README.md).
 
 ---
 
@@ -27,7 +27,7 @@ Exemplo: alteração em `user-stories.md` → atualizar `bdd.md` → `screens.md
 ## Árvore de execução
 
 ```text
-README.md
+docs/README.md
 └── user-stories.md
     └── bdd.md
         └── screens.md
@@ -37,9 +37,9 @@ README.md
 
 | Ordem | Artefato | Próximo |
 |-------|----------|---------|
-| 1 | [`README.md`](README.md) | [`user-stories.md`](user-stories.md) |
-| 2 | [`user-stories.md`](user-stories.md) | [`bdd.md`](bdd.md) |
-| 3 | [`bdd.md`](bdd.md) | [`screens.md`](screens.md) |
-| 4 | [`screens.md`](screens.md) | [`components.md`](components.md) |
-| 5 | [`components.md`](components.md) | [`prototype.html`](prototype.html) |
-| 6 | [`prototype.html`](prototype.html) | *(fim da árvore)* |
+| 1 | [`../docs/README.md`](../docs/README.md) | [`../docs/user-stories.md`](../docs/user-stories.md) |
+| 2 | [`../docs/user-stories.md`](../docs/user-stories.md) | [`../docs/bdd.md`](../docs/bdd.md) |
+| 3 | [`../docs/bdd.md`](../docs/bdd.md) | [`../docs/screens.md`](../docs/screens.md) |
+| 4 | [`../docs/screens.md`](../docs/screens.md) | [`../docs/components.md`](../docs/components.md) |
+| 5 | [`../docs/components.md`](../docs/components.md) | [`../docs/prototype.html`](../docs/prototype.html) |
+| 6 | [`../docs/prototype.html`](../docs/prototype.html) | *(fim da árvore)* |

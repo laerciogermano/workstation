@@ -1,6 +1,7 @@
 # Chines — Documentação
 
-Derivados dos inputs em [`../inputs/`](../inputs/).
+Derivados dos inputs em [`../inputs/`](../inputs/).  
+Regras para a IA na esteira: [`../config/config-ia.md`](../config/config-ia.md).
 
 | Artefato | Arquivo |
 |----------|---------|
@@ -9,7 +10,6 @@ Derivados dos inputs em [`../inputs/`](../inputs/).
 | Telas | [`screens.md`](screens.md) |
 | Componentes | [`components.md`](components.md) |
 | Protótipo | [`prototype.html`](prototype.html) |
-| Configurações IA | [`config-ia.md`](config-ia.md) |
 
 ## Próximos passos
 

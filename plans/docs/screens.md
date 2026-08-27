@@ -1,5 +1,9 @@
 # Telas do sistema — Plans
 
+**Por quê:** mapear onde cada capacidade aparece na interface.  
+**Importante:** liga intenção (histórias/BDD) a superfícies reais — sem isso, componentes e protótipo não sabem o que desenhar.  
+**No fluxo:** [`bdd.md`](bdd.md) → **este documento** → [`screens-bdd.md`](screens-bdd.md). Descreve telas e ações; o BDD por tela e o inventário de UI vêm depois.
+
 Descrição funcional das telas derivadas das histórias em [`user-stories.md`](user-stories.md) e cenários em [`bdd.md`](bdd.md). BDD por tela: [`screens-bdd.md`](screens-bdd.md). Componentes: [`components.md`](components.md).
 
 Personas principais: **organizador**, **condutor de projetos**, **orquestrador**, **modelador de fluxo**, **administrador do projeto**.

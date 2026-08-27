@@ -1,5 +1,9 @@
 # Cenários BDD — Plans
 
+**Por quê:** tornar cada história testável e inequívoca.  
+**Importante:** é o critério de “pronto” — sem Dado/Quando/Então, implementação e QA divergem.  
+**No fluxo:** [`user-stories.md`](user-stories.md) → **este documento** → [`screens.md`](screens.md). Aceite por história; o agrupamento por tela fica em [`screens-bdd.md`](screens-bdd.md).
+
 Critérios de aceite em formato **Dado / Quando / Então** para as histórias em [`user-stories.md`](user-stories.md).
 
 Fontes: [documento de visão](../README.md) e [`../inputs/`](../inputs/) (FOP — Flow Oriented Programming).

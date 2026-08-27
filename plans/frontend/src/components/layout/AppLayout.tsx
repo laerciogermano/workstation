@@ -1,46 +1,23 @@
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 
-const nav: { group: string; links: { to: string; label: string; end?: boolean }[] }[] = [
-  {
-    group: 'Trabalho',
-    links: [
-      { to: '/', label: 'Board', end: true },
-      { to: '/board/config', label: 'Colunas e raias' },
-    ],
-  },
-  {
-    group: 'Tempo e fluxo',
-    links: [
-      { to: '/gantt', label: 'Plano / Gantt' },
-      { to: '/gantt/fop', label: 'Editor FOP' },
-      { to: '/gantt/maquina', label: 'Editor máquina' },
-      { to: '/gantt/exportar', label: 'Exportar código' },
-    ],
-  },
-  {
-    group: 'Estrutura',
-    links: [
-      { to: '/arvore', label: 'Árvore de execução' },
-      { to: '/explorar', label: 'Explorar' },
-    ],
-  },
-  {
-    group: 'Configurações',
-    links: [{ to: '/configuracoes/catalogo', label: 'Catálogo de responsáveis' }],
-  },
+const primaryNav = [
+  { to: '/', label: 'Board', end: true },
+  { to: '/gantt', label: 'Plano / Gantt' },
+  { to: '/arvore', label: 'Árvore de execução' },
+];
+
+const transversalNav = [
+  { to: '/explorar', label: 'Explorar' },
+  { to: '/configuracoes/catalogo', label: 'Configurações' },
 ];
 
 function titleFromPath(path: string) {
   const map: Record<string, string> = {
     '/': 'Board',
-    '/board/config': 'Colunas e raias',
     '/gantt': 'Plano / Gantt',
-    '/gantt/fop': 'Editor FOP',
-    '/gantt/maquina': 'Editor máquina',
-    '/gantt/exportar': 'Exportar código',
     '/arvore': 'Árvore de execução',
     '/explorar': 'Explorar',
-    '/configuracoes/catalogo': 'Catálogo',
+    '/configuracoes/catalogo': 'Configurações',
   };
   if (path.startsWith('/explorar/')) return 'Detalhe do arquivo';
   return map[path] ?? 'Plans';
@@ -56,20 +33,28 @@ export function AppLayout() {
           <span>Intenção → roteiro acompanhável</span>
         </div>
         <nav className="sidebar-nav">
-          {nav.map((g) => (
-            <div key={g.group}>
-              <div className="nav-group-title">{g.group}</div>
-              {g.links.map((l) => (
-                <NavLink
-                  key={l.to}
-                  to={l.to}
-                  end={l.end}
-                  className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
-                >
-                  {l.label}
-                </NavLink>
-              ))}
-            </div>
+          <div className="nav-group-title">Visões</div>
+          {primaryNav.map((l) => (
+            <NavLink
+              key={l.to}
+              to={l.to}
+              end={l.end}
+              className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
+            >
+              {l.label}
+            </NavLink>
+          ))}
+        </nav>
+        <nav className="sidebar-nav sidebar-nav-bottom">
+          <div className="nav-group-title">Transversais</div>
+          {transversalNav.map((l) => (
+            <NavLink
+              key={l.to}
+              to={l.to}
+              className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
+            >
+              {l.label}
+            </NavLink>
           ))}
         </nav>
       </aside>

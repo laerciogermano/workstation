@@ -10,24 +10,23 @@ Personas principais: **organizador**, **condutor de projetos**, **orquestrador**
 
 ```
 Plans
-├── Board
-│   ├── Board (kanban)
-│   └── Configuração de colunas e raias
-├── Gantt
-│   ├── Plano / Gantt
-│   ├── Editor FOP (estado e procedimentos)
-│   ├── Editor máquina
-│   └── Exportar código (FOP-IR)
+├── Board (kanban + configuração de colunas e raias)
+├── Gantt (plano / Gantt)
 ├── Árvore de execução
-│   └── Floresta de atividades
-├── Explorar
-│   ├── Lista, busca e drill-down
-│   └── Detalhe do arquivo
-└── Configurações
-    └── Catálogo de responsáveis
+│
+└── Transversais (rodapé da navegação)
+    ├── Explorar
+    │   ├── Lista, busca e drill-down
+    │   └── Detalhe do arquivo
+    └── Configurações
+        └── Catálogo de responsáveis
 ```
 
-**Componente transversal:** detalhe da unidade de trabalho (drawer/painel) acessível a partir de Board, Gantt, Árvore e Explorar — mesma entidade (UUID), vocabulário por visão — US-01, US-02.
+**Transversais:**
+
+- **Detalhe da unidade** (drawer/painel) — acessível a partir de Board, Gantt, Árvore e Explorar; mesma entidade (UUID), vocabulário por visão — US-01, US-02.
+- **Explorar** — persistência e navegação por arquivos, disponível de qualquer visão.
+- **Configurações** — abaixo do Explorar na navegação; catálogo de responsáveis do projeto.
 
 ---
 
@@ -35,18 +34,16 @@ Plans
 
 | Tela | Histórias contempladas |
 |------|------------------------|
-| TELA-01 — Board (kanban) | US-01, US-05, US-06, US-07 |
-| TELA-02 — Configuração de colunas e raias | US-04 |
-| TELA-03 — Detalhe da unidade | US-01, US-02 |
-| TELA-04 — Plano / Gantt | US-08, US-09, US-10, US-11 |
-| TELA-05 — Editor FOP | US-12, US-19 |
-| TELA-06 — Editor máquina | US-13, US-19 |
-| TELA-07 — Exportar código | US-14 |
-| TELA-08 — Árvore de execução | US-15, US-16 |
-| TELA-09 — Explorar (lista e navegação) | US-17, US-18 |
-| TELA-10 — Detalhe do arquivo no Explorar | US-01, US-17 |
-| TELA-11 — Catálogo de responsáveis | US-03 |
+| TELA-01 — Board (kanban) | US-01, US-04, US-05, US-06, US-07 |
+| TELA-02 — Detalhe da unidade | US-01, US-02 |
+| TELA-03 — Plano / Gantt | US-08, US-09, US-10, US-11, US-12, US-13, US-14, US-19 |
+| TELA-04 — Árvore de execução | US-15, US-16 |
+| TELA-05 — Explorar (lista e navegação) | US-17, US-18 |
+| TELA-06 — Detalhe do arquivo no Explorar | US-01, US-17 |
+| TELA-07 — Catálogo de responsáveis | US-03 |
 | Detalhe da unidade (transversal) | US-01, US-02 |
+| Explorar (transversal) | US-17, US-18 |
+| Configurações (transversal) | US-03 |
 | Troca de visão (transversal) | US-01, US-17 |
 
 ---
@@ -54,7 +51,7 @@ Plans
 ## TELA-01 — Board (kanban)
 
 - **Personas:** Organizador, condutor de projetos, orquestrador
-- **Objetivo:** Registrar, mover e acompanhar cards no fluxo de colunas e raias, incluindo disparo de IA em colunas de execução.
+- **Objetivo:** Registrar, mover e acompanhar cards no fluxo de colunas e raias — incluindo configurar o próprio board e disparar IA em colunas de execução.
 
 ### Conteúdo
 
@@ -62,49 +59,26 @@ Plans
 - **Colunas de execução** identificadas visualmente.
 - **Hierarquia:** indicação de cards pai/filho; mover pai move a subárvore.
 - **Estados de IA** no card: `pendente`, `em execução`, `concluída`, `falhou`, `cancelada`.
+- **Painel / modo de configuração** (no próprio board): listas ordenáveis de colunas e raias; flag “coluna de execução”; aviso quando remoção está bloqueada por cards.
 
 ### Ações
 
 - Criar card com título e contexto opcional no próprio board — US-05.
 - Mover card entre qualquer coluna/raia válida (sem WIP em v1).
 - Aninhar, desaninhar e mover subárvore — US-06.
-- Abrir detalhe da unidade → TELA-03.
+- Configurar colunas e raias no board: adicionar, renomear, reordenar; marcar/desmarcar execução; remover só se vazia — US-04, US-07.
+- Abrir detalhe da unidade → TELA-02.
 - Abrir no Explorar / Gantt / Árvore — US-01, US-17.
 - Retry de IA quando status `falhou` — US-07.
 
 ### Navegação
 
 - Menu **Board**.
-- Atalho para configuração de colunas/raias → TELA-02.
+- Configuração de colunas/raias permanece **na mesma tela** (painel, modo ou drawer do board).
 
 ---
 
-## TELA-02 — Configuração de colunas e raias
-
-- **Personas:** Condutor de projetos
-- **Objetivo:** Adequar o board ao processo do time (quantidade livre de colunas e raias).
-
-### Conteúdo
-
-- **Lista ordenável** de colunas (nome, ordem, flag “coluna de execução”).
-- **Lista ordenável** de raias (nome, ordem).
-- **Aviso** quando remoção está bloqueada por cards presentes.
-
-### Ações
-
-- Adicionar, renomear, reordenar colunas e raias.
-- Marcar / desmarcar coluna de execução — US-07.
-- Remover coluna/raia **somente se vazia** — US-04.
-- Salvar configuração e voltar ao Board.
-
-### Navegação
-
-- Acessível a partir do Board (TELA-01).
-- Retorno ao Board após salvar ou cancelar.
-
----
-
-## TELA-03 — Detalhe da unidade
+## TELA-02 — Detalhe da unidade
 
 - **Personas:** Organizador, orquestrador, condutor de projetos
 - **Objetivo:** Ver e editar a mesma unidade (UUID) com campos, responsável, contexto, saídas e ciclo de vida.
@@ -131,10 +105,10 @@ Plans
 
 ---
 
-## TELA-04 — Plano / Gantt
+## TELA-03 — Plano / Gantt
 
 - **Personas:** Condutor de projetos, modelador de fluxo, orquestrador
-- **Objetivo:** Organizar ordens no tempo, dependências, hierarquia com roll-up e execução via AIs.
+- **Objetivo:** Organizar ordens no tempo, modelar FOP, programar máquina e exportar código — tudo na mesma superfície do Gantt.
 
 ### Conteúdo
 
@@ -144,6 +118,9 @@ Plans
 - **Relações** sequenciais (finish-to-start) e paralelas.
 - **Hierarquia** de tarefas com roll-up de datas e estado no pai.
 - **Status de execução** para tarefas com IA.
+- **Área FOP** (no Gantt): artefatos de estado (entradas/saídas), ligações, estruturas (sequência, paralelo, seleção, repetição), camadas, contexto e validação (órfãos / ciclo).
+- **Área máquina** (quando responsável = máquina): editor com libs v1 (`stdio`, `fs`, `http`), loops `for`/`while`, feedback e resultado.
+- **Área exportação:** status de consistência; FOP-IR; TypeScript / Python; preview e download.
 
 ### Ações
 
@@ -153,96 +130,20 @@ Plans
 - Definir, remover ou ajustar relações sequenciais/paralelas — US-09.
 - Aninhar / desaninhar tarefas — US-10.
 - Executar plano via AIs, cancelar, retry — US-11.
-- Abrir Editor FOP → TELA-05; Editor máquina → TELA-06; Exportar → TELA-07.
-- Abrir detalhe da unidade → TELA-03.
+- Definir/ligar/remover artefatos FOP; validar plano — US-12, US-19.
+- Programar e executar tarefa máquina — US-13.
+- Compilar FOP-IR e exportar TypeScript/Python — US-14.
+- Abrir detalhe da unidade → TELA-02.
 
 ### Navegação
 
 - Menu **Gantt**.
+- FOP, máquina e exportação ficam **na mesma tela** (painéis, abas ou modos do Gantt).
 - Troca de visão para Board / Árvore / Explorar na mesma unidade.
 
 ---
 
-## TELA-05 — Editor FOP
-
-- **Personas:** Modelador de fluxo
-- **Objetivo:** Modelar o roteiro como estado (entradas/saídas) + procedimentos, com validação para exportação.
-
-### Conteúdo
-
-- **Canvas / lista do fluxo** do plano selecionado.
-- **Artefatos de estado:** entradas e saídas (nome + referência) por tarefa/procedimento.
-- **Ligações** saída → entrada evidentes no fluxo.
-- **Estruturas:** sequência, paralelo, seleção (condicional), repetição — US-19.
-- **Camadas** e indicação de **contexto** completo/incompleto.
-- **Validação:** avisos (órfãos) e bloqueios (ciclo de estado).
-
-### Ações
-
-- Definir, editar e remover entradas/saídas.
-- Ligar / desligar artefatos entre tarefas.
-- Compor seleção e repetição no roteiro.
-- Validar plano (aviso órfãos; bloqueio ciclo).
-- Ir para Exportar → TELA-07 quando consistente.
-
-### Navegação
-
-- Acessível a partir do Plano / Gantt (TELA-04).
-- Retorno ao Gantt mantendo o plano selecionado.
-
----
-
-## TELA-06 — Editor máquina
-
-- **Personas:** Modelador de fluxo
-- **Objetivo:** Programar e executar tarefa com responsável máquina como linguagem no Gantt.
-
-### Conteúdo
-
-- **Editor** da tarefa máquina: bibliotecas v1 (`stdio`, `fs`, `http`), loops `for` / `while`, estados entrada/saída.
-- **Feedback** de sintaxe / libs fora do conjunto v1.
-- **Resultado da execução:** saídas atualizadas e status de conclusão.
-
-### Ações
-
-- Editar e salvar programa (rejeitar inválido ou fora de v1).
-- Executar tarefa máquina.
-- Associar/atualizar entradas e saídas do procedimento.
-- Voltar ao Gantt ou Detalhe da unidade.
-
-### Navegação
-
-- Disponível apenas quando o responsável da tarefa é **máquina**.
-- Entrada pelo Gantt (TELA-04) ou Árvore (procedimento — TELA-08).
-
----
-
-## TELA-07 — Exportar código
-
-- **Personas:** Modelador de fluxo
-- **Objetivo:** Compilar o plano em FOP-IR e exportar TypeScript ou Python.
-
-### Conteúdo
-
-- **Plano selecionado** e status de consistência (ciclo bloqueia; órfãos avisam).
-- **Opções:** gerar FOP-IR; exportar TypeScript; exportar Python; exportar direto (equivalente via IR).
-- **Avisos e erros** da validação/exportação.
-- **Pré-visualização** ou download do artefato gerado.
-
-### Ações
-
-- Compilar FOP-IR.
-- Exportar para TypeScript ou Python.
-- Rejeitar destinos não suportados em v1.
-- Baixar / copiar artefato quando a operação completa.
-
-### Navegação
-
-- Acessível a partir do Gantt (TELA-04) e do Editor FOP (TELA-05).
-
----
-
-## TELA-08 — Árvore de execução
+## TELA-04 — Árvore de execução
 
 - **Personas:** Condutor de projetos
 - **Objetivo:** Ver a floresta de atividades, responsáveis e hierarquia infinita fora do eixo temporal.
@@ -259,18 +160,18 @@ Plans
 - Criar atividade raiz ou filha (título obrigatório).
 - Desaninhar / reorganizar pais (sem ciclos).
 - Excluir atividade (subárvore deixa de aparecer como ativa).
-- Atribuir responsável → TELA-03 / US-02.
-- Editar procedimento máquina → alinhado a TELA-06 (escopo árvore).
+- Atribuir responsável → TELA-02 / US-02.
+- Editar procedimento máquina (escopo árvore; detalhe completo no Gantt — TELA-03).
 - Abrir no Board / Gantt / Explorar.
 
 ### Navegação
 
 - Menu **Árvore**.
-- Drill para detalhe da unidade → TELA-03.
+- Drill para detalhe da unidade → TELA-02.
 
 ---
 
-## TELA-09 — Explorar (lista e navegação)
+## TELA-05 — Explorar (lista e navegação)
 
 - **Personas:** Organizador, condutor de projetos
 - **Objetivo:** Percorrer unidades persistidas como arquivos, com busca e profundidade.
@@ -286,24 +187,24 @@ Plans
 
 - Buscar e filtrar por título.
 - Entrar/sair de níveis; saltar via breadcrumb.
-- Abrir detalhe do arquivo → TELA-10.
+- Abrir detalhe do arquivo → TELA-06.
 - Abrir a mesma unidade no Board, Gantt ou Árvore — US-17.
 
 ### Navegação
 
-- Menu **Explorar**.
+- Entrada **transversal** no rodapé da navegação (Explorar).
 - Lista vazia permanece utilizável (criar / voltar).
 
 ---
 
-## TELA-10 — Detalhe do arquivo no Explorar
+## TELA-06 — Detalhe do arquivo no Explorar
 
 - **Personas:** Organizador
 - **Objetivo:** Consultar a unidade persistida como arquivo e espelhar o ciclo de vida.
 
 ### Conteúdo
 
-- Mesmos campos canônicos da TELA-03 (UUID, título, contexto, responsável, saídas).
+- Mesmos campos canônicos da TELA-02 (UUID, título, contexto, responsável, saídas).
 - Metadados de persistência / arquivamento.
 - Atalhos para as outras visões da mesma unidade.
 
@@ -315,12 +216,12 @@ Plans
 
 ### Navegação
 
-- A partir da lista do Explorar (TELA-09).
+- A partir da lista do Explorar (TELA-05).
 - Equivalente visual ao detalhe transversal, rotulado como **arquivo**.
 
 ---
 
-## TELA-11 — Catálogo de responsáveis
+## TELA-07 — Catálogo de responsáveis
 
 - **Personas:** Administrador do projeto
 - **Objetivo:** Controlar quem pode ser atribuído como pessoa, IA ou máquina.
@@ -338,8 +239,8 @@ Plans
 
 ### Navegação
 
-- Menu **Configurações**.
-- Usado indiretamente por TELA-03 (atribuição).
+- Entrada **transversal** no rodapé da navegação, **abaixo do Explorar**.
+- Usado indiretamente por TELA-02 (atribuição).
 
 ---
 
@@ -347,7 +248,15 @@ Plans
 
 ### Detalhe da unidade
 
-Painel/drawer compartilhado (TELA-03) que garante **uma unidade / um UUID** ao trocar de Board, Gantt, Árvore ou Explorar — US-01, US-02.
+Painel/drawer compartilhado (TELA-02) que garante **uma unidade / um UUID** ao trocar de Board, Gantt, Árvore ou Explorar — US-01, US-02.
+
+### Explorar
+
+Área transversal na **parte inferior** da navegação: lista/busca/drill-down (TELA-05) e detalhe do arquivo (TELA-06). Acessível a partir de Board, Gantt e Árvore — US-17, US-18.
+
+### Configurações
+
+Ficam **abaixo do Explorar** na navegação. Em v1: catálogo de responsáveis (TELA-07) — US-03.
 
 ### Troca de visão
 

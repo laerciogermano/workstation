@@ -80,6 +80,12 @@ textarea {
   padding: 0.75rem 0;
 }
 
+.sidebar-nav-bottom {
+  flex: 0;
+  border-top: 1px solid #374151;
+  padding-bottom: 1rem;
+}
+
 .nav-group-title {
   padding: 0.75rem 1rem 0.35rem;
   font-size: 0.7rem;

@@ -1,28 +1,95 @@
 import { useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { columns, lanes, responsibleById, units } from '../../data/mockData';
+import { columns as seedColumns, lanes as seedLanes, responsibleById, units } from '../../data/mockData';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { Badge } from '../../components/ui/Badge';
+import { Panel } from '../../components/ui/Panel';
 import { UnitDrawer } from '../../components/ui/UnitDrawer';
 
 export function BoardPage() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [showConfig, setShowConfig] = useState(false);
   const [title, setTitle] = useState('');
   const [context, setContext] = useState('');
+  const [cols, setCols] = useState(seedColumns.map((c) => ({ ...c })));
+  const [laneList, setLaneList] = useState(seedLanes.map((l) => ({ ...l })));
   const active = useMemo(() => units.filter((u) => !u.archived), []);
   const selected = units.find((u) => u.id === selectedId) ?? null;
+  const cardsIn = (columnId: string) => units.filter((u) => !u.archived && u.columnId === columnId).length;
 
   return (
     <div>
       <PageHeader
         title="Board"
-        subtitle="Mesma unidade como card — colunas × raias, hierarquia e execução de IA."
+        subtitle="Mesma unidade como card — colunas × raias, hierarquia, execução de IA e configuração do board."
         actions={
-          <Link className="btn ghost" to="/board/config">
-            Configurar colunas e raias
-          </Link>
+          <button type="button" className="btn ghost" onClick={() => setShowConfig((v) => !v)}>
+            {showConfig ? 'Fechar configuração' : 'Configurar colunas e raias'}
+          </button>
         }
       />
+
+      {showConfig ? (
+        <div className="grid-2" style={{ marginBottom: '1rem' }}>
+          <Panel title="Colunas">
+            <ul className="config-list">
+              {cols
+                .slice()
+                .sort((a, b) => a.order - b.order)
+                .map((col) => {
+                  const count = cardsIn(col.id);
+                  return (
+                    <li key={col.id}>
+                      <input
+                        value={col.name}
+                        onChange={(e) =>
+                          setCols((all) => all.map((c) => (c.id === col.id ? { ...c, name: e.target.value } : c)))
+                        }
+                      />
+                      <label className="check">
+                        <input
+                          type="checkbox"
+                          checked={col.execution}
+                          onChange={(e) =>
+                            setCols((all) =>
+                              all.map((c) => (c.id === col.id ? { ...c, execution: e.target.checked } : c)),
+                            )
+                          }
+                        />
+                        execução
+                      </label>
+                      {count > 0 ? <Badge tone="warn">{count} cards</Badge> : <Badge tone="ok">vazia</Badge>}
+                      <button type="button" className="btn ghost" disabled={count > 0}>
+                        Remover
+                      </button>
+                    </li>
+                  );
+                })}
+            </ul>
+          </Panel>
+          <Panel title="Raias">
+            <ul className="config-list">
+              {laneList
+                .slice()
+                .sort((a, b) => a.order - b.order)
+                .map((lane) => (
+                  <li key={lane.id}>
+                    <input
+                      value={lane.name}
+                      onChange={(e) =>
+                        setLaneList((all) =>
+                          all.map((l) => (l.id === lane.id ? { ...l, name: e.target.value } : l)),
+                        )
+                      }
+                    />
+                    <button type="button" className="btn ghost">
+                      Remover
+                    </button>
+                  </li>
+                ))}
+            </ul>
+          </Panel>
+        </div>
+      ) : null}
 
       <div className="panel" style={{ marginBottom: '1rem' }}>
         <div className="panel-body row gap wrap">
@@ -45,7 +112,7 @@ export function BoardPage() {
       </div>
 
       <div className="kanban">
-        {columns
+        {cols
           .slice()
           .sort((a, b) => a.order - b.order)
           .map((col) => (
@@ -54,7 +121,7 @@ export function BoardPage() {
                 <strong>{col.name}</strong>
                 {col.execution ? <Badge tone="exec">execução</Badge> : null}
               </div>
-              {lanes
+              {laneList
                 .slice()
                 .sort((a, b) => a.order - b.order)
                 .map((lane) => {

@@ -259,7 +259,7 @@ Transversais
 |------------|------|-------|
 | **Visões** (seletor de tipo) | Navegação | Transversal **acima** do conteúdo; navega Board · Gantt · Árvore |
 | Área de conteúdo da tela ativa | Canvas | TELA-01 / TELA-03 / TELA-04 abaixo das Visões |
-| Painel Explorar (rodapé da nav) | Navegação | Sempre visível (estilo IDE) |
+| Painel Explorar (rodapé da nav) | Navegação | Fixo; altura da viewport; overflow V/H na árvore |
 | Breadcrumb / título da tela | Navegação | Telas internas |
 | Cabeçalho com persona | Navegação | Todas |
 
@@ -282,9 +282,10 @@ Transversais
 
 | Componente | Tipo | Onde |
 |------------|------|------|
-| Painel Explorar | Navegação | Layout global |
+| Painel Explorar | Navegação | Layout global; **fixo**; altura da **viewport** |
+| Área da árvore (scroll) | Árvore | **Overflow vertical e horizontal** dentro do painel |
 | Lista em árvore (embutida) | Árvore | **Componente** dentro do Explorar; sempre visível; drill-down infinito; **não** é tela |
-| Título do nó | Indicador | **Sempre legível** em qualquer profundidade; indentação limitada + scroll horizontal se necessário |
+| Título do nó | Indicador | **Sempre legível** em qualquer profundidade; indentação limitada |
 | Badge / meta arquivado | Indicador | Nó da árvore (não substitui o título) |
 | Empty state | Indicador | Árvore vazia utilizável |
 

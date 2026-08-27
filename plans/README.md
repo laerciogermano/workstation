@@ -188,4 +188,5 @@ Detalhamento operacional que épicos e stories devem respeitar. Não redefine a 
 
 - Múltiplas raízes permitidas.
 - Explorar: painel estilo IDE; lista em **árvore** embutida (não é tela); drill-down infinito; Configurações fixas embaixo.
-- **Título sempre legível** em qualquer profundidade (incl. >20 níveis): indentação não pode ocultar o texto; scroll horizontal no painel da árvore quando necessário.
+- Explorar **fixo**, altura da **viewport**, com **overflow vertical e horizontal** na área da árvore.
+- **Título sempre legível** em qualquer profundidade (incl. >20 níveis): indentação não pode ocultar o texto.

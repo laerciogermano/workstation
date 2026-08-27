@@ -269,9 +269,10 @@ Como **organizador**, quero **ver os arquivos numa lista em árvore (componente 
 
 ### Cenários
 
+- [ ] Dado que uso o sistema, quando consulto o Explorar, então o painel está **fixo**, com **altura da viewport**, e a árvore tem **overflow vertical e horizontal**.
 - [ ] Dado que existem unidades, quando uso o sistema, então a lista em árvore do painel Explorar está ordenada por **título** em cada nível (componente embutido, não uma tela).
 - [ ] Dado que há aninhamento, quando faço drill-down (expandir/recolher) no Explorar, então entro/saio dos níveis sem limite de profundidade.
-- [ ] Dado uma cadeia com **mais de 20 níveis**, quando expandida no Explorar, então o **título de cada nó permanece legível** (indentação não oculta o texto; scroll horizontal permitido).
+- [ ] Dado uma cadeia com **mais de 20 níveis**, quando expandida no Explorar, então o **título de cada nó permanece legível** (indentação não oculta o texto; scroll do painel permitido).
 - [ ] Dado que peço abrir no Explorar a partir de outra visão, quando a ação conclui, então o arquivo é revelado/destacado na lista em árvore do painel (sem abrir tela de detalhe).
 - [ ] Dado que a árvore está vazia, quando navego, então o sistema informa ausência / árvore vazia utilizável.
 

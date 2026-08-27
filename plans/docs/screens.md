@@ -25,7 +25,7 @@ Plans
 
 - **Visões** — componente transversal **acima do conteúdo das telas**: seletor/navegação entre os tipos Board, Gantt e Árvore; a tela ativa preenche a área abaixo. Não é uma tela em si — US-01.
 - **Detalhe da unidade** (drawer/painel) — acessível a partir de Board, Gantt e Árvore; mesma entidade (UUID), vocabulário por visão — US-01, US-02.
-- **Explorar** — painel transversal (como o explorador de arquivos de uma IDE): a **lista em árvore não é uma tela**; é um **componente** já visível dentro do Explorar, com drill-down infinito. Persistência como arquivos; **sem** detalhe de arquivo.
+- **Explorar** — painel transversal (como o explorador de arquivos de uma IDE): a **lista em árvore não é uma tela**; é um **componente** já visível dentro do Explorar, com drill-down infinito. Persistência como arquivos; **sem** detalhe de arquivo. Painel **fixo**, com **altura da viewport** e **overflow vertical e horizontal**.
 - **Configurações** — faixa **fixa embaixo** do Explorar; em v1 o catálogo de responsáveis.
 
 ---
@@ -213,7 +213,8 @@ Painel sempre presente na navegação, no padrão de um **explorador de IDE** �
 
 - A **lista em árvore não é uma tela**: é um **componente embutido** no próprio Explorar, já visível ao usar o sistema.
 - Drill-down infinito (expandir/recolher); ordenação por título em cada nível; arquivos arquivados acessíveis.
-- **Título sempre legível:** em qualquer profundidade (incluindo cadeias com dezenas de níveis), o **título do nó permanece visível**. A indentação não pode “empurrar” nem encolher o texto até sumir; níveis muito profundos usam indentação limitada e/ou **scroll horizontal** no painel da árvore.
+- **Layout fixo:** o painel Explorar é **fixo** na interface, com **altura igual à da tela (viewport)**; a área da árvore usa **overflow vertical e horizontal** (scroll em ambos os eixos quando o conteúdo excede).
+- **Título sempre legível:** em qualquer profundidade (incluindo cadeias com dezenas de níveis), o **título do nó permanece visível**. A indentação não pode “empurrar” nem encolher o texto até sumir; níveis muito profundos usam indentação limitada e o scroll horizontal do painel.
 - Sem detalhe de arquivo nesta superfície; atalhos levam à unidade no Board, Gantt ou Árvore.
 
 ### Configurações

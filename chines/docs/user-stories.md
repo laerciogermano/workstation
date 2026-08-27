@@ -9,6 +9,13 @@ Histórias derivadas dos documentos em [`../inputs/`](../inputs/):
 
 Apenas a descrição no formato **Como… quero… para…**. Cenários BDD: [`bdd.md`](bdd.md). Telas: [`screens.md`](screens.md).
 
+## Personas
+
+| Persona | Papel | Histórias |
+|---------|-------|-----------|
+| **Analista comercial** | Opera o monitoramento no dia a dia: cadastra produtos e parceiros, acompanha anúncios e ocorrências, conduz cobranças e usa relatórios operacionais. | US-01, US-02, US-04, US-06, US-07, US-08, US-09, US-10, US-11, US-12, US-13, US-15, US-16, US-17, US-18, US-20, US-23 |
+| **Gestor comercial** | Configura a plataforma, define regras de PMA, acompanha indicadores consolidados e conformidade dos revendedores. | US-03, US-05, US-14, US-19, US-21, US-22 |
+
 ---
 
 ## US-01 — Cadastrar produtos

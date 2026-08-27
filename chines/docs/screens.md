@@ -62,14 +62,11 @@ Dashboard
 | TELA-17 — Ranking de conformidade | US-22, US-23 |
 | TELA-18 — Log de varreduras | US-04, US-05 |
 | Exportação (transversal) | US-23 |
+| Notificações in-app (transversal) | US-12, US-13, US-20 |
 
 ---
 
 ## TELA-01 — Dashboard
-
-### Histórias contempladas
-
-- **US-14 — Painel administrativo**
 
 | | |
 |---|---|
@@ -96,12 +93,6 @@ Dashboard
 ---
 
 ## TELA-02 — Lista de produtos
-
-### Histórias contempladas
-
-- **US-01 — Cadastrar produtos**
-- **US-05 — Configurar frequência de monitoramento**
-- **US-23 — Exportar dados filtrados**
 
 | | |
 |---|---|
@@ -131,11 +122,6 @@ Dashboard
 
 ## TELA-03 — Cadastro / edição de produto
 
-### Histórias contempladas
-
-- **US-01 — Cadastrar produtos**
-- **US-05 — Configurar frequência de monitoramento**
-
 | | |
 |---|---|
 | **Personas** | Analista comercial |
@@ -164,10 +150,6 @@ Dashboard
 
 ## TELA-04 — Importação da central de dados
 
-### Histórias contempladas
-
-- **US-02 — Importar e atualizar a central de dados**
-
 | | |
 |---|---|
 | **Personas** | Analista comercial |
@@ -194,10 +176,6 @@ Dashboard
 
 ## TELA-05 — Canais de monitoramento
 
-### Histórias contempladas
-
-- **US-03 — Configurar canais de monitoramento**
-
 | | |
 |---|---|
 | **Personas** | Gestor comercial |
@@ -222,11 +200,6 @@ Dashboard
 ---
 
 ## TELA-06 — Regras de PMA e exceções
-
-### Histórias contempladas
-
-- **US-06 — Aplicar PMA por canal e modalidade**
-- **US-19 — Regras de PMA e exceções**
 
 | | |
 |---|---|
@@ -255,12 +228,6 @@ Dashboard
 
 ## TELA-07 — Relatórios, alertas e advertências
 
-### Histórias contempladas
-
-- **US-12 — Relatório periódico de irregularidades**
-- **US-13 — Alertas de irregularidade**
-- **US-21 — Advertência automática ao revendedor**
-
 | | |
 |---|---|
 | **Personas** | Gestor comercial, analista comercial |
@@ -286,15 +253,6 @@ Dashboard
 ---
 
 ## TELA-08 — Anúncios coletados
-
-### Histórias contempladas
-
-- **US-04 — Pesquisa automática de anúncios**
-- **US-07 — Identificar anúncios coletados**
-- **US-08 — Validar match e evitar falsos positivos**
-- **US-09 — Comparar preço com o PMA**
-- **US-11 — Vincular anúncio ao parceiro ou sinalizar canal paralelo**
-- **US-23 — Exportar dados filtrados**
 
 | | |
 |---|---|
@@ -322,14 +280,6 @@ Dashboard
 ---
 
 ## TELA-09 — Detalhe do anúncio
-
-### Histórias contempladas
-
-- **US-06 — Aplicar PMA por canal e modalidade**
-- **US-07 — Identificar anúncios coletados**
-- **US-08 — Validar match e evitar falsos positivos**
-- **US-09 — Comparar preço com o PMA**
-- **US-11 — Vincular anúncio ao parceiro ou sinalizar canal paralelo**
 
 | | |
 |---|---|
@@ -360,12 +310,6 @@ Dashboard
 
 ## TELA-10 — Mapeamento de preços (visão consolidada)
 
-### Histórias contempladas
-
-- **US-09 — Comparar preço com o PMA**
-- **US-15 — Visão consolidada de preços no mercado**
-- **US-23 — Exportar dados filtrados**
-
 | | |
 |---|---|
 | **Personas** | Analista comercial, gestor comercial |
@@ -395,11 +339,6 @@ Dashboard
 
 ## TELA-11 — Histórico de pesquisas e preços
 
-### Histórias contempladas
-
-- **US-16 — Histórico de pesquisas e preços**
-- **US-23 — Exportar dados filtrados**
-
 | | |
 |---|---|
 | **Personas** | Analista comercial, gestor comercial |
@@ -427,13 +366,6 @@ Dashboard
 
 ## TELA-12 — Lista de ocorrências
 
-### Histórias contempladas
-
-- **US-10 — Registrar ocorrências de violação**
-- **US-11 — Vincular anúncio ao parceiro ou sinalizar canal paralelo**
-- **US-20 — Controle de advertências e cobrança**
-- **US-23 — Exportar dados filtrados**
-
 | | |
 |---|---|
 | **Personas** | Analista comercial, gestor comercial |
@@ -460,13 +392,6 @@ Dashboard
 ---
 
 ## TELA-13 — Detalhe da ocorrência
-
-### Histórias contempladas
-
-- **US-10 — Registrar ocorrências de violação**
-- **US-17 — Evidências das ocorrências**
-- **US-20 — Controle de advertências e cobrança**
-- **US-21 — Advertência automática ao revendedor**
 
 | | |
 |---|---|
@@ -499,12 +424,6 @@ Dashboard
 
 ## TELA-14 — Lista de parceiros
 
-### Histórias contempladas
-
-- **US-11 — Vincular anúncio ao parceiro ou sinalizar canal paralelo**
-- **US-18 — Cadastrar empresas e revendedores**
-- **US-23 — Exportar dados filtrados**
-
 | | |
 |---|---|
 | **Personas** | Analista comercial |
@@ -530,10 +449,6 @@ Dashboard
 ---
 
 ## TELA-15 — Cadastro / edição de parceiro
-
-### Histórias contempladas
-
-- **US-18 — Cadastrar empresas e revendedores**
 
 | | |
 |---|---|
@@ -562,10 +477,6 @@ Dashboard
 
 ## TELA-16 — Vendedores não cadastrados
 
-### Histórias contempladas
-
-- **US-11 — Vincular anúncio ao parceiro ou sinalizar canal paralelo**
-
 | | |
 |---|---|
 | **Personas** | Analista comercial, gestor comercial |
@@ -592,11 +503,6 @@ Dashboard
 ---
 
 ## TELA-17 — Ranking de conformidade
-
-### Histórias contempladas
-
-- **US-22 — Ranking de conformidade por distribuidor**
-- **US-23 — Exportar dados filtrados**
 
 | | |
 |---|---|
@@ -626,11 +532,6 @@ Dashboard
 
 ## TELA-18 — Log de varreduras
 
-### Histórias contempladas
-
-- **US-04 — Pesquisa automática de anúncios**
-- **US-05 — Configurar frequência de monitoramento**
-
 | | |
 |---|---|
 | **Personas** | Analista comercial, gestor comercial |
@@ -659,8 +560,6 @@ Dashboard
 
 ### Exportação
 
-**Histórias contempladas:** US-23 — Exportar dados filtrados
-
 Disponível nas telas de lista (TELA-02, TELA-08, TELA-10, TELA-11, TELA-12, TELA-14, TELA-17):
 
 - **Modal ou drawer** com filtros ativos herdados da tela.
@@ -669,37 +568,6 @@ Disponível nas telas de lista (TELA-02, TELA-08, TELA-10, TELA-11, TELA-12, TEL
 
 ### Notificações in-app
 
-**Histórias contempladas:** US-12 — Relatório periódico de irregularidades · US-13 — Alertas de irregularidade · US-20 — Controle de advertências e cobrança
-
 - Badge no menu para ocorrências novas, prazos vencidos e falhas de varredura.
 - Centro de notificações com link direto para TELA-13 ou TELA-18.
 
----
-
-## Matriz história → tela
-
-| História | Telas |
-|----------|-------|
-| US-01 — Cadastrar produtos | TELA-02, TELA-03 |
-| US-02 — Importar e atualizar a central de dados | TELA-04 |
-| US-03 — Configurar canais de monitoramento | TELA-05 |
-| US-04 — Pesquisa automática de anúncios | TELA-08, TELA-18 |
-| US-05 — Configurar frequência de monitoramento | TELA-02, TELA-03, TELA-18 |
-| US-06 — Aplicar PMA por canal e modalidade | TELA-06, TELA-09 |
-| US-07 — Identificar anúncios coletados | TELA-08, TELA-09 |
-| US-08 — Validar match e evitar falsos positivos | TELA-08, TELA-09 |
-| US-09 — Comparar preço com o PMA | TELA-08, TELA-09, TELA-10 |
-| US-10 — Registrar ocorrências de violação | TELA-12, TELA-13 |
-| US-11 — Vincular anúncio ao parceiro ou sinalizar canal paralelo | TELA-08, TELA-09, TELA-12, TELA-14, TELA-16 |
-| US-12 — Relatório periódico de irregularidades | TELA-07, notificações |
-| US-13 — Alertas de irregularidade | TELA-07, notificações |
-| US-14 — Painel administrativo | TELA-01 |
-| US-15 — Visão consolidada de preços no mercado | TELA-10 |
-| US-16 — Histórico de pesquisas e preços | TELA-11 |
-| US-17 — Evidências das ocorrências | TELA-13 |
-| US-18 — Cadastrar empresas e revendedores | TELA-14, TELA-15 |
-| US-19 — Regras de PMA e exceções | TELA-06 |
-| US-20 — Controle de advertências e cobrança | TELA-12, TELA-13, notificações |
-| US-21 — Advertência automática ao revendedor | TELA-07, TELA-13 |
-| US-22 — Ranking de conformidade por distribuidor | TELA-17 |
-| US-23 — Exportar dados filtrados | TELA-02, TELA-08, TELA-10, TELA-11, TELA-12, TELA-14, TELA-17 |

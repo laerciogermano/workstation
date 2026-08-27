@@ -13,14 +13,14 @@ Plans
 ├── Explorar (painel transversal — estilo explorador de IDE)
 │   ├── Lista em árvore (componente embutido, sempre visível)
 │   └── Configurações (fixo embaixo)
-│       └── TELA-05 — Catálogo de responsáveis
+│       └── Catálogo de responsáveis
 │
 └── Área de conteúdo (ao lado do Explorar)
     ├── Visões (fixo no topo, centralizado — não fica no Explorar)
-    │   ├── TELA-01 — Board (kanban + configuração de colunas e raias)
-    │   ├── TELA-03 — Gantt (plano / Gantt)
-    │   └── TELA-04 — Árvore de execução
-    └── TELA-02 — Detalhe da unidade (drawer transversal)
+    │   ├── Board (kanban + configuração de colunas e raias)
+    │   ├── Gantt (plano / Gantt)
+    │   └── Árvore de execução
+    └── Detalhe da unidade (drawer transversal)
 ```
 
 **Transversais:**

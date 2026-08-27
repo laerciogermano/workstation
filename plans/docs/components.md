@@ -6,10 +6,34 @@ Legenda de tipos: **Filtro** · **Tabela** · **Card** · **Formulário** · **L
 
 ---
 
+## Mapa de navegação
+
+Espelha [`screens.md`](screens.md): estrutura de chrome e superfícies onde os componentes vivem.
+
+```
+Plans
+├── Visões (componente transversal — acima das telas)
+│   ├── Board → TELA-01
+│   ├── Gantt → TELA-03
+│   └── Árvore de execução → TELA-04
+│
+├── Detalhe da unidade (drawer transversal) → TELA-02
+│
+└── Explorar (painel transversal — estilo explorador de IDE)
+    ├── Lista em árvore (componente embutido, sempre visível)
+    └── Configurações (fixo embaixo)
+        └── Catálogo de responsáveis → TELA-05
+```
+
+**Transversais (componentes, não telas próprias):** Visões · Detalhe da unidade · Explorar (lista em árvore) · Configurações · Troca de visão.
+
+---
+
 ## Índice
 
 | Tela | Componentes |
 |------|-------------|
+| [Mapa de navegação](#mapa-de-navegação) | Visões · telas · Explorar · Configurações |
 | [TELA-01](#tela-01--board-kanban) | grade kanban, cards, config colunas/raias, hierarquia, status IA |
 | [TELA-02](#tela-02--detalhe-da-unidade) | drawer identidade, formulário, responsável, ciclo de vida, troca de visão |
 | [TELA-03](#tela-03--plano--gantt) | eixo temporal, FOP, máquina, exportação, dependências, AIs |
@@ -20,6 +44,28 @@ Legenda de tipos: **Filtro** · **Tabela** · **Card** · **Formulário** · **L
 ---
 
 ## TELA-01 — Board (kanban)
+
+### Mapa de componentes
+
+```
+TELA-01 Board
+├── Visões (transversal — acima)
+├── Grade kanban
+│   ├── Colunas × raias
+│   ├── Card de unidade
+│   │   ├── Badge responsável
+│   │   ├── Badge status IA
+│   │   └── Indicação pai/filho
+│   ├── Formulário novo card
+│   ├── Drag-and-drop
+│   └── Ações de hierarquia
+├── Painel configurar board
+│   ├── Lista ordenável colunas/raias
+│   ├── Toggle coluna de execução
+│   └── Remoção (bloqueio / aviso)
+├── Abrir detalhe → TELA-02
+└── Atalhos de visão → Gantt / Árvore / Explorar
+```
 
 | Componente | Tipo | Descrição |
 |------------|------|-----------|
@@ -42,6 +88,22 @@ Legenda de tipos: **Filtro** · **Tabela** · **Card** · **Formulário** · **L
 
 ## TELA-02 — Detalhe da unidade
 
+### Mapa de componentes
+
+```
+TELA-02 Detalhe da unidade (drawer transversal)
+├── Cabeçalho identidade (UUID + rótulo da visão)
+├── Formulário título e contexto
+├── Seletor de responsável (← catálogo TELA-05)
+├── Lista de saídas / artefatos
+├── Ciclo de vida
+│   ├── Badge ativa / arquivada
+│   ├── Arquivar / desarquivar
+│   └── Excluir (confirmação)
+├── Grupo troca de visão → Board / Gantt / Árvore / Explorar
+└── Indicador merge indisponível (v1)
+```
+
 | Componente | Tipo | Descrição |
 |------------|------|-----------|
 | Drawer / painel lateral | Drawer | Sobreposto às visões principais |
@@ -58,6 +120,33 @@ Legenda de tipos: **Filtro** · **Tabela** · **Card** · **Formulário** · **L
 ---
 
 ## TELA-03 — Plano / Gantt
+
+### Mapa de componentes
+
+```
+TELA-03 Plano / Gantt
+├── Visões (transversal — acima)
+├── Seletor de plano + barra de ações
+├── Abas / modos
+│   ├── Tempo
+│   │   ├── Eixo temporal
+│   │   ├── Lista sem datas
+│   │   ├── Dependências (sequencial / paralelo)
+│   │   ├── Hierarquia + roll-up
+│   │   └── Executar / cancelar / retry AIs
+│   ├── FOP
+│   │   ├── Canvas FOP
+│   │   ├── Artefatos de estado
+│   │   └── Validação (órfãos / ciclo / contexto)
+│   ├── Máquina
+│   │   ├── Editor (libs v1, loops)
+│   │   └── Preview execução
+│   └── Exportar
+│       ├── Opções (FOP-IR / TS / Python)
+│       ├── Preview do artefato
+│       └── Copiar / baixar
+└── Abrir detalhe → TELA-02
+```
 
 | Componente | Tipo | Descrição |
 |------------|------|-----------|
@@ -86,6 +175,22 @@ Legenda de tipos: **Filtro** · **Tabela** · **Card** · **Formulário** · **L
 
 ## TELA-04 — Árvore de execução
 
+### Mapa de componentes
+
+```
+TELA-04 Árvore de execução
+├── Visões (transversal — acima)
+├── Floresta de atividades
+│   ├── Nós (múltiplas raízes, hierarquia infinita)
+│   ├── Label de responsável
+│   ├── Empty state
+│   ├── Formulário nova atividade
+│   └── Ações de hierarquia
+├── Editor de procedimento (se responsável = máquina)
+├── Abrir detalhe → TELA-02
+└── Atalhos de visão → Board / Gantt / Explorar
+```
+
 | Componente | Tipo | Descrição |
 |------------|------|-----------|
 | Floresta de atividades | Árvore | Múltiplas raízes e nós aninhados |
@@ -101,6 +206,23 @@ Legenda de tipos: **Filtro** · **Tabela** · **Card** · **Formulário** · **L
 
 ## TELA-05 — Catálogo de responsáveis
 
+### Mapa de componentes
+
+```
+TELA-05 Catálogo de responsáveis
+├── Entrada via Configurações (fixo sob Explorar)
+├── Abas por tipo
+│   ├── Pessoas
+│   ├── IAs
+│   └── Máquinas
+├── Tabela do catálogo
+│   ├── Identidade / tipo / em uso
+│   ├── Formulário incluir
+│   ├── Remover (bloqueio se em uso)
+│   └── Lista de unidades em uso
+└── Empty state por tipo
+```
+
 | Componente | Tipo | Descrição |
 |------------|------|-----------|
 | Abas por tipo | Seletor | Pessoas · IAs · Máquinas |
@@ -114,6 +236,22 @@ Legenda de tipos: **Filtro** · **Tabela** · **Card** · **Formulário** · **L
 ---
 
 ## Componentes transversais
+
+### Mapa de componentes
+
+```
+Transversais
+├── Visões (acima das telas)
+│   ├── Seletor Board · Gantt · Árvore
+│   ├── Indicador visão ativa
+│   └── Área de conteúdo da tela ativa
+├── Detalhe da unidade → TELA-02
+├── Explorar (painel IDE)
+│   ├── Lista em árvore (embutida; título sempre legível)
+│   └── Configurações (fixo)
+│       └── Catálogo → TELA-05
+└── Troca de visão (“Abrir no…” + UUID estável)
+```
 
 ### Layout global
 
@@ -146,7 +284,8 @@ Legenda de tipos: **Filtro** · **Tabela** · **Card** · **Formulário** · **L
 |------------|------|------|
 | Painel Explorar | Navegação | Layout global |
 | Lista em árvore (embutida) | Árvore | **Componente** dentro do Explorar; sempre visível; drill-down infinito; **não** é tela |
-| Badge / meta arquivado | Indicador | Nó da árvore |
+| Título do nó | Indicador | **Sempre legível** em qualquer profundidade; indentação limitada + scroll horizontal se necessário |
+| Badge / meta arquivado | Indicador | Nó da árvore (não substitui o título) |
 | Empty state | Indicador | Árvore vazia utilizável |
 
 ### Configurações (fixas embaixo do Explorar)

@@ -213,6 +213,7 @@ Painel sempre presente na navegação, no padrão de um **explorador de IDE** �
 
 - A **lista em árvore não é uma tela**: é um **componente embutido** no próprio Explorar, já visível ao usar o sistema.
 - Drill-down infinito (expandir/recolher); ordenação por título em cada nível; arquivos arquivados acessíveis.
+- **Título sempre legível:** em qualquer profundidade (incluindo cadeias com dezenas de níveis), o **título do nó permanece visível**. A indentação não pode “empurrar” nem encolher o texto até sumir; níveis muito profundos usam indentação limitada e/ou **scroll horizontal** no painel da árvore.
 - Sem detalhe de arquivo nesta superfície; atalhos levam à unidade no Board, Gantt ou Árvore.
 
 ### Configurações

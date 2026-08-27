@@ -24,7 +24,7 @@ function FileNode({
   const hasKids = kids.length > 0;
 
   return (
-    <div className="ide-tree-node" style={{ paddingLeft: depth * 10 }}>
+    <div className="ide-tree-node" style={{ paddingLeft: Math.min(depth, 12) * 8 }}>
       <div className="ide-tree-row">
         {hasKids ? (
           <button
@@ -36,10 +36,10 @@ function FileNode({
             {isOpen ? '▾' : '▸'}
           </button>
         ) : (
-          <span className="ide-tree-toggle spacer" />
+          <span className="ide-tree-toggle spacer" aria-hidden />
         )}
         <span className="ide-tree-label" title={unit.title}>
-          {unit.title}
+          {unit.title || '(sem título)'}
           {unit.archived ? <span className="ide-tree-meta"> · arq.</span> : null}
           {resp ? <span className="ide-tree-meta"> · {resp.type}</span> : null}
         </span>

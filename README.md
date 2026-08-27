@@ -9,5 +9,5 @@
 ### Esteira (Plans)
 
 ```text
-Inputs → Visão → Épicos → Histórias → Versões → Refinamento técnico
+Inputs → Visão → Histórias → BDD → Telas → Componentes → Protótipo
 ```

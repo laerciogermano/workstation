@@ -1,19 +1,12 @@
 # Plans — Documentação
 
 Derivados do [documento de visão](../README.md).  
-A visão incorpora os fundamentos em [`../inputs/`](../inputs/) (FOP).
+Fundamentos FOP: [`../inputs/`](../inputs/).
 
-## Esteira
-
-```text
-Inputs (FOP) → Visão → Épicos → Histórias → Versões → Refinamento técnico
-```
-
-| Etapa | Pasta / artefato |
-|-------|------------------|
-| Inputs | [`../inputs/`](../inputs/) |
-| Visão (negócio) | [`../README.md`](../README.md) |
-| Épicos | `epics/` |
-| Histórias | `stories/` |
-| Board / versões | `board/` |
-| Tech | [`tech/`](tech/) |
+| Artefato | Arquivo |
+|----------|---------|
+| Histórias de usuário | [`user-stories.md`](user-stories.md) |
+| Cenários BDD | [`bdd.md`](bdd.md) |
+| Telas | [`screens.md`](screens.md) |
+| Componentes | [`components.md`](components.md) |
+| Protótipo | [`prototype.html`](prototype.html) |

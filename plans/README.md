@@ -1,7 +1,7 @@
 # Plans — Documento de visão
 
 Fonte do *quê* e do *porquê* do produto.  
-Derivados: [`docs/`](docs/) (`epics` → `stories` → `board` → `tech`).  
+Derivados: [`docs/`](docs/) (`user-stories` → `bdd` → `screens` → `components` → `prototype`).  
 Fundamentos de fluxo: [`inputs/`](inputs/) (FOP — Flow Oriented Programming).
 
 ---

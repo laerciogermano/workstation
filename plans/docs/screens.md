@@ -10,20 +10,22 @@ Personas principais: **organizador**, **condutor de projetos**, **orquestrador**
 
 ```
 Plans
-├── Visões (componente transversal — acima das telas)
-│   ├── Board (kanban + configuração de colunas e raias)
-│   ├── Gantt (plano / Gantt)
-│   └── Árvore de execução
+├── Explorar (painel transversal — estilo explorador de IDE)
+│   ├── Lista em árvore (componente embutido, sempre visível)
+│   └── Configurações (fixo embaixo)
+│       └── TELA-05 — Catálogo de responsáveis
 │
-└── Explorar (painel transversal — estilo explorador de IDE)
-    ├── Lista em árvore (componente embutido, sempre visível)
-    └── Configurações (fixo embaixo)
-        └── Catálogo de responsáveis
+└── Área de conteúdo (ao lado do Explorar)
+    ├── Visões (fixo no topo, centralizado — não fica no Explorar)
+    │   ├── TELA-01 — Board (kanban + configuração de colunas e raias)
+    │   ├── TELA-03 — Gantt (plano / Gantt)
+    │   └── TELA-04 — Árvore de execução
+    └── TELA-02 — Detalhe da unidade (drawer transversal)
 ```
 
 **Transversais:**
 
-- **Visões** — componente transversal **acima do conteúdo das telas**: seletor/navegação entre os tipos Board, Gantt e Árvore; a tela ativa preenche a área abaixo. Não é uma tela em si — US-01.
+- **Visões** — componente transversal **ao lado do conteúdo das telas** (nunca no painel Explorar): menu **fixo na parte superior**, **centralizado**, para navegar entre Board, Gantt e Árvore; a tela ativa preenche a área abaixo. Não é uma tela em si — US-01.
 - **Detalhe da unidade** (drawer/painel) — acessível a partir de Board, Gantt e Árvore; mesma entidade (UUID), vocabulário por visão — US-01, US-02.
 - **Explorar** — painel transversal (como o explorador de arquivos de uma IDE): a **lista em árvore não é uma tela**; é um **componente** já visível dentro do Explorar, com drill-down infinito. Persistência como arquivos; **sem** detalhe de arquivo. Painel **fixo**, com **altura da viewport** e **overflow vertical e horizontal**.
 - **Configurações** — faixa **fixa embaixo** do Explorar; em v1 o catálogo de responsáveis.
@@ -39,7 +41,7 @@ Plans
 | TELA-03 — Plano / Gantt | US-08, US-09, US-10, US-11, US-12, US-13, US-14, US-19 |
 | TELA-04 — Árvore de execução | US-15, US-16 |
 | TELA-05 — Catálogo de responsáveis | US-03 |
-| Visões (transversal, acima das telas) | US-01 |
+| Visões (transversal, topo central da área de conteúdo) | US-01 |
 | Detalhe da unidade (transversal) | US-01, US-02 |
 | Explorar (painel transversal + lista em árvore) | US-17, US-18 |
 | Configurações (fixo sob Explorar) | US-03 |
@@ -195,12 +197,13 @@ Plans
 
 ## Componentes transversais
 
-### Visões (acima das telas)
+### Visões (ao lado do conteúdo, topo central)
 
-Componente transversal de **navegação entre tipos de visão**, posicionado **acima** da área de conteúdo das telas — US-01.
+Componente transversal de **navegação entre tipos de visão**, na **área de conteúdo** (ao lado do Explorar — **não** no painel Explorar) — US-01.
 
+- Posição: **fixo na parte superior**, **centralizado** sobre a área da tela ativa.
 - Tipos navegáveis: **Board**, **Gantt**, **Árvore de execução**.
-- Não é uma tela: é o chrome compartilhado; a tela ativa (TELA-01, TELA-03 ou TELA-04) renderiza **abaixo** do seletor.
+- Não é uma tela: é o chrome compartilhado da área de conteúdo; a tela ativa (TELA-01, TELA-03 ou TELA-04) renderiza **abaixo** do menu.
 - Trocar de tipo mantém o contexto do projeto; quando a ação parte de uma unidade, o UUID permanece o mesmo (ver Troca de visão).
 
 ### Detalhe da unidade
@@ -223,4 +226,4 @@ Painel sempre presente na navegação, no padrão de um **explorador de IDE** �
 
 ### Troca de visão
 
-Ações “Abrir no Board / Gantt / Árvore / Explorar” presentes nas telas e no detalhe; a entidade permanece a mesma — US-01, US-17. Complementa o seletor de **Visões** (acima das telas) quando a troca é pedida a partir de uma unidade. “Abrir no Explorar” revela/destaca o arquivo na lista em árvore do painel (não abre outra tela).
+Ações “Abrir no Board / Gantt / Árvore / Explorar” presentes nas telas e no detalhe; a entidade permanece a mesma — US-01, US-17. Complementa o menu de **Visões** (fixo no topo central da área de conteúdo) quando a troca é pedida a partir de uma unidade. “Abrir no Explorar” revela/destaca o arquivo na lista em árvore do painel (não abre outra tela).

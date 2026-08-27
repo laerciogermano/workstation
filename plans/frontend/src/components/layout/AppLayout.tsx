@@ -19,6 +19,8 @@ function titleFromPath(path: string) {
 
 export function AppLayout() {
   const { pathname } = useLocation();
+  const showViews = !pathname.startsWith('/configuracoes');
+
   return (
     <div className="app-shell">
       <aside className="sidebar">
@@ -26,19 +28,6 @@ export function AppLayout() {
           Plans
           <span>Intenção → roteiro acompanhável</span>
         </div>
-        <nav className="sidebar-nav">
-          <div className="nav-group-title">Visões</div>
-          {primaryNav.map((l) => (
-            <NavLink
-              key={l.to}
-              to={l.to}
-              end={l.end}
-              className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
-            >
-              {l.label}
-            </NavLink>
-          ))}
-        </nav>
         <div className="sidebar-explore">
           <div className="nav-group-title">Explorar</div>
           <ExploreTreePanel />
@@ -49,6 +38,22 @@ export function AppLayout() {
           <div className="breadcrumb">
             Plans · <strong>{titleFromPath(pathname)}</strong>
           </div>
+          {showViews ? (
+            <nav className="views-nav" aria-label="Visões">
+              {primaryNav.map((l) => (
+                <NavLink
+                  key={l.to}
+                  to={l.to}
+                  end={l.end}
+                  className={({ isActive }) => (isActive ? 'views-link active' : 'views-link')}
+                >
+                  {l.label}
+                </NavLink>
+              ))}
+            </nav>
+          ) : (
+            <div className="views-nav-spacer" />
+          )}
           <div className="topbar-actions">
             <span className="muted">Organizador</span>
           </div>

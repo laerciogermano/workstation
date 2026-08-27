@@ -12,20 +12,20 @@ Espelha [`screens.md`](screens.md): estrutura de chrome e superfícies onde os c
 
 ```
 Plans
-├── Visões (componente transversal — acima das telas)
-│   ├── Board → TELA-01
-│   ├── Gantt → TELA-03
-│   └── Árvore de execução → TELA-04
+├── Explorar (painel transversal — estilo explorador de IDE)
+│   ├── Lista em árvore (componente embutido, sempre visível)
+│   └── Configurações (fixo embaixo)
+│       └── TELA-05 — Catálogo de responsáveis
 │
-├── Detalhe da unidade (drawer transversal) → TELA-02
-│
-└── Explorar (painel transversal — estilo explorador de IDE)
-    ├── Lista em árvore (componente embutido, sempre visível)
-    └── Configurações (fixo embaixo)
-        └── Catálogo de responsáveis → TELA-05
+└── Área de conteúdo (ao lado do Explorar)
+    ├── Visões (fixo no topo, centralizado — não fica no Explorar)
+    │   ├── TELA-01 — Board (kanban)
+    │   ├── TELA-03 — Gantt (plano / Gantt)
+    │   └── TELA-04 — Árvore de execução
+    └── TELA-02 — Detalhe da unidade (drawer transversal)
 ```
 
-**Transversais (componentes, não telas próprias):** Visões · Detalhe da unidade · Explorar (lista em árvore) · Configurações · Troca de visão.
+**Transversais (componentes, não telas próprias):** Visões (topo central da área de conteúdo) · Detalhe · Explorar · Configurações · Troca de visão.
 
 ---
 
@@ -39,7 +39,7 @@ Plans
 | [TELA-03](#tela-03--plano--gantt) | eixo temporal, FOP, máquina, exportação, dependências, AIs |
 | [TELA-04](#tela-04--árvore-de-execução) | floresta, nós, responsáveis, procedimento máquina |
 | [TELA-05](#tela-05--catálogo-de-responsáveis) | abas por tipo, tabela catálogo, CRUD, bloqueio remoção |
-| [Transversais](#componentes-transversais) | Visões (acima das telas), detalhe, Explorar, configurações |
+| [Transversais](#componentes-transversais) | Visões (topo central do conteúdo), detalhe, Explorar, configurações |
 
 ---
 
@@ -49,7 +49,7 @@ Plans
 
 ```
 TELA-01 Board
-├── Visões (transversal — acima)
+├── Visões (fixo, topo central da área de conteúdo)
 ├── Grade kanban
 │   ├── Colunas × raias
 │   ├── Card de unidade
@@ -125,7 +125,7 @@ TELA-02 Detalhe da unidade (drawer transversal)
 
 ```
 TELA-03 Plano / Gantt
-├── Visões (transversal — acima)
+├── Visões (fixo, topo central da área de conteúdo)
 ├── Seletor de plano + barra de ações
 ├── Abas / modos
 │   ├── Tempo
@@ -179,7 +179,7 @@ TELA-03 Plano / Gantt
 
 ```
 TELA-04 Árvore de execução
-├── Visões (transversal — acima)
+├── Visões (fixo, topo central da área de conteúdo)
 ├── Floresta de atividades
 │   ├── Nós (múltiplas raízes, hierarquia infinita)
 │   ├── Label de responsável
@@ -241,15 +241,15 @@ TELA-05 Catálogo de responsáveis
 
 ```
 Transversais
-├── Visões (acima das telas)
-│   ├── Seletor Board · Gantt · Árvore
-│   ├── Indicador visão ativa
-│   └── Área de conteúdo da tela ativa
-├── Detalhe da unidade → TELA-02
-├── Explorar (painel IDE)
+├── Explorar (painel IDE — coluna lateral)
 │   ├── Lista em árvore (embutida; título sempre legível)
 │   └── Configurações (fixo)
 │       └── Catálogo → TELA-05
+├── Área de conteúdo
+│   ├── Visões (fixo, topo central — fora do Explorar)
+│   │   ├── Seletor Board · Gantt · Árvore
+│   │   └── Conteúdo da tela ativa abaixo
+│   └── Detalhe da unidade → TELA-02
 └── Troca de visão (“Abrir no…” + UUID estável)
 ```
 
@@ -257,17 +257,18 @@ Transversais
 
 | Componente | Tipo | Telas |
 |------------|------|-------|
-| **Visões** (seletor de tipo) | Navegação | Transversal **acima** do conteúdo; navega Board · Gantt · Árvore |
+| **Visões** (menu de tipo) | Navegação | **Ao lado** do conteúdo (não no Explorar); **fixo no topo**, **centralizado** |
 | Área de conteúdo da tela ativa | Canvas | TELA-01 / TELA-03 / TELA-04 abaixo das Visões |
-| Painel Explorar (rodapé da nav) | Navegação | Fixo; altura da viewport; overflow V/H na árvore |
-| Breadcrumb / título da tela | Navegação | Telas internas |
-| Cabeçalho com persona | Navegação | Todas |
+| Painel Explorar | Navegação | Coluna lateral fixa; altura da viewport; overflow V/H |
+| Breadcrumb / título da tela | Navegação | Área de conteúdo |
+| Cabeçalho com persona | Navegação | Área de conteúdo |
 
-### Visões (transversal, acima das telas) — US-01
+### Visões (transversal, topo central da área de conteúdo) — US-01
 
 | Componente | Tipo | Descrição |
 |------------|------|-----------|
-| Seletor / abas de visão | Navegação | Troca entre Board, Gantt e Árvore sem ser uma tela própria |
+| Menu de visões | Navegação | Fixo no topo, centralizado; **não** fica no Explorar |
+| Seletor Board · Gantt · Árvore | Navegação | Troca de tipo sem ser uma tela própria |
 | Indicador da visão ativa | Indicador | Qual tipo está preenchendo a área abaixo |
 | Persistência de contexto | Indicador | Projeto (e unidade, se houver) permanece ao trocar de tipo |
 

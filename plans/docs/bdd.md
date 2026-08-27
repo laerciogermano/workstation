@@ -291,3 +291,7 @@ Como **modelador de fluxo**, quero **compor estruturas de seleção (condicionai
 - [ ] Dado que o contexto de entradas (dados e funções) está **incompleto**, quando tento executar o fluxo, então a execução não inicia e o sistema indica o que falta.
 - [ ] Dado que o **contexto está completo**, quando executo o fluxo, então a execução ocorre conforme o roteiro.
 - [ ] Dado que troco o responsável tipado do plano, quando consulto o roteiro, então seleção, repetição, camadas e ligações de estado permanecem inalteradas.
+
+## Próximos passos
+
+→ [`screens.md`](screens.md)

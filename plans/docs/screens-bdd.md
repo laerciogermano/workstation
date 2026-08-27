@@ -304,3 +304,7 @@ Como **organizador**, quero **ver os arquivos numa lista em árvore (componente 
 - [ ] Dado uma cadeia com **mais de 20 níveis**, quando expandida no Explorar, então o **título de cada nó permanece legível** (indentação não oculta o texto; scroll do painel permitido).
 - [ ] Dado que peço abrir no Explorar a partir de outra visão, quando a ação conclui, então o arquivo é revelado/destacado na lista em árvore do painel (sem abrir tela de detalhe).
 - [ ] Dado que a árvore está vazia, quando navego, então o sistema informa ausência / árvore vazia utilizável.
+
+## Próximos passos
+
+→ [`components.md`](components.md)

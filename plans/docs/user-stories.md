@@ -95,3 +95,7 @@ Como **organizador**, quero **ver os arquivos numa lista em árvore (componente 
 ## US-19 — Seleção, repetição, camadas e contexto
 
 Como **modelador de fluxo**, quero **compor estruturas de seleção (condicionais) e repetição no roteiro do plano, organizar endereços em camadas substituíveis e garantir que a execução só ocorra com contexto completo**, para que **fluxos condicionais, iterativos e desacoplados (roteiro × ator) sejam modelados no Gantt Flow sem acoplar regras de negócio a hardware ou linguagem de destino**.
+
+## Próximos passos
+
+→ [`bdd.md`](bdd.md)

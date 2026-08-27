@@ -227,3 +227,7 @@ Painel sempre presente na navegação, no padrão de um **explorador de IDE** �
 ### Troca de visão
 
 Ações “Abrir no Board / Gantt / Árvore / Explorar” presentes nas telas e no detalhe; a entidade permanece a mesma — US-01, US-17. Complementa o menu de **Visões** (fixo no topo central da área de conteúdo) quando a troca é pedida a partir de uma unidade. “Abrir no Explorar” revela/destaca o arquivo na lista em árvore do painel (não abre outra tela).
+
+## Próximos passos
+
+→ [`screens-bdd.md`](screens-bdd.md)

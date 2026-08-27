@@ -314,3 +314,7 @@ Transversais
 | Empty state | Indicador | Listas e árvores sem itens |
 | Toast / snackbar | Indicador | Salvar, exportar, erro de validação |
 | Validação inline | Indicador | Título obrigatório; datas início ≤ fim; libs v1 |
+
+## Próximos passos
+
+→ [`prototype.html`](prototype.html)

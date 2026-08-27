@@ -11,3 +11,7 @@ Fundamentos FOP: [`../inputs/`](../inputs/).
 | Screens BDD | [`screens-bdd.md`](screens-bdd.md) |
 | Componentes | [`components.md`](components.md) |
 | Protótipo | [`prototype.html`](prototype.html) |
+
+## Próximos passos
+
+→ [`user-stories.md`](user-stories.md)

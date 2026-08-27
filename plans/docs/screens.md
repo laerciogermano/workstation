@@ -1,6 +1,6 @@
 # Telas do sistema — Plans
 
-Descrição funcional das telas derivadas das histórias em [`user-stories.md`](user-stories.md) e cenários em [`bdd.md`](bdd.md). Componentes: [`components.md`](components.md).
+Descrição funcional das telas derivadas das histórias em [`user-stories.md`](user-stories.md) e cenários em [`bdd.md`](bdd.md). BDD por tela: [`screens-bdd.md`](screens-bdd.md). Componentes: [`components.md`](components.md).
 
 Personas principais: **organizador**, **condutor de projetos**, **orquestrador**, **modelador de fluxo**, **administrador do projeto**.
 

@@ -8,5 +8,6 @@ Fundamentos FOP: [`../inputs/`](../inputs/).
 | Histórias de usuário | [`user-stories.md`](user-stories.md) |
 | Cenários BDD | [`bdd.md`](bdd.md) |
 | Telas | [`screens.md`](screens.md) |
+| Screens BDD | [`screens-bdd.md`](screens-bdd.md) |
 | Componentes | [`components.md`](components.md) |
 | Protótipo | [`prototype.html`](prototype.html) |

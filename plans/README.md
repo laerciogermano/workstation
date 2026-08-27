@@ -1,19 +1,22 @@
 # Plans — Documento de visão
 
 Fonte do *quê* e do *porquê* do produto.  
-Derivados: [`docs/`](docs/) (`epics` → `stories` → `board` → `tech`).
+Derivados: [`docs/`](docs/) (`epics` → `stories` → `board` → `tech`).  
+Fundamentos de fluxo: [`inputs/`](inputs/) (FOP — Flow Oriented Programming).
 
 ---
 
 ## Visão
 
-O Plans é o lugar único onde intenções viram trabalho acompanhável: a **mesma unidade** aparece no Board, no Gantt, na Árvore de execução e no Explorar — com responsáveis tipados (pessoa, IA, prestador, máquina) e planos exportáveis como linguagem de programação (FOP).
+O Plans é o lugar único onde **intenções** e **roteiros** viram trabalho acompanhável: a **mesma unidade** aparece no Board, no Gantt, na Árvore de execução e no Explorar — com responsáveis tipados (pessoa, IA, prestador, máquina) e planos modelados como **linguagem visual de fluxo (FOP)** exportável para código.
+
+No Gantt, o plano é um **roteiro de mudanças de estado** (Gantt Flow): **dados** (estado) e **funções** (procedimentos) compostos em sequência, paralelo, seleção e repetição — compiláveis via FOP-IR sem reescrever o fluxo em cada linguagem.
 
 ## Problema
 
 Ferramentas de gestão impõem hierarquias rígidas e fragmentam a mesma atividade conforme a tela. Quem planeja, executa e explora perde o norte ao trocar de ferramenta ou de vocabulário.
 
-Além disso, desenvolver o mesmo fluxo de forma **redundante em múltiplas linguagens** exige uma **estrutura unificada** (linguagem visual → compilação → exportação) que as ferramentas atuais não oferecem.
+Ferramentas de desenvolvimento e automação, por sua vez, acoplam **roteiro** e **ator**, multiplicam formas redundantes do mesmo fluxo e não oferecem uma **linguagem ubíqua** de fluxo — visual → compilação → exportação — independente de paradigma, plataforma ou linguagem de destino.
 
 ## Para quem
 
@@ -22,22 +25,25 @@ Além disso, desenvolver o mesmo fluxo de forma **redundante em múltiplas lingu
 | Quem organiza o próprio trabalho | Registrar intenções, acompanhar e decidir sem trocar de ferramenta |
 | Quem conduz projetos | Ver a mesma unidade em board, tempo (Gantt), hierarquia e arquivos |
 | Quem orquestra IAs e prestadores | Atribuir responsáveis tipados e acompanhar execução / chamados |
-| Quem exporta fluxo como código | Tratar planos como FOP e gerar TypeScript / Python |
+| Quem modela e exporta fluxo como código | Tratar planos como FOP (roteiro) e gerar TypeScript / Python |
 
 ## Objetivo
 
-Organizar, acompanhar e visualizar o trabalho do projeto em **Board**, **Gantt**, **Árvore de execução** e **Explorar**, com responsáveis tipados e planos tratáveis como linguagem de programação exportável (FOP).
+Organizar, acompanhar e visualizar o trabalho do projeto em **Board**, **Gantt**, **Árvore de execução** e **Explorar**, com responsáveis tipados e planos tratáveis como **roteiros FOP** — estado + procedimentos, camadas substituíveis e exportação via FOP-IR.
 
 ## Proposta de valor
 
-O Plans ajuda a **registrar, acompanhar e decidir** atividades — pessoais ou de projeto — na mesma unidade de trabalho, sem trocar de ferramenta conforme a etapa.
+O Plans ajuda a **registrar, acompanhar e decidir** atividades — pessoais ou de projeto — na mesma unidade de trabalho, sem trocar de ferramenta conforme a etapa. Quando o trabalho é fluxo, o Gantt deixa de ser só cronograma: vira **linguagem visual de programação orientada a fluxo**.
 
 | Necessidade | O que o Plans faz |
 |-------------|-------------------|
 | Lembrar o que fazer | Registrar atividade com título (e contexto opcional) |
 | Entender opções antes de agir | IA pesquisa e consolida comparativo estruturado |
 | Acompanhar progresso | Board, Gantt, árvore ou Explorar sobre a **mesma** unidade |
+| Modelar o *como* do fluxo | Compor dados e funções (FOP) no Gantt, com ligações de estado |
+| Trocar quem executa sem reescrever o fluxo | Responsável tipado separado do roteiro |
 | Decidir e encerrar | Registrar escolha na atividade e arquivar ou concluir |
+| Reusar o fluxo em código | Compilar FOP-IR e exportar TypeScript / Python |
 
 ### Exemplos
 
@@ -47,13 +53,17 @@ O Plans ajuda a **registrar, acompanhar e decidir** atividades — pessoais ou d
 
 **Decompor quando fizer sentido** — *Comprar celular* pode virar sub-atividades (*Definir orçamento*, *Comparar modelos*, *Escolher loja*, *Comprar*): mesma unidade, hierarquia infinita, progresso visível.
 
+**Modelar e exportar um roteiro** — um plano no Gantt liga **saídas** de uma tarefa às **entradas** de outra (sequencial ou paralelo; com seleção e repetição quando couber). O mesmo roteiro compila em **FOP-IR** e exporta para TypeScript ou Python sem redesenhar o fluxo.
+
 ## Princípios
 
 1. **Uma unidade** — mesma entidade em todas as visões; só muda o nome.
 2. **Hierarquia infinita** — aninhamento sem limite de profundidade, sem ciclos.
-3. **Responsável tipado** — o tipo define o comportamento permitido.
-4. **FOP no Gantt** — **estado** (entradas/saídas) + **procedimentos** (funções/tarefas).
-5. **Linguagem visual unificada** — compilação única e exportação para outras linguagens.
+3. **Responsável tipado** — o tipo define o comportamento permitido; o responsável é o *quem*, não o roteiro.
+4. **Roteiro × ator** — o fluxo (o quê / quando / para quê) permanece estável quando se troca pessoa, IA, prestador ou máquina.
+5. **FOP no Gantt** — fluxo = **estado** (dados / entradas e saídas) + **procedimentos** (funções / tarefas); estruturas de **sequência**, **paralelo**, **seleção** e **repetição**.
+6. **Camadas e contexto** — endereços que se conhecem formam uma camada substituível; a execução ocorre quando o **contexto** está completo.
+7. **Linguagem visual unificada** — uma composição visual → **FOP-IR** → exportação para outras linguagens.
 
 ## Escopo da visão
 
@@ -63,7 +73,7 @@ O Plans ajuda a **registrar, acompanhar e decidir** atividades — pessoais ou d
 |------|-----------|
 | **Gestão de atividades** | Registrar com contexto; pesquisa assistida por IA; registrar decisão |
 | **Board** | Colunas e raias; cards; coluna de execução; chamados com prestadores |
-| **Gantt** | Ordens no tempo; sequencial/paralelo; planos; FOP; exportação |
+| **Gantt** | Ordens no tempo; sequencial/paralelo/seleção/repetição; planos; FOP; exportação |
 | **Árvore de execução** | Floresta (múltiplas raízes); hierarquia infinita; responsáveis |
 | **Explorar** | Persistência como arquivo; busca; drill-down e breadcrumb |
 
@@ -97,6 +107,8 @@ Alteração em uma visão reflete nas demais. Toda unidade persiste como **arqui
 
 **Um** responsável por unidade (ou nenhum). Filho **não herda** responsável do pai. Só itens do **catálogo do projeto** são atribuíveis: pessoas, IAs, prestadores, máquinas.
 
+O responsável é o **ator** do roteiro: trocar o ator não redefine o fluxo — apenas quem (ou o quê) executa.
+
 | Tipo | Comportamento |
 |------|----------------|
 | **Pessoa** | Execução humana |
@@ -104,11 +116,28 @@ Alteração em uma visão reflete nas demais. Toda unidade persiste como **arqui
 | **Prestador** | Assume, executa e conclui **chamado**; usuário final aceita → `atendido` |
 | **Máquina** | Linguagem de programação no Gantt (libs, loops, estados); procedimento editável na árvore |
 
+### Fluxo (FOP)
+
+Um **roteiro** (plano no Gantt) descreve mudanças de estado:
+
+| Conceito | Significado no Plans |
+|----------|----------------------|
+| **Dado** | Unidade de informação; o **estado** agrupa dados (entradas/saídas) |
+| **Função / procedimento** | Unidade de mudança de estado (tarefa ou bloco no fluxo) |
+| **Entrada / saída** | Artefato de estado: **nome + referência**; ligação saída→entrada conecta o fluxo |
+| **Endereço** | Identidade do dado ou da função (concreto ou abstrato) |
+| **Camada** | Unidade substituível; endereços que se conhecem compartilham camada |
+| **Contexto** | Conjunto de entradas (dados e funções) necessário para executar |
+
+**Estruturas de fluxo (v1):** sequencial (finish-to-start), paralelo, seleção e repetição (`for`, `while` na máquina).  
+**Compilação:** plano consistente → **FOP-IR** → TypeScript ou Python. Ciclo de estado **bloqueia** exportação útil; saídas órfãs geram **aviso**.
+
 ## Critérios de sucesso
 
 - Uma intenção registrada permanece a **mesma unidade** ao mudar de Board ↔ Gantt ↔ Árvore ↔ Explorar.
 - É possível ir de intenção → pesquisa assistida → decisão → conclusão/arquivo **sem trocar de ferramenta**.
-- Planos no Gantt exportam via **FOP-IR** para TypeScript e Python.
+- Um plano no Gantt expressa FOP (estado + procedimentos + ligações) e exporta via **FOP-IR** para TypeScript e Python.
+- Trocar o responsável tipado **não exige redesenhar** o roteiro.
 - Responsáveis tipados se comportam conforme o catálogo (IA dispara só em coluna de execução; chamado fecha com aceite do usuário).
 
 ## Glossário
@@ -119,8 +148,12 @@ Alteração em uma visão reflete nas demais. Toda unidade persiste como **arqui
 | **Coluna de execução** | Dispara IA ao receber card com responsável IA |
 | **Chamado** | Card com necessidade e serviço desejado |
 | **Entrada / saída** | Artefato de estado: **nome + referência**; saída de pesquisa assistida = comparativo |
-| **Plano** | Contêiner nomeado de tarefas + execução no Gantt |
+| **Plano** | Contêiner nomeado de tarefas + execução no Gantt; o **roteiro** do fluxo |
+| **Roteiro** | Descrição de mudanças de estado (dados + funções) independente do ator |
+| **FOP** | Flow Oriented Programming — programação orientada a fluxo |
 | **FOP-IR** | Representação intermediária do fluxo para exportação |
+| **Camada** | Unidade substituível de endereços que se conhecem |
+| **Contexto** | Entradas necessárias para a execução do fluxo estar completa |
 
 ## Regras de negócio (v1)
 
@@ -132,6 +165,7 @@ Detalhamento operacional que épicos e stories devem respeitar. Não redefine a 
 - Título obrigatório; contexto opcional; chamado: + necessidade e serviço.
 - Um responsável; sem herança pai→filho; só catálogo do projeto.
 - Hierarquia sem ciclos.
+- Roteiro e responsável são independentes: reatribuir não altera ligações de estado nem a estrutura do fluxo.
 
 ### Board
 
@@ -149,9 +183,12 @@ Detalhamento operacional que épicos e stories devem respeitar. Não redefine a 
 - Datas: **início + fim** (fuso do projeto); duração derivada; sem datas → listada, não posicionada (sinalizada).
 - Sequencial = **finish-to-start**.
 - Paralelo com dependência sequencial existente → **rejeitar** até remover a dependência.
+- Seleção e repetição fazem parte do modelo FOP; na máquina v1, loops explícitos: `for`, `while`.
 - Roll-up: pai = min(início)…max(fim) dos filhos com data; estado agrega falha se algum filho falhou.
 - Artefato = nome + referência; ligar saídas **opcional**; ciclo de estado bloqueia; órfãos geram **aviso** na exportação.
-- Bibliotecas v1: `stdio`, `fs`, `http`; loops: `for`, `while`.
+- Endereços concretos e abstratos são admitidos no modelo; camadas substituíveis não misturam conhecimentos cruzados indevidos.
+- Execução do fluxo (máquina / exportação coerente) pressupõe **contexto completo**.
+- Bibliotecas v1: `stdio`, `fs`, `http`.
 - Exportação: **FOP-IR**; destinos v1: **TypeScript**, **Python**.
 - Execução via AIs: só tarefas com responsável IA; **cancelar** → `cancelada`.
 

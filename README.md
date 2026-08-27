@@ -9,5 +9,5 @@
 ### Esteira (Plans)
 
 ```text
-Visão → Épicos → Histórias → Versões → Refinamento técnico
+Inputs → Visão → Épicos → Histórias → Versões → Refinamento técnico
 ```

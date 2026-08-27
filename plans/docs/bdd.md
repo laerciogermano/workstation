@@ -25,26 +25,26 @@ Como **organizador**, quero **que toda atividade tenha um id canônico (UUID) es
 
 ## US-02 — Atribuir responsável tipado
 
-Como **orquestrador**, quero **atribuir, trocar ou remover um responsável (pessoa, IA, prestador ou máquina) a partir do catálogo do projeto, sem herança automática do pai para o filho**, para que **o ator do roteiro fique definido sem redesenhar o fluxo quando eu trocar quem executa**.
+Como **orquestrador**, quero **atribuir, trocar ou remover um responsável (pessoa, IA ou máquina) a partir do catálogo do projeto, sem herança automática do pai para o filho**, para que **o ator do roteiro fique definido sem redesenhar o fluxo quando eu trocar quem executa**.
 
 ### Cenários
 
-- [ ] Dado que o item está no catálogo, quando atribuo pessoa, IA, prestador ou máquina, então tipo e identidade ficam visíveis e há no máximo **um** responsável.
+- [ ] Dado que o item está no catálogo, quando atribuo pessoa, IA ou máquina, então tipo e identidade ficam visíveis e há no máximo **um** responsável.
 - [ ] Dado que a unidade já tem responsável A, quando atribuo B do catálogo, então B substitui A sem alterar ligações de estado nem a estrutura do fluxo.
 - [ ] Dado que o item **não** está no catálogo, quando tento atribuir, então a operação é rejeitada.
 - [ ] Dado que existe um pai com responsável, quando crio um filho, então o filho **nasce sem** responsável.
-- [ ] Dado que o responsável é máquina, quando consulto a unidade, então ela é tratada como linguagem (Gantt: US-14; árvore: procedimento — US-16).
+- [ ] Dado que o responsável é máquina, quando consulto a unidade, então ela é tratada como linguagem (Gantt: US-13; árvore: procedimento — US-15).
 - [ ] Dado que removo o responsável, quando consulto a unidade, então não há responsável e cessam regras exclusivas do tipo anterior.
 
 ---
 
 ## US-03 — Gerenciar catálogo de responsáveis
 
-Como **administrador do projeto**, quero **incluir e remover pessoas, IAs, prestadores e máquinas no catálogo do projeto**, para que **somente atores autorizados possam ser atribuídos como responsáveis**.
+Como **administrador do projeto**, quero **incluir e remover pessoas, IAs e máquinas no catálogo do projeto**, para que **somente atores autorizados possam ser atribuídos como responsáveis**.
 
 ### Cenários
 
-- [ ] Dado que adiciono pessoa, IA, prestador ou máquina ao catálogo, quando um usuário atribui responsável, então o item passa a ser selecionável.
+- [ ] Dado que adiciono pessoa, IA ou máquina ao catálogo, quando um usuário atribui responsável, então o item passa a ser selecionável.
 - [ ] Dado que o item está no catálogo e **não** é responsável de nenhuma unidade, quando o removo do catálogo, então deixa de ser atribuível.
 - [ ] Dado que o item ainda é responsável de alguma unidade, quando tento removê-lo do catálogo, então a remoção é bloqueada ou exige reatribuição/limpeza antes.
 - [ ] Dado que o catálogo está vazio para um tipo, quando tento atribuir esse tipo, então não há opções válidas e a atribuição não completa.
@@ -110,24 +110,7 @@ Como **orquestrador**, quero **marcar colunas como de execução e, ao mover par
 
 ---
 
-## US-08 — Chamado e prestador de serviço
-
-Como **organizador**, quero **abrir chamados com título, necessidade e serviço desejado visíveis a todos os prestadores do catálogo**; e como **prestador de serviço**, quero **assumir, executar, concluir e transferir chamados, com aceite ou rejeição do usuário final**, para que **serviços externos sejam orquestrados com fechamento explícito (`aguardando aceite` → `atendido`)**.
-
-### Cenários
-
-- [ ] Dado que informo título, necessidade e serviço, quando crio o chamado, então ele fica visível a **todos os prestadores** do catálogo.
-- [ ] Dado que faltam necessidade ou serviço, quando valido, então o chamado é inválido.
-- [ ] Dado que o chamado está aberto, quando um prestador assume, então ele é o responsável.
-- [ ] Dado que o prestador conclui, quando registra a conclusão, então o status fica `aguardando aceite`.
-- [ ] Dado que o usuário final **aceita**, quando confirma, então o status fica `atendido`.
-- [ ] Dado que o usuário final **rejeita** o aceite, quando confirma, então o chamado volta a estado acionável pelo prestador (não `atendido`) e a rejeição fica visível.
-- [ ] Dado que há responsável, quando outro prestador tenta assumir sem liberação/reatribuição, então é rejeitado.
-- [ ] Dado que o responsável libera ou um admin reatribui, quando a transferência ocorre, então o novo prestador passa a ser o responsável.
-
----
-
-## US-09 — Planos, ordens e datas
+## US-08 — Planos, ordens e datas
 
 Como **condutor de projetos**, quero **criar planos nomeados, associar tarefas a um plano (ou ao plano padrão do projeto) e definir datas de início e fim no fuso do projeto**, para que **as ordens fiquem organizadas no tempo, com duração derivada e tarefas sem data sinalizadas na lista do Gantt**.
 
@@ -145,7 +128,7 @@ Como **condutor de projetos**, quero **criar planos nomeados, associar tarefas a
 
 ---
 
-## US-10 — Tarefas sequenciais e paralelas
+## US-09 — Tarefas sequenciais e paralelas
 
 Como **modelador de fluxo**, quero **definir relações sequenciais (finish-to-start) e paralelas entre tarefas, removê-las e impedir conflito entre os dois modos**, para que **o roteiro temporal reflita dependências reais sem ciclos nem combinações inválidas**.
 
@@ -159,7 +142,7 @@ Como **modelador de fluxo**, quero **definir relações sequenciais (finish-to-s
 
 ---
 
-## US-11 — Aninhar tarefas e roll-up
+## US-10 — Aninhar tarefas e roll-up
 
 Como **condutor de projetos**, quero **aninhar tarefas em hierarquia infinita no Gantt e ver roll-up de datas e estado no pai (min início, max fim; falha se algum filho falhou)**, para que **subplanos agreguem progresso e prazo sem herança de responsável**.
 
@@ -174,7 +157,7 @@ Como **condutor de projetos**, quero **aninhar tarefas em hierarquia infinita no
 
 ---
 
-## US-12 — Execução de planos via AIs
+## US-11 — Execução de planos via AIs
 
 Como **orquestrador**, quero **executar um plano apenas nas tarefas com responsável IA, cancelar a execução em andamento e retentar tarefas `falhou` ou `cancelada` por ação explícita**, para que **a orquestração automática seja parcial, controlável e transparente sobre o que está rodando**.
 
@@ -189,7 +172,7 @@ Como **orquestrador**, quero **executar um plano apenas nas tarefas com respons�
 
 ---
 
-## US-13 — Flow Oriented Programming
+## US-12 — Flow Oriented Programming
 
 Como **modelador de fluxo**, quero **definir entradas e saídas de estado (nome + referência), ligar saídas a entradas, compor procedimentos como funções/tarefas e validar o plano (aviso para saídas órfãs; bloqueio para ciclo de estado)**, para que **o Gantt expresse um roteiro FOP completo — dados + funções — pronto para compilação**.
 
@@ -205,7 +188,7 @@ Como **modelador de fluxo**, quero **definir entradas e saídas de estado (nome 
 
 ---
 
-## US-14 — Máquina como linguagem no Gantt
+## US-13 — Máquina como linguagem no Gantt
 
 Como **modelador de fluxo**, quero **programar e executar tarefas com responsável máquina usando bibliotecas v1 (`stdio`, `fs`, `http`), loops (`for`, `while`) e estados de entrada/saída**, para que **o Gantt funcione também como linguagem de programação orientada a fluxo, não só como cronograma**.
 
@@ -219,7 +202,7 @@ Como **modelador de fluxo**, quero **programar e executar tarefas com responsáv
 
 ---
 
-## US-15 — Exportar código e linguagem visual unificada
+## US-14 — Exportar código e linguagem visual unificada
 
 Como **modelador de fluxo**, quero **compilar um plano consistente em FOP-IR e exportar para TypeScript ou Python (direto ou via IR), com aviso para saídas órfãs e rejeição de destinos não suportados em v1**, para que **o mesmo roteiro visual vire código reutilizável sem reescrever o fluxo em cada linguagem**.
 
@@ -234,7 +217,7 @@ Como **modelador de fluxo**, quero **compilar um plano consistente em FOP-IR e e
 
 ---
 
-## US-16 — Visualizar árvore e responsáveis
+## US-15 — Visualizar árvore e responsáveis
 
 Como **condutor de projetos**, quero **ver a floresta de atividades (múltiplas raízes) com responsáveis visíveis e, quando o responsável for máquina, editar o procedimento associado ao nó**, para que **eu entenda a execução hierárquica fora do eixo temporal do Gantt**.
 
@@ -249,7 +232,7 @@ Como **condutor de projetos**, quero **ver a floresta de atividades (múltiplas 
 
 ---
 
-## US-17 — Criar atividades e hierarquia infinita
+## US-16 — Criar atividades e hierarquia infinita
 
 Como **condutor de projetos**, quero **criar atividades raiz e filhas com título, desaninhar, reorganizar pais e excluir subárvores**, para que **a decomposição da execução não tenha limite de profundidade e permaneça livre de ciclos**.
 
@@ -264,7 +247,7 @@ Como **condutor de projetos**, quero **criar atividades raiz e filhas com títul
 
 ---
 
-## US-18 — Persistir e abrir no Explorar
+## US-17 — Persistir e abrir no Explorar
 
 Como **organizador**, quero **que toda unidade persista como arquivo no Explorar e possa ser aberta a partir do Board, Gantt ou Árvore (e vice-versa)**, para que **a mesma entidade seja navegável como arquivo sem duplicar dados**.
 
@@ -278,7 +261,7 @@ Como **organizador**, quero **que toda unidade persista como arquivo no Explorar
 
 ---
 
-## US-19 — Lista, busca e navegação por profundidade
+## US-18 — Lista, busca e navegação por profundidade
 
 Como **organizador**, quero **listar arquivos ordenados por título, buscar por título e navegar em profundidade com drill-down e breadcrumb**, para que **eu percorra a hierarquia persistida de forma previsível, mesmo com aninhamento infinito**.
 
@@ -293,7 +276,7 @@ Como **organizador**, quero **listar arquivos ordenados por título, buscar por 
 
 ---
 
-## US-20 — Registrar atividade com objetivo e contexto
+## US-19 — Registrar atividade com objetivo e contexto
 
 Como **organizador**, quero **registrar uma atividade com título obrigatório e contexto opcional (orçamento, preferências, restrições)**, para que **a intenção fique capturada e oriente minha execução ou a de uma IA atribuída**.
 
@@ -307,7 +290,7 @@ Como **organizador**, quero **registrar uma atividade com título obrigatório e
 
 ---
 
-## US-21 — Pesquisar opções com IA
+## US-20 — Pesquisar opções com IA
 
 Como **organizador**, quero **solicitar pesquisa assistida por IA a partir de uma atividade com responsável IA, usando título e contexto, e receber comparativo estruturado (opções, benefícios, faixas de preço) como saída ligada à mesma unidade**, para que **eu decida com base em evidências sem sair do Plans**.
 
@@ -321,13 +304,13 @@ Como **organizador**, quero **solicitar pesquisa assistida por IA a partir de um
 
 ---
 
-## US-22 — Registrar decisão na atividade
+## US-21 — Registrar decisão na atividade
 
 Como **organizador**, quero **registrar a opção escolhida em uma atividade (com observação opcional), alterá-la antes de concluir e manter decisão e comparativo acessíveis após arquivar**, para que **a etapa de decisão fique documentada e eu saiba o que foi definido**.
 
 ### Cenários
 
-- [ ] Dado que existe comparativo de pesquisa (US-21) ou contexto manual, quando registro uma **decisão** (opção escolhida + observação opcional), então fica persistida na unidade.
+- [ ] Dado que existe comparativo de pesquisa (US-20) ou contexto manual, quando registro uma **decisão** (opção escolhida + observação opcional), então fica persistida na unidade.
 - [ ] Dado que registro decisão, quando consulto a atividade, então vejo título, contexto, comparativo (se houver) e decisão.
 - [ ] Dado que altero a decisão antes de concluir, quando salvo, então a decisão anterior é substituída.
 - [ ] Dado que registro decisão, quando **arquivo** a unidade, então decisão e comparativo permanecem acessíveis no Explorar.
@@ -335,7 +318,7 @@ Como **organizador**, quero **registrar a opção escolhida em uma atividade (co
 
 ---
 
-## US-23 — Seleção, repetição, camadas e contexto
+## US-22 — Seleção, repetição, camadas e contexto
 
 Como **modelador de fluxo**, quero **compor estruturas de seleção (condicionais) e repetição no roteiro do plano, organizar endereços em camadas substituíveis e garantir que a execução só ocorra com contexto completo**, para que **fluxos condicionais, iterativos e desacoplados (roteiro × ator) sejam modelados no Gantt Flow sem acoplar regras de negócio a hardware ou linguagem de destino**.
 

@@ -8,7 +8,7 @@ Fundamentos de fluxo: [`inputs/`](inputs/) (FOP — Flow Oriented Programming).
 
 ## Visão
 
-O Plans é o lugar único onde **intenções** e **roteiros** viram trabalho acompanhável: a **mesma unidade** aparece no Board, no Gantt, na Árvore de execução e no Explorar — com responsáveis tipados (pessoa, IA, prestador, máquina) e planos modelados como **linguagem visual de fluxo (FOP)** exportável para código.
+O Plans é o lugar único onde **intenções** e **roteiros** viram trabalho acompanhável: a **mesma unidade** aparece no Board, no Gantt, na Árvore de execução e no Explorar — com responsáveis tipados (pessoa, IA, máquina) e planos modelados como **linguagem visual de fluxo (FOP)** exportável para código.
 
 No Gantt, o plano é um **roteiro de mudanças de estado** (Gantt Flow): **dados** (estado) e **funções** (procedimentos) compostos em sequência, paralelo, seleção e repetição — compiláveis via FOP-IR sem reescrever o fluxo em cada linguagem.
 
@@ -24,7 +24,7 @@ Ferramentas de desenvolvimento e automação, por sua vez, acoplam **roteiro** e
 |---------|-------------|
 | Quem organiza o próprio trabalho | Registrar intenções, acompanhar e decidir sem trocar de ferramenta |
 | Quem conduz projetos | Ver a mesma unidade em board, tempo (Gantt), hierarquia e arquivos |
-| Quem orquestra IAs e prestadores | Atribuir responsáveis tipados e acompanhar execução / chamados |
+| Quem orquestra IAs | Atribuir responsáveis tipados e acompanhar execução de IAs |
 | Quem modela e exporta fluxo como código | Tratar planos como FOP (roteiro) e gerar TypeScript / Python |
 
 ## Objetivo
@@ -60,7 +60,7 @@ O Plans ajuda a **registrar, acompanhar e decidir** atividades — pessoais ou d
 1. **Uma unidade** — mesma entidade em todas as visões; só muda o nome.
 2. **Hierarquia infinita** — aninhamento sem limite de profundidade, sem ciclos.
 3. **Responsável tipado** — o tipo define o comportamento permitido; o responsável é o *quem*, não o roteiro.
-4. **Roteiro × ator** — o fluxo (o quê / quando / para quê) permanece estável quando se troca pessoa, IA, prestador ou máquina.
+4. **Roteiro × ator** — o fluxo (o quê / quando / para quê) permanece estável quando se troca pessoa, IA ou máquina.
 5. **FOP no Gantt** — fluxo = **estado** (dados / entradas e saídas) + **procedimentos** (funções / tarefas); estruturas de **sequência**, **paralelo**, **seleção** e **repetição**.
 6. **Camadas e contexto** — endereços que se conhecem formam uma camada substituível; a execução ocorre quando o **contexto** está completo.
 7. **Linguagem visual unificada** — uma composição visual → **FOP-IR** → exportação para outras linguagens.
@@ -72,7 +72,7 @@ O Plans ajuda a **registrar, acompanhar e decidir** atividades — pessoais ou d
 | Área | Em escopo |
 |------|-----------|
 | **Gestão de atividades** | Registrar com contexto; pesquisa assistida por IA; registrar decisão |
-| **Board** | Colunas e raias; cards; coluna de execução; chamados com prestadores |
+| **Board** | Colunas e raias; cards; coluna de execução |
 | **Gantt** | Ordens no tempo; sequencial/paralelo/seleção/repetição; planos; FOP; exportação |
 | **Árvore de execução** | Floresta (múltiplas raízes); hierarquia infinita; responsáveis |
 | **Explorar** | Persistência como arquivo; busca; drill-down e breadcrumb |
@@ -99,13 +99,13 @@ A mesma entidade, com **id canônico (UUID)** estável, muda só de rótulo conf
 
 Alteração em uma visão reflete nas demais. Toda unidade persiste como **arquivo** no Explorar.
 
-**Campos mínimos:** **título** obrigatório; **contexto** opcional (orienta humano ou IA). **Chamado** exige também **necessidade** e **serviço desejado**.
+**Campos mínimos:** **título** obrigatório; **contexto** opcional (orienta humano ou IA).
 
 **Ciclo de vida:** **excluir** remove em todas as visões; **arquivar** oculta do fluxo ativo e mantém no Explorar.
 
 ### Responsáveis
 
-**Um** responsável por unidade (ou nenhum). Filho **não herda** responsável do pai. Só itens do **catálogo do projeto** são atribuíveis: pessoas, IAs, prestadores, máquinas.
+**Um** responsável por unidade (ou nenhum). Filho **não herda** responsável do pai. Só itens do **catálogo do projeto** são atribuíveis: pessoas, IAs e máquinas.
 
 O responsável é o **ator** do roteiro: trocar o ator não redefine o fluxo — apenas quem (ou o quê) executa.
 
@@ -113,7 +113,6 @@ O responsável é o **ator** do roteiro: trocar o ator não redefine o fluxo —
 |------|----------------|
 | **Pessoa** | Execução humana |
 | **IA** | Executa no board e no Gantt; pesquisa assistida; estados `pendente` → `em execução` → `concluída` \| `falhou` \| `cancelada`; retry só por ação explícita |
-| **Prestador** | Assume, executa e conclui **chamado**; usuário final aceita → `atendido` |
 | **Máquina** | Linguagem de programação no Gantt (libs, loops, estados); procedimento editável na árvore |
 
 ### Fluxo (FOP)
@@ -138,7 +137,7 @@ Um **roteiro** (plano no Gantt) descreve mudanças de estado:
 - É possível ir de intenção → pesquisa assistida → decisão → conclusão/arquivo **sem trocar de ferramenta**.
 - Um plano no Gantt expressa FOP (estado + procedimentos + ligações) e exporta via **FOP-IR** para TypeScript e Python.
 - Trocar o responsável tipado **não exige redesenhar** o roteiro.
-- Responsáveis tipados se comportam conforme o catálogo (IA dispara só em coluna de execução; chamado fecha com aceite do usuário).
+- Responsáveis tipados se comportam conforme o catálogo (IA dispara só em coluna de execução).
 
 ## Glossário
 
@@ -146,7 +145,6 @@ Um **roteiro** (plano no Gantt) descreve mudanças de estado:
 |-------|-------------|
 | **Coluna / raia** | Estágio e faixa do board (quantidade livre) |
 | **Coluna de execução** | Dispara IA ao receber card com responsável IA |
-| **Chamado** | Card com necessidade e serviço desejado |
 | **Entrada / saída** | Artefato de estado: **nome + referência**; saída de pesquisa assistida = comparativo |
 | **Plano** | Contêiner nomeado de tarefas + execução no Gantt; o **roteiro** do fluxo |
 | **Roteiro** | Descrição de mudanças de estado (dados + funções) independente do ator |
@@ -162,7 +160,7 @@ Detalhamento operacional que épicos e stories devem respeitar. Não redefine a 
 ### Transversais
 
 - Id canônico UUID; exclusão global; arquivar ≠ excluir; merge fora de escopo.
-- Título obrigatório; contexto opcional; chamado: + necessidade e serviço.
+- Título obrigatório; contexto opcional.
 - Um responsável; sem herança pai→filho; só catálogo do projeto.
 - Hierarquia sem ciclos.
 - Roteiro e responsável são independentes: reatribuir não altera ligações de estado nem a estrutura do fluxo.
@@ -173,9 +171,6 @@ Detalhamento operacional que épicos e stories devem respeitar. Não redefine a 
 - Mover pai move a **subárvore** (pai + descendentes).
 - Sem WIP / permissões de caminho em v1: qualquer coluna/raia válida.
 - Só **coluna de execução** + responsável **IA** dispara execução automática.
-- Chamado visível a **todos os prestadores** do catálogo.
-- Prestador conclui → `aguardando aceite`; usuário final aceita → `atendido`.
-- Transferência: responsável atual **libera** ou admin **reatribui**.
 
 ### Gantt / FOP / IA
 

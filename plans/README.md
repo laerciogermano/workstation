@@ -74,7 +74,7 @@ O Plans ajuda a **registrar e acompanhar** atividades — pessoais ou de projeto
 | **Board** | Colunas e raias; cards; coluna de execução |
 | **Gantt** | Ordens no tempo; sequencial/paralelo/seleção/repetição; planos; FOP; exportação |
 | **Árvore de execução** | Floresta (múltiplas raízes); hierarquia infinita; responsáveis |
-| **Explorar** | Painel transversal (estilo IDE); lista em árvore embutida (não é tela); Configurações fixas embaixo |
+| **Explorar** | Painel transversal **estilo explorador de IDE**; **toda atividade** materializa-se como **arquivo** na árvore; lista embutida (não é tela); Configurações fixas embaixo |
 
 ### Fora de escopo (v1)
 
@@ -96,7 +96,7 @@ A mesma entidade, com **id canônico (UUID)** estável, muda só de rótulo conf
 | Árvore de execução | **atividade** (**nó**) |
 | Explorar | **arquivo** |
 
-Alteração em uma visão reflete nas demais. Toda unidade persiste como **arquivo** no Explorar.
+Alteração em uma visão reflete nas demais. **Toda atividade** (e toda unidade criada em qualquer visão) **também é um arquivo** na seção **Explorar**, no padrão de um **explorador de arquivos de IDE**: mesma identidade (UUID), sem cópia paralela.
 
 **Campos mínimos:** **título** obrigatório; **contexto** opcional (orienta humano ou IA).
 
@@ -189,6 +189,7 @@ Detalhamento operacional que épicos e stories devem respeitar. Não redefine a 
 ### Árvore / Explorar
 
 - Múltiplas raízes permitidas.
-- Explorar: painel estilo IDE; lista em **árvore** embutida (não é tela); drill-down infinito; Configurações fixas embaixo.
+- **Toda atividade é arquivo no Explorar:** criar, alterar ou excluir uma atividade em qualquer visão reflete no nó correspondente da árvore de arquivos (e vice-versa).
+- Explorar: painel **estilo explorador de IDE**; lista em **árvore** embutida (não é tela); drill-down infinito; Configurações fixas embaixo.
 - Explorar **fixo**, altura da **viewport**, com **overflow vertical e horizontal** na área da árvore.
 - **Título sempre legível** em qualquer profundidade (incl. >20 níveis): indentação não pode ocultar o texto.

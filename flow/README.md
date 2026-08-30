@@ -1,5 +1,7 @@
 # Flow — documento de visão
 
+Histórias de usuário: [`stories.md`](stories.md).
+
 ## Visão
 
 O **Flow** é uma forma de modelar, visualizar e executar processos como

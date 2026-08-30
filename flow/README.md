@@ -21,6 +21,14 @@ explícito:
 O Flow deve permitir que esse mesmo processo seja compreendido tanto como
 uma composição visual quanto como uma estrutura executável.
 
+### Grande objetivo
+
+O grande objetivo do **Flow** é permitir que um código desenhado
+visualmente no Flow seja **exportado como código executável em JavaScript
+ou Python**. O desenho do fluxo deve ser a fonte do código gerado:
+dados, funções, entradas, saídas e relações de composição precisam ser
+preservados na exportação.
+
 ## Problema
 
 Processos costumam ser descritos em formatos que mostram apenas parte do
@@ -54,6 +62,7 @@ compreensível e executável:
 4. **Visualizar** o fluxo e seu andamento em uma representação adequada,
    incluindo uma visão temporal semelhante a um Gantt.
 5. **Executar** o fluxo quando o contexto exigido estiver completo.
+6. **Exportar** o fluxo desenhado para código JavaScript ou Python.
 
 ## Modelo conceitual
 
@@ -254,14 +263,15 @@ significado.
 - repetição;
 - camadas;
 - contexto e validação de contexto completo;
-- acompanhamento temporal com etapas, duração, progresso e recursos.
+- acompanhamento temporal com etapas, duração, progresso e recursos;
+- exportação do fluxo para JavaScript ou Python.
 
 ### Não está definido pelos materiais de entrada
 
-Os arquivos de entrada não especificam uma linguagem de exportação, um
-formato de persistência, regras de permissões, tipos de usuário ou uma
-interface final. Essas decisões devem ser definidas em documentos derivados
-sem alterar os fundamentos desta visão.
+Os arquivos de entrada não especificam formato de persistência, regras de
+permissões, tipos de usuário ou uma interface final. Essas decisões devem
+ser definidas em documentos derivados sem alterar os fundamentos desta
+visão.
 
 ## Critérios de sucesso
 
@@ -274,6 +284,8 @@ sem alterar os fundamentos desta visão.
 - A visão temporal ajuda a acompanhar início, duração, progresso e recursos
   sem esconder a estrutura semântica do fluxo.
 - O modelo visual e o modelo executável descrevem o mesmo processo.
+- Um fluxo desenhado no Flow pode ser exportado para JavaScript ou Python
+  preservando sua lógica de dados, funções e composição.
 
 ## Glossário
 
@@ -292,3 +304,4 @@ sem alterar os fundamentos desta visão.
 | **Paralelo** | Composição de funções independentes executadas juntas |
 | **Seleção** | Composição condicionada por uma decisão |
 | **Repetição** | Composição que executa novamente uma função ou trecho |
+| **Exportação** | Geração de código JavaScript ou Python a partir do fluxo desenhado |

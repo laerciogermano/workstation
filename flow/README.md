@@ -219,6 +219,8 @@ O Flow deve apresentar o processo em uma visualização que preserve sua
 estrutura e facilite o acompanhamento. O material de referência em
 `input/gantt-sample.png` indica uma visão temporal com:
 
+![Referência visual de uma linha do tempo Gantt](input/gantt-sample.png)
+
 - nome das etapas;
 - data de início;
 - duração;

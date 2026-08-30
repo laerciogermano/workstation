@@ -42,14 +42,15 @@ transformação e composição**. Assim, o processo deixa de ser apenas uma
 sequência visual e passa a ser um sistema de mudanças de estado que pode ser
 inspecionado, substituído e executado.
 
-## Para quem
+## Personas principais
 
-| Pessoa | Necessidade |
+O Flow servirá a três personas principais:
+
+| Persona | Necessidade |
 |---|---|
-| Quem desenha processos | Explicar um processo sem perder suas dependências |
-| Quem implementa software | Representar funções e seus dados de entrada e saída |
-| Quem acompanha uma execução | Ver etapas, duração, progresso e recursos em uma linha do tempo |
-| Quem mantém um sistema | Substituir partes do fluxo sem redesenhar o processo inteiro |
+| **Gestor de atividades** | Gerir atividades e planos para serem executados por pessoas, acompanhando etapas, prazos, progresso e recursos. |
+| **Programador** | Desenvolver códigos e automações modelando dados, funções, dependências e estruturas de execução. |
+| **Orquestrador de IA** | Configurar e acompanhar a execução de atividades por IAs a partir do fluxo e do contexto disponíveis. |
 
 ## Proposta de valor
 

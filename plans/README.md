@@ -2,7 +2,7 @@
 
 **Por quê:** fixar o *quê* e o *porquê* do produto antes de qualquer história, tela ou código.  
 **Importante:** é a fonte de verdade do produto — sem ela, derivados divergem e o time perde o norte.  
-**No fluxo:** **este documento** → [`docs/`](docs/) (`user-stories` → `bdd` → `screens` → `screens-bdd` → `components` → `prototype`). Orienta toda a esteira; não substitui BDD nem UI.
+**No fluxo:** **este documento** → [`docs/`](docs/) (`functionalities` → `user-stories` → `bdd` → `screens` → `screens-bdd` → `components` → `prototype`). Orienta toda a esteira; não substitui BDD nem UI.
 
 Derivados: [`docs/`](docs/).  
 Fundamentos de fluxo: [`inputs/`](inputs/) (FOP — Flow Oriented Programming).

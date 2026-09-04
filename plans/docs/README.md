@@ -2,7 +2,7 @@
 
 **Por quê:** índice e ponto de entrada dos artefatos derivados da visão.  
 **Importante:** mostra a ordem da esteira e evita abrir um documento fora de contexto.  
-**No fluxo:** [`visão`](../README.md) → **este índice** → [`user-stories.md`](user-stories.md) → … → [`prototype.html`](prototype.html). Guia a navegação; o conteúdo de produto vive nos arquivos listados.
+**No fluxo:** [`visão`](../README.md) → **este índice** → [`functionalities.md`](functionalities.md) → [`user-stories.md`](user-stories.md) → … → [`prototype.html`](prototype.html). Guia a navegação; o conteúdo de produto vive nos arquivos listados.
 
 Derivados do [documento de visão](../README.md).  
 Fundamentos FOP: [`../inputs/`](../inputs/).  
@@ -10,6 +10,7 @@ Regras para a IA na esteira: [`../config/config-ia.md`](../config/config-ia.md).
 
 | Artefato | Arquivo | Papel no fluxo |
 |----------|---------|----------------|
+| Funcionalidades | [`functionalities.md`](functionalities.md) | Capacidades de cada seção e página em bullets, base para as histórias |
 | Histórias de usuário | [`user-stories.md`](user-stories.md) | O *quê* desejado pelo usuário (Como… quero… para…) |
 | Cenários BDD | [`bdd.md`](bdd.md) | Critérios de aceite por história (Dado / Quando / Então) |
 | Telas | [`screens.md`](screens.md) | Superfícies de UI e o que cada uma faz |
@@ -19,4 +20,4 @@ Regras para a IA na esteira: [`../config/config-ia.md`](../config/config-ia.md).
 
 ## Próximos passos
 
-→ [`user-stories.md`](user-stories.md)
+→ [`functionalities.md`](functionalities.md) → [`user-stories.md`](user-stories.md)

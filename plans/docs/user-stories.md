@@ -4,7 +4,7 @@
 **Importante:** define o escopo negociável do produto — sem histórias claras, BDD e telas inventam comportamento.  
 **No fluxo:** [`visão`](../README.md) → **este documento** → [`bdd.md`](bdd.md). É o contrato funcional em formato **Como… quero… para…**; não detalha cenários nem UI.
 
-Histórias derivadas do [documento de visão](../README.md) e dos fundamentos FOP em [`../inputs/`](../inputs/):
+Histórias derivadas do [documento de visão](../README.md), do [inventário de funcionalidades](functionalities.md) e dos fundamentos FOP em [`../inputs/`](../inputs/):
 
 - `Programação Orientada a Fluxo.docx` / `.pdf`
 - `Livro Flow Oriented Programming.docx`

@@ -1,0 +1,21 @@
+- Board
+    - Visualizar card
+        - Título
+        - Adicionar subtask
+        - Atribuir responsável
+    - Adicionar colunas;
+    - Adicionar card;
+        - Adicionar título;
+    - Adicinoar raias;
+    - Abrir card
+        - Editar título;
+        - Editar descrição;
+        - Adicionar card filho;
+- Flow
+- Tree
+- Explorar
+
+
+- Todo card filho também é um card
+    - Não há distinção de hierarquia
+        - A não ser uma ser filha da outra

@@ -8,6 +8,7 @@
 | [Chines](chines/) | [`chines/docs/`](chines/docs/) | [`chines/docs/`](chines/docs/) | [`chines/config/config-ia.md`](chines/config/config-ia.md) |
 | [Caronas](caronas/) | [`caronas/README.md`](caronas/README.md) | [`caronas/docs/`](caronas/docs/) | [`caronas/config/config-ia.md`](caronas/config/config-ia.md) |
 | [Fitness](fitness/) | [`fitness/README.md`](fitness/README.md) | [`fitness/docs/`](fitness/docs/) | [`fitness/config/config-ia.md`](fitness/config/config-ia.md) |
+| [ConnectMax](connectmax/) | [`connectmax/README.md`](connectmax/README.md) | [`connectmax/docs/`](connectmax/docs/) | [`connectmax/config/config-ia.md`](connectmax/config/config-ia.md) |
 
 ### Esteira (Plans)
 
@@ -36,3 +37,11 @@ Visão → Funcionalidades → Histórias → BDD → Telas → Screens BDD → 
 ```
 
 Prompts: [`fitness/prompts/timeline.md`](fitness/prompts/timeline.md).
+
+### Esteira (ConnectMax)
+
+```text
+Visão → Funcionalidades → Histórias → BDD → Telas → Screens BDD → Componentes → Protótipo
+```
+
+Prompts: [`connectmax/prompts/timeline.md`](connectmax/prompts/timeline.md).

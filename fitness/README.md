@@ -23,6 +23,7 @@ Quem treina e cuida da alimentação costuma viver com a rotina fragmentada:
 | **Ferramentas espalhadas** | Treino num app, dieta em outro, peso no celular, fotos no álbum — nada conversa. |
 | **Metas sem âncora metabólica** | Falta base clara (TMB, gasto, déficit/superávit) para saber se a estratégia faz sentido. |
 | **Dieta desconectada da geladeira** | Planos idealizados ignoram o que a pessoa já tem em casa; macros ficam no papel. |
+| **Plano sem checagem do dia** | A pessoa monta a dieta, mas não marca o que comeu — não sabe se cumpriu a meta calórica ou de macros. |
 | **Treino genérico** | Fichas que não cobrem musculação, calistenia e outras modalidades no mesmo fluxo, nem estimam calorias por exercício. |
 | **Evolução invisível** | Sem dashboards, gráficos e timeline de fotos, a motivação cai e o progresso some. |
 | **Hábito frágil** | Sem reconhecimento, streaks e desafios sociais (como no Strava), a constância some. |
@@ -53,6 +54,7 @@ O Fitness trata saúde e performance como um **sistema integrado**: o que você 
 | Prova visual do corpo | **Fotos** em timeline para comparar ao longo do tempo |
 | Dieta realista | Montar dieta com base no que **já tem disponível** |
 | Dieta precisa | Montar dieta por **macronutrientes** (proteína, carbo, gordura) |
+| Saber se cumpriu a dieta | **Marcar o que comeu** no dia e ver se bateu a **meta** (kcal e/ou macros) |
 | Treinar de formas diferentes | Montar treinos: musculação, calistenia e outras modalidades |
 | Entender o custo energético do treino | Cada exercício **estima calorias** no plano e na sessão |
 | Manter o hábito | Gamificação inspirada no Strava: streaks, desafios, conquistas, feed de progresso |
@@ -63,6 +65,8 @@ O Fitness trata saúde e performance como um **sistema integrado**: o que você 
 
 **Dieta com o que tem em casa** — João lista ovo, frango, arroz, banana e azeite. O app monta refeições que cabem nos macros do dia e no déficit escolhido, sem inventar ingredientes que ele não tem.
 
+**Marcou e cumpriu** — À noite, João marca café, almoço e jantar no plano (e anota o lanche extra). O app soma o consumido, compara com a meta do dia e mostra se ele **cumpriu** calorias e macros — ou onde estourou.
+
 **Treino misto com calorias** — Ana monta um dia de musculação (supino, remada, agachamento) e outro de calistenia (barra, flexão, prancha). Cada exercício mostra estimativa calórica; a sessão fecha o gasto do dia junto com a basal.
 
 **Evolução visível** — Bruno registra peso, circunferências e fotos de frente/lado a cada 2 semanas. O dashboard mostra tendência; a timeline de fotos deixa a mudança óbvia. Streaks e desafios mantêm a sequência.
@@ -71,7 +75,7 @@ O Fitness trata saúde e performance como um **sistema integrado**: o que você 
 
 1. **Um hub, três pilares** — treino, dieta e métricas vivem juntos; a estratégia calórica amarra os três.
 2. **Basal primeiro** — meta de déficit/superávit parte de dados reais do perfil, não de chute.
-3. **Dieta executável** — o plano respeita o que a pessoa tem disponível e/ou os macros definidos.
+3. **Dieta executável e verificável** — o plano respeita o que a pessoa tem disponível e/ou os macros; o dia fecha marcando o que comeu e se a meta foi cumprida.
 4. **Treino multimodal** — musculação, calistenia e outras modalidades no mesmo modelo de sessão e exercício.
 5. **Calorias no movimento** — exercício e sessão contribuem para o balanço energético do dia.
 6. **Evidência > opinião** — gráficos, dashboards e fotos na timeline mostram evolução.
@@ -89,10 +93,11 @@ O Fitness trata saúde e performance como um **sistema integrado**: o que você 
 | **Fotos / timeline** | Upload de fotos de progresso; comparar ao longo do tempo |
 | **Dieta por estoque** | Informar alimentos disponíveis; montar plano alimentar a partir disso |
 | **Dieta por macros** | Definir alvos de proteína, carbo e gordura; montar refeições alinhadas |
+| **Registro e cumprimento da dieta** | Marcar o que comeu (refeições do plano e ajustes); ver se cumpriu a meta do dia (kcal e/ou macros) |
 | **Treinos** | Montar treinos de musculação, calistenia e outras modalidades; biblioteca de exercícios |
 | **Calorias no treino** | Estimar calorias por exercício e por sessão; somar ao balanço do dia |
 | **Gamificação** | Streaks, conquistas, desafios, feed/atividade no espírito Strava |
-| **Acompanhamento diário** | Visão do dia: meta calórica, treino previsto, refeições, progresso gamificado |
+| **Acompanhamento diário** | Visão do dia: meta calórica, treino previsto, refeições marcadas, status de cumprimento da dieta, progresso gamificado |
 
 ### Fora de escopo (v1)
 
@@ -129,6 +134,14 @@ Lista do que a pessoa **tem disponível**; entrada para montagem de dieta realis
 
 Conjunto de refeições do dia/semana, gerado ou ajustado por **estoque** e/ou por **macros**, respeitando a estratégia calórica.
 
+### Registro alimentar do dia
+
+O que a pessoa **marcou como consumido** (refeições do plano cumpridas, parcialmente cumpridas ou trocadas; itens extras). Alimenta o balanço do dia e o julgamento de cumprimento da meta.
+
+### Cumprimento da meta (dieta)
+
+Comparação entre o **consumido marcado** e a **meta do dia** (kcal e/ou macros). Resultado visível: cumpriu, ficou abaixo ou estourou — com indicação do desvio.
+
 ### Treino e exercício
 
 **Treino** é uma sessão (ou ficha) com modalidade (musculação, calistenia, etc.). Cada **exercício** tem séries/reps/carga ou duração e uma **estimativa calórica**.
@@ -141,6 +154,7 @@ Streaks, conquistas, desafios e atividade compartilhada que recompensam constân
 
 - A pessoa calcula basal e escolhe déficit/superávit **sem planilha externa**.
 - Consegue montar dieta a partir do que tem **e/ou** dos macros, alinhada à meta calórica.
+- Consegue **marcar o que comeu** e ver de forma clara se **cumpriu a meta** do dia.
 - Monta treinos em modalidades diferentes e vê **calorias estimadas** por exercício/sessão.
 - Acompanha evolução por **gráficos** e por **timeline de fotos**.
 - Mantém o hábito com **gamificação** (streaks, desafios, conquistas) de forma mensurável.
@@ -155,6 +169,8 @@ Streaks, conquistas, desafios e atividade compartilhada que recompensam constân
 | **Superávit** | Consumir mais kcal que o gasto, visando ganho (ex.: massa) |
 | **Macros** | Macronutrientes: proteína, carboidrato e gordura |
 | **Estoque** | Alimentos que a pessoa tem disponíveis para montar a dieta |
+| **Registro alimentar** | Marcação do que foi consumido no dia (plano + ajustes) |
+| **Cumprimento da meta** | Status do dia frente à meta de kcal e/ou macros (cumpriu / abaixo / estourou) |
 | **Sessão** | Treino executado ou planejado em um dia |
 | **Timeline** | Linha do tempo de fotos (e opcionalmente métricas) para comparar evolução |
 | **Streak** | Sequência de dias com atividade registrada (treino, dieta ou métrica) |
@@ -166,6 +182,8 @@ Streaks, conquistas, desafios e atividade compartilhada que recompensam constân
 - Déficit/superávit altera a meta diária; treino e dieta devem poder ser reavaliados quando a estratégia muda.
 - Dieta por estoque só usa alimentos marcados como disponíveis (salvo override explícito do usuário).
 - Dieta por macros valida (ou alerta) desvio relevante dos alvos diários.
+- O usuário pode marcar refeições/alimentos consumidos no dia; o cumprimento da meta compara consumido vs. meta (kcal e/ou macros) e deixa o status explícito.
+- Cumprimento da dieta no dia conta para gamificação (streak/desafio) como ação real, junto com treino e métricas.
 - Todo exercício em um treino deve poder exibir estimativa calórica; a sessão agrega o total.
 - Métricas e fotos são datadas; dashboards e timeline respeitam a ordem cronológica.
 - Gamificação recompensa ações reais (treino feito, métrica registrada, meta do dia), não só abertura do app.

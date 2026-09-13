@@ -2,6 +2,10 @@
 
 Histórias de usuário: [`stories.md`](stories.md).
 
+**Pré-requisito:** a linguagem e a visualização bidirecional em tempo real
+vivem em [`../flow-language/`](../flow-language/). O Flow **consome** essa
+camada; não a redefine.
+
 ## Visão
 
 O **Flow** é uma forma de modelar, visualizar e executar processos como

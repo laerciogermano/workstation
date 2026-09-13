@@ -4,6 +4,8 @@
 
 | Projeto | Visão | Documentação | Config IA |
 |---------|-------|--------------|-----------|
+| [Flow Language](flow-language/) | [`flow-language/README.md`](flow-language/README.md) | [`flow-language/docs/`](flow-language/docs/) | [`flow-language/config/config-ia.md`](flow-language/config/config-ia.md) |
+| [Flow](flow/) | [`flow/README.md`](flow/README.md) | [`flow/epics/`](flow/epics/), [`flow/tasks/`](flow/tasks/) | — |
 | [Plans](plans/) | [`plans/README.md`](plans/README.md) | [`plans/docs/`](plans/docs/) | [`plans/config/config-ia.md`](plans/config/config-ia.md) |
 | [Chines](chines/) | [`chines/docs/`](chines/docs/) | [`chines/docs/`](chines/docs/) | [`chines/config/config-ia.md`](chines/config/config-ia.md) |
 | [Caronas](caronas/) | [`caronas/README.md`](caronas/README.md) | [`caronas/docs/`](caronas/docs/) | [`caronas/config/config-ia.md`](caronas/config/config-ia.md) |
@@ -14,9 +16,25 @@
 
 ## Ordem de desenvolvimento
 
+```text
+Flow Language  →  Flow  →  Plans
+```
+
+O **Flow Language** é pré-requisito do **Flow**: define a tradução
+bidirecional linguagem ↔ visualização de fluxo (IR, entradas, saídas,
+sincronização em tempo real) em [`flow-language/`](flow-language/).
+
 O **Flow** é pré-requisito do **Plans**. Para desenvolver o Plans, é
 necessário desenvolver primeiro os fundamentos de fluxo definidos em
-[`flow/`](flow/).
+[`flow/`](flow/), que por sua vez consomem o Flow Language.
+
+### Esteira (Flow Language)
+
+```text
+Visão → Funcionalidades → Histórias → BDD → Telas → Screens BDD → Componentes → Protótipo
+```
+
+Prompts: [`flow-language/prompts/timeline.md`](flow-language/prompts/timeline.md).
 
 ### Esteira (Plans)
 

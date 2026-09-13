@@ -1,4 +1,4 @@
-﻿# TSK-007 — Criar arquivo
+# TSK-007 — Criar arquivo
 
 | Campo | Valor |
 |-------|--------|
@@ -12,5 +12,15 @@
 ```mermaid
 flowchart TD
   T007[TSK-007 Criar arquivo]
+  T028[TSK-028 Criar BDD]
+  T029[TSK-029 Criar PAF]
+  T007 --> T028
+  T007 --> T029
   style T007 fill:#d4edda
+  style T028 fill:#d4edda
 ```
+
+## Filhos
+
+- [`TSK-028`](TSK-028-criar-bdd/README.md) → Criar BDD (Done)
+- [`TSK-029`](TSK-029-criar-paf/README.md) → Criar PAF (Todo)

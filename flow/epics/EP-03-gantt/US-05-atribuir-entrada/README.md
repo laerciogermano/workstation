@@ -1,0 +1,30 @@
+# US-05 — Atribuir entrada
+
+| Campo | Valor |
+|-------|--------|
+| ID | US-05 |
+| Épico | [EP-03 Gantt](../) |
+| Task | [TSK-025](../../../tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-005-gantt/TSK-025-atribuir-entrada/) |
+| Status | Done |
+
+## História
+
+Como usuário do Gantt, quero **atribuir a data de entrada** de uma tarefa, para definir quando a atividade começa no cronograma.
+
+## Print
+
+_(protótipo pendente)_
+
+## Cenários
+
+### SC-01 — Selecionar tarefa
+
+Quando o usuário **selecionar uma tarefa** no Gantt, o sistema deve **permitir atribuir a data de entrada**.
+
+### SC-02 — Informar data de entrada
+
+Quando o usuário **informar a data de entrada**, o sistema deve **associar essa data** à tarefa.
+
+### SC-03 — Entrada refletida no Gantt
+
+Quando a entrada **for atribuída**, o sistema deve **posicionar o início da tarefa** nessa data no Gantt.

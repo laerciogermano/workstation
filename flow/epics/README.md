@@ -27,6 +27,13 @@ EP-02 Board
 ├── US-07 Criar coluna
 └── US-08 Criar raia
 EP-03 Gantt
+├── US-01 Criar tarefa
+├── US-02 Mover tarefa (drag and drop)
+├── US-03 Remover tarefa
+├── US-04 Atribuir responsável
+├── US-05 Atribuir entrada
+├── US-06 Atribuir saída
+└── US-07 Visualizar tarefas
 EP-04 Arvore de execucao
 ```
 

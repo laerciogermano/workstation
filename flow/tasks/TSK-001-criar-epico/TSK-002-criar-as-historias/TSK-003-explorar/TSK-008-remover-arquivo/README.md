@@ -1,4 +1,4 @@
-﻿# TSK-008 — Remover arquivo
+# TSK-008 — Remover arquivo
 
 | Campo | Valor |
 |-------|--------|
@@ -12,5 +12,15 @@
 ```mermaid
 flowchart TD
   T008[TSK-008 Remover arquivo]
+  T030[TSK-030 Criar BDD]
+  T031[TSK-031 Criar PAF]
+  T008 --> T030
+  T008 --> T031
   style T008 fill:#d4edda
+  style T030 fill:#d4edda
 ```
+
+## Filhos
+
+- [`TSK-030`](TSK-030-criar-bdd/README.md) → Criar BDD (Done)
+- [`TSK-031`](TSK-031-criar-paf/README.md) → Criar PAF (Todo)

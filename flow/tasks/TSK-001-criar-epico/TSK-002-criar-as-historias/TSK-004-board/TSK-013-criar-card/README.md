@@ -3,7 +3,7 @@
 | Campo | Valor |
 |-------|--------|
 | ID | TSK-013 |
-| Status | Done |
+| Status | Doing |
 | Pai | [TSK-004](../README.md) |
 | Output | [US-01 — Criar card](../../../../../epics/EP-02-board/US-01-criar-card/README.md) |
 
@@ -16,7 +16,7 @@ flowchart TD
   T041[TSK-041 Criar PAF]
   T013 --> T040
   T013 --> T041
-  style T013 fill:#d4edda
+  style T013 fill:#fff3cd
   style T040 fill:#d4edda
 ```
 

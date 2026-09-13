@@ -3,7 +3,7 @@
 | Campo | Valor |
 |-------|--------|
 | ID | TSK-018 |
-| Status | Done |
+| Status | Doing |
 | Pai | [TSK-004](../README.md) |
 | Output | [US-06 — Editar card](../../../../../epics/EP-02-board/US-06-editar-card/README.md) |
 
@@ -16,7 +16,7 @@ flowchart TD
   T051[TSK-051 Criar PAF]
   T018 --> T050
   T018 --> T051
-  style T018 fill:#d4edda
+  style T018 fill:#fff3cd
   style T050 fill:#d4edda
 ```
 

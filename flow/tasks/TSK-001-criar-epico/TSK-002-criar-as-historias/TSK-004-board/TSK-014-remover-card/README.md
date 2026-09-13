@@ -3,7 +3,7 @@
 | Campo | Valor |
 |-------|--------|
 | ID | TSK-014 |
-| Status | Done |
+| Status | Doing |
 | Pai | [TSK-004](../README.md) |
 | Output | [US-02 — Remover card](../../../../../epics/EP-02-board/US-02-remover-card/README.md) |
 
@@ -16,7 +16,7 @@ flowchart TD
   T043[TSK-043 Criar PAF]
   T014 --> T042
   T014 --> T043
-  style T014 fill:#d4edda
+  style T014 fill:#fff3cd
   style T042 fill:#d4edda
 ```
 

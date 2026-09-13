@@ -3,7 +3,7 @@
 | Campo | Valor |
 |-------|--------|
 | ID | TSK-015 |
-| Status | Done |
+| Status | Doing |
 | Pai | [TSK-004](../README.md) |
 | Output | [US-03 — Mover card](../../../../../epics/EP-02-board/US-03-mover-card/README.md) |
 
@@ -16,7 +16,7 @@ flowchart TD
   T045[TSK-045 Criar PAF]
   T015 --> T044
   T015 --> T045
-  style T015 fill:#d4edda
+  style T015 fill:#fff3cd
   style T044 fill:#d4edda
 ```
 

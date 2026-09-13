@@ -5,7 +5,7 @@
 | ID | US-03 |
 | Épico | [EP-01 Explorar](../) |
 | Task | [TSK-009](../../../tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-003-explorar/TSK-009-renomear-arquivo/) |
-| Status | Done |
+| Status | Doing |
 
 ## História
 

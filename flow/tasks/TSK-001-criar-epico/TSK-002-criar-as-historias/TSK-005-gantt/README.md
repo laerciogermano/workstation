@@ -3,7 +3,7 @@
 | Campo | Valor |
 |-------|--------|
 | ID | TSK-005 |
-| Status | Done |
+| Status | Doing |
 | Pai | [TSK-002](../README.md) |
 | Output | [EP-03 — Gantt](../../../../epics/EP-03-gantt/README.md) |
 
@@ -54,20 +54,20 @@ flowchart TD
   T026 --> T067
   T027 --> T068
   T027 --> T069
-  style T005 fill:#d4edda
-  style T021 fill:#d4edda
+  style T005 fill:#fff3cd
+  style T021 fill:#fff3cd
   style T056 fill:#d4edda
-  style T022 fill:#d4edda
+  style T022 fill:#fff3cd
   style T058 fill:#d4edda
-  style T023 fill:#d4edda
+  style T023 fill:#fff3cd
   style T060 fill:#d4edda
-  style T024 fill:#d4edda
+  style T024 fill:#fff3cd
   style T062 fill:#d4edda
-  style T025 fill:#d4edda
+  style T025 fill:#fff3cd
   style T064 fill:#d4edda
-  style T026 fill:#d4edda
+  style T026 fill:#fff3cd
   style T066 fill:#d4edda
-  style T027 fill:#d4edda
+  style T027 fill:#fff3cd
   style T068 fill:#d4edda
 ```
 

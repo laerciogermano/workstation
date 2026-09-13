@@ -3,7 +3,7 @@
 | Campo | Valor |
 |-------|--------|
 | ID | TSK-020 |
-| Status | Done |
+| Status | Doing |
 | Pai | [TSK-004](../README.md) |
 | Output | [US-08 — Criar raia](../../../../../epics/EP-02-board/US-08-criar-raia/README.md) |
 
@@ -16,7 +16,7 @@ flowchart TD
   T055[TSK-055 Criar PAF]
   T020 --> T054
   T020 --> T055
-  style T020 fill:#d4edda
+  style T020 fill:#fff3cd
   style T054 fill:#d4edda
 ```
 

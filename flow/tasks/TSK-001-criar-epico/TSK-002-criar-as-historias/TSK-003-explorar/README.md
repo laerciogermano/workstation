@@ -3,7 +3,7 @@
 | Campo | Valor |
 |-------|--------|
 | ID | TSK-003 |
-| Status | Done |
+| Status | Doing |
 | Pai | [TSK-002](../README.md) |
 | Output | [EP-01 — Explorar](../../../../epics/EP-01-explorar/README.md) |
 
@@ -48,18 +48,18 @@ flowchart TD
   T011 --> T037
   T012 --> T038
   T012 --> T039
-  style T003 fill:#d4edda
-  style T007 fill:#d4edda
+  style T003 fill:#fff3cd
+  style T007 fill:#fff3cd
   style T028 fill:#d4edda
-  style T008 fill:#d4edda
+  style T008 fill:#fff3cd
   style T030 fill:#d4edda
-  style T009 fill:#d4edda
+  style T009 fill:#fff3cd
   style T032 fill:#d4edda
-  style T010 fill:#d4edda
+  style T010 fill:#fff3cd
   style T034 fill:#d4edda
-  style T011 fill:#d4edda
+  style T011 fill:#fff3cd
   style T036 fill:#d4edda
-  style T012 fill:#d4edda
+  style T012 fill:#fff3cd
   style T038 fill:#d4edda
 ```
 

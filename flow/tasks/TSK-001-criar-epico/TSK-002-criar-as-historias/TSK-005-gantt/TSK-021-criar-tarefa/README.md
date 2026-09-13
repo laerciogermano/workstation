@@ -3,7 +3,7 @@
 | Campo | Valor |
 |-------|--------|
 | ID | TSK-021 |
-| Status | Done |
+| Status | Doing |
 | Pai | [TSK-005](../README.md) |
 | Output | [US-01 — Criar tarefa](../../../../../epics/EP-03-gantt/US-01-criar-tarefa/README.md) |
 
@@ -16,7 +16,7 @@ flowchart TD
   T057[TSK-057 Criar PAF]
   T021 --> T056
   T021 --> T057
-  style T021 fill:#d4edda
+  style T021 fill:#fff3cd
   style T056 fill:#d4edda
 ```
 

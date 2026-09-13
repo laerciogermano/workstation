@@ -3,7 +3,7 @@
 | Campo | Valor |
 |-------|--------|
 | ID | TSK-024 |
-| Status | Done |
+| Status | Doing |
 | Pai | [TSK-005](../README.md) |
 | Output | [US-04 — Atribuir responsável](../../../../../epics/EP-03-gantt/US-04-atribuir-responsavel/README.md) |
 
@@ -16,7 +16,7 @@ flowchart TD
   T063[TSK-063 Criar PAF]
   T024 --> T062
   T024 --> T063
-  style T024 fill:#d4edda
+  style T024 fill:#fff3cd
   style T062 fill:#d4edda
 ```
 

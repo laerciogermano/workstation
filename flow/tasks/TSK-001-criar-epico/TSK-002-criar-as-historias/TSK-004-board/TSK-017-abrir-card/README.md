@@ -3,7 +3,7 @@
 | Campo | Valor |
 |-------|--------|
 | ID | TSK-017 |
-| Status | Done |
+| Status | Doing |
 | Pai | [TSK-004](../README.md) |
 | Output | [US-05 — Abrir card](../../../../../epics/EP-02-board/US-05-abrir-card/README.md) |
 
@@ -16,7 +16,7 @@ flowchart TD
   T049[TSK-049 Criar PAF]
   T017 --> T048
   T017 --> T049
-  style T017 fill:#d4edda
+  style T017 fill:#fff3cd
   style T048 fill:#d4edda
 ```
 

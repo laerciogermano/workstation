@@ -3,7 +3,7 @@
 | Campo | Valor |
 |-------|--------|
 | ID | TSK-016 |
-| Status | Done |
+| Status | Doing |
 | Pai | [TSK-004](../README.md) |
 | Output | [US-04 — Renomear card](../../../../../epics/EP-02-board/US-04-renomear-card/README.md) |
 
@@ -16,7 +16,7 @@ flowchart TD
   T047[TSK-047 Criar PAF]
   T016 --> T046
   T016 --> T047
-  style T016 fill:#d4edda
+  style T016 fill:#fff3cd
   style T046 fill:#d4edda
 ```
 

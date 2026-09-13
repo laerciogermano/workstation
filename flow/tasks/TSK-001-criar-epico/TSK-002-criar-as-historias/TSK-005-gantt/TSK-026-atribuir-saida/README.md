@@ -3,7 +3,7 @@
 | Campo | Valor |
 |-------|--------|
 | ID | TSK-026 |
-| Status | Done |
+| Status | Doing |
 | Pai | [TSK-005](../README.md) |
 | Output | [US-06 — Atribuir saída](../../../../../epics/EP-03-gantt/US-06-atribuir-saida/README.md) |
 
@@ -16,7 +16,7 @@ flowchart TD
   T067[TSK-067 Criar PAF]
   T026 --> T066
   T026 --> T067
-  style T026 fill:#d4edda
+  style T026 fill:#fff3cd
   style T066 fill:#d4edda
 ```
 

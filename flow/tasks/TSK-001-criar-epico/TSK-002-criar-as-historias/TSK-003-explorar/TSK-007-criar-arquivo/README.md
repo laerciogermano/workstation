@@ -3,7 +3,7 @@
 | Campo | Valor |
 |-------|--------|
 | ID | TSK-007 |
-| Status | Done |
+| Status | Doing |
 | Pai | [TSK-003](../README.md) |
 | Output | [US-01 — Criar arquivo](../../../../../epics/EP-01-explorar/US-01-criar-arquivo/README.md) |
 
@@ -16,7 +16,7 @@ flowchart TD
   T029[TSK-029 Criar PAF]
   T007 --> T028
   T007 --> T029
-  style T007 fill:#d4edda
+  style T007 fill:#fff3cd
   style T028 fill:#d4edda
 ```
 

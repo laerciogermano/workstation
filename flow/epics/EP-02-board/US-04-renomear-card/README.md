@@ -5,7 +5,7 @@
 | ID | US-04 |
 | Épico | [EP-02 Board](../) |
 | Task | [TSK-016](../../../tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-004-board/TSK-016-renomear-card/) |
-| Status | Done |
+| Status | Doing |
 
 ## História
 

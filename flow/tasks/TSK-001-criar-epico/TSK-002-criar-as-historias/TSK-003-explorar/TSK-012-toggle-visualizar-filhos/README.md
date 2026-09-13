@@ -3,7 +3,7 @@
 | Campo | Valor |
 |-------|--------|
 | ID | TSK-012 |
-| Status | Done |
+| Status | Doing |
 | Pai | [TSK-003](../README.md) |
 | Output | [US-06 — Expandir e recolher](../../../../../epics/EP-01-explorar/US-06-toggle-visualizar-filhos/README.md) |
 
@@ -16,7 +16,7 @@ flowchart TD
   T039[TSK-039 Criar PAF]
   T012 --> T038
   T012 --> T039
-  style T012 fill:#d4edda
+  style T012 fill:#fff3cd
   style T038 fill:#d4edda
 ```
 

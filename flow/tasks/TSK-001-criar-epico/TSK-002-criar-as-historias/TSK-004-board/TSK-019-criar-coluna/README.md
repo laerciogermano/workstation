@@ -3,7 +3,7 @@
 | Campo | Valor |
 |-------|--------|
 | ID | TSK-019 |
-| Status | Done |
+| Status | Doing |
 | Pai | [TSK-004](../README.md) |
 | Output | [US-07 — Criar coluna](../../../../../epics/EP-02-board/US-07-criar-coluna/README.md) |
 
@@ -16,7 +16,7 @@ flowchart TD
   T053[TSK-053 Criar PAF]
   T019 --> T052
   T019 --> T053
-  style T019 fill:#d4edda
+  style T019 fill:#fff3cd
   style T052 fill:#d4edda
 ```
 

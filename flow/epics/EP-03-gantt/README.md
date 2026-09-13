@@ -4,7 +4,7 @@
 |-------|--------|
 | ID | EP-03 |
 | Task | [TSK-005](../../tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-005-gantt/) |
-| Status | Done |
+| Status | Doing |
 
 ## Intenção
 

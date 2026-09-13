@@ -3,7 +3,7 @@
 | Campo | Valor |
 |-------|--------|
 | ID | TSK-022 |
-| Status | Done |
+| Status | Doing |
 | Pai | [TSK-005](../README.md) |
 | Output | [US-02 — Mover tarefa (drag and drop)](../../../../../epics/EP-03-gantt/US-02-mover-tarefa-dragdrop/README.md) |
 
@@ -16,7 +16,7 @@ flowchart TD
   T059[TSK-059 Criar PAF]
   T022 --> T058
   T022 --> T059
-  style T022 fill:#d4edda
+  style T022 fill:#fff3cd
   style T058 fill:#d4edda
 ```
 

@@ -5,7 +5,7 @@
 | ID | US-08 |
 | Épico | [EP-02 Board](../) |
 | Task | [TSK-020](../../../tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-004-board/TSK-020-criar-raia/) |
-| Status | Done |
+| Status | Doing |
 
 ## História
 

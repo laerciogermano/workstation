@@ -5,7 +5,7 @@
 | ID | US-04 |
 | Épico | [EP-01 Explorar](../) |
 | Task | [TSK-010](../../../tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-003-explorar/TSK-010-mover-arquivo-dragdrop/) |
-| Status | Done |
+| Status | Doing |
 
 ## História
 

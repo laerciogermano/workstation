@@ -53,15 +53,15 @@ flowchart TD
   style T007 fill:#d4edda
   style T008 fill:#d4edda
   style T009 fill:#d4edda
+  style T010 fill:#d4edda
 ```
 
 | Todo | Doing | Done |
 |------|-------|------|
-| [TSK-010](flow/epics/EP-01-explorar/US-04-mover-arquivo-dragdrop/README.md) Mover arquivo | [TSK-001](flow/tasks/TSK-001-criar-epico/README.md) Criar épico | [TSK-007](flow/epics/EP-01-explorar/US-01-criar-arquivo/README.md) Criar arquivo |
-| [TSK-011](flow/epics/EP-01-explorar/US-05-visualizar-arvore-de-arquivos/README.md) Visualizar árvore | [TSK-002](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/README.md) Criar as histórias | [TSK-008](flow/epics/EP-01-explorar/US-02-remover-arquivo/README.md) Remover arquivo |
-| [TSK-012](flow/epics/EP-01-explorar/US-06-toggle-visualizar-filhos/README.md) Toggle visualizar filhos | [TSK-003](flow/epics/EP-01-explorar/README.md) Explorar | [TSK-009](flow/epics/EP-01-explorar/US-03-renomear-arquivo/README.md) Renomear arquivo |
-| [TSK-004](flow/epics/EP-02-board/README.md) Board | | |
-| [TSK-005](flow/epics/EP-03-gantt/README.md) Gantt | | |
+| [TSK-011](flow/epics/EP-01-explorar/US-05-visualizar-arvore-de-arquivos/README.md) Visualizar árvore | [TSK-001](flow/tasks/TSK-001-criar-epico/README.md) Criar épico | [TSK-007](flow/epics/EP-01-explorar/US-01-criar-arquivo/README.md) Criar arquivo |
+| [TSK-012](flow/epics/EP-01-explorar/US-06-toggle-visualizar-filhos/README.md) Toggle visualizar filhos | [TSK-002](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/README.md) Criar as histórias | [TSK-008](flow/epics/EP-01-explorar/US-02-remover-arquivo/README.md) Remover arquivo |
+| [TSK-004](flow/epics/EP-02-board/README.md) Board | [TSK-003](flow/epics/EP-01-explorar/README.md) Explorar | [TSK-009](flow/epics/EP-01-explorar/US-03-renomear-arquivo/README.md) Renomear arquivo |
+| [TSK-005](flow/epics/EP-03-gantt/README.md) Gantt | | [TSK-010](flow/epics/EP-01-explorar/US-04-mover-arquivo-dragdrop/README.md) Mover arquivo |
 | [TSK-006](flow/epics/EP-04-arvore-de-execucao/README.md) Árvore de execução | | |
 
 → [`flow/`](flow/README.md) · [`flow/tasks/`](flow/tasks/README.md) · [`flow/epics/`](flow/epics/README.md) · [`flow/gantt.md`](flow/gantt.md)

@@ -35,6 +35,7 @@ flowchart TD
   style T007 fill:#d4edda
   style T008 fill:#d4edda
   style T009 fill:#d4edda
+  style T010 fill:#d4edda
 ```
 
 | ID | Task | Status | Output |
@@ -48,6 +49,6 @@ flowchart TD
 | TSK-007 | Criar arquivo | Done | [US-01](../epics/EP-01-explorar/US-01-criar-arquivo/README.md) |
 | TSK-008 | Remover arquivo | Done | [US-02](../epics/EP-01-explorar/US-02-remover-arquivo/README.md) |
 | TSK-009 | Renomear arquivo | Done | [US-03](../epics/EP-01-explorar/US-03-renomear-arquivo/README.md) |
-| TSK-010 | Mover arquivo | Todo | [US-04](../epics/EP-01-explorar/US-04-mover-arquivo-dragdrop/README.md) |
+| TSK-010 | Mover arquivo | Done | [US-04](../epics/EP-01-explorar/US-04-mover-arquivo-dragdrop/README.md) |
 | TSK-011 | Visualizar árvore | Todo | [US-05](../epics/EP-01-explorar/US-05-visualizar-arvore-de-arquivos/README.md) |
 | TSK-012 | Toggle filhos | Todo | [US-06](../epics/EP-01-explorar/US-06-toggle-visualizar-filhos/README.md) |

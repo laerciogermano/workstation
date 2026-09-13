@@ -13,9 +13,11 @@ Como usuário do Explorar, quero **renomear um arquivo** na árvore, para ajusta
 
 ## Print
 
-![Renomear arquivo](../../../images/Captura%20de%20tela%202026-09-13%20143248.png)
+![Renomear arquivo — menu](../../../images/Captura%20de%20tela%202026-09-13%20143248.png)
 
-Referência: arquivo **teste.html** na pasta **NOVA PASTA**, com menu de contexto e opção **Rename...** (atalho **F2**).
+![Renomear arquivo — campo inline](../../../images/Captura%20de%20tela%202026-09-13%20171825.png)
+
+Referência: arquivo **teste.html** na pasta **NOVA PASTA**, com menu de contexto e opção **Rename...** (atalho **F2**), e campo de nome editável inline.
 
 ## Cenários
 

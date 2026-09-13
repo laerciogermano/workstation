@@ -53,13 +53,13 @@ flowchart TD
   classDef doing fill:#fff3cd,stroke:#ffc107,color:#664d03
   classDef todo fill:#e9ecef,stroke:#6c757d,color:#212529
 
-  class T001 done
-  class T002,T003,T004,T005,T006,T007,T008,T009,T010,T011,T012 todo
+  class T001,T002,T003,T004,T005,T006,T007,T008,T009,T010,T011,T012 todo
 ```
 
 | Todo | Doing | Done |
 |------|-------|------|
-| [TSK-002](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/) Criar as histórias | — | [TSK-001](flow/tasks/TSK-001-criar-epico/) Criar épico |
+| [TSK-001](flow/tasks/TSK-001-criar-epico/) Criar épico | — | — |
+| [TSK-002](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/) Criar as histórias | | |
 | [TSK-003](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-003-explorar/) Explorar (+ histórias TSK-007…012) | | |
 | [TSK-004](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-004-board/) Board | | |
 | [TSK-005](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-005-gantt/) Gantt | | |

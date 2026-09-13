@@ -4,7 +4,7 @@ Cada item da raia Flow no [`board.md`](../board.md) tem um **id** e uma **pasta*
 
 | ID | Task | Status | Pasta |
 |----|------|--------|-------|
-| TSK-001 | Criar épico | Done | [`TSK-001-criar-epico/`](TSK-001-criar-epico/) |
+| TSK-001 | Criar épico | Todo | [`TSK-001-criar-epico/`](TSK-001-criar-epico/) |
 | TSK-002 | Criar as histórias | Todo | [`TSK-001-criar-epico/TSK-002-criar-as-historias/`](TSK-001-criar-epico/TSK-002-criar-as-historias/) |
 | TSK-003 | Explorar (histórias) | Todo | [`…/TSK-003-explorar/`](TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-003-explorar/) |
 | TSK-004 | Board (histórias) | Todo | [`…/TSK-004-board/`](TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-004-board/) |

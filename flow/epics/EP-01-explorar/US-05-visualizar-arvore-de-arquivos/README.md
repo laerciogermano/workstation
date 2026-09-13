@@ -35,10 +35,18 @@ Quando o usuário **clicar em um arquivo ou pasta** no Explorar, o sistema deve 
 
 Quando o usuário **clicar no chevron** de uma pasta recolhida no Explorar, o sistema deve **expandir a pasta** e **mostrar seus filhos** na árvore.
 
-### SC-05 — Recolher pasta
+### SC-05 — Ícone ao abrir pasta
+
+Quando a pasta **for expandida**, o sistema deve **atualizar o ícone/chevron** para o estado de pasta aberta.
+
+### SC-06 — Recolher pasta
 
 Quando o usuário **clicar no chevron** de uma pasta expandida no Explorar, o sistema deve **recolher a pasta** e **ocultar seus filhos** na árvore.
 
-### SC-06 — Recolher tudo
+### SC-07 — Ícone ao fechar pasta
+
+Quando a pasta **for recolhida**, o sistema deve **atualizar o ícone/chevron** para o estado de pasta fechada.
+
+### SC-08 — Recolher tudo
 
 Quando o usuário **clicar no ícone de recolher tudo** na barra do Explorar, o sistema deve **recolher todas as pastas** da árvore.

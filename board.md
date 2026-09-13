@@ -22,7 +22,7 @@ Pré-requisito do Plans.
 
 | Todo | Doing | Done |
 |------|-------|------|
-| Criar épico | | |
+| Criar as histórias | | Criar épico |
 
 → [`flow/`](flow/)
 

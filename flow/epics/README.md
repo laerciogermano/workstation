@@ -9,13 +9,19 @@
 
 ## EP-01 — Explorar
 
+![Capa EP-01 — Explorar](assets/epic-e01-cover.png)
+
 Árvore de arquivos e pastas no estilo IDE: criar, remover, renomear, mover e navegar a hierarquia de componentes do Flow.
 
 ## EP-02 — Board
 
+![Capa EP-02 — Board](assets/epic-e02-cover.png)
+
 Kanban por arquivo: colunas, raias e cards para acompanhar e alterar o status de cada unidade no fluxo de trabalho.
 
 ## EP-03 — Gantt
+
+![Capa EP-03 — Gantt](assets/epic-e03-cover.png)
 
 Cronograma das atividades no tempo: criar, mover, remover e atribuir responsável, com visão de sequência e paralelismo.
 
@@ -58,3 +64,4 @@ EP-04 Arvore de execucao
 ```
 
 → [`../tasks/`](../tasks/README.md) · [`../board.md`](../board.md)
+

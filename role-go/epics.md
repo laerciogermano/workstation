@@ -50,11 +50,15 @@ O usuário consome pelo app no bar parceiro via cardápio digital; a compra gera
 
 ## E05 — Gamificação e RoleGo Wallet
 
+![Capa do épico E05 — Gamificação e RoleGo Wallet](assets/epic-e05-cover.png)
+
 Pontos, selos, rankings entre amigos, recompensas (descontos, ingressos com preço reduzido, furo de fila) e status (ex.: Rolê Gold, Platina) incentivam uso e compra pelo app. A RoleGo Wallet guarda histórico de experiências, fotos, avaliações e selos, reforçando retenção e adesão dos estabelecimentos.
 
 ## E06 — Vitrine de influenciadores
 
 Influenciadores cadastram disponibilidade; casas e produtores contratam pela plataforma; o nome do influenciador confirmado aparece na página do evento como chamariz, com comissão sobre o cachê e tração em novas cidades.
+
+![Capa do épico E06 — Vitrine de influenciadores](assets/epic-e06-cover.png)
 
 ## E07 — Publicidade e visibilidade paga
 

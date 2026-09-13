@@ -30,8 +30,6 @@ EP-03 Gantt
 ├── US-02 Mover tarefa (drag and drop)
 ├── US-03 Remover tarefa
 ├── US-04 Atribuir responsável
-├── US-05 Atribuir entrada
-├── US-06 Atribuir saída
 ├── US-07 Visualizar tarefas
 └── US-08 Selecionar atividade
 EP-04 Arvore de execucao

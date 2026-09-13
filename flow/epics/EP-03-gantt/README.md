@@ -18,7 +18,5 @@ Controle de sequência e paralelismo das atividades.
 | US-02 | Mover tarefa (drag and drop) | [`US-02-mover-tarefa-dragdrop/`](US-02-mover-tarefa-dragdrop/README.md) |
 | US-03 | Remover tarefa | [`US-03-remover-tarefa/`](US-03-remover-tarefa/README.md) |
 | US-04 | Atribuir responsável | [`US-04-atribuir-responsavel/`](US-04-atribuir-responsavel/README.md) |
-| US-05 | Atribuir entrada | [`US-05-atribuir-entrada/`](US-05-atribuir-entrada/README.md) |
-| US-06 | Atribuir saída | [`US-06-atribuir-saida/`](US-06-atribuir-saida/README.md) |
 | US-07 | Visualizar tarefas | [`US-07-visualizar-tarefas/`](US-07-visualizar-tarefas/README.md) |
 | US-08 | Selecionar atividade | [`US-08-selecionar-atividade/`](US-08-selecionar-atividade/README.md) |

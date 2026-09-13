@@ -16,16 +16,12 @@ flowchart TD
   T022[TSK-022 Mover tarefa]
   T023[TSK-023 Remover tarefa]
   T024[TSK-024 Atribuir responsavel]
-  T025[TSK-025 Atribuir entrada]
-  T026[TSK-026 Atribuir saida]
   T027[TSK-027 Visualizar tarefas]
   T070[TSK-070 Selecionar atividade]
   T005 --> T021
   T005 --> T022
   T005 --> T023
   T005 --> T024
-  T005 --> T025
-  T005 --> T026
   T005 --> T027
   T005 --> T070
   style T005 fill:#fff3cd
@@ -33,8 +29,6 @@ flowchart TD
   style T022 fill:#fff3cd
   style T023 fill:#fff3cd
   style T024 fill:#fff3cd
-  style T025 fill:#fff3cd
-  style T026 fill:#fff3cd
   style T027 fill:#fff3cd
   style T070 fill:#fff3cd
 ```
@@ -53,12 +47,6 @@ flowchart TD
 - [`TSK-024`](TSK-024-atribuir-responsavel/README.md) → Output [US-04-atribuir-responsavel](../../../../epics/EP-03-gantt/US-04-atribuir-responsavel/README.md)
   - [`TSK-062`](TSK-024-atribuir-responsavel/TSK-062-criar-bdd/README.md) → Criar BDD
   - [`TSK-063`](TSK-024-atribuir-responsavel/TSK-063-criar-paf/README.md) → Criar PAF
-- [`TSK-025`](TSK-025-atribuir-entrada/README.md) → Output [US-05-atribuir-entrada](../../../../epics/EP-03-gantt/US-05-atribuir-entrada/README.md)
-  - [`TSK-064`](TSK-025-atribuir-entrada/TSK-064-criar-bdd/README.md) → Criar BDD
-  - [`TSK-065`](TSK-025-atribuir-entrada/TSK-065-criar-paf/README.md) → Criar PAF
-- [`TSK-026`](TSK-026-atribuir-saida/README.md) → Output [US-06-atribuir-saida](../../../../epics/EP-03-gantt/US-06-atribuir-saida/README.md)
-  - [`TSK-066`](TSK-026-atribuir-saida/TSK-066-criar-bdd/README.md) → Criar BDD
-  - [`TSK-067`](TSK-026-atribuir-saida/TSK-067-criar-paf/README.md) → Criar PAF
 - [`TSK-027`](TSK-027-visualizar-tarefas/README.md) → Output [US-07-visualizar-tarefas](../../../../epics/EP-03-gantt/US-07-visualizar-tarefas/README.md)
   - [`TSK-068`](TSK-027-visualizar-tarefas/TSK-068-criar-bdd/README.md) → Criar BDD
   - [`TSK-069`](TSK-027-visualizar-tarefas/TSK-069-criar-paf/README.md) → Criar PAF

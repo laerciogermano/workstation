@@ -24,3 +24,7 @@ Quando o usuário **abrir o Gantt**, o sistema deve **exibir as tarefas** no cro
 ### SC-02 — Tarefas posicionadas no tempo
 
 Quando as tarefas **forem exibidas**, o sistema deve **mostrá-las conforme entrada, saída e demais atributos** disponíveis.
+
+### SC-03 — Visualizar responsável
+
+Quando as tarefas **forem exibidas**, o sistema deve **mostrar o responsável** na **coluna de responsável**, na **linha de cada atividade**.

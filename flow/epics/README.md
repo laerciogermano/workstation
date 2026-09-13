@@ -33,6 +33,12 @@ EP-03 Gantt
 ├── US-07 Visualizar tarefas
 └── US-08 Selecionar atividade
 EP-04 Arvore de execucao
+├── US-01 Criar atividade
+├── US-02 Mover atividade (drag and drop)
+├── US-03 Remover atividade
+├── US-04 Atribuir responsável
+├── US-05 Visualizar árvore
+└── US-06 Selecionar atividade
 ```
 
 → [`../tasks/`](../tasks/README.md) · [`../board.md`](../board.md)

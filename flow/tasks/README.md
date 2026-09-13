@@ -68,6 +68,24 @@ flowchart TD
   T070[TSK-070 Selecionar atividade]
   T071[TSK-071 Criar BDD]
   T072[TSK-072 Criar PAF]
+  T073[TSK-073 Criar atividade]
+  T074[TSK-074 Mover atividade]
+  T075[TSK-075 Remover atividade]
+  T076[TSK-076 Atribuir responsavel]
+  T077[TSK-077 Visualizar arvore]
+  T078[TSK-078 Selecionar atividade]
+  T079[TSK-079 Criar BDD]
+  T080[TSK-080 Criar PAF]
+  T081[TSK-081 Criar BDD]
+  T082[TSK-082 Criar PAF]
+  T083[TSK-083 Criar BDD]
+  T084[TSK-084 Criar PAF]
+  T085[TSK-085 Criar BDD]
+  T086[TSK-086 Criar PAF]
+  T087[TSK-087 Criar BDD]
+  T088[TSK-088 Criar PAF]
+  T089[TSK-089 Criar BDD]
+  T090[TSK-090 Criar PAF]
   T006[TSK-006 Arvore execucao]
   T001 --> T002
   T002 --> T003
@@ -131,6 +149,24 @@ flowchart TD
   T070 --> T071
   T070 --> T072
   T002 --> T006
+  T006 --> T073
+  T006 --> T074
+  T006 --> T075
+  T006 --> T076
+  T006 --> T077
+  T006 --> T078
+  T073 --> T079
+  T073 --> T080
+  T074 --> T081
+  T074 --> T082
+  T075 --> T083
+  T075 --> T084
+  T076 --> T085
+  T076 --> T086
+  T077 --> T087
+  T077 --> T088
+  T078 --> T089
+  T078 --> T090
   style T001 fill:#fff3cd
   style T002 fill:#fff3cd
   style T003 fill:#d4edda
@@ -179,6 +215,19 @@ flowchart TD
   style T033 fill:#d4edda
   style T035 fill:#d4edda
   style T037 fill:#d4edda
+  style T006 fill:#fff3cd
+  style T073 fill:#fff3cd
+  style T074 fill:#fff3cd
+  style T075 fill:#fff3cd
+  style T076 fill:#fff3cd
+  style T077 fill:#fff3cd
+  style T078 fill:#fff3cd
+  style T079 fill:#d4edda
+  style T081 fill:#d4edda
+  style T083 fill:#d4edda
+  style T085 fill:#d4edda
+  style T087 fill:#d4edda
+  style T089 fill:#d4edda
 ```
 
 | ID | Task | Status | Output |
@@ -188,7 +237,7 @@ flowchart TD
 | TSK-003 | Explorar | Done | [EP-01](../epics/EP-01-explorar/README.md) |
 | TSK-004 | Board | Doing | [EP-02](../epics/EP-02-board/README.md) |
 | TSK-005 | Gantt | Doing | [EP-03](../epics/EP-03-gantt/README.md) |
-| TSK-006 | Árvore de execução | Todo | [EP-04](../epics/EP-04-arvore-de-execucao/README.md) |
+| TSK-006 | Árvore de execução | Doing | [EP-04](../epics/EP-04-arvore-de-execucao/README.md) |
 | TSK-007 | Criar arquivo | Done | [US-01](../epics/EP-01-explorar/US-01-criar-arquivo/README.md) |
 | TSK-028 | Criar BDD | Done | [US-01](../epics/EP-01-explorar/US-01-criar-arquivo/README.md) |
 | TSK-029 | Criar PAF | Done | [US-01](../epics/EP-01-explorar/US-01-criar-arquivo/README.md) |
@@ -246,3 +295,21 @@ flowchart TD
 | TSK-070 | Selecionar atividade | Doing | [US-08](../epics/EP-03-gantt/US-08-selecionar-atividade/README.md) |
 | TSK-071 | Criar BDD | Done | [US-08](../epics/EP-03-gantt/US-08-selecionar-atividade/README.md) |
 | TSK-072 | Criar PAF | Todo | [US-08](../epics/EP-03-gantt/US-08-selecionar-atividade/README.md) |
+| TSK-073 | Criar atividade | Doing | [US-01](../epics/EP-04-arvore-de-execucao/US-01-criar-atividade/README.md) |
+| TSK-079 | Criar BDD | Done | [US-01](../epics/EP-04-arvore-de-execucao/US-01-criar-atividade/README.md) |
+| TSK-080 | Criar PAF | Todo | [US-01](../epics/EP-04-arvore-de-execucao/US-01-criar-atividade/README.md) |
+| TSK-074 | Mover atividade | Doing | [US-02](../epics/EP-04-arvore-de-execucao/US-02-mover-atividade-dragdrop/README.md) |
+| TSK-081 | Criar BDD | Done | [US-02](../epics/EP-04-arvore-de-execucao/US-02-mover-atividade-dragdrop/README.md) |
+| TSK-082 | Criar PAF | Todo | [US-02](../epics/EP-04-arvore-de-execucao/US-02-mover-atividade-dragdrop/README.md) |
+| TSK-075 | Remover atividade | Doing | [US-03](../epics/EP-04-arvore-de-execucao/US-03-remover-atividade/README.md) |
+| TSK-083 | Criar BDD | Done | [US-03](../epics/EP-04-arvore-de-execucao/US-03-remover-atividade/README.md) |
+| TSK-084 | Criar PAF | Todo | [US-03](../epics/EP-04-arvore-de-execucao/US-03-remover-atividade/README.md) |
+| TSK-076 | Atribuir responsável | Doing | [US-04](../epics/EP-04-arvore-de-execucao/US-04-atribuir-responsavel/README.md) |
+| TSK-085 | Criar BDD | Done | [US-04](../epics/EP-04-arvore-de-execucao/US-04-atribuir-responsavel/README.md) |
+| TSK-086 | Criar PAF | Todo | [US-04](../epics/EP-04-arvore-de-execucao/US-04-atribuir-responsavel/README.md) |
+| TSK-077 | Visualizar árvore | Doing | [US-05](../epics/EP-04-arvore-de-execucao/US-05-visualizar-arvore/README.md) |
+| TSK-087 | Criar BDD | Done | [US-05](../epics/EP-04-arvore-de-execucao/US-05-visualizar-arvore/README.md) |
+| TSK-088 | Criar PAF | Todo | [US-05](../epics/EP-04-arvore-de-execucao/US-05-visualizar-arvore/README.md) |
+| TSK-078 | Selecionar atividade | Doing | [US-06](../epics/EP-04-arvore-de-execucao/US-06-selecionar-atividade/README.md) |
+| TSK-089 | Criar BDD | Done | [US-06](../epics/EP-04-arvore-de-execucao/US-06-selecionar-atividade/README.md) |
+| TSK-090 | Criar PAF | Todo | [US-06](../epics/EP-04-arvore-de-execucao/US-06-selecionar-atividade/README.md) |

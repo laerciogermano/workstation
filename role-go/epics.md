@@ -34,6 +34,8 @@ Cada épico agrupa um conjunto coerente de valor; histórias e BDD vêm depois.
 
 ## E01 — Conta, onboarding e perfil
 
+![Capa do épico E01 — Conta, onboarding e perfil](assets/epic-e01-cover.png)
+
 O usuário cria conta (email, Google ou Apple), configura preferências de tipo de evento, cidade, raio e localização, e mantém um perfil com foto, histórico de eventos, amigos, fotos por evento e selos. A entrada rápida e o perfil alimentam descoberta, social e gamificação.
 
 ## E02 — Descoberta de eventos

@@ -86,6 +86,24 @@ flowchart TD
   T070[TSK-070 Selecionar atividade]
   T071[TSK-071 Criar BDD]
   T072[TSK-072 Criar PAF]
+  T073[TSK-073 Criar atividade]
+  T074[TSK-074 Mover atividade]
+  T075[TSK-075 Remover atividade]
+  T076[TSK-076 Atribuir responsavel]
+  T077[TSK-077 Visualizar arvore]
+  T078[TSK-078 Selecionar atividade]
+  T079[TSK-079 Criar BDD]
+  T080[TSK-080 Criar PAF]
+  T081[TSK-081 Criar BDD]
+  T082[TSK-082 Criar PAF]
+  T083[TSK-083 Criar BDD]
+  T084[TSK-084 Criar PAF]
+  T085[TSK-085 Criar BDD]
+  T086[TSK-086 Criar PAF]
+  T087[TSK-087 Criar BDD]
+  T088[TSK-088 Criar PAF]
+  T089[TSK-089 Criar BDD]
+  T090[TSK-090 Criar PAF]
   T006[TSK-006 Arvore execucao]
   T001 --> T002
   T002 --> T003
@@ -149,6 +167,24 @@ flowchart TD
   T070 --> T071
   T070 --> T072
   T002 --> T006
+  T006 --> T073
+  T006 --> T074
+  T006 --> T075
+  T006 --> T076
+  T006 --> T077
+  T006 --> T078
+  T073 --> T079
+  T073 --> T080
+  T074 --> T081
+  T074 --> T082
+  T075 --> T083
+  T075 --> T084
+  T076 --> T085
+  T076 --> T086
+  T077 --> T087
+  T077 --> T088
+  T078 --> T089
+  T078 --> T090
   style T001 fill:#fff3cd
   style T002 fill:#fff3cd
   style T003 fill:#d4edda
@@ -197,38 +233,57 @@ flowchart TD
   style T033 fill:#d4edda
   style T035 fill:#d4edda
   style T037 fill:#d4edda
+  style T006 fill:#fff3cd
+  style T073 fill:#fff3cd
+  style T074 fill:#fff3cd
+  style T075 fill:#fff3cd
+  style T076 fill:#fff3cd
+  style T077 fill:#fff3cd
+  style T078 fill:#fff3cd
+  style T079 fill:#d4edda
+  style T081 fill:#d4edda
+  style T083 fill:#d4edda
+  style T085 fill:#d4edda
+  style T087 fill:#d4edda
+  style T089 fill:#d4edda
 ```
 
 | Todo | Doing | Done |
 |------|-------|------|
-| [TSK-006](flow/epics/EP-04-arvore-de-execucao/README.md) Árvore de execução | [TSK-001](flow/tasks/TSK-001-criar-epico/README.md) Criar épico | [TSK-028](flow/epics/EP-01-explorar/US-01-criar-arquivo/README.md) Criar BDD |
-| [TSK-043](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-004-board/TSK-014-remover-card/TSK-043-criar-paf/README.md) Criar PAF | [TSK-002](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/README.md) Criar as histórias | [TSK-030](flow/epics/EP-01-explorar/US-02-remover-arquivo/README.md) Criar BDD |
-| [TSK-045](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-004-board/TSK-015-mover-card/TSK-045-criar-paf/README.md) Criar PAF | [TSK-013](flow/epics/EP-02-board/US-01-criar-card/README.md) Criar card | [TSK-032](flow/epics/EP-01-explorar/US-03-renomear-arquivo/README.md) Criar BDD |
-| [TSK-047](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-004-board/TSK-016-renomear-card/TSK-047-criar-paf/README.md) Criar PAF | [TSK-014](flow/epics/EP-02-board/US-02-remover-card/README.md) Remover card | [TSK-034](flow/epics/EP-01-explorar/US-04-mover-arquivo-dragdrop/README.md) Criar BDD |
-| [TSK-049](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-004-board/TSK-017-abrir-card/TSK-049-criar-paf/README.md) Criar PAF | [TSK-015](flow/epics/EP-02-board/US-03-mover-card/README.md) Mover card | [TSK-036](flow/epics/EP-01-explorar/US-05-visualizar-arvore-de-arquivos/README.md) Criar BDD |
-| [TSK-051](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-004-board/TSK-018-editar-card/TSK-051-criar-paf/README.md) Criar PAF | [TSK-016](flow/epics/EP-02-board/US-04-renomear-card/README.md) Renomear card | [TSK-044](flow/epics/EP-02-board/US-03-mover-card/README.md) Criar BDD |
-| [TSK-053](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-004-board/TSK-019-criar-coluna/TSK-053-criar-paf/README.md) Criar PAF | [TSK-017](flow/epics/EP-02-board/US-05-abrir-card/README.md) Abrir card | [TSK-046](flow/epics/EP-02-board/US-04-renomear-card/README.md) Criar BDD |
-| [TSK-055](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-004-board/TSK-020-criar-raia/TSK-055-criar-paf/README.md) Criar PAF | [TSK-018](flow/epics/EP-02-board/US-06-editar-card/README.md) Editar card | [TSK-048](flow/epics/EP-02-board/US-05-abrir-card/README.md) Criar BDD |
-| [TSK-057](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-005-gantt/TSK-021-criar-tarefa/TSK-057-criar-paf/README.md) Criar PAF | [TSK-019](flow/epics/EP-02-board/US-07-criar-coluna/README.md) Criar coluna | [TSK-050](flow/epics/EP-02-board/US-06-editar-card/README.md) Criar BDD |
-| [TSK-059](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-005-gantt/TSK-022-mover-tarefa-dragdrop/TSK-059-criar-paf/README.md) Criar PAF | [TSK-020](flow/epics/EP-02-board/US-08-criar-raia/README.md) Criar raia | [TSK-052](flow/epics/EP-02-board/US-07-criar-coluna/README.md) Criar BDD |
-| [TSK-061](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-005-gantt/TSK-023-remover-tarefa/TSK-061-criar-paf/README.md) Criar PAF | [TSK-004](flow/epics/EP-02-board/README.md) Board | [TSK-054](flow/epics/EP-02-board/US-08-criar-raia/README.md) Criar BDD |
-| [TSK-063](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-005-gantt/TSK-024-atribuir-responsavel/TSK-063-criar-paf/README.md) Criar PAF | [TSK-021](flow/epics/EP-03-gantt/US-01-criar-tarefa/README.md) Criar tarefa | [TSK-056](flow/epics/EP-03-gantt/US-01-criar-tarefa/README.md) Criar BDD |
-| [TSK-069](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-005-gantt/TSK-027-visualizar-tarefas/TSK-069-criar-paf/README.md) Criar PAF | [TSK-022](flow/epics/EP-03-gantt/US-02-mover-tarefa-dragdrop/README.md) Mover tarefa | [TSK-058](flow/epics/EP-03-gantt/US-02-mover-tarefa-dragdrop/README.md) Criar BDD |
-| [TSK-072](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-005-gantt/TSK-070-selecionar-atividade/TSK-072-criar-paf/README.md) Criar PAF | [TSK-023](flow/epics/EP-03-gantt/US-03-remover-tarefa/README.md) Remover tarefa | [TSK-060](flow/epics/EP-03-gantt/US-03-remover-tarefa/README.md) Criar BDD |
-|  | [TSK-024](flow/epics/EP-03-gantt/US-04-atribuir-responsavel/README.md) Atribuir responsável | [TSK-062](flow/epics/EP-03-gantt/US-04-atribuir-responsavel/README.md) Criar BDD |
-|  | [TSK-027](flow/epics/EP-03-gantt/US-07-visualizar-tarefas/README.md) Visualizar tarefas | [TSK-068](flow/epics/EP-03-gantt/US-07-visualizar-tarefas/README.md) Criar BDD |
-|  | [TSK-070](flow/epics/EP-03-gantt/US-08-selecionar-atividade/README.md) Selecionar atividade | [TSK-071](flow/epics/EP-03-gantt/US-08-selecionar-atividade/README.md) Criar BDD |
-|  | [TSK-005](flow/epics/EP-03-gantt/README.md) Gantt | [TSK-029](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-003-explorar/TSK-007-criar-arquivo/TSK-029-criar-paf/README.md) Criar PAF |
-|  |  | [TSK-031](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-003-explorar/TSK-008-remover-arquivo/TSK-031-criar-paf/README.md) Criar PAF |
-|  |  | [TSK-033](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-003-explorar/TSK-009-renomear-arquivo/TSK-033-criar-paf/README.md) Criar PAF |
-|  |  | [TSK-035](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-003-explorar/TSK-010-mover-arquivo-dragdrop/TSK-035-criar-paf/README.md) Criar PAF |
-|  |  | [TSK-037](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-003-explorar/TSK-011-visualizar-arvore-de-arquivos/TSK-037-criar-paf/README.md) Criar PAF |
-|  |  | [TSK-007](flow/epics/EP-01-explorar/US-01-criar-arquivo/README.md) Criar arquivo |
-|  |  | [TSK-008](flow/epics/EP-01-explorar/US-02-remover-arquivo/README.md) Remover arquivo |
-|  |  | [TSK-009](flow/epics/EP-01-explorar/US-03-renomear-arquivo/README.md) Renomear arquivo |
+| [TSK-043](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-004-board/TSK-014-remover-card/TSK-043-criar-paf/README.md) Criar PAF | [TSK-001](flow/tasks/TSK-001-criar-epico/README.md) Criar épico | [TSK-028](flow/epics/EP-01-explorar/US-01-criar-arquivo/README.md) Criar BDD |
+| [TSK-045](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-004-board/TSK-015-mover-card/TSK-045-criar-paf/README.md) Criar PAF | [TSK-002](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/README.md) Criar as histórias | [TSK-030](flow/epics/EP-01-explorar/US-02-remover-arquivo/README.md) Criar BDD |
+| [TSK-047](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-004-board/TSK-016-renomear-card/TSK-047-criar-paf/README.md) Criar PAF | [TSK-013](flow/epics/EP-02-board/US-01-criar-card/README.md) Criar card | [TSK-032](flow/epics/EP-01-explorar/US-03-renomear-arquivo/README.md) Criar BDD |
+| [TSK-049](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-004-board/TSK-017-abrir-card/TSK-049-criar-paf/README.md) Criar PAF | [TSK-014](flow/epics/EP-02-board/US-02-remover-card/README.md) Remover card | [TSK-034](flow/epics/EP-01-explorar/US-04-mover-arquivo-dragdrop/README.md) Criar BDD |
+| [TSK-051](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-004-board/TSK-018-editar-card/TSK-051-criar-paf/README.md) Criar PAF | [TSK-015](flow/epics/EP-02-board/US-03-mover-card/README.md) Mover card | [TSK-036](flow/epics/EP-01-explorar/US-05-visualizar-arvore-de-arquivos/README.md) Criar BDD |
+| [TSK-053](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-004-board/TSK-019-criar-coluna/TSK-053-criar-paf/README.md) Criar PAF | [TSK-016](flow/epics/EP-02-board/US-04-renomear-card/README.md) Renomear card | [TSK-044](flow/epics/EP-02-board/US-03-mover-card/README.md) Criar BDD |
+| [TSK-055](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-004-board/TSK-020-criar-raia/TSK-055-criar-paf/README.md) Criar PAF | [TSK-017](flow/epics/EP-02-board/US-05-abrir-card/README.md) Abrir card | [TSK-046](flow/epics/EP-02-board/US-04-renomear-card/README.md) Criar BDD |
+| [TSK-057](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-005-gantt/TSK-021-criar-tarefa/TSK-057-criar-paf/README.md) Criar PAF | [TSK-018](flow/epics/EP-02-board/US-06-editar-card/README.md) Editar card | [TSK-048](flow/epics/EP-02-board/US-05-abrir-card/README.md) Criar BDD |
+| [TSK-059](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-005-gantt/TSK-022-mover-tarefa-dragdrop/TSK-059-criar-paf/README.md) Criar PAF | [TSK-019](flow/epics/EP-02-board/US-07-criar-coluna/README.md) Criar coluna | [TSK-050](flow/epics/EP-02-board/US-06-editar-card/README.md) Criar BDD |
+| [TSK-061](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-005-gantt/TSK-023-remover-tarefa/TSK-061-criar-paf/README.md) Criar PAF | [TSK-020](flow/epics/EP-02-board/US-08-criar-raia/README.md) Criar raia | [TSK-052](flow/epics/EP-02-board/US-07-criar-coluna/README.md) Criar BDD |
+| [TSK-063](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-005-gantt/TSK-024-atribuir-responsavel/TSK-063-criar-paf/README.md) Criar PAF | [TSK-004](flow/epics/EP-02-board/README.md) Board | [TSK-054](flow/epics/EP-02-board/US-08-criar-raia/README.md) Criar BDD |
+| [TSK-069](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-005-gantt/TSK-027-visualizar-tarefas/TSK-069-criar-paf/README.md) Criar PAF | [TSK-021](flow/epics/EP-03-gantt/US-01-criar-tarefa/README.md) Criar tarefa | [TSK-056](flow/epics/EP-03-gantt/US-01-criar-tarefa/README.md) Criar BDD |
+| [TSK-072](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-005-gantt/TSK-070-selecionar-atividade/TSK-072-criar-paf/README.md) Criar PAF | [TSK-022](flow/epics/EP-03-gantt/US-02-mover-tarefa-dragdrop/README.md) Mover tarefa | [TSK-058](flow/epics/EP-03-gantt/US-02-mover-tarefa-dragdrop/README.md) Criar BDD |
+| [TSK-080](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-006-arvore-de-execucao/TSK-073-criar-atividade/TSK-080-criar-paf/README.md) Criar PAF | [TSK-023](flow/epics/EP-03-gantt/US-03-remover-tarefa/README.md) Remover tarefa | [TSK-060](flow/epics/EP-03-gantt/US-03-remover-tarefa/README.md) Criar BDD |
+| [TSK-082](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-006-arvore-de-execucao/TSK-074-mover-atividade-dragdrop/TSK-082-criar-paf/README.md) Criar PAF | [TSK-024](flow/epics/EP-03-gantt/US-04-atribuir-responsavel/README.md) Atribuir responsável | [TSK-062](flow/epics/EP-03-gantt/US-04-atribuir-responsavel/README.md) Criar BDD |
+| [TSK-084](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-006-arvore-de-execucao/TSK-075-remover-atividade/TSK-084-criar-paf/README.md) Criar PAF | [TSK-027](flow/epics/EP-03-gantt/US-07-visualizar-tarefas/README.md) Visualizar tarefas | [TSK-068](flow/epics/EP-03-gantt/US-07-visualizar-tarefas/README.md) Criar BDD |
+| [TSK-086](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-006-arvore-de-execucao/TSK-076-atribuir-responsavel/TSK-086-criar-paf/README.md) Criar PAF | [TSK-070](flow/epics/EP-03-gantt/US-08-selecionar-atividade/README.md) Selecionar atividade | [TSK-071](flow/epics/EP-03-gantt/US-08-selecionar-atividade/README.md) Criar BDD |
+| [TSK-088](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-006-arvore-de-execucao/TSK-077-visualizar-arvore/TSK-088-criar-paf/README.md) Criar PAF | [TSK-005](flow/epics/EP-03-gantt/README.md) Gantt | [TSK-029](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-003-explorar/TSK-007-criar-arquivo/TSK-029-criar-paf/README.md) Criar PAF |
+| [TSK-090](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-006-arvore-de-execucao/TSK-078-selecionar-atividade/TSK-090-criar-paf/README.md) Criar PAF | [TSK-006](flow/epics/EP-04-arvore-de-execucao/README.md) Árvore de execução | [TSK-031](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-003-explorar/TSK-008-remover-arquivo/TSK-031-criar-paf/README.md) Criar PAF |
+|  | [TSK-073](flow/epics/EP-04-arvore-de-execucao/US-01-criar-atividade/README.md) Criar atividade | [TSK-033](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-003-explorar/TSK-009-renomear-arquivo/TSK-033-criar-paf/README.md) Criar PAF |
+|  | [TSK-074](flow/epics/EP-04-arvore-de-execucao/US-02-mover-atividade-dragdrop/README.md) Mover atividade | [TSK-035](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-003-explorar/TSK-010-mover-arquivo-dragdrop/TSK-035-criar-paf/README.md) Criar PAF |
+|  | [TSK-075](flow/epics/EP-04-arvore-de-execucao/US-03-remover-atividade/README.md) Remover atividade | [TSK-037](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-003-explorar/TSK-011-visualizar-arvore-de-arquivos/TSK-037-criar-paf/README.md) Criar PAF |
+|  | [TSK-076](flow/epics/EP-04-arvore-de-execucao/US-04-atribuir-responsavel/README.md) Atribuir responsável | [TSK-007](flow/epics/EP-01-explorar/US-01-criar-arquivo/README.md) Criar arquivo |
+|  | [TSK-077](flow/epics/EP-04-arvore-de-execucao/US-05-visualizar-arvore/README.md) Visualizar árvore | [TSK-008](flow/epics/EP-01-explorar/US-02-remover-arquivo/README.md) Remover arquivo |
+|  | [TSK-078](flow/epics/EP-04-arvore-de-execucao/US-06-selecionar-atividade/README.md) Selecionar atividade | [TSK-009](flow/epics/EP-01-explorar/US-03-renomear-arquivo/README.md) Renomear arquivo |
 |  |  | [TSK-010](flow/epics/EP-01-explorar/US-04-mover-arquivo-dragdrop/README.md) Mover arquivo |
 |  |  | [TSK-011](flow/epics/EP-01-explorar/US-05-visualizar-arvore-de-arquivos/README.md) Visualizar árvore |
 |  |  | [TSK-003](flow/epics/EP-01-explorar/README.md) Explorar |
+|  |  | [TSK-079](flow/epics/EP-04-arvore-de-execucao/US-01-criar-atividade/README.md) Criar BDD |
+|  |  | [TSK-081](flow/epics/EP-04-arvore-de-execucao/US-02-mover-atividade-dragdrop/README.md) Criar BDD |
+|  |  | [TSK-083](flow/epics/EP-04-arvore-de-execucao/US-03-remover-atividade/README.md) Criar BDD |
+|  |  | [TSK-085](flow/epics/EP-04-arvore-de-execucao/US-04-atribuir-responsavel/README.md) Criar BDD |
+|  |  | [TSK-087](flow/epics/EP-04-arvore-de-execucao/US-05-visualizar-arvore/README.md) Criar BDD |
+|  |  | [TSK-089](flow/epics/EP-04-arvore-de-execucao/US-06-selecionar-atividade/README.md) Criar BDD |
 → [`flow/`](flow/README.md) · [`flow/tasks/`](flow/tasks/README.md) · [`flow/epics/`](flow/epics/README.md) · [`flow/gantt.md`](flow/gantt.md)
 
 ---

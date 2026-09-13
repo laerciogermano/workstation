@@ -24,18 +24,18 @@ Legenda: verde = Done · amarelo = Doing · cinza = Todo
 
 ```mermaid
 flowchart TD
-  T001["TSK-001 · Criar épico"]
-  T002["TSK-002 · Criar as histórias"]
-  T003["TSK-003 · Explorar"]
-  T007["TSK-007 · Criar arquivo"]
-  T008["TSK-008 · Remover arquivo"]
-  T009["TSK-009 · Renomear arquivo"]
-  T010["TSK-010 · Mover arquivo drag and drop"]
-  T011["TSK-011 · Visualizar árvore de arquivos"]
-  T012["TSK-012 · Toggle de visualizar filhos"]
-  T004["TSK-004 · Board"]
-  T005["TSK-005 · Gantt"]
-  T006["TSK-006 · Árvore de execução"]
+  T001["TSK-001 Criar epico"]
+  T002["TSK-002 Criar as historias"]
+  T003["TSK-003 Explorar"]
+  T007["TSK-007 Criar arquivo"]
+  T008["TSK-008 Remover arquivo"]
+  T009["TSK-009 Renomear arquivo"]
+  T010["TSK-010 Mover arquivo drag and drop"]
+  T011["TSK-011 Visualizar arvore de arquivos"]
+  T012["TSK-012 Toggle de visualizar filhos"]
+  T004["TSK-004 Board"]
+  T005["TSK-005 Gantt"]
+  T006["TSK-006 Arvore de execucao"]
 
   T001 --> T002
   T002 --> T003
@@ -49,12 +49,12 @@ flowchart TD
   T002 --> T005
   T002 --> T006
 
-  classDef done fill:#d4edda,stroke:#198754,color:#0f5132
-  classDef doing fill:#fff3cd,stroke:#ffc107,color:#664d03
-  classDef todo fill:#e9ecef,stroke:#6c757d,color:#212529
+  classDef stDone fill:#d4edda,stroke:#198754
+  classDef stDoing fill:#fff3cd,stroke:#ffc107
+  classDef stTodo fill:#e9ecef,stroke:#6c757d
 
-  class T001,T002,T003 doing
-  class T004,T005,T006,T007,T008,T009,T010,T011,T012 todo
+  class T001,T002,T003 stDoing
+  class T004,T005,T006,T007,T008,T009,T010,T011,T012 stTodo
 ```
 
 | Todo | Doing | Done |

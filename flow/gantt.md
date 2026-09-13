@@ -5,30 +5,29 @@ Datas são relativas (planejamento); ajuste conforme a execução.
 
 ```mermaid
 gantt
-    title Flow — ordem das atividades
+    title Flow - ordem das atividades
     dateFormat YYYY-MM-DD
     axisFormat %d/%m
-    todayMarker off
 
-    section Épico
-    TSK-001 Criar épico                 :t001, 2026-09-13, 3d
+    section Epico
+    "TSK-001 Criar epico"                 :active, t001, 2026-09-13, 3d
 
-    section Histórias
-    TSK-002 Criar as histórias          :t002, after t001, 1d
+    section Historias
+    "TSK-002 Criar as historias"          :active, t002, after t001, 1d
 
     section Explorar
-    TSK-003 Explorar                    :t003, after t002, 1d
-    TSK-007 Criar arquivo               :t007, after t003, 1d
-    TSK-008 Remover arquivo             :t008, after t007, 1d
-    TSK-009 Renomear arquivo            :t009, after t008, 1d
-    TSK-010 Mover arquivo drag and drop :t010, after t009, 1d
-    TSK-011 Visualizar árvore           :t011, after t010, 1d
-    TSK-012 Toggle visualizar filhos    :t012, after t011, 1d
+    "TSK-003 Explorar"                    :active, t003, after t002, 1d
+    "TSK-007 Criar arquivo"               :t007, after t003, 1d
+    "TSK-008 Remover arquivo"             :t008, after t007, 1d
+    "TSK-009 Renomear arquivo"            :t009, after t008, 1d
+    "TSK-010 Mover arquivo"               :t010, after t009, 1d
+    "TSK-011 Visualizar arvore"           :t011, after t010, 1d
+    "TSK-012 Toggle visualizar filhos"    :t012, after t011, 1d
 
-    section Demais épicos
-    TSK-004 Board                       :t004, after t012, 2d
-    TSK-005 Gantt                       :t005, after t004, 2d
-    TSK-006 Árvore de execução          :t006, after t005, 2d
+    section Demais epicos
+    "TSK-004 Board"                       :t004, after t012, 2d
+    "TSK-005 Gantt"                       :t005, after t004, 2d
+    "TSK-006 Arvore de execucao"          :t006, after t005, 2d
 ```
 
 ## Ordem (sequência)

@@ -3,7 +3,7 @@
 | Campo | Valor |
 |-------|--------|
 | ID | TSK-003 |
-| Status | Todo |
+| Status | Doing |
 | Pai | [TSK-002](../) |
 | Épico | Explorar |
 

@@ -3,7 +3,7 @@
 | Campo | Valor |
 |-------|--------|
 | ID | TSK-002 |
-| Status | Todo |
+| Status | Doing |
 | Pai | [TSK-001](../) |
 | Board | [Flow](../../../../board.md) |
 

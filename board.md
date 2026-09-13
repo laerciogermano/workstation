@@ -2,21 +2,13 @@
 
 Kanban da workstation: **uma raia por projeto**, colunas **Todo**, **Doing** e **Done**.
 
-Mova os cards entre colunas conforme o trabalho avançar. Cada card corresponde a um passo da esteira do projeto.
-
 ---
 
 ## Flow
 
-Pré-requisito do Plans. Fundamentos de fluxo.
-
 | Todo | Doing | Done |
 |------|-------|------|
-| BDD | | Visão |
-| Telas | | Histórias |
-| Componentes | | |
-| Protótipo | | |
-| Exportação JS/Python | | |
+| | | |
 
 → [`flow/`](flow/)
 
@@ -26,14 +18,7 @@ Pré-requisito do Plans. Fundamentos de fluxo.
 
 | Todo | Doing | Done |
 |------|-------|------|
-| | Frontend (iterações) | Visão |
-| | | Funcionalidades |
-| | | Histórias |
-| | | BDD |
-| | | Telas |
-| | | Screens BDD |
-| | | Componentes |
-| | | Protótipo |
+| | | |
 
 → [`plans/`](plans/)
 
@@ -43,11 +28,7 @@ Pré-requisito do Plans. Fundamentos de fluxo.
 
 | Todo | Doing | Done |
 |------|-------|------|
-| Screens BDD | Frontend (iterações) | Histórias |
-| | | BDD |
-| | | Telas |
-| | | Componentes |
-| | | Protótipo |
+| | | |
 
 → [`chines/`](chines/)
 
@@ -57,13 +38,7 @@ Pré-requisito do Plans. Fundamentos de fluxo.
 
 | Todo | Doing | Done |
 |------|-------|------|
-| Funcionalidades | | Visão |
-| Histórias | | |
-| BDD | | |
-| Telas | | |
-| Screens BDD | | |
-| Componentes | | |
-| Protótipo | | |
+| | | |
 
 → [`caronas/`](caronas/)
 
@@ -73,13 +48,7 @@ Pré-requisito do Plans. Fundamentos de fluxo.
 
 | Todo | Doing | Done |
 |------|-------|------|
-| Funcionalidades | | Visão |
-| Histórias | | |
-| BDD | | |
-| Telas | | |
-| Screens BDD | | |
-| Componentes | | |
-| Protótipo | | |
+| | | |
 
 → [`fitness/`](fitness/)
 
@@ -89,13 +58,7 @@ Pré-requisito do Plans. Fundamentos de fluxo.
 
 | Todo | Doing | Done |
 |------|-------|------|
-| Funcionalidades | | Visão |
-| Histórias | | |
-| BDD | | |
-| Telas | | |
-| Screens BDD | | |
-| Componentes | | |
-| Protótipo | | |
+| | | |
 
 → [`connectmax/`](connectmax/)
 
@@ -105,10 +68,7 @@ Pré-requisito do Plans. Fundamentos de fluxo.
 
 | Todo | Doing | Done |
 |------|-------|------|
-| Tese | | Visão |
-| Estrutura | | |
-| Capítulos | | |
-| Manuscrito | | |
+| | | |
 
 → [`eternos-mutaveis/`](eternos-mutaveis/)
 
@@ -118,12 +78,6 @@ Pré-requisito do Plans. Fundamentos de fluxo.
 
 | Todo | Doing | Done |
 |------|-------|------|
-| Funcionalidades | | Visão |
-| Histórias | | |
-| BDD | | |
-| Telas | | |
-| Screens BDD | | |
-| Componentes | | |
-| Protótipo | | |
+| | | |
 
 → [`jiu-jitsu/`](jiu-jitsu/)

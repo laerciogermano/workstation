@@ -2,7 +2,8 @@
 
 Kanban da workstation: **uma raia por projeto**, colunas **Todo**, **Doing** e **Done**.
 
-Raias ordenadas por **prioridade** (maior → menor).
+Raias ordenadas por **prioridade** (maior → menor).  
+Quando houver hierarquia de tasks, a raia usa **Mermaid** (árvore + cor de status) em vez de forçar árvore dentro da tabela kanban.
 
 ---
 
@@ -18,18 +19,48 @@ Raias ordenadas por **prioridade** (maior → menor).
 
 ## P2 — Flow
 
-Pré-requisito do Plans.
+Pré-requisito do Plans.  
+Legenda: verde = Done · amarelo = Doing · cinza = Todo
+
+```mermaid
+flowchart TD
+  T001["TSK-001 · Criar épico"]
+  T002["TSK-002 · Criar as histórias"]
+  T003["TSK-003 · Explorar"]
+  T007["TSK-007 · Criar arquivo"]
+  T008["TSK-008 · Remover arquivo"]
+  T009["TSK-009 · Renomear arquivo"]
+  T010["TSK-010 · Mover arquivo drag and drop"]
+  T011["TSK-011 · Visualizar árvore de arquivos"]
+  T012["TSK-012 · Toggle de visualizar filhos"]
+  T004["TSK-004 · Board"]
+  T005["TSK-005 · Gantt"]
+  T006["TSK-006 · Árvore de execução"]
+
+  T001 --> T002
+  T002 --> T003
+  T003 --> T007
+  T003 --> T008
+  T003 --> T009
+  T003 --> T010
+  T003 --> T011
+  T003 --> T012
+  T002 --> T004
+  T002 --> T005
+  T002 --> T006
+
+  classDef done fill:#d4edda,stroke:#198754,color:#0f5132
+  classDef doing fill:#fff3cd,stroke:#ffc107,color:#664d03
+  classDef todo fill:#e9ecef,stroke:#6c757d,color:#212529
+
+  class T001 done
+  class T002,T003,T004,T005,T006,T007,T008,T009,T010,T011,T012 todo
+```
 
 | Todo | Doing | Done |
 |------|-------|------|
-| [TSK-002](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/) Criar as histórias | | [TSK-001](flow/tasks/TSK-001-criar-epico/) Criar épico |
-| [TSK-003](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-003-explorar/) Explorar | | |
-| [TSK-007](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-003-explorar/TSK-007-criar-arquivo/) Criar arquivo | | |
-| [TSK-008](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-003-explorar/TSK-008-remover-arquivo/) Remover arquivo | | |
-| [TSK-009](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-003-explorar/TSK-009-renomear-arquivo/) Renomear arquivo | | |
-| [TSK-010](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-003-explorar/TSK-010-mover-arquivo-dragdrop/) Mover arquivo (drag and drop) | | |
-| [TSK-011](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-003-explorar/TSK-011-visualizar-arvore-de-arquivos/) Visualizar árvore de arquivos | | |
-| [TSK-012](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-003-explorar/TSK-012-toggle-visualizar-filhos/) Toggle de visualizar filhos | | |
+| [TSK-002](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/) Criar as histórias | — | [TSK-001](flow/tasks/TSK-001-criar-epico/) Criar épico |
+| [TSK-003](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-003-explorar/) Explorar (+ histórias TSK-007…012) | | |
 | [TSK-004](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-004-board/) Board | | |
 | [TSK-005](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-005-gantt/) Gantt | | |
 | [TSK-006](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-006-arvore-de-execucao/) Árvore de execução | | |

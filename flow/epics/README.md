@@ -1,4 +1,4 @@
-﻿# Flow — Épicos
+# Flow — Épicos
 
 | ID | Épico | Pasta | Intenção |
 |----|-------|-------|----------|

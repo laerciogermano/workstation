@@ -39,12 +39,12 @@ O objetivo é resolver um problema comum: hoje, para descobrir o que está rolan
 
 | Persona | Quem é | Principais dores | O que faz no RoleGo | Épicos relacionados |
 |---------|--------|-------------------|----------------------|----------------------|
-| **Usuário Explorador** | Pessoa que quer sair (fim de semana, viagem, cidade nova) e decidir rápido com o grupo | Informação de eventos espalhada em vários apps; decisão em grupo é lenta e sem dados | Descobre eventos por feed/swipe/mapa, vê quem vai, dá like, entra no match do grupo, compra ingresso e vai ao chat | E01, E02, E03, E09 |
+| **Usuário Explorador** | Pessoa que quer sair (fim de semana, viagem, cidade nova) e decidir rápido com o grupo | Informação de eventos espalhada em vários apps; decisão em grupo é lenta e sem dados | Descobre eventos por feed/swipe/mapa, vê quem vai, dá like, entra no match do grupo, compra ingresso e vai ao chat | E01, E02, E03, E04, E10 |
 | **Usuário Solo** | Está sozinho na cidade (morador novo ou viajante) e quer socializar sem grupo formado | Dificuldade de conhecer gente em bares/festas sem estar acompanhado | Ativa o Modo Solo, conecta-se com quem deu like no mesmo evento, divide custos e experiência | E02 |
-| **Anfitrião de evento privado** | Pessoa física que organiza social, churrasco ou festa em local próprio | Falta de controle de lista e de confiança sobre quem confirma presença | Cria o evento privado, controla acesso/local revelado após confirmação, avalia convidados | E02, E11 |
-| **Convidado de evento privado** | Pessoa convidada para um evento privado (social, churrasco etc.) | Insegurança sobre o evento e o anfitrião antes de ir | Recebe convite/notificação, confirma presença, avalia o anfitrião após o evento | E09, E11 |
-| **Bar / Casa de eventos** | Estabelecimento comercial que promove eventos e quer vender mais e conhecer o público | Falta de vitrine unificada, dados de público e canal de venda direto | Publica eventos, vende ingresso, oferece cardápio digital, acompanha engajamento e paga por destaque | E02, E03, E04, E07, E10 |
-| **Influenciador / Organizador** | Criador de conteúdo ou produtor que divulga presença/eventos e busca monetização | Falta de canal direto para ser contratado e comprovar presença como atrativo | Cadastra disponibilidade, é contratado por casas/produtores, tem presença exibida na página do evento | E06 |
+| **Anfitrião de evento privado** | Pessoa física que organiza social, churrasco ou festa em local próprio | Falta de controle de lista e de confiança sobre quem confirma presença | Cria o evento privado, controla acesso/local revelado após confirmação, avalia convidados | E03, E12 |
+| **Convidado de evento privado** | Pessoa convidada para um evento privado (social, churrasco etc.) | Insegurança sobre o evento e o anfitrião antes de ir | Recebe convite/notificação, confirma presença, avalia o anfitrião após o evento | E10, E12 |
+| **Bar / Casa de eventos** | Estabelecimento comercial que promove eventos e quer vender mais e conhecer o público | Falta de vitrine unificada, dados de público e canal de venda direto | Publica eventos, vende ingresso, oferece cardápio digital, acompanha engajamento e paga por destaque | E03, E04, E05, E08, E11 |
+| **Influenciador / Organizador** | Criador de conteúdo ou produtor que divulga presença/eventos e busca monetização | Falta de canal direto para ser contratado e comprovar presença como atrativo | Cadastra disponibilidade, é contratado por casas/produtores, tem presença exibida na página do evento | E07 |
 
 ---
 

@@ -17,14 +17,18 @@ _(protótipo pendente)_
 
 ## Cenários
 
-### SC-01 — Selecionar tarefa
+### SC-01 — Clicar no ícone de responsável
 
-Quando o usuário **selecionar uma tarefa** no Gantt, o sistema deve **permitir atribuir um responsável**.
+Quando o usuário **clicar no ícone de responsável** na **primeira coluna à esquerda do Gantt**, na **linha da atividade**, o sistema deve **abrir a opção com as opções de responsáveis**.
 
-### SC-02 — Escolher responsável
+### SC-02 — Opção Atribuir responsável no menu transversal
 
-Quando o usuário **escolher um responsável**, o sistema deve **associar esse responsável** à tarefa.
+Quando o usuário **selecionar uma atividade** e no **menu transversal** **clicar no ícone Atribuir responsável**, o sistema deve **abrir a opção com as opções de responsáveis**.
 
-### SC-03 — Responsável visível no Gantt
+### SC-03 — Escolher responsável
 
-Quando o responsável **for atribuído**, o sistema deve **exibi-lo na tarefa** no Gantt.
+Quando o usuário **escolher um responsável** na lista, o sistema deve **associar esse responsável** à tarefa.
+
+### SC-04 — Responsável visível no Gantt
+
+Quando o responsável **for atribuído**, o sistema deve **exibi-lo na tarefa** no Gantt (ícone/indicação na primeira coluna à esquerda).

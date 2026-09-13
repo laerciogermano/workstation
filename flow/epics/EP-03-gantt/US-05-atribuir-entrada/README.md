@@ -17,9 +17,9 @@ _(protótipo pendente)_
 
 ## Cenários
 
-### SC-01 — Selecionar tarefa
+### SC-01 — Opção Atribuir entrada no menu transversal
 
-Quando o usuário **selecionar uma tarefa** no Gantt, o sistema deve **permitir atribuir a data de entrada**.
+Quando o usuário **selecionar uma atividade** e no **menu transversal** **clicar no ícone Atribuir entrada**, o sistema deve **abrir a opção de informar a data de entrada**.
 
 ### SC-02 — Informar data de entrada
 

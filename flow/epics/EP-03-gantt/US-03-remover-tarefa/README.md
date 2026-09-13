@@ -17,14 +17,22 @@ _(protótipo pendente)_
 
 ## Cenários
 
-### SC-01 — Acionar remoção
+### SC-01 — Selecionar tarefa
 
-Quando o usuário **acionar a remoção** de uma tarefa no Gantt, o sistema deve **abrir um prompt de confirmação**.
+Quando o usuário **selecionar uma tarefa** no Gantt, o sistema deve **destacar a tarefa selecionada**.
 
-### SC-02 — Cancelar confirmação
+### SC-02 — Opção Remover no menu transversal
 
-Quando o usuário **clicar em Cancelar** no prompt, o sistema **não deve excluir** a tarefa e **deve mantê-la** no Gantt.
+Quando o usuário **selecionar uma atividade** e no **menu transversal** **clicar no ícone Remover**, o sistema deve **abrir um prompt de confirmação**.
 
-### SC-03 — Confirmar exclusão
+### SC-03 — Pressionar Delete
 
-Quando o usuário **clicar em Confirmar** no prompt, o sistema deve **excluir a tarefa** e **deixar de exibi-la** no Gantt.
+Quando o usuário **pressionar Delete** com uma tarefa selecionada, o sistema deve **abrir um prompt de confirmação**.
+
+### SC-04 — Cancelar confirmação
+
+Quando o usuário **clicar em Cancelar** no prompt, o sistema **não deve excluir** a tarefa e **não deve alterar** Gantt nem Explorar.
+
+### SC-05 — Confirmar exclusão
+
+Quando o usuário **clicar em Confirmar** no prompt, o sistema deve **apagar a atividade no Gantt e no Explorar**.

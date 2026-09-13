@@ -17,9 +17,9 @@ _(protótipo pendente)_
 
 ## Cenários
 
-### SC-01 — Selecionar tarefa
+### SC-01 — Opção Atribuir saída no menu transversal
 
-Quando o usuário **selecionar uma tarefa** no Gantt, o sistema deve **permitir atribuir a data de saída**.
+Quando o usuário **selecionar uma atividade** e no **menu transversal** **clicar no ícone Atribuir saída**, o sistema deve **abrir a opção de informar a data de saída**.
 
 ### SC-02 — Informar data de saída
 

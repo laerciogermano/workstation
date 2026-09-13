@@ -32,7 +32,8 @@ EP-03 Gantt
 ├── US-04 Atribuir responsável
 ├── US-05 Atribuir entrada
 ├── US-06 Atribuir saída
-└── US-07 Visualizar tarefas
+├── US-07 Visualizar tarefas
+└── US-08 Selecionar atividade
 EP-04 Arvore de execucao
 ```
 

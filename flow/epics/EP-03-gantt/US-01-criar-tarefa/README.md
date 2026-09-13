@@ -17,14 +17,18 @@ _(protótipo pendente)_
 
 ## Cenários
 
-### SC-01 — Acionar criação de tarefa
+### SC-01 — Acionar criação de tarefa no Explorar
 
-Quando o usuário **acionar a criação de tarefa** no Gantt, o sistema deve **abrir a opção de dar nome** à nova tarefa.
+Quando o usuário **acionar a criação de tarefa no Explorar**, o sistema deve **abrir a opção de dar nome** à nova tarefa.
 
-### SC-02 — Confirmar nome com Enter
+### SC-02 — Opção Criar tarefa no menu transversal
+
+Quando o usuário **selecionar uma atividade** e no **menu transversal** **clicar no ícone Criar tarefa**, o sistema deve **abrir a opção de dar nome** à nova tarefa.
+
+### SC-03 — Confirmar nome com Enter
 
 Quando o usuário **der o nome e pressionar Enter**, o sistema deve **criar a tarefa** no Gantt.
 
-### SC-03 — Tarefa aparece no Gantt
+### SC-04 — Tarefa aparece no Gantt
 
 Quando a tarefa **for criada**, o sistema deve **exibi-la no Gantt**.

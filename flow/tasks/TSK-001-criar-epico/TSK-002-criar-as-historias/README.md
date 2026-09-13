@@ -261,4 +261,7 @@ Criar as histórias de usuário do projeto Flow — output em [`epics/`](../../.
   - [`TSK-027`](TSK-005-gantt/TSK-027-visualizar-tarefas/README.md) → Output [US-07](../../../epics/EP-03-gantt/US-07-visualizar-tarefas/README.md)
     - [`TSK-068`](TSK-005-gantt/TSK-027-visualizar-tarefas/TSK-068-criar-bdd/README.md) → Criar BDD
     - [`TSK-069`](TSK-005-gantt/TSK-027-visualizar-tarefas/TSK-069-criar-paf/README.md) → Criar PAF
+  - [`TSK-070`](TSK-005-gantt/TSK-070-selecionar-atividade/README.md) → Output [US-08](../../../epics/EP-03-gantt/US-08-selecionar-atividade/README.md)
+    - [`TSK-071`](TSK-005-gantt/TSK-070-selecionar-atividade/TSK-071-criar-bdd/README.md) → Criar BDD
+    - [`TSK-072`](TSK-005-gantt/TSK-070-selecionar-atividade/TSK-072-criar-paf/README.md) → Criar PAF
 - [`TSK-006`](TSK-006-arvore-de-execucao/README.md) → Output [EP-04](../../../epics/EP-04-arvore-de-execucao/README.md)

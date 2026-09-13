@@ -257,3 +257,6 @@ flowchart TD
 | TSK-027 | Visualizar tarefas | Doing | [US-07](../epics/EP-03-gantt/US-07-visualizar-tarefas/README.md) |
 | TSK-068 | Criar BDD | Done | [US-07](../epics/EP-03-gantt/US-07-visualizar-tarefas/README.md) |
 | TSK-069 | Criar PAF | Todo | [US-07](../epics/EP-03-gantt/US-07-visualizar-tarefas/README.md) |
+| TSK-070 | Selecionar atividade | Doing | [US-08](../epics/EP-03-gantt/US-08-selecionar-atividade/README.md) |
+| TSK-071 | Criar BDD | Done | [US-08](../epics/EP-03-gantt/US-08-selecionar-atividade/README.md) |
+| TSK-072 | Criar PAF | Todo | [US-08](../epics/EP-03-gantt/US-08-selecionar-atividade/README.md) |

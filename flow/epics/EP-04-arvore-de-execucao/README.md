@@ -5,6 +5,8 @@
 | ID | EP-04 |
 | Task | [TSK-006](../../tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-006-arvore-de-execucao/README.md) |
 | Status | Doing |
+ 
+![EP-04 — Árvore de execução cover](../assets/epic-e04-cover.png)
 
 ## Intenção
 

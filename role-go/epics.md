@@ -62,13 +62,18 @@ Influenciadores cadastram disponibilidade; casas e produtores contratam pela pla
 
 ## E07 — Publicidade e visibilidade paga
 
+![Capa do épico E07 — Publicidade e visibilidade paga](assets/epic-e07-cover.png)
+
 Eventos e casas pagam para aparecer além do alcance orgânico: impulsionamento fora do raio padrão, visibilidade no mapa, destaques no feed e parcerias de mídia paga — monetização B2B alinhada à visão.
 
 ## E08 — Assinatura Premium
 
+![Capa do épico E08 — Assinatura Premium](assets/epic-e08-cover.png)
+
 O usuário paga por recursos extras: mapa completo de eventos, descontos em bares parceiros, visualização de fotos e participantes sem restrição e demais diferenciais do roadmap — gerando receita recorrente e engajamento diferenciado.
 
 ## E09 — Notificações e alertas
+![Capa do épico E09 — Notificações e alertas](assets/epic-e09-cover.png)
 
 Push e central in-app avisam novo evento no raio, interações sociais (like, match, progresso do grupo), ingresso, segurança e pós-evento — reabrindo o app e acelerando a decisão no momento certo.
 
@@ -77,6 +82,13 @@ Push e central in-app avisam novo evento no raio, interações sociais (like, ma
 Estabelecimentos e produtores operam vitrine, publicação e gestão de eventos, venda de ingresso, cardápio, campanhas pagas e métricas básicas de público e engajamento — o lado B2B da proposta de valor.
 
 ## E11 — Reputação anfitrião–convidado
+![Capa do épico E10 — Painel do parceiro](assets/epic-e10-cover.png)
+
+Estabelecimentos e produtores operam vitrine, publicação e gestão de eventos, venda de ingresso, cardápio, campanhas pagas e métricas básicas de público e engajamento — o lado B2B da proposta de valor.
+
+## E11 — Reputação anfitrião–convidado
+
+![Capa do épico E11 — Reputação anfitrião–convidado](assets/epic-e11-cover.png)
 
 Anfitrião e convidado se avaliam por estrelas após o evento; a reputação fica no perfil e influencia listas e decisões de convite, mitigando risco social em eventos privados.
 

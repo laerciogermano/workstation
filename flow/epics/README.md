@@ -27,6 +27,8 @@ Cronograma das atividades no tempo: criar, mover, remover e atribuir responsáve
 
 ## EP-04 — Árvore de execução
 
+![Capa EP-04 — Árvore de execução](assets/epic-e04-cover.png)
+
 Hierarquia de atividades pais e filhas (floresta): decompor a execução fora do eixo temporal do Gantt, com responsáveis e reorganização.
 
 ## Hierarquia

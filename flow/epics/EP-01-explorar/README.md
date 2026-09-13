@@ -1,8 +1,6 @@
 ﻿# EP-01 — Explorar
 
-![EP-01 — Explorar presentation](C:\Users\LaércioGermano\.cursor\projects\c-Users-La-rcioGermano-Documents-workstation/assets/ep01-explorar-presentation.png)
-
-![EP-01 — Explorar cover](C:\Users\LaércioGermano\.cursor\projects\c-Users-La-rcioGermano-Documents-workstation/assets/ep01-explorar-cover.png)
+![EP-01 — Explorar cover](../assets/epic-e01-cover.png)
 
 | Campo | Valor |
 |-------|--------|

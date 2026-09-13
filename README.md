@@ -9,6 +9,7 @@
 | [Caronas](caronas/) | [`caronas/README.md`](caronas/README.md) | [`caronas/docs/`](caronas/docs/) | [`caronas/config/config-ia.md`](caronas/config/config-ia.md) |
 | [Fitness](fitness/) | [`fitness/README.md`](fitness/README.md) | [`fitness/docs/`](fitness/docs/) | [`fitness/config/config-ia.md`](fitness/config/config-ia.md) |
 | [ConnectMax](connectmax/) | [`connectmax/README.md`](connectmax/README.md) | [`connectmax/docs/`](connectmax/docs/) | [`connectmax/config/config-ia.md`](connectmax/config/config-ia.md) |
+| [Eternos Mutáveis](eternos-mutaveis/) | [`eternos-mutaveis/README.md`](eternos-mutaveis/README.md) | [`eternos-mutaveis/docs/`](eternos-mutaveis/docs/) | [`eternos-mutaveis/config/config-ia.md`](eternos-mutaveis/config/config-ia.md) |
 
 ### Esteira (Plans)
 
@@ -45,3 +46,11 @@ Visão → Funcionalidades → Histórias → BDD → Telas → Screens BDD → 
 ```
 
 Prompts: [`connectmax/prompts/timeline.md`](connectmax/prompts/timeline.md).
+
+### Esteira (Eternos Mutáveis)
+
+```text
+Visão → Tese → Estrutura → Capítulos → Manuscrito
+```
+
+Prompts: [`eternos-mutaveis/prompts/timeline.md`](eternos-mutaveis/prompts/timeline.md).

@@ -22,7 +22,7 @@ Pré-requisito do Plans.
 
 | Todo | Doing | Done |
 |------|-------|------|
-| | | |
+| Criar épico | | |
 
 → [`flow/`](flow/)
 
@@ -32,9 +32,9 @@ Pré-requisito do Plans.
 
 | Todo | Doing | Done |
 |------|-------|------|
-| | | |
+| | | Criar épico |
 
-→ [`plans/`](plans/)
+→ [`plans/`](plans/) · [`plans/epics/`](plans/epics/)
 
 ---
 

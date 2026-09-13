@@ -17,6 +17,14 @@ _(protótipo pendente)_
 
 ## Cenários
 
-### SC-01 — Remover card
+### SC-01 — Menu dos três pontos → Deletar
 
-Quando o usuário **abrir o menu do card** e escolher **remover**, o sistema deve **excluir o card** e **deixar de exibi-lo** no Board.
+Quando o usuário **clicar nos três pontos** do card e escolher **Deletar**, o sistema deve **abrir um prompt de confirmação**.
+
+### SC-02 — Cancelar confirmação
+
+Quando o usuário **clicar em Cancelar** no prompt, o sistema **não deve excluir** o card e **deve manter** o card no Board.
+
+### SC-03 — Confirmar exclusão
+
+Quando o usuário **clicar em Confirmar** no prompt, o sistema deve **excluir o card** e **deixar de exibi-lo** no Board.

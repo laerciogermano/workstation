@@ -17,9 +17,9 @@ _(protótipo pendente)_
 
 ## Cenários
 
-### SC-01 — Criar card em uma coluna
+### SC-01 — Clicar no botão + da coluna
 
-Quando o usuário **acionar criar card** em uma coluna do Board, o sistema deve **abrir a opção de dar nome** ao novo card.
+Quando o usuário **clicar no botão +** dentro de uma coluna do Board, o sistema deve **abrir a opção de dar nome** ao novo card.
 
 ### SC-02 — Confirmar nome com Enter
 

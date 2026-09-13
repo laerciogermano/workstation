@@ -64,7 +64,7 @@ flowchart TD
 | [TSK-005](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-005-gantt/) Gantt | | |
 | [TSK-006](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-006-arvore-de-execucao/) Árvore de execução | | |
 
-→ [`flow/`](flow/) · [`flow/tasks/`](flow/tasks/) · [`flow/gantt.md`](flow/gantt.md)
+→ [`flow/`](flow/) · [`flow/tasks/`](flow/tasks/) · [`flow/epics/`](flow/epics/) · [`flow/gantt.md`](flow/gantt.md)
 
 ---
 

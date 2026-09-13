@@ -11,6 +11,8 @@
 
 Criar os épicos do projeto Flow.
 
+Entrega: [`../../epics/`](../../epics/)
+
 ## Filhos
 
 - [`TSK-002`](TSK-002-criar-as-historias/) — Criar as histórias

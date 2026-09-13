@@ -1,11 +1,11 @@
-# TSK-007 — Criar arquivo
+﻿# US-01 — Criar arquivo
 
 | Campo | Valor |
 |-------|--------|
-| ID | TSK-007 |
+| ID | US-01 |
+| Épico | [EP-01 Explorar](../) |
+| Task | [TSK-007](../../../tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-003-explorar/TSK-007-criar-arquivo/) |
 | Status | Todo |
-| Pai | [TSK-003](../) |
-| Épico | Explorar |
 
 ## História
 
@@ -13,7 +13,7 @@ Como usuário do Explorar, quero **criar um arquivo** na árvore, para materiali
 
 ## Print
 
-![Criar arquivo](../../../../../images/Captura%20de%20tela%202026-09-13%20060040.png)
+![Criar arquivo](../../../images/Captura%20de%20tela%202026-09-13%20060040.png)
 
 Referência: pasta **NOVA PASTA** com ícone **+** (novo arquivo) na barra de ações.
 

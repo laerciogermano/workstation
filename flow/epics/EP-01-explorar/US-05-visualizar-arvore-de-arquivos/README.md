@@ -13,4 +13,4 @@ Como usuário do Explorar, quero **visualizar a árvore de arquivos**, para nave
 
 ## Print
 
-![Visualizar árvore de arquivos](print.png)
+![Visualizar árvore de arquivos](../../../images/Captura%20de%20tela%202026-09-13%20142940.png)

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Flow — Tasks · Flow Wiki</title>
+  <link rel="stylesheet" href="../assets/wiki.css" />
+</head>
+<body>
+  <div class="layout">
+    
+<aside class="sidebar">
+  <a class="brand" href="../index.html">Flow Wiki</a>
+  <nav>
+    <a href="../epics/index.html">Épicos</a>
+    <a href="../tasks/index.html">Tasks</a>
+  </nav>
+  <p class="side-note">Espelho HTML de <code>flow/</code></p>
+</aside>
+
+    <main class="content">
+      <p class="crumb"><a href="../index.html">Wiki</a> / <a href="../tasks/index.html">tasks</a></p>
+      <h1>Flow — Tasks</h1>
+<p>Cada item da raia Flow no <a href="../../board.md"><code>board.md</code></a> tem um <strong>id</strong>, uma <strong>pasta</strong> e um <strong>output</strong> em <a href="../epics/index.html"><code>epics/</code></a>.</p>
+<h2>Hierarquia</h2>
+<pre class="mermaid">flowchart TD
+  T001[TSK-001 Criar epico]
+  T002[TSK-002 Criar as historias]
+  T003[TSK-003 Explorar]
+  T007[TSK-007 Criar arquivo]
+  T008[TSK-008 Remover arquivo]
+  T009[TSK-009 Renomear arquivo]
+  T010[TSK-010 Mover arquivo]
+  T011[TSK-011 Visualizar arvore]
+  T012[TSK-012 Toggle filhos]
+  T004[TSK-004 Board]
+  T005[TSK-005 Gantt]
+  T006[TSK-006 Arvore execucao]
+  T001 --&gt; T002
+  T002 --&gt; T003
+  T003 --&gt; T007
+  T003 --&gt; T008
+  T003 --&gt; T009
+  T003 --&gt; T010
+  T003 --&gt; T011
+  T003 --&gt; T012
+  T002 --&gt; T004
+  T002 --&gt; T005
+  T002 --&gt; T006
+  style T001 fill:#fff3cd
+  style T002 fill:#fff3cd
+  style T003 fill:#fff3cd
+  style T007 fill:#d4edda
+  style T008 fill:#d4edda</pre>
+<table class="meta">
+<thead><tr><th>ID</th><th>Task</th><th>Status</th><th>Output</th></tr></thead>
+<tbody>
+<tr><td class="">TSK-001</td><td class="">Criar épico</td><td class="status-doing">Doing</td><td class=""><a href="../epics/index.html"><code>epics/</code></a></td></tr>
+<tr><td class="">TSK-002</td><td class="">Criar as histórias</td><td class="status-doing">Doing</td><td class=""><a href="../epics/index.html"><code>epics/</code></a></td></tr>
+<tr><td class="">TSK-003</td><td class="">Explorar</td><td class="status-doing">Doing</td><td class=""><a href="../epics/EP-01-explorar/index.html">EP-01</a></td></tr>
+<tr><td class="">TSK-004</td><td class="">Board</td><td class="status-todo">Todo</td><td class=""><a href="../epics/EP-02-board/index.html">EP-02</a></td></tr>
+<tr><td class="">TSK-005</td><td class="">Gantt</td><td class="status-todo">Todo</td><td class=""><a href="../epics/EP-03-gantt/index.html">EP-03</a></td></tr>
+<tr><td class="">TSK-006</td><td class="">Árvore de execução</td><td class="status-todo">Todo</td><td class=""><a href="../epics/EP-04-arvore-de-execucao/index.html">EP-04</a></td></tr>
+<tr><td class="">TSK-007</td><td class="">Criar arquivo</td><td class="status-done">Done</td><td class=""><a href="../epics/EP-01-explorar/US-01-criar-arquivo/index.html">US-01</a></td></tr>
+<tr><td class="">TSK-008</td><td class="">Remover arquivo</td><td class="status-done">Done</td><td class=""><a href="../epics/EP-01-explorar/US-02-remover-arquivo/index.html">US-02</a></td></tr>
+<tr><td class="">TSK-009</td><td class="">Renomear arquivo</td><td class="status-todo">Todo</td><td class=""><a href="../epics/EP-01-explorar/US-03-renomear-arquivo/index.html">US-03</a></td></tr>
+<tr><td class="">TSK-010</td><td class="">Mover arquivo</td><td class="status-todo">Todo</td><td class=""><a href="../epics/EP-01-explorar/US-04-mover-arquivo-dragdrop/index.html">US-04</a></td></tr>
+<tr><td class="">TSK-011</td><td class="">Visualizar árvore</td><td class="status-todo">Todo</td><td class=""><a href="../epics/EP-01-explorar/US-05-visualizar-arvore-de-arquivos/index.html">US-05</a></td></tr>
+<tr><td class="">TSK-012</td><td class="">Toggle filhos</td><td class="status-todo">Todo</td><td class=""><a href="../epics/EP-01-explorar/US-06-toggle-visualizar-filhos/index.html">US-06</a></td></tr>
+</tbody></table>
+    </main>
+  </div>
+  <script src="../assets/wiki.js"></script>
+</body>
+</html>

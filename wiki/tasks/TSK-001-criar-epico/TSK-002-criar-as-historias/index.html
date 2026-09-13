@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TSK-002 — Criar as histórias · Flow Wiki</title>
+  <link rel="stylesheet" href="../../../assets/wiki.css" />
+</head>
+<body>
+  <div class="layout">
+    
+<aside class="sidebar">
+  <a class="brand" href="../../../index.html">Flow Wiki</a>
+  <nav>
+    <a href="../../../epics/index.html">Épicos</a>
+    <a href="../../../tasks/index.html">Tasks</a>
+  </nav>
+  <p class="side-note">Espelho HTML de <code>flow/</code></p>
+</aside>
+
+    <main class="content">
+      <p class="crumb"><a href="../../../index.html">Wiki</a> / <a href="../../../tasks/index.html">tasks</a> / <a href="../../../tasks/TSK-001-criar-epico/index.html">TSK-001-criar-epico</a> / <a href="../../../tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/index.html">TSK-002-criar-as-historias</a></p>
+      <h1>TSK-002 — Criar as histórias</h1>
+<table class="meta">
+<thead><tr><th>Campo</th><th>Valor</th></tr></thead>
+<tbody>
+<tr><td class="">ID</td><td class="">TSK-002</td></tr>
+<tr><td class="">Status</td><td class="status-doing">Doing</td></tr>
+<tr><td class="">Pai</td><td class=""><a href="../index.html">TSK-001</a></td></tr>
+<tr><td class="">Board</td><td class=""><a href="../../../../board.md">Flow</a></td></tr>
+<tr><td class="">Output</td><td class=""><a href="../../../epics/index.html"><code>epics/</code></a> (histórias US dentro de cada EP)</td></tr>
+</tbody></table>
+<h2>Árvore de atividades</h2>
+<pre class="mermaid">flowchart TD
+  T002[TSK-002 Criar as historias]
+  T003[TSK-003 Explorar]
+  T007[TSK-007 Criar arquivo]
+  T008[TSK-008 Remover arquivo]
+  T009[TSK-009 Renomear arquivo]
+  T010[TSK-010 Mover arquivo]
+  T011[TSK-011 Visualizar arvore]
+  T012[TSK-012 Toggle filhos]
+  T004[TSK-004 Board]
+  T005[TSK-005 Gantt]
+  T006[TSK-006 Arvore execucao]
+  T002 --&gt; T003
+  T003 --&gt; T007
+  T003 --&gt; T008
+  T003 --&gt; T009
+  T003 --&gt; T010
+  T003 --&gt; T011
+  T003 --&gt; T012
+  T002 --&gt; T004
+  T002 --&gt; T005
+  T002 --&gt; T006
+  style T002 fill:#fff3cd
+  style T007 fill:#d4edda
+  style T008 fill:#d4edda</pre>
+<h2>Objetivo</h2>
+<p>Criar as histórias de usuário do projeto Flow — output em <a href="../../../epics/index.html"><code>epics/</code></a>.</p>
+<h2>Filhos</h2>
+<ul>
+<li><a href="TSK-003-explorar/index.html"><code>TSK-003</code></a> → Output <a href="../../../epics/EP-01-explorar/index.html">EP-01</a></li>
+</ul>
+<p>- <a href="TSK-003-explorar/TSK-007-criar-arquivo/index.html"><code>TSK-007</code></a> → Output <a href="../../../epics/EP-01-explorar/US-01-criar-arquivo/index.html">US-01</a> - <a href="TSK-003-explorar/TSK-008-remover-arquivo/index.html"><code>TSK-008</code></a> → Output <a href="../../../epics/EP-01-explorar/US-02-remover-arquivo/index.html">US-02</a> - <a href="TSK-003-explorar/TSK-009-renomear-arquivo/index.html"><code>TSK-009</code></a> → Output <a href="../../../epics/EP-01-explorar/US-03-renomear-arquivo/index.html">US-03</a> - <a href="TSK-003-explorar/TSK-010-mover-arquivo-dragdrop/index.html"><code>TSK-010</code></a> → Output <a href="../../../epics/EP-01-explorar/US-04-mover-arquivo-dragdrop/index.html">US-04</a> - <a href="TSK-003-explorar/TSK-011-visualizar-arvore-de-arquivos/index.html"><code>TSK-011</code></a> → Output <a href="../../../epics/EP-01-explorar/US-05-visualizar-arvore-de-arquivos/index.html">US-05</a> - <a href="TSK-003-explorar/TSK-012-toggle-visualizar-filhos/index.html"><code>TSK-012</code></a> → Output <a href="../../../epics/EP-01-explorar/US-06-toggle-visualizar-filhos/index.html">US-06</a></p>
+<ul>
+<li><a href="TSK-004-board/index.html"><code>TSK-004</code></a> → Output <a href="../../../epics/EP-02-board/index.html">EP-02</a></li>
+<li><a href="TSK-005-gantt/index.html"><code>TSK-005</code></a> → Output <a href="../../../epics/EP-03-gantt/index.html">EP-03</a></li>
+<li><a href="TSK-006-arvore-de-execucao/index.html"><code>TSK-006</code></a> → Output <a href="../../../epics/EP-04-arvore-de-execucao/index.html">EP-04</a></li>
+</ul>
+    </main>
+  </div>
+  <script src="../../../assets/wiki.js"></script>
+</body>
+</html>

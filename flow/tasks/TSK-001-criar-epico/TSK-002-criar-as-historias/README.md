@@ -8,10 +8,6 @@
 | Board | [Flow](../../../../board.md) |
 | Output | [`epics/`](../../../epics/README.md) (histórias US dentro de cada EP) |
 
-## Objetivo
-
-Criar as histórias de usuário do projeto Flow — output em [`epics/`](../../../epics/README.md).
-
 ## Árvore de atividades
 
 ```mermaid
@@ -38,7 +34,13 @@ flowchart TD
   T002 --> T005
   T002 --> T006
   style T002 fill:#fff3cd
+  style T007 fill:#d4edda
+  style T008 fill:#d4edda
 ```
+
+## Objetivo
+
+Criar as histórias de usuário do projeto Flow — output em [`epics/`](../../../epics/README.md).
 
 ## Filhos
 

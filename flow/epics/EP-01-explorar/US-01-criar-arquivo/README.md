@@ -5,7 +5,7 @@
 | ID | US-01 |
 | Épico | [EP-01 Explorar](../) |
 | Task | [TSK-007](../../../tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-003-explorar/TSK-007-criar-arquivo/) |
-| Status | Todo |
+| Status | Done |
 
 ## História
 
@@ -13,9 +13,11 @@ Como usuário do Explorar, quero **criar um arquivo** na árvore, para materiali
 
 ## Print
 
-![Criar arquivo](../../../images/Captura%20de%20tela%202026-09-13%20060040.png)
+![Criar arquivo — ícone +](../../../images/Captura%20de%20tela%202026-09-13%20060040.png)
 
-Referência: pasta **NOVA PASTA** com ícone **+** (novo arquivo) na barra de ações.
+![Criar arquivo — New File](../../../images/Captura%20de%20tela%202026-09-13%20143427.png)
+
+Referência: pasta **NOVA PASTA** com ícone **+** (novo arquivo) na barra de ações, e menu de contexto com **New File...**.
 
 ## Cenários
 
@@ -29,4 +31,8 @@ Quando o usuário **der o nome e pressionar Enter**, o arquivo deve **aparecer n
 
 ### SC-03 — Menu de contexto (botão direito)
 
-Quando o usuário **clicar com o botão direito** e escolher **adicionar arquivo**, o sistema deve **produzir o mesmo efeito** do SC-01: campo para dar nome e, após Enter, o arquivo aparece na lista.
+Quando o usuário **clicar com o botão direito** e escolher **adicionar arquivo** (ou **New File...**), o sistema deve **produzir o mesmo efeito** do SC-01: campo para dar nome e, após Enter, o arquivo aparece na lista.
+
+### SC-04 — Arquivo criado aparece no Explorar
+
+Quando o arquivo **for criado** (nome confirmado), o sistema deve **exibir o novo arquivo no Explorar**, na árvore sob a pasta atual.

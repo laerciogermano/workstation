@@ -8,10 +8,6 @@
 | Board | [Flow](../../../board.md) |
 | Output | [`epics/`](../../epics/README.md) |
 
-## Objetivo
-
-Criar os épicos do projeto Flow.
-
 ## Árvore de atividades
 
 ```mermaid
@@ -40,7 +36,13 @@ flowchart TD
   T002 --> T005
   T002 --> T006
   style T001 fill:#fff3cd
+  style T007 fill:#d4edda
+  style T008 fill:#d4edda
 ```
+
+## Objetivo
+
+Criar os épicos do projeto Flow.
 
 ## Filhos
 

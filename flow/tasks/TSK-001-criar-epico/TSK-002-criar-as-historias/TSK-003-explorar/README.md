@@ -25,6 +25,8 @@ flowchart TD
   T003 --> T011
   T003 --> T012
   style T003 fill:#fff3cd
+  style T007 fill:#d4edda
+  style T008 fill:#d4edda
 ```
 
 ## Filhos

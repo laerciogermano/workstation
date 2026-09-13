@@ -139,14 +139,14 @@ flowchart TD
   T002 --> T006
   style T001 fill:#fff3cd
   style T002 fill:#fff3cd
-  style T003 fill:#fff3cd
+  style T003 fill:#d4edda
   style T004 fill:#fff3cd
   style T005 fill:#fff3cd
-  style T007 fill:#fff3cd
-  style T008 fill:#fff3cd
-  style T009 fill:#fff3cd
-  style T010 fill:#fff3cd
-  style T011 fill:#fff3cd
+  style T007 fill:#d4edda
+  style T008 fill:#d4edda
+  style T009 fill:#d4edda
+  style T010 fill:#d4edda
+  style T011 fill:#d4edda
   style T013 fill:#fff3cd
   style T014 fill:#fff3cd
   style T015 fill:#fff3cd
@@ -182,31 +182,36 @@ flowchart TD
   style T064 fill:#d4edda
   style T066 fill:#d4edda
   style T068 fill:#d4edda
+  style T029 fill:#d4edda
+  style T031 fill:#d4edda
+  style T033 fill:#d4edda
+  style T035 fill:#d4edda
+  style T037 fill:#d4edda
 ```
 
 | ID | Task | Status | Output |
 |----|------|--------|--------|
 | TSK-001 | Criar épico | Doing | [`epics/`](../epics/README.md) |
 | TSK-002 | Criar as histórias | Doing | [`epics/`](../epics/README.md) |
-| TSK-003 | Explorar | Doing | [EP-01](../epics/EP-01-explorar/README.md) |
+| TSK-003 | Explorar | Done | [EP-01](../epics/EP-01-explorar/README.md) |
 | TSK-004 | Board | Doing | [EP-02](../epics/EP-02-board/README.md) |
 | TSK-005 | Gantt | Doing | [EP-03](../epics/EP-03-gantt/README.md) |
 | TSK-006 | Árvore de execução | Todo | [EP-04](../epics/EP-04-arvore-de-execucao/README.md) |
-| TSK-007 | Criar arquivo | Doing | [US-01](../epics/EP-01-explorar/US-01-criar-arquivo/README.md) |
+| TSK-007 | Criar arquivo | Done | [US-01](../epics/EP-01-explorar/US-01-criar-arquivo/README.md) |
 | TSK-028 | Criar BDD | Done | [US-01](../epics/EP-01-explorar/US-01-criar-arquivo/README.md) |
-| TSK-029 | Criar PAF | Todo | [US-01](../epics/EP-01-explorar/US-01-criar-arquivo/README.md) |
-| TSK-008 | Remover arquivo | Doing | [US-02](../epics/EP-01-explorar/US-02-remover-arquivo/README.md) |
+| TSK-029 | Criar PAF | Done | [US-01](../epics/EP-01-explorar/US-01-criar-arquivo/README.md) |
+| TSK-008 | Remover arquivo | Done | [US-02](../epics/EP-01-explorar/US-02-remover-arquivo/README.md) |
 | TSK-030 | Criar BDD | Done | [US-02](../epics/EP-01-explorar/US-02-remover-arquivo/README.md) |
-| TSK-031 | Criar PAF | Todo | [US-02](../epics/EP-01-explorar/US-02-remover-arquivo/README.md) |
-| TSK-009 | Renomear arquivo | Doing | [US-03](../epics/EP-01-explorar/US-03-renomear-arquivo/README.md) |
+| TSK-031 | Criar PAF | Done | [US-02](../epics/EP-01-explorar/US-02-remover-arquivo/README.md) |
+| TSK-009 | Renomear arquivo | Done | [US-03](../epics/EP-01-explorar/US-03-renomear-arquivo/README.md) |
 | TSK-032 | Criar BDD | Done | [US-03](../epics/EP-01-explorar/US-03-renomear-arquivo/README.md) |
-| TSK-033 | Criar PAF | Todo | [US-03](../epics/EP-01-explorar/US-03-renomear-arquivo/README.md) |
-| TSK-010 | Mover arquivo | Doing | [US-04](../epics/EP-01-explorar/US-04-mover-arquivo-dragdrop/README.md) |
+| TSK-033 | Criar PAF | Done | [US-03](../epics/EP-01-explorar/US-03-renomear-arquivo/README.md) |
+| TSK-010 | Mover arquivo | Done | [US-04](../epics/EP-01-explorar/US-04-mover-arquivo-dragdrop/README.md) |
 | TSK-034 | Criar BDD | Done | [US-04](../epics/EP-01-explorar/US-04-mover-arquivo-dragdrop/README.md) |
-| TSK-035 | Criar PAF | Todo | [US-04](../epics/EP-01-explorar/US-04-mover-arquivo-dragdrop/README.md) |
-| TSK-011 | Visualizar árvore | Doing | [US-05](../epics/EP-01-explorar/US-05-visualizar-arvore-de-arquivos/README.md) |
+| TSK-035 | Criar PAF | Done | [US-04](../epics/EP-01-explorar/US-04-mover-arquivo-dragdrop/README.md) |
+| TSK-011 | Visualizar árvore | Done | [US-05](../epics/EP-01-explorar/US-05-visualizar-arvore-de-arquivos/README.md) |
 | TSK-036 | Criar BDD | Done | [US-05](../epics/EP-01-explorar/US-05-visualizar-arvore-de-arquivos/README.md) |
-| TSK-037 | Criar PAF | Todo | [US-05](../epics/EP-01-explorar/US-05-visualizar-arvore-de-arquivos/README.md) |
+| TSK-037 | Criar PAF | Done | [US-05](../epics/EP-01-explorar/US-05-visualizar-arvore-de-arquivos/README.md) |
 | TSK-013 | Criar card | Doing | [US-01](../epics/EP-02-board/US-01-criar-card/README.md) |
 | TSK-040 | Criar BDD | Done | [US-01](../epics/EP-02-board/US-01-criar-card/README.md) |
 | TSK-041 | Criar PAF | Todo | [US-01](../epics/EP-02-board/US-01-criar-card/README.md) |

@@ -4,7 +4,7 @@
 |-------|--------|
 | ID | EP-01 |
 | Task | [TSK-003](../../tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-003-explorar/README.md) |
-| Status | Doing |
+| Status | Done |
 
 ## Intenção
 

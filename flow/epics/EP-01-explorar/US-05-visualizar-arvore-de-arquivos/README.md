@@ -5,7 +5,7 @@
 | ID | US-05 |
 | Épico | [EP-01 Explorar](../README.md) |
 | Task | [TSK-011](../../../tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-003-explorar/TSK-011-visualizar-arvore-de-arquivos/README.md) |
-| Status | Doing |
+| Status | Done |
 
 ## História
 

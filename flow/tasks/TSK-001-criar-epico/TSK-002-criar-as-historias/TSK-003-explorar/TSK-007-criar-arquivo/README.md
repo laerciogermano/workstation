@@ -3,7 +3,7 @@
 | Campo | Valor |
 |-------|--------|
 | ID | TSK-007 |
-| Status | Doing |
+| Status | Done |
 | Pai | [TSK-003](../README.md) |
 | Output | [US-01 — Criar arquivo](../../../../../epics/EP-01-explorar/US-01-criar-arquivo/README.md) |
 
@@ -16,11 +16,12 @@ flowchart TD
   T029[TSK-029 Criar PAF]
   T007 --> T028
   T007 --> T029
-  style T007 fill:#fff3cd
+  style T007 fill:#d4edda
   style T028 fill:#d4edda
+  style T029 fill:#d4edda
 ```
 
 ## Filhos
 
 - [`TSK-028`](TSK-028-criar-bdd/README.md) → Criar BDD (Done)
-- [`TSK-029`](TSK-029-criar-paf/README.md) → Criar PAF (Todo)
+- [`TSK-029`](TSK-029-criar-paf/README.md) → Criar PAF (Done)

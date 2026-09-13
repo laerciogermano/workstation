@@ -1,12 +1,12 @@
 # Documento de Visão — App “Rolê” (nome provisório)
 
-Plataforma de descoberta e experiência de eventos, festas e churrascos.
+Plataforma de descoberta e experiência de eventos, festas e eventos privados.
 
 ---
 
 ## 1. Visão Geral
 
-O Rolê é um aplicativo que centraliza a descoberta de festas, shows, churrascos e eventos privados em um raio de proximidade definido pelo usuário, unindo três camadas em um só produto:
+O Rolê é um aplicativo que centraliza a descoberta de festas, shows e eventos privados (ex.: sociais, churrascos) em um raio de proximidade definido pelo usuário, unindo três camadas em um só produto:
 
 1. Descoberta de eventos (estilo feed/geolocalização)
 2. Conexão social entre participantes (estilo “Tinder de eventos”)
@@ -22,7 +22,7 @@ O objetivo é resolver um problema comum: hoje, para descobrir o que está rolan
 - Não existe uma forma fácil de saber quem vai a um evento antes de decidir ir.
 - Pessoas sozinhas em uma cidade (viajando ou não) têm dificuldade de socializar em bares/festas.
 - Donos de bares/casas de eventos não têm uma vitrine unificada com dados de público e engajamento.
-- Falta um sistema de reputação/confiança entre anfitriões e convidados em eventos privados (ex: churrascos).
+- Falta um sistema de reputação/confiança entre anfitriões e convidados em eventos privados (ex.: sociais, churrascos).
 
 ---
 
@@ -39,7 +39,7 @@ O objetivo é resolver um problema comum: hoje, para descobrir o que está rolan
 
 ## 4. Jornada do Usuário (Fluxo Principal)
 
-1. **Onboarding:** criação de conta → preferências (tipo de evento: festa, show, churrasco etc.) → cidade → permissão de localização → raio de busca.
+1. **Onboarding:** criação de conta → preferências (tipo de evento: festa, show, evento privado etc.) → cidade → permissão de localização → raio de busca.
 
 2. **Descoberta de eventos** — múltiplos modos de visualização:
    - **Feed:** lista de eventos próximos, filtrável por tipo de evento; eventos patrocinados/pagos aparecem em destaque no topo.
@@ -69,7 +69,7 @@ Eventos por geolocalização e raio configurável, com quatro modos de visualiza
 - **Tinder (swipe):** decisão rápida evento a evento — principal motor de engajamento e monetização
 - **Mapa:** restrito a eventos patrocinados e usuários premium (ver 5.6)
 - **Lista:** visualização simples, sem swipe
-- Filtro por tipo de evento (festa, show, churrasco, evento privado)
+- Filtro por tipo de evento (festa, show, evento privado — ex.: social, churrasco)
 - Eventos privados com local revelado só após confirmação/código de acesso
 
 ### 5.2 Social / “Tinder de eventos”
@@ -113,9 +113,9 @@ Eventos por geolocalização e raio configurável, com quatro modos de visualiza
 - Notificação push disparada automaticamente quando um novo evento é cadastrado dentro do raio de busca configurado pelo usuário (ex: raio de 10 km definido → evento criado a 8 km do usuário → notificação enviada)
 - Formato da notificação traz tipo de evento, distância e horário, por exemplo:
   - “Rolê: surgiu uma festa social a 13 km de você”
-  - “Churrasco do Laércio a 3 km, começa às 20h”
+  - “Social do Laércio a 3 km, começa às 20h”
 - Objetivo: reengajar o usuário mesmo fora do app (notificação chega enquanto ele navega no celular em outros apps), funcionando como gatilho de reabertura do app e de decisão em cima da hora
-- Aplica-se tanto a eventos públicos quanto privados (ex: convite avulso de churrasco de conhecido)
+- Aplica-se tanto a eventos públicos quanto privados (ex.: convite avulso de social ou churrasco de conhecido)
 - Complementa a lógica de “curtida”/match: notificações também podem avisar sobre interações sociais recebidas (ex: alguém curtiu o usuário em um evento em comum), reforçando o loop de engajamento do produto
 
 ### 5.8 Assinatura Premium

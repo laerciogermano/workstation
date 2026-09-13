@@ -145,14 +145,14 @@ flowchart TD
   T002 --> T006
   style T001 fill:#fff3cd
   style T002 fill:#fff3cd
-  style T003 fill:#fff3cd
+  style T003 fill:#d4edda
   style T004 fill:#fff3cd
   style T005 fill:#fff3cd
-  style T007 fill:#fff3cd
-  style T008 fill:#fff3cd
-  style T009 fill:#fff3cd
-  style T010 fill:#fff3cd
-  style T011 fill:#fff3cd
+  style T007 fill:#d4edda
+  style T008 fill:#d4edda
+  style T009 fill:#d4edda
+  style T010 fill:#d4edda
+  style T011 fill:#d4edda
   style T013 fill:#fff3cd
   style T014 fill:#fff3cd
   style T015 fill:#fff3cd
@@ -188,6 +188,11 @@ flowchart TD
   style T064 fill:#d4edda
   style T066 fill:#d4edda
   style T068 fill:#d4edda
+  style T029 fill:#d4edda
+  style T031 fill:#d4edda
+  style T033 fill:#d4edda
+  style T035 fill:#d4edda
+  style T037 fill:#d4edda
 ```
 
 ## Objetivo

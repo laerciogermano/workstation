@@ -3,7 +3,7 @@
 | Campo | Valor |
 |-------|--------|
 | ID | TSK-031 |
-| Status | Todo |
+| Status | Done |
 | Pai | [TSK-008](../README.md) |
 | Output | [US-02 — Remover arquivo](../../../../../../epics/EP-01-explorar/US-02-remover-arquivo/README.md) |
 
@@ -12,4 +12,5 @@
 ```mermaid
 flowchart TD
   T031[TSK-031 Criar PAF]
+  style T031 fill:#d4edda
 ```

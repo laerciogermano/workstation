@@ -22,9 +22,9 @@ Pré-requisito do Plans.
 
 | Todo | Doing | Done |
 |------|-------|------|
-| Criar as histórias | | Criar épico |
+| [TSK-002](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/) Criar as histórias | | [TSK-001](flow/tasks/TSK-001-criar-epico/) Criar épico |
 
-→ [`flow/`](flow/)
+→ [`flow/`](flow/) · [`flow/tasks/`](flow/tasks/)
 
 ---
 

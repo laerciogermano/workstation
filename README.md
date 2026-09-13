@@ -10,6 +10,7 @@
 | [Fitness](fitness/) | [`fitness/README.md`](fitness/README.md) | [`fitness/docs/`](fitness/docs/) | [`fitness/config/config-ia.md`](fitness/config/config-ia.md) |
 | [ConnectMax](connectmax/) | [`connectmax/README.md`](connectmax/README.md) | [`connectmax/docs/`](connectmax/docs/) | [`connectmax/config/config-ia.md`](connectmax/config/config-ia.md) |
 | [Eternos Mutáveis](eternos-mutaveis/) | [`eternos-mutaveis/README.md`](eternos-mutaveis/README.md) | [`eternos-mutaveis/docs/`](eternos-mutaveis/docs/) | [`eternos-mutaveis/config/config-ia.md`](eternos-mutaveis/config/config-ia.md) |
+| [Jiu-jitsu](jiu-jitsu/) | [`jiu-jitsu/README.md`](jiu-jitsu/README.md) | [`jiu-jitsu/docs/`](jiu-jitsu/docs/) | [`jiu-jitsu/config/config-ia.md`](jiu-jitsu/config/config-ia.md) |
 
 ## Ordem de desenvolvimento
 
@@ -60,3 +61,11 @@ Visão → Tese → Estrutura → Capítulos → Manuscrito
 ```
 
 Prompts: [`eternos-mutaveis/prompts/timeline.md`](eternos-mutaveis/prompts/timeline.md).
+
+### Esteira (Jiu-jitsu)
+
+```text
+Visão → Funcionalidades → Histórias → BDD → Telas → Screens BDD → Componentes → Protótipo
+```
+
+Prompts: [`jiu-jitsu/prompts/timeline.md`](jiu-jitsu/prompts/timeline.md).

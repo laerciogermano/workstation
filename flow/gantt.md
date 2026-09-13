@@ -11,7 +11,7 @@ As criações de histórias (épicos e US) correm **em paralelo** a partir de 20
 |----|-----------|--------|---------|--------|-------------|
 | TSK-001 | Criar epico | 2026-09-13 | 3d | Doing | — |
 | TSK-002 | Criar as historias | 2026-09-16 | 1d | Doing | — |
-| TSK-003 | Explorar | 2026-09-17 | 1d | Doing | paralelo |
+| TSK-003 | Explorar | 2026-09-17 | 1d | Done | paralelo |
 | TSK-004 | Board | 2026-09-17 | 2d | Todo | paralelo |
 | TSK-005 | Gantt | 2026-09-17 | 2d | Todo | paralelo |
 | TSK-006 | Arvore de execucao | 2026-09-17 | 2d | Todo | paralelo |
@@ -19,7 +19,7 @@ As criações de histórias (épicos e US) correm **em paralelo** a partir de 20
 | TSK-008 | Remover arquivo | 2026-09-17 | 1d | Done | paralelo |
 | TSK-009 | Renomear arquivo | 2026-09-17 | 1d | Done | paralelo |
 | TSK-010 | Mover arquivo | 2026-09-17 | 1d | Done | paralelo |
-| TSK-011 | Visualizar arvore | 2026-09-17 | 1d | Todo | paralelo |
-| TSK-012 | Expandir e recolher | 2026-09-17 | 1d | Todo | paralelo |
+| TSK-011 | Visualizar arvore | 2026-09-17 | 1d | Done | paralelo |
+| TSK-012 | Expandir e recolher | 2026-09-17 | 1d | Done | paralelo |
 
 → [`tasks/`](tasks/README.md) · [`../board.md`](../board.md)

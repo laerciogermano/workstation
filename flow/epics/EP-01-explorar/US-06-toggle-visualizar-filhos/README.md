@@ -5,12 +5,12 @@
 | ID | US-06 |
 | Épico | [EP-01 Explorar](../) |
 | Task | [TSK-012](../../../tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-003-explorar/TSK-012-toggle-visualizar-filhos/) |
-| Status | Todo |
+| Status | Done |
 
 ## História
 
-Como usuário do Explorar, quero **expandir e recolher** os filhos de um nó na árvore, para mostrar ou ocultar a hierarquia.
+Comportamento de **expandir e recolher** consolidado em [US-05 — Visualizar árvore de arquivos](../US-05-visualizar-arvore-de-arquivos/) (cenários SC-04, SC-05 e SC-06).
 
 ## Print
 
-![Expandir e recolher](print.png)
+Ver [US-05](../US-05-visualizar-arvore-de-arquivos/).

@@ -38,6 +38,7 @@ flowchart TD
   style T001 fill:#fff3cd
   style T007 fill:#d4edda
   style T008 fill:#d4edda
+  style T009 fill:#d4edda
 ```
 
 ## Objetivo

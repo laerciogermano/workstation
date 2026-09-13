@@ -25,4 +25,8 @@ Quando o usuário **clicar com o botão direito** em um arquivo no Explorar e es
 
 ### SC-02 — Selecionar e pressionar Delete
 
-Quando o usuário **selecionar um arquivo** no Explorar e **pressionar a tecla Delete**, o sistema deve **remover o arquivo da árvore**.
+Quando o usuário **selecionar um arquivo** no Explorar e **pressionar a tecla Delete**, o sistema deve **remover o arquivo da árvore** (mesmo efeito do SC-01).
+
+### SC-03 — Arquivo removido some do Explorar
+
+Quando o arquivo **for removido**, o sistema deve **deixar de exibi-lo no Explorar**, retirando-o da árvore sob a pasta em que estava.

@@ -17,7 +17,7 @@ As criações de histórias (épicos e US) correm **em paralelo** a partir de 20
 | TSK-006 | Arvore de execucao | 2026-09-17 | 2d | Todo | paralelo |
 | TSK-007 | Criar arquivo | 2026-09-17 | 1d | Done | paralelo |
 | TSK-008 | Remover arquivo | 2026-09-17 | 1d | Done | paralelo |
-| TSK-009 | Renomear arquivo | 2026-09-17 | 1d | Todo | paralelo |
+| TSK-009 | Renomear arquivo | 2026-09-17 | 1d | Done | paralelo |
 | TSK-010 | Mover arquivo | 2026-09-17 | 1d | Todo | paralelo |
 | TSK-011 | Visualizar arvore | 2026-09-17 | 1d | Todo | paralelo |
 | TSK-012 | Toggle visualizar filhos | 2026-09-17 | 1d | Todo | paralelo |

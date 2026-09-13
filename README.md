@@ -11,6 +11,12 @@
 | [ConnectMax](connectmax/) | [`connectmax/README.md`](connectmax/README.md) | [`connectmax/docs/`](connectmax/docs/) | [`connectmax/config/config-ia.md`](connectmax/config/config-ia.md) |
 | [Eternos Mutáveis](eternos-mutaveis/) | [`eternos-mutaveis/README.md`](eternos-mutaveis/README.md) | [`eternos-mutaveis/docs/`](eternos-mutaveis/docs/) | [`eternos-mutaveis/config/config-ia.md`](eternos-mutaveis/config/config-ia.md) |
 
+## Ordem de desenvolvimento
+
+O **Flow** é pré-requisito do **Plans**. Para desenvolver o Plans, é
+necessário desenvolver primeiro os fundamentos de fluxo definidos em
+[`flow/`](flow/).
+
 ### Esteira (Plans)
 
 ```text

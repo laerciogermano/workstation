@@ -19,7 +19,6 @@ flowchart TD
   T009[TSK-009 Renomear arquivo]
   T010[TSK-010 Mover arquivo]
   T011[TSK-011 Visualizar arvore]
-  T012[TSK-012 Expandir e recolher]
   T028[TSK-028 Criar BDD]
   T029[TSK-029 Criar PAF]
   T030[TSK-030 Criar BDD]
@@ -30,8 +29,6 @@ flowchart TD
   T035[TSK-035 Criar PAF]
   T036[TSK-036 Criar BDD]
   T037[TSK-037 Criar PAF]
-  T038[TSK-038 Criar BDD]
-  T039[TSK-039 Criar PAF]
   T004[TSK-004 Board]
   T013[TSK-013 Criar card]
   T014[TSK-014 Remover card]
@@ -86,7 +83,6 @@ flowchart TD
   T003 --> T009
   T003 --> T010
   T003 --> T011
-  T003 --> T012
   T007 --> T028
   T007 --> T029
   T008 --> T030
@@ -97,8 +93,6 @@ flowchart TD
   T010 --> T035
   T011 --> T036
   T011 --> T037
-  T012 --> T038
-  T012 --> T039
   T002 --> T004
   T004 --> T013
   T004 --> T014
@@ -156,7 +150,6 @@ flowchart TD
   style T009 fill:#fff3cd
   style T010 fill:#fff3cd
   style T011 fill:#fff3cd
-  style T012 fill:#fff3cd
   style T013 fill:#fff3cd
   style T014 fill:#fff3cd
   style T015 fill:#fff3cd
@@ -177,7 +170,6 @@ flowchart TD
   style T032 fill:#d4edda
   style T034 fill:#d4edda
   style T036 fill:#d4edda
-  style T038 fill:#d4edda
   style T040 fill:#d4edda
   style T042 fill:#d4edda
   style T044 fill:#d4edda
@@ -217,9 +209,6 @@ Criar as histórias de usuário do projeto Flow — output em [`epics/`](../../.
   - [`TSK-011`](TSK-003-explorar/TSK-011-visualizar-arvore-de-arquivos/README.md) → Output [US-05](../../../epics/EP-01-explorar/US-05-visualizar-arvore-de-arquivos/README.md)
     - [`TSK-036`](TSK-003-explorar/TSK-011-visualizar-arvore-de-arquivos/TSK-036-criar-bdd/README.md) → Criar BDD
     - [`TSK-037`](TSK-003-explorar/TSK-011-visualizar-arvore-de-arquivos/TSK-037-criar-paf/README.md) → Criar PAF
-  - [`TSK-012`](TSK-003-explorar/TSK-012-toggle-visualizar-filhos/README.md) → Output [US-06](../../../epics/EP-01-explorar/US-06-toggle-visualizar-filhos/README.md)
-    - [`TSK-038`](TSK-003-explorar/TSK-012-toggle-visualizar-filhos/TSK-038-criar-bdd/README.md) → Criar BDD
-    - [`TSK-039`](TSK-003-explorar/TSK-012-toggle-visualizar-filhos/TSK-039-criar-paf/README.md) → Criar PAF
 - [`TSK-004`](TSK-004-board/README.md) → Output [EP-02](../../../epics/EP-02-board/README.md)
   - [`TSK-013`](TSK-004-board/TSK-013-criar-card/README.md) → Output [US-01](../../../epics/EP-02-board/US-01-criar-card/README.md)
     - [`TSK-040`](TSK-004-board/TSK-013-criar-card/TSK-040-criar-bdd/README.md) → Criar BDD

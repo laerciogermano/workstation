@@ -3,8 +3,8 @@
 | Campo | Valor |
 |-------|--------|
 | ID | US-01 |
-| Épico | [EP-01 Explorar](../) |
-| Task | [TSK-007](../../../tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-003-explorar/TSK-007-criar-arquivo/) |
+| Épico | [EP-01 Explorar](../README.md) |
+| Task | [TSK-007](../../../tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-003-explorar/TSK-007-criar-arquivo/README.md) |
 | Status | Doing |
 
 ## História

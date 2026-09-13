@@ -2,10 +2,10 @@
 
 | ID | Épico | Pasta | Intenção |
 |----|-------|-------|----------|
-| EP-01 | Explorar | [`EP-01-explorar/`](EP-01-explorar/) | Árvore de componentes parecida com IDE |
-| EP-02 | Board | [`EP-02-board/`](EP-02-board/) | Para cada arquivo, saber o status |
-| EP-03 | Gantt | [`EP-03-gantt/`](EP-03-gantt/) | Sequência e paralelismo das atividades |
-| EP-04 | Árvore de execução | [`EP-04-arvore-de-execucao/`](EP-04-arvore-de-execucao/) | Atividades pais e filhas |
+| EP-01 | Explorar | [`EP-01-explorar/`](EP-01-explorar/README.md) | Árvore de componentes parecida com IDE |
+| EP-02 | Board | [`EP-02-board/`](EP-02-board/README.md) | Para cada arquivo, saber o status |
+| EP-03 | Gantt | [`EP-03-gantt/`](EP-03-gantt/README.md) | Sequência e paralelismo das atividades |
+| EP-04 | Árvore de execução | [`EP-04-arvore-de-execucao/`](EP-04-arvore-de-execucao/README.md) | Atividades pais e filhas |
 
 ## Hierarquia
 
@@ -15,8 +15,7 @@ EP-01 Explorar
 ├── US-02 Remover arquivo
 ├── US-03 Renomear arquivo
 ├── US-04 Mover arquivo (drag and drop)
-├── US-05 Visualizar árvore de arquivos
-└── US-06 Expandir e recolher
+└── US-05 Visualizar árvore de arquivos
 EP-02 Board
 ├── US-01 Criar card
 ├── US-02 Remover card
@@ -37,4 +36,4 @@ EP-03 Gantt
 EP-04 Arvore de execucao
 ```
 
-→ [`../tasks/`](../tasks/) · [`../board.md`](../board.md)
+→ [`../tasks/`](../tasks/README.md) · [`../board.md`](../board.md)

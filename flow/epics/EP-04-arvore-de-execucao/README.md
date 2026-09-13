@@ -3,7 +3,7 @@
 | Campo | Valor |
 |-------|--------|
 | ID | EP-04 |
-| Task | [TSK-006](../../tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-006-arvore-de-execucao/) |
+| Task | [TSK-006](../../tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-006-arvore-de-execucao/README.md) |
 | Status | Todo |
 
 ## Intenção

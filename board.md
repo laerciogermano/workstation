@@ -32,7 +32,6 @@ flowchart TD
   T009[TSK-009 Renomear arquivo]
   T010[TSK-010 Mover arquivo]
   T011[TSK-011 Visualizar arvore]
-  T012[TSK-012 Expandir e recolher]
   T028[TSK-028 Criar BDD]
   T029[TSK-029 Criar PAF]
   T030[TSK-030 Criar BDD]
@@ -43,8 +42,6 @@ flowchart TD
   T035[TSK-035 Criar PAF]
   T036[TSK-036 Criar BDD]
   T037[TSK-037 Criar PAF]
-  T038[TSK-038 Criar BDD]
-  T039[TSK-039 Criar PAF]
   T004[TSK-004 Board]
   T013[TSK-013 Criar card]
   T014[TSK-014 Remover card]
@@ -100,7 +97,6 @@ flowchart TD
   T003 --> T009
   T003 --> T010
   T003 --> T011
-  T003 --> T012
   T007 --> T028
   T007 --> T029
   T008 --> T030
@@ -111,8 +107,6 @@ flowchart TD
   T010 --> T035
   T011 --> T036
   T011 --> T037
-  T012 --> T038
-  T012 --> T039
   T002 --> T004
   T004 --> T013
   T004 --> T014
@@ -171,7 +165,6 @@ flowchart TD
   style T009 fill:#fff3cd
   style T010 fill:#fff3cd
   style T011 fill:#fff3cd
-  style T012 fill:#fff3cd
   style T013 fill:#fff3cd
   style T014 fill:#fff3cd
   style T015 fill:#fff3cd
@@ -192,7 +185,6 @@ flowchart TD
   style T032 fill:#d4edda
   style T034 fill:#d4edda
   style T036 fill:#d4edda
-  style T038 fill:#d4edda
   style T040 fill:#d4edda
   style T042 fill:#d4edda
   style T044 fill:#d4edda
@@ -217,9 +209,6 @@ flowchart TD
 | [TSK-031](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-003-explorar/TSK-008-remover-arquivo/TSK-031-criar-paf/README.md) Criar PAF | [TSK-007](flow/epics/EP-01-explorar/US-01-criar-arquivo/README.md) Criar arquivo | [TSK-032](flow/epics/EP-01-explorar/US-03-renomear-arquivo/README.md) Criar BDD |
 | [TSK-033](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-003-explorar/TSK-009-renomear-arquivo/TSK-033-criar-paf/README.md) Criar PAF | [TSK-008](flow/epics/EP-01-explorar/US-02-remover-arquivo/README.md) Remover arquivo | [TSK-034](flow/epics/EP-01-explorar/US-04-mover-arquivo-dragdrop/README.md) Criar BDD |
 | [TSK-035](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-003-explorar/TSK-010-mover-arquivo-dragdrop/TSK-035-criar-paf/README.md) Criar PAF | [TSK-009](flow/epics/EP-01-explorar/US-03-renomear-arquivo/README.md) Renomear arquivo | [TSK-036](flow/epics/EP-01-explorar/US-05-visualizar-arvore-de-arquivos/README.md) Criar BDD |
-| [TSK-037](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-003-explorar/TSK-011-visualizar-arvore-de-arquivos/TSK-037-criar-paf/README.md) Criar PAF | [TSK-010](flow/epics/EP-01-explorar/US-04-mover-arquivo-dragdrop/README.md) Mover arquivo | [TSK-038](flow/epics/EP-01-explorar/US-06-toggle-visualizar-filhos/README.md) Criar BDD |
-| [TSK-039](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-003-explorar/TSK-012-toggle-visualizar-filhos/TSK-039-criar-paf/README.md) Criar PAF | [TSK-011](flow/epics/EP-01-explorar/US-05-visualizar-arvore-de-arquivos/README.md) Visualizar árvore | [TSK-040](flow/epics/EP-02-board/US-01-criar-card/README.md) Criar BDD |
-| [TSK-041](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-004-board/TSK-013-criar-card/TSK-041-criar-paf/README.md) Criar PAF | [TSK-012](flow/epics/EP-01-explorar/US-06-toggle-visualizar-filhos/README.md) Expandir e recolher | [TSK-042](flow/epics/EP-02-board/US-02-remover-card/README.md) Criar BDD |
 | [TSK-043](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-004-board/TSK-014-remover-card/TSK-043-criar-paf/README.md) Criar PAF | [TSK-003](flow/epics/EP-01-explorar/README.md) Explorar | [TSK-044](flow/epics/EP-02-board/US-03-mover-card/README.md) Criar BDD |
 | [TSK-045](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-004-board/TSK-015-mover-card/TSK-045-criar-paf/README.md) Criar PAF | [TSK-013](flow/epics/EP-02-board/US-01-criar-card/README.md) Criar card | [TSK-046](flow/epics/EP-02-board/US-04-renomear-card/README.md) Criar BDD |
 | [TSK-047](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-004-board/TSK-016-renomear-card/TSK-047-criar-paf/README.md) Criar PAF | [TSK-014](flow/epics/EP-02-board/US-02-remover-card/README.md) Remover card | [TSK-048](flow/epics/EP-02-board/US-05-abrir-card/README.md) Criar BDD |
@@ -239,7 +228,7 @@ flowchart TD
 |  | [TSK-027](flow/epics/EP-03-gantt/US-07-visualizar-tarefas/README.md) Visualizar tarefas |  |
 |  | [TSK-005](flow/epics/EP-03-gantt/README.md) Gantt |  |
 
-→ [low/](flow/README.md) · [low/tasks/](flow/tasks/README.md) · [low/epics/](flow/epics/README.md) · [low/gantt.md](flow/gantt.md)
+→ [`flow/`](flow/README.md) · [`flow/tasks/`](flow/tasks/README.md) · [`flow/epics/`](flow/epics/README.md) · [`flow/gantt.md`](flow/gantt.md)
 
 ---
 

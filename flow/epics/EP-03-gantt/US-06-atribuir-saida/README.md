@@ -3,8 +3,8 @@
 | Campo | Valor |
 |-------|--------|
 | ID | US-06 |
-| Épico | [EP-03 Gantt](../) |
-| Task | [TSK-026](../../../tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-005-gantt/TSK-026-atribuir-saida/) |
+| Épico | [EP-03 Gantt](../README.md) |
+| Task | [TSK-026](../../../tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-005-gantt/TSK-026-atribuir-saida/README.md) |
 | Status | Doing |
 
 ## História

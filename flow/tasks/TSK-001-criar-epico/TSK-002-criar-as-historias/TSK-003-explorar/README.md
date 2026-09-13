@@ -17,50 +17,17 @@ flowchart TD
   T009[TSK-009 Renomear arquivo]
   T010[TSK-010 Mover arquivo]
   T011[TSK-011 Visualizar arvore]
-  T012[TSK-012 Expandir e recolher]
-  T028[TSK-028 Criar BDD]
-  T029[TSK-029 Criar PAF]
-  T030[TSK-030 Criar BDD]
-  T031[TSK-031 Criar PAF]
-  T032[TSK-032 Criar BDD]
-  T033[TSK-033 Criar PAF]
-  T034[TSK-034 Criar BDD]
-  T035[TSK-035 Criar PAF]
-  T036[TSK-036 Criar BDD]
-  T037[TSK-037 Criar PAF]
-  T038[TSK-038 Criar BDD]
-  T039[TSK-039 Criar PAF]
   T003 --> T007
   T003 --> T008
   T003 --> T009
   T003 --> T010
   T003 --> T011
-  T003 --> T012
-  T007 --> T028
-  T007 --> T029
-  T008 --> T030
-  T008 --> T031
-  T009 --> T032
-  T009 --> T033
-  T010 --> T034
-  T010 --> T035
-  T011 --> T036
-  T011 --> T037
-  T012 --> T038
-  T012 --> T039
   style T003 fill:#fff3cd
   style T007 fill:#fff3cd
-  style T028 fill:#d4edda
   style T008 fill:#fff3cd
-  style T030 fill:#d4edda
   style T009 fill:#fff3cd
-  style T032 fill:#d4edda
   style T010 fill:#fff3cd
-  style T034 fill:#d4edda
   style T011 fill:#fff3cd
-  style T036 fill:#d4edda
-  style T012 fill:#fff3cd
-  style T038 fill:#d4edda
 ```
 
 ## Filhos
@@ -80,6 +47,3 @@ flowchart TD
 - [`TSK-011`](TSK-011-visualizar-arvore-de-arquivos/README.md) → Output [US-05-visualizar-arvore-de-arquivos](../../../../epics/EP-01-explorar/US-05-visualizar-arvore-de-arquivos/README.md)
   - [`TSK-036`](TSK-011-visualizar-arvore-de-arquivos/TSK-036-criar-bdd/README.md) → Criar BDD
   - [`TSK-037`](TSK-011-visualizar-arvore-de-arquivos/TSK-037-criar-paf/README.md) → Criar PAF
-- [`TSK-012`](TSK-012-toggle-visualizar-filhos/README.md) → Output [US-06-toggle-visualizar-filhos](../../../../epics/EP-01-explorar/US-06-toggle-visualizar-filhos/README.md)
-  - [`TSK-038`](TSK-012-toggle-visualizar-filhos/TSK-038-criar-bdd/README.md) → Criar BDD
-  - [`TSK-039`](TSK-012-toggle-visualizar-filhos/TSK-039-criar-paf/README.md) → Criar PAF

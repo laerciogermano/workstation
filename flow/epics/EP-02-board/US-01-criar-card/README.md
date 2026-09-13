@@ -3,8 +3,8 @@
 | Campo | Valor |
 |-------|--------|
 | ID | US-01 |
-| Épico | [EP-02 Board](../) |
-| Task | [TSK-013](../../../tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-004-board/TSK-013-criar-card/) |
+| Épico | [EP-02 Board](../README.md) |
+| Task | [TSK-013](../../../tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-004-board/TSK-013-criar-card/README.md) |
 | Status | Doing |
 
 ## História

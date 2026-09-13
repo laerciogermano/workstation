@@ -3,8 +3,8 @@
 | Campo | Valor |
 |-------|--------|
 | ID | US-03 |
-| Épico | [EP-03 Gantt](../) |
-| Task | [TSK-023](../../../tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-005-gantt/TSK-023-remover-tarefa/) |
+| Épico | [EP-03 Gantt](../README.md) |
+| Task | [TSK-023](../../../tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-005-gantt/TSK-023-remover-tarefa/README.md) |
 | Status | Doing |
 
 ## História

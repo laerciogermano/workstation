@@ -3,8 +3,8 @@
 | Campo | Valor |
 |-------|--------|
 | ID | US-04 |
-| Épico | [EP-03 Gantt](../) |
-| Task | [TSK-024](../../../tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-005-gantt/TSK-024-atribuir-responsavel/) |
+| Épico | [EP-03 Gantt](../README.md) |
+| Task | [TSK-024](../../../tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-005-gantt/TSK-024-atribuir-responsavel/README.md) |
 | Status | Doing |
 
 ## História

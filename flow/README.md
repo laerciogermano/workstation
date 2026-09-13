@@ -3,7 +3,7 @@
 Histórias de usuário: [`stories.md`](stories.md).
 
 **Pré-requisito:** a linguagem e a visualização bidirecional em tempo real
-vivem em [`../flow-language/`](../flow-language/). O Flow **consome** essa
+vivem em [`../flow-language/`](../flow-language/README.md). O Flow **consome** essa
 camada; não a redefine.
 
 ## Visão

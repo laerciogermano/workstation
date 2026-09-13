@@ -3,8 +3,8 @@
 | Campo | Valor |
 |-------|--------|
 | ID | US-04 |
-| Épico | [EP-01 Explorar](../) |
-| Task | [TSK-010](../../../tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-003-explorar/TSK-010-mover-arquivo-dragdrop/) |
+| Épico | [EP-01 Explorar](../README.md) |
+| Task | [TSK-010](../../../tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-003-explorar/TSK-010-mover-arquivo-dragdrop/README.md) |
 | Status | Doing |
 
 ## História

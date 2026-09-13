@@ -1,16 +1,15 @@
-# TSK-010 — Mover arquivo (drag and drop)
+﻿# TSK-010 — Mover arquivo (drag and drop)
 
 | Campo | Valor |
 |-------|--------|
 | ID | TSK-010 |
 | Status | Todo |
-| Pai | [TSK-003](../) |
-| Épico | Explorar |
+| Pai | [TSK-003](../README.md) |
+| Output | [US-04 — Mover arquivo](../../../../../epics/EP-01-explorar/US-04-mover-arquivo-dragdrop/README.md) |
 
-## História
+## Árvore de atividades
 
-Como usuário do Explorar, quero **mover um arquivo por drag and drop** na árvore, para reorganizar a hierarquia com o gesto de um explorador de IDE.
-
-## Print
-
-![Mover arquivo drag and drop](print.png)
+```mermaid
+flowchart TD
+  T010[TSK-010 Mover arquivo]
+```

@@ -1,16 +1,15 @@
-# TSK-008 — Remover arquivo
+﻿# TSK-008 — Remover arquivo
 
 | Campo | Valor |
 |-------|--------|
 | ID | TSK-008 |
 | Status | Todo |
-| Pai | [TSK-003](../) |
-| Épico | Explorar |
+| Pai | [TSK-003](../README.md) |
+| Output | [US-02 — Remover arquivo](../../../../../epics/EP-01-explorar/US-02-remover-arquivo/README.md) |
 
-## História
+## Árvore de atividades
 
-Como usuário do Explorar, quero **remover um arquivo** da árvore, para limpar unidades que não devem mais existir.
-
-## Print
-
-![Remover arquivo](print.png)
+```mermaid
+flowchart TD
+  T008[TSK-008 Remover arquivo]
+```

@@ -1,12 +1,15 @@
-# TSK-006 — Árvore de execução (histórias)
+# TSK-006 — Árvore de execução
 
 | Campo | Valor |
 |-------|--------|
 | ID | TSK-006 |
 | Status | Todo |
-| Pai | [TSK-002](../) |
-| Épico | Árvore de execução |
+| Pai | [TSK-002](../README.md) |
+| Output | [EP-04 — Árvore de execução](../../../../epics/EP-04-arvore-de-execucao/README.md) |
 
-## Objetivo
+## Árvore de atividades
 
-Criar as histórias do épico **Árvore de execução**: árvore com todas as atividades pais e filhas.
+```mermaid
+flowchart TD
+  T006[TSK-006 Arvore execucao]
+```

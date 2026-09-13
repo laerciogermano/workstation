@@ -1,12 +1,15 @@
-# TSK-004 — Board (histórias)
+# TSK-004 — Board
 
 | Campo | Valor |
 |-------|--------|
 | ID | TSK-004 |
 | Status | Todo |
-| Pai | [TSK-002](../) |
-| Épico | Board |
+| Pai | [TSK-002](../README.md) |
+| Output | [EP-02 — Board](../../../../epics/EP-02-board/README.md) |
 
-## Objetivo
+## Árvore de atividades
 
-Criar as histórias do épico **Board**: para cada arquivo, saber o status.
+```mermaid
+flowchart TD
+  T004[TSK-004 Board]
+```

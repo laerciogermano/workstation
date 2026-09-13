@@ -13,7 +13,7 @@ Quando houver hierarquia de tasks, a raia usa **Mermaid** (árvore + cor de stat
 |------|-------|------|
 | Criar épico | | |
 
-→ [`connectmax/`](connectmax/)
+→ [`connectmax/`](connectmax/README.md)
 
 ---
 
@@ -54,17 +54,17 @@ flowchart TD
 
 | Todo | Doing | Done |
 |------|-------|------|
-| [TSK-007](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-003-explorar/TSK-007-criar-arquivo/) Criar arquivo | [TSK-001](flow/tasks/TSK-001-criar-epico/) Criar épico | — |
-| [TSK-008](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-003-explorar/TSK-008-remover-arquivo/) Remover arquivo | [TSK-002](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/) Criar as histórias | |
-| [TSK-009](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-003-explorar/TSK-009-renomear-arquivo/) Renomear arquivo | [TSK-003](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-003-explorar/) Explorar | |
-| [TSK-010](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-003-explorar/TSK-010-mover-arquivo-dragdrop/) Mover arquivo | | |
-| [TSK-011](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-003-explorar/TSK-011-visualizar-arvore-de-arquivos/) Visualizar árvore | | |
-| [TSK-012](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-003-explorar/TSK-012-toggle-visualizar-filhos/) Toggle visualizar filhos | | |
-| [TSK-004](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-004-board/) Board | | |
-| [TSK-005](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-005-gantt/) Gantt | | |
-| [TSK-006](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-006-arvore-de-execucao/) Árvore de execução | | |
+| [TSK-007](flow/epics/EP-01-explorar/US-01-criar-arquivo/README.md) Criar arquivo | [TSK-001](flow/tasks/TSK-001-criar-epico/README.md) Criar épico | — |
+| [TSK-008](flow/epics/EP-01-explorar/US-02-remover-arquivo/README.md) Remover arquivo | [TSK-002](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/README.md) Criar as histórias | |
+| [TSK-009](flow/epics/EP-01-explorar/US-03-renomear-arquivo/README.md) Renomear arquivo | [TSK-003](flow/epics/EP-01-explorar/README.md) Explorar | |
+| [TSK-010](flow/epics/EP-01-explorar/US-04-mover-arquivo-dragdrop/README.md) Mover arquivo | | |
+| [TSK-011](flow/epics/EP-01-explorar/US-05-visualizar-arvore-de-arquivos/README.md) Visualizar árvore | | |
+| [TSK-012](flow/epics/EP-01-explorar/US-06-toggle-visualizar-filhos/README.md) Toggle visualizar filhos | | |
+| [TSK-004](flow/epics/EP-02-board/README.md) Board | | |
+| [TSK-005](flow/epics/EP-03-gantt/README.md) Gantt | | |
+| [TSK-006](flow/epics/EP-04-arvore-de-execucao/README.md) Árvore de execução | | |
 
-→ [`flow/`](flow/) · [`flow/tasks/`](flow/tasks/) · [`flow/epics/`](flow/epics/) · [`flow/gantt.md`](flow/gantt.md)
+→ [`flow/`](flow/README.md) · [`flow/tasks/`](flow/tasks/README.md) · [`flow/epics/`](flow/epics/README.md) · [`flow/gantt.md`](flow/gantt.md)
 
 ---
 
@@ -74,7 +74,7 @@ flowchart TD
 |------|-------|------|
 | | | Criar épico |
 
-→ [`plans/`](plans/) · [`plans/epics/`](plans/epics/)
+→ [`plans/`](plans/README.md) · [`plans/epics/`](plans/epics/README.md)
 
 ---
 
@@ -84,7 +84,7 @@ flowchart TD
 |------|-------|------|
 | | | |
 
-→ [`role-go/`](role-go/)
+→ [`role-go/`](role-go/README.md)
 
 ---
 
@@ -94,7 +94,7 @@ flowchart TD
 |------|-------|------|
 | | | |
 
-→ [`chines/`](chines/)
+→ [`chines/`](chines/docs/README.md)
 
 ---
 
@@ -104,7 +104,7 @@ flowchart TD
 |------|-------|------|
 | | | |
 
-→ [`caronas/`](caronas/)
+→ [`caronas/`](caronas/README.md)
 
 ---
 
@@ -114,7 +114,7 @@ flowchart TD
 |------|-------|------|
 | | | |
 
-→ [`fitness/`](fitness/)
+→ [`fitness/`](fitness/README.md)
 
 ---
 
@@ -124,7 +124,7 @@ flowchart TD
 |------|-------|------|
 | | | |
 
-→ [`eternos-mutaveis/`](eternos-mutaveis/)
+→ [`eternos-mutaveis/`](eternos-mutaveis/README.md)
 
 ---
 
@@ -134,4 +134,4 @@ flowchart TD
 |------|-------|------|
 | | | |
 
-→ [`jiu-jitsu/`](jiu-jitsu/)
+→ [`jiu-jitsu/`](jiu-jitsu/README.md)

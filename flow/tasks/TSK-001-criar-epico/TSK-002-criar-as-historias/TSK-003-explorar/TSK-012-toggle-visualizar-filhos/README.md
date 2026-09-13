@@ -1,16 +1,15 @@
-# TSK-012 — Toggle de visualizar filhos
+﻿# TSK-012 — Toggle de visualizar filhos
 
 | Campo | Valor |
 |-------|--------|
 | ID | TSK-012 |
 | Status | Todo |
-| Pai | [TSK-003](../) |
-| Épico | Explorar |
+| Pai | [TSK-003](../README.md) |
+| Output | [US-06 — Toggle visualizar filhos](../../../../../epics/EP-01-explorar/US-06-toggle-visualizar-filhos/README.md) |
 
-## História
+## Árvore de atividades
 
-Como usuário do Explorar, quero **alternar (toggle) a visualização dos filhos** de um nó na árvore, para expandir ou recolher a hierarquia.
-
-## Print
-
-![Toggle de visualizar filhos](print.png)
+```mermaid
+flowchart TD
+  T012[TSK-012 Toggle filhos]
+```

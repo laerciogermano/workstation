@@ -1,16 +1,15 @@
-# TSK-009 — Renomear arquivo
+﻿# TSK-009 — Renomear arquivo
 
 | Campo | Valor |
 |-------|--------|
 | ID | TSK-009 |
 | Status | Todo |
-| Pai | [TSK-003](../) |
-| Épico | Explorar |
+| Pai | [TSK-003](../README.md) |
+| Output | [US-03 — Renomear arquivo](../../../../../epics/EP-01-explorar/US-03-renomear-arquivo/README.md) |
 
-## História
+## Árvore de atividades
 
-Como usuário do Explorar, quero **renomear um arquivo** na árvore, para ajustar o título sem perder a identidade da unidade.
-
-## Print
-
-![Renomear arquivo](../../../../../images/Captura%20de%20tela%202026-09-13%20060040.png)
+```mermaid
+flowchart TD
+  T009[TSK-009 Renomear arquivo]
+```

@@ -1,16 +1,15 @@
-# TSK-011 — Visualizar árvore de arquivos
+﻿# TSK-011 — Visualizar árvore de arquivos
 
 | Campo | Valor |
 |-------|--------|
 | ID | TSK-011 |
 | Status | Todo |
-| Pai | [TSK-003](../) |
-| Épico | Explorar |
+| Pai | [TSK-003](../README.md) |
+| Output | [US-05 — Visualizar árvore](../../../../../epics/EP-01-explorar/US-05-visualizar-arvore-de-arquivos/README.md) |
 
-## História
+## Árvore de atividades
 
-Como usuário do Explorar, quero **visualizar a árvore de arquivos**, para navegar a hierarquia no painel estilo IDE.
-
-## Print
-
-![Visualizar árvore de arquivos](print.png)
+```mermaid
+flowchart TD
+  T011[TSK-011 Visualizar arvore]
+```

@@ -1,35 +1,47 @@
 # Flow — Tasks
 
-Cada item da raia Flow no [`board.md`](../board.md) tem um **id** e uma **pasta** aqui.
+Cada item da raia Flow no [`board.md`](../board.md) tem um **id**, uma **pasta** e um **output** em [`epics/`](../epics/).
 
-| ID | Task | Status | Pasta |
-|----|------|--------|-------|
-| TSK-001 | Criar épico | Doing | [`TSK-001-criar-epico/`](TSK-001-criar-epico/) |
-| TSK-002 | Criar as histórias | Doing | [`TSK-001-criar-epico/TSK-002-criar-as-historias/`](TSK-001-criar-epico/TSK-002-criar-as-historias/) |
-| TSK-003 | Explorar (histórias) | Doing | [`…/TSK-003-explorar/`](TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-003-explorar/) |
-| TSK-004 | Board (histórias) | Todo | [`…/TSK-004-board/`](TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-004-board/) |
-| TSK-005 | Gantt (histórias) | Todo | [`…/TSK-005-gantt/`](TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-005-gantt/) |
-| TSK-006 | Árvore de execução (histórias) | Todo | [`…/TSK-006-arvore-de-execucao/`](TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-006-arvore-de-execucao/) |
-| TSK-007 | Criar arquivo | Todo | [`…/TSK-007-criar-arquivo/`](TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-003-explorar/TSK-007-criar-arquivo/) |
-| TSK-008 | Remover arquivo | Todo | [`…/TSK-008-remover-arquivo/`](TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-003-explorar/TSK-008-remover-arquivo/) |
-| TSK-009 | Renomear arquivo | Todo | [`…/TSK-009-renomear-arquivo/`](TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-003-explorar/TSK-009-renomear-arquivo/) |
-| TSK-010 | Mover arquivo (drag and drop) | Todo | [`…/TSK-010-mover-arquivo-dragdrop/`](TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-003-explorar/TSK-010-mover-arquivo-dragdrop/) |
-| TSK-011 | Visualizar árvore de arquivos | Todo | [`…/TSK-011-visualizar-arvore-de-arquivos/`](TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-003-explorar/TSK-011-visualizar-arvore-de-arquivos/) |
-| TSK-012 | Toggle de visualizar filhos | Todo | [`…/TSK-012-toggle-visualizar-filhos/`](TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-003-explorar/TSK-012-toggle-visualizar-filhos/) |
+| ID | Task | Status | Output |
+|----|------|--------|--------|
+| TSK-001 | Criar épico | Doing | [`epics/`](../epics/README.md) |
+| TSK-002 | Criar as histórias | Doing | [`epics/`](../epics/README.md) |
+| TSK-003 | Explorar | Doing | [EP-01](../epics/EP-01-explorar/README.md) |
+| TSK-004 | Board | Todo | [EP-02](../epics/EP-02-board/README.md) |
+| TSK-005 | Gantt | Todo | [EP-03](../epics/EP-03-gantt/README.md) |
+| TSK-006 | Árvore de execução | Todo | [EP-04](../epics/EP-04-arvore-de-execucao/README.md) |
+| TSK-007 | Criar arquivo | Todo | [US-01](../epics/EP-01-explorar/US-01-criar-arquivo/README.md) |
+| TSK-008 | Remover arquivo | Todo | [US-02](../epics/EP-01-explorar/US-02-remover-arquivo/README.md) |
+| TSK-009 | Renomear arquivo | Todo | [US-03](../epics/EP-01-explorar/US-03-renomear-arquivo/README.md) |
+| TSK-010 | Mover arquivo | Todo | [US-04](../epics/EP-01-explorar/US-04-mover-arquivo-dragdrop/README.md) |
+| TSK-011 | Visualizar árvore | Todo | [US-05](../epics/EP-01-explorar/US-05-visualizar-arvore-de-arquivos/README.md) |
+| TSK-012 | Toggle filhos | Todo | [US-06](../epics/EP-01-explorar/US-06-toggle-visualizar-filhos/README.md) |
 
 ## Hierarquia
 
-```text
-TSK-001 Criar épico
-└── TSK-002 Criar as histórias
-    ├── TSK-003 Explorar
-    │   ├── TSK-007 Criar arquivo
-    │   ├── TSK-008 Remover arquivo
-    │   ├── TSK-009 Renomear arquivo
-    │   ├── TSK-010 Mover arquivo (drag and drop)
-    │   ├── TSK-011 Visualizar árvore de arquivos
-    │   └── TSK-012 Toggle de visualizar filhos
-    ├── TSK-004 Board
-    ├── TSK-005 Gantt
-    └── TSK-006 Árvore de execução
+```mermaid
+flowchart TD
+  T001[TSK-001 Criar epico]
+  T002[TSK-002 Criar as historias]
+  T003[TSK-003 Explorar]
+  T007[TSK-007 Criar arquivo]
+  T008[TSK-008 Remover arquivo]
+  T009[TSK-009 Renomear arquivo]
+  T010[TSK-010 Mover arquivo]
+  T011[TSK-011 Visualizar arvore]
+  T012[TSK-012 Toggle filhos]
+  T004[TSK-004 Board]
+  T005[TSK-005 Gantt]
+  T006[TSK-006 Arvore execucao]
+  T001 --> T002
+  T002 --> T003
+  T003 --> T007
+  T003 --> T008
+  T003 --> T009
+  T003 --> T010
+  T003 --> T011
+  T003 --> T012
+  T002 --> T004
+  T002 --> T005
+  T002 --> T006
 ```

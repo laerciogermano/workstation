@@ -1,25 +1,37 @@
-# TSK-003 — Explorar (histórias)
+# TSK-003 — Explorar
 
 | Campo | Valor |
 |-------|--------|
 | ID | TSK-003 |
 | Status | Doing |
-| Pai | [TSK-002](../) |
-| Épico | Explorar |
+| Pai | [TSK-002](../README.md) |
+| Output | [EP-01 — Explorar](../../../../epics/EP-01-explorar/README.md) |
 
-## Objetivo
+## Árvore de atividades
 
-Criar as histórias do épico **Explorar**: árvore de componentes parecida com IDE.
-
-## Print
-
-![Épico Explorar](../../../../images/Captura%20de%20tela%202026-09-13%20055738.png)
+```mermaid
+flowchart TD
+  T003[TSK-003 Explorar]
+  T007[TSK-007 Criar arquivo]
+  T008[TSK-008 Remover arquivo]
+  T009[TSK-009 Renomear arquivo]
+  T010[TSK-010 Mover arquivo]
+  T011[TSK-011 Visualizar arvore]
+  T012[TSK-012 Toggle filhos]
+  T003 --> T007
+  T003 --> T008
+  T003 --> T009
+  T003 --> T010
+  T003 --> T011
+  T003 --> T012
+  style T003 fill:#fff3cd
+```
 
 ## Filhos
 
-- [`TSK-007`](TSK-007-criar-arquivo/) — Criar arquivo · [print](../../../../images/Captura%20de%20tela%202026-09-13%20060040.png)
-- [`TSK-008`](TSK-008-remover-arquivo/) — Remover arquivo · [`print.png`](TSK-008-remover-arquivo/print.png)
-- [`TSK-009`](TSK-009-renomear-arquivo/) — Renomear arquivo · [print](../../../../images/Captura%20de%20tela%202026-09-13%20060040.png)
-- [`TSK-010`](TSK-010-mover-arquivo-dragdrop/) — Mover arquivo (drag and drop) · [`print.png`](TSK-010-mover-arquivo-dragdrop/print.png)
-- [`TSK-011`](TSK-011-visualizar-arvore-de-arquivos/) — Visualizar árvore de arquivos · [`print.png`](TSK-011-visualizar-arvore-de-arquivos/print.png)
-- [`TSK-012`](TSK-012-toggle-visualizar-filhos/) — Toggle de visualizar filhos · [`print.png`](TSK-012-toggle-visualizar-filhos/print.png)
+- [`TSK-007`](TSK-007-criar-arquivo/README.md) → Output [US-01](../../../../epics/EP-01-explorar/US-01-criar-arquivo/README.md)
+- [`TSK-008`](TSK-008-remover-arquivo/README.md) → Output [US-02](../../../../epics/EP-01-explorar/US-02-remover-arquivo/README.md)
+- [`TSK-009`](TSK-009-renomear-arquivo/README.md) → Output [US-03](../../../../epics/EP-01-explorar/US-03-renomear-arquivo/README.md)
+- [`TSK-010`](TSK-010-mover-arquivo-dragdrop/README.md) → Output [US-04](../../../../epics/EP-01-explorar/US-04-mover-arquivo-dragdrop/README.md)
+- [`TSK-011`](TSK-011-visualizar-arvore-de-arquivos/README.md) → Output [US-05](../../../../epics/EP-01-explorar/US-05-visualizar-arvore-de-arquivos/README.md)
+- [`TSK-012`](TSK-012-toggle-visualizar-filhos/README.md) → Output [US-06](../../../../epics/EP-01-explorar/US-06-toggle-visualizar-filhos/README.md)

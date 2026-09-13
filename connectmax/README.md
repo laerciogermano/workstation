@@ -23,7 +23,6 @@ Hoje a operação vende, mas o teto é o tamanho do time — e o time é limitad
 | **Prospecção 100% LinkedIn e manual** | Toda a busca de cliente passa pelo LinkedIn. Cada vendedor pesquisa, aborda e acompanha na mão. O canal existe; o processo não escala. |
 | **Time pequeno, faturamento travado** | São **cinco vendedores**, com **faturamento médio mensal de R$ 200 mil**. O volume de pipeline cabe nesse time. |
 | **Franqueados com mais vendedores faturam mais** | Outros franqueados tiram em média **R$ 600 mil por mês** porque têm **mais vendedores**. O faturamento acompanha o tamanho da equipe, não um “segredo” de oferta. |
-| **Não dá para contratar sem pipeline** | Contratar o sexto, o sétimo vendedor sem aumentar a prospecção gera ociosidade. Sem automação, cada nova cadeira exige mais horas humanas no LinkedIn. |
 | **Investidor sem alavanca** | Quem poderia entrar como investidor vê uma unidade limitada pela capacidade manual de prospectar. Falta um motor repetível de geração de leads para tratar a operação como **fonte de renda**. |
 
 O mercado e o produto já vendem. O que falta é um jeito de **automatizar a prospecção no LinkedIn** para **adicionar vendedores** com demanda na mesa — e, com isso, **subir o faturamento** na direção (e além) do que os franqueados maiores já tiram.

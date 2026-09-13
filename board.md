@@ -10,7 +10,7 @@ Raias ordenadas por **prioridade** (maior → menor).
 
 | Todo | Doing | Done |
 |------|-------|------|
-| | | |
+| Criar épico | | |
 
 → [`connectmax/`](connectmax/)
 

@@ -9,8 +9,22 @@
 
 ## História
 
-Como usuário do Board, quero **renomear um card**, para organizar o trabalho no kanban.
+Como usuário do Board, quero **renomear um card**, para ajustar o título sem perder o restante do card.
 
 ## Print
 
 _(protótipo pendente)_
+
+## Cenários
+
+### SC-01 — Iniciar renomeação
+
+Quando o usuário **acionar renomear** em um card, o sistema deve **abrir o campo de nome editável**.
+
+### SC-02 — Confirmar novo nome com Enter
+
+Quando o usuário **digitar o novo nome e pressionar Enter**, o sistema deve **aplicar o novo nome** ao card.
+
+### SC-03 — Nome atualizado no Board
+
+Quando o card **for renomeado**, o sistema deve **exibir o novo nome** no Board.

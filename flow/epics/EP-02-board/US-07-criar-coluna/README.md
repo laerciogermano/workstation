@@ -9,8 +9,22 @@
 
 ## História
 
-Como usuário do Board, quero **criar uma coluna**, para organizar o trabalho no kanban.
+Como usuário do Board, quero **criar uma coluna**, para organizar cards por status no kanban.
 
 ## Print
 
 _(protótipo pendente)_
+
+## Cenários
+
+### SC-01 — Criar coluna na raia
+
+Quando o usuário **acionar criar coluna** em uma raia do Board, o sistema deve **abrir a opção de dar nome** à nova coluna.
+
+### SC-02 — Confirmar nome com Enter
+
+Quando o usuário **der o nome e pressionar Enter**, o sistema deve **criar a coluna** na raia atual.
+
+### SC-03 — Coluna aparece no Board
+
+Quando a coluna **for criada**, o sistema deve **exibi-la na raia**, pronta para receber cards.

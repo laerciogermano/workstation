@@ -14,3 +14,17 @@ Como usuário do Board, quero **criar um card**, para organizar o trabalho no ka
 ## Print
 
 _(protótipo pendente)_
+
+## Cenários
+
+### SC-01 — Criar card em uma coluna
+
+Quando o usuário **acionar criar card** em uma coluna do Board, o sistema deve **abrir a opção de dar nome** ao novo card.
+
+### SC-02 — Confirmar nome com Enter
+
+Quando o usuário **der o nome e pressionar Enter**, o sistema deve **criar o card** na coluna atual.
+
+### SC-03 — Card aparece no Board
+
+Quando o card **for criado**, o sistema deve **exibi-lo na coluna** escolhida do Board.

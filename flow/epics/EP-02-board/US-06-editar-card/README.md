@@ -9,8 +9,22 @@
 
 ## História
 
-Como usuário do Board, quero **editar um card**, para organizar o trabalho no kanban.
+Como usuário do Board, quero **editar um card**, para atualizar as informações da unidade no kanban.
 
 ## Print
 
 _(protótipo pendente)_
+
+## Cenários
+
+### SC-01 — Editar campos do card
+
+Quando o usuário **abrir um card** e **alterar um campo editável**, o sistema deve **permitir a edição** do conteúdo.
+
+### SC-02 — Salvar alterações
+
+Quando o usuário **confirmar as alterações**, o sistema deve **persistir o conteúdo** do card.
+
+### SC-03 — Board reflete a edição
+
+Quando o card **for editado**, o sistema deve **atualizar a visualização** do card no Board com as novas informações.

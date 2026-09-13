@@ -9,8 +9,18 @@
 
 ## História
 
-Como usuário do Board, quero **abrir um card**, para organizar o trabalho no kanban.
+Como usuário do Board, quero **abrir um card**, para ver o detalhe da unidade no kanban.
 
 ## Print
 
 _(protótipo pendente)_
+
+## Cenários
+
+### SC-01 — Clicar no card
+
+Quando o usuário **clicar em um card** no Board, o sistema deve **abrir o detalhe** desse card.
+
+### SC-02 — Detalhe exibido
+
+Quando o card **for aberto**, o sistema deve **exibir o conteúdo** do card (título e demais informações disponíveis).

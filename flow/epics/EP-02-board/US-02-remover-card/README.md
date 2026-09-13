@@ -9,8 +9,14 @@
 
 ## História
 
-Como usuário do Board, quero **remover um card**, para organizar o trabalho no kanban.
+Como usuário do Board, quero **remover um card**, para limpar itens que não devem mais existir no kanban.
 
 ## Print
 
 _(protótipo pendente)_
+
+## Cenários
+
+### SC-01 — Remover card
+
+Quando o usuário **abrir o menu do card** e escolher **remover**, o sistema deve **excluir o card** e **deixar de exibi-lo** no Board.

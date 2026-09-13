@@ -23,4 +23,4 @@ Criar uma árvore de componentes parecida com IDE.
 | US-03 | Renomear arquivo | [`US-03-renomear-arquivo/`](US-03-renomear-arquivo/) |
 | US-04 | Mover arquivo (drag and drop) | [`US-04-mover-arquivo-dragdrop/`](US-04-mover-arquivo-dragdrop/) |
 | US-05 | Visualizar árvore de arquivos | [`US-05-visualizar-arvore-de-arquivos/`](US-05-visualizar-arvore-de-arquivos/) |
-| US-06 | Toggle de visualizar filhos | [`US-06-toggle-visualizar-filhos/`](US-06-toggle-visualizar-filhos/) |
+| US-06 | Expandir e recolher | [`US-06-toggle-visualizar-filhos/`](US-06-toggle-visualizar-filhos/) |

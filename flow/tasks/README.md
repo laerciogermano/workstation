@@ -14,7 +14,7 @@ flowchart TD
   T009[TSK-009 Renomear arquivo]
   T010[TSK-010 Mover arquivo]
   T011[TSK-011 Visualizar arvore]
-  T012[TSK-012 Toggle filhos]
+  T012[TSK-012 Expandir e recolher]
   T004[TSK-004 Board]
   T005[TSK-005 Gantt]
   T006[TSK-006 Arvore execucao]
@@ -51,4 +51,4 @@ flowchart TD
 | TSK-009 | Renomear arquivo | Done | [US-03](../epics/EP-01-explorar/US-03-renomear-arquivo/README.md) |
 | TSK-010 | Mover arquivo | Done | [US-04](../epics/EP-01-explorar/US-04-mover-arquivo-dragdrop/README.md) |
 | TSK-011 | Visualizar árvore | Todo | [US-05](../epics/EP-01-explorar/US-05-visualizar-arvore-de-arquivos/README.md) |
-| TSK-012 | Toggle filhos | Todo | [US-06](../epics/EP-01-explorar/US-06-toggle-visualizar-filhos/README.md) |
+| TSK-012 | Expandir e recolher | Todo | [US-06](../epics/EP-01-explorar/US-06-toggle-visualizar-filhos/README.md) |

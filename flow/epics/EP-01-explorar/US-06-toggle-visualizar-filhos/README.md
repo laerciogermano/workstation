@@ -1,4 +1,4 @@
-﻿# US-06 — Toggle de visualizar filhos
+﻿# US-06 — Expandir e recolher
 
 | Campo | Valor |
 |-------|--------|
@@ -9,8 +9,8 @@
 
 ## História
 
-Como usuário do Explorar, quero **alternar (toggle) a visualização dos filhos** de um nó na árvore, para expandir ou recolher a hierarquia.
+Como usuário do Explorar, quero **expandir e recolher** os filhos de um nó na árvore, para mostrar ou ocultar a hierarquia.
 
 ## Print
 
-![Toggle de visualizar filhos](print.png)
+![Expandir e recolher](print.png)

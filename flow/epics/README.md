@@ -16,7 +16,7 @@ EP-01 Explorar
 ├── US-03 Renomear arquivo
 ├── US-04 Mover arquivo (drag and drop)
 ├── US-05 Visualizar árvore de arquivos
-└── US-06 Toggle de visualizar filhos
+└── US-06 Expandir e recolher
 EP-02 Board
 EP-03 Gantt
 EP-04 Arvore de execucao

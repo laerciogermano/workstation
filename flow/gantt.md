@@ -20,6 +20,6 @@ As criações de histórias (épicos e US) correm **em paralelo** a partir de 20
 | TSK-009 | Renomear arquivo | 2026-09-17 | 1d | Done | paralelo |
 | TSK-010 | Mover arquivo | 2026-09-17 | 1d | Done | paralelo |
 | TSK-011 | Visualizar arvore | 2026-09-17 | 1d | Todo | paralelo |
-| TSK-012 | Toggle visualizar filhos | 2026-09-17 | 1d | Todo | paralelo |
+| TSK-012 | Expandir e recolher | 2026-09-17 | 1d | Todo | paralelo |
 
 → [`tasks/`](tasks/README.md) · [`../board.md`](../board.md)

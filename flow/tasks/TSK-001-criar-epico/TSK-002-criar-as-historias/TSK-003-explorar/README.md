@@ -17,7 +17,7 @@ flowchart TD
   T009[TSK-009 Renomear arquivo]
   T010[TSK-010 Mover arquivo]
   T011[TSK-011 Visualizar arvore]
-  T012[TSK-012 Toggle filhos]
+  T012[TSK-012 Expandir e recolher]
   T003 --> T007
   T003 --> T008
   T003 --> T009

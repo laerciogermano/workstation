@@ -22,6 +22,14 @@ flowchart TD
   T011[TSK-011 Visualizar arvore]
   T012[TSK-012 Expandir e recolher]
   T004[TSK-004 Board]
+  T013[TSK-013 Criar card]
+  T014[TSK-014 Remover card]
+  T015[TSK-015 Mover card]
+  T016[TSK-016 Renomear card]
+  T017[TSK-017 Abrir card]
+  T018[TSK-018 Editar card]
+  T019[TSK-019 Criar coluna]
+  T020[TSK-020 Criar raia]
   T005[TSK-005 Gantt]
   T006[TSK-006 Arvore execucao]
   T001 --> T002
@@ -33,6 +41,14 @@ flowchart TD
   T003 --> T011
   T003 --> T012
   T002 --> T004
+  T004 --> T013
+  T004 --> T014
+  T004 --> T015
+  T004 --> T016
+  T004 --> T017
+  T004 --> T018
+  T004 --> T019
+  T004 --> T020
   T002 --> T005
   T002 --> T006
   style T001 fill:#fff3cd

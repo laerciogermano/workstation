@@ -16,6 +16,14 @@ flowchart TD
   T011[TSK-011 Visualizar arvore]
   T012[TSK-012 Expandir e recolher]
   T004[TSK-004 Board]
+  T013[TSK-013 Criar card]
+  T014[TSK-014 Remover card]
+  T015[TSK-015 Mover card]
+  T016[TSK-016 Renomear card]
+  T017[TSK-017 Abrir card]
+  T018[TSK-018 Editar card]
+  T019[TSK-019 Criar coluna]
+  T020[TSK-020 Criar raia]
   T005[TSK-005 Gantt]
   T006[TSK-006 Arvore execucao]
   T001 --> T002
@@ -27,6 +35,14 @@ flowchart TD
   T003 --> T011
   T003 --> T012
   T002 --> T004
+  T004 --> T013
+  T004 --> T014
+  T004 --> T015
+  T004 --> T016
+  T004 --> T017
+  T004 --> T018
+  T004 --> T019
+  T004 --> T020
   T002 --> T005
   T002 --> T006
   style T001 fill:#fff3cd
@@ -54,3 +70,11 @@ flowchart TD
 | TSK-010 | Mover arquivo | Done | [US-04](../epics/EP-01-explorar/US-04-mover-arquivo-dragdrop/README.md) |
 | TSK-011 | Visualizar árvore | Done | [US-05](../epics/EP-01-explorar/US-05-visualizar-arvore-de-arquivos/README.md) |
 | TSK-012 | Expandir e recolher | Done | [US-06](../epics/EP-01-explorar/US-06-toggle-visualizar-filhos/README.md) |
+| TSK-013 | Criar card | Todo | [US-01](../epics/EP-02-board/US-01-criar-card/README.md) |
+| TSK-014 | Remover card | Todo | [US-02](../epics/EP-02-board/US-02-remover-card/README.md) |
+| TSK-015 | Mover card | Todo | [US-03](../epics/EP-02-board/US-03-mover-card/README.md) |
+| TSK-016 | Renomear card | Todo | [US-04](../epics/EP-02-board/US-04-renomear-card/README.md) |
+| TSK-017 | Abrir card | Todo | [US-05](../epics/EP-02-board/US-05-abrir-card/README.md) |
+| TSK-018 | Editar card | Todo | [US-06](../epics/EP-02-board/US-06-editar-card/README.md) |
+| TSK-019 | Criar coluna | Todo | [US-07](../epics/EP-02-board/US-07-criar-coluna/README.md) |
+| TSK-020 | Criar raia | Todo | [US-08](../epics/EP-02-board/US-08-criar-raia/README.md) |

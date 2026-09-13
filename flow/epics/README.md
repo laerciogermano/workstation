@@ -18,6 +18,14 @@ EP-01 Explorar
 ├── US-05 Visualizar árvore de arquivos
 └── US-06 Expandir e recolher
 EP-02 Board
+├── US-01 Criar card
+├── US-02 Remover card
+├── US-03 Mover card
+├── US-04 Renomear card
+├── US-05 Abrir card
+├── US-06 Editar card
+├── US-07 Criar coluna
+└── US-08 Criar raia
 EP-03 Gantt
 EP-04 Arvore de execucao
 ```

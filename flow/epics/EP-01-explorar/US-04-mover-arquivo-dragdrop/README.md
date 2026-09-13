@@ -13,7 +13,9 @@ Como usuário do Explorar, quero **mover um arquivo por drag and drop** na árvo
 
 ## Print
 
-![Mover arquivo drag and drop](print.png)
+![Mover arquivo drag and drop](../../../images/Captura%20de%20tela%202026-09-13%20173310.png)
+
+Referência: arquivo **teste.html** sendo arrastado na pasta **NOVA PASTA**, com preview flutuante do nome durante o gesto de mover.
 
 ## Cenários
 

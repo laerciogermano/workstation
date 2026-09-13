@@ -10,3 +10,7 @@
 ## História
 
 Como usuário do Explorar, quero **remover um arquivo** da árvore, para limpar unidades que não devem mais existir.
+
+## Print
+
+![Remover arquivo](print.png)

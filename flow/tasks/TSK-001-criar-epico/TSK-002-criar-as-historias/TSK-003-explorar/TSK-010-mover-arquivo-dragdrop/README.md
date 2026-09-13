@@ -10,3 +10,7 @@
 ## História
 
 Como usuário do Explorar, quero **mover um arquivo por drag and drop** na árvore, para reorganizar a hierarquia com o gesto de um explorador de IDE.
+
+## Print
+
+![Mover arquivo drag and drop](print.png)

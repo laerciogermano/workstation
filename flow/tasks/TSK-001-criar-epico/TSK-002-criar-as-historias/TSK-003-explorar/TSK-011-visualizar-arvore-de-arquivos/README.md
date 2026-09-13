@@ -10,3 +10,7 @@
 ## História
 
 Como usuário do Explorar, quero **visualizar a árvore de arquivos**, para navegar a hierarquia no painel estilo IDE.
+
+## Print
+
+![Visualizar árvore de arquivos](print.png)

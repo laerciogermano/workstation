@@ -7,6 +7,22 @@
 | EP-03 | Gantt | [`EP-03-gantt/`](EP-03-gantt/README.md) | Sequência e paralelismo das atividades |
 | EP-04 | Árvore de execução | [`EP-04-arvore-de-execucao/`](EP-04-arvore-de-execucao/README.md) | Atividades pais e filhas |
 
+## EP-01 — Explorar
+
+Árvore de arquivos e pastas no estilo IDE: criar, remover, renomear, mover e navegar a hierarquia de componentes do Flow.
+
+## EP-02 — Board
+
+Kanban por arquivo: colunas, raias e cards para acompanhar e alterar o status de cada unidade no fluxo de trabalho.
+
+## EP-03 — Gantt
+
+Cronograma das atividades no tempo: criar, mover, remover e atribuir responsável, com visão de sequência e paralelismo.
+
+## EP-04 — Árvore de execução
+
+Hierarquia de atividades pais e filhas (floresta): decompor a execução fora do eixo temporal do Gantt, com responsáveis e reorganização.
+
 ## Hierarquia
 
 ```text

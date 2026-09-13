@@ -1,11 +1,11 @@
-﻿# US-03 — Mover card
+# US-03 — Mover card
 
 | Campo | Valor |
 |-------|--------|
 | ID | US-03 |
 | Épico | [EP-02 Board](../) |
 | Task | [TSK-015](../../../tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-004-board/TSK-015-mover-card/) |
-| Status | Todo |
+| Status | Done |
 
 ## História
 

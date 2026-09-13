@@ -1,15 +1,15 @@
-﻿# US-06 — Editar card
+# US-06 — Editar card
 
 | Campo | Valor |
 |-------|--------|
 | ID | US-06 |
 | Épico | [EP-02 Board](../) |
 | Task | [TSK-018](../../../tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-004-board/TSK-018-editar-card/) |
-| Status | Todo |
+| Status | Done |
 
 ## História
 
-Como usuário do Board, quero **editar um card**, para atualizar as informações da unidade no kanban.
+Como usuário do Board, quero **editar um card** e **adicionar uma descrição**, para atualizar as informações da unidade no kanban.
 
 ## Print
 
@@ -19,11 +19,11 @@ _(protótipo pendente)_
 
 ### SC-01 — Editar campos do card
 
-Quando o usuário **abrir um card** e **alterar um campo editável**, o sistema deve **permitir a edição** do conteúdo.
+Quando o usuário **abrir um card** e **alterar um campo editável**, o sistema deve **permitir a edição** do conteúdo, inclusive **adicionar ou alterar a descrição** do card.
 
 ### SC-02 — Salvar alterações
 
-Quando o usuário **confirmar as alterações**, o sistema deve **persistir o conteúdo** do card.
+Quando o usuário **confirmar as alterações**, o sistema deve **persistir o conteúdo** do card, **incluindo a descrição**.
 
 ### SC-03 — Board reflete a edição
 

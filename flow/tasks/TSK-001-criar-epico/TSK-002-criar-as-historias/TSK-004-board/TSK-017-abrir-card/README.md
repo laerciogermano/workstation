@@ -1,9 +1,9 @@
-﻿# TSK-017 — Abrir card
+# TSK-017 — Abrir card
 
 | Campo | Valor |
 |-------|--------|
 | ID | TSK-017 |
-| Status | Todo |
+| Status | Done |
 | Pai | [TSK-004](../README.md) |
 | Output | [US-05 — Abrir card](../../../../epics/EP-02-board/US-05-abrir-card/README.md) |
 
@@ -12,4 +12,5 @@
 ```mermaid
 flowchart TD
   T017[TSK-017 Abrir card]
+  style T017 fill:#d4edda
 ```

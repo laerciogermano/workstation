@@ -12,7 +12,7 @@ As criações de histórias (épicos e US) correm **em paralelo** a partir de 20
 | TSK-001 | Criar epico | 2026-09-13 | 3d | Doing | — |
 | TSK-002 | Criar as historias | 2026-09-16 | 1d | Doing | — |
 | TSK-003 | Explorar | 2026-09-17 | 1d | Done | paralelo |
-| TSK-004 | Board | 2026-09-17 | 2d | Todo | paralelo |
+| TSK-004 | Board | 2026-09-17 | 2d | Done | paralelo |
 | TSK-005 | Gantt | 2026-09-17 | 2d | Todo | paralelo |
 | TSK-006 | Arvore de execucao | 2026-09-17 | 2d | Todo | paralelo |
 | TSK-007 | Criar arquivo | 2026-09-17 | 1d | Done | paralelo |
@@ -21,13 +21,13 @@ As criações de histórias (épicos e US) correm **em paralelo** a partir de 20
 | TSK-010 | Mover arquivo | 2026-09-17 | 1d | Done | paralelo |
 | TSK-011 | Visualizar arvore | 2026-09-17 | 1d | Done | paralelo |
 | TSK-012 | Expandir e recolher | 2026-09-17 | 1d | Done | paralelo |
-| TSK-013 | Criar card | 2026-09-17 | 1d | Todo | paralelo |
-| TSK-014 | Remover card | 2026-09-17 | 1d | Todo | paralelo |
-| TSK-015 | Mover card | 2026-09-17 | 1d | Todo | paralelo |
-| TSK-016 | Renomear card | 2026-09-17 | 1d | Todo | paralelo |
-| TSK-017 | Abrir card | 2026-09-17 | 1d | Todo | paralelo |
-| TSK-018 | Editar card | 2026-09-17 | 1d | Todo | paralelo |
-| TSK-019 | Criar coluna | 2026-09-17 | 1d | Todo | paralelo |
-| TSK-020 | Criar raia | 2026-09-17 | 1d | Todo | paralelo |
+| TSK-013 | Criar card | 2026-09-17 | 1d | Done | paralelo |
+| TSK-014 | Remover card | 2026-09-17 | 1d | Done | paralelo |
+| TSK-015 | Mover card | 2026-09-17 | 1d | Done | paralelo |
+| TSK-016 | Renomear card | 2026-09-17 | 1d | Done | paralelo |
+| TSK-017 | Abrir card | 2026-09-17 | 1d | Done | paralelo |
+| TSK-018 | Editar card | 2026-09-17 | 1d | Done | paralelo |
+| TSK-019 | Criar coluna | 2026-09-17 | 1d | Done | paralelo |
+| TSK-020 | Criar raia | 2026-09-17 | 1d | Done | paralelo |
 
 → [`tasks/`](tasks/README.md) · [`../board.md`](../board.md)

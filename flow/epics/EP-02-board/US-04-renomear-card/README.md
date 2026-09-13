@@ -1,11 +1,11 @@
-﻿# US-04 — Renomear card
+# US-04 — Renomear card
 
 | Campo | Valor |
 |-------|--------|
 | ID | US-04 |
 | Épico | [EP-02 Board](../) |
 | Task | [TSK-016](../../../tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-004-board/TSK-016-renomear-card/) |
-| Status | Todo |
+| Status | Done |
 
 ## História
 
@@ -17,10 +17,9 @@ _(protótipo pendente)_
 
 ## Cenários
 
-### SC-01 — Iniciar renomeação
+### SC-01 — Hover no nome do card
 
-Quando o usuário **acionar renomear** em um card, o sistema deve **abrir o campo de nome editável**.
-
+Quando o usuário **passar o mouse em cima do nome** do card, o sistema deve **tratar o nome como campo editável por padrão**, permitindo **selecionar** e **remover** texto como em um campo de edição.
 ### SC-02 — Confirmar novo nome com Enter
 
 Quando o usuário **digitar o novo nome e pressionar Enter**, o sistema deve **aplicar o novo nome** ao card.

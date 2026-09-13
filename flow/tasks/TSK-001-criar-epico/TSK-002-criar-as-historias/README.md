@@ -57,6 +57,15 @@ flowchart TD
   style T010 fill:#d4edda
   style T011 fill:#d4edda
   style T012 fill:#d4edda
+  style T004 fill:#d4edda
+  style T013 fill:#d4edda
+  style T014 fill:#d4edda
+  style T015 fill:#d4edda
+  style T016 fill:#d4edda
+  style T017 fill:#d4edda
+  style T018 fill:#d4edda
+  style T019 fill:#d4edda
+  style T020 fill:#d4edda
 ```
 
 ## Objetivo

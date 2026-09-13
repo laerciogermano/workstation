@@ -54,6 +54,15 @@ flowchart TD
   style T010 fill:#d4edda
   style T011 fill:#d4edda
   style T012 fill:#d4edda
+  style T004 fill:#d4edda
+  style T013 fill:#d4edda
+  style T014 fill:#d4edda
+  style T015 fill:#d4edda
+  style T016 fill:#d4edda
+  style T017 fill:#d4edda
+  style T018 fill:#d4edda
+  style T019 fill:#d4edda
+  style T020 fill:#d4edda
 ```
 
 | ID | Task | Status | Output |
@@ -61,7 +70,7 @@ flowchart TD
 | TSK-001 | Criar épico | Doing | [`epics/`](../epics/README.md) |
 | TSK-002 | Criar as histórias | Doing | [`epics/`](../epics/README.md) |
 | TSK-003 | Explorar | Done | [EP-01](../epics/EP-01-explorar/README.md) |
-| TSK-004 | Board | Todo | [EP-02](../epics/EP-02-board/README.md) |
+| TSK-004 | Board | Done | [EP-02](../epics/EP-02-board/README.md) |
 | TSK-005 | Gantt | Todo | [EP-03](../epics/EP-03-gantt/README.md) |
 | TSK-006 | Árvore de execução | Todo | [EP-04](../epics/EP-04-arvore-de-execucao/README.md) |
 | TSK-007 | Criar arquivo | Done | [US-01](../epics/EP-01-explorar/US-01-criar-arquivo/README.md) |
@@ -70,11 +79,11 @@ flowchart TD
 | TSK-010 | Mover arquivo | Done | [US-04](../epics/EP-01-explorar/US-04-mover-arquivo-dragdrop/README.md) |
 | TSK-011 | Visualizar árvore | Done | [US-05](../epics/EP-01-explorar/US-05-visualizar-arvore-de-arquivos/README.md) |
 | TSK-012 | Expandir e recolher | Done | [US-06](../epics/EP-01-explorar/US-06-toggle-visualizar-filhos/README.md) |
-| TSK-013 | Criar card | Todo | [US-01](../epics/EP-02-board/US-01-criar-card/README.md) |
-| TSK-014 | Remover card | Todo | [US-02](../epics/EP-02-board/US-02-remover-card/README.md) |
-| TSK-015 | Mover card | Todo | [US-03](../epics/EP-02-board/US-03-mover-card/README.md) |
-| TSK-016 | Renomear card | Todo | [US-04](../epics/EP-02-board/US-04-renomear-card/README.md) |
-| TSK-017 | Abrir card | Todo | [US-05](../epics/EP-02-board/US-05-abrir-card/README.md) |
-| TSK-018 | Editar card | Todo | [US-06](../epics/EP-02-board/US-06-editar-card/README.md) |
-| TSK-019 | Criar coluna | Todo | [US-07](../epics/EP-02-board/US-07-criar-coluna/README.md) |
-| TSK-020 | Criar raia | Todo | [US-08](../epics/EP-02-board/US-08-criar-raia/README.md) |
+| TSK-013 | Criar card | Done | [US-01](../epics/EP-02-board/US-01-criar-card/README.md) |
+| TSK-014 | Remover card | Done | [US-02](../epics/EP-02-board/US-02-remover-card/README.md) |
+| TSK-015 | Mover card | Done | [US-03](../epics/EP-02-board/US-03-mover-card/README.md) |
+| TSK-016 | Renomear card | Done | [US-04](../epics/EP-02-board/US-04-renomear-card/README.md) |
+| TSK-017 | Abrir card | Done | [US-05](../epics/EP-02-board/US-05-abrir-card/README.md) |
+| TSK-018 | Editar card | Done | [US-06](../epics/EP-02-board/US-06-editar-card/README.md) |
+| TSK-019 | Criar coluna | Done | [US-07](../epics/EP-02-board/US-07-criar-coluna/README.md) |
+| TSK-020 | Criar raia | Done | [US-08](../epics/EP-02-board/US-08-criar-raia/README.md) |

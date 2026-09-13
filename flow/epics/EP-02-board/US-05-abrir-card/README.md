@@ -1,11 +1,11 @@
-﻿# US-05 — Abrir card
+# US-05 — Abrir card
 
 | Campo | Valor |
 |-------|--------|
 | ID | US-05 |
 | Épico | [EP-02 Board](../) |
 | Task | [TSK-017](../../../tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-004-board/TSK-017-abrir-card/) |
-| Status | Todo |
+| Status | Done |
 
 ## História
 

@@ -72,21 +72,35 @@ flowchart TD
   style T010 fill:#d4edda
   style T011 fill:#d4edda
   style T012 fill:#d4edda
+  style T004 fill:#d4edda
+  style T013 fill:#d4edda
+  style T014 fill:#d4edda
+  style T015 fill:#d4edda
+  style T016 fill:#d4edda
+  style T017 fill:#d4edda
+  style T018 fill:#d4edda
+  style T019 fill:#d4edda
+  style T020 fill:#d4edda
 ```
 
 | Todo | Doing | Done |
 |------|-------|------|
-| [TSK-004](flow/epics/EP-02-board/README.md) Board | [TSK-001](flow/tasks/TSK-001-criar-epico/README.md) Criar épico | [TSK-007](flow/epics/EP-01-explorar/US-01-criar-arquivo/README.md) Criar arquivo |
-| [TSK-013](flow/epics/EP-02-board/US-01-criar-card/README.md) Criar card | [TSK-002](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/README.md) Criar as histórias | [TSK-008](flow/epics/EP-01-explorar/US-02-remover-arquivo/README.md) Remover arquivo |
-| [TSK-014](flow/epics/EP-02-board/US-02-remover-card/README.md) Remover card | | [TSK-009](flow/epics/EP-01-explorar/US-03-renomear-arquivo/README.md) Renomear arquivo |
-| [TSK-015](flow/epics/EP-02-board/US-03-mover-card/README.md) Mover card | | [TSK-010](flow/epics/EP-01-explorar/US-04-mover-arquivo-dragdrop/README.md) Mover arquivo |
-| [TSK-016](flow/epics/EP-02-board/US-04-renomear-card/README.md) Renomear card | | [TSK-011](flow/epics/EP-01-explorar/US-05-visualizar-arvore-de-arquivos/README.md) Visualizar árvore |
-| [TSK-017](flow/epics/EP-02-board/US-05-abrir-card/README.md) Abrir card | | [TSK-012](flow/epics/EP-01-explorar/US-06-toggle-visualizar-filhos/README.md) Expandir e recolher |
-| [TSK-018](flow/epics/EP-02-board/US-06-editar-card/README.md) Editar card | | [TSK-003](flow/epics/EP-01-explorar/README.md) Explorar |
-| [TSK-019](flow/epics/EP-02-board/US-07-criar-coluna/README.md) Criar coluna | | |
-| [TSK-020](flow/epics/EP-02-board/US-08-criar-raia/README.md) Criar raia | | |
-| [TSK-005](flow/epics/EP-03-gantt/README.md) Gantt | | |
-| [TSK-006](flow/epics/EP-04-arvore-de-execucao/README.md) Árvore de execução | | |
+| [TSK-005](flow/epics/EP-03-gantt/README.md) Gantt | [TSK-001](flow/tasks/TSK-001-criar-epico/README.md) Criar épico | [TSK-007](flow/epics/EP-01-explorar/US-01-criar-arquivo/README.md) Criar arquivo |
+| [TSK-006](flow/epics/EP-04-arvore-de-execucao/README.md) Árvore de execução | [TSK-002](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/README.md) Criar as histórias | [TSK-008](flow/epics/EP-01-explorar/US-02-remover-arquivo/README.md) Remover arquivo |
+| | | [TSK-009](flow/epics/EP-01-explorar/US-03-renomear-arquivo/README.md) Renomear arquivo |
+| | | [TSK-010](flow/epics/EP-01-explorar/US-04-mover-arquivo-dragdrop/README.md) Mover arquivo |
+| | | [TSK-011](flow/epics/EP-01-explorar/US-05-visualizar-arvore-de-arquivos/README.md) Visualizar árvore |
+| | | [TSK-012](flow/epics/EP-01-explorar/US-06-toggle-visualizar-filhos/README.md) Expandir e recolher |
+| | | [TSK-003](flow/epics/EP-01-explorar/README.md) Explorar |
+| | | [TSK-004](flow/epics/EP-02-board/README.md) Board |
+| | | [TSK-013](flow/epics/EP-02-board/US-01-criar-card/README.md) Criar card |
+| | | [TSK-014](flow/epics/EP-02-board/US-02-remover-card/README.md) Remover card |
+| | | [TSK-015](flow/epics/EP-02-board/US-03-mover-card/README.md) Mover card |
+| | | [TSK-016](flow/epics/EP-02-board/US-04-renomear-card/README.md) Renomear card |
+| | | [TSK-017](flow/epics/EP-02-board/US-05-abrir-card/README.md) Abrir card |
+| | | [TSK-018](flow/epics/EP-02-board/US-06-editar-card/README.md) Editar card |
+| | | [TSK-019](flow/epics/EP-02-board/US-07-criar-coluna/README.md) Criar coluna |
+| | | [TSK-020](flow/epics/EP-02-board/US-08-criar-raia/README.md) Criar raia |
 
 → [`flow/`](flow/README.md) · [`flow/tasks/`](flow/tasks/README.md) · [`flow/epics/`](flow/epics/README.md) · [`flow/gantt.md`](flow/gantt.md)
 

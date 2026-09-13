@@ -3,7 +3,7 @@
 | Campo | Valor |
 |-------|--------|
 | ID | TSK-004 |
-| Status | Todo |
+| Status | Done |
 | Pai | [TSK-002](../README.md) |
 | Output | [EP-02 — Board](../../../../epics/EP-02-board/README.md) |
 
@@ -28,6 +28,15 @@ flowchart TD
   T004 --> T018
   T004 --> T019
   T004 --> T020
+  style T004 fill:#d4edda
+  style T013 fill:#d4edda
+  style T014 fill:#d4edda
+  style T015 fill:#d4edda
+  style T016 fill:#d4edda
+  style T017 fill:#d4edda
+  style T018 fill:#d4edda
+  style T019 fill:#d4edda
+  style T020 fill:#d4edda
 ```
 
 ## Filhos

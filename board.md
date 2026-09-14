@@ -105,6 +105,7 @@ flowchart TD
   T089[TSK-089 Criar BDD]
   T090[TSK-090 Criar PAF]
   T006[TSK-006 Arvore execucao]
+  T091[TSK-091 Dashboard]
   T001 --> T002
   T002 --> T003
   T003 --> T007
@@ -185,6 +186,7 @@ flowchart TD
   T077 --> T088
   T078 --> T089
   T078 --> T090
+  T002 --> T091
   style T001 fill:#fff3cd
   style T002 fill:#fff3cd
   style T003 fill:#d4edda
@@ -252,12 +254,12 @@ flowchart TD
 |------|-------|------|
 | [TSK-043](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-004-board/TSK-014-remover-card/TSK-043-criar-paf/README.md) Criar PAF | [TSK-001](flow/tasks/TSK-001-criar-epico/README.md) Criar épico | [TSK-028](flow/epics/EP-01-explorar/US-01-criar-arquivo/README.md) Criar BDD |
 | [TSK-045](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-004-board/TSK-015-mover-card/TSK-045-criar-paf/README.md) Criar PAF | [TSK-002](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/README.md) Criar as histórias | [TSK-030](flow/epics/EP-01-explorar/US-02-remover-arquivo/README.md) Criar BDD |
-| [TSK-047](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-004-board/TSK-016-renomear-card/TSK-047-criar-paf/README.md) Criar PAF | [TSK-013](flow/epics/EP-02-board/US-01-criar-card/README.md) Criar card | [TSK-032](flow/epics/EP-01-explorar/US-03-renomear-arquivo/README.md) Criar BDD |
-| [TSK-049](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-004-board/TSK-017-abrir-card/TSK-049-criar-paf/README.md) Criar PAF | [TSK-014](flow/epics/EP-02-board/US-02-remover-card/README.md) Remover card | [TSK-034](flow/epics/EP-01-explorar/US-04-mover-arquivo-dragdrop/README.md) Criar BDD |
-| [TSK-051](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-004-board/TSK-018-editar-card/TSK-051-criar-paf/README.md) Criar PAF | [TSK-015](flow/epics/EP-02-board/US-03-mover-card/README.md) Mover card | [TSK-036](flow/epics/EP-01-explorar/US-05-visualizar-arvore-de-arquivos/README.md) Criar BDD |
-| [TSK-053](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-004-board/TSK-019-criar-coluna/TSK-053-criar-paf/README.md) Criar PAF | [TSK-016](flow/epics/EP-02-board/US-04-renomear-card/README.md) Renomear card | [TSK-044](flow/epics/EP-02-board/US-03-mover-card/README.md) Criar BDD |
-| [TSK-055](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-004-board/TSK-020-criar-raia/TSK-055-criar-paf/README.md) Criar PAF | [TSK-017](flow/epics/EP-02-board/US-05-abrir-card/README.md) Abrir card | [TSK-046](flow/epics/EP-02-board/US-04-renomear-card/README.md) Criar BDD |
-| [TSK-057](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-005-gantt/TSK-021-criar-tarefa/TSK-057-criar-paf/README.md) Criar PAF | [TSK-018](flow/epics/EP-02-board/US-06-editar-card/README.md) Editar card | [TSK-048](flow/epics/EP-02-board/US-05-abrir-card/README.md) Criar BDD |
+| [TSK-091](flow/epics/EP-05-dashboard/README.md) Dashboard | [TSK-013](flow/epics/EP-02-board/US-01-criar-card/README.md) Criar card | [TSK-032](flow/epics/EP-01-explorar/US-03-renomear-arquivo/README.md) Criar BDD |
+| [TSK-047](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-004-board/TSK-016-renomear-card/TSK-047-criar-paf/README.md) Criar PAF | [TSK-014](flow/epics/EP-02-board/US-02-remover-card/README.md) Remover card | [TSK-034](flow/epics/EP-01-explorar/US-04-mover-arquivo-dragdrop/README.md) Criar BDD |
+| [TSK-049](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-004-board/TSK-017-abrir-card/TSK-049-criar-paf/README.md) Criar PAF | [TSK-015](flow/epics/EP-02-board/US-03-mover-card/README.md) Mover card | [TSK-036](flow/epics/EP-01-explorar/US-05-visualizar-arvore-de-arquivos/README.md) Criar BDD |
+| [TSK-051](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-004-board/TSK-018-editar-card/TSK-051-criar-paf/README.md) Criar PAF | [TSK-016](flow/epics/EP-02-board/US-04-renomear-card/README.md) Renomear card | [TSK-044](flow/epics/EP-02-board/US-03-mover-card/README.md) Criar BDD |
+| [TSK-053](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-004-board/TSK-019-criar-coluna/TSK-053-criar-paf/README.md) Criar PAF | [TSK-017](flow/epics/EP-02-board/US-05-abrir-card/README.md) Abrir card | [TSK-046](flow/epics/EP-02-board/US-04-renomear-card/README.md) Criar BDD |
+| [TSK-055](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-004-board/TSK-020-criar-raia/TSK-055-criar-paf/README.md) Criar PAF | [TSK-018](flow/epics/EP-02-board/US-06-editar-card/README.md) Editar card | [TSK-048](flow/epics/EP-02-board/US-05-abrir-card/README.md) Criar BDD |
 | [TSK-059](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-005-gantt/TSK-022-mover-tarefa-dragdrop/TSK-059-criar-paf/README.md) Criar PAF | [TSK-019](flow/epics/EP-02-board/US-07-criar-coluna/README.md) Criar coluna | [TSK-050](flow/epics/EP-02-board/US-06-editar-card/README.md) Criar BDD |
 | [TSK-061](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-005-gantt/TSK-023-remover-tarefa/TSK-061-criar-paf/README.md) Criar PAF | [TSK-020](flow/epics/EP-02-board/US-08-criar-raia/README.md) Criar raia | [TSK-052](flow/epics/EP-02-board/US-07-criar-coluna/README.md) Criar BDD |
 | [TSK-063](flow/tasks/TSK-001-criar-epico/TSK-002-criar-as-historias/TSK-005-gantt/TSK-024-atribuir-responsavel/TSK-063-criar-paf/README.md) Criar PAF | [TSK-004](flow/epics/EP-02-board/README.md) Board | [TSK-054](flow/epics/EP-02-board/US-08-criar-raia/README.md) Criar BDD |

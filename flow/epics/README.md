@@ -1,4 +1,4 @@
-# Flow — Épicos
+﻿# Flow — Épicos
 
 | ID | Épico | Pasta | Intenção |
 |----|-------|-------|----------|
@@ -6,6 +6,7 @@
 | EP-02 | Board | [`EP-02-board/`](EP-02-board/README.md) | Para cada arquivo, saber o status |
 | EP-03 | Gantt | [`EP-03-gantt/`](EP-03-gantt/README.md) | Sequência e paralelismo das atividades |
 | EP-04 | Árvore de execução | [`EP-04-arvore-de-execucao/`](EP-04-arvore-de-execucao/README.md) | Atividades pais e filhas |
+| EP-05 | Dashboard | [`EP-05-dashboard/`](EP-05-dashboard/README.md) | Indicadores e visão consolidada |
 
 ## EP-01 — Explorar
 
@@ -30,6 +31,12 @@ Cronograma das atividades no tempo: criar, mover, remover e atribuir responsáve
 ![Capa EP-04 — Árvore de execução](assets/epic-e04-cover.png)
 
 Hierarquia de atividades pais e filhas (floresta): decompor a execução fora do eixo temporal do Gantt, com responsáveis e reorganização.
+
+## EP-05 — Dashboard
+
+![Capa EP-05 — Dashboard](assets/epic-e05-cover.png)
+
+Painel com indicadores e visão consolidada do andamento das atividades e fluxos.
 
 ## Hierarquia
 
@@ -63,6 +70,7 @@ EP-04 Arvore de execucao
 ├── US-04 Atribuir responsável
 ├── US-05 Visualizar árvore
 └── US-06 Selecionar atividade
+EP-05 Dashboard
 ```
 
 → [`../tasks/`](../tasks/README.md) · [`../board.md`](../board.md)

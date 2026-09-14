@@ -20,8 +20,7 @@ Cada épico agrupa um conjunto coerente de valor; histórias e BDD vêm depois.
 | E08 | Publicidade e visibilidade paga |
 | E09 | Assinatura Premium |
 | E10 | Notificações e alertas |
-| E11 | Painel do parceiro (bares e casas) |
-| E12 | Reputação anfitrião–convidado |
+| E11 | Reputação anfitrião–convidado |
 
 ---
 
@@ -85,15 +84,9 @@ O usuário paga por recursos extras: mapa completo de eventos, descontos em bare
 
 Push e central in-app avisam novo evento no raio, interações sociais (like, match, progresso do grupo), ingresso, segurança e pós-evento — reabrindo o app e acelerando a decisão no momento certo.
 
-## E11 — Painel do parceiro (bares e casas)
+## E11 — Reputação anfitrião–convidado
 
-![Capa do épico E11 — Painel do parceiro](assets/epic-e11-cover.png)
-
-Estabelecimentos e produtores operam vitrine, publicação e gestão de eventos, venda de ingresso, cardápio, campanhas pagas e métricas básicas de público e engajamento — o lado B2B da proposta de valor.
-
-## E12 — Reputação anfitrião–convidado
-
-![Capa do épico E12 — Reputação anfitrião–convidado](assets/epic-e12-cover.png)
+![Capa do épico E11 — Reputação anfitrião–convidado](assets/epic-e11-cover.png)
 
 Anfitrião e convidado se avaliam por estrelas após o evento; a reputação fica no perfil e influencia listas e decisões de convite, mitigando risco social em eventos privados.
 
@@ -110,4 +103,4 @@ Ordem sugerida para um MVP alinhado aos wireframes e à jornada principal da vis
 5. **E10** Notificações  
 6. **E06** Gamificação básica + pós-evento  
 
-Demais épicos (premium, ads, influenciadores, cardápio, painel, reputação) como **além do MVP**, conforme validação e go-to-market.
+Demais épicos (premium, ads, influenciadores, cardápio, reputação) como **além do MVP**, conforme validação e go-to-market.

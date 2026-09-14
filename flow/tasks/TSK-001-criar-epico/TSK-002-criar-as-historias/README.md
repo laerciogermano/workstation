@@ -89,6 +89,7 @@ flowchart TD
   T088[TSK-088 Criar PAF]
   T089[TSK-089 Criar BDD]
   T090[TSK-090 Criar PAF]
+  T091[TSK-091 Dashboard]
   T002 --> T003
   T003 --> T007
   T003 --> T008
@@ -165,6 +166,7 @@ flowchart TD
   T077 --> T088
   T078 --> T089
   T078 --> T090
+  T002 --> T091
   style T002 fill:#fff3cd
   style T003 fill:#d4edda
   style T004 fill:#fff3cd
@@ -310,3 +312,4 @@ Criar as histórias de usuário do projeto Flow — output em [`epics/`](../../.
   - [`TSK-078`](TSK-006-arvore-de-execucao/TSK-078-selecionar-atividade/README.md) → Output [US-06](../../../epics/EP-04-arvore-de-execucao/US-06-selecionar-atividade/README.md)
     - [`TSK-089`](TSK-006-arvore-de-execucao/TSK-078-selecionar-atividade/TSK-089-criar-bdd/README.md) → Criar BDD
     - [`TSK-090`](TSK-006-arvore-de-execucao/TSK-078-selecionar-atividade/TSK-090-criar-paf/README.md) → Criar PAF
+- [`TSK-091`](TSK-091-dashboard/README.md) → Output [EP-05](../../../epics/EP-05-dashboard/README.md)

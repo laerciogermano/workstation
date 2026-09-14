@@ -93,6 +93,7 @@ flowchart TD
   T089[TSK-089 Criar BDD]
   T090[TSK-090 Criar PAF]
   T006[TSK-006 Arvore execucao]
+  T091[TSK-091 Dashboard]
   T001 --> T002
   T002 --> T003
   T003 --> T007
@@ -173,6 +174,7 @@ flowchart TD
   T077 --> T088
   T078 --> T089
   T078 --> T090
+  T002 --> T091
   style T001 fill:#fff3cd
   style T002 fill:#fff3cd
   style T003 fill:#d4edda
@@ -247,3 +249,4 @@ Criar os épicos do projeto Flow.
   - [`TSK-004`](TSK-002-criar-as-historias/TSK-004-board/README.md) — Board → Output [EP-02](../../epics/EP-02-board/README.md)
   - [`TSK-005`](TSK-002-criar-as-historias/TSK-005-gantt/README.md) — Gantt → Output [EP-03](../../epics/EP-03-gantt/README.md)
   - [`TSK-006`](TSK-002-criar-as-historias/TSK-006-arvore-de-execucao/README.md) — Árvore de execução → Output [EP-04](../../epics/EP-04-arvore-de-execucao/README.md)
+  - [`TSK-091`](TSK-002-criar-as-historias/TSK-091-dashboard/README.md) — Dashboard → Output [EP-05](../../epics/EP-05-dashboard/README.md)

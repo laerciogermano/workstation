@@ -26,15 +26,20 @@ Criar e alterar código no canvas (funções, dados, entradas, saídas, ligaçõ
 
 | ID | Estória | O que faz |
 |----|---------|-----------|
-| 1.1 | Criar função | Adicionar nó de função no canvas |
-| 1.2 | Definir entrada | Nomear entrada de uma função |
-| 1.3 | Definir saída | Nomear saída de uma função |
-| 1.4 | Remover nó | Remover função ou dado do canvas |
-| 1.5 | Mover nó | Reposicionar nó no canvas |
-| 1.6 | Renomear função | Alterar o nome de uma função no canvas |
-| 1.7 | Renomear entrada/saída | Alterar nome do pin |
+| 1.1 | Visualizar Flow canvas | Exibir a área do canvas do fluxo |
+| 1.2 | Criar função | Adicionar nó de função no canvas |
+| 1.3 | Definir entrada | Nomear entrada de uma função |
+| 1.4 | Definir saída | Nomear saída de uma função |
+| 1.5 | Remover nó | Remover função ou dado do canvas |
+| 1.6 | Mover nó | Reposicionar nó no canvas |
+| 1.7 | Renomear função | Alterar o nome de uma função no canvas |
+| 1.8 | Renomear entrada/saída | Alterar nome do pin |
 
-#### 1.1 — Criar função
+#### 1.1 — Visualizar Flow canvas
+
+Como usuário da edição visual, quero **visualizar o Flow canvas**, para ver e interagir com o fluxo de código.
+
+#### 1.2 — Criar função
 
 Como usuário da edição visual, quero **criar uma função** no canvas, para compor o fluxo com um novo nó de função.
 
@@ -42,10 +47,10 @@ Como usuário da edição visual, quero **criar uma função** no canvas, para c
 
 | ID | Cenário | Quando | Então |
 |----|---------|--------|-------|
-| 1.1.1 | Criar função no clique | Usuário clica no canvas | Sistema exibe a função no canvas com a opção de nomear |
-| 1.1.2 | Nomear ao criar | Usuário informa o nome e confirma | Sistema mantém a função no canvas com o nome informado |
-| 1.1.3 | Cancelar criação | Usuário cancela a nomeação | Sistema não mantém a função no canvas |
-| 1.1.4 | Nome vazio | Usuário confirma sem informar nome | Sistema rejeita a confirmação e mantém a opção de nomear |
+| 1.2.1 | Criar função no clique | Usuário clica no canvas | Sistema exibe a função no canvas com a opção de nomear |
+| 1.2.2 | Nomear ao criar | Usuário informa o nome e confirma | Sistema mantém a função no canvas com o nome informado |
+| 1.2.3 | Cancelar criação | Usuário cancela a nomeação | Sistema não mantém a função no canvas |
+| 1.2.4 | Nome vazio | Usuário confirma sem informar nome | Sistema rejeita a confirmação e mantém a opção de nomear |
 
 ---
 

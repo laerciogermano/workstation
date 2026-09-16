@@ -25,15 +25,14 @@ Criar e alterar código no canvas (funções, dados, entradas, saídas, ligaçõ
 | ID | Funcionalidade | O que faz |
 |----|----------------|-----------|
 | F-01.01 | Criar função | Adicionar nó de função no canvas |
-| F-01.02 | Criar dado | Adicionar nó de dado no canvas |
-| F-01.03 | Definir entrada | Nomear entrada de uma função |
-| F-01.04 | Definir saída | Nomear saída de uma função |
-| F-01.05 | Criar ligação | Ligar saída → entrada |
-| F-01.06 | Remover ligação | Remover ligação entre pins |
-| F-01.07 | Remover nó | Remover função ou dado do canvas |
-| F-01.08 | Mover nó | Reposicionar nó no canvas |
-| F-01.09 | Renomear entrada/saída | Alterar nome do pin |
-| F-01.10 | Validar ligação | Impedir ligação entre endereços incompatíveis |
+| F-01.02 | Definir entrada | Nomear entrada de uma função |
+| F-01.03 | Definir saída | Nomear saída de uma função |
+| F-01.04 | Criar ligação | Ligar saída → entrada |
+| F-01.05 | Remover ligação | Remover ligação entre pins |
+| F-01.06 | Remover nó | Remover função ou dado do canvas |
+| F-01.07 | Mover nó | Reposicionar nó no canvas |
+| F-01.08 | Renomear entrada/saída | Alterar nome do pin |
+| F-01.09 | Validar ligação | Impedir ligação entre endereços incompatíveis |
 
 ---
 

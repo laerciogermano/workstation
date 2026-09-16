@@ -1,0 +1,29 @@
+---
+description: Após qualquer alteração no workstation, criar commit com mensagem explicativa em português
+alwaysApply: true
+---
+
+# Commit após alterações
+
+Sempre que concluir uma alteração neste repositório (código, docs, regras, configs), **criar um commit** em seguida.
+
+## Mensagem
+
+- Use `-m` com mensagem **explicativa em português**
+- Foque no **porquê** / efeito da mudança (1–2 frases)
+- Não use inglês na mensagem, salvo nomes próprios de arquivos, IDs ou termos técnicos inevitáveis
+
+## Exemplos
+
+```text
+✅ Adiciona épico EP-06: expandir Explorar para árvore 2D de pastas e arquivos.
+✅ Corrige validação de ligação entre pins incompatíveis no canvas.
+❌ Update stuff
+❌ WIP
+```
+
+## Observações
+
+- Inclua no commit apenas os arquivos da alteração em questão
+- Siga o protocolo de segurança do Git do projeto (sem `--no-verify`, sem amend indevido, sem push sem pedido)
+- Se não houver mudanças para commitar, não crie commit vazio

@@ -1,23 +1,38 @@
 # Flow Language — Documentação
 
-**Por quê:** índice e ponto de entrada dos artefatos derivados da visão.  
-**Importante:** mostra a ordem da esteira e evita abrir um documento fora de contexto.  
-**No fluxo:** [`visão`](../README.md) → **este índice** → funcionalidades → histórias → BDD → telas → componentes → protótipo.
+Índice da esteira derivada da [visão](../README.md).
 
-Derivados do [documento de visão](../README.md).  
-Regras para a IA na esteira: [`../config/config-ia.md`](../config/config-ia.md).  
-Timeline de prompts: [`../prompts/timeline.md`](../prompts/timeline.md).
+**Ordem:** visão → funcionalidades → histórias → BDD → telas → screens-bdd → componentes → protótipo.
 
-| Artefato | Arquivo | Papel no fluxo | Status |
-|----------|---------|----------------|--------|
-| Funcionalidades | `functionalities.md` | Capacidades de cada seção e página em bullets | A produzir |
-| Histórias de usuário | `user-stories.md` | O *quê* desejado pelo usuário (Como… quero… para…) | A produzir |
-| Cenários BDD | `bdd.md` | Critérios de aceite por história (Dado / Quando / Então) | A produzir |
-| Telas | `screens.md` | Superfícies de UI e o que cada uma faz | A produzir |
-| Screens BDD | `screens-bdd.md` | Mesmos critérios, agrupados por tela | A produzir |
-| Componentes | `components.md` | Inventário de UI para implementar | A produzir |
-| Protótipo | `prototype.html` | Validação visual/interativa do que foi especificado | A produzir |
+Config IA: [`../config/config-ia.md`](../config/config-ia.md) · Prompts: [`../prompts/timeline.md`](../prompts/timeline.md) · Épicos: [`../epics.md`](../epics.md)
+
+---
+
+## Fundamentos (inputs)
+
+PDFs de origem do modelo FOP. Não são artefatos da esteira; orientam visão, épicos e specs.
+
+| Arquivo | O que traz |
+|---------|------------|
+| [`laerciogermano_flow-oriented-programming.pdf`](laerciogermano_flow-oriented-programming.pdf) | FOP: dados, funções, I/O, sequência/paralelo/seleção/loop, camadas, contexto; repo de referência |
+| [`Systemic Ontological Metaphysical Philosophical Theory - Laércio Germano - Medium.pdf`](Systemic%20Ontological%20Metaphysical%20Philosophical%20Theory%20-%20Laércio%20Germano%20-%20Medium.pdf) | Base filosófica: estado + mudança; Flow como linguagem visual do plano de mudanças |
+
+Repo: https://github.com/laerciogermano/flow-oriented-programming
+
+---
+
+## Esteira de produto
+
+| Artefato | Arquivo | Papel | Status |
+|----------|---------|-------|--------|
+| Funcionalidades | `functionalities.md` | Capacidades em bullets | A produzir |
+| Histórias de usuário | `user-stories.md` | Como… quero… para… | A produzir |
+| Cenários BDD | `bdd.md` | Dado / Quando / Então | A produzir |
+| Telas | `screens.md` | Superfícies de UI | A produzir |
+| Screens BDD | `screens-bdd.md` | BDD por tela | A produzir |
+| Componentes | `components.md` | Inventário de UI | A produzir |
+| Protótipo | `prototype.html` | Validação visual | A produzir |
 
 ## Próximos passos
 
-→ `functionalities.md` (ainda não criado) — inventariar capacidades a partir da [visão](../README.md)
+→ `functionalities.md` a partir da [visão](../README.md) e de [`../epics.md`](../epics.md)

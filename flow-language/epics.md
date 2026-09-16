@@ -57,11 +57,11 @@ Como usuário da edição visual, quero **criar uma função** no canvas, para c
 | ID | Cenário | Quando | Então |
 |----|---------|--------|-------|
 | 1.2.1 | Criar função no clique | Usuário clica no canvas | Sistema exibe a função no canvas com a opção de nomear |
-| 1.2.2 | Nomear ao criar | Usuário informa o nome e confirma | Sistema mantém a função no canvas com o nome informado |
-| 1.2.3 | Cancelar criação | Usuário cancela a nomeação | Sistema não mantém a função no canvas |
-| 1.2.4 | Nome vazio | Usuário confirma sem informar nome | Sistema rejeita a confirmação e mantém a opção de nomear |
-| 1.2.5 | Criar função pelo menu transversal | Usuário seleciona uma função e clica na opção de função | Sistema cria uma função filha |
-| 1.2.6 | Criar função pela tecla F | Usuário seleciona uma função e pressiona a tecla F | Sistema cria uma função filha |
+| 1.2.2 | Criar função pelo menu transversal | Usuário seleciona uma função e clica na opção de função | Sistema cria uma função filha |
+| 1.2.3 | Criar função pela tecla F | Usuário seleciona uma função e pressiona a tecla F | Sistema cria uma função filha |
+| 1.2.4 | Nomear ao criar | Usuário informa o nome e confirma | Sistema mantém a função no canvas com o nome informado |
+| 1.2.5 | Cancelar criação | Usuário cancela a nomeação | Sistema não mantém a função no canvas |
+| 1.2.6 | Nome vazio | Usuário confirma sem informar nome | Sistema rejeita a confirmação e mantém a opção de nomear |
 
 ---
 

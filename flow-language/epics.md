@@ -31,7 +31,6 @@ Criar e alterar código no canvas (funções, dados, entradas, saídas, ligaçõ
 | F-01.05 | Mover nó | Reposicionar nó no canvas |
 | F-01.06 | Renomear função | Alterar o nome de uma função no canvas |
 | F-01.07 | Renomear entrada/saída | Alterar nome do pin |
-| F-01.08 | Validar ligação | Impedir ligação entre endereços incompatíveis |
 
 ---
 

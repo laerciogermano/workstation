@@ -4,19 +4,21 @@ Alinhado à [visão](README.md).
 
 **Premissa:** ferramenta de criação de código por manipulação visual; exporta para qualquer linguagem; **v1 = JavaScript e Python**.
 
+**IDs:** `1` = épico · `1.1` = estória · `1.1.1` = cenário.
+
 ---
 
 ## Índice
 
 | ID | Épico | Entrega |
 |----|-------|---------|
-| EP-01 | Edição visual | Criar e alterar código no canvas |
-| EP-02 | Exportação | Gerar JavaScript e Python |
-| EP-03 | Multi-linguagem | Novos alvos de exportação sem redefinir a ferramenta |
+| 1 | Edição visual | Criar e alterar código no canvas |
+| 2 | Exportação | Gerar JavaScript e Python |
+| 3 | Multi-linguagem | Novos alvos de exportação sem redefinir a ferramenta |
 
 ---
 
-## EP-01 — Edição visual
+## 1 — Edição visual
 
 Criar e alterar código no canvas (funções, dados, entradas, saídas, ligações).
 
@@ -24,15 +26,15 @@ Criar e alterar código no canvas (funções, dados, entradas, saídas, ligaçõ
 
 | ID | Estória | O que faz |
 |----|---------|-----------|
-| US-01 | Criar função | Adicionar nó de função no canvas |
-| US-02 | Definir entrada | Nomear entrada de uma função |
-| US-03 | Definir saída | Nomear saída de uma função |
-| US-04 | Remover nó | Remover função ou dado do canvas |
-| US-05 | Mover nó | Reposicionar nó no canvas |
-| US-06 | Renomear função | Alterar o nome de uma função no canvas |
-| US-07 | Renomear entrada/saída | Alterar nome do pin |
+| 1.1 | Criar função | Adicionar nó de função no canvas |
+| 1.2 | Definir entrada | Nomear entrada de uma função |
+| 1.3 | Definir saída | Nomear saída de uma função |
+| 1.4 | Remover nó | Remover função ou dado do canvas |
+| 1.5 | Mover nó | Reposicionar nó no canvas |
+| 1.6 | Renomear função | Alterar o nome de uma função no canvas |
+| 1.7 | Renomear entrada/saída | Alterar nome do pin |
 
-#### US-01 — Criar função
+#### 1.1 — Criar função
 
 Como usuário da edição visual, quero **criar uma função** no canvas, para compor o fluxo com um novo nó de função.
 
@@ -40,14 +42,14 @@ Como usuário da edição visual, quero **criar uma função** no canvas, para c
 
 | ID | Cenário | Quando | Então |
 |----|---------|--------|-------|
-| SC-01 | Acionar criar função | Usuário aciona criar função no canvas | Sistema adiciona um nó de função no canvas |
-| SC-02 | Nó visível no canvas | Função for criada | Sistema exibe o nó de função na área do canvas |
-| SC-03 | Nome inicial da função | Função for criada | Sistema atribui um nome inicial ao nó (padrão ou editável imediatamente) |
-| SC-04 | Função selecionada após criar | Função for criada | Sistema seleciona o novo nó no canvas |
+| 1.1.1 | Acionar criar função | Usuário aciona criar função no canvas | Sistema adiciona um nó de função no canvas |
+| 1.1.2 | Nó visível no canvas | Função for criada | Sistema exibe o nó de função na área do canvas |
+| 1.1.3 | Nome inicial da função | Função for criada | Sistema atribui um nome inicial ao nó (padrão ou editável imediatamente) |
+| 1.1.4 | Função selecionada após criar | Função for criada | Sistema seleciona o novo nó no canvas |
 
 ---
 
-## EP-02 — Exportação
+## 2 — Exportação
 
 Gerar código a partir do modelo visual. Alvos v1: **JavaScript** e **Python**.
 
@@ -55,14 +57,14 @@ Gerar código a partir do modelo visual. Alvos v1: **JavaScript** e **Python**.
 
 | ID | Estória | O que faz |
 |----|---------|-----------|
-| US-01 | Exportar para JavaScript | Gerar código JS a partir do canvas/modelo |
-| US-02 | Exportar para Python | Gerar código Python a partir do canvas/modelo |
-| US-03 | Escolher alvo de exportação | Selecionar JavaScript ou Python |
-| US-04 | Recusar export inválido | Não exportar se o modelo estiver incompleto ou inválido |
+| 2.1 | Exportar para JavaScript | Gerar código JS a partir do canvas/modelo |
+| 2.2 | Exportar para Python | Gerar código Python a partir do canvas/modelo |
+| 2.3 | Escolher alvo de exportação | Selecionar JavaScript ou Python |
+| 2.4 | Recusar export inválido | Não exportar se o modelo estiver incompleto ou inválido |
 
 ---
 
-## EP-03 — Multi-linguagem
+## 3 — Multi-linguagem
 
 Arquitetura para exportar para qualquer linguagem; além de JS e Python fica fora do v1.
 
@@ -70,17 +72,17 @@ Arquitetura para exportar para qualquer linguagem; além de JS e Python fica for
 
 | ID | Estória | O que faz |
 |----|---------|-----------|
-| US-01 | Registrar alvo de exportação | Permitir plugar um novo gerador de linguagem |
-| US-02 | Listar alvos disponíveis | Mostrar linguagens que já têm exportação |
-| US-03 | Recusar alvo sem gerador | Informar quando a linguagem ainda não é suportada |
+| 3.1 | Registrar alvo de exportação | Permitir plugar um novo gerador de linguagem |
+| 3.2 | Listar alvos disponíveis | Mostrar linguagens que já têm exportação |
+| 3.3 | Recusar alvo sem gerador | Informar quando a linguagem ainda não é suportada |
 
 ---
 
 ## Ordem de entrega (v1)
 
-1. EP-01 Edição visual  
-2. EP-02 Exportação (JavaScript, depois Python)  
-3. EP-03 Multi-linguagem (contrato de extensão)
+1. Edição visual  
+2. Exportação (JavaScript, depois Python)  
+3. Multi-linguagem (contrato de extensão)
 
 ## Fora de escopo (v1)
 

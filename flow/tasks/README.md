@@ -88,6 +88,7 @@ flowchart TD
   T090[TSK-090 Criar PAF]
   T006[TSK-006 Arvore execucao]
   T091[TSK-091 Dashboard]
+  T092[TSK-092 Expandir arvore 2D]
   T001 --> T002
   T002 --> T003
   T003 --> T007
@@ -169,6 +170,7 @@ flowchart TD
   T078 --> T089
   T078 --> T090
   T002 --> T091
+  T002 --> T092
   style T001 fill:#fff3cd
   style T002 fill:#fff3cd
   style T003 fill:#d4edda
@@ -241,6 +243,7 @@ flowchart TD
 | TSK-005 | Gantt | Doing | [EP-03](../epics/EP-03-gantt/README.md) |
 | TSK-006 | Árvore de execução | Doing | [EP-04](../epics/EP-04-arvore-de-execucao/README.md) |
 | TSK-091 | Dashboard | Todo | [EP-05](../epics/EP-05-dashboard/README.md) |
+| TSK-092 | Expandir para árvore 2D | Todo | [EP-06](../epics/EP-06-expandir-arvore-2d/README.md) |
 | TSK-007 | Criar arquivo | Done | [US-01](../epics/EP-01-explorar/US-01-criar-arquivo/README.md) |
 | TSK-028 | Criar BDD | Done | [US-01](../epics/EP-01-explorar/US-01-criar-arquivo/README.md) |
 | TSK-029 | Criar PAF | Done | [US-01](../epics/EP-01-explorar/US-01-criar-arquivo/README.md) |

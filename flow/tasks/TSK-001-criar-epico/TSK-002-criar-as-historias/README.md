@@ -90,6 +90,7 @@ flowchart TD
   T089[TSK-089 Criar BDD]
   T090[TSK-090 Criar PAF]
   T091[TSK-091 Dashboard]
+  T092[TSK-092 Expandir arvore 2D]
   T002 --> T003
   T003 --> T007
   T003 --> T008
@@ -167,6 +168,7 @@ flowchart TD
   T078 --> T089
   T078 --> T090
   T002 --> T091
+  T002 --> T092
   style T002 fill:#fff3cd
   style T003 fill:#d4edda
   style T004 fill:#fff3cd
@@ -313,3 +315,4 @@ Criar as histórias de usuário do projeto Flow — output em [`epics/`](../../.
     - [`TSK-089`](TSK-006-arvore-de-execucao/TSK-078-selecionar-atividade/TSK-089-criar-bdd/README.md) → Criar BDD
     - [`TSK-090`](TSK-006-arvore-de-execucao/TSK-078-selecionar-atividade/TSK-090-criar-paf/README.md) → Criar PAF
 - [`TSK-091`](TSK-091-dashboard/README.md) → Output [EP-05](../../../epics/EP-05-dashboard/README.md)
+- [`TSK-092`](TSK-092-expandir-arvore-2d/README.md) → Output [EP-06](../../../epics/EP-06-expandir-arvore-2d/README.md)

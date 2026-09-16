@@ -14,3 +14,4 @@ Como registrar: [`README.md`](README.md).
 | 006 | 2026-09-15 21:07 | Visão objetiva: criação visual + export JS/Python | [006-2026-09-15-visao-objetiva-js-python.md](006-2026-09-15-visao-objetiva-js-python.md) | Visão enxuta: criação de código visual; export para qualquer linguagem; agora JS e Python. |
 | 007 | 2026-09-15 21:09 | Refazer épicos objetivos com base na visão | [007-2026-09-15-refazer-epicos-objetivos.md](007-2026-09-15-refazer-epicos-objetivos.md) | Épicos reduzidos a EP-01 edição visual, EP-02 exportação JS/Python, EP-03 multi-linguagem. |
 | 008 | 2026-09-15 21:14 | Enriquecer READMEs com base nos PDFs | [008-2026-09-15-enriquecer-readmes-pdfs.md](008-2026-09-15-enriquecer-readmes-pdfs.md) | Visão + docs/README com modelo FOP e PDFs como fundamentos. |
+| 009 | 2026-09-15 21:38 | Criar cenários da US-01 | [009-2026-09-15-cenarios-us01.md](009-2026-09-15-cenarios-us01.md) | Cenários SC-01…SC-04 da US-01 Criar função no EP-01. |

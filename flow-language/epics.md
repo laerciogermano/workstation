@@ -32,6 +32,28 @@ Criar e alterar código no canvas (funções, dados, entradas, saídas, ligaçõ
 | US-06 | Renomear função | Alterar o nome de uma função no canvas |
 | US-07 | Renomear entrada/saída | Alterar nome do pin |
 
+#### US-01 — Criar função
+
+Como usuário da edição visual, quero **criar uma função** no canvas, para compor o fluxo com um novo nó de função.
+
+##### Cenários
+
+###### SC-01 — Acionar criar função
+
+Quando o usuário **acionar a ação de criar função** no canvas, o sistema deve **adicionar um nó de função** no canvas.
+
+###### SC-02 — Nó visível no canvas
+
+Quando a função **for criada**, o sistema deve **exibir o nó de função** na área do canvas.
+
+###### SC-03 — Nome inicial da função
+
+Quando a função **for criada**, o sistema deve **atribuir um nome inicial** ao nó (padrão ou editável imediatamente).
+
+###### SC-04 — Função selecionada após criar
+
+Quando a função **for criada**, o sistema deve **selecionar o novo nó** no canvas.
+
 ---
 
 ## EP-02 — Exportação

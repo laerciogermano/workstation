@@ -42,10 +42,7 @@ Como usuário da edição visual, quero **criar uma função** no canvas, para c
 
 | ID | Cenário | Quando | Então |
 |----|---------|--------|-------|
-| 1.1.1 | Acionar criar função | Usuário aciona criar função no canvas | Sistema adiciona um nó de função no canvas |
-| 1.1.2 | Nó visível no canvas | Função for criada | Sistema exibe o nó de função na área do canvas |
-| 1.1.3 | Nome inicial da função | Função for criada | Sistema atribui um nome inicial ao nó (padrão ou editável imediatamente) |
-| 1.1.4 | Função selecionada após criar | Função for criada | Sistema seleciona o novo nó no canvas |
+| 1.1.1 | Criar função no clique | Usuário clica no canvas | Sistema exibe a função no canvas com a opção de nomear |
 
 ---
 

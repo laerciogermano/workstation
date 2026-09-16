@@ -39,6 +39,12 @@ Criar e alterar código no canvas (funções, dados, entradas, saídas, ligaçõ
 
 Como usuário da edição visual, quero **visualizar o Flow canvas**, para ver e interagir com o fluxo de código.
 
+##### Cenários
+
+| ID | Cenário | Quando | Então |
+|----|---------|--------|-------|
+| 1.1.1 | Função main padrão | Usuário entra na tela | Sistema exibe a função `main` no canvas como padrão |
+
 #### 1.2 — Criar função
 
 Como usuário da edição visual, quero **criar uma função** no canvas, para compor o fluxo com um novo nó de função.

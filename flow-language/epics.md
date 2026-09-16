@@ -20,17 +20,17 @@ Alinhado à [visão](README.md).
 
 Criar e alterar código no canvas (funções, dados, entradas, saídas, ligações).
 
-### Funcionalidades
+### Estórias de usuário
 
-| ID | Funcionalidade | O que faz |
-|----|----------------|-----------|
-| F-01.01 | Criar função | Adicionar nó de função no canvas |
-| F-01.02 | Definir entrada | Nomear entrada de uma função |
-| F-01.03 | Definir saída | Nomear saída de uma função |
-| F-01.04 | Remover nó | Remover função ou dado do canvas |
-| F-01.05 | Mover nó | Reposicionar nó no canvas |
-| F-01.06 | Renomear função | Alterar o nome de uma função no canvas |
-| F-01.07 | Renomear entrada/saída | Alterar nome do pin |
+| ID | Estória | O que faz |
+|----|---------|-----------|
+| US-01 | Criar função | Adicionar nó de função no canvas |
+| US-02 | Definir entrada | Nomear entrada de uma função |
+| US-03 | Definir saída | Nomear saída de uma função |
+| US-04 | Remover nó | Remover função ou dado do canvas |
+| US-05 | Mover nó | Reposicionar nó no canvas |
+| US-06 | Renomear função | Alterar o nome de uma função no canvas |
+| US-07 | Renomear entrada/saída | Alterar nome do pin |
 
 ---
 
@@ -38,14 +38,14 @@ Criar e alterar código no canvas (funções, dados, entradas, saídas, ligaçõ
 
 Gerar código a partir do modelo visual. Alvos v1: **JavaScript** e **Python**.
 
-### Funcionalidades
+### Estórias de usuário
 
-| ID | Funcionalidade | O que faz |
-|----|----------------|-----------|
-| F-02.01 | Exportar para JavaScript | Gerar código JS a partir do canvas/modelo |
-| F-02.02 | Exportar para Python | Gerar código Python a partir do canvas/modelo |
-| F-02.03 | Escolher alvo de exportação | Selecionar JavaScript ou Python |
-| F-02.04 | Recusar export inválido | Não exportar se o modelo estiver incompleto ou inválido |
+| ID | Estória | O que faz |
+|----|---------|-----------|
+| US-01 | Exportar para JavaScript | Gerar código JS a partir do canvas/modelo |
+| US-02 | Exportar para Python | Gerar código Python a partir do canvas/modelo |
+| US-03 | Escolher alvo de exportação | Selecionar JavaScript ou Python |
+| US-04 | Recusar export inválido | Não exportar se o modelo estiver incompleto ou inválido |
 
 ---
 
@@ -53,13 +53,13 @@ Gerar código a partir do modelo visual. Alvos v1: **JavaScript** e **Python**.
 
 Arquitetura para exportar para qualquer linguagem; além de JS e Python fica fora do v1.
 
-### Funcionalidades
+### Estórias de usuário
 
-| ID | Funcionalidade | O que faz |
-|----|----------------|-----------|
-| F-03.01 | Registrar alvo de exportação | Permitir plugar um novo gerador de linguagem |
-| F-03.02 | Listar alvos disponíveis | Mostrar linguagens que já têm exportação |
-| F-03.03 | Recusar alvo sem gerador | Informar quando a linguagem ainda não é suportada |
+| ID | Estória | O que faz |
+|----|---------|-----------|
+| US-01 | Registrar alvo de exportação | Permitir plugar um novo gerador de linguagem |
+| US-02 | Listar alvos disponíveis | Mostrar linguagens que já têm exportação |
+| US-03 | Recusar alvo sem gerador | Informar quando a linguagem ainda não é suportada |
 
 ---
 

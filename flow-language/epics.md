@@ -44,6 +44,9 @@ Como usuário da edição visual, quero **visualizar o Flow canvas**, para ver e
 | ID | Cenário | Quando | Então |
 |----|---------|--------|-------|
 | 1.1.1 | Função main padrão | Usuário entra na tela | Sistema exibe a função `main` no canvas como padrão |
+| 1.1.2 | Selecionar função | Usuário clica em cima da função | Sistema seleciona a função e exibe o menu transversal com opções |
+| 1.1.3 | Selecionar entrada | Usuário clica em cima da entrada | Sistema seleciona a entrada e exibe o menu transversal com opções |
+| 1.1.4 | Selecionar saída | Usuário clica em cima da saída | Sistema seleciona a saída e exibe o menu transversal com opções |
 
 #### 1.2 — Criar função
 
@@ -57,9 +60,8 @@ Como usuário da edição visual, quero **criar uma função** no canvas, para c
 | 1.2.2 | Nomear ao criar | Usuário informa o nome e confirma | Sistema mantém a função no canvas com o nome informado |
 | 1.2.3 | Cancelar criação | Usuário cancela a nomeação | Sistema não mantém a função no canvas |
 | 1.2.4 | Nome vazio | Usuário confirma sem informar nome | Sistema rejeita a confirmação e mantém a opção de nomear |
-| 1.2.5 | Selecionar função | Usuário clica em cima da função | Sistema seleciona a função e exibe o menu transversal |
-| 1.2.6 | Criar função pelo menu transversal | Usuário seleciona uma função e clica na opção de função | Sistema cria uma função filha |
-| 1.2.7 | Criar função pela tecla F | Usuário seleciona uma função e pressiona a tecla F | Sistema cria uma função filha |
+| 1.2.5 | Criar função pelo menu transversal | Usuário seleciona uma função e clica na opção de função | Sistema cria uma função filha |
+| 1.2.6 | Criar função pela tecla F | Usuário seleciona uma função e pressiona a tecla F | Sistema cria uma função filha |
 
 ---
 

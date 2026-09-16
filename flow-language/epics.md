@@ -45,9 +45,8 @@ Como usuário da edição visual, quero **criar uma função** no canvas, para c
 | 1.1.1 | Criar função no clique | Usuário clica no canvas | Sistema exibe a função no canvas com a opção de nomear |
 | 1.1.2 | Nomear ao criar | Usuário informa o nome e confirma | Sistema mantém a função no canvas com o nome informado |
 | 1.1.3 | Cancelar criação | Usuário cancela a nomeação | Sistema não mantém a função no canvas |
-| 1.1.4 | Posição no clique | Usuário clica em um ponto do canvas | Sistema posiciona a função no ponto clicado |
-| 1.1.5 | Criar outra função | Já existe função no canvas e o usuário clica de novo | Sistema adiciona uma nova função independente |
-| 1.1.6 | Nome vazio | Usuário confirma sem informar nome | Sistema rejeita a confirmação e mantém a opção de nomear |
+| 1.1.4 | Criar outra função | Já existe função no canvas e o usuário clica de novo | Sistema adiciona uma nova função independente |
+| 1.1.5 | Nome vazio | Usuário confirma sem informar nome | Sistema rejeita a confirmação e mantém a opção de nomear |
 
 ---
 

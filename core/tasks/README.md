@@ -1,6 +1,6 @@
 # Tasks
 
-Árvore de execução, ordem/esforço e kanban **Todo / Doing / Done** por projeto (prioridade maior → menor).
+Árvore de execução e kanban **Todo / Doing / Done** por projeto (prioridade maior → menor).
 
 ---
 
@@ -45,36 +45,6 @@ screen-robot (6,55 h)
     ├── Persistir sessão em arquivo (0,25 h)
     └── Restaurar sessão do arquivo (0,25 h)
 ```
-
-### Ordem e esforço
-
-Sequência das maiores; filhas dentro de cada uma. Dias = min ÷ 480 (8h/dia).
-
-```text
-1. Provisionar um agente ........................ 60 min · 0,13 d
-   Subir / conectar · Serial online · Boot
-2. Instalar APKs ................................ 45 min · 0,09 d
-   Ler versão · Baixar APK · Instalar
-3. Receber eventos .............................. 48 min · 0,10 d
-   Boot · App aberta · Tela estável · Dump
-4. Executar operações ........................... 90 min · 0,19 d
-   Abrir app · tap · type · key · screenshot · xy por imagem
-5. Extrair elementos ............................ 120 min · 0,25 d
-   Texto · Ícone · Imagem/foto · Lista · Container · Árvore DOM
-6. Guardar estado de sessão ..................... 30 min · 0,06 d
-   Persistir · Restaurar
-                    Total = 393 min · 6,55 h · 0,82 dias
-```
-
-| # | Maior | Filhas | Min IA | Dias (8h) |
-|---|-------|--------|--------|-----------|
-| 1 | Provisionar um agente | subir/conectar · serial online · boot | 60 | 0,13 |
-| 2 | Instalar APKs | ler versão · baixar · instalar | 45 | 0,09 |
-| 3 | Receber eventos | boot · app aberta · tela estável · dump | 48 | 0,10 |
-| 4 | Executar operações | abrir aplicativo · tap · type · key · screenshot · resgatar x,y por imagem | 90 | 0,19 |
-| 5 | Extrair elementos | texto · ícone · imagem/foto · lista · container · árvore DOM | 120 | 0,25 |
-| 6 | Guardar sessão | persistir · restaurar | 30 | 0,06 |
-| | **Total** | | **393** | **0,82** (~6,55 h) |
 
 ### Kanban
 

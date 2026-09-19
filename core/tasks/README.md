@@ -12,40 +12,6 @@ Estimativas: minutos IA.
 
 ### Árvore de execução
 
-```text
-screen-robot
-├── 1. Provisionar um agente
-│   ├── Subir / conectar o Android (agent)
-│   ├── Garantir serial ADB online
-│   └── Aguardar boot completo
-├── 2. Instalar APKs
-│   ├── Ler versão na config do dispositivo
-│   ├── Baixar APK na versão definida
-│   └── Instalar pacote no agent
-├── 3. Receber eventos
-│   ├── Evento de boot
-│   ├── Evento de app aberta
-│   ├── Evento de tela estável
-│   └── Evento de mudança de dump
-├── 4. Executar operações
-│   ├── Abrir aplicativo
-│   ├── tap
-│   ├── type
-│   ├── key
-│   ├── screenshot
-│   └── Resgatar coordenadas x,y (imagem de entrada)
-├── 5. Extrair elementos e informações
-│   ├── Nó Texto
-│   ├── Nó Ícone
-│   ├── Nó Imagem / foto
-│   ├── Nó Lista (itens filhos + scroll)
-│   ├── Nó Container
-│   └── Montar árvore DOM (raiz → filhos)
-└── 6. Guardar estado de sessão
-    ├── Persistir sessão em arquivo
-    └── Restaurar sessão do arquivo
-```
-
 ```mermaid
 flowchart TB
   subgraph P[1 Provisionar agente]

@@ -25,7 +25,9 @@ O discovery tem **duas fases** em sequência:
 
 ### Fase 2 — Documento de épicos
 
-A partir da visão, agrupar funcionalidades em **épicos**. Para **cada cenário**, nesta ordem:
+A partir da visão, agrupar funcionalidades em **épicos**.
+
+Cada **cenário** representa **uma mudança de estado do sistema** (estado anterior → ação → estado resultante). Para cada um, nesta ordem:
 
 1. Definir o **cenário BDD** (Dado / Quando / Então)
 2. Criar o **protótipo de alta fidelidade maior**
@@ -54,7 +56,7 @@ Conjunto de **todos os épicos**, cada um contendo:
 | Artefato | Papel | Ordem |
 |----------|--------|-------|
 | **Histórias** | O *quê* desejado (Como… quero… para…) | — |
-| **Cenários BDD** | Critérios de aceite (Dado / Quando / Então) | 1º por cenário |
+| **Cenários BDD** | Uma mudança de estado do sistema; critérios de aceite (Dado / Quando / Então) | 1º por cenário |
 | **Protótipo de alta fidelidade maior** | UI de referência ampla do cenário / fluxo | 2º por cenário |
 | **Protótipo de alta fidelidade** | UI fidelidade alta que materializa o cenário | 3º por cenário |
 

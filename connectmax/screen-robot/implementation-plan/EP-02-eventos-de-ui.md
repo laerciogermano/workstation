@@ -405,21 +405,28 @@ sequenceDiagram
 
 ## Modelos
 
+### API
+
+`on(event: "boot" | "app_open" | "ui_stable" | "dump_change" | "*_poll", opts: EventOpts) → Promise<UiEvent>`
+
 ### EventOpts
 
 | Campo | Tipo | Descrição |
 |-------|------|-----------|
-| `timeoutMs` | `number` | Default por API |
+| `serial` | `string` | Device ADB |
+| `timeoutMs` | `number` | Default por evento |
 | `intervalMs` | `number` | Poll interval |
-| `stableMs` | `number` | US-04: janela sem mudança |
-| `handler` | `(e: UiEvent) => void` | Callback passado a `on(nome, opts)` para progresso/conclusão |
-| `activity` | `string?` | US-03 opcional |
+| `stableMs` | `number` | `"ui_stable"`: janela sem mudança |
+| `pkg` | `string?` | `"app_open"` |
+| `activity` | `string?` | `"app_open"` opcional |
+| `previousXml` | `string?` | `"dump_change"` baseline |
+| `handler` | `(e: UiEvent) => void` | Progresso (`*_poll`) e conclusão |
 
 ### UiEvent
 
 | Campo | Tipo | Exemplos `type` |
 |-------|------|-----------------|
-| `type` | `string` | `boot`, `app_foreground`, `ui_stable`, `dump_changed`, `*_poll` |
+| `type` | `string` | `boot`, `app_open`, `ui_stable`, `dump_change`, `boot_poll`, `app_poll`, `ui_stable_poll` |
 | `at` | `ISO-8601` | Timestamp |
 | `attempt` | `number` | Tentativa atual |
 

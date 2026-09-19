@@ -1,60 +1,28 @@
 # Funcionalidades — screen-robot
 
-**Por quê:** capacidades observáveis do robô de tela (sem regras de vendas).  
+**Por quê:** capacidades observáveis do robô, todas expostas via **código Node**.  
 **Origem:** [visão](../README.md).  
-**Planos:** [`plano-percepcao-imagem-hardware.md`](plano-percepcao-imagem-hardware.md) · [`plano-implementacao-percepcao.md`](plano-implementacao-percepcao.md).
+**Negócio ConnectMax:** [`../../vendas/`](../../vendas/README.md).
 
-## Como usar
+| Funcionalidade | Descrição |
+|----------------|-----------|
+| Provisionar um agente | Sobe/conecta o Android (agent) e deixa o device pronto para ADB (serial online, boot completo) |
+| Instalar APKs | Baixa (versão definida na config do dispositivo) e instala pacotes no agent |
+| Receber eventos | Observa e espera sinais do device/UI (boot, app aberta, tela estável, mudança de dump) |
+| Extrair elementos e informações | Lê a tela (dump/OCR) e devolve elementos com texto, bounds e metadados |
+| Executar operações | Dispara gestos e comandos (launch, tap, type, key, screenshot) a partir dos elementos ou coords |
+| Guardar estado de sessão | Persiste e restaura contexto da sessão (device, apps, último frame, login parcial) em arquivo |
 
-- Cada bullet é uma capacidade do robô.
-- Critérios de aceite técnicos: BDD nos planos de implementação (`@f0`…`@f4`).
-- Negócio ConnectMax (fila, cadência, faturamento) vive em [`../../vendas/`](../../vendas/README.md).
+## Cenário de aceitação (funcionalidade maior)
 
----
+Login no LinkedIn orquestrando as seis fatias:  
+[`bdd-linkedin-login.md`](bdd-linkedin-login.md) · script [`../sources/android-control/scripts/linkedin-login.js`](../sources/android-control/scripts/linkedin-login.js)
 
-## Captura
+## Fora do escopo
 
-- Capturar o frame atual da tela do device como PNG + width/height/ts **via agent** (único transporte neste momento).
-
-## Percepção (imagem → lista)
-
-- Extrair textos e bboxes via OCR.
-- Detectar ícones, botões, fotos e cards via vision.
-- Mesclar OCR + vision em uma lista `Element[]` com ids estáveis.
-- Validar schema de cada elemento (kind, bbox, center, label/text, score, source).
-- Expor CLI `perceive` sobre um PNG (fixture ou frame vivo).
-- Gerar overlay de debug opcional sobre o frame.
-
-## Decisão
-
-- Selecionar elemento da lista por label, kind ou índice (matcher).
-- Decidir ação via LLM opcional a partir de goal/step em linguagem natural.
-- Produzir `Action` tipada: tap, swipe, type, copy_text, shot_region — sem coordenadas hardcoded no goal.
-
-## Atuação
-
-- Executar tap, swipe e type no device **via agent** (`Actuate`).
-- Mapear center do elemento para coordenadas do actuator (calibração de resolução).
-
-## Goals e orquestração
-
-- Rodar goals JSON (steps: perceive → choose → act / wait / scroll).
-- Aguardar até um elemento aparecer (poll + timeout).
-- Rolar lista e re-perceive até achar o alvo.
-- Registrar métricas (acerto, latência, custo) por etapa.
-
-## Device / runtime
-
-- **Premissa atual:** todos os devices são **agents** (Capture e Actuate só por agent).
-- Operar no redroid/emulador também passa pelo agent (não há US de ADB dual neste momento).
-
----
-
-## Fora do escopo (este projeto)
-
-- Cadência LinkedIn, fila de leads, distribuição, faturamento, papéis vendedor/gestor/investidor.
-- Fechamento de venda.
+- Cadência LinkedIn, fila de leads, faturamento, papéis de venda.
+- Bypass de autenticação / scraping ilegítimo.
 
 ## Próximos passos
 
-→ Implementar histórias a partir de [`../epics/`](../epics/README.md) (começar EP-01 US-01…US-03 + EP-04 US-01…US-03)
+→ Implementação em [`../sources/android-control`](../sources/android-control/README.md)

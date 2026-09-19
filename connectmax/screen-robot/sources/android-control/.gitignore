@@ -1,5 +1,9 @@
 node_modules/
 screenshots/
+state/
+apks/*.xapk
+apks/*.apk
+!apks/ADBKeyboard.apk
 *.png
 .DS_Store
 meu-fluxo.json

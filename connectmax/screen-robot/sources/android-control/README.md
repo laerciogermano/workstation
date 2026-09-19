@@ -1,49 +1,55 @@
 # android-control
 
-Executa ações no Android (redroid / emulador) via **ADB**, a partir de um JSON ou da linha de comando.
+API **Node** do screen-robot sobre ADB: provisionar agent, instalar APKs, eventos, extrair UI, operar, sessão.
 
 ## Requisitos
 
-- `adb` no PATH
-- Device online (`adb devices`) — redroid: `127.0.0.1:5555`
+- Node ≥ 18, `adb` no PATH
+- Device online (redroid `127.0.0.1:5555` ou emulador)
+- Opcional: [`apkeep`](https://github.com/EFForg/apkeep) para baixar XAPK (`brew install apkeep`)
 
-## Uso rápido
+## Config do dispositivo
+
+[`device.config.json`](device.config.json) — serial, versões de apps (ex. Instagram), paths de sessão/print.
+
+## Funcionalidades (libs)
+
+| Recorte | Módulo |
+|---------|--------|
+| Provisionar agente | [`lib/provision.js`](lib/provision.js) |
+| Instalar APKs | [`lib/apks.js`](lib/apks.js) |
+| Receber eventos | [`lib/events.js`](lib/events.js) |
+| Extrair elementos | [`lib/extract.js`](lib/extract.js) |
+| Executar operações | [`lib/operate.js`](lib/operate.js) |
+| Guardar sessão | [`lib/session.js`](lib/session.js) |
+
+Inventário: [`../../docs/functionalities.md`](../../docs/functionalities.md)  
+BDD: [`../../docs/bdd-linkedin-login.md`](../../docs/bdd-linkedin-login.md)
+
+## Script inicial — login LinkedIn
+
+Baixa Instagram na versão da config, provisiona Android, abre LinkedIn, print, detecta login, digita credenciais, toca Entrar, salva sessão.
 
 ```bash
 cd connectmax/screen-robot/sources/android-control
 
-# Um comando
-node cli.js tap 360 640 --device 127.0.0.1:5555
-node cli.js setup-ime              # uma vez por device (acentos)
-node cli.js type "olá"
-node cli.js shot ./screenshots/tela.png
-node cli.js swipe 100 800 100 200 300
-node cli.js key KEYCODE_BACK
-node cli.js launch com.instagram.android
+# edite apps.instagram.version em device.config.json se precisar
+export LINKEDIN_USER='seu@email.com'
+export LINKEDIN_PASSWORD='***'
 
-# Sequência configurável
-cp config.example.json meu-fluxo.json   # edite
-node cli.js meu-fluxo.json
+npm run linkedin-login
+# ou: node scripts/linkedin-login.js --config ./device.config.json
 ```
 
-> No Android 15 / redroid, `adb shell input text` dá NPE com acentos. O CLI usa [ADBKeyBoard](https://github.com/senzhk/ADBKeyBoard) (`apks/ADBKeyboard.apk`). Foque um campo de texto antes de `type`.
+## CLI legado (JSON de steps)
 
-## Config JSON
+```bash
+node cli.js tap 360 640 --device 127.0.0.1:5555
+node cli.js setup-ime
+node cli.js type "olá"
+node cli.js shot ./screenshots/tela.png
+node cli.js launch com.linkedin.android
+node cli.js config.example.json
+```
 
-| `action` | Campos | Efeito |
-|----------|--------|--------|
-| `tap` / `click` | `x`, `y` | Clique |
-| `type` / `text` | `text`, `method?` | Digita. Unicode → ADBKeyBoard; ASCII tenta `input text` |
-| `setup-ime` | — | Instala/ativa ADBKeyBoard |
-| `swipe` | `x1`,`y1`,`x2`,`y2`,`ms?` | Arrasta |
-| `key` | `code` | Ex.: `KEYCODE_BACK`, `KEYCODE_HOME`, `66` (Enter) |
-| `wait` | `ms` | Pausa |
-| `screenshot` | `path?` | Print PNG |
-| `launch` | `package`, `activity?` | Abre app |
-| `shell` | `cmd` | `adb shell …` |
-
-Device: campo `device` no JSON, `--device`, ou env `ANDROID_SERIAL` (padrão `127.0.0.1:5555`).
-
-## Coordenadas
-
-Origem no canto superior esquerdo. Redroid padrão: **720×1280**. Ative *Pointer location* nas opções de desenvolvedor para ver X/Y ao tocar.
+> Android 15 / redroid: acentos via [ADBKeyBoard](https://github.com/senzhk/ADBKeyboard) (`apks/ADBKeyboard.apk`).

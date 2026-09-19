@@ -8,10 +8,11 @@
 ```text
 README.md (visão)
 └── docs/README.md
+    ├── functionalities.md
+    ├── bdd-linkedin-login.md
     ├── plano-percepcao-imagem-hardware.md
-    ├── plano-implementacao-percepcao.md
-    └── functionalities.md
-        └── sources/android-control (implementação F0→F4)
+    └── plano-implementacao-percepcao.md
+        └── sources/android-control (libs Node + scripts/linkedin-login.js)
 ```
 
 Prompts novos: gravar em [`../../prompts/`](../../prompts/README.md) (próximo NNN na timeline do ConnectMax).

@@ -8,12 +8,12 @@
 
 | Artefato | Arquivo | Status |
 |----------|---------|--------|
-| Épicos | [`../epics/`](../epics/README.md) | Feito |
+| Funcionalidades | [`functionalities.md`](functionalities.md) | Feito |
+| BDD login LinkedIn | [`bdd-linkedin-login.md`](bdd-linkedin-login.md) | Feito |
 | Plano percepção imagem → hardware | [`plano-percepcao-imagem-hardware.md`](plano-percepcao-imagem-hardware.md) | Feito |
 | Plano de implementação | [`plano-implementacao-percepcao.md`](plano-implementacao-percepcao.md) | Feito |
-| Funcionalidades | [`functionalities.md`](functionalities.md) | Feito |
 | Sources | [`../sources/`](../sources/README.md) | Em curso |
 
 ## Próximos passos
 
-→ [`../epics/`](../epics/README.md) → EP-01 Capture + EP-04 Actuate em [`../sources/android-control`](../sources/android-control/README.md)
+→ [`bdd-linkedin-login.md`](bdd-linkedin-login.md) · `npm run linkedin-login` em [`../sources/android-control`](../sources/android-control/README.md)

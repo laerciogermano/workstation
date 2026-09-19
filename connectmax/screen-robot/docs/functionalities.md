@@ -3,154 +3,155 @@
 **Por quê:** capacidades observáveis do robô, todas expostas via **código Node**.  
 **Origem:** [visão](../README.md).  
 **Agente LinkedIn:** [`../../linkedin-agent/`](../../linkedin-agent/README.md).  
-**Negócio:** [`../../vendas/`](../../vendas/README.md).
+**Negócio:** [`../../vendas/`](../../vendas/README.md).  
+**Estimativas (min):** [`tasks.md`](tasks.md).
 
 **IDs:** **US-** = história (uma ação/capacidade). **SC-XX** = cenário sequencial (mudança de estado + unidade testável/paralelizável; toda US tem ≥1 SC).  
 Eventos e operações: **cada item é uma US**. Extração + sessão = **US-13 Extrair elementos e guardar sessão**.
 
-| ID | Funcionalidade | Descrição | Min |
-|----|----------------|-----------|-----|
-| US-01 | Provisionar um agente | Sobe/conecta o Android e deixa o device pronto para ADB | 60 |
-| US-02 | Evento de boot | Espera e confirma sinal de boot do device | 12 |
-| US-03 | Evento de app aberta | Espera e confirma app em foreground | 12 |
-| US-04 | Evento de tela estável | Espera UI estável (sem transição) | 12 |
-| US-05 | Evento de mudança de dump | Detecta mudança no dump de UI (uiautomator) | 12 |
-| US-06 | Instalar APKs | Baixa (versão na config) e instala pacotes no agent | 45 |
-| US-07 | Abrir aplicativo | Launch de package/activity no agent | 15 |
-| US-08 | tap | Toque em coords ou bounds | 15 |
-| US-09 | type | Digitar / injetar texto | 15 |
-| US-10 | scroll | Swipe / scroll na tela ou lista | 15 |
-| US-11 | screenshot | Capturar frame da tela | 15 |
-| US-12 | Resgatar coordenadas x,y | Localizar alvo na tela a partir de imagem de entrada | 15 |
-| US-13 | Extrair elementos e guardar sessão | Elementos tipados + árvore DOM a partir da tela; persistir/restaurar sessão | 150 |
+| ID | Funcionalidade | Descrição |
+|----|----------------|-----------|
+| US-01 | Provisionar um agente | Sobe/conecta o Android e deixa o device pronto para ADB |
+| US-02 | Evento de boot | Espera e confirma sinal de boot do device |
+| US-03 | Evento de app aberta | Espera e confirma app em foreground |
+| US-04 | Evento de tela estável | Espera UI estável (sem transição) |
+| US-05 | Evento de mudança de dump | Detecta mudança no dump de UI (uiautomator) |
+| US-06 | Instalar APKs | Baixa (versão na config) e instala pacotes no agent |
+| US-07 | Abrir aplicativo | Launch de package/activity no agent |
+| US-08 | tap | Toque em coords ou bounds |
+| US-09 | type | Digitar / injetar texto |
+| US-10 | scroll | Swipe / scroll na tela ou lista |
+| US-11 | screenshot | Capturar frame da tela |
+| US-12 | Resgatar coordenadas x,y | Localizar alvo na tela a partir de imagem de entrada |
+| US-13 | Extrair elementos e guardar sessão | Elementos tipados + árvore DOM a partir da tela; persistir/restaurar sessão |
 
 ## Entradas · Execução · Saídas
 
-### US-01 · Provisionar um agente (60 min)
+### US-01 · Provisionar um agente
 
 | Entradas | Execução | Saídas |
 |----------|----------|--------|
 | Config do device (`device.config.json`), runtime Android disponível | Orquestrar subir/conectar, serial online e boot completo | Agent pronto para ADB (serial online, boot ok) |
 
-| ID | Cenário | Entradas | Execução | Saídas | Min |
-|----|---------|----------|----------|--------|-----|
-| SC-01 | Subir / conectar o Android (agent) | Host, imagem/runtime, script de start | Subir o agent e estabelecer conexão | Processo do agent em execução e alcançável | 20 |
-| SC-02 | Garantir serial ADB online | Agent alcançável, serial esperado na config | `adb connect` / listar devices até serial `device` | Serial ADB online | 20 |
-| SC-03 | Aguardar boot completo | Serial online | Poll de boot/sys.boot_completed (ou equivalente) | Device com boot completo | 20 |
+| ID | Cenário | Entradas | Execução | Saídas |
+|----|---------|----------|----------|--------|
+| SC-01 | Subir / conectar o Android (agent) | Host, imagem/runtime, script de start | Subir o agent e estabelecer conexão | Processo do agent em execução e alcançável |
+| SC-02 | Garantir serial ADB online | Agent alcançável, serial esperado na config | `adb connect` / listar devices até serial `device` | Serial ADB online |
+| SC-03 | Aguardar boot completo | Serial online | Poll de boot/sys.boot_completed (ou equivalente) | Device com boot completo |
 
-### US-02 · Evento de boot (12 min)
+### US-02 · Evento de boot
 
 | Entradas | Execução | Saídas |
 |----------|----------|--------|
 | Serial online | Esperar sinal de boot | Boot sinalizado |
 
-| ID | Cenário | Entradas | Execução | Saídas | Min |
-|----|---------|----------|----------|--------|-----|
-| SC-04 | Sinal de boot é recebido | Serial online | Listener aguarda o evento de boot | Boot sinalizado | 12 |
+| ID | Cenário | Entradas | Execução | Saídas |
+|----|---------|----------|----------|--------|
+| SC-04 | Sinal de boot é recebido | Serial online | Listener aguarda o evento de boot | Boot sinalizado |
 
-### US-03 · Evento de app aberta (12 min)
+### US-03 · Evento de app aberta
 
 | Entradas | Execução | Saídas |
 |----------|----------|--------|
 | Package em foreground esperado | Esperar app em foreground | App aberta confirmada |
 
-| ID | Cenário | Entradas | Execução | Saídas | Min |
-|----|---------|----------|----------|--------|-----|
-| SC-05 | App em foreground é confirmada | Package esperado em foreground | Aguardar app aberta | App em foreground | 12 |
+| ID | Cenário | Entradas | Execução | Saídas |
+|----|---------|----------|----------|--------|
+| SC-05 | App em foreground é confirmada | Package esperado em foreground | Aguardar app aberta | App em foreground |
 
-### US-04 · Evento de tela estável (12 min)
+### US-04 · Evento de tela estável
 
 | Entradas | Execução | Saídas |
 |----------|----------|--------|
 | App em foreground | Esperar UI estável (sem transição) | Tela estável |
 
-| ID | Cenário | Entradas | Execução | Saídas | Min |
-|----|---------|----------|----------|--------|-----|
-| SC-06 | Tela fica estável | App em foreground | Aguardar ausência de transição de UI | Tela estável | 12 |
+| ID | Cenário | Entradas | Execução | Saídas |
+|----|---------|----------|----------|--------|
+| SC-06 | Tela fica estável | App em foreground | Aguardar ausência de transição de UI | Tela estável |
 
-### US-05 · Evento de mudança de dump (12 min)
+### US-05 · Evento de mudança de dump
 
 | Entradas | Execução | Saídas |
 |----------|----------|--------|
 | Dump anterior (opcional), serial | Detectar mudança no dump de UI | Dump atualizado disponível |
 
-| ID | Cenário | Entradas | Execução | Saídas | Min |
-|----|---------|----------|----------|--------|-----|
-| SC-07 | Dump de UI muda | Dump anterior (ou ausência), serial online | Detectar mudança no dump (uiautomator) | Dump atualizado disponível | 12 |
+| ID | Cenário | Entradas | Execução | Saídas |
+|----|---------|----------|----------|--------|
+| SC-07 | Dump de UI muda | Dump anterior (ou ausência), serial online | Detectar mudança no dump (uiautomator) | Dump atualizado disponível |
 
-### US-06 · Instalar APKs (45 min)
+### US-06 · Instalar APKs
 
 | Entradas | Execução | Saídas |
 |----------|----------|--------|
 | Agent provisionado, lista de apps e versões na config | Ler versão, baixar e instalar cada pacote | Apps instalados nas versões definidas |
 
-| ID | Cenário | Entradas | Execução | Saídas | Min |
-|----|---------|----------|----------|--------|-----|
-| SC-08 | Ler versão na config do dispositivo | `device.config.json` | Parsear `apps.*.version` / package | Versão e package alvo | 5 |
-| SC-09 | Baixar APK na versão definida | Package + versão, ferramenta de download (ex. apkeep) | Baixar APK/XAPK da versão pedida | Artefato APK no disco | 25 |
-| SC-10 | Instalar pacote no agent | Serial online, caminho do APK | `adb install` (ou equivalente) | Pacote instalado no agent | 15 |
+| ID | Cenário | Entradas | Execução | Saídas |
+|----|---------|----------|----------|--------|
+| SC-08 | Ler versão na config do dispositivo | `device.config.json` | Parsear `apps.*.version` / package | Versão e package alvo |
+| SC-09 | Baixar APK na versão definida | Package + versão, ferramenta de download (ex. apkeep) | Baixar APK/XAPK da versão pedida | Artefato APK no disco |
+| SC-10 | Instalar pacote no agent | Serial online, caminho do APK | `adb install` (ou equivalente) | Pacote instalado no agent |
 
-### US-07 · Abrir aplicativo (15 min)
+### US-07 · Abrir aplicativo
 
 | Entradas | Execução | Saídas |
 |----------|----------|--------|
 | Package (e activity opcional) | Launch do app no agent | App em foreground |
 
-| ID | Cenário | Entradas | Execução | Saídas | Min |
-|----|---------|----------|----------|--------|-----|
-| SC-11 | App é aberta no agent | Package (e activity opcional) | Launch do app no agent | App em foreground | 15 |
+| ID | Cenário | Entradas | Execução | Saídas |
+|----|---------|----------|----------|--------|
+| SC-11 | App é aberta no agent | Package (e activity opcional) | Launch do app no agent | App em foreground |
 
-### US-08 · tap (15 min)
+### US-08 · tap
 
 | Entradas | Execução | Saídas |
 |----------|----------|--------|
 | Coordenadas x,y ou bounds do elemento | Toque na tela | UI refletindo o tap |
 
-| ID | Cenário | Entradas | Execução | Saídas | Min |
-|----|---------|----------|----------|--------|-----|
-| SC-12 | Toque na tela | Coordenadas x,y ou bounds do elemento | Tap no alvo | UI refletindo o toque | 15 |
+| ID | Cenário | Entradas | Execução | Saídas |
+|----|---------|----------|----------|--------|
+| SC-12 | Toque na tela | Coordenadas x,y ou bounds do elemento | Tap no alvo | UI refletindo o toque |
 
-### US-09 · type (15 min)
+### US-09 · type
 
 | Entradas | Execução | Saídas |
 |----------|----------|--------|
 | Texto, campo focado ou coords | Digitar / injetar texto | Texto na UI |
 
-| ID | Cenário | Entradas | Execução | Saídas | Min |
-|----|---------|----------|----------|--------|-----|
-| SC-13 | Texto é digitado | Texto, campo focado ou coords | Type injeta o texto | Texto na UI | 15 |
+| ID | Cenário | Entradas | Execução | Saídas |
+|----|---------|----------|----------|--------|
+| SC-13 | Texto é digitado | Texto, campo focado ou coords | Type injeta o texto | Texto na UI |
 
-### US-10 · scroll (15 min)
+### US-10 · scroll
 
 | Entradas | Execução | Saídas |
 |----------|----------|--------|
 | Direção (up/down/left/right), distância ou bounds da área | Swipe / scroll na tela ou na lista | Conteúdo rolado; novos itens visíveis |
 
-| ID | Cenário | Entradas | Execução | Saídas | Min |
-|----|---------|----------|----------|--------|-----|
-| SC-14 | Conteúdo é rolado | Direção, distância ou bounds da área | Scroll/swipe | Conteúdo rolado; novos itens visíveis | 15 |
+| ID | Cenário | Entradas | Execução | Saídas |
+|----|---------|----------|----------|--------|
+| SC-14 | Conteúdo é rolado | Direção, distância ou bounds da área | Scroll/swipe | Conteúdo rolado; novos itens visíveis |
 
-### US-11 · screenshot (15 min)
+### US-11 · screenshot
 
 | Entradas | Execução | Saídas |
 |----------|----------|--------|
 | Serial, path de saída | Capturar frame da tela | Arquivo de imagem |
 
-| ID | Cenário | Entradas | Execução | Saídas | Min |
-|----|---------|----------|----------|--------|-----|
-| SC-15 | Print da tela é salvo | Serial, path de saída | Capturar screenshot | Arquivo de imagem no path | 15 |
+| ID | Cenário | Entradas | Execução | Saídas |
+|----|---------|----------|----------|--------|
+| SC-15 | Print da tela é salvo | Serial, path de saída | Capturar screenshot | Arquivo de imagem no path |
 
-### US-12 · Resgatar coordenadas x,y (imagem de entrada) (15 min)
+### US-12 · Resgatar coordenadas x,y (imagem de entrada)
 
 | Entradas | Execução | Saídas |
 |----------|----------|--------|
 | Imagem template, frame/tela atual | Template match / visão na tela | Coordenadas x,y (e confiança) |
 
-| ID | Cenário | Entradas | Execução | Saídas | Min |
-|----|---------|----------|----------|--------|-----|
-| SC-16 | Coordenadas a partir de imagem template | Imagem template, frame/tela atual | Match por visão/template | Coordenadas x,y (e confiança) | 15 |
+| ID | Cenário | Entradas | Execução | Saídas |
+|----|---------|----------|----------|--------|
+| SC-16 | Coordenadas a partir de imagem template | Imagem template, frame/tela atual | Match por visão/template | Coordenadas x,y (e confiança) |
 
-### US-13 · Extrair elementos e guardar sessão (150 min)
+### US-13 · Extrair elementos e guardar sessão
 
 Extrai elementos tipados **a partir de uma imagem**/frame/dump da tela (textos via OCR, ícones, imagens/fotos, listas, containers), monta a **árvore de componentes** (estilo DOM) e **persiste/restaura** o contexto da sessão.
 
@@ -158,10 +159,10 @@ Extrai elementos tipados **a partir de uma imagem**/frame/dump da tela (textos v
 |----------|----------|--------|
 | Imagem da tela (screenshot/frame) ou dump; contexto (device, apps, etapa, paths) | OCR e reconhecimento de elementos; compor hierarquia; persistir/restaurar sessão | Elementos tipados + árvore DOM; sessão em disco / contexto restaurado |
 
-| ID | Cenário | Entradas | Execução | Saídas | Min |
-|----|---------|----------|----------|--------|-----|
-| SC-17 | Persistir sessão em arquivo | Estado em memória, path da sessão | Serializar e gravar | Arquivo de sessão | 15 |
-| SC-18 | Restaurar sessão do arquivo | Arquivo de sessão existente | Ler e reaplicar contexto | Estado restaurado no runtime | 15 |
+| ID | Cenário | Entradas | Execução | Saídas |
+|----|---------|----------|----------|--------|
+| SC-17 | Persistir sessão em arquivo | Estado em memória, path da sessão | Serializar e gravar | Arquivo de sessão |
+| SC-18 | Restaurar sessão do arquivo | Arquivo de sessão existente | Ler e reaplicar contexto | Estado restaurado no runtime |
 
 ## Cenário de aceitação (integração)
 

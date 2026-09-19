@@ -87,6 +87,34 @@ gantt
   TSK-025 Recuperar sessao              :tsk25, after tsk24, 15m
 ```
 
+| ID | Status | Início | Fim | Estimativa |
+|----|--------|--------|-----|------------|
+| TSK-001 | Todo | | | 60 min |
+| TSK-002 | Todo | | | 20 min |
+| TSK-003 | Todo | | | 20 min |
+| TSK-004 | Todo | | | 20 min |
+| TSK-005 | Todo | | | 24 min |
+| TSK-006 | Todo | | | 12 min |
+| TSK-007 | Todo | | | 12 min |
+| TSK-008 | Todo | | | 12 min |
+| TSK-009 | Todo | | | 12 min |
+| TSK-010 | Todo | | | 45 min |
+| TSK-011 | Todo | | | 5 min |
+| TSK-012 | Todo | | | 25 min |
+| TSK-013 | Todo | | | 15 min |
+| TSK-014 | Todo | | | 15 min |
+| TSK-015 | Todo | | | 15 min |
+| TSK-016 | Todo | | | 15 min |
+| TSK-017 | Todo | | | 15 min |
+| TSK-018 | Todo | | | 15 min |
+| TSK-019 | Todo | | | 15 min |
+| TSK-020 | Todo | | | 15 min |
+| TSK-021 | Todo | | | 120 min |
+| TSK-022 | Todo | | | 15 min |
+| TSK-023 | Todo | | | 15 min |
+| TSK-024 | Todo | | | 15 min |
+| TSK-025 | Todo | | | 15 min |
+
 ## Próximos passos
 
 → Roadmap: [`roadmap.md`](roadmap.md)  

@@ -2,10 +2,11 @@
 # Conecta via ADB e abre a tela com scrcpy.
 set -euo pipefail
 
-ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 cd "$ROOT"
 # shellcheck disable=SC1091
-source "$(dirname "$0")/_docker.sh"
+source "$SCRIPT_DIR/_docker.sh"
 
 if [[ -f .env ]]; then
   # shellcheck disable=SC1091

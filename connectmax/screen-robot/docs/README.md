@@ -8,6 +8,7 @@
 
 | Artefato | Arquivo | Status |
 |----------|---------|--------|
+| Vision (EN) — US title + description | [`vision-en.md`](vision-en.md) | Feito |
 | Funcionalidades (pasta por US) | [`functionalities/`](functionalities/README.md) | Feito |
 | Tasks (árvore + Gantt) | [`tasks.md`](tasks.md) | Feito |
 | BDD por nó | [`bdd-nos.md`](bdd-nos.md) | Feito |

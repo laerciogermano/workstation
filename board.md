@@ -9,11 +9,127 @@ Quando houver hierarquia de tasks, a raia usa **Mermaid** (árvore + cor de stat
 
 ## P1 — ConnectMax
 
+Percepção por imagem → ação (redroid → hardware).  
+Legenda: verde = Done · amarelo = Doing · cinza = Todo  
+Estimativas: horas de **esforço IA** (não humano).
+
+```mermaid
+flowchart TD
+  F01[F0.1 Contratos]
+  F02[F0.2 AdbCapture]
+  F03[F0.3 AdbActuate]
+  F04[F0.4 Smoke]
+  F11[F1.1 Schema]
+  F12[F1.2 OCR]
+  F13[F1.3 Vision]
+  F14[F1.4 Merge]
+  F15[F1.5 CLI perceive]
+  F21[F2.1 Matcher]
+  F22[F2.2 LLM Decide]
+  F23[F2.3 Steps goal]
+  F24[F2.4 Example goal]
+  F31[F3.1 Wait/retry]
+  F32[F3.2 Scroll]
+  F33[F3.3 Calibracao]
+  F34[F3.4 Metricas]
+  F41[F4.1 Revisar contratos]
+  F42[F4.2 Capture agent]
+  F43[F4.3 Actuate agent]
+  F44[F4.4 Flag + regressao]
+  F01 --> F02
+  F01 --> F03
+  F02 --> F04
+  F03 --> F04
+  F04 --> F11
+  F11 --> F12
+  F11 --> F13
+  F12 --> F14
+  F13 --> F14
+  F14 --> F15
+  F15 --> F21
+  F15 --> F22
+  F21 --> F23
+  F22 --> F23
+  F23 --> F24
+  F24 --> F31
+  F24 --> F32
+  F24 --> F33
+  F31 --> F34
+  F32 --> F34
+  F33 --> F34
+  F01 --> F41
+  F34 --> F42
+  F34 --> F43
+  F41 --> F42
+  F41 --> F43
+  F42 --> F44
+  F43 --> F44
+```
+
+```mermaid
+gantt
+  title Percepção por imagem → ação (minutos de esforço IA)
+  dateFormat X
+  axisFormat %s
+
+  section F0 Fundamentos
+  F0.1 Contratos           :a01, 0, 24m
+  F0.2 AdbCapture          :a02, after a01, 30m
+  F0.3 AdbActuate          :a03, after a01, 24m
+  F0.4 Smoke               :a04, after a02, 18m
+
+  section F1 Perceive
+  F1.1 Schema              :b01, after a04, 24m
+  F1.2 OCR                 :b02, after b01, 60m
+  F1.3 Vision              :b03, after b01, 90m
+  F1.4 Merge               :b04, after b02, 36m
+  F1.5 CLI + overlay       :b05, after b04, 30m
+
+  section F2 Decide
+  F2.1 Matcher             :c01, after b05, 36m
+  F2.2 LLM Decide          :c02, after b05, 48m
+  F2.3 Steps goal          :c03, after c01, 48m
+  F2.4 Example E2E         :c04, after c03, 24m
+
+  section F3 Robustez
+  F3.1 Wait/retry          :d01, after c04, 30m
+  F3.2 Scroll              :d02, after c04, 36m
+  F3.3 Calibracao          :d03, after c04, 30m
+  F3.4 Metricas            :d04, after d01, 24m
+
+  section F4 Hardware
+  F4.1 Revisar contratos   :e01, after d04, 18m
+  F4.2 Capture agent       :e02, after e01, 90m
+  F4.3 Actuate agent       :e03, after e01, 90m
+  F4.4 Flag + regressao    :e04, after e02, 48m
+```
+
 | Todo | Doing | Done |
 |------|-------|------|
+| F0.1 Contratos | | |
+| F0.2 AdbCapture | | |
+| F0.3 AdbActuate | | |
+| F0.4 Smoke | | |
+| F1.1 Schema | | |
+| F1.2 OCR | | |
+| F1.3 Vision | | |
+| F1.4 Merge | | |
+| F1.5 CLI perceive | | |
+| F2.1 Matcher | | |
+| F2.2 LLM Decide | | |
+| F2.3 Steps goal | | |
+| F2.4 Example goal | | |
+| F3.1 Wait/retry | | |
+| F3.2 Scroll | | |
+| F3.3 Calibração | | |
+| F3.4 Métricas | | |
+| F4.1 Revisar contratos | | |
+| F4.2 Capture agent | | |
+| F4.3 Actuate agent | | |
+| F4.4 Flag + regressão | | |
 | Criar épico | | |
 
-→ [`connectmax/`](connectmax/README.md)
+→ [`connectmax/`](connectmax/README.md) · [`plano percepção`](connectmax/docs/plano-percepcao-imagem-hardware.md) · [`plano implementação`](connectmax/docs/plano-implementacao-percepcao.md)
 
 ---
 

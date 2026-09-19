@@ -8,7 +8,7 @@
 
 Barra **EP**; **US** só quando o épico tem mais de uma história (SC em [`tasks.md`](tasks.md)).  
 EP com 1 US (EP-01, EP-03, EP-05): só o épico.  
-Cores (só 2): **EP** = azul · **US** = cinza.  
+Cores (só 2): **EP** = azul · **US** = cinza · fundo preto.  
 US-01 → US-02 sequenciais; **US-03..05** paralelas após US-02; **US-06..13** paralelas após US-03..05; US-14..16 sequenciais.  
 Soma esforço: **408 min** · caminho crítico: **249 min**.
 
@@ -17,13 +17,30 @@ Soma esforço: **408 min** · caminho crítico: **249 min**.
 config:
   theme: base
   themeVariables:
+    darkMode: true
+    background: '#000000'
+    primaryTextColor: '#ffffff'
+    secondaryTextColor: '#ffffff'
+    tertiaryTextColor: '#ffffff'
+    textColor: '#ffffff'
+    lineColor: '#333333'
+    mainBkg: '#000000'
+    secondaryColor: '#000000'
+    tertiaryColor: '#000000'
+    sectionBkgColor: '#000000'
+    sectionBkgColor2: '#000000'
+    altSectionBkgColor: '#000000'
+    gridColor: '#222222'
+    excludeBkgColor: '#000000'
+    todayLineColor: '#444444'
     doneTaskBkgColor: '#2563eb'
     doneTaskBorderColor: '#1d4ed8'
     taskBkgColor: '#94a3b8'
     taskBorderColor: '#64748b'
-    taskTextColor: '#0f172a'
+    taskTextColor: '#ffffff'
+    taskTextDarkColor: '#ffffff'
     taskTextLightColor: '#ffffff'
-    taskTextOutsideColor: '#0f172a'
+    taskTextOutsideColor: '#ffffff'
     critBkgColor: '#2563eb'
     critBorderColor: '#1d4ed8'
     activeTaskBkgColor: '#94a3b8'

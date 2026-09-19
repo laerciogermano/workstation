@@ -7,16 +7,14 @@ Artefato **3** do [discovery](README.md). Critérios de aceite em Gherkin — **
 ## Regras
 
 1. Só depois do catálogo de cenários fechado.
-2. **Um bloco Gherkin por US** (Entradas / Execução / Saídas da estória).
-3. **Um bloco Gherkin por SC** (Entradas / Execução / Saídas do cenário).
+2. Título da US (maior); Gherkin da US **logo abaixo**, sem subtítulo repetido.
+3. Cada SC: um heading `SC-NN — título` e o Gherkin abaixo (sem negrito duplicado).
 4. Não inventar US/SC que não existam no catálogo.
 
 ## Formato
 
 ```markdown
-## US-NN — <título>
-
-### US-NN
+## US-NN — <título da estória>
 
 ```gherkin
 Cenário: US-NN …
@@ -25,9 +23,7 @@ Cenário: US-NN …
   Então …
 ```
 
-### SC-NN
-
-**\<título do cenário\>**
+### SC-NN — <título do cenário>
 
 ```gherkin
 Cenário: SC-NN …

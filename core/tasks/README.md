@@ -1,6 +1,6 @@
 # Tasks
 
-Árvore de execução, Gantt e kanban **Todo / Doing / Done** por projeto (prioridade maior → menor).
+Árvore de execução, ordem/esforço e kanban **Todo / Doing / Done** por projeto (prioridade maior → menor).
 
 ---
 
@@ -12,100 +12,58 @@ Estimativas: minutos IA.
 
 ### Árvore de execução
 
-```mermaid
-flowchart TB
-  subgraph P[1 Provisionar agente]
-    P1[Subir e conectar] --> P2[Serial ADB online]
-    P2 --> P3[Boot completo]
-  end
-
-  subgraph I[2 Instalar APKs]
-    I1[Ler versao na config] --> I2[Baixar APK]
-    I2 --> I3[Instalar no agent]
-  end
-
-  subgraph E[3 Receber eventos]
-    E1[Boot] --> E2[App aberta]
-    E2 --> E3[Tela estavel]
-    E3 --> E4[Mudanca de dump]
-  end
-
-  subgraph O[4 Executar operacoes]
-    O1[Abrir aplicativo] --> O2[tap]
-    O2 --> O3[type]
-    O3 --> O4[key]
-    O4 --> O5[screenshot]
-    O5 --> O6[Resgatar xy por imagem]
-  end
-
-  subgraph X[5 Extrair elementos]
-    X1[Texto] --> X6[Arvore DOM]
-    X2[Icone] --> X6
-    X3[Imagem e foto] --> X6
-    X4[Lista] --> X6
-    X5[Container] --> X6
-  end
-
-  subgraph S[6 Guardar sessao]
-    S1[Persistir] --> S2[Restaurar]
-  end
-
-  P3 --> I1
-  I3 --> E1
-  E4 --> O1
-  O6 --> X1
-  X6 --> S1
+```text
+screen-robot
+├── 1. Provisionar um agente
+│   ├── Subir / conectar o Android (agent)
+│   ├── Garantir serial ADB online
+│   └── Aguardar boot completo
+├── 2. Instalar APKs
+│   ├── Ler versão na config do dispositivo
+│   ├── Baixar APK na versão definida
+│   └── Instalar pacote no agent
+├── 3. Receber eventos
+│   ├── Evento de boot
+│   ├── Evento de app aberta
+│   ├── Evento de tela estável
+│   └── Evento de mudança de dump
+├── 4. Executar operações
+│   ├── Abrir aplicativo
+│   ├── tap
+│   ├── type
+│   ├── key
+│   ├── screenshot
+│   └── Resgatar coordenadas x,y (imagem de entrada)
+├── 5. Extrair elementos e informações
+│   ├── Nó Texto
+│   ├── Nó Ícone
+│   ├── Nó Imagem / foto
+│   ├── Nó Lista (itens filhos + scroll)
+│   ├── Nó Container
+│   └── Montar árvore DOM (raiz → filhos)
+└── 6. Guardar estado de sessão
+    ├── Persistir sessão em arquivo
+    └── Restaurar sessão do arquivo
 ```
 
-### Gantt
+### Ordem e esforço (minutos IA)
 
-```mermaid
-gantt
-  title screen-robot funcionalidades minutos IA
-  dateFormat X
-  axisFormat %s
+Sequência das maiores; filhas dentro de cada uma.
 
-  section 1 Provisionar
-  Provisionar um agente     :crit, p0, 0, 60m
-  Subir e conectar agent    :p1, 0, 20m
-  Serial ADB online         :p2, after p1, 20m
-  Boot completo             :p3, after p2, 20m
-
-  section 2 Instalar APKs
-  Instalar APKs             :crit, i0, after p0, 45m
-  Ler versao na config      :i1, after p0, 5m
-  Baixar APK                :i2, after i1, 25m
-  Instalar no agent         :i3, after i2, 15m
-
-  section 3 Receber eventos
-  Receber eventos           :crit, e0, after i0, 48m
-  Evento boot               :e1, after i0, 12m
-  Evento app aberta         :e2, after e1, 12m
-  Evento tela estavel       :e3, after e2, 12m
-  Evento mudanca de dump    :e4, after e3, 12m
-
-  section 4 Operacoes
-  Executar operacoes        :crit, o0, after e0, 90m
-  Abrir aplicativo          :o1, after e0, 15m
-  tap                       :o2, after o1, 15m
-  type                      :o3, after o2, 15m
-  key                       :o4, after o3, 15m
-  screenshot                :o5, after o4, 15m
-  Resgatar xy por imagem    :o6, after o5, 15m
-
-  section 5 Extrair
-  Extrair elementos         :crit, x0, after o0, 120m
-  No Texto                  :x1, after o0, 20m
-  No Icone                  :x2, after x1, 20m
-  No Imagem e foto          :x3, after x2, 24m
-  No Lista                  :x4, after x3, 24m
-  No Container              :x5, after x4, 12m
-  Montar arvore DOM         :x6, after x5, 20m
-
-  section 6 Sessao
-  Guardar estado de sessao  :crit, s0, after x0, 30m
-  Persistir sessao          :s1, after x0, 15m
-  Restaurar sessao          :s2, after s1, 15m
+```text
+1. Provisionar um agente ........................ 60
+   Subir / conectar · Serial online · Boot
+2. Instalar APKs ................................ 45
+   Ler versão · Baixar APK · Instalar
+3. Receber eventos .............................. 48
+   Boot · App aberta · Tela estável · Dump
+4. Executar operações ........................... 90
+   Abrir app · tap · type · key · screenshot · xy por imagem
+5. Extrair elementos ............................ 120
+   Texto · Ícone · Imagem/foto · Lista · Container · Árvore DOM
+6. Guardar estado de sessão ..................... 30
+   Persistir · Restaurar
+                                        Total = 393
 ```
 
 | # | Maior | Filhas | Min IA |
@@ -126,7 +84,6 @@ gantt
 
 → [`screen-robot/`](../../connectmax/screen-robot/README.md) · [`functionalities`](../../connectmax/screen-robot/docs/functionalities.md)
 
----
 ---
 
 ## P1b — ConnectMax · vendas

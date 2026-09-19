@@ -43,6 +43,7 @@ Ver [`docs/functionalities/`](docs/functionalities/README.md).
 
 | Artefato | Caminho |
 |----------|---------|
+| Vision (EN) | [`docs/vision-en.md`](docs/vision-en.md) |
 | Funcionalidades | [`docs/functionalities/`](docs/functionalities/README.md) |
 | BDD login LinkedIn | [`docs/bdd-linkedin-login.md`](docs/bdd-linkedin-login.md) |
 | Sources (Node + runtimes) | [`sources/`](sources/README.md) |

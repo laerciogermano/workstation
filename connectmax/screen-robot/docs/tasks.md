@@ -12,7 +12,7 @@ Estimativas: minutos IA · **1 dia = 8h = 480 min**.
 ### Árvore de execução
 
 ```text
-screen-robot (318 min caminho · 408 min soma)
+screen-robot (273 min caminho · 408 min soma)
 ├── US-01 Provisionar um agente (60 min)
 │   ├── SC-01 Subir / conectar o Android (agent) (20 min)
 │   ├── SC-02 Garantir serial ADB online (20 min)
@@ -41,7 +41,7 @@ screen-robot (318 min caminho · 408 min soma)
 │   └── SC-15 Print da tela é salvo (15 min)
 ├── ∥ US-12 Resgatar coordenadas x,y a partir de uma imagem (15 min)
 │   └── SC-16 Coordenadas a partir de imagem template (15 min)
-├── US-13 Extrair elementos (120 min)
+├── ∥ US-13 Extrair elementos (120 min)
 │   └── SC-17 Extrair elementos tipados e árvore DOM (120 min)
 ├── US-14 Salvar sessão (15 min)
 │   └── SC-18 Salvar sessão em arquivo (15 min)
@@ -51,17 +51,17 @@ screen-robot (318 min caminho · 408 min soma)
     └── SC-20 Recuperar sessão do arquivo (15 min)
 ```
 
-`∥` = paralelizáveis (US-06..12; caminho do grupo = 45 min).
+`∥` = paralelizáveis (US-06..13; caminho do grupo = 120 min).
 
-### Gantt — histórias (US-06..12 paralelas)
+### Gantt — histórias (US-06..13 paralelas)
 
 Barras = US apenas (SC ficam na árvore acima).  
-US-01..05 e US-13..16 sequenciais; **US-06..12** partem juntas após US-05.  
-Soma esforço: **408 min** · caminho crítico: **318 min**.
+US-01..05 e US-14..16 sequenciais; **US-06..13** partem juntas após US-05.  
+Soma esforço: **408 min** · caminho crítico: **273 min**.
 
 ```mermaid
 gantt
-  title screen-robot US minutos IA (paralelo 06-12)
+  title screen-robot US minutos IA (paralelo 06-13)
   dateFormat X
   axisFormat %s
 
@@ -80,9 +80,9 @@ gantt
   US-10 scroll                          :us10, after us05, 15m
   US-11 screenshot                      :us11, after us05, 15m
   US-12 Resgatar coordenadas x,y        :us12, after us05, 15m
+  US-13 Extrair elementos               :crit, us13, after us05, 120m
 
   section Apos paralelo
-  US-13 Extrair elementos               :crit, us13, after us06, 120m
   US-14 Salvar sessao                   :us14, after us13, 15m
   US-15 Remover sessao                  :us15, after us14, 15m
   US-16 Recuperar sessao                :us16, after us15, 15m

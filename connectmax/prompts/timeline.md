@@ -50,4 +50,5 @@ Como registrar: [`README.md`](README.md).
 | 041 | 2026-09-19 | Tasks fica como 7 | [041-2026-09-19-tasks-como-7.md](041-2026-09-19-tasks-como-7.md) | Renomeia tasks.md → 7.tasks.md no screen-robot. |
 | 042 | 2026-09-19 | Descrição por atividade em tasks | [042-2026-09-19-tasks-descricao-atividades.md](042-2026-09-19-tasks-descricao-atividades.md) | Tabela de `7.tasks.md` com descrição de cada TSK. |
 | 043 | 2026-09-19 | Coluna Output em tasks | [043-2026-09-19-tasks-coluna-output.md](043-2026-09-19-tasks-coluna-output.md) | Adiciona Output (saída) por TSK em `7.tasks.md`. |
+| 044 | 2026-09-19 | Processo só bullets E/E/S | [044-2026-09-19-processo-so-bullets-ees.md](044-2026-09-19-processo-so-bullets-ees.md) | Remove árvore/fluxo do processo; fica entradas/execução/saídas. |
 | 043 | 2026-09-19 | Epics renomear | [043-2026-09-19-epics-renomear.md](043-2026-09-19-epics-renomear.md) | Renomeia 2.features.md → 2.epics.md no screen-robot. |

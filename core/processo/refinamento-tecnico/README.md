@@ -4,18 +4,18 @@ Transformar o discovery em plano executável.
 
 ## Entradas
 
-- Visão / brief do discovery
-- Escopo preliminar e hipóteses
+- [Documento de visão](../discovery/) do discovery (funcionalidades com título, descrição e capa)
+- [Documento de épicos](../discovery/) (histórias, BDD e protótipos de alta fidelidade)
 - Restrições técnicas e de negócio
 - Stack e padrões já adotados no projeto
 
 ## Execução
 
-- Desenhar arquitetura, contratos e dados
+- Desenhar arquitetura, contratos e dados a partir da visão e dos épicos
 - Identificar riscos e mitigações
-- Definir critérios de aceite e de pronto
+- Consolidar critérios de pronto (aceite já vem do BDD do discovery)
 - Estimar esforço e dependências
-- Quebrar em tarefas / histórias priorizadas
+- Quebrar em tarefas priorizadas
 
 ## Saídas
 

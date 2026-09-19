@@ -10,7 +10,7 @@ Cada etapa documenta **entradas**, **execução** e **saídas**.
 
 | Etapa | Pasta | Objetivo |
 |-------|-------|----------|
-| Discovery | [`discovery/`](discovery/) | Entender o problema, valor e escopo |
+| Discovery | [`discovery/`](discovery/) | Visão (funcionalidades) + épicos (histórias, BDD, protótipos HF) |
 | Refinamento técnico | [`refinamento-tecnico/`](refinamento-tecnico/) | Detalhar solução, riscos e critérios técnicos |
 | Desenvolvimento | [`desenvolvimento/`](desenvolvimento/) | Implementar o que foi acordado |
 | Testes | [`testes/`](testes/) | Validar comportamento e qualidade |
@@ -24,15 +24,15 @@ flowchart TB
   subgraph D["1. Discovery"]
     direction TB
     D_E["Entradas<br/>demanda / problema<br/>contexto e restrições<br/>stakeholders<br/>dados e feedback"]
-    D_X["Execução<br/>mapear problema e valor<br/>métricas de sucesso<br/>escopo in/out<br/>premissas e hipóteses<br/>validar com stakeholders"]
-    D_S["Saídas<br/>visão / brief<br/>hipóteses<br/>escopo preliminar"]
+    D_X["Execução<br/>mapear problema e valor<br/>métricas e escopo<br/>funcionalidades (título, descrição, capa)<br/>épicos com histórias, BDD e protótipos HF<br/>validar com stakeholders"]
+    D_S["Saídas<br/>documento de visão<br/>documento de épicos"]
     D_E --> D_X --> D_S
   end
 
   subgraph R["2. Refinamento técnico"]
     direction TB
-    R_E["Entradas<br/>visão / brief<br/>escopo e hipóteses<br/>restrições<br/>stack e padrões"]
-    R_X["Execução<br/>arquitetura e contratos<br/>riscos e mitigações<br/>critérios de aceite<br/>estimativas<br/>quebra em tarefas"]
+    R_E["Entradas<br/>visão (funcionalidades)<br/>épicos (histórias, BDD, protótipos HF)<br/>restrições<br/>stack e padrões"]
+    R_X["Execução<br/>arquitetura e contratos<br/>riscos e mitigações<br/>critérios de pronto<br/>estimativas<br/>quebra em tarefas"]
     R_S["Saídas<br/>desenho técnico / ADR<br/>critérios de pronto<br/>backlog priorizado"]
     R_E --> R_X --> R_S
   end

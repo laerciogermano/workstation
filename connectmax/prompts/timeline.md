@@ -31,3 +31,4 @@ Como registrar: [`README.md`](README.md).
 | 022 | 2026-09-19 | Funcionalidades como MD único | [022-2026-09-19-functionalities-md-unico.md](022-2026-09-19-functionalities-md-unico.md) | Pasta por US virou `docs/functionalities.md` com todas as histórias. |
 | 023 | 2026-09-19 | Gantt só com histórias | [023-2026-09-19-gantt-somente-estorias.md](023-2026-09-19-gantt-somente-estorias.md) | Gantt do tasks.md com US sequenciais; SC só na árvore. |
 | 024 | 2026-09-19 | US-07..12 paralelizáveis | [024-2026-09-19-us-07-12-paralelizaveis.md](024-2026-09-19-us-07-12-paralelizaveis.md) | Gantt: abrir/tap/type/scroll/screenshot/xy em paralelo; caminho 333 min. |
+| 025 | 2026-09-19 | US-06 paralelizável | [025-2026-09-19-us-06-paralelizavel.md](025-2026-09-19-us-06-paralelizavel.md) | Gantt: US-06..12 em paralelo após US-05; caminho 318 min. |

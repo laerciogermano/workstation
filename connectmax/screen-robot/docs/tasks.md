@@ -12,7 +12,7 @@ Estimativas: minutos IA · **1 dia = 8h = 480 min**.
 ### Árvore de execução
 
 ```text
-screen-robot (333 min caminho · 408 min soma)
+screen-robot (318 min caminho · 408 min soma)
 ├── US-01 Provisionar um agente (60 min)
 │   ├── SC-01 Subir / conectar o Android (agent) (20 min)
 │   ├── SC-02 Garantir serial ADB online (20 min)
@@ -25,7 +25,7 @@ screen-robot (333 min caminho · 408 min soma)
 │   └── SC-06 Tela fica estável (12 min)
 ├── US-05 Evento de mudança de dump (12 min)
 │   └── SC-07 Dump de UI muda (12 min)
-├── US-06 Instalar APKs (45 min)
+├── ∥ US-06 Instalar APKs (45 min)
 │   ├── SC-08 Ler versão na config do dispositivo (5 min)
 │   ├── SC-09 Baixar APK na versão definida (25 min)
 │   └── SC-10 Instalar pacote no agent (15 min)
@@ -51,17 +51,17 @@ screen-robot (333 min caminho · 408 min soma)
     └── SC-20 Recuperar sessão do arquivo (15 min)
 ```
 
-`∥` = paralelizáveis (US-07..12; caminho do grupo = 15 min).
+`∥` = paralelizáveis (US-06..12; caminho do grupo = 45 min).
 
-### Gantt — histórias (US-07..12 paralelas)
+### Gantt — histórias (US-06..12 paralelas)
 
 Barras = US apenas (SC ficam na árvore acima).  
-US-01..06 e US-13..16 sequenciais; **US-07..12** partem juntas após US-06.  
-Soma esforço: **408 min** · caminho crítico: **333 min**.
+US-01..05 e US-13..16 sequenciais; **US-06..12** partem juntas após US-05.  
+Soma esforço: **408 min** · caminho crítico: **318 min**.
 
 ```mermaid
 gantt
-  title screen-robot US minutos IA (paralelo 07-12)
+  title screen-robot US minutos IA (paralelo 06-12)
   dateFormat X
   axisFormat %s
 
@@ -71,18 +71,18 @@ gantt
   US-03 Evento de app aberta            :us03, after us02, 12m
   US-04 Evento de tela estavel          :us04, after us03, 12m
   US-05 Evento de mudanca de dump       :us05, after us04, 12m
-  US-06 Instalar APKs                   :us06, after us05, 45m
 
-  section Paralelo operacoes
-  US-07 Abrir aplicativo                :us07, after us06, 15m
-  US-08 tap                             :us08, after us06, 15m
-  US-09 type                            :us09, after us06, 15m
-  US-10 scroll                          :us10, after us06, 15m
-  US-11 screenshot                      :us11, after us06, 15m
-  US-12 Resgatar coordenadas x,y        :us12, after us06, 15m
+  section Paralelo
+  US-06 Instalar APKs                   :us06, after us05, 45m
+  US-07 Abrir aplicativo                :us07, after us05, 15m
+  US-08 tap                             :us08, after us05, 15m
+  US-09 type                            :us09, after us05, 15m
+  US-10 scroll                          :us10, after us05, 15m
+  US-11 screenshot                      :us11, after us05, 15m
+  US-12 Resgatar coordenadas x,y        :us12, after us05, 15m
 
   section Apos paralelo
-  US-13 Extrair elementos               :crit, us13, after us07, 120m
+  US-13 Extrair elementos               :crit, us13, after us06, 120m
   US-14 Salvar sessao                   :us14, after us13, 15m
   US-15 Remover sessao                  :us15, after us14, 15m
   US-16 Recuperar sessao                :us16, after us15, 15m

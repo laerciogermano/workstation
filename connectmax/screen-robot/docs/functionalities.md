@@ -5,17 +5,17 @@
 **Agente LinkedIn:** [`../../linkedin-agent/`](../../linkedin-agent/README.md).  
 **Negócio:** [`../../vendas/`](../../vendas/README.md).
 
-**IDs:** **US-** = história (uma ação/capacidade). **SC-** = cenário: mudança de estado + unidade testável e paralelizável (sob US-01, US-02 e US-13).  
+**IDs:** **US-** = história (uma ação/capacidade). **SC-** = cenário: mudança de estado + unidade testável e paralelizável (sob US-01, US-06 e US-13).  
 Eventos e operações: **cada item é uma US**. Extração + sessão = **US-13 Extrair elementos e guardar sessão**.
 
 | ID | Funcionalidade | Descrição | Min |
 |----|----------------|-----------|-----|
 | US-01 | Provisionar um agente | Sobe/conecta o Android e deixa o device pronto para ADB | 60 |
-| US-02 | Instalar APKs | Baixa (versão na config) e instala pacotes no agent | 45 |
-| US-03 | Evento de boot | Espera e confirma sinal de boot do device | 12 |
-| US-04 | Evento de app aberta | Espera e confirma app em foreground | 12 |
-| US-05 | Evento de tela estável | Espera UI estável (sem transição) | 12 |
-| US-06 | Evento de mudança de dump | Detecta mudança no dump de UI (uiautomator) | 12 |
+| US-02 | Evento de boot | Espera e confirma sinal de boot do device | 12 |
+| US-03 | Evento de app aberta | Espera e confirma app em foreground | 12 |
+| US-04 | Evento de tela estável | Espera UI estável (sem transição) | 12 |
+| US-05 | Evento de mudança de dump | Detecta mudança no dump de UI (uiautomator) | 12 |
+| US-06 | Instalar APKs | Baixa (versão na config) e instala pacotes no agent | 45 |
 | US-07 | Abrir aplicativo | Launch de package/activity no agent | 15 |
 | US-08 | tap | Toque em coords ou bounds | 15 |
 | US-09 | type | Digitar / injetar texto | 15 |
@@ -38,7 +38,31 @@ Eventos e operações: **cada item é uma US**. Extração + sessão = **US-13 E
 | SC-01.2 | Garantir serial ADB online | Agent alcançável, serial esperado na config | `adb connect` / listar devices até serial `device` | Serial ADB online | 20 |
 | SC-01.3 | Aguardar boot completo | Serial online | Poll de boot/sys.boot_completed (ou equivalente) | Device com boot completo | 20 |
 
-### US-02 · Instalar APKs (45 min)
+### US-02 · Evento de boot (12 min)
+
+| Entradas | Execução | Saídas |
+|----------|----------|--------|
+| Serial online | Esperar sinal de boot | Boot sinalizado |
+
+### US-03 · Evento de app aberta (12 min)
+
+| Entradas | Execução | Saídas |
+|----------|----------|--------|
+| Package em foreground esperado | Esperar app em foreground | App aberta confirmada |
+
+### US-04 · Evento de tela estável (12 min)
+
+| Entradas | Execução | Saídas |
+|----------|----------|--------|
+| App em foreground | Esperar UI estável (sem transição) | Tela estável |
+
+### US-05 · Evento de mudança de dump (12 min)
+
+| Entradas | Execução | Saídas |
+|----------|----------|--------|
+| Dump anterior (opcional), serial | Detectar mudança no dump de UI | Dump atualizado disponível |
+
+### US-06 · Instalar APKs (45 min)
 
 | Entradas | Execução | Saídas |
 |----------|----------|--------|
@@ -46,33 +70,9 @@ Eventos e operações: **cada item é uma US**. Extração + sessão = **US-13 E
 
 | ID | Cenário | Entradas | Execução | Saídas | Min |
 |----|---------|----------|----------|--------|-----|
-| SC-02.1 | Ler versão na config do dispositivo | `device.config.json` | Parsear `apps.*.version` / package | Versão e package alvo | 5 |
-| SC-02.2 | Baixar APK na versão definida | Package + versão, ferramenta de download (ex. apkeep) | Baixar APK/XAPK da versão pedida | Artefato APK no disco | 25 |
-| SC-02.3 | Instalar pacote no agent | Serial online, caminho do APK | `adb install` (ou equivalente) | Pacote instalado no agent | 15 |
-
-### US-03 · Evento de boot (12 min)
-
-| Entradas | Execução | Saídas |
-|----------|----------|--------|
-| Serial online | Esperar sinal de boot | Boot sinalizado |
-
-### US-04 · Evento de app aberta (12 min)
-
-| Entradas | Execução | Saídas |
-|----------|----------|--------|
-| Package em foreground esperado | Esperar app em foreground | App aberta confirmada |
-
-### US-05 · Evento de tela estável (12 min)
-
-| Entradas | Execução | Saídas |
-|----------|----------|--------|
-| App em foreground | Esperar UI estável (sem transição) | Tela estável |
-
-### US-06 · Evento de mudança de dump (12 min)
-
-| Entradas | Execução | Saídas |
-|----------|----------|--------|
-| Dump anterior (opcional), serial | Detectar mudança no dump de UI | Dump atualizado disponível |
+| SC-06.1 | Ler versão na config do dispositivo | `device.config.json` | Parsear `apps.*.version` / package | Versão e package alvo | 5 |
+| SC-06.2 | Baixar APK na versão definida | Package + versão, ferramenta de download (ex. apkeep) | Baixar APK/XAPK da versão pedida | Artefato APK no disco | 25 |
+| SC-06.3 | Instalar pacote no agent | Serial online, caminho do APK | `adb install` (ou equivalente) | Pacote instalado no agent | 15 |
 
 ### US-07 · Abrir aplicativo (15 min)
 

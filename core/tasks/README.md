@@ -6,14 +6,14 @@
 
 ## P1 — ConnectMax · screen-robot
 
-Histórias US (eventos e operações cada uma é US; Extrair+sessão = US-13 com SC; Provisionar/APKs com SC).  
+Histórias US (eventos e operações cada uma é US; Extrair+sessão = US-13 com SC; Provisionar/APKs (US-06) com SC).  
 **Árvore e Gantt:** [`screen-robot/docs/tasks.md`](../../connectmax/screen-robot/docs/tasks.md).  
 Funcionalidades: [`functionalities.md`](../../connectmax/screen-robot/docs/functionalities.md) · BDD nós: [`bdd-nos.md`](../../connectmax/screen-robot/docs/bdd-nos.md) · BDD login: [`bdd-linkedin-login.md`](../../connectmax/screen-robot/docs/bdd-linkedin-login.md).  
 Estimativas: minutos IA · **1 dia = 8h = 480 min**.
 
 ### Inventário de tasks (nós)
 
-IDs: **US-** história · **SC-** cenário (mudança de estado; unidade testável/paralelizável — sob US-01, US-02, US-13). Baseline paralelo: **2026-09-19**. Filhas partem no início do dia.  
+IDs: **US-** história · **SC-** cenário (mudança de estado; unidade testável/paralelizável — sob US-01, US-06, US-13). Baseline paralelo: **2026-09-19**. Filhas partem no início do dia.  
 1 dia útil = 8h. Entradas/Execução/Saídas: [`functionalities.md`](../../connectmax/screen-robot/docs/functionalities.md#entradas--execução--saídas).
 
 | ID | Descrição | Início | Fim | Output |
@@ -22,14 +22,14 @@ IDs: **US-** história · **SC-** cenário (mudança de estado; unidade testáve
 | SC-01.1 | Subir / conectar o Android (agent) | 2026-09-19 | 2026-09-19 | Processo do agent em execução e alcançável |
 | SC-01.2 | Garantir serial ADB online | 2026-09-19 | 2026-09-19 | Serial ADB online |
 | SC-01.3 | Aguardar boot completo | 2026-09-19 | 2026-09-19 | Device com boot completo |
-| US-02 | Instalar APKs | 2026-09-19 | 2026-09-19 | Apps instalados nas versões definidas |
-| SC-02.1 | Ler versão na config do dispositivo | 2026-09-19 | 2026-09-19 | Versão e package alvo |
-| SC-02.2 | Baixar APK na versão definida | 2026-09-19 | 2026-09-19 | Artefato APK no disco |
-| SC-02.3 | Instalar pacote no agent | 2026-09-19 | 2026-09-19 | Pacote instalado no agent |
-| US-03 | Evento de boot | 2026-09-19 | 2026-09-19 | Boot sinalizado |
-| US-04 | Evento de app aberta | 2026-09-19 | 2026-09-19 | App aberta confirmada |
-| US-05 | Evento de tela estável | 2026-09-19 | 2026-09-19 | Tela estável |
-| US-06 | Evento de mudança de dump | 2026-09-19 | 2026-09-19 | Dump atualizado disponível |
+| US-02 | Evento de boot | 2026-09-19 | 2026-09-19 | Boot sinalizado |
+| US-03 | Evento de app aberta | 2026-09-19 | 2026-09-19 | App aberta confirmada |
+| US-04 | Evento de tela estável | 2026-09-19 | 2026-09-19 | Tela estável |
+| US-05 | Evento de mudança de dump | 2026-09-19 | 2026-09-19 | Dump atualizado disponível |
+| US-06 | Instalar APKs | 2026-09-19 | 2026-09-19 | Apps instalados nas versões definidas |
+| SC-06.1 | Ler versão na config do dispositivo | 2026-09-19 | 2026-09-19 | Versão e package alvo |
+| SC-06.2 | Baixar APK na versão definida | 2026-09-19 | 2026-09-19 | Artefato APK no disco |
+| SC-06.3 | Instalar pacote no agent | 2026-09-19 | 2026-09-19 | Pacote instalado no agent |
 | US-07 | Abrir aplicativo | 2026-09-19 | 2026-09-19 | App em foreground |
 | US-08 | tap | 2026-09-19 | 2026-09-19 | UI refletindo o tap |
 | US-09 | type | 2026-09-19 | 2026-09-19 | Texto na UI |

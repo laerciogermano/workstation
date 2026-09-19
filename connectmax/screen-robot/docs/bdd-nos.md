@@ -45,46 +45,7 @@ Cenário: Boot completo no device
 
 ---
 
-## US-02 · Instalar APKs
-
-```gherkin
-Funcionalidade: Instalar APKs
-  Cenário: Apps da config ficam instalados na versão definida
-    Dado o agent provisionado e a lista de apps/versões na config
-    Quando cada pacote é resolvido, baixado e instalado
-    Então os apps estão instalados nas versões definidas
-```
-
-### SC-02.1 Ler versão na config do dispositivo
-
-```gherkin
-Cenário: Versão e package são lidos da config
-  Dado o arquivo device.config.json
-  Quando apps.*.version e package são parseados
-  Então a versão e o package alvo estão disponíveis para download
-```
-
-### SC-02.2 Baixar APK na versão definida
-
-```gherkin
-Cenário: APK da versão pedida é baixado
-  Dado package, versão e ferramenta de download
-  Quando o download da versão definida é executado
-  Então o artefato APK/XAPK existe no disco
-```
-
-### SC-02.3 Instalar pacote no agent
-
-```gherkin
-Cenário: Pacote é instalado no agent
-  Dado serial online e caminho do APK
-  Quando adb install (ou equivalente) é executado
-  Então o pacote está instalado no agent
-```
-
----
-
-## US-03 · Evento de boot
+## US-02 · Evento de boot
 
 ```gherkin
 Funcionalidade: Evento de boot
@@ -94,7 +55,7 @@ Funcionalidade: Evento de boot
     Então o boot é sinalizado
 ```
 
-## US-04 · Evento de app aberta
+## US-03 · Evento de app aberta
 
 ```gherkin
 Funcionalidade: Evento de app aberta
@@ -104,7 +65,7 @@ Funcionalidade: Evento de app aberta
     Então a app está em foreground
 ```
 
-## US-05 · Evento de tela estável
+## US-04 · Evento de tela estável
 
 ```gherkin
 Funcionalidade: Evento de tela estável
@@ -114,7 +75,7 @@ Funcionalidade: Evento de tela estável
     Então a tela está estável
 ```
 
-## US-06 · Evento de mudança de dump
+## US-05 · Evento de mudança de dump
 
 ```gherkin
 Funcionalidade: Evento de mudança de dump
@@ -122,6 +83,45 @@ Funcionalidade: Evento de mudança de dump
     Dado um dump anterior (ou ausência) e serial online
     Quando a hierarquia UI (uiautomator dump) muda em relação ao anterior
     Então um dump atualizado está disponível
+```
+
+---
+
+## US-06 · Instalar APKs
+
+```gherkin
+Funcionalidade: Instalar APKs
+  Cenário: Apps da config ficam instalados na versão definida
+    Dado o agent provisionado e a lista de apps/versões na config
+    Quando cada pacote é resolvido, baixado e instalado
+    Então os apps estão instalados nas versões definidas
+```
+
+### SC-06.1 Ler versão na config do dispositivo
+
+```gherkin
+Cenário: Versão e package são lidos da config
+  Dado o arquivo device.config.json
+  Quando apps.*.version e package são parseados
+  Então a versão e o package alvo estão disponíveis para download
+```
+
+### SC-06.2 Baixar APK na versão definida
+
+```gherkin
+Cenário: APK da versão pedida é baixado
+  Dado package, versão e ferramenta de download
+  Quando o download da versão definida é executado
+  Então o artefato APK/XAPK existe no disco
+```
+
+### SC-06.3 Instalar pacote no agent
+
+```gherkin
+Cenário: Pacote é instalado no agent
+  Dado serial online e caminho do APK
+  Quando adb install (ou equivalente) é executado
+  Então o pacote está instalado no agent
 ```
 
 ---

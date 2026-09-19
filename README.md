@@ -44,6 +44,7 @@ Hub de projetos, board e processo de desenvolvimento.
 | 📖 | [**Eternos Mutáveis**](eternos-mutaveis/) | Manuscrito / tese | [visão](eternos-mutaveis/README.md) · [docs](eternos-mutaveis/docs/) · [config IA](eternos-mutaveis/config/config-ia.md) |
 | 🥋 | [**Jiu-jitsu**](jiu-jitsu/) | App de jiu-jitsu | [visão](jiu-jitsu/README.md) · [docs](jiu-jitsu/docs/) · [config IA](jiu-jitsu/config/config-ia.md) |
 | 🎭 | [**RoleGo**](role-go/) | Role-playing / go | [visão](role-go/README.md) |
+| ✨ | [**Clozzy**](clozzy/) | Venda de conteúdos exclusivos de influencers | [visão](clozzy/README.md) · [docs](clozzy/docs/) · [config IA](clozzy/config/config-ia.md) |
 
 ---
 
@@ -122,3 +123,11 @@ Visão → Funcionalidades → Histórias → BDD → Telas → Screens BDD → 
 ```
 
 Prompts: [`jiu-jitsu/prompts/timeline.md`](jiu-jitsu/prompts/timeline.md).
+
+### Esteira (Clozzy)
+
+```text
+Visão → Funcionalidades → Histórias → BDD → Telas → Screens BDD → Componentes → Protótipo
+```
+
+Prompts: [`clozzy/prompts/timeline.md`](clozzy/prompts/timeline.md).

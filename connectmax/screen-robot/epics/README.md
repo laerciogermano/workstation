@@ -20,6 +20,7 @@ epics/EP-XX-…/
 ├── README.md
 ├── 1.stories.md
 ├── 2.epics.md
+├── 5.implementation-plan.md   # opcional (ex.: EP-01 com seq/classes/modelos)
 └── US-YY-…/
     ├── README.md
     ├── 1.stories.md
@@ -30,7 +31,7 @@ epics/EP-XX-…/
 
 ## EP-01 — Provisionar agente
 
-US-01 → [`EP-01-provisionar-agente/US-01-provisionar-um-agente/`](EP-01-provisionar-agente/US-01-provisionar-um-agente/README.md)
+US-01 → [`EP-01-provisionar-agente/US-01-provisionar-um-agente/`](EP-01-provisionar-agente/US-01-provisionar-um-agente/README.md) · plano: [`5.implementation-plan.md`](EP-01-provisionar-agente/5.implementation-plan.md)
 
 ## EP-02 — Eventos de UI
 

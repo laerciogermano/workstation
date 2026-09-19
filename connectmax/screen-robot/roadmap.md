@@ -1,7 +1,7 @@
 # Roadmap — screen-robot
 
-**Por quê:** Gantt EP → US → SC (minutos IA).  
-**Árvore / esforço por nó:** [`tasks.md`](tasks.md).  
+**Por quê:** Gantt EP → US (minutos IA).  
+**Árvore / Gantt com SC:** [`tasks.md`](tasks.md).  
 **Fonte:** [`scenarios.md`](scenarios.md).  
 **Épicos:** [`epics.md`](epics.md).  
 **Visão:** [`README.md`](README.md).
@@ -41,15 +41,12 @@ config:
     activeTaskBorderColor: '#64748b'
 ---
 gantt
-  title screen-robot EP / US / SC
+  title screen-robot EP / US
   dateFormat X
   axisFormat %s
 
   section EP-01 Provisionar
   EP-01 Provisionar agente              :done, ep01, 0, 60m
-  SC-01 Subir e conectar                :sc01, 0, 20m
-  SC-02 Serial ADB online               :sc02, after sc01, 20m
-  SC-03 Boot completo                   :sc03, after sc02, 20m
 
   section EP-02 Eventos de UI
   EP-02 Eventos de UI                   :done, ep02, after ep01, 24m
@@ -60,9 +57,6 @@ gantt
 
   section EP-03 Instalar APKs
   EP-03 Instalar APKs                   :done, ep03, after us05, 45m
-  SC-08 Ler versao                      :sc08, after us05, 5m
-  SC-09 Baixar APK                      :sc09, after sc08, 25m
-  SC-10 Instalar pacote                 :sc10, after sc09, 15m
 
   section EP-04 Operar tela
   EP-04 Operar tela                     :done, ep04, after us05, 15m

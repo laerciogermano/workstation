@@ -40,3 +40,4 @@ Como registrar: [`README.md`](README.md).
 | 031 | 2026-09-19 | Árvore EP→US→SC com colapso | [031-2026-09-19-arvore-ep-us-sc-colapso.md](031-2026-09-19-arvore-ep-us-sc-colapso.md) | tasks + roadmap: cenários filhos; colapso 1 SC / 1 US. |
 | 032 | 2026-09-19 | Remover legendas do roadmap | [032-2026-09-19-remover-legendas-roadmap.md](032-2026-09-19-remover-legendas-roadmap.md) | Tirou colapso/cores/paralelismo/soma do texto do roadmap. |
 | 033 | 2026-09-19 | Filhos do roadmap em 1.6 | [033-2026-09-19-processo-1-6-filhos-roadmap.md](033-2026-09-19-processo-1-6-filhos-roadmap.md) | Árvore do processo: 1.6 Roadmap expandido com EP/US/SC do screen-robot. |
+| 034 | 2026-09-19 | SC do Gantt roadmap → tasks | [034-2026-09-19-sc-gantt-roadmap-para-tasks.md](034-2026-09-19-sc-gantt-roadmap-para-tasks.md) | Roadmap só EP/US; Gantt com SC em tasks.md. |

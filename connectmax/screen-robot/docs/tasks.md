@@ -51,32 +51,32 @@ gantt
 
   section Provisionar
   SC-01.1 Subir e conectar         :p1, 0, 20m
-  SC-01.2 Serial ADB online        :after p1, 20m
-  SC-01.3 Boot completo            :after p2, 20m
+  SC-01.2 Serial ADB online        :p2, after p1, 20m
+  SC-01.3 Boot completo            :p3, after p2, 20m
 
   section Instalar APKs
-  SC-02.1 Ler versao               :after p3, 5m
-  SC-02.2 Baixar APK               :after i1, 25m
-  SC-02.3 Instalar pacote          :after i2, 15m
+  SC-02.1 Ler versao               :i1, after p3, 5m
+  SC-02.2 Baixar APK               :i2, after i1, 25m
+  SC-02.3 Instalar pacote          :i3, after i2, 15m
 
   section Eventos
-  US-03 Evento boot                :after i3, 12m
-  US-04 Evento app aberta          :after e1, 12m
-  US-05 Evento tela estavel        :after e2, 12m
-  US-06 Evento mudanca dump        :after e3, 12m
+  US-03 Evento boot                :e1, after i3, 12m
+  US-04 Evento app aberta          :e2, after e1, 12m
+  US-05 Evento tela estavel        :e3, after e2, 12m
+  US-06 Evento mudanca dump        :e4, after e3, 12m
 
   section Operacoes
-  US-07 Abrir aplicativo           :after e4, 15m
-  US-08 tap                        :after o1, 15m
-  US-09 type                       :after o2, 15m
-  US-10 scroll                     :after o3, 15m
-  US-11 screenshot                 :after o4, 15m
-  US-12 Resgatar xy por imagem     :after o5, 15m
+  US-07 Abrir aplicativo           :o1, after e4, 15m
+  US-08 tap                        :o2, after o1, 15m
+  US-09 type                       :o3, after o2, 15m
+  US-10 scroll                     :o4, after o3, 15m
+  US-11 screenshot                 :o5, after o4, 15m
+  US-12 Resgatar xy por imagem     :o6, after o5, 15m
 
   section Extrair e sessao
-  US-13 Extrair elementos          :crit, after o6, 120m
-  SC-13.1 Persistir sessao         :after x1, 15m
-  SC-13.2 Restaurar sessao         :after s1, 15m
+  US-13 Extrair elementos          :crit, x1, after o6, 120m
+  SC-13.1 Persistir sessao         :s1, after x1, 15m
+  SC-13.2 Restaurar sessao         :s2, after s1, 15m
 ```
 
 ## Próximos passos

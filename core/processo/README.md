@@ -17,24 +17,76 @@ Cada etapa documenta **entradas**, **execução** e **saídas**.
 | Implantação | [`implantacao/`](implantacao/README.md) | Publicar em ambiente alvo |
 | Manutenção | [`manutencao/`](manutencao/README.md) | Operar, corrigir e evoluir |
 
-### Gantt — atividades sequenciais
+### Árvore de execução
 
-Mesmas etapas do ciclo acima, em sequência (ordem do caminho crítico).  
-Durações relativas (1 unidade = 1 etapa); o gráfico mostra dependência, não estimativa de calendário.
+```text
+Processo (18)
+├── Discovery
+│   ├── Entradas
+│   ├── Execucao
+│   └── Saidas
+├── Refinamento tecnico
+│   ├── Entradas
+│   ├── Execucao
+│   └── Saidas
+├── Desenvolvimento
+│   ├── Entradas
+│   ├── Execucao
+│   └── Saidas
+├── Testes
+│   ├── Entradas
+│   ├── Execucao
+│   └── Saidas
+├── Implantacao
+│   ├── Entradas
+│   ├── Execucao
+│   └── Saidas
+└── Manutencao
+    ├── Entradas
+    ├── Execucao
+    └── Saidas
+```
+
+### Gantt — fases e filhas sequenciais
+
+Fases em ordem; dentro de cada fase: Entradas → Execução → Saídas.  
+Barras = folhas da árvore. Durações relativas (1 unidade = 1 filha).
 
 ```mermaid
 gantt
-  title Processo de desenvolvimento — etapas sequenciais
+  title Processo de desenvolvimento — fases e filhas sequenciais
   dateFormat X
   axisFormat %s
 
-  section Ciclo
-  Discovery              :d1, 0, 1
-  Refinamento tecnico    :d2, after d1, 1
-  Desenvolvimento        :d3, after d2, 1
-  Testes                 :d4, after d3, 1
-  Implantacao            :d5, after d4, 1
-  Manutencao             :d6, after d5, 1
+  section Discovery
+  Entradas               :d1e, 0, 1
+  Execucao               :d1x, after d1e, 1
+  Saidas                 :d1s, after d1x, 1
+
+  section Refinamento tecnico
+  Entradas               :d2e, after d1s, 1
+  Execucao               :d2x, after d2e, 1
+  Saidas                 :d2s, after d2x, 1
+
+  section Desenvolvimento
+  Entradas               :d3e, after d2s, 1
+  Execucao               :d3x, after d3e, 1
+  Saidas                 :d3s, after d3x, 1
+
+  section Testes
+  Entradas               :d4e, after d3s, 1
+  Execucao               :d4x, after d4e, 1
+  Saidas                 :d4s, after d4x, 1
+
+  section Implantacao
+  Entradas               :d5e, after d4s, 1
+  Execucao               :d5x, after d5e, 1
+  Saidas                 :d5s, after d5x, 1
+
+  section Manutencao
+  Entradas               :d6e, after d5s, 1
+  Execucao               :d6x, after d6e, 1
+  Saidas                 :d6s, after d6x, 1
 ```
 
 ## Fluxo (entradas → execução → saídas)

@@ -4,6 +4,7 @@
 **Produto / WBS:** [`plano-percepcao-imagem-hardware.md`](plano-percepcao-imagem-hardware.md).  
 **Código-base:** `sources/android-control`.  
 **Estimativas:** horas de **esforço de IA** (agente), não humanas.  
+**Premissa atual:** Capture e Actuate são **somente agent** (sem factory ADB|agent neste momento). Ver [`../epics/README.md`](../epics/README.md).
 **Negócio vendas:** fora de escopo — ver [`../../vendas/`](../../vendas/README.md).
 
 ---

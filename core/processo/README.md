@@ -6,7 +6,7 @@ Ciclo padrão da workstation:
 Discovery → Refinamento técnico → Desenvolvimento → Testes → Implantação → Manutenção
 ```
 
-Cada etapa documenta **entradas**, **execução** e **saídas**.
+Cada etapa documenta **entradas**, **execução** e **saídas**. A árvore abaixo lista os **passos da execução** de cada fase.
 
 | Etapa | Pasta | Objetivo |
 |-------|-------|----------|
@@ -20,73 +20,101 @@ Cada etapa documenta **entradas**, **execução** e **saídas**.
 ### Árvore de execução
 
 ```text
-Processo (18)
+Processo (32)
 ├── Discovery
-│   ├── Entradas
-│   ├── Execucao
-│   └── Saidas
+│   ├── Mapear problema, usuarios e valor
+│   ├── Delimitar escopo (in / out)
+│   ├── Recortar epicos
+│   ├── Listar estorias por epico
+│   ├── Listar cenarios por estoria
+│   └── Validar com stakeholders
 ├── Refinamento tecnico
-│   ├── Entradas
-│   ├── Execucao
-│   └── Saidas
+│   ├── Desenhar arquitetura, contratos e dados
+│   ├── Identificar riscos e mitigacoes
+│   ├── Consolidar criterios de pronto
+│   ├── Estimar esforco e dependencias
+│   └── Quebrar em tarefas priorizadas
 ├── Desenvolvimento
-│   ├── Entradas
-│   ├── Execucao
-│   └── Saidas
+│   ├── Implementar conforme aceite
+│   ├── Commits pequenos e revisaveis
+│   ├── Lote: primeiro caso, depois escala
+│   ├── Testes unitarios
+│   ├── Documentar o minimo
+│   └── Integrar com CI
 ├── Testes
-│   ├── Entradas
-│   ├── Execucao
-│   └── Saidas
+│   ├── Unitario / integracao / E2E
+│   ├── Aceite por cenario
+│   ├── Regressao
+│   ├── Qualidade
+│   └── Priorizar bugs
 ├── Implantacao
-│   ├── Entradas
-│   ├── Execucao
-│   └── Saidas
+│   ├── Build e release
+│   ├── Migracoes e configuracao
+│   ├── Deploy staging → prod
+│   ├── Smoke pos-deploy
+│   └── Comunicar / rollback
 └── Manutencao
-    ├── Entradas
-    ├── Execucao
-    └── Saidas
+    ├── Monitorar e incidentes
+    ├── Hotfixes
+    ├── Melhorias incrementais
+    ├── Debito tecnico
+    └── Encaminhar mudancas
 ```
 
-### Gantt — fases e filhas sequenciais
+### Gantt — fases e passos sequenciais
 
-Fases em ordem; dentro de cada fase: Entradas → Execução → Saídas.  
-Barras = folhas da árvore. Durações relativas (1 unidade = 1 filha).
+Fases em ordem; dentro de cada fase, os passos da execução (mesma ordem da árvore).  
+Barras = folhas da árvore. Durações relativas (1 unidade = 1 passo).
 
 ```mermaid
 gantt
-  title Processo de desenvolvimento — fases e filhas sequenciais
+  title Processo de desenvolvimento — fases e passos sequenciais
   dateFormat X
   axisFormat %s
 
   section Discovery
-  Entradas               :d1e, 0, 1
-  Execucao               :d1x, after d1e, 1
-  Saidas                 :d1s, after d1x, 1
+  Mapear problema e valor       :d1a, 0, 1
+  Delimitar escopo              :d1b, after d1a, 1
+  Recortar epicos               :d1c, after d1b, 1
+  Listar estorias               :d1d, after d1c, 1
+  Listar cenarios               :d1e, after d1d, 1
+  Validar stakeholders          :d1f, after d1e, 1
 
   section Refinamento tecnico
-  Entradas               :d2e, after d1s, 1
-  Execucao               :d2x, after d2e, 1
-  Saidas                 :d2s, after d2x, 1
+  Arquitetura e contratos       :d2a, after d1f, 1
+  Riscos e mitigacoes           :d2b, after d2a, 1
+  Criterios de pronto           :d2c, after d2b, 1
+  Estimar esforco               :d2d, after d2c, 1
+  Quebrar em tarefas            :d2e, after d2d, 1
 
   section Desenvolvimento
-  Entradas               :d3e, after d2s, 1
-  Execucao               :d3x, after d3e, 1
-  Saidas                 :d3s, after d3x, 1
+  Implementar aceite            :d3a, after d2e, 1
+  Commits revisaveis            :d3b, after d3a, 1
+  Lote primeiro caso            :d3c, after d3b, 1
+  Testes unitarios              :d3d, after d3c, 1
+  Documentar minimo             :d3e, after d3d, 1
+  Integrar CI                   :d3f, after d3e, 1
 
   section Testes
-  Entradas               :d4e, after d3s, 1
-  Execucao               :d4x, after d4e, 1
-  Saidas                 :d4s, after d4x, 1
+  Unitario integracao E2E       :d4a, after d3f, 1
+  Aceite por cenario            :d4b, after d4a, 1
+  Regressao                     :d4c, after d4b, 1
+  Qualidade                     :d4d, after d4c, 1
+  Priorizar bugs                :d4e, after d4d, 1
 
   section Implantacao
-  Entradas               :d5e, after d4s, 1
-  Execucao               :d5x, after d5e, 1
-  Saidas                 :d5s, after d5x, 1
+  Build e release               :d5a, after d4e, 1
+  Migracoes e config            :d5b, after d5a, 1
+  Deploy staging prod           :d5c, after d5b, 1
+  Smoke pos-deploy              :d5d, after d5c, 1
+  Comunicar rollback            :d5e, after d5d, 1
 
   section Manutencao
-  Entradas               :d6e, after d5s, 1
-  Execucao               :d6x, after d6e, 1
-  Saidas                 :d6s, after d6x, 1
+  Monitorar incidentes          :d6a, after d5e, 1
+  Hotfixes                      :d6b, after d6a, 1
+  Melhorias                     :d6c, after d6b, 1
+  Debito tecnico                :d6d, after d6c, 1
+  Encaminhar mudancas           :d6e, after d6d, 1
 ```
 
 ## Fluxo (entradas → execução → saídas)

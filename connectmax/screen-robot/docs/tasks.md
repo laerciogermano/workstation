@@ -1,19 +1,25 @@
 # Tasks — screen-robot
 
-**Por quê:** árvore de desenvolvimento das features e Gantt (minutos IA).  
+**Por quê:** árvore de execução das features e Gantt (minutos IA).  
 **Fonte:** [`functionalities.md`](functionalities.md).  
 **Visão:** [`../README.md`](../README.md).  
 **Kanban / inventário (umbrella):** [`core/tasks`](../../../core/tasks/README.md#p1--connectmax--screen-robot).
 
-Estimativas: minutos IA · **1 dia = 8h = 480 min**.  
-IDs: **US-** história · **SC-** cenário (mudança de estado; unidade testável e paralelizável — sob US-01, US-02, US-13).
+Histórias US (eventos e operações cada uma é US; Extrair+sessão = US-13 com SC; Provisionar/APKs com SC).  
+Estimativas: minutos IA · **1 dia = 8h = 480 min**.
 
-## Árvore de desenvolvimento
+### Árvore de execução
 
 ```text
 screen-robot (393 min)
 ├── US-01 Provisionar um agente (60 min)
+│   ├── SC-01.1 Subir / conectar o Android (agent) (20 min)
+│   ├── SC-01.2 Garantir serial ADB online (20 min)
+│   └── SC-01.3 Aguardar boot completo (20 min)
 ├── US-02 Instalar APKs (45 min)
+│   ├── SC-02.1 Ler versão na config do dispositivo (5 min)
+│   ├── SC-02.2 Baixar APK na versão definida (25 min)
+│   └── SC-02.3 Instalar pacote no agent (15 min)
 ├── Eventos
 │   ├── US-03 Evento de boot (12 min)
 │   ├── US-04 Evento de app aberta (12 min)
@@ -27,26 +33,15 @@ screen-robot (393 min)
 │   ├── US-11 screenshot (15 min)
 │   └── US-12 Resgatar coordenadas x,y (imagem de entrada) (15 min)
 └── US-13 Extrair elementos e guardar sessão (150 min)
+    ├── SC-13.1 Persistir sessão em arquivo (15 min)
+    └── SC-13.2 Restaurar sessão do arquivo (15 min)
 ```
 
-### Cenários (SC)
+### Gantt — atividades da árvore (paralelizáveis por IA)
 
-| ID | US | Cenário | Min |
-|----|----|---------|-----|
-| SC-01.1 | US-01 | Subir / conectar o Android (agent) | 20 |
-| SC-01.2 | US-01 | Garantir serial ADB online | 20 |
-| SC-01.3 | US-01 | Aguardar boot completo | 20 |
-| SC-02.1 | US-02 | Ler versão na config do dispositivo | 5 |
-| SC-02.2 | US-02 | Baixar APK na versão definida | 25 |
-| SC-02.3 | US-02 | Instalar pacote no agent | 15 |
-| SC-13.1 | US-13 | Persistir sessão em arquivo | 15 |
-| SC-13.2 | US-13 | Restaurar sessão do arquivo | 15 |
-
-## Gantt — atividades da árvore (cada SC = unidade paralelizável)
-
-Mesmas atividades da árvore (nomes e minutos).  
-Barras `crit` = funcionalidade; cada **SC** (e US sem SC) é unidade testável e paralelizável entre si (entrega IA).  
-Esforço total (soma): **393 min**. Caminho crítico ≈ **60 min** (Provisionar) — US-13 = **150 min**.
+Mesmas atividades da árvore acima (nomes e minutos).  
+Barras maiores (`crit`) = funcionalidade; filhas em paralelo entre si (entrega IA).  
+Esforço total (soma): **393 min**. Com filhas em paralelo, caminho crítico ≈ **60 min** (Provisionar) — US-13 = **150 min**.
 
 ```mermaid
 gantt

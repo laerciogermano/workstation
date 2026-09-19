@@ -10,25 +10,6 @@
 
 **IDs:** **US-** = história · **SC-XX** = cenário sequencial (toda US tem ≥1 SC).
 
-| ID | História |
-|----|----------|
-| [US-01](#us-01--provisionar-um-agente) | Provisionar um agente |
-| [US-02](#us-02--evento-de-boot) | Evento de boot |
-| [US-03](#us-03--evento-de-app-aberta) | Evento de app aberta |
-| [US-04](#us-04--evento-de-tela-estável) | Evento de tela estável |
-| [US-05](#us-05--evento-de-mudança-de-dump) | Evento de mudança de dump |
-| [US-06](#us-06--instalar-apks) | Instalar APKs |
-| [US-07](#us-07--abrir-aplicativo) | Abrir aplicativo |
-| [US-08](#us-08--tap) | tap |
-| [US-09](#us-09--type) | type |
-| [US-10](#us-10--scroll) | scroll |
-| [US-11](#us-11--screenshot) | screenshot |
-| [US-12](#us-12--resgatar-coordenadas-xy-a-partir-de-uma-imagem) | Resgatar coordenadas x,y a partir de uma imagem |
-| [US-13](#us-13--extrair-elementos) | Extrair elementos |
-| [US-14](#us-14--salvar-sessão) | Salvar sessão |
-| [US-15](#us-15--remover-sessão) | Remover sessão |
-| [US-16](#us-16--recuperar-sessão) | Recuperar sessão |
-
 ---
 
 ## US-01 — Provisionar um agente

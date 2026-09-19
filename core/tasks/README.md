@@ -47,7 +47,65 @@ screen-robot (408 min)
     └── Restaurar sessão do arquivo (15 min)
 ```
 
-### Entradas · Execução · Saídas (por nó)
+### Gantt — unidades de entrega paralelizáveis (IA)
+
+Unidades que **agentes IA podem entregar em paralelo** após contratos comuns.  
+Esforço total (soma): **408 min**. Caminho crítico estimado com paralelismo: **~152 min** (~0,32 dia / 8h).
+
+**Ondas**
+1. Contratos Node (serial)
+2. Caps + ações + nós de percepção **em paralelo**
+3. Montar árvore DOM (depois dos nós de extrair)
+4. Integração login LinkedIn (depois das caps)
+
+```mermaid
+gantt
+  title screen-robot entrega paralela IA minutos
+  dateFormat X
+  axisFormat %s
+
+  section 0 Contratos
+  Contratos Node libs          :crit, f0, 0, 24m
+
+  section 1 Caps em paralelo
+  Provisionar agente           :p0, after f0, 60m
+  Instalar APKs                :i0, after f0, 45m
+  Receber eventos              :e0, after f0, 48m
+  Guardar sessao               :s0, after f0, 30m
+
+  section 2 Operacoes em paralelo
+  Abrir aplicativo             :o1, after f0, 15m
+  tap                          :o2, after f0, 15m
+  type                         :o3, after f0, 15m
+  key                          :o4, after f0, 15m
+  scroll                       :o5, after f0, 15m
+  screenshot                   :o6, after f0, 15m
+  Resgatar xy por imagem       :o7, after f0, 15m
+
+  section 3 Extrair em paralelo
+  No Texto                     :x1, after f0, 20m
+  No Icone                     :x2, after f0, 20m
+  No Imagem e foto             :x3, after f0, 24m
+  No Lista                     :x4, after f0, 24m
+  No Container                 :x5, after f0, 12m
+
+  section 4 Depois dos nos
+  Montar arvore DOM            :crit, x6, after x3, 20m
+
+  section 5 Integracao
+  Login LinkedIn BDD           :crit, b0, after p0, 48m
+```
+
+| Unidade | Paralela com | Min | Bloqueia |
+|---------|--------------|-----|----------|
+| Contratos Node | — | 24 | tudo abaixo |
+| Provisionar · APKs · Eventos · Sessão | entre si | 60 / 45 / 48 / 30 | integração |
+| Abrir · tap · type · key · scroll · screenshot · xy | entre si e com caps | 15 c/u | integração |
+| Texto · Ícone · Imagem · Lista · Container | entre si e com caps | 12–24 | Montar DOM |
+| Montar árvore DOM | — | 20 | integração |
+| Login LinkedIn BDD | — | 48 | — |
+
+### Kanban
 
 #### 1. Provisionar um agente (60 min)
 

@@ -101,11 +101,6 @@ Recupera o contexto da sessão a partir do arquivo em disco.
 
 Lê o arquivo salvo e reaplica o estado no runtime, restaurando device, apps, etapa e paths do fluxo.
 
-## Fora de escopo
-
-- Cadência LinkedIn, fila de leads, faturamento, papéis de venda
-- Bypass de autenticação / scraping ilegítimo
-
 ## Próximos passos
 
 → [`scenarios.md`](scenarios.md)  

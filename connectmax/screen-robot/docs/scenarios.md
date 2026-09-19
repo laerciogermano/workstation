@@ -215,13 +215,6 @@
 | BDDs (unitário + piloto LinkedIn) | [`bdds.md`](bdds.md) |
 | Script | [`../sources/android-control/scripts/linkedin-login.js`](../sources/android-control/scripts/linkedin-login.js) |
 
-## Fora do escopo
-
-| Item |
-|------|
-| Cadência LinkedIn, fila de leads, faturamento, papéis de venda |
-| Bypass de autenticação / scraping ilegítimo |
-
 ## Próximos passos
 
 → [`tasks.md`](tasks.md) · [`core/tasks`](../../../core/tasks/README.md#p1--connectmax--screen-robot)  

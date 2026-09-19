@@ -1,20 +1,51 @@
-# workstation
+# Workstation
 
-Board: [`core/tasks/`](core/tasks/README.md) · Processo: [`core/processo/`](core/processo/README.md)
+Hub de projetos, board e processo de desenvolvimento.
 
-## Projetos
+---
 
-| Projeto | Visão | Documentação | Config IA |
-|---------|-------|--------------|-----------|
-| [Flow Language](flow-language/) | [`flow-language/README.md`](flow-language/README.md) | [`flow-language/docs/`](flow-language/docs/) | [`flow-language/config/config-ia.md`](flow-language/config/config-ia.md) |
-| [Flow](flow/) | [`flow/README.md`](flow/README.md) | [`flow/epics/`](flow/epics/), [`flow/tasks/`](flow/tasks/) | — |
-| [Plans](plans/) | [`plans/README.md`](plans/README.md) | [`plans/docs/`](plans/docs/) | [`plans/config/config-ia.md`](plans/config/config-ia.md) |
-| [Chines](chines/) | [`chines/docs/`](chines/docs/) | [`chines/docs/`](chines/docs/) | [`chines/config/config-ia.md`](chines/config/config-ia.md) |
-| [Caronas](caronas/) | [`caronas/README.md`](caronas/README.md) | [`caronas/docs/`](caronas/docs/) | [`caronas/config/config-ia.md`](caronas/config/config-ia.md) |
-| [Fitness](fitness/) | [`fitness/README.md`](fitness/README.md) | [`fitness/docs/`](fitness/docs/) | [`fitness/config/config-ia.md`](fitness/config/config-ia.md) |
-| [ConnectMax](connectmax/) | [`connectmax/README.md`](connectmax/README.md) | [`screen-robot`](connectmax/screen-robot/) · [`vendas`](connectmax/vendas/) | [`connectmax/config/config-ia.md`](connectmax/config/config-ia.md) |
-| [Eternos Mutáveis](eternos-mutaveis/) | [`eternos-mutaveis/README.md`](eternos-mutaveis/README.md) | [`eternos-mutaveis/docs/`](eternos-mutaveis/docs/) | [`eternos-mutaveis/config/config-ia.md`](eternos-mutaveis/config/config-ia.md) |
-| [Jiu-jitsu](jiu-jitsu/) | [`jiu-jitsu/README.md`](jiu-jitsu/README.md) | [`jiu-jitsu/docs/`](jiu-jitsu/docs/) | [`jiu-jitsu/config/config-ia.md`](jiu-jitsu/config/config-ia.md) |
+## Atalhos
+
+### Núcleo
+
+| | Seção | Descrição |
+|:--:|:------|:----------|
+| 📋 | [**Board**](core/tasks/README.md) | Kanban da workstation — raias por projeto, Todo / Doing / Done |
+| 🔄 | [**Processo**](core/processo/README.md) | Ciclo completo: discovery → manutenção, com entradas, execução e saídas |
+
+#### Fases do processo
+
+| | Fase | Descrição |
+|:--:|:-----|:----------|
+| 🔍 | [Discovery](core/processo/discovery/README.md) | Entender problema, valor e escopo |
+| 🧩 | [Refinamento técnico](core/processo/refinamento-tecnico/README.md) | Arquitetura, riscos e backlog executável |
+| 💻 | [Desenvolvimento](core/processo/desenvolvimento/README.md) | Implementar o que foi acordado |
+| 🧪 | [Testes](core/processo/testes/README.md) | Validar comportamento e qualidade |
+| 🚀 | [Implantação](core/processo/implantacao/README.md) | Publicar no ambiente alvo |
+| 🛠️ | [Manutenção](core/processo/manutencao/README.md) | Operar, corrigir e evoluir |
+
+```text
+🔍 Discovery → 🧩 Refinamento → 💻 Desenvolvimento → 🧪 Testes → 🚀 Implantação → 🛠️ Manutenção
+```
+
+---
+
+### Projetos
+
+| | Projeto | Descrição | Links |
+|:--:|:--------|:----------|:------|
+| 🔤 | [**Flow Language**](flow-language/) | Linguagem ↔ visualização de fluxo (IR, sync) | [visão](flow-language/README.md) · [docs](flow-language/docs/) · [config IA](flow-language/config/config-ia.md) |
+| 🌊 | [**Flow**](flow/) | Fundamentos de fluxo — pré-requisito do Plans | [visão](flow/README.md) · [épicos](flow/epics/) · [tasks](flow/tasks/) |
+| 📅 | [**Plans**](plans/) | Planejamento sobre o Flow | [visão](plans/README.md) · [docs](plans/docs/) · [config IA](plans/config/config-ia.md) |
+| 🌐 | [**Chines**](chines/) | Aprendizado de chinês | [docs](chines/docs/) · [config IA](chines/config/config-ia.md) |
+| 🚗 | [**Caronas**](caronas/) | Caronas compartilhadas | [visão](caronas/README.md) · [docs](caronas/docs/) · [config IA](caronas/config/config-ia.md) |
+| 🏋️ | [**Fitness**](fitness/) | Fitness e treinos | [visão](fitness/README.md) · [docs](fitness/docs/) · [config IA](fitness/config/config-ia.md) |
+| 🤖 | [**ConnectMax**](connectmax/) | Automação de tela + vendas | [visão](connectmax/README.md) · [screen-robot](connectmax/screen-robot/) · [vendas](connectmax/vendas/) · [config IA](connectmax/config/config-ia.md) |
+| 📖 | [**Eternos Mutáveis**](eternos-mutaveis/) | Manuscrito / tese | [visão](eternos-mutaveis/README.md) · [docs](eternos-mutaveis/docs/) · [config IA](eternos-mutaveis/config/config-ia.md) |
+| 🥋 | [**Jiu-jitsu**](jiu-jitsu/) | App de jiu-jitsu | [visão](jiu-jitsu/README.md) · [docs](jiu-jitsu/docs/) · [config IA](jiu-jitsu/config/config-ia.md) |
+| 🎭 | [**RoleGo**](role-go/) | Role-playing / go | [visão](role-go/README.md) |
+
+---
 
 ## Ordem de desenvolvimento
 

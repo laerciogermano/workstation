@@ -27,7 +27,7 @@ Automatizar apps móveis exige um caminho estável em código: agent pronto, app
 
 ## Objetivo
 
-Expor via Node: **provisionar · instalar APKs · eventos · extrair · operar · sessão**. Cenário piloto: login LinkedIn ([`docs/bdd-linkedin-login.md`](docs/bdd-linkedin-login.md)).
+Expor via Node: **provisionar · instalar APKs · eventos · operar · extrair · sessão**. Cenário piloto: login LinkedIn ([`docs/bdd-linkedin-login.md`](docs/bdd-linkedin-login.md)).
 
 ## Capacidades (v1)
 

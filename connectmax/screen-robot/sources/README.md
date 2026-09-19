@@ -6,7 +6,7 @@ Runtimes Android do robô de tela. São **projetos independentes** — escolha u
 |---------|-------------|-----------------|
 | [redroid](redroid/README.md) | Linux/Colima com `binder` — Android em Docker | `./scripts/view.sh` (scrcpy) |
 | [android-studio](android-studio/README.md) | macOS / SDK oficial — emulador Android Studio | janela do Emulator (+ OBS opcional para câmera) |
-| [android-control](android-control/README.md) | Agent via Node (provisionar, APKs, extrair, operar, sessão) | — |
+| [android-control](android-control/README.md) | Agent via Node (provisionar, APKs, operar, extrair, sessão) | — |
 
 ```bash
 # Redroid

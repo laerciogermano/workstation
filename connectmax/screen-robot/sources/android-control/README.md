@@ -1,6 +1,6 @@
 # android-control
 
-API **Node** do screen-robot sobre ADB: provisionar agent, instalar APKs, eventos, extrair UI, operar, sessão.
+API **Node** do screen-robot sobre ADB: provisionar agent, instalar APKs, eventos, operar, extrair UI, sessão.
 
 ## Requisitos
 
@@ -19,8 +19,8 @@ API **Node** do screen-robot sobre ADB: provisionar agent, instalar APKs, evento
 | Provisionar agente | [`lib/provision.js`](lib/provision.js) |
 | Instalar APKs | [`lib/apks.js`](lib/apks.js) |
 | Receber eventos | [`lib/events.js`](lib/events.js) |
-| Extrair elementos | [`lib/extract.js`](lib/extract.js) |
 | Executar operações | [`lib/operate.js`](lib/operate.js) |
+| Extrair elementos | [`lib/extract.js`](lib/extract.js) |
 | Guardar sessão | [`lib/session.js`](lib/session.js) |
 
 Inventário: [`../../docs/functionalities.md`](../../docs/functionalities.md)  

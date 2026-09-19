@@ -44,7 +44,7 @@ Ver [`docs/scenarios.md`](docs/scenarios.md).
 | Artefato | Caminho |
 |----------|---------|
 | Vision | [`docs/vision.md`](docs/vision.md) |
-| Épicos / fases | [`docs/epics.md`](docs/epics.md) |
+| Épicos | [`docs/epics.md`](docs/epics.md) |
 | Cenários (US + SC) | [`docs/scenarios.md`](docs/scenarios.md) |
 | BDDs | [`docs/bdds.md`](docs/bdds.md) |
 | Sources (Node + runtimes) | [`sources/`](sources/README.md) |

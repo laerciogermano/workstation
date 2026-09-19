@@ -2,7 +2,7 @@
 
 **Por quê:** árvore de execução das features e Gantt (minutos IA).  
 **Fonte:** [`scenarios.md`](scenarios.md).  
-**Épicos / fases:** [`epics.md`](epics.md).  
+**Épicos:** [`epics.md`](epics.md).
 **Visão:** [`../README.md`](../README.md).  
 **Kanban / inventário (umbrella):** [`core/tasks`](../../../core/tasks/README.md#p1--connectmax--screen-robot).
 

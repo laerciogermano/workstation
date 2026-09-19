@@ -9,7 +9,7 @@
 | Artefato | Arquivo | Status |
 |----------|---------|--------|
 | Vision — US título + descrição | [`vision.md`](vision.md) | Feito |
-| Épicos + fases entregáveis | [`epics.md`](epics.md) | Feito |
+| Épicos | [`epics.md`](epics.md) | Feito |
 | Cenários (US + SC) | [`scenarios.md`](scenarios.md) | Feito |
 | Tasks (árvore + Gantt) | [`tasks.md`](tasks.md) | Feito |
 | BDDs (US/SC + piloto LinkedIn) | [`bdds.md`](bdds.md) | Feito |

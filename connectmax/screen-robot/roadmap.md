@@ -1,6 +1,6 @@
 # Roadmap — screen-robot
 
-**Por quê:** Gantt dos épicos e histórias (minutos IA).  
+**Por quê:** Gantt das fases maiores (épicos), sequenciais.  
 **Árvore / esforço por nó:** [`tasks.md`](tasks.md).  
 **Fonte:** [`scenarios.md`](scenarios.md).  
 **Épicos:** [`epics.md`](epics.md).  
@@ -41,40 +41,17 @@ config:
     activeTaskBorderColor: '#64748b'
 ---
 gantt
-  title screen-robot EP/US minutos IA
+  title screen-robot épicos (sequencial)
   dateFormat X
   axisFormat %s
 
-  section EP-01 Provisionar
+  section Épicos
   EP-01 Provisionar agente              :done, ep01, 0, 60m
-
-  section EP-02 Eventos de UI
   EP-02 Eventos de UI                   :done, ep02, after ep01, 24m
-  US-02 Evento de boot                  :us02, after ep01, 12m
-  US-03 Evento de app aberta            :us03, after us02, 12m
-  US-04 Evento de tela estavel          :us04, after us02, 12m
-  US-05 Evento de mudanca de dump       :us05, after us02, 12m
-
-  section EP-03 Instalar APKs
-  EP-03 Instalar APKs                   :done, ep03, after us05, 45m
-
-  section EP-04 Operar tela
-  EP-04 Operar tela                     :done, ep04, after us05, 15m
-  US-07 Abrir aplicativo                :us07, after us05, 15m
-  US-08 tap                             :us08, after us05, 15m
-  US-09 type                            :us09, after us05, 15m
-  US-10 scroll                          :us10, after us05, 15m
-  US-11 screenshot                      :us11, after us05, 15m
-  US-12 Resgatar coordenadas x,y        :us12, after us05, 15m
-
-  section EP-05 Extrair elementos
-  EP-05 Extrair elementos               :done, ep05, after us05, 120m
-
-  section EP-06 Sessao
+  EP-03 Instalar APKs                   :done, ep03, after ep02, 45m
+  EP-04 Operar tela                     :done, ep04, after ep03, 15m
+  EP-05 Extrair elementos               :done, ep05, after ep04, 120m
   EP-06 Sessao                          :done, ep06, after ep05, 45m
-  US-14 Salvar sessao                   :us14, after ep05, 15m
-  US-15 Remover sessao                  :us15, after us14, 15m
-  US-16 Recuperar sessao                :us16, after us15, 15m
 ```
 
 ## Próximos passos

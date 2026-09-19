@@ -27,7 +27,7 @@ O mapa nasce no discovery; o restante do processo roda **estória a estória**, 
 ### Árvore de execução
 
 ```text
-Processo (41)
+Processo (38)
 ├── 1. Discovery
 │   ├── 1.1 Vision
 │   ├── 1.2 Functionalities
@@ -35,9 +35,6 @@ Processo (41)
 │   ├── 1.4 BDDs
 │   ├── 1.5 Prototipo
 │   └── 1.6 Roadmap
-│       ├── 1.6.1 Epicos (paralelizaveis)
-│       ├── 1.6.2 Estorias
-│       └── 1.6.3 Cenarios
 ├── 2. Refinamento tecnico
 │   ├── 2.1 Desenhar arquitetura, contratos e dados
 │   ├── 2.2 Identificar riscos e mitigacoes
@@ -90,12 +87,9 @@ gantt
   1.4 BDDs                      :d14, after d13, 1
   1.5 Prototipo                 :d15, after d14, 1
   1.6 Roadmap                   :d16, after d15, 1
-  1.6.1 Epicos                  :d161, after d16, 1
-  1.6.2 Estorias                :d162, after d161, 1
-  1.6.3 Cenarios                :d163, after d162, 1
 
   section 2. Refinamento tecnico
-  2. Refinamento tecnico        :p2, after d163, 1
+  2. Refinamento tecnico        :p2, after d16, 1
   2.1 Arquitetura e contratos   :d21, after p2, 1
   2.2 Riscos e mitigacoes       :d22, after d21, 1
   2.3 Criterios de pronto       :d23, after d22, 1

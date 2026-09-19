@@ -11,7 +11,7 @@ Ordem **obrigatória** — não pular nem inverter:
 3. **Cenários** — [`scenarios.md`](scenarios.md): catálogo EP → US → SC (sem Gherkin).
 4. **BDDs** — [`bdds.md`](bdds.md): Dado / Quando / Então por **US** e por **SC**.
 5. **Protótipo** — [`prototype.md`](prototype.md): validação visual/interativa do que foi especificado.
-6. **Roadmap** — [`roadmap.md`](roadmap.md): Gantt / ordem de execução; épicos primeiro (paralelizáveis), depois estórias e cenários no plano.
+6. **Roadmap** — [`roadmap.md`](roadmap.md): Gantt só com **fases maiores** (épicos), sequenciais.
 
 Só depois disso: **separar cada estória** e seguir, **por estória**, os passos do [processo](../README.md): refinamento técnico → desenvolvimento → testes → implantação → manutenção.
 
@@ -55,10 +55,7 @@ EP-01 — Autenticação          ← valor (entrar no produto)
 3. Derivar **cenários** (épicos → estórias → SC com entradas/execução/saídas)
 4. Escrever **BDDs** (Gherkin alinhado a cada US/SC)
 5. Produzir o **protótipo** (validar o *quê* com stakeholders)
-6. Montar o **roadmap**, nesta ordem:
-   1. **Épicos** — fatias de valor; definir já as **atividades paralelizáveis** no nível EP
-   2. **Estórias** — encaixar no plano (fica mais fácil após o EP paralelizável)
-   3. **Cenários** — encaixar SC no plano
+6. Montar o **roadmap** — só épicos, sequenciais (sem US/SC no Gantt)
 
 ## Saídas
 

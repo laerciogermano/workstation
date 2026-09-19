@@ -110,7 +110,7 @@ gantt
 | TSK-019 | Todo | | | 15 min |
 | TSK-020 | Todo | | | 15 min |
 | TSK-021 | Todo | | | 120 min |
-| TSK-022 | Todo | | | 15 min |
+| TSK-022 | Todo | | | 45 min |
 | TSK-023 | Todo | | | 15 min |
 | TSK-024 | Todo | | | 15 min |
 | TSK-025 | Todo | | | 15 min |

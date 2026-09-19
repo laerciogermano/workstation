@@ -6,12 +6,6 @@
 **Épicos:** [`epics.md`](epics.md).  
 **Visão:** [`README.md`](README.md).
 
-Barra **EP**; **US** só quando o épico tem mais de uma história (SC em [`tasks.md`](tasks.md)).  
-EP com 1 US (EP-01, EP-03, EP-05): só o épico.  
-Cores (só 2): **EP** = azul · **US** = cinza · fundo preto.  
-US-01 → US-02 sequenciais; **US-03..05** paralelas após US-02; **US-06..13** paralelas após US-03..05; US-14..16 sequenciais.  
-Soma esforço: **408 min** · caminho crítico: **249 min**.
-
 ```mermaid
 ---
 config:

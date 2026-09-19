@@ -16,7 +16,7 @@
 
 | Entradas | Execução | Saídas |
 |----------|----------|--------|
-| Config do device (`device.config.json`), runtime Android disponível | Orquestrar subir/conectar, serial online e boot completo | Agent pronto para ADB (serial online, boot ok) |
+| Config, runtime Android disponível | Orquestrar subir/conectar, serial online e boot completo | Agent pronto para ADB (serial online, boot ok) |
 
 | ID | Cenário | Entradas | Execução | Saídas |
 |----|---------|----------|----------|--------|

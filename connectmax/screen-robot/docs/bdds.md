@@ -13,7 +13,7 @@ Cada bloco: Dado / Quando / Então alinhado a Entradas / Execução / Saídas.
 
 ```gherkin
 Cenário: US-01 Agent fica pronto para ADB
-  Dado a config do dispositivo (device.config.json) e o runtime Android disponíveis
+  Dado o config e o runtime Android disponíveis
   Quando o provisionamento sobe/conecta o agent, garante serial online e aguarda boot completo
   Então o agent está pronto para ADB (serial online e boot ok)
 ```

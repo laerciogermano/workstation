@@ -5,7 +5,7 @@ Transformar o discovery em plano executável.
 ## Entradas
 
 - [Documento de visão](../discovery/) do discovery (funcionalidades com título, descrição e capa)
-- [Documento de épicos](../discovery/) (histórias, BDD e protótipos de alta fidelidade)
+- [Documento de épicos](../discovery/) (histórias, BDD → protótipo HF maior → protótipo HF por cenário)
 - Restrições técnicas e de negócio
 - Stack e padrões já adotados no projeto
 

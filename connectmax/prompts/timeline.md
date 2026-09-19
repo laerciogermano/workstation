@@ -41,3 +41,4 @@ Como registrar: [`README.md`](README.md).
 | 032 | 2026-09-19 | Remover legendas do roadmap | [032-2026-09-19-remover-legendas-roadmap.md](032-2026-09-19-remover-legendas-roadmap.md) | Tirou colapso/cores/paralelismo/soma do texto do roadmap. |
 | 033 | 2026-09-19 | Filhos do roadmap em 1.6 | [033-2026-09-19-processo-1-6-filhos-roadmap.md](033-2026-09-19-processo-1-6-filhos-roadmap.md) | Árvore do processo: 1.6 Roadmap expandido com EP/US/SC do screen-robot. |
 | 034 | 2026-09-19 | SC do Gantt roadmap → tasks | [034-2026-09-19-sc-gantt-roadmap-para-tasks.md](034-2026-09-19-sc-gantt-roadmap-para-tasks.md) | Roadmap só EP/US; Gantt com SC em tasks.md. |
+| 035 | 2026-09-19 | Folhas iguais no roadmap | [035-2026-09-19-roadmap-folhas-iguais.md](035-2026-09-19-roadmap-folhas-iguais.md) | Gantt do roadmap: folhas com o mesmo tamanho visual. |

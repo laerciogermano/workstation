@@ -27,13 +27,23 @@ O discovery tem **duas fases** em sequência:
 
 A partir da visão, agrupar funcionalidades em **épicos**.
 
-Cada **cenário** representa **uma mudança de estado do sistema** (estado anterior → ação → estado resultante). Para cada um, nesta ordem:
+Cada **história de usuário** é uma **funcionalidade macro** (ex.: criar usuário). Uma história se decompõe em **N cenários**; cada cenário é **uma mudança de estado do sistema** (estado anterior → ação → estado resultante).
+
+Exemplo — história **Criar usuário**:
+
+| # | Cenário | Mudança de estado |
+|---|---------|-------------------|
+| 1 | Clicar no botão criar | Lista → modal aberto |
+| 2 | Digitar o nome | Modal sem nome → modal com nome visível |
+| 3 | Clicar em salvar | Botão ativo → carregando/inativado → janela fechada e unidade salva na lista |
+
+Para **cada cenário**, nesta ordem:
 
 1. Definir o **cenário BDD** (Dado / Quando / Então)
 2. Criar o **protótipo de alta fidelidade maior**
 3. Criar o **protótipo de alta fidelidade** do cenário
 
-Também registrar as **histórias** do épico (Como… quero… para…) e validar o conjunto com stakeholders.
+Registrar as histórias no formato Como… quero… para… e validar o conjunto com stakeholders.
 
 ## Saídas
 
@@ -55,12 +65,12 @@ Conjunto de **todos os épicos**, cada um contendo:
 
 | Artefato | Papel | Ordem |
 |----------|--------|-------|
-| **Histórias** | O *quê* desejado (Como… quero… para…) | — |
-| **Cenários BDD** | Uma mudança de estado do sistema; critérios de aceite (Dado / Quando / Então) | 1º por cenário |
+| **Histórias** | Funcionalidade macro (Como… quero… para…); agrupa N cenários | — |
+| **Cenários BDD** | Uma mudança de estado da história; Dado / Quando / Então | 1º por cenário |
 | **Protótipo de alta fidelidade maior** | UI de referência ampla do cenário / fluxo | 2º por cenário |
 | **Protótipo de alta fidelidade** | UI fidelidade alta que materializa o cenário | 3º por cenário |
 
-Épicos ligam a visão ao trabalho executável: o detalhe de comportamento e a UI de referência saem daqui, sempre com BDD antes dos protótipos.
+Épicos ligam a visão ao trabalho executável: história = funcionalidade macro; cenários = mudanças de estado; BDD antes dos protótipos.
 
 ## Próximo passo
 

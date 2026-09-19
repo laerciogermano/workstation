@@ -22,5 +22,5 @@ vendas (cadência, fila, distribuição, faturamento)
 
 ## Próximos passos
 
-→ [`screen-robot/README.md`](screen-robot/README.md) — implementar F0+ no robô  
+→ [`screen-robot/README.md`](screen-robot/README.md) — épicos Capture → Perceive → Decide → Actuate
 → [`vendas/README.md`](vendas/README.md) — esteira de produto de vendas

@@ -11,4 +11,4 @@ ADICIONE Q LE LISTAS TBM
 
 ## Resultado
 
-- [`docs/functionalities.md`](../screen-robot/docs/functionalities.md): tipo de nó **Lista** explícito na extração (itens como filhos).
+- [`docs/functionalities/`](../screen-robot/docs/functionalities/README.md): tipo de nó **Lista** explícito na extração (itens como filhos).

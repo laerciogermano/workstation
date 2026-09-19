@@ -8,9 +8,9 @@
 ```text
 README.md (visão)
 └── docs/README.md
+    ├── vision.md
     ├── functionalities/          # pasta por US-XX
     │   └── US-XX-*/README.md
-    ├── functionalities.md        # ponte → functionalities/
     ├── tasks.md
     ├── bdd-nos.md
     └── bdd-linkedin-login.md

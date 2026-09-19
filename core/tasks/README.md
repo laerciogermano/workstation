@@ -92,6 +92,7 @@ Prompts: [`clozzy/prompts/timeline.md`](../../clozzy/prompts/timeline.md).
 ## P1 — ConnectMax · screen-robot
 
 Robô de tela em 4 épicos: **Capture → Perceive → Decide → Actuate**.  
+**Premissa:** devices = **agents** (Capture/Actuate só por agent).  
 Legenda: verde = Done · amarelo = Doing · cinza = Todo  
 Estimativas: **minutos de esforço IA** (não humano).  
 Épicos: [`epics/`](../../connectmax/screen-robot/epics/README.md).
@@ -99,12 +100,7 @@ Estimativas: **minutos de esforço IA** (não humano).
 ```mermaid
 flowchart TD
   subgraph EP01["EP-01 Capture"]
-    C01[US-01 Captura ADB 42m]
-    C02[US-02 Captura agent 90m]
-    C03[US-03 Backend capture 24m]
-    C01 --> C02
-    C01 --> C03
-    C02 --> C03
+    C01[US-01 Captura agent 90m]
   end
 
   subgraph EP02["EP-02 Perceive"]
@@ -133,36 +129,26 @@ flowchart TD
   end
 
   subgraph EP04["EP-04 Actuate"]
-    A01[US-01 Contrato atuacao 12m]
-    A02[US-02 Gestos ADB 24m]
-    A03[US-03 Clique do frame 9m]
-    A04[US-04 Rolar ate achar 36m]
-    A05[US-05 Calibrar resolucao 30m]
-    A06[US-06 Gestos agent 90m]
-    A07[US-07 Backend actuate 24m]
-    A01 --> A02 --> A03
-    A02 --> A04
-    A01 --> A05
-    A01 --> A06
-    A02 --> A07
-    A06 --> A07
+    A01[US-01 Gestos agent 102m]
+    A02[US-02 Rolar ate achar 36m]
+    A03[US-03 Calibrar resolucao 30m]
+    A01 --> A02
+    A01 --> A03
   end
 
   C01 --> P01
-  C01 --> A03
+  C01 --> A01
   P05 --> D01
   P05 --> D02
-  D03 --> A04
-  D03 --> A05
+  D03 --> A02
+  D03 --> A03
 ```
 
 ### EP-01 Capture
 
 | Todo | Doing | Done |
 |------|-------|------|
-| [US-01](../../connectmax/screen-robot/epics/EP-01-capture/US-01-capturar-tela-via-adb/README.md) Capturar via ADB · 42m | | |
-| [US-02](../../connectmax/screen-robot/epics/EP-01-capture/US-02-capturar-tela-via-agent/README.md) Capturar via agent · 90m | | |
-| [US-03](../../connectmax/screen-robot/epics/EP-01-capture/US-03-escolher-backend-de-captura/README.md) Backend captura · 24m | | |
+| [US-01](../../connectmax/screen-robot/epics/EP-01-capture/US-01-capturar-tela-via-agent/README.md) Capturar via agent · 90m | | |
 
 ### EP-02 Perceive
 
@@ -188,13 +174,9 @@ flowchart TD
 
 | Todo | Doing | Done |
 |------|-------|------|
-| [US-01](../../connectmax/screen-robot/epics/EP-04-actuate/US-01-definir-contrato-de-atuacao/README.md) Contrato atuação · 12m | | |
-| [US-02](../../connectmax/screen-robot/epics/EP-04-actuate/US-02-executar-gestos-via-adb/README.md) Gestos ADB · 24m | | |
-| [US-03](../../connectmax/screen-robot/epics/EP-04-actuate/US-03-validar-clique-a-partir-do-frame/README.md) Clique do frame · 9m | | |
-| [US-04](../../connectmax/screen-robot/epics/EP-04-actuate/US-04-rolar-lista-ate-achar-alvo/README.md) Rolar até achar · 36m | | |
-| [US-05](../../connectmax/screen-robot/epics/EP-04-actuate/US-05-calibrar-resolucao/README.md) Calibrar resolução · 30m | | |
-| [US-06](../../connectmax/screen-robot/epics/EP-04-actuate/US-06-executar-gestos-via-agent/README.md) Gestos agent · 90m | | |
-| [US-07](../../connectmax/screen-robot/epics/EP-04-actuate/US-07-escolher-backend-de-atuacao/README.md) Backend atuação · 24m | | |
+| [US-01](../../connectmax/screen-robot/epics/EP-04-actuate/US-01-executar-gestos-via-agent/README.md) Gestos via agent · 102m | | |
+| [US-02](../../connectmax/screen-robot/epics/EP-04-actuate/US-02-rolar-lista-ate-achar-alvo/README.md) Rolar até achar · 36m | | |
+| [US-03](../../connectmax/screen-robot/epics/EP-04-actuate/US-03-calibrar-resolucao/README.md) Calibrar resolução · 30m | | |
 
 → [`screen-robot/`](../../connectmax/screen-robot/README.md) · [`epics`](../../connectmax/screen-robot/epics/README.md) · [`plano`](../../connectmax/screen-robot/docs/plano-percepcao-imagem-hardware.md) · [`board`](../board/README.md#p1--connectmax--screen-robot)
 

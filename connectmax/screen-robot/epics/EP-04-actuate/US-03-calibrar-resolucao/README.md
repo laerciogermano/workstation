@@ -1,17 +1,17 @@
-# US-05 — Calibrar resolução frame ↔ actuator
+# US-03 — Calibrar resolução frame ↔ actuator
 
 | Campo | Valor |
 |-------|--------|
-| ID | US-05 |
+| ID | US-03 |
 | Épico | [EP-04 Actuate](../README.md) |
 | Status | Todo |
 | Esforço IA | 30m |
 | Recorte de | Atuação no device |
-| Depende de | [US-01](../US-01-definir-contrato-de-atuacao/README.md) |
+| Depende de | [US-01](../US-01-executar-gestos-via-agent/README.md) |
 
 ## História
 
-Como agente do screen-robot, quero **mapear coordenadas do frame para o espaço do actuator**, para cliques corretos quando a captura e o device têm resoluções diferentes.
+Como agente do screen-robot, quero **mapear coordenadas do frame para o espaço do actuator (agent)**, para cliques corretos quando a captura e o device têm resoluções diferentes.
 
 ## Cenários
 

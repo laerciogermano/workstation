@@ -13,7 +13,7 @@
 
 1. **Frame in, action out** — entrada = PNG + `width/height`; saída = gesto ou dado extraído.
 2. **Sem uiautomator em produção** — dump só opcional para debug/treino.
-3. **Actuator plugável** — ADB hoje; agent/HID depois, mesma API.
+3. **Actuator = agent** — neste momento todos os devices são agents (sem dual ADB/agent).
 4. **Coordenadas no espaço da imagem** — recalibrar se a captura mudar de resolução.
 
 ---

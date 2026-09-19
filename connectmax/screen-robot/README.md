@@ -27,17 +27,17 @@ Automatizar apps móveis sem depender de uiautomator/acessibilidade em produçã
 
 ## Objetivo
 
-Entregar Capture → Perceive → Decide → Actuate com backends plugáveis (ADB hoje; agent depois), goals JSON sem coordenadas hardcoded, e operação por listas de elementos (tap, type, swipe, wait, scroll).
+Entregar Capture → Perceive → Decide → Actuate com **agent como único transporte de device neste momento**, goals JSON sem coordenadas hardcoded, e operação por listas de elementos (tap, type, swipe, wait, scroll).
 
 ## Capacidades (v1)
 
-- Capturar frame (PNG + width/height).
+- Capturar frame (PNG + width/height) **via agent**.
 - Identificar textos (OCR), ícones/botões/cards (vision) e mesclar em `Element[]`.
 - Listar e selecionar elementos por label, kind ou índice.
-- Clicar, digitar, rolar, aguardar elemento, copiar texto / região.
+- Clicar, digitar, rolar, aguardar elemento, copiar texto / região **via agent**.
 - Decidir ação via matcher determinístico ou LLM opcional.
 - Calibrar resolução frame ↔ actuator.
-- Trocar backend `adb` ↔ `agent` sem reescrever Perceive/Decide.
+- **Premissa atual:** todos os devices são agents (sem dual ADB/agent neste momento).
 
 ## Fora de escopo
 

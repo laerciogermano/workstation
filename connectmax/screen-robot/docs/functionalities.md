@@ -14,8 +14,7 @@
 
 ## Captura
 
-- Capturar o frame atual da tela do device como PNG + width/height/ts.
-- Expor interface `Capture` com backends plugáveis (ADB, agent).
+- Capturar o frame atual da tela do device como PNG + width/height/ts **via agent** (único transporte neste momento).
 
 ## Percepção (imagem → lista)
 
@@ -34,7 +33,7 @@
 
 ## Atuação
 
-- Executar tap, swipe e type no device via `Actuate` (ADB ou agent).
+- Executar tap, swipe e type no device **via agent** (`Actuate`).
 - Mapear center do elemento para coordenadas do actuator (calibração de resolução).
 
 ## Goals e orquestração
@@ -46,8 +45,8 @@
 
 ## Device / runtime
 
-- Operar no redroid e no emulador Android Studio via ADB.
-- Preparar caminho hardware com backend agent sem reescrever Perceive/Decide.
+- **Premissa atual:** todos os devices são **agents** (Capture e Actuate só por agent).
+- Operar no redroid/emulador também passa pelo agent (não há US de ADB dual neste momento).
 
 ---
 

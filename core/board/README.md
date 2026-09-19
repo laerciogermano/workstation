@@ -8,19 +8,18 @@ Gantts por projeto (prioridade maior → menor).
 ## P1 — ConnectMax · screen-robot
 
 Robô de tela em 4 épicos: Capture → Perceive → Decide → Actuate.  
+**Premissa:** devices = **agents** (sem dual ADB/agent neste momento).  
 Estimativas: **minutos de esforço IA** (não humano).  
 Épicos: [`screen-robot/epics/`](../../connectmax/screen-robot/epics/README.md).
 
 ```mermaid
 gantt
-  title screen-robot — 4 épicos (minutos IA)
+  title screen-robot — 4 épicos (minutos IA) — agent only
   dateFormat X
   axisFormat %s
 
   section EP-01 Capture
-  Captura ADB              :a01, 0, 42m
-  Captura agent            :a02, after a01, 90m
-  Backend captura          :a03, after a01, 24m
+  Captura agent            :a01, 0, 90m
 
   section EP-02 Perceive
   Schema elemento          :b01, after a01, 24m
@@ -37,13 +36,9 @@ gantt
   Metricas                 :c05, after c03, 24m
 
   section EP-04 Actuate
-  Contrato atuacao         :d01, 0, 12m
-  Gestos ADB               :d02, after d01, 24m
-  Clique do frame          :d03, after d02, 9m
-  Rolar ate achar          :d04, after c03, 36m
-  Calibrar resolucao       :d05, after d01, 30m
-  Gestos agent             :d06, after d01, 90m
-  Backend atuacao          :d07, after d02, 24m
+  Gestos agent             :d01, 0, 102m
+  Rolar ate achar          :d02, after c03, 36m
+  Calibrar resolucao       :d03, after d01, 30m
 ```
 
 → [`tasks`](../tasks/README.md#p1--connectmax--screen-robot) · [`epics`](../../connectmax/screen-robot/epics/README.md)

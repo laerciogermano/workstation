@@ -1,13 +1,13 @@
-# US-04 — Rolar lista até achar alvo
+# US-02 — Rolar lista até achar alvo
 
 | Campo | Valor |
 |-------|--------|
-| ID | US-04 |
+| ID | US-02 |
 | Épico | [EP-04 Actuate](../README.md) |
 | Status | Todo |
 | Esforço IA | 36m |
 | Recorte de | Atuação no device · Orquestração de listas |
-| Depende de | [US-02](../US-02-executar-gestos-via-adb/README.md) |
+| Depende de | [US-01](../US-01-executar-gestos-via-agent/README.md) |
 
 ## História
 
@@ -17,7 +17,7 @@ Como agente do screen-robot, quero **rolar a tela e re-perceber até achar um al
 
 ### SC-01 — Swipe + perceive
 
-Dado alvo ausente no primeiro frame, quando **scroll_until** roda, então ao menos um **swipe** ocorre e perceive é chamado de novo.
+Dado alvo ausente no primeiro frame, quando **scroll_until** roda, então ao menos um **swipe via agent** ocorre e perceive é chamado de novo.
 
 ### SC-02 — Encontrou
 

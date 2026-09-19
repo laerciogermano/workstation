@@ -1,71 +1,71 @@
 # Documento de cenários
 
-Artefato **2** do [discovery](README.md). Fonte de verdade do *quê* do produto (EP → US → SC), **sem** Gherkin.
+Artefato **2** do [discovery](README.md). Fonte de verdade do *quê* do produto (EP → US → SC), **sem** Gherkin — **só tabelas**.
 
 **Antes:** [`vision.md`](vision.md). **Depois:** [`bdd.md`](bdd.md).
 
 ## Regras
 
-1. Organizar o produto em **épicos → estórias → cenários**.
-2. Cada **épico** (EP-) é um conjunto de estórias que, juntas, entregam **valor**. Uma estória isolada pode não bastar (ex.: login sem cadastro).
-3. Cada **estória** (US-) é uma **função / operação completa** do usuário (ex.: cadastrar, fazer login, provisionar agente).
-4. Cada estória lista **cenários** (SC-): as mudanças de **estado** necessárias para completar a operação.
-5. Toda estória **deve ter cenários** — no mínimo um. Uma estória pode conter **apenas um** cenário quando a operação for uma única mudança de estado.
-6. **Todo cenário deve ter ID** no formato `SC-XX` (sequencial no produto: SC-01, SC-02, …).
-7. Um **cenário** é, ao mesmo tempo:
-   - uma **mudança de estado** (estado anterior → ação → estado resultante, em geral visual na UI);
-   - uma **unidade testável** (aceite isolável: Dado/Quando/Então próprio);
-   - uma **unidade paralelizável** (pode ser desenvolvida/testada em paralelo com outros SC da mesma estória, salvo dependência explícita).
+1. Organizar o produto em **épicos → estórias → cenários**, todos em tabela.
+2. Cada **épico** (EP-) é um conjunto de estórias que, juntas, entregam **valor**.
+3. Cada **estória** (US-) é uma **função / operação completa** do usuário.
+4. Cada estória tem **cenários** (SC-): mudanças de **estado** (obrigatório ≥1).
+5. **Todo cenário** tem ID `SC-XX` (sequencial no produto).
+6. Um **cenário** é mudança de estado + unidade testável + unidade paralelizável.
 
 ## Formato
 
+Duas tabelas (sem seções narradas por US):
+
 ```markdown
-## EP-NN — <Valor do épico>
+## Épicos
 
-<Por que esse conjunto de estórias entrega valor.>
+| ID | Épico | Valor |
 
-### US-NN — <Operação completa>
+## Histórias (US)
 
-<Descrição breve: o que o usuário faz, para quem / por quê.>
+| EP | ID | História | Entradas | Execução | Saídas |
 
-| ID | Cenário | Mudança de estado |
-|----|---------|-------------------|
-| SC-01 | … | estado A → estado B |
-| SC-02 | … | estado B → estado C |
+## Cenários (SC)
+
+| US | ID | Cenário | Entradas | Execução | Saídas |
 ```
 
-Cada linha de cenário é unidade de aceite e de paralelismo (salvo dependência explícita).
+(Alternativa UI: coluna **Mudança de estado** no lugar de Entradas/Execução/Saídas.)
+
 ## Exemplo
 
-## EP-01 — Autenticação
+### Épicos
 
-Permitir que o usuário entre no produto: criar conta e autenticar. Login sozinho não entrega valor; cadastro + login juntos entregam.
+| ID | Épico | Valor |
+|----|-------|-------|
+| EP-01 | Autenticação | Entrar no produto (cadastro + login) |
 
-### US-01 — Cadastrar
+### Histórias (US)
 
-Permite criar uma nova conta.
+| EP | ID | História | Entradas | Execução | Saídas |
+|----|----|----------|----------|----------|--------|
+| EP-01 | US-01 | Cadastrar | Dados de conta | Criar conta | Conta criada |
+| EP-01 | US-02 | Fazer login | Credenciais | Autenticar | Sessão autenticada |
 
-| ID | Cenário | Mudança de estado |
-|----|---------|-------------------|
-| SC-01 | Abrir cadastro | Home → formulário de cadastro |
-| SC-02 | Preencher dados | Formulário vazio → campos preenchidos |
-| SC-03 | Confirmar | Botão ativo → conta criada / redirecionamento |
+### Cenários (SC)
 
-### US-02 — Fazer login
-
-Permite autenticar com credenciais existentes.
-
-| ID | Cenário | Mudança de estado |
-|----|---------|-------------------|
-| SC-04 | Abrir login | Home → formulário de login |
-| SC-05 | Preencher credenciais | Formulário vazio → campos preenchidos |
-| SC-06 | Confirmar | Formulário → sessão autenticada (área logada) |
+| US | ID | Cenário | Mudança de estado |
+|----|----|---------|-------------------|
+| US-01 | SC-01 | Abrir cadastro | Home → formulário de cadastro |
+| US-01 | SC-02 | Preencher dados | Formulário vazio → campos preenchidos |
+| US-01 | SC-03 | Confirmar | Botão ativo → conta criada / redirecionamento |
+| US-02 | SC-04 | Abrir login | Home → formulário de login |
+| US-02 | SC-05 | Preencher credenciais | Formulário vazio → campos preenchidos |
+| US-02 | SC-06 | Confirmar | Formulário → sessão autenticada |
 
 ## Fora do escopo
 
-- Gherkin / Dado-Quando-Então (vão para [`bdd.md`](bdd.md)).
-- Protótipo visual (vai para [`prototype.md`](prototype.md)).
-- Detalhe de arquitetura, tasks e implementação (vão para [refinamento técnico](../refinamento-tecnico/README.md)).
+| Item | Vai para |
+|------|----------|
+| Gherkin / Dado-Quando-Então | [`bdd.md`](bdd.md) |
+| Protótipo visual | [`prototype.md`](prototype.md) |
+| Arquitetura, tasks, implementação | [refinamento técnico](../refinamento-tecnico/README.md) |
 
 ## Próximo passo
 

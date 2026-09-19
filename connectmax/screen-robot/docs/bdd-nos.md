@@ -1,10 +1,8 @@
-# BDD — cenários por nó (screen-robot)
+# BDD — cenários por história (screen-robot)
 
-**Por quê:** aceite de cada nó da [árvore de execução](../../../core/tasks/README.md#p1--connectmax--screen-robot).  
+**Por quê:** aceite de cada **US** (e **SC** sob US-01, US-02, US-20).  
 **Funcionalidades:** [`functionalities.md`](functionalities.md).  
-**Cenário integrado:** [`bdd-linkedin-login.md`](bdd-linkedin-login.md).
-
-Cada cenário = mudança de estado (Dado → Quando → Então).
+**Integração:** [`bdd-linkedin-login.md`](bdd-linkedin-login.md).
 
 ---
 
@@ -86,196 +84,183 @@ Cenário: Pacote é instalado no agent
 
 ---
 
-## US-03 · Receber eventos
+## US-03 · Evento de boot
 
 ```gherkin
-Funcionalidade: Receber eventos
-  Cenário: Evento de UI confirmado para o próximo passo
-    Dado serial online e critérios de espera
-    Quando o sistema observa boot, app, estabilidade e dump
-    Então o evento esperado é confirmado
+Funcionalidade: Evento de boot
+  Cenário: Sinal de boot é recebido
+    Dado serial online
+    Quando o listener aguarda o evento de boot
+    Então o boot é sinalizado
 ```
 
-### SC-03.1 Evento de boot
+## US-04 · Evento de app aberta
 
 ```gherkin
-Cenário: Sinal de boot é recebido
-  Dado serial online
-  Quando o listener aguarda o evento de boot
-  Então o boot é sinalizado
+Funcionalidade: Evento de app aberta
+  Cenário: App em foreground é confirmada
+    Dado o package esperado em foreground
+    Quando o sistema aguarda a app aberta
+    Então a app está em foreground
 ```
 
-### SC-03.2 Evento de app aberta
+## US-05 · Evento de tela estável
 
 ```gherkin
-Cenário: App em foreground é confirmada
-  Dado o package esperado em foreground
-  Quando o sistema aguarda a app aberta
-  Então a app está em foreground
+Funcionalidade: Evento de tela estável
+  Cenário: Tela fica estável
+    Dado a app em foreground
+    Quando o sistema aguarda ausência de transição de UI
+    Então a tela está estável
 ```
 
-### SC-03.3 Evento de tela estável
+## US-06 · Evento de mudança de dump
 
 ```gherkin
-Cenário: Tela fica estável
-  Dado a app em foreground
-  Quando o sistema aguarda ausência de transição de UI
-  Então a tela está estável
-```
-
-### SC-03.4 Evento de mudança de dump
-
-```gherkin
-Cenário: Dump de UI muda
-  Dado um dump anterior (ou ausência) e serial online
-  Quando a hierarquia UI (uiautomator dump) muda em relação ao anterior
-  Então um dump atualizado está disponível
+Funcionalidade: Evento de mudança de dump
+  Cenário: Dump de UI muda
+    Dado um dump anterior (ou ausência) e serial online
+    Quando a hierarquia UI (uiautomator dump) muda em relação ao anterior
+    Então um dump atualizado está disponível
 ```
 
 ---
 
-## US-04 · Executar operações
+## US-07 · Abrir aplicativo
 
 ```gherkin
-Funcionalidade: Executar operações
-  Cenário: Ação é aplicada no device
-    Dado serial online e um alvo (package, coords, elemento ou imagem)
-    Quando a operação correspondente é disparada
-    Então a UI/device reflete a ação (e coords/artefato quando couber)
+Funcionalidade: Abrir aplicativo
+  Cenário: App é aberta no agent
+    Dado package (e activity opcional)
+    Quando launch é executado
+    Então a app está em foreground
 ```
 
-### SC-04.1 Abrir aplicativo
+## US-08 · tap
 
 ```gherkin
-Cenário: App é aberta no agent
-  Dado package (e activity opcional)
-  Quando launch é executado
-  Então a app está em foreground
+Funcionalidade: tap
+  Cenário: Toque na tela
+    Dado coordenadas x,y ou bounds de um elemento
+    Quando tap é executado nesse alvo
+    Então a UI reflete o toque
 ```
 
-### SC-04.2 tap
+## US-09 · type
 
 ```gherkin
-Cenário: Toque na tela
-  Dado coordenadas x,y ou bounds de um elemento
-  Quando tap é executado nesse alvo
-  Então a UI reflete o toque
+Funcionalidade: type
+  Cenário: Texto é digitado
+    Dado um texto e campo focado (ou coords)
+    Quando type injeta o texto
+    Então o texto aparece na UI
 ```
 
-### SC-04.3 type
+## US-10 · key
 
 ```gherkin
-Cenário: Texto é digitado
-  Dado um texto e campo focado (ou coords)
-  Quando type injeta o texto
-  Então o texto aparece na UI
+Funcionalidade: key
+  Cenário: Tecla é enviada
+    Dado um código de tecla (ex. ENTER, BACK)
+    Quando keyevent é enviado
+    Então a tecla é processada pelo device
 ```
 
-### SC-04.4 key
+## US-11 · scroll
 
 ```gherkin
-Cenário: Tecla é enviada
-  Dado um código de tecla (ex. ENTER, BACK)
-  Quando keyevent é enviado
-  Então a tecla é processada pelo device
+Funcionalidade: scroll
+  Cenário: Conteúdo é rolado
+    Dado direção (up/down/left/right) e distância ou área
+    Quando scroll/swipe é executado
+    Então o conteúdo rolou e novos itens podem ficar visíveis
 ```
 
-### SC-04.5 scroll
+## US-12 · screenshot
 
 ```gherkin
-Cenário: Conteúdo é rolado
-  Dado direção (up/down/left/right) e distância ou área
-  Quando scroll/swipe é executado
-  Então o conteúdo rolou e novos itens podem ficar visíveis
+Funcionalidade: screenshot
+  Cenário: Print da tela é salvo
+    Dado serial e path de saída
+    Quando screenshot é capturado
+    Então o arquivo de imagem existe no path
 ```
 
-### SC-04.6 screenshot
+## US-13 · Resgatar coordenadas x,y
 
 ```gherkin
-Cenário: Print da tela é salvo
-  Dado serial e path de saída
-  Quando screenshot é capturado
-  Então o arquivo de imagem existe no path
-```
-
-### SC-04.7 Resgatar coordenadas x,y (imagem de entrada)
-
-```gherkin
-Cenário: Coordenadas a partir de imagem template
-  Dado uma imagem de entrada (template) e o frame/tela atual
-  Quando o match por visão/template é executado
-  Então coordenadas x,y (e confiança) são devolvidas
+Funcionalidade: Resgatar coordenadas x,y
+  Cenário: Coordenadas a partir de imagem template
+    Dado uma imagem de entrada (template) e o frame/tela atual
+    Quando o match por visão/template é executado
+    Então coordenadas x,y (e confiança) são devolvidas
 ```
 
 ---
 
-## US-05 · Extrair elementos e informações
+## US-14 · Extrair nó Texto
 
 ```gherkin
-Funcionalidade: Extrair elementos e informações
-  Cenário: Árvore DOM da tela é produzida
-    Dado frame/dump da tela estável
-    Quando textos, ícones, imagens, listas e containers são extraídos e compostos
-    Então existe uma árvore de componentes navegável (estilo DOM)
+Funcionalidade: Extrair nó Texto
+  Cenário: Textos são extraídos
+    Dado frame/dump
+    Quando OCR ou atributos de texto são lidos
+    Então nós de texto existem com string e bounds
 ```
 
-### SC-05.1 Nó Texto
+## US-15 · Extrair nó Ícone
 
 ```gherkin
-Cenário: Textos são extraídos
-  Dado frame/dump
-  Quando OCR ou atributos de texto são lidos
-  Então nós de texto existem com string e bounds
+Funcionalidade: Extrair nó Ícone
+  Cenário: Ícones são reconhecidos
+    Dado frame/dump
+    Quando pictogramas/controles são detectados
+    Então nós de ícone existem com tipo e bounds
 ```
 
-### SC-05.2 Nó Ícone
+## US-16 · Extrair nó Imagem / foto
 
 ```gherkin
-Cenário: Ícones são reconhecidos
-  Dado frame/dump
-  Quando pictogramas/controles são detectados
-  Então nós de ícone existem com tipo e bounds
+Funcionalidade: Extrair nó Imagem / foto
+  Cenário: Regiões de mídia são detectadas
+    Dado frame/dump
+    Quando regiões de imagem/foto são identificadas
+    Então nós imagem/foto existem com bounds
 ```
 
-### SC-05.3 Nó Imagem / foto
+## US-17 · Extrair nó Lista
 
 ```gherkin
-Cenário: Regiões de mídia são detectadas
-  Dado frame/dump
-  Quando regiões de imagem/foto são identificadas
-  Então nós imagem/foto existem com bounds
+Funcionalidade: Extrair nó Lista
+  Cenário: Lista com itens é extraída
+    Dado frame/dump
+    Quando coleção rolável e itens são identificados
+    Então existe nó lista com filhos e metadados de scroll
 ```
 
-### SC-05.4 Nó Lista
+## US-18 · Extrair nó Container
 
 ```gherkin
-Cenário: Lista com itens é extraída
-  Dado frame/dump
-  Quando coleção rolável e itens são identificados
-  Então existe nó lista com filhos e metadados de scroll
+Funcionalidade: Extrair nó Container
+  Cenário: Containers são agrupados
+    Dado frame/dump
+    Quando card/toolbar/painel são agrupados
+    Então nós container existem com filhos
 ```
 
-### SC-05.5 Nó Container
+## US-19 · Montar árvore DOM
 
 ```gherkin
-Cenário: Containers são agrupados
-  Dado frame/dump
-  Quando card/toolbar/painel são agrupados
-  Então nós container existem com filhos
-```
-
-### SC-05.6 Montar árvore DOM
-
-```gherkin
-Cenário: Hierarquia raiz → filhos é montada
-  Dado nós tipados (texto, ícone, imagem, lista, container)
-  Quando a composição hierárquica é executada
-  Então a árvore DOM navegável é devolvida
+Funcionalidade: Montar árvore DOM
+  Cenário: Hierarquia raiz → filhos é montada
+    Dado nós tipados (texto, ícone, imagem, lista, container)
+    Quando a composição hierárquica é executada
+    Então a árvore DOM navegável é devolvida
 ```
 
 ---
 
-## US-06 · Guardar estado de sessão
+## US-20 · Guardar estado de sessão
 
 ```gherkin
 Funcionalidade: Guardar estado de sessão
@@ -285,7 +270,7 @@ Funcionalidade: Guardar estado de sessão
     Então a sessão está em disco ou o contexto foi restaurado
 ```
 
-### SC-06.1 Persistir sessão em arquivo
+### SC-20.1 Persistir sessão em arquivo
 
 ```gherkin
 Cenário: Sessão é gravada
@@ -294,7 +279,7 @@ Cenário: Sessão é gravada
   Então o arquivo de sessão existe
 ```
 
-### SC-06.2 Restaurar sessão do arquivo
+### SC-20.2 Restaurar sessão do arquivo
 
 ```gherkin
 Cenário: Sessão é restaurada

@@ -6,7 +6,7 @@
 
 ## P1 — ConnectMax · screen-robot
 
-Seis capacidades Node (maiores sequenciais + filhas).  
+Histórias US (eventos, operações e extração cada uma é US; Provisionar/APKs/Sessão com SC).  
 Funcionalidades: [`functionalities.md`](../../connectmax/screen-robot/docs/functionalities.md) · BDD nós: [`bdd-nos.md`](../../connectmax/screen-robot/docs/bdd-nos.md) · BDD login: [`bdd-linkedin-login.md`](../../connectmax/screen-robot/docs/bdd-linkedin-login.md).  
 Estimativas: minutos IA · **1 dia = 8h = 480 min**.
 
@@ -22,29 +22,29 @@ screen-robot (408 min)
 │   ├── SC-02.1 Ler versão na config do dispositivo (5 min)
 │   ├── SC-02.2 Baixar APK na versão definida (25 min)
 │   └── SC-02.3 Instalar pacote no agent (15 min)
-├── US-03 Receber eventos (48 min)
-│   ├── SC-03.1 Evento de boot (12 min)
-│   ├── SC-03.2 Evento de app aberta (12 min)
-│   ├── SC-03.3 Evento de tela estável (12 min)
-│   └── SC-03.4 Evento de mudança de dump (12 min)
-├── US-04 Executar operações (105 min)
-│   ├── SC-04.1 Abrir aplicativo (15 min)
-│   ├── SC-04.2 tap (15 min)
-│   ├── SC-04.3 type (15 min)
-│   ├── SC-04.4 key (15 min)
-│   ├── SC-04.5 scroll (15 min)
-│   ├── SC-04.6 screenshot (15 min)
-│   └── SC-04.7 Resgatar coordenadas x,y (imagem de entrada) (15 min)
-├── US-05 Extrair elementos e informações (120 min)
-│   ├── SC-05.1 Nó Texto (20 min)
-│   ├── SC-05.2 Nó Ícone (20 min)
-│   ├── SC-05.3 Nó Imagem / foto (24 min)
-│   ├── SC-05.4 Nó Lista (itens filhos + scroll) (24 min)
-│   ├── SC-05.5 Nó Container (12 min)
-│   └── SC-05.6 Montar árvore DOM (raiz → filhos) (20 min)
-└── US-06 Guardar estado de sessão (30 min)
-    ├── SC-06.1 Persistir sessão em arquivo (15 min)
-    └── SC-06.2 Restaurar sessão do arquivo (15 min)
+├── Eventos
+│   ├── US-03 Evento de boot (12 min)
+│   ├── US-04 Evento de app aberta (12 min)
+│   ├── US-05 Evento de tela estável (12 min)
+│   └── US-06 Evento de mudança de dump (12 min)
+├── Operações
+│   ├── US-07 Abrir aplicativo (15 min)
+│   ├── US-08 tap (15 min)
+│   ├── US-09 type (15 min)
+│   ├── US-10 key (15 min)
+│   ├── US-11 scroll (15 min)
+│   ├── US-12 screenshot (15 min)
+│   └── US-13 Resgatar coordenadas x,y (imagem de entrada) (15 min)
+├── Extrair
+│   ├── US-14 Extrair nó Texto (20 min)
+│   ├── US-15 Extrair nó Ícone (20 min)
+│   ├── US-16 Extrair nó Imagem / foto (24 min)
+│   ├── US-17 Extrair nó Lista (24 min)
+│   ├── US-18 Extrair nó Container (12 min)
+│   └── US-19 Montar árvore DOM (20 min)
+└── US-20 Guardar estado de sessão (30 min)
+    ├── SC-20.1 Persistir sessão em arquivo (15 min)
+    └── SC-20.2 Restaurar sessão do arquivo (15 min)
 ```
 
 ### Gantt — atividades da árvore (paralelizáveis por IA)
@@ -56,57 +56,54 @@ Esforço total (soma): **408 min**. Com filhas em paralelo, caminho crítico ≈
 
 ```mermaid
 gantt
-  title screen-robot atividades da arvore minutos IA
+  title screen-robot US minutos IA
   dateFormat X
   axisFormat %s
 
-  section 1 Provisionar
-  Provisionar um agente              :crit, p0, 0, 60m
-  Subir e conectar agent             :p1, 0, 20m
-  Garantir serial ADB online         :p2, 0, 20m
-  Aguardar boot completo             :p3, 0, 20m
+  section Provisionar
+  US-01 Provisionar agente         :crit, p0, 0, 60m
+  SC-01.1 Subir e conectar         :p1, 0, 20m
+  SC-01.2 Serial ADB online        :p2, 0, 20m
+  SC-01.3 Boot completo            :p3, 0, 20m
 
-  section 2 Instalar APKs
-  Instalar APKs                      :crit, i0, 0, 45m
-  Ler versao na config               :i1, 0, 5m
-  Baixar APK na versao               :i2, 0, 25m
-  Instalar pacote no agent           :i3, 0, 15m
+  section Instalar APKs
+  US-02 Instalar APKs              :crit, i0, 0, 45m
+  SC-02.1 Ler versao               :i1, 0, 5m
+  SC-02.2 Baixar APK               :i2, 0, 25m
+  SC-02.3 Instalar pacote          :i3, 0, 15m
 
-  section 3 Receber eventos
-  Receber eventos                    :crit, e0, 0, 48m
-  Evento de boot                     :e1, 0, 12m
-  Evento de app aberta               :e2, 0, 12m
-  Evento de tela estavel             :e3, 0, 12m
-  Evento de mudanca de dump          :e4, 0, 12m
+  section Eventos
+  US-03 Evento boot                :e1, 0, 12m
+  US-04 Evento app aberta          :e2, 0, 12m
+  US-05 Evento tela estavel        :e3, 0, 12m
+  US-06 Evento mudanca dump        :e4, 0, 12m
 
-  section 4 Executar operacoes
-  Executar operacoes                 :crit, o0, 0, 105m
-  Abrir aplicativo                   :o1, 0, 15m
-  tap                                :o2, 0, 15m
-  type                               :o3, 0, 15m
-  key                                :o4, 0, 15m
-  scroll                             :o5, 0, 15m
-  screenshot                         :o6, 0, 15m
-  Resgatar xy por imagem             :o7, 0, 15m
+  section Operacoes
+  US-07 Abrir aplicativo           :o1, 0, 15m
+  US-08 tap                        :o2, 0, 15m
+  US-09 type                       :o3, 0, 15m
+  US-10 key                        :o4, 0, 15m
+  US-11 scroll                     :o5, 0, 15m
+  US-12 screenshot                 :o6, 0, 15m
+  US-13 Resgatar xy por imagem     :o7, 0, 15m
 
-  section 5 Extrair elementos
-  Extrair elementos                  :crit, x0, 0, 120m
-  No Texto                           :x1, 0, 20m
-  No Icone                           :x2, 0, 20m
-  No Imagem e foto                   :x3, 0, 24m
-  No Lista                           :x4, 0, 24m
-  No Container                       :x5, 0, 12m
-  Montar arvore DOM                  :x6, after x3, 20m
+  section Extrair
+  US-14 No Texto                   :x1, 0, 20m
+  US-15 No Icone                   :x2, 0, 20m
+  US-16 No Imagem e foto           :x3, 0, 24m
+  US-17 No Lista                   :x4, 0, 24m
+  US-18 No Container               :x5, 0, 12m
+  US-19 Montar arvore DOM          :x6, after x3, 20m
 
-  section 6 Guardar sessao
-  Guardar estado de sessao           :crit, s0, 0, 30m
-  Persistir sessao em arquivo        :s1, 0, 15m
-  Restaurar sessao do arquivo        :s2, 0, 15m
+  section Sessao
+  US-20 Guardar sessao             :crit, s0, 0, 30m
+  SC-20.1 Persistir sessao         :s1, 0, 15m
+  SC-20.2 Restaurar sessao         :s2, 0, 15m
 ```
 
 ### Inventário de tasks (nós)
 
-IDs: **US-** funcionalidade · **SC-** cenário. Baseline paralelo: **2026-09-19**. Filhas partem no início do dia; **Montar árvore DOM** inicia após os nós de Extrair (mesmo dia).  
+IDs: **US-** história · **SC-** cenário (só sob US-01, US-02, US-20). Baseline paralelo: **2026-09-19**. Filhas partem no início do dia; **Montar árvore DOM** inicia após os nós de Extrair (mesmo dia).  
 1 dia útil = 8h. Entradas/Execução/Saídas: [`functionalities.md`](../../connectmax/screen-robot/docs/functionalities.md#entradas--execução--saídas-por-nó).
 
 | ID | Descrição | Início | Fim | Output |
@@ -119,29 +116,26 @@ IDs: **US-** funcionalidade · **SC-** cenário. Baseline paralelo: **2026-09-19
 | SC-02.1 | Ler versão na config do dispositivo | 2026-09-19 | 2026-09-19 | Versão e package alvo |
 | SC-02.2 | Baixar APK na versão definida | 2026-09-19 | 2026-09-19 | Artefato APK no disco |
 | SC-02.3 | Instalar pacote no agent | 2026-09-19 | 2026-09-19 | Pacote instalado no agent |
-| US-03 | Receber eventos | 2026-09-19 | 2026-09-19 | Evento confirmado (estado estável para o próximo passo) |
-| SC-03.1 | Evento de boot | 2026-09-19 | 2026-09-19 | Boot sinalizado |
-| SC-03.2 | Evento de app aberta | 2026-09-19 | 2026-09-19 | App aberta confirmada |
-| SC-03.3 | Evento de tela estável | 2026-09-19 | 2026-09-19 | Tela estável |
-| SC-03.4 | Evento de mudança de dump | 2026-09-19 | 2026-09-19 | Dump atualizado disponível |
-| US-04 | Executar operações | 2026-09-19 | 2026-09-19 | Ação aplicada no device; coords ou artefato quando couber |
-| SC-04.1 | Abrir aplicativo | 2026-09-19 | 2026-09-19 | App em foreground |
-| SC-04.2 | tap | 2026-09-19 | 2026-09-19 | UI refletindo o tap |
-| SC-04.3 | type | 2026-09-19 | 2026-09-19 | Texto na UI |
-| SC-04.4 | key | 2026-09-19 | 2026-09-19 | Tecla processada |
-| SC-04.5 | scroll | 2026-09-19 | 2026-09-19 | Conteúdo rolado; novos itens visíveis |
-| SC-04.6 | screenshot | 2026-09-19 | 2026-09-19 | Arquivo de imagem |
-| SC-04.7 | Resgatar coordenadas x,y (imagem de entrada) | 2026-09-19 | 2026-09-19 | Coordenadas x,y (e confiança) |
-| US-05 | Extrair elementos e informações | 2026-09-19 | 2026-09-19 | Árvore de componentes (estilo DOM) |
-| SC-05.1 | Nó Texto | 2026-09-19 | 2026-09-19 | Nós de texto com string e bounds |
-| SC-05.2 | Nó Ícone | 2026-09-19 | 2026-09-19 | Nós de ícone com tipo e bounds |
-| SC-05.3 | Nó Imagem / foto | 2026-09-19 | 2026-09-19 | Nós imagem/foto com bounds |
-| SC-05.4 | Nó Lista | 2026-09-19 | 2026-09-19 | Nó lista com filhos e metadados de scroll |
-| SC-05.5 | Nó Container | 2026-09-19 | 2026-09-19 | Nós container com filhos |
-| SC-05.6 | Montar árvore DOM (raiz → filhos) | 2026-09-19 | 2026-09-19 | Árvore DOM navegável |
-| US-06 | Guardar estado de sessão | 2026-09-19 | 2026-09-19 | Sessão em disco / contexto restaurado |
-| SC-06.1 | Persistir sessão em arquivo | 2026-09-19 | 2026-09-19 | Arquivo de sessão |
-| SC-06.2 | Restaurar sessão do arquivo | 2026-09-19 | 2026-09-19 | Estado restaurado no runtime |
+| US-03 | Evento de boot | 2026-09-19 | 2026-09-19 | Boot sinalizado |
+| US-04 | Evento de app aberta | 2026-09-19 | 2026-09-19 | App aberta confirmada |
+| US-05 | Evento de tela estável | 2026-09-19 | 2026-09-19 | Tela estável |
+| US-06 | Evento de mudança de dump | 2026-09-19 | 2026-09-19 | Dump atualizado disponível |
+| US-07 | Abrir aplicativo | 2026-09-19 | 2026-09-19 | App em foreground |
+| US-08 | tap | 2026-09-19 | 2026-09-19 | UI refletindo o tap |
+| US-09 | type | 2026-09-19 | 2026-09-19 | Texto na UI |
+| US-10 | key | 2026-09-19 | 2026-09-19 | Tecla processada |
+| US-11 | scroll | 2026-09-19 | 2026-09-19 | Conteúdo rolado; novos itens visíveis |
+| US-12 | screenshot | 2026-09-19 | 2026-09-19 | Arquivo de imagem |
+| US-13 | Resgatar coordenadas x,y (imagem de entrada) | 2026-09-19 | 2026-09-19 | Coordenadas x,y (e confiança) |
+| US-14 | Extrair nó Texto | 2026-09-19 | 2026-09-19 | Nós de texto com string e bounds |
+| US-15 | Extrair nó Ícone | 2026-09-19 | 2026-09-19 | Nós de ícone com tipo e bounds |
+| US-16 | Extrair nó Imagem / foto | 2026-09-19 | 2026-09-19 | Nós imagem/foto com bounds |
+| US-17 | Extrair nó Lista | 2026-09-19 | 2026-09-19 | Nó lista com filhos e metadados de scroll |
+| US-18 | Extrair nó Container | 2026-09-19 | 2026-09-19 | Nós container com filhos |
+| US-19 | Montar árvore DOM | 2026-09-19 | 2026-09-19 | Árvore DOM navegável |
+| US-20 | Guardar estado de sessão | 2026-09-19 | 2026-09-19 | Sessão em disco / contexto restaurado |
+| SC-20.1 | Persistir sessão em arquivo | 2026-09-19 | 2026-09-19 | Arquivo de sessão |
+| SC-20.2 | Restaurar sessão do arquivo | 2026-09-19 | 2026-09-19 | Estado restaurado no runtime |
 
 
 ### Kanban

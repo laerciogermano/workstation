@@ -7,41 +7,28 @@ Gantts por projeto (prioridade maior → menor).
 
 ## P1 — ConnectMax · screen-robot
 
-Robô de tela em 4 épicos: Capture → Perceive → Decide → Actuate.  
-**Premissa:** devices = **agents** (sem dual ADB/agent neste momento).  
-Estimativas: **minutos de esforço IA** (não humano).  
-Épicos: [`screen-robot/epics/`](../../connectmax/screen-robot/epics/README.md).
+Seis capacidades Node + cenário login LinkedIn.  
+Funcionalidades: [`functionalities.md`](../../connectmax/screen-robot/docs/functionalities.md) · BDD: [`bdd-linkedin-login.md`](../../connectmax/screen-robot/docs/bdd-linkedin-login.md).
 
 ```mermaid
 gantt
-  title screen-robot — 4 épicos (minutos IA) — agent only
+  title screen-robot — Node (minutos IA)
   dateFormat X
   axisFormat %s
 
-  section EP-01 Capture
-  Captura agent            :a01, 0, 90m
+  section Caps
+  Provisionar agente       :a01, 0, 30m
+  Instalar APKs            :a02, after a01, 45m
+  Receber eventos          :a03, after a01, 24m
+  Extrair elementos        :a04, after a03, 36m
+  Executar operacoes       :a05, after a02, 36m
+  Guardar sessao           :a06, after a05, 18m
 
-  section EP-02 Perceive
-  Schema elemento          :b01, after a01, 24m
-  OCR textos               :b02, after b01, 60m
-  Controles vision         :b03, after b01, 90m
-  Unificar lista           :b04, after b02, 36m
-  CLI perceive             :b05, after b04, 30m
-
-  section EP-03 Decide
-  Selecionar elemento      :c01, after b05, 36m
-  Decidir via LLM          :c02, after b05, 48m
-  Goal sem coords          :c03, after c01, 72m
-  Aguardar elemento        :c04, after c03, 30m
-  Metricas                 :c05, after c03, 24m
-
-  section EP-04 Actuate
-  Gestos agent             :d01, 0, 102m
-  Rolar ate achar          :d02, after c03, 36m
-  Calibrar resolucao       :d03, after d01, 30m
+  section Cenario
+  Login LinkedIn BDD       :b01, after a06, 60m
 ```
 
-→ [`tasks`](../tasks/README.md#p1--connectmax--screen-robot) · [`epics`](../../connectmax/screen-robot/epics/README.md)
+→ [`tasks`](../tasks/README.md#p1--connectmax--screen-robot) · [`functionalities`](../../connectmax/screen-robot/docs/functionalities.md)
 
 ---
 

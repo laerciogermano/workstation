@@ -29,11 +29,11 @@ Automatizar apps móveis exige um caminho estável em código: agent pronto, app
 
 ## Objetivo
 
-Expor via Node: **provisionar · instalar APKs · eventos · operar · extrair · sessão**. Cenário piloto: login LinkedIn ([`bdds.md`](bdds.md)).
+Expor via Node: **provisionar · instalar APKs · eventos · operar · extrair · sessão**. Cenário piloto: login LinkedIn ([`4.bdds.md`](4.bdds.md)).
 
 ## Capacidades (v1)
 
-Ver [`scenarios.md`](scenarios.md).
+Ver [`3.scenarios.md`](3.scenarios.md).
 
 ## Fora de escopo
 
@@ -45,15 +45,15 @@ Ver [`scenarios.md`](scenarios.md).
 
 | Artefato | Arquivo | Status |
 |----------|---------|--------|
-| Vision — US título + descrição | [`vision.md`](vision.md) | Feito |
-| Épicos | [`epics.md`](epics.md) | Feito |
-| Cenários (US + SC) | [`scenarios.md`](scenarios.md) | Feito |
+| Vision — US título + descrição | [`1.vision.md`](1.vision.md) | Feito |
+| Funcionalidades | [`2.functionalities.md`](2.functionalities.md) | Feito |
+| Cenários (US + SC) | [`3.scenarios.md`](3.scenarios.md) | Feito |
+| BDDs (US/SC + piloto LinkedIn) | [`4.bdds.md`](4.bdds.md) | Feito |
+| Roadmap (Gantt) | [`6.roadmap.md`](6.roadmap.md) | Feito |
 | Tasks (Gantt) | [`tasks.md`](tasks.md) | Feito |
-| Roadmap (Gantt) | [`roadmap.md`](roadmap.md) | Feito |
-| BDDs (US/SC + piloto LinkedIn) | [`bdds.md`](bdds.md) | Feito |
 | Sources | [`sources/`](sources/README.md) | Em curso |
 | android-control | [`sources/android-control/`](sources/android-control/README.md) | Em curso |
 
 ## Próximos passos
 
-→ [`bdds.md`](bdds.md) · `LINKEDIN_USER` / `LINKEDIN_PASSWORD` + `npm run linkedin-login` em `sources/android-control`
+→ [`4.bdds.md`](4.bdds.md) · `LINKEDIN_USER` / `LINKEDIN_PASSWORD` + `npm run linkedin-login` em `sources/android-control`

@@ -7,12 +7,12 @@
 
 ```text
 README.md (visão)
-├── vision.md
-├── epics.md
-├── scenarios.md              # US + SC (sem BDD)
-├── tasks.md                  # Gantt TSK
-├── roadmap.md                # Gantt
-├── bdds.md                   # BDDs por US/SC + piloto LinkedIn
+├── 1.vision.md
+├── 2.functionalities.md
+├── 3.scenarios.md              # US + SC (sem BDD)
+├── 4.bdds.md                   # BDDs por US/SC + piloto LinkedIn
+├── 6.roadmap.md                # Gantt
+├── tasks.md                    # Gantt TSK
 └── sources/android-control (libs Node + scripts/linkedin-login.js)
 ```
 

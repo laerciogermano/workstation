@@ -2,9 +2,9 @@
 
 **Por quê:** Gantt das tasks (minutos IA).  
 **IDs:** **TSK-** para todos os nós.  
-**Roadmap:** [`roadmap.md`](roadmap.md).  
-**Fonte:** [`scenarios.md`](scenarios.md).  
-**Épicos:** [`epics.md`](epics.md).  
+**Roadmap:** [`6.roadmap.md`](6.roadmap.md).  
+**Fonte:** [`3.scenarios.md`](3.scenarios.md).  
+**Funcionalidades:** [`2.functionalities.md`](2.functionalities.md).  
 **Visão:** [`README.md`](README.md).  
 **Kanban / inventário (umbrella):** [`core/tasks`](../../core/tasks/README.md#p1--connectmax--screen-robot).
 
@@ -117,6 +117,6 @@ gantt
 
 ## Próximos passos
 
-→ Roadmap: [`roadmap.md`](roadmap.md)  
+→ Roadmap: [`6.roadmap.md`](6.roadmap.md)  
 → Implementação em [`sources/android-control`](sources/android-control/README.md)  
-→ Aceite: [`bdds.md`](bdds.md)
+→ Aceite: [`4.bdds.md`](4.bdds.md)

@@ -44,3 +44,4 @@ Como registrar: [`README.md`](README.md).
 | 035 | 2026-09-19 | Folhas iguais no roadmap | [035-2026-09-19-roadmap-folhas-iguais.md](035-2026-09-19-roadmap-folhas-iguais.md) | Gantt do roadmap: folhas com o mesmo tamanho visual. |
 | 036 | 2026-09-19 | IDs TSK em tasks | [036-2026-09-19-tasks-ids-tsk.md](036-2026-09-19-tasks-ids-tsk.md) | tasks.md: todos os nós como TSK-001..025. |
 | 037 | 2026-09-19 | Tasks só com Gantt | [037-2026-09-19-tasks-so-gantt.md](037-2026-09-19-tasks-so-gantt.md) | Remove árvore de texto de tasks.md; fica só o Gantt. |
+| 038 | 2026-09-19 | Artefatos screen-robot numerados | [038-2026-09-19-screen-robot-artefatos-numerados.md](038-2026-09-19-screen-robot-artefatos-numerados.md) | Renomeia docs do discovery: 1.vision … 6.roadmap. |

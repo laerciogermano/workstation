@@ -4,35 +4,54 @@ Artefato do [discovery](README.md). Fonte de verdade do *quê* do produto.
 
 ## Regras
 
-1. Recortar **todas as funcionalidades maiores** do produto neste arquivo (ou no equivalente do projeto).
-2. Cada **funcionalidade** é uma **ação** no sistema (ex.: provisionar agente, criar usuário, instalar APK).
-3. Cada funcionalidade lista **cenários**: as mudanças de estado necessárias para executar essa ação.
-4. Um **cenário** descreve estado anterior → ação → estado resultante.
+1. Organizar o produto em **épicos → estórias → cenários**.
+2. Cada **épico** (EP-) é um conjunto de estórias que, juntas, entregam **valor**. Uma estória isolada pode não bastar (ex.: login sem cadastro).
+3. Cada **estória** (US-) é uma **função / operação completa** do usuário (ex.: cadastrar, fazer login, provisionar agente).
+4. Cada estória lista **cenários** (SC-): as mudanças de **estado visual** necessárias para completar a operação.
+5. Um **cenário** descreve estado visual anterior → ação → estado visual resultante.
 
-## Formato por funcionalidade
+## Formato
 
 ```markdown
-## <Título da ação>
+## EP-NN — <Valor do épico>
 
-<Descrição breve: o que faz, para quem / por quê.>
+<Por que esse conjunto de estórias entrega valor.>
 
-| # | Cenário | Mudança de estado |
-|---|---------|-------------------|
+### US-NN — <Operação completa>
+
+<Descrição breve: o que o usuário faz, para quem / por quê.>
+
+| # | Cenário | Mudança de estado visual |
+|---|---------|--------------------------|
 | 1 | … | estado A → estado B |
 | 2 | … | estado B → estado C |
 ```
 
 ## Exemplo
 
-## Criar usuário
+## EP-01 — Autenticação
 
-Permite cadastrar um novo usuário a partir da lista.
+Permitir que o usuário entre no produto: criar conta e autenticar. Login sozinho não entrega valor; cadastro + login juntos entregam.
 
-| # | Cenário | Mudança de estado |
-|---|---------|-------------------|
-| 1 | Clicar no botão criar | Lista → modal aberto |
-| 2 | Digitar o nome | Modal sem nome → modal com nome visível |
-| 3 | Clicar em salvar | Botão ativo → carregando/inativado → janela fechada e unidade salva na lista |
+### US-01 — Cadastrar
+
+Permite criar uma nova conta.
+
+| # | Cenário | Mudança de estado visual |
+|---|---------|--------------------------|
+| 1 | Abrir cadastro | Home → formulário de cadastro |
+| 2 | Preencher dados | Formulário vazio → campos preenchidos |
+| 3 | Confirmar | Botão ativo → conta criada / redirecionamento |
+
+### US-02 — Fazer login
+
+Permite autenticar com credenciais existentes.
+
+| # | Cenário | Mudança de estado visual |
+|---|---------|--------------------------|
+| 1 | Abrir login | Home → formulário de login |
+| 2 | Preencher credenciais | Formulário vazio → campos preenchidos |
+| 3 | Confirmar | Formulário → sessão autenticada (área logada) |
 
 ## Fora do escopo
 

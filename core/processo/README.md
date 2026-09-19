@@ -10,7 +10,7 @@ Cada etapa documenta **entradas**, **execução** e **saídas**.
 
 | Etapa | Pasta | Objetivo |
 |-------|-------|----------|
-| Discovery | [`discovery/`](discovery/README.md) | Documento de funcionalidades (ações + cenários de mudança de estado) |
+| Discovery | [`discovery/`](discovery/README.md) | Épicos (valor) → estórias (operação completa) → cenários (estado visual) |
 | Refinamento técnico | [`refinamento-tecnico/`](refinamento-tecnico/README.md) | Detalhar solução, riscos e critérios técnicos |
 | Desenvolvimento | [`desenvolvimento/`](desenvolvimento/README.md) | Implementar o que foi acordado |
 | Testes | [`testes/`](testes/README.md) | Validar comportamento e qualidade |
@@ -24,14 +24,14 @@ flowchart TB
   subgraph D["1. Discovery"]
     direction TB
     D_E["Entradas<br/>demanda / problema<br/>contexto e restrições<br/>stakeholders<br/>dados e feedback"]
-    D_X["Execução<br/>recortar funcionalidades maiores<br/>cada uma = ação<br/>cenários = mudanças de estado<br/>validar com stakeholders"]
-    D_S["Saídas<br/>documento de funcionalidades"]
+    D_X["Execução<br/>épicos = valor<br/>estórias = operação completa<br/>cenários = estado visual<br/>validar com stakeholders"]
+    D_S["Saídas<br/>documento de funcionalidades<br/>(EP → US → SC)"]
     D_E --> D_X --> D_S
   end
 
   subgraph R["2. Refinamento técnico"]
     direction TB
-    R_E["Entradas<br/>funcionalidades (ações + cenários)<br/>restrições<br/>stack e padrões"]
+    R_E["Entradas<br/>EP → US → SC<br/>restrições<br/>stack e padrões"]
     R_X["Execução<br/>arquitetura e contratos<br/>riscos e mitigações<br/>critérios de pronto<br/>estimativas<br/>quebra em tarefas"]
     R_S["Saídas<br/>desenho técnico / ADR<br/>critérios de pronto<br/>backlog priorizado"]
     R_E --> R_X --> R_S

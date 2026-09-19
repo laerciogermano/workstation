@@ -38,3 +38,4 @@ Como registrar: [`README.md`](README.md).
 | 029 | 2026-09-19 | Roadmap duas cores | [029-2026-09-19-roadmap-duas-cores.md](029-2026-09-19-roadmap-duas-cores.md) | Gantt: só azul (EP) e cinza (US). |
 | 030 | 2026-09-19 | Roadmap fundo preto | [030-2026-09-19-roadmap-fundo-preto.md](030-2026-09-19-roadmap-fundo-preto.md) | Gantt com fundo e seções pretos. |
 | 031 | 2026-09-19 | Árvore EP→US→SC com colapso | [031-2026-09-19-arvore-ep-us-sc-colapso.md](031-2026-09-19-arvore-ep-us-sc-colapso.md) | tasks + roadmap: cenários filhos; colapso 1 SC / 1 US. |
+| 032 | 2026-09-19 | Remover legendas do roadmap | [032-2026-09-19-remover-legendas-roadmap.md](032-2026-09-19-remover-legendas-roadmap.md) | Tirou colapso/cores/paralelismo/soma do texto do roadmap. |

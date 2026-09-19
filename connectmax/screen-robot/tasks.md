@@ -4,7 +4,7 @@
 **IDs:** **TSK-** para todos os nós.  
 **Roadmap:** [`6.roadmap.md`](6.roadmap.md).  
 **Fonte:** [`3.scenarios.md`](3.scenarios.md).  
-**Funcionalidades:** [`2.functionalities.md`](2.functionalities.md).  
+**Features:** [`2.features.md`](2.features.md).  
 **Visão:** [`README.md`](README.md).  
 **Kanban / inventário (umbrella):** [`core/tasks`](../../core/tasks/README.md#p1--connectmax--screen-robot).
 

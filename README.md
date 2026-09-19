@@ -11,7 +11,7 @@ Hub de projetos, board, tasks e processo de desenvolvimento.
 | | Seção | Descrição |
 |:--:|:------|:----------|
 | 📊 | [**Board**](core/board/README.md) | Gantts por projeto (cronograma / esforço) |
-| ✅ | [**Tasks**](core/tasks/README.md) | Árvore de execução + kanban Todo / Doing / Done |
+| ✅ | [**Tasks**](core/tasks/README.md) | Ordem de desenvolvimento, árvore de execução e kanban Todo / Doing / Done |
 | 🔄 | [**Processo**](core/processo/README.md) | Ciclo completo: discovery → manutenção, com entradas, execução e saídas |
 
 #### Fases do processo
@@ -46,89 +46,3 @@ Hub de projetos, board, tasks e processo de desenvolvimento.
 | 🥋 | [**Jiu-jitsu**](jiu-jitsu/) | App de jiu-jitsu | [visão](jiu-jitsu/README.md) · [docs](jiu-jitsu/docs/) · [config IA](jiu-jitsu/config/config-ia.md) |
 | 🎭 | [**RoleGo**](role-go/) | Role-playing / go | [visão](role-go/README.md) |
 | ✨ | [**Clozzy**](clozzy/) | Venda de conteúdos exclusivos de influencers | [visão](clozzy/README.md) · [docs](clozzy/docs/) · [config IA](clozzy/config/config-ia.md) |
-
----
-
-## Ordem de desenvolvimento
-
-```text
-Flow Language  →  Flow  →  Plans
-```
-
-O **Flow Language** é pré-requisito do **Flow**: define a tradução
-bidirecional linguagem ↔ visualização de fluxo (IR, entradas, saídas,
-sincronização em tempo real) em [`flow-language/`](flow-language/).
-
-O **Flow** é pré-requisito do **Plans**. Para desenvolver o Plans, é
-necessário desenvolver primeiro os fundamentos de fluxo definidos em
-[`flow/`](flow/), que por sua vez consomem o Flow Language.
-
-### Esteira (Flow Language)
-
-```text
-Visão → Funcionalidades → Histórias → BDD → Telas → Screens BDD → Componentes → Protótipo
-```
-
-Prompts: [`flow-language/prompts/timeline.md`](flow-language/prompts/timeline.md).
-
-### Esteira (Plans)
-
-```text
-Inputs → Visão → Histórias → BDD → Telas → Screens BDD → Componentes → Protótipo
-```
-
-### Esteira (Chines)
-
-```text
-Inputs → Histórias → BDD → Telas → Componentes → Protótipo
-```
-
-### Esteira (Caronas)
-
-```text
-Visão → Funcionalidades → Histórias → BDD → Telas → Screens BDD → Componentes → Protótipo
-```
-
-Prompts: [`caronas/prompts/timeline.md`](caronas/prompts/timeline.md).
-
-### Esteira (Fitness)
-
-```text
-Visão → Funcionalidades → Histórias → BDD → Telas → Screens BDD → Componentes → Protótipo
-```
-
-Prompts: [`fitness/prompts/timeline.md`](fitness/prompts/timeline.md).
-
-### Esteira (ConnectMax)
-
-```text
-screen-robot: visão → planos → F0…F4 em sources/android-control
-vendas:       visão → functionalities → user-stories → … → prototype
-```
-
-Prompts: [`connectmax/prompts/timeline.md`](connectmax/prompts/timeline.md).  
-Projetos: [`screen-robot`](connectmax/screen-robot/) · [`vendas`](connectmax/vendas/).
-
-### Esteira (Eternos Mutáveis)
-
-```text
-Visão → Tese → Estrutura → Capítulos → Manuscrito
-```
-
-Prompts: [`eternos-mutaveis/prompts/timeline.md`](eternos-mutaveis/prompts/timeline.md).
-
-### Esteira (Jiu-jitsu)
-
-```text
-Visão → Funcionalidades → Histórias → BDD → Telas → Screens BDD → Componentes → Protótipo
-```
-
-Prompts: [`jiu-jitsu/prompts/timeline.md`](jiu-jitsu/prompts/timeline.md).
-
-### Esteira (Clozzy)
-
-```text
-Visão → Funcionalidades → Histórias → BDD → Telas → Screens BDD → Componentes → Protótipo
-```
-
-Prompts: [`clozzy/prompts/timeline.md`](clozzy/prompts/timeline.md).

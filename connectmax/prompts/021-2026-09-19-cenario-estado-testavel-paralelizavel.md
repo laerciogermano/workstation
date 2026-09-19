@@ -15,5 +15,5 @@ Evoluir a definição de **cenário (SC-)** no processo: além de mudança de es
 
 ## Resultado
 
-- Processo: [`core/processo/discovery/`](../../../core/processo/discovery/README.md) (+ README do processo, refinamento, testes, desenvolvimento, README raiz).
+- Processo: [`core/processo/1.discovery/`](../../../core/processo/1.discovery/README.md) (+ README do processo, refinamento, testes, desenvolvimento, README raiz).
 - Alinhamento: screen-robot (`functionalities`, `tasks`, `bdd-nos`), linkedin-agent (`functionalities`), `core/tasks`.

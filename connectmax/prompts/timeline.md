@@ -54,3 +54,4 @@ Como registrar: [`README.md`](README.md).
 | 043 | 2026-09-19 | Epics renomear | [043-2026-09-19-epics-renomear.md](043-2026-09-19-epics-renomear.md) | Renomeia 2.features.md → 2.epics.md no screen-robot. |
 | 045 | 2026-09-19 | Features para epics | [045-2026-09-19-features-para-epics.md](045-2026-09-19-features-para-epics.md) | Renomeia 2.features.md → 2.epics.md no screen-robot. |
 | 046 | 2026-09-19 | Vision para stories (processo) | [046-2026-09-19-vision-para-stories-processo.md](046-2026-09-19-vision-para-stories-processo.md) | Alinha vision→stories e functionalities→epics no screen-robot e no discovery. |
+| 047 | 2026-09-19 | Índices nos nomes do processo | [047-2026-09-19-processo-indices-nomes.md](047-2026-09-19-processo-indices-nomes.md) | Numera fases e artefatos do processo (1.discovery … 6.manutencao). |

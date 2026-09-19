@@ -17,12 +17,12 @@ Hub de projetos, board, tasks e processo de desenvolvimento.
 
 | | Fase | Descrição |
 |:--:|:-----|:----------|
-| 🔍 | [Discovery](core/processo/discovery/README.md) | Vision → cenários → BDDs → protótipo; depois o ciclo por estória |
-| 🧩 | [Refinamento técnico](core/processo/refinamento-tecnico/README.md) | Arquitetura, riscos e backlog executável |
-| 💻 | [Desenvolvimento](core/processo/desenvolvimento/README.md) | Implementar o que foi acordado |
-| 🧪 | [Testes](core/processo/testes/README.md) | Validar comportamento e qualidade |
-| 🚀 | [Implantação](core/processo/implantacao/README.md) | Publicar no ambiente alvo |
-| 🛠️ | [Manutenção](core/processo/manutencao/README.md) | Operar, corrigir e evoluir |
+| 🔍 | [Discovery](core/processo/1.discovery/README.md) | Vision → cenários → BDDs → protótipo; depois o ciclo por estória |
+| 🧩 | [Refinamento técnico](core/processo/2.refinamento-tecnico/README.md) | Arquitetura, riscos e backlog executável |
+| 💻 | [Desenvolvimento](core/processo/3.desenvolvimento/README.md) | Implementar o que foi acordado |
+| 🧪 | [Testes](core/processo/4.testes/README.md) | Validar comportamento e qualidade |
+| 🚀 | [Implantação](core/processo/5.implantacao/README.md) | Publicar no ambiente alvo |
+| 🛠️ | [Manutenção](core/processo/6.manutencao/README.md) | Operar, corrigir e evoluir |
 
 ```text
 🔍 Discovery → 🧩 Refinamento → 💻 Desenvolvimento → 🧪 Testes → 🚀 Implantação → 🛠️ Manutenção

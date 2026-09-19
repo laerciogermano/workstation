@@ -6,12 +6,12 @@ Entender o problema e fechar o *quê* do produto antes do refinamento técnico.
 
 Ordem **obrigatória** — não pular nem inverter:
 
-1. **Stories** — [`stories.md`](stories.md): US com título + descrição de como funciona.
-2. **Epics** — [`epics.md`](epics.md): EP que agrupam US e entregam valor.
-3. **Cenários** — [`scenarios.md`](scenarios.md): catálogo EP → US → SC (sem Gherkin).
-4. **BDDs** — [`bdds.md`](bdds.md): Dado / Quando / Então por **US** e por **SC**.
-5. **Protótipo** — [`prototype.md`](prototype.md): validação visual/interativa do que foi especificado.
-6. **Roadmap** — [`roadmap.md`](roadmap.md): Gantt EP → US (sem SC nas barras).
+1. **Stories** — [`1.stories.md`](1.stories.md): US com título + descrição de como funciona.
+2. **Epics** — [`2.epics.md`](2.epics.md): EP que agrupam US e entregam valor.
+3. **Cenários** — [`3.scenarios.md`](3.scenarios.md): catálogo EP → US → SC (sem Gherkin).
+4. **BDDs** — [`4.bdds.md`](4.bdds.md): Dado / Quando / Então por **US** e por **SC**.
+5. **Protótipo** — [`5.prototype.md`](5.prototype.md): validação visual/interativa do que foi especificado.
+6. **Roadmap** — [`6.roadmap.md`](6.roadmap.md): Gantt EP → US (sem SC nas barras).
 7. **Tasks** — `tasks.md` do projeto: Gantt TSK (inclui SC) + inventário.
 
 A **visão do produto** (problema, para quem, objetivo, fora de escopo) fica no `README.md` do projeto.
@@ -63,14 +63,14 @@ EP-01 — Autenticação          ← valor (entrar no produto)
 
 | Ordem | Artefato | Conteúdo |
 |-------|----------|----------|
-| 1 | [`stories.md`](stories.md) | US título + descrição |
-| 2 | [`epics.md`](epics.md) | EP → lista de US |
-| 3 | [`scenarios.md`](scenarios.md) | EP → US → SC |
-| 4 | [`bdds.md`](bdds.md) | Aceite Gherkin por US e SC |
-| 5 | [`prototype.md`](prototype.md) / protótipo do projeto | Validação visual/interativa |
-| 6 | [`roadmap.md`](roadmap.md) / roadmap do projeto | Gantt EP/US |
+| 1 | [`1.stories.md`](1.stories.md) | US título + descrição |
+| 2 | [`2.epics.md`](2.epics.md) | EP → lista de US |
+| 3 | [`3.scenarios.md`](3.scenarios.md) | EP → US → SC |
+| 4 | [`4.bdds.md`](4.bdds.md) | Aceite Gherkin por US e SC |
+| 5 | [`5.prototype.md`](5.prototype.md) / protótipo do projeto | Validação visual/interativa |
+| 6 | [`6.roadmap.md`](6.roadmap.md) / roadmap do projeto | Gantt EP/US |
 | 7 | `tasks.md` do projeto | Gantt TSK + inventário |
 
 ## Próximo passo
 
-Com stories → epics → cenários → BDDs → protótipo → roadmap → tasks fechados: **uma estória por vez** → [Refinamento técnico](../refinamento-tecnico/README.md) (e demais fases do [processo](../README.md)).
+Com stories → epics → cenários → BDDs → protótipo → roadmap → tasks fechados: **uma estória por vez** → [Refinamento técnico](../2.refinamento-tecnico/README.md) (e demais fases do [processo](../README.md)).

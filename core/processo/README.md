@@ -10,19 +10,19 @@ Cada etapa documenta **entradas**, **execução** e **saídas**.
 
 ## Como atacar
 
-1. No [discovery](discovery/README.md), nesta ordem: **stories → epics → cenários → BDDs → protótipo → roadmap → tasks**.
+1. No [discovery](1.discovery/README.md), nesta ordem: **stories → epics → cenários → BDDs → protótipo → roadmap → tasks**.
 2. **Depois**, separar **cada estória** e aplicar o ciclo acima **por estória** (refinamento técnico → desenvolvimento → testes → implantação → manutenção).
 
 O mapa nasce no discovery; o restante do processo roda **estória a estória**, não no produto inteiro de uma vez.
 
 | Etapa | Pasta | Objetivo |
 |-------|-------|----------|
-| Discovery | [`discovery/`](discovery/README.md) | Stories → epics → cenários → BDDs → protótipo → roadmap → tasks; depois ciclo por estória |
-| Refinamento técnico | [`refinamento-tecnico/`](refinamento-tecnico/README.md) | Detalhar solução, riscos e critérios técnicos |
-| Desenvolvimento | [`desenvolvimento/`](desenvolvimento/README.md) | Implementar o que foi acordado |
-| Testes | [`testes/`](testes/README.md) | Validar comportamento e qualidade |
-| Implantação | [`implantacao/`](implantacao/README.md) | Publicar em ambiente alvo |
-| Manutenção | [`manutencao/`](manutencao/README.md) | Operar, corrigir e evoluir |
+| Discovery | [`1.discovery/`](1.discovery/README.md) | Stories → epics → cenários → BDDs → protótipo → roadmap → tasks; depois ciclo por estória |
+| Refinamento técnico | [`2.refinamento-tecnico/`](2.refinamento-tecnico/README.md) | Detalhar solução, riscos e critérios técnicos |
+| Desenvolvimento | [`3.desenvolvimento/`](3.desenvolvimento/README.md) | Implementar o que foi acordado |
+| Testes | [`4.testes/`](4.testes/README.md) | Validar comportamento e qualidade |
+| Implantação | [`5.implantacao/`](5.implantacao/README.md) | Publicar em ambiente alvo |
+| Manutenção | [`6.manutencao/`](6.manutencao/README.md) | Operar, corrigir e evoluir |
 
 ---
 
@@ -41,12 +41,12 @@ O mapa nasce no discovery; o restante do processo roda **estória a estória**, 
 
 **Saídas**
 
-- `stories.md`
-- `epics.md`
-- `scenarios.md`
-- `bdds.md`
+- `1.stories.md`
+- `2.epics.md`
+- `3.scenarios.md`
+- `4.bdds.md`
 - Protótipo
-- `roadmap.md`
+- `6.roadmap.md`
 - `tasks.md`
 
 ---

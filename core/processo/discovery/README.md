@@ -8,7 +8,7 @@ Ordem **obrigatória** — não pular nem inverter:
 
 1. **Vision** — [`vision.md`](vision.md): problema, para quem, objetivo, escopo in/out.
 2. **Cenários** — [`scenarios.md`](scenarios.md): catálogo EP → US → SC (sem Gherkin).
-3. **BDDs** — [`bdds.md`](bdds.md): Dado / Quando / Então por US e SC.
+3. **BDDs** — [`bdds.md`](bdds.md): Dado / Quando / Então **por SC**.
 4. **Protótipo** — [`prototype.md`](prototype.md): validação visual/interativa do que foi especificado.
 
 Só depois disso: **separar cada estória** e seguir, **por estória**, os passos do [processo](../README.md): refinamento técnico → desenvolvimento → testes → implantação → manutenção.
@@ -60,7 +60,7 @@ EP-01 — Autenticação          ← valor (entrar no produto)
 |-------|----------|----------|
 | 1 | [`vision.md`](vision.md) | Visão do produto |
 | 2 | [`scenarios.md`](scenarios.md) | EP → US → SC |
-| 3 | [`bdds.md`](bdds.md) | Aceite em Gherkin |
+| 3 | [`bdds.md`](bdds.md) | Aceite Gherkin por SC |
 | 4 | [`prototype.md`](prototype.md) / protótipo do projeto | Validação visual/interativa |
 
 ## Próximo passo

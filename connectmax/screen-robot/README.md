@@ -2,7 +2,7 @@
 
 **Por quê:** fixar o *quê* do robô de tela antes de goals de negócio.  
 **Importante:** este projeto **só** opera o device/tela via **Node**; não implementa cadência comercial nem fila de leads.  
-**No fluxo:** **este documento** → stories / scenarios / bdds / epics / tasks → implementação em [`sources/`](sources/README.md).  
+**No fluxo:** **este documento** → stories / scenarios / bdds / epics / implementation plan / tasks → implementação em [`sources/`](sources/README.md).  
 **Umbrella:** [`../README.md`](../README.md).  
 **Consumidor LinkedIn:** [`../linkedin-agent/`](../linkedin-agent/README.md).  
 **Negócio (fila/faturamento):** [`../vendas/`](../vendas/README.md).  
@@ -49,6 +49,7 @@ Ver [`2.scenarios.md`](2.scenarios.md).
 | Cenários (US + SC) | [`2.scenarios.md`](2.scenarios.md) | Feito |
 | BDDs (US/SC + piloto LinkedIn) | [`3.bdds.md`](3.bdds.md) | Feito |
 | Épicos | [`4.epics.md`](4.epics.md) | Feito |
+| Implementation plan | [`5.implementation-plan.md`](5.implementation-plan.md) | Feito |
 | Roadmap (Gantt) | [`6.roadmap.md`](6.roadmap.md) | Feito |
 | Tasks (Gantt) | [`7.tasks.md`](7.tasks.md) | Feito |
 | Sources | [`sources/`](sources/README.md) | Em curso |
@@ -56,4 +57,4 @@ Ver [`2.scenarios.md`](2.scenarios.md).
 
 ## Próximos passos
 
-→ [`3.bdds.md`](3.bdds.md) · `LINKEDIN_USER` / `LINKEDIN_PASSWORD` + `npm run linkedin-login` em `sources/android-control`
+→ [`5.implementation-plan.md`](5.implementation-plan.md) · [`3.bdds.md`](3.bdds.md) · `LINKEDIN_USER` / `LINKEDIN_PASSWORD` + `npm run linkedin-login` em `sources/android-control`

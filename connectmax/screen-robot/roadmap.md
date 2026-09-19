@@ -7,32 +7,49 @@
 **Visão:** [`README.md`](README.md).
 
 Barra pai = **EP** · barras filhas = **US** (SC ficam em [`tasks.md`](tasks.md)).  
+Cores: **EP** = teal escuro · **US** = âmbar · crítico = terracota.  
 US-01 → US-02 sequenciais; **US-03..05** paralelas após US-02; **US-06..13** paralelas após US-03..05; US-14..16 sequenciais.  
 Soma esforço: **408 min** · caminho crítico: **249 min**.
 
 ```mermaid
+---
+config:
+  theme: base
+  themeVariables:
+    doneTaskBkgColor: '#1a6b5c'
+    doneTaskBorderColor: '#0f453c'
+    taskBkgColor: '#d4a017'
+    taskBorderColor: '#8a6808'
+    taskTextColor: '#1a1a1a'
+    taskTextLightColor: '#ffffff'
+    taskTextOutsideColor: '#1a1a1a'
+    critBkgColor: '#c45c26'
+    critBorderColor: '#8a3d14'
+    activeTaskBkgColor: '#d4a017'
+    activeTaskBorderColor: '#8a6808'
+---
 gantt
   title screen-robot EP/US minutos IA
   dateFormat X
   axisFormat %s
 
   section EP-01 Provisionar
-  EP-01 Provisionar agente              :ep01, 0, 60m
+  EP-01 Provisionar agente              :done, ep01, 0, 60m
   US-01 Provisionar um agente           :us01, 0, 60m
 
   section EP-02 Eventos de UI
-  EP-02 Eventos de UI                   :ep02, after us01, 24m
+  EP-02 Eventos de UI                   :done, ep02, after us01, 24m
   US-02 Evento de boot                  :us02, after us01, 12m
   US-03 Evento de app aberta            :us03, after us02, 12m
   US-04 Evento de tela estavel          :us04, after us02, 12m
   US-05 Evento de mudanca de dump       :us05, after us02, 12m
 
   section EP-03 Instalar APKs
-  EP-03 Instalar APKs                   :ep03, after us05, 45m
+  EP-03 Instalar APKs                   :done, ep03, after us05, 45m
   US-06 Instalar APKs                   :us06, after us05, 45m
 
   section EP-04 Operar tela
-  EP-04 Operar tela                     :ep04, after us05, 15m
+  EP-04 Operar tela                     :done, ep04, after us05, 15m
   US-07 Abrir aplicativo                :us07, after us05, 15m
   US-08 tap                             :us08, after us05, 15m
   US-09 type                            :us09, after us05, 15m
@@ -41,11 +58,11 @@ gantt
   US-12 Resgatar coordenadas x,y        :us12, after us05, 15m
 
   section EP-05 Extrair elementos
-  EP-05 Extrair elementos               :crit, ep05, after us05, 120m
+  EP-05 Extrair elementos               :done, ep05, after us05, 120m
   US-13 Extrair elementos               :crit, us13, after us05, 120m
 
   section EP-06 Sessao
-  EP-06 Sessao                          :ep06, after us13, 45m
+  EP-06 Sessao                          :done, ep06, after us13, 45m
   US-14 Salvar sessao                   :us14, after us13, 15m
   US-15 Remover sessao                  :us15, after us14, 15m
   US-16 Recuperar sessao                :us16, after us15, 15m

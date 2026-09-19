@@ -33,3 +33,4 @@ Como registrar: [`README.md`](README.md).
 | 024 | 2026-09-19 | US-07..12 paralelizáveis | [024-2026-09-19-us-07-12-paralelizaveis.md](024-2026-09-19-us-07-12-paralelizaveis.md) | Gantt: abrir/tap/type/scroll/screenshot/xy em paralelo; caminho 333 min. |
 | 025 | 2026-09-19 | US-06 paralelizável | [025-2026-09-19-us-06-paralelizavel.md](025-2026-09-19-us-06-paralelizavel.md) | Gantt: US-06..12 em paralelo após US-05; caminho 318 min. |
 | 026 | 2026-09-19 | Épicos pais no roadmap | [026-2026-09-19-epicos-pais-roadmap.md](026-2026-09-19-epicos-pais-roadmap.md) | Gantt do roadmap com barra EP pai e US filhas. |
+| 027 | 2026-09-19 | Cores EP ≠ US no roadmap | [027-2026-09-19-cores-ep-us-roadmap.md](027-2026-09-19-cores-ep-us-roadmap.md) | Gantt: EP teal, US âmbar, crítico terracota. |

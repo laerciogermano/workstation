@@ -13,7 +13,7 @@ Estimativas: minutos IA · **1 dia = 8h = 480 min**.
 ### Árvore de execução
 
 ```text
-screen-robot (393 min)
+screen-robot (408 min)
 ├── 1. Provisionar um agente (60 min)
 │   ├── Subir / conectar o Android (agent) (20 min)
 │   ├── Garantir serial ADB online (20 min)
@@ -27,11 +27,12 @@ screen-robot (393 min)
 │   ├── Evento de app aberta (12 min)
 │   ├── Evento de tela estável (12 min)
 │   └── Evento de mudança de dump (12 min)
-├── 4. Executar operações (90 min)
+├── 4. Executar operações (105 min)
 │   ├── Abrir aplicativo (15 min)
 │   ├── tap (15 min)
 │   ├── type (15 min)
 │   ├── key (15 min)
+│   ├── scroll (15 min)
 │   ├── screenshot (15 min)
 │   └── Resgatar coordenadas x,y (imagem de entrada) (15 min)
 ├── 5. Extrair elementos e informações (120 min)
@@ -126,11 +127,11 @@ screen-robot (393 min)
 |----------|----------|--------|
 | Dump anterior (opcional), serial | Detectar mudança no dump de UI | Dump atualizado disponível |
 
-#### 4. Executar operações (90 min)
+#### 4. Executar operações (105 min)
 
 | Entradas | Execução | Saídas |
 |----------|----------|--------|
-| Serial online, alvo (package/coords/elemento/imagem) | Disparar abrir app, gestos, teclas, print e match por imagem | Ação aplicada no device; coords ou artefato quando couber |
+| Serial online, alvo (package/coords/elemento/imagem) | Disparar abrir app, gestos, scroll, teclas, print e match por imagem | Ação aplicada no device; coords ou artefato quando couber |
 
 ##### 4.1 Abrir aplicativo (15 min)
 
@@ -156,13 +157,19 @@ screen-robot (393 min)
 |----------|----------|--------|
 | Código de tecla (ex. ENTER, BACK) | Enviar keyevent | Tecla processada |
 
-##### 4.5 screenshot (15 min)
+##### 4.5 scroll (15 min)
+
+| Entradas | Execução | Saídas |
+|----------|----------|--------|
+| Direção (up/down/left/right), distância ou bounds da área | Swipe / scroll na tela ou na lista | Conteúdo rolado; novos itens visíveis |
+
+##### 4.6 screenshot (15 min)
 
 | Entradas | Execução | Saídas |
 |----------|----------|--------|
 | Serial, path de saída | Capturar frame da tela | Arquivo de imagem |
 
-##### 4.6 Resgatar coordenadas x,y (imagem de entrada) (15 min)
+##### 4.7 Resgatar coordenadas x,y (imagem de entrada) (15 min)
 
 | Entradas | Execução | Saídas |
 |----------|----------|--------|

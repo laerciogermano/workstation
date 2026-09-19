@@ -2,12 +2,12 @@
 
 Pipeline do robô: **Capture → Perceive → Decide → Actuate**.
 
-| ID | Épico | Pasta | Intenção |
-|----|-------|-------|----------|
-| EP-01 | Capture | [`EP-01-capture/`](EP-01-capture/README.md) | Frame da tela (PNG + width/height/ts) |
-| EP-02 | Perceive | [`EP-02-perceive/`](EP-02-perceive/README.md) | Frame → `Element[]` (OCR + vision) |
-| EP-03 | Decide | [`EP-03-decide/`](EP-03-decide/README.md) | Elementos + goal → `Action` |
-| EP-04 | Actuate | [`EP-04-actuate/`](EP-04-actuate/README.md) | Executar ação no device |
+| ID | Épico | Descrição | Por quê | Pasta |
+|----|-------|-----------|---------|-------|
+| EP-01 | Capture | Obter o frame da tela (PNG + width/height/ts) via `Capture`, com backends ADB ou agent | Sem frame o robô não enxerga a UI; backends plugáveis permitem redroid hoje e hardware depois | [`EP-01-capture/`](EP-01-capture/README.md) |
+| EP-02 | Perceive | Transformar frame → `Element[]` (OCR + vision + merge + CLI) | Sem lista de elementos não há o que selecionar nem clicar com intenção | [`EP-02-perceive/`](EP-02-perceive/README.md) |
+| EP-03 | Decide | A partir de elementos + goal, produzir `Action` (matcher e/ou LLM) e orquestrar o goal | Fecha o ciclo intenção → ação sem coordenadas hardcoded | [`EP-03-decide/`](EP-03-decide/README.md) |
+| EP-04 | Actuate | Executar `Action` no device (tap/swipe/type/scroll), com calibração e backends ADB/agent | Sem executar o gesto no device a decisão não altera a tela | [`EP-04-actuate/`](EP-04-actuate/README.md) |
 
 ## Fluxo
 
@@ -17,7 +17,7 @@ EP-01 Capture  →  EP-02 Perceive  →  EP-03 Decide  →  EP-04 Actuate
 
 Backends plugáveis (`adb` | `agent`) em Capture e Actuate; Perceive e Decide permanecem estáveis.
 
-Cada US é um **recorte de funcionalidade** (Como… quero… para…) com cenários — não só tarefa técnica.
+Cada US é um **recorte de funcionalidade** (Como… quero… para…) com cenários — não só tarefa técnica. Detalhe (descrição + por quê) na tabela de histórias de cada épico.
 
 ## Hierarquia
 

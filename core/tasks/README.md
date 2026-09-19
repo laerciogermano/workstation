@@ -1,9 +1,7 @@
-# Board
+# Tasks
 
-Kanban da workstation: **uma raia por projeto**, colunas **Todo**, **Doing** e **Done**.
-
-Raias ordenadas por **prioridade** (maior → menor).  
-Quando houver hierarquia de tasks, a raia usa **Mermaid** (árvore + cor de status) em vez de forçar árvore dentro da tabela kanban.
+Árvores de execução e kanban **Todo / Doing / Done** por projeto (prioridade maior → menor).  
+Gantts: [`board/`](../board/README.md).
 
 ---
 
@@ -66,44 +64,6 @@ flowchart TD
   F43 --> F44
 ```
 
-```mermaid
-gantt
-  title screen-robot (minutos de esforço IA)
-  dateFormat X
-  axisFormat %s
-
-  section F0 Fundamentos
-  F0.1 Contratos           :a01, 0, 24m
-  F0.2 AdbCapture          :a02, after a01, 30m
-  F0.3 AdbActuate          :a03, after a01, 24m
-  F0.4 Smoke               :a04, after a02, 18m
-
-  section F1 Perceive
-  F1.1 Schema              :b01, after a04, 24m
-  F1.2 OCR                 :b02, after b01, 60m
-  F1.3 Vision              :b03, after b01, 90m
-  F1.4 Merge               :b04, after b02, 36m
-  F1.5 CLI + overlay       :b05, after b04, 30m
-
-  section F2 Decide
-  F2.1 Matcher             :c01, after b05, 36m
-  F2.2 LLM Decide          :c02, after b05, 48m
-  F2.3 Steps goal          :c03, after c01, 48m
-  F2.4 Example E2E         :c04, after c03, 24m
-
-  section F3 Robustez
-  F3.1 Wait/retry          :d01, after c04, 30m
-  F3.2 Scroll              :d02, after c04, 36m
-  F3.3 Calibracao          :d03, after c04, 30m
-  F3.4 Metricas            :d04, after d01, 24m
-
-  section F4 Hardware
-  F4.1 Revisar contratos   :e01, after d04, 18m
-  F4.2 Capture agent       :e02, after e01, 90m
-  F4.3 Actuate agent       :e03, after e01, 90m
-  F4.4 Flag + regressao    :e04, after e02, 48m
-```
-
 | Todo | Doing | Done |
 |------|-------|------|
 | F0.1 Contratos · 24m | | |
@@ -128,7 +88,7 @@ gantt
 | F4.3 Actuate agent · 90m | | |
 | F4.4 Flag + regressão · 48m | | |
 
-→ [`screen-robot/`](../../connectmax/screen-robot/README.md) · [`plano`](../../connectmax/screen-robot/docs/plano-percepcao-imagem-hardware.md) · [`implementação`](../../connectmax/screen-robot/docs/plano-implementacao-percepcao.md)
+→ [`screen-robot/`](../../connectmax/screen-robot/README.md) · [`plano`](../../connectmax/screen-robot/docs/plano-percepcao-imagem-hardware.md) · [`implementação`](../../connectmax/screen-robot/docs/plano-implementacao-percepcao.md) · [`board`](../board/README.md#p1--connectmax--screen-robot)
 
 ---
 
@@ -141,7 +101,7 @@ Automação do processo de vendas / prospecção LinkedIn (consome o screen-robo
 | Criar épico | | |
 | user-stories.md | | |
 
-→ [`vendas/`](../../connectmax/vendas/README.md) · [`functionalities`](../../connectmax/vendas/docs/functionalities.md)
+→ [`vendas/`](../../connectmax/vendas/README.md) · [`functionalities`](../../connectmax/vendas/docs/functionalities.md) · [`board`](../board/README.md#p1b--connectmax--vendas)
 
 ---
 
@@ -417,7 +377,7 @@ flowchart TD
 |  |  | [TSK-085](../../flow/epics/EP-04-arvore-de-execucao/US-04-atribuir-responsavel/README.md) Criar BDD |
 |  |  | [TSK-087](../../flow/epics/EP-04-arvore-de-execucao/US-05-visualizar-arvore/README.md) Criar BDD |
 |  |  | [TSK-089](../../flow/epics/EP-04-arvore-de-execucao/US-06-selecionar-atividade/README.md) Criar BDD |
-→ [`flow/`](../../flow/README.md) · [`flow/tasks/`](../../flow/tasks/README.md) · [`flow/epics/`](../../flow/epics/README.md) · [`flow/gantt.md`](../../flow/gantt.md)
+→ [`flow/`](../../flow/README.md) · [`flow/tasks/`](../../flow/tasks/README.md) · [`flow/epics/`](../../flow/epics/README.md) · [`flow/gantt.md`](../../flow/gantt.md) · [`board`](../board/README.md#p2--flow)
 
 ---
 
@@ -427,7 +387,7 @@ flowchart TD
 |------|-------|------|
 | | | Criar épico |
 
-→ [`plans/`](../../plans/README.md) · [`plans/epics/`](../../plans/epics/README.md)
+→ [`plans/`](../../plans/README.md) · [`plans/epics/`](../../plans/epics/README.md) · [`board`](../board/README.md#p3--plans)
 
 ---
 
@@ -437,7 +397,7 @@ flowchart TD
 |------|-------|------|
 | | | |
 
-→ [`role-go/`](../../role-go/README.md)
+→ [`role-go/`](../../role-go/README.md) · [`board`](../board/README.md#p4--rolego)
 
 ---
 
@@ -447,7 +407,7 @@ flowchart TD
 |------|-------|------|
 | | | |
 
-→ [`chines/`](../../chines/docs/README.md)
+→ [`chines/`](../../chines/docs/README.md) · [`board`](../board/README.md#p5--chines)
 
 ---
 
@@ -457,7 +417,7 @@ flowchart TD
 |------|-------|------|
 | | | |
 
-→ [`caronas/`](../../caronas/README.md)
+→ [`caronas/`](../../caronas/README.md) · [`board`](../board/README.md#p6--caronas)
 
 ---
 
@@ -467,7 +427,7 @@ flowchart TD
 |------|-------|------|
 | | | |
 
-→ [`fitness/`](../../fitness/README.md)
+→ [`fitness/`](../../fitness/README.md) · [`board`](../board/README.md#p7--fitness)
 
 ---
 
@@ -477,7 +437,7 @@ flowchart TD
 |------|-------|------|
 | | | |
 
-→ [`eternos-mutaveis/`](../../eternos-mutaveis/README.md)
+→ [`eternos-mutaveis/`](../../eternos-mutaveis/README.md) · [`board`](../board/README.md#p8--eternos-mutáveis)
 
 ---
 
@@ -487,4 +447,4 @@ flowchart TD
 |------|-------|------|
 | | | |
 
-→ [`jiu-jitsu/`](../../jiu-jitsu/README.md)
+→ [`jiu-jitsu/`](../../jiu-jitsu/README.md) · [`board`](../board/README.md#p9--jiu-jitsu)

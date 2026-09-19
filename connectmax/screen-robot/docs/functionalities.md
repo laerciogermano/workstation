@@ -22,19 +22,19 @@
 |----------|----------|--------|
 | Config do device (`device.config.json`), runtime Android disponível | Orquestrar subir/conectar, serial online e boot completo | Agent pronto para ADB (serial online, boot ok) |
 
-##### US-01.1 Subir / conectar o Android (agent) (20 min)
+##### SC-01.1 Subir / conectar o Android (agent) (20 min)
 
 | Entradas | Execução | Saídas |
 |----------|----------|--------|
 | Host, imagem/runtime, script de start | Subir o agent e estabelecer conexão | Processo do agent em execução e alcançável |
 
-##### US-01.2 Garantir serial ADB online (20 min)
+##### SC-01.2 Garantir serial ADB online (20 min)
 
 | Entradas | Execução | Saídas |
 |----------|----------|--------|
 | Agent alcançável, serial esperado na config | `adb connect` / listar devices até serial `device` | Serial ADB online |
 
-##### US-01.3 Aguardar boot completo (20 min)
+##### SC-01.3 Aguardar boot completo (20 min)
 
 | Entradas | Execução | Saídas |
 |----------|----------|--------|
@@ -46,19 +46,19 @@
 |----------|----------|--------|
 | Agent provisionado, lista de apps e versões na config | Ler versão, baixar e instalar cada pacote | Apps instalados nas versões definidas |
 
-##### US-02.1 Ler versão na config do dispositivo (5 min)
+##### SC-02.1 Ler versão na config do dispositivo (5 min)
 
 | Entradas | Execução | Saídas |
 |----------|----------|--------|
 | `device.config.json` | Parsear `apps.*.version` / package | Versão e package alvo |
 
-##### US-02.2 Baixar APK na versão definida (25 min)
+##### SC-02.2 Baixar APK na versão definida (25 min)
 
 | Entradas | Execução | Saídas |
 |----------|----------|--------|
 | Package + versão, ferramenta de download (ex. apkeep) | Baixar APK/XAPK da versão pedida | Artefato APK no disco |
 
-##### US-02.3 Instalar pacote no agent (15 min)
+##### SC-02.3 Instalar pacote no agent (15 min)
 
 | Entradas | Execução | Saídas |
 |----------|----------|--------|
@@ -70,25 +70,25 @@
 |----------|----------|--------|
 | Serial online, critérios de espera | Observar e aguardar sinais de boot, app, UI e dump | Evento confirmado (estado estável para o próximo passo) |
 
-##### US-03.1 Evento de boot (12 min)
+##### SC-03.1 Evento de boot (12 min)
 
 | Entradas | Execução | Saídas |
 |----------|----------|--------|
 | Serial online | Esperar sinal de boot | Boot sinalizado |
 
-##### US-03.2 Evento de app aberta (12 min)
+##### SC-03.2 Evento de app aberta (12 min)
 
 | Entradas | Execução | Saídas |
 |----------|----------|--------|
 | Package em foreground esperado | Esperar app em foreground | App aberta confirmada |
 
-##### US-03.3 Evento de tela estável (12 min)
+##### SC-03.3 Evento de tela estável (12 min)
 
 | Entradas | Execução | Saídas |
 |----------|----------|--------|
 | App em foreground | Esperar UI estável (sem transição) | Tela estável |
 
-##### US-03.4 Evento de mudança de dump (12 min)
+##### SC-03.4 Evento de mudança de dump (12 min)
 
 | Entradas | Execução | Saídas |
 |----------|----------|--------|
@@ -100,43 +100,43 @@
 |----------|----------|--------|
 | Serial online, alvo (package/coords/elemento/imagem) | Disparar abrir app, gestos, scroll, teclas, print e match por imagem | Ação aplicada no device; coords ou artefato quando couber |
 
-##### US-04.1 Abrir aplicativo (15 min)
+##### SC-04.1 Abrir aplicativo (15 min)
 
 | Entradas | Execução | Saídas |
 |----------|----------|--------|
 | Package (e activity opcional) | Launch do app no agent | App em foreground |
 
-##### US-04.2 tap (15 min)
+##### SC-04.2 tap (15 min)
 
 | Entradas | Execução | Saídas |
 |----------|----------|--------|
 | Coordenadas x,y ou bounds do elemento | Toque na tela | UI refletindo o tap |
 
-##### US-04.3 type (15 min)
+##### SC-04.3 type (15 min)
 
 | Entradas | Execução | Saídas |
 |----------|----------|--------|
 | Texto, campo focado ou coords | Digitar / injetar texto | Texto na UI |
 
-##### US-04.4 key (15 min)
+##### SC-04.4 key (15 min)
 
 | Entradas | Execução | Saídas |
 |----------|----------|--------|
 | Código de tecla (ex. ENTER, BACK) | Enviar keyevent | Tecla processada |
 
-##### US-04.5 scroll (15 min)
+##### SC-04.5 scroll (15 min)
 
 | Entradas | Execução | Saídas |
 |----------|----------|--------|
 | Direção (up/down/left/right), distância ou bounds da área | Swipe / scroll na tela ou na lista | Conteúdo rolado; novos itens visíveis |
 
-##### US-04.6 screenshot (15 min)
+##### SC-04.6 screenshot (15 min)
 
 | Entradas | Execução | Saídas |
 |----------|----------|--------|
 | Serial, path de saída | Capturar frame da tela | Arquivo de imagem |
 
-##### US-04.7 Resgatar coordenadas x,y (imagem de entrada) (15 min)
+##### SC-04.7 Resgatar coordenadas x,y (imagem de entrada) (15 min)
 
 | Entradas | Execução | Saídas |
 |----------|----------|--------|
@@ -161,37 +161,37 @@ A saída é a **árvore completa** (raiz → filhos), não só uma lista plana �
 |----------|----------|--------|
 | Frame/dump da tela estável | Extrair textos, ícones, imagens, listas, containers e montar DOM | Árvore de componentes (estilo DOM) |
 
-##### US-05.1 Nó Texto (20 min)
+##### SC-05.1 Nó Texto (20 min)
 
 | Entradas | Execução | Saídas |
 |----------|----------|--------|
 | Frame/dump | OCR / atributo de texto | Nós de texto com string e bounds |
 
-##### US-05.2 Nó Ícone (20 min)
+##### SC-05.2 Nó Ícone (20 min)
 
 | Entradas | Execução | Saídas |
 |----------|----------|--------|
 | Frame/dump | Reconhecer pictogramas/controles | Nós de ícone com tipo e bounds |
 
-##### US-05.3 Nó Imagem / foto (24 min)
+##### SC-05.3 Nó Imagem / foto (24 min)
 
 | Entradas | Execução | Saídas |
 |----------|----------|--------|
 | Frame/dump | Detectar regiões de mídia | Nós imagem/foto com bounds |
 
-##### US-05.4 Nó Lista (itens filhos + scroll) (24 min)
+##### SC-05.4 Nó Lista (itens filhos + scroll) (24 min)
 
 | Entradas | Execução | Saídas |
 |----------|----------|--------|
 | Frame/dump | Identificar coleção rolável e itens | Nó lista com filhos e metadados de scroll |
 
-##### US-05.5 Nó Container (12 min)
+##### SC-05.5 Nó Container (12 min)
 
 | Entradas | Execução | Saídas |
 |----------|----------|--------|
 | Frame/dump | Agrupar card/toolbar/painel | Nós container com filhos |
 
-##### US-05.6 Montar árvore DOM (raiz → filhos) (20 min)
+##### SC-05.6 Montar árvore DOM (raiz → filhos) (20 min)
 
 | Entradas | Execução | Saídas |
 |----------|----------|--------|
@@ -203,13 +203,13 @@ A saída é a **árvore completa** (raiz → filhos), não só uma lista plana �
 |----------|----------|--------|
 | Contexto atual (device, apps, etapa, paths) | Persistir e/ou restaurar arquivo de sessão | Sessão em disco / contexto restaurado |
 
-##### US-06.1 Persistir sessão em arquivo (15 min)
+##### SC-06.1 Persistir sessão em arquivo (15 min)
 
 | Entradas | Execução | Saídas |
 |----------|----------|--------|
 | Estado em memória, path da sessão | Serializar e gravar | Arquivo de sessão |
 
-##### US-06.2 Restaurar sessão do arquivo (15 min)
+##### SC-06.2 Restaurar sessão do arquivo (15 min)
 
 | Entradas | Execução | Saídas |
 |----------|----------|--------|

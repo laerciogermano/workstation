@@ -15,36 +15,36 @@ Estimativas: minutos IA · **1 dia = 8h = 480 min**.
 ```text
 screen-robot (408 min)
 ├── US-01 Provisionar um agente (60 min)
-│   ├── US-01.1 Subir / conectar o Android (agent) (20 min)
-│   ├── US-01.2 Garantir serial ADB online (20 min)
-│   └── US-01.3 Aguardar boot completo (20 min)
+│   ├── SC-01.1 Subir / conectar o Android (agent) (20 min)
+│   ├── SC-01.2 Garantir serial ADB online (20 min)
+│   └── SC-01.3 Aguardar boot completo (20 min)
 ├── US-02 Instalar APKs (45 min)
-│   ├── US-02.1 Ler versão na config do dispositivo (5 min)
-│   ├── US-02.2 Baixar APK na versão definida (25 min)
-│   └── US-02.3 Instalar pacote no agent (15 min)
+│   ├── SC-02.1 Ler versão na config do dispositivo (5 min)
+│   ├── SC-02.2 Baixar APK na versão definida (25 min)
+│   └── SC-02.3 Instalar pacote no agent (15 min)
 ├── US-03 Receber eventos (48 min)
-│   ├── US-03.1 Evento de boot (12 min)
-│   ├── US-03.2 Evento de app aberta (12 min)
-│   ├── US-03.3 Evento de tela estável (12 min)
-│   └── US-03.4 Evento de mudança de dump (12 min)
+│   ├── SC-03.1 Evento de boot (12 min)
+│   ├── SC-03.2 Evento de app aberta (12 min)
+│   ├── SC-03.3 Evento de tela estável (12 min)
+│   └── SC-03.4 Evento de mudança de dump (12 min)
 ├── US-04 Executar operações (105 min)
-│   ├── US-04.1 Abrir aplicativo (15 min)
-│   ├── US-04.2 tap (15 min)
-│   ├── US-04.3 type (15 min)
-│   ├── US-04.4 key (15 min)
-│   ├── US-04.5 scroll (15 min)
-│   ├── US-04.6 screenshot (15 min)
-│   └── US-04.7 Resgatar coordenadas x,y (imagem de entrada) (15 min)
+│   ├── SC-04.1 Abrir aplicativo (15 min)
+│   ├── SC-04.2 tap (15 min)
+│   ├── SC-04.3 type (15 min)
+│   ├── SC-04.4 key (15 min)
+│   ├── SC-04.5 scroll (15 min)
+│   ├── SC-04.6 screenshot (15 min)
+│   └── SC-04.7 Resgatar coordenadas x,y (imagem de entrada) (15 min)
 ├── US-05 Extrair elementos e informações (120 min)
-│   ├── US-05.1 Nó Texto (20 min)
-│   ├── US-05.2 Nó Ícone (20 min)
-│   ├── US-05.3 Nó Imagem / foto (24 min)
-│   ├── US-05.4 Nó Lista (itens filhos + scroll) (24 min)
-│   ├── US-05.5 Nó Container (12 min)
-│   └── US-05.6 Montar árvore DOM (raiz → filhos) (20 min)
+│   ├── SC-05.1 Nó Texto (20 min)
+│   ├── SC-05.2 Nó Ícone (20 min)
+│   ├── SC-05.3 Nó Imagem / foto (24 min)
+│   ├── SC-05.4 Nó Lista (itens filhos + scroll) (24 min)
+│   ├── SC-05.5 Nó Container (12 min)
+│   └── SC-05.6 Montar árvore DOM (raiz → filhos) (20 min)
 └── US-06 Guardar estado de sessão (30 min)
-    ├── US-06.1 Persistir sessão em arquivo (15 min)
-    └── US-06.2 Restaurar sessão do arquivo (15 min)
+    ├── SC-06.1 Persistir sessão em arquivo (15 min)
+    └── SC-06.2 Restaurar sessão do arquivo (15 min)
 ```
 
 ### Gantt — atividades da árvore (paralelizáveis por IA)
@@ -106,42 +106,42 @@ gantt
 
 ### Inventário de tasks (nós)
 
-IDs = **US-** (funcionalidades). Baseline paralelo: **2026-09-19**. Filhas partem no início do dia; **Montar árvore DOM** inicia após os nós de Extrair (mesmo dia).  
+IDs: **US-** funcionalidade · **SC-** cenário. Baseline paralelo: **2026-09-19**. Filhas partem no início do dia; **Montar árvore DOM** inicia após os nós de Extrair (mesmo dia).  
 1 dia útil = 8h. Entradas/Execução/Saídas: [`functionalities.md`](../../connectmax/screen-robot/docs/functionalities.md#entradas--execução--saídas-por-nó).
 
 | ID | Descrição | Início | Fim | Output |
 |----|-----------|--------|-----|--------|
 | US-01 | Provisionar um agente | 2026-09-19 | 2026-09-19 | Agent pronto para ADB (serial online, boot ok) |
-| US-01.1 | Subir / conectar o Android (agent) | 2026-09-19 | 2026-09-19 | Processo do agent em execução e alcançável |
-| US-01.2 | Garantir serial ADB online | 2026-09-19 | 2026-09-19 | Serial ADB online |
-| US-01.3 | Aguardar boot completo | 2026-09-19 | 2026-09-19 | Device com boot completo |
+| SC-01.1 | Subir / conectar o Android (agent) | 2026-09-19 | 2026-09-19 | Processo do agent em execução e alcançável |
+| SC-01.2 | Garantir serial ADB online | 2026-09-19 | 2026-09-19 | Serial ADB online |
+| SC-01.3 | Aguardar boot completo | 2026-09-19 | 2026-09-19 | Device com boot completo |
 | US-02 | Instalar APKs | 2026-09-19 | 2026-09-19 | Apps instalados nas versões definidas |
-| US-02.1 | Ler versão na config do dispositivo | 2026-09-19 | 2026-09-19 | Versão e package alvo |
-| US-02.2 | Baixar APK na versão definida | 2026-09-19 | 2026-09-19 | Artefato APK no disco |
-| US-02.3 | Instalar pacote no agent | 2026-09-19 | 2026-09-19 | Pacote instalado no agent |
+| SC-02.1 | Ler versão na config do dispositivo | 2026-09-19 | 2026-09-19 | Versão e package alvo |
+| SC-02.2 | Baixar APK na versão definida | 2026-09-19 | 2026-09-19 | Artefato APK no disco |
+| SC-02.3 | Instalar pacote no agent | 2026-09-19 | 2026-09-19 | Pacote instalado no agent |
 | US-03 | Receber eventos | 2026-09-19 | 2026-09-19 | Evento confirmado (estado estável para o próximo passo) |
-| US-03.1 | Evento de boot | 2026-09-19 | 2026-09-19 | Boot sinalizado |
-| US-03.2 | Evento de app aberta | 2026-09-19 | 2026-09-19 | App aberta confirmada |
-| US-03.3 | Evento de tela estável | 2026-09-19 | 2026-09-19 | Tela estável |
-| US-03.4 | Evento de mudança de dump | 2026-09-19 | 2026-09-19 | Dump atualizado disponível |
+| SC-03.1 | Evento de boot | 2026-09-19 | 2026-09-19 | Boot sinalizado |
+| SC-03.2 | Evento de app aberta | 2026-09-19 | 2026-09-19 | App aberta confirmada |
+| SC-03.3 | Evento de tela estável | 2026-09-19 | 2026-09-19 | Tela estável |
+| SC-03.4 | Evento de mudança de dump | 2026-09-19 | 2026-09-19 | Dump atualizado disponível |
 | US-04 | Executar operações | 2026-09-19 | 2026-09-19 | Ação aplicada no device; coords ou artefato quando couber |
-| US-04.1 | Abrir aplicativo | 2026-09-19 | 2026-09-19 | App em foreground |
-| US-04.2 | tap | 2026-09-19 | 2026-09-19 | UI refletindo o tap |
-| US-04.3 | type | 2026-09-19 | 2026-09-19 | Texto na UI |
-| US-04.4 | key | 2026-09-19 | 2026-09-19 | Tecla processada |
-| US-04.5 | scroll | 2026-09-19 | 2026-09-19 | Conteúdo rolado; novos itens visíveis |
-| US-04.6 | screenshot | 2026-09-19 | 2026-09-19 | Arquivo de imagem |
-| US-04.7 | Resgatar coordenadas x,y (imagem de entrada) | 2026-09-19 | 2026-09-19 | Coordenadas x,y (e confiança) |
+| SC-04.1 | Abrir aplicativo | 2026-09-19 | 2026-09-19 | App em foreground |
+| SC-04.2 | tap | 2026-09-19 | 2026-09-19 | UI refletindo o tap |
+| SC-04.3 | type | 2026-09-19 | 2026-09-19 | Texto na UI |
+| SC-04.4 | key | 2026-09-19 | 2026-09-19 | Tecla processada |
+| SC-04.5 | scroll | 2026-09-19 | 2026-09-19 | Conteúdo rolado; novos itens visíveis |
+| SC-04.6 | screenshot | 2026-09-19 | 2026-09-19 | Arquivo de imagem |
+| SC-04.7 | Resgatar coordenadas x,y (imagem de entrada) | 2026-09-19 | 2026-09-19 | Coordenadas x,y (e confiança) |
 | US-05 | Extrair elementos e informações | 2026-09-19 | 2026-09-19 | Árvore de componentes (estilo DOM) |
-| US-05.1 | Nó Texto | 2026-09-19 | 2026-09-19 | Nós de texto com string e bounds |
-| US-05.2 | Nó Ícone | 2026-09-19 | 2026-09-19 | Nós de ícone com tipo e bounds |
-| US-05.3 | Nó Imagem / foto | 2026-09-19 | 2026-09-19 | Nós imagem/foto com bounds |
-| US-05.4 | Nó Lista | 2026-09-19 | 2026-09-19 | Nó lista com filhos e metadados de scroll |
-| US-05.5 | Nó Container | 2026-09-19 | 2026-09-19 | Nós container com filhos |
-| US-05.6 | Montar árvore DOM (raiz → filhos) | 2026-09-19 | 2026-09-19 | Árvore DOM navegável |
+| SC-05.1 | Nó Texto | 2026-09-19 | 2026-09-19 | Nós de texto com string e bounds |
+| SC-05.2 | Nó Ícone | 2026-09-19 | 2026-09-19 | Nós de ícone com tipo e bounds |
+| SC-05.3 | Nó Imagem / foto | 2026-09-19 | 2026-09-19 | Nós imagem/foto com bounds |
+| SC-05.4 | Nó Lista | 2026-09-19 | 2026-09-19 | Nó lista com filhos e metadados de scroll |
+| SC-05.5 | Nó Container | 2026-09-19 | 2026-09-19 | Nós container com filhos |
+| SC-05.6 | Montar árvore DOM (raiz → filhos) | 2026-09-19 | 2026-09-19 | Árvore DOM navegável |
 | US-06 | Guardar estado de sessão | 2026-09-19 | 2026-09-19 | Sessão em disco / contexto restaurado |
-| US-06.1 | Persistir sessão em arquivo | 2026-09-19 | 2026-09-19 | Arquivo de sessão |
-| US-06.2 | Restaurar sessão do arquivo | 2026-09-19 | 2026-09-19 | Estado restaurado no runtime |
+| SC-06.1 | Persistir sessão em arquivo | 2026-09-19 | 2026-09-19 | Arquivo de sessão |
+| SC-06.2 | Restaurar sessão do arquivo | 2026-09-19 | 2026-09-19 | Estado restaurado no runtime |
 
 
 ### Kanban

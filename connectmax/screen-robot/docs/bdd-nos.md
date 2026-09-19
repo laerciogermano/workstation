@@ -18,7 +18,7 @@ Funcionalidade: Provisionar um agente
     Então o agent está pronto (serial online e boot completo)
 ```
 
-### US-01.1 Subir / conectar o Android (agent)
+### SC-01.1 Subir / conectar o Android (agent)
 
 ```gherkin
 Cenário: Agent sobe e fica alcançável
@@ -27,7 +27,7 @@ Cenário: Agent sobe e fica alcançável
   Então o processo do agent está em execução e alcançável
 ```
 
-### US-01.2 Garantir serial ADB online
+### SC-01.2 Garantir serial ADB online
 
 ```gherkin
 Cenário: Serial ADB fica online
@@ -36,7 +36,7 @@ Cenário: Serial ADB fica online
   Então o serial ADB está online
 ```
 
-### US-01.3 Aguardar boot completo
+### SC-01.3 Aguardar boot completo
 
 ```gherkin
 Cenário: Boot completo no device
@@ -57,7 +57,7 @@ Funcionalidade: Instalar APKs
     Então os apps estão instalados nas versões definidas
 ```
 
-### US-02.1 Ler versão na config do dispositivo
+### SC-02.1 Ler versão na config do dispositivo
 
 ```gherkin
 Cenário: Versão e package são lidos da config
@@ -66,7 +66,7 @@ Cenário: Versão e package são lidos da config
   Então a versão e o package alvo estão disponíveis para download
 ```
 
-### US-02.2 Baixar APK na versão definida
+### SC-02.2 Baixar APK na versão definida
 
 ```gherkin
 Cenário: APK da versão pedida é baixado
@@ -75,7 +75,7 @@ Cenário: APK da versão pedida é baixado
   Então o artefato APK/XAPK existe no disco
 ```
 
-### US-02.3 Instalar pacote no agent
+### SC-02.3 Instalar pacote no agent
 
 ```gherkin
 Cenário: Pacote é instalado no agent
@@ -96,7 +96,7 @@ Funcionalidade: Receber eventos
     Então o evento esperado é confirmado
 ```
 
-### US-03.1 Evento de boot
+### SC-03.1 Evento de boot
 
 ```gherkin
 Cenário: Sinal de boot é recebido
@@ -105,7 +105,7 @@ Cenário: Sinal de boot é recebido
   Então o boot é sinalizado
 ```
 
-### US-03.2 Evento de app aberta
+### SC-03.2 Evento de app aberta
 
 ```gherkin
 Cenário: App em foreground é confirmada
@@ -114,7 +114,7 @@ Cenário: App em foreground é confirmada
   Então a app está em foreground
 ```
 
-### US-03.3 Evento de tela estável
+### SC-03.3 Evento de tela estável
 
 ```gherkin
 Cenário: Tela fica estável
@@ -123,7 +123,7 @@ Cenário: Tela fica estável
   Então a tela está estável
 ```
 
-### US-03.4 Evento de mudança de dump
+### SC-03.4 Evento de mudança de dump
 
 ```gherkin
 Cenário: Dump de UI muda
@@ -144,7 +144,7 @@ Funcionalidade: Executar operações
     Então a UI/device reflete a ação (e coords/artefato quando couber)
 ```
 
-### US-04.1 Abrir aplicativo
+### SC-04.1 Abrir aplicativo
 
 ```gherkin
 Cenário: App é aberta no agent
@@ -153,7 +153,7 @@ Cenário: App é aberta no agent
   Então a app está em foreground
 ```
 
-### US-04.2 tap
+### SC-04.2 tap
 
 ```gherkin
 Cenário: Toque na tela
@@ -162,7 +162,7 @@ Cenário: Toque na tela
   Então a UI reflete o toque
 ```
 
-### US-04.3 type
+### SC-04.3 type
 
 ```gherkin
 Cenário: Texto é digitado
@@ -171,7 +171,7 @@ Cenário: Texto é digitado
   Então o texto aparece na UI
 ```
 
-### US-04.4 key
+### SC-04.4 key
 
 ```gherkin
 Cenário: Tecla é enviada
@@ -180,7 +180,7 @@ Cenário: Tecla é enviada
   Então a tecla é processada pelo device
 ```
 
-### US-04.5 scroll
+### SC-04.5 scroll
 
 ```gherkin
 Cenário: Conteúdo é rolado
@@ -189,7 +189,7 @@ Cenário: Conteúdo é rolado
   Então o conteúdo rolou e novos itens podem ficar visíveis
 ```
 
-### US-04.6 screenshot
+### SC-04.6 screenshot
 
 ```gherkin
 Cenário: Print da tela é salvo
@@ -198,7 +198,7 @@ Cenário: Print da tela é salvo
   Então o arquivo de imagem existe no path
 ```
 
-### US-04.7 Resgatar coordenadas x,y (imagem de entrada)
+### SC-04.7 Resgatar coordenadas x,y (imagem de entrada)
 
 ```gherkin
 Cenário: Coordenadas a partir de imagem template
@@ -219,7 +219,7 @@ Funcionalidade: Extrair elementos e informações
     Então existe uma árvore de componentes navegável (estilo DOM)
 ```
 
-### US-05.1 Nó Texto
+### SC-05.1 Nó Texto
 
 ```gherkin
 Cenário: Textos são extraídos
@@ -228,7 +228,7 @@ Cenário: Textos são extraídos
   Então nós de texto existem com string e bounds
 ```
 
-### US-05.2 Nó Ícone
+### SC-05.2 Nó Ícone
 
 ```gherkin
 Cenário: Ícones são reconhecidos
@@ -237,7 +237,7 @@ Cenário: Ícones são reconhecidos
   Então nós de ícone existem com tipo e bounds
 ```
 
-### US-05.3 Nó Imagem / foto
+### SC-05.3 Nó Imagem / foto
 
 ```gherkin
 Cenário: Regiões de mídia são detectadas
@@ -246,7 +246,7 @@ Cenário: Regiões de mídia são detectadas
   Então nós imagem/foto existem com bounds
 ```
 
-### US-05.4 Nó Lista
+### SC-05.4 Nó Lista
 
 ```gherkin
 Cenário: Lista com itens é extraída
@@ -255,7 +255,7 @@ Cenário: Lista com itens é extraída
   Então existe nó lista com filhos e metadados de scroll
 ```
 
-### US-05.5 Nó Container
+### SC-05.5 Nó Container
 
 ```gherkin
 Cenário: Containers são agrupados
@@ -264,7 +264,7 @@ Cenário: Containers são agrupados
   Então nós container existem com filhos
 ```
 
-### US-05.6 Montar árvore DOM
+### SC-05.6 Montar árvore DOM
 
 ```gherkin
 Cenário: Hierarquia raiz → filhos é montada
@@ -285,7 +285,7 @@ Funcionalidade: Guardar estado de sessão
     Então a sessão está em disco ou o contexto foi restaurado
 ```
 
-### US-06.1 Persistir sessão em arquivo
+### SC-06.1 Persistir sessão em arquivo
 
 ```gherkin
 Cenário: Sessão é gravada
@@ -294,7 +294,7 @@ Cenário: Sessão é gravada
   Então o arquivo de sessão existe
 ```
 
-### US-06.2 Restaurar sessão do arquivo
+### SC-06.2 Restaurar sessão do arquivo
 
 ```gherkin
 Cenário: Sessão é restaurada

@@ -11,7 +11,7 @@
 | Instalar APKs | Baixa (versão definida na config do dispositivo) e instala pacotes no agent |
 | Receber eventos | Observa e espera sinais do device/UI (boot, app aberta, tela estável, mudança de dump) |
 | Extrair elementos e informações | Lê a tela e devolve a UI como **árvore de componentes** (estilo DOM): textos, ícones, imagens, fotos, **listas** e demais nós, com bounds e metadados |
-| Executar operações | Dispara gestos e comandos (launch, tap, type, key, screenshot) a partir dos elementos ou coords |
+| Executar operações | Dispara gestos e comandos (abrir aplicativo, tap, type, key, screenshot) a partir dos elementos ou coords |
 | Guardar estado de sessão | Persiste e restaura contexto da sessão (device, apps, último frame, login parcial) em arquivo |
 
 ### Extrair elementos e informações

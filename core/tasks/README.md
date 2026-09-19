@@ -35,7 +35,7 @@ screen-robot
 │   ├── Nó Container
 │   └── Montar árvore DOM (raiz → filhos)
 ├── 5. Executar operações
-│   ├── launch
+│   ├── Abrir aplicativo
 │   ├── tap
 │   ├── type
 │   ├── key
@@ -72,7 +72,7 @@ flowchart TB
   end
 
   subgraph O[5 Executar operacoes]
-    O1[launch] --> O2[tap]
+    O1[Abrir aplicativo] --> O2[tap]
     O2 --> O3[type]
     O3 --> O4[key]
     O4 --> O5[screenshot]
@@ -127,7 +127,7 @@ gantt
 
   section 5 Operacoes
   Executar operacoes        :crit, o0, after x0, 75m
-  launch                    :o1, after x0, 15m
+  Abrir aplicativo          :o1, after x0, 15m
   tap                       :o2, after o1, 15m
   type                      :o3, after o2, 15m
   key                       :o4, after o3, 15m
@@ -145,7 +145,7 @@ gantt
 | 2 | Instalar APKs | ler versão · baixar · instalar | 45 |
 | 3 | Receber eventos | boot · app aberta · tela estável · dump | 48 |
 | 4 | Extrair elementos | texto · ícone · imagem/foto · lista · container · árvore DOM | 120 |
-| 5 | Executar operações | launch · tap · type · key · screenshot | 75 |
+| 5 | Executar operações | abrir aplicativo · tap · type · key · screenshot | 75 |
 | 6 | Guardar sessão | persistir · restaurar | 30 |
 | | **Total** | | **378** |
 

@@ -53,6 +53,54 @@ plano-implementacao (este doc)
         └── [ ] factory backend=adb|agent
 ```
 
+### O que será feito em cada atividade
+
+#### F0 — Fundamentos
+
+| ID | Entregável | O que será feito |
+|----|------------|------------------|
+| I0.1 | `lib/types.js` | Definir os tipos/contratos JSDoc (ou shapes) de `Frame`, `Element`, `Action`, `Goal` e `Step`; enums `ElementKind` e `ActionType`; documentar o contrato Capture/Perceive/Decide/Actuate para o resto do código tipar contra isso. |
+| I0.2 | `lib/capture.js` | Expor interface `Capture.getFrame()` e implementar `AdbCapture`: screencap via ADB no serial configurado, salvar/devolver PNG + `width`/`height`/`ts`. Reutilizar o que já existe em `android-control` (shot). |
+| I0.3 | `lib/actuate.js` | Expor interface `Actuate.run(Action)` e implementar `AdbActuate`: wrap de `cli.js` / shell ADB para `tap`, `swipe` e `type` a partir de `Action`. Paralelo a I0.2. |
+| I0.4 | `scripts/smoke-tap.js` + BDD `@f0` | Script que faz `getFrame` → `tap` no centro do frame no redroid; validar que o PNG tem dimensões > 0 e que o tap fica dentro dos limites. Cobrir o cenário BDD `@f0`. |
+
+#### F1 — Perceive
+
+| ID | Entregável | O que será feito |
+|----|------------|------------------|
+| I1.1 | `lib/schema.js` | Validar JSON de `Element[]` (campos obrigatórios, `bbox` 4 números, `center` 2 números, `kind` conhecido). Rejeitar payloads inválidos com erro claro. |
+| I1.2 | `lib/ocr.js` | Provider OCR (local ou API): dado um `Frame`, extrair textos com bboxes e montar `Element[]` (`kind` text/button quando possível, `source: "ocr"`). Paralelo a I1.3. |
+| I1.3 | `lib/vision.js` | Provider vision (LLM/detector): detectar botões, fotos, cards e regiões UI sem depender só de texto; emitir `Element[]` com `source: "vision"`. Paralelo a I1.2. |
+| I1.4 | `lib/perceive.js` | `CompositePerceive`: chamar OCR ∥ vision, mergear listas (ids estáveis, sem conflito em sobreposição), marcar `source` ocr/vision/merged. |
+| I1.5 | `perceive-cli.js` + BDD `@f1` | CLI `perceive <frame.png>` → JSON; overlay debug opcional; fixtures com texto “Seguir”; passar BDD `@f1` (OCR + merge). |
+
+#### F2 — Decide + run
+
+| ID | Entregável | O que será feito |
+|----|------------|------------------|
+| I2.1 | `lib/matcher.js` | Decisão determinística: escolher elemento por `label` / `kind` / índice e devolver `Action` (`tap` no `center`, `copy_text`, etc.). Sem LLM. Paralelo a I2.2. |
+| I2.2 | `lib/llm-decide.js` | Decisão opcional via LLM: goal/step em linguagem natural + `Element[]` → `Action` estruturada. Fallback/uso só quando o matcher não basta. Paralelo a I2.1. |
+| I2.3 | `lib/decide.js` + `lib/runner.js` | `CompositeDecide` (matcher + llm); `GoalRunner` orquestra Capture → Perceive → Decide → Actuate por step do goal; resultado `RunResult` (success/fail + dados extraídos). |
+| I2.4 | `run-goal.js` + `goals/example.json` + BDD `@f2` | CLI para rodar um goal JSON; exemplo E2E “clicar em Seguir” **sem coordenadas hardcoded**; cobrir BDD `@f2` (tap por label + copy_text). |
+
+#### F3 — Robustez
+
+| ID | Entregável | O que será feito |
+|----|------------|------------------|
+| I3.1 | `lib/wait.js` | `WaitPolicy`: poll de capture+perceive até predicado (ex.: label aparece) ou timeout; usado em steps `wait_until`. Paralelo a I3.2 e I3.3. |
+| I3.2 | `lib/scroll.js` | Steps `scroll_until`: swipe + re-perceive em loop até achar o alvo ou esgotar `max_swipes` (listas fora da viewport). Paralelo a I3.1 e I3.3. |
+| I3.3 | `lib/calibrate.js` | Mapear coordenadas do espaço do frame para o espaço do actuator quando as resoluções diferem (ex.: 1080×1920 → 720×1280). Paralelo a I3.1 e I3.2. |
+| I3.4 | `lib/metrics.js` + BDD `@f3` | Registrar acerto, latência e custo por etapa; integrar no runner; passar BDD `@f3` (wait, scroll, calibrate). |
+
+#### F4 — Hardware-ready
+
+| ID | Entregável | O que será feito |
+|----|------------|------------------|
+| I4.1 | factory + env | Factory que lê `BACKEND=adb\|agent` (e serial/endpoint) e instancia Capture/Actuate corretos **sem** mudar Perceive/Decide. Revisar contratos de F0 se necessário. |
+| I4.2 | `lib/agent-capture.js` | Segundo backend de captura (APK agent ou scrcpy USB): mesma interface `getFrame()` → `Frame`. Paralelo a I4.3. |
+| I4.3 | `lib/agent-actuate.js` | Segundo backend de atuação via agent: mesma interface `run(Action)`. Paralelo a I4.2. |
+| I4.4 | BDD `@f4` + regressão | Validar factory + smoke do mesmo `goal.json` com `BACKEND=agent`; regressão mínima em 1 device (ou mock) sem reescrever goals. |
+
 ### Critérios de avanço
 
 | De | Para | Só avança se |

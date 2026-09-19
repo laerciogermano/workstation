@@ -10,14 +10,14 @@ Cada etapa documenta **entradas**, **execução** e **saídas**.
 
 ## Como atacar
 
-1. No [discovery](1.discovery/README.md), nesta ordem: **stories → scenarios → BDDs → epics → protótipo → roadmap → tasks**.
+1. No [discovery](1.discovery/README.md), nesta ordem: **stories → epics → scenarios → BDDs → protótipo → roadmap → tasks**.
 2. **Depois**, separar **cada estória** e aplicar o ciclo acima **por estória** (refinamento técnico → desenvolvimento → testes → implantação → manutenção).
 
 O mapa nasce no discovery; o restante do processo roda **estória a estória**, não no produto inteiro de uma vez.
 
 | Etapa | Pasta | Objetivo |
 |-------|-------|----------|
-| Discovery | [`1.discovery/`](1.discovery/README.md) | Stories → scenarios → BDDs → epics → protótipo → roadmap → tasks; depois ciclo por estória |
+| Discovery | [`1.discovery/`](1.discovery/README.md) | Stories → epics → scenarios → BDDs → protótipo → roadmap → tasks; depois ciclo por estória |
 | Refinamento técnico | [`2.refinamento-tecnico/`](2.refinamento-tecnico/README.md) | Detalhar solução, riscos e critérios técnicos |
 | Desenvolvimento | [`3.desenvolvimento/`](3.desenvolvimento/README.md) | Implementar o que foi acordado |
 | Testes | [`4.testes/`](4.testes/README.md) | Validar comportamento e qualidade |
@@ -37,14 +37,14 @@ O mapa nasce no discovery; o restante do processo roda **estória a estória**, 
 
 **Execução**
 
-- Stories → scenarios → BDDs → epics → protótipo → roadmap → tasks
+- Stories → epics → scenarios → BDDs → protótipo → roadmap → tasks
 
 **Saídas**
 
 - `1.stories.md`
-- `2.scenarios.md`
-- `3.bdds.md`
-- `4.epics.md`
+- `2.epics.md`
+- `3.scenarios.md`
+- `4.bdds.md`
 - Protótipo
 - `6.roadmap.md`
 - `7.tasks.md` / `tasks.md`

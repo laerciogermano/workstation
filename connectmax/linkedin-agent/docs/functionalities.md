@@ -2,7 +2,7 @@
 
 **Por quê:** recortar as **ações maiores** no LinkedIn que o agente executa via [`screen-robot`](../../screen-robot/README.md).  
 **Origem:** [visão](../README.md).  
-**Formato:** [processo — documento de cenários](../../../core/processo/1.discovery/2.scenarios.md).
+**Formato:** [processo — documento de cenários](../../../core/processo/1.discovery/3.scenarios.md).
 **Negócio:** [`../../vendas/`](../../vendas/README.md) consome estas ações; não as redefine.
 
 Cada **funcionalidade** é uma **ação**. Cada **cenário** é uma mudança de estado necessária para executar a ação — e também unidade testável e paralelizável.
@@ -108,7 +108,7 @@ Persiste contexto do agente (device, apps, etapa, último perfil/thread) para re
 ## Fora do escopo
 
 - Cadência, fila, distribuição, faturamento ([`vendas`](../../vendas/README.md)).
-- Provisionar device / OCR / gestos genéricos ([`screen-robot`](../../screen-robot/2.scenarios.md)).
+- Provisionar device / OCR / gestos genéricos ([`screen-robot`](../../screen-robot/3.scenarios.md)).
 - Bypass de autenticação ou uso ilegítimo do LinkedIn.
 
 ## Próximos passos

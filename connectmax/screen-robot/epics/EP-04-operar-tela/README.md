@@ -1,6 +1,6 @@
 # EP-04 — Operar tela
 
-**Índice:** [`../README.md`](../README.md) · **Flat:** [`../../4.epics.md`](../../4.epics.md).  
+**Índice:** [`../README.md`](../README.md) · **Flat:** [`../../2.epics.md`](../../2.epics.md).  
 **US:** US-07, US-08, US-09, US-10, US-11, US-12.
 
 ## Artefatos do épico
@@ -8,8 +8,9 @@
 | Artefato | Arquivo |
 |----------|---------|
 | Stories | [`1.stories.md`](1.stories.md) |
-| Cenários | [`2.scenarios.md`](2.scenarios.md) |
-| BDDs | [`3.bdds.md`](3.bdds.md) |
+| Épico | [`2.epics.md`](2.epics.md) |
+| Cenários | [`3.scenarios.md`](3.scenarios.md) |
+| BDDs | [`4.bdds.md`](4.bdds.md) |
 
 ## Estórias
 

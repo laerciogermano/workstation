@@ -8,7 +8,7 @@
 
 Barra **EP**; **US** só quando o épico tem mais de uma história (SC em [`tasks.md`](tasks.md)).  
 EP com 1 US (EP-01, EP-03, EP-05): só o épico.  
-Cores: **EP** = teal · **US** = âmbar · crítico = terracota.  
+Cores (só 2): **EP** = azul · **US** = cinza.  
 US-01 → US-02 sequenciais; **US-03..05** paralelas após US-02; **US-06..13** paralelas após US-03..05; US-14..16 sequenciais.  
 Soma esforço: **408 min** · caminho crítico: **249 min**.
 
@@ -17,17 +17,17 @@ Soma esforço: **408 min** · caminho crítico: **249 min**.
 config:
   theme: base
   themeVariables:
-    doneTaskBkgColor: '#1a6b5c'
-    doneTaskBorderColor: '#0f453c'
-    taskBkgColor: '#d4a017'
-    taskBorderColor: '#8a6808'
-    taskTextColor: '#1a1a1a'
+    doneTaskBkgColor: '#2563eb'
+    doneTaskBorderColor: '#1d4ed8'
+    taskBkgColor: '#94a3b8'
+    taskBorderColor: '#64748b'
+    taskTextColor: '#0f172a'
     taskTextLightColor: '#ffffff'
-    taskTextOutsideColor: '#1a1a1a'
-    critBkgColor: '#c45c26'
-    critBorderColor: '#8a3d14'
-    activeTaskBkgColor: '#d4a017'
-    activeTaskBorderColor: '#8a6808'
+    taskTextOutsideColor: '#0f172a'
+    critBkgColor: '#2563eb'
+    critBorderColor: '#1d4ed8'
+    activeTaskBkgColor: '#94a3b8'
+    activeTaskBorderColor: '#64748b'
 ---
 gantt
   title screen-robot EP/US minutos IA
@@ -57,7 +57,7 @@ gantt
   US-12 Resgatar coordenadas x,y        :us12, after us05, 15m
 
   section EP-05 Extrair elementos
-  EP-05 Extrair elementos               :crit, ep05, after us05, 120m
+  EP-05 Extrair elementos               :done, ep05, after us05, 120m
 
   section EP-06 Sessao
   EP-06 Sessao                          :done, ep06, after ep05, 45m

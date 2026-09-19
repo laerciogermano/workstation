@@ -35,3 +35,4 @@ Como registrar: [`README.md`](README.md).
 | 026 | 2026-09-19 | Épicos pais no roadmap | [026-2026-09-19-epicos-pais-roadmap.md](026-2026-09-19-epicos-pais-roadmap.md) | Gantt do roadmap com barra EP pai e US filhas. |
 | 027 | 2026-09-19 | Cores EP ≠ US no roadmap | [027-2026-09-19-cores-ep-us-roadmap.md](027-2026-09-19-cores-ep-us-roadmap.md) | Gantt: EP teal, US âmbar, crítico terracota. |
 | 028 | 2026-09-19 | Roadmap EP único sem US | [028-2026-09-19-roadmap-ep-unico.md](028-2026-09-19-roadmap-ep-unico.md) | Épicos com 1 US (EP-01/03/05) mostram só o épico no Gantt. |
+| 029 | 2026-09-19 | Roadmap duas cores | [029-2026-09-19-roadmap-duas-cores.md](029-2026-09-19-roadmap-duas-cores.md) | Gantt: só azul (EP) e cinza (US). |

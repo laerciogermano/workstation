@@ -46,17 +46,17 @@ IDs: **US-** história · **SC-XX** cenário sequencial (mudança de estado; uni
 | SC-15 | Print da tela é salvo | 2026-09-19 | 2026-09-19 | Arquivo de imagem |
 | US-12 | Resgatar coordenadas x,y a partir de uma imagem | 2026-09-19 | 2026-09-19 | Coordenadas x,y (e confiança) |
 | SC-16 | Coordenadas a partir de imagem template | 2026-09-19 | 2026-09-19 | Coordenadas x,y (e confiança) |
-| US-13 | Extrair árvore DOM | 2026-09-19 | 2026-09-19 | Árvore DOM navegável |
-| SC-17 | Extrair apenas textos (fase 1 da árvore) | 2026-09-19 | 2026-09-19 | Textos tipados |
-| SC-18 | Extrair o restante e compor árvore DOM | 2026-09-19 | 2026-09-19 | Árvore DOM navegável |
-| US-14 | Extrair ícones | 2026-09-19 | 2026-09-19 | Ícones tipados |
-| SC-19 | Extrair ícones da tela | 2026-09-19 | 2026-09-19 | Ícones tipados |
-| US-15 | Extrair textos | 2026-09-19 | 2026-09-19 | Textos tipados |
-| SC-20 | Extrair textos (OCR) | 2026-09-19 | 2026-09-19 | Textos tipados |
-| US-16 | Extrair listas | 2026-09-19 | 2026-09-19 | Listas com itens filhos |
-| SC-21 | Extrair listas com itens filhos | 2026-09-19 | 2026-09-19 | Listas com itens filhos |
-| US-17 | Extrair imagens | 2026-09-19 | 2026-09-19 | Imagens tipadas |
-| SC-22 | Extrair imagens/fotos | 2026-09-19 | 2026-09-19 | Imagens tipadas |
+| US-13 | Extrair árvore DOM | 2026-09-19 | 2026-09-19 | Árvore de componentes completa |
+| SC-17 | Extrair apenas textos (fase 1 da árvore) | 2026-09-19 | 2026-09-19 | Árvore de componentes contendo os textos |
+| SC-18 | Extrair o restante e compor árvore DOM | 2026-09-19 | 2026-09-19 | Árvore de componentes completa |
+| US-14 | Extrair ícones | 2026-09-19 | 2026-09-19 | Árvore de componentes contendo os ícones |
+| SC-19 | Extrair ícones da tela | 2026-09-19 | 2026-09-19 | Árvore de componentes contendo os ícones |
+| US-15 | Extrair textos | 2026-09-19 | 2026-09-19 | Árvore de componentes contendo os textos |
+| SC-20 | Extrair textos (OCR) | 2026-09-19 | 2026-09-19 | Árvore de componentes contendo os textos |
+| US-16 | Extrair listas | 2026-09-19 | 2026-09-19 | Árvore de componentes contendo as listas |
+| SC-21 | Extrair listas com itens filhos | 2026-09-19 | 2026-09-19 | Árvore de componentes contendo as listas |
+| US-17 | Extrair imagens | 2026-09-19 | 2026-09-19 | Árvore de componentes contendo as imagens |
+| SC-22 | Extrair imagens/fotos | 2026-09-19 | 2026-09-19 | Árvore de componentes contendo as imagens |
 | US-18 | Salvar sessão | 2026-09-19 | 2026-09-19 | Arquivo de sessão |
 | SC-23 | Salvar sessão em arquivo | 2026-09-19 | 2026-09-19 | Arquivo de sessão |
 | US-19 | Remover sessão | 2026-09-19 | 2026-09-19 | Sessão removida |

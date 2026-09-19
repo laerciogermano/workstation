@@ -63,3 +63,4 @@ Como registrar: [`README.md`](README.md).
 | 053 | 2026-09-19 | Epics em tabela como cenários | [053-2026-09-19-epics-tabela-como-cenarios.md](053-2026-09-19-epics-tabela-como-cenarios.md) | `4.epics.md` em tabelas por EP (EP · Épico · US · Estória). |
 | 054 | 2026-09-19 | Extrair elementos em estórias tipadas | [054-2026-09-19-extrair-elementos-estorias.md](054-2026-09-19-extrair-elementos-estorias.md) | EP-05: US-13..17 (ícones/textos/listas/imagens/DOM); sessão US-18..20; SC-17..24; TSK-021..030. |
 | 055 | 2026-09-19 | EP só no título; árvore DOM primeiro | [055-2026-09-19-epics-arvore-dom-primeiro.md](055-2026-09-19-epics-arvore-dom-primeiro.md) | Tabelas EP só US/Estória; US-13 árvore (textos→restante); SC-17..25; TSK-022..031. |
+| 056 | 2026-09-19 | Saída árvore de componentes | [056-2026-09-19-saida-arvore-componentes.md](056-2026-09-19-saida-arvore-componentes.md) | Cada estória de extração tem saída = árvore de componentes com os elementos respectivos. |

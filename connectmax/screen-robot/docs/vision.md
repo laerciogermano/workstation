@@ -110,5 +110,4 @@ Lê o arquivo salvo e reaplica o estado no runtime, restaurando device, apps, et
 
 → [`scenarios.md`](scenarios.md)  
 → [`tasks.md`](tasks.md)  
-→ [`bdd-nos.md`](bdd-nos.md)  
-→ [`bdd-linkedin-login.md`](bdd-linkedin-login.md)
+→ [`bdds.md`](bdds.md)

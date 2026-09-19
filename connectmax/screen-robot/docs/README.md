@@ -12,10 +12,9 @@
 | Épicos + fases entregáveis | [`epics.md`](epics.md) | Feito |
 | Cenários (US + SC) | [`scenarios.md`](scenarios.md) | Feito |
 | Tasks (árvore + Gantt) | [`tasks.md`](tasks.md) | Feito |
-| BDD por US/SC | [`bdd-nos.md`](bdd-nos.md) | Feito |
-| BDD login LinkedIn | [`bdd-linkedin-login.md`](bdd-linkedin-login.md) | Feito |
+| BDDs (US/SC + piloto LinkedIn) | [`bdds.md`](bdds.md) | Feito |
 | Sources | [`../sources/`](../sources/README.md) | Em curso |
 
 ## Próximos passos
 
-→ [`bdd-linkedin-login.md`](bdd-linkedin-login.md) · `npm run linkedin-login` em [`../sources/android-control`](../sources/android-control/README.md)
+→ [`bdds.md`](bdds.md) · `npm run linkedin-login` em [`../sources/android-control`](../sources/android-control/README.md)

@@ -130,7 +130,7 @@ flowchart TB
     direction TB
     D_E["Entradas<br/>demanda / problema<br/>contexto e restrições<br/>stakeholders<br/>dados e feedback"]
     D_X["Execução<br/>vision → cenários → BDDs → protótipo<br/>validar com stakeholders"]
-    D_S["Saídas<br/>vision.md<br/>scenarios.md<br/>bdd.md<br/>protótipo"]
+    D_S["Saídas<br/>vision.md<br/>scenarios.md<br/>bdds.md<br/>protótipo"]
     D_E --> D_X --> D_S
   end
 

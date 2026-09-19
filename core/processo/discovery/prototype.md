@@ -2,7 +2,7 @@
 
 Artefato **4** do [discovery](README.md). Validação visual/interativa do *quê* já fechado em vision, cenários e BDDs.
 
-**Antes:** [`bdd.md`](bdd.md). **Depois:** [refinamento técnico](../refinamento-tecnico/README.md) (por estória).
+**Antes:** [`bdds.md`](bdds.md). **Depois:** [refinamento técnico](../refinamento-tecnico/README.md) (por estória).
 
 ## Regras
 

@@ -5,7 +5,7 @@ Validar que o software faz o combinado.
 ## Entradas
 
 - Código entregue pelo desenvolvimento
-- Cenários de aceite do [documento de BDD](../discovery/bdd.md) (fonte: [`scenarios.md`](../discovery/scenarios.md))
+- Cenários de aceite do [documento de BDD](../discovery/bdds.md) (fonte: [`scenarios.md`](../discovery/scenarios.md))
 - Ambiente de teste configurado
 - Casos de regressão conhecidos
 

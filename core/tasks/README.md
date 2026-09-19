@@ -8,7 +8,7 @@
 
 Histórias US (eventos e operações cada uma é US; extrair = US-13; sessão = US-14..16).  
 **Árvore e Gantt:** [`screen-robot/docs/tasks.md`](../../connectmax/screen-robot/docs/tasks.md).  
-Cenários: [`scenarios.md`](../../connectmax/screen-robot/docs/scenarios.md) · BDD nós: [`bdd-nos.md`](../../connectmax/screen-robot/docs/bdd-nos.md) · BDD login: [`bdd-linkedin-login.md`](../../connectmax/screen-robot/docs/bdd-linkedin-login.md).  
+Cenários: [`scenarios.md`](../../connectmax/screen-robot/docs/scenarios.md) · BDDs: [`bdds.md`](../../connectmax/screen-robot/docs/bdds.md).
 Estimativas: minutos IA · **1 dia = 8h = 480 min**.
 
 ### Inventário de tasks (nós)
@@ -59,7 +59,7 @@ IDs: **US-** história · **SC-XX** cenário sequencial (mudança de estado; uni
 
 | Todo | Doing | Done |
 |------|-------|------|
-| [Login LinkedIn (BDD)](../../connectmax/screen-robot/docs/bdd-linkedin-login.md) · `npm run linkedin-login` | | [Libs Node 6 recortes](../../connectmax/screen-robot/sources/android-control/README.md) |
+| [Login LinkedIn (BDD)](../../connectmax/screen-robot/docs/bdds.md) · `npm run linkedin-login` | | [Libs Node 6 recortes](../../connectmax/screen-robot/sources/android-control/README.md) |
 
 → [`screen-robot/`](../../connectmax/screen-robot/README.md) · [`scenarios.md`](../../connectmax/screen-robot/docs/scenarios.md)
 

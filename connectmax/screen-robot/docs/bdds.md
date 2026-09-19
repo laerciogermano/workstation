@@ -1,9 +1,32 @@
-# BDD — cenários por história (screen-robot)
+# BDDs — screen-robot
 
-**Por quê:** aceite consolidado de cada **US** e **SC** (fonte: [`scenarios.md`](scenarios.md)).  
-**Integração:** [`bdd-linkedin-login.md`](bdd-linkedin-login.md).
+**Por quê:** aceite Gherkin de cada **US** e **SC** (fonte: [`scenarios.md`](scenarios.md)).  
+**Piloto de integração:** seção [Login LinkedIn](#integração--login-linkedin).
 
 Cada bloco usa Dado / Quando / Então alinhado a Entradas / Execução / Saídas.
+
+## Cobertura
+
+| US | SC | BDD unitário | No piloto LinkedIn |
+|----|----|--------------|--------------------|
+| US-01 | SC-01, SC-02, SC-03 | sim | sim (provisionar) |
+| US-02 | SC-04 | sim | parcial (`waitForUiReady` / boot) |
+| US-03 | SC-05 | sim | parcial (app aberta no launch) |
+| US-04 | SC-06 | sim | sim (UI estável) |
+| US-05 | SC-07 | sim | sim (dump disponível) |
+| US-06 | SC-08, SC-09, SC-10 | sim | sim (Instagram + LinkedIn) |
+| US-07 | SC-11 | sim | sim (abrir LinkedIn) |
+| US-08 | SC-12 | sim | sim (tap Entrar) |
+| US-09 | SC-13 | sim | sim (type user/senha) |
+| US-10 | SC-14 | sim | a exercer no script |
+| US-11 | SC-15 | sim | sim (screenshot) |
+| US-12 | SC-16 | sim | a exercer no script |
+| US-13 | SC-17 | sim | sim (extrair árvore) |
+| US-14 | SC-18 | sim | sim (salvar sessão) |
+| US-15 | SC-19 | sim | **não** — BDD unitário só |
+| US-16 | SC-20 | sim | **não** — BDD unitário só |
+
+**Lacunas do piloto:** US-15 (remover sessão) e US-16 (recuperar sessão) têm BDD unitário, mas o script `linkedin-login` ainda não as exercita. US-10 e US-12 constam no mapeamento operacional e devem ser exercidas no script.
 
 ---
 
@@ -359,6 +382,7 @@ Cenário: SC-19 Sessão é removida do disco
   Dado um path de sessão
   Quando o arquivo de sessão é apagado
   Então o arquivo de sessão não existe
+  E o runtime não mantém o contexto daquela sessão
 ```
 
 ---
@@ -381,3 +405,58 @@ Cenário: SC-20 Sessão é recuperada
   Quando a leitura reaplica o contexto
   Então o runtime possui o estado restaurado
 ```
+
+---
+
+## Integração — Login LinkedIn
+
+**Script:** [`../sources/android-control/scripts/linkedin-login.js`](../sources/android-control/scripts/linkedin-login.js)  
+**Config do device:** [`../sources/android-control/device.config.json`](../sources/android-control/device.config.json)
+
+```gherkin
+Funcionalidade: Login no LinkedIn com agent Android via Node
+  Como operador do screen-robot
+  Quero provisionar o agent, instalar APKs, ler a tela e autenticar no LinkedIn
+  Para validar o pipeline Node (US-01..14; US-15 e US-16 só no BDD unitário)
+
+  Contexto:
+    Dado a config do dispositivo em device.config.json
+    E as credenciais LINKEDIN_USER e LINKEDIN_PASSWORD no ambiente
+    E a versão do Instagram definida em apps.instagram.version
+
+  @provisionar @apks @eventos @operacoes @extrair @sessao
+  Cenário: Login a partir da home ou já na tela de login
+    Dado que o agente Android é provisionado e fica online
+    E o APK do Instagram na versão da config é baixado e instalado
+    E o APK do LinkedIn é instalado (se ainda não estiver)
+    Quando o LinkedIn é aberto no agent
+    E o sistema recebe o evento de UI estável (dump disponível)
+    E um print da tela é salvo
+    E os elementos e informações da tela são extraídos como árvore de componentes (textos, ícones, imagens/fotos, listas e containers)
+    Então a árvore contém o botão de login (ex.: "Entrar" / "Sign in")
+       ou a tela já é a de login (campos de usuário/senha)
+    Quando as operações digitam usuário e senha e tocam em Entrar
+    Então o estado da sessão é guardado em disco
+    E a sessão registra device, apps, caminho do print e etapa "login_submitted"
+```
+
+### Mapeamento US → passo
+
+| US | Passo BDD / script |
+|----|-------------------|
+| US-01 | `Dado que o agente Android é provisionado` → `provisionAgent()` |
+| US-02 | Boot no provisionamento / `waitForUiReady()` |
+| US-03 | App em foreground após abrir LinkedIn |
+| US-04 | `E o sistema recebe o evento de UI estável` → `waitForUiReady()` |
+| US-05 | Dump disponível no mesmo wait |
+| US-06 | `E o APK do Instagram…` / LinkedIn → `installApk` |
+| US-07 | `Quando o LinkedIn é aberto` → `operate.openApp` |
+| US-08 | tap Entrar → `operate.tap` |
+| US-09 | digitar usuário/senha → `operate.type` |
+| US-10 | scroll (quando necessário na tela) → `operate.scroll` |
+| US-11 | `E um print da tela é salvo` → `operate.screenshot` |
+| US-12 | resgatar x,y por imagem (quando necessário) → `operate.findByImage` |
+| US-13 | `E os elementos…` → `extractElements()` |
+| US-14 | `Então o estado da sessão…` → `saveSession()` |
+| US-15 | *fora do piloto* — ver BDD unitário |
+| US-16 | *fora do piloto* — ver BDD unitário |

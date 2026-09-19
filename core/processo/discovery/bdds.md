@@ -1,6 +1,6 @@
-# Documento de BDD
+# Documento de BDDs
 
-Artefato **3** do [discovery](README.md). Critérios de aceite em Gherkin (Dado / Quando / Então) por US e SC.
+Artefato **3** do [discovery](README.md). Critérios de aceite em Gherkin (Dado / Quando / Então) por US e SC — arquivo único `bdds.md`.
 
 **Antes:** [`scenarios.md`](scenarios.md). **Depois:** [`prototype.md`](prototype.md).
 

@@ -24,7 +24,7 @@ API **Node** do screen-robot sobre ADB: provisionar agent, instalar APKs, evento
 | Guardar sessão | [`lib/session.js`](lib/session.js) |
 
 Inventário: [`../../docs/scenarios.md`](../../docs/scenarios.md)  
-BDD: [`../../docs/bdd-linkedin-login.md`](../../docs/bdd-linkedin-login.md)
+BDD: [`../../docs/bdds.md`](../../docs/bdds.md)
 
 ## Script inicial — login LinkedIn
 

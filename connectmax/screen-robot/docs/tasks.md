@@ -91,4 +91,4 @@ gantt
 ## Próximos passos
 
 → Implementação em [`../sources/android-control`](../sources/android-control/README.md)  
-→ Aceite: [`bdd-linkedin-login.md`](bdd-linkedin-login.md) · BDD nós: [`bdd-nos.md`](bdd-nos.md)
+→ Aceite: [`bdds.md`](bdds.md)

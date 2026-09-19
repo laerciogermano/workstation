@@ -2,7 +2,7 @@
 
 Artefato **2** do [discovery](README.md). Fonte de verdade do *quê* do produto (EP → US → SC), **sem** Gherkin — tabelas **por estória**.
 
-**Antes:** [`vision.md`](vision.md). **Depois:** [`bdd.md`](bdd.md).
+**Antes:** [`vision.md`](vision.md). **Depois:** [`bdds.md`](bdds.md).
 
 ## Regras
 
@@ -71,10 +71,10 @@ Artefato **2** do [discovery](README.md). Fonte de verdade do *quê* do produto 
 
 | Item | Vai para |
 |------|----------|
-| Gherkin / Dado-Quando-Então | [`bdd.md`](bdd.md) |
+| Gherkin / Dado-Quando-Então | [`bdds.md`](bdds.md) |
 | Protótipo visual | [`prototype.md`](prototype.md) |
 | Arquitetura, tasks, implementação | [refinamento técnico](../refinamento-tecnico/README.md) |
 
 ## Próximo passo
 
-→ [`bdd.md`](bdd.md)
+→ [`bdds.md`](bdds.md)

@@ -1,6 +1,6 @@
 # Cenários — screen-robot
 
-**Por quê:** US e cenários (SC) do robô, todos expostos via **código Node**. BDD: [`bdd-nos.md`](bdd-nos.md).  
+**Por quê:** US e cenários (SC) do robô, todos expostos via **código Node**. BDDs: [`bdds.md`](bdds.md).  
 **Origem:** [visão](../README.md).  
 **Agente LinkedIn:** [`../../linkedin-agent/`](../../linkedin-agent/README.md).  
 **Negócio:** [`../../vendas/`](../../vendas/README.md).  
@@ -231,8 +231,7 @@
 
 | Artefato | Caminho |
 |----------|---------|
-| BDD por US/SC | [`bdd-nos.md`](bdd-nos.md) |
-| Piloto LinkedIn | [`bdd-linkedin-login.md`](bdd-linkedin-login.md) |
+| BDDs (unitário + piloto LinkedIn) | [`bdds.md`](bdds.md) |
 | Script | [`../sources/android-control/scripts/linkedin-login.js`](../sources/android-control/scripts/linkedin-login.js) |
 
 ## Fora do escopo

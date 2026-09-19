@@ -27,7 +27,7 @@ Automatizar apps móveis exige um caminho estável em código: agent pronto, app
 
 ## Objetivo
 
-Expor via Node: **provisionar · instalar APKs · eventos · operar · extrair · sessão**. Cenário piloto: login LinkedIn ([`docs/bdd-linkedin-login.md`](docs/bdd-linkedin-login.md)).
+Expor via Node: **provisionar · instalar APKs · eventos · operar · extrair · sessão**. Cenário piloto: login LinkedIn ([`docs/bdds.md`](docs/bdds.md)).
 
 ## Capacidades (v1)
 
@@ -46,8 +46,7 @@ Ver [`docs/scenarios.md`](docs/scenarios.md).
 | Vision | [`docs/vision.md`](docs/vision.md) |
 | Épicos / fases | [`docs/epics.md`](docs/epics.md) |
 | Cenários (US + SC) | [`docs/scenarios.md`](docs/scenarios.md) |
-| BDD por US/SC | [`docs/bdd-nos.md`](docs/bdd-nos.md) |
-| BDD login LinkedIn | [`docs/bdd-linkedin-login.md`](docs/bdd-linkedin-login.md) |
+| BDDs | [`docs/bdds.md`](docs/bdds.md) |
 | Sources (Node + runtimes) | [`sources/`](sources/README.md) |
 | android-control | [`sources/android-control/`](sources/android-control/README.md) |
 

@@ -2,9 +2,8 @@
 
 **Por quê:** fatia entregável do robô (capacidades Node → US).  
 **Visão:** [`../README.md`](../README.md).  
-**US / cenários:** [`scenarios.md`](scenarios.md). **BDD:** [`bdd-nos.md`](bdd-nos.md).  
-**Árvore / Gantt:** [`tasks.md`](tasks.md).  
-**Aceite piloto:** [`bdd-linkedin-login.md`](bdd-linkedin-login.md).
+**US / cenários:** [`scenarios.md`](scenarios.md). **BDDs:** [`bdds.md`](bdds.md).  
+**Árvore / Gantt:** [`tasks.md`](tasks.md).
 
 **IDs:** **EP-** = épico · **US-** = história ([`scenarios.md`](scenarios.md)).
 
@@ -36,13 +35,13 @@ Cada fase fecha um incremento usável em Node. Dependências são estritas: a fa
 | **F3** | Observar UI | EP-02 | Listeners: boot, app foreground, tela estável, mudança de dump | 48 |
 | **F4** | Atuar na tela | EP-04 | Abrir app + tap/type/scroll/screenshot + coords por template | 90 |
 | **F5** | Ler a tela | EP-05 | Extração tipada (textos, ícones, imagens, listas, containers) + árvore | 120 |
-| **F6** | Sessão + piloto | EP-06 | Persistência de sessão + [`bdd-linkedin-login.md`](bdd-linkedin-login.md) verde | 45 + aceite |
+| **F6** | Sessão + piloto | EP-06 | Persistência de sessão + [`bdds.md`](bdds.md) verde | 45 + aceite |
 
 ```text
 F1 Device ──► F2 APKs ──► F3 Eventos ──► F4 Operar ──► F5 Extrair ──► F6 Sessão + piloto
 ```
 
-**Piloto (F6):** `npm run linkedin-login` exercita o pipeline US-01 → US-16 (ver mapeamento em [`bdd-linkedin-login.md`](bdd-linkedin-login.md)).
+**Piloto (F6):** `npm run linkedin-login` exercita US-01..14 (US-15/16 só no BDD unitário — ver [`bdds.md`](bdds.md)).
 
 ### O que cada fase desbloqueia
 
@@ -147,4 +146,4 @@ Persiste e restaura estado do robô em disco.
 ## Próximos passos
 
 → Implementar por fase em [`../sources/android-control`](../sources/android-control/README.md)  
-→ Aceite F6: [`bdd-linkedin-login.md`](bdd-linkedin-login.md)
+→ Aceite F6: [`bdds.md`](bdds.md)

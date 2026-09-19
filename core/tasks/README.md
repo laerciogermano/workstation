@@ -7,7 +7,7 @@
 ## P1 — ConnectMax · screen-robot
 
 Seis capacidades Node (maiores sequenciais + filhas).  
-Funcionalidades: [`functionalities.md`](../../connectmax/screen-robot/docs/functionalities.md) · BDD: [`bdd-linkedin-login.md`](../../connectmax/screen-robot/docs/bdd-linkedin-login.md).  
+Funcionalidades: [`functionalities.md`](../../connectmax/screen-robot/docs/functionalities.md) · BDD nós: [`bdd-nos.md`](../../connectmax/screen-robot/docs/bdd-nos.md) · BDD login: [`bdd-linkedin-login.md`](../../connectmax/screen-robot/docs/bdd-linkedin-login.md).  
 Estimativas: minutos IA · **1 dia = 8h = 480 min**.
 
 ### Árvore de execução

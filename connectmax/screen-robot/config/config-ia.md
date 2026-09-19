@@ -10,6 +10,7 @@ README.md (visão)
 └── docs/README.md
     ├── functionalities.md
     ├── tasks.md
+    ├── bdd-nos.md
     └── bdd-linkedin-login.md
         └── sources/android-control (libs Node + scripts/linkedin-login.js)
 ```

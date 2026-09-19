@@ -34,6 +34,8 @@ A saída é a **árvore completa** (raiz → filhos), não só uma lista plana �
 Login no LinkedIn orquestrando as seis fatias:  
 [`bdd-linkedin-login.md`](bdd-linkedin-login.md) · script [`../sources/android-control/scripts/linkedin-login.js`](../sources/android-control/scripts/linkedin-login.js)
 
+BDD por nó da árvore: [`bdd-nos.md`](bdd-nos.md).
+
 ## Fora do escopo
 
 - Cadência LinkedIn, fila de leads, faturamento, papéis de venda.

@@ -26,3 +26,4 @@ Como registrar: [`README.md`](README.md).
 | 017 | 2026-09-19 | Árvore e Gantt no board | [017-2026-09-19-arvore-gantt-no-board.md](017-2026-09-19-arvore-gantt-no-board.md) | Moveu árvore e Gantt canônicos para core/board P1 screen-robot. |
 | 018 | 2026-09-19 | Remover esteiras do tasks | [018-2026-09-19-remover-esteiras-tasks.md](018-2026-09-19-remover-esteiras-tasks.md) | Removeu Ordem de desenvolvimento e Esteiras; ficou árvore + tabela. |
 | 019 | 2026-09-19 | Unificar board em tasks | [019-2026-09-19-unificar-board-tasks.md](019-2026-09-19-unificar-board-tasks.md) | Board e tasks viraram um só documento em core/tasks. |
+| 020 | 2026-09-19 | BDD por nó | [020-2026-09-19-bdd-por-no.md](020-2026-09-19-bdd-por-no.md) | Cenários Dado/Quando/Então para cada nó da árvore do screen-robot. |

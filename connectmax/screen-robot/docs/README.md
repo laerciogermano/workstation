@@ -10,6 +10,7 @@
 |----------|---------|--------|
 | Funcionalidades | [`functionalities.md`](functionalities.md) | Feito |
 | Tasks (ponte board/kanban) | [`tasks.md`](tasks.md) | Feito |
+| BDD por nó | [`bdd-nos.md`](bdd-nos.md) | Feito |
 | BDD login LinkedIn | [`bdd-linkedin-login.md`](bdd-linkedin-login.md) | Feito |
 | Sources | [`../sources/`](../sources/README.md) | Em curso |
 

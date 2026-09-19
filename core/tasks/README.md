@@ -46,7 +46,7 @@ IDs: **US-** história · **SC-XX** cenário sequencial (mudança de estado; uni
 | SC-15 | Print da tela é salvo | 2026-09-19 | 2026-09-19 | Arquivo de imagem |
 | US-12 | Resgatar coordenadas x,y a partir de uma imagem | 2026-09-19 | 2026-09-19 | Coordenadas x,y (e confiança) |
 | SC-16 | Coordenadas a partir de imagem template | 2026-09-19 | 2026-09-19 | Coordenadas x,y (e confiança) |
-| US-13 | Extrair árvore DOM | 2026-09-19 | 2026-09-19 | Árvore de componentes completa |
+| US-13 | Extrair árvore DOM com textos | 2026-09-19 | 2026-09-19 | Árvore de componentes completa |
 | SC-17 | Extrair textos (fase 1) | 2026-09-19 | 2026-09-19 | Árvore de componentes contendo os textos |
 | SC-18 | Extrair restante e compor árvore completa | 2026-09-19 | 2026-09-19 | Árvore de componentes completa |
 | US-14 | Extrair ícones | 2026-09-19 | 2026-09-19 | Árvore de componentes contendo os ícones |

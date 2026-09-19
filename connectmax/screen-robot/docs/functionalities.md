@@ -41,5 +41,5 @@ Login no LinkedIn orquestrando as seis fatias:
 
 ## Próximos passos
 
-→ [`tasks.md`](tasks.md) — árvore e Gantt  
+→ [`tasks.md`](tasks.md) → [`board`](../../../core/board/README.md#p1--connectmax--screen-robot) — árvore e Gantt  
 → Implementação em [`../sources/android-control`](../sources/android-control/README.md)

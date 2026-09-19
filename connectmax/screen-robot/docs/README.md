@@ -9,7 +9,7 @@
 | Artefato | Arquivo | Status |
 |----------|---------|--------|
 | Funcionalidades | [`functionalities.md`](functionalities.md) | Feito |
-| Tasks (árvore + Gantt) | [`tasks.md`](tasks.md) | Feito |
+| Tasks (ponte board/kanban) | [`tasks.md`](tasks.md) | Feito |
 | BDD login LinkedIn | [`bdd-linkedin-login.md`](bdd-linkedin-login.md) | Feito |
 | Sources | [`../sources/`](../sources/README.md) | Em curso |
 

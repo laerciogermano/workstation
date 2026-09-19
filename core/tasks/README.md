@@ -92,15 +92,15 @@ Prompts: [`clozzy/prompts/timeline.md`](../../clozzy/prompts/timeline.md).
 ## P1 — ConnectMax · screen-robot
 
 Seis capacidades **Node**: provisionar · APKs · eventos · extrair · operar · sessão.  
-Funcionalidades: [`functionalities.md`](../../connectmax/screen-robot/docs/functionalities.md) · Árvore/Gantt: [`tasks.md`](../../connectmax/screen-robot/docs/tasks.md) · BDD: [`bdd-linkedin-login.md`](../../connectmax/screen-robot/docs/bdd-linkedin-login.md).
+Funcionalidades: [`functionalities.md`](../../connectmax/screen-robot/docs/functionalities.md) · BDD: [`bdd-linkedin-login.md`](../../connectmax/screen-robot/docs/bdd-linkedin-login.md).
 
-Árvore e Gantt canônicos: [`screen-robot/docs/tasks.md`](../../connectmax/screen-robot/docs/tasks.md).
+Árvore de execução e Gantt: [`board`](../board/README.md#p1--connectmax--screen-robot).
 
 | Todo | Doing | Done |
 |------|-------|------|
 | [Login LinkedIn (BDD)](../../connectmax/screen-robot/docs/bdd-linkedin-login.md) · `npm run linkedin-login` | | [Libs Node 6 recortes](../../connectmax/screen-robot/sources/android-control/README.md) |
 
-→ [`screen-robot/`](../../connectmax/screen-robot/README.md) · [`tasks.md`](../../connectmax/screen-robot/docs/tasks.md) · [`board`](../board/README.md#p1--connectmax--screen-robot)
+→ [`screen-robot/`](../../connectmax/screen-robot/README.md) · [`board`](../board/README.md#p1--connectmax--screen-robot)
 
 ---
 

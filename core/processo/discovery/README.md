@@ -17,15 +17,15 @@ Uma estória sozinha pode não entregar valor. O épico é o recorte mínimo em 
 Exemplo — **épico Autenticação**: login isolado não entrega valor (não há como criar conta); login + cadastro juntos formam o épico.
 
 ```text
-EP — Autenticação          ← valor (entrar no produto)
-├── US — Cadastrar         ← operação completa
-│   ├── SC — Abrir formulário
-│   ├── SC — Preencher dados
-│   └── SC — Confirmar cadastro
-└── US — Fazer login       ← operação completa
-    ├── SC — Abrir formulário
-    ├── SC — Preencher credenciais
-    └── SC — Sessão autenticada
+EP-01 — Autenticação          ← valor (entrar no produto)
+├── US-01 — Cadastrar         ← operação completa
+│   ├── SC-01.1 Abrir formulário
+│   ├── SC-01.2 Preencher dados
+│   └── SC-01.3 Confirmar cadastro
+└── US-02 — Fazer login       ← operação completa
+    ├── SC-02.1 Abrir formulário
+    ├── SC-02.2 Preencher credenciais
+    └── SC-02.3 Sessão autenticada
 ```
 
 ## Entradas
@@ -54,17 +54,17 @@ Catálogo organizado em **épicos → estórias → cenários**.
 |-------|----------|
 | **Épico** | Valor entregue pelo conjunto de estórias |
 | **Estória** | Operação completa do usuário (ex.: criar usuário, fazer login) |
-| **Cenários** | Mudanças de estado necessárias para completar a estória (obrigatório ≥1; pode ser só um); cada um é unidade de teste e de paralelismo |
+| **Cenários** | ID `SC-<US>.<n>` + mudança de estado (obrigatório ≥1; pode ser só um); cada um é unidade de teste e de paralelismo |
 
 **Cenário** = mudança de estado (estado anterior → ação → estado resultante) **e** unidade testável/paralelizável exigida para completar a estória.
 
 Exemplo — estória **Criar usuário** (no épico Autenticação ou equivalente):
 
-| # | Cenário | Mudança de estado |
-|---|---------|-------------------|
-| 1 | Clicar no botão criar | Lista → modal aberto |
-| 2 | Digitar o nome | Modal sem nome → modal com nome visível |
-| 3 | Clicar em salvar | Botão ativo → carregando/inativado → janela fechada e unidade salva na lista |
+| ID | Cenário | Mudança de estado |
+|----|---------|-------------------|
+| SC-01.1 | Clicar no botão criar | Lista → modal aberto |
+| SC-01.2 | Digitar o nome | Modal sem nome → modal com nome visível |
+| SC-01.3 | Clicar em salvar | Botão ativo → carregando/inativado → janela fechada e unidade salva na lista |
 
 Modelo e regras: [`funcionalidades.md`](funcionalidades.md).
 

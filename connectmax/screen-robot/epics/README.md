@@ -17,38 +17,40 @@ EP-01 Capture  →  EP-02 Perceive  →  EP-03 Decide  →  EP-04 Actuate
 
 Backends plugáveis (`adb` | `agent`) em Capture e Actuate; Perceive e Decide permanecem estáveis.
 
+Cada US é um **recorte de funcionalidade** (Como… quero… para…) com cenários — não só tarefa técnica.
+
 ## Hierarquia
 
 ```text
-EP-01 Capture
-├── US-01 Contratos Capture
-├── US-02 AdbCapture
-├── US-03 Smoke frame
-├── US-04 Capture agent
-└── US-05 Flag backend (capture)
+EP-01 Capture — “Captura de tela do device”
+├── US-01 Obter frame padronizado
+├── US-02 Capturar tela via ADB
+├── US-03 Validar captura no redroid
+├── US-04 Capturar tela via agent
+└── US-05 Escolher backend de captura
 
-EP-02 Perceive
-├── US-01 Schema Element
-├── US-02 OCR
-├── US-03 Vision
-├── US-04 Merge
-└── US-05 CLI + overlay
+EP-02 Perceive — “Percepção frame → lista de elementos”
+├── US-01 Validar schema de elemento
+├── US-02 Extrair textos da tela (OCR)
+├── US-03 Detectar controles visuais
+├── US-04 Unificar lista de elementos
+└── US-05 Inspecionar percepção via CLI
 
-EP-03 Decide
-├── US-01 Matcher
-├── US-02 LLM Decide
-├── US-03 Steps + goal E2E
-├── US-04 Wait/retry
-└── US-05 Métricas
+EP-03 Decide — “Decisão + orquestração de goals”
+├── US-01 Selecionar elemento da lista
+├── US-02 Decidir ação via LLM
+├── US-03 Executar goal sem coordenadas fixas
+├── US-04 Aguardar elemento aparecer
+└── US-05 Registrar métricas por etapa
 
-EP-04 Actuate
-├── US-01 Contratos Actuate
-├── US-02 AdbActuate
-├── US-03 Smoke tap
-├── US-04 Scroll
-├── US-05 Calibração
-├── US-06 Actuate agent
-└── US-07 Flag backend (actuate)
+EP-04 Actuate — “Atuação no device”
+├── US-01 Definir contrato de atuação
+├── US-02 Executar gestos via ADB
+├── US-03 Validar clique a partir do frame
+├── US-04 Rolar lista até achar alvo
+├── US-05 Calibrar resolução frame ↔ actuator
+├── US-06 Executar gestos via agent
+└── US-07 Escolher backend de atuação
 ```
 
 → [`../README.md`](../README.md) · [`../docs/`](../docs/) · [`tasks`](../../../core/tasks/README.md#p1--connectmax--screen-robot) · [`board`](../../../core/board/README.md#p1--connectmax--screen-robot)

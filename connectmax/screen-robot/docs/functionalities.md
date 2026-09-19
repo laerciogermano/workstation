@@ -58,4 +58,4 @@
 
 ## Próximos passos
 
-→ Implementar EP-01…EP-04 conforme [`../epics/`](../epics/README.md) e [`plano-implementacao-percepcao.md`](plano-implementacao-percepcao.md)
+→ Implementar histórias a partir de [`../epics/`](../epics/README.md) (começar EP-01 US-01…US-03 + EP-04 US-01…US-03)

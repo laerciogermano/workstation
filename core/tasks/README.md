@@ -99,20 +99,23 @@ Estimativas: **minutos de esforço IA** (não humano).
 ```mermaid
 flowchart TD
   subgraph EP01["EP-01 Capture"]
-    C01[US-01 Contratos Capture 12m]
-    C02[US-02 AdbCapture 30m]
-    C03[US-03 Smoke frame 9m]
-    C04[US-04 Capture agent 90m]
-    C05[US-05 Flag capture 24m]
-    C01 --> C02 --> C03 --> C04 --> C05
+    C01[US-01 Frame padronizado 12m]
+    C02[US-02 Captura ADB 30m]
+    C03[US-03 Validar redroid 9m]
+    C04[US-04 Captura agent 90m]
+    C05[US-05 Backend capture 24m]
+    C01 --> C02 --> C03
+    C01 --> C04
+    C02 --> C05
+    C04 --> C05
   end
 
   subgraph EP02["EP-02 Perceive"]
-    P01[US-01 Schema 24m]
-    P02[US-02 OCR 60m]
-    P03[US-03 Vision 90m]
-    P04[US-04 Merge 36m]
-    P05[US-05 CLI overlay 30m]
+    P01[US-01 Schema elemento 24m]
+    P02[US-02 OCR textos 60m]
+    P03[US-03 Controles vision 90m]
+    P04[US-04 Unificar lista 36m]
+    P05[US-05 CLI perceive 30m]
     P01 --> P02
     P01 --> P03
     P02 --> P04
@@ -121,28 +124,31 @@ flowchart TD
   end
 
   subgraph EP03["EP-03 Decide"]
-    D01[US-01 Matcher 36m]
-    D02[US-02 LLM Decide 48m]
-    D03[US-03 Steps goal 72m]
-    D04[US-04 Wait/retry 30m]
+    D01[US-01 Selecionar elemento 36m]
+    D02[US-02 Decidir via LLM 48m]
+    D03[US-03 Goal sem coords 72m]
+    D04[US-04 Aguardar elemento 30m]
     D05[US-05 Metricas 24m]
     D01 --> D03
     D02 --> D03
-    D03 --> D04 --> D05
+    D03 --> D04
+    D03 --> D05
   end
 
   subgraph EP04["EP-04 Actuate"]
-    A01[US-01 Contratos Actuate 12m]
-    A02[US-02 AdbActuate 24m]
-    A03[US-03 Smoke tap 9m]
-    A04[US-04 Scroll 36m]
-    A05[US-05 Calibracao 30m]
-    A06[US-06 Actuate agent 90m]
-    A07[US-07 Flag actuate 24m]
+    A01[US-01 Contrato atuacao 12m]
+    A02[US-02 Gestos ADB 24m]
+    A03[US-03 Clique do frame 9m]
+    A04[US-04 Rolar ate achar 36m]
+    A05[US-05 Calibrar resolucao 30m]
+    A06[US-06 Gestos agent 90m]
+    A07[US-07 Backend actuate 24m]
     A01 --> A02 --> A03
-    A03 --> A04
-    A03 --> A05
-    A05 --> A06 --> A07
+    A02 --> A04
+    A01 --> A05
+    A01 --> A06
+    A02 --> A07
+    A06 --> A07
   end
 
   C03 --> P01
@@ -157,43 +163,43 @@ flowchart TD
 
 | Todo | Doing | Done |
 |------|-------|------|
-| [US-01](../../connectmax/screen-robot/epics/EP-01-capture/README.md) Contratos · 12m | | |
-| [US-02](../../connectmax/screen-robot/epics/EP-01-capture/README.md) AdbCapture · 30m | | |
-| [US-03](../../connectmax/screen-robot/epics/EP-01-capture/README.md) Smoke frame · 9m | | |
-| [US-04](../../connectmax/screen-robot/epics/EP-01-capture/README.md) Capture agent · 90m | | |
-| [US-05](../../connectmax/screen-robot/epics/EP-01-capture/README.md) Flag capture · 24m | | |
+| [US-01](../../connectmax/screen-robot/epics/EP-01-capture/US-01-obter-frame-padronizado/README.md) Obter frame padronizado · 12m | | |
+| [US-02](../../connectmax/screen-robot/epics/EP-01-capture/US-02-capturar-tela-via-adb/README.md) Capturar via ADB · 30m | | |
+| [US-03](../../connectmax/screen-robot/epics/EP-01-capture/US-03-validar-captura-no-redroid/README.md) Validar no redroid · 9m | | |
+| [US-04](../../connectmax/screen-robot/epics/EP-01-capture/US-04-capturar-tela-via-agent/README.md) Capturar via agent · 90m | | |
+| [US-05](../../connectmax/screen-robot/epics/EP-01-capture/US-05-escolher-backend-de-captura/README.md) Backend captura · 24m | | |
 
 ### EP-02 Perceive
 
 | Todo | Doing | Done |
 |------|-------|------|
-| [US-01](../../connectmax/screen-robot/epics/EP-02-perceive/README.md) Schema · 24m | | |
-| [US-02](../../connectmax/screen-robot/epics/EP-02-perceive/README.md) OCR · 60m | | |
-| [US-03](../../connectmax/screen-robot/epics/EP-02-perceive/README.md) Vision · 90m | | |
-| [US-04](../../connectmax/screen-robot/epics/EP-02-perceive/README.md) Merge · 36m | | |
-| [US-05](../../connectmax/screen-robot/epics/EP-02-perceive/README.md) CLI + overlay · 30m | | |
+| [US-01](../../connectmax/screen-robot/epics/EP-02-perceive/US-01-validar-schema-de-elemento/README.md) Schema elemento · 24m | | |
+| [US-02](../../connectmax/screen-robot/epics/EP-02-perceive/US-02-extrair-textos-ocr/README.md) Extrair textos OCR · 60m | | |
+| [US-03](../../connectmax/screen-robot/epics/EP-02-perceive/US-03-detectar-controles-visuais/README.md) Detectar controles · 90m | | |
+| [US-04](../../connectmax/screen-robot/epics/EP-02-perceive/US-04-unificar-lista-de-elementos/README.md) Unificar lista · 36m | | |
+| [US-05](../../connectmax/screen-robot/epics/EP-02-perceive/US-05-inspecionar-percepcao-via-cli/README.md) CLI perceive · 30m | | |
 
 ### EP-03 Decide
 
 | Todo | Doing | Done |
 |------|-------|------|
-| [US-01](../../connectmax/screen-robot/epics/EP-03-decide/README.md) Matcher · 36m | | |
-| [US-02](../../connectmax/screen-robot/epics/EP-03-decide/README.md) LLM Decide · 48m | | |
-| [US-03](../../connectmax/screen-robot/epics/EP-03-decide/README.md) Steps + goal · 72m | | |
-| [US-04](../../connectmax/screen-robot/epics/EP-03-decide/README.md) Wait/retry · 30m | | |
-| [US-05](../../connectmax/screen-robot/epics/EP-03-decide/README.md) Métricas · 24m | | |
+| [US-01](../../connectmax/screen-robot/epics/EP-03-decide/US-01-selecionar-elemento-da-lista/README.md) Selecionar elemento · 36m | | |
+| [US-02](../../connectmax/screen-robot/epics/EP-03-decide/US-02-decidir-acao-via-llm/README.md) Decidir via LLM · 48m | | |
+| [US-03](../../connectmax/screen-robot/epics/EP-03-decide/US-03-executar-goal-sem-coordenadas/README.md) Goal sem coords · 72m | | |
+| [US-04](../../connectmax/screen-robot/epics/EP-03-decide/US-04-aguardar-elemento-aparecer/README.md) Aguardar elemento · 30m | | |
+| [US-05](../../connectmax/screen-robot/epics/EP-03-decide/US-05-registrar-metricas-por-etapa/README.md) Métricas · 24m | | |
 
 ### EP-04 Actuate
 
 | Todo | Doing | Done |
 |------|-------|------|
-| [US-01](../../connectmax/screen-robot/epics/EP-04-actuate/README.md) Contratos · 12m | | |
-| [US-02](../../connectmax/screen-robot/epics/EP-04-actuate/README.md) AdbActuate · 24m | | |
-| [US-03](../../connectmax/screen-robot/epics/EP-04-actuate/README.md) Smoke tap · 9m | | |
-| [US-04](../../connectmax/screen-robot/epics/EP-04-actuate/README.md) Scroll · 36m | | |
-| [US-05](../../connectmax/screen-robot/epics/EP-04-actuate/README.md) Calibração · 30m | | |
-| [US-06](../../connectmax/screen-robot/epics/EP-04-actuate/README.md) Actuate agent · 90m | | |
-| [US-07](../../connectmax/screen-robot/epics/EP-04-actuate/README.md) Flag actuate · 24m | | |
+| [US-01](../../connectmax/screen-robot/epics/EP-04-actuate/US-01-definir-contrato-de-atuacao/README.md) Contrato atuação · 12m | | |
+| [US-02](../../connectmax/screen-robot/epics/EP-04-actuate/US-02-executar-gestos-via-adb/README.md) Gestos ADB · 24m | | |
+| [US-03](../../connectmax/screen-robot/epics/EP-04-actuate/US-03-validar-clique-a-partir-do-frame/README.md) Clique do frame · 9m | | |
+| [US-04](../../connectmax/screen-robot/epics/EP-04-actuate/US-04-rolar-lista-ate-achar-alvo/README.md) Rolar até achar · 36m | | |
+| [US-05](../../connectmax/screen-robot/epics/EP-04-actuate/US-05-calibrar-resolucao/README.md) Calibrar resolução · 30m | | |
+| [US-06](../../connectmax/screen-robot/epics/EP-04-actuate/US-06-executar-gestos-via-agent/README.md) Gestos agent · 90m | | |
+| [US-07](../../connectmax/screen-robot/epics/EP-04-actuate/US-07-escolher-backend-de-atuacao/README.md) Backend atuação · 24m | | |
 
 → [`screen-robot/`](../../connectmax/screen-robot/README.md) · [`epics`](../../connectmax/screen-robot/epics/README.md) · [`plano`](../../connectmax/screen-robot/docs/plano-percepcao-imagem-hardware.md) · [`board`](../board/README.md#p1--connectmax--screen-robot)
 

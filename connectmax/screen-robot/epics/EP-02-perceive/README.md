@@ -10,15 +10,19 @@
 
 Transformar **frame → `Element[]`**: textos (OCR), ícones/botões/cards (vision), merge com ids estáveis e CLI de debug.
 
+## Funcionalidade maior
+
+**Percepção frame → lista de elementos** — recortada nas histórias abaixo.
+
 ## Histórias
 
-| ID | História | Esforço IA | Notas |
+| ID | História | Esforço IA | Pasta |
 |----|----------|------------|-------|
-| US-01 | Schema `Element` + validação JSON | 24m | kind, bbox, center, label, score, source |
-| US-02 | OCR → textos + bboxes | 60m | Paralelo a US-03 |
-| US-03 | Vision → botões/fotos/cards | 90m | Paralelo a US-02 |
-| US-04 | Merge OCR + vision → `Element[]` | 36m | Após US-02 e US-03 |
-| US-05 | CLI `perceive` + overlay debug | 30m | Fixture ou frame vivo |
+| US-01 | Validar schema de elemento | 24m | [`US-01-validar-schema-de-elemento/`](US-01-validar-schema-de-elemento/README.md) |
+| US-02 | Extrair textos da tela (OCR) | 60m | [`US-02-extrair-textos-ocr/`](US-02-extrair-textos-ocr/README.md) |
+| US-03 | Detectar controles visuais | 90m | [`US-03-detectar-controles-visuais/`](US-03-detectar-controles-visuais/README.md) |
+| US-04 | Unificar lista de elementos | 36m | [`US-04-unificar-lista-de-elementos/`](US-04-unificar-lista-de-elementos/README.md) |
+| US-05 | Inspecionar percepção via CLI | 30m | [`US-05-inspecionar-percepcao-via-cli/`](US-05-inspecionar-percepcao-via-cli/README.md) |
 
 ## Critério de pronto
 

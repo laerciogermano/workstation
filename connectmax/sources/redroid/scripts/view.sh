@@ -56,4 +56,34 @@ fi
 
 echo "Abrindo scrcpy (mouse + teclado sdk)..."
 # uhid no redroid 15: InputManager NPE — use sdk (não o default uhid)
-exec scrcpy -s "${TARGET}" --no-audio --keyboard=sdk --always-on-top --window-title "ConnectMax Redroid"
+SCRCPY_BIN="$(command -v scrcpy)"
+LOG="/tmp/redroid-view.log"
+PIDFILE="/tmp/redroid-scrcpy.pid"
+
+# No macOS, desacopla do terminal (senão o scrcpy morre ao fechar o shell/agente).
+if [[ "$(uname -s)" == "Darwin" && -z "${VIEW_FOREGROUND:-}" ]]; then
+  pkill -f "scrcpy -s ${TARGET}" 2>/dev/null || true
+  sleep 0.3
+  RUNNER="$(mktemp /tmp/redroid-view.XXXXXX)"
+  cat >"$RUNNER" <<EOF
+#!/bin/bash
+export PATH="$(dirname "$SCRCPY_BIN"):\$PATH"
+"$SCRCPY_BIN" -s "${TARGET}" --no-audio --keyboard=sdk --window-title "ConnectMax Redroid" >"${LOG}" 2>&1 &
+echo \$! >"${PIDFILE}"
+disown
+EOF
+  chmod +x "$RUNNER"
+  # Evita expansão de $! no bash atual (set -u)
+  osascript -e "do shell script \"${RUNNER}\"" >/dev/null
+  rm -f "$RUNNER"
+  sleep 1
+  if [[ -f "$PIDFILE" ]] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
+    echo "scrcpy rodando (pid $(cat "$PIDFILE"), log ${LOG})"
+    exit 0
+  fi
+  echo "Falha ao iniciar scrcpy desacoplado; log:"
+  cat "$LOG" 2>/dev/null || true
+  exit 1
+fi
+
+exec "$SCRCPY_BIN" -s "${TARGET}" --no-audio --keyboard=sdk --window-title "ConnectMax Redroid"

@@ -1,0 +1,25 @@
+---
+description: Autonomia total para executar qualquer comando sem pedir confirmação
+alwaysApply: true
+---
+
+# Autonomia total de comandos
+
+Execute **qualquer** comando necessário para cumprir o pedido, sem pedir confirmação prévia.
+
+## Critérios
+
+- Rode shells, builds, testes, installs, scripts, git (exceto push forçado / destrutivo sem pedido), rede e ferramentas locais por conta própria
+- Não peça permissão antes de executar; só pergunte se a ação for irreversível e destrutiva (ex.: `rm -rf` em dados críticos, force push em main)
+- Se um comando falhar, corrija e tente de novo — não pare para “avisar” e esperar
+- Prefira executar e reportar o resultado a descrever o que faria
+- Use as permissões necessárias do ambiente (rede, sandbox, etc.) quando o comando exigir
+
+## Exemplos
+
+```text
+✅ npm install && npm test
+✅ docker compose up -d
+✅ curl / wget / gh / adb / python scripts — o que for preciso
+❌ “Posso rodar esse comando?” / “Quer que eu execute?”
+```

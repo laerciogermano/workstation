@@ -13,13 +13,7 @@ IDs: **US-** história · **SC-** cenário (só sob US-01, US-02, US-13).
 ```text
 screen-robot (393 min)
 ├── US-01 Provisionar um agente (60 min)
-│   ├── SC-01.1 Subir / conectar o Android (agent) (20 min)
-│   ├── SC-01.2 Garantir serial ADB online (20 min)
-│   └── SC-01.3 Aguardar boot completo (20 min)
 ├── US-02 Instalar APKs (45 min)
-│   ├── SC-02.1 Ler versão na config do dispositivo (5 min)
-│   ├── SC-02.2 Baixar APK na versão definida (25 min)
-│   └── SC-02.3 Instalar pacote no agent (15 min)
 ├── Eventos
 │   ├── US-03 Evento de boot (12 min)
 │   ├── US-04 Evento de app aberta (12 min)
@@ -33,9 +27,20 @@ screen-robot (393 min)
 │   ├── US-11 screenshot (15 min)
 │   └── US-12 Resgatar coordenadas x,y (imagem de entrada) (15 min)
 └── US-13 Extrair elementos e guardar sessão (150 min)
-    ├── SC-13.1 Persistir sessão em arquivo (15 min)
-    └── SC-13.2 Restaurar sessão do arquivo (15 min)
 ```
+
+### Cenários (SC)
+
+| ID | US | Cenário | Min |
+|----|----|---------|-----|
+| SC-01.1 | US-01 | Subir / conectar o Android (agent) | 20 |
+| SC-01.2 | US-01 | Garantir serial ADB online | 20 |
+| SC-01.3 | US-01 | Aguardar boot completo | 20 |
+| SC-02.1 | US-02 | Ler versão na config do dispositivo | 5 |
+| SC-02.2 | US-02 | Baixar APK na versão definida | 25 |
+| SC-02.3 | US-02 | Instalar pacote no agent | 15 |
+| SC-13.1 | US-13 | Persistir sessão em arquivo | 15 |
+| SC-13.2 | US-13 | Restaurar sessão do arquivo | 15 |
 
 ## Gantt — atividades da árvore (paralelizáveis por IA)
 

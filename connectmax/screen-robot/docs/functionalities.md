@@ -32,23 +32,11 @@ Eventos e operações: **cada item é uma US**. Extração + sessão = **US-13 E
 |----------|----------|--------|
 | Config do device (`device.config.json`), runtime Android disponível | Orquestrar subir/conectar, serial online e boot completo | Agent pronto para ADB (serial online, boot ok) |
 
-#### SC-01.1 Subir / conectar o Android (agent) (20 min)
-
-| Entradas | Execução | Saídas |
-|----------|----------|--------|
-| Host, imagem/runtime, script de start | Subir o agent e estabelecer conexão | Processo do agent em execução e alcançável |
-
-#### SC-01.2 Garantir serial ADB online (20 min)
-
-| Entradas | Execução | Saídas |
-|----------|----------|--------|
-| Agent alcançável, serial esperado na config | `adb connect` / listar devices até serial `device` | Serial ADB online |
-
-#### SC-01.3 Aguardar boot completo (20 min)
-
-| Entradas | Execução | Saídas |
-|----------|----------|--------|
-| Serial online | Poll de boot/sys.boot_completed (ou equivalente) | Device com boot completo |
+| ID | Cenário | Entradas | Execução | Saídas | Min |
+|----|---------|----------|----------|--------|-----|
+| SC-01.1 | Subir / conectar o Android (agent) | Host, imagem/runtime, script de start | Subir o agent e estabelecer conexão | Processo do agent em execução e alcançável | 20 |
+| SC-01.2 | Garantir serial ADB online | Agent alcançável, serial esperado na config | `adb connect` / listar devices até serial `device` | Serial ADB online | 20 |
+| SC-01.3 | Aguardar boot completo | Serial online | Poll de boot/sys.boot_completed (ou equivalente) | Device com boot completo | 20 |
 
 ### US-02 · Instalar APKs (45 min)
 
@@ -56,23 +44,11 @@ Eventos e operações: **cada item é uma US**. Extração + sessão = **US-13 E
 |----------|----------|--------|
 | Agent provisionado, lista de apps e versões na config | Ler versão, baixar e instalar cada pacote | Apps instalados nas versões definidas |
 
-#### SC-02.1 Ler versão na config do dispositivo (5 min)
-
-| Entradas | Execução | Saídas |
-|----------|----------|--------|
-| `device.config.json` | Parsear `apps.*.version` / package | Versão e package alvo |
-
-#### SC-02.2 Baixar APK na versão definida (25 min)
-
-| Entradas | Execução | Saídas |
-|----------|----------|--------|
-| Package + versão, ferramenta de download (ex. apkeep) | Baixar APK/XAPK da versão pedida | Artefato APK no disco |
-
-#### SC-02.3 Instalar pacote no agent (15 min)
-
-| Entradas | Execução | Saídas |
-|----------|----------|--------|
-| Serial online, caminho do APK | `adb install` (ou equivalente) | Pacote instalado no agent |
+| ID | Cenário | Entradas | Execução | Saídas | Min |
+|----|---------|----------|----------|--------|-----|
+| SC-02.1 | Ler versão na config do dispositivo | `device.config.json` | Parsear `apps.*.version` / package | Versão e package alvo | 5 |
+| SC-02.2 | Baixar APK na versão definida | Package + versão, ferramenta de download (ex. apkeep) | Baixar APK/XAPK da versão pedida | Artefato APK no disco | 25 |
+| SC-02.3 | Instalar pacote no agent | Serial online, caminho do APK | `adb install` (ou equivalente) | Pacote instalado no agent | 15 |
 
 ### US-03 · Evento de boot (12 min)
 
@@ -142,17 +118,10 @@ Extrai elementos tipados **a partir de uma imagem**/frame/dump da tela (textos v
 |----------|----------|--------|
 | Imagem da tela (screenshot/frame) ou dump; contexto (device, apps, etapa, paths) | OCR e reconhecimento de elementos; compor hierarquia; persistir/restaurar sessão | Elementos tipados + árvore DOM; sessão em disco / contexto restaurado |
 
-#### SC-13.1 Persistir sessão em arquivo (15 min)
-
-| Entradas | Execução | Saídas |
-|----------|----------|--------|
-| Estado em memória, path da sessão | Serializar e gravar | Arquivo de sessão |
-
-#### SC-13.2 Restaurar sessão do arquivo (15 min)
-
-| Entradas | Execução | Saídas |
-|----------|----------|--------|
-| Arquivo de sessão existente | Ler e reaplicar contexto | Estado restaurado no runtime |
+| ID | Cenário | Entradas | Execução | Saídas | Min |
+|----|---------|----------|----------|--------|-----|
+| SC-13.1 | Persistir sessão em arquivo | Estado em memória, path da sessão | Serializar e gravar | Arquivo de sessão | 15 |
+| SC-13.2 | Restaurar sessão do arquivo | Arquivo de sessão existente | Ler e reaplicar contexto | Estado restaurado no runtime | 15 |
 
 ## Cenário de aceitação (integração)
 

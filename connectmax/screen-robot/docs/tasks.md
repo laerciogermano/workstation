@@ -12,7 +12,7 @@ Estimativas: minutos IA · **1 dia = 8h = 480 min**.
 ### Árvore de execução
 
 ```text
-screen-robot (408 min)
+screen-robot (333 min caminho · 408 min soma)
 ├── US-01 Provisionar um agente (60 min)
 │   ├── SC-01 Subir / conectar o Android (agent) (20 min)
 │   ├── SC-02 Garantir serial ADB online (20 min)
@@ -29,17 +29,17 @@ screen-robot (408 min)
 │   ├── SC-08 Ler versão na config do dispositivo (5 min)
 │   ├── SC-09 Baixar APK na versão definida (25 min)
 │   └── SC-10 Instalar pacote no agent (15 min)
-├── US-07 Abrir aplicativo (15 min)
+├── ∥ US-07 Abrir aplicativo (15 min)
 │   └── SC-11 App é aberta no agent (15 min)
-├── US-08 tap (15 min)
+├── ∥ US-08 tap (15 min)
 │   └── SC-12 Toque na tela (15 min)
-├── US-09 type (15 min)
+├── ∥ US-09 type (15 min)
 │   └── SC-13 Texto é digitado (15 min)
-├── US-10 scroll (15 min)
+├── ∥ US-10 scroll (15 min)
 │   └── SC-14 Conteúdo é rolado (15 min)
-├── US-11 screenshot (15 min)
+├── ∥ US-11 screenshot (15 min)
 │   └── SC-15 Print da tela é salvo (15 min)
-├── US-12 Resgatar coordenadas x,y a partir de uma imagem (15 min)
+├── ∥ US-12 Resgatar coordenadas x,y a partir de uma imagem (15 min)
 │   └── SC-16 Coordenadas a partir de imagem template (15 min)
 ├── US-13 Extrair elementos (120 min)
 │   └── SC-17 Extrair elementos tipados e árvore DOM (120 min)
@@ -51,32 +51,38 @@ screen-robot (408 min)
     └── SC-20 Recuperar sessão do arquivo (15 min)
 ```
 
-### Gantt — histórias sequenciais
+`∥` = paralelizáveis (US-07..12; caminho do grupo = 15 min).
+
+### Gantt — histórias (US-07..12 paralelas)
 
 Barras = US apenas (SC ficam na árvore acima).  
-Cada US começa ao fim da anterior.  
-Esforço total (soma / caminho crítico): **408 min**.
+US-01..06 e US-13..16 sequenciais; **US-07..12** partem juntas após US-06.  
+Soma esforço: **408 min** · caminho crítico: **333 min**.
 
 ```mermaid
 gantt
-  title screen-robot US minutos IA sequencial
+  title screen-robot US minutos IA (paralelo 07-12)
   dateFormat X
   axisFormat %s
 
-  section Historias
+  section Sequencial
   US-01 Provisionar um agente           :us01, 0, 60m
   US-02 Evento de boot                  :us02, after us01, 12m
   US-03 Evento de app aberta            :us03, after us02, 12m
   US-04 Evento de tela estavel          :us04, after us03, 12m
   US-05 Evento de mudanca de dump       :us05, after us04, 12m
   US-06 Instalar APKs                   :us06, after us05, 45m
+
+  section Paralelo operacoes
   US-07 Abrir aplicativo                :us07, after us06, 15m
-  US-08 tap                             :us08, after us07, 15m
-  US-09 type                            :us09, after us08, 15m
-  US-10 scroll                          :us10, after us09, 15m
-  US-11 screenshot                      :us11, after us10, 15m
-  US-12 Resgatar coordenadas x,y        :us12, after us11, 15m
-  US-13 Extrair elementos               :crit, us13, after us12, 120m
+  US-08 tap                             :us08, after us06, 15m
+  US-09 type                            :us09, after us06, 15m
+  US-10 scroll                          :us10, after us06, 15m
+  US-11 screenshot                      :us11, after us06, 15m
+  US-12 Resgatar coordenadas x,y        :us12, after us06, 15m
+
+  section Apos paralelo
+  US-13 Extrair elementos               :crit, us13, after us07, 120m
   US-14 Salvar sessao                   :us14, after us13, 15m
   US-15 Remover sessao                  :us15, after us14, 15m
   US-16 Recuperar sessao                :us16, after us15, 15m

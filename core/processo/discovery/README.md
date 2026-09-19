@@ -7,7 +7,7 @@ Entender o problema e fechar o *quê* do produto antes do refinamento técnico.
 Ordem **obrigatória** — não pular nem inverter:
 
 1. **Vision** — [`vision.md`](vision.md): problema, para quem, objetivo, escopo in/out.
-2. **Cenários** — [`scenarios.md`](scenarios.md): catálogo EP → US → SC (sem Gherkin).
+2. **Roadmap / Cenários** — [`scenarios.md`](scenarios.md): criar **épicos**, depois **estórias**, depois **cenários** (sem Gherkin). No EP, definir atividades paralelizáveis cedo.
 3. **BDDs** — [`bdds.md`](bdds.md): Dado / Quando / Então por **US** e por **SC**.
 4. **Protótipo** — [`prototype.md`](prototype.md): validação visual/interativa do que foi especificado.
 
@@ -49,7 +49,10 @@ EP-01 — Autenticação          ← valor (entrar no produto)
 ## Execução
 
 1. Escrever a **vision** (problema, personas, objetivo, fora de escopo)
-2. Derivar **cenários** (épicos → estórias → SC com entradas/execução/saídas)
+2. Criar o **roadmap** em [`scenarios.md`](scenarios.md), **nesta ordem** (não inverter):
+   1. **Épicos** — fatias de valor; definir já as **atividades paralelizáveis** no nível EP (isso facilita recortar estórias e cenários depois)
+   2. **Estórias** — operações completas dentro de cada épico
+   3. **Cenários** — mudanças de estado (testáveis e paralelizáveis) por estória, com entradas/execução/saídas
 3. Escrever **BDDs** (Gherkin alinhado a cada US/SC)
 4. Produzir o **protótipo** (validar o *quê* com stakeholders)
 5. Validar o conjunto; só então liberar estórias para o restante do processo

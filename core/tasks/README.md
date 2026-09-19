@@ -6,7 +6,7 @@
 
 ## P1 — ConnectMax · screen-robot
 
-Histórias US (eventos e operações cada uma é US; extrair = US-13; sessão = US-14..16).  
+Histórias US (eventos e operações cada uma é US; extrair = US-13..17; sessão = US-18..20).  
 **Gantt:** [`screen-robot/7.tasks.md`](../../connectmax/screen-robot/7.tasks.md) · **Roadmap:** [`6.roadmap.md`](../../connectmax/screen-robot/6.roadmap.md).
 Cenários: [`2.scenarios.md`](../../connectmax/screen-robot/2.scenarios.md) · BDDs: [`3.bdds.md`](../../connectmax/screen-robot/3.bdds.md).
 Estimativas: minutos IA · **1 dia = 8h = 480 min**.
@@ -46,14 +46,22 @@ IDs: **US-** história · **SC-XX** cenário sequencial (mudança de estado; uni
 | SC-15 | Print da tela é salvo | 2026-09-19 | 2026-09-19 | Arquivo de imagem |
 | US-12 | Resgatar coordenadas x,y a partir de uma imagem | 2026-09-19 | 2026-09-19 | Coordenadas x,y (e confiança) |
 | SC-16 | Coordenadas a partir de imagem template | 2026-09-19 | 2026-09-19 | Coordenadas x,y (e confiança) |
-| US-13 | Extrair elementos | 2026-09-19 | 2026-09-19 | Elementos tipados + árvore DOM |
-| SC-17 | Extrair elementos tipados e árvore DOM | 2026-09-19 | 2026-09-19 | Elementos tipados + árvore DOM |
-| US-14 | Salvar sessão | 2026-09-19 | 2026-09-19 | Arquivo de sessão |
-| SC-18 | Salvar sessão em arquivo | 2026-09-19 | 2026-09-19 | Arquivo de sessão |
-| US-15 | Remover sessão | 2026-09-19 | 2026-09-19 | Sessão removida |
-| SC-19 | Remover sessão do disco | 2026-09-19 | 2026-09-19 | Arquivo inexistente; contexto limpo |
-| US-16 | Recuperar sessão | 2026-09-19 | 2026-09-19 | Estado restaurado no runtime |
-| SC-20 | Recuperar sessão do arquivo | 2026-09-19 | 2026-09-19 | Estado restaurado no runtime |
+| US-13 | Extrair ícones | 2026-09-19 | 2026-09-19 | Ícones tipados |
+| SC-17 | Extrair ícones da tela | 2026-09-19 | 2026-09-19 | Ícones tipados |
+| US-14 | Extrair textos | 2026-09-19 | 2026-09-19 | Textos tipados |
+| SC-18 | Extrair textos (OCR) | 2026-09-19 | 2026-09-19 | Textos tipados |
+| US-15 | Extrair listas | 2026-09-19 | 2026-09-19 | Listas com itens filhos |
+| SC-19 | Extrair listas com itens filhos | 2026-09-19 | 2026-09-19 | Listas com itens filhos |
+| US-16 | Extrair imagens | 2026-09-19 | 2026-09-19 | Imagens tipadas |
+| SC-20 | Extrair imagens/fotos | 2026-09-19 | 2026-09-19 | Imagens tipadas |
+| US-17 | Extrair árvore DOM | 2026-09-19 | 2026-09-19 | Árvore DOM navegável |
+| SC-21 | Compor árvore DOM navegável | 2026-09-19 | 2026-09-19 | Árvore DOM navegável |
+| US-18 | Salvar sessão | 2026-09-19 | 2026-09-19 | Arquivo de sessão |
+| SC-22 | Salvar sessão em arquivo | 2026-09-19 | 2026-09-19 | Arquivo de sessão |
+| US-19 | Remover sessão | 2026-09-19 | 2026-09-19 | Sessão removida |
+| SC-23 | Remover sessão do disco | 2026-09-19 | 2026-09-19 | Arquivo inexistente; contexto limpo |
+| US-20 | Recuperar sessão | 2026-09-19 | 2026-09-19 | Estado restaurado no runtime |
+| SC-24 | Recuperar sessão do arquivo | 2026-09-19 | 2026-09-19 | Estado restaurado no runtime |
 
 ### Kanban
 

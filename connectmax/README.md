@@ -165,4 +165,4 @@ Leitura da unidade como **fonte de renda**: time, capacidade de gerar demanda e 
 
 ## Próximos passos
 
-→ [`docs/README.md`](docs/README.md) → inventário de funcionalidades (a produzir)
+→ [`docs/functionalities.md`](docs/functionalities.md) → `user-stories.md` (a produzir)

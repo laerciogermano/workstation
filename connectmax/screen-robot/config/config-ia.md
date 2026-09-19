@@ -9,9 +9,9 @@
 README.md (visão)
 └── docs/README.md
     ├── vision.md
-    ├── functionalities.md        # todas as US + SC
+    ├── scenarios.md              # US + SC (sem BDD)
     ├── tasks.md
-    ├── bdd-nos.md
+    ├── bdd-nos.md                # BDD por US/SC
     └── bdd-linkedin-login.md
         └── sources/android-control (libs Node + scripts/linkedin-login.js)
 ```

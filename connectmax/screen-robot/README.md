@@ -31,7 +31,7 @@ Expor via Node: **provisionar · instalar APKs · eventos · operar · extrair �
 
 ## Capacidades (v1)
 
-Ver [`docs/functionalities.md`](docs/functionalities.md).
+Ver [`docs/scenarios.md`](docs/scenarios.md).
 
 ## Fora de escopo
 
@@ -45,7 +45,8 @@ Ver [`docs/functionalities.md`](docs/functionalities.md).
 |----------|---------|
 | Vision | [`docs/vision.md`](docs/vision.md) |
 | Épicos / fases | [`docs/epics.md`](docs/epics.md) |
-| Funcionalidades | [`docs/functionalities.md`](docs/functionalities.md) |
+| Cenários (US + SC) | [`docs/scenarios.md`](docs/scenarios.md) |
+| BDD por US/SC | [`docs/bdd-nos.md`](docs/bdd-nos.md) |
 | BDD login LinkedIn | [`docs/bdd-linkedin-login.md`](docs/bdd-linkedin-login.md) |
 | Sources (Node + runtimes) | [`sources/`](sources/README.md) |
 | android-control | [`sources/android-control/`](sources/android-control/README.md) |

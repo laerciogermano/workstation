@@ -10,9 +10,9 @@
 |----------|---------|--------|
 | Vision — US título + descrição | [`vision.md`](vision.md) | Feito |
 | Épicos + fases entregáveis | [`epics.md`](epics.md) | Feito |
-| Funcionalidades (todas as US) | [`functionalities.md`](functionalities.md) | Feito |
+| Cenários (US + SC) | [`scenarios.md`](scenarios.md) | Feito |
 | Tasks (árvore + Gantt) | [`tasks.md`](tasks.md) | Feito |
-| BDD por nó | [`bdd-nos.md`](bdd-nos.md) | Feito |
+| BDD por US/SC | [`bdd-nos.md`](bdd-nos.md) | Feito |
 | BDD login LinkedIn | [`bdd-linkedin-login.md`](bdd-linkedin-login.md) | Feito |
 | Sources | [`../sources/`](../sources/README.md) | Em curso |
 

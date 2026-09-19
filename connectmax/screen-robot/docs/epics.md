@@ -2,11 +2,11 @@
 
 **Por quê:** fatia entregável do robô (capacidades Node → US).  
 **Visão:** [`../README.md`](../README.md).  
-**US / BDD:** [`functionalities.md`](functionalities.md).  
+**US / cenários:** [`scenarios.md`](scenarios.md). **BDD:** [`bdd-nos.md`](bdd-nos.md).  
 **Árvore / Gantt:** [`tasks.md`](tasks.md).  
 **Aceite piloto:** [`bdd-linkedin-login.md`](bdd-linkedin-login.md).
 
-**IDs:** **EP-** = épico · **US-** = história ([`functionalities.md`](functionalities.md)).
+**IDs:** **EP-** = épico · **US-** = história ([`scenarios.md`](scenarios.md)).
 
 ---
 

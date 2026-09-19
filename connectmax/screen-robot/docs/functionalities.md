@@ -5,6 +5,7 @@
 **Agente LinkedIn:** [`../../linkedin-agent/`](../../linkedin-agent/README.md).  
 **Negócio:** [`../../vendas/`](../../vendas/README.md).  
 **Estimativas (min):** [`tasks.md`](tasks.md).  
+**Épicos / fases:** [`epics.md`](epics.md).  
 **Vision:** [`vision.md`](vision.md).
 
 **IDs:** **US-** = história · **SC-XX** = cenário sequencial (toda US tem ≥1 SC).

@@ -9,6 +9,7 @@
 | Artefato | Arquivo | Status |
 |----------|---------|--------|
 | Vision — US título + descrição | [`vision.md`](vision.md) | Feito |
+| Épicos + fases entregáveis | [`epics.md`](epics.md) | Feito |
 | Funcionalidades (todas as US) | [`functionalities.md`](functionalities.md) | Feito |
 | Tasks (árvore + Gantt) | [`tasks.md`](tasks.md) | Feito |
 | BDD por nó | [`bdd-nos.md`](bdd-nos.md) | Feito |

@@ -44,6 +44,7 @@ Ver [`docs/functionalities.md`](docs/functionalities.md).
 | Artefato | Caminho |
 |----------|---------|
 | Vision | [`docs/vision.md`](docs/vision.md) |
+| Épicos / fases | [`docs/epics.md`](docs/epics.md) |
 | Funcionalidades | [`docs/functionalities.md`](docs/functionalities.md) |
 | BDD login LinkedIn | [`docs/bdd-linkedin-login.md`](docs/bdd-linkedin-login.md) |
 | Sources (Node + runtimes) | [`sources/`](sources/README.md) |

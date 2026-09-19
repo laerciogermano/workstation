@@ -19,15 +19,15 @@ Recortadas nas histórias abaixo.
 
 ## Histórias
 
-| ID | História | Esforço IA | Pasta |
-|----|----------|------------|-------|
-| US-01 | Definir contrato de atuação | 12m | [`US-01-definir-contrato-de-atuacao/`](US-01-definir-contrato-de-atuacao/README.md) |
-| US-02 | Executar gestos via ADB | 24m | [`US-02-executar-gestos-via-adb/`](US-02-executar-gestos-via-adb/README.md) |
-| US-03 | Validar clique a partir do frame | 9m | [`US-03-validar-clique-a-partir-do-frame/`](US-03-validar-clique-a-partir-do-frame/README.md) |
-| US-04 | Rolar lista até achar alvo | 36m | [`US-04-rolar-lista-ate-achar-alvo/`](US-04-rolar-lista-ate-achar-alvo/README.md) |
-| US-05 | Calibrar resolução frame ↔ actuator | 30m | [`US-05-calibrar-resolucao/`](US-05-calibrar-resolucao/README.md) |
-| US-06 | Executar gestos via agent | 90m | [`US-06-executar-gestos-via-agent/`](US-06-executar-gestos-via-agent/README.md) |
-| US-07 | Escolher backend de atuação | 24m | [`US-07-escolher-backend-de-atuacao/`](US-07-escolher-backend-de-atuacao/README.md) |
+| ID | História | Funcionalidade | Esforço IA | Pasta |
+|----|----------|----------------|------------|-------|
+| US-01 | Definir contrato de atuação | Expor `Actuate.run(Action)` tipada para o Decide não conhecer ADB/agent | 12m | [`US-01-definir-contrato-de-atuacao/`](US-01-definir-contrato-de-atuacao/README.md) |
+| US-02 | Executar gestos via ADB | Executar tap, swipe e type no redroid/emulador via ADB | 24m | [`US-02-executar-gestos-via-adb/`](US-02-executar-gestos-via-adb/README.md) |
+| US-03 | Validar clique a partir do frame | Smoke Capture+Actuate: capturar frame e tocar no centro com coords válidas | 9m | [`US-03-validar-clique-a-partir-do-frame/`](US-03-validar-clique-a-partir-do-frame/README.md) |
+| US-04 | Rolar lista até achar alvo | Swipe + re-perceive até o alvo entrar na viewport (ou esgotar tentativas) | 36m | [`US-04-rolar-lista-ate-achar-alvo/`](US-04-rolar-lista-ate-achar-alvo/README.md) |
+| US-05 | Calibrar resolução frame ↔ actuator | Mapear center do frame para coordenadas do actuator quando as resoluções diferem | 30m | [`US-05-calibrar-resolucao/`](US-05-calibrar-resolucao/README.md) |
+| US-06 | Executar gestos via agent | Executar as mesmas Actions no hardware via agent, sem mudar o Decide | 90m | [`US-06-executar-gestos-via-agent/`](US-06-executar-gestos-via-agent/README.md) |
+| US-07 | Escolher backend de atuação | Selecionar `adb` ou `agent` por config/factory alinhado ao Capture | 24m | [`US-07-escolher-backend-de-atuacao/`](US-07-escolher-backend-de-atuacao/README.md) |
 
 ## Critério de pronto
 

@@ -66,3 +66,4 @@ Como registrar: [`README.md`](README.md).
 | 056 | 2026-09-19 | Saída árvore de componentes | [056-2026-09-19-saida-arvore-componentes.md](056-2026-09-19-saida-arvore-componentes.md) | Cada estória de extração tem saída = árvore de componentes com os elementos respectivos. |
 | 057 | 2026-09-19 | Remover Extrair textos (US-15) | [057-2026-09-19-remover-us15-extrair-textos.md](057-2026-09-19-remover-us15-extrair-textos.md) | Textos na árvore DOM (US-13); remove US-15; renumera US-14..19 / SC-17..24 / TSK-022..030. |
 | 058 | 2026-09-19 | Scenarios sem US/Estória na tabela | [058-2026-09-19-scenarios-sem-us-estoria-tabela.md](058-2026-09-19-scenarios-sem-us-estoria-tabela.md) | Tabelas de `2.scenarios.md` só com SC · Cenário · Entradas · Execução · Saídas. |
+| 059 | 2026-09-19 | Stories em formato de tabela | [059-2026-09-19-stories-formato-tabela.md](059-2026-09-19-stories-formato-tabela.md) | `1.stories.md` em tabela ID · Estória · Como funciona. |

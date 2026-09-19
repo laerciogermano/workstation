@@ -4,7 +4,8 @@
 **Importante:** este projeto **só** opera o device/tela via **Node**; não implementa cadência comercial nem fila de leads.  
 **No fluxo:** **este documento** → [`docs/`](docs/README.md) → implementação em [`sources/`](sources/README.md).  
 **Umbrella:** [`../README.md`](../README.md).  
-**Consumidor de negócio:** [`../vendas/`](../vendas/README.md).
+**Consumidor LinkedIn:** [`../linkedin-agent/`](../linkedin-agent/README.md).  
+**Negócio (fila/faturamento):** [`../vendas/`](../vendas/README.md).
 
 ---
 
@@ -21,7 +22,8 @@ Automatizar apps móveis exige um caminho estável em código: agent pronto, app
 | Persona | Necessidade |
 |---------|-------------|
 | **Agente / desenvolvedor** | Libs Node para as seis capacidades sem acoplar a um app de negócio |
-| **Projeto vendas (ConnectMax)** | Usar o robô como infra para prospecção no LinkedIn |
+| **linkedin-agent** | Usar o robô como infra para operações no LinkedIn |
+| **Projeto vendas** | Indireto: consome o linkedin-agent, não o robô |
 
 ## Objetivo
 
@@ -33,7 +35,8 @@ Ver [`docs/functionalities.md`](docs/functionalities.md).
 
 ## Fora de escopo
 
-- Regras de prospecção, fila de leads, faturamento ou papéis de vendedor.
+- Operações de domínio LinkedIn (login de negócio, busca, conexão) — isso é [`linkedin-agent`](../linkedin-agent/README.md).
+- Regras de prospecção, fila de leads, faturamento ou papéis de vendedor — isso é [`vendas`](../vendas/README.md).
 - Bypass de autenticação / scraping fora do uso legítimo do device.
 
 ## Código e planos

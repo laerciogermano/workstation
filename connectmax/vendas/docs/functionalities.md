@@ -3,12 +3,13 @@
 **Por quê:** reunir, em bullets, as capacidades do **processo de vendas / prospecção**.  
 **Papel no fluxo:** base funcional para as histórias de usuário.  
 **Origem:** documento de [visão](../README.md).  
-**Robô de tela (cliques, listas, OCR):** [`../../screen-robot/docs/functionalities.md`](../../screen-robot/docs/functionalities.md).
+**Operações LinkedIn:** [`../../linkedin-agent/docs/functionalities.md`](../../linkedin-agent/docs/functionalities.md).  
+**Robô de tela:** [`../../screen-robot/docs/functionalities.md`](../../screen-robot/docs/functionalities.md).
 
 ## Como usar este documento
 
 - Cada bullet descreve uma capacidade observável do produto de vendas.
-- Manipulação de tela (imagem → elementos → tap/type) **não** é redefinida aqui — usa o screen-robot.
+- Ações no LinkedIn **não** são redefinidas aqui — usa o [`linkedin-agent`](../../linkedin-agent/README.md).
 - Critérios de aceite ficam no [`bdd.md`](bdd.md) (a produzir).
 - Superfícies e UI ficam no [`screens.md`](screens.md) (a produzir).
 
@@ -36,7 +37,7 @@
 
 - Configurar cadência de abordagens e follow-ups.
 - Respeitar limites configuráveis de volume/frequência para não quebrar o canal.
-- Disparar etapas repetíveis da prospecção (mensagem, follow-up) conforme a cadência, **via screen-robot** quando a ação for na UI do LinkedIn.
+- Disparar etapas repetíveis da prospecção (mensagem, follow-up) conforme a cadência, **via linkedin-agent** quando a ação for na UI do LinkedIn.
 - Registrar o que já foi dito/feito em cada contato.
 - Pausar, retomar ou cancelar a cadência de um contato.
 - Evitar reabordar contato já tratado sem ação explícita.
@@ -116,6 +117,7 @@
 - Integração bancária / conciliação financeira da unidade.
 - Scraping ou bypass de autenticação da plataforma.
 - Implementação do motor Capture/Perceive/Decide/Actuate (pertence ao [`screen-robot`](../../screen-robot/README.md)).
+- Operações de domínio no app LinkedIn (pertence ao [`linkedin-agent`](../../linkedin-agent/README.md)).
 
 ---
 

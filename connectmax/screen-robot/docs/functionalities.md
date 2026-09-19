@@ -2,7 +2,8 @@
 
 **Por quê:** capacidades observáveis do robô, todas expostas via **código Node**.  
 **Origem:** [visão](../README.md).  
-**Negócio ConnectMax:** [`../../vendas/`](../../vendas/README.md).
+**Agente LinkedIn:** [`../../linkedin-agent/`](../../linkedin-agent/README.md).  
+**Negócio:** [`../../vendas/`](../../vendas/README.md).
 
 | Funcionalidade | Descrição |
 |----------------|-----------|

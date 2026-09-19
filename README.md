@@ -41,7 +41,7 @@ Hub de projetos, board, tasks e processo de desenvolvimento.
 | 🌐 | [**Chines**](chines/) | Aprendizado de chinês | [docs](chines/docs/) · [config IA](chines/config/config-ia.md) |
 | 🚗 | [**Caronas**](caronas/) | Caronas compartilhadas | [visão](caronas/README.md) · [docs](caronas/docs/) · [config IA](caronas/config/config-ia.md) |
 | 🏋️ | [**Fitness**](fitness/) | Fitness e treinos | [visão](fitness/README.md) · [docs](fitness/docs/) · [config IA](fitness/config/config-ia.md) |
-| 🤖 | [**ConnectMax**](connectmax/) | Automação de tela + vendas | [visão](connectmax/README.md) · [screen-robot](connectmax/screen-robot/) · [vendas](connectmax/vendas/) · [config IA](connectmax/config/config-ia.md) |
+| 🤖 | [**ConnectMax**](connectmax/README.md) | Tela + agente LinkedIn + vendas | [visão](connectmax/README.md) · [screen-robot](connectmax/screen-robot/README.md) · [linkedin-agent](connectmax/linkedin-agent/README.md) · [vendas](connectmax/vendas/README.md) · [config IA](connectmax/config/config-ia.md) |
 | 📖 | [**Eternos Mutáveis**](eternos-mutaveis/) | Manuscrito / tese | [visão](eternos-mutaveis/README.md) · [docs](eternos-mutaveis/docs/) · [config IA](eternos-mutaveis/config/config-ia.md) |
 | 🥋 | [**Jiu-jitsu**](jiu-jitsu/) | App de jiu-jitsu | [visão](jiu-jitsu/README.md) · [docs](jiu-jitsu/docs/) · [config IA](jiu-jitsu/config/config-ia.md) |
 | 🎭 | [**RoleGo**](role-go/) | Role-playing / go | [visão](role-go/README.md) |

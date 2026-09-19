@@ -1,5 +1,7 @@
 # workstation
 
+Board: [`core/tasks/`](core/tasks/README.md)
+
 ## Projetos
 
 | Projeto | Visão | Documentação | Config IA |

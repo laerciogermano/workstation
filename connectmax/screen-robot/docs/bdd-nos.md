@@ -274,14 +274,14 @@ Cenário: SC-15 Print da tela é salvo
 
 ---
 
-## US-12 · Resgatar coordenadas x,y
+## US-12 · Resgatar coordenadas x,y a partir de uma imagem
 
 ```gherkin
-Funcionalidade: US-12 Resgatar coordenadas x,y
+Funcionalidade: US-12 Resgatar coordenadas x,y a partir de uma imagem
   Cenário: Coordenadas do alvo são devolvidas
-    Dado imagem template e frame/tela atual
-    Quando template match / visão na tela é executado
-    Então coordenadas x,y (e confiança) são devolvidas
+    Dado uma imagem de entrada e o frame/tela atual
+    Quando o match por visão/template é executado
+    Então as coordenadas x,y (e confiança) são devolvidas
 ```
 
 ### SC-16 Coordenadas a partir de imagem template

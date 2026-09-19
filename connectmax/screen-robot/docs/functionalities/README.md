@@ -22,7 +22,7 @@ Cada pasta abaixo é uma estória.
 | US-09 | type | [`US-09-type/`](US-09-type/README.md) |
 | US-10 | scroll | [`US-10-scroll/`](US-10-scroll/README.md) |
 | US-11 | screenshot | [`US-11-screenshot/`](US-11-screenshot/README.md) |
-| US-12 | Resgatar coordenadas x,y | [`US-12-resgatar-coordenadas-x-y/`](US-12-resgatar-coordenadas-x-y/README.md) |
+| US-12 | Resgatar coordenadas x,y a partir de uma imagem | [`US-12-resgatar-coordenadas-x-y/`](US-12-resgatar-coordenadas-x-y/README.md) |
 | US-13 | Extrair elementos e guardar sessão | [`US-13-extrair-elementos-e-guardar-sessao/`](US-13-extrair-elementos-e-guardar-sessao/README.md) |
 
 ## Aceite de integração

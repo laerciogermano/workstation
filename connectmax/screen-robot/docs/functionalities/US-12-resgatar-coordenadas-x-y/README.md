@@ -1,8 +1,8 @@
-# US-12 — Resgatar coordenadas x,y
+# US-12 — Resgatar coordenadas x,y a partir de uma imagem
 
 **Índice:** [`../README.md`](../README.md) · **Tasks:** [`../../tasks.md`](../../tasks.md) · **BDD:** abaixo
 
-Localizar alvo na tela a partir de imagem de entrada.
+Resgata as coordenadas x,y na tela a partir de uma imagem de entrada (template).
 
 ## Entradas · Execução · Saídas
 
@@ -19,11 +19,11 @@ Localizar alvo na tela a partir de imagem de entrada.
 ## BDD
 
 ```gherkin
-Funcionalidade: US-12 Resgatar coordenadas x,y
+Funcionalidade: US-12 Resgatar coordenadas x,y a partir de uma imagem
   Cenário: Coordenadas do alvo são devolvidas
-    Dado imagem template e frame/tela atual
-    Quando template match / visão na tela é executado
-    Então coordenadas x,y (e confiança) são devolvidas
+    Dado uma imagem de entrada e o frame/tela atual
+    Quando o match por visão/template é executado
+    Então as coordenadas x,y (e confiança) são devolvidas
 ```
 
 ### SC-16 Coordenadas a partir de imagem template
@@ -34,4 +34,3 @@ Cenário: SC-16 Coordenadas a partir de imagem template
   Quando o match por visão/template é executado
   Então coordenadas x,y (e confiança) são devolvidas
 ```
-

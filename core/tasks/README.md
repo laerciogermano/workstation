@@ -44,7 +44,7 @@ IDs: **US-** história · **SC-XX** cenário sequencial (mudança de estado; uni
 | SC-14 | Conteúdo é rolado | 2026-09-19 | 2026-09-19 | Conteúdo rolado; novos itens visíveis |
 | US-11 | screenshot | 2026-09-19 | 2026-09-19 | Arquivo de imagem |
 | SC-15 | Print da tela é salvo | 2026-09-19 | 2026-09-19 | Arquivo de imagem |
-| US-12 | Resgatar coordenadas x,y (imagem de entrada) | 2026-09-19 | 2026-09-19 | Coordenadas x,y (e confiança) |
+| US-12 | Resgatar coordenadas x,y a partir de uma imagem | 2026-09-19 | 2026-09-19 | Coordenadas x,y (e confiança) |
 | SC-16 | Coordenadas a partir de imagem template | 2026-09-19 | 2026-09-19 | Coordenadas x,y (e confiança) |
 | US-13 | Extrair elementos e guardar sessão | 2026-09-19 | 2026-09-19 | Elementos tipados + árvore DOM; sessão em disco / restaurada |
 | SC-17 | Persistir sessão em arquivo | 2026-09-19 | 2026-09-19 | Arquivo de sessão |

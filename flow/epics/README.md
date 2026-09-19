@@ -79,5 +79,5 @@ EP-05 Dashboard
 EP-06 Expandir para árvore 2D
 ```
 
-→ [`../tasks/`](../tasks/README.md) · [`board`](../../core/tasks/README.md)
+→ [`../tasks/`](../tasks/README.md) · [`tasks`](../../core/tasks/README.md) · [`board`](../../core/board/README.md)
 

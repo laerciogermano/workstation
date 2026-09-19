@@ -10,7 +10,8 @@ Hub de projetos, board e processo de desenvolvimento.
 
 | | Seção | Descrição |
 |:--:|:------|:----------|
-| 📋 | [**Board**](core/tasks/README.md) | Kanban da workstation — raias por projeto, Todo / Doing / Done |
+| 📊 | [**Board**](core/board/README.md) | Gantts por projeto (cronograma / esforço) |
+| ✅ | [**Tasks**](core/tasks/README.md) | Árvore de execução + kanban Todo / Doing / Done |
 | 🔄 | [**Processo**](core/processo/README.md) | Ciclo completo: discovery → manutenção, com entradas, execução e saídas |
 
 #### Fases do processo

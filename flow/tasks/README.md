@@ -1,6 +1,6 @@
 # Flow — Tasks
 
-Cada item da raia Flow no [`board`](../../core/tasks/README.md) tem um **id**, uma **pasta** e um **output** em [`epics/`](../epics/README.md).
+Cada item da raia Flow em [`tasks`](../../core/tasks/README.md) tem um **id**, uma **pasta** e um **output** em [`epics/`](../epics/README.md). Gantt: [`board`](../../core/board/README.md).
 
 ## Hierarquia
 

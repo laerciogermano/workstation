@@ -5,7 +5,7 @@
 | ID | TSK-001 |
 | Status | Doing |
 | Pai | — |
-| Board | [Flow](../../../../core/tasks/README.md) |
+| Tasks | [Flow](../../../../core/tasks/README.md#p2--flow) |
 | Output | [`epics/`](../../epics/README.md) |
 
 ## Árvore de atividades

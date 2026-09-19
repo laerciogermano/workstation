@@ -1,9 +1,9 @@
 # Implementation plan — EP-06 Sessão
 
 **Por quê:** plano técnico do épico (sequências · agentes · passo a passo · contratos · classes · modelos · BDDs).  
-**Épico:** [`2.epics.md`](../../2.epics.md) · [`README.md`](README.md).  
+**Épico:** [`2.epics.md`](../2.epics.md) · [`README.md`](../epics/EP-06-sessao/README.md).  
 **US:** US-17..19 em pastas `US-17`..`US-19`.  
-**Código:** [`../../sources/android-control/lib/session.js`](../../sources/android-control/lib/session.js).
+**Código:** [`../sources/android-control/lib/session.js`](../sources/android-control/lib/session.js).
 
 **Stack:** Node ≥ 18 · `adb` · runtime provisionado (EP-01).
 
@@ -435,5 +435,5 @@ I1 → I2 → I3
 
 ## Próximos passos
 
-→ Implementar gaps em [`sources/android-control`](../../sources/android-control/README.md)  
+→ Implementar gaps em [`sources/android-control`](../sources/android-control/README.md)  
 → Aceite: BDDs em cada pasta `US-*/4.bdds.md`

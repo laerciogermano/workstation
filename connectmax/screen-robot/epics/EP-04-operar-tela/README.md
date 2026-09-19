@@ -8,7 +8,7 @@
 | Artefato | Arquivo |
 |----------|---------|
 | Stories | [`1.stories.md`](1.stories.md) |
-| Implementation plan | [`5.implementation-plan.md`](5.implementation-plan.md) |
+| Implementation plan | [`../../implementation-plan/EP-04-operar-tela.md`](../../implementation-plan/EP-04-operar-tela.md) |
 
 ## Estórias
 

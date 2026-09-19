@@ -1,6 +1,6 @@
 # Épicos — screen-robot
 
-**Por quê:** cada EP agrupa US; scenarios / BDDs / implementation plan ficam **só na pasta da estória**.  
+**Por quê:** cada EP agrupa US; scenarios / BDDs na pasta da estória; plano em [`../implementation-plan/`](../implementation-plan/README.md).  
 **Índice flat:** [`../2.epics.md`](../2.epics.md).  
 **Visão:** [`../README.md`](../README.md).
 
@@ -19,37 +19,39 @@
 epics/EP-XX-…/
 ├── README.md
 ├── 1.stories.md
-├── 5.implementation-plan.md   # plano do épico (seq/classes/modelos)
 └── US-YY-…/
     ├── README.md
     ├── 1.stories.md
     ├── 3.scenarios.md
     └── 4.bdds.md
+
+implementation-plan/
+└── EP-XX-….md                 # plano do épico
 ```
 
 ## EP-01 — Provisionar agente
 
-US-01 → [`EP-01-provisionar-agente/US-01-provisionar-um-agente/`](EP-01-provisionar-agente/US-01-provisionar-um-agente/README.md) · plano: [`5.implementation-plan.md`](EP-01-provisionar-agente/5.implementation-plan.md)
+US-01 → [`EP-01-provisionar-agente/US-01-provisionar-um-agente/`](EP-01-provisionar-agente/US-01-provisionar-um-agente/README.md) · plano: [`../implementation-plan/EP-01-provisionar-agente.md`](../implementation-plan/EP-01-provisionar-agente.md)
 
 ## EP-02 — Eventos de UI
 
-US-02..05 → [`EP-02-eventos-de-ui/`](EP-02-eventos-de-ui/README.md) · plano: [`5.implementation-plan.md`](EP-02-eventos-de-ui/5.implementation-plan.md)
+US-02..05 → [`EP-02-eventos-de-ui/`](EP-02-eventos-de-ui/README.md) · plano: [`../implementation-plan/EP-02-eventos-de-ui.md`](../implementation-plan/EP-02-eventos-de-ui.md)
 
 ## EP-03 — Instalar APKs
 
-US-06 → [`EP-03-instalar-apks/`](EP-03-instalar-apks/README.md) · plano: [`5.implementation-plan.md`](EP-03-instalar-apks/5.implementation-plan.md)
+US-06 → [`EP-03-instalar-apks/`](EP-03-instalar-apks/README.md) · plano: [`../implementation-plan/EP-03-instalar-apks.md`](../implementation-plan/EP-03-instalar-apks.md)
 
 ## EP-04 — Operar tela
 
-US-07..12 → [`EP-04-operar-tela/`](EP-04-operar-tela/README.md) · plano: [`5.implementation-plan.md`](EP-04-operar-tela/5.implementation-plan.md)
+US-07..12 → [`EP-04-operar-tela/`](EP-04-operar-tela/README.md) · plano: [`../implementation-plan/EP-04-operar-tela.md`](../implementation-plan/EP-04-operar-tela.md)
 
 ## EP-05 — Extrair elementos
 
-US-13..16 → [`EP-05-extrair-elementos/`](EP-05-extrair-elementos/README.md) · plano: [`5.implementation-plan.md`](EP-05-extrair-elementos/5.implementation-plan.md)
+US-13..16 → [`EP-05-extrair-elementos/`](EP-05-extrair-elementos/README.md) · plano: [`../implementation-plan/EP-05-extrair-elementos.md`](../implementation-plan/EP-05-extrair-elementos.md)
 
 ## EP-06 — Sessão
 
-US-17..19 → [`EP-06-sessao/`](EP-06-sessao/README.md) · plano: [`5.implementation-plan.md`](EP-06-sessao/5.implementation-plan.md)
+US-17..19 → [`EP-06-sessao/`](EP-06-sessao/README.md) · plano: [`../implementation-plan/EP-06-sessao.md`](../implementation-plan/EP-06-sessao.md)
 
 ## Próximos passos
 

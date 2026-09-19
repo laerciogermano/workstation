@@ -9,10 +9,10 @@
 README.md (visão)
 ├── 1.stories.md
 ├── 2.epics.md                  # EP → US (+ pasta epics/)
+├── implementation-plan/       # um .md por épico
 ├── 6.roadmap.md                # Gantt
 ├── 7.tasks.md                  # Gantt TSK
-├── epics/EP-*/                 # 1.stories + 2.epics
-│   ├── 5.implementation-plan.md  # plano do épico
+├── epics/EP-*/                 # 1.stories + US-*/
 │   └── US-*/                   # 3.scenarios + 4.bdds
 └── sources/android-control (libs Node + scripts/linkedin-login.js)
 ```

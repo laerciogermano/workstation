@@ -1,9 +1,9 @@
 # Implementation plan — EP-04 Operar tela
 
 **Por quê:** plano técnico do épico (sequências · agentes · passo a passo · contratos · classes · modelos · BDDs).  
-**Épico:** [`2.epics.md`](../../2.epics.md) · [`README.md`](README.md).  
+**Épico:** [`2.epics.md`](../2.epics.md) · [`README.md`](../epics/EP-04-operar-tela/README.md).  
 **US:** US-07..12 em pastas `US-07`..`US-12`.  
-**Código:** [`../../sources/android-control/lib/operate.js`](../../sources/android-control/lib/operate.js) · [`events.js`](../../sources/android-control/lib/events.js).
+**Código:** [`../sources/android-control/lib/operate.js`](../sources/android-control/lib/operate.js) · [`events.js`](../sources/android-control/lib/events.js).
 
 **Stack:** Node ≥ 18 · `adb` · runtime provisionado (EP-01).
 
@@ -759,5 +759,5 @@ I1 → I2 → I3 → I4
 
 ## Próximos passos
 
-→ Implementar gaps em [`sources/android-control`](../../sources/android-control/README.md)  
+→ Implementar gaps em [`sources/android-control`](../sources/android-control/README.md)  
 → Aceite: BDDs em cada pasta `US-*/4.bdds.md`

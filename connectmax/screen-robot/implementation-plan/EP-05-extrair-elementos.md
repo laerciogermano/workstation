@@ -1,9 +1,9 @@
 # Implementation plan — EP-05 Extrair elementos
 
 **Por quê:** plano técnico do épico (sequências · agentes · passo a passo · contratos · classes · modelos · BDDs).  
-**Épico:** [`2.epics.md`](../../2.epics.md) · [`README.md`](README.md).  
+**Épico:** [`2.epics.md`](../2.epics.md) · [`README.md`](../epics/EP-05-extrair-elementos/README.md).  
 **US:** US-13..16 em pastas `US-13`..`US-16`.  
-**Código:** [`../../sources/android-control/lib/extract.js`](../../sources/android-control/lib/extract.js).
+**Código:** [`../sources/android-control/lib/extract.js`](../sources/android-control/lib/extract.js).
 
 **Stack:** Node ≥ 18 · `adb` · runtime provisionado (EP-01).
 
@@ -529,5 +529,5 @@ I1 → I3/I4/I5 → I2
 
 ## Próximos passos
 
-→ Implementar gaps em [`sources/android-control`](../../sources/android-control/README.md)  
+→ Implementar gaps em [`sources/android-control`](../sources/android-control/README.md)  
 → Aceite: BDDs em cada pasta `US-*/4.bdds.md`

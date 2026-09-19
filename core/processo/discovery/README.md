@@ -4,6 +4,13 @@ Entender o problema e fechar o *quê* do produto antes do refinamento técnico.
 
 Artefato único: o [documento de funcionalidades](funcionalidades.md).
 
+## Ordem de ataque
+
+1. **Primeiro** — atacar **funcionalidades** e **estórias**: mapear o produto em épicos → estórias → cenários até o catálogo estar fechado e validado.
+2. **Depois** — **separar cada estória** e seguir, **por estória**, os passos do [processo](../README.md): discovery (detalhe da US) → refinamento técnico → desenvolvimento → testes → implantação → manutenção.
+
+Não atravessar o ciclo completo no produto inteiro de uma vez. O discovery fecha o mapa; a execução do processo é **por estória**.
+
 ## Hierarquia
 
 | Nível | ID | O que é | Critério |
@@ -70,4 +77,4 @@ Modelo e regras: [`funcionalidades.md`](funcionalidades.md).
 
 ## Próximo passo
 
-→ [Refinamento técnico](../refinamento-tecnico/README.md) — arquitetura, riscos e backlog técnico a partir do documento de funcionalidades
+Com o catálogo fechado: **uma estória por vez** → [Refinamento técnico](../refinamento-tecnico/README.md) (e demais fases do [processo](../README.md)).

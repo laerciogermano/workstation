@@ -17,7 +17,7 @@ Hub de projetos, board, tasks e processo de desenvolvimento.
 
 | | Fase | Descrição |
 |:--:|:-----|:----------|
-| 🔍 | [Discovery](core/processo/discovery/README.md) | Épico (valor) → estória (operação) → cenário (estado + testável/paralelizável) |
+| 🔍 | [Discovery](core/processo/discovery/README.md) | Funcionalidades/estórias primeiro; depois o ciclo por estória |
 | 🧩 | [Refinamento técnico](core/processo/refinamento-tecnico/README.md) | Arquitetura, riscos e backlog executável |
 | 💻 | [Desenvolvimento](core/processo/desenvolvimento/README.md) | Implementar o que foi acordado |
 | 🧪 | [Testes](core/processo/testes/README.md) | Validar comportamento e qualidade |

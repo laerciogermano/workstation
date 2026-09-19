@@ -8,9 +8,16 @@ Discovery → Refinamento técnico → Desenvolvimento → Testes → Implantaç
 
 Cada etapa documenta **entradas**, **execução** e **saídas**. A árvore abaixo lista os **passos da execução** de cada fase.
 
+## Como atacar
+
+1. No [discovery](discovery/README.md): **primeiro** funcionalidades e estórias (catálogo EP → US → SC).
+2. **Depois**, separar **cada estória** e aplicar o ciclo acima **por estória** (refinamento técnico → desenvolvimento → testes → implantação → manutenção).
+
+O mapa nasce no discovery; o restante do processo roda **estória a estória**, não no produto inteiro de uma vez.
+
 | Etapa | Pasta | Objetivo |
 |-------|-------|----------|
-| Discovery | [`discovery/`](discovery/README.md) | Épicos (valor) → estórias (operação) → cenários (estado + unidade testável/paralelizável) |
+| Discovery | [`discovery/`](discovery/README.md) | Funcionalidades/estórias primeiro; depois ciclo por estória |
 | Refinamento técnico | [`refinamento-tecnico/`](refinamento-tecnico/README.md) | Detalhar solução, riscos e critérios técnicos |
 | Desenvolvimento | [`desenvolvimento/`](desenvolvimento/README.md) | Implementar o que foi acordado |
 | Testes | [`testes/`](testes/README.md) | Validar comportamento e qualidade |

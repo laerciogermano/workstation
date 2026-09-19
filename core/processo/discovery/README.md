@@ -10,7 +10,7 @@ Artefato único: o [documento de funcionalidades](funcionalidades.md).
 |-------|-----|---------|----------|
 | **Épico** | EP- | Conjunto de estórias | Entrega **valor** observável ao usuário/negócio |
 | **Estória** | US- | Função / operação **completa** do usuário | Uma capacidade fechada (início → fim) |
-| **Cenário** | SC- | Mudança de **estado** + unidade **testável** e **paralelizável** | Estado A → ação → estado B; aceite e trabalho isoláveis |
+| **Cenário** | SC- | Mudança de **estado** + unidade **testável** e **paralelizável** | Estado A → ação → estado B; aceite e trabalho isoláveis. Toda US tem ≥1 SC (pode ser só um) |
 
 Uma estória sozinha pode não entregar valor. O épico é o recorte mínimo em que o conjunto de estórias passa a entregar.
 
@@ -41,7 +41,7 @@ EP — Autenticação          ← valor (entrar no produto)
 - Delimitar escopo (in / out)
 - Recortar **épicos** (conjuntos de estórias que entregam valor)
 - Para cada épico, listar as **estórias** (operações completas do usuário)
-- Para cada estória, listar os **cenários** (mudanças de estado; unidades testáveis e paralelizáveis)
+- Para cada estória, listar os **cenários** (obrigatório; no mínimo um — pode ser só um se a operação for uma única mudança de estado)
 - Validar o conjunto com stakeholders
 
 ## Saídas
@@ -54,7 +54,7 @@ Catálogo organizado em **épicos → estórias → cenários**.
 |-------|----------|
 | **Épico** | Valor entregue pelo conjunto de estórias |
 | **Estória** | Operação completa do usuário (ex.: criar usuário, fazer login) |
-| **Cenários** | Mudanças de estado necessárias para completar a estória; cada um é unidade de teste e de paralelismo |
+| **Cenários** | Mudanças de estado necessárias para completar a estória (obrigatório ≥1; pode ser só um); cada um é unidade de teste e de paralelismo |
 
 **Cenário** = mudança de estado (estado anterior → ação → estado resultante) **e** unidade testável/paralelizável exigida para completar a estória.
 

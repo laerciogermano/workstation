@@ -8,7 +8,8 @@ Artefato do [discovery](README.md). Fonte de verdade do *quê* do produto.
 2. Cada **épico** (EP-) é um conjunto de estórias que, juntas, entregam **valor**. Uma estória isolada pode não bastar (ex.: login sem cadastro).
 3. Cada **estória** (US-) é uma **função / operação completa** do usuário (ex.: cadastrar, fazer login, provisionar agente).
 4. Cada estória lista **cenários** (SC-): as mudanças de **estado** necessárias para completar a operação.
-5. Um **cenário** é, ao mesmo tempo:
+5. Toda estória **deve ter cenários** — no mínimo um. Uma estória pode conter **apenas um** cenário quando a operação for uma única mudança de estado.
+6. Um **cenário** é, ao mesmo tempo:
    - uma **mudança de estado** (estado anterior → ação → estado resultante, em geral visual na UI);
    - uma **unidade testável** (aceite isolável: Dado/Quando/Então próprio);
    - uma **unidade paralelizável** (pode ser desenvolvida/testada em paralelo com outros SC da mesma estória, salvo dependência explícita).

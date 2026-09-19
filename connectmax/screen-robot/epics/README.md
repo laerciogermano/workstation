@@ -19,7 +19,6 @@
 epics/EP-XX-…/
 ├── README.md
 ├── 1.stories.md
-├── 2.epics.md
 ├── 5.implementation-plan.md   # plano do épico (seq/classes/modelos)
 └── US-YY-…/
     ├── README.md

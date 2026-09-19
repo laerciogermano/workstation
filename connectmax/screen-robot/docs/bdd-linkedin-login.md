@@ -23,7 +23,7 @@ Funcionalidade: Login no LinkedIn com agent Android via Node
     Quando o LinkedIn é aberto no agent
     E o sistema recebe o evento de UI estável (dump disponível)
     E um print da tela é salvo
-    E os elementos e informações da tela são extraídos como árvore de componentes (textos, ícones, imagens/fotos e containers)
+    E os elementos e informações da tela são extraídos como árvore de componentes (textos, ícones, imagens/fotos, listas e containers)
     Então a árvore contém o botão de login (ex.: "Entrar" / "Sign in")
        ou a tela já é a de login (campos de usuário/senha)
     Quando as operações digitam usuário e senha e tocam em Entrar
@@ -38,6 +38,6 @@ Funcionalidade: Login no LinkedIn com agent Android via Node
 | Provisionar um agente | `Dado que o agente Android é provisionado` → `provisionAgent()` |
 | Instalar APKs | `E o APK do Instagram…` → `installApk(instagram)` (+ LinkedIn) |
 | Receber eventos | `Quando… evento de UI estável` → `waitForUiReady()` |
-| Extrair elementos e informações | `E os elementos… árvore de componentes` → `extractElements()` (DOM: textos, ícones, imagens/fotos) |
+| Extrair elementos e informações | `E os elementos… árvore de componentes` → `extractElements()` (DOM: textos, ícones, imagens/fotos, listas) |
 | Executar operações | launch, screenshot, type, tap Entrar → `operate.*` |
 | Guardar estado de sessão | `Então o estado da sessão é guardado` → `saveSession()` |

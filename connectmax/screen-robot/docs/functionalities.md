@@ -10,7 +10,7 @@
 | Provisionar um agente | Sobe/conecta o Android (agent) e deixa o device pronto para ADB (serial online, boot completo) |
 | Instalar APKs | Baixa (versão definida na config do dispositivo) e instala pacotes no agent |
 | Receber eventos | Observa e espera sinais do device/UI (boot, app aberta, tela estável, mudança de dump) |
-| Extrair elementos e informações | Lê a tela e devolve a UI como **árvore de componentes** (estilo DOM): textos, ícones, imagens, fotos e demais nós, com bounds e metadados |
+| Extrair elementos e informações | Lê a tela e devolve a UI como **árvore de componentes** (estilo DOM): textos, ícones, imagens, fotos, **listas** e demais nós, com bounds e metadados |
 | Executar operações | Dispara gestos e comandos (launch, tap, type, key, screenshot) a partir dos elementos ou coords |
 | Guardar estado de sessão | Persiste e restaura contexto da sessão (device, apps, último frame, login parcial) em arquivo |
 
@@ -23,10 +23,11 @@ Lê a tela (dump / OCR / visão) e devolve a hierarquia da UI como **árvore de 
 | Texto | String visível (OCR ou atributo de acessibilidade) |
 | Ícone | Controle/pictograma reconhecido (ex.: lupa, menu, coração) |
 | Imagem / foto | Região de mídia (avatar, banner, foto de perfil) |
-| Container | Agrupador (lista, card, toolbar) com filhos |
+| Lista | Coleção rolável/repetível de itens (cada item é um filho na árvore) |
+| Container | Agrupador (card, toolbar, painel) com filhos |
 | Outros | Botões, campos, links e nós genéricos com papel na UI |
 
-A saída é a **árvore completa** (raiz → filhos), não só uma lista plana — quem consome navega como em um DOM.
+A saída é a **árvore completa** (raiz → filhos), não só uma lista plana — quem consome navega como em um DOM. Listas entram como nós com itens filhos (e metadados de scroll quando houver).
 
 ## Cenário de aceitação (funcionalidade maior)
 

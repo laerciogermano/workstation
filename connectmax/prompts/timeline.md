@@ -20,3 +20,4 @@ Como registrar: [`README.md`](README.md).
 | 011 | 2026-09-19 | Funcionalidades Node + login LinkedIn + BDD | [011-2026-09-19-funcionalidades-node-linkedin-login.md](011-2026-09-19-funcionalidades-node-linkedin-login.md) | Seis capacidades Node; script Instagram→LinkedIn login; BDD de aceitação. |
 | 012 | 2026-09-19 | Criar projeto linkedin-agent | [012-2026-09-19-criar-linkedin-agent.md](012-2026-09-19-criar-linkedin-agent.md) | Novo subprojeto: agente LinkedIn sobre screen-robot; vendas consome o agente. |
 | 013 | 2026-09-19 | Extrair como árvore DOM | [013-2026-09-19-extrair-arvore-dom.md](013-2026-09-19-extrair-arvore-dom.md) | Extração devolve textos, ícones, imagens/fotos em árvore de componentes estilo DOM. |
+| 014 | 2026-09-19 | Extrair listas | [014-2026-09-19-extrair-listas.md](014-2026-09-19-extrair-listas.md) | Extração inclui nós de lista com itens filhos na árvore DOM. |

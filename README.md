@@ -17,7 +17,7 @@ Hub de projetos, board, tasks e processo de desenvolvimento.
 
 | | Fase | Descrição |
 |:--:|:-----|:----------|
-| 🔍 | [Discovery](core/processo/1.discovery/README.md) | Vision → cenários → BDDs → protótipo; depois o ciclo por estória |
+| 🔍 | [Discovery](core/processo/1.discovery/README.md) | Stories → epics → cenários → BDDs → protótipo → roadmap → tasks; depois o ciclo por estória |
 | 🧩 | [Refinamento técnico](core/processo/2.refinamento-tecnico/README.md) | Arquitetura, riscos e backlog executável |
 | 💻 | [Desenvolvimento](core/processo/3.desenvolvimento/README.md) | Implementar o que foi acordado |
 | 🧪 | [Testes](core/processo/4.testes/README.md) | Validar comportamento e qualidade |

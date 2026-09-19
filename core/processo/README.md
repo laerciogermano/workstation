@@ -17,6 +17,26 @@ Cada etapa documenta **entradas**, **execução** e **saídas**.
 | Implantação | [`implantacao/`](implantacao/README.md) | Publicar em ambiente alvo |
 | Manutenção | [`manutencao/`](manutencao/README.md) | Operar, corrigir e evoluir |
 
+### Gantt — atividades sequenciais
+
+Mesmas etapas do ciclo acima, em sequência (ordem do caminho crítico).  
+Durações relativas (1 unidade = 1 etapa); o gráfico mostra dependência, não estimativa de calendário.
+
+```mermaid
+gantt
+  title Processo de desenvolvimento — etapas sequenciais
+  dateFormat X
+  axisFormat %s
+
+  section Ciclo
+  Discovery              :d1, 0, 1
+  Refinamento tecnico    :d2, after d1, 1
+  Desenvolvimento        :d3, after d2, 1
+  Testes                 :d4, after d3, 1
+  Implantacao            :d5, after d4, 1
+  Manutencao             :d6, after d5, 1
+```
+
 ## Fluxo (entradas → execução → saídas)
 
 ```mermaid

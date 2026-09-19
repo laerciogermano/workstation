@@ -4,7 +4,7 @@
 **Papel no fluxo:** base funcional para as histórias de usuário.  
 **Origem:** documento de [visão](../README.md).  
 **Operações LinkedIn:** [`../../linkedin-agent/docs/functionalities.md`](../../linkedin-agent/docs/functionalities.md).  
-**Robô de tela:** [`../../screen-robot/docs/scenarios.md`](../../screen-robot/docs/scenarios.md).
+**Robô de tela:** [`../../screen-robot/scenarios.md`](../../screen-robot/scenarios.md).
 
 ## Como usar este documento
 

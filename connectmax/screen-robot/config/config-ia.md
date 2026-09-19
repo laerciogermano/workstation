@@ -7,11 +7,11 @@
 
 ```text
 README.md (visão)
-├── docs/README.md
-│   ├── vision.md
-│   ├── scenarios.md              # US + SC (sem BDD)
-│   ├── tasks.md
-│   └── bdds.md                   # BDDs por US/SC + piloto LinkedIn
+├── vision.md
+├── epics.md
+├── scenarios.md              # US + SC (sem BDD)
+├── tasks.md
+├── bdds.md                   # BDDs por US/SC + piloto LinkedIn
 └── sources/android-control (libs Node + scripts/linkedin-login.js)
 ```
 

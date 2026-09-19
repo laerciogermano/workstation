@@ -2,10 +2,12 @@
 
 **Por quê:** fixar o *quê* do robô de tela antes de goals de negócio.  
 **Importante:** este projeto **só** opera o device/tela via **Node**; não implementa cadência comercial nem fila de leads.  
-**No fluxo:** **este documento** → [`docs/`](docs/README.md) → implementação em [`sources/`](sources/README.md).  
+**No fluxo:** **este documento** → vision / scenarios / bdds / tasks → implementação em [`sources/`](sources/README.md).  
 **Umbrella:** [`../README.md`](../README.md).  
 **Consumidor LinkedIn:** [`../linkedin-agent/`](../linkedin-agent/README.md).  
-**Negócio (fila/faturamento):** [`../vendas/`](../vendas/README.md).
+**Negócio (fila/faturamento):** [`../vendas/`](../vendas/README.md).  
+**Config IA:** [`config/config-ia.md`](config/config-ia.md).  
+**Prompts:** [`../prompts/timeline.md`](../prompts/timeline.md).
 
 ---
 
@@ -27,11 +29,11 @@ Automatizar apps móveis exige um caminho estável em código: agent pronto, app
 
 ## Objetivo
 
-Expor via Node: **provisionar · instalar APKs · eventos · operar · extrair · sessão**. Cenário piloto: login LinkedIn ([`docs/bdds.md`](docs/bdds.md)).
+Expor via Node: **provisionar · instalar APKs · eventos · operar · extrair · sessão**. Cenário piloto: login LinkedIn ([`bdds.md`](bdds.md)).
 
 ## Capacidades (v1)
 
-Ver [`docs/scenarios.md`](docs/scenarios.md).
+Ver [`scenarios.md`](scenarios.md).
 
 ## Fora de escopo
 
@@ -39,17 +41,18 @@ Ver [`docs/scenarios.md`](docs/scenarios.md).
 - Regras de prospecção, fila de leads, faturamento ou papéis de vendedor — isso é [`vendas`](../vendas/README.md).
 - Bypass de autenticação / scraping fora do uso legítimo do device.
 
-## Código e planos
+## Artefatos
 
-| Artefato | Caminho |
-|----------|---------|
-| Vision | [`docs/vision.md`](docs/vision.md) |
-| Épicos | [`docs/epics.md`](docs/epics.md) |
-| Cenários (US + SC) | [`docs/scenarios.md`](docs/scenarios.md) |
-| BDDs | [`docs/bdds.md`](docs/bdds.md) |
-| Sources (Node + runtimes) | [`sources/`](sources/README.md) |
-| android-control | [`sources/android-control/`](sources/android-control/README.md) |
+| Artefato | Arquivo | Status |
+|----------|---------|--------|
+| Vision — US título + descrição | [`vision.md`](vision.md) | Feito |
+| Épicos | [`epics.md`](epics.md) | Feito |
+| Cenários (US + SC) | [`scenarios.md`](scenarios.md) | Feito |
+| Tasks (árvore + Gantt) | [`tasks.md`](tasks.md) | Feito |
+| BDDs (US/SC + piloto LinkedIn) | [`bdds.md`](bdds.md) | Feito |
+| Sources | [`sources/`](sources/README.md) | Em curso |
+| android-control | [`sources/android-control/`](sources/android-control/README.md) | Em curso |
 
 ## Próximos passos
 
-→ `LINKEDIN_USER` / `LINKEDIN_PASSWORD` + `npm run linkedin-login` em `sources/android-control`
+→ [`bdds.md`](bdds.md) · `LINKEDIN_USER` / `LINKEDIN_PASSWORD` + `npm run linkedin-login` em `sources/android-control`

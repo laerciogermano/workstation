@@ -3,8 +3,8 @@
 **Por quê:** árvore de execução das features e Gantt (minutos IA).  
 **Fonte:** [`scenarios.md`](scenarios.md).  
 **Épicos:** [`epics.md`](epics.md).
-**Visão:** [`../README.md`](../README.md).  
-**Kanban / inventário (umbrella):** [`core/tasks`](../../../core/tasks/README.md#p1--connectmax--screen-robot).
+**Visão:** [`README.md`](README.md).  
+**Kanban / inventário (umbrella):** [`core/tasks`](../../core/tasks/README.md#p1--connectmax--screen-robot).
 
 Histórias US (cada US com ≥1 SC; extrair = US-13; sessão = US-14..16).  
 Estimativas: minutos IA · **1 dia = 8h = 480 min**.
@@ -90,5 +90,5 @@ gantt
 
 ## Próximos passos
 
-→ Implementação em [`../sources/android-control`](../sources/android-control/README.md)  
+→ Implementação em [`sources/android-control`](sources/android-control/README.md)  
 → Aceite: [`bdds.md`](bdds.md)

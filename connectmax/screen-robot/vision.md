@@ -1,7 +1,7 @@
 # Vision — screen-robot
 
 **Por quê:** lista visual das histórias (US) e como cada uma funciona.  
-**Detalhe:** [`scenarios.md`](scenarios.md) · **Visão do produto:** [`../README.md`](../README.md).
+**Detalhe:** [`scenarios.md`](scenarios.md) · **Visão do produto:** [`README.md`](README.md).
 
 ## Histórias
 

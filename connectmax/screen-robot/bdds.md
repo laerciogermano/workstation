@@ -1,7 +1,7 @@
 # BDDs — screen-robot
 
 **Por quê:** aceite Gherkin de cada **US** e de cada **SC** (fonte: [`scenarios.md`](scenarios.md)).  
-**Piloto:** script [`../sources/android-control/scripts/linkedin-login.js`](../sources/android-control/scripts/linkedin-login.js).
+**Piloto:** script [`sources/android-control/scripts/linkedin-login.js`](sources/android-control/scripts/linkedin-login.js).
 
 Cada bloco: Dado / Quando / Então alinhado a Entradas / Execução / Saídas.
 

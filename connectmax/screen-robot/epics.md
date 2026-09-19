@@ -1,7 +1,7 @@
 # Épicos — screen-robot
 
 **Por quê:** fatia entregável do robô (capacidades Node → US).  
-**Visão:** [`../README.md`](../README.md).  
+**Visão:** [`README.md`](README.md).  
 **US / cenários:** [`scenarios.md`](scenarios.md). **BDDs:** [`bdds.md`](bdds.md).  
 **Árvore / Gantt:** [`tasks.md`](tasks.md).
 
@@ -81,5 +81,5 @@ Persiste e restaura estado do robô em disco.
 
 ## Próximos passos
 
-→ Implementar em [`../sources/android-control`](../sources/android-control/README.md)  
+→ Implementar em [`sources/android-control`](sources/android-control/README.md)  
 → Aceite: [`bdds.md`](bdds.md)

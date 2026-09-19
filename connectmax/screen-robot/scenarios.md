@@ -1,11 +1,11 @@
 # Cenários — screen-robot
 
 **Por quê:** US e cenários (SC) do robô, todos expostos via **código Node**. BDDs: [`bdds.md`](bdds.md).  
-**Origem:** [visão](../README.md).  
-**Agente LinkedIn:** [`../../linkedin-agent/`](../../linkedin-agent/README.md).  
-**Negócio:** [`../../vendas/`](../../vendas/README.md).  
+**Origem:** [visão](README.md).  
+**Agente LinkedIn:** [`../linkedin-agent/`](../linkedin-agent/README.md).  
+**Negócio:** [`../vendas/`](../vendas/README.md).  
 **Estimativas (min):** [`tasks.md`](tasks.md).  
-**Épicos:** [`epics.md`](epics.md).
+**Épicos:** [`epics.md`](epics.md).  
 **Vision:** [`vision.md`](vision.md).
 
 **IDs:** **US-** = história · **SC-XX** = cenário sequencial (toda US tem ≥1 SC).
@@ -213,9 +213,9 @@
 | Artefato | Caminho |
 |----------|---------|
 | BDDs (unitário + piloto LinkedIn) | [`bdds.md`](bdds.md) |
-| Script | [`../sources/android-control/scripts/linkedin-login.js`](../sources/android-control/scripts/linkedin-login.js) |
+| Script | [`sources/android-control/scripts/linkedin-login.js`](sources/android-control/scripts/linkedin-login.js) |
 
 ## Próximos passos
 
-→ [`tasks.md`](tasks.md) · [`core/tasks`](../../../core/tasks/README.md#p1--connectmax--screen-robot)  
-→ Implementação em [`../sources/android-control`](../sources/android-control/README.md)
+→ [`tasks.md`](tasks.md) · [`core/tasks`](../../core/tasks/README.md#p1--connectmax--screen-robot)  
+→ Implementação em [`sources/android-control`](sources/android-control/README.md)

@@ -6,7 +6,7 @@
 
 ## P1 — ConnectMax · screen-robot
 
-Histórias US (eventos, operações e extração cada uma é US; Provisionar/APKs/Sessão com SC).  
+Histórias US (eventos e operações cada uma é US; Extrair elementos = US-14; Provisionar/APKs/Sessão com SC).  
 Funcionalidades: [`functionalities.md`](../../connectmax/screen-robot/docs/functionalities.md) · BDD nós: [`bdd-nos.md`](../../connectmax/screen-robot/docs/bdd-nos.md) · BDD login: [`bdd-linkedin-login.md`](../../connectmax/screen-robot/docs/bdd-linkedin-login.md).  
 Estimativas: minutos IA · **1 dia = 8h = 480 min**.
 
@@ -36,22 +36,17 @@ screen-robot (393 min)
 │   └── US-12 Resgatar coordenadas x,y (imagem de entrada) (15 min)
 ├── Extrair
 │   ├── US-13 Extrair nó Texto a partir de imagem (20 min)
-│   ├── US-14 Extrair nó Ícone (20 min)
-│   ├── US-15 Extrair nó Imagem / foto (24 min)
-│   ├── US-16 Extrair nó Lista (24 min)
-│   ├── US-17 Extrair nó Container (12 min)
-│   └── US-18 Montar árvore DOM (20 min)
-└── US-19 Guardar estado de sessão (30 min)
-    ├── SC-19.1 Persistir sessão em arquivo (15 min)
-    └── SC-19.2 Restaurar sessão do arquivo (15 min)
+│   └── US-14 Extrair elementos (100 min)
+└── US-15 Guardar estado de sessão (30 min)
+    ├── SC-15.1 Persistir sessão em arquivo (15 min)
+    └── SC-15.2 Restaurar sessão do arquivo (15 min)
 ```
 
 ### Gantt — atividades da árvore (paralelizáveis por IA)
 
 Mesmas atividades da árvore acima (nomes e minutos).  
 Barras maiores (`crit`) = funcionalidade; filhas em paralelo entre si (entrega IA).  
-**Montar árvore DOM** só depois dos nós de extrair.  
-Esforço total (soma): **393 min**. Com filhas em paralelo, caminho crítico ≈ **60 min** (Provisionar) — Extrair como unidade `crit` cobre **120 min** se entregue monolítica; com só filhas paralelas + DOM após nós, a trilha Extrair é **24+20=44 min**.
+Esforço total (soma): **393 min**. Com filhas em paralelo, caminho crítico ≈ **60 min** (Provisionar) — trilha Extrair ≈ **100 min** (US-14), com US-13 (20 min) em paralelo.
 
 ```mermaid
 gantt
@@ -87,21 +82,17 @@ gantt
 
   section Extrair
   US-13 No Texto via imagem        :x1, 0, 20m
-  US-14 No Icone                   :x2, 0, 20m
-  US-15 No Imagem e foto           :x3, 0, 24m
-  US-16 No Lista                   :x4, 0, 24m
-  US-17 No Container               :x5, 0, 12m
-  US-18 Montar arvore DOM          :x6, after x3, 20m
+  US-14 Extrair elementos          :crit, x2, 0, 100m
 
   section Sessao
-  US-19 Guardar sessao             :crit, s0, 0, 30m
-  SC-19.1 Persistir sessao         :s1, 0, 15m
-  SC-19.2 Restaurar sessao         :s2, 0, 15m
+  US-15 Guardar sessao             :crit, s0, 0, 30m
+  SC-15.1 Persistir sessao         :s1, 0, 15m
+  SC-15.2 Restaurar sessao         :s2, 0, 15m
 ```
 
 ### Inventário de tasks (nós)
 
-IDs: **US-** história · **SC-** cenário (só sob US-01, US-02, US-19). Baseline paralelo: **2026-09-19**. Filhas partem no início do dia; **Montar árvore DOM** inicia após os nós de Extrair (mesmo dia).  
+IDs: **US-** história · **SC-** cenário (só sob US-01, US-02, US-15). Baseline paralelo: **2026-09-19**. Filhas partem no início do dia.  
 1 dia útil = 8h. Entradas/Execução/Saídas: [`functionalities.md`](../../connectmax/screen-robot/docs/functionalities.md#entradas--execução--saídas-por-nó).
 
 | ID | Descrição | Início | Fim | Output |
@@ -125,14 +116,10 @@ IDs: **US-** história · **SC-** cenário (só sob US-01, US-02, US-19). Baseli
 | US-11 | screenshot | 2026-09-19 | 2026-09-19 | Arquivo de imagem |
 | US-12 | Resgatar coordenadas x,y (imagem de entrada) | 2026-09-19 | 2026-09-19 | Coordenadas x,y (e confiança) |
 | US-13 | Extrair nó Texto a partir de imagem | 2026-09-19 | 2026-09-19 | Nós de texto com string e bounds |
-| US-14 | Extrair nó Ícone | 2026-09-19 | 2026-09-19 | Nós de ícone com tipo e bounds |
-| US-15 | Extrair nó Imagem / foto | 2026-09-19 | 2026-09-19 | Nós imagem/foto com bounds |
-| US-16 | Extrair nó Lista | 2026-09-19 | 2026-09-19 | Nó lista com filhos e metadados de scroll |
-| US-17 | Extrair nó Container | 2026-09-19 | 2026-09-19 | Nós container com filhos |
-| US-18 | Montar árvore DOM | 2026-09-19 | 2026-09-19 | Árvore DOM navegável |
-| US-19 | Guardar estado de sessão | 2026-09-19 | 2026-09-19 | Sessão em disco / contexto restaurado |
-| SC-19.1 | Persistir sessão em arquivo | 2026-09-19 | 2026-09-19 | Arquivo de sessão |
-| SC-19.2 | Restaurar sessão do arquivo | 2026-09-19 | 2026-09-19 | Estado restaurado no runtime |
+| US-14 | Extrair elementos | 2026-09-19 | 2026-09-19 | Elementos tipados + árvore DOM navegável |
+| US-15 | Guardar estado de sessão | 2026-09-19 | 2026-09-19 | Sessão em disco / contexto restaurado |
+| SC-15.1 | Persistir sessão em arquivo | 2026-09-19 | 2026-09-19 | Arquivo de sessão |
+| SC-15.2 | Restaurar sessão do arquivo | 2026-09-19 | 2026-09-19 | Estado restaurado no runtime |
 
 ### Kanban
 

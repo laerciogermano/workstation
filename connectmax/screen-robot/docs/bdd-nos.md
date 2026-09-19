@@ -1,6 +1,6 @@
 # BDD — cenários por história (screen-robot)
 
-**Por quê:** aceite de cada **US** (e **SC** sob US-01, US-02, US-19).  
+**Por quê:** aceite de cada **US** (e **SC** sob US-01, US-02, US-15).  
 **Funcionalidades:** [`functionalities.md`](functionalities.md).  
 **Integração:** [`bdd-linkedin-login.md`](bdd-linkedin-login.md).
 
@@ -198,59 +198,21 @@ Funcionalidade: Extrair nó Texto a partir de imagem
     Então nós de texto existem com string e bounds
 ```
 
-## US-14 · Extrair nó Ícone
+## US-14 · Extrair elementos
 
 ```gherkin
-Funcionalidade: Extrair nó Ícone
-  Cenário: Ícones são reconhecidos
-    Dado frame/dump
-    Quando pictogramas/controles são detectados
-    Então nós de ícone existem com tipo e bounds
-```
-
-## US-15 · Extrair nó Imagem / foto
-
-```gherkin
-Funcionalidade: Extrair nó Imagem / foto
-  Cenário: Regiões de mídia são detectadas
-    Dado frame/dump
-    Quando regiões de imagem/foto são identificadas
-    Então nós imagem/foto existem com bounds
-```
-
-## US-16 · Extrair nó Lista
-
-```gherkin
-Funcionalidade: Extrair nó Lista
-  Cenário: Lista com itens é extraída
-    Dado frame/dump
-    Quando coleção rolável e itens são identificados
-    Então existe nó lista com filhos e metadados de scroll
-```
-
-## US-17 · Extrair nó Container
-
-```gherkin
-Funcionalidade: Extrair nó Container
-  Cenário: Containers são agrupados
-    Dado frame/dump
-    Quando card/toolbar/painel são agrupados
-    Então nós container existem com filhos
-```
-
-## US-18 · Montar árvore DOM
-
-```gherkin
-Funcionalidade: Montar árvore DOM
-  Cenário: Hierarquia raiz → filhos é montada
-    Dado nós tipados (texto, ícone, imagem, lista, container)
-    Quando a composição hierárquica é executada
-    Então a árvore DOM navegável é devolvida
+Funcionalidade: Extrair elementos
+  Cenário: Elementos tipados e árvore DOM são extraídos
+    Dado imagem/frame/dump da tela
+    Quando ícones, imagens/fotos, listas e containers são reconhecidos
+    E a hierarquia raiz → filhos é composta
+    Então elementos tipados existem com bounds e metadados
+    E a árvore DOM navegável é devolvida
 ```
 
 ---
 
-## US-19 · Guardar estado de sessão
+## US-15 · Guardar estado de sessão
 
 ```gherkin
 Funcionalidade: Guardar estado de sessão
@@ -260,7 +222,7 @@ Funcionalidade: Guardar estado de sessão
     Então a sessão está em disco ou o contexto foi restaurado
 ```
 
-### SC-19.1 Persistir sessão em arquivo
+### SC-15.1 Persistir sessão em arquivo
 
 ```gherkin
 Cenário: Sessão é gravada
@@ -269,7 +231,7 @@ Cenário: Sessão é gravada
   Então o arquivo de sessão existe
 ```
 
-### SC-19.2 Restaurar sessão do arquivo
+### SC-15.2 Restaurar sessão do arquivo
 
 ```gherkin
 Cenário: Sessão é restaurada

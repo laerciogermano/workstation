@@ -5,8 +5,8 @@
 **Agente LinkedIn:** [`../../linkedin-agent/`](../../linkedin-agent/README.md).  
 **Negócio:** [`../../vendas/`](../../vendas/README.md).
 
-**IDs:** **US-** = história (uma ação/capacidade). **SC-** = cenário sob US-01, US-02 e US-19.  
-Eventos, operações e extração: **cada item é uma US**, não um lote.
+**IDs:** **US-** = história (uma ação/capacidade). **SC-** = cenário sob US-01, US-02 e US-15.  
+Eventos e operações: **cada item é uma US**. Extração tipada (ícone, imagem, lista, container + DOM) = **US-14 Extrair elementos**.
 
 | ID | Funcionalidade | Descrição | Min |
 |----|----------------|-----------|-----|
@@ -23,12 +23,8 @@ Eventos, operações e extração: **cada item é uma US**, não um lote.
 | US-11 | screenshot | Capturar frame da tela | 15 |
 | US-12 | Resgatar coordenadas x,y | Localizar alvo na tela a partir de imagem de entrada | 15 |
 | US-13 | Extrair nó Texto a partir de imagem | Extrair textos (string e bounds) a partir de uma imagem da tela | 20 |
-| US-14 | Extrair nó Ícone | Pictogramas/controles com tipo e bounds | 20 |
-| US-15 | Extrair nó Imagem / foto | Regiões de mídia com bounds | 24 |
-| US-16 | Extrair nó Lista | Coleção rolável com itens filhos e scroll | 24 |
-| US-17 | Extrair nó Container | Card/toolbar/painel com filhos | 12 |
-| US-18 | Montar árvore DOM | Compor hierarquia raiz → filhos (estilo DOM) | 20 |
-| US-19 | Guardar estado de sessão | Persistir e restaurar contexto da sessão | 30 |
+| US-14 | Extrair elementos | Ícones, imagens/fotos, listas, containers e árvore DOM a partir da tela | 100 |
+| US-15 | Guardar estado de sessão | Persistir e restaurar contexto da sessão | 30 |
 
 ## Entradas · Execução · Saídas
 
@@ -148,51 +144,27 @@ Extrai nós de texto **a partir de uma imagem** da tela (screenshot/frame).
 |----------|----------|--------|
 | Imagem da tela (screenshot/frame) | OCR / leitura de texto na imagem | Nós de texto com string e bounds |
 
-### US-14 · Extrair nó Ícone (20 min)
+### US-14 · Extrair elementos (100 min)
+
+Extrai elementos tipados da tela (ícones, imagens/fotos, listas, containers) e monta a **árvore de componentes** (estilo DOM): raiz → filhos, com bounds e metadados.
 
 | Entradas | Execução | Saídas |
 |----------|----------|--------|
-| Frame/dump | Reconhecer pictogramas/controles | Nós de ícone com tipo e bounds |
+| Imagem/frame/dump da tela | Reconhecer ícones, mídia, listas e containers; compor hierarquia | Elementos tipados + árvore DOM navegável |
 
-### US-15 · Extrair nó Imagem / foto (24 min)
-
-| Entradas | Execução | Saídas |
-|----------|----------|--------|
-| Frame/dump | Detectar regiões de mídia | Nós imagem/foto com bounds |
-
-### US-16 · Extrair nó Lista (24 min)
-
-| Entradas | Execução | Saídas |
-|----------|----------|--------|
-| Frame/dump | Identificar coleção rolável e itens | Nó lista com filhos e metadados de scroll |
-
-### US-17 · Extrair nó Container (12 min)
-
-| Entradas | Execução | Saídas |
-|----------|----------|--------|
-| Frame/dump | Agrupar card/toolbar/painel | Nós container com filhos |
-
-### US-18 · Montar árvore DOM (20 min)
-
-Lê nós tipados e devolve a hierarquia da UI como **árvore de componentes** (estilo DOM): raiz → filhos, com bounds e metadados.
-
-| Entradas | Execução | Saídas |
-|----------|----------|--------|
-| Nós tipados (texto, ícone, imagem, lista, container) | Compor hierarquia raiz → filhos | Árvore DOM navegável |
-
-### US-19 · Guardar estado de sessão (30 min)
+### US-15 · Guardar estado de sessão (30 min)
 
 | Entradas | Execução | Saídas |
 |----------|----------|--------|
 | Contexto atual (device, apps, etapa, paths) | Persistir e/ou restaurar arquivo de sessão | Sessão em disco / contexto restaurado |
 
-#### SC-19.1 Persistir sessão em arquivo (15 min)
+#### SC-15.1 Persistir sessão em arquivo (15 min)
 
 | Entradas | Execução | Saídas |
 |----------|----------|--------|
 | Estado em memória, path da sessão | Serializar e gravar | Arquivo de sessão |
 
-#### SC-19.2 Restaurar sessão do arquivo (15 min)
+#### SC-15.2 Restaurar sessão do arquivo (15 min)
 
 | Entradas | Execução | Saídas |
 |----------|----------|--------|

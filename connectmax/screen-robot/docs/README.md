@@ -12,8 +12,8 @@
 | Plano percepção imagem → hardware | [`plano-percepcao-imagem-hardware.md`](plano-percepcao-imagem-hardware.md) | Feito |
 | Plano de implementação | [`plano-implementacao-percepcao.md`](plano-implementacao-percepcao.md) | Feito |
 | Funcionalidades | [`functionalities.md`](functionalities.md) | Feito |
-| Sources | [`../sources/`](../sources/) | Em curso |
+| Sources | [`../sources/`](../sources/README.md) | Em curso |
 
 ## Próximos passos
 
-→ [`../epics/`](../epics/README.md) → EP-01 Capture + EP-04 Actuate em [`../sources/android-control`](../sources/android-control)
+→ [`../epics/`](../epics/README.md) → EP-01 Capture + EP-04 Actuate em [`../sources/android-control`](../sources/android-control/README.md)

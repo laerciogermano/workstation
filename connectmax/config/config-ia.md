@@ -1,14 +1,14 @@
 # Configurações para a IA — ConnectMax (umbrella)
 
 **Por quê:** timeline única e mapa dos dois projetos.  
-**Projetos:** [`../screen-robot/`](../screen-robot/) · [`../vendas/`](../vendas/).  
+**Projetos:** [`../screen-robot/`](../screen-robot/README.md) · [`../vendas/`](../vendas/README.md).  
 **Timeline:** [`../prompts/timeline.md`](../prompts/timeline.md).
 
 ## Regras
 
 ### Salvar todos os prompts
 
-Todo prompt do umbrella ConnectMax (qualquer subprojeto) deve ser gravado em [`../prompts/`](../prompts/) com o próximo `NNN` e linha na timeline.
+Todo prompt do umbrella ConnectMax (qualquer subprojeto) deve ser gravado em [`../prompts/`](../prompts/README.md) com o próximo `NNN` e linha na timeline.
 
 ### Cascata
 

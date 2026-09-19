@@ -6,7 +6,7 @@
 
 Índice cronológico: [`timeline.md`](timeline.md).  
 Visão do umbrella: [`../README.md`](../README.md).  
-Subprojetos: [`../screen-robot/`](../screen-robot/) · [`../vendas/`](../vendas/).  
+Subprojetos: [`../screen-robot/`](../screen-robot/README.md) · [`../vendas/`](../vendas/README.md).  
 Regras da IA: [`../config/config-ia.md`](../config/config-ia.md).
 
 ## Como registrar um prompt

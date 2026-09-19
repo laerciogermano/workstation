@@ -3,7 +3,7 @@
 **Por quê:** índice da esteira do processo de vendas.  
 **Visão:** [`../README.md`](../README.md).  
 **Umbrella:** [`../../README.md`](../../README.md).  
-**Robô de tela:** [`../../screen-robot/`](../../screen-robot/).  
+**Robô de tela:** [`../../screen-robot/`](../../screen-robot/README.md).  
 **Prompts:** [`../../prompts/timeline.md`](../../prompts/timeline.md).  
 **Config IA:** [`../config/config-ia.md`](../config/config-ia.md).
 
@@ -20,4 +20,4 @@
 ## Próximos passos
 
 → Esteira: [`functionalities.md`](functionalities.md) → `user-stories.md` (a produzir)  
-→ Ações no LinkedIn: consumir [`../../screen-robot/`](../../screen-robot/)
+→ Ações no LinkedIn: consumir [`../../screen-robot/`](../../screen-robot/README.md)

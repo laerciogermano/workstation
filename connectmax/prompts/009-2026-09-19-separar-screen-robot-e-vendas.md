@@ -20,6 +20,6 @@ Dividir o ConnectMax em dois projetos: (1) robô genérico de tela (imagem → e
 
 ## O que foi feito
 
-- Criados [`screen-robot/`](../screen-robot/) (sources + planos de percepção + functionalities do robô) e [`vendas/`](../vendas/) (visão comercial + functionalities de vendas).
+- Criados [`screen-robot/`](../screen-robot/README.md) (sources + planos de percepção + functionalities do robô) e [`vendas/`](../vendas/README.md) (visão comercial + functionalities de vendas).
 - Umbrella [`../README.md`](../README.md); board P1 / P1b; índices na workstation.
 - Este registro + timeline.

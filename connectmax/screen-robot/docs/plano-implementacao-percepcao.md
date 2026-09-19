@@ -4,7 +4,7 @@
 **Produto / WBS:** [`plano-percepcao-imagem-hardware.md`](plano-percepcao-imagem-hardware.md).  
 **Código-base:** `sources/android-control`.  
 **Estimativas:** horas de **esforço de IA** (agente), não humanas.  
-**Negócio vendas:** fora de escopo — ver [`../../vendas/`](../../vendas/).
+**Negócio vendas:** fora de escopo — ver [`../../vendas/`](../../vendas/README.md).
 
 ---
 

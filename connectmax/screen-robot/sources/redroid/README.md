@@ -4,7 +4,7 @@ Android em container Docker via [redroid](https://github.com/remote-android/redr
 
 Usado como runtime do motor de prospecção LinkedIn do ConnectMax (ambiente Android controlado).
 
-Projeto irmão (emulador oficial / Android Studio): [`../android-studio`](../android-studio/).
+Projeto irmão (emulador oficial / Android Studio): [`../android-studio`](../android-studio/README.md).
 
 ## Requisitos
 

@@ -8,7 +8,7 @@
 
 - Cada bullet é uma capacidade do robô.
 - Critérios de aceite técnicos: BDD nos planos de implementação (`@f0`…`@f4`).
-- Negócio ConnectMax (fila, cadência, faturamento) vive em [`../../vendas/`](../../vendas/).
+- Negócio ConnectMax (fila, cadência, faturamento) vive em [`../../vendas/`](../../vendas/README.md).
 
 ---
 

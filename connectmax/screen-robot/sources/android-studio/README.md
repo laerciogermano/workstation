@@ -4,7 +4,7 @@ Android via **emulador oficial** (SDK / Android Studio), com janela nativa do em
 
 Usado quando o redroid (Docker) não cabe no host — por exemplo macOS sem binder — ou quando precisa de **câmera virtual** (OBS) com vídeo de teste.
 
-Projeto irmão: [`../redroid`](../redroid/) (Android em container).
+Projeto irmão: [`../redroid`](../redroid/README.md) (Android em container).
 
 ## Requisitos
 

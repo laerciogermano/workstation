@@ -115,7 +115,7 @@
 - Marketplace de franquias ou captação pública de investimento.
 - Integração bancária / conciliação financeira da unidade.
 - Scraping ou bypass de autenticação da plataforma.
-- Implementação do motor Capture/Perceive/Decide/Actuate (pertence ao [`screen-robot`](../../screen-robot/)).
+- Implementação do motor Capture/Perceive/Decide/Actuate (pertence ao [`screen-robot`](../../screen-robot/README.md)).
 
 ---
 

@@ -1,0 +1,23 @@
+---
+description: Links internos para pastas devem apontar ao README.md
+alwaysApply: true
+---
+
+# Links apontam para README
+
+Em markdown do repositório, links para pastas do projeto devem apontar para o `README.md` da pasta, não só para o diretório.
+
+## Critérios
+
+- Preferir `pasta/README.md` (ou `../pasta/README.md`) no destino do link
+- O texto visível pode continuar como `pasta/` se for mais claro
+- Não alterar links externos (http/https) nem âncoras em arquivos já nomeados (`.md`)
+
+## Exemplos
+
+```text
+✅ [`screen-robot/`](screen-robot/README.md)
+✅ [`docs/`](docs/README.md)
+❌ [`screen-robot/`](screen-robot/)
+❌ [`docs/`](docs/)
+```

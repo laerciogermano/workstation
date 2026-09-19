@@ -14,4 +14,4 @@ README.md (visão)
         └── sources/android-control (implementação F0→F4)
 ```
 
-Prompts novos: gravar em [`../../prompts/`](../../prompts/) (próximo NNN na timeline do ConnectMax).
+Prompts novos: gravar em [`../../prompts/`](../../prompts/README.md) (próximo NNN na timeline do ConnectMax).

@@ -2,12 +2,12 @@
 
 **Por quê:** fixar o *quê* e o *porquê* do produto de **vendas / prospecção** antes de qualquer história, tela ou código.  
 **Importante:** é a fonte de verdade do processo comercial — sem ela, derivados divergem.  
-**No fluxo:** **este documento** → [`docs/`](docs/) (`functionalities` → `user-stories` → `bdd` → `screens` → `screens-bdd` → `components` → `prototype`).  
+**No fluxo:** **este documento** → [`docs/`](docs/README.md) (`functionalities` → `user-stories` → `bdd` → `screens` → `screens-bdd` → `components` → `prototype`).  
 **Umbrella:** [`../README.md`](../README.md).  
-**Infra de tela (robô):** [`../screen-robot/`](../screen-robot/) — captura, lista de elementos, cliques e digitação; este projeto **não** reimplementa o robô.
+**Infra de tela (robô):** [`../screen-robot/`](../screen-robot/README.md) — captura, lista de elementos, cliques e digitação; este projeto **não** reimplementa o robô.
 
-Derivados: [`docs/`](docs/).  
-Timeline de prompts: [`../prompts/`](../prompts/).  
+Derivados: [`docs/`](docs/README.md).  
+Timeline de prompts: [`../prompts/`](../prompts/README.md).  
 Regras para a IA: [`config/config-ia.md`](config/config-ia.md).
 
 ---

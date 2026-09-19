@@ -52,4 +52,4 @@ EP-04 Actuate — “Atuação no device”
 └── US-07 Escolher backend de atuação
 ```
 
-→ [`../README.md`](../README.md) · [`../docs/`](../docs/) · [`tasks`](../../../core/tasks/README.md#p1--connectmax--screen-robot) · [`board`](../../../core/board/README.md#p1--connectmax--screen-robot)
+→ [`../README.md`](../README.md) · [`../docs/`](../docs/README.md) · [`tasks`](../../../core/tasks/README.md#p1--connectmax--screen-robot) · [`board`](../../../core/board/README.md#p1--connectmax--screen-robot)

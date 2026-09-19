@@ -2,9 +2,9 @@
 
 **Por quê:** fixar o *quê* do robô de tela antes de código ou goals de negócio.  
 **Importante:** este projeto **só** vê e manipula a tela; não implementa cadência comercial nem fila de leads.  
-**No fluxo:** **este documento** → [`docs/`](docs/) → implementação em [`sources/`](sources/).  
+**No fluxo:** **este documento** → [`docs/`](docs/README.md) → implementação em [`sources/`](sources/README.md).  
 **Umbrella:** [`../README.md`](../README.md).  
-**Consumidor de negócio:** [`../vendas/`](../vendas/).
+**Consumidor de negócio:** [`../vendas/`](../vendas/README.md).
 
 ---
 
@@ -50,7 +50,7 @@ Entregar Capture → Perceive → Decide → Actuate com backends plugáveis (AD
 | Artefato | Caminho |
 |----------|---------|
 | Épicos (Capture · Perceive · Decide · Actuate) | [`epics/`](epics/README.md) |
-| Sources (redroid, android-studio, android-control) | [`sources/`](sources/) |
+| Sources (redroid, android-studio, android-control) | [`sources/`](sources/README.md) |
 | Plano produto (WBS + Gantt) | [`docs/plano-percepcao-imagem-hardware.md`](docs/plano-percepcao-imagem-hardware.md) |
 | Plano implementação | [`docs/plano-implementacao-percepcao.md`](docs/plano-implementacao-percepcao.md) |
 | Funcionalidades | [`docs/functionalities.md`](docs/functionalities.md) |

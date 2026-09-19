@@ -4,12 +4,12 @@ Umbrella com **dois projetos** independentes:
 
 | Projeto | Papel | Pasta |
 |---------|-------|--------|
-| **screen-robot** | Robô de tela: captura imagem, identifica textos/ícones/listas e manipula (clicar, digitar, rolar) | [`screen-robot/`](screen-robot/) |
-| **vendas** | Automação do processo de vendas / prospecção LinkedIn da operação ConnectMax | [`vendas/`](vendas/) |
+| **screen-robot** | Robô de tela: captura imagem, identifica textos/ícones/listas e manipula (clicar, digitar, rolar) | [`screen-robot/`](screen-robot/README.md) |
+| **vendas** | Automação do processo de vendas / prospecção LinkedIn da operação ConnectMax | [`vendas/`](vendas/README.md) |
 
 **Dependência:** `vendas` consome o `screen-robot` para agir no LinkedIn; o robô **não** conhece regras de negócio de vendas.
 
-Prompts (timeline compartilhada): [`prompts/`](prompts/).  
+Prompts (timeline compartilhada): [`prompts/`](prompts/README.md).  
 Config IA (umbrella): [`config/config-ia.md`](config/config-ia.md).
 
 ## Ordem sugerida

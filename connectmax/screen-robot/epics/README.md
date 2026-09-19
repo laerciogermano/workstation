@@ -20,13 +20,12 @@ epics/EP-XX-…/
 ├── README.md
 ├── 1.stories.md
 ├── 2.epics.md
-├── 5.implementation-plan.md   # opcional (ex.: EP-01 com seq/classes/modelos)
+├── 5.implementation-plan.md   # plano do épico (seq/classes/modelos)
 └── US-YY-…/
     ├── README.md
     ├── 1.stories.md
     ├── 3.scenarios.md
-    ├── 4.bdds.md
-    └── 5.implementation-plan.md
+    └── 4.bdds.md
 ```
 
 ## EP-01 — Provisionar agente

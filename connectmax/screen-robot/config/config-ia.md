@@ -12,7 +12,8 @@ README.md (visão)
 ├── 6.roadmap.md                # Gantt
 ├── 7.tasks.md                  # Gantt TSK
 ├── epics/EP-*/                 # 1.stories + 2.epics
-│   └── US-*/                   # 3.scenarios + 4.bdds + 5.implementation-plan
+│   ├── 5.implementation-plan.md  # plano do épico
+│   └── US-*/                   # 3.scenarios + 4.bdds
 └── sources/android-control (libs Node + scripts/linkedin-login.js)
 ```
 

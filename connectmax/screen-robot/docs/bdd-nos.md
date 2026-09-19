@@ -1,6 +1,6 @@
 # BDD — cenários por história (screen-robot)
 
-**Por quê:** aceite de cada **US** e de cada **SC** em [`functionalities.md`](functionalities.md).  
+**Por quê:** aceite consolidado de cada **US** e **SC** (fonte por pasta: [`functionalities/`](functionalities/README.md)).  
 **Integração:** [`bdd-linkedin-login.md`](bdd-linkedin-login.md).
 
 Cada bloco usa Dado / Quando / Então alinhado a Entradas / Execução / Saídas.

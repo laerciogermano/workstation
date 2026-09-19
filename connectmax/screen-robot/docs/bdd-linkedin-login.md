@@ -1,6 +1,6 @@
 # BDD — Login LinkedIn via agent (Node)
 
-**Por quê:** critério de aceite da funcionalidade maior que usa **cada** recorte de [`functionalities.md`](functionalities.md).  
+**Por quê:** critério de aceite da funcionalidade maior que usa **cada** recorte de [`functionalities/`](functionalities/README.md).  
 **Script:** [`../sources/android-control/scripts/linkedin-login.js`](../sources/android-control/scripts/linkedin-login.js)  
 **Config do device:** [`../sources/android-control/device.config.json`](../sources/android-control/device.config.json)
 

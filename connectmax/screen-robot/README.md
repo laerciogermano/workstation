@@ -31,7 +31,7 @@ Expor via Node: **provisionar · instalar APKs · eventos · operar · extrair �
 
 ## Capacidades (v1)
 
-Ver [`docs/functionalities.md`](docs/functionalities.md).
+Ver [`docs/functionalities/`](docs/functionalities/README.md).
 
 ## Fora de escopo
 
@@ -43,7 +43,7 @@ Ver [`docs/functionalities.md`](docs/functionalities.md).
 
 | Artefato | Caminho |
 |----------|---------|
-| Funcionalidades | [`docs/functionalities.md`](docs/functionalities.md) |
+| Funcionalidades | [`docs/functionalities/`](docs/functionalities/README.md) |
 | BDD login LinkedIn | [`docs/bdd-linkedin-login.md`](docs/bdd-linkedin-login.md) |
 | Sources (Node + runtimes) | [`sources/`](sources/README.md) |
 | android-control | [`sources/android-control/`](sources/android-control/README.md) |

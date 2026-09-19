@@ -108,7 +108,7 @@ Persiste contexto do agente (device, apps, etapa, último perfil/thread) para re
 ## Fora do escopo
 
 - Cadência, fila, distribuição, faturamento ([`vendas`](../../vendas/README.md)).
-- Provisionar device / OCR / gestos genéricos ([`screen-robot`](../../screen-robot/docs/functionalities.md)).
+- Provisionar device / OCR / gestos genéricos ([`screen-robot`](../../screen-robot/docs/functionalities/README.md)).
 - Bypass de autenticação ou uso ilegítimo do LinkedIn.
 
 ## Próximos passos

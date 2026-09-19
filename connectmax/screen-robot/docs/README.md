@@ -8,7 +8,7 @@
 
 | Artefato | Arquivo | Status |
 |----------|---------|--------|
-| Funcionalidades (I/O por nó) | [`functionalities.md`](functionalities.md) | Feito |
+| Funcionalidades (pasta por US) | [`functionalities/`](functionalities/README.md) | Feito |
 | Tasks (árvore + Gantt) | [`tasks.md`](tasks.md) | Feito |
 | BDD por nó | [`bdd-nos.md`](bdd-nos.md) | Feito |
 | BDD login LinkedIn | [`bdd-linkedin-login.md`](bdd-linkedin-login.md) | Feito |

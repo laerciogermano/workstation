@@ -68,10 +68,10 @@ Processo (38)
     └── 6.5 Encaminhar mudancas
 ```
 
-### Gantt — fases e passos sequenciais
+### Roadmap — etapas sequenciais
 
-Pais e filhos na mesma ordem da árvore, **todos sequenciais** (fase → passos → próxima fase).  
-Durações relativas (1 unidade = 1 nó). Estilo: fundo preto · fase = azul · passo = cinza.
+Só as fases maiores, em sequência (detalhe dos passos na árvore acima).  
+Estilo: fundo preto · etapa = azul.
 
 ```mermaid
 ---
@@ -108,59 +108,17 @@ config:
     activeTaskBorderColor: '#64748b'
 ---
 gantt
-  title Processo de desenvolvimento — fases e passos sequenciais
+  title Processo — etapas sequenciais
   dateFormat X
   axisFormat %s
 
-  section 1. Discovery
+  section Etapas
   1. Discovery                  :done, p1, 0, 1
-  1.1 Vision                    :d11, after p1, 1
-  1.2 Functionalities           :d12, after d11, 1
-  1.3 Cenarios                  :d13, after d12, 1
-  1.4 BDDs                      :d14, after d13, 1
-  1.5 Prototipo                 :d15, after d14, 1
-  1.6 Roadmap                   :d16, after d15, 1
-
-  section 2. Refinamento tecnico
-  2. Refinamento tecnico        :done, p2, after d16, 1
-  2.1 Arquitetura e contratos   :d21, after p2, 1
-  2.2 Riscos e mitigacoes       :d22, after d21, 1
-  2.3 Criterios de pronto       :d23, after d22, 1
-  2.4 Estimar esforco           :d24, after d23, 1
-  2.5 Quebrar em tarefas        :d25, after d24, 1
-
-  section 3. Desenvolvimento
-  3. Desenvolvimento            :done, p3, after d25, 1
-  3.1 Implementar aceite        :d31, after p3, 1
-  3.2 Commits revisaveis        :d32, after d31, 1
-  3.3 Lote primeiro caso        :d33, after d32, 1
-  3.4 Testes unitarios          :d34, after d33, 1
-  3.5 Documentar minimo         :d35, after d34, 1
-  3.6 Integrar CI               :d36, after d35, 1
-
-  section 4. Testes
-  4. Testes                     :done, p4, after d36, 1
-  4.1 Unitario integracao E2E   :d41, after p4, 1
-  4.2 Aceite por cenario        :d42, after d41, 1
-  4.3 Regressao                 :d43, after d42, 1
-  4.4 Qualidade                 :d44, after d43, 1
-  4.5 Priorizar bugs            :d45, after d44, 1
-
-  section 5. Implantacao
-  5. Implantacao                :done, p5, after d45, 1
-  5.1 Build e release           :d51, after p5, 1
-  5.2 Migracoes e config        :d52, after d51, 1
-  5.3 Deploy staging prod       :d53, after d52, 1
-  5.4 Smoke pos-deploy          :d54, after d53, 1
-  5.5 Comunicar rollback        :d55, after d54, 1
-
-  section 6. Manutencao
-  6. Manutencao                 :done, p6, after d55, 1
-  6.1 Monitorar incidentes      :d61, after p6, 1
-  6.2 Hotfixes                  :d62, after d61, 1
-  6.3 Melhorias                 :d63, after d62, 1
-  6.4 Debito tecnico            :d64, after d63, 1
-  6.5 Encaminhar mudancas       :d65, after d64, 1
+  2. Refinamento tecnico        :done, p2, after p1, 1
+  3. Desenvolvimento            :done, p3, after p2, 1
+  4. Testes                     :done, p4, after p3, 1
+  5. Implantacao                :done, p5, after p4, 1
+  6. Manutencao                 :done, p6, after p5, 1
 ```
 
 ## Fluxo (entradas → execução → saídas)

@@ -1,4 +1,7 @@
 .env
 data/
+apks/
 *.log
 .DS_Store
+*.apk
+*.xapk

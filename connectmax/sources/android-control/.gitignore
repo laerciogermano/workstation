@@ -1,0 +1,5 @@
+node_modules/
+screenshots/
+*.png
+.DS_Store
+meu-fluxo.json

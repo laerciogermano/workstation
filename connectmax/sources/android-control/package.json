@@ -1,0 +1,17 @@
+{
+  "name": "android-control",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Executa ações configuráveis no Android via ADB (tap, type, screenshot)",
+  "bin": {
+    "android-control": "./cli.js"
+  },
+  "scripts": {
+    "run": "node cli.js",
+    "example": "node cli.js config.example.json"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

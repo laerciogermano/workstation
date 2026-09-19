@@ -6,6 +6,7 @@ Runtimes Android usados pelo ConnectMax. São **dois projetos independentes** �
 |---------|-------------|-----------------|
 | [redroid](redroid/) | Linux/Colima com `binder` — Android em Docker | `./scripts/view.sh` (scrcpy) |
 | [android-studio](android-studio/) | macOS / SDK oficial — emulador Android Studio | janela do Emulator (+ OBS opcional para câmera) |
+| [android-control](android-control/) | Automação ADB (tap, digitar, print) via Node | — |
 
 ```bash
 # Redroid

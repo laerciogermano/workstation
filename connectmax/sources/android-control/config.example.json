@@ -1,0 +1,14 @@
+{
+  "device": "127.0.0.1:5555",
+  "steps": [
+    { "action": "launch", "package": "com.instagram.android" },
+    { "action": "wait", "ms": 2000 },
+    { "action": "screenshot", "path": "./screenshots/01-home.png" },
+    { "action": "tap", "x": 360, "y": 1200 },
+    { "action": "wait", "ms": 800 },
+    { "action": "type", "text": "hello" },
+    { "action": "wait", "ms": 500 },
+    { "action": "screenshot", "path": "./screenshots/02-after-type.png" },
+    { "action": "key", "code": "KEYCODE_BACK" }
+  ]
+}

@@ -54,6 +54,6 @@ if [[ "${STATE}" != "device" ]]; then
   exit 1
 fi
 
-echo "Abrindo scrcpy (mouse ativo; teclado SDK desativado — evita crash no redroid 15)..."
-# --keyboard=disabled: no redroid 15 o InputManager NPE com o teclado UHID do scrcpy
-exec scrcpy -s "${TARGET}" --no-audio --keyboard=disabled --always-on-top --window-title "ConnectMax Redroid"
+echo "Abrindo scrcpy (mouse + teclado sdk)..."
+# uhid no redroid 15: InputManager NPE — use sdk (não o default uhid)
+exec scrcpy -s "${TARGET}" --no-audio --keyboard=sdk --always-on-top --window-title "ConnectMax Redroid"

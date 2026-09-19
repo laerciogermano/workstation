@@ -60,3 +60,4 @@ Como registrar: [`README.md`](README.md).
 | 050 | 2026-09-19 | Scenarios screen-robot como tabela | [050-2026-09-19-scenarios-screen-robot-tabela.md](050-2026-09-19-scenarios-screen-robot-tabela.md) | Unifica SC-01..SC-20 do screen-robot em uma tabela. |
 | 051 | 2026-09-19 | Separar cenários por estórias | [051-2026-09-19-cenarios-por-estorias.md](051-2026-09-19-cenarios-por-estorias.md) | Agrupa tabelas de SC por seção US no screen-robot. |
 | 052 | 2026-09-19 | US como coluna na tabela de cenários | [052-2026-09-19-us-coluna-tabela-cenarios.md](052-2026-09-19-us-coluna-tabela-cenarios.md) | Inclui US e Estória nas tabelas de cenários por estória. |
+| 053 | 2026-09-19 | Epics em tabela como cenários | [053-2026-09-19-epics-tabela-como-cenarios.md](053-2026-09-19-epics-tabela-como-cenarios.md) | `4.epics.md` em tabelas por EP (EP · Épico · US · Estória). |

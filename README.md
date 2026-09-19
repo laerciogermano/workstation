@@ -1,6 +1,6 @@
 # Workstation
 
-Hub de projetos, board e processo de desenvolvimento.
+Hub de projetos, board, tasks e processo de desenvolvimento.
 
 ---
 

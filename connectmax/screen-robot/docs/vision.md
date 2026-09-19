@@ -3,38 +3,6 @@
 **Por quê:** lista visual das histórias (US) e como cada uma funciona.  
 **Detalhe:** [`functionalities/`](functionalities/README.md) · **Visão do produto:** [`../README.md`](../README.md).
 
-## Pipeline
-
-```mermaid
-flowchart LR
-  subgraph Provisionar
-    US01[US-01 Provisionar agente]
-  end
-  subgraph Eventos
-    US02[US-02 Evento de boot]
-    US03[US-03 Evento de app aberta]
-    US04[US-04 Evento de tela estável]
-    US05[US-05 Evento de mudança de dump]
-  end
-  subgraph Instalar
-    US06[US-06 Instalar APKs]
-  end
-  subgraph Operar
-    US07[US-07 Abrir aplicativo]
-    US08[US-08 tap]
-    US09[US-09 type]
-    US10[US-10 scroll]
-    US11[US-11 screenshot]
-    US12[US-12 x,y a partir de imagem]
-  end
-  subgraph Extrair
-    US13[US-13 Extrair e sessão]
-  end
-
-  US01 --> US02 --> US03 --> US04 --> US05 --> US06
-  US06 --> US07 --> US08 --> US09 --> US10 --> US11 --> US12 --> US13
-```
-
 ## Histórias
 
 ### US-01 — Provisionar um agente

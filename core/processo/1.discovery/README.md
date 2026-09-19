@@ -12,7 +12,7 @@ Ordem **obrigatória** — não pular nem inverter:
 4. **Epics** — [`4.epics.md`](4.epics.md): EP que agrupam US e entregam valor.
 5. **Protótipo** — [`5.prototype.md`](5.prototype.md): validação visual/interativa do que foi especificado.
 6. **Roadmap** — [`6.roadmap.md`](6.roadmap.md): Gantt EP → US (sem SC; folhas EP/US do mesmo tamanho).
-7. **Tasks** — `tasks.md` do projeto: Gantt TSK (inclui SC) + inventário.
+7. **Tasks** — [`7.tasks.md`](7.tasks.md) / `tasks.md` do projeto: Gantt TSK + EP/US/SC em cada barra + inventário.
 
 A **visão do produto** (problema, para quem, objetivo, fora de escopo) fica no `README.md` do projeto.
 
@@ -59,7 +59,7 @@ EP-01 — Autenticação      ← valor (entrar no produto); agrupa US-01 + US-0
 4. Agrupar em **epics** (valor por EP)
 5. Produzir o **protótipo** (validar o *quê* com stakeholders)
 6. Montar o **roadmap** (EP/US)
-7. Montar as **tasks** (TSK + SC no Gantt)
+7. Montar as **tasks** (TSK + ID EP/US/SC em cada barra)
 
 ## Saídas
 
@@ -71,7 +71,7 @@ EP-01 — Autenticação      ← valor (entrar no produto); agrupa US-01 + US-0
 | 4 | [`4.epics.md`](4.epics.md) | EP → lista de US |
 | 5 | [`5.prototype.md`](5.prototype.md) / protótipo do projeto | Validação visual/interativa |
 | 6 | [`6.roadmap.md`](6.roadmap.md) / roadmap do projeto | Gantt EP/US |
-| 7 | `tasks.md` do projeto | Gantt TSK + inventário |
+| 7 | [`7.tasks.md`](7.tasks.md) / `tasks.md` do projeto | Gantt TSK + EP/US/SC + inventário |
 
 ## Próximo passo
 

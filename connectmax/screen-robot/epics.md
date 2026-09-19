@@ -3,7 +3,7 @@
 **Por quê:** fatia entregável do robô (capacidades Node → US).  
 **Visão:** [`README.md`](README.md).  
 **US / cenários:** [`scenarios.md`](scenarios.md). **BDDs:** [`bdds.md`](bdds.md).  
-**Árvore / Gantt:** [`tasks.md`](tasks.md).
+**Árvore:** [`tasks.md`](tasks.md). **Roadmap:** [`roadmap.md`](roadmap.md).
 
 **IDs:** **EP-** = épico · **US-** = história ([`scenarios.md`](scenarios.md)).
 

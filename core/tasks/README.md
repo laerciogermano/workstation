@@ -35,7 +35,7 @@ screen-robot (393 min)
 │   ├── US-11 screenshot (15 min)
 │   └── US-12 Resgatar coordenadas x,y (imagem de entrada) (15 min)
 ├── Extrair
-│   ├── US-13 Extrair nó Texto (20 min)
+│   ├── US-13 Extrair nó Texto a partir de imagem (20 min)
 │   ├── US-14 Extrair nó Ícone (20 min)
 │   ├── US-15 Extrair nó Imagem / foto (24 min)
 │   ├── US-16 Extrair nó Lista (24 min)
@@ -86,7 +86,7 @@ gantt
   US-12 Resgatar xy por imagem     :o6, 0, 15m
 
   section Extrair
-  US-13 No Texto                   :x1, 0, 20m
+  US-13 No Texto via imagem        :x1, 0, 20m
   US-14 No Icone                   :x2, 0, 20m
   US-15 No Imagem e foto           :x3, 0, 24m
   US-16 No Lista                   :x4, 0, 24m
@@ -124,7 +124,7 @@ IDs: **US-** história · **SC-** cenário (só sob US-01, US-02, US-19). Baseli
 | US-10 | scroll | 2026-09-19 | 2026-09-19 | Conteúdo rolado; novos itens visíveis |
 | US-11 | screenshot | 2026-09-19 | 2026-09-19 | Arquivo de imagem |
 | US-12 | Resgatar coordenadas x,y (imagem de entrada) | 2026-09-19 | 2026-09-19 | Coordenadas x,y (e confiança) |
-| US-13 | Extrair nó Texto | 2026-09-19 | 2026-09-19 | Nós de texto com string e bounds |
+| US-13 | Extrair nó Texto a partir de imagem | 2026-09-19 | 2026-09-19 | Nós de texto com string e bounds |
 | US-14 | Extrair nó Ícone | 2026-09-19 | 2026-09-19 | Nós de ícone com tipo e bounds |
 | US-15 | Extrair nó Imagem / foto | 2026-09-19 | 2026-09-19 | Nós imagem/foto com bounds |
 | US-16 | Extrair nó Lista | 2026-09-19 | 2026-09-19 | Nó lista com filhos e metadados de scroll |

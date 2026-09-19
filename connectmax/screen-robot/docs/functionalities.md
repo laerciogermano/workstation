@@ -22,7 +22,7 @@ Eventos, operações e extração: **cada item é uma US**, não um lote.
 | US-10 | scroll | Swipe / scroll na tela ou lista | 15 |
 | US-11 | screenshot | Capturar frame da tela | 15 |
 | US-12 | Resgatar coordenadas x,y | Localizar alvo na tela a partir de imagem de entrada | 15 |
-| US-13 | Extrair nó Texto | Textos com string e bounds | 20 |
+| US-13 | Extrair nó Texto a partir de imagem | Extrair textos (string e bounds) a partir de uma imagem da tela | 20 |
 | US-14 | Extrair nó Ícone | Pictogramas/controles com tipo e bounds | 20 |
 | US-15 | Extrair nó Imagem / foto | Regiões de mídia com bounds | 24 |
 | US-16 | Extrair nó Lista | Coleção rolável com itens filhos e scroll | 24 |
@@ -140,11 +140,13 @@ Eventos, operações e extração: **cada item é uma US**, não um lote.
 |----------|----------|--------|
 | Imagem template, frame/tela atual | Template match / visão na tela | Coordenadas x,y (e confiança) |
 
-### US-13 · Extrair nó Texto (20 min)
+### US-13 · Extrair nó Texto a partir de imagem (20 min)
+
+Extrai nós de texto **a partir de uma imagem** da tela (screenshot/frame).
 
 | Entradas | Execução | Saídas |
 |----------|----------|--------|
-| Frame/dump | OCR / atributo de texto | Nós de texto com string e bounds |
+| Imagem da tela (screenshot/frame) | OCR / leitura de texto na imagem | Nós de texto com string e bounds |
 
 ### US-14 · Extrair nó Ícone (20 min)
 

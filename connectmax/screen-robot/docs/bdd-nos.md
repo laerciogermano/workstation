@@ -188,13 +188,13 @@ Funcionalidade: Resgatar coordenadas x,y
 
 ---
 
-## US-13 · Extrair nó Texto
+## US-13 · Extrair nó Texto a partir de imagem
 
 ```gherkin
-Funcionalidade: Extrair nó Texto
-  Cenário: Textos são extraídos
-    Dado frame/dump
-    Quando OCR ou atributos de texto são lidos
+Funcionalidade: Extrair nó Texto a partir de imagem
+  Cenário: Textos são extraídos da imagem da tela
+    Dado uma imagem da tela (screenshot/frame)
+    Quando OCR / leitura de texto é aplicada na imagem
     Então nós de texto existem com string e bounds
 ```
 

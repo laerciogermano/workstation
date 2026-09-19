@@ -71,16 +71,49 @@ Processo (38)
 ### Gantt — fases e passos sequenciais
 
 Pais e filhos na mesma ordem da árvore, **todos sequenciais** (fase → passos → próxima fase).  
-Durações relativas (1 unidade = 1 nó).
+Durações relativas (1 unidade = 1 nó). Estilo: fundo preto · fase = azul · passo = cinza.
 
 ```mermaid
+---
+config:
+  theme: base
+  themeVariables:
+    darkMode: true
+    background: '#000000'
+    primaryTextColor: '#ffffff'
+    secondaryTextColor: '#ffffff'
+    tertiaryTextColor: '#ffffff'
+    textColor: '#ffffff'
+    lineColor: '#333333'
+    mainBkg: '#000000'
+    secondaryColor: '#000000'
+    tertiaryColor: '#000000'
+    sectionBkgColor: '#000000'
+    sectionBkgColor2: '#000000'
+    altSectionBkgColor: '#000000'
+    gridColor: '#222222'
+    excludeBkgColor: '#000000'
+    todayLineColor: '#444444'
+    doneTaskBkgColor: '#2563eb'
+    doneTaskBorderColor: '#1d4ed8'
+    taskBkgColor: '#94a3b8'
+    taskBorderColor: '#64748b'
+    taskTextColor: '#ffffff'
+    taskTextDarkColor: '#ffffff'
+    taskTextLightColor: '#ffffff'
+    taskTextOutsideColor: '#ffffff'
+    critBkgColor: '#2563eb'
+    critBorderColor: '#1d4ed8'
+    activeTaskBkgColor: '#94a3b8'
+    activeTaskBorderColor: '#64748b'
+---
 gantt
   title Processo de desenvolvimento — fases e passos sequenciais
   dateFormat X
   axisFormat %s
 
   section 1. Discovery
-  1. Discovery                  :p1, 0, 1
+  1. Discovery                  :done, p1, 0, 1
   1.1 Vision                    :d11, after p1, 1
   1.2 Functionalities           :d12, after d11, 1
   1.3 Cenarios                  :d13, after d12, 1
@@ -89,7 +122,7 @@ gantt
   1.6 Roadmap                   :d16, after d15, 1
 
   section 2. Refinamento tecnico
-  2. Refinamento tecnico        :p2, after d16, 1
+  2. Refinamento tecnico        :done, p2, after d16, 1
   2.1 Arquitetura e contratos   :d21, after p2, 1
   2.2 Riscos e mitigacoes       :d22, after d21, 1
   2.3 Criterios de pronto       :d23, after d22, 1
@@ -97,7 +130,7 @@ gantt
   2.5 Quebrar em tarefas        :d25, after d24, 1
 
   section 3. Desenvolvimento
-  3. Desenvolvimento            :p3, after d25, 1
+  3. Desenvolvimento            :done, p3, after d25, 1
   3.1 Implementar aceite        :d31, after p3, 1
   3.2 Commits revisaveis        :d32, after d31, 1
   3.3 Lote primeiro caso        :d33, after d32, 1
@@ -106,7 +139,7 @@ gantt
   3.6 Integrar CI               :d36, after d35, 1
 
   section 4. Testes
-  4. Testes                     :p4, after d36, 1
+  4. Testes                     :done, p4, after d36, 1
   4.1 Unitario integracao E2E   :d41, after p4, 1
   4.2 Aceite por cenario        :d42, after d41, 1
   4.3 Regressao                 :d43, after d42, 1
@@ -114,7 +147,7 @@ gantt
   4.5 Priorizar bugs            :d45, after d44, 1
 
   section 5. Implantacao
-  5. Implantacao                :p5, after d45, 1
+  5. Implantacao                :done, p5, after d45, 1
   5.1 Build e release           :d51, after p5, 1
   5.2 Migracoes e config        :d52, after d51, 1
   5.3 Deploy staging prod       :d53, after d52, 1
@@ -122,7 +155,7 @@ gantt
   5.5 Comunicar rollback        :d55, after d54, 1
 
   section 6. Manutencao
-  6. Manutencao                 :p6, after d55, 1
+  6. Manutencao                 :done, p6, after d55, 1
   6.1 Monitorar incidentes      :d61, after p6, 1
   6.2 Hotfixes                  :d62, after d61, 1
   6.3 Melhorias                 :d63, after d62, 1

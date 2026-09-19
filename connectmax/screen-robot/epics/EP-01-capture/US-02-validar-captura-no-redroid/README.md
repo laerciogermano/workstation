@@ -1,13 +1,13 @@
-# US-03 — Validar captura no redroid
+# US-02 — Validar captura no redroid
 
 | Campo | Valor |
 |-------|--------|
-| ID | US-03 |
+| ID | US-02 |
 | Épico | [EP-01 Capture](../README.md) |
 | Status | Todo |
 | Esforço IA | 9m |
 | Recorte de | Captura de tela do device |
-| Depende de | [US-02](../US-02-capturar-tela-via-adb/README.md) |
+| Depende de | [US-01](../US-01-capturar-tela-via-adb/README.md) |
 
 ## História
 

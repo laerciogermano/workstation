@@ -99,15 +99,14 @@ Estimativas: **minutos de esforço IA** (não humano).
 ```mermaid
 flowchart TD
   subgraph EP01["EP-01 Capture"]
-    C01[US-01 Frame padronizado 12m]
-    C02[US-02 Captura ADB 30m]
-    C03[US-03 Validar redroid 9m]
-    C04[US-04 Captura agent 90m]
-    C05[US-05 Backend capture 24m]
-    C01 --> C02 --> C03
+    C01[US-01 Captura ADB 42m]
+    C02[US-02 Validar redroid 9m]
+    C03[US-03 Captura agent 90m]
+    C04[US-04 Backend capture 24m]
+    C01 --> C02
+    C01 --> C03
     C01 --> C04
-    C02 --> C05
-    C04 --> C05
+    C03 --> C04
   end
 
   subgraph EP02["EP-02 Perceive"]
@@ -151,8 +150,8 @@ flowchart TD
     A06 --> A07
   end
 
-  C03 --> P01
-  C03 --> A03
+  C02 --> P01
+  C02 --> A03
   P05 --> D01
   P05 --> D02
   D03 --> A04
@@ -163,11 +162,10 @@ flowchart TD
 
 | Todo | Doing | Done |
 |------|-------|------|
-| [US-01](../../connectmax/screen-robot/epics/EP-01-capture/US-01-obter-frame-padronizado/README.md) Obter frame padronizado · 12m | | |
-| [US-02](../../connectmax/screen-robot/epics/EP-01-capture/US-02-capturar-tela-via-adb/README.md) Capturar via ADB · 30m | | |
-| [US-03](../../connectmax/screen-robot/epics/EP-01-capture/US-03-validar-captura-no-redroid/README.md) Validar no redroid · 9m | | |
-| [US-04](../../connectmax/screen-robot/epics/EP-01-capture/US-04-capturar-tela-via-agent/README.md) Capturar via agent · 90m | | |
-| [US-05](../../connectmax/screen-robot/epics/EP-01-capture/US-05-escolher-backend-de-captura/README.md) Backend captura · 24m | | |
+| [US-01](../../connectmax/screen-robot/epics/EP-01-capture/US-01-capturar-tela-via-adb/README.md) Capturar via ADB · 42m | | |
+| [US-02](../../connectmax/screen-robot/epics/EP-01-capture/US-02-validar-captura-no-redroid/README.md) Validar no redroid · 9m | | |
+| [US-03](../../connectmax/screen-robot/epics/EP-01-capture/US-03-capturar-tela-via-agent/README.md) Capturar via agent · 90m | | |
+| [US-04](../../connectmax/screen-robot/epics/EP-01-capture/US-04-escolher-backend-de-captura/README.md) Backend captura · 24m | | |
 
 ### EP-02 Perceive
 

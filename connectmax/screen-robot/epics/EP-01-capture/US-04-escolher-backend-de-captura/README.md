@@ -1,13 +1,13 @@
-# US-05 — Escolher backend de captura
+# US-04 — Escolher backend de captura
 
 | Campo | Valor |
 |-------|--------|
-| ID | US-05 |
+| ID | US-04 |
 | Épico | [EP-01 Capture](../README.md) |
 | Status | Todo |
 | Esforço IA | 24m |
 | Recorte de | Captura de tela do device |
-| Depende de | [US-02](../US-02-capturar-tela-via-adb/README.md), [US-04](../US-04-capturar-tela-via-agent/README.md) |
+| Depende de | [US-01](../US-01-capturar-tela-via-adb/README.md), [US-03](../US-03-capturar-tela-via-agent/README.md) |
 
 ## História
 
@@ -17,11 +17,11 @@ Como operador do screen-robot, quero **escolher o backend de captura** (`adb` ou
 
 ### SC-01 — Factory ADB
 
-Dado `BACKEND=adb` (ou equivalente), quando a factory **monta Capture**, então a instância é **AdbCapture**.
+Dado `BACKEND=adb` (ou equivalente), quando a factory **monta Capture**, então a captura **usa ADB**.
 
 ### SC-02 — Factory agent
 
-Dado `BACKEND=agent`, quando a factory **monta Capture**, então a instância é **AgentCapture**.
+Dado `BACKEND=agent`, quando a factory **monta Capture**, então a captura **usa agent**.
 
 ### SC-03 — Perceive inalterado
 

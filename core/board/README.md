@@ -18,14 +18,13 @@ gantt
   axisFormat %s
 
   section EP-01 Capture
-  Frame padronizado        :a01, 0, 12m
-  Captura ADB              :a02, after a01, 30m
-  Validar redroid          :a03, after a02, 9m
-  Captura agent            :a04, after a01, 90m
-  Backend captura          :a05, after a03, 24m
+  Captura ADB              :a01, 0, 42m
+  Validar redroid          :a02, after a01, 9m
+  Captura agent            :a03, after a01, 90m
+  Backend captura          :a04, after a02, 24m
 
   section EP-02 Perceive
-  Schema elemento          :b01, after a03, 24m
+  Schema elemento          :b01, after a02, 24m
   OCR textos               :b02, after b01, 60m
   Controles vision         :b03, after b01, 90m
   Unificar lista           :b04, after b02, 36m

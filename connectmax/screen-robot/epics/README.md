@@ -23,11 +23,10 @@ Cada US é um **recorte de funcionalidade** (Como… quero… para…) com cená
 
 ```text
 EP-01 Capture — “Captura de tela do device”
-├── US-01 Obter frame padronizado
-├── US-02 Capturar tela via ADB
-├── US-03 Validar captura no redroid
-├── US-04 Capturar tela via agent
-└── US-05 Escolher backend de captura
+├── US-01 Capturar tela via ADB
+├── US-02 Validar captura no redroid
+├── US-03 Capturar tela via agent
+└── US-04 Escolher backend de captura
 
 EP-02 Perceive — “Percepção frame → lista de elementos”
 ├── US-01 Validar schema de elemento

@@ -5,50 +5,6 @@
 
 Cada bloco: Dado / Quando / Então alinhado a Entradas / Execução / Saídas.
 
-## Índice
-
-| ID | Título |
-|----|--------|
-| [US-01](#us-01) | Provisionar um agente |
-| [US-02](#us-02) | Evento de boot |
-| [US-03](#us-03) | Evento de app aberta |
-| [US-04](#us-04) | Evento de tela estável |
-| [US-05](#us-05) | Evento de mudança de dump |
-| [US-06](#us-06) | Instalar APKs |
-| [US-07](#us-07) | Abrir aplicativo |
-| [US-08](#us-08) | tap |
-| [US-09](#us-09) | type |
-| [US-10](#us-10) | scroll |
-| [US-11](#us-11) | screenshot |
-| [US-12](#us-12) | Resgatar coordenadas x,y a partir de uma imagem |
-| [US-13](#us-13) | Extrair elementos |
-| [US-14](#us-14) | Salvar sessão |
-| [US-15](#us-15) | Remover sessão |
-| [US-16](#us-16) | Recuperar sessão |
-
-| SC | Cenário | US |
-|----|---------|-----|
-| [SC-01](#sc-01) | Subir / conectar o Android (agent) | US-01 |
-| [SC-02](#sc-02) | Garantir serial ADB online | US-01 |
-| [SC-03](#sc-03) | Aguardar boot completo | US-01 |
-| [SC-04](#sc-04) | Sinal de boot é recebido | US-02 |
-| [SC-05](#sc-05) | App em foreground é confirmada | US-03 |
-| [SC-06](#sc-06) | Tela fica estável | US-04 |
-| [SC-07](#sc-07) | Dump de UI muda | US-05 |
-| [SC-08](#sc-08) | Ler versão na config do dispositivo | US-06 |
-| [SC-09](#sc-09) | Baixar APK na versão definida | US-06 |
-| [SC-10](#sc-10) | Instalar pacote no agent | US-06 |
-| [SC-11](#sc-11) | App é aberta no agent | US-07 |
-| [SC-12](#sc-12) | Toque na tela | US-08 |
-| [SC-13](#sc-13) | Texto é digitado | US-09 |
-| [SC-14](#sc-14) | Conteúdo é rolado | US-10 |
-| [SC-15](#sc-15) | Print da tela é salvo | US-11 |
-| [SC-16](#sc-16) | Coordenadas a partir de imagem template | US-12 |
-| [SC-17](#sc-17) | Extrair elementos tipados e árvore DOM | US-13 |
-| [SC-18](#sc-18) | Salvar sessão em arquivo | US-14 |
-| [SC-19](#sc-19) | Remover sessão do disco | US-15 |
-| [SC-20](#sc-20) | Recuperar sessão do arquivo | US-16 |
-
 ---
 
 ## US-01 — Provisionar um agente

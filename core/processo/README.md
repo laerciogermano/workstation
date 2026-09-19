@@ -27,7 +27,7 @@ O mapa nasce no discovery; o restante do processo roda **estória a estória**, 
 ### Árvore de execução
 
 ```text
-Processo (32)
+Processo (38)
 ├── 1. Discovery
 │   ├── 1.1 Vision
 │   ├── 1.2 Functionalities
@@ -70,8 +70,8 @@ Processo (32)
 
 ### Gantt — fases e passos sequenciais
 
-Fases em ordem; dentro de cada fase, os passos da execução (mesma ordem da árvore).  
-Barras = folhas da árvore. Durações relativas (1 unidade = 1 passo).
+Pais e filhos na mesma ordem da árvore, **todos sequenciais** (fase → passos → próxima fase).  
+Durações relativas (1 unidade = 1 nó).
 
 ```mermaid
 gantt
@@ -79,49 +79,55 @@ gantt
   dateFormat X
   axisFormat %s
 
-  section Discovery
-  Vision                        :d1a, 0, 1
-  Functionalities               :d1b, after d1a, 1
-  Cenarios                      :d1c, after d1b, 1
-  BDDs                          :d1d, after d1c, 1
-  Prototipo                     :d1e, after d1d, 1
-  Roadmap                       :d1f, after d1e, 1
+  section 1. Discovery
+  1. Discovery                  :p1, 0, 1
+  1.1 Vision                    :d11, after p1, 1
+  1.2 Functionalities           :d12, after d11, 1
+  1.3 Cenarios                  :d13, after d12, 1
+  1.4 BDDs                      :d14, after d13, 1
+  1.5 Prototipo                 :d15, after d14, 1
+  1.6 Roadmap                   :d16, after d15, 1
 
-  section Refinamento tecnico
-  Arquitetura e contratos       :d2a, after d1f, 1
-  Riscos e mitigacoes           :d2b, after d2a, 1
-  Criterios de pronto           :d2c, after d2b, 1
-  Estimar esforco               :d2d, after d2c, 1
-  Quebrar em tarefas            :d2e, after d2d, 1
+  section 2. Refinamento tecnico
+  2. Refinamento tecnico        :p2, after d16, 1
+  2.1 Arquitetura e contratos   :d21, after p2, 1
+  2.2 Riscos e mitigacoes       :d22, after d21, 1
+  2.3 Criterios de pronto       :d23, after d22, 1
+  2.4 Estimar esforco           :d24, after d23, 1
+  2.5 Quebrar em tarefas        :d25, after d24, 1
 
-  section Desenvolvimento
-  Implementar aceite            :d3a, after d2e, 1
-  Commits revisaveis            :d3b, after d3a, 1
-  Lote primeiro caso            :d3c, after d3b, 1
-  Testes unitarios              :d3d, after d3c, 1
-  Documentar minimo             :d3e, after d3d, 1
-  Integrar CI                   :d3f, after d3e, 1
+  section 3. Desenvolvimento
+  3. Desenvolvimento            :p3, after d25, 1
+  3.1 Implementar aceite        :d31, after p3, 1
+  3.2 Commits revisaveis        :d32, after d31, 1
+  3.3 Lote primeiro caso        :d33, after d32, 1
+  3.4 Testes unitarios          :d34, after d33, 1
+  3.5 Documentar minimo         :d35, after d34, 1
+  3.6 Integrar CI               :d36, after d35, 1
 
-  section Testes
-  Unitario integracao E2E       :d4a, after d3f, 1
-  Aceite por cenario            :d4b, after d4a, 1
-  Regressao                     :d4c, after d4b, 1
-  Qualidade                     :d4d, after d4c, 1
-  Priorizar bugs                :d4e, after d4d, 1
+  section 4. Testes
+  4. Testes                     :p4, after d36, 1
+  4.1 Unitario integracao E2E   :d41, after p4, 1
+  4.2 Aceite por cenario        :d42, after d41, 1
+  4.3 Regressao                 :d43, after d42, 1
+  4.4 Qualidade                 :d44, after d43, 1
+  4.5 Priorizar bugs            :d45, after d44, 1
 
-  section Implantacao
-  Build e release               :d5a, after d4e, 1
-  Migracoes e config            :d5b, after d5a, 1
-  Deploy staging prod           :d5c, after d5b, 1
-  Smoke pos-deploy              :d5d, after d5c, 1
-  Comunicar rollback            :d5e, after d5d, 1
+  section 5. Implantacao
+  5. Implantacao                :p5, after d45, 1
+  5.1 Build e release           :d51, after p5, 1
+  5.2 Migracoes e config        :d52, after d51, 1
+  5.3 Deploy staging prod       :d53, after d52, 1
+  5.4 Smoke pos-deploy          :d54, after d53, 1
+  5.5 Comunicar rollback        :d55, after d54, 1
 
-  section Manutencao
-  Monitorar incidentes          :d6a, after d5e, 1
-  Hotfixes                      :d6b, after d6a, 1
-  Melhorias                     :d6c, after d6b, 1
-  Debito tecnico                :d6d, after d6c, 1
-  Encaminhar mudancas           :d6e, after d6d, 1
+  section 6. Manutencao
+  6. Manutencao                 :p6, after d55, 1
+  6.1 Monitorar incidentes      :d61, after p6, 1
+  6.2 Hotfixes                  :d62, after d61, 1
+  6.3 Melhorias                 :d63, after d62, 1
+  6.4 Debito tecnico            :d64, after d63, 1
+  6.5 Encaminhar mudancas       :d65, after d64, 1
 ```
 
 ## Fluxo (entradas → execução → saídas)

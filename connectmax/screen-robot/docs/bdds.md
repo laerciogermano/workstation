@@ -1,11 +1,30 @@
 # BDDs — screen-robot
 
-**Por quê:** aceite Gherkin **só dos cenários (SC)** (fonte: [`scenarios.md`](scenarios.md)).  
+**Por quê:** aceite Gherkin de cada **US** e de cada **SC** (fonte: [`scenarios.md`](scenarios.md)).  
 **Piloto:** script [`../sources/android-control/scripts/linkedin-login.js`](../sources/android-control/scripts/linkedin-login.js).
 
-Cada bloco: Dado / Quando / Então alinhado a Entradas / Execução / Saídas do SC.
+Cada bloco: Dado / Quando / Então alinhado a Entradas / Execução / Saídas.
 
 ## Índice
+
+| ID | Título |
+|----|--------|
+| [US-01](#us-01) | Provisionar um agente |
+| [US-02](#us-02) | Evento de boot |
+| [US-03](#us-03) | Evento de app aberta |
+| [US-04](#us-04) | Evento de tela estável |
+| [US-05](#us-05) | Evento de mudança de dump |
+| [US-06](#us-06) | Instalar APKs |
+| [US-07](#us-07) | Abrir aplicativo |
+| [US-08](#us-08) | tap |
+| [US-09](#us-09) | type |
+| [US-10](#us-10) | scroll |
+| [US-11](#us-11) | screenshot |
+| [US-12](#us-12) | Resgatar coordenadas x,y a partir de uma imagem |
+| [US-13](#us-13) | Extrair elementos |
+| [US-14](#us-14) | Salvar sessão |
+| [US-15](#us-15) | Remover sessão |
+| [US-16](#us-16) | Recuperar sessão |
 
 | SC | Cenário | US |
 |----|---------|-----|
@@ -33,6 +52,15 @@ Cada bloco: Dado / Quando / Então alinhado a Entradas / Execução / Saídas do
 ---
 
 ## US-01 — Provisionar um agente
+
+### US-01
+
+```gherkin
+Cenário: US-01 Agent fica pronto para ADB
+  Dado a config do dispositivo (device.config.json) e o runtime Android disponíveis
+  Quando o provisionamento sobe/conecta o agent, garante serial online e aguarda boot completo
+  Então o agent está pronto para ADB (serial online e boot ok)
+```
 
 ### SC-01
 
@@ -72,6 +100,15 @@ Cenário: SC-03 Boot completo no device
 
 ## US-02 — Evento de boot
 
+### US-02
+
+```gherkin
+Cenário: US-02 Boot do device é sinalizado
+  Dado o serial online
+  Quando o sistema espera o sinal de boot
+  Então o boot é sinalizado
+```
+
 ### SC-04
 
 **Sinal de boot é recebido**
@@ -85,6 +122,15 @@ Cenário: SC-04 Sinal de boot é recebido
 ```
 
 ## US-03 — Evento de app aberta
+
+### US-03
+
+```gherkin
+Cenário: US-03 App aberta é confirmada
+  Dado o package em foreground esperado
+  Quando o sistema espera a app em foreground
+  Então a app aberta está confirmada
+```
 
 ### SC-05
 
@@ -100,6 +146,15 @@ Cenário: SC-05 App em foreground é confirmada
 
 ## US-04 — Evento de tela estável
 
+### US-04
+
+```gherkin
+Cenário: US-04 Tela estável é confirmada
+  Dado a app em foreground
+  Quando o sistema espera UI estável (sem transição)
+  Então a tela está estável
+```
+
 ### SC-06
 
 **Tela fica estável**
@@ -114,6 +169,15 @@ Cenário: SC-06 Tela fica estável
 
 ## US-05 — Evento de mudança de dump
 
+### US-05
+
+```gherkin
+Cenário: US-05 Dump atualizado fica disponível
+  Dado um dump anterior (opcional) e serial online
+  Quando o sistema detecta mudança no dump de UI
+  Então um dump atualizado está disponível
+```
+
 ### SC-07
 
 **Dump de UI muda**
@@ -127,6 +191,15 @@ Cenário: SC-07 Dump de UI muda
 ```
 
 ## US-06 — Instalar APKs
+
+### US-06
+
+```gherkin
+Cenário: US-06 Apps da config ficam instalados na versão definida
+  Dado o agent provisionado e a lista de apps/versões na config
+  Quando cada pacote é lido, baixado e instalado
+  Então os apps estão instalados nas versões definidas
+```
 
 ### SC-08
 
@@ -166,6 +239,15 @@ Cenário: SC-10 Pacote é instalado no agent
 
 ## US-07 — Abrir aplicativo
 
+### US-07
+
+```gherkin
+Cenário: US-07 App fica em foreground no agent
+  Dado package (e activity opcional)
+  Quando o launch do app é executado no agent
+  Então a app está em foreground
+```
+
 ### SC-11
 
 **App é aberta no agent**
@@ -179,6 +261,15 @@ Cenário: SC-11 App é aberta no agent
 ```
 
 ## US-08 — tap
+
+### US-08
+
+```gherkin
+Cenário: US-08 UI reflete o toque
+  Dado coordenadas x,y ou bounds do elemento
+  Quando o toque na tela é executado
+  Então a UI reflete o tap
+```
 
 ### SC-12
 
@@ -194,6 +285,15 @@ Cenário: SC-12 Toque na tela
 
 ## US-09 — type
 
+### US-09
+
+```gherkin
+Cenário: US-09 Texto aparece na UI
+  Dado um texto e campo focado ou coords
+  Quando digitar / injetar texto é executado
+  Então o texto aparece na UI
+```
+
 ### SC-13
 
 **Texto é digitado**
@@ -207,6 +307,15 @@ Cenário: SC-13 Texto é digitado
 ```
 
 ## US-10 — scroll
+
+### US-10
+
+```gherkin
+Cenário: US-10 Conteúdo da tela ou lista é rolado
+  Dado direção (up/down/left/right), distância ou bounds da área
+  Quando swipe / scroll é executado
+  Então o conteúdo rolou e novos itens podem ficar visíveis
+```
 
 ### SC-14
 
@@ -222,6 +331,15 @@ Cenário: SC-14 Conteúdo é rolado
 
 ## US-11 — screenshot
 
+### US-11
+
+```gherkin
+Cenário: US-11 Frame da tela é capturado
+  Dado serial e path de saída
+  Quando o frame da tela é capturado
+  Então o arquivo de imagem existe
+```
+
 ### SC-15
 
 **Print da tela é salvo**
@@ -236,6 +354,15 @@ Cenário: SC-15 Print da tela é salvo
 
 ## US-12 — Resgatar coordenadas x,y a partir de uma imagem
 
+### US-12
+
+```gherkin
+Cenário: US-12 Coordenadas do alvo são devolvidas
+  Dado uma imagem de entrada e o frame/tela atual
+  Quando o match por visão/template é executado
+  Então as coordenadas x,y (e confiança) são devolvidas
+```
+
 ### SC-16
 
 **Coordenadas a partir de imagem template**
@@ -249,6 +376,17 @@ Cenário: SC-16 Coordenadas a partir de imagem template
 ```
 
 ## US-13 — Extrair elementos
+
+### US-13
+
+```gherkin
+Cenário: US-13 Elementos tipados e árvore DOM
+  Dado uma imagem da tela (screenshot/frame) ou dump
+  Quando OCR e reconhecimento extraem elementos tipados
+  E a hierarquia raiz → filhos (árvore DOM) é composta
+  Então elementos tipados existem com string/tipo, bounds e metadados
+  E a árvore DOM navegável é devolvida
+```
 
 ### SC-17
 
@@ -266,6 +404,15 @@ Cenário: SC-17 Elementos tipados e árvore DOM
 
 ## US-14 — Salvar sessão
 
+### US-14
+
+```gherkin
+Cenário: US-14 Sessão é gravada em disco
+  Dado estado em memória e path da sessão
+  Quando a serialização grava o arquivo
+  Então o arquivo de sessão existe
+```
+
 ### SC-18
 
 **Salvar sessão em arquivo**
@@ -279,6 +426,16 @@ Cenário: SC-18 Sessão é gravada
 ```
 
 ## US-15 — Remover sessão
+
+### US-15
+
+```gherkin
+Cenário: US-15 Sessão é removida
+  Dado um path de sessão
+  Quando a remoção da sessão é executada
+  Então o arquivo de sessão não existe
+  E o runtime não mantém o contexto daquela sessão
+```
 
 ### SC-19
 
@@ -294,6 +451,15 @@ Cenário: SC-19 Sessão é removida do disco
 ```
 
 ## US-16 — Recuperar sessão
+
+### US-16
+
+```gherkin
+Cenário: US-16 Sessão é recuperada
+  Dado um arquivo de sessão existente
+  Quando a leitura reaplica o contexto
+  Então o runtime possui o estado restaurado
+```
 
 ### SC-20
 

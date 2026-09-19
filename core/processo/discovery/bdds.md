@@ -1,31 +1,40 @@
 # Documento de BDDs
 
-Artefato **3** do [discovery](README.md). Critérios de aceite em Gherkin **apenas por cenário (SC)** — arquivo único `bdds.md`.
+Artefato **3** do [discovery](README.md). Critérios de aceite em Gherkin — **um por US** e **um por SC** — arquivo único `bdds.md`.
 
 **Antes:** [`scenarios.md`](scenarios.md). **Depois:** [`prototype.md`](prototype.md).
 
 ## Regras
 
 1. Só depois do catálogo de cenários fechado.
-2. **Um bloco Gherkin por SC** do [`scenarios.md`](scenarios.md), alinhado a Entradas / Execução / Saídas.
-3. Não escrever BDD de nível US (a estória é coberta pela soma dos SC).
-4. Não inventar SC que não exista no catálogo.
+2. **Um bloco Gherkin por US** (Entradas / Execução / Saídas da estória).
+3. **Um bloco Gherkin por SC** (Entradas / Execução / Saídas do cenário).
+4. Não inventar US/SC que não existam no catálogo.
 
 ## Formato
 
+```markdown
+## US-NN — <título>
+
+### US-NN
+
 ```gherkin
-Cenário: SC-NN <título>
+Cenário: US-NN …
   Dado …
   Quando …
   Então …
 ```
 
-Agrupar sob heading da US só para navegação:
+### SC-NN
 
-```markdown
-## US-NN — <título>
+**\<título do cenário\>**
 
-### SC-NN <título>
+```gherkin
+Cenário: SC-NN …
+  Dado …
+  Quando …
+  Então …
+```
 ```
 
 ## Próximo passo

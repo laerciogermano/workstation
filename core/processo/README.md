@@ -47,7 +47,7 @@ O mapa nasce no discovery; o restante do processo roda **estória a estória**, 
 - `4.epics.md`
 - Protótipo
 - `6.roadmap.md`
-- `tasks.md`
+- `7.tasks.md` / `tasks.md`
 
 ---
 

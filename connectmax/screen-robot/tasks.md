@@ -13,18 +13,18 @@ Estimativas: minutos IA · **1 dia = 8h = 480 min**.
 ### Árvore de execução
 
 ```text
-screen-robot (273 min caminho · 408 min soma)
+screen-robot (249 min caminho · 408 min soma)
 ├── US-01 Provisionar um agente (60 min)
 │   ├── SC-01 Subir / conectar o Android (agent) (20 min)
 │   ├── SC-02 Garantir serial ADB online (20 min)
 │   └── SC-03 Aguardar boot completo (20 min)
 ├── US-02 Evento de boot (12 min)
 │   └── SC-04 Sinal de boot é recebido (12 min)
-├── US-03 Evento de app aberta (12 min)
+├── ∥ US-03 Evento de app aberta (12 min)
 │   └── SC-05 App em foreground é confirmada (12 min)
-├── US-04 Evento de tela estável (12 min)
+├── ∥ US-04 Evento de tela estável (12 min)
 │   └── SC-06 Tela fica estável (12 min)
-├── US-05 Evento de mudança de dump (12 min)
+├── ∥ US-05 Evento de mudança de dump (12 min)
 │   └── SC-07 Dump de UI muda (12 min)
 ├── ∥ US-06 Instalar APKs (45 min)
 │   ├── SC-08 Ler versão na config do dispositivo (5 min)
@@ -52,7 +52,7 @@ screen-robot (273 min caminho · 408 min soma)
     └── SC-20 Recuperar sessão do arquivo (15 min)
 ```
 
-`∥` = paralelizáveis (US-06..13; caminho do grupo = 120 min).
+`∥` = paralelizáveis (US-03..05 e US-06..13; caminhos dos grupos = 12 min e 120 min).
 
 ## Próximos passos
 

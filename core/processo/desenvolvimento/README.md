@@ -13,6 +13,7 @@ Implementar o que foi refinado.
 
 - Implementar conforme critérios de aceite
 - Manter commits pequenos e revisáveis
+- Em trabalho em lote: fazer primeiro um caso, validar o caminho; só então escalar ao restante
 - Escrever testes unitários quando couber
 - Documentar o mínimo necessário
 - Integrar com a esteira do projeto (CI)

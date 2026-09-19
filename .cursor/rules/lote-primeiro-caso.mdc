@@ -1,0 +1,23 @@
+---
+description: Em trabalho em lote, validar o primeiro caso antes de escalar
+alwaysApply: true
+---
+
+# Lote: primeiro caso, depois escala
+
+Sempre que for fazer algo em lote (vários arquivos, user stories, épicos, itens semelhantes), **não aplique em massa de imediato**.
+
+## Critérios
+
+1. Comece pelo **menor pedaço**: um único caso representativo
+2. Entregue esse primeiro caso e **valide** se o caminho está correto (formato, conteúdo, padrão, aceite)
+3. Só após validação, **replique** no restante usando o caminho já confirmado
+4. Se a validação falhar, ajuste no primeiro caso e só então escale
+
+## Exemplos
+
+```text
+✅ Criar US-01, validar README; depois gerar US-02..US-N no mesmo padrão
+✅ Editar um arquivo-piloto; confirmar; aplicar o mesmo ajuste nos demais
+❌ Gerar de uma vez todos os READMEs / diffs em lote sem validar o primeiro
+```

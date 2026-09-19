@@ -48,7 +48,7 @@ Ver [`2.scenarios.md`](2.scenarios.md).
 | Stories — US título + descrição | [`1.stories.md`](1.stories.md) | Feito |
 | Cenários (US + SC) | [`2.scenarios.md`](2.scenarios.md) | Feito |
 | BDDs (US/SC + piloto LinkedIn) | [`3.bdds.md`](3.bdds.md) | Feito |
-| Épicos | [`4.epics.md`](4.epics.md) | Feito |
+| Épicos | [`4.epics.md`](4.epics.md) · [`epics/`](epics/README.md) | Feito |
 | Implementation plan | [`5.implementation-plan.md`](5.implementation-plan.md) | Feito |
 | Roadmap (Gantt) | [`6.roadmap.md`](6.roadmap.md) | Feito |
 | Tasks (Gantt) | [`7.tasks.md`](7.tasks.md) | Feito |

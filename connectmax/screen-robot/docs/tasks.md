@@ -5,13 +5,13 @@
 **Visão:** [`../README.md`](../README.md).  
 **Kanban / inventário (umbrella):** [`core/tasks`](../../../core/tasks/README.md#p1--connectmax--screen-robot).
 
-Histórias US (cada US com ≥1 SC; Extrair+sessão = US-13).  
+Histórias US (cada US com ≥1 SC; extrair = US-13; sessão = US-14..16).  
 Estimativas: minutos IA · **1 dia = 8h = 480 min**.
 
 ### Árvore de execução
 
 ```text
-screen-robot (393 min)
+screen-robot (408 min)
 ├── US-01 Provisionar um agente (60 min)
 │   ├── SC-01 Subir / conectar o Android (agent) (20 min)
 │   ├── SC-02 Garantir serial ADB online (20 min)
@@ -40,16 +40,22 @@ screen-robot (393 min)
 │   └── SC-15 Print da tela é salvo (15 min)
 ├── US-12 Resgatar coordenadas x,y a partir de uma imagem (15 min)
 │   └── SC-16 Coordenadas a partir de imagem template (15 min)
-└── US-13 Extrair elementos e guardar sessão (150 min)
-    ├── SC-17 Persistir sessão em arquivo (15 min)
-    └── SC-18 Restaurar sessão do arquivo (15 min)
+├── US-13 Extrair elementos (120 min)
+│   └── SC-17 Extrair elementos tipados e árvore DOM (120 min)
+├── US-14 Salvar sessão (15 min)
+│   └── SC-18 Salvar sessão em arquivo (15 min)
+├── US-15 Remover sessão (15 min)
+│   └── SC-19 Remover sessão do disco (15 min)
+└── US-16 Recuperar sessão (15 min)
+    └── SC-20 Recuperar sessão do arquivo (15 min)
 ```
 
 ### Gantt — atividades da árvore (sequenciais)
 
-Mesmas atividades da árvore acima (nomes e minutos), em sequência.  
-Barras na ordem da árvore (folhas SC).  
-Esforço total (soma / caminho crítico): **393 min**.
+Mesmas atividades da árvore acima (nomes e minutos).  
+Barra pai = US · barras filhas = SC (dentro da US, em sequência).  
+US sequenciais: cada US começa ao fim da anterior.  
+Esforço total (soma / caminho crítico): **408 min**.
 
 ```mermaid
 gantt
@@ -57,34 +63,73 @@ gantt
   dateFormat X
   axisFormat %s
 
-  section Provisionar
-  SC-01 Subir e conectar         :p1, 0, 20m
-  SC-02 Serial ADB online        :p2, after p1, 20m
-  SC-03 Boot completo            :p3, after p2, 20m
+  section US-01 Provisionar (60)
+  US-01 Provisionar um agente           :us01, 0, 60m
+  SC-01 Subir e conectar                :sc01, 0, 20m
+  SC-02 Serial ADB online               :sc02, after sc01, 20m
+  SC-03 Boot completo                   :sc03, after sc02, 20m
 
-  section Eventos
-  SC-04 Evento boot              :e1, after p3, 12m
-  SC-05 Evento app aberta        :e2, after e1, 12m
-  SC-06 Evento tela estavel      :e3, after e2, 12m
-  SC-07 Evento mudanca dump      :e4, after e3, 12m
+  section US-02 Evento boot (12)
+  US-02 Evento de boot                  :us02, after us01, 12m
+  SC-04 Sinal de boot                   :sc04, after us01, 12m
 
-  section Instalar APKs
-  SC-08 Ler versao               :i1, after e4, 5m
-  SC-09 Baixar APK               :i2, after i1, 25m
-  SC-10 Instalar pacote          :i3, after i2, 15m
+  section US-03 Evento app aberta (12)
+  US-03 Evento de app aberta            :us03, after us02, 12m
+  SC-05 App em foreground               :sc05, after us02, 12m
 
-  section Operacoes
-  SC-11 Abrir aplicativo         :o1, after i3, 15m
-  SC-12 tap                      :o2, after o1, 15m
-  SC-13 type                     :o3, after o2, 15m
-  SC-14 scroll                   :o4, after o3, 15m
-  SC-15 screenshot               :o5, after o4, 15m
-  SC-16 Resgatar xy por imagem   :o6, after o5, 15m
+  section US-04 Evento tela estavel (12)
+  US-04 Evento de tela estavel          :us04, after us03, 12m
+  SC-06 Tela fica estavel               :sc06, after us03, 12m
 
-  section Extrair e sessao
-  US-13 Extrair elementos          :crit, x1, after o6, 120m
-  SC-17 Persistir sessao         :s1, after x1, 15m
-  SC-18 Restaurar sessao         :s2, after s1, 15m
+  section US-05 Evento mudanca dump (12)
+  US-05 Evento de mudanca de dump       :us05, after us04, 12m
+  SC-07 Dump de UI muda                 :sc07, after us04, 12m
+
+  section US-06 Instalar APKs (45)
+  US-06 Instalar APKs                   :us06, after us05, 45m
+  SC-08 Ler versao                      :sc08, after us05, 5m
+  SC-09 Baixar APK                      :sc09, after sc08, 25m
+  SC-10 Instalar pacote                 :sc10, after sc09, 15m
+
+  section US-07 Abrir aplicativo (15)
+  US-07 Abrir aplicativo                :us07, after us06, 15m
+  SC-11 App e aberta no agent           :sc11, after us06, 15m
+
+  section US-08 tap (15)
+  US-08 tap                             :us08, after us07, 15m
+  SC-12 Toque na tela                   :sc12, after us07, 15m
+
+  section US-09 type (15)
+  US-09 type                            :us09, after us08, 15m
+  SC-13 Texto e digitado                :sc13, after us08, 15m
+
+  section US-10 scroll (15)
+  US-10 scroll                          :us10, after us09, 15m
+  SC-14 Conteudo e rolado               :sc14, after us09, 15m
+
+  section US-11 screenshot (15)
+  US-11 screenshot                      :us11, after us10, 15m
+  SC-15 Print da tela e salvo           :sc15, after us10, 15m
+
+  section US-12 Resgatar xy (15)
+  US-12 Resgatar coordenadas x,y        :us12, after us11, 15m
+  SC-16 Coordenadas a partir de imagem  :sc16, after us11, 15m
+
+  section US-13 Extrair elementos (120)
+  US-13 Extrair elementos               :crit, us13, after us12, 120m
+  SC-17 Extrair elementos tipados       :crit, sc17, after us12, 120m
+
+  section US-14 Salvar sessao (15)
+  US-14 Salvar sessao                   :us14, after us13, 15m
+  SC-18 Salvar sessao em arquivo        :sc18, after us13, 15m
+
+  section US-15 Remover sessao (15)
+  US-15 Remover sessao                  :us15, after us14, 15m
+  SC-19 Remover sessao do disco         :sc19, after us14, 15m
+
+  section US-16 Recuperar sessao (15)
+  US-16 Recuperar sessao                :us16, after us15, 15m
+  SC-20 Recuperar sessao do arquivo     :sc20, after us15, 15m
 ```
 
 ## Próximos passos

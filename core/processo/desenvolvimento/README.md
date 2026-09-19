@@ -11,7 +11,7 @@ Implementar o que foi refinado.
 
 ## Execução
 
-- Implementar conforme critérios de aceite
+- Implementar conforme critérios de aceite (preferência: um cenário por vez / em paralelo quando independente)
 - Manter commits pequenos e revisáveis
 - Em trabalho em lote: fazer primeiro um caso, validar o caminho; só então escalar ao restante
 - Escrever testes unitários quando couber

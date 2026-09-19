@@ -10,7 +10,7 @@ Artefato único: o [documento de funcionalidades](funcionalidades.md).
 |-------|-----|---------|----------|
 | **Épico** | EP- | Conjunto de estórias | Entrega **valor** observável ao usuário/negócio |
 | **Estória** | US- | Função / operação **completa** do usuário | Uma capacidade fechada (início → fim) |
-| **Cenário** | SC- | Mudança de **estado visual** | Estado A → ação → estado B na UI |
+| **Cenário** | SC- | Mudança de **estado** + unidade **testável** e **paralelizável** | Estado A → ação → estado B; aceite e trabalho isoláveis |
 
 Uma estória sozinha pode não entregar valor. O épico é o recorte mínimo em que o conjunto de estórias passa a entregar.
 
@@ -41,7 +41,7 @@ EP — Autenticação          ← valor (entrar no produto)
 - Delimitar escopo (in / out)
 - Recortar **épicos** (conjuntos de estórias que entregam valor)
 - Para cada épico, listar as **estórias** (operações completas do usuário)
-- Para cada estória, listar os **cenários** (mudanças de estado visual)
+- Para cada estória, listar os **cenários** (mudanças de estado; unidades testáveis e paralelizáveis)
 - Validar o conjunto com stakeholders
 
 ## Saídas
@@ -54,14 +54,14 @@ Catálogo organizado em **épicos → estórias → cenários**.
 |-------|----------|
 | **Épico** | Valor entregue pelo conjunto de estórias |
 | **Estória** | Operação completa do usuário (ex.: criar usuário, fazer login) |
-| **Cenários** | Mudanças de estado visual necessárias para completar a estória |
+| **Cenários** | Mudanças de estado necessárias para completar a estória; cada um é unidade de teste e de paralelismo |
 
-**Cenário** = uma mudança de estado **visual** (estado anterior → ação → estado resultante) exigida para completar a estória.
+**Cenário** = mudança de estado (estado anterior → ação → estado resultante) **e** unidade testável/paralelizável exigida para completar a estória.
 
 Exemplo — estória **Criar usuário** (no épico Autenticação ou equivalente):
 
-| # | Cenário | Mudança de estado visual |
-|---|---------|--------------------------|
+| # | Cenário | Mudança de estado |
+|---|---------|-------------------|
 | 1 | Clicar no botão criar | Lista → modal aberto |
 | 2 | Digitar o nome | Modal sem nome → modal com nome visível |
 | 3 | Clicar em salvar | Botão ativo → carregando/inativado → janela fechada e unidade salva na lista |

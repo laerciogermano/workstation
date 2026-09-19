@@ -6,7 +6,7 @@
 **Kanban / inventário (umbrella):** [`core/tasks`](../../../core/tasks/README.md#p1--connectmax--screen-robot).
 
 Estimativas: minutos IA · **1 dia = 8h = 480 min**.  
-IDs: **US-** história · **SC-** cenário (só sob US-01, US-02, US-13).
+IDs: **US-** história · **SC-** cenário (mudança de estado; unidade testável e paralelizável — sob US-01, US-02, US-13).
 
 ## Árvore de desenvolvimento
 
@@ -42,10 +42,10 @@ screen-robot (393 min)
 | SC-13.1 | US-13 | Persistir sessão em arquivo | 15 |
 | SC-13.2 | US-13 | Restaurar sessão do arquivo | 15 |
 
-## Gantt — atividades da árvore (paralelizáveis por IA)
+## Gantt — atividades da árvore (cada SC = unidade paralelizável)
 
 Mesmas atividades da árvore (nomes e minutos).  
-Barras `crit` = funcionalidade; filhas em paralelo entre si (entrega IA).  
+Barras `crit` = funcionalidade; cada **SC** (e US sem SC) é unidade testável e paralelizável entre si (entrega IA).  
 Esforço total (soma): **393 min**. Caminho crítico ≈ **60 min** (Provisionar) — US-13 = **150 min**.
 
 ```mermaid

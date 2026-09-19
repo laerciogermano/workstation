@@ -10,7 +10,7 @@ Cada etapa documenta **entradas**, **execução** e **saídas**.
 
 | Etapa | Pasta | Objetivo |
 |-------|-------|----------|
-| Discovery | [`discovery/`](discovery/README.md) | Épicos (valor) → estórias (operação completa) → cenários (estado visual) |
+| Discovery | [`discovery/`](discovery/README.md) | Épicos (valor) → estórias (operação) → cenários (estado + unidade testável/paralelizável) |
 | Refinamento técnico | [`refinamento-tecnico/`](refinamento-tecnico/README.md) | Detalhar solução, riscos e critérios técnicos |
 | Desenvolvimento | [`desenvolvimento/`](desenvolvimento/README.md) | Implementar o que foi acordado |
 | Testes | [`testes/`](testes/README.md) | Validar comportamento e qualidade |
@@ -24,7 +24,7 @@ flowchart TB
   subgraph D["1. Discovery"]
     direction TB
     D_E["Entradas<br/>demanda / problema<br/>contexto e restrições<br/>stakeholders<br/>dados e feedback"]
-    D_X["Execução<br/>épicos = valor<br/>estórias = operação completa<br/>cenários = estado visual<br/>validar com stakeholders"]
+    D_X["Execução<br/>épicos = valor<br/>estórias = operação completa<br/>cenários = estado + testável/paralelizável<br/>validar com stakeholders"]
     D_S["Saídas<br/>documento de funcionalidades<br/>(EP → US → SC)"]
     D_E --> D_X --> D_S
   end

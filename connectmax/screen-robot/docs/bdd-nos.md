@@ -1,6 +1,6 @@
 # BDD — cenários por história (screen-robot)
 
-**Por quê:** aceite de cada **US** (e **SC** sob US-01, US-02, US-13).  
+**Por quê:** aceite de cada **US** e **SC**. Cada cenário = mudança de estado + unidade testável.  
 **Funcionalidades:** [`functionalities.md`](functionalities.md).  
 **Integração:** [`bdd-linkedin-login.md`](bdd-linkedin-login.md).
 

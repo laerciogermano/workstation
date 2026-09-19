@@ -12,7 +12,7 @@ Validar que o software faz o combinado.
 ## Execução
 
 - Executar unitários, integração e E2E (conforme risco)
-- Validar cenários de aceite (mudanças de estado visual)
+- Validar cada cenário de aceite como unidade (mudança de estado; em paralelo quando independente)
 - Rodar regressão
 - Verificar qualidade (performance, segurança, acessibilidade quando aplicável)
 - Registrar e priorizar defeitos

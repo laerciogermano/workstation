@@ -13,7 +13,7 @@ Estimativas: minutos IA · **1 dia = 8h = 480 min**.
 
 ### Inventário de tasks (nós)
 
-IDs: **US-** história · **SC-** cenário (só sob US-01, US-02, US-13). Baseline paralelo: **2026-09-19**. Filhas partem no início do dia.  
+IDs: **US-** história · **SC-** cenário (mudança de estado; unidade testável/paralelizável — sob US-01, US-02, US-13). Baseline paralelo: **2026-09-19**. Filhas partem no início do dia.  
 1 dia útil = 8h. Entradas/Execução/Saídas: [`functionalities.md`](../../connectmax/screen-robot/docs/functionalities.md#entradas--execução--saídas).
 
 | ID | Descrição | Início | Fim | Output |

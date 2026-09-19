@@ -5,7 +5,7 @@
 **Formato:** [processo — documento de funcionalidades](../../../core/processo/discovery/funcionalidades.md).  
 **Negócio:** [`../../vendas/`](../../vendas/README.md) consome estas ações; não as redefine.
 
-Cada **funcionalidade** é uma **ação**. Cada **cenário** é uma mudança de estado necessária para executar a ação.
+Cada **funcionalidade** é uma **ação**. Cada **cenário** é uma mudança de estado necessária para executar a ação — e também unidade testável e paralelizável.
 
 ---
 

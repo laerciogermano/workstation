@@ -5,7 +5,7 @@
 **Agente LinkedIn:** [`../../linkedin-agent/`](../../linkedin-agent/README.md).  
 **Negócio:** [`../../vendas/`](../../vendas/README.md).
 
-**IDs:** **US-** = história (uma ação/capacidade). **SC-** = cenário sob US-01, US-02 e US-13.  
+**IDs:** **US-** = história (uma ação/capacidade). **SC-** = cenário: mudança de estado + unidade testável e paralelizável (sob US-01, US-02 e US-13).  
 Eventos e operações: **cada item é uma US**. Extração + sessão = **US-13 Extrair elementos e guardar sessão**.
 
 | ID | Funcionalidade | Descrição | Min |

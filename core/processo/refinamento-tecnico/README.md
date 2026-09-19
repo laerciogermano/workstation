@@ -4,7 +4,7 @@ Transformar o discovery em plano executável.
 
 ## Entradas
 
-- [Documento de funcionalidades](../discovery/funcionalidades.md) (épicos → estórias → cenários de estado visual)
+- [Documento de funcionalidades](../discovery/funcionalidades.md) (épicos → estórias → cenários = estado + unidade testável/paralelizável)
 - Restrições técnicas e de negócio
 - Stack e padrões já adotados no projeto
 
@@ -12,9 +12,9 @@ Transformar o discovery em plano executável.
 
 - Desenhar arquitetura, contratos e dados a partir de épicos, estórias e cenários
 - Identificar riscos e mitigações
-- Consolidar critérios de pronto (aceite a partir dos cenários visuais do discovery)
-- Estimar esforço e dependências
-- Quebrar em tarefas priorizadas
+- Consolidar critérios de pronto (aceite por cenário do discovery)
+- Estimar esforço e dependências; tratar cada cenário como unidade paralelizável quando não houver dependência
+- Quebrar em tarefas priorizadas (preferência: 1 tarefa ↔ 1 cenário)
 
 ## Saídas
 

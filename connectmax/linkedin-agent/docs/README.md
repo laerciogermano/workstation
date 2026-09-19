@@ -9,7 +9,7 @@
 
 | Artefato | Arquivo | Papel | Status |
 |----------|---------|-------|--------|
-| Funcionalidades | [`functionalities.md`](functionalities.md) | Ações LinkedIn + cenários (mudança de estado) | Feito |
+| Funcionalidades | [`functionalities.md`](functionalities.md) | Ações LinkedIn + cenários (estado; testável/paralelizável) | Feito |
 
 ## Próximos passos
 

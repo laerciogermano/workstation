@@ -6,7 +6,7 @@
 
 ## P1 — ConnectMax · screen-robot
 
-Histórias US (eventos e operações cada uma é US; Extrair elementos = US-13; Provisionar/APKs/Sessão com SC).  
+Histórias US (eventos e operações cada uma é US; Extrair+sessão = US-13 com SC; Provisionar/APKs com SC).  
 Funcionalidades: [`functionalities.md`](../../connectmax/screen-robot/docs/functionalities.md) · BDD nós: [`bdd-nos.md`](../../connectmax/screen-robot/docs/bdd-nos.md) · BDD login: [`bdd-linkedin-login.md`](../../connectmax/screen-robot/docs/bdd-linkedin-login.md).  
 Estimativas: minutos IA · **1 dia = 8h = 480 min**.
 
@@ -34,17 +34,16 @@ screen-robot (393 min)
 │   ├── US-10 scroll (15 min)
 │   ├── US-11 screenshot (15 min)
 │   └── US-12 Resgatar coordenadas x,y (imagem de entrada) (15 min)
-├── US-13 Extrair elementos (120 min)
-└── US-14 Guardar estado de sessão (30 min)
-    ├── SC-14.1 Persistir sessão em arquivo (15 min)
-    └── SC-14.2 Restaurar sessão do arquivo (15 min)
+└── US-13 Extrair elementos e guardar sessão (150 min)
+    ├── SC-13.1 Persistir sessão em arquivo (15 min)
+    └── SC-13.2 Restaurar sessão do arquivo (15 min)
 ```
 
 ### Gantt — atividades da árvore (paralelizáveis por IA)
 
 Mesmas atividades da árvore acima (nomes e minutos).  
 Barras maiores (`crit`) = funcionalidade; filhas em paralelo entre si (entrega IA).  
-Esforço total (soma): **393 min**. Com filhas em paralelo, caminho crítico ≈ **60 min** (Provisionar) — Extrair = **120 min** (US-13).
+Esforço total (soma): **393 min**. Com filhas em paralelo, caminho crítico ≈ **60 min** (Provisionar) — US-13 = **150 min**.
 
 ```mermaid
 gantt
@@ -78,18 +77,15 @@ gantt
   US-11 screenshot                 :o5, 0, 15m
   US-12 Resgatar xy por imagem     :o6, 0, 15m
 
-  section Extrair
-  US-13 Extrair elementos          :crit, x1, 0, 120m
-
-  section Sessao
-  US-14 Guardar sessao             :crit, s0, 0, 30m
-  SC-14.1 Persistir sessao         :s1, 0, 15m
-  SC-14.2 Restaurar sessao         :s2, 0, 15m
+  section Extrair e sessao
+  US-13 Extrair e guardar sessao   :crit, x1, 0, 150m
+  SC-13.1 Persistir sessao         :s1, 0, 15m
+  SC-13.2 Restaurar sessao         :s2, 0, 15m
 ```
 
 ### Inventário de tasks (nós)
 
-IDs: **US-** história · **SC-** cenário (só sob US-01, US-02, US-14). Baseline paralelo: **2026-09-19**. Filhas partem no início do dia.  
+IDs: **US-** história · **SC-** cenário (só sob US-01, US-02, US-13). Baseline paralelo: **2026-09-19**. Filhas partem no início do dia.  
 1 dia útil = 8h. Entradas/Execução/Saídas: [`functionalities.md`](../../connectmax/screen-robot/docs/functionalities.md#entradas--execução--saídas-por-nó).
 
 | ID | Descrição | Início | Fim | Output |
@@ -112,10 +108,9 @@ IDs: **US-** história · **SC-** cenário (só sob US-01, US-02, US-14). Baseli
 | US-10 | scroll | 2026-09-19 | 2026-09-19 | Conteúdo rolado; novos itens visíveis |
 | US-11 | screenshot | 2026-09-19 | 2026-09-19 | Arquivo de imagem |
 | US-12 | Resgatar coordenadas x,y (imagem de entrada) | 2026-09-19 | 2026-09-19 | Coordenadas x,y (e confiança) |
-| US-13 | Extrair elementos | 2026-09-19 | 2026-09-19 | Elementos tipados + árvore DOM navegável |
-| US-14 | Guardar estado de sessão | 2026-09-19 | 2026-09-19 | Sessão em disco / contexto restaurado |
-| SC-14.1 | Persistir sessão em arquivo | 2026-09-19 | 2026-09-19 | Arquivo de sessão |
-| SC-14.2 | Restaurar sessão do arquivo | 2026-09-19 | 2026-09-19 | Estado restaurado no runtime |
+| US-13 | Extrair elementos e guardar sessão | 2026-09-19 | 2026-09-19 | Elementos tipados + árvore DOM; sessão em disco / restaurada |
+| SC-13.1 | Persistir sessão em arquivo | 2026-09-19 | 2026-09-19 | Arquivo de sessão |
+| SC-13.2 | Restaurar sessão do arquivo | 2026-09-19 | 2026-09-19 | Estado restaurado no runtime |
 
 ### Kanban
 

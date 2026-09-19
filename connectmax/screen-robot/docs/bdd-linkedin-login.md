@@ -8,7 +8,7 @@
 Funcionalidade: Login no LinkedIn com agent Android via Node
   Como operador do screen-robot
   Quero provisionar o agent, instalar APKs, ler a tela e autenticar no LinkedIn
-  Para validar o pipeline Node (US-01 → US-02 → eventos US-03..06 → operações US-07..12 → extrair US-13 → US-14)
+  Para validar o pipeline Node (US-01 → US-02 → eventos US-03..06 → operações US-07..12 → US-13)
 
   Contexto:
     Dado a config do dispositivo em device.config.json
@@ -39,5 +39,4 @@ Funcionalidade: Login no LinkedIn com agent Android via Node
 | Instalar APKs | `E o APK do Instagram…` → `installApk(instagram)` (+ LinkedIn) |
 | Receber eventos | `Quando… evento de UI estável` → `waitForUiReady()` |
 | Executar operações | abrir aplicativo, screenshot, type, tap Entrar, scroll, resgatar x,y por imagem → `operate.*` |
-| Extrair elementos e informações | `E os elementos… árvore de componentes` → `extractElements()` (DOM: textos, ícones, imagens/fotos, listas) |
-| Guardar estado de sessão | `Então o estado da sessão é guardado` → `saveSession()` |
+| Extrair elementos e guardar sessão | `E os elementos…` → `extractElements()`; `Então o estado da sessão…` → `saveSession()` |

@@ -1,6 +1,6 @@
 # BDD — cenários por história (screen-robot)
 
-**Por quê:** aceite de cada **US** (e **SC** sob US-01, US-02, US-14).  
+**Por quê:** aceite de cada **US** (e **SC** sob US-01, US-02, US-13).  
 **Funcionalidades:** [`functionalities.md`](functionalities.md).  
 **Integração:** [`bdd-linkedin-login.md`](bdd-linkedin-login.md).
 
@@ -188,31 +188,22 @@ Funcionalidade: Resgatar coordenadas x,y
 
 ---
 
-## US-13 · Extrair elementos
+## US-13 · Extrair elementos e guardar sessão
 
 ```gherkin
-Funcionalidade: Extrair elementos
-  Cenário: Elementos tipados e árvore DOM são extraídos da imagem da tela
+Funcionalidade: Extrair elementos e guardar sessão
+  Cenário: Elementos tipados, árvore DOM e sessão
     Dado uma imagem da tela (screenshot/frame) ou dump
+    E contexto atual (device, apps, etapa, paths)
     Quando OCR extrai textos e ícones, imagens/fotos, listas e containers são reconhecidos
     E a hierarquia raiz → filhos é composta
+    E persistir e/ou restaurar sessão é executado
     Então elementos tipados existem com string/tipo, bounds e metadados
     E a árvore DOM navegável é devolvida
+    E a sessão está em disco ou o contexto foi restaurado
 ```
 
----
-
-## US-14 · Guardar estado de sessão
-
-```gherkin
-Funcionalidade: Guardar estado de sessão
-  Cenário: Sessão persiste e pode ser restaurada
-    Dado contexto atual (device, apps, etapa, paths)
-    Quando persistir e/ou restaurar é executado
-    Então a sessão está em disco ou o contexto foi restaurado
-```
-
-### SC-14.1 Persistir sessão em arquivo
+### SC-13.1 Persistir sessão em arquivo
 
 ```gherkin
 Cenário: Sessão é gravada
@@ -221,7 +212,7 @@ Cenário: Sessão é gravada
   Então o arquivo de sessão existe
 ```
 
-### SC-14.2 Restaurar sessão do arquivo
+### SC-13.2 Restaurar sessão do arquivo
 
 ```gherkin
 Cenário: Sessão é restaurada

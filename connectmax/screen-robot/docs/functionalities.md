@@ -5,8 +5,8 @@
 **Agente LinkedIn:** [`../../linkedin-agent/`](../../linkedin-agent/README.md).  
 **Negócio:** [`../../vendas/`](../../vendas/README.md).
 
-**IDs:** **US-** = história (uma ação/capacidade). **SC-** = cenário sob US-01, US-02 e US-14.  
-Eventos e operações: **cada item é uma US**. Extração (texto via imagem, ícones, mídia, listas, containers + DOM) = **US-13 Extrair elementos**.
+**IDs:** **US-** = história (uma ação/capacidade). **SC-** = cenário sob US-01, US-02 e US-13.  
+Eventos e operações: **cada item é uma US**. Extração + sessão = **US-13 Extrair elementos e guardar sessão**.
 
 | ID | Funcionalidade | Descrição | Min |
 |----|----------------|-----------|-----|
@@ -22,8 +22,7 @@ Eventos e operações: **cada item é uma US**. Extração (texto via imagem, í
 | US-10 | scroll | Swipe / scroll na tela ou lista | 15 |
 | US-11 | screenshot | Capturar frame da tela | 15 |
 | US-12 | Resgatar coordenadas x,y | Localizar alvo na tela a partir de imagem de entrada | 15 |
-| US-13 | Extrair elementos | Textos (via imagem), ícones, imagens/fotos, listas, containers e árvore DOM | 120 |
-| US-14 | Guardar estado de sessão | Persistir e restaurar contexto da sessão | 30 |
+| US-13 | Extrair elementos e guardar sessão | Elementos tipados + árvore DOM a partir da tela; persistir/restaurar sessão | 150 |
 
 ## Entradas · Execução · Saídas
 
@@ -135,27 +134,21 @@ Eventos e operações: **cada item é uma US**. Extração (texto via imagem, í
 |----------|----------|--------|
 | Imagem template, frame/tela atual | Template match / visão na tela | Coordenadas x,y (e confiança) |
 
-### US-13 · Extrair elementos (120 min)
+### US-13 · Extrair elementos e guardar sessão (150 min)
 
-Extrai elementos tipados **a partir de uma imagem**/frame/dump da tela (textos via OCR, ícones, imagens/fotos, listas, containers) e monta a **árvore de componentes** (estilo DOM): raiz → filhos, com bounds e metadados.
-
-| Entradas | Execução | Saídas |
-|----------|----------|--------|
-| Imagem da tela (screenshot/frame) ou dump | OCR de textos; reconhecer ícones, mídia, listas e containers; compor hierarquia | Elementos tipados + árvore DOM navegável |
-
-### US-14 · Guardar estado de sessão (30 min)
+Extrai elementos tipados **a partir de uma imagem**/frame/dump da tela (textos via OCR, ícones, imagens/fotos, listas, containers), monta a **árvore de componentes** (estilo DOM) e **persiste/restaura** o contexto da sessão.
 
 | Entradas | Execução | Saídas |
 |----------|----------|--------|
-| Contexto atual (device, apps, etapa, paths) | Persistir e/ou restaurar arquivo de sessão | Sessão em disco / contexto restaurado |
+| Imagem da tela (screenshot/frame) ou dump; contexto (device, apps, etapa, paths) | OCR e reconhecimento de elementos; compor hierarquia; persistir/restaurar sessão | Elementos tipados + árvore DOM; sessão em disco / contexto restaurado |
 
-#### SC-14.1 Persistir sessão em arquivo (15 min)
+#### SC-13.1 Persistir sessão em arquivo (15 min)
 
 | Entradas | Execução | Saídas |
 |----------|----------|--------|
 | Estado em memória, path da sessão | Serializar e gravar | Arquivo de sessão |
 
-#### SC-14.2 Restaurar sessão do arquivo (15 min)
+#### SC-13.2 Restaurar sessão do arquivo (15 min)
 
 | Entradas | Execução | Saídas |
 |----------|----------|--------|

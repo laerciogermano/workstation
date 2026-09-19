@@ -4,8 +4,8 @@ Transformar o discovery em plano executável.
 
 ## Entradas
 
-- [Documento de cenários](../1.discovery/3.scenarios.md) (épicos → estórias → cenários = estado + unidade testável/paralelizável)
-- BDDs do [discovery](../1.discovery/4.bdds.md)
+- [Documento de cenários](../1.discovery/2.scenarios.md) (estórias → cenários = estado + unidade testável/paralelizável)
+- BDDs do [discovery](../1.discovery/3.bdds.md)
 - Protótipo validado ([prototype](../1.discovery/5.prototype.md))
 - Restrições técnicas e de negócio
 - Stack e padrões já adotados no projeto

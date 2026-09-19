@@ -47,65 +47,64 @@ screen-robot (408 min)
     └── Restaurar sessão do arquivo (15 min)
 ```
 
-### Gantt — unidades de entrega paralelizáveis (IA)
+### Gantt — atividades da árvore (paralelizáveis por IA)
 
-Unidades que **agentes IA podem entregar em paralelo** após contratos comuns.  
-Esforço total (soma): **408 min**. Caminho crítico estimado com paralelismo: **~152 min** (~0,32 dia / 8h).
-
-**Ondas**
-1. Contratos Node (serial)
-2. Caps + ações + nós de percepção **em paralelo**
-3. Montar árvore DOM (depois dos nós de extrair)
-4. Integração login LinkedIn (depois das caps)
+Mesmas atividades da árvore acima (nomes e minutos).  
+Barras maiores (`crit`) = funcionalidade; filhas em paralelo entre si (entrega IA).  
+**Montar árvore DOM** só depois dos nós de extrair.  
+Esforço total (soma): **408 min**. Com filhas em paralelo, caminho crítico ≈ **60 min** (Provisionar) — Extrair como unidade `crit` cobre **120 min** se entregue monolítica; com só filhas paralelas + DOM após nós, a trilha Extrair é **24+20=44 min**.
 
 ```mermaid
 gantt
-  title screen-robot entrega paralela IA minutos
+  title screen-robot atividades da arvore minutos IA
   dateFormat X
   axisFormat %s
 
-  section 0 Contratos
-  Contratos Node libs          :crit, f0, 0, 24m
+  section 1 Provisionar
+  Provisionar um agente              :crit, p0, 0, 60m
+  Subir e conectar agent             :p1, 0, 20m
+  Garantir serial ADB online         :p2, 0, 20m
+  Aguardar boot completo             :p3, 0, 20m
 
-  section 1 Caps em paralelo
-  Provisionar agente           :p0, after f0, 60m
-  Instalar APKs                :i0, after f0, 45m
-  Receber eventos              :e0, after f0, 48m
-  Guardar sessao               :s0, after f0, 30m
+  section 2 Instalar APKs
+  Instalar APKs                      :crit, i0, 0, 45m
+  Ler versao na config               :i1, 0, 5m
+  Baixar APK na versao               :i2, 0, 25m
+  Instalar pacote no agent           :i3, 0, 15m
 
-  section 2 Operacoes em paralelo
-  Abrir aplicativo             :o1, after f0, 15m
-  tap                          :o2, after f0, 15m
-  type                         :o3, after f0, 15m
-  key                          :o4, after f0, 15m
-  scroll                       :o5, after f0, 15m
-  screenshot                   :o6, after f0, 15m
-  Resgatar xy por imagem       :o7, after f0, 15m
+  section 3 Receber eventos
+  Receber eventos                    :crit, e0, 0, 48m
+  Evento de boot                     :e1, 0, 12m
+  Evento de app aberta               :e2, 0, 12m
+  Evento de tela estavel             :e3, 0, 12m
+  Evento de mudanca de dump          :e4, 0, 12m
 
-  section 3 Extrair em paralelo
-  No Texto                     :x1, after f0, 20m
-  No Icone                     :x2, after f0, 20m
-  No Imagem e foto             :x3, after f0, 24m
-  No Lista                     :x4, after f0, 24m
-  No Container                 :x5, after f0, 12m
+  section 4 Executar operacoes
+  Executar operacoes                 :crit, o0, 0, 105m
+  Abrir aplicativo                   :o1, 0, 15m
+  tap                                :o2, 0, 15m
+  type                               :o3, 0, 15m
+  key                                :o4, 0, 15m
+  scroll                             :o5, 0, 15m
+  screenshot                         :o6, 0, 15m
+  Resgatar xy por imagem             :o7, 0, 15m
 
-  section 4 Depois dos nos
-  Montar arvore DOM            :crit, x6, after x3, 20m
+  section 5 Extrair elementos
+  Extrair elementos                  :crit, x0, 0, 120m
+  No Texto                           :x1, 0, 20m
+  No Icone                           :x2, 0, 20m
+  No Imagem e foto                   :x3, 0, 24m
+  No Lista                           :x4, 0, 24m
+  No Container                       :x5, 0, 12m
+  Montar arvore DOM                  :x6, after x3, 20m
 
-  section 5 Integracao
-  Login LinkedIn BDD           :crit, b0, after p0, 48m
+  section 6 Guardar sessao
+  Guardar estado de sessao           :crit, s0, 0, 30m
+  Persistir sessao em arquivo        :s1, 0, 15m
+  Restaurar sessao do arquivo        :s2, 0, 15m
 ```
 
-| Unidade | Paralela com | Min | Bloqueia |
-|---------|--------------|-----|----------|
-| Contratos Node | — | 24 | tudo abaixo |
-| Provisionar · APKs · Eventos · Sessão | entre si | 60 / 45 / 48 / 30 | integração |
-| Abrir · tap · type · key · scroll · screenshot · xy | entre si e com caps | 15 c/u | integração |
-| Texto · Ícone · Imagem · Lista · Container | entre si e com caps | 12–24 | Montar DOM |
-| Montar árvore DOM | — | 20 | integração |
-| Login LinkedIn BDD | — | 48 | — |
-
-### Kanban
+### Entradas · Execução · Saídas (por nó)
 
 #### 1. Provisionar um agente (60 min)
 

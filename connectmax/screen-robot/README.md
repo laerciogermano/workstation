@@ -2,7 +2,7 @@
 
 **Por quê:** fixar o *quê* do robô de tela antes de goals de negócio.  
 **Importante:** este projeto **só** opera o device/tela via **Node**; não implementa cadência comercial nem fila de leads.  
-**No fluxo:** **este documento** → vision / scenarios / bdds / tasks → implementação em [`sources/`](sources/README.md).  
+**No fluxo:** **este documento** → stories / epics / scenarios / bdds / tasks → implementação em [`sources/`](sources/README.md).  
 **Umbrella:** [`../README.md`](../README.md).  
 **Consumidor LinkedIn:** [`../linkedin-agent/`](../linkedin-agent/README.md).  
 **Negócio (fila/faturamento):** [`../vendas/`](../vendas/README.md).  
@@ -45,7 +45,7 @@ Ver [`3.scenarios.md`](3.scenarios.md).
 
 | Artefato | Arquivo | Status |
 |----------|---------|--------|
-| Vision — US título + descrição | [`1.vision.md`](1.vision.md) | Feito |
+| Stories — US título + descrição | [`1.stories.md`](1.stories.md) | Feito |
 | Épicos | [`2.epics.md`](2.epics.md) | Feito |
 | Cenários (US + SC) | [`3.scenarios.md`](3.scenarios.md) | Feito |
 | BDDs (US/SC + piloto LinkedIn) | [`4.bdds.md`](4.bdds.md) | Feito |

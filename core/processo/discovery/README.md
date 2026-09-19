@@ -6,12 +6,15 @@ Entender o problema e fechar o *quê* do produto antes do refinamento técnico.
 
 Ordem **obrigatória** — não pular nem inverter:
 
-1. **Vision** — [`vision.md`](vision.md): problema, para quem, objetivo, escopo in/out.
-2. **Functionalities** — [`functionalities.md`](functionalities.md): capacidades observáveis do produto (base para EP/US).
+1. **Stories** — [`stories.md`](stories.md): US com título + descrição de como funciona.
+2. **Epics** — [`epics.md`](epics.md): EP que agrupam US e entregam valor.
 3. **Cenários** — [`scenarios.md`](scenarios.md): catálogo EP → US → SC (sem Gherkin).
 4. **BDDs** — [`bdds.md`](bdds.md): Dado / Quando / Então por **US** e por **SC**.
 5. **Protótipo** — [`prototype.md`](prototype.md): validação visual/interativa do que foi especificado.
-6. **Roadmap** — [`roadmap.md`](roadmap.md): Gantt só com **fases maiores** (épicos), sequenciais.
+6. **Roadmap** — [`roadmap.md`](roadmap.md): Gantt EP → US (sem SC nas barras).
+7. **Tasks** — `tasks.md` do projeto: Gantt TSK (inclui SC) + inventário.
+
+A **visão do produto** (problema, para quem, objetivo, fora de escopo) fica no `README.md` do projeto.
 
 Só depois disso: **separar cada estória** e seguir, **por estória**, os passos do [processo](../README.md): refinamento técnico → desenvolvimento → testes → implantação → manutenção.
 
@@ -26,8 +29,6 @@ Não atravessar o ciclo completo no produto inteiro de uma vez. O discovery fech
 | **Cenário** | SC- | Mudança de **estado** + unidade **testável** e **paralelizável** | Estado A → ação → estado B; aceite e trabalho isoláveis. Toda US tem ≥1 SC (pode ser só um) |
 
 Uma estória sozinha pode não entregar valor. O épico é o recorte mínimo em que o conjunto de estórias passa a entregar.
-
-Exemplo — **épico Autenticação**: login isolado não entrega valor (não há como criar conta); login + cadastro juntos formam o épico.
 
 ```text
 EP-01 — Autenticação          ← valor (entrar no produto)
@@ -50,24 +51,26 @@ EP-01 — Autenticação          ← valor (entrar no produto)
 
 ## Execução
 
-1. Escrever a **vision** (problema, personas, objetivo, fora de escopo)
-2. Listar **functionalities** (capacidades observáveis derivadas da vision)
-3. Derivar **cenários** (épicos → estórias → SC com entradas/execução/saídas)
+1. Escrever as **stories** (US título + como funciona)
+2. Agrupar em **epics** (valor por EP)
+3. Derivar **cenários** (EP → US → SC com entradas/execução/saídas)
 4. Escrever **BDDs** (Gherkin alinhado a cada US/SC)
 5. Produzir o **protótipo** (validar o *quê* com stakeholders)
-6. Montar o **roadmap** — só épicos, sequenciais (sem US/SC no Gantt)
+6. Montar o **roadmap** (EP/US)
+7. Montar as **tasks** (TSK + SC no Gantt)
 
 ## Saídas
 
 | Ordem | Artefato | Conteúdo |
 |-------|----------|----------|
-| 1 | [`vision.md`](vision.md) | Visão do produto |
-| 2 | [`functionalities.md`](functionalities.md) | Capacidades observáveis |
+| 1 | [`stories.md`](stories.md) | US título + descrição |
+| 2 | [`epics.md`](epics.md) | EP → lista de US |
 | 3 | [`scenarios.md`](scenarios.md) | EP → US → SC |
 | 4 | [`bdds.md`](bdds.md) | Aceite Gherkin por US e SC |
 | 5 | [`prototype.md`](prototype.md) / protótipo do projeto | Validação visual/interativa |
-| 6 | [`roadmap.md`](roadmap.md) / roadmap do projeto | Plano / Gantt de execução |
+| 6 | [`roadmap.md`](roadmap.md) / roadmap do projeto | Gantt EP/US |
+| 7 | `tasks.md` do projeto | Gantt TSK + inventário |
 
 ## Próximo passo
 
-Com vision → functionalities → cenários → BDDs → protótipo → roadmap fechados: **uma estória por vez** → [Refinamento técnico](../refinamento-tecnico/README.md) (e demais fases do [processo](../README.md)).
+Com stories → epics → cenários → BDDs → protótipo → roadmap → tasks fechados: **uma estória por vez** → [Refinamento técnico](../refinamento-tecnico/README.md) (e demais fases do [processo](../README.md)).

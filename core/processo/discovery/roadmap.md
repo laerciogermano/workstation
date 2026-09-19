@@ -6,7 +6,7 @@ Artefato **6** do [discovery](README.md). Plano / Gantt com **apenas as fases ma
 
 ## Regras
 
-1. Só depois de vision → functionalities → cenários → BDDs → protótipo.
+1. Só depois de stories → epics → cenários → BDDs → protótipo.
 2. No Gantt do roadmap: **só épicos**, um após o outro (sem US/SC nas barras).
 3. Detalhe de estórias, cenários, paralelismo e esforço fica em [`scenarios.md`](scenarios.md) / `tasks.md` do produto.
 4. O arquivo concreto fica no projeto (`roadmap.md`); este doc define o papel no discovery.

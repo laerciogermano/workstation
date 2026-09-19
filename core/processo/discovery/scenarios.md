@@ -2,7 +2,7 @@
 
 Artefato **3** do [discovery](README.md). Fonte de verdade do *quê* do produto (EP → US → SC), **sem** Gherkin — tabelas **por estória**.
 
-**Antes:** [`functionalities.md`](functionalities.md). **Depois:** [`bdds.md`](bdds.md).
+**Antes:** [`epics.md`](epics.md). **Depois:** [`bdds.md`](bdds.md).
 
 ## Regras
 

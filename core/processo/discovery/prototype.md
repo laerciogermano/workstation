@@ -1,12 +1,12 @@
 # Protótipo
 
-Artefato **5** do [discovery](README.md). Validação visual/interativa do *quê* já fechado em vision, functionalities, cenários e BDDs.
+Artefato **5** do [discovery](README.md). Validação visual/interativa do *quê* já fechado em stories, epics, cenários e BDDs.
 
 **Antes:** [`bdds.md`](bdds.md). **Depois:** [`roadmap.md`](roadmap.md).
 
 ## Regras
 
-1. Só depois de vision → functionalities → cenários → BDDs.
+1. Só depois de stories → epics → cenários → BDDs.
 2. O arquivo concreto fica no projeto (`prototype.html`, Figma, etc.); este doc define o papel no discovery.
 3. Serve para validar com stakeholders o comportamento especificado — não substitui BDD nem implementação.
 

@@ -7,7 +7,7 @@
 
 ```text
 README.md (visão)
-├── 1.vision.md
+├── 1.stories.md
 ├── 2.epics.md
 ├── 3.scenarios.md              # US + SC (sem BDD)
 ├── 4.bdds.md                   # BDDs por US/SC + piloto LinkedIn

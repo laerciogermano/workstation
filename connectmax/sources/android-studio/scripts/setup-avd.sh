@@ -45,6 +45,7 @@ skip = {
     "hw.lcd.width", "hw.lcd.height", "hw.lcd.density",
     "hw.camera.back", "hw.camera.front",
     "hw.gpu.enabled", "hw.gpu.mode",
+    "hw.keyboard", "hw.keyboard.lid", "hw.mainKeys",
 }
 lines = []
 for line in p.read_text().splitlines():
@@ -65,6 +66,10 @@ lines += [
     "hw.camera.front=webcam0",
     "hw.gpu.enabled=yes",
     "hw.gpu.mode=swiftshader_indirect",
+    # teclado físico do Mac/PC (sem isso não digita no emulador)
+    "hw.keyboard=yes",
+    "hw.keyboard.lid=no",
+    "hw.mainKeys=no",
 ]
 p.write_text("\n".join(lines) + "\n")
 print("Config leve aplicada:", p)

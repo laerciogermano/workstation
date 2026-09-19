@@ -106,6 +106,7 @@ sources/android-studio/
 | Sintoma | O que fazer |
 |---------|-------------|
 | Emulador sobe e morre | Falta de RAM no host; feche apps, baixe `EMU_MEMORY`, não rode Colima+redroid ao mesmo tempo |
+| Não digita no emulador | `hw.keyboard=yes` no AVD (o `setup-avd.sh` já aplica); reinicie o emulador e clique na janela antes de digitar |
 | Camera preta / placeholder | OBS Virtual Camera não aprovada no macOS, ou emulador usando a webcam errada (`emulator -webcam-list`) |
 | `emulator: command not found` | Exporte `ANDROID_HOME` e `PATH` (veja `start.sh`) |
 | Disco cheio | AVD e system images pesam vários GB; limpe `~/.android` / imagens antigas |

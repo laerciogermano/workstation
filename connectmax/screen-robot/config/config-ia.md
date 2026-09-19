@@ -8,7 +8,7 @@
 ```text
 README.md (visão)
 ├── 1.vision.md
-├── 2.features.md
+├── 2.epics.md
 ├── 3.scenarios.md              # US + SC (sem BDD)
 ├── 4.bdds.md                   # BDDs por US/SC + piloto LinkedIn
 ├── 6.roadmap.md                # Gantt

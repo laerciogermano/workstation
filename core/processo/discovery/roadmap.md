@@ -7,9 +7,11 @@ Artefato **6** do [discovery](README.md). Plano / Gantt de execução a partir d
 ## Regras
 
 1. Só depois de vision → functionalities → cenários → BDDs → protótipo.
-2. Ao montar o roadmap, nesta ordem: **épicos → estórias → cenários** (não inverter).
-3. Definir cedo as **atividades paralelizáveis** no nível **épico**; com isso, encaixar estórias e cenários no plano fica mais fácil.
-4. O arquivo concreto fica no projeto (`roadmap.md`); este doc define o papel no discovery.
+2. Filhos do roadmap, nesta ordem (não inverter):
+   1. **Épicos** — definir cedo as **atividades paralelizáveis** no nível EP
+   2. **Estórias** — encaixar no plano (mais fácil após o EP)
+   3. **Cenários** — encaixar SC no plano
+3. O arquivo concreto fica no projeto (`roadmap.md`); este doc define o papel no discovery.
 
 ## Saída esperada no projeto
 

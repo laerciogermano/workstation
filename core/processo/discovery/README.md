@@ -55,7 +55,10 @@ EP-01 — Autenticação          ← valor (entrar no produto)
 3. Derivar **cenários** (épicos → estórias → SC com entradas/execução/saídas)
 4. Escrever **BDDs** (Gherkin alinhado a cada US/SC)
 5. Produzir o **protótipo** (validar o *quê* com stakeholders)
-6. Montar o **roadmap** (épicos → estórias → cenários no plano; definir atividades paralelizáveis nos épicos — assim estórias e SC ficam mais fáceis de encaixar)
+6. Montar o **roadmap**, nesta ordem:
+   1. **Épicos** — fatias de valor; definir já as **atividades paralelizáveis** no nível EP
+   2. **Estórias** — encaixar no plano (fica mais fácil após o EP paralelizável)
+   3. **Cenários** — encaixar SC no plano
 
 ## Saídas
 

@@ -27,7 +27,7 @@ O mapa nasce no discovery; o restante do processo roda **estória a estória**, 
 ### Árvore de execução
 
 ```text
-Processo (38)
+Processo (63)
 ├── 1. Discovery
 │   ├── 1.1 Vision
 │   ├── 1.2 Functionalities
@@ -35,6 +35,31 @@ Processo (38)
 │   ├── 1.4 BDDs
 │   ├── 1.5 Prototipo
 │   └── 1.6 Roadmap
+│       ├── EP-01 Provisionar agente
+│       │   ├── SC-01 Subir / conectar o Android (agent)
+│       │   ├── SC-02 Garantir serial ADB online
+│       │   └── SC-03 Aguardar boot completo
+│       ├── EP-02 Eventos de UI
+│       │   ├── US-02 Evento de boot
+│       │   ├── US-03 Evento de app aberta
+│       │   ├── US-04 Evento de tela estável
+│       │   └── US-05 Evento de mudança de dump
+│       ├── EP-03 Instalar APKs
+│       │   ├── SC-08 Ler versão na config do dispositivo
+│       │   ├── SC-09 Baixar APK na versão definida
+│       │   └── SC-10 Instalar pacote no agent
+│       ├── EP-04 Operar tela
+│       │   ├── US-07 Abrir aplicativo
+│       │   ├── US-08 tap
+│       │   ├── US-09 type
+│       │   ├── US-10 scroll
+│       │   ├── US-11 screenshot
+│       │   └── US-12 Resgatar coordenadas x,y a partir de uma imagem
+│       ├── EP-05 Extrair elementos
+│       └── EP-06 Sessão
+│           ├── US-14 Salvar sessão
+│           ├── US-15 Remover sessão
+│           └── US-16 Recuperar sessão
 ├── 2. Refinamento tecnico
 │   ├── 2.1 Desenhar arquitetura, contratos e dados
 │   ├── 2.2 Identificar riscos e mitigacoes

@@ -9,7 +9,7 @@
 
 Sobe/conecta o Android e deixa o device pronto para ADB.
 
-Na prática, o código Node lê `device.config.json`, sobe o runtime/agent no host, estabelece a conexão e só considera o provisionamento concluído quando o serial ADB aparece como `device` e o boot do sistema está completo (`sys.boot_completed` ou equivalente). Sem esse estado, nenhuma operação seguinte deve rodar.
+Dado o config, sobe o runtime/agent no host, estabelece a conexão e só considera o provisionamento concluído quando o serial ADB aparece como `device` e o boot do sistema está completo (`sys.boot_completed` ou equivalente). Sem esse estado, nenhuma operação seguinte deve rodar.
 
 ### US-02 — Evento de boot
 

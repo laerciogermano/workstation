@@ -14,21 +14,6 @@
 | US-05 | Extrair elementos e informações | Lê a tela e devolve a UI como **árvore de componentes** (estilo DOM): textos, ícones, imagens, fotos, **listas** e demais nós, com bounds e metadados |
 | US-06 | Guardar estado de sessão | Persiste e restaura contexto da sessão (device, apps, último frame, login parcial) em arquivo |
 
-### US-05 · Extrair elementos e informações
-
-Lê a tela (dump / OCR / visão) e devolve a hierarquia da UI como **árvore de componentes**, análoga a um DOM: cada nó tem tipo, bounds, metadados e filhos.
-
-| Tipo de nó | Conteúdo típico |
-|------------|-----------------|
-| Texto | String visível (OCR ou atributo de acessibilidade) |
-| Ícone | Controle/pictograma reconhecido (ex.: lupa, menu, coração) |
-| Imagem / foto | Região de mídia (avatar, banner, foto de perfil) |
-| Lista | Coleção rolável/repetível de itens (cada item é um filho na árvore) |
-| Container | Agrupador (card, toolbar, painel) com filhos |
-| Outros | Botões, campos, links e nós genéricos com papel na UI |
-
-A saída é a **árvore completa** (raiz → filhos), não só uma lista plana — quem consome navega como em um DOM. Listas entram como nós com itens filhos (e metadados de scroll quando houver).
-
 ## Entradas · Execução · Saídas (por nó)
 
 #### US-01 · Provisionar um agente (60 min)
@@ -158,6 +143,19 @@ A saída é a **árvore completa** (raiz → filhos), não só uma lista plana �
 | Imagem template, frame/tela atual | Template match / visão na tela | Coordenadas x,y (e confiança) |
 
 #### US-05 · Extrair elementos e informações (120 min)
+
+Lê a tela (dump / OCR / visão) e devolve a hierarquia da UI como **árvore de componentes**, análoga a um DOM: cada nó tem tipo, bounds, metadados e filhos.
+
+| Tipo de nó | Conteúdo típico |
+|------------|-----------------|
+| Texto | String visível (OCR ou atributo de acessibilidade) |
+| Ícone | Controle/pictograma reconhecido (ex.: lupa, menu, coração) |
+| Imagem / foto | Região de mídia (avatar, banner, foto de perfil) |
+| Lista | Coleção rolável/repetível de itens (cada item é um filho na árvore) |
+| Container | Agrupador (card, toolbar, painel) com filhos |
+| Outros | Botões, campos, links e nós genéricos com papel na UI |
+
+A saída é a **árvore completa** (raiz → filhos), não só uma lista plana — quem consome navega como em um DOM. Listas entram como nós com itens filhos (e metadados de scroll quando houver).
 
 | Entradas | Execução | Saídas |
 |----------|----------|--------|

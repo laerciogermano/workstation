@@ -9,8 +9,6 @@
 |----------|---------|
 | Stories | [`1.stories.md`](1.stories.md) |
 | Épico | [`2.epics.md`](2.epics.md) |
-| Cenários | [`3.scenarios.md`](3.scenarios.md) |
-| BDDs | [`4.bdds.md`](4.bdds.md) |
 
 ## Estórias
 

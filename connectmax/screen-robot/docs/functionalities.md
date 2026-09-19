@@ -5,7 +5,7 @@
 **Agente LinkedIn:** [`../../linkedin-agent/`](../../linkedin-agent/README.md).  
 **Negócio:** [`../../vendas/`](../../vendas/README.md).
 
-**IDs:** **US-** = história (uma ação/capacidade). **SC-** = cenário: mudança de estado + unidade testável e paralelizável (toda US tem ≥1 SC).  
+**IDs:** **US-** = história (uma ação/capacidade). **SC-XX** = cenário sequencial (mudança de estado + unidade testável/paralelizável; toda US tem ≥1 SC).  
 Eventos e operações: **cada item é uma US**. Extração + sessão = **US-13 Extrair elementos e guardar sessão**.
 
 | ID | Funcionalidade | Descrição | Min |
@@ -34,9 +34,9 @@ Eventos e operações: **cada item é uma US**. Extração + sessão = **US-13 E
 
 | ID | Cenário | Entradas | Execução | Saídas | Min |
 |----|---------|----------|----------|--------|-----|
-| SC-01.1 | Subir / conectar o Android (agent) | Host, imagem/runtime, script de start | Subir o agent e estabelecer conexão | Processo do agent em execução e alcançável | 20 |
-| SC-01.2 | Garantir serial ADB online | Agent alcançável, serial esperado na config | `adb connect` / listar devices até serial `device` | Serial ADB online | 20 |
-| SC-01.3 | Aguardar boot completo | Serial online | Poll de boot/sys.boot_completed (ou equivalente) | Device com boot completo | 20 |
+| SC-01 | Subir / conectar o Android (agent) | Host, imagem/runtime, script de start | Subir o agent e estabelecer conexão | Processo do agent em execução e alcançável | 20 |
+| SC-02 | Garantir serial ADB online | Agent alcançável, serial esperado na config | `adb connect` / listar devices até serial `device` | Serial ADB online | 20 |
+| SC-03 | Aguardar boot completo | Serial online | Poll de boot/sys.boot_completed (ou equivalente) | Device com boot completo | 20 |
 
 ### US-02 · Evento de boot (12 min)
 
@@ -46,7 +46,7 @@ Eventos e operações: **cada item é uma US**. Extração + sessão = **US-13 E
 
 | ID | Cenário | Entradas | Execução | Saídas | Min |
 |----|---------|----------|----------|--------|-----|
-| SC-02.1 | Sinal de boot é recebido | Serial online | Listener aguarda o evento de boot | Boot sinalizado | 12 |
+| SC-04 | Sinal de boot é recebido | Serial online | Listener aguarda o evento de boot | Boot sinalizado | 12 |
 
 ### US-03 · Evento de app aberta (12 min)
 
@@ -56,7 +56,7 @@ Eventos e operações: **cada item é uma US**. Extração + sessão = **US-13 E
 
 | ID | Cenário | Entradas | Execução | Saídas | Min |
 |----|---------|----------|----------|--------|-----|
-| SC-03.1 | App em foreground é confirmada | Package esperado em foreground | Aguardar app aberta | App em foreground | 12 |
+| SC-05 | App em foreground é confirmada | Package esperado em foreground | Aguardar app aberta | App em foreground | 12 |
 
 ### US-04 · Evento de tela estável (12 min)
 
@@ -66,7 +66,7 @@ Eventos e operações: **cada item é uma US**. Extração + sessão = **US-13 E
 
 | ID | Cenário | Entradas | Execução | Saídas | Min |
 |----|---------|----------|----------|--------|-----|
-| SC-04.1 | Tela fica estável | App em foreground | Aguardar ausência de transição de UI | Tela estável | 12 |
+| SC-06 | Tela fica estável | App em foreground | Aguardar ausência de transição de UI | Tela estável | 12 |
 
 ### US-05 · Evento de mudança de dump (12 min)
 
@@ -76,7 +76,7 @@ Eventos e operações: **cada item é uma US**. Extração + sessão = **US-13 E
 
 | ID | Cenário | Entradas | Execução | Saídas | Min |
 |----|---------|----------|----------|--------|-----|
-| SC-05.1 | Dump de UI muda | Dump anterior (ou ausência), serial online | Detectar mudança no dump (uiautomator) | Dump atualizado disponível | 12 |
+| SC-07 | Dump de UI muda | Dump anterior (ou ausência), serial online | Detectar mudança no dump (uiautomator) | Dump atualizado disponível | 12 |
 
 ### US-06 · Instalar APKs (45 min)
 
@@ -86,9 +86,9 @@ Eventos e operações: **cada item é uma US**. Extração + sessão = **US-13 E
 
 | ID | Cenário | Entradas | Execução | Saídas | Min |
 |----|---------|----------|----------|--------|-----|
-| SC-06.1 | Ler versão na config do dispositivo | `device.config.json` | Parsear `apps.*.version` / package | Versão e package alvo | 5 |
-| SC-06.2 | Baixar APK na versão definida | Package + versão, ferramenta de download (ex. apkeep) | Baixar APK/XAPK da versão pedida | Artefato APK no disco | 25 |
-| SC-06.3 | Instalar pacote no agent | Serial online, caminho do APK | `adb install` (ou equivalente) | Pacote instalado no agent | 15 |
+| SC-08 | Ler versão na config do dispositivo | `device.config.json` | Parsear `apps.*.version` / package | Versão e package alvo | 5 |
+| SC-09 | Baixar APK na versão definida | Package + versão, ferramenta de download (ex. apkeep) | Baixar APK/XAPK da versão pedida | Artefato APK no disco | 25 |
+| SC-10 | Instalar pacote no agent | Serial online, caminho do APK | `adb install` (ou equivalente) | Pacote instalado no agent | 15 |
 
 ### US-07 · Abrir aplicativo (15 min)
 
@@ -98,7 +98,7 @@ Eventos e operações: **cada item é uma US**. Extração + sessão = **US-13 E
 
 | ID | Cenário | Entradas | Execução | Saídas | Min |
 |----|---------|----------|----------|--------|-----|
-| SC-07.1 | App é aberta no agent | Package (e activity opcional) | Launch do app no agent | App em foreground | 15 |
+| SC-11 | App é aberta no agent | Package (e activity opcional) | Launch do app no agent | App em foreground | 15 |
 
 ### US-08 · tap (15 min)
 
@@ -108,7 +108,7 @@ Eventos e operações: **cada item é uma US**. Extração + sessão = **US-13 E
 
 | ID | Cenário | Entradas | Execução | Saídas | Min |
 |----|---------|----------|----------|--------|-----|
-| SC-08.1 | Toque na tela | Coordenadas x,y ou bounds do elemento | Tap no alvo | UI refletindo o toque | 15 |
+| SC-12 | Toque na tela | Coordenadas x,y ou bounds do elemento | Tap no alvo | UI refletindo o toque | 15 |
 
 ### US-09 · type (15 min)
 
@@ -118,7 +118,7 @@ Eventos e operações: **cada item é uma US**. Extração + sessão = **US-13 E
 
 | ID | Cenário | Entradas | Execução | Saídas | Min |
 |----|---------|----------|----------|--------|-----|
-| SC-09.1 | Texto é digitado | Texto, campo focado ou coords | Type injeta o texto | Texto na UI | 15 |
+| SC-13 | Texto é digitado | Texto, campo focado ou coords | Type injeta o texto | Texto na UI | 15 |
 
 ### US-10 · scroll (15 min)
 
@@ -128,7 +128,7 @@ Eventos e operações: **cada item é uma US**. Extração + sessão = **US-13 E
 
 | ID | Cenário | Entradas | Execução | Saídas | Min |
 |----|---------|----------|----------|--------|-----|
-| SC-10.1 | Conteúdo é rolado | Direção, distância ou bounds da área | Scroll/swipe | Conteúdo rolado; novos itens visíveis | 15 |
+| SC-14 | Conteúdo é rolado | Direção, distância ou bounds da área | Scroll/swipe | Conteúdo rolado; novos itens visíveis | 15 |
 
 ### US-11 · screenshot (15 min)
 
@@ -138,7 +138,7 @@ Eventos e operações: **cada item é uma US**. Extração + sessão = **US-13 E
 
 | ID | Cenário | Entradas | Execução | Saídas | Min |
 |----|---------|----------|----------|--------|-----|
-| SC-11.1 | Print da tela é salvo | Serial, path de saída | Capturar screenshot | Arquivo de imagem no path | 15 |
+| SC-15 | Print da tela é salvo | Serial, path de saída | Capturar screenshot | Arquivo de imagem no path | 15 |
 
 ### US-12 · Resgatar coordenadas x,y (imagem de entrada) (15 min)
 
@@ -148,7 +148,7 @@ Eventos e operações: **cada item é uma US**. Extração + sessão = **US-13 E
 
 | ID | Cenário | Entradas | Execução | Saídas | Min |
 |----|---------|----------|----------|--------|-----|
-| SC-12.1 | Coordenadas a partir de imagem template | Imagem template, frame/tela atual | Match por visão/template | Coordenadas x,y (e confiança) | 15 |
+| SC-16 | Coordenadas a partir de imagem template | Imagem template, frame/tela atual | Match por visão/template | Coordenadas x,y (e confiança) | 15 |
 
 ### US-13 · Extrair elementos e guardar sessão (150 min)
 
@@ -160,8 +160,8 @@ Extrai elementos tipados **a partir de uma imagem**/frame/dump da tela (textos v
 
 | ID | Cenário | Entradas | Execução | Saídas | Min |
 |----|---------|----------|----------|--------|-----|
-| SC-13.1 | Persistir sessão em arquivo | Estado em memória, path da sessão | Serializar e gravar | Arquivo de sessão | 15 |
-| SC-13.2 | Restaurar sessão do arquivo | Arquivo de sessão existente | Ler e reaplicar contexto | Estado restaurado no runtime | 15 |
+| SC-17 | Persistir sessão em arquivo | Estado em memória, path da sessão | Serializar e gravar | Arquivo de sessão | 15 |
+| SC-18 | Restaurar sessão do arquivo | Arquivo de sessão existente | Ler e reaplicar contexto | Estado restaurado no runtime | 15 |
 
 ## Cenário de aceitação (integração)
 

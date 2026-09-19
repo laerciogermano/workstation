@@ -19,13 +19,13 @@ Exemplo — **épico Autenticação**: login isolado não entrega valor (não h�
 ```text
 EP-01 — Autenticação          ← valor (entrar no produto)
 ├── US-01 — Cadastrar         ← operação completa
-│   ├── SC-01.1 Abrir formulário
-│   ├── SC-01.2 Preencher dados
-│   └── SC-01.3 Confirmar cadastro
+│   ├── SC-01 Abrir formulário
+│   ├── SC-02 Preencher dados
+│   └── SC-03 Confirmar cadastro
 └── US-02 — Fazer login       ← operação completa
-    ├── SC-02.1 Abrir formulário
-    ├── SC-02.2 Preencher credenciais
-    └── SC-02.3 Sessão autenticada
+    ├── SC-04 Abrir formulário
+    ├── SC-05 Preencher credenciais
+    └── SC-06 Sessão autenticada
 ```
 
 ## Entradas
@@ -54,7 +54,7 @@ Catálogo organizado em **épicos → estórias → cenários**.
 |-------|----------|
 | **Épico** | Valor entregue pelo conjunto de estórias |
 | **Estória** | Operação completa do usuário (ex.: criar usuário, fazer login) |
-| **Cenários** | ID `SC-<US>.<n>` + mudança de estado (obrigatório ≥1; pode ser só um); cada um é unidade de teste e de paralelismo |
+| **Cenários** | ID `SC-XX` + mudança de estado (obrigatório ≥1; pode ser só um); cada um é unidade de teste e de paralelismo |
 
 **Cenário** = mudança de estado (estado anterior → ação → estado resultante) **e** unidade testável/paralelizável exigida para completar a estória.
 
@@ -62,9 +62,9 @@ Exemplo — estória **Criar usuário** (no épico Autenticação ou equivalente
 
 | ID | Cenário | Mudança de estado |
 |----|---------|-------------------|
-| SC-01.1 | Clicar no botão criar | Lista → modal aberto |
-| SC-01.2 | Digitar o nome | Modal sem nome → modal com nome visível |
-| SC-01.3 | Clicar em salvar | Botão ativo → carregando/inativado → janela fechada e unidade salva na lista |
+| SC-01 | Clicar no botão criar | Lista → modal aberto |
+| SC-02 | Digitar o nome | Modal sem nome → modal com nome visível |
+| SC-03 | Clicar em salvar | Botão ativo → carregando/inativado → janela fechada e unidade salva na lista |
 
 Modelo e regras: [`funcionalidades.md`](funcionalidades.md).
 

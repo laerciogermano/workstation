@@ -16,7 +16,7 @@ Funcionalidade: Provisionar um agente
     Então o agent está pronto (serial online e boot completo)
 ```
 
-### SC-01.1 Subir / conectar o Android (agent)
+### SC-01 Subir / conectar o Android (agent)
 
 ```gherkin
 Cenário: Agent sobe e fica alcançável
@@ -25,7 +25,7 @@ Cenário: Agent sobe e fica alcançável
   Então o processo do agent está em execução e alcançável
 ```
 
-### SC-01.2 Garantir serial ADB online
+### SC-02 Garantir serial ADB online
 
 ```gherkin
 Cenário: Serial ADB fica online
@@ -34,7 +34,7 @@ Cenário: Serial ADB fica online
   Então o serial ADB está online
 ```
 
-### SC-01.3 Aguardar boot completo
+### SC-03 Aguardar boot completo
 
 ```gherkin
 Cenário: Boot completo no device
@@ -47,42 +47,46 @@ Cenário: Boot completo no device
 
 ## US-02 · Evento de boot
 
+### SC-04 Sinal de boot é recebido
+
 ```gherkin
-Funcionalidade: Evento de boot
-  Cenário: Sinal de boot é recebido
-    Dado serial online
-    Quando o listener aguarda o evento de boot
-    Então o boot é sinalizado
+Cenário: Sinal de boot é recebido
+  Dado serial online
+  Quando o listener aguarda o evento de boot
+  Então o boot é sinalizado
 ```
 
 ## US-03 · Evento de app aberta
 
+### SC-05 App em foreground é confirmada
+
 ```gherkin
-Funcionalidade: Evento de app aberta
-  Cenário: App em foreground é confirmada
-    Dado o package esperado em foreground
-    Quando o sistema aguarda a app aberta
-    Então a app está em foreground
+Cenário: App em foreground é confirmada
+  Dado o package esperado em foreground
+  Quando o sistema aguarda a app aberta
+  Então a app está em foreground
 ```
 
 ## US-04 · Evento de tela estável
 
+### SC-06 Tela fica estável
+
 ```gherkin
-Funcionalidade: Evento de tela estável
-  Cenário: Tela fica estável
-    Dado a app em foreground
-    Quando o sistema aguarda ausência de transição de UI
-    Então a tela está estável
+Cenário: Tela fica estável
+  Dado a app em foreground
+  Quando o sistema aguarda ausência de transição de UI
+  Então a tela está estável
 ```
 
 ## US-05 · Evento de mudança de dump
 
+### SC-07 Dump de UI muda
+
 ```gherkin
-Funcionalidade: Evento de mudança de dump
-  Cenário: Dump de UI muda
-    Dado um dump anterior (ou ausência) e serial online
-    Quando a hierarquia UI (uiautomator dump) muda em relação ao anterior
-    Então um dump atualizado está disponível
+Cenário: Dump de UI muda
+  Dado um dump anterior (ou ausência) e serial online
+  Quando a hierarquia UI (uiautomator dump) muda em relação ao anterior
+  Então um dump atualizado está disponível
 ```
 
 ---
@@ -97,7 +101,7 @@ Funcionalidade: Instalar APKs
     Então os apps estão instalados nas versões definidas
 ```
 
-### SC-06.1 Ler versão na config do dispositivo
+### SC-08 Ler versão na config do dispositivo
 
 ```gherkin
 Cenário: Versão e package são lidos da config
@@ -106,7 +110,7 @@ Cenário: Versão e package são lidos da config
   Então a versão e o package alvo estão disponíveis para download
 ```
 
-### SC-06.2 Baixar APK na versão definida
+### SC-09 Baixar APK na versão definida
 
 ```gherkin
 Cenário: APK da versão pedida é baixado
@@ -115,7 +119,7 @@ Cenário: APK da versão pedida é baixado
   Então o artefato APK/XAPK existe no disco
 ```
 
-### SC-06.3 Instalar pacote no agent
+### SC-10 Instalar pacote no agent
 
 ```gherkin
 Cenário: Pacote é instalado no agent
@@ -128,62 +132,68 @@ Cenário: Pacote é instalado no agent
 
 ## US-07 · Abrir aplicativo
 
+### SC-11 App é aberta no agent
+
 ```gherkin
-Funcionalidade: Abrir aplicativo
-  Cenário: App é aberta no agent
-    Dado package (e activity opcional)
-    Quando launch é executado
-    Então a app está em foreground
+Cenário: App é aberta no agent
+  Dado package (e activity opcional)
+  Quando launch é executado
+  Então a app está em foreground
 ```
 
 ## US-08 · tap
 
+### SC-12 Toque na tela
+
 ```gherkin
-Funcionalidade: tap
-  Cenário: Toque na tela
-    Dado coordenadas x,y ou bounds de um elemento
-    Quando tap é executado nesse alvo
-    Então a UI reflete o toque
+Cenário: Toque na tela
+  Dado coordenadas x,y ou bounds de um elemento
+  Quando tap é executado nesse alvo
+  Então a UI reflete o toque
 ```
 
 ## US-09 · type
 
+### SC-13 Texto é digitado
+
 ```gherkin
-Funcionalidade: type
-  Cenário: Texto é digitado
-    Dado um texto e campo focado (ou coords)
-    Quando type injeta o texto
-    Então o texto aparece na UI
+Cenário: Texto é digitado
+  Dado um texto e campo focado (ou coords)
+  Quando type injeta o texto
+  Então o texto aparece na UI
 ```
 
 ## US-10 · scroll
 
+### SC-14 Conteúdo é rolado
+
 ```gherkin
-Funcionalidade: scroll
-  Cenário: Conteúdo é rolado
-    Dado direção (up/down/left/right) e distância ou área
-    Quando scroll/swipe é executado
-    Então o conteúdo rolou e novos itens podem ficar visíveis
+Cenário: Conteúdo é rolado
+  Dado direção (up/down/left/right) e distância ou área
+  Quando scroll/swipe é executado
+  Então o conteúdo rolou e novos itens podem ficar visíveis
 ```
 
 ## US-11 · screenshot
 
+### SC-15 Print da tela é salvo
+
 ```gherkin
-Funcionalidade: screenshot
-  Cenário: Print da tela é salvo
-    Dado serial e path de saída
-    Quando screenshot é capturado
-    Então o arquivo de imagem existe no path
+Cenário: Print da tela é salvo
+  Dado serial e path de saída
+  Quando screenshot é capturado
+  Então o arquivo de imagem existe no path
 ```
 
 ## US-12 · Resgatar coordenadas x,y
 
+### SC-16 Coordenadas a partir de imagem template
+
 ```gherkin
-Funcionalidade: Resgatar coordenadas x,y
-  Cenário: Coordenadas a partir de imagem template
-    Dado uma imagem de entrada (template) e o frame/tela atual
-    Quando o match por visão/template é executado
-    Então coordenadas x,y (e confiança) são devolvidas
+Cenário: Coordenadas a partir de imagem template
+  Dado uma imagem de entrada (template) e o frame/tela atual
+  Quando o match por visão/template é executado
+  Então coordenadas x,y (e confiança) são devolvidas
 ```
 
 ---
@@ -203,7 +213,7 @@ Funcionalidade: Extrair elementos e guardar sessão
     E a sessão está em disco ou o contexto foi restaurado
 ```
 
-### SC-13.1 Persistir sessão em arquivo
+### SC-17 Persistir sessão em arquivo
 
 ```gherkin
 Cenário: Sessão é gravada
@@ -212,7 +222,7 @@ Cenário: Sessão é gravada
   Então o arquivo de sessão existe
 ```
 
-### SC-13.2 Restaurar sessão do arquivo
+### SC-18 Restaurar sessão do arquivo
 
 ```gherkin
 Cenário: Sessão é restaurada

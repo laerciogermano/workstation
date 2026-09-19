@@ -13,32 +13,42 @@ Estimativas: minutos IA · **1 dia = 8h = 480 min**.
 
 ### Inventário de tasks (nós)
 
-IDs: **US-** história · **SC-** cenário (mudança de estado; unidade testável/paralelizável — sob US-01, US-06, US-13). Baseline paralelo: **2026-09-19**. Filhas partem no início do dia.  
+IDs: **US-** história · **SC-XX** cenário sequencial (mudança de estado; unidade testável/paralelizável). Baseline paralelo: **2026-09-19**. Filhas partem no início do dia.  
 1 dia útil = 8h. Entradas/Execução/Saídas: [`functionalities.md`](../../connectmax/screen-robot/docs/functionalities.md#entradas--execução--saídas).
 
 | ID | Descrição | Início | Fim | Output |
 |----|-----------|--------|-----|--------|
 | US-01 | Provisionar um agente | 2026-09-19 | 2026-09-19 | Agent pronto para ADB (serial online, boot ok) |
-| SC-01.1 | Subir / conectar o Android (agent) | 2026-09-19 | 2026-09-19 | Processo do agent em execução e alcançável |
-| SC-01.2 | Garantir serial ADB online | 2026-09-19 | 2026-09-19 | Serial ADB online |
-| SC-01.3 | Aguardar boot completo | 2026-09-19 | 2026-09-19 | Device com boot completo |
+| SC-01 | Subir / conectar o Android (agent) | 2026-09-19 | 2026-09-19 | Processo do agent em execução e alcançável |
+| SC-02 | Garantir serial ADB online | 2026-09-19 | 2026-09-19 | Serial ADB online |
+| SC-03 | Aguardar boot completo | 2026-09-19 | 2026-09-19 | Device com boot completo |
 | US-02 | Evento de boot | 2026-09-19 | 2026-09-19 | Boot sinalizado |
+| SC-04 | Sinal de boot é recebido | 2026-09-19 | 2026-09-19 | Boot sinalizado |
 | US-03 | Evento de app aberta | 2026-09-19 | 2026-09-19 | App aberta confirmada |
+| SC-05 | App em foreground é confirmada | 2026-09-19 | 2026-09-19 | App em foreground |
 | US-04 | Evento de tela estável | 2026-09-19 | 2026-09-19 | Tela estável |
+| SC-06 | Tela fica estável | 2026-09-19 | 2026-09-19 | Tela estável |
 | US-05 | Evento de mudança de dump | 2026-09-19 | 2026-09-19 | Dump atualizado disponível |
+| SC-07 | Dump de UI muda | 2026-09-19 | 2026-09-19 | Dump atualizado disponível |
 | US-06 | Instalar APKs | 2026-09-19 | 2026-09-19 | Apps instalados nas versões definidas |
-| SC-06.1 | Ler versão na config do dispositivo | 2026-09-19 | 2026-09-19 | Versão e package alvo |
-| SC-06.2 | Baixar APK na versão definida | 2026-09-19 | 2026-09-19 | Artefato APK no disco |
-| SC-06.3 | Instalar pacote no agent | 2026-09-19 | 2026-09-19 | Pacote instalado no agent |
+| SC-08 | Ler versão na config do dispositivo | 2026-09-19 | 2026-09-19 | Versão e package alvo |
+| SC-09 | Baixar APK na versão definida | 2026-09-19 | 2026-09-19 | Artefato APK no disco |
+| SC-10 | Instalar pacote no agent | 2026-09-19 | 2026-09-19 | Pacote instalado no agent |
 | US-07 | Abrir aplicativo | 2026-09-19 | 2026-09-19 | App em foreground |
+| SC-11 | App é aberta no agent | 2026-09-19 | 2026-09-19 | App em foreground |
 | US-08 | tap | 2026-09-19 | 2026-09-19 | UI refletindo o tap |
+| SC-12 | Toque na tela | 2026-09-19 | 2026-09-19 | UI refletindo o toque |
 | US-09 | type | 2026-09-19 | 2026-09-19 | Texto na UI |
+| SC-13 | Texto é digitado | 2026-09-19 | 2026-09-19 | Texto na UI |
 | US-10 | scroll | 2026-09-19 | 2026-09-19 | Conteúdo rolado; novos itens visíveis |
+| SC-14 | Conteúdo é rolado | 2026-09-19 | 2026-09-19 | Conteúdo rolado; novos itens visíveis |
 | US-11 | screenshot | 2026-09-19 | 2026-09-19 | Arquivo de imagem |
+| SC-15 | Print da tela é salvo | 2026-09-19 | 2026-09-19 | Arquivo de imagem |
 | US-12 | Resgatar coordenadas x,y (imagem de entrada) | 2026-09-19 | 2026-09-19 | Coordenadas x,y (e confiança) |
+| SC-16 | Coordenadas a partir de imagem template | 2026-09-19 | 2026-09-19 | Coordenadas x,y (e confiança) |
 | US-13 | Extrair elementos e guardar sessão | 2026-09-19 | 2026-09-19 | Elementos tipados + árvore DOM; sessão em disco / restaurada |
-| SC-13.1 | Persistir sessão em arquivo | 2026-09-19 | 2026-09-19 | Arquivo de sessão |
-| SC-13.2 | Restaurar sessão do arquivo | 2026-09-19 | 2026-09-19 | Estado restaurado no runtime |
+| SC-17 | Persistir sessão em arquivo | 2026-09-19 | 2026-09-19 | Arquivo de sessão |
+| SC-18 | Restaurar sessão do arquivo | 2026-09-19 | 2026-09-19 | Estado restaurado no runtime |
 
 ### Kanban
 

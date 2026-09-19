@@ -17,6 +17,8 @@ eram oos passos para entregar o roadmap, criar primeiro os epicos,
 depois as estorias depois os cenarios.
 ```
 
+(Vocabulário: **configurar**, não criar.)
+
 ## Interpretação
 
 Sob **1.6 Roadmap**, listar os **passos de entrega** do roadmap (não o catálogo EP do produto): configurar épicos → configurar estórias → configurar cenários.

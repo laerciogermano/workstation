@@ -4,7 +4,9 @@ Transformar o discovery em plano executável.
 
 ## Entradas
 
-- [Documento de funcionalidades](../discovery/funcionalidades.md) (épicos → estórias → cenários = estado + unidade testável/paralelizável)
+- [Documento de cenários](../discovery/scenarios.md) (épicos → estórias → cenários = estado + unidade testável/paralelizável)
+- BDDs do [discovery](../discovery/bdd.md)
+- Protótipo validado ([prototype](../discovery/prototype.md))
 - Restrições técnicas e de negócio
 - Stack e padrões já adotados no projeto
 

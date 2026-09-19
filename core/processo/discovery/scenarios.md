@@ -1,6 +1,8 @@
-# Documento de funcionalidades
+# Documento de cenários
 
-Artefato do [discovery](README.md). Fonte de verdade do *quê* do produto.
+Artefato **2** do [discovery](README.md). Fonte de verdade do *quê* do produto (EP → US → SC), **sem** Gherkin.
+
+**Antes:** [`vision.md`](vision.md). **Depois:** [`bdd.md`](bdd.md).
 
 ## Regras
 
@@ -61,4 +63,10 @@ Permite autenticar com credenciais existentes.
 
 ## Fora do escopo
 
+- Gherkin / Dado-Quando-Então (vão para [`bdd.md`](bdd.md)).
+- Protótipo visual (vai para [`prototype.md`](prototype.md)).
 - Detalhe de arquitetura, tasks e implementação (vão para [refinamento técnico](../refinamento-tecnico/README.md)).
+
+## Próximo passo
+
+→ [`bdd.md`](bdd.md)

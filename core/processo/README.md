@@ -10,14 +10,14 @@ Cada etapa documenta **entradas**, **execução** e **saídas**. A árvore abaix
 
 ## Como atacar
 
-1. No [discovery](discovery/README.md): **primeiro** funcionalidades e estórias (catálogo EP → US → SC).
+1. No [discovery](discovery/README.md), nesta ordem: **vision → cenários → BDDs → protótipo**.
 2. **Depois**, separar **cada estória** e aplicar o ciclo acima **por estória** (refinamento técnico → desenvolvimento → testes → implantação → manutenção).
 
 O mapa nasce no discovery; o restante do processo roda **estória a estória**, não no produto inteiro de uma vez.
 
 | Etapa | Pasta | Objetivo |
 |-------|-------|----------|
-| Discovery | [`discovery/`](discovery/README.md) | Funcionalidades/estórias primeiro; depois ciclo por estória |
+| Discovery | [`discovery/`](discovery/README.md) | Vision → cenários → BDDs → protótipo; depois ciclo por estória |
 | Refinamento técnico | [`refinamento-tecnico/`](refinamento-tecnico/README.md) | Detalhar solução, riscos e critérios técnicos |
 | Desenvolvimento | [`desenvolvimento/`](desenvolvimento/README.md) | Implementar o que foi acordado |
 | Testes | [`testes/`](testes/README.md) | Validar comportamento e qualidade |
@@ -29,11 +29,10 @@ O mapa nasce no discovery; o restante do processo roda **estória a estória**, 
 ```text
 Processo (32)
 ├── Discovery
-│   ├── Mapear problema, usuarios e valor
-│   ├── Delimitar escopo (in / out)
-│   ├── Recortar epicos
-│   ├── Listar estorias por epico
-│   ├── Listar cenarios por estoria
+│   ├── Vision
+│   ├── Cenarios (EP → US → SC)
+│   ├── BDDs
+│   ├── Prototipo
 │   └── Validar com stakeholders
 ├── Refinamento tecnico
 │   ├── Desenhar arquitetura, contratos e dados
@@ -80,12 +79,11 @@ gantt
   axisFormat %s
 
   section Discovery
-  Mapear problema e valor       :d1a, 0, 1
-  Delimitar escopo              :d1b, after d1a, 1
-  Recortar epicos               :d1c, after d1b, 1
-  Listar estorias               :d1d, after d1c, 1
-  Listar cenarios               :d1e, after d1d, 1
-  Validar stakeholders          :d1f, after d1e, 1
+  Vision                        :d1a, 0, 1
+  Cenarios                      :d1b, after d1a, 1
+  BDDs                          :d1c, after d1b, 1
+  Prototipo                     :d1d, after d1c, 1
+  Validar stakeholders          :d1f, after d1d, 1
 
   section Refinamento tecnico
   Arquitetura e contratos       :d2a, after d1f, 1
@@ -131,14 +129,14 @@ flowchart TB
   subgraph D["1. Discovery"]
     direction TB
     D_E["Entradas<br/>demanda / problema<br/>contexto e restrições<br/>stakeholders<br/>dados e feedback"]
-    D_X["Execução<br/>épicos = valor<br/>estórias = operação completa<br/>cenários = estado + testável/paralelizável<br/>validar com stakeholders"]
-    D_S["Saídas<br/>documento de funcionalidades<br/>(EP → US → SC)"]
+    D_X["Execução<br/>vision → cenários → BDDs → protótipo<br/>validar com stakeholders"]
+    D_S["Saídas<br/>vision.md<br/>scenarios.md<br/>bdd.md<br/>protótipo"]
     D_E --> D_X --> D_S
   end
 
   subgraph R["2. Refinamento técnico"]
     direction TB
-    R_E["Entradas<br/>EP → US → SC<br/>restrições<br/>stack e padrões"]
+    R_E["Entradas<br/>vision + EP → US → SC + BDD<br/>restrições<br/>stack e padrões"]
     R_X["Execução<br/>arquitetura e contratos<br/>riscos e mitigações<br/>critérios de pronto<br/>estimativas<br/>quebra em tarefas"]
     R_S["Saídas<br/>desenho técnico / ADR<br/>critérios de pronto<br/>backlog priorizado"]
     R_E --> R_X --> R_S

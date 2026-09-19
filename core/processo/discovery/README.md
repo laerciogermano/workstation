@@ -2,16 +2,20 @@
 
 Entender o problema e fechar o *quê* do produto antes do refinamento técnico.
 
-Artefato único: o [documento de funcionalidades](funcionalidades.md).
+## Ordem dos artefatos
 
-## Ordem de ataque
+Ordem **obrigatória** — não pular nem inverter:
 
-1. **Primeiro** — atacar **funcionalidades** e **estórias**: mapear o produto em épicos → estórias → cenários até o catálogo estar fechado e validado.
-2. **Depois** — **separar cada estória** e seguir, **por estória**, os passos do [processo](../README.md): discovery (detalhe da US) → refinamento técnico → desenvolvimento → testes → implantação → manutenção.
+1. **Vision** — [`vision.md`](vision.md): problema, para quem, objetivo, escopo in/out.
+2. **Cenários** — [`scenarios.md`](scenarios.md): catálogo EP → US → SC (sem Gherkin).
+3. **BDDs** — [`bdd.md`](bdd.md): Dado / Quando / Então por US e SC.
+4. **Protótipo** — [`prototype.md`](prototype.md): validação visual/interativa do que foi especificado.
+
+Só depois disso: **separar cada estória** e seguir, **por estória**, os passos do [processo](../README.md): refinamento técnico → desenvolvimento → testes → implantação → manutenção.
 
 Não atravessar o ciclo completo no produto inteiro de uma vez. O discovery fecha o mapa; a execução do processo é **por estória**.
 
-## Hierarquia
+## Hierarquia (no artefato de cenários)
 
 | Nível | ID | O que é | Critério |
 |-------|-----|---------|----------|
@@ -44,37 +48,21 @@ EP-01 — Autenticação          ← valor (entrar no produto)
 
 ## Execução
 
-- Mapear problema, usuários e valor esperado
-- Delimitar escopo (in / out)
-- Recortar **épicos** (conjuntos de estórias que entregam valor)
-- Para cada épico, listar as **estórias** (operações completas do usuário)
-- Para cada estória, listar os **cenários** (obrigatório; no mínimo um — pode ser só um se a operação for uma única mudança de estado)
-- Validar o conjunto com stakeholders
+1. Escrever a **vision** (problema, personas, objetivo, fora de escopo)
+2. Derivar **cenários** (épicos → estórias → SC com entradas/execução/saídas)
+3. Escrever **BDDs** (Gherkin alinhado a cada US/SC)
+4. Produzir o **protótipo** (validar o *quê* com stakeholders)
+5. Validar o conjunto; só então liberar estórias para o restante do processo
 
 ## Saídas
 
-### Documento de funcionalidades
-
-Catálogo organizado em **épicos → estórias → cenários**.
-
-| Campo | Conteúdo |
-|-------|----------|
-| **Épico** | Valor entregue pelo conjunto de estórias |
-| **Estória** | Operação completa do usuário (ex.: criar usuário, fazer login) |
-| **Cenários** | ID `SC-XX` + mudança de estado (obrigatório ≥1; pode ser só um); cada um é unidade de teste e de paralelismo |
-
-**Cenário** = mudança de estado (estado anterior → ação → estado resultante) **e** unidade testável/paralelizável exigida para completar a estória.
-
-Exemplo — estória **Criar usuário** (no épico Autenticação ou equivalente):
-
-| ID | Cenário | Mudança de estado |
-|----|---------|-------------------|
-| SC-01 | Clicar no botão criar | Lista → modal aberto |
-| SC-02 | Digitar o nome | Modal sem nome → modal com nome visível |
-| SC-03 | Clicar em salvar | Botão ativo → carregando/inativado → janela fechada e unidade salva na lista |
-
-Modelo e regras: [`funcionalidades.md`](funcionalidades.md).
+| Ordem | Artefato | Conteúdo |
+|-------|----------|----------|
+| 1 | [`vision.md`](vision.md) | Visão do produto |
+| 2 | [`scenarios.md`](scenarios.md) | EP → US → SC |
+| 3 | [`bdd.md`](bdd.md) | Aceite em Gherkin |
+| 4 | [`prototype.md`](prototype.md) / protótipo do projeto | Validação visual/interativa |
 
 ## Próximo passo
 
-Com o catálogo fechado: **uma estória por vez** → [Refinamento técnico](../refinamento-tecnico/README.md) (e demais fases do [processo](../README.md)).
+Com vision → cenários → BDDs → protótipo fechados: **uma estória por vez** → [Refinamento técnico](../refinamento-tecnico/README.md) (e demais fases do [processo](../README.md)).

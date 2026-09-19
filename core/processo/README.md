@@ -10,12 +10,12 @@ Cada etapa documenta **entradas**, **execução** e **saídas**.
 
 | Etapa | Pasta | Objetivo |
 |-------|-------|----------|
-| Discovery | [`discovery/`](discovery/) | Fase 1: visão → Fase 2: épicos (BDD → protótipo HF maior → protótipo HF por cenário) |
-| Refinamento técnico | [`refinamento-tecnico/`](refinamento-tecnico/) | Detalhar solução, riscos e critérios técnicos |
-| Desenvolvimento | [`desenvolvimento/`](desenvolvimento/) | Implementar o que foi acordado |
-| Testes | [`testes/`](testes/) | Validar comportamento e qualidade |
-| Implantação | [`implantacao/`](implantacao/) | Publicar em ambiente alvo |
-| Manutenção | [`manutencao/`](manutencao/) | Operar, corrigir e evoluir |
+| Discovery | [`discovery/`](discovery/README.md) | Documento de funcionalidades (ações + cenários de mudança de estado) |
+| Refinamento técnico | [`refinamento-tecnico/`](refinamento-tecnico/README.md) | Detalhar solução, riscos e critérios técnicos |
+| Desenvolvimento | [`desenvolvimento/`](desenvolvimento/README.md) | Implementar o que foi acordado |
+| Testes | [`testes/`](testes/README.md) | Validar comportamento e qualidade |
+| Implantação | [`implantacao/`](implantacao/README.md) | Publicar em ambiente alvo |
+| Manutenção | [`manutencao/`](manutencao/README.md) | Operar, corrigir e evoluir |
 
 ## Fluxo (entradas → execução → saídas)
 
@@ -24,14 +24,14 @@ flowchart TB
   subgraph D["1. Discovery"]
     direction TB
     D_E["Entradas<br/>demanda / problema<br/>contexto e restrições<br/>stakeholders<br/>dados e feedback"]
-    D_X["Execução<br/>Fase 1: visão (funcionalidades)<br/>Fase 2: épicos — por cenário:<br/>BDD → protótipo HF maior → protótipo HF<br/>validar com stakeholders"]
-    D_S["Saídas<br/>documento de visão<br/>documento de épicos"]
+    D_X["Execução<br/>recortar funcionalidades maiores<br/>cada uma = ação<br/>cenários = mudanças de estado<br/>validar com stakeholders"]
+    D_S["Saídas<br/>documento de funcionalidades"]
     D_E --> D_X --> D_S
   end
 
   subgraph R["2. Refinamento técnico"]
     direction TB
-    R_E["Entradas<br/>visão (funcionalidades)<br/>épicos (BDD → HF maior → HF)<br/>restrições<br/>stack e padrões"]
+    R_E["Entradas<br/>funcionalidades (ações + cenários)<br/>restrições<br/>stack e padrões"]
     R_X["Execução<br/>arquitetura e contratos<br/>riscos e mitigações<br/>critérios de pronto<br/>estimativas<br/>quebra em tarefas"]
     R_S["Saídas<br/>desenho técnico / ADR<br/>critérios de pronto<br/>backlog priorizado"]
     R_E --> R_X --> R_S
@@ -47,8 +47,8 @@ flowchart TB
 
   subgraph T["4. Testes"]
     direction TB
-    T_E["Entradas<br/>código entregue<br/>critérios / BDD<br/>ambiente de teste<br/>casos de regressão"]
-    T_X["Execução<br/>unitário / integração / E2E<br/>aceite BDD<br/>regressão<br/>qualidade<br/>priorizar bugs"]
+    T_E["Entradas<br/>código entregue<br/>cenários de aceite<br/>ambiente de teste<br/>casos de regressão"]
+    T_X["Execução<br/>unitário / integração / E2E<br/>aceite por cenário<br/>regressão<br/>qualidade<br/>priorizar bugs"]
     T_S["Saídas<br/>evidência de aceite<br/>bugs priorizados<br/>relatório de resultados"]
     T_E --> T_X --> T_S
   end

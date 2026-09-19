@@ -4,16 +4,15 @@ Transformar o discovery em plano executável.
 
 ## Entradas
 
-- [Documento de visão](../discovery/) do discovery (funcionalidades com título, descrição e capa)
-- [Documento de épicos](../discovery/) (histórias, BDD → protótipo HF maior → protótipo HF por cenário)
+- [Documento de funcionalidades](../discovery/funcionalidades.md) (ações maiores + cenários de mudança de estado)
 - Restrições técnicas e de negócio
 - Stack e padrões já adotados no projeto
 
 ## Execução
 
-- Desenhar arquitetura, contratos e dados a partir da visão e dos épicos
+- Desenhar arquitetura, contratos e dados a partir das funcionalidades e cenários
 - Identificar riscos e mitigações
-- Consolidar critérios de pronto (aceite já vem do BDD do discovery)
+- Consolidar critérios de pronto (aceite a partir dos cenários do discovery)
 - Estimar esforço e dependências
 - Quebrar em tarefas priorizadas
 

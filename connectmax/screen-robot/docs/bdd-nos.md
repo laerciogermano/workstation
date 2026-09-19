@@ -1,6 +1,6 @@
 # BDD — cenários por história (screen-robot)
 
-**Por quê:** aceite de cada **US** (e **SC** sob US-01, US-02, US-20).  
+**Por quê:** aceite de cada **US** (e **SC** sob US-01, US-02, US-19).  
 **Funcionalidades:** [`functionalities.md`](functionalities.md).  
 **Integração:** [`bdd-linkedin-login.md`](bdd-linkedin-login.md).
 
@@ -156,17 +156,7 @@ Funcionalidade: type
     Então o texto aparece na UI
 ```
 
-## US-10 · key
-
-```gherkin
-Funcionalidade: key
-  Cenário: Tecla é enviada
-    Dado um código de tecla (ex. ENTER, BACK)
-    Quando keyevent é enviado
-    Então a tecla é processada pelo device
-```
-
-## US-11 · scroll
+## US-10 · scroll
 
 ```gherkin
 Funcionalidade: scroll
@@ -176,7 +166,7 @@ Funcionalidade: scroll
     Então o conteúdo rolou e novos itens podem ficar visíveis
 ```
 
-## US-12 · screenshot
+## US-11 · screenshot
 
 ```gherkin
 Funcionalidade: screenshot
@@ -186,7 +176,7 @@ Funcionalidade: screenshot
     Então o arquivo de imagem existe no path
 ```
 
-## US-13 · Resgatar coordenadas x,y
+## US-12 · Resgatar coordenadas x,y
 
 ```gherkin
 Funcionalidade: Resgatar coordenadas x,y
@@ -198,7 +188,7 @@ Funcionalidade: Resgatar coordenadas x,y
 
 ---
 
-## US-14 · Extrair nó Texto
+## US-13 · Extrair nó Texto
 
 ```gherkin
 Funcionalidade: Extrair nó Texto
@@ -208,7 +198,7 @@ Funcionalidade: Extrair nó Texto
     Então nós de texto existem com string e bounds
 ```
 
-## US-15 · Extrair nó Ícone
+## US-14 · Extrair nó Ícone
 
 ```gherkin
 Funcionalidade: Extrair nó Ícone
@@ -218,7 +208,7 @@ Funcionalidade: Extrair nó Ícone
     Então nós de ícone existem com tipo e bounds
 ```
 
-## US-16 · Extrair nó Imagem / foto
+## US-15 · Extrair nó Imagem / foto
 
 ```gherkin
 Funcionalidade: Extrair nó Imagem / foto
@@ -228,7 +218,7 @@ Funcionalidade: Extrair nó Imagem / foto
     Então nós imagem/foto existem com bounds
 ```
 
-## US-17 · Extrair nó Lista
+## US-16 · Extrair nó Lista
 
 ```gherkin
 Funcionalidade: Extrair nó Lista
@@ -238,7 +228,7 @@ Funcionalidade: Extrair nó Lista
     Então existe nó lista com filhos e metadados de scroll
 ```
 
-## US-18 · Extrair nó Container
+## US-17 · Extrair nó Container
 
 ```gherkin
 Funcionalidade: Extrair nó Container
@@ -248,7 +238,7 @@ Funcionalidade: Extrair nó Container
     Então nós container existem com filhos
 ```
 
-## US-19 · Montar árvore DOM
+## US-18 · Montar árvore DOM
 
 ```gherkin
 Funcionalidade: Montar árvore DOM
@@ -260,7 +250,7 @@ Funcionalidade: Montar árvore DOM
 
 ---
 
-## US-20 · Guardar estado de sessão
+## US-19 · Guardar estado de sessão
 
 ```gherkin
 Funcionalidade: Guardar estado de sessão
@@ -270,7 +260,7 @@ Funcionalidade: Guardar estado de sessão
     Então a sessão está em disco ou o contexto foi restaurado
 ```
 
-### SC-20.1 Persistir sessão em arquivo
+### SC-19.1 Persistir sessão em arquivo
 
 ```gherkin
 Cenário: Sessão é gravada
@@ -279,7 +269,7 @@ Cenário: Sessão é gravada
   Então o arquivo de sessão existe
 ```
 
-### SC-20.2 Restaurar sessão do arquivo
+### SC-19.2 Restaurar sessão do arquivo
 
 ```gherkin
 Cenário: Sessão é restaurada

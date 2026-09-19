@@ -13,7 +13,7 @@ Estimativas: minutos IA · **1 dia = 8h = 480 min**.
 ### Árvore de execução
 
 ```text
-screen-robot (408 min)
+screen-robot (393 min)
 ├── US-01 Provisionar um agente (60 min)
 │   ├── SC-01.1 Subir / conectar o Android (agent) (20 min)
 │   ├── SC-01.2 Garantir serial ADB online (20 min)
@@ -31,20 +31,19 @@ screen-robot (408 min)
 │   ├── US-07 Abrir aplicativo (15 min)
 │   ├── US-08 tap (15 min)
 │   ├── US-09 type (15 min)
-│   ├── US-10 key (15 min)
-│   ├── US-11 scroll (15 min)
-│   ├── US-12 screenshot (15 min)
-│   └── US-13 Resgatar coordenadas x,y (imagem de entrada) (15 min)
+│   ├── US-10 scroll (15 min)
+│   ├── US-11 screenshot (15 min)
+│   └── US-12 Resgatar coordenadas x,y (imagem de entrada) (15 min)
 ├── Extrair
-│   ├── US-14 Extrair nó Texto (20 min)
-│   ├── US-15 Extrair nó Ícone (20 min)
-│   ├── US-16 Extrair nó Imagem / foto (24 min)
-│   ├── US-17 Extrair nó Lista (24 min)
-│   ├── US-18 Extrair nó Container (12 min)
-│   └── US-19 Montar árvore DOM (20 min)
-└── US-20 Guardar estado de sessão (30 min)
-    ├── SC-20.1 Persistir sessão em arquivo (15 min)
-    └── SC-20.2 Restaurar sessão do arquivo (15 min)
+│   ├── US-13 Extrair nó Texto (20 min)
+│   ├── US-14 Extrair nó Ícone (20 min)
+│   ├── US-15 Extrair nó Imagem / foto (24 min)
+│   ├── US-16 Extrair nó Lista (24 min)
+│   ├── US-17 Extrair nó Container (12 min)
+│   └── US-18 Montar árvore DOM (20 min)
+└── US-19 Guardar estado de sessão (30 min)
+    ├── SC-19.1 Persistir sessão em arquivo (15 min)
+    └── SC-19.2 Restaurar sessão do arquivo (15 min)
 ```
 
 ### Gantt — atividades da árvore (paralelizáveis por IA)
@@ -52,7 +51,7 @@ screen-robot (408 min)
 Mesmas atividades da árvore acima (nomes e minutos).  
 Barras maiores (`crit`) = funcionalidade; filhas em paralelo entre si (entrega IA).  
 **Montar árvore DOM** só depois dos nós de extrair.  
-Esforço total (soma): **408 min**. Com filhas em paralelo, caminho crítico ≈ **60 min** (Provisionar) — Extrair como unidade `crit` cobre **120 min** se entregue monolítica; com só filhas paralelas + DOM após nós, a trilha Extrair é **24+20=44 min**.
+Esforço total (soma): **393 min**. Com filhas em paralelo, caminho crítico ≈ **60 min** (Provisionar) — Extrair como unidade `crit` cobre **120 min** se entregue monolítica; com só filhas paralelas + DOM após nós, a trilha Extrair é **24+20=44 min**.
 
 ```mermaid
 gantt
@@ -82,28 +81,27 @@ gantt
   US-07 Abrir aplicativo           :o1, 0, 15m
   US-08 tap                        :o2, 0, 15m
   US-09 type                       :o3, 0, 15m
-  US-10 key                        :o4, 0, 15m
-  US-11 scroll                     :o5, 0, 15m
-  US-12 screenshot                 :o6, 0, 15m
-  US-13 Resgatar xy por imagem     :o7, 0, 15m
+  US-10 scroll                     :o4, 0, 15m
+  US-11 screenshot                 :o5, 0, 15m
+  US-12 Resgatar xy por imagem     :o6, 0, 15m
 
   section Extrair
-  US-14 No Texto                   :x1, 0, 20m
-  US-15 No Icone                   :x2, 0, 20m
-  US-16 No Imagem e foto           :x3, 0, 24m
-  US-17 No Lista                   :x4, 0, 24m
-  US-18 No Container               :x5, 0, 12m
-  US-19 Montar arvore DOM          :x6, after x3, 20m
+  US-13 No Texto                   :x1, 0, 20m
+  US-14 No Icone                   :x2, 0, 20m
+  US-15 No Imagem e foto           :x3, 0, 24m
+  US-16 No Lista                   :x4, 0, 24m
+  US-17 No Container               :x5, 0, 12m
+  US-18 Montar arvore DOM          :x6, after x3, 20m
 
   section Sessao
-  US-20 Guardar sessao             :crit, s0, 0, 30m
-  SC-20.1 Persistir sessao         :s1, 0, 15m
-  SC-20.2 Restaurar sessao         :s2, 0, 15m
+  US-19 Guardar sessao             :crit, s0, 0, 30m
+  SC-19.1 Persistir sessao         :s1, 0, 15m
+  SC-19.2 Restaurar sessao         :s2, 0, 15m
 ```
 
 ### Inventário de tasks (nós)
 
-IDs: **US-** história · **SC-** cenário (só sob US-01, US-02, US-20). Baseline paralelo: **2026-09-19**. Filhas partem no início do dia; **Montar árvore DOM** inicia após os nós de Extrair (mesmo dia).  
+IDs: **US-** história · **SC-** cenário (só sob US-01, US-02, US-19). Baseline paralelo: **2026-09-19**. Filhas partem no início do dia; **Montar árvore DOM** inicia após os nós de Extrair (mesmo dia).  
 1 dia útil = 8h. Entradas/Execução/Saídas: [`functionalities.md`](../../connectmax/screen-robot/docs/functionalities.md#entradas--execução--saídas-por-nó).
 
 | ID | Descrição | Início | Fim | Output |
@@ -123,20 +121,18 @@ IDs: **US-** história · **SC-** cenário (só sob US-01, US-02, US-20). Baseli
 | US-07 | Abrir aplicativo | 2026-09-19 | 2026-09-19 | App em foreground |
 | US-08 | tap | 2026-09-19 | 2026-09-19 | UI refletindo o tap |
 | US-09 | type | 2026-09-19 | 2026-09-19 | Texto na UI |
-| US-10 | key | 2026-09-19 | 2026-09-19 | Tecla processada |
-| US-11 | scroll | 2026-09-19 | 2026-09-19 | Conteúdo rolado; novos itens visíveis |
-| US-12 | screenshot | 2026-09-19 | 2026-09-19 | Arquivo de imagem |
-| US-13 | Resgatar coordenadas x,y (imagem de entrada) | 2026-09-19 | 2026-09-19 | Coordenadas x,y (e confiança) |
-| US-14 | Extrair nó Texto | 2026-09-19 | 2026-09-19 | Nós de texto com string e bounds |
-| US-15 | Extrair nó Ícone | 2026-09-19 | 2026-09-19 | Nós de ícone com tipo e bounds |
-| US-16 | Extrair nó Imagem / foto | 2026-09-19 | 2026-09-19 | Nós imagem/foto com bounds |
-| US-17 | Extrair nó Lista | 2026-09-19 | 2026-09-19 | Nó lista com filhos e metadados de scroll |
-| US-18 | Extrair nó Container | 2026-09-19 | 2026-09-19 | Nós container com filhos |
-| US-19 | Montar árvore DOM | 2026-09-19 | 2026-09-19 | Árvore DOM navegável |
-| US-20 | Guardar estado de sessão | 2026-09-19 | 2026-09-19 | Sessão em disco / contexto restaurado |
-| SC-20.1 | Persistir sessão em arquivo | 2026-09-19 | 2026-09-19 | Arquivo de sessão |
-| SC-20.2 | Restaurar sessão do arquivo | 2026-09-19 | 2026-09-19 | Estado restaurado no runtime |
-
+| US-10 | scroll | 2026-09-19 | 2026-09-19 | Conteúdo rolado; novos itens visíveis |
+| US-11 | screenshot | 2026-09-19 | 2026-09-19 | Arquivo de imagem |
+| US-12 | Resgatar coordenadas x,y (imagem de entrada) | 2026-09-19 | 2026-09-19 | Coordenadas x,y (e confiança) |
+| US-13 | Extrair nó Texto | 2026-09-19 | 2026-09-19 | Nós de texto com string e bounds |
+| US-14 | Extrair nó Ícone | 2026-09-19 | 2026-09-19 | Nós de ícone com tipo e bounds |
+| US-15 | Extrair nó Imagem / foto | 2026-09-19 | 2026-09-19 | Nós imagem/foto com bounds |
+| US-16 | Extrair nó Lista | 2026-09-19 | 2026-09-19 | Nó lista com filhos e metadados de scroll |
+| US-17 | Extrair nó Container | 2026-09-19 | 2026-09-19 | Nós container com filhos |
+| US-18 | Montar árvore DOM | 2026-09-19 | 2026-09-19 | Árvore DOM navegável |
+| US-19 | Guardar estado de sessão | 2026-09-19 | 2026-09-19 | Sessão em disco / contexto restaurado |
+| SC-19.1 | Persistir sessão em arquivo | 2026-09-19 | 2026-09-19 | Arquivo de sessão |
+| SC-19.2 | Restaurar sessão do arquivo | 2026-09-19 | 2026-09-19 | Estado restaurado no runtime |
 
 ### Kanban
 

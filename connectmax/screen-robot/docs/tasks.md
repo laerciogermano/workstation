@@ -50,11 +50,10 @@ screen-robot (408 min)
     └── SC-20 Recuperar sessão do arquivo (15 min)
 ```
 
-### Gantt — atividades da árvore (sequenciais)
+### Gantt — histórias sequenciais
 
-Mesmas atividades da árvore acima (nomes e minutos).  
-Barra pai = US · barras filhas = SC (dentro da US, em sequência).  
-US sequenciais: cada US começa ao fim da anterior.  
+Barras = US apenas (SC ficam na árvore acima).  
+Cada US começa ao fim da anterior.  
 Esforço total (soma / caminho crítico): **408 min**.
 
 ```mermaid
@@ -63,73 +62,23 @@ gantt
   dateFormat X
   axisFormat %s
 
-  section US-01 Provisionar (60)
+  section Historias
   US-01 Provisionar um agente           :us01, 0, 60m
-  SC-01 Subir e conectar                :sc01, 0, 20m
-  SC-02 Serial ADB online               :sc02, after sc01, 20m
-  SC-03 Boot completo                   :sc03, after sc02, 20m
-
-  section US-02 Evento boot (12)
   US-02 Evento de boot                  :us02, after us01, 12m
-  SC-04 Sinal de boot                   :sc04, after us01, 12m
-
-  section US-03 Evento app aberta (12)
   US-03 Evento de app aberta            :us03, after us02, 12m
-  SC-05 App em foreground               :sc05, after us02, 12m
-
-  section US-04 Evento tela estavel (12)
   US-04 Evento de tela estavel          :us04, after us03, 12m
-  SC-06 Tela fica estavel               :sc06, after us03, 12m
-
-  section US-05 Evento mudanca dump (12)
   US-05 Evento de mudanca de dump       :us05, after us04, 12m
-  SC-07 Dump de UI muda                 :sc07, after us04, 12m
-
-  section US-06 Instalar APKs (45)
   US-06 Instalar APKs                   :us06, after us05, 45m
-  SC-08 Ler versao                      :sc08, after us05, 5m
-  SC-09 Baixar APK                      :sc09, after sc08, 25m
-  SC-10 Instalar pacote                 :sc10, after sc09, 15m
-
-  section US-07 Abrir aplicativo (15)
   US-07 Abrir aplicativo                :us07, after us06, 15m
-  SC-11 App e aberta no agent           :sc11, after us06, 15m
-
-  section US-08 tap (15)
   US-08 tap                             :us08, after us07, 15m
-  SC-12 Toque na tela                   :sc12, after us07, 15m
-
-  section US-09 type (15)
   US-09 type                            :us09, after us08, 15m
-  SC-13 Texto e digitado                :sc13, after us08, 15m
-
-  section US-10 scroll (15)
   US-10 scroll                          :us10, after us09, 15m
-  SC-14 Conteudo e rolado               :sc14, after us09, 15m
-
-  section US-11 screenshot (15)
   US-11 screenshot                      :us11, after us10, 15m
-  SC-15 Print da tela e salvo           :sc15, after us10, 15m
-
-  section US-12 Resgatar xy (15)
   US-12 Resgatar coordenadas x,y        :us12, after us11, 15m
-  SC-16 Coordenadas a partir de imagem  :sc16, after us11, 15m
-
-  section US-13 Extrair elementos (120)
   US-13 Extrair elementos               :crit, us13, after us12, 120m
-  SC-17 Extrair elementos tipados       :crit, sc17, after us12, 120m
-
-  section US-14 Salvar sessao (15)
   US-14 Salvar sessao                   :us14, after us13, 15m
-  SC-18 Salvar sessao em arquivo        :sc18, after us13, 15m
-
-  section US-15 Remover sessao (15)
   US-15 Remover sessao                  :us15, after us14, 15m
-  SC-19 Remover sessao do disco         :sc19, after us14, 15m
-
-  section US-16 Recuperar sessao (15)
   US-16 Recuperar sessao                :us16, after us15, 15m
-  SC-20 Recuperar sessao do arquivo     :sc20, after us15, 15m
 ```
 
 ## Próximos passos

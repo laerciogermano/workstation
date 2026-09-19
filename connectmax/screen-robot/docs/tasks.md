@@ -95,45 +95,45 @@ gantt
   axisFormat %s
 
   section 1 Provisionar
-  Provisionar um agente     :crit, p0, 0, 60
-  Subir e conectar agent    :p1, 0, 20
-  Serial ADB online         :p2, after p1, 20
-  Boot completo             :p3, after p2, 20
+  Provisionar um agente     :crit, p0, 0, 60m
+  Subir e conectar agent    :p1, 0, 20m
+  Serial ADB online         :p2, after p1, 20m
+  Boot completo             :p3, after p2, 20m
 
   section 2 Instalar APKs
-  Instalar APKs             :crit, i0, after p0, 45
-  Ler versao na config      :i1, after p0, 5
-  Baixar APK                :i2, after i1, 25
-  Instalar no agent         :i3, after i2, 15
+  Instalar APKs             :crit, i0, after p0, 45m
+  Ler versao na config      :i1, after p0, 5m
+  Baixar APK                :i2, after i1, 25m
+  Instalar no agent         :i3, after i2, 15m
 
   section 3 Receber eventos
-  Receber eventos           :crit, e0, after i0, 48
-  Evento boot               :e1, after i0, 12
-  Evento app aberta         :e2, after e1, 12
-  Evento tela estavel       :e3, after e2, 12
-  Evento mudanca de dump    :e4, after e3, 12
+  Receber eventos           :crit, e0, after i0, 48m
+  Evento boot               :e1, after i0, 12m
+  Evento app aberta         :e2, after e1, 12m
+  Evento tela estavel       :e3, after e2, 12m
+  Evento mudanca de dump    :e4, after e3, 12m
 
   section 4 Extrair
-  Extrair elementos         :crit, x0, after e0, 120
-  No Texto                  :x1, after e0, 20
-  No Icone                  :x2, after x1, 20
-  No Imagem e foto          :x3, after x2, 24
-  No Lista                  :x4, after x3, 24
-  No Container              :x5, after x4, 12
-  Montar arvore DOM         :x6, after x5, 20
+  Extrair elementos         :crit, x0, after e0, 120m
+  No Texto                  :x1, after e0, 20m
+  No Icone                  :x2, after x1, 20m
+  No Imagem e foto          :x3, after x2, 24m
+  No Lista                  :x4, after x3, 24m
+  No Container              :x5, after x4, 12m
+  Montar arvore DOM         :x6, after x5, 20m
 
   section 5 Operacoes
-  Executar operacoes        :crit, o0, after x0, 75
-  launch                    :o1, after x0, 15
-  tap                       :o2, after o1, 15
-  type                      :o3, after o2, 15
-  key                       :o4, after o3, 15
-  screenshot                :o5, after o4, 15
+  Executar operacoes        :crit, o0, after x0, 75m
+  launch                    :o1, after x0, 15m
+  tap                       :o2, after o1, 15m
+  type                      :o3, after o2, 15m
+  key                       :o4, after o3, 15m
+  screenshot                :o5, after o4, 15m
 
   section 6 Sessao
-  Guardar estado de sessao  :crit, s0, after o0, 30
-  Persistir sessao          :s1, after o0, 15
-  Restaurar sessao          :s2, after s1, 15
+  Guardar estado de sessao  :crit, s0, after o0, 30m
+  Persistir sessao          :s1, after o0, 15m
+  Restaurar sessao          :s2, after s1, 15m
 ```
 
 | # | Maior | Filhas | Min IA |

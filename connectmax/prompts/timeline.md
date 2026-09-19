@@ -22,3 +22,4 @@ Como registrar: [`README.md`](README.md).
 | 013 | 2026-09-19 | Extrair como árvore DOM | [013-2026-09-19-extrair-arvore-dom.md](013-2026-09-19-extrair-arvore-dom.md) | Extração devolve textos, ícones, imagens/fotos em árvore de componentes estilo DOM. |
 | 014 | 2026-09-19 | Extrair listas | [014-2026-09-19-extrair-listas.md](014-2026-09-19-extrair-listas.md) | Extração inclui nós de lista com itens filhos na árvore DOM. |
 | 015 | 2026-09-19 | Remover planos de percepção | [015-2026-09-19-remover-planos-percepcao.md](015-2026-09-19-remover-planos-percepcao.md) | Apagou plano-implementacao-percepcao e plano-percepcao-imagem-hardware. |
+| 016 | 2026-09-19 | Tasks árvore + Gantt | [016-2026-09-19-tasks-arvore-gantt.md](016-2026-09-19-tasks-arvore-gantt.md) | `docs/tasks.md` com árvore e Gantt das 6 maiores + filhas. |

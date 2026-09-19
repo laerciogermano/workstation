@@ -8,27 +8,11 @@ Gantts por projeto (prioridade maior → menor).
 ## P1 — ConnectMax · screen-robot
 
 Seis capacidades Node + cenário login LinkedIn.  
-Funcionalidades: [`functionalities.md`](../../connectmax/screen-robot/docs/functionalities.md) · BDD: [`bdd-linkedin-login.md`](../../connectmax/screen-robot/docs/bdd-linkedin-login.md).
+Funcionalidades: [`functionalities.md`](../../connectmax/screen-robot/docs/functionalities.md) · Tasks: [`tasks.md`](../../connectmax/screen-robot/docs/tasks.md) · BDD: [`bdd-linkedin-login.md`](../../connectmax/screen-robot/docs/bdd-linkedin-login.md).
 
-```mermaid
-gantt
-  title screen-robot — Node (minutos IA)
-  dateFormat X
-  axisFormat %s
+Gantt canônico (maiores sequenciais + filhas): [`tasks.md`](../../connectmax/screen-robot/docs/tasks.md#gantt).
 
-  section Caps
-  Provisionar agente       :a01, 0, 30m
-  Instalar APKs            :a02, after a01, 45m
-  Receber eventos          :a03, after a01, 24m
-  Extrair elementos        :a04, after a03, 36m
-  Executar operacoes       :a05, after a02, 36m
-  Guardar sessao           :a06, after a05, 18m
-
-  section Cenario
-  Login LinkedIn BDD       :b01, after a06, 60m
-```
-
-→ [`tasks`](../tasks/README.md#p1--connectmax--screen-robot) · [`functionalities`](../../connectmax/screen-robot/docs/functionalities.md)
+→ [`tasks`](../tasks/README.md#p1--connectmax--screen-robot) · [`screen-robot/docs/tasks.md`](../../connectmax/screen-robot/docs/tasks.md) · [`functionalities`](../../connectmax/screen-robot/docs/functionalities.md)
 
 ---
 

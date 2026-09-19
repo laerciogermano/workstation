@@ -54,6 +54,5 @@ if [[ "${STATE}" != "device" ]]; then
   exit 1
 fi
 
-echo "Abrindo scrcpy..."
-# --no-control: no Android 15/redroid o controle de input ainda quebra em algumas builds do scrcpy
-exec scrcpy -s "${TARGET}" --no-audio --no-control
+echo "Abrindo scrcpy (mouse e teclado ativos)..."
+exec scrcpy -s "${TARGET}" --no-audio

@@ -35,9 +35,14 @@ cd sources/android-studio
 # 3) espera boot
 ./scripts/wait-boot.sh
 
-# 4) (opcional) abre o app Camera
+# 4) (opcional) Instagram — XAPK em apks/ (gitignored) ou baixa com apkeep
+./scripts/install-instagram.sh
+
+# 5) (opcional) abre o app Camera
 ./scripts/open-camera.sh
 ```
+
+Instagram: última do APKPure compatível com API 28+ (AVD = API 30). Binário em `apks/` — **não** vai no git (copyright Meta); `brew install apkeep` na primeira máquina.
 
 Parar:
 
@@ -90,6 +95,7 @@ Vídeo padrão: `media/sample.mp4`. Pode passar outro:
 sources/android-studio/
 ├── README.md
 ├── .gitignore
+├── apks/                 # local only (gitignored) — Instagram XAPK
 ├── media/
 │   └── sample.mp4
 └── scripts/
@@ -97,6 +103,7 @@ sources/android-studio/
     ├── start.sh
     ├── stop.sh
     ├── wait-boot.sh
+    ├── install-instagram.sh
     ├── open-camera.sh
     └── start-obs-camera.sh
 ```

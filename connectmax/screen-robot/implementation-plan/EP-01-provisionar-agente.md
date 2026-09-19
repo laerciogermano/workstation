@@ -296,7 +296,7 @@ classDiagram
     -RuntimeStarter starter
     +provisionAgent(cfg) Promise~AgentHandle~
     +waitForAdbOnline(serial, timeoutMs) Promise~void~
-    +waitForBoot(serial, timeoutMs) Promise~void~
+    +on("boot", opts) Promise~void~
   }
 
   Provisioner --> AdbClient : usa
@@ -309,7 +309,7 @@ classDiagram
 ```
 
 **Hoje:** `provisionAgent` + `AdbClient` (`adb.js`) cobrem SC-02+SC-03; SC-01 é manual via scripts redroid/studio.  
-**Gap:** extrair `RuntimeStarter` e APIs `waitForAdbOnline` / `waitForBoot`.
+**Gap:** extrair `RuntimeStarter`, `waitForAdbOnline` e reusar `on("boot")` (EP-02).
 
 ---
 
@@ -361,7 +361,7 @@ Cenário: SC-03 Boot completo no device
 |---|---------|-----|----------|----------|
 | I1 | Tipar `ProvisionConfig` / `AgentHandle` (JSDoc ou `.d.ts`) | — | `lib/provision.js` | Tipos documentados |
 | I2 | Extrair `waitForAdbOnline(serial, opts)` | SC-02 | `provision.js` + `adb.js` | API isolada + timeout |
-| I3 | Extrair `waitForBoot(serial, opts)` | SC-03 | `provision.js` | API isolada + `onEvent` |
+| I3 | Extrair boot via EventBus `on("boot")` (EP-02) | SC-03 | `provision.js` / `events.js` | Reuso do evento |
 | I4 | `RuntimeStarter` + `RedroidStarter` (chama `sources/redroid/scripts/start.sh`) | SC-01 | `lib/runtime/` | Start opcional se não reachable |
 | I5 | `AvdStarter` (android-studio scripts) | SC-01 | `lib/runtime/` | kind=`avd` |
 | I6 | `provisionAgent` orquestra I2–I5 | US-01 | `provision.js` | BDDs US-01 + SC passam |
@@ -383,8 +383,8 @@ I1 → I2 → I3 → I4 → I5 → I6 → I7
 | `provisionAgent` (connect + boot loop) | Existe — mistura SC-02+SC-03 |
 | `connectIfTcp` / `adb` / `wait-for-device` | Existe |
 | Start redroid/AVD via Node | **Gap** (só scripts shell) |
-| `waitForBoot` / `waitForAdbOnline` dedicados | **Gap** |
-| Eventos `onEvent` no provision | **Gap** (EP-02 US-02 reutiliza) |
+| `waitForAdbOnline` dedicado; boot via `on("boot")` | **Gap** / EP-02 |
+| Eventos via `on(nome)` no provision | **Gap** (EP-02 US-02) |
 
 ---
 

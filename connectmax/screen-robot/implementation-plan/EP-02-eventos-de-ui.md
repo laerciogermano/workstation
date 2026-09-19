@@ -34,8 +34,8 @@
 
 | Agente | Responsabilidade |
 |--------|------------------|
-| Caller | Solicita o wait de boot e opcionalmente recebe `onEvent` de progresso |
-| EventBus | Polla a condição de boot e resolve quando `sys.boot_completed=1` |
+| Caller | Solicita o wait de boot e opcionalmente escuta progresso via `on` |
+| EventBus | Expõe `on("boot")`; polla até `sys.boot_completed=1` e emite o evento |
 | AdbClient | Lê propriedades do device via `adb shell getprop` |
 | Device | Fonte da prop `sys.boot_completed` |
 
@@ -88,35 +88,35 @@ sequenceDiagram
   participant A as AdbClient
   participant D as Device
 
-  Dev->>E: waitForBoot(serial, opts)
+  Dev->>E: on("boot", { serial, ...opts })
   loop até boot=1 ou timeout
     E->>A: getprop sys.boot_completed
     A->>D: adb shell getprop
     D-->>A: "0"|"1"
     A-->>E: prop
-    E--)Dev: onEvent(type boot_poll)
+    E--)Dev: on("boot_poll", payload)
   end
-  E-->>Dev: { boot: true }
+  E-->>Dev: on("boot", { boot: true })
 ```
 
 #### Passo a passo
 
 | # | Chamada | Por quê | Entradas | Execução | Saídas |
 |---|---------|---------|----------|----------|--------|
-| 1 | Dev → EventBus: `waitForBoot(serial, opts)` | Esperar boot | `serial`, opts | Inicia loop de poll | Promise |
+| 1 | Dev → EventBus: `on("boot", { serial, ...opts })` | Esperar boot | `serial`, opts | Inicia loop de poll | Promise |
 | 2 | EventBus → AdbClient: `getprop sys.boot_completed` | Checar prop | `serial` | Pede leitura | pedido |
 | 3 | AdbClient → Device: `adb shell getprop` | Ler no device | prop | Shell | pedido |
 | 4 | Device → AdbClient: `"0"\|"1"` | Valor | — | Resposta | prop |
 | 5 | AdbClient → EventBus: `prop` | Entregar valor | — | Propaga | prop |
-| 6 | EventBus → Dev: `onEvent(boot_poll)` | Progresso (fire-and-forget) | type + valor | Callback assíncrono | — |
-| 7 | EventBus → Dev: `{ boot: true }` | Condição ok | prop==1 | Resolve Promise | `{ boot: true }` |
+| 6 | EventBus → Dev: `on("boot_poll", payload)` | Progresso (fire-and-forget) | type + valor | Callback assíncrono | — |
+| 7 | EventBus → Dev: `on("boot", { boot: true })` | Condição ok | prop==1 | Resolve Promise | `{ boot: true }` |
 
 #### Contratos
 
 | | Contrato |
 |--|----------|
-| **API** | `waitForBoot(serial, opts?: EventOpts) → Promise<{ boot: true }>` |
-| **Entrada** | `serial`; `timeoutMs?`; `intervalMs?`; `onEvent?` |
+| **API** | `on("boot", opts: EventOpts) → Promise<{ boot: true }>` |
+| **Entrada** | evento `"boot"`; `serial`; `timeoutMs?`; `intervalMs?`; handler opcional |
 | **Pré** | Serial ADB online (EP-01) |
 | **Saída** | `{ boot: true }` + eventos `boot_poll` / `boot` |
 | **Erro** | `EVENT_BOOT_TIMEOUT` |
@@ -128,7 +128,7 @@ sequenceDiagram
 | Agente | Responsabilidade |
 |--------|------------------|
 | Caller | Pede wait até o package (e activity opcional) estar em foreground |
-| EventBus | Polla evidência de app ativa e emite `app_poll` até confirmar foreground |
+| EventBus | Expõe `on("app_open")`; polla foreground e emite progresso/`app_open` |
 | AdbClient | Executa `dumpsys window` / `pidof` (ou equivalentes) no device |
 | Device | Reporta janela/processo ativos que indicam o package em foreground |
 
@@ -181,35 +181,35 @@ sequenceDiagram
   participant A as AdbClient
   participant D as Device
 
-  Dev->>E: waitForAppForeground(serial, pkg, opts)
+  Dev->>E: on("app_open", { serial, pkg, ...opts })
   loop até foreground ou timeout
     E->>A: dumpsys window / pidof pkg
     A->>D: adb shell
     D-->>A: package ativo?
     A-->>E: evidência
-    E--)Dev: onEvent(type app_poll)
+    E--)Dev: on("app_poll", payload)
   end
-  E-->>Dev: { foreground: true, package }
+  E-->>Dev: on("app_open", { foreground: true, package })
 ```
 
 #### Passo a passo
 
 | # | Chamada | Por quê | Entradas | Execução | Saídas |
 |---|---------|---------|----------|----------|--------|
-| 1 | Dev → EventBus: `waitForAppForeground(...)` | Esperar app na frente | `serial`, `pkg` | Inicia poll | Promise |
+| 1 | Dev → EventBus: `on("app_open", { serial, pkg, ...opts })` | Esperar app na frente | `serial`, `pkg` | Inicia poll | Promise |
 | 2 | EventBus → AdbClient: `dumpsys` / `pidof` | Evidência de foreground | `pkg` | Pede shell | pedido |
 | 3 | AdbClient → Device: `adb shell` | Consultar | comando | Executa | pedido |
 | 4 | Device → AdbClient: `package ativo?` | Evidência | — | stdout | sim/não |
 | 5 | AdbClient → EventBus: `evidência` | Reportar | — | Propaga | evidência |
-| 6 | EventBus → Dev: `onEvent(app_poll)` | Progresso (fire-and-forget) | pkg + evidência | Callback | — |
-| 7 | EventBus → Dev: `{ foreground, package }` | App aberta | match | Resolve | resultado |
+| 6 | EventBus → Dev: `on("app_poll", payload)` | Progresso (fire-and-forget) | pkg + evidência | Callback | — |
+| 7 | EventBus → Dev: `on("app_open", { foreground, package })` | App aberta | match | Resolve | resultado |
 
 #### Contratos
 
 | | Contrato |
 |--|----------|
-| **API** | `waitForAppForeground(serial, pkg, opts?) → Promise<{ foreground: true, package }>` |
-| **Entrada** | `serial`; `pkg`; `activity?`; `timeoutMs?`; `onEvent?` |
+| **API** | `on("app_open", opts) → Promise<{ foreground: true, package }>` |
+| **Entrada** | evento `"app_open"`; `serial`; `pkg`; `activity?`; `timeoutMs?`; handler opcional |
 | **Pré** | Device Booted; package instalado (ou a instalar) |
 | **Saída** | Package (e activity opcional) em foreground |
 | **Erro** | `EVENT_APP_TIMEOUT` |
@@ -221,7 +221,7 @@ sequenceDiagram
 | Agente | Responsabilidade |
 |--------|------------------|
 | Caller | Pede wait até a UI parar de mudar por `stableMs` |
-| EventBus | Amostra dumps, compara hashes e resolve quando estável |
+| EventBus | Expõe `on("ui_stable")`; amostra dumps até estável e emite o evento |
 | Extractor | Obtém o XML da UI (`uiautomator dump`) para cada amostra |
 | Device | Fornece o dump da hierarquia de views |
 
@@ -274,37 +274,37 @@ sequenceDiagram
   participant X as Extractor
   participant D as Device
 
-  Dev->>E: waitForUiStable(serial, opts)
+  Dev->>E: on("ui_stable", { serial, ...opts })
   loop até estável por stableMs ou timeout
     E->>X: dumpUiXml(serial)
     X->>D: uiautomator dump
     D-->>X: xml
     X-->>E: xml
     E->>E: hash(xml) == previous?
-    E--)Dev: onEvent(type ui_stable_poll)
+    E--)Dev: on("ui_stable_poll", payload)
   end
-  E-->>Dev: { stable: true }
+  E-->>Dev: on("ui_stable", { stable: true })
 ```
 
 #### Passo a passo
 
 | # | Chamada | Por quê | Entradas | Execução | Saídas |
 |---|---------|---------|----------|----------|--------|
-| 1 | Dev → EventBus: `waitForUiStable(...)` | Esperar UI quieta | `serial`, `stableMs?` | Inicia amostragem | Promise |
+| 1 | Dev → EventBus: `on("ui_stable", { serial, ...opts })` | Esperar UI quieta | `serial`, `stableMs?` | Inicia amostragem | Promise |
 | 2 | EventBus → Extractor: `dumpUiXml(serial)` | Snapshot UI | `serial` | Pede dump | pedido |
 | 3 | Extractor → Device: `uiautomator dump` | Capturar XML | — | Dump + pull | pedido |
 | 4 | Device → Extractor: `xml` | Snapshot | — | Retorna XML | xml |
 | 5 | Extractor → EventBus: `xml` | Entregar dump | — | Propaga | xml |
 | 6 | EventBus → EventBus: `hash == previous?` | Detectar estabilidade | xml | Compara hashes | stable? |
-| 7 | EventBus → Dev: `onEvent(ui_stable_poll)` | Progresso (fire-and-forget) | hash | Callback | — |
-| 8 | EventBus → Dev: `{ stable: true }` | UI estável | stableMs | Resolve | `{ stable: true }` |
+| 7 | EventBus → Dev: `on("ui_stable_poll", payload)` | Progresso (fire-and-forget) | hash | Callback | — |
+| 8 | EventBus → Dev: `on("ui_stable", { stable: true })` | UI estável | stableMs | Resolve | `{ stable: true }` |
 
 #### Contratos
 
 | | Contrato |
 |--|----------|
-| **API** | `waitForUiStable(serial, opts?) → Promise<{ stable: true }>` |
-| **Entrada** | `serial`; `timeoutMs?`; `stableMs?`; `intervalMs?`; `onEvent?` |
+| **API** | `on("ui_stable", opts) → Promise<{ stable: true }>` |
+| **Entrada** | evento `"ui_stable"`; `serial`; `timeoutMs?`; `stableMs?`; `intervalMs?`; handler opcional |
 | **Pré** | App em foreground (US-03) recomendado |
 | **Saída** | Dump/hash sem mudança por `stableMs` |
 | **Erro** | `EVENT_STABLE_TIMEOUT` |
@@ -316,7 +316,7 @@ sequenceDiagram
 | Agente | Responsabilidade |
 |--------|------------------|
 | Caller | Pede wait até o dump divergir do baseline |
-| EventBus | Compara hash atual com o anterior e resolve na primeira mudança |
+| EventBus | Expõe `on("dump_change")`; emite quando o hash diverge |
 | Extractor | Captura novos dumps XML sob demanda |
 | Device | Fonte do dump uiautomator a cada poll |
 
@@ -369,7 +369,7 @@ sequenceDiagram
   participant X as Extractor
   participant D as Device
 
-  Dev->>E: waitForDumpChange(serial, previousXml?, opts)
+  Dev->>E: on("dump_change", { serial, previousXml?, ...opts })
   loop até hash ≠ previous ou timeout
     E->>X: dumpUiXml(serial)
     X->>D: uiautomator dump
@@ -377,27 +377,27 @@ sequenceDiagram
     X-->>E: xml
     E->>E: hash ≠ previous?
   end
-  E-->>Dev: { xml, changed: true }
+  E-->>Dev: on("dump_change", { xml, changed: true })
 ```
 
 #### Passo a passo
 
 | # | Chamada | Por quê | Entradas | Execução | Saídas |
 |---|---------|---------|----------|----------|--------|
-| 1 | Dev → EventBus: `waitForDumpChange(...)` | Esperar mudança | `serial`, baseline | Inicia poll | Promise |
+| 1 | Dev → EventBus: `on("dump_change", { serial, previousXml?, ...opts })` | Esperar mudança | `serial`, baseline | Inicia poll | Promise |
 | 2 | EventBus → Extractor: `dumpUiXml(serial)` | Novo snapshot | `serial` | Pede dump | pedido |
 | 3 | Extractor → Device: `uiautomator dump` | Capturar XML | — | Dump + pull | pedido |
 | 4 | Device → Extractor: `xml` | Snapshot | — | Retorna | xml |
 | 5 | Extractor → EventBus: `xml` | Entregar | — | Propaga | xml |
 | 6 | EventBus → EventBus: `hash ≠ previous?` | Detectar mudança | xml vs base | Compara | changed? |
-| 7 | EventBus → Dev: `{ xml, changed: true }` | Mudou | novo xml | Resolve | resultado |
+| 7 | EventBus → Dev: `on("dump_change", { xml, changed: true })` | Mudou | novo xml | Resolve | resultado |
 
 #### Contratos
 
 | | Contrato |
 |--|----------|
-| **API** | `waitForDumpChange(serial, opts?) → Promise<{ xml, changed: true }>` |
-| **Entrada** | `serial`; `previousXml?`; `timeoutMs?`; `onEvent?` |
+| **API** | `on("dump_change", opts) → Promise<{ xml, changed: true }>` |
+| **Entrada** | evento `"dump_change"`; `serial`; `previousXml?`; `timeoutMs?`; handler opcional |
 | **Pré** | Serial online; dump uiautomator disponível |
 | **Saída** | `{ xml, changed: true }` com hash ≠ base |
 | **Erro** | `EVENT_DUMP_TIMEOUT` |
@@ -412,7 +412,7 @@ sequenceDiagram
 | `timeoutMs` | `number` | Default por API |
 | `intervalMs` | `number` | Poll interval |
 | `stableMs` | `number` | US-04: janela sem mudança |
-| `onEvent` | `(e) => void` | Callback de progresso |
+| `handler` | `(e: UiEvent) => void` | Callback passado a `on(nome, opts)` para progresso/conclusão |
 | `activity` | `string?` | US-03 opcional |
 
 ### UiEvent
@@ -484,7 +484,7 @@ classDiagram
     +number timeoutMs
     +number intervalMs
     +number stableMs
-    +function onEvent
+    +string type
   }
   class UiEvent {
     +string type
@@ -500,10 +500,11 @@ classDiagram
     +dumpUiXml(serial) string
   }
   class EventBus {
-    +waitForBoot(serial, opts)
-    +waitForAppForeground(serial, pkg, opts)
-    +waitForUiStable(serial, opts)
-    +waitForDumpChange(serial, opts)
+    +on(event, opts) Promise
+    +on("boot", opts)
+    +on("app_open", opts)
+    +on("ui_stable", opts)
+    +on("dump_change", opts)
   }
   EventBus --> AdbClient
   EventBus --> Extractor
@@ -561,11 +562,11 @@ Cenário: US-05 Dump atualizado fica disponível
 
 | # | Entrega | US | Arquivos | Critério |
 |---|---------|-----|----------|----------|
-| I1 | `waitForBoot` dedicado + `onEvent` | US-02 | `events.js` | SC-04 |
-| I2 | `waitForAppForeground` (dumpsys, não só pidof) | US-03 | `events.js` | SC-05 |
-| I3 | `waitForUiStable` por hash de dump | US-04 | `events.js` | SC-06 |
-| I4 | `waitForDumpChange` | US-05 | `events.js` | SC-07 |
-| I5 | Deprecar/agrupar `waitForUiReady` genérico | — | `events.js` | API clara |
+| I1 | `on("boot")` + emit `boot_poll`/`boot` | US-02 | `events.js` | SC-04 |
+| I2 | `on("app_open")` (dumpsys, não só pidof) | US-03 | `events.js` | SC-05 |
+| I3 | `on("ui_stable")` por hash de dump | US-04 | `events.js` | SC-06 |
+| I4 | `on("dump_change")` | US-05 | `events.js` | SC-07 |
+| I5 | Unificar em `on(event, opts)`; deprecar `waitForUiReady` | — | `events.js` | API clara |
 
 ### Ordem
 
@@ -579,8 +580,8 @@ I1 → I2 → I3 → I4 → I5
 
 | Peça | Status |
 |------|--------|
-| `waitForUiReady` / `isPackageForeground` | Parcial |
-| `waitForBoot` / `waitForUiStable` / `waitForDumpChange` | **Gap** |
+| `on(event, opts)` unificado | **Gap** (hoje `waitForUiReady`) |
+| Eventos `"boot"` / `"app_open"` / `"ui_stable"` / `"dump_change"` | **Gap** |
 | Foreground real (dumpsys) | **Gap** |
 
 ---
@@ -589,7 +590,7 @@ I1 → I2 → I3 → I4 → I5
 
 1. Quatro APIs de evento exportadas  
 2. Sequências US-02..05 cobertas por BDD  
-3. `onEvent` disponível em todas  
+3. `on(nome, opts)` cobre os quatro eventos + polls  
 4. Consumíveis por EP-03..05  
 
 ## Próximos passos

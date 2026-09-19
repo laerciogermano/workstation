@@ -34,8 +34,8 @@
 | Agente | Responsabilidade |
 |--------|------------------|
 | Caller | Pede abertura do package/activity no agent |
-| Operator | Dispara o launch e confirma foreground via EventBus |
-| EventBus | Espera o app alvo ficar em foreground após o start |
+| Operator | Dispara o launch e confirma foreground via EventBus `on("app_open")` |
+| EventBus | Responde a `on("app_open")` após o start |
 | AdbClient | Envia `am start` / `monkey` ao device |
 | Device | Inicia a activity e passa a exibir o app |
 
@@ -94,7 +94,7 @@ sequenceDiagram
   A->>D: launch
   D-->>A: started
   A-->>O: ok
-  O->>E: waitForAppForeground(pkg)
+  O->>E: on("app_open", { serial, pkg })
   E-->>O: foreground
   O-->>Dev: ok
 ```
@@ -108,7 +108,7 @@ sequenceDiagram
 | 3 | AdbClient → Device: `launch` | Iniciar app | intent | AM/monkey | pedido |
 | 4 | Device → AdbClient: `started` | App iniciando | — | Confirma start | `started` |
 | 5 | AdbClient → Operator: `ok` | Comando ok | — | Propaga | `ok` |
-| 6 | Operator → EventBus: `waitForAppForeground` | Confirmar foreground | `pkg` | Wait US-03 | pedido |
+| 6 | Operator → EventBus: `on("app_open", { serial, pkg })` | Confirmar foreground | `pkg` | Wait US-03 | pedido |
 | 7 | EventBus → Operator: `foreground` | App na frente | — | Resolve wait | `foreground` |
 | 8 | Operator → Dev: `ok` | Launch ok | — | Resolve | `ok` |
 
@@ -119,7 +119,7 @@ sequenceDiagram
 | **API** | `launch(serial, pkg, activity?) → Promise<void>` |
 | **Entrada** | `serial`; `pkg`; `activity?` |
 | **Pré** | Device Booted; package instalado |
-| **Saída** | App em foreground (via `waitForAppForeground`) |
+| **Saída** | App em foreground (via `on("app_open")`) |
 | **Erro** | `OP_LAUNCH_FAILED` · `EVENT_APP_TIMEOUT` |
 
 ### US-08 — tap
@@ -662,7 +662,7 @@ classDiagram
     +match(template, frame) MatchResult
   }
   class EventBus {
-    +waitForAppForeground(...)
+    +on("app_open", opts)
   }
   class AdbClient {
     +adb(serial, args)
@@ -728,7 +728,7 @@ Cenário: US-12 Coordenadas do alvo são devolvidas
 
 | # | Entrega | US | Critério |
 |---|---------|-----|----------|
-| I1 | `launch` + `waitForAppForeground` | US-07 | SC-11 |
+| I1 | `launch` + `on("app_open")` | US-07 | SC-11 |
 | I2 | `scroll` / swipe API + CLI | US-10 | SC-14 |
 | I3 | `VisionMatcher` + `findTemplateCoords` | US-12 | SC-16 |
 | I4 | Pós-condição opcional (dump change) em tap/type | US-08/09 | Aceite UI |

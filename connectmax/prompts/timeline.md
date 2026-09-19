@@ -52,3 +52,4 @@ Como registrar: [`README.md`](README.md).
 | 043 | 2026-09-19 | Coluna Output em tasks | [043-2026-09-19-tasks-coluna-output.md](043-2026-09-19-tasks-coluna-output.md) | Adiciona Output (saída) por TSK em `7.tasks.md`. |
 | 044 | 2026-09-19 | Processo só bullets E/E/S | [044-2026-09-19-processo-so-bullets-ees.md](044-2026-09-19-processo-so-bullets-ees.md) | Remove árvore/fluxo do processo; fica entradas/execução/saídas. |
 | 043 | 2026-09-19 | Epics renomear | [043-2026-09-19-epics-renomear.md](043-2026-09-19-epics-renomear.md) | Renomeia 2.features.md → 2.epics.md no screen-robot. |
+| 045 | 2026-09-19 | Features para epics | [045-2026-09-19-features-para-epics.md](045-2026-09-19-features-para-epics.md) | Renomeia 2.features.md → 2.epics.md no screen-robot. |

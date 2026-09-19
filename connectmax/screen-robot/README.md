@@ -46,7 +46,7 @@ Ver [`3.scenarios.md`](3.scenarios.md).
 | Artefato | Arquivo | Status |
 |----------|---------|--------|
 | Vision — US título + descrição | [`1.vision.md`](1.vision.md) | Feito |
-| Features | [`2.features.md`](2.features.md) | Feito |
+| Épicos | [`2.epics.md`](2.epics.md) | Feito |
 | Cenários (US + SC) | [`3.scenarios.md`](3.scenarios.md) | Feito |
 | BDDs (US/SC + piloto LinkedIn) | [`4.bdds.md`](4.bdds.md) | Feito |
 | Roadmap (Gantt) | [`6.roadmap.md`](6.roadmap.md) | Feito |

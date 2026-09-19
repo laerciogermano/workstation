@@ -1,19 +1,18 @@
 # Documento de cenários
 
-Artefato **2** do [discovery](README.md). Fonte de verdade do *quê* do produto (EP → US → SC), **sem** Gherkin — tabelas **por estória**.
+Artefato **3** do [discovery](README.md). Fonte de verdade do *quê* do produto (EP → US → SC), **sem** Gherkin — tabelas **por estória**.
 
-**Antes:** [`vision.md`](vision.md). **Depois:** [`bdds.md`](bdds.md).
+**Antes:** [`functionalities.md`](functionalities.md). **Depois:** [`bdds.md`](bdds.md).
 
 ## Regras
 
-1. Ao criar o **roadmap**, seguir a ordem **épicos → estórias → cenários** (não pular nem inverter).
-2. No nível **épico**, definir cedo as **atividades paralelizáveis**; com isso, estórias e cenários ficam mais fáceis de recortar.
-3. Cada **épico** (EP-) é um conjunto de estórias que, juntas, entregam **valor**.
-4. Cada **estória** (US-) é uma **função / operação completa** do usuário.
-5. Cada estória tem **cenários** (SC-): mudanças de **estado** (obrigatório ≥1).
-6. **Todo cenário** tem ID `SC-XX` (sequencial no produto).
-7. Um **cenário** é mudança de estado + unidade testável + unidade paralelizável.
-8. Em cada US: tabela da estória (Entradas · Execução · Saídas) + tabela dos SC.
+1. Organizar o produto em **épicos → estórias → cenários** (não pular nem inverter).
+2. Cada **épico** (EP-) é um conjunto de estórias que, juntas, entregam **valor**.
+3. Cada **estória** (US-) é uma **função / operação completa** do usuário.
+4. Cada estória tem **cenários** (SC-): mudanças de **estado** (obrigatório ≥1).
+5. **Todo cenário** tem ID `SC-XX` (sequencial no produto).
+6. Um **cenário** é mudança de estado + unidade testável + unidade paralelizável.
+7. Em cada US: tabela da estória (Entradas · Execução · Saídas) + tabela dos SC.
 
 ## Formato
 
@@ -74,6 +73,7 @@ Artefato **2** do [discovery](README.md). Fonte de verdade do *quê* do produto 
 |------|----------|
 | Gherkin / Dado-Quando-Então | [`bdds.md`](bdds.md) |
 | Protótipo visual | [`prototype.md`](prototype.md) |
+| Plano / Gantt | [`roadmap.md`](roadmap.md) |
 | Arquitetura, tasks, implementação | [refinamento técnico](../refinamento-tecnico/README.md) |
 
 ## Próximo passo

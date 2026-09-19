@@ -10,14 +10,14 @@ Cada etapa documenta **entradas**, **execução** e **saídas**. A árvore abaix
 
 ## Como atacar
 
-1. No [discovery](discovery/README.md), nesta ordem: **vision → roadmap (épicos → estórias → cenários) → BDDs → protótipo**.
+1. No [discovery](discovery/README.md), nesta ordem: **vision → functionalities → cenários → BDDs → protótipo → roadmap**.
 2. **Depois**, separar **cada estória** e aplicar o ciclo acima **por estória** (refinamento técnico → desenvolvimento → testes → implantação → manutenção).
 
 O mapa nasce no discovery; o restante do processo roda **estória a estória**, não no produto inteiro de uma vez.
 
 | Etapa | Pasta | Objetivo |
 |-------|-------|----------|
-| Discovery | [`discovery/`](discovery/README.md) | Vision → roadmap (EP → US → SC) → BDDs → protótipo; depois ciclo por estória |
+| Discovery | [`discovery/`](discovery/README.md) | Vision → functionalities → cenários → BDDs → protótipo → roadmap; depois ciclo por estória |
 | Refinamento técnico | [`refinamento-tecnico/`](refinamento-tecnico/README.md) | Detalhar solução, riscos e critérios técnicos |
 | Desenvolvimento | [`desenvolvimento/`](desenvolvimento/README.md) | Implementar o que foi acordado |
 | Testes | [`testes/`](testes/README.md) | Validar comportamento e qualidade |
@@ -27,15 +27,14 @@ O mapa nasce no discovery; o restante do processo roda **estória a estória**, 
 ### Árvore de execução
 
 ```text
-Processo (33)
+Processo (32)
 ├── 1. Discovery
 │   ├── 1.1 Vision
-│   ├── 1.2 Roadmap: epicos (paralelizaveis)
-│   ├── 1.3 Roadmap: estorias
-│   ├── 1.4 Roadmap: cenarios (EP → US → SC)
-│   ├── 1.5 BDDs
-│   ├── 1.6 Prototipo
-│   └── 1.7 Validar com stakeholders
+│   ├── 1.2 Functionalities
+│   ├── 1.3 Cenarios (EP → US → SC)
+│   ├── 1.4 BDDs
+│   ├── 1.5 Prototipo
+│   └── 1.6 Roadmap
 ├── 2. Refinamento tecnico
 │   ├── 2.1 Desenhar arquitetura, contratos e dados
 │   ├── 2.2 Identificar riscos e mitigacoes
@@ -82,15 +81,14 @@ gantt
 
   section Discovery
   Vision                        :d1a, 0, 1
-  Roadmap epicos                :d1b, after d1a, 1
-  Roadmap estorias              :d1c, after d1b, 1
-  Roadmap cenarios              :d1d, after d1c, 1
-  BDDs                          :d1e, after d1d, 1
-  Prototipo                     :d1f, after d1e, 1
-  Validar stakeholders          :d1g, after d1f, 1
+  Functionalities               :d1b, after d1a, 1
+  Cenarios                      :d1c, after d1b, 1
+  BDDs                          :d1d, after d1c, 1
+  Prototipo                     :d1e, after d1d, 1
+  Roadmap                       :d1f, after d1e, 1
 
   section Refinamento tecnico
-  Arquitetura e contratos       :d2a, after d1g, 1
+  Arquitetura e contratos       :d2a, after d1f, 1
   Riscos e mitigacoes           :d2b, after d2a, 1
   Criterios de pronto           :d2c, after d2b, 1
   Estimar esforco               :d2d, after d2c, 1
@@ -133,8 +131,8 @@ flowchart TB
   subgraph D["1. Discovery"]
     direction TB
     D_E["Entradas<br/>demanda / problema<br/>contexto e restrições<br/>stakeholders<br/>dados e feedback"]
-    D_X["Execução<br/>vision → cenários → BDDs → protótipo<br/>validar com stakeholders"]
-    D_S["Saídas<br/>vision.md<br/>scenarios.md<br/>bdds.md<br/>protótipo"]
+    D_X["Execução<br/>vision → functionalities → cenários<br/>BDDs → protótipo → roadmap"]
+    D_S["Saídas<br/>vision.md<br/>functionalities.md<br/>scenarios.md<br/>bdds.md<br/>protótipo<br/>roadmap"]
     D_E --> D_X --> D_S
   end
 

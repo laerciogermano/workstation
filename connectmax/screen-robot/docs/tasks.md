@@ -1,7 +1,7 @@
 # Tasks — screen-robot
 
 **Por quê:** árvore de execução das features e Gantt (minutos IA).  
-**Fonte:** [`functionalities/`](functionalities/README.md).  
+**Fonte:** [`functionalities.md`](functionalities.md).  
 **Visão:** [`../README.md`](../README.md).  
 **Kanban / inventário (umbrella):** [`core/tasks`](../../../core/tasks/README.md#p1--connectmax--screen-robot).
 

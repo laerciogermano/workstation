@@ -9,7 +9,7 @@
 | Artefato | Arquivo | Status |
 |----------|---------|--------|
 | Vision — US título + descrição | [`vision.md`](vision.md) | Feito |
-| Funcionalidades (pasta por US) | [`functionalities/`](functionalities/README.md) | Feito |
+| Funcionalidades (todas as US) | [`functionalities.md`](functionalities.md) | Feito |
 | Tasks (árvore + Gantt) | [`tasks.md`](tasks.md) | Feito |
 | BDD por nó | [`bdd-nos.md`](bdd-nos.md) | Feito |
 | BDD login LinkedIn | [`bdd-linkedin-login.md`](bdd-linkedin-login.md) | Feito |

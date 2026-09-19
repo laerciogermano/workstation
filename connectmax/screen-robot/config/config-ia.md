@@ -9,8 +9,7 @@
 README.md (visão)
 └── docs/README.md
     ├── vision.md
-    ├── functionalities/          # pasta por US-XX
-    │   └── US-XX-*/README.md
+    ├── functionalities.md        # todas as US + SC
     ├── tasks.md
     ├── bdd-nos.md
     └── bdd-linkedin-login.md

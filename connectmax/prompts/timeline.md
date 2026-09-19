@@ -28,3 +28,4 @@ Como registrar: [`README.md`](README.md).
 | 019 | 2026-09-19 | Unificar board em tasks | [019-2026-09-19-unificar-board-tasks.md](019-2026-09-19-unificar-board-tasks.md) | Board e tasks viraram um só documento em core/tasks. |
 | 020 | 2026-09-19 | BDD por nó | [020-2026-09-19-bdd-por-no.md](020-2026-09-19-bdd-por-no.md) | Cenários Dado/Quando/Então para cada nó da árvore do screen-robot. |
 | 021 | 2026-09-19 | Cenário = estado + testável/paralelizável | [021-2026-09-19-cenario-estado-testavel-paralelizavel.md](021-2026-09-19-cenario-estado-testavel-paralelizavel.md) | Processo: cada SC é mudança de estado e unidade testável/paralelizável; docs alinhados. |
+| 022 | 2026-09-19 | Funcionalidades como MD único | [022-2026-09-19-functionalities-md-unico.md](022-2026-09-19-functionalities-md-unico.md) | Pasta por US virou `docs/functionalities.md` com todas as histórias. |

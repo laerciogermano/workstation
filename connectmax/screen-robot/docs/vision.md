@@ -1,7 +1,7 @@
 # Vision — screen-robot
 
 **Por quê:** lista visual das histórias (US) e como cada uma funciona.  
-**Detalhe:** [`functionalities/`](functionalities/README.md) · **Visão do produto:** [`../README.md`](../README.md).
+**Detalhe:** [`functionalities.md`](functionalities.md) · **Visão do produto:** [`../README.md`](../README.md).
 
 ## Histórias
 
@@ -108,6 +108,6 @@ Lê o arquivo salvo e reaplica o estado no runtime, restaurando device, apps, et
 
 ## Próximos passos
 
-→ [`functionalities/`](functionalities/README.md)  
+→ [`functionalities.md`](functionalities.md)  
 → [`tasks.md`](tasks.md)  
 → [`bdd-linkedin-login.md`](bdd-linkedin-login.md)

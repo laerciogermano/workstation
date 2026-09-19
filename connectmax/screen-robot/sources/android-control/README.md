@@ -10,7 +10,7 @@ Executa ações no Android (redroid / emulador) via **ADB**, a partir de um JSON
 ## Uso rápido
 
 ```bash
-cd connectmax/sources/android-control
+cd connectmax/screen-robot/sources/android-control
 
 # Um comando
 node cli.js tap 360 640 --device 127.0.0.1:5555

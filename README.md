@@ -12,7 +12,7 @@ Board: [`core/tasks/`](core/tasks/README.md)
 | [Chines](chines/) | [`chines/docs/`](chines/docs/) | [`chines/docs/`](chines/docs/) | [`chines/config/config-ia.md`](chines/config/config-ia.md) |
 | [Caronas](caronas/) | [`caronas/README.md`](caronas/README.md) | [`caronas/docs/`](caronas/docs/) | [`caronas/config/config-ia.md`](caronas/config/config-ia.md) |
 | [Fitness](fitness/) | [`fitness/README.md`](fitness/README.md) | [`fitness/docs/`](fitness/docs/) | [`fitness/config/config-ia.md`](fitness/config/config-ia.md) |
-| [ConnectMax](connectmax/) | [`connectmax/README.md`](connectmax/README.md) | [`connectmax/docs/`](connectmax/docs/) | [`connectmax/config/config-ia.md`](connectmax/config/config-ia.md) |
+| [ConnectMax](connectmax/) | [`connectmax/README.md`](connectmax/README.md) | [`screen-robot`](connectmax/screen-robot/) · [`vendas`](connectmax/vendas/) | [`connectmax/config/config-ia.md`](connectmax/config/config-ia.md) |
 | [Eternos Mutáveis](eternos-mutaveis/) | [`eternos-mutaveis/README.md`](eternos-mutaveis/README.md) | [`eternos-mutaveis/docs/`](eternos-mutaveis/docs/) | [`eternos-mutaveis/config/config-ia.md`](eternos-mutaveis/config/config-ia.md) |
 | [Jiu-jitsu](jiu-jitsu/) | [`jiu-jitsu/README.md`](jiu-jitsu/README.md) | [`jiu-jitsu/docs/`](jiu-jitsu/docs/) | [`jiu-jitsu/config/config-ia.md`](jiu-jitsu/config/config-ia.md) |
 
@@ -69,10 +69,12 @@ Prompts: [`fitness/prompts/timeline.md`](fitness/prompts/timeline.md).
 ### Esteira (ConnectMax)
 
 ```text
-Visão → Funcionalidades → Histórias → BDD → Telas → Screens BDD → Componentes → Protótipo
+screen-robot: visão → planos → F0…F4 em sources/android-control
+vendas:       visão → functionalities → user-stories → … → prototype
 ```
 
-Prompts: [`connectmax/prompts/timeline.md`](connectmax/prompts/timeline.md).
+Prompts: [`connectmax/prompts/timeline.md`](connectmax/prompts/timeline.md).  
+Projetos: [`screen-robot`](connectmax/screen-robot/) · [`vendas`](connectmax/vendas/).
 
 ### Esteira (Eternos Mutáveis)
 

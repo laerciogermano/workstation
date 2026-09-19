@@ -1,6 +1,6 @@
-# Sources
+# Sources — screen-robot
 
-Runtimes Android usados pelo ConnectMax. São **dois projetos independentes** — escolha um por máquina/sessão (não rode os dois juntos se a RAM for apertada).
+Runtimes Android do robô de tela. São **projetos independentes** — escolha um por máquina/sessão.
 
 | Projeto | Quando usar | Como ver a tela |
 |---------|-------------|-----------------|
@@ -10,8 +10,8 @@ Runtimes Android usados pelo ConnectMax. São **dois projetos independentes** �
 
 ```bash
 # Redroid
-cd sources/redroid && ./scripts/start.sh && ./scripts/view.sh
+cd screen-robot/sources/redroid && ./scripts/start.sh && ./scripts/view.sh
 
 # Emulador (Android Studio / SDK)
-cd sources/android-studio && ./scripts/setup-avd.sh && ./scripts/start.sh
+cd screen-robot/sources/android-studio && ./scripts/setup-avd.sh && ./scripts/start.sh
 ```

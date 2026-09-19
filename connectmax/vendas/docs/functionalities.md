@@ -1,15 +1,14 @@
-# Funcionalidades do sistema — ConnectMax
+# Funcionalidades do sistema — ConnectMax vendas
 
-**Por quê:** reunir, em bullets, as capacidades esperadas do produto.  
-**Papel no fluxo:** base funcional para as histórias de usuário, sem antecipar critérios de aceite, layout ou implementação.  
+**Por quê:** reunir, em bullets, as capacidades do **processo de vendas / prospecção**.  
+**Papel no fluxo:** base funcional para as histórias de usuário.  
 **Origem:** documento de [visão](../README.md).  
-**Motor técnico (imagem → ação):** [`plano-percepcao-imagem-hardware.md`](plano-percepcao-imagem-hardware.md) · [`plano-implementacao-percepcao.md`](plano-implementacao-percepcao.md).
+**Robô de tela (cliques, listas, OCR):** [`../../screen-robot/docs/functionalities.md`](../../screen-robot/docs/functionalities.md).
 
 ## Como usar este documento
 
-- Cada bullet descreve uma capacidade observável do produto.
-- Uma funcionalidade pode originar uma ou mais histórias de usuário.
-- As histórias devem preservar as regras de negócio e os limites de v1 da visão.
+- Cada bullet descreve uma capacidade observável do produto de vendas.
+- Manipulação de tela (imagem → elementos → tap/type) **não** é redefinida aqui — usa o screen-robot.
 - Critérios de aceite ficam no [`bdd.md`](bdd.md) (a produzir).
 - Superfícies e UI ficam no [`screens.md`](screens.md) (a produzir).
 
@@ -37,7 +36,7 @@
 
 - Configurar cadência de abordagens e follow-ups.
 - Respeitar limites configuráveis de volume/frequência para não quebrar o canal.
-- Disparar etapas repetíveis da prospecção (mensagem, follow-up) conforme a cadência.
+- Disparar etapas repetíveis da prospecção (mensagem, follow-up) conforme a cadência, **via screen-robot** quando a ação for na UI do LinkedIn.
 - Registrar o que já foi dito/feito em cada contato.
 - Pausar, retomar ou cancelar a cadência de um contato.
 - Evitar reabordar contato já tratado sem ação explícita.
@@ -47,16 +46,6 @@
 - Marcar contato como pronto para conversa comercial (handoff).
 - Entregar o lead ao vendedor com contexto da prospecção.
 - Manter o fechamento da venda sob responsabilidade do vendedor (o motor não marca venda sozinho).
-
-### Percepção e atuação por imagem (infra do motor)
-
-- Capturar o frame da tela do device (redroid ou hardware) como contrato de entrada.
-- Extrair elementos visuais (textos, botões, cards) só a partir da imagem.
-- Decidir a próxima ação (tap, swipe, digitar, copiar texto) a partir de elementos + goal.
-- Executar a ação no device via backend plugável (ADB hoje; agent depois).
-- Rodar goals sem coordenadas hardcoded no JSON.
-- Aguardar elemento aparecer, rolar listas e recalibrar resolução frame ↔ actuator.
-- Trocar backend de captura/atuação sem reescrever percepção nem decisão.
 
 ---
 
@@ -126,6 +115,7 @@
 - Marketplace de franquias ou captação pública de investimento.
 - Integração bancária / conciliação financeira da unidade.
 - Scraping ou bypass de autenticação da plataforma.
+- Implementação do motor Capture/Perceive/Decide/Actuate (pertence ao [`screen-robot`](../../screen-robot/)).
 
 ---
 

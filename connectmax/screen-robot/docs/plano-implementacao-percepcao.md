@@ -1,9 +1,10 @@
 # Plano de implementação — Capture → Perceive → Decide → Actuate
 
-**Por quê:** especificar *como* implementar o motor de percepção por imagem no ConnectMax, com diagramas, BDD, árvore de execução e Gantt paralelizado.  
+**Por quê:** especificar *como* implementar o motor de percepção por imagem no **screen-robot**, com diagramas, BDD, árvore de execução e Gantt paralelizado.  
 **Produto / WBS:** [`plano-percepcao-imagem-hardware.md`](plano-percepcao-imagem-hardware.md).  
 **Código-base:** `sources/android-control`.  
-**Estimativas:** horas de **esforço de IA** (agente), não humanas.
+**Estimativas:** horas de **esforço de IA** (agente), não humanas.  
+**Negócio vendas:** fora de escopo — ver [`../../vendas/`](../../vendas/).
 
 ---
 

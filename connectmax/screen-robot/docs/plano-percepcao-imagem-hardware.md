@@ -1,6 +1,7 @@
 # Plano — Percepção por imagem → ação (redroid → hardware)
 
 **Por quê:** automatizar “ver a tela → extrair elementos → decidir → clicar/copiar” com **imagem como contrato único**, reutilizável no redroid e depois em dispositivo físico.  
+**Projeto:** [`screen-robot`](../README.md) (não inclui regras de vendas).  
 **Base:** `sources/android-control` (tap / type / shot / ADBKeyBoard).  
 **Estimativas:** horas de **esforço de IA** (agente implementando), não de humano. 1 h IA ≈ uma sessão contínua de implementação/teste no repo.
 

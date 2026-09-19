@@ -5,7 +5,8 @@
 **No fluxo:** todo prompt novo entra **primeiro** aqui (arquivo numerado + linha na timeline) e só depois o restante do trabalho.
 
 Índice cronológico: [`timeline.md`](timeline.md).  
-Visão do produto: [`../README.md`](../README.md).  
+Visão do umbrella: [`../README.md`](../README.md).  
+Subprojetos: [`../screen-robot/`](../screen-robot/) · [`../vendas/`](../vendas/).  
 Regras da IA: [`../config/config-ia.md`](../config/config-ia.md).
 
 ## Como registrar um prompt

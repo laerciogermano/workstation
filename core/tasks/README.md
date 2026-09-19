@@ -7,9 +7,9 @@ Quando houver hierarquia de tasks, a raia usa **Mermaid** (árvore + cor de stat
 
 ---
 
-## P1 — ConnectMax
+## P1 — ConnectMax · screen-robot
 
-Percepção por imagem → ação (redroid → hardware).  
+Robô de tela: imagem → lista de elementos → clicar/digitar/rolar.  
 Legenda: verde = Done · amarelo = Doing · cinza = Todo  
 Estimativas: **minutos de esforço IA** (não humano).
 
@@ -68,7 +68,7 @@ flowchart TD
 
 ```mermaid
 gantt
-  title Percepção por imagem → ação (minutos de esforço IA)
+  title screen-robot (minutos de esforço IA)
   dateFormat X
   axisFormat %s
 
@@ -127,9 +127,21 @@ gantt
 | F4.2 Capture agent · 90m | | |
 | F4.3 Actuate agent · 90m | | |
 | F4.4 Flag + regressão · 48m | | |
-| Criar épico | | |
 
-→ [`connectmax/`](../../connectmax/README.md) · [`plano percepção`](../../connectmax/docs/plano-percepcao-imagem-hardware.md) · [`plano implementação`](../../connectmax/docs/plano-implementacao-percepcao.md)
+→ [`screen-robot/`](../../connectmax/screen-robot/README.md) · [`plano`](../../connectmax/screen-robot/docs/plano-percepcao-imagem-hardware.md) · [`implementação`](../../connectmax/screen-robot/docs/plano-implementacao-percepcao.md)
+
+---
+
+## P1b — ConnectMax · vendas
+
+Automação do processo de vendas / prospecção LinkedIn (consome o screen-robot).
+
+| Todo | Doing | Done |
+|------|-------|------|
+| Criar épico | | |
+| user-stories.md | | |
+
+→ [`vendas/`](../../connectmax/vendas/README.md) · [`functionalities`](../../connectmax/vendas/docs/functionalities.md)
 
 ---
 

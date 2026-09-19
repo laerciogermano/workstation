@@ -28,45 +28,45 @@ O mapa nasce no discovery; o restante do processo roda **estória a estória**, 
 
 ```text
 Processo (33)
-├── Discovery
-│   ├── Vision
-│   ├── Roadmap: epicos (paralelizaveis)
-│   ├── Roadmap: estorias
-│   ├── Roadmap: cenarios (EP → US → SC)
-│   ├── BDDs
-│   ├── Prototipo
-│   └── Validar com stakeholders
-├── Refinamento tecnico
-│   ├── Desenhar arquitetura, contratos e dados
-│   ├── Identificar riscos e mitigacoes
-│   ├── Consolidar criterios de pronto
-│   ├── Estimar esforco e dependencias
-│   └── Quebrar em tarefas priorizadas
-├── Desenvolvimento
-│   ├── Implementar conforme aceite
-│   ├── Commits pequenos e revisaveis
-│   ├── Lote: primeiro caso, depois escala
-│   ├── Testes unitarios
-│   ├── Documentar o minimo
-│   └── Integrar com CI
-├── Testes
-│   ├── Unitario / integracao / E2E
-│   ├── Aceite por cenario
-│   ├── Regressao
-│   ├── Qualidade
-│   └── Priorizar bugs
-├── Implantacao
-│   ├── Build e release
-│   ├── Migracoes e configuracao
-│   ├── Deploy staging → prod
-│   ├── Smoke pos-deploy
-│   └── Comunicar / rollback
-└── Manutencao
-    ├── Monitorar e incidentes
-    ├── Hotfixes
-    ├── Melhorias incrementais
-    ├── Debito tecnico
-    └── Encaminhar mudancas
+├── 1. Discovery
+│   ├── 1.1 Vision
+│   ├── 1.2 Roadmap: epicos (paralelizaveis)
+│   ├── 1.3 Roadmap: estorias
+│   ├── 1.4 Roadmap: cenarios (EP → US → SC)
+│   ├── 1.5 BDDs
+│   ├── 1.6 Prototipo
+│   └── 1.7 Validar com stakeholders
+├── 2. Refinamento tecnico
+│   ├── 2.1 Desenhar arquitetura, contratos e dados
+│   ├── 2.2 Identificar riscos e mitigacoes
+│   ├── 2.3 Consolidar criterios de pronto
+│   ├── 2.4 Estimar esforco e dependencias
+│   └── 2.5 Quebrar em tarefas priorizadas
+├── 3. Desenvolvimento
+│   ├── 3.1 Implementar conforme aceite
+│   ├── 3.2 Commits pequenos e revisaveis
+│   ├── 3.3 Lote: primeiro caso, depois escala
+│   ├── 3.4 Testes unitarios
+│   ├── 3.5 Documentar o minimo
+│   └── 3.6 Integrar com CI
+├── 4. Testes
+│   ├── 4.1 Unitario / integracao / E2E
+│   ├── 4.2 Aceite por cenario
+│   ├── 4.3 Regressao
+│   ├── 4.4 Qualidade
+│   └── 4.5 Priorizar bugs
+├── 5. Implantacao
+│   ├── 5.1 Build e release
+│   ├── 5.2 Migracoes e configuracao
+│   ├── 5.3 Deploy staging → prod
+│   ├── 5.4 Smoke pos-deploy
+│   └── 5.5 Comunicar / rollback
+└── 6. Manutencao
+    ├── 6.1 Monitorar e incidentes
+    ├── 6.2 Hotfixes
+    ├── 6.3 Melhorias incrementais
+    ├── 6.4 Debito tecnico
+    └── 6.5 Encaminhar mudancas
 ```
 
 ### Gantt — fases e passos sequenciais

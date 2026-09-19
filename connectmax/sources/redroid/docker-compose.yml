@@ -19,13 +19,20 @@ services:
       # (virtiofs) quebra o /data do Android (SQLITE_CANTOPEN).
       - redroid-data:/data
     command:
-      - androidboot.redroid_width=${REDROID_WIDTH:-720}
-      - androidboot.redroid_height=${REDROID_HEIGHT:-1280}
-      - androidboot.redroid_dpi=${REDROID_DPI:-320}
-      - androidboot.redroid_fps=${REDROID_FPS:-30}
-      - androidboot.redroid_gpu_mode=${REDROID_GPU_MODE:-guest}
-      # memfd substitui ashmem (necessário em kernels recentes sem ashmem_linux)
-      - androidboot.use_memfd=true
+      - "androidboot.redroid_width=${REDROID_WIDTH:-720}"
+      - "androidboot.redroid_height=${REDROID_HEIGHT:-1280}"
+      - "androidboot.redroid_dpi=${REDROID_DPI:-320}"
+      - "androidboot.redroid_fps=${REDROID_FPS:-30}"
+      - "androidboot.redroid_gpu_mode=${REDROID_GPU_MODE:-guest}"
+      - "androidboot.use_memfd=true"
+      # Identidade aparente do aparelho (esconde "redroid15_arm64_only" em apps)
+      - "ro.product.brand=${DEVICE_BRAND:-google}"
+      - "ro.product.manufacturer=${DEVICE_MANUFACTURER:-Google}"
+      # Sem espaços no valor: o parser do Android corta em whitespace
+      - "ro.product.model=${DEVICE_MODEL:-Pixel8}"
+      - "ro.product.name=${DEVICE_NAME:-shiba}"
+      - "ro.product.device=${DEVICE_DEVICE:-shiba}"
+      - "ro.product.marketname=${DEVICE_MARKETNAME:-Pixel8}"
 
 volumes:
   redroid-data:

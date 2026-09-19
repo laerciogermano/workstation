@@ -18,34 +18,34 @@ gantt
   axisFormat %s
 
   section EP-01 Capture
-  Contratos Capture        :a01, 0, 12m
-  AdbCapture               :a02, after a01, 30m
-  Smoke frame              :a03, after a02, 9m
-  Capture agent            :a04, after a03, 90m
-  Flag backend capture     :a05, after a04, 24m
+  Frame padronizado        :a01, 0, 12m
+  Captura ADB              :a02, after a01, 30m
+  Validar redroid          :a03, after a02, 9m
+  Captura agent            :a04, after a01, 90m
+  Backend captura          :a05, after a03, 24m
 
   section EP-02 Perceive
-  Schema Element           :b01, after a03, 24m
-  OCR                      :b02, after b01, 60m
-  Vision                   :b03, after b01, 90m
-  Merge                    :b04, after b02, 36m
-  CLI + overlay            :b05, after b04, 30m
+  Schema elemento          :b01, after a03, 24m
+  OCR textos               :b02, after b01, 60m
+  Controles vision         :b03, after b01, 90m
+  Unificar lista           :b04, after b02, 36m
+  CLI perceive             :b05, after b04, 30m
 
   section EP-03 Decide
-  Matcher                  :c01, after b05, 36m
-  LLM Decide               :c02, after b05, 48m
-  Steps + goal E2E         :c03, after c01, 72m
-  Wait/retry               :c04, after c03, 30m
-  Metricas                 :c05, after c04, 24m
+  Selecionar elemento      :c01, after b05, 36m
+  Decidir via LLM          :c02, after b05, 48m
+  Goal sem coords          :c03, after c01, 72m
+  Aguardar elemento        :c04, after c03, 30m
+  Metricas                 :c05, after c03, 24m
 
   section EP-04 Actuate
-  Contratos Actuate        :d01, 0, 12m
-  AdbActuate               :d02, after d01, 24m
-  Smoke tap                :d03, after d02, 9m
-  Scroll                   :d04, after c03, 36m
-  Calibracao               :d05, after c03, 30m
-  Actuate agent            :d06, after d05, 90m
-  Flag backend actuate     :d07, after d06, 24m
+  Contrato atuacao         :d01, 0, 12m
+  Gestos ADB               :d02, after d01, 24m
+  Clique do frame          :d03, after d02, 9m
+  Rolar ate achar          :d04, after c03, 36m
+  Calibrar resolucao       :d05, after d01, 30m
+  Gestos agent             :d06, after d01, 90m
+  Backend atuacao          :d07, after d02, 24m
 ```
 
 → [`tasks`](../tasks/README.md#p1--connectmax--screen-robot) · [`epics`](../../connectmax/screen-robot/epics/README.md)

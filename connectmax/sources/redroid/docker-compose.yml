@@ -1,0 +1,26 @@
+# Redroid — Android em container para o ConnectMax.
+# Requer Linux com módulos binder (ashmem opcional se use_memfd=true).
+# NÃO exponha a porta ADB na internet pública.
+
+services:
+  redroid:
+    image: ${REDROID_IMAGE:-redroid/redroid:15.0.0_64only-latest}
+    container_name: connectmax-redroid
+    restart: unless-stopped
+    privileged: true
+    stdin_open: true
+    tty: true
+    pull_policy: always
+    ports:
+      # ADB só em localhost — seguro para desenvolvimento local
+      - "${ADB_HOST:-127.0.0.1}:${ADB_PORT:-5555}:5555"
+    volumes:
+      - ./data:/data
+    command:
+      - androidboot.redroid_width=${REDROID_WIDTH:-720}
+      - androidboot.redroid_height=${REDROID_HEIGHT:-1280}
+      - androidboot.redroid_dpi=${REDROID_DPI:-320}
+      - androidboot.redroid_fps=${REDROID_FPS:-30}
+      - androidboot.redroid_gpu_mode=${REDROID_GPU_MODE:-guest}
+      # memfd substitui ashmem (necessário em kernels recentes sem ashmem_linux)
+      - androidboot.use_memfd=true

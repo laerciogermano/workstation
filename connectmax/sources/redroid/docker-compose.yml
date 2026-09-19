@@ -15,7 +15,9 @@ services:
       # ADB só em localhost — seguro para desenvolvimento local
       - "${ADB_HOST:-127.0.0.1}:${ADB_PORT:-5555}:5555"
     volumes:
-      - ./data:/data
+      # Volume nomeado (filesystem Linux nativo). Bind ./data no Mac/Colima
+      # (virtiofs) quebra o /data do Android (SQLITE_CANTOPEN).
+      - redroid-data:/data
     command:
       - androidboot.redroid_width=${REDROID_WIDTH:-720}
       - androidboot.redroid_height=${REDROID_HEIGHT:-1280}
@@ -24,3 +26,6 @@ services:
       - androidboot.redroid_gpu_mode=${REDROID_GPU_MODE:-guest}
       # memfd substitui ashmem (necessário em kernels recentes sem ashmem_linux)
       - androidboot.use_memfd=true
+
+volumes:
+  redroid-data:

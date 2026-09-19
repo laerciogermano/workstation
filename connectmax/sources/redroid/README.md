@@ -51,7 +51,8 @@ Copie `.env.example` → `.env` (o `start.sh` faz isso se faltar) e ajuste:
 - `ADB_HOST` / `ADB_PORT` — ADB só em `127.0.0.1` por padrão
 - resolução / DPI / FPS / `REDROID_GPU_MODE` (`guest` = software, `host` = GPU)
 
-Dados persistentes ficam em `./data` (ignorado pelo git).
+Dados persistentes ficam no volume Docker `redroid-data` (filesystem Linux nativo).  
+**Não** use bind mount `./data` no Mac/Colima — o virtiofs quebra o `/data` do Android (`SQLITE_CANTOPEN`).
 
 ## Segurança
 

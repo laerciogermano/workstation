@@ -48,7 +48,7 @@ Ver stories em [`1.stories.md`](1.stories.md) e cenários em cada pasta `epics/E
 | Stories — US título + descrição | [`1.stories.md`](1.stories.md) | Feito |
 | Épicos | [`2.epics.md`](2.epics.md) · [`epics/`](epics/README.md) | Feito |
 | Cenários / BDDs | por estória em [`epics/EP-*/US-*/`](epics/README.md) | Feito |
-| Implementation plan | por épico (ex. [`EP-01`](epics/EP-01-provisionar-agente/5.implementation-plan.md)) | Em curso |
+| Implementation plan | por épico em [`epics/EP-*/5.implementation-plan.md`](epics/README.md) | Feito |
 | Roadmap (Gantt) | [`6.roadmap.md`](6.roadmap.md) | Feito |
 | Tasks (Gantt) | [`7.tasks.md`](7.tasks.md) | Feito |
 | Sources | [`sources/`](sources/README.md) | Em curso |

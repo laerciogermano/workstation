@@ -9,6 +9,7 @@
 |----------|---------|
 | Stories | [`1.stories.md`](1.stories.md) |
 | Épico | [`2.epics.md`](2.epics.md) |
+| Implementation plan | [`5.implementation-plan.md`](5.implementation-plan.md) |
 
 ## Estórias
 

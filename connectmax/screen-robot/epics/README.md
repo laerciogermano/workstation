@@ -34,23 +34,23 @@ US-01 → [`EP-01-provisionar-agente/US-01-provisionar-um-agente/`](EP-01-provis
 
 ## EP-02 — Eventos de UI
 
-US-02..05 → [`EP-02-eventos-de-ui/`](EP-02-eventos-de-ui/README.md)
+US-02..05 → [`EP-02-eventos-de-ui/`](EP-02-eventos-de-ui/README.md) · plano: [`5.implementation-plan.md`](EP-02-eventos-de-ui/5.implementation-plan.md)
 
 ## EP-03 — Instalar APKs
 
-US-06 → [`EP-03-instalar-apks/`](EP-03-instalar-apks/README.md)
+US-06 → [`EP-03-instalar-apks/`](EP-03-instalar-apks/README.md) · plano: [`5.implementation-plan.md`](EP-03-instalar-apks/5.implementation-plan.md)
 
 ## EP-04 — Operar tela
 
-US-07..12 → [`EP-04-operar-tela/`](EP-04-operar-tela/README.md)
+US-07..12 → [`EP-04-operar-tela/`](EP-04-operar-tela/README.md) · plano: [`5.implementation-plan.md`](EP-04-operar-tela/5.implementation-plan.md)
 
 ## EP-05 — Extrair elementos
 
-US-13..16 → [`EP-05-extrair-elementos/`](EP-05-extrair-elementos/README.md)
+US-13..16 → [`EP-05-extrair-elementos/`](EP-05-extrair-elementos/README.md) · plano: [`5.implementation-plan.md`](EP-05-extrair-elementos/5.implementation-plan.md)
 
 ## EP-06 — Sessão
 
-US-17..19 → [`EP-06-sessao/`](EP-06-sessao/README.md)
+US-17..19 → [`EP-06-sessao/`](EP-06-sessao/README.md) · plano: [`5.implementation-plan.md`](EP-06-sessao/5.implementation-plan.md)
 
 ## Próximos passos
 

@@ -58,3 +58,4 @@ Como registrar: [`README.md`](README.md).
 | 048 | 2026-09-19 | Renomeei vision para stories | [048-2026-09-19-renomeei-vision-para-stories.md](048-2026-09-19-renomeei-vision-para-stories.md) | Alinha README raiz: Discovery começa em Stories, não Vision. |
 | 049 | 2026-09-19 | Scenarios após stories; epics após BDDs | [049-2026-09-19-scenarios-apos-stories-epics-apos-bdds.md](049-2026-09-19-scenarios-apos-stories-epics-apos-bdds.md) | Discovery: scenarios após stories; epics após BDDs e antes do roadmap. |
 | 050 | 2026-09-19 | Scenarios screen-robot como tabela | [050-2026-09-19-scenarios-screen-robot-tabela.md](050-2026-09-19-scenarios-screen-robot-tabela.md) | Unifica SC-01..SC-20 do screen-robot em uma tabela. |
+| 051 | 2026-09-19 | Separar cenários por estórias | [051-2026-09-19-cenarios-por-estorias.md](051-2026-09-19-cenarios-por-estorias.md) | Agrupa tabelas de SC por seção US no screen-robot. |

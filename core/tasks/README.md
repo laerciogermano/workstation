@@ -32,7 +32,8 @@ screen-robot
 │   ├── tap
 │   ├── type
 │   ├── key
-│   └── screenshot
+│   ├── screenshot
+│   └── Resgatar coordenadas x,y (imagem de entrada)
 ├── 5. Extrair elementos e informações
 │   ├── Nó Texto
 │   ├── Nó Ícone
@@ -68,6 +69,7 @@ flowchart TB
     O2 --> O3[type]
     O3 --> O4[key]
     O4 --> O5[screenshot]
+    O5 --> O6[Resgatar xy por imagem]
   end
 
   subgraph X[5 Extrair elementos]
@@ -85,7 +87,7 @@ flowchart TB
   P3 --> I1
   I3 --> E1
   E4 --> O1
-  O5 --> X1
+  O6 --> X1
   X6 --> S1
 ```
 
@@ -117,12 +119,13 @@ gantt
   Evento mudanca de dump    :e4, after e3, 12m
 
   section 4 Operacoes
-  Executar operacoes        :crit, o0, after e0, 75m
+  Executar operacoes        :crit, o0, after e0, 90m
   Abrir aplicativo          :o1, after e0, 15m
   tap                       :o2, after o1, 15m
   type                      :o3, after o2, 15m
   key                       :o4, after o3, 15m
   screenshot                :o5, after o4, 15m
+  Resgatar xy por imagem    :o6, after o5, 15m
 
   section 5 Extrair
   Extrair elementos         :crit, x0, after o0, 120m
@@ -144,10 +147,10 @@ gantt
 | 1 | Provisionar um agente | subir/conectar · serial online · boot | 60 |
 | 2 | Instalar APKs | ler versão · baixar · instalar | 45 |
 | 3 | Receber eventos | boot · app aberta · tela estável · dump | 48 |
-| 4 | Executar operações | abrir aplicativo · tap · type · key · screenshot | 75 |
+| 4 | Executar operações | abrir aplicativo · tap · type · key · screenshot · resgatar x,y por imagem | 90 |
 | 5 | Extrair elementos | texto · ícone · imagem/foto · lista · container · árvore DOM | 120 |
 | 6 | Guardar sessão | persistir · restaurar | 30 |
-| | **Total** | | **378** |
+| | **Total** | | **393** |
 
 ### Kanban
 

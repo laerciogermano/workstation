@@ -38,6 +38,6 @@ Funcionalidade: Login no LinkedIn com agent Android via Node
 | Provisionar um agente | `Dado que o agente Android é provisionado` → `provisionAgent()` |
 | Instalar APKs | `E o APK do Instagram…` → `installApk(instagram)` (+ LinkedIn) |
 | Receber eventos | `Quando… evento de UI estável` → `waitForUiReady()` |
+| Executar operações | abrir aplicativo, screenshot, type, tap Entrar, resgatar x,y por imagem → `operate.*` |
 | Extrair elementos e informações | `E os elementos… árvore de componentes` → `extractElements()` (DOM: textos, ícones, imagens/fotos, listas) |
-| Executar operações | abrir aplicativo, screenshot, type, tap Entrar → `operate.*` |
 | Guardar estado de sessão | `Então o estado da sessão é guardado` → `saveSession()` |

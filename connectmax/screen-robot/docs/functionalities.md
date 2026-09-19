@@ -10,7 +10,7 @@
 | Provisionar um agente | Sobe/conecta o Android (agent) e deixa o device pronto para ADB (serial online, boot completo) |
 | Instalar APKs | Baixa (versão definida na config do dispositivo) e instala pacotes no agent |
 | Receber eventos | Observa e espera sinais do device/UI (boot, app aberta, tela estável, mudança de dump) |
-| Executar operações | Dispara gestos e comandos (abrir aplicativo, tap, type, key, screenshot) a partir dos elementos ou coords |
+| Executar operações | Dispara gestos e comandos (abrir aplicativo, tap, type, key, screenshot) e **rescata coordenadas x,y** a partir de uma imagem de entrada |
 | Extrair elementos e informações | Lê a tela e devolve a UI como **árvore de componentes** (estilo DOM): textos, ícones, imagens, fotos, **listas** e demais nós, com bounds e metadados |
 | Guardar estado de sessão | Persiste e restaura contexto da sessão (device, apps, último frame, login parcial) em arquivo |
 

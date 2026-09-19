@@ -19,10 +19,10 @@ depois as estorias depois os cenarios.
 
 ## Interpretação
 
-Sob **1.6 Roadmap**, listar os **passos de entrega** do roadmap (não o catálogo EP do produto): criar épicos → criar estórias → criar cenários.
+Sob **1.6 Roadmap**, listar os **passos de entrega** do roadmap (não o catálogo EP do produto): configurar épicos → configurar estórias → configurar cenários.
 
 ## Resultado
 
-- `1.6.1 Criar épicos` → `1.6.2 Criar estórias` → `1.6.3 Criar cenários`
+- `1.6.1 Configurar épicos` → `1.6.2 Configurar estórias` → `1.6.3 Configurar cenários`
 - Contagem Processo: **41**
 - Removidos EP/US/SC do screen-robot da árvore do processo

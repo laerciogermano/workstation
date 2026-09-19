@@ -35,9 +35,9 @@ Processo (41)
 │   ├── 1.4 BDDs
 │   ├── 1.5 Prototipo
 │   └── 1.6 Roadmap
-│       ├── 1.6.1 Criar épicos
-│       ├── 1.6.2 Criar estórias
-│       └── 1.6.3 Criar cenários
+│       ├── 1.6.1 Configurar épicos
+│       ├── 1.6.2 Configurar estórias
+│       └── 1.6.3 Configurar cenários
 ├── 2. Refinamento tecnico
 │   ├── 2.1 Desenhar arquitetura, contratos e dados
 │   ├── 2.2 Identificar riscos e mitigacoes

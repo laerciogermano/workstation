@@ -4,6 +4,8 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
+# shellcheck disable=SC1091
+source "$(dirname "$0")/_docker.sh"
 
 if [[ ! -f .env ]]; then
   cp .env.example .env
@@ -18,8 +20,9 @@ if [[ "$(uname -s)" == "Linux" ]]; then
     echo "Rode: sudo ./scripts/setup-host.sh"
     echo
   fi
-else
-  echo "Aviso: host é $(uname -s). Redroid exige Linux; o container pode falhar no Docker Desktop (macOS/Windows)."
+elif [[ "$(uname -s)" == "Darwin" ]]; then
+  echo "macOS + Colima: garantindo binderfs na VM..."
+  colima ssh -- sh -c 'sudo modprobe binder_linux devices="binder,hwbinder,vndbinder" 2>/dev/null || true; mountpoint -q /dev/binderfs || sudo mount -t binder binder /dev/binderfs' 2>/dev/null || true
   echo
 fi
 

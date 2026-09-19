@@ -16,7 +16,13 @@ Projeto irmão (emulador oficial / Android Studio): [`../android-studio`](../and
 
 ### macOS / Windows
 
-O Docker Desktop **não** oferece o kernel Linux com binder. Neste Mac, use uma **VM Linux** (UTM, Multipass, cloud) e rode o projeto **dentro** dela; no Mac só o scrcpy apontando para o IP da VM.
+Neste Mac usamos **Colima** (não Docker Desktop). Os scripts (`start`/`view`/`stop`/`status`) apontam sozinhos para `~/.colima/default/docker.sock` e montam `binderfs` na VM.
+
+```bash
+colima start   # se ainda não estiver rodando
+./scripts/start.sh
+./scripts/view.sh
+```
 
 ## Setup rápido (Linux)
 

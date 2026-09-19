@@ -9,9 +9,7 @@
 README.md (visão)
 └── docs/README.md
     ├── functionalities.md
-    ├── bdd-linkedin-login.md
-    ├── plano-percepcao-imagem-hardware.md
-    └── plano-implementacao-percepcao.md
+    └── bdd-linkedin-login.md
         └── sources/android-control (libs Node + scripts/linkedin-login.js)
 ```
 

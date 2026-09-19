@@ -4,6 +4,8 @@
 **Base:** `sources/android-control` (tap / type / shot / ADBKeyBoard).  
 **Estimativas:** horas de **esforço de IA** (agente implementando), não de humano. 1 h IA ≈ uma sessão contínua de implementação/teste no repo.
 
+**Implementação (sequência, classes, BDD, árvore, Gantt):** [`plano-implementacao-percepcao.md`](plano-implementacao-percepcao.md).
+
 ---
 
 ## Princípios
@@ -130,42 +132,43 @@ Eixo = horas de trabalho de IA (não dias humanos). Barras na mesma faixa de tem
 
 ```mermaid
 gantt
-  title Percepção por imagem → ação (horas de esforço IA)
+  title Percepção por imagem → ação (minutos de esforço IA)
   dateFormat X
-  axisFormat %s h
-  tickInterval 1hour
+  axisFormat %s
 
   section F0 Fundamentos
-  F0.1 Contratos           :a01, 0, 0.4h
-  F0.2 AdbCapture          :a02, after a01, 0.5h
-  F0.3 AdbActuate          :a03, after a01, 0.4h
-  F0.4 Smoke               :a04, after a02 a03, 0.3h
+  F0.1 Contratos           :a01, 0, 24m
+  F0.2 AdbCapture          :a02, after a01, 30m
+  F0.3 AdbActuate          :a03, after a01, 24m
+  F0.4 Smoke               :a04, after a02, 18m
 
   section F1 Perceive
-  F1.1 Schema              :b01, after a04, 0.4h
-  F1.2 OCR                 :b02, after b01, 1h
-  F1.3 Vision              :b03, after b01, 1.5h
-  F1.4 Merge               :b04, after b02 b03, 0.6h
-  F1.5 CLI + overlay       :b05, after b04, 0.5h
+  F1.1 Schema              :b01, after a04, 24m
+  F1.2 OCR                 :b02, after b01, 60m
+  F1.3 Vision              :b03, after b01, 90m
+  F1.4 Merge               :b04, after b02, 36m
+  F1.5 CLI + overlay       :b05, after b04, 30m
 
   section F2 Decide
-  F2.1 Matcher             :c01, after b05, 0.6h
-  F2.2 LLM Decide          :c02, after b05, 0.8h
-  F2.3 Steps goal          :c03, after c01 c02, 0.8h
-  F2.4 Example E2E         :c04, after c03, 0.4h
+  F2.1 Matcher             :c01, after b05, 36m
+  F2.2 LLM Decide          :c02, after b05, 48m
+  F2.3 Steps goal          :c03, after c01, 48m
+  F2.4 Example E2E         :c04, after c03, 24m
 
   section F3 Robustez
-  F3.1 Wait/retry          :d01, after c04, 0.5h
-  F3.2 Scroll              :d02, after c04, 0.6h
-  F3.3 Calibração          :d03, after c04, 0.5h
-  F3.4 Métricas            :d04, after d01 d02 d03, 0.4h
+  F3.1 Wait/retry          :d01, after c04, 30m
+  F3.2 Scroll              :d02, after c04, 36m
+  F3.3 Calibração          :d03, after c04, 30m
+  F3.4 Métricas            :d04, after d01, 24m
 
   section F4 Hardware
-  F4.1 Revisar contratos   :e01, after d04, 0.3h
-  F4.2 Capture agent       :e02, after e01, 1.5h
-  F4.3 Actuate agent       :e03, after e01, 1.5h
-  F4.4 Flag + regressão    :e04, after e02 e03, 0.8h
+  F4.1 Revisar contratos   :e01, after d04, 18m
+  F4.2 Capture agent       :e02, after e01, 90m
+  F4.3 Actuate agent       :e03, after e01, 90m
+  F4.4 Flag + regressão    :e04, after e02, 48m
 ```
+
+> No Gantt Mermaid, `after a02` / `after b02` simplifica múltiplas dependências; a tabela de estimativas acima é a fonte de verdade para paralelismo (ex.: F0.3∥F0.2, F1.3∥F1.2, F4.3∥F4.2). Durações = horas IA convertidas em minutos (0,4 h → 24 m).
 
 ### Trilhas paralelas (visão rápida)
 

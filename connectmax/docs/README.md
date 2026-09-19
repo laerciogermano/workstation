@@ -11,6 +11,7 @@ Timeline de prompts: [`../prompts/timeline.md`](../prompts/timeline.md).
 | Artefato | Arquivo | Papel no fluxo | Status |
 |----------|---------|----------------|--------|
 | Plano percepção imagem → hardware | [`plano-percepcao-imagem-hardware.md`](plano-percepcao-imagem-hardware.md) | WBS, Gantt e horas de esforço IA (Capture→Perceive→Decide→Actuate) | Feito |
+| Plano de implementação (percepção) | [`plano-implementacao-percepcao.md`](plano-implementacao-percepcao.md) | Sequência, classes, BDD, árvore de execução, Gantt paralelizado | Feito |
 | Funcionalidades | `functionalities.md` | Capacidades de cada seção e página em bullets | A produzir |
 | Histórias de usuário | `user-stories.md` | O *quê* desejado pelo usuário (Como… quero… para…) | A produzir |
 | Cenários BDD | `bdd.md` | Critérios de aceite por história (Dado / Quando / Então) | A produzir |
@@ -21,5 +22,5 @@ Timeline de prompts: [`../prompts/timeline.md`](../prompts/timeline.md).
 
 ## Próximos passos
 
-→ Implementar **F0** do [`plano-percepcao-imagem-hardware.md`](plano-percepcao-imagem-hardware.md) em `sources/android-control`  
+→ Seguir [`plano-implementacao-percepcao.md`](plano-implementacao-percepcao.md) a partir de **F0** em `sources/android-control`  
 → Em paralelo na esteira de produto: `functionalities.md` (ainda não criado) a partir da [visão](../README.md)

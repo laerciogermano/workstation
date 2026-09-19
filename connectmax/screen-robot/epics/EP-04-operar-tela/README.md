@@ -1,10 +1,23 @@
 # EP-04 — Operar tela
 
 **Índice:** [`../README.md`](../README.md) · **Flat:** [`../../4.epics.md`](../../4.epics.md).  
-**US:** US-07..12.
+**US:** US-07, US-08, US-09, US-10, US-11, US-12.
+
+## Artefatos do épico
 
 | Artefato | Arquivo |
 |----------|---------|
 | Stories | [`1.stories.md`](1.stories.md) |
 | Cenários | [`2.scenarios.md`](2.scenarios.md) |
 | BDDs | [`3.bdds.md`](3.bdds.md) |
+
+## Estórias
+
+| ID | Estória | Pasta |
+|----|---------|-------|
+| US-07 | Abrir aplicativo | [`US-07-abrir-aplicativo/`](US-07-abrir-aplicativo/README.md) |
+| US-08 | tap | [`US-08-tap/`](US-08-tap/README.md) |
+| US-09 | type | [`US-09-type/`](US-09-type/README.md) |
+| US-10 | scroll | [`US-10-scroll/`](US-10-scroll/README.md) |
+| US-11 | screenshot | [`US-11-screenshot/`](US-11-screenshot/README.md) |
+| US-12 | Resgatar coordenadas x,y a partir de uma imagem | [`US-12-resgatar-coordenadas-x-y-a-partir-de-uma-imagem/`](US-12-resgatar-coordenadas-x-y-a-partir-de-uma-imagem/README.md) |

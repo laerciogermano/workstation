@@ -17,9 +17,15 @@
 
 ```text
 epics/EP-XX-…/
+├── README.md
 ├── 1.stories.md
 ├── 2.scenarios.md
-└── 3.bdds.md
+├── 3.bdds.md
+└── US-YY-…/
+    ├── README.md
+    ├── 1.stories.md
+    ├── 2.scenarios.md
+    └── 3.bdds.md
 ```
 
 ## EP-01 — Provisionar agente

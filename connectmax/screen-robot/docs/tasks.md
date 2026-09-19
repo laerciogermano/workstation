@@ -37,48 +37,46 @@ screen-robot (393 min)
     └── SC-13.2 Restaurar sessão do arquivo (15 min)
 ```
 
-### Gantt — atividades da árvore (paralelizáveis por IA)
+### Gantt — atividades da árvore (sequenciais)
 
-Mesmas atividades da árvore acima (nomes e minutos).  
-Barras maiores (`crit`) = funcionalidade; filhas em paralelo entre si (entrega IA).  
-Esforço total (soma): **393 min**. Com filhas em paralelo, caminho crítico ≈ **60 min** (Provisionar) — US-13 = **150 min**.
+Mesmas atividades da árvore acima (nomes e minutos), em sequência.  
+Barras na ordem da árvore (folhas: SC sob US-01/02/13; US sem SC nas demais).  
+Esforço total (soma / caminho crítico): **393 min**.
 
 ```mermaid
 gantt
-  title screen-robot US minutos IA
+  title screen-robot US minutos IA sequencial
   dateFormat X
   axisFormat %s
 
   section Provisionar
-  US-01 Provisionar agente         :crit, p0, 0, 60m
   SC-01.1 Subir e conectar         :p1, 0, 20m
-  SC-01.2 Serial ADB online        :p2, 0, 20m
-  SC-01.3 Boot completo            :p3, 0, 20m
+  SC-01.2 Serial ADB online        :after p1, 20m
+  SC-01.3 Boot completo            :after p2, 20m
 
   section Instalar APKs
-  US-02 Instalar APKs              :crit, i0, 0, 45m
-  SC-02.1 Ler versao               :i1, 0, 5m
-  SC-02.2 Baixar APK               :i2, 0, 25m
-  SC-02.3 Instalar pacote          :i3, 0, 15m
+  SC-02.1 Ler versao               :after p3, 5m
+  SC-02.2 Baixar APK               :after i1, 25m
+  SC-02.3 Instalar pacote          :after i2, 15m
 
   section Eventos
-  US-03 Evento boot                :e1, 0, 12m
-  US-04 Evento app aberta          :e2, 0, 12m
-  US-05 Evento tela estavel        :e3, 0, 12m
-  US-06 Evento mudanca dump        :e4, 0, 12m
+  US-03 Evento boot                :after i3, 12m
+  US-04 Evento app aberta          :after e1, 12m
+  US-05 Evento tela estavel        :after e2, 12m
+  US-06 Evento mudanca dump        :after e3, 12m
 
   section Operacoes
-  US-07 Abrir aplicativo           :o1, 0, 15m
-  US-08 tap                        :o2, 0, 15m
-  US-09 type                       :o3, 0, 15m
-  US-10 scroll                     :o4, 0, 15m
-  US-11 screenshot                 :o5, 0, 15m
-  US-12 Resgatar xy por imagem     :o6, 0, 15m
+  US-07 Abrir aplicativo           :after e4, 15m
+  US-08 tap                        :after o1, 15m
+  US-09 type                       :after o2, 15m
+  US-10 scroll                     :after o3, 15m
+  US-11 screenshot                 :after o4, 15m
+  US-12 Resgatar xy por imagem     :after o5, 15m
 
   section Extrair e sessao
-  US-13 Extrair e guardar sessao   :crit, x1, 0, 150m
-  SC-13.1 Persistir sessao         :s1, 0, 15m
-  SC-13.2 Restaurar sessao         :s2, 0, 15m
+  US-13 Extrair elementos          :crit, after o6, 120m
+  SC-13.1 Persistir sessao         :after x1, 15m
+  SC-13.2 Restaurar sessao         :after s1, 15m
 ```
 
 ## Próximos passos

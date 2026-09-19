@@ -23,3 +23,5 @@ Como registrar: [`README.md`](README.md).
 | 014 | 2026-09-19 | Extrair listas | [014-2026-09-19-extrair-listas.md](014-2026-09-19-extrair-listas.md) | Extração inclui nós de lista com itens filhos na árvore DOM. |
 | 015 | 2026-09-19 | Remover planos de percepção | [015-2026-09-19-remover-planos-percepcao.md](015-2026-09-19-remover-planos-percepcao.md) | Apagou plano-implementacao-percepcao e plano-percepcao-imagem-hardware. |
 | 016 | 2026-09-19 | Tasks árvore + Gantt | [016-2026-09-19-tasks-arvore-gantt.md](016-2026-09-19-tasks-arvore-gantt.md) | `docs/tasks.md` com árvore e Gantt das 6 maiores + filhas. |
+| 017 | 2026-09-19 | Árvore e Gantt no board | [017-2026-09-19-arvore-gantt-no-board.md](017-2026-09-19-arvore-gantt-no-board.md) | Moveu árvore e Gantt canônicos para core/board P1 screen-robot. |
+| 018 | 2026-09-19 | Remover esteiras do tasks | [018-2026-09-19-remover-esteiras-tasks.md](018-2026-09-19-remover-esteiras-tasks.md) | Removeu Ordem de desenvolvimento e Esteiras; ficou árvore + tabela. |

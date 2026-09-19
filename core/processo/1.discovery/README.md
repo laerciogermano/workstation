@@ -11,7 +11,7 @@ Ordem **obrigatória** — não pular nem inverter:
 3. **BDDs** — [`3.bdds.md`](3.bdds.md): Dado / Quando / Então por **US** e por **SC**.
 4. **Epics** — [`4.epics.md`](4.epics.md): EP que agrupam US e entregam valor.
 5. **Protótipo** — [`5.prototype.md`](5.prototype.md): validação visual/interativa do que foi especificado.
-6. **Roadmap** — [`6.roadmap.md`](6.roadmap.md): Gantt EP → US (sem SC nas barras).
+6. **Roadmap** — [`6.roadmap.md`](6.roadmap.md): Gantt EP → US (sem SC; folhas EP/US do mesmo tamanho).
 7. **Tasks** — `tasks.md` do projeto: Gantt TSK (inclui SC) + inventário.
 
 A **visão do produto** (problema, para quem, objetivo, fora de escopo) fica no `README.md` do projeto.

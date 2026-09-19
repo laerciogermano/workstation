@@ -24,7 +24,10 @@ Cada pasta abaixo é uma estória.
 | US-10 | scroll | [`US-10-scroll/`](US-10-scroll/README.md) |
 | US-11 | screenshot | [`US-11-screenshot/`](US-11-screenshot/README.md) |
 | US-12 | Resgatar coordenadas x,y a partir de uma imagem | [`US-12-resgatar-coordenadas-x-y/`](US-12-resgatar-coordenadas-x-y/README.md) |
-| US-13 | Extrair elementos e guardar sessão | [`US-13-extrair-elementos-e-guardar-sessao/`](US-13-extrair-elementos-e-guardar-sessao/README.md) |
+| US-13 | Extrair elementos | [`US-13-extrair-elementos/`](US-13-extrair-elementos/README.md) |
+| US-14 | Salvar sessão | [`US-14-salvar-sessao/`](US-14-salvar-sessao/README.md) |
+| US-15 | Remover sessão | [`US-15-remover-sessao/`](US-15-remover-sessao/README.md) |
+| US-16 | Recuperar sessão | [`US-16-recuperar-sessao/`](US-16-recuperar-sessao/README.md) |
 
 ## Aceite de integração
 

@@ -77,11 +77,29 @@ Resgata as coordenadas x,y na tela a partir de uma imagem de entrada (template).
 
 Recebe uma imagem template e o frame/tela atual, faz match por visão/template e devolve x,y (e confiança). Assim o robô toca em alvos reconhecidos visualmente quando não há id estável no dump.
 
-### US-13 — Extrair elementos e guardar sessão
+### US-13 — Extrair elementos
 
-Elementos tipados + árvore DOM a partir da tela; persistir/restaurar sessão.
+Extrai elementos tipados a partir da tela e monta a árvore DOM.
 
-A partir de imagem/frame ou dump, reconhece textos (OCR), ícones, imagens/fotos, listas e containers, monta uma árvore de componentes (estilo DOM) e permite gravar/restaurar o contexto da sessão em arquivo (device, apps, etapa, paths). É a ponte entre “o que está na tela” e o estado do fluxo automatizado.
+A partir de imagem/frame ou dump, reconhece textos (OCR), ícones, imagens/fotos, listas e containers e compõe a hierarquia raiz → filhos (estilo DOM). É a leitura estruturada do que está na tela.
+
+### US-14 — Salvar sessão
+
+Persiste o contexto da sessão em arquivo.
+
+Serializa o estado em memória (device, apps, etapa, paths, etc.) e grava no path da sessão, para retomar o fluxo depois.
+
+### US-15 — Remover sessão
+
+Remove a sessão persistida em disco.
+
+Apaga o arquivo de sessão e limpa o contexto associado no runtime, quando a sessão não deve mais ser reutilizada.
+
+### US-16 — Recuperar sessão
+
+Recupera o contexto da sessão a partir do arquivo em disco.
+
+Lê o arquivo salvo e reaplica o estado no runtime, restaurando device, apps, etapa e paths do fluxo.
 
 ## Fora de escopo
 

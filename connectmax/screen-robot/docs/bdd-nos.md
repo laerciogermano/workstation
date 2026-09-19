@@ -295,34 +295,88 @@ Cenário: SC-16 Coordenadas a partir de imagem template
 
 ---
 
-## US-13 · Extrair elementos e guardar sessão
+## US-13 · Extrair elementos
 
 ```gherkin
-Funcionalidade: US-13 Extrair elementos e guardar sessão
-  Cenário: Elementos tipados, árvore DOM e sessão
+Funcionalidade: US-13 Extrair elementos
+  Cenário: Elementos tipados e árvore DOM
     Dado uma imagem da tela (screenshot/frame) ou dump
-    E contexto atual (device, apps, etapa, paths)
     Quando OCR e reconhecimento extraem elementos tipados
     E a hierarquia raiz → filhos (árvore DOM) é composta
-    E persistir e/ou restaurar sessão é executado
     Então elementos tipados existem com string/tipo, bounds e metadados
     E a árvore DOM navegável é devolvida
-    E a sessão está em disco ou o contexto foi restaurado
 ```
 
-### SC-17 Persistir sessão em arquivo
+### SC-17 Extrair elementos tipados e árvore DOM
 
 ```gherkin
-Cenário: SC-17 Sessão é gravada
+Cenário: SC-17 Elementos tipados e árvore DOM
+  Dado uma imagem da tela (screenshot/frame) ou dump
+  Quando OCR e reconhecimento extraem elementos tipados
+  E a hierarquia raiz → filhos é composta
+  Então elementos tipados existem com string/tipo, bounds e metadados
+  E a árvore DOM navegável é devolvida
+```
+
+---
+
+## US-14 · Salvar sessão
+
+```gherkin
+Funcionalidade: US-14 Salvar sessão
+  Cenário: Sessão é gravada em disco
+    Dado estado em memória e path da sessão
+    Quando a serialização grava o arquivo
+    Então o arquivo de sessão existe
+```
+
+### SC-18 Salvar sessão em arquivo
+
+```gherkin
+Cenário: SC-18 Sessão é gravada
   Dado estado em memória e path da sessão
   Quando a serialização grava o arquivo
   Então o arquivo de sessão existe
 ```
 
-### SC-18 Restaurar sessão do arquivo
+---
+
+## US-15 · Remover sessão
 
 ```gherkin
-Cenário: SC-18 Sessão é restaurada
+Funcionalidade: US-15 Remover sessão
+  Cenário: Sessão é removida
+    Dado um path de sessão
+    Quando a remoção da sessão é executada
+    Então o arquivo de sessão não existe
+    E o runtime não mantém o contexto daquela sessão
+```
+
+### SC-19 Remover sessão do disco
+
+```gherkin
+Cenário: SC-19 Sessão é removida do disco
+  Dado um path de sessão
+  Quando o arquivo de sessão é apagado
+  Então o arquivo de sessão não existe
+```
+
+---
+
+## US-16 · Recuperar sessão
+
+```gherkin
+Funcionalidade: US-16 Recuperar sessão
+  Cenário: Sessão é recuperada
+    Dado um arquivo de sessão existente
+    Quando a leitura reaplica o contexto
+    Então o runtime possui o estado restaurado
+```
+
+### SC-20 Recuperar sessão do arquivo
+
+```gherkin
+Cenário: SC-20 Sessão é recuperada
   Dado um arquivo de sessão existente
   Quando a leitura reaplica o contexto
   Então o runtime possui o estado restaurado

@@ -47,3 +47,4 @@ Como registrar: [`README.md`](README.md).
 | 038 | 2026-09-19 | Artefatos screen-robot numerados | [038-2026-09-19-screen-robot-artefatos-numerados.md](038-2026-09-19-screen-robot-artefatos-numerados.md) | Renomeia docs do discovery: 1.vision … 6.roadmap. |
 | 039 | 2026-09-19 | Roadmap igual tasks EP/US | [039-2026-09-19-roadmap-igual-tasks-ep-us.md](039-2026-09-19-roadmap-igual-tasks-ep-us.md) | Roadmap espelha tasks (minutos), sem SC, IDs EP/US. |
 | 040 | 2026-09-19 | Features renomear | [040-2026-09-19-features-renomear.md](040-2026-09-19-features-renomear.md) | Renomeia 2.functionalities.md → 2.features.md no screen-robot. |
+| 041 | 2026-09-19 | Tasks fica como 7 | [041-2026-09-19-tasks-como-7.md](041-2026-09-19-tasks-como-7.md) | Renomeia tasks.md → 7.tasks.md no screen-robot. |

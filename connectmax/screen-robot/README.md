@@ -50,7 +50,7 @@ Ver [`3.scenarios.md`](3.scenarios.md).
 | Cenários (US + SC) | [`3.scenarios.md`](3.scenarios.md) | Feito |
 | BDDs (US/SC + piloto LinkedIn) | [`4.bdds.md`](4.bdds.md) | Feito |
 | Roadmap (Gantt) | [`6.roadmap.md`](6.roadmap.md) | Feito |
-| Tasks (Gantt) | [`tasks.md`](tasks.md) | Feito |
+| Tasks (Gantt) | [`7.tasks.md`](7.tasks.md) | Feito |
 | Sources | [`sources/`](sources/README.md) | Em curso |
 | android-control | [`sources/android-control/`](sources/android-control/README.md) | Em curso |
 

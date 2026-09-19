@@ -7,7 +7,7 @@
 ## P1 — ConnectMax · screen-robot
 
 Histórias US (eventos e operações cada uma é US; extrair = US-13; sessão = US-14..16).  
-**Gantt:** [`screen-robot/tasks.md`](../../connectmax/screen-robot/tasks.md) · **Roadmap:** [`6.roadmap.md`](../../connectmax/screen-robot/6.roadmap.md).
+**Gantt:** [`screen-robot/7.tasks.md`](../../connectmax/screen-robot/7.tasks.md) · **Roadmap:** [`6.roadmap.md`](../../connectmax/screen-robot/6.roadmap.md).
 Cenários: [`3.scenarios.md`](../../connectmax/screen-robot/3.scenarios.md) · BDDs: [`4.bdds.md`](../../connectmax/screen-robot/4.bdds.md).
 Estimativas: minutos IA · **1 dia = 8h = 480 min**.
 

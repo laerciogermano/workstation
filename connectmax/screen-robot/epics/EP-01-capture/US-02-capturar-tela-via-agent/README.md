@@ -1,8 +1,8 @@
-# US-03 — Capturar tela via agent
+# US-02 — Capturar tela via agent
 
 | Campo | Valor |
 |-------|--------|
-| ID | US-03 |
+| ID | US-02 |
 | Épico | [EP-01 Capture](../README.md) |
 | Status | Todo |
 | Esforço IA | 90m |

@@ -1,13 +1,13 @@
-# US-04 — Escolher backend de captura
+# US-03 — Escolher backend de captura
 
 | Campo | Valor |
 |-------|--------|
-| ID | US-04 |
+| ID | US-03 |
 | Épico | [EP-01 Capture](../README.md) |
 | Status | Todo |
 | Esforço IA | 24m |
 | Recorte de | Captura de tela do device |
-| Depende de | [US-01](../US-01-capturar-tela-via-adb/README.md), [US-03](../US-03-capturar-tela-via-agent/README.md) |
+| Depende de | [US-01](../US-01-capturar-tela-via-adb/README.md), [US-02](../US-02-capturar-tela-via-agent/README.md) |
 
 ## História
 

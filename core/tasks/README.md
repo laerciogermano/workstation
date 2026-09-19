@@ -100,13 +100,11 @@ Estimativas: **minutos de esforço IA** (não humano).
 flowchart TD
   subgraph EP01["EP-01 Capture"]
     C01[US-01 Captura ADB 42m]
-    C02[US-02 Validar redroid 9m]
-    C03[US-03 Captura agent 90m]
-    C04[US-04 Backend capture 24m]
+    C02[US-02 Captura agent 90m]
+    C03[US-03 Backend capture 24m]
     C01 --> C02
     C01 --> C03
-    C01 --> C04
-    C03 --> C04
+    C02 --> C03
   end
 
   subgraph EP02["EP-02 Perceive"]
@@ -150,8 +148,8 @@ flowchart TD
     A06 --> A07
   end
 
-  C02 --> P01
-  C02 --> A03
+  C01 --> P01
+  C01 --> A03
   P05 --> D01
   P05 --> D02
   D03 --> A04
@@ -163,9 +161,8 @@ flowchart TD
 | Todo | Doing | Done |
 |------|-------|------|
 | [US-01](../../connectmax/screen-robot/epics/EP-01-capture/US-01-capturar-tela-via-adb/README.md) Capturar via ADB · 42m | | |
-| [US-02](../../connectmax/screen-robot/epics/EP-01-capture/US-02-validar-captura-no-redroid/README.md) Validar no redroid · 9m | | |
-| [US-03](../../connectmax/screen-robot/epics/EP-01-capture/US-03-capturar-tela-via-agent/README.md) Capturar via agent · 90m | | |
-| [US-04](../../connectmax/screen-robot/epics/EP-01-capture/US-04-escolher-backend-de-captura/README.md) Backend captura · 24m | | |
+| [US-02](../../connectmax/screen-robot/epics/EP-01-capture/US-02-capturar-tela-via-agent/README.md) Capturar via agent · 90m | | |
+| [US-03](../../connectmax/screen-robot/epics/EP-01-capture/US-03-escolher-backend-de-captura/README.md) Backend captura · 24m | | |
 
 ### EP-02 Perceive
 

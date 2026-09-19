@@ -19,12 +19,11 @@ gantt
 
   section EP-01 Capture
   Captura ADB              :a01, 0, 42m
-  Validar redroid          :a02, after a01, 9m
-  Captura agent            :a03, after a01, 90m
-  Backend captura          :a04, after a02, 24m
+  Captura agent            :a02, after a01, 90m
+  Backend captura          :a03, after a01, 24m
 
   section EP-02 Perceive
-  Schema elemento          :b01, after a02, 24m
+  Schema elemento          :b01, after a01, 24m
   OCR textos               :b02, after b01, 60m
   Controles vision         :b03, after b01, 90m
   Unificar lista           :b04, after b02, 36m

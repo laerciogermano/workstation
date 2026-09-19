@@ -59,3 +59,4 @@ Como registrar: [`README.md`](README.md).
 | 049 | 2026-09-19 | Scenarios após stories; epics após BDDs | [049-2026-09-19-scenarios-apos-stories-epics-apos-bdds.md](049-2026-09-19-scenarios-apos-stories-epics-apos-bdds.md) | Discovery: scenarios após stories; epics após BDDs e antes do roadmap. |
 | 050 | 2026-09-19 | Scenarios screen-robot como tabela | [050-2026-09-19-scenarios-screen-robot-tabela.md](050-2026-09-19-scenarios-screen-robot-tabela.md) | Unifica SC-01..SC-20 do screen-robot em uma tabela. |
 | 051 | 2026-09-19 | Separar cenários por estórias | [051-2026-09-19-cenarios-por-estorias.md](051-2026-09-19-cenarios-por-estorias.md) | Agrupa tabelas de SC por seção US no screen-robot. |
+| 052 | 2026-09-19 | US como coluna na tabela de cenários | [052-2026-09-19-us-coluna-tabela-cenarios.md](052-2026-09-19-us-coluna-tabela-cenarios.md) | Inclui US e Estória nas tabelas de cenários por estória. |

@@ -44,11 +44,19 @@ Eventos e operações: **cada item é uma US**. Extração + sessão = **US-13 E
 |----------|----------|--------|
 | Serial online | Esperar sinal de boot | Boot sinalizado |
 
+| ID | Cenário | Entradas | Execução | Saídas | Min |
+|----|---------|----------|----------|--------|-----|
+| US-02 | Sinal de boot é recebido | Serial online | Listener aguarda o evento de boot | Boot sinalizado | 12 |
+
 ### US-03 · Evento de app aberta (12 min)
 
 | Entradas | Execução | Saídas |
 |----------|----------|--------|
 | Package em foreground esperado | Esperar app em foreground | App aberta confirmada |
+
+| ID | Cenário | Entradas | Execução | Saídas | Min |
+|----|---------|----------|----------|--------|-----|
+| US-03 | App em foreground é confirmada | Package esperado em foreground | Aguardar app aberta | App em foreground | 12 |
 
 ### US-04 · Evento de tela estável (12 min)
 
@@ -56,11 +64,19 @@ Eventos e operações: **cada item é uma US**. Extração + sessão = **US-13 E
 |----------|----------|--------|
 | App em foreground | Esperar UI estável (sem transição) | Tela estável |
 
+| ID | Cenário | Entradas | Execução | Saídas | Min |
+|----|---------|----------|----------|--------|-----|
+| US-04 | Tela fica estável | App em foreground | Aguardar ausência de transição de UI | Tela estável | 12 |
+
 ### US-05 · Evento de mudança de dump (12 min)
 
 | Entradas | Execução | Saídas |
 |----------|----------|--------|
 | Dump anterior (opcional), serial | Detectar mudança no dump de UI | Dump atualizado disponível |
+
+| ID | Cenário | Entradas | Execução | Saídas | Min |
+|----|---------|----------|----------|--------|-----|
+| US-05 | Dump de UI muda | Dump anterior (ou ausência), serial online | Detectar mudança no dump (uiautomator) | Dump atualizado disponível | 12 |
 
 ### US-06 · Instalar APKs (45 min)
 
@@ -80,11 +96,19 @@ Eventos e operações: **cada item é uma US**. Extração + sessão = **US-13 E
 |----------|----------|--------|
 | Package (e activity opcional) | Launch do app no agent | App em foreground |
 
+| ID | Cenário | Entradas | Execução | Saídas | Min |
+|----|---------|----------|----------|--------|-----|
+| US-07 | App é aberta no agent | Package (e activity opcional) | Launch do app no agent | App em foreground | 15 |
+
 ### US-08 · tap (15 min)
 
 | Entradas | Execução | Saídas |
 |----------|----------|--------|
 | Coordenadas x,y ou bounds do elemento | Toque na tela | UI refletindo o tap |
+
+| ID | Cenário | Entradas | Execução | Saídas | Min |
+|----|---------|----------|----------|--------|-----|
+| US-08 | Toque na tela | Coordenadas x,y ou bounds do elemento | Tap no alvo | UI refletindo o toque | 15 |
 
 ### US-09 · type (15 min)
 
@@ -92,11 +116,19 @@ Eventos e operações: **cada item é uma US**. Extração + sessão = **US-13 E
 |----------|----------|--------|
 | Texto, campo focado ou coords | Digitar / injetar texto | Texto na UI |
 
+| ID | Cenário | Entradas | Execução | Saídas | Min |
+|----|---------|----------|----------|--------|-----|
+| US-09 | Texto é digitado | Texto, campo focado ou coords | Type injeta o texto | Texto na UI | 15 |
+
 ### US-10 · scroll (15 min)
 
 | Entradas | Execução | Saídas |
 |----------|----------|--------|
 | Direção (up/down/left/right), distância ou bounds da área | Swipe / scroll na tela ou na lista | Conteúdo rolado; novos itens visíveis |
+
+| ID | Cenário | Entradas | Execução | Saídas | Min |
+|----|---------|----------|----------|--------|-----|
+| US-10 | Conteúdo é rolado | Direção, distância ou bounds da área | Scroll/swipe | Conteúdo rolado; novos itens visíveis | 15 |
 
 ### US-11 · screenshot (15 min)
 
@@ -104,11 +136,19 @@ Eventos e operações: **cada item é uma US**. Extração + sessão = **US-13 E
 |----------|----------|--------|
 | Serial, path de saída | Capturar frame da tela | Arquivo de imagem |
 
+| ID | Cenário | Entradas | Execução | Saídas | Min |
+|----|---------|----------|----------|--------|-----|
+| US-11 | Print da tela é salvo | Serial, path de saída | Capturar screenshot | Arquivo de imagem no path | 15 |
+
 ### US-12 · Resgatar coordenadas x,y (imagem de entrada) (15 min)
 
 | Entradas | Execução | Saídas |
 |----------|----------|--------|
 | Imagem template, frame/tela atual | Template match / visão na tela | Coordenadas x,y (e confiança) |
+
+| ID | Cenário | Entradas | Execução | Saídas | Min |
+|----|---------|----------|----------|--------|-----|
+| US-12 | Coordenadas a partir de imagem template | Imagem template, frame/tela atual | Match por visão/template | Coordenadas x,y (e confiança) | 15 |
 
 ### US-13 · Extrair elementos e guardar sessão (150 min)
 

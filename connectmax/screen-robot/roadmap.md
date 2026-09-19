@@ -1,7 +1,7 @@
 # Roadmap — screen-robot
 
 **Por quê:** Gantt EP → US (folhas com o mesmo tamanho visual).  
-**Árvore / Gantt com SC e minutos:** [`tasks.md`](tasks.md).  
+**Gantt com SC e minutos:** [`tasks.md`](tasks.md).  
 **Fonte:** [`scenarios.md`](scenarios.md).  
 **Épicos:** [`epics.md`](epics.md).  
 **Visão:** [`README.md`](README.md).

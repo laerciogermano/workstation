@@ -48,7 +48,7 @@ Ver [`scenarios.md`](scenarios.md).
 | Vision — US título + descrição | [`vision.md`](vision.md) | Feito |
 | Épicos | [`epics.md`](epics.md) | Feito |
 | Cenários (US + SC) | [`scenarios.md`](scenarios.md) | Feito |
-| Tasks (árvore) | [`tasks.md`](tasks.md) | Feito |
+| Tasks (Gantt) | [`tasks.md`](tasks.md) | Feito |
 | Roadmap (Gantt) | [`roadmap.md`](roadmap.md) | Feito |
 | BDDs (US/SC + piloto LinkedIn) | [`bdds.md`](bdds.md) | Feito |
 | Sources | [`sources/`](sources/README.md) | Em curso |

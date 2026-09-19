@@ -27,7 +27,7 @@ O mapa nasce no discovery; o restante do processo roda **estória a estória**, 
 ### Árvore de execução
 
 ```text
-Processo (32)
+Processo (31)
 ├── Discovery
 │   ├── Vision
 │   ├── Cenarios (EP → US → SC)

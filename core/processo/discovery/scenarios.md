@@ -1,63 +1,71 @@
 # Documento de cenários
 
-Artefato **2** do [discovery](README.md). Fonte de verdade do *quê* do produto (EP → US → SC), **sem** Gherkin — **só tabelas**.
+Artefato **2** do [discovery](README.md). Fonte de verdade do *quê* do produto (EP → US → SC), **sem** Gherkin — tabelas **por estória**.
 
 **Antes:** [`vision.md`](vision.md). **Depois:** [`bdd.md`](bdd.md).
 
 ## Regras
 
-1. Organizar o produto em **épicos → estórias → cenários**, todos em tabela.
+1. Organizar o produto em **épicos → estórias → cenários**.
 2. Cada **épico** (EP-) é um conjunto de estórias que, juntas, entregam **valor**.
 3. Cada **estória** (US-) é uma **função / operação completa** do usuário.
 4. Cada estória tem **cenários** (SC-): mudanças de **estado** (obrigatório ≥1).
 5. **Todo cenário** tem ID `SC-XX` (sequencial no produto).
 6. Um **cenário** é mudança de estado + unidade testável + unidade paralelizável.
+7. Em cada US: tabela da estória (Entradas · Execução · Saídas) + tabela dos SC.
 
 ## Formato
 
-Duas tabelas (sem seções narradas por US):
-
 ```markdown
-## Épicos
+## EP-NN — <Valor>
 
-| ID | Épico | Valor |
+| ID | História |
+|----|----------|
+| US-… | … |
 
-## Histórias (US)
+### US-NN — <Operação completa>
 
-| EP | ID | História | Entradas | Execução | Saídas |
+| Entradas | Execução | Saídas |
+|----------|----------|--------|
+| … | … | … |
 
-## Cenários (SC)
-
-| US | ID | Cenário | Entradas | Execução | Saídas |
+| ID | Cenário | Entradas | Execução | Saídas |
+|----|---------|----------|----------|--------|
+| SC-… | … | … | … | … |
 ```
-
-(Alternativa UI: coluna **Mudança de estado** no lugar de Entradas/Execução/Saídas.)
 
 ## Exemplo
 
-### Épicos
+## EP-01 — Autenticação
 
-| ID | Épico | Valor |
-|----|-------|-------|
-| EP-01 | Autenticação | Entrar no produto (cadastro + login) |
+| ID | História |
+|----|----------|
+| US-01 | Cadastrar |
+| US-02 | Fazer login |
 
-### Histórias (US)
+### US-01 — Cadastrar
 
-| EP | ID | História | Entradas | Execução | Saídas |
-|----|----|----------|----------|----------|--------|
-| EP-01 | US-01 | Cadastrar | Dados de conta | Criar conta | Conta criada |
-| EP-01 | US-02 | Fazer login | Credenciais | Autenticar | Sessão autenticada |
+| Entradas | Execução | Saídas |
+|----------|----------|--------|
+| Dados de conta | Criar conta | Conta criada |
 
-### Cenários (SC)
+| ID | Cenário | Mudança de estado |
+|----|---------|-------------------|
+| SC-01 | Abrir cadastro | Home → formulário de cadastro |
+| SC-02 | Preencher dados | Formulário vazio → campos preenchidos |
+| SC-03 | Confirmar | Botão ativo → conta criada / redirecionamento |
 
-| US | ID | Cenário | Mudança de estado |
-|----|----|---------|-------------------|
-| US-01 | SC-01 | Abrir cadastro | Home → formulário de cadastro |
-| US-01 | SC-02 | Preencher dados | Formulário vazio → campos preenchidos |
-| US-01 | SC-03 | Confirmar | Botão ativo → conta criada / redirecionamento |
-| US-02 | SC-04 | Abrir login | Home → formulário de login |
-| US-02 | SC-05 | Preencher credenciais | Formulário vazio → campos preenchidos |
-| US-02 | SC-06 | Confirmar | Formulário → sessão autenticada |
+### US-02 — Fazer login
+
+| Entradas | Execução | Saídas |
+|----------|----------|--------|
+| Credenciais | Autenticar | Sessão autenticada |
+
+| ID | Cenário | Mudança de estado |
+|----|---------|-------------------|
+| SC-04 | Abrir login | Home → formulário de login |
+| SC-05 | Preencher credenciais | Formulário vazio → campos preenchidos |
+| SC-06 | Confirmar | Formulário → sessão autenticada |
 
 ## Fora do escopo
 

@@ -45,10 +45,11 @@ Entregar Capture → Perceive → Decide → Actuate com backends plugáveis (AD
 - Fechar venda ou conversar comercialmente.
 - Bypass de autenticação / scraping fora do uso legítimo do device.
 
-## Código e planos
+## Código, épicos e planos
 
 | Artefato | Caminho |
 |----------|---------|
+| Épicos (Capture · Perceive · Decide · Actuate) | [`epics/`](epics/README.md) |
 | Sources (redroid, android-studio, android-control) | [`sources/`](sources/) |
 | Plano produto (WBS + Gantt) | [`docs/plano-percepcao-imagem-hardware.md`](docs/plano-percepcao-imagem-hardware.md) |
 | Plano implementação | [`docs/plano-implementacao-percepcao.md`](docs/plano-implementacao-percepcao.md) |
@@ -56,4 +57,4 @@ Entregar Capture → Perceive → Decide → Actuate com backends plugáveis (AD
 
 ## Próximos passos
 
-→ [`docs/README.md`](docs/README.md) → implementar **F0** em `sources/android-control`
+→ [`epics/`](epics/README.md) → implementar **EP-01 Capture** + **EP-04 Actuate** (smoke) em `sources/android-control`

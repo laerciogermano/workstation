@@ -7,48 +7,48 @@ Gantts por projeto (prioridade maior → menor).
 
 ## P1 — ConnectMax · screen-robot
 
-Robô de tela: imagem → lista de elementos → clicar/digitar/rolar.  
-Estimativas: **minutos de esforço IA** (não humano).
+Robô de tela em 4 épicos: Capture → Perceive → Decide → Actuate.  
+Estimativas: **minutos de esforço IA** (não humano).  
+Épicos: [`screen-robot/epics/`](../../connectmax/screen-robot/epics/README.md).
 
 ```mermaid
 gantt
-  title screen-robot (minutos de esforço IA)
+  title screen-robot — 4 épicos (minutos IA)
   dateFormat X
   axisFormat %s
 
-  section F0 Fundamentos
-  F0.1 Contratos           :a01, 0, 24m
-  F0.2 AdbCapture          :a02, after a01, 30m
-  F0.3 AdbActuate          :a03, after a01, 24m
-  F0.4 Smoke               :a04, after a02, 18m
+  section EP-01 Capture
+  Contratos Capture        :a01, 0, 12m
+  AdbCapture               :a02, after a01, 30m
+  Smoke frame              :a03, after a02, 9m
+  Capture agent            :a04, after a03, 90m
+  Flag backend capture     :a05, after a04, 24m
 
-  section F1 Perceive
-  F1.1 Schema              :b01, after a04, 24m
-  F1.2 OCR                 :b02, after b01, 60m
-  F1.3 Vision              :b03, after b01, 90m
-  F1.4 Merge               :b04, after b02, 36m
-  F1.5 CLI + overlay       :b05, after b04, 30m
+  section EP-02 Perceive
+  Schema Element           :b01, after a03, 24m
+  OCR                      :b02, after b01, 60m
+  Vision                   :b03, after b01, 90m
+  Merge                    :b04, after b02, 36m
+  CLI + overlay            :b05, after b04, 30m
 
-  section F2 Decide
-  F2.1 Matcher             :c01, after b05, 36m
-  F2.2 LLM Decide          :c02, after b05, 48m
-  F2.3 Steps goal          :c03, after c01, 48m
-  F2.4 Example E2E         :c04, after c03, 24m
+  section EP-03 Decide
+  Matcher                  :c01, after b05, 36m
+  LLM Decide               :c02, after b05, 48m
+  Steps + goal E2E         :c03, after c01, 72m
+  Wait/retry               :c04, after c03, 30m
+  Metricas                 :c05, after c04, 24m
 
-  section F3 Robustez
-  F3.1 Wait/retry          :d01, after c04, 30m
-  F3.2 Scroll              :d02, after c04, 36m
-  F3.3 Calibracao          :d03, after c04, 30m
-  F3.4 Metricas            :d04, after d01, 24m
-
-  section F4 Hardware
-  F4.1 Revisar contratos   :e01, after d04, 18m
-  F4.2 Capture agent       :e02, after e01, 90m
-  F4.3 Actuate agent       :e03, after e01, 90m
-  F4.4 Flag + regressao    :e04, after e02, 48m
+  section EP-04 Actuate
+  Contratos Actuate        :d01, 0, 12m
+  AdbActuate               :d02, after d01, 24m
+  Smoke tap                :d03, after d02, 9m
+  Scroll                   :d04, after c03, 36m
+  Calibracao               :d05, after c03, 30m
+  Actuate agent            :d06, after d05, 90m
+  Flag backend actuate     :d07, after d06, 24m
 ```
 
-→ [`tasks`](../tasks/README.md#p1--connectmax--screen-robot)
+→ [`tasks`](../tasks/README.md#p1--connectmax--screen-robot) · [`epics`](../../connectmax/screen-robot/epics/README.md)
 
 ---
 

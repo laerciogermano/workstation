@@ -56,7 +56,7 @@ Prompts: [`fitness/prompts/timeline.md`](../../fitness/prompts/timeline.md).
 ### Esteira (ConnectMax)
 
 ```text
-screen-robot: visão → planos → F0…F4 em sources/android-control
+screen-robot: Capture → Perceive → Decide → Actuate ([`epics/`](../../connectmax/screen-robot/epics/))
 vendas:       visão → functionalities → user-stories → … → prototype
 ```
 
@@ -91,88 +91,111 @@ Prompts: [`clozzy/prompts/timeline.md`](../../clozzy/prompts/timeline.md).
 
 ## P1 — ConnectMax · screen-robot
 
-Robô de tela: imagem → lista de elementos → clicar/digitar/rolar.  
+Robô de tela em 4 épicos: **Capture → Perceive → Decide → Actuate**.  
 Legenda: verde = Done · amarelo = Doing · cinza = Todo  
-Estimativas: **minutos de esforço IA** (não humano).
+Estimativas: **minutos de esforço IA** (não humano).  
+Épicos: [`epics/`](../../connectmax/screen-robot/epics/README.md).
 
 ```mermaid
 flowchart TD
-  F01[F0.1 Contratos 24m]
-  F02[F0.2 AdbCapture 30m]
-  F03[F0.3 AdbActuate 24m]
-  F04[F0.4 Smoke 18m]
-  F11[F1.1 Schema 24m]
-  F12[F1.2 OCR 60m]
-  F13[F1.3 Vision 90m]
-  F14[F1.4 Merge 36m]
-  F15[F1.5 CLI perceive 30m]
-  F21[F2.1 Matcher 36m]
-  F22[F2.2 LLM Decide 48m]
-  F23[F2.3 Steps goal 48m]
-  F24[F2.4 Example goal 24m]
-  F31[F3.1 Wait/retry 30m]
-  F32[F3.2 Scroll 36m]
-  F33[F3.3 Calibracao 30m]
-  F34[F3.4 Metricas 24m]
-  F41[F4.1 Revisar contratos 18m]
-  F42[F4.2 Capture agent 90m]
-  F43[F4.3 Actuate agent 90m]
-  F44[F4.4 Flag + regressao 48m]
-  F01 --> F02
-  F01 --> F03
-  F02 --> F04
-  F03 --> F04
-  F04 --> F11
-  F11 --> F12
-  F11 --> F13
-  F12 --> F14
-  F13 --> F14
-  F14 --> F15
-  F15 --> F21
-  F15 --> F22
-  F21 --> F23
-  F22 --> F23
-  F23 --> F24
-  F24 --> F31
-  F24 --> F32
-  F24 --> F33
-  F31 --> F34
-  F32 --> F34
-  F33 --> F34
-  F01 --> F41
-  F34 --> F42
-  F34 --> F43
-  F41 --> F42
-  F41 --> F43
-  F42 --> F44
-  F43 --> F44
+  subgraph EP01["EP-01 Capture"]
+    C01[US-01 Contratos Capture 12m]
+    C02[US-02 AdbCapture 30m]
+    C03[US-03 Smoke frame 9m]
+    C04[US-04 Capture agent 90m]
+    C05[US-05 Flag capture 24m]
+    C01 --> C02 --> C03 --> C04 --> C05
+  end
+
+  subgraph EP02["EP-02 Perceive"]
+    P01[US-01 Schema 24m]
+    P02[US-02 OCR 60m]
+    P03[US-03 Vision 90m]
+    P04[US-04 Merge 36m]
+    P05[US-05 CLI overlay 30m]
+    P01 --> P02
+    P01 --> P03
+    P02 --> P04
+    P03 --> P04
+    P04 --> P05
+  end
+
+  subgraph EP03["EP-03 Decide"]
+    D01[US-01 Matcher 36m]
+    D02[US-02 LLM Decide 48m]
+    D03[US-03 Steps goal 72m]
+    D04[US-04 Wait/retry 30m]
+    D05[US-05 Metricas 24m]
+    D01 --> D03
+    D02 --> D03
+    D03 --> D04 --> D05
+  end
+
+  subgraph EP04["EP-04 Actuate"]
+    A01[US-01 Contratos Actuate 12m]
+    A02[US-02 AdbActuate 24m]
+    A03[US-03 Smoke tap 9m]
+    A04[US-04 Scroll 36m]
+    A05[US-05 Calibracao 30m]
+    A06[US-06 Actuate agent 90m]
+    A07[US-07 Flag actuate 24m]
+    A01 --> A02 --> A03
+    A03 --> A04
+    A03 --> A05
+    A05 --> A06 --> A07
+  end
+
+  C03 --> P01
+  C03 --> A03
+  P05 --> D01
+  P05 --> D02
+  D03 --> A04
+  D03 --> A05
 ```
+
+### EP-01 Capture
 
 | Todo | Doing | Done |
 |------|-------|------|
-| F0.1 Contratos · 24m | | |
-| F0.2 AdbCapture · 30m | | |
-| F0.3 AdbActuate · 24m | | |
-| F0.4 Smoke · 18m | | |
-| F1.1 Schema · 24m | | |
-| F1.2 OCR · 60m | | |
-| F1.3 Vision · 90m | | |
-| F1.4 Merge · 36m | | |
-| F1.5 CLI perceive · 30m | | |
-| F2.1 Matcher · 36m | | |
-| F2.2 LLM Decide · 48m | | |
-| F2.3 Steps goal · 48m | | |
-| F2.4 Example goal · 24m | | |
-| F3.1 Wait/retry · 30m | | |
-| F3.2 Scroll · 36m | | |
-| F3.3 Calibração · 30m | | |
-| F3.4 Métricas · 24m | | |
-| F4.1 Revisar contratos · 18m | | |
-| F4.2 Capture agent · 90m | | |
-| F4.3 Actuate agent · 90m | | |
-| F4.4 Flag + regressão · 48m | | |
+| [US-01](../../connectmax/screen-robot/epics/EP-01-capture/README.md) Contratos · 12m | | |
+| [US-02](../../connectmax/screen-robot/epics/EP-01-capture/README.md) AdbCapture · 30m | | |
+| [US-03](../../connectmax/screen-robot/epics/EP-01-capture/README.md) Smoke frame · 9m | | |
+| [US-04](../../connectmax/screen-robot/epics/EP-01-capture/README.md) Capture agent · 90m | | |
+| [US-05](../../connectmax/screen-robot/epics/EP-01-capture/README.md) Flag capture · 24m | | |
 
-→ [`screen-robot/`](../../connectmax/screen-robot/README.md) · [`plano`](../../connectmax/screen-robot/docs/plano-percepcao-imagem-hardware.md) · [`implementação`](../../connectmax/screen-robot/docs/plano-implementacao-percepcao.md) · [`board`](../board/README.md#p1--connectmax--screen-robot)
+### EP-02 Perceive
+
+| Todo | Doing | Done |
+|------|-------|------|
+| [US-01](../../connectmax/screen-robot/epics/EP-02-perceive/README.md) Schema · 24m | | |
+| [US-02](../../connectmax/screen-robot/epics/EP-02-perceive/README.md) OCR · 60m | | |
+| [US-03](../../connectmax/screen-robot/epics/EP-02-perceive/README.md) Vision · 90m | | |
+| [US-04](../../connectmax/screen-robot/epics/EP-02-perceive/README.md) Merge · 36m | | |
+| [US-05](../../connectmax/screen-robot/epics/EP-02-perceive/README.md) CLI + overlay · 30m | | |
+
+### EP-03 Decide
+
+| Todo | Doing | Done |
+|------|-------|------|
+| [US-01](../../connectmax/screen-robot/epics/EP-03-decide/README.md) Matcher · 36m | | |
+| [US-02](../../connectmax/screen-robot/epics/EP-03-decide/README.md) LLM Decide · 48m | | |
+| [US-03](../../connectmax/screen-robot/epics/EP-03-decide/README.md) Steps + goal · 72m | | |
+| [US-04](../../connectmax/screen-robot/epics/EP-03-decide/README.md) Wait/retry · 30m | | |
+| [US-05](../../connectmax/screen-robot/epics/EP-03-decide/README.md) Métricas · 24m | | |
+
+### EP-04 Actuate
+
+| Todo | Doing | Done |
+|------|-------|------|
+| [US-01](../../connectmax/screen-robot/epics/EP-04-actuate/README.md) Contratos · 12m | | |
+| [US-02](../../connectmax/screen-robot/epics/EP-04-actuate/README.md) AdbActuate · 24m | | |
+| [US-03](../../connectmax/screen-robot/epics/EP-04-actuate/README.md) Smoke tap · 9m | | |
+| [US-04](../../connectmax/screen-robot/epics/EP-04-actuate/README.md) Scroll · 36m | | |
+| [US-05](../../connectmax/screen-robot/epics/EP-04-actuate/README.md) Calibração · 30m | | |
+| [US-06](../../connectmax/screen-robot/epics/EP-04-actuate/README.md) Actuate agent · 90m | | |
+| [US-07](../../connectmax/screen-robot/epics/EP-04-actuate/README.md) Flag actuate · 24m | | |
+
+→ [`screen-robot/`](../../connectmax/screen-robot/README.md) · [`epics`](../../connectmax/screen-robot/epics/README.md) · [`plano`](../../connectmax/screen-robot/docs/plano-percepcao-imagem-hardware.md) · [`board`](../board/README.md#p1--connectmax--screen-robot)
 
 ---
 

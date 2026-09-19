@@ -58,4 +58,4 @@
 
 ## Próximos passos
 
-→ Implementar F0–F4 conforme [`plano-implementacao-percepcao.md`](plano-implementacao-percepcao.md)
+→ Implementar EP-01…EP-04 conforme [`../epics/`](../epics/README.md) e [`plano-implementacao-percepcao.md`](plano-implementacao-percepcao.md)

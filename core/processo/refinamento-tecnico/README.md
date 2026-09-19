@@ -2,16 +2,22 @@
 
 Transformar o discovery em plano executável.
 
-## Foco
+## Entradas
 
-- Arquitetura e stack
-- Contratos, interfaces e dados
-- Riscos técnicos e mitigações
-- Critérios de aceite técnicos
-- Estimativas e dependências
-- Quebra em tarefas / histórias
+- Visão / brief do discovery
+- Escopo preliminar e hipóteses
+- Restrições técnicas e de negócio
+- Stack e padrões já adotados no projeto
 
-## Saídas típicas
+## Execução
+
+- Desenhar arquitetura, contratos e dados
+- Identificar riscos e mitigações
+- Definir critérios de aceite e de pronto
+- Estimar esforço e dependências
+- Quebrar em tarefas / histórias priorizadas
+
+## Saídas
 
 - Desenho técnico (ou ADR)
 - Critérios de pronto

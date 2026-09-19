@@ -2,15 +2,24 @@
 
 Validar que o software faz o combinado.
 
-## Foco
+## Entradas
 
-- Testes unitários, integração e E2E (conforme risco)
-- BDD / cenários de aceite
-- Regressão
-- Critérios de qualidade (performance, segurança, acessibilidade quando aplicável)
+- Código entregue pelo desenvolvimento
+- Critérios de aceite / BDD
+- Ambiente de teste configurado
+- Casos de regressão conhecidos
 
-## Saídas típicas
+## Execução
 
-- Evidência de aceite
+- Executar unitários, integração e E2E (conforme risco)
+- Validar cenários de aceite (BDD)
+- Rodar regressão
+- Verificar qualidade (performance, segurança, acessibilidade quando aplicável)
+- Registrar e priorizar defeitos
+
+## Saídas
+
+- Evidência de aceite (aprovado / rejeitado)
 - Bugs priorizados
+- Relatório de cobertura / resultados
 - Próximo passo: implantação (se aprovado)

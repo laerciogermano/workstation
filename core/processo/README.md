@@ -6,6 +6,8 @@ Ciclo padrão da workstation:
 Discovery → Refinamento técnico → Desenvolvimento → Testes → Implantação → Manutenção
 ```
 
+Cada etapa documenta **entradas**, **execução** e **saídas**.
+
 | Etapa | Pasta | Objetivo |
 |-------|-------|----------|
 | Discovery | [`discovery/`](discovery/) | Entender o problema, valor e escopo |

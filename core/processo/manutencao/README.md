@@ -2,16 +2,24 @@
 
 Operar, corrigir e evoluir o que está em produção.
 
-## Foco
+## Entradas
 
-- Monitoramento e incidentes
-- Correções (bugs / hotfixes)
-- Melhorias incrementais
-- Débito técnico controlado
-- Feedback → novo ciclo (discovery ou refinamento)
+- Sistema em produção
+- Monitoramento, logs e alertas
+- Incidentes, bugs e feedback de usuários
+- Backlog de melhorias e débito técnico
 
-## Saídas típicas
+## Execução
+
+- Monitorar saúde e responder a incidentes
+- Aplicar correções (bugs / hotfixes)
+- Entregar melhorias incrementais
+- Controlar débito técnico
+- Encaminhar mudanças relevantes para discovery ou refinamento
+
+## Saídas
 
 - Estabilidade operacional
-- Backlog de evolução
-- Retorno ao discovery / refinamento quando houver mudança relevante
+- Correções e melhorias publicadas
+- Backlog de evolução atualizado
+- Retorno ao discovery / refinamento quando couber

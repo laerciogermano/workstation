@@ -2,15 +2,24 @@
 
 Implementar o que foi refinado.
 
-## Foco
+## Entradas
 
-- Código alinhado aos critérios de aceite
-- Commits pequenos e revisáveis
-- Documentação mínima necessária
-- Integração contínua com a esteira do projeto
+- Backlog priorizado e critérios de aceite
+- Desenho técnico / ADRs
+- Código e infraestrutura existentes
+- Ambiente de desenvolvimento pronto
 
-## Saídas típicas
+## Execução
 
-- Código e testes unitários (quando couber)
+- Implementar conforme critérios de aceite
+- Manter commits pequenos e revisáveis
+- Escrever testes unitários quando couber
+- Documentar o mínimo necessário
+- Integrar com a esteira do projeto (CI)
+
+## Saídas
+
+- Código pronto para validação
 - PRs / commits revisáveis
+- Testes unitários (quando aplicável)
 - Próximo passo: testes

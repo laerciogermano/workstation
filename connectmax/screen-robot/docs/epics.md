@@ -79,11 +79,6 @@ Persiste e restaura estado do robô em disco.
 
 ---
 
-## Fora de escopo (v1)
-
-- Domínio LinkedIn / prospecção — [`../../linkedin-agent/`](../../linkedin-agent/README.md) · [`../../vendas/`](../../vendas/README.md)
-- Bypass de autenticação ou scraping fora do uso legítimo do device
-
 ## Próximos passos
 
 → Implementar em [`../sources/android-control`](../sources/android-control/README.md)  

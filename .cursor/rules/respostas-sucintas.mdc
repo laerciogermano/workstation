@@ -1,0 +1,23 @@
+---
+description: Respostas e textos da IA devem ser o mais sucintos e objetivos possível
+alwaysApply: true
+---
+
+# Respostas sucintas e objetivas
+
+Ao escrever qualquer coisa (respostas, commits, docs, comentários, PRs), seja **estritamente essencial**.
+
+## Critérios
+
+- Diga só o necessário para atender o pedido — zero preenchimento, preâmbulos ou repetição
+- Objetividade máxima: fato → ação → resultado (quando couber)
+- Cubra **todos** os critérios necessários do pedido; sucinto ≠ incompleto
+- Prefira uma frase curta a um parágrafo; bullets só quando a lista for mais clara que prosa
+- Não explique o óbvio, não narrar o processo, não oferecer alternativas não pedidas
+
+## Exemplos
+
+```text
+✅ Corrigido: validação rejeitava pins incompatíveis.
+❌ Aqui está o que eu fiz: primeiro analisei o código, depois ajustei a validação para que pins incompatíveis sejam rejeitados corretamente, o que melhora a UX...
+```

@@ -13,37 +13,37 @@ Estimativas: minutos IA · **1 dia = 8h = 480 min**.
 ### Árvore de execução
 
 ```text
-screen-robot
-├── 1. Provisionar um agente
-│   ├── Subir / conectar o Android (agent)
-│   ├── Garantir serial ADB online
-│   └── Aguardar boot completo
-├── 2. Instalar APKs
-│   ├── Ler versão na config do dispositivo
-│   ├── Baixar APK na versão definida
-│   └── Instalar pacote no agent
-├── 3. Receber eventos
-│   ├── Evento de boot
-│   ├── Evento de app aberta
-│   ├── Evento de tela estável
-│   └── Evento de mudança de dump
-├── 4. Executar operações
-│   ├── Abrir aplicativo
-│   ├── tap
-│   ├── type
-│   ├── key
-│   ├── screenshot
-│   └── Resgatar coordenadas x,y (imagem de entrada)
-├── 5. Extrair elementos e informações
-│   ├── Nó Texto
-│   ├── Nó Ícone
-│   ├── Nó Imagem / foto
-│   ├── Nó Lista (itens filhos + scroll)
-│   ├── Nó Container
-│   └── Montar árvore DOM (raiz → filhos)
-└── 6. Guardar estado de sessão
-    ├── Persistir sessão em arquivo
-    └── Restaurar sessão do arquivo
+screen-robot (6,55 h)
+├── 1. Provisionar um agente (1 h)
+│   ├── Subir / conectar o Android (agent) (0,33 h)
+│   ├── Garantir serial ADB online (0,33 h)
+│   └── Aguardar boot completo (0,33 h)
+├── 2. Instalar APKs (0,75 h)
+│   ├── Ler versão na config do dispositivo (0,08 h)
+│   ├── Baixar APK na versão definida (0,42 h)
+│   └── Instalar pacote no agent (0,25 h)
+├── 3. Receber eventos (0,8 h)
+│   ├── Evento de boot (0,2 h)
+│   ├── Evento de app aberta (0,2 h)
+│   ├── Evento de tela estável (0,2 h)
+│   └── Evento de mudança de dump (0,2 h)
+├── 4. Executar operações (1,5 h)
+│   ├── Abrir aplicativo (0,25 h)
+│   ├── tap (0,25 h)
+│   ├── type (0,25 h)
+│   ├── key (0,25 h)
+│   ├── screenshot (0,25 h)
+│   └── Resgatar coordenadas x,y (imagem de entrada) (0,25 h)
+├── 5. Extrair elementos e informações (2 h)
+│   ├── Nó Texto (0,33 h)
+│   ├── Nó Ícone (0,33 h)
+│   ├── Nó Imagem / foto (0,4 h)
+│   ├── Nó Lista (itens filhos + scroll) (0,4 h)
+│   ├── Nó Container (0,2 h)
+│   └── Montar árvore DOM (raiz → filhos) (0,33 h)
+└── 6. Guardar estado de sessão (0,5 h)
+    ├── Persistir sessão em arquivo (0,25 h)
+    └── Restaurar sessão do arquivo (0,25 h)
 ```
 
 ### Ordem e esforço

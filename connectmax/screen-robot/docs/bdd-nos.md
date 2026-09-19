@@ -8,7 +8,7 @@ Cada cenário = mudança de estado (Dado → Quando → Então).
 
 ---
 
-## 1. Provisionar um agente
+## US-01 · Provisionar um agente
 
 ```gherkin
 Funcionalidade: Provisionar um agente
@@ -18,7 +18,7 @@ Funcionalidade: Provisionar um agente
     Então o agent está pronto (serial online e boot completo)
 ```
 
-### 1.1 Subir / conectar o Android (agent)
+### US-01.1 Subir / conectar o Android (agent)
 
 ```gherkin
 Cenário: Agent sobe e fica alcançável
@@ -27,7 +27,7 @@ Cenário: Agent sobe e fica alcançável
   Então o processo do agent está em execução e alcançável
 ```
 
-### 1.2 Garantir serial ADB online
+### US-01.2 Garantir serial ADB online
 
 ```gherkin
 Cenário: Serial ADB fica online
@@ -36,7 +36,7 @@ Cenário: Serial ADB fica online
   Então o serial ADB está online
 ```
 
-### 1.3 Aguardar boot completo
+### US-01.3 Aguardar boot completo
 
 ```gherkin
 Cenário: Boot completo no device
@@ -47,7 +47,7 @@ Cenário: Boot completo no device
 
 ---
 
-## 2. Instalar APKs
+## US-02 · Instalar APKs
 
 ```gherkin
 Funcionalidade: Instalar APKs
@@ -57,7 +57,7 @@ Funcionalidade: Instalar APKs
     Então os apps estão instalados nas versões definidas
 ```
 
-### 2.1 Ler versão na config do dispositivo
+### US-02.1 Ler versão na config do dispositivo
 
 ```gherkin
 Cenário: Versão e package são lidos da config
@@ -66,7 +66,7 @@ Cenário: Versão e package são lidos da config
   Então a versão e o package alvo estão disponíveis para download
 ```
 
-### 2.2 Baixar APK na versão definida
+### US-02.2 Baixar APK na versão definida
 
 ```gherkin
 Cenário: APK da versão pedida é baixado
@@ -75,7 +75,7 @@ Cenário: APK da versão pedida é baixado
   Então o artefato APK/XAPK existe no disco
 ```
 
-### 2.3 Instalar pacote no agent
+### US-02.3 Instalar pacote no agent
 
 ```gherkin
 Cenário: Pacote é instalado no agent
@@ -86,7 +86,7 @@ Cenário: Pacote é instalado no agent
 
 ---
 
-## 3. Receber eventos
+## US-03 · Receber eventos
 
 ```gherkin
 Funcionalidade: Receber eventos
@@ -96,7 +96,7 @@ Funcionalidade: Receber eventos
     Então o evento esperado é confirmado
 ```
 
-### 3.1 Evento de boot
+### US-03.1 Evento de boot
 
 ```gherkin
 Cenário: Sinal de boot é recebido
@@ -105,7 +105,7 @@ Cenário: Sinal de boot é recebido
   Então o boot é sinalizado
 ```
 
-### 3.2 Evento de app aberta
+### US-03.2 Evento de app aberta
 
 ```gherkin
 Cenário: App em foreground é confirmada
@@ -114,7 +114,7 @@ Cenário: App em foreground é confirmada
   Então a app está em foreground
 ```
 
-### 3.3 Evento de tela estável
+### US-03.3 Evento de tela estável
 
 ```gherkin
 Cenário: Tela fica estável
@@ -123,7 +123,7 @@ Cenário: Tela fica estável
   Então a tela está estável
 ```
 
-### 3.4 Evento de mudança de dump
+### US-03.4 Evento de mudança de dump
 
 ```gherkin
 Cenário: Dump de UI muda
@@ -134,7 +134,7 @@ Cenário: Dump de UI muda
 
 ---
 
-## 4. Executar operações
+## US-04 · Executar operações
 
 ```gherkin
 Funcionalidade: Executar operações
@@ -144,7 +144,7 @@ Funcionalidade: Executar operações
     Então a UI/device reflete a ação (e coords/artefato quando couber)
 ```
 
-### 4.1 Abrir aplicativo
+### US-04.1 Abrir aplicativo
 
 ```gherkin
 Cenário: App é aberta no agent
@@ -153,7 +153,7 @@ Cenário: App é aberta no agent
   Então a app está em foreground
 ```
 
-### 4.2 tap
+### US-04.2 tap
 
 ```gherkin
 Cenário: Toque na tela
@@ -162,7 +162,7 @@ Cenário: Toque na tela
   Então a UI reflete o toque
 ```
 
-### 4.3 type
+### US-04.3 type
 
 ```gherkin
 Cenário: Texto é digitado
@@ -171,7 +171,7 @@ Cenário: Texto é digitado
   Então o texto aparece na UI
 ```
 
-### 4.4 key
+### US-04.4 key
 
 ```gherkin
 Cenário: Tecla é enviada
@@ -180,7 +180,7 @@ Cenário: Tecla é enviada
   Então a tecla é processada pelo device
 ```
 
-### 4.5 scroll
+### US-04.5 scroll
 
 ```gherkin
 Cenário: Conteúdo é rolado
@@ -189,7 +189,7 @@ Cenário: Conteúdo é rolado
   Então o conteúdo rolou e novos itens podem ficar visíveis
 ```
 
-### 4.6 screenshot
+### US-04.6 screenshot
 
 ```gherkin
 Cenário: Print da tela é salvo
@@ -198,7 +198,7 @@ Cenário: Print da tela é salvo
   Então o arquivo de imagem existe no path
 ```
 
-### 4.7 Resgatar coordenadas x,y (imagem de entrada)
+### US-04.7 Resgatar coordenadas x,y (imagem de entrada)
 
 ```gherkin
 Cenário: Coordenadas a partir de imagem template
@@ -209,7 +209,7 @@ Cenário: Coordenadas a partir de imagem template
 
 ---
 
-## 5. Extrair elementos e informações
+## US-05 · Extrair elementos e informações
 
 ```gherkin
 Funcionalidade: Extrair elementos e informações
@@ -219,7 +219,7 @@ Funcionalidade: Extrair elementos e informações
     Então existe uma árvore de componentes navegável (estilo DOM)
 ```
 
-### 5.1 Nó Texto
+### US-05.1 Nó Texto
 
 ```gherkin
 Cenário: Textos são extraídos
@@ -228,7 +228,7 @@ Cenário: Textos são extraídos
   Então nós de texto existem com string e bounds
 ```
 
-### 5.2 Nó Ícone
+### US-05.2 Nó Ícone
 
 ```gherkin
 Cenário: Ícones são reconhecidos
@@ -237,7 +237,7 @@ Cenário: Ícones são reconhecidos
   Então nós de ícone existem com tipo e bounds
 ```
 
-### 5.3 Nó Imagem / foto
+### US-05.3 Nó Imagem / foto
 
 ```gherkin
 Cenário: Regiões de mídia são detectadas
@@ -246,7 +246,7 @@ Cenário: Regiões de mídia são detectadas
   Então nós imagem/foto existem com bounds
 ```
 
-### 5.4 Nó Lista
+### US-05.4 Nó Lista
 
 ```gherkin
 Cenário: Lista com itens é extraída
@@ -255,7 +255,7 @@ Cenário: Lista com itens é extraída
   Então existe nó lista com filhos e metadados de scroll
 ```
 
-### 5.5 Nó Container
+### US-05.5 Nó Container
 
 ```gherkin
 Cenário: Containers são agrupados
@@ -264,7 +264,7 @@ Cenário: Containers são agrupados
   Então nós container existem com filhos
 ```
 
-### 5.6 Montar árvore DOM
+### US-05.6 Montar árvore DOM
 
 ```gherkin
 Cenário: Hierarquia raiz → filhos é montada
@@ -275,7 +275,7 @@ Cenário: Hierarquia raiz → filhos é montada
 
 ---
 
-## 6. Guardar estado de sessão
+## US-06 · Guardar estado de sessão
 
 ```gherkin
 Funcionalidade: Guardar estado de sessão
@@ -285,7 +285,7 @@ Funcionalidade: Guardar estado de sessão
     Então a sessão está em disco ou o contexto foi restaurado
 ```
 
-### 6.1 Persistir sessão em arquivo
+### US-06.1 Persistir sessão em arquivo
 
 ```gherkin
 Cenário: Sessão é gravada
@@ -294,7 +294,7 @@ Cenário: Sessão é gravada
   Então o arquivo de sessão existe
 ```
 
-### 6.2 Restaurar sessão do arquivo
+### US-06.2 Restaurar sessão do arquivo
 
 ```gherkin
 Cenário: Sessão é restaurada

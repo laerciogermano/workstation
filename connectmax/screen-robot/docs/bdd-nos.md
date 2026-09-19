@@ -1,6 +1,6 @@
 # BDD — cenários por história (screen-robot)
 
-**Por quê:** aceite de cada **US** (e **SC** sob US-01, US-02, US-15).  
+**Por quê:** aceite de cada **US** (e **SC** sob US-01, US-02, US-14).  
 **Funcionalidades:** [`functionalities.md`](functionalities.md).  
 **Integração:** [`bdd-linkedin-login.md`](bdd-linkedin-login.md).
 
@@ -188,31 +188,21 @@ Funcionalidade: Resgatar coordenadas x,y
 
 ---
 
-## US-13 · Extrair nó Texto a partir de imagem
-
-```gherkin
-Funcionalidade: Extrair nó Texto a partir de imagem
-  Cenário: Textos são extraídos da imagem da tela
-    Dado uma imagem da tela (screenshot/frame)
-    Quando OCR / leitura de texto é aplicada na imagem
-    Então nós de texto existem com string e bounds
-```
-
-## US-14 · Extrair elementos
+## US-13 · Extrair elementos
 
 ```gherkin
 Funcionalidade: Extrair elementos
-  Cenário: Elementos tipados e árvore DOM são extraídos
-    Dado imagem/frame/dump da tela
-    Quando ícones, imagens/fotos, listas e containers são reconhecidos
+  Cenário: Elementos tipados e árvore DOM são extraídos da imagem da tela
+    Dado uma imagem da tela (screenshot/frame) ou dump
+    Quando OCR extrai textos e ícones, imagens/fotos, listas e containers são reconhecidos
     E a hierarquia raiz → filhos é composta
-    Então elementos tipados existem com bounds e metadados
+    Então elementos tipados existem com string/tipo, bounds e metadados
     E a árvore DOM navegável é devolvida
 ```
 
 ---
 
-## US-15 · Guardar estado de sessão
+## US-14 · Guardar estado de sessão
 
 ```gherkin
 Funcionalidade: Guardar estado de sessão
@@ -222,7 +212,7 @@ Funcionalidade: Guardar estado de sessão
     Então a sessão está em disco ou o contexto foi restaurado
 ```
 
-### SC-15.1 Persistir sessão em arquivo
+### SC-14.1 Persistir sessão em arquivo
 
 ```gherkin
 Cenário: Sessão é gravada
@@ -231,7 +221,7 @@ Cenário: Sessão é gravada
   Então o arquivo de sessão existe
 ```
 
-### SC-15.2 Restaurar sessão do arquivo
+### SC-14.2 Restaurar sessão do arquivo
 
 ```gherkin
 Cenário: Sessão é restaurada

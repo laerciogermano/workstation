@@ -1,6 +1,6 @@
 # workstation
 
-Board: [`core/tasks/`](core/tasks/README.md)
+Board: [`core/tasks/`](core/tasks/README.md) · Processo: [`core/processo/`](core/processo/README.md)
 
 ## Projetos
 

@@ -34,7 +34,7 @@ Automatizar apps móveis exige um caminho estável em código: agent pronto, app
 
 Expor via Node: **provisionar · instalar APKs · eventos · operar · extrair · sessão**. Cenário piloto: login LinkedIn (BDDs em [`5.bdds.md`](5.bdds.md)).
 
-Também será possível **deixar o controle do Android disponível** para um operador humano: ver a tela e agir (tap, type, scroll, etc.) via espelhamento ([`pocs/redroid/`](pocs/redroid/README.md) · `view.sh` / scrcpy), sem depender só do script.
+Também será possível **deixar o controle do Android disponível** para um operador humano: ver a tela e agir (tap, type, scroll, etc.) via espelhamento ([`src/scripts/view.sh`](src/scripts/view.sh) / scrcpy · `npm run view`), sem depender só do script.
 
 ## Capacidades (v1)
 
@@ -63,7 +63,7 @@ API em [`src/`](src/README.md). Superfície do handle: `provisionEmulator(cfg)` 
 
 A lib sobe o container quando o `name` é novo. Com o mesmo `name` de novo, só reconecta. Não é necessário rodar `start.sh` manualmente nesse fluxo.
 
-**Controle interativo da tela:** com o agent no ar, use [`pocs/redroid/scripts/view.sh`](pocs/redroid/README.md) (scrcpy) para visualizar e operar o Android (tocar, digitar, etc.) enquanto a API Node também pode automatizar.
+**Controle interativo da tela:** com o agent no ar, use [`src/scripts/view.sh`](src/scripts/view.sh) (`cd src && npm run view`) para visualizar e operar o Android (tocar, digitar, etc.) enquanto a API Node também pode automatizar.
 
 ### 2. Configuração
 

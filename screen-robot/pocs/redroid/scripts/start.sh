@@ -29,5 +29,5 @@ fi
 
 docker compose up -d
 echo
-echo "Container iniciado. Conecte a tela com: ./scripts/view.sh"
+echo "Container iniciado. Conecte a tela com: cd ../../src && npm run view"
 docker compose ps

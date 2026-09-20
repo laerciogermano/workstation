@@ -4,7 +4,14 @@ Android em container Docker via [redroid](https://github.com/remote-android/redr
 
 Usado como runtime do **screen-robot**: a lib sobe **um container por `name`** (multi-agent). Scripts manuais abaixo servem para POC/debug de uma instância.
 
-**Controle disponível:** com o container rodando, `./scripts/view.sh` deixa a tela Android aberta no host para **visualizar e operar** (tocar, digitar, rolar e demais gestos), em paralelo à automação Node.
+**Controle disponível:** com o container rodando, use o view do screen-robot:
+
+```bash
+cd ../../src && npm run view
+# ou: ../../src/scripts/view.sh
+```
+
+(`pocs/redroid/scripts/view.sh` só delega para esse script.) Abre a tela no host para **visualizar e operar** (tocar, digitar, rolar), em paralelo à automação Node.
 
 Projeto irmão (emulador oficial / Android Studio): [`../android-studio`](../android-studio/README.md).
 
@@ -34,7 +41,7 @@ Neste Mac usamos **Colima** (não Docker Desktop). Os scripts (`start`/`view`/`s
 ```bash
 colima start   # se ainda não estiver rodando
 ./scripts/start.sh   # POC de 1 instância (porta padrão 5555)
-./scripts/view.sh
+cd ../../src && npm run view
 ```
 
 ## Setup rápido (Linux) — POC 1 instância
@@ -49,7 +56,7 @@ sudo ./scripts/setup-host.sh
 ./scripts/start.sh
 
 # 3) ver a tela
-./scripts/view.sh
+cd ../../src && npm run view
 ```
 
 Parar:
@@ -116,7 +123,9 @@ screen-robot/pocs/redroid/
 │   ├── start.sh
 │   ├── stop.sh
 │   ├── reset.sh       # down -v + start (instância do zero)
-│   ├── view.sh
+│   ├── view.sh        # delega → src/scripts/view.sh
 │   └── status.sh
 └── data/          # criado em runtime (POC 1 instância)
 ```
+
+View canônico do projeto: [`../../src/scripts/view.sh`](../../src/scripts/view.sh).

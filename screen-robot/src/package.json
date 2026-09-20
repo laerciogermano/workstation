@@ -11,6 +11,7 @@
     "run": "node cli.js",
     "example": "node cli.js config.example.json",
     "linkedin-login": "node scripts/linkedin-login.js",
+    "view": "bash scripts/view.sh",
     "test": "node --test 'lib/**/*.test.js'",
     "test:unit": "node --test 'lib/**/*.test.js'",
     "test:e2e": "node --test --test-concurrency=1 'test/bdd/**/*.test.js'"

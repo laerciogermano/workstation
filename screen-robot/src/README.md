@@ -4,7 +4,7 @@ API **Node** (≥ 18) para controlar Android via ADB: provisionar agents, instal
 
 Visão do projeto: [`../README.md`](../README.md) · Runtimes: [`../pocs/`](../pocs/README.md) · Aceite: [`../5.bdds.md`](../5.bdds.md)
 
-Com o runtime no ar, o Android fica **disponível para controle humano**: espelhar a tela e operar (tap, digitar, scroll, …) via scrcpy — ver [`../pocs/redroid/`](../pocs/redroid/README.md) (`./scripts/view.sh`). A API do handle automatiza as mesmas ações por código.
+Com o runtime no ar, o Android fica **disponível para controle humano**: espelhar a tela e operar (tap, digitar, scroll, …) via scrcpy — [`scripts/view.sh`](scripts/view.sh) (`npm run view`). A API do handle automatiza as mesmas ações por código.
 
 ---
 
@@ -249,6 +249,18 @@ Script [`scripts/linkedin-login.js`](scripts/linkedin-login.js):
 7. `extract()` ×5 → `tree-screen.png` + `component-tree.json`
 
 Só LinkedIn (sem Instagram). Sem digitar credenciais e sem `saveSession`.
+
+---
+
+## 10b. Ver / operar a tela — `scripts/view.sh`
+
+```bash
+cd screen-robot/src
+npm run view
+# ou: ./scripts/view.sh --device 127.0.0.1:5555
+```
+
+Abre **scrcpy** no serial de `device.config.json` (ou `--device`) para visualizar e controlar o Android (tap, digitar, scroll) enquanto a API Node roda.
 
 ---
 

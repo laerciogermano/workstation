@@ -8,7 +8,7 @@ Ordem **obrigatória** — não pular nem inverter:
 
 1. **Stories** — [`1.stories.md`](1.stories.md): US com título + descrição de como funciona.
 2. **Epics** — [`2.epics.md`](2.epics.md): EP que agrupam US e entregam valor.
-3. **Cenários** — [`3.scenarios.md`](3.scenarios.md): catálogo US → SC (sem Gherkin).
+3. **Cenários** — [`3.scenarios.md`](3.scenarios.md) ou pasta `3.scenarios/`: catálogo US → SC (sem Gherkin; por EP se pasta).
 4. **BDDs** — [`4.bdds.md`](4.bdds.md): Dado / Quando / Então por **US** e por **SC**.
 5. **Protótipo** — [`5.prototype.md`](5.prototype.md): validação visual/interativa do que foi especificado.
 6. **Roadmap** — [`6.roadmap.md`](6.roadmap.md): Gantt EP → US (sem SC; barra = duração da atividade).
@@ -70,7 +70,7 @@ US-02 — Fazer login
 |-------|----------|----------|
 | 1 | [`1.stories.md`](1.stories.md) | US título + descrição |
 | 2 | [`2.epics.md`](2.epics.md) | EP → lista de US |
-| 3 | [`3.scenarios.md`](3.scenarios.md) | US → SC |
+| 3 | [`3.scenarios.md`](3.scenarios.md) / `3.scenarios/` | US → SC (opcional por EP) |
 | 4 | [`4.bdds.md`](4.bdds.md) | Aceite Gherkin por US e SC |
 | 5 | [`5.prototype.md`](5.prototype.md) / protótipo do projeto | Validação visual/interativa |
 | 6 | [`6.roadmap.md`](6.roadmap.md) / roadmap do projeto | Gantt EP/US |

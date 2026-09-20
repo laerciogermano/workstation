@@ -33,7 +33,7 @@ Expor via Node: **provisionar · instalar APKs · eventos · operar · extrair �
 
 ## Capacidades (v1)
 
-Ver stories em [`1.stories.md`](1.stories.md) e cenários em [`3.scenarios.md`](3.scenarios.md).
+Ver stories em [`1.stories.md`](1.stories.md) e cenários em [`3.scenarios/`](3.scenarios/README.md).
 
 ## Fora de escopo
 
@@ -47,7 +47,7 @@ Ver stories em [`1.stories.md`](1.stories.md) e cenários em [`3.scenarios.md`](
 |----------|---------|--------|
 | Stories — US título + descrição | [`1.stories.md`](1.stories.md) | Feito |
 | Épicos | [`2.epics.md`](2.epics.md) | Feito |
-| Cenários | [`3.scenarios.md`](3.scenarios.md) | Feito |
+| Cenários | [`3.scenarios/`](3.scenarios/README.md) | Feito |
 | BDDs | [`4.bdds.md`](4.bdds.md) | Feito |
 | Implementation plan | por épico em [`implementation-plan/`](implementation-plan/README.md) | Feito |
 | Roadmap (Gantt) | [`6.roadmap.md`](6.roadmap.md) | Feito |
@@ -57,4 +57,4 @@ Ver stories em [`1.stories.md`](1.stories.md) e cenários em [`3.scenarios.md`](
 
 ## Próximos passos
 
-→ [`3.scenarios.md`](3.scenarios.md) · [`4.bdds.md`](4.bdds.md) · `LINKEDIN_USER` / `LINKEDIN_PASSWORD` + `npm run linkedin-login` em `sources/android-control`
+→ [`3.scenarios/`](3.scenarios/README.md) · [`4.bdds.md`](4.bdds.md) · `LINKEDIN_USER` / `LINKEDIN_PASSWORD` + `npm run linkedin-login` em `sources/android-control`

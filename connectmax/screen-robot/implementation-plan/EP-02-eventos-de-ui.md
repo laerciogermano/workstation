@@ -2,7 +2,7 @@
 
 **Por quê:** plano técnico do épico (sequências · agentes · passo a passo · contratos · classes · modelos · BDDs).  
 **Épico:** [`2.epics.md`](../2.epics.md).  
-**US:** [`1.stories.md`](../1.stories.md) · [`3.scenarios.md`](../3.scenarios.md) · [`4.bdds.md`](../4.bdds.md).
+**US:** [`1.stories.md`](../1.stories.md) · [`3.scenarios/EP-02-eventos-de-ui.md`](../3.scenarios/EP-02-eventos-de-ui.md) · [`4.bdds.md`](../4.bdds.md).
 **Código:** [`../sources/android-control/lib/events.js`](../sources/android-control/lib/events.js) · [`extract.js`](../sources/android-control/lib/extract.js) · [`adb.js`](../sources/android-control/lib/adb.js).
 
 **Stack:** Node ≥ 18 · `adb` · runtime provisionado (EP-01).

@@ -9,7 +9,7 @@
 README.md (visão)
 ├── 1.stories.md
 ├── 2.epics.md                  # EP → US
-├── 3.scenarios.md              # US → SC
+├── 3.scenarios/                # US → SC (por EP)
 ├── 4.bdds.md                   # Gherkin US/SC
 ├── implementation-plan/        # um .md por épico
 ├── 6.roadmap.md                # Gantt

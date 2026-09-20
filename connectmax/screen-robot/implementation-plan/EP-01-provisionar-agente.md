@@ -2,7 +2,7 @@
 
 **Por quê:** plano técnico do épico (sequências · agentes · passo a passo · contratos · classes · modelos · BDDs).  
 **Épico:** [`2.epics.md`](../2.epics.md).  
-**US:** [`1.stories.md`](../1.stories.md) · [`3.scenarios.md`](../3.scenarios.md) · [`4.bdds.md`](../4.bdds.md).
+**US:** [`1.stories.md`](../1.stories.md) · [`3.scenarios/EP-01-provisionar-agente.md`](../3.scenarios/EP-01-provisionar-agente.md) · [`4.bdds.md`](../4.bdds.md).
 **Código:** [`../sources/android-control/lib/provision.js`](../sources/android-control/lib/provision.js) · [`adb.js`](../sources/android-control/lib/adb.js).  
 **Runtime:** [`../sources/redroid/`](../sources/redroid/README.md) · [`../sources/android-studio/`](../sources/android-studio/README.md).
 

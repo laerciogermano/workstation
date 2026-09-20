@@ -15,6 +15,8 @@
 
 O **screen-robot** é um agent Android controlado por código Node: provisiona o device, instala APKs, recebe eventos de UI, extrai elementos/informações da tela, executa operações e guarda estado de sessão.
 
+Além da automação por API, a instância Android permanece **disponível para controle interativo**: visualizar a tela (espelhamento) e operar manualmente — tocar, digitar, rolar e demais gestos — em paralelo ou em complemento ao código.
+
 ## Problema
 
 Automatizar apps móveis exige um caminho estável em código: agent pronto, apps na versão certa, leitura da tela e gestos confiáveis — sem acoplar regras de venda.
@@ -24,12 +26,15 @@ Automatizar apps móveis exige um caminho estável em código: agent pronto, app
 | Persona | Necessidade |
 |---------|-------------|
 | **Agente / desenvolvedor** | Libs Node para as seis capacidades sem acoplar a um app de negócio |
+| **Operador / debug** | Ver e operar a tela do Android (tap, digitar, etc.) enquanto o agent está no ar |
 | **linkedin-agent** | Usar o robô como infra para operações no LinkedIn |
 | **Projeto vendas** | Indireto: consome o linkedin-agent, não o robô |
 
 ## Objetivo
 
 Expor via Node: **provisionar · instalar APKs · eventos · operar · extrair · sessão**. Cenário piloto: login LinkedIn (BDDs em [`5.bdds.md`](5.bdds.md)).
+
+Também será possível **deixar o controle do Android disponível** para um operador humano: ver a tela e agir (tap, type, scroll, etc.) via espelhamento ([`pocs/redroid/`](pocs/redroid/README.md) · `view.sh` / scrcpy), sem depender só do script.
 
 ## Capacidades (v1)
 
@@ -57,6 +62,8 @@ API em [`src/`](src/README.md). Superfície do handle: `provisionEmulator(cfg)` 
 | Opcional | [`apkeep`](https://github.com/EFForg/apkeep) para baixar XAPK |
 
 A lib sobe o container quando o `name` é novo. Com o mesmo `name` de novo, só reconecta. Não é necessário rodar `start.sh` manualmente nesse fluxo.
+
+**Controle interativo da tela:** com o agent no ar, use [`pocs/redroid/scripts/view.sh`](pocs/redroid/README.md) (scrcpy) para visualizar e operar o Android (tocar, digitar, etc.) enquanto a API Node também pode automatizar.
 
 ### 2. Configuração
 

@@ -4,6 +4,8 @@ Android em container Docker via [redroid](https://github.com/remote-android/redr
 
 Usado como runtime do **screen-robot**: a lib sobe **um container por `name`** (multi-agent). Scripts manuais abaixo servem para POC/debug de uma instância.
 
+**Controle disponível:** com o container rodando, `./scripts/view.sh` deixa a tela Android aberta no host para **visualizar e operar** (tocar, digitar, rolar e demais gestos), em paralelo à automação Node.
+
 Projeto irmão (emulador oficial / Android Studio): [`../android-studio`](../android-studio/README.md).
 
 ## Multi-agent (contrato com a lib)

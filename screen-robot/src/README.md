@@ -4,6 +4,8 @@ API **Node** (≥ 18) para controlar Android via ADB: provisionar agents, instal
 
 Visão do projeto: [`../README.md`](../README.md) · Runtimes: [`../pocs/`](../pocs/README.md) · Aceite: [`../5.bdds.md`](../5.bdds.md)
 
+Com o runtime no ar, o Android fica **disponível para controle humano**: espelhar a tela e operar (tap, digitar, scroll, …) via scrcpy — ver [`../pocs/redroid/`](../pocs/redroid/README.md) (`./scripts/view.sh`). A API do handle automatiza as mesmas ações por código.
+
 ---
 
 ## Instalação / entrada

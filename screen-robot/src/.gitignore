@@ -5,6 +5,7 @@ apks/*.xapk
 apks/*.apk
 !apks/ADBKeyboard.apk
 *.png
+!test/fixtures/**/*.png
 *.traineddata
 .DS_Store
 meu-fluxo.json

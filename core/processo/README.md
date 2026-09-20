@@ -19,7 +19,7 @@ O mapa e a prioridade nascem no discovery; o detalhe (SC/BDD) e o restante do pr
 |-------|-------|----------|
 | Discovery | [`1.discovery/`](1.discovery/README.md) | Stories → epics → roadmap; refinar estória (scenarios → BDDs → protótipo? → tasks); depois ciclo por estória |
 | Refinamento técnico | [`2.refinamento-tecnico/`](2.refinamento-tecnico/README.md) | Detalhar solução, riscos e critérios técnicos |
-| Desenvolvimento | [`3.desenvolvimento/`](3.desenvolvimento/README.md) | Implementar o que foi acordado |
+| Desenvolvimento | [`3.desenvolvimento/`](3.desenvolvimento/README.md) | Por IA: clone → branch → TDD → implementar → testar → PR → Pendente aprovação |
 | Testes | [`4.testes/`](4.testes/README.md) | Validar comportamento e qualidade |
 | Implantação | [`5.implantacao/`](5.implantacao/README.md) | Publicar em ambiente alvo |
 | Manutenção | [`6.manutencao/`](6.manutencao/README.md) | Operar, corrigir e evoluir |

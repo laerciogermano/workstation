@@ -169,13 +169,13 @@ const e4 = await handle.extract(); // listas (visão + OCR)
 const e5 = await handle.extract(); // imagens (visão)
 // [ { type: "text"|"icon"|"list"|"image", text?, bounds, center? }, … ]
 
-// US-23: buscar por texto (um elemento ou conjunto vizinho com score)
-// const hit = findByText(elements, "Sign in with Email", { minScore: 0.8 });
+// US-23: findByText encapsula extractElements (OCR interno)
+// const hit = await findByText(handle.serial, "Sign in with Email", { minScore: 0.8 });
 ```
 
 Fonte do frame: screenshot ADB, stream ou câmera (device real) — mesmo pipeline.
 
-Helpers: `extractElements` / `findByText` / `findLoginTarget` / `findEditableFields` em [`lib/extract.js`](lib/extract.js).
+Helpers: `findByText` (encapsula OCR) / `extractElements` / `findLoginTarget` / `findEditableFields` em [`lib/extract.js`](lib/extract.js).
 
 ---
 

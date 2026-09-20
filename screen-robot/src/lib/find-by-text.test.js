@@ -1,9 +1,9 @@
 /**
- * Unitário — findByText (US-23 / SC-29).
+ * Unitário — findByText / matchByText (US-23 / SC-29).
  */
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { findByText } from "./extract.js";
+import { findByText, matchByText } from "./extract.js";
 
 const SIGN_IN_SPLIT = [
   { type: "text", text: "Sign", bounds: { x: 236, y: 815, w: 75, h: 37 } },
@@ -13,9 +13,9 @@ const SIGN_IN_SPLIT = [
   { type: "text", text: "Join", bounds: { x: 86, y: 480, w: 71, h: 29 } },
 ];
 
-describe("findByText", () => {
+describe("matchByText", () => {
   it("une palavras OCR vizinhas com score elevado (Sign in with Email)", () => {
-    const hit = findByText(SIGN_IN_SPLIT, "Sign in with Email", {
+    const hit = matchByText(SIGN_IN_SPLIT, "Sign in with Email", {
       minScore: 0.8,
     });
     assert.ok(hit);
@@ -27,7 +27,7 @@ describe("findByText", () => {
   });
 
   it("match em um único elemento", () => {
-    const hit = findByText(
+    const hit = matchByText(
       [{ type: "text", text: "Entrar", bounds: { x: 10, y: 10, w: 100, h: 40 } }],
       "Entrar",
       { minScore: 0.9 },
@@ -38,14 +38,14 @@ describe("findByText", () => {
   });
 
   it("retorna null abaixo do limiar", () => {
-    const hit = findByText(SIGN_IN_SPLIT, "Completely unrelated phrase", {
+    const hit = matchByText(SIGN_IN_SPLIT, "Completely unrelated phrase", {
       minScore: 0.9,
     });
     assert.equal(hit, null);
   });
 
   it("não escolhe substring curta (ex. with) no lugar da frase", () => {
-    const hit = findByText(SIGN_IN_SPLIT, "Sign in with Email", {
+    const hit = matchByText(SIGN_IN_SPLIT, "Sign in with Email", {
       minScore: 0.75,
     });
     assert.ok(hit);
@@ -63,8 +63,25 @@ describe("findByText", () => {
         },
       ],
     };
-    const hit = findByText(tree, "Sign in with Email", { minScore: 0.8 });
+    const hit = matchByText(tree, "Sign in with Email", { minScore: 0.8 });
     assert.ok(hit);
     assert.equal(hit.elements.length, 4);
+  });
+});
+
+describe("findByText", () => {
+  it("encapsula extractElements (não recebe lista)", async () => {
+    let called = false;
+    const hit = await findByText("s", "Sign in with Email", {
+      minScore: 0.8,
+      extractElements: async () => {
+        called = true;
+        return { elements: SIGN_IN_SPLIT, framePath: "/tmp/x.png" };
+      },
+    });
+    assert.equal(called, true);
+    assert.ok(hit);
+    assert.equal(hit.elements.length, 4);
+    assert.match(hit.text, /sign in with email/);
   });
 });

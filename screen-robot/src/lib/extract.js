@@ -214,15 +214,27 @@ export function findEditableFields(elements) {
 }
 
 /**
- * US-23 / SC-29 — busca por texto com score de similaridade.
- * Aceita lista plana ou árvore (`children`); cobre frase OCR partida.
+ * US-23 / SC-29 — busca por texto; encapsula `extractElements` (OCR interno).
+ * Caller: `findByText(serial, query)` — **não** passa lista de elementos.
  *
+ * @param {string} serial
+ * @param {string} query
+ * @param {{ minScore?: number, extractElements?: Function, captureFrame?: Function, ocrRecognize?: Function }} [opts]
+ * @returns {Promise<{ elements: object[], score: number, text: string, bounds: object, center: [number, number] } | null>}
+ */
+export async function findByText(serial, query, opts = {}) {
+  const runExtract = opts.extractElements ?? extractElements;
+  const { elements } = await runExtract(serial, opts);
+  return matchByText(elements, query, opts);
+}
+
+/**
+ * Match síncrono sobre lista/árvore já extraída (uso interno / testes).
  * @param {object[]|object} elementsOrTree
  * @param {string} query
  * @param {{ minScore?: number }} [opts]
- * @returns {{ elements: object[], score: number, text: string, bounds: object, center: [number, number] } | null}
  */
-export function findByText(elementsOrTree, query, opts = {}) {
+export function matchByText(elementsOrTree, query, opts = {}) {
   const minScore = opts.minScore ?? 0.75;
   const q = normalizeText(query);
   if (!q) return null;

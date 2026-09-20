@@ -84,15 +84,15 @@ const e5 = await handle.extract();
 ### US-23 — Buscar por texto (similaridade)
 
 OCR costuma devolver a frase partida (piloto LinkedIn: `"Sign"` + `"in"` + `"with"` + `"Email"`, não a string inteira).  
-Função (ex. `findByText(elements, query, { minScore })`):
+`findByText(serial, query, { minScore })` **encapsula** `extractElements` — o caller **não** passa a lista de elementos.
 
+- interno: `extractElements(serial)` → OCR → lista
 - procura **um** elemento cujo `text` tenha score alto vs o query; **ou**
-- procura um **conjunto** de elementos vizinhos (mesma linha / bounds próximos) cuja **junção** dos textos maximize a similaridade com o query
-- retorno: `{ elements, score, bounds?, center? }` (melhor match ≥ `minScore`) ou vazio
+- procura um **conjunto** de elementos vizinhos (mesma linha / bounds próximos) cuja **junção** dos textos maximize a similaridade
+- retorno: `{ elements, score, bounds?, center? }` (melhor match ≥ `minScore`) ou `null`
 
 ```js
-const elements = await handle.extract();
-const hit = findByText(elements, "Sign in with Email", { minScore: 0.8 });
+const hit = await findByText(handle.serial, "Sign in with Email", { minScore: 0.8 });
 // hit.elements → [Sign, in, with, Email]; hit.score elevado; hit.center para tap
 ```
 
@@ -340,7 +340,7 @@ Fonte: [`5.bdds.md#ep-05--extrair-elementos`](../5.bdds.md#ep-05--extrair-elemen
 | I5 | Passos 3–5 → elementos `icon` / `list` / `image` | SC-19..21 | Tipos na lista |
 | I6 | Sem uiautomator dump como fonte | — | Só frame → OCR/visão |
 | I7 | Piloto: `extract()` ×5 + JSON da lista | — | linkedin-login |
-| I8 | `findByText` — match por similaridade (1 el. ou conjunto vizinho) | SC-29 | Score ≥ limiar; cobre `"Sign in with Email"` partido |
+| I8 | `findByText(serial, query)` encapsula `extractElements` + match por similaridade | SC-29 | Score ≥ limiar; caller não passa lista |
 
 ### Ordem
 
@@ -358,7 +358,7 @@ I1 → I2 → I3 → I4 → I5 → I6 → I7 → I8
 | Fonte = frame → OCR/visão | Feito (`frame.js` / `ocr.js` / `vision.js`) |
 | `dumpUiXml` | Só legado eventos EP-02 |
 | `extractElements` lista plana | Alinha com o contrato alvo de `extract()` |
-| `findByText` (US-23) | Feito — união de vizinhos + score; piloto linkedin-login |
+| `findByText` (US-23) | Feito — encapsula `extractElements`; união de vizinhos + score |
 
 ---
 

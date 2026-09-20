@@ -9,11 +9,11 @@
 
 ## Entradas
 
-- Lista de elementos OCR; texto-alvo; limiar de score
+- Serial do agent; texto-alvo; limiar de score (opcional)
 
 ## Execução
 
-- `findByText`: match em um elemento **ou** conjunto vizinho (texto unido) com similaridade elevada
+- `findByText(serial, query)` encapsula `extractElements` (OCR interno); match em um elemento **ou** conjunto vizinho com similaridade elevada
 
 ## Saídas
 

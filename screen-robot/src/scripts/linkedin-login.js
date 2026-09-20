@@ -11,7 +11,7 @@ import { dirname, resolve, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { sleep } from "../lib/adb.js";
-import { extractElements, findByText } from "../lib/extract.js";
+import { findByText } from "../lib/extract.js";
 import { provisionEmulator } from "../lib/provision.js";
 import { resetInstance } from "../lib/reset-instance.js";
 
@@ -72,8 +72,9 @@ async function main() {
   {
     let hit = null;
     for (let attempt = 1; attempt <= 8; attempt++) {
-      const { elements } = await extractElements(handle.serial);
-      hit = findByText(elements, "Sign in with Email", { minScore: 0.75 });
+      hit = await findByText(handle.serial, "Sign in with Email", {
+        minScore: 0.75,
+      });
       if (hit?.center) break;
       console.log(`   tentativa ${attempt}/8 — aguardando OCR…`);
       await sleep(3_000);

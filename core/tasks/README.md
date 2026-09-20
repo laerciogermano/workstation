@@ -68,7 +68,7 @@ IDs: **US-** história · **SC-XX** cenário sequencial (mudança de estado; uni
 
 | Todo | Doing | Pendente aprovação | Done |
 |------|-------|--------------------|------|
-| [Login LinkedIn (BDD)](../../screen-robot/5.bdds.md) | | | [TSK-002](../../screen-robot/tasks/TSK-001-provisionar-agente/TSK-002-subir-e-conectar/README.md)..[TSK-004](../../screen-robot/tasks/TSK-001-provisionar-agente/TSK-004-boot-completo/README.md) EP-01 · [TSK-005](../../screen-robot/tasks/TSK-005-eventos-de-ui/README.md)..[TSK-009](../../screen-robot/tasks/TSK-005-eventos-de-ui/TSK-009-evento-de-mudanca-dump/README.md) EP-02 · [Libs Node](../../screen-robot/src/README.md) |
+| [Login LinkedIn (BDD)](../../screen-robot/5.bdds.md) | | | EP-01 ([TSK-002](../../screen-robot/tasks/TSK-001-provisionar-agente/TSK-002-subir-e-conectar/README.md)..004) · EP-02 ([TSK-005](../../screen-robot/tasks/TSK-005-eventos-de-ui/README.md)..009) · EP-03 ([TSK-010](../../screen-robot/tasks/TSK-010-instalar-apks/README.md)..013) · [Libs](../../screen-robot/src/README.md) |
 
 → [`screen-robot/`](../../screen-robot/README.md) · [`5.bdds.md`](../../screen-robot/5.bdds.md) · [`7.tasks.md`](../../screen-robot/7.tasks.md)
 

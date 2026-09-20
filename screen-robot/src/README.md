@@ -19,7 +19,7 @@ Runtimes de POC (redroid / AVD): [`../pocs/`](../pocs/README.md).
 | Recorte | Módulo |
 |---------|--------|
 | Provisionar emulador (`provisionEmulator`) | [`lib/provision.js`](lib/provision.js) |
-| Instalar APKs | [`lib/apks.js`](lib/apks.js) |
+| Instalar APKs (`handle.installApk`) | [`lib/apks.js`](lib/apks.js) + `apk-read-spec` · `apk-download` · `apk-install-package` |
 | Receber eventos (`handle.on` após provision) | [`lib/events.js`](lib/events.js) + `event-boot` · `event-app-open` · `event-ui-stable` · `event-dump-change` |
 | Executar operações | [`lib/operate.js`](lib/operate.js) |
 | Extrair elementos | [`lib/extract.js`](lib/extract.js) |

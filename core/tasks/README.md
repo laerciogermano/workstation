@@ -68,7 +68,7 @@ IDs: **US-** história · **SC-XX** cenário sequencial (mudança de estado; uni
 
 | Todo | Doing | Pendente aprovação | Done |
 |------|-------|--------------------|------|
-| [TSK-003](../../screen-robot/tasks/TSK-001-provisionar-agente/TSK-003-serial-adb-online/README.md) Serial ADB online · [TSK-004](../../screen-robot/tasks/TSK-001-provisionar-agente/TSK-004-boot-completo/README.md) Boot completo · [Login LinkedIn (BDD)](../../screen-robot/5.bdds.md) | | [TSK-002](../../screen-robot/tasks/TSK-001-provisionar-agente/TSK-002-subir-e-conectar/README.md) Subir e conectar | [Libs Node 6 recortes](../../screen-robot/src/README.md) |
+| [TSK-004](../../screen-robot/tasks/TSK-001-provisionar-agente/TSK-004-boot-completo/README.md) Boot completo · [Login LinkedIn (BDD)](../../screen-robot/5.bdds.md) | | [TSK-003](../../screen-robot/tasks/TSK-001-provisionar-agente/TSK-003-serial-adb-online/README.md) Serial ADB online | [TSK-002](../../screen-robot/tasks/TSK-001-provisionar-agente/TSK-002-subir-e-conectar/README.md) Subir e conectar · [Libs Node 6 recortes](../../screen-robot/src/README.md) |
 
 → [`screen-robot/`](../../screen-robot/README.md) · [`5.bdds.md`](../../screen-robot/5.bdds.md) · [`7.tasks.md`](../../screen-robot/7.tasks.md)
 

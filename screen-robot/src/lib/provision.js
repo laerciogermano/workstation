@@ -3,8 +3,9 @@
  * Superfície pública: apenas `provisionEmulator`.
  * Handle inclui `on` (EP-02) — eventos via handle após provisionar.
  */
-import { adb, connectIfTcp, sleep } from "./adb.js";
+import { adb, sleep } from "./adb.js";
 import { createOn } from "./events.js";
+import { ensureAdbOnline } from "./ensure-adb-online.js";
 import { startRuntime } from "./start-runtime.js";
 
 /**
@@ -37,25 +38,6 @@ function resolveConfig(cfg) {
     connectTimeoutMs: Number(cfg.provision?.connectTimeoutMs ?? 120_000),
     startScript: cfg.provision?.startScript,
   };
-}
-
-/** SC-02 — serial ADB em estado device. */
-async function ensureAdbOnline(serial, timeoutMs, started) {
-  connectIfTcp(serial);
-  while (Date.now() - started < timeoutMs) {
-    try {
-      adb(serial, ["wait-for-device"], { timeout: 5_000 });
-      return;
-    } catch {
-      connectIfTcp(serial);
-      await sleep(2_000);
-    }
-  }
-  const err = new Error(
-    `PROVISION_ADB_TIMEOUT: serial ${serial} não ficou device em ${timeoutMs}ms`,
-  );
-  err.code = "PROVISION_ADB_TIMEOUT";
-  throw err;
 }
 
 /** SC-03 — sys.boot_completed=1. */

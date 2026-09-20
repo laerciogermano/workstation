@@ -5,7 +5,7 @@
 **No fluxo:** **este documento** → [`docs/`](docs/README.md) (`functionalities` → `user-stories` → `bdd` → `screens` → `screens-bdd` → `components` → `prototype`).  
 **Umbrella:** [`../README.md`](../README.md).  
 **Agente LinkedIn:** [`../linkedin-agent/`](../linkedin-agent/README.md) — operações no app (login, busca, conexão, mensagem); este projeto **não** reimplementa o agente nem o robô.  
-**Infra de tela:** [`../screen-robot/`](../screen-robot/README.md) — usada via linkedin-agent.
+**Infra de tela:** [`../../screen-robot/`](../../screen-robot/README.md) — usada via linkedin-agent.
 
 Derivados: [`docs/`](docs/README.md).  
 Timeline de prompts: [`../prompts/`](../prompts/README.md).  

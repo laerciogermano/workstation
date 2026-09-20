@@ -1,10 +1,10 @@
 # linkedin-agent — Documento de visão
 
 **Por quê:** fixar o *quê* do agente LinkedIn antes de cadência comercial ou código.  
-**Importante:** este projeto **automatiza operações no app LinkedIn** usando o [`screen-robot`](../screen-robot/README.md); não implementa fila de leads, faturamento nem papéis de vendedor.  
+**Importante:** este projeto **automatiza operações no app LinkedIn** usando o [`screen-robot`](../../screen-robot/README.md); não implementa fila de leads, faturamento nem papéis de vendedor.  
 **No fluxo:** **este documento** → [`docs/`](docs/README.md) → implementação.  
 **Umbrella:** [`../README.md`](../README.md).  
-**Infra de tela:** [`../screen-robot/`](../screen-robot/README.md).  
+**Infra de tela:** [`../../screen-robot/`](../../screen-robot/README.md).  
 **Consumidor de negócio:** [`../vendas/`](../vendas/README.md).
 
 ---
@@ -41,7 +41,7 @@ vendas (cadência, fila, distribuição, faturamento)
 ## Fora de escopo
 
 - Cadência comercial, fila de leads, distribuição, faturamento, papéis (isso é [`vendas`](../vendas/README.md)).
-- Capacidades genéricas de device/tela (isso é [`screen-robot`](../screen-robot/README.md)).
+- Capacidades genéricas de device/tela (isso é [`screen-robot`](../../screen-robot/README.md)).
 - Bypass de autenticação / scraping ilegítimo.
 
 ## Artefatos
@@ -55,4 +55,4 @@ vendas (cadência, fila, distribuição, faturamento)
 ## Próximos passos
 
 → Detalhar e validar [`docs/functionalities.md`](docs/functionalities.md)  
-→ Consumir APIs/scripts do [`../screen-robot/sources/`](../screen-robot/sources/README.md)
+→ Consumir APIs/scripts do [`../../screen-robot/sources/`](../../screen-robot/sources/README.md)

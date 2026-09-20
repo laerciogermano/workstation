@@ -15,6 +15,6 @@ Substituir a pasta `docs/functionalities/` (uma pasta por US) por um único `doc
 
 ## Resultado
 
-- Criado [`screen-robot/docs/functionalities.md`](../screen-robot/docs/functionalities.md) com US-01..16.
+- Criado [`screen-robot/docs/functionalities.md`](../../screen-robot/docs/functionalities.md) com US-01..16.
 - Removida a pasta `docs/functionalities/`.
 - Links atualizados (README, docs, config-ia, sources, vendas, linkedin-agent, core/tasks).

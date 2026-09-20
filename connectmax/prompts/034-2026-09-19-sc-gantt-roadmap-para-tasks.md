@@ -15,5 +15,5 @@ Tirar barras SC do Gantt de `roadmap.md`; colocar o Gantt completo (com SC) em `
 
 ## Resultado
 
-- [`roadmap.md`](../screen-robot/roadmap.md): EP / US.
-- [`7.tasks.md`](../screen-robot/7.tasks.md): árvore + Gantt EP / US / SC.
+- [`roadmap.md`](../../screen-robot/roadmap.md): EP / US.
+- [`7.tasks.md`](../../screen-robot/7.tasks.md): árvore + Gantt EP / US / SC.

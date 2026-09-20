@@ -2,7 +2,7 @@
 
 **Por quê:** atividades executáveis do refinamento técnico (pastas = `TSK-<nn>-<titulo>`), cada uma com Entradas · Execução · Saídas.  
 **Gantt / inventário:** [`7.tasks.md`](../7.tasks.md).  
-**Processo:** [`core/processo/2.refinamento-tecnico`](../../../core/processo/2.refinamento-tecnico/README.md).  
+**Processo:** [`core/processo/2.refinamento-tecnico`](../../core/processo/2.refinamento-tecnico/README.md).  
 **Cenários / BDDs / planos:** [`4.scenarios.md`](../4.scenarios.md) · [`5.bdds.md`](../5.bdds.md) · [`implementation-plan/`](../implementation-plan/README.md).
 
 ## Escopo atual

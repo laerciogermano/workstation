@@ -15,4 +15,4 @@ No Gantt de `docs/tasks.md`, manter só as barras das US em sequência; SC perma
 
 ## Resultado
 
-- [`docs/tasks.md`](../screen-robot/docs/tasks.md): Gantt com US-01..16 sequenciais; SCs removidos do diagrama.
+- [`docs/tasks.md`](../../screen-robot/docs/tasks.md): Gantt com US-01..16 sequenciais; SCs removidos do diagrama.

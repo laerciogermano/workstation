@@ -4,7 +4,7 @@
 **Visão:** [`../README.md`](../README.md).  
 **Umbrella:** [`../../README.md`](../../README.md).  
 **Agente LinkedIn:** [`../../linkedin-agent/`](../../linkedin-agent/README.md).  
-**Robô de tela:** [`../../screen-robot/`](../../screen-robot/README.md).  
+**Robô de tela:** [`../../../screen-robot/`](../../../screen-robot/README.md).  
 **Prompts:** [`../../prompts/timeline.md`](../../prompts/timeline.md).  
 **Config IA:** [`../config/config-ia.md`](../config/config-ia.md).
 

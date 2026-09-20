@@ -15,5 +15,5 @@ Reordenar artefatos do discovery: stories → scenarios → BDDs → epics → p
 
 ## Resultado
 
-- `core/processo/1.discovery/` e `connectmax/screen-robot/`: renomes via `git mv` (temp para evitar colisão).
+- `core/processo/1.discovery/` e `screen-robot/`: renomes via `git mv` (temp para evitar colisão).
 - Ordem textual e paths atualizados em processo, README raiz, screen-robot e referências (tasks, linkedin-agent, vendas, android-control).

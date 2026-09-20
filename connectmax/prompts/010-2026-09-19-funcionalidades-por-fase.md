@@ -9,6 +9,6 @@ nao precisa ser um documento de epicos, deixe um documento de funcionalidades me
 
 ## Resultado
 
-- Fonte de verdade: [`screen-robot/docs/functionalities/`](../screen-robot/docs/functionalities/README.md) — 4 fases (Captura · Percepção · Decisão · Atuação), tabela Funcionalidade | Descrição.
+- Fonte de verdade: [`screen-robot/docs/functionalities/`](../../screen-robot/docs/functionalities/README.md) — 4 fases (Captura · Percepção · Decisão · Atuação), tabela Funcionalidade | Descrição.
 - Removida a árvore `screen-robot/epics/` (US/EP).
 - README, docs, tasks e board apontam para functionalities.

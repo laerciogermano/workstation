@@ -15,4 +15,4 @@ Incluir US-06 no grupo paralelo com US-07..12 (todas partem após US-05); recalc
 
 ## Resultado
 
-- [`docs/tasks.md`](../screen-robot/docs/tasks.md): paralelo US-06..12; caminho **318 min** · soma **408 min**.
+- [`docs/tasks.md`](../../screen-robot/docs/tasks.md): paralelo US-06..12; caminho **318 min** · soma **408 min**.

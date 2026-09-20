@@ -15,4 +15,4 @@ Em `7.tasks.md`, acrescentar coluna **Output** (saída esperada) para cada TSK.
 
 ## Resultado
 
-- Tabela com Output alinhado a [`3.scenarios.md`](../screen-robot/3.scenarios.md).
+- Tabela com Output alinhado a [`3.scenarios.md`](../../screen-robot/3.scenarios.md).

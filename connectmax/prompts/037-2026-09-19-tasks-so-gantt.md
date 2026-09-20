@@ -15,4 +15,4 @@ Em `tasks.md`, remover a árvore em texto; manter só o Gantt.
 
 ## Resultado
 
-- [`7.tasks.md`](../screen-robot/7.tasks.md): cabeçalho + Gantt TSK.
+- [`7.tasks.md`](../../screen-robot/7.tasks.md): cabeçalho + Gantt TSK.

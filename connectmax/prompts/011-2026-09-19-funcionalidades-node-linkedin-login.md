@@ -22,7 +22,7 @@ crie o cenario bdd de aceitacao dessa funcionalidade maior descrita que utilzacr
 
 ## Resultado
 
-- [`docs/functionalities/`](../screen-robot/docs/functionalities/README.md) com as 6 capacidades.
+- [`docs/functionalities/`](../../screen-robot/docs/functionalities/README.md) com as 6 capacidades.
 - Libs Node em `sources/android-control/lib/` + `device.config.json` (versão Instagram).
-- Script [`scripts/linkedin-login.js`](../screen-robot/sources/android-control/scripts/linkedin-login.js).
-- BDD [`docs/bdd-linkedin-login.md`](../screen-robot/docs/bdd-linkedin-login.md).
+- Script [`scripts/linkedin-login.js`](../../screen-robot/sources/android-control/scripts/linkedin-login.js).
+- BDD [`docs/bdd-linkedin-login.md`](../../screen-robot/docs/bdd-linkedin-login.md).

@@ -16,4 +16,4 @@ Pastas em `tasks/` usam o nome da task (Gantt), não prefixos EP-/US-/SC-. Orige
 ## Resultado
 
 - Processo: [`2.refinamento-tecnico`](../../../core/processo/2.refinamento-tecnico/README.md) · [`3.desenvolvimento`](../../../core/processo/3.desenvolvimento/README.md).
-- [`screen-robot/tasks/`](../screen-robot/tasks/README.md): `provisionar-agente/` → `subir-e-conectar` · `serial-adb-online` · `boot-completo`.
+- [`screen-robot/tasks/`](../../screen-robot/tasks/README.md): `provisionar-agente/` → `subir-e-conectar` · `serial-adb-online` · `boot-completo`.

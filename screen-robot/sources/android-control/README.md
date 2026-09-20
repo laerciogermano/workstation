@@ -31,7 +31,7 @@ BDD: [`../../5.bdds.md`](../../5.bdds.md)
 Baixa Instagram na versão da config, provisiona Android, abre LinkedIn, print, detecta login, digita credenciais, toca Entrar, salva sessão.
 
 ```bash
-cd connectmax/screen-robot/sources/android-control
+cd screen-robot/sources/android-control
 
 # edite apps.instagram.version em device.config.json se precisar
 export LINKEDIN_USER='seu@email.com'

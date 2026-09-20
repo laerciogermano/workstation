@@ -10,6 +10,6 @@
 
 1. Todo prompt que alterar este projeto deve ser registrado em [`../../prompts/`](../../prompts/README.md).
 2. Fonte do *quê*: [`../docs/functionalities.md`](../docs/functionalities.md) (ações + cenários).
-3. Não reimplementar captura/percepção/gestos — consumir [`../../screen-robot/`](../../screen-robot/README.md).
+3. Não reimplementar captura/percepção/gestos — consumir [`../../../screen-robot/`](../../../screen-robot/README.md).
 4. Não colocar fila, faturamento ou papéis aqui — isso é [`../../vendas/`](../../vendas/README.md).
 5. Links para pastas apontam para o `README.md` da pasta.

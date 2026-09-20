@@ -5,7 +5,7 @@ Implementar **por IA** o que foi refinado — uma atividade (`tasks/`) por vez, 
 ## Entradas
 
 - Atividade da pasta [`tasks/`](../2.refinamento-tecnico/README.md) (nome da task; Entradas · Execução · Saídas)
-- **Gantt das tasks** do projeto (ex.: [`7.tasks.md`](../../../connectmax/screen-robot/7.tasks.md)) — ordem e dependências da árvore de execução
+- **Gantt das tasks** do projeto (ex.: [`7.tasks.md`](../../../screen-robot/7.tasks.md)) — ordem e dependências da árvore de execução
 - Critérios de aceite (scenarios / BDDs)
 - Desenho técnico / ADRs
 - Repositório remoto do projeto

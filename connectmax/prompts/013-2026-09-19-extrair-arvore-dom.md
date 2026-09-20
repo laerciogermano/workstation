@@ -13,5 +13,5 @@ nesse item defe tambem devolver icones, imagens, fotos , trxtos e etc, agrupados
 
 ## Resultado
 
-- [`docs/functionalities/`](../screen-robot/docs/functionalities/README.md): extração devolve árvore de componentes (textos, ícones, imagens/fotos, containers) estilo DOM.
+- [`docs/functionalities/`](../../screen-robot/docs/functionalities/README.md): extração devolve árvore de componentes (textos, ícones, imagens/fotos, containers) estilo DOM.
 - BDD de login alinhado a essa saída.

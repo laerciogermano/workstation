@@ -3,7 +3,7 @@
 **Por quê:** índice dos artefatos do agente LinkedIn.  
 **Visão:** [`../README.md`](../README.md).  
 **Umbrella:** [`../../README.md`](../../README.md).  
-**Infra:** [`../../screen-robot/`](../../screen-robot/README.md).  
+**Infra:** [`../../../screen-robot/`](../../../screen-robot/README.md).  
 **Negócio:** [`../../vendas/`](../../vendas/README.md).  
 **Config IA:** [`../config/config-ia.md`](../config/config-ia.md).
 
@@ -14,4 +14,4 @@
 ## Próximos passos
 
 → Validar [`functionalities.md`](functionalities.md)  
-→ Implementar sobre [`../../screen-robot/`](../../screen-robot/README.md)
+→ Implementar sobre [`../../../screen-robot/`](../../../screen-robot/README.md)

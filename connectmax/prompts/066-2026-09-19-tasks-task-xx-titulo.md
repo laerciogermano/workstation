@@ -15,4 +15,4 @@ Pastas em `tasks/` no formato `task-<nn>-<titulo>` (ex.: `task-002-subir-e-conec
 
 ## Resultado
 
-- Processo e [`screen-robot/tasks/`](../screen-robot/tasks/README.md) renomeados para `task-001-…` … `task-004-…`.
+- Processo e [`screen-robot/tasks/`](../../screen-robot/tasks/README.md) renomeados para `task-001-…` … `task-004-…`.

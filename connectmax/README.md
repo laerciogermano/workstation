@@ -1,10 +1,10 @@
 # ConnectMax
 
-Umbrella com **três projetos** independentes:
+Umbrella ConnectMax + **screen-robot** na raiz do works:
 
 | Projeto | Papel | Pasta |
 |---------|-------|--------|
-| **screen-robot** | Robô de tela: provisiona agent, lê UI, executa gestos | [`screen-robot/`](screen-robot/README.md) |
+| **screen-robot** | Robô de tela: provisiona agent, lê UI, executa gestos | [`screen-robot/`](../screen-robot/README.md) |
 | **linkedin-agent** | Agente LinkedIn: automatiza operações no app usando o screen-robot | [`linkedin-agent/`](linkedin-agent/README.md) |
 | **vendas** | Processo de vendas / prospecção (cadência, fila, faturamento) | [`vendas/`](vendas/README.md) |
 
@@ -25,6 +25,6 @@ vendas (cadência, fila, distribuição, faturamento)
 
 ## Próximos passos
 
-→ [`screen-robot/README.md`](screen-robot/README.md) — capacidades Node de tela  
+→ [`screen-robot/README.md`](../screen-robot/README.md) — capacidades Node de tela  
 → [`linkedin-agent/README.md`](linkedin-agent/README.md) — operações LinkedIn  
 → [`vendas/README.md`](vendas/README.md) — esteira de produto de vendas

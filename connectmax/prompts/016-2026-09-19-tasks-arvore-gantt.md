@@ -11,5 +11,5 @@ crie um arquvo chamado tasks e crie uma arvore de execucao junto a um gantt com 
 
 ## Resultado
 
-- [`screen-robot/docs/tasks.md`](../screen-robot/docs/tasks.md): árvore + Gantt (6 maiores sequenciais, filhas dentro de cada barra).
+- [`screen-robot/docs/tasks.md`](../../screen-robot/docs/tasks.md): árvore + Gantt (6 maiores sequenciais, filhas dentro de cada barra).
 - Índice docs, board e core/tasks apontam para esse arquivo.

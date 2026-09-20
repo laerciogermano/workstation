@@ -3,11 +3,11 @@
 **Por quê:** fixar o *quê* do robô de tela antes de goals de negócio.  
 **Importante:** este projeto **só** opera o device/tela via **Node**; não implementa cadência comercial nem fila de leads.  
 **No fluxo:** **este documento** → stories → epics (prioridade) → roadmap → refinar estória (scenarios → bdds → protótipo se houver) → `7.tasks` / implementation-plan → pasta [`tasks/`](tasks/README.md) (EP/US/SC) → implementação em [`sources/`](sources/README.md).  
-**Umbrella:** [`../README.md`](../README.md).  
-**Consumidor LinkedIn:** [`../linkedin-agent/`](../linkedin-agent/README.md).  
-**Negócio (fila/faturamento):** [`../vendas/`](../vendas/README.md).  
+**Umbrella:** [`../connectmax/README.md`](../connectmax/README.md).  
+**Consumidor LinkedIn:** [`../connectmax/linkedin-agent/`](../connectmax/linkedin-agent/README.md).  
+**Negócio (fila/faturamento):** [`../connectmax/vendas/`](../connectmax/vendas/README.md).  
 **Config IA:** [`config/config-ia.md`](config/config-ia.md).  
-**Prompts:** [`../prompts/timeline.md`](../prompts/timeline.md).
+**Prompts:** [`../connectmax/prompts/timeline.md`](../connectmax/prompts/timeline.md).
 
 ---
 
@@ -37,8 +37,8 @@ Ver stories em [`1.stories.md`](1.stories.md) e cenários em [`4.scenarios.md`](
 
 ## Fora de escopo
 
-- Operações de domínio LinkedIn (login de negócio, busca, conexão) — isso é [`linkedin-agent`](../linkedin-agent/README.md).
-- Regras de prospecção, fila de leads, faturamento ou papéis de vendedor — isso é [`vendas`](../vendas/README.md).
+- Operações de domínio LinkedIn (login de negócio, busca, conexão) — isso é [`linkedin-agent`](../connectmax/linkedin-agent/README.md).
+- Regras de prospecção, fila de leads, faturamento ou papéis de vendedor — isso é [`vendas`](../connectmax/vendas/README.md).
 - Bypass de autenticação / scraping fora do uso legítimo do device.
 
 ## Artefatos

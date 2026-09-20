@@ -4,7 +4,7 @@
 **Papel no fluxo:** base funcional para as histórias de usuário.  
 **Origem:** documento de [visão](../README.md).  
 **Operações LinkedIn:** [`../../linkedin-agent/docs/functionalities.md`](../../linkedin-agent/docs/functionalities.md).  
-**Robô de tela:** [`../../screen-robot/README.md`](../../screen-robot/README.md).
+**Robô de tela:** [`../../screen-robot/README.md`](../../../screen-robot/README.md).
 
 ## Como usar este documento
 
@@ -116,7 +116,7 @@
 - Marketplace de franquias ou captação pública de investimento.
 - Integração bancária / conciliação financeira da unidade.
 - Scraping ou bypass de autenticação da plataforma.
-- Implementação do motor Capture/Perceive/Decide/Actuate (pertence ao [`screen-robot`](../../screen-robot/README.md)).
+- Implementação do motor Capture/Perceive/Decide/Actuate (pertence ao [`screen-robot`](../../../screen-robot/README.md)).
 - Operações de domínio no app LinkedIn (pertence ao [`linkedin-agent`](../../linkedin-agent/README.md)).
 
 ---

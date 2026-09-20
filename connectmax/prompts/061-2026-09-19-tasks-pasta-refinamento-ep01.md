@@ -18,4 +18,4 @@ No refinamento técnico, a saída final passa a incluir pasta `tasks/` com uma a
 ## Resultado
 
 - Processo: [`2.refinamento-tecnico/README.md`](../../../core/processo/2.refinamento-tecnico/README.md) (+ README do processo / workstation / desenvolvimento).
-- [`screen-robot/tasks/`](../screen-robot/tasks/README.md): EP-01 → US-01 → SC-01..03.
+- [`screen-robot/tasks/`](../../screen-robot/tasks/README.md): EP-01 → US-01 → SC-01..03.

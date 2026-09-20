@@ -20,4 +20,4 @@ Tirar do `roadmap.md` o bloco de legendas (colapso, cores, paralelismo, soma/cam
 
 ## Resultado
 
-- [`roadmap.md`](../screen-robot/roadmap.md): só cabeçalho de links + Gantt.
+- [`roadmap.md`](../../screen-robot/roadmap.md): só cabeçalho de links + Gantt.

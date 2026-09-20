@@ -147,7 +147,37 @@ export function createOperate(serial, deps = {}) {
   }
 
   function tap(x, y) {
-    runAdb(serial, ["shell", "input", "tap", String(x), String(y)]);
+    const xi = Math.round(Number(x));
+    const yi = Math.round(Number(y));
+    const maxAttempts = 5;
+    let lastErr;
+    for (let i = 0; i < maxAttempts; i++) {
+      try {
+        connectIfTcp(serial);
+        // Preferir `cmd input` (mais estável no redroid); fallback `input`.
+        try {
+          runAdb(serial, ["shell", "cmd", "input", "tap", String(xi), String(yi)]);
+        } catch {
+          runAdb(serial, ["shell", "input", "tap", String(xi), String(yi)]);
+        }
+        return;
+      } catch (e) {
+        lastErr = e;
+        const msg = String(e?.message || e);
+        if (
+          !/Broken pipe|Failure calling service input|device offline|closed|not found/i.test(
+            msg,
+          )
+        ) {
+          fail("OPERATE_TAP_FAILED", msg);
+        }
+        spawnSync("sleep", ["1"]);
+      }
+    }
+    fail(
+      "OPERATE_TAP_FAILED",
+      `tap(${xi},${yi}) falhou após ${maxAttempts} tentativas: ${lastErr?.message || lastErr}`,
+    );
   }
 
   function tapElement(el) {

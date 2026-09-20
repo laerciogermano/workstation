@@ -12,14 +12,33 @@ describe("escapeInputText", () => {
 });
 
 describe("createOperate", () => {
-  it("tap envia input tap", () => {
+  it("tap envia cmd input tap", () => {
     const calls = [];
     const op = createOperate("s", {
       adb: (_s, args) => calls.push(args),
       sleep: async () => {},
+      connectIfTcp: () => {},
     });
     op.tap(10, 20);
-    assert.deepEqual(calls[0], ["shell", "input", "tap", "10", "20"]);
+    assert.deepEqual(calls[0], ["shell", "cmd", "input", "tap", "10", "20"]);
+  });
+
+  it("tap faz retry em Broken pipe", () => {
+    let n = 0;
+    const calls = [];
+    const op = createOperate("s", {
+      adb: (_s, args) => {
+        calls.push(args);
+        n += 1;
+        if (n <= 2) {
+          throw new Error("cmd: Failure calling service input: Broken pipe (32)");
+        }
+        return {};
+      },
+      connectIfTcp: () => {},
+    });
+    op.tap(1, 2);
+    assert.ok(calls.length >= 3);
   });
 
   it("scroll down faz swipe", () => {

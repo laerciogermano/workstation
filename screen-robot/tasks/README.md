@@ -44,7 +44,8 @@ tasks/
 │   ├── TSK-024-extrair-restante-dom/
 │   ├── TSK-025-extrair-icones/
 │   ├── TSK-026-extrair-listas/
-│   └── TSK-027-extrair-imagens/
+│   ├── TSK-027-extrair-imagens/
+│   └── TSK-037-buscar-por-texto/
 └── TSK-028-sessao/
     ├── TSK-029-salvar-sessao/
     ├── TSK-030-remover-sessao/

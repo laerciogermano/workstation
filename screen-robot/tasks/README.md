@@ -67,6 +67,6 @@ tasks/
 | TSK-015..020 | Filhas EP-04 | sob `TSK-014-operar-tela/` |
 | TSK-035 | Abrir scrcpy | [`TSK-035-abrir-scrcpy/`](TSK-014-operar-tela/TSK-035-abrir-scrcpy/README.md) |
 | TSK-021 | Extrair elementos | [`TSK-021-extrair-elementos/`](TSK-021-extrair-elementos/README.md) |
-| TSK-022..027 | Filhas EP-05 | sob `TSK-021-extrair-elementos/` |
+| TSK-022..027 · TSK-037 | Filhas EP-05 | sob `TSK-021-extrair-elementos/` |
 | TSK-028 | Sessão | [`TSK-028-sessao/`](TSK-028-sessao/README.md) |
 | TSK-029..031 | Filhas EP-06 | sob `TSK-028-sessao/` |

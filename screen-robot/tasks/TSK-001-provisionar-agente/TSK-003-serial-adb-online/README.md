@@ -12,7 +12,7 @@
 ## Entradas
 
 - Agent alcançável (TSK-002)
-- Serial esperado na config (`cfg.provision.serial` / `cfg.device` / `ANDROID_SERIAL`)
+- Serial **alocado** ao nome do agent (não fixo pelo caller em multi-agent)
 - `connectTimeoutMs` (default 120000)
 
 ## Execução
@@ -23,7 +23,7 @@
 ## Saídas
 
 - Serial ADB online (`AdbOnline`)
-- Erros típicos: `PROVISION_NO_SERIAL` · `PROVISION_ADB_TIMEOUT`
+- Erros típicos: `PROVISION_ADB_TIMEOUT`
 
 ## Documentação
 
@@ -32,9 +32,9 @@
 
 ```gherkin
 Cenário: SC-02 Serial ADB fica online
-  Dado o agent alcançável e o serial esperado na config
+  Dado o agent alcançável e o serial alocado ao nome
   Quando adb connect / listagem de devices é repetida até o serial aparecer como device
   Então o serial ADB está online
 ```
 
-- Plano: passos #7–#14 em [`EP-01-provisionar-agente.md`](../../../implementation-plan/EP-01-provisionar-agente.md)
+- Plano: [`EP-01-provisionar-agente.md`](../../../implementation-plan/EP-01-provisionar-agente.md)

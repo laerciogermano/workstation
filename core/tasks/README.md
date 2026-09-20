@@ -20,10 +20,10 @@ IDs: **US-** história · **SC-XX** cenário sequencial (mudança de estado; uni
 
 | ID | Descrição | Início | Fim | Output |
 |----|-----------|--------|-----|--------|
-| US-01 | Provisionar um agente | 2026-09-19 | 2026-09-19 | Agent pronto para ADB (serial online, boot ok) |
-| SC-01 | Subir / conectar o Android (agent) | 2026-09-19 | 2026-09-19 | Processo do agent em execução e alcançável |
-| SC-02 | Garantir serial ADB online | 2026-09-19 | 2026-09-19 | Serial ADB online |
-| SC-03 | Aguardar boot completo | 2026-09-19 | 2026-09-19 | Device com boot completo |
+| US-01 | Provisionar um agente | 2026-09-19 | 2026-09-20 | Agent nomeado pronto (container novo, serial online, boot ok) |
+| SC-01 | Criar container/runtime nomeado | 2026-09-19 | 2026-09-20 | Agent nomeado em execução e alcançável |
+| SC-02 | Garantir serial ADB online | 2026-09-19 | 2026-09-20 | Serial ADB online |
+| SC-03 | Aguardar boot completo | 2026-09-19 | 2026-09-20 | Device com boot completo |
 | US-02 | Evento de boot | 2026-09-19 | 2026-09-19 | Boot sinalizado |
 | SC-04 | Sinal de boot é recebido | 2026-09-19 | 2026-09-19 | Boot sinalizado |
 | US-03 | Evento de app aberta | 2026-09-19 | 2026-09-19 | App aberta confirmada |
@@ -63,12 +63,15 @@ IDs: **US-** história · **SC-XX** cenário sequencial (mudança de estado; uni
 | SC-23 | Remover sessão | 2026-09-19 | 2026-09-19 | Arquivo inexistente; contexto limpo |
 | US-19 | Recuperar sessão | 2026-09-19 | 2026-09-19 | Estado restaurado no runtime |
 | SC-24 | Recuperar sessão | 2026-09-19 | 2026-09-19 | Estado restaurado no runtime |
+| US-20 | Resgatar agente existente | 2026-09-20 | 2026-09-20 | Handle anexado sem criar container |
+| SC-25 | Localizar agent pelo nome | 2026-09-20 | 2026-09-20 | Referência ao runtime existente |
+| SC-26 | Reconectar e confirmar boot | 2026-09-20 | 2026-09-20 | Serial online e boot ok |
 
 ### Kanban
 
 | Todo | Doing | Pendente aprovação | Done |
 |------|-------|--------------------|------|
-| | | | EP-01 ([TSK-002](../../screen-robot/tasks/TSK-001-provisionar-agente/TSK-002-subir-e-conectar/README.md)..004) · EP-02 ([TSK-005](../../screen-robot/tasks/TSK-005-eventos-de-ui/README.md)..009) · EP-03 ([TSK-010](../../screen-robot/tasks/TSK-010-instalar-apks/README.md)..013) · EP-04 ([TSK-014](../../screen-robot/tasks/TSK-014-operar-tela/README.md)..020) · EP-05 ([TSK-021](../../screen-robot/tasks/TSK-021-extrair-elementos/README.md)..027) · EP-06 ([TSK-028](../../screen-robot/tasks/TSK-028-sessao/README.md)..031) · [Libs](../../screen-robot/src/README.md) · [Login LinkedIn (BDD)](../../screen-robot/5.bdds.md) |
+| EP-01 agents nomeados ([TSK-002](../../screen-robot/tasks/TSK-001-provisionar-agente/TSK-002-subir-e-conectar/README.md)..004 · [TSK-032](../../screen-robot/tasks/TSK-001-provisionar-agente/TSK-032-resgatar-agente/README.md)..034) | | | EP-02 ([TSK-005](../../screen-robot/tasks/TSK-005-eventos-de-ui/README.md)..009) · EP-03 ([TSK-010](../../screen-robot/tasks/TSK-010-instalar-apks/README.md)..013) · EP-04 ([TSK-014](../../screen-robot/tasks/TSK-014-operar-tela/README.md)..020) · EP-05 ([TSK-021](../../screen-robot/tasks/TSK-021-extrair-elementos/README.md)..027) · EP-06 ([TSK-028](../../screen-robot/tasks/TSK-028-sessao/README.md)..031) · [Libs](../../screen-robot/src/README.md) · [Login LinkedIn (BDD)](../../screen-robot/5.bdds.md) |
 
 → [`screen-robot/`](../../screen-robot/README.md) · [`5.bdds.md`](../../screen-robot/5.bdds.md) · [`7.tasks.md`](../../screen-robot/7.tasks.md)
 

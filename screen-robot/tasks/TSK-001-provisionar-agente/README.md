@@ -4,27 +4,27 @@
 |-------|--------|
 | Pasta | `TSK-001-provisionar-agente` |
 | TSK | [`TSK-001`](../../7.tasks.md) |
-| Origem | EP-01 · US-01 |
-| Filhas | [`TSK-002-subir-e-conectar`](TSK-002-subir-e-conectar/README.md) · [`TSK-003-serial-adb-online`](TSK-003-serial-adb-online/README.md) · [`TSK-004-boot-completo`](TSK-004-boot-completo/README.md) |
+| Origem | EP-01 · US-01 · US-20 |
+| Filhas | [`TSK-002`](TSK-002-subir-e-conectar/README.md) · [`TSK-003`](TSK-003-serial-adb-online/README.md) · [`TSK-004`](TSK-004-boot-completo/README.md) · [`TSK-032`](TSK-032-resgatar-agente/README.md) |
 | Plano | [`implementation-plan/EP-01-provisionar-agente.md`](../../implementation-plan/EP-01-provisionar-agente.md) |
 
 ## Entradas
 
 - Stories / épicos: [`1.stories.md`](../../1.stories.md) · [`2.epics.md`](../../2.epics.md)
-- Cenários SC-01..03 e BDDs de aceite
-- Host com `adb`; runtime redroid ou AVD disponível/startável
-- Stack: Node ≥ 18 · JS · Docker/Colima (redroid) ou AVD
+- Cenários SC-01..03 · SC-25..26 e BDDs
+- Host com `adb` + Docker/Colima (redroid) ou AVD
+- Stack: Node ≥ 18 · JS
 
 ## Execução
 
-- Entregar capacidade Node de provisionar o agent até serial ADB `device` + boot completo
-- API pública: único método `provisionEmulator(cfg)` → `AgentHandle` (filhas encapsuladas)
-- Implementar / validar na ordem: TSK-002 → TSK-003 → TSK-004
+- `provisionEmulator(cfg)` — **nome** obrigatório; cria **container novo**; aloca serial/porta
+- `attachEmulator(name)` — resgata agent existente sem criar
+- Filhas: TSK-002→004 (create) · TSK-032→034 (attach)
 
 ## Saídas
 
-- Agent pronto para ADB (serial online, boot ok) — pré-requisito das demais tasks do Gantt
-- Handle com `serial`, `kind`, `provisionedAt`, `bootCompleted: true`
+- Handle com `name`, `serial`, `kind`, `bootCompleted: true`
+- Erros tipados: `PROVISION_NAME_TAKEN` · `PROVISION_NAME_NOT_FOUND` · `PROVISION_*`
 
 ## Documentação
 
@@ -32,4 +32,4 @@
 - BDDs: [`5.bdds.md#ep-01--provisionar-agente`](../../5.bdds.md#ep-01--provisionar-agente)
 - Plano: [`implementation-plan/EP-01-provisionar-agente.md`](../../implementation-plan/EP-01-provisionar-agente.md)
 - Código: [`src/lib/provision.js`](../../src/lib/provision.js)
-- Runtime: [`pocs/redroid/`](../../pocs/redroid/README.md) · [`pocs/android-studio/`](../../pocs/android-studio/README.md)
+- Runtime: [`pocs/redroid/`](../../pocs/redroid/README.md)

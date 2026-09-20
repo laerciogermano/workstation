@@ -3,7 +3,7 @@
 **Por quê:** plano técnico do épico (sequências · agentes · passo a passo · contratos · classes · modelos · BDDs).  
 **Épico:** [`2.epics.md`](../2.epics.md).  
 **US:** [`1.stories.md`](../1.stories.md) · [`4.scenarios.md#ep-01--provisionar-agente`](../4.scenarios.md#ep-01--provisionar-agente) · [`5.bdds.md#ep-01--provisionar-agente`](../5.bdds.md#ep-01--provisionar-agente).  
-**Biblioteca:** [`../src/lib/provision.js`](../src/lib/provision.js) — **único método público:** `provisionEmulator`.  
+**Biblioteca:** [`../src/lib/provision.js`](../src/lib/provision.js) — público: `provisionEmulator` · `attachEmulator`.  
 **Runtime:** [`../pocs/redroid/`](../pocs/redroid/README.md) · [`../pocs/android-studio/`](../pocs/android-studio/README.md).
 
 **Stack:** Node ≥ 18 · JavaScript · `adb` · Docker/Colima (redroid) ou AVD.
@@ -14,12 +14,15 @@
 
 | ID | Item |
 |----|------|
-| US-01 | Provisionar um agente |
-| SC-01 | Subir / conectar o Android (agent) |
+| US-01 | Provisionar um agente (container **novo** + **nome**) |
+| SC-01 | Criar container/runtime nomeado |
 | SC-02 | Garantir serial ADB online |
 | SC-03 | Aguardar boot completo |
+| US-20 | Resgatar agente existente |
+| SC-25 | Localizar agent pelo nome |
+| SC-26 | Reconectar e confirmar boot |
 
-**Resultado:** serial ADB `device` + `sys.boot_completed=1` → runtime pronto para EP-02..06.
+**Resultado:** handle com `name` + serial ADB `device` + `sys.boot_completed=1` → pronto para EP-02..06. Vários nomes ⇒ vários containers em paralelo.
 
 ---
 
@@ -28,20 +31,27 @@
 ```text
 src/
 ├── lib/
-│   ├── provision.js
+│   ├── provision.js                 # provisionEmulator + attachEmulator
 │   ├── provision.test.js
-│   ├── start-runtime.js
+│   ├── start-runtime.js             # cria container novo (nome → porta/serial)
 │   ├── start-runtime.test.js
+│   ├── attach-runtime.js            # resolve nome → runtime existente
+│   ├── attach-runtime.test.js
 │   ├── ensure-adb-online.js
 │   ├── ensure-adb-online.test.js
 │   ├── wait-boot-completed.js
 │   ├── wait-boot-completed.test.js
 │   ├── adb.js
-│   └── events.js                 # on anexado ao handle (EP-02)
+│   └── events.js
+├── device.config.json               # provision.name (obrigatório no create)
 └── test/
     └── bdd/
         ├── ep-01-provisionar-agente.test.js
-        └── us-01-agent-fica-pronto-para-adb.test.js
+        ├── us-01-agent-fica-pronto-para-adb.test.js
+        └── us-20-resgatar-agente-existente.test.js
+pocs/redroid/
+├── docker-compose.yml               # multi-instância (nome / porta)
+└── scripts/                         # start/stop por nome
 ```
 
 Unitários ao lado do módulo (deps mock/stub). BDD e2e só US/EP.
@@ -52,22 +62,31 @@ Unitários ao lado do módulo (deps mock/stub). BDD e2e só US/EP.
 
 Arquivo: `src/lib/provision.js`.
 
-**Regra:** a lib **encapsula** todas as chamadas dos diagramas de sequência (SC-01→SC-03). Para o caller existe **apenas um método**:
+**API pública:**
 
 ```js
-import { provisionEmulator } from "./lib/provision.js";
+import { provisionEmulator, attachEmulator } from "./lib/provision.js";
 
-const handle = await provisionEmulator(cfg);
-// → { serial, kind, provisionedAt, bootCompleted: true, on }
-// EP-02: await handle.on("ui_stable", …)
+// US-01 — sempre cria container novo
+const a = await provisionEmulator({
+  provision: { name: "agent-a", kind: "redroid" },
+});
+// → { name, serial, kind, provisionedAt, bootCompleted: true, … }
+
+// US-20 — resgata sem criar
+const again = await attachEmulator("agent-a");
+// nome ausente → PROVISION_NAME_NOT_FOUND
+// nome já em uso no create → PROVISION_NAME_TAKEN
 ```
 
-Helpers internos (`resolveConfig`, `startRuntime`, `ensureAdbOnline`, `waitBootCompleted`, uso de `adb.js`) **não** são exportados — ficam privados ao módulo. `on` no handle vem de EP-02.
+Helpers internos (`resolveConfig`, `startRuntime`, `attachRuntime`, `ensureAdbOnline`, `waitBootCompleted`) **não** são exportados.
 
 | Superfície | O quê |
 |------------|--------|
-| **Público** | `provisionEmulator(cfg) → Promise<AgentHandle>` |
-| **Privado** | resolve config · start runtime · connect/wait ADB · poll boot |
+| **Público** | `provisionEmulator(cfg)` · `attachEmulator(name)` |
+| **Privado** | alocar porta/serial · criar/anexar container · ADB · boot |
+
+`cfg.provision.name` (ou `cfg.name`) é **obrigatório** em `provisionEmulator`. Serial/porta são **alocados** pela lib (não fixos na config do caller para multi-agent).
 
 ---
 
@@ -81,7 +100,7 @@ Helpers internos (`resolveConfig`, `startRuntime`, `ensureAdbOnline`, `waitBootC
 |--------|------------------|
 | Caller / CLI | Chama **só** `provisionEmulator(cfg)` e consome o `AgentHandle` |
 | provision.js | Biblioteca: encapsula SC-01→SC-03 (start, ADB, boot) |
-| Runtime (interno) | Sobe ou detecta redroid/AVD até ficar alcançável |
+| Runtime (interno) | Cria container novo por `name` (ou resolve existente no attach) |
 | AdbClient (interno) | `adb` connect, wait-for-device, getprop — **não** exportado |
 | Device / emulador | Android alvo |
 
@@ -397,29 +416,29 @@ classDiagram
 
 Fonte canônica: [`5.bdds.md#ep-01--provisionar-agente`](../5.bdds.md#ep-01--provisionar-agente).
 
-### US-01 — Agent fica pronto para ADB
+### US-01 — Agent nomeado fica pronto para ADB
 
 ```gherkin
-Cenário: US-01 Agent fica pronto para ADB
-  Dado o config e o runtime Android disponíveis
-  Quando o provisionamento sobe/conecta o agent, garante serial online e aguarda boot completo
-  Então o agent está pronto para ADB (serial online e boot ok)
+Cenário: US-01 Agent nomeado fica pronto para ADB
+  Dado o config com nome único e o runtime Android disponíveis
+  Quando o provisionamento cria um container novo para esse nome, garante serial online e aguarda boot completo
+  Então o agent está pronto para ADB (nome, serial online e boot ok)
 ```
 
-### SC-01 — Subir / conectar o Android (agent)
+### SC-01 — Criar container/runtime nomeado
 
 ```gherkin
-Cenário: SC-01 Agent sobe e fica alcançável
-  Dado host, imagem/runtime e script de start
-  Quando o agent é iniciado e a conexão é estabelecida
-  Então o processo do agent está em execução e alcançável
+Cenário: SC-01 Container novo sobe e fica alcançável
+  Dado nome único do agent, host e imagem/runtime
+  Quando a lib aloca serial/porta e cria um container novo ligado ao nome
+  Então o agent nomeado está em execução e alcançável
 ```
 
 ### SC-02 — Garantir serial ADB online
 
 ```gherkin
 Cenário: SC-02 Serial ADB fica online
-  Dado o agent alcançável e o serial esperado na config
+  Dado o agent alcançável e o serial alocado ao nome
   Quando adb connect / listagem de devices é repetida até o serial aparecer como device
   Então o serial ADB está online
 ```
@@ -433,24 +452,51 @@ Cenário: SC-03 Boot completo no device
   Então o device reporta boot completo
 ```
 
+### US-20 — Agent existente é resgatado pelo nome
+
+```gherkin
+Cenário: US-20 Agent existente é resgatado pelo nome
+  Dado um agent já provisionado com determinado nome
+  Quando o resgate localiza o runtime pelo nome, reconecta o serial e confirma boot
+  Então o handle fica pronto sem criar outro emulador
+```
+
+### SC-25 — Localizar agent pelo nome
+
+```gherkin
+Cenário: SC-25 Runtime é resolvido pelo nome
+  Dado o nome de um agent já criado
+  Quando a lib resolve container/runtime e serial associados ao nome
+  Então a referência ao runtime existente está disponível
+```
+
+### SC-26 — Reconectar e confirmar boot
+
+```gherkin
+Cenário: SC-26 Handle anexado fica pronto
+  Dado o runtime localizado pelo nome
+  Quando adb connect / wait-for-device e poll de boot concluem
+  Então o handle está pronto (serial online, boot ok) sem novo container
+```
+
 ---
 
 ## Plano de implementação (gaps → entregas)
 
 | # | Entrega | SC | Arquivos | Critério |
 |---|---------|-----|----------|----------|
-| I1 | Lib `provision.js` com **só** `provisionEmulator` exportado | US-01 | `lib/provision.js` | API pública = 1 método |
-| I2 | Internos: `resolveConfig` + `ensureAdbOnline` + `waitBootCompleted` | SC-02/03 | `provision.js` | Encapsulam o diagrama; não exportados |
-| I3 | Interno: `startRuntime` (redroid `start.sh`) | SC-01 | `provision.js` | Start se não reachable |
-| I4 | Interno: start AVD (`kind=avd`) | SC-01 | `provision.js` | Sem novo export |
-| I5 | CLI chama `provisionEmulator` | US-01 | `cli.js` | Exit 0 só com Booted |
-| I6 | Piloto LinkedIn usa `provisionEmulator` | US-01 | `scripts/linkedin-login.js` | Mesmo config |
+| I1 | `provisionEmulator` exige `name`; cria container novo | US-01 / SC-01 | `provision.js` · `start-runtime.js` | Nome único; `PROVISION_NAME_TAKEN` se já existe |
+| I2 | Alocação de porta/serial por agent | SC-01 | `start-runtime.js` · pocs redroid | N agents em paralelo |
+| I3 | `ensureAdbOnline` + `waitBootCompleted` no serial alocado | SC-02/03 | existentes | Encapsulados |
+| I4 | `attachEmulator(name)` | US-20 / SC-25..26 | `attach-runtime.js` · `provision.js` | Sem novo container; `PROVISION_NAME_NOT_FOUND` |
+| I5 | Handle inclui `name` | US-01/20 | `provision.js` | `handle.name` estável |
+| I6 | BDD e2e US-01 / US-20 / EP-01 | — | `test/bdd/` | Aceite multi-agent |
+| I7 | Piloto LinkedIn passa `name` | US-01 | `linkedin-login.js` · config | Compatível |
 
 ### Ordem
 
 ```text
-I1 → I2 → I3 → I4 → I5 → I6
-         ↘ I3/I4 após I2 (ainda internos)
+I1 → I2 → I3 → I5 → I4 → I6 → I7
 ```
 
 ---
@@ -459,23 +505,24 @@ I1 → I2 → I3 → I4 → I5 → I6
 
 | Peça | Status |
 |------|--------|
-| `provisionEmulator` (único export) | Existe — encapsula SC-01→SC-03 |
-| Internos ADB / boot / start | `ensure-adb-online` · `wait-boot-completed` · `start-runtime` |
-| Unitários isolados (mock/stub) | Ao lado de cada módulo |
-| BDD e2e US-01 / EP-01 | `test/bdd/` |
-| Exports extras além de `provisionEmulator` | **Proibido** nesta lib |
+| `provisionEmulator` (serial fixo / start se reachable) | Existe — **evoluir** para nome + container novo |
+| `attachEmulator` | **Gap** |
+| Alocação multi-porta / multi-container | **Gap** (POC redroid = 1 instância) |
+| Internos ADB / boot | `ensure-adb-online` · `wait-boot-completed` |
+| BDD e2e US-01 / EP-01 | Existe — **estender** US-20 + multi-nome |
 
 ---
 
 ## Critério de pronto (épico)
 
-1. Biblioteca JS com **apenas** `provisionEmulator` na superfície pública  
-2. Sequências SC-01..03 encapsuladas dentro da lib  
-3. Modelos `ProvisionConfig` / `AgentHandle` / estados documentados  
-4. `provisionEmulator` devolve handle só em estado `Booted`  
-5. Piloto LinkedIn usa o mesmo método  
+1. `provisionEmulator` cria container **novo** por `name`; falha se nome já existe  
+2. `attachEmulator(name)` resgata sem criar; falha se nome ausente  
+3. SC-01..03 e SC-25..26 encapsulados  
+4. Handle com `name`, `serial`, `bootCompleted`  
+5. ≥2 agents simultâneos no e2e  
+6. Piloto LinkedIn usa `name`  
 
 ## Próximos passos
 
-→ Completar gaps I3–I4 em [`src`](../src/README.md)  
+→ Implementar I1–I7 em [`src`](../src/README.md)  
 → Aceite: [`5.bdds.md#ep-01--provisionar-agente`](../5.bdds.md#ep-01--provisionar-agente)

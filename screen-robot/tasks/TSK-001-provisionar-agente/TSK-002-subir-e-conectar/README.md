@@ -1,4 +1,4 @@
-# Subir e conectar
+# Container nomeado
 
 | Campo | Valor |
 |-------|--------|
@@ -6,35 +6,26 @@
 | TSK | [`TSK-002`](../../../7.tasks.md) |
 | Origem | SC-01 |
 | Pai | [`TSK-001-provisionar-agente`](../README.md) |
-| Estado | `Absent` / `Starting` → `Reachable` |
+| Estado | `Absent` → `Starting` → `Reachable` |
 
 ## Entradas
 
-- Host, imagem/runtime e script de start (`kind`, `startScript?`)
-- Config resolvida (após `resolveConfig` interno)
+- Nome único do agent (`provision.name`)
+- Host, imagem/runtime (`kind`)
 
 ## Execução
 
-- Interno: `startRuntime` — sobe o agent se ainda não estiver alcançável
-- Materializar Android via script (ex. redroid `start.sh` / AVD)
+- Interno: alocar porta/serial livre; criar **container novo** ligado ao nome
+- Falhar com `PROVISION_NAME_TAKEN` se o nome já existir
 - Confirmar processo/porta alcançável
 
 ## Saídas
 
-- Processo do agent em execução e alcançável (`Reachable`)
-- Erro típico: `PROVISION_START_FAILED`
+- Agent nomeado em execução e alcançável (`Reachable`)
+- Erro típico: `PROVISION_START_FAILED` · `PROVISION_NAME_TAKEN`
 
 ## Documentação
 
-- Cenário: [`4.scenarios.md`](../../../4.scenarios.md#ep-01--provisionar-agente)
-- BDD:
-
-```gherkin
-Cenário: SC-01 Agent sobe e fica alcançável
-  Dado host, imagem/runtime e script de start
-  Quando o agent é iniciado e a conexão é estabelecida
-  Então o processo do agent está em execução e alcançável
-```
-
-- Plano: passos #3–#6 em [`EP-01-provisionar-agente.md`](../../../implementation-plan/EP-01-provisionar-agente.md)
-- Runtime: [`pocs/redroid/`](../../../pocs/redroid/README.md) · [`pocs/android-studio/`](../../../pocs/android-studio/README.md)
+- Cenário / BDD: [`4.scenarios.md`](../../../4.scenarios.md#ep-01--provisionar-agente) · [`5.bdds.md`](../../../5.bdds.md#ep-01--provisionar-agente)
+- Plano: [`EP-01-provisionar-agente.md`](../../../implementation-plan/EP-01-provisionar-agente.md)
+- Runtime: [`pocs/redroid/`](../../../pocs/redroid/README.md)

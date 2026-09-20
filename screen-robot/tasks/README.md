@@ -16,7 +16,10 @@ tasks/
 ├── TSK-001-provisionar-agente/
 │   ├── TSK-002-subir-e-conectar/
 │   ├── TSK-003-serial-adb-online/
-│   └── TSK-004-boot-completo/
+│   ├── TSK-004-boot-completo/
+│   └── TSK-032-resgatar-agente/
+│       ├── TSK-033-localizar-por-nome/
+│       └── TSK-034-reconectar-e-boot/
 ├── TSK-005-eventos-de-ui/
 │   ├── TSK-006-evento-de-boot/
 │   ├── TSK-007-evento-de-app-aberta/
@@ -49,7 +52,9 @@ tasks/
 | TSK | Atividade | Pasta |
 |-----|-----------|-------|
 | TSK-001 | Provisionar agente | [`TSK-001-provisionar-agente/`](TSK-001-provisionar-agente/README.md) |
-| TSK-002..004 | Filhas EP-01 | sob `TSK-001-provisionar-agente/` |
+| TSK-002..004 | Filhas US-01 | sob `TSK-001-provisionar-agente/` |
+| TSK-032 | Resgatar agente | [`TSK-032-resgatar-agente/`](TSK-001-provisionar-agente/TSK-032-resgatar-agente/README.md) |
+| TSK-033..034 | Filhas US-20 | sob `TSK-032-resgatar-agente/` |
 | TSK-005 | Eventos de UI | [`TSK-005-eventos-de-ui/`](TSK-005-eventos-de-ui/README.md) |
 | TSK-006..009 | Filhas EP-02 | sob `TSK-005-eventos-de-ui/` |
 | TSK-010 | Instalar APKs | [`TSK-010-instalar-apks/`](TSK-010-instalar-apks/README.md) |

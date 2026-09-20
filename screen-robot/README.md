@@ -45,7 +45,7 @@ Ver stories em [`1.stories.md`](1.stories.md) e cenários em [`4.scenarios.md`](
 
 ## Como usar
 
-API em [`src/`](src/README.md). Superfície pública: `provisionEmulator(cfg)` → **handle** com todos os métodos. Não passe `serial` nas operações — ele vem do handle.
+API em [`src/`](src/README.md). Superfície pública: `provisionEmulator(cfg)` (cria agent **novo**) e `attachEmulator(name)` (resgata existente) → **handle**. Não passe `serial` nas operações — ele vem do handle.
 
 ### 1. Pré-requisitos
 
@@ -53,16 +53,10 @@ API em [`src/`](src/README.md). Superfície pública: `provisionEmulator(cfg)` �
 |------|---------|
 | Node | ≥ 18 |
 | `adb` | no `PATH` |
-| Runtime Android | serial ADB online (redroid, AVD ou device) — ver [`pocs/`](pocs/README.md) |
+| Docker/Colima | para `kind: "redroid"` (lib sobe **container novo** por nome) — ver [`pocs/redroid/`](pocs/redroid/README.md) |
 | Opcional | [`apkeep`](https://github.com/EFForg/apkeep) para baixar XAPK |
 
-**`start.sh` não é obrigatório** se o serial já estiver alcançável. `provisionEmulator` só sobe o runtime quando a porta/serial não responde: com `provision.kind` `redroid` ou `avd` chama o script em [`pocs/`](pocs/README.md); com `kind: "adb"` (padrão da config) exige device já online.
-
-```bash
-# só se ainda não houver Android na porta
-cd screen-robot/pocs/redroid && ./scripts/start.sh
-# opcional: ./scripts/view.sh
-```
+A lib **cria** o container ao chamar `provisionEmulator` com um **nome** novo. Não é necessário rodar `start.sh` manualmente nesse fluxo. `attachEmulator(name)` só reconecta a um agent já criado.
 
 ### 2. Configuração
 
@@ -70,21 +64,30 @@ Edite [`src/device.config.json`](src/device.config.json):
 
 | Campo | Uso |
 |-------|-----|
-| `provision.serial` / `device` | Serial ADB (ex. `127.0.0.1:5555`) |
+| `provision.name` | **Obrigatório** no create — id do agent (único) |
+| `provision.kind` | `redroid` · `avd` · … |
 | `provision.connectTimeoutMs` | Timeout de boot/conexão |
 | `apps.*` | `package`, `version`, `artifact` (path local) ou `source` (download) |
 | `session.path` / `screenshot.path` | Paths do piloto LinkedIn |
 | `credentials.linkedin.*Env` | Nomes das env vars de user/senha |
 
+Serial/porta são **alocados** pela lib por agent (não fixar um único `127.0.0.1:5555` para multi-instância).
+
 ### 3. Fluxo típico (código)
 
 ```js
-import { readFileSync } from "node:fs";
-import { provisionEmulator } from "./lib/provision.js";
+import { provisionEmulator, attachEmulator } from "./lib/provision.js";
 
-const cfg = JSON.parse(readFileSync("./device.config.json", "utf8"));
-const handle = await provisionEmulator(cfg);
-// handle.serial · handle.kind · handle.bootCompleted
+const a = await provisionEmulator({
+  provision: { name: "agent-a", kind: "redroid" },
+});
+const b = await provisionEmulator({
+  provision: { name: "agent-b", kind: "redroid" },
+});
+// a.serial !== b.serial — containers distintos
+
+const again = await attachEmulator("agent-a");
+// again.name === "agent-a"
 ```
 
 A partir daí, só o handle:
@@ -121,10 +124,12 @@ const state = await handle.restoreSession("./state/session.json");
 await handle.removeSession("./state/session.json");
 ```
 
-### 4. Métodos do handle
+### 4. API pública e métodos do handle
 
 | Método | O quê |
 |--------|--------|
+| `provisionEmulator(cfg)` | Cria agent **novo** (`name` obrigatório); aloca serial; boot ok |
+| `attachEmulator(name)` | Resgata agent existente pelo nome (sem criar container) |
 | `installApk(app)` | Lê spec → baixa se preciso → instala; retorna `{ package, version, skipped }` |
 | `on(event, opts?, cb?)` | `boot` · `app_open` · `ui_stable` · `dump_change` |
 | `launch(pkg, activity?)` | Abre app |
@@ -136,7 +141,7 @@ await handle.removeSession("./state/session.json");
 | `extract()` | Árvore DOM progressiva |
 | `saveSession` / `restoreSession` / `removeSession` | Persistência JSON |
 
-Erros tipados (campo `err.code`): `PROVISION_*`, `APK_*`, `OPERATE_*`, `SESSION_*`, `EVENT_*`.
+Erros tipados (campo `err.code`): `PROVISION_*` (incl. `PROVISION_NAME_TAKEN` · `PROVISION_NAME_NOT_FOUND`), `APK_*`, `OPERATE_*`, `SESSION_*`, `EVENT_*`.
 
 ### 5. Piloto LinkedIn
 
@@ -177,4 +182,4 @@ Detalhe das libs e CLI legado: [`src/README.md`](src/README.md).
 
 ## Próximos passos
 
-→ Consumir o handle no [`linkedin-agent`](../connectmax/linkedin-agent/README.md) · aceite: [`5.bdds.md`](5.bdds.md)
+→ Consumir `provisionEmulator` / `attachEmulator` no [`linkedin-agent`](../connectmax/linkedin-agent/README.md) · aceite: [`5.bdds.md`](5.bdds.md)

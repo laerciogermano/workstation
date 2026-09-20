@@ -7,18 +7,18 @@ Runtimes de POC (redroid / AVD): [`../pocs/`](../pocs/README.md).
 ## Requisitos
 
 - Node ≥ 18, `adb` no PATH
-- Device online (redroid `127.0.0.1:5555` ou emulador)
+- Docker/Colima para multi-agent redroid (`provision.name` + `kind: "redroid"`)
 - Opcional: [`apkeep`](https://github.com/EFForg/apkeep) para baixar XAPK (`brew install apkeep`)
 
 ## Config do dispositivo
 
-[`device.config.json`](device.config.json) — serial, versões de apps (ex. Instagram), paths de sessão/print.
+[`device.config.json`](device.config.json) — `provision.name` (obrigatório no create), `kind`, apps, paths de sessão/print.
 
 ## Funcionalidades (libs)
 
 | Recorte | Módulo |
 |---------|--------|
-| Provisionar emulador (`provisionEmulator`) | [`lib/provision.js`](lib/provision.js) |
+| Provisionar / resgatar (`provisionEmulator` · `attachEmulator`) | [`lib/provision.js`](lib/provision.js) |
 | Instalar APKs (`handle.installApk`) | [`lib/apks.js`](lib/apks.js) + `apk-read-spec` · `apk-download` · `apk-install-package` |
 | Receber eventos (`handle.on` após provision) | [`lib/events.js`](lib/events.js) + `event-boot` · `event-app-open` · `event-ui-stable` · `event-dump-change` |
 | Operar tela (`handle.launch` / `tap` / `type` / `scroll` / `screenshot` / `matchImage`) | [`lib/operate.js`](lib/operate.js) |

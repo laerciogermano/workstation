@@ -72,22 +72,30 @@ function pngSize(path) {
 }
 
 /**
- * OCR full-frame costuma falhar nos botões brancos do Tinder.
- * Fallback: faixa inferior (PSM 11) + matchByText.
+ * Busca obrigatória por texto: "Continue with Phone Number".
+ * findByText primeiro; fallback OCR em faixa (botão branco falha no full-frame).
  */
 async function findContinueWithPhoneNumber(serial) {
   const query = "Continue with Phone Number";
+  console.log(`   buscar texto: "${query}"`);
+
   let hit = await findByText(serial, query, { minScore: 0.75 });
-  if (hit?.center) return hit;
+  if (hit?.center) {
+    console.log(`   findByText → "${hit.text}" score=${hit.score.toFixed(2)}`);
+    return inflateButtonHit(hit);
+  }
 
   const framePath = await captureFrame(serial);
   const { w, h } = pngSize(framePath);
   const rect = {
-    left: Math.floor(w * 0.05),
-    top: Math.floor(h * 0.55),
-    width: Math.floor(w * 0.9),
-    height: Math.floor(h * 0.3),
+    left: Math.floor(w * 0.02),
+    top: Math.floor(h * 0.5),
+    width: Math.floor(w * 0.96),
+    height: Math.floor(h * 0.4),
   };
+  console.log(
+    `   findByText vazio — OCR faixa y=${rect.top}..${rect.top + rect.height}`,
+  );
   const worker = await createWorker("eng");
   try {
     await worker.setParameters({ tessedit_pageseg_mode: "11" });
@@ -111,10 +119,32 @@ async function findContinueWithPhoneNumber(serial) {
           source: "ocr-band",
         };
       });
-    return matchByText(elements, query, { minScore: 0.75 });
+    const texts = elements.map((e) => e.text).join(" ");
+    console.log(`   OCR faixa: ${texts.slice(0, 120)}${texts.length > 120 ? "…" : ""}`);
+    hit = matchByText(elements, query, { minScore: 0.75 });
+    if (hit?.center) return inflateButtonHit(hit);
+    return null;
   } finally {
     await worker.terminate();
   }
+}
+
+/** Amplia bounds do texto OCR para cobrir o botão pill (mais alto que a linha). */
+function inflateButtonHit(hit) {
+  const b = hit.bounds || { x: 0, y: 0, w: 0, h: 0 };
+  const padY = Math.max(24, Math.floor(b.h * 1.5));
+  const padX = Math.max(16, Math.floor(b.w * 0.05));
+  const bounds = {
+    x: Math.max(0, b.x - padX),
+    y: Math.max(0, b.y - padY),
+    w: b.w + padX * 2,
+    h: b.h + padY * 2,
+  };
+  const center = [
+    Math.floor(bounds.x + bounds.w / 2),
+    Math.floor(bounds.y + bounds.h / 2),
+  ];
+  return { ...hit, bounds, center };
 }
 
 /** Nova sessão OCR/visão (frame fresco — extract do handle reusa cache). */

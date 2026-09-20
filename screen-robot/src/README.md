@@ -250,7 +250,8 @@ Script [`scripts/linkedin-login.js`](scripts/linkedin-login.js):
 2. `resetInstance(cfg)`
 3. `provisionEmulator` → `openScrcpy` → `installApk(linkedin)` → `launch` → `on("ui_stable")`
 4. `01-tela-inicial.png`
-5. `extract()` ×5 → console + `tree-screen.png` + `component-tree.json`
+5. **Sign in with Email** → wait 5s → `02-apos-sign-in-email.png`
+6. `extract()` ×5 → console + `tree-screen.png` + `component-tree.json`
 
 Só LinkedIn (sem Instagram). Sem digitar credenciais e sem `saveSession`.
 

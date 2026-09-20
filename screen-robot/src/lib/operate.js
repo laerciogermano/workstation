@@ -65,8 +65,37 @@ export function createOperate(serial, deps = {}) {
 
   async function launch(pkg, activity) {
     try {
-      if (activity) {
-        runAdb(serial, ["shell", "am", "start", "-n", `${pkg}/${activity}`]);
+      let component =
+        activity == null
+          ? null
+          : String(activity).includes("/")
+            ? String(activity)
+            : `${pkg}/${activity}`;
+      if (!component) {
+        try {
+          const resolved = runAdb(serial, [
+            "shell",
+            "cmd",
+            "package",
+            "resolve-activity",
+            "--brief",
+            "-c",
+            "android.intent.category.LAUNCHER",
+            pkg,
+          ]);
+          const line = (resolved.stdout || "")
+            .trim()
+            .split("\n")
+            .map((l) => l.trim())
+            .filter(Boolean)
+            .pop();
+          if (line && line.includes("/")) component = line;
+        } catch {
+          /* resolve opcional */
+        }
+      }
+      if (component) {
+        runAdb(serial, ["shell", "am", "start", "-n", component]);
       } else {
         runAdb(serial, [
           "shell",
@@ -76,25 +105,26 @@ export function createOperate(serial, deps = {}) {
           "android.intent.action.MAIN",
           "-c",
           "android.intent.category.LAUNCHER",
+          "-p",
           pkg,
         ]);
       }
     } catch (e) {
-      // fallback monkey
-      try {
-        runAdb(serial, [
-          "shell",
-          "monkey",
-          "-p",
-          pkg,
-          "-c",
-          "android.intent.category.LAUNCHER",
-          "1",
-        ]);
-      } catch (e2) {
+      // monkey no redroid costuma exit ≠ 0; tenta mesmo assim
+      runAdbOk(serial, [
+        "shell",
+        "monkey",
+        "-p",
+        pkg,
+        "-c",
+        "android.intent.category.LAUNCHER",
+        "1",
+      ]);
+      await sleep(1_500);
+      if (!runAdbOk(serial, ["shell", "pidof", pkg])) {
         fail(
           "OPERATE_LAUNCH_FAILED",
-          `launch falhou para ${pkg}: ${e2.message || e.message}`,
+          `launch falhou para ${pkg}: ${e.message}`,
         );
       }
     }

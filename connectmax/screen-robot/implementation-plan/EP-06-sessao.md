@@ -153,6 +153,57 @@ const s = await handle.restoreSession("./sessions/li.json");
 
 `saveSession` inclui `handle.serial` / `kind` no payload automaticamente.
 
+#### Exemplo de JSON (arquivo de sessão)
+
+Gravado por `handle.saveSession("./sessions/linkedin.json", { … })`:
+
+```json
+{
+  "serial": "127.0.0.1:5555",
+  "kind": "redroid",
+  "step": "logged-in",
+  "apps": {
+    "instagram": {
+      "package": "com.instagram.android",
+      "version": "361.0.0.0.0"
+    },
+    "linkedin": {
+      "package": "com.linkedin.android",
+      "version": "4.1.986"
+    }
+  },
+  "screenshot": "./screenshots/linkedin-before-login.png",
+  "paths": {
+    "session": "./sessions/linkedin.json",
+    "screenshot": "./screenshots/linkedin-before-login.png"
+  },
+  "extract": {
+    "step": 5,
+    "texts": [{ "type": "text", "text": "Entrar" }],
+    "tree": { "type": "other", "children": [] },
+    "icons": [],
+    "lists": [],
+    "images": []
+  },
+  "events": [
+    { "type": "ui_stable", "attempt": 3, "at": "2026-09-19T23:00:00.000Z" }
+  ],
+  "savedAt": "2026-09-19T23:00:01.000Z"
+}
+```
+
+| Campo | Origem |
+|-------|--------|
+| `serial` / `kind` | handle (EP-01) |
+| `step` | estado passado pelo caller |
+| `apps` | instalação (EP-03) |
+| `paths` | paths úteis para restore |
+| `extract` | último snapshot (EP-05), opcional |
+| `events` | últimos eventos (EP-02), opcional |
+| `savedAt` | preenchido no save |
+
+`restoreSession` lê esse JSON e reaplica `serial`, `apps`, `step` e `paths` no runtime do handle.
+
 ---
 
 ## Modelos / Erros

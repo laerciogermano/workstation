@@ -73,3 +73,4 @@ Como registrar: [`README.md`](README.md).
 | 063 | 2026-09-19 | Gantt guia robôs; humano libera | [063-2026-09-19-dev-gantt-humano-paralelo.md](063-2026-09-19-dev-gantt-humano-paralelo.md) | Ordem do Gantt; próximo robô após humano; sequencial espera, paralelo PRs separados. |
 | 064 | 2026-09-19 | Clone dentro da pasta da task | [064-2026-09-19-clone-dentro-pasta-task.md](064-2026-09-19-clone-dentro-pasta-task.md) | Baixar o projeto dentro da pasta da atividade em `tasks/`. |
 | 065 | 2026-09-19 | Árvore tasks pelo nome | [065-2026-09-19-tasks-nome-nao-ep-us-sc.md](065-2026-09-19-tasks-nome-nao-ep-us-sc.md) | Pastas em `tasks/` = nome da task; sem EP/US/SC no path. |
+| 066 | 2026-09-19 | Pastas task-xx-titulo | [066-2026-09-19-tasks-task-xx-titulo.md](066-2026-09-19-tasks-task-xx-titulo.md) | Padrão de pasta/branch: `task-<nn>-<titulo>`. |

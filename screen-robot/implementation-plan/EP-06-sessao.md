@@ -181,7 +181,7 @@ Ilustrativo da API EP-06 (o piloto LinkedIn atual **não** grava sessão):
   "apps": {
     "linkedin": {
       "package": "com.linkedin.android",
-      "version": "6.1.1"
+      "version": "4.1.1248"
     }
   },
   "screenshot": "./screenshots/01-antes-agree.png",

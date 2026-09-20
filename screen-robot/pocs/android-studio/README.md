@@ -133,7 +133,8 @@ screen-robot/pocs/android-studio/
 |---------|-------------|
 | Tela branca | Activity sobe mas UI não pinta — falta GMS (use Google APIs/Play) ou GPU só software |
 | Screenshot/scrcpy preto no login | Muitas vezes `FLAG_SECURE` (captura bloqueada), não crash |
-| Emulador sobe e morre | Falta de RAM no host; feche apps, baixe `EMU_MEMORY` |
+| Emulador sobe e morre / `RESET_FAILED` | Disco cheio — o log mostra `does not have enough disk space`; libere ≥8 GB em `/Users` |
+| Emulador sobe e morre (RAM) | Falta de RAM no host; feche apps, baixe `EMU_MEMORY` |
 | Não digita no emulador | `hw.keyboard=yes` no AVD (o `setup-avd.sh` já aplica); reinicie e clique na janela |
 | Camera preta / placeholder | OBS Virtual Camera não aprovada no macOS, ou webcam errada (`emulator -webcam-list`) |
 | `emulator: command not found` | Exporte `ANDROID_HOME` e `PATH` (veja `start.sh`) |

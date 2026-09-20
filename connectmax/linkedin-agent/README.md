@@ -55,4 +55,4 @@ vendas (cadência, fila, distribuição, faturamento)
 ## Próximos passos
 
 → Detalhar e validar [`docs/functionalities.md`](docs/functionalities.md)  
-→ Consumir APIs/scripts do [`../../screen-robot/sources/`](../../screen-robot/sources/README.md)
+→ Consumir APIs/scripts do [`../../screen-robot/src/`](../../screen-robot/src/README.md)

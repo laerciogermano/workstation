@@ -5,7 +5,7 @@
 **US:** [`1.stories.md`](../1.stories.md) · [`4.scenarios.md#ep-06--sessao`](../4.scenarios.md#ep-06--sessao) · [`5.bdds.md#ep-06--sessao`](../5.bdds.md#ep-06--sessao).  
 **Handle:** sessão são métodos do [`AgentHandle`](EP-01-provisionar-agente.md) — **não** funções soltas desligadas do agent.  
 **Pré-requisito:** [`EP-01`](EP-01-provisionar-agente.md) · handle.  
-**Implementação interna:** [`../sources/lib/session.js`](../sources/lib/session.js) (anexado ao handle em `provision.js`).
+**Implementação interna:** [`../src/lib/session.js`](../src/lib/session.js) (anexado ao handle em `provision.js`).
 
 **Stack:** Node ≥ 18 · JavaScript · runtime provisionado.
 
@@ -305,5 +305,5 @@ I1 → I2 → I3 → I4 → I5
 
 ## Próximos passos
 
-→ Implementar I1–I5 em [`sources`](../sources/README.md)  
+→ Implementar I1–I5 em [`sources`](../src/README.md)  
 → Aceite: [`5.bdds.md#ep-06--sessao`](../5.bdds.md#ep-06--sessao)

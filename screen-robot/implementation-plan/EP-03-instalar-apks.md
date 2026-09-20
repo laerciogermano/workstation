@@ -5,7 +5,7 @@
 **US:** [`1.stories.md`](../1.stories.md) · [`4.scenarios.md#ep-03--instalar-apks`](../4.scenarios.md#ep-03--instalar-apks) · [`5.bdds.md#ep-03--instalar-apks`](../5.bdds.md#ep-03--instalar-apks).  
 **Handle:** `installApk` é método do [`AgentHandle`](EP-01-provisionar-agente.md) — **não** é função solta com `serial`.  
 **Pré-requisito:** [`EP-01`](EP-01-provisionar-agente.md) · `provisionEmulator` → handle.  
-**Implementação interna:** [`../sources/lib/apks.js`](../sources/lib/apks.js) (anexado ao handle em `provision.js`).
+**Implementação interna:** [`../src/lib/apks.js`](../src/lib/apks.js) (anexado ao handle em `provision.js`).
 
 **Stack:** Node ≥ 18 · JavaScript · `adb` · runtime provisionado (EP-01).
 
@@ -268,5 +268,5 @@ I1 → I2 → I3 → I4 → I5
 
 ## Próximos passos
 
-→ Implementar I1–I5 em [`sources`](../sources/README.md)  
+→ Implementar I1–I5 em [`sources`](../src/README.md)  
 → Aceite: [`5.bdds.md#ep-03--instalar-apks`](../5.bdds.md#ep-03--instalar-apks)

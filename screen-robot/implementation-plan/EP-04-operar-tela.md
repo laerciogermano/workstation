@@ -5,7 +5,7 @@
 **US:** [`1.stories.md`](../1.stories.md) · [`4.scenarios.md#ep-04--operar-tela`](../4.scenarios.md#ep-04--operar-tela) · [`5.bdds.md#ep-04--operar-tela`](../5.bdds.md#ep-04--operar-tela).  
 **Handle:** gestos são métodos do [`AgentHandle`](EP-01-provisionar-agente.md) — **não** funções soltas com `serial`.  
 **Pré-requisito:** [`EP-01`](EP-01-provisionar-agente.md) · [`EP-02`](EP-02-eventos-de-ui.md) (`handle.on` para confirmar app/UI).  
-**Implementação interna:** [`../sources/lib/operate.js`](../sources/lib/operate.js) (anexado ao handle em `provision.js`).
+**Implementação interna:** [`../src/lib/operate.js`](../src/lib/operate.js) (anexado ao handle em `provision.js`).
 
 **Stack:** Node ≥ 18 · JavaScript · `adb` · runtime provisionado.
 
@@ -251,5 +251,5 @@ I1 → I2 → I3 → I4 → I5 → I6 → I7 → I8
 
 ## Próximos passos
 
-→ Implementar I1–I8 em [`sources`](../sources/README.md)  
+→ Implementar I1–I8 em [`sources`](../src/README.md)  
 → Aceite: [`5.bdds.md#ep-04--operar-tela`](../5.bdds.md#ep-04--operar-tela)

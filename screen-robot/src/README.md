@@ -31,7 +31,7 @@ BDD: [`../5.bdds.md`](../5.bdds.md)
 ## Script inicial — login LinkedIn
 
 ```bash
-cd screen-robot/sources
+cd screen-robot/src
 
 export LINKEDIN_USER='seu@email.com'
 export LINKEDIN_PASSWORD='***'

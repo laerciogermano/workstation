@@ -7,4 +7,4 @@ Provas de conceito e runtimes auxiliares (não são a API Node).
 | [`redroid/`](redroid/README.md) | Android em Docker/Colima |
 | [`android-studio/`](android-studio/README.md) | Emulador oficial (AVD) |
 
-Código do robô: [`../sources/`](../sources/README.md).
+Código do robô: [`../src/`](../src/README.md).

@@ -3,7 +3,7 @@
 **Por quê:** plano técnico do épico (sequências · agentes · passo a passo · contratos · classes · modelos · BDDs).  
 **Épico:** [`2.epics.md`](../2.epics.md).  
 **US:** [`1.stories.md`](../1.stories.md) · [`4.scenarios.md#ep-01--provisionar-agente`](../4.scenarios.md#ep-01--provisionar-agente) · [`5.bdds.md#ep-01--provisionar-agente`](../5.bdds.md#ep-01--provisionar-agente).  
-**Biblioteca:** [`../sources/lib/provision.js`](../sources/lib/provision.js) — **único método público:** `provisionEmulator`.  
+**Biblioteca:** [`../src/lib/provision.js`](../src/lib/provision.js) — **único método público:** `provisionEmulator`.  
 **Runtime:** [`../pocs/redroid/`](../pocs/redroid/README.md) · [`../pocs/android-studio/`](../pocs/android-studio/README.md).
 
 **Stack:** Node ≥ 18 · JavaScript · `adb` · Docker/Colima (redroid) ou AVD.
@@ -25,7 +25,7 @@
 
 ## Biblioteca JavaScript
 
-Arquivo: `sources/lib/provision.js`.
+Arquivo: `src/lib/provision.js`.
 
 **Regra:** a lib **encapsula** todas as chamadas dos diagramas de sequência (SC-01→SC-03). Para o caller existe **apenas um método**:
 
@@ -451,5 +451,5 @@ I1 → I2 → I3 → I4 → I5 → I6
 
 ## Próximos passos
 
-→ Completar gaps I3–I4 em [`sources`](../sources/README.md)  
+→ Completar gaps I3–I4 em [`sources`](../src/README.md)  
 → Aceite: [`5.bdds.md#ep-01--provisionar-agente`](../5.bdds.md#ep-01--provisionar-agente)

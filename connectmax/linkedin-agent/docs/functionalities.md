@@ -113,5 +113,5 @@ Persiste contexto do agente (device, apps, etapa, último perfil/thread) para re
 
 ## Próximos passos
 
-→ Implementação consumindo [`../../../screen-robot/sources/`](../../../screen-robot/sources/README.md)  
+→ Implementação consumindo [`../../../screen-robot/src/`](../../../screen-robot/src/README.md)  
 → Quem orquestra cadência: [`../../vendas/`](../../vendas/README.md)

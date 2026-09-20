@@ -2,7 +2,7 @@
 
 **Por quê:** fixar o *quê* do robô de tela antes de goals de negócio.  
 **Importante:** este projeto **só** opera o device/tela via **Node**; não implementa cadência comercial nem fila de leads.  
-**No fluxo:** **este documento** → stories → epics (prioridade) → roadmap → refinar estória (scenarios → bdds → protótipo se houver) → `7.tasks` / implementation-plan → pasta [`tasks/`](tasks/README.md) (EP/US/SC) → implementação em [`sources/`](sources/README.md).  
+**No fluxo:** **este documento** → stories → epics (prioridade) → roadmap → refinar estória (scenarios → bdds → protótipo se houver) → `7.tasks` / implementation-plan → pasta [`tasks/`](tasks/README.md) (EP/US/SC) → implementação em [`src/`](src/README.md).  
 **Umbrella:** [`../connectmax/README.md`](../connectmax/README.md).  
 **Consumidor LinkedIn:** [`../connectmax/linkedin-agent/`](../connectmax/linkedin-agent/README.md).  
 **Negócio (fila/faturamento):** [`../connectmax/vendas/`](../connectmax/vendas/README.md).  
@@ -53,9 +53,9 @@ Ver stories em [`1.stories.md`](1.stories.md) e cenários em [`4.scenarios.md`](
 | Implementation plan | por épico em [`implementation-plan/`](implementation-plan/README.md) | Feito |
 | Tasks (Gantt) | [`7.tasks.md`](7.tasks.md) | Feito |
 | Tasks (EP/US/SC) | [`tasks/`](tasks/README.md) | EP-01 |
-| Sources | [`sources/`](sources/README.md) | Em curso |
-| sources | [`sources/`](sources/README.md) | Em curso |
+| Sources | [`src/`](src/README.md) | Em curso |
+| src | [`src/`](src/README.md) | Em curso |
 
 ## Próximos passos
 
-→ [`4.scenarios.md`](4.scenarios.md) · [`5.bdds.md`](5.bdds.md) · `LINKEDIN_USER` / `LINKEDIN_PASSWORD` + `npm run linkedin-login` em `sources`
+→ [`4.scenarios.md`](4.scenarios.md) · [`5.bdds.md`](5.bdds.md) · `LINKEDIN_USER` / `LINKEDIN_PASSWORD` + `npm run linkedin-login` em `src`

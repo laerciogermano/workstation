@@ -49,6 +49,10 @@ async function main() {
   const handle = await provisionEmulator(cfg);
   console.log(`   OK ${handle.serial}`);
 
+  console.log("1.5) Abrir scrcpy…");
+  const view = handle.openScrcpy({ title: `linkedin-login ${handle.serial}` });
+  console.log(`   OK pid=${view.pid}`);
+
   console.log("2) Instalar LinkedIn…");
   const li = await handle.installApk(cfg.apps.linkedin);
   console.log(`   OK ${li.package} ${li.version || "?"}${li.skipped ? " (skip)" : ""}`);

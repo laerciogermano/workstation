@@ -166,7 +166,7 @@ Ordem do script ([`src/scripts/linkedin-login.js`](src/scripts/linkedin-login.js
 
 1. Limpar `screenshots/`
 2. `resetInstance(cfg)` — instância do zero
-3. `provisionEmulator` → `installApk(linkedin)` → `launch` → `ui_stable`
+3. `provisionEmulator` → `openScrcpy` → `installApk(linkedin)` → `launch` → `ui_stable`
 4. Screenshot `01-tela-inicial.png`
 5. `extract()` ×5 → console da árvore + `tree-screen.png` + `component-tree.json`
 

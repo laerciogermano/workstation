@@ -159,6 +159,7 @@ await handle.removeSession("./state/session.json");
 | `matchImage(templatePath)` | `{ x, y, confidence }` |
 | `openScrcpy(opts?)` | Abre scrcpy no serial do handle (US-21); retorna `{ pid, serial }` |
 | `extract()` | Lista plana de elementos (OCR/visão) |
+| `findByText(serial, query)` | US-23: elementos lado a lado contidos na string maior (encapsula OCR) |
 | `saveSession` / `restoreSession` / `removeSession` | Persistência JSON |
 
 Erros tipados (campo `err.code`): `PROVISION_*` (incl. `PROVISION_INVALID_NAME`), `RESET_*`, `APK_*`, `OPERATE_*`, `SESSION_*`, `EVENT_*`.
@@ -176,17 +177,23 @@ Ordem do script ([`src/scripts/linkedin-login.js`](src/scripts/linkedin-login.js
 2. `resetInstance(cfg)` — instância do zero
 3. `provisionEmulator` → `openScrcpy` → `installApk(linkedin)` → `launch` → `ui_stable`
 4. Screenshot `01-tela-inicial.png`
-5. **Sign in with Email** → wait 5s → `02-apos-sign-in-email.png`
+5. `findByText(serial, "Sign in with Email")` → tap no `center` → `02-apos-sign-in-email.png`
 6. `extract()` ×5 → console da lista + `tree-screen.png` + `component-tree.json`
 
 Não digita credenciais e não chama `saveSession`.
+
+**Aceite SC-30 (OCR partido):** fixture [`src/test/fixtures/linkedin-tela-inicial.png`](src/test/fixtures/linkedin-tela-inicial.png) — query devolve `Sign`+`in`+`with`+`Email`.
 
 ### 6. Testes
 
 ```bash
 cd screen-robot/src
-npm test          # unitários (mock/stub, sem device)
-npm run test:e2e  # BDD e2e US/EP (precisa runtime Android)
+npm test          # unitários (inclui fixture LinkedIn)
+npm run test:e2e  # BDD e2e US/EP (precisa runtime Android, exceto SC-30)
+
+# Só LinkedIn / SC-30
+node --test --test-timeout=120000 test/bdd/sc-30-linkedin-sign-in-with-email.test.js
+node --test --test-timeout=120000 lib/find-by-text.fixture.test.js
 ```
 
 Detalhe das libs e CLI legado: [`src/README.md`](src/README.md).

@@ -235,12 +235,18 @@ const elements = await handle.extract();
 | Tipo | Comando |
 |------|---------|
 | Unitário (mock/stub, ao lado do módulo) | `npm test` |
-| BDD e2e US/EP (runtime real, sem doubles) | `npm run test:e2e` |
+| BDD e2e US/EP (runtime real) | `npm run test:e2e` |
+| **SC-30 LinkedIn** (fixture, sem device) | ver abaixo |
+| Piloto LinkedIn ao vivo | `npm run linkedin-login` |
 
 ```bash
 cd screen-robot/src
 npm test
-npm run test:e2e   # requer Docker/Colima + adb
+npm run test:e2e   # requer Docker/Colima + adb (maioria dos BDDs)
+
+# Só SC-30 / fixture LinkedIn
+node --test --test-timeout=120000 test/bdd/sc-30-linkedin-sign-in-with-email.test.js
+node --test --test-timeout=120000 lib/find-by-text.fixture.test.js
 ```
 
 ---
@@ -258,10 +264,12 @@ Script [`scripts/linkedin-login.js`](scripts/linkedin-login.js):
 2. `resetInstance(cfg)`
 3. `provisionEmulator` → `openScrcpy` → `installApk(linkedin)` → `launch` → `on("ui_stable")`
 4. `01-tela-inicial.png`
-5. **Sign in with Email** → wait 5s → `02-apos-sign-in-email.png`
+5. `findByText(serial, "Sign in with Email")` → tap `center` → `02-apos-sign-in-email.png`
 6. `extract()` ×5 → console da lista + `tree-screen.png` + `component-tree.json`
 
 Só LinkedIn (sem Instagram). Sem digitar credenciais e sem `saveSession`.
+
+**SC-30:** fixture [`test/fixtures/linkedin-tela-inicial.png`](test/fixtures/linkedin-tela-inicial.png) · BDD [`test/bdd/sc-30-linkedin-sign-in-with-email.test.js`](test/bdd/sc-30-linkedin-sign-in-with-email.test.js).
 
 ---
 

@@ -37,15 +37,20 @@
 ```text
 src/
 ├── lib/
-│   ├── extract.js                 # createExtract → handle.extract() (progressivo)
-│   ├── frame.js                   # captura de frame
-│   ├── ocr.js                     # tesseract → palavras + bounds
-│   ├── vision.js                  # heurísticas icon/list/image
+│   ├── extract.js                      # createExtract · extractElements · findByText
+│   ├── frame.js                        # captura de frame
+│   ├── ocr.js                          # tesseract → palavras + bounds
+│   ├── vision.js                       # heurísticas icon/list/image
 │   ├── extract.test.js
-│   └── provision.js               # anexa extract ao handle
+│   ├── find-by-text.test.js            # matchByText / encapsulamento
+│   ├── find-by-text.fixture.test.js    # SC-30 unitário (fixture LinkedIn)
+│   └── provision.js
 └── test/
+    ├── fixtures/
+    │   └── linkedin-tela-inicial.png   # print inicial LinkedIn (SC-30)
     └── bdd/
-        └── ep-05-extrair-elementos.test.js
+        ├── ep-05-extrair-elementos.test.js
+        └── sc-30-linkedin-sign-in-with-email.test.js
 ```
 
 ---
@@ -73,13 +78,18 @@ const e4 = await handle.extract();
 
 const e5 = await handle.extract();
 // + elementos type "image" (SC-21 / US-16)
+
+// US-23 / SC-29..30 — busca por texto (encapsula OCR)
+const hit = await findByText(handle.serial, "Sign in with Email", { minScore: 0.8 });
+// elementos lado a lado contidos na string maior → Sign, in, with, Email
 ```
 
-**Regra:** sempre `extract()` → `Promise<UiElement[]>`. Sem `kind`/opts. O que muda é a lista: novos tipos aparecem.  
+**Regra `extract()`:** sempre → `Promise<UiElement[]>`. Sem `kind`/opts.  
+**Regra `findByText()`:** `findByText(serial, query)` encapsula `extractElements`; retorna só elementos **lado a lado** cujo texto unido está **na string maior** (`query`); `{ elements, score, bounds, center }` ou `null`.  
 **Sequência canônica:** frame → OCR/visão → lista (não XML dump, não árvore DOM).
 
-**Público:** `handle.extract() → Promise<UiElement[]>` (lista plana)  
-**Privado:** capturar frame · OCR · visão · tipar/inserir elementos na lista  
+**Público:** `handle.extract() → Promise<UiElement[]>` (lista plana) · `findByText(serial, query) → Promise<FindByTextHit | null>`  
+**Privado:** capturar frame · OCR · visão · tipar/inserir elementos · match lado a lado na query
 
 ### US-23 — Buscar por texto (similaridade)
 
@@ -252,6 +262,17 @@ type AgentHandle = {
   extract(): Promise<UiElement[]>;
 };
 
+/** Hit de findByText: elementos lado a lado contidos na string maior. */
+type FindByTextHit = {
+  elements: UiElement[];
+  score: number;
+  text: string;
+  bounds: { x: number; y: number; w: number; h: number };
+  center: [number, number];
+};
+
+// findByText(serial, query) → Promise<FindByTextHit | null>
+
 const elements = await handle.extract();
 // Array.isArray(elements)
 // elements[0].type === "text" | "icon" | …
@@ -347,7 +368,7 @@ Fonte: [`5.bdds.md#ep-05--extrair-elementos`](../5.bdds.md#ep-05--extrair-elemen
 ### Ordem
 
 ```text
-I1 → I2 → I3 → I4 → I5 → I6 → I7 → I8
+I1 → I2 → I3 → I4 → I5 → I6 → I7 → I8 → I9
 ```
 
 ---
@@ -359,8 +380,26 @@ I1 → I2 → I3 → I4 → I5 → I6 → I7 → I8
 | `createExtract` → `handle.extract()` | Existe (ainda árvore); **migrar retorno para lista** |
 | Fonte = frame → OCR/visão | Feito (`frame.js` / `ocr.js` / `vision.js`) |
 | `dumpUiXml` | Só legado eventos EP-02 |
-| `extractElements` lista plana | Alinha com o contrato alvo de `extract()` |
-| `findByText` (US-23) | Feito — encapsula `extractElements`; união de vizinhos + score |
+| `extractElements` lista plana | Feito |
+| `findByText` (US-23) | Feito — encapsula `extractElements`; lado a lado + contidos na query |
+| Fixture + BDD SC-30 | Feito — `linkedin-tela-inicial.png` · `sc-30-*.test.js` |
+
+---
+
+## Como rodar (SC-30 / LinkedIn)
+
+```bash
+cd screen-robot/src
+
+# BDD oficial SC-30 (fixture, sem device)
+node --test --test-timeout=120000 test/bdd/sc-30-linkedin-sign-in-with-email.test.js
+
+# Unitário da mesma fixture
+node --test --test-timeout=120000 lib/find-by-text.fixture.test.js
+
+# Piloto ao vivo (device)
+npm run linkedin-login
+```
 
 ---
 
@@ -370,8 +409,10 @@ I1 → I2 → I3 → I4 → I5 → I6 → I7 → I8
 2. Retorno = **lista** `UiElement[]` (não árvore `root`/`children`)  
 3. Pipeline = **frame → OCR/visão → lista** (sem dump uiautomator)  
 4. Cada chamada acrescenta tipos de elemento na lista  
-5. BDDs US-13 + EP-05  
+5. `findByText(serial, query)`: elementos **lado a lado** contidos na **string maior**  
+6. BDD **SC-30** LinkedIn verde (fixture)  
+7. BDDs US-13 + EP-05  
 
 ## Próximos passos
 
-→ Aceite: [`5.bdds.md#ep-05--extrair-elementos`](../5.bdds.md#ep-05--extrair-elementos)
+→ Aceite: [`5.bdds.md#ep-05--extrair-elementos`](../5.bdds.md#ep-05--extrair-elementos) · SC-30

@@ -2,7 +2,7 @@
 
 API **Node** do screen-robot sobre ADB: provisionar agent, instalar APKs, eventos, operar, extrair UI, sessão.
 
-Runtimes de POC (redroid / AVD): [`../../core/pocs/`](../../core/pocs/README.md).
+Runtimes de POC (redroid / AVD): [`../pocs/`](../pocs/README.md).
 
 ## Requisitos
 

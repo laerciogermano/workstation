@@ -24,7 +24,7 @@ Neste Mac o SDK costuma estar em:
 ## Setup rápido
 
 ```bash
-cd core/pocs/android-studio
+cd screen-robot/pocs/android-studio
 
 # 1) cria/atualiza o AVD ConnectMax_Cam (API 30, arm64, leve)
 ./scripts/setup-avd.sh
@@ -92,7 +92,7 @@ Vídeo padrão: `media/sample.mp4`. Pode passar outro:
 ## Layout
 
 ```text
-core/pocs/android-studio/
+screen-robot/pocs/android-studio/
 ├── README.md
 ├── .gitignore
 ├── apks/                 # local only (gitignored) — Instagram XAPK

@@ -27,7 +27,7 @@ colima start   # se ainda não estiver rodando
 ## Setup rápido (Linux)
 
 ```bash
-cd core/pocs/redroid
+cd screen-robot/pocs/redroid
 
 # 1) módulos do kernel (uma vez por boot, ou persistir via /etc/modules-load.d)
 sudo ./scripts/setup-host.sh
@@ -84,7 +84,7 @@ curl -fsSL https://raw.githubusercontent.com/remote-android/redroid-doc/master/d
 ## Layout
 
 ```text
-core/pocs/redroid/
+screen-robot/pocs/redroid/
 ├── docker-compose.yml
 ├── .env.example
 ├── scripts/

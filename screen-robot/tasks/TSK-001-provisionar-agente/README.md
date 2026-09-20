@@ -32,4 +32,4 @@
 - BDDs: [`5.bdds.md#ep-01--provisionar-agente`](../../5.bdds.md#ep-01--provisionar-agente)
 - Plano: [`implementation-plan/EP-01-provisionar-agente.md`](../../implementation-plan/EP-01-provisionar-agente.md)
 - Código: [`sources/lib/provision.js`](../../sources/lib/provision.js)
-- Runtime: [`core/pocs/redroid/`](../../../core/pocs/redroid/README.md) · [`core/pocs/android-studio/`](../../../core/pocs/android-studio/README.md)
+- Runtime: [`pocs/redroid/`](../../pocs/redroid/README.md) · [`pocs/android-studio/`](../../pocs/android-studio/README.md)

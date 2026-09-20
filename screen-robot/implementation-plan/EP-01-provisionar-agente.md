@@ -4,7 +4,7 @@
 **Épico:** [`2.epics.md`](../2.epics.md).  
 **US:** [`1.stories.md`](../1.stories.md) · [`4.scenarios.md#ep-01--provisionar-agente`](../4.scenarios.md#ep-01--provisionar-agente) · [`5.bdds.md#ep-01--provisionar-agente`](../5.bdds.md#ep-01--provisionar-agente).  
 **Biblioteca:** [`../sources/lib/provision.js`](../sources/lib/provision.js) — **único método público:** `provisionEmulator`.  
-**Runtime:** [`../../core/pocs/redroid/`](../../core/pocs/redroid/README.md) · [`../../core/pocs/android-studio/`](../../core/pocs/android-studio/README.md).
+**Runtime:** [`../pocs/redroid/`](../pocs/redroid/README.md) · [`../pocs/android-studio/`](../pocs/android-studio/README.md).
 
 **Stack:** Node ≥ 18 · JavaScript · `adb` · Docker/Colima (redroid) ou AVD.
 

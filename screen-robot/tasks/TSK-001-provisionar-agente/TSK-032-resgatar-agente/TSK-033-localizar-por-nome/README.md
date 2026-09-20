@@ -13,7 +13,7 @@
 
 ## Execução
 
-- Resolver container/runtime e serial associados ao nome
+- Resolver AVD/emulador e serial associados ao nome
 
 ## Saídas
 

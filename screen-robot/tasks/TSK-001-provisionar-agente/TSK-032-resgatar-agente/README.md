@@ -15,7 +15,7 @@
 ## Execução
 
 - `provisionEmulator({ name })` com nome já registrado — encapsula SC-25→26
-- Não cria container novo
+- Não cria AVD/emulador novo
 
 ## Saídas
 

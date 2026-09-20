@@ -12,12 +12,12 @@
 
 - Stories / épicos: [`1.stories.md`](../../1.stories.md) · [`2.epics.md`](../../2.epics.md)
 - Cenários SC-01..03 · SC-25..26 · SC-28 e BDDs
-- Host com `adb` + runtime Android (qualquer vendor) com identidade mascarada
+- Host com `adb` + AVD (Google APIs/Play) com identidade mascarada
 - Stack: Node ≥ 18 · JS
 
 ## Execução
 
-- `provisionEmulator(cfg)` — **nome** obrigatório; cria **container novo**; aloca serial/porta
+- `provisionEmulator(cfg)` — **nome** obrigatório; sobe **AVD/emulador novo**; resolve serial
 - Mesmo `provisionEmulator({ name })` — se o nome já existir, anexa sem criar
 - Filhas: TSK-002→004 (create) · TSK-036 (mascarar identidade) · TSK-032→034 (attach)
 
@@ -32,4 +32,4 @@
 - BDDs: [`5.bdds.md#ep-01--provisionar-agente`](../../5.bdds.md#ep-01--provisionar-agente)
 - Plano: [`implementation-plan/EP-01-provisionar-agente.md`](../../implementation-plan/EP-01-provisionar-agente.md)
 - Código: [`src/lib/provision.js`](../../src/lib/provision.js)
-- Runtime: [`pocs/`](../../pocs/README.md) (mascaramento US-22) · [`pocs/redroid/`](../../pocs/redroid/README.md)
+- Runtime: [`pocs/android-studio/`](../../pocs/android-studio/README.md) · mascaramento [`pocs/`](../../pocs/README.md)

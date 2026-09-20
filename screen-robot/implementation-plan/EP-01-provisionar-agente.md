@@ -4,11 +4,30 @@
 **Épico:** [`2.epics.md`](../2.epics.md).  
 **US:** [`1.stories.md`](../1.stories.md) · [`4.scenarios.md#ep-01--provisionar-agente`](../4.scenarios.md#ep-01--provisionar-agente) · [`5.bdds.md#ep-01--provisionar-agente`](../5.bdds.md#ep-01--provisionar-agente).  
 **Biblioteca:** [`../src/lib/provision.js`](../src/lib/provision.js) — handle: `provisionEmulator` (create-or-attach por `name`). Ops: [`../src/lib/reset-instance.js`](../src/lib/reset-instance.js) — `resetInstance` (fora do handle).  
-**Runtime:** [`../pocs/redroid/`](../pocs/redroid/README.md) · [`../pocs/android-studio/`](../pocs/android-studio/README.md).
+**Runtime:** Android Emulator / AVD via [`../pocs/android-studio/`](../pocs/android-studio/README.md).
 
-**Stack:** Node ≥ 18 · JavaScript · `adb` · Docker/Colima (redroid) ou AVD.
+**Stack:** Node ≥ 18 · JavaScript · `adb` · Android SDK / Emulator (AVD).
 
-**Mascaramento (US-22 · SC-28):** todo runtime (qualquer vendor) **deve** expor identidade de aparelho Android comum, sem o fingerprint do vendor de automação — ver [`../pocs/README.md`](../pocs/README.md#mascarar-identidade-do-aparelho).
+**Mascaramento (US-22 · SC-28):** o AVD **deve** expor identidade de aparelho Android comum, sem o fingerprint do vendor de automação — ver [`../pocs/README.md`](../pocs/README.md#mascarar-identidade-do-aparelho).
+
+---
+
+## Decisões de runtime (AVD)
+
+1. **Por que AVD, não container:** apps de loja (LinkedIn, Instagram, Tinder) precisam de **GMS** + GPU decente. Sem isso a UI fica branca/preta. Não recomendar Android em container para store apps.
+2. **AVD obrigatório:** API 30+ (padrão do projeto), imagem **Google APIs** ou **Google Play**, **arm64** no Apple Silicon.
+3. **Tela branca:** Activity sobe mas a UI não pinta — tipicamente falta GMS ou GPU só software.
+4. **Screenshot/scrcpy preto no login:** frequentemente `FLAG_SECURE` (captura bloqueada) — não é necessariamente crash.
+5. **Multi-agent:** vários AVDs / instâncias do emulator — bem mais pesado que containers; documentar como limitação.
+6. **Scripts** ([`pocs/android-studio/scripts/`](../pocs/android-studio/README.md)): `setup-avd.sh`, `start.sh`, `wait-boot.sh`, `stop.sh`; `reset.sh` planejado (`-wipe-data`) — **gap** até existir.
+7. **Visão interativa:** janela nativa do emulator; scrcpy opcional no serial ADB.
+
+| Caso | Comportamento |
+|------|----------------|
+| Create | Sobe AVD nomeado por `provision.name` (ou `AVD_NAME`) |
+| Attach | Reconecta ao serial existente (`emulator-5554`, …) |
+| `provision.kind` | `"avd"` (default documentado) |
+| `resetInstance` | Default: `pocs/android-studio/scripts/reset.sh` (TODO — gap) |
 
 ---
 
@@ -16,17 +35,17 @@
 
 | ID | Item |
 |----|------|
-| US-01 | Provisionar um agente (container **novo** + **nome**) |
-| SC-01 | Criar container/runtime nomeado |
+| US-01 | Provisionar um agente (AVD/emulador **novo** + **nome**) |
+| SC-01 | Criar AVD/emulador nomeado |
 | SC-02 | Garantir serial ADB online |
 | SC-03 | Aguardar boot completo |
 | US-20 | Resgatar agente existente |
 | SC-25 | Localizar agent pelo nome |
 | SC-26 | Reconectar e confirmar boot |
-| US-22 | Mascarar identidade do aparelho (qualquer vendor) |
+| US-22 | Mascarar identidade do aparelho |
 | SC-28 | Identidade de aparelho de mercado |
 
-**Resultado:** handle com `name` + serial ADB `device` + `sys.boot_completed=1` → pronto para EP-02..06. Vários nomes ⇒ vários containers em paralelo. Identidade aparente = aparelho de mercado ([`pocs/README.md`](../pocs/README.md#mascarar-identidade-do-aparelho)).
+**Resultado:** handle com `name` + serial ADB `device` + `sys.boot_completed=1` → pronto para EP-02..06. Vários nomes ⇒ vários AVDs em paralelo (mais pesado — ver limitação acima). Identidade aparente = aparelho de mercado ([`pocs/README.md`](../pocs/README.md#mascarar-identidade-do-aparelho)).
 
 ---
 
@@ -39,9 +58,9 @@ src/
 │   ├── provision.test.js
 │   ├── reset-instance.js            # resetInstance (ops — wipe + boot)
 │   ├── reset-instance.test.js
-│   ├── start-runtime.js             # cria container novo (nome → porta/serial)
+│   ├── start-runtime.js             # sobe AVD novo (nome → serial)
 │   ├── start-runtime.test.js
-│   ├── attach-runtime.js            # resolve nome → runtime existente
+│   ├── attach-runtime.js            # resolve nome → emulador existente
 │   ├── attach-runtime.test.js
 │   ├── ensure-adb-online.js
 │   ├── ensure-adb-online.test.js
@@ -55,9 +74,9 @@ src/
         ├── ep-01-provisionar-agente.test.js
         ├── us-01-agent-fica-pronto-para-adb.test.js
         └── us-20-resgatar-agente-existente.test.js
-pocs/redroid/
-├── docker-compose.yml               # multi-instância (nome / porta)
-└── scripts/                         # start / stop / reset (down -v)
+pocs/android-studio/
+├── README.md
+└── scripts/                         # setup-avd / start / wait-boot / stop / reset (TODO)
 ```
 
 Unitários ao lado do módulo (deps mock/stub). BDD e2e só US/EP.
@@ -73,15 +92,15 @@ Arquivo: `src/lib/provision.js`.
 ```js
 import { provisionEmulator } from "./lib/provision.js";
 
-// nome novo → cria container
+// nome novo → sobe AVD
 const a = await provisionEmulator({
-  provision: { name: "agent-a", kind: "redroid" },
+  provision: { name: "agent-a", kind: "avd" },
 });
 // → { name, serial, kind, provisionedAt, bootCompleted: true, … }
 
 // mesmo nome → anexa (US-20)
 const again = await provisionEmulator({
-  provision: { name: "agent-a", kind: "redroid" },
+  provision: { name: "agent-a", kind: "avd" },
 });
 ```
 
@@ -91,11 +110,11 @@ Helpers internos (`resolveConfig`, `startRuntime`, `attachRuntime`, `ensureAdbOn
 |------------|--------|
 | **Público (handle)** | `provisionEmulator(cfg)` |
 | **Público (ops)** | `resetInstance(cfg)` — wipe + boot; **não** anexado ao handle |
-| **Privado** | alocar porta/serial · criar/anexar container · ADB · boot |
+| **Privado** | alocar serial · criar/anexar AVD · ADB · boot |
 
-`cfg.provision.name` (ou `cfg.name`) é **obrigatório**. Serial/porta são **alocados** pela lib no create (não fixos na config do caller para multi-agent).
+`cfg.provision.name` (ou `cfg.name`) é **obrigatório**. Serial é **alocado/resolvido** pela lib no create (ex. `emulator-5554`).
 
-`resetInstance` usa `cfg.provision.resetScript` (default: `pocs/redroid/scripts/reset.sh`) e espera ADB + boot. Erros: `RESET_NO_SERIAL` · `RESET_FAILED` · `RESET_UNSUPPORTED`.
+`resetInstance` usa `cfg.provision.resetScript` (default: `pocs/android-studio/scripts/reset.sh` — **gap** se o script ainda não existir) e espera ADB + boot. Erros: `RESET_NO_SERIAL` · `RESET_FAILED` · `RESET_UNSUPPORTED`.
 
 ---
 
@@ -109,9 +128,9 @@ Helpers internos (`resolveConfig`, `startRuntime`, `attachRuntime`, `ensureAdbOn
 |--------|------------------|
 | Caller / CLI | Chama **só** `provisionEmulator(cfg)` e consome o `AgentHandle` |
 | provision.js | Biblioteca: encapsula SC-01→SC-03 (start, ADB, boot) |
-| Runtime (interno) | Cria container novo por `name` (ou resolve existente no attach) |
+| Runtime (interno) | Sobe AVD novo por `name` (ou resolve existente no attach) |
 | AdbClient (interno) | `adb` connect, wait-for-device, getprop — **não** exportado |
-| Device / emulador | Android alvo |
+| Device / emulador | Android alvo (AVD) |
 
 ```mermaid
 ---
@@ -161,7 +180,7 @@ sequenceDiagram
   participant Lib as provision.js
   participant R as Runtime (interno)
   participant A as AdbClient (interno)
-  participant D as Emulador / Device
+  participant D as Emulador / AVD
 
   Dev->>Lib: provisionEmulator(cfg)
   note over Lib: único método público
@@ -170,7 +189,7 @@ sequenceDiagram
   rect rgb(17,17,17)
     note over Lib,D: SC-01 Subir / conectar
     Lib->>R: startRuntime(cfg) se ainda não reachable
-    R->>D: scripts/start.sh (docker/AVD)
+    R->>D: scripts/start.sh (AVD)
     D-->>R: up
     R-->>Lib: reachable
   end
@@ -207,8 +226,8 @@ sequenceDiagram
 |---|----|------|---------|-----------|----------|----------|--------|
 | 1 | Dev | provision.js | `provisionEmulator(cfg)` | **Única** chamada pública | `cfg` | Orquestra SC-01→SC-03 por dentro | Promise `AgentHandle` |
 | 2 | Lib | Lib | `resolveConfig` *(privado)* | Normalizar config | `cfg` + env | Defaults e precedência | config resolvida |
-| 3 | Lib | Runtime | `startRuntime` *(privado)* | Garantir emulador up (SC-01) | `kind`, `startScript?` | Start se não reachable | `reachable` |
-| 4 | Runtime | Device | `scripts/start.sh` | Materializar Android | script | Spawn docker/AVD | `up` |
+| 3 | Lib | Runtime | `startRuntime` *(privado)* | Garantir AVD up (SC-01) | `kind`, `startScript?` | Start se não reachable | `reachable` |
+| 4 | Runtime | Device | `scripts/start.sh` | Materializar Android | script | Spawn emulator/AVD | `up` |
 | 5–6 | Device → Lib | — | reachable | Fechar SC-01 | `up` | Confirma | `true` |
 | 7–14 | Lib ↔ Adb | *(privado)* | connect + wait-for-device | SC-02 | `serial` | Loop até `device` | `online` |
 | 15–18 | Lib ↔ Adb | *(privado)* | getprop boot | SC-03 | `serial` | Poll até `1` | `boot=1` |
@@ -219,17 +238,18 @@ sequenceDiagram
 **API pública** (só isto é importável pelo caller):
 
 ```ts
-// Pré: host com adb; runtime redroid/AVD disponível ou startável
+// Pré: host com adb; AVD disponível ou startável (Google APIs/Play)
 // Erros: PROVISION_NO_SERIAL | PROVISION_START_FAILED | PROVISION_ADB_TIMEOUT | PROVISION_BOOT_TIMEOUT
 
 type ProvisionConfig = {
   device?: string;
   provision?: {
+    name?: string;
     serial?: string;
-    kind?: "adb" | "redroid" | "avd";
+    kind?: "adb" | "avd";
     connectTimeoutMs?: number;
     startScript?: string;
-    /** Path do script de wipe (usado por resetInstance; default redroid/reset.sh). */
+    /** Path do wipe (resetInstance; default pocs/android-studio/scripts/reset.sh). */
     resetScript?: string;
   };
 };
@@ -252,8 +272,8 @@ declare function provisionEmulator(cfg: ProvisionConfig): Promise<AgentHandle>;
 
 const handle = await provisionEmulator({
   provision: {
-    serial: "127.0.0.1:5555",
-    kind: "redroid",
+    name: "agent-a",
+    kind: "avd",
     connectTimeoutMs: 120_000,
   },
 });
@@ -271,12 +291,12 @@ const handle = await provisionEmulator({
 
 | Campo | Tipo | Origem | Descrição |
 |-------|------|--------|-----------|
-| `serial` | `string` | `cfg.provision.serial` \| `cfg.device` \| `ANDROID_SERIAL` | Ex.: `127.0.0.1:5555` |
-| `kind` | `"adb" \| "redroid" \| "avd"` | `cfg.provision.kind` | Runtime alvo |
+| `name` | `string` | `cfg.provision.name` \| `AVD_NAME` | Nome do agent / AVD |
+| `serial` | `string` | `cfg.provision.serial` \| `cfg.device` \| `ANDROID_SERIAL` | Ex.: `emulator-5554` |
+| `kind` | `"adb" \| "avd"` | `cfg.provision.kind` | Default documentado: `"avd"` |
 | `connectTimeoutMs` | `number` | `cfg.provision.connectTimeoutMs` | Default `120000` |
 | `startScript` | `string?` | futuro | Path do script de start (SC-01) |
-| `resetScript` | `string?` | `cfg.provision.resetScript` | Path do wipe (`resetInstance`); default redroid `reset.sh` |
-| `host` | `string?` | futuro | Host Docker/Colima |
+| `resetScript` | `string?` | `cfg.provision.resetScript` | Wipe (`resetInstance`); default `pocs/android-studio/scripts/reset.sh` |
 
 ### AgentHandle (saída)
 
@@ -303,9 +323,9 @@ Absent → Starting → Reachable → AdbOnline → Booted
 
 | Estado | Significado | SC |
 |--------|-------------|-----|
-| `Absent` | Sem processo/container | — |
+| `Absent` | Sem processo/AVD | — |
 | `Starting` | Script de start em curso | SC-01 |
-| `Reachable` | Runtime alcançável (porta/processo) | SC-01 |
+| `Reachable` | Emulador alcançável (processo/serial) | SC-01 |
 | `AdbOnline` | `adb` lista serial como `device` | SC-02 |
 | `Booted` | `sys.boot_completed=1` | SC-03 |
 
@@ -419,8 +439,8 @@ classDiagram
   AgentHandle --> events_js : on
 ```
 
-**Hoje:** `provisionEmulator` exportado; ADB + boot encapsulados; `on` no handle (EP-02); `resetInstance` ops + `pocs/redroid/scripts/reset.sh`.  
-**Gap:** completar `startRuntime` (redroid/AVD) **dentro** da lib, sem expandir a API do handle além do create-or-attach.
+**Hoje:** `provisionEmulator` exportado; ADB + boot encapsulados; `on` no handle (EP-02); `resetInstance` ops; default reset aponta para `pocs/android-studio/scripts/reset.sh` (**gap** — script TODO).  
+**Gap:** completar `startRuntime` (AVD) **dentro** da lib; implementar `reset.sh` (`-wipe-data`); sem expandir a API do handle além do create-or-attach.
 
 ---
 
@@ -433,16 +453,16 @@ Fonte canônica: [`5.bdds.md#ep-01--provisionar-agente`](../5.bdds.md#ep-01--pro
 ```gherkin
 Cenário: US-01 Agent nomeado fica pronto para ADB
   Dado o config com nome único e o runtime Android disponíveis
-  Quando o provisionamento cria um container novo para esse nome, garante serial online e aguarda boot completo
+  Quando o provisionamento cria um AVD/emulador novo para esse nome, garante serial online e aguarda boot completo
   Então o agent está pronto para ADB (nome, serial online e boot ok)
 ```
 
-### SC-01 — Criar container/runtime nomeado
+### SC-01 — Criar AVD/emulador nomeado
 
 ```gherkin
-Cenário: SC-01 Container novo sobe e fica alcançável
-  Dado nome único do agent, host e imagem/runtime
-  Quando a lib aloca serial/porta e cria um container novo ligado ao nome
+Cenário: SC-01 AVD/emulador novo sobe e fica alcançável
+  Dado nome único do agent, host e AVD/runtime
+  Quando a lib aloca serial e sobe um AVD/emulador novo ligado ao nome
   Então o agent nomeado está em execução e alcançável
 ```
 
@@ -478,7 +498,7 @@ Cenário: US-20 Agent existente é resgatado pelo nome
 ```gherkin
 Cenário: SC-25 Runtime é resolvido pelo nome
   Dado o nome de um agent já criado
-  Quando a lib resolve container/runtime e serial associados ao nome
+  Quando a lib resolve AVD/emulador e serial associados ao nome
   Então a referência ao runtime existente está disponível
 ```
 
@@ -488,14 +508,14 @@ Cenário: SC-25 Runtime é resolvido pelo nome
 Cenário: SC-26 Handle anexado fica pronto
   Dado o runtime localizado pelo nome
   Quando adb connect / wait-for-device e poll de boot concluem
-  Então o handle está pronto (serial online, boot ok) sem novo container
+  Então o handle está pronto (serial online, boot ok) sem novo AVD/emulador
 ```
 
 ### US-22 — Mascarar identidade do aparelho
 
 ```gherkin
 Cenário: US-22 Apps veem aparelho de mercado, não o vendor de automação
-  Dado um agent com boot completo em qualquer vendor de runtime
+  Dado um agent com boot completo em AVD
   Quando as props de produto do Android são lidas (ex. ro.product.model)
   Então os valores são de aparelho de mercado e não expõem o fingerprint do vendor
 ```
@@ -504,7 +524,7 @@ Cenário: US-22 Apps veem aparelho de mercado, não o vendor de automação
 
 ```gherkin
 Cenário: SC-28 Identidade de aparelho de mercado
-  Dado agent boot ok e perfil de produto configurado no vendor
+  Dado agent boot ok e perfil de produto configurado no AVD
   Quando getprop (ou equivalente) de ro.product.* é consultado
   Então brand/model/device são de aparelho comum e sem nome do runtime de automação
 ```
@@ -515,19 +535,20 @@ Cenário: SC-28 Identidade de aparelho de mercado
 
 | # | Entrega | SC | Arquivos | Critério |
 |---|---------|-----|----------|----------|
-| I1 | `provisionEmulator` exige `name`; cria se novo | US-01 / SC-01 | `provision.js` · `start-runtime.js` | Container novo |
-| I2 | Alocação de porta/serial por agent | SC-01 | `start-runtime.js` · pocs redroid | N agents em paralelo |
+| I1 | `provisionEmulator` exige `name`; cria se novo | US-01 / SC-01 | `provision.js` · `start-runtime.js` | AVD/emulador novo |
+| I2 | Resolução de serial por agent (AVD) | SC-01 | `start-runtime.js` · `pocs/android-studio` | N agents (limitação RAM) |
 | I3 | `ensureAdbOnline` + `waitBootCompleted` no serial alocado | SC-02/03 | existentes | Encapsulados |
-| I4 | Mesmo `provisionEmulator` anexa se nome existe | US-20 / SC-25..26 | `attach-runtime.js` · `provision.js` | Sem novo container |
+| I4 | Mesmo `provisionEmulator` anexa se nome existe | US-20 / SC-25..26 | `attach-runtime.js` · `provision.js` | Sem novo AVD |
 | I5 | Handle inclui `name` | US-01/20 | `provision.js` | `handle.name` estável |
 | I6 | BDD e2e US-01 / US-20 / EP-01 | — | `test/bdd/` | Aceite multi-agent |
-| I7 | Piloto: limpa screenshots → `resetInstance` → provision | — | `linkedin-login.js` · `reset-instance.js` | Instância do zero |
-| I8 | Mascaramento de identidade (qualquer vendor) | US-22 / SC-28 | `pocs/` · runtime config | Sem fingerprint do vendor |
+| I7 | Piloto: limpa screenshots → `resetInstance` → provision | — | `linkedin-login.js` · `reset-instance.js` · `reset.sh` | Instância do zero |
+| I8 | Mascaramento de identidade (AVD) | US-22 / SC-28 | `pocs/android-studio` | Sem fingerprint do vendor |
+| I9 | `reset.sh` (`-wipe-data`) | — | `pocs/android-studio/scripts/reset.sh` | Gap fechado |
 
 ### Ordem
 
 ```text
-I1 → I2 → I3 → I5 → I4 → I6 → I7 → I8
+I1 → I2 → I3 → I5 → I4 → I6 → I7 → I8 → I9
 ```
 
 ---
@@ -537,11 +558,11 @@ I1 → I2 → I3 → I5 → I4 → I6 → I7 → I8
 | Peça | Status |
 |------|--------|
 | `provisionEmulator` (create-or-attach por `name`) | Existe — evoluir / consolidar |
-| `resetInstance` + `reset.sh` | Existe (ops / piloto) |
+| `resetInstance` + `reset.sh` | Ops existe; script AVD **TODO** (gap) |
 | `attachRuntime` interno | Interno do provision |
-| Alocação multi-porta / multi-container | Gap (POC redroid multi) |
+| Multi-AVD paralelo | Gap / limitação de recursos |
 | Internos ADB / boot | `ensure-adb-online` · `wait-boot-completed` |
-| Mascaramento identidade (US-22) | Parcial — contrato em [`pocs/README.md`](../pocs/README.md); cada vendor aplica |
+| Mascaramento identidade (US-22) | Parcial — contrato em [`pocs/README.md`](../pocs/README.md); AVD aplica |
 | BDD e2e US-01 / US-20 / EP-01 | Estender multi-nome · US-22 |
 
 ---
@@ -551,11 +572,12 @@ I1 → I2 → I3 → I5 → I4 → I6 → I7 → I8
 1. `provisionEmulator({ name })` cria se novo; anexa se o nome já existir  
 2. SC-01..03 e SC-25..26 encapsulados no mesmo método  
 3. Handle com `name`, `serial`, `bootCompleted`  
-4. ≥2 agents simultâneos no e2e  
+4. ≥2 agents simultâneos no e2e (aceitar custo de RAM)  
 5. Piloto LinkedIn: `resetInstance` + provision (screenshots limpos)  
-6. SC-28: identidade de aparelho de mercado em qualquer vendor (sem fingerprint do runtime de automação)  
+6. SC-28: identidade de aparelho de mercado no AVD (sem fingerprint do runtime)  
+7. AVD com Google APIs/Play — UI pintada (sem tela branca por falta de GMS)  
 
 ## Próximos passos
 
-→ Implementar I1–I7 em [`src`](../src/README.md)  
+→ Implementar I1–I9 em [`src`](../src/README.md)  
 → Aceite: [`5.bdds.md#ep-01--provisionar-agente`](../5.bdds.md#ep-01--provisionar-agente)

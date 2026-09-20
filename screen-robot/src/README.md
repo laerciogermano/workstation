@@ -13,7 +13,7 @@ Com o runtime no ar, o Android fica **disponível para controle humano**: espelh
 ```bash
 cd screen-robot/src
 # Node ≥ 18, adb no PATH
-# Docker/Colima se kind=redroid (a lib sobe o container)
+# Android SDK / Emulator (AVD) — kind=avd; Google APIs/Play
 ```
 
 Superfície pública:
@@ -29,43 +29,42 @@ Tudo o mais (gestos, APKs, eventos, extract, sessão) vem no **handle** retornad
 
 ## 1. Provisionar agents — `provisionEmulator(cfg)`
 
-Um único método: **cria** se o `name` for novo; **anexa** se o nome já existir (sem criar outro container).
+Um único método: **cria** se o `name` for novo; **anexa** se o nome já existir (sem criar outro AVD/emulador).
 
 ```js
 const handle = await provisionEmulator({
   provision: {
     name: "agent-a",          // obrigatório ([a-zA-Z0-9_-])
-    kind: "redroid",          // redroid | avd | …
+    kind: "avd",              // default documentado
     connectTimeoutMs: 120_000,
-    // host: "127.0.0.1",     // opcional
   },
 });
 // handle.name · handle.serial · handle.kind · handle.bootCompleted · handle.provisionedAt
 
 // mesmo nome de novo → anexa ao agent existente
 const again = await provisionEmulator({
-  provision: { name: "agent-a", kind: "redroid" },
+  provision: { name: "agent-a", kind: "avd" },
 });
 // again.serial === handle.serial
 ```
 
 | Caso | Comportamento |
 |------|----------------|
-| Nome novo | Aloca porta ADB, sobe container novo, registra, boot ok |
-| Nome já registrado | Reconecta serial existente, boot ok — **não** cria outro |
+| Nome novo | Sobe AVD (`provision.name` / `AVD_NAME`), registra, boot ok |
+| Nome já registrado | Reconecta serial existente (`emulator-5554`, …), boot ok — **não** cria outro |
 | Nome inválido | `PROVISION_INVALID_NAME` |
 
 ### Vários em paralelo
 
 ```js
-const a = await provisionEmulator({ provision: { name: "a", kind: "redroid" } });
-const b = await provisionEmulator({ provision: { name: "b", kind: "redroid" } });
-// a.serial !== b.serial
+const a = await provisionEmulator({ provision: { name: "a", kind: "avd" } });
+const b = await provisionEmulator({ provision: { name: "b", kind: "avd" } });
+// a.serial !== b.serial — limitação: vários AVDs pesam mais RAM
 ```
 
-Não é obrigatório rodar `pocs/redroid/scripts/start.sh` — o create já sobe o container.
+Não é obrigatório rodar `pocs/android-studio/scripts/start.sh` — o create já sobe o AVD.
 
-**US-22:** qualquer vendor deve mascarar identidade — ver [`../pocs/README.md`](../pocs/README.md#mascarar-identidade-do-aparelho).
+**US-22:** mascarar identidade no AVD — ver [`../pocs/README.md`](../pocs/README.md#mascarar-identidade-do-aparelho).
 
 Config de exemplo: [`device.config.json`](device.config.json) (`provision.name`, `kind`, apps, paths).
 
@@ -73,7 +72,7 @@ Config de exemplo: [`device.config.json`](device.config.json) (`provision.name`,
 
 ## 1b. Reset do zero — `resetInstance(cfg)`
 
-Recria a instância limpa (apaga volume Docker e sobe de novo). Usado pelo piloto LinkedIn antes do provision.
+Recria a instância limpa (wipe do AVD e sobe de novo). Usado pelo piloto LinkedIn antes do provision.
 
 ```js
 import { resetInstance } from "./lib/reset-instance.js";
@@ -84,7 +83,7 @@ const { serial, kind, resetAt } = await resetInstance(cfg);
 
 | Item | Detalhe |
 |------|---------|
-| Script default | [`../pocs/redroid/scripts/reset.sh`](../pocs/redroid/README.md) (`docker compose down -v` + `start.sh`) |
+| Script default | [`../pocs/android-studio/scripts/reset.sh`](../pocs/android-studio/README.md) (planejado: `-wipe-data` — **gap**/TODO) |
 | Override | `cfg.provision.resetScript` |
 | Erros | `RESET_NO_SERIAL` · `RESET_FAILED` · `RESET_UNSUPPORTED` |
 
@@ -221,7 +220,7 @@ const elements = await handle.extract();
 |---------|---------|
 | `provisionEmulator` | [`lib/provision.js`](lib/provision.js) |
 | `resetInstance` | [`lib/reset-instance.js`](lib/reset-instance.js) |
-| Container / porta / registry | `start-runtime` · `attach-runtime` · `agent-registry` |
+| AVD / serial / registry | `start-runtime` · `attach-runtime` · `agent-registry` |
 | `installApk` | [`lib/apks.js`](lib/apks.js) |
 | `on` | [`lib/events.js`](lib/events.js) |
 | Gestos / captura | [`lib/operate.js`](lib/operate.js) |
@@ -242,7 +241,7 @@ const elements = await handle.extract();
 ```bash
 cd screen-robot/src
 npm test
-npm run test:e2e   # requer Docker/Colima + adb (maioria dos BDDs)
+npm run test:e2e   # requer AVD (android-studio) + adb (maioria dos BDDs)
 
 # Só SC-30 / fixture LinkedIn
 node --test --test-timeout=120000 test/bdd/sc-30-linkedin-sign-in-with-email.test.js
@@ -278,7 +277,7 @@ Só LinkedIn (sem Instagram). Sem digitar credenciais e sem `saveSession`.
 ```bash
 cd screen-robot/src
 npm run view
-# ou: ./scripts/view.sh --device 127.0.0.1:5555
+# ou: ./scripts/view.sh --device emulator-5554
 ```
 
 Abre **scrcpy** no serial de `device.config.json` (ou `--device`) para visualizar e controlar o Android (tap, digitar, scroll) enquanto a API Node roda.
@@ -290,7 +289,7 @@ Abre **scrcpy** no serial de `device.config.json` (ou `--device`) para visualiza
 Steps avulsos (serial explícito; preferir o handle):
 
 ```bash
-node cli.js tap 360 640 --device 127.0.0.1:5555
+node cli.js tap 360 640 --device emulator-5554
 node cli.js setup-ime
 node cli.js type "olá"
 node cli.js shot ./screenshots/tela.png

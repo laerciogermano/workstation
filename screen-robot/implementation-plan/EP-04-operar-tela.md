@@ -7,7 +7,9 @@
 **Pré-requisito:** [`EP-01`](EP-01-provisionar-agente.md) · [`EP-02`](EP-02-eventos-de-ui.md) (`handle.on` para confirmar app/UI).  
 **Implementação interna:** [`../src/lib/operate.js`](../src/lib/operate.js) (anexado ao handle em `provision.js`).
 
-**Stack:** Node ≥ 18 · JavaScript · `adb` · visão/OCR (coords) · runtime provisionado.
+**Stack:** Node ≥ 18 · JavaScript · `adb` · visão/OCR (coords) · runtime AVD provisionado.
+
+**Runtime (UI útil):** operar/capturar exige tela pintada — AVD com **Google APIs / Play** (GMS). Tela branca = falta GMS/GPU; screenshot preto no login muitas vezes = `FLAG_SECURE`. Detalhe: [Decisões de runtime (AVD)](EP-01-provisionar-agente.md#decisões-de-runtime-avd).
 
 **Princípio:** gestos (`tap`/`type`) usam **coords vindas de visão/OCR** sobre o frame.  
 **Type:** digita **só tocando teclas** localizadas por OCR na **imagem do teclado** (região opcional); **proibido** `adb input text` / ADBKeyboard / inject.

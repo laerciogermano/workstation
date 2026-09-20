@@ -1,4 +1,4 @@
-# Container nomeado
+# AVD/emulador nomeado
 
 | Campo | Valor |
 |-------|--------|
@@ -10,14 +10,14 @@
 
 ## Entradas
 
-- Nome único do agent (`provision.name`)
-- Host, imagem/runtime (`kind`)
+- Nome único do agent (`provision.name` / `AVD_NAME`)
+- `kind: "avd"`
 
 ## Execução
 
-- Interno: alocar porta/serial livre; criar **container novo** ligado ao nome
+- Interno: resolver serial; subir **AVD/emulador novo** ligado ao nome
 - Falhar com `PROVISION_NAME_TAKEN` se o nome já existir
-- Confirmar processo/porta alcançável
+- Confirmar processo/serial alcançável
 
 ## Saídas
 
@@ -28,4 +28,4 @@
 
 - Cenário / BDD: [`4.scenarios.md`](../../../4.scenarios.md#ep-01--provisionar-agente) · [`5.bdds.md`](../../../5.bdds.md#ep-01--provisionar-agente)
 - Plano: [`EP-01-provisionar-agente.md`](../../../implementation-plan/EP-01-provisionar-agente.md)
-- Runtime: [`pocs/redroid/`](../../../pocs/redroid/README.md)
+- Runtime: [`pocs/android-studio/`](../../../pocs/android-studio/README.md)

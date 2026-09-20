@@ -7,7 +7,9 @@
 **Pré-requisito:** [`EP-01`](EP-01-provisionar-agente.md) · `provisionEmulator` → handle.  
 **Implementação interna:** [`../src/lib/apks.js`](../src/lib/apks.js) (anexado ao handle em `provision.js`).
 
-**Stack:** Node ≥ 18 · JavaScript · `adb` · runtime provisionado (EP-01).
+**Stack:** Node ≥ 18 · JavaScript · `adb` · runtime AVD provisionado (EP-01).
+
+**Runtime (UI útil):** instalar/abrir apps de loja exige AVD com **Google APIs / Play** (GMS) — ver [Decisões de runtime (AVD)](EP-01-provisionar-agente.md#decisões-de-runtime-avd). Sem GMS a app pode instalar mas a UI fica branca/preta.
 
 ---
 

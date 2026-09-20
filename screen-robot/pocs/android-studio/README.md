@@ -1,18 +1,17 @@
 # Android Studio / Emulator (ConnectMax)
 
-Android via **emulador oficial** (SDK / Android Studio), com janela nativa do emulator.
+**Único runtime documentado** do screen-robot: Android via **emulador oficial** (SDK / Android Studio) — `provision.kind: `"avd"`.
 
-Usado quando o redroid (Docker) não cabe no host — por exemplo macOS sem binder — ou quando precisa de **câmera virtual** (OBS) com vídeo de teste.
-
-Projeto irmão: [`../redroid`](../redroid/README.md) (Android em container).
+Apps de loja (LinkedIn, Instagram, Tinder) exigem imagem **Google APIs** ou **Google Play** (GMS). Em Apple Silicon: **arm64**. Não use Android em container para esses apps.
 
 ## Requisitos
 
 | Item | Detalhe |
 |------|---------|
-| macOS / Linux | Host com RAM livre (o AVD leve usa ~384–768 MB guest; o processo host consome bem mais) |
+| macOS / Linux | Host com RAM livre (AVD leve ~384–768 MB guest; processo host consome bem mais) |
 | SDK | `ANDROID_HOME` apontando para command-line tools ou Android Studio SDK |
 | Ferramentas | `emulator`, `adb`, `avdmanager`, `sdkmanager` |
+| System image | **Google APIs** ou **Google Play**, API 30+ (arm64 no Apple Silicon) |
 | Opcional | [Android Studio](https://developer.android.com/studio), [OBS](https://obsproject.com/) (Virtual Camera) |
 
 Neste Mac o SDK costuma estar em:
@@ -26,10 +25,10 @@ Neste Mac o SDK costuma estar em:
 ```bash
 cd screen-robot/pocs/android-studio
 
-# 1) cria/atualiza o AVD ConnectMax_Cam (API 30, arm64, leve)
+# 1) cria/atualiza o AVD (API 30+, Google APIs/Play, arm64)
 ./scripts/setup-avd.sh
 
-# 2) sobe o emulador (janela do Android Emulator)
+# 2) sobe o emulador (janela nativa)
 ./scripts/start.sh
 
 # 3) espera boot
@@ -50,11 +49,24 @@ Parar:
 ./scripts/stop.sh
 ```
 
+**Reset (wipe):** `scripts/reset.sh` — planejado (`emulator -wipe-data` / recriar AVD). Gap até existir; override via `provision.resetScript`.
+
 ### Pelo Android Studio
 
 1. Instale o Android Studio e abra **Device Manager**.
-2. Crie um AVD (API 30+, Google APIs, arm64 no Apple Silicon) com o nome `ConnectMax_Cam`, **ou** use o criado por `./scripts/setup-avd.sh`.
+2. Crie um AVD (API 30+, **Google APIs** ou **Play Store**, arm64 no Apple Silicon) com o nome `ConnectMax_Cam`, **ou** use o criado por `./scripts/setup-avd.sh`.
 3. Rode o AVD pelo Studio **ou** pelos scripts acima (mesma pasta `~/.android/avd`).
+
+## Create / Attach (lib)
+
+| Caso | Comportamento |
+|------|----------------|
+| Create | Sobe AVD nomeado por `provision.name` (ou `AVD_NAME`) |
+| Attach | Reconecta ao serial do emulador existente (`emulator-5554`, …) |
+
+## Visão interativa
+
+Janela nativa do emulator. scrcpy é opcional no serial ADB (`npm run view` em [`../../src/`](../../src/README.md)).
 
 ## Câmera com vídeo (OBS)
 
@@ -81,9 +93,9 @@ Vídeo padrão: `media/sample.mp4`. Pode passar outro:
 
 ## Aplicar mascaramento neste vendor
 
-Requisito geral (qualquer vendor): [`../README.md`](../README.md#mascarar-identidade-do-aparelho) · US-22 / SC-28.
+Requisito: [`../README.md`](../README.md#mascarar-identidade-do-aparelho) · US-22 / SC-28.
 
-Neste POC (AVD), use um **device definition / skin** de aparelho de mercado no `avdmanager`/`setup-avd.sh` (não um perfil genérico “emulator” óbvio) e revise `ro.product.*` no `config.ini` / build props do AVD quando necessário. Apps devem ver marca/modelo de aparelho comum, não o fingerprint do vendor de automação.
+Neste POC (AVD), use um **device definition / skin** de aparelho de mercado no `avdmanager`/`setup-avd.sh` (não um perfil genérico “emulator” óbvio) e revise `ro.product.*` no `config.ini` / build props do AVD quando necessário.
 
 ## Variáveis
 
@@ -91,7 +103,7 @@ Neste POC (AVD), use um **device definition / skin** de aparelho de mercado no `
 |----------|--------|--------|
 | `ANDROID_HOME` | `/opt/homebrew/share/android-commandlinetools` | SDK |
 | `JAVA_HOME` | OpenJDK Homebrew | Java do sdkmanager/emulator |
-| `AVD_NAME` | `ConnectMax_Cam` | Nome do AVD |
+| `AVD_NAME` | `ConnectMax_Cam` | Nome do AVD (`provision.name`) |
 | `EMU_MEMORY` | `384` | RAM guest (MB) — aumente se o host tiver folga |
 | `EMU_CORES` | `1` | CPUs guest |
 
@@ -109,6 +121,7 @@ screen-robot/pocs/android-studio/
     ├── start.sh
     ├── stop.sh
     ├── wait-boot.sh
+    ├── reset.sh          # planejado (TODO — wipe-data)
     ├── install-instagram.sh
     ├── open-camera.sh
     └── start-obs-camera.sh
@@ -118,8 +131,11 @@ screen-robot/pocs/android-studio/
 
 | Sintoma | O que fazer |
 |---------|-------------|
-| Emulador sobe e morre | Falta de RAM no host; feche apps, baixe `EMU_MEMORY`, não rode Colima+redroid ao mesmo tempo |
-| Não digita no emulador | `hw.keyboard=yes` no AVD (o `setup-avd.sh` já aplica); reinicie o emulador e clique na janela antes de digitar |
-| Camera preta / placeholder | OBS Virtual Camera não aprovada no macOS, ou emulador usando a webcam errada (`emulator -webcam-list`) |
+| Tela branca | Activity sobe mas UI não pinta — falta GMS (use Google APIs/Play) ou GPU só software |
+| Screenshot/scrcpy preto no login | Muitas vezes `FLAG_SECURE` (captura bloqueada), não crash |
+| Emulador sobe e morre | Falta de RAM no host; feche apps, baixe `EMU_MEMORY` |
+| Não digita no emulador | `hw.keyboard=yes` no AVD (o `setup-avd.sh` já aplica); reinicie e clique na janela |
+| Camera preta / placeholder | OBS Virtual Camera não aprovada no macOS, ou webcam errada (`emulator -webcam-list`) |
 | `emulator: command not found` | Exporte `ANDROID_HOME` e `PATH` (veja `start.sh`) |
 | Disco cheio | AVD e system images pesam vários GB; limpe `~/.android` / imagens antigas |
+| Multi-agent pesado | Vários AVDs consomem bem mais RAM que containers — limitação documentada |

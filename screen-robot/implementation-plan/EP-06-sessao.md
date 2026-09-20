@@ -175,8 +175,8 @@ Ilustrativo da API EP-06 (o piloto LinkedIn atual **não** grava sessão):
 
 ```json
 {
-  "serial": "127.0.0.1:5555",
-  "kind": "redroid",
+  "serial": "emulator-5554",
+  "kind": "avd",
   "step": "ready",
   "apps": {
     "linkedin": {

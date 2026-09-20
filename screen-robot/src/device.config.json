@@ -1,9 +1,11 @@
 {
-  "device": "127.0.0.1:5555",
+  "device": "emulator-5554",
   "provision": {
-    "kind": "adb",
-    "serial": "127.0.0.1:5555",
-    "connectTimeoutMs": 120000
+    "name": "ConnectMax_Cam",
+    "kind": "avd",
+    "serial": "emulator-5554",
+    "connectTimeoutMs": 120000,
+    "resetScript": "../pocs/android-studio/scripts/reset.sh"
   },
   "apps": {
     "instagram": {

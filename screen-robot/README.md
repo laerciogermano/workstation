@@ -19,7 +19,7 @@ O **screen-robot** é um agent Android controlado por código Node: provisiona o
 
 Além da automação por API, a instância Android permanece **disponível para controle interativo**: visualizar a tela (espelhamento) e operar manualmente — tocar, digitar, rolar e demais gestos — em paralelo ou em complemento ao código.
 
-O runtime Android (qualquer **vendor**/kind: container, AVD, etc.) **deve mascarar** a identidade do ambiente: apps e telas **não** devem ver o nome do emulador/vendor, e sim props de um aparelho Android comum (marca/modelo de mercado).
+O runtime Android (**AVD** via [`pocs/android-studio/`](pocs/android-studio/README.md)) **deve mascarar** a identidade do ambiente: apps e telas **não** devem ver o nome do emulador/vendor, e sim props de um aparelho Android comum (marca/modelo de mercado).
 
 ## Mascarar identidade do aparelho
 
@@ -66,12 +66,13 @@ API em [`src/`](src/README.md). Superfície do handle: `provisionEmulator(cfg)` 
 |------|---------|
 | Node | ≥ 18 |
 | `adb` | no `PATH` |
-| Docker/Colima | para `kind: "redroid"` (lib sobe **container novo** por nome) — ver [`pocs/redroid/`](pocs/redroid/README.md) |
+| Android SDK / Emulator | runtime **AVD** (`kind: "avd"`) — ver [`pocs/android-studio/`](pocs/android-studio/README.md) |
+| System image | **Google APIs** ou **Google Play** (arm64 no Apple Silicon) — GMS para LinkedIn/Instagram/Tinder |
 | Opcional | [`apkeep`](https://github.com/EFForg/apkeep) para baixar XAPK |
 
-A lib sobe o container quando o `name` é novo. Com o mesmo `name` de novo, só reconecta. Não é necessário rodar `start.sh` manualmente nesse fluxo.
+Create = sobe AVD nomeado por `provision.name` (ou `AVD_NAME`). Attach = reconecta ao serial existente (`emulator-5554`, …). Não é necessário rodar `start.sh` manualmente nesse fluxo.
 
-**Controle interativo da tela:** com o agent no ar, use [`src/scripts/view.sh`](src/scripts/view.sh) (`cd src && npm run view`) para visualizar e operar o Android (tocar, digitar, etc.) enquanto a API Node também pode automatizar.
+**Controle interativo da tela:** janela nativa do emulator; opcionalmente [`src/scripts/view.sh`](src/scripts/view.sh) (`cd src && npm run view`) / scrcpy enquanto a API Node automatiza.
 
 ### 2. Configuração
 
@@ -79,16 +80,16 @@ Edite [`src/device.config.json`](src/device.config.json):
 
 | Campo | Uso |
 |-------|-----|
-| `provision.name` | **Obrigatório** — id do agent |
-| `provision.kind` | `redroid` · `avd` · … |
+| `provision.name` | **Obrigatório** — id do agent / nome do AVD |
+| `provision.kind` | `"avd"` (default documentado) |
 | `provision.connectTimeoutMs` | Timeout de boot/conexão |
 | `apps.*` | `package`, `version`, `artifact` (path local) ou `source` (download) |
-| `provision.resetScript` | Opcional — script de wipe (`resetInstance`); default = `pocs/redroid/scripts/reset.sh` |
+| `provision.resetScript` | Opcional — wipe (`resetInstance`); default = `pocs/android-studio/scripts/reset.sh` (TODO — gap) |
 | `session.path` | Path genérico de sessão (API EP-06; o piloto atual **não** grava sessão) |
 | `screenshot.path` | Path ilustrativo na config; o piloto usa nomes fixos em `screenshots/` |
 | `credentials.linkedin.*Env` | Reservado para login completo (piloto atual **não** digita user/senha) |
 
-Serial/porta são **alocados** pela lib por agent (não fixar um único `127.0.0.1:5555` para multi-instância).
+Serial é **resolvido** pela lib por agent (ex. `emulator-5554`).
 
 ### 3. Fluxo típico (código)
 
@@ -96,15 +97,15 @@ Serial/porta são **alocados** pela lib por agent (não fixar um único `127.0.0
 import { provisionEmulator } from "./lib/provision.js";
 
 const a = await provisionEmulator({
-  provision: { name: "agent-a", kind: "redroid" },
+  provision: { name: "agent-a", kind: "avd" },
 });
 const b = await provisionEmulator({
-  provision: { name: "agent-b", kind: "redroid" },
+  provision: { name: "agent-b", kind: "avd" },
 });
-// a.serial !== b.serial — containers distintos
+// a.serial !== b.serial — AVDs distintos (mais pesado — ver EP-01)
 
 const again = await provisionEmulator({
-  provision: { name: "agent-a", kind: "redroid" },
+  provision: { name: "agent-a", kind: "avd" },
 });
 // again.serial === a.serial — anexou sem criar
 ```
@@ -148,7 +149,7 @@ await handle.removeSession("./state/session.json");
 | Método | O quê |
 |--------|--------|
 | `provisionEmulator(cfg)` | Cria se `name` novo; anexa se já existir; aloca serial; boot ok |
-| `resetInstance(cfg)` | **Ops** (não é método do handle): wipe do volume + sobe de novo; ADB + boot ok |
+| `resetInstance(cfg)` | **Ops** (não é método do handle): wipe do AVD + sobe de novo; ADB + boot ok |
 | `installApk(app)` | Lê spec → baixa se preciso → instala; retorna `{ package, version, skipped }` |
 | `on(event, opts?, cb?)` | `boot` · `app_open` · `ui_stable` · `frame_change` |
 | `launch(pkg, activity?)` | Abre app |

@@ -10,7 +10,7 @@ README.md (visão)
 ├── 1.stories.md
 ├── 2.epics.md                  # EP → US + prioridade
 ├── 3.roadmap.md                # Gantt priorizado
-├── 4.scenarios/                # US → SC (por EP; refino pós-roadmap)
+├── 4.scenarios.md               # US → SC (arquivo único; refino pós-roadmap)
 ├── 5.bdds/                     # Gherkin (por EP)
 ├── 6.prototype.md              # opcional
 ├── 7.tasks.md                  # Gantt TSK

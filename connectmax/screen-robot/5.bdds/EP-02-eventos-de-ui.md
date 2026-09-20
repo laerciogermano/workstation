@@ -1,6 +1,6 @@
 # BDDs — EP-02 Eventos de UI
 
-**Por quê:** aceite Gherkin das US/SC do épico (fonte: [`../4.scenarios/EP-02-eventos-de-ui.md`](../4.scenarios/EP-02-eventos-de-ui.md)).  
+**Por quê:** aceite Gherkin das US/SC do épico (fonte: [`../4.scenarios.md#ep-02--eventos-de-ui`](../4.scenarios.md#ep-02--eventos-de-ui)).  
 **Índice:** [`README.md`](README.md) · **Plano:** [`../implementation-plan/EP-02-eventos-de-ui.md`](../implementation-plan/EP-02-eventos-de-ui.md).
 
 **US:** US-02..05 · **SC:** SC-04..07.

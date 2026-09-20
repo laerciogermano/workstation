@@ -9,7 +9,7 @@ Ordem **obrigatória** — não pular nem inverter:
 1. **Stories** — [`1.stories.md`](1.stories.md): US com título + descrição de como funciona.
 2. **Epics** — [`2.epics.md`](2.epics.md): EP que agrupam US, entregam valor e têm **prioridade**.
 3. **Roadmap** — [`3.roadmap.md`](3.roadmap.md): Gantt EP → US com a prioridade dos épicos (sem SC; barra = duração da atividade).
-4. **Cenários** — [`4.scenarios.md`](4.scenarios.md) ou pasta `4.scenarios/`: refinar cada US → SC (sem Gherkin; por EP se pasta).
+4. **Cenários** — [`4.scenarios.md`](4.scenarios.md): refinar cada US → SC (sem Gherkin; arquivo único).
 5. **BDDs** — [`5.bdds.md`](5.bdds.md) ou pasta `5.bdds/`: Dado / Quando / Então por **US** e por **SC**.
 6. **Protótipo** — [`6.prototype.md`](6.prototype.md): opcional; validação visual/interativa do que foi especificado.
 7. **Tasks** — [`7.tasks.md`](7.tasks.md) / `tasks.md` do projeto: Gantt TSK + EP/US/SC em cada barra + inventário.
@@ -77,7 +77,7 @@ US-02 — Fazer login
 | 1 | [`1.stories.md`](1.stories.md) | US título + descrição |
 | 2 | [`2.epics.md`](2.epics.md) | EP → lista de US + prioridade |
 | 3 | [`3.roadmap.md`](3.roadmap.md) / roadmap do projeto | Gantt EP/US priorizado |
-| 4 | [`4.scenarios.md`](4.scenarios.md) / `4.scenarios/` | US → SC (opcional por EP) |
+| 4 | [`4.scenarios.md`](4.scenarios.md) | US → SC (arquivo único) |
 | 5 | [`5.bdds.md`](5.bdds.md) / `5.bdds/` | Aceite Gherkin por US e SC |
 | 6 | [`6.prototype.md`](6.prototype.md) / protótipo do projeto | Opcional; validação visual/interativa |
 | 7 | [`7.tasks.md`](7.tasks.md) / `tasks.md` do projeto | Gantt TSK + EP/US/SC + inventário |

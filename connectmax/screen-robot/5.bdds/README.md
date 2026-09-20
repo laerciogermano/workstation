@@ -1,7 +1,7 @@
 # BDDs — screen-robot
 
 **Por quê:** um arquivo Gherkin (US/SC) por épico.  
-**Cenários:** [`../4.scenarios/`](../4.scenarios/README.md) · **Épicos:** [`../2.epics.md`](../2.epics.md).  
+**Cenários:** [`../4.scenarios.md`](../4.scenarios.md) · **Épicos:** [`../2.epics.md`](../2.epics.md).  
 **Piloto:** script [`../sources/android-control/scripts/linkedin-login.js`](../sources/android-control/scripts/linkedin-login.js).  
 **Visão:** [`../README.md`](../README.md).
 

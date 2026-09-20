@@ -1,6 +1,6 @@
 # BDDs — EP-05 Extrair elementos
 
-**Por quê:** aceite Gherkin das US/SC do épico (fonte: [`../4.scenarios/EP-05-extrair-elementos.md`](../4.scenarios/EP-05-extrair-elementos.md)).  
+**Por quê:** aceite Gherkin das US/SC do épico (fonte: [`../4.scenarios.md#ep-05--extrair-elementos`](../4.scenarios.md#ep-05--extrair-elementos)).  
 **Índice:** [`README.md`](README.md) · **Plano:** [`../implementation-plan/EP-05-extrair-elementos.md`](../implementation-plan/EP-05-extrair-elementos.md).
 
 **US:** US-13..16 · **SC:** SC-17..21.

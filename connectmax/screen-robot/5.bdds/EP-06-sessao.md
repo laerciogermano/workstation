@@ -1,6 +1,6 @@
 # BDDs — EP-06 Sessão
 
-**Por quê:** aceite Gherkin das US/SC do épico (fonte: [`../4.scenarios/EP-06-sessao.md`](../4.scenarios/EP-06-sessao.md)).  
+**Por quê:** aceite Gherkin das US/SC do épico (fonte: [`../4.scenarios.md#ep-06--sessao`](../4.scenarios.md#ep-06--sessao)).  
 **Índice:** [`README.md`](README.md) · **Plano:** [`../implementation-plan/EP-06-sessao.md`](../implementation-plan/EP-06-sessao.md).
 
 **US:** US-17..19 · **SC:** SC-22..24.

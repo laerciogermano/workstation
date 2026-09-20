@@ -78,7 +78,7 @@ async function main() {
 
   console.log("5) Clicar Sign in with Email…");
   {
-    const { elements } = extractElements(handle.serial);
+    const { elements } = await extractElements(handle.serial);
     const btn = findSignInWithEmail(elements);
     if (btn?.center) {
       console.log(`   → ${btn.label || btn.text}`);

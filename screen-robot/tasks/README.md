@@ -35,7 +35,8 @@ tasks/
 │   ├── TSK-017-type/
 │   ├── TSK-018-scroll/
 │   ├── TSK-019-screenshot/
-│   └── TSK-020-resgatar-coordenadas/
+│   ├── TSK-020-resgatar-coordenadas/
+│   └── TSK-035-abrir-scrcpy/
 ├── TSK-021-extrair-elementos/
 │   ├── TSK-022-extrair-arvore-dom/
 │   ├── TSK-023-extrair-textos/
@@ -61,6 +62,7 @@ tasks/
 | TSK-011..013 | Filhas EP-03 | sob `TSK-010-instalar-apks/` |
 | TSK-014 | Operar tela | [`TSK-014-operar-tela/`](TSK-014-operar-tela/README.md) |
 | TSK-015..020 | Filhas EP-04 | sob `TSK-014-operar-tela/` |
+| TSK-035 | Abrir scrcpy | [`TSK-035-abrir-scrcpy/`](TSK-014-operar-tela/TSK-035-abrir-scrcpy/README.md) |
 | TSK-021 | Extrair elementos | [`TSK-021-extrair-elementos/`](TSK-021-extrair-elementos/README.md) |
 | TSK-022..027 | Filhas EP-05 | sob `TSK-021-extrair-elementos/` |
 | TSK-028 | Sessão | [`TSK-028-sessao/`](TSK-028-sessao/README.md) |

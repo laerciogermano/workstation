@@ -136,6 +136,7 @@ handle.type("olá");                                    // ASCII via input; unic
 handle.scroll({ direction: "down", distance: 800 });   // up|down|left|right; x/y opcionais
 const shot = handle.screenshot("./screenshots/tela.png");
 const { x, y, confidence } = await handle.matchImage("./templates/btn.png");
+// await handle.openScrcpy(); // US-21 / TSK-035 — gap
 ```
 
 | Método | Erros tipados |

@@ -149,6 +149,7 @@ await handle.removeSession("./state/session.json");
 | `scroll({ direction, distance, x?, y? })` | Swipe |
 | `screenshot(path)` | Grava PNG |
 | `matchImage(templatePath)` | `{ x, y, confidence }` |
+| `openScrcpy(opts?)` | Abre scrcpy no serial do handle (US-21 · gap → TSK-035) |
 | `extract()` | Árvore DOM progressiva |
 | `saveSession` / `restoreSession` / `removeSession` | Persistência JSON |
 

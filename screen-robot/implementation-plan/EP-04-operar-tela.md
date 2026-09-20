@@ -21,9 +21,10 @@
 | US-10 | scroll |
 | US-11 | screenshot |
 | US-12 | Resgatar coordenadas x,y a partir de uma imagem |
-| SC-11..16 | Cenários correspondentes |
+| US-21 | Abrir scrcpy (espelhar tela) |
+| SC-11..16 · SC-27 | Cenários correspondentes |
 
-**Resultado:** gestos e captura via `handle.launch` / `tap` / `type` / `scroll` / `screenshot` / `matchImage`.
+**Resultado:** gestos e captura via `handle.launch` / `tap` / `type` / `scroll` / `screenshot` / `matchImage` / `openScrcpy`.
 
 ---
 
@@ -32,13 +33,16 @@
 ```text
 src/
 ├── lib/
-│   ├── operate.js                 # createOperate → handle.launch/tap/type/scroll/screenshot/matchImage
+│   ├── operate.js                 # createOperate → handle.launch/tap/…/openScrcpy
 │   ├── operate.test.js
 │   └── provision.js               # anexa operate ao handle
+├── scripts/
+│   └── view.sh                    # CLI/legado; openScrcpy reutiliza a mesma lógica
 └── test/
     └── bdd/
         ├── ep-04-operar-tela.test.js
-        └── us-07-abrir-aplicativo.test.js
+        ├── us-07-abrir-aplicativo.test.js
+        └── us-21-abrir-scrcpy.test.js
 ```
 
 ---
@@ -61,12 +65,13 @@ await handle.type("olá");
 await handle.scroll({ direction: "down", distance: 800 });
 await handle.screenshot("./screenshots/tela.png");
 const { x, y } = await handle.matchImage("./templates/btn.png");
+await handle.openScrcpy(); // janela scrcpy no serial do handle
 ```
 
 | Superfície | O quê |
 |------------|--------|
-| **Público** | `handle.launch` · `tap` · `type` · `scroll` · `screenshot` · `matchImage` |
-| **Privado** | am start · input tap/text/swipe · screencap · template match |
+| **Público** | `handle.launch` · `tap` · `type` · `scroll` · `screenshot` · `matchImage` · `openScrcpy` |
+| **Privado** | am start · input tap/text/swipe · screencap · template match · spawn scrcpy |
 
 ---
 
@@ -239,12 +244,13 @@ Fonte: [`5.bdds.md#ep-04--operar-tela`](../5.bdds.md#ep-04--operar-tela). “Qua
 | I5 | `scroll` | SC-14 | US-10 |
 | I6 | `screenshot` | SC-15 | US-11 |
 | I7 | `matchImage` | SC-16 | US-12 |
-| I8 | Piloto: `launch` · `screenshot` tela inicial · `extract` | — | linkedin-login | Taps (Sign in with Email) após validar UI nova |
+| I8 | `openScrcpy` no handle (serial implícito) | SC-27 | US-21 |
+| I9 | Piloto: `launch` · `screenshot` tela inicial · `extract` | — | linkedin-login |
 
 ### Ordem
 
 ```text
-I1 → I2 → I3 → I4 → I5 → I6 → I7 → I8
+I1 → I2 → I3 → I4 → I5 → I6 → I7 → I8 → I9
 ```
 
 ---
@@ -255,6 +261,7 @@ I1 → I2 → I3 → I4 → I5 → I6 → I7 → I8
 |------|--------|
 | `createOperate` → handle | Existe |
 | `launch` / `tap` / `type` / `scroll` / `screenshot` / `matchImage` | Existe |
+| `openScrcpy` | Gap — script [`scripts/view.sh`](../src/scripts/view.sh) |
 | Legado `operate.*(serial, …)` | Deprecado |
 
 ---
@@ -262,8 +269,8 @@ I1 → I2 → I3 → I4 → I5 → I6 → I7 → I8
 ## Critério de pronto (épico)
 
 1. Caller só usa métodos do handle  
-2. SC-11..16 encapsulados  
-3. BDDs US-07 + EP-04  
+2. SC-11..16 e SC-27 encapsulados  
+3. BDDs US-07 · US-21 · EP-04  
 
 ## Próximos passos
 

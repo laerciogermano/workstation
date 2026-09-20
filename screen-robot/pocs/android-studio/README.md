@@ -79,6 +79,12 @@ Vídeo padrão: `media/sample.mp4`. Pode passar outro:
 ./scripts/start-obs-camera.sh /caminho/para/video.mp4
 ```
 
+## Aplicar mascaramento neste vendor
+
+Requisito geral (qualquer vendor): [`../README.md`](../README.md#mascarar-identidade-do-aparelho).
+
+Neste POC (AVD), use um **device definition / skin** de aparelho de mercado no `avdmanager`/`setup-avd.sh` (não um perfil genérico “emulator” óbvio) e revise `ro.product.*` no `config.ini` / build props do AVD quando necessário. Apps devem ver marca/modelo de aparelho comum, não o fingerprint do vendor de automação.
+
 ## Variáveis
 
 | Variável | Padrão | Efeito |

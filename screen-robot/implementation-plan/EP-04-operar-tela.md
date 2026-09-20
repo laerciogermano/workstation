@@ -251,5 +251,5 @@ I1 → I2 → I3 → I4 → I5 → I6 → I7 → I8
 
 ## Próximos passos
 
-→ Implementar I1–I8 em [`sources`](../src/README.md)  
+→ Implementar I1–I8 em [`src`](../src/README.md)  
 → Aceite: [`5.bdds.md#ep-04--operar-tela`](../5.bdds.md#ep-04--operar-tela)

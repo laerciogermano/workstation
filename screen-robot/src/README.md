@@ -1,4 +1,4 @@
-# Sources — screen-robot
+# src — screen-robot
 
 API **Node** do screen-robot sobre ADB: provisionar agent, instalar APKs, eventos, operar, extrair UI, sessão.
 

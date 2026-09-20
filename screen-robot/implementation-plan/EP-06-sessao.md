@@ -305,5 +305,5 @@ I1 → I2 → I3 → I4 → I5
 
 ## Próximos passos
 
-→ Implementar I1–I5 em [`sources`](../src/README.md)  
+→ Implementar I1–I5 em [`src`](../src/README.md)  
 → Aceite: [`5.bdds.md#ep-06--sessao`](../5.bdds.md#ep-06--sessao)

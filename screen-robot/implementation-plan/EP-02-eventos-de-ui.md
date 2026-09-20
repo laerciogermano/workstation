@@ -429,5 +429,5 @@ I1 → I2 → I3 → I4 → I5 → I6
 
 ## Próximos passos
 
-→ Implementar I1–I6 em [`sources`](../src/README.md)  
+→ Implementar I1–I6 em [`src`](../src/README.md)  
 → Aceite: [`5.bdds.md#ep-02--eventos-de-ui`](../5.bdds.md#ep-02--eventos-de-ui)

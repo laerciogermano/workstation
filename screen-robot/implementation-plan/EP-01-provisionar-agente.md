@@ -451,5 +451,5 @@ I1 → I2 → I3 → I4 → I5 → I6
 
 ## Próximos passos
 
-→ Completar gaps I3–I4 em [`sources`](../src/README.md)  
+→ Completar gaps I3–I4 em [`src`](../src/README.md)  
 → Aceite: [`5.bdds.md#ep-01--provisionar-agente`](../5.bdds.md#ep-01--provisionar-agente)

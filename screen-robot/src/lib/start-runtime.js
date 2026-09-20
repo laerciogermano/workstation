@@ -1,17 +1,25 @@
 /**
- * SC-01 — subir runtime até processo/porta alcançável.
+ * SC-01 — criar container/runtime nomeado até porta alcançável.
  * Usado só por provision.js (não faz parte da API pública).
  */
 import { spawnSync } from "node:child_process";
 import net from "node:net";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import {
+  createAgentRegistry,
+  sanitizeAgentName,
+} from "./agent-registry.js";
 import { sleep as defaultSleep } from "./adb.js";
 
 const pocsRoot = path.resolve(
-  path.dirname(fileURLToPath(import.meta.url)),
+  dirnameSafe(),
   "../../pocs",
 );
+
+function dirnameSafe() {
+  return path.dirname(fileURLToPath(import.meta.url));
+}
 
 /** @param {"adb"|"redroid"|"avd"|string} kind */
 export function defaultStartScript(kind) {
@@ -47,10 +55,40 @@ export function isRuntimeReachable(serial, timeoutMs = 1_000) {
   });
 }
 
-function defaultRunStartScript(scriptPath) {
+function isPortFree(host, port) {
+  return new Promise((resolve) => {
+    const server = net.createServer();
+    server.once("error", () => resolve(false));
+    server.once("listening", () => {
+      server.close(() => resolve(true));
+    });
+    server.listen(port, host);
+  });
+}
+
+/**
+ * @param {string} host
+ * @param {number} [from]
+ * @param {number} [to]
+ * @param {{ isPortFree?: Function }} [deps]
+ */
+export async function allocateAdbPort(host = "127.0.0.1", from = 5555, to = 5655, deps = {}) {
+  const free = deps.isPortFree ?? isPortFree;
+  for (let port = from; port <= to; port++) {
+    if (await free(host, port)) return port;
+  }
+  const err = new Error(
+    `PROVISION_START_FAILED: nenhuma porta ADB livre em ${host}:${from}-${to}`,
+  );
+  err.code = "PROVISION_START_FAILED";
+  throw err;
+}
+
+function defaultRunStartScript(scriptPath, env = {}) {
   const r = spawnSync("bash", [scriptPath], {
     encoding: "utf8",
     stdio: "inherit",
+    env: { ...process.env, ...env },
   });
   if (r.status !== 0) {
     const err = new Error(
@@ -62,38 +100,70 @@ function defaultRunStartScript(scriptPath) {
 }
 
 /**
- * @param {{ serial: string, kind: string, connectTimeoutMs?: number, startScript?: string }} resolved
- * @param {{ isReachable?: Function, runStartScript?: Function, sleep?: Function, now?: Function }} [deps]
+ * Cria container **novo** para `name`. Falha se nome já registrado.
+ * @param {{ name: string, kind: string, connectTimeoutMs?: number, host?: string, startScript?: string }} resolved
+ * @param {object} [deps]
+ * @returns {Promise<{ name: string, serial: string, port: number, kind: string }>}
  */
 export async function startRuntime(resolved, deps = {}) {
+  const name = sanitizeAgentName(resolved.name);
+  const kind = resolved.kind || "redroid";
+  const host = resolved.host || "127.0.0.1";
+  const timeoutMs = Number(resolved.connectTimeoutMs ?? 120_000);
+  const registry = deps.registry ?? createAgentRegistry();
   const isReachable = deps.isReachable ?? isRuntimeReachable;
   const runStartScript = deps.runStartScript ?? defaultRunStartScript;
+  const allocPort = deps.allocateAdbPort ?? allocateAdbPort;
   const sleep = deps.sleep ?? defaultSleep;
   const now = deps.now ?? Date.now;
-  const timeoutMs = Number(resolved.connectTimeoutMs ?? 120_000);
 
-  if (await isReachable(resolved.serial)) return;
+  if (registry.has(name)) {
+    const err = new Error(
+      `PROVISION_NAME_TAKEN: agent "${name}" já existe — use attachEmulator`,
+    );
+    err.code = "PROVISION_NAME_TAKEN";
+    throw err;
+  }
 
-  const script =
-    resolved.startScript || defaultStartScript(resolved.kind);
+  const script = resolved.startScript || defaultStartScript(kind);
   if (!script) {
     const err = new Error(
-      `PROVISION_START_FAILED: runtime não alcançável e sem startScript (kind=${resolved.kind})`,
+      `PROVISION_START_FAILED: sem startScript (kind=${kind})`,
     );
     err.code = "PROVISION_START_FAILED";
     throw err;
   }
 
-  await runStartScript(script);
+  const port = await allocPort(host);
+  const serial = `${host}:${port}`;
+  const container = `sr-${name}`;
+
+  await runStartScript(script, {
+    AGENT_NAME: name,
+    ADB_PORT: String(port),
+    ADB_HOST: host,
+    COMPOSE_PROJECT_NAME: `sr-${name}`,
+    REDROID_CONTAINER_NAME: container,
+  });
 
   const started = now();
   while (now() - started < timeoutMs) {
-    if (await isReachable(resolved.serial)) return;
+    if (await isReachable(serial)) {
+      registry.set(name, {
+        serial,
+        port,
+        kind,
+        container,
+        host,
+        createdAt: new Date(now()).toISOString(),
+      });
+      return { name, serial, port, kind };
+    }
     await sleep(500);
   }
 
   const err = new Error(
-    `PROVISION_START_FAILED: ${script} rodou mas ${resolved.serial} não ficou alcançável em ${timeoutMs}ms`,
+    `PROVISION_START_FAILED: ${script} rodou mas ${serial} não ficou alcançável em ${timeoutMs}ms`,
   );
   err.code = "PROVISION_START_FAILED";
   throw err;

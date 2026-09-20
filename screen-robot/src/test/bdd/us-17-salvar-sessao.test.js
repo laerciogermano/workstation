@@ -8,8 +8,8 @@ import path from "node:path";
 import { describe, it, before } from "node:test";
 import { provisionEmulator } from "../../lib/provision.js";
 
-const serial = process.env.ANDROID_SERIAL || "127.0.0.1:5555";
 const timeoutMs = Number(process.env.PROVISION_TIMEOUT_MS || 180_000);
+const agentName = process.env.SR_AGENT_NAME || "us-17-salvar-sessao-test";
 
 describe("Cenário: US-17 Salvar sessão", () => {
   /** @type {Awaited<ReturnType<typeof provisionEmulator>>} */
@@ -18,7 +18,7 @@ describe("Cenário: US-17 Salvar sessão", () => {
 
   before(async () => {
     handle = await provisionEmulator({
-      provision: { serial, kind: "redroid", connectTimeoutMs: timeoutMs },
+      provision: { name: agentName, kind: "redroid", connectTimeoutMs: timeoutMs },
     });
   }, { timeout: 300_000 });
 

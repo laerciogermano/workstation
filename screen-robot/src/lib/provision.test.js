@@ -5,58 +5,109 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { provisionEmulator } from "./provision.js";
 
+const handleDeps = {
+  ensureAdbOnline: async () => {},
+  waitBootCompleted: async () => {},
+  createOn: () => async () => ({}),
+  createInstallApk: () => async () => ({ skipped: true }),
+  createOperate: () => ({
+    launch: async () => {},
+    tap: () => {},
+    tapElement: () => {},
+    type: () => {},
+    scroll: () => {},
+    screenshot: () => "/x.png",
+    matchImage: async () => ({ x: 1, y: 2, confidence: 1 }),
+  }),
+  createExtract: () => async () => ({ type: "root", children: [] }),
+  createSessionApi: () => ({
+    saveSession: async () => "/s.json",
+    removeSession: async () => true,
+    restoreSession: async () => ({}),
+  }),
+  toIso: () => "t",
+};
+
+function memoryRegistry(seed = {}) {
+  const map = new Map(Object.entries(seed));
+  return {
+    has: (n) => map.has(n),
+    get: (n) => map.get(n) || null,
+    set: (n, r) => map.set(n, r),
+    remove: (n) => map.delete(n),
+  };
+}
+
 describe("provisionEmulator", () => {
-  it("lança PROVISION_NO_SERIAL sem serial", async () => {
-    const prev = process.env.ANDROID_SERIAL;
-    delete process.env.ANDROID_SERIAL;
-    try {
-      await assert.rejects(
-        () => provisionEmulator({}),
-        (err) => err && err.code === "PROVISION_NO_SERIAL",
-      );
-    } finally {
-      if (prev !== undefined) process.env.ANDROID_SERIAL = prev;
-    }
+  it("lança PROVISION_INVALID_NAME sem name", async () => {
+    await assert.rejects(
+      () => provisionEmulator({}),
+      (err) => err && err.code === "PROVISION_INVALID_NAME",
+    );
   });
 
-  it("anexa on, installApk, operate, extract e session", async () => {
+  it("cria quando nome é novo", async () => {
+    let started = 0;
+    let attached = 0;
     const handle = await provisionEmulator(
-      { provision: { serial: "127.0.0.1:5555", kind: "redroid" } },
+      { provision: { name: "agent-a", kind: "redroid" } },
       {
-        startRuntime: async () => {},
-        ensureAdbOnline: async () => {},
-        waitBootCompleted: async () => {},
-        createOn: () => async () => ({}),
-        createInstallApk: () => async () => ({ skipped: true }),
-        createOperate: () => ({
-          launch: async () => {},
-          tap: () => {},
-          tapElement: () => {},
-          type: () => {},
-          scroll: () => {},
-          screenshot: () => "/x.png",
-          matchImage: async () => ({ x: 1, y: 2, confidence: 1 }),
-        }),
-        createExtract: () => async () => ({ type: "root", children: [] }),
-        createSessionApi: () => ({
-          saveSession: async () => "/s.json",
-          removeSession: async () => true,
-          restoreSession: async () => ({}),
-        }),
-        toIso: () => "t",
+        ...handleDeps,
+        registry: memoryRegistry(),
+        startRuntime: async () => {
+          started += 1;
+          return {
+            name: "agent-a",
+            serial: "127.0.0.1:5555",
+            port: 5555,
+            kind: "redroid",
+          };
+        },
+        attachRuntime: async () => {
+          attached += 1;
+          return {
+            name: "agent-a",
+            serial: "127.0.0.1:5555",
+            port: 5555,
+            kind: "redroid",
+          };
+        },
       },
     );
-    assert.equal(typeof handle.on, "function");
-    assert.equal(typeof handle.installApk, "function");
-    assert.equal(typeof handle.launch, "function");
-    assert.equal(typeof handle.tap, "function");
-    assert.equal(typeof handle.type, "function");
-    assert.equal(typeof handle.scroll, "function");
-    assert.equal(typeof handle.screenshot, "function");
-    assert.equal(typeof handle.matchImage, "function");
-    assert.equal(typeof handle.extract, "function");
-    assert.equal(typeof handle.saveSession, "function");
-    assert.equal(typeof handle.removeSession, "function");
-    assert.equal(typeof handle.restoreSession, "function");
+    assert.equal(started, 1);
+    assert.equal(attached, 0);
+    assert.equal(handle.name, "agent-a");
+    assert.equal(handle.serial, "127.0.0.1:5555");
+    assert.equal(handle.bootCompleted, true);
+  });
+
+  it("anexa quando nome já existe", async () => {
+    let started = 0;
+    let attached = 0;
+    const handle = await provisionEmulator(
+      { provision: { name: "agent-a", kind: "redroid" } },
+      {
+        ...handleDeps,
+        registry: memoryRegistry({
+          "agent-a": { serial: "127.0.0.1:5555", port: 5555 },
+        }),
+        startRuntime: async () => {
+          started += 1;
+          throw new Error("não deve criar");
+        },
+        attachRuntime: async () => {
+          attached += 1;
+          return {
+            name: "agent-a",
+            serial: "127.0.0.1:5555",
+            port: 5555,
+            kind: "redroid",
+          };
+        },
+      },
+    );
+    assert.equal(started, 0);
+    assert.equal(attached, 1);
+    assert.equal(handle.name, "agent-a");
   });
 });

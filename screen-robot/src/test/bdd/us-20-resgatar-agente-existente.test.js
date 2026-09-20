@@ -1,12 +1,11 @@
 /**
- * BDD e2e — US-01 Agent nomeado fica pronto para ADB
+ * BDD e2e — US-20 Resgatar agente existente (via provisionEmulator)
  */
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import path from "node:path";
 import { describe, it, before, after } from "node:test";
 import { fileURLToPath } from "node:url";
-import { adb } from "../../lib/adb.js";
 import { createAgentRegistry } from "../../lib/agent-registry.js";
 import { provisionEmulator } from "../../lib/provision.js";
 
@@ -16,7 +15,7 @@ const pocsRoot = path.resolve(
 );
 const stopScript = path.join(pocsRoot, "redroid", "scripts", "stop.sh");
 const timeoutMs = Number(process.env.PROVISION_TIMEOUT_MS || 180_000);
-const name = `us01-${Date.now().toString(36)}`;
+const name = `us20-${Date.now().toString(36)}`;
 
 function stopAgent(n) {
   const rec = createAgentRegistry().get(n);
@@ -38,28 +37,22 @@ function stopAgent(n) {
   createAgentRegistry().remove(n);
 }
 
-describe("Cenário: US-01 Agent nomeado fica pronto para ADB", () => {
+describe("Cenário: US-20 Agent existente é resgatado pelo nome", () => {
   before(() => stopAgent(name));
   after(() => stopAgent(name));
 
   it(
-    "Dado nome único; Quando provisionEmulator; Então name/serial online e boot ok",
+    "Dado agent provisionado; Quando provisionEmulator com o mesmo nome; Então mesmo serial sem criar outro",
     async () => {
-      const handle = await provisionEmulator({
+      const created = await provisionEmulator({
         provision: { name, kind: "redroid", connectTimeoutMs: timeoutMs },
       });
-
-      assert.equal(handle.name, name);
-      assert.ok(handle.serial);
-      assert.equal(handle.kind, "redroid");
-      assert.equal(handle.bootCompleted, true);
-      assert.ok(handle.provisionedAt);
-      assert.equal(typeof handle.on, "function");
-      assert.equal(adb(handle.serial, ["get-state"]).stdout.trim(), "device");
-      assert.equal(
-        adb(handle.serial, ["shell", "getprop", "sys.boot_completed"]).stdout.trim(),
-        "1",
-      );
+      const attached = await provisionEmulator({
+        provision: { name, kind: "redroid", connectTimeoutMs: timeoutMs },
+      });
+      assert.equal(attached.name, name);
+      assert.equal(attached.serial, created.serial);
+      assert.equal(attached.bootCompleted, true);
     },
     { timeout: 300_000 },
   );

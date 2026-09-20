@@ -11,13 +11,13 @@ import { fileURLToPath } from "node:url";
 import { adbOk } from "../../lib/adb.js";
 import { provisionEmulator } from "../../lib/provision.js";
 
-const serial = process.env.ANDROID_SERIAL || "127.0.0.1:5555";
 const pocsRoot = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
   "../../../pocs",
 );
 const stopScript = path.join(pocsRoot, "redroid", "scripts", "stop.sh");
 const timeoutMs = Number(process.env.PROVISION_TIMEOUT_MS || 180_000);
+const agentName = process.env.SR_AGENT_NAME || "ep-04-operar-tela-test";
 const pkg = "com.android.settings";
 
 describe("Épico: EP-04 Operar tela", () => {
@@ -27,7 +27,7 @@ describe("Épico: EP-04 Operar tela", () => {
   before(async () => {
     spawnSync("bash", [stopScript], { encoding: "utf8", stdio: "inherit" });
     handle = await provisionEmulator({
-      provision: { serial, kind: "redroid", connectTimeoutMs: timeoutMs },
+      provision: { name: agentName, kind: "redroid", connectTimeoutMs: timeoutMs },
     });
   }, { timeout: 300_000 });
 
@@ -35,7 +35,7 @@ describe("Épico: EP-04 Operar tela", () => {
     "Dado agent; Quando launch/tap/type/scroll/screenshot/matchImage; Então OK",
     async () => {
       await handle.launch(pkg, ".Settings");
-      assert.ok(adbOk(serial, ["shell", "pidof", pkg]));
+      assert.ok(adbOk(handle.serial, ["shell", "pidof", pkg]));
 
       handle.tap(200, 400);
       handle.scroll({ direction: "down", distance: 400 });

@@ -5,8 +5,8 @@ import assert from "node:assert/strict";
 import { describe, it, before } from "node:test";
 import { provisionEmulator } from "../../lib/provision.js";
 
-const serial = process.env.ANDROID_SERIAL || "127.0.0.1:5555";
 const timeoutMs = Number(process.env.PROVISION_TIMEOUT_MS || 180_000);
+const agentName = process.env.SR_AGENT_NAME || "us-05-dump-atualizado-fica-disponivel-test";
 
 describe("Cenário: US-05 Dump atualizado fica disponível", () => {
   /** @type {Awaited<ReturnType<typeof provisionEmulator>>} */
@@ -14,7 +14,7 @@ describe("Cenário: US-05 Dump atualizado fica disponível", () => {
 
   before(async () => {
     handle = await provisionEmulator({
-      provision: { serial, kind: "redroid", connectTimeoutMs: timeoutMs },
+      provision: { name: agentName, kind: "redroid", connectTimeoutMs: timeoutMs },
     });
   }, { timeout: 300_000 });
 

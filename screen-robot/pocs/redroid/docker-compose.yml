@@ -1,11 +1,12 @@
 # Redroid — Android em container para o ConnectMax.
 # Requer Linux com módulos binder (ashmem opcional se use_memfd=true).
 # NÃO exponha a porta ADB na internet pública.
+# Multi-agent: COMPOSE_PROJECT_NAME + REDROID_CONTAINER_NAME + ADB_PORT por nome.
 
 services:
   redroid:
     image: ${REDROID_IMAGE:-redroid/redroid:15.0.0_64only-latest}
-    container_name: connectmax-redroid
+    container_name: ${REDROID_CONTAINER_NAME:-connectmax-redroid}
     restart: unless-stopped
     privileged: true
     stdin_open: true
@@ -17,6 +18,7 @@ services:
     volumes:
       # Volume nomeado (filesystem Linux nativo). Bind ./data no Mac/Colima
       # (virtiofs) quebra o /data do Android (SQLITE_CANTOPEN).
+      # Com COMPOSE_PROJECT_NAME por agent, o volume fica isolado por projeto.
       - redroid-data:/data
     command:
       - "androidboot.redroid_width=${REDROID_WIDTH:-720}"

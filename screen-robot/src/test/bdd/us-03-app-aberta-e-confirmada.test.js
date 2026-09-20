@@ -6,8 +6,8 @@ import { describe, it, before } from "node:test";
 import { launch } from "../../lib/operate.js";
 import { provisionEmulator } from "../../lib/provision.js";
 
-const serial = process.env.ANDROID_SERIAL || "127.0.0.1:5555";
 const timeoutMs = Number(process.env.PROVISION_TIMEOUT_MS || 180_000);
+const agentName = process.env.SR_AGENT_NAME || "us-03-app-aberta-e-confirmada-test";
 const pkg = process.env.EVENT_TEST_PKG || "com.android.settings";
 
 describe("Cenário: US-03 App aberta é confirmada", () => {
@@ -16,9 +16,9 @@ describe("Cenário: US-03 App aberta é confirmada", () => {
 
   before(async () => {
     handle = await provisionEmulator({
-      provision: { serial, kind: "redroid", connectTimeoutMs: timeoutMs },
+      provision: { name: agentName, kind: "redroid", connectTimeoutMs: timeoutMs },
     });
-    await launch(serial, pkg, ".Settings");
+    await launch(handle.serial, pkg, ".Settings");
   }, { timeout: 300_000 });
 
   it(

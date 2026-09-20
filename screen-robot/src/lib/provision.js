@@ -1,76 +1,62 @@
 /**
  * Biblioteca de provisionamento do emulador/agent.
- * Superfície pública: apenas `provisionEmulator`.
+ * Público: provisionEmulator (cria se nome novo; anexa se já existir).
  * Handle: on · installApk · operate · extract · session (EP-02..06).
  */
 import { createInstallApk as defaultCreateInstallApk } from "./apks.js";
+import { attachRuntime as defaultAttachRuntime } from "./attach-runtime.js";
 import { createOn as defaultCreateOn } from "./events.js";
 import { createExtract as defaultCreateExtract } from "./extract.js";
 import { ensureAdbOnline as defaultEnsureAdbOnline } from "./ensure-adb-online.js";
 import { createOperate as defaultCreateOperate } from "./operate.js";
 import { createSessionApi as defaultCreateSessionApi } from "./session.js";
+import {
+  createAgentRegistry,
+  sanitizeAgentName,
+} from "./agent-registry.js";
 import { startRuntime as defaultStartRuntime } from "./start-runtime.js";
 import { waitBootCompleted as defaultWaitBootCompleted } from "./wait-boot-completed.js";
 
 /**
  * @typedef {object} ProvisionConfig
- * @property {string} [device]
- * @property {{ serial?: string, kind?: string, connectTimeoutMs?: number, startScript?: string }} [provision]
+ * @property {string} [name]
+ * @property {{ name?: string, kind?: string, host?: string, connectTimeoutMs?: number, startScript?: string }} [provision]
  */
 
 /** @param {ProvisionConfig} cfg */
 function resolveConfig(cfg) {
-  const serial =
-    cfg.provision?.serial || cfg.device || process.env.ANDROID_SERIAL;
-  if (!serial) {
-    const err = new Error("PROVISION_NO_SERIAL: falta serial/device na config");
-    err.code = "PROVISION_NO_SERIAL";
-    throw err;
-  }
+  const name = sanitizeAgentName(cfg.provision?.name || cfg.name);
   return {
-    serial,
-    kind: cfg.provision?.kind || "adb",
+    name,
+    kind: cfg.provision?.kind || "redroid",
+    host: cfg.provision?.host || "127.0.0.1",
     connectTimeoutMs: Number(cfg.provision?.connectTimeoutMs ?? 120_000),
     startScript: cfg.provision?.startScript,
   };
 }
 
-/**
- * @param {ProvisionConfig} cfg
- * @param {object} [deps]
- */
-export async function provisionEmulator(cfg, deps = {}) {
-  const startRuntime = deps.startRuntime ?? defaultStartRuntime;
-  const ensureAdbOnline = deps.ensureAdbOnline ?? defaultEnsureAdbOnline;
-  const waitBootCompleted = deps.waitBootCompleted ?? defaultWaitBootCompleted;
+function buildHandle(meta, deps, toIso) {
   const createOn = deps.createOn ?? defaultCreateOn;
   const createInstallApk = deps.createInstallApk ?? defaultCreateInstallApk;
   const createOperate = deps.createOperate ?? defaultCreateOperate;
   const createExtract = deps.createExtract ?? defaultCreateExtract;
   const createSessionApi = deps.createSessionApi ?? defaultCreateSessionApi;
-  const now = deps.now ?? Date.now;
-  const toIso = deps.toIso ?? (() => new Date().toISOString());
 
-  const resolved = resolveConfig(cfg);
-  const started = now();
-
-  await startRuntime(resolved);
-  await ensureAdbOnline(resolved.serial, resolved.connectTimeoutMs, started);
-  await waitBootCompleted(resolved.serial, resolved.connectTimeoutMs, started);
-
-  const operate = createOperate(resolved.serial);
+  const operate = createOperate(meta.serial);
   const session = createSessionApi({
-    serial: resolved.serial,
-    kind: resolved.kind,
+    serial: meta.serial,
+    kind: meta.kind,
+    name: meta.name,
   });
 
   return {
-    serial: resolved.serial,
-    kind: resolved.kind,
+    name: meta.name,
+    serial: meta.serial,
+    kind: meta.kind,
     provisionedAt: toIso(),
     bootCompleted: true,
-    on: createOn(resolved.serial),
-    installApk: createInstallApk(resolved.serial),
+    on: createOn(meta.serial),
+    installApk: createInstallApk(meta.serial),
     launch: operate.launch,
     tap: operate.tap,
     tapElement: operate.tapElement,
@@ -78,9 +64,47 @@ export async function provisionEmulator(cfg, deps = {}) {
     scroll: operate.scroll,
     screenshot: operate.screenshot,
     matchImage: operate.matchImage,
-    extract: createExtract(resolved.serial),
+    extract: createExtract(meta.serial),
     saveSession: session.saveSession,
     removeSession: session.removeSession,
     restoreSession: session.restoreSession,
   };
+}
+
+/**
+ * Provisiona um agent pelo `name`:
+ * - nome **novo** → cria container/runtime e registra
+ * - nome **já existente** → anexa (sem criar outro)
+ *
+ * @param {ProvisionConfig} cfg
+ * @param {object} [deps]
+ */
+export async function provisionEmulator(cfg, deps = {}) {
+  const startRuntime = deps.startRuntime ?? defaultStartRuntime;
+  const attachRuntime = deps.attachRuntime ?? defaultAttachRuntime;
+  const ensureAdbOnline = deps.ensureAdbOnline ?? defaultEnsureAdbOnline;
+  const waitBootCompleted = deps.waitBootCompleted ?? defaultWaitBootCompleted;
+  const registry = deps.registry ?? createAgentRegistry();
+  const now = deps.now ?? Date.now;
+  const toIso = deps.toIso ?? (() => new Date().toISOString());
+
+  const resolved = resolveConfig(cfg);
+  const started = now();
+
+  const runtime = registry.has(resolved.name)
+    ? await attachRuntime(
+        resolved.name,
+        { connectTimeoutMs: resolved.connectTimeoutMs },
+        { ...deps, registry },
+      )
+    : await startRuntime(resolved, { ...deps, registry });
+
+  await ensureAdbOnline(runtime.serial, resolved.connectTimeoutMs, started);
+  await waitBootCompleted(runtime.serial, resolved.connectTimeoutMs, started);
+
+  return buildHandle(
+    { name: runtime.name, serial: runtime.serial, kind: runtime.kind },
+    deps,
+    toIso,
+  );
 }

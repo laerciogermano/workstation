@@ -6,8 +6,8 @@ import { describe, it, before } from "node:test";
 import { adbOk } from "../../lib/adb.js";
 import { provisionEmulator } from "../../lib/provision.js";
 
-const serial = process.env.ANDROID_SERIAL || "127.0.0.1:5555";
 const timeoutMs = Number(process.env.PROVISION_TIMEOUT_MS || 180_000);
+const agentName = process.env.SR_AGENT_NAME || "us-07-abrir-aplicativo-test";
 const pkg = "com.android.settings";
 
 describe("Cenário: US-07 Abrir aplicativo", () => {
@@ -16,7 +16,7 @@ describe("Cenário: US-07 Abrir aplicativo", () => {
 
   before(async () => {
     handle = await provisionEmulator({
-      provision: { serial, kind: "redroid", connectTimeoutMs: timeoutMs },
+      provision: { name: agentName, kind: "redroid", connectTimeoutMs: timeoutMs },
     });
   }, { timeout: 300_000 });
 
@@ -24,7 +24,7 @@ describe("Cenário: US-07 Abrir aplicativo", () => {
     "Dado agent; Quando launch Settings; Então package em foreground",
     async () => {
       await handle.launch(pkg, ".Settings");
-      assert.ok(adbOk(serial, ["shell", "pidof", pkg]));
+      assert.ok(adbOk(handle.serial, ["shell", "pidof", pkg]));
     },
     { timeout: 120_000 },
   );

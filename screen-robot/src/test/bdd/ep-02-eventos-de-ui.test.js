@@ -10,13 +10,13 @@ import { dumpUiXml } from "../../lib/extract.js";
 import { launch } from "../../lib/operate.js";
 import { provisionEmulator } from "../../lib/provision.js";
 
-const serial = process.env.ANDROID_SERIAL || "127.0.0.1:5555";
 const pocsRoot = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
   "../../../pocs",
 );
 const stopScript = path.join(pocsRoot, "redroid", "scripts", "stop.sh");
 const timeoutMs = Number(process.env.PROVISION_TIMEOUT_MS || 180_000);
+const agentName = process.env.SR_AGENT_NAME || "ep-02-eventos-de-ui-test";
 const pkg = process.env.EVENT_TEST_PKG || "com.android.settings";
 
 describe("Épico: EP-02 Eventos de UI", () => {
@@ -26,7 +26,7 @@ describe("Épico: EP-02 Eventos de UI", () => {
   before(async () => {
     spawnSync("bash", [stopScript], { encoding: "utf8", stdio: "inherit" });
     handle = await provisionEmulator({
-      provision: { serial, kind: "redroid", connectTimeoutMs: timeoutMs },
+      provision: { name: agentName, kind: "redroid", connectTimeoutMs: timeoutMs },
     });
   }, { timeout: 300_000 });
 
@@ -37,7 +37,7 @@ describe("Épico: EP-02 Eventos de UI", () => {
         boot: true,
       });
 
-      await launch(serial, pkg, ".Settings");
+      await launch(handle.serial, pkg, ".Settings");
       const app = await handle.on("app_open", {
         pkg,
         timeoutMs: 60_000,
@@ -63,7 +63,7 @@ describe("Épico: EP-02 Eventos de UI", () => {
       assert.ok(changed.xml.length > 0);
       assert.notEqual(changed.xml, previousXml);
       // sanity: dump real ainda obtível
-      assert.ok(dumpUiXml(serial).length > 0);
+      assert.ok(dumpUiXml(handle.serial).length > 0);
     },
     { timeout: 300_000 },
   );

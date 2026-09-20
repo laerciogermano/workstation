@@ -5,6 +5,7 @@ import assert from "node:assert/strict";
 import path from "node:path";
 import { describe, it } from "node:test";
 import {
+  allocateAdbPort,
   defaultStartScript,
   startRuntime,
 } from "./start-runtime.js";
@@ -19,96 +20,62 @@ function fakeClock(start = 0) {
   };
 }
 
-describe("startRuntime", () => {
-  it("não executa startScript se já alcançável", async () => {
-    let runs = 0;
-    await startRuntime(
-      { serial: "127.0.0.1:5555", kind: "redroid", connectTimeoutMs: 1_000 },
-      {
-        isReachable: async () => true,
-        runStartScript: async () => {
-          runs += 1;
-        },
-      },
-    );
-    assert.equal(runs, 0);
-  });
+function memoryRegistry() {
+  const map = new Map();
+  return {
+    has: (n) => map.has(n),
+    get: (n) => map.get(n) || null,
+    set: (n, r) => map.set(n, r),
+    remove: (n) => map.delete(n),
+  };
+}
 
-  it("executa startScript e retorna quando fica alcançável", async () => {
-    let reachable = false;
-    let runs = 0;
+describe("allocateAdbPort", () => {
+  it("escolhe primeira porta livre", async () => {
+    const port = await allocateAdbPort("127.0.0.1", 5555, 5557, {
+      isPortFree: async (_h, p) => p === 5556,
+    });
+    assert.equal(port, 5556);
+  });
+});
+
+describe("startRuntime", () => {
+  it("cria agent novo e registra serial", async () => {
+    const registry = memoryRegistry();
+    let envSeen;
     const clock = fakeClock();
-    await startRuntime(
+    let reachable = false;
+    const r = await startRuntime(
+      { name: "agent-a", kind: "redroid", connectTimeoutMs: 5_000 },
       {
-        serial: "127.0.0.1:5555",
-        kind: "redroid",
-        connectTimeoutMs: 5_000,
-        startScript: "/tmp/fake-start.sh",
-      },
-      {
+        registry,
+        allocateAdbPort: async () => 5555,
         isReachable: async () => reachable,
-        runStartScript: async () => {
-          runs += 1;
+        runStartScript: async (_s, env) => {
+          envSeen = env;
           reachable = true;
         },
         sleep: clock.sleep,
         now: clock.now,
       },
     );
-    assert.equal(runs, 1);
-    assert.equal(reachable, true);
+    assert.equal(r.name, "agent-a");
+    assert.equal(r.serial, "127.0.0.1:5555");
+    assert.equal(envSeen.AGENT_NAME, "agent-a");
+    assert.equal(envSeen.ADB_PORT, "5555");
+    assert.equal(registry.get("agent-a").serial, "127.0.0.1:5555");
   });
 
-  it("é idempotente quando já alcançável", async () => {
-    let runs = 0;
-    const deps = {
-      isReachable: async () => true,
-      runStartScript: async () => {
-        runs += 1;
-      },
-    };
-    await startRuntime(
-      { serial: "127.0.0.1:5555", kind: "redroid", connectTimeoutMs: 1_000 },
-      deps,
-    );
-    await startRuntime(
-      { serial: "127.0.0.1:5555", kind: "redroid", connectTimeoutMs: 1_000 },
-      deps,
-    );
-    assert.equal(runs, 0);
-  });
-
-  it("lança PROVISION_START_FAILED se o script falha", async () => {
+  it("lança PROVISION_NAME_TAKEN se nome existe", async () => {
+    const registry = memoryRegistry();
+    registry.set("agent-a", { serial: "127.0.0.1:5555", port: 5555 });
     await assert.rejects(
       () =>
         startRuntime(
-          {
-            serial: "127.0.0.1:59999",
-            kind: "redroid",
-            connectTimeoutMs: 1_000,
-            startScript: "/tmp/fail.sh",
-          },
-          {
-            isReachable: async () => false,
-            runStartScript: async () => {
-              const err = new Error("PROVISION_START_FAILED: exit 1");
-              err.code = "PROVISION_START_FAILED";
-              throw err;
-            },
-          },
+          { name: "agent-a", kind: "redroid" },
+          { registry, allocateAdbPort: async () => 5556 },
         ),
-      (err) => err && err.code === "PROVISION_START_FAILED",
-    );
-  });
-
-  it("lança PROVISION_START_FAILED sem startScript e inacessível", async () => {
-    await assert.rejects(
-      () =>
-        startRuntime(
-          { serial: "127.0.0.1:59998", kind: "adb", connectTimeoutMs: 1_000 },
-          { isReachable: async () => false },
-        ),
-      (err) => err && err.code === "PROVISION_START_FAILED",
+      (err) => err && err.code === "PROVISION_NAME_TAKEN",
     );
   });
 
@@ -118,12 +85,14 @@ describe("startRuntime", () => {
       () =>
         startRuntime(
           {
-            serial: "127.0.0.1:59997",
+            name: "x",
             kind: "redroid",
             connectTimeoutMs: 50,
             startScript: "/tmp/ok.sh",
           },
           {
+            registry: memoryRegistry(),
+            allocateAdbPort: async () => 5555,
             isReachable: async () => false,
             runStartScript: async () => {},
             sleep: clock.sleep,

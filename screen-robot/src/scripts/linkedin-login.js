@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Abre LinkedIn e imprime a árvore de componentes (handle.extract progressivo).
+ * Abre LinkedIn, clica AGREE (se houver) e imprime a árvore de componentes.
  *
  * Uso:
  *   node scripts/linkedin-login.js
@@ -10,6 +10,8 @@ import { readFileSync, existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { sleep } from "../lib/adb.js";
+import { extractElements } from "../lib/extract.js";
 import { provisionEmulator } from "../lib/provision.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -19,6 +21,20 @@ function loadConfig(path) {
   const abs = resolve(path);
   if (!existsSync(abs)) throw new Error(`Config não encontrada: ${abs}`);
   return JSON.parse(readFileSync(abs, "utf8"));
+}
+
+function findAgree(elements) {
+  return (
+    elements.find(
+      (el) =>
+        el.clickable &&
+        /^(agree|aceitar|aceito|concordo)$/i.test(String(el.label || "").trim()),
+    ) ||
+    elements.find(
+      (el) => el.clickable && /^agree$/i.test(String(el.text || "").trim()),
+    ) ||
+    elements.find((el) => /agree/i.test(String(el.label || "")))
+  );
 }
 
 async function main() {
@@ -43,15 +59,29 @@ async function main() {
   console.log("3) Abrir LinkedIn…");
   await handle.launch(cfg.apps.linkedin.package);
   await handle.on("ui_stable", { timeoutMs: 90_000 });
-  handle.screenshot(resolve(outDir, "tree-screen.png"));
+  handle.screenshot(resolve(outDir, "01-antes-agree.png"));
 
-  console.log("4) Extrair árvore (5 passos)…");
+  console.log("4) Clicar AGREE (se existir)…");
+  const { elements } = extractElements(handle.serial);
+  const agree = findAgree(elements);
+  if (agree?.center) {
+    console.log(`   → ${agree.label || agree.text}`);
+    handle.tapElement(agree);
+    await sleep(2_000);
+    await handle.on("ui_stable", { timeoutMs: 60_000 }).catch(() => {});
+    handle.screenshot(resolve(outDir, "02-apos-agree.png"));
+  } else {
+    console.log("   (botão AGREE não encontrado — segue)");
+  }
+
+  console.log("5) Extrair árvore (5 passos)…");
   let tree;
   for (let i = 1; i <= 5; i++) {
     tree = await handle.extract();
     console.log(`   passo ${i}: children=${tree.children?.length ?? 0}`);
   }
 
+  handle.screenshot(resolve(outDir, "tree-screen.png"));
   const json = JSON.stringify(tree, null, 2);
   const outJson = resolve(outDir, "component-tree.json");
   writeFileSync(outJson, json, "utf8");

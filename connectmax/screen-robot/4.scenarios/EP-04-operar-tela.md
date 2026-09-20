@@ -1,7 +1,7 @@
 # Cenários — EP-04 Operar tela
 
 **Por quê:** US e cenários (SC) do épico, expostos via **código Node**.  
-**Índice:** [`README.md`](README.md) · **BDDs:** [`../4.bdds/EP-04-operar-tela.md`](../4.bdds/EP-04-operar-tela.md).  
+**Índice:** [`README.md`](README.md) · **BDDs:** [`../5.bdds/EP-04-operar-tela.md`](../5.bdds/EP-04-operar-tela.md).  
 **Épico:** [`../2.epics.md`](../2.epics.md) · **Plano:** [`../implementation-plan/EP-04-operar-tela.md`](../implementation-plan/EP-04-operar-tela.md).
 
 **US:** US-07..12 · **SC:** SC-11..16.
@@ -46,4 +46,4 @@
 
 ## Próximos passos
 
-→ [`../4.bdds/EP-04-operar-tela.md`](../4.bdds/EP-04-operar-tela.md) · [`../implementation-plan/EP-04-operar-tela.md`](../implementation-plan/EP-04-operar-tela.md)
+→ [`../5.bdds/EP-04-operar-tela.md`](../5.bdds/EP-04-operar-tela.md) · [`../implementation-plan/EP-04-operar-tela.md`](../implementation-plan/EP-04-operar-tela.md)

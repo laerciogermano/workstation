@@ -8,12 +8,13 @@
 ```text
 README.md (visão)
 ├── 1.stories.md
-├── 2.epics.md                  # EP → US
-├── 3.scenarios/                # US → SC (por EP)
-├── 4.bdds/                  # Gherkin (por EP)                   # Gherkin US/SC
-├── implementation-plan/        # um .md por épico
-├── 6.roadmap.md                # Gantt
+├── 2.epics.md                  # EP → US + prioridade
+├── 3.roadmap.md                # Gantt priorizado
+├── 4.scenarios/                # US → SC (por EP; refino pós-roadmap)
+├── 5.bdds/                     # Gherkin (por EP)
+├── 6.prototype.md              # opcional
 ├── 7.tasks.md                  # Gantt TSK
+├── implementation-plan/        # um .md por épico
 └── sources/android-control (libs Node + scripts/linkedin-login.js)
 ```
 

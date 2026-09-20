@@ -1,7 +1,7 @@
 # Implementation plan — screen-robot
 
 **Por quê:** um arquivo de plano técnico por épico (sequências · agentes · passo a passo · contratos · classes · modelos · BDDs).  
-**Épicos:** [`../2.epics.md`](../2.epics.md) · [`../3.scenarios/`](../3.scenarios/README.md) · [`../4.bdds/`](../4.bdds/README.md).  
+**Épicos:** [`../2.epics.md`](../2.epics.md) · [`../4.scenarios/`](../4.scenarios/README.md) · [`../5.bdds/`](../5.bdds/README.md).  
 **Visão:** [`../README.md`](../README.md).
 
 | ID | Épico | Plano |
@@ -26,4 +26,4 @@ implementation-plan/
 
 ## Próximos passos
 
-→ [`../7.tasks.md`](../7.tasks.md) · [`../6.roadmap.md`](../6.roadmap.md)
+→ [`../7.tasks.md`](../7.tasks.md) · [`../3.roadmap.md`](../3.roadmap.md)

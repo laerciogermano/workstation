@@ -1,7 +1,7 @@
 # Cenários — EP-03 Instalar APKs
 
 **Por quê:** US e cenários (SC) do épico, expostos via **código Node**.  
-**Índice:** [`README.md`](README.md) · **BDDs:** [`../4.bdds/EP-03-instalar-apks.md`](../4.bdds/EP-03-instalar-apks.md).  
+**Índice:** [`README.md`](README.md) · **BDDs:** [`../5.bdds/EP-03-instalar-apks.md`](../5.bdds/EP-03-instalar-apks.md).  
 **Épico:** [`../2.epics.md`](../2.epics.md) · **Plano:** [`../implementation-plan/EP-03-instalar-apks.md`](../implementation-plan/EP-03-instalar-apks.md).
 
 **US:** US-06 · **SC:** SC-08..10.
@@ -18,4 +18,4 @@
 
 ## Próximos passos
 
-→ [`../4.bdds/EP-03-instalar-apks.md`](../4.bdds/EP-03-instalar-apks.md) · [`../implementation-plan/EP-03-instalar-apks.md`](../implementation-plan/EP-03-instalar-apks.md)
+→ [`../5.bdds/EP-03-instalar-apks.md`](../5.bdds/EP-03-instalar-apks.md) · [`../implementation-plan/EP-03-instalar-apks.md`](../implementation-plan/EP-03-instalar-apks.md)

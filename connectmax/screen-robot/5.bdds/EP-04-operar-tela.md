@@ -1,6 +1,6 @@
 # BDDs — EP-04 Operar tela
 
-**Por quê:** aceite Gherkin das US/SC do épico (fonte: [`../3.scenarios/EP-04-operar-tela.md`](../3.scenarios/EP-04-operar-tela.md)).  
+**Por quê:** aceite Gherkin das US/SC do épico (fonte: [`../4.scenarios/EP-04-operar-tela.md`](../4.scenarios/EP-04-operar-tela.md)).  
 **Índice:** [`README.md`](README.md) · **Plano:** [`../implementation-plan/EP-04-operar-tela.md`](../implementation-plan/EP-04-operar-tela.md).
 
 **US:** US-07..12 · **SC:** SC-11..16.

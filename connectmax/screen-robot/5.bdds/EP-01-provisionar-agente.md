@@ -1,6 +1,6 @@
 # BDDs — EP-01 Provisionar agente
 
-**Por quê:** aceite Gherkin das US/SC do épico (fonte: [`../3.scenarios/EP-01-provisionar-agente.md`](../3.scenarios/EP-01-provisionar-agente.md)).  
+**Por quê:** aceite Gherkin das US/SC do épico (fonte: [`../4.scenarios/EP-01-provisionar-agente.md`](../4.scenarios/EP-01-provisionar-agente.md)).  
 **Índice:** [`README.md`](README.md) · **Plano:** [`../implementation-plan/EP-01-provisionar-agente.md`](../implementation-plan/EP-01-provisionar-agente.md).
 
 **US:** US-01 · **SC:** SC-01..03.

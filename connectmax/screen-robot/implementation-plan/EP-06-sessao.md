@@ -2,7 +2,7 @@
 
 **Por quê:** plano técnico do épico (sequências · agentes · passo a passo · contratos · classes · modelos · BDDs).  
 **Épico:** [`2.epics.md`](../2.epics.md).  
-**US:** [`1.stories.md`](../1.stories.md) · [`3.scenarios/EP-06-sessao.md`](../3.scenarios/EP-06-sessao.md) · [`4.bdds/EP-06-sessao.md`](../4.bdds/EP-06-sessao.md).
+**US:** [`1.stories.md`](../1.stories.md) · [`4.scenarios/EP-06-sessao.md`](../4.scenarios/EP-06-sessao.md) · [`5.bdds/EP-06-sessao.md`](../5.bdds/EP-06-sessao.md).
 **Código:** [`../sources/android-control/lib/session.js`](../sources/android-control/lib/session.js).
 
 **Stack:** Node ≥ 18 · `adb` · runtime provisionado (EP-01).
@@ -434,7 +434,7 @@ classDiagram
 
 ## Cenários BDD
 
-Fonte: `US-17`..`US-19` / `4.bdds/EP-06-sessao.md`.
+Fonte: `US-17`..`US-19` / `5.bdds/EP-06-sessao.md`.
 
 ```gherkin
 Cenário: US-17 Sessão é gravada em disco
@@ -494,4 +494,4 @@ I1 → I2 → I3
 ## Próximos passos
 
 → Implementar gaps em [`sources/android-control`](../sources/android-control/README.md)  
-→ Aceite: BDDs em [`4.bdds/EP-06-sessao.md`](../4.bdds/EP-06-sessao.md)
+→ Aceite: BDDs em [`5.bdds/EP-06-sessao.md`](../5.bdds/EP-06-sessao.md)

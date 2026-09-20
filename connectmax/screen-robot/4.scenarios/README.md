@@ -1,7 +1,7 @@
 # Cenários — screen-robot
 
 **Por quê:** um arquivo de cenários (US → SC) por épico.  
-**Épicos:** [`../2.epics.md`](../2.epics.md) · **BDDs:** [`../4.bdds/`](../4.bdds/README.md).  
+**Épicos:** [`../2.epics.md`](../2.epics.md) · **BDDs:** [`../5.bdds/`](../5.bdds/README.md).  
 **Visão:** [`../README.md`](../README.md).  
 **Stories:** [`../1.stories.md`](../1.stories.md).  
 **Tasks:** [`../7.tasks.md`](../7.tasks.md).
@@ -20,7 +20,7 @@
 ## Estrutura
 
 ```text
-3.scenarios/
+4.scenarios/
 ├── README.md
 ├── EP-01-provisionar-agente.md
 ├── EP-02-eventos-de-ui.md
@@ -34,9 +34,9 @@
 
 | Artefato | Caminho |
 |----------|---------|
-| BDDs (unitário + piloto LinkedIn) | [`../4.bdds/`](../4.bdds/README.md) |
+| BDDs (unitário + piloto LinkedIn) | [`../5.bdds/`](../5.bdds/README.md) |
 | Script | [`../sources/android-control/scripts/linkedin-login.js`](../sources/android-control/scripts/linkedin-login.js) |
 
 ## Próximos passos
 
-→ [`../4.bdds/`](../4.bdds/README.md) · [`../implementation-plan/`](../implementation-plan/README.md) · [`../7.tasks.md`](../7.tasks.md)
+→ [`../5.bdds/`](../5.bdds/README.md) · [`../implementation-plan/`](../implementation-plan/README.md) · [`../7.tasks.md`](../7.tasks.md)

@@ -1,7 +1,7 @@
 # Cenários — EP-01 Provisionar agente
 
 **Por quê:** US e cenários (SC) do épico, expostos via **código Node**.  
-**Índice:** [`README.md`](README.md) · **BDDs:** [`../4.bdds/EP-01-provisionar-agente.md`](../4.bdds/EP-01-provisionar-agente.md).  
+**Índice:** [`README.md`](README.md) · **BDDs:** [`../5.bdds/EP-01-provisionar-agente.md`](../5.bdds/EP-01-provisionar-agente.md).  
 **Épico:** [`../2.epics.md`](../2.epics.md) · **Plano:** [`../implementation-plan/EP-01-provisionar-agente.md`](../implementation-plan/EP-01-provisionar-agente.md).
 
 **US:** US-01 · **SC:** SC-01..03.
@@ -18,4 +18,4 @@
 
 ## Próximos passos
 
-→ [`../4.bdds/EP-01-provisionar-agente.md`](../4.bdds/EP-01-provisionar-agente.md) · [`../implementation-plan/EP-01-provisionar-agente.md`](../implementation-plan/EP-01-provisionar-agente.md)
+→ [`../5.bdds/EP-01-provisionar-agente.md`](../5.bdds/EP-01-provisionar-agente.md) · [`../implementation-plan/EP-01-provisionar-agente.md`](../implementation-plan/EP-01-provisionar-agente.md)

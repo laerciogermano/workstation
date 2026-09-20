@@ -2,7 +2,7 @@
 
 **Por quê:** fixar o *quê* do robô de tela antes de goals de negócio.  
 **Importante:** este projeto **só** opera o device/tela via **Node**; não implementa cadência comercial nem fila de leads.  
-**No fluxo:** **este documento** → stories → epics → scenarios → bdds → implementation-plan (por épico) → roadmap / tasks → implementação em [`sources/`](sources/README.md).  
+**No fluxo:** **este documento** → stories → epics (prioridade) → roadmap → refinar estória (scenarios → bdds → protótipo se houver) → tasks / implementation-plan → implementação em [`sources/`](sources/README.md).  
 **Umbrella:** [`../README.md`](../README.md).  
 **Consumidor LinkedIn:** [`../linkedin-agent/`](../linkedin-agent/README.md).  
 **Negócio (fila/faturamento):** [`../vendas/`](../vendas/README.md).  
@@ -29,11 +29,11 @@ Automatizar apps móveis exige um caminho estável em código: agent pronto, app
 
 ## Objetivo
 
-Expor via Node: **provisionar · instalar APKs · eventos · operar · extrair · sessão**. Cenário piloto: login LinkedIn (BDDs em [`4.bdds/`](4.bdds/README.md)).
+Expor via Node: **provisionar · instalar APKs · eventos · operar · extrair · sessão**. Cenário piloto: login LinkedIn (BDDs em [`5.bdds/`](5.bdds/README.md)).
 
 ## Capacidades (v1)
 
-Ver stories em [`1.stories.md`](1.stories.md) e cenários em [`3.scenarios/`](3.scenarios/README.md).
+Ver stories em [`1.stories.md`](1.stories.md) e cenários em [`4.scenarios/`](4.scenarios/README.md).
 
 ## Fora de escopo
 
@@ -46,15 +46,15 @@ Ver stories em [`1.stories.md`](1.stories.md) e cenários em [`3.scenarios/`](3.
 | Artefato | Arquivo | Status |
 |----------|---------|--------|
 | Stories — US título + descrição | [`1.stories.md`](1.stories.md) | Feito |
-| Épicos | [`2.epics.md`](2.epics.md) | Feito |
-| Cenários | [`3.scenarios/`](3.scenarios/README.md) | Feito |
-| BDDs | [`4.bdds/`](4.bdds/README.md) | Feito |
+| Épicos (prioridade) | [`2.epics.md`](2.epics.md) | Feito |
+| Roadmap (Gantt) | [`3.roadmap.md`](3.roadmap.md) | Feito |
+| Cenários | [`4.scenarios/`](4.scenarios/README.md) | Feito |
+| BDDs | [`5.bdds/`](5.bdds/README.md) | Feito |
 | Implementation plan | por épico em [`implementation-plan/`](implementation-plan/README.md) | Feito |
-| Roadmap (Gantt) | [`6.roadmap.md`](6.roadmap.md) | Feito |
 | Tasks (Gantt) | [`7.tasks.md`](7.tasks.md) | Feito |
 | Sources | [`sources/`](sources/README.md) | Em curso |
 | android-control | [`sources/android-control/`](sources/android-control/README.md) | Em curso |
 
 ## Próximos passos
 
-→ [`3.scenarios/`](3.scenarios/README.md) · [`4.bdds/`](4.bdds/README.md) · `LINKEDIN_USER` / `LINKEDIN_PASSWORD` + `npm run linkedin-login` em `sources/android-control`
+→ [`4.scenarios/`](4.scenarios/README.md) · [`5.bdds/`](5.bdds/README.md) · `LINKEDIN_USER` / `LINKEDIN_PASSWORD` + `npm run linkedin-login` em `sources/android-control`

@@ -1,6 +1,6 @@
 # BDDs — EP-03 Instalar APKs
 
-**Por quê:** aceite Gherkin das US/SC do épico (fonte: [`../3.scenarios/EP-03-instalar-apks.md`](../3.scenarios/EP-03-instalar-apks.md)).  
+**Por quê:** aceite Gherkin das US/SC do épico (fonte: [`../4.scenarios/EP-03-instalar-apks.md`](../4.scenarios/EP-03-instalar-apks.md)).  
 **Índice:** [`README.md`](README.md) · **Plano:** [`../implementation-plan/EP-03-instalar-apks.md`](../implementation-plan/EP-03-instalar-apks.md).
 
 **US:** US-06 · **SC:** SC-08..10.

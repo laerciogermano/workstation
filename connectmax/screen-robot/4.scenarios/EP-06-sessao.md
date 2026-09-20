@@ -1,7 +1,7 @@
 # Cenários — EP-06 Sessão
 
 **Por quê:** US e cenários (SC) do épico, expostos via **código Node**.  
-**Índice:** [`README.md`](README.md) · **BDDs:** [`../4.bdds/EP-06-sessao.md`](../4.bdds/EP-06-sessao.md).  
+**Índice:** [`README.md`](README.md) · **BDDs:** [`../5.bdds/EP-06-sessao.md`](../5.bdds/EP-06-sessao.md).  
 **Épico:** [`../2.epics.md`](../2.epics.md) · **Plano:** [`../implementation-plan/EP-06-sessao.md`](../implementation-plan/EP-06-sessao.md).
 
 **US:** US-17..19 · **SC:** SC-22..24.
@@ -28,4 +28,4 @@
 
 ## Próximos passos
 
-→ [`../4.bdds/EP-06-sessao.md`](../4.bdds/EP-06-sessao.md) · [`../implementation-plan/EP-06-sessao.md`](../implementation-plan/EP-06-sessao.md)
+→ [`../5.bdds/EP-06-sessao.md`](../5.bdds/EP-06-sessao.md) · [`../implementation-plan/EP-06-sessao.md`](../implementation-plan/EP-06-sessao.md)

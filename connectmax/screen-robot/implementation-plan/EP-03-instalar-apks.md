@@ -2,7 +2,7 @@
 
 **Por quê:** plano técnico do épico (sequências · agentes · passo a passo · contratos · classes · modelos · BDDs).  
 **Épico:** [`2.epics.md`](../2.epics.md).  
-**US:** [`1.stories.md`](../1.stories.md) · [`3.scenarios/EP-03-instalar-apks.md`](../3.scenarios/EP-03-instalar-apks.md) · [`4.bdds/EP-03-instalar-apks.md`](../4.bdds/EP-03-instalar-apks.md).
+**US:** [`1.stories.md`](../1.stories.md) · [`4.scenarios/EP-03-instalar-apks.md`](../4.scenarios/EP-03-instalar-apks.md) · [`5.bdds/EP-03-instalar-apks.md`](../5.bdds/EP-03-instalar-apks.md).
 **Código:** [`../sources/android-control/lib/apks.js`](../sources/android-control/lib/apks.js) · [`adb.js`](../sources/android-control/lib/adb.js).
 
 **Stack:** Node ≥ 18 · `adb` · runtime provisionado (EP-01).
@@ -333,7 +333,7 @@ classDiagram
 
 ## Cenários BDD
 
-Fonte: [`4.bdds/EP-03-instalar-apks.md`](../4.bdds/EP-03-instalar-apks.md).
+Fonte: [`5.bdds/EP-03-instalar-apks.md`](../5.bdds/EP-03-instalar-apks.md).
 
 ```gherkin
 Cenário: US-06 Apps da config ficam instalados na versão definida
@@ -400,4 +400,4 @@ I1 → I2 → I3 → I4
 ## Próximos passos
 
 → Implementar gaps em [`sources/android-control`](../sources/android-control/README.md)  
-→ Aceite: BDDs em [`4.bdds/EP-03-instalar-apks.md`](../4.bdds/EP-03-instalar-apks.md)
+→ Aceite: BDDs em [`5.bdds/EP-03-instalar-apks.md`](../5.bdds/EP-03-instalar-apks.md)

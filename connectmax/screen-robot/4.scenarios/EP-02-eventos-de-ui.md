@@ -1,7 +1,7 @@
 # Cenários — EP-02 Eventos de UI
 
 **Por quê:** US e cenários (SC) do épico, expostos via **código Node**.  
-**Índice:** [`README.md`](README.md) · **BDDs:** [`../4.bdds/EP-02-eventos-de-ui.md`](../4.bdds/EP-02-eventos-de-ui.md).  
+**Índice:** [`README.md`](README.md) · **BDDs:** [`../5.bdds/EP-02-eventos-de-ui.md`](../5.bdds/EP-02-eventos-de-ui.md).  
 **Épico:** [`../2.epics.md`](../2.epics.md) · **Plano:** [`../implementation-plan/EP-02-eventos-de-ui.md`](../implementation-plan/EP-02-eventos-de-ui.md).
 
 **US:** US-02..05 · **SC:** SC-04..07.
@@ -34,4 +34,4 @@
 
 ## Próximos passos
 
-→ [`../4.bdds/EP-02-eventos-de-ui.md`](../4.bdds/EP-02-eventos-de-ui.md) · [`../implementation-plan/EP-02-eventos-de-ui.md`](../implementation-plan/EP-02-eventos-de-ui.md)
+→ [`../5.bdds/EP-02-eventos-de-ui.md`](../5.bdds/EP-02-eventos-de-ui.md) · [`../implementation-plan/EP-02-eventos-de-ui.md`](../implementation-plan/EP-02-eventos-de-ui.md)

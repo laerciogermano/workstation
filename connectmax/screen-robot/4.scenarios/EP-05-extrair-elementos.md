@@ -1,7 +1,7 @@
 # Cenários — EP-05 Extrair elementos
 
 **Por quê:** US e cenários (SC) do épico, expostos via **código Node**.  
-**Índice:** [`README.md`](README.md) · **BDDs:** [`../4.bdds/EP-05-extrair-elementos.md`](../4.bdds/EP-05-extrair-elementos.md).  
+**Índice:** [`README.md`](README.md) · **BDDs:** [`../5.bdds/EP-05-extrair-elementos.md`](../5.bdds/EP-05-extrair-elementos.md).  
 **Épico:** [`../2.epics.md`](../2.epics.md) · **Plano:** [`../implementation-plan/EP-05-extrair-elementos.md`](../implementation-plan/EP-05-extrair-elementos.md).
 
 **US:** US-13..16 · **SC:** SC-17..21.
@@ -35,4 +35,4 @@
 
 ## Próximos passos
 
-→ [`../4.bdds/EP-05-extrair-elementos.md`](../4.bdds/EP-05-extrair-elementos.md) · [`../implementation-plan/EP-05-extrair-elementos.md`](../implementation-plan/EP-05-extrair-elementos.md)
+→ [`../5.bdds/EP-05-extrair-elementos.md`](../5.bdds/EP-05-extrair-elementos.md) · [`../implementation-plan/EP-05-extrair-elementos.md`](../implementation-plan/EP-05-extrair-elementos.md)

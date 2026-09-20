@@ -24,6 +24,11 @@
       "package": "com.tinder",
       "source": "huawei-app-gallery",
       "artifact": "apks/com.tinder.apk"
+    },
+    "hms": {
+      "package": "com.huawei.hwid",
+      "source": "apk-pure",
+      "artifact": "apks/com.huawei.hwid.apk"
     }
   },
   "credentials": {

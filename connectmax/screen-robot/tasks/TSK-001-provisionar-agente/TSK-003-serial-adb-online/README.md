@@ -2,16 +2,16 @@
 
 | Campo | Valor |
 |-------|--------|
-| Pasta | `task-003-serial-adb-online` |
+| Pasta | `TSK-003-serial-adb-online` |
 | TSK | [`TSK-003`](../../../7.tasks.md) |
 | Origem | SC-02 |
-| Pai | [`task-001-provisionar-agente`](../README.md) |
+| Pai | [`TSK-001-provisionar-agente`](../README.md) |
 | Estado | `Reachable` → `AdbOnline` |
-| Depende | [`task-002-subir-e-conectar`](../task-002-subir-e-conectar/README.md) |
+| Depende | [`TSK-002-subir-e-conectar`](../TSK-002-subir-e-conectar/README.md) |
 
 ## Entradas
 
-- Agent alcançável (task-002)
+- Agent alcançável (TSK-002)
 - Serial esperado na config (`cfg.provision.serial` / `cfg.device` / `ANDROID_SERIAL`)
 - `connectTimeoutMs` (default 120000)
 

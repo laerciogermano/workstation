@@ -18,7 +18,7 @@ Hub de projetos, board, tasks e processo de desenvolvimento.
 | | Fase | Descrição |
 |:--:|:-----|:----------|
 | 🔍 | [Discovery](core/processo/1.discovery/README.md) | Stories → epics → roadmap; refinar estória (scenarios → BDDs → protótipo? → tasks); depois o ciclo por estória |
-| 🧩 | [Refinamento técnico](core/processo/2.refinamento-tecnico/README.md) | Arquitetura, riscos, backlog e pasta `tasks/` (`task-<nn>-<titulo>`) |
+| 🧩 | [Refinamento técnico](core/processo/2.refinamento-tecnico/README.md) | Arquitetura, riscos, backlog e pasta `tasks/` (`TSK-<nn>-<titulo>`) |
 | 💻 | [Desenvolvimento](core/processo/3.desenvolvimento/README.md) | Por IA na ordem do Gantt: TDD → PR → Pendente aprovação; próximo robô só após humano |
 | 🧪 | [Testes](core/processo/4.testes/README.md) | Validar comportamento e qualidade |
 | 🚀 | [Implantação](core/processo/5.implantacao/README.md) | Publicar no ambiente alvo |

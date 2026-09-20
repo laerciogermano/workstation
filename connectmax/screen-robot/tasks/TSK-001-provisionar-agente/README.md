@@ -2,10 +2,10 @@
 
 | Campo | Valor |
 |-------|--------|
-| Pasta | `task-001-provisionar-agente` |
+| Pasta | `TSK-001-provisionar-agente` |
 | TSK | [`TSK-001`](../../7.tasks.md) |
 | Origem | EP-01 · US-01 |
-| Filhas | [`task-002-subir-e-conectar`](task-002-subir-e-conectar/README.md) · [`task-003-serial-adb-online`](task-003-serial-adb-online/README.md) · [`task-004-boot-completo`](task-004-boot-completo/README.md) |
+| Filhas | [`TSK-002-subir-e-conectar`](TSK-002-subir-e-conectar/README.md) · [`TSK-003-serial-adb-online`](TSK-003-serial-adb-online/README.md) · [`TSK-004-boot-completo`](TSK-004-boot-completo/README.md) |
 | Plano | [`implementation-plan/EP-01-provisionar-agente.md`](../../implementation-plan/EP-01-provisionar-agente.md) |
 
 ## Entradas
@@ -19,7 +19,7 @@
 
 - Entregar capacidade Node de provisionar o agent até serial ADB `device` + boot completo
 - API pública: único método `provisionEmulator(cfg)` → `AgentHandle` (filhas encapsuladas)
-- Implementar / validar na ordem: task-002 → task-003 → task-004
+- Implementar / validar na ordem: TSK-002 → TSK-003 → TSK-004
 
 ## Saídas
 

@@ -2,10 +2,10 @@
 
 | Campo | Valor |
 |-------|--------|
-| Pasta | `task-002-subir-e-conectar` |
+| Pasta | `TSK-002-subir-e-conectar` |
 | TSK | [`TSK-002`](../../../7.tasks.md) |
 | Origem | SC-01 |
-| Pai | [`task-001-provisionar-agente`](../README.md) |
+| Pai | [`TSK-001-provisionar-agente`](../README.md) |
 | Estado | `Absent` / `Starting` → `Reachable` |
 
 ## Entradas

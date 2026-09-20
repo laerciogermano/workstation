@@ -38,22 +38,22 @@ Em paralelo: vários PRs podem aguardar ao mesmo tempo; nenhum robô avança par
 Igual ao nome da pasta da atividade:
 
 ```text
-task-<nn>-<titulo>
+TSK-<nn>-<titulo>
 ```
 
 | Parte | Regra | Exemplo |
 |-------|--------|---------|
-| Prefixo | `task-` | `task-` |
+| Prefixo | `TSK-` | `TSK-` |
 | `<nn>` | número da task (zero-pad) | `002` |
 | `<titulo>` | kebab-case do nome | `subir-e-conectar` |
 
-Exemplos: `task-002-subir-e-conectar` · `task-001-provisionar-agente`
+Exemplos: `TSK-002-subir-e-conectar` · `TSK-001-provisionar-agente`
 
 ## Execução (por atividade / por robô)
 
 Ordem **obrigatória** — não pular nem inverter:
 
-1. **Baixar o projeto** — clone (ou worktree) limpo **dentro da pasta da atividade** em `tasks/` (ex.: `tasks/task-001-provisionar-agente/task-002-subir-e-conectar/`), isolado para esta task; o `README.md` da atividade permanece na pasta; o código do repo fica como subpasta do clone nessa mesma pasta
+1. **Baixar o projeto** — clone (ou worktree) limpo **dentro da pasta da atividade** em `tasks/` (ex.: `tasks/TSK-001-provisionar-agente/TSK-002-subir-e-conectar/`), isolado para esta task; o `README.md` da atividade permanece na pasta; o código do repo fica como subpasta do clone nessa mesma pasta
 2. **Criar a branch** — nome no [padrão](#padrão-de-branch) (= nome da pasta); publicar upstream quando houver push
 3. **Criar os TDDs** — testes que falham e cobrem o aceite da atividade (Entradas · Execução · Saídas / BDD)
 4. **Implementar a funcionalidade** — código mínimo para os TDDs passarem e o aceite fechar
@@ -65,8 +65,8 @@ Ordem **obrigatória** — não pular nem inverter:
 
 ```text
 tasks/
-└── task-001-provisionar-agente/
-    └── task-002-subir-e-conectar/   ← pasta da atividade
+└── TSK-001-provisionar-agente/
+    └── TSK-002-subir-e-conectar/   ← pasta da atividade
         ├── README.md
         └── <repo>/                  ← projeto baixado aqui (clone/worktree)
 ```
@@ -88,7 +88,7 @@ Regras transversais:
 
 ## Saídas
 
-- Branch no padrão `task-<nn>-<titulo>`
+- Branch no padrão `TSK-<nn>-<titulo>`
 - TDDs + implementação + evidência de testes verdes
 - Pull request aberto
 - Atividade no board em **Pendente aprovação**

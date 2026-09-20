@@ -18,33 +18,33 @@ Transformar o discovery em plano executável.
 - Consolidar critérios de pronto (aceite por cenário do discovery)
 - Estimar esforço e dependências; tratar cada cenário como unidade paralelizável quando não houver dependência
 - Quebrar em tarefas priorizadas (preferência: 1 tarefa ↔ 1 cenário)
-- **No final:** criar a pasta `tasks/` do projeto com uma atividade documentada para **cada task** do Gantt (pasta = `task-<nn>-<titulo>`)
+- **No final:** criar a pasta `tasks/` do projeto com uma atividade documentada para **cada task** do Gantt (pasta = `TSK-<nn>-<titulo>`)
 
 ## Saídas
 
 - Desenho técnico (ou ADR)
 - Critérios de pronto
 - Backlog priorizado
-- Pasta `tasks/` no projeto — pastas `task-<nn>-<titulo>` (hierarquia do Gantt); cada uma com **Entradas · Execução · Saídas** e documentação
+- Pasta `tasks/` no projeto — pastas `TSK-<nn>-<titulo>` (hierarquia do Gantt); cada uma com **Entradas · Execução · Saídas** e documentação
 - Próximo passo: desenvolvimento
 
 ## Pasta `tasks/` (obrigatória ao fechar o refinamento)
 
-Pastas no padrão **`task-<nn>-<titulo>`** (kebab-case), alinhado ao Gantt [`7.tasks.md`](../1.discovery/7.tasks.md) — **não** usar `EP-` / `US-` / `SC-` no nome da pasta. Origem (EP/US/SC) fica só no README da atividade.
+Pastas no padrão **`TSK-<nn>-<titulo>`** (kebab-case), alinhado ao Gantt [`7.tasks.md`](../1.discovery/7.tasks.md) — **não** usar `EP-` / `US-` / `SC-` no nome da pasta. Origem (EP/US/SC) fica só no README da atividade.
 
 ```text
 tasks/
 ├── README.md
-└── task-001-provisionar-agente/
+└── TSK-001-provisionar-agente/
     ├── README.md
-    ├── task-002-subir-e-conectar/
-    ├── task-003-serial-adb-online/
-    └── task-004-boot-completo/
+    ├── TSK-002-subir-e-conectar/
+    ├── TSK-003-serial-adb-online/
+    └── TSK-004-boot-completo/
 ```
 
 | Parte | Regra | Exemplo |
 |-------|--------|---------|
-| Prefixo | `task-` | `task-` |
+| Prefixo | `TSK-` | `TSK-` |
 | `<nn>` | número da task no Gantt (zero-pad 2+ dígitos) | `001` |
 | `<titulo>` | kebab-case do nome da atividade | `subir-e-conectar` |
 

@@ -67,8 +67,7 @@ async function main() {
   if (agree?.center) {
     console.log(`   → ${agree.label || agree.text}`);
     handle.tapElement(agree);
-    await sleep(2_000);
-    await handle.on("ui_stable", { timeoutMs: 60_000 }).catch(() => {});
+    await sleep(5_000);
     handle.screenshot(resolve(outDir, "02-apos-agree.png"));
   } else {
     console.log("   (botão AGREE não encontrado — segue)");

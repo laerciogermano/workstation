@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Abre LinkedIn, clica AGREE (se houver) e imprime a árvore de componentes.
+ * Abre LinkedIn, clica AGREE ou JOIN NOW (se houver) e imprime a árvore.
  *
  * Uso:
  *   node scripts/linkedin-login.js
@@ -37,6 +37,16 @@ function findAgree(elements) {
   );
 }
 
+function findJoinNow(elements) {
+  const isJoin = (s) =>
+    /^(join\s*now|cadastre[- ]?se|inscreva[- ]?se)$/i.test(String(s || "").trim());
+  return (
+    elements.find((el) => el.clickable && (isJoin(el.label) || isJoin(el.text))) ||
+    elements.find((el) => isJoin(el.label) || isJoin(el.text)) ||
+    elements.find((el) => /join\s*now/i.test(String(el.label || "")))
+  );
+}
+
 async function main() {
   const argv = process.argv.slice(2);
   let configPath = resolve(ROOT, "device.config.json");
@@ -61,16 +71,24 @@ async function main() {
   await handle.on("ui_stable", { timeoutMs: 90_000 });
   handle.screenshot(resolve(outDir, "01-antes-agree.png"));
 
-  console.log("4) Clicar AGREE (se existir)…");
+  console.log("4) Clicar AGREE ou JOIN NOW…");
   const { elements } = extractElements(handle.serial);
   const agree = findAgree(elements);
   if (agree?.center) {
-    console.log(`   → ${agree.label || agree.text}`);
+    console.log(`   → AGREE: ${agree.label || agree.text}`);
     handle.tapElement(agree);
     await sleep(5_000);
     handle.screenshot(resolve(outDir, "02-apos-agree.png"));
   } else {
-    console.log("   (botão AGREE não encontrado — segue)");
+    const join = findJoinNow(elements);
+    if (join?.center) {
+      console.log(`   → JOIN NOW: ${join.label || join.text}`);
+      handle.tapElement(join);
+      await sleep(5_000);
+      handle.screenshot(resolve(outDir, "02-apos-join-now.png"));
+    } else {
+      console.log("   (AGREE e JOIN NOW não encontrados — segue)");
+    }
   }
 
   console.log("5) Extrair árvore (5 passos)…");

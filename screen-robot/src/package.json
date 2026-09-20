@@ -3,14 +3,16 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Agent Android via Node: provisionar, APKs, eventos, extrair, operar, sessão",
+  "description": "Agent Android via Node: provisionar, APKs, eventos, extrair, operar, sess\u00e3o",
   "bin": {
     "screen-robot": "./cli.js"
   },
   "scripts": {
     "run": "node cli.js",
     "example": "node cli.js config.example.json",
-    "linkedin-login": "node scripts/linkedin-login.js"
+    "linkedin-login": "node scripts/linkedin-login.js",
+    "test": "node --test test/bdd/**/*.test.js",
+    "test:e2e": "node --test test/bdd/**/*.test.js"
   },
   "engines": {
     "node": ">=18"

@@ -3,9 +3,9 @@
  * Superfície pública: apenas `provisionEmulator`.
  * Handle inclui `on` (EP-02) — eventos via handle após provisionar.
  */
-import { spawnSync } from "node:child_process";
 import { adb, connectIfTcp, sleep } from "./adb.js";
 import { createOn } from "./events.js";
+import { startRuntime } from "./start-runtime.js";
 
 /**
  * @typedef {object} ProvisionConfig
@@ -37,29 +37,6 @@ function resolveConfig(cfg) {
     connectTimeoutMs: Number(cfg.provision?.connectTimeoutMs ?? 120_000),
     startScript: cfg.provision?.startScript,
   };
-}
-
-/** SC-01 — sobe runtime se startScript informado e serial ainda não online. */
-function startRuntime(resolved) {
-  if (!resolved.startScript) return;
-  try {
-    connectIfTcp(resolved.serial);
-    adb(resolved.serial, ["get-state"], { timeout: 3_000 });
-    return;
-  } catch {
-    /* precisa start */
-  }
-  const r = spawnSync("bash", [resolved.startScript], {
-    encoding: "utf8",
-    stdio: "inherit",
-  });
-  if (r.status !== 0) {
-    const err = new Error(
-      `PROVISION_START_FAILED: ${resolved.startScript} exit ${r.status}`,
-    );
-    err.code = "PROVISION_START_FAILED";
-    throw err;
-  }
 }
 
 /** SC-02 — serial ADB em estado device. */
@@ -109,7 +86,7 @@ export async function provisionEmulator(cfg) {
   const resolved = resolveConfig(cfg);
   const started = Date.now();
 
-  startRuntime(resolved);
+  await startRuntime(resolved);
   await ensureAdbOnline(resolved.serial, resolved.connectTimeoutMs, started);
   await waitBootCompleted(resolved.serial, resolved.connectTimeoutMs, started);
 

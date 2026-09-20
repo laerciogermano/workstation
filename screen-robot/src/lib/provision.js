@@ -78,6 +78,7 @@ export async function provisionEmulator(cfg, deps = {}) {
     scroll: operate.scroll,
     screenshot: operate.screenshot,
     matchImage: operate.matchImage,
+    openScrcpy: operate.openScrcpy,
     extract: createExtract(resolved.serial),
     saveSession: session.saveSession,
     removeSession: session.removeSession,

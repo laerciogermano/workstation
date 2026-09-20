@@ -21,6 +21,7 @@
 
 ## Saídas
 
-- `handle.openScrcpy()` devolve handle do processo / `{ pid, serial }` (ou equivalente)
+- `handle.openScrcpy()` devolve `{ pid, serial }`
 - Janela scrcpy operável (tap, digitar) no serial do agent
 - Aceite: [`5.bdds.md`](../../5.bdds.md) US-21 · SC-27
+- Status: **Done**

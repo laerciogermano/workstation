@@ -261,7 +261,7 @@ I1 → I2 → I3 → I4 → I5 → I6 → I7 → I8 → I9
 |------|--------|
 | `createOperate` → handle | Existe |
 | `launch` / `tap` / `type` / `scroll` / `screenshot` / `matchImage` | Existe |
-| `openScrcpy` | Gap — script [`scripts/view.sh`](../src/scripts/view.sh) |
+| `openScrcpy` | Existe |
 | Legado `operate.*(serial, …)` | Deprecado |
 
 ---

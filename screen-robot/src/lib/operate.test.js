@@ -83,4 +83,31 @@ describe("createOperate", () => {
       (err) => err && err.code === "OPERATE_LAUNCH_FAILED",
     );
   });
+
+  it("openScrcpy spawna scrcpy no serial", () => {
+    let spawned;
+    const op = createOperate("127.0.0.1:5555", {
+      whichScrcpy: () => "/usr/bin/scrcpy",
+      connectIfTcp: () => {},
+      spawnScrcpy: (bin, args, opts) => {
+        spawned = { bin, args, opts };
+        return { pid: 4242, unref: () => {} };
+      },
+    });
+    const out = op.openScrcpy({ title: "test" });
+    assert.equal(out.pid, 4242);
+    assert.equal(out.serial, "127.0.0.1:5555");
+    assert.equal(spawned.bin, "/usr/bin/scrcpy");
+    assert.ok(spawned.args.includes("127.0.0.1:5555"));
+    assert.ok(spawned.args.includes("--keyboard=sdk"));
+    assert.equal(spawned.opts.detached, true);
+  });
+
+  it("openScrcpy falha sem scrcpy no PATH", () => {
+    const op = createOperate("s", { whichScrcpy: () => null });
+    assert.throws(
+      () => op.openScrcpy(),
+      (err) => err && err.code === "OPERATE_SCRCPY_FAILED",
+    );
+  });
 });

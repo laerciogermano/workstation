@@ -36,6 +36,7 @@ describe("provisionEmulator", () => {
           scroll: () => {},
           screenshot: () => "/x.png",
           matchImage: async () => ({ x: 1, y: 2, confidence: 1 }),
+          openScrcpy: () => ({ pid: 1, serial: "127.0.0.1:5555" }),
         }),
         createExtract: () => async () => ({ type: "root", children: [] }),
         createSessionApi: () => ({
@@ -54,6 +55,7 @@ describe("provisionEmulator", () => {
     assert.equal(typeof handle.scroll, "function");
     assert.equal(typeof handle.screenshot, "function");
     assert.equal(typeof handle.matchImage, "function");
+    assert.equal(typeof handle.openScrcpy, "function");
     assert.equal(typeof handle.extract, "function");
     assert.equal(typeof handle.saveSession, "function");
     assert.equal(typeof handle.removeSession, "function");

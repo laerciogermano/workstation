@@ -136,7 +136,7 @@ handle.type("olá");                                    // ASCII via input; unic
 handle.scroll({ direction: "down", distance: 800 });   // up|down|left|right; x/y opcionais
 const shot = handle.screenshot("./screenshots/tela.png");
 const { x, y, confidence } = await handle.matchImage("./templates/btn.png");
-// await handle.openScrcpy(); // US-21 / TSK-035 — gap
+await handle.openScrcpy(); // { pid, serial } — janela para ver/operar
 ```
 
 | Método | Erros tipados |
@@ -145,8 +145,13 @@ const { x, y, confidence } = await handle.matchImage("./templates/btn.png");
 | `type` | `OPERATE_TYPE_FAILED` |
 | `screenshot` | `OPERATE_SCREENSHOT_FAILED` |
 | `matchImage` | `OPERATE_MATCH_NOT_FOUND` |
+| `openScrcpy` | `OPERATE_SCRCPY_FAILED` |
 
 IME unicode: [`apks/ADBKeyboard.apk`](apks/ADBKeyboard.apk) (instalado sob demanda).
+
+```js
+const { pid, serial } = handle.openScrcpy(); // scrcpy no serial do handle
+```
 
 ---
 

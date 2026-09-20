@@ -1,11 +1,12 @@
 /**
  * EP-04 — operações de tela (internos do handle).
- * Caller: handle.launch / tap / type / scroll / screenshot / matchImage.
+ * Caller: handle.launch / tap / type / scroll / screenshot / matchImage / openScrcpy.
  */
+import { spawn, spawnSync } from "node:child_process";
 import { mkdirSync, existsSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { adb, adbOk, sleep as defaultSleep } from "./adb.js";
+import { adb, adbOk, connectIfTcp as defaultConnectIfTcp, sleep as defaultSleep } from "./adb.js";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const ADB_IME = "com.android.adbkeyboard/.AdbIME";
@@ -45,6 +46,20 @@ export function createOperate(serial, deps = {}) {
   const exists = deps.existsSync ?? existsSync;
   const mkdir = deps.mkdirSync ?? mkdirSync;
   const resolvePath = deps.resolve ?? resolve;
+  const connectIfTcp = deps.connectIfTcp ?? defaultConnectIfTcp;
+  const whichScrcpy =
+    deps.whichScrcpy ??
+    (() => {
+      const r = spawnSync("command", ["-v", "scrcpy"], {
+        encoding: "utf8",
+        shell: true,
+      });
+      const p = (r.stdout || "").trim();
+      return r.status === 0 && p ? p : null;
+    });
+  const spawnScrcpy =
+    deps.spawnScrcpy ??
+    ((bin, args, opts) => spawn(bin, args, opts));
 
   function ensureAdbKeyboard() {
     const installed = runAdbOk(serial, [
@@ -226,7 +241,60 @@ export function createOperate(serial, deps = {}) {
     return hit;
   }
 
-  return { launch, tap, tapElement, type, scroll, screenshot, matchImage };
+  /**
+   * Abre scrcpy no serial do handle (US-21 / SC-27).
+   * @param {{ title?: string, detached?: boolean, extraArgs?: string[] }} [opts]
+   * @returns {{ pid: number, serial: string }}
+   */
+  function openScrcpy(opts = {}) {
+    const bin = whichScrcpy();
+    if (!bin) {
+      fail(
+        "OPERATE_SCRCPY_FAILED",
+        "scrcpy não encontrado no PATH (brew install scrcpy)",
+      );
+    }
+    try {
+      connectIfTcp(serial);
+    } catch {
+      /* connect best-effort */
+    }
+    const title = opts.title || `screen-robot ${serial}`;
+    const args = [
+      "-s",
+      serial,
+      "--no-audio",
+      "--keyboard=sdk",
+      "--window-title",
+      title,
+      ...(opts.extraArgs || []),
+    ];
+    const detached = opts.detached !== false;
+    try {
+      const child = spawnScrcpy(bin, args, {
+        detached,
+        stdio: "ignore",
+      });
+      if (detached && typeof child.unref === "function") child.unref();
+      if (child.pid == null) {
+        fail("OPERATE_SCRCPY_FAILED", "scrcpy não iniciou (sem pid)");
+      }
+      return { pid: child.pid, serial };
+    } catch (e) {
+      fail("OPERATE_SCRCPY_FAILED", e.message || String(e));
+    }
+  }
+
+  return {
+    launch,
+    tap,
+    tapElement,
+    type,
+    scroll,
+    screenshot,
+    matchImage,
+    openScrcpy,
+  };
 }
 
 /** @deprecated Preferir handle via createOperate */

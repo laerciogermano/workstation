@@ -13,6 +13,7 @@ import { fileURLToPath } from "node:url";
 import { sleep } from "../lib/adb.js";
 import { extractElements } from "../lib/extract.js";
 import { provisionEmulator } from "../lib/provision.js";
+import { resetInstance } from "../lib/reset-instance.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, "..");
@@ -67,6 +68,10 @@ async function main() {
   console.log("0) Limpar screenshots…");
   clearScreenshots(outDir);
 
+  console.log("0.5) Resetar instância do zero…");
+  const reset = await resetInstance(cfg);
+  console.log(`   OK ${reset.serial}`);
+
   console.log("1) Provisionar…");
   const handle = await provisionEmulator(cfg);
   console.log(`   OK ${handle.serial}`);
@@ -80,7 +85,7 @@ async function main() {
   await handle.on("ui_stable", { timeoutMs: 90_000 });
   handle.screenshot(resolve(outDir, "01-antes-agree.png"));
 
-  console.log("4) Clicar AGREE ou Sign In…");
+  // console.log("4) Clicar AGREE ou Sign In…");
   const { elements } = extractElements(handle.serial);
 
   console.log(elements);

@@ -37,3 +37,5 @@ describe("Épico: EP-05 Extrair elementos", () => {
     { timeout: 180_000 },
   );
 });
+
+// SC-30 vive em sc-30-linkedin-sign-in-with-email.test.js (fixture, sem device)

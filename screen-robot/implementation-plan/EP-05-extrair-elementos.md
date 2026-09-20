@@ -25,7 +25,7 @@
 | US-15 | Extrair listas |
 | US-16 | Extrair imagens |
 | US-23 | Buscar elemento(s) por texto (similaridade) |
-| SC-17..21 · SC-29 | Cenários correspondentes |
+| SC-17..21 · SC-29..30 | Cenários correspondentes (SC-30 = LinkedIn Sign in with Email) |
 
 **Resultado:** **lista plana** `UiElement[]` — cada item tem `type`, `bounds`, opcionalmente `text` / `center`.  
 `handle.extract()` — **um método, sem parâmetros**; cada chamada (por estória/SC) **acrescenta elementos** na mesma lista acumulada.
@@ -341,6 +341,7 @@ Fonte: [`5.bdds.md#ep-05--extrair-elementos`](../5.bdds.md#ep-05--extrair-elemen
 | I6 | Sem uiautomator dump como fonte | — | Só frame → OCR/visão |
 | I7 | Piloto: `extract()` ×5 + JSON da lista | — | linkedin-login |
 | I8 | `findByText(serial, query)` encapsula `extractElements` + match por similaridade | SC-29 | Score ≥ limiar; caller não passa lista |
+| I9 | BDD SC-30 LinkedIn fixture `"Sign in with Email"` → 4 partes | SC-30 | `Sign`+`in`+`with`+`Email` |
 
 ### Ordem
 

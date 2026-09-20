@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Abre Tinder: ALLOW → Continue with Phone Number → lista da tela seguinte.
+ * Abre Tinder (GMS arm64): ALLOW → Continue with Phone Number → lista da tela seguinte.
  *
  * Uso:
  *   node scripts/tinder-home.js
@@ -186,22 +186,32 @@ async function main() {
   const view = handle.openScrcpy({ title: `tinder-home ${handle.serial}` });
   console.log(`   OK pid=${view.pid}`);
 
-  console.log("2) Instalar HMS Core (obrigatório p/ Tinder Huawei)…");
-  const hmsSpec = cfg.apps?.hms;
-  if (hmsSpec?.package) {
-    const hms = await handle.installApk(hmsSpec);
-    console.log(
-      `   OK ${hms.package} ${hms.version || "?"}${hms.skipped ? " (skip)" : ""}`,
-    );
-  } else {
-    console.log("   (apps.hms ausente — Tinder Huawei pode falhar sem HMS Core)");
-  }
-
-  console.log("2.5) Instalar tinder…");
+  console.log("2) Instalar tinder (GMS / arm64)…");
   const installed = await handle.installApk(appSpec);
   console.log(
     `   OK ${installed.package} ${installed.version || "?"}${installed.skipped ? " (skip)" : ""}`,
   );
+
+  console.log("2.5) Localização: permissões + geo fix (SP)…");
+  {
+    const serial = handle.serial;
+    for (const p of [
+      "android.permission.ACCESS_FINE_LOCATION",
+      "android.permission.ACCESS_COARSE_LOCATION",
+    ]) {
+      spawnSync("adb", ["-s", serial, "shell", "pm", "grant", appSpec.package, p], {
+        encoding: "utf8",
+      });
+    }
+    spawnSync("adb", ["-s", serial, "shell", "cmd", "location", "set-location-enabled", "true"], {
+      encoding: "utf8",
+    });
+    // emu geo fix: longitude latitude
+    spawnSync("adb", ["-s", serial, "emu", "geo", "fix", "-46.6333", "-23.5505"], {
+      encoding: "utf8",
+    });
+    console.log("   OK location + geo fix");
+  }
 
   console.log("3) Abrir tinder…");
   await handle.launch(appSpec.package);

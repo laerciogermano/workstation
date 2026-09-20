@@ -22,8 +22,9 @@
     },
     "tinder": {
       "package": "com.tinder",
-      "source": "huawei-app-gallery",
-      "artifact": "apks/com.tinder.apk"
+      "version": "16.11.0",
+      "source": "apkcombo",
+      "artifact": "apks/com.tinder.xapk"
     },
     "hms": {
       "package": "com.huawei.hwid",
@@ -38,7 +39,12 @@
     }
   },
   "type": {
-    "keyboardRegion": { "x": 0, "y": 700, "width": 720, "height": 520 }
+    "keyboardRegion": {
+      "x": 0,
+      "y": 700,
+      "width": 720,
+      "height": 520
+    }
   },
   "session": {
     "path": "./state/session.json"

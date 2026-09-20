@@ -175,7 +175,7 @@ const e5 = await handle.extract(); // imagens (visão)
 
 Fonte do frame: screenshot ADB, stream ou câmera (device real) — mesmo pipeline.
 
-Helpers: `extractElements` / `findLoginTarget` / `findEditableFields` · planejado `findByText` (US-23) em [`lib/extract.js`](lib/extract.js).
+Helpers: `extractElements` / `findByText` / `findLoginTarget` / `findEditableFields` em [`lib/extract.js`](lib/extract.js).
 
 ---
 

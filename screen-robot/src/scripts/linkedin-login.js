@@ -11,7 +11,7 @@ import { dirname, resolve, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { sleep } from "../lib/adb.js";
-import { extractElements } from "../lib/extract.js";
+import { extractElements, findByText } from "../lib/extract.js";
 import { provisionEmulator } from "../lib/provision.js";
 import { resetInstance } from "../lib/reset-instance.js";
 
@@ -29,14 +29,6 @@ function clearScreenshots(dir) {
   for (const name of readdirSync(dir)) {
     rmSync(join(dir, name), { recursive: true, force: true });
   }
-}
-
-function findSignInWithEmail(elements) {
-  const match = (s) => /sign\s*in\s*with\s*email/i.test(String(s || ""));
-  return (
-    elements.find((el) => el.clickable && (match(el.label) || match(el.text))) ||
-    elements.find((el) => match(el.label) || match(el.text))
-  );
 }
 
 async function main() {
@@ -78,11 +70,19 @@ async function main() {
 
   console.log("5) Clicar Sign in with Email…");
   {
-    const { elements } = await extractElements(handle.serial);
-    const btn = findSignInWithEmail(elements);
-    if (btn?.center) {
-      console.log(`   → ${btn.label || btn.text}`);
-      handle.tapElement(btn);
+    let hit = null;
+    for (let attempt = 1; attempt <= 8; attempt++) {
+      const { elements } = await extractElements(handle.serial);
+      hit = findByText(elements, "Sign in with Email", { minScore: 0.75 });
+      if (hit?.center) break;
+      console.log(`   tentativa ${attempt}/8 — aguardando OCR…`);
+      await sleep(3_000);
+    }
+    if (hit?.center) {
+      console.log(
+        `   → "${hit.text}" score=${hit.score.toFixed(2)} parts=${hit.elements.length}`,
+      );
+      handle.tapElement({ center: hit.center, bounds: hit.bounds });
       await sleep(5_000);
       handle.screenshot(resolve(outDir, "02-apos-sign-in-email.png"));
     } else {

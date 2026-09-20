@@ -358,7 +358,7 @@ I1 → I2 → I3 → I4 → I5 → I6 → I7 → I8
 | Fonte = frame → OCR/visão | Feito (`frame.js` / `ocr.js` / `vision.js`) |
 | `dumpUiXml` | Só legado eventos EP-02 |
 | `extractElements` lista plana | Alinha com o contrato alvo de `extract()` |
-| `findByText` (US-23) | **Gap** — regex exata no piloto falha quando OCR parte a frase |
+| `findByText` (US-23) | Feito — união de vizinhos + score; piloto linkedin-login |
 
 ---
 

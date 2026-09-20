@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Abre LinkedIn, tira print da tela inicial e imprime a árvore de componentes.
+ * Abre LinkedIn, clica “Sign in with Email” e imprime a árvore.
  *
  * Uso:
  *   node scripts/linkedin-login.js
@@ -10,6 +10,8 @@ import { readFileSync, existsSync, mkdirSync, writeFileSync, readdirSync, rmSync
 import { dirname, resolve, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { sleep } from "../lib/adb.js";
+import { extractElements } from "../lib/extract.js";
 import { provisionEmulator } from "../lib/provision.js";
 import { resetInstance } from "../lib/reset-instance.js";
 
@@ -27,6 +29,14 @@ function clearScreenshots(dir) {
   for (const name of readdirSync(dir)) {
     rmSync(join(dir, name), { recursive: true, force: true });
   }
+}
+
+function findSignInWithEmail(elements) {
+  const match = (s) => /sign\s*in\s*with\s*email/i.test(String(s || ""));
+  return (
+    elements.find((el) => el.clickable && (match(el.label) || match(el.text))) ||
+    elements.find((el) => match(el.label) || match(el.text))
+  );
 }
 
 async function main() {
@@ -66,7 +76,21 @@ async function main() {
   handle.screenshot(shotPath);
   console.log(`   OK → ${shotPath}`);
 
-  console.log("5) Extrair árvore (5 passos)…");
+  console.log("5) Clicar Sign in with Email…");
+  {
+    const { elements } = extractElements(handle.serial);
+    const btn = findSignInWithEmail(elements);
+    if (btn?.center) {
+      console.log(`   → ${btn.label || btn.text}`);
+      handle.tapElement(btn);
+      await sleep(5_000);
+      handle.screenshot(resolve(outDir, "02-apos-sign-in-email.png"));
+    } else {
+      console.log("   (Sign in with Email não encontrado — segue)");
+    }
+  }
+
+  console.log("6) Extrair árvore (5 passos)…");
   let tree;
   for (let i = 1; i <= 5; i++) {
     tree = await handle.extract();

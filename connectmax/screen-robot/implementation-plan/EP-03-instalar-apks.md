@@ -112,23 +112,23 @@ sequenceDiagram
 
 #### Passo a passo
 
-| # | Chamada | Por quê | Entradas | Execução | Saídas |
-|---|---------|---------|----------|----------|--------|
-| 1 | Dev → ApkInstaller: `installAppsFromConfig(...)` | Instalar apps do cfg | `serial`, `cfg` | Itera apps | lista resultados |
-| 2 | ApkInstaller → Config: `package/version` | Ler alvo | chave app | Parse | pedido |
-| 3 | Config → ApkInstaller: `alvo` | Contrato da app | — | Retorna | alvo |
-| 4 | ApkInstaller → AdbClient: `versionName?` | Ver se já instalado | `package` | Pede dumpsys | pedido |
-| 5 | AdbClient → Device: `dumpsys package` | Ler versão | `pkg` | Shell | pedido |
-| 6 | Device → AdbClient: `versionName\|null` | Versão atual | — | Resposta | versão |
-| 7 | AdbClient → ApkInstaller: `versão atual` | Reportar | — | Propaga | versão |
-| 8 | ApkInstaller → Dev: `skip` | Já na versão | match | Atalho | `skipped` |
-| 9 | ApkInstaller → Downloader: `apkeep/artifact` | Obter binário | pkg/version | Download ou path | pedido |
-| 10 | Downloader → ApkInstaller: `path` | Artefato | — | Retorna path | path |
-| 11 | ApkInstaller → AdbClient: `adb install` | Instalar | path(s) | install/-multiple | pedido |
-| 12 | AdbClient → Device: `instalar` | pm install | APK/XAPK | Aplica package | pedido |
-| 13 | Device → AdbClient: `ok` | Install ok | — | Success | `ok` |
-| 14 | AdbClient → ApkInstaller: `Success` | Confirmar | — | Propaga | `Success` |
-| 15 | ApkInstaller → Dev: `{ installed, package, version }` | Resultado | — | Agrega | InstallResult |
+| # | De | Para | Chamada | Por quê | Entradas | Execução | Saídas |
+|---|----|------|---------|---------|----------|----------|--------|
+| 1 | Dev | ApkInstaller | `installAppsFromConfig(...)` | Instalar apps do cfg | `serial`, `cfg` | Itera apps | lista resultados |
+| 2 | ApkInstaller | Config | `package/version` | Ler alvo | chave app | Parse | pedido |
+| 3 | Config | ApkInstaller | `alvo` | Contrato da app | — | Retorna | alvo |
+| 4 | ApkInstaller | AdbClient | `versionName?` | Ver se já instalado | `package` | Pede dumpsys | pedido |
+| 5 | AdbClient | Device | `dumpsys package` | Ler versão | `pkg` | Shell | pedido |
+| 6 | Device | AdbClient | `versionName\ | null` | Versão atual | — | Resposta |
+| 7 | AdbClient | ApkInstaller | `versão atual` | Reportar | — | Propaga | versão |
+| 8 | ApkInstaller | Dev | `skip` | Já na versão | match | Atalho | `skipped` |
+| 9 | ApkInstaller | Downloader | `apkeep/artifact` | Obter binário | pkg/version | Download ou path | pedido |
+| 10 | Downloader | ApkInstaller | `path` | Artefato | — | Retorna path | path |
+| 11 | ApkInstaller | AdbClient | `adb install` | Instalar | path(s) | install/-multiple | pedido |
+| 12 | AdbClient | Device | `instalar` | pm install | APK/XAPK | Aplica package | pedido |
+| 13 | Device | AdbClient | `ok` | Install ok | — | Success | `ok` |
+| 14 | AdbClient | ApkInstaller | `Success` | Confirmar | — | Propaga | `Success` |
+| 15 | ApkInstaller | Dev | `{ installed, package, version }` | Resultado | — | Agrega | InstallResult |
 
 #### Contratos
 

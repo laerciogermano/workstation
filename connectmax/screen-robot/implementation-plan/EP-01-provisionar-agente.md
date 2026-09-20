@@ -127,27 +127,27 @@ sequenceDiagram
 
 #### Passo a passo
 
-| # | Chamada | Por quê | Entradas | Execução | Saídas |
-|---|---------|---------|----------|----------|--------|
-| 1 | Dev → Provisioner: `provisionAgent(cfg)` | Entrada do épico | `cfg` | Valida cfg e orquestra SC-01→SC-03 | Promise `AgentHandle` |
-| 2 | Provisioner → Provisioner: resolve serial/timeout/kind | Normalizar config | `cfg` + env | Aplica defaults e precedência | `ProvisionConfig` |
-| 3 | Provisioner → RuntimeStarter: `start(cfg)` | Garantir runtime up (SC-01) | `kind`, `startScript?` | Chama start se não reachable | pedido de start |
-| 4 | RuntimeStarter → Device: `scripts/start.sh` | Materializar Android | script + args | Spawn docker/AVD | pedido de up |
-| 5 | Device → RuntimeStarter: `up` | Confirmar runtime no ar | porta/processo | Sinaliza up | `up` |
-| 6 | RuntimeStarter → Provisioner: `reachable` | Fechar SC-01 | `up` | Retorna reachable | `true` |
-| 7 | Provisioner → AdbClient: `connectIfTcp(serial)` | TCP precisa connect (SC-02) | `serial` | Detecta TCP e pede connect | pedido |
-| 8 | AdbClient → Device: `adb connect` | Abrir canal ADB | `host:port` | Roda adb connect | pedido |
-| 9 | Device → AdbClient: `connected` | Sessão TCP | — | Aceita/recusa connect | `connected` |
-| 10 | AdbClient → Provisioner: `ok` | Connect concluído | — | Propaga resultado | `ok` |
-| 11 | Provisioner → AdbClient: `wait-for-device` | Esperar estado device | `serial` | Chama wait-for-device | pedido |
-| 12 | AdbClient → Device: `adb wait-for-device` | Bloquear até online | `serial` | Comando adb | pedido |
-| 13 | Device → AdbClient: `device` | Serial online | — | Estado device | `device` |
-| 14 | AdbClient → Provisioner: `online` | SC-02 ok | — | Propaga online | `online` |
-| 15 | Provisioner → AdbClient: `getprop sys.boot_completed` | Checar boot (SC-03) | `serial` | Pede getprop | pedido |
-| 16 | AdbClient → Device: `adb shell getprop` | Ler prop | `sys.boot_completed` | Shell remoto | pedido |
-| 17 | Device → AdbClient: `"1"` | Boot completo | — | Retorna prop | `1` |
-| 18 | AdbClient → Provisioner: `boot=1` | SC-03 ok | — | Propaga Booted | `boot=1` |
-| 19 | Provisioner → Dev: `AgentHandle` | Entregar handle | estado interno | Monta saída | `{ serial, kind, provisionedAt }` |
+| # | De | Para | Chamada | Por quê | Entradas | Execução | Saídas |
+|---|----|------|---------|---------|----------|----------|--------|
+| 1 | Dev | Provisioner | `provisionAgent(cfg)` | Entrada do épico | `cfg` | Valida cfg e orquestra SC-01→SC-03 | Promise `AgentHandle` |
+| 2 | Provisioner | Provisioner | resolve serial/timeout/kind | Normalizar config | `cfg` + env | Aplica defaults e precedência | `ProvisionConfig` |
+| 3 | Provisioner | RuntimeStarter | `start(cfg)` | Garantir runtime up (SC-01) | `kind`, `startScript?` | Chama start se não reachable | pedido de start |
+| 4 | RuntimeStarter | Device | `scripts/start.sh` | Materializar Android | script + args | Spawn docker/AVD | pedido de up |
+| 5 | Device | RuntimeStarter | `up` | Confirmar runtime no ar | porta/processo | Sinaliza up | `up` |
+| 6 | RuntimeStarter | Provisioner | `reachable` | Fechar SC-01 | `up` | Retorna reachable | `true` |
+| 7 | Provisioner | AdbClient | `connectIfTcp(serial)` | TCP precisa connect (SC-02) | `serial` | Detecta TCP e pede connect | pedido |
+| 8 | AdbClient | Device | `adb connect` | Abrir canal ADB | `host:port` | Roda adb connect | pedido |
+| 9 | Device | AdbClient | `connected` | Sessão TCP | — | Aceita/recusa connect | `connected` |
+| 10 | AdbClient | Provisioner | `ok` | Connect concluído | — | Propaga resultado | `ok` |
+| 11 | Provisioner | AdbClient | `wait-for-device` | Esperar estado device | `serial` | Chama wait-for-device | pedido |
+| 12 | AdbClient | Device | `adb wait-for-device` | Bloquear até online | `serial` | Comando adb | pedido |
+| 13 | Device | AdbClient | `device` | Serial online | — | Estado device | `device` |
+| 14 | AdbClient | Provisioner | `online` | SC-02 ok | — | Propaga online | `online` |
+| 15 | Provisioner | AdbClient | `getprop sys.boot_completed` | Checar boot (SC-03) | `serial` | Pede getprop | pedido |
+| 16 | AdbClient | Device | `adb shell getprop` | Ler prop | `sys.boot_completed` | Shell remoto | pedido |
+| 17 | Device | AdbClient | `"1"` | Boot completo | — | Retorna prop | `1` |
+| 18 | AdbClient | Provisioner | `boot=1` | SC-03 ok | — | Propaga Booted | `boot=1` |
+| 19 | Provisioner | Dev | `AgentHandle` | Entregar handle | estado interno | Monta saída | `{ serial, kind, provisionedAt }` |
 
 #### Contratos
 

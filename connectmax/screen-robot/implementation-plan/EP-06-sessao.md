@@ -91,13 +91,13 @@ sequenceDiagram
 
 #### Passo a passo
 
-| # | Chamada | Por quê | Entradas | Execução | Saídas |
-|---|---------|---------|----------|----------|--------|
-| 1 | Dev → SessionStore: `saveSession(path, state)` | Persistir | `path`, state | Serializa | Promise |
-| 2 | SessionStore → SessionStore: `merge savedAt` | Carimbar | state | Injeta ISO timestamp | state |
-| 3 | SessionStore → FS: `mkdir + write JSON` | Gravar | path + JSON | Cria dirs e escreve | pedido |
-| 4 | FS → SessionStore: `ok` | Escrita ok | — | Confirma | `ok` |
-| 5 | SessionStore → Dev: `absPath` | Path canônico | — | Resolve | absPath |
+| # | De | Para | Chamada | Por quê | Entradas | Execução | Saídas |
+|---|----|------|---------|---------|----------|----------|--------|
+| 1 | Dev | SessionStore | `saveSession(path, state)` | Persistir | `path`, state | Serializa | Promise |
+| 2 | SessionStore | SessionStore | `merge savedAt` | Carimbar | state | Injeta ISO timestamp | state |
+| 3 | SessionStore | FS | `mkdir + write JSON` | Gravar | path + JSON | Cria dirs e escreve | pedido |
+| 4 | FS | SessionStore | `ok` | Escrita ok | — | Confirma | `ok` |
+| 5 | SessionStore | Dev | `absPath` | Path canônico | — | Resolve | absPath |
 
 #### Contratos
 
@@ -176,13 +176,13 @@ sequenceDiagram
 
 #### Passo a passo
 
-| # | Chamada | Por quê | Entradas | Execução | Saídas |
-|---|---------|---------|----------|----------|--------|
-| 1 | Dev → SessionStore: `removeSession(path)` | Apagar sessão | `path` | Unlink idempotente | Promise |
-| 2 | SessionStore → FS: `unlink` | Remover arquivo | `path` | Apaga se existe | pedido |
-| 3 | FS → SessionStore: `removed\|absent` | Resultado FS | — | Retorna flag | status |
-| 4 | SessionStore → SessionStore: `limpar contexto` | Alinhar memória | handles | Reset runtime | — |
-| 5 | SessionStore → Dev: `{ removed }` | Resultado | — | Resolve | `{ removed }` |
+| # | De | Para | Chamada | Por quê | Entradas | Execução | Saídas |
+|---|----|------|---------|---------|----------|----------|--------|
+| 1 | Dev | SessionStore | `removeSession(path)` | Apagar sessão | `path` | Unlink idempotente | Promise |
+| 2 | SessionStore | FS | `unlink` | Remover arquivo | `path` | Apaga se existe | pedido |
+| 3 | FS | SessionStore | `removed\ | absent` | Resultado FS | — | Retorna flag |
+| 4 | SessionStore | SessionStore | `limpar contexto` | Alinhar memória | handles | Reset runtime | — |
+| 5 | SessionStore | Dev | `{ removed }` | Resultado | — | Resolve | `{ removed }` |
 
 #### Contratos
 
@@ -266,15 +266,15 @@ sequenceDiagram
 
 #### Passo a passo
 
-| # | Chamada | Por quê | Entradas | Execução | Saídas |
-|---|---------|---------|----------|----------|--------|
-| 1 | Dev → SessionStore: `restoreSession(path)` | Restaurar | `path` | Read + validate | Promise |
-| 2 | SessionStore → FS: `read JSON` | Carregar | `path` | fs.readFile | pedido |
-| 3 | FS → SessionStore: `content` | Arquivo ok | — | alt ok | JSON |
-| 4 | SessionStore → SessionStore: `validar schema` | Garantir campos | JSON | Valida | state |
-| 5 | SessionStore → Dev: `state` | Sessão pronta | — | Resolve | `SessionState` |
-| 6 | FS → SessionStore: `missing\|invalid` | Falha de leitura | — | alt erro | erro |
-| 7 | SessionStore → Dev: `erro` | Não restaurável | código | Rejeita | `SESSION_*` |
+| # | De | Para | Chamada | Por quê | Entradas | Execução | Saídas |
+|---|----|------|---------|---------|----------|----------|--------|
+| 1 | Dev | SessionStore | `restoreSession(path)` | Restaurar | `path` | Read + validate | Promise |
+| 2 | SessionStore | FS | `read JSON` | Carregar | `path` | fs.readFile | pedido |
+| 3 | FS | SessionStore | `content` | Arquivo ok | — | alt ok | JSON |
+| 4 | SessionStore | SessionStore | `validar schema` | Garantir campos | JSON | Valida | state |
+| 5 | SessionStore | Dev | `state` | Sessão pronta | — | Resolve | `SessionState` |
+| 6 | FS | SessionStore | `missing\ | invalid` | Falha de leitura | — | alt erro |
+| 7 | SessionStore | Dev | `erro` | Não restaurável | código | Rejeita | `SESSION_*` |
 
 #### Contratos
 

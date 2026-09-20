@@ -101,16 +101,16 @@ sequenceDiagram
 
 #### Passo a passo
 
-| # | Chamada | Por quê | Entradas | Execução | Saídas |
-|---|---------|---------|----------|----------|--------|
-| 1 | Dev → Operator: `launch(...)` | Abrir app | `serial`, `pkg` | Orquestra launch+wait | Promise |
-| 2 | Operator → AdbClient: `am start` / `monkey` | Disparar activity | `pkg`/`activity` | Envia comando | pedido |
-| 3 | AdbClient → Device: `launch` | Iniciar app | intent | AM/monkey | pedido |
-| 4 | Device → AdbClient: `started` | App iniciando | — | Confirma start | `started` |
-| 5 | AdbClient → Operator: `ok` | Comando ok | — | Propaga | `ok` |
-| 6 | Operator → EventBus: `on("app_open", { serial, pkg })` | Confirmar foreground | `pkg` | Wait US-03 | pedido |
-| 7 | EventBus → Operator: `foreground` | App na frente | — | Resolve wait | `foreground` |
-| 8 | Operator → Dev: `ok` | Launch ok | — | Resolve | `ok` |
+| # | De | Para | Chamada | Por quê | Entradas | Execução | Saídas |
+|---|----|------|---------|---------|----------|----------|--------|
+| 1 | Dev | Operator | `launch(...)` | Abrir app | `serial`, `pkg` | Orquestra launch+wait | Promise |
+| 2 | Operator | AdbClient | `am start` / `monkey` | Disparar activity | `pkg`/`activity` | Envia comando | pedido |
+| 3 | AdbClient | Device | `launch` | Iniciar app | intent | AM/monkey | pedido |
+| 4 | Device | AdbClient | `started` | App iniciando | — | Confirma start | `started` |
+| 5 | AdbClient | Operator | `ok` | Comando ok | — | Propaga | `ok` |
+| 6 | Operator | EventBus | `on("app_open", { serial, pkg })` | Confirmar foreground | `pkg` | Wait US-03 | pedido |
+| 7 | EventBus | Operator | `foreground` | App na frente | — | Resolve wait | `foreground` |
+| 8 | Operator | Dev | `ok` | Launch ok | — | Resolve | `ok` |
 
 #### Contratos
 
@@ -192,14 +192,14 @@ sequenceDiagram
 
 #### Passo a passo
 
-| # | Chamada | Por quê | Entradas | Execução | Saídas |
-|---|---------|---------|----------|----------|--------|
-| 1 | Dev → Operator: `tap` / `tapElement` | Toque na UI | coords ou el | Resolve coords | Promise |
-| 2 | Operator → AdbClient: `input tap` | Enviar toque | `x,y` | Comando input | pedido |
-| 3 | AdbClient → Device: `tap` | Injetar evento | coords | `input tap` | pedido |
-| 4 | Device → AdbClient: `done` | Toque aplicado | — | Confirma | `done` |
-| 5 | AdbClient → Operator: `ok` | Tap ok | — | Propaga | `ok` |
-| 6 | Operator → Dev: `ok` | Ação concluída | — | Resolve | `ok` |
+| # | De | Para | Chamada | Por quê | Entradas | Execução | Saídas |
+|---|----|------|---------|---------|----------|----------|--------|
+| 1 | Dev | Operator | `tap` / `tapElement` | Toque na UI | coords ou el | Resolve coords | Promise |
+| 2 | Operator | AdbClient | `input tap` | Enviar toque | `x,y` | Comando input | pedido |
+| 3 | AdbClient | Device | `tap` | Injetar evento | coords | `input tap` | pedido |
+| 4 | Device | AdbClient | `done` | Toque aplicado | — | Confirma | `done` |
+| 5 | AdbClient | Operator | `ok` | Tap ok | — | Propaga | `ok` |
+| 6 | Operator | Dev | `ok` | Ação concluída | — | Resolve | `ok` |
 
 #### Contratos
 
@@ -288,18 +288,18 @@ sequenceDiagram
 
 #### Passo a passo
 
-| # | Chamada | Por quê | Entradas | Execução | Saídas |
-|---|---------|---------|----------|----------|--------|
-| 1 | Dev → Operator: `typeText(serial, text)` | Digitar texto | `serial`, `text` | Escolhe ASCII/unicode | Promise |
-| 2 | Operator → AdbClient: `input text` | Caminho ASCII | texto escapado | alt ASCII | pedido |
-| 3 | AdbClient → Device: `injetar` | Aplicar chars | payload | input/IME | pedido |
-| 4 | Device → AdbClient: `done` | Texto aplicado | — | Confirma | `done` |
-| 5 | AdbClient → Operator: `ok` | Type ok | — | Propaga | `ok` |
-| 6 | Operator → AdbClient: `ADBKeyBoard + B64` | Caminho unicode | texto B64 | alt unicode | pedido |
-| 7 | AdbClient → Device: `injetar` | Broadcast IME | payload | ADB_INPUT_B64 | pedido |
-| 8 | Device → AdbClient: `done` | Texto aplicado | — | Confirma | `done` |
-| 9 | AdbClient → Operator: `ok` | Type ok | — | Propaga | `ok` |
-| 10 | Operator → Dev: `ok` | Concluído | — | Resolve | `ok` |
+| # | De | Para | Chamada | Por quê | Entradas | Execução | Saídas |
+|---|----|------|---------|---------|----------|----------|--------|
+| 1 | Dev | Operator | `typeText(serial, text)` | Digitar texto | `serial`, `text` | Escolhe ASCII/unicode | Promise |
+| 2 | Operator | AdbClient | `input text` | Caminho ASCII | texto escapado | alt ASCII | pedido |
+| 3 | AdbClient | Device | `injetar` | Aplicar chars | payload | input/IME | pedido |
+| 4 | Device | AdbClient | `done` | Texto aplicado | — | Confirma | `done` |
+| 5 | AdbClient | Operator | `ok` | Type ok | — | Propaga | `ok` |
+| 6 | Operator | AdbClient | `ADBKeyBoard + B64` | Caminho unicode | texto B64 | alt unicode | pedido |
+| 7 | AdbClient | Device | `injetar` | Broadcast IME | payload | ADB_INPUT_B64 | pedido |
+| 8 | Device | AdbClient | `done` | Texto aplicado | — | Confirma | `done` |
+| 9 | AdbClient | Operator | `ok` | Type ok | — | Propaga | `ok` |
+| 10 | Operator | Dev | `ok` | Concluído | — | Resolve | `ok` |
 
 #### Contratos
 
@@ -382,15 +382,15 @@ sequenceDiagram
 
 #### Passo a passo
 
-| # | Chamada | Por quê | Entradas | Execução | Saídas |
-|---|---------|---------|----------|----------|--------|
-| 1 | Dev → Operator: `scroll(...)` | Scroll da UI | direction, bounds? | Inicia gesto | Promise |
-| 2 | Operator → Operator: `calc swipe` | Coords do gesto | direction/distance | Calcula x1,y1→x2,y2 | coords |
-| 3 | Operator → AdbClient: `input swipe` | Enviar gesto | coords | Comando swipe | pedido |
-| 4 | AdbClient → Device: `swipe` | Executar | gesto | `input swipe` | pedido |
-| 5 | Device → AdbClient: `done` | Swipe ok | — | Confirma | `done` |
-| 6 | AdbClient → Operator: `ok` | Scroll ok | — | Propaga | `ok` |
-| 7 | Operator → Dev: `ok` | Concluído | — | Resolve | `ok` |
+| # | De | Para | Chamada | Por quê | Entradas | Execução | Saídas |
+|---|----|------|---------|---------|----------|----------|--------|
+| 1 | Dev | Operator | `scroll(...)` | Scroll da UI | direction, bounds? | Inicia gesto | Promise |
+| 2 | Operator | Operator | `calc swipe` | Coords do gesto | direction/distance | Calcula x1,y1→x2,y2 | coords |
+| 3 | Operator | AdbClient | `input swipe` | Enviar gesto | coords | Comando swipe | pedido |
+| 4 | AdbClient | Device | `swipe` | Executar | gesto | `input swipe` | pedido |
+| 5 | Device | AdbClient | `done` | Swipe ok | — | Confirma | `done` |
+| 6 | AdbClient | Operator | `ok` | Scroll ok | — | Propaga | `ok` |
+| 7 | Operator | Dev | `ok` | Concluído | — | Resolve | `ok` |
 
 #### Contratos
 
@@ -472,14 +472,14 @@ sequenceDiagram
 
 #### Passo a passo
 
-| # | Chamada | Por quê | Entradas | Execução | Saídas |
-|---|---------|---------|----------|----------|--------|
-| 1 | Dev → Operator: `screenshot(serial, path)` | Capturar tela | `serial`, `path` | Orquestra capturar+pull | Promise |
-| 2 | Operator → AdbClient: `screencap + pull` | Obter imagem | `path` | Dois passos adb | pedido |
-| 3 | AdbClient → Device: `capturar` | Framebuffer | — | `screencap -p` | pedido |
-| 4 | Device → AdbClient: `png` | Bytes da imagem | — | Arquivo remoto | png |
-| 5 | AdbClient → Operator: `arquivo local` | Pull ok | — | Arquivo no host | path |
-| 6 | Operator → Dev: `absPath` | Path final | — | Resolve | absPath |
+| # | De | Para | Chamada | Por quê | Entradas | Execução | Saídas |
+|---|----|------|---------|---------|----------|----------|--------|
+| 1 | Dev | Operator | `screenshot(serial, path)` | Capturar tela | `serial`, `path` | Orquestra capturar+pull | Promise |
+| 2 | Operator | AdbClient | `screencap + pull` | Obter imagem | `path` | Dois passos adb | pedido |
+| 3 | AdbClient | Device | `capturar` | Framebuffer | — | `screencap -p` | pedido |
+| 4 | Device | AdbClient | `png` | Bytes da imagem | — | Arquivo remoto | png |
+| 5 | AdbClient | Operator | `arquivo local` | Pull ok | — | Arquivo no host | path |
+| 6 | Operator | Dev | `absPath` | Path final | — | Resolve | absPath |
 
 #### Contratos
 
@@ -563,14 +563,14 @@ sequenceDiagram
 
 #### Passo a passo
 
-| # | Chamada | Por quê | Entradas | Execução | Saídas |
-|---|---------|---------|----------|----------|--------|
-| 1 | Dev → Operator: `findTemplateCoords(...)` | Achar template | frame\|serial + template | Inicia match | Promise |
-| 2 | Operator → Device: `screenshot` | Obter frame se falta | `serial` | opt captura | pedido |
-| 3 | Device → Operator: `frame` | Frame pronto | — | Retorna imagem | frame |
-| 4 | Operator → VisionMatcher: `match(...)` | Localizar template | template + frame | Template matching | pedido |
-| 5 | VisionMatcher → Operator: `x,y,confidence` | Melhor match | — | Retorna | MatchResult |
-| 6 | Operator → Dev: `{ x, y, confidence }` | Coords | — | Resolve | resultado |
+| # | De | Para | Chamada | Por quê | Entradas | Execução | Saídas |
+|---|----|------|---------|---------|----------|----------|--------|
+| 1 | Dev | Operator | `findTemplateCoords(...)` | Achar template | frame\ | serial + template | Inicia match |
+| 2 | Operator | Device | `screenshot` | Obter frame se falta | `serial` | opt captura | pedido |
+| 3 | Device | Operator | `frame` | Frame pronto | — | Retorna imagem | frame |
+| 4 | Operator | VisionMatcher | `match(...)` | Localizar template | template + frame | Template matching | pedido |
+| 5 | VisionMatcher | Operator | `x,y,confidence` | Melhor match | — | Retorna | MatchResult |
+| 6 | Operator | Dev | `{ x, y, confidence }` | Coords | — | Resolve | resultado |
 
 #### Contratos
 

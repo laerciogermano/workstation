@@ -101,15 +101,15 @@ sequenceDiagram
 
 #### Passo a passo
 
-| # | Chamada | Por quê | Entradas | Execução | Saídas |
-|---|---------|---------|----------|----------|--------|
-| 1 | Dev → EventBus: `on("boot", { serial, ...opts })` | Esperar boot | `serial`, opts | Inicia loop de poll | Promise |
-| 2 | EventBus → AdbClient: `getprop sys.boot_completed` | Checar prop | `serial` | Pede leitura | pedido |
-| 3 | AdbClient → Device: `adb shell getprop` | Ler no device | prop | Shell | pedido |
-| 4 | Device → AdbClient: `"0"\|"1"` | Valor | — | Resposta | prop |
-| 5 | AdbClient → EventBus: `prop` | Entregar valor | — | Propaga | prop |
-| 6 | EventBus → Dev: `on("boot_poll", payload)` | Progresso (fire-and-forget) | type + valor | Callback assíncrono | — |
-| 7 | EventBus → Dev: `on("boot", { boot: true })` | Condição ok | prop==1 | Resolve Promise | `{ boot: true }` |
+| # | De | Para | Chamada | Por quê | Entradas | Execução | Saídas |
+|---|----|------|---------|---------|----------|----------|--------|
+| 1 | Dev | EventBus | `on("boot", { serial, ...opts })` | Esperar boot | `serial`, opts | Inicia loop de poll | Promise |
+| 2 | EventBus | AdbClient | `getprop sys.boot_completed` | Checar prop | `serial` | Pede leitura | pedido |
+| 3 | AdbClient | Device | `adb shell getprop` | Ler no device | prop | Shell | pedido |
+| 4 | Device | AdbClient | `"0"\ | "1"` | Valor | — | Resposta |
+| 5 | AdbClient | EventBus | `prop` | Entregar valor | — | Propaga | prop |
+| 6 | EventBus | Dev | `on("boot_poll", payload)` | Progresso (fire-and-forget) | type + valor | Callback assíncrono | — |
+| 7 | EventBus | Dev | `on("boot", { boot: true })` | Condição ok | prop==1 | Resolve Promise | `{ boot: true }` |
 
 #### Contratos
 
@@ -194,15 +194,15 @@ sequenceDiagram
 
 #### Passo a passo
 
-| # | Chamada | Por quê | Entradas | Execução | Saídas |
-|---|---------|---------|----------|----------|--------|
-| 1 | Dev → EventBus: `on("app_open", { serial, pkg, ...opts })` | Esperar app na frente | `serial`, `pkg` | Inicia poll | Promise |
-| 2 | EventBus → AdbClient: `dumpsys` / `pidof` | Evidência de foreground | `pkg` | Pede shell | pedido |
-| 3 | AdbClient → Device: `adb shell` | Consultar | comando | Executa | pedido |
-| 4 | Device → AdbClient: `package ativo?` | Evidência | — | stdout | sim/não |
-| 5 | AdbClient → EventBus: `evidência` | Reportar | — | Propaga | evidência |
-| 6 | EventBus → Dev: `on("app_poll", payload)` | Progresso (fire-and-forget) | pkg + evidência | Callback | — |
-| 7 | EventBus → Dev: `on("app_open", { foreground, package })` | App aberta | match | Resolve | resultado |
+| # | De | Para | Chamada | Por quê | Entradas | Execução | Saídas |
+|---|----|------|---------|---------|----------|----------|--------|
+| 1 | Dev | EventBus | `on("app_open", { serial, pkg, ...opts })` | Esperar app na frente | `serial`, `pkg` | Inicia poll | Promise |
+| 2 | EventBus | AdbClient | `dumpsys` / `pidof` | Evidência de foreground | `pkg` | Pede shell | pedido |
+| 3 | AdbClient | Device | `adb shell` | Consultar | comando | Executa | pedido |
+| 4 | Device | AdbClient | `package ativo?` | Evidência | — | stdout | sim/não |
+| 5 | AdbClient | EventBus | `evidência` | Reportar | — | Propaga | evidência |
+| 6 | EventBus | Dev | `on("app_poll", payload)` | Progresso (fire-and-forget) | pkg + evidência | Callback | — |
+| 7 | EventBus | Dev | `on("app_open", { foreground, package })` | App aberta | match | Resolve | resultado |
 
 #### Contratos
 
@@ -288,16 +288,16 @@ sequenceDiagram
 
 #### Passo a passo
 
-| # | Chamada | Por quê | Entradas | Execução | Saídas |
-|---|---------|---------|----------|----------|--------|
-| 1 | Dev → EventBus: `on("ui_stable", { serial, ...opts })` | Esperar UI quieta | `serial`, `stableMs?` | Inicia amostragem | Promise |
-| 2 | EventBus → Extractor: `dumpUiXml(serial)` | Snapshot UI | `serial` | Pede dump | pedido |
-| 3 | Extractor → Device: `uiautomator dump` | Capturar XML | — | Dump + pull | pedido |
-| 4 | Device → Extractor: `xml` | Snapshot | — | Retorna XML | xml |
-| 5 | Extractor → EventBus: `xml` | Entregar dump | — | Propaga | xml |
-| 6 | EventBus → EventBus: `hash == previous?` | Detectar estabilidade | xml | Compara hashes | stable? |
-| 7 | EventBus → Dev: `on("ui_stable_poll", payload)` | Progresso (fire-and-forget) | hash | Callback | — |
-| 8 | EventBus → Dev: `on("ui_stable", { stable: true })` | UI estável | stableMs | Resolve | `{ stable: true }` |
+| # | De | Para | Chamada | Por quê | Entradas | Execução | Saídas |
+|---|----|------|---------|---------|----------|----------|--------|
+| 1 | Dev | EventBus | `on("ui_stable", { serial, ...opts })` | Esperar UI quieta | `serial`, `stableMs?` | Inicia amostragem | Promise |
+| 2 | EventBus | Extractor | `dumpUiXml(serial)` | Snapshot UI | `serial` | Pede dump | pedido |
+| 3 | Extractor | Device | `uiautomator dump` | Capturar XML | — | Dump + pull | pedido |
+| 4 | Device | Extractor | `xml` | Snapshot | — | Retorna XML | xml |
+| 5 | Extractor | EventBus | `xml` | Entregar dump | — | Propaga | xml |
+| 6 | EventBus | EventBus | `hash == previous?` | Detectar estabilidade | xml | Compara hashes | stable? |
+| 7 | EventBus | Dev | `on("ui_stable_poll", payload)` | Progresso (fire-and-forget) | hash | Callback | — |
+| 8 | EventBus | Dev | `on("ui_stable", { stable: true })` | UI estável | stableMs | Resolve | `{ stable: true }` |
 
 #### Contratos
 
@@ -382,15 +382,15 @@ sequenceDiagram
 
 #### Passo a passo
 
-| # | Chamada | Por quê | Entradas | Execução | Saídas |
-|---|---------|---------|----------|----------|--------|
-| 1 | Dev → EventBus: `on("dump_change", { serial, previousXml?, ...opts })` | Esperar mudança | `serial`, baseline | Inicia poll | Promise |
-| 2 | EventBus → Extractor: `dumpUiXml(serial)` | Novo snapshot | `serial` | Pede dump | pedido |
-| 3 | Extractor → Device: `uiautomator dump` | Capturar XML | — | Dump + pull | pedido |
-| 4 | Device → Extractor: `xml` | Snapshot | — | Retorna | xml |
-| 5 | Extractor → EventBus: `xml` | Entregar | — | Propaga | xml |
-| 6 | EventBus → EventBus: `hash ≠ previous?` | Detectar mudança | xml vs base | Compara | changed? |
-| 7 | EventBus → Dev: `on("dump_change", { xml, changed: true })` | Mudou | novo xml | Resolve | resultado |
+| # | De | Para | Chamada | Por quê | Entradas | Execução | Saídas |
+|---|----|------|---------|---------|----------|----------|--------|
+| 1 | Dev | EventBus | `on("dump_change", { serial, previousXml?, ...opts })` | Esperar mudança | `serial`, baseline | Inicia poll | Promise |
+| 2 | EventBus | Extractor | `dumpUiXml(serial)` | Novo snapshot | `serial` | Pede dump | pedido |
+| 3 | Extractor | Device | `uiautomator dump` | Capturar XML | — | Dump + pull | pedido |
+| 4 | Device | Extractor | `xml` | Snapshot | — | Retorna | xml |
+| 5 | Extractor | EventBus | `xml` | Entregar | — | Propaga | xml |
+| 6 | EventBus | EventBus | `hash ≠ previous?` | Detectar mudança | xml vs base | Compara | changed? |
+| 7 | EventBus | Dev | `on("dump_change", { xml, changed: true })` | Mudou | novo xml | Resolve | resultado |
 
 #### Contratos
 

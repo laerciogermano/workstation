@@ -188,6 +188,7 @@ type AgentHandle = {
   on(
     event: "boot" | "app_open" | "ui_stable" | "dump_change",
     opts?: Record<string, unknown>,
+    onEvent?: (payload: { type: string; [k: string]: unknown }) => void,
   ): Promise<unknown>;
 };
 
@@ -323,7 +324,7 @@ classDiagram
     +string kind
     +string provisionedAt
     +boolean bootCompleted
-    +on(event, opts) Promise
+    +on(event, opts, onEvent) Promise
   }
 
   note for AgentHandle "on anexado no provision (EP-02)"

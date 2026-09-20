@@ -31,7 +31,7 @@
 ## Fluxo (obrigatório)
 
 1. **Provisionar** o emulador (EP-01) → recebe `AgentHandle`.  
-2. **Usar o handle** → `handle.on(event, opts)` (serial já no handle).
+2. **Usar o handle** → `handle.on(event, opts?, onEvent?)` (serial já no handle).
 
 ```js
 import { provisionEmulator } from "./lib/provision.js";
@@ -40,15 +40,15 @@ const handle = await provisionEmulator(cfg);
 
 await handle.on("boot", { timeoutMs: 60_000 });
 await handle.on("app_open", { pkg: "com.linkedin.android" });
-await handle.on("ui_stable", { stableMs: 1_200 });
+await handle.on("ui_stable", { stableMs: 1_200 }, (p) => console.log(p.type));
 await handle.on("dump_change", { previousXml });
 ```
 
-Não chamar `on` sem handle. Não passar `serial` em `opts` (vem do handle).
+Não chamar `on` sem handle. Não passar `serial` em `opts` (vem do handle). Callback de progresso = **3º parâmetro** (não `opts.onEvent`).
 
 | Superfície | O quê |
 |------------|--------|
-| **Público (caller)** | `provisionEmulator` → `handle.on(event, opts)` |
+| **Público (caller)** | `provisionEmulator` → `handle.on(event, opts?, onEvent?)` |
 | **Privado** | waits em `events.js` · adb · dump · polls `*_poll` |
 
 `event`: `"boot"` \| `"app_open"` \| `"ui_stable"` \| `"dump_change"`.
@@ -124,9 +124,9 @@ sequenceDiagram
   note over P,H: EP-01
   P-->>Dev: handle { serial, on, ... }
 
-  Dev->>H: on(event, opts)
-  note over H: único método de eventos
-  H->>E: on(event, { ...opts, serial })
+  Dev->>H: on(event, opts, onEvent?)
+  note over H: 3º param = progresso
+  H->>E: on(event, { ...opts, serial }, onEvent)
   E->>D: poll (boot / fg / dump)
   D-->>E: evidência
   E-->>H: UiEventResult
@@ -138,7 +138,7 @@ sequenceDiagram
 | # | De | Para | Chamada | Descrição | Entradas | Execução | Saídas |
 |---|----|------|---------|-----------|----------|----------|--------|
 | 1 | Dev | provision.js | `provisionEmulator(cfg)` | Obter handle (EP-01) | `cfg` | SC-01→SC-03 | `AgentHandle` |
-| 2 | Dev | handle | `on(event, opts)` | Esperar evento UI | `event`, opts (sem serial) | Despacha SC-04..07 | Promise resultado |
+| 2 | Dev | handle | `on(event, opts?, onEvent?)` | Esperar evento UI | event, opts, callback? | Despacha SC-04..07 | Promise resultado |
 | 3 | handle | events | bind serial *(privado)* | Completar opts | `handle.serial` | Injeta serial | opts completos |
 | 4–n | events ↔ Device | *(privado)* | polls por evento | Ver US abaixo | opts | Loop + `onEvent` | resultado tipado |
 
@@ -160,7 +160,6 @@ type EventOpts = {
   activity?: string;       // app_open
   previousXml?: string;    // dump_change
   contains?: string;       // ui_stable opcional
-  onEvent?: (payload: { type: string; [k: string]: unknown }) => void;
 };
 
 type UiEventResult =
@@ -169,18 +168,20 @@ type UiEventResult =
   | { stable: true }
   | { xml: string; changed: true };
 
+type OnEvent = (payload: { type: string; [k: string]: unknown }) => void;
+
 type AgentHandle = {
   serial: string;
   kind: string;
   provisionedAt: string;
   bootCompleted: true;
-  on(event: EventName, opts?: EventOpts): Promise<UiEventResult>;
+  on(event: EventName, opts?: EventOpts, onEvent?: OnEvent): Promise<UiEventResult>;
 };
 
 const handle = await provisionEmulator(cfg);
 await handle.on("boot", { timeoutMs: 60_000 });
 await handle.on("app_open", { pkg: "com.linkedin.android" });
-await handle.on("ui_stable", { stableMs: 1_200 });
+await handle.on("ui_stable", { stableMs: 1_200 }, (p) => console.log(p.type));
 await handle.on("dump_change", { previousXml: "<hierarchy/>" });
 ```
 
@@ -191,11 +192,11 @@ await handle.on("dump_change", { previousXml: "<hierarchy/>" });
 ### US-02 — Evento de boot (SC-04)
 
 ```ts
-await handle.on("boot", {
-  timeoutMs: 60_000,
-  intervalMs: 1_500,
-  onEvent: (p) => console.log(p.type), // boot_poll
-});
+await handle.on(
+  "boot",
+  { timeoutMs: 60_000, intervalMs: 1_500 },
+  (p) => console.log(p.type), // boot_poll
+);
 // → { boot: true }
 ```
 
@@ -273,7 +274,8 @@ const changed = await handle.on("dump_change", {
 | `activity` | `string?` | `"app_open"` |
 | `previousXml` | `string?` | `"dump_change"` |
 | `contains` | `string?` | `"ui_stable"` opcional |
-| `onEvent` | `(e) => void` | Progresso (`*_poll`) |
+
+**3º parâmetro** `onEvent?: (e) => void` — progresso (`*_poll`), não vai em `EventOpts`.
 
 `serial` **não** entra em `EventOpts` — vem do handle.
 
@@ -355,7 +357,7 @@ classDiagram
     +string kind
     +string provisionedAt
     +boolean bootCompleted
-    +on(event, opts) Promise~UiEventResult~
+    +on(event, opts, onEvent) Promise~UiEventResult~
   }
 
   note for AgentHandle "on faz parte do handle.\nCaller: provision → handle.on"

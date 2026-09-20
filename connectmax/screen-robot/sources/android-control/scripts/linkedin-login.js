@@ -71,13 +71,14 @@ async function main() {
   await operate.launch(serial, cfg.apps.linkedin.package);
 
   console.log("5) Receber eventos (UI estável)…");
-  await handle.on("ui_stable", {
-    timeoutMs: 90_000,
-    onEvent: (e) => {
+  await handle.on(
+    "ui_stable",
+    { timeoutMs: 90_000 },
+    (e) => {
       events.push(e);
       if (e.type === "ui_stable") console.log(`   evento ${e.type} (tentativa ${e.attempt})`);
     },
-  });
+  );
 
   const shotPath = resolve(ROOT, cfg.screenshot?.path || "./screenshots/linkedin-before-login.png");
   console.log("6) Print da tela…");
@@ -95,7 +96,7 @@ async function main() {
     console.log("8) Tocar botão de login…");
     operate.tapElement(serial, target.loginButton);
     await sleep(2_000);
-    await handle.on("ui_stable", { timeoutMs: 30_000, onEvent: (e) => events.push(e) });
+    await handle.on("ui_stable", { timeoutMs: 30_000 }, (e) => events.push(e));
     ({ elements } = extractElements(serial));
     target = findLoginTarget(elements);
   } else if (!target.alreadyOnLoginScreen && !target.loginButton) {

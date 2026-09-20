@@ -192,11 +192,12 @@ async function waitDumpChange(serial, opts = {}) {
 
 /**
  * Liga `on` ao serial do handle (usado só por provisionEmulator).
+ * Assinatura: on(event, opts?, onEvent?)
  * @param {string} serial
  */
 export function createOn(serial) {
-  return async function on(event, opts = {}) {
-    const full = { ...opts, serial };
+  return async function on(event, opts = {}, onEvent) {
+    const full = { ...opts, serial, onEvent };
     switch (event) {
       case "boot":
         return waitBoot(serial, full);

@@ -19,7 +19,7 @@ import { createOn } from "./events.js";
  * @property {string} kind
  * @property {string} provisionedAt
  * @property {true} bootCompleted
- * @property {(event: string, opts?: object) => Promise<object>} on
+ * @property {(event: string, opts?: object, onEvent?: Function) => Promise<object>} on
  */
 
 /** @param {ProvisionConfig} cfg */

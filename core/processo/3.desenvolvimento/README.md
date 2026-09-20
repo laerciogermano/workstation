@@ -87,7 +87,7 @@ Regras:
 
 Ordem **obrigatória** — não pular nem inverter:
 
-1. **Baixar o projeto** — clone (ou worktree) limpo **dentro da pasta da atividade** em `tasks/` (ex.: `tasks/TSK-001-provisionar-agente/TSK-002-subir-e-conectar/`), isolado para esta task; o `README.md` da atividade permanece na pasta; o código do repo fica como subpasta do clone nessa mesma pasta
+1. **Baixar o projeto** — **clone** limpo (`git clone`) **dentro da pasta da atividade** em `tasks/` (ex.: `tasks/TSK-001-provisionar-agente/TSK-002-subir-e-conectar/`), isolado para esta task; o `README.md` da atividade permanece na pasta; o código do repo fica como subpasta do clone nessa mesma pasta. **Não** usar `git worktree`
 2. **Criar a branch** — nome no [padrão](#padrão-de-branch) (= nome da pasta); publicar upstream quando houver push
 3. **Criar os TDDs** — testes que falham e cobrem o aceite da atividade (Entradas · Execução · Saídas / BDD)
 4. **Implementar a funcionalidade** — código mínimo para os TDDs passarem e o aceite fechar
@@ -102,7 +102,7 @@ tasks/
 └── TSK-001-provisionar-agente/
     └── TSK-002-subir-e-conectar/   ← pasta da atividade
         ├── README.md
-        └── <repo>/                  ← projeto baixado aqui (clone/worktree)
+        └── <repo>/                  ← clone do projeto (`git clone`; sem worktree)
 ```
 
 Regras transversais:

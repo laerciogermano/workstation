@@ -1,3 +1,4 @@
-# Cópias de sources dentro de workstations de tasks
+# Cópias / clones do repo dentro de pastas de tasks
 **/tasks/**/sources/
 **/tasks/**/source/
+**/tasks/**/workstation/

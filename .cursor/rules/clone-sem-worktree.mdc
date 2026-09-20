@@ -1,0 +1,12 @@
+---
+description: Desenvolvimento usa git clone na pasta da task; nunca git worktree
+alwaysApply: true
+---
+
+# Clone na task, sem worktree
+
+No fluxo de [`core/processo/3.desenvolvimento`](core/processo/3.desenvolvimento/README.md):
+
+- Baixar o projeto com **`git clone`** dentro da pasta da atividade em `tasks/TSK-…/`
+- **Nunca** usar `git worktree add` (nem para a branch da atividade)
+- Branch da atividade só no clone da pasta da task; `works/` permanece em `main`

@@ -11,7 +11,7 @@ adicone no desenvoviment que deve baixarf o projeto dentero da ativiade da pasta
 
 ## Interpretação
 
-No desenvolvimento, o clone/worktree do projeto deve ficar dentro da pasta da atividade correspondente em `tasks/`.
+No desenvolvimento, o **clone** do projeto (`git clone`; **sem** worktree) deve ficar dentro da pasta da atividade correspondente em `tasks/`.
 
 ## Resultado
 

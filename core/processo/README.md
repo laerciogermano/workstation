@@ -91,13 +91,13 @@ O mapa e a prioridade nascem no discovery; o detalhe (SC/BDD) e o restante do pr
 
 1. Baixar o projeto **dentro da pasta da atividade** em `tasks/`
 2. Criar branch `TSK-<nn>-<titulo>` (= pasta da atividade)
-3. Criar TDDs
+3. Criar TDDs (**SC** = unitário · **US**/**EP** = BDD e2e)
 4. Implementar a funcionalidade
 5. Testar
 6. Abrir PR (Summary + Test plan) e status → **Pendente aprovação**
 7. Parar até validação humana
 
-Ordem = Gantt das tasks. Sequencial → robô espera o outro. Paralelo → robôs em paralelo, PRs separados; próximo passo da árvore/Gantt só após aprovação. Corpo do PR: [padrão de escrita](3.desenvolvimento/README.md#padrão-de-escrita-do-pull-request).
+Ordem = Gantt das tasks. Sequencial → robô espera o outro. Paralelo → robôs em paralelo, PRs separados; próximo passo da árvore/Gantt só após aprovação. Corpo do PR: [padrão de escrita](3.desenvolvimento/README.md#padrão-de-escrita-do-pull-request). Tipo de teste: [por origem](3.desenvolvimento/README.md#tipo-de-teste-por-origem).
 
 **Saídas**
 
@@ -118,8 +118,8 @@ Ordem = Gantt das tasks. Sequencial → robô espera o outro. Paralelo → robô
 
 **Execução**
 
-- Unitário / integração / E2E
-- Aceite por cenário
+- SC = unitário · US/EP = BDD e2e
+- Aceite por origem (SC isolado; US/EP integrado)
 - Regressão
 - Qualidade
 - Priorizar bugs

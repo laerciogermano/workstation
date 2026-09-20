@@ -72,14 +72,13 @@ Regras:
 ## Summary
 
 - Fecha SC-01: sobe o runtime do agent e deixa o processo alcançável (`Reachable`)
-- TDD + `startRuntime` cobrindo start a partir de `Absent` / `Starting`
+- TDD unitário de `startRuntime` (origem SC-01) cobrindo `Absent` / `Starting` → `Reachable`
 - Atividade: `TSK-002-subir-e-conectar` (pai `TSK-001`)
 
 ## Test plan
 
-- [ ] `npm test` (ou suíte da atividade) verde no clone da pasta da task
-- [ ] Dado host/imagem/script de start, quando inicia o agent, então o processo fica em execução e alcançável
-- [ ] Falha típica `PROVISION_START_FAILED` coberta ou documentada no teste
+- [ ] Suíte unitária da SC verde no clone da pasta da task
+- [ ] Casos: start a partir de ausente; já alcançável; falha `PROVISION_START_FAILED`
 - [ ] Branch `TSK-002-subir-e-conectar`; card no board em **Pendente aprovação**
 ```
 
@@ -89,11 +88,25 @@ Ordem **obrigatória** — não pular nem inverter:
 
 1. **Baixar o projeto** — **clone** limpo (`git clone`) **dentro da pasta da atividade** em `tasks/` (ex.: `tasks/TSK-001-provisionar-agente/TSK-002-subir-e-conectar/`), isolado para esta task; o `README.md` da atividade permanece na pasta; o código do repo fica como subpasta do clone nessa mesma pasta. **Não** usar `git worktree`
 2. **Criar a branch** — nome no [padrão](#padrão-de-branch) (= nome da pasta); publicar upstream quando houver push
-3. **Criar os TDDs** — testes que falham e cobrem o aceite da atividade (Entradas · Execução · Saídas / BDD)
+3. **Criar os TDDs** — testes que falham e cobrem o aceite da atividade ([tipo por origem](#tipo-de-teste-por-origem))
 4. **Implementar a funcionalidade** — código mínimo para os TDDs passarem e o aceite fechar
 5. **Testar** — rodar a suíte relevante; só seguir com testes verdes
 6. **Concluir no board** — abrir **pull request** da branch no [padrão de escrita](#padrão-de-escrita-do-pull-request) e mudar o status da atividade para **Pendente aprovação**
 7. **Parar** — aguardar validação humana; **não** iniciar a próxima atividade do Gantt até essa aprovação
+
+### Tipo de teste por origem
+
+| Origem da atividade | Tipo de teste | Como |
+|---------------------|---------------|------|
+| **SC-** (cenário / mudança de estado) | **Unitário** | Isola o helper/módulo (deps mockáveis); sem runtime real / e2e |
+| **US-** (história) | **BDD e2e** | Gherkin Dado/Quando/Então contra o sistema integrado |
+| **EP-** (épico) | **BDD e2e** | Gherkin de ponta a ponta do aceite do épico |
+
+Regras:
+
+- Task cuja origem é **SC** → só unitários (TDD no módulo interno)
+- Task cuja origem é **US** ou **EP** → BDD e2e (aceite integrado)
+- Não misturar: SC não sobe e2e; US/EP não fecham só com unitário
 
 ### Onde fica o clone
 
@@ -110,6 +123,7 @@ Regras transversais:
 - Preferência: uma SC (ou atividade folha) por robô / ciclo
 - Lote: primeiro um caso, validar; só então escalar
 - Commits pequenos e revisáveis; CI do projeto deve passar no PR
+- Testes: [tipo por origem](#tipo-de-teste-por-origem) (SC = unitário · US/EP = BDD e2e)
 
 ## Status no board
 
@@ -123,7 +137,7 @@ Regras transversais:
 ## Saídas
 
 - Branch no padrão `TSK-<nn>-<titulo>`
-- TDDs + implementação + evidência de testes verdes
+- TDDs no [tipo por origem](#tipo-de-teste-por-origem) + implementação + evidência de testes verdes
 - Pull request aberto
 - Atividade no board em **Pendente aprovação**
 - Próximo robô / próximo passo do Gantt: **somente após validação humana**

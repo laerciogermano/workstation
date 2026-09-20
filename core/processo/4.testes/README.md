@@ -11,8 +11,8 @@ Validar que o software faz o combinado.
 
 ## Execução
 
-- Executar unitários, integração e E2E (conforme risco)
-- Validar cada cenário de aceite como unidade (mudança de estado; em paralelo quando independente)
+- **SC** → unitários; **US** / **EP** → BDD e2e (mesmo critério do [desenvolvimento](../3.desenvolvimento/README.md#tipo-de-teste-por-origem))
+- Validar cada cenário de aceite conforme o tipo (SC isolado; US/EP integrado)
 - Rodar regressão
 - Verificar qualidade (performance, segurança, acessibilidade quando aplicável)
 - Registrar e priorizar defeitos

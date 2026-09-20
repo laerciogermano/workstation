@@ -1,5 +1,5 @@
 /**
- * BDD e2e — US-13 Extrair árvore DOM com textos
+ * BDD e2e — US-13 Extrair elementos (lista plana)
  */
 import assert from "node:assert/strict";
 import { describe, it, before } from "node:test";
@@ -8,7 +8,7 @@ import { provisionEmulator } from "../../lib/provision.js";
 const serial = process.env.ANDROID_SERIAL || "127.0.0.1:5555";
 const timeoutMs = Number(process.env.PROVISION_TIMEOUT_MS || 180_000);
 
-describe("Cenário: US-13 Extrair árvore DOM com textos", () => {
+describe("Cenário: US-13 Extrair elementos (lista plana)", () => {
   /** @type {Awaited<ReturnType<typeof provisionEmulator>>} */
   let handle;
 
@@ -19,11 +19,11 @@ describe("Cenário: US-13 Extrair árvore DOM com textos", () => {
   }, { timeout: 300_000 });
 
   it(
-    "Dado agent; Quando extract(); Então raiz com children",
+    "Dado agent; Quando extract(); Então devolve lista (sem children)",
     async () => {
-      const tree = await handle.extract();
-      assert.equal(tree.type, "root");
-      assert.ok(Array.isArray(tree.children));
+      const list = await handle.extract();
+      assert.ok(Array.isArray(list));
+      assert.ok(list.every((e) => e.children === undefined));
     },
     { timeout: 120_000 },
   );

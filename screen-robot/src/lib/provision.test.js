@@ -38,7 +38,7 @@ describe("provisionEmulator", () => {
           matchImage: async () => ({ x: 1, y: 2, confidence: 1 }),
           openScrcpy: () => ({ pid: 1, serial: "127.0.0.1:5555" }),
         }),
-        createExtract: () => async () => ({ type: "root", children: [] }),
+        createExtract: () => async () => [],
         createSessionApi: () => ({
           saveSession: async () => "/s.json",
           removeSession: async () => true,

@@ -2,7 +2,7 @@
 
 | Campo | Valor |
 |-------|--------|
-| Pasta | `TSK-022-extrair-arvore-dom` |
+| Pasta | `TSK-022-extrair-elementos-ocr` |
 | TSK | [`TSK-022`](../../7.tasks.md) |
 | Origem | US-13 |
 | Pai | [`TSK-021`](../README.md) |

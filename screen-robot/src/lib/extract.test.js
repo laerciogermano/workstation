@@ -29,45 +29,28 @@ const WORDS = [
 ];
 
 describe("createExtract (OCR)", () => {
-  it("enriquece árvore a cada chamada via frame→OCR", async () => {
+  it("enriquece lista plana a cada chamada via frame→OCR", async () => {
     const extract = createExtract("s", {
       captureFrame: async () => "/tmp/fake.png",
       ocrRecognize: async () => WORDS,
       frameSize: { w: 1080, h: 2400 },
     });
     const t1 = await extract();
-    assert.equal(t1.type, "root");
-    assert.ok(t1.children.some((c) => c.type === "text" && c.text === "Entrar"));
+    assert.ok(Array.isArray(t1));
+    assert.ok(t1.some((c) => c.type === "text" && c.text === "Entrar"));
+    assert.equal(t1.every((e) => e.children === undefined), true);
 
     const t2 = await extract();
-    assert.equal(t2.children[0]?.type, "other");
-
-    const types = [];
-    const walk = (n) => {
-      types.push(n.type);
-      (n.children || []).forEach(walk);
-    };
+    assert.ok(t2.some((e) => e.type === "other"));
 
     const t3 = await extract();
-    walk(t3);
-    assert.ok(types.includes("icon"));
+    assert.ok(t3.some((e) => e.type === "icon"));
 
-    const types4 = [];
-    const w4 = (n) => {
-      types4.push(n.type);
-      (n.children || []).forEach(w4);
-    };
     const t4 = await extract();
-    w4(t4);
-    assert.ok(types4.includes("list"));
+    assert.ok(t4.some((e) => e.type === "list"));
 
-    const types5 = [];
-    const w5 = (n) => {
-      types5.push(n.type);
-      (n.children || []).forEach(w5);
-    };
     const t5 = await extract();
-    w5(t5);
-    assert.ok(types5.includes("image"));
+    assert.ok(t5.some((e) => e.type === "image"));
+    assert.ok(t5.every((e) => Array.isArray(e.center) && e.center.length === 2));
   });
 });

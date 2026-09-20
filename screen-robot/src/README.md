@@ -1,6 +1,6 @@
 # src — screen-robot
 
-API **Node** (≥ 18) para controlar Android via ADB: provisionar agents, instalar APKs, eventos de UI, gestos, extração DOM e sessão.
+API **Node** (≥ 18) para controlar Android via ADB: provisionar agents, instalar APKs, eventos de UI, gestos, extração de elementos (lista) e sessão.
 
 Visão do projeto: [`../README.md`](../README.md) · Runtimes: [`../pocs/`](../pocs/README.md) · Aceite: [`../5.bdds.md`](../5.bdds.md)
 
@@ -265,7 +265,7 @@ Script [`scripts/linkedin-login.js`](scripts/linkedin-login.js):
 3. `provisionEmulator` → `openScrcpy` → `installApk(linkedin)` → `launch` → `on("ui_stable")`
 4. `01-tela-inicial.png`
 5. `findByText(serial, "Sign in with Email")` → tap `center` → `02-apos-sign-in-email.png`
-6. `extract()` ×5 → console da lista + `tree-screen.png` + `component-tree.json`
+6. `extract()` ×5 → console da lista + `frame-screen.png` + `elements.json`
 
 Só LinkedIn (sem Instagram). Sem digitar credenciais e sem `saveSession`.
 

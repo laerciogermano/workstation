@@ -1,7 +1,7 @@
 /**
- * EP-05 — extrair árvore DOM progressiva via frame → OCR/visão.
- * Caller: handle.extract() — cada chamada enriquece a árvore.
- * Proibido: uiautomator dump como fonte da árvore.
+ * EP-05 — extrair lista plana de elementos via frame → OCR/visão.
+ * Caller: handle.extract() — cada chamada enriquece a lista (sem children).
+ * Proibido: uiautomator dump como fonte.
  */
 import { adb } from "./adb.js";
 import { captureFrame } from "./frame.js";
@@ -10,7 +10,7 @@ import { detectIcons, detectImages, detectLists } from "./vision.js";
 
 const REMOTE_DUMP = "/sdcard/sr-window-dump.xml";
 
-/** @deprecated legado eventos EP-02 — não usar para árvore DOM */
+/** @deprecated legado eventos EP-02 — não usar para extract */
 export function dumpUiXml(serial, deps = {}) {
   const runAdb = deps.adb ?? adb;
   runAdb(serial, ["shell", "uiautomator", "dump", REMOTE_DUMP]);
@@ -18,15 +18,24 @@ export function dumpUiXml(serial, deps = {}) {
   return r.stdout || "";
 }
 
+function withCenter(el) {
+  const b = el.bounds;
+  return {
+    ...el,
+    center: [Math.floor(b.x + b.w / 2), Math.floor(b.y + b.h / 2)],
+  };
+}
+
 /**
  * @param {string} serial
  * @param {object} [deps]
+ * @returns {() => Promise<object[]>}
  */
 export function createExtract(serial, deps = {}) {
   /** @type {number} */
   let step = 0;
-  /** @type {object|null} */
-  let tree = null;
+  /** @type {object[]} */
+  let elements = [];
   /** @type {import("./ocr.js").OcrWord[]|null} */
   let wordsCache = null;
   /** @type {{ w: number, h: number }|null} */
@@ -55,59 +64,39 @@ export function createExtract(serial, deps = {}) {
     } else {
       frameSize = { w: maxX, h: maxY };
     }
-    if (!tree) {
-      tree = {
-        type: "root",
-        bounds: { x: 0, y: 0, w: frameSize.w, h: frameSize.h },
-        children: [],
-        _frame: framePath,
-      };
-    }
   }
 
   function stepTexts() {
-    tree.children = wordsCache.map((w) => ({
-      type: "text",
-      text: w.text,
-      bounds: { ...w.bounds },
-      children: [],
-    }));
+    elements = wordsCache.map((w) =>
+      withCenter({ type: "text", text: w.text, bounds: { ...w.bounds } }),
+    );
   }
 
-  function stepHierarchy() {
-    const container = {
-      type: "other",
-      bounds: { ...tree.bounds },
-      children: wordsCache.map((w) => ({
-        type: "text",
-        text: w.text,
-        bounds: { ...w.bounds },
-        children: [],
-      })),
-    };
-    tree.children = [container];
+  function stepEnrich() {
+    if (elements.some((e) => e.type === "other")) return;
+    elements.push(
+      withCenter({
+        type: "other",
+        bounds: { x: 0, y: 0, w: frameSize.w, h: frameSize.h },
+      }),
+    );
   }
 
-  function mergeNodes(nodes) {
+  function appendElements(nodes) {
     if (!nodes.length) return;
-    if (tree.children.length === 1 && tree.children[0].type === "other") {
-      tree.children[0].children.push(...nodes);
-    } else {
-      tree.children.push(...nodes);
-    }
+    elements.push(...nodes.map(withCenter));
   }
 
   return async function extract() {
     await ensurePerception();
     step += 1;
     if (step === 1) stepTexts();
-    else if (step === 2) stepHierarchy();
-    else if (step === 3) mergeNodes(detectIcons(wordsCache, frameSize));
-    else if (step === 4) mergeNodes(detectLists(wordsCache));
-    else mergeNodes(detectImages(wordsCache, frameSize));
+    else if (step === 2) stepEnrich();
+    else if (step === 3) appendElements(detectIcons(wordsCache, frameSize));
+    else if (step === 4) appendElements(detectLists(wordsCache));
+    else appendElements(detectImages(wordsCache, frameSize));
 
-    const { _frame, ...pub } = tree;
-    return structuredClone(pub);
+    return structuredClone(elements);
   };
 }
 
@@ -230,7 +219,7 @@ export async function findByText(serial, query, opts = {}) {
 }
 
 /**
- * Match síncrono sobre lista/árvore já extraída (uso interno / testes).
+ * Match síncrono sobre lista já extraída (uso interno / testes).
  * @param {object[]|object} elementsOrTree
  * @param {string} query
  * @param {{ minScore?: number }} [opts]

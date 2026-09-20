@@ -76,20 +76,20 @@ async function main() {
   handle.screenshot(shotPath);
   console.log(`   OK → ${shotPath}`);
 
-  console.log("5) Extrair árvore (5 passos)…");
-  let tree;
+  console.log("5) Extrair lista (5 passos)…");
+  let elements;
   for (let i = 1; i <= 5; i++) {
-    tree = await handle.extract();
-    console.log(`   passo ${i}: children=${tree.children?.length ?? 0}`);
+    elements = await handle.extract();
+    console.log(`   passo ${i}: elements=${elements.length}`);
   }
 
-  handle.screenshot(resolve(outDir, "tree-screen.png"));
-  const json = JSON.stringify(tree, null, 2);
-  const outJson = resolve(outDir, "component-tree.json");
+  handle.screenshot(resolve(outDir, "frame-screen.png"));
+  const json = JSON.stringify(elements, null, 2);
+  const outJson = resolve(outDir, "elements.json");
   writeFileSync(outJson, json, "utf8");
   console.log(json);
   console.log(`\nOK → ${outJson}`);
-  console.log(`OK → ${resolve(outDir, "tree-screen.png")}`);
+  console.log(`OK → ${resolve(outDir, "frame-screen.png")}`);
 }
 
 main().catch((e) => {

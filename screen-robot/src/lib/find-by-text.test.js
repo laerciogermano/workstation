@@ -53,17 +53,9 @@ describe("matchByText", () => {
     assert.ok(!/^(with|in|sign|email)$/i.test(hit.text));
   });
 
-  it("aceita árvore com children", () => {
-    const tree = {
-      type: "root",
-      children: [
-        {
-          type: "other",
-          children: SIGN_IN_SPLIT.map((e) => ({ ...e, children: [] })),
-        },
-      ],
-    };
-    const hit = matchByText(tree, "Sign in with Email", { minScore: 0.8 });
+  it("aceita lista plana de elementos", () => {
+    const list = SIGN_IN_SPLIT.map((e) => ({ ...e }));
+    const hit = matchByText(list, "Sign in with Email", { minScore: 0.8 });
     assert.ok(hit);
     assert.equal(hit.elements.length, 4);
   });

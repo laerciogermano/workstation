@@ -2,7 +2,7 @@
 
 | Campo | Valor |
 |-------|--------|
-| Pasta | `TSK-024-extrair-restante-dom` |
+| Pasta | `TSK-024-enriquecer-lista` |
 | TSK | [`TSK-024`](../../7.tasks.md) |
 | Origem | SC-18 |
 | Pai | [`TSK-021`](../README.md) |

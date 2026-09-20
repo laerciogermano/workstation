@@ -178,7 +178,7 @@ Ordem do script ([`src/scripts/linkedin-login.js`](src/scripts/linkedin-login.js
 3. `provisionEmulator` → `openScrcpy` → `installApk(linkedin)` → `launch` → `ui_stable`
 4. Screenshot `01-tela-inicial.png`
 5. `findByText(serial, "Sign in with Email")` → tap no `center` → `02-apos-sign-in-email.png`
-6. `extract()` ×5 → console da lista + `tree-screen.png` + `component-tree.json`
+6. `extract()` ×5 → console da lista + `frame-screen.png` + `elements.json`
 
 Não digita credenciais e não chama `saveSession`.
 

@@ -1,6 +1,7 @@
 /**
  * Heurísticas de visão sobre layout OCR (ícones / listas / imagens).
  * Sem dump ADB — só geometria do frame + palavras OCR.
+ * Retorno = elementos planos (sem children).
  */
 
 /**
@@ -17,7 +18,7 @@ export function detectIcons(words, frameSize) {
       const cand = { x, y, w: 40, h: 40 };
       const overlapsText = occupied.some((b) => overlap(cand, b));
       if (!overlapsText && nearCornerOrTop(cand, frameSize)) {
-        icons.push({ type: "icon", bounds: cand, children: [] });
+        icons.push({ type: "icon", bounds: cand });
         occupied.push(cand);
       }
     }
@@ -51,12 +52,6 @@ export function detectLists(words) {
       lists.push({
         type: "list",
         bounds: { x: x1, y: y1, w: x2 - x1, h: y2 - y1 },
-        children: group.map((g) => ({
-          type: "text",
-          text: g.text,
-          bounds: { ...g.bounds },
-          children: [],
-        })),
       });
     }
   }
@@ -77,7 +72,7 @@ export function detectImages(words, frameSize) {
   };
   const textInBand = words.filter((w) => overlap(band, w.bounds));
   if (textInBand.length <= 2) {
-    images.push({ type: "image", bounds: band, children: [] });
+    images.push({ type: "image", bounds: band });
   }
   return images;
 }

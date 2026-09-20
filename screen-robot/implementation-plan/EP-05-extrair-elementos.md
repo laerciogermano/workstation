@@ -377,7 +377,7 @@ I1 → I2 → I3 → I4 → I5 → I6 → I7 → I8 → I9
 
 | Peça | Status |
 |------|--------|
-| `createExtract` → `handle.extract()` | Existe (ainda árvore); **migrar retorno para lista** |
+| `createExtract` → `handle.extract()` | Feito — retorno `UiElement[]` (lista plana, sem `children`) |
 | Fonte = frame → OCR/visão | Feito (`frame.js` / `ocr.js` / `vision.js`) |
 | `dumpUiXml` | Só legado eventos EP-02 |
 | `extractElements` lista plana | Feito |

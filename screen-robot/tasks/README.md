@@ -39,9 +39,9 @@ tasks/
 │   ├── TSK-020-resgatar-coordenadas/
 │   └── TSK-035-abrir-scrcpy/
 ├── TSK-021-extrair-elementos/
-│   ├── TSK-022-extrair-arvore-dom/
+│   ├── TSK-022-extrair-elementos-ocr/
 │   ├── TSK-023-extrair-textos/
-│   ├── TSK-024-extrair-restante-dom/
+│   ├── TSK-024-enriquecer-lista/
 │   ├── TSK-025-extrair-icones/
 │   ├── TSK-026-extrair-listas/
 │   ├── TSK-027-extrair-imagens/

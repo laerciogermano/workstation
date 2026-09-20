@@ -17,6 +17,7 @@ tasks/
 │   ├── TSK-002-subir-e-conectar/
 │   ├── TSK-003-serial-adb-online/
 │   ├── TSK-004-boot-completo/
+│   ├── TSK-036-mascarar-identidade/
 │   └── TSK-032-resgatar-agente/
 │       ├── TSK-033-localizar-por-nome/
 │       └── TSK-034-reconectar-e-boot/
@@ -54,6 +55,7 @@ tasks/
 |-----|-----------|-------|
 | TSK-001 | Provisionar agente | [`TSK-001-provisionar-agente/`](TSK-001-provisionar-agente/README.md) |
 | TSK-002..004 | Filhas US-01 | sob `TSK-001-provisionar-agente/` |
+| TSK-036 | Mascarar identidade | [`TSK-036-mascarar-identidade/`](TSK-001-provisionar-agente/TSK-036-mascarar-identidade/README.md) |
 | TSK-032 | Resgatar agente | [`TSK-032-resgatar-agente/`](TSK-001-provisionar-agente/TSK-032-resgatar-agente/README.md) |
 | TSK-033..034 | Filhas US-20 | sob `TSK-032-resgatar-agente/` |
 | TSK-005 | Eventos de UI | [`TSK-005-eventos-de-ui/`](TSK-005-eventos-de-ui/README.md) |

@@ -11,7 +11,7 @@ Código do robô: [`../src/`](../src/README.md).
 
 ## Mascarar identidade do aparelho
 
-**Requisito (qualquer vendor):** o Android aparente para apps **não** deve expor o nome/fingerprint do runtime de automação (emulador, container, cloud device, etc.). Deve apresentar-se como **aparelho Android de mercado** (marca, modelo, device), para reduzir sinais de que é robô.
+**Requisito (qualquer vendor · US-22 · SC-28):** o Android aparente para apps **não** deve expor o nome/fingerprint do runtime de automação (emulador, container, cloud device, etc.). Deve apresentar-se como **aparelho Android de mercado** (marca, modelo, device), para reduzir sinais de que é robô.
 
 Aplica-se a **todo** `provision.kind` / POC — não é regra de um vendor só.
 

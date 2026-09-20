@@ -65,6 +65,8 @@ const b = await provisionEmulator({ provision: { name: "b", kind: "redroid" } })
 
 Não é obrigatório rodar `pocs/redroid/scripts/start.sh` — o create já sobe o container.
 
+**US-22:** qualquer vendor deve mascarar identidade — ver [`../pocs/README.md`](../pocs/README.md#mascarar-identidade-do-aparelho).
+
 Config de exemplo: [`device.config.json`](device.config.json) (`provision.name`, `kind`, apps, paths).
 
 ---

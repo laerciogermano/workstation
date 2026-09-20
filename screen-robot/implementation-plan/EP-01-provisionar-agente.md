@@ -8,7 +8,7 @@
 
 **Stack:** Node ≥ 18 · JavaScript · `adb` · Docker/Colima (redroid) ou AVD.
 
-**Mascaramento:** todo runtime (qualquer vendor) **deve** expor identidade de aparelho Android comum, sem o fingerprint do vendor de automação — ver [`../pocs/README.md`](../pocs/README.md#mascarar-identidade-do-aparelho).
+**Mascaramento (US-22 · SC-28):** todo runtime (qualquer vendor) **deve** expor identidade de aparelho Android comum, sem o fingerprint do vendor de automação — ver [`../pocs/README.md`](../pocs/README.md#mascarar-identidade-do-aparelho).
 
 ---
 
@@ -23,8 +23,10 @@
 | US-20 | Resgatar agente existente |
 | SC-25 | Localizar agent pelo nome |
 | SC-26 | Reconectar e confirmar boot |
+| US-22 | Mascarar identidade do aparelho (qualquer vendor) |
+| SC-28 | Identidade de aparelho de mercado |
 
-**Resultado:** handle com `name` + serial ADB `device` + `sys.boot_completed=1` → pronto para EP-02..06. Vários nomes ⇒ vários containers em paralelo.
+**Resultado:** handle com `name` + serial ADB `device` + `sys.boot_completed=1` → pronto para EP-02..06. Vários nomes ⇒ vários containers em paralelo. Identidade aparente = aparelho de mercado ([`pocs/README.md`](../pocs/README.md#mascarar-identidade-do-aparelho)).
 
 ---
 
@@ -489,6 +491,24 @@ Cenário: SC-26 Handle anexado fica pronto
   Então o handle está pronto (serial online, boot ok) sem novo container
 ```
 
+### US-22 — Mascarar identidade do aparelho
+
+```gherkin
+Cenário: US-22 Apps veem aparelho de mercado, não o vendor de automação
+  Dado um agent com boot completo em qualquer vendor de runtime
+  Quando as props de produto do Android são lidas (ex. ro.product.model)
+  Então os valores são de aparelho de mercado e não expõem o fingerprint do vendor
+```
+
+### SC-28 — Identidade de aparelho de mercado
+
+```gherkin
+Cenário: SC-28 Identidade de aparelho de mercado
+  Dado agent boot ok e perfil de produto configurado no vendor
+  Quando getprop (ou equivalente) de ro.product.* é consultado
+  Então brand/model/device são de aparelho comum e sem nome do runtime de automação
+```
+
 ---
 
 ## Plano de implementação (gaps → entregas)
@@ -502,11 +522,12 @@ Cenário: SC-26 Handle anexado fica pronto
 | I5 | Handle inclui `name` | US-01/20 | `provision.js` | `handle.name` estável |
 | I6 | BDD e2e US-01 / US-20 / EP-01 | — | `test/bdd/` | Aceite multi-agent |
 | I7 | Piloto: limpa screenshots → `resetInstance` → provision | — | `linkedin-login.js` · `reset-instance.js` | Instância do zero |
+| I8 | Mascaramento de identidade (qualquer vendor) | US-22 / SC-28 | `pocs/` · runtime config | Sem fingerprint do vendor |
 
 ### Ordem
 
 ```text
-I1 → I2 → I3 → I5 → I4 → I6 → I7
+I1 → I2 → I3 → I5 → I4 → I6 → I7 → I8
 ```
 
 ---
@@ -520,7 +541,8 @@ I1 → I2 → I3 → I5 → I4 → I6 → I7
 | `attachRuntime` interno | Interno do provision |
 | Alocação multi-porta / multi-container | Gap (POC redroid multi) |
 | Internos ADB / boot | `ensure-adb-online` · `wait-boot-completed` |
-| BDD e2e US-01 / US-20 / EP-01 | Estender multi-nome |
+| Mascaramento identidade (US-22) | Parcial — contrato em [`pocs/README.md`](../pocs/README.md); cada vendor aplica |
+| BDD e2e US-01 / US-20 / EP-01 | Estender multi-nome · US-22 |
 
 ---
 
@@ -531,6 +553,7 @@ I1 → I2 → I3 → I5 → I4 → I6 → I7
 3. Handle com `name`, `serial`, `bootCompleted`  
 4. ≥2 agents simultâneos no e2e  
 5. Piloto LinkedIn: `resetInstance` + provision (screenshots limpos)  
+6. SC-28: identidade de aparelho de mercado em qualquer vendor (sem fingerprint do runtime de automação)  
 
 ## Próximos passos
 

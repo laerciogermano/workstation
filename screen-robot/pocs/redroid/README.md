@@ -87,14 +87,14 @@ Copie `.env.example` → `.env` (o `start.sh` faz isso se faltar) e ajuste:
 - `ADB_HOST` / `ADB_PORT` — ADB só em `127.0.0.1` por padrão; multi-agent usa portas distintas por `name`
 - `COMPOSE_PROJECT_NAME` / nome do container — alinhado ao `provision.name` quando a lib sobe a instância
 - resolução / DPI / FPS / `REDROID_GPU_MODE` (`guest` = software, `host` = GPU)
-- **Identidade mascarada** — `DEVICE_*` (perfil de aparelho de mercado; ver requisito geral em [`../README.md`](../README.md#mascarar-identidade-do-aparelho)) — [aplicar neste vendor](#aplicar-mascaramento-neste-vendor)
+- **Identidade mascarada** — `DEVICE_*` (perfil de aparelho de mercado; US-22 · [`../README.md`](../README.md#mascarar-identidade-do-aparelho)) — [aplicar neste vendor](#aplicar-mascaramento-neste-vendor)
 
 Dados persistentes: volume Docker **por agent** (não compartilhar o mesmo volume entre nomes).  
 **Não** use bind mount `./data` no Mac/Colima — o virtiofs quebra o `/data` do Android (`SQLITE_CANTOPEN`).
 
 ## Aplicar mascaramento neste vendor
 
-Requisito geral (qualquer vendor): [`../README.md`](../README.md#mascarar-identidade-do-aparelho).
+Requisito geral (qualquer vendor): [`../README.md`](../README.md#mascarar-identidade-do-aparelho) · US-22 / SC-28.
 
 Neste POC, o perfil vai em `DEVICE_*` no `.env` → `ro.product.*` no [`docker-compose.yml`](docker-compose.yml):
 

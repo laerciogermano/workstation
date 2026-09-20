@@ -81,7 +81,7 @@ Vídeo padrão: `media/sample.mp4`. Pode passar outro:
 
 ## Aplicar mascaramento neste vendor
 
-Requisito geral (qualquer vendor): [`../README.md`](../README.md#mascarar-identidade-do-aparelho).
+Requisito geral (qualquer vendor): [`../README.md`](../README.md#mascarar-identidade-do-aparelho) · US-22 / SC-28.
 
 Neste POC (AVD), use um **device definition / skin** de aparelho de mercado no `avdmanager`/`setup-avd.sh` (não um perfil genérico “emulator” óbvio) e revise `ro.product.*` no `config.ini` / build props do AVD quando necessário. Apps devem ver marca/modelo de aparelho comum, não o fingerprint do vendor de automação.
 

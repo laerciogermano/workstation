@@ -186,7 +186,18 @@ async function main() {
   const view = handle.openScrcpy({ title: `tinder-home ${handle.serial}` });
   console.log(`   OK pid=${view.pid}`);
 
-  console.log("2) Instalar tinder…");
+  console.log("2) Instalar HMS Core (obrigatório p/ Tinder Huawei)…");
+  const hmsSpec = cfg.apps?.hms;
+  if (hmsSpec?.package) {
+    const hms = await handle.installApk(hmsSpec);
+    console.log(
+      `   OK ${hms.package} ${hms.version || "?"}${hms.skipped ? " (skip)" : ""}`,
+    );
+  } else {
+    console.log("   (apps.hms ausente — Tinder Huawei pode falhar sem HMS Core)");
+  }
+
+  console.log("2.5) Instalar tinder…");
   const installed = await handle.installApk(appSpec);
   console.log(
     `   OK ${installed.package} ${installed.version || "?"}${installed.skipped ? " (skip)" : ""}`,
@@ -241,25 +252,26 @@ async function main() {
   writeFileSync(resolve(outDir, "02-elements.json"), JSON.stringify(list2, null, 2), "utf8");
   console.log(JSON.stringify(list2, null, 2));
 
-  console.log("9) Clicar Continue with Phone Number…");
+  console.log('9) Buscar texto "Continue with Phone Number" e clicar…');
   {
     let hit = null;
-    for (let attempt = 1; attempt <= 8; attempt++) {
+    for (let attempt = 1; attempt <= 10; attempt++) {
       hit = await findContinueWithPhoneNumber(handle.serial);
       if (hit?.center) break;
-      console.log(`   tentativa ${attempt}/8 — aguardando OCR…`);
+      console.log(`   tentativa ${attempt}/10 — texto ainda não visível…`);
       await sleep(2_000);
     }
-    if (hit?.center) {
-      console.log(
-        `   → "${hit.text}" score=${hit.score.toFixed(2)} parts=${hit.elements.length} center=${JSON.stringify(hit.center)}`,
+    if (!hit?.center) {
+      throw new Error(
+        'Texto "Continue with Phone Number" não encontrado na tela (OCR/findByText)',
       );
-      handle.tapElement({ center: hit.center, bounds: hit.bounds });
-      await sleep(5_000);
-      await handle.on("ui_stable", { timeoutMs: 60_000 }).catch(() => {});
-    } else {
-      console.log("   (Continue with Phone Number não encontrado — segue)");
     }
+    console.log(
+      `   → "${hit.text}" score=${hit.score.toFixed(2)} parts=${hit.elements.length} center=${JSON.stringify(hit.center)}`,
+    );
+    handle.tapElement({ center: hit.center, bounds: hit.bounds });
+    await sleep(5_000);
+    await handle.on("ui_stable", { timeoutMs: 60_000 }).catch(() => {});
   }
 
   console.log("10) Print após Phone Number…");

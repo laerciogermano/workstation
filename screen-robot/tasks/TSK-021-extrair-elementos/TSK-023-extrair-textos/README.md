@@ -13,8 +13,8 @@
 
 ## Execução
 
-- **OCR** no frame: textos + bounds → nodes `text` · `extract()` fase 1
+- **OCR** no frame: textos + bounds → elementos `text` · `extract()` fase 1
 
 ## Saídas
 
-- Árvore com textos · aceite SC-17
+- Lista com elementos `text` · aceite SC-17

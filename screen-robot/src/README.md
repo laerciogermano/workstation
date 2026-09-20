@@ -159,20 +159,20 @@ const { pid, serial } = handle.openScrcpy(); // scrcpy no serial do handle
 
 ## 5. Extrair UI — `handle.extract()`
 
-Percepção por **frame → OCR/visão → árvore** (sem dump uiautomator). Sem parâmetros. Cada chamada **enriquece** a mesma árvore:
+Percepção por **frame → OCR/visão → lista plana** (sem dump uiautomator, sem árvore DOM). Sem parâmetros. Cada chamada **acrescenta elementos** na mesma lista:
 
 ```js
-const t1 = await handle.extract(); // OCR: textos + bounds
-const t2 = await handle.extract(); // hierarquia (visão + OCR)
-const t3 = await handle.extract(); // ícones (visão)
-const t4 = await handle.extract(); // listas (visão + OCR)
-const t5 = await handle.extract(); // imagens (visão)
-// { type: "root", bounds, children: [ { type, text?, bounds?, children } ] }
+const e1 = await handle.extract(); // OCR: textos + bounds
+const e2 = await handle.extract(); // lista enriquecida (visão + OCR)
+const e3 = await handle.extract(); // ícones (visão)
+const e4 = await handle.extract(); // listas (visão + OCR)
+const e5 = await handle.extract(); // imagens (visão)
+// [ { type: "text"|"icon"|"list"|"image", text?, bounds, center? }, … ]
 ```
 
 Fonte do frame: screenshot ADB, stream ou câmera (device real) — mesmo pipeline.
 
-Legado (piloto LinkedIn, lista plana): `extractElements` / `findLoginTarget` / `findEditableFields` em [`lib/extract.js`](lib/extract.js).
+Helpers de lista: `extractElements` / `findLoginTarget` / `findEditableFields` em [`lib/extract.js`](lib/extract.js).
 
 ---
 
@@ -206,7 +206,7 @@ await handle.launch(cfg.apps.linkedin.package);
 await handle.on("ui_stable", { timeoutMs: 90_000 });
 
 handle.screenshot("./screenshots/01-antes-agree.png");
-const tree = await handle.extract();
+const elements = await handle.extract();
 ```
 
 ---
@@ -255,7 +255,7 @@ Script [`scripts/linkedin-login.js`](scripts/linkedin-login.js):
 3. `provisionEmulator` → `openScrcpy` → `installApk(linkedin)` → `launch` → `on("ui_stable")`
 4. `01-tela-inicial.png`
 5. **Sign in with Email** → wait 5s → `02-apos-sign-in-email.png`
-6. `extract()` ×5 → console + `tree-screen.png` + `component-tree.json`
+6. `extract()` ×5 → console da lista + `tree-screen.png` + `component-tree.json`
 
 Só LinkedIn (sem Instagram). Sem digitar credenciais e sem `saveSession`.
 

@@ -9,9 +9,10 @@
 
 **Stack:** Node ≥ 18 · JavaScript · `adb` · **OCR** · **visão** (detecção + template match) · runtime provisionado.
 
-**Princípio:** percepção = **frame/imagem** → OCR (textos + bounds) + visão (ícones/listas/imagens) → árvore DOM.  
-**Proibido** como fonte da árvore: dump uiautomator / árvore de acessibilidade ADB.  
-**Fonte de frame:** screenshot ADB, stream ou **câmera** (device real) — mesmo pipeline.
+**Princípio:** percepção = **frame/imagem** → OCR (textos + bounds) + visão (ícones/listas/imagens) → **lista plana de elementos**.  
+**Proibido** como fonte: dump uiautomator / árvore de acessibilidade ADB.  
+**Fonte de frame:** screenshot ADB, stream ou **câmera** (device real) — mesmo pipeline.  
+**Não** devolver árvore DOM (`root` / `children`); contrato = **array de elementos**.
 
 ---
 
@@ -19,14 +20,14 @@
 
 | ID | Item |
 |----|------|
-| US-13 | Extrair árvore DOM com textos |
+| US-13 | Extrair elementos (OCR) |
 | US-14 | Extrair ícones |
 | US-15 | Extrair listas |
 | US-16 | Extrair imagens |
 | SC-17..21 | Cenários correspondentes |
 
-**Resultado:** **árvore estilo DOM** — raiz com `children`; cada elemento é um **node**.  
-`handle.extract()` — **um método, sem parâmetros**; cada chamada (por estória/SC) **incrementa nodes** na mesma árvore.
+**Resultado:** **lista plana** `UiElement[]` — cada item tem `type`, `bounds`, opcionalmente `text` / `center`.  
+`handle.extract()` — **um método, sem parâmetros**; cada chamada (por estória/SC) **acrescenta elementos** na mesma lista acumulada.
 
 ---
 
@@ -36,12 +37,14 @@
 src/
 ├── lib/
 │   ├── extract.js                 # createExtract → handle.extract() (progressivo)
+│   ├── frame.js                   # captura de frame
+│   ├── ocr.js                     # tesseract → palavras + bounds
+│   ├── vision.js                  # heurísticas icon/list/image
 │   ├── extract.test.js
 │   └── provision.js               # anexa extract ao handle
 └── test/
     └── bdd/
-        ├── ep-05-extrair-elementos.test.js
-        └── us-13-extrair-arvore-dom.test.js
+        └── ep-05-extrair-elementos.test.js
 ```
 
 ---
@@ -50,131 +53,91 @@ src/
 
 1. **Provisionar** → handle.  
 2. **Capturar frame** (screenshot ADB / stream / câmera) — interno.  
-3. **Extrair** → `handle.extract()`; OCR/visão sobre o frame; retorno = árvore DOM; cada chamada enriquece nodes.
+3. **Extrair** → `handle.extract()`; OCR/visão sobre o frame; retorno = **lista de elementos**; cada chamada enriquece a lista.
 
 ```js
 const handle = await provisionEmulator(cfg);
 
-const t1 = await handle.extract();
-// frame → OCR textos + bounds → nodes text (SC-17)
+const e1 = await handle.extract();
+// frame → OCR textos + bounds → elementos type "text" (SC-17)
 
-const t2 = await handle.extract();
-// mesmo frame → visão + OCR → hierarquia completa (SC-18)
+const e2 = await handle.extract();
+// mesmo frame → visão + OCR → lista enriquecida (SC-18)
 
-const t3 = await handle.extract();
-// + nodes type "icon" (SC-19 / US-14)
+const e3 = await handle.extract();
+// + elementos type "icon" (SC-19 / US-14)
 
-const t4 = await handle.extract();
-// + nodes type "list" (SC-20 / US-15)
+const e4 = await handle.extract();
+// + elementos type "list" (SC-20 / US-15)
 
-const t5 = await handle.extract();
-// + nodes type "image" (SC-21 / US-16)
+const e5 = await handle.extract();
+// + elementos type "image" (SC-21 / US-16)
 ```
 
-**Regra:** sempre `extract()` → `Promise<UiNode>` (raiz). Sem `kind`/opts. O que muda é a árvore: novos tipos de node aparecem / hierarquia completa.  
-**Sequência canônica:** frame → OCR/visão → árvore (não XML dump).
+**Regra:** sempre `extract()` → `Promise<UiElement[]>`. Sem `kind`/opts. O que muda é a lista: novos tipos aparecem.  
+**Sequência canônica:** frame → OCR/visão → lista (não XML dump, não árvore DOM).
 
 | Superfície | O quê |
 |------------|--------|
-| **Público** | `handle.extract() → Promise<UiNode>` (árvore DOM) |
-| **Privado** | capturar frame · OCR · visão · tipar/inserir nodes na árvore |
+| **Público** | `handle.extract() → Promise<UiElement[]>` (lista plana) |
+| **Privado** | capturar frame · OCR · visão · tipar/inserir elementos na lista |
 
 ---
 
-## Exemplo de JSON (árvore DOM)
+## Exemplo de JSON (lista de elementos)
 
-### Após 1ª chamada — SC-17 (textos)
+### Após 1ª chamada — SC-17 (textos OCR)
 
 ```json
-{
-  "type": "root",
-  "bounds": { "x": 0, "y": 0, "w": 1080, "h": 2400 },
-  "children": [
-    {
-      "type": "text",
-      "text": "Entrar",
-      "bounds": { "x": 120, "y": 1800, "w": 840, "h": 96 },
-      "children": []
-    },
-    {
-      "type": "text",
-      "text": "E-mail ou telefone",
-      "bounds": { "x": 120, "y": 900, "w": 840, "h": 72 },
-      "children": []
-    }
-  ]
-}
+[
+  {
+    "type": "text",
+    "text": "Entrar",
+    "bounds": { "x": 120, "y": 1800, "w": 840, "h": 96 },
+    "center": [540, 1848]
+  },
+  {
+    "type": "text",
+    "text": "E-mail ou telefone",
+    "bounds": { "x": 120, "y": 900, "w": 840, "h": 72 },
+    "center": [540, 936]
+  }
+]
 ```
 
-### Após 2ª chamada — SC-18 (hierarquia + textos)
+### Após 2ª chamada — SC-18 (lista enriquecida)
+
+Mesma lista de textos; podem entrar elementos auxiliares de visão (ainda sem ícones/listas/imagens dedicados se forem passos 3–5):
 
 ```json
-{
-  "type": "root",
-  "bounds": { "x": 0, "y": 0, "w": 1080, "h": 2400 },
-  "children": [
-    {
-      "type": "other",
-      "bounds": { "x": 0, "y": 0, "w": 1080, "h": 2400 },
-      "children": [
-        {
-          "type": "other",
-          "bounds": { "x": 48, "y": 800, "w": 984, "h": 400 },
-          "children": [
-            {
-              "type": "text",
-              "text": "E-mail ou telefone",
-              "bounds": { "x": 120, "y": 900, "w": 840, "h": 72 },
-              "children": []
-            }
-          ]
-        },
-        {
-          "type": "text",
-          "text": "Entrar",
-          "bounds": { "x": 120, "y": 1800, "w": 840, "h": 96 },
-          "children": []
-        }
-      ]
-    }
-  ]
-}
+[
+  {
+    "type": "text",
+    "text": "E-mail ou telefone",
+    "bounds": { "x": 120, "y": 900, "w": 840, "h": 72 },
+    "center": [540, 936]
+  },
+  {
+    "type": "text",
+    "text": "Entrar",
+    "bounds": { "x": 120, "y": 1800, "w": 840, "h": 96 },
+    "center": [540, 1848]
+  }
+]
 ```
 
-### Após 3ª–5ª chamadas — ícones / listas / imagens como nodes
+### Após 3ª–5ª chamadas — ícones / listas / imagens na mesma lista
 
-Mesma raiz; nodes novos com `"type": "icon" | "list" | "image"` entram na hierarquia (filhos nos lugares certos):
+Elementos novos com `"type": "icon" | "list" | "image"` são **append** na lista (sem aninhar `children`):
 
 ```json
-{
-  "type": "root",
-  "bounds": { "x": 0, "y": 0, "w": 1080, "h": 2400 },
-  "children": [
-    {
-      "type": "other",
-      "children": [
-        {
-          "type": "icon",
-          "bounds": { "x": 48, "y": 64, "w": 72, "h": 72 },
-          "children": []
-        },
-        {
-          "type": "list",
-          "bounds": { "x": 0, "y": 400, "w": 1080, "h": 1200 },
-          "children": [
-            {
-              "type": "other",
-              "children": [
-                { "type": "text", "text": "Item 1", "children": [] },
-                { "type": "image", "bounds": { "x": 24, "y": 420, "w": 128, "h": 128 }, "children": [] }
-              ]
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
+[
+  { "type": "text", "text": "Entrar", "bounds": { "x": 120, "y": 1800, "w": 840, "h": 96 }, "center": [540, 1848] },
+  { "type": "icon", "bounds": { "x": 48, "y": 64, "w": 72, "h": 72 }, "center": [84, 100] },
+  { "type": "list", "bounds": { "x": 0, "y": 400, "w": 1080, "h": 1200 }, "center": [540, 1000] },
+  { "type": "text", "text": "Item 1", "bounds": { "x": 40, "y": 420, "w": 200, "h": 40 }, "center": [140, 440] },
+  { "type": "image", "bounds": { "x": 24, "y": 420, "w": 128, "h": 128 }, "center": [88, 484] }
+]
 ```
 
 ---
@@ -233,53 +196,53 @@ sequenceDiagram
 
   loop uma chamada por estória / SC
     Dev->>H: extract()
-    note over H,X: sem parâmetros; contrato extract() mantido
-    H->>X: nextStep(tree)
+    note over H,X: sem parâmetros; retorno = lista
+    H->>X: nextStep(list)
     X->>D: capturar frame (screenshot / câmera)
     D-->>X: imagem
-    X->>X: OCR / visão → tipar / inserir nodes
-    X-->>H: UiNode (raiz DOM)
-    H-->>Dev: árvore enriquecida
+    X->>X: OCR / visão → tipar / append elementos
+    X-->>H: UiElement[]
+    H-->>Dev: lista enriquecida
   end
 ```
 
-### Por US — mesma chamada, árvore que ganha nodes
+### Por US — mesma chamada, lista que ganha elementos
 
-| Ordem | US | SC | Chamada | O que a árvore ganha |
-|-------|----|-----|---------|----------------------|
-| 1 | US-13 | SC-17 | `extract()` | nodes `type: "text"` via **OCR** |
-| 2 | US-13 | SC-18 | `extract()` | hierarquia (`other` + filhos); textos no lugar — **visão + OCR** |
-| 3 | US-14 | SC-19 | `extract()` | nodes `type: "icon"` via **visão** |
-| 4 | US-15 | SC-20 | `extract()` | nodes `type: "list"` (+ itens) — **visão + OCR** |
-| 5 | US-16 | SC-21 | `extract()` | nodes `type: "image"` via **visão** |
+| Ordem | US | SC | Chamada | O que a lista ganha |
+|-------|----|-----|---------|---------------------|
+| 1 | US-13 | SC-17 | `extract()` | elementos `type: "text"` via **OCR** |
+| 2 | US-13 | SC-18 | `extract()` | lista enriquecida (visão + OCR; sem hierarquia) |
+| 3 | US-14 | SC-19 | `extract()` | elementos `type: "icon"` via **visão** |
+| 4 | US-15 | SC-20 | `extract()` | elementos `type: "list"` — **visão + OCR** |
+| 5 | US-16 | SC-21 | `extract()` | elementos `type: "image"` via **visão** |
 
-Caller inspeciona a árvore (walk em `children`) — não há arrays paralelos `texts` / `icons` fora do DOM.
+Caller filtra/itera o array (`el.type`, `el.text`, `el.center`) — **não** há walk em `children`.
 
 #### Contratos
 
 ```ts
-type NodeType = "root" | "text" | "icon" | "list" | "image" | "other";
+type ElementType = "text" | "icon" | "list" | "image" | "other";
 
-/** Node da árvore DOM. */
-type UiNode = {
-  type: NodeType;
+/** Elemento plano encontrado por OCR/visão. */
+type UiElement = {
+  type: ElementType;
   text?: string;
-  bounds?: { x: number; y: number; w: number; h: number };
-  children: UiNode[];
+  bounds: { x: number; y: number; w: number; h: number };
+  center?: [number, number];
 };
 
 type AgentHandle = {
   // … EP-01..04 …
-  /** Sem parâmetros. Retorna a árvore DOM; cada chamada incrementa nodes. */
-  extract(): Promise<UiNode>;
+  /** Sem parâmetros. Retorna lista de elementos; cada chamada acrescenta itens. */
+  extract(): Promise<UiElement[]>;
 };
 
-const tree = await handle.extract();
-// tree.type === "root"
-// tree.children[0].type === "text" | "icon" | …
+const elements = await handle.extract();
+// Array.isArray(elements)
+// elements[0].type === "text" | "icon" | …
 ```
 
-**Interno:** cursor de passo no handle; árvore mutável/acumulada; após o passo 5, nova chamada pode devolver a árvore completa (idempotente).
+**Interno:** cursor de passo no handle; lista mutável/acumulada; após o passo 5, nova chamada pode devolver a lista completa (idempotente).
 
 ---
 
@@ -290,7 +253,7 @@ const tree = await handle.extract();
 | `EXTRACT_FRAME_FAILED` | frame/imagem indisponível (screenshot/câmera) |
 | `EXTRACT_OCR_FAILED` | falha no OCR |
 | `EXTRACT_VISION_FAILED` | falha na visão/detecção |
-| `EXTRACT_STEP_FAILED` | falha ao tipar/inserir nodes no passo |
+| `EXTRACT_STEP_FAILED` | falha ao tipar/inserir elementos no passo |
 
 ---
 
@@ -324,24 +287,23 @@ config:
 classDiagram
   direction TB
   class AgentHandle {
-    +extract() Promise~UiNode~
+    +extract() Promise~UiElement[]~
   }
-  class UiNode {
-    +NodeType type
+  class UiElement {
+    +ElementType type
     +string text
     +bounds
-    +UiNode[] children
+    +center
   }
   class extract_js {
     <<internal>>
     createExtract(serial)
     -step
-    -tree
+    -elements
   }
-  note for AgentHandle "Retorno = árvore DOM"
+  note for AgentHandle "Retorno = lista plana (OCR/visão)"
   AgentHandle --> extract_js
-  extract_js ..> UiNode : devolve
-  UiNode --> UiNode : children
+  extract_js ..> UiElement : devolve array
 ```
 
 ---
@@ -349,7 +311,7 @@ classDiagram
 ## Cenários BDD
 
 Fonte: [`5.bdds.md#ep-05--extrair-elementos`](../5.bdds.md#ep-05--extrair-elementos).  
-“Quando…” = `handle.extract()`; “Então…” = árvore contém nodes do tipo da estória.
+“Quando…” = `handle.extract()`; “Então…” = lista contém elementos do tipo da estória.
 
 ---
 
@@ -357,13 +319,13 @@ Fonte: [`5.bdds.md#ep-05--extrair-elementos`](../5.bdds.md#ep-05--extrair-elemen
 
 | # | Entrega | SC | Critério |
 |---|---------|-----|----------|
-| I1 | `createExtract` + `handle.extract()` → `UiNode` raiz | — | Árvore DOM; contrato `extract()` mantido |
+| I1 | `createExtract` + `handle.extract()` → `UiElement[]` | — | Lista plana; sem árvore DOM |
 | I2 | Fonte de frame (screenshot ADB; abstrair câmera) | — | Imagem disponível sem dump XML |
-| I3 | Passo 1 → OCR textos + bounds → nodes `text` | SC-17 | Filhos texto |
-| I4 | Passo 2 → visão + OCR → hierarquia completa | SC-18 | `children` aninhados |
-| I5 | Passos 3–5 → nodes `icon` / `list` / `image` | SC-19..21 | Tipos na árvore |
-| I6 | Migrar fora de uiautomator dump | — | Sem XML dump como fonte da árvore |
-| I7 | Piloto: `extract()` ×5 + `component-tree.json` | — | linkedin-login |
+| I3 | Passo 1 → OCR textos + bounds → elementos `text` | SC-17 | Itens texto na lista |
+| I4 | Passo 2 → visão + OCR → lista enriquecida | SC-18 | Mais elementos / tipos |
+| I5 | Passos 3–5 → elementos `icon` / `list` / `image` | SC-19..21 | Tipos na lista |
+| I6 | Sem uiautomator dump como fonte | — | Só frame → OCR/visão |
+| I7 | Piloto: `extract()` ×5 + JSON da lista | — | linkedin-login |
 
 ### Ordem
 
@@ -377,18 +339,19 @@ I1 → I2 → I3 → I4 → I5 → I6 → I7
 
 | Peça | Status |
 |------|--------|
-| `createExtract` → `handle.extract()` | Existe (progressivo); **contrato público mantido** |
-| Fonte = `dumpUiXml` / uiautomator | **Gap** — **deve migrar** para frame → OCR/visão |
-| `extractElements` lista plana | Legado (piloto LinkedIn) |
+| `createExtract` → `handle.extract()` | Existe (ainda árvore); **migrar retorno para lista** |
+| Fonte = frame → OCR/visão | Feito (`frame.js` / `ocr.js` / `vision.js`) |
+| `dumpUiXml` | Só legado eventos EP-02 |
+| `extractElements` lista plana | Alinha com o contrato alvo de `extract()` |
 
 ---
 
 ## Critério de pronto (épico)
 
 1. `handle.extract()` sem parâmetros  
-2. Retorno = árvore DOM (`type` + `children`); elementos = nodes  
-3. Pipeline = **frame → OCR/visão → árvore** (sem dump uiautomator)  
-4. Cada chamada incrementa tipos de node na árvore  
+2. Retorno = **lista** `UiElement[]` (não árvore `root`/`children`)  
+3. Pipeline = **frame → OCR/visão → lista** (sem dump uiautomator)  
+4. Cada chamada acrescenta tipos de elemento na lista  
 5. BDDs US-13 + EP-05  
 
 ## Próximos passos

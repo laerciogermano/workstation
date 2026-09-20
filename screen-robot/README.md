@@ -15,7 +15,7 @@
 
 O **screen-robot** é um agent Android controlado por código Node: provisiona o device, instala APKs, recebe eventos de UI, **percebe a tela por imagem** (OCR + visão), executa operações e guarda estado de sessão.
 
-**Princípio de percepção:** ler e automatizar a UI a partir de um **frame/imagem** (screenshot, stream ou **câmera em aparelho real**) — **OCR** para textos e visão para ícones/listas/imagens/coords. **Não** depende de dump uiautomator / árvore de acessibilidade ADB para montar a árvore DOM nem para achar alvos. O caminho futuro (device físico + câmera) usa o **mesmo** pipeline imagem → OCR/visão → árvore → gestos.
+**Princípio de percepção:** ler e automatizar a UI a partir de um **frame/imagem** (screenshot, stream ou **câmera em aparelho real**) — **OCR** para textos e visão para ícones/listas/imagens/coords. **Não** depende de dump uiautomator / árvore de acessibilidade ADB. O caminho futuro (device físico + câmera) usa o **mesmo** pipeline imagem → OCR/visão → **lista de elementos** → gestos.
 
 Além da automação por API, a instância Android permanece **disponível para controle interativo**: visualizar a tela (espelhamento) e operar manualmente — tocar, digitar, rolar e demais gestos — em paralelo ou em complemento ao código.
 
@@ -129,13 +129,13 @@ handle.scroll({ direction: "down", distance: 800 });
 handle.screenshot("./screenshots/tela.png");
 const { x, y, confidence } = await handle.matchImage("./templates/btn.png");
 
-// Extrair UI (cada chamada enriquece a mesma árvore)
-const t1 = await handle.extract(); // textos
-const t2 = await handle.extract(); // hierarquia
-const t3 = await handle.extract(); // ícones
-const t4 = await handle.extract(); // listas
-const t5 = await handle.extract(); // imagens
-// → { type: "root", children: [ … nodes com type/bounds/text ] }
+// Extrair UI (lista plana de elementos OCR/visão; cada chamada enriquece)
+const e1 = await handle.extract(); // textos OCR
+const e2 = await handle.extract(); // lista enriquecida
+const e3 = await handle.extract(); // ícones
+const e4 = await handle.extract(); // listas
+const e5 = await handle.extract(); // imagens
+// → [ { type, text?, bounds, center? }, … ]
 
 // Sessão
 await handle.saveSession("./state/session.json", { step: "logged-in" });
@@ -158,7 +158,7 @@ await handle.removeSession("./state/session.json");
 | `screenshot(path)` | Grava PNG |
 | `matchImage(templatePath)` | `{ x, y, confidence }` |
 | `openScrcpy(opts?)` | Abre scrcpy no serial do handle (US-21); retorna `{ pid, serial }` |
-| `extract()` | Árvore DOM progressiva |
+| `extract()` | Lista plana de elementos (OCR/visão) |
 | `saveSession` / `restoreSession` / `removeSession` | Persistência JSON |
 
 Erros tipados (campo `err.code`): `PROVISION_*` (incl. `PROVISION_INVALID_NAME`), `RESET_*`, `APK_*`, `OPERATE_*`, `SESSION_*`, `EVENT_*`.
@@ -177,7 +177,7 @@ Ordem do script ([`src/scripts/linkedin-login.js`](src/scripts/linkedin-login.js
 3. `provisionEmulator` → `openScrcpy` → `installApk(linkedin)` → `launch` → `ui_stable`
 4. Screenshot `01-tela-inicial.png`
 5. **Sign in with Email** → wait 5s → `02-apos-sign-in-email.png`
-6. `extract()` ×5 → console da árvore + `tree-screen.png` + `component-tree.json`
+6. `extract()` ×5 → console da lista + `tree-screen.png` + `component-tree.json`
 
 Não digita credenciais e não chama `saveSession`.
 

@@ -1,4 +1,4 @@
-# TSK 022 extrair arvore dom
+# TSK 022 extrair elementos OCR
 
 | Campo | Valor |
 |-------|--------|
@@ -13,8 +13,8 @@
 
 ## Execução
 
-- OCR (textos) + visão (restante) sobre o frame até árvore completa · `extract()`
+- OCR (textos) + visão (restante) sobre o frame até **lista completa** · `extract()`
 
 ## Saídas
 
-- Árvore de componentes completa · aceite US-13
+- Lista de elementos · aceite US-13

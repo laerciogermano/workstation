@@ -12,8 +12,8 @@
 
 ## Execução
 
-- Pipeline **frame → OCR/visão → árvore DOM** via `handle.extract()` (sem dump uiautomator)
+- Pipeline **frame → OCR/visão → lista plana** via `handle.extract()` (sem dump uiautomator, sem árvore DOM)
 
 ## Saídas
 
-- Árvore de componentes por tipo / completa · aceite EP-05
+- Lista de elementos por tipo / completa · aceite EP-05

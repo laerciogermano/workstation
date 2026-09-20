@@ -189,18 +189,14 @@ Ilustrativo da API EP-06 (o piloto LinkedIn atual **não** grava sessão):
     "session": "./sessions/linkedin.json",
     "screenshot": "./screenshots/01-antes-agree.png"
   },
-  "extract": {
-    "type": "root",
-    "bounds": { "x": 0, "y": 0, "w": 1080, "h": 2400 },
-    "children": [
-      {
-        "type": "text",
-        "text": "Sign in",
-        "bounds": { "x": 120, "y": 1800, "w": 840, "h": 96 },
-        "children": []
-      }
-    ]
-  },
+  "extract": [
+    {
+      "type": "text",
+      "text": "Sign in",
+      "bounds": { "x": 120, "y": 1800, "w": 840, "h": 96 },
+      "center": [540, 1848]
+    }
+  ],
   "events": [
     { "type": "ui_stable", "attempt": 3, "at": "2026-09-19T23:00:00.000Z" }
   ],
@@ -214,7 +210,7 @@ Ilustrativo da API EP-06 (o piloto LinkedIn atual **não** grava sessão):
 | `step` | estado passado pelo caller |
 | `apps` | instalação (EP-03) |
 | `paths` | paths úteis para restore |
-| `extract` | última árvore DOM (EP-05), opcional |
+| `extract` | última lista de elementos (EP-05), opcional |
 | `events` | últimos eventos (EP-02), opcional |
 | `savedAt` | preenchido no save |
 
@@ -289,7 +285,7 @@ Fonte: [`5.bdds.md#ep-06--sessao`](../5.bdds.md#ep-06--sessao).
 | I2 | save inclui serial/kind do handle | SC-22 | US-17 |
 | I3 | remove limpa arquivo + contexto | SC-23 | US-18 |
 | I4 | restore reaplica no handle/runtime | SC-24 | US-19 |
-| I5 | Piloto **não** chama `saveSession` (fluxo atual = árvore / AGREE|Sign In) | — | linkedin-login | API de sessão disponível; piloto não grava |
+| I5 | Piloto **não** chama `saveSession` (fluxo atual = lista OCR / AGREE|Sign In) | — | linkedin-login | API de sessão disponível; piloto não grava |
 
 ### Ordem
 

@@ -13,8 +13,8 @@
 
 ## Execução
 
-- **Visão** detecta regiões de imagem/foto no frame → nodes `image` · `extract()`
+- **Visão** detecta regiões de imagem/foto no frame → elementos `image` · `extract()`
 
 ## Saídas
 
-- Árvore com imagens · aceite SC-21
+- Lista com elementos `image` · aceite SC-21

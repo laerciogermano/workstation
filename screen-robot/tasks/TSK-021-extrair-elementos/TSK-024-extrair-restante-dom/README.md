@@ -1,4 +1,4 @@
-# TSK 024 extrair restante dom
+# TSK 024 enriquecer lista
 
 | Campo | Valor |
 |-------|--------|
@@ -9,12 +9,12 @@
 
 ## Entradas
 
-- Árvore fase 1; mesmo **frame**
+- Lista fase 1; mesmo **frame**
 
 ## Execução
 
-- **Visão + OCR** no frame: ícones/listas/imagens; compor hierarquia · `extract()` fase 2
+- **Visão + OCR** no frame: ícones/listas/imagens; append na lista plana · `extract()` fase 2
 
 ## Saídas
 
-- Árvore completa · aceite SC-18
+- Lista completa · aceite SC-18

@@ -13,8 +13,8 @@
 
 ## Execução
 
-- **Visão** reconhece ícones no frame → nodes `icon` · `extract()`
+- **Visão** reconhece ícones no frame → elementos `icon` · `extract()`
 
 ## Saídas
 
-- Árvore com ícones · aceite SC-19
+- Lista com elementos `icon` · aceite SC-19

@@ -13,8 +13,8 @@
 
 ## Execução
 
-- **Visão + OCR** reconhecem listas/itens no frame → nodes `list` · `extract()`
+- **Visão + OCR** reconhecem listas/itens no frame → elementos `list` · `extract()`
 
 ## Saídas
 
-- Árvore com listas · aceite SC-20
+- Lista com elementos `list` · aceite SC-20

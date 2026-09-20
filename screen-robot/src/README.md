@@ -242,8 +242,9 @@ Script [`scripts/linkedin-login.js`](scripts/linkedin-login.js):
 2. `resetInstance(cfg)`
 3. `provisionEmulator` → `installApk(linkedin)` → `launch` → `on("ui_stable")`
 4. `01-antes-agree.png`
-5. **AGREE** (se houver) ou **Sign In** → wait 5s → `02-apos-agree.png` / `02-apos-sign-in.png`
-6. `extract()` ×5 → `tree-screen.png` + `component-tree.json`
+5. **AGREE** (se houver) → wait 5s → `02-apos-agree.png`
+6. **Already have an account? Sign in** → wait 5s → `03-apos-sign-in.png`
+7. `extract()` ×5 → `tree-screen.png` + `component-tree.json`
 
 Só LinkedIn (sem Instagram). Sem digitar credenciais e sem `saveSession`.
 

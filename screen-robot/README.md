@@ -160,8 +160,9 @@ Ordem do script ([`src/scripts/linkedin-login.js`](src/scripts/linkedin-login.js
 2. `resetInstance(cfg)` — instância do zero
 3. `provisionEmulator` → `installApk(linkedin)` → `launch` → `ui_stable`
 4. Screenshot `01-antes-agree.png`
-5. Se houver **AGREE** → tap + 5s → `02-apos-agree.png`; senão se houver **Sign In** → tap + 5s → `02-apos-sign-in.png`
-6. `extract()` ×5 → `tree-screen.png` + `component-tree.json`
+5. Se houver **AGREE** → tap + 5s → `02-apos-agree.png`
+6. **Already have an account? Sign in** → tap + 5s → `03-apos-sign-in.png`
+7. `extract()` ×5 → `tree-screen.png` + `component-tree.json`
 
 Não instala Instagram, não digita credenciais e não chama `saveSession`.
 

@@ -239,7 +239,7 @@ Fonte: [`5.bdds.md#ep-04--operar-tela`](../5.bdds.md#ep-04--operar-tela). “Qua
 | I5 | `scroll` | SC-14 | US-10 |
 | I6 | `screenshot` | SC-15 | US-11 |
 | I7 | `matchImage` | SC-16 | US-12 |
-| I8 | Piloto: `launch` · `tapElement` (AGREE\|Sign In) · `screenshot` (nomes fixos) | — | linkedin-login | Sem type/scroll/matchImage no fluxo atual |
+| I8 | Piloto: `launch` · AGREE · Sign in · `screenshot` (nomes fixos) | — | linkedin-login | Sem type/scroll/matchImage no fluxo atual |
 
 ### Ordem
 

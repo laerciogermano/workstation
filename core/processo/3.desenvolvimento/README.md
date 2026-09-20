@@ -49,6 +49,40 @@ TSK-<nn>-<titulo>
 
 Exemplos: `TSK-002-subir-e-conectar` · `TSK-001-provisionar-agente`
 
+## Padrão de escrita do pull request
+
+O corpo do PR usa **sempre** estas duas seções (nesta ordem). Título do PR = mesmo padrão da branch, com espaço legível: `TSK-<nn> <titulo em palavras>`.
+
+| Seção | O que precisa ter |
+|-------|-------------------|
+| **Summary** | 1–3 bullets: o *porquê* / efeito da mudança; referência à atividade (`TSK-…`); aceite coberto (SC/BDD) se houver |
+| **Test plan** | Checklist acionável para o humano validar (comandos, cenários BDD, evidência esperada); itens marcáveis `- [ ]` |
+
+Regras:
+
+- Sem preâmbulo; sem listar arquivos sem motivo
+- Summary = efeito; Test plan = como o revisor prova que fechou o aceite
+- Um PR por atividade (paralelo → PRs separados)
+
+### Exemplo
+
+**Título:** `TSK-002 Subir e conectar`
+
+```markdown
+## Summary
+
+- Fecha SC-01: sobe o runtime do agent e deixa o processo alcançável (`Reachable`)
+- TDD + `startRuntime` cobrindo start a partir de `Absent` / `Starting`
+- Atividade: `TSK-002-subir-e-conectar` (pai `TSK-001`)
+
+## Test plan
+
+- [ ] `npm test` (ou suíte da atividade) verde no clone da pasta da task
+- [ ] Dado host/imagem/script de start, quando inicia o agent, então o processo fica em execução e alcançável
+- [ ] Falha típica `PROVISION_START_FAILED` coberta ou documentada no teste
+- [ ] Branch `TSK-002-subir-e-conectar`; card no board em **Pendente aprovação**
+```
+
 ## Execução (por atividade / por robô)
 
 Ordem **obrigatória** — não pular nem inverter:
@@ -58,7 +92,7 @@ Ordem **obrigatória** — não pular nem inverter:
 3. **Criar os TDDs** — testes que falham e cobrem o aceite da atividade (Entradas · Execução · Saídas / BDD)
 4. **Implementar a funcionalidade** — código mínimo para os TDDs passarem e o aceite fechar
 5. **Testar** — rodar a suíte relevante; só seguir com testes verdes
-6. **Concluir no board** — abrir **pull request** da branch e mudar o status da atividade para **Pendente aprovação**
+6. **Concluir no board** — abrir **pull request** da branch no [padrão de escrita](#padrão-de-escrita-do-pull-request) e mudar o status da atividade para **Pendente aprovação**
 7. **Parar** — aguardar validação humana; **não** iniciar a próxima atividade do Gantt até essa aprovação
 
 ### Onde fica o clone

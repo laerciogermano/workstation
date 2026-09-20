@@ -94,15 +94,15 @@ O mapa e a prioridade nascem no discovery; o detalhe (SC/BDD) e o restante do pr
 3. Criar TDDs
 4. Implementar a funcionalidade
 5. Testar
-6. Abrir PR e status → **Pendente aprovação**
+6. Abrir PR (Summary + Test plan) e status → **Pendente aprovação**
 7. Parar até validação humana
 
-Ordem = Gantt das tasks. Sequencial → robô espera o outro. Paralelo → robôs em paralelo, PRs separados; próximo passo da árvore/Gantt só após aprovação.
+Ordem = Gantt das tasks. Sequencial → robô espera o outro. Paralelo → robôs em paralelo, PRs separados; próximo passo da árvore/Gantt só após aprovação. Corpo do PR: [padrão de escrita](3.desenvolvimento/README.md#padrão-de-escrita-do-pull-request).
 
 **Saídas**
 
 - Branch + TDDs + código
-- PR aberto
+- PR aberto (Summary + Test plan)
 - Board: Pendente aprovação (próximo robô só após humano)
 
 ---

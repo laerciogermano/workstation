@@ -2,7 +2,7 @@
 
 **Por quê:** plano técnico do épico (sequências · agentes · passo a passo · contratos · classes · modelos · BDDs).  
 **Épico:** [`2.epics.md`](../2.epics.md).  
-**US:** [`1.stories.md`](../1.stories.md) · [`3.scenarios/EP-05-extrair-elementos.md`](../3.scenarios/EP-05-extrair-elementos.md) · [`4.bdds.md`](../4.bdds.md).
+**US:** [`1.stories.md`](../1.stories.md) · [`3.scenarios/EP-05-extrair-elementos.md`](../3.scenarios/EP-05-extrair-elementos.md) · [`4.bdds/EP-05-extrair-elementos.md`](../4.bdds/EP-05-extrair-elementos.md).
 **Código:** [`../sources/android-control/lib/extract.js`](../sources/android-control/lib/extract.js).
 
 **Stack:** Node ≥ 18 · `adb` · runtime provisionado (EP-01).
@@ -528,7 +528,7 @@ classDiagram
 
 ## Cenários BDD
 
-Fonte: `US-13`..`US-16` / `4.bdds.md`.
+Fonte: `US-13`..`US-16` / `4.bdds/EP-05-extrair-elementos.md`.
 
 ```gherkin
 Cenário: US-13 Árvore de componentes é composta em duas fases
@@ -597,4 +597,4 @@ I1 → I3/I4/I5 → I2
 ## Próximos passos
 
 → Implementar gaps em [`sources/android-control`](../sources/android-control/README.md)  
-→ Aceite: BDDs em cada pasta `US-*/4.bdds.md`
+→ Aceite: BDDs em [`4.bdds/EP-05-extrair-elementos.md`](../4.bdds/EP-05-extrair-elementos.md)

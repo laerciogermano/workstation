@@ -34,7 +34,7 @@
 
 | Artefato | Caminho |
 |----------|---------|
-| BDDs (unitário + piloto LinkedIn) | [`../4.bdds.md`](../4.bdds.md) · [`../4.bdds/`](../4.bdds/README.md) |
+| BDDs (unitário + piloto LinkedIn) | [`../4.bdds/`](../4.bdds/README.md) |
 | Script | [`../sources/android-control/scripts/linkedin-login.js`](../sources/android-control/scripts/linkedin-login.js) |
 
 ## Próximos passos

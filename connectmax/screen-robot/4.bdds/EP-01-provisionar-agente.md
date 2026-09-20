@@ -1,0 +1,50 @@
+# BDDs — EP-01 Provisionar agente
+
+**Por quê:** aceite Gherkin das US/SC do épico (fonte: [`../3.scenarios/EP-01-provisionar-agente.md`](../3.scenarios/EP-01-provisionar-agente.md)).  
+**Índice:** [`README.md`](README.md) · **Plano:** [`../implementation-plan/EP-01-provisionar-agente.md`](../implementation-plan/EP-01-provisionar-agente.md).
+
+**US:** US-01 · **SC:** SC-01..03.
+
+Cada bloco: Dado / Quando / Então alinhado a Entradas / Execução / Saídas.
+
+---
+
+## US-01 — Provisionar um agente
+
+```gherkin
+Cenário: US-01 Agent fica pronto para ADB
+  Dado o config e o runtime Android disponíveis
+  Quando o provisionamento sobe/conecta o agent, garante serial online e aguarda boot completo
+  Então o agent está pronto para ADB (serial online e boot ok)
+```
+
+### SC-01 — Subir / conectar o Android (agent)
+
+```gherkin
+Cenário: SC-01 Agent sobe e fica alcançável
+  Dado host, imagem/runtime e script de start
+  Quando o agent é iniciado e a conexão é estabelecida
+  Então o processo do agent está em execução e alcançável
+```
+
+### SC-02 — Garantir serial ADB online
+
+```gherkin
+Cenário: SC-02 Serial ADB fica online
+  Dado o agent alcançável e o serial esperado na config
+  Quando adb connect / listagem de devices é repetida até o serial aparecer como device
+  Então o serial ADB está online
+```
+
+### SC-03 — Aguardar boot completo
+
+```gherkin
+Cenário: SC-03 Boot completo no device
+  Dado o serial ADB online
+  Quando o sistema faz poll de boot (ex. sys.boot_completed)
+  Então o device reporta boot completo
+```
+
+## Próximos passos
+
+→ [`../implementation-plan/EP-01-provisionar-agente.md`](../implementation-plan/EP-01-provisionar-agente.md)

@@ -12,7 +12,6 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { provisionEmulator } from "../lib/provision.js";
-import { installApk } from "../lib/apks.js";
 import {
   extractElements,
   findLoginTarget,
@@ -60,12 +59,12 @@ async function main() {
   console.log(`   OK ${serial}`);
 
   console.log("2) Instalar Instagram (versão na config)…");
-  const ig = await installApk(serial, cfg.apps.instagram);
-  console.log(`   OK ${ig.package} ${ig.version || "?"}`);
+  const ig = await handle.installApk(cfg.apps.instagram);
+  console.log(`   OK ${ig.package} ${ig.version || "?"}${ig.skipped ? " (skip)" : ""}`);
 
   console.log("3) Instalar LinkedIn…");
-  const li = await installApk(serial, cfg.apps.linkedin);
-  console.log(`   OK ${li.package} ${li.version || "?"}`);
+  const li = await handle.installApk(cfg.apps.linkedin);
+  console.log(`   OK ${li.package} ${li.version || "?"}${li.skipped ? " (skip)" : ""}`);
 
   console.log("4) Abrir LinkedIn…");
   await operate.launch(serial, cfg.apps.linkedin.package);

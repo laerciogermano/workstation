@@ -44,6 +44,10 @@ describe("provisionEmulator", () => {
           calls.push(["on", serial]);
           return onFn;
         },
+        createInstallApk: (serial) => {
+          calls.push(["installApk", serial]);
+          return async () => ({ package: "x", version: "1", skipped: true });
+        },
         now: () => 1_700_000_000_000,
         toIso: () => "2026-01-01T00:00:00.000Z",
       },
@@ -54,11 +58,13 @@ describe("provisionEmulator", () => {
       ["adb", "127.0.0.1:5555"],
       ["boot", "127.0.0.1:5555"],
       ["on", "127.0.0.1:5555"],
+      ["installApk", "127.0.0.1:5555"],
     ]);
     assert.equal(handle.serial, "127.0.0.1:5555");
     assert.equal(handle.kind, "redroid");
     assert.equal(handle.bootCompleted, true);
     assert.equal(handle.provisionedAt, "2026-01-01T00:00:00.000Z");
     assert.equal(handle.on, onFn);
+    assert.equal(typeof handle.installApk, "function");
   });
 });

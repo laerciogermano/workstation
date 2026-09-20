@@ -24,6 +24,32 @@
 
 ---
 
+## Árvore de arquivos
+
+```text
+src/
+├── lib/
+│   ├── apks.js                      # createInstallApk → handle.installApk
+│   ├── apks.test.js
+│   ├── apk-read-spec.js             # SC-08
+│   ├── apk-read-spec.test.js
+│   ├── apk-get-installed-version.js
+│   ├── apk-get-installed-version.test.js
+│   ├── apk-download.js              # SC-09
+│   ├── apk-download.test.js
+│   ├── apk-install-package.js       # SC-10
+│   ├── apk-install-package.test.js
+│   └── provision.js                 # anexa installApk ao handle
+├── apks/
+│   └── ADBKeyboard.apk              # artefato local (e2e)
+└── test/
+    └── bdd/
+        ├── ep-03-instalar-apks.test.js
+        └── us-06-apps-da-config-ficam-instalados.test.js
+```
+
+---
+
 ## Fluxo (obrigatório)
 
 1. **Provisionar** (EP-01) → `AgentHandle`.  
@@ -255,8 +281,11 @@ I1 → I2 → I3 → I4 → I5
 
 | Peça | Status |
 |------|--------|
-| `installApk(serial, app)` export solto | Existe — **mover** para handle |
-| `handle.installApk` | **Gap** |
+| `handle.installApk` | Existe via `createInstallApk` |
+| SC-08 / 09 / 10 | `apk-read-spec` · `apk-download` · `apk-install-package` |
+| Skip se versão ok | Sim |
+| Erros tipados | `APK_CONFIG_INVALID` · `APK_DOWNLOAD_FAILED` · `APK_INSTALL_FAILED` |
+| Piloto LinkedIn | `handle.installApk` |
 
 ---
 

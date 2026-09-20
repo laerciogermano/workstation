@@ -1,11 +1,9 @@
 /**
  * Biblioteca de provisionamento do emulador/agent.
  * Superfície pública: apenas `provisionEmulator`.
- * Handle inclui `on` (EP-02) — eventos via handle após provisionar.
- *
- * deps (só para unitário): startRuntime, ensureAdbOnline, waitBootCompleted,
- * createOn, now, toIso — produção não passa deps.
+ * Handle: `on` (EP-02) · `installApk` (EP-03).
  */
+import { createInstallApk as defaultCreateInstallApk } from "./apks.js";
 import { createOn as defaultCreateOn } from "./events.js";
 import { ensureAdbOnline as defaultEnsureAdbOnline } from "./ensure-adb-online.js";
 import { startRuntime as defaultStartRuntime } from "./start-runtime.js";
@@ -24,6 +22,7 @@ import { waitBootCompleted as defaultWaitBootCompleted } from "./wait-boot-compl
  * @property {string} provisionedAt
  * @property {true} bootCompleted
  * @property {(event: string, opts?: object, onEvent?: Function) => Promise<object>} on
+ * @property {(app: object) => Promise<object>} installApk
  */
 
 /** @param {ProvisionConfig} cfg */
@@ -46,7 +45,7 @@ function resolveConfig(cfg) {
 /**
  * Único método público: provisiona o emulador (SC-01→SC-03).
  * @param {ProvisionConfig} cfg
- * @param {{ startRuntime?: Function, ensureAdbOnline?: Function, waitBootCompleted?: Function, createOn?: Function, now?: Function, toIso?: Function }} [deps]
+ * @param {object} [deps]
  * @returns {Promise<AgentHandle>}
  */
 export async function provisionEmulator(cfg, deps = {}) {
@@ -54,6 +53,7 @@ export async function provisionEmulator(cfg, deps = {}) {
   const ensureAdbOnline = deps.ensureAdbOnline ?? defaultEnsureAdbOnline;
   const waitBootCompleted = deps.waitBootCompleted ?? defaultWaitBootCompleted;
   const createOn = deps.createOn ?? defaultCreateOn;
+  const createInstallApk = deps.createInstallApk ?? defaultCreateInstallApk;
   const now = deps.now ?? Date.now;
   const toIso = deps.toIso ?? (() => new Date().toISOString());
 
@@ -70,5 +70,6 @@ export async function provisionEmulator(cfg, deps = {}) {
     provisionedAt: toIso(),
     bootCompleted: true,
     on: createOn(resolved.serial),
+    installApk: createInstallApk(resolved.serial),
   };
 }

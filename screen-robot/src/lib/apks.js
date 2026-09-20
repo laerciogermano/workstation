@@ -40,11 +40,18 @@ export function createInstallApk(serial, deps = {}) {
 
     const installed = getVersion(serial, spec.package);
     if (spec.version && installed && installed !== spec.version) {
-      const err = new Error(
-        `APK_INSTALL_FAILED: versionName "${installed}" ≠ alvo "${spec.version}"`,
-      );
-      err.code = "APK_INSTALL_FAILED";
-      throw err;
+      const remote = Boolean(spec.source);
+      if (remote) {
+        console.warn(
+          `Aviso: versionName instalada "${installed}" ≠ config "${spec.version}" (pin em device.config).`,
+        );
+      } else {
+        const err = new Error(
+          `APK_INSTALL_FAILED: versionName "${installed}" ≠ alvo "${spec.version}"`,
+        );
+        err.code = "APK_INSTALL_FAILED";
+        throw err;
+      }
     }
 
     return {

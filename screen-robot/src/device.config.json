@@ -8,15 +8,15 @@
   "apps": {
     "instagram": {
       "package": "com.instagram.android",
-      "version": "340.0.0.0.91",
+      "version": "447.0.0.55.81",
       "source": "apk-pure",
       "artifact": "apks/com.instagram.android.xapk"
     },
     "linkedin": {
       "package": "com.linkedin.android",
-      "version": "4.1.1093",
+      "version": "6.1.1",
       "source": "apk-pure",
-      "artifact": "apks/com.linkedin.android.xapk"
+      "artifact": "apks/com.linkedin.android.apk"
     }
   },
   "credentials": {

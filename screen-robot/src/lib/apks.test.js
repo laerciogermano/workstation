@@ -55,7 +55,7 @@ describe("createInstallApk", () => {
     assert.deepEqual(steps[1], ["ins", "s", "/apks/com.x.apk"]);
   });
 
-  it("lança APK_INSTALL_FAILED se versão pós-install diverge", async () => {
+  it("lança APK_INSTALL_FAILED se versão diverge sem source (artifact local)", async () => {
     const installApk = createInstallApk("s", {
       readAppSpec: (app) => app,
       getInstalledVersion: () => "1.0",
@@ -64,8 +64,32 @@ describe("createInstallApk", () => {
       sleep: async () => {},
     });
     await assert.rejects(
-      () => installApk({ package: "com.x", version: "2.0" }),
+      () => installApk({ package: "com.x", version: "2.0", artifact: "/a.apk" }),
       (err) => err && err.code === "APK_INSTALL_FAILED",
     );
+  });
+
+  it("avisa e segue se versão diverge com source remoto", async () => {
+    const warnings = [];
+    const prev = console.warn;
+    console.warn = (...a) => warnings.push(a.join(" "));
+    try {
+      const installApk = createInstallApk("s", {
+        readAppSpec: (app) => app,
+        getInstalledVersion: () => "447.0",
+        ensureApkArtifact: () => "/a.apk",
+        installPackage: () => {},
+        sleep: async () => {},
+      });
+      const r = await installApk({
+        package: "com.x",
+        version: "340.0",
+        source: "apk-pure",
+      });
+      assert.equal(r.version, "447.0");
+      assert.ok(warnings.some((w) => w.includes("447.0")));
+    } finally {
+      console.warn = prev;
+    }
   });
 });

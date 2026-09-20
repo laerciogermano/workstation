@@ -124,7 +124,7 @@ await handle.on("frame_change");
 // Operar tela
 await handle.launch("com.linkedin.android");
 handle.tap(360, 640);
-handle.type("olá");
+handle.type("11999999999", { region: { x: 0, y: 700, width: 720, height: 500 } });
 handle.scroll({ direction: "down", distance: 800 });
 handle.screenshot("./screenshots/tela.png");
 const { x, y, confidence } = await handle.matchImage("./templates/btn.png");
@@ -153,7 +153,7 @@ await handle.removeSession("./state/session.json");
 | `on(event, opts?, cb?)` | `boot` · `app_open` · `ui_stable` · `frame_change` |
 | `launch(pkg, activity?)` | Abre app |
 | `tap(x, y)` / `tapElement(el)` | Toque |
-| `type(text)` | Digita (ASCII via `input text`; unicode via ADBKeyBoard) |
+| `type(text, opts?)` | Digita via OCR do teclado + tap em cada tecla (região opcional `x,y,width,height`) |
 | `scroll({ direction, distance, x?, y? })` | Swipe |
 | `screenshot(path)` | Grava PNG |
 | `matchImage(templatePath)` | `{ x, y, confidence }` |

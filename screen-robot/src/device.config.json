@@ -30,6 +30,9 @@
       "passwordEnv": "LINKEDIN_PASSWORD"
     }
   },
+  "type": {
+    "keyboardRegion": { "x": 0, "y": 700, "width": 720, "height": 520 }
+  },
   "session": {
     "path": "./state/session.json"
   },

@@ -39,7 +39,11 @@ describe("Épico: EP-04 Operar tela", () => {
 
       handle.tap(200, 400);
       handle.scroll({ direction: "down", distance: 400 });
-      handle.type("test");
+      // type = OCR teclado + tap; Settings sem teclado → OPERATE_TYPE_FAILED (unitários cobrem o happy path)
+      await assert.rejects(
+        () => handle.type("1", { delayMs: 0 }),
+        (err) => err && err.code === "OPERATE_TYPE_FAILED",
+      );
 
       const shot = path.join(os.tmpdir(), `sr-shot-${Date.now()}.png`);
       const out = handle.screenshot(shot);

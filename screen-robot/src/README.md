@@ -134,7 +134,7 @@ Desconhecido → `EVENT_UNKNOWN`. Timeout → códigos `EVENT_*` / timeout do li
 await handle.launch("com.linkedin.android");           // ou launch(pkg, ".MainActivity")
 handle.tap(360, 640);                                  // coords de visão/OCR sobre o frame
 handle.tapElement(el);                                 // el.center ou el.bounds (OCR/visão)
-handle.type("olá");                                    // ASCII via input; unicode via ADBKeyBoard
+handle.type("11999999999", { region: { x: 0, y: 700, width: 720, height: 500 } }); // OCR teclado → tap
 handle.scroll({ direction: "down", distance: 800 });   // up|down|left|right; x/y opcionais
 const shot = handle.screenshot("./screenshots/tela.png"); // capturar frame (ADB; futuro: câmera)
 const { x, y, confidence } = await handle.matchImage("./templates/btn.png");
@@ -149,7 +149,7 @@ await handle.openScrcpy(); // { pid, serial } — janela para ver/operar
 | `matchImage` | `OPERATE_MATCH_NOT_FOUND` |
 | `openScrcpy` | `OPERATE_SCRCPY_FAILED` |
 
-IME unicode: [`apks/ADBKeyboard.apk`](apks/ADBKeyboard.apk) (instalado sob demanda).
+Type: OCR das teclas na **imagem do teclado** (região opcional) e digitação **só com tap** — sem `input text` / ADBKeyboard.
 
 ```js
 const { pid, serial } = handle.openScrcpy(); // scrcpy no serial do handle

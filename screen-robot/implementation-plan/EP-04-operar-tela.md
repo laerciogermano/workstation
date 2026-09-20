@@ -10,6 +10,7 @@
 **Stack:** Node ≥ 18 · JavaScript · `adb` · visão/OCR (coords) · runtime provisionado.
 
 **Princípio:** gestos (`tap`/`type`) usam **coords vindas de visão/OCR** sobre o frame.  
+**Type:** digita **só tocando teclas** localizadas por OCR na **imagem do teclado** (região opcional); **proibido** `adb input text` / ADBKeyboard / inject.
 `screenshot` = **capturar frame** (screencap ADB hoje; futuro: câmera no device real — mesmo path de imagem).
 
 ---
@@ -64,7 +65,9 @@ await handle.on("app_open", { pkg: "com.linkedin.android" });
 await handle.on("ui_stable", { stableMs: 800 });
 
 await handle.tap(360, 640); // coords de visão/OCR (ou matchImage)
-await handle.type("olá");
+await handle.type("11999999999", {
+  region: { x: 0, y: 700, width: 720, height: 500 }, // opcional
+});
 await handle.scroll({ direction: "down", distance: 800 });
 await handle.screenshot("./screenshots/tela.png"); // capturar frame
 const { x, y } = await handle.matchImage("./templates/btn.png");
@@ -74,7 +77,7 @@ await handle.openScrcpy(); // janela scrcpy no serial do handle
 | Superfície | O quê |
 |------------|--------|
 | **Público** | `handle.launch` · `tap` · `type` · `scroll` · `screenshot` · `matchImage` · `openScrcpy` |
-| **Privado** | am start · input tap/text/swipe · capturar frame · template match / OCR coords · spawn scrcpy |
+| **Privado** | am start · input tap/swipe · capturar frame · OCR teclas → tap · template match · spawn scrcpy |
 
 ---
 
@@ -144,7 +147,8 @@ sequenceDiagram
 |----|-----|-----------------|---------|
 | US-07 | SC-11 | `handle.launch(pkg, activity?)` | am start; opcional `on("app_open")` |
 | US-08 | SC-12 | `handle.tap(x, y)` / `tapElement(el)` | input tap; **x,y de visão/OCR** |
-| US-09 | SC-13 | `handle.type(text)` | input text / IME; foco via coords visão/OCR |
+| US-09 | SC-13 | `handle.type(text, opts?)` | frame → OCR teclas (região opcional) → tap por caractere |
+
 | US-10 | SC-14 | `handle.scroll(opts)` | swipe |
 | US-11 | SC-15 | `handle.screenshot(path)` | **capturar frame** (screencap; futuro câmera) + gravar |
 | US-12 | SC-16 | `handle.matchImage(templatePath)` | template match / visão → x,y |
@@ -159,12 +163,27 @@ type ScrollOpts = {
   y?: number;
 };
 
+/** Região opcional do teclado na imagem (coords de tela / frame). */
+type KeyboardRegion = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+};
+
+type TypeOpts = {
+  /** Recorte do teclado no frame; se omitido, OCR no frame inteiro. */
+  region?: KeyboardRegion;
+  delayMs?: number;
+};
+
 type AgentHandle = {
   // … EP-01..03 …
   launch(pkg: string, activity?: string): Promise<void>;
   tap(x: number, y: number): void;
   tapElement(el: { bounds?: { centerX: number; centerY: number } }): void;
-  type(text: string): void;
+  /** Digita só com tap nas teclas OCR do frame (sem input text / IME). */
+  type(text: string, opts?: TypeOpts): Promise<void>;
   scroll(opts: ScrollOpts): void;
   screenshot(path: string): string;
   matchImage(templatePath: string): Promise<{ x: number; y: number; confidence: number }>;
@@ -216,7 +235,7 @@ classDiagram
   class AgentHandle {
     +launch(pkg, activity)
     +tap(x, y)
-    +type(text)
+    +type(text, opts?)
     +scroll(opts)
     +screenshot(path)
     +matchImage(path)
@@ -243,7 +262,7 @@ Fonte: [`5.bdds.md#ep-04--operar-tela`](../5.bdds.md#ep-04--operar-tela). “Qua
 | I1 | `bindOperate(serial)` + anexar ao handle | — | Sem serial no caller |
 | I2 | `launch` + integração `on("app_open")` | SC-11 | US-07 |
 | I3 | `tap` / `tapElement` | SC-12 | US-08 |
-| I4 | `type` (IME se necessário) | SC-13 | US-09 |
+| I4 | `type` via OCR do teclado + tap por tecla (região opcional) | SC-13 | US-09 |
 | I5 | `scroll` | SC-14 | US-10 |
 | I6 | `screenshot` = capturar frame | SC-15 | US-11 |
 | I7 | `matchImage` (visão/template → coords) | SC-16 | US-12 |
@@ -263,7 +282,7 @@ I1 → I2 → I3 → I4 → I5 → I6 → I7 → I8 → I9
 | Peça | Status |
 |------|--------|
 | `createOperate` → handle | Existe |
-| `launch` / `tap` / `type` / `scroll` / `screenshot` / `matchImage` | Existe |
+| `launch` / `tap` / `type` / `scroll` / `screenshot` / `matchImage` | Existe (`type` = OCR teclado + tap; região opcional) |
 | `openScrcpy` | Existe |
 | Legado `operate.*(serial, …)` | Deprecado |
 

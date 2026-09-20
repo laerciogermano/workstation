@@ -1,16 +1,14 @@
 /**
  * EP-04 — operações de tela (internos do handle).
  * Caller: handle.launch / tap / type / scroll / screenshot / matchImage / openScrcpy.
+ * type: OCR das teclas no frame → tap por caractere (sem input text / IME).
  */
 import { spawn, spawnSync } from "node:child_process";
 import { mkdirSync, existsSync } from "node:fs";
 import { dirname, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
 import { adb, adbOk, connectIfTcp as defaultConnectIfTcp, sleep as defaultSleep } from "./adb.js";
-
-const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const ADB_IME = "com.android.adbkeyboard/.AdbIME";
-const ADB_KB_APK = resolve(ROOT, "apks/ADBKeyboard.apk");
+import { captureFrame } from "./frame.js";
+import { ocrWords, regionToRectangle } from "./ocr.js";
 
 function fail(code, msg) {
   const err = new Error(msg);
@@ -18,21 +16,32 @@ function fail(code, msg) {
   throw err;
 }
 
-export function escapeInputText(text) {
-  return String(text)
-    .replace(/\\/g, "\\\\")
-    .replace(/%/g, "\\%")
-    .replace(/ /g, "%s")
-    .replace(/'/g, "\\'")
-    .replace(/"/g, '\\"')
-    .replace(/&/g, "\\&")
-    .replace(/</g, "\\<")
-    .replace(/>/g, "\\>")
-    .replace(/\(/g, "\\(")
-    .replace(/\)/g, "\\)")
-    .replace(/\|/g, "\\|")
-    .replace(/;/g, "\\;")
-    .replace(/\n/g, "%s");
+/**
+ * Mapa caractere → center a partir de palavras OCR (teclas = 1 glifo).
+ * @param {{ text: string, bounds: { x: number, y: number, w: number, h: number } }[]} words
+ * @returns {Map<string, { x: number, y: number }>}
+ */
+export function buildKeyCenters(words) {
+  /** @type {Map<string, { x: number, y: number }>} */
+  const map = new Map();
+  for (const w of words || []) {
+    const t = String(w?.text || "").trim();
+    if (!t) continue;
+    const chars = [...t];
+    if (chars.length !== 1) continue;
+    const ch = chars[0];
+    const b = w.bounds || { x: 0, y: 0, w: 0, h: 0 };
+    const center = {
+      x: Math.floor(b.x + b.w / 2),
+      y: Math.floor(b.y + b.h / 2),
+    };
+    map.set(ch, center);
+    const lower = ch.toLowerCase();
+    const upper = ch.toUpperCase();
+    if (!map.has(lower)) map.set(lower, center);
+    if (!map.has(upper)) map.set(upper, center);
+  }
+  return map;
 }
 
 /**
@@ -47,6 +56,8 @@ export function createOperate(serial, deps = {}) {
   const mkdir = deps.mkdirSync ?? mkdirSync;
   const resolvePath = deps.resolve ?? resolve;
   const connectIfTcp = deps.connectIfTcp ?? defaultConnectIfTcp;
+  const capture = deps.captureFrame ?? captureFrame;
+  const recognize = deps.ocrWords ?? ocrWords;
   const whichScrcpy =
     deps.whichScrcpy ??
     (() => {
@@ -60,23 +71,6 @@ export function createOperate(serial, deps = {}) {
   const spawnScrcpy =
     deps.spawnScrcpy ??
     ((bin, args, opts) => spawn(bin, args, opts));
-
-  function ensureAdbKeyboard() {
-    const installed = runAdbOk(serial, [
-      "shell",
-      "pm",
-      "path",
-      "com.android.adbkeyboard",
-    ]);
-    if (!installed) {
-      if (!exists(ADB_KB_APK)) {
-        fail("OPERATE_TYPE_FAILED", `ADBKeyBoard ausente: ${ADB_KB_APK}`);
-      }
-      runAdb(serial, ["install", "-r", ADB_KB_APK], { stdio: "inherit" });
-    }
-    runAdbOk(serial, ["shell", "ime", "enable", ADB_IME]);
-    runAdb(serial, ["shell", "ime", "set", ADB_IME]);
-  }
 
   async function launch(pkg, activity) {
     try {
@@ -189,31 +183,43 @@ export function createOperate(serial, deps = {}) {
     tap(cx, cy);
   }
 
-  function type(text) {
-    const s = String(text);
-    if (/^[\x20-\x7E]*$/.test(s)) {
-      try {
-        runAdb(serial, ["shell", "input", "text", escapeInputText(s)]);
-        return;
-      } catch {
-        /* fallback IME */
-      }
-    }
+  /**
+   * Digita tocando teclas localizadas por OCR na imagem do teclado.
+   * @param {string} text
+   * @param {{ region?: { x?: number, y?: number, width?: number, height?: number, w?: number, h?: number }, delayMs?: number }} [opts]
+   */
+  async function type(text, opts = {}) {
+    const s = String(text ?? "");
+    if (!s.length) return;
     try {
-      ensureAdbKeyboard();
-      const b64 = Buffer.from(s, "utf8").toString("base64");
-      runAdb(serial, [
-        "shell",
-        "am",
-        "broadcast",
-        "-a",
-        "ADB_INPUT_B64",
-        "--es",
-        "msg",
-        b64,
-      ]);
+      const framePath = await capture(serial, deps);
+      const rectangle = regionToRectangle(opts.region);
+      const words = await recognize(framePath, {
+        ...deps,
+        rectangle: rectangle || undefined,
+        region: opts.region,
+      });
+      const keys = buildKeyCenters(words);
+      const delayMs = Number(opts.delayMs ?? 100);
+      for (const ch of s) {
+        if (ch === " " || ch === "\n" || ch === "\t") continue;
+        const hit =
+          keys.get(ch) || keys.get(ch.toLowerCase()) || keys.get(ch.toUpperCase());
+        if (!hit) {
+          fail(
+            "OPERATE_TYPE_FAILED",
+            `tecla "${ch}" não encontrada no OCR do teclado` +
+              (rectangle
+                ? ` (região ${rectangle.left},${rectangle.top} ${rectangle.width}x${rectangle.height})`
+                : ""),
+          );
+        }
+        tap(hit.x, hit.y);
+        if (delayMs > 0) await sleep(delayMs);
+      }
     } catch (e) {
-      fail("OPERATE_TYPE_FAILED", e.message);
+      if (e?.code === "OPERATE_TYPE_FAILED" || e?.code === "OPERATE_TAP_FAILED") throw e;
+      fail("OPERATE_TYPE_FAILED", e.message || String(e));
     }
   }
 
@@ -337,8 +343,8 @@ export function tap(serial, x, y) {
 export function tapElement(serial, el) {
   return createOperate(serial).tapElement(el);
 }
-export function typeText(serial, text) {
-  return createOperate(serial).type(text);
+export async function typeText(serial, text, opts) {
+  return createOperate(serial).type(text, opts);
 }
 export function key(serial, code) {
   adb(serial, ["shell", "input", "keyevent", String(code)]);

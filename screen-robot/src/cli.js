@@ -15,12 +15,11 @@ import { spawnSync } from "node:child_process";
 import { mkdirSync, readFileSync, existsSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { createOperate } from "./lib/operate.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const DEFAULT_DEVICE = process.env.ANDROID_SERIAL || "127.0.0.1:5555";
-const ADB_IME = "com.android.adbkeyboard/.AdbIME";
-const ADB_KB_APK = resolve(__dirname, "apks/ADBKeyboard.apk");
 
 function usage(code = 1) {
   console.log(`Uso:
@@ -31,13 +30,12 @@ function usage(code = 1) {
   node cli.js swipe <x1> <y1> <x2> <y2> [ms] [--device SERIAL]
   node cli.js key <KEYCODE|número> [--device SERIAL]
   node cli.js wait <ms>
-  node cli.js setup-ime   # instala/ativa ADBKeyBoard (necessário p/ acentos)
 
 Config (JSON): ver config.example.json
 Device padrão: ${DEFAULT_DEVICE} (ou ANDROID_SERIAL)
 
-Nota: no Android 15/redroid, \`input text\` quebra com acentos (NPE).
-      Digitação usa ADBKeyBoard (broadcast B64).`);
+Nota: type digita via OCR do teclado + tap em cada tecla (sem input text / ADBKeyboard).
+      Região opcional no step: "region": { "x", "y", "width", "height" }.`);
   process.exit(code);
 }
 
@@ -70,74 +68,6 @@ function adb(device, args, opts = {}) {
   return r;
 }
 
-function adbOk(device, args) {
-  const r = spawnSync("adb", ["-s", device, ...args], { encoding: "utf8" });
-  return r.status === 0;
-}
-
-/** Escapa texto para `adb shell input text` (só ASCII confiável). */
-function escapeInputText(text) {
-  return String(text)
-    .replace(/\\/g, "\\\\")
-    .replace(/%/g, "\\%")
-    .replace(/ /g, "%s")
-    .replace(/'/g, "\\'")
-    .replace(/"/g, '\\"')
-    .replace(/&/g, "\\&")
-    .replace(/</g, "\\<")
-    .replace(/>/g, "\\>")
-    .replace(/\(/g, "\\(")
-    .replace(/\)/g, "\\)")
-    .replace(/\|/g, "\\|")
-    .replace(/;/g, "\\;")
-    .replace(/\n/g, "%s");
-}
-
-function isAscii(text) {
-  return /^[\x20-\x7E]*$/.test(String(text));
-}
-
-/** Instala/ativa ADBKeyBoard (unicode). APK open-source em apks/. */
-function ensureAdbKeyboard(device) {
-  const installed = adbOk(device, [
-    "shell",
-    "pm",
-    "path",
-    "com.android.adbkeyboard",
-  ]);
-  if (!installed) {
-    if (!existsSync(ADB_KB_APK)) {
-      throw new Error(
-        `ADBKeyBoard não instalado e APK ausente: ${ADB_KB_APK}\n` +
-          `Rode: node cli.js setup-ime`,
-      );
-    }
-    console.log("Instalando ADBKeyBoard...");
-    adb(device, ["install", "-r", ADB_KB_APK], { stdio: "inherit" });
-  }
-  adbOk(device, ["shell", "ime", "enable", ADB_IME]);
-  adb(device, ["shell", "ime", "set", ADB_IME]);
-}
-
-function typeViaAdbKeyboard(device, text) {
-  ensureAdbKeyboard(device);
-  const b64 = Buffer.from(String(text), "utf8").toString("base64");
-  adb(device, ["shell", "am", "broadcast", "-a", "ADB_INPUT_B64", "--es", "msg", b64]);
-}
-
-function typeText(device, text, method) {
-  const m = method || (isAscii(text) ? "input" : "adb");
-  if (m === "input") {
-    try {
-      adb(device, ["shell", "input", "text", escapeInputText(text)]);
-      return;
-    } catch (e) {
-      console.warn(`input text falhou (${e.message.split("\n")[0]}); usando ADBKeyBoard`);
-    }
-  }
-  typeViaAdbKeyboard(device, text);
-}
-
 async function sleep(ms) {
   return new Promise((r) => setTimeout(r, ms));
 }
@@ -160,17 +90,11 @@ async function runStep(device, step, i) {
       const text = step.text ?? step.value;
       if (text == null) throw new Error(`${label}: falta text`);
       console.log(`${label} ${JSON.stringify(text)}`);
-      // Android 15: input text NPE com unicode → ADBKeyBoard (B64)
-      typeText(device, text, step.method);
-      break;
-    }
-    case "setup-ime":
-    case "setup_ime": {
-      console.log(`${label} ADBKeyBoard`);
-      if (!existsSync(ADB_KB_APK)) throw new Error(`APK ausente: ${ADB_KB_APK}`);
-      adb(device, ["install", "-r", ADB_KB_APK], { stdio: "inherit" });
-      ensureAdbKeyboard(device);
-      console.log(`IME ativo: ${ADB_IME}`);
+      const region = step.region || step.keyboardRegion;
+      await createOperate(device).type(String(text), {
+        region,
+        delayMs: step.delayMs,
+      });
       break;
     }
     case "swipe": {
@@ -293,8 +217,6 @@ async function main() {
     await runStep(device, { action: "tap", x: rest[0], y: rest[1] }, 0);
   } else if (cmd === "type" || cmd === "text") {
     await runStep(device, { action: "type", text: rest.join(" ") }, 0);
-  } else if (cmd === "setup-ime" || cmd === "setup_ime") {
-    await runStep(device, { action: "setup-ime" }, 0);
   } else if (cmd === "shot" || cmd === "screenshot") {
     await runStep(device, { action: "screenshot", path: rest[0] }, 0);
   } else if (cmd === "swipe") {

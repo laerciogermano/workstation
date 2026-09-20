@@ -1,27 +1,62 @@
 /**
  * OCR sobre imagem → palavras com bounds (tesseract.js).
  */
-import Tesseract from "tesseract.js";
+import Tesseract, { createWorker } from "tesseract.js";
 
 /**
  * @typedef {{ text: string, bounds: { x: number, y: number, w: number, h: number }, confidence: number }} OcrWord
+ * @typedef {{ left: number, top: number, width: number, height: number }} OcrRectangle
  */
 
 /**
+ * Normaliza região `{ x, y, width|w, height|h }` → retângulo tesseract.
+ * @param {{ x?: number, y?: number, width?: number, w?: number, height?: number, h?: number, left?: number, top?: number } | null | undefined} region
+ * @returns {OcrRectangle | null}
+ */
+export function regionToRectangle(region) {
+  if (!region || typeof region !== "object") return null;
+  const left = Number(region.left ?? region.x ?? 0);
+  const top = Number(region.top ?? region.y ?? 0);
+  const width = Number(region.width ?? region.w ?? 0);
+  const height = Number(region.height ?? region.h ?? 0);
+  if (!(width > 0 && height > 0)) return null;
+  return {
+    left: Math.max(0, Math.floor(left)),
+    top: Math.max(0, Math.floor(top)),
+    width: Math.floor(width),
+    height: Math.floor(height),
+  };
+}
+
+/**
  * @param {string} imagePath
- * @param {{ ocrRecognize?: Function, lang?: string }} [deps]
+ * @param {{ ocrRecognize?: Function, lang?: string, rectangle?: OcrRectangle | object, region?: object }} [deps]
  * @returns {Promise<OcrWord[]>}
  */
 export async function ocrWords(imagePath, deps = {}) {
   if (typeof deps.ocrRecognize === "function") {
     return deps.ocrRecognize(imagePath, deps);
   }
+  const rectangle =
+    regionToRectangle(deps.rectangle) || regionToRectangle(deps.region);
   try {
-    const lang = deps.lang || "por+eng";
-    const result = await Tesseract.recognize(imagePath, lang, {
-      logger: () => {},
-    });
-    const words = result?.data?.words || [];
+    const lang = deps.lang || (rectangle ? "eng" : "por+eng");
+    let words;
+    if (rectangle) {
+      const worker = await createWorker(lang);
+      try {
+        await worker.setParameters({ tessedit_pageseg_mode: "11" });
+        const r = await worker.recognize(imagePath, { rectangle });
+        words = r?.data?.words || [];
+      } finally {
+        await worker.terminate();
+      }
+    } else {
+      const result = await Tesseract.recognize(imagePath, lang, {
+        logger: () => {},
+      });
+      words = result?.data?.words || [];
+    }
     return words
       .filter((w) => w.text && String(w.text).trim() && (w.confidence ?? 0) >= 40)
       .map((w) => {

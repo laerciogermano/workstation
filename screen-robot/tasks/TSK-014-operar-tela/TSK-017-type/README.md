@@ -9,12 +9,19 @@
 
 ## Entradas
 
-- Texto; campo focado ou coords (visão/OCR sobre o frame)
+- Texto a digitar (ex. dígitos do telefone)
+- Frame com o **teclado visível** na imagem
+- Opcional: região de atuação `{ x, y, width, height }` (teclados com tamanho/posição fixos)
 
 ## Execução
 
-- `handle.type(text)` — alvo via coords da percepção por imagem
+- `handle.type(text, opts?)`:
+  1. Captura o **frame** (screenshot)
+  2. OCR **só na imagem do teclado** (região opcional se configurada)
+  3. Recupera a posição (center) de **cada tecla**
+  4. Digita **tocando** cada tecla em sequência (`tap`)
+- **Proibido:** `adb input text`, ADBKeyboard/IME inject ou qualquer injeção que não seja tap na imagem
 
 ## Saídas
 
-- Texto na UI · aceite SC-13
+- Texto na UI via taps nas teclas · aceite SC-13

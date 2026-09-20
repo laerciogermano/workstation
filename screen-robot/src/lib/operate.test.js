@@ -3,15 +3,66 @@
  */
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { createOperate, escapeInputText } from "./operate.js";
+import { buildKeyCenters, createOperate } from "./operate.js";
 
-describe("escapeInputText", () => {
-  it("escapa espaços", () => {
-    assert.equal(escapeInputText("a b"), "a%sb");
+describe("buildKeyCenters", () => {
+  it("mapeia dígitos OCR para centers", () => {
+    const map = buildKeyCenters([
+      { text: "1", bounds: { x: 0, y: 0, w: 20, h: 20 } },
+      { text: "2", bounds: { x: 40, y: 0, w: 20, h: 20 } },
+      { text: "Phone", bounds: { x: 0, y: 100, w: 80, h: 20 } },
+    ]);
+    assert.deepEqual(map.get("1"), { x: 10, y: 10 });
+    assert.deepEqual(map.get("2"), { x: 50, y: 10 });
+    assert.equal(map.has("P"), false);
   });
 });
 
 describe("createOperate", () => {
+  it("type toca cada tecla via OCR (sem input text)", async () => {
+    const taps = [];
+    const op = createOperate("s", {
+      adb: (_s, args) => {
+        if (args.includes("tap")) taps.push([args[4], args[5]]);
+        return {};
+      },
+      connectIfTcp: () => {},
+      sleep: async () => {},
+      captureFrame: async () => "/tmp/kb.png",
+      ocrWords: async (_p, deps) => {
+        assert.ok(deps.rectangle || deps.region);
+        return [
+          { text: "1", bounds: { x: 10, y: 10, w: 20, h: 20 } },
+          { text: "2", bounds: { x: 50, y: 10, w: 20, h: 20 } },
+          { text: "9", bounds: { x: 90, y: 10, w: 20, h: 20 } },
+        ];
+      },
+    });
+    await op.type("129", {
+      region: { x: 0, y: 700, width: 720, height: 500 },
+      delayMs: 0,
+    });
+    assert.deepEqual(taps, [
+      ["20", "20"],
+      ["60", "20"],
+      ["100", "20"],
+    ]);
+  });
+
+  it("type falha se tecla ausente no OCR", async () => {
+    const op = createOperate("s", {
+      adb: () => {},
+      connectIfTcp: () => {},
+      sleep: async () => {},
+      captureFrame: async () => "/tmp/kb.png",
+      ocrWords: async () => [{ text: "1", bounds: { x: 0, y: 0, w: 10, h: 10 } }],
+    });
+    await assert.rejects(
+      () => op.type("5", { delayMs: 0 }),
+      (err) => err && err.code === "OPERATE_TYPE_FAILED",
+    );
+  });
+
   it("tap envia cmd input tap", () => {
     const calls = [];
     const op = createOperate("s", {

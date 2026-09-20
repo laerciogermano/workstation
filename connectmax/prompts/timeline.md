@@ -70,3 +70,4 @@ Como registrar: [`README.md`](README.md).
 | 060 | 2026-09-19 | US-13 Extrair árvore DOM com textos | [060-2026-09-19-us13-arvore-dom-com-textos.md](060-2026-09-19-us13-arvore-dom-com-textos.md) | Renomeia US-13 para Extrair árvore DOM com textos. |
 | 061 | 2026-09-19 | Pasta tasks no refinamento (EP-01) | [061-2026-09-19-tasks-pasta-refinamento-ep01.md](061-2026-09-19-tasks-pasta-refinamento-ep01.md) | Refinamento fecha com `tasks/` EP/US/SC (E/E/S); cria só EP-01 no screen-robot. |
 | 062 | 2026-09-19 | Desenvolvimento 100% IA (TDD → PR) | [062-2026-09-19-desenvolvimento-ia-tdd-pr.md](062-2026-09-19-desenvolvimento-ia-tdd-pr.md) | Dev por IA: clone → branch → TDD → implementar → testar → PR → Pendente aprovação. |
+| 063 | 2026-09-19 | Gantt guia robôs; humano libera | [063-2026-09-19-dev-gantt-humano-paralelo.md](063-2026-09-19-dev-gantt-humano-paralelo.md) | Ordem do Gantt; próximo robô após humano; sequencial espera, paralelo PRs separados. |

@@ -19,7 +19,7 @@ O mapa e a prioridade nascem no discovery; o detalhe (SC/BDD) e o restante do pr
 |-------|-------|----------|
 | Discovery | [`1.discovery/`](1.discovery/README.md) | Stories → epics → roadmap; refinar estória (scenarios → BDDs → protótipo? → tasks); depois ciclo por estória |
 | Refinamento técnico | [`2.refinamento-tecnico/`](2.refinamento-tecnico/README.md) | Detalhar solução, riscos e critérios técnicos |
-| Desenvolvimento | [`3.desenvolvimento/`](3.desenvolvimento/README.md) | Por IA: clone → branch → TDD → implementar → testar → PR → Pendente aprovação |
+| Desenvolvimento | [`3.desenvolvimento/`](3.desenvolvimento/README.md) | Por IA na ordem do Gantt; sequencial/paralelo; próximo robô só após humano |
 | Testes | [`4.testes/`](4.testes/README.md) | Validar comportamento e qualidade |
 | Implantação | [`5.implantacao/`](5.implantacao/README.md) | Publicar em ambiente alvo |
 | Manutenção | [`6.manutencao/`](6.manutencao/README.md) | Operar, corrigir e evoluir |
@@ -82,11 +82,12 @@ O mapa e a prioridade nascem no discovery; o detalhe (SC/BDD) e o restante do pr
 **Entradas**
 
 - Atividade em `tasks/` + aceite
+- Gantt das tasks (ordem / dependências)
 - Desenho técnico
 - Repo remoto
 - Board
 
-**Execução** (tudo por IA, por atividade)
+**Execução** (tudo por IA / robôs, por atividade)
 
 1. Baixar o projeto
 2. Criar branch `task/<ID>-<slug>`
@@ -94,12 +95,15 @@ O mapa e a prioridade nascem no discovery; o detalhe (SC/BDD) e o restante do pr
 4. Implementar a funcionalidade
 5. Testar
 6. Abrir PR e status → **Pendente aprovação**
+7. Parar até validação humana
+
+Ordem = Gantt das tasks. Sequencial → robô espera o outro. Paralelo → robôs em paralelo, PRs separados; próximo passo da árvore/Gantt só após aprovação.
 
 **Saídas**
 
 - Branch + TDDs + código
 - PR aberto
-- Board: Pendente aprovação
+- Board: Pendente aprovação (próximo robô só após humano)
 
 ---
 

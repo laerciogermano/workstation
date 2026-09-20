@@ -166,12 +166,10 @@ Ordem do script ([`src/scripts/linkedin-login.js`](src/scripts/linkedin-login.js
 1. Limpar `screenshots/`
 2. `resetInstance(cfg)` — instância do zero
 3. `provisionEmulator` → `installApk(linkedin)` → `launch` → `ui_stable`
-4. Screenshot `01-antes-agree.png`
-5. Se houver **AGREE** → tap + 5s → `02-apos-agree.png`
-6. **Already have an account? Sign in** → wait 5s → `03-apos-login.png`
-7. `extract()` ×5 → `tree-screen.png` + `component-tree.json`
+4. Screenshot `01-tela-inicial.png`
+5. `extract()` ×5 → console da árvore + `tree-screen.png` + `component-tree.json`
 
-Não instala Instagram, não digita credenciais e não chama `saveSession`.
+Não digita credenciais e não chama `saveSession`. Próximos taps (ex. Sign in with Email) entram depois de validar a tela nova.
 
 ### 6. Testes
 

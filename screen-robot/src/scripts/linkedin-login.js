@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Abre LinkedIn: AGREE → “Already have an account? Sign in” → árvore.
+ * Abre LinkedIn, tira print da tela inicial e imprime a árvore de componentes.
  *
  * Uso:
  *   node scripts/linkedin-login.js
@@ -10,8 +10,6 @@ import { readFileSync, existsSync, mkdirSync, writeFileSync, readdirSync, rmSync
 import { dirname, resolve, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { sleep } from "../lib/adb.js";
-import { extractElements } from "../lib/extract.js";
 import { provisionEmulator } from "../lib/provision.js";
 import { resetInstance } from "../lib/reset-instance.js";
 
@@ -29,42 +27,6 @@ function clearScreenshots(dir) {
   for (const name of readdirSync(dir)) {
     rmSync(join(dir, name), { recursive: true, force: true });
   }
-}
-
-function findAgree(elements) {
-  return (
-    elements.find(
-      (el) =>
-        el.clickable &&
-        /^(agree|aceitar|aceito|concordo)$/i.test(String(el.label || "").trim()),
-    ) ||
-    elements.find(
-      (el) => el.clickable && /^agree$/i.test(String(el.text || "").trim()),
-    ) ||
-    elements.find((el) => /agree/i.test(String(el.label || "")))
-  );
-}
-
-function findSignIn(elements) {
-  const already = (s) =>
-    /already\s+have\s+an\s+account/i.test(String(s || "")) &&
-    /sign\s*in/i.test(String(s || ""));
-  const isSignIn = (s) => {
-    const t = String(s || "").trim();
-    return /^(sign\s*in|entrar|log\s*in|login)$/i.test(t) || /sign\s*in/i.test(t);
-  };
-  return (
-    elements.find((el) => el.clickable && (already(el.label) || already(el.text))) ||
-    elements.find((el) => already(el.label) || already(el.text)) ||
-    elements.find((el) => el.clickable && (isSignIn(el.label) || isSignIn(el.text))) ||
-    elements.find((el) => isSignIn(el.label) || isSignIn(el.text))
-  );
-}
-
-async function tapAndShot(handle, el, outPath, waitMs = 5_000) {
-  handle.tapElement(el);
-  await sleep(waitMs);
-  handle.screenshot(outPath);
 }
 
 async function main() {
@@ -94,35 +56,13 @@ async function main() {
   console.log("3) Abrir LinkedIn…");
   await handle.launch(cfg.apps.linkedin.package);
   await handle.on("ui_stable", { timeoutMs: 90_000 });
-  handle.screenshot(resolve(outDir, "01-antes-agree.png"));
 
-  console.log("4) Clicar AGREE (se existir)…");
-  {
-    const { elements } = extractElements(handle.serial);
-    const agree = findAgree(elements);
-    if (agree?.center) {
-      console.log(`   → ${agree.label || agree.text}`);
-      await tapAndShot(handle, agree, resolve(outDir, "02-apos-agree.png"));
-    } else {
-      console.log("   (AGREE não encontrado — segue)");
-    }
-  }
+  console.log("4) Print da tela inicial…");
+  const shotPath = resolve(outDir, "01-tela-inicial.png");
+  handle.screenshot(shotPath);
+  console.log(`   OK → ${shotPath}`);
 
-  console.log("5) Clicar Already have an account? Sign in…");
-  {
-    const { elements } = extractElements(handle.serial);
-    const signIn = findSignIn(elements);
-    if (signIn?.center) {
-      console.log(`   → ${signIn.label || signIn.text}`);
-      handle.tapElement(signIn);
-      await sleep(5_000);
-      handle.screenshot(resolve(outDir, "03-apos-login.png"));
-    } else {
-      console.log("   (Sign in não encontrado — segue)");
-    }
-  }
-
-  console.log("6) Extrair árvore (5 passos)…");
+  console.log("5) Extrair árvore (5 passos)…");
   let tree;
   for (let i = 1; i <= 5; i++) {
     tree = await handle.extract();

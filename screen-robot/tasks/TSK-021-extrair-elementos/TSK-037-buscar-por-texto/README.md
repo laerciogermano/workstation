@@ -13,8 +13,9 @@
 
 ## Execução
 
-- `findByText(serial, query)` encapsula `extractElements` (OCR interno); match em um elemento **ou** conjunto vizinho com similaridade elevada
+- `findByText(serial, query)` encapsula `extractElements` (OCR interno)
+- Retorna elementos **lado a lado** cujo texto unido está **contido na string maior** (query)
 
 ## Saídas
 
-- `{ elements, score, center? }` ≥ limiar · aceite SC-29
+- `{ elements, score, center? }` — adjacentes dentro da query · aceite SC-29 / SC-30

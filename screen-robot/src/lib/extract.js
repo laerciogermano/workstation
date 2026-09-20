@@ -216,6 +216,7 @@ export function findEditableFields(elements) {
 /**
  * US-23 / SC-29 — busca por texto; encapsula `extractElements` (OCR interno).
  * Caller: `findByText(serial, query)` — **não** passa lista de elementos.
+ * Retorno: elementos **lado a lado** cujo texto unido está **contido na string maior** (query).
  *
  * @param {string} serial
  * @param {string} query

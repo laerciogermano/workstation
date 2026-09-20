@@ -86,14 +86,15 @@ const e5 = await handle.extract();
 OCR costuma devolver a frase partida (piloto LinkedIn: `"Sign"` + `"in"` + `"with"` + `"Email"`, não a string inteira).  
 `findByText(serial, query, { minScore })` **encapsula** `extractElements` — o caller **não** passa a lista de elementos.
 
-- interno: `extractElements(serial)` → OCR → lista
-- procura **um** elemento cujo `text` tenha score alto vs o query; **ou**
-- procura um **conjunto** de elementos vizinhos (mesma linha / bounds próximos) cuja **junção** dos textos maximize a similaridade
-- retorno: `{ elements, score, bounds?, center? }` (melhor match ≥ `minScore`) ou `null`
+**Regras de retorno:**
+- elementos **lado a lado** (mesma linha / bounds vizinhos)
+- o texto de cada um (e o texto **unido**) está **contido na string maior** (`query`)
+- score de similaridade ≥ `minScore`
 
 ```js
 const hit = await findByText(handle.serial, "Sign in with Email", { minScore: 0.8 });
-// hit.elements → [Sign, in, with, Email]; hit.score elevado; hit.center para tap
+// hit.elements → [Sign, in, with, Email] — lado a lado, dentro da query
+// hit.score elevado; hit.center para tap
 ```
 
 ---

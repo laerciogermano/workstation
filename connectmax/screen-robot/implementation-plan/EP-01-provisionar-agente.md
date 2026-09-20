@@ -33,10 +33,11 @@ Arquivo: `sources/android-control/lib/provision.js`.
 import { provisionEmulator } from "./lib/provision.js";
 
 const handle = await provisionEmulator(cfg);
-// → { serial, kind, provisionedAt, bootCompleted: true }
+// → { serial, kind, provisionedAt, bootCompleted: true, on }
+// EP-02: await handle.on("ui_stable", …)
 ```
 
-Helpers internos (`resolveConfig`, `startRuntime`, `ensureAdbOnline`, `waitBootCompleted`, uso de `adb.js`) **não** são exportados — ficam privados ao módulo.
+Helpers internos (`resolveConfig`, `startRuntime`, `ensureAdbOnline`, `waitBootCompleted`, uso de `adb.js`) **não** são exportados — ficam privados ao módulo. `on` no handle vem de EP-02.
 
 | Superfície | O quê |
 |------------|--------|
@@ -158,7 +159,7 @@ sequenceDiagram
 | 5–6 | Device → Lib | — | reachable | Fechar SC-01 | `up` | Confirma | `true` |
 | 7–14 | Lib ↔ Adb | *(privado)* | connect + wait-for-device | SC-02 | `serial` | Loop até `device` | `online` |
 | 15–18 | Lib ↔ Adb | *(privado)* | getprop boot | SC-03 | `serial` | Poll até `1` | `boot=1` |
-| 19 | Lib | Dev | `AgentHandle` | Entregar handle | estado interno | Monta saída | `{ serial, kind, provisionedAt, bootCompleted }` |
+| 19 | Lib | Dev | `AgentHandle` | Entregar handle | estado interno | Monta saída + anexa `on` | `{ serial, kind, provisionedAt, bootCompleted, on }` |
 
 #### Contratos
 

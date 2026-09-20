@@ -91,7 +91,7 @@ sequenceDiagram
 
 #### Passo a passo
 
-| # | De | Para | Chamada | Por quê | Entradas | Execução | Saídas |
+| # | De | Para | Chamada | Descrição | Entradas | Execução | Saídas |
 |---|----|------|---------|---------|----------|----------|--------|
 | 1 | Dev | SessionStore | `saveSession(path, state)` | Persistir | `path`, state | Serializa | Promise |
 | 2 | SessionStore | SessionStore | `merge savedAt` | Carimbar | state | Injeta ISO timestamp | state |
@@ -176,7 +176,7 @@ sequenceDiagram
 
 #### Passo a passo
 
-| # | De | Para | Chamada | Por quê | Entradas | Execução | Saídas |
+| # | De | Para | Chamada | Descrição | Entradas | Execução | Saídas |
 |---|----|------|---------|---------|----------|----------|--------|
 | 1 | Dev | SessionStore | `removeSession(path)` | Apagar sessão | `path` | Unlink idempotente | Promise |
 | 2 | SessionStore | FS | `unlink` | Remover arquivo | `path` | Apaga se existe | pedido |
@@ -266,7 +266,7 @@ sequenceDiagram
 
 #### Passo a passo
 
-| # | De | Para | Chamada | Por quê | Entradas | Execução | Saídas |
+| # | De | Para | Chamada | Descrição | Entradas | Execução | Saídas |
 |---|----|------|---------|---------|----------|----------|--------|
 | 1 | Dev | SessionStore | `restoreSession(path)` | Restaurar | `path` | Read + validate | Promise |
 | 2 | SessionStore | FS | `read JSON` | Carregar | `path` | fs.readFile | pedido |

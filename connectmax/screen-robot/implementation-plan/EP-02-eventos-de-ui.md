@@ -101,7 +101,7 @@ sequenceDiagram
 
 #### Passo a passo
 
-| # | De | Para | Chamada | Por quê | Entradas | Execução | Saídas |
+| # | De | Para | Chamada | Descrição | Entradas | Execução | Saídas |
 |---|----|------|---------|---------|----------|----------|--------|
 | 1 | Dev | EventBus | `on("boot", { serial, ...opts })` | Esperar boot | `serial`, opts | Inicia loop de poll | Promise |
 | 2 | EventBus | AdbClient | `getprop sys.boot_completed` | Checar prop | `serial` | Pede leitura | pedido |
@@ -194,7 +194,7 @@ sequenceDiagram
 
 #### Passo a passo
 
-| # | De | Para | Chamada | Por quê | Entradas | Execução | Saídas |
+| # | De | Para | Chamada | Descrição | Entradas | Execução | Saídas |
 |---|----|------|---------|---------|----------|----------|--------|
 | 1 | Dev | EventBus | `on("app_open", { serial, pkg, ...opts })` | Esperar app na frente | `serial`, `pkg` | Inicia poll | Promise |
 | 2 | EventBus | AdbClient | `dumpsys` / `pidof` | Evidência de foreground | `pkg` | Pede shell | pedido |
@@ -288,7 +288,7 @@ sequenceDiagram
 
 #### Passo a passo
 
-| # | De | Para | Chamada | Por quê | Entradas | Execução | Saídas |
+| # | De | Para | Chamada | Descrição | Entradas | Execução | Saídas |
 |---|----|------|---------|---------|----------|----------|--------|
 | 1 | Dev | EventBus | `on("ui_stable", { serial, ...opts })` | Esperar UI quieta | `serial`, `stableMs?` | Inicia amostragem | Promise |
 | 2 | EventBus | Extractor | `dumpUiXml(serial)` | Snapshot UI | `serial` | Pede dump | pedido |
@@ -382,7 +382,7 @@ sequenceDiagram
 
 #### Passo a passo
 
-| # | De | Para | Chamada | Por quê | Entradas | Execução | Saídas |
+| # | De | Para | Chamada | Descrição | Entradas | Execução | Saídas |
 |---|----|------|---------|---------|----------|----------|--------|
 | 1 | Dev | EventBus | `on("dump_change", { serial, previousXml?, ...opts })` | Esperar mudança | `serial`, baseline | Inicia poll | Promise |
 | 2 | EventBus | Extractor | `dumpUiXml(serial)` | Novo snapshot | `serial` | Pede dump | pedido |

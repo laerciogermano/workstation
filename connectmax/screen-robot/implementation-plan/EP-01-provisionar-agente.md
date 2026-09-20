@@ -127,7 +127,7 @@ sequenceDiagram
 
 #### Passo a passo
 
-| # | De | Para | Chamada | Por quê | Entradas | Execução | Saídas |
+| # | De | Para | Chamada | Descrição | Entradas | Execução | Saídas |
 |---|----|------|---------|---------|----------|----------|--------|
 | 1 | Dev | Provisioner | `provisionAgent(cfg)` | Entrada do épico | `cfg` | Valida cfg e orquestra SC-01→SC-03 | Promise `AgentHandle` |
 | 2 | Provisioner | Provisioner | resolve serial/timeout/kind | Normalizar config | `cfg` + env | Aplica defaults e precedência | `ProvisionConfig` |

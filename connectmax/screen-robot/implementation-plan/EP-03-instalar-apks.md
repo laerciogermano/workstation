@@ -112,7 +112,7 @@ sequenceDiagram
 
 #### Passo a passo
 
-| # | De | Para | Chamada | Por quê | Entradas | Execução | Saídas |
+| # | De | Para | Chamada | Descrição | Entradas | Execução | Saídas |
 |---|----|------|---------|---------|----------|----------|--------|
 | 1 | Dev | ApkInstaller | `installAppsFromConfig(...)` | Instalar apps do cfg | `serial`, `cfg` | Itera apps | lista resultados |
 | 2 | ApkInstaller | Config | `package/version` | Ler alvo | chave app | Parse | pedido |

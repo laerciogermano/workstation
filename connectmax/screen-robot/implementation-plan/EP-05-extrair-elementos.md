@@ -97,7 +97,7 @@ sequenceDiagram
 
 #### Passo a passo
 
-| # | De | Para | Chamada | Por quê | Entradas | Execução | Saídas |
+| # | De | Para | Chamada | Descrição | Entradas | Execução | Saídas |
 |---|----|------|---------|---------|----------|----------|--------|
 | 1 | Dev | Extractor | `extractTextTree(serial)` | Fase 1 textos | `serial` | Dump + parse text | Promise |
 | 2 | Extractor | Device | `uiautomator dump` | Obter XML | — | Dump + pull | pedido |
@@ -186,7 +186,7 @@ sequenceDiagram
 
 #### Passo a passo
 
-| # | De | Para | Chamada | Por quê | Entradas | Execução | Saídas |
+| # | De | Para | Chamada | Descrição | Entradas | Execução | Saídas |
 |---|----|------|---------|---------|----------|----------|--------|
 | 1 | Dev | Extractor | `extractIcons(...)` | Tipar ícones | serial/tree | Prepara dump | Promise |
 | 2 | Extractor | Device | `dump / frame` | Evidência UI | `serial` | Obtém dump/frame | pedido |
@@ -268,7 +268,7 @@ sequenceDiagram
 
 #### Passo a passo
 
-| # | De | Para | Chamada | Por quê | Entradas | Execução | Saídas |
+| # | De | Para | Chamada | Descrição | Entradas | Execução | Saídas |
 |---|----|------|---------|---------|----------|----------|--------|
 | 1 | Dev | Extractor | `extractLists(...)` | Tipar listas | serial/tree | Detecta containers | Promise |
 | 2 | Extractor | Extractor | `detectar ListView/...` | Achar listas | xml/tree | Heurísticas | candidatos |
@@ -348,7 +348,7 @@ sequenceDiagram
 
 #### Passo a passo
 
-| # | De | Para | Chamada | Por quê | Entradas | Execução | Saídas |
+| # | De | Para | Chamada | Descrição | Entradas | Execução | Saídas |
 |---|----|------|---------|---------|----------|----------|--------|
 | 1 | Dev | Extractor | `extractImages(...)` | Tipar imagens | serial/tree | Filtra nodes | Promise |
 | 2 | Extractor | Extractor | `nodes imagem + bounds` | kind=image | xml/tree | Heurísticas | nodes |

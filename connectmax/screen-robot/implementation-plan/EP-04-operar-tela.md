@@ -101,7 +101,7 @@ sequenceDiagram
 
 #### Passo a passo
 
-| # | De | Para | Chamada | Por quê | Entradas | Execução | Saídas |
+| # | De | Para | Chamada | Descrição | Entradas | Execução | Saídas |
 |---|----|------|---------|---------|----------|----------|--------|
 | 1 | Dev | Operator | `launch(...)` | Abrir app | `serial`, `pkg` | Orquestra launch+wait | Promise |
 | 2 | Operator | AdbClient | `am start` / `monkey` | Disparar activity | `pkg`/`activity` | Envia comando | pedido |
@@ -192,7 +192,7 @@ sequenceDiagram
 
 #### Passo a passo
 
-| # | De | Para | Chamada | Por quê | Entradas | Execução | Saídas |
+| # | De | Para | Chamada | Descrição | Entradas | Execução | Saídas |
 |---|----|------|---------|---------|----------|----------|--------|
 | 1 | Dev | Operator | `tap` / `tapElement` | Toque na UI | coords ou el | Resolve coords | Promise |
 | 2 | Operator | AdbClient | `input tap` | Enviar toque | `x,y` | Comando input | pedido |
@@ -288,7 +288,7 @@ sequenceDiagram
 
 #### Passo a passo
 
-| # | De | Para | Chamada | Por quê | Entradas | Execução | Saídas |
+| # | De | Para | Chamada | Descrição | Entradas | Execução | Saídas |
 |---|----|------|---------|---------|----------|----------|--------|
 | 1 | Dev | Operator | `typeText(serial, text)` | Digitar texto | `serial`, `text` | Escolhe ASCII/unicode | Promise |
 | 2 | Operator | AdbClient | `input text` | Caminho ASCII | texto escapado | alt ASCII | pedido |
@@ -382,7 +382,7 @@ sequenceDiagram
 
 #### Passo a passo
 
-| # | De | Para | Chamada | Por quê | Entradas | Execução | Saídas |
+| # | De | Para | Chamada | Descrição | Entradas | Execução | Saídas |
 |---|----|------|---------|---------|----------|----------|--------|
 | 1 | Dev | Operator | `scroll(...)` | Scroll da UI | direction, bounds? | Inicia gesto | Promise |
 | 2 | Operator | Operator | `calc swipe` | Coords do gesto | direction/distance | Calcula x1,y1→x2,y2 | coords |
@@ -472,7 +472,7 @@ sequenceDiagram
 
 #### Passo a passo
 
-| # | De | Para | Chamada | Por quê | Entradas | Execução | Saídas |
+| # | De | Para | Chamada | Descrição | Entradas | Execução | Saídas |
 |---|----|------|---------|---------|----------|----------|--------|
 | 1 | Dev | Operator | `screenshot(serial, path)` | Capturar tela | `serial`, `path` | Orquestra capturar+pull | Promise |
 | 2 | Operator | AdbClient | `screencap + pull` | Obter imagem | `path` | Dois passos adb | pedido |
@@ -563,7 +563,7 @@ sequenceDiagram
 
 #### Passo a passo
 
-| # | De | Para | Chamada | Por quê | Entradas | Execução | Saídas |
+| # | De | Para | Chamada | Descrição | Entradas | Execução | Saídas |
 |---|----|------|---------|---------|----------|----------|--------|
 | 1 | Dev | Operator | `findTemplateCoords(...)` | Achar template | frame/serial + template | Inicia match | Promise |
 | 2 | Operator | Device | `screenshot` | Obter frame se falta | `serial` | opt captura | pedido |

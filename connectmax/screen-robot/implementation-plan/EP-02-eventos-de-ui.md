@@ -113,13 +113,54 @@ sequenceDiagram
 
 #### Contratos
 
-| | Contrato |
-|--|----------|
-| **API** | `on("boot", opts: EventOpts) → Promise<{ boot: true }>` |
-| **Entrada** | evento `"boot"`; `serial`; `timeoutMs?`; `intervalMs?`; handler opcional |
-| **Pré** | Serial ADB online (EP-01) |
-| **Saída** | `{ boot: true }` + eventos `boot_poll` / `boot` |
-| **Erro** | `EVENT_BOOT_TIMEOUT` |
+Exemplos TypeScript das chamadas (# do passo a passo).
+
+```ts
+// Pré: serial ADB online (EP-01)
+// Erro: EVENT_BOOT_TIMEOUT
+
+type EventOpts = {
+  serial: string;
+  timeoutMs?: number;
+  intervalMs?: number;
+  onEvent?: (payload: { type: string; [k: string]: unknown }) => void;
+};
+
+// #1 Dev → EventBus
+declare function on(
+  event: "boot",
+  opts: EventOpts,
+): Promise<{ boot: true }>;
+
+const result = await on("boot", {
+  serial: "127.0.0.1:5555",
+  timeoutMs: 60_000,
+  intervalMs: 1_500,
+  onEvent: (p) => console.log(p.type),
+});
+
+// #2–5 EventBus ↔ AdbClient ↔ Device
+declare function getprop(
+  serial: string,
+  key: "sys.boot_completed",
+): Promise<"0" | "1">;
+
+const prop = await getprop("127.0.0.1:5555", "sys.boot_completed");
+
+// #6 EventBus → Dev (progresso)
+type BootPoll = { type: "boot_poll"; attempt: number; value: "0" | "1"; at: string };
+const poll: BootPoll = {
+  type: "boot_poll",
+  attempt: 1,
+  value: "0",
+  at: "2026-09-19T21:00:00.000Z",
+};
+
+// #7 EventBus → Dev
+const done: { boot: true } = { boot: true };
+// result === done
+```
+
 
 ### US-03 — Evento de app aberta
 
@@ -206,13 +247,44 @@ sequenceDiagram
 
 #### Contratos
 
-| | Contrato |
-|--|----------|
-| **API** | `on("app_open", opts) → Promise<{ foreground: true, package }>` |
-| **Entrada** | evento `"app_open"`; `serial`; `pkg`; `activity?`; `timeoutMs?`; handler opcional |
-| **Pré** | Device Booted; package instalado (ou a instalar) |
-| **Saída** | Package (e activity opcional) em foreground |
-| **Erro** | `EVENT_APP_TIMEOUT` |
+Exemplos TypeScript das chamadas (# do passo a passo).
+
+```ts
+// Pré: device Booted; package instalado (ou a instalar)
+// Erro: EVENT_APP_TIMEOUT
+
+type AppOpenOpts = {
+  serial: string;
+  pkg: string;
+  activity?: string;
+  timeoutMs?: number;
+  intervalMs?: number;
+  onEvent?: (payload: { type: string; [k: string]: unknown }) => void;
+};
+
+// #1 Dev → EventBus
+declare function on(
+  event: "app_open",
+  opts: AppOpenOpts,
+): Promise<{ foreground: true; package: string; activity?: string }>;
+
+await on("app_open", {
+  serial: "127.0.0.1:5555",
+  pkg: "com.linkedin.android",
+  activity: ".authenticator.LaunchActivity",
+  timeoutMs: 30_000,
+});
+
+// #2–5 EventBus ↔ AdbClient ↔ Device
+declare function isPackageForeground(serial: string, pkg: string): boolean;
+const fg = isPackageForeground("127.0.0.1:5555", "com.linkedin.android");
+
+// #6 progresso
+type AppPoll = { type: "app_poll"; package: string; foreground: boolean; attempt: number };
+// #7 resultado
+const opened = { foreground: true as const, package: "com.linkedin.android" };
+```
+
 
 ### US-04 — Evento de tela estável
 
@@ -301,13 +373,43 @@ sequenceDiagram
 
 #### Contratos
 
-| | Contrato |
-|--|----------|
-| **API** | `on("ui_stable", opts) → Promise<{ stable: true }>` |
-| **Entrada** | evento `"ui_stable"`; `serial`; `timeoutMs?`; `stableMs?`; `intervalMs?`; handler opcional |
-| **Pré** | App em foreground (US-03) recomendado |
-| **Saída** | Dump/hash sem mudança por `stableMs` |
-| **Erro** | `EVENT_STABLE_TIMEOUT` |
+Exemplos TypeScript das chamadas (# do passo a passo).
+
+```ts
+// Pré: app em foreground (US-03) recomendado
+// Erro: EVENT_STABLE_TIMEOUT
+
+type UiStableOpts = {
+  serial: string;
+  timeoutMs?: number;
+  stableMs?: number;
+  intervalMs?: number;
+  onEvent?: (payload: { type: string; [k: string]: unknown }) => void;
+};
+
+// #1 Dev → EventBus
+declare function on(
+  event: "ui_stable",
+  opts: UiStableOpts,
+): Promise<{ stable: true }>;
+
+await on("ui_stable", {
+  serial: "127.0.0.1:5555",
+  timeoutMs: 30_000,
+  stableMs: 1_200,
+  intervalMs: 400,
+});
+
+// #2–5 dump / hash
+declare function dumpUiXml(serial: string): string;
+declare function hashDump(xml: string): string;
+const xml = dumpUiXml("127.0.0.1:5555");
+const h = hashDump(xml);
+
+// #6 progresso ui_stable_poll · #7 { stable: true }
+const stable = { stable: true as const };
+```
+
 
 ### US-05 — Evento de mudança de dump
 
@@ -394,13 +496,41 @@ sequenceDiagram
 
 #### Contratos
 
-| | Contrato |
-|--|----------|
-| **API** | `on("dump_change", opts) → Promise<{ xml, changed: true }>` |
-| **Entrada** | evento `"dump_change"`; `serial`; `previousXml?`; `timeoutMs?`; handler opcional |
-| **Pré** | Serial online; dump uiautomator disponível |
-| **Saída** | `{ xml, changed: true }` com hash ≠ base |
-| **Erro** | `EVENT_DUMP_TIMEOUT` |
+Exemplos TypeScript das chamadas (# do passo a passo).
+
+```ts
+// Pré: serial online; dump uiautomator disponível
+// Erro: EVENT_DUMP_TIMEOUT
+
+type DumpChangeOpts = {
+  serial: string;
+  previousXml?: string;
+  timeoutMs?: number;
+  intervalMs?: number;
+  onEvent?: (payload: { type: string; [k: string]: unknown }) => void;
+};
+
+// #1 Dev → EventBus
+declare function on(
+  event: "dump_change",
+  opts: DumpChangeOpts,
+): Promise<{ xml: string; changed: true }>;
+
+const changed = await on("dump_change", {
+  serial: "127.0.0.1:5555",
+  previousXml: "<hierarchy/>",
+  timeoutMs: 20_000,
+});
+
+// #2–5 dump atual vs base
+declare function dumpUiXml(serial: string): string;
+const xml = dumpUiXml("127.0.0.1:5555");
+
+// #6 dump_poll · #7 { xml, changed: true }
+const out: { xml: string; changed: true } = { xml, changed: true };
+```
+
+
 ---
 
 ## Modelos

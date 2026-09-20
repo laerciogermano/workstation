@@ -111,13 +111,35 @@ sequenceDiagram
 
 #### Contratos
 
-| | Contrato |
-|--|----------|
-| **API** | `extractTextTree(serial) → { tree, xml }` · `extractFullTree(serial\|tree) → { tree }` |
-| **Entrada** | `serial` **ou** árvore fase 1 + dump/frame |
-| **Pré** | Device Booted; UI dumpável |
-| **Saída** | Fase 1: árvore `kind=text`; Fase 2: árvore completa tipada |
-| **Erro** | `EXTRACT_DUMP_FAILED` · `EXTRACT_EMPTY_TREE` |
+Exemplos TypeScript das chamadas (# do passo a passo).
+
+```ts
+// Pré: device Booted; UI dumpável
+// Erros: EXTRACT_DUMP_FAILED | EXTRACT_EMPTY_TREE
+
+type TreeNode = {
+  kind: "text" | "icon" | "list" | "image" | "node";
+  text?: string;
+  bounds?: { x1: number; y1: number; x2: number; y2: number };
+  children?: TreeNode[];
+  [k: string]: unknown;
+};
+
+// #1 Dev → Extractor
+declare function extractTextTree(
+  serial: string,
+): Promise<{ tree: TreeNode; xml: string }>;
+
+declare function extractFullTree(
+  input: string | TreeNode,
+): Promise<{ tree: TreeNode }>;
+
+const phase1 = await extractTextTree("127.0.0.1:5555");
+// phase1.tree.kind === "text" (nós com texto)
+
+const full = await extractFullTree(phase1.tree);
+```
+
 
 ### US-14 — Extrair ícones
 
@@ -196,13 +218,28 @@ sequenceDiagram
 
 #### Contratos
 
-| | Contrato |
-|--|----------|
-| **API** | `extractIcons(serial\|tree) → { tree }` |
-| **Entrada** | `serial` ou tree parcial; dump/frame |
-| **Pré** | Dump disponível |
-| **Saída** | Árvore com nodes `kind=icon` (bounds/metadados) |
-| **Erro** | `EXTRACT_DUMP_FAILED` |
+Exemplos TypeScript das chamadas (# do passo a passo).
+
+```ts
+// Pré: dump disponível
+// Erro: EXTRACT_DUMP_FAILED
+
+type TreeNode = {
+  kind: "icon" | string;
+  bounds?: { x1: number; y1: number; x2: number; y2: number };
+  children?: TreeNode[];
+  [k: string]: unknown;
+};
+
+// #1 Dev → Extractor
+declare function extractIcons(
+  input: string | TreeNode,
+): Promise<{ tree: TreeNode }>;
+
+const { tree } = await extractIcons("127.0.0.1:5555");
+// tree inclui nodes kind === "icon"
+```
+
 
 ### US-15 — Extrair listas
 
@@ -277,13 +314,27 @@ sequenceDiagram
 
 #### Contratos
 
-| | Contrato |
-|--|----------|
-| **API** | `extractLists(serial\|tree) → { tree }` |
-| **Entrada** | `serial` ou tree; dump |
-| **Pré** | Dump disponível |
-| **Saída** | Árvore com `kind=list` + items filhos |
-| **Erro** | `EXTRACT_DUMP_FAILED` |
+Exemplos TypeScript das chamadas (# do passo a passo).
+
+```ts
+// Pré: dump disponível
+// Erro: EXTRACT_DUMP_FAILED
+
+type TreeNode = {
+  kind: "list" | string;
+  children?: TreeNode[];
+  [k: string]: unknown;
+};
+
+// #1 Dev → Extractor
+declare function extractLists(
+  input: string | TreeNode,
+): Promise<{ tree: TreeNode }>;
+
+const { tree } = await extractLists("127.0.0.1:5555");
+// tree inclui kind === "list" com items filhos
+```
+
 
 ### US-16 — Extrair imagens
 
@@ -356,13 +407,29 @@ sequenceDiagram
 
 #### Contratos
 
-| | Contrato |
-|--|----------|
-| **API** | `extractImages(serial\|tree) → { tree }` |
-| **Entrada** | `serial` ou tree; dump/frame |
-| **Pré** | Dump disponível |
-| **Saída** | Árvore com `kind=image` + bounds |
-| **Erro** | `EXTRACT_DUMP_FAILED` |
+Exemplos TypeScript das chamadas (# do passo a passo).
+
+```ts
+// Pré: dump disponível
+// Erro: EXTRACT_DUMP_FAILED
+
+type TreeNode = {
+  kind: "image" | string;
+  bounds?: { x1: number; y1: number; x2: number; y2: number };
+  children?: TreeNode[];
+  [k: string]: unknown;
+};
+
+// #1 Dev → Extractor
+declare function extractImages(
+  input: string | TreeNode,
+): Promise<{ tree: TreeNode }>;
+
+const { tree } = await extractImages("127.0.0.1:5555");
+// tree inclui kind === "image" + bounds
+```
+
+
 ---
 
 ## Modelos

@@ -114,13 +114,47 @@ sequenceDiagram
 
 #### Contratos
 
-| | Contrato |
-|--|----------|
-| **API** | `launch(serial, pkg, activity?) → Promise<void>` |
-| **Entrada** | `serial`; `pkg`; `activity?` |
-| **Pré** | Device Booted; package instalado |
-| **Saída** | App em foreground (via `on("app_open")`) |
-| **Erro** | `OP_LAUNCH_FAILED` · `EVENT_APP_TIMEOUT` |
+Exemplos TypeScript das chamadas (# do passo a passo).
+
+```ts
+// Pré: device Booted; package instalado
+// Erros: OP_LAUNCH_FAILED | EVENT_APP_TIMEOUT
+
+// #1 Dev → Operator
+declare function launch(
+  serial: string,
+  pkg: string,
+  activity?: string,
+): Promise<void>;
+
+await launch(
+  "127.0.0.1:5555",
+  "com.linkedin.android",
+  ".authenticator.LaunchActivity",
+);
+
+// #2–N AdbClient / monkey / am start + on("app_open")
+declare function amStart(
+  serial: string,
+  component: string,
+): Promise<void>;
+
+await amStart(
+  "127.0.0.1:5555",
+  "com.linkedin.android/.authenticator.LaunchActivity",
+);
+
+declare function on(
+  event: "app_open",
+  opts: { serial: string; pkg: string },
+): Promise<{ foreground: true; package: string }>;
+
+await on("app_open", {
+  serial: "127.0.0.1:5555",
+  pkg: "com.linkedin.android",
+});
+```
+
 
 ### US-08 — tap
 
@@ -203,13 +237,29 @@ sequenceDiagram
 
 #### Contratos
 
-| | Contrato |
-|--|----------|
-| **API** | `tap(serial, x, y) → void` · `tapElement(serial, el) → void` |
-| **Entrada** | `serial`; coords `x,y` **ou** elemento com `center`/`bounds` |
-| **Pré** | Device Booted; UI alvo visível |
-| **Saída** | Toque enviado; UI pode refletir a ação |
-| **Erro** | `OP_TAP_INVALID_TARGET` (sem center) |
+Exemplos TypeScript das chamadas (# do passo a passo).
+
+```ts
+// Pré: device Booted; UI alvo visível
+// Erro: OP_TAP_INVALID_TARGET
+
+type UiElement = {
+  center?: { x: number; y: number };
+  bounds?: { x1: number; y1: number; x2: number; y2: number };
+};
+
+// #1 Dev → Operator
+declare function tap(serial: string, x: number, y: number): void;
+declare function tapElement(serial: string, el: UiElement): void;
+
+tap("127.0.0.1:5555", 540, 960);
+tapElement("127.0.0.1:5555", { center: { x: 540, y: 960 } });
+
+// AdbClient → Device
+declare function adbInputTap(serial: string, x: number, y: number): void;
+adbInputTap("127.0.0.1:5555", 540, 960);
+```
+
 
 ### US-09 — type
 
@@ -303,13 +353,24 @@ sequenceDiagram
 
 #### Contratos
 
-| | Contrato |
-|--|----------|
-| **API** | `typeText(serial, text) → void` |
-| **Entrada** | `serial`; `text` (ASCII ou unicode) |
-| **Pré** | Campo focado ou IME pronto; ADBKeyBoard para unicode |
-| **Saída** | Texto injetado no campo/UI |
-| **Erro** | Falha `input text` / IME ausente |
+Exemplos TypeScript das chamadas (# do passo a passo).
+
+```ts
+// Pré: campo focado ou IME pronto; ADBKeyBoard para unicode
+
+// #1 Dev → Operator
+declare function typeText(serial: string, text: string): void;
+
+typeText("127.0.0.1:5555", "hello@example.com");
+
+// AdbClient → Device (ASCII / IME)
+declare function adbInputText(serial: string, escaped: string): void;
+declare function adbBroadcastIme(serial: string, text: string): void;
+
+adbInputText("127.0.0.1:5555", "hello@example.com");
+adbBroadcastIme("127.0.0.1:5555", "olá");
+```
+
 
 ### US-10 — scroll
 
@@ -394,13 +455,36 @@ sequenceDiagram
 
 #### Contratos
 
-| | Contrato |
-|--|----------|
-| **API** | `scroll(serial, opts: ScrollOpts) → void` |
-| **Entrada** | `direction`; `distance?`; `bounds?` |
-| **Pré** | Device Booted; área scrollável |
-| **Saída** | Swipe executado; conteúdo pode revelar novos itens |
-| **Erro** | `OP_SCROLL_UNSUPPORTED` (até API existir) |
+Exemplos TypeScript das chamadas (# do passo a passo).
+
+```ts
+// Pré: device Booted; área scrollável
+// Erro: OP_SCROLL_UNSUPPORTED
+
+type ScrollOpts = {
+  direction: "up" | "down" | "left" | "right";
+  distance?: number;
+  bounds?: { x1: number; y1: number; x2: number; y2: number };
+};
+
+// #1 Dev → Operator
+declare function scroll(serial: string, opts: ScrollOpts): void;
+
+scroll("127.0.0.1:5555", { direction: "down", distance: 800 });
+
+// AdbClient → Device
+declare function adbSwipe(
+  serial: string,
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number,
+  durationMs?: number,
+): void;
+
+adbSwipe("127.0.0.1:5555", 540, 1400, 540, 600, 300);
+```
+
 
 ### US-11 — screenshot
 
@@ -483,13 +567,34 @@ sequenceDiagram
 
 #### Contratos
 
-| | Contrato |
-|--|----------|
-| **API** | `screenshot(serial, path) → string` (absPath) |
-| **Entrada** | `serial`; `path` de saída |
-| **Pré** | Device Booted |
-| **Saída** | Arquivo de imagem no path absoluto |
-| **Erro** | Falha `screencap` / `pull` |
+Exemplos TypeScript das chamadas (# do passo a passo).
+
+```ts
+// Pré: device Booted
+
+// #1 Dev → Operator
+declare function screenshot(serial: string, path: string): string;
+
+const absPath = screenshot(
+  "127.0.0.1:5555",
+  "artifacts/screen.png",
+);
+// → "/Users/.../artifacts/screen.png"
+
+// AdbClient → Device
+declare function screencapPull(
+  serial: string,
+  remotePath: string,
+  localPath: string,
+): string;
+
+screencapPull(
+  "127.0.0.1:5555",
+  "/sdcard/screen.png",
+  absPath,
+);
+```
+
 
 ### US-12 — Coordenadas por template
 
@@ -574,13 +679,34 @@ sequenceDiagram
 
 #### Contratos
 
-| | Contrato |
-|--|----------|
-| **API** | `findTemplateCoords(serial\|framePath, templatePath) → MatchResult` |
-| **Entrada** | Frame/tela + imagem template; limiar de confiança |
-| **Pré** | Screenshot disponível ou capturável |
-| **Saída** | `{ x, y, confidence }` |
-| **Erro** | `OP_MATCH_LOW_CONFIDENCE` · template não encontrado |
+Exemplos TypeScript das chamadas (# do passo a passo).
+
+```ts
+// Pré: screenshot disponível ou capturável
+// Erros: OP_MATCH_LOW_CONFIDENCE | template não encontrado
+
+type MatchResult = {
+  x: number;
+  y: number;
+  confidence: number;
+};
+
+// #1 Dev → Operator / Matcher
+declare function findTemplateCoords(
+  frame: string, // serial ou path do frame
+  templatePath: string,
+  minConfidence?: number,
+): MatchResult;
+
+const match = findTemplateCoords(
+  "artifacts/screen.png",
+  "templates/login-button.png",
+  0.85,
+);
+// → { x: 540, y: 1200, confidence: 0.92 }
+```
+
+
 ---
 
 ## Modelos

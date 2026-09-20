@@ -151,14 +151,100 @@ sequenceDiagram
 
 #### Contratos
 
-| | Contrato |
-|--|----------|
-| **API** | `provisionAgent(cfg: ProvisionConfig) → Promise<AgentHandle>` |
-| **Entrada** | `cfg` com `serial` (ou `device` / `ANDROID_SERIAL`), `kind?`, `connectTimeoutMs?`, `startScript?` |
-| **Pré** | Host com `adb`; runtime redroid/AVD disponível ou startável |
-| **Saída** | `{ serial, kind, provisionedAt, bootCompleted: true }` |
-| **Erro** | `PROVISION_NO_SERIAL` · `PROVISION_START_FAILED` · `PROVISION_ADB_TIMEOUT` · `PROVISION_BOOT_TIMEOUT` |
-| **Pós** | Device em estado `Booted`; pronto para EP-02..06 |
+Exemplos TypeScript das chamadas (# do passo a passo).
+
+```ts
+// Pré: host com adb; runtime redroid/AVD disponível ou startável
+// Erros: PROVISION_NO_SERIAL | PROVISION_START_FAILED | PROVISION_ADB_TIMEOUT | PROVISION_BOOT_TIMEOUT
+
+type ProvisionConfig = {
+  device?: string;
+  provision?: {
+    serial?: string;
+    kind?: "adb" | "redroid" | "avd";
+    connectTimeoutMs?: number;
+    startScript?: string;
+  };
+};
+
+type AgentHandle = {
+  serial: string;
+  kind: string;
+  provisionedAt: string; // ISO-8601
+  bootCompleted: true;
+};
+
+// #1 Dev → Provisioner
+declare function provisionAgent(cfg: ProvisionConfig): Promise<AgentHandle>;
+
+const handle = await provisionAgent({
+  provision: {
+    serial: "127.0.0.1:5555",
+    kind: "redroid",
+    connectTimeoutMs: 120_000,
+  },
+});
+
+// #2 Provisioner → Provisioner
+declare function resolveProvisionConfig(cfg: ProvisionConfig): {
+  serial: string;
+  kind: "adb" | "redroid" | "avd";
+  connectTimeoutMs: number;
+  startScript?: string;
+};
+
+const resolved = resolveProvisionConfig({
+  provision: { serial: "127.0.0.1:5555" },
+});
+// → { serial: "127.0.0.1:5555", kind: "adb", connectTimeoutMs: 120_000 }
+
+// #3 Provisioner → RuntimeStarter
+declare function start(cfg: ProvisionConfig): Promise<{ reachable: true }>;
+
+await start(resolved);
+
+// #4 RuntimeStarter → Device
+declare function spawnStartScript(
+  script: string,
+  args?: string[],
+): Promise<{ up: true }>;
+
+await spawnStartScript("sources/redroid/scripts/start.sh");
+
+// #5–6 Device → RuntimeStarter → Provisioner
+const up: { up: true } = { up: true };
+const reachable: true = true;
+
+// #7 Provisioner → AdbClient
+declare function connectIfTcp(serial: string): void;
+connectIfTcp("127.0.0.1:5555");
+
+// #8–10 AdbClient ↔ Device
+declare function adbConnect(hostPort: string): Promise<"connected">;
+await adbConnect("127.0.0.1:5555");
+
+// #11–14 AdbClient ↔ Device → Provisioner
+declare function waitForDevice(serial: string): Promise<"device">;
+const online = await waitForDevice("127.0.0.1:5555");
+// → "device"
+
+// #15–18 AdbClient ↔ Device → Provisioner
+declare function getprop(
+  serial: string,
+  key: "sys.boot_completed",
+): Promise<"0" | "1">;
+
+const boot = await getprop("127.0.0.1:5555", "sys.boot_completed");
+// → "1"
+
+// #19 Provisioner → Dev
+const out: AgentHandle = {
+  serial: "127.0.0.1:5555",
+  kind: "redroid",
+  provisionedAt: "2026-09-19T21:00:00.000Z",
+  bootCompleted: true,
+};
+```
 
 ## Modelos
 

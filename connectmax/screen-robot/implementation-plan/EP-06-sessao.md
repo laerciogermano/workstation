@@ -101,13 +101,40 @@ sequenceDiagram
 
 #### Contratos
 
-| | Contrato |
-|--|----------|
-| **API** | `saveSession(path, state: SessionState) → string` |
-| **Entrada** | `path`; estado em memória (`serial`, `apps?`, `step?`, `paths?`) |
-| **Pré** | Path gravável |
-| **Saída** | Path absoluto do JSON; inclui `savedAt` |
-| **Erro** | `SESSION_WRITE_FAILED` |
+Exemplos TypeScript das chamadas (# do passo a passo).
+
+```ts
+// Pré: path gravável
+// Erro: SESSION_WRITE_FAILED
+
+type SessionState = {
+  serial?: string;
+  apps?: string[];
+  step?: string;
+  paths?: Record<string, string>;
+  savedAt?: string;
+  [k: string]: unknown;
+};
+
+// #1 Dev → SessionStore
+declare function saveSession(path: string, state: SessionState): string;
+
+const absPath = saveSession("sessions/linkedin.json", {
+  serial: "127.0.0.1:5555",
+  apps: ["com.linkedin.android"],
+  step: "logged-in",
+  paths: { screenshot: "artifacts/screen.png" },
+});
+// → ".../sessions/linkedin.json" (com savedAt ISO)
+
+// #2–4 FS
+declare function writeJson(path: string, data: SessionState): void;
+writeJson(absPath, {
+  serial: "127.0.0.1:5555",
+  savedAt: "2026-09-19T21:00:00.000Z",
+});
+```
+
 
 ### US-18 — Remover sessão
 
@@ -186,13 +213,24 @@ sequenceDiagram
 
 #### Contratos
 
-| | Contrato |
-|--|----------|
-| **API** | `removeSession(path) → { removed: boolean }` |
-| **Entrada** | `path` da sessão |
-| **Pré** | — (idempotente) |
-| **Saída** | Arquivo inexistente; contexto runtime limpo |
-| **Erro** | Falha de FS (raro); preferir idempotente |
+Exemplos TypeScript das chamadas (# do passo a passo).
+
+```ts
+// Pré: — (idempotente)
+
+// #1 Dev → SessionStore
+declare function removeSession(
+  path: string,
+): { removed: boolean };
+
+const out = removeSession("sessions/linkedin.json");
+// → { removed: true }  ou  { removed: false } se já inexistente
+
+// FS
+declare function unlinkIfExists(path: string): boolean;
+unlinkIfExists("sessions/linkedin.json");
+```
+
 
 ### US-19 — Recuperar sessão
 
@@ -278,13 +316,33 @@ sequenceDiagram
 
 #### Contratos
 
-| | Contrato |
-|--|----------|
-| **API** | `restoreSession(path) → SessionState` · `loadSession(path) → SessionState \| null` |
-| **Entrada** | `path` existente |
-| **Pré** | Arquivo JSON válido |
-| **Saída** | Estado restaurado (schema validado) |
-| **Erro** | `SESSION_NOT_FOUND` · `SESSION_INVALID` |
+Exemplos TypeScript das chamadas (# do passo a passo).
+
+```ts
+// Pré: arquivo JSON válido
+// Erros: SESSION_NOT_FOUND | SESSION_INVALID
+
+type SessionState = {
+  serial?: string;
+  apps?: string[];
+  step?: string;
+  paths?: Record<string, string>;
+  savedAt?: string;
+  [k: string]: unknown;
+};
+
+// #1 Dev → SessionStore
+declare function restoreSession(path: string): SessionState;
+declare function loadSession(path: string): SessionState | null;
+
+const state = restoreSession("sessions/linkedin.json");
+// → { serial, apps, step, paths, savedAt }
+
+const maybe = loadSession("sessions/missing.json");
+// → null
+```
+
+
 ---
 
 ## Modelos

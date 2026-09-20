@@ -132,14 +132,93 @@ sequenceDiagram
 
 #### Contratos
 
-| | Contrato |
-|--|----------|
-| **API** | `installAppsFromConfig(serial, cfg) → Promise<InstallResult[]>` · `installApk(serial, app)` |
-| **Entrada** | `serial` Booted; `cfg.apps.*` (`package`, `version?`, `source?`, `artifact?`) |
-| **Pré** | EP-01 ok; `apkeep` ou artefato local para download |
-| **Saída** | Lista `{ package, version, skipped, artifactPath? }` |
-| **Erro** | `APK_CONFIG_INVALID` · `APK_DOWNLOAD_FAILED` · `APK_INSTALL_FAILED` |
-| **Pós** | `versionName` no device == alvo (se informado) |
+Exemplos TypeScript das chamadas (# do passo a passo).
+
+```ts
+// Pré: EP-01 ok; apkeep ou artefato local
+// Erros: APK_CONFIG_INVALID | APK_DOWNLOAD_FAILED | APK_INSTALL_FAILED
+// Pós: versionName no device == alvo (se informado)
+
+type AppSpec = {
+  package: string;
+  version?: string;
+  source?: string;
+  artifact?: string;
+};
+
+type InstallResult = {
+  package: string;
+  version: string;
+  skipped: boolean;
+  artifactPath?: string;
+};
+
+type AppsConfig = { apps: Record<string, AppSpec> };
+
+// #1 Dev → ApkInstaller
+declare function installAppsFromConfig(
+  serial: string,
+  cfg: AppsConfig,
+): Promise<InstallResult[]>;
+
+declare function installApk(serial: string, app: AppSpec): Promise<InstallResult>;
+
+const results = await installAppsFromConfig("127.0.0.1:5555", {
+  apps: {
+    linkedin: {
+      package: "com.linkedin.android",
+      version: "4.1.986",
+      source: "apk-pure",
+    },
+  },
+});
+
+// #2–3 Config
+const alvo: AppSpec = {
+  package: "com.linkedin.android",
+  version: "4.1.986",
+};
+
+// #4–7 versionName?
+declare function getInstalledVersion(
+  serial: string,
+  pkg: string,
+): Promise<string | null>;
+
+const current = await getInstalledVersion(
+  "127.0.0.1:5555",
+  "com.linkedin.android",
+);
+
+// #8 skip
+const skipped: InstallResult = {
+  package: "com.linkedin.android",
+  version: "4.1.986",
+  skipped: true,
+};
+
+// #9–10 Downloader
+declare function downloadApk(app: AppSpec): Promise<string>;
+const artifactPath = await downloadApk(alvo);
+// → "/tmp/com.linkedin.android.apk"
+
+// #11–14 adb install
+declare function adbInstall(
+  serial: string,
+  paths: string[],
+): Promise<"Success">;
+await adbInstall("127.0.0.1:5555", [artifactPath]);
+
+// #15 resultado
+const installed: InstallResult = {
+  package: "com.linkedin.android",
+  version: "4.1.986",
+  skipped: false,
+  artifactPath,
+};
+```
+
+
 ---
 
 ## Modelos

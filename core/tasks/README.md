@@ -1,6 +1,8 @@
 # Tasks
 
-Árvore de execução e kanban **Todo / Doing / Done** por projeto (prioridade maior → menor).
+Árvore de execução e kanban **Todo / Doing / Pendente aprovação / Done** por projeto (prioridade maior → menor).
+
+Fluxo de desenvolvimento (IA): clone → branch `task/<ID>-<slug>` → TDD → implementar → testar → PR → **Pendente aprovação**. Detalhe: [`processo/3.desenvolvimento`](../processo/3.desenvolvimento/README.md).
 
 ---
 

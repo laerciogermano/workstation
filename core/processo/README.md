@@ -81,25 +81,25 @@ O mapa e a prioridade nascem no discovery; o detalhe (SC/BDD) e o restante do pr
 
 **Entradas**
 
-- Backlog e aceite
+- Atividade em `tasks/` + aceite
 - Desenho técnico
-- Código existente
-- Ambiente pronto
+- Repo remoto
+- Board
 
-**Execução**
+**Execução** (tudo por IA, por atividade)
 
-- Implementar conforme aceite
-- Commits pequenos e revisáveis
-- Lote: primeiro caso, depois escala
-- Testes unitários
-- Documentar o mínimo
-- Integrar com CI
+1. Baixar o projeto
+2. Criar branch `task/<ID>-<slug>`
+3. Criar TDDs
+4. Implementar a funcionalidade
+5. Testar
+6. Abrir PR e status → **Pendente aprovação**
 
 **Saídas**
 
-- Código para validação
-- PRs / commits
-- Testes unitários
+- Branch + TDDs + código
+- PR aberto
+- Board: Pendente aprovação
 
 ---
 

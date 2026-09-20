@@ -75,3 +75,4 @@ Como registrar: [`README.md`](README.md).
 | 065 | 2026-09-19 | Árvore tasks pelo nome | [065-2026-09-19-tasks-nome-nao-ep-us-sc.md](065-2026-09-19-tasks-nome-nao-ep-us-sc.md) | Pastas em `tasks/` = nome da task; sem EP/US/SC no path. |
 | 066 | 2026-09-19 | Pastas task-xx-titulo | [066-2026-09-19-tasks-task-xx-titulo.md](066-2026-09-19-tasks-task-xx-titulo.md) | Padrão de pasta/branch: `task-<nn>-<titulo>`. |
 | 067 | 2026-09-19 | TSK em maiúsculo | [067-2026-09-19-tsk-maiusculo.md](067-2026-09-19-tsk-maiusculo.md) | Prefixo das pastas/branches: `TSK-<nn>-<titulo>`. |
+| 068 | 2026-09-19 | Padrão de escrita do PR | [068-2026-09-19-padrao-escrita-pr.md](068-2026-09-19-padrao-escrita-pr.md) | PR com Summary + Test plan; conteúdo por seção + exemplo TSK-002. |

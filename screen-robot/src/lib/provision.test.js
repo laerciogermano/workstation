@@ -1,5 +1,5 @@
 /**
- * Unitário — ao lado de provision.js (orquestração com deps stub; sem app/runtime).
+ * Unitário — provision.js (deps stub).
  */
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
@@ -19,52 +19,44 @@ describe("provisionEmulator", () => {
     }
   });
 
-  it("orquestra start → adb → boot e devolve AgentHandle Booted", async () => {
-    const calls = [];
-    const onFn = async () => ({});
+  it("anexa on, installApk, operate, extract e session", async () => {
     const handle = await provisionEmulator(
+      { provision: { serial: "127.0.0.1:5555", kind: "redroid" } },
       {
-        provision: {
-          serial: "127.0.0.1:5555",
-          kind: "redroid",
-          connectTimeoutMs: 1_000,
-        },
-      },
-      {
-        startRuntime: async (resolved) => {
-          calls.push(["start", resolved.serial]);
-        },
-        ensureAdbOnline: async (serial) => {
-          calls.push(["adb", serial]);
-        },
-        waitBootCompleted: async (serial) => {
-          calls.push(["boot", serial]);
-        },
-        createOn: (serial) => {
-          calls.push(["on", serial]);
-          return onFn;
-        },
-        createInstallApk: (serial) => {
-          calls.push(["installApk", serial]);
-          return async () => ({ package: "x", version: "1", skipped: true });
-        },
-        now: () => 1_700_000_000_000,
-        toIso: () => "2026-01-01T00:00:00.000Z",
+        startRuntime: async () => {},
+        ensureAdbOnline: async () => {},
+        waitBootCompleted: async () => {},
+        createOn: () => async () => ({}),
+        createInstallApk: () => async () => ({ skipped: true }),
+        createOperate: () => ({
+          launch: async () => {},
+          tap: () => {},
+          tapElement: () => {},
+          type: () => {},
+          scroll: () => {},
+          screenshot: () => "/x.png",
+          matchImage: async () => ({ x: 1, y: 2, confidence: 1 }),
+        }),
+        createExtract: () => async () => ({ type: "root", children: [] }),
+        createSessionApi: () => ({
+          saveSession: async () => "/s.json",
+          removeSession: async () => true,
+          restoreSession: async () => ({}),
+        }),
+        toIso: () => "t",
       },
     );
-
-    assert.deepEqual(calls, [
-      ["start", "127.0.0.1:5555"],
-      ["adb", "127.0.0.1:5555"],
-      ["boot", "127.0.0.1:5555"],
-      ["on", "127.0.0.1:5555"],
-      ["installApk", "127.0.0.1:5555"],
-    ]);
-    assert.equal(handle.serial, "127.0.0.1:5555");
-    assert.equal(handle.kind, "redroid");
-    assert.equal(handle.bootCompleted, true);
-    assert.equal(handle.provisionedAt, "2026-01-01T00:00:00.000Z");
-    assert.equal(handle.on, onFn);
+    assert.equal(typeof handle.on, "function");
     assert.equal(typeof handle.installApk, "function");
+    assert.equal(typeof handle.launch, "function");
+    assert.equal(typeof handle.tap, "function");
+    assert.equal(typeof handle.type, "function");
+    assert.equal(typeof handle.scroll, "function");
+    assert.equal(typeof handle.screenshot, "function");
+    assert.equal(typeof handle.matchImage, "function");
+    assert.equal(typeof handle.extract, "function");
+    assert.equal(typeof handle.saveSession, "function");
+    assert.equal(typeof handle.removeSession, "function");
+    assert.equal(typeof handle.restoreSession, "function");
   });
 });

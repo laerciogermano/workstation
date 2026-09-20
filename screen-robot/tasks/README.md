@@ -7,7 +7,7 @@
 
 ## Escopo atual
 
-EP-01 · EP-02 · EP-03.
+EP-01 · EP-02 · EP-03 · EP-04 · EP-05 · EP-06.
 
 ## Árvore
 
@@ -22,10 +22,28 @@ tasks/
 │   ├── TSK-007-evento-de-app-aberta/
 │   ├── TSK-008-evento-de-tela-estavel/
 │   └── TSK-009-evento-de-mudanca-dump/
-└── TSK-010-instalar-apks/
-    ├── TSK-011-ler-versao/
-    ├── TSK-012-baixar-apk/
-    └── TSK-013-instalar-pacote/
+├── TSK-010-instalar-apks/
+│   ├── TSK-011-ler-versao/
+│   ├── TSK-012-baixar-apk/
+│   └── TSK-013-instalar-pacote/
+├── TSK-014-operar-tela/
+│   ├── TSK-015-abrir-aplicativo/
+│   ├── TSK-016-tap/
+│   ├── TSK-017-type/
+│   ├── TSK-018-scroll/
+│   ├── TSK-019-screenshot/
+│   └── TSK-020-resgatar-coordenadas/
+├── TSK-021-extrair-elementos/
+│   ├── TSK-022-extrair-arvore-dom/
+│   ├── TSK-023-extrair-textos/
+│   ├── TSK-024-extrair-restante-dom/
+│   ├── TSK-025-extrair-icones/
+│   ├── TSK-026-extrair-listas/
+│   └── TSK-027-extrair-imagens/
+└── TSK-028-sessao/
+    ├── TSK-029-salvar-sessao/
+    ├── TSK-030-remover-sessao/
+    └── TSK-031-recuperar-sessao/
 ```
 
 | TSK | Atividade | Pasta |
@@ -35,6 +53,10 @@ tasks/
 | TSK-005 | Eventos de UI | [`TSK-005-eventos-de-ui/`](TSK-005-eventos-de-ui/README.md) |
 | TSK-006..009 | Filhas EP-02 | sob `TSK-005-eventos-de-ui/` |
 | TSK-010 | Instalar APKs | [`TSK-010-instalar-apks/`](TSK-010-instalar-apks/README.md) |
-| TSK-011 | Ler versão | [`TSK-011-ler-versao/`](TSK-010-instalar-apks/TSK-011-ler-versao/README.md) |
-| TSK-012 | Baixar APK | [`TSK-012-baixar-apk/`](TSK-010-instalar-apks/TSK-012-baixar-apk/README.md) |
-| TSK-013 | Instalar pacote | [`TSK-013-instalar-pacote/`](TSK-010-instalar-apks/TSK-013-instalar-pacote/README.md) |
+| TSK-011..013 | Filhas EP-03 | sob `TSK-010-instalar-apks/` |
+| TSK-014 | Operar tela | [`TSK-014-operar-tela/`](TSK-014-operar-tela/README.md) |
+| TSK-015..020 | Filhas EP-04 | sob `TSK-014-operar-tela/` |
+| TSK-021 | Extrair elementos | [`TSK-021-extrair-elementos/`](TSK-021-extrair-elementos/README.md) |
+| TSK-022..027 | Filhas EP-05 | sob `TSK-021-extrair-elementos/` |
+| TSK-028 | Sessão | [`TSK-028-sessao/`](TSK-028-sessao/README.md) |
+| TSK-029..031 | Filhas EP-06 | sob `TSK-028-sessao/` |

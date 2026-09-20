@@ -17,8 +17,6 @@ import {
   findLoginTarget,
   findEditableFields,
 } from "../lib/extract.js";
-import * as operate from "../lib/operate.js";
-import { saveSession } from "../lib/session.js";
 import { sleep } from "../lib/adb.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -67,7 +65,7 @@ async function main() {
   console.log(`   OK ${li.package} ${li.version || "?"}${li.skipped ? " (skip)" : ""}`);
 
   console.log("4) Abrir LinkedIn…");
-  await operate.launch(serial, cfg.apps.linkedin.package);
+  await handle.launch(cfg.apps.linkedin.package);
 
   console.log("5) Receber eventos (UI estável)…");
   await handle.on(
@@ -81,7 +79,7 @@ async function main() {
 
   const shotPath = resolve(ROOT, cfg.screenshot?.path || "./screenshots/linkedin-before-login.png");
   console.log("6) Print da tela…");
-  operate.screenshot(serial, shotPath);
+  handle.screenshot(shotPath);
   console.log(`   → ${shotPath}`);
 
   console.log("7) Extrair elementos…");
@@ -93,7 +91,7 @@ async function main() {
 
   if (!target.alreadyOnLoginScreen && target.loginButton) {
     console.log("8) Tocar botão de login…");
-    operate.tapElement(serial, target.loginButton);
+    handle.tapElement(target.loginButton);
     await sleep(2_000);
     await handle.on("ui_stable", { timeoutMs: 30_000 }, (e) => events.push(e));
     ({ elements } = extractElements(serial));
@@ -115,13 +113,13 @@ async function main() {
   }
 
   console.log("9) Digitar usuário e senha…");
-  operate.tapElement(serial, fields.user);
+  handle.tapElement(fields.user);
   await sleep(400);
-  operate.typeText(serial, user);
+  handle.type(user);
   await sleep(400);
-  operate.tapElement(serial, fields.password);
+  handle.tapElement(fields.password);
   await sleep(400);
-  operate.typeText(serial, password);
+  handle.type(password);
   await sleep(400);
 
   ({ elements } = extractElements(serial));
@@ -133,13 +131,12 @@ async function main() {
   if (!enter?.center) throw new Error("Botão Entrar não encontrado");
 
   console.log(`10) Clicar em Entrar (${enter.label})…`);
-  operate.tapElement(serial, enter);
+  handle.tapElement(enter);
 
   const sessionPath = resolve(ROOT, cfg.session?.path || "./state/session.json");
   console.log("11) Guardar estado de sessão…");
-  saveSession(sessionPath, {
+  await handle.saveSession(sessionPath, {
     stage: "login_submitted",
-    agent,
     apps: { instagram: ig, linkedin: li },
     screenshot: shotPath,
     events: events.slice(-20),

@@ -21,9 +21,9 @@ Runtimes de POC (redroid / AVD): [`../pocs/`](../pocs/README.md).
 | Provisionar emulador (`provisionEmulator`) | [`lib/provision.js`](lib/provision.js) |
 | Instalar APKs (`handle.installApk`) | [`lib/apks.js`](lib/apks.js) + `apk-read-spec` · `apk-download` · `apk-install-package` |
 | Receber eventos (`handle.on` após provision) | [`lib/events.js`](lib/events.js) + `event-boot` · `event-app-open` · `event-ui-stable` · `event-dump-change` |
-| Executar operações | [`lib/operate.js`](lib/operate.js) |
-| Extrair elementos | [`lib/extract.js`](lib/extract.js) |
-| Guardar sessão | [`lib/session.js`](lib/session.js) |
+| Operar tela (`handle.launch` / `tap` / `type` / `scroll` / `screenshot` / `matchImage`) | [`lib/operate.js`](lib/operate.js) |
+| Extrair árvore DOM (`handle.extract`) | [`lib/extract.js`](lib/extract.js) |
+| Sessão (`handle.saveSession` / `removeSession` / `restoreSession`) | [`lib/session.js`](lib/session.js) |
 
 Inventário: [`../4.scenarios.md`](../4.scenarios.md)  
 BDD: [`../5.bdds.md`](../5.bdds.md)

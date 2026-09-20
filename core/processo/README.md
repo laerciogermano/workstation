@@ -91,7 +91,7 @@ O mapa e a prioridade nascem no discovery; o detalhe (SC/BDD) e o restante do pr
 
 1. Baixar o projeto **dentro da pasta da atividade** em `tasks/`
 2. Criar branch `TSK-<nn>-<titulo>` (= pasta da atividade)
-3. Criar TDDs (**SC** = unitário · **US**/**EP** = BDD e2e)
+3. Criar TDDs (**SC** → unitário do **componente** criado · **US**/**EP** = BDD e2e; SC sem suíte própria)
 4. Implementar a funcionalidade
 5. Testar
 6. Abrir PR (Summary + Test plan) e status → **Pendente aprovação**
@@ -118,8 +118,8 @@ Ordem = Gantt das tasks. Sequencial → robô espera o outro. Paralelo → robô
 
 **Execução**
 
-- SC = unitário · US/EP = BDD e2e
-- Aceite por origem (SC isolado; US/EP integrado)
+- SC sem suíte · unitário do componente · US/EP = BDD e2e
+- Aceite US/EP integrado; componentes cobertos por unitário
 - Regressão
 - Qualidade
 - Priorizar bugs

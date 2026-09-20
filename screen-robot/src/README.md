@@ -30,14 +30,16 @@ BDD: [`../5.bdds.md`](../5.bdds.md)
 
 ## Testes automatizados
 
-| Origem | Tipo | Comando |
-|--------|------|---------|
-| **SC** | unitário (`test/unit/`) | `npm test` / `npm run test:unit` |
+| O quê | Tipo | Comando |
+|-------|------|---------|
+| Componentes (`lib/*.js`) | unitário (`test/unit/<componente>.test.js`) | `npm test` / `npm run test:unit` |
 | **US** / **EP** | BDD e2e (`test/bdd/`) | `npm run test:e2e` |
+
+**SC** não tem suíte própria — só unitários dos módulos entregues.
 
 ```bash
 cd screen-robot/src
-npm test          # unitários SC
+npm test          # unitários dos componentes
 npm run test:e2e  # BDD e2e US/EP (requer runtime Android)
 ```
 

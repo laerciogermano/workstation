@@ -72,13 +72,13 @@ Regras:
 ## Summary
 
 - Fecha SC-01: sobe o runtime do agent e deixa o processo alcançável (`Reachable`)
-- TDD unitário de `startRuntime` (origem SC-01) cobrindo `Absent` / `Starting` → `Reachable`
+- TDD unitário do componente `startRuntime` (`Absent` / `Starting` → `Reachable`)
 - Atividade: `TSK-002-subir-e-conectar` (pai `TSK-001`)
 
 ## Test plan
 
-- [ ] Suíte unitária da SC verde no clone da pasta da task
-- [ ] Casos: start a partir de ausente; já alcançável; falha `PROVISION_START_FAILED`
+- [ ] Unitários do componente verde no clone da pasta da task
+- [ ] Casos: já alcançável; sobe e fica reachable; falha `PROVISION_START_FAILED`
 - [ ] Branch `TSK-002-subir-e-conectar`; card no board em **Pendente aprovação**
 ```
 
@@ -98,15 +98,15 @@ Ordem **obrigatória** — não pular nem inverter:
 
 | Origem da atividade | Tipo de teste | Como |
 |---------------------|---------------|------|
-| **SC-** (cenário / mudança de estado) | **Unitário** | Isola o helper/módulo (deps mockáveis); sem runtime real / e2e |
+| **SC-** (cenário) | **Não testado** como cenário | Ao criar componentes, escrever **unitários do módulo** (ex. `start-runtime.test.js`); SC não tem suíte própria |
 | **US-** (história) | **BDD e2e** | Gherkin Dado/Quando/Então contra o sistema integrado |
 | **EP-** (épico) | **BDD e2e** | Gherkin de ponta a ponta do aceite do épico |
 
 Regras:
 
-- Task cuja origem é **SC** → só unitários (TDD no módulo interno)
-- Task cuja origem é **US** ou **EP** → BDD e2e (aceite integrado)
-- Não misturar: SC não sobe e2e; US/EP não fecham só com unitário
+- **SC** → sem teste de cenário; só unitários dos **componentes** entregues na task
+- **US** / **EP** → BDD e2e (aceite integrado)
+- Não misturar: não inventar suíte `sc-*.test`; US/EP não fecham só com unitário
 
 ### Onde fica o clone
 
@@ -123,7 +123,7 @@ Regras transversais:
 - Preferência: uma SC (ou atividade folha) por robô / ciclo
 - Lote: primeiro um caso, validar; só então escalar
 - Commits pequenos e revisáveis; CI do projeto deve passar no PR
-- Testes: [tipo por origem](#tipo-de-teste-por-origem) (SC = unitário · US/EP = BDD e2e)
+- Testes: [tipo por origem](#tipo-de-teste-por-origem) (SC sem suíte · unitário do componente · US/EP = BDD e2e)
 
 ## Status no board
 

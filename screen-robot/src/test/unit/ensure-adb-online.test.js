@@ -1,13 +1,12 @@
 /**
- * Unitário — SC-02 Serial ADB fica online
- * Fonte: 5.bdds.md · TSK-003
+ * Unitário — lib/ensure-adb-online.js
  */
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { ensureAdbOnline } from "../../lib/ensure-adb-online.js";
 
-describe("Cenário: SC-02 Serial ADB fica online (unit)", () => {
-  it("Dado serial esperado; Quando wait-for-device ok; Então AdbOnline", async () => {
+describe("ensureAdbOnline", () => {
+  it("retorna quando wait-for-device ok", async () => {
     let connects = 0;
     let waits = 0;
     await ensureAdbOnline("127.0.0.1:5555", 5_000, Date.now(), {
@@ -23,7 +22,7 @@ describe("Cenário: SC-02 Serial ADB fica online (unit)", () => {
     assert.equal(waits, 1);
   });
 
-  it("Dado falha temporaria; Quando retry; Então fica online", async () => {
+  it("repete até device após falha temporária", async () => {
     let attempts = 0;
     await ensureAdbOnline("127.0.0.1:5555", 10_000, Date.now(), {
       connectIfTcp: () => {},
@@ -36,7 +35,7 @@ describe("Cenário: SC-02 Serial ADB fica online (unit)", () => {
     assert.equal(attempts, 2);
   });
 
-  it("Dado já online; Quando ensureAdbOnline de novo; Então idempotente", async () => {
+  it("é idempotente quando já online", async () => {
     let waits = 0;
     const deps = {
       connectIfTcp: () => {},
@@ -49,10 +48,8 @@ describe("Cenário: SC-02 Serial ADB fica online (unit)", () => {
     await ensureAdbOnline("127.0.0.1:5555", 1_000, Date.now(), deps);
     assert.equal(waits, 2);
   });
-});
 
-describe("Cenário: SC-02 falha tipica PROVISION_ADB_TIMEOUT (unit)", () => {
-  it("Dado serial inacessivel; Quando timeout; Então PROVISION_ADB_TIMEOUT", async () => {
+  it("lança PROVISION_ADB_TIMEOUT se o serial não fica device", async () => {
     let waits = 0;
     await assert.rejects(
       () =>

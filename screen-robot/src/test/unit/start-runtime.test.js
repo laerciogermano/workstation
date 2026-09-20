@@ -1,6 +1,5 @@
 /**
- * Unitário — SC-01 Agent sobe e fica alcançável
- * Fonte: 5.bdds.md · TSK-002
+ * Unitário — lib/start-runtime.js
  */
 import assert from "node:assert/strict";
 import path from "node:path";
@@ -10,8 +9,8 @@ import {
   startRuntime,
 } from "../../lib/start-runtime.js";
 
-describe("Cenário: SC-01 Agent sobe e fica alcançável (unit)", () => {
-  it("Dado já alcançável; Quando startRuntime; Então não executa startScript", async () => {
+describe("startRuntime", () => {
+  it("não executa startScript se já alcançável", async () => {
     let runs = 0;
     await startRuntime(
       { serial: "127.0.0.1:5555", kind: "redroid", connectTimeoutMs: 1_000 },
@@ -25,7 +24,7 @@ describe("Cenário: SC-01 Agent sobe e fica alcançável (unit)", () => {
     assert.equal(runs, 0);
   });
 
-  it("Dado host/script; Quando sobe e fica alcançável; Então Reachable", async () => {
+  it("executa startScript e retorna quando fica alcançável", async () => {
     let reachable = false;
     let runs = 0;
     await startRuntime(
@@ -48,7 +47,7 @@ describe("Cenário: SC-01 Agent sobe e fica alcançável (unit)", () => {
     assert.equal(reachable, true);
   });
 
-  it("Dado já Reachable após start; Quando startRuntime de novo; Então idempotente", async () => {
+  it("é idempotente quando já alcançável", async () => {
     let runs = 0;
     const deps = {
       isReachable: async () => true,
@@ -66,10 +65,8 @@ describe("Cenário: SC-01 Agent sobe e fica alcançável (unit)", () => {
     );
     assert.equal(runs, 0);
   });
-});
 
-describe("Cenário: SC-01 falha tipica PROVISION_START_FAILED (unit)", () => {
-  it("Dado script que falha; Quando tenta subir; Então PROVISION_START_FAILED", async () => {
+  it("lança PROVISION_START_FAILED se o script falha", async () => {
     await assert.rejects(
       () =>
         startRuntime(
@@ -92,7 +89,7 @@ describe("Cenário: SC-01 falha tipica PROVISION_START_FAILED (unit)", () => {
     );
   });
 
-  it("Dado kind=adb sem startScript e inacessivel; Quando sobe; Então PROVISION_START_FAILED", async () => {
+  it("lança PROVISION_START_FAILED sem startScript e inacessível", async () => {
     await assert.rejects(
       () =>
         startRuntime(
@@ -103,7 +100,7 @@ describe("Cenário: SC-01 falha tipica PROVISION_START_FAILED (unit)", () => {
     );
   });
 
-  it("Dado script ok mas nunca Reachable; Quando timeout; Então PROVISION_START_FAILED", async () => {
+  it("lança PROVISION_START_FAILED se nunca fica alcançável", async () => {
     await assert.rejects(
       () =>
         startRuntime(
@@ -124,12 +121,16 @@ describe("Cenário: SC-01 falha tipica PROVISION_START_FAILED (unit)", () => {
   });
 });
 
-describe("defaultStartScript (unit)", () => {
+describe("defaultStartScript", () => {
   it("resolve paths redroid e avd; adb sem script", () => {
     const redroid = defaultStartScript("redroid");
     const avd = defaultStartScript("avd");
-    assert.ok(redroid && redroid.endsWith(path.join("redroid", "scripts", "start.sh")));
-    assert.ok(avd && avd.endsWith(path.join("android-studio", "scripts", "start.sh")));
+    assert.ok(
+      redroid && redroid.endsWith(path.join("redroid", "scripts", "start.sh")),
+    );
+    assert.ok(
+      avd && avd.endsWith(path.join("android-studio", "scripts", "start.sh")),
+    );
     assert.equal(defaultStartScript("adb"), undefined);
   });
 });

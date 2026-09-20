@@ -89,7 +89,7 @@ O mapa e a prioridade nascem no discovery; o detalhe (SC/BDD) e o restante do pr
 
 **Execução** (tudo por IA / robôs, por atividade)
 
-1. Baixar o projeto
+1. Baixar o projeto **dentro da pasta da atividade** em `tasks/`
 2. Criar branch `task/<ID>-<slug>`
 3. Criar TDDs
 4. Implementar a funcionalidade

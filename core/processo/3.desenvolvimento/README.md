@@ -51,13 +51,24 @@ Exemplos: `task/SC-01-subir-conectar-android` · `task/US-01-provisionar-um-agen
 
 Ordem **obrigatória** — não pular nem inverter:
 
-1. **Baixar o projeto** — clone (ou worktree) limpo a partir do remoto, isolado para esta task
+1. **Baixar o projeto** — clone (ou worktree) limpo **dentro da pasta da atividade** em `tasks/` (ex.: `tasks/EP-01-…/US-01-…/SC-01-…/`), isolado para esta task; o `README.md` da atividade permanece na pasta; o código do repo fica como subpasta do clone nessa mesma pasta
 2. **Criar a branch** — nome no [padrão](#padrão-de-branch); publicar upstream quando houver push
 3. **Criar os TDDs** — testes que falham e cobrem o aceite da atividade (Entradas · Execução · Saídas / BDD)
 4. **Implementar a funcionalidade** — código mínimo para os TDDs passarem e o aceite fechar
 5. **Testar** — rodar a suíte relevante; só seguir com testes verdes
 6. **Concluir no board** — abrir **pull request** da branch e mudar o status da atividade para **Pendente aprovação**
 7. **Parar** — aguardar validação humana; **não** iniciar a próxima atividade do Gantt até essa aprovação
+
+### Onde fica o clone
+
+```text
+tasks/
+└── EP-NN-…/
+    └── US-NN-…/
+        └── SC-NN-…/          ← pasta da atividade
+            ├── README.md     ← Entradas · Execução · Saídas
+            └── <repo>/       ← projeto baixado aqui (clone/worktree)
+```
 
 Regras transversais:
 

@@ -47,8 +47,8 @@ nohup emulator -avd "$AVD_NAME" \
   -wipe-data \
   -camera-back "$WEBCAM" \
   -camera-front "$WEBCAM" \
-  -memory "${EMU_MEMORY:-384}" \
-  -cores "${EMU_CORES:-1}" \
+  -memory "${EMU_MEMORY:-1024}" \
+  -cores "${EMU_CORES:-2}" \
   -gpu swiftshader_indirect \
   -no-snapshot \
   -no-boot-anim \

@@ -87,22 +87,22 @@ Copie `.env.example` → `.env` (o `start.sh` faz isso se faltar) e ajuste:
 - `ADB_HOST` / `ADB_PORT` — ADB só em `127.0.0.1` por padrão; multi-agent usa portas distintas por `name`
 - `COMPOSE_PROJECT_NAME` / nome do container — alinhado ao `provision.name` quando a lib sobe a instância
 - resolução / DPI / FPS / `REDROID_GPU_MODE` (`guest` = software, `host` = GPU)
-- **Identidade mascarada** — `DEVICE_*` (não expor “redroid”; parecer Pixel/Android de mercado) — ver [Mascarar identidade](#mascarar-identidade-não-redroid)
+- **Identidade mascarada** — `DEVICE_*` (perfil de aparelho de mercado; ver requisito geral em [`../README.md`](../README.md#mascarar-identidade-do-aparelho)) — [aplicar neste vendor](#aplicar-mascaramento-neste-vendor)
 
 Dados persistentes: volume Docker **por agent** (não compartilhar o mesmo volume entre nomes).  
 **Não** use bind mount `./data` no Mac/Colima — o virtiofs quebra o `/data` do Android (`SQLITE_CANTOPEN`).
 
-## Mascarar identidade (não-redroid)
+## Aplicar mascaramento neste vendor
 
-**Requisito:** o Android aparente para apps **não** deve se apresentar como redroid/emulador óbvio — mascarar como um aparelho real (modelo/marca Android de mercado), para reduzir sinais de que é robô.
+Requisito geral (qualquer vendor): [`../README.md`](../README.md#mascarar-identidade-do-aparelho).
 
-| O quê | Como |
+Neste POC, o perfil vai em `DEVICE_*` no `.env` → `ro.product.*` no [`docker-compose.yml`](docker-compose.yml):
+
+| Campo | Uso |
 |-------|------|
-| Props de produto | `DEVICE_BRAND` · `DEVICE_MANUFACTURER` · `DEVICE_MODEL` · `DEVICE_NAME` · `DEVICE_DEVICE` · `DEVICE_MARKETNAME` no `.env` |
-| Compose | `ro.product.*` no [`docker-compose.yml`](docker-compose.yml) (defaults = Pixel 8 / Google) |
-| Objetivo | Apps leem `getprop ro.product.model` etc. e veem **Pixel8** (ou outro perfil), não `redroid15_arm64_only` |
+| `DEVICE_BRAND` · `DEVICE_MANUFACTURER` · `DEVICE_MODEL` · `DEVICE_NAME` · `DEVICE_DEVICE` · `DEVICE_MARKETNAME` | Props de produto no boot |
 
-Padrão no [`.env.example`](.env.example):
+Padrão no [`.env.example`](.env.example) (exemplo Pixel — troque por outro aparelho se quiser):
 
 ```bash
 DEVICE_BRAND=google
@@ -113,9 +113,7 @@ DEVICE_DEVICE=shiba
 DEVICE_MARKETNAME=Pixel8
 ```
 
-**Limites:** isso mascara props de build/produto; **não** garante bypass de Play Integrity / SafetyNet / attestation de alto nível. Sem espaços nos valores (`DEVICE_MODEL` etc.) — limitação do cmdline de boot.
-
-Após mudar identidade: `./scripts/reset.sh` (wipe + start) para o boot aplicar as props novas.
+Sem espaços nos valores — limitação do cmdline de boot neste stack. Após mudar: `./scripts/reset.sh` para o boot aplicar as props novas.
 
 ## Segurança
 

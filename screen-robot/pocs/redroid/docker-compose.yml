@@ -25,7 +25,7 @@ services:
       - "androidboot.redroid_fps=${REDROID_FPS:-30}"
       - "androidboot.redroid_gpu_mode=${REDROID_GPU_MODE:-guest}"
       - "androidboot.use_memfd=true"
-      # Identidade aparente do aparelho (esconde "redroid15_arm64_only" em apps)
+      # Identidade aparente do aparelho (esconde fingerprint genérico do vendor no boot)
       - "ro.product.brand=${DEVICE_BRAND:-google}"
       - "ro.product.manufacturer=${DEVICE_MANUFACTURER:-Google}"
       # Sem espaços no valor: o parser do Android corta em whitespace

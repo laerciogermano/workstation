@@ -17,7 +17,7 @@ O **screen-robot** é um agent Android controlado por código Node: provisiona o
 
 Além da automação por API, a instância Android permanece **disponível para controle interativo**: visualizar a tela (espelhamento) e operar manualmente — tocar, digitar, rolar e demais gestos — em paralelo ou em complemento ao código.
 
-O runtime **deve mascarar** a identidade do emulador: apps e telas **não** devem ver “redroid”, e sim props de um aparelho Android comum (ex. Pixel). Detalhe: [`pocs/redroid/`](pocs/redroid/README.md#mascarar-identidade-não-redroid).
+O runtime Android (qualquer **vendor**/kind: container, AVD, etc.) **deve mascarar** a identidade do ambiente: apps e telas **não** devem ver o nome do emulador/vendor, e sim props de um aparelho Android comum (marca/modelo de mercado). Detalhe: [`pocs/README.md`](pocs/README.md#mascarar-identidade-do-aparelho).
 
 ## Problema
 

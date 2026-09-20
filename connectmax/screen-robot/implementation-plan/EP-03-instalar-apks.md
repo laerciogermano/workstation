@@ -2,10 +2,12 @@
 
 **Por quê:** plano técnico do épico (sequências · agentes · passo a passo · contratos · classes · modelos · BDDs).  
 **Épico:** [`2.epics.md`](../2.epics.md).  
-**US:** [`1.stories.md`](../1.stories.md) · [`4.scenarios.md#ep-03--instalar-apks`](../4.scenarios.md#ep-03--instalar-apks) · [`5.bdds.md#ep-03--instalar-apks`](../5.bdds.md#ep-03--instalar-apks).
-**Código:** [`../sources/android-control/lib/apks.js`](../sources/android-control/lib/apks.js) · [`adb.js`](../sources/android-control/lib/adb.js).
+**US:** [`1.stories.md`](../1.stories.md) · [`4.scenarios.md#ep-03--instalar-apks`](../4.scenarios.md#ep-03--instalar-apks) · [`5.bdds.md#ep-03--instalar-apks`](../5.bdds.md#ep-03--instalar-apks).  
+**Handle:** `installApk` é método do [`AgentHandle`](EP-01-provisionar-agente.md) — **não** é função solta com `serial`.  
+**Pré-requisito:** [`EP-01`](EP-01-provisionar-agente.md) · `provisionEmulator` → handle.  
+**Implementação interna:** [`../sources/android-control/lib/apks.js`](../sources/android-control/lib/apks.js) (anexado ao handle em `provision.js`).
 
-**Stack:** Node ≥ 18 · `adb` · runtime provisionado (EP-01).
+**Stack:** Node ≥ 18 · JavaScript · `adb` · runtime provisionado (EP-01).
 
 ---
 
@@ -18,24 +20,44 @@
 | SC-09 | Baixar APK na versão definida |
 | SC-10 | Instalar pacote no agent |
 
-**Resultado:** apps da `device.config.json` instalados na versão pedida.
+**Resultado:** apps da config instalados na versão pedida via `handle.installApk(...)`.
+
+---
+
+## Fluxo (obrigatório)
+
+1. **Provisionar** (EP-01) → `AgentHandle`.  
+2. **Usar o handle** → `handle.installApk(app)`.
+
+```js
+import { provisionEmulator } from "./lib/provision.js";
+
+const handle = await provisionEmulator(cfg);
+await handle.installApk(cfg.apps.linkedin);
+// → { package, version, skipped, artifactPath? }
+```
+
+Não passar `serial` — vem do handle. Sequência SC-08→SC-10 encapsulada por dentro.
+
+| Superfície | O quê |
+|------------|--------|
+| **Público (caller)** | `provisionEmulator` → `handle.installApk(app)` |
+| **Privado** | ler spec · versionName · download · adb install |
 
 ---
 
 ## Diagramas de sequência
 
-### US-06 — Instalar APKs (fluxo completo)
+### Visão geral — provisionar, depois `handle.installApk`
 
 #### Agentes
 
 | Agente | Responsabilidade |
 |--------|------------------|
-| Caller | Dispara instalação das apps do cfg e recebe o resultado por package |
-| ApkInstaller | Para cada app: decide skip, baixa artefato e instala via ADB |
-| Config | Fornece `package` / `version` / source por entrada em `cfg.apps` |
-| Downloader | Obtém APK/XAPK (apkeep ou path local) e devolve o artefato |
-| AdbClient | Consulta versão instalada e executa `adb install` / `install-multiple` |
-| Device | Recebe o package e reporta sucesso/falha da instalação |
+| Caller | `provisionEmulator` → `handle.installApk(app)` |
+| AgentHandle | Expõe `installApk`; carrega `serial` |
+| apks.js (interno) | Encapsula SC-08→SC-10 |
+| Device | Recebe o package |
 
 ```mermaid
 ---
@@ -82,62 +104,32 @@ config:
 sequenceDiagram
   autonumber
   actor Dev as Caller
-  participant K as ApkInstaller
-  participant C as Config
-  participant DL as Downloader
-  participant A as AdbClient
+  participant P as provision.js
+  participant H as AgentHandle
+  participant K as apks (interno)
   participant D as Device
 
-  Dev->>K: installAppsFromConfig(serial, cfg)
-  loop para cada app em cfg.apps
-    K->>C: apps.*.package / version
-    C-->>K: alvo
-    K->>A: versionName instalada?
-    A->>D: dumpsys package
-    D-->>A: versionName|null
-    A-->>K: versão atual
-    alt já na versão alvo
-      K-->>Dev: skip
-    else precisa instalar
-      K->>DL: apkeep / artifact local
-      DL-->>K: path APK/XAPK
-      K->>A: adb install / install-multiple
-      A->>D: instalar
-      D-->>A: ok
-      A-->>K: Success
-      K-->>Dev: { installed: true, package, version }
-    end
+  Dev->>P: provisionEmulator(cfg)
+  P-->>Dev: handle
+
+  Dev->>H: installApk(app)
+  H->>K: installApk(serial, app)
+  note over K: SC-08 ler alvo · SC-09 baixar · SC-10 instalar
+  alt já na versão
+    K-->>H: skipped
+  else
+    K->>D: download + adb install
+    D-->>K: ok
+    K-->>H: installed
   end
+  H-->>Dev: InstallResult
 ```
-
-#### Passo a passo
-
-| # | De | Para | Chamada | Descrição | Entradas | Execução | Saídas |
-|---|----|------|---------|---------|----------|----------|--------|
-| 1 | Dev | ApkInstaller | `installAppsFromConfig(...)` | Instalar apps do cfg | `serial`, `cfg` | Itera apps | lista resultados |
-| 2 | ApkInstaller | Config | `package/version` | Ler alvo | chave app | Parse | pedido |
-| 3 | Config | ApkInstaller | `alvo` | Contrato da app | — | Retorna | alvo |
-| 4 | ApkInstaller | AdbClient | `versionName?` | Ver se já instalado | `package` | Pede dumpsys | pedido |
-| 5 | AdbClient | Device | `dumpsys package` | Ler versão | `pkg` | Shell | pedido |
-| 6 | Device | AdbClient | `versionName/null` | Versão atual | — | Resposta | versão |
-| 7 | AdbClient | ApkInstaller | `versão atual` | Reportar | — | Propaga | versão |
-| 8 | ApkInstaller | Dev | `skip` | Já na versão | match | Atalho | `skipped` |
-| 9 | ApkInstaller | Downloader | `apkeep/artifact` | Obter binário | pkg/version | Download ou path | pedido |
-| 10 | Downloader | ApkInstaller | `path` | Artefato | — | Retorna path | path |
-| 11 | ApkInstaller | AdbClient | `adb install` | Instalar | path(s) | install/-multiple | pedido |
-| 12 | AdbClient | Device | `instalar` | pm install | APK/XAPK | Aplica package | pedido |
-| 13 | Device | AdbClient | `ok` | Install ok | — | Success | `ok` |
-| 14 | AdbClient | ApkInstaller | `Success` | Confirmar | — | Propaga | `Success` |
-| 15 | ApkInstaller | Dev | `{ installed, package, version }` | Resultado | — | Agrega | InstallResult |
 
 #### Contratos
 
-Exemplos TypeScript das chamadas (# do passo a passo).
-
 ```ts
-// Pré: EP-01 ok; apkeep ou artefato local
+// Pré: handle de EP-01; apkeep ou artefato local
 // Erros: APK_CONFIG_INVALID | APK_DOWNLOAD_FAILED | APK_INSTALL_FAILED
-// Pós: versionName no device == alvo (se informado)
 
 type AppSpec = {
   package: string;
@@ -153,101 +145,42 @@ type InstallResult = {
   artifactPath?: string;
 };
 
-type AppsConfig = { apps: Record<string, AppSpec> };
+type AgentHandle = {
+  // … EP-01 / EP-02 …
+  installApk(app: AppSpec): Promise<InstallResult>;
+};
 
-// #1 Dev → ApkInstaller
-declare function installAppsFromConfig(
-  serial: string,
-  cfg: AppsConfig,
-): Promise<InstallResult[]>;
-
-declare function installApk(serial: string, app: AppSpec): Promise<InstallResult>;
-
-const results = await installAppsFromConfig("127.0.0.1:5555", {
-  apps: {
-    linkedin: {
-      package: "com.linkedin.android",
-      version: "4.1.986",
-      source: "apk-pure",
-    },
-  },
+const handle = await provisionEmulator(cfg);
+const r = await handle.installApk({
+  package: "com.linkedin.android",
+  version: "4.1.986",
+  source: "apk-pure",
 });
-
-// #2–3 Config
-const alvo: AppSpec = {
-  package: "com.linkedin.android",
-  version: "4.1.986",
-};
-
-// #4–7 versionName?
-declare function getInstalledVersion(
-  serial: string,
-  pkg: string,
-): Promise<string | null>;
-
-const current = await getInstalledVersion(
-  "127.0.0.1:5555",
-  "com.linkedin.android",
-);
-
-// #8 skip
-const skipped: InstallResult = {
-  package: "com.linkedin.android",
-  version: "4.1.986",
-  skipped: true,
-};
-
-// #9–10 Downloader
-declare function downloadApk(app: AppSpec): Promise<string>;
-const artifactPath = await downloadApk(alvo);
-// → "/tmp/com.linkedin.android.apk"
-
-// #11–14 adb install
-declare function adbInstall(
-  serial: string,
-  paths: string[],
-): Promise<"Success">;
-await adbInstall("127.0.0.1:5555", [artifactPath]);
-
-// #15 resultado
-const installed: InstallResult = {
-  package: "com.linkedin.android",
-  version: "4.1.986",
-  skipped: false,
-  artifactPath,
-};
 ```
 
+**Interno (não exportar ao caller como API com serial):** `downloadApk`, `getInstalledVersion`, `adbInstall` — usados por `createInstallApk(serial)` anexado ao handle.
 
 ---
 
 ## Modelos
 
-### AppSpec
+### AppSpec / InstallResult
 
 | Campo | Tipo | Descrição |
 |-------|------|-----------|
 | `package` | `string` | Package Android |
-| `version` | `string?` | versionName alvo |
-| `source` | `string?` | ex. `apk-pure` |
-| `artifact` | `string?` | Path local APK/XAPK |
-
-### InstallResult
-
-| Campo | Tipo |
-|-------|------|
-| `package` | `string` |
-| `version` | `string` |
-| `skipped` | `boolean` |
-| `artifactPath` | `string?` |
+| `version` | `string?` | Versão alvo |
+| `source` | `string?` | Ex. apk-pure |
+| `artifact` | `string?` | Path local |
+| `skipped` | `boolean` | Já na versão (resultado) |
 
 ### Erros
 
 | Código | Quando |
 |--------|--------|
-| `APK_CONFIG_INVALID` | SC-08 |
-| `APK_DOWNLOAD_FAILED` | SC-09 |
-| `APK_INSTALL_FAILED` | SC-10 |
+| `APK_CONFIG_INVALID` | Sem package |
+| `APK_DOWNLOAD_FAILED` | apkeep/artefato |
+| `APK_INSTALL_FAILED` | adb install |
 
 ---
 
@@ -277,91 +210,26 @@ config:
     clusterBorder: '#333333'
     titleColor: '#ffffff'
     edgeLabelBackground: '#000000'
-    actorBkg: '#000000'
-    actorBorder: '#64748b'
-    actorTextColor: '#ffffff'
-    actorLineColor: '#333333'
-    signalColor: '#94a3b8'
-    signalTextColor: '#ffffff'
-    labelBoxBkgColor: '#000000'
-    labelBoxBorderColor: '#64748b'
-    labelTextColor: '#ffffff'
-    loopTextColor: '#ffffff'
-    noteBorderColor: '#64748b'
-    noteBkgColor: '#111111'
-    noteTextColor: '#ffffff'
-    activationBorderColor: '#64748b'
-    activationBkgColor: '#1a1a1a'
-    sequenceNumberColor: '#ffffff'
     classText: '#ffffff'
 ---
 classDiagram
   direction TB
-  class AppSpec {
-    +string package
-    +string version
-    +string source
-    +string artifact
+  class AgentHandle {
+    +installApk(app) Promise~InstallResult~
   }
-  class InstallResult {
-    +string package
-    +boolean skipped
+  class apks_js {
+    <<internal>>
+    createInstallApk(serial)
   }
-  class ConfigReader {
-    +readApps(cfg) AppSpec[]
-  }
-  class Downloader {
-    +ensureArtifact(spec) string
-  }
-  class AdbClient {
-    +adb(serial, args)
-  }
-  class ApkInstaller {
-    +installApk(serial, app)
-    +installAppsFromConfig(serial, cfg)
-  }
-  ApkInstaller --> ConfigReader
-  ApkInstaller --> Downloader
-  ApkInstaller --> AdbClient
-  ApkInstaller ..> AppSpec
-  ApkInstaller ..> InstallResult
+  note for AgentHandle "Caller: provision → handle.installApk"
+  AgentHandle --> apks_js : installApk
 ```
-
-**Hoje / gap:** ver mapeamento abaixo.
 
 ---
 
 ## Cenários BDD
 
-Fonte: [`5.bdds.md#ep-03--instalar-apks`](../5.bdds.md#ep-03--instalar-apks).
-
-```gherkin
-Cenário: US-06 Apps da config ficam instalados na versão definida
-  Dado o agent provisionado e a lista de apps/versões na config
-  Quando cada pacote é lido, baixado e instalado
-  Então os apps estão instalados nas versões definidas
-```
-
-```gherkin
-Cenário: SC-08 Versão e package são lidos da config
-  Dado o arquivo device.config.json
-  Quando apps.*.version e package são parseados
-  Então a versão e o package alvo estão disponíveis para download
-```
-
-```gherkin
-Cenário: SC-09 APK da versão pedida é baixado
-  Dado package, versão e ferramenta de download
-  Quando o download da versão definida é executado
-  Então o artefato APK/XAPK existe no disco
-```
-
-```gherkin
-Cenário: SC-10 Pacote é instalado no agent
-  Dado serial online e caminho do APK
-  Quando adb install é executado
-  Então o pacote está instalado no agent
-```
+Fonte: [`5.bdds.md#ep-03--instalar-apks`](../5.bdds.md#ep-03--instalar-apks). Caller: handle já provisionado; “Quando…” = `handle.installApk`.
 
 ---
 
@@ -369,15 +237,16 @@ Cenário: SC-10 Pacote é instalado no agent
 
 | # | Entrega | SC | Critério |
 |---|---------|-----|----------|
-| I1 | `installAppsFromConfig` multi-app | US-06 | Loop config |
-| I2 | Skip se `versionName` == alvo | SC-08/10 | Idempotente |
-| I3 | Validar versão pós-install | SC-10 | Assert versionName |
-| I4 | Erros tipados download/install | SC-09/10 | Códigos estáveis |
+| I1 | `createInstallApk(serial)` + anexar `handle.installApk` | — | Sem `serial` no caller |
+| I2 | Skip se versionName == alvo | SC-08/10 | Idempotente |
+| I3 | Validar versão pós-install | SC-10 | Assert |
+| I4 | Erros tipados | SC-09/10 | Códigos estáveis |
+| I5 | Piloto usa `handle.installApk` | — | linkedin-login |
 
 ### Ordem
 
 ```text
-I1 → I2 → I3 → I4
+I1 → I2 → I3 → I4 → I5
 ```
 
 ---
@@ -386,18 +255,18 @@ I1 → I2 → I3 → I4
 
 | Peça | Status |
 |------|--------|
-| `installApk` + apkeep + XAPK | Existe |
-| Loop multi-app + skip por versão estrita | **Parcial / gap** |
+| `installApk(serial, app)` export solto | Existe — **mover** para handle |
+| `handle.installApk` | **Gap** |
 
 ---
 
 ## Critério de pronto (épico)
 
-1. Config → download → install cobertos  
-2. BDDs US-06 + SC-08..10  
-3. Idempotente na versão alvo  
+1. Caller: `provisionEmulator` → `handle.installApk`  
+2. SC-08..10 encapsulados  
+3. BDDs US-06 + SC  
 
 ## Próximos passos
 
-→ Implementar gaps em [`sources/android-control`](../sources/android-control/README.md)  
-→ Aceite: BDDs em [`5.bdds.md#ep-03--instalar-apks`](../5.bdds.md#ep-03--instalar-apks)
+→ Implementar I1–I5 em [`sources/android-control`](../sources/android-control/README.md)  
+→ Aceite: [`5.bdds.md#ep-03--instalar-apks`](../5.bdds.md#ep-03--instalar-apks)

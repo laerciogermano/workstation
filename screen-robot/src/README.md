@@ -28,6 +28,14 @@ Runtimes de POC (redroid / AVD): [`../pocs/`](../pocs/README.md).
 Inventário: [`../4.scenarios.md`](../4.scenarios.md)  
 BDD: [`../5.bdds.md`](../5.bdds.md)
 
+## Testes automatizados
+
+```bash
+cd screen-robot/src
+npm test        # BDD e2e (SC-01…)
+npm run test:e2e
+```
+
 ## Script inicial — login LinkedIn
 
 ```bash

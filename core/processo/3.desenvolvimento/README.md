@@ -5,6 +5,7 @@ Implementar o que foi refinado.
 ## Entradas
 
 - Backlog priorizado e critérios de aceite
+- Pasta `tasks/` (EP → US → SC com Entradas · Execução · Saídas)
 - Desenho técnico / ADRs
 - Código e infraestrutura existentes
 - Ambiente de desenvolvimento pronto

@@ -2,7 +2,7 @@
 
 **Por quê:** fixar o *quê* do robô de tela antes de goals de negócio.  
 **Importante:** este projeto **só** opera o device/tela via **Node**; não implementa cadência comercial nem fila de leads.  
-**No fluxo:** **este documento** → stories → epics (prioridade) → roadmap → refinar estória (scenarios → bdds → protótipo se houver) → tasks / implementation-plan → implementação em [`sources/`](sources/README.md).  
+**No fluxo:** **este documento** → stories → epics (prioridade) → roadmap → refinar estória (scenarios → bdds → protótipo se houver) → `7.tasks` / implementation-plan → pasta [`tasks/`](tasks/README.md) (EP/US/SC) → implementação em [`sources/`](sources/README.md).  
 **Umbrella:** [`../README.md`](../README.md).  
 **Consumidor LinkedIn:** [`../linkedin-agent/`](../linkedin-agent/README.md).  
 **Negócio (fila/faturamento):** [`../vendas/`](../vendas/README.md).  
@@ -52,6 +52,7 @@ Ver stories em [`1.stories.md`](1.stories.md) e cenários em [`4.scenarios.md`](
 | BDDs | [`5.bdds.md`](5.bdds.md) | Feito |
 | Implementation plan | por épico em [`implementation-plan/`](implementation-plan/README.md) | Feito |
 | Tasks (Gantt) | [`7.tasks.md`](7.tasks.md) | Feito |
+| Tasks (EP/US/SC) | [`tasks/`](tasks/README.md) | EP-01 |
 | Sources | [`sources/`](sources/README.md) | Em curso |
 | android-control | [`sources/android-control/`](sources/android-control/README.md) | Em curso |
 

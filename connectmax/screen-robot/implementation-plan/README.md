@@ -32,4 +32,4 @@ implementation-plan/
 
 ## Próximos passos
 
-→ [`../7.tasks.md`](../7.tasks.md) · [`../3.roadmap.md`](../3.roadmap.md)
+→ [`../tasks/`](../tasks/README.md) · [`../7.tasks.md`](../7.tasks.md) · [`../3.roadmap.md`](../3.roadmap.md)

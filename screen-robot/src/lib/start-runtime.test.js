@@ -6,6 +6,7 @@ import path from "node:path";
 import { describe, it } from "node:test";
 import {
   defaultStartScript,
+  isRuntimeReachable,
   startRuntime,
 } from "./start-runtime.js";
 
@@ -132,6 +133,22 @@ describe("startRuntime", () => {
         ),
       (err) => err && err.code === "PROVISION_START_FAILED",
     );
+  });
+});
+
+describe("isRuntimeReachable", () => {
+  it("aceita emulator-* via adb devices", async () => {
+    const ok = await isRuntimeReachable("emulator-5554", 100, {
+      adbDevices: () => "List of devices attached\nemulator-5554\tdevice\n",
+    });
+    assert.equal(ok, true);
+  });
+
+  it("recusa emulator offline", async () => {
+    const ok = await isRuntimeReachable("emulator-5554", 100, {
+      adbDevices: () => "List of devices attached\nemulator-5554\toffline\n",
+    });
+    assert.equal(ok, false);
   });
 });
 

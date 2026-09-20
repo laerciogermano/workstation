@@ -6,7 +6,11 @@ import { describe, it } from "node:test";
 import { defaultResetScript, resetInstance } from "./reset-instance.js";
 
 describe("defaultResetScript", () => {
-  it("aponta redroid para adb e redroid", () => {
+  it("aponta avd para android-studio", () => {
+    assert.match(defaultResetScript("avd"), /android-studio\/scripts\/reset\.sh$/);
+  });
+
+  it("aponta redroid para adb e redroid (legado)", () => {
     assert.match(defaultResetScript("adb"), /redroid\/scripts\/reset\.sh$/);
     assert.match(defaultResetScript("redroid"), /redroid\/scripts\/reset\.sh$/);
   });

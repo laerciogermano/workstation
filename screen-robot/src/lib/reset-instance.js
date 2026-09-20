@@ -23,6 +23,9 @@ const pocsRoot = path.resolve(
  * @returns {string|undefined}
  */
 export function defaultResetScript(kind) {
+  if (kind === "avd") {
+    return path.join(pocsRoot, "android-studio", "scripts", "reset.sh");
+  }
   if (kind === "redroid" || kind === "adb") {
     return path.join(pocsRoot, "redroid", "scripts", "reset.sh");
   }

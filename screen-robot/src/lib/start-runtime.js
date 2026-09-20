@@ -25,26 +25,39 @@ export function defaultStartScript(kind) {
 }
 
 /**
- * Porta/host do serial TCP (ex. 127.0.0.1:5555) respondendo.
+ * Runtime alcançável: TCP (127.0.0.1:5555) ou serial local no `adb devices` (emulator-5554).
  * @param {string} serial
  * @param {number} [timeoutMs]
+ * @param {{ adbDevices?: () => string }} [deps]
  */
-export function isRuntimeReachable(serial, timeoutMs = 1_000) {
-  const m = String(serial).match(/^(localhost|\d+\.\d+\.\d+\.\d+):(\d+)$/i);
-  if (!m) return Promise.resolve(false);
-  const host = m[1].toLowerCase() === "localhost" ? "127.0.0.1" : m[1];
-  const port = Number(m[2]);
-  return new Promise((resolve) => {
-    const socket = net.connect({ host, port }, () => {
-      socket.destroy();
-      resolve(true);
+export function isRuntimeReachable(serial, timeoutMs = 1_000, deps = {}) {
+  const s = String(serial || "");
+  const m = s.match(/^(localhost|\d+\.\d+\.\d+\.\d+):(\d+)$/i);
+  if (m) {
+    const host = m[1].toLowerCase() === "localhost" ? "127.0.0.1" : m[1];
+    const port = Number(m[2]);
+    return new Promise((resolve) => {
+      const socket = net.connect({ host, port }, () => {
+        socket.destroy();
+        resolve(true);
+      });
+      socket.on("error", () => resolve(false));
+      socket.setTimeout(timeoutMs, () => {
+        socket.destroy();
+        resolve(false);
+      });
     });
-    socket.on("error", () => resolve(false));
-    socket.setTimeout(timeoutMs, () => {
-      socket.destroy();
-      resolve(false);
-    });
-  });
+  }
+  if (!s) return Promise.resolve(false);
+  const list =
+    typeof deps.adbDevices === "function"
+      ? deps.adbDevices()
+      : spawnSync("adb", ["devices"], { encoding: "utf8" }).stdout || "";
+  const line = String(list)
+    .split("\n")
+    .map((l) => l.trim())
+    .find((l) => l.startsWith(`${s}\t`) || l.startsWith(`${s} `));
+  return Promise.resolve(Boolean(line && /\bdevice\b/.test(line)));
 }
 
 function defaultRunStartScript(scriptPath) {

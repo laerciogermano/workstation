@@ -248,7 +248,7 @@ Script [`scripts/linkedin-login.js`](scripts/linkedin-login.js):
 
 1. Limpa `screenshots/`
 2. `resetInstance(cfg)`
-3. `provisionEmulator` → `installApk(linkedin)` → `launch` → `on("ui_stable")`
+3. `provisionEmulator` → `openScrcpy` → `installApk(linkedin)` → `launch` → `on("ui_stable")`
 4. `01-tela-inicial.png`
 5. `extract()` ×5 → console + `tree-screen.png` + `component-tree.json`
 

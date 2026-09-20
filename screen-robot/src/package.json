@@ -13,7 +13,7 @@
     "linkedin-login": "node scripts/linkedin-login.js",
     "test": "node --test 'lib/**/*.test.js'",
     "test:unit": "node --test 'lib/**/*.test.js'",
-    "test:e2e": "node --test 'test/bdd/**/*.test.js'"
+    "test:e2e": "node --test --test-concurrency=1 'test/bdd/**/*.test.js'"
   },
   "engines": {
     "node": ">=18"

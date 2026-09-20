@@ -26,6 +26,22 @@
 
 ---
 
+## Árvore de arquivos
+
+```text
+src/
+├── lib/
+│   ├── extract.js                 # createExtract → handle.extract() (progressivo)
+│   ├── extract.test.js
+│   └── provision.js               # anexa extract ao handle
+└── test/
+    └── bdd/
+        ├── ep-05-extrair-elementos.test.js
+        └── us-13-extrair-arvore-dom.test.js
+```
+
+---
+
 ## Fluxo (obrigatório)
 
 1. **Provisionar** → handle.  
@@ -351,8 +367,8 @@ I1 → I2 → I3 → I4 → I5
 
 | Peça | Status |
 |------|--------|
-| `extractElements(serial)` lista plana | Existe — **mapear** para árvore `UiNode` |
-| Árvore DOM acumulada por passos | **Gap** |
+| `createExtract` → `handle.extract()` | Existe (progressivo) |
+| `extractElements` lista plana | Legado (piloto LinkedIn) |
 
 ---
 
@@ -360,10 +376,9 @@ I1 → I2 → I3 → I4 → I5
 
 1. `handle.extract()` sem parâmetros  
 2. Retorno = árvore DOM (`type` + `children`); elementos = nodes  
-3. Cada estória incrementa tipos de node na árvore  
-4. BDDs US-13..16  
+3. Cada chamada incrementa tipos de node na árvore  
+4. BDDs US-13 + EP-05  
 
 ## Próximos passos
 
-→ Implementar I1–I5 em [`src`](../src/README.md)  
 → Aceite: [`5.bdds.md#ep-05--extrair-elementos`](../5.bdds.md#ep-05--extrair-elementos)

@@ -24,6 +24,22 @@
 
 ---
 
+## Árvore de arquivos
+
+```text
+src/
+├── lib/
+│   ├── session.js                 # createSessionApi → handle.save/remove/restoreSession
+│   ├── session.test.js
+│   └── provision.js               # anexa session ao handle
+└── test/
+    └── bdd/
+        ├── ep-06-sessao.test.js
+        └── us-17-salvar-sessao.test.js
+```
+
+---
+
 ## Fluxo (obrigatório)
 
 1. **Provisionar** → handle.  
@@ -291,9 +307,9 @@ I1 → I2 → I3 → I4 → I5
 
 | Peça | Status |
 |------|--------|
-| `saveSession` / `loadSession` soltos | Existe — **mover** para handle |
-| `removeSession` | **Gap** |
-| `restoreSession` reaplicando runtime | **Gap** |
+| `createSessionApi` → handle | Existe |
+| `saveSession` / `removeSession` / `restoreSession` | Existe |
+| Legado `saveSession` / `loadSession` soltos | Deprecado |
 
 ---
 
@@ -301,9 +317,8 @@ I1 → I2 → I3 → I4 → I5
 
 1. Sessão só via handle  
 2. SC-22..24 encapsulados  
-3. BDDs US-17..19  
+3. BDDs US-17 + EP-06  
 
 ## Próximos passos
 
-→ Implementar I1–I5 em [`src`](../src/README.md)  
 → Aceite: [`5.bdds.md#ep-06--sessao`](../5.bdds.md#ep-06--sessao)

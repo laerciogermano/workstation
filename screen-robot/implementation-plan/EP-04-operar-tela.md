@@ -27,6 +27,22 @@
 
 ---
 
+## Árvore de arquivos
+
+```text
+src/
+├── lib/
+│   ├── operate.js                 # createOperate → handle.launch/tap/type/scroll/screenshot/matchImage
+│   ├── operate.test.js
+│   └── provision.js               # anexa operate ao handle
+└── test/
+    └── bdd/
+        ├── ep-04-operar-tela.test.js
+        └── us-07-abrir-aplicativo.test.js
+```
+
+---
+
 ## Fluxo (obrigatório)
 
 1. **Provisionar** → handle.  
@@ -237,9 +253,9 @@ I1 → I2 → I3 → I4 → I5 → I6 → I7 → I8
 
 | Peça | Status |
 |------|--------|
-| `operate.js` com `serial` no 1º arg | Existe — **mover** para handle |
-| `matchImage` / scroll | **Gap** / parcial |
-| `handle.launch`… | **Gap** |
+| `createOperate` → handle | Existe |
+| `launch` / `tap` / `type` / `scroll` / `screenshot` / `matchImage` | Existe |
+| Legado `operate.*(serial, …)` | Deprecado |
 
 ---
 
@@ -247,9 +263,8 @@ I1 → I2 → I3 → I4 → I5 → I6 → I7 → I8
 
 1. Caller só usa métodos do handle  
 2. SC-11..16 encapsulados  
-3. BDDs US-07..12  
+3. BDDs US-07 + EP-04  
 
 ## Próximos passos
 
-→ Implementar I1–I8 em [`src`](../src/README.md)  
 → Aceite: [`5.bdds.md#ep-04--operar-tela`](../5.bdds.md#ep-04--operar-tela)

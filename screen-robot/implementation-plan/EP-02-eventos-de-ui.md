@@ -28,6 +28,36 @@
 
 ---
 
+## Árvore de arquivos
+
+```text
+src/
+├── lib/
+│   ├── events.js                 # createOn → handle.on
+│   ├── events.test.js
+│   ├── event-boot.js             # waitBoot (US-02 / SC-04)
+│   ├── event-boot.test.js
+│   ├── event-app-open.js         # waitAppOpen (US-03 / SC-05)
+│   ├── event-app-open.test.js
+│   ├── event-ui-stable.js        # waitUiStable (US-04 / SC-06)
+│   ├── event-ui-stable.test.js
+│   ├── event-dump-change.js      # waitDumpChange (US-05 / SC-07)
+│   ├── event-dump-change.test.js
+│   ├── extract.js                # dumpUiXml (deps de stable/dump)
+│   └── provision.js              # anexa on ao handle
+└── test/
+    └── bdd/
+        ├── ep-02-eventos-de-ui.test.js
+        ├── us-02-boot-do-device-e-sinalizado.test.js
+        ├── us-03-app-aberta-e-confirmada.test.js
+        ├── us-04-tela-estavel-e-confirmada.test.js
+        └── us-05-dump-atualizado-fica-disponivel.test.js
+```
+
+Unitários ao lado do módulo (mock/stub). BDD e2e só US/EP.
+
+---
+
 ## Fluxo (obrigatório)
 
 1. **Provisionar** o emulador (EP-01) → recebe `AgentHandle`.  
@@ -413,9 +443,10 @@ I1 → I2 → I3 → I4 → I5 → I6
 
 | Peça | Status |
 |------|--------|
-| `handle.on` após `provisionEmulator` | **Alvo** |
-| `createOn(serial)` interno | **Gap** / em curso |
-| `waitForUiReady` exportado | Substituir por `handle.on("ui_stable")` |
+| `handle.on` após `provisionEmulator` | Existe |
+| `createOn(serial)` interno | `events.js` |
+| `waitBoot` / `waitAppOpen` / `waitUiStable` / `waitDumpChange` | Módulos `event-*` + unitários |
+| BDD e2e US-02..05 / EP-02 | `test/bdd/` |
 | `on` como export solto | **Proibido** |
 
 ---

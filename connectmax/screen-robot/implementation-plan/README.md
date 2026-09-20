@@ -16,7 +16,7 @@
 | EP-02 | Eventos de UI | [`EP-02-eventos-de-ui.md`](EP-02-eventos-de-ui.md) | `on(event, opts?, onEvent?)` |
 | EP-03 | Instalar APKs | [`EP-03-instalar-apks.md`](EP-03-instalar-apks.md) | `installApk(app)` |
 | EP-04 | Operar tela | [`EP-04-operar-tela.md`](EP-04-operar-tela.md) | `launch` · `tap` · `type` · `scroll` · `screenshot` · `matchImage` |
-| EP-05 | Extrair elementos | [`EP-05-extrair-elementos.md`](EP-05-extrair-elementos.md) | `extract(kind, opts?)` |
+| EP-05 | Extrair elementos | [`EP-05-extrair-elementos.md`](EP-05-extrair-elementos.md) | `extract()` — JSON acumulado por chamada |
 | EP-06 | Sessão | [`EP-06-sessao.md`](EP-06-sessao.md) | `saveSession` · `removeSession` · `restoreSession` |
 
 ## Estrutura

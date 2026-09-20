@@ -178,12 +178,16 @@ Gravado por `handle.saveSession("./sessions/linkedin.json", { … })`:
     "screenshot": "./screenshots/linkedin-before-login.png"
   },
   "extract": {
-    "step": 5,
-    "texts": [{ "type": "text", "text": "Entrar" }],
-    "tree": { "type": "other", "children": [] },
-    "icons": [],
-    "lists": [],
-    "images": []
+    "type": "root",
+    "bounds": { "x": 0, "y": 0, "w": 1080, "h": 2400 },
+    "children": [
+      {
+        "type": "text",
+        "text": "Entrar",
+        "bounds": { "x": 120, "y": 1800, "w": 840, "h": 96 },
+        "children": []
+      }
+    ]
   },
   "events": [
     { "type": "ui_stable", "attempt": 3, "at": "2026-09-19T23:00:00.000Z" }
@@ -198,7 +202,7 @@ Gravado por `handle.saveSession("./sessions/linkedin.json", { … })`:
 | `step` | estado passado pelo caller |
 | `apps` | instalação (EP-03) |
 | `paths` | paths úteis para restore |
-| `extract` | último snapshot (EP-05), opcional |
+| `extract` | última árvore DOM (EP-05), opcional |
 | `events` | últimos eventos (EP-02), opcional |
 | `savedAt` | preenchido no save |
 

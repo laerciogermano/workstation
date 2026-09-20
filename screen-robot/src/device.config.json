@@ -1,8 +1,7 @@
 {
-  "device": "127.0.0.1:5555",
   "provision": {
-    "kind": "adb",
-    "serial": "127.0.0.1:5555",
+    "name": "linkedin-pilot",
+    "kind": "redroid",
     "connectTimeoutMs": 120000
   },
   "apps": {

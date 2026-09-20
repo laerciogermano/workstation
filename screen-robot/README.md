@@ -7,7 +7,8 @@
 **Consumidor LinkedIn:** [`../connectmax/linkedin-agent/`](../connectmax/linkedin-agent/README.md).  
 **Negócio (fila/faturamento):** [`../connectmax/vendas/`](../connectmax/vendas/README.md).  
 **Config IA:** [`config/config-ia.md`](config/config-ia.md).  
-**Prompts:** [`../connectmax/prompts/timeline.md`](../connectmax/prompts/timeline.md).
+**Prompts:** [`../connectmax/prompts/timeline.md`](../connectmax/prompts/timeline.md).  
+**Postmortem (runtime):** [`postmortem.md`](postmortem.md) — por que saímos do redroid e adotamos Android Studio.
 
 ---
 

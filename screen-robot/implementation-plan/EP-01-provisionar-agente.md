@@ -4,7 +4,8 @@
 **Épico:** [`2.epics.md`](../2.epics.md).  
 **US:** [`1.stories.md`](../1.stories.md) · [`4.scenarios.md#ep-01--provisionar-agente`](../4.scenarios.md#ep-01--provisionar-agente) · [`5.bdds.md#ep-01--provisionar-agente`](../5.bdds.md#ep-01--provisionar-agente).  
 **Biblioteca:** [`../src/lib/provision.js`](../src/lib/provision.js) — handle: `provisionEmulator` (create-or-attach por `name`). Ops: [`../src/lib/reset-instance.js`](../src/lib/reset-instance.js) — `resetInstance` (fora do handle).  
-**Runtime:** Android Emulator / AVD via [`../pocs/android-studio/`](../pocs/android-studio/README.md).
+**Runtime:** Android Emulator / AVD via [`../pocs/android-studio/`](../pocs/android-studio/README.md).  
+**Postmortem:** [`../postmortem.md`](../postmortem.md) (problemas do redroid → escolha do AVD).
 
 **Stack:** Node ≥ 18 · JavaScript · `adb` · Android SDK / Emulator (AVD).
 

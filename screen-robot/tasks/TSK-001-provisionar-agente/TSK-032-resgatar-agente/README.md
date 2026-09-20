@@ -14,7 +14,7 @@
 
 ## Execução
 
-- `attachEmulator(name)` — encapsula SC-25→26
+- `provisionEmulator({ name })` com nome já registrado — encapsula SC-25→26
 - Não cria container novo
 
 ## Saídas

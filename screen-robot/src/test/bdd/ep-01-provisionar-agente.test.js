@@ -1,5 +1,5 @@
 /**
- * BDD e2e — EP-01 Provisionar agente (create + attach por nome)
+ * BDD e2e — EP-01 Provisionar agente (create-or-attach por nome)
  */
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
@@ -8,7 +8,7 @@ import { describe, it, before, after } from "node:test";
 import { fileURLToPath } from "node:url";
 import { adb } from "../../lib/adb.js";
 import { createAgentRegistry } from "../../lib/agent-registry.js";
-import { attachEmulator, provisionEmulator } from "../../lib/provision.js";
+import { provisionEmulator } from "../../lib/provision.js";
 
 const pocsRoot = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
@@ -51,7 +51,7 @@ describe("Épico: EP-01 Provisionar agente", () => {
   });
 
   it(
-    "Dado nomes distintos; Quando provisiona A e B e attach A; Então handles Booted com seriais distintos",
+    "Dado nomes distintos; Quando provisiona A/B e reprovisiona A; Então seriais distintos e A reanexa",
     async () => {
       const a = await provisionEmulator({
         provision: { name: nameA, kind: "redroid", connectTimeoutMs: timeoutMs },
@@ -70,15 +70,9 @@ describe("Épico: EP-01 Provisionar agente", () => {
       assert.equal(b.name, nameB);
       assert.notEqual(a.serial, b.serial);
 
-      await assert.rejects(
-        () =>
-          provisionEmulator({
-            provision: { name: nameA, kind: "redroid", connectTimeoutMs: 5_000 },
-          }),
-        (err) => err && err.code === "PROVISION_NAME_TAKEN",
-      );
-
-      const again = await attachEmulator(nameA, { connectTimeoutMs: timeoutMs });
+      const again = await provisionEmulator({
+        provision: { name: nameA, kind: "redroid", connectTimeoutMs: timeoutMs },
+      });
       assert.equal(again.name, nameA);
       assert.equal(again.serial, a.serial);
       assert.equal(again.bootCompleted, true);

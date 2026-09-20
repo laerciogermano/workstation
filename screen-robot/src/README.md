@@ -1,60 +1,229 @@
 # src — screen-robot
 
-API **Node** do screen-robot sobre ADB: provisionar agent, instalar APKs, eventos, operar, extrair UI, sessão.
+API **Node** (≥ 18) para controlar Android via ADB: provisionar agents, instalar APKs, eventos de UI, gestos, extração DOM e sessão.
 
-Runtimes de POC (redroid / AVD): [`../pocs/`](../pocs/README.md).
+Visão do projeto: [`../README.md`](../README.md) · Runtimes: [`../pocs/`](../pocs/README.md) · Aceite: [`../5.bdds.md`](../5.bdds.md)
 
-## Requisitos
+---
 
-- Node ≥ 18, `adb` no PATH
-- Docker/Colima para multi-agent redroid (`provision.name` + `kind: "redroid"`)
-- Opcional: [`apkeep`](https://github.com/EFForg/apkeep) para baixar XAPK (`brew install apkeep`)
-
-## Config do dispositivo
-
-[`device.config.json`](device.config.json) — `provision.name` (obrigatório no create), `kind`, apps, paths de sessão/print.
-
-## Funcionalidades (libs)
-
-| Recorte | Módulo |
-|---------|--------|
-| Provisionar / resgatar (`provisionEmulator` · `attachEmulator`) | [`lib/provision.js`](lib/provision.js) |
-| Instalar APKs (`handle.installApk`) | [`lib/apks.js`](lib/apks.js) + `apk-read-spec` · `apk-download` · `apk-install-package` |
-| Receber eventos (`handle.on` após provision) | [`lib/events.js`](lib/events.js) + `event-boot` · `event-app-open` · `event-ui-stable` · `event-dump-change` |
-| Operar tela (`handle.launch` / `tap` / `type` / `scroll` / `screenshot` / `matchImage`) | [`lib/operate.js`](lib/operate.js) |
-| Extrair árvore DOM (`handle.extract`) | [`lib/extract.js`](lib/extract.js) |
-| Sessão (`handle.saveSession` / `removeSession` / `restoreSession`) | [`lib/session.js`](lib/session.js) |
-
-Inventário: [`../4.scenarios.md`](../4.scenarios.md)  
-BDD: [`../5.bdds.md`](../5.bdds.md)
-
-## Testes automatizados
-
-| O quê | Tipo | Comando |
-|-------|------|---------|
-| Componentes (`lib/*.js`) | unitário ao lado do arquivo; **deps mock/stub** (sem app/runtime) | `npm test` / `npm run test:unit` |
-| **US** / **EP** | BDD e2e (`test/bdd/`) — **app inteira, sem mock/stub** | `npm run test:e2e` |
-
-**SC** não tem suíte própria. Unitário isola o SUT. BDD e2e exercita o caminho real (runtime/ADB).
+## Instalação / entrada
 
 ```bash
 cd screen-robot/src
-npm test          # unitários isolados (mock/stub)
-npm run test:e2e  # BDD e2e US/EP — sistema real (requer runtime Android)
+# Node ≥ 18, adb no PATH
+# Docker/Colima se kind=redroid (a lib sobe o container)
 ```
 
-## Script inicial — login LinkedIn
+Superfície pública:
+
+```js
+import { provisionEmulator, attachEmulator } from "./lib/provision.js";
+```
+
+Tudo o mais (gestos, APKs, eventos, extract, sessão) vem no **handle** retornado. Não passe `serial` nas operações — ele está no handle.
+
+---
+
+## 1. Provisionar e resgatar agents
+
+### Criar (sempre container novo)
+
+```js
+const handle = await provisionEmulator({
+  provision: {
+    name: "agent-a",          // obrigatório, único ([a-zA-Z0-9_-])
+    kind: "redroid",          // redroid | avd | …
+    connectTimeoutMs: 120_000,
+    // host: "127.0.0.1",     // opcional
+  },
+});
+// handle.name · handle.serial · handle.kind · handle.bootCompleted · handle.provisionedAt
+```
+
+- Aloca porta ADB livre e sobe **um container novo** ligado ao `name`
+- Se o nome já existir → `err.code === "PROVISION_NAME_TAKEN"` (use `attachEmulator`)
+- Nome inválido → `PROVISION_INVALID_NAME`
+
+### Resgatar (sem criar)
+
+```js
+const again = await attachEmulator("agent-a", { connectTimeoutMs: 120_000 });
+// again.serial === handle.serial
+```
+
+- Nome ausente → `PROVISION_NAME_NOT_FOUND`
+
+### Vários em paralelo
+
+```js
+const a = await provisionEmulator({ provision: { name: "a", kind: "redroid" } });
+const b = await provisionEmulator({ provision: { name: "b", kind: "redroid" } });
+// a.serial !== b.serial
+```
+
+Não é obrigatório rodar `pocs/redroid/scripts/start.sh` no fluxo da lib — o create já sobe o container.
+
+Config de exemplo: [`device.config.json`](device.config.json) (`provision.name`, `kind`, apps, paths).
+
+---
+
+## 2. Instalar APKs — `handle.installApk(app)`
+
+```js
+const r = await handle.installApk({
+  package: "com.linkedin.android",
+  version: "4.1.1093",           // opcional: skip se já instalada
+  artifact: "apks/app.apk",      // path local
+  // source: "apk-pure",         // download via apkeep se não houver artifact
+});
+// { package, version, skipped, artifactPath? }
+```
+
+Erros: `APK_CONFIG_INVALID` · `APK_DOWNLOAD_FAILED` · `APK_INSTALL_FAILED`.
+
+---
+
+## 3. Eventos de UI — `handle.on(event, opts?, onEvent?)`
+
+```js
+await handle.on("boot");
+await handle.on("app_open", { pkg: "com.linkedin.android", timeoutMs: 60_000 });
+await handle.on("ui_stable", { timeoutMs: 90_000, stableMs: 800 }, (e) => {
+  console.log(e.type, e.attempt);
+});
+await handle.on("dump_change", { timeoutMs: 30_000 });
+```
+
+| Evento | O quê |
+|--------|--------|
+| `boot` | Sinal de boot do device |
+| `app_open` | Package em foreground (`opts.pkg`) |
+| `ui_stable` | UI sem transição |
+| `dump_change` | Dump uiautomator mudou |
+
+Desconhecido → `EVENT_UNKNOWN`. Timeout → códigos `EVENT_*` / timeout do listener.
+
+---
+
+## 4. Operar tela
+
+```js
+await handle.launch("com.linkedin.android");           // ou launch(pkg, ".MainActivity")
+handle.tap(360, 640);
+handle.tapElement(el);                                 // el.center ou el.bounds
+handle.type("olá");                                    // ASCII via input; unicode via ADBKeyBoard
+handle.scroll({ direction: "down", distance: 800 });   // up|down|left|right; x/y opcionais
+const shot = handle.screenshot("./screenshots/tela.png");
+const { x, y, confidence } = await handle.matchImage("./templates/btn.png");
+```
+
+| Método | Erros tipados |
+|--------|----------------|
+| `launch` | `OPERATE_LAUNCH_FAILED` |
+| `type` | `OPERATE_TYPE_FAILED` |
+| `screenshot` | `OPERATE_SCREENSHOT_FAILED` |
+| `matchImage` | `OPERATE_MATCH_NOT_FOUND` |
+
+IME unicode: [`apks/ADBKeyboard.apk`](apks/ADBKeyboard.apk) (instalado sob demanda).
+
+---
+
+## 5. Extrair UI — `handle.extract()`
+
+Sem parâmetros. Cada chamada **enriquece** a mesma árvore:
+
+```js
+const t1 = await handle.extract(); // textos
+const t2 = await handle.extract(); // hierarquia
+const t3 = await handle.extract(); // ícones
+const t4 = await handle.extract(); // listas
+const t5 = await handle.extract(); // imagens
+// { type: "root", bounds, children: [ { type, text?, bounds?, children } ] }
+```
+
+Legado (piloto LinkedIn, lista plana): `extractElements` / `findLoginTarget` / `findEditableFields` em [`lib/extract.js`](lib/extract.js).
+
+---
+
+## 6. Sessão
+
+```js
+await handle.saveSession("./state/session.json", { step: "logged-in", apps: […] });
+const state = await handle.restoreSession("./state/session.json");
+// state inclui serial, kind, savedAt + campos passados
+await handle.removeSession("./state/session.json"); // true se removeu
+```
+
+Erros: `SESSION_WRITE_FAILED` · `SESSION_NOT_FOUND` · `SESSION_INVALID`.
+
+---
+
+## 7. Fluxo completo (exemplo)
+
+```js
+import { readFileSync } from "node:fs";
+import { provisionEmulator } from "./lib/provision.js";
+
+const cfg = JSON.parse(readFileSync("./device.config.json", "utf8"));
+const handle = await provisionEmulator(cfg);
+
+await handle.installApk(cfg.apps.linkedin);
+await handle.launch(cfg.apps.linkedin.package);
+await handle.on("ui_stable", { timeoutMs: 90_000 });
+
+handle.screenshot(cfg.screenshot.path);
+const tree = await handle.extract();
+
+await handle.saveSession(cfg.session.path, { stage: "ready", treeType: tree.type });
+```
+
+---
+
+## 8. Mapa de módulos
+
+| Recorte | Arquivo |
+|---------|---------|
+| `provisionEmulator` · `attachEmulator` | [`lib/provision.js`](lib/provision.js) |
+| Container / porta / registry | `start-runtime` · `attach-runtime` · `agent-registry` |
+| `installApk` | [`lib/apks.js`](lib/apks.js) |
+| `on` | [`lib/events.js`](lib/events.js) |
+| Gestos / captura | [`lib/operate.js`](lib/operate.js) |
+| `extract` | [`lib/extract.js`](lib/extract.js) |
+| Sessão | [`lib/session.js`](lib/session.js) |
+
+---
+
+## 9. Testes
+
+| Tipo | Comando |
+|------|---------|
+| Unitário (mock/stub, ao lado do módulo) | `npm test` |
+| BDD e2e US/EP (runtime real, sem doubles) | `npm run test:e2e` |
 
 ```bash
 cd screen-robot/src
+npm test
+npm run test:e2e   # requer Docker/Colima + adb
+```
 
+---
+
+## 10. Piloto LinkedIn
+
+```bash
+cd screen-robot/src
 export LINKEDIN_USER='seu@email.com'
 export LINKEDIN_PASSWORD='***'
-
 npm run linkedin-login
 ```
 
-## CLI legado (JSON de steps)
+Usa `device.config.json` → provisionar → instalar apps → launch → eventos → extract → type → `saveSession`.
+
+---
+
+## 11. CLI legado
+
+Steps avulsos (serial explícito; preferir o handle):
 
 ```bash
 node cli.js tap 360 640 --device 127.0.0.1:5555
@@ -64,5 +233,3 @@ node cli.js shot ./screenshots/tela.png
 node cli.js launch com.linkedin.android
 node cli.js config.example.json
 ```
-
-> Android 15 / redroid: acentos via [ADBKeyBoard](https://github.com/senzhk/ADBKeyboard) (`apks/ADBKeyboard.apk`).

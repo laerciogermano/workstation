@@ -98,7 +98,7 @@ Ordem **obrigatória** — não pular nem inverter:
 
 | Origem da atividade | Tipo de teste | Como |
 |---------------------|---------------|------|
-| **SC-** (cenário) | **Não testado** como cenário | Ao criar componentes, unitário **ao lado do arquivo** (ex. `lib/start-runtime.test.js` junto de `start-runtime.js`); SC sem suíte própria |
+| **SC-** (cenário) | **Não testado** como cenário | Ao criar componentes, unitário **ao lado do arquivo** (ex. `lib/start-runtime.test.js` junto de `start-runtime.js`); SC sem suíte própria; [isolado com mock/stub](#unitários-isolados) |
 | **US-** (história) | **BDD e2e** | Gherkin Dado/Quando/Então contra o sistema integrado |
 | **EP-** (épico) | **BDD e2e** | Gherkin de ponta a ponta do aceite do épico |
 
@@ -107,6 +107,18 @@ Regras:
 - **SC** → sem teste de cenário; só unitário **ao lado** do componente entregue
 - **US** / **EP** → BDD e2e (aceite integrado)
 - Não misturar: não inventar suíte `sc-*.test` nem pasta `test/unit`; US/EP não fecham só com unitário
+
+### Unitários isolados
+
+Unitário testa **só** o componente sob teste. Dependências e demais componentes **não exercitados** entram como **mock** ou **stub** — nunca a aplicação / runtime / stack completa.
+
+| Obrigatório | Proibido no unitário |
+|-------------|----------------------|
+| Injetar deps (mock/stub) no SUT | Subir app, emulador, container, servidor ou DB reais |
+| Exercitar só o módulo sob teste | Chamar a árvore inteira de módulos “de verdade” |
+| Falhas e sucessos via doubles | Rede, ADB, Docker/Colima ou UI reais |
+
+Doubles cobrem: I/O, rede, processos externos, irmãos/pais do módulo, clock/sleep quando o tempo importa. Integração real fica só no **BDD e2e** (US/EP).
 
 ### Onde fica o clone
 
@@ -123,7 +135,7 @@ Regras transversais:
 - Preferência: uma SC (ou atividade folha) por robô / ciclo
 - Lote: primeiro um caso, validar; só então escalar
 - Commits pequenos e revisáveis; CI do projeto deve passar no PR
-- Testes: [tipo por origem](#tipo-de-teste-por-origem) (SC sem suíte · unitário do componente · US/EP = BDD e2e)
+- Testes: [tipo por origem](#tipo-de-teste-por-origem) · [unitários isolados](#unitários-isolados) (mock/stub; sem app inteira) · US/EP = BDD e2e
 
 ## Status no board
 

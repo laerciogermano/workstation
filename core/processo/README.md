@@ -93,13 +93,13 @@ O mapa e a prioridade nascem no discovery; o detalhe (SC/BDD) e o restante do pr
 
 1. Baixar o projeto **dentro da pasta da atividade** em `tasks/`
 2. Criar branch `TSK-<nn>-<titulo>` (= pasta da atividade)
-3. Criar TDDs (**SC** → unitário do **componente** criado · **US**/**EP** = BDD e2e; SC sem suíte própria)
+3. Criar TDDs (**SC** → unitário do componente com **mock/stub** · **US**/**EP** = BDD e2e; SC sem suíte própria)
 4. Implementar a funcionalidade
 5. Testar
 6. Abrir PR (Summary + Test plan) e status → **Pendente aprovação**
 7. Parar até validação humana
 
-Ordem = Gantt das tasks. Sequencial → robô espera o outro. Paralelo → robôs em paralelo, PRs separados; próximo passo da árvore/Gantt só após aprovação. Corpo do PR: [padrão de escrita](3.desenvolvimento/README.md#padrão-de-escrita-do-pull-request). Tipo de teste: [por origem](3.desenvolvimento/README.md#tipo-de-teste-por-origem).
+Ordem = Gantt das tasks. Sequencial → robô espera o outro. Paralelo → robôs em paralelo, PRs separados; próximo passo da árvore/Gantt só após aprovação. Corpo do PR: [padrão de escrita](3.desenvolvimento/README.md#padrão-de-escrita-do-pull-request). Tipo de teste: [por origem](3.desenvolvimento/README.md#tipo-de-teste-por-origem) · [unitários isolados](3.desenvolvimento/README.md#unitários-isolados).
 
 **Saídas**
 
@@ -120,7 +120,7 @@ Ordem = Gantt das tasks. Sequencial → robô espera o outro. Paralelo → robô
 
 **Execução**
 
-- SC sem suíte · unitário do componente · US/EP = BDD e2e
+- SC sem suíte · unitário isolado (mock/stub; sem app inteira) · US/EP = BDD e2e
 - Aceite US/EP integrado; componentes cobertos por unitário
 - Regressão
 - Qualidade

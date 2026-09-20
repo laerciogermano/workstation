@@ -1,14 +1,16 @@
 # Implementation plan — screen-robot
 
-**Por quê:** um arquivo de plano técnico por épico (sequências · agentes · passo a passo · contratos · classes · modelos · BDDs).  
+**Por quê:** um arquivo de plano técnico por épico (sequências · agentes · passo a passo · contratos · classes · modelos · BDDs · **árvore de arquivos**).  
 **Épicos:** [`../2.epics.md`](../2.epics.md) · [`../4.scenarios.md`](../4.scenarios.md) · [`../5.bdds.md`](../5.bdds.md).  
-**Visão:** [`../README.md`](../README.md).
+**Visão:** [`../README.md`](../README.md).  
+**Processo:** [`core/processo/2.refinamento-tecnico`](../../core/processo/2.refinamento-tecnico/README.md#plano-de-implementação-por-épico).
 
 **Padrão (EP-01 → EP-06):**
 
 1. `provisionEmulator(cfg)` → `AgentHandle`  
 2. Capacidades seguintes são **métodos do handle** (sem `serial` no caller)  
-3. Libs internas (`events`, `apks`, `operate`, `extract`, `session`) encapsulam as sequências
+3. Libs internas (`events`, `apks`, `operate`, `extract`, `session`) encapsulam as sequências  
+4. Cada plano EP inclui seção **Árvore de arquivos** (código + unitários ao lado + e2e US/EP)
 
 | ID | Épico | Plano | API no handle |
 |----|-------|-------|---------------|

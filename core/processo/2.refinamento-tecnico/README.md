@@ -18,15 +18,46 @@ Transformar o discovery em plano executável.
 - Consolidar critérios de pronto (aceite por cenário do discovery)
 - Estimar esforço e dependências; tratar cada cenário como unidade paralelizável quando não houver dependência
 - Quebrar em tarefas priorizadas (preferência: 1 tarefa ↔ 1 cenário)
+- **Plano de implementação** por épico (ex.: `implementation-plan/EP-….md`): sequências · agentes · contratos · classes · modelos · BDDs — e **árvore de arquivos** do que o épico cria/altera
 - **No final:** criar a pasta `tasks/` do projeto com uma atividade documentada para **cada task** do Gantt (pasta = `TSK-<nn>-<titulo>`)
 
 ## Saídas
 
 - Desenho técnico (ou ADR)
+- Planos de implementação (com **árvore de arquivos** por épico)
 - Critérios de pronto
 - Backlog priorizado
 - Pasta `tasks/` no projeto — pastas `TSK-<nn>-<titulo>` (hierarquia do Gantt); cada uma com **Entradas · Execução · Saídas** e documentação
 - Próximo passo: desenvolvimento
+
+## Plano de implementação (por épico)
+
+Cada plano (ex. `implementation-plan/EP-01-….md`) deve incluir, além de sequências / contratos / classes / BDDs, uma seção **Árvore de arquivos** mostrando pastas e arquivos que o épico introduz ou altera (código, testes colocados ao lado do módulo, configs).
+
+Exemplo de forma:
+
+```text
+src/
+├── lib/
+│   ├── provision.js
+│   ├── start-runtime.js
+│   ├── start-runtime.test.js
+│   ├── ensure-adb-online.js
+│   ├── ensure-adb-online.test.js
+│   ├── wait-boot-completed.js
+│   └── wait-boot-completed.test.js
+└── test/
+    └── bdd/
+        ├── ep-01-provisionar-agente.test.js
+        └── us-01-agent-fica-pronto-para-adb.test.js
+```
+
+Regras:
+
+- Mostrar só o recorte relevante ao épico (não o monorepo inteiro)
+- Unitários **ao lado** do arquivo que testam (`módulo.test.js` na mesma pasta)
+- BDD e2e (US/EP) sob a pasta de e2e do projeto (ex. `test/bdd/`)
+- Atualizar a árvore quando o desenho mudar no refinamento
 
 ## Pasta `tasks/` (obrigatória ao fechar o refinamento)
 

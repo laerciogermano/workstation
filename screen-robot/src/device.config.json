@@ -17,6 +17,11 @@
       "version": "4.1.1248",
       "source": "apk-pure",
       "artifact": "apks/com.linkedin.android.xapk"
+    },
+    "tinder": {
+      "package": "com.tinder",
+      "source": "huawei-app-gallery",
+      "artifact": "apks/com.tinder.apk"
     }
   },
   "credentials": {

@@ -20,7 +20,7 @@ Runtimes de POC (redroid / AVD): [`../pocs/`](../pocs/README.md).
 |---------|--------|
 | Provisionar emulador (`provisionEmulator`) | [`lib/provision.js`](lib/provision.js) |
 | Instalar APKs | [`lib/apks.js`](lib/apks.js) |
-| Receber eventos (`handle.on` após provision) | [`lib/events.js`](lib/events.js) (via handle) |
+| Receber eventos (`handle.on` após provision) | [`lib/events.js`](lib/events.js) + `event-boot` · `event-app-open` · `event-ui-stable` · `event-dump-change` |
 | Executar operações | [`lib/operate.js`](lib/operate.js) |
 | Extrair elementos | [`lib/extract.js`](lib/extract.js) |
 | Guardar sessão | [`lib/session.js`](lib/session.js) |

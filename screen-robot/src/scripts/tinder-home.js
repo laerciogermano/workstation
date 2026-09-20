@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Abre Tinder até a tela inicial, clica ALLOW (permissão) e imprime a lista.
+ * Abre Tinder: ALLOW → Continue with Phone Number → lista da tela seguinte.
  *
  * Uso:
  *   node scripts/tinder-home.js
@@ -11,9 +11,17 @@ import { dirname, resolve, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { sleep } from "../lib/adb.js";
-import { createExtract, extractElements, findByText } from "../lib/extract.js";
+import { captureFrame } from "../lib/frame.js";
+import {
+  createExtract,
+  extractElements,
+  findByText,
+  matchByText,
+} from "../lib/extract.js";
 import { provisionEmulator } from "../lib/provision.js";
 import { resetInstance } from "../lib/reset-instance.js";
+import { createWorker } from "tesseract.js";
+import { spawnSync } from "node:child_process";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, "..");
@@ -52,6 +60,61 @@ async function findAllowButton(serial) {
     .sort((a, b) => a.bounds.y - b.bounds.y);
   // O botão ALLOW fica acima do ALLOW de "DON'T ALLOW"
   return allows[0] || null;
+}
+
+function pngSize(path) {
+  const r = spawnSync("sips", ["-g", "pixelWidth", "-g", "pixelHeight", path], {
+    encoding: "utf8",
+  });
+  const w = Number(/pixelWidth:\s*(\d+)/.exec(r.stdout || "")?.[1] || 720);
+  const h = Number(/pixelHeight:\s*(\d+)/.exec(r.stdout || "")?.[1] || 1280);
+  return { w, h };
+}
+
+/**
+ * OCR full-frame costuma falhar nos botões brancos do Tinder.
+ * Fallback: faixa inferior (PSM 11) + matchByText.
+ */
+async function findContinueWithPhoneNumber(serial) {
+  const query = "Continue with Phone Number";
+  let hit = await findByText(serial, query, { minScore: 0.75 });
+  if (hit?.center) return hit;
+
+  const framePath = await captureFrame(serial);
+  const { w, h } = pngSize(framePath);
+  const rect = {
+    left: Math.floor(w * 0.05),
+    top: Math.floor(h * 0.55),
+    width: Math.floor(w * 0.9),
+    height: Math.floor(h * 0.3),
+  };
+  const worker = await createWorker("eng");
+  try {
+    await worker.setParameters({ tessedit_pageseg_mode: "11" });
+    const r = await worker.recognize(framePath, { rectangle: rect });
+    const elements = (r.data.words || [])
+      .filter((word) => word.text?.trim() && (word.confidence ?? 0) >= 40)
+      .map((word, i) => {
+        const b = word.bbox || {};
+        const x0 = Number(b.x0 ?? 0);
+        const y0 = Number(b.y0 ?? 0);
+        const x1 = Number(b.x1 ?? x0);
+        const y1 = Number(b.y1 ?? y0);
+        return {
+          id: `b${i}`,
+          kind: "text",
+          label: String(word.text).trim(),
+          text: String(word.text).trim(),
+          bbox: [x0, y0, x1, y1],
+          bounds: { x: x0, y: y0, w: Math.max(1, x1 - x0), h: Math.max(1, y1 - y0) },
+          center: [Math.floor((x0 + x1) / 2), Math.floor((y0 + y1) / 2)],
+          source: "ocr-band",
+        };
+      });
+    return matchByText(elements, query, { minScore: 0.75 });
+  } finally {
+    await worker.terminate();
+  }
 }
 
 /** Nova sessão OCR/visão (frame fresco — extract do handle reusa cache). */
@@ -145,13 +208,43 @@ async function main() {
   console.log(`   OK → ${shot2}`);
 
   const list2 = await extractList(handle.serial, "8)");
-  handle.screenshot(resolve(outDir, "frame-screen.png"));
-  const outJson = resolve(outDir, "elements.json");
-  writeFileSync(outJson, JSON.stringify(list2, null, 2), "utf8");
   writeFileSync(resolve(outDir, "02-elements.json"), JSON.stringify(list2, null, 2), "utf8");
   console.log(JSON.stringify(list2, null, 2));
+
+  console.log("9) Clicar Continue with Phone Number…");
+  {
+    let hit = null;
+    for (let attempt = 1; attempt <= 8; attempt++) {
+      hit = await findContinueWithPhoneNumber(handle.serial);
+      if (hit?.center) break;
+      console.log(`   tentativa ${attempt}/8 — aguardando OCR…`);
+      await sleep(2_000);
+    }
+    if (hit?.center) {
+      console.log(
+        `   → "${hit.text}" score=${hit.score.toFixed(2)} parts=${hit.elements.length} center=${JSON.stringify(hit.center)}`,
+      );
+      handle.tapElement({ center: hit.center, bounds: hit.bounds });
+      await sleep(5_000);
+      await handle.on("ui_stable", { timeoutMs: 60_000 }).catch(() => {});
+    } else {
+      console.log("   (Continue with Phone Number não encontrado — segue)");
+    }
+  }
+
+  console.log("10) Print após Phone Number…");
+  const shot3 = resolve(outDir, "03-apos-phone-number.png");
+  handle.screenshot(shot3);
+  console.log(`   OK → ${shot3}`);
+
+  const list3 = await extractList(handle.serial, "11)");
+  handle.screenshot(resolve(outDir, "frame-screen.png"));
+  const outJson = resolve(outDir, "elements.json");
+  writeFileSync(outJson, JSON.stringify(list3, null, 2), "utf8");
+  writeFileSync(resolve(outDir, "03-elements.json"), JSON.stringify(list3, null, 2), "utf8");
+  console.log(JSON.stringify(list3, null, 2));
   console.log(`\nOK → ${outJson}`);
-  console.log(`OK → ${shot2}`);
+  console.log(`OK → ${shot3}`);
 }
 
 main().catch((e) => {

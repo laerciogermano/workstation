@@ -11,7 +11,7 @@ README.md (visão)
 ├── 2.epics.md                  # EP → US + prioridade
 ├── 3.roadmap.md                # Gantt priorizado
 ├── 4.scenarios.md               # US → SC (arquivo único; refino pós-roadmap)
-├── 5.bdds/                     # Gherkin (por EP)
+├── 5.bdds.md                    # Gherkin (arquivo único)
 ├── 6.prototype.md              # opcional
 ├── 7.tasks.md                  # Gantt TSK
 ├── implementation-plan/        # um .md por épico

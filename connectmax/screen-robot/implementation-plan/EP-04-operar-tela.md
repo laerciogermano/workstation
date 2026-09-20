@@ -2,7 +2,7 @@
 
 **Por quê:** plano técnico do épico (sequências · agentes · passo a passo · contratos · classes · modelos · BDDs).  
 **Épico:** [`2.epics.md`](../2.epics.md).  
-**US:** [`1.stories.md`](../1.stories.md) · [`4.scenarios.md#ep-04--operar-tela`](../4.scenarios.md#ep-04--operar-tela) · [`5.bdds/EP-04-operar-tela.md`](../5.bdds/EP-04-operar-tela.md).
+**US:** [`1.stories.md`](../1.stories.md) · [`4.scenarios.md#ep-04--operar-tela`](../4.scenarios.md#ep-04--operar-tela) · [`5.bdds.md#ep-04--operar-tela`](../5.bdds.md#ep-04--operar-tela).
 **Código:** [`../sources/android-control/lib/operate.js`](../sources/android-control/lib/operate.js) · [`events.js`](../sources/android-control/lib/events.js).
 
 **Stack:** Node ≥ 18 · `adb` · runtime provisionado (EP-01).
@@ -804,7 +804,7 @@ classDiagram
 
 ## Cenários BDD
 
-Fonte: `US-07`..`US-12` / `5.bdds/EP-04-operar-tela.md`.
+Fonte: `US-07`..`US-12` / `5.bdds.md#ep-04--operar-tela`.
 
 ```gherkin
 Cenário: US-07 App fica em foreground no agent
@@ -886,4 +886,4 @@ I1 → I2 → I3 → I4
 ## Próximos passos
 
 → Implementar gaps em [`sources/android-control`](../sources/android-control/README.md)  
-→ Aceite: BDDs em [`5.bdds/EP-04-operar-tela.md`](../5.bdds/EP-04-operar-tela.md)
+→ Aceite: BDDs em [`5.bdds.md#ep-04--operar-tela`](../5.bdds.md#ep-04--operar-tela)

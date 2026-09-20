@@ -29,7 +29,7 @@ Automatizar apps móveis exige um caminho estável em código: agent pronto, app
 
 ## Objetivo
 
-Expor via Node: **provisionar · instalar APKs · eventos · operar · extrair · sessão**. Cenário piloto: login LinkedIn (BDDs em [`5.bdds/`](5.bdds/README.md)).
+Expor via Node: **provisionar · instalar APKs · eventos · operar · extrair · sessão**. Cenário piloto: login LinkedIn (BDDs em [`5.bdds.md`](5.bdds.md)).
 
 ## Capacidades (v1)
 
@@ -49,7 +49,7 @@ Ver stories em [`1.stories.md`](1.stories.md) e cenários em [`4.scenarios.md`](
 | Épicos (prioridade) | [`2.epics.md`](2.epics.md) | Feito |
 | Roadmap (Gantt) | [`3.roadmap.md`](3.roadmap.md) | Feito |
 | Cenários | [`4.scenarios.md`](4.scenarios.md) | Feito |
-| BDDs | [`5.bdds/`](5.bdds/README.md) | Feito |
+| BDDs | [`5.bdds.md`](5.bdds.md) | Feito |
 | Implementation plan | por épico em [`implementation-plan/`](implementation-plan/README.md) | Feito |
 | Tasks (Gantt) | [`7.tasks.md`](7.tasks.md) | Feito |
 | Sources | [`sources/`](sources/README.md) | Em curso |
@@ -57,4 +57,4 @@ Ver stories em [`1.stories.md`](1.stories.md) e cenários em [`4.scenarios.md`](
 
 ## Próximos passos
 
-→ [`4.scenarios.md`](4.scenarios.md) · [`5.bdds/`](5.bdds/README.md) · `LINKEDIN_USER` / `LINKEDIN_PASSWORD` + `npm run linkedin-login` em `sources/android-control`
+→ [`4.scenarios.md`](4.scenarios.md) · [`5.bdds.md`](5.bdds.md) · `LINKEDIN_USER` / `LINKEDIN_PASSWORD` + `npm run linkedin-login` em `sources/android-control`

@@ -2,7 +2,7 @@
 
 **Por quê:** plano técnico do épico (sequências · agentes · passo a passo · contratos · classes · modelos · BDDs).  
 **Épico:** [`2.epics.md`](../2.epics.md).  
-**US:** [`1.stories.md`](../1.stories.md) · [`4.scenarios.md#ep-02--eventos-de-ui`](../4.scenarios.md#ep-02--eventos-de-ui) · [`5.bdds/EP-02-eventos-de-ui.md`](../5.bdds/EP-02-eventos-de-ui.md).
+**US:** [`1.stories.md`](../1.stories.md) · [`4.scenarios.md#ep-02--eventos-de-ui`](../4.scenarios.md#ep-02--eventos-de-ui) · [`5.bdds.md#ep-02--eventos-de-ui`](../5.bdds.md#ep-02--eventos-de-ui).
 **Código:** [`../sources/android-control/lib/events.js`](../sources/android-control/lib/events.js) · [`extract.js`](../sources/android-control/lib/extract.js) · [`adb.js`](../sources/android-control/lib/adb.js).
 
 **Stack:** Node ≥ 18 · `adb` · runtime provisionado (EP-01).
@@ -655,7 +655,7 @@ classDiagram
 
 ## Cenários BDD
 
-Fonte: `5.bdds/EP-02-eventos-de-ui.md`.
+Fonte: `5.bdds.md#ep-02--eventos-de-ui`.
 
 ### US-02
 
@@ -733,4 +733,4 @@ I1 → I2 → I3 → I4 → I5
 ## Próximos passos
 
 → Implementar gaps em [`sources/android-control`](../sources/android-control/README.md)  
-→ Aceite: BDDs em [`5.bdds/EP-02-eventos-de-ui.md`](../5.bdds/EP-02-eventos-de-ui.md)
+→ Aceite: BDDs em [`5.bdds.md#ep-02--eventos-de-ui`](../5.bdds.md#ep-02--eventos-de-ui)

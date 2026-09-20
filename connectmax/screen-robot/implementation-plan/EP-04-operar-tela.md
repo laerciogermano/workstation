@@ -1,8 +1,8 @@
 # Implementation plan — EP-04 Operar tela
 
 **Por quê:** plano técnico do épico (sequências · agentes · passo a passo · contratos · classes · modelos · BDDs).  
-**Épico:** [`2.epics.md`](../2.epics.md) · [`README.md`](../epics/EP-04-operar-tela/README.md).  
-**US:** US-07..12 em pastas `US-07`..`US-12`.  
+**Épico:** [`2.epics.md`](../2.epics.md).  
+**US:** [`1.stories.md`](../1.stories.md) · [`3.scenarios.md`](../3.scenarios.md) · [`4.bdds.md`](../4.bdds.md).
 **Código:** [`../sources/android-control/lib/operate.js`](../sources/android-control/lib/operate.js) · [`events.js`](../sources/android-control/lib/events.js).
 
 **Stack:** Node ≥ 18 · `adb` · runtime provisionado (EP-01).

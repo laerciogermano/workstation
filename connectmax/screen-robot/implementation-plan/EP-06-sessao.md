@@ -1,8 +1,8 @@
 # Implementation plan — EP-06 Sessão
 
 **Por quê:** plano técnico do épico (sequências · agentes · passo a passo · contratos · classes · modelos · BDDs).  
-**Épico:** [`2.epics.md`](../2.epics.md) · [`README.md`](../epics/EP-06-sessao/README.md).  
-**US:** US-17..19 em pastas `US-17`..`US-19`.  
+**Épico:** [`2.epics.md`](../2.epics.md).  
+**US:** [`1.stories.md`](../1.stories.md) · [`3.scenarios.md`](../3.scenarios.md) · [`4.bdds.md`](../4.bdds.md).
 **Código:** [`../sources/android-control/lib/session.js`](../sources/android-control/lib/session.js).
 
 **Stack:** Node ≥ 18 · `adb` · runtime provisionado (EP-01).

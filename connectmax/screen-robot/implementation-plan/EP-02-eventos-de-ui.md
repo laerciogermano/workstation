@@ -1,8 +1,8 @@
 # Implementation plan — EP-02 Eventos de UI
 
 **Por quê:** plano técnico do épico (sequências · agentes · passo a passo · contratos · classes · modelos · BDDs).  
-**Épico:** [`2.epics.md`](../2.epics.md) · [`README.md`](../epics/EP-02-eventos-de-ui/README.md).  
-**US:** US-02..05 em [`US-02-evento-de-boot/`](../epics/EP-02-eventos-de-ui/US-02-evento-de-boot/README.md) · [`US-03`](../epics/EP-02-eventos-de-ui/US-03-evento-de-app-aberta/README.md) · [`US-04`](../epics/EP-02-eventos-de-ui/US-04-evento-de-tela-estavel/README.md) · [`US-05`](../epics/EP-02-eventos-de-ui/US-05-evento-de-mudanca-de-dump/README.md).  
+**Épico:** [`2.epics.md`](../2.epics.md).  
+**US:** [`1.stories.md`](../1.stories.md) · [`3.scenarios.md`](../3.scenarios.md) · [`4.bdds.md`](../4.bdds.md).
 **Código:** [`../sources/android-control/lib/events.js`](../sources/android-control/lib/events.js) · [`extract.js`](../sources/android-control/lib/extract.js) · [`adb.js`](../sources/android-control/lib/adb.js).
 
 **Stack:** Node ≥ 18 · `adb` · runtime provisionado (EP-01).

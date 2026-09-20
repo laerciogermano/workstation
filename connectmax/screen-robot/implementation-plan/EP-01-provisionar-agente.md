@@ -1,8 +1,8 @@
 # Implementation plan — EP-01 Provisionar agente
 
 **Por quê:** plano técnico do épico (sequências · agentes · passo a passo · contratos · classes · modelos · BDDs).  
-**Épico:** [`2.epics.md`](../2.epics.md) · [`README.md`](../epics/EP-01-provisionar-agente/README.md).  
-**US:** [`US-01-provisionar-um-agente/`](../epics/EP-01-provisionar-agente/US-01-provisionar-um-agente/README.md).  
+**Épico:** [`2.epics.md`](../2.epics.md).  
+**US:** [`1.stories.md`](../1.stories.md) · [`3.scenarios.md`](../3.scenarios.md) · [`4.bdds.md`](../4.bdds.md).
 **Código:** [`../sources/android-control/lib/provision.js`](../sources/android-control/lib/provision.js) · [`adb.js`](../sources/android-control/lib/adb.js).  
 **Runtime:** [`../sources/redroid/`](../sources/redroid/README.md) · [`../sources/android-studio/`](../sources/android-studio/README.md).
 
@@ -315,7 +315,7 @@ classDiagram
 
 ## Cenários BDD
 
-Fonte canônica: [`US-01-provisionar-um-agente/4.bdds.md`](../epics/EP-01-provisionar-agente/US-01-provisionar-um-agente/4.bdds.md).
+Fonte canônica: [`4.bdds.md`](../4.bdds.md).
 
 ### US-01 — Agent fica pronto para ADB
 
@@ -399,4 +399,4 @@ I1 → I2 → I3 → I4 → I5 → I6 → I7
 ## Próximos passos
 
 → Implementar I1–I7 em [`sources/android-control`](../sources/android-control/README.md)  
-→ Aceite: [`US-01-provisionar-um-agente/4.bdds.md`](../epics/EP-01-provisionar-agente/US-01-provisionar-um-agente/4.bdds.md)
+→ Aceite: [`4.bdds.md`](../4.bdds.md)

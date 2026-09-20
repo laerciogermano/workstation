@@ -8,12 +8,12 @@
 ```text
 README.md (visão)
 ├── 1.stories.md
-├── 2.epics.md                  # EP → US (+ pasta epics/)
-├── implementation-plan/       # um .md por épico
+├── 2.epics.md                  # EP → US
+├── 3.scenarios.md              # US → SC
+├── 4.bdds.md                   # Gherkin US/SC
+├── implementation-plan/        # um .md por épico
 ├── 6.roadmap.md                # Gantt
 ├── 7.tasks.md                  # Gantt TSK
-├── epics/EP-*/                 # 1.stories + US-*/
-│   └── US-*/                   # 3.scenarios + 4.bdds
 └── sources/android-control (libs Node + scripts/linkedin-login.js)
 ```
 

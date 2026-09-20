@@ -2,7 +2,7 @@
 
 **Por quê:** fixar o *quê* do robô de tela antes de goals de negócio.  
 **Importante:** este projeto **só** opera o device/tela via **Node**; não implementa cadência comercial nem fila de leads.  
-**No fluxo:** **este documento** → stories → epics → (por estória: scenarios / bdds) → implementation-plan (por épico) → roadmap / tasks → implementação em [`sources/`](sources/README.md).  
+**No fluxo:** **este documento** → stories → epics → scenarios → bdds → implementation-plan (por épico) → roadmap / tasks → implementação em [`sources/`](sources/README.md).  
 **Umbrella:** [`../README.md`](../README.md).  
 **Consumidor LinkedIn:** [`../linkedin-agent/`](../linkedin-agent/README.md).  
 **Negócio (fila/faturamento):** [`../vendas/`](../vendas/README.md).  
@@ -29,11 +29,11 @@ Automatizar apps móveis exige um caminho estável em código: agent pronto, app
 
 ## Objetivo
 
-Expor via Node: **provisionar · instalar APKs · eventos · operar · extrair · sessão**. Cenário piloto: login LinkedIn (BDDs em [`epics/`](epics/README.md) por US).
+Expor via Node: **provisionar · instalar APKs · eventos · operar · extrair · sessão**. Cenário piloto: login LinkedIn (BDDs em [`4.bdds.md`](4.bdds.md)).
 
 ## Capacidades (v1)
 
-Ver stories em [`1.stories.md`](1.stories.md) e cenários em cada pasta `epics/EP-*/US-*/`.
+Ver stories em [`1.stories.md`](1.stories.md) e cenários em [`3.scenarios.md`](3.scenarios.md).
 
 ## Fora de escopo
 
@@ -46,8 +46,9 @@ Ver stories em [`1.stories.md`](1.stories.md) e cenários em cada pasta `epics/E
 | Artefato | Arquivo | Status |
 |----------|---------|--------|
 | Stories — US título + descrição | [`1.stories.md`](1.stories.md) | Feito |
-| Épicos | [`2.epics.md`](2.epics.md) · [`epics/`](epics/README.md) | Feito |
-| Cenários / BDDs | por estória em [`epics/EP-*/US-*/`](epics/README.md) | Feito |
+| Épicos | [`2.epics.md`](2.epics.md) | Feito |
+| Cenários | [`3.scenarios.md`](3.scenarios.md) | Feito |
+| BDDs | [`4.bdds.md`](4.bdds.md) | Feito |
 | Implementation plan | por épico em [`implementation-plan/`](implementation-plan/README.md) | Feito |
 | Roadmap (Gantt) | [`6.roadmap.md`](6.roadmap.md) | Feito |
 | Tasks (Gantt) | [`7.tasks.md`](7.tasks.md) | Feito |
@@ -56,4 +57,4 @@ Ver stories em [`1.stories.md`](1.stories.md) e cenários em cada pasta `epics/E
 
 ## Próximos passos
 
-→ [`epics/`](epics/README.md) · `LINKEDIN_USER` / `LINKEDIN_PASSWORD` + `npm run linkedin-login` em `sources/android-control`
+→ [`3.scenarios.md`](3.scenarios.md) · [`4.bdds.md`](4.bdds.md) · `LINKEDIN_USER` / `LINKEDIN_PASSWORD` + `npm run linkedin-login` em `sources/android-control`

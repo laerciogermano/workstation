@@ -1,8 +1,8 @@
 # Implementation plan — EP-03 Instalar APKs
 
 **Por quê:** plano técnico do épico (sequências · agentes · passo a passo · contratos · classes · modelos · BDDs).  
-**Épico:** [`2.epics.md`](../2.epics.md) · [`README.md`](../epics/EP-03-instalar-apks/README.md).  
-**US:** [`US-06-instalar-apks/`](../epics/EP-03-instalar-apks/US-06-instalar-apks/README.md).  
+**Épico:** [`2.epics.md`](../2.epics.md).  
+**US:** [`1.stories.md`](../1.stories.md) · [`3.scenarios.md`](../3.scenarios.md) · [`4.bdds.md`](../4.bdds.md).
 **Código:** [`../sources/android-control/lib/apks.js`](../sources/android-control/lib/apks.js) · [`adb.js`](../sources/android-control/lib/adb.js).
 
 **Stack:** Node ≥ 18 · `adb` · runtime provisionado (EP-01).
@@ -254,7 +254,7 @@ classDiagram
 
 ## Cenários BDD
 
-Fonte: [`US-06-instalar-apks/4.bdds.md`](../epics/EP-03-instalar-apks/US-06-instalar-apks/4.bdds.md).
+Fonte: [`4.bdds.md`](../4.bdds.md).
 
 ```gherkin
 Cenário: US-06 Apps da config ficam instalados na versão definida

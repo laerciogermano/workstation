@@ -171,7 +171,7 @@ Ordem do script ([`src/scripts/linkedin-login.js`](src/scripts/linkedin-login.js
 5. **Sign in with Email** → wait 5s → `02-apos-sign-in-email.png`
 6. `extract()` ×5 → console da árvore + `tree-screen.png` + `component-tree.json`
 
-Não digita credenciais e não chama `saveSession`. Próximos taps (ex. Sign in with Email) entram depois de validar a tela nova.
+Não digita credenciais e não chama `saveSession`.
 
 ### 6. Testes
 

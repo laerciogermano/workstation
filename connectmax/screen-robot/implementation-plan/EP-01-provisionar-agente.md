@@ -2,11 +2,11 @@
 
 **Por quê:** plano técnico do épico (sequências · agentes · passo a passo · contratos · classes · modelos · BDDs).  
 **Épico:** [`2.epics.md`](../2.epics.md).  
-**US:** [`1.stories.md`](../1.stories.md) · [`4.scenarios.md#ep-01--provisionar-agente`](../4.scenarios.md#ep-01--provisionar-agente) · [`5.bdds.md#ep-01--provisionar-agente`](../5.bdds.md#ep-01--provisionar-agente).
-**Código:** [`../sources/android-control/lib/provision.js`](../sources/android-control/lib/provision.js) · [`adb.js`](../sources/android-control/lib/adb.js).  
+**US:** [`1.stories.md`](../1.stories.md) · [`4.scenarios.md#ep-01--provisionar-agente`](../4.scenarios.md#ep-01--provisionar-agente) · [`5.bdds.md#ep-01--provisionar-agente`](../5.bdds.md#ep-01--provisionar-agente).  
+**Biblioteca:** [`../sources/android-control/lib/provision.js`](../sources/android-control/lib/provision.js) — **único método público:** `provisionEmulator`.  
 **Runtime:** [`../sources/redroid/`](../sources/redroid/README.md) · [`../sources/android-studio/`](../sources/android-studio/README.md).
 
-**Stack:** Node ≥ 18 · `adb` · Docker/Colima (redroid) ou AVD.
+**Stack:** Node ≥ 18 · JavaScript · `adb` · Docker/Colima (redroid) ou AVD.
 
 ---
 
@@ -23,6 +23,28 @@
 
 ---
 
+## Biblioteca JavaScript
+
+Arquivo: `sources/android-control/lib/provision.js`.
+
+**Regra:** a lib **encapsula** todas as chamadas dos diagramas de sequência (SC-01→SC-03). Para o caller existe **apenas um método**:
+
+```js
+import { provisionEmulator } from "./lib/provision.js";
+
+const handle = await provisionEmulator(cfg);
+// → { serial, kind, provisionedAt, bootCompleted: true }
+```
+
+Helpers internos (`resolveConfig`, `startRuntime`, `ensureAdbOnline`, `waitBootCompleted`, uso de `adb.js`) **não** são exportados — ficam privados ao módulo.
+
+| Superfície | O quê |
+|------------|--------|
+| **Público** | `provisionEmulator(cfg) → Promise<AgentHandle>` |
+| **Privado** | resolve config · start runtime · connect/wait ADB · poll boot |
+
+---
+
 ## Diagramas de sequência
 
 ### US-01 — Provisionar um agente
@@ -31,11 +53,11 @@
 
 | Agente | Responsabilidade |
 |--------|------------------|
-| Caller / CLI | Inicia o provisionamento e consome o `AgentHandle` pronto |
-| Provisioner | Orquestra SC-01→SC-03: resolve config, sobe runtime, espera ADB e boot |
-| RuntimeStarter | Sobe ou detecta o runtime Android (redroid/AVD) até ficar alcançável |
-| AdbClient | Encapsula comandos `adb` (connect, wait-for-device, getprop) |
-| Device / redroid | Android alvo onde o agent roda e responde aos comandos ADB |
+| Caller / CLI | Chama **só** `provisionEmulator(cfg)` e consome o `AgentHandle` |
+| provision.js | Biblioteca: encapsula SC-01→SC-03 (start, ADB, boot) |
+| Runtime (interno) | Sobe ou detecta redroid/AVD até ficar alcançável |
+| AdbClient (interno) | `adb` connect, wait-for-device, getprop — **não** exportado |
+| Device / emulador | Android alvo |
 
 ```mermaid
 ---
@@ -82,76 +104,65 @@ config:
 sequenceDiagram
   autonumber
   actor Dev as Caller / CLI
-  participant P as Provisioner
-  participant R as RuntimeStarter
-  participant A as AdbClient
-  participant D as Device / redroid
+  participant Lib as provision.js
+  participant R as Runtime (interno)
+  participant A as AdbClient (interno)
+  participant D as Emulador / Device
 
-  Dev->>P: provisionAgent(cfg)
-  P->>P: resolve serial, timeout, kind
+  Dev->>Lib: provisionEmulator(cfg)
+  note over Lib: único método público
+  Lib->>Lib: resolveConfig(cfg)
 
   rect rgb(17,17,17)
-    note over P,D: SC-01 Subir / conectar
-    P->>R: start(cfg) se ainda não reachable
+    note over Lib,D: SC-01 Subir / conectar
+    Lib->>R: startRuntime(cfg) se ainda não reachable
     R->>D: scripts/start.sh (docker/AVD)
-    D-->>R: up (porta/processo)
-    R-->>P: reachable
+    D-->>R: up
+    R-->>Lib: reachable
   end
 
   rect rgb(26,26,26)
-    note over P,D: SC-02 Serial ADB online
+    note over Lib,D: SC-02 Serial ADB online
     loop até device ou timeout
-      P->>A: connectIfTcp(serial)
+      Lib->>A: connectIfTcp(serial)
       A->>D: adb connect
       D-->>A: connected
-      A-->>P: ok
-      P->>A: wait-for-device
+      Lib->>A: wait-for-device
       A->>D: adb -s serial wait-for-device
       D-->>A: device
-      A-->>P: online
+      A-->>Lib: online
     end
   end
 
   rect rgb(34,34,34)
-    note over P,D: SC-03 Boot completo
+    note over Lib,D: SC-03 Boot completo
     loop até boot=1 ou timeout
-      P->>A: getprop sys.boot_completed
+      Lib->>A: getprop sys.boot_completed
       A->>D: adb shell getprop
       D-->>A: "1"
-      A-->>P: boot=1
+      A-->>Lib: boot=1
     end
   end
 
-  P-->>Dev: AgentHandle { serial, kind, provisionedAt }
+  Lib-->>Dev: AgentHandle { serial, kind, provisionedAt, bootCompleted }
 ```
 
 #### Passo a passo
 
 | # | De | Para | Chamada | Descrição | Entradas | Execução | Saídas |
-|---|----|------|---------|---------|----------|----------|--------|
-| 1 | Dev | Provisioner | `provisionAgent(cfg)` | Entrada do épico | `cfg` | Valida cfg e orquestra SC-01→SC-03 | Promise `AgentHandle` |
-| 2 | Provisioner | Provisioner | resolve serial/timeout/kind | Normalizar config | `cfg` + env | Aplica defaults e precedência | `ProvisionConfig` |
-| 3 | Provisioner | RuntimeStarter | `start(cfg)` | Garantir runtime up (SC-01) | `kind`, `startScript?` | Chama start se não reachable | pedido de start |
-| 4 | RuntimeStarter | Device | `scripts/start.sh` | Materializar Android | script + args | Spawn docker/AVD | pedido de up |
-| 5 | Device | RuntimeStarter | `up` | Confirmar runtime no ar | porta/processo | Sinaliza up | `up` |
-| 6 | RuntimeStarter | Provisioner | `reachable` | Fechar SC-01 | `up` | Retorna reachable | `true` |
-| 7 | Provisioner | AdbClient | `connectIfTcp(serial)` | TCP precisa connect (SC-02) | `serial` | Detecta TCP e pede connect | pedido |
-| 8 | AdbClient | Device | `adb connect` | Abrir canal ADB | `host:port` | Roda adb connect | pedido |
-| 9 | Device | AdbClient | `connected` | Sessão TCP | — | Aceita/recusa connect | `connected` |
-| 10 | AdbClient | Provisioner | `ok` | Connect concluído | — | Propaga resultado | `ok` |
-| 11 | Provisioner | AdbClient | `wait-for-device` | Esperar estado device | `serial` | Chama wait-for-device | pedido |
-| 12 | AdbClient | Device | `adb wait-for-device` | Bloquear até online | `serial` | Comando adb | pedido |
-| 13 | Device | AdbClient | `device` | Serial online | — | Estado device | `device` |
-| 14 | AdbClient | Provisioner | `online` | SC-02 ok | — | Propaga online | `online` |
-| 15 | Provisioner | AdbClient | `getprop sys.boot_completed` | Checar boot (SC-03) | `serial` | Pede getprop | pedido |
-| 16 | AdbClient | Device | `adb shell getprop` | Ler prop | `sys.boot_completed` | Shell remoto | pedido |
-| 17 | Device | AdbClient | `"1"` | Boot completo | — | Retorna prop | `1` |
-| 18 | AdbClient | Provisioner | `boot=1` | SC-03 ok | — | Propaga Booted | `boot=1` |
-| 19 | Provisioner | Dev | `AgentHandle` | Entregar handle | estado interno | Monta saída | `{ serial, kind, provisionedAt }` |
+|---|----|------|---------|-----------|----------|----------|--------|
+| 1 | Dev | provision.js | `provisionEmulator(cfg)` | **Única** chamada pública | `cfg` | Orquestra SC-01→SC-03 por dentro | Promise `AgentHandle` |
+| 2 | Lib | Lib | `resolveConfig` *(privado)* | Normalizar config | `cfg` + env | Defaults e precedência | config resolvida |
+| 3 | Lib | Runtime | `startRuntime` *(privado)* | Garantir emulador up (SC-01) | `kind`, `startScript?` | Start se não reachable | `reachable` |
+| 4 | Runtime | Device | `scripts/start.sh` | Materializar Android | script | Spawn docker/AVD | `up` |
+| 5–6 | Device → Lib | — | reachable | Fechar SC-01 | `up` | Confirma | `true` |
+| 7–14 | Lib ↔ Adb | *(privado)* | connect + wait-for-device | SC-02 | `serial` | Loop até `device` | `online` |
+| 15–18 | Lib ↔ Adb | *(privado)* | getprop boot | SC-03 | `serial` | Poll até `1` | `boot=1` |
+| 19 | Lib | Dev | `AgentHandle` | Entregar handle | estado interno | Monta saída | `{ serial, kind, provisionedAt, bootCompleted }` |
 
 #### Contratos
 
-Exemplos TypeScript das chamadas (# do passo a passo).
+**API pública** (só isto é importável pelo caller):
 
 ```ts
 // Pré: host com adb; runtime redroid/AVD disponível ou startável
@@ -174,77 +185,22 @@ type AgentHandle = {
   bootCompleted: true;
 };
 
-// #1 Dev → Provisioner
-declare function provisionAgent(cfg: ProvisionConfig): Promise<AgentHandle>;
+/** Único método exportado pela biblioteca. */
+declare function provisionEmulator(cfg: ProvisionConfig): Promise<AgentHandle>;
 
-const handle = await provisionAgent({
+const handle = await provisionEmulator({
   provision: {
     serial: "127.0.0.1:5555",
     kind: "redroid",
     connectTimeoutMs: 120_000,
   },
 });
-
-// #2 Provisioner → Provisioner
-declare function resolveProvisionConfig(cfg: ProvisionConfig): {
-  serial: string;
-  kind: "adb" | "redroid" | "avd";
-  connectTimeoutMs: number;
-  startScript?: string;
-};
-
-const resolved = resolveProvisionConfig({
-  provision: { serial: "127.0.0.1:5555" },
-});
-// → { serial: "127.0.0.1:5555", kind: "adb", connectTimeoutMs: 120_000 }
-
-// #3 Provisioner → RuntimeStarter
-declare function start(cfg: ProvisionConfig): Promise<{ reachable: true }>;
-
-await start(resolved);
-
-// #4 RuntimeStarter → Device
-declare function spawnStartScript(
-  script: string,
-  args?: string[],
-): Promise<{ up: true }>;
-
-await spawnStartScript("sources/redroid/scripts/start.sh");
-
-// #5–6 Device → RuntimeStarter → Provisioner
-const up: { up: true } = { up: true };
-const reachable: true = true;
-
-// #7 Provisioner → AdbClient
-declare function connectIfTcp(serial: string): void;
-connectIfTcp("127.0.0.1:5555");
-
-// #8–10 AdbClient ↔ Device
-declare function adbConnect(hostPort: string): Promise<"connected">;
-await adbConnect("127.0.0.1:5555");
-
-// #11–14 AdbClient ↔ Device → Provisioner
-declare function waitForDevice(serial: string): Promise<"device">;
-const online = await waitForDevice("127.0.0.1:5555");
-// → "device"
-
-// #15–18 AdbClient ↔ Device → Provisioner
-declare function getprop(
-  serial: string,
-  key: "sys.boot_completed",
-): Promise<"0" | "1">;
-
-const boot = await getprop("127.0.0.1:5555", "sys.boot_completed");
-// → "1"
-
-// #19 Provisioner → Dev
-const out: AgentHandle = {
-  serial: "127.0.0.1:5555",
-  kind: "redroid",
-  provisionedAt: "2026-09-19T21:00:00.000Z",
-  bootCompleted: true,
-};
+// → { serial, kind, provisionedAt, bootCompleted: true }
 ```
+
+**Interno (não exportar):** `resolveConfig`, `startRuntime`, `ensureAdbOnline`, `waitBootCompleted` — encapsulam as linhas #2–#18 do passo a passo.
+
+---
 
 ## Modelos
 
@@ -340,6 +296,13 @@ config:
 classDiagram
   direction TB
 
+  class provision_js {
+    <<library>>
+    +provisionEmulator(cfg) Promise~AgentHandle~
+  }
+
+  note for provision_js "Único export público.\nSC-01..03 encapsulados."
+
   class ProvisionConfig {
     +string serial
     +string kind
@@ -354,48 +317,29 @@ classDiagram
     +boolean bootCompleted
   }
 
+  class Internals {
+    <<private>>
+    resolveConfig()
+    startRuntime()
+    ensureAdbOnline()
+    waitBootCompleted()
+  }
+
   class AdbClient {
-    +adb(serial, args) SpawnResult
-    +adbOk(serial, args) boolean
-    +connectIfTcp(serial) void
-    +sleep(ms) Promise~void~
+    <<private module adb.js>>
+    adb()
+    connectIfTcp()
+    sleep()
   }
 
-  class RuntimeStarter {
-    <<interface>>
-    +start(cfg) Promise~void~
-    +isReachable(cfg) Promise~boolean~
-  }
-
-  class RedroidStarter {
-    +start(cfg) Promise~void~
-    +isReachable(cfg) Promise~boolean~
-  }
-
-  class AvdStarter {
-    +start(cfg) Promise~void~
-    +isReachable(cfg) Promise~boolean~
-  }
-
-  class Provisioner {
-    -AdbClient adb
-    -RuntimeStarter starter
-    +provisionAgent(cfg) Promise~AgentHandle~
-    +waitForAdbOnline(serial, timeoutMs) Promise~void~
-    +on("boot", opts) Promise~void~
-  }
-
-  Provisioner --> AdbClient : usa
-  Provisioner --> RuntimeStarter : usa
-  Provisioner ..> ProvisionConfig : lê
-  Provisioner ..> AgentHandle : cria
-  RuntimeStarter <|.. RedroidStarter
-  RuntimeStarter <|.. AvdStarter
-  ProvisionConfig --> AgentHandle : produz
+  provision_js --> Internals : usa
+  Internals --> AdbClient : usa
+  provision_js ..> ProvisionConfig : lê
+  provision_js ..> AgentHandle : cria
 ```
 
-**Hoje:** `provisionAgent` + `AdbClient` (`adb.js`) cobrem SC-02+SC-03; SC-01 é manual via scripts redroid/studio.  
-**Gap:** extrair `RuntimeStarter`, `waitForAdbOnline` e reusar `on("boot")` (EP-02).
+**Hoje:** `provisionEmulator` exportado; ADB + boot encapsulados; SC-01 start via script ainda gap interno.  
+**Gap:** completar `startRuntime` (redroid/AVD) **dentro** da lib, sem expandir a API pública.
 
 ---
 
@@ -445,19 +389,18 @@ Cenário: SC-03 Boot completo no device
 
 | # | Entrega | SC | Arquivos | Critério |
 |---|---------|-----|----------|----------|
-| I1 | Tipar `ProvisionConfig` / `AgentHandle` (JSDoc ou `.d.ts`) | — | `lib/provision.js` | Tipos documentados |
-| I2 | Extrair `waitForAdbOnline(serial, opts)` | SC-02 | `provision.js` + `adb.js` | API isolada + timeout |
-| I3 | Extrair boot via EventBus `on("boot")` (EP-02) | SC-03 | `provision.js` / `events.js` | Reuso do evento |
-| I4 | `RuntimeStarter` + `RedroidStarter` (chama `sources/redroid/scripts/start.sh`) | SC-01 | `lib/runtime/` | Start opcional se não reachable |
-| I5 | `AvdStarter` (android-studio scripts) | SC-01 | `lib/runtime/` | kind=`avd` |
-| I6 | `provisionAgent` orquestra I2–I5 | US-01 | `provision.js` | BDDs US-01 + SC passam |
-| I7 | CLI `node cli.js provision --config …` | US-01 | `cli.js` | Exit 0 só com Booted |
+| I1 | Lib `provision.js` com **só** `provisionEmulator` exportado | US-01 | `lib/provision.js` | API pública = 1 método |
+| I2 | Internos: `resolveConfig` + `ensureAdbOnline` + `waitBootCompleted` | SC-02/03 | `provision.js` | Encapsulam o diagrama; não exportados |
+| I3 | Interno: `startRuntime` (redroid `start.sh`) | SC-01 | `provision.js` | Start se não reachable |
+| I4 | Interno: start AVD (`kind=avd`) | SC-01 | `provision.js` | Sem novo export |
+| I5 | CLI chama `provisionEmulator` | US-01 | `cli.js` | Exit 0 só com Booted |
+| I6 | Piloto LinkedIn usa `provisionEmulator` | US-01 | `scripts/linkedin-login.js` | Mesmo config |
 
 ### Ordem
 
 ```text
-I1 → I2 → I3 → I4 → I5 → I6 → I7
-         ↘ paraleliza I4/I5 após I1
+I1 → I2 → I3 → I4 → I5 → I6
+         ↘ I3/I4 após I2 (ainda internos)
 ```
 
 ---
@@ -466,23 +409,22 @@ I1 → I2 → I3 → I4 → I5 → I6 → I7
 
 | Peça | Status |
 |------|--------|
-| `provisionAgent` (connect + boot loop) | Existe — mistura SC-02+SC-03 |
-| `connectIfTcp` / `adb` / `wait-for-device` | Existe |
-| Start redroid/AVD via Node | **Gap** (só scripts shell) |
-| `waitForAdbOnline` dedicado; boot via `on("boot")` | **Gap** / EP-02 |
-| Eventos via `on(nome)` no provision | **Gap** (EP-02 US-02) |
+| `provisionEmulator` (único export) | Existe — encapsula SC-02+SC-03 |
+| Internos ADB / boot | Encapsulados em `provision.js` + `adb.js` |
+| `startRuntime` (SC-01) | **Gap** interno (scripts shell manuais) |
+| Exports extras além de `provisionEmulator` | **Proibido** nesta lib |
 
 ---
 
 ## Critério de pronto (épico)
 
-1. Modelos `ProvisionConfig` / `AgentHandle` / estados documentados  
-2. Classes/APIs alinhadas ao diagrama  
-3. Sequências SC-01..03 implementáveis e cobertas por BDD  
-4. `provisionAgent` devolve handle só em estado `Booted`  
-5. Piloto LinkedIn continua funcionando com o mesmo config  
+1. Biblioteca JS com **apenas** `provisionEmulator` na superfície pública  
+2. Sequências SC-01..03 encapsuladas dentro da lib  
+3. Modelos `ProvisionConfig` / `AgentHandle` / estados documentados  
+4. `provisionEmulator` devolve handle só em estado `Booted`  
+5. Piloto LinkedIn usa o mesmo método  
 
 ## Próximos passos
 
-→ Implementar I1–I7 em [`sources/android-control`](../sources/android-control/README.md)  
+→ Completar gaps I3–I4 em [`sources/android-control`](../sources/android-control/README.md)  
 → Aceite: [`5.bdds.md#ep-01--provisionar-agente`](../5.bdds.md#ep-01--provisionar-agente)

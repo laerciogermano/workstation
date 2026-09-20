@@ -11,7 +11,7 @@ import { readFileSync, existsSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { provisionAgent } from "../lib/provision.js";
+import { provisionEmulator } from "../lib/provision.js";
 import { installApk } from "../lib/apks.js";
 import { waitForUiReady } from "../lib/events.js";
 import {
@@ -56,7 +56,7 @@ async function main() {
   const events = [];
 
   console.log("1) Provisionar agente…");
-  const agent = await provisionAgent(cfg);
+  const agent = await provisionEmulator(cfg);
   const serial = agent.serial;
   console.log(`   OK ${serial}`);
 

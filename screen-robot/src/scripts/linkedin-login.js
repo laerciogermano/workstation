@@ -85,42 +85,40 @@ async function main() {
   await handle.on("ui_stable", { timeoutMs: 90_000 });
   handle.screenshot(resolve(outDir, "01-antes-agree.png"));
 
-  // console.log("4) Clicar AGREE ou Sign In…");
+  console.log("4) Clicar AGREE ou Sign In…");
   const { elements } = extractElements(handle.serial);
+  const agree = findAgree(elements);
+  if (agree?.center) {
+    console.log(`   → AGREE: ${agree.label || agree.text}`);
+    handle.tapElement(agree);
+    await sleep(5_000);
+    handle.screenshot(resolve(outDir, "02-apos-agree.png"));
+  } else {
+    const signIn = findSignIn(elements);
+    if (signIn?.center) {
+      console.log(`   → Sign In: ${signIn.label || signIn.text}`);
+      handle.tapElement(signIn);
+      await sleep(5_000);
+      handle.screenshot(resolve(outDir, "02-apos-sign-in.png"));
+    } else {
+      console.log("   (AGREE e Sign In não encontrados — segue)");
+    }
+  }
 
-  console.log(elements);
-  // const agree = findAgree(elements);
-  // if (agree?.center) {
-  //   console.log(`   → AGREE: ${agree.label || agree.text}`);
-  //   handle.tapElement(agree);
-  //   await sleep(5_000);
-  //   handle.screenshot(resolve(outDir, "02-apos-agree.png"));
-  // } else {
-  //   const signIn = findSignIn(elements);
-  //   if (signIn?.center) {
-  //     console.log(`   → Sign In: ${signIn.label || signIn.text}`);
-  //     handle.tapElement(signIn);
-  //     await sleep(5_000);
-  //     handle.screenshot(resolve(outDir, "02-apos-sign-in.png"));
-  //   } else {
-  //     console.log("   (AGREE e Sign In não encontrados — segue)");
-  //   }
-  // }
+  console.log("5) Extrair árvore (5 passos)…");
+  let tree;
+  for (let i = 1; i <= 5; i++) {
+    tree = await handle.extract();
+    console.log(`   passo ${i}: children=${tree.children?.length ?? 0}`);
+  }
 
-  // console.log("5) Extrair árvore (5 passos)…");
-  // let tree;
-  // for (let i = 1; i <= 5; i++) {
-  //   tree = await handle.extract();
-  //   console.log(`   passo ${i}: children=${tree.children?.length ?? 0}`);
-  // }
-
-  // handle.screenshot(resolve(outDir, "tree-screen.png"));
-  // const json = JSON.stringify(tree, null, 2);
-  // const outJson = resolve(outDir, "component-tree.json");
-  // writeFileSync(outJson, json, "utf8");
-  // console.log(json);
-  // console.log(`\nOK → ${outJson}`);
-  // console.log(`OK → ${resolve(outDir, "tree-screen.png")}`);
+  handle.screenshot(resolve(outDir, "tree-screen.png"));
+  const json = JSON.stringify(tree, null, 2);
+  const outJson = resolve(outDir, "component-tree.json");
+  writeFileSync(outJson, json, "utf8");
+  console.log(json);
+  console.log(`\nOK → ${outJson}`);
+  console.log(`OK → ${resolve(outDir, "tree-screen.png")}`);
 }
 
 main().catch((e) => {

@@ -3,7 +3,7 @@
 **Por quê:** plano técnico do épico (sequências · agentes · passo a passo · contratos · classes · modelos · BDDs).  
 **Épico:** [`2.epics.md`](../2.epics.md).  
 **US:** [`1.stories.md`](../1.stories.md) · [`4.scenarios.md#ep-01--provisionar-agente`](../4.scenarios.md#ep-01--provisionar-agente) · [`5.bdds.md#ep-01--provisionar-agente`](../5.bdds.md#ep-01--provisionar-agente).  
-**Biblioteca:** [`../src/lib/provision.js`](../src/lib/provision.js) — público: `provisionEmulator` (create-or-attach por `name`).  
+**Biblioteca:** [`../src/lib/provision.js`](../src/lib/provision.js) — handle: `provisionEmulator` (create-or-attach por `name`). Ops: [`../src/lib/reset-instance.js`](../src/lib/reset-instance.js) — `resetInstance` (fora do handle).  
 **Runtime:** [`../pocs/redroid/`](../pocs/redroid/README.md) · [`../pocs/android-studio/`](../pocs/android-studio/README.md).
 
 **Stack:** Node ≥ 18 · JavaScript · `adb` · Docker/Colima (redroid) ou AVD.
@@ -33,6 +33,8 @@ src/
 ├── lib/
 │   ├── provision.js                 # provisionEmulator (create-or-attach)
 │   ├── provision.test.js
+│   ├── reset-instance.js            # resetInstance (ops — wipe + boot)
+│   ├── reset-instance.test.js
 │   ├── start-runtime.js             # cria container novo (nome → porta/serial)
 │   ├── start-runtime.test.js
 │   ├── attach-runtime.js            # resolve nome → runtime existente
@@ -51,7 +53,7 @@ src/
         └── us-20-resgatar-agente-existente.test.js
 pocs/redroid/
 ├── docker-compose.yml               # multi-instância (nome / porta)
-└── scripts/                         # start/stop por nome
+└── scripts/                         # start / stop / reset (down -v)
 ```
 
 Unitários ao lado do módulo (deps mock/stub). BDD e2e só US/EP.
@@ -83,10 +85,13 @@ Helpers internos (`resolveConfig`, `startRuntime`, `attachRuntime`, `ensureAdbOn
 
 | Superfície | O quê |
 |------------|--------|
-| **Público** | `provisionEmulator(cfg)` |
+| **Público (handle)** | `provisionEmulator(cfg)` |
+| **Público (ops)** | `resetInstance(cfg)` — wipe + boot; **não** anexado ao handle |
 | **Privado** | alocar porta/serial · criar/anexar container · ADB · boot |
 
 `cfg.provision.name` (ou `cfg.name`) é **obrigatório**. Serial/porta são **alocados** pela lib no create (não fixos na config do caller para multi-agent).
+
+`resetInstance` usa `cfg.provision.resetScript` (default: `pocs/redroid/scripts/reset.sh`) e espera ADB + boot. Erros: `RESET_NO_SERIAL` · `RESET_FAILED` · `RESET_UNSUPPORTED`.
 
 ---
 
@@ -220,6 +225,8 @@ type ProvisionConfig = {
     kind?: "adb" | "redroid" | "avd";
     connectTimeoutMs?: number;
     startScript?: string;
+    /** Path do script de wipe (usado por resetInstance; default redroid/reset.sh). */
+    resetScript?: string;
   };
 };
 
@@ -264,6 +271,7 @@ const handle = await provisionEmulator({
 | `kind` | `"adb" \| "redroid" \| "avd"` | `cfg.provision.kind` | Runtime alvo |
 | `connectTimeoutMs` | `number` | `cfg.provision.connectTimeoutMs` | Default `120000` |
 | `startScript` | `string?` | futuro | Path do script de start (SC-01) |
+| `resetScript` | `string?` | `cfg.provision.resetScript` | Path do wipe (`resetInstance`); default redroid `reset.sh` |
 | `host` | `string?` | futuro | Host Docker/Colima |
 
 ### AgentHandle (saída)
@@ -407,8 +415,8 @@ classDiagram
   AgentHandle --> events_js : on
 ```
 
-**Hoje:** `provisionEmulator` exportado; ADB + boot encapsulados; `on` no handle (EP-02).  
-**Gap:** completar `startRuntime` (redroid/AVD) **dentro** da lib, sem expandir a API pública além do handle.
+**Hoje:** `provisionEmulator` exportado; ADB + boot encapsulados; `on` no handle (EP-02); `resetInstance` ops + `pocs/redroid/scripts/reset.sh`.  
+**Gap:** completar `startRuntime` (redroid/AVD) **dentro** da lib, sem expandir a API do handle além do create-or-attach.
 
 ---
 
@@ -491,7 +499,7 @@ Cenário: SC-26 Handle anexado fica pronto
 | I4 | Mesmo `provisionEmulator` anexa se nome existe | US-20 / SC-25..26 | `attach-runtime.js` · `provision.js` | Sem novo container |
 | I5 | Handle inclui `name` | US-01/20 | `provision.js` | `handle.name` estável |
 | I6 | BDD e2e US-01 / US-20 / EP-01 | — | `test/bdd/` | Aceite multi-agent |
-| I7 | Piloto LinkedIn passa `name` | US-01 | `linkedin-login.js` · config | Compatível |
+| I7 | Piloto: limpa screenshots → `resetInstance` → provision | — | `linkedin-login.js` · `reset-instance.js` | Instância do zero |
 
 ### Ordem
 
@@ -506,6 +514,7 @@ I1 → I2 → I3 → I5 → I4 → I6 → I7
 | Peça | Status |
 |------|--------|
 | `provisionEmulator` (create-or-attach por `name`) | Existe — evoluir / consolidar |
+| `resetInstance` + `reset.sh` | Existe (ops / piloto) |
 | `attachRuntime` interno | Interno do provision |
 | Alocação multi-porta / multi-container | Gap (POC redroid multi) |
 | Internos ADB / boot | `ensure-adb-online` · `wait-boot-completed` |
@@ -519,7 +528,7 @@ I1 → I2 → I3 → I5 → I4 → I6 → I7
 2. SC-01..03 e SC-25..26 encapsulados no mesmo método  
 3. Handle com `name`, `serial`, `bootCompleted`  
 4. ≥2 agents simultâneos no e2e  
-5. Piloto LinkedIn usa `name`  
+5. Piloto LinkedIn: `resetInstance` + provision (screenshots limpos)  
 
 ## Próximos passos
 

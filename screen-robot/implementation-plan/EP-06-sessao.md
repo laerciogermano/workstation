@@ -171,27 +171,23 @@ const s = await handle.restoreSession("./sessions/li.json");
 
 #### Exemplo de JSON (arquivo de sessão)
 
-Gravado por `handle.saveSession("./sessions/linkedin.json", { … })`:
+Ilustrativo da API EP-06 (o piloto LinkedIn atual **não** grava sessão):
 
 ```json
 {
   "serial": "127.0.0.1:5555",
   "kind": "redroid",
-  "step": "logged-in",
+  "step": "ready",
   "apps": {
-    "instagram": {
-      "package": "com.instagram.android",
-      "version": "361.0.0.0.0"
-    },
     "linkedin": {
       "package": "com.linkedin.android",
-      "version": "4.1.986"
+      "version": "6.1.1"
     }
   },
-  "screenshot": "./screenshots/linkedin-before-login.png",
+  "screenshot": "./screenshots/01-antes-agree.png",
   "paths": {
     "session": "./sessions/linkedin.json",
-    "screenshot": "./screenshots/linkedin-before-login.png"
+    "screenshot": "./screenshots/01-antes-agree.png"
   },
   "extract": {
     "type": "root",
@@ -199,7 +195,7 @@ Gravado por `handle.saveSession("./sessions/linkedin.json", { … })`:
     "children": [
       {
         "type": "text",
-        "text": "Entrar",
+        "text": "Sign in",
         "bounds": { "x": 120, "y": 1800, "w": 840, "h": 96 },
         "children": []
       }
@@ -293,7 +289,7 @@ Fonte: [`5.bdds.md#ep-06--sessao`](../5.bdds.md#ep-06--sessao).
 | I2 | save inclui serial/kind do handle | SC-22 | US-17 |
 | I3 | remove limpa arquivo + contexto | SC-23 | US-18 |
 | I4 | restore reaplica no handle/runtime | SC-24 | US-19 |
-| I5 | Piloto usa `handle.saveSession` | — | linkedin-login |
+| I5 | Piloto **não** chama `saveSession` (fluxo atual = árvore / AGREE|Sign In) | — | linkedin-login | API de sessão disponível; piloto não grava |
 
 ### Ordem
 

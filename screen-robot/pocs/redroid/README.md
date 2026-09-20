@@ -56,6 +56,14 @@ Parar:
 ./scripts/stop.sh
 ```
 
+Reset do zero (apaga volume de dados e sobe limpo):
+
+```bash
+./scripts/reset.sh
+```
+
+A lib chama o mesmo script via `resetInstance(cfg)` ([`../../src/lib/reset-instance.js`](../../src/README.md#1b-reset-do-zero--resetinstancecfg)) — usado pelo piloto LinkedIn.
+
 Status / logs:
 
 ```bash
@@ -86,6 +94,7 @@ Dados persistentes: volume Docker **por agent** (não compartilhar o mesmo volum
 | `adb` offline | `adb kill-server && adb connect 127.0.0.1:<porta>`; `./scripts/status.sh` |
 | Sem tela | Confirme scrcpy instalado; `docker compose logs -f` |
 | Nome já em uso | Chamar `provisionEmulator` de novo com o mesmo `name` (anexa) |
+| Estado sujo / AGREE já aceito | `./scripts/reset.sh` ou `resetInstance(cfg)` (wipe do volume) |
 | Kernel sem ashmem | Já usamos `androidboot.use_memfd=true` no compose |
 
 Debug oficial do projeto:
@@ -104,6 +113,7 @@ screen-robot/pocs/redroid/
 │   ├── setup-host.sh
 │   ├── start.sh
 │   ├── stop.sh
+│   ├── reset.sh       # down -v + start (instância do zero)
 │   ├── view.sh
 │   └── status.sh
 └── data/          # criado em runtime (POC 1 instância)

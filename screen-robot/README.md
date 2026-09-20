@@ -45,7 +45,7 @@ Ver stories em [`1.stories.md`](1.stories.md) e cenários em [`4.scenarios.md`](
 
 ## Como usar
 
-API em [`src/`](src/README.md). Superfície pública: `provisionEmulator(cfg)` → **handle** (cria se o `name` for novo; anexa se já existir). Não passe `serial` nas operações — ele vem do handle.
+API em [`src/`](src/README.md). Superfície do handle: `provisionEmulator(cfg)` → **handle** (cria se o `name` for novo; anexa se já existir). Ops paralelo (fora do handle): `resetInstance(cfg)` — recria o runtime do zero. Não passe `serial` nas operações do handle — ele vem do handle.
 
 ### 1. Pré-requisitos
 
@@ -68,8 +68,10 @@ Edite [`src/device.config.json`](src/device.config.json):
 | `provision.kind` | `redroid` · `avd` · … |
 | `provision.connectTimeoutMs` | Timeout de boot/conexão |
 | `apps.*` | `package`, `version`, `artifact` (path local) ou `source` (download) |
-| `session.path` / `screenshot.path` | Paths do piloto LinkedIn |
-| `credentials.linkedin.*Env` | Nomes das env vars de user/senha |
+| `provision.resetScript` | Opcional — script de wipe (`resetInstance`); default = `pocs/redroid/scripts/reset.sh` |
+| `session.path` | Path genérico de sessão (API EP-06; o piloto atual **não** grava sessão) |
+| `screenshot.path` | Path ilustrativo na config; o piloto usa nomes fixos em `screenshots/` |
+| `credentials.linkedin.*Env` | Reservado para login completo (piloto atual **não** digita user/senha) |
 
 Serial/porta são **alocados** pela lib por agent (não fixar um único `127.0.0.1:5555` para multi-instância).
 
@@ -131,6 +133,7 @@ await handle.removeSession("./state/session.json");
 | Método | O quê |
 |--------|--------|
 | `provisionEmulator(cfg)` | Cria se `name` novo; anexa se já existir; aloca serial; boot ok |
+| `resetInstance(cfg)` | **Ops** (não é método do handle): wipe do volume + sobe de novo; ADB + boot ok |
 | `installApk(app)` | Lê spec → baixa se preciso → instala; retorna `{ package, version, skipped }` |
 | `on(event, opts?, cb?)` | `boot` · `app_open` · `ui_stable` · `dump_change` |
 | `launch(pkg, activity?)` | Abre app |
@@ -142,18 +145,25 @@ await handle.removeSession("./state/session.json");
 | `extract()` | Árvore DOM progressiva |
 | `saveSession` / `restoreSession` / `removeSession` | Persistência JSON |
 
-Erros tipados (campo `err.code`): `PROVISION_*` (incl. `PROVISION_INVALID_NAME`), `APK_*`, `OPERATE_*`, `SESSION_*`, `EVENT_*`.
+Erros tipados (campo `err.code`): `PROVISION_*` (incl. `PROVISION_INVALID_NAME`), `RESET_*`, `APK_*`, `OPERATE_*`, `SESSION_*`, `EVENT_*`.
 
 ### 5. Piloto LinkedIn
 
 ```bash
 cd screen-robot/src
-export LINKEDIN_USER='seu@email.com'
-export LINKEDIN_PASSWORD='***'
 npm run linkedin-login
 ```
 
-Ordem do script: provisionar → instalar Instagram/LinkedIn → launch → `ui_stable` → screenshot → extrair campos → digitar → Entrar → `saveSession`.
+Ordem do script ([`src/scripts/linkedin-login.js`](src/scripts/linkedin-login.js)):
+
+1. Limpar `screenshots/`
+2. `resetInstance(cfg)` — instância do zero
+3. `provisionEmulator` → `installApk(linkedin)` → `launch` → `ui_stable`
+4. Screenshot `01-antes-agree.png`
+5. Se houver **AGREE** → tap + 5s → `02-apos-agree.png`; senão se houver **Sign In** → tap + 5s → `02-apos-sign-in.png`
+6. `extract()` ×5 → `tree-screen.png` + `component-tree.json`
+
+Não instala Instagram, não digita credenciais e não chama `saveSession`.
 
 ### 6. Testes
 

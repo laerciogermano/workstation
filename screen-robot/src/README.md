@@ -18,9 +18,10 @@ Superfície pública:
 
 ```js
 import { provisionEmulator } from "./lib/provision.js";
+import { resetInstance } from "./lib/reset-instance.js"; // ops — fora do handle
 ```
 
-Tudo o mais (gestos, APKs, eventos, extract, sessão) vem no **handle** retornado. Não passe `serial` nas operações — ele está no handle.
+Tudo o mais (gestos, APKs, eventos, extract, sessão) vem no **handle** retornado. Não passe `serial` nas operações — ele está no handle. `resetInstance` é export ops (wipe + boot); não é método do handle.
 
 ---
 
@@ -63,6 +64,25 @@ const b = await provisionEmulator({ provision: { name: "b", kind: "redroid" } })
 Não é obrigatório rodar `pocs/redroid/scripts/start.sh` — o create já sobe o container.
 
 Config de exemplo: [`device.config.json`](device.config.json) (`provision.name`, `kind`, apps, paths).
+
+---
+
+## 1b. Reset do zero — `resetInstance(cfg)`
+
+Recria a instância limpa (apaga volume Docker e sobe de novo). Usado pelo piloto LinkedIn antes do provision.
+
+```js
+import { resetInstance } from "./lib/reset-instance.js";
+
+const { serial, kind, resetAt } = await resetInstance(cfg);
+// → ADB online + boot completo
+```
+
+| Item | Detalhe |
+|------|---------|
+| Script default | [`../pocs/redroid/scripts/reset.sh`](../pocs/redroid/README.md) (`docker compose down -v` + `start.sh`) |
+| Override | `cfg.provision.resetScript` |
+| Erros | `RESET_NO_SERIAL` · `RESET_FAILED` · `RESET_UNSUPPORTED` |
 
 ---
 
@@ -162,18 +182,19 @@ Erros: `SESSION_WRITE_FAILED` · `SESSION_NOT_FOUND` · `SESSION_INVALID`.
 ```js
 import { readFileSync } from "node:fs";
 import { provisionEmulator } from "./lib/provision.js";
+import { resetInstance } from "./lib/reset-instance.js";
 
 const cfg = JSON.parse(readFileSync("./device.config.json", "utf8"));
+
+await resetInstance(cfg); // opcional: instância do zero
 const handle = await provisionEmulator(cfg);
 
 await handle.installApk(cfg.apps.linkedin);
 await handle.launch(cfg.apps.linkedin.package);
 await handle.on("ui_stable", { timeoutMs: 90_000 });
 
-handle.screenshot(cfg.screenshot.path);
+handle.screenshot("./screenshots/01-antes-agree.png");
 const tree = await handle.extract();
-
-await handle.saveSession(cfg.session.path, { stage: "ready", treeType: tree.type });
 ```
 
 ---
@@ -183,6 +204,7 @@ await handle.saveSession(cfg.session.path, { stage: "ready", treeType: tree.type
 | Recorte | Arquivo |
 |---------|---------|
 | `provisionEmulator` | [`lib/provision.js`](lib/provision.js) |
+| `resetInstance` | [`lib/reset-instance.js`](lib/reset-instance.js) |
 | Container / porta / registry | `start-runtime` · `attach-runtime` · `agent-registry` |
 | `installApk` | [`lib/apks.js`](lib/apks.js) |
 | `on` | [`lib/events.js`](lib/events.js) |
@@ -211,12 +233,19 @@ npm run test:e2e   # requer Docker/Colima + adb
 
 ```bash
 cd screen-robot/src
-export LINKEDIN_USER='seu@email.com'
-export LINKEDIN_PASSWORD='***'
 npm run linkedin-login
 ```
 
-Usa `device.config.json` → provisionar → instalar apps → launch → eventos → extract → type → `saveSession`.
+Script [`scripts/linkedin-login.js`](scripts/linkedin-login.js):
+
+1. Limpa `screenshots/`
+2. `resetInstance(cfg)`
+3. `provisionEmulator` → `installApk(linkedin)` → `launch` → `on("ui_stable")`
+4. `01-antes-agree.png`
+5. **AGREE** (se houver) ou **Sign In** → wait 5s → `02-apos-agree.png` / `02-apos-sign-in.png`
+6. `extract()` ×5 → `tree-screen.png` + `component-tree.json`
+
+Só LinkedIn (sem Instagram). Sem digitar credenciais e sem `saveSession`.
 
 ---
 

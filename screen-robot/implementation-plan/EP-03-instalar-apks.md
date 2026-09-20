@@ -267,7 +267,7 @@ Fonte: [`5.bdds.md#ep-03--instalar-apks`](../5.bdds.md#ep-03--instalar-apks). Ca
 | I2 | Skip se versionName == alvo | SC-08/10 | Idempotente |
 | I3 | Validar versão pós-install | SC-10 | Assert |
 | I4 | Erros tipados | SC-09/10 | Códigos estáveis |
-| I5 | Piloto usa `handle.installApk` | — | linkedin-login |
+| I5 | Piloto usa `handle.installApk(apps.linkedin)` apenas | — | linkedin-login | Sem Instagram no script |
 
 ### Ordem
 

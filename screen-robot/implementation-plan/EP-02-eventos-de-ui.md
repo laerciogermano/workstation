@@ -429,7 +429,7 @@ Caller nos BDDs: device já provisionado (handle); “Quando o sistema espera…
 | I3 | Interno: `waitAppOpen` (dumpsys) | SC-05 | `events.js` | `handle.on("app_open")` |
 | I4 | Interno: `waitUiStable` | SC-06 | `events.js` | `handle.on("ui_stable")` |
 | I5 | Interno: `waitDumpChange` | SC-07 | `events.js` | `handle.on("dump_change")` |
-| I6 | Piloto: `provisionEmulator` → `handle.on(...)` | — | `linkedin-login.js` | Sem `on`/`waitForUiReady` soltos |
+| I6 | Piloto: reset → launch → `handle.on("ui_stable")` | — | `linkedin-login.js` | Sem `on`/`waitForUiReady` soltos |
 
 ### Ordem
 

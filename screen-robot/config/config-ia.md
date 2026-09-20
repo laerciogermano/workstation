@@ -15,7 +15,7 @@ README.md (visão)
 ├── 6.prototype.md              # opcional
 ├── 7.tasks.md                  # Gantt TSK
 ├── implementation-plan/        # um .md por épico
-└── src (libs Node + scripts/linkedin-login.js)
+└── src (libs Node + `resetInstance` + scripts/linkedin-login.js)
 ```
 
 Prompts novos: gravar em [`../../prompts/`](../../prompts/README.md) (próximo NNN na timeline do ConnectMax).

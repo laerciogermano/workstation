@@ -10,11 +10,12 @@
 1. `provisionEmulator(cfg)` → `AgentHandle`  
 2. Capacidades seguintes são **métodos do handle** (sem `serial` no caller)  
 3. Libs internas (`events`, `apks`, `operate`, `extract`, `session`) encapsulam as sequências  
-4. Cada plano EP inclui seção **Árvore de arquivos** (código + unitários ao lado + e2e US/EP)
+4. Cada plano EP inclui seção **Árvore de arquivos** (código + unitários ao lado + e2e US/EP)  
+5. Ops paralelo (fora do handle): `resetInstance(cfg)` — ver [`EP-01`](EP-01-provisionar-agente.md) e [`../src/README.md`](../src/README.md)
 
 | ID | Épico | Plano | API no handle |
 |----|-------|-------|---------------|
-| EP-01 | Provisionar agente | [`EP-01-provisionar-agente.md`](EP-01-provisionar-agente.md) | `provisionEmulator` → handle |
+| EP-01 | Provisionar agente | [`EP-01-provisionar-agente.md`](EP-01-provisionar-agente.md) | `provisionEmulator` → handle (+ ops `resetInstance`) |
 | EP-02 | Eventos de UI | [`EP-02-eventos-de-ui.md`](EP-02-eventos-de-ui.md) | `on(event, opts?, onEvent?)` |
 | EP-03 | Instalar APKs | [`EP-03-instalar-apks.md`](EP-03-instalar-apks.md) | `installApk(app)` |
 | EP-04 | Operar tela | [`EP-04-operar-tela.md`](EP-04-operar-tela.md) | `launch` · `tap` · `type` · `scroll` · `screenshot` · `matchImage` |

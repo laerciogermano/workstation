@@ -353,7 +353,7 @@ Fonte: [`5.bdds.md#ep-05--extrair-elementos`](../5.bdds.md#ep-05--extrair-elemen
 | I2 | Passo 1 → nodes `text` | SC-17 | Filhos texto |
 | I3 | Passo 2 → hierarquia completa | SC-18 | `children` aninhados |
 | I4 | Passos 3–5 → nodes `icon` / `list` / `image` | SC-19..21 | Tipos na árvore |
-| I5 | Piloto usa `extract()` | — | linkedin-login |
+| I5 | Piloto: `extract()` ×5 + `component-tree.json`; `extractElements` para achar AGREE/Sign In | — | linkedin-login |
 
 ### Ordem
 

@@ -8,10 +8,10 @@ Apps de loja (LinkedIn, Instagram, Tinder) exigem imagem **Google APIs** ou **Go
 
 | Item | Detalhe |
 |------|---------|
-| macOS / Linux | Host com RAM livre (AVD leve ~384–768 MB guest; processo host consome bem mais) |
+| macOS / Linux | Host com RAM livre (AVD Play ~1–1.5 GB guest; processo host consome bem mais) |
 | SDK | `ANDROID_HOME` apontando para command-line tools ou Android Studio SDK |
 | Ferramentas | `emulator`, `adb`, `avdmanager`, `sdkmanager` |
-| System image | **Google APIs** ou **Google Play**, API 30+ (arm64 no Apple Silicon) |
+| System image | **Google Play** (`google_apis_playstore`), API 30+ arm64 — GMS atualizável (Continue with Google) |
 | Opcional | [Android Studio](https://developer.android.com/studio), [OBS](https://obsproject.com/) (Virtual Camera) |
 
 Neste Mac o SDK costuma estar em:
@@ -25,7 +25,7 @@ Neste Mac o SDK costuma estar em:
 ```bash
 cd screen-robot/pocs/android-studio
 
-# 1) cria/atualiza o AVD (API 30+, Google APIs/Play, arm64)
+# 1) cria/atualiza o AVD (API 30+, Google Play, arm64)
 ./scripts/setup-avd.sh
 
 # 2) sobe o emulador (janela nativa)
@@ -34,14 +34,20 @@ cd screen-robot/pocs/android-studio
 # 3) espera boot
 ./scripts/wait-boot.sh
 
-# 4) (opcional) Instagram — XAPK em apks/ (gitignored) ou baixa com apkeep
+# 4) (uma vez) conta Google + atualizar Play Services — senão "Continue with Google" não faz nada
+#    Settings → Passwords & accounts → Add account → Google
+#    Play Store → atualizar "Google Play services"
+
+# 5) (opcional) Instagram — XAPK em apks/ (gitignored) ou baixa com apkeep
 ./scripts/install-instagram.sh
 
-# 5) (opcional) abre o app Camera
+# 6) (opcional) abre o app Camera
 ./scripts/open-camera.sh
 ```
 
 Instagram: última do APKPure compatível com API 28+ (AVD = API 30). Binário em `apks/` — **não** vai no git (copyright Meta); `brew install apkeep` na primeira máquina.
+
+**Continue with Google (LinkedIn/Tinder):** precisa de imagem **Play Store**, conta Google no aparelho e GMS ≥ versão pedida pelo app. Sem isso o botão falha em silêncio (`SERVICE_VERSION_UPDATE_REQUIRED`). O fluxo automatizado usa **Sign in with Email**.
 
 Parar:
 
@@ -54,7 +60,7 @@ Parar:
 ### Pelo Android Studio
 
 1. Instale o Android Studio e abra **Device Manager**.
-2. Crie um AVD (API 30+, **Google APIs** ou **Play Store**, arm64 no Apple Silicon) com o nome `ConnectMax_Cam`, **ou** use o criado por `./scripts/setup-avd.sh`.
+2. Crie um AVD (API 30+, **Google Play** / Play Store, arm64 no Apple Silicon) com o nome `ConnectMax_Cam`, **ou** use o criado por `./scripts/setup-avd.sh`.
 3. Rode o AVD pelo Studio **ou** pelos scripts acima (mesma pasta `~/.android/avd`).
 
 ## Create / Attach (lib)

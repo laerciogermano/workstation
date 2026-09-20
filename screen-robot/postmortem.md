@@ -49,6 +49,7 @@ O que **funcionava** no redroid: provision ADB, install de alguns APKs, telas mu
 3. Documentar a decisão no plano (EP-01) e no postmortem evita voltar ao redroid por inércia.
 4. Disco no Mac é pré-requisito do AVD (≥ ~8 GB livres); Colima+redroid + AVD juntos esgotam o volume.
 5. **Tinder Huawei vs Play:** APKPure costuma entregar só `armeabi-v7a` (não instala no AVD `arm64-v8a`). A App Gallery Huawei entrega arm64, mas o Location Kit falha no AVD Google com **10808 AGC_CHECK_FAIL** (“Unable to fetch location…”). Mitigação: XAPK **universal GMS** (ex. APKCombo, com split `arm64-v8a`) em `apks/com.tinder.xapk` + `geo fix` antes do launch.
+6. **Continue with Google no-op:** AVD `google_apis` traz GMS velho (~20.x) sem Play Store; LinkedIn pede GMS ≥23 e falha com `SERVICE_VERSION_UPDATE_REQUIRED` / `resolution=null` (sem diálogo). Mitigação: imagem **`google_apis_playstore`**, conta Google no device e atualizar Play Services. Automação continua em **Sign in with Email**.
 
 ---
 

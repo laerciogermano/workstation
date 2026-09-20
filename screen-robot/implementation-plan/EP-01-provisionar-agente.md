@@ -8,6 +8,8 @@
 
 **Stack:** Node ≥ 18 · JavaScript · `adb` · Docker/Colima (redroid) ou AVD.
 
+**Mascaramento:** o runtime redroid **deve** expor identidade de aparelho Android comum (`ro.product.*` / `DEVICE_*`), não o nome “redroid”, para apps não detectarem o robô de imediato — ver [`../pocs/redroid/README.md`](../pocs/redroid/README.md#mascarar-identidade-não-redroid).
+
 ---
 
 ## Escopo

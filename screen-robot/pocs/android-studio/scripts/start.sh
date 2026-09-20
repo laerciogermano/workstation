@@ -29,7 +29,7 @@ fi
 WEBCAM="${WEBCAM:-webcam0}"
 
 echo "Usando câmera: ${WEBCAM}"
-echo "AVD: ${AVD_NAME} (memory=${EMU_MEMORY:-384} cores=${EMU_CORES:-1})"
+echo "AVD: ${AVD_NAME} (memory=${EMU_MEMORY:-1024} cores=${EMU_CORES:-2} no-window=${EMU_NO_WINDOW:-0})"
 
 AVD_DIR="$HOME/.android/avd/${AVD_NAME}.avd"
 if [[ -f "$AVD_DIR/config.ini" ]]; then
@@ -44,18 +44,28 @@ fi
 pkill -f "qemu-system.*${AVD_NAME}" 2>/dev/null || true
 sleep 1
 
+# Play Store AVD: ≥1 GB guest. EMU_NO_WINDOW=1 = headless (mais estável) + scrcpy.
+NO_WINDOW_ARGS=()
+if [[ "${EMU_NO_WINDOW:-0}" == "1" ]]; then
+  NO_WINDOW_ARGS+=(-no-window)
+fi
+
 nohup emulator -avd "$AVD_NAME" \
   -camera-back "$WEBCAM" \
   -camera-front "$WEBCAM" \
-  -memory "${EMU_MEMORY:-384}" \
-  -cores "${EMU_CORES:-1}" \
+  -memory "${EMU_MEMORY:-1024}" \
+  -cores "${EMU_CORES:-2}" \
   -gpu swiftshader_indirect \
   -no-snapshot \
   -no-boot-anim \
   -no-audio \
   -no-metrics \
+  ${NO_WINDOW_ARGS[@]+"${NO_WINDOW_ARGS[@]}"} \
   >"$ROOT/emulator.log" 2>&1 &
 
 echo "Emulador iniciando (pid $!). Aguarde o boot..."
 echo "Log: $ROOT/emulator.log"
 echo "Depois: ./scripts/wait-boot.sh && ./scripts/open-camera.sh"
+if [[ "${EMU_NO_WINDOW:-0}" == "1" ]]; then
+  echo "Headless: após boot, scrcpy -s emulator-5554"
+fi

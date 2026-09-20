@@ -17,41 +17,40 @@ cd screen-robot/src
 Superfície pública:
 
 ```js
-import { provisionEmulator, attachEmulator } from "./lib/provision.js";
+import { provisionEmulator } from "./lib/provision.js";
 ```
 
 Tudo o mais (gestos, APKs, eventos, extract, sessão) vem no **handle** retornado. Não passe `serial` nas operações — ele está no handle.
 
 ---
 
-## 1. Provisionar e resgatar agents
+## 1. Provisionar agents — `provisionEmulator(cfg)`
 
-### Criar (sempre container novo)
+Um único método: **cria** se o `name` for novo; **anexa** se o nome já existir (sem criar outro container).
 
 ```js
 const handle = await provisionEmulator({
   provision: {
-    name: "agent-a",          // obrigatório, único ([a-zA-Z0-9_-])
+    name: "agent-a",          // obrigatório ([a-zA-Z0-9_-])
     kind: "redroid",          // redroid | avd | …
     connectTimeoutMs: 120_000,
     // host: "127.0.0.1",     // opcional
   },
 });
 // handle.name · handle.serial · handle.kind · handle.bootCompleted · handle.provisionedAt
-```
 
-- Aloca porta ADB livre e sobe **um container novo** ligado ao `name`
-- Se o nome já existir → `err.code === "PROVISION_NAME_TAKEN"` (use `attachEmulator`)
-- Nome inválido → `PROVISION_INVALID_NAME`
-
-### Resgatar (sem criar)
-
-```js
-const again = await attachEmulator("agent-a", { connectTimeoutMs: 120_000 });
+// mesmo nome de novo → anexa ao agent existente
+const again = await provisionEmulator({
+  provision: { name: "agent-a", kind: "redroid" },
+});
 // again.serial === handle.serial
 ```
 
-- Nome ausente → `PROVISION_NAME_NOT_FOUND`
+| Caso | Comportamento |
+|------|----------------|
+| Nome novo | Aloca porta ADB, sobe container novo, registra, boot ok |
+| Nome já registrado | Reconecta serial existente, boot ok — **não** cria outro |
+| Nome inválido | `PROVISION_INVALID_NAME` |
 
 ### Vários em paralelo
 
@@ -61,7 +60,7 @@ const b = await provisionEmulator({ provision: { name: "b", kind: "redroid" } })
 // a.serial !== b.serial
 ```
 
-Não é obrigatório rodar `pocs/redroid/scripts/start.sh` no fluxo da lib — o create já sobe o container.
+Não é obrigatório rodar `pocs/redroid/scripts/start.sh` — o create já sobe o container.
 
 Config de exemplo: [`device.config.json`](device.config.json) (`provision.name`, `kind`, apps, paths).
 
@@ -183,7 +182,7 @@ await handle.saveSession(cfg.session.path, { stage: "ready", treeType: tree.type
 
 | Recorte | Arquivo |
 |---------|---------|
-| `provisionEmulator` · `attachEmulator` | [`lib/provision.js`](lib/provision.js) |
+| `provisionEmulator` | [`lib/provision.js`](lib/provision.js) |
 | Container / porta / registry | `start-runtime` · `attach-runtime` · `agent-registry` |
 | `installApk` | [`lib/apks.js`](lib/apks.js) |
 | `on` | [`lib/events.js`](lib/events.js) |

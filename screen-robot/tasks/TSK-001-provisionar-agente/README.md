@@ -18,7 +18,7 @@
 ## Execução
 
 - `provisionEmulator(cfg)` — **nome** obrigatório; cria **container novo**; aloca serial/porta
-- `attachEmulator(name)` — resgata agent existente sem criar
+- Mesmo `provisionEmulator({ name })` — se o nome já existir, anexa sem criar
 - Filhas: TSK-002→004 (create) · TSK-032→034 (attach)
 
 ## Saídas

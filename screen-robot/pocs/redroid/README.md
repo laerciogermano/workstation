@@ -11,8 +11,8 @@ Projeto irmão (emulador oficial / Android Studio): [`../android-studio`](../and
 | Conceito | Comportamento |
 |----------|----------------|
 | `name` | Id estável do agent (rótulo do container / compose project) |
-| Create (`provisionEmulator`) | Sempre **novo** container + porta ADB alocada; falha se `name` já existir |
-| Attach (`attachEmulator`) | Resolve `name` → serial/porta; **não** cria container |
+| Create | `provisionEmulator` com nome **novo** → container + porta ADB |
+| Attach | `provisionEmulator` com nome **já existente** → reconecta; **não** cria |
 | Paralelo | Vários nomes ⇒ vários containers (portas distintas em `127.0.0.1`) |
 
 Detalhe de API: [`../../README.md`](../../README.md) · plano: [`../../implementation-plan/EP-01-provisionar-agente.md`](../../implementation-plan/EP-01-provisionar-agente.md).
@@ -85,7 +85,7 @@ Dados persistentes: volume Docker **por agent** (não compartilhar o mesmo volum
 | Container some na hora | `sudo ./scripts/setup-host.sh` e `dmesg -T` |
 | `adb` offline | `adb kill-server && adb connect 127.0.0.1:<porta>`; `./scripts/status.sh` |
 | Sem tela | Confirme scrcpy instalado; `docker compose logs -f` |
-| Nome já em uso | Use outro `name` no create, ou `attachEmulator` |
+| Nome já em uso | Chamar `provisionEmulator` de novo com o mesmo `name` (anexa) |
 | Kernel sem ashmem | Já usamos `androidboot.use_memfd=true` no compose |
 
 Debug oficial do projeto:

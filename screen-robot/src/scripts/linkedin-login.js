@@ -114,7 +114,9 @@ async function main() {
     const signIn = findSignIn(elements);
     if (signIn?.center) {
       console.log(`   → ${signIn.label || signIn.text}`);
-      await tapAndShot(handle, signIn, resolve(outDir, "03-apos-sign-in.png"));
+      handle.tapElement(signIn);
+      await sleep(5_000);
+      handle.screenshot(resolve(outDir, "03-apos-login.png"));
     } else {
       console.log("   (Sign in não encontrado — segue)");
     }

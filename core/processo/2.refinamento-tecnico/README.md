@@ -18,28 +18,35 @@ Transformar o discovery em plano executável.
 - Consolidar critérios de pronto (aceite por cenário do discovery)
 - Estimar esforço e dependências; tratar cada cenário como unidade paralelizável quando não houver dependência
 - Quebrar em tarefas priorizadas (preferência: 1 tarefa ↔ 1 cenário)
-- **No final:** criar a pasta `tasks/` do projeto com uma atividade documentada para **cada task** do Gantt (pasta = nome da task, não EP/US/SC)
+- **No final:** criar a pasta `tasks/` do projeto com uma atividade documentada para **cada task** do Gantt (pasta = `task-<nn>-<titulo>`)
 
 ## Saídas
 
 - Desenho técnico (ou ADR)
 - Critérios de pronto
 - Backlog priorizado
-- Pasta `tasks/` no projeto — pastas pelo **nome da task** (hierarquia do Gantt); cada uma com **Entradas · Execução · Saídas** e documentação
+- Pasta `tasks/` no projeto — pastas `task-<nn>-<titulo>` (hierarquia do Gantt); cada uma com **Entradas · Execução · Saídas** e documentação
 - Próximo passo: desenvolvimento
 
 ## Pasta `tasks/` (obrigatória ao fechar o refinamento)
 
-Pastas nomeadas pelo **nome da task** (kebab-case), alinhado ao Gantt [`7.tasks.md`](../1.discovery/7.tasks.md) — **não** usar `EP-` / `US-` / `SC-` no nome da pasta. Origem (EP/US/SC) fica só no README da atividade.
+Pastas no padrão **`task-<nn>-<titulo>`** (kebab-case), alinhado ao Gantt [`7.tasks.md`](../1.discovery/7.tasks.md) — **não** usar `EP-` / `US-` / `SC-` no nome da pasta. Origem (EP/US/SC) fica só no README da atividade.
 
 ```text
 tasks/
 ├── README.md
-└── <nome-da-task>/              # ex.: provisionar-agente
+└── task-001-provisionar-agente/
     ├── README.md
-    └── <nome-da-filha>/         # ex.: subir-e-conectar
-        └── README.md
+    ├── task-002-subir-e-conectar/
+    ├── task-003-serial-adb-online/
+    └── task-004-boot-completo/
 ```
+
+| Parte | Regra | Exemplo |
+|-------|--------|---------|
+| Prefixo | `task-` | `task-` |
+| `<nn>` | número da task no Gantt (zero-pad 2+ dígitos) | `001` |
+| `<titulo>` | kebab-case do nome da atividade | `subir-e-conectar` |
 
 Hierarquia = árvore/Gantt das tasks (pai → filhas). Cada `README.md` documenta:
 

@@ -2,15 +2,16 @@
 
 | Campo | Valor |
 |-------|--------|
+| Pasta | `task-004-boot-completo` |
 | TSK | [`TSK-004`](../../../7.tasks.md) |
 | Origem | SC-03 |
-| Pai | [`provisionar-agente`](../README.md) |
+| Pai | [`task-001-provisionar-agente`](../README.md) |
 | Estado | `AdbOnline` → `Booted` |
-| Depende | [`serial-adb-online`](../serial-adb-online/README.md) |
+| Depende | [`task-003-serial-adb-online`](../task-003-serial-adb-online/README.md) |
 
 ## Entradas
 
-- Serial ADB online (serial-adb-online)
+- Serial ADB online (task-003)
 - Timeout de boot alinhado à config de provisionamento
 
 ## Execução

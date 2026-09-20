@@ -35,24 +35,26 @@ Em paralelo: vários PRs podem aguardar ao mesmo tempo; nenhum robô avança par
 
 ## Padrão de branch
 
+Igual ao nome da pasta da atividade:
+
 ```text
-task/<ID>-<slug>
+task-<nn>-<titulo>
 ```
 
 | Parte | Regra | Exemplo |
 |-------|--------|---------|
-| Prefixo | sempre `task/` | `task/` |
-| `<ID>` | ID da atividade em execução (preferir SC-; senão US-/EP-/TSK-) | `SC-01` |
-| `<slug>` | kebab-case do nome da atividade | `subir-conectar-android` |
+| Prefixo | `task-` | `task-` |
+| `<nn>` | número da task (zero-pad) | `002` |
+| `<titulo>` | kebab-case do nome | `subir-e-conectar` |
 
-Exemplos: `task/SC-01-subir-conectar-android` · `task/US-01-provisionar-um-agente` · `task/TSK-002-subir-e-conectar`
+Exemplos: `task-002-subir-e-conectar` · `task-001-provisionar-agente`
 
 ## Execução (por atividade / por robô)
 
 Ordem **obrigatória** — não pular nem inverter:
 
-1. **Baixar o projeto** — clone (ou worktree) limpo **dentro da pasta da atividade** em `tasks/` (ex.: `tasks/provisionar-agente/subir-e-conectar/`), isolado para esta task; o `README.md` da atividade permanece na pasta; o código do repo fica como subpasta do clone nessa mesma pasta
-2. **Criar a branch** — nome no [padrão](#padrão-de-branch); publicar upstream quando houver push
+1. **Baixar o projeto** — clone (ou worktree) limpo **dentro da pasta da atividade** em `tasks/` (ex.: `tasks/task-001-provisionar-agente/task-002-subir-e-conectar/`), isolado para esta task; o `README.md` da atividade permanece na pasta; o código do repo fica como subpasta do clone nessa mesma pasta
+2. **Criar a branch** — nome no [padrão](#padrão-de-branch) (= nome da pasta); publicar upstream quando houver push
 3. **Criar os TDDs** — testes que falham e cobrem o aceite da atividade (Entradas · Execução · Saídas / BDD)
 4. **Implementar a funcionalidade** — código mínimo para os TDDs passarem e o aceite fechar
 5. **Testar** — rodar a suíte relevante; só seguir com testes verdes
@@ -63,10 +65,10 @@ Ordem **obrigatória** — não pular nem inverter:
 
 ```text
 tasks/
-└── <nome-da-task>/              # ex.: provisionar-agente
-    └── <nome-da-filha>/         # ex.: subir-e-conectar  ← pasta da atividade
+└── task-001-provisionar-agente/
+    └── task-002-subir-e-conectar/   ← pasta da atividade
         ├── README.md
-        └── <repo>/              ← projeto baixado aqui (clone/worktree)
+        └── <repo>/                  ← projeto baixado aqui (clone/worktree)
 ```
 
 Regras transversais:
@@ -86,7 +88,7 @@ Regras transversais:
 
 ## Saídas
 
-- Branch no padrão `task/<ID>-<slug>`
+- Branch no padrão `task-<nn>-<titulo>`
 - TDDs + implementação + evidência de testes verdes
 - Pull request aberto
 - Atividade no board em **Pendente aprovação**

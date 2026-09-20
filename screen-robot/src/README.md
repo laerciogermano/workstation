@@ -33,14 +33,14 @@ BDD: [`../5.bdds.md`](../5.bdds.md)
 | O quê | Tipo | Comando |
 |-------|------|---------|
 | Componentes (`lib/*.js`) | unitário ao lado do arquivo; **deps mock/stub** (sem app/runtime) | `npm test` / `npm run test:unit` |
-| **US** / **EP** | BDD e2e (`test/bdd/`) | `npm run test:e2e` |
+| **US** / **EP** | BDD e2e (`test/bdd/`) — **app inteira, sem mock/stub** | `npm run test:e2e` |
 
-**SC** não tem suíte própria. Unitário isola o SUT — sem ADB, Docker, emulador nem árvore real de módulos.
+**SC** não tem suíte própria. Unitário isola o SUT. BDD e2e exercita o caminho real (runtime/ADB).
 
 ```bash
 cd screen-robot/src
 npm test          # unitários isolados (mock/stub)
-npm run test:e2e  # BDD e2e US/EP (requer runtime Android)
+npm run test:e2e  # BDD e2e US/EP — sistema real (requer runtime Android)
 ```
 
 ## Script inicial — login LinkedIn

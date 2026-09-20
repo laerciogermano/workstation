@@ -12,18 +12,20 @@ function defaultGetBootCompleted(serial) {
  * @param {string} serial
  * @param {number} timeoutMs
  * @param {number} [started]
- * @param {{ getBootCompleted?: Function, sleep?: Function }} [deps]
+ * @param {{ getBootCompleted?: Function, sleep?: Function, now?: Function }} [deps]
  */
 export async function waitBootCompleted(
   serial,
   timeoutMs,
-  started = Date.now(),
+  started,
   deps = {},
 ) {
   const getBootCompleted = deps.getBootCompleted ?? defaultGetBootCompleted;
   const sleep = deps.sleep ?? defaultSleep;
+  const now = deps.now ?? Date.now;
+  const t0 = started ?? now();
 
-  while (Date.now() - started < timeoutMs) {
+  while (now() - t0 < timeoutMs) {
     try {
       if (getBootCompleted(serial) === "1") return;
     } catch {

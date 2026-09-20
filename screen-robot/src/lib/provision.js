@@ -2,11 +2,14 @@
  * Biblioteca de provisionamento do emulador/agent.
  * Superfície pública: apenas `provisionEmulator`.
  * Handle inclui `on` (EP-02) — eventos via handle após provisionar.
+ *
+ * deps (só para unitário): startRuntime, ensureAdbOnline, waitBootCompleted,
+ * createOn, now, toIso — produção não passa deps.
  */
-import { createOn } from "./events.js";
-import { ensureAdbOnline } from "./ensure-adb-online.js";
-import { startRuntime } from "./start-runtime.js";
-import { waitBootCompleted } from "./wait-boot-completed.js";
+import { createOn as defaultCreateOn } from "./events.js";
+import { ensureAdbOnline as defaultEnsureAdbOnline } from "./ensure-adb-online.js";
+import { startRuntime as defaultStartRuntime } from "./start-runtime.js";
+import { waitBootCompleted as defaultWaitBootCompleted } from "./wait-boot-completed.js";
 
 /**
  * @typedef {object} ProvisionConfig
@@ -43,11 +46,19 @@ function resolveConfig(cfg) {
 /**
  * Único método público: provisiona o emulador (SC-01→SC-03).
  * @param {ProvisionConfig} cfg
+ * @param {{ startRuntime?: Function, ensureAdbOnline?: Function, waitBootCompleted?: Function, createOn?: Function, now?: Function, toIso?: Function }} [deps]
  * @returns {Promise<AgentHandle>}
  */
-export async function provisionEmulator(cfg) {
+export async function provisionEmulator(cfg, deps = {}) {
+  const startRuntime = deps.startRuntime ?? defaultStartRuntime;
+  const ensureAdbOnline = deps.ensureAdbOnline ?? defaultEnsureAdbOnline;
+  const waitBootCompleted = deps.waitBootCompleted ?? defaultWaitBootCompleted;
+  const createOn = deps.createOn ?? defaultCreateOn;
+  const now = deps.now ?? Date.now;
+  const toIso = deps.toIso ?? (() => new Date().toISOString());
+
   const resolved = resolveConfig(cfg);
-  const started = Date.now();
+  const started = now();
 
   await startRuntime(resolved);
   await ensureAdbOnline(resolved.serial, resolved.connectTimeoutMs, started);
@@ -56,7 +67,7 @@ export async function provisionEmulator(cfg) {
   return {
     serial: resolved.serial,
     kind: resolved.kind,
-    provisionedAt: new Date().toISOString(),
+    provisionedAt: toIso(),
     bootCompleted: true,
     on: createOn(resolved.serial),
   };

@@ -1,5 +1,5 @@
 /**
- * Unitário — ao lado de start-runtime.js
+ * Unitário — ao lado de start-runtime.js (deps mock/stub; sem runtime real).
  */
 import assert from "node:assert/strict";
 import path from "node:path";
@@ -8,6 +8,16 @@ import {
   defaultStartScript,
   startRuntime,
 } from "./start-runtime.js";
+
+function fakeClock(start = 0) {
+  let t = start;
+  return {
+    now: () => t,
+    sleep: async (ms) => {
+      t += ms;
+    },
+  };
+}
 
 describe("startRuntime", () => {
   it("não executa startScript se já alcançável", async () => {
@@ -27,6 +37,7 @@ describe("startRuntime", () => {
   it("executa startScript e retorna quando fica alcançável", async () => {
     let reachable = false;
     let runs = 0;
+    const clock = fakeClock();
     await startRuntime(
       {
         serial: "127.0.0.1:5555",
@@ -40,7 +51,8 @@ describe("startRuntime", () => {
           runs += 1;
           reachable = true;
         },
-        sleep: async () => {},
+        sleep: clock.sleep,
+        now: clock.now,
       },
     );
     assert.equal(runs, 1);
@@ -101,6 +113,7 @@ describe("startRuntime", () => {
   });
 
   it("lança PROVISION_START_FAILED se nunca fica alcançável", async () => {
+    const clock = fakeClock();
     await assert.rejects(
       () =>
         startRuntime(
@@ -113,7 +126,8 @@ describe("startRuntime", () => {
           {
             isReachable: async () => false,
             runStartScript: async () => {},
-            sleep: async () => {},
+            sleep: clock.sleep,
+            now: clock.now,
           },
         ),
       (err) => err && err.code === "PROVISION_START_FAILED",

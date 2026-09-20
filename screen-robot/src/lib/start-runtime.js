@@ -63,12 +63,13 @@ function defaultRunStartScript(scriptPath) {
 
 /**
  * @param {{ serial: string, kind: string, connectTimeoutMs?: number, startScript?: string }} resolved
- * @param {{ isReachable?: Function, runStartScript?: Function, sleep?: Function }} [deps]
+ * @param {{ isReachable?: Function, runStartScript?: Function, sleep?: Function, now?: Function }} [deps]
  */
 export async function startRuntime(resolved, deps = {}) {
   const isReachable = deps.isReachable ?? isRuntimeReachable;
   const runStartScript = deps.runStartScript ?? defaultRunStartScript;
   const sleep = deps.sleep ?? defaultSleep;
+  const now = deps.now ?? Date.now;
   const timeoutMs = Number(resolved.connectTimeoutMs ?? 120_000);
 
   if (await isReachable(resolved.serial)) return;
@@ -85,8 +86,8 @@ export async function startRuntime(resolved, deps = {}) {
 
   await runStartScript(script);
 
-  const started = Date.now();
-  while (Date.now() - started < timeoutMs) {
+  const started = now();
+  while (now() - started < timeoutMs) {
     if (await isReachable(resolved.serial)) return;
     await sleep(500);
   }

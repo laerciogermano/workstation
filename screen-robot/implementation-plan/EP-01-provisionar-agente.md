@@ -23,6 +23,31 @@
 
 ---
 
+## Árvore de arquivos
+
+```text
+src/
+├── lib/
+│   ├── provision.js
+│   ├── provision.test.js
+│   ├── start-runtime.js
+│   ├── start-runtime.test.js
+│   ├── ensure-adb-online.js
+│   ├── ensure-adb-online.test.js
+│   ├── wait-boot-completed.js
+│   ├── wait-boot-completed.test.js
+│   ├── adb.js
+│   └── events.js                 # on anexado ao handle (EP-02)
+└── test/
+    └── bdd/
+        ├── ep-01-provisionar-agente.test.js
+        └── us-01-agent-fica-pronto-para-adb.test.js
+```
+
+Unitários ao lado do módulo (deps mock/stub). BDD e2e só US/EP.
+
+---
+
 ## Biblioteca JavaScript
 
 Arquivo: `src/lib/provision.js`.
@@ -434,9 +459,10 @@ I1 → I2 → I3 → I4 → I5 → I6
 
 | Peça | Status |
 |------|--------|
-| `provisionEmulator` (único export) | Existe — encapsula SC-02+SC-03 |
-| Internos ADB / boot | Encapsulados em `provision.js` + `adb.js` |
-| `startRuntime` (SC-01) | **Gap** interno (scripts shell manuais) |
+| `provisionEmulator` (único export) | Existe — encapsula SC-01→SC-03 |
+| Internos ADB / boot / start | `ensure-adb-online` · `wait-boot-completed` · `start-runtime` |
+| Unitários isolados (mock/stub) | Ao lado de cada módulo |
+| BDD e2e US-01 / EP-01 | `test/bdd/` |
 | Exports extras além de `provisionEmulator` | **Proibido** nesta lib |
 
 ---

@@ -12,20 +12,22 @@ function defaultWaitForDevice(serial) {
  * @param {string} serial
  * @param {number} timeoutMs
  * @param {number} [started]
- * @param {{ connectIfTcp?: Function, waitForDevice?: Function, sleep?: Function }} [deps]
+ * @param {{ connectIfTcp?: Function, waitForDevice?: Function, sleep?: Function, now?: Function }} [deps]
  */
 export async function ensureAdbOnline(
   serial,
   timeoutMs,
-  started = Date.now(),
+  started,
   deps = {},
 ) {
   const connectIfTcp = deps.connectIfTcp ?? defaultConnectIfTcp;
   const waitForDevice = deps.waitForDevice ?? defaultWaitForDevice;
   const sleep = deps.sleep ?? defaultSleep;
+  const now = deps.now ?? Date.now;
+  const t0 = started ?? now();
 
   connectIfTcp(serial);
-  while (Date.now() - started < timeoutMs) {
+  while (now() - t0 < timeoutMs) {
     try {
       waitForDevice(serial);
       return;

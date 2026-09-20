@@ -32,14 +32,14 @@ BDD: [`../5.bdds.md`](../5.bdds.md)
 
 | O quê | Tipo | Comando |
 |-------|------|---------|
-| Componentes (`lib/*.js`) | unitário ao lado do arquivo (`lib/<módulo>.test.js`) | `npm test` / `npm run test:unit` |
+| Componentes (`lib/*.js`) | unitário ao lado do arquivo; **deps mock/stub** (sem app/runtime) | `npm test` / `npm run test:unit` |
 | **US** / **EP** | BDD e2e (`test/bdd/`) | `npm run test:e2e` |
 
-**SC** não tem suíte própria — só unitários colocados ao lado do módulo.
+**SC** não tem suíte própria. Unitário isola o SUT — sem ADB, Docker, emulador nem árvore real de módulos.
 
 ```bash
 cd screen-robot/src
-npm test          # unitários dos componentes
+npm test          # unitários isolados (mock/stub)
 npm run test:e2e  # BDD e2e US/EP (requer runtime Android)
 ```
 

@@ -180,7 +180,7 @@ sequenceDiagram
 |---|----|------|---------|---------|----------|----------|--------|
 | 1 | Dev | SessionStore | `removeSession(path)` | Apagar sessão | `path` | Unlink idempotente | Promise |
 | 2 | SessionStore | FS | `unlink` | Remover arquivo | `path` | Apaga se existe | pedido |
-| 3 | FS | SessionStore | `removed\ | absent` | Resultado FS | — | Retorna flag |
+| 3 | FS | SessionStore | `removed/absent` | Resultado FS | — | Retorna flag | status |
 | 4 | SessionStore | SessionStore | `limpar contexto` | Alinhar memória | handles | Reset runtime | — |
 | 5 | SessionStore | Dev | `{ removed }` | Resultado | — | Resolve | `{ removed }` |
 
@@ -273,7 +273,7 @@ sequenceDiagram
 | 3 | FS | SessionStore | `content` | Arquivo ok | — | alt ok | JSON |
 | 4 | SessionStore | SessionStore | `validar schema` | Garantir campos | JSON | Valida | state |
 | 5 | SessionStore | Dev | `state` | Sessão pronta | — | Resolve | `SessionState` |
-| 6 | FS | SessionStore | `missing\ | invalid` | Falha de leitura | — | alt erro |
+| 6 | FS | SessionStore | `missing/invalid` | Falha de leitura | — | alt erro | erro |
 | 7 | SessionStore | Dev | `erro` | Não restaurável | código | Rejeita | `SESSION_*` |
 
 #### Contratos

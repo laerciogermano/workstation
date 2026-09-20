@@ -565,7 +565,7 @@ sequenceDiagram
 
 | # | De | Para | Chamada | Por quê | Entradas | Execução | Saídas |
 |---|----|------|---------|---------|----------|----------|--------|
-| 1 | Dev | Operator | `findTemplateCoords(...)` | Achar template | frame\ | serial + template | Inicia match |
+| 1 | Dev | Operator | `findTemplateCoords(...)` | Achar template | frame/serial + template | Inicia match | Promise |
 | 2 | Operator | Device | `screenshot` | Obter frame se falta | `serial` | opt captura | pedido |
 | 3 | Device | Operator | `frame` | Frame pronto | — | Retorna imagem | frame |
 | 4 | Operator | VisionMatcher | `match(...)` | Localizar template | template + frame | Template matching | pedido |

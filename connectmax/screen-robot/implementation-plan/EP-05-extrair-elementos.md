@@ -104,7 +104,7 @@ sequenceDiagram
 | 3 | Device | Extractor | `xml` | Hierarquia | — | Retorna | xml |
 | 4 | Extractor | Extractor | `parse → árvore textos` | Montar tree | xml | Parser text nodes | tree |
 | 5 | Extractor | Dev | `tree fase 1` | Entrega rápida | — | Resolve | `{ tree, xml }` |
-| 6 | Dev | Extractor | `extractFullTree(...)` | Fase 2 completa | serial\ | tree | Orquestra extractors |
+| 6 | Dev | Extractor | `extractFullTree(...)` | Fase 2 completa | serial/tree | Orquestra extractors | Promise |
 | 7 | Extractor | Extractor | `icons+lists+images` | Kinds extras | tree/xml | Chama US-14..16 | subárvores |
 | 8 | Extractor | Extractor | `compor hierarquia` | Árvore única | subárvores | Merge | tree |
 | 9 | Extractor | Dev | `tree completa` | DOM final | — | Resolve | `{ tree }` |
@@ -188,9 +188,9 @@ sequenceDiagram
 
 | # | De | Para | Chamada | Por quê | Entradas | Execução | Saídas |
 |---|----|------|---------|---------|----------|----------|--------|
-| 1 | Dev | Extractor | `extractIcons(...)` | Tipar ícones | serial\ | tree | Prepara dump |
+| 1 | Dev | Extractor | `extractIcons(...)` | Tipar ícones | serial/tree | Prepara dump | Promise |
 | 2 | Extractor | Device | `dump / frame` | Evidência UI | `serial` | Obtém dump/frame | pedido |
-| 3 | Device | Extractor | `xml\ | frame` | Dados | — | Retorna |
+| 3 | Device | Extractor | `xml/frame` | Dados | — | Retorna | evidência |
 | 4 | Extractor | Extractor | `filtrar icons` | Marcar kind=icon | xml/tree | Heurísticas | nodes |
 | 5 | Extractor | Dev | `tree kind=icon` | Ícones | — | Resolve | `{ tree }` |
 
@@ -270,7 +270,7 @@ sequenceDiagram
 
 | # | De | Para | Chamada | Por quê | Entradas | Execução | Saídas |
 |---|----|------|---------|---------|----------|----------|--------|
-| 1 | Dev | Extractor | `extractLists(...)` | Tipar listas | serial\ | tree | Detecta containers |
+| 1 | Dev | Extractor | `extractLists(...)` | Tipar listas | serial/tree | Detecta containers | Promise |
 | 2 | Extractor | Extractor | `detectar ListView/...` | Achar listas | xml/tree | Heurísticas | candidatos |
 | 3 | Extractor | Extractor | `agrupar items` | Filhos como items | containers | Agrupa | list+items |
 | 4 | Extractor | Dev | `tree kind=list` | Listas | — | Resolve | `{ tree }` |
@@ -350,7 +350,7 @@ sequenceDiagram
 
 | # | De | Para | Chamada | Por quê | Entradas | Execução | Saídas |
 |---|----|------|---------|---------|----------|----------|--------|
-| 1 | Dev | Extractor | `extractImages(...)` | Tipar imagens | serial\ | tree | Filtra nodes |
+| 1 | Dev | Extractor | `extractImages(...)` | Tipar imagens | serial/tree | Filtra nodes | Promise |
 | 2 | Extractor | Extractor | `nodes imagem + bounds` | kind=image | xml/tree | Heurísticas | nodes |
 | 3 | Extractor | Dev | `tree kind=image` | Imagens | — | Resolve | `{ tree }` |
 

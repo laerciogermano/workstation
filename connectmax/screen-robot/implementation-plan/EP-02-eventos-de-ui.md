@@ -106,7 +106,7 @@ sequenceDiagram
 | 1 | Dev | EventBus | `on("boot", { serial, ...opts })` | Esperar boot | `serial`, opts | Inicia loop de poll | Promise |
 | 2 | EventBus | AdbClient | `getprop sys.boot_completed` | Checar prop | `serial` | Pede leitura | pedido |
 | 3 | AdbClient | Device | `adb shell getprop` | Ler no device | prop | Shell | pedido |
-| 4 | Device | AdbClient | `"0"\ | "1"` | Valor | — | Resposta |
+| 4 | Device | AdbClient | `"0"/"1"` | Valor | — | Resposta | prop |
 | 5 | AdbClient | EventBus | `prop` | Entregar valor | — | Propaga | prop |
 | 6 | EventBus | Dev | `on("boot_poll", payload)` | Progresso (fire-and-forget) | type + valor | Callback assíncrono | — |
 | 7 | EventBus | Dev | `on("boot", { boot: true })` | Condição ok | prop==1 | Resolve Promise | `{ boot: true }` |

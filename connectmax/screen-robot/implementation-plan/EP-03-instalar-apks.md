@@ -119,7 +119,7 @@ sequenceDiagram
 | 3 | Config | ApkInstaller | `alvo` | Contrato da app | — | Retorna | alvo |
 | 4 | ApkInstaller | AdbClient | `versionName?` | Ver se já instalado | `package` | Pede dumpsys | pedido |
 | 5 | AdbClient | Device | `dumpsys package` | Ler versão | `pkg` | Shell | pedido |
-| 6 | Device | AdbClient | `versionName\ | null` | Versão atual | — | Resposta |
+| 6 | Device | AdbClient | `versionName/null` | Versão atual | — | Resposta | versão |
 | 7 | AdbClient | ApkInstaller | `versão atual` | Reportar | — | Propaga | versão |
 | 8 | ApkInstaller | Dev | `skip` | Já na versão | match | Atalho | `skipped` |
 | 9 | ApkInstaller | Downloader | `apkeep/artifact` | Obter binário | pkg/version | Download ou path | pedido |

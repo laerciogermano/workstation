@@ -54,8 +54,8 @@ Ver stories em [`1.stories.md`](1.stories.md) e cenários em [`4.scenarios.md`](
 | Tasks (Gantt) | [`7.tasks.md`](7.tasks.md) | Feito |
 | Tasks (EP/US/SC) | [`tasks/`](tasks/README.md) | EP-01 |
 | Sources | [`sources/`](sources/README.md) | Em curso |
-| android-control | [`sources/android-control/`](sources/android-control/README.md) | Em curso |
+| sources | [`sources/`](sources/README.md) | Em curso |
 
 ## Próximos passos
 
-→ [`4.scenarios.md`](4.scenarios.md) · [`5.bdds.md`](5.bdds.md) · `LINKEDIN_USER` / `LINKEDIN_PASSWORD` + `npm run linkedin-login` em `sources/android-control`
+→ [`4.scenarios.md`](4.scenarios.md) · [`5.bdds.md`](5.bdds.md) · `LINKEDIN_USER` / `LINKEDIN_PASSWORD` + `npm run linkedin-login` em `sources`

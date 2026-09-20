@@ -1,11 +1,11 @@
 {
-  "name": "android-control",
+  "name": "screen-robot",
   "version": "1.0.0",
   "private": true,
   "type": "module",
   "description": "Agent Android via Node: provisionar, APKs, eventos, extrair, operar, sessão",
   "bin": {
-    "android-control": "./cli.js"
+    "screen-robot": "./cli.js"
   },
   "scripts": {
     "run": "node cli.js",

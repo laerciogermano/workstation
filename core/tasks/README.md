@@ -68,7 +68,7 @@ IDs: **US-** história · **SC-XX** cenário sequencial (mudança de estado; uni
 
 | Todo | Doing | Done |
 |------|-------|------|
-| [Login LinkedIn (BDD)](../../screen-robot/5.bdds.md) · `npm run linkedin-login` | | [Libs Node 6 recortes](../../screen-robot/sources/android-control/README.md) |
+| [Login LinkedIn (BDD)](../../screen-robot/5.bdds.md) · `npm run linkedin-login` | | [Libs Node 6 recortes](../../screen-robot/sources/README.md) |
 
 → [`screen-robot/`](../../screen-robot/README.md) · [`5.bdds.md`](../../screen-robot/5.bdds.md)
 

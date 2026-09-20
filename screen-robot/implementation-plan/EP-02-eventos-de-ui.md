@@ -5,7 +5,7 @@
 **US:** [`1.stories.md`](../1.stories.md) · [`4.scenarios.md#ep-02--eventos-de-ui`](../4.scenarios.md#ep-02--eventos-de-ui) · [`5.bdds.md#ep-02--eventos-de-ui`](../5.bdds.md#ep-02--eventos-de-ui).  
 **Handle:** `on` é método do [`AgentHandle`](EP-01-provisionar-agente.md) — **não** é função solta.  
 **Pré-requisito:** [`EP-01`](EP-01-provisionar-agente.md) · `provisionEmulator` → handle.  
-**Implementação interna:** [`../sources/android-control/lib/events.js`](../sources/android-control/lib/events.js) (anexado ao handle em `provision.js`).
+**Implementação interna:** [`../sources/lib/events.js`](../sources/lib/events.js) (anexado ao handle em `provision.js`).
 
 **Stack:** Node ≥ 18 · JavaScript · `adb` · runtime provisionado (EP-01).
 
@@ -429,5 +429,5 @@ I1 → I2 → I3 → I4 → I5 → I6
 
 ## Próximos passos
 
-→ Implementar I1–I6 em [`sources/android-control`](../sources/android-control/README.md)  
+→ Implementar I1–I6 em [`sources`](../sources/README.md)  
 → Aceite: [`5.bdds.md#ep-02--eventos-de-ui`](../5.bdds.md#ep-02--eventos-de-ui)

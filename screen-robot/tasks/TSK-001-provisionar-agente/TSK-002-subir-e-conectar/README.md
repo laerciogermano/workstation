@@ -37,4 +37,4 @@ Cenário: SC-01 Agent sobe e fica alcançável
 ```
 
 - Plano: passos #3–#6 em [`EP-01-provisionar-agente.md`](../../../implementation-plan/EP-01-provisionar-agente.md)
-- Runtime: [`sources/redroid/`](../../../sources/redroid/README.md) · [`sources/android-studio/`](../../../sources/android-studio/README.md)
+- Runtime: [`core/pocs/redroid/`](../../../../core/pocs/redroid/README.md) · [`core/pocs/android-studio/`](../../../../core/pocs/android-studio/README.md)

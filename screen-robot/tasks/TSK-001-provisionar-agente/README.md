@@ -31,5 +31,5 @@
 - Cenários: [`4.scenarios.md#ep-01--provisionar-agente`](../../4.scenarios.md#ep-01--provisionar-agente)
 - BDDs: [`5.bdds.md#ep-01--provisionar-agente`](../../5.bdds.md#ep-01--provisionar-agente)
 - Plano: [`implementation-plan/EP-01-provisionar-agente.md`](../../implementation-plan/EP-01-provisionar-agente.md)
-- Código: [`sources/android-control/lib/provision.js`](../../sources/android-control/lib/provision.js)
-- Runtime: [`sources/redroid/`](../../sources/redroid/README.md) · [`sources/android-studio/`](../../sources/android-studio/README.md)
+- Código: [`sources/lib/provision.js`](../../sources/lib/provision.js)
+- Runtime: [`core/pocs/redroid/`](../../../core/pocs/redroid/README.md) · [`core/pocs/android-studio/`](../../../core/pocs/android-studio/README.md)

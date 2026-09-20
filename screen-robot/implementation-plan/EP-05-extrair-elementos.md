@@ -5,7 +5,7 @@
 **US:** [`1.stories.md`](../1.stories.md) · [`4.scenarios.md#ep-05--extrair-elementos`](../4.scenarios.md#ep-05--extrair-elementos) · [`5.bdds.md#ep-05--extrair-elementos`](../5.bdds.md#ep-05--extrair-elementos).  
 **Handle:** `extract` é método do [`AgentHandle`](EP-01-provisionar-agente.md) — **não** é função solta com `serial`.  
 **Pré-requisito:** [`EP-01`](EP-01-provisionar-agente.md) · handle.  
-**Implementação interna:** [`../sources/android-control/lib/extract.js`](../sources/android-control/lib/extract.js) (anexado ao handle em `provision.js`).
+**Implementação interna:** [`../sources/lib/extract.js`](../sources/lib/extract.js) (anexado ao handle em `provision.js`).
 
 **Stack:** Node ≥ 18 · JavaScript · `adb` · runtime provisionado.
 
@@ -365,5 +365,5 @@ I1 → I2 → I3 → I4 → I5
 
 ## Próximos passos
 
-→ Implementar I1–I5 em [`sources/android-control`](../sources/android-control/README.md)  
+→ Implementar I1–I5 em [`sources`](../sources/README.md)  
 → Aceite: [`5.bdds.md#ep-05--extrair-elementos`](../5.bdds.md#ep-05--extrair-elementos)

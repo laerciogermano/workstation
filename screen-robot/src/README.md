@@ -32,7 +32,7 @@ BDD: [`../5.bdds.md`](../5.bdds.md)
 
 ```bash
 cd screen-robot/src
-npm test        # BDD e2e (SC-01, SC-02…)
+npm test        # BDD e2e (SC-01..SC-03)
 npm run test:e2e
 ```
 

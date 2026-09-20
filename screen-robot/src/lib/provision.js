@@ -3,10 +3,10 @@
  * Superfície pública: apenas `provisionEmulator`.
  * Handle inclui `on` (EP-02) — eventos via handle após provisionar.
  */
-import { adb, sleep } from "./adb.js";
 import { createOn } from "./events.js";
 import { ensureAdbOnline } from "./ensure-adb-online.js";
 import { startRuntime } from "./start-runtime.js";
+import { waitBootCompleted } from "./wait-boot-completed.js";
 
 /**
  * @typedef {object} ProvisionConfig
@@ -38,25 +38,6 @@ function resolveConfig(cfg) {
     connectTimeoutMs: Number(cfg.provision?.connectTimeoutMs ?? 120_000),
     startScript: cfg.provision?.startScript,
   };
-}
-
-/** SC-03 — sys.boot_completed=1. */
-async function waitBootCompleted(serial, timeoutMs, started) {
-  while (Date.now() - started < timeoutMs) {
-    try {
-      const boot = adb(serial, ["shell", "getprop", "sys.boot_completed"])
-        .stdout.trim();
-      if (boot === "1") return;
-    } catch {
-      /* retry */
-    }
-    await sleep(2_000);
-  }
-  const err = new Error(
-    `PROVISION_BOOT_TIMEOUT: boot não completou em ${timeoutMs}ms (${serial})`,
-  );
-  err.code = "PROVISION_BOOT_TIMEOUT";
-  throw err;
 }
 
 /**

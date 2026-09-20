@@ -4,7 +4,7 @@ Implementar **por IA** o que foi refinado — uma atividade (`tasks/`) por vez, 
 
 ## Entradas
 
-- Atividade da pasta [`tasks/`](../2.refinamento-tecnico/README.md) (EP → US → SC com Entradas · Execução · Saídas)
+- Atividade da pasta [`tasks/`](../2.refinamento-tecnico/README.md) (nome da task; Entradas · Execução · Saídas)
 - **Gantt das tasks** do projeto (ex.: [`7.tasks.md`](../../../connectmax/screen-robot/7.tasks.md)) — ordem e dependências da árvore de execução
 - Critérios de aceite (scenarios / BDDs)
 - Desenho técnico / ADRs
@@ -51,7 +51,7 @@ Exemplos: `task/SC-01-subir-conectar-android` · `task/US-01-provisionar-um-agen
 
 Ordem **obrigatória** — não pular nem inverter:
 
-1. **Baixar o projeto** — clone (ou worktree) limpo **dentro da pasta da atividade** em `tasks/` (ex.: `tasks/EP-01-…/US-01-…/SC-01-…/`), isolado para esta task; o `README.md` da atividade permanece na pasta; o código do repo fica como subpasta do clone nessa mesma pasta
+1. **Baixar o projeto** — clone (ou worktree) limpo **dentro da pasta da atividade** em `tasks/` (ex.: `tasks/provisionar-agente/subir-e-conectar/`), isolado para esta task; o `README.md` da atividade permanece na pasta; o código do repo fica como subpasta do clone nessa mesma pasta
 2. **Criar a branch** — nome no [padrão](#padrão-de-branch); publicar upstream quando houver push
 3. **Criar os TDDs** — testes que falham e cobrem o aceite da atividade (Entradas · Execução · Saídas / BDD)
 4. **Implementar a funcionalidade** — código mínimo para os TDDs passarem e o aceite fechar
@@ -63,11 +63,10 @@ Ordem **obrigatória** — não pular nem inverter:
 
 ```text
 tasks/
-└── EP-NN-…/
-    └── US-NN-…/
-        └── SC-NN-…/          ← pasta da atividade
-            ├── README.md     ← Entradas · Execução · Saídas
-            └── <repo>/       ← projeto baixado aqui (clone/worktree)
+└── <nome-da-task>/              # ex.: provisionar-agente
+    └── <nome-da-filha>/         # ex.: subir-e-conectar  ← pasta da atividade
+        ├── README.md
+        └── <repo>/              ← projeto baixado aqui (clone/worktree)
 ```
 
 Regras transversais:

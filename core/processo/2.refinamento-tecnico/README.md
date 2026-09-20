@@ -18,36 +18,36 @@ Transformar o discovery em plano executável.
 - Consolidar critérios de pronto (aceite por cenário do discovery)
 - Estimar esforço e dependências; tratar cada cenário como unidade paralelizável quando não houver dependência
 - Quebrar em tarefas priorizadas (preferência: 1 tarefa ↔ 1 cenário)
-- **No final:** criar a pasta `tasks/` do projeto com uma atividade documentada para **cada EP**, **cada US** e **cada SC**
+- **No final:** criar a pasta `tasks/` do projeto com uma atividade documentada para **cada task** do Gantt (pasta = nome da task, não EP/US/SC)
 
 ## Saídas
 
 - Desenho técnico (ou ADR)
 - Critérios de pronto
 - Backlog priorizado
-- Pasta `tasks/` no projeto — hierarquia EP → US → SC; cada atividade com **Entradas · Execução · Saídas** e documentação (links a scenarios, BDDs, plano)
+- Pasta `tasks/` no projeto — pastas pelo **nome da task** (hierarquia do Gantt); cada uma com **Entradas · Execução · Saídas** e documentação
 - Próximo passo: desenvolvimento
 
 ## Pasta `tasks/` (obrigatória ao fechar o refinamento)
 
+Pastas nomeadas pelo **nome da task** (kebab-case), alinhado ao Gantt [`7.tasks.md`](../1.discovery/7.tasks.md) — **não** usar `EP-` / `US-` / `SC-` no nome da pasta. Origem (EP/US/SC) fica só no README da atividade.
+
 ```text
 tasks/
 ├── README.md
-└── EP-NN-<slug>/
-    ├── README.md                 # atividade do épico
-    └── US-NN-<slug>/
-        ├── README.md             # atividade da estória
-        └── SC-NN-<slug>/
-            └── README.md         # atividade do cenário
+└── <nome-da-task>/              # ex.: provisionar-agente
+    ├── README.md
+    └── <nome-da-filha>/         # ex.: subir-e-conectar
+        └── README.md
 ```
 
-Cada `README.md` de atividade documenta:
+Hierarquia = árvore/Gantt das tasks (pai → filhas). Cada `README.md` documenta:
 
 | Seção | Conteúdo |
 |-------|----------|
 | Entradas | Pré-condições, artefatos e dependências |
 | Execução | O que fazer (passos / critérios técnicos) |
 | Saídas | Resultado observável / aceite |
-| Documentação | Links a scenarios, BDDs, implementation-plan (e código, se houver) |
+| Documentação | Links a scenarios, BDDs, implementation-plan (e código, se houver); IDs EP/US/SC/TSK como metadado |
 
-Lote: primeiro um épico completo; validar o formato; só então escalar aos demais.
+Lote: primeiro um épico completo (suas tasks); validar o formato; só então escalar aos demais.

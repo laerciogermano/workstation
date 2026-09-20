@@ -1,31 +1,28 @@
 # Tasks — screen-robot
 
-**Por quê:** atividades executáveis do refinamento técnico (EP → US → SC), cada uma com Entradas · Execução · Saídas.  
+**Por quê:** atividades executáveis do refinamento técnico (pastas = **nome da task**), cada uma com Entradas · Execução · Saídas.  
 **Gantt / inventário:** [`7.tasks.md`](../7.tasks.md).  
 **Processo:** [`core/processo/2.refinamento-tecnico`](../../../core/processo/2.refinamento-tecnico/README.md).  
 **Cenários / BDDs / planos:** [`4.scenarios.md`](../4.scenarios.md) · [`5.bdds.md`](../5.bdds.md) · [`implementation-plan/`](../implementation-plan/README.md).
 
 ## Escopo atual
 
-Só **EP-01**. Demais épicos depois da validação deste formato.
+Só tasks do **Provisionar agente** (TSK-001..004). Demais depois da validação deste formato.
 
 ## Árvore
 
 ```text
 tasks/
-└── EP-01-provisionar-agente/
+└── provisionar-agente/          # TSK-001
     ├── README.md
-    └── US-01-provisionar-um-agente/
-        ├── README.md
-        ├── SC-01-subir-conectar-android/
-        ├── SC-02-garantir-serial-adb-online/
-        └── SC-03-aguardar-boot-completo/
+    ├── subir-e-conectar/        # TSK-002
+    ├── serial-adb-online/       # TSK-003
+    └── boot-completo/           # TSK-004
 ```
 
-| ID | Atividade | Pasta |
-|----|-----------|-------|
-| EP-01 | Provisionar agente | [`EP-01-provisionar-agente/`](EP-01-provisionar-agente/README.md) |
-| US-01 | Provisionar um agente | [`US-01-provisionar-um-agente/`](EP-01-provisionar-agente/US-01-provisionar-um-agente/README.md) |
-| SC-01 | Subir / conectar o Android | [`SC-01-…`](EP-01-provisionar-agente/US-01-provisionar-um-agente/SC-01-subir-conectar-android/README.md) |
-| SC-02 | Garantir serial ADB online | [`SC-02-…`](EP-01-provisionar-agente/US-01-provisionar-um-agente/SC-02-garantir-serial-adb-online/README.md) |
-| SC-03 | Aguardar boot completo | [`SC-03-…`](EP-01-provisionar-agente/US-01-provisionar-um-agente/SC-03-aguardar-boot-completo/README.md) |
+| TSK | Atividade | Pasta |
+|-----|-----------|-------|
+| TSK-001 | Provisionar agente | [`provisionar-agente/`](provisionar-agente/README.md) |
+| TSK-002 | Subir e conectar | [`subir-e-conectar/`](provisionar-agente/subir-e-conectar/README.md) |
+| TSK-003 | Serial ADB online | [`serial-adb-online/`](provisionar-agente/serial-adb-online/README.md) |
+| TSK-004 | Boot completo | [`boot-completo/`](provisionar-agente/boot-completo/README.md) |

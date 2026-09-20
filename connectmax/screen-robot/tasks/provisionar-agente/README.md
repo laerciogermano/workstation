@@ -1,11 +1,10 @@
-# EP-01 — Provisionar agente
+# Provisionar agente
 
 | Campo | Valor |
 |-------|--------|
-| ID | EP-01 |
 | TSK | [`TSK-001`](../../7.tasks.md) |
-| Prioridade | 1 |
-| Filha | [`US-01`](US-01-provisionar-um-agente/README.md) |
+| Origem | EP-01 · US-01 |
+| Filhas | [`subir-e-conectar`](subir-e-conectar/README.md) · [`serial-adb-online`](serial-adb-online/README.md) · [`boot-completo`](boot-completo/README.md) |
 | Plano | [`implementation-plan/EP-01-provisionar-agente.md`](../../implementation-plan/EP-01-provisionar-agente.md) |
 
 ## Entradas
@@ -18,12 +17,12 @@
 ## Execução
 
 - Entregar capacidade Node de provisionar o agent até serial ADB `device` + boot completo
-- API pública: único método `provisionEmulator(cfg)` → `AgentHandle` (SC-01→SC-03 encapsulados)
-- Implementar / validar na ordem: SC-01 → SC-02 → SC-03 (via US-01)
+- API pública: único método `provisionEmulator(cfg)` → `AgentHandle` (filhas encapsuladas)
+- Implementar / validar na ordem: subir-e-conectar → serial-adb-online → boot-completo
 
 ## Saídas
 
-- Agent pronto para ADB (serial online, boot ok) — pré-requisito de EP-02..06
+- Agent pronto para ADB (serial online, boot ok) — pré-requisito das demais tasks do Gantt
 - Handle com `serial`, `kind`, `provisionedAt`, `bootCompleted: true`
 
 ## Documentação

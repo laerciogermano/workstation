@@ -66,14 +66,14 @@ O mapa e a prioridade nascem no discovery; o detalhe (SC/BDD) e o restante do pr
 - Consolidar critérios de pronto
 - Estimar esforço e dependências
 - Quebrar em tarefas priorizadas
-- Criar pasta `tasks/` com atividades de cada EP, US e SC (Entradas · Execução · Saídas + documentação)
+- Criar pasta `tasks/` com uma atividade por **task do Gantt** (pasta = nome da task; Entradas · Execução · Saídas + documentação)
 
 **Saídas**
 
 - Desenho técnico / ADR
 - Critérios de pronto
 - Backlog priorizado
-- `tasks/` (EP → US → SC documentados)
+- `tasks/` (pastas pelo nome da task; origem EP/US/SC só no README)
 
 ---
 

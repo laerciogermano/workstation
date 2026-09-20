@@ -1,16 +1,16 @@
-# SC-02 — Garantir serial ADB online
+# Serial ADB online
 
 | Campo | Valor |
 |-------|--------|
-| ID | SC-02 |
-| TSK | [`TSK-003`](../../../../7.tasks.md) |
-| Pai | [`US-01`](../README.md) |
+| TSK | [`TSK-003`](../../../7.tasks.md) |
+| Origem | SC-02 |
+| Pai | [`provisionar-agente`](../README.md) |
 | Estado | `Reachable` → `AdbOnline` |
-| Depende | [`SC-01`](../SC-01-subir-conectar-android/README.md) |
+| Depende | [`subir-e-conectar`](../subir-e-conectar/README.md) |
 
 ## Entradas
 
-- Agent alcançável (SC-01)
+- Agent alcançável (subir-e-conectar)
 - Serial esperado na config (`cfg.provision.serial` / `cfg.device` / `ANDROID_SERIAL`)
 - `connectTimeoutMs` (default 120000)
 
@@ -26,7 +26,7 @@
 
 ## Documentação
 
-- Cenário: [`4.scenarios.md`](../../../../4.scenarios.md#ep-01--provisionar-agente)
+- Cenário: [`4.scenarios.md`](../../../4.scenarios.md#ep-01--provisionar-agente)
 - BDD:
 
 ```gherkin
@@ -36,4 +36,4 @@ Cenário: SC-02 Serial ADB fica online
   Então o serial ADB está online
 ```
 
-- Plano: passos #7–#14 em [`EP-01-provisionar-agente.md`](../../../../implementation-plan/EP-01-provisionar-agente.md)
+- Plano: passos #7–#14 em [`EP-01-provisionar-agente.md`](../../../implementation-plan/EP-01-provisionar-agente.md)

@@ -1,10 +1,10 @@
-# SC-01 — Subir / conectar o Android (agent)
+# Subir e conectar
 
 | Campo | Valor |
 |-------|--------|
-| ID | SC-01 |
-| TSK | [`TSK-002`](../../../../7.tasks.md) |
-| Pai | [`US-01`](../README.md) |
+| TSK | [`TSK-002`](../../../7.tasks.md) |
+| Origem | SC-01 |
+| Pai | [`provisionar-agente`](../README.md) |
 | Estado | `Absent` / `Starting` → `Reachable` |
 
 ## Entradas
@@ -25,7 +25,7 @@
 
 ## Documentação
 
-- Cenário: [`4.scenarios.md`](../../../../4.scenarios.md#ep-01--provisionar-agente)
+- Cenário: [`4.scenarios.md`](../../../4.scenarios.md#ep-01--provisionar-agente)
 - BDD:
 
 ```gherkin
@@ -35,5 +35,5 @@ Cenário: SC-01 Agent sobe e fica alcançável
   Então o processo do agent está em execução e alcançável
 ```
 
-- Plano: passos #3–#6 em [`EP-01-provisionar-agente.md`](../../../../implementation-plan/EP-01-provisionar-agente.md)
-- Runtime: [`sources/redroid/`](../../../../sources/redroid/README.md) · [`sources/android-studio/`](../../../../sources/android-studio/README.md)
+- Plano: passos #3–#6 em [`EP-01-provisionar-agente.md`](../../../implementation-plan/EP-01-provisionar-agente.md)
+- Runtime: [`sources/redroid/`](../../../sources/redroid/README.md) · [`sources/android-studio/`](../../../sources/android-studio/README.md)

@@ -1,16 +1,16 @@
-# SC-03 — Aguardar boot completo
+# Boot completo
 
 | Campo | Valor |
 |-------|--------|
-| ID | SC-03 |
-| TSK | [`TSK-004`](../../../../7.tasks.md) |
-| Pai | [`US-01`](../README.md) |
+| TSK | [`TSK-004`](../../../7.tasks.md) |
+| Origem | SC-03 |
+| Pai | [`provisionar-agente`](../README.md) |
 | Estado | `AdbOnline` → `Booted` |
-| Depende | [`SC-02`](../SC-02-garantir-serial-adb-online/README.md) |
+| Depende | [`serial-adb-online`](../serial-adb-online/README.md) |
 
 ## Entradas
 
-- Serial ADB online (SC-02)
+- Serial ADB online (serial-adb-online)
 - Timeout de boot alinhado à config de provisionamento
 
 ## Execução
@@ -25,7 +25,7 @@
 
 ## Documentação
 
-- Cenário: [`4.scenarios.md`](../../../../4.scenarios.md#ep-01--provisionar-agente)
+- Cenário: [`4.scenarios.md`](../../../4.scenarios.md#ep-01--provisionar-agente)
 - BDD:
 
 ```gherkin
@@ -35,4 +35,4 @@ Cenário: SC-03 Boot completo no device
   Então o device reporta boot completo
 ```
 
-- Plano: passos #15–#19 em [`EP-01-provisionar-agente.md`](../../../../implementation-plan/EP-01-provisionar-agente.md)
+- Plano: passos #15–#19 em [`EP-01-provisionar-agente.md`](../../../implementation-plan/EP-01-provisionar-agente.md)

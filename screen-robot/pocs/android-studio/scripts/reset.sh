@@ -18,10 +18,13 @@ free_gb() {
 echo "Reset AVD: ${AVD_NAME} (wipe-data)…"
 FREE="$(free_gb || echo "?")"
 echo "Espaço livre em /Users: ${FREE} GB"
-if [[ "$FREE" =~ ^[0-9]+$ ]] && (( FREE < 8 )); then
-  echo "Erro: disco insuficiente para o AVD (livre=${FREE} GB; precisa ~8+ GB)."
-  echo "Libere espaço (ex.: ~/.android/avd antigos, Docker/Colima, apks grandes) e tente de novo."
+if [[ "$FREE" =~ ^[0-9]+$ ]] && (( FREE < 4 )); then
+  echo "Erro: disco insuficiente para o AVD (livre=${FREE} GB; precisa ~4+ GB)."
+  echo "Libere espaço (ex.: ~/.android/avd antigos, apks grandes) e tente de novo."
   exit 1
+fi
+if [[ "$FREE" =~ ^[0-9]+$ ]] && (( FREE < 8 )); then
+  echo "Aviso: pouco espaço (${FREE} GB). Wipe pode falhar; ideal ≥8 GB."
 fi
 
 "$ROOT/scripts/stop.sh"

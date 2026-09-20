@@ -9,12 +9,12 @@
 
 ## Entradas
 
-- Handle provisionado (EP-01+)
+- Frame da tela
 
 ## Execução
 
-- Entregar capacidade de tsk 023 extrair textos
+- **OCR** no frame: textos + bounds → nodes `text` · `extract()` fase 1
 
 ## Saídas
 
-- Aceite da origem coberta
+- Árvore com textos · aceite SC-17

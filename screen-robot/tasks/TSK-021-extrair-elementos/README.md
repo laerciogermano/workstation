@@ -8,12 +8,12 @@
 
 ## Entradas
 
-- Handle provisionado (EP-01+)
+- Handle provisionado (EP-01+); fonte de **frame** (screenshot/stream/câmera)
 
 ## Execução
 
-- Entregar capacidade de extrair elementos
+- Pipeline **frame → OCR/visão → árvore DOM** via `handle.extract()` (sem dump uiautomator)
 
 ## Saídas
 
-- Aceite da origem coberta
+- Árvore de componentes por tipo / completa · aceite EP-05

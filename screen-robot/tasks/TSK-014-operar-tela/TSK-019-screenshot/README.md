@@ -1,4 +1,4 @@
-# TSK 019 screenshot
+# TSK 019 capturar frame
 
 | Campo | Valor |
 |-------|--------|
@@ -9,12 +9,12 @@
 
 ## Entradas
 
-- Handle provisionado (EP-01+)
+- Handle provisionado (EP-01+); path de saída; fonte de frame (screencap ADB; futuro câmera)
 
 ## Execução
 
-- Entregar capacidade de tsk 019 screenshot
+- `handle.screenshot(path)` — capturar **frame** e gravar arquivo de imagem
 
 ## Saídas
 
-- Aceite da origem coberta
+- Arquivo de imagem no path · aceite SC-15

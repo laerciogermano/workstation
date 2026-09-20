@@ -9,12 +9,12 @@
 
 ## Entradas
 
-- Handle provisionado (EP-01+)
+- Frame da tela
 
 ## Execução
 
-- Entregar capacidade de tsk 027 extrair imagens
+- **Visão** detecta regiões de imagem/foto no frame → nodes `image` · `extract()`
 
 ## Saídas
 
-- Aceite da origem coberta
+- Árvore com imagens · aceite SC-21

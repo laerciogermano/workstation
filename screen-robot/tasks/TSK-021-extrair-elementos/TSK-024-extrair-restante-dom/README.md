@@ -9,12 +9,12 @@
 
 ## Entradas
 
-- Handle provisionado (EP-01+)
+- Árvore fase 1; mesmo **frame**
 
 ## Execução
 
-- Entregar capacidade de tsk 024 extrair restante dom
+- **Visão + OCR** no frame: ícones/listas/imagens; compor hierarquia · `extract()` fase 2
 
 ## Saídas
 
-- Aceite da origem coberta
+- Árvore completa · aceite SC-18

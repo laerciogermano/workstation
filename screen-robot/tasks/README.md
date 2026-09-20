@@ -25,7 +25,7 @@ tasks/
 │   ├── TSK-006-evento-de-boot/
 │   ├── TSK-007-evento-de-app-aberta/
 │   ├── TSK-008-evento-de-tela-estavel/
-│   └── TSK-009-evento-de-mudanca-dump/
+│   └── TSK-009-evento-de-mudanca-de-frame/   # US-05 frame_change
 ├── TSK-010-instalar-apks/
 │   ├── TSK-011-ler-versao/
 │   ├── TSK-012-baixar-apk/

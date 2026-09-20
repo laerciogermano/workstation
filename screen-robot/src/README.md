@@ -114,15 +114,15 @@ await handle.on("app_open", { pkg: "com.linkedin.android", timeoutMs: 60_000 });
 await handle.on("ui_stable", { timeoutMs: 90_000, stableMs: 800 }, (e) => {
   console.log(e.type, e.attempt);
 });
-await handle.on("dump_change", { timeoutMs: 30_000 });
+await handle.on("frame_change", { timeoutMs: 30_000 });
 ```
 
 | Evento | O quê |
 |--------|--------|
 | `boot` | Sinal de boot do device |
 | `app_open` | Package em foreground (`opts.pkg`) |
-| `ui_stable` | UI sem transição |
-| `dump_change` | Dump uiautomator mudou |
+| `ui_stable` | Frame estável (hash/diff de imagem) |
+| `frame_change` | Frame/imagem mudou (hash/diff visual) |
 
 Desconhecido → `EVENT_UNKNOWN`. Timeout → códigos `EVENT_*` / timeout do listener.
 
@@ -132,11 +132,11 @@ Desconhecido → `EVENT_UNKNOWN`. Timeout → códigos `EVENT_*` / timeout do li
 
 ```js
 await handle.launch("com.linkedin.android");           // ou launch(pkg, ".MainActivity")
-handle.tap(360, 640);
-handle.tapElement(el);                                 // el.center ou el.bounds
+handle.tap(360, 640);                                  // coords de visão/OCR sobre o frame
+handle.tapElement(el);                                 // el.center ou el.bounds (OCR/visão)
 handle.type("olá");                                    // ASCII via input; unicode via ADBKeyBoard
 handle.scroll({ direction: "down", distance: 800 });   // up|down|left|right; x/y opcionais
-const shot = handle.screenshot("./screenshots/tela.png");
+const shot = handle.screenshot("./screenshots/tela.png"); // capturar frame (ADB; futuro: câmera)
 const { x, y, confidence } = await handle.matchImage("./templates/btn.png");
 await handle.openScrcpy(); // { pid, serial } — janela para ver/operar
 ```
@@ -159,16 +159,18 @@ const { pid, serial } = handle.openScrcpy(); // scrcpy no serial do handle
 
 ## 5. Extrair UI — `handle.extract()`
 
-Sem parâmetros. Cada chamada **enriquece** a mesma árvore:
+Percepção por **frame → OCR/visão → árvore** (sem dump uiautomator). Sem parâmetros. Cada chamada **enriquece** a mesma árvore:
 
 ```js
-const t1 = await handle.extract(); // textos
-const t2 = await handle.extract(); // hierarquia
-const t3 = await handle.extract(); // ícones
-const t4 = await handle.extract(); // listas
-const t5 = await handle.extract(); // imagens
+const t1 = await handle.extract(); // OCR: textos + bounds
+const t2 = await handle.extract(); // hierarquia (visão + OCR)
+const t3 = await handle.extract(); // ícones (visão)
+const t4 = await handle.extract(); // listas (visão + OCR)
+const t5 = await handle.extract(); // imagens (visão)
 // { type: "root", bounds, children: [ { type, text?, bounds?, children } ] }
 ```
+
+Fonte do frame: screenshot ADB, stream ou câmera (device real) — mesmo pipeline.
 
 Legado (piloto LinkedIn, lista plana): `extractElements` / `findLoginTarget` / `findEditableFields` em [`lib/extract.js`](lib/extract.js).
 

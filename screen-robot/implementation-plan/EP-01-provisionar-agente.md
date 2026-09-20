@@ -241,7 +241,7 @@ type AgentHandle = {
   bootCompleted: true;
   /** EP-02: eventos de UI (serial já no handle). */
   on(
-    event: "boot" | "app_open" | "ui_stable" | "dump_change",
+    event: "boot" | "app_open" | "ui_stable" | "frame_change",
     opts?: Record<string, unknown>,
     onEvent?: (payload: { type: string; [k: string]: unknown }) => void,
   ): Promise<unknown>;

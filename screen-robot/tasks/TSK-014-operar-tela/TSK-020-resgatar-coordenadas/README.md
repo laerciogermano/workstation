@@ -9,12 +9,12 @@
 
 ## Entradas
 
-- Handle provisionado (EP-01+)
+- Handle provisionado; imagem template; frame/tela atual
 
 ## Execução
 
-- Entregar capacidade de tsk 020 resgatar coordenadas
+- Match por **visão**/template sobre o frame → coords para tap/type
 
 ## Saídas
 
-- Aceite da origem coberta
+- `{ x, y, confidence }` · aceite SC-16

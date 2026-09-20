@@ -9,12 +9,12 @@
 
 ## Entradas
 
-- Handle provisionado (EP-01+)
+- Frame da tela
 
 ## Execução
 
-- Entregar capacidade de tsk 025 extrair icones
+- **Visão** reconhece ícones no frame → nodes `icon` · `extract()`
 
 ## Saídas
 
-- Aceite da origem coberta
+- Árvore com ícones · aceite SC-19

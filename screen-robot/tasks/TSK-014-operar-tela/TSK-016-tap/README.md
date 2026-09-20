@@ -9,12 +9,12 @@
 
 ## Entradas
 
-- Handle provisionado (EP-01+)
+- Coords x,y ou bounds vindos de **visão/OCR** sobre o frame
 
 ## Execução
 
-- Entregar capacidade de tsk 016 tap
+- `handle.tap(x, y)` / `tapElement(el)` — gestos com coords da percepção por imagem
 
 ## Saídas
 
-- Aceite da origem coberta
+- UI refletindo o toque · aceite SC-12

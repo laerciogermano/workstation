@@ -9,12 +9,12 @@
 
 ## Entradas
 
-- Handle provisionado (EP-01+)
+- Frame da tela
 
 ## Execução
 
-- Entregar capacidade de tsk 026 extrair listas
+- **Visão + OCR** reconhecem listas/itens no frame → nodes `list` · `extract()`
 
 ## Saídas
 
-- Aceite da origem coberta
+- Árvore com listas · aceite SC-20

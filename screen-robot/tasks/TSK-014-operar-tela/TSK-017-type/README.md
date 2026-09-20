@@ -9,12 +9,12 @@
 
 ## Entradas
 
-- Handle provisionado (EP-01+)
+- Texto; campo focado ou coords (visão/OCR sobre o frame)
 
 ## Execução
 
-- Entregar capacidade de tsk 017 type
+- `handle.type(text)` — alvo via coords da percepção por imagem
 
 ## Saídas
 
-- Aceite da origem coberta
+- Texto na UI · aceite SC-13

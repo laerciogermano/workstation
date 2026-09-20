@@ -7,7 +7,8 @@
 **Pré-requisito:** [`EP-01`](EP-01-provisionar-agente.md) · `provisionEmulator` → handle.  
 **Implementação interna:** [`../src/lib/events.js`](../src/lib/events.js) (anexado ao handle em `provision.js`).
 
-**Stack:** Node ≥ 18 · JavaScript · `adb` · runtime provisionado (EP-01).
+**Stack:** Node ≥ 18 · JavaScript · `adb` · runtime provisionado (EP-01).  
+**Percepção:** estabilidade e mudança de UI por **hash/diff de frame/imagem** (screenshot ADB, stream ou câmera) — **não** dump uiautomator / XML de acessibilidade.
 
 ---
 
@@ -18,11 +19,11 @@
 | US-02 | Evento de boot |
 | US-03 | Evento de app aberta |
 | US-04 | Evento de tela estável |
-| US-05 | Evento de mudança de dump |
+| US-05 | Evento de mudança de frame |
 | SC-04 | Sinal de boot é recebido |
 | SC-05 | App em foreground é confirmada |
 | SC-06 | Tela fica estável |
-| SC-07 | Dump de UI muda |
+| SC-07 | Frame da tela muda |
 
 **Resultado:** sinais de UI confiáveis via `handle.on(...)` antes de instalar/operar/extrair.
 
@@ -39,11 +40,11 @@ src/
 │   ├── event-boot.test.js
 │   ├── event-app-open.js         # waitAppOpen (US-03 / SC-05)
 │   ├── event-app-open.test.js
-│   ├── event-ui-stable.js        # waitUiStable (US-04 / SC-06)
+│   ├── event-ui-stable.js        # waitUiStable — hash de frame (US-04 / SC-06)
 │   ├── event-ui-stable.test.js
-│   ├── event-dump-change.js      # waitDumpChange (US-05 / SC-07)
-│   ├── event-dump-change.test.js
-│   ├── extract.js                # dumpUiXml (deps de stable/dump)
+│   ├── event-frame-change.js     # waitFrameChange (US-05 / SC-07)
+│   ├── event-frame-change.test.js
+│   ├── frame.js                  # capturar frame (screenshot/stream/câmera) — deps de stable/change
 │   └── provision.js              # anexa on ao handle
 └── test/
     └── bdd/
@@ -51,10 +52,12 @@ src/
         ├── us-02-boot-do-device-e-sinalizado.test.js
         ├── us-03-app-aberta-e-confirmada.test.js
         ├── us-04-tela-estavel-e-confirmada.test.js
-        └── us-05-dump-atualizado-fica-disponivel.test.js
+        └── us-05-frame-atualizado-fica-disponivel.test.js
 ```
 
 Unitários ao lado do módulo (mock/stub). BDD e2e só US/EP.
+
+**Gap código atual:** ainda há `event-dump-change.js` / `waitDumpChange` / `dump_change` / `dumpUiXml` — **deve migrar** para frame + hash de imagem (`frame_change` / `waitFrameChange`).
 
 ---
 
@@ -71,7 +74,7 @@ const handle = await provisionEmulator(cfg);
 await handle.on("boot", { timeoutMs: 60_000 });
 await handle.on("app_open", { pkg: "com.linkedin.android" });
 await handle.on("ui_stable", { stableMs: 1_200 }, (p) => console.log(p.type));
-await handle.on("dump_change", { previousXml });
+await handle.on("frame_change", { previousFrame });
 ```
 
 Não chamar `on` sem handle. Não passar `serial` em `opts` (vem do handle). Callback de progresso = **3º parâmetro** (não `opts.onEvent`).
@@ -79,9 +82,9 @@ Não chamar `on` sem handle. Não passar `serial` em `opts` (vem do handle). Cal
 | Superfície | O quê |
 |------------|--------|
 | **Público (caller)** | `provisionEmulator` → `handle.on(event, opts?, onEvent?)` |
-| **Privado** | waits em `events.js` · adb · dump · polls `*_poll` |
+| **Privado** | waits em `events.js` · adb · captura de frame · polls `*_poll` |
 
-`event`: `"boot"` \| `"app_open"` \| `"ui_stable"` \| `"dump_change"`.
+`event`: `"boot"` \| `"app_open"` \| `"ui_stable"` \| `"frame_change"`.
 
 ---
 
@@ -97,8 +100,8 @@ Não chamar `on` sem handle. Não passar `serial` em `opts` (vem do handle). Cal
 | provision.js | Entrega `AgentHandle` com `on` ligado (EP-01) |
 | AgentHandle | Expõe `on`; carrega `serial` |
 | events.js (interno) | Encapsula SC-04→SC-07; ligado ao handle |
-| AdbClient / Extractor (interno) | getprop, dumpsys, dump XML |
-| Device | Fonte de props, foreground e dump |
+| AdbClient / FrameSource (interno) | getprop, dumpsys, captura de frame |
+| Device | Fonte de props, foreground e frames (imagem) |
 
 ```mermaid
 ---
@@ -157,7 +160,7 @@ sequenceDiagram
   Dev->>H: on(event, opts, onEvent?)
   note over H: 3º param = progresso
   H->>E: on(event, { ...opts, serial }, onEvent)
-  E->>D: poll (boot / fg / dump)
+  E->>D: poll (boot / fg / frame hash)
   D-->>E: evidência
   E-->>H: UiEventResult
   H-->>Dev: resultado
@@ -178,9 +181,9 @@ sequenceDiagram
 
 ```ts
 // Pré: EP-01 concluído
-// Erros: EVENT_BOOT_TIMEOUT | EVENT_APP_TIMEOUT | EVENT_STABLE_TIMEOUT | EVENT_DUMP_TIMEOUT | EVENT_UNKNOWN
+// Erros: EVENT_BOOT_TIMEOUT | EVENT_APP_TIMEOUT | EVENT_STABLE_TIMEOUT | EVENT_FRAME_TIMEOUT | EVENT_UNKNOWN
 
-type EventName = "boot" | "app_open" | "ui_stable" | "dump_change";
+type EventName = "boot" | "app_open" | "ui_stable" | "frame_change";
 
 type EventOpts = {
   timeoutMs?: number;
@@ -188,15 +191,15 @@ type EventOpts = {
   stableMs?: number;       // ui_stable
   pkg?: string;            // app_open
   activity?: string;       // app_open
-  previousXml?: string;    // dump_change
-  contains?: string;       // ui_stable opcional
+  previousFrame?: Buffer | string; // frame_change (bytes ou path)
+  contains?: string;       // ui_stable opcional (legado; preferir hash de imagem)
 };
 
 type UiEventResult =
   | { boot: true }
   | { foreground: true; package: string; activity?: string }
   | { stable: true }
-  | { xml: string; changed: true };
+  | { frame: Buffer | string; changed: true };
 
 type OnEvent = (payload: { type: string; [k: string]: unknown }) => void;
 
@@ -212,10 +215,10 @@ const handle = await provisionEmulator(cfg);
 await handle.on("boot", { timeoutMs: 60_000 });
 await handle.on("app_open", { pkg: "com.linkedin.android" });
 await handle.on("ui_stable", { stableMs: 1_200 }, (p) => console.log(p.type));
-await handle.on("dump_change", { previousXml: "<hierarchy/>" });
+await handle.on("frame_change", { previousFrame });
 ```
 
-**Interno (não exportar ao caller):** `createOn(serial)`, `waitBoot`, `waitAppOpen`, `waitUiStable`, `waitDumpChange` em `events.js` — anexados ao handle em `provisionEmulator`.
+**Interno (não exportar ao caller):** `createOn(serial)`, `waitBoot`, `waitAppOpen`, `waitUiStable`, `waitFrameChange` em `events.js` — anexados ao handle em `provisionEmulator`.
 
 ---
 
@@ -269,25 +272,29 @@ await handle.on("ui_stable", {
 | # | De | Para | Chamada | Descrição |
 |---|----|------|---------|-----------|
 | 1 | Dev | handle | `on("ui_stable", opts)` | Entrada |
-| 2 | events | Device | dump + hash *(privado)* | Estabilidade |
+| 2 | events | Device | capturar frame + hash estável *(privado)* | Estabilidade visual |
 | 3 | handle | Dev | `{ stable: true }` | Resolve |
+
+**Proibido** para este evento: depender de `dumpUiXml` / uiautomator.
 
 ---
 
-### US-05 — Evento de mudança de dump (SC-07)
+### US-05 — Evento de mudança de frame (SC-07)
 
 ```ts
-const changed = await handle.on("dump_change", {
-  previousXml: "<hierarchy/>",
+const changed = await handle.on("frame_change", {
+  previousFrame,
   timeoutMs: 20_000,
 });
 ```
 
 | # | De | Para | Chamada | Descrição |
 |---|----|------|---------|-----------|
-| 1 | Dev | handle | `on("dump_change", opts)` | Entrada |
-| 2 | events | Device | dump até hash ≠ base *(privado)* | Mudança |
-| 3 | handle | Dev | `{ xml, changed: true }` | Resolve |
+| 1 | Dev | handle | `on("frame_change", opts)` | Entrada |
+| 2 | events | Device | frame até hash ≠ base *(privado)* | Mudança visual |
+| 3 | handle | Dev | `{ frame, changed: true }` | Resolve |
+
+**Proibido** para este evento: dump XML / `dump_change` / `waitDumpChange`.
 
 ---
 
@@ -302,7 +309,7 @@ const changed = await handle.on("dump_change", {
 | `stableMs` | `number` | `"ui_stable"` |
 | `pkg` | `string?` | `"app_open"` |
 | `activity` | `string?` | `"app_open"` |
-| `previousXml` | `string?` | `"dump_change"` |
+| `previousFrame` | `Buffer \| string?` | `"frame_change"` |
 | `contains` | `string?` | `"ui_stable"` opcional |
 
 **3º parâmetro** `onEvent?: (e) => void` — progresso (`*_poll`), não vai em `EventOpts`.
@@ -316,7 +323,7 @@ const changed = await handle.on("dump_change", {
 | `boot` | `{ boot: true }` |
 | `app_open` | `{ foreground: true, package, activity? }` |
 | `ui_stable` | `{ stable: true }` |
-| `dump_change` | `{ xml, changed: true }` |
+| `frame_change` | `{ frame, changed: true }` |
 
 ### Erros
 
@@ -325,7 +332,7 @@ const changed = await handle.on("dump_change", {
 | `EVENT_BOOT_TIMEOUT` | US-02 |
 | `EVENT_APP_TIMEOUT` | US-03 |
 | `EVENT_STABLE_TIMEOUT` | US-04 |
-| `EVENT_DUMP_TIMEOUT` | US-05 |
+| `EVENT_FRAME_TIMEOUT` | US-05 |
 | `EVENT_UNKNOWN` | evento inválido |
 
 ---
@@ -402,7 +409,7 @@ classDiagram
     waitBoot()
     waitAppOpen()
     waitUiStable()
-    waitDumpChange()
+    waitFrameChange()
   }
 
   provision_js ..> AgentHandle : cria
@@ -427,14 +434,15 @@ Caller nos BDDs: device já provisionado (handle); “Quando o sistema espera…
 | I1 | `createOn(serial)` + anexar `handle.on` em `provisionEmulator` | — | `events.js` + `provision.js` | `on` só no handle |
 | I2 | Interno: `waitBoot` | SC-04 | `events.js` | `handle.on("boot")` |
 | I3 | Interno: `waitAppOpen` (dumpsys) | SC-05 | `events.js` | `handle.on("app_open")` |
-| I4 | Interno: `waitUiStable` | SC-06 | `events.js` | `handle.on("ui_stable")` |
-| I5 | Interno: `waitDumpChange` | SC-07 | `events.js` | `handle.on("dump_change")` |
-| I6 | Piloto: reset → launch → `handle.on("ui_stable")` | — | `linkedin-login.js` | Sem `on`/`waitForUiReady` soltos |
+| I4 | Interno: `waitUiStable` por hash de **frame** | SC-06 | `event-ui-stable.js` | `handle.on("ui_stable")` sem dump XML |
+| I5 | Interno: `waitFrameChange` | SC-07 | `event-frame-change.js` | `handle.on("frame_change")` |
+| I6 | Remover deps `dumpUiXml` de stable/change | — | migrar de `event-dump-*` | Sem uiautomator nos eventos |
+| I7 | Piloto: reset → launch → `handle.on("ui_stable")` | — | `linkedin-login.js` | Sem `on`/`waitForUiReady` soltos |
 
 ### Ordem
 
 ```text
-I1 → I2 → I3 → I4 → I5 → I6
+I1 → I2 → I3 → I4 → I5 → I6 → I7
 ```
 
 ---
@@ -445,8 +453,10 @@ I1 → I2 → I3 → I4 → I5 → I6
 |------|--------|
 | `handle.on` após `provisionEmulator` | Existe |
 | `createOn(serial)` interno | `events.js` |
-| `waitBoot` / `waitAppOpen` / `waitUiStable` / `waitDumpChange` | Módulos `event-*` + unitários |
-| BDD e2e US-02..05 / EP-02 | `test/bdd/` |
+| `waitBoot` / `waitAppOpen` | Módulos `event-*` + unitários |
+| `waitUiStable` / `waitDumpChange` | **Legado dump XML** — migrar para hash de frame / `waitFrameChange` |
+| Evento `dump_change` | **Renomear** → `frame_change` |
+| BDD e2e US-02..05 / EP-02 | `test/bdd/` (atualizar nomes dump→frame) |
 | `on` como export solto | **Proibido** |
 
 ---
@@ -455,10 +465,11 @@ I1 → I2 → I3 → I4 → I5 → I6
 
 1. Caller **sempre** provisiona antes e usa `handle.on`  
 2. Sequências SC-04..07 encapsuladas; serial só no handle  
-3. Quatro eventos cobertos por BDD  
-4. Piloto LinkedIn no mesmo padrão  
+3. `ui_stable` e `frame_change` por **imagem**, sem dump uiautomator  
+4. Quatro eventos cobertos por BDD  
+5. Piloto LinkedIn no mesmo padrão  
 
 ## Próximos passos
 
-→ Implementar I1–I6 em [`src`](../src/README.md)  
+→ Implementar I1–I7 em [`src`](../src/README.md)  
 → Aceite: [`5.bdds.md#ep-02--eventos-de-ui`](../5.bdds.md#ep-02--eventos-de-ui)

@@ -13,7 +13,9 @@
 
 ## Visão
 
-O **screen-robot** é um agent Android controlado por código Node: provisiona o device, instala APKs, recebe eventos de UI, extrai elementos/informações da tela, executa operações e guarda estado de sessão.
+O **screen-robot** é um agent Android controlado por código Node: provisiona o device, instala APKs, recebe eventos de UI, **percebe a tela por imagem** (OCR + visão), executa operações e guarda estado de sessão.
+
+**Princípio de percepção:** ler e automatizar a UI a partir de um **frame/imagem** (screenshot, stream ou **câmera em aparelho real**) — **OCR** para textos e visão para ícones/listas/imagens/coords. **Não** depende de dump uiautomator / árvore de acessibilidade ADB para montar a árvore DOM nem para achar alvos. O caminho futuro (device físico + câmera) usa o **mesmo** pipeline imagem → OCR/visão → árvore → gestos.
 
 Além da automação por API, a instância Android permanece **disponível para controle interativo**: visualizar a tela (espelhamento) e operar manualmente — tocar, digitar, rolar e demais gestos — em paralelo ou em complemento ao código.
 
@@ -25,7 +27,7 @@ O runtime Android (qualquer **vendor**/kind: container, AVD, etc.) **deve mascar
 
 ## Problema
 
-Automatizar apps móveis exige um caminho estável em código: agent pronto, apps na versão certa, leitura da tela e gestos confiáveis — sem acoplar regras de venda.
+Automatizar apps móveis (emulador **ou** aparelho real filmado/capturado) exige um caminho estável em código: agent pronto, apps na versão certa, **leitura da tela por imagem/OCR** e gestos confiáveis — sem acoplar regras de venda e sem depender de acessibilidade ADB que não existe no fluxo só-câmera.
 
 ## Para quem
 
@@ -117,7 +119,7 @@ await handle.installApk(cfg.apps.linkedin);
 await handle.on("boot");
 await handle.on("app_open", { pkg: "com.linkedin.android" });
 await handle.on("ui_stable", { timeoutMs: 90_000 });
-await handle.on("dump_change");
+await handle.on("frame_change");
 
 // Operar tela
 await handle.launch("com.linkedin.android");
@@ -148,7 +150,7 @@ await handle.removeSession("./state/session.json");
 | `provisionEmulator(cfg)` | Cria se `name` novo; anexa se já existir; aloca serial; boot ok |
 | `resetInstance(cfg)` | **Ops** (não é método do handle): wipe do volume + sobe de novo; ADB + boot ok |
 | `installApk(app)` | Lê spec → baixa se preciso → instala; retorna `{ package, version, skipped }` |
-| `on(event, opts?, cb?)` | `boot` · `app_open` · `ui_stable` · `dump_change` |
+| `on(event, opts?, cb?)` | `boot` · `app_open` · `ui_stable` · `frame_change` |
 | `launch(pkg, activity?)` | Abre app |
 | `tap(x, y)` / `tapElement(el)` | Toque |
 | `type(text)` | Digita (ASCII via `input text`; unicode via ADBKeyBoard) |

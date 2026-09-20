@@ -7,7 +7,11 @@
 **Pré-requisito:** [`EP-01`](EP-01-provisionar-agente.md) · handle.  
 **Implementação interna:** [`../src/lib/extract.js`](../src/lib/extract.js) (anexado ao handle em `provision.js`).
 
-**Stack:** Node ≥ 18 · JavaScript · `adb` · runtime provisionado.
+**Stack:** Node ≥ 18 · JavaScript · `adb` · **OCR** · **visão** (detecção + template match) · runtime provisionado.
+
+**Princípio:** percepção = **frame/imagem** → OCR (textos + bounds) + visão (ícones/listas/imagens) → árvore DOM.  
+**Proibido** como fonte da árvore: dump uiautomator / árvore de acessibilidade ADB.  
+**Fonte de frame:** screenshot ADB, stream ou **câmera** (device real) — mesmo pipeline.
 
 ---
 
@@ -45,16 +49,17 @@ src/
 ## Fluxo (obrigatório)
 
 1. **Provisionar** → handle.  
-2. **Extrair** → `handle.extract()`; retorno = árvore DOM; cada chamada enriquece nodes.
+2. **Capturar frame** (screenshot ADB / stream / câmera) — interno.  
+3. **Extrair** → `handle.extract()`; OCR/visão sobre o frame; retorno = árvore DOM; cada chamada enriquece nodes.
 
 ```js
 const handle = await provisionEmulator(cfg);
 
 const t1 = await handle.extract();
-// árvore só com nodes de texto (SC-17)
+// frame → OCR textos + bounds → nodes text (SC-17)
 
 const t2 = await handle.extract();
-// mesma árvore + hierarquia completa (SC-18)
+// mesmo frame → visão + OCR → hierarquia completa (SC-18)
 
 const t3 = await handle.extract();
 // + nodes type "icon" (SC-19 / US-14)
@@ -66,12 +71,13 @@ const t5 = await handle.extract();
 // + nodes type "image" (SC-21 / US-16)
 ```
 
-**Regra:** sempre `extract()` → `Promise<UiNode>` (raiz). Sem `kind`/opts. O que muda é a árvore: novos tipos de node aparecem / hierarquia completa.
+**Regra:** sempre `extract()` → `Promise<UiNode>` (raiz). Sem `kind`/opts. O que muda é a árvore: novos tipos de node aparecem / hierarquia completa.  
+**Sequência canônica:** frame → OCR/visão → árvore (não XML dump).
 
 | Superfície | O quê |
 |------------|--------|
 | **Público** | `handle.extract() → Promise<UiNode>` (árvore DOM) |
-| **Privado** | passo · dump · parse · inserir/tipar nodes na árvore |
+| **Privado** | capturar frame · OCR · visão · tipar/inserir nodes na árvore |
 
 ---
 
@@ -223,15 +229,15 @@ sequenceDiagram
   actor Dev as Caller
   participant H as AgentHandle
   participant X as extract (interno)
-  participant D as Device
+  participant D as Device / FrameSource
 
   loop uma chamada por estória / SC
     Dev->>H: extract()
-    note over H,X: sem parâmetros
+    note over H,X: sem parâmetros; contrato extract() mantido
     H->>X: nextStep(tree)
-    X->>D: dump / frame
-    D-->>X: xml
-    X->>X: tipar / inserir nodes na árvore
+    X->>D: capturar frame (screenshot / câmera)
+    D-->>X: imagem
+    X->>X: OCR / visão → tipar / inserir nodes
     X-->>H: UiNode (raiz DOM)
     H-->>Dev: árvore enriquecida
   end
@@ -241,11 +247,11 @@ sequenceDiagram
 
 | Ordem | US | SC | Chamada | O que a árvore ganha |
 |-------|----|-----|---------|----------------------|
-| 1 | US-13 | SC-17 | `extract()` | nodes `type: "text"` |
-| 2 | US-13 | SC-18 | `extract()` | hierarquia (`other` + filhos); textos no lugar |
-| 3 | US-14 | SC-19 | `extract()` | nodes `type: "icon"` |
-| 4 | US-15 | SC-20 | `extract()` | nodes `type: "list"` (+ itens filhos) |
-| 5 | US-16 | SC-21 | `extract()` | nodes `type: "image"` |
+| 1 | US-13 | SC-17 | `extract()` | nodes `type: "text"` via **OCR** |
+| 2 | US-13 | SC-18 | `extract()` | hierarquia (`other` + filhos); textos no lugar — **visão + OCR** |
+| 3 | US-14 | SC-19 | `extract()` | nodes `type: "icon"` via **visão** |
+| 4 | US-15 | SC-20 | `extract()` | nodes `type: "list"` (+ itens) — **visão + OCR** |
+| 5 | US-16 | SC-21 | `extract()` | nodes `type: "image"` via **visão** |
 
 Caller inspeciona a árvore (walk em `children`) — não há arrays paralelos `texts` / `icons` fora do DOM.
 
@@ -281,7 +287,9 @@ const tree = await handle.extract();
 
 | Código | Quando |
 |--------|--------|
-| `EXTRACT_DUMP_FAILED` | dump indisponível |
+| `EXTRACT_FRAME_FAILED` | frame/imagem indisponível (screenshot/câmera) |
+| `EXTRACT_OCR_FAILED` | falha no OCR |
+| `EXTRACT_VISION_FAILED` | falha na visão/detecção |
 | `EXTRACT_STEP_FAILED` | falha ao tipar/inserir nodes no passo |
 
 ---
@@ -349,16 +357,18 @@ Fonte: [`5.bdds.md#ep-05--extrair-elementos`](../5.bdds.md#ep-05--extrair-elemen
 
 | # | Entrega | SC | Critério |
 |---|---------|-----|----------|
-| I1 | `createExtract` + `handle.extract()` → `UiNode` raiz | — | Árvore DOM |
-| I2 | Passo 1 → nodes `text` | SC-17 | Filhos texto |
-| I3 | Passo 2 → hierarquia completa | SC-18 | `children` aninhados |
-| I4 | Passos 3–5 → nodes `icon` / `list` / `image` | SC-19..21 | Tipos na árvore |
-| I5 | Piloto: `extract()` ×5 + `component-tree.json`; `extractElements` para achar AGREE/Sign In | — | linkedin-login |
+| I1 | `createExtract` + `handle.extract()` → `UiNode` raiz | — | Árvore DOM; contrato `extract()` mantido |
+| I2 | Fonte de frame (screenshot ADB; abstrair câmera) | — | Imagem disponível sem dump XML |
+| I3 | Passo 1 → OCR textos + bounds → nodes `text` | SC-17 | Filhos texto |
+| I4 | Passo 2 → visão + OCR → hierarquia completa | SC-18 | `children` aninhados |
+| I5 | Passos 3–5 → nodes `icon` / `list` / `image` | SC-19..21 | Tipos na árvore |
+| I6 | Migrar fora de uiautomator dump | — | Sem XML dump como fonte da árvore |
+| I7 | Piloto: `extract()` ×5 + `component-tree.json` | — | linkedin-login |
 
 ### Ordem
 
 ```text
-I1 → I2 → I3 → I4 → I5
+I1 → I2 → I3 → I4 → I5 → I6 → I7
 ```
 
 ---
@@ -367,7 +377,8 @@ I1 → I2 → I3 → I4 → I5
 
 | Peça | Status |
 |------|--------|
-| `createExtract` → `handle.extract()` | Existe (progressivo) |
+| `createExtract` → `handle.extract()` | Existe (progressivo); **contrato público mantido** |
+| Fonte = `dumpUiXml` / uiautomator | **Gap** — **deve migrar** para frame → OCR/visão |
 | `extractElements` lista plana | Legado (piloto LinkedIn) |
 
 ---
@@ -376,8 +387,9 @@ I1 → I2 → I3 → I4 → I5
 
 1. `handle.extract()` sem parâmetros  
 2. Retorno = árvore DOM (`type` + `children`); elementos = nodes  
-3. Cada chamada incrementa tipos de node na árvore  
-4. BDDs US-13 + EP-05  
+3. Pipeline = **frame → OCR/visão → árvore** (sem dump uiautomator)  
+4. Cada chamada incrementa tipos de node na árvore  
+5. BDDs US-13 + EP-05  
 
 ## Próximos passos
 

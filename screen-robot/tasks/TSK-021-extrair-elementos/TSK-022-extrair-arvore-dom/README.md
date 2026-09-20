@@ -9,12 +9,12 @@
 
 ## Entradas
 
-- Handle provisionado (EP-01+)
+- Handle provisionado; frame da tela
 
 ## Execução
 
-- Entregar capacidade de tsk 022 extrair arvore dom
+- OCR (textos) + visão (restante) sobre o frame até árvore completa · `extract()`
 
 ## Saídas
 
-- Aceite da origem coberta
+- Árvore de componentes completa · aceite US-13

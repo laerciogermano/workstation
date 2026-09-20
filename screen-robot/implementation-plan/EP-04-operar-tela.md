@@ -7,7 +7,10 @@
 **Pré-requisito:** [`EP-01`](EP-01-provisionar-agente.md) · [`EP-02`](EP-02-eventos-de-ui.md) (`handle.on` para confirmar app/UI).  
 **Implementação interna:** [`../src/lib/operate.js`](../src/lib/operate.js) (anexado ao handle em `provision.js`).
 
-**Stack:** Node ≥ 18 · JavaScript · `adb` · runtime provisionado.
+**Stack:** Node ≥ 18 · JavaScript · `adb` · visão/OCR (coords) · runtime provisionado.
+
+**Princípio:** gestos (`tap`/`type`) usam **coords vindas de visão/OCR** sobre o frame.  
+`screenshot` = **capturar frame** (screencap ADB hoje; futuro: câmera no device real — mesmo path de imagem).
 
 ---
 
@@ -19,7 +22,7 @@
 | US-08 | tap |
 | US-09 | type |
 | US-10 | scroll |
-| US-11 | screenshot |
+| US-11 | Capturar frame (screenshot / câmera) |
 | US-12 | Resgatar coordenadas x,y a partir de uma imagem |
 | US-21 | Abrir scrcpy (espelhar tela) |
 | SC-11..16 · SC-27 | Cenários correspondentes |
@@ -60,10 +63,10 @@ await handle.launch("com.linkedin.android");
 await handle.on("app_open", { pkg: "com.linkedin.android" });
 await handle.on("ui_stable", { stableMs: 800 });
 
-await handle.tap(360, 640);
+await handle.tap(360, 640); // coords de visão/OCR (ou matchImage)
 await handle.type("olá");
 await handle.scroll({ direction: "down", distance: 800 });
-await handle.screenshot("./screenshots/tela.png");
+await handle.screenshot("./screenshots/tela.png"); // capturar frame
 const { x, y } = await handle.matchImage("./templates/btn.png");
 await handle.openScrcpy(); // janela scrcpy no serial do handle
 ```
@@ -71,7 +74,7 @@ await handle.openScrcpy(); // janela scrcpy no serial do handle
 | Superfície | O quê |
 |------------|--------|
 | **Público** | `handle.launch` · `tap` · `type` · `scroll` · `screenshot` · `matchImage` · `openScrcpy` |
-| **Privado** | am start · input tap/text/swipe · screencap · template match · spawn scrcpy |
+| **Privado** | am start · input tap/text/swipe · capturar frame · template match / OCR coords · spawn scrcpy |
 
 ---
 
@@ -129,7 +132,7 @@ sequenceDiagram
 
   Dev->>H: launch / tap / type / scroll / screenshot / matchImage
   H->>O: (serial do handle)
-  O->>D: adb shell / screencap / match
+  O->>D: adb shell / capturar frame / match visão
   D-->>O: ok / path / coords
   O-->>H: resultado
   H-->>Dev: void | path | { x, y, confidence }
@@ -140,11 +143,11 @@ sequenceDiagram
 | US | SC | Chamada pública | Interno |
 |----|-----|-----------------|---------|
 | US-07 | SC-11 | `handle.launch(pkg, activity?)` | am start; opcional `on("app_open")` |
-| US-08 | SC-12 | `handle.tap(x, y)` / `tapElement(el)` | input tap |
-| US-09 | SC-13 | `handle.type(text)` | input text / IME |
+| US-08 | SC-12 | `handle.tap(x, y)` / `tapElement(el)` | input tap; **x,y de visão/OCR** |
+| US-09 | SC-13 | `handle.type(text)` | input text / IME; foco via coords visão/OCR |
 | US-10 | SC-14 | `handle.scroll(opts)` | swipe |
-| US-11 | SC-15 | `handle.screenshot(path)` | screencap + pull |
-| US-12 | SC-16 | `handle.matchImage(templatePath)` | template match → x,y |
+| US-11 | SC-15 | `handle.screenshot(path)` | **capturar frame** (screencap; futuro câmera) + gravar |
+| US-12 | SC-16 | `handle.matchImage(templatePath)` | template match / visão → x,y |
 
 #### Contratos
 
@@ -242,8 +245,8 @@ Fonte: [`5.bdds.md#ep-04--operar-tela`](../5.bdds.md#ep-04--operar-tela). “Qua
 | I3 | `tap` / `tapElement` | SC-12 | US-08 |
 | I4 | `type` (IME se necessário) | SC-13 | US-09 |
 | I5 | `scroll` | SC-14 | US-10 |
-| I6 | `screenshot` | SC-15 | US-11 |
-| I7 | `matchImage` | SC-16 | US-12 |
+| I6 | `screenshot` = capturar frame | SC-15 | US-11 |
+| I7 | `matchImage` (visão/template → coords) | SC-16 | US-12 |
 | I8 | `openScrcpy` no handle (serial implícito) | SC-27 | US-21 |
 | I9 | Piloto: `launch` · `screenshot` tela inicial · `extract` | — | linkedin-login |
 

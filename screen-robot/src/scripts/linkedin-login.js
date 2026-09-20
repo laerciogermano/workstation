@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Abre LinkedIn, clica AGREE ou JOIN NOW (se houver) e imprime a árvore.
+ * Abre LinkedIn, clica AGREE ou Sign In (se houver) e imprime a árvore.
  *
  * Uso:
  *   node scripts/linkedin-login.js
@@ -37,13 +37,14 @@ function findAgree(elements) {
   );
 }
 
-function findJoinNow(elements) {
-  const isJoin = (s) =>
-    /^(join\s*now|cadastre[- ]?se|inscreva[- ]?se)$/i.test(String(s || "").trim());
+function findSignIn(elements) {
+  const isSignIn = (s) => {
+    const t = String(s || "").trim();
+    return /^(sign\s*in|entrar|log\s*in|login)$/i.test(t) || /sign\s*in/i.test(t);
+  };
   return (
-    elements.find((el) => el.clickable && (isJoin(el.label) || isJoin(el.text))) ||
-    elements.find((el) => isJoin(el.label) || isJoin(el.text)) ||
-    elements.find((el) => /join\s*now/i.test(String(el.label || "")))
+    elements.find((el) => el.clickable && (isSignIn(el.label) || isSignIn(el.text))) ||
+    elements.find((el) => isSignIn(el.label) || isSignIn(el.text))
   );
 }
 
@@ -71,7 +72,7 @@ async function main() {
   await handle.on("ui_stable", { timeoutMs: 90_000 });
   handle.screenshot(resolve(outDir, "01-antes-agree.png"));
 
-  console.log("4) Clicar AGREE ou JOIN NOW…");
+  console.log("4) Clicar AGREE ou Sign In…");
   const { elements } = extractElements(handle.serial);
   const agree = findAgree(elements);
   if (agree?.center) {
@@ -80,14 +81,14 @@ async function main() {
     await sleep(5_000);
     handle.screenshot(resolve(outDir, "02-apos-agree.png"));
   } else {
-    const join = findJoinNow(elements);
-    if (join?.center) {
-      console.log(`   → JOIN NOW: ${join.label || join.text}`);
-      handle.tapElement(join);
+    const signIn = findSignIn(elements);
+    if (signIn?.center) {
+      console.log(`   → Sign In: ${signIn.label || signIn.text}`);
+      handle.tapElement(signIn);
       await sleep(5_000);
-      handle.screenshot(resolve(outDir, "02-apos-join-now.png"));
+      handle.screenshot(resolve(outDir, "02-apos-sign-in.png"));
     } else {
-      console.log("   (AGREE e JOIN NOW não encontrados — segue)");
+      console.log("   (AGREE e Sign In não encontrados — segue)");
     }
   }
 

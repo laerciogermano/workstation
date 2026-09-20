@@ -1,10 +1,11 @@
 /**
  * Biblioteca de provisionamento do emulador/agent.
  * Superfície pública: apenas `provisionEmulator`.
- * Internamente encapsula SC-01→SC-03 (start · ADB online · boot completo).
+ * Handle inclui `on` (EP-02) — eventos via handle após provisionar.
  */
 import { spawnSync } from "node:child_process";
 import { adb, connectIfTcp, sleep } from "./adb.js";
+import { createOn } from "./events.js";
 
 /**
  * @typedef {object} ProvisionConfig
@@ -18,6 +19,7 @@ import { adb, connectIfTcp, sleep } from "./adb.js";
  * @property {string} kind
  * @property {string} provisionedAt
  * @property {true} bootCompleted
+ * @property {(event: string, opts?: object) => Promise<object>} on
  */
 
 /** @param {ProvisionConfig} cfg */
@@ -43,7 +45,7 @@ function startRuntime(resolved) {
   try {
     connectIfTcp(resolved.serial);
     adb(resolved.serial, ["get-state"], { timeout: 3_000 });
-    return; // já reachable
+    return;
   } catch {
     /* precisa start */
   }
@@ -116,5 +118,6 @@ export async function provisionEmulator(cfg) {
     kind: resolved.kind,
     provisionedAt: new Date().toISOString(),
     bootCompleted: true,
+    on: createOn(resolved.serial),
   };
 }

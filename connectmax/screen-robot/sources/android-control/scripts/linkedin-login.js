@@ -13,7 +13,6 @@ import { fileURLToPath } from "node:url";
 
 import { provisionEmulator } from "../lib/provision.js";
 import { installApk } from "../lib/apks.js";
-import { waitForUiReady } from "../lib/events.js";
 import {
   extractElements,
   findLoginTarget,
@@ -56,8 +55,8 @@ async function main() {
   const events = [];
 
   console.log("1) Provisionar agente…");
-  const agent = await provisionEmulator(cfg);
-  const serial = agent.serial;
+  const handle = await provisionEmulator(cfg);
+  const serial = handle.serial;
   console.log(`   OK ${serial}`);
 
   console.log("2) Instalar Instagram (versão na config)…");
@@ -72,11 +71,11 @@ async function main() {
   await operate.launch(serial, cfg.apps.linkedin.package);
 
   console.log("5) Receber eventos (UI estável)…");
-  await waitForUiReady(serial, {
+  await handle.on("ui_stable", {
     timeoutMs: 90_000,
     onEvent: (e) => {
       events.push(e);
-      if (e.type === "ui_ready") console.log(`   evento ${e.type} (tentativa ${e.attempt})`);
+      if (e.type === "ui_stable") console.log(`   evento ${e.type} (tentativa ${e.attempt})`);
     },
   });
 
@@ -96,7 +95,7 @@ async function main() {
     console.log("8) Tocar botão de login…");
     operate.tapElement(serial, target.loginButton);
     await sleep(2_000);
-    await waitForUiReady(serial, { timeoutMs: 30_000, onEvent: (e) => events.push(e) });
+    await handle.on("ui_stable", { timeoutMs: 30_000, onEvent: (e) => events.push(e) });
     ({ elements } = extractElements(serial));
     target = findLoginTarget(elements);
   } else if (!target.alreadyOnLoginScreen && !target.loginButton) {

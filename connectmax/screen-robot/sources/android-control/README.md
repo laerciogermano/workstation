@@ -18,7 +18,7 @@ API **Node** do screen-robot sobre ADB: provisionar agent, instalar APKs, evento
 |---------|--------|
 | Provisionar emulador (`provisionEmulator`) | [`lib/provision.js`](lib/provision.js) |
 | Instalar APKs | [`lib/apks.js`](lib/apks.js) |
-| Receber eventos | [`lib/events.js`](lib/events.js) |
+| Receber eventos (`handle.on` após provision) | [`lib/events.js`](lib/events.js) (via handle) |
 | Executar operações | [`lib/operate.js`](lib/operate.js) |
 | Extrair elementos | [`lib/extract.js`](lib/extract.js) |
 | Guardar sessão | [`lib/session.js`](lib/session.js) |

@@ -183,6 +183,11 @@ type AgentHandle = {
   kind: string;
   provisionedAt: string; // ISO-8601
   bootCompleted: true;
+  /** EP-02: eventos de UI (serial já no handle). */
+  on(
+    event: "boot" | "app_open" | "ui_stable" | "dump_change",
+    opts?: Record<string, unknown>,
+  ): Promise<unknown>;
 };
 
 /** Único método exportado pela biblioteca. */
@@ -195,10 +200,11 @@ const handle = await provisionEmulator({
     connectTimeoutMs: 120_000,
   },
 });
-// → { serial, kind, provisionedAt, bootCompleted: true }
+// → { serial, kind, provisionedAt, bootCompleted: true, on }
+// EP-02: await handle.on("ui_stable", { stableMs: 1_200 });
 ```
 
-**Interno (não exportar):** `resolveConfig`, `startRuntime`, `ensureAdbOnline`, `waitBootCompleted` — encapsulam as linhas #2–#18 do passo a passo.
+**Interno (não exportar):** `resolveConfig`, `startRuntime`, `ensureAdbOnline`, `waitBootCompleted` — encapsulam as linhas #2–#18 do passo a passo. `on` é anexado ao handle via `events.createOn(serial)` (EP-02).
 
 ---
 
@@ -222,6 +228,7 @@ const handle = await provisionEmulator({
 | `kind` | `string` | Kind efetivo |
 | `provisionedAt` | `ISO-8601` | Momento do aceite |
 | `bootCompleted` | `boolean` | Sempre `true` no sucesso |
+| `on` | `(event, opts?) => Promise` | EP-02: eventos de UI no handle |
 
 ### DeviceState (máquina de estados)
 
@@ -315,7 +322,10 @@ classDiagram
     +string kind
     +string provisionedAt
     +boolean bootCompleted
+    +on(event, opts) Promise
   }
+
+  note for AgentHandle "on anexado no provision (EP-02)"
 
   class Internals {
     <<private>>
@@ -332,14 +342,21 @@ classDiagram
     sleep()
   }
 
+  class events_js {
+    <<EP-02 internal>>
+    createOn(serial)
+  }
+
   provision_js --> Internals : usa
   Internals --> AdbClient : usa
   provision_js ..> ProvisionConfig : lê
   provision_js ..> AgentHandle : cria
+  provision_js --> events_js : anexa on
+  AgentHandle --> events_js : on
 ```
 
-**Hoje:** `provisionEmulator` exportado; ADB + boot encapsulados; SC-01 start via script ainda gap interno.  
-**Gap:** completar `startRuntime` (redroid/AVD) **dentro** da lib, sem expandir a API pública.
+**Hoje:** `provisionEmulator` exportado; ADB + boot encapsulados; `on` no handle (EP-02).  
+**Gap:** completar `startRuntime` (redroid/AVD) **dentro** da lib, sem expandir a API pública além do handle.
 
 ---
 

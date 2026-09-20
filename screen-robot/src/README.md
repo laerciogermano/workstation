@@ -30,10 +30,15 @@ BDD: [`../5.bdds.md`](../5.bdds.md)
 
 ## Testes automatizados
 
+| Origem | Tipo | Comando |
+|--------|------|---------|
+| **SC** | unitário (`test/unit/`) | `npm test` / `npm run test:unit` |
+| **US** / **EP** | BDD e2e (`test/bdd/`) | `npm run test:e2e` |
+
 ```bash
 cd screen-robot/src
-npm test        # BDD e2e (SC-01..SC-03)
-npm run test:e2e
+npm test          # unitários SC
+npm run test:e2e  # BDD e2e US/EP (requer runtime Android)
 ```
 
 ## Script inicial — login LinkedIn

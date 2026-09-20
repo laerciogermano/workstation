@@ -2,3 +2,6 @@
 **/tasks/**/sources/
 **/tasks/**/source/
 **/tasks/**/workstation/
+
+.DS_Store
+**/.DS_Store

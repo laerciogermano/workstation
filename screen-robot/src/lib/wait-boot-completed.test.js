@@ -1,9 +1,9 @@
 /**
- * Unitário — lib/wait-boot-completed.js
+ * Unitário — ao lado de wait-boot-completed.js
  */
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { waitBootCompleted } from "../../lib/wait-boot-completed.js";
+import { waitBootCompleted } from "./wait-boot-completed.js";
 
 describe("waitBootCompleted", () => {
   it("retorna quando boot=1", async () => {

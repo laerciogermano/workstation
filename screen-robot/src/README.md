@@ -32,10 +32,10 @@ BDD: [`../5.bdds.md`](../5.bdds.md)
 
 | O quê | Tipo | Comando |
 |-------|------|---------|
-| Componentes (`lib/*.js`) | unitário (`test/unit/<componente>.test.js`) | `npm test` / `npm run test:unit` |
+| Componentes (`lib/*.js`) | unitário ao lado do arquivo (`lib/<módulo>.test.js`) | `npm test` / `npm run test:unit` |
 | **US** / **EP** | BDD e2e (`test/bdd/`) | `npm run test:e2e` |
 
-**SC** não tem suíte própria — só unitários dos módulos entregues.
+**SC** não tem suíte própria — só unitários colocados ao lado do módulo.
 
 ```bash
 cd screen-robot/src

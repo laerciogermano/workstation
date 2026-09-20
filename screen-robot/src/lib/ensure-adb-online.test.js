@@ -1,9 +1,9 @@
 /**
- * Unitário — lib/ensure-adb-online.js
+ * Unitário — ao lado de ensure-adb-online.js
  */
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { ensureAdbOnline } from "../../lib/ensure-adb-online.js";
+import { ensureAdbOnline } from "./ensure-adb-online.js";
 
 describe("ensureAdbOnline", () => {
   it("retorna quando wait-for-device ok", async () => {

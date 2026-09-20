@@ -11,8 +11,8 @@
     "run": "node cli.js",
     "example": "node cli.js config.example.json",
     "linkedin-login": "node scripts/linkedin-login.js",
-    "test": "node --test 'test/unit/**/*.test.js'",
-    "test:unit": "node --test 'test/unit/**/*.test.js'",
+    "test": "node --test 'lib/**/*.test.js'",
+    "test:unit": "node --test 'lib/**/*.test.js'",
     "test:e2e": "node --test 'test/bdd/**/*.test.js'"
   },
   "engines": {

@@ -98,15 +98,15 @@ Ordem **obrigatória** — não pular nem inverter:
 
 | Origem da atividade | Tipo de teste | Como |
 |---------------------|---------------|------|
-| **SC-** (cenário) | **Não testado** como cenário | Ao criar componentes, escrever **unitários do módulo** (ex. `start-runtime.test.js`); SC não tem suíte própria |
+| **SC-** (cenário) | **Não testado** como cenário | Ao criar componentes, unitário **ao lado do arquivo** (ex. `lib/start-runtime.test.js` junto de `start-runtime.js`); SC sem suíte própria |
 | **US-** (história) | **BDD e2e** | Gherkin Dado/Quando/Então contra o sistema integrado |
 | **EP-** (épico) | **BDD e2e** | Gherkin de ponta a ponta do aceite do épico |
 
 Regras:
 
-- **SC** → sem teste de cenário; só unitários dos **componentes** entregues na task
+- **SC** → sem teste de cenário; só unitário **ao lado** do componente entregue
 - **US** / **EP** → BDD e2e (aceite integrado)
-- Não misturar: não inventar suíte `sc-*.test`; US/EP não fecham só com unitário
+- Não misturar: não inventar suíte `sc-*.test` nem pasta `test/unit`; US/EP não fecham só com unitário
 
 ### Onde fica o clone
 

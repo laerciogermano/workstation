@@ -1,5 +1,5 @@
 /**
- * Unitário — lib/start-runtime.js
+ * Unitário — ao lado de start-runtime.js
  */
 import assert from "node:assert/strict";
 import path from "node:path";
@@ -7,7 +7,7 @@ import { describe, it } from "node:test";
 import {
   defaultStartScript,
   startRuntime,
-} from "../../lib/start-runtime.js";
+} from "./start-runtime.js";
 
 describe("startRuntime", () => {
   it("não executa startScript se já alcançável", async () => {

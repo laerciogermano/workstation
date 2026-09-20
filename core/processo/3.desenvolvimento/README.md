@@ -99,14 +99,14 @@ Ordem **obrigatória** — não pular nem inverter:
 | Origem da atividade | Tipo de teste | Como |
 |---------------------|---------------|------|
 | **SC-** (cenário) | **Não testado** como cenário | Ao criar componentes, unitário **ao lado do arquivo** (ex. `lib/start-runtime.test.js` junto de `start-runtime.js`); SC sem suíte própria; [isolado com mock/stub](#unitários-isolados) |
-| **US-** (história) | **BDD e2e** | Gherkin Dado/Quando/Então contra o sistema integrado |
-| **EP-** (épico) | **BDD e2e** | Gherkin de ponta a ponta do aceite do épico |
+| **US-** (história) | **BDD e2e** | Gherkin Dado/Quando/Então — [app inteira, sem mock/stub](#bdd-e2e-sem-doubles) |
+| **EP-** (épico) | **BDD e2e** | Gherkin de ponta a ponta — [app inteira, sem mock/stub](#bdd-e2e-sem-doubles) |
 
 Regras:
 
 - **SC** → sem teste de cenário; só unitário **ao lado** do componente entregue
-- **US** / **EP** → BDD e2e (aceite integrado)
-- Não misturar: não inventar suíte `sc-*.test` nem pasta `test/unit`; US/EP não fecham só com unitário
+- **US** / **EP** → BDD e2e (aceite integrado; **sem** mock/stub)
+- Não misturar: não inventar suíte `sc-*.test` nem pasta `test/unit`; US/EP não fecham só com unitário; e2e não usa doubles
 
 ### Unitários isolados
 
@@ -119,6 +119,18 @@ Unitário testa **só** o componente sob teste. Dependências e demais component
 | Falhas e sucessos via doubles | Rede, ADB, Docker/Colima ou UI reais |
 
 Doubles cobrem: I/O, rede, processos externos, irmãos/pais do módulo, clock/sleep quando o tempo importa. Integração real fica só no **BDD e2e** (US/EP).
+
+### BDD e2e sem doubles
+
+BDD e2e (US/EP) testa a **aplicação inteira** no caminho real — **sem mock nem stub**. Sobe runtime, I/O, rede e módulos de produção como em uso.
+
+| Obrigatório | Proibido no BDD e2e |
+|-------------|---------------------|
+| Exercitar API/fluxo público de ponta a ponta | Mock/stub de deps, módulos ou serviços |
+| Runtime / device / stack reais quando o domínio exige | Doubles de relógio, ADB, dump, rede, etc. |
+| Aceite Gherkin observável no sistema integrado | “E2e” que só instancia um módulo isolado |
+
+Unitário = doubles. BDD e2e = sistema real. Não misturar os dois modos no mesmo arquivo de teste.
 
 ### Onde fica o clone
 
@@ -135,7 +147,7 @@ Regras transversais:
 - Preferência: uma SC (ou atividade folha) por robô / ciclo
 - Lote: primeiro um caso, validar; só então escalar
 - Commits pequenos e revisáveis; CI do projeto deve passar no PR
-- Testes: [tipo por origem](#tipo-de-teste-por-origem) · [unitários isolados](#unitários-isolados) (mock/stub; sem app inteira) · US/EP = BDD e2e
+- Testes: [tipo por origem](#tipo-de-teste-por-origem) · [unitários isolados](#unitários-isolados) · [BDD e2e sem doubles](#bdd-e2e-sem-doubles)
 
 ## Status no board
 

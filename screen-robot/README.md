@@ -53,15 +53,15 @@ API em [`src/`](src/README.md). Superfície pública: `provisionEmulator(cfg)` �
 |------|---------|
 | Node | ≥ 18 |
 | `adb` | no `PATH` |
-| Runtime Android | redroid (`127.0.0.1:5555`) ou emulador — ver [`pocs/`](pocs/README.md) |
+| Runtime Android | serial ADB online (redroid, AVD ou device) — ver [`pocs/`](pocs/README.md) |
 | Opcional | [`apkeep`](https://github.com/EFForg/apkeep) para baixar XAPK |
 
-Subir redroid (exemplo):
+**`start.sh` não é obrigatório** se o serial já estiver alcançável. `provisionEmulator` só sobe o runtime quando a porta/serial não responde: com `provision.kind` `redroid` ou `avd` chama o script em [`pocs/`](pocs/README.md); com `kind: "adb"` (padrão da config) exige device já online.
 
 ```bash
-cd screen-robot/pocs/redroid
-./scripts/start.sh   # sobe container + adb connect
-# opcional: ./scripts/view.sh  # scrcpy
+# só se ainda não houver Android na porta
+cd screen-robot/pocs/redroid && ./scripts/start.sh
+# opcional: ./scripts/view.sh
 ```
 
 ### 2. Configuração

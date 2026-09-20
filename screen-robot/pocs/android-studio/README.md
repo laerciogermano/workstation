@@ -49,7 +49,7 @@ Parar:
 ./scripts/stop.sh
 ```
 
-**Reset (wipe):** `scripts/reset.sh` — planejado (`emulator -wipe-data` / recriar AVD). Gap até existir; override via `provision.resetScript`.
+**Reset (wipe):** [`scripts/reset.sh`](scripts/reset.sh) — `emulator -wipe-data` + boot. Override via `provision.resetScript`.
 
 ### Pelo Android Studio
 
@@ -121,7 +121,7 @@ screen-robot/pocs/android-studio/
     ├── start.sh
     ├── stop.sh
     ├── wait-boot.sh
-    ├── reset.sh          # planejado (TODO — wipe-data)
+    ├── reset.sh          # wipe-data + start + wait-boot
     ├── install-instagram.sh
     ├── open-camera.sh
     └── start-obs-camera.sh

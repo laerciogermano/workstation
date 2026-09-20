@@ -19,7 +19,7 @@
 3. **Tela branca:** Activity sobe mas a UI não pinta — tipicamente falta GMS ou GPU só software.
 4. **Screenshot/scrcpy preto no login:** frequentemente `FLAG_SECURE` (captura bloqueada) — não é necessariamente crash.
 5. **Multi-agent:** vários AVDs / instâncias do emulator — bem mais pesado que containers; documentar como limitação.
-6. **Scripts** ([`pocs/android-studio/scripts/`](../pocs/android-studio/README.md)): `setup-avd.sh`, `start.sh`, `wait-boot.sh`, `stop.sh`; `reset.sh` planejado (`-wipe-data`) — **gap** até existir.
+6. **Scripts** ([`pocs/android-studio/scripts/`](../pocs/android-studio/README.md)): `setup-avd.sh`, `start.sh`, `wait-boot.sh`, `stop.sh`, `reset.sh` (`-wipe-data` + boot).
 7. **Visão interativa:** janela nativa do emulator; scrcpy opcional no serial ADB.
 
 | Caso | Comportamento |
@@ -27,7 +27,7 @@
 | Create | Sobe AVD nomeado por `provision.name` (ou `AVD_NAME`) |
 | Attach | Reconecta ao serial existente (`emulator-5554`, …) |
 | `provision.kind` | `"avd"` (default documentado) |
-| `resetInstance` | Default: `pocs/android-studio/scripts/reset.sh` (TODO — gap) |
+| `resetInstance` | Default: `pocs/android-studio/scripts/reset.sh` |
 
 ---
 
@@ -114,7 +114,7 @@ Helpers internos (`resolveConfig`, `startRuntime`, `attachRuntime`, `ensureAdbOn
 
 `cfg.provision.name` (ou `cfg.name`) é **obrigatório**. Serial é **alocado/resolvido** pela lib no create (ex. `emulator-5554`).
 
-`resetInstance` usa `cfg.provision.resetScript` (default: `pocs/android-studio/scripts/reset.sh` — **gap** se o script ainda não existir) e espera ADB + boot. Erros: `RESET_NO_SERIAL` · `RESET_FAILED` · `RESET_UNSUPPORTED`.
+`resetInstance` usa `cfg.provision.resetScript` (default: `pocs/android-studio/scripts/reset.sh`) e espera ADB + boot. Erros: `RESET_NO_SERIAL` · `RESET_FAILED` · `RESET_UNSUPPORTED`.
 
 ---
 
@@ -439,8 +439,8 @@ classDiagram
   AgentHandle --> events_js : on
 ```
 
-**Hoje:** `provisionEmulator` exportado; ADB + boot encapsulados; `on` no handle (EP-02); `resetInstance` ops; default reset aponta para `pocs/android-studio/scripts/reset.sh` (**gap** — script TODO).  
-**Gap:** completar `startRuntime` (AVD) **dentro** da lib; implementar `reset.sh` (`-wipe-data`); sem expandir a API do handle além do create-or-attach.
+**Hoje:** `provisionEmulator` exportado; ADB + boot encapsulados; `on` no handle (EP-02); `resetInstance` ops + `pocs/android-studio/scripts/reset.sh`.  
+**Gap:** completar `startRuntime` (AVD) **dentro** da lib, sem expandir a API do handle além do create-or-attach.
 
 ---
 
@@ -543,7 +543,7 @@ Cenário: SC-28 Identidade de aparelho de mercado
 | I6 | BDD e2e US-01 / US-20 / EP-01 | — | `test/bdd/` | Aceite multi-agent |
 | I7 | Piloto: limpa screenshots → `resetInstance` → provision | — | `linkedin-login.js` · `reset-instance.js` · `reset.sh` | Instância do zero |
 | I8 | Mascaramento de identidade (AVD) | US-22 / SC-28 | `pocs/android-studio` | Sem fingerprint do vendor |
-| I9 | `reset.sh` (`-wipe-data`) | — | `pocs/android-studio/scripts/reset.sh` | Gap fechado |
+| I9 | `reset.sh` (`-wipe-data`) | — | `pocs/android-studio/scripts/reset.sh` | Feito |
 
 ### Ordem
 
@@ -558,7 +558,7 @@ I1 → I2 → I3 → I5 → I4 → I6 → I7 → I8 → I9
 | Peça | Status |
 |------|--------|
 | `provisionEmulator` (create-or-attach por `name`) | Existe — evoluir / consolidar |
-| `resetInstance` + `reset.sh` | Ops existe; script AVD **TODO** (gap) |
+| `resetInstance` + `reset.sh` | Feito (ops + `pocs/android-studio/scripts/reset.sh`) |
 | `attachRuntime` interno | Interno do provision |
 | Multi-AVD paralelo | Gap / limitação de recursos |
 | Internos ADB / boot | `ensure-adb-online` · `wait-boot-completed` |

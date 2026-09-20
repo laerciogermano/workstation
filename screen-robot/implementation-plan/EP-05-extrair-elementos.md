@@ -24,7 +24,8 @@
 | US-14 | Extrair ícones |
 | US-15 | Extrair listas |
 | US-16 | Extrair imagens |
-| SC-17..21 | Cenários correspondentes |
+| US-23 | Buscar elemento(s) por texto (similaridade) |
+| SC-17..21 · SC-29 | Cenários correspondentes |
 
 **Resultado:** **lista plana** `UiElement[]` — cada item tem `type`, `bounds`, opcionalmente `text` / `center`.  
 `handle.extract()` — **um método, sem parâmetros**; cada chamada (por estória/SC) **acrescenta elementos** na mesma lista acumulada.
@@ -77,10 +78,23 @@ const e5 = await handle.extract();
 **Regra:** sempre `extract()` → `Promise<UiElement[]>`. Sem `kind`/opts. O que muda é a lista: novos tipos aparecem.  
 **Sequência canônica:** frame → OCR/visão → lista (não XML dump, não árvore DOM).
 
-| Superfície | O quê |
-|------------|--------|
-| **Público** | `handle.extract() → Promise<UiElement[]>` (lista plana) |
-| **Privado** | capturar frame · OCR · visão · tipar/inserir elementos na lista |
+**Público:** `handle.extract() → Promise<UiElement[]>` (lista plana)  
+**Privado:** capturar frame · OCR · visão · tipar/inserir elementos na lista  
+
+### US-23 — Buscar por texto (similaridade)
+
+OCR costuma devolver a frase partida (piloto LinkedIn: `"Sign"` + `"in"` + `"with"` + `"Email"`, não a string inteira).  
+Função (ex. `findByText(elements, query, { minScore })`):
+
+- procura **um** elemento cujo `text` tenha score alto vs o query; **ou**
+- procura um **conjunto** de elementos vizinhos (mesma linha / bounds próximos) cuja **junção** dos textos maximize a similaridade com o query
+- retorno: `{ elements, score, bounds?, center? }` (melhor match ≥ `minScore`) ou vazio
+
+```js
+const elements = await handle.extract();
+const hit = findByText(elements, "Sign in with Email", { minScore: 0.8 });
+// hit.elements → [Sign, in, with, Email]; hit.score elevado; hit.center para tap
+```
 
 ---
 
@@ -326,11 +340,12 @@ Fonte: [`5.bdds.md#ep-05--extrair-elementos`](../5.bdds.md#ep-05--extrair-elemen
 | I5 | Passos 3–5 → elementos `icon` / `list` / `image` | SC-19..21 | Tipos na lista |
 | I6 | Sem uiautomator dump como fonte | — | Só frame → OCR/visão |
 | I7 | Piloto: `extract()` ×5 + JSON da lista | — | linkedin-login |
+| I8 | `findByText` — match por similaridade (1 el. ou conjunto vizinho) | SC-29 | Score ≥ limiar; cobre `"Sign in with Email"` partido |
 
 ### Ordem
 
 ```text
-I1 → I2 → I3 → I4 → I5 → I6 → I7
+I1 → I2 → I3 → I4 → I5 → I6 → I7 → I8
 ```
 
 ---
@@ -343,6 +358,7 @@ I1 → I2 → I3 → I4 → I5 → I6 → I7
 | Fonte = frame → OCR/visão | Feito (`frame.js` / `ocr.js` / `vision.js`) |
 | `dumpUiXml` | Só legado eventos EP-02 |
 | `extractElements` lista plana | Alinha com o contrato alvo de `extract()` |
+| `findByText` (US-23) | **Gap** — regex exata no piloto falha quando OCR parte a frase |
 
 ---
 

@@ -9,19 +9,19 @@
 
 ## Entradas
 
-- Handle provisionado (EP-01+), serial ADB online
+- `serial` ADB online (EP-01+)
 - `scrcpy` no `PATH` do host
 - Script de referência: [`../../src/scripts/view.sh`](../../src/scripts/view.sh)
 
 ## Execução
 
-- Anexar `handle.openScrcpy(opts?)` em `operate.js` / `provision.js`
-- Reutilizar lógica de `view.sh` (connect ADB → spawn scrcpy no serial do handle)
+- Exportar `openScrcpy({ serial, … })` em `operate.js`
+- Reutilizar lógica de `view.sh` (connect ADB → spawn scrcpy no serial)
 - Unitário com spawn stub; BDD e2e US-21 / SC-27
 
 ## Saídas
 
-- `handle.openScrcpy()` devolve `{ pid, serial }`
+- `openScrcpy({ serial })` devolve `{ pid, serial }`
 - Janela scrcpy operável (tap, digitar) no serial do agent
 - Aceite: [`5.bdds.md`](../../5.bdds.md) US-21 · SC-27
 - Status: **Done**

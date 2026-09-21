@@ -42,7 +42,8 @@ describe("Cenário: US-01 Agent fica pronto para ADB", () => {
       assert.equal(handle.bootCompleted, true);
       assert.ok(handle.provisionedAt);
       assert.equal(handle.on, undefined);
-      assert.equal(typeof handle.installApk, "function");
+      assert.equal(handle.installApk, undefined);
+      assert.equal(handle.launch, undefined);
       assert.equal(adb(serial, ["get-state"]).stdout.trim(), "device");
       assert.equal(
         adb(serial, ["shell", "getprop", "sys.boot_completed"]).stdout.trim(),

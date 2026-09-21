@@ -3,9 +3,9 @@
 **Por quê:** plano técnico do épico (sequências · agentes · passo a passo · contratos · classes · modelos · BDDs).  
 **Épico:** [`2.epics.md`](../2.epics.md).  
 **US:** [`1.stories.md`](../1.stories.md) · [`4.scenarios.md#ep-03--instalar-apks`](../4.scenarios.md#ep-03--instalar-apks) · [`5.bdds.md#ep-03--instalar-apks`](../5.bdds.md#ep-03--instalar-apks).  
-**Handle:** `installApk` é método do [`AgentHandle`](EP-01-provisionar-agente.md) — **não** é função solta com `serial`.  
-**Pré-requisito:** [`EP-01`](EP-01-provisionar-agente.md) · `provisionEmulator` → handle.  
-**Implementação interna:** [`../src/lib/apks.js`](../src/lib/apks.js) (anexado ao handle em `provision.js`).
+**API:** `installApk({ serial, … })` em [`../src/lib/apks.js`](../src/lib/apks.js) — função pura com config; **não** método de handle.  
+**Pré-requisito:** [`EP-01`](EP-01-provisionar-agente.md) · `provisionEmulator(cfg)` → `{ serial, … }`.  
+**Implementação:** [`../src/lib/apks.js`](../src/lib/apks.js).
 
 **Stack:** Node ≥ 18 · JavaScript · `adb` · runtime AVD provisionado (EP-01).
 
@@ -22,7 +22,7 @@
 | SC-09 | Baixar APK na versão definida |
 | SC-10 | Instalar pacote no agent |
 
-**Resultado:** apps da config instalados na versão pedida via `handle.installApk(...)`.
+**Resultado:** apps da config instalados na versão pedida via `installApk({ serial, … })`.
 
 ---
 
@@ -30,20 +30,22 @@
 
 ```js
 import { provisionEmulator } from "../src/lib/provision.js";
+import { installApk } from "../src/lib/apks.js";
 
-const handle = await provisionEmulator(cfg); // EP-01
+const { serial } = await provisionEmulator(cfg); // EP-01
 
-const result = await handle.installApk(cfg.apps.linkedin);
+const result = await installApk({ serial, ...cfg.apps.linkedin });
 // → { package, version, skipped, artifactPath? }
 
-await handle.installApk({
+await installApk({
+  serial,
   package: "com.instagram.android",
   version: "…",
-  // apkUrl / localPath conforme spec do app
 });
+// ou: installApk({ serial, app: cfg.apps.instagram })
 ```
 
-Não passar `serial` — vem do handle. Sequência SC-08→SC-10 encapsulada por dentro.
+**Antes → depois:** `handle.installApk(app)` → `installApk({ serial, …app })`. Sequência SC-08→SC-10 encapsulada por dentro.
 
 ---
 
@@ -52,7 +54,7 @@ Não passar `serial` — vem do handle. Sequência SC-08→SC-10 encapsulada por
 ```text
 src/
 ├── lib/
-│   ├── apks.js                      # createInstallApk → handle.installApk
+│   ├── apks.js                      # installApk(cfg)
 │   ├── apks.test.js
 │   ├── apk-read-spec.js             # SC-08
 │   ├── apk-read-spec.test.js
@@ -62,7 +64,7 @@ src/
 │   ├── apk-download.test.js
 │   ├── apk-install-package.js       # SC-10
 │   ├── apk-install-package.test.js
-│   └── provision.js                 # anexa installApk ao handle
+│   └── provision.js                 # só dados (serial/kind)
 ├── apks/
 │   └── ADBKeyboard.apk              # artefato local (e2e)
 └── test/
@@ -75,37 +77,31 @@ src/
 
 ## Fluxo (obrigatório)
 
-1. **Provisionar** (EP-01) → `AgentHandle`.  
-2. **Usar o handle** → `handle.installApk(app)`.
+1. **Provisionar** (EP-01) → `{ serial, … }`.  
+2. **Instalar** → `installApk({ serial, … })`.
 
 ```js
-import { provisionEmulator } from "./lib/provision.js";
-
-const handle = await provisionEmulator(cfg);
-await handle.installApk(cfg.apps.linkedin);
-// → { package, version, skipped, artifactPath? }
+const { serial } = await provisionEmulator(cfg);
+await installApk({ serial, ...cfg.apps.linkedin });
 ```
-
-Não passar `serial` — vem do handle. Sequência SC-08→SC-10 encapsulada por dentro.
 
 | Superfície | O quê |
 |------------|--------|
-| **Público (caller)** | `provisionEmulator` → `handle.installApk(app)` |
+| **Público (caller)** | `installApk({ serial, package, version?, source?, artifact? })` |
 | **Privado** | ler spec · versionName · download · adb install |
 
 ---
 
 ## Diagramas de sequência
 
-### Visão geral — provisionar, depois `handle.installApk`
+### Visão geral — provisionar, depois `installApk`
 
 #### Agentes
 
 | Agente | Responsabilidade |
 |--------|------------------|
-| Caller | `provisionEmulator` → `handle.installApk(app)` |
-| AgentHandle | Expõe `installApk`; carrega `serial` |
-| apks.js (interno) | Encapsula SC-08→SC-10 |
+| Caller | `provisionEmulator` → `installApk({ serial, … })` |
+| apks.js | Encapsula SC-08→SC-10 |
 | Device | Recebe o package |
 
 ```mermaid
@@ -154,31 +150,28 @@ sequenceDiagram
   autonumber
   actor Dev as Caller
   participant P as provision.js
-  participant H as AgentHandle
-  participant K as apks (interno)
+  participant K as apks.js
   participant D as Device
 
   Dev->>P: provisionEmulator(cfg)
-  P-->>Dev: handle
+  P-->>Dev: { serial, kind, … }
 
-  Dev->>H: installApk(app)
-  H->>K: installApk(serial, app)
+  Dev->>K: installApk({ serial, …app })
   note over K: SC-08 ler alvo · SC-09 baixar · SC-10 instalar
   alt já na versão
-    K-->>H: skipped
+    K-->>Dev: skipped
   else
     K->>D: download + adb install
     D-->>K: ok
-    K-->>H: installed
+    K-->>Dev: InstallResult
   end
-  H-->>Dev: InstallResult
 ```
 
 #### Contratos
 
 ```ts
-// Pré: handle de EP-01; apkeep ou artefato local
-// Erros: APK_CONFIG_INVALID | APK_DOWNLOAD_FAILED | APK_INSTALL_FAILED
+// Pré: serial de EP-01; apkeep ou artefato local
+// Erros: APK_CONFIG_INVALID | APK_NO_SERIAL | APK_DOWNLOAD_FAILED | APK_INSTALL_FAILED
 
 type AppSpec = {
   package: string;
@@ -194,20 +187,18 @@ type InstallResult = {
   artifactPath?: string;
 };
 
-type AgentHandle = {
-  // … EP-01 / EP-02 …
-  installApk(app: AppSpec): Promise<InstallResult>;
-};
+function installApk(cfg: { serial: string } & AppSpec): Promise<InstallResult>;
 
-const handle = await provisionEmulator(cfg);
-const r = await handle.installApk({
+const { serial } = await provisionEmulator(cfg);
+const r = await installApk({
+  serial,
   package: "com.linkedin.android",
   version: "4.1.986",
   source: "apk-pure",
 });
 ```
 
-**Interno (não exportar ao caller como API com serial):** `downloadApk`, `getInstalledVersion`, `adbInstall` — usados por `createInstallApk(serial)` anexado ao handle.
+**Interno (não exportar como API separada obrigatória):** `downloadApk`, `getInstalledVersion`, `adbInstall` — usados por `installApk`.
 
 ---
 
@@ -228,6 +219,7 @@ const r = await handle.installApk({
 | Código | Quando |
 |--------|--------|
 | `APK_CONFIG_INVALID` | Sem package |
+| `APK_NO_SERIAL` | Sem serial |
 | `APK_DOWNLOAD_FAILED` | apkeep/artefato |
 | `APK_INSTALL_FAILED` | adb install |
 
@@ -263,22 +255,18 @@ config:
 ---
 classDiagram
   direction TB
-  class AgentHandle {
-    +installApk(app) Promise~InstallResult~
-  }
   class apks_js {
-    <<internal>>
-    createInstallApk(serial)
+    <<module>>
+    +installApk(cfg) Promise~InstallResult~
   }
-  note for AgentHandle "Caller: provision → handle.installApk"
-  AgentHandle --> apks_js : installApk
+  note for apks_js "Caller: provision → installApk({ serial, … })"
 ```
 
 ---
 
 ## Cenários BDD
 
-Fonte: [`5.bdds.md#ep-03--instalar-apks`](../5.bdds.md#ep-03--instalar-apks). Caller: handle já provisionado; “Quando…” = `handle.installApk`.
+Fonte: [`5.bdds.md#ep-03--instalar-apks`](../5.bdds.md#ep-03--instalar-apks). Caller: `serial` de EP-01; “Quando…” = `installApk({ serial, … })`.
 
 ---
 
@@ -286,11 +274,11 @@ Fonte: [`5.bdds.md#ep-03--instalar-apks`](../5.bdds.md#ep-03--instalar-apks). Ca
 
 | # | Entrega | SC | Critério |
 |---|---------|-----|----------|
-| I1 | `createInstallApk(serial)` + anexar `handle.installApk` | — | Sem `serial` no caller |
+| I1 | `installApk({ serial, … })` exportado | — | Função pura com config |
 | I2 | Skip se versionName == alvo | SC-08/10 | Idempotente |
 | I3 | Validar versão pós-install | SC-10 | Assert |
 | I4 | Erros tipados | SC-09/10 | Códigos estáveis |
-| I5 | Piloto usa `handle.installApk(apps.linkedin)` apenas | — | linkedin-login | Sem Instagram no script |
+| I5 | Piloto usa `installApk({ serial, …apps.linkedin })` apenas | — | linkedin-login | Sem Instagram no script |
 
 ### Ordem
 
@@ -304,17 +292,17 @@ I1 → I2 → I3 → I4 → I5
 
 | Peça | Status |
 |------|--------|
-| `handle.installApk` | Existe via `createInstallApk` |
+| `installApk({ serial, … })` | Existe |
 | SC-08 / 09 / 10 | `apk-read-spec` · `apk-download` · `apk-install-package` |
 | Skip se versão ok | Sim |
-| Erros tipados | `APK_CONFIG_INVALID` · `APK_DOWNLOAD_FAILED` · `APK_INSTALL_FAILED` |
-| Piloto LinkedIn | `handle.installApk` |
+| Erros tipados | `APK_CONFIG_INVALID` · `APK_NO_SERIAL` · `APK_DOWNLOAD_FAILED` · `APK_INSTALL_FAILED` |
+| Piloto LinkedIn | `installApk({ serial, … })` |
 
 ---
 
 ## Critério de pronto (épico)
 
-1. Caller: `provisionEmulator` → `handle.installApk`  
+1. Caller: `provisionEmulator` → `installApk({ serial, … })`  
 2. SC-08..10 encapsulados  
 3. BDDs US-06 + SC  
 

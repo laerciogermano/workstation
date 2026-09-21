@@ -10,11 +10,11 @@
 
 ## Entradas
 
-- Handle EP-01; specs em `device.config.json` (`apps.*`)
+- `serial` (EP-01); specs em `device.config.json` (`apps.*`)
 
 ## Execução
 
-- API: `handle.installApk(app)` (SC-08→10 encapsulados)
+- API: `installApk({ serial, …app })` (SC-08→10 encapsulados)
 - Unitários isolados; BDD e2e US-06 / EP-03
 
 ## Saídas

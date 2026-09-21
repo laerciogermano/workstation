@@ -7,19 +7,19 @@
 
 **Padrão (EP-01 → EP-06):**
 
-1. `provisionEmulator(cfg)` → `AgentHandle`  
-2. Capacidades seguintes são **métodos do handle** (sem `serial` no caller)  
-3. Libs internas (`events`, `apks`, `operate`, `extract`, `session`) encapsulam as sequências  
-4. Cada plano EP inclui **`## Como utilizar`** (exemplos de chamadas dos métodos públicos) e **Árvore de arquivos**  
-5. Ops paralelo (fora do handle): `resetInstance(cfg)` — ver [`EP-01`](EP-01-provisionar-agente.md) e [`../src/README.md`](../src/README.md)
+1. `provisionEmulator(cfg)` → `{ serial, kind, provisionedAt, bootCompleted }` (só dados)  
+2. Capacidades seguintes são **funções puras** com `{ serial, … }` (como `on`)  
+3. Libs (`events`, `apks`, `operate`, `extract`, `session`) encapsulam as sequências  
+4. Cada plano EP inclui **`## Como utilizar`** e **Árvore de arquivos**  
+5. Ops paralelo: `resetInstance(cfg)` — ver [`EP-01`](EP-01-provisionar-agente.md) e [`../src/README.md`](../src/README.md)
 
-| ID | Épico | Plano | API no handle |
-|----|-------|-------|---------------|
-| EP-01 | Provisionar agente | [`EP-01-provisionar-agente.md`](EP-01-provisionar-agente.md) | `provisionEmulator` → handle (+ ops `resetInstance`; US-22 mascarar identidade) |
-| EP-02 | Eventos de UI | [`EP-02-eventos-de-ui.md`](EP-02-eventos-de-ui.md) | `on(cfg)` — função única (não `handle.on`) |
-| EP-03 | Instalar APKs | [`EP-03-instalar-apks.md`](EP-03-instalar-apks.md) | `installApk(app)` |
+| ID | Épico | Plano | API |
+|----|-------|-------|-----|
+| EP-01 | Provisionar agente | [`EP-01-provisionar-agente.md`](EP-01-provisionar-agente.md) | `provisionEmulator` → dados (+ ops `resetInstance`) |
+| EP-02 | Eventos de UI | [`EP-02-eventos-de-ui.md`](EP-02-eventos-de-ui.md) | `on(cfg)` |
+| EP-03 | Instalar APKs | [`EP-03-instalar-apks.md`](EP-03-instalar-apks.md) | `installApk({ serial, … })` |
 | EP-04 | Operar tela | [`EP-04-operar-tela.md`](EP-04-operar-tela.md) | `launch` · `tap` · `type` · `scroll` · `screenshot` · `matchImage` · `openScrcpy` |
-| EP-05 | Extrair elementos | [`EP-05-extrair-elementos.md`](EP-05-extrair-elementos.md) | `extract()` → só textos OCR; `findByText` (US-23 · SC-29/30 LinkedIn) |
+| EP-05 | Extrair elementos | [`EP-05-extrair-elementos.md`](EP-05-extrair-elementos.md) | `extract({ serial })`; `findByText` |
 | EP-06 | Sessão | [`EP-06-sessao.md`](EP-06-sessao.md) | `saveSession` · `removeSession` · `restoreSession` |
 
 ## Estrutura
@@ -27,7 +27,7 @@
 ```text
 implementation-plan/
 ├── README.md
-├── EP-01-provisionar-agente.md   # … Escopo → Como utilizar → Árvore → …
+├── EP-01-provisionar-agente.md
 ├── EP-02-eventos-de-ui.md
 ├── …
 └── EP-06-sessao.md

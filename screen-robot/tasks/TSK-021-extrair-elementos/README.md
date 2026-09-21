@@ -8,12 +8,12 @@
 
 ## Entradas
 
-- Handle provisionado (EP-01+); fonte de **frame** (screenshot/stream/câmera)
+- `serial` (EP-01+); fonte de **frame** (screenshot/stream/câmera)
 
 ## Execução
 
-- Pipeline **frame → OCR → lista plana de textos** via `handle.extract()` (sem dump uiautomator, sem árvore DOM)
-- **Antes → depois:** sem enriquecimento por visão; só `type: "text"`
+- Pipeline **frame → OCR → lista plana de textos** via `extract({ serial })` (sem dump uiautomator, sem árvore DOM)
+- **Antes → depois:** `handle.extract()` → `extract({ serial })`; só `type: "text"`
 
 ## Saídas
 

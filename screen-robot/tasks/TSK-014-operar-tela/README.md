@@ -8,11 +8,11 @@
 
 ## Entradas
 
-- Handle provisionado (EP-01+)
+- `serial` (EP-01+)
 
 ## Execução
 
-- Entregar capacidade de operar tela
+- Funções `launch` / `tap` / `type` / `scroll` / `screenshot` / `matchImage` / `openScrcpy` com `{ serial, … }`
 
 ## Saídas
 

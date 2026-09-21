@@ -11,14 +11,16 @@ import { dirname, resolve, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { sleep } from "../lib/adb.js";
+import { installApk } from "../lib/apks.js";
 import { on } from "../lib/events.js";
 import { captureFrame } from "../lib/frame.js";
 import {
-  createExtract,
+  extract,
   extractElements,
   findByText,
   matchByText,
 } from "../lib/extract.js";
+import { launch, openScrcpy, screenshot, tapElement } from "../lib/operate.js";
 import { provisionEmulator } from "../lib/provision.js";
 import { resetInstance } from "../lib/reset-instance.js";
 import { createWorker } from "tesseract.js";
@@ -148,11 +150,10 @@ function inflateButtonHit(hit) {
   return { ...hit, bounds, center };
 }
 
-/** OCR de textos no frame (createExtract fresco — handle reusa cache). */
+/** OCR de textos no frame (cada chamada = OCR novo). */
 async function extractList(serial, label) {
   console.log(`${label} Extrair textos (OCR)…`);
-  const extract = createExtract(serial);
-  const elements = await extract();
+  const elements = await extract({ serial });
   console.log(`   texts=${elements.length}`);
   return elements;
 }
@@ -177,22 +178,21 @@ async function main() {
   console.log(`   OK ${reset.serial}`);
 
   console.log("1) Provisionar…");
-  const handle = await provisionEmulator(cfg);
-  console.log(`   OK ${handle.serial}`);
+  const { serial } = await provisionEmulator(cfg);
+  console.log(`   OK ${serial}`);
 
   console.log("1.5) Abrir scrcpy…");
-  const view = handle.openScrcpy({ title: `tinder-home ${handle.serial}` });
+  const view = openScrcpy({ serial, title: `tinder-home ${serial}` });
   console.log(`   OK pid=${view.pid}`);
 
   console.log("2) Instalar tinder (GMS / arm64)…");
-  const installed = await handle.installApk(appSpec);
+  const installed = await installApk({ serial, ...appSpec });
   console.log(
     `   OK ${installed.package} ${installed.version || "?"}${installed.skipped ? " (skip)" : ""}`,
   );
 
   console.log("2.5) Localização: permissões + geo fix (SP)…");
   {
-    const serial = handle.serial;
     for (const p of [
       "android.permission.ACCESS_FINE_LOCATION",
       "android.permission.ACCESS_COARSE_LOCATION",
@@ -212,15 +212,15 @@ async function main() {
   }
 
   console.log("3) Abrir tinder…");
-  await handle.launch(appSpec.package);
-  await on({ serial: handle.serial, event: "ui_stable", timeoutMs: 90_000 });
+  await launch({ serial, package: appSpec.package });
+  await on({ serial, event: "ui_stable", timeoutMs: 90_000 });
 
   console.log("4) Print da tela inicial…");
   const shot1 = resolve(outDir, "01-tela-inicial.png");
-  handle.screenshot(shot1);
+  screenshot({ serial, path: shot1 });
   console.log(`   OK → ${shot1}`);
 
-  const list1 = await extractList(handle.serial, "5)");
+  const list1 = await extractList(serial, "5)");
   writeFileSync(resolve(outDir, "01-elements.json"), JSON.stringify(list1, null, 2), "utf8");
   console.log(JSON.stringify(list1, null, 2));
 
@@ -228,10 +228,10 @@ async function main() {
   {
     let hit = null;
     for (let attempt = 1; attempt <= 8; attempt++) {
-      hit = await findAllowButton(handle.serial);
+      hit = await findAllowButton(serial);
       if (hit?.center) break;
       // fallback findByText se OCR variar
-      const fb = await findByText(handle.serial, "ALLOW", { minScore: 0.9 });
+      const fb = await findByText(serial, "ALLOW", { minScore: 0.9 });
       if (fb?.center && String(fb.elements?.[0]?.text || fb.elements?.[0]?.label) === "ALLOW") {
         hit = fb;
         break;
@@ -243,9 +243,9 @@ async function main() {
       console.log(
         `   → "${hit.text}" center=${JSON.stringify(hit.center)} y=${hit.bounds.y}`,
       );
-      handle.tapElement({ center: hit.center, bounds: hit.bounds });
+      tapElement({ serial, center: hit.center, bounds: hit.bounds });
       await sleep(5_000);
-      await on({ serial: handle.serial, event: "ui_stable", timeoutMs: 60_000 }).catch(() => {});
+      await on({ serial, event: "ui_stable", timeoutMs: 60_000 }).catch(() => {});
     } else {
       console.log("   (ALLOW botão não encontrado — segue)");
     }
@@ -253,10 +253,10 @@ async function main() {
 
   console.log("7) Print após ALLOW…");
   const shot2 = resolve(outDir, "02-apos-allow.png");
-  handle.screenshot(shot2);
+  screenshot({ serial, path: shot2 });
   console.log(`   OK → ${shot2}`);
 
-  const list2 = await extractList(handle.serial, "8)");
+  const list2 = await extractList(serial, "8)");
   writeFileSync(resolve(outDir, "02-elements.json"), JSON.stringify(list2, null, 2), "utf8");
   console.log(JSON.stringify(list2, null, 2));
 
@@ -264,7 +264,7 @@ async function main() {
   {
     let hit = null;
     for (let attempt = 1; attempt <= 10; attempt++) {
-      hit = await findContinueWithPhoneNumber(handle.serial);
+      hit = await findContinueWithPhoneNumber(serial);
       if (hit?.center) break;
       console.log(`   tentativa ${attempt}/10 — texto ainda não visível…`);
       await sleep(2_000);
@@ -277,18 +277,18 @@ async function main() {
     console.log(
       `   → "${hit.text}" score=${hit.score.toFixed(2)} parts=${hit.elements.length} center=${JSON.stringify(hit.center)}`,
     );
-    handle.tapElement({ center: hit.center, bounds: hit.bounds });
+    tapElement({ serial, center: hit.center, bounds: hit.bounds });
     await sleep(5_000);
-    await on({ serial: handle.serial, event: "ui_stable", timeoutMs: 60_000 }).catch(() => {});
+    await on({ serial, event: "ui_stable", timeoutMs: 60_000 }).catch(() => {});
   }
 
   console.log("10) Print após Phone Number…");
   const shot3 = resolve(outDir, "03-apos-phone-number.png");
-  handle.screenshot(shot3);
+  screenshot({ serial, path: shot3 });
   console.log(`   OK → ${shot3}`);
 
-  const list3 = await extractList(handle.serial, "11)");
-  handle.screenshot(resolve(outDir, "frame-screen.png"));
+  const list3 = await extractList(serial, "11)");
+  screenshot({ serial, path: resolve(outDir, "frame-screen.png") });
   const outJson = resolve(outDir, "elements.json");
   writeFileSync(outJson, JSON.stringify(list3, null, 2), "utf8");
   writeFileSync(resolve(outDir, "03-elements.json"), JSON.stringify(list3, null, 2), "utf8");

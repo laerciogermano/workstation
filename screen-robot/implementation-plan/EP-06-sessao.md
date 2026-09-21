@@ -3,9 +3,9 @@
 **Por quê:** plano técnico do épico (sequências · agentes · passo a passo · contratos · classes · modelos · BDDs).  
 **Épico:** [`2.epics.md`](../2.epics.md).  
 **US:** [`1.stories.md`](../1.stories.md) · [`4.scenarios.md#ep-06--sessao`](../4.scenarios.md#ep-06--sessao) · [`5.bdds.md#ep-06--sessao`](../5.bdds.md#ep-06--sessao).  
-**Handle:** sessão são métodos do [`AgentHandle`](EP-01-provisionar-agente.md) — **não** funções soltas desligadas do agent.  
-**Pré-requisito:** [`EP-01`](EP-01-provisionar-agente.md) · handle.  
-**Implementação interna:** [`../src/lib/session.js`](../src/lib/session.js) (anexado ao handle em `provision.js`).
+**API:** `saveSession` / `removeSession` / `restoreSession` em [`../src/lib/session.js`](../src/lib/session.js) — funções com config; **não** métodos de handle.  
+**Pré-requisito:** [`EP-01`](EP-01-provisionar-agente.md) · `{ serial, kind }` no save.  
+**Implementação:** [`../src/lib/session.js`](../src/lib/session.js).
 
 **Stack:** Node ≥ 18 · JavaScript · runtime provisionado.
 
@@ -20,7 +20,7 @@
 | US-19 | Recuperar sessão |
 | SC-22..24 | Cenários correspondentes |
 
-**Resultado:** estado persistido/apagado/restaurado via `handle.saveSession` / `removeSession` / `restoreSession`.
+**Resultado:** estado persistido/apagado/restaurado via `saveSession` / `removeSession` / `restoreSession`.
 
 ---
 
@@ -28,24 +28,25 @@
 
 ```js
 import { provisionEmulator } from "../src/lib/provision.js";
+import { saveSession, restoreSession, removeSession } from "../src/lib/session.js";
 
-const handle = await provisionEmulator(cfg); // EP-01
+const { serial, kind } = await provisionEmulator(cfg); // EP-01
 // … operar …
 
-const path = await handle.saveSession("./sessions/linkedin.json", {
-  step: "logged-in",
-  apps: ["com.linkedin.android"],
+const path = await saveSession({
+  serial,
+  kind,
+  path: "./sessions/linkedin.json",
+  state: { step: "logged-in", apps: ["com.linkedin.android"] },
 });
-// → path do arquivo
 
-const state = await handle.restoreSession("./sessions/linkedin.json");
+const state = await restoreSession({ path: "./sessions/linkedin.json" });
 // → { serial, kind, savedAt, step, apps, … }
 
-const removed = await handle.removeSession("./sessions/linkedin.json");
-// → true | false
+const removed = await removeSession({ path: "./sessions/linkedin.json" });
 ```
 
-Serial/contexto do handle entram no JSON ao salvar. Erros: `SESSION_WRITE_FAILED` · `SESSION_NOT_FOUND` · `SESSION_INVALID`.
+**Antes → depois:** `handle.saveSession(path, state)` → `saveSession({ serial, kind, path, state })`. Erros: `SESSION_WRITE_FAILED` · `SESSION_NOT_FOUND` · `SESSION_INVALID`.
 
 ---
 
@@ -54,9 +55,9 @@ Serial/contexto do handle entram no JSON ao salvar. Erros: `SESSION_WRITE_FAILED
 ```text
 src/
 ├── lib/
-│   ├── session.js                 # createSessionApi → handle.save/remove/restoreSession
+│   ├── session.js                 # saveSession / removeSession / restoreSession
 │   ├── session.test.js
-│   └── provision.js               # anexa session ao handle
+│   └── provision.js               # só dados
 └── test/
     └── bdd/
         ├── ep-06-sessao.test.js
@@ -67,23 +68,20 @@ src/
 
 ## Fluxo (obrigatório)
 
-1. **Provisionar** → handle.  
-2. **Sessão** via métodos do handle (path + estado; serial/contexto do handle inclusos ao salvar).
+1. **Provisionar** → `{ serial, kind }`.  
+2. **Sessão** via funções com `path` (+ `serial`/`kind` no save).
 
 ```js
-const handle = await provisionEmulator(cfg);
-// … operar …
-
-await handle.saveSession("./sessions/linkedin.json", { step: "logged-in", apps: […] });
-await handle.removeSession("./sessions/linkedin.json");
-const state = await handle.restoreSession("./sessions/linkedin.json");
-// restore reaplica contexto no runtime ligado ao handle
+const { serial, kind } = await provisionEmulator(cfg);
+await saveSession({ serial, kind, path: "./sessions/linkedin.json", state: { step: "logged-in" } });
+await removeSession({ path: "./sessions/linkedin.json" });
+const state = await restoreSession({ path: "./sessions/linkedin.json" });
 ```
 
 | Superfície | O quê |
 |------------|--------|
-| **Público** | `handle.saveSession` · `removeSession` · `restoreSession` |
-| **Privado** | serialize JSON · unlink · reaplicar serial/apps/etapa |
+| **Público** | `saveSession` · `removeSession` · `restoreSession` |
+| **Privado** | serialize JSON · unlink |
 
 ---
 
@@ -135,28 +133,23 @@ config:
 sequenceDiagram
   autonumber
   actor Dev as Caller
-  participant H as AgentHandle
-  participant S as session (interno)
+  participant S as session.js
   participant FS as Filesystem
 
   alt US-17 save
-    Dev->>H: saveSession(path, state)
-    H->>S: merge serial + state + savedAt
+    Dev->>S: saveSession({ serial, kind, path, state })
     S->>FS: write JSON
     FS-->>S: ok
-    H-->>Dev: path
+    S-->>Dev: path
   else US-18 remove
-    Dev->>H: removeSession(path)
-    H->>S: unlink
+    Dev->>S: removeSession({ path })
     S->>FS: delete
-    H-->>Dev: removed
+    S-->>Dev: removed
   else US-19 restore
-    Dev->>H: restoreSession(path)
-    H->>S: read JSON
+    Dev->>S: restoreSession({ path })
     S->>FS: read
     FS-->>S: payload
-    S->>H: reaplicar contexto
-    H-->>Dev: SessionState
+    S-->>Dev: SessionState
   end
 ```
 
@@ -164,9 +157,9 @@ sequenceDiagram
 
 | US | SC | Chamada |
 |----|-----|---------|
-| US-17 | SC-22 | `handle.saveSession(path, state?)` |
-| US-18 | SC-23 | `handle.removeSession(path)` |
-| US-19 | SC-24 | `handle.restoreSession(path)` |
+| US-17 | SC-22 | `saveSession({ serial, kind, path, state? })` |
+| US-18 | SC-23 | `removeSession({ path })` |
+| US-19 | SC-24 | `restoreSession({ path })` |
 
 #### Contratos
 
@@ -180,19 +173,21 @@ type SessionState = {
   [k: string]: unknown;
 };
 
-type AgentHandle = {
-  // … EP-01..05 …
-  saveSession(path: string, state?: SessionState): Promise<string>;
-  removeSession(path: string): Promise<boolean>;
-  restoreSession(path: string): Promise<SessionState>;
-};
+function saveSession(cfg: {
+  serial: string;
+  kind: string;
+  path: string;
+  state?: SessionState;
+}): Promise<string>;
+function removeSession(cfg: { path: string }): Promise<boolean>;
+function restoreSession(cfg: { path: string }): Promise<SessionState>;
 
-await handle.saveSession("./sessions/li.json", { step: "logged-in" });
-await handle.removeSession("./sessions/li.json");
-const s = await handle.restoreSession("./sessions/li.json");
+await saveSession({ serial, kind, path: "./sessions/li.json", state: { step: "logged-in" } });
+await removeSession({ path: "./sessions/li.json" });
+const s = await restoreSession({ path: "./sessions/li.json" });
 ```
 
-`saveSession` inclui `handle.serial` / `kind` no payload automaticamente.
+`saveSession` grava `serial` / `kind` no payload a partir da config.
 
 #### Exemplo de JSON (arquivo de sessão)
 
@@ -231,7 +226,7 @@ Ilustrativo da API EP-06 (o piloto LinkedIn atual **não** grava sessão):
 
 | Campo | Origem |
 |-------|--------|
-| `serial` / `kind` | handle (EP-01) |
+| `serial` / `kind` | config do caller (EP-01) |
 | `step` | estado passado pelo caller |
 | `apps` | instalação (EP-03) |
 | `paths` | paths úteis para restore |
@@ -239,7 +234,7 @@ Ilustrativo da API EP-06 (o piloto LinkedIn atual **não** grava sessão):
 | `events` | últimos eventos (EP-02), opcional |
 | `savedAt` | preenchido no save |
 
-`restoreSession` lê esse JSON e reaplica `serial`, `apps`, `step` e `paths` no runtime do handle.
+`restoreSession` lê esse JSON e devolve `serial`, `apps`, `step` e `paths` para o caller reaplicar.
 
 ---
 
@@ -282,16 +277,13 @@ config:
 ---
 classDiagram
   direction TB
-  class AgentHandle {
-    +saveSession(path, state)
-    +removeSession(path)
-    +restoreSession(path)
-  }
   class session_js {
-    <<internal>>
-    bindSession(handle)
+    <<module>>
+    +saveSession(cfg)
+    +removeSession(cfg)
+    +restoreSession(cfg)
   }
-  AgentHandle --> session_js
+  note for session_js "Caller passa serial/kind no save"
 ```
 
 ---
@@ -306,10 +298,10 @@ Fonte: [`5.bdds.md#ep-06--sessao`](../5.bdds.md#ep-06--sessao).
 
 | # | Entrega | SC | Critério |
 |---|---------|-----|----------|
-| I1 | Anexar `saveSession` / `removeSession` / `restoreSession` ao handle | — | Sem API solta no caller |
-| I2 | save inclui serial/kind do handle | SC-22 | US-17 |
-| I3 | remove limpa arquivo + contexto | SC-23 | US-18 |
-| I4 | restore reaplica no handle/runtime | SC-24 | US-19 |
+| I1 | Exportar `saveSession` / `removeSession` / `restoreSession` com config | — | Funções puras |
+| I2 | save inclui serial/kind da config | SC-22 | US-17 |
+| I3 | remove limpa arquivo | SC-23 | US-18 |
+| I4 | restore devolve estado do JSON | SC-24 | US-19 |
 | I5 | Piloto **não** chama `saveSession` (fluxo atual = lista OCR / AGREE|Sign In) | — | linkedin-login | API de sessão disponível; piloto não grava |
 
 ### Ordem
@@ -324,15 +316,14 @@ I1 → I2 → I3 → I4 → I5
 
 | Peça | Status |
 |------|--------|
-| `createSessionApi` → handle | Existe |
-| `saveSession` / `removeSession` / `restoreSession` | Existe |
-| Legado `saveSession` / `loadSession` soltos | Deprecado |
+| `saveSession` / `removeSession` / `restoreSession` | Existe (funções com config) |
+| Legado `handle.*` / `createSessionApi` | Removido |
 
 ---
 
 ## Critério de pronto (épico)
 
-1. Sessão só via handle  
+1. Sessão só via funções com config  
 2. SC-22..24 encapsulados  
 3. BDDs US-17 + EP-06  
 

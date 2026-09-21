@@ -1,9 +1,18 @@
 /**
- * Unitário — operate.js createOperate (adb stub).
+ * Unitário — operate.js (adb stub).
  */
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { buildKeyCenters, createOperate } from "./operate.js";
+import {
+  buildKeyCenters,
+  launch,
+  tap,
+  type,
+  scroll,
+  screenshot,
+  matchImage,
+  openScrcpy,
+} from "./operate.js";
 
 describe("buildKeyCenters", () => {
   it("mapeia dígitos OCR para centers", () => {
@@ -18,30 +27,34 @@ describe("buildKeyCenters", () => {
   });
 });
 
-describe("createOperate", () => {
+describe("operate", () => {
   it("type toca cada tecla via OCR (sem input text)", async () => {
     const taps = [];
-    const op = createOperate("s", {
-      adb: (_s, args) => {
-        if (args.includes("tap")) taps.push([args[4], args[5]]);
-        return {};
+    await type(
+      {
+        serial: "s",
+        text: "129",
+        region: { x: 0, y: 700, width: 720, height: 500 },
+        delayMs: 0,
       },
-      connectIfTcp: () => {},
-      sleep: async () => {},
-      captureFrame: async () => "/tmp/kb.png",
-      ocrWords: async (_p, deps) => {
-        assert.ok(deps.rectangle || deps.region);
-        return [
-          { text: "1", bounds: { x: 10, y: 10, w: 20, h: 20 } },
-          { text: "2", bounds: { x: 50, y: 10, w: 20, h: 20 } },
-          { text: "9", bounds: { x: 90, y: 10, w: 20, h: 20 } },
-        ];
+      {
+        adb: (_s, args) => {
+          if (args.includes("tap")) taps.push([args[4], args[5]]);
+          return {};
+        },
+        connectIfTcp: () => {},
+        sleep: async () => {},
+        captureFrame: async () => "/tmp/kb.png",
+        ocrWords: async (_p, deps) => {
+          assert.ok(deps.rectangle || deps.region);
+          return [
+            { text: "1", bounds: { x: 10, y: 10, w: 20, h: 20 } },
+            { text: "2", bounds: { x: 50, y: 10, w: 20, h: 20 } },
+            { text: "9", bounds: { x: 90, y: 10, w: 20, h: 20 } },
+          ];
+        },
       },
-    });
-    await op.type("129", {
-      region: { x: 0, y: 700, width: 720, height: 500 },
-      delayMs: 0,
-    });
+    );
     assert.deepEqual(taps, [
       ["20", "20"],
       ["60", "20"],
@@ -50,88 +63,107 @@ describe("createOperate", () => {
   });
 
   it("type falha se tecla ausente no OCR", async () => {
-    const op = createOperate("s", {
-      adb: () => {},
-      connectIfTcp: () => {},
-      sleep: async () => {},
-      captureFrame: async () => "/tmp/kb.png",
-      ocrWords: async () => [{ text: "1", bounds: { x: 0, y: 0, w: 10, h: 10 } }],
-    });
     await assert.rejects(
-      () => op.type("5", { delayMs: 0 }),
+      () =>
+        type(
+          { serial: "s", text: "5", delayMs: 0 },
+          {
+            adb: () => {},
+            connectIfTcp: () => {},
+            sleep: async () => {},
+            captureFrame: async () => "/tmp/kb.png",
+            ocrWords: async () => [
+              { text: "1", bounds: { x: 0, y: 0, w: 10, h: 10 } },
+            ],
+          },
+        ),
       (err) => err && err.code === "OPERATE_TYPE_FAILED",
     );
   });
 
   it("tap envia cmd input tap", () => {
     const calls = [];
-    const op = createOperate("s", {
-      adb: (_s, args) => calls.push(args),
-      sleep: async () => {},
-      connectIfTcp: () => {},
-    });
-    op.tap(10, 20);
+    tap(
+      { serial: "s", x: 10, y: 20 },
+      {
+        adb: (_s, args) => calls.push(args),
+        sleep: async () => {},
+        connectIfTcp: () => {},
+      },
+    );
     assert.deepEqual(calls[0], ["shell", "cmd", "input", "tap", "10", "20"]);
   });
 
   it("tap faz retry em Broken pipe", () => {
     let n = 0;
     const calls = [];
-    const op = createOperate("s", {
-      adb: (_s, args) => {
-        calls.push(args);
-        n += 1;
-        if (n <= 2) {
-          throw new Error("cmd: Failure calling service input: Broken pipe (32)");
-        }
-        return {};
+    tap(
+      { serial: "s", x: 1, y: 2 },
+      {
+        adb: (_s, args) => {
+          calls.push(args);
+          n += 1;
+          if (n <= 2) {
+            throw new Error("cmd: Failure calling service input: Broken pipe (32)");
+          }
+          return {};
+        },
+        connectIfTcp: () => {},
       },
-      connectIfTcp: () => {},
-    });
-    op.tap(1, 2);
+    );
     assert.ok(calls.length >= 3);
   });
 
   it("scroll down faz swipe", () => {
     const calls = [];
-    const op = createOperate("s", {
-      adb: (_s, args) => calls.push(args),
-    });
-    op.scroll({ direction: "down", distance: 100, x: 5, y: 10 });
+    scroll(
+      { serial: "s", direction: "down", distance: 100, x: 5, y: 10 },
+      { adb: (_s, args) => calls.push(args) },
+    );
     assert.equal(calls[0][2], "swipe");
     assert.equal(calls[0][6], "110");
   });
 
   it("screenshot grava path", () => {
-    const op = createOperate("s", {
-      adb: () => {},
-      mkdirSync: () => {},
-      resolve: (p) => `/abs/${p}`,
-    });
-    assert.equal(op.screenshot("out.png"), "/abs/out.png");
+    assert.equal(
+      screenshot(
+        { serial: "s", path: "out.png" },
+        {
+          adb: () => {},
+          mkdirSync: () => {},
+          resolve: (p) => `/abs/${p}`,
+        },
+      ),
+      "/abs/out.png",
+    );
   });
 
   it("matchImage exige template", async () => {
-    const op = createOperate("s", { existsSync: () => false });
     await assert.rejects(
-      () => op.matchImage("/nope.png"),
+      () =>
+        matchImage(
+          { serial: "s", templatePath: "/nope.png" },
+          { existsSync: () => false },
+        ),
       (err) => err && err.code === "OPERATE_MATCH_NOT_FOUND",
     );
   });
 
   it("launch resolve activity e faz am start -n", async () => {
     const calls = [];
-    const op = createOperate("s", {
-      adb: (_s, args) => {
-        calls.push(args);
-        if (args.includes("resolve-activity")) {
-          return { stdout: "com.x/.Main\n" };
-        }
-        return {};
+    await launch(
+      { serial: "s", package: "com.x" },
+      {
+        adb: (_s, args) => {
+          calls.push(args);
+          if (args.includes("resolve-activity")) {
+            return { stdout: "com.x/.Main\n" };
+          }
+          return {};
+        },
+        sleep: async () => {},
       },
-      sleep: async () => {},
-    });
-    await op.launch("com.x");
+    );
     assert.ok(calls.some((a) => a.includes("resolve-activity")));
     assert.ok(
       calls.some(
@@ -141,30 +173,35 @@ describe("createOperate", () => {
   });
 
   it("launch marca OPERATE_LAUNCH_FAILED se adb falha", async () => {
-    const op = createOperate("s", {
-      adb: () => {
-        throw new Error("boom");
-      },
-      adbOk: () => false,
-      sleep: async () => {},
-    });
     await assert.rejects(
-      () => op.launch("com.x"),
+      () =>
+        launch(
+          { serial: "s", package: "com.x" },
+          {
+            adb: () => {
+              throw new Error("boom");
+            },
+            adbOk: () => false,
+            sleep: async () => {},
+          },
+        ),
       (err) => err && err.code === "OPERATE_LAUNCH_FAILED",
     );
   });
 
   it("openScrcpy spawna scrcpy no serial", () => {
     let spawned;
-    const op = createOperate("127.0.0.1:5555", {
-      whichScrcpy: () => "/usr/bin/scrcpy",
-      connectIfTcp: () => {},
-      spawnScrcpy: (bin, args, opts) => {
-        spawned = { bin, args, opts };
-        return { pid: 4242, unref: () => {} };
+    const out = openScrcpy(
+      { serial: "127.0.0.1:5555", title: "test" },
+      {
+        whichScrcpy: () => "/usr/bin/scrcpy",
+        connectIfTcp: () => {},
+        spawnScrcpy: (bin, args, opts) => {
+          spawned = { bin, args, opts };
+          return { pid: 4242, unref: () => {} };
+        },
       },
-    });
-    const out = op.openScrcpy({ title: "test" });
+    );
     assert.equal(out.pid, 4242);
     assert.equal(out.serial, "127.0.0.1:5555");
     assert.equal(spawned.bin, "/usr/bin/scrcpy");
@@ -174,9 +211,8 @@ describe("createOperate", () => {
   });
 
   it("openScrcpy falha sem scrcpy no PATH", () => {
-    const op = createOperate("s", { whichScrcpy: () => null });
     assert.throws(
-      () => op.openScrcpy(),
+      () => openScrcpy({ serial: "s" }, { whichScrcpy: () => null }),
       (err) => err && err.code === "OPERATE_SCRCPY_FAILED",
     );
   });

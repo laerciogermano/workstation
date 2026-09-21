@@ -1,14 +1,10 @@
 /**
  * Biblioteca de provisionamento do emulador/agent.
- * Superfície pública: apenas `provisionEmulator`.
- * Handle: installApk · operate · extract · session (EP-03..06).
- * Eventos UI: `on(cfg)` em events.js (EP-02) — não anexado ao handle.
+ * Superfície pública: apenas `provisionEmulator` — devolve dados (sem métodos).
+ * Ops: installApk · operate · extract · session (imports separados).
+ * Eventos UI: `on(cfg)` em events.js (EP-02).
  */
-import { createInstallApk as defaultCreateInstallApk } from "./apks.js";
-import { createExtract as defaultCreateExtract } from "./extract.js";
 import { ensureAdbOnline as defaultEnsureAdbOnline } from "./ensure-adb-online.js";
-import { createOperate as defaultCreateOperate } from "./operate.js";
-import { createSessionApi as defaultCreateSessionApi } from "./session.js";
 import { startRuntime as defaultStartRuntime } from "./start-runtime.js";
 import { waitBootCompleted as defaultWaitBootCompleted } from "./wait-boot-completed.js";
 
@@ -51,15 +47,12 @@ function resolveConfig(cfg) {
 /**
  * @param {ProvisionConfig} cfg
  * @param {object} [deps]
+ * @returns {Promise<{ serial: string, kind: string, provisionedAt: string, bootCompleted: true }>}
  */
 export async function provisionEmulator(cfg, deps = {}) {
   const startRuntime = deps.startRuntime ?? defaultStartRuntime;
   const ensureAdbOnline = deps.ensureAdbOnline ?? defaultEnsureAdbOnline;
   const waitBootCompleted = deps.waitBootCompleted ?? defaultWaitBootCompleted;
-  const createInstallApk = deps.createInstallApk ?? defaultCreateInstallApk;
-  const createOperate = deps.createOperate ?? defaultCreateOperate;
-  const createExtract = deps.createExtract ?? defaultCreateExtract;
-  const createSessionApi = deps.createSessionApi ?? defaultCreateSessionApi;
   const now = deps.now ?? Date.now;
   const toIso = deps.toIso ?? (() => new Date().toISOString());
 
@@ -71,29 +64,10 @@ export async function provisionEmulator(cfg, deps = {}) {
   await ensureAdbOnline(serial, resolved.connectTimeoutMs, started);
   await waitBootCompleted(serial, resolved.connectTimeoutMs, started);
 
-  const operate = createOperate(serial);
-  const session = createSessionApi({
-    serial,
-    kind: resolved.kind,
-  });
-
   return {
     serial,
     kind: resolved.kind,
     provisionedAt: toIso(),
     bootCompleted: true,
-    installApk: createInstallApk(serial),
-    launch: operate.launch,
-    tap: operate.tap,
-    tapElement: operate.tapElement,
-    type: operate.type,
-    scroll: operate.scroll,
-    screenshot: operate.screenshot,
-    matchImage: operate.matchImage,
-    openScrcpy: operate.openScrcpy,
-    extract: createExtract(serial),
-    saveSession: session.saveSession,
-    removeSession: session.removeSession,
-    restoreSession: session.restoreSession,
   };
 }

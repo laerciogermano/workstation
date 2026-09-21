@@ -9,11 +9,11 @@
 
 ## Entradas
 
-- Handle provisionado; imagem template; frame/tela atual
+- `serial` (EP-01+); imagem template; frame/tela atual
 
 ## Execução
 
-- Match por **visão**/template sobre o frame → coords para tap/type
+- `matchImage({ serial, templatePath })` — match por **visão**/template → coords para tap/type
 
 ## Saídas
 

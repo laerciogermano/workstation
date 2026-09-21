@@ -10,11 +10,11 @@
 
 ## Entradas
 
-- Serial no handle; path do artefato
+- `serial`; path do artefato
 
 ## Execução
 
-- Componente `installPackage` + orquestração `createInstallApk` (skip se versão ok)
+- Componente `installPackage` + orquestração `installApk({ serial, … })` (skip se versão ok)
 
 ## Saídas
 

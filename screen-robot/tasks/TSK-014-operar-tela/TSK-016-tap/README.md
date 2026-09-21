@@ -13,7 +13,7 @@
 
 ## Execução
 
-- `handle.tap(x, y)` / `tapElement(el)` — gestos com coords da percepção por imagem
+- `tap({ serial, x, y })` / `tapElement({ serial, center, bounds })` — gestos com coords da percepção por imagem
 
 ## Saídas
 

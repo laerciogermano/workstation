@@ -9,11 +9,11 @@
 
 ## Entradas
 
-- Handle provisionado (EP-01+)
+- `serial` (EP-01+); direção/distância
 
 ## Execução
 
-- Entregar capacidade de tsk 018 scroll
+- `scroll({ serial, direction, distance?, … })`
 
 ## Saídas
 

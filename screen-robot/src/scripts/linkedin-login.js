@@ -11,8 +11,10 @@ import { dirname, resolve, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { sleep } from "../lib/adb.js";
+import { installApk } from "../lib/apks.js";
 import { on } from "../lib/events.js";
-import { findByText } from "../lib/extract.js";
+import { extract, findByText } from "../lib/extract.js";
+import { launch, openScrcpy, screenshot, tapElement } from "../lib/operate.js";
 import { provisionEmulator } from "../lib/provision.js";
 import { resetInstance } from "../lib/reset-instance.js";
 
@@ -49,31 +51,31 @@ async function main() {
   console.log(`   OK ${reset.serial}`);
 
   console.log("1) Provisionar…");
-  const handle = await provisionEmulator(cfg);
-  console.log(`   OK ${handle.serial}`);
+  const { serial } = await provisionEmulator(cfg);
+  console.log(`   OK ${serial}`);
 
   console.log("1.5) Abrir scrcpy…");
-  const view = handle.openScrcpy({ title: `linkedin-login ${handle.serial}` });
+  const view = openScrcpy({ serial, title: `linkedin-login ${serial}` });
   console.log(`   OK pid=${view.pid}`);
 
   console.log("2) Instalar LinkedIn…");
-  const li = await handle.installApk(cfg.apps.linkedin);
+  const li = await installApk({ serial, ...cfg.apps.linkedin });
   console.log(`   OK ${li.package} ${li.version || "?"}${li.skipped ? " (skip)" : ""}`);
 
   console.log("3) Abrir LinkedIn…");
-  await handle.launch(cfg.apps.linkedin.package);
-  await on({ serial: handle.serial, event: "ui_stable", timeoutMs: 90_000 });
+  await launch({ serial, package: cfg.apps.linkedin.package });
+  await on({ serial, event: "ui_stable", timeoutMs: 90_000 });
 
   console.log("4) Print da tela inicial…");
   const shotPath = resolve(outDir, "01-tela-inicial.png");
-  handle.screenshot(shotPath);
+  screenshot({ serial, path: shotPath });
   console.log(`   OK → ${shotPath}`);
 
   console.log("5) Clicar Sign in with Email…");
   {
     let hit = null;
     for (let attempt = 1; attempt <= 8; attempt++) {
-      hit = await findByText(handle.serial, "Sign in with Email", {
+      hit = await findByText(serial, "Sign in with Email", {
         minScore: 0.75,
       });
       if (hit?.center) break;
@@ -84,19 +86,19 @@ async function main() {
       console.log(
         `   → "${hit.text}" score=${hit.score.toFixed(2)} parts=${hit.elements.length}`,
       );
-      handle.tapElement({ center: hit.center, bounds: hit.bounds });
+      tapElement({ serial, center: hit.center, bounds: hit.bounds });
       await sleep(5_000);
-      handle.screenshot(resolve(outDir, "02-apos-sign-in-email.png"));
+      screenshot({ serial, path: resolve(outDir, "02-apos-sign-in-email.png") });
     } else {
       console.log("   (Sign in with Email não encontrado — segue)");
     }
   }
 
   console.log("6) Extrair textos (OCR)…");
-  const elements = await handle.extract();
+  const elements = await extract({ serial });
   console.log(`   texts=${elements.length}`);
 
-  handle.screenshot(resolve(outDir, "frame-screen.png"));
+  screenshot({ serial, path: resolve(outDir, "frame-screen.png") });
   const json = JSON.stringify(elements, null, 2);
   const outJson = resolve(outDir, "elements.json");
   writeFileSync(outJson, json, "utf8");

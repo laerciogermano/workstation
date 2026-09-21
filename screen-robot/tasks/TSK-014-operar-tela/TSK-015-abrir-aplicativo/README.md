@@ -9,11 +9,11 @@
 
 ## Entradas
 
-- Handle provisionado (EP-01+)
+- `serial` (EP-01+); package/activity
 
 ## Execução
 
-- Entregar capacidade de tsk 015 abrir aplicativo
+- `launch({ serial, package, activity? })`
 
 ## Saídas
 

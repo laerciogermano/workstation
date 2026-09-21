@@ -1,26 +1,25 @@
 /**
- * Unitário — apks.js createInstallApk (orquestração stub).
+ * Unitário — apks.js installApk (orquestração stub).
  */
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { createInstallApk } from "./apks.js";
+import { installApk } from "./apks.js";
 
-describe("createInstallApk", () => {
+describe("installApk", () => {
   it("skip quando versionName == alvo", async () => {
-    const installApk = createInstallApk("s", {
-      readAppSpec: (app) => app,
-      getInstalledVersion: () => "1.2.3",
-      ensureApkArtifact: () => {
-        throw new Error("não deve baixar");
+    const r = await installApk(
+      { serial: "s", package: "com.x", version: "1.2.3" },
+      {
+        readAppSpec: (app) => app,
+        getInstalledVersion: () => "1.2.3",
+        ensureApkArtifact: () => {
+          throw new Error("não deve baixar");
+        },
+        installPackage: () => {
+          throw new Error("não deve instalar");
+        },
       },
-      installPackage: () => {
-        throw new Error("não deve instalar");
-      },
-    });
-    const r = await installApk({
-      package: "com.x",
-      version: "1.2.3",
-    });
+    );
     assert.deepEqual(r, {
       package: "com.x",
       version: "1.2.3",
@@ -31,22 +30,24 @@ describe("createInstallApk", () => {
   it("baixa, instala e devolve resultado", async () => {
     let verCalls = 0;
     const steps = [];
-    const installApk = createInstallApk("s", {
-      readAppSpec: (app) => app,
-      getInstalledVersion: () => {
-        verCalls += 1;
-        return verCalls === 1 ? null : "9.0";
+    const r = await installApk(
+      { serial: "s", package: "com.x", version: "9.0" },
+      {
+        readAppSpec: (app) => app,
+        getInstalledVersion: () => {
+          verCalls += 1;
+          return verCalls === 1 ? null : "9.0";
+        },
+        ensureApkArtifact: (spec) => {
+          steps.push("dl");
+          return `/apks/${spec.package}.apk`;
+        },
+        installPackage: (serial, path) => {
+          steps.push(["ins", serial, path]);
+        },
+        sleep: async () => {},
       },
-      ensureApkArtifact: (spec) => {
-        steps.push("dl");
-        return `/apks/${spec.package}.apk`;
-      },
-      installPackage: (serial, path) => {
-        steps.push(["ins", serial, path]);
-      },
-      sleep: async () => {},
-    });
-    const r = await installApk({ package: "com.x", version: "9.0" });
+    );
     assert.equal(r.skipped, false);
     assert.equal(r.package, "com.x");
     assert.equal(r.version, "9.0");
@@ -55,16 +56,33 @@ describe("createInstallApk", () => {
     assert.deepEqual(steps[1], ["ins", "s", "/apks/com.x.apk"]);
   });
 
+  it("aceita app aninhado", async () => {
+    const r = await installApk(
+      { serial: "s", app: { package: "com.x", version: "1.0" } },
+      {
+        readAppSpec: (app) => app,
+        getInstalledVersion: () => "1.0",
+        ensureApkArtifact: () => {
+          throw new Error("não deve baixar");
+        },
+      },
+    );
+    assert.equal(r.skipped, true);
+  });
+
   it("lança APK_INSTALL_FAILED se versão diverge sem source (artifact local)", async () => {
-    const installApk = createInstallApk("s", {
-      readAppSpec: (app) => app,
-      getInstalledVersion: () => "1.0",
-      ensureApkArtifact: () => "/a.apk",
-      installPackage: () => {},
-      sleep: async () => {},
-    });
     await assert.rejects(
-      () => installApk({ package: "com.x", version: "2.0", artifact: "/a.apk" }),
+      () =>
+        installApk(
+          { serial: "s", package: "com.x", version: "2.0", artifact: "/a.apk" },
+          {
+            readAppSpec: (app) => app,
+            getInstalledVersion: () => "1.0",
+            ensureApkArtifact: () => "/a.apk",
+            installPackage: () => {},
+            sleep: async () => {},
+          },
+        ),
       (err) => err && err.code === "APK_INSTALL_FAILED",
     );
   });
@@ -74,18 +92,16 @@ describe("createInstallApk", () => {
     const prev = console.warn;
     console.warn = (...a) => warnings.push(a.join(" "));
     try {
-      const installApk = createInstallApk("s", {
-        readAppSpec: (app) => app,
-        getInstalledVersion: () => "447.0",
-        ensureApkArtifact: () => "/a.apk",
-        installPackage: () => {},
-        sleep: async () => {},
-      });
-      const r = await installApk({
-        package: "com.x",
-        version: "340.0",
-        source: "apk-pure",
-      });
+      const r = await installApk(
+        { serial: "s", package: "com.x", version: "340.0", source: "apk-pure" },
+        {
+          readAppSpec: (app) => app,
+          getInstalledVersion: () => "447.0",
+          ensureApkArtifact: () => "/a.apk",
+          installPackage: () => {},
+          sleep: async () => {},
+        },
+      );
       assert.equal(r.version, "447.0");
       assert.ok(warnings.some((w) => w.includes("447.0")));
     } finally {

@@ -11,7 +11,10 @@ import { readFileSync, existsSync, mkdirSync, writeFileSync, readdirSync, rmSync
 import { dirname, resolve, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { installApk } from "../lib/apks.js";
 import { on } from "../lib/events.js";
+import { extract } from "../lib/extract.js";
+import { launch, openScrcpy, screenshot } from "../lib/operate.js";
 import { provisionEmulator } from "../lib/provision.js";
 import { resetInstance } from "../lib/reset-instance.js";
 
@@ -66,33 +69,33 @@ async function main() {
   }
 
   console.log("1) Provisionar…");
-  const handle = await provisionEmulator(cfg);
-  console.log(`   OK ${handle.serial}`);
+  const { serial } = await provisionEmulator(cfg);
+  console.log(`   OK ${serial}`);
 
   console.log(`1.5) Abrir scrcpy…`);
-  const view = handle.openScrcpy({ title: `${appKey}-home ${handle.serial}` });
+  const view = openScrcpy({ serial, title: `${appKey}-home ${serial}` });
   console.log(`   OK pid=${view.pid}`);
 
   console.log(`2) Instalar ${appKey}…`);
-  const installed = await handle.installApk(appSpec);
+  const installed = await installApk({ serial, ...appSpec });
   console.log(
     `   OK ${installed.package} ${installed.version || "?"}${installed.skipped ? " (skip)" : ""}`,
   );
 
   console.log(`3) Abrir ${appKey}…`);
-  await handle.launch(appSpec.package);
-  await on({ serial: handle.serial, event: "ui_stable", timeoutMs: 90_000 });
+  await launch({ serial, package: appSpec.package });
+  await on({ serial, event: "ui_stable", timeoutMs: 90_000 });
 
   console.log("4) Print da tela inicial…");
   const shotPath = resolve(outDir, "01-tela-inicial.png");
-  handle.screenshot(shotPath);
+  screenshot({ serial, path: shotPath });
   console.log(`   OK → ${shotPath}`);
 
   console.log("5) Extrair textos (OCR)…");
-  const elements = await handle.extract();
+  const elements = await extract({ serial });
   console.log(`   texts=${elements.length}`);
 
-  handle.screenshot(resolve(outDir, "frame-screen.png"));
+  screenshot({ serial, path: resolve(outDir, "frame-screen.png") });
   const json = JSON.stringify(elements, null, 2);
   const outJson = resolve(outDir, "elements.json");
   writeFileSync(outJson, json, "utf8");

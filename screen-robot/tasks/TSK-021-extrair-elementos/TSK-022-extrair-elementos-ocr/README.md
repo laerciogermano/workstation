@@ -9,11 +9,11 @@
 
 ## Entradas
 
-- Handle provisionado; frame da tela
+- `serial` (EP-01+); frame da tela
 
 ## Execução
 
-- **OCR** sobre o frame → lista plana só de textos · `extract()`
+- **OCR** sobre o frame → lista plana só de textos · `extract({ serial })`
 
 ## Saídas
 

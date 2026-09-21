@@ -3,9 +3,9 @@
 **Por quê:** plano técnico do épico (sequências · agentes · passo a passo · contratos · classes · modelos · BDDs).  
 **Épico:** [`2.epics.md`](../2.epics.md).  
 **US:** [`1.stories.md`](../1.stories.md) · [`4.scenarios.md#ep-05--extrair-elementos`](../4.scenarios.md#ep-05--extrair-elementos) · [`5.bdds.md#ep-05--extrair-elementos`](../5.bdds.md#ep-05--extrair-elementos).  
-**Handle:** `extract` é método do [`AgentHandle`](EP-01-provisionar-agente.md) — **não** é função solta com `serial`.  
-**Pré-requisito:** [`EP-01`](EP-01-provisionar-agente.md) · handle.  
-**Implementação interna:** [`../src/lib/extract.js`](../src/lib/extract.js) (anexado ao handle em `provision.js`).
+**API:** `extract({ serial })` · `findByText(serial, query)` em [`../src/lib/extract.js`](../src/lib/extract.js) — funções puras; **não** método de handle.  
+**Pré-requisito:** [`EP-01`](EP-01-provisionar-agente.md) · `serial`.  
+**Implementação:** [`../src/lib/extract.js`](../src/lib/extract.js).
 
 **Stack:** Node ≥ 18 · JavaScript · `adb` · **OCR** · runtime provisionado.  
 **Visão (`vision.js`):** legado / usado só em template match (US-12 `matchImage`) — **não** entra no contrato de `extract()`.
@@ -31,7 +31,7 @@
 | SC-18 · SC-19 · SC-20 · SC-21 | Enriquecer / ícones / listas / imagens | **Cancelado / removido** |
 
 **Resultado:** **lista plana** `UiElement[]` — cada item `{ type: "text", text, bounds, center }`.  
-`handle.extract()` — **um método, sem parâmetros**; uma chamada (ou repetidas) devolve a **mesma** lista de textos OCR — **sem** fases 1/2 nem accumulate de outros tipos.
+`extract({ serial })` — cada chamada faz OCR de novo; devolve só textos.
 
 ---
 
@@ -39,24 +39,21 @@
 
 ```js
 import { provisionEmulator } from "../src/lib/provision.js";
-import { findByText } from "../src/lib/extract.js";
+import { extract, findByText } from "../src/lib/extract.js";
+import { tapElement } from "../src/lib/operate.js";
 
-const handle = await provisionEmulator(cfg); // EP-01
+const { serial } = await provisionEmulator(cfg); // EP-01
 
-const elements = await handle.extract();
+const elements = await extract({ serial });
 // → [ { type: "text", text, bounds, center }, … ]
 
-const again = await handle.extract(); // mesma lista de textos
+const again = await extract({ serial }); // OCR novo
 
-// US-23 — busca por texto (encapsula OCR; não passa a lista)
-const hit = await findByText(handle.serial, "Sign in with Email", {
-  minScore: 0.8,
-});
-// → { elements, score, text, bounds, center } | null
-if (hit) handle.tapElement({ center: hit.center, bounds: hit.bounds });
+const hit = await findByText(serial, "Sign in with Email", { minScore: 0.8 });
+if (hit) tapElement({ serial, center: hit.center, bounds: hit.bounds });
 ```
 
-Só `type: "text"`. Sem ícones/listas/imagens.
+**Antes → depois:** `handle.extract()` (cache) → `extract({ serial })` (OCR a cada call). Só `type: "text"`.
 
 ---
 
@@ -65,7 +62,7 @@ Só `type: "text"`. Sem ícones/listas/imagens.
 ```text
 src/
 ├── lib/
-│   ├── extract.js                      # createExtract · extractElements · findByText
+│   ├── extract.js                      # extract · extractElements · findByText
 │   ├── frame.js                        # captura de frame
 │   ├── ocr.js                          # tesseract → palavras + bounds
 │   ├── vision.js                       # legado; template match (US-12) — não tipa extract
@@ -85,29 +82,17 @@ src/
 
 ## Fluxo (obrigatório)
 
-1. **Provisionar** → handle.  
-2. **Capturar frame** (screenshot ADB / stream / câmera) — interno.  
-3. **Extrair** → `handle.extract()`; OCR sobre o frame; retorno = **lista de textos**.
+1. **Provisionar** → `{ serial }`.  
+2. **Capturar frame** (interno).  
+3. **Extrair** → `extract({ serial })`; OCR sobre o frame; retorno = **lista de textos**.
 
 ```js
-const handle = await provisionEmulator(cfg);
-
-const elements = await handle.extract();
-// frame → OCR → [ { type: "text", text, bounds, center }, … ]
-
-const again = await handle.extract();
-// mesma lista plana de textos (sem enriquecer com ícones/listas/imagens)
-
-// US-23 / SC-29..30 — busca por texto (encapsula OCR)
-const hit = await findByText(handle.serial, "Sign in with Email", { minScore: 0.8 });
-// elementos lado a lado contidos na string maior → Sign, in, with, Email
+const { serial } = await provisionEmulator(cfg);
+const elements = await extract({ serial });
+const hit = await findByText(serial, "Sign in with Email", { minScore: 0.8 });
 ```
 
-**Regra `extract()`:** sempre → `Promise<UiElement[]>` com `type: "text"` apenas. Sem `kind`/opts. Sem fases.  
-**Regra `findByText()`:** `findByText(serial, query)` encapsula `extractElements`; retorna só elementos **lado a lado** cujo texto unido está **na string maior** (`query`); `{ elements, score, bounds, center }` ou `null`.  
-**Sequência canônica:** frame → OCR → lista de textos (não XML dump, não árvore DOM, não visão para tipar).
-
-**Público:** `handle.extract() → Promise<UiElement[]>` (só textos) · `findByText(serial, query) → Promise<FindByTextHit | null>`  
+**Público:** `extract({ serial }) → Promise<UiElement[]>` · `findByText(serial, query)`  
 **Privado:** capturar frame · OCR · tipar `text` · match lado a lado na query
 
 ### US-23 — Buscar por texto (similaridade)
@@ -121,7 +106,7 @@ OCR costuma devolver a frase partida (piloto LinkedIn: `"Sign"` + `"in"` + `"wit
 - score de similaridade ≥ `minScore`
 
 ```js
-const hit = await findByText(handle.serial, "Sign in with Email", { minScore: 0.8 });
+const hit = await findByText(serial, "Sign in with Email", { minScore: 0.8 });
 // hit.elements → [Sign, in, with, Email] — lado a lado, dentro da query
 // hit.score elevado; hit.center para tap
 ```
@@ -199,26 +184,23 @@ config:
 sequenceDiagram
   autonumber
   actor Dev as Caller
-  participant H as AgentHandle
-  participant X as extract (interno)
+  participant X as extract.js
   participant D as Device / FrameSource
 
-  Dev->>H: extract()
-  note over H,X: sem parâmetros; retorno = só textos OCR
-  H->>X: extractElements
+  Dev->>X: extract({ serial })
+  note over X: retorno = só textos OCR
   X->>D: capturar frame (screenshot / câmera)
   D-->>X: imagem
   X->>X: OCR → elementos type text
-  X-->>H: UiElement[]
-  H-->>Dev: lista plana de textos
+  X-->>Dev: lista plana de textos
 ```
 
 ### Por US — ativo
 
 | Ordem | US | SC | Chamada | O que devolve |
 |-------|----|-----|---------|----------------|
-| 1 | US-13 | SC-17 | `extract()` | elementos `type: "text"` via **OCR** |
-| — | US-23 | SC-29..30 | `findByText` | hit com textos lado a lado na query |
+| 1 | US-13 | SC-17 | `extract({ serial })` | elementos `type: "text"` via **OCR** |
+| — | US-23 | SC-29..30 | `findByText(serial, query)` | hit com textos lado a lado na query |
 
 Caller filtra/itera o array (`el.text`, `el.center`) — **não** há walk em `children` nem tipos de visão.
 
@@ -235,11 +217,7 @@ type UiElement = {
   center?: [number, number];
 };
 
-type AgentHandle = {
-  // … EP-01..04 …
-  /** Sem parâmetros. Retorna lista plana só de textos OCR. */
-  extract(): Promise<UiElement[]>;
-};
+function extract(cfg: { serial: string }): Promise<UiElement[]>;
 
 /** Hit de findByText: elementos lado a lado contidos na string maior. */
 type FindByTextHit = {
@@ -250,7 +228,13 @@ type FindByTextHit = {
   center: [number, number];
 };
 
-const elements = await handle.extract();
+function findByText(
+  serial: string,
+  query: string,
+  opts?: { minScore?: number },
+): Promise<FindByTextHit | null>;
+
+const elements = await extract({ serial });
 // [ { type: "text", text, bounds, center }, … ]
 ```
 
@@ -294,8 +278,10 @@ config:
 ---
 classDiagram
   direction TB
-  class AgentHandle {
-    +extract() Promise~UiElement[]~
+  class extract_js {
+    <<module>>
+    +extract(cfg) Promise~UiElement[]~
+    +findByText(serial, query)
   }
   class UiElement {
     +text type
@@ -303,13 +289,7 @@ classDiagram
     +bounds
     +center
   }
-  class extract_js {
-    <<internal>>
-    createExtract(serial)
-    -elements
-  }
-  note for AgentHandle "Retorno = lista plana só textos OCR"
-  AgentHandle --> extract_js
+  note for extract_js "Retorno = lista plana só textos OCR"
   extract_js ..> UiElement : devolve array
 ```
 
@@ -318,7 +298,7 @@ classDiagram
 ## Cenários BDD
 
 Fonte: [`5.bdds.md#ep-05--extrair-elementos`](../5.bdds.md#ep-05--extrair-elementos).  
-“Quando…” = `handle.extract()`; “Então…” = lista só com `type: "text"`.
+“Quando…” = `extract({ serial })`; “Então…” = lista só com `type: "text"`.
 
 ---
 
@@ -326,11 +306,11 @@ Fonte: [`5.bdds.md#ep-05--extrair-elementos`](../5.bdds.md#ep-05--extrair-elemen
 
 | # | Entrega | SC | Critério |
 |---|---------|-----|----------|
-| I1 | `createExtract` + `handle.extract()` → `UiElement[]` | — | Lista plana só `text`; sem árvore DOM |
+| I1 | `extract({ serial })` → `UiElement[]` | — | Lista plana só `text`; sem árvore DOM |
 | I2 | Fonte de frame (screenshot ADB; abstrair câmera) | — | Imagem disponível sem dump XML |
 | I3 | OCR textos + bounds → elementos `text` | SC-17 | Itens texto na lista |
 | I4 | Sem uiautomator dump como fonte | — | Só frame → OCR |
-| I5 | Piloto: `extract()` + JSON da lista de textos | — | linkedin-login |
+| I5 | Piloto: `extract({ serial })` + JSON da lista de textos | — | linkedin-login |
 | I6 | `findByText(serial, query)` encapsula `extractElements` + match por similaridade | SC-29 | Score ≥ limiar; caller não passa lista |
 | I7 | BDD SC-30 LinkedIn fixture `"Sign in with Email"` → 4 partes | SC-30 | `Sign`+`in`+`with`+`Email` |
 
@@ -346,7 +326,7 @@ I1 → I2 → I3 → I4 → I5 → I6 → I7
 
 | Peça | Status |
 |------|--------|
-| `createExtract` → `handle.extract()` | Feito — só `type: "text"` (lista plana, sem `children`) |
+| `extract({ serial })` | Feito — só `type: "text"` (lista plana, sem `children`) |
 | Fonte = frame → OCR | Feito (`frame.js` / `ocr.js`) |
 | `vision.js` tipando extract | **Removido do produto** — legado; US-12 `matchImage` permanece |
 | `dumpUiXml` | Só legado eventos EP-02 |
@@ -375,10 +355,10 @@ npm run linkedin-login
 
 ## Critério de pronto (épico)
 
-1. `handle.extract()` sem parâmetros  
+1. `extract({ serial })`  
 2. Retorno = **lista** `UiElement[]` só com `type: "text"` (não árvore `root`/`children`)  
 3. Pipeline = **frame → OCR → lista de textos** (sem dump uiautomator; sem enriquecimento por visão)  
-4. Chamadas repetidas = mesma lista de textos (sem accumulate de ícones/listas/imagens)  
+4. Chamadas repetidas = OCR de novo (lista plana só textos)  
 5. `findByText(serial, query)`: elementos **lado a lado** contidos na **string maior**  
 6. BDD **SC-30** LinkedIn verde (fixture)  
 7. BDDs US-13 + EP-05  

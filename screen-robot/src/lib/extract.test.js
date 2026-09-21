@@ -1,9 +1,9 @@
 /**
- * Unitário — extract.js createExtract (OCR/frame stub).
+ * Unitário — extract.js extract (OCR/frame stub).
  */
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { createExtract } from "./extract.js";
+import { extract } from "./extract.js";
 
 const WORDS = [
   {
@@ -18,21 +18,20 @@ const WORDS = [
   },
 ];
 
-describe("createExtract (OCR)", () => {
+describe("extract (OCR)", () => {
   it("devolve só textos (type=text) a cada chamada", async () => {
-    const extract = createExtract("s", {
+    const deps = {
       captureFrame: async () => "/tmp/fake.png",
       ocrRecognize: async () => WORDS,
-      frameSize: { w: 1080, h: 2400 },
-    });
-    const t1 = await extract();
+    };
+    const t1 = await extract({ serial: "s" }, deps);
     assert.ok(Array.isArray(t1));
     assert.equal(t1.length, 2);
     assert.ok(t1.every((e) => e.type === "text"));
     assert.ok(t1.some((c) => c.text === "Entrar"));
     assert.equal(t1.every((e) => e.children === undefined), true);
 
-    const t2 = await extract();
+    const t2 = await extract({ serial: "s" }, deps);
     assert.equal(t2.length, t1.length);
     assert.ok(t2.every((e) => e.type === "text"));
     assert.ok(t2.every((e) => Array.isArray(e.center) && e.center.length === 2));

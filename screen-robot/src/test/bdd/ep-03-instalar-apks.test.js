@@ -8,6 +8,7 @@ import path from "node:path";
 import { describe, it, before } from "node:test";
 import { fileURLToPath } from "node:url";
 import { getInstalledVersion } from "../../lib/apk-get-installed-version.js";
+import { installApk } from "../../lib/apks.js";
 import { provisionEmulator } from "../../lib/provision.js";
 
 const serial = process.env.ANDROID_SERIAL || "127.0.0.1:5555";
@@ -23,12 +24,9 @@ const app = {
 };
 
 describe("Épico: EP-03 Instalar APKs", () => {
-  /** @type {Awaited<ReturnType<typeof provisionEmulator>>} */
-  let handle;
-
   before(async () => {
     spawnSync("bash", [stopScript], { encoding: "utf8", stdio: "inherit" });
-    handle = await provisionEmulator({
+    await provisionEmulator({
       provision: { serial, kind: "redroid", connectTimeoutMs: timeoutMs },
     });
   }, { timeout: 300_000 });
@@ -36,14 +34,15 @@ describe("Épico: EP-03 Instalar APKs", () => {
   it(
     "Dado agent e artefato local; Quando installApk; Então pacote instalado e skip idempotente",
     async () => {
-      const first = await handle.installApk(app);
+      const first = await installApk({ serial, ...app });
       assert.equal(first.package, app.package);
       assert.equal(first.skipped, false);
       assert.ok(first.artifactPath);
       const installed = getInstalledVersion(serial, app.package);
       assert.ok(installed);
 
-      const second = await handle.installApk({
+      const second = await installApk({
+        serial,
         ...app,
         version: installed,
       });

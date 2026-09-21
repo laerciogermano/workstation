@@ -9,11 +9,11 @@
 
 ## Entradas
 
-- Handle provisionado (EP-01+); path de saída; fonte de frame (screencap ADB; futuro câmera)
+- `serial` (EP-01+); path de saída; fonte de frame (screencap ADB; futuro câmera)
 
 ## Execução
 
-- `handle.screenshot(path)` — capturar **frame** e gravar arquivo de imagem
+- `screenshot({ serial, path })` — capturar **frame** e gravar arquivo de imagem
 
 ## Saídas
 

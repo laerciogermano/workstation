@@ -15,7 +15,7 @@
 
 ## Execução
 
-- `handle.type(text, opts?)`:
+- `type({ serial, text, region?, … })`:
   1. Captura o **frame** (screenshot)
   2. OCR **só na imagem do teclado** (região opcional se configurada)
   3. Recupera a posição (center) de **cada tecla**

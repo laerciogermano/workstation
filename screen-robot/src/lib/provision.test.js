@@ -9,23 +9,6 @@ const stubDeps = {
   startRuntime: async () => {},
   ensureAdbOnline: async () => {},
   waitBootCompleted: async () => {},
-  createInstallApk: () => async () => ({ skipped: true }),
-  createOperate: () => ({
-    launch: async () => {},
-    tap: () => {},
-    tapElement: () => {},
-    type: () => {},
-    scroll: () => {},
-    screenshot: () => "/x.png",
-    matchImage: async () => ({ x: 1, y: 2, confidence: 1 }),
-    openScrcpy: () => ({ pid: 1, serial: "127.0.0.1:5555" }),
-  }),
-  createExtract: () => async () => [],
-  createSessionApi: () => ({
-    saveSession: async () => "/s.json",
-    removeSession: async () => true,
-    restoreSession: async () => ({}),
-  }),
   toIso: () => "t",
 };
 
@@ -43,24 +26,20 @@ describe("provisionEmulator", () => {
     }
   });
 
-  it("anexa installApk, operate, extract e session (sem on)", async () => {
+  it("devolve só dados (sem métodos)", async () => {
     const handle = await provisionEmulator(
       { provision: { serial: "127.0.0.1:5555", kind: "redroid" } },
       stubDeps,
     );
+    assert.equal(handle.serial, "127.0.0.1:5555");
+    assert.equal(handle.kind, "redroid");
+    assert.equal(handle.bootCompleted, true);
+    assert.equal(handle.provisionedAt, "t");
     assert.equal(handle.on, undefined);
-    assert.equal(typeof handle.installApk, "function");
-    assert.equal(typeof handle.launch, "function");
-    assert.equal(typeof handle.tap, "function");
-    assert.equal(typeof handle.type, "function");
-    assert.equal(typeof handle.scroll, "function");
-    assert.equal(typeof handle.screenshot, "function");
-    assert.equal(typeof handle.matchImage, "function");
-    assert.equal(typeof handle.openScrcpy, "function");
-    assert.equal(typeof handle.extract, "function");
-    assert.equal(typeof handle.saveSession, "function");
-    assert.equal(typeof handle.removeSession, "function");
-    assert.equal(typeof handle.restoreSession, "function");
+    assert.equal(handle.installApk, undefined);
+    assert.equal(handle.launch, undefined);
+    assert.equal(handle.extract, undefined);
+    assert.equal(handle.saveSession, undefined);
   });
 
   it("kind=redroid defaulta serial 127.0.0.1:5555", async () => {
@@ -88,10 +67,6 @@ describe("provisionEmulator", () => {
           assert.equal(r.serial, undefined);
           return { serial: "127.0.0.1:5601" };
         },
-        createOperate: () => ({
-          ...stubDeps.createOperate(),
-          openScrcpy: () => ({ pid: 1, serial: "127.0.0.1:5601" }),
-        }),
       },
     );
     assert.equal(handle.serial, "127.0.0.1:5601");

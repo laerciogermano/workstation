@@ -115,52 +115,49 @@ A partir daí:
 
 ```js
 import { on } from "./lib/events.js";
+import { installApk } from "./lib/apks.js";
+import { launch, tap, type, scroll, screenshot, matchImage } from "./lib/operate.js";
+import { extract } from "./lib/extract.js";
+import { saveSession, restoreSession, removeSession } from "./lib/session.js";
 
-// Instalar APK (skip se versão já ok)
-await handle.installApk(cfg.apps.linkedin);
+const { serial, kind } = a;
 
-// Eventos — on(cfg), não handle.on
-await on({ serial: handle.serial, event: "boot" });
-await on({ serial: handle.serial, event: "app_open", pkg: "com.linkedin.android" });
-await on({ serial: handle.serial, event: "ui_stable", timeoutMs: 90_000 });
-await on({ serial: handle.serial, event: "frame_change" });
+await installApk({ serial, ...cfg.apps.linkedin });
 
-// Operar tela
-await handle.launch("com.linkedin.android");
-handle.tap(360, 640);
-handle.type("11999999999", { region: { x: 0, y: 700, width: 720, height: 500 } });
-handle.scroll({ direction: "down", distance: 800 });
-handle.screenshot("./screenshots/tela.png");
-const { x, y, confidence } = await handle.matchImage("./templates/btn.png");
+await on({ serial, event: "boot" });
+await on({ serial, event: "app_open", pkg: "com.linkedin.android" });
+await on({ serial, event: "ui_stable", timeoutMs: 90_000 });
+await on({ serial, event: "frame_change" });
 
-// Extrair UI (frame → OCR → lista plana só de textos)
-const elements = await handle.extract();
+await launch({ serial, package: "com.linkedin.android" });
+tap({ serial, x: 360, y: 640 });
+await type({ serial, text: "11999999999", region: { x: 0, y: 700, width: 720, height: 500 } });
+scroll({ serial, direction: "down", distance: 800 });
+screenshot({ serial, path: "./screenshots/tela.png" });
+const { x, y, confidence } = await matchImage({ serial, templatePath: "./templates/btn.png" });
+
+const elements = await extract({ serial });
 // → [ { type: "text", text, bounds, center }, … ]
 
-// Sessão
-await handle.saveSession("./state/session.json", { step: "logged-in" });
-const state = await handle.restoreSession("./state/session.json");
-await handle.removeSession("./state/session.json");
+await saveSession({ serial, kind, path: "./state/session.json", state: { step: "logged-in" } });
+const state = await restoreSession({ path: "./state/session.json" });
+await removeSession({ path: "./state/session.json" });
 ```
 
-### 4. API pública e métodos do handle
+### 4. API pública (funções puras)
 
-| Método | O quê |
+| Função | O quê |
 |--------|--------|
-| `provisionEmulator(cfg)` | Cria se `name` novo; anexa se já existir; aloca serial; boot ok |
-| `resetInstance(cfg)` | **Ops** (não é método do handle): wipe do AVD + sobe de novo; ADB + boot ok |
-| `installApk(app)` | Lê spec → baixa se preciso → instala; retorna `{ package, version, skipped }` |
-| `on(cfg)` | **EP-02** (não é método do handle): `boot` · `app_open` · `ui_stable` · `frame_change` |
-| `launch(pkg, activity?)` | Abre app |
-| `tap(x, y)` / `tapElement(el)` | Toque |
-| `type(text, opts?)` | Digita via OCR do teclado + tap em cada tecla (região opcional `x,y,width,height`) |
-| `scroll({ direction, distance, x?, y? })` | Swipe |
-| `screenshot(path)` | Grava PNG |
-| `matchImage(templatePath)` | `{ x, y, confidence }` |
-| `openScrcpy(opts?)` | Abre scrcpy no serial do handle (US-21); retorna `{ pid, serial }` |
-| `extract()` | Lista plana só de textos OCR (`type: "text"`) |
-| `findByText(serial, query)` | US-23: elementos lado a lado contidos na string maior (encapsula OCR) |
+| `provisionEmulator(cfg)` | Cria se `name` novo; anexa se já existir; retorna `{ serial, kind, bootCompleted, provisionedAt }` |
+| `resetInstance(cfg)` | Wipe do AVD + sobe de novo; ADB + boot ok |
+| `installApk({ serial, … })` | Lê spec → baixa se preciso → instala; `{ package, version, skipped }` |
+| `on(cfg)` | `boot` · `app_open` · `ui_stable` · `frame_change` |
+| `launch` / `tap` / `tapElement` / `type` / `scroll` / `screenshot` / `matchImage` / `openScrcpy` | Gestos e captura (`serial` no cfg) |
+| `extract({ serial })` | Lista plana só de textos OCR |
+| `findByText(serial, query)` | US-23: elementos lado a lado na query |
 | `saveSession` / `restoreSession` / `removeSession` | Persistência JSON |
+
+**Antes → depois:** métodos no handle → funções com `{ serial, … }`.
 
 Erros tipados (campo `err.code`): `PROVISION_*` (incl. `PROVISION_INVALID_NAME`), `RESET_*`, `APK_*`, `OPERATE_*`, `SESSION_*`, `EVENT_*`.
 

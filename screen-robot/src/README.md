@@ -4,7 +4,7 @@ API **Node** (≥ 18) para controlar Android via ADB: provisionar agents, instal
 
 Visão do projeto: [`../README.md`](../README.md) · Runtimes: [`../pocs/`](../pocs/README.md) · Aceite: [`../5.bdds.md`](../5.bdds.md)
 
-Com o runtime no ar, o Android fica **disponível para controle humano**: espelhar a tela e operar (tap, digitar, scroll, …) via scrcpy — [`scripts/view.sh`](scripts/view.sh) (`npm run view`). A API do handle automatiza as mesmas ações por código.
+Com o runtime no ar, o Android fica **disponível para controle humano**: espelhar a tela e operar (tap, digitar, scroll, …) via scrcpy — [`scripts/view.sh`](scripts/view.sh) (`npm run view`). A API automatiza as mesmas ações por código.
 
 ---
 
@@ -16,15 +16,19 @@ cd screen-robot/src
 # Android SDK / Emulator (AVD) — kind=avd; Google APIs/Play
 ```
 
-Superfície pública:
+Superfície pública (funções puras; `serial` no cfg):
 
 ```js
 import { provisionEmulator } from "./lib/provision.js";
-import { on } from "./lib/events.js"; // EP-02 — fora do handle
-import { resetInstance } from "./lib/reset-instance.js"; // ops — fora do handle
+import { on } from "./lib/events.js";
+import { installApk } from "./lib/apks.js";
+import { launch, tap, tapElement, type, scroll, screenshot, matchImage, openScrcpy } from "./lib/operate.js";
+import { extract } from "./lib/extract.js";
+import { saveSession, removeSession, restoreSession } from "./lib/session.js";
+import { resetInstance } from "./lib/reset-instance.js";
 ```
 
-Gestos, APKs, extract e sessão vêm no **handle**. Eventos UI: **`on(cfg)`** (import separado; `serial` na config). `resetInstance` também é ops fora do handle.
+**Antes → depois:** `provisionEmulator` devolve só `{ serial, kind, provisionedAt, bootCompleted }` — sem métodos. Ops usam `fn({ serial, … })` (como `on`).
 
 ---
 
@@ -33,20 +37,19 @@ Gestos, APKs, extract e sessão vêm no **handle**. Eventos UI: **`on(cfg)`** (i
 Um único método: **cria** se o `name` for novo; **anexa** se o nome já existir (sem criar outro AVD/emulador).
 
 ```js
-const handle = await provisionEmulator({
+const { serial, kind, bootCompleted, provisionedAt } = await provisionEmulator({
   provision: {
     name: "ConnectMax_Cam",   // AVD (= AVD_NAME)
     kind: "avd",              // avd | adb | redroid(legado)
     // serial opcional com kind=avd — resolve via adb pelo name
   },
 });
-// handle.serial · handle.kind · handle.bootCompleted · handle.provisionedAt
 
 // mesmo name de novo → anexa ao AVD já ligado
 const again = await provisionEmulator({
   provision: { name: "ConnectMax_Cam", kind: "avd" },
 });
-// again.serial === handle.serial
+// again.serial === serial
 ```
 
 | `kind` | Precisa | Comportamento |
@@ -101,19 +104,23 @@ const { serial, kind, resetAt } = await resetInstance(cfg);
 
 ---
 
-## 2. Instalar APKs — `handle.installApk(app)`
+## 2. Instalar APKs — `installApk({ serial, … })`
 
 ```js
-const r = await handle.installApk({
+const r = await installApk({
+  serial,
   package: "com.linkedin.android",
   version: "4.1.1093",           // opcional: skip se já instalada
   artifact: "apks/app.apk",      // path local
   // source: "apk-pure",         // download via apkeep se não houver artifact
 });
+// ou: installApk({ serial, app: cfg.apps.linkedin })
 // { package, version, skipped, artifactPath? }
 ```
 
-Erros: `APK_CONFIG_INVALID` · `APK_DOWNLOAD_FAILED` · `APK_INSTALL_FAILED`.
+**Antes → depois:** `handle.installApk(app)` → `installApk({ serial, …app })`.
+
+Erros: `APK_CONFIG_INVALID` · `APK_NO_SERIAL` · `APK_DOWNLOAD_FAILED` · `APK_INSTALL_FAILED`.
 
 ---
 
@@ -122,21 +129,21 @@ Erros: `APK_CONFIG_INVALID` · `APK_DOWNLOAD_FAILED` · `APK_INSTALL_FAILED`.
 ```js
 import { on } from "./lib/events.js";
 
-await on({ serial: handle.serial, event: "boot" });
+await on({ serial, event: "boot" });
 await on({
-  serial: handle.serial,
+  serial,
   event: "app_open",
   pkg: "com.linkedin.android",
   timeoutMs: 60_000,
 });
 await on({
-  serial: handle.serial,
+  serial,
   event: "ui_stable",
   timeoutMs: 90_000,
   stableMs: 800,
   onEvent: (e) => console.log(e.type, e.attempt),
 });
-await on({ serial: handle.serial, event: "frame_change", timeoutMs: 30_000 });
+await on({ serial, event: "frame_change", timeoutMs: 30_000 });
 ```
 
 | Evento | O quê |
@@ -146,7 +153,7 @@ await on({ serial: handle.serial, event: "frame_change", timeoutMs: 30_000 });
 | `ui_stable` | Frame estável (hash/diff de imagem) |
 | `frame_change` | Frame/imagem mudou (hoje via dump legado; alvo = hash visual) |
 
-**Antes → depois:** `handle.on(event, opts)` → `on({ serial, event, … })`. Sem método no handle.
+**Antes → depois:** `handle.on(event, opts)` → `on({ serial, event, … })`. Sem método no provision.
 
 Desconhecido → `EVENT_UNKNOWN`. Sem serial → `EVENT_NO_SERIAL`. Timeout → códigos `EVENT_*`.
 
@@ -155,17 +162,17 @@ Desconhecido → `EVENT_UNKNOWN`. Sem serial → `EVENT_NO_SERIAL`. Timeout → 
 ## 4. Operar tela
 
 ```js
-await handle.launch("com.linkedin.android");           // ou launch(pkg, ".MainActivity")
-handle.tap(360, 640);                                  // coords de visão/OCR sobre o frame
-handle.tapElement(el);                                 // el.center ou el.bounds (OCR)
-handle.type("11999999999", { region: { x: 0, y: 700, width: 720, height: 500 } }); // OCR teclado → tap
-handle.scroll({ direction: "down", distance: 800 });   // up|down|left|right; x/y opcionais
-const shot = handle.screenshot("./screenshots/tela.png"); // capturar frame (ADB; futuro: câmera)
-const { x, y, confidence } = await handle.matchImage("./templates/btn.png");
-await handle.openScrcpy(); // { pid, serial } — janela para ver/operar
+await launch({ serial, package: "com.linkedin.android" }); // ou activity
+tap({ serial, x: 360, y: 640 });
+tapElement({ serial, center: el.center, bounds: el.bounds });
+await type({ serial, text: "11999999999", region: { x: 0, y: 700, width: 720, height: 500 } });
+scroll({ serial, direction: "down", distance: 800 });
+const shot = screenshot({ serial, path: "./screenshots/tela.png" });
+const { x, y, confidence } = await matchImage({ serial, templatePath: "./templates/btn.png" });
+const { pid } = openScrcpy({ serial, title: `agent ${serial}` });
 ```
 
-| Método | Erros tipados |
+| Função | Erros tipados |
 |--------|----------------|
 | `launch` | `OPERATE_LAUNCH_FAILED` |
 | `type` | `OPERATE_TYPE_FAILED` |
@@ -175,45 +182,41 @@ await handle.openScrcpy(); // { pid, serial } — janela para ver/operar
 
 Type: OCR das teclas na **imagem do teclado** (região opcional) e digitação **só com tap** — sem `input text` / ADBKeyboard.
 
-```js
-const { pid, serial } = handle.openScrcpy(); // scrcpy no serial do handle
-```
+**Antes → depois:** `handle.launch(pkg)` → `launch({ serial, package })` (idem tap/type/…).
 
 ---
 
-## 5. Extrair UI — `handle.extract()`
+## 5. Extrair UI — `extract({ serial })`
 
-Pipeline **frame → OCR → lista plana de textos** (sem dump uiautomator, sem árvore DOM). Sem parâmetros. Só elementos `type: "text"` — **sem** ícones, listas, imagens ou enriquecimento por visão.
+Pipeline **frame → OCR → lista plana de textos** (sem dump uiautomator, sem árvore DOM). Só elementos `type: "text"`. Cada chamada faz OCR de novo.
 
-**Antes → depois:** `extract()` deixou de enriquecer com visão em chamadas sucessivas; devolve só textos OCR.
+**Antes → depois:** `handle.extract()` (cache no handle) → `extract({ serial })` (OCR a cada call).
 
 ```js
-const elements = await handle.extract();
+const elements = await extract({ serial });
 // [ { type: "text", text, bounds, center }, … ]
 
-// Chamadas repetidas = mesma lista de textos (não accumulate outros tipos)
-const again = await handle.extract();
-
 // US-23: findByText — elementos lado a lado contidos na string maior (query)
-// const hit = await findByText(handle.serial, "Sign in with Email", { minScore: 0.8 });
-// // → elements: Sign, in, with, Email
+// const hit = await findByText(serial, "Sign in with Email", { minScore: 0.8 });
 ```
 
 Fonte do frame: screenshot ADB, stream ou câmera (device real) — mesmo pipeline.  
 `vision.js` permanece legado / template match (US-12); **não** tipa o retorno de `extract()`.
 
-Helpers: `findByText` (encapsula OCR; só vizinhos dentro da query) / `extractElements` / `findLoginTarget` / `findEditableFields` em [`lib/extract.js`](lib/extract.js).
+Helpers: `findByText` / `extractElements` / `findLoginTarget` / `findEditableFields` em [`lib/extract.js`](lib/extract.js).
 
 ---
 
 ## 6. Sessão
 
 ```js
-await handle.saveSession("./state/session.json", { step: "logged-in", apps: […] });
-const state = await handle.restoreSession("./state/session.json");
+await saveSession({ serial, kind, path: "./state/session.json", state: { step: "logged-in", apps: […] } });
+const state = await restoreSession({ path: "./state/session.json" });
 // state inclui serial, kind, savedAt + campos passados
-await handle.removeSession("./state/session.json"); // true se removeu
+await removeSession({ path: "./state/session.json" }); // true se removeu
 ```
+
+**Antes → depois:** `handle.saveSession(path, state)` → `saveSession({ serial, kind, path, state })`.
 
 Erros: `SESSION_WRITE_FAILED` · `SESSION_NOT_FOUND` · `SESSION_INVALID`.
 
@@ -225,19 +228,22 @@ Erros: `SESSION_WRITE_FAILED` · `SESSION_NOT_FOUND` · `SESSION_INVALID`.
 import { readFileSync } from "node:fs";
 import { provisionEmulator } from "./lib/provision.js";
 import { on } from "./lib/events.js";
+import { installApk } from "./lib/apks.js";
+import { launch, screenshot } from "./lib/operate.js";
+import { extract } from "./lib/extract.js";
 import { resetInstance } from "./lib/reset-instance.js";
 
 const cfg = JSON.parse(readFileSync("./device.config.json", "utf8"));
 
 await resetInstance(cfg); // opcional: instância do zero
-const handle = await provisionEmulator(cfg);
+const { serial } = await provisionEmulator(cfg);
 
-await handle.installApk(cfg.apps.linkedin);
-await handle.launch(cfg.apps.linkedin.package);
-await on({ serial: handle.serial, event: "ui_stable", timeoutMs: 90_000 });
+await installApk({ serial, ...cfg.apps.linkedin });
+await launch({ serial, package: cfg.apps.linkedin.package });
+await on({ serial, event: "ui_stable", timeoutMs: 90_000 });
 
-handle.screenshot("./screenshots/01-antes-agree.png");
-const elements = await handle.extract();
+screenshot({ serial, path: "./screenshots/01-antes-agree.png" });
+const elements = await extract({ serial });
 ```
 
 ---
@@ -290,10 +296,10 @@ Script [`scripts/linkedin-login.js`](scripts/linkedin-login.js):
 
 1. Limpa `screenshots/`
 2. `resetInstance(cfg)`
-3. `provisionEmulator` → `openScrcpy` → `installApk(linkedin)` → `launch` → `on("ui_stable")`
+3. `provisionEmulator` → `openScrcpy` → `installApk` → `launch` → `on("ui_stable")`
 4. `01-tela-inicial.png`
-5. `findByText(serial, "Sign in with Email")` → tap `center` → `02-apos-sign-in-email.png`
-6. `extract()` → console da lista de textos OCR + `frame-screen.png` + `elements.json`
+5. `findByText(serial, "Sign in with Email")` → `tapElement` → `02-apos-sign-in-email.png`
+6. `extract({ serial })` → console da lista de textos OCR + `frame-screen.png` + `elements.json`
 
 Só LinkedIn (sem Instagram). Sem digitar credenciais e sem `saveSession`.
 
@@ -315,7 +321,7 @@ Abre **scrcpy** no serial de `device.config.json` (ou `--device`) para visualiza
 
 ## 11. CLI legado
 
-Steps avulsos (serial explícito; preferir o handle):
+Steps avulsos (serial explícito; preferir as funções de `lib/`):
 
 ```bash
 node cli.js tap 360 640 --device emulator-5554

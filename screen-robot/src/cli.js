@@ -15,7 +15,7 @@ import { spawnSync } from "node:child_process";
 import { mkdirSync, readFileSync, existsSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { createOperate } from "./lib/operate.js";
+import { type as typeKeys } from "./lib/operate.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -91,7 +91,9 @@ async function runStep(device, step, i) {
       if (text == null) throw new Error(`${label}: falta text`);
       console.log(`${label} ${JSON.stringify(text)}`);
       const region = step.region || step.keyboardRegion;
-      await createOperate(device).type(String(text), {
+      await typeKeys({
+        serial: device,
+        text: String(text),
         region,
         delayMs: step.delayMs,
       });

@@ -1,7 +1,7 @@
 /**
  * EP-05 — extrair lista plana de textos via frame → OCR.
- * Caller: handle.extract() — só elementos type "text" (sem ícones/listas/imagens).
- * Proibido: uiautomator dump como fonte.
+ * Caller: extract({ serial }) — só elementos type "text" (sem ícones/listas/imagens).
+ * Cada chamada faz OCR de novo (sem cache). Proibido: uiautomator dump como fonte.
  */
 import { adb } from "./adb.js";
 import { captureFrame } from "./frame.js";
@@ -26,52 +26,28 @@ function withCenter(el) {
 }
 
 /**
- * @param {string} serial
+ * @param {{ serial: string }} cfg
  * @param {object} [deps]
- * @returns {() => Promise<object[]>}
+ * @returns {Promise<object[]>}
  */
-export function createExtract(serial, deps = {}) {
-  /** @type {object[]|null} */
-  let elements = null;
-  /** @type {import("./ocr.js").OcrWord[]|null} */
-  let wordsCache = null;
-  /** @type {{ w: number, h: number }|null} */
-  let frameSize = null;
-  /** @type {string|null} */
-  let framePath = null;
-
-  async function ensurePerception() {
-    if (wordsCache && frameSize && framePath) return;
-    const capture = deps.captureFrame
-      ? (s, d) => deps.captureFrame(s, d)
-      : captureFrame;
-    const recognize = deps.ocrRecognize
-      ? (p, d) => deps.ocrRecognize(p, d)
-      : ocrWords;
-    framePath = await capture(serial, deps);
-    wordsCache = await recognize(framePath, deps);
-    let maxX = 1080;
-    let maxY = 2400;
-    for (const w of wordsCache) {
-      maxX = Math.max(maxX, w.bounds.x + w.bounds.w);
-      maxY = Math.max(maxY, w.bounds.y + w.bounds.h);
-    }
-    if (deps.frameSize) {
-      frameSize = deps.frameSize;
-    } else {
-      frameSize = { w: maxX, h: maxY };
-    }
+export async function extract(cfg, deps = {}) {
+  const serial = cfg?.serial;
+  if (!serial) {
+    const err = new Error("extract: falta serial");
+    err.code = "EXTRACT_NO_SERIAL";
+    throw err;
   }
-
-  return async function extract() {
-    await ensurePerception();
-    if (!elements) {
-      elements = wordsCache.map((w) =>
-        withCenter({ type: "text", text: w.text, bounds: { ...w.bounds } }),
-      );
-    }
-    return structuredClone(elements);
-  };
+  const capture = deps.captureFrame
+    ? (s, d) => deps.captureFrame(s, d)
+    : captureFrame;
+  const recognize = deps.ocrRecognize
+    ? (p, d) => deps.ocrRecognize(p, d)
+    : ocrWords;
+  const framePath = await capture(serial, deps);
+  const words = await recognize(framePath, deps);
+  return words.map((w) =>
+    withCenter({ type: "text", text: w.text, bounds: { ...w.bounds } }),
+  );
 }
 
 /**

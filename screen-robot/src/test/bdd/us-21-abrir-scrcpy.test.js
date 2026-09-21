@@ -6,6 +6,7 @@ import { spawnSync } from "node:child_process";
 import { describe, it, before } from "node:test";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
+import { openScrcpy } from "../../lib/operate.js";
 import { provisionEmulator } from "../../lib/provision.js";
 
 const serial = process.env.ANDROID_SERIAL || "127.0.0.1:5555";
@@ -25,26 +26,22 @@ function hasScrcpy() {
 }
 
 describe("US-21: Abrir scrcpy (espelhar tela)", () => {
-  /** @type {Awaited<ReturnType<typeof provisionEmulator>>} */
-  let handle;
-
   before(async () => {
     if (!hasScrcpy()) return;
     spawnSync("bash", [stopScript], { encoding: "utf8", stdio: "inherit" });
-    handle = await provisionEmulator({
+    await provisionEmulator({
       provision: { serial, kind: "redroid", connectTimeoutMs: timeoutMs },
     });
   }, { timeout: 300_000 });
 
   it(
-    "Dado handle; Quando openScrcpy; Então pid no serial",
+    "Dado serial; Quando openScrcpy; Então pid no serial",
     async () => {
       if (!hasScrcpy()) {
         console.log("skip: scrcpy ausente no PATH");
         return;
       }
-      assert.ok(handle);
-      const out = handle.openScrcpy({ title: "us-21-test" });
+      const out = openScrcpy({ serial, title: "us-21-test" });
       assert.equal(out.serial, serial);
       assert.ok(Number.isInteger(out.pid) && out.pid > 0);
       try {

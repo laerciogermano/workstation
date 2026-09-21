@@ -13,7 +13,7 @@
 
 ## Execução
 
-- **OCR** no frame: textos + bounds → elementos `text` · `extract()`
+- **OCR** no frame: textos + bounds → elementos `text` · `extract({ serial })`
 
 ## Saídas
 

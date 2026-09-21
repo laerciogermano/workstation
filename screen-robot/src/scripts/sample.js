@@ -9,15 +9,16 @@
  *   node scripts/sample.js
  */
 import { provisionEmulator } from "../lib/provision.js";
+import { openScrcpy } from "../lib/operate.js";
 
-const handle = await provisionEmulator({
+const { serial } = await provisionEmulator({
   provision: {
-    name: "agent-sssb",
+    name: "agent-b",
     kind: "redroid",
   },
 });
 
-console.log(`Emulador: ${handle.serial} (name=agent-b)`);
+console.log(`Emulador: ${serial} (name=agent-b)`);
 
-const view = handle.openScrcpy({ title: `sample ${handle.serial}` });
+const view = openScrcpy({ serial, title: `sample ${serial}` });
 console.log(`scrcpy pid=${view.pid}`);

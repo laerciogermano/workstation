@@ -66,7 +66,7 @@ export function findSerialForRedroid(name, deps = {}) {
           '{{(index (index .NetworkSettings.Ports "5555/tcp") 0).HostPort}}',
           c,
         ],
-        { encoding: "utf8", env: dockerEnv() },
+        { encoding: "utf8", env: dockerEnv(), timeout: 8_000 },
       );
       if (r.status !== 0) return null;
       const port = String(r.stdout || "").trim();

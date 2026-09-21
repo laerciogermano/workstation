@@ -114,6 +114,8 @@ describe("startRuntime", () => {
     let runs = 0;
     const clock = fakeClock();
     const expected = serialForRedroidName("agent-b");
+    /** @type {Set<string>} */
+    const up = new Set(["127.0.0.1:5555"]);
     const out = await startRuntime(
       {
         name: "agent-b",
@@ -122,15 +124,12 @@ describe("startRuntime", () => {
         startScript: "/tmp/start.sh",
       },
       {
-        isReachable: async (serial) => {
-          // 5555 “alheio” online não deve impedir create da instância agent-b
-          if (serial === "127.0.0.1:5555") return true;
-          return serial === expected;
-        },
+        isReachable: async (serial) => up.has(serial),
         findSerialForRedroid: () => null,
         runStartScript: async (_script, e) => {
           runs += 1;
           env = e;
+          up.add(expected);
         },
         sleep: clock.sleep,
         now: clock.now,
@@ -145,10 +144,11 @@ describe("startRuntime", () => {
 
   it("kind redroid + name anexa instância já online do mesmo name", async () => {
     let runs = 0;
+    const expected = serialForRedroidName("agent-a");
     const out = await startRuntime(
       { name: "agent-a", kind: "redroid" },
       {
-        isReachable: async () => true,
+        isReachable: async (serial) => serial === expected,
         findSerialForRedroid: () => "127.0.0.1:5610",
         runStartScript: async () => {
           runs += 1;
@@ -156,7 +156,7 @@ describe("startRuntime", () => {
       },
     );
     assert.equal(runs, 0);
-    assert.equal(out.serial, "127.0.0.1:5610");
+    assert.equal(out.serial, expected);
   });
 
   it("é idempotente quando já alcançável", async () => {
@@ -250,20 +250,25 @@ describe("isRuntimeReachable", () => {
     assert.equal(ok, false);
   });
 
-  it("host:port exige adb device além de TCP", async () => {
+  it("host:port exige adb connect + device além de TCP", async () => {
     const server = net.createServer();
     await new Promise((r) => server.listen(0, "127.0.0.1", r));
     const port = server.address().port;
     const serial = `127.0.0.1:${port}`;
+    /** @type {string[]} */
+    const connects = [];
     try {
       const offline = await isRuntimeReachable(serial, 500, {
+        adbConnect: (s) => connects.push(s),
         adbGetState: () => "offline",
       });
       assert.equal(offline, false);
       const online = await isRuntimeReachable(serial, 500, {
+        adbConnect: (s) => connects.push(s),
         adbGetState: () => "device",
       });
       assert.equal(online, true);
+      assert.deepEqual(connects, [serial, serial]);
     } finally {
       await new Promise((r) => server.close(r));
     }

@@ -30,10 +30,10 @@ export function defaultStartScript(kind) {
 
 /**
  * Runtime alcançável: TCP (127.0.0.1:5555) ou serial local no `adb devices` (emulator-5554).
- * Para host:port, exige também `adb get-state` = device (porta aberta ≠ ADB online).
+ * Para host:port, exige `adb connect` + `get-state` = device (porta aberta ≠ ADB online).
  * @param {string} serial
  * @param {number} [timeoutMs]
- * @param {{ adbDevices?: () => string, adbGetState?: (serial: string) => string }} [deps]
+ * @param {{ adbDevices?: () => string, adbGetState?: (serial: string) => string, adbConnect?: (serial: string) => void }} [deps]
  */
 export function isRuntimeReachable(serial, timeoutMs = 1_000, deps = {}) {
   const s = String(serial || "");
@@ -44,12 +44,24 @@ export function isRuntimeReachable(serial, timeoutMs = 1_000, deps = {}) {
     return new Promise((resolve) => {
       const socket = net.connect({ host, port }, () => {
         socket.destroy();
+        try {
+          if (typeof deps.adbConnect === "function") deps.adbConnect(s);
+          else
+            spawnSync("adb", ["connect", s], {
+              encoding: "utf8",
+              timeout: 5_000,
+            });
+        } catch {
+          /* connect falhou — get-state abaixo resolve false */
+        }
         const state =
           typeof deps.adbGetState === "function"
             ? deps.adbGetState(s)
             : String(
-                spawnSync("adb", ["-s", s, "get-state"], { encoding: "utf8" })
-                  .stdout || "",
+                spawnSync("adb", ["-s", s, "get-state"], {
+                  encoding: "utf8",
+                  timeout: 5_000,
+                }).stdout || "",
               ).trim();
         resolve(state === "device");
       });
@@ -138,8 +150,9 @@ export async function startRuntime(resolved, deps = {}) {
     const already = lookupAvd(resolved.name);
     if (already) return { serial: already };
   } else if (resolved.kind === "redroid" && resolved.name) {
-    const already = lookupRedroid(resolved.name);
-    if (already && (await isReachable(already))) return { serial: already };
+    // Porta deriva do name — checa ADB antes de docker inspect (inspect trava se daemon morto)
+    const expected = serial || serialForRedroidName(resolved.name);
+    if (await isReachable(expected)) return { serial: expected };
   } else if (serial && (await isReachable(serial))) {
     return { serial };
   }
@@ -172,8 +185,17 @@ export async function startRuntime(resolved, deps = {}) {
       const found = lookupAvd(resolved.name);
       if (found) return { serial: found };
     } else if (resolved.kind === "redroid" && resolved.name) {
-      const found = lookupRedroid(resolved.name) || serial;
-      if (found && (await isReachable(found))) return { serial: found };
+      // Preferir serial derivado do name; inspect só como fallback (com timeout no spawn)
+      if (serial && (await isReachable(serial))) return { serial };
+      let found = null;
+      try {
+        found = lookupRedroid(resolved.name);
+      } catch {
+        found = null;
+      }
+      if (found && found !== serial && (await isReachable(found))) {
+        return { serial: found };
+      }
     } else if (serial && (await isReachable(serial))) {
       return { serial };
     }

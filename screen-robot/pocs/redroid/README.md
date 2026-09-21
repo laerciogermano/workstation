@@ -13,7 +13,9 @@ cd screen-robot/pocs/redroid
 cd ../../src && npm run sample   # sample.js com kind=redroid
 ```
 
-No macOS, o `start.sh` instala `linux-modules-extra` na VM do Colima se `binder_linux` faltar (sem isso o ADB fica `offline`). Se o Colima estiver “up” mas o Docker não responder, o `_docker.sh` faz `colima restart` (só `colima start` ignora). O `start.sh` usa `--force-recreate` para recuperar container zombie após restart da VM.
+No macOS, o `start.sh` instala `linux-modules-extra` na VM do Colima se `binder_linux` faltar (sem isso o ADB fica `offline`). Se o Colima estiver “Running” mas o Docker não responder (`colima status` pode falhar com `empty value` e `colima start` ignora), o `_docker.sh` faz `colima restart` e, se isso falhar, `colima stop -f` + kill do hostagent + `colima start`. O `start.sh` usa `--force-recreate` para recuperar container zombie após restart da VM.
+
+**Antes → depois:** só `colima start` quando Docker morto → agora detecta Running via `colima list` e força revive.
 
 Parar: `./scripts/stop.sh` · Reset wipe: `./scripts/reset.sh`
 
@@ -27,3 +29,5 @@ await provisionEmulator({ provision: { kind: "redroid", name: "agent-a" } });
 Sem `name`: serial legado `127.0.0.1:5555` / container `connectmax-redroid`.
 
 **Antes → depois:** `name` era ignorado (sempre a mesma instância). Agora `REDROID_NAME` + `ADB_PORT` isolam por name. Voltar ao único container legado: omita `name` ou use só `serial: "127.0.0.1:5555"`.
+
+**Reachability:** attach checa ADB na porta derivada do `name` (com `adb connect`) **antes** de `docker inspect` — inspect trava se o daemon Docker estiver morto.

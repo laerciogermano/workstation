@@ -5,16 +5,16 @@
  *   npm run sample
  *   node scripts/sample.js
  */
-import { readFileSync } from "node:fs";
-import { dirname, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
-
 import { provisionEmulator } from "../lib/provision.js";
 
-const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const cfg = JSON.parse(readFileSync(resolve(root, "device.config.json"), "utf8"));
+const handle = await provisionEmulator({
+  provision: {
+    name: "ConnectMax_Cam",
+    kind: "avd",
+    serial: "emulator-5554",
+  },
+});
 
-const handle = await provisionEmulator(cfg);
 console.log(`Emulador: ${handle.serial}`);
 
 const view = handle.openScrcpy({ title: `sample ${handle.serial}` });

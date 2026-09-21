@@ -87,12 +87,9 @@ async function main() {
   handle.screenshot(shotPath);
   console.log(`   OK → ${shotPath}`);
 
-  console.log("5) Extrair lista (5 passos)…");
-  let elements;
-  for (let i = 1; i <= 5; i++) {
-    elements = await handle.extract();
-    console.log(`   passo ${i}: elements=${elements.length}`);
-  }
+  console.log("5) Extrair textos (OCR)…");
+  const elements = await handle.extract();
+  console.log(`   texts=${elements.length}`);
 
   handle.screenshot(resolve(outDir, "frame-screen.png"));
   const json = JSON.stringify(elements, null, 2);

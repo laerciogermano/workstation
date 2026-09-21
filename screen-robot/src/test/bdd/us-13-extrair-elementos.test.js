@@ -19,10 +19,11 @@ describe("Cenário: US-13 Extrair elementos (lista plana)", () => {
   }, { timeout: 300_000 });
 
   it(
-    "Dado agent; Quando extract(); Então devolve lista (sem children)",
+    "Dado agent; Quando extract(); Então devolve só textos (sem children)",
     async () => {
       const list = await handle.extract();
       assert.ok(Array.isArray(list));
+      assert.ok(list.every((e) => e.type === "text"));
       assert.ok(list.every((e) => e.children === undefined));
     },
     { timeout: 120_000 },

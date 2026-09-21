@@ -12,7 +12,7 @@ import { provisionEmulator } from "../lib/provision.js";
 
 const handle = await provisionEmulator({
   provision: {
-    name: "agent-b",
+    name: "agent-sssb",
     kind: "redroid",
   },
 });

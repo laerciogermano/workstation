@@ -1,7 +1,6 @@
 /**
- * Heurísticas de visão sobre layout OCR (ícones / listas / imagens).
- * Sem dump ADB — só geometria do frame + palavras OCR.
- * Retorno = elementos planos (sem children).
+ * Legado — heurísticas icon/list/image (não usadas por `extract()`).
+ * `extract()` devolve só textos OCR. Visão ativa: template match (US-12 / matchImage).
  */
 
 /**

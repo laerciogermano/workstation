@@ -147,15 +147,12 @@ function inflateButtonHit(hit) {
   return { ...hit, bounds, center };
 }
 
-/** Nova sessão OCR/visão (frame fresco — extract do handle reusa cache). */
+/** OCR de textos no frame (createExtract fresco — handle reusa cache). */
 async function extractList(serial, label) {
-  console.log(`${label} Extrair lista (5 passos)…`);
+  console.log(`${label} Extrair textos (OCR)…`);
   const extract = createExtract(serial);
-  let elements;
-  for (let i = 1; i <= 5; i++) {
-    elements = await extract();
-    console.log(`   passo ${i}: elements=${elements.length}`);
-  }
+  const elements = await extract();
+  console.log(`   texts=${elements.length}`);
   return elements;
 }
 

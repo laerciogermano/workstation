@@ -19,21 +19,16 @@ describe("Épico: EP-05 Extrair elementos", () => {
   }, { timeout: 300_000 });
 
   it(
-    "Dado agent; Quando extract() repetido; Então lista enriquece",
+    "Dado agent; Quando extract(); Então lista só com textos",
     async () => {
       const t1 = await handle.extract();
       assert.ok(Array.isArray(t1));
+      assert.ok(t1.every((e) => e.type === "text"));
+      assert.ok(t1.every((e) => e.children === undefined));
 
       const t2 = await handle.extract();
-      assert.ok(Array.isArray(t2));
-      assert.ok(t2.length >= t1.length);
-
-      await handle.extract();
-      await handle.extract();
-      const t5 = await handle.extract();
-      assert.ok(Array.isArray(t5));
-      assert.ok(t5.length >= 0);
-      assert.ok(t5.every((e) => e.children === undefined));
+      assert.equal(t2.length, t1.length);
+      assert.ok(t2.every((e) => e.type === "text"));
     },
     { timeout: 180_000 },
   );

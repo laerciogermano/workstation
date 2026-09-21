@@ -1,12 +1,11 @@
 /**
- * EP-05 — extrair lista plana de elementos via frame → OCR/visão.
- * Caller: handle.extract() — cada chamada enriquece a lista (sem children).
+ * EP-05 — extrair lista plana de textos via frame → OCR.
+ * Caller: handle.extract() — só elementos type "text" (sem ícones/listas/imagens).
  * Proibido: uiautomator dump como fonte.
  */
 import { adb } from "./adb.js";
 import { captureFrame } from "./frame.js";
 import { ocrWords } from "./ocr.js";
-import { detectIcons, detectImages, detectLists } from "./vision.js";
 
 const REMOTE_DUMP = "/sdcard/sr-window-dump.xml";
 
@@ -32,10 +31,8 @@ function withCenter(el) {
  * @returns {() => Promise<object[]>}
  */
 export function createExtract(serial, deps = {}) {
-  /** @type {number} */
-  let step = 0;
-  /** @type {object[]} */
-  let elements = [];
+  /** @type {object[]|null} */
+  let elements = null;
   /** @type {import("./ocr.js").OcrWord[]|null} */
   let wordsCache = null;
   /** @type {{ w: number, h: number }|null} */
@@ -66,36 +63,13 @@ export function createExtract(serial, deps = {}) {
     }
   }
 
-  function stepTexts() {
-    elements = wordsCache.map((w) =>
-      withCenter({ type: "text", text: w.text, bounds: { ...w.bounds } }),
-    );
-  }
-
-  function stepEnrich() {
-    if (elements.some((e) => e.type === "other")) return;
-    elements.push(
-      withCenter({
-        type: "other",
-        bounds: { x: 0, y: 0, w: frameSize.w, h: frameSize.h },
-      }),
-    );
-  }
-
-  function appendElements(nodes) {
-    if (!nodes.length) return;
-    elements.push(...nodes.map(withCenter));
-  }
-
   return async function extract() {
     await ensurePerception();
-    step += 1;
-    if (step === 1) stepTexts();
-    else if (step === 2) stepEnrich();
-    else if (step === 3) appendElements(detectIcons(wordsCache, frameSize));
-    else if (step === 4) appendElements(detectLists(wordsCache));
-    else appendElements(detectImages(wordsCache, frameSize));
-
+    if (!elements) {
+      elements = wordsCache.map((w) =>
+        withCenter({ type: "text", text: w.text, bounds: { ...w.bounds } }),
+      );
+    }
     return structuredClone(elements);
   };
 }

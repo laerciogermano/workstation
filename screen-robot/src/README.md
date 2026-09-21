@@ -28,7 +28,7 @@ import { saveSession, removeSession, restoreSession } from "./lib/session.js";
 import { resetInstance } from "./lib/reset-instance.js";
 ```
 
-**Antes → depois:** `provisionEmulator` devolve só `{ serial, kind, provisionedAt, bootCompleted }` — sem métodos. Ops usam `fn({ serial, … })` (como `on`).
+**Antes → depois:** `connectTimeoutMs` era um relógio único compartilhado entre start + ADB + boot (start consumia o orçamento do boot). Agora cada fase (`ensureAdbOnline`, `waitBootCompleted`) tem o próprio timeout.
 
 ---
 

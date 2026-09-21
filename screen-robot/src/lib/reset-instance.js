@@ -97,7 +97,7 @@ export async function resetInstance(cfg = {}, deps = {}) {
     throw err;
   }
 
-  await ensureAdbOnline(serial, connectTimeoutMs, started);
-  await waitBootCompleted(serial, connectTimeoutMs, started);
+  await ensureAdbOnline(serial, connectTimeoutMs);
+  await waitBootCompleted(serial, connectTimeoutMs);
   return { serial, kind, resetAt: new Date().toISOString() };
 }

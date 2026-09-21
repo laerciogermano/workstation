@@ -31,3 +31,5 @@ Sem `name`: serial legado `127.0.0.1:5555` / container `connectmax-redroid`.
 **Antes → depois:** `name` era ignorado (sempre a mesma instância). Agora `REDROID_NAME` + `ADB_PORT` isolam por name. Voltar ao único container legado: omita `name` ou use só `serial: "127.0.0.1:5555"`.
 
 **Reachability:** attach checa ADB na porta derivada do `name` (com `adb connect`) **antes** de `docker inspect` — inspect trava se o daemon Docker estiver morto.
+
+**Recursos (macOS/Colima):** profile default ~2 GiB. Várias instâncias redroid em paralelo deixam ADB `offline` / `PROVISION_BOOT_TIMEOUT`. Pare as outras (`docker stop redroid-…`) ou aumente memória do Colima antes de provisionar outra.

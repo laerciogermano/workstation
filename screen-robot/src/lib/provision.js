@@ -53,16 +53,15 @@ export async function provisionEmulator(cfg, deps = {}) {
   const startRuntime = deps.startRuntime ?? defaultStartRuntime;
   const ensureAdbOnline = deps.ensureAdbOnline ?? defaultEnsureAdbOnline;
   const waitBootCompleted = deps.waitBootCompleted ?? defaultWaitBootCompleted;
-  const now = deps.now ?? Date.now;
   const toIso = deps.toIso ?? (() => new Date().toISOString());
 
   const resolved = resolveConfig(cfg);
-  const started = now();
 
   const runtime = await startRuntime(resolved);
   const serial = runtime?.serial || resolved.serial;
-  await ensureAdbOnline(serial, resolved.connectTimeoutMs, started);
-  await waitBootCompleted(serial, resolved.connectTimeoutMs, started);
+  // Cada fase tem orçamento próprio — start não consome o timeout de ADB/boot
+  await ensureAdbOnline(serial, resolved.connectTimeoutMs);
+  await waitBootCompleted(serial, resolved.connectTimeoutMs);
 
   return {
     serial,

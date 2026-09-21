@@ -13,12 +13,12 @@ import { openScrcpy } from "../lib/operate.js";
 
 const { serial } = await provisionEmulator({
   provision: {
-    name: "agent-b",
+    name: "agent-bb",
     kind: "redroid",
   },
 });
 
-console.log(`Emulador: ${serial} (name=agent-b)`);
+console.log(`Emulador: ${serial} (name=agent-bb)`);
 
 const view = openScrcpy({ serial, title: `sample ${serial}` });
 console.log(`scrcpy pid=${view.pid}`);

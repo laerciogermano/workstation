@@ -52,7 +52,23 @@ elif [[ "$(uname -s)" == "Darwin" ]]; then
   echo
 fi
 
-docker compose up -d --force-recreate
+docker compose up -d --force-recreate || {
+  # Compose às vezes deixa container órfão com nome prefixado após recreate falho
+  echo "force-recreate falhou — removendo container órfão e tentando de novo..."
+  docker rm -f "${REDROID_CONTAINER_NAME:-redroid}" 2>/dev/null || true
+  while read -r id; do
+    [[ -n "$id" ]] && docker rm -f "$id" 2>/dev/null || true
+  done < <(docker ps -aq --filter "name=${REDROID_CONTAINER_NAME:-redroid}" 2>/dev/null)
+  docker compose up -d --force-recreate
+}
+
+# Aviso: muitas instâncias no Colima 2GiB → boot/ADB offline
+n_up="$(docker ps --filter ancestor=redroid/redroid --format '{{.ID}}' 2>/dev/null | wc -l | tr -d ' ')"
+if [[ "${n_up:-0}" -gt 1 ]]; then
+  echo "Aviso: ${n_up} containers redroid up — em Colima ~2GiB o ADB pode ficar offline / boot timeout."
+  echo "  Pare extras: docker stop \$(docker ps -q --filter ancestor=redroid/redroid)"
+fi
+
 echo
 echo "Container iniciado. Conecte a tela com: cd ../../src && npm run view"
 docker compose ps

@@ -1,5 +1,5 @@
 /**
- * BDD e2e — EP-05 Extrair elementos
+ * BDD e2e — EP-05 Extrair textos
  */
 import assert from "node:assert/strict";
 import { describe, it, before } from "node:test";
@@ -9,7 +9,7 @@ import { provisionEmulator } from "../../lib/provision.js";
 const serial = process.env.ANDROID_SERIAL || "127.0.0.1:5555";
 const timeoutMs = Number(process.env.PROVISION_TIMEOUT_MS || 180_000);
 
-describe("Épico: EP-05 Extrair elementos", () => {
+describe("Épico: EP-05 Extrair textos", () => {
   before(async () => {
     await provisionEmulator({
       provision: { serial, kind: "redroid", connectTimeoutMs: timeoutMs },

@@ -1,11 +1,11 @@
-# TSK 027 extrair imagens — **cancelado / removido**
+# TSK 027 extrair imagens — **cancelado**
 
 | Campo | Valor |
 |-------|--------|
 | Pasta | `TSK-027-extrair-imagens` |
-| TSK | [`TSK-027`](../../7.tasks.md) |
-| Origem | US-16 · SC-21 |
+| TSK | [`TSK-027`](../../../7.tasks.md) |
+| Origem | US-16 · SC-21 (removidos) |
 | Pai | [`TSK-021`](../README.md) |
-| Status | **Cancelado / removido** — não faz parte do produto |
+| Status | **Cancelado** — absorvido em US-13 Extrair textos |
 
-`extract()` não devolve elementos `image`.
+`extract()` não devolve `image`.

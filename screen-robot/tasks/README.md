@@ -38,13 +38,13 @@ tasks/
 │   ├── TSK-019-screenshot/
 │   ├── TSK-020-resgatar-coordenadas/
 │   └── TSK-035-abrir-scrcpy/
-├── TSK-021-extrair-elementos/
+├── TSK-021-extrair-elementos/             # EP-05 Extrair textos (US-13)
 │   ├── TSK-022-extrair-elementos-ocr/
 │   ├── TSK-023-extrair-textos/
-│   ├── TSK-024-enriquecer-lista/          # cancelado / removido
-│   ├── TSK-025-extrair-icones/            # cancelado / removido
-│   ├── TSK-026-extrair-listas/            # cancelado / removido
-│   ├── TSK-027-extrair-imagens/           # cancelado / removido
+│   ├── TSK-024-enriquecer-lista/          # cancelado (absorvido em US-13)
+│   ├── TSK-025-extrair-icones/            # cancelado (absorvido em US-13)
+│   ├── TSK-026-extrair-listas/            # cancelado (absorvido em US-13)
+│   ├── TSK-027-extrair-imagens/           # cancelado (absorvido em US-13)
 │   └── TSK-037-buscar-por-texto/
 └── TSK-028-sessao/
     ├── TSK-029-salvar-sessao/
@@ -66,7 +66,7 @@ tasks/
 | TSK-014 | Operar tela | [`TSK-014-operar-tela/`](TSK-014-operar-tela/README.md) |
 | TSK-015..020 | Filhas EP-04 | sob `TSK-014-operar-tela/` |
 | TSK-035 | Abrir scrcpy | [`TSK-035-abrir-scrcpy/`](TSK-014-operar-tela/TSK-035-abrir-scrcpy/README.md) |
-| TSK-021 | Extrair elementos | [`TSK-021-extrair-elementos/`](TSK-021-extrair-elementos/README.md) |
+| TSK-021 | Extrair textos | [`TSK-021-extrair-elementos/`](TSK-021-extrair-elementos/README.md) |
 | TSK-022..023 · TSK-037 | Filhas EP-05 (ativas) | sob `TSK-021-extrair-elementos/` |
 | TSK-024..027 | Filhas EP-05 **canceladas / removidas** | sob `TSK-021-extrair-elementos/` |
 | TSK-028 | Sessão | [`TSK-028-sessao/`](TSK-028-sessao/README.md) |

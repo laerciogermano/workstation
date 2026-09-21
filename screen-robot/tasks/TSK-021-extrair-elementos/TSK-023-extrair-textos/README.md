@@ -3,7 +3,7 @@
 | Campo | Valor |
 |-------|--------|
 | Pasta | `TSK-023-extrair-textos` |
-| TSK | [`TSK-023`](../../7.tasks.md) |
+| TSK | [`TSK-023`](../../../7.tasks.md) |
 | Origem | SC-17 |
 | Pai | [`TSK-021`](../README.md) |
 

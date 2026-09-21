@@ -1,8 +1,8 @@
-# Implementation plan — EP-05 Extrair elementos
+# Implementation plan — EP-05 Extrair textos
 
 **Por quê:** plano técnico do épico (sequências · agentes · passo a passo · contratos · classes · modelos · BDDs).  
 **Épico:** [`2.epics.md`](../2.epics.md).  
-**US:** [`1.stories.md`](../1.stories.md) · [`4.scenarios.md#ep-05--extrair-elementos`](../4.scenarios.md#ep-05--extrair-elementos) · [`5.bdds.md#ep-05--extrair-elementos`](../5.bdds.md#ep-05--extrair-elementos).  
+**US:** [`1.stories.md`](../1.stories.md) · [`4.scenarios.md#ep-05--extrair-textos`](../4.scenarios.md#ep-05--extrair-textos) · [`5.bdds.md#ep-05--extrair-textos`](../5.bdds.md#ep-05--extrair-textos).  
 **API:** `extract({ serial })` · `findByText(serial, query)` em [`../src/lib/extract.js`](../src/lib/extract.js) — funções puras; **não** método de handle.  
 **Pré-requisito:** [`EP-01`](EP-01-provisionar-agente.md) · `serial`.  
 **Implementação:** [`../src/lib/extract.js`](../src/lib/extract.js).
@@ -10,12 +10,12 @@
 **Stack:** Node ≥ 18 · JavaScript · `adb` · **OCR** · runtime provisionado.  
 **Visão (`vision.js`):** legado / usado só em template match (US-12 `matchImage`) — **não** entra no contrato de `extract()`.
 
-**Princípio:** percepção em `extract` = **frame/imagem** → **OCR** → **lista plana só de textos**.  
+**Princípio:** percepção = **frame/imagem** → **OCR** → **lista plana de textos**.  
 **Proibido** como fonte: dump uiautomator / árvore de acessibilidade ADB.  
 **Fonte de frame:** screenshot ADB, stream ou **câmera** (device real) — mesmo pipeline.  
 **Não** devolver árvore DOM (`root` / `children`); contrato = **array de elementos `type: "text"`**.
 
-**Antes → depois:** `extract()` deixou de enriquecer com visão (ícones/listas/imagens em chamadas sucessivas). Agora devolve **somente** textos OCR; chamadas repetidas = mesma lista plana.
+**Antes → depois:** US-13/14/15 (e US-16 imagens) eram stories separadas (textos / ícones / listas / imagens). Agora **só US-13 Extrair textos**; `extract()` devolve somente textos OCR.
 
 ---
 
@@ -23,12 +23,13 @@
 
 | ID | Item | Status |
 |----|------|--------|
-| US-13 | Extrair elementos (OCR) — só textos | Ativo |
+| US-13 | Extrair textos (OCR) | Ativo |
 | US-23 | Buscar elemento(s) por texto (similaridade) | Ativo |
 | SC-17 | Extrair textos | Ativo |
 | SC-29..30 | `findByText` (SC-30 = LinkedIn Sign in with Email) | Ativo |
-| US-14 · US-15 · US-16 | Extrair ícones / listas / imagens | **Cancelado / removido** |
-| SC-18 · SC-19 · SC-20 · SC-21 | Enriquecer / ícones / listas / imagens | **Cancelado / removido** |
+| US-14 · US-15 · US-16 | Extrair ícones / listas / imagens | **Absorvido em US-13 / removido** |
+| SC-18 · SC-19 · SC-20 · SC-21 | Enriquecer / ícones / listas / imagens | **Removido** |
+| TSK-024..027 | Tasks de ícones/listas/imagens/enriquecer | **Cancelado** |
 
 **Resultado:** **lista plana** `UiElement[]` — cada item `{ type: "text", text, bounds, center }`.  
 `extract({ serial })` — cada chamada faz OCR de novo; devolve só textos.

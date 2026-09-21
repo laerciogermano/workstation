@@ -19,7 +19,7 @@
 | EP-02 | Eventos de UI | [`EP-02-eventos-de-ui.md`](EP-02-eventos-de-ui.md) | `on(cfg)` |
 | EP-03 | Instalar APKs | [`EP-03-instalar-apks.md`](EP-03-instalar-apks.md) | `installApk({ serial, … })` |
 | EP-04 | Operar tela | [`EP-04-operar-tela.md`](EP-04-operar-tela.md) | `launch` · `tap` · `type` · `scroll` · `screenshot` · `matchImage` · `openScrcpy` |
-| EP-05 | Extrair elementos | [`EP-05-extrair-elementos.md`](EP-05-extrair-elementos.md) | `extract({ serial })`; `findByText` |
+| EP-05 | Extrair textos | [`EP-05-extrair-elementos.md`](EP-05-extrair-elementos.md) | `extract({ serial })` → só textos OCR; `findByText` |
 | EP-06 | Sessão | [`EP-06-sessao.md`](EP-06-sessao.md) | `saveSession` · `removeSession` · `restoreSession` |
 
 ## Estrutura

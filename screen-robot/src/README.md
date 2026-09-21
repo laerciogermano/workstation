@@ -1,6 +1,6 @@
 # src — screen-robot
 
-API **Node** (≥ 18) para controlar Android via ADB: provisionar agents, instalar APKs, eventos de UI, gestos, extração de elementos (lista) e sessão.
+API **Node** (≥ 18) para controlar Android via ADB: provisionar agents, instalar APKs, eventos de UI, gestos, extração de textos (OCR) e sessão.
 
 Visão do projeto: [`../README.md`](../README.md) · Runtimes: [`../pocs/`](../pocs/README.md) · Aceite: [`../5.bdds.md`](../5.bdds.md)
 
@@ -186,7 +186,7 @@ Type: OCR das teclas na **imagem do teclado** (região opcional) e digitação *
 
 ---
 
-## 5. Extrair UI — `extract({ serial })`
+## 5. Extrair textos — `extract({ serial })`
 
 Pipeline **frame → OCR → lista plana de textos** (sem dump uiautomator, sem árvore DOM). Só elementos `type: "text"`. Cada chamada faz OCR de novo.
 

@@ -3,7 +3,7 @@
 | Campo | Valor |
 |-------|--------|
 | Pasta | `TSK-037-buscar-por-texto` |
-| TSK | [`TSK-037`](../../7.tasks.md) |
+| TSK | [`TSK-037`](../../../7.tasks.md) |
 | Origem | US-23 · SC-29 · SC-30 |
 | Pai | [`TSK-021`](../README.md) |
 

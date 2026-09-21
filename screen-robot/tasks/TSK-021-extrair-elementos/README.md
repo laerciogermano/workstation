@@ -1,10 +1,10 @@
-# Extrair elementos
+# Extrair textos
 
 | Campo | Valor |
 |-------|--------|
 | Pasta | `TSK-021-extrair-elementos` |
-| TSK | [`TSK-021`](../7.tasks.md) |
-| Origem | EP-05 |
+| TSK | [`TSK-021`](../../7.tasks.md) |
+| Origem | EP-05 · US-13 |
 
 ## Entradas
 
@@ -13,7 +13,7 @@
 ## Execução
 
 - Pipeline **frame → OCR → lista plana de textos** via `extract({ serial })` (sem dump uiautomator, sem árvore DOM)
-- **Antes → depois:** `handle.extract()` → `extract({ serial })`; só `type: "text"`
+- **Antes → depois:** US-13/14/15 unificados em US-13; `handle.extract()` → `extract({ serial })`; só `type: "text"`
 
 ## Saídas
 

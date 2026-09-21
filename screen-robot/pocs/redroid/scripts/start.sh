@@ -34,7 +34,8 @@ if [[ "$(uname -s)" == "Linux" ]]; then
   fi
 elif [[ "$(uname -s)" == "Darwin" ]]; then
   echo "macOS + Colima: garantindo binder_linux + binderfs na VM..."
-  colima ssh -- bash -lc '
+  # alarm evita hang infinito se a VM/ssh estiver zumbi
+  perl -e 'alarm shift; exec @ARGV' 90 colima ssh -- bash -lc '
     set -e
     if ! lsmod | grep -q binder_linux; then
       K=$(uname -r)
@@ -47,11 +48,11 @@ elif [[ "$(uname -s)" == "Darwin" ]]; then
     fi
     sudo mkdir -p /dev/binderfs
     mountpoint -q /dev/binderfs || sudo mount -t binder binder /dev/binderfs
-  '
+  ' || echo "Aviso: timeout/falha ao preparar binder na VM (tente: colima restart)"
   echo
 fi
 
-docker compose up -d
+docker compose up -d --force-recreate
 echo
 echo "Container iniciado. Conecte a tela com: cd ../../src && npm run view"
 docker compose ps

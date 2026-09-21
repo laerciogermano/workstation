@@ -30,9 +30,10 @@ export function defaultStartScript(kind) {
 
 /**
  * Runtime alcançável: TCP (127.0.0.1:5555) ou serial local no `adb devices` (emulator-5554).
+ * Para host:port, exige também `adb get-state` = device (porta aberta ≠ ADB online).
  * @param {string} serial
  * @param {number} [timeoutMs]
- * @param {{ adbDevices?: () => string }} [deps]
+ * @param {{ adbDevices?: () => string, adbGetState?: (serial: string) => string }} [deps]
  */
 export function isRuntimeReachable(serial, timeoutMs = 1_000, deps = {}) {
   const s = String(serial || "");
@@ -43,7 +44,14 @@ export function isRuntimeReachable(serial, timeoutMs = 1_000, deps = {}) {
     return new Promise((resolve) => {
       const socket = net.connect({ host, port }, () => {
         socket.destroy();
-        resolve(true);
+        const state =
+          typeof deps.adbGetState === "function"
+            ? deps.adbGetState(s)
+            : String(
+                spawnSync("adb", ["-s", s, "get-state"], { encoding: "utf8" })
+                  .stdout || "",
+              ).trim();
+        resolve(state === "device");
       });
       socket.on("error", () => resolve(false));
       socket.setTimeout(timeoutMs, () => {

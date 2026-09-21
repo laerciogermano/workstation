@@ -2,6 +2,7 @@
  * Unitário — ao lado de start-runtime.js (deps mock/stub; sem runtime real).
  */
 import assert from "node:assert/strict";
+import net from "node:net";
 import path from "node:path";
 import { describe, it } from "node:test";
 import {
@@ -247,6 +248,25 @@ describe("isRuntimeReachable", () => {
       adbDevices: () => "List of devices attached\nemulator-5554\toffline\n",
     });
     assert.equal(ok, false);
+  });
+
+  it("host:port exige adb device além de TCP", async () => {
+    const server = net.createServer();
+    await new Promise((r) => server.listen(0, "127.0.0.1", r));
+    const port = server.address().port;
+    const serial = `127.0.0.1:${port}`;
+    try {
+      const offline = await isRuntimeReachable(serial, 500, {
+        adbGetState: () => "offline",
+      });
+      assert.equal(offline, false);
+      const online = await isRuntimeReachable(serial, 500, {
+        adbGetState: () => "device",
+      });
+      assert.equal(online, true);
+    } finally {
+      await new Promise((r) => server.close(r));
+    }
   });
 });
 

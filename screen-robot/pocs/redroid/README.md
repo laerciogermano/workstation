@@ -13,7 +13,7 @@ cd screen-robot/pocs/redroid
 cd ../../src && npm run sample   # sample.js com kind=redroid
 ```
 
-No macOS, o `start.sh` instala `linux-modules-extra` na VM do Colima se `binder_linux` faltar (sem isso o ADB fica `offline`).
+No macOS, o `start.sh` instala `linux-modules-extra` na VM do Colima se `binder_linux` faltar (sem isso o ADB fica `offline`). Se o Colima estiver “up” mas o Docker não responder, o `_docker.sh` faz `colima restart` (só `colima start` ignora). O `start.sh` usa `--force-recreate` para recuperar container zombie após restart da VM.
 
 Parar: `./scripts/stop.sh` · Reset wipe: `./scripts/reset.sh`
 

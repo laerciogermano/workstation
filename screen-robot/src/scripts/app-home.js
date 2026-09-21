@@ -4,6 +4,7 @@
  *
  * Uso:
  *   node scripts/app-home.js --app tinder
+ *   node scripts/app-home.js --app instagram --no-reset
  *   node scripts/app-home.js --app instagram --config ./device.config.json
  */
 import { readFileSync, existsSync, mkdirSync, writeFileSync, readdirSync, rmSync } from "node:fs";
@@ -33,11 +34,17 @@ async function main() {
   const argv = process.argv.slice(2);
   let configPath = resolve(ROOT, "device.config.json");
   let appKey = null;
+  let noReset = false;
   for (let i = 0; i < argv.length; i++) {
     if (argv[i] === "--config") configPath = resolve(argv[++i]);
     if (argv[i] === "--app") appKey = argv[++i];
+    if (argv[i] === "--no-reset") noReset = true;
   }
-  if (!appKey) throw new Error("Uso: node scripts/app-home.js --app <tinder|instagram|…>");
+  if (!appKey) {
+    throw new Error(
+      "Uso: node scripts/app-home.js --app <tinder|instagram|…> [--no-reset]",
+    );
+  }
 
   const cfg = loadConfig(configPath);
   const appSpec = cfg.apps?.[appKey];
@@ -49,9 +56,13 @@ async function main() {
   console.log(`0) Limpar screenshots/${appKey}…`);
   clearDir(outDir);
 
-  console.log("0.5) Resetar instância do zero…");
-  const reset = await resetInstance(cfg);
-  console.log(`   OK ${reset.serial}`);
+  if (noReset) {
+    console.log("0.5) Sem reset — continua sessão no runtime atual…");
+  } else {
+    console.log("0.5) Resetar instância do zero…");
+    const reset = await resetInstance(cfg);
+    console.log(`   OK ${reset.serial}`);
+  }
 
   console.log("1) Provisionar…");
   const handle = await provisionEmulator(cfg);

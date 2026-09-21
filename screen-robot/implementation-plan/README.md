@@ -16,7 +16,7 @@
 | ID | Épico | Plano | API no handle |
 |----|-------|-------|---------------|
 | EP-01 | Provisionar agente | [`EP-01-provisionar-agente.md`](EP-01-provisionar-agente.md) | `provisionEmulator` → handle (+ ops `resetInstance`; US-22 mascarar identidade) |
-| EP-02 | Eventos de UI | [`EP-02-eventos-de-ui.md`](EP-02-eventos-de-ui.md) | `on(event, opts?, onEvent?)` |
+| EP-02 | Eventos de UI | [`EP-02-eventos-de-ui.md`](EP-02-eventos-de-ui.md) | `on(cfg)` — função única (não `handle.on`) |
 | EP-03 | Instalar APKs | [`EP-03-instalar-apks.md`](EP-03-instalar-apks.md) | `installApk(app)` |
 | EP-04 | Operar tela | [`EP-04-operar-tela.md`](EP-04-operar-tela.md) | `launch` · `tap` · `type` · `scroll` · `screenshot` · `matchImage` · `openScrcpy` |
 | EP-05 | Extrair elementos | [`EP-05-extrair-elementos.md`](EP-05-extrair-elementos.md) | `extract()` → só textos OCR; `findByText` (US-23 · SC-29/30 LinkedIn) |

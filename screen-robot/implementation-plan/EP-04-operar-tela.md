@@ -4,7 +4,7 @@
 **Épico:** [`2.epics.md`](../2.epics.md).  
 **US:** [`1.stories.md`](../1.stories.md) · [`4.scenarios.md#ep-04--operar-tela`](../4.scenarios.md#ep-04--operar-tela) · [`5.bdds.md#ep-04--operar-tela`](../5.bdds.md#ep-04--operar-tela).  
 **Handle:** gestos são métodos do [`AgentHandle`](EP-01-provisionar-agente.md) — **não** funções soltas com `serial`.  
-**Pré-requisito:** [`EP-01`](EP-01-provisionar-agente.md) · [`EP-02`](EP-02-eventos-de-ui.md) (`handle.on` para confirmar app/UI).  
+**Pré-requisito:** [`EP-01`](EP-01-provisionar-agente.md) · [`EP-02`](EP-02-eventos-de-ui.md) (`on(cfg)` para confirmar app/UI).  
 **Implementação interna:** [`../src/lib/operate.js`](../src/lib/operate.js) (anexado ao handle em `provision.js`).
 
 **Stack:** Node ≥ 18 · JavaScript · `adb` · visão/OCR (coords) · runtime AVD provisionado.
@@ -38,12 +38,14 @@
 
 ```js
 import { provisionEmulator } from "../src/lib/provision.js";
+import { on } from "../src/lib/events.js";
 
 const handle = await provisionEmulator(cfg); // EP-01
+const { serial } = handle;
 
 await handle.launch("com.linkedin.android");
-await handle.on("app_open", { pkg: "com.linkedin.android" }); // EP-02
-await handle.on("ui_stable", { stableMs: 800 });
+await on({ serial, event: "app_open", pkg: "com.linkedin.android" }); // EP-02
+await on({ serial, event: "ui_stable", stableMs: 800 });
 
 handle.tap(360, 640); // ou handle.tapElement({ center, bounds })
 await handle.type("11999999999", {
@@ -57,7 +59,7 @@ const view = handle.openScrcpy({ title: `agent ${handle.serial}` });
 // → { pid, serial }
 ```
 
-`type` = OCR das teclas + tap — sem `adb input text`. Coords de `extract` / `findByText` / `matchImage`.
+`type` = OCR das teclas + tap — sem `adb input text`. Coords de `extract` / `findByText` / `matchImage`. Eventos UI: **`on(cfg)`** (EP-02), não `handle.on`.
 
 ---
 
@@ -84,14 +86,15 @@ src/
 
 1. **Provisionar** → handle.  
 2. **Operar** via métodos do handle (serial implícito).  
-3. Opcional: confirmar com `handle.on("app_open" | "ui_stable", …)` (EP-02).
+3. Opcional: confirmar com `on({ serial, event: "app_open" | "ui_stable", … })` (EP-02).
 
 ```js
 const handle = await provisionEmulator(cfg);
+const { serial } = handle;
 
 await handle.launch("com.linkedin.android");
-await handle.on("app_open", { pkg: "com.linkedin.android" });
-await handle.on("ui_stable", { stableMs: 800 });
+await on({ serial, event: "app_open", pkg: "com.linkedin.android" });
+await on({ serial, event: "ui_stable", stableMs: 800 });
 
 await handle.tap(360, 640); // coords de visão/OCR (ou matchImage)
 await handle.type("11999999999", {

@@ -312,10 +312,10 @@ const handle = await provisionEmulator({
   },
 });
 // → { serial, kind, provisionedAt, bootCompleted: true, on }
-// EP-02: await handle.on("ui_stable", { stableMs: 1_200 });
+// EP-02: await on({ serial: handle.serial, event: "ui_stable", stableMs: 1_200 });
 ```
 
-**Interno (não exportar):** `resolveConfig`, `startRuntime`, `ensureAdbOnline`, `waitBootCompleted` — encapsulam as linhas #2–#18 do passo a passo. `on` é anexado ao handle via `events.createOn(serial)` (EP-02).
+**Interno (não exportar):** `resolveConfig`, `startRuntime`, `ensureAdbOnline`, `waitBootCompleted` — encapsulam as linhas #2–#18 do passo a passo. Eventos UI: [`EP-02`](EP-02-eventos-de-ui.md) `on(cfg)` — **não** anexado ao handle.
 
 ---
 
@@ -440,10 +440,9 @@ classDiagram
     +string kind
     +string provisionedAt
     +boolean bootCompleted
-    +on(event, opts, onEvent) Promise
   }
 
-  note for AgentHandle "on anexado no provision (EP-02)"
+  note for AgentHandle "Eventos UI: on(cfg) em events.js (EP-02),\nnão método do handle"
 
   class Internals {
     <<private>>
@@ -460,20 +459,14 @@ classDiagram
     sleep()
   }
 
-  class events_js {
-    <<EP-02 internal>>
-    createOn(serial)
-  }
-
   provision_js --> Internals : usa
   Internals --> AdbClient : usa
   provision_js ..> ProvisionConfig : lê
   provision_js ..> AgentHandle : cria
-  provision_js --> events_js : anexa on
-  AgentHandle --> events_js : on
 ```
 
-**Hoje:** `provisionEmulator` exportado; ADB + boot encapsulados; `on` no handle (EP-02); `resetInstance` ops + `pocs/android-studio/scripts/reset.sh`.  
+**Hoje:** `provisionEmulator` exportado; ADB + boot encapsulados; `resetInstance` ops + `pocs/android-studio/scripts/reset.sh`.  
+**EP-02:** eventos via `on(cfg)` solto — **não** anexar `on` ao handle.  
 **Gap:** completar `startRuntime` (AVD) **dentro** da lib, sem expandir a API do handle além do create-or-attach.
 
 ---

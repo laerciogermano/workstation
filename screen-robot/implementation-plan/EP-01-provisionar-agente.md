@@ -50,6 +50,39 @@
 
 ---
 
+## Como utilizar
+
+```js
+import { provisionEmulator } from "../src/lib/provision.js";
+import { resetInstance } from "../src/lib/reset-instance.js";
+
+// Create — nome novo sobe AVD (ou redroid se kind=redroid)
+const handle = await provisionEmulator({
+  provision: { name: "agent-a", kind: "avd" },
+});
+// → { serial, kind, bootCompleted: true, provisionedAt, on, installApk, … }
+
+// Attach — mesmo name anexa (não sobe outro)
+const again = await provisionEmulator({
+  provision: { name: "agent-a", kind: "avd" },
+});
+// again.serial === handle.serial
+
+// redroid nomeado (porta/container isolados)
+const r = await provisionEmulator({
+  provision: { name: "agent-b", kind: "redroid" },
+});
+
+// Ops (fora do handle): wipe + boot
+await resetInstance({
+  provision: { serial: handle.serial, kind: "avd" },
+});
+```
+
+Não passar `serial` nas operações do handle — vem do handle. API canônica: [`../src/README.md`](../src/README.md).
+
+---
+
 ## Árvore de arquivos
 
 ```text

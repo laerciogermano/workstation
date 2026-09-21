@@ -24,6 +24,31 @@
 
 ---
 
+## Como utilizar
+
+```js
+import { provisionEmulator } from "../src/lib/provision.js";
+
+const handle = await provisionEmulator(cfg); // EP-01
+// … operar …
+
+const path = await handle.saveSession("./sessions/linkedin.json", {
+  step: "logged-in",
+  apps: ["com.linkedin.android"],
+});
+// → path do arquivo
+
+const state = await handle.restoreSession("./sessions/linkedin.json");
+// → { serial, kind, savedAt, step, apps, … }
+
+const removed = await handle.removeSession("./sessions/linkedin.json");
+// → true | false
+```
+
+Serial/contexto do handle entram no JSON ao salvar. Erros: `SESSION_WRITE_FAILED` · `SESSION_NOT_FOUND` · `SESSION_INVALID`.
+
+---
+
 ## Árvore de arquivos
 
 ```text

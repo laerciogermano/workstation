@@ -35,6 +35,31 @@
 
 ---
 
+## Como utilizar
+
+```js
+import { provisionEmulator } from "../src/lib/provision.js";
+import { findByText } from "../src/lib/extract.js";
+
+const handle = await provisionEmulator(cfg); // EP-01
+
+const elements = await handle.extract();
+// → [ { type: "text", text, bounds, center }, … ]
+
+const again = await handle.extract(); // mesma lista de textos
+
+// US-23 — busca por texto (encapsula OCR; não passa a lista)
+const hit = await findByText(handle.serial, "Sign in with Email", {
+  minScore: 0.8,
+});
+// → { elements, score, text, bounds, center } | null
+if (hit) handle.tapElement({ center: hit.center, bounds: hit.bounds });
+```
+
+Só `type: "text"`. Sem ícones/listas/imagens.
+
+---
+
 ## Árvore de arquivos
 
 ```text

@@ -29,6 +29,24 @@
 
 ---
 
+## Como utilizar
+
+```js
+import { provisionEmulator } from "../src/lib/provision.js";
+
+const handle = await provisionEmulator(cfg); // EP-01
+
+await handle.on("boot", { timeoutMs: 60_000 });
+await handle.on("app_open", { pkg: "com.linkedin.android" });
+await handle.on("ui_stable", { stableMs: 1_200 }, (p) => console.log(p.type));
+await handle.on("frame_change", { previousFrame });
+```
+
+Eventos: `"boot"` \| `"app_open"` \| `"ui_stable"` \| `"frame_change"`.  
+Não passar `serial` em `opts`. Callback de progresso = **3º parâmetro**.
+
+---
+
 ## Árvore de arquivos
 
 ```text

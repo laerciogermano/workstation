@@ -26,6 +26,27 @@
 
 ---
 
+## Como utilizar
+
+```js
+import { provisionEmulator } from "../src/lib/provision.js";
+
+const handle = await provisionEmulator(cfg); // EP-01
+
+const result = await handle.installApk(cfg.apps.linkedin);
+// → { package, version, skipped, artifactPath? }
+
+await handle.installApk({
+  package: "com.instagram.android",
+  version: "…",
+  // apkUrl / localPath conforme spec do app
+});
+```
+
+Não passar `serial` — vem do handle. Sequência SC-08→SC-10 encapsulada por dentro.
+
+---
+
 ## Árvore de arquivos
 
 ```text

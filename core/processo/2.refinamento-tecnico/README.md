@@ -18,13 +18,13 @@ Transformar o discovery em plano executável.
 - Consolidar critérios de pronto (aceite por cenário do discovery)
 - Estimar esforço e dependências; tratar cada cenário como unidade paralelizável quando não houver dependência
 - Quebrar em tarefas priorizadas (preferência: 1 tarefa ↔ 1 cenário)
-- **Plano de implementação** por épico (ex.: `implementation-plan/EP-….md`): sequências · agentes · contratos · classes · modelos · BDDs — e **árvore de arquivos** do que o épico cria/altera
+- **Plano de implementação** por épico (ex.: `implementation-plan/EP-….md`): sequências · agentes · contratos · classes · modelos · BDDs — **como utilizar** (exemplos de chamadas) — e **árvore de arquivos** do que o épico cria/altera
 - **No final:** criar a pasta `tasks/` do projeto com uma atividade documentada para **cada task** do Gantt (pasta = `TSK-<nn>-<titulo>`)
 
 ## Saídas
 
 - Desenho técnico (ou ADR)
-- Planos de implementação (com **árvore de arquivos** por épico)
+- Planos de implementação (com **Como utilizar** + **árvore de arquivos** por épico)
 - Critérios de pronto
 - Backlog priorizado
 - Pasta `tasks/` no projeto — pastas `TSK-<nn>-<titulo>` (hierarquia do Gantt); cada uma com **Entradas · Execução · Saídas** e documentação
@@ -32,7 +32,39 @@ Transformar o discovery em plano executável.
 
 ## Plano de implementação (por épico)
 
-Cada plano (ex. `implementation-plan/EP-01-….md`) deve incluir, além de sequências / contratos / classes / BDDs, uma seção **Árvore de arquivos** mostrando pastas e arquivos que o épico introduz ou altera (código, testes colocados ao lado do módulo, configs).
+Cada plano (ex. `implementation-plan/EP-01-….md`) deve incluir sequências / contratos / classes / BDDs e, obrigatoriamente:
+
+### Como utilizar
+
+Seção **`## Como utilizar`** com **exemplos de chamadas** dos métodos públicos do épico (imports + snippets). Quem for implementar ou consumir a API deve conseguir copiar o exemplo sem caçar o contrato no meio do plano.
+
+Conteúdo mínimo:
+
+- Import(s) do módulo / handle
+- Uma chamada típica por método público do épico
+- Retorno esperado em comentário curto quando não for óbvio
+- Pré-condição breve se houver (ex.: “após `provisionEmulator`”)
+
+Exemplo de forma:
+
+````markdown
+## Como utilizar
+
+```js
+import { provisionEmulator } from "./lib/provision.js";
+
+const handle = await provisionEmulator({
+  provision: { name: "agent-a", kind: "avd" },
+});
+// → { serial, kind, bootCompleted: true, … }
+```
+````
+
+Colocar a seção cedo no plano (após **Escopo** / antes dos diagramas longos). Atualizar os exemplos quando a API pública mudar.
+
+### Árvore de arquivos
+
+Seção **Árvore de arquivos** mostrando pastas e arquivos que o épico introduz ou altera (código, testes colocados ao lado do módulo, configs).
 
 Exemplo de forma:
 

@@ -34,6 +34,33 @@
 
 ---
 
+## Como utilizar
+
+```js
+import { provisionEmulator } from "../src/lib/provision.js";
+
+const handle = await provisionEmulator(cfg); // EP-01
+
+await handle.launch("com.linkedin.android");
+await handle.on("app_open", { pkg: "com.linkedin.android" }); // EP-02
+await handle.on("ui_stable", { stableMs: 800 });
+
+handle.tap(360, 640); // ou handle.tapElement({ center, bounds })
+await handle.type("11999999999", {
+  region: { x: 0, y: 700, width: 720, height: 500 }, // opcional — teclado
+});
+await handle.scroll({ direction: "down", distance: 800 });
+handle.screenshot("./screenshots/tela.png");
+const { x, y, confidence } = await handle.matchImage("./templates/btn.png");
+handle.tap(x, y);
+const view = handle.openScrcpy({ title: `agent ${handle.serial}` });
+// → { pid, serial }
+```
+
+`type` = OCR das teclas + tap — sem `adb input text`. Coords de `extract` / `findByText` / `matchImage`.
+
+---
+
 ## Árvore de arquivos
 
 ```text

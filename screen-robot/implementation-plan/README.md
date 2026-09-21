@@ -1,6 +1,6 @@
 # Implementation plan — screen-robot
 
-**Por quê:** um arquivo de plano técnico por épico (sequências · agentes · passo a passo · contratos · classes · modelos · BDDs · **árvore de arquivos**).  
+**Por quê:** um arquivo de plano técnico por épico (sequências · agentes · passo a passo · contratos · classes · modelos · BDDs · **Como utilizar** · **árvore de arquivos**).  
 **Épicos:** [`../2.epics.md`](../2.epics.md) · [`../4.scenarios.md`](../4.scenarios.md) · [`../5.bdds.md`](../5.bdds.md).  
 **Visão:** [`../README.md`](../README.md).  
 **Processo:** [`core/processo/2.refinamento-tecnico`](../../core/processo/2.refinamento-tecnico/README.md#plano-de-implementação-por-épico).
@@ -10,7 +10,7 @@
 1. `provisionEmulator(cfg)` → `AgentHandle`  
 2. Capacidades seguintes são **métodos do handle** (sem `serial` no caller)  
 3. Libs internas (`events`, `apks`, `operate`, `extract`, `session`) encapsulam as sequências  
-4. Cada plano EP inclui seção **Árvore de arquivos** (código + unitários ao lado + e2e US/EP)  
+4. Cada plano EP inclui **`## Como utilizar`** (exemplos de chamadas dos métodos públicos) e **Árvore de arquivos**  
 5. Ops paralelo (fora do handle): `resetInstance(cfg)` — ver [`EP-01`](EP-01-provisionar-agente.md) e [`../src/README.md`](../src/README.md)
 
 | ID | Épico | Plano | API no handle |
@@ -27,7 +27,7 @@
 ```text
 implementation-plan/
 ├── README.md
-├── EP-01-provisionar-agente.md
+├── EP-01-provisionar-agente.md   # … Escopo → Como utilizar → Árvore → …
 ├── EP-02-eventos-de-ui.md
 ├── …
 └── EP-06-sessao.md

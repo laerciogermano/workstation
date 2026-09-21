@@ -237,6 +237,7 @@ const elements = await handle.extract();
 | BDD e2e US/EP (runtime real) | `npm run test:e2e` |
 | **SC-30 LinkedIn** (fixture, sem device) | ver abaixo |
 | Piloto LinkedIn ao vivo | `npm run linkedin-login` |
+| Exemplo mínimo (provision + scrcpy) | `npm run sample` |
 
 ```bash
 cd screen-robot/src

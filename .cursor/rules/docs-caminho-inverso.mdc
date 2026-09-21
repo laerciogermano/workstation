@@ -1,0 +1,30 @@
+---
+description: Alterações de código devem atualizar docs com o caminho inverso
+alwaysApply: true
+---
+
+# Docs acompanham o código (caminho inverso)
+
+Sempre que alterar código neste repositório, **atualizar a documentação** no mesmo commit (ou imediatamente após), com o necessário para alguém refazer o caminho **contrário** depois.
+
+## Critérios
+
+- Cubra o que mudou: contrato, config, defaults, flags, fluxos, pré-requisitos e efeitos colaterais
+- Inclua o **antes → depois** quando o comportamento antigo importar para reverter ou migrar
+- Documente como voltar: comando, config anterior, branch/commit, feature flag ou passo de rollback
+- Prefira o doc canônico do módulo (README, plano EP, postmortem, `src/README.md`) — não invente pasta nova sem necessidade
+- Sucinto: só o essencial para operar e desfazer; sem tutorial genérico
+
+## Exemplos
+
+```text
+✅ Código muda provision.name → README/start-runtime: name = AVD_NAME; serial sai do adb; como forçar AVD antigo
+✅ Script deixa de fazer wipe → doc: default --no-reset; wipe com --reset
+❌ Só muda o código e deixa o README descrevendo o fluxo antigo
+```
+
+## Fluxo
+
+1. Alterar o código
+2. Atualizar o(s) doc(s) afetado(s) com uso novo + caminho inverso
+3. Commit (código + docs juntos) e push

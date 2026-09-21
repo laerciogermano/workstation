@@ -322,7 +322,7 @@ const { serial } = await provisionEmulator({
 | `name` | `string` | `cfg.provision.name` \| `AVD_NAME` | Nome do agent / AVD |
 | `serial` | `string` | `cfg.provision.serial` \| `cfg.device` \| `ANDROID_SERIAL` | Ex.: `emulator-5554` |
 | `kind` | `"adb" \| "avd"` | `cfg.provision.kind` | Default documentado: `"avd"` |
-| `connectTimeoutMs` | `number` | `cfg.provision.connectTimeoutMs` | Default `120000` |
+| `connectTimeoutMs` | `number` | `cfg.provision.connectTimeoutMs` | Default `120000` **por fase** (ADB e boot separados; start tem o seu) |
 | `startScript` | `string?` | futuro | Path do script de start (SC-01) |
 | `resetScript` | `string?` | `cfg.provision.resetScript` | Wipe (`resetInstance`); default `pocs/android-studio/scripts/reset.sh` |
 

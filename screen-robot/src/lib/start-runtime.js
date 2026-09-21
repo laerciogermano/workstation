@@ -60,10 +60,39 @@ export function isRuntimeReachable(serial, timeoutMs = 1_000, deps = {}) {
   return Promise.resolve(Boolean(line && /\bdevice\b/.test(line)));
 }
 
-function defaultRunStartScript(scriptPath) {
+/** Serial `emulator-*` cujo `adb emu avd name` bate com `name`. */
+export function findSerialForAvd(name, deps = {}) {
+  const list =
+    typeof deps.adbDevices === "function"
+      ? deps.adbDevices()
+      : spawnSync("adb", ["devices"], { encoding: "utf8" }).stdout || "";
+  const serials = String(list)
+    .split("\n")
+    .map((l) => l.trim())
+    .filter((l) => l.startsWith("emulator-") && /\bdevice\b/.test(l))
+    .map((l) => l.split(/\s+/)[0]);
+  const avdName =
+    deps.avdNameOf ||
+    ((serial) => {
+      const r = spawnSync("adb", ["-s", serial, "emu", "avd", "name"], {
+        encoding: "utf8",
+      });
+      return String(r.stdout || "")
+        .split("\n")
+        .map((l) => l.trim())
+        .find((l) => l && l !== "OK") || "";
+    });
+  for (const serial of serials) {
+    if (avdName(serial) === name) return serial;
+  }
+  return null;
+}
+
+function defaultRunStartScript(scriptPath, env = {}) {
   const r = spawnSync("bash", [scriptPath], {
     encoding: "utf8",
     stdio: "inherit",
+    env: { ...process.env, ...env },
   });
   if (r.status !== 0) {
     const err = new Error(
@@ -75,17 +104,23 @@ function defaultRunStartScript(scriptPath) {
 }
 
 /**
- * @param {{ serial: string, kind: string, connectTimeoutMs?: number, startScript?: string }} resolved
- * @param {{ isReachable?: Function, runStartScript?: Function, sleep?: Function, now?: Function }} [deps]
+ * @param {{ serial?: string, name?: string, kind: string, connectTimeoutMs?: number, startScript?: string }} resolved
+ * @param {{ isReachable?: Function, runStartScript?: Function, findSerialForAvd?: Function, sleep?: Function, now?: Function }} [deps]
  */
 export async function startRuntime(resolved, deps = {}) {
   const isReachable = deps.isReachable ?? isRuntimeReachable;
   const runStartScript = deps.runStartScript ?? defaultRunStartScript;
+  const lookupAvd = deps.findSerialForAvd ?? findSerialForAvd;
   const sleep = deps.sleep ?? defaultSleep;
   const now = deps.now ?? Date.now;
   const timeoutMs = Number(resolved.connectTimeoutMs ?? 120_000);
 
-  if (await isReachable(resolved.serial)) return;
+  if (resolved.kind === "avd" && resolved.name) {
+    const already = lookupAvd(resolved.name);
+    if (already) return { serial: already };
+  } else if (resolved.serial && (await isReachable(resolved.serial))) {
+    return { serial: resolved.serial };
+  }
 
   const script =
     resolved.startScript || defaultStartScript(resolved.kind);
@@ -97,16 +132,23 @@ export async function startRuntime(resolved, deps = {}) {
     throw err;
   }
 
-  await runStartScript(script);
+  const env = resolved.name ? { AVD_NAME: resolved.name } : {};
+  await runStartScript(script, env);
 
   const started = now();
   while (now() - started < timeoutMs) {
-    if (await isReachable(resolved.serial)) return;
+    if (resolved.kind === "avd" && resolved.name) {
+      const serial = lookupAvd(resolved.name);
+      if (serial) return { serial };
+    } else if (resolved.serial && (await isReachable(resolved.serial))) {
+      return { serial: resolved.serial };
+    }
     await sleep(500);
   }
 
+  const who = resolved.name || resolved.serial;
   const err = new Error(
-    `PROVISION_START_FAILED: ${script} rodou mas ${resolved.serial} não ficou alcançável em ${timeoutMs}ms`,
+    `PROVISION_START_FAILED: ${script} rodou mas ${who} não ficou alcançável em ${timeoutMs}ms`,
   );
   err.code = "PROVISION_START_FAILED";
   throw err;

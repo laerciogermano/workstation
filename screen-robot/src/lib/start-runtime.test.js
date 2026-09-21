@@ -60,6 +60,54 @@ describe("startRuntime", () => {
     assert.equal(reachable, true);
   });
 
+  it("kind avd usa o name (AVD_NAME), ignora serial já online de outro AVD", async () => {
+    let env;
+    let runs = 0;
+    let lookups = 0;
+    const clock = fakeClock();
+    const out = await startRuntime(
+      {
+        name: "Outro_Cam",
+        kind: "avd",
+        serial: "emulator-5554",
+        connectTimeoutMs: 5_000,
+        startScript: "/tmp/start.sh",
+      },
+      {
+        isReachable: async () => true,
+        findSerialForAvd: () => {
+          lookups += 1;
+          return lookups > 1 ? "emulator-5556" : null;
+        },
+        runStartScript: async (_script, e) => {
+          runs += 1;
+          env = e;
+        },
+        sleep: clock.sleep,
+        now: clock.now,
+      },
+    );
+    assert.equal(runs, 1);
+    assert.equal(env.AVD_NAME, "Outro_Cam");
+    assert.equal(out.serial, "emulator-5556");
+  });
+
+  it("kind avd não sobe de novo se o name já está no adb", async () => {
+    let runs = 0;
+    const out = await startRuntime(
+      { name: "ConnectMax_Cam", kind: "avd", serial: "emulator-5554" },
+      {
+        isReachable: async () => true,
+        findSerialForAvd: () => "emulator-5558",
+        runStartScript: async () => {
+          runs += 1;
+        },
+      },
+    );
+    assert.equal(runs, 0);
+    assert.equal(out.serial, "emulator-5558");
+  });
+
   it("é idempotente quando já alcançável", async () => {
     let runs = 0;
     const deps = {

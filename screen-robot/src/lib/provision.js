@@ -15,21 +15,24 @@ import { waitBootCompleted as defaultWaitBootCompleted } from "./wait-boot-compl
 /**
  * @typedef {object} ProvisionConfig
  * @property {string} [device]
- * @property {{ serial?: string, kind?: string, connectTimeoutMs?: number, startScript?: string }} [provision]
+ * @property {{ name?: string, serial?: string, kind?: string, connectTimeoutMs?: number, startScript?: string }} [provision]
  */
 
 /** @param {ProvisionConfig} cfg */
 function resolveConfig(cfg) {
+  const name = cfg.provision?.name;
   const serial =
     cfg.provision?.serial || cfg.device || process.env.ANDROID_SERIAL;
-  if (!serial) {
+  const kind = cfg.provision?.kind || "adb";
+  if (!serial && !(name && kind === "avd")) {
     const err = new Error("PROVISION_NO_SERIAL: falta serial/device na config");
     err.code = "PROVISION_NO_SERIAL";
     throw err;
   }
   return {
+    name,
     serial,
-    kind: cfg.provision?.kind || "adb",
+    kind,
     connectTimeoutMs: Number(cfg.provision?.connectTimeoutMs ?? 120_000),
     startScript: cfg.provision?.startScript,
   };
@@ -54,23 +57,24 @@ export async function provisionEmulator(cfg, deps = {}) {
   const resolved = resolveConfig(cfg);
   const started = now();
 
-  await startRuntime(resolved);
-  await ensureAdbOnline(resolved.serial, resolved.connectTimeoutMs, started);
-  await waitBootCompleted(resolved.serial, resolved.connectTimeoutMs, started);
+  const runtime = await startRuntime(resolved);
+  const serial = runtime?.serial || resolved.serial;
+  await ensureAdbOnline(serial, resolved.connectTimeoutMs, started);
+  await waitBootCompleted(serial, resolved.connectTimeoutMs, started);
 
-  const operate = createOperate(resolved.serial);
+  const operate = createOperate(serial);
   const session = createSessionApi({
-    serial: resolved.serial,
+    serial,
     kind: resolved.kind,
   });
 
   return {
-    serial: resolved.serial,
+    serial,
     kind: resolved.kind,
     provisionedAt: toIso(),
     bootCompleted: true,
-    on: createOn(resolved.serial),
-    installApk: createInstallApk(resolved.serial),
+    on: createOn(serial),
+    installApk: createInstallApk(serial),
     launch: operate.launch,
     tap: operate.tap,
     tapElement: operate.tapElement,
@@ -79,7 +83,7 @@ export async function provisionEmulator(cfg, deps = {}) {
     screenshot: operate.screenshot,
     matchImage: operate.matchImage,
     openScrcpy: operate.openScrcpy,
-    extract: createExtract(resolved.serial),
+    extract: createExtract(serial),
     saveSession: session.saveSession,
     removeSession: session.removeSession,
     restoreSession: session.restoreSession,

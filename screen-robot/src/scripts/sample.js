@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /**
  * Exemplo mínimo: provisionar o emulador e abrir o scrcpy.
+ * `name` = AVD (muda a instância). O serial vem do adb.
  *
  *   npm run sample
  *   node scripts/sample.js
@@ -11,7 +12,6 @@ const handle = await provisionEmulator({
   provision: {
     name: "ConnectMax_Cam",
     kind: "avd",
-    serial: "emulator-5554",
   },
 });
 

@@ -15,7 +15,7 @@
 ## Execução
 
 - Componente interno `waitBoot` — poll `sys.boot_completed` até `1`
-- Expor via `handle.on("boot", opts?, onEvent?)`
+- Expor via `on({ event: "boot", … })`
 
 ## Saídas
 

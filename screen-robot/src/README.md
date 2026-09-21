@@ -20,10 +20,11 @@ Superfície pública:
 
 ```js
 import { provisionEmulator } from "./lib/provision.js";
+import { on } from "./lib/events.js"; // EP-02 — fora do handle
 import { resetInstance } from "./lib/reset-instance.js"; // ops — fora do handle
 ```
 
-Tudo o mais (gestos, APKs, eventos, extract, sessão) vem no **handle** retornado. Não passe `serial` nas operações — ele está no handle. `resetInstance` é export ops (wipe + boot); não é método do handle.
+Gestos, APKs, extract e sessão vêm no **handle**. Eventos UI: **`on(cfg)`** (import separado; `serial` na config). `resetInstance` também é ops fora do handle.
 
 ---
 
@@ -116,25 +117,38 @@ Erros: `APK_CONFIG_INVALID` · `APK_DOWNLOAD_FAILED` · `APK_INSTALL_FAILED`.
 
 ---
 
-## 3. Eventos de UI — `handle.on(event, opts?, onEvent?)`
+## 3. Eventos de UI — `on(cfg)`
 
 ```js
-await handle.on("boot");
-await handle.on("app_open", { pkg: "com.linkedin.android", timeoutMs: 60_000 });
-await handle.on("ui_stable", { timeoutMs: 90_000, stableMs: 800 }, (e) => {
-  console.log(e.type, e.attempt);
+import { on } from "./lib/events.js";
+
+await on({ serial: handle.serial, event: "boot" });
+await on({
+  serial: handle.serial,
+  event: "app_open",
+  pkg: "com.linkedin.android",
+  timeoutMs: 60_000,
 });
-await handle.on("frame_change", { timeoutMs: 30_000 });
+await on({
+  serial: handle.serial,
+  event: "ui_stable",
+  timeoutMs: 90_000,
+  stableMs: 800,
+  onEvent: (e) => console.log(e.type, e.attempt),
+});
+await on({ serial: handle.serial, event: "frame_change", timeoutMs: 30_000 });
 ```
 
 | Evento | O quê |
 |--------|--------|
 | `boot` | Sinal de boot do device |
-| `app_open` | Package em foreground (`opts.pkg`) |
+| `app_open` | Package em foreground (`pkg`) |
 | `ui_stable` | Frame estável (hash/diff de imagem) |
-| `frame_change` | Frame/imagem mudou (hash/diff visual) |
+| `frame_change` | Frame/imagem mudou (hoje via dump legado; alvo = hash visual) |
 
-Desconhecido → `EVENT_UNKNOWN`. Timeout → códigos `EVENT_*` / timeout do listener.
+**Antes → depois:** `handle.on(event, opts)` → `on({ serial, event, … })`. Sem método no handle.
+
+Desconhecido → `EVENT_UNKNOWN`. Sem serial → `EVENT_NO_SERIAL`. Timeout → códigos `EVENT_*`.
 
 ---
 
@@ -210,6 +224,7 @@ Erros: `SESSION_WRITE_FAILED` · `SESSION_NOT_FOUND` · `SESSION_INVALID`.
 ```js
 import { readFileSync } from "node:fs";
 import { provisionEmulator } from "./lib/provision.js";
+import { on } from "./lib/events.js";
 import { resetInstance } from "./lib/reset-instance.js";
 
 const cfg = JSON.parse(readFileSync("./device.config.json", "utf8"));
@@ -219,7 +234,7 @@ const handle = await provisionEmulator(cfg);
 
 await handle.installApk(cfg.apps.linkedin);
 await handle.launch(cfg.apps.linkedin.package);
-await handle.on("ui_stable", { timeoutMs: 90_000 });
+await on({ serial: handle.serial, event: "ui_stable", timeoutMs: 90_000 });
 
 handle.screenshot("./screenshots/01-antes-agree.png");
 const elements = await handle.extract();

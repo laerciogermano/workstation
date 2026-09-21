@@ -1,14 +1,14 @@
 /**
- * Unitário — events.js createOn (despacho com waits stub).
+ * Unitário — events.js on(cfg).
  */
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { createOn } from "./events.js";
+import { on } from "./events.js";
 
-describe("createOn", () => {
-  it("despacha boot / app_open / ui_stable / dump_change", async () => {
+describe("on(cfg)", () => {
+  it("despacha boot / app_open / ui_stable / frame_change", async () => {
     const calls = [];
-    const on = createOn("127.0.0.1:5555", {
+    const deps = {
       waitBoot: async (serial, opts) => {
         calls.push(["boot", serial, opts.onEvent]);
         return { boot: true };
@@ -21,31 +21,47 @@ describe("createOn", () => {
         calls.push(["stable"]);
         return { stable: true };
       },
-      waitDumpChange: async () => {
-        calls.push(["dump"]);
+      waitDumpChange: async (serial, opts) => {
+        calls.push(["frame", opts.previousXml]);
         return { xml: "<x/>", changed: true };
       },
-    });
+    };
     const cb = () => {};
-    assert.deepEqual(await on("boot", {}, cb), { boot: true });
-    assert.deepEqual(await on("app_open", { pkg: "com.x" }), {
-      foreground: true,
-      package: "com.x",
-    });
-    assert.deepEqual(await on("ui_stable", {}), { stable: true });
-    assert.deepEqual(await on("dump_change", { previousXml: "" }), {
-      xml: "<x/>",
-      changed: true,
-    });
+    assert.deepEqual(
+      await on({ serial: "127.0.0.1:5555", event: "boot", onEvent: cb }, deps),
+      { boot: true },
+    );
+    assert.deepEqual(
+      await on({ serial: "127.0.0.1:5555", event: "app_open", pkg: "com.x" }, deps),
+      { foreground: true, package: "com.x" },
+    );
+    assert.deepEqual(
+      await on({ serial: "s", event: "ui_stable" }, deps),
+      { stable: true },
+    );
+    assert.deepEqual(
+      await on(
+        { serial: "s", event: "frame_change", previousFrame: "<old/>" },
+        deps,
+      ),
+      { xml: "<x/>", changed: true },
+    );
     assert.equal(calls[0][0], "boot");
     assert.equal(calls[0][2], cb);
     assert.equal(calls[1][2], "com.x");
+    assert.equal(calls[3][1], "<old/>");
+  });
+
+  it("lança EVENT_NO_SERIAL sem serial", async () => {
+    await assert.rejects(
+      () => on({ event: "boot" }),
+      (err) => err && err.code === "EVENT_NO_SERIAL",
+    );
   });
 
   it("lança EVENT_UNKNOWN para evento inválido", async () => {
-    const on = createOn("s");
     await assert.rejects(
-      () => on("nope"),
+      () => on({ serial: "s", event: "nope" }),
       (err) => err && err.code === "EVENT_UNKNOWN",
     );
   });

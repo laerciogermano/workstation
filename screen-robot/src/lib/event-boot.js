@@ -1,6 +1,6 @@
 /**
  * SC-04 / US-02 — aguardar sinal de boot (evento UI).
- * Interno; caller usa handle.on("boot", …).
+ * Interno; caller usa on({ event: "boot", … }).
  */
 import { adb, sleep as defaultSleep } from "./adb.js";
 

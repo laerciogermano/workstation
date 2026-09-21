@@ -11,6 +11,7 @@ import { dirname, resolve, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { sleep } from "../lib/adb.js";
+import { on } from "../lib/events.js";
 import { captureFrame } from "../lib/frame.js";
 import {
   createExtract,
@@ -212,7 +213,7 @@ async function main() {
 
   console.log("3) Abrir tinder…");
   await handle.launch(appSpec.package);
-  await handle.on("ui_stable", { timeoutMs: 90_000 });
+  await on({ serial: handle.serial, event: "ui_stable", timeoutMs: 90_000 });
 
   console.log("4) Print da tela inicial…");
   const shot1 = resolve(outDir, "01-tela-inicial.png");
@@ -244,7 +245,7 @@ async function main() {
       );
       handle.tapElement({ center: hit.center, bounds: hit.bounds });
       await sleep(5_000);
-      await handle.on("ui_stable", { timeoutMs: 60_000 }).catch(() => {});
+      await on({ serial: handle.serial, event: "ui_stable", timeoutMs: 60_000 }).catch(() => {});
     } else {
       console.log("   (ALLOW botão não encontrado — segue)");
     }
@@ -278,7 +279,7 @@ async function main() {
     );
     handle.tapElement({ center: hit.center, bounds: hit.bounds });
     await sleep(5_000);
-    await handle.on("ui_stable", { timeoutMs: 60_000 }).catch(() => {});
+    await on({ serial: handle.serial, event: "ui_stable", timeoutMs: 60_000 }).catch(() => {});
   }
 
   console.log("10) Print após Phone Number…");

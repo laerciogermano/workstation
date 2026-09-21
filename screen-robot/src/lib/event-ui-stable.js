@@ -1,6 +1,6 @@
 /**
  * SC-06 / US-04 — aguardar UI estável (dump hash estável).
- * Interno; caller usa handle.on("ui_stable", …).
+ * Interno; caller usa on({ event: "ui_stable", … }).
  */
 import { createHash } from "node:crypto";
 import { sleep as defaultSleep } from "./adb.js";

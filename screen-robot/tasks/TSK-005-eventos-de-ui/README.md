@@ -15,7 +15,7 @@
 
 ## Execução
 
-- Encapsular SC-04..07 em módulos internos; API pública = `handle.on(event, opts?, onEvent?)`
+- Encapsular SC-04..07 em módulos internos; API pública = `on(cfg)` (`serial` + `event` na config)
 - Unitários isolados (mock/stub) ao lado de cada módulo; BDD e2e para US/EP
 
 ## Saídas

@@ -15,7 +15,7 @@
 ## Execução
 
 - Componente interno `waitFrameChange` — frame até hash ≠ base (sem dump uiautomator)
-- `handle.on("frame_change", { previousFrame }, onEvent?)`
+- `on({ event: "frame_change", previousFrame, … })`
 
 ## Saídas
 

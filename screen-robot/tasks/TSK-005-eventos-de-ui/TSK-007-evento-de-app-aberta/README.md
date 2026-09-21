@@ -16,7 +16,7 @@
 ## Execução
 
 - Componente interno `waitAppOpen` — poll foreground (`pidof` / equivalente)
-- `handle.on("app_open", { pkg, ... }, onEvent?)`
+- `on({ event: "app_open", pkg, … })`
 
 ## Saídas
 

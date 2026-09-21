@@ -1,6 +1,6 @@
 /**
  * SC-05 / US-03 — aguardar app em foreground.
- * Interno; caller usa handle.on("app_open", { pkg }, …).
+ * Interno; caller usa on({ event: "app_open", pkg, … }).
  */
 import { adbOk, sleep as defaultSleep } from "./adb.js";
 

@@ -111,17 +111,19 @@ const again = await provisionEmulator({
 // again.serial === a.serial — anexou sem criar
 ```
 
-A partir daí, só o handle:
+A partir daí:
 
 ```js
+import { on } from "./lib/events.js";
+
 // Instalar APK (skip se versão já ok)
 await handle.installApk(cfg.apps.linkedin);
 
-// Eventos (aguarda sinal antes de operar)
-await handle.on("boot");
-await handle.on("app_open", { pkg: "com.linkedin.android" });
-await handle.on("ui_stable", { timeoutMs: 90_000 });
-await handle.on("frame_change");
+// Eventos — on(cfg), não handle.on
+await on({ serial: handle.serial, event: "boot" });
+await on({ serial: handle.serial, event: "app_open", pkg: "com.linkedin.android" });
+await on({ serial: handle.serial, event: "ui_stable", timeoutMs: 90_000 });
+await on({ serial: handle.serial, event: "frame_change" });
 
 // Operar tela
 await handle.launch("com.linkedin.android");
@@ -148,7 +150,7 @@ await handle.removeSession("./state/session.json");
 | `provisionEmulator(cfg)` | Cria se `name` novo; anexa se já existir; aloca serial; boot ok |
 | `resetInstance(cfg)` | **Ops** (não é método do handle): wipe do AVD + sobe de novo; ADB + boot ok |
 | `installApk(app)` | Lê spec → baixa se preciso → instala; retorna `{ package, version, skipped }` |
-| `on(event, opts?, cb?)` | `boot` · `app_open` · `ui_stable` · `frame_change` |
+| `on(cfg)` | **EP-02** (não é método do handle): `boot` · `app_open` · `ui_stable` · `frame_change` |
 | `launch(pkg, activity?)` | Abre app |
 | `tap(x, y)` / `tapElement(el)` | Toque |
 | `type(text, opts?)` | Digita via OCR do teclado + tap em cada tecla (região opcional `x,y,width,height`) |

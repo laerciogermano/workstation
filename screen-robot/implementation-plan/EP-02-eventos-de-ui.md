@@ -81,7 +81,7 @@ src/
 
 Unitários ao lado do módulo. BDD e2e só US/EP.
 
-**Gap código atual:** `createOn` + `handle.on` no provision — migrar para `export async function on(cfg)`. Remover `on` do AgentHandle. Migrar `dump_change` → `frame_change`.
+**Código:** `on(cfg)` exportado; `handle.on` removido. Gap restante: `frame_change` ainda reusa dump XML (`waitDumpChange`) — I5.
 
 ---
 
@@ -405,13 +405,13 @@ Caller nos BDDs: device com `serial` online; “Quando o sistema espera…” = 
 
 | # | Entrega | SC | Arquivos | Critério |
 |---|---------|-----|----------|----------|
-| I1 | Exportar `on(cfg)`; remover `createOn` / `handle.on` do provision | — | `events.js` · `provision.js` | Caller usa só `on(cfg)` |
+| I1 | Exportar `on(cfg)`; remover `createOn` / `handle.on` do provision | — | `events.js` · `provision.js` | **Feito** |
 | I2 | Interno: `waitBoot` | SC-04 | `event-boot.js` | `on({ event: "boot" })` |
 | I3 | Interno: `waitAppOpen` | SC-05 | `event-app-open.js` | `on({ event: "app_open", pkg })` |
-| I4 | Interno: `waitUiStable` por hash de frame | SC-06 | `event-ui-stable.js` | Sem dump XML |
-| I5 | Interno: `waitFrameChange` | SC-07 | `event-frame-change.js` | Sem `dump_change` |
-| I6 | Atualizar scripts/BDDs/docs (`handle.on` → `on(cfg)`) | — | piloto · `src/README` · tasks | Zero `handle.on` |
-| I7 | Piloto LinkedIn: `on({ serial, event: "ui_stable", … })` | — | `linkedin-login.js` | Compila no novo contrato |
+| I4 | Interno: `waitUiStable` por hash de frame | SC-06 | `event-ui-stable.js` | Sem dump XML (gap: ainda dump) |
+| I5 | Interno: `waitFrameChange` | SC-07 | `event-frame-change.js` | **Gap** — hoje `frame_change` → dump |
+| I6 | Atualizar scripts/BDDs/docs (`handle.on` → `on(cfg)`) | — | piloto · `src/README` · tasks | **Feito** |
+| I7 | Piloto LinkedIn: `on({ serial, event: "ui_stable", … })` | — | `linkedin-login.js` | **Feito** |
 
 ### Ordem
 
@@ -425,11 +425,11 @@ I1 → I2 → I3 → I4 → I5 → I6 → I7
 
 | Peça | Status |
 |------|--------|
-| `handle.on` / `createOn(serial)` | **Legado** — substituir por `on(cfg)` |
+| `on(cfg)` exportado | **Feito** |
+| `handle.on` / `createOn` | **Removidos** |
 | `waitBoot` / `waitAppOpen` | Existem |
-| `waitUiStable` / `waitDumpChange` | Migrar dump → frame / `waitFrameChange` |
-| Evento `dump_change` | Renomear → `frame_change` |
-| `on` como export solto | **Alvo** (único público) |
+| `waitUiStable` / `waitDumpChange` | Ainda dump XML — migrar para hash de frame |
+| Evento `frame_change` | Alias de `dump_change` até I5 |
 
 ---
 

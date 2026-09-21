@@ -1,6 +1,6 @@
 /**
- * SC-07 / US-05 — aguardar mudança no dump de UI.
- * Interno; caller usa handle.on("dump_change", …).
+ * SC-07 / US-05 — aguardar mudança no dump de UI (legado; alvo = frame hash).
+ * Interno; caller usa on({ event: "frame_change"|"dump_change", … }).
  */
 import { createHash } from "node:crypto";
 import { sleep as defaultSleep } from "./adb.js";

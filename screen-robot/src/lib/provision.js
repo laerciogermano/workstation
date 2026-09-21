@@ -1,10 +1,10 @@
 /**
  * Biblioteca de provisionamento do emulador/agent.
  * Superfície pública: apenas `provisionEmulator`.
- * Handle: on · installApk · operate · extract · session (EP-02..06).
+ * Handle: installApk · operate · extract · session (EP-03..06).
+ * Eventos UI: `on(cfg)` em events.js (EP-02) — não anexado ao handle.
  */
 import { createInstallApk as defaultCreateInstallApk } from "./apks.js";
-import { createOn as defaultCreateOn } from "./events.js";
 import { createExtract as defaultCreateExtract } from "./extract.js";
 import { ensureAdbOnline as defaultEnsureAdbOnline } from "./ensure-adb-online.js";
 import { createOperate as defaultCreateOperate } from "./operate.js";
@@ -56,7 +56,6 @@ export async function provisionEmulator(cfg, deps = {}) {
   const startRuntime = deps.startRuntime ?? defaultStartRuntime;
   const ensureAdbOnline = deps.ensureAdbOnline ?? defaultEnsureAdbOnline;
   const waitBootCompleted = deps.waitBootCompleted ?? defaultWaitBootCompleted;
-  const createOn = deps.createOn ?? defaultCreateOn;
   const createInstallApk = deps.createInstallApk ?? defaultCreateInstallApk;
   const createOperate = deps.createOperate ?? defaultCreateOperate;
   const createExtract = deps.createExtract ?? defaultCreateExtract;
@@ -83,7 +82,6 @@ export async function provisionEmulator(cfg, deps = {}) {
     kind: resolved.kind,
     provisionedAt: toIso(),
     bootCompleted: true,
-    on: createOn(serial),
     installApk: createInstallApk(serial),
     launch: operate.launch,
     tap: operate.tap,

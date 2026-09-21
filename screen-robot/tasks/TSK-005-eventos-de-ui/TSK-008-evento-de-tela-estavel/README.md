@@ -15,7 +15,7 @@
 ## Execução
 
 - Componente interno `waitUiStable` — hash/diff de **frame/imagem** estável por `stableMs` (sem dump XML)
-- `handle.on("ui_stable", opts?, onEvent?)`
+- `on({ event: "ui_stable", … })`
 
 ## Saídas
 

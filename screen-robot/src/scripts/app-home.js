@@ -11,6 +11,7 @@ import { readFileSync, existsSync, mkdirSync, writeFileSync, readdirSync, rmSync
 import { dirname, resolve, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { on } from "../lib/events.js";
 import { provisionEmulator } from "../lib/provision.js";
 import { resetInstance } from "../lib/reset-instance.js";
 
@@ -80,7 +81,7 @@ async function main() {
 
   console.log(`3) Abrir ${appKey}…`);
   await handle.launch(appSpec.package);
-  await handle.on("ui_stable", { timeoutMs: 90_000 });
+  await on({ serial: handle.serial, event: "ui_stable", timeoutMs: 90_000 });
 
   console.log("4) Print da tela inicial…");
   const shotPath = resolve(outDir, "01-tela-inicial.png");

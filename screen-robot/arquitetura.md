@@ -961,6 +961,447 @@ sequenceDiagram
   Note over X,Op: §5.5–5.6 frame+OCR+tap
 ```
 
+### 5.10 Scripts shell — AVD (`pocs/android-studio/scripts`)
+
+Quem chama: `start-runtime` → `defaultStartScript("avd")` → `start.sh` · `resetInstance` → `defaultResetScript("avd")` → `reset.sh`. Env: `AVD_NAME` (default `ConnectMax_Cam`), `EMU_MEMORY`, `EMU_CORES`, `EMU_NO_WINDOW`.
+
+#### `start.sh`
+
+```mermaid
+---
+config:
+  theme: base
+  themeVariables:
+    darkMode: true
+    background: '#000000'
+    primaryColor: '#000000'
+    primaryTextColor: '#ffffff'
+    primaryBorderColor: '#64748b'
+    lineColor: '#64748b'
+    textColor: '#ffffff'
+    mainBkg: '#000000'
+    actorBkg: '#000000'
+    actorBorder: '#64748b'
+    actorTextColor: '#ffffff'
+    signalColor: '#94a3b8'
+    signalTextColor: '#ffffff'
+    noteBorderColor: '#64748b'
+    noteBkgColor: '#111111'
+    noteTextColor: '#ffffff'
+    sequenceNumberColor: '#ffffff'
+---
+sequenceDiagram
+  autonumber
+  actor Lib as start-runtime / bash
+  participant Start as start.sh
+  participant Setup as setup-avd.sh
+  participant AvdMgr as avdmanager
+  participant Emu as emulator CLI
+  participant FS as ~/.android/avd/*.avd
+  participant Qemu as qemu-system (nohup)
+
+  Lib->>Start: bash start.sh (AVD_NAME=…)
+  Start->>Start: export JAVA_HOME ANDROID_HOME PATH
+  alt emulator não no PATH
+    Start-->>Lib: exit 1
+  end
+  Start->>AvdMgr: list avd | grep Name: AVD_NAME
+  alt AVD não existe
+    Start->>Setup: setup-avd.sh
+    Note over Setup: ver §5.10 setup-avd
+  end
+  Start->>Emu: -webcam-list
+  Start->>Start: escolhe webcam OBS ou webcam0
+  Start->>FS: reescreve hw.camera.back/front no config.ini
+  Start->>Qemu: pkill qemu-system.*AVD_NAME
+  Start->>Emu: nohup emulator -avd AVD_NAME -camera-* -memory -cores -gpu … [-no-window]
+  Emu->>Qemu: processo em background → emulator.log
+  Start-->>Lib: exit 0 (boot ainda assíncrono — lib faz poll)
+```
+
+#### `setup-avd.sh`
+
+```mermaid
+---
+config:
+  theme: base
+  themeVariables:
+    darkMode: true
+    background: '#000000'
+    primaryColor: '#000000'
+    primaryTextColor: '#ffffff'
+    primaryBorderColor: '#64748b'
+    lineColor: '#64748b'
+    textColor: '#ffffff'
+    mainBkg: '#000000'
+    actorBkg: '#000000'
+    actorBorder: '#64748b'
+    actorTextColor: '#ffffff'
+    signalColor: '#94a3b8'
+    signalTextColor: '#ffffff'
+    noteBorderColor: '#64748b'
+    noteBkgColor: '#111111'
+    noteTextColor: '#ffffff'
+    sequenceNumberColor: '#ffffff'
+---
+sequenceDiagram
+  autonumber
+  actor Caller as start.sh / manual
+  participant Setup as setup-avd.sh
+  participant Sdk as sdkmanager
+  participant Avd as avdmanager
+  participant Py as python3
+  participant FS as config.ini
+
+  Caller->>Setup: setup-avd.sh
+  Setup->>Setup: checa ANDROID_HOME/emulator
+  Setup->>Sdk: yes | --licenses
+  Setup->>Sdk: --install emulator platform-tools system-images;android-30;google_apis_playstore;arm64-v8a
+  alt AVD já existe
+    Setup->>Setup: só atualiza config
+  else
+    Setup->>Avd: create avd -n AVD_NAME -k PACKAGE -d pixel_4 --force
+  end
+  opt config ainda google_apis (sem Play)
+    Setup->>Avd: delete avd + create playstore
+  end
+  Setup->>Py: reescreve RAM/CPU/disk/câmera/PlayStore.enabled
+  Py->>FS: config.ini
+  Setup-->>Caller: pronto
+```
+
+#### `reset.sh` (+ `stop.sh` + `wait-boot.sh`)
+
+```mermaid
+---
+config:
+  theme: base
+  themeVariables:
+    darkMode: true
+    background: '#000000'
+    primaryColor: '#000000'
+    primaryTextColor: '#ffffff'
+    primaryBorderColor: '#64748b'
+    lineColor: '#64748b'
+    textColor: '#ffffff'
+    mainBkg: '#000000'
+    actorBkg: '#000000'
+    actorBorder: '#64748b'
+    actorTextColor: '#ffffff'
+    signalColor: '#94a3b8'
+    signalTextColor: '#ffffff'
+    noteBorderColor: '#64748b'
+    noteBkgColor: '#111111'
+    noteTextColor: '#ffffff'
+    sequenceNumberColor: '#ffffff'
+    loopTextColor: '#ffffff'
+---
+sequenceDiagram
+  autonumber
+  actor Lib as resetInstance
+  participant Reset as reset.sh
+  participant Stop as stop.sh
+  participant Setup as setup-avd.sh
+  participant Emu as emulator
+  participant Wait as wait-boot.sh
+  participant ADB as adb -e
+  participant Qemu as qemu-system
+
+  Lib->>Reset: bash reset.sh (AVD_NAME)
+  Reset->>Reset: free_gb /Users — aborta se livre menor que 4 GB
+  Reset->>Stop: stop.sh
+  Stop->>Qemu: pkill qemu-system.*AVD_NAME
+  Stop->>Qemu: pkill emulator -avd AVD_NAME
+  alt AVD sumiu
+    Reset->>Setup: setup-avd.sh
+  end
+  Reset->>Emu: -webcam-list → WEBCAM
+  Reset->>Emu: nohup emulator -avd … -wipe-data …
+  Emu->>Qemu: sobe com wipe
+  Reset->>Reset: sleep 3; kill -0 pid (senão FATAL no log)
+  Reset->>Wait: wait-boot.sh
+  loop até 60× (sleep 2)
+    Wait->>Qemu: pgrep qemu-system
+    Wait->>ADB: shell getprop sys.boot_completed
+  end
+  Wait->>ADB: devices -l
+  Wait-->>Reset: boot OK
+  Reset-->>Lib: exit 0
+```
+
+#### `stop.sh` / `wait-boot.sh` (isolados)
+
+```mermaid
+---
+config:
+  theme: base
+  themeVariables:
+    darkMode: true
+    background: '#000000'
+    primaryColor: '#000000'
+    primaryTextColor: '#ffffff'
+    primaryBorderColor: '#64748b'
+    lineColor: '#64748b'
+    textColor: '#ffffff'
+    mainBkg: '#000000'
+    actorBkg: '#000000'
+    actorBorder: '#64748b'
+    actorTextColor: '#ffffff'
+    signalColor: '#94a3b8'
+    signalTextColor: '#ffffff'
+    noteBorderColor: '#64748b'
+    noteBkgColor: '#111111'
+    noteTextColor: '#ffffff'
+    sequenceNumberColor: '#ffffff'
+    loopTextColor: '#ffffff'
+---
+sequenceDiagram
+  autonumber
+  actor User as operador / reset.sh
+  participant Stop as stop.sh
+  participant Wait as wait-boot.sh
+  participant Qemu as qemu-system
+  participant ADB as adb -e
+
+  alt stop
+    User->>Stop: stop.sh
+    Stop->>Qemu: pkill -f qemu-system.*AVD_NAME
+    Stop->>Qemu: pkill -f emulator -avd AVD_NAME
+  else wait-boot
+    User->>Wait: wait-boot.sh
+    loop 1..60
+      Wait->>Qemu: pgrep qemu-system (senão exit 1)
+      Wait->>ADB: getprop sys.boot_completed
+      alt =1
+        Wait->>ADB: devices -l
+        Wait-->>User: exit 0
+      end
+    end
+    Wait-->>User: timeout exit 1
+  end
+```
+
+### 5.11 Scripts shell — redroid (`pocs/redroid/scripts`)
+
+Quem chama: `start-runtime` → `start.sh` (env `REDROID_NAME`, `ADB_PORT`) · `resetInstance` → `reset.sh`. Todo script `source _docker.sh` (garante Docker/Colima).
+
+#### `_docker.sh` — `_redroid_ensure_docker`
+
+```mermaid
+---
+config:
+  theme: base
+  themeVariables:
+    darkMode: true
+    background: '#000000'
+    primaryColor: '#000000'
+    primaryTextColor: '#ffffff'
+    primaryBorderColor: '#64748b'
+    lineColor: '#64748b'
+    textColor: '#ffffff'
+    mainBkg: '#000000'
+    actorBkg: '#000000'
+    actorBorder: '#64748b'
+    actorTextColor: '#ffffff'
+    signalColor: '#94a3b8'
+    signalTextColor: '#ffffff'
+    noteBorderColor: '#64748b'
+    noteBkgColor: '#111111'
+    noteTextColor: '#ffffff'
+    sequenceNumberColor: '#ffffff'
+    loopTextColor: '#ffffff'
+---
+sequenceDiagram
+  autonumber
+  participant Any as start|reset|stop.sh
+  participant D as _docker.sh
+  participant Sock as ~/.colima/*/docker.sock
+  participant Colima as colima CLI
+  participant Dock as docker info
+  participant SSH as colima ssh (alarm)
+
+  Any->>D: source _docker.sh → _redroid_ensure_docker
+  D->>Sock: localiza socket Colima
+  D->>D: export DOCKER_HOST=unix://…
+  D->>Dock: docker info
+  alt OK
+    D-->>Any: return 0
+  else Darwin + colima
+    alt colima “running” mas docker morto
+      D->>Colima: restart (alarm 90s)
+      opt falhou
+        D->>Colima: stop -f + pkill limactl + start
+      end
+    else
+      D->>Colima: start
+    end
+    D->>SSH: mount binderfs (best-effort)
+    loop até 45s
+      D->>Dock: docker info
+    end
+  end
+```
+
+#### `start.sh`
+
+```mermaid
+---
+config:
+  theme: base
+  themeVariables:
+    darkMode: true
+    background: '#000000'
+    primaryColor: '#000000'
+    primaryTextColor: '#ffffff'
+    primaryBorderColor: '#64748b'
+    lineColor: '#64748b'
+    textColor: '#ffffff'
+    mainBkg: '#000000'
+    actorBkg: '#000000'
+    actorBorder: '#64748b'
+    actorTextColor: '#ffffff'
+    signalColor: '#94a3b8'
+    signalTextColor: '#ffffff'
+    noteBorderColor: '#64748b'
+    noteBkgColor: '#111111'
+    noteTextColor: '#ffffff'
+    sequenceNumberColor: '#ffffff'
+---
+sequenceDiagram
+  autonumber
+  actor Lib as start-runtime
+  participant Start as start.sh
+  participant DockInit as _docker.sh
+  participant Host as colima ssh / lsmod
+  participant Compose as docker compose
+  participant Ctr as container redroid-*
+
+  Lib->>Start: bash start.sh (REDROID_NAME ADB_PORT)
+  Start->>DockInit: source → ensure docker
+  opt sem .env
+    Start->>Start: cp .env.example .env
+  end
+  Start->>Start: mkdir -p data
+  opt REDROID_NAME set
+    Start->>Start: SLUG → COMPOSE_PROJECT_NAME / REDROID_CONTAINER_NAME / ADB_PORT
+  end
+  alt Linux
+    Start->>Host: lsmod binder_linux (aviso se falta)
+  else Darwin
+    Start->>Host: colima ssh → modprobe binder + mount binderfs
+  end
+  Start->>Compose: up -d --force-recreate
+  opt falhou
+    Start->>Compose: docker rm -f órfãos + up de novo
+  end
+  Compose->>Ctr: sobe redroid/redroid
+  Start->>Compose: ps (+ aviso se mais de 1 redroid up)
+  Start-->>Lib: exit 0
+```
+
+#### `reset.sh` / `stop.sh`
+
+```mermaid
+---
+config:
+  theme: base
+  themeVariables:
+    darkMode: true
+    background: '#000000'
+    primaryColor: '#000000'
+    primaryTextColor: '#ffffff'
+    primaryBorderColor: '#64748b'
+    lineColor: '#64748b'
+    textColor: '#ffffff'
+    mainBkg: '#000000'
+    actorBkg: '#000000'
+    actorBorder: '#64748b'
+    actorTextColor: '#ffffff'
+    signalColor: '#94a3b8'
+    signalTextColor: '#ffffff'
+    noteBorderColor: '#64748b'
+    noteBkgColor: '#111111'
+    noteTextColor: '#ffffff'
+    sequenceNumberColor: '#ffffff'
+---
+sequenceDiagram
+  autonumber
+  actor Lib as resetInstance / operador
+  participant Reset as reset.sh
+  participant Stop as stop.sh
+  participant DockInit as _docker.sh
+  participant Compose as docker compose
+  participant Start as start.sh
+  participant Vol as volumes ./data
+
+  alt reset (wipe)
+    Lib->>Reset: bash reset.sh
+    Reset->>DockInit: source ensure docker
+    Reset->>Reset: aplica REDROID_NAME → project/container/port
+    Reset->>Compose: down -v
+    Compose->>Vol: remove volumes (instância do zero)
+    Reset->>Start: exec start.sh
+    Note over Start: §5.11 start (compose up)
+  else stop (preserva data)
+    Lib->>Stop: stop.sh
+    Stop->>DockInit: source ensure docker
+    Stop->>Compose: down
+    Note over Vol: ./data preservado
+  end
+```
+
+### 5.12 Quem chama qual script
+
+```mermaid
+---
+config:
+  theme: base
+  themeVariables:
+    darkMode: true
+    background: '#000000'
+    primaryColor: '#000000'
+    primaryTextColor: '#ffffff'
+    primaryBorderColor: '#64748b'
+    lineColor: '#64748b'
+    textColor: '#ffffff'
+    mainBkg: '#000000'
+    actorBkg: '#000000'
+    actorBorder: '#64748b'
+    actorTextColor: '#ffffff'
+    signalColor: '#94a3b8'
+    signalTextColor: '#ffffff'
+    noteBorderColor: '#64748b'
+    noteBkgColor: '#111111'
+    noteTextColor: '#ffffff'
+    sequenceNumberColor: '#ffffff'
+---
+sequenceDiagram
+  autonumber
+  participant Prov as provisionEmulator
+  participant Reset as resetInstance
+  participant SR as start-runtime
+  participant AvdStart as android-studio/start.sh
+  participant AvdReset as android-studio/reset.sh
+  participant RedStart as redroid/start.sh
+  participant RedReset as redroid/reset.sh
+
+  Prov->>SR: startRuntime
+  alt kind=avd
+    SR->>AvdStart: bash + AVD_NAME
+  else kind=redroid
+    SR->>RedStart: bash + REDROID_NAME + ADB_PORT
+  end
+
+  Reset->>Reset: defaultResetScript(kind)
+  alt kind=avd
+    Reset->>AvdReset: bash reset.sh
+    Note over AvdReset: stop → wipe emulator → wait-boot
+  else kind=redroid|adb
+    Reset->>RedReset: bash reset.sh
+    Note over RedReset: compose down -v → start.sh
+  end
+```
+
 ---
 
 ## 6. Gaps (código vs alvo)
@@ -982,5 +1423,5 @@ sequenceDiagram
 | Contratos / uso | [`src/README.md`](src/README.md) |
 | Detalhe por EP | [`implementation-plan/`](implementation-plan/README.md) |
 | Por que AVD | [`postmortem.md`](postmortem.md) |
-| Shell start/reset | [`pocs/android-studio/`](pocs/android-studio/README.md) · [`pocs/redroid/`](pocs/redroid/README.md) |
+| Shell start/reset (seq. §5.10–5.12) | [`pocs/android-studio/`](pocs/android-studio/README.md) · [`pocs/redroid/`](pocs/redroid/README.md) |
 | Aceite | [`5.bdds.md`](5.bdds.md) |

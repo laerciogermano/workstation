@@ -3,6 +3,7 @@
 **Por quê:** um arquivo de plano técnico por épico (sequências · agentes · passo a passo · contratos · classes · modelos · BDDs · **Como utilizar** · **árvore de arquivos**).  
 **Épicos:** [`../2.epics.md`](../2.epics.md) · [`../4.scenarios.md`](../4.scenarios.md) · [`../5.bdds.md`](../5.bdds.md).  
 **Visão:** [`../README.md`](../README.md).  
+**Arquitetura consolidada:** [`../arquitetura.md`](../arquitetura.md).  
 **Processo:** [`core/processo/2.refinamento-tecnico`](../../core/processo/2.refinamento-tecnico/README.md#plano-de-implementação-por-épico).
 
 **Padrão (EP-01 → EP-06):**

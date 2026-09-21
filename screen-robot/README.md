@@ -3,6 +3,7 @@
 **Por quê:** fixar o *quê* do robô de tela antes de goals de negócio.  
 **Importante:** este projeto **só** opera o device/tela via **Node**; não implementa cadência comercial nem fila de leads.  
 **No fluxo:** **este documento** → stories → epics (prioridade) → roadmap → refinar estória (scenarios → bdds → protótipo se houver) → `7.tasks` / implementation-plan → pasta [`tasks/`](tasks/README.md) (EP/US/SC) → implementação em [`src/`](src/README.md).  
+**Arquitetura (sequências · classes):** [`arquitetura.md`](arquitetura.md).  
 **Umbrella:** [`../connectmax/README.md`](../connectmax/README.md).  
 **Consumidor LinkedIn:** [`../connectmax/linkedin-agent/`](../connectmax/linkedin-agent/README.md).  
 **Negócio (fila/faturamento):** [`../connectmax/vendas/`](../connectmax/vendas/README.md).  
@@ -206,6 +207,7 @@ Detalhe das libs e CLI legado: [`src/README.md`](src/README.md).
 | Roadmap (Gantt) | [`3.roadmap.md`](3.roadmap.md) | Feito |
 | Cenários | [`4.scenarios.md`](4.scenarios.md) | Feito |
 | BDDs | [`5.bdds.md`](5.bdds.md) | Feito |
+| Arquitetura (seq. · classes) | [`arquitetura.md`](arquitetura.md) | Feito |
 | Implementation plan | por épico em [`implementation-plan/`](implementation-plan/README.md) | Feito |
 | Tasks (Gantt) | [`7.tasks.md`](7.tasks.md) | Feito |
 | Tasks (EP/US/SC) | [`tasks/`](tasks/README.md) | EP-01..06 |

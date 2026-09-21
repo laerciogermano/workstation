@@ -21,7 +21,7 @@
 
 ## Saídas
 
-- Device com boot completo (`Booted`) → `AgentHandle` com `bootCompleted: true`
+- Device com boot completo (`Booted`) → `{ serial, bootCompleted: true }`
 - Erro típico: `PROVISION_BOOT_TIMEOUT`
 
 ## Documentação

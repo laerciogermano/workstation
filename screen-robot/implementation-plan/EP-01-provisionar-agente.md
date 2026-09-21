@@ -142,8 +142,8 @@ Helpers internos (`resolveConfig`, `startRuntime`, `attachRuntime`, `ensureAdbOn
 
 | Superfície | O quê |
 |------------|--------|
-| **Público (handle)** | `provisionEmulator(cfg)` |
-| **Público (ops)** | `resetInstance(cfg)` — wipe + boot; **não** anexado ao handle |
+| **Público (dados)** | `provisionEmulator(cfg)` → `{ serial, kind, provisionedAt, bootCompleted }` |
+| **Público (ops)** | `resetInstance(cfg)` — wipe + boot; funções EP-02..06 com `{ serial, … }` |
 | **Privado** | alocar serial · criar/anexar AVD · ADB · boot |
 
 `cfg.provision.name` (ou `cfg.name`) é **obrigatório**. Serial é **alocado/resolvido** pela lib no create (ex. `emulator-5554`).
@@ -160,7 +160,7 @@ Helpers internos (`resolveConfig`, `startRuntime`, `attachRuntime`, `ensureAdbOn
 
 | Agente | Responsabilidade |
 |--------|------------------|
-| Caller / CLI | Chama **só** `provisionEmulator(cfg)` e consome o `AgentHandle` |
+| Caller / CLI | Chama **só** `provisionEmulator(cfg)` e consome `{ serial, … }` |
 | provision.js | Biblioteca: encapsula SC-01→SC-03 (start, ADB, boot) |
 | Runtime (interno) | Sobe AVD novo por `name` (ou resolve existente no attach) |
 | AdbClient (interno) | `adb` connect, wait-for-device, getprop — **não** exportado |
@@ -251,21 +251,21 @@ sequenceDiagram
     end
   end
 
-  Lib-->>Dev: AgentHandle { serial, kind, provisionedAt, bootCompleted }
+  Lib-->>Dev: { serial, kind, provisionedAt, bootCompleted }
 ```
 
 #### Passo a passo
 
 | # | De | Para | Chamada | Descrição | Entradas | Execução | Saídas |
 |---|----|------|---------|-----------|----------|----------|--------|
-| 1 | Dev | provision.js | `provisionEmulator(cfg)` | **Única** chamada pública | `cfg` | Orquestra SC-01→SC-03 por dentro | Promise `AgentHandle` |
+| 1 | Dev | provision.js | `provisionEmulator(cfg)` | **Única** chamada pública EP-01 | `cfg` | Orquestra SC-01→SC-03 por dentro | Promise `{ serial, kind, provisionedAt, bootCompleted }` |
 | 2 | Lib | Lib | `resolveConfig` *(privado)* | Normalizar config | `cfg` + env | Defaults e precedência | config resolvida |
 | 3 | Lib | Runtime | `startRuntime` *(privado)* | Garantir AVD up (SC-01) | `kind`, `startScript?` | Start se não reachable | `reachable` |
 | 4 | Runtime | Device | `scripts/start.sh` | Materializar Android | script | Spawn emulator/AVD | `up` |
 | 5–6 | Device → Lib | — | reachable | Fechar SC-01 | `up` | Confirma | `true` |
 | 7–14 | Lib ↔ Adb | *(privado)* | connect + wait-for-device | SC-02 | `serial` | Loop até `device` | `online` |
 | 15–18 | Lib ↔ Adb | *(privado)* | getprop boot | SC-03 | `serial` | Poll até `1` | `boot=1` |
-| 19 | Lib | Dev | `AgentHandle` | Entregar handle | estado interno | Monta saída + anexa `on` | `{ serial, kind, provisionedAt, bootCompleted, on }` |
+| 19 | Lib | Dev | resultado | Entregar dados | estado interno | Monta saída (sem métodos) | `{ serial, kind, provisionedAt, bootCompleted }` |
 
 #### Contratos
 
@@ -288,34 +288,28 @@ type ProvisionConfig = {
   };
 };
 
-type AgentHandle = {
+type ProvisionResult = {
   serial: string;
   kind: string;
   provisionedAt: string; // ISO-8601
   bootCompleted: true;
-  /** EP-02: eventos de UI (serial já no handle). */
-  on(
-    event: "boot" | "app_open" | "ui_stable" | "frame_change",
-    opts?: Record<string, unknown>,
-    onEvent?: (payload: { type: string; [k: string]: unknown }) => void,
-  ): Promise<unknown>;
 };
 
-/** Único método exportado pela biblioteca. */
-declare function provisionEmulator(cfg: ProvisionConfig): Promise<AgentHandle>;
+/** Único método exportado do EP-01. Ops EP-02..06: funções com `{ serial, … }`. */
+declare function provisionEmulator(cfg: ProvisionConfig): Promise<ProvisionResult>;
 
-const handle = await provisionEmulator({
+const { serial } = await provisionEmulator({
   provision: {
     name: "agent-a",
     kind: "avd",
     connectTimeoutMs: 120_000,
   },
 });
-// → { serial, kind, provisionedAt, bootCompleted: true, on }
-// EP-02: await on({ serial: handle.serial, event: "ui_stable", stableMs: 1_200 });
+// → { serial, kind, provisionedAt, bootCompleted: true }
+// EP-02: await on({ serial, event: "ui_stable", stableMs: 1_200 });
 ```
 
-**Interno (não exportar):** `resolveConfig`, `startRuntime`, `ensureAdbOnline`, `waitBootCompleted` — encapsulam as linhas #2–#18 do passo a passo. Eventos UI: [`EP-02`](EP-02-eventos-de-ui.md) `on(cfg)` — **não** anexado ao handle.
+**Interno (não exportar):** `resolveConfig`, `startRuntime`, `ensureAdbOnline`, `waitBootCompleted` — encapsulam as linhas #2–#18 do passo a passo. Eventos UI: [`EP-02`](EP-02-eventos-de-ui.md) `on(cfg)` — **não** anexado ao retorno.
 
 ---
 
@@ -332,7 +326,7 @@ const handle = await provisionEmulator({
 | `startScript` | `string?` | futuro | Path do script de start (SC-01) |
 | `resetScript` | `string?` | `cfg.provision.resetScript` | Wipe (`resetInstance`); default `pocs/android-studio/scripts/reset.sh` |
 
-### AgentHandle (saída)
+### ProvisionResult (saída)
 
 | Campo | Tipo | Descrição |
 |-------|------|-----------|
@@ -340,13 +334,8 @@ const handle = await provisionEmulator({
 | `kind` | `string` | Kind efetivo |
 | `provisionedAt` | `ISO-8601` | Momento do aceite |
 | `bootCompleted` | `boolean` | Sempre `true` no sucesso |
-| `on` | `(event, opts?, onEvent?) => Promise` | EP-02: eventos de UI |
-| `installApk` | `(app) => Promise` | EP-03 |
-| `launch` / `tap` / `type` / `scroll` / `screenshot` / `matchImage` | métodos | EP-04 |
-| `extract` | `() => Promise<UiElement[]>` | EP-05 — lista plana só de textos OCR |
-| `saveSession` / `removeSession` / `restoreSession` | métodos | EP-06 |
 
-Métodos EP-02..06 são anexados ao handle em `provisionEmulator` (libs internas).
+**Antes → depois:** retorno tinha métodos (`on`, `installApk`, `launch`, …). Agora **só dados**; ops em funções com `{ serial, … }` ([`EP-02`](EP-02-eventos-de-ui.md)..[`EP-06`](EP-06-sessao.md)).
 
 ### DeviceState (máquina de estados)
 
@@ -423,10 +412,10 @@ classDiagram
 
   class provision_js {
     <<library>>
-    +provisionEmulator(cfg) Promise~AgentHandle~
+    +provisionEmulator(cfg) Promise~ProvisionResult~
   }
 
-  note for provision_js "Único export público.\nSC-01..03 encapsulados."
+  note for provision_js "Único export público EP-01.\nSC-01..03 encapsulados."
 
   class ProvisionConfig {
     +string serial
@@ -435,14 +424,14 @@ classDiagram
     +string startScript
   }
 
-  class AgentHandle {
+  class ProvisionResult {
     +string serial
     +string kind
     +string provisionedAt
     +boolean bootCompleted
   }
 
-  note for AgentHandle "Eventos UI: on(cfg) em events.js (EP-02),\nnão método do handle"
+  note for ProvisionResult "Só dados.\nOps: on/installApk/launch/… com serial"
 
   class Internals {
     <<private>>
@@ -462,12 +451,12 @@ classDiagram
   provision_js --> Internals : usa
   Internals --> AdbClient : usa
   provision_js ..> ProvisionConfig : lê
-  provision_js ..> AgentHandle : cria
+  provision_js ..> ProvisionResult : cria
 ```
 
 **Hoje:** `provisionEmulator` exportado; ADB + boot encapsulados; `resetInstance` ops + `pocs/android-studio/scripts/reset.sh`.  
-**EP-02:** eventos via `on(cfg)` solto — **não** anexar `on` ao handle.  
-**Gap:** completar `startRuntime` (AVD) **dentro** da lib, sem expandir a API do handle além do create-or-attach.
+**EP-02..06:** funções com `{ serial, … }` — **não** anexar métodos ao retorno.  
+**Gap:** completar `startRuntime` (AVD) **dentro** da lib, sem expandir a API além do create-or-attach.
 
 ---
 
@@ -532,10 +521,10 @@ Cenário: SC-25 Runtime é resolvido pelo nome
 ### SC-26 — Reconectar e confirmar boot
 
 ```gherkin
-Cenário: SC-26 Handle anexado fica pronto
+Cenário: SC-26 Provision anexado fica pronto
   Dado o runtime localizado pelo nome
   Quando adb connect / wait-for-device e poll de boot concluem
-  Então o handle está pronto (serial online, boot ok) sem novo AVD/emulador
+  Então o resultado está pronto (serial online, boot ok) sem novo AVD/emulador
 ```
 
 ### US-22 — Mascarar identidade do aparelho
@@ -566,7 +555,7 @@ Cenário: SC-28 Identidade de aparelho de mercado
 | I2 | Resolução de serial por agent (AVD) | SC-01 | `start-runtime.js` · `pocs/android-studio` | N agents (limitação RAM) |
 | I3 | `ensureAdbOnline` + `waitBootCompleted` no serial alocado | SC-02/03 | existentes | Encapsulados |
 | I4 | Mesmo `provisionEmulator` anexa se nome existe | US-20 / SC-25..26 | `attach-runtime.js` · `provision.js` | Sem novo AVD |
-| I5 | Handle inclui `name` | US-01/20 | `provision.js` | `handle.name` estável |
+| I5 | Resultado inclui `name` | US-01/20 | `provision.js` | `name` estável no retorno |
 | I6 | BDD e2e US-01 / US-20 / EP-01 | — | `test/bdd/` | Aceite multi-agent |
 | I7 | Piloto: limpa screenshots → `resetInstance` → provision | — | `linkedin-login.js` · `reset-instance.js` · `reset.sh` | Instância do zero |
 | I8 | Mascaramento de identidade (AVD) | US-22 / SC-28 | `pocs/android-studio` | Sem fingerprint do vendor |

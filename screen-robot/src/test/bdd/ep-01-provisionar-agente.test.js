@@ -27,7 +27,7 @@ describe("Épico: EP-01 Provisionar agente", () => {
   });
 
   it(
-    "Dado runtime disponivel; Quando provisiona o agent (SC-01..03); Então AgentHandle Booted",
+    "Dado runtime disponivel; Quando provisiona o agent (SC-01..03); Então ProvisionResult Booted",
     async () => {
       const handle = await provisionEmulator({
         provision: {

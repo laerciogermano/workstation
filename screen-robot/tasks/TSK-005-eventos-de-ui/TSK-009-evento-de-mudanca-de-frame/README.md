@@ -10,12 +10,12 @@
 
 ## Entradas
 
-- `previousFrame` (opcional); serial no handle; fonte de imagem (screenshot/stream/câmera)
+- `previousFrame` (opcional); `serial`; fonte de imagem (screenshot/stream/câmera)
 
 ## Execução
 
 - Componente interno `waitFrameChange` — frame até hash ≠ base (sem dump uiautomator)
-- `on({ event: "frame_change", previousFrame, … })`
+- `on({ serial, event: "frame_change", previousFrame, … })`
 
 ## Saídas
 

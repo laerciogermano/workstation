@@ -59,7 +59,7 @@ Ver stories em [`1.stories.md`](1.stories.md) e cenários em [`4.scenarios.md`](
 
 ## Como usar
 
-API em [`src/`](src/README.md). Superfície do handle: `provisionEmulator(cfg)` → **handle** (cria se o `name` for novo; anexa se já existir). Ops paralelo (fora do handle): `resetInstance(cfg)` — recria o runtime do zero. Não passe `serial` nas operações do handle — ele vem do handle.
+API em [`src/`](src/README.md). `provisionEmulator(cfg)` → `{ serial, kind, bootCompleted, provisionedAt }` (só dados). Ops: `on` / `installApk` / `launch` / … com `{ serial, … }`. `resetInstance(cfg)` recria o runtime do zero.
 
 ### 1. Pré-requisitos
 

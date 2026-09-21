@@ -10,15 +10,16 @@
 
 ## Entradas
 
-- Handle de EP-01 (`provisionEmulator` → `AgentHandle` com `on`)
+- `{ serial }` de EP-01 (`provisionEmulator`)
 - BDDs US-02..05 / SC-04..07
 
 ## Execução
 
-- Encapsular SC-04..07 em módulos internos; API pública = `on(cfg)` (`serial` + `event` na config)
-- Unitários isolados (mock/stub) ao lado de cada módulo; BDD e2e para US/EP
+- Encapsular SC-04..07 em módulos internos; API pública = `on({ serial, event, … })`
+- **Antes → depois:** `handle.on(event, opts)` → `on(cfg)`
+- Unitários isolados (mock/stub); BDD e2e para US/EP
 
 ## Saídas
 
-- Sinais `boot` · `app_open` · `ui_stable` · `frame_change` via handle
+- Sinais `boot` · `app_open` · `ui_stable` · `frame_change` via `on(cfg)`
 - Aceite EP-02 / US-02..05 verdes

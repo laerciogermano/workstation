@@ -210,7 +210,7 @@ Ilustrativo da API EP-06 (o piloto LinkedIn atual **não** grava sessão):
 | `step` | estado passado pelo caller |
 | `apps` | instalação (EP-03) |
 | `paths` | paths úteis para restore |
-| `extract` | última lista de elementos (EP-05), opcional |
+| `extract` | última lista de textos OCR (EP-05), opcional |
 | `events` | últimos eventos (EP-02), opcional |
 | `savedAt` | preenchido no save |
 

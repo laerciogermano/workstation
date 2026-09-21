@@ -143,7 +143,7 @@ Desconhecido → `EVENT_UNKNOWN`. Timeout → códigos `EVENT_*` / timeout do li
 ```js
 await handle.launch("com.linkedin.android");           // ou launch(pkg, ".MainActivity")
 handle.tap(360, 640);                                  // coords de visão/OCR sobre o frame
-handle.tapElement(el);                                 // el.center ou el.bounds (OCR/visão)
+handle.tapElement(el);                                 // el.center ou el.bounds (OCR)
 handle.type("11999999999", { region: { x: 0, y: 700, width: 720, height: 500 } }); // OCR teclado → tap
 handle.scroll({ direction: "down", distance: 800 });   // up|down|left|right; x/y opcionais
 const shot = handle.screenshot("./screenshots/tela.png"); // capturar frame (ADB; futuro: câmera)
@@ -169,22 +169,24 @@ const { pid, serial } = handle.openScrcpy(); // scrcpy no serial do handle
 
 ## 5. Extrair UI — `handle.extract()`
 
-Percepção por **frame → OCR/visão → lista plana** (sem dump uiautomator, sem árvore DOM). Sem parâmetros. Cada chamada **acrescenta elementos** na mesma lista:
+Pipeline **frame → OCR → lista plana de textos** (sem dump uiautomator, sem árvore DOM). Sem parâmetros. Só elementos `type: "text"` — **sem** ícones, listas, imagens ou enriquecimento por visão.
+
+**Antes → depois:** `extract()` deixou de enriquecer com visão em chamadas sucessivas; devolve só textos OCR.
 
 ```js
-const e1 = await handle.extract(); // OCR: textos + bounds
-const e2 = await handle.extract(); // lista enriquecida (visão + OCR)
-const e3 = await handle.extract(); // ícones (visão)
-const e4 = await handle.extract(); // listas (visão + OCR)
-const e5 = await handle.extract(); // imagens (visão)
-// [ { type: "text"|"icon"|"list"|"image", text?, bounds, center? }, … ]
+const elements = await handle.extract();
+// [ { type: "text", text, bounds, center }, … ]
+
+// Chamadas repetidas = mesma lista de textos (não accumulate outros tipos)
+const again = await handle.extract();
 
 // US-23: findByText — elementos lado a lado contidos na string maior (query)
 // const hit = await findByText(handle.serial, "Sign in with Email", { minScore: 0.8 });
 // // → elements: Sign, in, with, Email
 ```
 
-Fonte do frame: screenshot ADB, stream ou câmera (device real) — mesmo pipeline.
+Fonte do frame: screenshot ADB, stream ou câmera (device real) — mesmo pipeline.  
+`vision.js` permanece legado / template match (US-12); **não** tipa o retorno de `extract()`.
 
 Helpers: `findByText` (encapsula OCR; só vizinhos dentro da query) / `extractElements` / `findLoginTarget` / `findEditableFields` em [`lib/extract.js`](lib/extract.js).
 
@@ -276,7 +278,7 @@ Script [`scripts/linkedin-login.js`](scripts/linkedin-login.js):
 3. `provisionEmulator` → `openScrcpy` → `installApk(linkedin)` → `launch` → `on("ui_stable")`
 4. `01-tela-inicial.png`
 5. `findByText(serial, "Sign in with Email")` → tap `center` → `02-apos-sign-in-email.png`
-6. `extract()` ×5 → console da lista + `frame-screen.png` + `elements.json`
+6. `extract()` → console da lista de textos OCR + `frame-screen.png` + `elements.json`
 
 Só LinkedIn (sem Instagram). Sem digitar credenciais e sem `saveSession`.
 

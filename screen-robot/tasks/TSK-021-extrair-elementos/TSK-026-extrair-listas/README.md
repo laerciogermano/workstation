@@ -1,4 +1,4 @@
-# TSK 026 extrair listas
+# TSK 026 extrair listas — **cancelado / removido**
 
 | Campo | Valor |
 |-------|--------|
@@ -6,15 +6,6 @@
 | TSK | [`TSK-026`](../../7.tasks.md) |
 | Origem | US-15 · SC-20 |
 | Pai | [`TSK-021`](../README.md) |
+| Status | **Cancelado / removido** — não faz parte do produto |
 
-## Entradas
-
-- Frame da tela
-
-## Execução
-
-- **Visão + OCR** reconhecem listas/itens no frame → elementos `list` · `extract()`
-
-## Saídas
-
-- Lista com elementos `list` · aceite SC-20
+`extract()` não devolve elementos `list`.

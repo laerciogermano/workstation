@@ -310,7 +310,7 @@ const handle = await provisionEmulator({
 | `on` | `(event, opts?, onEvent?) => Promise` | EP-02: eventos de UI |
 | `installApk` | `(app) => Promise` | EP-03 |
 | `launch` / `tap` / `type` / `scroll` / `screenshot` / `matchImage` | métodos | EP-04 |
-| `extract` | `() => Promise<UiElement[]>` | EP-05 — lista acumulada a cada chamada |
+| `extract` | `() => Promise<UiElement[]>` | EP-05 — lista plana só de textos OCR |
 | `saveSession` / `removeSession` / `restoreSession` | métodos | EP-06 |
 
 Métodos EP-02..06 são anexados ao handle em `provisionEmulator` (libs internas).

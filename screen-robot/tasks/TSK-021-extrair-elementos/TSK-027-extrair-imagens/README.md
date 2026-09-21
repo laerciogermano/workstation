@@ -1,4 +1,4 @@
-# TSK 027 extrair imagens
+# TSK 027 extrair imagens — **cancelado / removido**
 
 | Campo | Valor |
 |-------|--------|
@@ -6,15 +6,6 @@
 | TSK | [`TSK-027`](../../7.tasks.md) |
 | Origem | US-16 · SC-21 |
 | Pai | [`TSK-021`](../README.md) |
+| Status | **Cancelado / removido** — não faz parte do produto |
 
-## Entradas
-
-- Frame da tela
-
-## Execução
-
-- **Visão** detecta regiões de imagem/foto no frame → elementos `image` · `extract()`
-
-## Saídas
-
-- Lista com elementos `image` · aceite SC-21
+`extract()` não devolve elementos `image`.

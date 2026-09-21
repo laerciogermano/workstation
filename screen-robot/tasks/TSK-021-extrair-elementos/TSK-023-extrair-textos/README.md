@@ -13,7 +13,7 @@
 
 ## Execução
 
-- **OCR** no frame: textos + bounds → elementos `text` · `extract()` fase 1
+- **OCR** no frame: textos + bounds → elementos `text` · `extract()`
 
 ## Saídas
 

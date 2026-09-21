@@ -14,9 +14,9 @@
 
 ## Visão
 
-O **screen-robot** é um agent Android controlado por código Node: provisiona o device, instala APKs, recebe eventos de UI, **percebe a tela por imagem** (OCR + visão), executa operações e guarda estado de sessão.
+O **screen-robot** é um agent Android controlado por código Node: provisiona o device, instala APKs, recebe eventos de UI, **percebe a tela por imagem** (OCR para textos; visão/template para coords), executa operações e guarda estado de sessão.
 
-**Princípio de percepção:** ler e automatizar a UI a partir de um **frame/imagem** (screenshot, stream ou **câmera em aparelho real**) — **OCR** para textos e visão para ícones/listas/imagens/coords. **Não** depende de dump uiautomator / árvore de acessibilidade ADB. O caminho futuro (device físico + câmera) usa o **mesmo** pipeline imagem → OCR/visão → **lista de elementos** → gestos.
+**Princípio de percepção:** ler e automatizar a UI a partir de um **frame/imagem** (screenshot, stream ou **câmera em aparelho real**) — **OCR** para textos (`extract()` → lista plana só de `type: "text"`) e **visão/template** para coords (US-12 `matchImage`). **Não** depende de dump uiautomator / árvore de acessibilidade ADB. O caminho futuro (device físico + câmera) usa o **mesmo** pipeline imagem → OCR → **lista de textos** → gestos.
 
 Além da automação por API, a instância Android permanece **disponível para controle interativo**: visualizar a tela (espelhamento) e operar manualmente — tocar, digitar, rolar e demais gestos — em paralelo ou em complemento ao código.
 
@@ -131,13 +131,9 @@ handle.scroll({ direction: "down", distance: 800 });
 handle.screenshot("./screenshots/tela.png");
 const { x, y, confidence } = await handle.matchImage("./templates/btn.png");
 
-// Extrair UI (lista plana de elementos OCR/visão; cada chamada enriquece)
-const e1 = await handle.extract(); // textos OCR
-const e2 = await handle.extract(); // lista enriquecida
-const e3 = await handle.extract(); // ícones
-const e4 = await handle.extract(); // listas
-const e5 = await handle.extract(); // imagens
-// → [ { type, text?, bounds, center? }, … ]
+// Extrair UI (frame → OCR → lista plana só de textos)
+const elements = await handle.extract();
+// → [ { type: "text", text, bounds, center }, … ]
 
 // Sessão
 await handle.saveSession("./state/session.json", { step: "logged-in" });
@@ -160,7 +156,7 @@ await handle.removeSession("./state/session.json");
 | `screenshot(path)` | Grava PNG |
 | `matchImage(templatePath)` | `{ x, y, confidence }` |
 | `openScrcpy(opts?)` | Abre scrcpy no serial do handle (US-21); retorna `{ pid, serial }` |
-| `extract()` | Lista plana de elementos (OCR/visão) |
+| `extract()` | Lista plana só de textos OCR (`type: "text"`) |
 | `findByText(serial, query)` | US-23: elementos lado a lado contidos na string maior (encapsula OCR) |
 | `saveSession` / `restoreSession` / `removeSession` | Persistência JSON |
 
@@ -180,7 +176,7 @@ Ordem do script ([`src/scripts/linkedin-login.js`](src/scripts/linkedin-login.js
 3. `provisionEmulator` → `openScrcpy` → `installApk(linkedin)` → `launch` → `ui_stable`
 4. Screenshot `01-tela-inicial.png`
 5. `findByText(serial, "Sign in with Email")` → tap no `center` → `02-apos-sign-in-email.png`
-6. `extract()` ×5 → console da lista + `frame-screen.png` + `elements.json`
+6. `extract()` → console da lista de textos OCR + `frame-screen.png` + `elements.json`
 
 Não digita credenciais e não chama `saveSession`.
 

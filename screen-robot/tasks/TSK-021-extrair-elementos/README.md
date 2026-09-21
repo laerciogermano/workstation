@@ -12,8 +12,9 @@
 
 ## Execução
 
-- Pipeline **frame → OCR/visão → lista plana** via `handle.extract()` (sem dump uiautomator, sem árvore DOM)
+- Pipeline **frame → OCR → lista plana de textos** via `handle.extract()` (sem dump uiautomator, sem árvore DOM)
+- **Antes → depois:** sem enriquecimento por visão; só `type: "text"`
 
 ## Saídas
 
-- Lista de elementos por tipo / completa · aceite EP-05
+- Lista `[ { type: "text", text, bounds, center }, … ]` · aceite EP-05 (US-13 · US-23)

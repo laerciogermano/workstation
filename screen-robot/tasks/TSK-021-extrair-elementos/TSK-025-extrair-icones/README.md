@@ -1,4 +1,4 @@
-# TSK 025 extrair icones
+# TSK 025 extrair icones — **cancelado / removido**
 
 | Campo | Valor |
 |-------|--------|
@@ -6,15 +6,6 @@
 | TSK | [`TSK-025`](../../7.tasks.md) |
 | Origem | US-14 · SC-19 |
 | Pai | [`TSK-021`](../README.md) |
+| Status | **Cancelado / removido** — não faz parte do produto |
 
-## Entradas
-
-- Frame da tela
-
-## Execução
-
-- **Visão** reconhece ícones no frame → elementos `icon` · `extract()`
-
-## Saídas
-
-- Lista com elementos `icon` · aceite SC-19
+`extract()` não devolve elementos `icon`. Visão/template match permanece só em US-12 (`matchImage`).

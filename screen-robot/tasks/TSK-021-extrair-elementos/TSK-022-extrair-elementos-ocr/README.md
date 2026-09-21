@@ -13,8 +13,8 @@
 
 ## Execução
 
-- OCR (textos) + visão (restante) sobre o frame até **lista completa** · `extract()`
+- **OCR** sobre o frame → lista plana só de textos · `extract()`
 
 ## Saídas
 
-- Lista de elementos · aceite US-13
+- Lista `[ { type: "text", text, bounds, center }, … ]` · aceite US-13

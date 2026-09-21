@@ -22,8 +22,21 @@ if [[ "$(uname -s)" == "Linux" ]]; then
     echo
   fi
 elif [[ "$(uname -s)" == "Darwin" ]]; then
-  echo "macOS + Colima: garantindo binderfs na VM..."
-  colima ssh -- sh -c 'sudo modprobe binder_linux devices="binder,hwbinder,vndbinder" 2>/dev/null || true; mountpoint -q /dev/binderfs || sudo mount -t binder binder /dev/binderfs' 2>/dev/null || true
+  echo "macOS + Colima: garantindo binder_linux + binderfs na VM..."
+  colima ssh -- bash -lc '
+    set -e
+    if ! lsmod | grep -q binder_linux; then
+      K=$(uname -r)
+      if ! modprobe binder_linux devices="binder,hwbinder,vndbinder" 2>/dev/null; then
+        echo "Instalando linux-modules-extra-$K (binder)..."
+        sudo apt-get update -qq
+        sudo DEBIAN_FRONTEND=noninteractive apt-get install -y "linux-modules-extra-$K"
+        sudo modprobe binder_linux devices="binder,hwbinder,vndbinder"
+      fi
+    fi
+    sudo mkdir -p /dev/binderfs
+    mountpoint -q /dev/binderfs || sudo mount -t binder binder /dev/binderfs
+  '
   echo
 fi
 

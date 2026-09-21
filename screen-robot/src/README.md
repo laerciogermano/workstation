@@ -52,15 +52,16 @@ const again = await provisionEmulator({
 |--------|---------|---------------|
 | `avd` | `name` | Sobe/anexa AVD; serial sai do `adb` |
 | `adb` | `serial` / `device` / `ANDROID_SERIAL` | Só anexa device já online |
-| `redroid` | `serial` | Legado/stub |
+| `redroid` | (opcional) `serial` — default `127.0.0.1:5555` | Sobe Docker/Colima via `pocs/redroid/scripts/start.sh` |
 
 | Caso | Comportamento |
 |------|----------------|
 | Nome/AVD novo | `start.sh` + setup cria AVD, boot ok |
 | AVD já no `adb` | Reconecta serial desse AVD — **não** sobe outro |
 | `kind=adb` sem serial | `PROVISION_NO_SERIAL` |
+| `kind=redroid` sem serial | Usa `127.0.0.1:5555` e sobe o container |
 
-**Antes → depois:** serial era sempre obrigatório e `name` era ignorado no start; agora `kind=avd` + `name` basta (serial resolvido). Para voltar ao modo “só anexa”: `kind: "adb"` + `serial`.
+**Antes → depois:** serial era sempre obrigatório e `name` era ignorado no start; agora `kind=avd` + `name` basta (serial resolvido), e `kind=redroid` defaulta o serial TCP. Para AVD canônico (GMS/apps de loja): `kind: "avd"`. Redroid = Android em container (sem GMS completo — ver postmortem).
 
 ### Vários em paralelo
 

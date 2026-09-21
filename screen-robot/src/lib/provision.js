@@ -21,14 +21,20 @@ import { waitBootCompleted as defaultWaitBootCompleted } from "./wait-boot-compl
 /** @param {ProvisionConfig} cfg */
 function resolveConfig(cfg) {
   const name = cfg.provision?.name;
-  const serial =
+  let serial =
     cfg.provision?.serial || cfg.device || process.env.ANDROID_SERIAL;
   const kind = cfg.provision?.kind || "adb";
+  // redroid: porta ADB do docker-compose (127.0.0.1:5555) se serial omitido
+  if (!serial && kind === "redroid") {
+    serial = "127.0.0.1:5555";
+  }
   if (!serial && !(name && kind === "avd")) {
     const tip =
       kind === "avd"
         ? "com kind=avd informe provision.name (AVD)"
-        : "informe provision.serial/device, ou use kind=avd + name";
+        : kind === "redroid"
+          ? "com kind=redroid use serial 127.0.0.1:5555 (default) ou informe serial"
+          : "informe provision.serial/device, ou use kind=avd + name / kind=redroid";
     const err = new Error(`PROVISION_NO_SERIAL: falta serial/device (${tip})`);
     err.code = "PROVISION_NO_SERIAL";
     throw err;

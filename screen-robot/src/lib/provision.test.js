@@ -61,4 +61,39 @@ describe("provisionEmulator", () => {
     assert.equal(typeof handle.removeSession, "function");
     assert.equal(typeof handle.restoreSession, "function");
   });
+
+  it("kind=redroid defaulta serial 127.0.0.1:5555", async () => {
+    const handle = await provisionEmulator(
+      { provision: { kind: "redroid" } },
+      {
+        startRuntime: async (r) => {
+          assert.equal(r.serial, "127.0.0.1:5555");
+          assert.equal(r.kind, "redroid");
+          return { serial: r.serial };
+        },
+        ensureAdbOnline: async () => {},
+        waitBootCompleted: async () => {},
+        createOn: () => async () => ({}),
+        createInstallApk: () => async () => ({ skipped: true }),
+        createOperate: () => ({
+          launch: async () => {},
+          tap: () => {},
+          tapElement: () => {},
+          type: () => {},
+          scroll: () => {},
+          screenshot: () => "/x.png",
+          matchImage: async () => ({ x: 1, y: 2, confidence: 1 }),
+          openScrcpy: () => ({ pid: 1, serial: "127.0.0.1:5555" }),
+        }),
+        createExtract: () => async () => [],
+        createSessionApi: () => ({
+          saveSession: async () => "/s.json",
+          removeSession: async () => true,
+          restoreSession: async () => ({}),
+        }),
+        toIso: () => "t",
+      },
+    );
+    assert.equal(handle.serial, "127.0.0.1:5555");
+  });
 });

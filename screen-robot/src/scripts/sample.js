@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Exemplo mínimo: provisionar o emulador e abrir o scrcpy.
- * `name` = AVD (muda a instância). O serial vem do adb.
+ * `name` = AVD; `kind: "avd"` sobe/anexa esse AVD (serial sai do adb).
  *
  *   npm run sample
  *   node scripts/sample.js

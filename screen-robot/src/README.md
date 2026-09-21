@@ -34,25 +34,33 @@ Um único método: **cria** se o `name` for novo; **anexa** se o nome já existi
 ```js
 const handle = await provisionEmulator({
   provision: {
-    name: "agent-a",          // obrigatório ([a-zA-Z0-9_-])
-    kind: "avd",              // default documentado
-    connectTimeoutMs: 120_000,
+    name: "ConnectMax_Cam",   // AVD (= AVD_NAME)
+    kind: "avd",              // avd | adb | redroid(legado)
+    // serial opcional com kind=avd — resolve via adb pelo name
   },
 });
-// handle.name · handle.serial · handle.kind · handle.bootCompleted · handle.provisionedAt
+// handle.serial · handle.kind · handle.bootCompleted · handle.provisionedAt
 
-// mesmo nome de novo → anexa ao agent existente
+// mesmo name de novo → anexa ao AVD já ligado
 const again = await provisionEmulator({
-  provision: { name: "agent-a", kind: "avd" },
+  provision: { name: "ConnectMax_Cam", kind: "avd" },
 });
 // again.serial === handle.serial
 ```
 
+| `kind` | Precisa | Comportamento |
+|--------|---------|---------------|
+| `avd` | `name` | Sobe/anexa AVD; serial sai do `adb` |
+| `adb` | `serial` / `device` / `ANDROID_SERIAL` | Só anexa device já online |
+| `redroid` | `serial` | Legado/stub |
+
 | Caso | Comportamento |
 |------|----------------|
-| Nome novo | Sobe AVD (`provision.name` / `AVD_NAME`), registra, boot ok |
-| Nome já registrado | Reconecta serial existente (`emulator-5554`, …), boot ok — **não** cria outro |
-| Nome inválido | `PROVISION_INVALID_NAME` |
+| Nome/AVD novo | `start.sh` + setup cria AVD, boot ok |
+| AVD já no `adb` | Reconecta serial desse AVD — **não** sobe outro |
+| `kind=adb` sem serial | `PROVISION_NO_SERIAL` |
+
+**Antes → depois:** serial era sempre obrigatório e `name` era ignorado no start; agora `kind=avd` + `name` basta (serial resolvido). Para voltar ao modo “só anexa”: `kind: "adb"` + `serial`.
 
 ### Vários em paralelo
 

@@ -25,7 +25,11 @@ function resolveConfig(cfg) {
     cfg.provision?.serial || cfg.device || process.env.ANDROID_SERIAL;
   const kind = cfg.provision?.kind || "adb";
   if (!serial && !(name && kind === "avd")) {
-    const err = new Error("PROVISION_NO_SERIAL: falta serial/device na config");
+    const tip =
+      kind === "avd"
+        ? "com kind=avd informe provision.name (AVD)"
+        : "informe provision.serial/device, ou use kind=avd + name";
+    const err = new Error(`PROVISION_NO_SERIAL: falta serial/device (${tip})`);
     err.code = "PROVISION_NO_SERIAL";
     throw err;
   }

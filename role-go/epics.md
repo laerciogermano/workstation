@@ -11,7 +11,7 @@ Cada épico agrupa um conjunto coerente de valor; histórias e BDD vêm depois.
 | ID | Épico |
 |----|-------|
 | E01 | Conta, onboarding e perfil |
-| E02 | Descoberta de eventos |
+| E02 | Publicação e descoberta de eventos |
 | E03 | Ciclo de vida do evento |
 | E04 | Ingressos e pagamento |
 | E05 | Cardápio digital e consumação |
@@ -30,17 +30,17 @@ Cada épico agrupa um conjunto coerente de valor; histórias e BDD vêm depois.
 
 O usuário cria conta (email, Google ou Apple), configura preferências de tipo de evento, cidade, raio e localização, e mantém um perfil com foto, histórico de eventos, amigos, fotos por evento e selos. A entrada rápida e o perfil alimentam descoberta, social e gamificação.
 
-## E02 — Descoberta de eventos
+## E02 — Publicação e descoberta de eventos
 
-![Capa do épico E02 — Descoberta de eventos](assets/epic-e02-cover.png)
+![Capa do épico E02 — Publicação e descoberta de eventos](assets/epic-e02-cover.png)
 
-O usuário encontra o que está rolando perto dele por geolocalização e raio configurável (ex.: 5, 20 ou 50 km), com modos Feed, Tinder (swipe), Lista e Mapa (conforme premium/patrocínio), filtros por tipo e dia, destaque de eventos patrocinados e radar dinâmico com cards atualizados — unificando a descoberta hoje espalhada em Instagram, Google, sites e WhatsApp.
+Lado oferta: anfitriões, casas e produtores criam e publicam o evento (público ou privado, com controle de lista e revelação de local). Lado demanda: o usuário encontra o que está rolando perto por geolocalização e raio configurável (ex.: 5, 20 ou 50 km), com modos Feed, Tinder (swipe), Lista e Mapa (conforme premium/patrocínio), filtros por tipo e dia, destaque de eventos patrocinados e radar dinâmico — oferta e descoberta no mesmo loop, unificando o que hoje está espalhado em Instagram, Google, sites e WhatsApp.
 
 ## E03 — Ciclo de vida do evento
 
 ![Capa do épico E03 — Ciclo de vida do evento](assets/epic-e03-cover.png)
 
-Cada evento tem página completa (local, horários, valores de entrada/VIP/bebida, confirmados, interessados, influenciadores contratados e fotos de edições anteriores) e um ciclo do anúncio ao pós-evento (criar, publicar, promover, ao vivo, avaliação, comentário e selos) — informação suficiente para decidir, comprar e lembrar o rolê.
+Cada evento publicado tem página completa (local, horários, valores de entrada/VIP/bebida, confirmados, interessados, influenciadores contratados e fotos de edições anteriores) e o ciclo da promoção ao pós-evento (promover, ao vivo, avaliação, comentário e selos) — informação suficiente para decidir, comprar e lembrar o rolê. Criar/publicar e descobrir ficam em [E02](#e02--publicação-e-descoberta-de-eventos).
 
 ## E04 — Ingressos e pagamento
 
@@ -97,7 +97,7 @@ Anfitrião e convidado se avaliam por estrelas após o evento; a reputação fic
 Ordem sugerida para um MVP alinhado aos wireframes e à jornada principal da visão:
 
 1. **E01** Conta e onboarding  
-2. **E02** Descoberta de eventos  
+2. **E02** Publicação e descoberta de eventos  
 3. **E03** Ciclo de vida do evento  
 4. **E04** Ingressos  
 5. **E10** Notificações  

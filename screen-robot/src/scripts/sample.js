@@ -2,7 +2,7 @@
 /**
  * Exemplo mínimo: provisionar o runtime e abrir o scrcpy.
  *
- * redroid: Colima + Docker; serial padrão 127.0.0.1:5555
+ * redroid: name = id da instância (container/porta/volume próprios)
  * avd:     name = AVD (ex. ConnectMax_Cam)
  *
  *   npm run sample
@@ -12,12 +12,12 @@ import { provisionEmulator } from "../lib/provision.js";
 
 const handle = await provisionEmulator({
   provision: {
+    name: "agent-b",
     kind: "redroid",
-    // serial opcional — default 127.0.0.1:5555
   },
 });
 
-console.log(`Emulador: ${handle.serial}`);
+console.log(`Emulador: ${handle.serial} (name=agent-b)`);
 
 const view = handle.openScrcpy({ title: `sample ${handle.serial}` });
 console.log(`scrcpy pid=${view.pid}`);

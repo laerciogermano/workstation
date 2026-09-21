@@ -15,6 +15,17 @@ fi
 
 mkdir -p data
 
+# Instância por name: REDROID_NAME → projeto/container/porta isolados
+REDROID_NAME="${REDROID_NAME:-}"
+if [[ -n "$REDROID_NAME" ]]; then
+  SLUG="$(echo "$REDROID_NAME" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+//; s/-+$//; s/^$/default/')"
+  export COMPOSE_PROJECT_NAME="redroid-${SLUG}"
+  export REDROID_CONTAINER_NAME="redroid-${SLUG}"
+  export REDROID_NAME
+  export ADB_PORT="${ADB_PORT:-5555}"
+  echo "Instância redroid name=${REDROID_NAME} container=${REDROID_CONTAINER_NAME} port=${ADB_PORT}"
+fi
+
 if [[ "$(uname -s)" == "Linux" ]]; then
   if ! lsmod | grep -q binder_linux; then
     echo "Aviso: binder_linux não está carregado."

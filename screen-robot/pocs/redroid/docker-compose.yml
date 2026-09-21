@@ -5,18 +5,22 @@
 services:
   redroid:
     image: ${REDROID_IMAGE:-redroid/redroid:15.0.0_64only-latest}
-    container_name: connectmax-redroid
+    # Por instância: REDROID_NAME → container redroid-<slug> (ver start.sh)
+    container_name: ${REDROID_CONTAINER_NAME:-connectmax-redroid}
     restart: unless-stopped
     privileged: true
     stdin_open: true
     tty: true
     pull_policy: always
+    labels:
+      com.screen-robot.redroid.name: "${REDROID_NAME:-default}"
     ports:
       # ADB só em localhost — seguro para desenvolvimento local
       - "${ADB_HOST:-127.0.0.1}:${ADB_PORT:-5555}:5555"
     volumes:
       # Volume nomeado (filesystem Linux nativo). Bind ./data no Mac/Colima
       # (virtiofs) quebra o /data do Android (SQLITE_CANTOPEN).
+      # Com COMPOSE_PROJECT_NAME=redroid-<slug>, o volume fica isolado por name.
       - redroid-data:/data
     command:
       - "androidboot.redroid_width=${REDROID_WIDTH:-720}"

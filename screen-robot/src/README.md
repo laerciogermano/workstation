@@ -52,23 +52,25 @@ const again = await provisionEmulator({
 |--------|---------|---------------|
 | `avd` | `name` | Sobe/anexa AVD; serial sai do `adb` |
 | `adb` | `serial` / `device` / `ANDROID_SERIAL` | Só anexa device já online |
-| `redroid` | (opcional) `serial` — default `127.0.0.1:5555` | Sobe Docker/Colima via `pocs/redroid/scripts/start.sh` |
+| `redroid` | `name` **ou** `serial` | Com `name`: container/porta/volume por instância; sem `name`: `127.0.0.1:5555` |
 
 | Caso | Comportamento |
 |------|----------------|
 | Nome/AVD novo | `start.sh` + setup cria AVD, boot ok |
 | AVD já no `adb` | Reconecta serial desse AVD — **não** sobe outro |
 | `kind=adb` sem serial | `PROVISION_NO_SERIAL` |
-| `kind=redroid` sem serial | Usa `127.0.0.1:5555` e sobe o container |
+| `kind=redroid` + `name` novo | Container `redroid-<slug>`, porta derivada do name, volume isolado |
+| `kind=redroid` + mesmo `name` | Anexa ao container já online — **não** reusa outra instância |
+| `kind=redroid` sem name/serial | Usa `127.0.0.1:5555` (legado) |
 
-**Antes → depois:** serial era sempre obrigatório e `name` era ignorado no start; agora `kind=avd` + `name` basta (serial resolvido), e `kind=redroid` defaulta o serial TCP. Para AVD canônico (GMS/apps de loja): `kind: "avd"`. Redroid = Android em container (sem GMS completo — ver postmortem).
+**Antes → depois:** `kind=redroid` ignorava `name` e sempre usava `127.0.0.1:5555`. Agora `name` distinto sobe outra instância; mesmo `name` anexa. Sem `name` mantém o default legado. AVD canônico (GMS): `kind: "avd"`.
 
 ### Vários em paralelo
 
 ```js
-const a = await provisionEmulator({ provision: { name: "a", kind: "avd" } });
-const b = await provisionEmulator({ provision: { name: "b", kind: "avd" } });
-// a.serial !== b.serial — limitação: vários AVDs pesam mais RAM
+const a = await provisionEmulator({ provision: { name: "a", kind: "redroid" } });
+const b = await provisionEmulator({ provision: { name: "b", kind: "redroid" } });
+// a.serial !== b.serial
 ```
 
 Não é obrigatório rodar `pocs/android-studio/scripts/start.sh` — o create já sobe o AVD.

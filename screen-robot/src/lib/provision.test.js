@@ -96,4 +96,39 @@ describe("provisionEmulator", () => {
     );
     assert.equal(handle.serial, "127.0.0.1:5555");
   });
+
+  it("kind=redroid + name não força 5555 (serial sai do startRuntime)", async () => {
+    const handle = await provisionEmulator(
+      { provision: { kind: "redroid", name: "agent-b" } },
+      {
+        startRuntime: async (r) => {
+          assert.equal(r.name, "agent-b");
+          assert.equal(r.serial, undefined);
+          return { serial: "127.0.0.1:5601" };
+        },
+        ensureAdbOnline: async () => {},
+        waitBootCompleted: async () => {},
+        createOn: () => async () => ({}),
+        createInstallApk: () => async () => ({ skipped: true }),
+        createOperate: () => ({
+          launch: async () => {},
+          tap: () => {},
+          tapElement: () => {},
+          type: () => {},
+          scroll: () => {},
+          screenshot: () => "/x.png",
+          matchImage: async () => ({ x: 1, y: 2, confidence: 1 }),
+          openScrcpy: () => ({ pid: 1, serial: "127.0.0.1:5601" }),
+        }),
+        createExtract: () => async () => [],
+        createSessionApi: () => ({
+          saveSession: async () => "/s.json",
+          removeSession: async () => true,
+          restoreSession: async () => ({}),
+        }),
+        toIso: () => "t",
+      },
+    );
+    assert.equal(handle.serial, "127.0.0.1:5601");
+  });
 });

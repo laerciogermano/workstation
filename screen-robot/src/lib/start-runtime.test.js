@@ -9,7 +9,7 @@ import {
   isRuntimeReachable,
   startRuntime,
 } from "./start-runtime.js";
-
+import { serialForRedroidName } from "./redroid-instance.js";
 function fakeClock(start = 0) {
   let t = start;
   return {
@@ -106,6 +106,56 @@ describe("startRuntime", () => {
     );
     assert.equal(runs, 0);
     assert.equal(out.serial, "emulator-5558");
+  });
+
+  it("kind redroid + name sobe outra porta e não anexa 5555 alheio", async () => {
+    let env;
+    let runs = 0;
+    const clock = fakeClock();
+    const expected = serialForRedroidName("agent-b");
+    const out = await startRuntime(
+      {
+        name: "agent-b",
+        kind: "redroid",
+        connectTimeoutMs: 5_000,
+        startScript: "/tmp/start.sh",
+      },
+      {
+        isReachable: async (serial) => {
+          // 5555 “alheio” online não deve impedir create da instância agent-b
+          if (serial === "127.0.0.1:5555") return true;
+          return serial === expected;
+        },
+        findSerialForRedroid: () => null,
+        runStartScript: async (_script, e) => {
+          runs += 1;
+          env = e;
+        },
+        sleep: clock.sleep,
+        now: clock.now,
+      },
+    );
+    assert.equal(runs, 1);
+    assert.equal(env.REDROID_NAME, "agent-b");
+    assert.equal(env.ADB_PORT, expected.split(":")[1]);
+    assert.equal(out.serial, expected);
+    assert.notEqual(out.serial, "127.0.0.1:5555");
+  });
+
+  it("kind redroid + name anexa instância já online do mesmo name", async () => {
+    let runs = 0;
+    const out = await startRuntime(
+      { name: "agent-a", kind: "redroid" },
+      {
+        isReachable: async () => true,
+        findSerialForRedroid: () => "127.0.0.1:5610",
+        runStartScript: async () => {
+          runs += 1;
+        },
+      },
+    );
+    assert.equal(runs, 0);
+    assert.equal(out.serial, "127.0.0.1:5610");
   });
 
   it("é idempotente quando já alcançável", async () => {

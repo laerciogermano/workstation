@@ -20,8 +20,10 @@ Parar: `./scripts/stop.sh` · Reset wipe: `./scripts/reset.sh`
 ## Provision (Node)
 
 ```js
-await provisionEmulator({ provision: { kind: "redroid" } });
-// serial default 127.0.0.1:5555
+await provisionEmulator({ provision: { kind: "redroid", name: "agent-a" } });
+// name distinto → outro container/porta/volume; mesmo name → anexa
 ```
 
-**Antes → depois:** pasta marcada só como legado; agora o `kind=redroid` sobe de novo via `start.sh` e o sample usa redroid. Para voltar ao AVD: `kind: "avd", name: "ConnectMax_Cam"`.
+Sem `name`: serial legado `127.0.0.1:5555` / container `connectmax-redroid`.
+
+**Antes → depois:** `name` era ignorado (sempre a mesma instância). Agora `REDROID_NAME` + `ADB_PORT` isolam por name. Voltar ao único container legado: omita `name` ou use só `serial: "127.0.0.1:5555"`.

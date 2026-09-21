@@ -24,17 +24,17 @@ function resolveConfig(cfg) {
   let serial =
     cfg.provision?.serial || cfg.device || process.env.ANDROID_SERIAL;
   const kind = cfg.provision?.kind || "adb";
-  // redroid: porta ADB do docker-compose (127.0.0.1:5555) se serial omitido
-  if (!serial && kind === "redroid") {
+  // redroid sem name: serial legado 127.0.0.1:5555; com name: porta deriva do name
+  if (!serial && kind === "redroid" && !name) {
     serial = "127.0.0.1:5555";
   }
-  if (!serial && !(name && kind === "avd")) {
+  if (!serial && !(name && (kind === "avd" || kind === "redroid"))) {
     const tip =
       kind === "avd"
         ? "com kind=avd informe provision.name (AVD)"
         : kind === "redroid"
-          ? "com kind=redroid use serial 127.0.0.1:5555 (default) ou informe serial"
-          : "informe provision.serial/device, ou use kind=avd + name / kind=redroid";
+          ? "com kind=redroid informe provision.name ou serial (default 127.0.0.1:5555)"
+          : "informe provision.serial/device, ou use kind=avd|redroid + name";
     const err = new Error(`PROVISION_NO_SERIAL: falta serial/device (${tip})`);
     err.code = "PROVISION_NO_SERIAL";
     throw err;

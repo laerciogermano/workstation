@@ -7,6 +7,10 @@ import net from "node:net";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { sleep as defaultSleep } from "./adb.js";
+import {
+  findSerialForRedroid as defaultFindSerialForRedroid,
+  serialForRedroidName,
+} from "./redroid-instance.js";
 
 const pocsRoot = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
@@ -105,21 +109,31 @@ function defaultRunStartScript(scriptPath, env = {}) {
 
 /**
  * @param {{ serial?: string, name?: string, kind: string, connectTimeoutMs?: number, startScript?: string }} resolved
- * @param {{ isReachable?: Function, runStartScript?: Function, findSerialForAvd?: Function, sleep?: Function, now?: Function }} [deps]
+ * @param {{ isReachable?: Function, runStartScript?: Function, findSerialForAvd?: Function, findSerialForRedroid?: Function, sleep?: Function, now?: Function }} [deps]
  */
 export async function startRuntime(resolved, deps = {}) {
   const isReachable = deps.isReachable ?? isRuntimeReachable;
   const runStartScript = deps.runStartScript ?? defaultRunStartScript;
   const lookupAvd = deps.findSerialForAvd ?? findSerialForAvd;
+  const lookupRedroid =
+    deps.findSerialForRedroid ?? defaultFindSerialForRedroid;
   const sleep = deps.sleep ?? defaultSleep;
   const now = deps.now ?? Date.now;
   const timeoutMs = Number(resolved.connectTimeoutMs ?? 120_000);
 
+  let serial = resolved.serial;
+  if (resolved.kind === "redroid" && resolved.name && !serial) {
+    serial = serialForRedroidName(resolved.name);
+  }
+
   if (resolved.kind === "avd" && resolved.name) {
     const already = lookupAvd(resolved.name);
     if (already) return { serial: already };
-  } else if (resolved.serial && (await isReachable(resolved.serial))) {
-    return { serial: resolved.serial };
+  } else if (resolved.kind === "redroid" && resolved.name) {
+    const already = lookupRedroid(resolved.name);
+    if (already && (await isReachable(already))) return { serial: already };
+  } else if (serial && (await isReachable(serial))) {
+    return { serial };
   }
 
   const script =
@@ -132,21 +146,33 @@ export async function startRuntime(resolved, deps = {}) {
     throw err;
   }
 
-  const env = resolved.name ? { AVD_NAME: resolved.name } : {};
+  /** @type {Record<string, string>} */
+  const env = {};
+  if (resolved.kind === "avd" && resolved.name) {
+    env.AVD_NAME = resolved.name;
+  }
+  if (resolved.kind === "redroid" && resolved.name) {
+    env.REDROID_NAME = resolved.name;
+    const port = String(serial).split(":")[1] || "5555";
+    env.ADB_PORT = port;
+  }
   await runStartScript(script, env);
 
   const started = now();
   while (now() - started < timeoutMs) {
     if (resolved.kind === "avd" && resolved.name) {
-      const serial = lookupAvd(resolved.name);
-      if (serial) return { serial };
-    } else if (resolved.serial && (await isReachable(resolved.serial))) {
-      return { serial: resolved.serial };
+      const found = lookupAvd(resolved.name);
+      if (found) return { serial: found };
+    } else if (resolved.kind === "redroid" && resolved.name) {
+      const found = lookupRedroid(resolved.name) || serial;
+      if (found && (await isReachable(found))) return { serial: found };
+    } else if (serial && (await isReachable(serial))) {
+      return { serial };
     }
     await sleep(500);
   }
 
-  const who = resolved.name || resolved.serial;
+  const who = resolved.name || serial;
   const err = new Error(
     `PROVISION_START_FAILED: ${script} rodou mas ${who} não ficou alcançável em ${timeoutMs}ms`,
   );

@@ -9,10 +9,12 @@ flowchart TD
   C[Códigos são roteiros]
   D[Roteiros são receitas]
   E[Bons programadores são bons roteiristas]
+  F[O que faz um bom roteirista?]
   A --> B
   B --> C
   C --> D
   C --> E
+  E --> F
 ```
 
 ## Seções
@@ -21,3 +23,4 @@ flowchart TD
   - [Códigos são roteiros](do-que-sao-feitos-os-softwares/codigos-sao-roteiros/README.md)
     - [Roteiros são receitas](do-que-sao-feitos-os-softwares/codigos-sao-roteiros/roteiros-sao-receitas/README.md)
     - [Bons programadores são bons roteiristas](do-que-sao-feitos-os-softwares/codigos-sao-roteiros/bons-programadores-sao-bons-roteiristas/README.md)
+      - [O que faz um bom roteirista?](do-que-sao-feitos-os-softwares/codigos-sao-roteiros/bons-programadores-sao-bons-roteiristas/o-que-faz-um-bom-roteirista/README.md)

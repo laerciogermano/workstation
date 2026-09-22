@@ -10,3 +10,4 @@ Roteiros são receitas que precisam de ingredientes, um roteiro conjunto de pass
 
 - [Roteiros são receitas](roteiros-sao-receitas/README.md)
 - [Bons programadores são bons roteiristas](bons-programadores-sao-bons-roteiristas/README.md)
+  - [O que faz um bom roteirista?](bons-programadores-sao-bons-roteiristas/o-que-faz-um-bom-roteirista/README.md)

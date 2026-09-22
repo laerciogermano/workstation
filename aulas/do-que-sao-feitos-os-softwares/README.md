@@ -11,3 +11,4 @@ Na próxima seção, essa ideia ganha um nome útil: o código como **roteiro**.
 - [Códigos são roteiros](codigos-sao-roteiros/README.md)
   - [Roteiros são receitas](codigos-sao-roteiros/roteiros-sao-receitas/README.md)
   - [Bons programadores são bons roteiristas](codigos-sao-roteiros/bons-programadores-sao-bons-roteiristas/README.md)
+    - [O que faz um bom roteirista?](codigos-sao-roteiros/bons-programadores-sao-bons-roteiristas/o-que-faz-um-bom-roteirista/README.md)

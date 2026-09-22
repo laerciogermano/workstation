@@ -21,6 +21,8 @@ flowchart TD
   E[Bons programadores são bons roteiristas]
   F[O que faz um bom roteirista?]
   EC[Engenharia convencional]
+  AL[Arquitetura Limpa]
+  SFS[Softwares são feitos de softwares]
   M[Matéria]
   CP1[Porta]
   CP2[Maçaneta]
@@ -38,7 +40,9 @@ flowchart TD
   M7[Cerâmica]
   A --> B
   B --> EC
+  B --> AL
   B --> C
+  AL --> SFS
   C --> D
   C --> E
   E --> F
@@ -83,7 +87,7 @@ flowchart TD
 
 Softwares não nascem prontos na tela. Por trás de cada app, site ou sistema há um material básico: **instruções escritas** que alguém (ou alguma máquina) consegue seguir.
 
-Antes, um contraste: a engenharia convencional é constituída de **matéria**. O software, de **roteiros**.
+Antes, um contraste: a engenharia convencional é constituída de **matéria**. Uncle Bob, em Arquitetura Limpa, diz que **softwares são feitos de softwares**. E o código, em si, é **roteiro**.
 
 ## Engenharia convencional
 
@@ -128,6 +132,14 @@ A matéria é o material de construção do mundo físico. Em casa, ela aparece 
 
 - Madeira — tampo, pés
 - Metal — estrutura, parafusos
+
+## Arquitetura Limpa
+
+No livro **Arquitetura Limpa**, Robert C. Martin (Uncle Bob) desloca a pergunta “do que são feitos os softwares?” para longe da matéria física: o material do software não é madeira nem metal.
+
+### Softwares são feitos de softwares
+
+Softwares são feitos de softwares. Um sistema maior é composto de módulos, bibliotecas, serviços e camadas menores — cada um também software. A engenharia aqui monta peças de software umas sobre as outras, não tijolos sobre concreto.
 
 ## Códigos são roteiros
 

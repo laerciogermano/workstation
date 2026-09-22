@@ -32,9 +32,9 @@ flowchart TD
   FP[Processo]
   FO[Operários]
   CARP[Exemplo: carpintaria]
-  CM[Madeira]
-  CPJ[Projeto]
-  CCP[Carpinteiro]
+  CARP1[Madeira]
+  CARP2[Projeto]
+  CARP3[Carpinteiro]
   M[Matéria]
   CP1[Porta]
   CP2[Maçaneta]
@@ -65,9 +65,9 @@ flowchart TD
   FAB --> FM
   FAB --> FP
   FAB --> FO
-  CARP --> CM
-  CARP --> CPJ
-  CARP --> CCP
+  CARP --> CARP1
+  CARP --> CARP2
+  CARP --> CARP3
   C --> D
   C --> E
   E --> F

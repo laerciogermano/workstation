@@ -80,7 +80,7 @@ Quem executa a receita: o cozinheiro, ou uma máquina. No software: uma pessoa o
 
 ### Código
 
-O **código** é o texto do roteiro: as instruções escritas numa linguagem que a máquina (ou um intérprete) consegue executar. É a forma concreta do roteiro de software — o mesmo papel da receita escrita na cozinha. Fica à direita do exemplo do bolo: mesma ideia, no mundo do software.
+O **código** é o texto do roteiro: as instruções escritas numa linguagem que a máquina (ou um intérprete) consegue executar. É a forma concreta do roteiro de software — o mesmo papel da receita escrita na cozinha.
 
 #### Dado
 

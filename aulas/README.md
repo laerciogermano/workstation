@@ -20,8 +20,18 @@ flowchart TD
   LG3[Sujeito]
   E[Bons programadores são bons roteiristas]
   F[O que faz um bom roteirista?]
+  EC[Engenharia convencional]
+  M[Matéria]
+  M1[Madeira]
+  M2[Tijolo]
+  M3[Concreto]
+  M4[Metal]
+  M5[Vidro]
+  M6[Plástico]
+  M7[Cerâmica]
   A --> B
   B --> C
+  B --> EC
   C --> D
   C --> E
   E --> F
@@ -37,6 +47,14 @@ flowchart TD
   LG --> LG1
   LG --> LG2
   LG --> LG3
+  EC --> M
+  M --> M1
+  M --> M2
+  M --> M3
+  M --> M4
+  M --> M5
+  M --> M6
+  M --> M7
 ```
 
 ## Do que são feitos os softwares?
@@ -45,7 +63,7 @@ Softwares não nascem prontos na tela. Por trás de cada app, site ou sistema h�
 
 Essas instruções dizem o que fazer, em que ordem, e com o quê. O computador não “entende” o mundo como nós — ele executa o que foi descrito com precisão.
 
-Na próxima seção, essa ideia ganha um nome útil: o código como **roteiro**.
+Na próxima seção, essa ideia ganha um nome útil: o código como **roteiro**. Em contraste, a engenharia convencional é constituída de **matéria**.
 
 ## Códigos são roteiros
 
@@ -135,3 +153,39 @@ Um bom roteirista:
 - prevê o público e os imprevistos — caminhos felizes e erros
 
 No código, isso vira: nomes honestos, fluxo legível, responsabilidades pequenas e tratamento explícito do que pode falhar.
+
+## Engenharia convencional
+
+Enquanto o software é feito de roteiros (instruções), a **engenharia convencional** é constituída de **matéria**: coisas físicas que ocupam espaço, têm peso e se transformam com ferramentas e energia.
+
+### Matéria
+
+A matéria é o material de construção do mundo físico. Em casa, ela aparece em formas cotidianas:
+
+#### Madeira
+
+Portas, mesas, armários, piso.
+
+#### Tijolo
+
+Paredes, muros, churrasqueira.
+
+#### Concreto
+
+Laje, piso, fundação.
+
+#### Metal
+
+Torneiras, portões, estruturas, eletrodomésticos.
+
+#### Vidro
+
+Janelas, copos, box do banheiro.
+
+#### Plástico
+
+Tomadas, utensílios, embalagens, tubos.
+
+#### Cerâmica
+
+Azulejos, louças, vasos.

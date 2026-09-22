@@ -3,6 +3,7 @@
 ```mermaid
 flowchart TD
   A[Aulas]
+  FS[Filosofia do software]
   B[Do que são feitos os softwares?]
   C[Códigos são roteiros]
   D[Roteiros são receitas]
@@ -50,6 +51,7 @@ flowchart TD
   M5[Vidro]
   M6[Plástico]
   M7[Cerâmica]
+  A --> FS
   A --> B
   B --> EC
   B --> AL
@@ -107,6 +109,10 @@ flowchart TD
   CP7 --> M1
   CP7 --> M4
 ```
+
+## Filosofia do software
+
+Perguntas de fundo sobre o que é software, de que é feito, como se organiza e o que significa programar bem — antes das técnicas e das ferramentas.
 
 ## Do que são feitos os softwares?
 

@@ -190,11 +190,11 @@ Por isso um software completo junta as três peças: **o quê** entra, **como** 
 
 Pense numa receita de bolo:
 
-| Exemplo: bolo | Código | Língua |
-|---|---|---|
-| Ingredientes | Dado | Objeto |
-| Roteiro | Processamento | Verbo |
-| Pessoa | Hardware | Sujeito |
+| Exemplo: bolo | Código | Língua | Exemplo: casa |
+|---|---|---|---|
+| Ingredientes | Dado | Objeto | Materiais |
+| Roteiro | Processamento | Verbo | Planta |
+| Pessoa | Hardware | Sujeito | Pedreiro |
 
 
 Sem ingredientes, a receita não produz nada. Sem passos, ninguém sabe o que fazer. Sem quem execute — humano ou agente automatizado — o roteiro fica só no papel.

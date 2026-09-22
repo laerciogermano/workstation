@@ -6,11 +6,17 @@ flowchart TD
   B[Do que são feitos os softwares?]
   C[Códigos são roteiros]
   D[Roteiros são receitas]
+  D1[Ingredientes]
+  D2[Roteiro]
+  D3[Pessoa]
   E[Bons programadores são bons roteiristas]
   F[O que faz um bom roteirista?]
   A --> B
   B --> C
   C --> D
+  D --> D1
+  D --> D2
+  D --> D3
   C --> E
   E --> F
 ```
@@ -46,6 +52,18 @@ Pense numa receita de bolo:
 Sem ingredientes, a receita não produz nada. Sem passos, ninguém sabe o que fazer. Sem quem execute — humano ou agente automatizado — o roteiro fica só no papel.
 
 Por isso um software completo junta as três peças: **o quê** entra, **como** se transforma, e **quem** (pessoa ou máquina) leva o roteiro até o fim.
+
+#### Ingredientes
+
+O que entra na execução: dados, arquivos, APIs, configs — o material sem o qual o roteiro não produz resultado.
+
+#### Roteiro
+
+O conjunto de passos: a sequência de instruções que transforma os ingredientes no resultado desejado.
+
+#### Pessoa
+
+Quem executa o roteiro: uma pessoa ou máquinas (agentes). Sem executor, o roteiro fica só no papel.
 
 ### Bons programadores são bons roteiristas
 

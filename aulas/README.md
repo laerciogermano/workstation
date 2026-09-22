@@ -6,6 +6,14 @@ flowchart TD
   B[Do que são feitos os softwares?]
   C[Códigos são roteiros]
   D[Roteiros são receitas]
+  DX[Exemplo: bolo]
+  D1[Ingredientes]
+  D2[Roteiro]
+  D3[Pessoa]
+  CG[Código]
+  CG1[Dado]
+  CG2[Processamento]
+  CG3[Hardware]
   E[Bons programadores são bons roteiristas]
   F[O que faz um bom roteirista?]
   A --> B
@@ -13,20 +21,14 @@ flowchart TD
   C --> D
   C --> E
   E --> F
-  D --> lado
-
-  subgraph lado[" "]
-    direction LR
-    DX[Exemplo: bolo]
-    CG[Código]
-  end
-
-  DX --> D1[Ingredientes]
-  DX --> D2[Roteiro]
-  DX --> D3[Pessoa]
-  CG --> CG1[Dado]
-  CG --> CG2[Processamento]
-  CG --> CG3[Hardware]
+  D --> DX
+  D --> CG
+  DX --> D1
+  DX --> D2
+  DX --> D3
+  CG --> CG1
+  CG --> CG2
+  CG --> CG3
 ```
 
 ## Do que são feitos os softwares?

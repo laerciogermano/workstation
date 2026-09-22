@@ -6,6 +6,7 @@ flowchart TD
   B[Do que são feitos os softwares?]
   C[Códigos são roteiros]
   D[Roteiros são receitas]
+  DX[Exemplo: bolo]
   D1[Ingredientes]
   D2[Roteiro]
   D3[Pessoa]
@@ -14,9 +15,10 @@ flowchart TD
   A --> B
   B --> C
   C --> D
-  D --> D1
-  D --> D2
-  D --> D3
+  D --> DX
+  DX --> D1
+  DX --> D2
+  DX --> D3
   C --> E
   E --> F
 ```
@@ -41,6 +43,10 @@ Roteiros são receitas que precisam de ingredientes, um roteiro conjunto de pass
 
 Roteiros são receitas que precisam de ingredientes, um roteiro conjunto de passos e uma pessoa ou máquinas (agentes).
 
+Por isso um software completo junta as três peças: **o quê** entra, **como** se transforma, e **quem** (pessoa ou máquina) leva o roteiro até o fim.
+
+#### Exemplo: bolo
+
 Pense numa receita de bolo:
 
 | Na cozinha | No software |
@@ -51,19 +57,17 @@ Pense numa receita de bolo:
 
 Sem ingredientes, a receita não produz nada. Sem passos, ninguém sabe o que fazer. Sem quem execute — humano ou agente automatizado — o roteiro fica só no papel.
 
-Por isso um software completo junta as três peças: **o quê** entra, **como** se transforma, e **quem** (pessoa ou máquina) leva o roteiro até o fim.
+##### Ingredientes
 
-#### Ingredientes
+Farinha, ovos, açúcar, fermento — o material sem o qual o bolo não sai. No software: dados, arquivos, APIs, configs.
 
-O que entra na execução: dados, arquivos, APIs, configs — o material sem o qual o roteiro não produz resultado.
+##### Roteiro
 
-#### Roteiro
+Misturar, assar, esperar — a sequência de passos. No software: as instruções do código.
 
-O conjunto de passos: a sequência de instruções que transforma os ingredientes no resultado desejado.
+##### Pessoa
 
-#### Pessoa
-
-Quem executa o roteiro: uma pessoa ou máquinas (agentes). Sem executor, o roteiro fica só no papel.
+Quem executa a receita: o cozinheiro, ou uma máquina. No software: uma pessoa ou agentes (máquinas). Sem executor, o roteiro fica só no papel.
 
 ### Bons programadores são bons roteiristas
 

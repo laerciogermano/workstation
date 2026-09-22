@@ -22,6 +22,13 @@ flowchart TD
   F[O que faz um bom roteirista?]
   EC[Engenharia convencional]
   M[Matéria]
+  CP1[Porta]
+  CP2[Maçaneta]
+  CP3[Janela]
+  CP4[Parede]
+  CP5[Piso]
+  CP6[Torneira]
+  CP7[Mesa]
   M1[Madeira]
   M2[Tijolo]
   M3[Concreto]
@@ -48,13 +55,28 @@ flowchart TD
   LG --> LG2
   LG --> LG3
   EC --> M
-  M --> M1
-  M --> M2
-  M --> M3
-  M --> M4
-  M --> M5
-  M --> M6
-  M --> M7
+  M --> CP1
+  M --> CP2
+  M --> CP3
+  M --> CP4
+  M --> CP5
+  M --> CP6
+  M --> CP7
+  CP1 --> M1
+  CP1 --> M4
+  CP2 --> M4
+  CP3 --> M5
+  CP3 --> M1
+  CP3 --> M4
+  CP4 --> M2
+  CP4 --> M3
+  CP5 --> M1
+  CP5 --> M3
+  CP5 --> M7
+  CP6 --> M4
+  CP6 --> M6
+  CP7 --> M1
+  CP7 --> M4
 ```
 
 ## Do que são feitos os softwares?
@@ -69,35 +91,43 @@ A **engenharia convencional** é constituída de **matéria**: coisas físicas q
 
 ### Matéria
 
-A matéria é o material de construção do mundo físico. Em casa, ela aparece em formas cotidianas:
+A matéria é o material de construção do mundo físico. Em casa, ela aparece primeiro em **componentes maiores** — peças que usamos no dia a dia — e cada um é feito de matérias-primas (as folhas da árvore).
 
-#### Madeira
+#### Porta
 
-Portas, mesas, armários, piso.
+- Madeira — folha, batente
+- Metal — dobradiças, fechaduras
 
-#### Tijolo
+#### Maçaneta
 
-Paredes, muros, churrasqueira.
+- Metal — corpo, trinco, parafusos
 
-#### Concreto
+#### Janela
 
-Laje, piso, fundação.
+- Vidro — o painel transparente
+- Madeira — caixilho
+- Metal — perfil, fechos
 
-#### Metal
+#### Parede
 
-Torneiras, portões, estruturas, eletrodomésticos.
+- Tijolo — alvenaria
+- Concreto — estrutura, reboco
 
-#### Vidro
+#### Piso
 
-Janelas, copos, box do banheiro.
+- Madeira — tábua, laminado
+- Concreto — contrapiso
+- Cerâmica — revestimento
 
-#### Plástico
+#### Torneira
 
-Tomadas, utensílios, embalagens, tubos.
+- Metal — corpo, registro
+- Plástico — vedações, mangueiras
 
-#### Cerâmica
+#### Mesa
 
-Azulejos, louças, vasos.
+- Madeira — tampo, pés
+- Metal — estrutura, parafusos
 
 ## Códigos são roteiros
 

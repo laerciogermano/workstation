@@ -24,6 +24,9 @@ flowchart TD
   AL[Arquitetura Limpa]
   SFS[Softwares são feitos de softwares]
   CASA[Exemplo: casa]
+  HM[Materiais]
+  HP[Planta]
+  HPe[Pedreiro]
   M[Matéria]
   CP1[Porta]
   CP2[Maçaneta]
@@ -45,13 +48,10 @@ flowchart TD
   B --> C
   AL --> SFS
   SFS --> CASA
-  CASA --> CP1
-  CASA --> CP2
-  CASA --> CP3
-  CASA --> CP4
-  CASA --> CP5
-  CASA --> CP6
-  CASA --> CP7
+  CASA --> HM
+  CASA --> HP
+  CASA --> HPe
+  HM --> M
   C --> D
   C --> E
   E --> F
@@ -152,17 +152,25 @@ Softwares são feitos de softwares. Um sistema maior é composto de módulos, bi
 
 #### Exemplo: casa
 
-A **casa** ilustra a mesma ideia no mundo físico: ela não é “feita de madeira” direto — é feita de **componentes** (porta, janela, parede…), e só esses componentes é que são feitos de matéria. Assim como o software maior é feito de softwares menores.
+A **casa** também junta três peças — o mesmo padrão do bolo, do código e da língua:
 
-- Porta
-- Maçaneta
-- Janela
-- Parede
-- Piso
-- Torneira
-- Mesa
+| Exemplo: bolo | Código | Língua | Exemplo: casa |
+|---|---|---|---|
+| Ingredientes | Dado | Objeto | Materiais |
+| Roteiro | Processamento | Verbo | Planta |
+| Pessoa | Hardware | Sujeito | Pedreiro |
 
-Os mesmos filhos do ramo de **Matéria** na engenharia convencional: a casa os agrupa; a matéria os constitui.
+##### Materiais
+
+O que entra na obra: madeira, tijolo, concreto, metal… e os componentes (porta, janela, parede…). Liga ao ramo de **Matéria** da engenharia convencional.
+
+##### Planta
+
+O roteiro da construção: planta baixa, cortes, sequência de etapas.
+
+##### Pedreiro
+
+Quem executa a planta com os materiais — a pessoa (ou equipe) que leva a obra até o fim.
 
 ## Códigos são roteiros
 

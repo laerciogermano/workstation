@@ -17,15 +17,12 @@ flowchart TD
 
   subgraph lado[" "]
     direction LR
-    subgraph bolo["Exemplo: bolo"]
-      direction TB
-      D1[Ingredientes] --> D2[Roteiro] --> D3[Pessoa]
-    end
-    subgraph codigo["Código"]
-      direction TB
-      CG1[Dado] --> CG2[Processamento] --> CG3[Hardware]
-    end
+    DX[Exemplo: bolo]
+    CG[Código]
   end
+
+  DX --> D1[Ingredientes] --> D2[Roteiro] --> D3[Pessoa]
+  CG --> CG1[Dado] --> CG2[Processamento] --> CG3[Hardware]
 ```
 
 ## Do que são feitos os softwares?

@@ -21,8 +21,12 @@ flowchart TD
     CG[Código]
   end
 
-  DX --> D1[Ingredientes] --> D2[Roteiro] --> D3[Pessoa]
-  CG --> CG1[Dado] --> CG2[Processamento] --> CG3[Hardware]
+  DX --> D1[Ingredientes]
+  DX --> D2[Roteiro]
+  DX --> D3[Pessoa]
+  CG --> CG1[Dado]
+  CG --> CG2[Processamento]
+  CG --> CG3[Hardware]
 ```
 
 ## Do que são feitos os softwares?

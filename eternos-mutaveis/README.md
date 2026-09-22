@@ -87,7 +87,7 @@ Eternos Mutáveis trata espírito, filosofia e programação como **a mesma leit
 ### Fora de escopo (v1)
 
 - Canal do Metafísico (mídia e acesso; obra irmã de validação e influência)
-- Filme *O Metafísico*
+- Filme [*O Metafísico*](../filme-metafisico/README.md)
 - Livro da Metodologia Flow e Plataforma Flow (método e produto; não esta tese espiritual)
 - Tratado acadêmico de filologia ou doxografia aristotélica
 - Manual de uma linguagem de programação específica

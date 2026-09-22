@@ -23,6 +23,7 @@ flowchart TD
   EC[Engenharia convencional]
   AL[Arquitetura Limpa]
   SFS[Softwares são feitos de softwares]
+  CASA[Exemplo: casa]
   M[Matéria]
   CP1[Porta]
   CP2[Maçaneta]
@@ -43,6 +44,14 @@ flowchart TD
   B --> AL
   B --> C
   AL --> SFS
+  SFS --> CASA
+  CASA --> CP1
+  CASA --> CP2
+  CASA --> CP3
+  CASA --> CP4
+  CASA --> CP5
+  CASA --> CP6
+  CASA --> CP7
   C --> D
   C --> E
   E --> F
@@ -140,6 +149,20 @@ No livro **Arquitetura Limpa**, Robert C. Martin (Uncle Bob) desloca a pergunta 
 ### Softwares são feitos de softwares
 
 Softwares são feitos de softwares. Um sistema maior é composto de módulos, bibliotecas, serviços e camadas menores — cada um também software. A engenharia aqui monta peças de software umas sobre as outras, não tijolos sobre concreto.
+
+#### Exemplo: casa
+
+A **casa** ilustra a mesma ideia no mundo físico: ela não é “feita de madeira” direto — é feita de **componentes** (porta, janela, parede…), e só esses componentes é que são feitos de matéria. Assim como o software maior é feito de softwares menores.
+
+- Porta
+- Maçaneta
+- Janela
+- Parede
+- Piso
+- Torneira
+- Mesa
+
+Os mesmos filhos do ramo de **Matéria** na engenharia convencional: a casa os agrupa; a matéria os constitui.
 
 ## Códigos são roteiros
 

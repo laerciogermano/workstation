@@ -19,15 +19,11 @@ flowchart TD
     direction LR
     subgraph bolo["Exemplo: bolo"]
       direction TB
-      D1[Ingredientes]
-      D2[Roteiro]
-      D3[Pessoa]
+      D1[Ingredientes] --> D2[Roteiro] --> D3[Pessoa]
     end
     subgraph codigo["Código"]
       direction TB
-      CG1[Dado]
-      CG2[Processamento]
-      CG3[Hardware]
+      CG1[Dado] --> CG2[Processamento] --> CG3[Hardware]
     end
   end
 ```
@@ -60,9 +56,9 @@ Pense numa receita de bolo:
 
 | Na cozinha | No software |
 |---|---|
-| Ingredientes | Dados, arquivos, APIs, configs |
-| Passos | Instruções do código |
-| Cozinheiro ou máquina | Pessoa ou agentes (máquinas) |
+| Ingredientes | Dado |
+| Roteiro | Processamento |
+| Pessoa | Hardware |
 
 Sem ingredientes, a receita não produz nada. Sem passos, ninguém sabe o que fazer. Sem quem execute — humano ou agente automatizado — o roteiro fica só no papel.
 

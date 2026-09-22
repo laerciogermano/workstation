@@ -5,30 +5,31 @@ flowchart TD
   A[Aulas]
   B[Do que são feitos os softwares?]
   C[Códigos são roteiros]
-  CG[Código]
-  CG1[Dado]
-  CG2[Processamento]
-  CG3[Hardware]
   D[Roteiros são receitas]
-  DX[Exemplo: bolo]
-  D1[Ingredientes]
-  D2[Roteiro]
-  D3[Pessoa]
   E[Bons programadores são bons roteiristas]
   F[O que faz um bom roteirista?]
   A --> B
   B --> C
-  C --> CG
-  CG --> CG1
-  CG --> CG2
-  CG --> CG3
   C --> D
-  D --> DX
-  DX --> D1
-  DX --> D2
-  DX --> D3
   C --> E
   E --> F
+  D --> lado
+
+  subgraph lado[" "]
+    direction LR
+    subgraph bolo["Exemplo: bolo"]
+      direction TB
+      D1[Ingredientes]
+      D2[Roteiro]
+      D3[Pessoa]
+    end
+    subgraph codigo["Código"]
+      direction TB
+      CG1[Dado]
+      CG2[Processamento]
+      CG3[Hardware]
+    end
+  end
 ```
 
 ## Do que são feitos os softwares?
@@ -46,22 +47,6 @@ Se um software é feito de instruções, o **código** é o texto dessas instru�
 Um roteiro de teatro lista falas e cenas. Um roteiro de software lista **passos**: ler um dado, calcular, mostrar na tela, guardar no disco. A linguagem muda (JavaScript, Python, etc.), mas o papel é o mesmo: descrever a ação com clareza para quem vai executar.
 
 Roteiros são receitas que precisam de ingredientes, um roteiro conjunto de passos e uma pessoa ou máquinas (agentes).
-
-### Código
-
-O **código** é o texto do roteiro: as instruções escritas numa linguagem que a máquina (ou um intérprete) consegue executar. É a forma concreta do roteiro de software — o mesmo papel da receita escrita na cozinha.
-
-#### Dado
-
-O que o código lê e transforma: números, textos, arquivos, respostas de APIs — a matéria-prima da execução.
-
-#### Processamento
-
-As operações que o código aplica aos dados: calcular, filtrar, decidir, combinar — os passos do roteiro em ação.
-
-#### Hardware
-
-Onde o código e o processamento acontecem de fato: processador, memória, disco, rede — a máquina que executa o roteiro.
 
 ### Roteiros são receitas
 
@@ -92,6 +77,22 @@ Misturar, assar, esperar — a sequência de passos. No software: as instruçõe
 ##### Pessoa
 
 Quem executa a receita: o cozinheiro, ou uma máquina. No software: uma pessoa ou agentes (máquinas). Sem executor, o roteiro fica só no papel.
+
+### Código
+
+O **código** é o texto do roteiro: as instruções escritas numa linguagem que a máquina (ou um intérprete) consegue executar. É a forma concreta do roteiro de software — o mesmo papel da receita escrita na cozinha. Fica à direita do exemplo do bolo: mesma ideia, no mundo do software.
+
+#### Dado
+
+O que o código lê e transforma: números, textos, arquivos, respostas de APIs — a matéria-prima da execução. Corresponde aos **ingredientes**.
+
+#### Processamento
+
+As operações que o código aplica aos dados: calcular, filtrar, decidir, combinar — os passos do roteiro em ação. Corresponde ao **roteiro**.
+
+#### Hardware
+
+Onde o código e o processamento acontecem de fato: processador, memória, disco, rede — a máquina que executa o roteiro. Corresponde à **pessoa** (ou agente).
 
 ### Bons programadores são bons roteiristas
 

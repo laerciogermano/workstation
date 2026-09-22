@@ -31,6 +31,10 @@ flowchart TD
   FM[Matéria-prima]
   FP[Processo]
   FO[Operários]
+  CARP[Exemplo: carpintaria]
+  CM[Madeira]
+  CPJ[Projeto]
+  CCP[Carpinteiro]
   M[Matéria]
   CP1[Porta]
   CP2[Maçaneta]
@@ -53,6 +57,7 @@ flowchart TD
   AL --> SFS
   SFS --> CASA
   SFS --> FAB
+  SFS --> CARP
   CASA --> HM
   CASA --> HP
   CASA --> HPe
@@ -60,6 +65,9 @@ flowchart TD
   FAB --> FM
   FAB --> FP
   FAB --> FO
+  CARP --> CM
+  CARP --> CPJ
+  CARP --> CCP
   C --> D
   C --> E
   E --> F
@@ -162,11 +170,11 @@ Softwares são feitos de softwares. Um sistema maior é composto de módulos, bi
 
 A **casa** também junta três peças — o mesmo padrão do bolo, do código e da língua:
 
-| Exemplo: bolo | Código | Língua | Exemplo: casa | Exemplo: fábrica |
-|---|---|---|---|---|
-| Ingredientes | Dado | Objeto | Materiais | Matéria-prima |
-| Roteiro | Processamento | Verbo | Planta | Processo |
-| Pessoa | Hardware | Sujeito | Pedreiro | Operários |
+| Exemplo: bolo | Código | Língua | Exemplo: casa | Exemplo: fábrica | Exemplo: carpintaria |
+|---|---|---|---|---|---|
+| Ingredientes | Dado | Objeto | Materiais | Matéria-prima | Madeira |
+| Roteiro | Processamento | Verbo | Planta | Processo | Projeto |
+| Pessoa | Hardware | Sujeito | Pedreiro | Operários | Carpinteiro |
 
 ##### Materiais
 
@@ -196,6 +204,22 @@ A sequência de produção: corte, montagem, inspeção. Corresponde ao **roteir
 
 Quem opera a linha — pessoas ou automações. Corresponde à **pessoa** / **pedreiro**.
 
+#### Exemplo: carpintaria
+
+A **carpintaria** é o mesmo padrão no ofício da madeira:
+
+##### Madeira
+
+A matéria-prima do ofício — tábuas, vigas, compensado. Corresponde aos **ingredientes** / **matéria-prima**.
+
+##### Projeto
+
+Medidas, cortes, ordem de montagem — o roteiro da peça. Corresponde ao **roteiro** / **processo**.
+
+##### Carpinteiro
+
+Quem executa o projeto na madeira. Corresponde à **pessoa** / **operários**.
+
 ## Códigos são roteiros
 
 Se um software é feito de instruções, o **código** é o texto dessas instruções — um **roteiro** do que deve acontecer.
@@ -214,11 +238,11 @@ Por isso um software completo junta as três peças: **o quê** entra, **como** 
 
 Pense numa receita de bolo:
 
-| Exemplo: bolo | Código | Língua | Exemplo: casa | Exemplo: fábrica |
-|---|---|---|---|---|
-| Ingredientes | Dado | Objeto | Materiais | Matéria-prima |
-| Roteiro | Processamento | Verbo | Planta | Processo |
-| Pessoa | Hardware | Sujeito | Pedreiro | Operários |
+| Exemplo: bolo | Código | Língua | Exemplo: casa | Exemplo: fábrica | Exemplo: carpintaria |
+|---|---|---|---|---|---|
+| Ingredientes | Dado | Objeto | Materiais | Matéria-prima | Madeira |
+| Roteiro | Processamento | Verbo | Planta | Processo | Projeto |
+| Pessoa | Hardware | Sujeito | Pedreiro | Operários | Carpinteiro |
 
 
 Sem ingredientes, a receita não produz nada. Sem passos, ninguém sabe o que fazer. Sem quem execute — humano ou agente automatizado — o roteiro fica só no papel.

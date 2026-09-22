@@ -14,6 +14,10 @@ flowchart TD
   CG1[Dado]
   CG2[Processamento]
   CG3[Hardware]
+  LG[Linguagem]
+  LG1[Símbolos]
+  LG2[Gramática]
+  LG3[Interpretador]
   E[Bons programadores são bons roteiristas]
   F[O que faz um bom roteirista?]
   A --> B
@@ -23,12 +27,16 @@ flowchart TD
   E --> F
   D --> DX
   D --> CG
+  D --> LG
   DX --> D1
   DX --> D2
   DX --> D3
   CG --> CG1
   CG --> CG2
   CG --> CG3
+  LG --> LG1
+  LG --> LG2
+  LG --> LG3
 ```
 
 ## Do que são feitos os softwares?
@@ -57,11 +65,12 @@ Por isso um software completo junta as três peças: **o quê** entra, **como** 
 
 Pense numa receita de bolo:
 
-| Na cozinha | No software |
-|---|---|
-| Ingredientes | Dado |
-| Roteiro | Processamento |
-| Pessoa | Hardware |
+| Exemplo: bolo | Código | Linguagem |
+|---|---|---|
+| Ingredientes | Dado | Símbolos |
+| Roteiro | Processamento | Gramática |
+| Pessoa | Hardware | Interpretador |
+
 
 Sem ingredientes, a receita não produz nada. Sem passos, ninguém sabe o que fazer. Sem quem execute — humano ou agente automatizado — o roteiro fica só no papel.
 
@@ -92,6 +101,22 @@ As operações que o código aplica aos dados: calcular, filtrar, decidir, combi
 #### Hardware
 
 Onde o código e o processamento acontecem de fato: processador, memória, disco, rede — a máquina que executa o roteiro. Corresponde à **pessoa** (ou agente).
+
+### Linguagem
+
+A **linguagem** é o sistema de símbolos e regras em que o roteiro (código) é escrito — Python, JavaScript, etc. Sem linguagem comum entre quem escreve e quem executa, o roteiro não passa.
+
+#### Símbolos
+
+Palavras, números, operadores, nomes — as peças do vocabulário. Corresponde aos **ingredientes** / **dado**.
+
+#### Gramática
+
+Como os símbolos se combinam em frases válidas e com sentido. Corresponde ao **roteiro** / **processamento**.
+
+#### Interpretador
+
+Quem lê a linguagem e executa o que ela descreve (intérprete, compilador, runtime). Corresponde à **pessoa** / **hardware**.
 
 ### Bons programadores são bons roteiristas
 

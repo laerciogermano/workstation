@@ -4,6 +4,7 @@
 flowchart TD
   A[Aulas]
   FS[Filosofia do software]
+  FSD[Dualidade dado função]
   B[Do que são feitos os softwares?]
   C[Códigos são roteiros]
   D[Roteiros são receitas]
@@ -52,6 +53,7 @@ flowchart TD
   M6[Plástico]
   M7[Cerâmica]
   A --> FS
+  FS --> FSD
   A --> B
   B --> EC
   B --> AL
@@ -113,6 +115,10 @@ flowchart TD
 ## Filosofia do software
 
 Perguntas de fundo sobre o que é software, de que é feito, como se organiza e o que significa programar bem — antes das técnicas e das ferramentas.
+
+### Dualidade dado função
+
+Todo software oscila entre duas faces inseparáveis: o **dado** (o que é, o que se guarda, o que se transforma) e a **função** (o que se faz com o dado). Um sem o outro não completa o roteiro — ingredientes sem passos, ou passos sem matéria.
 
 ## Do que são feitos os softwares?
 

@@ -14,10 +14,10 @@ flowchart TD
   CG1[Dado]
   CG2[Processamento]
   CG3[Hardware]
-  LG[Linguagem]
-  LG1[Símbolos]
+  LG[Língua]
+  LG1[Palavras]
   LG2[Gramática]
-  LG3[Interpretador]
+  LG3[Falante]
   E[Bons programadores são bons roteiristas]
   F[O que faz um bom roteirista?]
   A --> B
@@ -65,11 +65,11 @@ Por isso um software completo junta as três peças: **o quê** entra, **como** 
 
 Pense numa receita de bolo:
 
-| Exemplo: bolo | Código | Linguagem |
+| Exemplo: bolo | Código | Língua |
 |---|---|---|
-| Ingredientes | Dado | Símbolos |
+| Ingredientes | Dado | Palavras |
 | Roteiro | Processamento | Gramática |
-| Pessoa | Hardware | Interpretador |
+| Pessoa | Hardware | Falante |
 
 
 Sem ingredientes, a receita não produz nada. Sem passos, ninguém sabe o que fazer. Sem quem execute — humano ou agente automatizado — o roteiro fica só no papel.
@@ -102,21 +102,21 @@ As operações que o código aplica aos dados: calcular, filtrar, decidir, combi
 
 Onde o código e o processamento acontecem de fato: processador, memória, disco, rede — a máquina que executa o roteiro. Corresponde à **pessoa** (ou agente).
 
-### Linguagem
+### Língua
 
-A **linguagem** é o sistema de símbolos e regras em que o roteiro (código) é escrito — Python, JavaScript, etc. Sem linguagem comum entre quem escreve e quem executa, o roteiro não passa.
+A **língua** falada — português, inglês, etc. — é o roteiro humano: combinamos peças para dizer o que fazer, o que é, o que queremos. O código imita essa lógica num outro meio.
 
-#### Símbolos
+#### Palavras
 
-Palavras, números, operadores, nomes — as peças do vocabulário. Corresponde aos **ingredientes** / **dado**.
+O vocabulário: nomes, verbos, adjetivos — o material sonoro/escrito. Corresponde aos **ingredientes** / **dado**.
 
 #### Gramática
 
-Como os símbolos se combinam em frases válidas e com sentido. Corresponde ao **roteiro** / **processamento**.
+Como as palavras se juntam em frases com sentido. Corresponde ao **roteiro** / **processamento**.
 
-#### Interpretador
+#### Falante
 
-Quem lê a linguagem e executa o que ela descreve (intérprete, compilador, runtime). Corresponde à **pessoa** / **hardware**.
+Quem fala e quem escuta — quem põe a língua em uso. Corresponde à **pessoa** / **hardware**.
 
 ### Bons programadores são bons roteiristas
 

@@ -6,6 +6,9 @@ flowchart TD
   B[Do que são feitos os softwares?]
   C[Códigos são roteiros]
   CG[Código]
+  CG1[Dado]
+  CG2[Processamento]
+  CG3[Hardware]
   D[Roteiros são receitas]
   DX[Exemplo: bolo]
   D1[Ingredientes]
@@ -16,6 +19,9 @@ flowchart TD
   A --> B
   B --> C
   C --> CG
+  CG --> CG1
+  CG --> CG2
+  CG --> CG3
   C --> D
   D --> DX
   DX --> D1
@@ -44,6 +50,18 @@ Roteiros são receitas que precisam de ingredientes, um roteiro conjunto de pass
 ### Código
 
 O **código** é o texto do roteiro: as instruções escritas numa linguagem que a máquina (ou um intérprete) consegue executar. É a forma concreta do roteiro de software — o mesmo papel da receita escrita na cozinha.
+
+#### Dado
+
+O que o código lê e transforma: números, textos, arquivos, respostas de APIs — a matéria-prima da execução.
+
+#### Processamento
+
+As operações que o código aplica aos dados: calcular, filtrar, decidir, combinar — os passos do roteiro em ação.
+
+#### Hardware
+
+Onde o código e o processamento acontecem de fato: processador, memória, disco, rede — a máquina que executa o roteiro.
 
 ### Roteiros são receitas
 

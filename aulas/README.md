@@ -5,6 +5,7 @@ flowchart TD
   A[Aulas]
   B[Do que são feitos os softwares?]
   C[Códigos são roteiros]
+  CG[Código]
   D[Roteiros são receitas]
   DX[Exemplo: bolo]
   D1[Ingredientes]
@@ -14,6 +15,7 @@ flowchart TD
   F[O que faz um bom roteirista?]
   A --> B
   B --> C
+  C --> CG
   C --> D
   D --> DX
   DX --> D1
@@ -38,6 +40,10 @@ Se um software é feito de instruções, o **código** é o texto dessas instru�
 Um roteiro de teatro lista falas e cenas. Um roteiro de software lista **passos**: ler um dado, calcular, mostrar na tela, guardar no disco. A linguagem muda (JavaScript, Python, etc.), mas o papel é o mesmo: descrever a ação com clareza para quem vai executar.
 
 Roteiros são receitas que precisam de ingredientes, um roteiro conjunto de passos e uma pessoa ou máquinas (agentes).
+
+### Código
+
+O **código** é o texto do roteiro: as instruções escritas numa linguagem que a máquina (ou um intérprete) consegue executar. É a forma concreta do roteiro de software — o mesmo papel da receita escrita na cozinha.
 
 ### Roteiros são receitas
 

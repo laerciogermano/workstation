@@ -15,9 +15,9 @@ flowchart TD
   CG2[Processamento]
   CG3[Hardware]
   LG[Língua]
-  LG1[Palavras]
-  LG2[Gramática]
-  LG3[Falante]
+  LG1[Objeto]
+  LG2[Verbo]
+  LG3[Sujeito]
   E[Bons programadores são bons roteiristas]
   F[O que faz um bom roteirista?]
   A --> B
@@ -67,9 +67,9 @@ Pense numa receita de bolo:
 
 | Exemplo: bolo | Código | Língua |
 |---|---|---|
-| Ingredientes | Dado | Palavras |
-| Roteiro | Processamento | Gramática |
-| Pessoa | Hardware | Falante |
+| Ingredientes | Dado | Objeto |
+| Roteiro | Processamento | Verbo |
+| Pessoa | Hardware | Sujeito |
 
 
 Sem ingredientes, a receita não produz nada. Sem passos, ninguém sabe o que fazer. Sem quem execute — humano ou agente automatizado — o roteiro fica só no papel.
@@ -106,17 +106,17 @@ Onde o código e o processamento acontecem de fato: processador, memória, disco
 
 A **língua** falada — português, inglês, etc. — é o roteiro humano: combinamos peças para dizer o que fazer, o que é, o que queremos. O código imita essa lógica num outro meio.
 
-#### Palavras
+#### Objeto
 
-O vocabulário: nomes, verbos, adjetivos — o material sonoro/escrito. Corresponde aos **ingredientes** / **dado**.
+Sobre o quê se fala — a coisa afetada ou referida. Corresponde aos **ingredientes** / **dado**.
 
-#### Gramática
+#### Verbo
 
-Como as palavras se juntam em frases com sentido. Corresponde ao **roteiro** / **processamento**.
+A ação ou estado — o que acontece. Corresponde ao **roteiro** / **processamento**.
 
-#### Falante
+#### Sujeito
 
-Quem fala e quem escuta — quem põe a língua em uso. Corresponde à **pessoa** / **hardware**.
+Quem age ou de quem se fala — quem põe a frase em movimento. Corresponde à **pessoa** / **hardware**.
 
 ### Bons programadores são bons roteiristas
 

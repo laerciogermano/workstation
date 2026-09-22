@@ -27,6 +27,10 @@ flowchart TD
   HM[Materiais]
   HP[Planta]
   HPe[Pedreiro]
+  FAB[Exemplo: fábrica]
+  FM[Matéria-prima]
+  FP[Processo]
+  FO[Operários]
   M[Matéria]
   CP1[Porta]
   CP2[Maçaneta]
@@ -48,10 +52,14 @@ flowchart TD
   B --> C
   AL --> SFS
   SFS --> CASA
+  SFS --> FAB
   CASA --> HM
   CASA --> HP
   CASA --> HPe
   HM --> M
+  FAB --> FM
+  FAB --> FP
+  FAB --> FO
   C --> D
   C --> E
   E --> F
@@ -154,11 +162,11 @@ Softwares são feitos de softwares. Um sistema maior é composto de módulos, bi
 
 A **casa** também junta três peças — o mesmo padrão do bolo, do código e da língua:
 
-| Exemplo: bolo | Código | Língua | Exemplo: casa |
-|---|---|---|---|
-| Ingredientes | Dado | Objeto | Materiais |
-| Roteiro | Processamento | Verbo | Planta |
-| Pessoa | Hardware | Sujeito | Pedreiro |
+| Exemplo: bolo | Código | Língua | Exemplo: casa | Exemplo: fábrica |
+|---|---|---|---|---|
+| Ingredientes | Dado | Objeto | Materiais | Matéria-prima |
+| Roteiro | Processamento | Verbo | Planta | Processo |
+| Pessoa | Hardware | Sujeito | Pedreiro | Operários |
 
 ##### Materiais
 
@@ -171,6 +179,22 @@ O roteiro da construção: planta baixa, cortes, sequência de etapas.
 ##### Pedreiro
 
 Quem executa a planta com os materiais — a pessoa (ou equipe) que leva a obra até o fim.
+
+#### Exemplo: fábrica
+
+A **fábrica** é o mesmo padrão em escala industrial:
+
+##### Matéria-prima
+
+O que entra na linha: aço, plástico, componentes. Corresponde aos **ingredientes** / **materiais**.
+
+##### Processo
+
+A sequência de produção: corte, montagem, inspeção. Corresponde ao **roteiro** / **planta**.
+
+##### Operários
+
+Quem opera a linha — pessoas ou automações. Corresponde à **pessoa** / **pedreiro**.
 
 ## Códigos são roteiros
 
@@ -190,11 +214,11 @@ Por isso um software completo junta as três peças: **o quê** entra, **como** 
 
 Pense numa receita de bolo:
 
-| Exemplo: bolo | Código | Língua | Exemplo: casa |
-|---|---|---|---|
-| Ingredientes | Dado | Objeto | Materiais |
-| Roteiro | Processamento | Verbo | Planta |
-| Pessoa | Hardware | Sujeito | Pedreiro |
+| Exemplo: bolo | Código | Língua | Exemplo: casa | Exemplo: fábrica |
+|---|---|---|---|---|
+| Ingredientes | Dado | Objeto | Materiais | Matéria-prima |
+| Roteiro | Processamento | Verbo | Planta | Processo |
+| Pessoa | Hardware | Sujeito | Pedreiro | Operários |
 
 
 Sem ingredientes, a receita não produz nada. Sem passos, ninguém sabe o que fazer. Sem quem execute — humano ou agente automatizado — o roteiro fica só no papel.

@@ -344,11 +344,12 @@ npm run ocr -- --all
 # testes (um por PNG em screenshots/): node --test lib/screenshots-ocr.test.js
 # OCR → screenshots/<nome>.txt
 # ícones/imagens (componentes ≠ fundo, sem coords) → screenshots/<nome>/icon-NN.png|image-NN.png
+# descritivos (OCR vizinho) → screenshots/<nome>/manifest.json
 ```
 
-Roda `ocrWords` (tesseract) sobre PNG local e imprime o texto. Sem path → `screenshots/<nome>`. `--all` processa todos os `.png` da pasta. O teste também salva um `.txt` ao lado de cada imagem (`screenshots/home.png` → `screenshots/home.txt`) e extrai ícones/imagens para `screenshots/<nome>/` via componentes conectados + `sharp` (sem coordenadas manuais).
+Roda `ocrWords` (tesseract) sobre PNG local e imprime o texto. Sem path → `screenshots/<nome>`. `--all` processa todos os `.png` da pasta. O teste também salva um `.txt` ao lado de cada imagem (`screenshots/home.png` → `screenshots/home.txt`), extrai ícones/imagens para `screenshots/<nome>/` via componentes conectados + `sharp`, e grava `manifest.json` com `{ file, type, bounds, label }` (label = OCR à direita do visual / herdado na mesma linha).
 
-**Antes → depois:** OCR só via `extract({ serial })` (device). Agora dá para OCR de arquivo em `screenshots/` sem ADB; testes gravam `screenshots/<nome>.txt` e crops em `screenshots/<nome>/`. Dep: `sharp`. Rollback: remover suite `visuals` do teste, dep `sharp`, e as pastas geradas.
+**Antes → depois:** OCR só via `extract({ serial })` (device). Agora dá para OCR de arquivo em `screenshots/` sem ADB; testes gravam `screenshots/<nome>.txt`, crops e `manifest.json` em `screenshots/<nome>/`. Dep: `sharp`. Rollback: remover suite `visuals` / `attachLabels` do teste, dep `sharp`, e as pastas geradas.
 
 ---
 

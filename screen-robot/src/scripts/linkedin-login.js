@@ -47,8 +47,8 @@ async function main() {
   clearScreenshots(outDir);
 
   console.log("0.5) Resetar instância do zero…");
-  const reset = await resetInstance(cfg);
-  console.log(`   OK ${reset.serial}`);
+  // const reset = await resetInstance(cfg);
+  // console.log(`   OK ${reset.serial}`);
 
   console.log("1) Provisionar…");
   const { serial } = await provisionEmulator(cfg);
@@ -62,49 +62,49 @@ async function main() {
   const li = await installApk({ serial, ...cfg.apps.linkedin });
   console.log(`   OK ${li.package} ${li.version || "?"}${li.skipped ? " (skip)" : ""}`);
 
-  console.log("3) Abrir LinkedIn…");
-  await launch({ serial, package: cfg.apps.linkedin.package });
-  await on({ serial, event: "ui_stable", timeoutMs: 90_000 });
+  // console.log("3) Abrir LinkedIn…");
+  // await launch({ serial, package: cfg.apps.linkedin.package });
+  // await on({ serial, event: "ui_stable", timeoutMs: 90_000 });
 
-  console.log("4) Print da tela inicial…");
-  const shotPath = resolve(outDir, "01-tela-inicial.png");
-  screenshot({ serial, path: shotPath });
-  console.log(`   OK → ${shotPath}`);
+  // console.log("4) Print da tela inicial…");
+  // const shotPath = resolve(outDir, "01-tela-inicial.png");
+  // screenshot({ serial, path: shotPath });
+  // console.log(`   OK → ${shotPath}`);
 
-  console.log("5) Clicar Sign in with Email…");
-  {
-    let hit = null;
-    for (let attempt = 1; attempt <= 8; attempt++) {
-      hit = await findByText(serial, "Sign in with Email", {
-        minScore: 0.75,
-      });
-      if (hit?.center) break;
-      console.log(`   tentativa ${attempt}/8 — aguardando OCR…`);
-      await sleep(3_000);
-    }
-    if (hit?.center) {
-      console.log(
-        `   → "${hit.text}" score=${hit.score.toFixed(2)} parts=${hit.elements.length}`,
-      );
-      tapElement({ serial, center: hit.center, bounds: hit.bounds });
-      await sleep(5_000);
-      screenshot({ serial, path: resolve(outDir, "02-apos-sign-in-email.png") });
-    } else {
-      console.log("   (Sign in with Email não encontrado — segue)");
-    }
-  }
+  // console.log("5) Clicar Sign in with Email…");
+  // {
+  //   let hit = null;
+  //   for (let attempt = 1; attempt <= 8; attempt++) {
+  //     hit = await findByText(serial, "Sign in with Email", {
+  //       minScore: 0.75,
+  //     });
+  //     if (hit?.center) break;
+  //     console.log(`   tentativa ${attempt}/8 — aguardando OCR…`);
+  //     await sleep(3_000);
+  //   }
+  //   if (hit?.center) {
+  //     console.log(
+  //       `   → "${hit.text}" score=${hit.score.toFixed(2)} parts=${hit.elements.length}`,
+  //     );
+  //     tapElement({ serial, center: hit.center, bounds: hit.bounds });
+  //     await sleep(5_000);
+  //     screenshot({ serial, path: resolve(outDir, "02-apos-sign-in-email.png") });
+  //   } else {
+  //     console.log("   (Sign in with Email não encontrado — segue)");
+  //   }
+  // }
 
-  console.log("6) Extrair textos (OCR)…");
-  const elements = await extract({ serial });
-  console.log(`   texts=${elements.length}`);
+  // console.log("6) Extrair textos (OCR)…");
+  // const elements = await extract({ serial });
+  // console.log(`   texts=${elements.length}`);
 
-  screenshot({ serial, path: resolve(outDir, "frame-screen.png") });
-  const json = JSON.stringify(elements, null, 2);
-  const outJson = resolve(outDir, "elements.json");
-  writeFileSync(outJson, json, "utf8");
-  console.log(json);
-  console.log(`\nOK → ${outJson}`);
-  console.log(`OK → ${resolve(outDir, "frame-screen.png")}`);
+  // screenshot({ serial, path: resolve(outDir, "frame-screen.png") });
+  // const json = JSON.stringify(elements, null, 2);
+  // const outJson = resolve(outDir, "elements.json");
+  // writeFileSync(outJson, json, "utf8");
+  // console.log(json);
+  // console.log(`\nOK → ${outJson}`);
+  // console.log(`OK → ${resolve(outDir, "frame-screen.png")}`);
 }
 
 main().catch((e) => {

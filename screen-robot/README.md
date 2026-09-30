@@ -44,7 +44,7 @@ Automatizar apps móveis (emulador **ou** aparelho real filmado/capturado) exige
 
 Expor via Node: **provisionar · instalar APKs · eventos · operar · extrair · sessão**. Cenário piloto: login LinkedIn (BDDs em [`5.bdds.md`](5.bdds.md)).
 
-Também será possível **deixar o controle do Android disponível** para um operador humano: ver a tela e agir (tap, type, scroll, etc.) via espelhamento ([`src/scripts/view.sh`](src/scripts/view.sh) / scrcpy · `npm run view`), sem depender só do script.
+Também será possível **deixar o controle do Android disponível** para um operador humano: ver a tela e agir (tap, type, scroll, etc.) via espelhamento ([`src/scripts/view.sh`](src/scripts/view.sh) / scrcpy · `npm run view`), ou só capturar a tela com [`src/scripts/print.js`](src/scripts/print.js) (`npm run print -- -n tela.png`), sem depender só do script.
 
 ## Capacidades (v1)
 

@@ -319,6 +319,21 @@ Abre **scrcpy** no serial de `device.config.json` (ou `--device`) para visualiza
 
 ---
 
+## 10c. Print da tela — `scripts/print.js`
+
+```bash
+cd screen-robot/src
+npm run print -- -n teste.png
+# ou: npm run print -- teste.png
+# ou: node scripts/print.js -n tela.png --device emulator-5554
+```
+
+Tira screenshot do device online e grava em `screenshots/<nome>.png` (path absoluto ou com `/` grava no caminho dado). Serial: `--device` → `ANDROID_SERIAL` → `device.config.json` → 1º device ADB.
+
+**Antes → depois:** não havia `npm run print`; equivalente antigo: `node cli.js shot ./screenshots/tela.png --device …`. Rollback: remover o script npm `print` e `scripts/print.js`.
+
+---
+
 ## 11. CLI legado
 
 Steps avulsos (serial explícito; preferir as funções de `lib/`):

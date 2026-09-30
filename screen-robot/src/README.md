@@ -342,12 +342,12 @@ npm run ocr -- screenshots/home.png
 npm run ocr -- home.png
 npm run ocr -- --all
 # testes (um por PNG em screenshots/): node --test lib/screenshots-ocr.test.js
-# cada teste grava screenshots/ocr/<nome>.txt
+# cada teste grava screenshots/<nome>.txt ao lado do PNG
 ```
 
-Roda `ocrWords` (tesseract) sobre PNG local e imprime o texto. Sem path → `screenshots/<nome>`. `--all` processa todos os `.png` da pasta. O teste também salva um `.txt` por imagem em `screenshots/ocr/`.
+Roda `ocrWords` (tesseract) sobre PNG local e imprime o texto. Sem path → `screenshots/<nome>`. `--all` processa todos os `.png` da pasta. O teste também salva um `.txt` ao lado de cada imagem (`screenshots/home.png` → `screenshots/home.txt`).
 
-**Antes → depois:** OCR só via `extract({ serial })` (device). Agora dá para OCR de arquivo em `screenshots/` sem ADB; testes gravam `screenshots/ocr/<nome>.txt`. Rollback: remover `npm run ocr`, `scripts/ocr-image.js` e `lib/screenshots-ocr.test.js`.
+**Antes → depois:** OCR só via `extract({ serial })` (device). Agora dá para OCR de arquivo em `screenshots/` sem ADB; testes gravam `screenshots/<nome>.txt` ao lado do PNG. Rollback: remover `npm run ocr`, `scripts/ocr-image.js` e `lib/screenshots-ocr.test.js`.
 
 ---
 

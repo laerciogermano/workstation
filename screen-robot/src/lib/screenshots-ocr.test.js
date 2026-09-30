@@ -1,17 +1,15 @@
 /**
- * Um teste por PNG em screenshots/ — OCR, print e grava resultado em arquivo.
- * Saída: screenshots/ocr/<nome-sem-ext>.txt
+ * Um teste por PNG em screenshots/ — OCR, print e grava resultado ao lado da imagem.
+ * Saída: screenshots/<nome>.txt (mesmo stem do .png)
  */
 import assert from "node:assert/strict";
-import { existsSync, mkdirSync, readdirSync, writeFileSync } from "node:fs";
+import { existsSync, readdirSync, writeFileSync } from "node:fs";
 import { basename, dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, it } from "node:test";
 import { ocrWords } from "./ocr.js";
 
-const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const SHOTS = resolve(ROOT, "screenshots");
-const OUT = resolve(SHOTS, "ocr");
+const SHOTS = resolve(dirname(fileURLToPath(import.meta.url)), "../screenshots");
 
 const images = existsSync(SHOTS)
   ? readdirSync(SHOTS)
@@ -20,8 +18,7 @@ const images = existsSync(SHOTS)
   : [];
 
 function outPathFor(pngName) {
-  const stem = basename(pngName, ".png");
-  return resolve(OUT, `${stem}.txt`);
+  return resolve(SHOTS, `${basename(pngName, ".png")}.txt`);
 }
 
 describe("OCR screenshots/", () => {
@@ -29,8 +26,6 @@ describe("OCR screenshots/", () => {
     it("sem PNGs em screenshots/ — skip", { skip: "sem screenshots" }, () => {});
     return;
   }
-
-  mkdirSync(OUT, { recursive: true });
 
   for (const name of images) {
     it(`extrai texto: ${name}`, { timeout: 180_000 }, async () => {

@@ -48,4 +48,5 @@ Hub de projetos, board, tasks e processo de desenvolvimento.
 | 🥋 | [**Jiu-jitsu**](jiu-jitsu/) | App de jiu-jitsu | [visão](jiu-jitsu/README.md) · [docs](jiu-jitsu/docs/) · [config IA](jiu-jitsu/config/config-ia.md) |
 | 🎭 | [**RoleGo**](role-go/) | Role-playing / go | [visão](role-go/README.md) |
 | ✨ | [**Clozzy**](clozzy/) | Venda de conteúdos exclusivos de influencers | [visão](clozzy/README.md) · [docs](clozzy/docs/) · [config IA](clozzy/config/config-ia.md) |
+| 🧾 | [**e-notas**](e-notas/README.md) | Índice de preços via QR de nota fiscal | [visão](e-notas/README.md) · [docs](e-notas/docs/README.md) · [config IA](e-notas/config/config-ia.md) |
 | 📚 | [**Aulas**](aulas/README.md) | Árvore de seções / conteúdo didático | [visão](aulas/README.md) |

@@ -1,8 +1,17 @@
 # Screen Robot
     - Automatizar
-        - Pesquisar e conectar aos compradores
-            - Tirar prints e testar ocrs
+        - Conectar aos compradores
+            - [ok] Tirar prints e testar ocrs
+            - [ok] criar testes extraindo ocr
+            - criar robo que recebe texto e decide o que fazer
+                - [ok] testar texto e perguntar onde estou
+                - Extrair ocr com posicoes
+                - Realizar operações com IA com interface android junto a um prompt que define o que fazer
+            - criar lib que extrai dados formatados
             - Calcular gasto IA testando
+         - Pesquisar
+            - Dado um conjunto de filtros, pesquisar e ir para página de 
+            resultados
         - Enviar mensagem
     - Provisionar Agente -> Device operante com linkedin instalado
     - Finalizar lib, principalmente estrutura de provisionamento

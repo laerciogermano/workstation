@@ -1,0 +1,11 @@
+# Screen Robot
+    - Automatizar
+        - Pesquisar e conectar aos compradores
+            - Tirar prints e testar ocrs
+            - Calcular gasto IA testando
+        - Enviar mensagem
+    - Provisionar Agente -> Device operante com linkedin instalado
+    - Finalizar lib, principalmente estrutura de provisionamento
+
+# Flow Oriented Programming
+    - Criar roadmap

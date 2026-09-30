@@ -334,6 +334,22 @@ Tira screenshot do device online e grava em `screenshots/<nome>.png` (path absol
 
 ---
 
+## 10d. OCR de imagens — `scripts/ocr-image.js`
+
+```bash
+cd screen-robot/src
+npm run ocr -- screenshots/home.png
+npm run ocr -- home.png
+npm run ocr -- --all
+# testes (um por PNG em screenshots/): node --test lib/screenshots-ocr.test.js
+```
+
+Roda `ocrWords` (tesseract) sobre PNG local e imprime o texto. Sem path → `screenshots/<nome>`. `--all` processa todos os `.png` da pasta.
+
+**Antes → depois:** OCR só via `extract({ serial })` (device). Agora dá para OCR de arquivo em `screenshots/` sem ADB. Rollback: remover `npm run ocr`, `scripts/ocr-image.js` e `lib/screenshots-ocr.test.js`.
+
+---
+
 ## 11. CLI legado
 
 Steps avulsos (serial explícito; preferir as funções de `lib/`):

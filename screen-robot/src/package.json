@@ -15,6 +15,7 @@
     "instagram-home": "node scripts/instagram-home.js",
     "sample": "node scripts/sample.js",
     "print": "node scripts/print.js",
+    "ocr": "node scripts/ocr-image.js",
     "view": "bash scripts/view.sh",
     "test": "node --test 'lib/**/*.test.js'",
     "test:unit": "node --test 'lib/**/*.test.js'",

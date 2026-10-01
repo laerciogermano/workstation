@@ -1,0 +1,30 @@
+# Bullets — transcrição
+
+- Objetivo da mensagem: fazer as pessoas entenderem o que é a realidade
+- Perguntas centrais: por que estamos aqui; o que é Deus; o que é o mundo espiritual; o que existe depois da morte; por que existe algo em vez do nada; do que é constituída a existência
+- Essas perguntas rodeiam a humanidade há milhares de anos; as respostas ainda são mistério
+- Religiões, teorias filosóficas e a ciência tentam explicar a origem de tudo — nenhuma enxerga com clareza todas as respostas
+- Diante do excesso de informação e de tantas explicações, o homem continua perdido e confuso sobre o mundo espiritual
+- Formas de relação com a espiritualidade: alguns permanecem intactos; outros tentam seguir e não conseguem; outros nem tentam / não acreditam; outros acreditam mas não frequentam
+- Cada um tem sua forma de enxergar a espiritualidade e de explicar Deus e o mundo espiritual
+- Apesar da evolução tecnológica e de outros conhecimentos, ainda engatinhamos no que deveria ser o conhecimento mais importante
+- Com tanta desinformação, o homem anda perdido: tenta viver bem, entender, aprender, acertando e errando
+- Muitos vivem atormentados; muitos sob condições precárias (financeiro, psicológico, mental)
+- Grande parte disso vem da ignorância espiritual
+- Conversas sobre espiritualidade costumam ir para o lúdico ou o sombrio, justamente por não se entender o que a espiritualidade de fato é
+- Assim vivemos sem saber ao certo o que estamos fazendo aqui
+- Desde cedo o autor tentou compreender a existência; frustração o desviou para questões mais palpáveis
+- Apaixonou-se por programação
+- O conhecimento de software se aplica à vida como um todo — e a questões abstratas/filosóficas
+- Programação está tão ligada à filosofia que é um dos pontos mais importantes inclusive para explicar a espiritualidade
+- Decisões de desenvolvimento de software são decisões filosóficas reutilizáveis na vida
+- Exemplo: processo — um bom programador é um bom gestor de processos; quem planeja e organiza entrega projetos (software ou vida)
+- Programação está mais relacionada à vida e aos conhecimentos aplicáveis do que se imagina
+- Busca de mais de uma década pela estrutura perfeita de software
+- Um livro mudou a forma de enxergar software e introduziu um assunto que, aprofundado, mostrou: programação não só ligada à filosofia, mas também base da espiritualidade
+- Isso mudou totalmente a forma de chegar à realidade
+- Até então: ateu; não acreditava em Deus; via crentes como bitolados, ignorantes, sem ceticismo nem critérios; fé no lugar da lógica
+- Queria explicação lógica e coerente para acreditar em Deus e no mundo espiritual
+- Foi programando e entrando nos aspectos profundos do desenvolvimento que viu o conceito ligado também à filosofia e à espiritualidade
+- Conceito: sólidos e abstratos — o “D” de SOLID (Robert C. Martin / Uncle Bob): Dependency Inversion — depender de abstrações, não de instâncias sólidas
+- Aprofundando nas estruturas do software, compreende-se não apenas a espiritualidade como também… (transcrição corta aqui)

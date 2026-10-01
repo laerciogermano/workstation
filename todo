@@ -5,10 +5,14 @@
             - [ok] criar testes extraindo ocr
             - criar robo que recebe texto e decide o que fazer
                 - [ok] testar texto e perguntar onde estou
-                - Extrair ocr com posicoes
                 - Realizar operações com IA com interface android junto a um prompt que define o que fazer
+                    - Subir android
+                    - Extrair ocr com posicoes
+                    - Integrar com IA 
+                        - Testar primeiro com CURSOR
             - criar lib que extrai dados formatados
-            - Calcular gasto IA testando
+            - Calcular gasto reconhecimento de imagem com IA
+            - Calcular custo recinhecimento de texto com IA
          - Pesquisar
             - Dado um conjunto de filtros, pesquisar e ir para página de 
             resultados
@@ -16,5 +20,52 @@
     - Provisionar Agente -> Device operante com linkedin instalado
     - Finalizar lib, principalmente estrutura de provisionamento
 
+# ConectMax
+    - Aprovar com o Gilson o serviço
+    - Iniciar prospecção
+    - Criar landing page
+
+# Connect Tech
+    - Criar landing page
+
+# Clozzy
+    - Definir roadmap
+
+# Role Go
+    - Definir épico 01
+    
 # Flow Oriented Programming
     - Criar roadmap
+
+# Aulas
+    - Criar roadmap
+
+# Caronas
+    - Criar documento de épicos
+
+# Chinês
+    - Marcar call com Vaime
+
+# E-Notas
+    - Criar documento de visão
+
+# Eternos Mutáveis
+    - Definir roadmap
+
+# Filme Metafísico
+    - Definir Roteiro
+
+# Fitness
+    - Definir documento de épicos
+
+# Flow
+    - Esperar Flow Language
+
+# Flow Language
+    - Definir Épicos
+
+# Jiu Jtsu
+    - Definir documento de visão
+
+# Plans
+    - Definir documento de visão

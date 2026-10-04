@@ -1,0 +1,14 @@
+- Apresentação do autor: formação em engenharia de software; primeiro contato com computadores aos 12 anos
+- Aos 17 começou a graduação e se apaixonou por programação, vendo-a como hobby, desafio e raciocínio lógico
+- Sua grande missão: encontrar a forma perfeita de desenvolver software
+- Estudava por conta própria e publicou pouco, porque sempre queria melhorar; sensação comum de querer refazer sistemas antigos
+- Nesses 15 anos, a ambição foi desenvolver software com característica constante em qualquer projeto, independente de linguagem, sistema operacional, hardware ou domínio
+- Acredita que existem regras eternas no desenvolvimento de software
+- Encontrou *Arquitetura Limpa* (Uncle Bob), com o qual se identificou, e que confirma a existência de regras imutáveis
+- Programadores estudam paradigmas, boas práticas e linguagens, mas não dominam os conceitos-base do design
+- Há jogos de linguagem na computação: conceitos ambíguos, com sentidos diferentes em contextos diferentes
+- O livro de Uncle Bob pergunta do que o software é feito; o autor discorda de que software seja confuso e sem estruturas óbvias como um prédio
+- Orientação a objetos: a menor unidade é o objeto, com estado e comportamento; seus quatro pilares (polimorfismo, herança, abstração, encapsulamento) são conceitos filosóficos mal compreendidos
+- Filósofos modernos dizem que a metafísica não avança porque não dominamos a linguagem; o autor chama isso de "labirintos dos jogos de linguagem"
+- O problema vem da não definição correta dos termos e afeta a cosmovisão e o design de software
+- Objetivo do livro: relacionar filosofia e computação para ajustar as lentes, mudar o paradigma de construir software e de viver

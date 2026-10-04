@@ -1,0 +1,22 @@
+- Estamos acostumados ao mundo material e esquecemos estruturas tão presentes quanto ele, perceptíveis pelo intelecto
+- O conhecimento transcendental é buscado desde que o homem dominou a linguagem
+- Tentativas: persas (Zoroastro), orientais (taoísmo), egípcios (corpo hermético, Caibalion), judaísmo (símbolos), gregos
+- Gregos: mito e logos, matemáticos, Pitágoras e a herança egípcia, ordens iniciáticas
+- Pré-socráticos: Parmênides (nada muda) × Heráclito (tudo muda)
+- Platão: mundo das ideias × sentidos; Demiurgo como artesão; integrou Parmênides e Heráclito
+- Aristóteles: substância (forma e matéria), filosofia primeira e causa primeira (Deus), usada por Tomás de Aquino; o autor acha errada a leitura de que ele discordava de Platão
+- Cristianismo: "assim na Terra como no céu" (princípio hermético); "no princípio era o Verbo" ligado ao Logos de Heráclito
+- Gnósticos: libertação do espírito pelo conhecimento, não pela fé; um deus maligno teria prendido o espírito à carne
+- Idade Média perseguiu o conhecimento; Renascimento o resgatou em símbolos e pinturas; Iluministas buscavam a razão; Rosa-Cruz e maçonaria
+- Críticos da metafísica: Nietzsche, Kant, Schopenhauer; Jung fala em arquétipos e inconsciente coletivo
+- Sem consenso: alguns filósofos dizem que o problema vem da linguagem, com polimorfismo (palavra com vários sentidos) e redundância (nomes diferentes, mesmo sentido)
+- Russell, Whitehead e Wittgenstein buscaram uma linguagem única; Wittgenstein no Tractatus e depois recuou para os jogos de linguagem
+- Não temos manual lógico da existência, e isso gera problemas por ignorância
+- Somos analfabetos espirituais: a gnose não veio porque não dominamos o conhecimento além da matéria
+- Excesso de informações e de crenças sem base lógica; baile de máscaras; quem finge saber confunde mentes
+- Comportamento é de acordo com a crença: crença deturpada gera comportamento deturpado
+- Era adâmica: o ser humano não compreende a própria identidade e vive um inferno cíclico, repetindo erros
+- Guerras, violência, desigualdade, problemas familiares, pessoais, existenciais e espirituais vêm da ignorância
+- Software sofre dos mesmos problemas: custo alto; quanto mais funcionalidades, menor a produtividade
+- Causas no software: conceitos redundantes, escrita linear (e não holística), OOP deturpada pela substância aristotélica, muitos paradigmas, linguagens e frameworks, mudanças frequentes, software pouco intuitivo (Arquitetura Limpa)
+- Problema comum a filosofia, espiritualidade e software: os jogos de linguagem

@@ -1,0 +1,11 @@
+- Os filósofos modernos (Russell, Whitehead, Wittgenstein) acreditavam que os problemas filosóficos vinham dos jogos de linguagem
+- Sem dominar a linguagem, as discussões ficam confusas, porque os termos não são definidos e não se segue uma lógica formal
+- Objetivo deles: uma linguagem única e unificada, sem redundância, que categorizasse todos os significados
+- Resolvida a linguagem, resolve-se a filosofia, a percepção da realidade e da vida: Deus, eternidade, identidade, tempo, céu, inferno
+- Wittgenstein publicou o Tratado lógico-filosófico e depois o chamou de erro, afirmando que não existiria linguagem unificada
+- O propósito deste trabalho é dar continuidade, criando uma linguagem única e isomórfica
+- Os problemas filosóficos afetam a visão de realidade e tudo que projetamos, inclusive o software
+- Dor do software: ao crescer, perde-se manutenibilidade e performance; mais programadores não aumentam as entregas
+- Causas: erros de design e redundância de formas de fazer a mesma coisa; software não é tão intuitivo quanto estruturas físicas
+- Conceitos sem objetividade: sopa de letras, de sentidos e de signos
+- Proposta: uma linguagem única, isomórfica e sem redundância, que resolva a filosofia e o software (mais rápido, com mais qualidade e menos custo)

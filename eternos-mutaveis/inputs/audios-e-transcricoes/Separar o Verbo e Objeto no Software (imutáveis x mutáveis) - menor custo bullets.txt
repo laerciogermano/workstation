@@ -1,0 +1,14 @@
+- As três teorias (software, filosofia e espiritualidade) se conectam: ao resolver a linguagem, tudo é estado e mudança
+- Aristóteles funciona como o demiurgo gnóstico: carnificou o espírito, unindo em sua substância os dois mundos de Platão
+- Platão: um mundo perfeito (ideias) e outro imperfeito (material); Aristóteles: tudo é forma e matéria, sem outro mundo
+- Contradição: Aristóteles não concorda com Platão, mas forma e matéria já é visão platônica
+- Erro: não entender que os mundos são realmente separados
+- O maior erro é prender o movimento ao elemento (o movimento pertencer à entidade) e não o contrário; é assim que desenvolvemos software e não tem dado certo
+- Solução: separar movimento (eterno, imutável) e estado
+- No software: arquitetura baseada em conceitos sólidos, constantes, eternos e imutáveis; reutilização, melhor estrutura e proteção contra mudanças futuras
+- Separando o imutável, não há mutações nele; reduz custo e tempo, aumenta a qualidade
+- Na espiritualidade: dois mundos apartados; o mundo dos movimentos cria os abstratos, as formas eternas
+- Somos feitos de formas (estruturas eternas) e também de movimento, que é mais importante que a forma
+- As histórias se repetem como melodias com notas diferentes; as construções são a identidade de Deus, presentes em tudo, não podem ser criadas nem destruídas
+- Compreender isso é compreender as regras do jogo da vida
+- Não é uma questão moral do que fazer; as regras explicam tudo e levam a conclusões morais parecidas entre quem as conhece

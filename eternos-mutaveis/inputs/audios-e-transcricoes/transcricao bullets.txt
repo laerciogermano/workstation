@@ -1,0 +1,17 @@
+- Objetivo: fazer entender o que é a realidade, por que estamos aqui, o que é Deus, o mundo espiritual, o que existe depois da morte, por que existe algo e não o nada, do que é constituída a existência
+- Perguntas de milhares de anos, com respostas ainda um mistério
+- Religiões, teorias filosóficas e ciência tentam explicar a origem de tudo sem enxergar com clareza
+- Excesso de informação deixa o homem perdido e confuso sobre o mundo espiritual
+- Formas de lidar com a fé: permanecer intacto, tentar e não conseguir, não acreditar, acreditar e não frequentar
+- Cada um explica Deus e o mundo espiritual à sua maneira
+- Evoluímos tecnologicamente, mas engatinhamos no conhecimento mais importante
+- O homem anda perdido, acerta e erra; muitos vivem atormentados e em condições precárias, por ignorância espiritual
+- Conversas sobre o tema vão ao lúdico ou ao sombrio, por não se entender o que é espiritualidade
+- Desde cedo o autor tentou compreender a existência; a frustração o desviou para o palpável e ele se apaixonou por programação
+- O conhecimento de software vale para a vida e para questões filosóficas; é um dos pontos mais importantes para explicar a espiritualidade
+- Decisões de desenvolvimento são decisões filosóficas reutilizáveis na vida; bom programador é bom gestor de processos
+- Busca de mais de uma década pela estrutura perfeita de software; um livro mudou sua forma de enxergar software
+- Programação como base da espiritualidade mudou sua forma de chegar à realidade
+- Era ateu e via os crentes como bitolados, sem ceticismo, que trocavam lógica por fé; precisava de explicação lógica e coerente
+- Programando, nos aspectos profundos de sistemas, identificou o conceito ligado a filosofia e espiritualidade: sólidos e abstratos, a última letra do SOLID (Uncle Bob), inversão de dependência
+- Aprofundando nas estruturas do software, compreende-se também a espiritualidade (a gravação termina aqui)

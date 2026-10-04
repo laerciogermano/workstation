@@ -345,8 +345,8 @@
 
 | Bloco | Status |
 |-------|--------|
-| 0–7 | Em [`artigo.md`](artigo.md) |
+| 0.1–7.8 | Em [`artigo.md`](artigo.md), mesma hierarquia |
 
 ## Próximos passos
 
-→ Revisar prosa do [`artigo.md`](artigo.md) (ritmo, cortes, aprofundar onde o input pedir)
+→ Revisar prosa do [`artigo.md`](artigo.md) seção a seção (ritmo, cortes, aprofundar onde o input pedir)

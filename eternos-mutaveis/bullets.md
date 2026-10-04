@@ -7,13 +7,24 @@
 - Objetivo: entender o que é a realidade, pela lógica e não pela fé
 - Perguntas eternas: Deus, vida, mundo espiritual, depois da morte, por que há algo e não o nada, do que é feita a existência, por que estamos aqui
 - Milênios de tentativas (templos, tratados, telescópios) sem consenso
+- Contraste com a matemática: dois e dois são quatro em qualquer língua e século; no espírito não há consenso
+- Religiões, escolas filosóficas e ciência explicam a origem de tudo: cada uma ilumina uma parte, nenhuma enxerga o todo
 - Perdidos no excesso: informação demais, síntese de menos
-- Preço da ignorância espiritual: sofrimento, ansiedade, vida sem sentido
-- Desvio pelo palpável: a programação como outra porta para as mesmas perguntas
-- Busca da estrutura perfeita do software levou à filosofia e à espiritualidade
-- O ateu que queria lógica e a encontrou nas camadas profundas de sistemas
+- Cada pessoa lida de um jeito com o espiritual: herda a fé e a mantém, entra num grupo e não consegue seguir, segue um tempo e abandona, pula de tradição em tradição, acredita mas não frequenta, nem tenta porque não acredita
+- Cada um explica Deus à sua maneira; a conversa escorrega para o lúdico ou o sombrio e termina em divergência
+- Religiões pedem fé sem base lógica; o essencial não está sendo transmitido
+- Preço da ignorância espiritual: evoluímos em tecnologia, medicina e engenharia, mas engatinhamos no conhecimento mais importante
+- Com tanta desinformação o homem sofre: tenta viver bem, acerta, erra, recomeça; muitos vivem atormentados e em condições precárias (financeiras, psicológicas, mentais), com ansiedade e vida sem sentido
+- Desvio pelo palpável: cansado da frustração, o autor se apaixona pela programação
+- Programação aplica-se à vida inteira: decisão de arquitetura é decisão filosófica (o que separar, o que unir, do que cada parte depende)
+- Bom programador é bom gestor de processos: quem planeja e organiza entrega qualquer projeto, de software ou de vida
+- Busca da estrutura perfeita do software por mais de uma década; nos últimos três anos, períodos sabáticos estudando filosofias, tradições espirituais e o Caibalion
+- Um livro mudou a lente sobre o código: a programação virou base para compreender a espiritualidade
+- O ateu que queria lógica: via os crentes como bitolados, sem ceticismo, trocando lógica por fé; só aceitaria Deus com explicação lógica e coerente
+- As perguntas de que havia desistido estavam na programação, nas camadas profundas de sistemas
 - A chave: sólidos e abstratos
-- Ponte: o que vem a seguir sempre esteve diante dos olhos
+- Espiritualidade não como mais uma religião nem como fé por si só, mas como o conhecimento que leva a Deus
+- Ponte: o que vem a seguir sempre esteve diante dos olhos; de tão simples, nunca foi percebido em sua grandeza
 
 ---
 

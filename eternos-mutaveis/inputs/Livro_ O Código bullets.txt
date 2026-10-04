@@ -1,0 +1,391 @@
+- Título do material: Eternos Mutáveis — A resolução da metafísica
+- To Do inicial: reunir todos os dados
+- Quem sou (persona do autor): pai da metafísica; criador de alfabetização espiritual
+- Revelará ao mundo o que é Deus e o mundo espiritual
+- Refuta Aristóteles e aponta o maior erro da humanidade
+- Mudou o paradigma de realidade das pessoas
+- Porquê do livro: manual da vida substituto da Bíblia
+- Autor será escritor de filosofia metafísica conectada à programação
+- Conecta programação, linguagem, filosofia e espiritualidade
+- Explica de forma simples polimorfismo, verbo, objeto, essencialidade e acoplamento
+- Libertação do homem: era adâmica e superação adâmica
+- Evidenciar o verbo, não apenas o estado; o mundo ignora o verbo
+- Afirma que revelará ao mundo que Deus é uma negra
+- Lógica de Deus é inversa: pequeno é grande; humilde é primeiro; últimos serão primeiros
+- Renúncia é vitória; desconforto é felicidade
+- Consciência das regras do jogo; resolve estrutura do software; alfabetização espiritual
+- Faça pela criança que foi (o retorno); para o você do outro lado
+- Revelar o poder da abstração e outra forma de enxergar a realidade
+- Estrutura 1 — Vivemos a era adâmica: homem preso ao mundo material/físico
+- Inconsciente da realidade eterna e da origem espiritual
+- Guiado por impressões sensoriais; enxerga só um cisco da realidade
+- Adão simboliza a encarnação; ignorância do mundo espiritual
+- Perguntas: o que é Deus, mundo espiritual, alma, pós-morte, o que somos, por que algo em vez do nada
+- Estrutura 2 — Por milhares de anos o homem busca respostas
+- Explicações religiosas: sem base lógica; muitas exigem fé
+- Explicações filosóficas: sobrenatural além do sensível; acessível pela lógica (metafísica); sem consenso
+- Explicações científicas e lúdicas: Deus materializado; alma/fantasmas; anjos e demônios; conexão direta entre planos
+- Trauma civilizatório: discussões gregas, Idade Média, monopólio do conhecimento, Renascimento
+- Ciência ignora a metafísica; evolução espiritual tardia; analfabetismo espiritual
+- Estrutura 3 — Somos analfabetos espirituais neste fruto/nesta terra
+- Não compreendemos as estruturas que regem a realidade
+- Deus e o sobrenatural não foram explicados de forma clara e objetiva
+- Analfabetismo espiritual causa divergências, conflitos e guerras
+- Estrutura 4 — O erro: Aristóteles como culpado
+- Teoria da substância: forma e matéria; verbo acoplado ao objeto
+- Correção proposta: desacoplar verbo e estado; objetos não possuem verbos; verbos possuem objetos
+- Impactos na OOP: estados e comportamentos; acorrentar espírito à carne e movimento ao estado
+- Mundo imperativo acorrenta espírito à carne; forma/matéria, forma/conteúdo, classe/instância
+- Estrutura 5 — Superação adâmica: gnose como conhecimento que liberta
+- Mundo espiritual existe e pode ser entendido de forma exata como a matemática
+- Mudança de paradigma; iluminação; batizado pelo conhecimento; transcendência
+- Homem encontra Deus; “conhecereis a verdade e a verdade vos libertará”
+- Conhecimento do verbo; reconciliação/conciliação
+- Perguntas sobre perfeição: Deus é perfeito? Deus é tudo? Tudo muda? O que não muda?
+- Conhecimento extraído da linguagem: autor como metafísico e programador
+- Relação direta entre programação, filosofia e espiritualidade
+- Estrutura da linguagem é fiel à realidade; sem linguagem não se compreende a realidade
+- Estrutura 6 — Conhecimento: existência, ser como menor unidade fundamental, ontologia
+- Dualidades-chave: movimento×estado, ser×estar, eternos×temporais, potência×ato, verbo×objeto
+- Entradas×saídas, abstrato×sólido, forma×matéria, coesão×acoplamento, critério×qualidade
+- Metafísico×físico, isomórfico×polimórfico, metamórfico, perfeito×imperfeito
+- Seção Vídeo 1: era adâmica e visão aristotélica do espírito preso à matéria
+- Homem não compreende estrutura fundamental nem origem das decisões
+- Ignorância se perpetua; crenças moldam comportamento; homem não conhece metafísica
+- Objetivo do vídeo/livro: fazer compreender Deus, mundo espiritual, alma, origem, pós-morte, o que somos, por que algo em vez do nada
+- Dualidade com contexto histórico: Heráclito, Parmênides, Platão, Aristóteles, gnosticismo, cristianismo, Idade Média, Renascimento
+- De fora: chave para explicar Deus estava na programação
+- Linguagem expressa a realidade; estrutura da linguagem se repete na realidade
+- Busca desde o princípio: origem da existência, Deus criador, juízo, paraíso/inferno, mundo espiritual
+- Cap. Estrutura 1 — Era Adâmica (detalhe): estruturas só percebidas pelo intelecto
+- Encarnação = acoplamento do espírito à matéria
+- Crianças carecem de base lógica; linguagem humana é contraditória e mal compreendida
+- Insatisfação e busca por sentido; visão deturpada da realidade
+- Perguntas: constituição da realidade, Deus, outra realidade, pós-morte, eternidade, céu/inferno, o que sou, para onde vou, sentido da vida
+- Cap. Estrutura 2 — Busca pela iluminação: filosofia responde o que a sensorialidade não resolve
+- Hipóteses culturais: persas/Zoroastro (dualidade, tensão, imortalidade da alma)
+- Taoísmo: dualidade yin-yang e darma; budismo: roda de Samsara; hinduísmo: Bhagavad Gita
+- Egito/hermetismo: o Todo, Corpus Hermeticum, Pedra de Roseta, hieróglifos, Caibalion
+- Princípios herméticos citados: Todo é mente, correspondência, polaridade, causa-efeito, fluxo e refluxo, gênero; Hermes Trismegisto
+- Judaísmo: Salomão; Moisés “Sou o que sou”; João 1:1 — no princípio era o Verbo; José do Egito e símbolos; Logos
+- Gregos: mito como arquétipo; matemáticos e formas eternas (esfera); Pitágoras e Egito
+- Pré-socráticos: Parmênides (nada muda); Heráclito (tudo muda exceto a mudança; Logos; tensão dos opostos; que dormem e que não dormem)
+- Clássicos: Sócrates (razão como virtude); Platão (ideias, Demiurgo/Timeu, o que muda e o que não muda separados)
+- Aristóteles: substâncias, hilemorfismo, causa primeira/metafísica, forma×matéria
+- Cristianismo: assim na Terra como no céu; Tomás de Aquino; Logos heraclítico
+- Gnósticos: libertação do espírito da carne pelo intelecto; Jesus gnóstico; Apócrifo de João (íon, Sophia); Demiurgo maligno
+- Idade Média: destruição de conhecimento?; Renascimento: símbolos em pinturas; Iluministas: verdade pela razão
+- Ordens iniciáticas: Maçonaria (régua e compasso), Rosa-Cruz
+- Críticas à metafísica: Nietzsche, Kant, ciência; Jung: arquétipos, inconsciente coletivo, estruturas simbólicas
+- Saussure: signo (significante×significado), semiótica, teoria do valor por oposição (“só é porque não é”)
+- Espiritismo também aparece na lista de caminhos
+- Problemas filosóficos decorrem da ineficiência da linguagem (Whitehead, Russell, Wittgenstein)
+- Linguagem comum: polimorfismos (mesmo nome, significados diferentes) e redundâncias (nomes diferentes, mesmo significado)
+- Busca de linguagem única; Russell (paradoxo do barbeiro/conjuntos; “o rei é burro” exige existência prévia do rei)
+- Wittgenstein v1: tudo é linguagem; do que não se pode falar, calar; linguagem é limite do mundo; Tractatus
+- Wittgenstein v2: não há linguagem formal única capaz de resumir o mundo
+- Estruturas comuns: dialética como tensão dos opostos; metafísica continua em aberto (realismo vs idealismo)
+- Ciência toma o lugar: foco nos particulares; visão aristotélica ignora metafísica; conhecimento prático/experiência
+- Ciência estuda particulares; metafísica estuda gerais (acesso pelo intelecto; Deus não se experiencia)
+- Matemática prova o que é para todos os casos; ciência prova o que não é (enquanto não falso, verdadeiro)
+- Cap. Estrutura 3 — O inferno (consequências de não conhecer metafísica)
+- Homem roda nos particulares em círculo; não entende símbolo, verbo etc.
+- Sem manual da vida; comportamento segue crença; crença deturpada gera comportamento deturpado
+- Excesso de informações sem bases lógicas; excesso de opções e crenças
+- Baile de máscaras: fingir saber; confundir mentes; falar do que não se entende
+- Autômato: comportamento definido por estado interno e externo
+- Inferno cíclico: conto da mosca; ciclo do esquecimento; atores em histórias que se repetem
+- Desejo de ter e tédio de possuir (pêndulo do esquecimento); lembrar é poder
+- Analfabetismo espiritual gera mazelas individuais, familiares e sociais
+- Produtos deturpados: polimorfismo e abstração mal compreendidos
+- Modelamos software como enxergamos o mundo; visão deturpada gera software deturpado
+- Manutenção custa ~80% do esforço; aumentar programadores não resolve
+- Conceitos confusos: polimorfismo/isomorfismo, sólido×abstrato, componentes, encapsulamento, acoplamento/coesão, imperativo/declarativo
+- Boas práticas (GoF, SOLID) sem domínio filosófico/linguístico
+- OOP aristotélica: estruturas estáticas; não se enxerga fluxo de execução
+- Redundância de paradigmas, linguagens, frameworks e domínios; código do ano anterior parece ridículo
+- Softwares pouco intuitivos (diferente de prédios); feitos de símbolos/significados; necessidade de blocos tipo Lego
+- Problema persiste em espiritualidade, filosofia, linguagem e software
+- Homem faz mal ao próximo sem saber que faz mal a si
+- Cap. Estrutura 4 — Qual o conhecimento que liberta?
+- Chave da metafísica estava no software; conhecimento do abstrato; domínio da linguagem
+- Caminho: estudo dos abstratos, desenvolvimento, essencialismo, Arquitetura Limpa, estrutura do software
+- Filósofos da linguagem: Moore, Russell, Frege, Wittgenstein
+- Linguagem, software, filosofia e espiritualidade compartilham o mesmo problema
+- Dominando a linguagem, domina-se software, filosofia e realidade
+- OOP reflete forma×matéria e classe×instância; há mais filosofia em programação do que se imagina
+- Existencialismo: problemas (era adâmica, violência, desigualdade, identidade, excesso de info, baile de máscaras, inferno cíclico)
+- Motivo: não compreende realidade, identidade nem eternidade
+- Solução: resolução da linguagem, da metafísica e gnose
+- Filosofia: nasce para solucionar; falha por polimorfismo e redundância de significados
+- Software: cresce e produtividade cai porque modelamos como enxergamos a realidade
+- Resolvendo a linguagem, resolve-se software, filosofia e existência
+- Cap. Estrutura 5 — O erro: Aristóteles acopla verbo ao objeto; foco nos estados e ignorância do verbo
+- Cap. Estrutura 6 — Conhecimento secreto (acesso)
+- Realidade é dual; trindade como cortina de fumaça para a dualidade
+- Linguagem é mudança de estado; experiência material é produto de estruturas maiores
+- Estruturas espirituais/metafísicas só percebidas pelo intelecto; ordenam tudo o que é, foi e será
+- Lado agente processador invisível; erro estava na linguagem
+- Crítica a Aristóteles: polimorfismo do símbolo para verbo e estado
+- Linguagem descreve a realidade; chave está no movimento; transcendência vem do desacoplamento
+- Softwares lidam muito com linguagem; tudo é linguagem; linguagem simula a realidade
+- Retorno à visão de Platão: separar verbo e objeto
+- Dualidade (história da criação): para ser, o não ser; para toda qualidade, a oposta
+- Experimento da tela preta: ponto preto não cria existência; ponto branco cria contraste/existência
+- Qualidades são no mínimo binárias; não há unanimidade; todo significado é referencial/relativo
+- Ser não se define a si; não-ser define por contraste (Saussure)
+- Surgem todas as coisas pela guerra dos opostos
+- Pares listados: significante×significado, qualidade×critério, luz×sombra, presente×vazio, ligado×desligado
+- Estado×movimento, ato×potência, devir×ser, mutável×eterno, objeto×verbo, matéria×forma
+- Físico×metafísico, polimórfico×isomórfico, saída×entrada, macho×fêmea, componente×espaço
+- Sólido×abstrato, acoplamento×coesão, dedução×indução, imperativo×declarativo, particular×geral, privado×público
+- Caos×ordem, efeito×causa, imperfeito×perfeito
+- Todo elemento/qualidade/critério pertence a uma história/movimento; elemento só pode conter uma qualidade
+- Movimento e estado: tudo muda exceto a mudança; movimento = mudança de estado
+- Estado se mede e se vê; movimento é invisível, eterno e modifica o estado
+- Objeto é transformado; verbo transforma; verbo como logos; lado oculto = plano das mudanças
+- Ser e estar: ser não pode ser criado/destruído (imutável); estar cria-se e destrói-se (mutável)
+- Eternos e temporais: eternos mutáveis; separar símbolos
+- Sólido × abstrato: abstratos são espaços criados pelos verbos; espaços únicos e isomórficos (a própria forma)
+- Abstrato = molde; sólido = componente; princípio macho (sólido) e fêmea (abstrato)
+- Ontologia: estudo do ser; símbolo = significante (elemento) × significado (verbo/forma)
+- Ente existe; elemento é menor unidade da existência, possui qualidades, compõe história
+- Elemento pode representar sólidos/abstratos e estados/verbos; materializa o abstrato
+- Forma × matéria: matéria = componente; forma = estrutura essencial/espaço a preencher
+- Formas são eternas, imutáveis, base de toda “criação”; verbos/histórias criam formas
+- Formas como arquétipos no inconsciente coletivo (Jung); símbolos similares em culturas isoladas
+- Identidade e Navio de Teseu: identidade está no espaço/história, não no componente
+- Qualquer um pode ser o navio se preencher o espaço; espaço deixado é imutável
+- Indução: particular→geral (elemento preenche quais histórias?); dedução: geral→particular
+- Imperativo: controle do fluxo, sujeito, movimento induzido; declarativo: sem controle do fluxo, IoC, protocolos
+- Fluxo/ordem/logos: reutilização de fluxos; metafísica = estudo do plano das mudanças; verbo é fractal
+- Universo é grande autômato: dado um estado, um movimento; regras imutáveis
+- Cap. Estrutura 7 — Perfeição: resolução em linguagem, software, filosofia, espiritualidade, existencialismo
+- Histórias (verbos) são padrões eternos; objetos são elementos mutáveis; histórias se repetem
+- Como músicas/filmes com mesma estrutura e diferentes notas/personagens
+- Histórias = menor unidade fundamental da realidade; o que aconteceu acontecerá; o que nunca aconteceu não acontecerá
+- Software escalável com regras independentes de hardware, SO, linguagem, paradigma ou projeto
+- Regras imutáveis como o Logos/roteiro; elementos processantes e processados variam
+- Bom programador precisa conhecer do que softwares são feitos e bases filosóficas
+- Riscos da perfeição: fascínio, superioridade, julgamento ao próximo, nova queda
+- Cap. Estrutura 8 — A imperfeição: somos todos os mesmos; condenar o próximo é condenar a si
+- Mundo do acoplamento; natureza imperfeita; carro/caverna de Platão; crucificação cristã
+- Reduzir danos; honrar quem é puro ou próximo disso
+- Cap. Estrutura 9 — Superação adâmica (equilíbrio)
+- Domínio da metafísica para boa vida; o que procura o universo evidencia; o que é, o universo procura
+- Analogia select/Tinder; controlar a máquina; moderação; nem só físico nem só material
+- Romper ciclo desejo/tédio; morte do ego; libertação do ciclo
+- Cada ato é plantio; memória curta; olhar para frente
+- Conhecimento altera paradigmas; melhora linguagem, filosofia e software
+- Observar histórias da natureza; usar o verbo a favor; estado define movimento; configurar ambiente
+- Controle da mente; escolha do pensar; plano; esfera polida; saber o porquê desejas
+- Atitudes não dependem das emoções; somos atores em papéis escritos; assumir papel de autor
+- Senhor do destino; 20 minutos por dia; gozar da eternidade; você é a consciência
+- Conciliação dos eternos mutáveis; pense como se já fosse e serás
+- Computador se assemelha ao universo; só absorvemos quando desprevenidos
+- Deus é exemplo; todos somos os mesmos; em tudo que focar, cresce
+- Todo acoplamento/excesso será punido; você não lida com pessoas, lida com situações
+- Superação adâmica (detalhe): compreender estados e histórias; histórias são estados que mudam
+- Identidade: autor e ator; razão; centelha divina; somos idênticos
+- Eternidade: eterno presente; extrair princípios da natureza; enxergar o que se repete
+- Arquétipos: objetos abstratos com características acopladas; um ser pode ter mais de um
+- Crítica aprofundada a Aristóteles: não unir espírito e carne; não “carnificar” o espírito
+- Separar objeto (transformado) e verbo (transforma); movimentos eternos, estados mutáveis
+- Foco nos objetos gera sofrimento; histórias possuem objetos, não o contrário
+- Paradoxo do barbeiro: João não é barbeiro e cliente ao mesmo tempo; abstrair papéis
+- Atribuir o ser ao comportamento, não o comportamento ao ser
+- Ilusão da individualidade; ego; não separar ator e personagem cria carmas acoplados
+- Esquecemos o que se repete; decisões baseadas em estados; mesmos erros; sofrimento contínuo
+- Proposta de continuidade a Russell/Whitehead; visão próxima de Jung; linguagem unificada possível
+- Conceitos mal compreendidos da filosofia definem o software (correspondência, polimorfismo, acoplamento, etc.)
+- Forma de projetar software também pode definir a visão da realidade
+- Cadeia: resolver linguagem → software → filosofia → existência/espiritualidade
+- Propor paradigma de linguagem; ponto de partida de nova discussão; mundo não é lugar bacana
+- Sumário formal — Parte I: As Bases da Existência
+- Cap. 1 Dualidade: ser/não-ser; lei dos opostos; luz/escuridão, vida/morte, físico/metafísico; ato e potência
+- Cap. 2 Ser e Devir: ser constante e mutável; tempo como mudança de estado; influência grega e cristã
+- Cap. 3 Verbo como motor: linguagem como analogia da criação; verbo = movimento eterno; Deus motor imóvel e Verbo (João 1:1)
+- Parte II — Mundo Material e o Eterno
+- Cap. 4 Natureza da matéria: corpo temporário; tempo e entropia; matéria como prisão/véu gnóstico; aparência×essência
+- Cap. 5 Espírito isomórfico: eterno/imutável; arquétipos/formas (Platão+gnosticismo); unidade espiritual; ética
+- Cap. 6 Ponte: metafísica além do físico; coexistência dos mundos; verbo liga espírito e matéria; papel da consciência
+- Parte III — Superação Adâmica
+- Cap. 7 Queda e ignorância: mito adâmico simbólico; perda da consciência do eterno; cegueira dos sentidos
+- Cap. 8 Caminho da gnose: conhecimento liberta; centelha divina; retorno ao Éden interior
+- Cap. 9 Morte e renascimento do eu: desapego do ego; transformação pelo verbo; viver no espírito
+- Parte IV — Deus é o Verbo e a Mudança
+- Cap. 10 Motor imóvel e Deus vivo: comparação aristotélico×bíblico; Deus como mudança e permanência
+- Cap. 11 Eternidade e ciclos: eterno retorno (Nietzsche); espírito atravessa formas; tempo como ilusão; agora eterno
+- Cap. 12 Céu e inferno como estados de consciência: não lugares; ética; espírito que ama vs que destrói
+- Conclusão: unidade restaurada; superação da matéria pelo verbo; Deus é o Verbo e a Mudança
+- Softwares: equivalência funções/autômatos (Turing); roteiros e atores; feitos de verbo
+- Stateful×stateless; encapsulamento público/privado; agentes; variáveis e proteção a substituição
+- Separar roteiros e objetos; sujeito e objeto; linguagem ubíqua; olhar de objetos para fluxo
+- Experimento mental: controlar todos os personagens de um jogo imersivo — o que faria diferente hoje?
+- Linha cronológica da metafísica — 1. Pré-socráticos: Tales, Anaximandro, Heráclito, Parmênides; arché; aparência×realidade
+- 2. Socráticos/platônicos: ética socrática; Ideias; mundo sensível×inteligível; ser eterno pela razão
+- 3. Aristóteles: cria o termo Metafísica; ser enquanto ser; causas; ato e potência; Deus como ato puro
+- 4. Helenístico/neoplatônico: Plotino; Uno; emanacionismo; influência cristã
+- 5. Cristã medieval: Agostinho (Platão+cristianismo); Tomás (Aristóteles+teologia); vias tomistas
+- 6. Renascença/escolástica tardia: redescoberta; questionamento a Aristóteles; tensões teologia×metafísica
+- 7. Racionalismo/empirismo: Descartes, Spinoza, Leibniz; Locke/Berkeley/Hume; ceticismo de Hume
+- 8. Idealismo alemão: Kant (coisa em si); Fichte, Schelling, Hegel (realidade racional/histórica)
+- 9. Críticas: Nietzsche, Comte, Marx, Heidegger (esquecimento do ser)
+- 10. Contemporânea: analíticos, Whitehead processual, fenomenologia, metafísica da informação, ontologias computacionais, IA
+- Temas posteriores listados: paraíso, eterno presente, ilusão da identidade, autômato, corpo×espírito
+- Tudo que aconteceu acontecerá; baile de máscaras; superação adâmica; eternidade; todos somos os mesmos
+- Correspondência, dualidade, ser e devir, movimento e estado, entidades, arquétipos, egrégora, ato/potência, ego
+- Mito de Sísifo, conto da mosca, inferno cíclico, ciclo de reencarnação, Jardim do Éden
+- Lista de perguntas/tópicos do livro: de onde vem a convicção; o que é metafísica; importância; uso prático
+- Diferença sólido×abstrato; óbvio precisa ser dito; baile de máscaras; excesso de opções; gnose; era adâmica
+- Autômatos; flow; eterno presente; ato da criação; houve criação?; dualidade; plano das mudanças
+- Ilusão da identidade; o que sou?; Deus é e será; objetificação; trindade; arquétipos; Jesus símbolo
+- Causa e efeito; leve três em uma; iluminismo; ontologia movimento×matéria; física×metafísica
+- Universo autômato; teoria do movimento; ato×potência; vida é filme; ordem divina; abstração
+- Movimento como centro; língua de Deus; linguagem ubíqua; filosofia cristã; resgate renascentista
+- Relatividade existencial; egrégora; nascimento do ego; Sísifo; mosca; baile; inferno; caos; entropia; Satanás; apocalipse
+- Morte do ego; Bíblia como conjunto de movimentos; ilusão do caos; teoria dos jogos; Éden; reencarnação
+- Transmutação mental; sentido da vida; tentação
+- Quem sou (marketing): maior filósofo; detentor da linguagem; linguista do Logos; filosofia+computação+espiritualidade
+- Tom dramático: lista de termos (Deus, céu, terra, paraíso, inferno, logos, demiurgo, etc.)
+- Glossário temático amplo: dualidade, polimórfico, isomórfico, metamórfico, arquétipos, jogos de linguagem
+- Software: OOP, classe/instância, clean architecture, roteiros, agentes, stateful/stateless, público/privado
+- Psicologia: identidade, nascimento do ego, paradigma de realidade, comportamento
+- Público-alvo: jovens 15–22, adultos, velhos
+- Conselhos/código de conduta: seja consciência; não ser controlado pela mente; próximo como a ti
+- Não falar dos outros; ter/enxergar/ser o plano; diário; controlar ambiente; não se expor demais
+- Próximo passo é o mais importante; ser essencial ao próximo passo; evitar sequelas
+- Nunca raiva; nunca reagir; nunca se explicar; focar no bom caminho; falar o indispensável
+- Pessoas veem só uma face; faça pelos que sofrem; você é o que acredita ser
+- Sem causa não há materialização; deleite como eterno; foque nas transições dos estados
+- Sumário “O Código”: 1 não existe manual; 2 consequências; 3 motivo; 4 forma correta
+- O que o livro resolve: estruturar a linguagem; jogos de linguagem (Russell, Whitehead, Wittgenstein) impedem avanço
+- Resolver linguagem → resolver filosofia → explicar realidade
+- Introdução (prosa): não há manual sintetizado da vida; espiritualidade confundida com paranormal/medo
+- Mundo saturado de informações; fé sem lógica; baile de máscaras; analfabetismo espiritual civilizacional
+- Metafísica = filosofia primeira, causa de todos os efeitos, suprassensível; sem ela não se entende Deus
+- Má orientação gera regressão e problemas do individual ao coletivo; todos os problemas derivam da ignorância
+- Livro oferece visão lógica, acessível e sintética da essência e do mundo metafísico
+- Convicção do autor: 15 anos buscando forma perfeita de software; achou padrões que questionam ontologia aristotélica
+- Programadores são roteiristas de máquinas; lidam com histórias, padrões, concretos e abstratos
+- Essência: alma/metafísica/generalização/o que se repete — o conhecimento/padrão
+- Metafísica (etimologia): além da física; domínio do que se repete, abstrato, imaterial, espiritual
+- Importância: identidade, essência, acesso a Deus, eternidade; vida consciente e livre de tormentos
+- Uso prático: tudo se aprende por reprodução; histórias generalizam critérios abstratos
+- Sólido: endereço físico, mensurável; abstrato: estrutura geral sem endereço (ex.: Doug × cachorro)
+- Compreender abstratos extrai o mundo espiritual e permite antever histórias que se repetem
+- O óbvio precisa ser dito para se tornar unânime
+- Baile de máscaras: aparência de expertise; quem não diferencia qualidades tudo parece igual
+- Excesso de opções exige bússola lógica; livro para quem quer desacorrentar as amarras
+- Gnose: conhecimento que dá acesso a Deus, eternidade e jardim do Éden; desprende do material
+- Era adâmica: homem tem intelecto mas não descobriu condição de autômato; vira só corpo/instinto
+- Autômatos: consciência produto do estado; sentimento vem do estado; percepção muda com o tempo
+- Tabela de estados e movimentos previsíveis; estado + movimento → próximo estado
+- Com consciência, dissociar corpo e observador permite configurar ambiente interno/externo
+- Estado de Flow: ter plano, enxergar o plano, eliminar o não essencial ao fluxo
+- Eterno presente: mesma centelha em todos os corpos sob véu do esquecimento; mal ao outro é mal a si
+- Herda o mundo que deixou; experimenta céu ou inferno nesse presente
+- Ato da Criação (poema): Deus se reparte; do uno o outro; do igual o oposto; do unânime o contraste
+- Pares criados: constante/mutável, eternidade/tempo, luz/escuridão, bem/mal, ordem/caos, paz/guerra
+- Alívio/dor, felicidade/tristeza, sabedoria/ignorância, destino/escolha, tédio/desejo, potência/ato, princípio/fim
+- Houve criação?: não; universo já “nasceu” pronto; verdade auto-suficiente, eterna, indestrutível
+- Tudo que aconteceu irá acontecer; o que não acontece jamais acontecerá; já viemos a eternidade aqui e agora
+- Dualidade: existência requer não-existência; unanimidade não se percebe; guerra dos opostos
+- Importância da dualidade: revela seres ocultos, constantes e eternos (movimentos/metafísica)
+- Ser e Devir: dois seres, não substância aristotélica unificada; ser constante e ser mutável
+- Análogos: matéria/movimento, verbo/estado, matéria/energia; movidos = estados; que movem = movimento
+- No texto: ser = imutável/próprio movimento; estado/devir = transitório
+- Ilusão da identidade (Navio de Teseu): identidade não se sustenta só com forma+matéria aristotélica
+- O que sou: alfa e ômega; corpo e consciência; mente como sexto sentido (estados/crenças + movimentos/abstrações)
+- Separar observador (sétimo sentido, puro/eterno) da mente contaminável; consciência conecta a Deus
+- Deus é e será: eterno exige possibilidade de não ser; tempo define o eterno
+- Deus não é ente criador (evita regressão criador-criatura); Deus é e está — metafísica e natureza
+- Deus = metafísica, causa primeira; lei divina tende à ordem; crença desalinhada gera comportamento desalinhado
+- Ontologia tradicional precisa ser reanalisada para unificar crenças
+- Problema da objetificação: ver entidades isoladas em fundo vazio; útil mas restritivo
+- Proposta: dança contínua estados↔movimentos; equilíbrio após perturbação; realidade proporcional ao observador
+- Trindade e cristianismo: risco de individualizar Jesus; preferir essência/egrégora/papel/valores
+- Fé verdadeira = conhecimento que torna a crença natural; aproximação oriental da totalidade
+- Arquétipos / Jesus é símbolo: “eu sou o que sou e o que serei”; ser e tempo; movimento e matéria; ordem divina
+- Causa e efeito: não objeto estático newtoniano; movimento como reequilíbrio/relação vibracional com o ambiente
+- Leve três em uma: múltiplos estados/movimentos como um fenômeno; identidade pura só no mundo do movimento/ideias
+- Nada eterno a não ser os movimentos; universo como dança de interações
+- Ontologia movimento e matéria: matéria mutável/observável; movimento imutável (se muda, são dois movimentos)
+- Analogia da melodia: identidade atemporal independente de instrumentos
+- Física × metafísica: ambos possuem estados e movimentos; alinhar intelecto à natureza = alinhar à ordem divina
+- Universo autômato / teoria do movimento: movimentos veem características, não elementos
+- Estado atual = o todo (relações), não só o objeto; astros como clock do processador do universo
+- Estado e relação como 4ª dimensão; dois objetos igualmente perturbados se comportam como no estado inicial
+- Ato × potência: matéria=estado; verbo=movimento; ato=matéria+movimento; potência=o que pode vir a ser
+- Quanto mais padrões conhecer, mais prever o ato; tendência ao ato de maior probabilidade
+- Vida é um filme com final escrito; personagens escolhem perspectiva
+- Ordem divina: tendência natural ao estado de potência mais provável; leis de Newton em uma
+- Tempo absoluto (versão do texto): tempo humano constante; massa/frequência relativa; espaço comprime
+- Abstração: substituir elementos da história mantendo resultados; polimorfismo é nome ruim
+- Não é o objeto polimórfico, mas a história que abstrai; no Flow o foco é a ação
+- Cabo de vassoura: utilidade está na história (objeto extenso), não no objeto
+- Individualização projeta ilusão de elementos; maior abstração = maior inteligência; ontologia defeituosa
+- Movimento como centro: consciência é movimento; movimento enxerga papel; Deus no movimento das coisas
+- Língua de Deus: movimentos = língua; padrões reconhecíveis; quem abstrai chega a qualquer potência
+- Linguagem ubíqua: símbolos intuitivos, paralelizáveis; como no filme A Chegada
+- Filosofia cristã: induz a pensar Jesus implementando espírito santo; White Pill implementa língua de Deus
+- Resgate ao Renascimento: leis de Newton; ordem de Tales; cosmos
+- Relatividade existencial: massa relativa (não só espaço-tempo); coisas deixam de ser elas em outra frequência
+- Egrégora: conjunto de crenças; define comportamento, cultura e realidade; não desacreditamos o que fielmente cremos
+- Se cremos que morreremos, o corpo apaga; tabela de crenças/skills; cirurgia da personalidade
+- Nascimento do ego: mal da objetificação; criança identifica existência; do reativo ao intelecto
+- Mito de Sísifo: sem conhecimento dos movimentos, ciclo desejo→tédio; saco sem fundo; só conhecimento liberta
+- Conto da mosca: memória ruim faz voltar ao risco; humano igual em escala maior
+- Baile de máscaras: impostorismo; efeito manada; autêntico gera contraste; egrégora negativa do fingir
+- Personalidade fraca entra na manada; forte vira herói
+- Inferno cíclico: individualidade como mal; padrões se repetem; Blue Pill liberta e traz Éden; enxergar Deus em tudo
+- Caos: ciclo vicioso, polaridade esquerda/direita, mentira elimina da ordem
+- Entropia: dificuldade de prever conforme distância/relação com o observador
+- Satanás: individualidade; voz da mente; ego
+- V de divergência da egrégora: do violeta ao vermelho
+- White Pill: autêntico vence jogo das máscaras; verdade vem à tona; convergência para a luz
+- Apocalipse: todos tomam Blue Pill; vergonha das máscaras; cultivar natureza; ensinar pobres; cada ferida vira antídoto (pai/mãe/professor)
+- Morte do ego: identidade no comportamento; outro como si; fruto da egrégora; fagulhas do Todo; Deus > indivíduo
+- Bíblia = conjunto de movimentos simbólicos para abstração; Jesus/Jesuis; origem egípcia/Hermes → Abraão → Ocidente → cristianismo
+- Ilusão do caos: não existe caos; caos é humano impondo sua ordem
+- Teoria dos jogos: olho por olho mudou; jogar com Deus dobra a moeda/conquista pela ordem divina
+- Jardim do Éden: já vivemos nele; mentira é o diabo; natureza é representação máxima de Deus (não imperfeita)
+- Mesma identidade/consciência; viver eternamente em diversos corpos; tender ao perfeito
+- Ciclo de reencarnação: somos o todo; todas as formas de vida; herdamos a terra que deixamos
+- Ninguém nasce mal; crianças alegres; mundo mentiroso corrói; todos podem ter vida virtuosa
+- Fórmula da felicidade: gatilhos (banho quente, café); histórias conhecidas de motivação
+- Autômatos: ambiente + natureza + intelecto = comportamento; crenças desalinhadas desalinhham a vida
+- Não somos o que pensamos (pensamento é estado); consciência = movimento/decisão/verdadeiro-falso
+- Deus dá as caras; você decide; Ele dá o movimento
+- Transmutação mental: cérebro não diferencia imaginação e realidade; ignorar voz linear; visualizar imagens
+- Separar observador da mente; “Eu sou consciência universal observando”; deuses sem memória onde tudo tende a dar certo
+- Memória fotográfica (tópico listado)
+- Sentido da vida: desejar harmonia/deleite; intelecto organiza o caos rumo à ordem divina
+- Missão: explorar potencial, compartilhar conhecimentos/criações, contemplar ordem divina com semelhantes
+- Montanha-russa da consciência: sem ordem divina, sobe e desce por esforço; com ela, passageiro elevado em ascensão contínua
+- Esteja preparado para nunca se aborrecer; seja ser de luz (esfera polida; queda = evolução)
+- Tentação: não criar ilusões/expectativas que não sejam de Deus
+- Manual da Vida (inexistente) — Cap. 1 Farsa da informação: excesso cega; baile de máscaras; vida não é guia pronto
+- Cap. 2 Jogo da realidade parcial: vemos fatia; ego/eu é construção/ilusão
+- Cap. 3 Modelo OOP: entes acoplados; autômatos; decisões por estado; sofrimento por ciclos ignorados
+- Cap. 4 Inferno cíclico: futuro = passado com novos atores; saída = controle da mente; ser autor além de ator
+- Cap. 5 Caminho do conhecimento: realidade como relações/padrões; metafísica = estudo do que se repete; arquétipos
+- Cap. 6 Observador e centelha divina: leitor é observador; eternidade = eterno presente
+- Cap. 7 Escolha dos arquétipos: escolher histórias a viver; liberdade = reagir com sabedoria às limitações
+- Epílogo: verdade interna; sem manual externo; navegar o ciclo como um com a essência do todo
+- Introdução alternativa: universo de histórias; mapa prático metafísica+ego+linguagem+arquétipos; bússola para o fluxo eterno
+- Seção “O que é o Ente?” aparece como tópico em aberto
+- Diagramas alfabéticos A–G e “8 MAIOR” (notas visuais do manuscrito)
+- Promessa de mercado: libertação do espírito pelo conhecimento; visão lógica de Deus e do universo
+- Ferramenta de análise metafísica + código de conduta tipo 48 Leis; explicar Éden/inferno e vida eterna
+- Dor da audiência: desinformação; religiões só pela fé; essencial não transmitido
+- Objetivo profissional: reduzir ansiedade; impacto social/cultural/financeiro; cargo público; palestras; Logos Academy
+- Diferenciação: bases lógicas da programação para metafísica
+- Desejo da audiência: explicar Deus; crença por vias lógicas (gnose), não só fé
+- Sensações desejadas: alívio, tranquilidade, esperança, entusiasmo, felicidade
+- Comunidade: Logos Academy; sem símbolo/cor/canal definidos ainda
+- Conteúdo: termos novos/técnicos; metafísica e desenvolvimento não são populares
+- Diferenciação de mercado: autenticidade; se seguiria; orgulho; não parece com alguém do mercado
+- Já levantou bandeira política (não fala mais); não acompanha concorrentes; estuda filosofia e Lúcia Helena Galvão
+- Notas de rodapé do manuscrito: [a] colocar nas falas dos filósofos; [b] como conectar o símbolo?
+- Links citados no material: artigos Medium do autor; repositório flow-oriented-programming no GitHub

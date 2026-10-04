@@ -8,6 +8,12 @@ Pré-requisitos
 - `adb` disponível e permissões concedidas.
 - Pasta `src/screenshots/` para artefatos.
 
+Regra de decisão (obrigatória)
+- **Toda decisão** (o que clicar, se Skip apareceu, se há Connect, se scrollar, se a tela mudou) deve usar **somente** `extract()` / `findByText` e o retorno de texto `{ text, x, y }`.
+- A IA **jamais** tira print do dispositivo sozinha para **olhar a imagem** e decidir o próximo passo.
+- Screenshots no fluxo feliz são só artefato opcional de log — **não** entram no raciocínio da IA.
+- **Exceção (debug):** se algo sair do planejado ou houver erro, aí pode tirar print e pedir análise da IA pela imagem — **só nessa exceção**, nunca no restante da jornada.
+
 Passos (interfaces usadas)
 1) Capture frame + OCR
    - chamar: `extract({ serial })`
@@ -61,7 +67,8 @@ Passos (interfaces usadas)
 Critérios de aceite
 - A jornada: Search → digitar → fechar teclado → Show all results → People → Connect (e Skip se aparecer).
 - Scroll só no centro; nunca na zona do teclado nem na faixa inferior do system nav.
-- Artefatos: `screenshots/*.png`, `elements-*.json`, log com totais.
+- Decisões só via OCR/texto; print+análise por imagem apenas em erro/debug.
+- Artefatos: `elements-*.json`, log com totais; screenshots só se debug ou log opcional.
 
 Notas operacionais
 - Timeouts: esperar 1–3s entre ações; `findByText` com `minScore:0.75`.

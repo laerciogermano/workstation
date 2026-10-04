@@ -1,0 +1,485 @@
+- Tema do arquivo: diário de meditações ligado a Livro O Código, Tratado Lógico Filosófico Universal, Flow e Histórico
+- Cabeçalho inclui a frase Preserve o desejo
+- Não seja reativo; desligue notificações
+- Esteja em bom estado e estará em um bom mundo
+- O agora não é o todo; você é um autômato; o mundo é o seu estado
+- Não confunda o estado atual com o todo; o sentimento de hoje não será o de amanhã
+- O estado é a lente com que se enxerga o mundo; coma bem, durma bem, esteja bem
+- No dia a dia, foque no caminho feliz; se der errado, tenha o próximo caminho feliz e o próximo plano
+- Foque no que não quer ser, em vez do que quer ser
+- Beleza é organização
+- O nada é o excesso da falta do todo
+- Trabalhe sempre em cima da obra; não desperdice tempo com rascunhos
+- O segredo é o equilíbrio: nem tanto, nem tão pouco; entre um e o outro
+- Enxergar a abstração pode trazer a sensação ruim de ver as coisas se repetindo
+- A ação vem da intenção; o espírito mora na intenção da ação
+- O desejo é o medo do oposto: medo gera desejo (pobreza→riqueza, violência→paz, solidão→companhia)
+- Reflexão pessoal sobre falta da Nati, planos de vida, culpa, dependência emocional e o que desejar tornar-se
+- Quisestes o Jardim, tivestes o Jardim: completude gera falta de desejo, sensação de estar parado; não desejar é um inferno
+- A pergunta mais importante: o que desejas te tornar?
+- De que serve a vida se não for para viver a melhor versão
+- Pessoas que vivem com medo de serem enganadas são vistas como mesquinhas
+- Exercício: se vivesse todas as vidas simultaneamente pela eternidade, o que faria de diferente?
+- Completo essencialismo, metamorfismo e abstração: metamorfismo muda a forma; abstração foca no que importa
+- Características excludentes barram cenários; multiplicidade (estar em mais de um lugar) resolveria o terceiro excluído
+- Não há ser perfeito sem contradição; no material, um ser ocupa um espaço e uma forma por vez
+- Ser perfeito exigiria metamorfose e multiplicidade; Platão mirou a mística e acertou Jesus; o ser perfeito seria metamórfico
+- Todo pensamento deve estar contido em algo prático
+- O homem não decide o destino; o fluxo conduz e molda como um carpinteiro
+- Liste seus maiores medos
+- Tema: estrutura dual da realidade entre verbo e objeto (várias versões do mesmo ensaio no arquivo)
+- Habituados ao mundo material, esquecemos estruturas invisíveis: religião chama de espiritual; filosofia, metafísica ou Demiurgo
+- Perguntas (o que é Deus, do que tudo é feito) não se resolvem só pela experiência sensível; a experiência é efeito de algo maior
+- A estrutura oculta se compreende pelo intelecto e pela gnose, não só por experimentos empíricos
+- O lado oculto é o agente processador que transforma o material; é outro plano da realidade
+- Dualidade funda a existência: ser ou não ser; frio/calor, luz/escuridão; se tudo fosse igual, nada seria percebido
+- Experimento da tela preta: ponto preto não cria existência; ponto branco cria diferença e existência
+- Duas substâncias: estado/objeto (visível, mutável) e movimento/verbo (invisível, eterno, transformador)
+- Isso rompe a substância aristotélica única (forma+matéria) e separa espírito e carne, verbo e objeto
+- Mundo material: objetos que sofrem mudança; mundo imaterial: verbos, movimentos e histórias
+- Histórias/roteiros são eternos e se repetem; mudam só os elementos que os preenchem (música, versões do mesmo filme)
+- A história é a menor unidade fundamental da realidade
+- Forma é espaço/molde abstrato; matéria é o componente que preenche; identidade está na forma, não na matéria
+- Paradoxo do navio de Teseu: o navio é o espaço/critério, não as tábuas
+- Formas eternas são arquétipos; presentes no inconsciente coletivo (Jung); símbolos semelhantes em culturas sem contato
+- Jogos de linguagem (Russell, Whitehead, Wittgenstein) atrapalham filosofia e também a construção de software
+- Ajustar as lentes melhora software, linguagem, relação com o espiritual e o material
+- Não somos só matéria: somos também verbo; como Deus temos domínio da ação, mas com ignorância, diferentemente do Demiurgo perfeito
+- Princípio de gênero: sólido/masculino e abstrato/feminino; composição e reutilização de histórias
+- Não houve criação: tudo sempre esteve e sempre estará; formas não se criam nem se destroem
+- Prompt interno: reescrever o texto com tom mais formal para Medium, mantendo originalidade do autor
+- Adicionar declarativo x imperativo no artigo
+- Misericórdia e perdão: quem leva numa face e dá a outra; olho por olho deixa todos cegos; alma rancorosa é farta de ser carregada
+- Lista de nomes/marcas possíveis: metaprogramador, germano.dev, o metafísico, filosofiaDoCodigo, Flow, artesão do software, DemiurgoProgramador etc.
+- Link de planilha e ideias de artigos/vídeos
+- A condição da existência é a condição de presença
+- Não houve criação nem juízo final; céu e inferno são aqui e agora
+- Somos a mesma consciência experimentando todas as vidas simultaneamente; o que fazemos ao outro fazemos a nós
+- Não há reencarnação nem outro plano pós-morte: ao morrer deixa-se este corpo; karma é o ato presente; somos carrasco e vítima
+- Universo fractal e recursivo, sem início nem fim; tudo que aconteceu acontecerá; herdaremos o mundo que deixamos para nós
+- Criar pequena comunidade para ler ideias e artigos
+- Somos a experiência produzida pela carne
+- Desafio do livre arbítrio: IA observa humano e responde questionário; se iguais, talvez não haja livre arbítrio
+- Erro ontológico: Aristóteles uniu característica e mudança; deveriam ser dois seres; isso deu ruim na OOP, na vida e na espiritualidade
+- Links: artigo DIO programação e metafísica; YouTube shorts
+- O endereço surge na contraposição dos seres
+- Desenvolver software é a arte de contar histórias
+- Existem muitas formas de chegar ao mesmo resultado
+- Teoria unificada: ser como menor unidade; ontologia; Heráclito (muda) e Parmênides (constante); Platão unifica; Aristóteles contesta com forma+matéria
+- Influência aristotélica no MER e na OOP: objeto com estado e comportamento (ex.: carro)
+- Se movimento é só relação entre corpos, como o elemento seria anterior à causa?
+- Suma Teológica de Tomás de Aquino usa base aristotélica para provar Deus
+- Deveria criar o artigo Flow; side effect ao passar objeto por referência
+- O mundo é dual: sempre amado ou odiado; escolha de que lado estar
+- Defina-se; memórias revelam o inconsciente
+- Glândula pineal talvez seja capacidade de pensar em detalhes
+- Pessoas se definem por como são tratadas; trate-as e elas se tornarão
+- Busca pelo não ser (não parecer feio) em vez do ser; foque em eliminar riscos, não só mostrar benefícios
+- Não tente convencer: seja/pareça o que procuram
+- Cada símbolo de linguagem equivale a um sim ou não, com oposto
+- Padrões se repetem; pessoas são previsíveis pelas características e rastros
+- A verdade por si só é autossuficiente
+- Dualidade: para todo ser, o não ser; contraste; universo binário
+- Atributos simples binários; compostos como cor
+- Bloco FLOW / O CÓDIGO: promessa = manual da vida e novo paradigma
+- Dores da audiência: excesso de informação, ansiedade, depressão, família, trabalho, relacionamento, finanças, violência, mazelas
+- Objetivo profissional: tornar o Brasil um país de primeiro mundo
+- Percepção da audiência: match do Tinder / profissional de TI; diferenciação por paradigma e conhecimentos da computação
+- Felicidade é o ato de não estar preocupado
+- Somos autômatos; estado define comportamento; se comportamento nos define e estados mudam, somos muitos
+- Não faça planos que não pode controlar
+- Energia acompanha a intenção; humildade atrai sabedoria
+- Gere referências enquanto fala
+- Vingança real: perdoar; indiferença aliada à generosidade desarma
+- O que há de ser, será; como crer se não pode explicar?
+- Deus é a própria realidade, o próprio sistema; está na natureza mais que nas criações humanas
+- Beleza do mundo é do tamanho da sabedoria; em certo nível, fica inacessível à ignorância
+- Derrota ou vitória não devem parar; reconhece o padrão quem já percorreu o caminho
+- Livre arbítrio: não afirma logicamente ainda, mas chuta que sim; Deus dobrou o universo; última peça: e é
+- Mude hábitos, mude cérebro/mente; no universo não existe se — o se é condição humana
+- Bom ou ruim é perspectiva; Deus dá com uma mão e tira com a outra
+- Logos se observa por abstração, indução e dedução
+- Não há desejo sem tédio; contexto define significado; abstrair é selecionar a forma
+- Nunca revele intenções; o Todo é mente; domínio da mente é domínio do Todo
+- Perspectiva é endereço; ambiente altera perspectiva; mudar ambiente muda o mundo
+- Você não é visto pelo que é, mas pelo que parece ser no mundo de cada um
+- Foque na produção e no resultado
+- Enxergamos pelo contraste; comum se apaga; diferente se destaca; somos a régua do mundo
+- Para todo espaço, preenchimento; para todo preenchimento, novos espaços; eterno ciclo desejo/tédio
+- Falha na ontologia aristotélica gerou desastre na modelagem de software; propõe TFOMS contra MER
+- Selecione o que vê, ouve, fala, pensa e come; belo é espaço do desejo; feio é espelho
+- Ambiente define mente; mente define mundo; escreva e controle gatilhos
+- História é mudança de estado (e0→e1); não comente motivos, ordene o ato
+- Pense no plano, não em pessoas; seja essencial; haja como stateless (exemplo do porteiro)
+- Sensação de eu se renova a cada instante; jogo perfeito reproduziria a realidade
+- Mundo visto é reflexo da compreensão; tamanho do mundo = tamanho do conhecimento
+- Dialética: guerra da familiaridade; externo é diferença do interno
+- Lista de metas Flow: selecionar/criar/mover elementos, código, livros, cursos, livraria, tráfego, vender Flow, comunidade
+- Histórias se repetem; idade é memória; museu de grandes novidades; tudo muda exceto a mudança
+- Existe algo em vez de nada porque a verdade é absoluta e não tem opção de não ser
+- Todos somos o mesmo, só mudamos de endereço
+- Controle pensamentos ou a mente te controlará; vida sem consciência é autômato
+- Como enxerga as pessoas define como elas se comportam diante de você
+- Quem se irrita com os outros é escravo deles (Epiteto); raiva como batata quente
+- Antes de salvar vidas, preserve a sua
+- Casa ambiente tem sua configuração; conhecer a mente/pensamento para se libertar
+- Criticar o mundo orientado a objetos; aprender imaginando e explicando o desenho
+- Lista de metas pessoais: corpo, inglês, dinheiro, plataforma, livro, ordem
+- Se está pra baixo, perspectiva errada; liste bons caminhos; eleve pensamentos
+- Deus é realidade: estado (visível/mutável) e mudança (oculta/constante); tempo = mudança de estado
+- Dois planos: material (manifestação) e das mudanças (causa); Logos é a ordem das mudanças
+- Metafísica estuda o plano das mudanças; Logos, metafísica, manifestação, linguagem e consciência são isomórficos
+- Conhecimento é domínio do que se repete; programe-se anotando bons pensamentos
+- Manifestação é rastro da alma
+- Menos acoplamento e mais coesão por objetivo; ser essencial
+- Mundo dos homens é irracional: guarde a razão, seja político, fale/ouça/veja pouco; semelhantes virão em multidão
+- Seja doutor na arte de ignorar; maldade reside na ignorância
+- Consertar dentes/sorriso; parar de fumar; fazer vídeos YouTube
+- Quanto maior a categorização, maior a abstração e a reutilização de histórias
+- Quanto mais se mostrar, menos compatibilidade
+- Consciência comanda o autômato; ambiente domina o autômato; consciência domina o ambiente
+- Ignorância pode ser mecanismo de liberdade/não determinismo; somos a variável imprevisível?
+- Viemos às mesmas histórias em diferentes perspectivas
+- Listas de projetos: YouTube, Flow, livros, Clozzy, Smarket; nunca se exalte; escreva, clusterize, refine
+- Escolha as melhores versões e viva-as; molde a realidade moldando a si
+- Abstração é uma perspectiva; ambiente interfere no fazer
+- Não se materializa sem conhecer a origem/causa; pensar e agir fortalece aquilo
+- Sentido da existência como arte mais inteligente; envelhecer jovem valoriza a juventude
+- Sem consciência, sou a consciência; sem percepção do tempo, sou o tempo; sem controle, sou o controle
+- Humano aprende por reprodução da natureza; criatura imita o criador
+- Mais importante que saber o que deseja é entender por que deseja
+- Pensamento do eterno presente: mesma centelha em todos os corpos sob véu do esquecimento; mal ao outro é mal a si; herda o mundo deixado; céu ou inferno aqui
+- Boa nova aos que sofrem: somos um; apegue-se à centelha, não à identidade material; pó a pó; não busque além da morte
+- Deus dobrou o universo para liberdade; tenha misericórdia; perdoe para ser perdoado
+- Indução não sabe o quem (endereço); dedução sabe o quem
+- Abstração: arte de ignorar e extrair o proveitoso; conceito mais importante
+- Cadeia Deus = verdade → fato → história → estados e mudança → ser e devir → verbo e estado → criador e criatura
+- Princípio da correspondência: quem fala de outro para você falará de você para outro
+- Conheça as histórias e reconheça nos atores os personagens
+- Ciclo: como se vê → sente → comporta → veem → tratam → se vê; quebre o ciclo; defina-se
+- Ambiente define comportamento: controle o ambiente para o próximo estado desejado
+- Universo repete melodias com diferentes tons; compatibilidade é arte de ignorar defeitos
+- Possuído não é desejado; desejo é falta; dialética eterna
+- Não confundir ignorância dos homens em explicar Deus com a existência de Deus
+- Objeto é unidade repetível e substituível; estado e verbo podem ser abstratos ou concretos
+- Verbo está entre potência e ato; ato é história finalizada
+- Esteja à vontade: nervosismo contagia; corpo não diferencia realidade e imaginação
+- Se algo tira a paz, você nunca a teve; tesouro onde estiver a atenção
+- Estado é história comprimida/congelada/condensada
+- Universo como música: histórias = melodias; estados = notas
+- Ambiente define o que se faz; controle o ambiente, não só a ação
+- Pessoas não sabem o que querem até que mostrem; concreto é produto de abstrações em ato
+- Quanto mais próximos, mesmas histórias; quanto mais distantes, diferentes
+- Nada é novo: a memória é que fica mais longa; quem ama deixa livre
+- Deus pode sempre ter estado aqui; vê-lo depende da forma de enxergar
+- Características revelam comportamento
+- Demore para decidir o que quer; depois não recue; o mundo tentará dissuadir (Nietzsche)
+- Deus não joga dados, nós jogamos; mente humana abre novas threads; se = livre arbítrio via ignorância
+- Computador se assemelha ao universo, não o contrário
+- Transmutação mental: pense como se já estivesse e decida com base nisso
+- Flow é estrutura física do software / plano das ideias; introduzir teoria de tudo
+- Lista de produtos: Flow Artigo/View/plataforma, Clozzy, YouTube, Smarket, livros, WorkFlow
+- Universo é autômato; um move o outro; sem o outro não há movimento
+- Enxergamos parcialmente a realidade; há plano metafísico atrás do físico
+- Só absorvemos quando desprevenidos; histórias conhecidas não provocam frustração
+- Deus é silencioso e exemplo; deseje aceitação de Deus, não dos homens
+- Flow: panta rei; Logos driver design; vigie a intenção
+- Melhor conviver com acoplamento sendo estrutura estável e compatível a todas as perspectivas
+- Menor característica existente: a existência
+- Morte não será sentida; somos autômato; 7 representa o ciclo
+- Dissimulação: muitos só querem desculpa; coloque no extremo para ver importância do desejo
+- Em tudo que focar, crescerá (problema ou solução)
+- Creia com fé da sabedoria
+- Se Deus é um, criou o mundo para companhia, embora com problemas
+- Deus permite o mal para ensinar e evoluir
+- Parece não haver livre arbítrio pois todo espaço será preenchido; se houver motivo para ser bem tratado, será
+- Estamos mais em contato com criações humanas do que com as de Deus; isso deturpa a realidade
+- Massa não difere verdade de mentira; acredita em quem fala com confiança
+- Todo excedente será punido; foque no necessário (citação Mogli)
+- Se alguém der um tapa, evite levar outro; não dependa do outro para a paz
+- Também fez parte da maldade do mundo; ajoelhe-se perante Deus
+- Não importa o que o peão fala, importa a disposição do tabuleiro; lida-se com situações, não pessoas
+- Não existe azarado, existe quem não aprende; a vida mede o que se sabe
+- Objeto como acúmulo de histórias; crença define comportamento, visão e personalidade
+- Natureza é a linguagem falada mais detalhada; a cada piscar, nada é o mesmo
+- Evite erro (exemplo da sinuca); aja como se todos gostassem e gostarão
+- Messias será o próximo Hermes Trismegisto
+- Metafísica é religião sem santidade; ignore o desnecessário; compatibilidade = perdoar/ignorar erros
+- Quem repara a presença repara a ausência; imagine-se grande, haja grande
+- Pessoas fazem o que você faria no lugar delas
+- Adam Smith: bom para você; Nash: bom para você e para a comunidade
+- Linguagem + metafísica aristotélica torna objeto a menor unidade com comportamento e característica
+- Quanto menos características, mais abstrato; quanto mais, mais concreto
+- Remova vaidade e excessos; peso da presença = peso da falta; campo ruim faz bons jogadores
+- Nunca reaja; doar é nobre; na perda identifica-se o valor
+- Universo é uno porque é ciclo: ida e volta, dois estados mínimos
+- Tu és filho da árvore da vida; já somos todas as coisas
+- Quem não entende Deus não entende realidade, linguagem, pensamento nem natureza
+- História e estória; real e metafísico; ambos têm estado e mudança
+- Sofrimento vem de não seguir regras de Deus; amor proporcional à devoção
+- Realidade multifacetada: um fato vive várias histórias/perspectivas
+- Por menor que seja, todo ato tem consequência; fale o indispensável
+- Falar/contato demais gera desgaste; mantenha energia limpa; não saia da thread/plano
+- Ao acordar a mente está limpa; tente permanecer nesse estado
+- Movimento é invisível em instante isolado; matéria/estado é foto/história compilada
+- Abstração é olhar a história sob um ponto de vista; elemento vira personagem ao participar
+- Produto de todas as perspectivas define o que acontecerá; somos previsíveis em cada perspectiva
+- Trabalhe com exemplo mínimo; recicle a vida; esteja aqui e agora
+- Domine pensamentos perguntando qual o próximo passo; você não é o que pensa; não seja mosca/autômato
+- Algoritmo da árvore da vida: universo fractal/recursivo; pó a pó; herdaremos o mundo deixado
+- Melhor forma de pensar é desenhando
+- Dois tipos de pessoas: as que acreditam em si/humanidade e as que não
+- Cérebro salva o comum e enxerga diferença; no outro vemos a diferença do que somos
+- Tesouro onde estiver o coração/atenção; morada da atenção é a thread
+- Tolo calado passa por sábio; permaneça no plano mesmo ante a morte
+- Somos autores, personagens e atores; razão não deve depender dos sentimentos
+- Sabedoria: entender motivações dos desejos e histórias que se repetem
+- Não culpe destino nem pessoas: são atores de histórias; observe intenções
+- Não pense: escreva ou desenhe; burrice é andar em ciclos
+- Não houve princípio nem haverá fim; sempre existiu
+- Técnica Flow: escrever diariamente sobre o assunto; o documento cresce e facilita engajamento e retorno ao estado
+- Vida é eterna e curta ao mesmo tempo; viva ambas as perspectivas
+- Quem não apresenta ameaça passa despercebido; características revelam motivações
+- Sonho: mundo com sabedoria; pregar pelo bem comum, não pela vaidade
+- Acoplamento do verbo bem visto (dois recados positivos) vs danoso (um negativo)
+- Acusar outros é acusar a si; sem esperanças no mundo = sem esperanças em si
+- Universo fractal: micro como macro; dialética = guerra dos opostos
+- Acoplamento é traiçoeiro; no mundo real estado não se invoca do nada, só se transmuda
+- É bem visto quem se esconde; medem pelo que você não é
+- Toda perspectiva é face de Deus; no micro digital única, no macro sem diferença
+- Meta: tornar o pouco raro abundante; depois novos raros (dialética)
+- Não interessa inteligência dos homens, mas a de Deus por meio deles; obra se descobre, não se cria
+- Quem reconhece o que se repete reconhece o que há de vir
+- Acoplamento é o maior cupim da OOP; preferência temporal é admirável
+- Controle de desejos (boca/olhos) escala do micro ao macro
+- Tenha, veja e seja essencial ao plano/fluxo; 4W: who when what why
+- Próximo estado deve ser essencial ao próximo movimento e vice-versa
+- Fazer sempre; pensar quase sempre; falar jamais; mostre nos resultados
+- Se pudesse ver a melhor versão, teria vergonha do espelho
+- Dialética e Lei de Murphy: o que pode dar errado dará; exemplos de descuido
+- Não importa o que falam, importa se você acredita
+- Escreva o livro que gostaria que seu filho lesse
+- Quando só, sou todas as coisas; com eles, sou mais um
+- Metas diárias: água, academia, tarefa, refeição, ler página; ideia Smarket no condomínio
+- Para todo problema complexo, soluções simples; quebre em menores
+- História tem dimensão de tempo; estado não; identidade pertence ao papel, não à matéria
+- Nada muda, tudo transmuta; matéria é ator mudando de personagem
+- Aniquilação do ego: indivíduo vs Todo; arquétipos; menor unidade = história (estado inicial, mudança, estado final)
+- Linguagem tradicional é falha: ações acopladas ao sujeito; estrutura baseada em paradigma OO
+- Wittgenstein/Tractatus: linguagem não exprime totalidade; corpo fala além da boca
+- Acoplamento do verbo: mesma ação com diferentes intenções
+- Objeto = acúmulo de estados/qualidades; arquétipos verbonianos se escondem atrás dos estados
+- Conteúdo vs ambiente (homem/vinho, sala/garrafa); objeto participa de várias estórias
+- Fractal: fato único em pequena escala, mesmo em larga; trate como última vez
+- Substantivo = história condensada (como variável); salve-se primeiro para salvar o mundo
+- Objetivo: boa vida e mundo livre de tormentos para o maior número
+- Trinidade ligada a Platão; ações devem olhar todas as perspectivas conhecidas
+- Tamanho do ciclo proporcional à memória; sem memória, vive em ciclos
+- Eternos mutáveis: mente, razão e realidade são isomórficas; tudo é sistema
+- Entes únicos na matéria, mas papéis se repetem; estória = relação reproduzível de características e movimentos
+- Mônada = fatia papel+comportamento / estado+movimento; junção forma estórias e histórias
+- Objetos pertencem mais a movimentos do que movimentos a objetos
+- Acoplamento de comportamento (uma ação, várias funções) e de estado (aglomerado em n movimentos)
+- Remova o eu; viva paz como guerra contínua; não viva só pelos sentimentos
+- Futuro = repetição do passado com diferentes atores; Terra como fruto em ciclos; sem contato com outro fruto
+- Não haverá salvador único; Deus se manifesta como sabedoria, não como paranormal
+- Crie com visão de quem usa; escreva o que gostaria de ler; ideia Duolingo de conhecimentos
+- Livre-se de ambientes que rebaixam; suba a montanha
+- Matéria é memória do universo; converta energias
+- Nenhum pensamento deve apossar a mente; aja polido para evitar martírio mental futuro
+- Deus não virá: salvação parte de nós; anote conclusões e parta delas
+- Desacople vaidade das intenções; universo resume-se a estados e histórias
+- Missão: sintetizar a Palavra para novas e velhas gerações; ensinar a viver
+- Arquétipo do anticristo: sociedade sacrificada por ~30 anos para boa vida
+- Entidades malignas = arquétipos de personalidade por construções mentais distorcidas; conversão pelo conhecimento
+- Oração = imaginar a boa história; conhecimento enriquece essas histórias
+- Realidade do homem como quadro/pintura mental; Deus = sistema/autômato/verdade/engrenagem
+- Não lute para ser aceito onde já é; não compita, compartilhe
+- Hipótese: sintetizar tratado para explicação efetiva em massa
+- Imaginação é cópia imperfeita; limite do mundo = conhecimento; natureza é professora
+- OOP faz crer em identidade única separada; ao entender repetição, sobra sensação de livre arbítrio
+- Sistema se dividiu para podermos existir; cuidado com o que pensa: começa nas ideias
+- Ninguém deseja o que não conhece; ao me conhecer me reconheci em todos — e foi um inferno
+- Espíritos = arquétipos comportamentais; moral é orar para o todo, não só para si
+- Livro sugerido: O retorno de Cristo; função não pertence ao objeto — objeto pertence à função
+- Máquina da imortalidade: percepção aumentada do tempo em jogo/software
+- Logos = conjunto de princípios eternos; princípios enxergam qualidades, não objetos
+- Lógica deriva de proposições naturais; estórias se repetem; realidade imita a arte
+- Notas sobre Wittgenstein: linguagem, pensamento e realidade isomórficos; sujeito como limite
+- Nova ontologia: existência = diferença → mudança → dois estados e dois caminhos; mônada = mudança de estado
+- Superação adâmica: sair da visão vertical OO para visão horizontal orientada a fluxos
+- Objetos não são agentes da mudança; mudança decorre de mônadas/princípios
+- Metodologia Flow convida a olhar ordem dos eventos, não objetos
+- Eternos e mutáveis: o que muda e o que é mudado
+- Tudo precisou ser como é para a existência ser possível
+- Universo fractal: vai até o humano e volta; somos última ponta
+- Natureza é expressão concreta da metafísica; era adâmica será superada
+- Busca por software → ontologia → espiritualidade → linguagem; erro de software reflete erro de visão da realidade
+- Coincidência metafísica/Cristo/gnosticismo; falta síntese; crê em razão subjacente universal
+- Estórias = descrições abstratas de fatos; arquétipos = símbolos com características que expressam estórias
+- Moral: enxergar o outro como a ti; somos razão da existência / Deus observando a criação
+- Catálogo universal das estórias; ouro no que se repete
+- Menor unidade do ser é a ação; teoria de tudo unindo Hermes a Wittgenstein
+- Tempo = mudança ininterrupta de estados; morte pouco sentida porque notamos só diferença
+- Envelhecer = menos novidade = tempo parece mais curto
+- Verbos têm conexões lógicas (abrir/entrar/sair/fechar); Wittgentein atentou a estados, talvez esqueceu o verbo
+- Livre arbítrio como capacidade de ser observador e configurar o meio; verdadeira gnose
+- Consciência humana única e imutável; muda o que está em volta
+- Estamos em máquina de estados; estado e movimento se definem mutuamente; sem início nem fim
+- Matemática, metafísica e linguagem constituem a mesma coisa
+- Aparência: melhor parecer vaidoso que desleixado; ideal = humilde e disciplinado; excesso esconde falta
+- App de meditação com textos e categorias; plante e colha eternamente
+- Humanidade cega pelo desejo de se sentir especial não vê ciclos já conhecidos
+- Motivo do livro: complexidade de software reflete percepção distorcida da realidade; nova abordagem ressignifica software e vida
+- Linguagem inicia na definição do símbolo ser; limite da cognição é a linguagem
+- Polaridade: ser temporal tem qualidade de não ser; ser atemporal/eterno não
+- Não faça por você, faça pelos que sofrem; Deus = inteligência e verdade; natureza = mãe
+- Você não é único; somos todos os mesmos
+- Único mandamento: enxergue o outro como a ti; tome as rédeas do autômato
+- Anotar cria referência; pensar como criador para entender o criador
+- Qualidade apreciável: criar, visualizar e seguir um plano; roteiros são paralelos, palavras lineares
+- Cuidado com intenção da vaidade dentro da mesma mônada
+- Se a vida é um sonho, deixar de sonhar é rejeitar a razão de existir
+- Notas sobre Marsilio Ficino e Pico della Mirandola: neoplatonismo, dignidade do homem, gnose, sincretismo
+- Nova ordem gnóstica: Deus não virá dos céus, nascerá da terra; anjos em formação
+- Ouro não está nos personagens, mas na sucessão de eventos
+- Tenha clareza do que não quer; metafísica é o conhecimento mais importante
+- Transmutação mental: definir a si; intenção → energia → ressonância
+- O que define significado é o espaço, não o preenchimento
+- Toda característica antecede evento e todo evento sucede característica
+- Universo: ordem, movimento e estado / características e movimentos
+- Erro: achar que objeto possui comportamento; comportamentos independem de objetos; softwares devem separar unidade de ação e de estado
+- Movimentos se relacionam com características, não com objetos; objetos = acúmulo de características acopladas
+- Verbo não tem significado sozinho: intenção/contexto define
+- Correspondências: porta e tampa servem abrir/fechar; mônadas enxergam qualidades
+- No mundo dos planos, concreto não precisa existir: estados e ordem de eventos
+- Ato concreto de baixo para cima; abstrato de cima para baixo
+- Softwares são histórias; bons desenvolvedores são bons roteiristas
+- Mônada = unidade de ação (estado inicial, movimento, estado final) com antagônica; exemplo cai/levanta João; jornada do herói
+- Quem controla a ordem dos eventos controla a matéria
+- Por isso Flow: não se codifica olhando entidades, mas fluxos de mudança de estado
+- Funções criaram a necessidade de objetos; objeto é comodidade cognitiva
+- O que e o quando importam mais que o quem; desacople verbo do sujeito
+- Linguagem SVO → VO: caiu(João); sujeito também vira objeto afetado
+- Alfabetização metafísica: catalogar relações como símbolos
+- Binário/polaridade: 0↔1 com dois movimentos antagônicos
+- Comunicação interna por imagens/cenários, não só vozes lineares
+- Toda verdade é meia verdade; conto da mosca: não seja autômato
+- Alquimista converte energia ruim em boa
+- Erro dar muitos nomes às mesmas coisas repetidas
+- Lei da semeadura: plantio e colheita antagônicos; subida e descida
+- Homem morre pela boca, olhos e ouvidos; cuide do consumo
+- Somos última ponta do fractal; se contato superior tivesse que existir, já teria
+- Vida como escada rolante contrária: precisa subir para manter posição
+- Limite da consciência: tudo se resume a ordem da mudança de estado; fim da matrix
+- Quem não sabe para onde vai, qualquer lugar serve; tenha um Gantt
+- Exemplo arquétipo resiliência: régua, elástico, convalescente
+- Belo não é para prestígio do autor, mas para admiração; admire mais do que deseje ser admirado
+- Não haverá salvador externo: salvação é escolha individual
+- Alegria = superação do medo/conforto; dor repele, alegria atrai; disputas geram ódio e amor
+- Afirmações Eu sou: amado, admirado, respeitado, próspero, bondoso, etc.
+- Padrão e manifestação / metafísica e física / verbo e estado
+- Definir o que algo é exige especificar a relação (porta larga/estreita conforme quem olha)
+- Livre arbítrio: escolher papéis nas mesmas histórias; céu/inferno são cenas; Deus/Satanás são personagens
+- Mau/bom ato não te torna eternamente demônio/Deus, a menos que se repita
+- Universo se partiu em dois para dar vida
+- Trate todos como se estivessem sofrendo
+- Algoritmo/missão: explicar vida eterna em corpos temporais; levar felicidade e sentido aos que sofrem
+- Sentimento de alegria inexplicável = presença de Deus; razão de viver
+- Palavra é para quem está de joelhos, não para o copo cheio
+- Ordem altera o significado; você é mensageiro de Deus
+- Pessoas sofrem por ignorância; reconfigure a mente com verdades
+- Controle do autômato = controle de emoções; ouro nos estados e movimentos
+- Basta uma decisão diferente para interromper o ciclo
+- Defina-se como centelha divina eterna em corpo temporal
+- Terceiro excluído na mesma perspectiva; em outra mônada pode ser e não ser (alto/baixo)
+- Identidade polimórfica por perspectiva; ilusão de identidade; arquétipos junguianos
+- Você pode tudo, contanto que enxergue o outro como a ti
+- Ciência olha estados; metafísica olha movimentos
+- Planejamento de cima para baixo; construção de baixo para cima (tijolos → casa)
+- Glória vem da superação do difícil; porta estreita
+- Ego/identidade separada é ilusão; despertar supera individualismo
+- Silogismo do ser: dualidade, diferença, eterno/temporal, ida/volta, correspondência
+- Diferença entre o que existe e o que é; Deus é (YHWH: Sou o que sou), não meramente existe
+- Universo = árvore fractal eterna de árvores e frutos
+- Ensine a pescar; para ser bom precisa sabedoria; enxergar no próximo a si impede o mal
+- Deus é autor e obra; história já escrita; bem e mal faces da mesma moeda
+- Existência, razão e verdade são inevitáveis
+- Metas amplas: White Pill, livros, Flow, Clozzy, Smarket, casas, corpo, mente, família, amigos
+- Relação provoca mudança, não o sujeito; redefinir ontologia SVO
+- Flow decompõe objetos em função e dado, diferente da OO
+- Não há bala de prata; pedra-papel-tesoura; toda escolha tem renúncia
+- Teoria do movimento: jogar muda estado do ambiente; movimento é reação de equilíbrio
+- Não existe identidade; só verbo e estado; sujeito preenche espaço entre ambos
+- Ser vivo sente seis emoções básicas; vida sem consciência é autômato
+- Singularidade só na metafísica; essência singular, manifestação dinâmica
+- Verbo antecede sujeito; sujeito = espaço que compõe
+- Dois conceitos-chave: polaridade e correspondência; liberam os demais
+- Correspondência escancara o baile de máscaras; viemos, morremos e retornamos
+- Deus visto pela tinta do pincel; criatura prova o autor
+- Logos/Razão/YHWH: princípios onipotentes, onipresentes, oniscientes
+- Criar rede social Thoughts; idioma do sábio é conhecimento, do comum estética e dinheiro
+- Vida do sábio é solitária; precisa camuflar e às vezes mostrar posses para ser ouvido
+- Elemento está entre verbo e estado / ser e não ser; identidade singular substancial não se sustenta
+- Princípios listados: correspondência e polaridade (com notas de rodapé)
+- Só existe um espírito: o de Deus; estamos criando a consciência de Deus
+- Antídoto a Narciso: imperfeito também é espelho
+- Algoritmo perfeito: singularidade e todo ao mesmo tempo (karma verdadeiro)
+- Construirá casas, mercados, plataformas, livros, escolas, negócios para herdar o mundo na eternidade
+- Vergonha ao se reconhecer no espelho do mundo / festa de máscaras (Kafka)
+- Amadurecer: jogar o tabuleiro sem se sujar; aliança só com quem vê as leis
+- Você é o carrasco e a vítima; sofre o mesmo mal que comete
+- Objetos não definem movimento; movimentos definem objetos
+- Metafísica = causa primeira / ciência das diferenças e relações; batismo ao entender
+- Sensação é diferença; o que dá prazer enfraquece, o que tira fortalece
+- Esfera polida: pouco por fora, muitas formas por dentro; colapso da onda
+- Domínio da mente; bateria social; cuidado com fala e atenção
+- Esoterismo = metafísica = estudo das relações; aproveite o presente
+- Quando baterem, ofereça a outra face: melhor rosto ferido que coração envenenado
+- Transmutação mental hermética: você é consciência/espectador, não corpo nem mente
+- Prazer está em servir; cuidado com vaidade após ajudar
+- Imaginação acelera raciocínio e memória; mapeamento mental 2D/árvore
+- 1% é ouro das tentativas; desejo é dor, gozo é alívio
+- Antídoto das dores = conhecimento; manual de Deus = natureza
+- Identidade é forma, não substância material; ser vs estar
+- Lei de Murphy ligada à mônada: se possível, acontecerá
+- Ninguém adivinhará o quanto você é bom; julgam pela aparência
+- Relação é a verdadeira identidade; espaço e corpo ilusórios, diferentes em grau
+- Não existem amigos genuínos sem interesse; seja justo sem perder o princípio
+- Cultive Deus em silêncio; chegou ao fim da teoria necessária; sistematizar elementos e movimentos
+- Entidades não existem, formas existem; uma entidade: Deus/lei
+- Renúncia da identidade → centelha divina; indivíduo = produto dele com o meio
+- Evento/padrão é a identidade; qualidade sem função é peso
+- Cristianismo, judaísmo e islamismo: três filhos órfãos de Hermes; metafísica = hermetismo
+- Ideia de linguagem metafísica unificada na alfabetização; visão unificada; menor desigualdade
+- Metafísica = linguagem de Deus; hipótese de conhecimentos ocultos nas religiões abraâmicas e no poder
+- Indução: concreto→abstrato; dedução: abstrato→concreto; exemplo do café adoçado
+- Princípio é relacional e baseado em abstração de movimentos e características
+- Dois tipos de seres: temporais e eternos; metafísica = Deus / ser que não pode não ser
+- Ciclo ver-se → sentir → expressar → serem vistos → ver-se; use positivamente
+- Cuidado com ajudas de pessoas boas: às vezes atendem necessidade de quem ajuda
+- Vencer é não cair; antes de criticar, entenda motivações (correspondência)
+- Abstração = tornar objeto polimórfico atribuindo qualidades/funções
+- Significado é relacional (vassoura como espada para o samurai); intenção define significado
+- Faça do presente a eternidade; escolhas de agora tendem a se repetir eternamente
+- Técnica Flow como diário cronológico para retomar concentração e estado
+- Eterno presente (versão longa): todas as vidas simultâneas; céu ou inferno no presente
+- Tempo cupim: deteriora corpo, relações, bairros, famílias, esperança, inocência
+- Paraíso só quando entenderem que céu/inferno não são pós-morte, mas aqui e agora
+- Super-homem: reconstrói o mundo em si após perder esperanças nos homens
+- Você está sozinho; foque no resultado; desista dos copos cheios; trabalhe com jovens
+- Definições: meio, significado, princípio/mônada (dada relação de estados → movimento → resultado)
+- Bom e ruim são sentidos de um eixo; continue plantando
+- Hermes Trismegisto pai de filósofos/sábios; metafísica = correspondência do Caibalion
+- Deus é o centro; círculo como símbolo perfeito (mesma forma em toda perspectiva)
+- Inteligência = gerar resultado pela imaginação/abstração no mundo real
+- Universo = princípio, movimento e matéria (bit / ligar-desligar / intenção)
+- Ideal existe como inverso do não ideal
+- Natureza é a melhor bíblia; configure o ambiente; plante boas sementes
+- Repúdio ao defeito alheio pode ser vergonha de si
+- Consciência = lógica; Deus não está morto, está nascendo
+- Não há livre arbítrio pleno: somos lógica moldada por histórias e ambiente
+- Conhecimento serve para não repetir erros; amadurecer = ninguém virá salvar; único leal é Deus
+- Sentido da vida: sofrer menos; dor é justiceira; natureza é professora
+- Tenha plano; foque na construção e no resultado; pouco em larga escala é muito
+- Notas finais do arquivo marcam trechos importantes: raiva, existência inevitável, correspondência, polaridade, transmutação mental, lógica

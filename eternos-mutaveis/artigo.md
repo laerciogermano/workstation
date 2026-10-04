@@ -94,6 +94,8 @@ Sem compreender o além da matéria, faltam chão para Deus, eternidade, céu, i
 
 ## 2. Busca por respostas — contexto histórico
 
+![Banner do capítulo 2: trilha dourada de símbolos de civilizações seguida por um buscador com lanterna](assets/banner-cap-2-busca-por-respostas.jpg)
+
 ### 2.1 Por que a busca começa
 
 A filosofia nasce quando a experiência sensorial não resolve. Todos buscam as mesmas perguntas da abertura; as respostas divergem.
@@ -138,6 +140,8 @@ A metafísica segue em aberto. Não há consenso. Não há manual lógico da exi
 
 ## 3. Consequências — o inferno cíclico
 
+![Banner do capítulo 3: anel de figuras repetindo o mesmo caminho em volta de dois polos](assets/banner-cap-3-inferno-ciclico.jpg)
+
 ### 3.1 Mazelas do analfabetismo
 
 O analfabetismo espiritual — já nomeado — não fica no discurso. Vira problemas individuais, familiares, sociais. Quando Deus e o espiritual são mal transmitidos, o sofrimento escala.
@@ -170,6 +174,8 @@ Modelamos o mundo como o enxergamos — e geramos produtos e softwares deturpado
 
 ## 4. Existe um conhecimento que liberta
 
+![Banner do capítulo 4: portal de luz aberto e corrente se desfazendo em partículas douradas](assets/banner-cap-4-conhecimento-que-liberta.jpg)
+
 ### 4.1 Insight
 
 Estávamos enxergando errado. A chave da metafísica estava na linguagem — e, no meu caminho, no software. (O arco biográfico já foi contado na abertura.)
@@ -194,6 +200,8 @@ Uma visão lógica de Deus e da dinâmica do universo. Uma ferramenta de anális
 
 ## 5. O erro — Aristóteles e a substância
 
+![Banner do capítulo 5: figura clássica prendendo o fluxo de luz num bloco acorrentado; à direita, objetos trancados](assets/banner-cap-5-erro-aristoteles.jpg)
+
 ### 5.1 Teoria da substância
 
 Platão separou dois mundos: o que muda e o que não muda. Aristóteles uniu forma e matéria na **substância** — e acoplou o verbo ao objeto, o movimento ao elemento. Em leitura dura: carnificou o espírito. Fez, na ontologia, o papel que certos gnósticos atribuíram a um demiurgo: prender o eterno no carnal dentro de uma só unidade. Mundos fundidos versus mundos separados.
@@ -213,6 +221,8 @@ O maior erro da programação não é um framework ruim: é repetir a ontologia 
 ---
 
 ## 6. O conhecimento secreto — alfabeto da dualidade
+
+![Banner do capítulo 6: filme dourado, símbolos opostos e horizonte espelhado](assets/banner-cap-6-alfabeto-da-dualidade.jpg)
 
 ### 6.1 Acesso
 
@@ -256,6 +266,8 @@ A menor unidade da realidade não é a coisa isolada: é a **história** — est
 ---
 
 ## 7. Superação adâmica — aplicação
+
+![Banner do capítulo 7: figura de pé com luz no peito, máscaras aos pés e árvore diante de uma estrutura luminosa](assets/banner-cap-7-superacao-adamica.jpg)
 
 ### 7.1 Resolução cruzada
 

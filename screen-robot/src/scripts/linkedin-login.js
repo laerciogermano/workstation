@@ -54,22 +54,33 @@ async function main() {
   const { serial } = await provisionEmulator(cfg);
   console.log(`   OK ${serial}`);
 
-  console.log("1.5) Abrir scrcpy…");
-  const view = openScrcpy({ serial, title: `linkedin-login ${serial}` });
-  console.log(`   OK pid=${view.pid}`);
+  const elements = await extract({ serial });
+  console.log(elements);
 
-  console.log("2) Instalar LinkedIn…");
-  const li = await installApk({ serial, ...cfg.apps.linkedin });
-  console.log(`   OK ${li.package} ${li.version || "?"}${li.skipped ? " (skip)" : ""}`);
+  // console.log("1.5) Abrir scrcpy…");
+  // const view = openScrcpy({ serial, title: `linkedin-login ${serial}` });
+  // console.log(`   OK pid=${view.pid}`);
+
+  // console.log("2) Instalar LinkedIn…");
+  // const li = await installApk({ serial, ...cfg.apps.linkedin });
+  // console.log(`   OK ${li.package} ${li.version || "?"}${li.skipped ? " (skip)" : ""}`);
 
   // console.log("3) Abrir LinkedIn…");
-  // await launch({ serial, package: cfg.apps.linkedin.package });
+  await launch({ serial, package: cfg.apps.linkedin.package });
   // await on({ serial, event: "ui_stable", timeoutMs: 90_000 });
+
+  const hit = await findByText(serial, "Network", {
+    minScore: 0.75,
+  });
+
+  console.log(hit);
 
   // console.log("4) Print da tela inicial…");
   // const shotPath = resolve(outDir, "01-tela-inicial.png");
-  // screenshot({ serial, path: shotPath });
+  // screenshot({ serial, path: "screenshot-teste.png" });
   // console.log(`   OK → ${shotPath}`);
+
+  await tapElement({ serial, center: hit.center, bounds: hit.bounds });
 
   // console.log("5) Clicar Sign in with Email…");
   // {

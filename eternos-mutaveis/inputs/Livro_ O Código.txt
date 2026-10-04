@@ -1,0 +1,2654 @@
+﻿Eternos Mutáveis
+
+
+A resolução da metafísica
+
+
+
+
+
+
+
+
+To Do
+* Reunir todos os dados
+
+
+Quem sou
+* Você é o pai da metafísica
+* Criou um sistema de alfabetização espiritual
+* Revelará ao mundo o que é Deus e o mundo espiritual
+* Você refuta aristóteles revelando o maior erro da humanidade
+* Você mudou o paradigma de realidade das pessoas
+Porquês
+* Manual da vida substituto da Bíblia
+* Você será um escritor. Possuirá um livro publicado falando de filosofia metafísica e programação. Basicamente você conectou conceitos de programação com a linguagem, filosofia e espiritualidade. 
+* Você refuta Aristóteles e dá ao mundo uma perspectiva diferente e libertadora. Isso possui extrema importância mundial. As pessoas não compreendem conceitos de polimorfismo, verbo, objeto, essencialidade, acoplamento. Confusão de conceitos.Explicar de uma forma simples.
+* A libertação do homem
+   * Era Adâmica
+   * Superação Adâmica
+* O verbo será evidenciado, não apenas o estado
+   * O mundo ignora o verbo
+* Revelará ao mundo que Deus é uma negra
+* A lógica de Deus é inversa
+   * O pequeno é grande
+   * O humilde é primeiro
+   * Os últimos serão os primeiros
+   * A renúncia é a vitória 
+   * O,desconforto é a felicidade
+* Consciência das regras do jogo
+* Resolve a estrutura do software 
+* Alfabetização espiritual
+* Revelação do maior erro da humanidade
+* Faça pela criança que você foi
+   * O retorno
+* Para o você do outro lado
+* Revelar o poder da abstração 
+* Uma forma diferente de se enxergar a realidade
+
+
+
+
+
+
+
+
+Estrutura
+* 1. Vivemos a era adâmica
+   *    * Homem que nasce acostumado e preso, enxergando apenas o mundo material (o mundo físico)
+   * Inconsciente da realidade eterna e de sua origem espiritual
+   * O  homem que é guiado por suas impressões sensoriais
+   * Enxergando apenas um cisco ( algo pequeno) da realidade
+   * Simboliza Adão a encarnação
+   * A ignorância do mundo espiritual
+   * O homem que não conhece o que está para além da matéria
+   * Perguntas surgem
+      * O que é Deus?
+      * O mundo espiritual?
+      * O conceito de alma?
+      * O que vem após a morte?
+      * O que somos?
+      * Porque existe algo ao invés do nada? 
+* 2. Por milhares de anos, o homem busca pelas respostas
+   * Existem diferentes explicações
+      * Religiosas
+         * Existem diversas explicações religiosas sem uma base lógica
+         * Existem crenças que necessitam da fé para serem aceitas
+      * Filosóficas
+         * Tentativa de compreender o sobrenatural
+            * Aquilo que está para além da experiência, matéria, sensível
+            * Podem ser acessadas por meio da lógica
+            * Metafísica
+         * Não houve um consenso metafísico
+      * Científicas
+      * Explicações lúdicas
+         * Deus como um ser material
+            * Materializam a alma
+         * Conceito de alma / fantasmas
+         * Anjos e demônios
+         * Conexão direta entre os planos material e espiritual
+   * Trauma civilizatório
+      * Discussões Gregas
+      * Idade média
+      * Monopólio do conhecimento
+      * Renascentismo resgata
+      * Não há consenso metafísico
+      * Evolução da Ciência e Tecnologia
+      * A ciência ignora a metafísica
+      * Evolução espiritual tardia
+      * Analfabetismo espiritual
+* 3. Somos analfabetos espirituais
+   * Infelizmente, neste fruto, nesta terra, ainda somos analfabetos espirituais.
+   * Não compreendemos as estruturas que regem a realidade
+   * Deus não foi explicado corretamente
+      * Todo o conhecimento que nos foi passado sobre o mundo espiritual não reflete de fato a realidade. 
+      * Até o momento, não existe uma síntese que explica de forma clara e objetiva o sobrenatural.
+      * O conhecimento daquilo que está para além da matéria
+   * O problema é que o analfabetismo espiritual ainda impera
+      * Causando divergëncias, conflitos, guerras
+* 4. O erro
+   * Aristóteles como culpado
+      * Teoria de Substância
+         * Forma e Matéria
+         * Verbo acoplado ao objeto;
+      * Desacoplamento do verbo e do estado
+         * Objetos não possuem verbos
+         * Verbos possuem objetos 
+      * Impactos na OOP 
+         * Seres detidos de características e mudanças
+         * Estados e comportamentos
+         * Acostumados a acorrentar o espírito a carne
+         * Acostumados a acorrentar o movimento ao estado
+         * O mundo imperativo acorrenta o espírito a carne
+         * Forma e matéria
+         * Forma e conteúdo 
+         * Classe e instância 
+* 5. Superação Adâmica
+   * Gnose: o conhecimento que liberta
+   * O mundo espiritual existe e pode ser entendido
+   * O mundo espiritual pode ser compreendido de forma exata como a matemática
+   * Gnose: a libertação por meio do conhecimento
+   * Somos metafísicos
+   * Mudança de paradigma da realidade
+   * O homem compreende a metafísica
+   * Iluminação
+   * Batizado pelo conhecimento
+   * Transcendência
+   * O homem encontra Deus
+   * Gnosticismo
+   * Libertação por meio do conhecimento
+   * Conhecereis a verdade e a verdade vos libertará
+   * Conhecimento do verbo
+   * A reconciliação/ conciliação
+* Se existe um conhecimento que liberta, qual seria?
+   * O que é Deus?
+      * Quais as qualidades de Deus?
+         * Perfeito
+      * O que é ser perfeito?
+         * Algo que não muda
+   * Deus é perfeito?
+   * Deus é tudo?
+   * Tudo é perfeito?
+   * Tudo não muda?
+   * O que é ser perfeito?
+   * O que é ser imperfeito?
+   * No mundo tudo muda
+   * O que não muda?
+* Conhecimento extraído da linguagem
+   * Quem sou?
+      * Metafísico
+      * Programador
+   * Há relação direta entre
+      * Programação
+      * Filosofia
+      * Espiritualidade
+   * A estrutura da linguagem é fiel a realidade
+      * Não compreendendo a linguagem, não compreendemos a realidade
+* 6. Conhecimento
+   * Introdução
+   * O que é a existência?
+   * O que é o ser?
+      *  a menor unidade fundamental da realidade
+   * Ontologia
+   * Dualidade
+   * Movimento x Estado
+   * Ser x Estar
+   * Eternos x Temporais
+   * Potëncia x Ato
+   * Verbo x Objeto
+   * Entradas x Saídas
+   * Abstrato x Sólido
+   * Forma x Matéria
+   * Coesão x Acoplamento
+   * Critério x Qualidade
+   * Metafísico x Físico
+   * Isomórfico x Polimórfico
+   * Metamórfico
+   * Perfeito x Imperfeito
+
+
+
+
+
+
+
+
+Vídeo 1
+* Vivemos a era adâmica
+   * Homem nasce acostumado e preso ao mundo material/ físico
+   * Enxerga apenas a matéria
+   * Inconsciente da realidade eterna e de sua origem espiritual
+   * Adão simboliza a encarnação e o início da ignorância espiritual
+   * O homem enxerga o espírito preso à matéria
+      * Visão aristotélica
+   * No processo primitivo, o homem é guiado apenas por impressões sensoriais
+   * O homem não compreende a estrutura fundamental da realidade.
+   * Visão deturpada da realidade
+   * Não compreende a origem de suas decisões nem o sentido de sua existência
+   * Ignorância da realidade fundamental é inconsciente e se perpetua
+   * Crenças do homem moldam seu comportamento
+   * O homem não conhece a metafísica
+* Somos analfabetos espirituais
+   * Neste fruto, nesta terra, ainda somos analfabetos espirituais.
+   * Não compreendemos as estruturas que regem a realidade
+   * O que é Deus
+   * O mundo espiritual
+   * O conceito de alma
+   * O que vem após a morte
+   * O que somos
+   * Porque existe algo ao invés do nada 
+* Existem diferentes explicações para as mesmas perguntas
+   * Religiosas
+   * Filosóficas
+   * Lúdicas
+Objetivo
+* Fazer as pessoas compreenderem
+   * O que é Deus?
+   * O que é o mundo espiritual?
+   * O que é alma?
+   * De onde viemos?
+   * O que vem após a morte?
+   * O que somos?
+   * Porque existe algo ao invés do nada?
+
+
+* * Dualidade
+   * Contexto Histórico
+      * Heráclito
+      * Parmênides
+      * Platão
+      * Aristóteles
+      * Gnosticismo
+      * Cristianismo
+      * Idade Média
+      * Renascentismo
+De fora
+* A chave para explicar Deus estava na programação
+   * Sou programador e a chave da metafísica está na programação
+   * Conhecimento da estrutura da linguagem
+   * A estrutura da linguagem se repete na realidade
+   * A linguagem expressa a realidade
+* Tentativa de compreensão da existência
+   * Desde o princípio da existência, o homem busca compreender questões como..
+      * Como surgiu a existência?
+      * Por quê existe algo ao invés do nada?
+      * Existe um Deus criador?
+      * O que vem após a morte?
+      * Há juízo final?
+      * Há paraíso ou inferno?
+      * Existe um mundo espiritual?
+   * 
+
+Estrutura
+1. Era Adâmica
+   1. Homem nasce acostumado e preso ao mundo material/ físico
+   2. O homem enxerga apenas a matéria
+   3. Homem é inconsciente da realidade eterna e de sua origem espiritual
+   4. Essas estruturas só podem ser percebidas pelo intelecto
+   5. “Criação de Adão” simboliza a encarnação e o início da ignorância espiritual
+   6. Encarnação é o acoplamento do espírito à matéria
+   7. No processo primitivo, o homem é guiado apenas por impressões sensoriais
+   8. Não compreende a origem de suas decisões nem o sentido de sua existência
+   9. Ignorância da realidade fundamental é inconsciente e se perpetua
+   10. Crenças do homem moldam seu comportamento
+   11. As crianças carecem de base lógica
+   12. Linguagem utilizada pelo homem é contraditória e mal compreendida
+   13. O homem não compreende a estrutura fundamental da realidade.
+   14. O homem não conhece a metafísica
+   15. Insatisfação do homem e busca por respostas sobre sentido e existência
+   16. Visão deturpada da realidade
+   17. Surgem perguntas como
+      1. Do que é constituída a realidade?
+      2. Deus existe?
+      3. Há outra realidade além desta?
+      4. O que há após a morte?
+      5. Há eternidade?
+      6. Há céu ou inferno?
+      7. O que sou?
+      8. Para onde vou?
+      9. Qual sentido da vida?
+      10. O que é vida?
+2. Busca pela iluminação
+   1. Filosofia como resposta a perguntas que a experiência sensorial não resolve
+   2. Todos buscam e tentam explicar as mesmas perguntas, mas com diferentes respostas
+   3. Diferentes hipóteses filosóficas, religiosas e culturais 
+      1. Persas
+         1. Zoroastro
+            1. Dualidade
+            2. Tensão
+            3. Imortalidade da alma  
+      2. Taoísmo
+         1. Dualidade
+            1. Ying Yang
+            2. Darma
+      3. Budistas
+         1. Roda de Samsara
+      4. Hinduísmo
+         1. Bhagavad Gita
+      5. Egípcia
+         1. Hermetismo chama de o Todo
+         2. Corpus hermeticum
+         3. Pedra de Roseta
+            1. Linguagem
+               1. Hieróglifos  
+         4. Caibalion
+            1. O todo é mente 
+         5. Correspondência
+         6. Polaridade
+         7. Todo é mente
+         8. Causa efeito
+            1. Ação e reação
+         9. Fluxo e Refluxo
+         10. Gênero   
+         11. Hermes trismegisto
+            1. Hieróglifos 
+      6. Judaísmo
+         1. Salomão
+         2. Moisés o que é Deus
+            1. “Sou o que sou”
+         3. João 1:1
+            1. “No princípio era o Verbo, e o Verbo estava com Deus, e o Verbo era Deus”
+         4. José do Egito 
+            1. Símbolos 
+         5. Logos
+            1. João 1:1
+      7. Gregos 
+         1. Relação do mito com o logos
+            1. O mito é o arquétipo 
+         2. Matemáticos
+            1. Formas eternas e perfeitas
+               1. Esfera
+            2. Ordens iniciáticas
+            3. Pitágoras
+            4. Ensinamentos do Egito  
+         3. Pré socrático
+            1. Definição do ser, da realidade
+            2. Parmênides
+               1. Nada muda 
+            3. Heraclito
+               1. Heráclito nomeia como Logos
+               2. Tudo que existe é tensão entre os opostos
+               3. Tudo muda
+                  1. exceto a mudança 
+               4. Se tudo muda, devemos nos ater ao Sophon, tudo o que não muda, o logos
+               5. Existem os que dormem e os que não dormem
+         4. Clássico
+            1. Sócrates
+               1. Razão como virtude
+            2. Platão
+               1. Teoria das ideias 
+               2. Platão a nomeia como o próprio Demiurgo.
+               3. Ideias e sentidos 
+               4. Os dois existem, mas separados
+                  1. O que muda
+                  2. O que não muda
+               5. Demiurgo
+                  1. Timeu de Platão
+                     1. Organizador
+                  2. Artesão Divino
+            3. Aristóteles
+               1. Teoria das substâncias
+               2. Hilemorfismo 
+               3. Aristóteles como causa primeira e posteriormente chamado de metafísica  
+               4. Separação entre objetos agentes e processados 
+                  1. Platão x Aristóteles
+                  2. Substância 
+                     1. Forma x matéria 
+
+
+      8. Cristianismo
+         1. Assim na Terra como no céu
+         2. São Tomás de Aquino
+         3. Logos Herálicto
+      9. Gnósticos
+         1. Libertação do espírito da carne por meio do intelecto
+         2. Jesus Cristo gnóstico
+         3. Apócrifo João
+            1. ion, sophia
+         4. Demiurgo maligno
+      10. Idade Média
+         1. Destruição de conhecimento?
+      11. Renascentismo
+         1. Símbolos de pinturas
+      12. Iluministas
+         1. Buscavam a verdade a razão 
+      13. Ordens iniciáticas
+         1. Maçonaria 
+            1. Régua e compasso 
+         2. Rosa cruz
+      14. Crítica à metafísica 
+         1. Nietzsche
+         2. Kant
+         3. Ciência 
+      15. Jung
+         1. Arquétipos
+         2. Inconsciente coletivo
+         3. estruturas simbólicas repetidas
+      16. Kant
+      17. Nietzsche
+      18. Ferdinand de Saussure
+         1. Curso de linguística geral
+         2. Signo Linguístico
+            1. Significante x Significado
+            2. Semiótica
+               1. Estudo dos símbolos
+            3. Teoria do valor
+               1. Oposição
+                  1. Só é porquê não é.
+      19. Espiritismo
+   4. Problemas filosóficos decorrem da ineficiência da linguagem
+      1. Whitehead, Russell e Wittgenstein apontaram que os problemas filosóficos metafísicos decorrem dos erros da linguagem
+      2. Linguagem comum é confusa
+         1. Polimorfismos
+            1. Mesmo nome com diferentes significados 
+         2. Redundâncias
+            1. Diferentes nomes com os mesmos significados 
+      3. Busca por uma linguagem única
+         1. Uma única forma para se fazer uma coisa
+         2. Roussel
+            1. Paradoxo do barbeiro ou conjuntos
+            2. O rei é burro
+               1. Que rei?
+                  1. Pode não existir o rei
+                     1. Deve existir antes o rei
+                     2. Existe um rei
+                     3. Este rei é burro  
+         3. White head
+         4. Luid witnestein V1
+            1. v1
+               1. Tudo é linguagem
+                  1. Do que não se pode falar, deve se calar 
+               2. A linguagem é o limite do mundo 
+               3. Tratados lógicos filosófico 
+                  1. Explica a realidade por proposições 
+               4. Jogos de palavras
+                  1. Tudo é linguagem
+                  2. A linguagem é o limite 
+         5. Luid V2
+      4. Luid v2 conclui que não pode haver linguagem única 
+         1. não podemos resumir o mundo em um linguagem lógica
+         2. Wittgenstein posteriormente voltou atrás 
+         3. Não há possibilidade de uma linguagem formal
+   5. Compartilhamento de estruturas comuns
+      1. Dialética
+         1. Tensão entre os opostos 
+   6. A metafísica continua em aberto
+   7. Realismo ou idealismo
+   8. Não há consenso metafísico
+   9. Falta de vias lógicas
+   10. A ciência toma o lugar
+   11. Foco na ciência nos particulares 
+   12. Ciência
+      1.  Visão Aristotélica
+         1. Ignora o mundo metafísico?
+         2. Foco nos particulares
+         3. O conhecimento é voltado a termos práticos
+            1. Experiência
+         4. Metafísica ou Ciência
+         5. Ciência estuda os particulares
+         6. Metafísica estuda os gerais
+            1. Não há experiência
+            2. O acesso é por via do intelecto
+            3. Deus não pode ser experienciado
+         7. Diferença entre ciência e metafísica 
+            1. O tema parece místico e fora do alcance da razão.
+            2. Mas pode ser compreendido pelo intelecto.
+            3. A ciência depende de testes e experiências materiais.
+            4. O entendimento espiritual exige uma abordagem intelectual.
+      2. A matemática prova o que é
+         1. Para todos os casos
+      3. Ciência prova o que não é
+         1. Foco nos particulares
+         2. Enquanto ninguém tiver uma prova que é falso, é verdadeiro
+3. O inferno (Consequências)
+   1. Consequências de não conhecer metafísica
+   2. O ser humano roda nos particulares e em círculo 
+   3. Dificuldade do homem de conhecer a realidade
+      1. Não entende conceitos básicos
+         1. símbolo, verbo, 
+   4. Era adâmica
+      1. Não existe um manual da vida
+      2. O comportamento é consequência da crença 
+      3. Uma crença deturpada gera comportamento deturpado
+   5. Excesso de informações
+      1. Sem bases lógicas
+   6. Excesso de opções
+   7. Excesso de crenças
+      1. Muitas pessoas que não se familiarizam com as opções existentes de crenças
+         1. O indivíduo não enxerga uma realidade mais abrangente
+         2. O indivíduo não conhece sua verdadeira identidade
+   8. Baile de máscaras
+      1. Muitas pessoas fingindo que sabem
+      2. Confundem as mentes
+      3. Muito se fala do que se não entende
+   9. Autômato
+      1. O comportamento é definido pelo estado
+         1. Interno
+         2. Externo
+   10. O inferno cíclico
+      1. Conto da mosca
+      2. Ciclo do esquecimento
+         1. A memória faz esquecermos e voltarmos ao ponto que paramos feito moscas
+      3. Somos atores vivendo diferentes personagens de histórias que se repetem
+         1. Nunca percebemos…
+         2. O inferno do homem
+      4. Desejo de ter e o tédio de possuir
+         1. Pêndulo do esquecimento
+      5. Lembrar é poder.
+      6.    11. Analfabetismo Espiritual
+      1. As  mazelas são decorrentes da ignorância
+      2. Problemas individuais
+         1. Vida sem sentido 
+      3. Problemas familiares
+      4. Problemas da sociedade
+   12. Produtos deturpados
+      1. Conceitos mal compreendidos
+         1. Polimorfismo
+         2. Abstração
+      2. Modelamos Software como enxergamos o mundo
+      3. Enxerga se o mundo deturpado
+      4. Gera-se software deturpado
+   13. Software
+      1. No software temos os mesmos problemas (Relação com o software)
+      2. A forma como modelamos software é a mesma como enxergamos a realidade
+      3. Se enxergamos a realidade deturpada, desenvolvemos softwares deturpados
+      4. lidamos muito com linguagem
+      5. Como engenheiro de software, conclui se que sofremos do mesmo problema da filosofia
+      6. Aumento do software queda de produtividade
+         1. Criar software simples é fácil, difícil é criar um software mantível
+            1. Manutenção custa 80% do esforço de desenvolvimento 
+         2. aumento de programadres n resolve
+      7. motivo
+         1. Não compreendemos
+            1. Diferentes paradigmas
+               1.  Conceitos confusos
+            2. Conceitos bases que rodeiam o desenvolvimento de software
+               1. Polimorfismo e Isomorfismo
+               2. Sólido x Abstrato
+               3. Componentes 
+               4. Encapsulamento
+               5. Acoplamento e Coesão 
+               6. Imperativo e declarativo 
+            3. Boas práticas
+               1. GOF
+               2. SÓLID
+            4. Muito menos de filosofia   
+         2. Não dominamos a linguagem
+         3. redundância e polimorfismo de símbolos nomes conceitos
+         4. Nos perdemos em conceitos que aumentam drasticamente a complexidade e o custo de manutenção
+         5. A escrita do software é linear
+            1. Mais difícil de ver panoramicamente 
+         6. Usamos OOP
+            1. Enxergamos o software orientado a objetos aristotélicos 
+               1. Estruturas estáticas (semânticas)
+               2.          Não enxergamos a ordem, o fluxo de execução
+      8. Redundância de formas para o mesmo objetivo
+         1. Códigos são redundantes, possuem diferentes formas para se fazer a mesma coisas
+         2. Formas diferentes de se reproduzir as mesmas estruturas
+            1. Paradigmas
+            2. Linguagens
+            3. Frameworks
+            4. Domínios 
+               1. Reescreve-se as mesmas coisas 
+            5. Programadores
+               1. Vícios 
+               2. Interpretações 
+               3. Mudanças recorrentes na forma de desenvolver software
+               4. Como programador sentimos que nosso código do ano anterior é ridículo 
+         3. Aumento na curva de aprendizagem 
+      9. Softwares são pouco intuitivos, diferente de outras engenharias
+         1. Falta de compreensão do que de fato são feitos os softwares
+            1. Arquitetura limpa
+               1. Software não são tão intuitivos como prédios 
+            2. Softwares são feitos de linguagens
+               1. O objeto do software são símbolos que representam significados 
+      10. Necessidade de blocos
+         1. Encaixes como lego
+            1. Como se não sabemos do que softwares são feitos?
+   14. O problema persiste
+      1. Espiritualidade
+      2. Filosofia
+      3. Linguagem
+      4. Software
+   15. O homem faz mal ao próximo sem saber que faz mal a si.
+4. Qual o conhecimento que liberta? (Insatisfação -> Insight)
+   1. A chave da metafísica estava no software 
+   2. Conhecimento do Abstrato
+   3. Domínio da linguagem
+   4. Como chegou a solução ?
+      1. Estudo dos abstratos
+      2. Desenvolvendo software 
+      3. Essencialismo
+      4. Conhecimento dos abstratos
+      5. Livro arquitetura limpa 
+      6. Conhecer a estrutura do software 
+      7. Deturpação no OOP
+      8. Modelamos Software como enxergamos o mundo
+      9. Enxergamos mal o mundo
+      10. Modelos os mal o software 
+   5. O problema está na linguagem
+      1. Filósofos da linguagem
+         1. Moore
+         2. Russel
+         3. Frege
+         4. Wittgenstein
+      2. Efeito colateral no Software
+   6. O que há entre a linguagem, o software, a filosofia, a espiritualidade?
+      1. Compartilham do mesmo problema
+      2. Falta de domínio da linguagem
+         1. Falta de compreensão da realidade
+         2. O problema do software também é a falta de domínio da linguagem.
+            1. Dominando a linguagem, domina-se o software, a filosofia e a realidade. 
+      3. Existe mais filosofia em programação do que se imagina
+         1. Problema de software
+            1. OOP 
+               1. Forma vs. Matéria
+               2. Classe vs. Instância
+         2. Conceitos no desenvolvimento que são refletidos e discutidos há milhares de anos em muitas culturas, religiões e filosofias 
+         3. Desenvolver software está além de software
+         4. Existem mais detalhes nos softwares que não estávamos enxergando
+         5. Existe mais filosofia em programação do que se imagina, sendo necessário compreender a linguagem
+            1. Modelagem de software 
+         6. Filósofos buscavam as formas perfeitas, constantes e eternas
+            1. Necessita-se compreender filosofia para reproduzir no software 
+   7. Problema
+      1. Existencialismo
+         1. Problema
+            1. Era Adâmica
+            2. Violência
+            3. Desigualdade social
+            4. Complexo de identidade
+            5. Excesso de informações
+            6. Baile de máscaras
+            7. Inferno cíclico
+         2. Motivo
+            1. Não compreende a realidade
+            2. Não compreende a sua identidade
+            3. Não compreende a eternidade
+         3. Solução
+            1. Resolução da linguagem
+            2. Resolução da metafísica
+            3. Gnose;
+      2. Filosofia
+         1. Problema
+            1. A filosofia nasce pra solucionar
+            2. Não se compreende a realidade
+            3. Não se compreende de metafísica
+         2. Motivo
+            1. Falta de compreensão da linguagem
+            2. Polimorfismo de significados
+            3. Redundância de significados
+         3. Solução
+            1. Resolução da linguagem
+      3. Software
+         1. Problema
+            1. Softwares crescem  a produtividade cai
+         2. Motivo
+            1. Modelamos software como enxergamos a realidade
+            2. Não compreendemos a realidade
+            3. Não compreendemos a linguagem
+         3. Solução
+            1. Resolução da linguagem
+      4. Todas as áreas possuem o mesmo problema
+      5. Resolvendo a linguagem, resolve-se o software, a filosofia e a existência.
+5. O erro
+   1. Aristóteles como culpado
+      1. Teoria de Substância
+         1. Forma e Matéria
+         2. Verbo acoplado ao objeto;
+      2. Desacoplamento do verbo e do estado
+         1. Objetos não possuem verbos
+         2. Verbos possuem objetos 
+      3. Impactos na OOP 
+         1. Seres detidos de características e mudanças
+         2. Estados e comportamentos
+         3. Acostumados a acorrentar o espírito a carne
+         4. Acostumados a acorrentar o movimento ao estado
+         5. O mundo imperativo acorrenta o espírito a carne
+         6. Forma e matéria
+         7. Forma e conteúdo 
+         8. Classe e instância 
+      4.    2. Foco nos estados e ignorância do verbo
+6. O  conhecimento secreto  (Acesso) 
+   1. A realidade é dual.
+   2. A trindade é uma cortina de fumaça para a dualidade.
+   3. Domńio da linguagem
+      1. Linguagem é mudança de estado
+      2. A experiência material como produto de algo maior que a define e ordena tudo
+      3. Existência de estruturas invisíveis à percepção sensorial, chamadas espirituais ou metafísicas
+      4. Essas estruturas só podem ser percebidas pelo intelecto, não pelos sentidos físicos
+      5. Conhecimento transcendental a matéria
+      6. Essas estruturas não são visíveis como o mundo material.
+      7. Esse algo maior ordena tudo o que é, foi e será.
+      8. Diferentes nomes e interpretações dessas estruturas em religiões e filosofias (espirituais, ocultas, metafísicas)
+      9. São chamadas de espirituais pelas religiões.
+      10. Esse algo maior ordena tudo o que é, foi e será.
+      11. O tema parece místico e fora do alcance da razão.
+      12. Mas pode ser compreendido pelo intelecto.
+      13. O entendimento espiritual exige uma abordagem intelectual.
+      14. Esse lado é o agente processador invisível aos olhos.
+      15. Ele é invisível por causa de sua própria natureza.
+      16. Há um plano da realidade que é pouco compreendido, mas real.
+      17. Diferentes caminhos para as mesmas perguntas[a]
+      18. O erro estava o tempo todo na linguagem
+      19. Crítica a Aristóteles
+         1. Polimorfismo do símbolo para verbo e estado
+      20. A forma como enxergamos a linguagem enxergamos o mundo
+      21. A linguagem oferece forte consequência no comportamento 
+      22. Insight
+         1. Filosofia
+            1. Eternos e mutáveis
+         2. Estrutura do software
+         3. Abstrações
+      23. Conhecimento secreto
+      24. A chave estava na linguagem
+      25. A linguagem descreve a realidade
+      26. A chave está no movimento
+      27. Compreender acoplamento e desacoplar a matéria e o verbo
+      28. A transcendência vem do desacoplamento
+      29. Entender os símbolos
+      30. Softwares lidam muito com linguagem 
+      31. Tudo é linguagem 
+      32. Linguagem representam mudanças de estado 
+      33. A linguagem tem como objetivo simular a realidade
+   4. Retorno a visão de Platão 
+      1. Separação do verbo e do objeto
+   5. Dualidade (História da criação)
+      1. A dualidade é a chave
+      2. Para ser, o não ser.
+      3. Para toda qualidade percebida há a sua oposta. 
+      4. A dualidade parte da dualidade entre ser e não ser.
+      5. Para ser o não ser
+      6. Se uma qualidade pode ser percebida, há a sua oposta
+      7. Tudo que é parado só é compreensível porque há movimento.
+      8. O ser só é porque há o não ser.
+      9. Para que algo exista, seu oposto também deve existir.
+      10. Exemplo: o frio só existe porque existe o calor.
+      11. Toda existência é relação entre ser e não ser.
+      12. Se tudo fosse igual, nada poderia ser percebido.
+      13. A unanimidade absoluta não pode ser notada.
+      14. Só compreendemos a existência pela diferença.
+      15. Essa compreensão é alcançada intelectualmente, por gnose.
+      16. Para existir o ser, deve haver o não ser.
+      17. Um experimento demonstra isso: uma tela toda preta não mostra nada.
+      18. Experimento tela preta
+      19. Se colocarmos um ponto preto sobre ela, nada muda.
+      20. Para haver existência, é preciso contraste.
+      21. Colocar um ponto branco cria diferença, portanto existência.
+      22. A existência só ocorre através da diferença.
+      23. Essa é a história da criação 
+      24. Qualidades são no mínimo binárias
+      25.  Não há qualidade para todos os casos 
+      26. Não há unanimidade
+      27. Todo significado é referencial
+      28. O ser não define a si.
+      29. Todo significado é relativo
+      30. O ser não define a si 
+      31. O não ser o define por contraste 
+      32. Sousurre 
+         1. https://www.youtube.com/watch?v=2K2P3EGQhUE
+         2. substancia, forma e matéria
+      33. Assim surgem todas as coisas
+      34. Pela guerra dos opostos
+      35. Se há ser, deve haver o não-ser
+      36. Se há material, há imaterial
+      37. Toda a realidade é composta por histórias
+      38. A presença e a ausência
+      39. Significante x Significado
+      40. Qualidade x Critério 
+      41. Luz x sombra
+      42. Presente x Vazio
+      43. Ligado x Desligado
+      44. Estado x movimento
+      45. Ato x Potência
+      46. Devir x Ser
+      47. Mutável x Eterno
+      48. Estado x Movimento
+      49. Objeto x Verbo
+      50. Matéria x Forma
+      51. Físico x Metafísico
+      52. Polimórfico x Isomórfico
+      53. Saída x Entrada
+      54. Macho x Fêmea
+      55. Componente x Espaço
+      56. Sólido x Abstrato
+      57. Acoplamento x Coesão
+      58. Dedução x Indução 
+      59. Imperativo x Declarativo
+      60. Particular x Geral
+      61. Privado x Público
+      62. Caos x Ordem
+      63. Efeito x Causa
+      64. Imperfeito x Perfeito
+      65. A história da existência 
+      66. A história do elemento
+      67. Todo elemento pertence a uma história
+      68. Toda qualidade pertence a um criterio
+      69. Todo critério pertence a um movimento   
+      70. Definição de lado das qualidades 
+         1. Um elemento só pode conter uma qualidsde
+   6. Movimento e estado
+      1. Tudo muda, exceto a mudança
+      2. O movimento é a mudança de estado 
+      3. Há duas substâncias distintas: o estado e o movimento.
+      4. O estado é o que se mede e se vê.
+      5. O movimento é invisível, eterno e modifica o estado.
+      6. Existe o que sofre mudança e o que provoca a mudança.
+      7. O objeto é o que é transformado.
+      8. O verbo é o que transforma.
+      9. Verbos como logos
+      10. Tudo muda, exceto a mudança
+      11.  O verbo é a mudança 
+      12. O lado oculto é o plano das mudanças 
+      13. Movimento como história 
+      14. Não há apenas estado no universo
+      15. Existe mudança, movimento
+      16. Movimento é o próprio verbo
+      17. Não pode ser visto
+   7. Ser e estar
+      1. Ser
+         1. Não pode ser criado e nem destruído
+         2. Imutável
+      2. Estar
+         1. Cria-se e destrói.
+         2. Mutável
+   8. Eternos e temporais
+      1. Eternos mutáveis
+      2. Separação dos símbolos 
+         1. Eternos e mutáveis 
+   9. Atos x Potências 
+   10. Sólido x Abstrato
+      1. História da composição 
+      2. Camadas
+      3. Um símbolo representa o sólido; o outro, o abstrato.
+      4. Os abstratos são os espaços criados pelos verbos.
+      5. Esses espaços serão preenchidos por elementos.
+      6. Os espaços são únicos e isomórficos: são a própria forma.
+      7. O abstrato é o molde, o sólido é o componente.
+      8. O abstrato é o ser que será composto.
+      9. Isso é o princípio de gênero presente em várias culturas.
+      10. O princípio macho e fêmea também aparece no esoterismo.
+      11. Macho representa o princípio sólido.
+      12. A Fêmea representa o princípio abstrato.
+      13. Isso se relaciona com a teoria da substância de Aristóteles.
+   11. Qualidade x Critério
+      1. Toda qualidade está presente em uma história 
+   12. Ontologia[b]
+      1. Estudo do ser
+         1. Símbolos
+            1. Significante
+               1. Elemento
+            2. Significado
+               1. Verbo
+               2. Forma
+      2. Ente
+         1. Existe
+      3. Elemento
+         1. Tudo que componente uma história 
+      4. Da dualidade nasce o símbolo
+         1. Cada símbolo pertence a uma história
+         2.  A primeira história é a da existência 
+         3. A maior abstração existente 
+      5. Elemento 
+         1. Menor unidade da existência 
+         2. Possui qualidades
+         3. Componente
+      6. Elemento  presente em uma história;
+         1. Pode representar  sólidos e abstratos;
+         2. Representado no mundo material
+         3. Pode representar estados ou verbos (história)
+            1. Capacidade de materializar o abstrato
+            2. Estrutura sólida para representar conceitos sólidos ou abstratos
+   13. Verbo e objeto
+   14. Forma x Matéria
+      1. Aristóteles dizia que uma substância tem forma e matéria.
+      2. Matéria é o componente; forma é a estrutura essencial.
+      3. A forma é o espaço que será preenchido pela matéria.
+      4. Forma x Matéria
+         1. As formas são estruturas eternas e imutáveis.
+         2. Elas não foram criadas nem podem ser destruídas.
+         3. São a base de toda “criação”, embora nada tenha sido criado.
+         4. As formas sempre existiram e sempre existirão.
+         5. Os verbos e histórias criam essas formas.
+      5. Forma X Componente
+      6. Formas são Arquétipos 
+         1. Elas estão presentes em toda a realidade.
+         2. Pertencem ao inconsciente coletivo descrito por Jung.
+         3. Por isso, símbolos similares aparecem em culturas isoladas.
+   15. Polimorfismo e Isomorfismo
+   16. Metafísico e Físico
+   17. Perfeito x Imperfeito
+   18. Acoplamento e Coesão
+      1. Perfeito ou Imperfeito
+   19. Princípio da correspondência
+   20. Entradas x Saídas
+   21. Metamorfismo x Polimorfismo
+   22. Statefull x Stateless
+   23. Identidade
+      1. Navio de Teseu
+         1. Isso ajuda a explicar o paradoxo do navio de Teseu.
+         2. O navio não é o componente, mas o espaço que ele ocupa na história.
+         3. Qualquer um pode ser o navio de Teseu se preencher esse espaço.
+         4. A identidade está no espaço e não no objeto.
+         5. Tudo muda, exceto a própria mudança.
+         6. O espaço deixado pelo navio é imutável.
+         7. A identidade simbólica é estrutural e universal.
+   24. Dedução x Indução
+      1. Indução 
+         1. Particular para o geral
+            1. Elemento preenche quais histórias?
+      2. Dedução
+         1. Geral para o particular 
+            1. Quais elementos preenche essa história?
+   25. Escopos Público x Privado
+   26. Roteiro x Leaf
+   27. Imperativo 
+      1. Possui controle do fluxo
+      2. Possui sujeito 
+      3. Movimento induzido 
+      4. Há controle do movimento 
+   28. Declarativo
+      1. Não possui controle do fluxo
+      2. Inversão de controle 
+         1. Interfaces bem definidas
+            1. Protocolo
+   29. Fluxo / Ordem / Logos
+      1. Reutilização de fluxos
+      2. Define-se como metafísica o estudo do plano das mudanças;
+      3. Relação entre os verbos 
+      4. Verbo é constituído de verbo
+      5. Verbo é fractal
+   30. O universo é um grande autômato 
+      1. Dado um estado, um movimento
+      2. Regras e princípios imutáveis 
+7. Perfeição
+   1. Resolução
+      1. Linguagem
+      2. Software
+      3. Filosofia
+      4. Espiritualidade
+      5. Existencialismo 
+   2. Fascínio com o perfeito
+   3. Histórias como padrões eternos
+      1. As histórias (verbos) são padrões eternos.
+      2. Os objetos são elementos mutáveis dessas histórias.
+      3. Isso permite a reutilização das mesmas histórias.
+      4. As histórias se repetem com diferentes componentes.
+      5. Elas seguem os mesmos padrões.
+      6. São como músicas com diferentes notas, mas mesma estrutura.
+      7. Como filmes com diferentes personagens, mas mesmo roteiro.
+      8. A identidade está na história, não nos personagens.
+      9. Uma foto isolada não revela a história.
+      10. A observação revela o padrão da narrativa.
+      11. As histórias são a menor unidade fundamental da realidade.
+      12. Elas se repetem eternamente.
+      13. Tudo que aconteceu acontecerá novamente.
+      14. O que nunca aconteceu não acontecerá.
+      15. As histórias mudam os componentes, mas mantêm a estrutura.
+      16. Tudo é estado e mudança
+   4. Software
+      1. É possível construir sistemas escaláveis utilizando sempre as mesmas regras que independem de hardware, sistema operacional, linguagem, plataforma ou projeto
+         1. Softwares portáteis para qualquer hardware, so, linguagem ou projeto 
+         2. As regras de cada linguagem, plataforma, projeto não podem impactar na estrutura do código
+         3. As regras são imutáveis
+            1. Assim como na filosofia, o movimento não muda, é constante. A ordem dos eventos, Logos, o roteiro é sempre o mesmo, variando apenas os seus objetos processantes e processados.
+               1. No modelo imperativo 
+               2. Sujeito e objeto 
+            2. O roteiro nunca muda
+               1. Os elementos que sim
+         4. Construir software utilizando as mesmas regras independente de
+            1. Arquitetura de Hardware
+            2. Arquitetura de Componentes
+            3. Sistema operacional
+            4. Paradigma
+            5. Linguagem
+            6. Projeto  
+         5. Tudo isso tem um motivo: a filosofia buscava compreender os aspectos imutáveis da realidade, prendendo ao imutável temos bases fortes 
+            1. Para conhecer as regras e se tornar um bom programador é necessário conhecer primeiro do que os softwares são feitos e como os conceitos filosóficos sustentam as suas bases
+               1. Para ser um bom programador deve dar mais um passo em direção a linguagem
+               2. Ajustar as lentes para melhor utilizar as regras
+               3. Para construir um bom software é necessário conhecer de filosofia
+   5. A busca pela perfeicao 
+   6. Sentimento de superioridade
+   7. Julgamento ao próximo 
+   8. A nova queda
+8. A imperfeição 
+   1. Somos todos os mesmos
+   2. Ao condenar o próximo, condenamo-nos. 
+   3. Somos todos imperfeitos
+   4. O sentimento é compartilhado
+   5. O mundo do acoplamento 
+   6. Natureza imperfeita do homem
+   7. Conhecimento do imperfeito 
+   8. Dar rena de Platão 
+   9. Caverna de Platão
+   10. Cristianismo crucificação 
+   11. Somos imperfeitos
+   12. Reduza os danos 
+   13. Honrado o homem que é puro ou próximo disso 
+9. A superação adâmica (Equilíbrio)
+   1. Domínio da metafísica
+   2. Usa os conhecimentos para ter uma boa vida 
+   3. O que você procura, o universo te evidencia
+   4. O que você é, o universo te procura
+   5. É como um select na base ou um tinder que dá match
+   6. Conhecer dos principios pata melhor controlar a máquina 
+   7. Ter o controle
+   8. Não ignorar os pelos, mas buscar o equilíbrio
+   9. Moderação 
+   10. Nem tudo é só físico e nem tudo é só material 
+   11. Transcendência da matéria
+   12. O homem domina a metafísica
+   13. Entende o que é constituída a realidade
+      1. Eternos Mutáveis
+   14. Rompimento com o ciclo do desejo de ter e o tédio de possuir
+   15. Morte do ego
+   16. Libertação do ciclo 
+   17. Para uma floresça, necessitam-se de muitas tentativas. Somos uma tentativa. Cada ato é um plantio. O que faz uma semente vingar e outra não?
+   18. O ser humano tem memória curta
+   19. É um ser falho
+   20. O olhar para frente 
+   21. Compreender esses conceitos ajuda a entender a realidade.
+   22. Ajuda a entender a essência humana.
+   23. Responde a perguntas sobre morte, céu, inferno e eternidade.
+   24. Altera nossos paradigmas de realidade.
+   25. Melhorar nossa compreensão da linguagem.
+   26. Melhorar nossa compreensão da filosofia.
+   27. Jogos de linguagem dificultam a filosofia e a visão de mundo.
+   28. Isso afeta também o desenvolvimento de software.
+   29. Ajustar nossas lentes melhora o software e a filosofia.
+   30. Resolver os problemas de linguagem é resolver problemas existenciais.
+   31. As histórias estão por aí; precisamos observá las
+   32. Aprendemos por reprodução 
+   33. Processo de alquimia?
+   34. Mudar a vida da água para vinho
+   35. Observar a natureza e colher as suas histórias como quem separa joio do trigo
+   36. Responder às perguntas iniciais
+   37. Use o verbo ao seu favor e dos outros
+   38. O estado define o movimento 
+   39. Configure seu ambiente  
+   40. Partir de onde parou
+   41. Controle da mente
+   42. Escolha o que pensar
+   43. Tenha um plano
+   44. Seja uma esfera polida
+   45. Saiba o porquê desejas
+   46. Suas atitudes não dependem das suas emoções 
+   47. Conheça as histórias
+   48. Somos atores em papéis já escritos
+      1. O futuro repete o passado com diferentes atores
+   49. Assumir o papel de autor
+      1. Escolha de arquétipos
+   50. Senhor do seu destino
+   51. 20 minutos por dia
+   52. Livrar-se dos problemas da ignorância 
+   53. Ter uma boa vida
+   54. Gozar da eternidade
+   55. Você é a consciência
+   56. A conciliação dos eternos mutáveis 
+   57. S
+   58. Pense como se já fosse e serás
+   59. O computador se assemelha ao universo
+   60. Só absorvemos quando estamos desprevenidos. Histórias conhecidas não provocam frustrações
+   61. Deus é exemplo
+   62. Todos somos os mesmos
+   63. Em tudo que focar, cresce
+   64. Todo acoplamento/excesso será punido
+   65. Você não ida com pessoas, lida com situações
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Uma Visão Filosófica Metafísica Ontológica de um Programador | by Laércio Germano | Medium
+Tratado Filosófico Metafísico Ontológico | by Laércio Germano | Medium
+https://github.com/laerciogermano/flow-oriented-programming
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   1. Ajustar essas lentes nos ajuda a compreender melhor o mundo espiritual e o material.
+      1. Superação adâmica
+         1. Compreender a realidade
+            1. Estados e histórias
+            2. Histórias são estados que mudam
+            3. Histórias que se repetem
+               1. Estórias
+            4. Conhecimento extraído das histórias
+            5. Reproduzir estórias transformando em resultado
+         2. Compreensão da iden li tidade
+            1. O autor e o ator
+            2. A razão 
+            3. Centelha divina
+            4. Somos idênticos
+         3. Compreensão da eternidade
+            1. Eterno presente
+            2. Extrai da natureza os princípios
+            3. Enxerga o que se repete
+         4. Compreensão dos arquétipos
+            1. Arquétipos são objetos abstratos com características acopladas
+            2. Um ser pode ter mais de um arquétipo
+
+
+
+
+   66. Não compreendemos a linguagem
+      1. Não compreendemos os entes
+   67. Não compreendemos os eternos e os mutáveis
+   68. Não compreendemos os abstratos e os concretos
+   69. Forma e Matéria
+   70. Arquétipos
+   71. Não compreendemos a Metafísica, focamos apenas na física
+   72. Não compreendemos a realidade
+   73. Tudo é linguagem
+   74. Crítica a Aristóteles 
+      1. Essas são duas substâncias distintas.
+      2. Não devem ser unidas como proposto Aristóteles.
+      3. Aristóteles uniu espírito e carne em sua teoria da substância.
+      4. Não se pode “carnificar” o espírito.
+      5. A matéria e o movimento são distintos.
+      6. O objeto é transformado; o verbo transforma.
+      7. Ao separar os dois, entendemos o mundo material e o dos movimentos.
+      8. O mundo dos movimentos é eterno e imutável
+      9. O mundo material está sempre se transformando
+      10. O princípio da dualidade ajuda a discutir existência e não existência
+      11. Isso permite fragmentar questões complexas.
+      12. Os movimentos (verbos) são eternos e os estados (objetos) mudam.
+      13. Foco nos objetos e pouco nos verbos
+         1. A desinformação e a confusão provê ignorância
+            1. A ignorância provê sofrimento
+         2. Há muito sofrimento no mundo
+            1. Problemas dos mais diversos
+               1. Históricos 
+               2. Familiares 
+               3. Pessoais
+         3. Enxergamos uma realidade parcial
+         4. Acoplamento entre
+            1. Características
+            2. Funções
+         5. vemos características e esquecemos das histórias
+            1. Objetos não possuem histórias
+               1. Histórias possuem objetos 
+               2.          6. Efeitos colaterais
+               1. Ilusão da identidade
+                  1. Paradoxo do barbeiro de Russel
+                     1. Quando há a separação do verbo e do objeto, há a possibilidade de abstração
+                     2. Com a abstração pode separar o ser polimórfico e abstrair, o João não é barbeiro e cliente ao mesmo tempo, não existe João, existe um barbeiro e um cliente. 
+                     3. Não é os dois em cada, é parte um e parte outro 
+                     4. Não é o João que corta o cabelo de João, é o barbeiro que corta o cabelo do barbeiro.
+                     5. Todo humano pode barbear a si 
+                     6. O barbeiro é humano
+                     7. O barbeiro barbeia quem não se barbeia
+                     8. O barbeiro não pode barbear a si. 
+                     9. João é barbeiro
+                     10. João.barbeia_a_si()
+                     11. João.barbeia(João)
+                     12. João é barbeiro e humano
+                     13. Atribuir comportamento ao ser ao inves de atribuir o ser ao comportsmento
+                  2. Paradoxo de Teseu
+                  3. Processo de individualização na infância
+                  4. Criação do ego
+                  5. Individualização das coisas
+                  6. Ilusão da individualidade
+                  7. Foco nos objetos (entes)
+                  8. Não há separação entre ator e personagem
+                     1. O ator que carrega todos os carmas de seus personagens
+                     2. Cria-se acoplamentos e contradições 
+                  9. Embora os estados sejam únicos, os papéis são limitados?
+               2. Esquece-se do que se repete
+                  1. Deixamos de enxergar a outra parte da realidade
+                  2. Nossas decisões são baseadas nos estados
+                  3. Tendemos as mesmas decisões
+                  4. Tendemos a cometer os mesmos erros
+               3. Sofrimento contínuo
+                  1. O sofrimento advém da ignorância
+                  2. Repetimos os mesmos erros
+                     1. Vivemos as mesmas histórias
+   75. O olhar para trás 
+   76. Proposta de continuidade ao trabalho de russel e whitehead
+   77. Visão próxima de Yung 
+      1. Símbolos gerais
+   78. É possível criar uma linguagem unificada
+   79. Conceitos mal compreendidos da filosofia definem como projetamos software
+   80. A forma como enxergamos a realidade define a forma como projetamos software
+      1. Correspondência 
+      2. Polimorfismo
+      3. Acoplamento
+      4. Coesão 
+      5. Abstração
+      6. Componente
+      7. Verbo
+      8. Objeto
+      9. Imperativo
+      10. Declarativo
+      11. Metamórfico
+      12. Indução
+      13. Dedução 
+   81. A forma como projetamos software pode definir a forma como enxergamos a realidade.  
+   82. A chave da metafísica está no desenvolvimento de software
+   83. Resolvendo a linguagem resolvem os problemas do software
+   84. Resolvendo a linguagem resolve a filosofia
+   85. Resolvendo a filosofia resolvem os problemas existenciais  
+   86. Propor um paradigma de linguagem
+   87. Resolvendo questões filosóficas
+   88. Resolvendo questões do software
+   89. Resolvendo questões existenciais e espirituais
+      1. Cosmovisão 
+   90. Superação Adâmica 
+      1. Libertação do espírito da carne 
+      2. Por meio da gnose alcançar a sabedoria 
+   91. Criar um ponto de partida de uma nova discussão que se perdeu  
+   92. O mundo não é um lugar bacana
+Parte I – As Bases da Existência
+
+
+Capítulo 1 – O Princípio da Dualidade
+        •        Ser e não-ser: a lei dos opostos.
+        •        Como a dualidade estrutura a realidade.
+        •        Exemplos: luz/escuridão, vida/morte, físico/metafísico.
+        •        Aristóteles: ato e potência como faces dessa lei.
+
+
+Capítulo 2 – O Ser e o Devir
+        •        Ser constante (imutável) e ser mutável (devir).
+        •        O tempo como mudança de estado.
+        •        A visão aristotélica aplicada ao espírito e à matéria.
+        •        A influência dessa noção no pensamento grego e na filosofia cristã.
+
+
+Capítulo 3 – O Verbo como Motor da Realidade
+        •        Linguagem como analogia da criação.
+        •        Verbo = movimento eterno que produz formas.
+        •        Objetos e espaços abstratos: preenchimento e vazio.
+        •        Deus como “o que move sem ser movido” (Aristóteles) e como Verbo criador (João 1:1).
+
+
+⸻
+
+
+Parte II – O Mundo Material e o Eterno
+
+
+Capítulo 4 – A Natureza da Matéria
+        •        O corpo como manifestação temporária.
+        •        O papel do tempo e da entropia.
+        •        A visão gnóstica da matéria como prisão ou véu.
+        •        Diferença entre aparência e essência.
+
+
+Capítulo 5 – O Espírito Isomórfico
+        •        Espírito eterno, constante, imutável.
+        •        Arquétipos e formas perfeitas (Platão + gnosticismo).
+        •        A unidade espiritual entre todos os seres conscientes.
+        •        Consequências éticas dessa visão.
+
+
+Capítulo 6 – A Ponte Entre os Dois Mundos
+        •        Metafísica: o estudo do que está além do físico.
+        •        Como o mundo eterno e o mundo material coexistem.
+        •        O verbo como ligação entre espírito e matéria.
+        •        O papel da consciência na interpretação da realidade.
+
+
+⸻
+
+
+Parte III – Superação Adâmica
+
+
+Capítulo 7 – A Queda e a Ignorância
+        •        O mito adâmico e sua leitura simbólica.
+        •        A “queda” como perda da consciência do eterno.
+        •        A cegueira espiritual e a ilusão dos sentidos.
+        •        A prisão da dualidade sem transcendência.
+
+
+Capítulo 8 – O Caminho da Gnose
+        •        Conhecimento como libertação.
+        •        Gnosticismo e a busca pela verdade além do mundo físico.
+        •        Reconhecimento da centelha divina em si e nos outros.
+        •        A metáfora do “retorno ao Éden” interior.
+
+
+Capítulo 9 – Morte e Renascimento do Eu
+        •        Desapego do ego como chave para a eternidade.
+        •        Transformação pelo entendimento do verbo/movimento.
+        •        Superar a condição adâmica: viver no espírito.
+
+
+⸻
+
+
+Parte IV – Deus é o Verbo e a Mudança
+
+
+Capítulo 10 – O Motor Imóvel de Aristóteles e o Deus Vivo
+        •        Comparação entre o Deus aristotélico e o Deus bíblico.
+        •        Deus como mudança e permanência ao mesmo tempo.
+        •        O verbo eterno como princípio criador.
+
+
+Capítulo 11 – Eternidade e Ciclos
+        •        O eterno retorno (Nietzsche) e a visão espiritual cíclica.
+        •        Como o espírito atravessa diferentes formas de vida.
+        •        O tempo como ilusão e o “agora” como eternidade.
+
+
+Capítulo 12 – Céu e Inferno como Estados de Consciência
+        •        Não lugares, mas condições eternas do espírito.
+        •        A ética como fundamento da eternidade.
+        •        O espírito que ama e o espírito que destrói.
+
+
+⸻
+
+
+Conclusão – A Unidade Restaurada
+        •        A superação da matéria pela compreensão do verbo.
+        •        O reencontro do homem com sua natureza eterna.
+        •        Síntese final: Deus é o Verbo e a Mudança.
+
+
+   93. Softwares
+      1. Equivalência entre funções e autômatos 
+         1. Alan Turing 
+      2. Roteiros e Atores
+      3. Feitos de verbo
+      4. Stateful x stateless
+      5. Encapsulamento
+         1. Público
+            1. Conectores 
+         2. Privado
+            1. Contexto interno 
+      6. Agentes
+      7. Roteiros
+      8. Estados
+      9. Bons programadores
+      10. Variáveis 
+         1. Proteção a substituição 
+            1. Dependências
+               1. Atores
+               2. Objetos
+      11. Fluxo
+      12. Agentes e Objeto
+      13. Verbos são eternos e imutáveis 
+      14. Separação dos roteiros e dos objetos 
+      15. Separação de sujeito e objeto 
+      16. Acoplamento e coesão
+      17. Linguagem ubíqua  
+      18. Componentes
+      19. Mudar o olhar de objetos para fluxo
+      20. Fluxo possui sentido 
+
+
+
+
+
+
+Se você controlasse todos os personagens de um jogo, do nascimento à morte, e cada ação impactasse todos os outros, com a realidade tão imersiva que não dá para distinguir do real, o que faria diferente hoje?
+Imagine um jogo ao qual você viveria todos os personagens simultaneamente. Decidiria por suas ações desde o seu nascimento até a sua morte. Cada ato que escolhesse estaria interferindo diretamente na experiência dos outros personagens.  Se esse jogo fosse tão realista a ponto que você não conseguisse distinguir o virtual da realidade, o que você faria de diferente do que você faz hoje?
+Imagine um jogo em que você vivesse todos os personagens simultaneamente.Você decidiria as ações de cada um deles desde o nascimento até a morte. Cada escolha que fizesse influenciaria diretamente a experiência dos outros personagens. Agora, imagine que esse jogo fosse tão realista que você não conseguisse distinguir o virtual da realidade.
+O que você faria de diferente em relação ao que faz hoje?
+
+
+
+
+Claro. Aqui está a linha cronológica do estudo da metafísica organizada em tópicos, com os principais períodos, autores e transformações conceituais:
+________________
+
+
+1. 
+Origens Pré-Socráticas (séc. VII–V a.C.)
+* Tales de Mileto, Anaximandro, Heráclito, Parmênides
+
+* Buscam o arché (princípio fundamental do ser)
+
+* Início da distinção entre aparência e realidade
+
+* Introdução da noção de unidade e permanência por trás da mudança
+
+________________
+
+
+2. 
+Socráticos e Platônicos (séc. V–IV a.C.)
+   * Sócrates: foco na ética, mas influência na estrutura do conhecimento
+
+   * Platão:
+
+      * Teoria das Ideias ou Formas
+
+      * Realidade dividida em mundo sensível e mundo inteligível
+
+      * O ser verdadeiro é eterno, imutável e acessível pela razão
+
+________________
+
+
+3. 
+Aristóteles (séc. IV a.C.)
+         * Cria o termo “Metafísica”
+
+         * Obra: Metafísica
+
+         * Estudo do “ser enquanto ser”
+
+         * Causas primeiras, substância, essência, ato e potência
+
+         * Deus como ato puro
+
+________________
+
+
+4. 
+Período Helenístico e Neoplatônico (séc. III a.C.–V d.C.)
+            * Plotino e o Neoplatonismo
+
+               * O Uno como princípio absoluto
+
+               * Emanacionismo: realidade em camadas que se distanciam do Uno
+
+               * Influência direta no pensamento cristão
+
+________________
+
+
+5. 
+Filosofia Cristã Medieval (séc. V–XIV)
+                  * Agostinho: fusão de Platão com Cristianismo
+
+                  * Tomás de Aquino: síntese entre Aristóteles e teologia cristã
+
+                     * Ser como participação no ser divino
+
+                     * Provas racionais da existência de Deus (vias tomistas)
+
+________________
+
+
+6. 
+Renascença e Escolástica Tardia (séc. XV–XVI)
+                        * Redescoberta de autores antigos
+
+                        * Questionamentos à autoridade aristotélica
+
+                        * Metafísica ainda ligada à teologia, mas surgem tensões
+
+________________
+
+
+7. 
+Racionalismo e Empirismo (séc. XVII–XVIII)
+                           * Descartes: dualismo mente-corpo; certeza do “eu penso”
+
+                           * Spinoza: monismo; Deus como substância única
+
+                           * Leibniz: mônadas e harmonia preestabelecida
+
+                           * Locke, Berkeley, Hume: crítica à metafísica tradicional; ênfase na experiência sensível
+
+                           * Hume: ceticismo radical sobre causalidade e substância
+
+________________
+
+
+8. 
+Idealismo Alemão (séc. XVIII–XIX)
+                              * Kant: revolução copernicana; metafísica possível só dentro dos limites da razão
+
+                                 * “Coisa em si” é incognoscível
+
+                                    * Fichte, Schelling, Hegel:
+
+                                       * Sistema racional do real
+
+                                       * O ser se realiza no pensamento
+
+                                       * A realidade é racional e histórica
+
+________________
+
+
+9. 
+Críticas à Metafísica (séc. XIX–XX)
+                                          * Nietzsche: morte de Deus; crítica aos fundamentos metafísicos
+
+                                          * Comte: positivismo e rejeição da metafísica
+
+                                          * Marx: materialismo histórico
+
+                                          * Heidegger: retorno à questão do ser; crítica à metafísica ocidental como esquecimento do ser
+
+________________
+
+
+10. 
+Metafísica Contemporânea (séc. XX–XXI)
+                                             * Analíticos: lógica modal, ontologia formal, identidade pessoal, tempo e causalidade
+
+                                             * Processualistas (Whitehead): realidade como processo e evento
+
+                                             * Fenomenologia (Husserl, Merleau-Ponty): intencionalidade da consciência
+
+                                             * Metafísica especulativa: tentativas recentes de reconstrução do sistema metafísico
+
+                                             * Integração com ciência, linguagem e tecnologia
+
+                                                * Metafísica da informação
+
+                                                * Ontologias computacionais
+
+                                                * Inteligência artificial e consciência
+
+________________
+
+
+Se quiser, posso transformar isso em uma linha do tempo visual ou aprofundar algum período específico. Deseja isso?
+
+
+
+
+
+
+                                                   94. Paraíso
+                                                   95. Um eterno presente 
+                                                   96. Ilusão da identidade 
+                                                   97. Autômato 
+                                                   98. Diferença do corpo e do espírito 
+                                                   99. Tudo que aconteceu, acontecerá
+                                                   100. Baile de máscaras
+                                                   101. Superação adâmica 
+                                                   102. Eternidade
+                                                   103. Todos somos os mesmos
+                                                   104. Somos eternos 
+                                                   105. Correspondência 
+                                                   106. Dualidade
+                                                   107. Ser e o devir
+                                                   108. Movimento e estado
+                                                   109. Entidades 
+                                                   110. Ilusão da identidade
+                                                   111. O que sou
+                                                   112. Quem é Deus
+                                                   113. Arquétipos
+                                                   114. Egrégora
+                                                   115. Ato ou Potência 
+                                                   116. Ego
+                                                   117. Mito de sísifo
+                                                   118. Conto da mosca
+                                                   119. Autômato
+                                                   120. Um baile de máscaras
+                                                   121. Inferno cíclico
+                                                   122. Ciclo reencarnação
+                                                   123. Jardim do Éden
+                                                   124. Superação adâmica
+
+
+
+
+                                                   * Introdução
+                                                   * De onde vem a sua convicção ao falar desta essência?
+                                                   * De qual essência você fala?
+                                                   * O que é metafísica?
+                                                   * Qual a importância de conhecer sobre metafísica?
+                                                   * Como se utiliza a metafísica na prática?
+                                                   * Qual a diferença de sólido para abstrato?
+                                                   * Qual importância de compreender a diferença entre sólido x abstrato?
+                                                   * Como a estrutura dos seres se comportam no mundo abstrato e sólido?
+                                                   * O óbvio precisa ser dito
+                                                   * Um Grande Baile de Máscaras
+                                                   * Excesso de opções
+                                                   * Gnose: Libertação por meio do Conhecimento
+                                                   * Era adâmica
+                                                   * O que são autômatos?
+                                                   * Somos autômatos
+                                                   * Estado de Flow
+                                                   * Um eterno presente
+                                                   * O Conto da Criação Divina
+                                                   * Houve uma criação?
+                                                   * O que é a Dualidade?
+                                                   * Qual a importância da Dualidade?
+                                                   * Qual a diferença entre o plano das mudanças e o mundo metafísico?
+                                                   * A Dualidade
+                                                   * Ser e Devir
+                                                   * Ilusão da Identidade?
+                                                   * O que sou?
+                                                   * Deus é e será
+                                                   * O Problema da Objetificação
+                                                   * Trindade e o Cristianismo
+                                                   * Arquétipos
+                                                   * Jesus é um Símbolo
+                                                   * Causa e Efeito
+                                                   * Leve Três em Uma
+                                                   * O Iluminismo
+                                                   * Ontologia: Movimento e Matéria
+                                                   * Física x Metafísica
+                                                   * O universo é um autômato 
+                                                   * Teoria do Movimento
+                                                   * Ato x Potência
+                                                   * A vida é um filme
+                                                   * Ordem Divina
+                                                   * Abstração
+                                                   * Movimento como Centro do Universo
+                                                   * A Língua de Deus
+                                                   * Linguagem Ubíqua
+                                                   * A Filosofia Cristã
+                                                   * Resgate ao Renascentismo
+                                                   * Relatividade Existencial
+                                                   * Egrégora
+                                                   * O Nascimento do Ego
+                                                   * O Mito de Sísifo
+                                                   * Conto da Mosca
+                                                   * Um Baile de Máscaras
+                                                   * Inferno Cíclico
+                                                   * O Caos
+                                                   * A Entropia
+                                                   * Satanás
+                                                   * Apocalipse
+                                                   * A Morte do Ego
+                                                   * A Bíblia é um Conjunto de Movimentos
+                                                   * O Ilusão do Caos
+                                                   * Teoria dos Jogos
+                                                   * O Jardim do Éden
+                                                   * Ciclo de Reencarnação
+                                                   * Somos Autômatos
+                                                   * Transmutação Mental
+                                                   * O Sentido da Vida
+                                                   * A tentação
+Quem sou
+                                                   * O maior filósofo de todos os tempos
+                                                   * Detentor da linguagem
+                                                   * Linguista do Logos
+                                                   * filosofia, computação e espiritualidade
+
+
+Tom dramático?
+                                                   * Espiritualidade
+                                                   * Deus
+                                                   * Céu
+                                                   * Terra
+                                                   * Paraíso
+                                                   * Inferno
+                                                   * Era adâmica
+                                                   * Baile de máscaras
+                                                   * Mito de sísifo
+                                                   * Autômato
+                                                   * Conto da Mosca
+                                                   * Superação adâmica
+                                                   * Identidade
+                                                   * Ciclo Reencarnação
+                                                   * Um Eterno Presente
+                                                   * Filosofia
+                                                   * Logos
+                                                   * Demiurgo
+                                                   * Substância
+                                                   * Metafísica
+                                                   * Forma 
+                                                   * Matéria
+                                                   * Perfeito
+                                                   * Imperfeito
+                                                   * Movimento
+                                                   * Estado
+                                                   * Eternos
+                                                   * Mutáveis
+                                                   * Ente
+                                                   * Ser
+                                                   * Devir
+                                                   * Ontologia
+                                                   * Dualidade
+                                                   * Polimórfico 
+                                                   * Dedução
+                                                   * Cosmovisão
+                                                   * Gnose
+                                                   * Indução
+                                                   * Isomórfico
+                                                   * Metamórfico
+                                                   * Arquétipos
+                                                   * Inconsciente coletivo
+                                                   * Jogos de linguagem
+                                                   * Autômato
+                                                   * Identidade
+                                                   * Navio de Teseu
+                                                   * Egrégora
+                                                   * Ato
+                                                   * Potência
+                                                   * Autômatos 
+                                                   * Linguagem
+                                                   * Ente
+                                                   * Ser
+                                                   * Sujeito
+                                                   * Verbo
+                                                   * Objeto
+                                                   * Abstração
+                                                   * Macho
+                                                   * Fêmea
+                                                   * Correspondência
+                                                   * Arquétipos
+                                                   * Polimorfismo
+                                                   * Redundância
+                                                   * Linguagem Ubíqua
+                                                   * Nascimento do Sujeito
+                                                   * Software
+                                                   * Sistemas
+                                                   * Imperativo
+                                                   * Declarativo
+                                                   * Acoplamento
+                                                   * Coesão
+                                                   * OOP
+                                                   * Polimorfismo
+                                                   * Classe
+                                                   * Instância
+                                                   * Componentes
+                                                   * Encapsulamento
+                                                   * Coesão
+                                                   * Clean Architecture
+                                                   * Roteiros
+                                                   * Agentes
+                                                   * Abstração
+                                                   * Variáveis
+                                                   * Camadas
+                                                   * Stateful
+                                                   * Stateless
+                                                   * Público
+                                                   * Privado
+                                                   * Estados
+                                                   * Objeto
+                                                   * Separação Verbo de Objeto
+                                                   * Psicologia 
+                                                   * Identidade
+                                                   * Nascimento do Ego
+                                                   * Paradigma de realidade
+                                                   * Comportamento
+                                                   * Arquétipos
+                                                   * Física
+                                                   * Teoria do movimento
+                                                   1. Existencialismo
+                                                   1. Problema
+                                                   1. Era Adâmica
+                                                   2. Violência
+                                                   3. Desigualdade social
+                                                   4. Complexo de identidade
+                                                   5. Excesso de informações
+                                                   6. Baile de máscaras
+                                                   7. Inferno cíclico
+                                                   2. Motivo
+                                                   1. Não compreende a realidade
+                                                   2. Não compreende a sua identidade
+                                                   3. Não compreende a eternidade
+                                                   3. Solução
+                                                   1. Resolução da linguagem
+                                                   2. Resolução da metafísica
+                                                   3. Gnose;
+                                                   2. Filosofia
+                                                   1. Problema
+                                                   1. A filosofia nasce para solucionar
+                                                   2. Não se compreende a realidade
+                                                   3. Não se compreende de metafísica
+                                                   2. Motivo
+                                                   1. Falta de compreensão da linguagem
+                                                   2. Polimorfismo de significados
+                                                   3. Redundância de significados
+                                                   3. Solução
+                                                   1. Resolução da linguagem
+                                                   3. Software
+                                                   1. Problema
+                                                   1. Softwares crescem e a produtividade cai
+                                                   2. Motivo
+                                                   1. Modelamos software como enxergamos a realidade
+                                                   2. Não compreendemos a realidade
+                                                   3. Não compreendemos a linguagem
+                                                   3. Solução
+                                                   1. Resolução da linguagem
+                                                   4. Todas as áreas possuem o mesmo problema
+                                                   5. Resolvendo a linguagem, resolve-se o software, a filosofia e a existência.
+
+
+  
+
+
+
+  
+
+  
+
+  
+
+
+
+
+
+Público alvo 
+                                                   * Jovens de 15 a 22 anos
+                                                   * Adultas
+                                                   * Velhos
+
+
+
+
+Conselhos (código de conduta)
+                                                   * seja consciência
+                                                   * Não deixe ser controlado pela mente
+                                                   * enxergar o próximo como a ti mesmo 
+                                                   * não falar dos outros
+                                                   * ter um plano
+                                                   * enxergar o plano
+                                                   * ser o plano 
+                                                   * tenha um diário
+                                                   * controle seu ambiente
+                                                   * não se exponha mais que o necessário 
+                                                   * o próximo é o passo mais importante
+                                                   * Seja essencial ao próximo passo
+                                                   * Se tudo passa, evite deixar sequelas
+                                                   * Nunca tenha raiva
+                                                   * Nunca reaja
+                                                   * Nunca se explique
+                                                   * Foque apenas no bom caminho;
+                                                   * Fale o indispensável 
+                                                   * As pessoas enxergam apenas uma face sua
+                                                   * Faça pelos que sofrem
+                                                   * Você é o que acredita ser
+                                                   * Se não sabe a causa, não há materialização
+                                                   * Deleite como eterno
+                                                   * Foque apenas nas transições dos estados
+O Código Sumkário
+
+
+                                                   1. Não existe manual da vida
+                                                   2. Consequências
+                                                   3. Motivo
+                                                   4. Forma correta
+
+
+O que o livro resolve?
+Então. O primeiro o objetivo do livro de espiritualidade seria basicamente você explicar conceitos que são muito pouco ainda compreendidos e que são discutido há milhares de anos desde que a gente desde que a gente parou pra desde que a gente dominou a linguagem dominou o raciocínio a gente tenta entender de onde a gente veio pra onde a gente vai o que que é Deus eternidade será e fé tudo mais a questão é muito provavelmente e aí existe uma discussão filosófica recente do Russell Whitehe e Luigi Wittntein que dizia que o problema são os jogos de linguagem e esses símbolos eles têm conceito de deturpados ambíguos redundantes que impedem que a gente avance nesses temas filosóficos que explicam a própria realidade então qual que é o objetivo do livro dar um significado uma estrutura para a linguagem resolvendo os problemas da linguagem uma vez que a gente resolve os problemas da linguagem a gente resolve os problemas da filosofia decorrentes das más interpretações e da falta de uma confiabilidade de uma boa estrutura da linguagem a gente não consegue avançar nesses tempos
+
+
+
+
+
+
+Introdução
+                                                   * Não há manual para a vida
+                                                   * Vivemos em um mundo cheio de informações 
+                                                   * Somos analfabetos espirituais
+                                                   * Muitos não familiarizam com as opções
+                                                   * Muitos não buscam;
+                                                   * Muitos aceitam;
+                                                   * Não há bases lógicas;
+                                                   * Cada um tem sua interpretação;
+                                                   * Baile de máscaras
+                                                   * Apesar de existir a Bíblia e muitos outros livros, não existe um sintético, acessível 
+                                                   * A verdadeira essência espiritual é a metafísica
+                                                   * Muitos tentaram compreender
+                                                   * Muitos ficaram loucos no caminho
+                                                   * Sem compreender a metafísica não há como compreender Deus
+                                                   * A má orientação traz efeitos catastróficos
+                                                   * Muita tristeza no mundo
+                                                   * Este livro traz a verdadeira metafísica
+
+
+A verdade é que não existe um manual sintetizado que explique a verdadeira realidade das coisas. Um manual para a vida ao qual o jovem possa ler é melhor para entender a sua espiritualidade. Ao invés disso, são levados a acreditarem que o mundo espiritual é o mundo paranormal, e assim, são levados ao medo. 
+Vivemos em um mundo saturado de informações e crenças, mas poucos realmente compreendem sua verdadeira identidade ou enxergam a realidade de forma alinhada à realidade. Muitos nem sequer conhecem as opções de crenças disponíveis, enquanto outros simplesmente aceitam o que lhes é imposto. Possuem a fé como a base que sustenta a sua crença.
+Muitos fingem saber do que não sabem, confundindo ainda mais as mentes. É o famoso baile de máscaras. Fala-se com muita convicção, mesmo sob efeito de muita ignorância, e nesse cenário, aqueles que ouvem não possuem senso crítico aprimorado para discernirem o que é ou não correto.
+Apesar da Bíblia, e de tantos outros livros que trazem lições para a vida, ainda não existe uma abordagem que trate a realidade de forma lógica, sintética e acessível. E, por isso, nossa civilização ainda continua analfabeta espiritual. A verdadeira essência espiritual, debatida há milênios, segue envolta em teorias e mistérios.
+Muitos tentaram compreendê-la, alguns enlouqueceram em sua busca, e, apesar das incontáveis discussões, pouco se concluiu. Ciclo após ciclo, o debate retorna, mas a compreensão segue fragmentada. Essa essência, conhecida como filosofia primeira, causa de todos os efeitos, o que está além da matéria, o suprassensível, a tão sonhada Metafísica, continua sendo um mistério.
+Sem compreender a metafísica, não podemos entender o mundo espiritual, Deus, a realidade, a verdade ou qualquer razão que sustente nossas crenças. Ao longo do tempo, essa compreensão foi subvertida, reduzida a dogmas morais sem bases lógicas, gerando ainda mais confusão e práticas insustentáveis.
+Entre tantos erros, também encontramos valiosos acertos. Não se pode negar as contribuições daqueles que buscaram a verdade em favor da humanidade. No entanto, os efeitos catastróficos da falta de uma real orientação espiritual são inegáveis. Para quem tem mais experiência de vida, a sensação é clara: em muitos aspectos, ao invés de evoluirmos, estamos regredindo.
+A má orientação, mesmo quando bem intencionada, gera problemas em todas as escalas, do individual ao coletivo. Enquanto a sociedade não compreender sua essência e a realidade em sua totalidade, uma vida de propósito, tranquilidade e paz será impossível.
+Todos os problemas da civilização, sejam pessoais, familiares, nacionais ou internacionais, derivam da ignorância, da falta de compreensão sobre a verdadeira realidade das coisas. Este livro tem como objetivo oferecer uma visão lógica, acessível e sintética, que permitirá que você compreenda sua verdadeira essência e comece a viver de acordo com ela.
+Introdução
+A verdade é que não existe um manual sintetizado que explique, de forma clara e objetiva, a verdadeira realidade das coisas. Um guia para a vida que permita ao ser compreender a espiritualidade sem se perder em misticismos ou ilusões. Em vez disso, a maioria é levada a crer que o mundo oculto se resume ao paranormal, ao sobrenatural, àquilo que inspira medo e confusão.
+Vivemos em uma era saturada de informações e crenças, mas poucos realmente compreendem sua verdadeira identidade ou enxergam a realidade como ela é. Muitos sequer conhecem as diversas perspectivas disponíveis ou apenas aceitam o que lhes foi imposto. A fé se torna a base da crença, não a lógica.
+Nesse cenário, há os que fingem saber o que não sabem, reforçando a desordem. Como em um baile de máscaras, discursos são proferidos com convicção, mesmo quando fundamentados na ignorância. E quem os ouve, sem um senso crítico apurado, acaba incapaz de discernir entre verdade e ilusão.
+Apesar da existência da Bíblia e de tantos outros textos que oferecem ensinamentos sobre a vida, ainda não há uma abordagem lógica, sintética e acessível que trate da realidade espiritual de forma correta. Nossa civilização, nesse aspecto, permanece espiritualmente analfabeta. A essência da espiritualidade, debatida há milênios, continua envolta em mistérios e fragmentos de teorias desconexas.
+Muitos tentaram compreendê-la, alguns enlouqueceram em sua busca, e apesar das incontáveis discussões, pouco se concluiu. Ciclo após ciclo, a humanidade retorna ao mesmo debate, mas a compreensão segue fragmentada. Essa essência, conhecida como filosofia primeira, a causa de todos os efeitos, aquilo que está além da matéria, o suprassensível, a tão sonhada Metafísica, permanece um enigma.
+Sem compreender a metafísica, não se pode entender o mundo espiritual, Deus, a eternidade, céu, inferno, a própria realidade. Com o tempo, essa compreensão foi distorcida, reduzida a dogmas morais sem base lógica, alimentando ainda mais confusão e práticas insustentáveis.
+No entanto, entre tantos erros, há acertos valiosos. Não se pode ignorar as contribuições daqueles que buscaram a verdade em benefício da humanidade. Mas também não se pode negar os efeitos catastróficos da falta de uma orientação espiritual real e coerente. Para aqueles que possuem mais experiência de vida, a percepção é clara: em muitos aspectos, ao invés de avançarmos, estamos regredindo.
+A má orientação, mesmo quando nasce da boa intenção, gera problemas em todas as escalas, do individual ao coletivo. Enquanto a sociedade não compreender sua essência e a realidade em sua totalidade, uma vida de propósito, tranquilidade e paz será impossível.
+Todos os problemas da civilização, sejam pessoais, familiares, nacionais ou globais, derivam da ignorância, da falta de compreensão sobre a verdadeira realidade das coisas. Este livro tem como objetivo oferecer uma visão lógica, acessível e sintética, permitindo que você não apenas desmistifique, como também passe a conhecer o mundo espiritual, o mundo metafísico, a parte oculta do universo.
+De onde vem a sua convicção ao falar desta essência?
+Sou programador e sempre busquei padrões universais, mas foi na programação que encontrei a melhor forma de aplicá-los. No fim das contas, somos roteiristas de máquinas, lidamos com histórias, padrões, linguagens, conceitos concretos e abstratos, e usamos tudo isso para construir bons softwares. Durante quinze anos, procurei a forma perfeita de desenvolver software, até que encontrei. Só que essa descoberta não muda apenas a forma como modelamos sistemas, ela também questiona a visão tradicional sobre metafísica e ontologia, aquela baseada na lógica aristotélica. No fundo, não é só um novo jeito de pensar software, é um novo jeito de enxergar a própria realidade.
+De qual essência você fala?
+A essência das coisas está na alma, na metafísica, na generalização, naquilo que se repete: o conhecimento. Ele é abstrato, oculto, intangível, mas pode ser compreendido. É o famoso padrão. Através dele, pelo estudo das relações, conseguimos extrair as verdades imutáveis, constantes e eternas da natureza. Essa essência foi buscada por milênios, mas nunca houve uma definição unânime. Para muitos, a discussão já está morta ou fragmentada em visões desconexas. Mas é exatamente sobre essa essência que este livro trata: a metafísica.
+O que é metafísica?
+A palavra “metafísica” vem do grego metaphysis, termo retirado pela primeira vez de uma tradução das escrituras de Aristóteles, onde a metafísica era referida como a causa primeira. “Meta” significa além, e “physiká” vem de física. Ou seja, metafísica é aquilo que está além do físico: o suprassensível.
+De forma mais sintetizada, a metafísica corresponde ao domínio do que se repete, do abstrato, onde reinam os padrões, o mundo imaterial, a parte oculta do universo, o mundo espiritual.
+Qual a importância de conhecer sobre metafísica?
+A importância de conhecer a metafísica está na capacidade de compreender a própria identidade e a essência dos seres, proporcionando um maior acesso a Deus e à s
+ua razão de existir, bem como a sua eternidade. 
+Além disso, permite enxergar o mundo dos padrões, dos arquétipos e o lado oculto do universo, utilizando esse conhecimento para levar uma vida consciente, tranquila e livre de tormentos.
+Infeliz é aquele que se perde na tempestade de informações e não sabe filtrar o conhecimento essencial para tomar as melhores decisões, vivendo assim em meio a grandes turbulências. Este livro tem como objetivo ser um manual da vida, oferecendo a explicação da realidade e da vida eterna.
+Como se utiliza a metafísica na prática?
+Tudo que aprendemos é por reprodução. Uma história observada não pertence exclusivamente a reprodução específica, mas a um ensinamento generalizado que pode ser utilizado em diferentes reproduções com diferentes elementos, mas que no caso, devem atender aos mesmos critérios gerais (abstratos). 
+Qual a diferença de sólido para abstrato?
+Sólidos são os seres que possuem um endereço físico. Estruturas materializadas. Que podem ser medidas. Que existem concretamente. Os abstratos são estruturas gerais e que não possuem um endereço físico. Não pode ser materializado. Um exemplo seria o cachorro “Doug”, este cachorro é uma estrutura material, possui um endereço físico. Já um cachorro refere a uma estrutura geral que não existe, portanto, não possui um nome, referido apenas como uma estrutura abstrata, geral, um conjunto. 
+Qual importância de compreender a diferença entre sólido x abstrato?
+É importante compreender a diferença dessas estruturas pois, ao compreendermos os abstratos, estaremos extraindo do mundo físico, o mundo dos gerais, o mundo abstrato, o mundo espiritual, o mundo suprassensível, o mundo metafísico, o lado oculto do universo. Com conhecimento dos gerais, teremos o poder de fazer conexões que auxiliam nos mais diversos tipos de decisões. Podendo compreender que as histórias se repetem, é uma vez conhecendo as histórias, o ser poderá se antever melhor em suas análises.
+Como a estrutura dos seres se comportam no mundo abstrato e sólido?
+Uma história possui estados e movimentos, isso significa dizer que, 
+
+
+O óbvio precisa ser dito
+Uma das mais importantes lições que aprendi, é que o óbvio precisa ser dito, pois mesmo o óbvio pode não ser para outra pessoa, e isso acontece com frequência. Sendo assim, deve-se falar o óbvio sempre que oportuno, para que se torne óbvio por unanimidade.
+Um Grande Baile de Máscaras
+Vivemos em um mundo onde existem muitas pessoas que são boas no que fazem em aparentarem serem boas. Isso é muito mais frequente do que imaginamos, qualquer pessoa que parecer ser boa, falando com convicção um assunto, passará facilmente como um expert. Para aquele que não difere qualidades, tudo terá a mesma qualidade. Para o pássaro que não difere fio de galho, tudo é galho.
+Excesso de opções 
+Temos diferentes pessoas falando com muita convicção sobre diferentes pontos de vistas, e para não nos cegarmos a ignorância e a vastidão de opções, temos que desenvolver as ferramentas lógicas para usarmos como nossas próprias bússolas. Este livro é para todas as pessoas que estão prontas para desacontarrentarem as amarras e passarem a enxergar a verdadeira realidade das coisas.
+Gnose: Libertação por meio do Conhecimento
+Existe um conhecimento que nos faz compreender a verdadeira realidade das coisas. E por meio deste conhecimento, há acesso a Deus, a eternidade e ao jardim do Éden. Quem compreender este conceito se desprendeu do mundo material e passará a encontrar o mundo metafísico.
+Era adâmica
+A era adâmica é constituída pelo momento que o homem encontra o intelecto, mas ainda não descobriu a sua condição de autômato. Este, sem compreender que seu corpo e sua alma são estruturas apartadas, passa a ser apenas corpo, sendo levado pelos seus instintos mais primitivos.
+O que são autômatos?
+Basicamente, somos autômatos. Isso significa dizer que a nossa consciência é produto do nosso estado físico. O nosso sentimento advém do nosso estado atual. O estado molda a nossa percepção. Dentro de uma linha do tempo, temos diferentes estados, entrando em um fluxo e refluxo, idas e voltas. Para cada estado, temos uma percepção diferente sobre nós mesmos e o próprio mundo que nos rodeia. Desta forma, somos facilmente levados a acreditar que somos o nosso estado atual e este, como nossa consciência, permanece linear conforme o tempo. Porém, este é um grande erro a ser cometido, que torna o homem dentro de um ciclo sem fim, levando-o a cometer as mesmas escolhas. 
+
+
+
+
+Autômatos são máquinas de estados. Isso significa dizer que, para cada estado conhecido, haverá um próximo estado correspondente. Ou seja, todo movimento que acontece no sistema decorre do seu estado anterior somado ao movimento correspondem que gerará o próximo estado. Imagine que exista uma tabela a qual possui todos os estados possíveis, e para todo estado, há também um movimento correspondente para o próximo estado. Desta forma, tanto os estados, quanto os movimentos, são previsíveis e podem ser estudados.
+Somos autômatos
+Nossos estados definem nossos comportamentos. Enquanto não dissociarmos a nossa condição corpórea e consciência, seremos produtos de nossos próprios estados. Quando temos consciência, podemos ter controle do ambiente e assim assumir controle de si.
+
+
+Como seres detentores de intelecto, podemos observar a nossa condição de autômato, porém, isto só é possível quando o próprio ser se desprender de sua identidade corpórea e assumir a sua identidade consciente. Ao atingir essa identidade, compreenderá que as suas decisões são baseadas no seu estado anterior e que o ambiente interno (corpo) e ambiente externo possuem uma forte influência sobre as suas decisões. Sendo assim, é importante compreender como o seu corpo, sua mente e o universo funcionam, seguindo o conceito de autômato, e conseguir melhor configurar o ambiente, interno e externo, para o próximo estado desejado.
+Estado de Flow
+O estado de Flow constitui em você ter o seu plano traçado, com todos os seus objetivos, e definir todas as atividades necessárias para se chegar a esse objetivo. Ao finalizar, não basta apenas ter o plano, é necessário enxergar o plano, que ele seja frequente no seu campo de visão. Ao ter e enxergar o plano, agora, para completar o estado de Flow, é necessário adotar o processo de eliminar todas as gorduras, tudo que não é essencial ao fluxo.
+Um eterno presente
+E se Deus te desse de presente um mundo onde você seria todas as vidas que já existiram, que existem e que existirão por toda a eternidade. Seria a mesma centelha divina habitando diferentes corpos envolvidos pelo véu do esquecimento. Tudo o que seria, existiria apenas no presente. Viveria todas as vidas simultaneamente. Qualquer mal que causasse a alguém estaria causando um mal a si mesmo. Nasceria herdando o mundo que deixou para trás. Deus não enviaria um único filho para o sacrifício e a reencarnação, mas a você em todas as coisas. Você experimentaria a morte e o despertar em cada vida pelo resto da eternidade. Nesse presente, você viveria o céu ou o inferno?
+
+O Ato da Criação
+Deus, sozinho em sua eternidade, decidiu-se repartir. 
+Do uno, fez-se o outro. 
+Do que era igual, fez-se o oposto.
+Do que era unânime, surgiu o contraste.
+Do constante, o mutável.
+Da eternidade, o tempo.
+Da luz, a escuridão.
+Do bem, o mal.
+Da ordem, o caos.
+Da paz, a guerra.
+Do alívio, a dor.
+Da felicidade, a tristeza.
+Da sabedoria, a ignorância.
+Da potência, o ato.
+Do princípio, o fim.
+O que era um Todo único, partiu-se e formou todas as coisas.
+
+
+
+O Ato da Criação
+
+Deus, sozinho em sua eternidade, decidiu-se repartir.
+Do uno, fez-se o outro. 
+Do que era igual, surgiu o oposto.
+Do unânime, o contraste. 
+Do constante, o mutável. 
+Da eternidade, o tempo. 
+Da luz, a escuridão. 
+Do bem, o mal. 
+Da ordem, o caos. 
+Da paz, a guerra. 
+Do alívio, a dor. 
+Da felicidade, a tristeza. 
+Da sabedoria, a ignorância.
+Do destino, a escolha.
+Do tédio, o desejo.
+Da potência, o ato.
+Do princípio, o fim.
+O que era um Todo único, partiu-se e formou todas as coisas.
+
+—------------------------------------------------------------------------
+
+Deus, sozinho em sua eternidade, decidiu-se repartir.
+Do uno, fez-se o outro.
+Do que era igual, surgiu o oposto.
+O que era unânime, tornou-se contraste.
+Do constante, surgiu o mutável. 
+Da eternidade, o tempo. 
+Da luz, a escuridão. 
+Do bem, o mal. 
+Da ordem, o caos. 
+Da paz, a guerra. 
+Do alívio, a dor. 
+Da felicidade, a tristeza. 
+Da sabedoria, a ignorância.
+Do destino, a escolha.
+Do tédio, o desejo.
+Da potência, o ato.
+Do princípio, o fim.
+O que era um Todo único, partiu-se e formou todas as coisas.
+
+
+Deus, sozinho em sua eternidade, decidiu-se repartir.
+Do uno, fez-se o outro.
+Do que era igual, surgiu o oposto.
+O unânime, tornou-se contraste.
+Do constante, surgiu o mutável.
+Da eternidade, o tempo.
+Da luz, a escuridão.
+Do bem, o mal.
+Da ordem, o caos.
+Da paz, a guerra.
+Do alívio, a dor.
+Da felicidade, a tristeza.
+Da sabedoria, a ignorância.
+Do destino, a escolha.
+Do tédio, o desejo.
+Da potência, o ato.
+Do princípio, o fim.
+O que era um Todo único partiu-se e formou todas as coisas.
+
+
+
+A tristeza e a felicidade
+A eternidade e o tempo.
+O caos e a ordem.
+O princípio e o fim.
+O que era um Todo único, partiu-se e formou todas as coisas.
+
+
+Da escuridão, a luz. 
+Do mal, fez-se o bem. 
+Da dor, fez-se o alívio. 
+Da tristeza, fez-se a  felicidade. 
+Do eterno, fez  o tempo.
+Do que era caos, fez a mais perfeita ordem. 
+Do princípio fez  o fim.  
+O que era um Todo único, partiu-se e formou todas as coisas.
+
+
+Houve uma criação?
+Não houve uma criação. O universo já “nasceu” pronto. Todas as manifestações são expressões fiéis do mundo abstrato. Sendo a verdade auto suficiente, constante, eterna, imutável, indestrutível. A verdade não possui a opção de não existir. Sendo assim, o universo não foi criado e nem poderá ser destruído, tudo é, foi e sempre será. Tudo que aconteceu, irá acontecer novamente, e o que não acontece, jamais acontecerá. Já viemos a eternidade aqui e agora.
+O que é a Dualidade?
+Para toda existência haverá a não-existência. O ser só se define pelo contraste com o não ser. A unanimidade jamais poderia ser percebida. Se tudo fosse, nada seria. Toda existência só é possível porque há também a não existência. Para ser, é preciso o não ser. A existência requer a guerra entre os opostos.
+
+
+                                                   * para toda qualidade haverão dois termos que identificarão a existencia ou à nao existencia da capacidade. A capacidade de um elemento possiie endereco fisico o torna fisico ou abstrato.
+Qual a importância da Dualidade?
+É por meio da dualidade que notamos a existência de outros seres, os ocultos, constantes e eternos, que não podem ser vistos a olho nu, como no caso da metafísica, como no caso dos movimentos.
+Qual a diferença entre o plano das mudanças e o mundo metafísico?
+ Plano das mudanças 
+A Dualidade
+Se tudo fosse, nada seria. Para ser, o não ser.
+A dualidade é o primeiro conceito a ser compreendido para adentrar no mundo da metafísica. É por meio dela que encontramos os pólos que sustentam toda a base da realidade.
+O princípio da dualidade afirma que, para que algo exista, deve haver contraste entre a existência e a não existência. A unanimidade jamais poderia ser percebida. Para que haja percepção, é necessário o embate entre opostos. Para que algo seja, deve haver o que não é.
+Assim, podemos induzir que toda existência carrega consigo sua não existência. Se podemos notar o ser, é porque o não ser também se faz presente fazendo contraste. Esse princípio se desdobra em todas as qualidades perceptíveis. Toda existência é sustentada pela relação entre o ser e o não ser.
+Se há frio, há calor. Se há luz, há escuridão. Se há alto, há baixo. Se há físico, há metafísico. Se há mutável, há eterno. Se há parado, há movimento. Assim, desdobram-se todas as coisas.
+É por meio da dualidade que podemos encontrar meio da existência da natureza, a existência também do lado oculto. A natureza representa o mundo material que pode ser medido. A metafísica corresponde ao mundo abstrato.
+Ser e Devir
+Pelo conceito da dualidade, encontramos dois tipos de seres. Diferente da visão tradicional de um ser unificado — definido como objeto ou entidade com características e comportamentos — agora mudamos nosso paradoxo para desmistificar a substância ontológica aristotélica.
+Em vez de um único ser com identidade fixa, temos dois: o ser e o devir. O ser representa aquilo que é e que não pode deixar de ser. O devir representa aquilo que pode deixar de vir a ser. Dessa forma, temos o ser constante e o ser mutável.
+As estruturas análogas a esses dois seres são: matéria e movimento, verbo e estado, matéria e energia, estado e movimento. Todas essas relações se referem ao mesmo arquétipo. No final, caracterizam-se pelos que podem ser medidos e pelos que possuem a capacidade de mover — isto é, a própria mudança.
+Podemos definir como “os que são movidos” os estados, e como “os que movem” o próprio movimento. O estado é representado pelo devir, pelo transitório. O ser, por sua vez, é o que é: imutável, o próprio movimento.
+Ilusão da Identidade?
+O paradoxo da identidade, também conhecido como paradoxo do Navio de Teseu, é um exercício filosófico que questiona a natureza de algo que ”é”, que mantém sua identidade ao longo do tempo.
+Imagine um navio onde cada peça é substituída por uma nova. Depois de um tempo, todas as peças originais foram trocadas. Agora imagine que essas peças originais foram usadas para reconstruir um segundo navio. A questão é: qual dos dois é o verdadeiro navio de Teseu?
+Com isso, percebe-se que o conceito de identidade não pode existir, pois como dizia Heráclito de Éfeso, tudo no universo permanece inconstante. Desta forma, podemos concluir que o nosso conceito de identidade precisa ser revisto, pois não se sustenta apenas utilizando o conceito aristotélico de substância sendo composta por forma e matéria representando a identidade imutável do ser.
+O que sou?
+Somos ambos, o alfa e o omega, o infinito e o estado, o eterno e o mutável. Estes consistem em corpo e consciência. O corpo é a parte física, enquanto a consciência é lógica subjacente denominado como o observador tomador de decisões. A mente, aqui referida como o sexto sentido, cria abstrações que nos ajudam a entender e simular situações, gerando significado. No entanto, essas simulações dependem das percepções armazenadas na mente.
+A mente é dinâmica, a união de todos os sentidos, sexto sentido, composta de estados e movimentos. Os estados são crenças e convicções, enquanto os movimentos representam potenciais ações e a capacidade de abstrair a partir de uma história. Se a mente estiver contaminada, essas abstrações se tornam distorcidas, levando a pensamentos e comportamentos negativos.
+Para manter a mente saudável, é necessário adotar uma postura de observador, separando a consciência da mente. Isso permite analisar e corrigir os estados mentais, removendo impurezas. Uma mente limpa é como água cristalina, onde ideias e valores positivos fluem sem obstáculos. Em contraste, uma mente poluída tende a atrair elementos negativos.
+A consciência, ou observador, ou sétimo sentido, é pura, imutável e eterna, enquanto o corpo é transitório. Fazemos parte tanto do mundo físico quanto de uma consciência universal, sem começo nem fim. Embora nossa existência física seja passageira, a consciência é nossa verdadeira essência, conectando-nos a algo maior e duradouro.
+A mente pode ser contaminada por ideias equivocadas ou comportamentos destrutivos, mas a consciência, enquanto pura, conecta o indivíduo a Deus. A separação entre mente e consciência é crucial, pois a mente está sujeita a mudanças e distorções, enquanto a consciência é constante, servindo de guia para ordem, a lógica, a verdade.
+Deus é e será
+Embora afirmado anteriormente que Deus era apenas um, não passou de uma tentativa mais intuitiva de iniciar o assunto, mas a própria citação não poderia ser verdadeira. Para que algo seja eterno, seria necessário que existisse também a possibilidade dele não ser. Do que seria o eterno se não existisse o tempo?
+O universo conhecido simplesmente é e sempre será. Deus não é um “ente” criador, pois entraria em um ciclo infinito de criador e criatura. Se Deus criou o mundo, então quem criou Deus? Deus é e está, metafísica e natureza, e com intelecto poderemos passar a reconhecê-lo em suas manifestações. Do que seria a metafísica sem a natureza?
+Deus é a metafísica, a causa primeira, o que engendra toda a natureza. O que foi, é e sempre será.
+Embora o universo, aos nossos olhos, em alguns momentos, pareça ser um caos, inegavelmente ele possui movimentos que tendem a ordem divina, como você mesmo pode notar pela sua própria existência. Essa é a lei de Deus, e essa lei sempre prevalecerá. Toda essa conjuntura forma esse “um” todo ordenado e harmônico que podemos denominar como Deus. Se algo perturbar estes movimentos divinos, será levado a uma justa correção.
+Toda esta confusão teológica, filosófica, científica ou qualquer outra expressão do conhecimento de Deus e dos homens, advém de enxergar a substância do “ser” como um elemento individualizado a parte do Todo, impactando diretamente a crença das civilizações e consequentemente nos seus comportamentos.
+A ontologia tradicional precisa ser reanalisada para que possamos ressignificar e assim unificar as crenças, reconciliando os paradoxos. O comportamento da humanidade advém do que se acredita. Se a crença for desalinhada com a verdadeira realidade das coisas, o comportamento também será. Um conjunto de crenças define a realidade e consequentemente o comportamento de uma civilização. Quanto mais a crença de uma sociedade estiver alinhada com a ordem divina, mais harmoniosa será a vida dos seres.
+O Problema da Objetificação
+A objetificação é um conceito que descreve nossa tendência a ver a realidade como composta de entidades isoladas em um pano de fundo vazio. Esse modelo nos permite identificar objetos e estudá-los com precisão. Ao reconhecer as características específicas de um objeto e seu comportamento, conseguimos analisar, prever e até reproduzir ações. No entanto, essa abordagem pode ser restritiva se ignorarmos que a realidade vai além do que é imediatamente visível.
+A distinção entre matéria e forma é um princípio fundamental da filosofia ocidental, especialmente na tradição aristotélica, onde a substância é vista como um elemento que combina esses dois planos. A matéria representa as propriedades observáveis do objeto, enquanto a forma define seu comportamento e o seu papel no mundo. A partir dessa perspectiva, um objeto pode ser visto tanto como um agente, por suas ações, quanto como um estado, pelas suas características, caracterizando-se como corpo. No entanto, essa visão tradicional pode levar a uma narrativa onde a realidade do “ser” seja baseada em corpos, possuindo uma identidade única e imutável, caracterizando-se como substância aristotélica.
+Ao invés dessa visão, propõe-se que o movimento seja visto como resultado do equilíbrio da dinâmica universal, onde para toda perturbação de um estado inerte, haverá um movimento de equilíbrio proporcional.
+Ao adotar uma perspectiva diferente, podemos reinterpretar o conceito de causa e efeito para uma uma dança contínua e infinita entre estados e movimentos, uma interação constante entre as características dos objetos e o fluxo universal que os movimenta, modificando o seu estado e, dependendo de sua natureza, gerando novos movimentos em um ciclo infinito.
+Essa visão propõe uma abordagem mais holística da realidade, onde os movimentos invisíveis e imutáveis desempenham um papel crucial na construção da realidade de um indivíduo, pois a realidade passa a ser proporcional ao observador.
+Trindade e o Cristianismo
+A tendência ocidental de individualizar e objetificar as coisas pode levar a uma percepção distorcida da realidade. No Cristianismo, a forma como a Igreja aborda Jesus reflete essa visão individualizada. Em vez de centrar a atenção exclusivamente no Jesus como o Filho de Deus, devemos olhar para a essência espiritual que ele representa, evitando uma visão que apenas o reduza a um objeto
+Jesus pode ser considerado uma egregora, um papel que simboliza conduta e valores corretos. Ele é uma referência para uma boa conduta espiritual, de maneira semelhante a outros nomes importantes na história ou no contexto da cultura oriental, como o conceito de Nirvana. A ideia central é que todos esses conceitos estão falando sobre a mesma coisa, mas com linguagens diferentes. A ênfase deveria estar nos valores que Jesus representa, mais do que em sua existência física ou como entidade individualizada.
+Se encararmos tudo como um Todo, conseguimos estabelecer uma relação mais próxima com Deus, sem os artifícios de separação e individualização. Em vez de projetar nossos valores e crenças sobre entidades separadas, devemos buscar um relacionamento mais direto, compreendendo que, ao nos assemelharmos a Jesus, estamos em contato direto com Deus.
+Os conceitos da Trindade podem levar ao individualismo, se mal interpretados. Se entendermos o Cristianismo apenas como uma coleção de entidades separadas, corremos o risco de nos afastar da essência espiritual da mensagem. Projetamos para fora o que temos dentro; portanto, se adotarmos uma mentalidade individualista, isso se refletirá na forma como vemos os outros e o mundo ao nosso redor.
+Para abordar essa questão, devemos adotar uma abordagem mais alinhada com a ideia de totalidade e unidade, que é mais comum na cultura oriental. Jesus não deve ser visto apenas como uma entidade individual, mas como um papel, uma Egrégora, um conjunto de crenças que nos orienta a nos comportar de maneira justa e compassiva assim como grandes outros profetas. O verdadeiro ato de fé não é acreditar no impossível, mas alcançar um nível de conhecimento que torne a crença uma escolha natural, sem a necessidade de forçar algo em que não acreditamos completamente.
+Arquétipos
+Jesus é um Símbolo
+                                                   * Jesuis
+                                                   * Eu sou o que sou e o que serei
+                                                   * Ser e Tempo
+                                                   * Movimento e Matéria
+                                                   * O código da vinci
+                                                   * A ordem divina
+                                                   * A lei de moisés
+                                                   * eu sou o que sou, e o que serei
+                                                   * eu sou o tempo, o estado e a ordem
+Causa e Efeito
+A visão clássica da física, baseada na abordagem ocidental de objetificação e nas leis do movimento de Newton, sugere que um objeto mantém sua identidade, mesmo quando é submetido a uma força, até que chegue ao seu destino e libere energia. No entanto, essa interpretação não reflete a natureza dinâmica do universo, onde tudo está em constante mudança. Quando uma força é aplicada a um ambiente, ela altera a relação entre seus elementos, resultando em uma modificação no estado do objeto em relação ao observador, provocando movimento. À medida que o objeto se move, ele passa por transformações, buscando um novo equilíbrio.
+Quando jogamos um objeto, alteramos sua posição e frequência em relação ao ambiente. O sistema busca restaurar um estado de harmonia, sugerindo uma abordagem diferente para causa e efeito. A força aplicada a um objeto modifica sua relação com o ambiente e outros elementos, de modo que o movimento é uma consequência dessas mudanças. Essa visão sugere que a causa e efeito esteja mais relacionada ao reequilíbrio do sistema.
+A confusão sobre causa e efeito surge ao pensar nos objetos como estáticos. Na realidade, o movimento e as mudanças são definidos pela relação entre as coisas. Se um objeto é perturbado, o sistema tende a se ajustar para restaurar o equilíbrio. Esse processo pode ser comparado a um sistema vibracional, onde cada elemento busca alinhar-se com a frequência predominante do ambiente. Assim, se a frequência de um objeto é alterada com relação ao ambiente, a tendência é que ele retorne ao seu estado inicial.
+Leve Três em Uma
+Quando pensamos em "Três em Uma", estamos examinando a possibilidade de entender vários estados e movimentos como um único fenômeno, ou vários deles simultâneos. A ideia de "Leve Três por Uma" pode ser vista como um exercício de observação do mundo em suas múltiplas camadas, onde cada aspecto é parte de um todo maior. Aqui, a ideia de que não existe um sujeito no sentido clássico é relevante; em vez disso, o foco é no estado e no movimento dos elementos.
+No entanto, quando falamos de estado e movimento, não estamos nos referindo apenas ao comportamento de um elemento isolado. O movimento é uma relação entre elementos e o ambiente ao redor, que, por sua vez, também reage ao movimento, formando um ciclo contínuo de mudanças e interações. A distorção causada por um elemento em movimento, por exemplo, pode provocar mudanças significativas, tanto em sua própria forma quanto no ambiente circundante.
+A essência dessas transformações não está na substância subjacente das coisas, mas na relação entre elas. O estado dos elementos, suas localizações e como eles interagem formam um padrão que define o movimento e, consequentemente, a dinâmica do universo. Em uma abordagem mais abstrata, a ideia de identidade pura só existe no mundo do movimento nas ideias. No mundo real, as coisas são compostas por átomos que se comportam de acordo com suas características intrínsecas e sua interação com outros elementos.
+Uma conclusão importante dessa reflexão é que nada no mundo é verdadeiramente eterno a não ser os seus movimentos. Os elementos e o ambiente estão em constante transformação, buscando um equilíbrio que mantém a energia constante. A relação entre as coisas é o que define suas identidades, reforçando a ideia de que o universo é uma dança contínua de interações.
+Portanto, é importante considerar que o mundo natural é um aglomerado de átomos, cuja essência é determinada pelo comportamento e pela relação entre seus elementos. Isso nos leva a questionar a identidade consciente como sendo plural ou única. Embora o estado da mente possa ser plural, a realidade é que tudo funciona conforme as características e comportamentos dos elementos que compõem o nosso universo. Em última análise, tudo está como deveria estar para que a existência fosse possível.
+O Iluminismo
+Ontologia: Movimento e Matéria
+No universo observável, podemos identificar dois tipos de elementos bases, mas com naturezas distintas: matéria e movimento. A matéria consiste nos elementos físicos, nas suas características mutáveis e observáveis, enquanto que o movimento representa os eventos de transformações do estado da matéria.
+O movimento, ao contrário da matéria, possui natureza imutável. O movimento é identificado pela sua própria essência do ser. Se o seu comportamento “muda”, o movimento deixa de ser o mesmo, e passamos a ter ao invés de um, agora dois movimentos, mantendo sempre a sua natureza imutável.
+Um exemplo intuitivo seria a melodia de uma música. Independente dos instrumentos ou conjunto harmônico, a identidade da música será atemporal e imutável. Independente do lugar ou tempo, uma música uma vez escrita, jamais perderá a sua identidade.
+Já o estado da matéria possui natureza mutável, portanto, a sua identificação vem de um conjunto de características observáveis do objeto. Características que podem ser representadas como cor, formato, localização, dentre outras.
+                                                   * Uma visão que propõe mais os estudos do movimento
+                                                   * Ao invés da objetificação das coisas
+Física x Metafísica
+A física e a metafísica representam dois domínios fundamentais do pensamento humano, cada um com seus próprios parâmetros e modos de compreender o universo. Na física, estudamos a matéria tangível, os corpos que ocupam espaço e têm massa, e as forças que os movem. Este é o domínio do mundo visível, dos fenômenos que podemos observar e medir com precisão. É o campo onde a ciência estabelece suas regras e leis, como a gravidade e a termodinâmica, e busca previsibilidade e consistência.
+Já a metafísica mergulha em questões mais abstratas e, muitas vezes, transcendentais. Aqui, a matéria não é apenas o objeto físico, mas também a essência que o constitui e a finalidade que ele serve. A metafísica busca entender o significado mais profundo das coisas, indo além do tangível para explorar conceitos como ser, existência, causalidade e propósito. Este campo questiona a natureza última da realidade, interrogando se existe algo mais além do que nossos sentidos podem captar.
+No modelo aristotélico, há uma distinção clara entre o físico e o metafísico, mas também uma relação intrínseca entre eles. Para Aristóteles, a física lidava com os objetos do mundo sensível, enquanto a metafísica se concentrava nas primeiras causas e nos princípios subjacentes a esses objetos. Um exemplo dessa relação é a ideia de que a matéria no mundo metafísico é como um papel em uma peça de teatro—é o substrato no qual as ideias e as funções ganham vida. No mundo físico, por outro lado, a matéria é o próprio objeto, concreto e perceptível.
+Neste livro, propomos uma separação entre o físico e o metafísico, mas destacamos que ambos os domínios tendem a possuir estados e movimentos identicos. O mundo físico é governado por leis naturais, como as do movimento de Newton, mas o mundo metafísico é mais fluido, onde os estados podem ser de pura ideia ou conceito, e o movimento é mais sutil, relacionado ao pensamento e à evolução das ideias.
+Quando falamos de intelecto e realidade, há uma conexão direta com o divino, ou a ordem suprema. Acredita-se que quanto mais nosso intelecto estiver alinhado com a realidade natural, mais estaremos em harmonia com uma ordem maior, que pode ser vista como divina ou transcendental. Esse alinhamento pode ser entendido como um reconhecimento de que o conhecimento, em última análise, deve buscar uma verdade universal, capaz de unir o físico e o metafísico em uma única compreensão coerente do mundo.
+                                                   * separa se a realidade em físico e metafísico
+                                                   * No modelo aristotelico utiliza muito o objeto físico e metsfisico
+                                                   * A matéria no mundo metafísico é o papel, objeto que desempenha uma funcao
+                                                   * A matéria no mundo físico seria o próprio objeto
+                                                   * Neste livro, separamos em físico e metafisico E cada um deles possui estado e movimento
+                                                   * O mundo do intelecto, contendo estado e movimento
+                                                   * Mundo real contendo matéria e movimento
+                                                   * Quanto mais nosso intelecto estiver alinhado com a realidade da natureza, mais alinhados estará o ser da ordem divina.
+O universo é um autômato 
+Teoria do Movimento
+                                                   * A identidade visa resolver quando um elemento pode ser definido como o mesmo ou não
+                                                   * Os movimentos não enxergam os elementos, mas sim suas características
+                                                   * o elemento está em mais de um lugar ao mesmo tempo
+                                                   * A natureza modifica s matéria e o ambiente durante a passagem do objeto
+                                                   * O estado atual define o próximo estado mais provsvel
+                                                   * O estado atual é o todo, não apenas o objeto
+                                                   * Desta forma, o todo representa cada elemento contido no universo que se comunica
+                                                   * O movimento dos astros modificará no comportamento do movimento, mesmo que de forma mínima perceptível s uma distância curta do observador
+                                                   * Dependendo do movimento dos astros, o padrão se repetirá
+                                                   * É como se a posição dos astros fosse o clock do processador do universo
+                                                   * O movimento assim como a matéria talvez sejam sempre diferentes
+                                                   * Mas o processo de abstração a curta distância é possível
+                                                   * Com poucos elementos
+                                                   * Mas quando falamos de macro e micro, o conceito muda
+                                                   * O estado define o movimento, a relação das coisas
+                                                   * Se eu jogo um objeto na velocidade da luz, para o observador, o objeto psssouser luz
+                                                   * Pela posição e natureza dos elementos em um plano, define-se o movimento que sucederá com probabilidade
+                                                   * o estado e a relação das coisas é a 4 dimensão. Não é só o objeto, mas a relação dele com as coisas que forma a 4 dimensão? Um objeto pode ser para outro perturbado o mesmo que eram em um ambiente inicial. Dois objetos igualmente perturbados, se comportam como no estado inicial.
+                                                   * Dois objetos perturbados se comportam igualmente um para o outro.
+Ato x Potência
+
+                                                   * Teoria do movimento
+                                                   * A matéria é o estado
+                                                   * O verbo é o movimento
+                                                   * O ato é a matéria mais o movimento
+                                                   * A potência é tudo aquilo que pode vir a ser com com um conjunto de atos de acordo com uma matéria inicial
+                                                   * Tendência só ato de maior probabilidade
+                                                   * Quanto mais distante, menos difícil de prever
+                                                   * O produto dos resultados de todas as potências será o ato
+                                                   * O resultado final é o produto da aplicação de todos os padroes Que interferem no elemento
+                                                   * Quanto mais padrões conhecer, mais preveremos o ato
+                                                   * O ato é produto do estado e da relação das coisas
+A vida é um filme
+A vida é um filme com final escrito ao qual os personagens serão meros espectadores decidindo qual a perspectiva ter.
+Ordem Divina
+                                                   * as 3 leis de Newton em uma
+                                                   * Teoria do movimento
+                                                   * Existe uma tendência natural das coisas de seguirem para um estado de potência mais provável
+Tempo é Absoluto
+                                                   * O tempo de um humano sempre será o mesmo, independente da sua velocidade
+                                                   * O tempo é relativo as coisas, assim como tamanho
+                                                   * Em um espaço vazio, um elemento sozinho não pode ter tamanho
+                                                   * Abstração
+O conceito de substituir os elementos de uma história a fim de obter os mesmos resultados.
+                                                   * polimorfismo é um nome ruim.
+                                                   * Não é um objeto que é polimórfico, mas sim a história quenénabstrara.
+                                                   * No Flow n concentra no objeto, mas sim na ação
+                                                   * Conceito de abstração
+                                                   * Falso conceito de polimorfismo
+                                                   * Não é que um cabo de vassoura tem multi utilidade é que a história permite a modificação dos elementos então não é que o cabo de vassoura Tem a possibilidade de limpar o chão como estender roupa é a possibilidade de estender roupa tem de utilizar um objeto extenso e aí Serve tudo.
+                                                   * O elemento é só uma ilusão que nós temos de individualizar os outros pela projeção da nossa individualidade ao mundo externo Quando nós nascemos nós entramos num processo de individualização e assim passamos a ver tudo que é Diferente no universo de elemento individual entendeu de individual
+                                                   * Início do processo de categoriacao
+                                                   * O verdadeiro conceito de abstração
+                                                   * A ontologia tá defeituosa.
+                                                   * Quanto maior a capacidade de exercer o seu poder de abstração, mais inteligente será o homem
+Movimento como Centro do Universo
+A ideia de movimento como centro de tudo propõe uma perspectiva inovadora na qual a consciência é entendida como movimento. Em vez de se concentrar em objetos específicos, o foco desloca-se para a dinâmica do movimento em si, ressaltando que a percepção não se limita a ver coisas, mas a compreender papéis e contextos.
+Nesse contexto, todas as abstrações ocorrem constantemente, sinalizando uma fluidez na compreensão do universo. A cada ação que fazemos para mover o espaço, há uma resposta ou consequência divina, sugerindo que movemos estados e Deus é quem orienta o movimento. Isso destaca uma conexão entre ação humana e vontade divina, indicando que Deus está no movimento das coisas, guiando os resultados de nossas ações.
+Esta filosofia do movimento como centro de tudo sugere uma maneira de entender a existência e a natureza da realidade, onde a influência divina é percebida através do próprio movimento. Assim, o movimento torna-se uma metáfora para a força divina que molda e direciona o curso dos acontecimentos.
+A essência do movimento é central para a compreensão do universo e da consciência. Em vez de concentrar-se nos objetos, a ênfase recai no próprio movimento. Isso implica que o movimento não se limita a ver os objetos, mas compreende seus papéis e interações.
+Tudo é continuamente influenciado por abstrações que moldam nossa realidade. Quando movemos algo no espaço, Deus determina as consequências desse movimento, sugerindo uma interconexão entre ação e propósito divino. Assim, nossa capacidade de mover estados é uma extensão da influência divina sobre o movimento.
+Deus, portanto, está presente no movimento de todas as coisas, sugerindo uma visão filosófica que coloca o movimento no centro de toda a existência. Dessa forma, a filosofia do movimento torna-se a base para entender a dinâmica do universo e nosso papel dentro dele.
+                                                   * a consciência é o movimento
+                                                   * Ao invés de focar no objeto, foca-se no movimento
+                                                   * O movimento não enxerga objeto, enxerga papel;
+                                                   * A todo momento todos s abstrações são executadas
+                                                   * Você move o espaço e Deus diz o que acontece
+                                                   * Movemos estados e Deus faz o movimento
+                                                   * Deus está no movimento das coisas
+                                                   * A filosofia como movimento como centro de tudo;
+A Língua de Deus
+                                                   * Os moviMentos são a língua de deus
+                                                   * Quem detecta utiliza dos conceitos de abstração
+                                                   * Consegue com um conjunto de atos chegar em qualquer potência
+                                                   * Os movimentos podem ser reconhecidos
+                                                   * Esses movimentos conhecidos são padroes
+                                                   * A língua dos anjos rsrs
+Linguagem Ubíqua
+                                                   * uma linguagem universal de símbolos de forma intuitiva
+                                                   * Uma linguagem a qual permite paralelizacap
+                                                   * Uma linguagem como a do filme a chegada
+A Filosofia Cristã
+                                                   * A filosofia cristã induz o ser a pensar que Jesus implementaria o espírito santo
+                                                   * A White Pill implementa a língua de Deus
+Resgate ao Renascentismo
+                                                   * leis de Newton provocaram revolucao
+                                                   * Trazer a ordem de tales de mileto
+                                                   * O cosmos
+Relatividade Existencial
+                                                   * ao invés do espaço e o tempo se comprimir , a massa se comprime
+                                                   * Ao invés do tempo ser relativo, a massa do objeto que é relativa, ele deixa de ser ele em movimento, muda de frequência
+                                                   * O espaço se comprime para que o tempo continue
+                                                   * O tempo é absoluto, a massa que é relativa. As coisas podem deixar de serem elas em outra frequência? Sim!
+Egrégora
+Enquanto houverem características conhecidas, os movimentos também serão conhecidos.
+                                                   * Conjunto de crenças de um indivíduo ou grupo
+                                                   * A egregora define o comportamento do homem bem como da civilizacao
+                                                   * Egregora é a cultura
+                                                   * Um conjunto de eventos passados determinam o comportamento;
+                                                   * Tendência natural das pessoas tenderem a um comportamento
+                                                   * A egregora de um ser define a sua realidade
+                                                   * Define o seu mundo
+                                                   * A egregora define o comportamento do homem
+                                                   * A egregora define o comportamento do corpo
+                                                   * Não conseguimos desacreditar em algo que fielmente acreditamos
+                                                   * Nossa consciência não permite
+                                                   * Não temos poder sobre nossa consciência
+                                                   * Ela é o que acreditamos.
+                                                   * Se acreditamos que iremos morrer, nosso corpo apaga.
+                                                   * Nosso corpo age em harmonia em diferentes partes para nos proteger inclusive;
+                                                   * Imagina reunir todas as perguntas do mundo e fizermos para todas as pessoas do mundo, seria como se tivéssemos todos os perfis de crenças e seria possível traçar o comportamento das pessoa de acordo com suas crenças
+                                                   * Cirurgia da personalidade, tabela de skills
+O Nascimento do Ego
+                                                   * o mal da o objetificacao
+                                                   * Somos deuses conhecendo nossa perfeicao divina
+                                                   * Nascimento da criança
+                                                   * Identificação de sua existência
+                                                   * Até então é reação comportamental, física, não intelectual
+                                                   * O intelecto
+O Mito de Sísifo
+                                                   * Quando não te,os conhecimento dos movimentos tendemos ao ciclo vicioso
+                                                   * O desejo de ter para o tédio de possuir
+                                                   * Um saco sem fundo, quanto ais queremos, mais desejamos
+                                                   * Uma busca constante incessante que não traz preenchimento
+                                                   * Muitos sequer consegue, alcançar o estágio de sucesso para comcluor esse vazio
+                                                   * Muitos vivem este ciclo no trabalho e sem tempo para viver
+                                                   * Apenas para pagar contas e desejar a vida inteira por algo que sem conhecimenti será alcançado
+                                                   * Outros buscam preencher outros tipos de faltas com exceços
+                                                   * Deter o conhecimento te torna presente e satisfeito
+                                                   * Te conecta com o fluxo divino e te torna próspero por consequência
+                                                   * Apenas o conhecimento liberta desse ciclo
+Conto da Mosca
+                                                   * A mosca possui memória rui,
+                                                   * Ela retorna ao lugar de risco pois se esquece durante o caminho
+                                                   * O ser humano é igual, mas em escala de tempo maior
+                                                   * A vida inteira
+                                                   * Com conhecimento liberta desse ciclo vicioso
+                                                   * Traz uma vida de significado
+Um Baile de Máscaras
+A sensação de ser um impostor é comum em ambientes onde ninguém mostra sua verdadeira personalidade. Cada pessoa veste uma máscara, tentando ser o que acha que deveria ser para se encaixar no grupo.
+Isso cria um efeito manada. Quando alguém novo e mais autêntico entra nesse tipo de ambiente, gera-se a diferença, o contraste, e as duas partes sentem. Os que estão de máscara enxergam no autêntico a sua própria natureza, sentindo-se envergonhados negam passam a negar o autêntico. Ao se sentir rejeitado, o autêntico sente vergonha de si e passa a usar também a sua máscara.
+                                                   * a personalidade fraca entra na manada
+                                                   * A personalidade forte continua e vira o heroi
+O efeito coletivo desse processo cria uma espécie de egregora negativa, uma energia compartilhada que perpetua a ideia de que é necessário fingir para ser aceito. Assim, a cultura do ambiente se mantém, criando um círculo vicioso onde todos escondem quem realmente são.
+Inferno Cíclico
+                                                   * A individualidade é o mal da humanidade.
+                                                   * Tudo tende a se repetir
+                                                   * Os movimentos seguem um padrao
+                                                   * O ciclo da sofrencia
+                                                   * O ciclo da ,entira
+                                                   * Muitas vidas foram ceifadas
+                                                   * Muitas vidas foram de sofrimento por n terem esperanças
+                                                   * Uma vida sem significado divino, sem esperanca
+                                                   * O conhecimento liberta
+                                                   * A Blue Pill liberta do inferno e traz o jardim do Éden
+                                                   * É a linha de deus
+                                                   * Se conhecermos os movimentos, aplicamos abstração
+                                                   * Nos esquivamos dos riscos e dos caminhos tortuosos
+                                                   * Passamos a enxergar Deus em todas as coisas
+O Caos
+                                                   * o Clico vicioso
+                                                   * A deformidade entre as pessoaa
+                                                   * Polaridade comportsmental
+                                                   * Esquerda e direita
+                                                   * A mentira destruirá o ser
+                                                   * O ser será eliminado da ordem
+                                                   * Csminhará contra a ordem e tenderá as profundezas
+A Entropia
+                                                   * a entropia é s dificuldade de prever algo de acordo do a distância dos elementos, de acordo com a relação desses objetos com o observador.
+Satanás
+                                                   * a individualidade é o mal
+                                                   * A voz que sopra nos nossos ouvidos da mente
+                                                   * O ego
+O V de Divergência da Egrégora
+                                                   * forma a divergência entre todas as cores
+                                                   * Do Violeta ao vermelho
+White Pill
+                                                   * O autêntico que vence no jogo dos de máscara e liberta todos de suas máscaras.
+                                                   * O autêntico que descobre que a Blue Pill é a verdadeira;
+                                                   * Quem passa a ser feio é quem está de máscara
+                                                   * A verdade vem a tona
+                                                   * A libertação
+                                                   * A convergência para a luz
+Apocalipse
+                                                   * todos irão tomar s Blue pill
+                                                   * Quem usar máscaras sentirá vergonha
+                                                   * Quem usou roupas, sentirão vergonha
+                                                   * As pessoas cultivarão a natureza
+                                                   * O conhecimento será utilizado para todos
+                                                   * Buscaremos formas de ensinar aos mais pobres
+                                                   * Otimizar os ensinos e o cultivo ao critério
+                                                   * Todos exercerão aquilo que nasceram para fazer
+                                                   * Explorarão ao máximo a sua capacidade
+                                                   * Ajudará outras pessoas a se recuperarem daquilo que elas possuem a Blue Pill para ofertar
+                                                   * Cada um que sofre de um problema será antídoto
+                                                   * Aquele que sofreu pela falta de um pai será pai
+                                                   * Aquele que sofreu por u,a falta de mãe será mãe
+                                                   * Aquele que sofreu pela falta de um professor será professor
+A Morte do Ego
+                                                   * a visão de que a identidade está mais ligada ao nosso comportsmento
+                                                   * O apego aos movimentos e o comportsmento
+                                                   * Não enxergando apenas como um corpo
+                                                   * Enxergando o outro como a si mesmo
+                                                   * Um indivíduo que fez tudo o que fez por estar onde está
+                                                   * Fruto muito mais da egregora ao qual foi inserido
+                                                   * Todos somos fagulhas de um todo
+                                                   * Enxergar a si como parte de um todo, e não como um indivíduo importwntr
+                                                   * Deus é importante, não o indivíduo
+                                                   * A mente é mais importante que o corpo
+                                                   * O intelecto nos aproxima de deus
+                                                   * O intelecto nos faz ser o mesmo em essencia
+                                                   * A egregora dos seres pode possuir a mesma base
+                                                   * A manifestação do corpo para as novas descobertas
+                                                   * A Bíblia é um Conjunto de Movimentos
+                                                   * tudo é simbolico
+                                                   * Serve para aplicarmos abstracao
+                                                   * O próprio nome de Jesus jesuis
+                                                   * Origem egipcia Com hermes
+                                                   * Depois Abraão com judaismo
+                                                   * Filosofia ocidental
+                                                   * cristianismo
+O Ilusão do Caos
+                                                   * n existe caos
+                                                   * O caos é o humano tentando impor a sua ordem
+Teoria dos Jogos
+                                                   * o olho por olho prevaleceu
+                                                   * A Regra Mudou
+                                                   * Afira Deus sempre dará as moedas, você joga com Deus
+                                                   * Para cada moeda que você der pra ele, ele te dará a sua e a dele
+                                                   * Para cada decisão em direção a ordem divina, haverá uma conquista maior;
+                                                   * Para cada moeda, ganhará duas
+                                                   * Para cada decisão, ganhará o dobro
+O Jardim do Éden
+                                                   * já vivemos no jardim
+                                                   * A mentira é o diabo
+                                                   * A egregora mentirosa Cria o caos
+                                                   * A natureza n é imperfeita como dizia platao
+                                                   * Ela é uma representação máxima de Deus
+                                                   * Somos criação divina
+                                                   * Tendemos ao perfeito
+                                                   * O universo já é perfeito
+                                                   * Aqueles que deterem essa egregora do jardim do Éden estarão salvos
+                                                   * Viverão a eternidade em diversos corpos
+                                                   * Seria tedioso viver sozinho no universo
+                                                   * Somos toda a consciência divina manifestando em um corpo
+                                                   * Somos todo o mesmo
+                                                   * A mesma identidade
+                                                   * Viveremos eternamente
+                                                   * Tendemos ao perfeito
+Ciclo de Reencarnação
+                                                   * Já somos o todo
+                                                   * Vivemos em todas as formas de vida
+                                                   * Temos identidade única
+                                                   * Nascemos no próximo ser humano;
+                                                   * Renasceremos em todas as formas
+                                                   * Somos tudo e todos
+                                                   * Nós existe distinção em consciência
+                                                   * O homem suporta o que é próprio daquilo
+                                                   * Nada acontece ao homem que não seja próprio do homem
+                                                   * Reencarnaremos neste mundo e herdaremos a terra que deixamos para nós mesmos
+Ninguém nasce mal
+                                                   * Somos a criação divina
+                                                   * Crianças são alegres por natureza
+                                                   * O mundo mentiroso corroi o ser é traz o caos
+                                                   * Todos podem ter uma virtuosa e de significado
+Fórmula da Felicidade
+Manter-se contente utilizando histórias conhecidas de motivação, muito conhecida como gatilhos.
+                                                   * gatilhos de felicidade
+                                                   * Tomar banho quente
+                                                   * Tomar café
+                                                   * Somos Autômatos
+                                                   * nosso estado define nosso comportsmento
+                                                   * O ambiente que estamos define comportsmento
+                                                   * A natureza junto ao intelecto forma o comportamento do individuo
+                                                   * Um indivíduo com crenças desalinhadas tendem a comportamentos desalinhados
+                                                   * Indivíduo com comportamento desenhslinhado tende a tornar sua ida e seu corpo desalinhado s ordem divina
+                                                   * Sermos autômatos e não cuidar,os, podemos viver um ciclo eterno
+                                                   * Não somos o que pensamos, o que pensamos faz parte do estado, do automato
+                                                   * O momento não representa o todo
+                                                   * Boas crenças, bons comportamentos
+                                                   * Entender que estamos como autômatos, mas nossa essência do ser é eterna
+                                                   * Não só,os o que pensamos
+                                                   * A mente é a união dos sentidos
+                                                   * Mente faz parte do corpo tbm;
+                                                   * A consciência é nossa capacidade de dizer verdade ou falso;
+                                                   * Os cálculos que você faz
+                                                   * Cálculo é movimento
+                                                   * Consciência é o movimento, a decisão
+                                                   * Teve que ser assim para ter a modificação domestado
+                                                   * Deus dá as caras, vc decide, ele da o movimento
+Transmutação Mental
+                                                   * Cérebro não diferencia a diferença entre realidade imaginação
+                                                   * Sentimentos não são estados
+                                                   * Ignorar o que pensa
+                                                   * Remover voz linear
+                                                   * Criar visualização de imagens ao invés de sons
+                                                   * Visualizar imagem ao invés de ter uma voz
+                                                   * Maior capacidade
+                                                   * Linguagem paralela
+                                                   * Transmutação mental é a definição de si. O que sou? Onde a consciência está? Como me defino sugere o que serei.
+                                                   * Nosso cérebro diferencia imaginação da realidade, logo, sentimos o que imaginamos
+                                                   * A transmutação mental é separar o observador da mente e passar a observa la
+                                                   * É assim, permite sonhar e se sentir feliz eliminando os pensamentos ruins e focando na felicidade de ser o que quiser.
+                                                   * Eu sou!
+                                                   * Eu sou consciência universal observando.
+                                                   * Somos deuses jogados no mundo sem memória onde tudo tende a dar certo;
+Memória Fotográfica
+O Sentido da Vida
+Você está sempre com vontade de se sentir contente, pois sabe o mal gosto de momentos de dores físicas e emocionais. Desejas a harmonia em todos os momentos, pois ela te faz experienciar a mais divina das sensações de estar vivo. Desejas perpetuar este estado. Desejas o deleite de uma vida contente repleta destes momentos livre de todas as desordens.
+O que te distingue dos outros seres é o seu intelecto. Ele te dá a possibilidade de viver de maneira plena, tranquila e segura, mesmo em meio à sua ilusão de uma natureza caótica. Você tem o poder de organizar o que parecia ser caos da sua forma e, a partir disso, estabelecer uma ordem sua que tende a ordem divina. Uma ordem criativa, na qual a força de seus atos pode gerar os melhores momentos, proporcionando experiências desejadas inimagináveis das mais diversas manifestações do cosmos.
+Você deve valorizar a arte do conhecimento, pois é por meio deste que podes adquirir as ferramentas necessárias para criar uma vida próspera de deleite e de significado. Você tem a capacidade de evoluir significativamente da forma mais autêntica possível, explorando a máxima potência da sua natureza e do seu intelecto.
+Quanto mais você evoluir na arte de conhecer os movimentos divinos, quanto mais o seu conjunto de crenças estiverem alinhadas a esta ordem, mais você perpetuará este estado contente e assim poderá cada vez mais impactar também a vida dos seus semelhantes, em um ciclo evolutivo de prosperidade acumulativa e exponencial.
+Está é a tua maior missão na Terra: explorar o teu maior potencial, buscando e compartilhando os seus conhecimentos e suas criações, deleitando-se com os frutos durante essa virtuosa viagem, contemplando a ordem da criação divina com os seus semelhantes.
+A Montanha Russa da Consciência
+A vida cotidiana, sem a compreensão profunda da consciência e da ordem divina, assemelha-se a subir uma ladeira íngreme apenas com o próprio esforço. A cada passo, a subida é árdua, e o cume parece distante. O alívio só vem na descida, quando, por um breve momento, podemos descansar e aproveitar a sensação de queda livre. Mas, inevitavelmente, retornamos ao ponto inicial de equilíbrio, prontos para começar a escalada novamente. É um ciclo incessante de esforço e alívio, onde cada descida só serve para nos preparar para a próxima subida.
+Entretanto, ao compreendermos a ordem divina, essa dinâmica muda radicalmente. Não estamos mais no controle, lutando contra a gravidade com nossas próprias forças. Em vez disso, somos como passageiros em uma montanha-russa, sendo puxados por uma força superior. Nesta jornada, não há necessidade de esforço próprio. Somos constantemente elevados, vislumbrando a subida e a descida sem o desgaste da luta pessoal.
+A partir dessa nova perspectiva, a vida se transforma em uma experiência eterna de contemplação. A cada momento, somos carregados por uma força maior, desfrutando de uma vista que o Criador nos proporciona. Não há descidas abruptas ou quedas dolorosas; estamos sempre em ascensão, sustentados pela ordem divina. A experiência deixa de ser uma sequência de altos e baixos, tornando-se uma eterna subida, onde o prazer e a contemplação são constantes.
+Neste estado de despertar, a nossa jornada é transformada. A compreensão da ordem divina nos permite transcender o ciclo de esforço e alívio, substituindo-o por uma fluida e contínua experiência de paz e alegria. Deixamos de ser os agentes do nosso próprio fardo e nos tornamos contempladores da majestosa vista que se revela diante de nós, em uma montanha-russa eterna de deleite e descoberta.
+
+
+Esteja preparado para nunca se aborrecer
+
+
+
+
+Seja um ser de luz
+                                                   * transforma energia ruim em energia boa;
+                                                   * ma esfera polida;
+                                                   * em cada queda uma oportunidade de se evoluir;
+
+
+A tentação
+                                                   * nunca se admire ou crie ilusões ou sonhe acordado com algo que deseja?
+                                                   * Não crie expectativas que n seja de Deus
+
+
+O Manual da Vida (Inexistente)
+Capítulo 1: A Farsa da Informação
+Vivemos em um mundo onde as informações se multiplicam a cada segundo, mas, em vez de nos iluminar, muitas vezes nos cegam. O excesso de dados e de crenças conflitantes nos coloca em um terreno fértil para a confusão. Cada pessoa parece ter uma resposta pronta, uma visão do mundo que, muitas vezes, carece de bases lógicas. Somos bombardeados por vozes que falam do que não entendem, e, ao tentar filtrar a verdade, nos deparamos com o baile de máscaras da sociedade.
+Mas a verdade é que ninguém tem um "manual da vida". A vida não é um conjunto de regras infalíveis ou um guia pronto para ser seguido. É um caos orgânico de escolhas, crenças e padrões repetidos.
+Capítulo 2: O Jogo da Realidade Parcial
+Nosso entendimento da realidade é, no melhor dos casos, fragmentado. Olhamos para o mundo e vemos apenas um pedaço dele, uma fatia restrita, que nos impede de perceber o todo. O ser humano é limitado em sua capacidade de compreender a complexidade da existência. A realidade que enxergamos é apenas um reflexo do que conseguimos perceber em um dado momento, filtrado pelas lentes do ego.
+Mas qual é a nossa verdadeira identidade? Não sabemos. O que sabemos é que nos apegamos ao que chamamos de “eu”, uma construção feita ao longo da vida, moldada pela experiência, pela cultura e pelas circunstâncias. Esse ego, essa sensação de individualidade, é, na verdade, uma ilusão.
+Capítulo 3: O Modelo OOP – Objetos e Padrões
+Assim como em uma linguagem de programação orientada a objetos (OOP), nossa mente e nossas vidas são compostas de entes, acoplados entre si, com características, funções e efeitos colaterais. Mas, ao contrário do que imaginamos, as identidades que construímos não são tão fixas quanto parecem. A ideia de um “eu” imutável é apenas uma máscara que usamos para navegar no mundo. Somos, na realidade, autômatos programados para reagir a certos estímulos com base em padrões repetidos.
+Nossas decisões, frequentemente, são baseadas no estado mental que encontramos em determinado momento. Vivemos de forma cíclica, reagindo aos mesmos estímulos, cometendo os mesmos erros. O sofrimento surge quando não compreendemos que somos prisioneiros desses ciclos. A ignorância sobre a verdadeira natureza da realidade nos mantém aprisionados, repetindo sempre os mesmos comportamentos, os mesmos erros.
+Capítulo 4: O Inferno Cíclico
+A vida se desenrola em ciclos. Vivemos em um inferno cíclico, como moscas que giram em torno da mesma lâmpada, sem jamais se libertar da rotina. Não vemos que o que chamamos de "futuro" nada mais é do que uma repetição do passado, apenas com novos atores. Cada um de nós desempenha papéis já definidos, como personagens de uma história antiga, e sem saber, nos condenamos a repetir a narrativa que nos é imposta.
+Mas existe uma saída. A chave para escapar desse ciclo está no controle da mente, na conscientização de que somos atores, mas que também podemos ser os autores. A superação do "ciclo adâmico" implica em transcender o sofrimento e romper as barreiras da ignorância. Para isso, é necessário um profundo entendimento de nós mesmos e do que nos move.
+Capítulo 5: O Caminho do Conhecimento
+O primeiro passo para a liberdade é o conhecimento. Devemos buscar compreender a realidade, não como uma coleção de objetos isolados, mas como um conjunto de relações, de padrões que se repetem. A verdade não está nos objetos, mas nas características e nas histórias que os conectam. É o entendimento dessas histórias, desses arquétipos, que nos permite transcender a ilusão da individualidade e compreender a natureza essencial de tudo o que existe.
+A metafísica é o estudo dos padrões que se repetem. Ao compreendê-los, começamos a perceber a lógica que rege a vida. Conhecer os arquétipos, as histórias que se desenrolam em nossas vidas e na história da humanidade, é o caminho para entender quem realmente somos.
+Capítulo 6: O Observador e a Centelha Divina
+Você, leitor, não é o ator, mas o observador. Você é a centelha divina, a consciência que observa a dança dos personagens e das histórias. Sua verdadeira identidade não está nos papéis que você interpreta, mas na capacidade de perceber o que se repete, de compreender os padrões que governam o fluxo da vida.
+Tudo o que existe tem uma razão. Somos todos parte de uma mesma essência, conectados por uma lógica universal que transcende o tempo e o espaço. Quando você começa a perceber isso, começa a ver além das limitações da identidade individual. A eternidade não está no futuro nem no passado. Ela é o eterno presente, sempre acessível a quem consegue olhar para dentro de si.
+Capítulo 7: A Escolha dos Arquétipos
+Ao compreender que a realidade é feita de histórias e padrões que se repetem, você começa a se dar conta de seu papel na grande narrativa. Você pode escolher quais arquétipos deseja incorporar, quais histórias deseja viver. Não estamos mais à mercê do acaso ou das circunstâncias. Somos capazes de, pelo entendimento, influenciar a trama.
+Escolher seus arquétipos é um ato de autoconhecimento. Você começa a perceber que a verdadeira liberdade não está na ausência de limitações, mas na capacidade de escolher como reagir a essas limitações. O segredo para uma vida plena não está em negar a realidade, mas em compreender profundamente suas leis e escolher, com sabedoria, como navegar por ela.
+Epílogo: A Verdade em Si Mesma
+O mundo está repleto de desinformação, mas a verdade não é algo externo a você. A verdade está dentro, na capacidade de perceber o que se repete, de reconhecer as histórias e os arquétipos que governam a vida. Ao compreender isso, você não precisa de um manual da vida, porque já possui todas as respostas. A vida é um processo de descoberta contínua, de entender a realidade, de viver as histórias que você escolheu, de se tornar quem você realmente é.
+E, assim, você se liberta do ciclo, não porque escapou dele, mas porque agora sabe como navegar nele. Como observador, você transcende a ilusão da identidade e se torna um com a essência do todo.
+
+
+
+
+Introdução: A Jornada Filosófica e Espiritual
+Vivemos em um universo repleto de histórias. Cada movimento, cada transformação, é parte de uma narrativa maior, um fluxo contínuo que molda a realidade à nossa volta. Este livro é um convite para mergulhar nesse fluxo, explorar suas nuances e compreender os padrões que nos conectam ao Todo.
+As reflexões aqui apresentadas nasceram de uma busca pessoal por significado, uma tentativa de unir o filosófico, o espiritual e o prático em uma única estrutura coerente. Ao longo dessa jornada, percebi que a realidade não é apenas um conjunto de objetos separados, mas um tecido intrincado de mudanças e relações, onde cada ser, evento e ideia é uma manifestação de histórias universais.
+A proposta deste livro é oferecer um mapa para navegar essa realidade, explorando temas como a metafísica, o papel do ego, a linguagem e os arquétipos. Mais do que um tratado filosófico, esta obra busca ser um guia prático para ajudar o leitor a alinhar-se ao fluxo da existência e encontrar harmonia em meio às transformações constantes.
+Ao longo das páginas, você será desafiado a repensar sua visão de mundo, a questionar o papel do ego e a reconhecer os padrões que moldam sua vida. Por meio dessas reflexões, espero que você encontre não apenas respostas, mas também novas perguntas que o impulsionem em sua própria jornada de autodescoberta.
+Convido você a embarcar nessa jornada comigo. Que este livro seja uma bússola, apontando para a essência imutável que conecta todas as coisas e guiando você em direção a uma vida mais consciente, livre de tormentos, e alinhada com o eterno fluxo da realidade.
+Seja bem-vindo a esta meditação sobre o universo, o ser e o devir. Aqui começa uma nova maneira de olhar para si mesmo e para o mundo.
+
+
+
+
+—-
+
+
+
+
+O que é o Ente?
+
+
+
+
+
+
+
+
+A -
+B –
+C —
+D —-
+E —--
+F —---
+G —----
+
+8 MAIOR
+A —------
+B —------—------
+C —------—------—------
+D —------—------—------—------
+E —------—------—------—------—------
+F —------—------—------—------—------—------
+G —------—------—------—------—------—------—------
+
+
+. ABCDEFG ABCDEFG
+
+
+  
+
+
+
+
+
+Qual é sua promessa de mercado?
+Libertação do espírito por meio do conhecimento. Apresentar uma visão de mundo baseada em lógica para explicar Deus e a dinâmica do universo. Oferecer uma ferramenta de análise metafísica e um código de conduta semelhante às 48 Leis do Poder, permitindo que as pessoas apliquem o conceito de correspondência em suas vidas. Explicar a condição da vida eterna, o Éden e o inferno, trazendo conforto ao mostrar que viveremos eternamente e que nosso presente define nossa eternidade.
+
+
+Qual é a dor da sua audiência?
+Excesso de desinformação. Religiões sem bases lógicas que dependem apenas da fé. O essencial não está sendo transmitido.
+
+
+Qual é seu objetivo profissional?
+Gerar impacto positivo na ansiedade das pessoas. Criar impacto social, cultural e financeiro. No futuro, ocupar um cargo público e contribuir nas decisões do Estado. Ministrar palestras, vender livros e captar recursos para construir a Logos Academy.
+
+
+Como você se diferencia da concorrência?
+Utilizo bases lógicas extraídas da programação para explicar conceitos metafísicos.
+
+
+Qual desejo você satisfaz na sua audiência?
+Explicação de Deus. Ter uma religião/crença que faça sentido e que possa ser acreditada sem depender da fé, mas por vias lógicas. Gnose: libertação do espírito.
+
+
+Quais sensações você quer causar na sua audiência?
+Alívio, tranquilidade, esperança, entusiasmo, felicidade.
+
+
+Você chama sua comunidade por algum nome?
+Podemos chamá-la de Logos Academy.
+
+
+As pessoas que te acompanham te reconhecem por algum elemento, cor ou símbolo?
+Não.
+
+
+Você tem uma paleta de cores definida para seus materiais?
+Ainda não.
+
+
+Qual é seu canal de comunicação com a comunidade?
+Ainda não tenho.
+
+
+Criação de Conteúdo
+
+
+Seu conteúdo é facilmente compreendido pela audiência?
+Não, pois introduzo termos novos e técnicos que nunca foram escutados.
+
+
+Seu conteúdo é facilmente reconhecido?
+Não, pois metafísica e desenvolvimento não são temas populares.
+
+
+Diferenciação de Mercado
+Você consegue ser autêntico sem medo do julgamento alheio?
+Farei o meu melhor.
+
+
+Você se seguiria?
+Sim.
+
+
+Você sente orgulho dos seus conteúdos?
+Sim.
+
+
+Você sente que se parece com alguém do mercado?
+Não, pois não acompanho outros conteúdos.
+
+
+Você já levantou alguma bandeira?
+Sim, política, mas não falo mais sobre isso.
+
+
+Você acompanha seus concorrentes?
+Não. Estudo mais filosofia e assisto a conteúdos como os de Lúcia Helena Galvão.
+
+
+
+
+[a]Colocar nas falas e explicações dos filósofos
+[b]Como conectar o símbolo?

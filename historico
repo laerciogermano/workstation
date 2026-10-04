@@ -1,0 +1,10 @@
+1 out 2026
+
+- Eternos Mutáveis
+    - Qual a relação do sujeito no modelo imperativo para o declarativo?
+        - No modelo imperativo o sujeito é quem executa a ação
+        - No modelo declarativo, não há sujeito na execucao, dado uma entrada, o sistema devolve uma saída
+        - No modelo declarativo não há controle, esse controle é invertido, ioc
+        - No modelo declarativo não há controle: sequência, seleção e nem estruturas de repetição
+        - No modelo declarartivo, nao se conhece a exeuccao
+    - 

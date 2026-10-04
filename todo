@@ -6,7 +6,7 @@
             - criar robo que recebe texto e decide o que fazer
                 - [ok] testar texto e perguntar onde estou
                 - Realizar operações com IA com interface android junto a um prompt que define o que fazer
-                    - Subir android
+                    - Identificar se possuem todos os comandos necessários
                     - Extrair ocr com posicoes
                     - Integrar com IA 
                         - Testar primeiro com CURSOR
@@ -23,7 +23,6 @@
 # ConectMax
     - Aprovar com o Gilson o serviço
     - Iniciar prospecção
-    - Criar landing page
 
 # Connect Tech
     - Criar landing page

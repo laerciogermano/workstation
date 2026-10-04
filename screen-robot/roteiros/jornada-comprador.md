@@ -1,7 +1,7 @@
 # Roteiro: Buscar "comprador" e conectar (UI via OCR)
 
 Objetivo
-- Automatizar a jornada do operador: buscar "comprador" no LinkedIn (AVD já na página do LinkedIn), abrir Show all results, clicar em People e conectar nos perfis (Skip se aparecer) até **não haver mais resultados** elegíveis ou até **exceder o limite do LinkedIn**.
+- Automatizar a jornada do operador: buscar "comprador" no LinkedIn (AVD já na página do LinkedIn), abrir Show all results, clicar em People e conectar nos perfis (Skip se aparecer), **scrollando até achar `Connect` no OCR**, até fim explícito da lista ou limite do LinkedIn.
 
 Pré-requisitos
 - AVD/agent online e na tela principal do LinkedIn (emulator-5554).
@@ -68,10 +68,11 @@ Passos (interfaces usadas)
 6) Iterar perfis e conectar (um Connect por item da lista)
    - **Só clicar onde o OCR devolveu `Connect`** (match exato `^Connect$`, `180 < y < 850`). **Jamais** clicar em `Message` / `Pending` / `Follow` / `Following`.
    - **Proibido tap estimado** por grau/`x: ~458`: se o extract não tiver a palavra `Connect`, **não** há clique nesse item — só scroll e tentar de novo. (O estimado era a causa de clicar em Message e ter que dar BACK.)
-   - **Critérios de saída** (qualquer um encerra o passo 6 e **encerra o processo** — nada de scroll/tap depois):
-     1. **Sem mais resultados:** após N scrolls consecutivos (ex. 3) sem nenhum `Connect` elegível novo (só `Pending`/`Message`/`Follow`, ou lista estagnada). OCR explícito de fim: `No more results` / `End of results` / `You've reached the end` / `não há mais resultados`. **Não** tratar “Are these results helpful?” sozinho como fim (falso positivo no meio da lista).
-     2. **Limite LinkedIn:** texto junto com `weekly invitation limit`, `invitation limit`, `can't send invitations`, `limite de convites`, `não é possível enviar`, etc.
-   - **Não** usar limite N artificial de connects no run.
+   - **Sem teto de rounds:** se a tela não tiver `Connect` no OCR, **scrollar no centro infinitamente** até aparecer algum `Connect` — **não** parar após 3 (nem N) rounds vazios.
+   - **Critérios de saída** (só estes encerram o passo 6 e o processo):
+     1. **Fim explícito da lista** no OCR: `No more results` / `End of results` / `You've reached the end` / `não há mais resultados`. **Não** usar “Are these results helpful?” sozinho nem idle de N scrolls.
+     2. **Limite LinkedIn:** `weekly invitation limit`, `invitation limit`, `can't send invitations`, `limite de convites`, `não é possível enviar`, etc.
+   - **Não** usar limite N artificial de connects nem de rounds no run.
    - Ao bater critério de saída: ir ao Encerramento, gravar log, **`process.exit` / encerrar o script imediatamente** — o AVD não deve continuar sendo manipulado.
    - **Armadilha Message / Premium:** tap errado (ou gesto curto no centro) pode abrir compose “Send a message” / InMail / paywall Premium. **Nunca** enviar mensagem nem clicar CTA Premium.
      - Detecção via OCR: textos como `Message`, `Send a message`, `InMail`, `Premium`, `Upgrade`, `Try Premium`, composer vazio + `Send`.
@@ -85,21 +86,21 @@ Passos (interfaces usadas)
      5. sheet `Add a note…`: **só** `Skip` / `Ignorar` — jamais `Add a note` (detectar título pelo texto junto `/add\s+a\s+note/i`)
      6. se OCR mostrar `Withdraw invitation` / `Withdraw` + `invitation`: **clicar `Cancel`** (jamais confirmar Withdraw) — logar; não contar Connect
      7. incrementar contador só se Connect + Skip ok (sem Message/Withdraw); logar no `.md`
-   - se **zero** `Connect` no OCR da tela: scroll centro (não inventar clique) e repetir
+   - se **zero** `Connect` no OCR da tela: scroll centro (não inventar clique) e **repetir sem limite de rounds** até achar `Connect` ou critério de saída
    - depois dos Connects OCR da tela: scroll **swipe** no centro (`x: 270`, `y: 480`, `direction: "up"`, `distance` ≥ 350); logar scroll
-   - **após rolar:** repetir; idle sem `Connect` OCR → Encerramento; limite LinkedIn → Encerramento
+   - **após rolar:** repetir; Encerramento só por fim explícito / limite LinkedIn
    - **não** clicar botões de item com `y ≥ 850` (nav); só `Skip` do sheet pode estar nessa faixa
    - teclado fechado antes de qualquer scroll da lista (centro)
 
 7) Encerramento
-   - disparado por: sem mais resultados **ou** limite LinkedIn **ou** erro fatal (tudo documentado no log)
+   - disparado por: fim explícito da lista (OCR) **ou** limite LinkedIn **ou** erro fatal (tudo documentado no log)
    - log final no `.md`: totais + motivo de parada
    - **parar o script de imediato** — proibido continuar scroll/tap/extract em loop após o encerramento
 
 Critérios de aceite
-- A jornada: Search → digitar → fechar teclado → Show all results → People → Connect (e Skip) até **sem mais resultados** ou **limite LinkedIn**.
+- A jornada: Search → digitar → fechar teclado → Show all results → People → Connect (e Skip); scroll infinito até achar `Connect` OCR; para só em fim explícito ou limite LinkedIn.
 - Após Encerramento, o AVD deixa de ser manipulado (processo termina).
-- Passo 6: scroll só no centro; log `.md` com Decisão + OCR JSON por passo.
+- Passo 6: sem teto de rounds vazios; scroll só no centro; log `.md` com Decisão + OCR JSON por passo.
 - Só clica em `Connect` lido no OCR; **proibido** tap estimado; **jamais** `Message` (nem Pending/Follow/Following).
 - Após Connect, no sheet: só `Skip` — jamais `Add a note`.
 - Se `Withdraw invitation`: só `Cancel` — jamais confirmar Withdraw.
@@ -110,7 +111,7 @@ Notas operacionais
 - Timeouts: esperar 1–3s entre ações; `findByText` com `minScore:0.75`.
 - Scroll lista: `direction: "up"`; origem **sempre no centro** (`x: 270`, `y: 480` em 540×960); `distance` ≥ 350. Fechar teclado antes.
 - **Scroll — sempre no centro** na lista: **jamais** na zona do teclado/nav (risco de fechar o app). Swipe curto no centro pode abrir Message — preferir swipe longo.
-- **Parada:** sem mais resultados (idle de scrolls sem Connect novo) **ou** limite LinkedIn (OCR) — sem `LIMITE=N` artificial; ao parar, encerrar o processo.
+- **Parada:** fim explícito da lista (OCR) **ou** limite LinkedIn — **não** parar por “3 rounds sem Connect”; scroll até achar `Connect`; ao parar, encerrar o processo.
 - Log: um `.md` por execução (documento: Decisão em prosa + OCR em JSON separado).
 - Se OCR do teclado falhar, não clicar em `comprador` da lista — só digitar e depois fechar teclado → `Show all results` (não usar `adb input text`).
 

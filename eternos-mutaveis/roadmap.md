@@ -3,7 +3,8 @@
 **Por quê:** fixar a sequência dos tópicos da obra a partir dos [`inputs/`](inputs/README.md).  
 **Fonte:** documentos em [`inputs/`](inputs/README.md); áudios/transcrições em [`inputs/audios-e-transcricoes/`](inputs/audios-e-transcricoes/README.md); visão filosófica, tratado, briefing, notas de abertura.  
 **Visão:** [`README.md`](README.md).  
-**Já escrito:** abertura em [`artigo.md`](artigo.md) (até sólidos e abstratos).
+**Já escrito:** abertura em [`artigo.md`](artigo.md) (até sólidos e abstratos).  
+**Regra:** cada ideia tem um bloco **dono**; nos outros, só ponte curta (“como em X”).
 
 ---
 
@@ -14,7 +15,7 @@
   - Responder, pela via da lógica (não da fé), as perguntas eternas
   - Promessa: revelar o que estava diante dos olhos — de tão simples, nunca foi visto em sua grandeza
 
-- **0.2 As perguntas que não envelhecem**
+- **0.2 As perguntas que não envelhecem** *(dono da lista)*
   - Desde o início dos tempos, o homem tenta respondê-las
   - Lista
     - O que é Deus?
@@ -31,7 +32,7 @@
     - Cada uma ilumina uma parte
     - Nenhuma enxerga o todo com clareza
 
-- **0.3 Perdidos no excesso**
+- **0.3 Perdidos no excesso** *(dono da dor vivida: excesso / confusão)*
   - Nunca tanta informação; nunca tanta confusão sobre o que importa
   - Explicações concorrentes sem síntese acessível
   - Formas de lidar com o espiritual
@@ -42,79 +43,39 @@
     - Acredita, mas não frequenta
     - Nem tenta / simplesmente não acredita
   - Cada indivíduo explica Deus e o espiritual à sua maneira
-  - Conversas sobre espiritualidade
-    - Escorregam para o lúdico
-    - Escorregam para o sombrio
-    - Ou terminam em divergência
-  - Causa: não sabemos, de fato, o que é a espiritualidade
+  - Conversas: lúdico, sombrio ou divergência
+  - Causa: não sabemos o que é a espiritualidade
   - Religiões pedem fé sem base lógica; o essencial não está sendo transmitido
 
-- **0.4 O preço da ignorância espiritual**
-  - Evoluímos na tecnologia, medicina, engenharia
-  - No conhecimento mais importante, ainda engatinhamos
-  - Com tanta desinformação, o homem sofre
-    - Tenta viver bem, entender, aprender — acerta, erra, recomeça
-    - Muitos vivem atormentados
-    - Muitos em condições precárias (financeiras, psicológicas, mentais)
-    - Ansiedade e vida sem sentido
-  - Boa parte desse sofrimento nasce da ignorância espiritual
+- **0.4 O preço da ignorância espiritual** *(sintoma pessoal/social — nome canônico em 1.5)*
+  - Evoluímos na tecnologia, medicina, engenharia; no espiritual, engatinhamos
+  - Sofre: atormentados; precariedade (financeira, psicológica, mental); ansiedade; vida sem sentido
+  - Tenta viver bem, entender, aprender — acerta, erra, recomeça
   - Seguimos sem saber ao certo o que estamos fazendo aqui
 
 - **0.5 O desvio pelo palpável (jornada do autor)**
-  - Desde cedo tentou compreender a existência
-  - Mais frustração do que respostas
-  - Cansado, desviou a busca para o que podia tocar
-  - Apaixonou-se pela programação
+  - Busca precoce → frustração → desvio para o palpável → programação
   - Não abandonou as perguntas — só mudou de porta
-  - Conhecimento de software aplica-se à vida inteira
-    - Decisões de arquitetura = decisões filosóficas
-      - O que separar
-      - O que unir
-      - Do que cada parte depende
-    - Exemplo: processo
-      - Bom programador = bom gestor de processos
-      - Quem planeja e organiza entrega qualquer projeto (software ou vida)
-  - Programação está mais perto da filosofia (e da espiritualidade) do que se imagina
+  - Software aplica-se à vida (arquitetura = filosofia; processo = entrega de qualquer projeto)
+  - Programação mais perto da filosofia/espiritualidade do que se imagina
 
-- **0.6 A busca da estrutura perfeita**
-  - Grande busca: a estrutura perfeita de um software
-  - Mais de uma década (aprofundação contínua)
-  - Últimos ~3 anos em períodos sabáticos, foco intensivo
-    - Filosofias diversas
-    - Tradições espirituais
-    - Caibalion / hermetismo
-    - Paralelo entre áreas que pareciam não conversar
-  - Motivo: entender o software exigia entender o pensamento por trás dele
-  - Um livro mudou a lente sobre o código
-    - Introduziu um conceito que, aprofundado, deixou de ser só técnico
-    - Programação não só ligada à filosofia — base para compreender a espiritualidade
-  - Isso virou do avesso o modo de chegar à realidade
+- **0.6 A busca da estrutura perfeita** *(dono do arco biográfico: década, sabáticos, livro)*
+  - Grande busca: estrutura perfeita de software (década)
+  - ~3 anos sabáticos: filosofias, tradições, Caibalion — paralelo entre áreas
+  - Um livro mudou a lente; o conceito deixou de ser só técnico
+  - Programação como base para compreender a espiritualidade
 
 - **0.7 O ateu que queria lógica**
-  - Até então: ateu; não acreditava em Deus
-  - Via crentes como bitolados, sem ceticismo nem critério
-  - Fé no lugar da lógica; não questionavam a fundo
-  - Exigência: explicação lógica e coerente para aceitar Deus e o mundo espiritual
-  - Encontrou essa explicação programando
-    - Nas camadas profundas do desenvolvimento de sistemas
-    - As perguntas de que havia desistido estavam ali
+  - Ateu; rejeitava fé sem critério
+  - Exigia explicação lógica para Deus e o espiritual
+  - Encontrou-a programando — as perguntas de que desistira estavam ali
 
-- **0.8 A chave: sólidos e abstratos**
-  - Conceito: sólidos e abstratos
-  - Origem técnica: “D” de SOLID (Robert C. Martin / Uncle Bob)
-    - Dependency Inversion Principle
-    - Código deve depender de abstrações, nunca de instâncias sólidas
-  - Parece só boa prática de engenharia
-  - Aprofundando nas estruturas do software → o que faltava para a espiritualidade
-  - Não é mais uma religião entre tantas
-  - Não é a fé em Deus por si só
-  - É o conhecimento que leva a Deus
-    - Capaz de unir o que as religiões dividiram
-    - Unanimidade pela compreensão (gnose), não pela obediência
+- **0.8 A chave: sólidos e abstratos** *(dono do insight SOLID; gnose plena em 4.4)*
+  - Sólidos e abstratos — “D” de SOLID (Uncle Bob): depender de abstrações, não de instâncias sólidas
+  - Parece só engenharia; aprofundando → porta para a espiritualidade
+  - Antecipa: não fé nem mais uma religião, e sim conhecimento que leva a Deus *(desenvolve em 4.4)*
 
-- **0.9 Ponte para o restante da obra**
-  - O que vem a seguir sempre esteve diante dos nossos olhos
-  - De tão simples, nunca foi percebido em toda a sua grandeza
+- **0.9 Ponte**
   - → segue para **1. Era adâmica**
 
 ---
@@ -122,298 +83,261 @@
 ## 1. Era adâmica — o problema
 
 - **1.1 Queda / encarnação**
-  - “Criação de Adão” simboliza encarnação e início da ignorância espiritual
+  - “Criação de Adão” = encarnação e início da ignorância espiritual
   - Encarnação = acoplamento do espírito à matéria
-  - Espírito que virou carne
 - **1.2 Prisão ao mundo material**
-  - Homem nasce acostumado e preso ao mundo físico
-  - Enxerga apenas a matéria / impressões sensoriais
-  - Inconsciente da realidade eterna e da origem espiritual
-  - Enxerga só um “cisco” da realidade
-- **1.3 Ignorância estrutural**
-  - Estruturas metafísicas só acessíveis pelo intelecto (não pelos sentidos)
-  - Homem não compreende a estrutura fundamental da realidade
-  - Homem não conhece a metafísica
-  - Linguagem contraditória e mal compreendida
-  - Não compreende a origem das próprias decisões nem o sentido da existência
-- **1.4 Crença e comportamento**
-  - Crenças moldam comportamento
-  - Crianças carecem de base lógica; crença herdada sem critério
-  - Ignorância se perpetua de forma inconsciente
-  - Visão deturpada da realidade
-- **1.5 Sem metafísica, sem as respostas**
-  - Sem compreender o além da matéria → sem Deus, eternidade, céu, inferno, sentido
+  - Nasce preso ao físico; só impressões sensoriais
+  - Inconsciente da origem espiritual; vê só um “cisco” da realidade
+- **1.3 Ignorância estrutural** *(dono: acesso só pelo intelecto)*
+  - Estruturas metafísicas perceptíveis pelo intelecto, não pelos sentidos
+  - Não compreende a estrutura da realidade nem a metafísica
+  - Linguagem contraditória; não vê origem das próprias decisões
+- **1.4 Crença herdada**
+  - Crianças sem base lógica; crença herdada sem critério
+  - Ignorância se perpetua; visão deturpada
+  - *(mecanismo crença→comportamento em 3.4)*
+- **1.5 Analfabetismo espiritual** *(dono do nome e da distinção)*
+  - Sem o além da matéria → sem Deus, eternidade, céu, inferno, sentido *(perguntas: 0.2)*
   - Metafísica ≠ espiritualidade
     - Metafísica = estudo da estrutura da realidade
     - Espiritualidade = experiência dessa estrutura
-  - Perguntas eternas voltam (eco do bloco 0)
-  - Síntese: analfabetismo espiritual
-  - → segue para **2. Busca por respostas**
+  - Síntese: **analfabetismo espiritual**
+  - → **2**
 
 ---
 
 ## 2. Busca por respostas — contexto histórico
 
 - **2.1 Por que a busca começa**
-  - Filosofia como resposta ao que a experiência sensorial não resolve
-  - Todos buscam as mesmas perguntas; respostas divergem
-- **2.2 Hipóteses religiosas, filosóficas e culturais**
-  - Persas — Zoroastro (dualidade, tensão, imortalidade da alma)
-  - Taoísmo — yin-yang, dharma / dualidade
-  - Budismo — roda do samsara; fluir
+  - Filosofia responde ao que o sensorial não resolve
+  - Mesmas perguntas de **0.2**; respostas divergem
+- **2.2 Hipóteses religiosas, filosóficas e culturais** *(dono do inventário histórico)*
+  - Persas — Zoroastro (dualidade, alma)
+  - Taoísmo — yin-yang, dharma
+  - Budismo — samsara; fluir
   - Hinduísmo — Bhagavad Gita
-  - Egito / hermetismo
-    - Corpus Hermeticum; “o Todo”
-    - Caibalion (Todo é mente, correspondência, polaridade, causa-efeito, fluxo/refluxo, gênero…)
-    - Pedra de Roseta / hieróglifos / Hermes Trismegisto
-  - Judaísmo
-    - “Sou o que sou”; Salomão; Moisés
-    - Logos / João 1:1 (“No princípio era o Verbo…”)
-    - Cabala; símbolos
+  - Egito / hermetismo — Corpus Hermeticum; Caibalion; Hermes; hieróglifos
+  - Judaísmo — “Sou o que sou”; Logos / João 1:1; Cabala
   - Gregos
-    - Mito → logos; mito como arquétipo
-    - Matemáticos / Pitágoras: formas eternas; ordens iniciáticas; Egito
-    - Pré-socráticos
-      - Parmênides: nada muda
-      - Heráclito: tudo muda (exceto a mudança); Logos; tensão dos opostos; dormem vs. acordados
-    - Clássicos
-      - Sócrates: razão como virtude
-      - Platão: teoria das ideias; dois mundos (o que muda × o que não muda); Demiurgo (Timeu)
-      - Aristóteles: substância; hilemorfismo; causa primeira / metafísica; forma × matéria
-  - Cristianismo — “assim na Terra como no céu”; Tomás de Aquino; Logos
-  - Gnósticos — libertação do espírito pela gnose; demiurgo; apócrifos
-  - Idade Média — perseguição / destruição de conhecimento
-  - Renascimento — resgate por símbolos e pinturas
-  - Iluminismo — busca pela razão
-  - Ordens iniciáticas — maçonaria, Rosa-Cruz (régua e compasso)
-  - Crítica à metafísica — Kant, Nietzsche, ciência
-  - Jung — arquétipos; inconsciente coletivo; símbolos anteriores ao homem
-  - Saussure — significante × significado; valor por oposição
+    - Mito → logos; Pitágoras; ordens iniciáticas
+    - Parmênides (nada muda) × Heráclito (tudo muda / Logos) *(dialética aplicada em 3.5; alfabeto em 6)*
+    - Sócrates; Platão (ideias, dois mundos, Demiurgo) *(tese em 5)*
+    - Aristóteles (substância, hilemorfismo) *(tese em 5)*
+  - Cristianismo — “Terra como céu”; Tomás; Logos *(correspondência definida em 6.1)*
+  - Gnósticos — libertação pela gnose; demiurgo *(gnose plena em 4.4)*
+  - Idade Média — perseguição / destruição do saber; monopólio
+  - Renascimento — resgate por símbolos/pinturas; conhecimento ainda elitizado (ordens)
+  - Iluminismo — razão
+  - Ordens — maçonaria, Rosa-Cruz
+  - Crítica — Kant, Nietzsche, ciência
+  - Jung — arquétipos; inconsciente coletivo; **símbolos anteriores ao homem**
+  - Saussure — significante × significado
   - Espiritismo
 - **2.3 Explicações lúdicas deturpadas**
-  - Deus materializado; alma como fantasma
-  - Anjos e demônios como ponte literal entre planos
-  - Conexão direta material/espiritual mal compreendida
-- **2.4 Trauma civilizatório**
-  - Monopólio e destruição do saber
-  - Resgate renascentista; conhecimento elitizado (ordens, poucos)
-- **2.5 Ciência × metafísica**
-  - Ciência toma o lugar; foco nos particulares / experiência material
-  - Metafísica estuda os gerais; acesso pelo intelecto (sem experimento material)
-  - Tema parece místico; pode ser compreendido pela razão
-  - Matemática prova o que é (para todos os casos)
-  - Ciência costuma falsear particulares
-- **2.6 Problema da linguagem**
-  - Russell, Whitehead, Wittgenstein: problemas filosóficos = erros de linguagem
-  - Polimorfismo (mesmo nome, sentidos diferentes)
-  - Redundância (nomes diferentes, mesmo sentido)
-  - Busca de linguagem única (Tractatus)
-  - Wittgenstein V2: jogos de linguagem; abandona linguagem única
+  - Deus materializado; alma/fantasma; anjos/demônios como ponte literal
+- **2.4 Ciência × metafísica**
+  - Ciência nos particulares / experiência; metafísica nos gerais
+  - Acesso pelo intelecto *(como em 1.3)*; parece místico, é racional
+  - Matemática prova o que é; ciência falseia particulares
+- **2.5 Problema da linguagem** *(dono: Russell / Whitehead / Wittgenstein)*
+  - Problemas filosóficos = erros de linguagem
+  - Polimorfismo e redundância de símbolos
+  - Tractatus → linguagem única; Wittgenstein V2 abandona (jogos de linguagem)
   - Tese da obra: continuar Russell/Whitehead; V2 errou ao parar
-  - Jung: símbolos são anteriores ao homem (estruturas que se repetem sem contato)
-- **2.7 Resultado provisório**
-  - Metafísica em aberto; sem consenso; sem manual lógico da existência
-  - → segue para **3. Consequências**
+- **2.6 Resultado provisório**
+  - Metafísica em aberto; sem consenso; sem manual lógico
+  - → **3**
 
 ---
 
 ## 3. Consequências — o inferno cíclico
 
-- **3.1 Analfabetismo espiritual**
-  - Não compreendemos as estruturas que regem a realidade
-  - Deus / espiritual não foram explicados corretamente
-  - Mazelas decorrente da ignorância (individual, familiar, social)
+- **3.1 Mazelas do analfabetismo** *(nome em 1.5; aqui só efeitos)*
+  - Problemas individuais, familiares, sociais
+  - Deus/espiritual mal transmitidos → sofrimento em escala
 - **3.2 Identidade e individualização**
-  - Não vive de acordo com a verdadeira identidade
-  - Individualiza tudo; ilusão da individualidade
-  - Identidade linear é ilusão; consciência não-linear
+  - Não vive conforme a identidade; individualiza tudo
+  - Identidade linear ilusória; consciência não-linear
   - Cérebro ignora o comum por eficiência
-- **3.3 Excesso sem base**
-  - Excesso de informações sem bases lógicas
-  - Excesso de opções e de crenças
-  - Baile de máscaras: fingem que sabem; confundem mentes; fala-se do que não se entende
-- **3.4 Autômato**
-  - Comportamento definido pelo estado (interno × externo)
+- **3.3 Excesso sem base** *(eco de 0.3 — só a face estrutural)*
+  - Excesso de opções/crenças sem lógica
+  - Baile de máscaras: fingem saber; confundem; falam do que não entendem
+- **3.4 Autômato** *(dono: crença → comportamento)*
+  - Comportamento = estado interno × externo
   - Livre-arbítrio ilusório: crença × DNA × ambiente
   - Crença deturpada → comportamento deturpado
-- **3.5 Dialética e esquecimento**
-  - Dialética = guerra dos opostos (Heráclito; Hegel: tese–antítese–síntese)
-  - Leitura profunda: perda de memória / ignorar o que se tornou comum
-  - Desejo de ter × tédio de possuir (pêndulo)
-  - Exemplos: corte de cabelo; mosca que perde a memória e volta
+- **3.5 Dialética e esquecimento** *(dono da mecânica do ciclo desejo/tédio)*
+  - Guerra dos opostos (Heráclito; Hegel) lida como perda de memória / ignorar o comum
+  - Desejo de ter × tédio de possuir
+  - Exemplos: corte de cabelo; mosca
   - Lembrar é poder
-- **3.6 Inferno cíclico**
-  - Atores vivendo personagens de histórias que se repetem
-  - Repetem os mesmos erros sem perceber o padrão
+- **3.6 Inferno cíclico** *(dono do diagnóstico ator/personagem)*
+  - Atores em histórias que se repetem; mesmos erros sem ver o padrão
   - Violência, desigualdade, conflitos — frutos da ignorância
-  - Fazer mal ao outro é fazer mal a si
-- **3.7 Produtos deturpados (e o software)**
-  - Modelamos o mundo como o enxergamos → produtos/software deturpados
-  - Mesmo problema: espiritualidade, filosofia, linguagem e software
-  - Dor concreta do software
-    - Manutenção ~80% do esforço; criar simples é fácil, manter é difícil
-    - Mais gente ≠ mais produtividade (feats caem com o crescimento)
-    - Sopa de paradigmas, linguagens, frameworks, vícios
-    - Escrita linear; difícil visão panorâmica
-    - OOP com influência aristotélica (foco em objetos, não no fluxo)
-    - Pouco intuitivo vs. outras engenharias (Clean Architecture: não é como prédios)
-  - → segue para **4. Conhecimento que liberta**
+  - *(fundamento “mal ao outro = mal a si” em 6.6)*
+- **3.7 Produtos deturpados e dor do software** *(dono da dor; cura em 7.3; erro ontológico em 5)*
+  - Modelamos o mundo como o enxergamos → software deturpado
+  - Mesmo núcleo: espiritualidade, filosofia, linguagem, software
+  - Manutenção ~80%; feats ↓ com crescimento; sopa de paradigmas
+  - Escrita pouco panorâmica; pouco intuitivo (Clean Architecture ≠ prédios)
+  - Sintoma: OOP aristotélica (foco em objetos, não no fluxo) *(diagnóstico em 5)*
+  - → **4**
 
 ---
 
 ## 4. Existe um conhecimento que liberta
 
-- **4.1 Insight: estávamos enxergando errado**
-  - A chave da metafísica estava no software / na linguagem
-  - Conhecimento do abstrato; domínio da linguagem
-- **4.2 Como se chegou à solução**
-  - Estudo dos abstratos; essencialismo
-  - Livro (arquitetura limpa / estrutura do software)
-  - Deturpação no OOP; modelamos software como enxergamos o mundo
-- **4.3 Problema comum a todas as áreas**
-  - Existência / filosofia / software: mesmo núcleo
-  - Motivo: não compreendemos linguagem, identidade, eternidade, realidade
-  - Solução: resolução da linguagem → metafísica → gnose
-- **4.4 Gnose**
-  - Libertação por compreensão (não por fé, obediência ou moral cega)
+- **4.1 Insight**
+  - Chave na linguagem/software *(arco biográfico: 0.6–0.8)*
+- **4.2 Caminho técnico**
+  - Abstratos, essencialismo; deturpação do OOP *(dor: 3.7)*
+- **4.3 Cadeia de resolução**
+  - Resolver a linguagem *(2.5)* → metafísica → gnose → existência/software/filosofia
+- **4.4 Gnose** *(dono da definição e da citação)*
+  - Libertação por compreensão (não fé, obediência ou moral cega)
+  - Livro de conhecimento; Deus compreensível pela razão
   - “Conhecereis a verdade, e a verdade vos libertará”
-  - Livro de conhecimento, não de fé
-  - Qualquer pessoa pode compreender Deus pela razão
-- **4.5 O que a obra oferece**
-  - Visão lógica de Deus e da dinâmica do universo
+- **4.5 O que a obra oferece** *(promessa; teoria em 6; prática em 7)*
+  - Visão lógica de Deus e do universo
   - Ferramenta de análise metafísica
-  - Código de conduta aplicável (correspondência na vida)
-  - Condição da vida eterna; Éden e inferno; presente define eternidade
-  - → segue para **5. O erro**
+  - Código de conduta via correspondência *(definida em 6.1)*
+  - Vida eterna; Éden e inferno; presente define eternidade *(teoria em 6.6)*
+  - → **5**
 
 ---
 
 ## 5. O erro — Aristóteles e a substância
 
-- **5.1 Teoria da substância**
-  - Forma + matéria unidas na mesma substância
-  - Verbo acoplado ao objeto / movimento preso ao elemento
-  - Aristóteles “carnificou o espírito” (demiurgo gnóstico da substância)
-  - Discordância com Platão: mundos separados vs. mundos fundidos
-- **5.2 Correção ontológica**
-  - Objetos não possuem verbos
-  - Verbos possuem objetos
-  - Desacoplar verbo e estado; movimento × elemento
-  - Retorno à visão de Platão (dois mundos / separar verbo e objeto)
+- **5.1 Teoria da substância** *(dono da tese crítica; inventário em 2.2)*
+  - Forma + matéria na mesma substância; verbo acoplado ao objeto
+  - “Carnificou o espírito” (demiurgo da substância)
+  - Mundos fundidos vs. mundos separados (Platão)
+- **5.2 Correção ontológica** *(dono do argumento verbo × objeto)*
+  - Objetos não possuem verbos; verbos possuem objetos
+  - Desacoplar verbo e estado
+  - Retorno a Platão: separar os dois mundos
 - **5.3 Impacto na OOP e no cotidiano**
-  - Seres com características e comportamentos acoplados
-  - Classe × instância; forma × conteúdo; espírito acorrentado à carne
+  - Classe/instância; características + comportamentos acoplados
   - Mundo imperativo: sujeito + verbo no objeto
-  - Foco nos estados; ignorância do verbo / do fluxo
+  - Espírito acorrentado à carne; foco em estado, cegueira ao fluxo
 - **5.4 Maior erro da programação**
-  - Repetir a ontologia da substância no código (objetos/essências no lugar do fluxo)
-  - Paradoxo do barbeiro: atribuir comportamento ao ser → contradição; separar papéis
-  - Navio de Teseu (eco): identidade no papel/história, não no componente (detalhe no 6)
-  - → segue para **6. Conhecimento secreto**
+  - Ontologia da substância no código (objetos no lugar do fluxo)
+  - Paradoxo do barbeiro: comportamento no ser → contradição; separar papéis
+  - *(Navio de Teseu em 6.6; cura do software em 7.3)*
+  - → **6**
 
 ---
 
 ## 6. O conhecimento secreto — alfabeto da dualidade
 
-- **6.1 Acesso**
-  - A realidade é dual (trindade como cortina sobre a dualidade)
-  - Estruturas invisíveis aos sentidos; perceptíveis pelo intelecto
-  - Linguagem = descrição da mudança de estado
-  - Princípio da correspondência (“assim em cima como embaixo”)
+- **6.1 Acesso** *(dono da correspondência)*
+  - Realidade dual (trindade como cortina)
+  - Estruturas ocultas: pelo intelecto *(1.3)*
+  - Linguagem descreve mudança de estado
+  - Correspondência: “assim em cima como embaixo”
 - **6.2 História da criação (contraste)**
-  - Se tudo fosse, nada seria; para ser, o não-ser
-  - Experimento tela preta / ponto branco
-  - Pedagogia fita/filme: fotos = atos; intervalo invisível = verbo
-  - Toda qualidade é referencial; ser definido pelo contraste
-- **6.3 Pares da dualidade (ordem de exposição)**
+  - Se tudo fosse, nada seria; tela preta / ponto branco
+  - Fita/filme: fotos = atos; intervalo = verbo
+  - Qualidade referencial; ser pelo contraste
+- **6.3 Pares da dualidade** *(dono do alfabeto; argumento verbo×objeto em 5.2)*
   - Ser × Devir
-  - Movimento × Estado (mudança de estado = tempo)
+  - Movimento × Estado (mudança = tempo)
   - Ser × Estar
   - Eternos × Temporais → **eternos mutáveis**
   - Ato × Potência
-  - Verbo × Objeto (verbos produzem abstratos; objetos não têm comportamento)
-  - Abstrato × Sólido (espaço × preenchimento)
-  - Forma × Matéria (formas não criadas nem destruídas; “não houve criação”)
-  - Metafísico × Físico
-  - Espírito × Corpo
+  - Verbo × Objeto
+  - Abstrato × Sólido
+  - Forma × Matéria (formas não criadas/destruídas; “não houve criação”)
+  - Metafísico × Físico / Espírito × Corpo
   - Isomórfico × Polimórfico
-  - Qualidade × Critério
-  - Entradas × Saídas
-  - Macho × Fêmea / Componente × Espaço (gênero hermético)
+  - Qualidade × Critério / Entradas × Saídas
+  - Macho × Fêmea / Componente × Espaço
   - Acoplamento × Coesão
   - Dedução × Indução
-  - Imperativo × Declarativo (sujeito/controle vs. IoC; execução sem sequência/seleção/loop implícitos)
+  - Imperativo × Declarativo (IoC)
   - Stateful × Stateless
-  - Perfeito × Imperfeito
-  - Particular × Geral / Privado × Público
+  - Perfeito × Imperfeito / Particular × Geral
   - Causa × Efeito / Ordem × Caos
-- **6.4 Ontologia**
-  - Menor unidade = história (não o objeto isolado)
-  - História = estados + mudança (verbo)
+- **6.4 Ontologia e Logos** *(dono: história como unidade + axiomas)*
+  - Menor unidade = história (estados + mudança)
   - Elemento; símbolo (significante × significado)
-  - Colapso do movimento: verbo sólido → novo objeto
-  - Verbo fractal (verbo de verbos)
-  - Logos = ordem / relação dos verbos = plano das mudanças
-  - Metafísica = estudo do plano das mudanças
-- **6.5 Tratado (axiomas-chave)**
-  - Verbo oculto e constante; estado observável e mutável
+  - Colapso do movimento; verbo fractal
+  - Logos = ordem dos verbos = plano das mudanças
+  - Metafísica = estudo desse plano
+  - Verbo oculto/constante; estado observável/mutável
   - Linguagem = limite da consciência
-  - Isomorfismo: linguagem ≡ metafísica ≡ programação ≡ matemática ≡ consciência ≡ realidade ≡ Logos
-  - Flow (visão): linguagem visual que descreve o plano das mudanças *(produto irmão — sem detalhar spec aqui)*
-  - Universo como autômato: dado um estado, um movimento; regras imutáveis
-- **6.6 Deus, eternidade, céu e inferno**
-  - Deus = Verbo / Logos / mudança (não só motor imóvel / substância)
-  - Eternidade × Vida: espírito eterno; corpo cíclico; o que ocorreu voltará a ocorrer
+  - Isomorfismo: linguagem ≡ metafísica ≡ programação ≡ matemática ≡ consciência ≡ Logos
+  - Flow (visão irmã): descreve o plano das mudanças — sem spec aqui
+  - Universo como autômato: estado + movimento; regras imutáveis
+- **6.5 Deus, eternidade, céu e inferno** *(dono das definições)*
+  - Deus = Verbo / Logos / mudança
+  - Eternidade × Vida: espírito eterno; corpo cíclico; o que ocorreu voltará
   - Céu × Inferno = estados de consciência (não lugares)
   - Mal ao outro = mal a si (consciência isomórfica)
-  - Navio de Teseu: identidade no espaço/critério da história, não no componente
-  - → segue para **7. Superação adâmica**
+  - Navio de Teseu: identidade no critério/história, não no componente
+  - → **7**
 
 ---
 
 ## 7. Superação adâmica — aplicação
 
 - **7.1 Resolução cruzada**
-  - Linguagem → software → filosofia → espiritualidade → existência
-  - Ajustar as lentes: mesmos princípios imutáveis em todos os domínios
-- **7.2 Histórias como padrões eternos**
-  - Verbos = padrões reutilizáveis; objetos = notas/personagens mutáveis
-  - Identidade na história, não no personagem
-  - Música / filme: mesma estrutura, componentes diferentes
-  - Tudo que aconteceu acontecerá; o que nunca aconteceu não acontecerá
-- **7.3 Software sob as regras eternas**
+  - Aplicar a cadeia de **4.3** em linguagem, software, filosofia, espiritualidade, existência
+- **7.2 Histórias como padrões eternos** *(dono da identidade na história)*
+  - Verbos reutilizáveis; objetos = notas/personagens
+  - Identidade na história, não no personagem *(diagnóstico ator: 3.6)*
+  - Música/filme; o que aconteceu voltará; o que nunca ocorreu não ocorrerá
+- **7.3 Software sob as regras eternas** *(dono da cura de 3.7 / 5)*
   - Regras independentes de hardware, SO, linguagem, paradigma, projeto
-  - Fluxo / Logos > objeto; roteiro constante, elementos variáveis
-  - Separar imutáveis × mutáveis → menor custo, mais qualidade, menos manutenção
+  - Fluxo/Logos > objeto; separar imutáveis × mutáveis → menor custo
   - Bom programador precisa de filosofia / domínio da linguagem
 - **7.4 Fase da perfeição (armadilha)**
-  - Fascínio com o perfeito → sentimento de superioridade
-  - Julgamento ao próximo → nova queda
+  - Fascínio → superioridade → julgamento → nova queda
 - **7.5 Fase da imperfeição**
-  - Somos todos os mesmos / todos somos um
-  - Ao condenar o próximo, condenamo-nos
-  - Caverna e rédea de Platão; crucificação (símbolo)
-  - Natureza imperfeita; reduzir danos; honrar quem se aproxima da pureza
-  - Mundo do acoplamento
-- **7.6 Equilíbrio — superação adâmica**
-  - Domínio da metafísica; transcendência da matéria
-  - Nem só físico nem só espiritual; moderação
-  - Romper desejo de ter / tédio de possuir; morte do ego; libertação do ciclo
-  - Centelha divina; retorno ao Éden interior; eterno presente
-  - De ator a autor: escolher arquétipos; senhor do destino
-  - Experimento: jogo em que você vive todos os personagens — o que faria diferente?
-  - Lógica inversa de Deus (último/primeiro, renúncia/vitória, desconforto/felicidade)
+  - Todos somos um; condenar o próximo é condenar a si
+  - Caverna/rédea; crucificação (símbolo); reduzir danos
+  - Mundo do acoplamento; natureza imperfeita
+- **7.6 Equilíbrio**
+  - Domínio da metafísica; moderação matéria/espírito
+  - Romper o ciclo de **3.5**; morte do ego
+  - Centelha divina; Éden interior; eterno presente
+  - De ator a autor: escolher arquétipos *(sobre 7.2 / 3.6)*
+  - Experimento do jogo (viver todos os personagens)
+  - Lógica inversa de Deus
 - **7.7 Prática**
-  - O que procuras, o universo evidencia; o que és, o universo te procura
-  - Configure o ambiente; tenha um plano; controle a mente; escolha o que pensar
-  - Observar a natureza e colher histórias; partir de onde parou
-  - 20 minutos por dia; “pense como se já fosse e serás”
-  - Use o verbo a favor seu e dos outros
-- **7.8 Fecho — respostas às perguntas da abertura**
-  - Com a lente dos eternos mutáveis: Deus, vida, espírito, morte, eternidade, céu, inferno, sentido
+  - Universo evidencia o que procuras / procura o que és
+  - Ambiente, plano, mente, 20 min/dia, “pense como se já fosse”
+  - Observar histórias na natureza; usar o verbo a favor
+- **7.8 Fecho — respostas**
+  - Responder **0.2** com a lente de **6** (sem redefinir)
   - Conciliação dos eternos mutáveis
-  - “Conhecereis a verdade, e a verdade vos libertará”
-  - Gozar da eternidade em harmonia com a identidade
+  - Gozar a eternidade em harmonia com a identidade *(gnose: 4.4)*
+
+---
+
+## Mapa dos donos (anti-redundância)
+
+| Ideia | Bloco dono |
+|-------|------------|
+| Lista das perguntas | 0.2 |
+| Excesso / confusão vivida | 0.3 |
+| Insight SOLID / jornada | 0.6–0.8 |
+| Acesso só pelo intelecto | 1.3 |
+| Analfabetismo espiritual | 1.5 |
+| Inventário histórico | 2.2 |
+| Russell / Wittgenstein | 2.5 |
+| Crença → comportamento | 3.4 |
+| Desejo/tédio / dialética | 3.5 |
+| Ator em ciclo | 3.6 |
+| Dor do software | 3.7 |
+| Gnose + citação | 4.4 |
+| Crítica a Aristóteles / verbo×objeto | 5 |
+| Correspondência | 6.1 |
+| Alfabeto da dualidade | 6.3 |
+| História/Logos/axiomas | 6.4 |
+| Deus / céu / inferno / Teseu / mal=a si | 6.5 |
+| Identidade na história | 7.2 |
+| Cura do software | 7.3 |
 
 ---
 
@@ -426,4 +350,4 @@
 
 ## Próximos passos
 
-→ Validar árvores **1–7** → continuar [`artigo.md`](artigo.md) a partir do bloco **1**
+→ Continuar [`artigo.md`](artigo.md) a partir do bloco **1. Era adâmica**

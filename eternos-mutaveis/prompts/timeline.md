@@ -13,3 +13,4 @@ Como registrar: [`README.md`](README.md).
 | 005 | 2026-10-04 | Separar áudios e transcrições | [005-2026-10-04-separar-audios-transcricoes.md](005-2026-10-04-separar-audios-transcricoes.md) | Mover `.m4a` e transcrições para `inputs/audios-e-transcricoes/`. |
 | 006 | 2026-10-04 | Roadmap em árvore (cap. 0) | [006-2026-10-04-roadmap-arvore-cap0.md](006-2026-10-04-roadmap-arvore-cap0.md) | Expandir só o bloco 0 em árvore hierárquica; validar antes dos demais. |
 | 007 | 2026-10-04 | Roadmap em árvore (caps. 1–7) | [007-2026-10-04-roadmap-arvore-caps-1-7.md](007-2026-10-04-roadmap-arvore-caps-1-7.md) | Expandir blocos 1–7 em árvore, com lacunas dos inputs. |
+| 008 | 2026-10-04 | Limpar redundâncias do roadmap | [008-2026-10-04-roadmap-limpar-redundancias.md](008-2026-10-04-roadmap-limpar-redundancias.md) | Um bloco dono por ideia; pontes curtas; mapa anti-redundância. |

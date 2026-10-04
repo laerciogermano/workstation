@@ -403,5 +403,6 @@ npm run view             # scrcpy
 |-----|------|
 | Implementação / testes / CLI | [`src/README.md`](src/README.md) |
 | Stories · épicos · BDDs | [`1.stories.md`](1.stories.md) · [`2.epics.md`](2.epics.md) · [`5.bdds.md`](5.bdds.md) |
+| Jornada comprador (IA + OCR; sem script com roteiro preso) | [`roteiros/jornada-comprador.md`](roteiros/jornada-comprador.md) |
 | Identidade do aparelho (US-22) | [`pocs/README.md`](pocs/README.md#mascarar-identidade-do-aparelho) |
 | Postmortem runtime | [`postmortem.md`](postmortem.md) |

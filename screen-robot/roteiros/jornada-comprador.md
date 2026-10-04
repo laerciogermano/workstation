@@ -3,13 +3,20 @@
 Objetivo
 - Automatizar a jornada do operador: buscar "comprador" no LinkedIn (AVD já na página do LinkedIn), abrir Show all results, clicar em People e conectar nos perfis (Skip se aparecer), **scrollando até achar `Connect`**, até fim explícito da lista ou limite do LinkedIn.
 
+Modo de execução (obrigatório) — IA + linguagem natural
+- Este arquivo é a **fonte da jornada em linguagem natural**. A IA lê estes critérios e, a cada turno, **extrai o OCR** (`extract` / `findByText` → `{ text, x, y }`) e **decide o próximo passo** com base neste doc + no texto da tela.
+- **Proibido** criar, manter ou executar script (`.js` / `.mjs` / one-shot Node / `_run-tmp` etc.) com o roteiro **preso** no código (máquina de estados, loops `while` hardcoded, fases `home|typed|people`, regex/lista de passos duplicando este markdown).
+- **Permitido** só chamar as **interfaces** pontuais do screen-robot (`extract`, `tapElement`, `type`, `scroll`, `key`, `sleep`, …) sob comando da IA — sem embutir a política da jornada no arquivo.
+- **Antes → depois:** runs via script monolítico com o fluxo embutido → **IA opera** lendo este roteiro + OCR a cada passo; o log `.md` registra Decisão + OCR; não há “runner” da jornada no repo.
+- Rollback: voltar a um commit anterior deste markdown; **não** ressuscitar runner com jornada hardcoded.
+
 Pré-requisitos
 - AVD/agent online e na tela principal do LinkedIn (emulator-5554).
 - `adb` disponível e permissões concedidas.
 - Pasta `src/screenshots/` e pasta de logs da execução (ex. `src/logs/jornada-comprador/`) para artefatos.
 
 Regra de decisão (obrigatória) — execução da jornada
-- **Toda decisão** em runtime (o que clicar, se Skip apareceu, se há Connect, se scrollar, se a tela mudou) deve usar **somente** `extract()` / `findByText` e o retorno de texto `{ text, x, y }`.
+- **Toda decisão** em runtime (o que clicar, se Skip apareceu, se há Connect, se scrollar, se a tela mudou) é da **IA**, usando **somente** `extract()` / `findByText` e o retorno de texto `{ text, x, y }`, interpretados à luz deste roteiro.
    - **CTA do card:** **jamais** clicar em `Message` (nem `Msg`, `Send a message`). **Apenas** `Connect` (match exato `^Connect$` no OCR). **Proibido** tap estimado à direita do card (`x: ~458`) — era isso que acertava `Message` quando o pill não saía no OCR. Sem `Connect` no extract → pular/scroll; se abrir Message → `KEYCODE_BACK` e não contar.
 - A IA **jamais** tira print do dispositivo sozinha para **olhar a imagem** e decidir o próximo passo da execução.
 - Screenshots no fluxo feliz são só artefato opcional de log — **não** entram no raciocínio da IA em runtime.
@@ -73,7 +80,7 @@ Passos (interfaces usadas)
      1. **Fim explícito da lista** no OCR: `No more results` / `End of results` / `You've reached the end` / `não há mais resultados`. **Não** usar “Are these results helpful?” sozinho nem idle de N scrolls.
      2. **Limite LinkedIn:** `weekly invitation limit`, `invitation limit`, `can't send invitations`, `limite de convites`, `não é possível enviar`, etc.
    - **Não** usar limite N artificial de connects nem de rounds no run.
-   - Ao bater critério de saída: ir ao Encerramento, gravar log, **`process.exit` / encerrar o script imediatamente** — o AVD não deve continuar sendo manipulado.
+   - Ao bater critério de saída: ir ao Encerramento, gravar log, **parar a execução imediatamente** — o AVD não deve continuar sendo manipulado.
    - **Armadilha Message / Premium:** tap errado (ou gesto curto no centro) pode abrir compose “Send a message” / InMail / paywall Premium. **Nunca** enviar mensagem nem clicar CTA Premium.
      - Detecção via OCR: textos como `Message`, `Send a message`, `InMail`, `Premium`, `Upgrade`, `Try Premium`, composer vazio + `Send`.
      - Recuperação: `key(KEYCODE_BACK)` (1–3×) até `extract()` voltar à lista People (`People` chip + graus `2nd`/`3rd+` / busca `comprador`) — **não** decidir por imagem.
@@ -96,11 +103,12 @@ Passos (interfaces usadas)
 7) Encerramento
    - disparado por: fim explícito da lista (OCR) **ou** limite LinkedIn **ou** erro fatal (tudo documentado no log)
    - log final no `.md`: totais + motivo de parada
-   - **parar o script de imediato** — proibido continuar scroll/tap/extract em loop após o encerramento
+   - **parar a execução de imediato** — proibido continuar scroll/tap/extract após o encerramento
 
 Critérios de aceite
 - A jornada: Search → digitar → fechar teclado → Show all results → People → Connect (e Skip); scroll infinito até achar `Connect`; para só em fim explícito ou limite LinkedIn.
-- Após Encerramento, o AVD deixa de ser manipulado (processo termina).
+- Execução por **IA + este markdown**: sem script com o roteiro preso; cada passo = OCR → decisão em prosa no log → interface.
+- Após Encerramento, o AVD deixa de ser manipulado.
 - Passo 6: sem teto de rounds vazios; scroll só no centro; log `.md` com Decisão + OCR JSON por passo.
 - Só clica em `Connect`; **proibido** tap estimado; **jamais** `Message` (nem Pending/Follow/Following).
 - Após Connect, no sheet: só `Skip` — jamais `Add a note`.
@@ -112,13 +120,14 @@ Notas operacionais
 - Timeouts: esperar 1–3s entre ações; `findByText` com `minScore:0.75`.
 - Scroll lista: `direction: "up"`; origem **sempre no centro** (`x: 270`, `y: 480` em 540×960); `distance` **~150–200** (rolagens menores). Fechar teclado antes.
 - **Scroll — sempre no centro**, curto: **jamais** na zona do teclado/nav. Swipe longo demais pula Connect; gesto curto demais pode virar tap — manter swipe contínuo com `distance` ~150–200.
-- **Parada:** fim explícito da lista (OCR) **ou** limite LinkedIn — **não** parar por “3 rounds sem Connect”; scroll até achar `Connect`; ao parar, encerrar o processo.
+- **Parada:** fim explícito da lista (OCR) **ou** limite LinkedIn — **não** parar por “3 rounds sem Connect”; scroll até achar `Connect`; ao parar, encerrar a execução.
 - Log: um `.md` por execução (documento: Decisão em prosa + OCR em JSON separado).
 - Se OCR do teclado falhar, não clicar em `comprador` da lista — só digitar e depois fechar teclado → `Show all results` (não usar `adb input text`).
 
-Como reproduzir manualmente (linha de comando)
-1. Abrir AVD e navegar ao LinkedIn (manual ou `npm run linkedin-login` até o ponto de login já na home).
-2. Executar snippets Node que chamem as interfaces acima (ver `src/scripts/linkedin-login.js` como base).
+Como executar
+1. Abrir AVD e navegar ao LinkedIn (manual ou `npm run linkedin-login` só para login/home — **não** é runner desta jornada).
+2. Pedir à IA: executar este roteiro; ela lê o markdown, chama `extract`/ações pontuais e decide em tempo real.
+3. Artefato: `src/logs/jornada-comprador/<stamp>.md` com Decisão + OCR por passo.
 
-Responsável: automação `screen-robot/src/scripts/linkedin-login.js` (exemplo).
+Responsável: IA operando sobre `screen-robot/roteiros/jornada-comprador.md` + interfaces em `src/lib/`.
 

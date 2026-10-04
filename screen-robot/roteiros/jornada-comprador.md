@@ -1,7 +1,7 @@
 # Roteiro: Buscar "comprador" e conectar (UI via OCR)
 
 Objetivo
-- Automatizar a jornada do operador: buscar "comprador" no LinkedIn (AVD já na página do LinkedIn), navegar aos resultados, abrir People → Show all e conectar nos perfis listados.
+- Automatizar a jornada do operador: buscar "comprador" no LinkedIn (AVD já na página do LinkedIn), abrir Show all results e clicar em People.
 
 Pré-requisitos
 - AVD/agent online e na tela principal do LinkedIn (emulator-5554).

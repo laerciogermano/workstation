@@ -23,13 +23,7 @@ Passos (interfaces usadas)
    - fallback: se `type` falhar, localizar `comprador` em `extract()` (Recent/autocomplete) e `tapElement` sobre ele
    - esperar 1–3s
 
-4) Clicar no resultado desejado
-   - `findByText(serial, "comprador")` → hit `{ x, y }`
-   - `tapElement({ serial, x, y })`
-   - esperar 2–3s
-   - depois do tap, localizar e clicar em `Show all results` (ou par `Show` + `all`) se aparecer:
-     - `findByText(serial, "Show all")` → `tapElement({ serial, x, y })`
-     - esperar 2–3s
+4) (removido)
 
 5) Iterar perfis e conectar
    - para cada item listado:

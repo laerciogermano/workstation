@@ -1,0 +1,25 @@
+- Flow-Oriented Programming: paradigma visual para desenvolvimento orientado a serviços
+- Epígrafe: "Nothing is permanent, except change." — Heráclito
+- Enfatiza desacoplamento em nível de serviço em todas as chamadas, com componentes como camadas substituíveis
+- Elimina conceitos redundantes e adota "one way of development"
+- Arquitetura em camadas com linguagem ubíqua e representações visuais concretas
+- Princípios aplicáveis além do software, a qualquer disciplina
+- Limitação das camadas tradicionais em OOP: nem todos os objetos são tratados como camadas potenciais
+- Clean Architecture: o arquiteto deve projetar com opções de camadas abertas; em OOP o conceito de camada é mais restrito
+- No mundo real, objetos interagem pelas mesmas leis físicas e podem ser substituídos por equivalentes
+- Em modelos tradicionais, muitos comportamentos não admitem desacoplamento em nível de serviço
+- Flow torna todos os componentes homogêneos e compatíveis para integração e substituição
+- Inputs são tratados como injeção de dependência e vice-versa; parâmetros são camadas substituíveis (comportamento e/ou dados)
+- Visualizações: "A picture is worth a thousand words." — Confúcio; cada parte elementar do software pode ser vista como figura
+- Conceitos 1–20: um fluxo de execução consiste em dados e funções
+- Dado é unidade de informação; um estado pode ter n dados
+- Função é unidade de mudança de estado; pode ter n endereços de entrada e n de saída
+- Funções e dados podem ter endereços concretos ou abstratos
+- Uma função pode receber endereços abstratos de dados e funções como entrada e retornar endereços concretos como saída
+- Funções podem conter outras sequenciais, paralelas, estruturas de seleção e de loop
+- Endereços que se conhecem fazem parte da mesma camada; os que não se conhecem estão em camadas diferentes
+- A entrada forma uma camada de contexto; uma camada é uma unidade substituível
+- Diferentes camadas podem ser combinadas para formar novas camadas
+- A execução do fluxo ocorre quando a camada está completa
+- Uma camada com contexto completo equivale a um novo contexto para outra camada
+- Contato: laerciogermanoo@gmail.com; licença MIT

@@ -1,0 +1,19 @@
+- Título: Teoria Filosófica Metafísica Ontológica Sistêmica
+- Epígrafe: "Do que não se pode falar, deve-se calar." — Wittgenstein
+- A menor unidade fundamental da realidade é a história
+- Uma história é formada por estados e mudança (verbo)
+- O estado representa o que é observável e mutável
+- O verbo representa o que é oculto e constante
+- O verbo move um estado para outro estado
+- A mudança de estado representa o tempo
+- Os verbos possuem relações de compatibilidade entre si
+- Define-se como Logos a ordem (relação) dos verbos
+- A relação dos verbos constitui o plano das mudanças
+- Define-se como metafísica o estudo do plano das mudanças
+- A linguagem é a descrição do plano das mudanças
+- A linguagem é o limite da consciência
+- A linguagem, a metafísica, a manifestação, a programação, a matemática, a consciência, a realidade e o Logos são isomórficos
+- O Flow é uma linguagem de programação visual que descreve e sistematiza o plano das mudanças
+- Link: https://github.com/laerciogermano/flow-oriented-programming
+- Fecho: "Tudo muda, exceto a mudança." — Heráclito de Éfeso
+- Autor: Laércio Germano

@@ -602,7 +602,7 @@ Tira screenshot do device online e grava em `screenshots/<nome>.png` (path absol
 
 ---
 
-## 10d. OCR de imagens — `scripts/ocr-image.js`
+## OCR de imagens — `scripts/ocr-image.js`
 
 ```bash
 cd screen-robot/src
@@ -621,7 +621,7 @@ Roda `ocrWords` (tesseract) sobre PNG local e imprime o texto. Sem path → `scr
 
 ---
 
-## 11. CLI legado
+## CLI legado
 
 Steps avulsos (serial explícito; preferir as funções de `lib/`):
 

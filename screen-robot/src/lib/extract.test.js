@@ -34,6 +34,9 @@ describe("extract (OCR)", () => {
     const t2 = await extract({ serial: "s" }, deps);
     assert.equal(t2.length, t1.length);
     assert.ok(t2.every((e) => e.type === "text"));
-    assert.ok(t2.every((e) => Array.isArray(e.center) && e.center.length === 2));
+    assert.ok(t2.every((e) => typeof e.x === "number" && typeof e.y === "number"));
+    assert.ok(t2.every((e) => e.bounds === undefined && e.center === undefined));
+    assert.equal(t2.find((e) => e.text === "Entrar").x, 500);
+    assert.equal(t2.find((e) => e.text === "Entrar").y, 1850);
   });
 });

@@ -26,6 +26,7 @@ describe("findByText — fixture LinkedIn", () => {
     );
     assert.match(hit.text, /^sign in with email$/);
     assert.ok(hit.score >= 0.75);
-    assert.ok(Array.isArray(hit.center) && hit.center.length === 2);
+    assert.equal(typeof hit.x, "number");
+    assert.equal(typeof hit.y, "number");
   });
 });

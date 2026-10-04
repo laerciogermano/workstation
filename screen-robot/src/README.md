@@ -164,7 +164,7 @@ Desconhecido → `EVENT_UNKNOWN`. Sem serial → `EVENT_NO_SERIAL`. Timeout → 
 ```js
 await launch({ serial, package: "com.linkedin.android" }); // ou activity
 tap({ serial, x: 360, y: 640 });
-tapElement({ serial, center: el.center, bounds: el.bounds });
+tapElement({ serial, x: el.x, y: el.y });
 await type({ serial, text: "11999999999", region: { x: 0, y: 700, width: 720, height: 500 } });
 scroll({ serial, direction: "down", distance: 800 });
 const shot = screenshot({ serial, path: "./screenshots/tela.png" });
@@ -194,11 +194,14 @@ Pipeline **frame → OCR → lista plana de textos** (sem dump uiautomator, sem 
 
 ```js
 const elements = await extract({ serial });
-// [ { type: "text", text, bounds, center }, … ]
+// [ { type: "text", text, x, y }, … ]
 
 // US-23: findByText — elementos lado a lado contidos na string maior (query)
 // const hit = await findByText(serial, "Sign in with Email", { minScore: 0.8 });
+// if (hit) tapElement({ serial, x: hit.x, y: hit.y });
 ```
+
+**Antes → depois:** `{ text, bounds, center }` → `{ text, x, y }`; tap só com `x,y`.
 
 Fonte do frame: screenshot ADB, stream ou câmera (device real) — mesmo pipeline.  
 `vision.js` permanece legado / template match (US-12); **não** tipa o retorno de `extract()`.

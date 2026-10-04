@@ -9,11 +9,11 @@
 
 ## Entradas
 
-- Coords x,y ou bounds vindos de **visão/OCR** sobre o frame
+- Coords **x,y** vindos de **visão/OCR** sobre o frame
 
 ## Execução
 
-- `tap({ serial, x, y })` / `tapElement({ serial, center, bounds })` — gestos com coords da percepção por imagem
+- `tap({ serial, x, y })` / `tapElement({ serial, x, y })` — gestos com coords da percepção por imagem
 
 ## Saídas
 

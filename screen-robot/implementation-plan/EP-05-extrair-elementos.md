@@ -31,8 +31,8 @@
 | SC-18 · SC-19 · SC-20 · SC-21 | Enriquecer / ícones / listas / imagens | **Removido** |
 | TSK-024..027 | Tasks de ícones/listas/imagens/enriquecer | **Cancelado** |
 
-**Resultado:** **lista plana** `UiElement[]` — cada item `{ type: "text", text, bounds, center }`.  
-`extract({ serial })` — cada chamada faz OCR de novo; devolve só textos.
+**Resultado:** **lista plana** `UiElement[]` — cada item `{ type: "text", text, x, y }`.  
+`extract({ serial })` — cada chamada faz OCR de novo; devolve só textos com ponto de clique.
 
 ---
 
@@ -46,15 +46,15 @@ import { tapElement } from "../src/lib/operate.js";
 const { serial } = await provisionEmulator(cfg); // EP-01
 
 const elements = await extract({ serial });
-// → [ { type: "text", text, bounds, center }, … ]
+// → [ { type: "text", text, x, y }, … ]
 
 const again = await extract({ serial }); // OCR novo
 
 const hit = await findByText(serial, "Sign in with Email", { minScore: 0.8 });
-if (hit) tapElement({ serial, center: hit.center, bounds: hit.bounds });
+if (hit) tapElement({ serial, x: hit.x, y: hit.y });
 ```
 
-**Antes → depois:** `handle.extract()` (cache) → `extract({ serial })` (OCR a cada call). Só `type: "text"`.
+**Antes → depois:** `{ text, bounds, center }` → `{ text, x, y }`; `tapElement({ center, bounds })` → `tapElement({ x, y })`.
 
 ---
 
@@ -109,7 +109,7 @@ OCR costuma devolver a frase partida (piloto LinkedIn: `"Sign"` + `"in"` + `"wit
 ```js
 const hit = await findByText(serial, "Sign in with Email", { minScore: 0.8 });
 // hit.elements → [Sign, in, with, Email] — lado a lado, dentro da query
-// hit.score elevado; hit.center para tap
+// hit.score elevado; hit.x / hit.y para tap
 ```
 
 ---
@@ -121,14 +121,14 @@ const hit = await findByText(serial, "Sign in with Email", { minScore: 0.8 });
   {
     "type": "text",
     "text": "Entrar",
-    "bounds": { "x": 120, "y": 1800, "w": 840, "h": 96 },
-    "center": [540, 1848]
+    "x": 540,
+    "y": 1848
   },
   {
     "type": "text",
     "text": "E-mail ou telefone",
-    "bounds": { "x": 120, "y": 900, "w": 840, "h": 72 },
-    "center": [540, 936]
+    "x": 540,
+    "y": 936
   }
 ]
 ```
@@ -203,19 +203,19 @@ sequenceDiagram
 | 1 | US-13 | SC-17 | `extract({ serial })` | elementos `type: "text"` via **OCR** |
 | — | US-23 | SC-29..30 | `findByText(serial, query)` | hit com textos lado a lado na query |
 
-Caller filtra/itera o array (`el.text`, `el.center`) — **não** há walk em `children` nem tipos de visão.
+Caller filtra/itera o array (`el.text`, `el.x`, `el.y`) — **não** há walk em `children` nem tipos de visão.
 
 #### Contratos
 
 ```ts
 type ElementType = "text";
 
-/** Elemento plano encontrado por OCR. */
+/** Elemento plano encontrado por OCR (ponto de clique). */
 type UiElement = {
   type: "text";
   text: string;
-  bounds: { x: number; y: number; w: number; h: number };
-  center?: [number, number];
+  x: number;
+  y: number;
 };
 
 function extract(cfg: { serial: string }): Promise<UiElement[]>;
@@ -225,8 +225,8 @@ type FindByTextHit = {
   elements: UiElement[];
   score: number;
   text: string;
-  bounds: { x: number; y: number; w: number; h: number };
-  center: [number, number];
+  x: number;
+  y: number;
 };
 
 function findByText(
@@ -236,7 +236,7 @@ function findByText(
 ): Promise<FindByTextHit | null>;
 
 const elements = await extract({ serial });
-// [ { type: "text", text, bounds, center }, … ]
+// [ { type: "text", text, x, y }, … ]
 ```
 
 ---
@@ -287,8 +287,8 @@ classDiagram
   class UiElement {
     +text type
     +string text
-    +bounds
-    +center
+    +number x
+    +number y
   }
   note for extract_js "Retorno = lista plana só textos OCR"
   extract_js ..> UiElement : devolve array
@@ -309,7 +309,7 @@ Fonte: [`5.bdds.md#ep-05--extrair-elementos`](../5.bdds.md#ep-05--extrair-elemen
 |---|---------|-----|----------|
 | I1 | `extract({ serial })` → `UiElement[]` | — | Lista plana só `text`; sem árvore DOM |
 | I2 | Fonte de frame (screenshot ADB; abstrair câmera) | — | Imagem disponível sem dump XML |
-| I3 | OCR textos + bounds → elementos `text` | SC-17 | Itens texto na lista |
+| I3 | OCR textos → elementos `text` com `x,y` | SC-17 | Itens texto na lista |
 | I4 | Sem uiautomator dump como fonte | — | Só frame → OCR |
 | I5 | Piloto: `extract({ serial })` + JSON da lista de textos | — | linkedin-login |
 | I6 | `findByText(serial, query)` encapsula `extractElements` + match por similaridade | SC-29 | Score ≥ limiar; caller não passa lista |

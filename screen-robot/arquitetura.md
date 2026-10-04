@@ -105,7 +105,7 @@ device (AVD / redroid / aparelho)
 |--------|-------|--------------|
 | `launch(cfg)` | resolve-activity → `am start` / monkey | adb shell |
 | `tap(cfg)` | `cmd input tap` → fallback `input tap` (+ reconnect) | adb |
-| `tapElement(cfg)` | center/bounds → `tap` | → tap |
+| `tapElement(cfg)` | `x,y` → `tap` | → tap |
 | `type(cfg)` | frame → OCR região → `buildKeyCenters` → taps | frame+ocr+tap |
 | `buildKeyCenters(words)` | Map char→center (1 glifo) | puro |
 | `scroll(cfg)` | `input swipe` | adb |

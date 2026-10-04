@@ -17,12 +17,23 @@ export function dumpUiXml(serial, deps = {}) {
   return r.stdout || "";
 }
 
-function withCenter(el) {
-  const b = el.bounds;
+/** Centro do bounds OCR → ponto de clique { x, y }. */
+function pointFromBounds(b) {
+  const box = b || { x: 0, y: 0, w: 0, h: 0 };
   return {
-    ...el,
-    center: [Math.floor(b.x + b.w / 2), Math.floor(b.y + b.h / 2)],
+    x: Math.floor(box.x + box.w / 2),
+    y: Math.floor(box.y + box.h / 2),
   };
+}
+
+/** Elemento público: só type/text/x/y (sem bounds/center). */
+function toPublicElement(el) {
+  const text = elText(el);
+  if (el?.x != null && el?.y != null && !el?.bounds && !el?.bbox) {
+    return { type: "text", text, x: Math.round(Number(el.x)), y: Math.round(Number(el.y)) };
+  }
+  const p = pointFromBounds(elBounds(el));
+  return { type: "text", text, x: p.x, y: p.y };
 }
 
 /**
@@ -45,9 +56,10 @@ export async function extract(cfg, deps = {}) {
     : ocrWords;
   const framePath = await capture(serial, deps);
   const words = await recognize(framePath, deps);
-  return words.map((w) =>
-    withCenter({ type: "text", text: w.text, bounds: { ...w.bounds } }),
-  );
+  return words.map((w) => {
+    const p = pointFromBounds(w.bounds);
+    return { type: "text", text: w.text, x: p.x, y: p.y };
+  });
 }
 
 /**
@@ -66,13 +78,11 @@ export async function extractElements(serial, deps = {}) {
   const words = await recognize(framePath, deps);
   const elements = words.map((w, i) => {
     const b = w.bounds;
-    const center = [
-      Math.floor(b.x + b.w / 2),
-      Math.floor(b.y + b.h / 2),
-    ];
+    const p = pointFromBounds(b);
     return {
       id: `e${i}`,
       kind: "text",
+      type: "text",
       label: w.text,
       text: w.text,
       contentDesc: "",
@@ -80,8 +90,10 @@ export async function extractElements(serial, deps = {}) {
       className: "",
       clickable: true,
       password: false,
-      bbox: [b.x, b.y, b.x + b.w, b.y + b.h],
-      center,
+      // bounds interno para match lado a lado; contrato público = x,y
+      bounds: { ...b },
+      x: p.x,
+      y: p.y,
       source: "ocr",
     };
   });
@@ -160,7 +172,7 @@ export function findEditableFields(elements) {
  * @param {string} serial
  * @param {string} query
  * @param {{ minScore?: number, extractElements?: Function, captureFrame?: Function, ocrRecognize?: Function }} [opts]
- * @returns {Promise<{ elements: object[], score: number, text: string, bounds: object, center: [number, number] } | null>}
+ * @returns {Promise<{ elements: object[], score: number, text: string, x: number, y: number } | null>}
  */
 export async function findByText(serial, query, opts = {}) {
   const runExtract = opts.extractElements ?? extractElements;
@@ -216,16 +228,13 @@ export function matchByText(elementsOrTree, query, opts = {}) {
   if (!best || best.score < minScore) return null;
 
   const bounds = unionBounds(best.elements.map(elBounds));
-  const center = [
-    Math.floor(bounds.x + bounds.w / 2),
-    Math.floor(bounds.y + bounds.h / 2),
-  ];
+  const p = pointFromBounds(bounds);
   return {
-    elements: best.elements,
+    elements: best.elements.map(toPublicElement),
     score: best.score,
     text: best.text,
-    bounds,
-    center,
+    x: p.x,
+    y: p.y,
   };
 }
 
@@ -238,6 +247,9 @@ function elBounds(el) {
   if (Array.isArray(el?.bbox) && el.bbox.length >= 4) {
     const [x0, y0, x1, y1] = el.bbox;
     return { x: x0, y: y0, w: x1 - x0, h: y1 - y0 };
+  }
+  if (el?.x != null && el?.y != null) {
+    return { x: Number(el.x), y: Number(el.y), w: 1, h: 1 };
   }
   return { x: 0, y: 0, w: 0, h: 0 };
 }

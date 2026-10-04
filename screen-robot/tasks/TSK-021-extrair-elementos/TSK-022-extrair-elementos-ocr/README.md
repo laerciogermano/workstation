@@ -17,4 +17,4 @@
 
 ## Saídas
 
-- Lista `[ { type: "text", text, bounds, center }, … ]` · aceite US-13
+- Lista `[ { type: "text", text, x, y }, … ]` · aceite US-13

@@ -138,7 +138,7 @@ screenshot({ serial, path: "./screenshots/tela.png" });
 const { x, y, confidence } = await matchImage({ serial, templatePath: "./templates/btn.png" });
 
 const elements = await extract({ serial });
-// → [ { type: "text", text, bounds, center }, … ]
+// → [ { type: "text", text, x, y }, … ]
 
 await saveSession({ serial, kind, path: "./state/session.json", state: { step: "logged-in" } });
 const state = await restoreSession({ path: "./state/session.json" });

@@ -17,4 +17,4 @@
 
 ## Saídas
 
-- Lista `[ { type: "text", text, bounds, center }, … ]` · aceite EP-05 (US-13 · US-23)
+- Lista `[ { type: "text", text, x, y }, … ]` · aceite EP-05 (US-13 · US-23)

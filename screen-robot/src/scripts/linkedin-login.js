@@ -80,7 +80,7 @@ async function main() {
   // screenshot({ serial, path: "screenshot-teste.png" });
   // console.log(`   OK → ${shotPath}`);
 
-  await tapElement({ serial, center: hit.center, bounds: hit.bounds });
+  await tapElement({ serial, x: hit.x, y: hit.y });
 
   // console.log("5) Clicar Sign in with Email…");
   // {
@@ -89,15 +89,15 @@ async function main() {
   //     hit = await findByText(serial, "Sign in with Email", {
   //       minScore: 0.75,
   //     });
-  //     if (hit?.center) break;
+  //     if (hit?.x != null) break;
   //     console.log(`   tentativa ${attempt}/8 — aguardando OCR…`);
   //     await sleep(3_000);
   //   }
-  //   if (hit?.center) {
+  //   if (hit?.x != null) {
   //     console.log(
   //       `   → "${hit.text}" score=${hit.score.toFixed(2)} parts=${hit.elements.length}`,
   //     );
-  //     tapElement({ serial, center: hit.center, bounds: hit.bounds });
+  //     tapElement({ serial, x: hit.x, y: hit.y });
   //     await sleep(5_000);
   //     screenshot({ serial, path: resolve(outDir, "02-apos-sign-in-email.png") });
   //   } else {

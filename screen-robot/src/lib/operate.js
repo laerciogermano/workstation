@@ -197,16 +197,17 @@ export function tap(cfg, deps = {}) {
 }
 
 /**
- * @param {{ serial: string, center?: [number, number], bounds?: object }} cfg
+ * Toque no ponto do elemento OCR (`x`,`y`).
+ * @param {{ serial: string, x: number, y: number }} cfg
  * @param {object} [deps]
  */
 export function tapElement(cfg, deps = {}) {
-  const cx = cfg?.center?.[0] ?? cfg?.bounds?.centerX;
-  const cy = cfg?.center?.[1] ?? cfg?.bounds?.centerY;
-  if (cx == null || cy == null) {
-    fail("OPERATE_LAUNCH_FAILED", "tapElement: elemento sem center");
+  const xi = cfg?.x;
+  const yi = cfg?.y;
+  if (xi == null || yi == null || Number.isNaN(Number(xi)) || Number.isNaN(Number(yi))) {
+    fail("OPERATE_TAP_FAILED", "tapElement: falta x,y");
   }
-  tap({ serial: requireSerial(cfg), x: cx, y: cy }, deps);
+  tap({ serial: requireSerial(cfg), x: xi, y: yi }, deps);
 }
 
 /**

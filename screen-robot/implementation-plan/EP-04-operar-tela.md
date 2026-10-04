@@ -49,7 +49,7 @@ await launch({ serial, package: "com.linkedin.android" });
 await on({ serial, event: "app_open", pkg: "com.linkedin.android" }); // EP-02
 await on({ serial, event: "ui_stable", stableMs: 800 });
 
-tap({ serial, x: 360, y: 640 }); // ou tapElement({ serial, center, bounds })
+tap({ serial, x: 360, y: 640 }); // ou tapElement({ serial, x, y })
 await type({
   serial,
   text: "11999999999",
@@ -204,7 +204,7 @@ type KeyboardRegion = {
 
 function launch(cfg: { serial: string; package: string; activity?: string }): Promise<void>;
 function tap(cfg: { serial: string; x: number; y: number }): void;
-function tapElement(cfg: { serial: string; center?: [number, number]; bounds?: object }): void;
+function tapElement(cfg: { serial: string; x: number; y: number }): void;
 /** Digita só com tap nas teclas OCR do frame (sem input text / IME). */
 function type(cfg: { serial: string; text: string; region?: KeyboardRegion; delayMs?: number }): Promise<void>;
 function scroll(cfg: ScrollOpts): void;

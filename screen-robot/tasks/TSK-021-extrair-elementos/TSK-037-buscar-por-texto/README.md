@@ -19,7 +19,7 @@
 
 ## Saídas
 
-- `{ elements, score, center? }` — adjacentes dentro da query · aceite SC-29 / SC-30
+- `{ elements, score, x, y }` — adjacentes dentro da query · aceite SC-29 / SC-30
 
 ## Testes
 

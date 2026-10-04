@@ -22,8 +22,9 @@ describe("matchByText", () => {
     assert.equal(hit.elements.length, 4);
     assert.ok(hit.score >= 0.8);
     assert.match(hit.text, /sign in with email/);
-    assert.ok(hit.center[0] > 236 && hit.center[0] < 547);
-    assert.ok(Math.abs(hit.center[1] - 830) < 40);
+    assert.ok(hit.x > 236 && hit.x < 547);
+    assert.ok(Math.abs(hit.y - 830) < 40);
+    assert.ok(hit.elements.every((e) => e.bounds === undefined && typeof e.x === "number"));
   });
 
   it("match em um único elemento", () => {

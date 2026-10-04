@@ -47,20 +47,14 @@ async function findAllowButton(serial) {
   const { elements } = await extractElements(serial);
   const allows = elements
     .filter((e) => String(e.text || e.label || "") === "ALLOW")
-    .map((e) => {
-      const b = e.bounds || {
-        x: e.bbox[0],
-        y: e.bbox[1],
-        w: e.bbox[2] - e.bbox[0],
-        h: e.bbox[3] - e.bbox[1],
-      };
-      const center = e.center || [
-        Math.floor(b.x + b.w / 2),
-        Math.floor(b.y + b.h / 2),
-      ];
-      return { text: "ALLOW", bounds: b, center, score: 1, elements: [e] };
-    })
-    .sort((a, b) => a.bounds.y - b.bounds.y);
+    .map((e) => ({
+      text: "ALLOW",
+      x: e.x,
+      y: e.y,
+      score: 1,
+      elements: [e],
+    }))
+    .sort((a, b) => a.y - b.y);
   // O botão ALLOW fica acima do ALLOW de "DON'T ALLOW"
   return allows[0] || null;
 }
@@ -83,9 +77,9 @@ async function findContinueWithPhoneNumber(serial) {
   console.log(`   buscar texto: "${query}"`);
 
   let hit = await findByText(serial, query, { minScore: 0.75 });
-  if (hit?.center) {
+  if (hit?.x != null) {
     console.log(`   findByText → "${hit.text}" score=${hit.score.toFixed(2)}`);
-    return inflateButtonHit(hit);
+    return hit;
   }
 
   const framePath = await captureFrame(serial);
@@ -116,38 +110,18 @@ async function findContinueWithPhoneNumber(serial) {
           kind: "text",
           label: String(word.text).trim(),
           text: String(word.text).trim(),
-          bbox: [x0, y0, x1, y1],
           bounds: { x: x0, y: y0, w: Math.max(1, x1 - x0), h: Math.max(1, y1 - y0) },
-          center: [Math.floor((x0 + x1) / 2), Math.floor((y0 + y1) / 2)],
+          x: Math.floor((x0 + x1) / 2),
+          y: Math.floor((y0 + y1) / 2),
           source: "ocr-band",
         };
       });
     const texts = elements.map((e) => e.text).join(" ");
     console.log(`   OCR faixa: ${texts.slice(0, 120)}${texts.length > 120 ? "…" : ""}`);
-    hit = matchByText(elements, query, { minScore: 0.75 });
-    if (hit?.center) return inflateButtonHit(hit);
-    return null;
+    return matchByText(elements, query, { minScore: 0.75 });
   } finally {
     await worker.terminate();
   }
-}
-
-/** Amplia bounds do texto OCR para cobrir o botão pill (mais alto que a linha). */
-function inflateButtonHit(hit) {
-  const b = hit.bounds || { x: 0, y: 0, w: 0, h: 0 };
-  const padY = Math.max(24, Math.floor(b.h * 1.5));
-  const padX = Math.max(16, Math.floor(b.w * 0.05));
-  const bounds = {
-    x: Math.max(0, b.x - padX),
-    y: Math.max(0, b.y - padY),
-    w: b.w + padX * 2,
-    h: b.h + padY * 2,
-  };
-  const center = [
-    Math.floor(bounds.x + bounds.w / 2),
-    Math.floor(bounds.y + bounds.h / 2),
-  ];
-  return { ...hit, bounds, center };
 }
 
 /** OCR de textos no frame (cada chamada = OCR novo). */
@@ -229,21 +203,19 @@ async function main() {
     let hit = null;
     for (let attempt = 1; attempt <= 8; attempt++) {
       hit = await findAllowButton(serial);
-      if (hit?.center) break;
+      if (hit?.x != null) break;
       // fallback findByText se OCR variar
       const fb = await findByText(serial, "ALLOW", { minScore: 0.9 });
-      if (fb?.center && String(fb.elements?.[0]?.text || fb.elements?.[0]?.label) === "ALLOW") {
+      if (fb?.x != null && String(fb.elements?.[0]?.text || fb.elements?.[0]?.label) === "ALLOW") {
         hit = fb;
         break;
       }
       console.log(`   tentativa ${attempt}/8 — aguardando OCR ALLOW…`);
       await sleep(2_000);
     }
-    if (hit?.center) {
-      console.log(
-        `   → "${hit.text}" center=${JSON.stringify(hit.center)} y=${hit.bounds.y}`,
-      );
-      tapElement({ serial, center: hit.center, bounds: hit.bounds });
+    if (hit?.x != null) {
+      console.log(`   → "${hit.text}" x=${hit.x} y=${hit.y}`);
+      tapElement({ serial, x: hit.x, y: hit.y });
       await sleep(5_000);
       await on({ serial, event: "ui_stable", timeoutMs: 60_000 }).catch(() => {});
     } else {
@@ -265,19 +237,19 @@ async function main() {
     let hit = null;
     for (let attempt = 1; attempt <= 10; attempt++) {
       hit = await findContinueWithPhoneNumber(serial);
-      if (hit?.center) break;
+      if (hit?.x != null) break;
       console.log(`   tentativa ${attempt}/10 — texto ainda não visível…`);
       await sleep(2_000);
     }
-    if (!hit?.center) {
+    if (hit?.x == null) {
       throw new Error(
         'Texto "Continue with Phone Number" não encontrado na tela (OCR/findByText)',
       );
     }
     console.log(
-      `   → "${hit.text}" score=${hit.score.toFixed(2)} parts=${hit.elements.length} center=${JSON.stringify(hit.center)}`,
+      `   → "${hit.text}" score=${hit.score.toFixed(2)} parts=${hit.elements.length} x=${hit.x} y=${hit.y}`,
     );
-    tapElement({ serial, center: hit.center, bounds: hit.bounds });
+    tapElement({ serial, x: hit.x, y: hit.y });
     await sleep(5_000);
     await on({ serial, event: "ui_stable", timeoutMs: 60_000 }).catch(() => {});
   }

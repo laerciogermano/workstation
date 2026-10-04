@@ -28,7 +28,8 @@ describe("Cenário: SC-30 LinkedIn Sign in with Email", () => {
       );
       assert.match(hit.text, /^sign in with email$/);
       assert.ok(hit.score >= 0.75);
-      assert.equal(hit.center.length, 2);
+      assert.equal(typeof hit.x, "number");
+      assert.equal(typeof hit.y, "number");
     },
     { timeout: 120_000 },
   );

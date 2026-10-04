@@ -213,8 +213,8 @@ Ilustrativo da API EP-06 (o piloto LinkedIn atual **não** grava sessão):
     {
       "type": "text",
       "text": "Sign in",
-      "bounds": { "x": 120, "y": 1800, "w": 840, "h": 96 },
-      "center": [540, 1848]
+      "x": 540,
+      "y": 1848
     }
   ],
   "events": [

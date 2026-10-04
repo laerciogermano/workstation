@@ -1,0 +1,322 @@
+[
+  {
+    "bounds" : {
+      "h" : 26,
+      "w" : 52,
+      "x" : 60,
+      "y" : 14
+    },
+    "confidence" : 1,
+    "text" : "3:30"
+  },
+  {
+    "bounds" : {
+      "h" : 22,
+      "w" : 106,
+      "x" : 89,
+      "y" : 71
+    },
+    "confidence" : 1,
+    "text" : "comprador"
+  },
+  {
+    "bounds" : {
+      "h" : 23,
+      "w" : 92,
+      "x" : 81,
+      "y" : 145
+    },
+    "confidence" : 0.30000001192092896,
+    "text" : "People •"
+  },
+  {
+    "bounds" : {
+      "h" : 20,
+      "w" : 33,
+      "x" : 225,
+      "y" : 143
+    },
+    "confidence" : 0.5,
+    "text" : "1st"
+  },
+  {
+    "bounds" : {
+      "h" : 22,
+      "w" : 42,
+      "x" : 298,
+      "y" : 141
+    },
+    "confidence" : 1,
+    "text" : "2nd"
+  },
+  {
+    "bounds" : {
+      "h" : 20,
+      "w" : 46,
+      "x" : 376,
+      "y" : 143
+    },
+    "confidence" : 1,
+    "text" : "3rd+"
+  },
+  {
+    "bounds" : {
+      "h" : 13,
+      "w" : 117,
+      "x" : 110,
+      "y" : 188
+    },
+    "confidence" : 0.30000001192092896,
+    "text" : "velaio, viacil"
+  },
+  {
+    "bounds" : {
+      "h" : 17,
+      "w" : 360,
+      "x" : 107,
+      "y" : 216
+    },
+    "confidence" : 1,
+    "text" : "Past: Comprador Técnico at Neuman & Esser"
+  },
+  {
+    "bounds" : {
+      "h" : 14,
+      "w" : 164,
+      "x" : 150,
+      "y" : 257
+    },
+    "confidence" : 1,
+    "text" : "1 mutual connection"
+  },
+  {
+    "bounds" : {
+      "h" : 20,
+      "w" : 78,
+      "x" : 459,
+      "y" : 144
+    },
+    "confidence" : 1,
+    "text" : "Locatior"
+  },
+  {
+    "bounds" : {
+      "h" : 22,
+      "w" : 240,
+      "x" : 105,
+      "y" : 324
+    },
+    "confidence" : 1,
+    "text" : "Denise dos Anjos • 2nd"
+  },
+  {
+    "bounds" : {
+      "h" : 20,
+      "w" : 253,
+      "x" : 105,
+      "y" : 352
+    },
+    "confidence" : 1,
+    "text" : "Senior Procurement Spec..."
+  },
+  {
+    "bounds" : {
+      "h" : 24,
+      "w" : 204,
+      "x" : 108,
+      "y" : 375
+    },
+    "confidence" : 1,
+    "text" : "Campinas, São Paulo,"
+  },
+  {
+    "bounds" : {
+      "h" : 19,
+      "w" : 53,
+      "x" : 107,
+      "y" : 401
+    },
+    "confidence" : 1,
+    "text" : "Brazil"
+  },
+  {
+    "bounds" : {
+      "h" : 21,
+      "w" : 332,
+      "x" : 103,
+      "y" : 438
+    },
+    "confidence" : 1,
+    "text" : "Past: Comprador sênior at Eldor Do Brasiil"
+  },
+  {
+    "bounds" : {
+      "h" : 18,
+      "w" : 235,
+      "x" : 108,
+      "y" : 462
+    },
+    "confidence" : 1,
+    "text" : "Componentes Automotivos..."
+  },
+  {
+    "bounds" : {
+      "h" : 12,
+      "w" : 32,
+      "x" : 112,
+      "y" : 493
+    },
+    "confidence" : 0.30000001192092896,
+    "text" : "Sạ0g"
+  },
+  {
+    "bounds" : {
+      "h" : 16,
+      "w" : 165,
+      "x" : 148,
+      "y" : 501
+    },
+    "confidence" : 1,
+    "text" : "1 mutual connection"
+  },
+  {
+    "bounds" : {
+      "h" : 19,
+      "w" : 111,
+      "x" : 390,
+      "y" : 335
+    },
+    "confidence" : 0.5,
+    "text" : "•+ Connect"
+  },
+  {
+    "bounds" : {
+      "h" : 24,
+      "w" : 240,
+      "x" : 108,
+      "y" : 567
+    },
+    "confidence" : 0.5,
+    "text" : "Gustavo Nucci © • 2nd"
+  },
+  {
+    "bounds" : {
+      "h" : 22,
+      "w" : 252,
+      "x" : 106,
+      "y" : 596
+    },
+    "confidence" : 1,
+    "text" : "Purchasing | Procuremen..."
+  },
+  {
+    "bounds" : {
+      "h" : 20,
+      "w" : 54,
+      "x" : 107,
+      "y" : 619
+    },
+    "confidence" : 1,
+    "text" : "Brazil"
+  },
+  {
+    "bounds" : {
+      "h" : 19,
+      "w" : 238,
+      "x" : 105,
+      "y" : 656
+    },
+    "confidence" : 1,
+    "text" : "Past: Comprador at AsGa S\/A"
+  },
+  {
+    "bounds" : {
+      "h" : 14,
+      "w" : 172,
+      "x" : 180,
+      "y" : 697
+    },
+    "confidence" : 1,
+    "text" : "3 mutual connections"
+  },
+  {
+    "bounds" : {
+      "h" : 24,
+      "w" : 110,
+      "x" : 389,
+      "y" : 579
+    },
+    "confidence" : 0.5,
+    "text" : "a+ Connect"
+  },
+  {
+    "bounds" : {
+      "h" : 25,
+      "w" : 228,
+      "x" : 108,
+      "y" : 763
+    },
+    "confidence" : 1,
+    "text" : "Weslley Amorim • 2nd"
+  },
+  {
+    "bounds" : {
+      "h" : 22,
+      "w" : 106,
+      "x" : 105,
+      "y" : 791
+    },
+    "confidence" : 1,
+    "text" : "comprador"
+  },
+  {
+    "bounds" : {
+      "h" : 23,
+      "w" : 204,
+      "x" : 108,
+      "y" : 816
+    },
+    "confidence" : 1,
+    "text" : "Belo Horizonte, Minas"
+  },
+  {
+    "bounds" : {
+      "h" : 24,
+      "w" : 120,
+      "x" : 107,
+      "y" : 841
+    },
+    "confidence" : 1,
+    "text" : "Gerais, Brazil"
+  },
+  {
+    "bounds" : {
+      "h" : 19,
+      "w" : 330,
+      "x" : 105,
+      "y" : 878
+    },
+    "confidence" : 1,
+    "text" : "Current: Comprador at Hospital da Baleia"
+  },
+  {
+    "bounds" : {
+      "h" : 20,
+      "w" : 148,
+      "x" : 164,
+      "y" : 917
+    },
+    "confidence" : 1,
+    "text" : "mutual connection"
+  },
+  {
+    "bounds" : {
+      "h" : 21,
+      "w" : 110,
+      "x" : 389,
+      "y" : 775
+    },
+    "confidence" : 0.5,
+    "text" : "•+ Connect"
+  }
+]

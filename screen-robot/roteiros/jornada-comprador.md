@@ -27,6 +27,9 @@ Passos (interfaces usadas)
    - `findByText(serial, "comprador")` → hit `{ x, y }`
    - `tapElement({ serial, x, y })`
    - esperar 2–3s
+   - depois do tap, localizar e clicar em `Show all results` (ou par `Show` + `all`) se aparecer:
+     - `findByText(serial, "Show all")` → `tapElement({ serial, x, y })`
+     - esperar 2–3s
 
 5) Navegar até seção People
    - usar `extract()` repetidamente e `scroll({ serial, direction: "up", distance })` até detectar header `People` (y alto) ou sinais de People (tokens: `mutual`, `2nd`, `1st`)

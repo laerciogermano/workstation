@@ -36,6 +36,7 @@ Log por execução (obrigatório)
   3. `### OCR usado na decisão` — bloco `json` com a lista `{ text, x, y }` (ou trecho) usada
   4. `### Resultado` — prosa do que aconteceu depois; opcionalmente outro bloco `json` se o OCR seguinte importar
 - Sem documento de passo = execução incompleta para auditoria. Decisões continuam só por OCR; o log é o registro, não a fonte da decisão.
+- **Console (obrigatório):** a cada `extract()` / `findByText`, **imprimir no stdout o OCR completo** retornado (`text@x,y` por linha ou JSON), sem filtrar — para auditoria ao vivo (ex.: pill `+ Connect` visível na UI às vezes não sai no OCR; sem dump não dá para ver o buraco).
 
 Passos (interfaces usadas)
 1) Capture frame + OCR

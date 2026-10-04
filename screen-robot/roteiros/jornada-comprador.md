@@ -40,15 +40,18 @@ Passos (interfaces usadas)
    - esperar 2–3s
    - salvar screenshot (`screenshots/after-people.png`)
 
-6) Iterar perfis e conectar
-   - para cada item listado:
-     - localizar botão/link `Connect` via `extract()` (match exato `^Connect$`, não `connections`)
-     - `tapElement({ serial, x, y })`
-     - aguardar 1–2s
-     - se aparecer `Skip` / `Ignorar` / `Cancelar`: `findByText` → `tapElement` no Skip
-     - salvar screenshot por ação (`screenshots/connect-N.png`)
-   - rolar a lista periodicamente com `scroll` **sempre no centro** da tela (ver nota de zona segura)
-   - teclado deve estar fechado antes de qualquer scroll
+6) Iterar perfis e conectar (um Connect por item da lista)
+   - OCR **quase nunca** lê o texto do pill `Connect` (só às vezes o da linha cortada pelo nav).
+   - Para **cada** item da lista visível:
+     1. achar o marcador de grau do perfil (`2nd` / `3rd+`) com `y > 180` (abaixo dos chips) e `x < 400` (não é o chip da barra)
+     2. clicar o pill Connect à direita do card: `tapElement({ serial, x: ~458, y: grau.y })` (em 540px; manter `y` na faixa segura `180 < y < 850`)
+     3. aguardar 1–2s
+     4. se aparecer `Skip` / `Ignorar` / `Cancelar`: `findByText` → `tapElement` no Skip (não usar `Cancelar` do system dialog por engano se houver outro fluxo)
+     5. screenshot `screenshots/connect-N.png`
+   - depois de clicar **todos** os Connects visíveis da tela: scroll **uma vez** no centro (`x: 270`, `y: 480`)
+   - **após rolar, repetir o processo** (itens 1–5) para **cada** item novo da lista; continuar o ciclo scroll → conectar até esgotar os perfis ou o limite da sessão
+   - **não** clicar `Connect` com `y ≥ 850` (sobreposto ao system nav)
+   - teclado fechado antes de qualquer scroll
 
 7) Encerramento
    - salvar `screenshots/connect-final.png` / `elements-final.json`

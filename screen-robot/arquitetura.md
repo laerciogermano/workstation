@@ -706,7 +706,7 @@ sequenceDiagram
   else tap / tapElement
     Caller->>O: tap | tapElement
     O->>ADB: connectIfTcp
-    O->>ADB: shell cmd input tap x y
+    O->>ADB: shell input tap x y
     opt falha
       O->>ADB: shell input tap x y
     end

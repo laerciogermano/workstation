@@ -39,7 +39,8 @@ describe("operate", () => {
       },
       {
         adb: (_s, args) => {
-          if (args.includes("tap")) taps.push([args[4], args[5]]);
+          // shell input tap x y
+          if (args.includes("tap")) taps.push([args[3], args[4]]);
           return {};
         },
         connectIfTcp: () => {},

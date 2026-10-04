@@ -47,7 +47,7 @@ Passos (interfaces usadas)
      - aguardar 1–2s
      - checar `findByText(serial, "Skip"|"Cancelar"|"Ignorar")` — se aparecer, `tapElement` no `Skip`
      - salvar screenshot por ação (`screenshots/connect-N.png`)
-   - rolar a lista periodicamente (`scroll`) para trazer novos perfis
+   - rolar a lista periodicamente (`scroll`) na **zona segura** (miolo da tela — nunca teclado / nunca faixa inferior do system nav)
 
 7) Encerramento
    - salvar `screenshots/connect-final.png`
@@ -61,6 +61,7 @@ Critérios de aceite
 Notas operacionais
 - Timeouts: esperar 1–3s entre ações; `findByText` com `minScore:0.75`.
 - Scroll: `direction: "up"` para revelar conteúdo abaixo; ajustar `distance` conforme AVD.
+- **Scroll — zona segura:** o gesto **jamais** pode começar/terminar na zona do teclado nem na faixa inferior do system nav (risco de fechar/minimizar o app ou acionar gestos do Android). Preferir origem no **miolo** da lista (ex. `y` ~40–60% da altura da tela; em 540×960 ≈ `y` 380–580). Evitar `y` alto demais (status/chips) e `y` baixo demais (nav bar / home indicator / teclado). Se o teclado estiver aberto, **fechar antes** de qualquer scroll.
 - Se OCR do teclado falhar, não clicar em `comprador` da lista — só digitar e depois fechar teclado → `Show all results` (não usar `adb input text`).
 
 Como reproduzir manualmente (linha de comando)

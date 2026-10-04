@@ -2,6 +2,7 @@
 
 Objetivo
 - Automatizar a jornada do operador: buscar "comprador" no LinkedIn (AVD já na página do LinkedIn), abrir Show all results, clicar em People e conectar nos perfis (Skip se aparecer), **scrollando até achar `Connect`**, até fim explícito da lista ou limite do LinkedIn.
+- Em **cada nova conexão** bem-sucedida, **registrar no log** todas as informações do comprador disponíveis no item da lista (OCR do card), antes/no ato do Connect.
 
 Modo de execução (obrigatório) — IA + linguagem natural
 - Este arquivo é a **fonte da jornada em linguagem natural**. A IA lê estes critérios e, a cada turno, **extrai o OCR com RapidOCR** (`extract({ serial, engine: "rapidocr" })` / `findByText(..., { engine: "rapidocr" })` → `{ text, x, y }`) e **decide o próximo passo** com base neste doc + no texto da tela.
@@ -36,6 +37,7 @@ Log por execução (obrigatório)
   2. `### Decisão` — prosa: por que e o que foi feito (ex.: “achei Search com y&lt;120; tap @180,78; ignorei search do feedback”)
   3. `### OCR usado na decisão` — bloco `json` com a lista `{ text, x, y }` (ou trecho) usada
   4. `### Resultado` — prosa do que aconteceu depois; opcionalmente outro bloco `json` se o OCR seguinte importar
+- **Por cada Connect contado** (conexão nova ok): incluir também `### Comprador` com **todas** as infos do item da lista disponíveis no OCR daquele card (não omitir campos presentes na tela). Ver passo 6.
 - Sem documento de passo = execução incompleta para auditoria. Decisões continuam só por OCR; o log é o registro, não a fonte da decisão.
 - **Console (obrigatório):** a cada `extract()` / `findByText`, **imprimir no stdout o OCR completo** retornado (`text@x,y` por linha ou JSON), sem filtrar — para auditoria ao vivo (ex.: pill `+ Connect` visível na UI às vezes não sai no OCR; sem dump não dá para ver o buraco).
 - **OCR backends:** jornada usa **`rapidocr`**. Comparativo na fixture: [`extract.ocr-backends.fixture.test.js`](../src/lib/extract.ocr-backends.fixture.test.js). Default global do produto permanece tesseract se `engine` omitido; esta jornada **sempre** passa `engine: "rapidocr"`.
@@ -91,11 +93,12 @@ Passos (interfaces usadas)
    - Em cada tela (via `extract()`):
      1. listar todos os hits `text === "Connect"` com `180 < y < 850` (ignorar OCR `connections` / `Message`)
      2. se a mesma faixa `y` tiver `Message` / `Pending` / `Follow` → **não** tap (logar)
-     3. para cada `Connect` válido: `tapElement({ serial, x, y })` **só** nas coordenadas retornadas
-     4. aguardar 1–2s; se abriu Message/Premium → BACK (não contar); se limite LinkedIn / fim → Encerramento
-     5. sheet `Add a note…`: **só** `Skip` / `Ignorar` — jamais `Add a note` (detectar título pelo texto junto `/add\s+a\s+note/i`)
-     6. se OCR mostrar `Withdraw invitation` / `Withdraw` + `invitation`: **clicar `Cancel`** (jamais confirmar Withdraw) — logar; não contar Connect
-     7. incrementar contador só se Connect + Skip ok (sem Message/Withdraw); logar no `.md`
+     3. **antes do tap:** para cada `Connect` válido, **extrair e registrar o card do comprador** no log — todos os textos OCR do item da lista associados a esse Connect (faixa vertical do card: tipicamente do nome até o próximo card / mutual connections; incluir o que existir: nome, grau `2nd`/`3rd+`, headline/cargo, localização, `Current:` / `Past:`, empresa, mutual connections, e qualquer outro texto do item). Estruturar em `### Comprador` (prosa ou campos) + bloco `json` com os `{ text, x, y }` do card. **Sem registro do comprador = Connect incompleto** (não contar).
+     4. para cada `Connect` válido já registrado: `tapElement({ serial, x, y })` **só** nas coordenadas retornadas
+     5. aguardar 1–2s; se abriu Message/Premium → BACK (não contar); se limite LinkedIn / fim → Encerramento
+     6. sheet `Add a note…`: **só** `Skip` / `Ignorar` — jamais `Add a note` (detectar título pelo texto junto `/add\s+a\s+note/i`)
+     7. se OCR mostrar `Withdraw invitation` / `Withdraw` + `invitation`: **clicar `Cancel`** (jamais confirmar Withdraw) — logar; não contar Connect
+     8. incrementar contador só se Connect + Skip ok (sem Message/Withdraw) **e** `### Comprador` gravado no `.md`
    - se **zero** `Connect` na tela: scroll centro (não inventar clique) e **repetir sem limite de rounds** até achar `Connect` ou critério de saída
    - depois dos `Connect` da tela: scroll **swipe curto** no centro (`x: 270`, `y: 480`, `direction: "up"`, `distance` ~150–200 em 540×960 — **não** ≥350)
    - **Rolagem pequena de propósito:** swipe grande “pula” cards (item cego — Connect some sem passar pelo OCR). Preferir vários scrolls curtos a um longo.
@@ -105,7 +108,7 @@ Passos (interfaces usadas)
 
 7) Encerramento
    - disparado por: fim explícito da lista (OCR) **ou** limite LinkedIn **ou** erro fatal (tudo documentado no log)
-   - log final no `.md`: totais + motivo de parada
+   - log final no `.md`: totais + motivo de parada; opcionalmente índice/resumo dos compradores conectados nesta run
    - **parar a execução de imediato** — proibido continuar scroll/tap/extract após o encerramento
 
 Critérios de aceite
@@ -113,6 +116,7 @@ Critérios de aceite
 - Execução por **IA + este markdown**: sem script com o roteiro preso; cada passo = OCR → decisão em prosa no log → interface.
 - Após Encerramento, o AVD deixa de ser manipulado.
 - Passo 6: sem teto de rounds vazios; scroll só no centro; log `.md` com Decisão + OCR JSON por passo.
+- **Cada Connect contado** tem `### Comprador` com **todas** as infos disponíveis no item da lista (OCR do card); Connect sem esse registro não conta.
 - Só clica em `Connect`; **proibido** tap estimado; **jamais** `Message` (nem Pending/Follow/Following).
 - Após Connect, no sheet: só `Skip` — jamais `Add a note`.
 - Se `Withdraw invitation`: só `Cancel` — jamais confirmar Withdraw.
@@ -125,12 +129,14 @@ Notas operacionais
 - **Scroll — sempre no centro**, curto: **jamais** na zona do teclado/nav. Swipe longo demais pula Connect; gesto curto demais pode virar tap — manter swipe contínuo com `distance` ~150–200.
 - **Parada:** fim explícito da lista (OCR) **ou** limite LinkedIn — **não** parar por “3 rounds sem Connect”; scroll até achar `Connect`; ao parar, encerrar a execução.
 - Log: um `.md` por execução (documento: Decisão em prosa + OCR em JSON separado).
+- **Registro do comprador:** só a partir do OCR do card na lista (não abrir o perfil para “completar” dados). Se um campo não aparecer no OCR do item, não inventar — registrar o que houver.
+- **Antes → depois (registro):** log só com Decisão/OCR genérico do passo → cada Connect contado exige `### Comprador` com todos os textos do item. Rollback: remover a seção `### Comprador` / critério do passo 6 item 3 deste markdown.
 - Se OCR do teclado falhar, não clicar em `comprador` da lista — só digitar e depois fechar teclado → `Show all results` (não usar `adb input text`).
 
 Como executar
 1. Abrir AVD e navegar ao LinkedIn (manual ou `npm run linkedin-login` só para login/home — **não** é runner desta jornada).
 2. Pedir à IA: executar este roteiro; ela lê o markdown, chama `extract`/ações pontuais e decide em tempo real.
-3. Artefato: `src/logs/jornada-comprador/<stamp>.md` com Decisão + OCR por passo.
+3. Artefato: `src/logs/jornada-comprador/<stamp>.md` com Decisão + OCR por passo + `### Comprador` por cada Connect contado.
 
 Responsável: IA operando sobre `screen-robot/roteiros/jornada-comprador.md` + interfaces em `src/lib/`.
 

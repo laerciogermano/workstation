@@ -3,7 +3,7 @@
 **Por quê:** fixar a sequência dos tópicos da obra a partir dos [`inputs/`](inputs/README.md).  
 **Fonte:** documentos em [`inputs/`](inputs/README.md); áudios/transcrições em [`inputs/audios-e-transcricoes/`](inputs/audios-e-transcricoes/README.md); visão filosófica, tratado, briefing, notas de abertura.  
 **Visão:** [`README.md`](README.md).  
-**Já escrito:** [`artigo.md`](artigo.md) — abertura (0) + capítulos 1–7.  
+**Já escrito:** [`artigo.md`](artigo.md) — prosa na hierarquia 0.1–7.8 (espelha este roadmap).  
 **Regra:** cada ideia tem um bloco **dono**; nos outros, só ponte curta (“como em X”).
 
 ---

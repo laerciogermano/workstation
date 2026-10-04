@@ -15,3 +15,4 @@ Como registrar: [`README.md`](README.md).
 | 007 | 2026-10-04 | Roadmap em árvore (caps. 1–7) | [007-2026-10-04-roadmap-arvore-caps-1-7.md](007-2026-10-04-roadmap-arvore-caps-1-7.md) | Expandir blocos 1–7 em árvore, com lacunas dos inputs. |
 | 008 | 2026-10-04 | Limpar redundâncias do roadmap | [008-2026-10-04-roadmap-limpar-redundancias.md](008-2026-10-04-roadmap-limpar-redundancias.md) | Um bloco dono por ideia; pontes curtas; mapa anti-redundância. |
 | 009 | 2026-10-04 | Escrever capítulos no artigo | [009-2026-10-04-escrever-capitulos-artigo.md](009-2026-10-04-escrever-capitulos-artigo.md) | Prosa dos capítulos 1–7 em `artigo.md` a partir do roadmap e inputs. |
+| 010 | 2026-10-04 | Artigo na hierarquia do roadmap | [010-2026-10-04-artigo-seguir-roadmap.md](010-2026-10-04-artigo-seguir-roadmap.md) | Reescrever `artigo.md` espelhando 0.1–7.8 do roadmap. |

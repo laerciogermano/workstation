@@ -1,220 +1,407 @@
-# screen-robot — Documento de visão
+# screen-robot
 
-**Por quê:** fixar o *quê* do robô de tela antes de goals de negócio.  
-**Importante:** este projeto **só** opera o device/tela via **Node**; não implementa cadência comercial nem fila de leads.  
-**No fluxo:** **este documento** → stories → epics (prioridade) → roadmap → refinar estória (scenarios → bdds → protótipo se houver) → `7.tasks` / implementation-plan → pasta [`tasks/`](tasks/README.md) (EP/US/SC) → implementação em [`src/`](src/README.md).  
-**Arquitetura (sequências · classes):** [`arquitetura.md`](arquitetura.md).  
-**Umbrella:** [`../connectmax/README.md`](../connectmax/README.md).  
-**Consumidor LinkedIn:** [`../connectmax/linkedin-agent/`](../connectmax/linkedin-agent/README.md).  
-**Negócio (fila/faturamento):** [`../connectmax/vendas/`](../connectmax/vendas/README.md).  
-**Config IA:** [`config/config-ia.md`](config/config-ia.md).  
-**Prompts:** [`../connectmax/prompts/timeline.md`](../connectmax/prompts/timeline.md).  
-**Postmortem (runtime):** [`postmortem.md`](postmortem.md) — por que saímos do redroid e adotamos Android Studio.
+Agent Android via **Node**: frame → OCR → gestos. Sem dump uiautomator / árvore DOM.
 
----
-
-## Visão
-
-O **screen-robot** é um agent Android controlado por código Node: provisiona o device, instala APKs, recebe eventos de UI, **percebe a tela por imagem** (OCR para textos; visão/template para coords), executa operações e guarda estado de sessão.
-
-**Princípio de percepção:** ler e automatizar a UI a partir de um **frame/imagem** (screenshot, stream ou **câmera em aparelho real**) — **OCR** para textos (`extract()` → lista plana só de `type: "text"`) e **visão/template** para coords (US-12 `matchImage`). **Não** depende de dump uiautomator / árvore de acessibilidade ADB. O caminho futuro (device físico + câmera) usa o **mesmo** pipeline imagem → OCR → **lista de textos** → gestos.
-
-Além da automação por API, a instância Android permanece **disponível para controle interativo**: visualizar a tela (espelhamento) e operar manualmente — tocar, digitar, rolar e demais gestos — em paralelo ou em complemento ao código.
-
-O runtime Android (**AVD** via [`pocs/android-studio/`](pocs/android-studio/README.md)) **deve mascarar** a identidade do ambiente: apps e telas **não** devem ver o nome do emulador/vendor, e sim props de um aparelho Android comum (marca/modelo de mercado).
-
-## Mascarar identidade do aparelho
-
-**US-22 · SC-28 · EP-01.** Contrato e detalhes: [`pocs/README.md`](pocs/README.md#mascarar-identidade-do-aparelho). Cada vendor só documenta *como* aplica.
-
-## Problema
-
-Automatizar apps móveis (emulador **ou** aparelho real filmado/capturado) exige um caminho estável em código: agent pronto, apps na versão certa, **leitura da tela por imagem/OCR** e gestos confiáveis — sem acoplar regras de venda e sem depender de acessibilidade ADB que não existe no fluxo só-câmera.
-
-## Para quem
-
-| Persona | Necessidade |
-|---------|-------------|
-| **Agente / desenvolvedor** | Libs Node para as seis capacidades sem acoplar a um app de negócio |
-| **Operador / debug** | Ver e operar a tela do Android (tap, digitar, etc.) enquanto o agent está no ar |
-| **linkedin-agent** | Usar o robô como infra para operações no LinkedIn |
-| **Projeto vendas** | Indireto: consome o linkedin-agent, não o robô |
-
-## Objetivo
-
-Expor via Node: **provisionar · instalar APKs · eventos · operar · extrair · sessão**. Cenário piloto: login LinkedIn (BDDs em [`5.bdds.md`](5.bdds.md)).
-
-Também será possível **deixar o controle do Android disponível** para um operador humano: ver a tela e agir (tap, type, scroll, etc.) via espelhamento ([`src/scripts/view.sh`](src/scripts/view.sh) / scrcpy · `npm run view`), ou só capturar a tela com [`src/scripts/print.js`](src/scripts/print.js) (`npm run print -- -n tela.png`), sem depender só do script.
-
-## Capacidades (v1)
-
-Ver stories em [`1.stories.md`](1.stories.md) e cenários em [`4.scenarios.md`](4.scenarios.md).
-
-## Fora de escopo
-
-- Operações de domínio LinkedIn (login de negócio, busca, conexão) — isso é [`linkedin-agent`](../connectmax/linkedin-agent/README.md).
-- Regras de prospecção, fila de leads, faturamento ou papéis de vendedor — isso é [`vendas`](../connectmax/vendas/README.md).
-- Bypass de autenticação / scraping fora do uso legítimo do device.
-
----
-
-## Como usar
-
-API em [`src/`](src/README.md). `provisionEmulator(cfg)` → `{ serial, kind, bootCompleted, provisionedAt }` (só dados). Ops: `on` / `installApk` / `launch` / … com `{ serial, … }`. `resetInstance(cfg)` recria o runtime do zero.
-
-### 1. Pré-requisitos
-
-| Item | Detalhe |
-|------|---------|
-| Node | ≥ 18 |
-| `adb` | no `PATH` |
-| Android SDK / Emulator | runtime **AVD** (`kind: "avd"`) — ver [`pocs/android-studio/`](pocs/android-studio/README.md) |
-| System image | **Google APIs** ou **Google Play** (arm64 no Apple Silicon) — GMS para LinkedIn/Instagram/Tinder |
-| Opcional | [`apkeep`](https://github.com/EFForg/apkeep) para baixar XAPK |
-
-Create = sobe AVD nomeado por `provision.name` (ou `AVD_NAME`). Attach = reconecta ao serial existente (`emulator-5554`, …). Não é necessário rodar `start.sh` manualmente nesse fluxo.
-
-**Controle interativo da tela:** janela nativa do emulator; opcionalmente [`src/scripts/view.sh`](src/scripts/view.sh) (`cd src && npm run view`) / scrcpy enquanto a API Node automatiza.
-
-### 2. Configuração
-
-Edite [`src/device.config.json`](src/device.config.json):
-
-| Campo | Uso |
-|-------|-----|
-| `provision.name` | **Obrigatório** — id do agent / nome do AVD |
-| `provision.kind` | `"avd"` (default documentado) |
-| `provision.connectTimeoutMs` | Timeout de boot/conexão |
-| `apps.*` | `package`, `version`, `artifact` (path local) ou `source` (download) |
-| `provision.resetScript` | Opcional — wipe (`resetInstance`); default = `pocs/android-studio/scripts/reset.sh` (TODO — gap) |
-| `session.path` | Path genérico de sessão (API EP-06; o piloto atual **não** grava sessão) |
-| `screenshot.path` | Path ilustrativo na config; o piloto usa nomes fixos em `screenshots/` |
-| `credentials.linkedin.*Env` | Reservado para login completo (piloto atual **não** digita user/senha) |
-
-Serial é **resolvido** pela lib por agent (ex. `emulator-5554`).
-
-### 3. Fluxo típico (código)
+**Libs:** [`src/`](src/README.md) · **Stories:** [`1.stories.md`](1.stories.md) · **Arquitetura:** [`arquitetura.md`](arquitetura.md) · **Runtime AVD:** [`pocs/android-studio/`](pocs/android-studio/README.md)
 
 ```js
-import { provisionEmulator } from "./lib/provision.js";
-
-const a = await provisionEmulator({
-  provision: { name: "agent-a", kind: "avd" },
-});
-const b = await provisionEmulator({
-  provision: { name: "agent-b", kind: "avd" },
-});
-// a.serial !== b.serial — AVDs distintos (mais pesado — ver EP-01)
-
-const again = await provisionEmulator({
-  provision: { name: "agent-a", kind: "avd" },
-});
-// again.serial === a.serial — anexou sem criar
+import { provisionEmulator } from "./src/lib/provision.js";
+import { on } from "./src/lib/events.js";
+import { installApk } from "./src/lib/apks.js";
+import { launch, tap, tapElement, type, scroll, screenshot, matchImage, openScrcpy } from "./src/lib/operate.js";
+import { extract, findByText } from "./src/lib/extract.js";
+import { saveSession, restoreSession, removeSession } from "./src/lib/session.js";
+import { resetInstance } from "./src/lib/reset-instance.js";
 ```
 
-A partir daí:
+Pré-requisitos: Node ≥ 18 · `adb` · AVD (`kind: "avd"`) · config [`src/device.config.json`](src/device.config.json).
+
+---
+
+## Interfaces
+
+Cada interface: **entrada** · **saída**. Erros tipados em `err.code`.
+
+---
+
+### `provisionEmulator(cfg)`
+
+Cria se `name` novo; anexa se já existir.
+
+**Entrada**
+
+| Campo | Obrig. | Descrição |
+|-------|--------|-----------|
+| `provision.name` | sim (`avd`/`redroid`) | Id do agent / AVD |
+| `provision.kind` | | `"avd"` · `"adb"` · `"redroid"` |
+| `provision.serial` | se `adb` | Serial já online |
+| `provision.connectTimeoutMs` | | Timeout por fase |
+
+**Saída**
+
+```json
+{
+  "serial": "emulator-5554",
+  "kind": "avd",
+  "bootCompleted": true,
+  "provisionedAt": "2026-10-04T14:00:00.000Z"
+}
+```
 
 ```js
-import { on } from "./lib/events.js";
-import { installApk } from "./lib/apks.js";
-import { launch, tap, type, scroll, screenshot, matchImage } from "./lib/operate.js";
-import { extract } from "./lib/extract.js";
-import { saveSession, restoreSession, removeSession } from "./lib/session.js";
+const { serial } = await provisionEmulator({
+  provision: { name: "agent-a", kind: "avd" },
+});
+```
 
-const { serial, kind } = a;
+---
 
-await installApk({ serial, ...cfg.apps.linkedin });
+### `resetInstance(cfg)`
 
-await on({ serial, event: "boot" });
-await on({ serial, event: "app_open", pkg: "com.linkedin.android" });
+Wipe + sobe de novo.
+
+**Entrada**
+
+| Campo | Obrig. | Descrição |
+|-------|--------|-----------|
+| `provision.serial` / `device` | sim | Serial alvo |
+| `provision.kind` | | Script de reset |
+| `provision.resetScript` | | Override |
+| `provision.connectTimeoutMs` | | Timeout pós-reset |
+
+**Saída**
+
+```json
+{
+  "serial": "emulator-5554",
+  "kind": "avd",
+  "resetAt": "2026-10-04T14:01:00.000Z"
+}
+```
+
+---
+
+### `installApk(cfg)`
+
+**Entrada**
+
+| Campo | Obrig. | Descrição |
+|-------|--------|-----------|
+| `serial` | sim | Device |
+| `package` | sim* | Package |
+| `version` | | Skip se igual |
+| `artifact` | * | Path local APK/XAPK |
+| `source` | * | Ex. `"apk-pure"` |
+| `app` | | `{ package, version, artifact?, source? }` |
+
+\* flat ou via `app`.
+
+**Saída**
+
+```json
+{
+  "package": "com.linkedin.android",
+  "version": "4.1.1093",
+  "skipped": false,
+  "artifactPath": "/abs/path/apks/app.apk"
+}
+```
+
+```js
+await installApk({ serial, package: "com.linkedin.android", artifact: "apks/app.apk" });
+```
+
+---
+
+### `on(cfg)`
+
+**Entrada**
+
+| Campo | Obrig. | Descrição |
+|-------|--------|-----------|
+| `serial` | sim | Device |
+| `event` | sim | `boot` · `app_open` · `ui_stable` · `frame_change` |
+| `pkg` | `app_open` | Package em foreground |
+| `timeoutMs` | | Timeout |
+| `stableMs` | | Janela (`ui_stable`) |
+| `onEvent` | | Callback |
+
+**Saída** (ex. `ui_stable`)
+
+```json
+{ "type": "ui_stable", "attempt": 3, "at": "2026-10-04T14:02:00.000Z" }
+```
+
+```js
 await on({ serial, event: "ui_stable", timeoutMs: 90_000 });
-await on({ serial, event: "frame_change" });
+```
 
+---
+
+### `launch(cfg)`
+
+**Entrada**
+
+| Campo | Obrig. | Descrição |
+|-------|--------|-----------|
+| `serial` | sim | Device |
+| `package` / `pkg` | sim | Package |
+| `activity` | | Activity opcional |
+
+**Saída:** `undefined`
+
+```js
 await launch({ serial, package: "com.linkedin.android" });
+```
+
+---
+
+### `tap(cfg)` / `tapElement(cfg)`
+
+Toque em **x,y**.
+
+**Entrada**
+
+| Campo | Obrig. | Descrição |
+|-------|--------|-----------|
+| `serial` | sim | Device |
+| `x` | sim | X |
+| `y` | sim | Y |
+
+**Saída:** `undefined`
+
+```js
 tap({ serial, x: 360, y: 640 });
+tapElement({ serial, x: hit.x, y: hit.y });
+```
+
+---
+
+### `type(cfg)`
+
+OCR das teclas → tap por caractere (sem `input text`).
+
+**Entrada**
+
+| Campo | Obrig. | Descrição |
+|-------|--------|-----------|
+| `serial` | sim | Device |
+| `text` | sim | Texto |
+| `region` | | `{ x, y, width, height }` teclado |
+| `delayMs` | | Default `100` |
+
+**Saída:** `undefined`
+
+```js
 await type({ serial, text: "11999999999", region: { x: 0, y: 700, width: 720, height: 500 } });
+```
+
+---
+
+### `scroll(cfg)`
+
+**Entrada**
+
+| Campo | Obrig. | Descrição |
+|-------|--------|-----------|
+| `serial` | sim | Device |
+| `direction` | | `down` · `up` · `left` · `right` |
+| `distance` | | Default `800` |
+| `x` / `y` | | Origem do swipe |
+
+**Saída:** `undefined`
+
+```js
 scroll({ serial, direction: "down", distance: 800 });
-screenshot({ serial, path: "./screenshots/tela.png" });
+```
+
+---
+
+### `screenshot(cfg)`
+
+**Entrada**
+
+| Campo | Obrig. | Descrição |
+|-------|--------|-----------|
+| `serial` | sim | Device |
+| `path` | sim | Destino PNG |
+
+**Saída**
+
+```text
+"/abs/path/screenshots/tela.png"
+```
+
+```js
+const path = screenshot({ serial, path: "./screenshots/tela.png" });
+```
+
+---
+
+### `matchImage(cfg)`
+
+**Entrada**
+
+| Campo | Obrig. | Descrição |
+|-------|--------|-----------|
+| `serial` | sim | Device |
+| `templatePath` | sim | PNG template |
+
+**Saída**
+
+```json
+{ "x": 360, "y": 640, "confidence": 0.92 }
+```
+
+```js
 const { x, y, confidence } = await matchImage({ serial, templatePath: "./templates/btn.png" });
+```
 
+---
+
+### `openScrcpy(cfg)`
+
+**Entrada**
+
+| Campo | Obrig. | Descrição |
+|-------|--------|-----------|
+| `serial` | sim | Device |
+| `title` | | Título da janela |
+| `detached` | | Default `true` |
+| `extraArgs` | | Args scrcpy |
+
+**Saída**
+
+```json
+{ "pid": 12345, "serial": "emulator-5554" }
+```
+
+```js
+const { pid } = openScrcpy({ serial, title: `agent ${serial}` });
+```
+
+---
+
+### `extract(cfg)`
+
+Frame → OCR → lista plana `{ type: "text", text, x, y }`.
+
+**Entrada**
+
+| Campo | Obrig. | Descrição |
+|-------|--------|-----------|
+| `serial` | sim | Device |
+
+**Saída**
+
+```json
+[
+  { "type": "text", "text": "Sign", "x": 273, "y": 833 },
+  { "type": "text", "text": "in", "x": 339, "y": 829 },
+  { "type": "text", "text": "with", "x": 402, "y": 829 },
+  { "type": "text", "text": "Email", "x": 500, "y": 829 }
+]
+```
+
+```js
 const elements = await extract({ serial });
-// → [ { type: "text", text, x, y }, … ]
+```
 
+---
+
+### `findByText(serial, query, opts?)`
+
+OCR interno; elementos lado a lado contidos na query.
+
+**Entrada**
+
+| Campo | Obrig. | Descrição |
+|-------|--------|-----------|
+| `serial` | sim | Device |
+| `query` | sim | Ex. `"Sign in with Email"` |
+| `opts.minScore` | | Default `0.75` |
+
+**Saída**
+
+```json
+{
+  "elements": [
+    { "type": "text", "text": "Sign", "x": 273, "y": 833 },
+    { "type": "text", "text": "in", "x": 339, "y": 829 },
+    { "type": "text", "text": "with", "x": 402, "y": 829 },
+    { "type": "text", "text": "Email", "x": 500, "y": 829 }
+  ],
+  "score": 0.95,
+  "text": "sign in with email",
+  "x": 386,
+  "y": 830
+}
+```
+
+Sem match: `null`.
+
+```js
+const hit = await findByText(serial, "Sign in with Email", { minScore: 0.8 });
+if (hit) tapElement({ serial, x: hit.x, y: hit.y });
+```
+
+---
+
+### `saveSession(cfg)`
+
+**Entrada:** `serial` · `kind` · `path` · `state?`
+
+**Saída**
+
+```text
+"/abs/path/state/session.json"
+```
+
+---
+
+### `restoreSession(cfg)`
+
+**Entrada:** `path`
+
+**Saída**
+
+```json
+{
+  "step": "logged-in",
+  "serial": "emulator-5554",
+  "kind": "avd",
+  "savedAt": "2026-10-04T14:05:00.000Z"
+}
+```
+
+---
+
+### `removeSession(cfg)`
+
+**Entrada:** `path`
+
+**Saída:** `true` se removeu · `false` se inexistente
+
+```js
 await saveSession({ serial, kind, path: "./state/session.json", state: { step: "logged-in" } });
 const state = await restoreSession({ path: "./state/session.json" });
 await removeSession({ path: "./state/session.json" });
 ```
 
-### 4. API pública (funções puras)
-
-Entrada / resposta de cada interface: [`src/README.md#interfaces`](src/README.md#interfaces).
-
-| Função | O quê |
-|--------|--------|
-| `provisionEmulator(cfg)` | Cria se `name` novo; anexa se já existir; retorna `{ serial, kind, bootCompleted, provisionedAt }` |
-| `resetInstance(cfg)` | Wipe do AVD + sobe de novo; ADB + boot ok |
-| `installApk({ serial, … })` | Lê spec → baixa se preciso → instala; `{ package, version, skipped }` |
-| `on(cfg)` | `boot` · `app_open` · `ui_stable` · `frame_change` |
-| `launch` / `tap` / `tapElement` / `type` / `scroll` / `screenshot` / `matchImage` / `openScrcpy` | Gestos e captura (`serial` no cfg; tap = **x,y**) |
-| `extract({ serial })` | Lista plana `{ type: "text", text, x, y }` |
-| `findByText(serial, query)` | US-23: elementos lado a lado + `x,y` |
-| `saveSession` / `restoreSession` / `removeSession` | Persistência JSON |
-
-**Antes → depois:** métodos no handle → funções com `{ serial, … }`.
-
-Erros tipados (campo `err.code`): `PROVISION_*` (incl. `PROVISION_INVALID_NAME`), `RESET_*`, `APK_*`, `OPERATE_*`, `SESSION_*`, `EVENT_*`.
-
-### 5. Piloto LinkedIn
-
-```bash
-cd screen-robot/src
-npm run linkedin-login
-```
-
-Ordem do script ([`src/scripts/linkedin-login.js`](src/scripts/linkedin-login.js)):
-
-1. Limpar `screenshots/`
-2. `resetInstance(cfg)` — instância do zero
-3. `provisionEmulator` → `openScrcpy` → `installApk(linkedin)` → `launch` → `ui_stable`
-4. Screenshot `01-tela-inicial.png`
-5. `findByText(serial, "Sign in with Email")` → tap `x,y` → `02-apos-sign-in-email.png`
-6. `extract()` → console da lista de textos OCR + `frame-screen.png` + `elements.json`
-
-Não digita credenciais e não chama `saveSession`.
-
-**Aceite SC-30 (OCR partido):** fixture [`src/test/fixtures/linkedin-tela-inicial.png`](src/test/fixtures/linkedin-tela-inicial.png) — query devolve `Sign`+`in`+`with`+`Email`.
-
-### 6. Testes
-
-```bash
-cd screen-robot/src
-npm test          # unitários (inclui fixture LinkedIn)
-npm run test:e2e  # BDD e2e US/EP (precisa runtime Android, exceto SC-30)
-
-# Só LinkedIn / SC-30
-node --test --test-timeout=120000 test/bdd/sc-30-linkedin-sign-in-with-email.test.js
-node --test --test-timeout=120000 lib/find-by-text.fixture.test.js
-```
-
-Detalhe das libs e CLI legado: [`src/README.md`](src/README.md).
-
 ---
 
-## Artefatos
+## Uso rápido
 
-| Artefato | Arquivo | Status |
-|----------|---------|--------|
-| Stories — US título + descrição | [`1.stories.md`](1.stories.md) | Feito |
-| Épicos (prioridade) | [`2.epics.md`](2.epics.md) | Feito |
-| Roadmap (Gantt) | [`3.roadmap.md`](3.roadmap.md) | Feito |
-| Cenários | [`4.scenarios.md`](4.scenarios.md) | Feito |
-| BDDs | [`5.bdds.md`](5.bdds.md) | Feito |
-| Arquitetura (seq. · classes) | [`arquitetura.md`](arquitetura.md) | Feito |
-| Implementation plan | por épico em [`implementation-plan/`](implementation-plan/README.md) | Feito |
-| Tasks (Gantt) | [`7.tasks.md`](7.tasks.md) | Feito |
-| Tasks (EP/US/SC) | [`tasks/`](tasks/README.md) | EP-01..06 |
-| Sources | [`src/`](src/README.md) | Feito |
+```bash
+cd screen-robot/src
+npm test
+npm run linkedin-login   # piloto
+npm run view             # scrcpy
+```
 
-## Próximos passos
-
-→ Consumir `provisionEmulator` no [`linkedin-agent`](../connectmax/linkedin-agent/README.md) · aceite: [`5.bdds.md`](5.bdds.md)
+| Doc | Link |
+|-----|------|
+| Implementação / testes / CLI | [`src/README.md`](src/README.md) |
+| Stories · épicos · BDDs | [`1.stories.md`](1.stories.md) · [`2.epics.md`](2.epics.md) · [`5.bdds.md`](5.bdds.md) |
+| Identidade do aparelho (US-22) | [`pocs/README.md`](pocs/README.md#mascarar-identidade-do-aparelho) |
+| Postmortem runtime | [`postmortem.md`](postmortem.md) |

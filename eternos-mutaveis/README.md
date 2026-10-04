@@ -5,7 +5,7 @@
 **No fluxo:** **este documento** → [`docs/`](docs/) (`tese` → `estrutura` → `capitulos` → `manuscrito`). Orienta toda a esteira; não substitui o texto dos capítulos.
 
 Derivados: [`docs/`](docs/).  
-Apresentação visual do artigo: [`apresentacao.md`](apresentacao.md).  
+Apresentação visual do artigo: [`apresentacao.md`](apresentacao.md) · versão em bullets: [`bullets.md`](bullets.md).  
 Timeline de prompts: [`prompts/`](prompts/).  
 Regras para a IA: [`config/config-ia.md`](config/config-ia.md).
 

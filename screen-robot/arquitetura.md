@@ -104,7 +104,7 @@ device (AVD / redroid / aparelho)
 | Método | O quê | Camada baixa |
 |--------|-------|--------------|
 | `launch(cfg)` | resolve-activity → `am start` / monkey | adb shell |
-| `tap(cfg)` | `cmd input tap` → fallback `input tap` (+ reconnect) | adb |
+| `tap(cfg)` | `input tap` → fallback `cmd input tap` (+ reconnect) | adb |
 | `tapElement(cfg)` | `x,y` → `tap` | → tap |
 | `type(cfg)` | frame → OCR região → `buildKeyCenters` → taps | frame+ocr+tap |
 | `buildKeyCenters(words)` | Map char→center (1 glifo) | puro |

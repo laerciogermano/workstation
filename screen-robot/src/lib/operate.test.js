@@ -81,7 +81,7 @@ describe("operate", () => {
     );
   });
 
-  it("tap envia cmd input tap", () => {
+  it("tap envia input tap", () => {
     const calls = [];
     tap(
       { serial: "s", x: 10, y: 20 },
@@ -91,7 +91,7 @@ describe("operate", () => {
         connectIfTcp: () => {},
       },
     );
-    assert.deepEqual(calls[0], ["shell", "cmd", "input", "tap", "10", "20"]);
+    assert.deepEqual(calls[0], ["shell", "input", "tap", "10", "20"]);
   });
 
   it("tap faz retry em Broken pipe", () => {

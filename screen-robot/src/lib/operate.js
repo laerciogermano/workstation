@@ -170,11 +170,12 @@ export function tap(cfg, deps = {}) {
   for (let i = 0; i < maxAttempts; i++) {
     try {
       d.connectIfTcp(serial);
-      // Preferir `cmd input` (mais estável no redroid); fallback `input`.
+      // Preferir `input tap` (AVD Play: `cmd input` pode sair 0 sem tocar).
+      // Fallback `cmd input` para redroid/outros.
       try {
-        d.runAdb(serial, ["shell", "cmd", "input", "tap", String(xi), String(yi)]);
-      } catch {
         d.runAdb(serial, ["shell", "input", "tap", String(xi), String(yi)]);
+      } catch {
+        d.runAdb(serial, ["shell", "cmd", "input", "tap", String(xi), String(yi)]);
       }
       return;
     } catch (e) {

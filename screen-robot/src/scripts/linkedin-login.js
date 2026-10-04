@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Abre LinkedIn, clica “Sign in with Email” e imprime a lista de elementos.
+ * Provisiona, extrai textos (OCR) e clica em "Network" pelo x,y do resultado.
  *
  * Uso:
  *   node scripts/linkedin-login.js
@@ -11,12 +11,10 @@ import { dirname, resolve, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { sleep } from "../lib/adb.js";
-import { installApk } from "../lib/apks.js";
 import { on } from "../lib/events.js";
-import { extract, findByText } from "../lib/extract.js";
-import { launch, openScrcpy, screenshot, tapElement } from "../lib/operate.js";
+import { extract } from "../lib/extract.js";
+import { screenshot, tapElement } from "../lib/operate.js";
 import { provisionEmulator } from "../lib/provision.js";
-import { resetInstance } from "../lib/reset-instance.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, "..");
@@ -46,7 +44,7 @@ async function main() {
   console.log("0) Limpar screenshots…");
   clearScreenshots(outDir);
 
-  console.log("0.5) Resetar instância do zero…");
+  // console.log("0.5) Resetar instância do zero…");
   // const reset = await resetInstance(cfg);
   // console.log(`   OK ${reset.serial}`);
 
@@ -54,68 +52,30 @@ async function main() {
   const { serial } = await provisionEmulator(cfg);
   console.log(`   OK ${serial}`);
 
+  console.log("2) Extrair textos (OCR)…");
   const elements = await extract({ serial });
   console.log(elements);
+  writeFileSync(resolve(outDir, "elements.json"), JSON.stringify(elements, null, 2), "utf8");
+  screenshot({ serial, path: resolve(outDir, "01-antes-network.png") });
 
-  // console.log("1.5) Abrir scrcpy…");
-  // const view = openScrcpy({ serial, title: `linkedin-login ${serial}` });
-  // console.log(`   OK pid=${view.pid}`);
+  console.log('3) Clicar "Network" (x,y do extract)…');
+  const network =
+    elements.find((e) => /^network$/i.test(String(e.text || "").trim())) ||
+    null;
+  if (!network) {
+    throw new Error('Texto "Network" não encontrado no extract');
+  }
+  console.log(`   → "${network.text}" x=${network.x} y=${network.y}`);
+  tapElement({ serial, x: network.x, y: network.y });
+  await sleep(3_000);
+  await on({ serial, event: "ui_stable", timeoutMs: 60_000 }).catch(() => {});
 
-  // console.log("2) Instalar LinkedIn…");
-  // const li = await installApk({ serial, ...cfg.apps.linkedin });
-  // console.log(`   OK ${li.package} ${li.version || "?"}${li.skipped ? " (skip)" : ""}`);
-
-  // console.log("3) Abrir LinkedIn…");
-  await launch({ serial, package: cfg.apps.linkedin.package });
-  // await on({ serial, event: "ui_stable", timeoutMs: 90_000 });
-
-  const hit = await findByText(serial, "Network", {
-    minScore: 0.75,
-  });
-
-  console.log(hit);
-
-  // console.log("4) Print da tela inicial…");
-  // const shotPath = resolve(outDir, "01-tela-inicial.png");
-  // screenshot({ serial, path: "screenshot-teste.png" });
-  // console.log(`   OK → ${shotPath}`);
-
-  await tapElement({ serial, x: hit.x, y: hit.y });
-
-  // console.log("5) Clicar Sign in with Email…");
-  // {
-  //   let hit = null;
-  //   for (let attempt = 1; attempt <= 8; attempt++) {
-  //     hit = await findByText(serial, "Sign in with Email", {
-  //       minScore: 0.75,
-  //     });
-  //     if (hit?.x != null) break;
-  //     console.log(`   tentativa ${attempt}/8 — aguardando OCR…`);
-  //     await sleep(3_000);
-  //   }
-  //   if (hit?.x != null) {
-  //     console.log(
-  //       `   → "${hit.text}" score=${hit.score.toFixed(2)} parts=${hit.elements.length}`,
-  //     );
-  //     tapElement({ serial, x: hit.x, y: hit.y });
-  //     await sleep(5_000);
-  //     screenshot({ serial, path: resolve(outDir, "02-apos-sign-in-email.png") });
-  //   } else {
-  //     console.log("   (Sign in with Email não encontrado — segue)");
-  //   }
-  // }
-
-  // console.log("6) Extrair textos (OCR)…");
-  // const elements = await extract({ serial });
-  // console.log(`   texts=${elements.length}`);
-
-  // screenshot({ serial, path: resolve(outDir, "frame-screen.png") });
-  // const json = JSON.stringify(elements, null, 2);
-  // const outJson = resolve(outDir, "elements.json");
-  // writeFileSync(outJson, json, "utf8");
-  // console.log(json);
-  // console.log(`\nOK → ${outJson}`);
-  // console.log(`OK → ${resolve(outDir, "frame-screen.png")}`);
+  screenshot({ serial, path: resolve(outDir, "02-apos-network.png") });
+  const after = await extract({ serial });
+  writeFileSync(resolve(outDir, "elements-apos-network.json"), JSON.stringify(after, null, 2), "utf8");
+  console.log("4) Após Network:");
+  console.log(after);
+  console.log(`OK → ${resolve(outDir, "02-apos-network.png")}`);
 }
 
 main().catch((e) => {

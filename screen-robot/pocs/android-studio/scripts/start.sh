@@ -50,6 +50,7 @@ if [[ "${EMU_NO_WINDOW:-0}" == "1" ]]; then
   NO_WINDOW_ARGS+=(-no-window)
 fi
 
+: >"$ROOT/emulator.log"
 nohup emulator -avd "$AVD_NAME" \
   -camera-back "$WEBCAM" \
   -camera-front "$WEBCAM" \
@@ -62,9 +63,39 @@ nohup emulator -avd "$AVD_NAME" \
   -no-metrics \
   ${NO_WINDOW_ARGS[@]+"${NO_WINDOW_ARGS[@]}"} \
   >"$ROOT/emulator.log" 2>&1 &
+EMU_PID=$!
+disown "$EMU_PID" 2>/dev/null || true
 
-echo "Emulador iniciando (pid $!). Aguarde o boot..."
+echo "Emulador iniciando (pid $EMU_PID). Aguarde o boot..."
 echo "Log: $ROOT/emulator.log"
+
+# Falha cedo só em FATAL de disco / qemu que nunca sobe — não mate o launcher.
+qemu_up() { pgrep -f "qemu-system.*${AVD_NAME}" >/dev/null 2>&1; }
+for _ in $(seq 1 20); do
+  sleep 1
+  if grep -q 'enough disk space' "$ROOT/emulator.log" 2>/dev/null; then
+    echo "ERRO: disco insuficiente para o AVD ${AVD_NAME} (precisa ~5GB livres)."
+    df -h /System/Volumes/Data 2>/dev/null || df -h /
+    tail -20 "$ROOT/emulator.log" || true
+    pkill -f "qemu-system.*${AVD_NAME}" 2>/dev/null || true
+    exit 1
+  fi
+  if grep -q '^FATAL' "$ROOT/emulator.log" 2>/dev/null; then
+    echo "ERRO: emulator FATAL — veja $ROOT/emulator.log"
+    tail -20 "$ROOT/emulator.log" || true
+    exit 1
+  fi
+  if qemu_up; then
+    break
+  fi
+done
+
+if ! qemu_up; then
+  echo "ERRO: qemu do AVD ${AVD_NAME} não subiu."
+  tail -30 "$ROOT/emulator.log" || true
+  exit 1
+fi
+
 echo "Depois: ./scripts/wait-boot.sh && ./scripts/open-camera.sh"
 if [[ "${EMU_NO_WINDOW:-0}" == "1" ]]; then
   echo "Headless: após boot, scrcpy -s emulator-5554"

@@ -9,6 +9,7 @@ Apps de loja (LinkedIn, Instagram, Tinder) exigem imagem **Google APIs** ou **Go
 | Item | Detalhe |
 |------|---------|
 | macOS / Linux | Host com RAM livre (AVD Play ~1–1.5 GB guest; processo host consome bem mais) |
+| Disco livre | **≥ 5 GB** em `/System/Volumes/Data` — abaixo disso o emulator aborta com `FATAL … enough disk space` e o provision parece “travar” no boot |
 | SDK | `ANDROID_HOME` apontando para command-line tools ou Android Studio SDK |
 | Ferramentas | `emulator`, `adb`, `avdmanager`, `sdkmanager` |
 | System image | **Google Play** (`google_apis_playstore`), API 30+ arm64 — GMS atualizável (Continue with Google) |
@@ -29,6 +30,7 @@ cd screen-robot/pocs/android-studio
 ./scripts/setup-avd.sh
 
 # 2) sobe o emulador (janela nativa)
+#    start.sh falha cedo se disco insuficiente (FATAL no log) — não fica “travado”
 ./scripts/start.sh
 
 # 3) espera boot

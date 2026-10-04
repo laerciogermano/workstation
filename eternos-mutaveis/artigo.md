@@ -6,6 +6,8 @@
 
 ## 0. Abertura — as perguntas que não envelhecem
 
+![Banner do capítulo 0: figura solitária sob um céu de perguntas douradas que se tornam estrutura](assets/banner-cap-0-abertura.jpg)
+
 ### 0.1 Objetivo da mensagem
 
 O objetivo desta mensagem é fazer o leitor compreender o que é a realidade — e responder, pela via da lógica e não da fé, às perguntas que a humanidade carrega desde que aprendeu a falar. O que será revelado sempre esteve diante dos nossos olhos. De tão simples, nunca foi percebido em toda a sua grandeza.

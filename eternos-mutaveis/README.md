@@ -151,4 +151,4 @@ A obra como veículo público da tese: publicação, tradução e circulação n
 
 ## Próximos passos
 
-→ [`docs/README.md`](docs/README.md) → tese e argumentos (a produzir)
+→ [`roadmap.md`](roadmap.md) (ordem do que falar/escrever) → continuar [`artigo.md`](artigo.md) no bloco 1 → [`docs/README.md`](docs/README.md) (tese e argumentos, a produzir)

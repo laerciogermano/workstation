@@ -83,7 +83,8 @@ Passos (interfaces usadas)
      3. para cada `Connect` OCR válido: `tapElement({ serial, x, y })` **só** nessas coordenadas do OCR
      4. aguardar 1–2s; se abriu Message/Premium → BACK (não contar); se limite LinkedIn / fim → Encerramento
      5. sheet `Add a note…`: **só** `Skip` / `Ignorar` — jamais `Add a note` (detectar título pelo texto junto `/add\s+a\s+note/i`)
-     6. incrementar contador; logar no `.md`
+     6. se OCR mostrar `Withdraw invitation` / `Withdraw` + `invitation`: **clicar `Cancel`** (jamais confirmar Withdraw) — logar; não contar Connect
+     7. incrementar contador só se Connect + Skip ok (sem Message/Withdraw); logar no `.md`
    - se **zero** `Connect` no OCR da tela: scroll centro (não inventar clique) e repetir
    - depois dos Connects OCR da tela: scroll **swipe** no centro (`x: 270`, `y: 480`, `direction: "up"`, `distance` ≥ 350); logar scroll
    - **após rolar:** repetir; idle sem `Connect` OCR → Encerramento; limite LinkedIn → Encerramento
@@ -101,6 +102,7 @@ Critérios de aceite
 - Passo 6: scroll só no centro; log `.md` com Decisão + OCR JSON por passo.
 - Só clica em `Connect` lido no OCR; **proibido** tap estimado; **jamais** `Message` (nem Pending/Follow/Following).
 - Após Connect, no sheet: só `Skip` — jamais `Add a note`.
+- Se `Withdraw invitation`: só `Cancel` — jamais confirmar Withdraw.
 - Se abrir Message/Premium: BACK via OCR até a lista; nunca enviar mensagem.
 - Decisões só via OCR/texto; print+análise por imagem apenas em erro/debug.
 

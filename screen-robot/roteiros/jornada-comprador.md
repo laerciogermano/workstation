@@ -83,7 +83,12 @@ Passos (interfaces usadas)
    - **Sem teto de rounds:** se a tela não tiver `Connect`, **scrollar no centro infinitamente** até aparecer algum `Connect` — **não** parar após 3 (nem N) rounds vazios.
    - **Critérios de saída** (só estes encerram o passo 6 e o processo):
      1. **Fim explícito da lista** no OCR: `No more results` / `End of results` / `You've reached the end` / `não há mais resultados`. **Não** usar “Are these results helpful?” sozinho nem idle de N scrolls.
-     2. **Limite LinkedIn:** `weekly invitation limit`, `invitation limit`, `can't send invitations`, `limite de convites`, `não é possível enviar`, etc.
+     2. **Limite semanal de convites LinkedIn** — **parar imediatamente** se o OCR (toast ou texto na tela) contiver a mensagem (RapidOCR costuma juntar palavras):
+        - Frase canônica: `Your invitation to {Name} was not sent because you have reached the weekly limit for connection invitations.`
+        - Fragmentos OCR observados: `Yourinvitationto…wasnot` · `sentbecauseyouhavereachedthe` · `weeklylimitforconnectioninvitations.`
+        - Também aceitar: `weekly invitation limit` / `weeklylimitforconnectioninvitations` / `invitation limit` / `can't send invitations` / `limite de convites` / `não é possível enviar`.
+        - Evidência: print `src/screenshots/linkedin-weekly-invitation-limit.png` + OCR no log da run (ex. 2026-10-04T19-42-45).
+        - Ao detectar: **não** Skip, **não** scroll, **não** novo Connect — Encerramento com motivo `limite_linkedin`.
    - **Não** usar limite N artificial de connects nem de rounds no run.
    - Ao bater critério de saída: ir ao Encerramento, gravar log, **parar a execução imediatamente** — o AVD não deve continuar sendo manipulado.
    - **Armadilha Message / Premium:** tap errado (ou gesto curto no centro) pode abrir compose “Send a message” / InMail / paywall Premium. **Nunca** enviar mensagem nem clicar CTA Premium.
@@ -127,7 +132,7 @@ Notas operacionais
 - Timeouts: esperar 1–3s entre ações; `findByText` com `minScore:0.75`.
 - Scroll lista: `direction: "up"`; origem **sempre no centro** (`x: 270`, `y: 480` em 540×960); `distance` **~150–200** (rolagens menores). Fechar teclado antes.
 - **Scroll — sempre no centro**, curto: **jamais** na zona do teclado/nav. Swipe longo demais pula Connect; gesto curto demais pode virar tap — manter swipe contínuo com `distance` ~150–200.
-- **Parada:** fim explícito da lista (OCR) **ou** limite LinkedIn — **não** parar por “3 rounds sem Connect”; scroll até achar `Connect`; ao parar, encerrar a execução.
+- **Parada:** fim explícito da lista (OCR) **ou** limite semanal de convites (`weeklylimitforconnectioninvitations` / frase `Your invitation to … was not sent because you have reached the weekly limit…`) — **não** parar por “3 rounds sem Connect”; scroll até achar `Connect`; ao parar, encerrar a execução.
 - Log: um `.md` por execução (documento: Decisão em prosa + OCR em JSON separado).
 - **Registro do comprador:** só a partir do OCR do card na lista (não abrir o perfil para “completar” dados). Se um campo não aparecer no OCR do item, não inventar — registrar o que houver.
 - **Antes → depois (registro):** log só com Decisão/OCR genérico do passo → cada Connect contado exige `### Comprador` com todos os textos do item. Rollback: remover a seção `### Comprador` / critério do passo 6 item 3 deste markdown.

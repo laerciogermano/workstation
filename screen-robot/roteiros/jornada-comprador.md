@@ -4,7 +4,7 @@ Objetivo
 - Automatizar a jornada do operador: buscar "comprador" no LinkedIn (AVD já na página do LinkedIn), abrir Show all results, clicar em People e conectar nos perfis (Skip se aparecer), **scrollando até achar `Connect`**, até fim explícito da lista ou limite do LinkedIn.
 
 Modo de execução (obrigatório) — IA + linguagem natural
-- Este arquivo é a **fonte da jornada em linguagem natural**. A IA lê estes critérios e, a cada turno, **extrai o OCR** (`extract` / `findByText` → `{ text, x, y }`) e **decide o próximo passo** com base neste doc + no texto da tela.
+- Este arquivo é a **fonte da jornada em linguagem natural**. A IA lê estes critérios e, a cada turno, **extrai o OCR com RapidOCR** (`extract({ serial, engine: "rapidocr" })` / `findByText(..., { engine: "rapidocr" })` → `{ text, x, y }`) e **decide o próximo passo** com base neste doc + no texto da tela.
 - **Proibido** criar, manter ou executar script (`.js` / `.mjs` / one-shot Node / `_run-tmp` etc.) com o roteiro **preso** no código (máquina de estados, loops `while` hardcoded, fases `home|typed|people`, regex/lista de passos duplicando este markdown).
 - **Permitido** só chamar as **interfaces** pontuais do screen-robot (`extract`, `tapElement`, `type`, `scroll`, `key`, `sleep`, …) sob comando da IA — sem embutir a política da jornada no arquivo.
 - **Antes → depois:** runs via script monolítico com o fluxo embutido → **IA opera** lendo este roteiro + OCR a cada passo; o log `.md` registra Decisão + OCR; não há “runner” da jornada no repo.
@@ -16,7 +16,8 @@ Pré-requisitos
 - Pasta `src/screenshots/` e pasta de logs da execução (ex. `src/logs/jornada-comprador/`) para artefatos.
 
 Regra de decisão (obrigatória) — execução da jornada
-- **Toda decisão** em runtime (o que clicar, se Skip apareceu, se há Connect, se scrollar, se a tela mudou) é da **IA**, usando **somente** `extract()` / `findByText` e o retorno de texto `{ text, x, y }`, interpretados à luz deste roteiro.
+- **Engine OCR desta jornada:** **`rapidocr`** (obrigatório). Não usar tesseract aqui — na lista People o pill `Connect` some no tesseract.js. Rollback: `engine: "tesseract"` / unset `SCREEN_ROBOT_OCR`.
+- **Toda decisão** em runtime (o que clicar, se Skip apareceu, se há Connect, se scrollar, se a tela mudou) é da **IA**, usando **somente** `extract({ engine: "rapidocr" })` / `findByText(..., { engine: "rapidocr" })` e o retorno de texto `{ text, x, y }`, interpretados à luz deste roteiro.
    - **CTA do card:** **jamais** clicar em `Message` (nem `Msg`, `Send a message`). **Apenas** `Connect` (match exato `^Connect$` no OCR). **Proibido** tap estimado à direita do card (`x: ~458`) — era isso que acertava `Message` quando o pill não saía no OCR. Sem `Connect` no extract → pular/scroll; se abrir Message → `KEYCODE_BACK` e não contar.
 - A IA **jamais** tira print do dispositivo sozinha para **olhar a imagem** e decidir o próximo passo da execução.
 - Screenshots no fluxo feliz são só artefato opcional de log — **não** entram no raciocínio da IA em runtime.
@@ -37,11 +38,11 @@ Log por execução (obrigatório)
   4. `### Resultado` — prosa do que aconteceu depois; opcionalmente outro bloco `json` se o OCR seguinte importar
 - Sem documento de passo = execução incompleta para auditoria. Decisões continuam só por OCR; o log é o registro, não a fonte da decisão.
 - **Console (obrigatório):** a cada `extract()` / `findByText`, **imprimir no stdout o OCR completo** retornado (`text@x,y` por linha ou JSON), sem filtrar — para auditoria ao vivo (ex.: pill `+ Connect` visível na UI às vezes não sai no OCR; sem dump não dá para ver o buraco).
-- **OCR backends (debug):** na fixture People/comprador, `tesseract.js` (default) **não** lê o pill; `rapidocr` devolve `Connect` exato; `macos-vision` devolve `•+ Connect`. Ver [`src/lib/extract-engines.js`](../src/lib/extract-engines.js) e teste [`extract.ocr-backends.fixture.test.js`](../src/lib/extract.ocr-backends.fixture.test.js). Default do produto ainda é tesseract até troca explícita.
+- **OCR backends:** jornada usa **`rapidocr`**. Comparativo na fixture: [`extract.ocr-backends.fixture.test.js`](../src/lib/extract.ocr-backends.fixture.test.js). Default global do produto permanece tesseract se `engine` omitido; esta jornada **sempre** passa `engine: "rapidocr"`.
 
 Passos (interfaces usadas)
 1) Capture frame + OCR
-   - chamar: `extract({ serial })`
+   - chamar: `extract({ serial, engine: "rapidocr" })`
    - saída: lista `{ type: "text", text, x, y }`
    - log: OCR completo + decisão “iniciar jornada”
 
@@ -62,14 +63,14 @@ Passos (interfaces usadas)
 
 4) Clicar em "Show all results"
    - após abrir os resultados (buscar "comprador"), localizar `Show all results`:
-     - `findByText(serial, "Show all")` → hit `{ x, y }` ou detectar par vizinho `Show` + `all` na mesma linha via `extract()`
+     - `findByText(serial, "Show all", { engine: "rapidocr" })` → hit `{ x, y }` ou detectar par vizinho `Show` + `all` na mesma linha via `extract({ engine: "rapidocr" })`
    - `tapElement({ serial, x, y })`
    - esperar 2–3s
    - log: OCR + decisão tap Show all (persistir trecho OCR no log; `elements-*.json` opcional)
 
 5) Clicar em People
    - após `Show all results`, localizar a aba/filtro `People` (preferir `y` baixo, barra de chips — tipicamente `y < 200`)
-   - `extract()` ou `findByText(serial, "People")` → `{ x, y }`
+   - `extract({ engine: "rapidocr" })` ou `findByText(serial, "People", { engine: "rapidocr" })` → `{ x, y }`
    - `tapElement({ serial, x, y })`
    - esperar 2–3s
    - log: OCR + decisão tap People

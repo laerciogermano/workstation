@@ -6,8 +6,21 @@
 import { adb } from "./adb.js";
 import { captureFrame } from "./frame.js";
 import { ocrWords } from "./ocr.js";
+import { ocrWordsMacosVision } from "./ocr-macos-vision.js";
+import { ocrWordsRapidocr } from "./ocr-rapidocr.js";
 
 const REMOTE_DUMP = "/sdcard/sr-window-dump.xml";
+
+/** @param {{ engine?: string, ocrRecognize?: Function }} src */
+function resolveRecognize(src = {}) {
+  if (typeof src.ocrRecognize === "function") {
+    return (p, d) => src.ocrRecognize(p, d);
+  }
+  const engine = src.engine || process.env.SCREEN_ROBOT_OCR || "tesseract";
+  if (engine === "rapidocr") return ocrWordsRapidocr;
+  if (engine === "macos-vision") return ocrWordsMacosVision;
+  return ocrWords;
+}
 
 /** @deprecated legado eventos EP-02 — não usar para extract */
 export function dumpUiXml(serial, deps = {}) {
@@ -37,7 +50,7 @@ function toPublicElement(el) {
 }
 
 /**
- * @param {{ serial: string }} cfg
+ * @param {{ serial: string, engine?: "tesseract"|"rapidocr"|"macos-vision" }} cfg
  * @param {object} [deps]
  * @returns {Promise<object[]>}
  */
@@ -51,9 +64,7 @@ export async function extract(cfg, deps = {}) {
   const capture = deps.captureFrame
     ? (s, d) => deps.captureFrame(s, d)
     : captureFrame;
-  const recognize = deps.ocrRecognize
-    ? (p, d) => deps.ocrRecognize(p, d)
-    : ocrWords;
+  const recognize = resolveRecognize({ ...deps, ...cfg });
   const framePath = await capture(serial, deps);
   const words = await recognize(framePath, deps);
   return words.map((w) => {
@@ -71,9 +82,7 @@ export async function extractElements(serial, deps = {}) {
   const capture = deps.captureFrame
     ? (s, d) => deps.captureFrame(s, d)
     : captureFrame;
-  const recognize = deps.ocrRecognize
-    ? (p, d) => deps.ocrRecognize(p, d)
-    : ocrWords;
+  const recognize = resolveRecognize(deps);
   const framePath = await capture(serial, deps);
   const words = await recognize(framePath, deps);
   const elements = words.map((w, i) => {
@@ -171,7 +180,7 @@ export function findEditableFields(elements) {
  *
  * @param {string} serial
  * @param {string} query
- * @param {{ minScore?: number, extractElements?: Function, captureFrame?: Function, ocrRecognize?: Function }} [opts]
+ * @param {{ minScore?: number, engine?: string, extractElements?: Function, captureFrame?: Function, ocrRecognize?: Function }} [opts]
  * @returns {Promise<{ elements: object[], score: number, text: string, x: number, y: number } | null>}
  */
 export async function findByText(serial, query, opts = {}) {

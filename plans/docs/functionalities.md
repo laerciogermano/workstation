@@ -27,6 +27,7 @@
 - Exigir título para criar uma unidade.
 - Permitir contexto opcional para orientar a execução humana ou por IA.
 - Impedir ciclos na hierarquia.
+- Favorecer decomposição de atividades em partes (incl. quando o responsável é IA), para validação parcial entre etapas e menor chance de erro em cascata.
 
 ### Navegação entre visões
 
@@ -241,6 +242,7 @@
 - Exibir o responsável de cada nó.
 - Criar atividade raiz com título obrigatório.
 - Criar atividade filha com título obrigatório.
+- Permitir dividir uma atividade grande em filhas para validação parcial (humano ou IA) antes de avançar o todo.
 - Desaninhar atividades.
 - Reorganizar pais e filhos.
 - Impedir ciclos na reorganização.

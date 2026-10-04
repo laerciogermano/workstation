@@ -47,13 +47,14 @@ O Plans ajuda a **registrar e acompanhar** atividades — pessoais ou de projeto
 | Acompanhar progresso | Board, Gantt, árvore ou Explorar sobre a **mesma** unidade |
 | Modelar o *como* do fluxo | Compor dados e funções (FOP) no Gantt, com ligações de estado |
 | Trocar quem executa sem reescrever o fluxo | Responsável tipado separado do roteiro |
+| Validar por partes (humano ou IA) | Dividir atividades em etapas; cada conclusão é um checkpoint |
 | Reusar o fluxo em código | Compilar FOP-IR e exportar TypeScript / Python |
 
 ### Exemplos
 
 **Registrar uma intenção** — *Comprar fone de ouvido*: cria o **card** no board com **título** e, se quiser, **contexto** (*uso diário, cancelamento de ruído, até R$ 500*). A mesma unidade aparece nas demais visões para não se perder o que precisa ser feito.
 
-**Decompor quando fizer sentido** — *Comprar celular* pode virar sub-cards (*Definir orçamento*, *Comparar modelos*, *Escolher loja*, *Comprar*): mesma unidade, hierarquia infinita, progresso visível.
+**Decompor para validar por partes** — *Comprar celular* vira sub-cards (*Definir orçamento*, *Comparar modelos*, *Escolher loja*, *Comprar*): mesma unidade, hierarquia infinita, progresso visível. Mesmo quando o responsável é **IA**, a divisão em partes permite validação parcial e reduz a chance de erro em cascata.
 
 **Modelar e exportar um roteiro** — um plano no Gantt liga **saídas** de uma tarefa às **entradas** de outra (sequencial ou paralelo; com seleção e repetição quando couber). O mesmo roteiro compila em **FOP-IR** e exporta para TypeScript ou Python sem redesenhar o fluxo.
 
@@ -61,11 +62,12 @@ O Plans ajuda a **registrar e acompanhar** atividades — pessoais ou de projeto
 
 1. **Uma unidade** — mesma entidade em todas as visões; só muda o nome. **Toda atividade é também um arquivo** no Explorar (estilo IDE).
 2. **Hierarquia infinita** — aninhamento sem limite de profundidade, sem ciclos.
-3. **Responsável tipado** — o tipo define o comportamento permitido; o responsável é o *quem*, não o roteiro.
-4. **Roteiro × ator** — o fluxo (o quê / quando / para quê) permanece estável quando se troca pessoa, IA ou máquina.
-5. **FOP no Gantt** — fluxo = **estado** (dados / entradas e saídas) + **procedimentos** (funções / tarefas); estruturas de **sequência**, **paralelo**, **seleção** e **repetição**.
-6. **Camadas e contexto** — endereços que se conhecem formam uma camada substituível; a execução ocorre quando o **contexto** está completo.
-7. **Linguagem visual unificada** — uma composição visual → **FOP-IR** → exportação para outras linguagens.
+3. **Partes antes do todo** — dividir atividades em etapas mesmo quando feitas por IA; validação parcial em cada parte diminui a chance de erros em cascata.
+4. **Responsável tipado** — o tipo define o comportamento permitido; o responsável é o *quem*, não o roteiro.
+5. **Roteiro × ator** — o fluxo (o quê / quando / para quê) permanece estável quando se troca pessoa, IA ou máquina.
+6. **FOP no Gantt** — fluxo = **estado** (dados / entradas e saídas) + **procedimentos** (funções / tarefas); estruturas de **sequência**, **paralelo**, **seleção** e **repetição**.
+7. **Camadas e contexto** — endereços que se conhecem formam uma camada substituível; a execução ocorre quando o **contexto** está completo.
+8. **Linguagem visual unificada** — uma composição visual → **FOP-IR** → exportação para outras linguagens.
 
 ## Escopo da visão
 
@@ -141,6 +143,7 @@ Um **roteiro** (plano no Gantt) descreve mudanças de estado:
 - Um plano no Gantt expressa FOP (estado + procedimentos + ligações) e exporta via **FOP-IR** para TypeScript e Python.
 - Trocar o responsável tipado **não exige redesenhar** o roteiro.
 - Responsáveis tipados se comportam conforme o catálogo (IA dispara só em coluna de execução).
+- Atividades (incl. as feitas por IA) podem ser **divididas em partes** com validação parcial entre etapas, reduzindo erro em cascata.
 
 ## Glossário
 
@@ -166,6 +169,7 @@ Detalhamento operacional que épicos e stories devem respeitar. Não redefine a 
 - Título obrigatório; contexto opcional.
 - Um responsável; sem herança pai→filho; só catálogo do projeto.
 - Hierarquia sem ciclos.
+- Preferir decompor atividades em partes (incl. responsável IA) para validação parcial entre etapas.
 - Roteiro e responsável são independentes: reatribuir não altera ligações de estado nem a estrutura do fluxo.
 
 ### Board

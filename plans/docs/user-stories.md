@@ -86,7 +86,7 @@ Como **condutor de projetos**, quero **ver a floresta de atividades (múltiplas 
 
 ## US-16 — Criar atividades e hierarquia infinita
 
-Como **condutor de projetos**, quero **criar atividades raiz e filhas com título, desaninhar, reorganizar pais e excluir subárvores**, para que **a decomposição da execução não tenha limite de profundidade e permaneça livre de ciclos**.
+Como **condutor de projetos**, quero **criar atividades raiz e filhas com título, desaninhar, reorganizar pais e excluir subárvores**, para que **eu divida o trabalho em partes (mesmo quando feitas por IA), valide parcialmente cada etapa e reduza erros em cascata, sem limite de profundidade e sem ciclos**.
 
 ## US-17 — Persistir e abrir no Explorar
 

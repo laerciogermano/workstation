@@ -240,7 +240,7 @@ Como **condutor de projetos**, quero **ver a floresta de atividades (múltiplas 
 
 ## US-16 — Criar atividades e hierarquia infinita
 
-Como **condutor de projetos**, quero **criar atividades raiz e filhas com título, desaninhar, reorganizar pais e excluir subárvores**, para que **a decomposição da execução não tenha limite de profundidade e permaneça livre de ciclos**.
+Como **condutor de projetos**, quero **criar atividades raiz e filhas com título, desaninhar, reorganizar pais e excluir subárvores**, para que **eu divida o trabalho em partes (mesmo quando feitas por IA), valide parcialmente cada etapa e reduza erros em cascata, sem limite de profundidade e sem ciclos**.
 
 ### Cenários
 
@@ -249,6 +249,7 @@ Como **condutor de projetos**, quero **criar atividades raiz e filhas com títul
 - [ ] Dado que uma atividade é filha, quando a **desaninho**, então pode tornar-se raiz ou subordinar-se a outro pai sem ciclo.
 - [ ] Dado que não informo título, quando tento criar, então a criação é rejeitada.
 - [ ] Dado que adiciono níveis ou tentaria ciclo, quando confirmo, então profundidade é aceita e ciclo é rejeitado.
+- [ ] Dado que uma atividade tem responsável IA, quando a decomponho em filhas, então cada filha pode ser concluída/validada independentemente antes do pai.
 - [ ] Dado que excluo uma atividade com filhos, quando confirmo, então a subárvore deixa de aparecer como ativa (alinhado a US-01).
 
 ---

@@ -68,6 +68,8 @@ O que vem a seguir sempre esteve diante dos nossos olhos. De tão simples, nunca
 
 ## 1. Era adâmica — o problema
 
+![Banner do capítulo 1: figura de terra ajoelhada com uma centelha de luz dourada, sob um cosmos que ela não vê por inteiro](assets/banner-cap-1-era-adamica.jpg)
+
 ### 1.1 Queda / encarnação
 
 A “criação de Adão” simboliza a encarnação e o início da ignorância espiritual. Encarnação é o acoplamento do espírito à matéria — o espírito que virou carne e, nesse ato, esquece a origem.

@@ -20,13 +20,14 @@ Montagem / evolução do roteiro (fora do runtime)
 - Quando o roteiro já for auto-suficiente, voltar à regra de execução: zero decisão por imagem.
 
 Log por execução (obrigatório)
-- A cada run, criar um arquivo de log (ex. `logs/jornada-comprador/YYYYMMDD-HHMMSS.jsonl` ou `.md`).
-- **Para cada passo** (1–7 e cada iteração do Connect): registrar
-  1. `passo` / `subpasso` / timestamp
-  2. **saída OCR** usada na decisão (`extract` / `findByText`: lista ou trecho `{ text, x, y }`)
-  3. **decisão** tomada (ex. “tap Search @180,78”, “pular Pending @y=508”, “Skip sheet”, “scroll centro”, “parar: limite LinkedIn”)
-  4. ação executada e resultado observado no OCR seguinte
-- Sem log de passo = execução incompleta para auditoria. Decisões continuam só por OCR; o log é o registro, não a fonte da decisão.
+- A cada run, criar um **documento explicativo** Markdown: `logs/jornada-comprador/YYYYMMDD-HHMMSS.md` (não só `.jsonl` cru).
+- Formato de **relatório legível**: texto explicando a decisão **separado** do JSON do OCR (JSON só em bloco de código).
+- Por passo (1–7 e cada iteração Connect), incluir nesta ordem:
+  1. Cabeçalho `## Passo N — título (timestamp)`
+  2. `### Decisão` — prosa: por que e o que foi feito (ex.: “achei Search com y&lt;120; tap @180,78; ignorei search do feedback”)
+  3. `### OCR usado na decisão` — bloco `json` com a lista `{ text, x, y }` (ou trecho) usada
+  4. `### Resultado` — prosa do que aconteceu depois; opcionalmente outro bloco `json` se o OCR seguinte importar
+- Sem documento de passo = execução incompleta para auditoria. Decisões continuam só por OCR; o log é o registro, não a fonte da decisão.
 
 Passos (interfaces usadas)
 1) Capture frame + OCR
@@ -102,7 +103,7 @@ Notas operacionais
 - Scroll lista: `direction: "up"`; origem **sempre no centro** (`x: 270`, `y: 480` em 540×960); `distance` ≥ 350. Fechar teclado antes.
 - **Scroll — sempre no centro** na lista: **jamais** na zona do teclado/nav (risco de fechar o app). Swipe curto no centro pode abrir Message — preferir swipe longo.
 - **Parada:** só limite do LinkedIn detectado por OCR — sem `LIMITE=N` artificial.
-- Log: um arquivo por execução com OCR + decisões por passo.
+- Log: um `.md` por execução (documento: Decisão em prosa + OCR em JSON separado).
 - Se OCR do teclado falhar, não clicar em `comprador` da lista — só digitar e depois fechar teclado → `Show all results` (não usar `adb input text`).
 
 Como reproduzir manualmente (linha de comando)

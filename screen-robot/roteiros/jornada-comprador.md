@@ -22,6 +22,9 @@ Passos (interfaces usadas)
    - preferir `type({ serial, text: "comprador", region? })` (OCR teclado)
    - fallback: se `type` falhar, localizar `comprador` em `extract()` (Recent/autocomplete) e `tapElement` sobre ele
    - esperar 1–3s
+   - após digitar, clicar no item `comprador` (autocomplete / resultado imediato) para remover o teclado/autocomplete antes de procurar `Show all results`
+     - localizar `comprador` via `extract()` ou `findByText(serial, "comprador")` e `tapElement({ serial, x, y })`
+     - esperar 0.8–1.5s
 
 4) Clicar em "Show all results"
    - após abrir os resultados (buscar "comprador"), localizar `Show all results`:

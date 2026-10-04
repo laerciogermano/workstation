@@ -83,12 +83,12 @@ Passos (interfaces usadas)
    - **Sem teto de rounds:** se a tela não tiver `Connect`, **scrollar no centro infinitamente** até aparecer algum `Connect` — **não** parar após 3 (nem N) rounds vazios.
    - **Critérios de saída** (só estes encerram o passo 6 e o processo):
      1. **Fim explícito da lista** no OCR: `No more results` / `End of results` / `You've reached the end` / `não há mais resultados`. **Não** usar “Are these results helpful?” sozinho nem idle de N scrolls.
-     2. **Limite semanal de convites LinkedIn** — **parar imediatamente** se o OCR (toast ou texto na tela) contiver a mensagem (RapidOCR costuma juntar palavras):
+     2. **Limite semanal de convites LinkedIn** — o toast **aparece depois do `Skip`** (não logo após o tap em `Connect`). Fluxo: Connect → sheet Add a note → **Skip** → `extract` → se OCR tiver a mensagem, **parar imediatamente**.
         - Frase canônica: `Your invitation to {Name} was not sent because you have reached the weekly limit for connection invitations.`
-        - Fragmentos OCR observados: `Yourinvitationto…wasnot` · `sentbecauseyouhavereachedthe` · `weeklylimitforconnectioninvitations.`
-        - Também aceitar: `weekly invitation limit` / `weeklylimitforconnectioninvitations` / `invitation limit` / `can't send invitations` / `limite de convites` / `não é possível enviar`.
-        - Evidência: print `src/screenshots/linkedin-weekly-invitation-limit.png` + OCR no log da run (ex. 2026-10-04T19-42-45).
-        - Ao detectar: **não** Skip, **não** scroll, **não** novo Connect — Encerramento com motivo `limite_linkedin`.
+        - Fragmentos OCR observados (pós-Skip): `Yourinvitationto…wasnot` · `sentbecauseyouhavereachedthe` · `weeklylimitforconnectioninvitations.` · `Please try again next week`
+        - Também aceitar: `weekly invitation limit` / `weeklylimitforconnectioninvitations` / `Please try again next week` / `invitation limit` / `can't send invitations` / `limite de convites` / `não é possível enviar`.
+        - Evidência: print `src/screenshots/linkedin-weekly-invitation-limit.png` (capturado **após Skip**).
+        - Ao detectar **pós-Skip**: esse Connect **não conta**; **não** scroll, **não** novo Connect — Encerramento com motivo `limite_linkedin`.
    - **Não** usar limite N artificial de connects nem de rounds no run.
    - Ao bater critério de saída: ir ao Encerramento, gravar log, **parar a execução imediatamente** — o AVD não deve continuar sendo manipulado.
    - **Armadilha Message / Premium:** tap errado (ou gesto curto no centro) pode abrir compose “Send a message” / InMail / paywall Premium. **Nunca** enviar mensagem nem clicar CTA Premium.
@@ -100,10 +100,11 @@ Passos (interfaces usadas)
      2. se a mesma faixa `y` tiver `Message` / `Pending` / `Follow` → **não** tap (logar)
      3. **antes do tap:** para cada `Connect` válido, **extrair e registrar o card do comprador** no log — todos os textos OCR do item da lista associados a esse Connect (faixa vertical do card: tipicamente do nome até o próximo card / mutual connections; incluir o que existir: nome, grau `2nd`/`3rd+`, headline/cargo, localização, `Current:` / `Past:`, empresa, mutual connections, e qualquer outro texto do item). Estruturar em `### Comprador` (prosa ou campos) + bloco `json` com os `{ text, x, y }` do card. **Sem registro do comprador = Connect incompleto** (não contar).
      4. para cada `Connect` válido já registrado: `tapElement({ serial, x, y })` **só** nas coordenadas retornadas
-     5. aguardar 1–2s; se abriu Message/Premium → BACK (não contar); se limite LinkedIn / fim → Encerramento
+     5. aguardar 1–2s; se abriu Message/Premium → BACK (não contar); se fim de lista → Encerramento
      6. sheet `Add a note…`: **só** `Skip` / `Ignorar` — jamais `Add a note` (detectar título pelo texto junto `/add\s+a\s+note/i`)
-     7. se OCR mostrar `Withdraw invitation` / `Withdraw` + `invitation`: **clicar `Cancel`** (jamais confirmar Withdraw) — logar; não contar Connect
-     8. incrementar contador só se Connect + Skip ok (sem Message/Withdraw) **e** `### Comprador` gravado no `.md`
+     7. **logo após o Skip:** `extract` de novo e checar toast de **limite semanal** (critério 2 acima). Se presente → logar OCR + Encerramento `limite_linkedin` (**não** contar esse Connect). Sem toast → seguir.
+     8. se OCR mostrar `Withdraw invitation` / `Withdraw` + `invitation`: **clicar `Cancel`** (jamais confirmar Withdraw) — logar; não contar Connect
+     9. incrementar contador só se Connect + Skip ok (sem Message/Withdraw/limite) **e** `### Comprador` gravado no `.md`
    - se **zero** `Connect` na tela: scroll centro (não inventar clique) e **repetir sem limite de rounds** até achar `Connect` ou critério de saída
    - depois dos `Connect` da tela: scroll **swipe curto** no centro (`x: 270`, `y: 480`, `direction: "up"`, `distance` ~150–200 em 540×960 — **não** ≥350)
    - **Rolagem pequena de propósito:** swipe grande “pula” cards (item cego — Connect some sem passar pelo OCR). Preferir vários scrolls curtos a um longo.
@@ -132,7 +133,7 @@ Notas operacionais
 - Timeouts: esperar 1–3s entre ações; `findByText` com `minScore:0.75`.
 - Scroll lista: `direction: "up"`; origem **sempre no centro** (`x: 270`, `y: 480` em 540×960); `distance` **~150–200** (rolagens menores). Fechar teclado antes.
 - **Scroll — sempre no centro**, curto: **jamais** na zona do teclado/nav. Swipe longo demais pula Connect; gesto curto demais pode virar tap — manter swipe contínuo com `distance` ~150–200.
-- **Parada:** fim explícito da lista (OCR) **ou** limite semanal de convites (`weeklylimitforconnectioninvitations` / frase `Your invitation to … was not sent because you have reached the weekly limit…`) — **não** parar por “3 rounds sem Connect”; scroll até achar `Connect`; ao parar, encerrar a execução.
+- **Parada:** fim explícito da lista (OCR) **ou** limite semanal de convites **detectado no OCR logo após Skip** (`weeklylimitforconnectioninvitations` / `Your invitation to … was not sent…`) — **não** parar por “3 rounds sem Connect”; scroll até achar `Connect`; ao parar, encerrar a execução.
 - Log: um `.md` por execução (documento: Decisão em prosa + OCR em JSON separado).
 - **Registro do comprador:** só a partir do OCR do card na lista (não abrir o perfil para “completar” dados). Se um campo não aparecer no OCR do item, não inventar — registrar o que houver.
 - **Antes → depois (registro):** log só com Decisão/OCR genérico do passo → cada Connect contado exige `### Comprador` com todos os textos do item. Rollback: remover a seção `### Comprador` / critério do passo 6 item 3 deste markdown.

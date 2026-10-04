@@ -1,7 +1,7 @@
 # Roadmap — o que falar / escrever (ordem)
 
-**Por quê:** fixar a sequência dos tópicos da obra a partir dos [`inputs/`](inputs/).  
-**Fonte:** `Eternos Mutáveis.txt`, visão filosófica, tratado, briefing, transcrição, notas de abertura.  
+**Por quê:** fixar a sequência dos tópicos da obra a partir dos [`inputs/`](inputs/README.md).  
+**Fonte:** documentos em [`inputs/`](inputs/README.md); áudios/transcrições em [`inputs/audios-e-transcricoes/`](inputs/audios-e-transcricoes/README.md); visão filosófica, tratado, briefing, notas de abertura.  
 **Visão:** [`README.md`](README.md).  
 **Já escrito:** abertura em [`artigo.md`](artigo.md) (até sólidos e abstratos).
 

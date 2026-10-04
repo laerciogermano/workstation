@@ -10,6 +10,7 @@ Pré-requisitos
 
 Regra de decisão (obrigatória) — execução da jornada
 - **Toda decisão** em runtime (o que clicar, se Skip apareceu, se há Connect, se scrollar, se a tela mudou) deve usar **somente** `extract()` / `findByText` e o retorno de texto `{ text, x, y }`.
+- **CTA do card:** **jamais** clicar em `Message` (nem `Msg`, `Send a message`). **Apenas** `Connect` (match exato `^Connect$`). Se o OCR mostrar `Message` na faixa do item → pular; se o tap abrir Message → `KEYCODE_BACK` e não contar.
 - A IA **jamais** tira print do dispositivo sozinha para **olhar a imagem** e decidir o próximo passo da execução.
 - Screenshots no fluxo feliz são só artefato opcional de log — **não** entram no raciocínio da IA em runtime.
 - **Exceção (debug):** se algo sair do planejado ou houver erro, aí pode tirar print e pedir análise da IA pela imagem — **só nessa exceção**, nunca no restante da execução.
@@ -66,7 +67,7 @@ Passos (interfaces usadas)
 
 6) Iterar perfis e conectar (um Connect por item da lista)
    - OCR **quase nunca** lê o texto do pill `Connect` (só às vezes o da linha cortada pelo nav).
-   - **Só clicar em `Connect`** (match exato `^Connect$`). **Jamais** clicar em `Message`, `Pending`, `Follow`, `Following`, `Follow back`, nem qualquer outro CTA do card.
+   - **Só clicar em `Connect`** (match exato `^Connect$`). **Jamais** clicar em `Message` — regra absoluta; também jamais `Pending`, `Follow`, `Following`, `Follow back` nem outro CTA do card.
    - **Critérios de saída** (qualquer um encerra o passo 6 e **encerra o processo** — nada de scroll/tap depois):
      1. **Sem mais resultados:** após N scrolls consecutivos (ex. 3) sem nenhum `Connect` elegível novo (só `Pending`/`Message`/`Follow`, ou OCR sem graus novos / lista estagnada — mesmos textos de nomes na faixa da lista), **ou** OCR de fim de lista (`No more results`, `End of results`, `You've reached the end`, `não há mais`, feedback “Are these results helpful?” sem novos cards Connect abaixo).
      2. **Limite LinkedIn:** texto junto com `weekly invitation limit`, `invitation limit`, `can't send invitations`, `limite de convites`, `não é possível enviar`, etc.
@@ -97,7 +98,7 @@ Critérios de aceite
 - A jornada: Search → digitar → fechar teclado → Show all results → People → Connect (e Skip) até **sem mais resultados** ou **limite LinkedIn**.
 - Após Encerramento, o AVD deixa de ser manipulado (processo termina).
 - Passo 6: scroll só no centro; log `.md` com Decisão + OCR JSON por passo.
-- Só clica em `Connect` (exato); jamais `Message` / `Pending` / `Follow` / `Following`.
+- Só clica em `Connect` (exato); **jamais** `Message` (nem Pending/Follow/Following).
 - Após Connect, no sheet: só `Skip` — jamais `Add a note`.
 - Se abrir Message/Premium: BACK via OCR até a lista; nunca enviar mensagem.
 - Decisões só via OCR/texto; print+análise por imagem apenas em erro/debug.

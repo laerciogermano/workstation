@@ -1,7 +1,7 @@
 # Roteiro: Buscar "comprador" e conectar (UI via OCR)
 
 Objetivo
-- Automatizar a jornada do operador: buscar "comprador" no LinkedIn (AVD já na página do LinkedIn), abrir Show all results, clicar em People e conectar nos perfis (Skip se aparecer).
+- Automatizar a jornada do operador: buscar "comprador" no LinkedIn (AVD já na página do LinkedIn), abrir Show all results, clicar em People e conectar nos perfis (Skip se aparecer), até o limite da sessão; se preciso, fechar o app (scroll nas bordas), reabrir e repetir.
 
 Pré-requisitos
 - AVD/agent online e na tela principal do LinkedIn (emulator-5554).
@@ -58,22 +58,34 @@ Passos (interfaces usadas)
    - **após rolar, repetir o processo** (itens 1–5) para **cada** item novo da lista; continuar o ciclo scroll → conectar até esgotar os perfis ou o limite da sessão
    - **não** clicar botões de item com `y ≥ 850` (nav); só `Skip` do sheet pode estar nessa faixa
    - ignorar itens já `Pending` / `Following` (não são Connect)
-   - teclado fechado antes de qualquer scroll
+   - teclado fechado antes de qualquer scroll da lista (centro)
 
-7) Encerramento
-   - salvar `screenshots/connect-final.png` / `elements-final.json`
-   - log resumido: total connects / skips
+7) Fechar LinkedIn, reabrir e repetir até o limite
+   - se o limite de connects da sessão **ainda não** foi atingido (lista esgotada, travou, ou fim da rodada):
+     1. **fechar o app LinkedIn** com scroll/gesto **nas bordas** (faixa inferior do system nav / borda — é a **única** exceção à regra de scroll no centro; propósito = sair/minimizar o app)
+     2. confirmar saída via OCR (`extract()`): sumiram `Search` / abas Home|Network|…; ou apareceu launcher
+     3. **abrir o LinkedIn de novo** (ícone no launcher via OCR/texto, ou relaunch do pacote se já for o fluxo operacional)
+     4. esperar home (`extract()` achar `Search`)
+     5. **repetir** os passos 1–6
+   - continuar o ciclo fechar → abrir → Search → … → Connect até o **limite** ser atendido
+   - só então ir ao Encerramento
+
+8) Encerramento
+   - log resumido: total connects / skips / ciclos (fechar+reabrir)
+   - `elements-final.json` opcional via `extract()`
 
 Critérios de aceite
 - A jornada: Search → digitar → fechar teclado → Show all results → People → Connect (e Skip se aparecer).
-- Scroll só no centro; nunca na zona do teclado nem na faixa inferior do system nav.
+- Se o limite não foi atingido: fechar LinkedIn (scroll nas bordas) → reabrir → repetir até o limite.
+- Scroll da **lista** só no centro; scroll nas **bordas** só para fechar o app (passo 7).
 - Decisões só via OCR/texto; print+análise por imagem apenas em erro/debug.
 - Artefatos: `elements-*.json`, log com totais; screenshots só se debug ou log opcional.
 
 Notas operacionais
 - Timeouts: esperar 1–3s entre ações; `findByText` com `minScore:0.75`.
-- Scroll: `direction: "up"` para revelar conteúdo abaixo; ajustar `distance` conforme AVD.
-- **Scroll — sempre no centro:** o gesto **jamais** pode começar/terminar na zona do teclado nem na faixa inferior do system nav (risco de fechar/minimizar o app). Origem **fixada no centro** da tela (ex. `x` = largura/2, `y` = altura/2; em 540×960 → `x: 270`, `y: 480`). Proibido scroll baixo (nav/teclado) ou alto demais (status). Se o teclado estiver aberto, **fechar antes** de qualquer scroll.
+- Scroll lista: `direction: "up"`; origem **sempre no centro** (`x: 270`, `y: 480` em 540×960). Fechar teclado antes.
+- **Scroll — centro vs borda:** na lista, **jamais** scroll na zona do teclado/nav (fecha o app sem querer). **Exceção:** passo 7 usa scroll/gesto nas bordas **de propósito** para fechar o LinkedIn.
+- Limite da sessão: definir no run (ex. N connects); o ciclo 7 só para quando o limite ainda não foi cumprido.
 - Se OCR do teclado falhar, não clicar em `comprador` da lista — só digitar e depois fechar teclado → `Show all results` (não usar `adb input text`).
 
 Como reproduzir manualmente (linha de comando)

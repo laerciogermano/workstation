@@ -87,7 +87,8 @@ Passos (interfaces usadas)
      6. se OCR mostrar `Withdraw invitation` / `Withdraw` + `invitation`: **clicar `Cancel`** (jamais confirmar Withdraw) — logar; não contar Connect
      7. incrementar contador só se Connect + Skip ok (sem Message/Withdraw); logar no `.md`
    - se **zero** `Connect` no OCR da tela: scroll centro (não inventar clique) e **repetir sem limite de rounds** até achar `Connect` ou critério de saída
-   - depois dos Connects OCR da tela: scroll **swipe** no centro (`x: 270`, `y: 480`, `direction: "up"`, `distance` ≥ 350); logar scroll
+   - depois dos Connects OCR da tela: scroll **swipe curto** no centro (`x: 270`, `y: 480`, `direction: "up"`, `distance` ~150–200 em 540×960 — **não** ≥350)
+   - **Rolagem pequena de propósito:** swipe grande “pula” cards (item cego — Connect some sem passar pelo OCR). Preferir vários scrolls curtos a um longo.
    - **após rolar:** repetir; Encerramento só por fim explícito / limite LinkedIn
    - **não** clicar botões de item com `y ≥ 850` (nav); só `Skip` do sheet pode estar nessa faixa
    - teclado fechado antes de qualquer scroll da lista (centro)
@@ -109,8 +110,8 @@ Critérios de aceite
 
 Notas operacionais
 - Timeouts: esperar 1–3s entre ações; `findByText` com `minScore:0.75`.
-- Scroll lista: `direction: "up"`; origem **sempre no centro** (`x: 270`, `y: 480` em 540×960); `distance` ≥ 350. Fechar teclado antes.
-- **Scroll — sempre no centro** na lista: **jamais** na zona do teclado/nav (risco de fechar o app). Swipe curto no centro pode abrir Message — preferir swipe longo.
+- Scroll lista: `direction: "up"`; origem **sempre no centro** (`x: 270`, `y: 480` em 540×960); `distance` **~150–200** (rolagens menores). Fechar teclado antes.
+- **Scroll — sempre no centro**, curto: **jamais** na zona do teclado/nav. Swipe longo demais pula Connect; gesto curto demais pode virar tap — manter swipe contínuo com `distance` ~150–200.
 - **Parada:** fim explícito da lista (OCR) **ou** limite LinkedIn — **não** parar por “3 rounds sem Connect”; scroll até achar `Connect`; ao parar, encerrar o processo.
 - Log: um `.md` por execução (documento: Decisão em prosa + OCR em JSON separado).
 - Se OCR do teclado falhar, não clicar em `comprador` da lista — só digitar e depois fechar teclado → `Show all results` (não usar `adb input text`).

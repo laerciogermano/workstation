@@ -147,15 +147,17 @@ await removeSession({ path: "./state/session.json" });
 
 ### 4. API pública (funções puras)
 
+Entrada / resposta de cada interface: [`src/README.md#interfaces`](src/README.md#interfaces).
+
 | Função | O quê |
 |--------|--------|
 | `provisionEmulator(cfg)` | Cria se `name` novo; anexa se já existir; retorna `{ serial, kind, bootCompleted, provisionedAt }` |
 | `resetInstance(cfg)` | Wipe do AVD + sobe de novo; ADB + boot ok |
 | `installApk({ serial, … })` | Lê spec → baixa se preciso → instala; `{ package, version, skipped }` |
 | `on(cfg)` | `boot` · `app_open` · `ui_stable` · `frame_change` |
-| `launch` / `tap` / `tapElement` / `type` / `scroll` / `screenshot` / `matchImage` / `openScrcpy` | Gestos e captura (`serial` no cfg) |
-| `extract({ serial })` | Lista plana só de textos OCR |
-| `findByText(serial, query)` | US-23: elementos lado a lado na query |
+| `launch` / `tap` / `tapElement` / `type` / `scroll` / `screenshot` / `matchImage` / `openScrcpy` | Gestos e captura (`serial` no cfg; tap = **x,y**) |
+| `extract({ serial })` | Lista plana `{ type: "text", text, x, y }` |
+| `findByText(serial, query)` | US-23: elementos lado a lado + `x,y` |
 | `saveSession` / `restoreSession` / `removeSession` | Persistência JSON |
 
 **Antes → depois:** métodos no handle → funções com `{ serial, … }`.
@@ -175,7 +177,7 @@ Ordem do script ([`src/scripts/linkedin-login.js`](src/scripts/linkedin-login.js
 2. `resetInstance(cfg)` — instância do zero
 3. `provisionEmulator` → `openScrcpy` → `installApk(linkedin)` → `launch` → `ui_stable`
 4. Screenshot `01-tela-inicial.png`
-5. `findByText(serial, "Sign in with Email")` → tap no `center` → `02-apos-sign-in-email.png`
+5. `findByText(serial, "Sign in with Email")` → tap `x,y` → `02-apos-sign-in-email.png`
 6. `extract()` → console da lista de textos OCR + `frame-screen.png` + `elements.json`
 
 Não digita credenciais e não chama `saveSession`.

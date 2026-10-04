@@ -30,202 +30,467 @@ import { resetInstance } from "./lib/reset-instance.js";
 
 **Antes → depois:** `connectTimeoutMs` era um relógio único compartilhado entre start + ADB + boot (start consumia o orçamento do boot). Agora cada fase (`ensureAdbOnline`, `waitBootCompleted`) tem o próprio timeout.
 
+Config de exemplo: [`device.config.json`](device.config.json).  
+**US-22** (mascarar identidade): [`../pocs/README.md`](../pocs/README.md#mascarar-identidade-do-aparelho).
+
 ---
 
-## 1. Provisionar agents — `provisionEmulator(cfg)`
+## Interfaces
 
-Um único método: **cria** se o `name` for novo; **anexa** se o nome já existir (sem criar outro AVD/emulador).
+Cada seção: **entrada** · **chamada** · **resposta**. Erros tipados em `err.code`.
 
-```js
-const { serial, kind, bootCompleted, provisionedAt } = await provisionEmulator({
-  provision: {
-    name: "ConnectMax_Cam",   // AVD (= AVD_NAME)
-    kind: "avd",              // avd | adb | redroid(legado)
-    // serial opcional com kind=avd — resolve via adb pelo name
-  },
-});
+---
 
-// mesmo name de novo → anexa ao AVD já ligado
-const again = await provisionEmulator({
-  provision: { name: "ConnectMax_Cam", kind: "avd" },
-});
-// again.serial === serial
-```
+### `provisionEmulator(cfg)`
+
+Cria AVD/agent se `name` for novo; anexa se já existir.
+
+**Entrada**
+
+| Campo | Obrigatório | Descrição |
+|-------|-------------|-----------|
+| `provision.name` | sim (`avd`/`redroid`) | Id do agent / nome do AVD |
+| `provision.kind` | não | `"avd"` (default) · `"adb"` · `"redroid"` |
+| `provision.serial` / `device` | sim se `kind=adb` | Serial ADB já online |
+| `provision.connectTimeoutMs` | não | Timeout por fase (ADB / boot) |
 
 | `kind` | Precisa | Comportamento |
 |--------|---------|---------------|
 | `avd` | `name` | Sobe/anexa AVD; serial sai do `adb` |
-| `adb` | `serial` / `device` / `ANDROID_SERIAL` | Só anexa device já online |
-| `redroid` | `name` **ou** `serial` | Com `name`: container/porta/volume por instância; sem `name`: `127.0.0.1:5555` |
+| `adb` | `serial` | Só anexa device online |
+| `redroid` | `name` ou `serial` | Instância por `name`; sem `name` → `127.0.0.1:5555` |
 
-| Caso | Comportamento |
-|------|----------------|
-| Nome/AVD novo | `start.sh` + setup cria AVD, boot ok |
-| AVD já no `adb` | Reconecta serial desse AVD — **não** sobe outro |
-| `kind=adb` sem serial | `PROVISION_NO_SERIAL` |
-| `kind=redroid` + `name` novo | Container `redroid-<slug>`, porta derivada do name, volume isolado |
-| `kind=redroid` + mesmo `name` | Anexa ao container já online — **não** reusa outra instância |
-| `kind=redroid` sem name/serial | Usa `127.0.0.1:5555` (legado) |
-
-**Antes → depois:** `kind=redroid` ignorava `name` e sempre usava `127.0.0.1:5555`. Agora `name` distinto sobe outra instância; mesmo `name` anexa. Sem `name` mantém o default legado. AVD canônico (GMS): `kind: "avd"`.
-
-### Vários em paralelo
+**Chamada**
 
 ```js
-const a = await provisionEmulator({ provision: { name: "a", kind: "redroid" } });
-const b = await provisionEmulator({ provision: { name: "b", kind: "redroid" } });
-// a.serial !== b.serial
+const handle = await provisionEmulator({
+  provision: { name: "ConnectMax_Cam", kind: "avd" },
+});
 ```
 
-Não é obrigatório rodar `pocs/android-studio/scripts/start.sh` — o create já sobe o AVD.
+**Resposta**
 
-**US-22:** mascarar identidade no AVD — ver [`../pocs/README.md`](../pocs/README.md#mascarar-identidade-do-aparelho).
+```json
+{
+  "serial": "emulator-5554",
+  "kind": "avd",
+  "bootCompleted": true,
+  "provisionedAt": "2026-10-04T14:00:00.000Z"
+}
+```
 
-Config de exemplo: [`device.config.json`](device.config.json) (`provision.name`, `kind`, apps, paths).
+Erros: `PROVISION_*` (ex. `PROVISION_NO_SERIAL`, `PROVISION_INVALID_NAME`).
 
 ---
 
-## 1b. Reset do zero — `resetInstance(cfg)`
+### `resetInstance(cfg)`
 
-Recria a instância limpa (wipe do AVD e sobe de novo). Usado pelo piloto LinkedIn antes do provision.
+Wipe + sobe de novo (ADB online + boot).
+
+**Entrada**
+
+| Campo | Obrigatório | Descrição |
+|-------|-------------|-----------|
+| `provision.serial` / `device` / `ANDROID_SERIAL` | sim | Serial alvo |
+| `provision.kind` | não | Seleciona script de reset |
+| `provision.resetScript` | não | Override do script default |
+| `provision.connectTimeoutMs` | não | Timeout ADB/boot pós-reset |
+
+**Chamada**
 
 ```js
-import { resetInstance } from "./lib/reset-instance.js";
-
-const { serial, kind, resetAt } = await resetInstance(cfg);
-// → ADB online + boot completo
+const r = await resetInstance(cfg);
 ```
 
-| Item | Detalhe |
-|------|---------|
-| Script default | [`../pocs/android-studio/scripts/reset.sh`](../pocs/android-studio/README.md) (planejado: `-wipe-data` — **gap**/TODO) |
-| Override | `cfg.provision.resetScript` |
-| Erros | `RESET_NO_SERIAL` · `RESET_FAILED` · `RESET_UNSUPPORTED` |
+**Resposta**
+
+```json
+{
+  "serial": "emulator-5554",
+  "kind": "avd",
+  "resetAt": "2026-10-04T14:01:00.000Z"
+}
+```
+
+Erros: `RESET_NO_SERIAL` · `RESET_FAILED` · `RESET_UNSUPPORTED`.
 
 ---
 
-## 2. Instalar APKs — `installApk({ serial, … })`
+### `installApk(cfg)`
+
+**Entrada**
+
+| Campo | Obrigatório | Descrição |
+|-------|-------------|-----------|
+| `serial` | sim | Device |
+| `package` | sim* | Package Android |
+| `version` | não | Skip se já instalada |
+| `artifact` | não* | Path local do APK/XAPK |
+| `source` | não* | Ex. `"apk-pure"` — download via apkeep |
+| `app` | não | Objeto `{ package, version, artifact?, source? }` (alternativa aos campos flat) |
+
+\* via `cfg` flat ou `cfg.app`.
+
+**Chamada**
 
 ```js
 const r = await installApk({
   serial,
   package: "com.linkedin.android",
-  version: "4.1.1093",           // opcional: skip se já instalada
-  artifact: "apks/app.apk",      // path local
-  // source: "apk-pure",         // download via apkeep se não houver artifact
+  version: "4.1.1093",
+  artifact: "apks/app.apk",
 });
 // ou: installApk({ serial, app: cfg.apps.linkedin })
-// { package, version, skipped, artifactPath? }
 ```
 
-**Antes → depois:** `handle.installApk(app)` → `installApk({ serial, …app })`.
+**Resposta**
+
+```json
+{
+  "package": "com.linkedin.android",
+  "version": "4.1.1093",
+  "skipped": false,
+  "artifactPath": "/abs/path/apks/app.apk"
+}
+```
+
+Skip (mesma versão): `{ "package", "version", "skipped": true }`.
 
 Erros: `APK_CONFIG_INVALID` · `APK_NO_SERIAL` · `APK_DOWNLOAD_FAILED` · `APK_INSTALL_FAILED`.
 
 ---
 
-## 3. Eventos de UI — `on(cfg)`
+### `on(cfg)`
+
+Espera evento de UI.
+
+**Entrada**
+
+| Campo | Obrigatório | Descrição |
+|-------|-------------|-----------|
+| `serial` | sim | Device |
+| `event` | sim | `boot` · `app_open` · `ui_stable` · `frame_change` |
+| `pkg` | `app_open` | Package em foreground |
+| `timeoutMs` | não | Timeout da espera |
+| `stableMs` | não | Janela estável (`ui_stable`) |
+| `onEvent` | não | Callback `(e) => …` |
+| `previousFrame` / `previousXml` | não | Baseline (`frame_change`) |
+
+**Chamada**
 
 ```js
-import { on } from "./lib/events.js";
-
 await on({ serial, event: "boot" });
-await on({
-  serial,
-  event: "app_open",
-  pkg: "com.linkedin.android",
-  timeoutMs: 60_000,
-});
-await on({
-  serial,
-  event: "ui_stable",
-  timeoutMs: 90_000,
-  stableMs: 800,
-  onEvent: (e) => console.log(e.type, e.attempt),
-});
+await on({ serial, event: "app_open", pkg: "com.linkedin.android", timeoutMs: 60_000 });
+await on({ serial, event: "ui_stable", timeoutMs: 90_000, stableMs: 800 });
 await on({ serial, event: "frame_change", timeoutMs: 30_000 });
 ```
 
-| Evento | O quê |
-|--------|--------|
-| `boot` | Sinal de boot do device |
-| `app_open` | Package em foreground (`pkg`) |
-| `ui_stable` | Frame estável (hash/diff de imagem) |
-| `frame_change` | Frame/imagem mudou (hoje via dump legado; alvo = hash visual) |
+**Resposta**
 
-**Antes → depois:** `handle.on(event, opts)` → `on({ serial, event, … })`. Sem método no provision.
+Depende do evento (objeto de confirmação / dump). Ex. conceitual:
 
-Desconhecido → `EVENT_UNKNOWN`. Sem serial → `EVENT_NO_SERIAL`. Timeout → códigos `EVENT_*`.
+```json
+{ "type": "ui_stable", "attempt": 3, "at": "2026-10-04T14:02:00.000Z" }
+```
+
+Erros: `EVENT_NO_SERIAL` · `EVENT_UNKNOWN` · `EVENT_*` (timeout).
 
 ---
 
-## 4. Operar tela
+### `launch(cfg)`
+
+**Entrada**
+
+| Campo | Obrigatório | Descrição |
+|-------|-------------|-----------|
+| `serial` | sim | Device |
+| `package` / `pkg` | sim | Package |
+| `activity` | não | Activity ou `pkg/activity` |
+
+**Chamada**
 
 ```js
-await launch({ serial, package: "com.linkedin.android" }); // ou activity
+await launch({ serial, package: "com.linkedin.android" });
+```
+
+**Resposta:** `undefined` (side-effect). Erro: `OPERATE_LAUNCH_FAILED` · `OPERATE_NO_SERIAL`.
+
+---
+
+### `tap(cfg)` / `tapElement(cfg)`
+
+Toque em **x,y** (visão/OCR).
+
+**Entrada**
+
+| Campo | Obrigatório | Descrição |
+|-------|-------------|-----------|
+| `serial` | sim | Device |
+| `x` | sim | Coordenada X |
+| `y` | sim | Coordenada Y |
+
+**Chamada**
+
+```js
 tap({ serial, x: 360, y: 640 });
 tapElement({ serial, x: el.x, y: el.y });
-await type({ serial, text: "11999999999", region: { x: 0, y: 700, width: 720, height: 500 } });
+```
+
+**Resposta:** `undefined`. Erro: `OPERATE_TAP_FAILED` · `OPERATE_NO_SERIAL`.
+
+---
+
+### `type(cfg)`
+
+OCR das teclas no frame → tap por caractere (sem `input text` / IME).
+
+**Entrada**
+
+| Campo | Obrigatório | Descrição |
+|-------|-------------|-----------|
+| `serial` | sim | Device |
+| `text` | sim | String a digitar |
+| `region` | não | `{ x, y, width, height }` — ROI do teclado |
+| `delayMs` | não | Pausa entre taps (default `100`) |
+
+**Chamada**
+
+```js
+await type({
+  serial,
+  text: "11999999999",
+  region: { x: 0, y: 700, width: 720, height: 500 },
+});
+```
+
+**Resposta:** `undefined`. Erro: `OPERATE_TYPE_FAILED` · `OPERATE_TAP_FAILED`.
+
+---
+
+### `scroll(cfg)`
+
+**Entrada**
+
+| Campo | Obrigatório | Descrição |
+|-------|-------------|-----------|
+| `serial` | sim | Device |
+| `direction` | não | `down` (default) · `up` · `left` · `right` |
+| `distance` | não | Pixels (default `800`) |
+| `x` / `y` | não | Origem do swipe (defaults `540` / `1200`) |
+
+**Chamada**
+
+```js
 scroll({ serial, direction: "down", distance: 800 });
+```
+
+**Resposta:** `undefined`.
+
+---
+
+### `screenshot(cfg)`
+
+**Entrada**
+
+| Campo | Obrigatório | Descrição |
+|-------|-------------|-----------|
+| `serial` | sim | Device |
+| `path` | sim | Destino do PNG |
+
+**Chamada**
+
+```js
 const shot = screenshot({ serial, path: "./screenshots/tela.png" });
-const { x, y, confidence } = await matchImage({ serial, templatePath: "./templates/btn.png" });
+```
+
+**Resposta**
+
+```text
+"/abs/path/screenshots/tela.png"
+```
+
+Erro: `OPERATE_SCREENSHOT_FAILED`.
+
+---
+
+### `matchImage(cfg)`
+
+Template match no frame → ponto **x,y**.
+
+**Entrada**
+
+| Campo | Obrigatório | Descrição |
+|-------|-------------|-----------|
+| `serial` | sim | Device |
+| `templatePath` | sim | PNG do template |
+
+**Chamada**
+
+```js
+const hit = await matchImage({ serial, templatePath: "./templates/btn.png" });
+```
+
+**Resposta**
+
+```json
+{ "x": 360, "y": 640, "confidence": 0.92 }
+```
+
+Erro: `OPERATE_MATCH_NOT_FOUND`.
+
+---
+
+### `openScrcpy(cfg)`
+
+**Entrada**
+
+| Campo | Obrigatório | Descrição |
+|-------|-------------|-----------|
+| `serial` | sim | Device |
+| `title` | não | Título da janela |
+| `detached` | não | Default `true` |
+| `extraArgs` | não | Args extras do scrcpy |
+
+**Chamada**
+
+```js
 const { pid } = openScrcpy({ serial, title: `agent ${serial}` });
 ```
 
-| Função | Erros tipados |
-|--------|----------------|
-| `launch` | `OPERATE_LAUNCH_FAILED` |
-| `type` | `OPERATE_TYPE_FAILED` |
-| `screenshot` | `OPERATE_SCREENSHOT_FAILED` |
-| `matchImage` | `OPERATE_MATCH_NOT_FOUND` |
-| `openScrcpy` | `OPERATE_SCRCPY_FAILED` |
+**Resposta**
 
-Type: OCR das teclas na **imagem do teclado** (região opcional) e digitação **só com tap** — sem `input text` / ADBKeyboard.
+```json
+{ "pid": 12345, "serial": "emulator-5554" }
+```
 
-**Antes → depois:** `handle.launch(pkg)` → `launch({ serial, package })` (idem tap/type/…).
+Erro: `OPERATE_SCRCPY_FAILED`.
 
 ---
 
-## 5. Extrair textos — `extract({ serial })`
+### `extract(cfg)`
 
-Pipeline **frame → OCR → lista plana de textos** (sem dump uiautomator, sem árvore DOM). Só elementos `type: "text"`. Cada chamada faz OCR de novo.
+Frame → OCR → lista plana só `type: "text"` (sem DOM / uiautomator). Cada call = OCR novo.
 
-**Antes → depois:** `handle.extract()` (cache no handle) → `extract({ serial })` (OCR a cada call).
+**Entrada**
+
+| Campo | Obrigatório | Descrição |
+|-------|-------------|-----------|
+| `serial` | sim | Device |
+
+**Chamada**
 
 ```js
 const elements = await extract({ serial });
-// [ { type: "text", text, x, y }, … ]
-
-// US-23: findByText — elementos lado a lado contidos na string maior (query)
-// const hit = await findByText(serial, "Sign in with Email", { minScore: 0.8 });
-// if (hit) tapElement({ serial, x: hit.x, y: hit.y });
 ```
 
-**Antes → depois:** `{ text, bounds, center }` → `{ text, x, y }`; tap só com `x,y`.
+**Resposta**
 
-Fonte do frame: screenshot ADB, stream ou câmera (device real) — mesmo pipeline.  
-`vision.js` permanece legado / template match (US-12); **não** tipa o retorno de `extract()`.
+```json
+[
+  { "type": "text", "text": "Sign", "x": 273, "y": 833 },
+  { "type": "text", "text": "in", "x": 339, "y": 829 },
+  { "type": "text", "text": "with", "x": 402, "y": 829 },
+  { "type": "text", "text": "Email", "x": 500, "y": 829 }
+]
+```
 
-Helpers: `findByText` / `extractElements` / `findLoginTarget` / `findEditableFields` em [`lib/extract.js`](lib/extract.js).
+**Antes → depois:** `{ text, bounds, center }` → `{ text, x, y }`.
+
+Erros: `EXTRACT_NO_SERIAL` · `EXTRACT_FRAME_FAILED` · `EXTRACT_OCR_FAILED`.
 
 ---
 
-## 6. Sessão
+### `findByText(serial, query, opts?)`
+
+Encapsula OCR interno; devolve elementos **lado a lado** contidos na query (string maior).
+
+**Entrada**
+
+| Campo | Obrigatório | Descrição |
+|-------|-------------|-----------|
+| `serial` | sim | Device (1º arg) |
+| `query` | sim | Texto-alvo (ex. `"Sign in with Email"`) |
+| `opts.minScore` | não | Limiar (default `0.75`) |
+
+**Chamada**
 
 ```js
-await saveSession({ serial, kind, path: "./state/session.json", state: { step: "logged-in", apps: […] } });
-const state = await restoreSession({ path: "./state/session.json" });
-// state inclui serial, kind, savedAt + campos passados
-await removeSession({ path: "./state/session.json" }); // true se removeu
+import { findByText } from "./lib/extract.js";
+
+const hit = await findByText(serial, "Sign in with Email", { minScore: 0.8 });
+if (hit) tapElement({ serial, x: hit.x, y: hit.y });
 ```
 
-**Antes → depois:** `handle.saveSession(path, state)` → `saveSession({ serial, kind, path, state })`.
+**Resposta**
+
+```json
+{
+  "elements": [
+    { "type": "text", "text": "Sign", "x": 273, "y": 833 },
+    { "type": "text", "text": "in", "x": 339, "y": 829 },
+    { "type": "text", "text": "with", "x": 402, "y": 829 },
+    { "type": "text", "text": "Email", "x": 500, "y": 829 }
+  ],
+  "score": 0.95,
+  "text": "sign in with email",
+  "x": 386,
+  "y": 830
+}
+```
+
+Sem match: `null`.
+
+---
+
+### `saveSession(cfg)` / `restoreSession(cfg)` / `removeSession(cfg)`
+
+**Entrada**
+
+| Função | Campos |
+|--------|--------|
+| `saveSession` | `serial` · `kind` · `path` · `state?` (objeto livre) |
+| `restoreSession` | `path` |
+| `removeSession` | `path` |
+
+**Chamada**
+
+```js
+await saveSession({
+  serial,
+  kind: "avd",
+  path: "./state/session.json",
+  state: { step: "logged-in" },
+});
+const state = await restoreSession({ path: "./state/session.json" });
+const removed = await removeSession({ path: "./state/session.json" });
+```
+
+**Resposta**
+
+`saveSession` → path absoluto:
+
+```text
+"/abs/path/state/session.json"
+```
+
+`restoreSession` → JSON gravado:
+
+```json
+{
+  "step": "logged-in",
+  "serial": "emulator-5554",
+  "kind": "avd",
+  "savedAt": "2026-10-04T14:05:00.000Z"
+}
+```
+
+`removeSession` → `true` se removeu · `false` se arquivo inexistente.
 
 Erros: `SESSION_WRITE_FAILED` · `SESSION_NOT_FOUND` · `SESSION_INVALID`.
 
 ---
 
-## 7. Fluxo completo (exemplo)
+## Fluxo completo (exemplo)
 
 ```js
 import { readFileSync } from "node:fs";
@@ -251,7 +516,7 @@ const elements = await extract({ serial });
 
 ---
 
-## 8. Mapa de módulos
+## Mapa de módulos
 
 | Recorte | Arquivo |
 |---------|---------|
@@ -266,7 +531,7 @@ const elements = await extract({ serial });
 
 ---
 
-## 9. Testes
+## Testes
 
 | Tipo | Comando |
 |------|---------|
@@ -288,7 +553,7 @@ node --test --test-timeout=120000 lib/find-by-text.fixture.test.js
 
 ---
 
-## 10. Piloto LinkedIn
+## Piloto LinkedIn
 
 ```bash
 cd screen-robot/src
@@ -301,7 +566,7 @@ Script [`scripts/linkedin-login.js`](scripts/linkedin-login.js):
 2. `resetInstance(cfg)`
 3. `provisionEmulator` → `openScrcpy` → `installApk` → `launch` → `on("ui_stable")`
 4. `01-tela-inicial.png`
-5. `findByText(serial, "Sign in with Email")` → `tapElement` → `02-apos-sign-in-email.png`
+5. `findByText(serial, "Sign in with Email")` → `tapElement({ x, y })` → `02-apos-sign-in-email.png`
 6. `extract({ serial })` → console da lista de textos OCR + `frame-screen.png` + `elements.json`
 
 Só LinkedIn (sem Instagram). Sem digitar credenciais e sem `saveSession`.
@@ -310,7 +575,7 @@ Só LinkedIn (sem Instagram). Sem digitar credenciais e sem `saveSession`.
 
 ---
 
-## 10b. Ver / operar a tela — `scripts/view.sh`
+## Ver / operar a tela — `scripts/view.sh`
 
 ```bash
 cd screen-robot/src
@@ -322,7 +587,7 @@ Abre **scrcpy** no serial de `device.config.json` (ou `--device`) para visualiza
 
 ---
 
-## 10c. Print da tela — `scripts/print.js`
+## Print da tela — `scripts/print.js`
 
 ```bash
 cd screen-robot/src

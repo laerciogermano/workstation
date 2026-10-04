@@ -31,16 +31,7 @@ Passos (interfaces usadas)
      - `findByText(serial, "Show all")` → `tapElement({ serial, x, y })`
      - esperar 2–3s
 
-5) Navegar até seção People
-   - usar `extract()` repetidamente e `scroll({ serial, direction: "up", distance })` até detectar header `People` (y alto) ou sinais de People (tokens: `mutual`, `2nd`, `1st`)
-   - validar com OCR; salvar screenshot a cada iteração
-
-6) Clicar em "Show all" (People)
-   - procurar par vizinho `Show` + `all` (mesma linha) via `extract()` ou `findByText(serial,"Show all")`
-   - `tapElement({ serial, x, y })`
-   - esperar 3s
-
-7) Iterar perfis e conectar
+5) Iterar perfis e conectar
    - para cada item listado:
      - localizar botão/link `Connect` / `connections` via `extract()` (proximal ao perfil)
      - `tapElement({ serial, x, y })`
@@ -48,8 +39,7 @@ Passos (interfaces usadas)
      - checar `findByText(serial, "Skip"|"Cancelar"|"Ignorar")` — se aparecer, `tapElement` no `Skip`
      - salvar screenshot por ação (`screenshots/connect-N.png`)
    - rolar a lista periodicamente (`scroll`) para trazer novos perfis
-
-8) Encerramento
+6) Encerramento
    - salvar `screenshots/connect-final.png`
    - gerar `elements-<etapa>.json` com `extract()` em pontos chave
    - log resumido: total connects / skips / falhas

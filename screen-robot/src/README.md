@@ -127,7 +127,7 @@ Só LinkedIn (sem Instagram). Sem digitar credenciais e sem `saveSession`.
 
 **SC-30:** fixture [`test/fixtures/linkedin-tela-inicial.png`](test/fixtures/linkedin-tela-inicial.png) · BDD [`test/bdd/sc-30-linkedin-sign-in-with-email.test.js`](test/bdd/sc-30-linkedin-sign-in-with-email.test.js).
 
-**People/comprador OCR:** fixture [`test/fixtures/linkedin-people-comprador-connect.png`](test/fixtures/linkedin-people-comprador-connect.png) · teste [`lib/extract.people-comprador.fixture.test.js`](lib/extract.people-comprador.fixture.test.js) (print do OCR no console). Antes: sem fixture dessa tela; depois: print + `extract` sem device. Rollback: remover fixture + teste.
+**People/comprador OCR:** fixture [`test/fixtures/linkedin-people-comprador-connect.png`](test/fixtures/linkedin-people-comprador-connect.png) · teste [`lib/extract.people-comprador.fixture.test.js`](lib/extract.people-comprador.fixture.test.js) — print no console e grava [`test/output/linkedin-people-comprador-connect.ocr.json`](test/output/linkedin-people-comprador-connect.ocr.json) (+ `.txt`). Antes: só console; depois: artefato em `test/output/`. Rollback: remover escrita no teste + pasta `test/output/`.
 
 ---
 

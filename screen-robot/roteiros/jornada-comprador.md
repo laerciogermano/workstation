@@ -54,15 +54,19 @@ Passos (interfaces usadas)
 6) Iterar perfis e conectar (um Connect por item da lista)
    - OCR **quase nunca** lê o texto do pill `Connect` (só às vezes o da linha cortada pelo nav).
    - **Critério de saída:** o passo 6 **só finaliza** quando o **limite de conexão for estourado** (ex. N connects do run). Não encerrar por lista “esgotada”, scroll sem novos itens ou fim aparente da tela — continuar rolando e tentando até estourar o limite.
+   - **Armadilha Message / Premium:** tap errado (ou gesto curto no centro) pode abrir compose “Send a message” / InMail / paywall Premium. **Nunca** enviar mensagem nem clicar CTA Premium.
+     - Detecção via OCR: textos como `Message`, `Send a message`, `InMail`, `Premium`, `Upgrade`, `Try Premium`, composer vazio + `Send`.
+     - Recuperação: `key(KEYCODE_BACK)` (1–3×) até `extract()` voltar à lista People (`People` chip + graus `2nd`/`3rd+` / busca `comprador`) — **não** decidir por imagem.
+     - Antes de cada Connect e após cada scroll: checar essa armadilha; se presente, BACK e seguir.
    - Para **cada** item da lista visível:
      1. achar o marcador de grau do perfil (`2nd` / `3rd+`) com `y > 180` (abaixo dos chips) e `x < 400` (não é o chip da barra)
-     2. ignorar se o card já mostra `Pending` / `Following` (não são Connect)
-     3. clicar o pill Connect à direita do card: `tapElement({ serial, x: ~458, y: grau.y })` (em 540px; manter `y` na faixa segura `180 < y < 850`)
-     4. aguardar 1–2s
-     5. se aparecer sheet `Add a note…`: clicar `Skip` / `Ignorar` (o Skip costuma ficar em `y` ~840–870 — **permitir** esse tap; não confundir com system nav)
+     2. ignorar se o card mostra `Pending` / `Following` / `Message` (não são Connect)
+     3. clicar o pill Connect à direita: `tapElement({ serial, x: ~458, y: grau.y })` (540px; `180 < y < 850`) — **só** se não houver `Message` na mesma faixa `y`
+     4. aguardar 1–2s; se caiu na armadilha Message/Premium → BACK (não contar Connect)
+     5. se sheet `Add a note…`: `Skip` / `Ignorar` (`y` ~840–870 ok)
      6. incrementar contador; se `connects >= limite` → sair do passo 6
-   - depois de clicar **todos** os Connects elegíveis da tela: scroll **uma vez** no centro (`x: 270`, `y: 480`)
-   - **após rolar, repetir** para **cada** item novo da lista; ciclo infinito até o limite estourar
+   - depois dos Connects elegíveis: scroll **swipe** no centro (`x: 270`, `y: 480`, `direction: "up"`, `distance` ≥ 350) — gesto contínuo, **não** tap; evitar `distance` baixa (vira clique e abre Message)
+   - **após rolar:** checar armadilha Message/Premium; depois repetir itens; até o limite estourar
    - **não** clicar botões de item com `y ≥ 850` (nav); só `Skip` do sheet pode estar nessa faixa
    - teclado fechado antes de qualquer scroll da lista (centro)
 
@@ -72,14 +76,15 @@ Passos (interfaces usadas)
 
 Critérios de aceite
 - A jornada: Search → digitar → fechar teclado → Show all results → People → Connect (e Skip se aparecer) até o limite de conexão estourar.
-- Passo 6 só termina no limite; scroll da lista só no centro.
+- Passo 6 só termina no limite; scroll da lista só no centro (swipe, não tap).
+- Se abrir Message/Premium: BACK via OCR até a lista; nunca enviar mensagem.
 - Decisões só via OCR/texto; print+análise por imagem apenas em erro/debug.
 - Artefatos: `elements-*.json`, log com totais; screenshots só se debug ou log opcional.
 
 Notas operacionais
 - Timeouts: esperar 1–3s entre ações; `findByText` com `minScore:0.75`.
-- Scroll lista: `direction: "up"`; origem **sempre no centro** (`x: 270`, `y: 480` em 540×960). Fechar teclado antes.
-- **Scroll — sempre no centro** na lista: **jamais** na zona do teclado/nav (risco de fechar o app).
+- Scroll lista: `direction: "up"`; origem **sempre no centro** (`x: 270`, `y: 480` em 540×960); `distance` ≥ 350. Fechar teclado antes.
+- **Scroll — sempre no centro** na lista: **jamais** na zona do teclado/nav (risco de fechar o app). Swipe curto no centro pode abrir Message — preferir swipe longo.
 - Limite da sessão: definir no run (ex. N connects); passo 6 só para quando esse limite for estourado.
 - Se OCR do teclado falhar, não clicar em `comprador` da lista — só digitar e depois fechar teclado → `Show all results` (não usar `adb input text`).
 

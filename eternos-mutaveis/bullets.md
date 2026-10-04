@@ -38,6 +38,13 @@
 - Crença herdada: mapa do mundo recebido antes de poder questionar
 - Analfabetismo espiritual: o problema central
 - Metafísica (estudo da estrutura) × espiritualidade (experiência dela)
+- O homem se acostuma ao mundo material e esquece outras estruturas igualmente presentes, mas invisíveis: as religiões as chamam de espirituais; os filósofos, de substância oculta ou metafísica
+- Esse lado oculto é o "mundo que transforma o mundo", um agente processador invisível aos olhos
+- Parece místico, mas pode ser compreendido pelo intelecto, por via diferente da ciência experimental
+- A experiência é produto de algo maior que ordena tudo por trás
+- Metafísica: *meta* (além) + *physis* (físico); o suprassensível, o mundo dos verbos, dos vazios, dos movimentos, das ideias, dos espíritos, que divide espaço com a matéria
+- Muito do que se sabe sobre Deus e o lado espiritual está equivocado
+- O conhecimento que separa a era adâmica da superação adâmica: o homem encarnado que transcende a matéria
 
 ---
 
@@ -57,6 +64,23 @@
 - Ciência (particulares) × metafísica (gerais)
 - Problema da linguagem: Russell, Whitehead, Wittgenstein
 - Resultado provisório: a metafísica segue em aberto
+- A busca começa quando o homem domina a linguagem e a experiência sozinha não responde
+- Persas (Zoroastro) e orientais (taoísmo): conceitos de dualidade que se relacionam entre si
+- Egito: corpo hermético e Caibalion, com sete princípios gerais de como o universo opera
+- Gregos: do mito ao logos; matemáticos que buscavam estruturas eternas; Pitágoras e a herança egípcia; ordens iniciáticas já no Egito e na Grécia
+- Pré-socráticos: Parmênides (nada muda) × Heráclito (tudo muda, exceto a mudança; ninguém entra duas vezes no mesmo rio; ensinava por aforismos)
+- Platão: mundo das ideias × mundo dos sentidos; Deus como Demiurgo, o artesão
+- Aristóteles: substância como forma e matéria; filosofia primeira e causa primeira (usada por Tomás de Aquino); o autor questiona a leitura de que ele rompe com Platão
+- Cristianismo: "assim na Terra como no céu" é a correspondência hermética; "No princípio era o Verbo" dialoga com o Logos de Heráclito
+- Gnósticos: libertação do espírito pelo conhecimento, não pela fé; um deus maligno teria aprisionado o espírito à carne; Jesus lido como ser humano iluminado pela gnose
+- Idade Média perseguiu e destruiu o saber; Renascimento o resgatou em símbolos e pinturas; Iluminismo buscou a razão
+- Ordens (Rosa-Cruz, maçonaria) estudam princípios eternos e imutáveis; matemáticos veneravam símbolos e viam a matemática como linguagem de Deus
+- Críticos da metafísica: Kant, Nietzsche, Schopenhauer
+- Jung: arquétipos e inconsciente coletivo; símbolos que se repetem em civilizações sem contato, anteriores ao próprio homem
+- Linguagem: polimorfismo (um nome, vários sentidos) e redundância (vários nomes, um sentido)
+- Russell e Whitehead buscavam uma linguagem única, sem redundância; Wittgenstein tentou no Tractatus ("do que não se pode falar, deve-se calar"; a linguagem é o limite do conhecimento) e depois recuou para os jogos de linguagem
+- Esta obra dá continuidade a Russell e Whitehead: uma linguagem única e isomórfica, que resolve a linguagem para resolver a filosofia
+- Cada civilização, religião e filósofo avançou, mas não existe manual lógico da existência
 
 ---
 
@@ -71,6 +95,20 @@
 - Dialética e esquecimento: desejo, posse, hábito, tédio, novo desejo
 - Inferno cíclico: atores repetindo os mesmos erros
 - Dor do software: manutenção cara, produtividade em queda, OOP centrada em objetos
+- Analfabetos espirituais: os problemas vêm da forma deturpada de enxergar a realidade
+- Baile de máscaras: gente que finge saber e confunde mentes; excesso de crenças sem base lógica
+- A identidade fixa não existe: tudo muda a cada instante, e o tempo e a existência são vistos como linha reta
+- O cérebro processa em pulsos, como uma máquina que reinicia a cada momento, e ignora o que é comum para poupar energia
+- Memória limitada: desejos giram em círculo (Schopenhauer: desejo de ter × tédio de possuir)
+- Dialética (Heráclito, Hegel, yin-yang): tese, antítese, síntese lidas como perda de memória; exemplos do cabelo, do casamento e do peso; a mosca que perde a memória
+- Sem tédio não haveria desejo; todo espaço preenchido gera novos espaços
+- Como vencer o ciclo: ir em direção à correnteza, entender que tudo passa e tudo retorna
+- Livre-arbítrio ilusório: o homem é produto de crenças, DNA e ambiente, e não escolhe o que acredita
+- A sociedade cultiva o individual e vive de medo e de aparência de segurança; o mal é a mente desordenada, não o mundo
+- Dor do software: começa rápido, perde manutenibilidade e performance de desenvolvimento; mais gente e menos entregas; não escala com o número de funcionalidades
+- Redundância de formas de fazer a mesma coisa (paradigmas, linguagens, frameworks, domínios); curva de aprendizagem alta; mudança constante de jeito de desenvolver
+- Software é pouco intuitivo, diferente de um prédio (Arquitetura Limpa); "sopa de letras" de signos
+- O problema comum a filosofia, espiritualidade e software: os jogos de linguagem
 
 ---
 
@@ -83,6 +121,19 @@
 - Cadeia: linguagem → metafísica → gnose
 - Gnose: libertação por compreensão, não por fé ou obediência
 - O que a obra oferece: visão lógica de Deus, ferramenta de análise metafísica, código de conduta pela correspondência, condição da vida eterna
+- Resolver a linguagem resolve a filosofia, e isso muda a percepção de Deus, eternidade, identidade, tempo, céu e inferno
+- Objetivo da obra: dar significado e estrutura à linguagem
+- Trajetória do autor: engenharia de software, programação desde a juventude (primeiro contato aos 12 anos, graduação aos 17), 15 anos de busca por regras eternas, independentes de linguagem, sistema operacional, hardware e domínio
+- Arquitetura Limpa (Uncle Bob) confirmou que existem regras imutáveis, mas o autor discorda de que o software não tenha estruturas óbvias
+- Programadores não dominam os conceitos-base: os pilares da OOP (polimorfismo, herança, abstração, encapsulamento) vêm da filosofia e da linguagem, e não são compreendidos
+- Tratado Filosófico Metafísico Ontológico Sistêmico: 14 teses (história como menor unidade, verbo, Logos, metafísica, linguagem)
+- Flow: linguagem visual de programação que descreve e sistematiza o plano das mudanças; camadas substituíveis e desacopladas
+- Ajustar as lentes muda o paradigma de construir software e de viver
+- Promessa: libertação do espírito pelo conhecimento, com lógica
+- Código de conduta no estilo das 48 Leis do Poder, aplicando a correspondência
+- Não é moral do que fazer: são as regras do jogo da vida, e a conclusão moral tende a convergir
+- Conforto: viveremos eternamente e o presente define a eternidade
+- Sensações pretendidas: alívio, tranquilidade, esperança, entusiasmo, felicidade
 
 ---
 
@@ -96,6 +147,13 @@
 - Impacto na OOP: classes com comportamento e característica coladas
 - Maior erro da programação: repetir a ontologia da substância no código
 - Paradoxo do barbeiro: separar papéis fecha a lógica
+- Aristóteles funciona como o demiurgo gnóstico: carnificou o espírito ao fundir os dois mundos platônicos na substância
+- Contradição: ele nega Platão, mas forma e matéria já é visão platônica
+- Maior erro de interpretação: prender o movimento ao elemento, como se o movimento pertencesse ao elemento
+- Platão acerta ao separar os mundos: um perfeito e eterno, outro material e mutável
+- Na OOP, a menor unidade é o objeto com estado e comportamento; o software imita objetos do mundo real
+- Não funciona bem: separar movimento e estado é o caminho
+- Vemos o mundo só como material, feito de fatos; o mundo é feito de verbos e objetos
 
 ---
 
@@ -112,6 +170,25 @@
 - Logos: ordem entre os verbos; tudo é isomórfico (linguagem, metafísica, programação, matemática, consciência)
 - Deus como Verbo; céu e inferno como estados de consciência
 - Navio de Teseu resolvido pela identidade no critério, não no componente
+- Experimento: universo todo preto com um ponto branco; bola preta num ambiente preto não é percebida
+- "Para ser, é preciso não ser": frio e calor, luz e sombra, bom e mau
+- Eterno × mutável: o eterno é perfeito porque não precisa mudar; o mutável é imperfeito porque muda
+- Exemplo da porta: estado inicial (fechada), verbo (abrir), estado final (aberta); um verbo grande contém verbos menores (destrancar, abrir)
+- Fita de cinema: vemos as fotos (estados); o verbo entre elas é invisível; o que enxergamos é o resultado do movimento
+- Ato = o estado atual; potência = as possibilidades a partir dele
+- Particular × geral: abrir uma porta, uma carta, uma garrafa; é o mesmo verbo
+- Abstração: espaço recortado onde se encaixa qualquer objeto, com critérios que são a forma; o verbo "cair" serve para laranja, skate ou bola
+- Colapso do movimento: o espaço preenchido vira novo estado, novo ato com novas potências
+- Histórias se repetem como música com outras notas ou filme com outros personagens; o que aconteceu acontecerá
+- Gênero hermético: macho = sólido, fêmea = abstrato; composição de histórias
+- Aristóteles: forma (espaço) e matéria (componente); a forma é o espaço que o componente preenche
+- Navio de Teseu: o navio é o critério, o espaço na história, e não o componente
+- Formas não são criadas nem destruídas ("não houve criação"); são estruturas arquetípicas, ligadas ao inconsciente coletivo
+- Deus como o próprio movimento, o Demiurgo, polimórfico, presente em tudo; "No princípio era o Verbo"
+- O homem também é verbo e tem domínio da própria ordem, deturpada pela ignorância
+- Tratado: verbos têm relações de compatibilidade; a mudança de estado representa o tempo; a linguagem descreve o plano das mudanças e é o limite da consciência
+- Espírito único e isomórfico; corpos são manifestações polimórficas da mesma estrutura
+- Espírito não se cria nem se destrói; a vida é ciclo sem fim; o espírito deve ver o outro como a si
 
 ---
 
@@ -127,3 +204,10 @@
 - Equilíbrio: morte do ego, eterno presente, de ator a autor
 - Prática: ambiente, plano, controle da mente, tempo diário para lembrar
 - Fecho: respostas às perguntas da abertura; a verdade compreendida liberta
+- Software: separar imutável de mutável protege a aplicação de mudanças, reduz custo e tempo e aumenta a qualidade ("software sólido")
+- Reutilização de histórias e padrões eternos com elementos diferentes
+- Conhecer o plano dos verbos permite compreender a identidade e as regras do jogo da vida
+- Vencer o desejo cíclico: acompanhar as fases, entender que sentimentos vão e voltam
+- Ajustar as lentes melhora software, linguagem e a visão do mundo espiritual e do material
+- Objetivo: libertar e fazer o homem viver em harmonia com a própria identidade
+- A mensagem remove os véus e mostra a face de Deus; o homem encarnado transcende a matéria

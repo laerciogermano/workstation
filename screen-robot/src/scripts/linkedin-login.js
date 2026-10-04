@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /**
- * Provisiona, extrai textos (OCR) e clica em "Network" pelo x,y do resultado.
+ * Provisiona, extrai textos (OCR) e navega na barra: Network → Post → Notifications → Jobs.
+ * Após cada clique espera 5s.
  *
  * Uso:
  *   node scripts/linkedin-login.js
@@ -11,13 +12,14 @@ import { dirname, resolve, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { sleep } from "../lib/adb.js";
-import { on } from "../lib/events.js";
-import { extract } from "../lib/extract.js";
-import { screenshot, tapElement } from "../lib/operate.js";
+import { extract, findByText } from "../lib/extract.js";
+import { screenshot, tapElement, type } from "../lib/operate.js";
 import { provisionEmulator } from "../lib/provision.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, "..");
+const WAIT_MS = 5_000;
+const TABS = ["Network", "Post", "Notifications", "Jobs"];
 
 function loadConfig(path) {
   const abs = resolve(path);
@@ -32,6 +34,31 @@ function clearScreenshots(dir) {
   }
 }
 
+function findTab(elements, label) {
+  const re = new RegExp(`^${label}$`, "i");
+  return elements.find((e) => re.test(String(e.text || "").trim())) || null;
+}
+
+async function tapTab(serial, outDir, label, step) {
+  console.log(`${step}) Extrair + clicar "${label}"…`);
+  const elements = await extract({ serial });
+  const slug = label.toLowerCase();
+  writeFileSync(
+    resolve(outDir, `elements-antes-${slug}.json`),
+    JSON.stringify(elements, null, 2),
+    "utf8",
+  );
+  screenshot({ serial, path: resolve(outDir, `${String(step).padStart(2, "0")}-antes-${slug}.png`) });
+
+  const hit = findTab(elements, label);
+  if (!hit) throw new Error(`Texto "${label}" não encontrado no extract`);
+  console.log(`   → "${hit.text}" x=${hit.x} y=${hit.y}`);
+  tapElement({ serial, x: hit.x, y: hit.y });
+  console.log(`   aguardando ${WAIT_MS / 1000}s…`);
+  await sleep(WAIT_MS);
+  screenshot({ serial, path: resolve(outDir, `${String(step).padStart(2, "0")}-apos-${slug}.png`) });
+}
+
 async function main() {
   const argv = process.argv.slice(2);
   let configPath = resolve(ROOT, "device.config.json");
@@ -44,38 +71,64 @@ async function main() {
   console.log("0) Limpar screenshots…");
   clearScreenshots(outDir);
 
-  // console.log("0.5) Resetar instância do zero…");
-  // const reset = await resetInstance(cfg);
-  // console.log(`   OK ${reset.serial}`);
-
   console.log("1) Provisionar…");
   const { serial } = await provisionEmulator(cfg);
   console.log(`   OK ${serial}`);
 
-  console.log("2) Extrair textos (OCR)…");
-  const elements = await extract({ serial });
-  console.log(elements);
-  writeFileSync(resolve(outDir, "elements.json"), JSON.stringify(elements, null, 2), "utf8");
-  screenshot({ serial, path: resolve(outDir, "01-antes-network.png") });
-
-  console.log('3) Clicar "Network" (x,y do extract)…');
-  const network =
-    elements.find((e) => /^network$/i.test(String(e.text || "").trim())) ||
-    null;
-  if (!network) {
-    throw new Error('Texto "Network" não encontrado no extract');
+  let step = 2;
+  for (const tab of TABS) {
+    await tapTab(serial, outDir, tab, step);
+    step += 1;
   }
-  console.log(`   → "${network.text}" x=${network.x} y=${network.y}`);
-  tapElement({ serial, x: network.x, y: network.y });
-  await sleep(3_000);
-  await on({ serial, event: "ui_stable", timeoutMs: 60_000 }).catch(() => {});
-
-  screenshot({ serial, path: resolve(outDir, "02-apos-network.png") });
-  const after = await extract({ serial });
-  writeFileSync(resolve(outDir, "elements-apos-network.json"), JSON.stringify(after, null, 2), "utf8");
-  console.log("4) Após Network:");
-  console.log(after);
-  console.log(`OK → ${resolve(outDir, "02-apos-network.png")}`);
+  // Após navegar pelas abas, executar busca "comprador" e abrir Show all results
+  console.log("OK — tabs: Network → Post → Notifications → Jobs");
+  try {
+    console.log("Executando busca 'comprador' e abrindo Show all results…");
+    const els = await extract({ serial });
+    const searchEl = els.find((e) => /^search$/i.test(String(e.text || ""))) || els.find((e) => /search/i.test(e.text || ""));
+    if (searchEl) {
+      tapElement({ serial, x: searchEl.x, y: searchEl.y });
+      await sleep(1000);
+      try {
+        await type({ serial, text: "comprador", delayMs: 120 });
+        await sleep(800);
+        const after = await extract({ serial });
+        const auto = after.find((e) => /^comprador$/i.test(String(e.text || "")));
+        if (auto) {
+          // clicar no item para remover teclado/autocomplete
+          tapElement({ serial, x: auto.x, y: auto.y });
+          await sleep(800);
+        }
+      } catch {
+        // fallback: buscar autocomplete e tocar
+        const after = await extract({ serial });
+        const auto = after.find((e) => /^comprador$/i.test(String(e.text || "")));
+        if (auto) {
+          tapElement({ serial, x: auto.x, y: auto.y });
+          await sleep(800);
+        }
+      }
+      // procurar Show all results e clicar
+      let show = await findByText(serial, "Show all", { minScore: 0.75 });
+      if (!show) {
+        const after2 = await extract({ serial });
+        const s = after2.find((e) => /^show$/i.test(String(e.text || "")));
+        const a = after2.find((e) => /^all$/i.test(String(e.text || "")) && Math.abs(e.y - (s?.y || 0)) < 40);
+        if (s && a) show = { x: Math.floor((s.x + a.x) / 2), y: s.y };
+      }
+      if (show?.x != null) {
+        tapElement({ serial, x: show.x, y: show.y });
+        await sleep(1500);
+        screenshot({ serial, path: resolve(outDir, "after-showall.png") });
+      } else {
+        console.log("Show all results não encontrado");
+      }
+    } else {
+      console.log("Search não encontrado — pulando busca comprador");
+    }
+  } catch (e) {
+    console.error("Erro na busca comprador:", e.message || e);
+  }
 }
 
 main().catch((e) => {

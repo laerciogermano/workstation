@@ -19,6 +19,18 @@ Runtime **opcional** para Linux/CI: Android Emulator Google com **Play Store** (
 
 ## Setup rápido
 
+Via Node (create-or-attach + ADB + boot):
+
+```bash
+cd screen-robot/src
+# uma vez no Linux: ../pocs/docker-avd/scripts/build-image.sh
+npm run docker-avd                 # name=agent-a
+npm run docker-avd -- meu-agent    # outro name
+npm run docker-avd -- agent-a --view
+```
+
+Via shell do POC:
+
 ```bash
 cd screen-robot/pocs/docker-avd
 ./scripts/build-image.sh          # pull Google + tag local
@@ -58,6 +70,8 @@ DOCKER_AVD_NAME=agent-a ./scripts/start.sh
 
 ## Provision (Node)
 
+Script: [`../../src/scripts/docker-avd-provision.js`](../../src/scripts/docker-avd-provision.js) · `npm run docker-avd`.
+
 ```js
 await provisionEmulator({
   provision: { kind: "docker-avd", name: "agent-a" },
@@ -66,6 +80,8 @@ await provisionEmulator({
 ```
 
 Portas **5655–5754** (não colidem com redroid 5555–5654).
+
+**Antes → depois:** só scripts shell do POC → agora `npm run docker-avd` sobe/anexa via `provisionEmulator`. Rollback: use `./scripts/start.sh` + `wait-boot.sh`.
 
 ## Gate GMS / LinkedIn
 

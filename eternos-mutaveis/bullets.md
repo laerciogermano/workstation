@@ -45,6 +45,14 @@
 - Metafísica: *meta* (além) + *physis* (físico); o suprassensível, o mundo dos verbos, dos vazios, dos movimentos, das ideias, dos espíritos, que divide espaço com a matéria
 - Muito do que se sabe sobre Deus e o lado espiritual está equivocado
 - O conhecimento que separa a era adâmica da superação adâmica: o homem encarnado que transcende a matéria
+- A criação de Adão como metáfora: o homem adâmico (a personalidade) ainda existe e deve ser superado
+- Somos centelha divina num corpo transitório, sob o véu do esquecimento
+- O homem primitivo é guiado por impressões sensoriais e não entende a origem das próprias decisões nem o sentido da existência
+- A ignorância se perpetua de forma inconsciente; "o homem não é mau, reproduz comportamentos sem perceber"
+- A linguagem do homem é contraditória e mal compreendida
+- Não existe um manual sintético e acessível da vida; o mundo espiritual vira paranormal e gera medo
+- Civilização analfabeta espiritual: divergência, conflito e guerra; sintomas listados: violência, desigualdade, complexo de identidade, excesso de informação, baile de máscaras
+- Alfabetização metafísica: ensinar os padrões e símbolos desde a infância, numa linguagem unificada
 
 ---
 
@@ -81,6 +89,16 @@
 - Russell e Whitehead buscavam uma linguagem única, sem redundância; Wittgenstein tentou no Tractatus ("do que não se pode falar, deve-se calar"; a linguagem é o limite do conhecimento) e depois recuou para os jogos de linguagem
 - Esta obra dá continuidade a Russell e Whitehead: uma linguagem única e isomórfica, que resolve a linguagem para resolver a filosofia
 - Cada civilização, religião e filósofo avançou, mas não existe manual lógico da existência
+- Budismo (roda do samsara), hinduísmo (Bhagavad Gita), judaísmo ("Sou o que sou")
+- Hermetismo: Corpus Hermeticum, Pedra de Roseta e hieróglifos como linguagem; princípios do Caibalion (o Todo é mente, correspondência, polaridade, causa e efeito, fluxo e refluxo, gênero)
+- Heráclito: o Logos, o que não muda, tensão dos opostos, os que dormem e os que acordam
+- Sócrates: a razão como virtude; Platão no *Timeu*: o Demiurgo como artesão organizador
+- Gnósticos: Apócrifo de João (Aion, Sophia) e o demiurgo maligno
+- Renascimento: Ficino e Pico della Mirandola retomam neoplatonismo, hermetismo e cabala
+- Saussure: signo (significante e significado) e valor por oposição ("só é porque não é")
+- Ciência × metafísica: a ciência olha os estados e os particulares, depende de teste e "prova o que não é"; a metafísica olha os movimentos e os gerais, pelo intelecto; a matemática prova o que é, para todos os casos; Deus não pode ser experienciado
+- Metafísica entre realismo e idealismo, sem consenso
+- Origem do autor: a complexidade do software o levou à ontologia e à espiritualidade
 
 ---
 
@@ -109,6 +127,19 @@
 - Redundância de formas de fazer a mesma coisa (paradigmas, linguagens, frameworks, domínios); curva de aprendizagem alta; mudança constante de jeito de desenvolver
 - Software é pouco intuitivo, diferente de um prédio (Arquitetura Limpa); "sopa de letras" de signos
 - O problema comum a filosofia, espiritualidade e software: os jogos de linguagem
+- Autômato: máquina de estados em que cada estado tem um movimento e um próximo estado; o estado molda a percepção; o universo opera como um grande autômato
+- Conto da mosca: volta ao lugar de risco porque esquece no caminho; pêndulo do esquecimento; "lembrar é poder"; basta uma decisão diferente para interromper o ciclo
+- Mito de Sísifo: saco sem fundo; busca que não preenche; trabalhar só para pagar contas; excessos para preencher faltas
+- Atores vivendo personagens: o ator carrega os carmas dos personagens
+- Individualização na infância: o ego nasce da separação do todo; a individualidade é ilusão e "o mal da humanidade"
+- Céu e inferno aqui e agora: condição mental, cenas que se repetem; a mesma consciência vive todas as vidas sob o véu do esquecimento; o mal feito ao outro é feito a si
+- A dor como justiceira: sem dor, não há valor
+- Violência, desigualdade e conflitos como frutos da ignorância
+- Software: manutenção consome cerca de 80% do esforço; criar é fácil, manter é difícil
+- Causas no software: conceitos confusos (polimorfismo × isomorfismo, sólido × abstrato, encapsulamento, acoplamento × coesão, imperativo × declarativo), escrita linear, objetos estáticos no lugar da ordem e do fluxo
+- Modelamos o software como enxergamos a realidade: visão deturpada gera software deturpado
+- "Acoplamento é o maior cupim da OOP"
+- A natureza é o manual de Deus: para toda dor há causa e antídoto
 
 ---
 
@@ -134,6 +165,15 @@
 - Não é moral do que fazer: são as regras do jogo da vida, e a conclusão moral tende a convergir
 - Conforto: viveremos eternamente e o presente define a eternidade
 - Sensações pretendidas: alívio, tranquilidade, esperança, entusiasmo, felicidade
+- Gnose: "conhecereis a verdade, e a verdade vos libertará"; o mundo espiritual pode ser compreendido com a exatidão da matemática
+- Raciocínio: Deus é perfeito, logo imutável; no mundo tudo muda; o que não muda?
+- A chave estava no software: estudo dos abstratos, essencialismo e *Arquitetura Limpa*
+- A estrutura da linguagem é fiel à realidade e se repete nela; sem compreender a linguagem não se compreende a realidade
+- Linguagem, software, filosofia e espiritualidade compartilham o mesmo problema: falta de domínio da linguagem
+- Metafísica como domínio do que se repete: quem reconhece o padrão antevê o que vem
+- Manual da vida: lógico, sintético e acessível
+- Não haverá salvador: a salvação parte de cada indivíduo
+- Para combater o veneno, é preciso conhecer o veneno
 
 ---
 
@@ -152,8 +192,19 @@
 - Maior erro de interpretação: prender o movimento ao elemento, como se o movimento pertencesse ao elemento
 - Platão acerta ao separar os mundos: um perfeito e eterno, outro material e mutável
 - Na OOP, a menor unidade é o objeto com estado e comportamento; o software imita objetos do mundo real
-- Não funciona bem: separar movimento e estado é o caminho
-- Vemos o mundo só como material, feito de fatos; o mundo é feito de verbos e objetos
+- Essa forma de desenvolver software não tem dado muito certo; a saída é separar movimento (eterno) de estado (mutável)
+- Enxergamos o mundo só como material, feito de fatos; na verdade ele é feito de verbos e objetos
+- Aristóteles define Deus como ato puro e motor imóvel; sua substância sustenta a prova de Deus de Tomás de Aquino
+- Se tivesse seguido Platão, objetos teriam características e os verbos seriam o plano das ideias, o Logos de Heráclito
+- Em vez de um ser com características e mudanças, há dois: o ser (constante) e o devir (mutável)
+- Objetificação: ver a realidade como entidades isoladas num fundo vazio
+- O objeto é só estado, sem comportamento; a função não pertence ao objeto, o objeto pertence à função
+- Hilemorfismo relido: forma = espaço/critério (abstrato); matéria = componente que o preenche; a identidade está na forma
+- O modelo entidade-relacionamento (MER) reúne estado e ação no objeto; o Flow separa função e dado
+- Na linguagem, o sujeito não é o ator, é o que está entre o verbo e o estado; propõe-se VO, como `caiu(João)`
+- Paradoxo do barbeiro: `João.barbeiaASi()` contradiz; com papéis separados, o barbeiro corta o cabelo do cliente
+- Identidade como ilusão (Navio de Teseu)
+- Tudo que se sustenta na ontologia aristotélica deve ser revisto, inclusive a linguagem
 
 ---
 
@@ -189,6 +240,17 @@
 - Tratado: verbos têm relações de compatibilidade; a mudança de estado representa o tempo; a linguagem descreve o plano das mudanças e é o limite da consciência
 - Espírito único e isomórfico; corpos são manifestações polimórficas da mesma estrutura
 - Espírito não se cria nem se destrói; a vida é ciclo sem fim; o espírito deve ver o outro como a si
+- Todo significado é referencial: o não ser define o ser por contraste
+- Ser = o que é e não pode deixar de ser; devir = o que pode deixar de vir a ser; ser × estar
+- Estado como história condensada; estória (padrão) × história (instância)
+- Mais pares: presença × ausência, significante × significado, qualidade × critério, luz × sombra, ligado × desligado, entrada × saída, macho × fêmea, componente × espaço, acoplamento × coesão, dedução × indução, privado × público, caos × ordem, efeito × causa, perfeito × imperfeito, particular × geral
+- Imperativo = controle no sujeito; declarativo = inversão de controle (interfaces e protocolos)
+- O verbo é fractal; a trindade é cortina de fumaça sobre a dualidade
+- Dois mundos: Mundo da Verdade (padrões) × Mundo da Existência (manifestações)
+- Deus não é um ente criador (senão, quem criou Deus?): é a metafísica, a causa primeira, o que foi, é e sempre será; é o ser e o devir; os movimentos são a língua de Deus
+- "Deus existe" seria equívoco: ele é
+- Não houve criação: o universo já nasceu pronto
+- Princípio, movimento e matéria
 
 ---
 
@@ -211,3 +273,14 @@
 - Ajustar as lentes melhora software, linguagem e a visão do mundo espiritual e do material
 - Objetivo: libertar e fazer o homem viver em harmonia com a própria identidade
 - A mensagem remove os véus e mostra a face de Deus; o homem encarnado transcende a matéria
+- Superação adâmica: transcender a visão vertical orientada a objetos e ver a história como menor unidade; o mundo horizontal, orientado a fluxos
+- Software feito de função e dado; bons desenvolvedores são bons roteiristas ("desenvolver software é a arte de contar histórias")
+- Flow olha a ordem dos eventos, não os objetos; linguagem ubíqua; desacoplar o verbo do sujeito
+- Para construir um bom software é preciso conhecer filosofia
+- Seja o autor: conheça as histórias e reconheça nos atores os seus personagens; escolher o papel interrompe os ciclos
+- Observador: você não é o ator nem a mente; a consciência é pura, imutável e eterna; transmutação mental
+- Equilíbrio: nem tanto, nem tão pouco; todo excesso é uma falta
+- Um só mandamento: enxergar o outro como a si; quem se irrita com os outros é escravo deles
+- Imperfeição: perfeição é ato de aperfeiçoar, não resultado; perdoar e ter misericórdia
+- Prática: tenha um plano, veja o plano, siga o plano; não reagir; metas diárias; o próximo passo é o mais importante
+- Estado de Flow: eliminar o que não é essencial ao fluxo

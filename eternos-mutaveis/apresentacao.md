@@ -4,7 +4,7 @@
 
 ![Banner do capítulo 0](assets/banner-cap-0-abertura.jpg)
 
-Desde o início dos tempos o homem faz as mesmas perguntas: o que é Deus, a vida, o mundo espiritual, o que existe depois da morte, por que há algo e não o nada. Milênios depois, ainda não há consenso, e o excesso de informação só aumentou a confusão. O autor, ateu e programador, buscou uma explicação lógica e a encontrou onde menos esperava: no princípio da inversão de dependência (SOLID), que manda depender de abstrações e não de instâncias sólidas. Essa é a chave que liga software, filosofia e espiritualidade.
+Desde o início dos tempos o homem faz as mesmas perguntas: o que é Deus, a vida, o mundo espiritual, o que existe depois da morte, por que há algo e não o nada. Milênios depois, ainda não há consenso, e o excesso de informação só aumentou a confusão. O autor, ateu e programador, buscou uma explicação lógica e a encontrou onde menos esperava: aprofundando seus conhecimentos em programação de sistemas, onde descobriu a diferença entre sólidos e abstratos. Essa é a chave que liga software, filosofia e espiritualidade.
 
 ---
 

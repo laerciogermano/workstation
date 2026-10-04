@@ -53,6 +53,15 @@
 - Não existe um manual sintético e acessível da vida; o mundo espiritual vira paranormal e gera medo
 - Civilização analfabeta espiritual: divergência, conflito e guerra; sintomas listados: violência, desigualdade, complexo de identidade, excesso de informação, baile de máscaras
 - Alfabetização metafísica: ensinar os padrões e símbolos desde a infância, numa linguagem unificada
+- Homem tem intelecto, mas ignora a própria condição de autômato e reduz-se a corpo e instinto
+- Crença herdada já molda a ação: mapa recebido vira comportamento antes do questionamento
+- Estamos mais em contato com criações humanas do que com a natureza; isso deturpa a visão da realidade
+- Aparência × essência: a matéria é véu; o que se vê não é o que rege
+- Sem metafísica (filosofia primeira, causa dos efeitos) Deus permanece incompreensível
+- Não confundir a incapacidade humana de explicar Deus com a inexistência de Deus
+- Metafísica como “religião sem santidade”: acesso pelo intelecto, sem culto nem fé cega
+- Insatisfação e busca por sentido nascem da visão deturpada da realidade
+- O óbvio precisa ser dito para se tornar unânime; sem síntese acessível, cada um inventa o seu mapa
 
 ---
 
@@ -99,6 +108,16 @@
 - Ciência × metafísica: a ciência olha os estados e os particulares, depende de teste e "prova o que não é"; a metafísica olha os movimentos e os gerais, pelo intelecto; a matemática prova o que é, para todos os casos; Deus não pode ser experienciado
 - Metafísica entre realismo e idealismo, sem consenso
 - Origem do autor: a complexidade do software o levou à ontologia e à espiritualidade
+- Platão integra Parmênides (o que não muda) e Heráclito (o que muda) nos dois mundos
+- Pré-socráticos também: Tales e Anaximandro (arché); aparência × realidade
+- Helenismo/neoplatonismo: Plotino, Uno e emanacionismo — ponte para o cristianismo
+- Agostinho: síntese de Platão e cristianismo; Tomás: Aristóteles a serviço da teologia
+- Idade Média: além da perseguição, monopólio do conhecimento
+- Linhagem hermética nas religiões abraâmicas: judaísmo, cristianismo e islamismo como herdeiros órfãos de Hermes
+- Explicações lúdicas também: anjos, demônios e “conexão direta” entre planos
+- Racionalismo e empirismo (Descartes a Hume): a ciência ocupa o lugar da metafísica; evolução espiritual fica tardia
+- Heidegger: esquecimento do ser — eco moderno da mesma lacuna metafísica
+- Russell: o referente precisa existir antes do predicado (“o rei é burro”); a linguagem já embute ontologia
 
 ---
 
@@ -140,6 +159,17 @@
 - Modelamos o software como enxergamos a realidade: visão deturpada gera software deturpado
 - "Acoplamento é o maior cupim da OOP"
 - A natureza é o manual de Deus: para toda dor há causa e antídoto
+- Crença deturpada gera comportamento deturpado; sem bússola lógica, a ação já nasce torta
+- Desejo é medo do oposto (pobreza→riqueza, solidão→companhia); o pêndulo começa no medo
+- Completude também é inferno: sem desejo, sensação de parada; “quisestes o Jardim, tivestes o Jardim”
+- Se o comportamento nos define e os estados mudam, somos muitos — a identidade única não se sustenta
+- O desejo de se sentir especial cega para os ciclos já conhecidos
+- Baile de máscaras + manada: a massa confunde confiança com verdade; egrégora do fingir se espalha
+- Futuro = passado com novos atores; o cenário se repete, muda só o elenco
+- Tamanho do ciclo proporcional à memória: sem memória, a mosca (e o homem) vive em loop
+- Envelhecer encurta o tempo sentido: menos novidade, mais repetição percebida
+- OOP reforça a ilusão de identidade única e separada — o erro do software ecoa o erro existencial
+- Boas práticas e padrões (GoF etc.) sem domínio filosófico/linguístico não curam a dor do software
 
 ---
 
@@ -174,6 +204,17 @@
 - Manual da vida: lógico, sintético e acessível
 - Não haverá salvador: a salvação parte de cada indivíduo
 - Para combater o veneno, é preciso conhecer o veneno
+- Dominando a linguagem, domina-se software, filosofia e a realidade
+- Há mais filosofia na programação do que se imagina: OOP espelha forma×matéria e classe×instância
+- Caminho também passa pelos filósofos da linguagem: Moore, Frege, Russell, Wittgenstein
+- Cadeia prática: resolver a linguagem → software → filosofia → existência/espiritualidade
+- Trajetória inversa: busca do software perfeito → ontologia → espiritualidade → linguagem
+- Sólido = endereço físico mensurável; abstrato = estrutura geral sem endereço; compreender abstratos extrai o mundo espiritual
+- Essência = o que se repete (alma, generalização, padrão); aprende-se por reprodução de histórias
+- Gnose: batismo pelo conhecimento; acesso a Deus, eternidade e jardim do Éden; desprende do material
+- Flow: elimina conceitos redundantes, um só modo de desenvolver; camadas homogêneas e princípios além do software
+- Conteúdo da libertação: conhecimento do verbo e reconciliação com a ordem
+- Depender de abstrações, não de instâncias sólidas: a chave técnica que abre a metafísica
 
 ---
 
@@ -205,6 +246,17 @@
 - Paradoxo do barbeiro: `João.barbeiaASi()` contradiz; com papéis separados, o barbeiro corta o cabelo do cliente
 - Identidade como ilusão (Navio de Teseu)
 - Tudo que se sustenta na ontologia aristotélica deve ser revisto, inclusive a linguagem
+- Movimentos se relacionam com características, não com objetos; objetos são acúmulo de características acopladas
+- Funções criaram a necessidade de objetos; o objeto é comodidade cognitiva, não motor da mudança
+- O quê e o quando importam mais que o quem
+- Relação provoca a mudança, não o sujeito
+- Verbo antecede o sujeito; o sujeito só preenche o espaço entre verbo e estado
+- Atribuir o ser ao comportamento, não o comportamento ao ser
+- Polimorfismo do símbolo (mesmo nome para verbo e para estado) sustenta o erro aristotélico
+- Ecos do acoplamento: forma×conteúdo, classe×instância; o mundo imperativo acorrenta espírito à carne
+- Softwares devem separar unidade de ação e unidade de estado; comportamentos independem de objetos
+- Foco nos objetos gera sofrimento; histórias possuem objetos, não o contrário
+- Linguagem tradicional falha ao acoplar ação ao sujeito e modelar o mundo como OO
 
 ---
 
@@ -251,6 +303,19 @@
 - "Deus existe" seria equívoco: ele é
 - Não houve criação: o universo já nasceu pronto
 - Princípio, movimento e matéria
+- Mais pares: físico×metafísico, natural×sobrenatural, observável×observador, o que move×o que é movido, energia×matéria, eternidade×tempo, bem×mal, paz×guerra, alívio×dor, felicidade×tristeza, sabedoria×ignorância, destino×escolha, tédio×desejo, princípio×fim, criador×criatura, padrão×manifestação
+- Guerra dos opostos: tudo surge pelo contraste; qualidades são no mínimo binárias
+- Não é o objeto que é polimórfico: a história é que abstrai
+- Utilidade está na história (cabo de vassoura), não no objeto isolado
+- Movimentos enxergam características, não elementos
+- Estado atual = o todo das relações, não só o objeto
+- Todo elemento/qualidade pertence a uma história; por perspectiva, um elemento só contém uma qualidade por vez
+- Ser = o próprio movimento imutável; estado/devir = o transitório
+- Mônada: estado inicial + movimento + estado final (com antagônica); binário 0↔1 com dois movimentos opostos
+- Analogia da melodia: identidade atemporal independente dos instrumentos
+- Indução: quais histórias este elemento preenche?; dedução: do geral ao particular com endereço
+- Cadeia: verdade → fato → história → estados e mudança → ser e devir → verbo e estado
+- Endereço/existência surge na contraposição dos seres; a condição da existência é a presença pelo contraste
 
 ---
 
@@ -284,3 +349,18 @@
 - Imperfeição: perfeição é ato de aperfeiçoar, não resultado; perdoar e ter misericórdia
 - Prática: tenha um plano, veja o plano, siga o plano; não reagir; metas diárias; o próximo passo é o mais importante
 - Estado de Flow: eliminar o que não é essencial ao fluxo
+- Código de conduta: nunca raiva, nunca reagir, nunca se explicar; falar o indispensável; não falar dos outros
+- Correspondência prática: quem fala de outro para você falará de você para outro
+- Você não lida com pessoas, lida com situações; trate todos como se estivessem sofrendo
+- Ciclo a quebrar: como se vê → sente → comporta → veem → tratam → se vê; defina-se
+- Selecione o que vê, ouve, fala, pensa e come; controle gatilhos; mude o ambiente, muda o mundo
+- Haja como stateless; atitudes não dependem das emoções; saiba por que desejas
+- Desejo é medo do oposto; foque também no que não quer ser (eliminar riscos)
+- Em tudo que focar, cresce; todo acoplamento/excesso será punido
+- Lógica inversa: pequeno é grande, humilde é primeiro; renúncia é vitória; desconforto pode ser felicidade
+- Misericórdia: oferecer a outra face; olho por olho deixa todos cegos; vingança real é perdoar
+- Faça do presente a eternidade: escolhas de agora tendem a se repetir; cada ato é plantio
+- Técnica: escrever/desenhar o plano (diário Flow); próximo estado essencial ao próximo movimento
+- Experimento: se controlasse todos os personagens num jogo imersivo — ou vivesse todas as vidas — o que faria diferente hoje?
+- Software: separar roteiros e objetos; bons desenvolvedores são roteiristas de autômatos; catálogo de estórias reutilizáveis
+- Observe histórias na natureza; use o verbo a favor; o estado define o próximo movimento

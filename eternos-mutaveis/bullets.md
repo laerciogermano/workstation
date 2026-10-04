@@ -4,8 +4,6 @@
 
 ![Banner do capítulo 0](assets/banner-cap-0-abertura.jpg)
 
-Arquivo: `assets/banner-cap-0-abertura.jpg`
-
 - Objetivo: entender o que é a realidade, pela lógica e não pela fé
 - Perguntas eternas: Deus, vida, mundo espiritual, depois da morte, por que há algo e não o nada, do que é feita a existência, por que estamos aqui
 - Milênios de tentativas (templos, tratados, telescópios) sem consenso
@@ -23,8 +21,6 @@ Arquivo: `assets/banner-cap-0-abertura.jpg`
 
 ![Banner do capítulo 1](assets/banner-cap-1-era-adamica.jpg)
 
-Arquivo: `assets/banner-cap-1-era-adamica.jpg`
-
 - Queda / encarnação: espírito acoplado à matéria, que esquece a origem
 - Prisão ao mundo material: guiado pelos sentidos, vê só um cisco da realidade
 - Ignorância estrutural: estruturas metafísicas só o intelecto alcança
@@ -37,8 +33,6 @@ Arquivo: `assets/banner-cap-1-era-adamica.jpg`
 ## 2. Busca por respostas — contexto histórico
 
 ![Banner do capítulo 2](assets/banner-cap-2-busca-por-respostas.jpg)
-
-Arquivo: `assets/banner-cap-2-busca-por-respostas.jpg`
 
 - Por que a busca começa: a experiência sensorial não resolve
 - Persas, taoísmo, budismo, hinduísmo
@@ -59,8 +53,6 @@ Arquivo: `assets/banner-cap-2-busca-por-respostas.jpg`
 
 ![Banner do capítulo 3](assets/banner-cap-3-inferno-ciclico.jpg)
 
-Arquivo: `assets/banner-cap-3-inferno-ciclico.jpg`
-
 - Mazelas do analfabetismo: individuais, familiares, sociais
 - Identidade individualizada, tratada como linha reta
 - Excesso de opções e crenças sem base lógica
@@ -75,8 +67,6 @@ Arquivo: `assets/banner-cap-3-inferno-ciclico.jpg`
 
 ![Banner do capítulo 4](assets/banner-cap-4-conhecimento-que-liberta.jpg)
 
-Arquivo: `assets/banner-cap-4-conhecimento-que-liberta.jpg`
-
 - Insight: a chave da metafísica estava na linguagem e no software
 - Caminho técnico: abstratos, essencialismo, deturpação da OOP
 - Cadeia: linguagem → metafísica → gnose
@@ -88,8 +78,6 @@ Arquivo: `assets/banner-cap-4-conhecimento-que-liberta.jpg`
 ## 5. O erro — Aristóteles e a substância
 
 ![Banner do capítulo 5](assets/banner-cap-5-erro-aristoteles.jpg)
-
-Arquivo: `assets/banner-cap-5-erro-aristoteles.jpg`
 
 - Platão: dois mundos, o que muda e o que não muda
 - Aristóteles: forma e matéria unidas na substância; verbo colado ao objeto
@@ -103,8 +91,6 @@ Arquivo: `assets/banner-cap-5-erro-aristoteles.jpg`
 ## 6. O conhecimento secreto — alfabeto da dualidade
 
 ![Banner do capítulo 6](assets/banner-cap-6-alfabeto-da-dualidade.jpg)
-
-Arquivo: `assets/banner-cap-6-alfabeto-da-dualidade.jpg`
 
 - A realidade é dual; correspondência: assim em cima como embaixo
 - Criação por contraste: o ponto branco no universo preto; o verbo entre os fotogramas
@@ -121,8 +107,6 @@ Arquivo: `assets/banner-cap-6-alfabeto-da-dualidade.jpg`
 ## 7. Superação adâmica — aplicação
 
 ![Banner do capítulo 7](assets/banner-cap-7-superacao-adamica.jpg)
-
-Arquivo: `assets/banner-cap-7-superacao-adamica.jpg`
 
 - Resolução cruzada: existência, filosofia, espiritualidade e software
 - Histórias como padrões eternos; objetos como personagens mutáveis

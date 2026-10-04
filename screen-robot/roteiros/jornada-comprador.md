@@ -10,14 +10,14 @@ Pré-requisitos
 
 Regra de decisão (obrigatória) — execução da jornada
 - **Toda decisão** em runtime (o que clicar, se Skip apareceu, se há Connect, se scrollar, se a tela mudou) deve usar **somente** `extract()` / `findByText` e o retorno de texto `{ text, x, y }`.
-- **CTA do card:** **jamais** clicar em `Message` (nem `Msg`, `Send a message`). **Apenas** `Connect` (match exato `^Connect$`). Se o OCR mostrar `Message` na faixa do item → pular; se o tap abrir Message → `KEYCODE_BACK` e não contar.
+   - **CTA do card:** **jamais** clicar em `Message` (nem `Msg`, `Send a message`). **Apenas** `Connect` (match exato `^Connect$` no OCR). **Proibido** tap estimado à direita do card (`x: ~458`) — era isso que acertava `Message` quando o pill não saía no OCR. Sem `Connect` no extract → pular/scroll; se abrir Message → `KEYCODE_BACK` e não contar.
 - A IA **jamais** tira print do dispositivo sozinha para **olhar a imagem** e decidir o próximo passo da execução.
 - Screenshots no fluxo feliz são só artefato opcional de log — **não** entram no raciocínio da IA em runtime.
 - **Exceção (debug):** se algo sair do planejado ou houver erro, aí pode tirar print e pedir análise da IA pela imagem — **só nessa exceção**, nunca no restante da execução.
 
 Montagem / evolução do roteiro (fora do runtime)
 - Para **montar ou evoluir** esta jornada, a IA **pode** enviar imagem do dispositivo e extrair detalhes visuais (layout, pills, sheets, zonas) — **somente** para enriquecer o roteiro até ele ficar **auto-suficiente** (passos e critérios só com OCR/texto).
-- Objetivo desse uso de imagem: fechar lacunas do doc (ex. “Connect não sai no OCR → usar grau `2nd` + x fixo”), não operar o AVD passo a passo pela visão.
+- Objetivo desse uso de imagem: fechar lacunas do doc — **não** voltar a autorizar tap estimado em Message; se Connect não sai no OCR, o runtime deve scrollar, não chutar `x,y`.
 - Quando o roteiro já for auto-suficiente, voltar à regra de execução: zero decisão por imagem.
 
 Log por execução (obrigatório)
@@ -66,8 +66,8 @@ Passos (interfaces usadas)
    - log: OCR + decisão tap People
 
 6) Iterar perfis e conectar (um Connect por item da lista)
-   - OCR **quase nunca** lê o texto do pill `Connect` (só às vezes o da linha cortada pelo nav).
-   - **Só clicar em `Connect`** (match exato `^Connect$`). **Jamais** clicar em `Message` — regra absoluta; também jamais `Pending`, `Follow`, `Following`, `Follow back` nem outro CTA do card.
+   - **Só clicar onde o OCR devolveu `Connect`** (match exato `^Connect$`, `180 < y < 850`). **Jamais** clicar em `Message` / `Pending` / `Follow` / `Following`.
+   - **Proibido tap estimado** por grau/`x: ~458`: se o extract não tiver a palavra `Connect`, **não** há clique nesse item — só scroll e tentar de novo. (O estimado era a causa de clicar em Message e ter que dar BACK.)
    - **Critérios de saída** (qualquer um encerra o passo 6 e **encerra o processo** — nada de scroll/tap depois):
      1. **Sem mais resultados:** após N scrolls consecutivos (ex. 3) sem nenhum `Connect` elegível novo (só `Pending`/`Message`/`Follow`, ou lista estagnada). OCR explícito de fim: `No more results` / `End of results` / `You've reached the end` / `não há mais resultados`. **Não** tratar “Are these results helpful?” sozinho como fim (falso positivo no meio da lista).
      2. **Limite LinkedIn:** texto junto com `weekly invitation limit`, `invitation limit`, `can't send invitations`, `limite de convites`, `não é possível enviar`, etc.
@@ -77,15 +77,16 @@ Passos (interfaces usadas)
      - Detecção via OCR: textos como `Message`, `Send a message`, `InMail`, `Premium`, `Upgrade`, `Try Premium`, composer vazio + `Send`.
      - Recuperação: `key(KEYCODE_BACK)` (1–3×) até `extract()` voltar à lista People (`People` chip + graus `2nd`/`3rd+` / busca `comprador`) — **não** decidir por imagem.
      - Antes de cada Connect e após cada scroll: checar essa armadilha; se presente, BACK e seguir (logar OCR + decisão BACK).
-   - Para **cada** item da lista visível:
-     1. achar o marcador de grau do perfil (`2nd` / `3rd+`) com `y > 180` (abaixo dos chips) e `x < 400` (não é o chip da barra)
-     2. na faixa `y` do card, se OCR mostrar `Message` / `Pending` / `Follow` / `Following` → **pular** o item (não tap) — logar motivo
-     3. se OCR achar `Connect` exato nessa faixa → `tapElement` nesse `{ x, y }`; senão (OCR cego no pill) tap à direita `x: ~458, y: grau.y` **somente** se a faixa não tiver os CTAs proibidos acima (`180 < y < 850`)
-     4. aguardar 1–2s; se OCR mostrar **limite LinkedIn** ou **fim de resultados** → Encerramento; se armadilha Message/Premium → BACK (não contar Connect)
-     5. se sheet `Add a note…` / `Add a note`: **jamais** clicar em `Add a note` — só `Skip` / `Ignorar` (`y` ~840–870 ok). Skip do sheet **não** é CTA do card. OCR costuma partir o título em tokens (`Add` `a` `note`); detectar pelo texto **junto** (`join` dos `text`) com `/add\s+a\s+note/i`
-     6. incrementar contador de connects; logar no `.md` (Decisão + OCR JSON)
-   - depois dos Connects elegíveis: scroll **swipe** no centro (`x: 270`, `y: 480`, `direction: "up"`, `distance` ≥ 350) — gesto contínuo, **não** tap; logar scroll
-   - **após rolar:** se ainda houver Connect elegível → repetir; se idle de resultados atingir o limiar → Encerramento; se limite LinkedIn → Encerramento
+   - Em cada tela (via `extract()`):
+     1. listar todos os hits `text === "Connect"` com `180 < y < 850` (ignorar OCR `connections` / `Message`)
+     2. se a mesma faixa `y` tiver `Message` / `Pending` / `Follow` → **não** tap (logar)
+     3. para cada `Connect` OCR válido: `tapElement({ serial, x, y })` **só** nessas coordenadas do OCR
+     4. aguardar 1–2s; se abriu Message/Premium → BACK (não contar); se limite LinkedIn / fim → Encerramento
+     5. sheet `Add a note…`: **só** `Skip` / `Ignorar` — jamais `Add a note` (detectar título pelo texto junto `/add\s+a\s+note/i`)
+     6. incrementar contador; logar no `.md`
+   - se **zero** `Connect` no OCR da tela: scroll centro (não inventar clique) e repetir
+   - depois dos Connects OCR da tela: scroll **swipe** no centro (`x: 270`, `y: 480`, `direction: "up"`, `distance` ≥ 350); logar scroll
+   - **após rolar:** repetir; idle sem `Connect` OCR → Encerramento; limite LinkedIn → Encerramento
    - **não** clicar botões de item com `y ≥ 850` (nav); só `Skip` do sheet pode estar nessa faixa
    - teclado fechado antes de qualquer scroll da lista (centro)
 
@@ -98,7 +99,7 @@ Critérios de aceite
 - A jornada: Search → digitar → fechar teclado → Show all results → People → Connect (e Skip) até **sem mais resultados** ou **limite LinkedIn**.
 - Após Encerramento, o AVD deixa de ser manipulado (processo termina).
 - Passo 6: scroll só no centro; log `.md` com Decisão + OCR JSON por passo.
-- Só clica em `Connect` (exato); **jamais** `Message` (nem Pending/Follow/Following).
+- Só clica em `Connect` lido no OCR; **proibido** tap estimado; **jamais** `Message` (nem Pending/Follow/Following).
 - Após Connect, no sheet: só `Skip` — jamais `Add a note`.
 - Se abrir Message/Premium: BACK via OCR até a lista; nunca enviar mensagem.
 - Decisões só via OCR/texto; print+análise por imagem apenas em erro/debug.

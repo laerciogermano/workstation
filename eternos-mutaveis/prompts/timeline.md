@@ -11,3 +11,4 @@ Como registrar: [`README.md`](README.md).
 | 003 | 2026-10-01 | Aprimorar artigo | [003-2026-10-01-aprimorar-artigo.md](003-2026-10-01-aprimorar-artigo.md) | Revisar prosa da abertura: seções, ritmo, transições e fecho, fiel aos inputs. |
 | 004 | 2026-10-04 | Roadmap de tópicos pelos inputs | [004-2026-10-04-roadmap-topicos-inputs.md](004-2026-10-04-roadmap-topicos-inputs.md) | Ordenar em bullets o que falar/escrever (abertura → era adâmica → dualidade → superação) em `roadmap.md`. |
 | 005 | 2026-10-04 | Separar áudios e transcrições | [005-2026-10-04-separar-audios-transcricoes.md](005-2026-10-04-separar-audios-transcricoes.md) | Mover `.m4a` e transcrições para `inputs/audios-e-transcricoes/`. |
+| 006 | 2026-10-04 | Roadmap em árvore (cap. 0) | [006-2026-10-04-roadmap-arvore-cap0.md](006-2026-10-04-roadmap-arvore-cap0.md) | Expandir só o bloco 0 em árvore hierárquica; validar antes dos demais. |

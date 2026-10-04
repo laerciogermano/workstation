@@ -46,11 +46,12 @@ Passos (interfaces usadas)
      1. achar o marcador de grau do perfil (`2nd` / `3rd+`) com `y > 180` (abaixo dos chips) e `x < 400` (não é o chip da barra)
      2. clicar o pill Connect à direita do card: `tapElement({ serial, x: ~458, y: grau.y })` (em 540px; manter `y` na faixa segura `180 < y < 850`)
      3. aguardar 1–2s
-     4. se aparecer `Skip` / `Ignorar` / `Cancelar`: `findByText` → `tapElement` no Skip (não usar `Cancelar` do system dialog por engano se houver outro fluxo)
+     4. se aparecer sheet `Add a note…`: clicar `Skip` / `Ignorar` (o Skip costuma ficar em `y` ~840–870 — **permitir** esse tap; não confundir com system nav)
      5. screenshot `screenshots/connect-N.png`
    - depois de clicar **todos** os Connects visíveis da tela: scroll **uma vez** no centro (`x: 270`, `y: 480`)
    - **após rolar, repetir o processo** (itens 1–5) para **cada** item novo da lista; continuar o ciclo scroll → conectar até esgotar os perfis ou o limite da sessão
-   - **não** clicar `Connect` com `y ≥ 850` (sobreposto ao system nav)
+   - **não** clicar botões de item com `y ≥ 850` (nav); só `Skip` do sheet pode estar nessa faixa
+   - ignorar itens já `Pending` / `Following` (não são Connect)
    - teclado fechado antes de qualquer scroll
 
 7) Encerramento

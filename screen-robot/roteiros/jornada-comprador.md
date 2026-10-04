@@ -37,6 +37,7 @@ Log por execução (obrigatório)
   4. `### Resultado` — prosa do que aconteceu depois; opcionalmente outro bloco `json` se o OCR seguinte importar
 - Sem documento de passo = execução incompleta para auditoria. Decisões continuam só por OCR; o log é o registro, não a fonte da decisão.
 - **Console (obrigatório):** a cada `extract()` / `findByText`, **imprimir no stdout o OCR completo** retornado (`text@x,y` por linha ou JSON), sem filtrar — para auditoria ao vivo (ex.: pill `+ Connect` visível na UI às vezes não sai no OCR; sem dump não dá para ver o buraco).
+- **OCR backends (debug):** na fixture People/comprador, `tesseract.js` (default) **não** lê o pill; `rapidocr` devolve `Connect` exato; `macos-vision` devolve `•+ Connect`. Ver [`src/lib/extract-engines.js`](../src/lib/extract-engines.js) e teste [`extract.ocr-backends.fixture.test.js`](../src/lib/extract.ocr-backends.fixture.test.js). Default do produto ainda é tesseract até troca explícita.
 
 Passos (interfaces usadas)
 1) Capture frame + OCR

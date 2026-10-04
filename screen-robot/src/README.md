@@ -103,6 +103,10 @@ node --test --test-timeout=120000 lib/find-by-text.fixture.test.js
 
 # OCR People/comprador (fixture com Connect na UI; imprime retorno no console)
 node --test --test-timeout=120000 lib/extract.people-comprador.fixture.test.js
+
+# Comparar backends OCR na mesma fixture (quem vê Connect?)
+# Pré: darwin para macos-vision; `pip3 install --user rapidocr-onnxruntime` para rapidocr
+node --test --test-timeout=180000 lib/extract.ocr-backends.fixture.test.js
 ```
 
 ---
@@ -127,7 +131,9 @@ Só LinkedIn (sem Instagram). Sem digitar credenciais e sem `saveSession`.
 
 **SC-30:** fixture [`test/fixtures/linkedin-tela-inicial.png`](test/fixtures/linkedin-tela-inicial.png) · BDD [`test/bdd/sc-30-linkedin-sign-in-with-email.test.js`](test/bdd/sc-30-linkedin-sign-in-with-email.test.js).
 
-**People/comprador OCR:** fixture [`test/fixtures/linkedin-people-comprador-connect.png`](test/fixtures/linkedin-people-comprador-connect.png) · teste [`lib/extract.people-comprador.fixture.test.js`](lib/extract.people-comprador.fixture.test.js) — print no console e grava [`test/output/linkedin-people-comprador-connect.ocr.json`](test/output/linkedin-people-comprador-connect.ocr.json) (+ `.txt`). Antes: só console; depois: artefato em `test/output/`. Rollback: remover escrita no teste + pasta `test/output/`.
+**People/comprador OCR:** fixture [`test/fixtures/linkedin-people-comprador-connect.png`](test/fixtures/linkedin-people-comprador-connect.png) · teste [`lib/extract.people-comprador.fixture.test.js`](lib/extract.people-comprador.fixture.test.js) — print no console e grava [`test/output/linkedin-people-comprador-connect.ocr.json`](test/output/linkedin-people-comprador-connect.ocr.json) (+ `.txt`).
+
+**OCR backends (Connect):** [`lib/extract-engines.js`](lib/extract-engines.js) — `tesseract` (default/`ocr.js`) · `macos-vision` ([`tools/vision-ocr.swift`](tools/vision-ocr.swift) → `bin/vision-ocr`) · `rapidocr` ([`tools/rapidocr_cli.py`](tools/rapidocr_cli.py), `pip3 install --user rapidocr-onnxruntime`). Comparativo: [`lib/extract.ocr-backends.fixture.test.js`](lib/extract.ocr-backends.fixture.test.js) → [`test/output/ocr-backends-compare.json`](test/output/ocr-backends-compare.json). Nesta fixture: **RapidOCR** devolve `Connect` exato; **macos-vision** devolve `•+ Connect` / similar; **tesseract.js** não vê o pill. Default do produto continua tesseract até decisão explícita. Rollback: remover `extract-engines` + backends + teste.
 
 ---
 

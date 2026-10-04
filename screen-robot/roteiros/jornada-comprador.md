@@ -64,7 +64,7 @@ Passos (interfaces usadas)
      2. na faixa `y` do card, se OCR mostrar `Message` / `Pending` / `Follow` / `Following` → **pular** o item (não tap)
      3. se OCR achar `Connect` exato nessa faixa → `tapElement` nesse `{ x, y }`; senão (OCR cego no pill) tap à direita `x: ~458, y: grau.y` **somente** se a faixa não tiver os CTAs proibidos acima (`180 < y < 850`)
      4. aguardar 1–2s; se caiu na armadilha Message/Premium → BACK (não contar Connect)
-     5. se sheet `Add a note…`: `Skip` / `Ignorar` (`y` ~840–870 ok) — Skip do sheet **não** é CTA do card
+     5. se sheet `Add a note…` / `Add a note`: **jamais** clicar em `Add a note` — só `Skip` / `Ignorar` (`y` ~840–870 ok). Skip do sheet **não** é CTA do card
      6. incrementar contador; se `connects >= limite` → sair do passo 6
    - depois dos Connects elegíveis: scroll **swipe** no centro (`x: 270`, `y: 480`, `direction: "up"`, `distance` ≥ 350) — gesto contínuo, **não** tap; evitar `distance` baixa (vira clique e abre Message)
    - **após rolar:** checar armadilha Message/Premium; depois repetir itens; até o limite estourar
@@ -79,6 +79,7 @@ Critérios de aceite
 - A jornada: Search → digitar → fechar teclado → Show all results → People → Connect (e Skip se aparecer) até o limite de conexão estourar.
 - Passo 6 só termina no limite; scroll da lista só no centro (swipe, não tap).
 - Só clica em `Connect` (exato); jamais `Message` / `Pending` / `Follow` / `Following`.
+- Após Connect, no sheet: só `Skip` — jamais `Add a note`.
 - Se abrir Message/Premium: BACK via OCR até a lista; nunca enviar mensagem.
 - Decisões só via OCR/texto; print+análise por imagem apenas em erro/debug.
 - Artefatos: `elements-*.json`, log com totais; screenshots só se debug ou log opcional.

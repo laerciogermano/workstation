@@ -3,7 +3,7 @@
 **Por quê:** fixar a sequência dos tópicos da obra a partir dos [`inputs/`](inputs/README.md).  
 **Fonte:** documentos em [`inputs/`](inputs/README.md); áudios/transcrições em [`inputs/audios-e-transcricoes/`](inputs/audios-e-transcricoes/README.md); visão filosófica, tratado, briefing, notas de abertura.  
 **Visão:** [`README.md`](README.md).  
-**Já escrito:** abertura em [`artigo.md`](artigo.md) (até sólidos e abstratos).  
+**Já escrito:** [`artigo.md`](artigo.md) — abertura (0) + capítulos 1–7.  
 **Regra:** cada ideia tem um bloco **dono**; nos outros, só ponte curta (“como em X”).
 
 ---
@@ -345,9 +345,8 @@
 
 | Bloco | Status |
 |-------|--------|
-| 0. Abertura | Em [`artigo.md`](artigo.md) |
-| 1–7 | Árvore no roadmap; prosa a escrever nesta ordem |
+| 0–7 | Em [`artigo.md`](artigo.md) |
 
 ## Próximos passos
 
-→ Continuar [`artigo.md`](artigo.md) a partir do bloco **1. Era adâmica**
+→ Revisar prosa do [`artigo.md`](artigo.md) (ritmo, cortes, aprofundar onde o input pedir)

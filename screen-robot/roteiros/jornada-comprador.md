@@ -8,11 +8,16 @@ Pré-requisitos
 - `adb` disponível e permissões concedidas.
 - Pasta `src/screenshots/` para artefatos.
 
-Regra de decisão (obrigatória)
-- **Toda decisão** (o que clicar, se Skip apareceu, se há Connect, se scrollar, se a tela mudou) deve usar **somente** `extract()` / `findByText` e o retorno de texto `{ text, x, y }`.
-- A IA **jamais** tira print do dispositivo sozinha para **olhar a imagem** e decidir o próximo passo.
-- Screenshots no fluxo feliz são só artefato opcional de log — **não** entram no raciocínio da IA.
-- **Exceção (debug):** se algo sair do planejado ou houver erro, aí pode tirar print e pedir análise da IA pela imagem — **só nessa exceção**, nunca no restante da jornada.
+Regra de decisão (obrigatória) — execução da jornada
+- **Toda decisão** em runtime (o que clicar, se Skip apareceu, se há Connect, se scrollar, se a tela mudou) deve usar **somente** `extract()` / `findByText` e o retorno de texto `{ text, x, y }`.
+- A IA **jamais** tira print do dispositivo sozinha para **olhar a imagem** e decidir o próximo passo da execução.
+- Screenshots no fluxo feliz são só artefato opcional de log — **não** entram no raciocínio da IA em runtime.
+- **Exceção (debug):** se algo sair do planejado ou houver erro, aí pode tirar print e pedir análise da IA pela imagem — **só nessa exceção**, nunca no restante da execução.
+
+Montagem / evolução do roteiro (fora do runtime)
+- Para **montar ou evoluir** esta jornada, a IA **pode** enviar imagem do dispositivo e extrair detalhes visuais (layout, pills, sheets, zonas) — **somente** para enriquecer o roteiro até ele ficar **auto-suficiente** (passos e critérios só com OCR/texto).
+- Objetivo desse uso de imagem: fechar lacunas do doc (ex. “Connect não sai no OCR → usar grau `2nd` + x fixo”), não operar o AVD passo a passo pela visão.
+- Quando o roteiro já for auto-suficiente, voltar à regra de execução: zero decisão por imagem.
 
 Passos (interfaces usadas)
 1) Capture frame + OCR

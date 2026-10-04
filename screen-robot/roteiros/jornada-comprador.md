@@ -69,7 +69,7 @@ Passos (interfaces usadas)
    - OCR **quase nunca** lê o texto do pill `Connect` (só às vezes o da linha cortada pelo nav).
    - **Só clicar em `Connect`** (match exato `^Connect$`). **Jamais** clicar em `Message` — regra absoluta; também jamais `Pending`, `Follow`, `Following`, `Follow back` nem outro CTA do card.
    - **Critérios de saída** (qualquer um encerra o passo 6 e **encerra o processo** — nada de scroll/tap depois):
-     1. **Sem mais resultados:** após N scrolls consecutivos (ex. 3) sem nenhum `Connect` elegível novo (só `Pending`/`Message`/`Follow`, ou OCR sem graus novos / lista estagnada — mesmos textos de nomes na faixa da lista), **ou** OCR de fim de lista (`No more results`, `End of results`, `You've reached the end`, `não há mais`, feedback “Are these results helpful?” sem novos cards Connect abaixo).
+     1. **Sem mais resultados:** após N scrolls consecutivos (ex. 3) sem nenhum `Connect` elegível novo (só `Pending`/`Message`/`Follow`, ou lista estagnada). OCR explícito de fim: `No more results` / `End of results` / `You've reached the end` / `não há mais resultados`. **Não** tratar “Are these results helpful?” sozinho como fim (falso positivo no meio da lista).
      2. **Limite LinkedIn:** texto junto com `weekly invitation limit`, `invitation limit`, `can't send invitations`, `limite de convites`, `não é possível enviar`, etc.
    - **Não** usar limite N artificial de connects no run.
    - Ao bater critério de saída: ir ao Encerramento, gravar log, **`process.exit` / encerrar o script imediatamente** — o AVD não deve continuar sendo manipulado.

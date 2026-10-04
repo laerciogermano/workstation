@@ -1,11 +1,5 @@
 # Eternos Mutáveis — Apresentação do artigo
 
-Resumo visual do artigo: um banner e uma síntese por capítulo. Texto completo em [`artigo.md`](artigo.md); ordem de exposição em [`roadmap.md`](roadmap.md).
-
-**Tese:** o real é um só — eterno e, ao mesmo tempo, mutável. A ignorância dessa unidade gera o sofrimento humano; compreendê-la, pela lógica e não pela fé, liberta.
-
----
-
 ## 0. Abertura — as perguntas que não envelhecem
 
 ![Banner do capítulo 0](assets/banner-cap-0-abertura.jpg)

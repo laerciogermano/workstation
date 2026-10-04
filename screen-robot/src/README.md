@@ -13,7 +13,8 @@ Com o runtime no ar, o Android fica **disponível para controle humano**: espelh
 ```bash
 cd screen-robot/src
 # Node ≥ 18, adb no PATH
-# Android SDK / Emulator (AVD) — kind=avd; Google APIs/Play
+# Mac: Android SDK / Emulator — kind=avd (Google APIs/Play)
+# Linux+KVM: kind=docker-avd — ver ../pocs/docker-avd/README.md (ABI x86_64)
 ```
 
 Superfície pública (funções puras; `serial` no cfg):

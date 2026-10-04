@@ -1,0 +1,25 @@
+# Emulador oficial Android (Google) em Docker — Linux + KVM.
+# NÃO exponha a porta ADB na internet pública.
+# macOS / Docker Desktop / Colima: não suportado (sem /dev/kvm útil).
+
+services:
+  emulator:
+    image: ${DOCKER_AVD_IMAGE:-screen-robot/docker-avd:playstore}
+    container_name: ${DOCKER_AVD_CONTAINER_NAME:-docker-avd-default}
+    restart: unless-stopped
+    privileged: true
+    devices:
+      - /dev/kvm
+    environment:
+      ADBKEY: ${ADBKEY:-}
+    labels:
+      com.screen-robot.docker-avd.name: "${DOCKER_AVD_NAME:-default}"
+    ports:
+      - "${ADB_HOST:-127.0.0.1}:${ADB_PORT:-5655}:5555"
+      - "${ADB_HOST:-127.0.0.1}:${GRPC_PORT:-8655}:8554"
+    volumes:
+      # Estado do AVD (userdata) — isolado por COMPOSE_PROJECT_NAME
+      - avd-data:/data
+
+volumes:
+  avd-data:

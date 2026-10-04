@@ -24,13 +24,20 @@ function resolveConfig(cfg) {
   if (!serial && kind === "redroid" && !name) {
     serial = "127.0.0.1:5555";
   }
-  if (!serial && !(name && (kind === "avd" || kind === "redroid"))) {
+  // docker-avd sem name: porta default 5655; com name: porta deriva do name
+  if (!serial && kind === "docker-avd" && !name) {
+    serial = "127.0.0.1:5655";
+  }
+  const namedKinds = kind === "avd" || kind === "redroid" || kind === "docker-avd";
+  if (!serial && !(name && namedKinds)) {
     const tip =
       kind === "avd"
         ? "com kind=avd informe provision.name (AVD)"
         : kind === "redroid"
           ? "com kind=redroid informe provision.name ou serial (default 127.0.0.1:5555)"
-          : "informe provision.serial/device, ou use kind=avd|redroid + name";
+          : kind === "docker-avd"
+            ? "com kind=docker-avd informe provision.name ou serial (default 127.0.0.1:5655; Linux+KVM)"
+            : "informe provision.serial/device, ou use kind=avd|redroid|docker-avd + name";
     const err = new Error(`PROVISION_NO_SERIAL: falta serial/device (${tip})`);
     err.code = "PROVISION_NO_SERIAL";
     throw err;

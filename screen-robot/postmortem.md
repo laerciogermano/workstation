@@ -57,4 +57,19 @@ O que **funcionava** no redroid: provision ADB, install de alguns APKs, telas mu
 
 - Docs e config: `provision.kind: "avd"` · [`pocs/android-studio/`](pocs/android-studio/README.md)
 - `pocs/redroid/`: legado (stub) — não é runtime do ConnectMax
-- Código JS pode ainda ter referências internas a `redroid`; produto documentado é só AVD
+- Código JS pode ainda ter referências internas a `redroid`; produto documentado no Mac é AVD
+
+## Tentativa docker-avd (emulador oficial Google em Docker)
+
+**Não é redroid.** POC [`pocs/docker-avd/`](pocs/docker-avd/README.md): imagem Google Play (`28-playstore-x64` hospedada; API 30 playstore via emu-docker), volume de estado, `kind: "docker-avd"`.
+
+| Gate | Critério |
+|------|----------|
+| Host | Linux + `/dev/kvm` — macOS/Colima **fora** |
+| GMS | `pm path com.google.android.gms` |
+| LinkedIn | APK **x86_64**; UI não branca |
+| Estado | stop/start no volume; `export-state` / `import-state` |
+
+Smoke no Mac: `./scripts/smoke-check.sh` → SKIP. No Linux: mesmo script faz boot + GMS + persistência + export/import.
+
+Se o gate falhar no Linux, kind fica experimental; default do repo permanece `avd`.

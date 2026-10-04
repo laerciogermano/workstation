@@ -2,7 +2,7 @@
 
 Agent Android via **Node**: frame → OCR → gestos. Sem dump uiautomator / árvore DOM.
 
-**Libs:** [`src/`](src/README.md) · **Stories:** [`1.stories.md`](1.stories.md) · **Arquitetura:** [`arquitetura.md`](arquitetura.md) · **Runtime AVD:** [`pocs/android-studio/`](pocs/android-studio/README.md)
+**Libs:** [`src/`](src/README.md) · **Stories:** [`1.stories.md`](1.stories.md) · **Arquitetura:** [`arquitetura.md`](arquitetura.md) · **Runtime AVD:** [`pocs/android-studio/`](pocs/android-studio/README.md) · **docker-avd (Linux):** [`pocs/docker-avd/`](pocs/docker-avd/README.md)
 
 ```js
 import { provisionEmulator } from "./src/lib/provision.js";
@@ -14,7 +14,7 @@ import { saveSession, restoreSession, removeSession } from "./src/lib/session.js
 import { resetInstance } from "./src/lib/reset-instance.js";
 ```
 
-Pré-requisitos: Node ≥ 18 · `adb` · AVD (`kind: "avd"`) · config [`src/device.config.json`](src/device.config.json).
+Pré-requisitos: Node ≥ 18 · `adb` · AVD (`kind: "avd"`, Mac) ou Linux+KVM (`kind: "docker-avd"`) · config [`src/device.config.json`](src/device.config.json).
 
 ---
 
@@ -32,10 +32,12 @@ Cria se `name` novo; anexa se já existir.
 
 | Campo | Obrig. | Descrição |
 |-------|--------|-----------|
-| `provision.name` | sim (`avd`/`redroid`) | Id do agent / AVD |
-| `provision.kind` | | `"avd"` · `"adb"` · `"redroid"` |
+| `provision.name` | sim (`avd`/`redroid`/`docker-avd`) | Id do agent / AVD |
+| `provision.kind` | | `"avd"` · `"adb"` · `"redroid"` · `"docker-avd"` |
 | `provision.serial` | se `adb` | Serial já online |
 | `provision.connectTimeoutMs` | | Timeout por fase |
+
+`docker-avd`: Linux + `/dev/kvm`; serial `127.0.0.1:5655+`; ABI guest **x86_64**. Mac → `avd`. Ver [`pocs/docker-avd/`](pocs/docker-avd/README.md).
 
 **Saída**
 
@@ -52,6 +54,9 @@ Cria se `name` novo; anexa se já existir.
 const { serial } = await provisionEmulator({
   provision: { name: "agent-a", kind: "avd" },
 });
+
+// Linux + KVM (estado em volume Docker; export/import no POC)
+// await provisionEmulator({ provision: { name: "agent-a", kind: "docker-avd" } });
 ```
 
 ---

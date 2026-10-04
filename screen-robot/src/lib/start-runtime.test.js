@@ -5,12 +5,13 @@ import assert from "node:assert/strict";
 import net from "node:net";
 import path from "node:path";
 import { describe, it } from "node:test";
+import { serialForDockerAvdName } from "./docker-avd-instance.js";
+import { serialForRedroidName } from "./redroid-instance.js";
 import {
   defaultStartScript,
   isRuntimeReachable,
   startRuntime,
 } from "./start-runtime.js";
-import { serialForRedroidName } from "./redroid-instance.js";
 function fakeClock(start = 0) {
   let t = start;
   return {
@@ -159,6 +160,56 @@ describe("startRuntime", () => {
     assert.equal(out.serial, expected);
   });
 
+  it("kind docker-avd + name sobe porta 5655+ e env DOCKER_AVD_NAME", async () => {
+    let env;
+    let runs = 0;
+    const clock = fakeClock();
+    const expected = serialForDockerAvdName("agent-b");
+    /** @type {Set<string>} */
+    const up = new Set();
+    const out = await startRuntime(
+      {
+        name: "agent-b",
+        kind: "docker-avd",
+        connectTimeoutMs: 5_000,
+        startScript: "/tmp/start.sh",
+      },
+      {
+        isReachable: async (serial) => up.has(serial),
+        findSerialForDockerAvd: () => null,
+        runStartScript: async (_script, e) => {
+          runs += 1;
+          env = e;
+          up.add(expected);
+        },
+        sleep: clock.sleep,
+        now: clock.now,
+      },
+    );
+    assert.equal(runs, 1);
+    assert.equal(env.DOCKER_AVD_NAME, "agent-b");
+    assert.equal(env.ADB_PORT, expected.split(":")[1]);
+    assert.equal(out.serial, expected);
+    assert.match(out.serial, /^127\.0\.0\.1:5[67]\d\d$/);
+  });
+
+  it("kind docker-avd + name anexa instância já online", async () => {
+    let runs = 0;
+    const expected = serialForDockerAvdName("agent-a");
+    const out = await startRuntime(
+      { name: "agent-a", kind: "docker-avd" },
+      {
+        isReachable: async (serial) => serial === expected,
+        findSerialForDockerAvd: () => "127.0.0.1:5710",
+        runStartScript: async () => {
+          runs += 1;
+        },
+      },
+    );
+    assert.equal(runs, 0);
+    assert.equal(out.serial, expected);
+  });
+
   it("é idempotente quando já alcançável", async () => {
     let runs = 0;
     const deps = {
@@ -276,14 +327,19 @@ describe("isRuntimeReachable", () => {
 });
 
 describe("defaultStartScript", () => {
-  it("resolve paths redroid e avd; adb sem script", () => {
+  it("resolve paths redroid, avd e docker-avd; adb sem script", () => {
     const redroid = defaultStartScript("redroid");
     const avd = defaultStartScript("avd");
+    const dockerAvd = defaultStartScript("docker-avd");
     assert.ok(
       redroid && redroid.endsWith(path.join("redroid", "scripts", "start.sh")),
     );
     assert.ok(
       avd && avd.endsWith(path.join("android-studio", "scripts", "start.sh")),
+    );
+    assert.ok(
+      dockerAvd &&
+        dockerAvd.endsWith(path.join("docker-avd", "scripts", "start.sh")),
     );
     assert.equal(defaultStartScript("adb"), undefined);
   });

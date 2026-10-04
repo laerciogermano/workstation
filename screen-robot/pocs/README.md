@@ -1,10 +1,12 @@
 # POCs — screen-robot
 
-Runtime do ConnectMax: **Android Emulator / AVD**.
+Runtime canônico (Mac / apps de loja): **Android Emulator / AVD**.
 
 | POC | Descrição |
 |-----|-----------|
-| [`android-studio/`](android-studio/README.md) | **Único runtime documentado** — AVD (`provision.kind: "avd"`); scripts start/stop/wait-boot; `reset.sh` planejado |
+| [`android-studio/`](android-studio/README.md) | **Canônico** — AVD no host (`provision.kind: "avd"`) |
+| [`docker-avd/`](docker-avd/README.md) | **Opcional Linux+KVM** — emulador oficial Google em Docker (`kind: "docker-avd"`); estado em volume + export/import |
+| [`redroid/`](redroid/README.md) | Legado — Android container sem GMS útil para loja |
 
 Código do robô: [`../src/`](../src/README.md).
 
@@ -23,3 +25,4 @@ Código do robô: [`../src/`](../src/README.md).
 Implementação:
 
 - AVD / Android Studio: [`android-studio/README.md`](android-studio/README.md#aplicar-mascaramento-neste-vendor)
+- docker-avd (Linux): props via imagem Google; ver [`docker-avd/README.md`](docker-avd/README.md)

@@ -1,0 +1,4 @@
+.env
+artifacts/
+*.tar.gz
+emulator.log

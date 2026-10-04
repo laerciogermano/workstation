@@ -13,7 +13,7 @@ Legenda nos diagramas: `+` público exportado · `-` interno (não exportado) ·
 |-----------|---------|
 | Funções puras | Sem handle; `{ serial, … }` → dados |
 | Percepção | frame → OCR → textos; gestos por coords |
-| Runtime | AVD canônico; redroid legado |
+| Runtime | AVD canônico (Mac); docker-avd opcional (Linux+KVM); redroid legado |
 | Create/attach | mesmo `name` anexa — não cria segundo |
 | Deps | injetáveis para testes |
 
@@ -32,7 +32,7 @@ folha Node (adb.js · fs · crypto · child_process · net · tesseract.js)
     ↓
 processos externos (adb · bash pocs/*/scripts · docker · scrcpy · apkeep · unzip)
     ↓
-device (AVD / redroid / aparelho)
+device (AVD / docker-avd / redroid / aparelho)
 ```
 
 ---
@@ -72,6 +72,11 @@ device (AVD / redroid / aparelho)
 | `redroid-instance.js` | `containerNameForRedroid(name)` | `redroid-<slug>` |
 | `redroid-instance.js` | `findSerialForRedroid(name, …)` | `docker inspect` HostPort |
 | `redroid-instance.js` | `-dockerEnv()` | DOCKER_HOST / Colima sock |
+| `docker-avd-instance.js` | `slugifyDockerAvdName(name)` | slug |
+| `docker-avd-instance.js` | `portForDockerAvdName(name)` | 5655+(hash%100) |
+| `docker-avd-instance.js` | `serialForDockerAvdName(name)` | `127.0.0.1:port` |
+| `docker-avd-instance.js` | `containerNameForDockerAvd(name)` | `docker-avd-<slug>` |
+| `docker-avd-instance.js` | `findSerialForDockerAvd(name, …)` | `docker inspect` HostPort |
 
 ### Eventos — `events.js` + `event-*.js`
 
@@ -199,6 +204,13 @@ classDiagram
     +findSerialForRedroid(name, deps)
     -dockerEnv()
   }
+  class docker_avd_instance_js {
+    +slugifyDockerAvdName(name)
+    +portForDockerAvdName(name)
+    +serialForDockerAvdName(name)
+    +containerNameForDockerAvd(name)
+    +findSerialForDockerAvd(name, deps)
+  }
   class ensure_adb_online_js {
     +ensureAdbOnline(serial, timeoutMs, started, deps)
     -defaultWaitForDevice(serial)
@@ -325,6 +337,7 @@ classDiagram
   reset_instance_js --> wait_boot_completed_js
   reset_instance_js --> adb_js : sleep
   start_runtime_js --> redroid_instance_js
+  start_runtime_js --> docker_avd_instance_js
   start_runtime_js --> adb_js : sleep
   ensure_adb_online_js --> adb_js
   wait_boot_completed_js --> adb_js
@@ -1350,7 +1363,11 @@ sequenceDiagram
   end
 ```
 
-### 5.12 Quem chama qual script
+### 5.12 Scripts shell — docker-avd (`pocs/docker-avd/scripts`)
+
+Quem chama: `start-runtime` → `start.sh` (env `DOCKER_AVD_NAME`, `ADB_PORT`) · `resetInstance` → `reset.sh`. Exige Linux + `/dev/kvm`. Volume `avd-data` por projeto; `export-state.sh` / `import-state.sh` replicam o tar. Runbook: [`pocs/docker-avd/README.md`](pocs/docker-avd/README.md).
+
+### 5.13 Quem chama qual script
 
 ```mermaid
 ---
@@ -1384,18 +1401,25 @@ sequenceDiagram
   participant AvdReset as android-studio/reset.sh
   participant RedStart as redroid/start.sh
   participant RedReset as redroid/reset.sh
+  participant DavdStart as docker-avd/start.sh
+  participant DavdReset as docker-avd/reset.sh
 
   Prov->>SR: startRuntime
   alt kind=avd
     SR->>AvdStart: bash + AVD_NAME
   else kind=redroid
     SR->>RedStart: bash + REDROID_NAME + ADB_PORT
+  else kind=docker-avd
+    SR->>DavdStart: bash + DOCKER_AVD_NAME + ADB_PORT
   end
 
   Reset->>Reset: defaultResetScript(kind)
   alt kind=avd
     Reset->>AvdReset: bash reset.sh
     Note over AvdReset: stop → wipe emulator → wait-boot
+  else kind=docker-avd
+    Reset->>DavdReset: bash reset.sh
+    Note over DavdReset: compose down -v → start.sh
   else kind=redroid|adb
     Reset->>RedReset: bash reset.sh
     Note over RedReset: compose down -v → start.sh
@@ -1423,5 +1447,5 @@ sequenceDiagram
 | Contratos / uso | [`src/README.md`](src/README.md) |
 | Detalhe por EP | [`implementation-plan/`](implementation-plan/README.md) |
 | Por que AVD | [`postmortem.md`](postmortem.md) |
-| Shell start/reset (seq. §5.10–5.12) | [`pocs/android-studio/`](pocs/android-studio/README.md) · [`pocs/redroid/`](pocs/redroid/README.md) |
+| Shell start/reset (seq. §5.10–5.13) | [`pocs/android-studio/`](pocs/android-studio/README.md) · [`pocs/docker-avd/`](pocs/docker-avd/README.md) · [`pocs/redroid/`](pocs/redroid/README.md) |
 | Aceite | [`5.bdds.md`](5.bdds.md) |

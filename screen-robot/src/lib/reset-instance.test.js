@@ -10,6 +10,10 @@ describe("defaultResetScript", () => {
     assert.match(defaultResetScript("avd"), /android-studio\/scripts\/reset\.sh$/);
   });
 
+  it("aponta docker-avd para pocs/docker-avd", () => {
+    assert.match(defaultResetScript("docker-avd"), /docker-avd\/scripts\/reset\.sh$/);
+  });
+
   it("aponta redroid para adb e redroid (legado)", () => {
     assert.match(defaultResetScript("adb"), /redroid\/scripts\/reset\.sh$/);
     assert.match(defaultResetScript("redroid"), /redroid\/scripts\/reset\.sh$/);
@@ -32,6 +36,31 @@ describe("resetInstance", () => {
     );
     assert.equal(ran, 1);
     assert.equal(out.serial, "127.0.0.1:5555");
+  });
+
+  it("docker-avd passa DOCKER_AVD_NAME e ADB_PORT ao resetScript", async () => {
+    /** @type {Record<string, string>|undefined} */
+    let env;
+    await resetInstance(
+      {
+        provision: {
+          name: "agent-a",
+          serial: "127.0.0.1:5710",
+          kind: "docker-avd",
+          connectTimeoutMs: 5_000,
+        },
+      },
+      {
+        runResetScript: async (_script, e) => {
+          env = e;
+        },
+        isReachable: async () => true,
+        ensureAdbOnline: async () => {},
+        waitBootCompleted: async () => {},
+      },
+    );
+    assert.equal(env?.DOCKER_AVD_NAME, "agent-a");
+    assert.equal(env?.ADB_PORT, "5710");
   });
 
   it("falha sem serial", async () => {

@@ -8,6 +8,10 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { sleep as defaultSleep } from "./adb.js";
 import {
+  findSerialForDockerAvd as defaultFindSerialForDockerAvd,
+  serialForDockerAvdName,
+} from "./docker-avd-instance.js";
+import {
   findSerialForRedroid as defaultFindSerialForRedroid,
   serialForRedroidName,
 } from "./redroid-instance.js";
@@ -17,13 +21,16 @@ const pocsRoot = path.resolve(
   "../../pocs",
 );
 
-/** @param {"adb"|"redroid"|"avd"|string} kind */
+/** @param {"adb"|"redroid"|"avd"|"docker-avd"|string} kind */
 export function defaultStartScript(kind) {
   if (kind === "redroid") {
     return path.join(pocsRoot, "redroid", "scripts", "start.sh");
   }
   if (kind === "avd") {
     return path.join(pocsRoot, "android-studio", "scripts", "start.sh");
+  }
+  if (kind === "docker-avd") {
+    return path.join(pocsRoot, "docker-avd", "scripts", "start.sh");
   }
   return undefined;
 }
@@ -129,7 +136,7 @@ function defaultRunStartScript(scriptPath, env = {}) {
 
 /**
  * @param {{ serial?: string, name?: string, kind: string, connectTimeoutMs?: number, startScript?: string }} resolved
- * @param {{ isReachable?: Function, runStartScript?: Function, findSerialForAvd?: Function, findSerialForRedroid?: Function, sleep?: Function, now?: Function }} [deps]
+ * @param {{ isReachable?: Function, runStartScript?: Function, findSerialForAvd?: Function, findSerialForRedroid?: Function, findSerialForDockerAvd?: Function, sleep?: Function, now?: Function }} [deps]
  */
 export async function startRuntime(resolved, deps = {}) {
   const isReachable = deps.isReachable ?? isRuntimeReachable;
@@ -137,6 +144,8 @@ export async function startRuntime(resolved, deps = {}) {
   const lookupAvd = deps.findSerialForAvd ?? findSerialForAvd;
   const lookupRedroid =
     deps.findSerialForRedroid ?? defaultFindSerialForRedroid;
+  const lookupDockerAvd =
+    deps.findSerialForDockerAvd ?? defaultFindSerialForDockerAvd;
   const sleep = deps.sleep ?? defaultSleep;
   const now = deps.now ?? Date.now;
   const timeoutMs = Number(resolved.connectTimeoutMs ?? 120_000);
@@ -145,6 +154,9 @@ export async function startRuntime(resolved, deps = {}) {
   if (resolved.kind === "redroid" && resolved.name && !serial) {
     serial = serialForRedroidName(resolved.name);
   }
+  if (resolved.kind === "docker-avd" && resolved.name && !serial) {
+    serial = serialForDockerAvdName(resolved.name);
+  }
 
   if (resolved.kind === "avd" && resolved.name) {
     const already = lookupAvd(resolved.name);
@@ -152,6 +164,9 @@ export async function startRuntime(resolved, deps = {}) {
   } else if (resolved.kind === "redroid" && resolved.name) {
     // Porta deriva do name — checa ADB antes de docker inspect (inspect trava se daemon morto)
     const expected = serial || serialForRedroidName(resolved.name);
+    if (await isReachable(expected)) return { serial: expected };
+  } else if (resolved.kind === "docker-avd" && resolved.name) {
+    const expected = serial || serialForDockerAvdName(resolved.name);
     if (await isReachable(expected)) return { serial: expected };
   } else if (serial && (await isReachable(serial))) {
     return { serial };
@@ -177,6 +192,11 @@ export async function startRuntime(resolved, deps = {}) {
     const port = String(serial).split(":")[1] || "5555";
     env.ADB_PORT = port;
   }
+  if (resolved.kind === "docker-avd" && resolved.name) {
+    env.DOCKER_AVD_NAME = resolved.name;
+    const port = String(serial).split(":")[1] || "5655";
+    env.ADB_PORT = port;
+  }
   await runStartScript(script, env);
 
   const started = now();
@@ -190,6 +210,17 @@ export async function startRuntime(resolved, deps = {}) {
       let found = null;
       try {
         found = lookupRedroid(resolved.name);
+      } catch {
+        found = null;
+      }
+      if (found && found !== serial && (await isReachable(found))) {
+        return { serial: found };
+      }
+    } else if (resolved.kind === "docker-avd" && resolved.name) {
+      if (serial && (await isReachable(serial))) return { serial };
+      let found = null;
+      try {
+        found = lookupDockerAvd(resolved.name);
       } catch {
         found = null;
       }

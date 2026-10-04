@@ -71,4 +71,34 @@ describe("provisionEmulator", () => {
     );
     assert.equal(handle.serial, "127.0.0.1:5601");
   });
+
+  it("kind=docker-avd defaulta serial 127.0.0.1:5655", async () => {
+    const handle = await provisionEmulator(
+      { provision: { kind: "docker-avd" } },
+      {
+        ...stubDeps,
+        startRuntime: async (r) => {
+          assert.equal(r.serial, "127.0.0.1:5655");
+          assert.equal(r.kind, "docker-avd");
+          return { serial: r.serial };
+        },
+      },
+    );
+    assert.equal(handle.serial, "127.0.0.1:5655");
+  });
+
+  it("kind=docker-avd + name não força 5655 (serial sai do startRuntime)", async () => {
+    const handle = await provisionEmulator(
+      { provision: { kind: "docker-avd", name: "agent-b" } },
+      {
+        ...stubDeps,
+        startRuntime: async (r) => {
+          assert.equal(r.name, "agent-b");
+          assert.equal(r.serial, undefined);
+          return { serial: "127.0.0.1:5710" };
+        },
+      },
+    );
+    assert.equal(handle.serial, "127.0.0.1:5710");
+  });
 });

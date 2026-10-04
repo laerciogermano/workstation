@@ -19,12 +19,15 @@ const pocsRoot = path.resolve(
 );
 
 /**
- * @param {"adb"|"redroid"|"avd"|string} kind
+ * @param {"adb"|"redroid"|"avd"|"docker-avd"|string} kind
  * @returns {string|undefined}
  */
 export function defaultResetScript(kind) {
   if (kind === "avd") {
     return path.join(pocsRoot, "android-studio", "scripts", "reset.sh");
+  }
+  if (kind === "docker-avd") {
+    return path.join(pocsRoot, "docker-avd", "scripts", "reset.sh");
   }
   if (kind === "redroid" || kind === "adb") {
     return path.join(pocsRoot, "redroid", "scripts", "reset.sh");
@@ -32,10 +35,11 @@ export function defaultResetScript(kind) {
   return undefined;
 }
 
-function defaultRunResetScript(scriptPath) {
+function defaultRunResetScript(scriptPath, env = {}) {
   const r = spawnSync("bash", [scriptPath], {
     encoding: "utf8",
     stdio: "inherit",
+    env: { ...process.env, ...env },
   });
   if (r.status !== 0) {
     const err = new Error(
@@ -47,7 +51,7 @@ function defaultRunResetScript(scriptPath) {
 }
 
 /**
- * @param {{ device?: string, provision?: { serial?: string, kind?: string, connectTimeoutMs?: number, resetScript?: string, startScript?: string } }} cfg
+ * @param {{ device?: string, provision?: { name?: string, serial?: string, kind?: string, connectTimeoutMs?: number, resetScript?: string, startScript?: string } }} cfg
  * @param {object} [deps]
  */
 export async function resetInstance(cfg = {}, deps = {}) {
@@ -60,6 +64,7 @@ export async function resetInstance(cfg = {}, deps = {}) {
   }
 
   const kind = cfg.provision?.kind || "adb";
+  const name = cfg.provision?.name;
   const connectTimeoutMs = Number(cfg.provision?.connectTimeoutMs ?? 180_000);
   const script =
     cfg.provision?.resetScript ||
@@ -82,7 +87,23 @@ export async function resetInstance(cfg = {}, deps = {}) {
   const sleep = deps.sleep ?? defaultSleep;
   const now = deps.now ?? Date.now;
 
-  await runResetScript(script);
+  /** @type {Record<string, string>} */
+  const env = {};
+  if (kind === "docker-avd" && name) {
+    env.DOCKER_AVD_NAME = name;
+    const port = String(serial).split(":")[1];
+    if (port) env.ADB_PORT = port;
+  }
+  if (kind === "redroid" && name) {
+    env.REDROID_NAME = name;
+    const port = String(serial).split(":")[1];
+    if (port) env.ADB_PORT = port;
+  }
+  if (kind === "avd" && name) {
+    env.AVD_NAME = name;
+  }
+
+  await runResetScript(script, env);
 
   const started = now();
   while (now() - started < connectTimeoutMs) {

@@ -33,15 +33,23 @@ Passos (interfaces usadas)
    - esperar 2–3s
    - salvar `elements-showall.json` e screenshot (`screenshots/after-showall.png`)
 
-5) Iterar perfis e conectar
+5) Clicar em People
+   - após `Show all results`, localizar a aba/filtro `People` (preferir `y` baixo, barra de chips — tipicamente `y < 200`)
+   - `extract()` ou `findByText(serial, "People")` → `{ x, y }`
+   - `tapElement({ serial, x, y })`
+   - esperar 2–3s
+   - salvar screenshot (`screenshots/after-people.png`)
+
+6) Iterar perfis e conectar
    - para cada item listado:
-     - localizar botão/link `Connect` / `connections` via `extract()` (proximal ao perfil)
+     - localizar botão/link `Connect` via `extract()` (match exato `^Connect$`, não `connections`)
      - `tapElement({ serial, x, y })`
      - aguardar 1–2s
      - checar `findByText(serial, "Skip"|"Cancelar"|"Ignorar")` — se aparecer, `tapElement` no `Skip`
      - salvar screenshot por ação (`screenshots/connect-N.png`)
    - rolar a lista periodicamente (`scroll`) para trazer novos perfis
-6) Encerramento
+
+7) Encerramento
    - salvar `screenshots/connect-final.png`
    - gerar `elements-<etapa>.json` com `extract()` em pontos chave
    - log resumido: total connects / skips / falhas

@@ -40,23 +40,13 @@ Passos (interfaces usadas)
    - esperar 2–3s
    - salvar screenshot (`screenshots/after-people.png`)
 
-6) Iterar perfis e conectar
-   - para cada item listado:
-     - localizar botão/link `Connect` via `extract()` (match exato `^Connect$`, não `connections`)
-     - `tapElement({ serial, x, y })`
-     - aguardar 1–2s
-     - checar `findByText(serial, "Skip"|"Cancelar"|"Ignorar")` — se aparecer, `tapElement` no `Skip`
-     - salvar screenshot por ação (`screenshots/connect-N.png`)
-   - rolar a lista periodicamente (`scroll`) na **zona segura** (miolo da tela — nunca teclado / nunca faixa inferior do system nav)
-
-7) Encerramento
-   - salvar `screenshots/connect-final.png`
-   - gerar `elements-<etapa>.json` com `extract()` em pontos chave
-   - log resumido: total connects / skips / falhas
+6) Encerramento
+   - salvar `screenshots/after-people.png` / `elements-people.json` com `extract()` em pontos chave
+   - log resumido da jornada
 
 Critérios de aceite
-- A jornada encontra e clica em pelo menos um `Connect` e trata `Skip` quando presente.
-- Artefatos gerados: `screenshots/*.png`, `elements-*.json`, log com totais.
+- A jornada chega na aba People após Search → digitar → fechar teclado → Show all results → People.
+- Artefatos gerados: `screenshots/*.png`, `elements-*.json`.
 
 Notas operacionais
 - Timeouts: esperar 1–3s entre ações; `findByText` com `minScore:0.75`.

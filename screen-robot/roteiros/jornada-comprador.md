@@ -102,7 +102,7 @@ Critérios de aceite
 - A jornada: Search → digitar → fechar teclado → Show all results → People → Connect (e Skip); scroll infinito até achar `Connect`; para só em fim explícito ou limite LinkedIn.
 - Após Encerramento, o AVD deixa de ser manipulado (processo termina).
 - Passo 6: sem teto de rounds vazios; scroll só no centro; log `.md` com Decisão + OCR JSON por passo.
-- Só clica em `Connect` lido no OCR; **proibido** tap estimado; **jamais** `Message` (nem Pending/Follow/Following).
+- Só clica em `Connect`; **proibido** tap estimado; **jamais** `Message` (nem Pending/Follow/Following).
 - Após Connect, no sheet: só `Skip` — jamais `Add a note`.
 - Se `Withdraw invitation`: só `Cancel` — jamais confirmar Withdraw.
 - Se abrir Message/Premium: BACK via OCR até a lista; nunca enviar mensagem.

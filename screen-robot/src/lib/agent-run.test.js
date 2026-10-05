@@ -79,6 +79,10 @@ describe("agent-run (SC-32)", () => {
             assert.equal(historySteps, 12);
             assert.equal(history.length, 1);
             assert.equal(history[0].resultado, "tap 458,344");
+            assert.deepEqual(history[0].ocr, [
+              { text: "Connect", x: 458, y: 344 },
+              { text: "People", x: 80, y: 150 },
+            ]);
             return {
               resumo: "ok",
               acao: { type: "done", motivo: "conectado" },

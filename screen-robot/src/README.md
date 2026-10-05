@@ -201,6 +201,8 @@ Stdout: `[agent]` / `[decide]` / `[gemini]` ou `[openai]`. Provider default `gem
 
 **Antes → depois (extract no stdout):** após cada `extract`, além de `text@x,y`, imprime o JSON completo (`extract return:`). Rollback: só o loop compacto em `dumpOcrStdout`.
 
+**Antes → depois (OCR no histórico):** cada item de `history` inclui `ocr` compacto (`text,x,y`) da tela daquele passo, além de `resultado`/ação. Aumenta tokens no prompt. Rollback: omitir `ocr` no `history.push`.
+
 **Antes → depois (histórico configurável):** `history.slice(-8)` fixo → janela `historySteps` (default **12**), via `runAgent({ historySteps })` · `AGENT_HISTORY_STEPS` · `--history-steps`. Cada passo grava também `resultado` (ex. `scroll up`) no histórico enviado ao modelo. Rollback: `slice(-8)` sem `resultado`.
 
 **Antes → depois (home/Settings no system prompt):** lite fazia `scroll up` na home e reabria o shade; agora o system de `decide` manda shade→`KEYCODE_BACK`/`HOME`, gaveta→`scroll down`, tap em `Settings`. Roteiro: [`roteiros/abrir-settings.md`](../roteiros/abrir-settings.md). Rollback: remover o bloco “Home / Settings” de `buildSystemPrompt`.

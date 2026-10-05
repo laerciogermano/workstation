@@ -4,7 +4,7 @@
 import { mkdirSync, appendFileSync, writeFileSync, existsSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { extract } from "./extract.js";
-import { decide, resolveHistorySteps, resolveDecideModel, resolveProvider } from "./agent-decide.js";
+import { decide, resolveHistorySteps, resolveDecideModel, resolveProvider, compactOcr } from "./agent-decide.js";
 import { DEFAULT_MODEL as DEFAULT_GEMINI_MODEL } from "./gemini.js";
 import { tapElement, scroll, type, key } from "./operate.js";
 import { adb, sleep as defaultSleep } from "./adb.js";
@@ -382,7 +382,14 @@ export async function runAgent(cfg, deps = {}) {
         resultado,
       });
       steps.push({ step: i, error: true, resultado });
-      history.push({ step: i, type: "sleep", motivo: resultado, error: resultado, resultado });
+      history.push({
+        step: i,
+        type: "sleep",
+        motivo: resultado,
+        error: resultado,
+        resultado,
+        ocr: [],
+      });
       usageCalls.push({ step: i, error: resultado });
       await sleep(recoverMs);
       continue;
@@ -426,7 +433,14 @@ export async function runAgent(cfg, deps = {}) {
         usage: errUsage,
       });
       steps.push({ step: i, error: true, resultado });
-      history.push({ step: i, type: "sleep", motivo: resultado, error: resultado, resultado });
+      history.push({
+        step: i,
+        type: "sleep",
+        motivo: resultado,
+        error: resultado,
+        resultado,
+        ocr: compactOcr(ocr),
+      });
       recordChatCall({
         step: i,
         error: resultado,
@@ -498,6 +512,7 @@ export async function runAgent(cfg, deps = {}) {
       code: acao.code,
       resultado,
       error: stepError ? resultado : undefined,
+      ocr: compactOcr(ocr),
     });
 
     if (acao.type === "done") {

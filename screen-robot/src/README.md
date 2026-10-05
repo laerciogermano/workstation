@@ -179,16 +179,20 @@ export GEMINI_API_KEY=…          # obrigatório para decide real
 export GEMINI_MODEL=gemini-3.5-flash-lite
 # opcional: export GEMINI_FALLBACK_MODELS=gemini-3.1-flash-lite
 # opcional: export GEMINI_MAX_PROMPT_CHARS=6000
+# opcional: export AGENT_HISTORY_STEPS=12   # janela de passos no prompt (default 12)
 # retry/indisponível: GEMINI_RETRY_MS=0 · GEMINI_CHAIN_WAIT_MS=0 · GEMINI_CHAIN_ROUNDS=30
 # (saturado → reenvia na hora, sem backoff; até N rounds)
 
 npm run agent -- --prompt ../roteiros/jornada-comprador.md
 npm run agent -- --prompt ../roteiros/abrir-settings.md
+npm run agent -- --prompt ../roteiros/abrir-settings.md --history-steps 16
 npm run agent -- --prompt "abra o LinkedIn e mostre as últimas 10 conexões"
 npm run agent:smoke              # 1–2 passos no device; sem key = heurística Connect/scroll
 ```
 
 Stdout: `[agent]` / `[decide]` / `[gemini]`. Usa **só** `GEMINI_MODEL` (default código `gemini-3.5-flash-lite`). Fallback só se `GEMINI_FALLBACK_MODELS` estiver setado.
+
+**Antes → depois (histórico configurável):** `history.slice(-8)` fixo → janela `historySteps` (default **12**), via `runAgent({ historySteps })` · `AGENT_HISTORY_STEPS` · `--history-steps`. Cada passo grava também `resultado` (ex. `scroll up`) no histórico enviado ao modelo. Rollback: `slice(-8)` sem `resultado`.
 
 **Antes → depois (home/Settings no system prompt):** lite fazia `scroll up` na home e reabria o shade; agora o system de `decide` manda shade→`KEYCODE_BACK`/`HOME`, gaveta→`scroll down`, tap em `Settings`. Roteiro: [`roteiros/abrir-settings.md`](../roteiros/abrir-settings.md). Rollback: remover o bloco “Home / Settings” de `buildSystemPrompt`.
 
@@ -202,8 +206,13 @@ Stdout: `[agent]` / `[decide]` / `[gemini]`. Usa **só** `GEMINI_MODEL` (default
 import { decide } from "./lib/agent-decide.js";
 import { runAgent } from "./lib/agent-run.js";
 
-const { acao } = await decide({ prompt, ocr });
-const { status, logPath, usagePath, usage } = await runAgent({ serial, prompt, maxSteps: 40 });
+const { acao } = await decide({ prompt, ocr, history, historySteps: 12 });
+const { status, logPath, usagePath, usage } = await runAgent({
+  serial,
+  prompt,
+  maxSteps: 40,
+  historySteps: 12,
+});
 ```
 
 Testes: `node --test lib/gemini.test.js lib/agent-decide.test.js lib/agent-run.test.js`.  

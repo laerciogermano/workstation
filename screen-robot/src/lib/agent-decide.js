@@ -128,6 +128,22 @@ Regras:
 }
 
 const MAX_PROMPT_CHARS = Number(process.env.GEMINI_MAX_PROMPT_CHARS || 6000);
+/** Janela de passos recentes no prompt (antes: 8 fixo). Env: AGENT_HISTORY_STEPS. */
+export const DEFAULT_HISTORY_STEPS = 12;
+
+/**
+ * Resolve N da janela de histórico (≥1). cfg > env > default.
+ * @param {{ historySteps?: number } | null | undefined} [cfg]
+ */
+export function resolveHistorySteps(cfg) {
+  const raw =
+    cfg?.historySteps ??
+    process.env.AGENT_HISTORY_STEPS ??
+    DEFAULT_HISTORY_STEPS;
+  const n = Number(raw);
+  if (!Number.isFinite(n) || n < 1) return DEFAULT_HISTORY_STEPS;
+  return Math.floor(n);
+}
 
 function clipPrompt(prompt) {
   const s = String(prompt || "").trim();
@@ -138,11 +154,22 @@ function clipPrompt(prompt) {
   );
 }
 
-function buildUserPrompt({ prompt, ocr, history }) {
-  const hist =
-    Array.isArray(history) && history.length
-      ? `\nHistórico recente:\n${JSON.stringify(history.slice(-8), null, 0)}\n`
-      : "";
+/**
+ * @param {{
+ *   prompt: string,
+ *   ocr: Array<{ text?: string, x?: number, y?: number }>,
+ *   history?: object[],
+ *   historySteps?: number,
+ * }} cfg
+ */
+export function buildUserPrompt(cfg) {
+  const { prompt, ocr, history } = cfg;
+  const n = resolveHistorySteps(cfg);
+  const window =
+    Array.isArray(history) && history.length ? history.slice(-n) : [];
+  const hist = window.length
+    ? `\nHistórico recente (últimos ${window.length}/${n}):\n${JSON.stringify(window, null, 0)}\n`
+    : "";
   return `Objetivo / roteiro:
 ${clipPrompt(prompt)}
 ${hist}
@@ -157,6 +184,7 @@ Defina a próxima ação.`;
  *   prompt: string,
  *   ocr: Array<{ text?: string, x?: number, y?: number }>,
  *   history?: object[],
+ *   historySteps?: number,
  *   model?: string,
  *   apiKey?: string,
  *   thinkingLevel?: "low"|"medium"|"high",
@@ -173,8 +201,9 @@ export async function decide(cfg, deps = {}) {
 
   const logFn = deps.log ?? log;
   const model = cfg.model || process.env.GEMINI_MODEL || DEFAULT_MODEL;
+  const historySteps = resolveHistorySteps(cfg);
   logFn(
-    `início model=${model} ocrHits=${cfg.ocr.length} history=${(cfg.history || []).length}`,
+    `início model=${model} ocrHits=${cfg.ocr.length} history=${(cfg.history || []).length} historySteps=${historySteps}`,
   );
 
   const gen = deps.generateContent ?? generateContent;
@@ -186,7 +215,7 @@ export async function decide(cfg, deps = {}) {
     const out = await gen(
       {
         system: buildSystemPrompt(),
-        prompt: buildUserPrompt(cfg),
+        prompt: buildUserPrompt({ ...cfg, historySteps }),
         model,
         apiKey: cfg.apiKey,
         json: true,

@@ -4,7 +4,7 @@
 import { mkdirSync, appendFileSync, writeFileSync, existsSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { extract } from "./extract.js";
-import { decide } from "./agent-decide.js";
+import { decide, resolveHistorySteps } from "./agent-decide.js";
 import { DEFAULT_MODEL } from "./gemini.js";
 import { tapElement, scroll, type, key } from "./operate.js";
 import { adb, sleep as defaultSleep } from "./adb.js";
@@ -271,6 +271,7 @@ function appendStepLog(logPath, step, { resumo, acao, ocr, resultado, usage }) {
  *   keyboardRegion?: object,
  *   model?: string,
  *   apiKey?: string,
+ *   historySteps?: number,
  * }} cfg
  * @param {object} [deps]
  */
@@ -280,6 +281,7 @@ export async function runAgent(cfg, deps = {}) {
   if (!cfg?.prompt) fail("AGENT_NO_PROMPT", "runAgent: falta prompt");
 
   const maxSteps = Number(cfg.maxSteps ?? 40);
+  const historySteps = resolveHistorySteps(cfg);
   const engine = cfg.engine || "rapidocr";
   const sleep = deps.sleep ?? defaultSleep;
   const runExtract = deps.extract ?? extract;
@@ -293,7 +295,9 @@ export async function runAgent(cfg, deps = {}) {
   const logPath = join(logDir, `${runStamp}.md`);
 
   const model = cfg.model || process.env.GEMINI_MODEL || DEFAULT_MODEL;
-  log(`início serial=${serial} engine=${engine} model=${model} maxSteps=${maxSteps}`);
+  log(
+    `início serial=${serial} engine=${engine} model=${model} maxSteps=${maxSteps} historySteps=${historySteps}`,
+  );
   log(`log → ${logPath}`);
   log(`usage → ${usageDir}/<timestamp>.json (1 arquivo por request)`);
 
@@ -306,6 +310,7 @@ export async function runAgent(cfg, deps = {}) {
       `- engine: \`${engine}\``,
       `- model: \`${model}\``,
       `- maxSteps: ${maxSteps}`,
+      `- historySteps: ${historySteps}`,
       `- started: ${new Date().toISOString()}`,
       "",
       "## Prompt",
@@ -371,7 +376,7 @@ export async function runAgent(cfg, deps = {}) {
         resultado,
       });
       steps.push({ step: i, error: true, resultado });
-      history.push({ step: i, type: "sleep", motivo: resultado, error: resultado });
+      history.push({ step: i, type: "sleep", motivo: resultado, error: resultado, resultado });
       usageCalls.push({ step: i, error: resultado });
       await sleep(recoverMs);
       continue;
@@ -396,6 +401,7 @@ export async function runAgent(cfg, deps = {}) {
           prompt: cfg.prompt,
           ocr,
           history,
+          historySteps,
           model: cfg.model,
           apiKey: cfg.apiKey,
         },
@@ -413,7 +419,7 @@ export async function runAgent(cfg, deps = {}) {
         usage: errUsage,
       });
       steps.push({ step: i, error: true, resultado });
-      history.push({ step: i, type: "sleep", motivo: resultado, error: resultado });
+      history.push({ step: i, type: "sleep", motivo: resultado, error: resultado, resultado });
       recordChatCall({
         step: i,
         error: resultado,
@@ -480,6 +486,10 @@ export async function runAgent(cfg, deps = {}) {
       motivo: acao.motivo,
       x: acao.x,
       y: acao.y,
+      direction: acao.direction,
+      text: acao.text,
+      code: acao.code,
+      resultado,
       error: stepError ? resultado : undefined,
     });
 

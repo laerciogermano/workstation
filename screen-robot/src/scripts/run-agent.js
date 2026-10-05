@@ -5,9 +5,10 @@
  *   npm run agent -- --prompt ../roteiros/jornada-comprador.md
  *   npm run agent -- --prompt "objetivo em texto"
  *   npm run agent -- --prompt ./meu.txt --device emulator-5554 --max-steps 20
+ *   npm run agent -- --prompt ./meu.txt --history-steps 12
  *   créditos: src/usage/<timestamp>.json (1 arquivo por request, flat)
  *
- * Env: GEMINI_API_KEY (obrigatório) · GEMINI_MODEL (opcional)
+ * Env: GEMINI_API_KEY (obrigatório) · GEMINI_MODEL (opcional) · AGENT_HISTORY_STEPS (opcional, default 12)
  */
 import { readFileSync, existsSync } from "node:fs";
 import { resolve, dirname, join } from "node:path";
@@ -56,6 +57,8 @@ const promptRaw = argValue("--prompt") || argValue("-p");
 const prompt = loadPrompt(promptRaw);
 const serial = loadSerial();
 const maxSteps = Number(argValue("--max-steps") || "40");
+const historyStepsRaw = argValue("--history-steps");
+const historySteps = historyStepsRaw != null ? Number(historyStepsRaw) : undefined;
 const engine = argValue("--engine") || "rapidocr";
 const logDir = argValue("--log-dir") || join(SRC_ROOT, "logs", "agent");
 const usageDir = argValue("--usage-dir") || join(SRC_ROOT, "usage");
@@ -74,11 +77,15 @@ if (!process.env.GEMINI_API_KEY) {
   process.exit(2);
 }
 
-console.log(`runAgent serial=${serial} engine=${engine} maxSteps=${maxSteps}`);
+console.log(
+  `runAgent serial=${serial} engine=${engine} maxSteps=${maxSteps}` +
+    (historySteps != null ? ` historySteps=${historySteps}` : ""),
+);
 const result = await runAgent({
   serial,
   prompt,
   maxSteps,
+  historySteps,
   engine,
   logDir,
   usageDir,

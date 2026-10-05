@@ -7,9 +7,12 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, it } from "node:test";
 import {
+  buildUserPrompt,
   compactOcr,
   decide,
+  DEFAULT_HISTORY_STEPS,
   parseActionPayload,
+  resolveHistorySteps,
 } from "./agent-decide.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -39,6 +42,41 @@ describe("agent-decide (SC-31)", () => {
       () => parseActionPayload({ acao: { type: "swipe" } }),
       (e) => e.code === "AGENT_BAD_ACTION",
     );
+  });
+
+  it("resolveHistorySteps default 12; cfg/env", () => {
+    assert.equal(DEFAULT_HISTORY_STEPS, 12);
+    assert.equal(resolveHistorySteps({}), 12);
+    assert.equal(resolveHistorySteps({ historySteps: 2 }), 2);
+    assert.equal(resolveHistorySteps({ historySteps: 0 }), 12);
+    const prev = process.env.AGENT_HISTORY_STEPS;
+    process.env.AGENT_HISTORY_STEPS = "5";
+    try {
+      assert.equal(resolveHistorySteps({}), 5);
+      assert.equal(resolveHistorySteps({ historySteps: 3 }), 3);
+    } finally {
+      if (prev == null) delete process.env.AGENT_HISTORY_STEPS;
+      else process.env.AGENT_HISTORY_STEPS = prev;
+    }
+  });
+
+  it("buildUserPrompt com historySteps=2 só manda 2 itens", () => {
+    const history = [
+      { step: 1, type: "scroll", resultado: "scroll down" },
+      { step: 2, type: "key", resultado: "key KEYCODE_HOME" },
+      { step: 3, type: "tap", resultado: "tap 1,2" },
+    ];
+    const prompt = buildUserPrompt({
+      prompt: "abrir Settings",
+      ocr: [{ text: "Settings", x: 10, y: 20 }],
+      history,
+      historySteps: 2,
+    });
+    assert.match(prompt, /últimos 2\/2/);
+    assert.match(prompt, /"step":2/);
+    assert.match(prompt, /"step":3/);
+    assert.doesNotMatch(prompt, /"step":1/);
+    assert.match(prompt, /key KEYCODE_HOME/);
   });
 
   it("decide com stub: tap no Connect da fixture", async () => {

@@ -44,8 +44,9 @@ describe("agent-run (SC-32)", () => {
               { type: "text", text: "People", x: 80, y: 150 },
             ];
           },
-          decide: async ({ ocr, history }) => {
+          decide: async ({ ocr, history, historySteps }) => {
             if (!history?.length) {
+              assert.equal(historySteps, 12);
               return {
                 resumo: "Connect visível",
                 acao: {
@@ -75,6 +76,9 @@ describe("agent-run (SC-32)", () => {
                 ],
               };
             }
+            assert.equal(historySteps, 12);
+            assert.equal(history.length, 1);
+            assert.equal(history[0].resultado, "tap 458,344");
             return {
               resumo: "ok",
               acao: { type: "done", motivo: "conectado" },
@@ -108,6 +112,7 @@ describe("agent-run (SC-32)", () => {
       assert.match(md, /### OCR usado na decisão/);
       assert.match(md, /\*\*status:\*\* `done`/);
       assert.match(md, /conectar num comprador/);
+      assert.match(md, /historySteps: 12/);
       assert.match(md, /usage: in=10 out=4/);
       assert.equal(result.usage.totalTokenCount, 29);
       // flat em usage/: só .json com timestamp, sem pasta filha
@@ -177,6 +182,39 @@ describe("agent-run (SC-32)", () => {
       assert.equal(result.status, "done");
       assert.ok(decides >= 2);
       assert.ok(result.steps.some((s) => s.error));
+    } finally {
+      rmSync(logDir, { recursive: true, force: true });
+      rmSync(usageDir, { recursive: true, force: true });
+    }
+  });
+
+  it("runAgent passa historySteps customizado ao decide", async () => {
+    const logDir = mkdtempSync(join(tmpdir(), "sr-agent-"));
+    const usageDir = mkdtempSync(join(tmpdir(), "sr-usage-"));
+    let seen;
+    try {
+      const result = await runAgent(
+        {
+          serial: "emulator-5554",
+          prompt: "x",
+          maxSteps: 2,
+          historySteps: 2,
+          logDir,
+          usageDir,
+          stepDelayMs: 0,
+        },
+        {
+          sleep: async () => {},
+          extract: async () => [{ type: "text", text: "A", x: 1, y: 2 }],
+          decide: async (cfg) => {
+            seen = cfg.historySteps;
+            return { resumo: "ok", acao: { type: "done", motivo: "ok" } };
+          },
+        },
+      );
+      assert.equal(result.status, "done");
+      assert.equal(seen, 2);
+      assert.match(readFileSync(result.logPath, "utf8"), /historySteps: 2/);
     } finally {
       rmSync(logDir, { recursive: true, force: true });
       rmSync(usageDir, { recursive: true, force: true });

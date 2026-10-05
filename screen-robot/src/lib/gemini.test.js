@@ -60,7 +60,10 @@ describe("gemini", () => {
     assert.equal(isRetryable(400, "bad request"), false);
   });
 
-  it("resolveModelChain coloca primary primeiro", () => {
+  it("resolveModelChain: sem fallbacks = só o primary (GEMINI_MODEL fixo)", () => {
+    assert.deepEqual(resolveModelChain("gemini-3.1-flash-lite"), [
+      "gemini-3.1-flash-lite",
+    ]);
     const c = resolveModelChain("gemini-3.8-flash", ["gemini-3.1-flash-lite"]);
     assert.equal(c[0], "gemini-3.8-flash");
     assert.ok(c.includes("gemini-3.1-flash-lite"));

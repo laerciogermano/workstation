@@ -74,11 +74,14 @@ function supportsThinkingLevel(model) {
 }
 
 /**
+ * Modelo fixo = `GEMINI_MODEL` / opts.model (sem fallback automático).
+ * Fallback só se `fallbackModels` ou `GEMINI_FALLBACK_MODELS` for passado explicitamente.
  * @param {string} primary
  * @param {string[]|string|undefined} fallbacks
  */
 export function resolveModelChain(primary, fallbacks) {
-  let list = DEFAULT_FALLBACKS;
+  /** @type {string[]} */
+  let list = [];
   if (typeof fallbacks === "string" && fallbacks.trim()) {
     list = fallbacks.split(",").map((s) => s.trim()).filter(Boolean);
   } else if (Array.isArray(fallbacks)) {
@@ -88,6 +91,7 @@ export function resolveModelChain(primary, fallbacks) {
       .map((s) => s.trim())
       .filter(Boolean);
   }
+  // lista vazia = modelo único (export GEMINI_MODEL)
   const seen = new Set();
   const chain = [];
   for (const m of [primary, ...list]) {

@@ -234,6 +234,10 @@ export async function generateContent(opts, deps = {}) {
             logFn(`fallback → ${models[mi + 1]} (modelo indisponível: ${model})`);
             break;
           }
+          // 404 permanente sem próximo modelo: não queima rounds
+          if (isModelUnavailable(res.status, lastMsg)) {
+            fail("GEMINI_REQUEST_FAILED", lastMsg, { status: res.status, models });
+          }
           if (isHighDemand(res.status, lastMsg) && mi < models.length - 1) {
             logFn(`fallback → ${models[mi + 1]} (high demand em ${model})`);
             break;

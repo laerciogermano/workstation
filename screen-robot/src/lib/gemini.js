@@ -15,11 +15,13 @@ const DEFAULT_FALLBACKS = [
 const API_BASE = "https://generativelanguage.googleapis.com/v1beta";
 /** Retries só para erro de rede; 503 troca de modelo na hora. */
 const DEFAULT_RETRIES = 1;
-const DEFAULT_RETRY_MS = 800;
+const DEFAULT_RETRY_MS = Number(process.env.GEMINI_RETRY_MS || 250);
 /** Timeout por request — evita ficar 30–50s num 503 lento. */
 const DEFAULT_TIMEOUT_MS = Number(process.env.GEMINI_TIMEOUT_MS || 12000);
 /** Se todos os modelos derem 503, espera e re-tenta a cadeia. */
 const DEFAULT_CHAIN_ROUNDS = Number(process.env.GEMINI_CHAIN_ROUNDS || 2);
+/** Espera base entre rounds da cadeia (× round). Antes: 4000ms. */
+const DEFAULT_CHAIN_WAIT_MS = Number(process.env.GEMINI_CHAIN_WAIT_MS || 800);
 
 function fail(code, msg, extra = {}) {
   const err = new Error(msg);
@@ -134,11 +136,12 @@ export async function generateContent(opts, deps = {}) {
   const retries = Number(
     opts.retries ?? process.env.GEMINI_RETRIES ?? DEFAULT_RETRIES,
   );
-  const retryMs = Number(
-    opts.retryMs ?? process.env.GEMINI_RETRY_MS ?? DEFAULT_RETRY_MS,
-  );
+  const retryMs = Number(opts.retryMs ?? DEFAULT_RETRY_MS);
   const timeoutMs = Number(opts.timeoutMs ?? DEFAULT_TIMEOUT_MS);
   const chainRounds = Number(opts.chainRounds ?? DEFAULT_CHAIN_ROUNDS);
+  const chainWaitMs = Number(
+    opts.chainWaitMs ?? DEFAULT_CHAIN_WAIT_MS,
+  );
 
   const promptChars = String(opts.prompt || "").length;
   const systemChars = String(opts.system || "").length;
@@ -149,7 +152,7 @@ export async function generateContent(opts, deps = {}) {
 
   for (let round = 1; round <= chainRounds; round++) {
     if (round > 1) {
-      const wait = 4000 * round;
+      const wait = chainWaitMs * round;
       logFn(`round ${round}/${chainRounds}: aguardando ${wait}ms (API saturada)`);
       await sleepFn(wait);
     }

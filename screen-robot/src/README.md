@@ -179,6 +179,7 @@ export GEMINI_API_KEY=…          # obrigatório para decide real
 export GEMINI_MODEL=gemini-3.1-flash-lite
 # opcional: export GEMINI_FALLBACK_MODELS=gemini-3.8-flash,gemini-3.6-flash
 # opcional: export GEMINI_MAX_PROMPT_CHARS=6000
+# retry/indisponível (defaults curtos): GEMINI_RETRY_MS=250 · GEMINI_CHAIN_WAIT_MS=800
 
 npm run agent -- --prompt ../roteiros/jornada-comprador.md
 npm run agent -- --prompt "abra o LinkedIn e mostre as últimas 10 conexões"
@@ -186,6 +187,8 @@ npm run agent:smoke              # 1–2 passos no device; sem key = heurística
 ```
 
 Stdout: `[agent]` / `[decide]` / `[gemini]`. Usa **só** `GEMINI_MODEL` (ex. `gemini-3.1-flash-lite`). Fallback só se `GEMINI_FALLBACK_MODELS` estiver setado.
+
+**Antes → depois (retry):** entre rounds saturados `4000×round` (8s no round 2) → `GEMINI_CHAIN_WAIT_MS×round` default **800** (1,6s); retry attempt default **250ms** (antes 800). Rollback: `export GEMINI_CHAIN_WAIT_MS=4000 GEMINI_RETRY_MS=800`.
 
 ```js
 import { decide } from "./lib/agent-decide.js";

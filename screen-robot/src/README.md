@@ -205,6 +205,8 @@ Stdout: `[agent]` / `[decide]` / `[gemini]` ou `[openai]`. Provider default `gem
 
 **Antes → depois (extract no stdout):** após cada `extract`, além de `text@x,y`, imprime o JSON completo (`extract return:`). Rollback: só o loop compacto em `dumpOcrStdout`.
 
+**Antes → depois (screencap):** `adb shell screencap` + pull podia travar no AVD → `adb exec-out screencap -p` em [`lib/frame.js`](lib/frame.js) / `screenshot`. Fallback shell+pull se exec-out falhar. Rollback: só shell+pull.
+
 **Antes → depois (OCR no histórico):** cada item de `history` inclui `ocr` compacto (`text,x,y`) da tela daquele passo, além de `resultado`/ação. Aumenta tokens no prompt. Rollback: omitir `ocr` no `history.push`.
 
 **Antes → depois (histórico configurável):** `history.slice(-8)` fixo → janela `historySteps` (default **12**), via `runAgent({ historySteps })` · `AGENT_HISTORY_STEPS` · `--history-steps`. Cada passo grava também `resultado` (ex. `scroll up`) no histórico enviado ao modelo. Rollback: `slice(-8)` sem `resultado`.

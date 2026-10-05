@@ -3,7 +3,7 @@
  * type: OCR das teclas no frame → tap por caractere (sem input text / IME).
  */
 import { spawn, spawnSync } from "node:child_process";
-import { mkdirSync, existsSync } from "node:fs";
+import { mkdirSync, existsSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { adb, adbOk, connectIfTcp as defaultConnectIfTcp, sleep as defaultSleep } from "./adb.js";
 import { captureFrame } from "./frame.js";
@@ -391,6 +391,15 @@ export function screenshot(cfg, deps = {}) {
   try {
     const abs = d.resolvePath(path);
     d.mkdir(dirname(abs), { recursive: true });
+    const r = spawnSync(
+      "adb",
+      ["-s", serial, "exec-out", "screencap", "-p"],
+      { encoding: null, maxBuffer: 32 * 1024 * 1024 },
+    );
+    if (r.status === 0 && r.stdout?.length && r.stdout[0] === 0x89) {
+      writeFileSync(abs, r.stdout);
+      return abs;
+    }
     const remote = "/sdcard/sr-shot.png";
     d.runAdb(serial, ["shell", "screencap", "-p", remote]);
     d.runAdb(serial, ["pull", remote, abs]);

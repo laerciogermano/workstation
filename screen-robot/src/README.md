@@ -176,11 +176,14 @@ Loop genérico: OCR RapidOCR → Gemini 3.8 Flash → `tap`/`scroll`/`type`/`key
 cd screen-robot/src
 export GEMINI_API_KEY=…          # obrigatório para decide real
 # opcional: export GEMINI_MODEL=gemini-3.8-flash
+# opcional: export GEMINI_RETRIES=4 GEMINI_RETRY_MS=2000  # high demand / 429
 
 npm run agent -- --prompt ../roteiros/jornada-comprador.md
 npm run agent -- --prompt "abra o LinkedIn e mostre as últimas 10 conexões"
 npm run agent:smoke              # 1–2 passos no device; sem key = heurística Connect/scroll
 ```
+
+Stdout: prefixos `[agent]`, `[decide]`, `[gemini]` (passo, extract, HTTP/retry, ação). Erro de high demand → retry automático.
 
 ```js
 import { decide } from "./lib/agent-decide.js";

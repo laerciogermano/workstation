@@ -25,9 +25,14 @@ function looksLoading(ocr) {
   return /\b(loading|carregando|please wait|aguarde)\b/.test(t);
 }
 
+function log(...args) {
+  console.log(`[agent ${new Date().toISOString()}]`, ...args);
+}
+
 function dumpOcrStdout(ocr) {
+  log(`OCR ${ocr?.length ?? 0} hits:`);
   for (const e of ocr || []) {
-    console.log(`${e.text}@${e.x},${e.y}`);
+    console.log(`  ${e.text}@${e.x},${e.y}`);
   }
 }
 
@@ -133,6 +138,10 @@ export async function runAgent(cfg, deps = {}) {
   if (!existsSync(logDir)) mkdirSync(logDir, { recursive: true });
   const logPath = join(logDir, `${stamp()}.md`);
 
+  const model = cfg.model || process.env.GEMINI_MODEL || "gemini-3.8-flash";
+  log(`início serial=${serial} engine=${engine} model=${model} maxSteps=${maxSteps}`);
+  log(`log → ${logPath}`);
+
   writeFileSync(
     logPath,
     [
@@ -140,6 +149,7 @@ export async function runAgent(cfg, deps = {}) {
       "",
       `- serial: \`${serial}\``,
       `- engine: \`${engine}\``,
+      `- model: \`${model}\``,
       `- maxSteps: ${maxSteps}`,
       `- started: ${new Date().toISOString()}`,
       "",
@@ -159,35 +169,67 @@ export async function runAgent(cfg, deps = {}) {
   let status = "max_steps";
 
   for (let i = 1; i <= maxSteps; i++) {
+    log(`── passo ${i}/${maxSteps} ──`);
+    log(`extract…`);
+    const tExtract = Date.now();
     let ocr = await runExtract({ serial, engine }, deps);
+    log(`extract ok em ${Date.now() - tExtract}ms (${ocr.length} hits)`);
     dumpOcrStdout(ocr);
 
     if (looksLoading(ocr)) {
+      log(`tela loading — retry extract em 800ms`);
       await sleep(800);
       ocr = await runExtract({ serial, engine }, deps);
       dumpOcrStdout(ocr);
     }
 
-    const decision = await runDecide(
-      {
-        prompt: cfg.prompt,
+    log(`decide (Gemini)…`);
+    let decision;
+    try {
+      decision = await runDecide(
+        {
+          prompt: cfg.prompt,
+          ocr,
+          history,
+          model: cfg.model,
+          apiKey: cfg.apiKey,
+        },
+        deps,
+      );
+    } catch (e) {
+      const resultado = `erro decide: ${e.code || ""} ${e.message || e}`;
+      log(resultado);
+      appendStepLog(logPath, i, {
+        resumo: "(falha na decisão)",
+        acao: { type: "fail", motivo: String(e.message || e) },
         ocr,
-        history,
-        model: cfg.model,
-        apiKey: cfg.apiKey,
-      },
-      deps,
-    );
+        resultado,
+      });
+      steps.push({ step: i, error: true, resultado });
+      status = "fail";
+      break;
+    }
 
     const { resumo, acao } = decision;
+    log(
+      `decisão: ${acao.type}` +
+        (acao.x != null ? ` @${acao.x},${acao.y}` : "") +
+        (acao.direction ? ` ${acao.direction}` : "") +
+        (acao.motivo ? ` — ${acao.motivo}` : ""),
+    );
+    if (resumo) log(`resumo: ${resumo.slice(0, 200)}`);
+
     let resultado = "";
     try {
+      log(`executar ${acao.type}…`);
       resultado = await executeAction(
         { serial, acao, engine },
         deps,
       );
+      log(`resultado: ${resultado}`);
     } catch (e) {
       resultado = `erro: ${e.message || e}`;
+      log(resultado);
       appendStepLog(logPath, i, { resumo, acao, ocr, resultado });
       steps.push({ step: i, acao, resultado, error: true });
       status = "fail";
@@ -206,10 +248,12 @@ export async function runAgent(cfg, deps = {}) {
 
     if (acao.type === "done") {
       status = "done";
+      log(`done — objetivo cumprido`);
       break;
     }
     if (acao.type === "fail") {
       status = "fail";
+      log(`fail — ${acao.motivo || "sem motivo"}`);
       break;
     }
 
@@ -222,5 +266,6 @@ export async function runAgent(cfg, deps = {}) {
     "utf8",
   );
 
+  log(`fim status=${status} steps=${steps.length} log=${logPath}`);
   return { status, steps, logPath };
 }

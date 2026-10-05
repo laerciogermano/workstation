@@ -141,24 +141,49 @@ Defina a próxima ação.`;
  * }} cfg
  * @param {{ generateContent?: Function }} [deps]
  */
+function log(...args) {
+  console.log(`[decide ${new Date().toISOString()}]`, ...args);
+}
+
 export async function decide(cfg, deps = {}) {
   if (!cfg?.prompt) fail("AGENT_NO_PROMPT", "decide: falta prompt");
   if (!Array.isArray(cfg.ocr)) fail("AGENT_NO_OCR", "decide: falta ocr[]");
 
-  const gen = deps.generateContent ?? generateContent;
-  const { text, usage } = await gen(
-    {
-      system: buildSystemPrompt(),
-      prompt: buildUserPrompt(cfg),
-      model: cfg.model || process.env.GEMINI_MODEL || DEFAULT_MODEL,
-      apiKey: cfg.apiKey,
-      json: true,
-      thinkingLevel: cfg.thinkingLevel || "low",
-    },
-    deps,
+  const logFn = deps.log ?? log;
+  const model = cfg.model || process.env.GEMINI_MODEL || DEFAULT_MODEL;
+  logFn(
+    `início model=${model} ocrHits=${cfg.ocr.length} history=${(cfg.history || []).length}`,
   );
 
+  const gen = deps.generateContent ?? generateContent;
+  let text;
+  let usage;
+  try {
+    const out = await gen(
+      {
+        system: buildSystemPrompt(),
+        prompt: buildUserPrompt(cfg),
+        model,
+        apiKey: cfg.apiKey,
+        json: true,
+        thinkingLevel: cfg.thinkingLevel || "low",
+      },
+      deps,
+    );
+    text = out.text;
+    usage = out.usage;
+  } catch (e) {
+    logFn(`erro Gemini: ${e.code || ""} ${e.message}`);
+    throw e;
+  }
+
   const parsed = parseActionPayload(text);
+  logFn(
+    `ação=${parsed.acao.type}` +
+      (parsed.acao.x != null ? ` @${parsed.acao.x},${parsed.acao.y}` : "") +
+      (parsed.acao.direction ? ` dir=${parsed.acao.direction}` : "") +
+      (parsed.acao.motivo ? ` — ${parsed.acao.motivo}` : ""),
+  );
   return { ...parsed, usage };
 }
 

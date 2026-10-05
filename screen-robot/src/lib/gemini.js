@@ -1,12 +1,12 @@
 /**
  * EP-07 — cliente Gemini generateContent (texto → JSON).
- * Default: gemini-2.5-flash-lite (menor custo). Se 404/indisponível → 3.1-flash-lite.
- * High demand (503) → fallback imediato (sem ficar minutos no mesmo modelo).
+ * Default: gemini-2.5-flash-lite (menor custo).
+ * Sem fallback automático — só `GEMINI_MODEL` / opts.model (e `GEMINI_FALLBACK_MODELS` se setado).
  */
 
 const DEFAULT_MODEL = "gemini-2.5-flash-lite";
-/** Fallback barato se o primary falhar (404 / high demand). */
-const DEFAULT_FALLBACKS = ["gemini-3.1-flash-lite"];
+/** Só usado se `GEMINI_FALLBACK_MODELS` / opts.fallbackModels for passado. */
+const DEFAULT_FALLBACKS = [];
 const API_BASE = "https://generativelanguage.googleapis.com/v1beta";
 /** Retries só para erro de rede; 503 troca de modelo na hora. */
 const DEFAULT_RETRIES = 1;
@@ -73,25 +73,22 @@ function supportsThinkingLevel(model) {
 }
 
 /**
- * Cadeia: primary + fallbacks.
- * Sem `fallbackModels` / `GEMINI_FALLBACK_MODELS` → usa DEFAULT_FALLBACKS (barato).
- * `GEMINI_FALLBACK_MODELS=` (vazio) ou `fallbackModels: []` = modelo único.
+ * Cadeia: primary + fallbacks explícitos.
+ * Sem `fallbackModels` / `GEMINI_FALLBACK_MODELS` → modelo único (sem fallback).
  * @param {string} primary
  * @param {string[]|string|undefined} fallbacks
  */
 export function resolveModelChain(primary, fallbacks) {
   /** @type {string[]} */
   let list = [];
-  if (typeof fallbacks === "string") {
+  if (typeof fallbacks === "string" && fallbacks.trim()) {
     list = fallbacks.split(",").map((s) => s.trim()).filter(Boolean);
   } else if (Array.isArray(fallbacks)) {
     list = fallbacks;
-  } else if (process.env.GEMINI_FALLBACK_MODELS != null) {
+  } else if (process.env.GEMINI_FALLBACK_MODELS) {
     list = process.env.GEMINI_FALLBACK_MODELS.split(",")
       .map((s) => s.trim())
       .filter(Boolean);
-  } else {
-    list = DEFAULT_FALLBACKS;
   }
   const seen = new Set();
   const chain = [];

@@ -61,6 +61,15 @@ describe("agent-run (SC-32)", () => {
                     prompt: "PROMPT_COMPLETO_STEP1",
                     system: "SYSTEM_STEP1",
                     response: '{"acao":{"type":"tap"}}',
+                    input: {
+                      system: "SYSTEM_STEP1",
+                      prompt: "PROMPT_COMPLETO_STEP1",
+                      body: { contents: [{ role: "user", parts: [{ text: "PROMPT_COMPLETO_STEP1" }] }] },
+                    },
+                    output: {
+                      text: '{"acao":{"type":"tap"}}',
+                      raw: { candidates: [] },
+                    },
                     usage: { promptTokenCount: 10, candidatesTokenCount: 4, totalTokenCount: 14 },
                   },
                 ],
@@ -113,6 +122,9 @@ describe("agent-run (SC-32)", () => {
       assert.equal(req1.prompt, "PROMPT_COMPLETO_STEP1");
       assert.equal(req1.system, "SYSTEM_STEP1");
       assert.equal(req1.response, '{"acao":{"type":"tap"}}');
+      assert.equal(req1.input.prompt, "PROMPT_COMPLETO_STEP1");
+      assert.equal(req1.output.text, '{"acao":{"type":"tap"}}');
+      assert.equal(req1.roteiro, "conectar num comprador");
     } finally {
       rmSync(logDir, { recursive: true, force: true });
       rmSync(usageDir, { recursive: true, force: true });

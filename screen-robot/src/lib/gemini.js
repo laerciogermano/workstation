@@ -152,11 +152,16 @@ export async function generateContent(opts, deps = {}) {
   /** @type {object[]} */
   const requests = [];
 
-  const baseReqMeta = () => ({
+  const baseReqMeta = (body) => ({
     promptChars,
     systemChars,
     prompt: promptText,
     system: systemText || undefined,
+    input: {
+      system: systemText || undefined,
+      prompt: promptText,
+      body: body || undefined,
+    },
   });
 
   for (let round = 1; round <= chainRounds; round++) {
@@ -227,7 +232,8 @@ export async function generateContent(opts, deps = {}) {
             ok: false,
             error: lastMsg,
             ms: Date.now() - t0,
-            ...baseReqMeta(),
+            ...baseReqMeta(body),
+            output: { error: lastMsg },
           });
           if (isHighDemand(0, lastMsg) || /timeout/i.test(lastMsg)) {
             if (mi < models.length - 1) {
@@ -266,8 +272,9 @@ export async function generateContent(opts, deps = {}) {
             status: res.status,
             error: lastMsg,
             ms,
-            ...baseReqMeta(),
+            ...baseReqMeta(body),
             usage: raw?.usageMetadata || undefined,
+            output: { raw, error: lastMsg },
           });
 
           if (isModelUnavailable(res.status, lastMsg) && mi < models.length - 1) {
@@ -321,8 +328,9 @@ export async function generateContent(opts, deps = {}) {
             ok: false,
             error: "empty response",
             ms,
-            ...baseReqMeta(),
+            ...baseReqMeta(body),
             usage: raw?.usageMetadata || undefined,
+            output: { raw, error: "empty response" },
           });
           if (mi < models.length - 1) {
             logFn(`fallback → ${models[mi + 1]} (resposta vazia)`);
@@ -344,9 +352,10 @@ export async function generateContent(opts, deps = {}) {
           round,
           ok: true,
           ms,
-          ...baseReqMeta(),
+          ...baseReqMeta(body),
           response: text,
           usage,
+          output: { text, raw },
         });
 
         return {

@@ -150,7 +150,14 @@ function uniqueUsagePath(usageDir) {
  * Um arquivo por request HTTP ao chat, flat em usage/<timestamp>.json
  * @returns {string[]}
  */
-function writeChatRequestFiles({ usageDir, runStamp, serial, engine, call }) {
+function writeChatRequestFiles({
+  usageDir,
+  runStamp,
+  serial,
+  engine,
+  call,
+  roteiro,
+}) {
   const reqs =
     Array.isArray(call.requests) && call.requests.length > 0
       ? call.requests
@@ -161,11 +168,23 @@ function writeChatRequestFiles({ usageDir, runStamp, serial, engine, call }) {
             error: call.error || undefined,
             usage: call.usage,
             synthetic: true,
+            input: call.input,
+            output: call.output,
           },
         ];
   const paths = [];
   for (const req of reqs) {
     const path = uniqueUsagePath(usageDir);
+    const input =
+      req.input ||
+      (req.system || req.prompt
+        ? { system: req.system, prompt: req.prompt }
+        : undefined);
+    const output =
+      req.output ||
+      (req.response != null || req.error
+        ? { text: req.response, error: req.error }
+        : undefined);
     writeUsageFile(path, {
       run: runStamp,
       step: call.step,
@@ -183,9 +202,15 @@ function writeChatRequestFiles({ usageDir, runStamp, serial, engine, call }) {
       systemChars: req.systemChars,
       status: req.status,
       synthetic: req.synthetic || undefined,
-      system: req.system || undefined,
-      prompt: req.prompt || undefined,
-      response: req.response || undefined,
+      // input/output inteiros da request ao chat
+      input,
+      output,
+      // aliases legíveis (mesmo conteúdo textual)
+      system: req.system || input?.system || undefined,
+      prompt: req.prompt || input?.prompt || undefined,
+      response: req.response || output?.text || undefined,
+      // roteiro original completo (pode ser maior que o prompt enviado se clipado)
+      roteiro: roteiro || undefined,
       usage: req.usage || call.usage || undefined,
     });
     paths.push(path);
@@ -308,6 +333,7 @@ export async function runAgent(cfg, deps = {}) {
       serial,
       engine,
       call,
+      roteiro: cfg.prompt,
     });
     requestFiles.push(...paths);
     if (paths.length) lastUsagePath = paths[paths.length - 1];

@@ -1,17 +1,12 @@
 /**
  * EP-07 — cliente Gemini generateContent (texto → JSON).
- * Default: gemini-3.1-flash-lite (estável nesta conta).
+ * Default: gemini-2.5-flash-lite (menor custo). Se 404/indisponível → 3.1-flash-lite.
  * High demand (503) → fallback imediato (sem ficar minutos no mesmo modelo).
  */
 
-const DEFAULT_MODEL = "gemini-3.1-flash-lite";
-/** Cadeia validada na conta (2.5 e gemini-3-flash = 404). */
-const DEFAULT_FALLBACKS = [
-  "gemini-3.1-flash-lite",
-  "gemini-3.8-flash",
-  "gemini-3.7-flash",
-  "gemini-3.6-flash",
-];
+const DEFAULT_MODEL = "gemini-2.5-flash-lite";
+/** Fallback barato se o primary falhar (404 / high demand). */
+const DEFAULT_FALLBACKS = ["gemini-3.1-flash-lite"];
 const API_BASE = "https://generativelanguage.googleapis.com/v1beta";
 /** Retries só para erro de rede; 503 troca de modelo na hora. */
 const DEFAULT_RETRIES = 1;
@@ -78,24 +73,26 @@ function supportsThinkingLevel(model) {
 }
 
 /**
- * Modelo fixo = `GEMINI_MODEL` / opts.model (sem fallback automático).
- * Fallback só se `fallbackModels` ou `GEMINI_FALLBACK_MODELS` for passado explicitamente.
+ * Cadeia: primary + fallbacks.
+ * Sem `fallbackModels` / `GEMINI_FALLBACK_MODELS` → usa DEFAULT_FALLBACKS (barato).
+ * `GEMINI_FALLBACK_MODELS=` (vazio) ou `fallbackModels: []` = modelo único.
  * @param {string} primary
  * @param {string[]|string|undefined} fallbacks
  */
 export function resolveModelChain(primary, fallbacks) {
   /** @type {string[]} */
   let list = [];
-  if (typeof fallbacks === "string" && fallbacks.trim()) {
+  if (typeof fallbacks === "string") {
     list = fallbacks.split(",").map((s) => s.trim()).filter(Boolean);
   } else if (Array.isArray(fallbacks)) {
     list = fallbacks;
-  } else if (process.env.GEMINI_FALLBACK_MODELS) {
+  } else if (process.env.GEMINI_FALLBACK_MODELS != null) {
     list = process.env.GEMINI_FALLBACK_MODELS.split(",")
       .map((s) => s.trim())
       .filter(Boolean);
+  } else {
+    list = DEFAULT_FALLBACKS;
   }
-  // lista vazia = modelo único (export GEMINI_MODEL)
   const seen = new Set();
   const chain = [];
   for (const m of [primary, ...list]) {

@@ -175,9 +175,9 @@ Loop genérico: OCR RapidOCR → Gemini 3.8 Flash → `tap`/`scroll`/`type`/`key
 ```bash
 cd screen-robot/src
 export GEMINI_API_KEY=…          # obrigatório para decide real
-# modelo FIXO = valor do export (sem fallback automático)
-export GEMINI_MODEL=gemini-3.1-flash-lite
-# opcional: export GEMINI_FALLBACK_MODELS=gemini-3.8-flash,gemini-3.6-flash
+# modelo default no código = gemini-2.5-flash-lite (mais barato); fallback 3.1-flash-lite
+# opcional override: export GEMINI_MODEL=gemini-3.1-flash-lite
+# opcional: export GEMINI_FALLBACK_MODELS=   # vazio = sem fallback
 # opcional: export GEMINI_MAX_PROMPT_CHARS=6000
 # retry/indisponível (defaults curtos): GEMINI_RETRY_MS=250 · GEMINI_CHAIN_WAIT_MS=800
 
@@ -186,7 +186,9 @@ npm run agent -- --prompt "abra o LinkedIn e mostre as últimas 10 conexões"
 npm run agent:smoke              # 1–2 passos no device; sem key = heurística Connect/scroll
 ```
 
-Stdout: `[agent]` / `[decide]` / `[gemini]`. Usa **só** `GEMINI_MODEL` (ex. `gemini-3.1-flash-lite`). Fallback só se `GEMINI_FALLBACK_MODELS` estiver setado.
+Stdout: `[agent]` / `[decide]` / `[gemini]`. Default **`gemini-2.5-flash-lite`** (+ fallback `gemini-3.1-flash-lite`). Override: `GEMINI_MODEL` / `GEMINI_FALLBACK_MODELS`.
+
+**Antes → depois (modelo):** default `gemini-3.1-flash-lite` fixo → `gemini-2.5-flash-lite` + fallback `3.1-flash-lite`. Rollback: `export GEMINI_MODEL=gemini-3.1-flash-lite` e `GEMINI_FALLBACK_MODELS=`.
 
 **Antes → depois (retry):** entre rounds saturados `4000×round` (8s no round 2) → `GEMINI_CHAIN_WAIT_MS×round` default **800** (1,6s); retry attempt default **250ms** (antes 800). Rollback: `export GEMINI_CHAIN_WAIT_MS=4000 GEMINI_RETRY_MS=800`.
 

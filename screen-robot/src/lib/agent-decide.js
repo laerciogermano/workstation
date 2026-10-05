@@ -176,6 +176,8 @@ export async function decide(cfg, deps = {}) {
   const gen = deps.generateContent ?? generateContent;
   let text;
   let usage;
+  let usedModel = model;
+  let requests;
   try {
     const out = await gen(
       {
@@ -190,6 +192,8 @@ export async function decide(cfg, deps = {}) {
     );
     text = out.text;
     usage = out.usage;
+    usedModel = out.model || model;
+    requests = out.requests;
   } catch (e) {
     logFn(`erro Gemini: ${e.code || ""} ${e.message}`);
     throw e;
@@ -202,7 +206,7 @@ export async function decide(cfg, deps = {}) {
       (parsed.acao.direction ? ` dir=${parsed.acao.direction}` : "") +
       (parsed.acao.motivo ? ` — ${parsed.acao.motivo}` : ""),
   );
-  return { ...parsed, usage };
+  return { ...parsed, usage, model: usedModel, requests };
 }
 
 export { ACTION_TYPES };

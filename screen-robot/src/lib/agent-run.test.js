@@ -73,7 +73,7 @@ describe("agent-run (SC-32)", () => {
       assert.ok(extracts >= 2);
       assert.ok(result.logPath);
       assert.ok(result.usagePath);
-      assert.match(basename(result.usagePath), /^\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}\.json$/);
+      assert.match(basename(result.usagePath), /^\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}-\d{3}\.json$/);
       const md = readFileSync(result.logPath, "utf8");
       assert.match(md, /### Decisão/);
       assert.match(md, /### OCR usado na decisão/);

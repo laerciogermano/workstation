@@ -146,6 +146,8 @@ export async function generateContent(opts, deps = {}) {
 
   let lastMsg = "";
   let lastStatus = 0;
+  /** @type {object[]} */
+  const requests = [];
 
   for (let round = 1; round <= chainRounds; round++) {
     if (round > 1) {
@@ -204,6 +206,16 @@ export async function generateContent(opts, deps = {}) {
           lastMsg = e?.name === "AbortError" ? `timeout ${timeoutMs}ms` : e?.message || String(e);
           lastStatus = 0;
           logFn(`network error: ${lastMsg}`);
+          requests.push({
+            model,
+            attempt,
+            round,
+            ok: false,
+            error: lastMsg,
+            ms: Date.now() - t0,
+            promptChars,
+            systemChars,
+          });
           if (isHighDemand(0, lastMsg) || /timeout/i.test(lastMsg)) {
             if (mi < models.length - 1) {
               logFn(`fallback → ${models[mi + 1]} (${lastMsg})`);
@@ -229,6 +241,18 @@ export async function generateContent(opts, deps = {}) {
             raw?.error?.message ||
             `HTTP ${res.status} ${res.statusText || ""}`.trim();
           logFn(`HTTP ${res.status} em ${ms}ms: ${lastMsg}`);
+          requests.push({
+            model,
+            attempt,
+            round,
+            ok: false,
+            status: res.status,
+            error: lastMsg,
+            ms,
+            promptChars,
+            systemChars,
+            usage: raw?.usageMetadata || undefined,
+          });
 
           if (isModelUnavailable(res.status, lastMsg) && mi < models.length - 1) {
             logFn(`fallback → ${models[mi + 1]} (modelo indisponível: ${model})`);
@@ -236,7 +260,12 @@ export async function generateContent(opts, deps = {}) {
           }
           // 404 permanente sem próximo modelo: não queima rounds
           if (isModelUnavailable(res.status, lastMsg)) {
-            fail("GEMINI_REQUEST_FAILED", lastMsg, { status: res.status, models });
+            fail("GEMINI_REQUEST_FAILED", lastMsg, {
+              status: res.status,
+              models,
+              requests,
+              model,
+            });
           }
           if (isHighDemand(res.status, lastMsg) && mi < models.length - 1) {
             logFn(`fallback → ${models[mi + 1]} (high demand em ${model})`);
@@ -265,6 +294,17 @@ export async function generateContent(opts, deps = {}) {
           logFn(
             `empty response em ${ms}ms finishReason=${raw?.candidates?.[0]?.finishReason}`,
           );
+          requests.push({
+            model,
+            attempt,
+            round,
+            ok: false,
+            error: "empty response",
+            ms,
+            promptChars,
+            systemChars,
+            usage: raw?.usageMetadata || undefined,
+          });
           if (mi < models.length - 1) {
             logFn(`fallback → ${models[mi + 1]} (resposta vazia)`);
             break;
@@ -279,12 +319,23 @@ export async function generateContent(opts, deps = {}) {
               ? ` tokens in=${usage.promptTokenCount ?? "?"} out=${usage.candidatesTokenCount ?? "?"}`
               : ""),
         );
+        requests.push({
+          model,
+          attempt,
+          round,
+          ok: true,
+          ms,
+          promptChars,
+          systemChars,
+          usage,
+        });
 
         return {
           text,
           usage,
           raw,
           model,
+          requests,
         };
       }
     }
@@ -293,7 +344,7 @@ export async function generateContent(opts, deps = {}) {
   fail(
     "GEMINI_REQUEST_FAILED",
     lastMsg || `falha após retries/fallbacks (${models.join(", ")})`,
-    { status: lastStatus, models },
+    { status: lastStatus, models, requests },
   );
 }
 

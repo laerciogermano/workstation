@@ -16,7 +16,8 @@ function fail(code, msg) {
 }
 
 function stamp() {
-  return new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19);
+  // inclui ms para não sobrescrever 2 runs no mesmo segundo
+  return new Date().toISOString().replace(/[:.]/g, "-").slice(0, 23);
 }
 
 function looksLoading(ocr) {
@@ -229,7 +230,7 @@ export async function runAgent(cfg, deps = {}) {
   const steps = [];
   /** @type {object[]} */
   const usageCalls = [];
-  let status = "max_steps";
+  let status = "running";
 
   const flushUsage = () => {
     writeUsageFile(usagePath, {
@@ -247,6 +248,19 @@ export async function runAgent(cfg, deps = {}) {
     });
   };
   flushUsage();
+
+  const onSignal = (sig) => {
+    status = `aborted_${sig}`;
+    try {
+      flushUsage();
+    } catch {
+      /* ignore */
+    }
+    log(`sinal ${sig} — usage salvo em ${usagePath}`);
+    process.exit(130);
+  };
+  process.once("SIGINT", () => onSignal("SIGINT"));
+  process.once("SIGTERM", () => onSignal("SIGTERM"));
 
   const recoverMs = Number(cfg.recoverDelayMs ?? process.env.AGENT_RECOVER_MS ?? 1500);
 
@@ -270,6 +284,7 @@ export async function runAgent(cfg, deps = {}) {
       });
       steps.push({ step: i, error: true, resultado });
       history.push({ step: i, type: "sleep", motivo: resultado, error: resultado });
+      usageCalls.push({ step: i, error: resultado });
       flushUsage();
       await sleep(recoverMs);
       continue;
@@ -311,15 +326,26 @@ export async function runAgent(cfg, deps = {}) {
       });
       steps.push({ step: i, error: true, resultado });
       history.push({ step: i, type: "sleep", motivo: resultado, error: resultado });
+      usageCalls.push({
+        step: i,
+        error: resultado,
+        model: e.model || model,
+        requests: e.requests || undefined,
+      });
       flushUsage();
       await sleep(recoverMs);
       continue;
     }
 
-    if (decision.usage) {
-      usageCalls.push({ step: i, usage: decision.usage });
-      flushUsage();
-    }
+    // Sempre registra o passo (mesmo sem usageMetadata) — cada decide = 1 entry
+    usageCalls.push({
+      step: i,
+      model: decision.model || model,
+      usage: decision.usage || undefined,
+      requests: decision.requests || undefined,
+      acao: decision.acao?.type,
+    });
+    flushUsage();
 
     const { resumo, acao } = decision;
     log(
@@ -370,6 +396,8 @@ export async function runAgent(cfg, deps = {}) {
 
     await sleep(Number(cfg.stepDelayMs ?? 600));
   }
+
+  if (status === "running") status = "max_steps";
 
   appendFileSync(
     logPath,

@@ -206,7 +206,9 @@ Testes: `node --test lib/gemini.test.js lib/agent-decide.test.js lib/agent-run.t
 Plano: [`../implementation-plan/EP-07-motor-gemini.md`](../implementation-plan/EP-07-motor-gemini.md).  
 POC custo/visão: [`test/output/poc-vision/custos-por-agente.md`](test/output/poc-vision/custos-por-agente.md).
 
-**Antes → depois (usage):** `jornada-comprador.json` agregado → de novo `usage/<ISO-stamp>.json` por execução (único). Rollback: agregar por promptId.
+Cada `runAgent` grava `usage/<ISO-stamp-com-ms>.json` (**1 arquivo por execução**; ms evita colisão). `calls[]` tem **todo** decide (ok ou erro) + `requests[]` de cada HTTP Gemini. Abort (Ctrl+C) faz flush. Status mid-run: `running`.
+
+**Antes → depois (usage):** só gravava passo com `usageMetadata`; stamp sem ms podia sobrescrever; Ctrl+C perdia flush. Rollback: stamp `.slice(0,19)` e push só se `decision.usage`.
 
 **Antes → depois:** `scroll down` somava y (lista People não andava no AVD); `type` tocava teclas até falhar e o fallback ADB concatenava (`cccomprador`). Agora `down` = dedo sobe; teclas resolvidas antes de tap; tecla QWERTY ausente interpolada; fallback ADB limpa o campo. Rollback: `y2 = y + distance` e type sem interpolação/limpeza.
 

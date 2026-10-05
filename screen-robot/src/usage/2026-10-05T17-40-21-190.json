@@ -1,0 +1,27 @@
+{
+  "run": "2026-10-05T17-39-30-839",
+  "step": 8,
+  "at": "2026-10-05T17:40:21.190Z",
+  "serial": "emulator-5554",
+  "engine": "rapidocr",
+  "model": "gemini-3.5-flash-lite",
+  "ok": true,
+  "acao": "scroll",
+  "attempt": 1,
+  "round": 1,
+  "ms": 1905,
+  "promptChars": 8552,
+  "systemChars": 1666,
+  "usage": {
+    "promptTokenCount": 3207,
+    "candidatesTokenCount": 525,
+    "totalTokenCount": 3732,
+    "promptTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 3207
+      }
+    ],
+    "serviceTier": "standard"
+  }
+}

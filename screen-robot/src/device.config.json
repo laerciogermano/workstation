@@ -30,6 +30,9 @@
       "package": "com.huawei.hwid",
       "source": "apk-pure",
       "artifact": "apks/com.huawei.hwid.apk"
+    },
+    "gmail": {
+      "package": "com.google.android.gm"
     }
   },
   "credentials": {

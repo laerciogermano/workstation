@@ -4,7 +4,7 @@
     "macos-vision": {
       "ok": true,
       "error": null,
-      "ms": 425,
+      "ms": 491,
       "hits": 32,
       "connectHits": [
         {
@@ -296,7 +296,7 @@
     "rapidocr": {
       "ok": true,
       "error": null,
-      "ms": 1333,
+      "ms": 2939,
       "hits": 33,
       "connectHits": [
         {
@@ -610,7 +610,7 @@
     "tesseract": {
       "ok": true,
       "error": null,
-      "ms": 826,
+      "ms": 1012,
       "hits": 84,
       "connectHits": [],
       "connectExact": [],

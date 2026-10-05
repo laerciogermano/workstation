@@ -1,0 +1,30 @@
+{
+  "run": "2026-10-05T18-00-13-031",
+  "step": 4,
+  "at": "2026-10-05T18:01:00.383Z",
+  "serial": "emulator-5554",
+  "engine": "rapidocr",
+  "model": "gemini-3.5-flash-lite",
+  "ok": true,
+  "acao": "scroll",
+  "attempt": 1,
+  "round": 1,
+  "ms": 1801,
+  "promptChars": 1846,
+  "systemChars": 1666,
+  "system": "Você opera um smartphone Android olhando só a lista OCR da tela (textos + coordenadas x,y na escala do device).\n\nResponda APENAS JSON válido (sem markdown) no formato:\n{\n  \"resumo\": \"2-4 frases do que tem na tela\",\n  \"elementos\": [{ \"label\": \"...\", \"tipo\": \"button|chip|card|text\", \"x\": 0, \"y\": 0 }],\n  \"acao\": {\n    \"type\": \"tap|scroll|type|key|sleep|done|fail\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"...\"\n  }\n}\n\nRegras:\n- Coords de tap = mesma escala do OCR (device). Não invente scale.\n- tap: use x,y de um item OCR existente (centro do texto alvo).\n- scroll: direction down|up|left|right quando o próximo alvo não está visível.\n- Se o histórico mostrar vários scrolls com o mesmo OCR (tela não mudou), NÃO scroll de novo: mude de estratégia (tap em outro elemento, type, key BACK).\n- Filtro de localização LinkedIn: se OCR tiver \"Add a location\" / \"Add alocation\" e a cidade alvo do roteiro (ex. Campinas) NÃO estiver na lista, faça tap em Add a location e depois type da cidade — NÃO fique só scrollando a lista.\n- Connect: só tap se text exato \"Connect\" e tipicamente 180 < y < 850. Se o histórico já tem tap nas mesmas coords e a tela não mudou, scroll ou outro Connect — não repita o mesmo tap.\n- type: digite text de uma vez (campo acao.text obrigatório). Se o histórico mostrar erro de tecla OCR, espere (sleep) e tente type de novo, ou key KEYCODE_BACK e reabra o campo.\n- key: code tipo KEYCODE_BACK.\n- sleep: ms quando a tela parece carregando.\n- done: objetivo cumprido.\n- fail: impossível continuar (motivo claro).\n- Não peça screenshot; decida só com o OCR e o prompt.",
+  "prompt": "Objetivo / roteiro:\nabra\n\nHistórico recente:\n[{\"step\":1,\"type\":\"scroll\",\"motivo\":\"Rolar a lista para encontrar mais perfis de compradores para interagir.\",\"x\":null,\"y\":null},{\"step\":2,\"type\":\"scroll\",\"motivo\":\"Rolar a lista para baixo para encontrar mais perfis de compradores disponíveis para conexão.\",\"x\":null,\"y\":null},{\"step\":3,\"type\":\"scroll\",\"motivo\":\"Como os perfis visíveis já estão com status Pending, rolar para baixo para encontrar novos perfis de compradores para interagir.\",\"x\":null,\"y\":null}]\n\nOCR atual (JSON):\n[{\"text\":\"3:00\",\"x\":88,\"y\":25},{\"text\":\"comprador\",\"x\":143,\"y\":81},{\"text\":\"People\",\"x\":62,\"y\":154},{\"text\":\"Posts\",\"x\":163,\"y\":153},{\"text\":\"Jobs\",\"x\":256,\"y\":152},{\"text\":\"Schools\",\"x\":359,\"y\":152},{\"text\":\"Courses\",\"x\":478,\"y\":154},{\"text\":\"DanielaLeao·2nd\",\"x\":204,\"y\":248},{\"text\":\"Pending\",\"x\":455,\"y\":259},{\"text\":\"compradora\",\"x\":164,\"y\":276},{\"text\":\"Belo Horizonte,Minas\",\"x\":209,\"y\":299},{\"text\":\"Gerais,Brazil\",\"x\":168,\"y\":326},{\"text\":\"Current:CompradorsenioratBerolaAtacadista\",\"x\":297,\"y\":361},{\"text\":\"4mutual connections\",\"x\":266,\"y\":401},{\"text\":\"DanieledeAndrade·\",\"x\":218,\"y\":470},{\"text\":\"Pending\",\"x\":457,\"y\":481},{\"text\":\"2nd\",\"x\":127,\"y\":502},{\"text\":\"CompradornaVINCIEner...\",\"x\":234,\"y\":527},{\"text\":\"BeloHorizonte,Minas\",\"x\":209,\"y\":551},{\"text\":\"Gerais,Brazil\",\"x\":168,\"y\":578},{\"text\":\"Past:CompradorsenioratIricom\",\"x\":243,\"y\":613},{\"text\":\"2mutual connections\",\"x\":265,\"y\":654},{\"text\":\"MarcoAntonioOliveira\",\"x\":230,\"y\":723},{\"text\":\"?\",\"x\":406,\"y\":733},{\"text\":\"Pending\",\"x\":456,\"y\":733},{\"text\":\"·2nd\",\"x\":133,\"y\":754},{\"text\":\"Comprador-Negociador...\",\"x\":231,\"y\":779},{\"text\":\"Contagem,Minas Gerais,\",\"x\":224,\"y\":803},{\"text\":\"Brazil\",\"x\":134,\"y\":830},{\"text\":\"Past:CompradoratSupermercadosRex\",\"x\":268,\"y\":865},{\"text\":\"1mutual connection\",\"x\":231,\"y\":906}]\n\nDefina a próxima ação.",
+  "response": "{\n  \"resumo\": \"A tela exibe resultados de busca para 'comprador' na aba People, com os perfis de Daniela Leao, Daniele de Andrade e Marco Antonio Oliveira, todos com o status 'Pending' nos botões de conexão. O histórico mostra que vários scrolls já foram feitos e a tela continua mostrando perfis pendentes, indicando a necessidade de rolar ainda mais para encontrar novos perfis disponíveis.\",\n  \"elementos\": [\n    {\n      \"label\": \"People\",\n      \"tipo\": \"chip\",\n      \"x\": 62,\n      \"y\": 154\n    },\n    {\n      \"label\": \"DanielaLeao·2nd\",\n      \"tipo\": \"card\",\n      \"x\": 204,\n      \"y\": 248\n    },\n    {\n      \"label\": \"Pending\",\n      \"tipo\": \"button\",\n      \"x\": 455,\n      \"y\": 259\n    },\n    {\n      \"label\": \"DanieledeAndrade·\",\n      \"tipo\": \"card\",\n      \"x\": 218,\n      \"y\": 470\n    },\n    {\n      \"label\": \"Pending\",\n      \"tipo\": \"button\",\n      \"x\": 457,\n      \"y\": 481\n    },\n    {\n      \"label\": \"MarcoAntonioOliveira\",\n      \"tipo\": \"card\",\n      \"x\": 230,\n      \"y\": 723\n    },\n    {\n      \"label\": \"Pending\",\n      \"tipo\": \"button\",\n      \"x\": 456,\n      \"y\": 733\n    }\n  ],\n  \"acao\": {\n    \"type\": \"scroll\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": \"down\",\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"Os perfis visíveis atualmente já estão com o status Pending. É necessário rolar a lista para baixo para encontrar novos compradores para se conectar.\"\n  }\n}",
+  "usage": {
+    "promptTokenCount": 1247,
+    "candidatesTokenCount": 498,
+    "totalTokenCount": 1745,
+    "promptTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 1247
+      }
+    ],
+    "serviceTier": "standard"
+  }
+}

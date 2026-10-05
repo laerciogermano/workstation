@@ -13,6 +13,8 @@ import {
   DEFAULT_HISTORY_STEPS,
   parseActionPayload,
   resolveHistorySteps,
+  resolveProvider,
+  resolveDecideModel,
 } from "./agent-decide.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -58,6 +60,13 @@ describe("agent-decide (SC-31)", () => {
       if (prev == null) delete process.env.AGENT_HISTORY_STEPS;
       else process.env.AGENT_HISTORY_STEPS = prev;
     }
+  });
+
+  it("resolveProvider: openai por flag/modelo gpt-", () => {
+    assert.equal(resolveProvider({}), "gemini");
+    assert.equal(resolveProvider({ provider: "openai" }), "openai");
+    assert.equal(resolveProvider({ model: "gpt-4o-mini" }), "openai");
+    assert.equal(resolveDecideModel({ provider: "openai" }), "gpt-4o-mini");
   });
 
   it("buildUserPrompt com historySteps=2 só manda 2 itens", () => {

@@ -81,7 +81,7 @@ const elements = await extract({ serial });
 | `on` | [`lib/events.js`](lib/events.js) |
 | Gestos / captura | [`lib/operate.js`](lib/operate.js) |
 | `extract` | [`lib/extract.js`](lib/extract.js) |
-| `decide` / `runAgent` (EP-07 Gemini) | [`lib/agent-decide.js`](lib/agent-decide.js) · [`lib/agent-run.js`](lib/agent-run.js) · [`lib/gemini.js`](lib/gemini.js) |
+| `decide` / `runAgent` (EP-07) | [`lib/agent-decide.js`](lib/agent-decide.js) · [`lib/agent-run.js`](lib/agent-run.js) · [`lib/gemini.js`](lib/gemini.js) · [`lib/openai.js`](lib/openai.js) |
 | Sessão | [`lib/session.js`](lib/session.js) |
 
 ---
@@ -180,17 +180,24 @@ export GEMINI_MODEL=gemini-3.5-flash-lite
 # opcional: export GEMINI_FALLBACK_MODELS=gemini-3.1-flash-lite
 # opcional: export GEMINI_MAX_PROMPT_CHARS=6000
 # opcional: export AGENT_HISTORY_STEPS=12   # janela de passos no prompt (default 12)
+# OpenAI (gpt-4o-mini):
+#   export OPENAI_API_KEY=…
+#   export AGENT_PROVIDER=openai
+#   # ou: --provider openai --model gpt-4o-mini
 # retry/indisponível: GEMINI_RETRY_MS=0 · GEMINI_CHAIN_WAIT_MS=0 · GEMINI_CHAIN_ROUNDS=30
 # (saturado → reenvia na hora, sem backoff; até N rounds)
 
 npm run agent -- --prompt ../roteiros/jornada-comprador.md
 npm run agent -- --prompt ../roteiros/abrir-settings.md
 npm run agent -- --prompt ../roteiros/abrir-settings.md --history-steps 16
+npm run agent -- --provider openai --model gpt-4o-mini --prompt ../roteiros/abrir-settings.md
 npm run agent -- --prompt "abra o LinkedIn e mostre as últimas 10 conexões"
 npm run agent:smoke              # 1–2 passos no device; sem key = heurística Connect/scroll
 ```
 
-Stdout: `[agent]` / `[decide]` / `[gemini]`. Usa **só** `GEMINI_MODEL` (default código `gemini-3.5-flash-lite`). Fallback só se `GEMINI_FALLBACK_MODELS` estiver setado.
+Stdout: `[agent]` / `[decide]` / `[gemini]` ou `[openai]`. Provider default `gemini`; `AGENT_PROVIDER=openai` ou modelo `gpt-*` usa OpenAI. Fallback Gemini só se `GEMINI_FALLBACK_MODELS` estiver setado.
+
+**Antes → depois (OpenAI):** só Gemini → também `gpt-4o-mini` via [`lib/openai.js`](lib/openai.js) (`OPENAI_API_KEY`, `--provider openai --model gpt-4o-mini`). Usage OpenAI normalizado para `promptTokenCount`/`candidatesTokenCount`. Rollback: omitir provider/openai e usar só Gemini.
 
 **Antes → depois (histórico configurável):** `history.slice(-8)` fixo → janela `historySteps` (default **12**), via `runAgent({ historySteps })` · `AGENT_HISTORY_STEPS` · `--history-steps`. Cada passo grava também `resultado` (ex. `scroll up`) no histórico enviado ao modelo. Rollback: `slice(-8)` sem `resultado`.
 
@@ -215,7 +222,7 @@ const { status, logPath, usagePath, usage } = await runAgent({
 });
 ```
 
-Testes: `node --test lib/gemini.test.js lib/agent-decide.test.js lib/agent-run.test.js`.  
+Testes: `node --test lib/gemini.test.js lib/openai.test.js lib/agent-decide.test.js lib/agent-run.test.js`.  
 Plano: [`../implementation-plan/EP-07-motor-gemini.md`](../implementation-plan/EP-07-motor-gemini.md).  
 POC custo/visão: [`test/output/poc-vision/custos-por-agente.md`](test/output/poc-vision/custos-por-agente.md).
 

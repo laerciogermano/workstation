@@ -1,7 +1,14 @@
 /**
- * EP-07 / US-24 — decide próxima ação a partir de prompt + OCR (Gemini).
+ * EP-07 / US-24 — decide próxima ação a partir de prompt + OCR (Gemini ou OpenAI).
  */
-import { generateContent, DEFAULT_MODEL } from "./gemini.js";
+import {
+  generateContent as generateGemini,
+  DEFAULT_MODEL as DEFAULT_GEMINI_MODEL,
+} from "./gemini.js";
+import {
+  generateContent as generateOpenAI,
+  DEFAULT_MODEL as DEFAULT_OPENAI_MODEL,
+} from "./openai.js";
 
 const ACTION_TYPES = new Set([
   "tap",
@@ -17,6 +24,35 @@ function fail(code, msg) {
   const err = new Error(msg);
   err.code = code;
   throw err;
+}
+
+/**
+ * @param {{ provider?: string, model?: string } | null | undefined} [cfg]
+ * @returns {"gemini"|"openai"}
+ */
+export function resolveProvider(cfg) {
+  const explicit = String(cfg?.provider || process.env.AGENT_PROVIDER || "")
+    .trim()
+    .toLowerCase();
+  if (explicit === "openai" || explicit === "gpt") return "openai";
+  if (explicit === "gemini" || explicit === "google") return "gemini";
+  const model = String(
+    cfg?.model || process.env.OPENAI_MODEL || process.env.GEMINI_MODEL || "",
+  );
+  if (/^gpt-/i.test(model) || /openai/i.test(model)) return "openai";
+  return "gemini";
+}
+
+/**
+ * @param {{ provider?: string, model?: string } | null | undefined} [cfg]
+ */
+export function resolveDecideModel(cfg) {
+  const provider = resolveProvider(cfg);
+  if (cfg?.model) return cfg.model;
+  if (provider === "openai") {
+    return process.env.OPENAI_MODEL || DEFAULT_OPENAI_MODEL;
+  }
+  return process.env.GEMINI_MODEL || DEFAULT_GEMINI_MODEL;
 }
 
 /**
@@ -186,6 +222,7 @@ Defina a próxima ação.`;
  *   history?: object[],
  *   historySteps?: number,
  *   model?: string,
+ *   provider?: string,
  *   apiKey?: string,
  *   thinkingLevel?: "low"|"medium"|"high",
  * }} cfg
@@ -200,13 +237,16 @@ export async function decide(cfg, deps = {}) {
   if (!Array.isArray(cfg.ocr)) fail("AGENT_NO_OCR", "decide: falta ocr[]");
 
   const logFn = deps.log ?? log;
-  const model = cfg.model || process.env.GEMINI_MODEL || DEFAULT_MODEL;
+  const provider = resolveProvider(cfg);
+  const model = resolveDecideModel(cfg);
   const historySteps = resolveHistorySteps(cfg);
   logFn(
-    `início model=${model} ocrHits=${cfg.ocr.length} history=${(cfg.history || []).length} historySteps=${historySteps}`,
+    `início provider=${provider} model=${model} ocrHits=${cfg.ocr.length} history=${(cfg.history || []).length} historySteps=${historySteps}`,
   );
 
-  const gen = deps.generateContent ?? generateContent;
+  const gen =
+    deps.generateContent ??
+    (provider === "openai" ? generateOpenAI : generateGemini);
   let text;
   let usage;
   let usedModel = model;
@@ -228,7 +268,7 @@ export async function decide(cfg, deps = {}) {
     usedModel = out.model || model;
     requests = out.requests;
   } catch (e) {
-    logFn(`erro Gemini: ${e.code || ""} ${e.message}`);
+    logFn(`erro ${provider}: ${e.code || ""} ${e.message}`);
     throw e;
   }
 
@@ -239,7 +279,7 @@ export async function decide(cfg, deps = {}) {
       (parsed.acao.direction ? ` dir=${parsed.acao.direction}` : "") +
       (parsed.acao.motivo ? ` — ${parsed.acao.motivo}` : ""),
   );
-  return { ...parsed, usage, model: usedModel, requests };
+  return { ...parsed, usage, model: usedModel, provider, requests };
 }
 
-export { ACTION_TYPES };
+export { ACTION_TYPES, DEFAULT_GEMINI_MODEL, DEFAULT_OPENAI_MODEL };

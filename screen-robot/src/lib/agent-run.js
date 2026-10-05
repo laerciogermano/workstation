@@ -4,8 +4,8 @@
 import { mkdirSync, appendFileSync, writeFileSync, existsSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { extract } from "./extract.js";
-import { decide, resolveHistorySteps } from "./agent-decide.js";
-import { DEFAULT_MODEL } from "./gemini.js";
+import { decide, resolveHistorySteps, resolveDecideModel, resolveProvider } from "./agent-decide.js";
+import { DEFAULT_MODEL as DEFAULT_GEMINI_MODEL } from "./gemini.js";
 import { tapElement, scroll, type, key } from "./operate.js";
 import { adb, sleep as defaultSleep } from "./adb.js";
 
@@ -270,6 +270,7 @@ function appendStepLog(logPath, step, { resumo, acao, ocr, resultado, usage }) {
  *   usageDir?: string,
  *   keyboardRegion?: object,
  *   model?: string,
+ *   provider?: string,
  *   apiKey?: string,
  *   historySteps?: number,
  * }} cfg
@@ -294,9 +295,10 @@ export async function runAgent(cfg, deps = {}) {
   if (!existsSync(usageDir)) mkdirSync(usageDir, { recursive: true });
   const logPath = join(logDir, `${runStamp}.md`);
 
-  const model = cfg.model || process.env.GEMINI_MODEL || DEFAULT_MODEL;
+  const provider = resolveProvider(cfg);
+  const model = resolveDecideModel(cfg) || DEFAULT_GEMINI_MODEL;
   log(
-    `início serial=${serial} engine=${engine} model=${model} maxSteps=${maxSteps} historySteps=${historySteps}`,
+    `início serial=${serial} engine=${engine} provider=${provider} model=${model} maxSteps=${maxSteps} historySteps=${historySteps}`,
   );
   log(`log → ${logPath}`);
   log(`usage → ${usageDir}/<timestamp>.json (1 arquivo por request)`);
@@ -308,6 +310,7 @@ export async function runAgent(cfg, deps = {}) {
       "",
       `- serial: \`${serial}\``,
       `- engine: \`${engine}\``,
+      `- provider: \`${provider}\``,
       `- model: \`${model}\``,
       `- maxSteps: ${maxSteps}`,
       `- historySteps: ${historySteps}`,
@@ -393,7 +396,7 @@ export async function runAgent(cfg, deps = {}) {
       }
     }
 
-    log(`decide (Gemini)…`);
+    log(`decide (${provider})…`);
     let decision;
     try {
       decision = await runDecide(
@@ -403,6 +406,7 @@ export async function runAgent(cfg, deps = {}) {
           history,
           historySteps,
           model: cfg.model,
+          provider: cfg.provider,
           apiKey: cfg.apiKey,
         },
         deps,

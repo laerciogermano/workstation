@@ -6,14 +6,16 @@
  *   npm run agent -- --prompt "objetivo em texto"
  *   npm run agent -- --prompt ./meu.txt --device emulator-5554 --max-steps 20
  *   npm run agent -- --prompt ./meu.txt --history-steps 12
+ *   npm run agent -- --provider openai --model gpt-4o-mini --prompt ../roteiros/abrir-settings.md
  *   créditos: src/usage/<timestamp>.json (1 arquivo por request, flat)
  *
- * Env: GEMINI_API_KEY (obrigatório) · GEMINI_MODEL (opcional) · AGENT_HISTORY_STEPS (opcional, default 12)
+ * Env: GEMINI_API_KEY ou OPENAI_API_KEY · AGENT_PROVIDER · GEMINI_MODEL / OPENAI_MODEL · AGENT_HISTORY_STEPS
  */
 import { readFileSync, existsSync } from "node:fs";
 import { resolve, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { runAgent } from "../lib/agent-run.js";
+import { resolveProvider } from "../lib/agent-decide.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const SRC_ROOT = resolve(__dirname, "..");
@@ -59,6 +61,8 @@ const serial = loadSerial();
 const maxSteps = Number(argValue("--max-steps") || "40");
 const historyStepsRaw = argValue("--history-steps");
 const historySteps = historyStepsRaw != null ? Number(historyStepsRaw) : undefined;
+const provider = argValue("--provider") || undefined;
+const model = argValue("--model") || undefined;
 const engine = argValue("--engine") || "rapidocr";
 const logDir = argValue("--log-dir") || join(SRC_ROOT, "logs", "agent");
 const usageDir = argValue("--usage-dir") || join(SRC_ROOT, "usage");
@@ -72,13 +76,22 @@ if (!serial) {
   console.error("falta serial (--device / ANDROID_SERIAL / device.config.json)");
   process.exit(2);
 }
-if (!process.env.GEMINI_API_KEY) {
-  console.error("falta GEMINI_API_KEY");
+
+const resolvedProvider = resolveProvider({ provider, model });
+if (resolvedProvider === "openai") {
+  if (!process.env.OPENAI_API_KEY) {
+    console.error("falta OPENAI_API_KEY (provider=openai)");
+    process.exit(2);
+  }
+} else if (!process.env.GEMINI_API_KEY) {
+  console.error("falta GEMINI_API_KEY (provider=gemini)");
   process.exit(2);
 }
 
 console.log(
-  `runAgent serial=${serial} engine=${engine} maxSteps=${maxSteps}` +
+  `runAgent serial=${serial} engine=${engine} provider=${resolvedProvider}` +
+    (model ? ` model=${model}` : "") +
+    ` maxSteps=${maxSteps}` +
     (historySteps != null ? ` historySteps=${historySteps}` : ""),
 );
 const result = await runAgent({
@@ -86,6 +99,8 @@ const result = await runAgent({
   prompt,
   maxSteps,
   historySteps,
+  provider,
+  model,
   engine,
   logDir,
   usageDir,

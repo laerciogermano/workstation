@@ -10,15 +10,22 @@
  *   créditos: src/usage/<timestamp>.json (1 arquivo por request, flat)
  *
  * Env: GEMINI_API_KEY ou OPENAI_API_KEY · AGENT_PROVIDER · GEMINI_MODEL / OPENAI_MODEL · AGENT_HISTORY_STEPS
+ * Keys também em src/.env (gitignored) — ver .env.example
  */
 import { readFileSync, existsSync } from "node:fs";
 import { resolve, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { loadEnvFiles } from "../lib/load-env.js";
 import { runAgent } from "../lib/agent-run.js";
 import { resolveProvider } from "../lib/agent-decide.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const SRC_ROOT = resolve(__dirname, "..");
+
+loadEnvFiles([
+  join(SRC_ROOT, ".env"),
+  join(SRC_ROOT, ".env.local"),
+]);
 
 function argValue(flag) {
   const i = process.argv.indexOf(flag);

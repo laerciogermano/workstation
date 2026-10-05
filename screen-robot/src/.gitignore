@@ -9,3 +9,5 @@ apks/*.apk
 *.traineddata
 .DS_Store
 meu-fluxo.json
+.env
+.env.local

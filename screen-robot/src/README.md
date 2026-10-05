@@ -174,14 +174,16 @@ Loop genérico: OCR RapidOCR → Gemini 3.8 Flash → `tap`/`scroll`/`type`/`key
 
 ```bash
 cd screen-robot/src
-export GEMINI_API_KEY=…          # obrigatório para decide real
+# keys: export … ou arquivo local .env (gitignored; modelo em .env.example)
+# cp .env.example .env   # depois preencha OPENAI_API_KEY / GEMINI_API_KEY
+export GEMINI_API_KEY=…          # obrigatório para decide Gemini (se não estiver no .env)
 # modelo ÚNICO = valor do export (sem fallback automático)
 export GEMINI_MODEL=gemini-3.5-flash-lite
 # opcional: export GEMINI_FALLBACK_MODELS=gemini-3.1-flash-lite
 # opcional: export GEMINI_MAX_PROMPT_CHARS=6000
 # opcional: export AGENT_HISTORY_STEPS=12   # janela de passos no prompt (default 12)
 # OpenAI (gpt-4o-mini):
-#   export OPENAI_API_KEY=…
+#   export OPENAI_API_KEY=…   # ou OPENAI_API_KEY=… no .env
 #   export AGENT_PROVIDER=openai
 #   # ou: --provider openai --model gpt-4o-mini
 # retry/indisponível: GEMINI_RETRY_MS=0 · GEMINI_CHAIN_WAIT_MS=0 · GEMINI_CHAIN_ROUNDS=30
@@ -196,6 +198,8 @@ npm run agent:smoke              # 1–2 passos no device; sem key = heurística
 ```
 
 Stdout: `[agent]` / `[decide]` / `[gemini]` ou `[openai]`. Provider default `gemini`; `AGENT_PROVIDER=openai` ou modelo `gpt-*` usa OpenAI. Fallback Gemini só se `GEMINI_FALLBACK_MODELS` estiver setado.
+
+**Antes → depois (.env local):** keys só via export → também `src/.env` / `.env.local` (gitignored), carregados por `run-agent` via [`lib/load-env.js`](lib/load-env.js). Modelo: [`.env.example`](.env.example). Rollback: apagar `.env` e exportar no shell.
 
 **Antes → depois (OpenAI):** só Gemini → também `gpt-4o-mini` via [`lib/openai.js`](lib/openai.js) (`OPENAI_API_KEY`, `--provider openai --model gpt-4o-mini`). Usage OpenAI normalizado para `promptTokenCount`/`candidatesTokenCount`. Rollback: omitir provider/openai e usar só Gemini.
 

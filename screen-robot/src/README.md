@@ -249,9 +249,11 @@ npm run usage:report
 # abre usage/dashboard.html no browser
 ```
 
-Gera [`usage/dashboard.html`](usage/dashboard.html) com cards (totais), barras por step (`promptTokenCount` / `candidatesTokenCount` / `totalTokenCount`), linha acumulada e tabela. Filtra por `run`. Fonte: só metadados de `usage/*.json` (não embute prompt completo).
+Gera [`usage/dashboard.html`](usage/dashboard.html) com **todos** os `usage/*.json` (inclusive falhas sem `usageMetadata`), cards, barras por request, acumulado e tabela. Filtro: Todos ou por `run`.
 
 **Antes → depois:** usage só em JSON solto → relatório visual regenerável. Rollback: `rm usage/dashboard.html scripts/build-usage-dashboard.js` e remover script `usage:report` do `package.json`.
+
+**Antes → depois (todos os arquivos):** o gerador filtrava `totalTokenCount > 0` e omitia requests com erro (ex. 503). Agora inclui 100% dos `.json` em `usage/`. Rollback: `.filter((r) => r.total > 0)`.
 
 Abort (Ctrl+C) mantém os arquivos já gravados. Status mid-run: `running` no log.
 

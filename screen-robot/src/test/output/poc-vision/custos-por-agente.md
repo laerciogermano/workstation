@@ -129,21 +129,36 @@ Tokens/op usados no cálculo (seção 2): Imagem ~20 KB = 538 in + 300 out · OC
 
 Arquivo ~20 KB: [`compressed-20kb.webp`](compressed-20kb.webp) · [`meta-20kb.json`](meta-20kb.json)
 
-### N agentes / mês — todos os modelos elegíveis (US$ + R$)
+### N agentes / mês — todos os modelos × modo Imagem / OCR (US$ + R$)
 
-Custo monetário da API · modo **Imagem ~20 KB** · ~429 conexões/mês por agente · câmbio US$ 1 = R$ 5,50.  
+Custo monetário da API · ~429 conexões/mês por agente · câmbio US$ 1 = R$ 5,50.  
 ***Gemini 3.8 Flash*** = testado e aprovado.
+
+#### Modo Imagem ~20 KB
 
 | Modelo | 1 agente | 5 agentes | 10 agentes | 50 agentes |
 |--------|----------|-----------|------------|------------|
-| Gemini 2.5 Flash-Lite | US$ 0,21 (R$ 1,15) | US$ 1,04 (R$ 5,74) | US$ 2,09 (R$ 11,47) | US$ 10,43 (R$ 57,36) |
-| Gemini 3.1 Flash-Lite | US$ 0,70 (R$ 3,86) | US$ 3,51 (R$ 19,29) | US$ 7,01 (R$ 38,58) | US$ 35,07 (R$ 192,89) |
-| Gemini 2.5 Flash | US$ 1,09 (R$ 6,02) | US$ 5,47 (R$ 30,08) | US$ 10,94 (R$ 60,15) | US$ 54,68 (R$ 300,77) |
+| Gemini 2.5 Flash-Lite | US$ 0,21 (R$ 1,15) | US$ 1,04 (R$ 5,74) | US$ 2,09 (R$ 11,47) | US$ 10,43 (R$ 57,35) |
+| Gemini 3.1 Flash-Lite | US$ 0,70 (R$ 3,86) | US$ 3,51 (R$ 19,29) | US$ 7,01 (R$ 38,58) | US$ 35,07 (R$ 192,88) |
+| Gemini 2.5 Flash | US$ 1,09 (R$ 6,02) | US$ 5,47 (R$ 30,08) | US$ 10,94 (R$ 60,15) | US$ 54,68 (R$ 300,76) |
 | Gemini 3 Flash | US$ 1,40 (R$ 7,72) | US$ 7,01 (R$ 38,58) | US$ 14,03 (R$ 77,15) | US$ 70,14 (R$ 385,77) |
 | Gemini 3.6 Flash\* | US$ 1,83 (R$ 10,09) | US$ 9,17 (R$ 50,44) | US$ 18,34 (R$ 100,88) | US$ 91,71 (R$ 504,41) |
 | Gemini 3.7 Flash\* | US$ 1,83 (R$ 10,09) | US$ 9,17 (R$ 50,44) | US$ 18,34 (R$ 100,88) | US$ 91,71 (R$ 504,41) |
 | **Gemini 3.8 Flash\*** | **US$ 1,83 (R$ 10,09)** | **US$ 9,17 (R$ 50,44)** | **US$ 18,34 (R$ 100,88)** | **US$ 91,71 (R$ 504,41)** |
 | Gemini 3.5 Flash | US$ 4,21 (R$ 23,15) | US$ 21,04 (R$ 115,73) | US$ 42,08 (R$ 231,46) | US$ 210,42 (R$ 1.157,31) |
+
+#### Modo OCR JSON
+
+| Modelo | 1 agente | 5 agentes | 10 agentes | 50 agentes |
+|--------|----------|-----------|------------|------------|
+| Gemini 2.5 Flash-Lite | US$ 0,16 (R$ 0,91) | US$ 0,82 (R$ 4,53) | US$ 1,65 (R$ 9,07) | US$ 8,24 (R$ 45,34) |
+| Gemini 3.1 Flash-Lite | US$ 0,48 (R$ 2,66) | US$ 2,42 (R$ 13,32) | US$ 4,84 (R$ 26,63) | US$ 24,21 (R$ 133,16) |
+| Gemini 2.5 Flash | US$ 0,68 (R$ 3,75) | US$ 3,41 (R$ 18,75) | US$ 6,82 (R$ 37,50) | US$ 34,09 (R$ 187,51) |
+| Gemini 3 Flash | US$ 0,97 (R$ 5,33) | US$ 4,84 (R$ 26,63) | US$ 9,68 (R$ 53,26) | US$ 48,42 (R$ 266,31) |
+| Gemini 3.6 Flash\* | US$ 1,34 (R$ 7,40) | US$ 6,72 (R$ 36,98) | US$ 13,45 (R$ 73,95) | US$ 67,23 (R$ 369,77) |
+| Gemini 3.7 Flash\* | US$ 1,34 (R$ 7,40) | US$ 6,72 (R$ 36,98) | US$ 13,45 (R$ 73,95) | US$ 67,23 (R$ 369,77) |
+| **Gemini 3.8 Flash\*** | **US$ 1,34 (R$ 7,40)** | **US$ 6,72 (R$ 36,98)** | **US$ 13,45 (R$ 73,95)** | **US$ 67,23 (R$ 369,77)** |
+| Gemini 3.5 Flash | US$ 2,91 (R$ 15,98) | US$ 14,53 (R$ 79,89) | US$ 29,05 (R$ 159,79) | US$ 145,26 (R$ 798,93) |
 
 ---
 

@@ -183,11 +183,14 @@ export GEMINI_MODEL=gemini-3.5-flash-lite
 # (saturado → reenvia na hora, sem backoff; até N rounds)
 
 npm run agent -- --prompt ../roteiros/jornada-comprador.md
+npm run agent -- --prompt ../roteiros/abrir-settings.md
 npm run agent -- --prompt "abra o LinkedIn e mostre as últimas 10 conexões"
 npm run agent:smoke              # 1–2 passos no device; sem key = heurística Connect/scroll
 ```
 
 Stdout: `[agent]` / `[decide]` / `[gemini]`. Usa **só** `GEMINI_MODEL` (default código `gemini-3.5-flash-lite`). Fallback só se `GEMINI_FALLBACK_MODELS` estiver setado.
+
+**Antes → depois (home/Settings no system prompt):** lite fazia `scroll up` na home e reabria o shade; agora o system de `decide` manda shade→`KEYCODE_BACK`/`HOME`, gaveta→`scroll down`, tap em `Settings`. Roteiro: [`roteiros/abrir-settings.md`](../roteiros/abrir-settings.md). Rollback: remover o bloco “Home / Settings” de `buildSystemPrompt`.
 
 **Antes → depois (modelo):** `gemini-2.5-flash-lite` (404 new users) → `gemini-3.5-flash-lite` (recomendado pela API). Rollback: `export GEMINI_MODEL=gemini-3.1-flash-lite`.
 

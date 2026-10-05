@@ -107,6 +107,8 @@ const { x, y } = await matchImage({ serial, templatePath: "./templates/btn.png" 
 openScrcpy({ serial });
 ```
 
+`down` = ver itens abaixo (y2 < y). **Antes:** y aumentava e o default 540,1200 saía da tela 720×1280.
+
 | Superfície | O quê |
 |------------|--------|
 | **Público** | `launch` · `tap` · `type` · `scroll` · `screenshot` · `matchImage` · `openScrcpy` |

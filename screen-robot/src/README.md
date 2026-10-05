@@ -199,7 +199,7 @@ Testes: `node --test lib/gemini.test.js lib/agent-decide.test.js lib/agent-run.t
 Plano: [`../implementation-plan/EP-07-motor-gemini.md`](../implementation-plan/EP-07-motor-gemini.md).  
 POC custo/visão: [`test/output/poc-vision/custos-por-agente.md`](test/output/poc-vision/custos-por-agente.md).
 
-Cada `runAgent` grava `usage/<ISO-stamp>.json` com `calls[]` (`usageMetadata` da API por passo) e `totals`. Pasta: `--usage-dir` ou `src/usage/`. **Antes:** só `logs/agent/*.md`. Rollback: ignorar `usage/` e `usageDir`.
+**Antes → depois:** `scroll down` somava y (lista People não andava no AVD); `type` tocava teclas até falhar e o fallback ADB concatenava (`cccomprador`). Agora `down` = dedo sobe; teclas resolvidas antes de tap; tecla QWERTY ausente interpolada; fallback ADB limpa o campo. Rollback: `y2 = y + distance` e type sem interpolação/limpeza.
 
 **Antes → depois:** IA no chat Cursor chama `extract`/`tap` à mão → `runAgent` + `GEMINI_API_KEY`. Rollback: não usar `npm run agent`; voltar ao fluxo manual do roteiro.
 

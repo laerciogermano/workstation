@@ -100,7 +100,40 @@ export function buildKeyCenters(words) {
       }
     }
   }
-  return map;
+  return fillMissingKeyCenters(map);
+}
+
+const QWERTY_ROWS = ["qwertyuiop", "asdfghjkl", "zxcvbnm"];
+
+/**
+ * Completa teclas ausentes na linha QWERTY (ex. RapidOCR some com "o")
+ * interpolando x entre vizinhas conhecidas.
+ * @param {Map<string, { x: number, y: number }>} map
+ * @returns {Map<string, { x: number, y: number }>}
+ */
+export function fillMissingKeyCenters(map) {
+  const out = new Map(map);
+  for (const row of QWERTY_ROWS) {
+    const known = [];
+    for (let i = 0; i < row.length; i++) {
+      const hit = out.get(row[i]) || out.get(row[i].toUpperCase());
+      if (hit) known.push({ i, x: hit.x, y: hit.y });
+    }
+    if (known.length < 2) continue;
+    const a = known[0];
+    const b = known[known.length - 1];
+    const di = b.i - a.i || 1;
+    const dx = (b.x - a.x) / di;
+    const y = Math.round(known.reduce((s, k) => s + k.y, 0) / known.length);
+    for (let i = 0; i < row.length; i++) {
+      const ch = row[i];
+      if (out.has(ch) || out.has(ch.toUpperCase())) continue;
+      const center = { x: Math.round(a.x + dx * (i - a.i)), y };
+      out.set(ch, center);
+      out.set(ch.toUpperCase(), center);
+    }
+  }
+  return out;
 }
 
 /**
@@ -270,12 +303,13 @@ export async function type(cfg, deps = {}) {
     });
     const keys = buildKeyCenters(words);
     const delayMs = Number(cfg.delayMs ?? 100);
+    /** @type {{ ch: string, x: number, y: number }[]} */
+    const taps = [];
     for (const ch of s) {
       if (ch === "\n" || ch === "\t") continue;
       if (ch === " ") {
         const spaceHit = keys.get(" ") || { x: 270, y: 845 };
-        tap({ serial, x: spaceHit.x, y: spaceHit.y }, deps);
-        if (delayMs > 0) await d.sleep(delayMs);
+        taps.push({ ch: " ", x: spaceHit.x, y: spaceHit.y });
         continue;
       }
       const hit =
@@ -289,13 +323,27 @@ export async function type(cfg, deps = {}) {
               : ""),
         );
       }
-      tap({ serial, x: hit.x, y: hit.y }, deps);
+      taps.push({ ch, x: hit.x, y: hit.y });
+    }
+    for (const t of taps) {
+      tap({ serial, x: t.x, y: t.y }, deps);
       if (delayMs > 0) await d.sleep(delayMs);
     }
   } catch (e) {
     if (e?.code === "OPERATE_TYPE_FAILED" || e?.code === "OPERATE_TAP_FAILED") throw e;
     fail("OPERATE_TYPE_FAILED", e.message || String(e));
   }
+}
+
+function readWmSize(serial, runAdb) {
+  try {
+    const r = runAdb(serial, ["shell", "wm", "size"]);
+    const m = String(r?.stdout || "").match(/(\d+)x(\d+)/);
+    if (m) return { w: Number(m[1]), h: Number(m[2]) };
+  } catch {
+    /* default */
+  }
+  return { w: 720, h: 1280 };
 }
 
 /**
@@ -305,15 +353,19 @@ export async function type(cfg, deps = {}) {
 export function scroll(cfg, deps = {}) {
   const serial = requireSerial(cfg);
   const d = resolveDeps(deps);
+  const needSize = cfg.x == null || cfg.y == null || cfg.distance == null;
+  const size = needSize ? readWmSize(serial, d.runAdb) : { w: 720, h: 1280 };
   const direction = cfg.direction || "down";
-  const distance = Number(cfg.distance ?? 800);
-  const x = Number(cfg.x ?? 540);
-  const y = Number(cfg.y ?? 1200);
+  const distance = Number(cfg.distance ?? Math.floor(size.h * 0.35));
+  const x = Number(cfg.x ?? Math.floor(size.w / 2));
+  const y = Number(cfg.y ?? Math.floor(size.h * 0.62));
   let x2 = x;
   let y2 = y;
-  if (direction === "down") y2 = y + distance;
-  else if (direction === "up") y2 = y - distance;
-  else if (direction === "left") x2 = x - distance;
+  // down = ver itens abaixo = dedo sobe (y diminui). Default antigo y+=distance
+  // saía da tela (y=1200 em AVD 720×1280) e a lista People não andava.
+  if (direction === "down") y2 = Math.max(0, y - distance);
+  else if (direction === "up") y2 = y + distance;
+  else if (direction === "left") x2 = Math.max(0, x - distance);
   else if (direction === "right") x2 = x + distance;
   d.runAdb(serial, [
     "shell",

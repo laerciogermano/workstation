@@ -36,18 +36,20 @@ function loadPrompt(raw) {
   return raw;
 }
 
+function loadDeviceCfg() {
+  try {
+    return JSON.parse(readFileSync(join(SRC_ROOT, "device.config.json"), "utf8"));
+  } catch {
+    return {};
+  }
+}
+
 function loadSerial() {
   const fromArg = argValue("--device") || argValue("--serial");
   if (fromArg) return fromArg;
   if (process.env.ANDROID_SERIAL) return process.env.ANDROID_SERIAL;
-  try {
-    const cfg = JSON.parse(
-      readFileSync(join(SRC_ROOT, "device.config.json"), "utf8"),
-    );
-    return cfg.device || cfg.provision?.serial || null;
-  } catch {
-    return null;
-  }
+  const cfg = loadDeviceCfg();
+  return cfg.device || cfg.provision?.serial || null;
 }
 
 const promptRaw = argValue("--prompt") || argValue("-p");
@@ -57,6 +59,7 @@ const maxSteps = Number(argValue("--max-steps") || "40");
 const engine = argValue("--engine") || "rapidocr";
 const logDir = argValue("--log-dir") || join(SRC_ROOT, "logs", "agent");
 const usageDir = argValue("--usage-dir") || join(SRC_ROOT, "usage");
+const keyboardRegion = loadDeviceCfg().type?.keyboardRegion;
 
 if (!prompt) {
   console.error("uso: npm run agent -- --prompt <texto|arquivo.md>");
@@ -79,6 +82,7 @@ const result = await runAgent({
   engine,
   logDir,
   usageDir,
+  keyboardRegion,
 });
 console.log(
   JSON.stringify(

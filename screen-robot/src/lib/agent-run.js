@@ -61,7 +61,12 @@ export async function executeAction(cfg, deps = {}) {
       );
       return `scroll ${a.direction || "down"}`;
     case "type": {
-      const payload = { serial, text: a.text, engine: cfg.engine };
+      const payload = {
+        serial,
+        text: a.text,
+        engine: cfg.engine,
+        region: cfg.keyboardRegion,
+      };
       const adbFallback =
         process.env.AGENT_TYPE_ADB_FALLBACK !== "0" &&
         cfg.adbTypeFallback !== false;
@@ -73,10 +78,13 @@ export async function executeAction(cfg, deps = {}) {
           await doType(payload, deps);
         } catch (e2) {
           if (!adbFallback) throw e2;
-          // OCR do teclado incompleto (ex. sem "o") — fallback ADB no motor
           const runAdb = deps.adb ?? adb;
+          log(`type OCR falhou (${e2.message}) — limpa campo e fallback adb input text`);
+          runAdb(serial, ["shell", "input", "keyevent", "KEYCODE_MOVE_END"]);
+          for (let i = 0; i < 40; i++) {
+            runAdb(serial, ["shell", "input", "keyevent", "KEYCODE_DEL"]);
+          }
           const escaped = String(a.text).replace(/ /g, "%s");
-          log(`type OCR falhou (${e2.message}) — fallback adb input text`);
           runAdb(serial, ["shell", "input", "text", escaped]);
           return `type-adb ${JSON.stringify(a.text)}`;
         }
@@ -164,6 +172,7 @@ function appendStepLog(logPath, step, { resumo, acao, ocr, resultado }) {
  *   engine?: string,
  *   logDir?: string,
  *   usageDir?: string,
+ *   keyboardRegion?: object,
  *   model?: string,
  *   apiKey?: string,
  * }} cfg
@@ -301,7 +310,7 @@ export async function runAgent(cfg, deps = {}) {
     try {
       log(`executar ${acao.type}…`);
       resultado = await executeAction(
-        { serial, acao, engine },
+        { serial, acao, engine, keyboardRegion: cfg.keyboardRegion },
         deps,
       );
       log(`resultado: ${resultado}`);

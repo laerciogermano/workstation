@@ -25,6 +25,15 @@ describe("buildKeyCenters", () => {
     assert.deepEqual(map.get("2"), { x: 50, y: 10 });
     assert.equal(map.has("P"), false);
   });
+
+  it("interpola tecla ausente na linha QWERTY", () => {
+    const map = buildKeyCenters([
+      { text: "i", bounds: { x: 0, y: 10, w: 10, h: 10 } },
+      { text: "p", bounds: { x: 20, y: 10, w: 10, h: 10 } },
+    ]);
+    assert.ok(map.get("o"));
+    assert.equal(map.get("o").y, 15);
+  });
 });
 
 describe("operate", () => {
@@ -122,7 +131,7 @@ describe("operate", () => {
       { adb: (_s, args) => calls.push(args) },
     );
     assert.equal(calls[0][2], "swipe");
-    assert.equal(calls[0][6], "110");
+    assert.equal(calls[0][6], "0");
   });
 
   it("screenshot grava path", () => {

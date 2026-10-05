@@ -215,8 +215,10 @@ await type({ serial, text: "11999999999", region: { x: 0, y: 700, width: 720, he
 |-------|--------|-----------|
 | `serial` | sim | Device |
 | `direction` | | `down` · `up` · `left` · `right` |
-| `distance` | | Default `800` |
-| `x` / `y` | | Origem do swipe |
+| `distance` | | Default ~35% da altura (`wm size`); **antes** 800 |
+| `x` / `y` | | Origem do swipe; default centro / ~62% da altura (**antes** 540,1200) |
+
+`down` = ver itens abaixo (dedo sobe). **Antes:** `y2 = y + distance` saía da tela no AVD 720×1280 e a lista não andava. Rollback: `y2 = y + distance`, default `x=540,y=1200,distance=800`.
 
 **Saída:** `undefined`
 

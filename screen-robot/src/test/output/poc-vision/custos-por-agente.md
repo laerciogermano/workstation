@@ -48,14 +48,16 @@ US$/op: Imagem 20 KB ≈ 0,000130 · Imagem 31 KB ≈ 0,000150 · OCR ≈ 0,0001
 
 Arquivo ~20 KB: [`compressed-20kb.webp`](compressed-20kb.webp) · [`meta-20kb.json`](meta-20kb.json)
 
-### N agentes / mês (US$)
+### N agentes / mês — custo monetário da API (dólares)
 
-| Agentes | Conexões/mês | Imagem 20 KB | Imagem 31 KB | OCR |
-|---------|--------------|--------------|--------------|-----|
-| 1 | 429 | 0,16 | 0,18 | 0,12 |
-| 5 | 2.143 | 0,78 | 0,90 | 0,62 |
-| 10 | 4.286 | 1,56 | 1,80 | 1,24 |
-| 50 | 21.429 | 7,81 | 9,00 | 6,18 |
+Sim: valores em **US$** (quanto se paga à API Gemini no mês). Não é quantidade de operações.
+
+| Agentes | Conexões/mês | Custo Imagem 20 KB | Custo Imagem 31 KB | Custo OCR |
+|---------|--------------|--------------------|--------------------|-----------|
+| 1 | 429 | US$ 0,16 | US$ 0,18 | US$ 0,12 |
+| 5 | 2.143 | US$ 0,78 | US$ 0,90 | US$ 0,62 |
+| 10 | 4.286 | US$ 1,56 | US$ 1,80 | US$ 1,24 |
+| 50 | 21.429 | US$ 7,81 | US$ 9,00 | US$ 6,18 |
 
 ---
 

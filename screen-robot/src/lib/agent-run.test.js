@@ -86,6 +86,12 @@ describe("agent-run (SC-32)", () => {
       assert.equal(usage.totals.candidatesTokenCount, 7);
       assert.equal(usage.totals.totalTokenCount, 29);
       assert.equal(result.usage.totalTokenCount, 29);
+      // usage legível: totals/calls antes; prompt só preview
+      assert.ok(usage.totals);
+      assert.ok(!("prompt" in usage));
+      assert.equal(typeof usage.promptChars, "number");
+      assert.match(usage.promptPreview, /conectar/);
+      assert.match(md, /usage: in=10 out=4/);
     } finally {
       rmSync(logDir, { recursive: true, force: true });
       rmSync(usageDir, { recursive: true, force: true });

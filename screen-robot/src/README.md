@@ -206,9 +206,11 @@ Testes: `node --test lib/gemini.test.js lib/agent-decide.test.js lib/agent-run.t
 Plano: [`../implementation-plan/EP-07-motor-gemini.md`](../implementation-plan/EP-07-motor-gemini.md).  
 POC custo/visão: [`test/output/poc-vision/custos-por-agente.md`](test/output/poc-vision/custos-por-agente.md).
 
-Cada `runAgent` grava `usage/<ISO-stamp-com-ms>.json` (**1 arquivo por execução**; ms evita colisão). `calls[]` tem **todo** decide (ok ou erro) + `requests[]` de cada HTTP Gemini. Abort (Ctrl+C) faz flush. Status mid-run: `running`.
+Cada `runAgent` grava `usage/<ISO-stamp-com-ms>.json` (**1 arquivo por execução**; ms evita colisão). Ordem do JSON: `totals` + `calls[]` primeiro (cada decide = 1 entry com `usage` + `requests[]` HTTP); roteiro completo fica no log `.md` — no usage só `promptChars` + `promptPreview`. Abort (Ctrl+C) faz flush. Status mid-run: `running`.
 
 **Antes → depois (usage):** só gravava passo com `usageMetadata`; stamp sem ms podia sobrescrever; Ctrl+C perdia flush. Rollback: stamp `.slice(0,19)` e push só se `decision.usage`.
+
+**Antes → depois (usage legível):** embutia o roteiro inteiro no topo do JSON (escondia `calls`); agora `totals`/`calls` primeiro e prompt só preview. Rollback: campo `prompt` completo no payload.
 
 **Antes → depois:** `scroll down` somava y (lista People não andava no AVD); `type` tocava teclas até falhar e o fallback ADB concatenava (`cccomprador`). Agora `down` = dedo sobe; teclas resolvidas antes de tap; tecla QWERTY ausente interpolada; fallback ADB limpa o campo. Rollback: `y2 = y + distance` e type sem interpolação/limpeza.
 

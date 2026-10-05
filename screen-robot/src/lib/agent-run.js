@@ -134,7 +134,13 @@ function writeUsageFile(usagePath, payload) {
   writeFileSync(usagePath, JSON.stringify(payload, null, 2) + "\n", "utf8");
 }
 
-function appendStepLog(logPath, step, { resumo, acao, ocr, resultado }) {
+function appendStepLog(logPath, step, { resumo, acao, ocr, resultado, usage }) {
+  const u = usage || null;
+  const usageLine = u
+    ? `- usage: in=${u.promptTokenCount ?? "?"} out=${u.candidatesTokenCount ?? "?"}` +
+      (u.thoughtsTokenCount ? ` thoughts=${u.thoughtsTokenCount}` : "") +
+      (u.totalTokenCount != null ? ` total=${u.totalTokenCount}` : "")
+    : null;
   const block = [
     "",
     `## Passo ${step} — ${acao.type} (${new Date().toISOString()})`,
@@ -148,6 +154,7 @@ function appendStepLog(logPath, step, { resumo, acao, ocr, resultado }) {
     acao.direction ? `- direction: ${acao.direction}` : null,
     acao.text ? `- text: ${acao.text}` : null,
     acao.code ? `- code: ${acao.code}` : null,
+    usageLine,
     "",
     "### OCR usado na decisão",
     "",
@@ -233,6 +240,8 @@ export async function runAgent(cfg, deps = {}) {
   let status = "running";
 
   const flushUsage = () => {
+    // Ordem: totals/calls primeiro — prompt completo fica no log .md (não esconde o usage).
+    const prompt = String(cfg.prompt || "");
     writeUsageFile(usagePath, {
       started: startedAt,
       ended: new Date().toISOString(),
@@ -240,11 +249,12 @@ export async function runAgent(cfg, deps = {}) {
       engine,
       model,
       maxSteps,
-      prompt: cfg.prompt,
       logPath,
       status,
-      calls: usageCalls,
       totals: sumUsage(usageCalls),
+      calls: usageCalls,
+      promptChars: prompt.length,
+      promptPreview: prompt.slice(0, 240),
     });
   };
   flushUsage();
@@ -318,11 +328,13 @@ export async function runAgent(cfg, deps = {}) {
       const resultado = `erro decide: ${e.code || ""} ${e.message || e}`;
       // Jamais abortar a run por timeout/503/rede — só registra e tenta de novo.
       log(`${resultado} — recupera e continua`);
+      const errUsage = (e.requests || []).map((r) => r?.usage).find(Boolean);
       appendStepLog(logPath, i, {
         resumo: "(decide falhou; processo segue)",
         acao: { type: "sleep", ms: recoverMs, motivo: String(e.message || e) },
         ocr,
         resultado,
+        usage: errUsage,
       });
       steps.push({ step: i, error: true, resultado });
       history.push({ step: i, type: "sleep", motivo: resultado, error: resultado });
@@ -330,6 +342,7 @@ export async function runAgent(cfg, deps = {}) {
         step: i,
         error: resultado,
         model: e.model || model,
+        usage: errUsage || undefined,
         requests: e.requests || undefined,
       });
       flushUsage();
@@ -355,6 +368,13 @@ export async function runAgent(cfg, deps = {}) {
         (acao.motivo ? ` — ${acao.motivo}` : ""),
     );
     if (resumo) log(`resumo: ${resumo.slice(0, 200)}`);
+    if (decision.usage) {
+      const u = decision.usage;
+      log(
+        `usage in=${u.promptTokenCount ?? "?"} out=${u.candidatesTokenCount ?? "?"}` +
+          (u.totalTokenCount != null ? ` total=${u.totalTokenCount}` : ""),
+      );
+    }
 
     let resultado = "";
     let stepError = false;
@@ -371,7 +391,13 @@ export async function runAgent(cfg, deps = {}) {
       log(`${resultado} — recupera e continua`);
     }
 
-    appendStepLog(logPath, i, { resumo, acao, ocr, resultado });
+    appendStepLog(logPath, i, {
+      resumo,
+      acao,
+      ocr,
+      resultado,
+      usage: decision.usage,
+    });
     steps.push({ step: i, acao, resultado, error: stepError });
     history.push({
       step: i,

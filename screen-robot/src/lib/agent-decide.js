@@ -114,6 +114,7 @@ Regras:
 - scroll: direction down|up|left|right quando o próximo alvo não está visível.
 - Se o histórico mostrar vários scrolls com o mesmo OCR (tela não mudou), NÃO scroll de novo: mude de estratégia (tap em outro elemento, type, key BACK).
 - Filtro de localização LinkedIn: se OCR tiver "Add a location" / "Add alocation" e a cidade alvo do roteiro (ex. Campinas) NÃO estiver na lista, faça tap em Add a location e depois type da cidade — NÃO fique só scrollando a lista.
+- Connect: só tap se text exato "Connect" e tipicamente 180 < y < 850. Se o histórico já tem tap nas mesmas coords e a tela não mudou, scroll ou outro Connect — não repita o mesmo tap.
 - type: digite text de uma vez (campo acao.text obrigatório). Se o histórico mostrar erro de tecla OCR, espere (sleep) e tente type de novo, ou key KEYCODE_BACK e reabra o campo.
 - key: code tipo KEYCODE_BACK.
 - sleep: ms quando a tela parece carregando.

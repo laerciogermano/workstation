@@ -115,13 +115,14 @@ src/
 | `maxSteps` | | Default 40 |
 | `engine` | | Default `rapidocr` |
 | `logDir` | | Default `logs/agent/` |
-| `usageDir` | | Default `usage/` — um JSON por prompt com `usageMetadata` |
+| `usageDir` | | Default `usage/` |
+| `promptId` | | Basename do roteiro → `usage/<promptId>.json` |
 
 Saída: `{ status, steps, logPath, usagePath, usage }`.
 
-Fluxo por passo: extract → dump OCR stdout → decide → execute → append log → flush `usage/*.json` → se não terminal, repeat. Sem `ui_stable`.
+Fluxo por passo: extract → dump OCR stdout → decide → execute → append log → flush usage do prompt → se não terminal, repeat. Sem `ui_stable`.
 
-**Antes → depois:** run não persistia créditos. Rollback: ignorar pasta `usage/`.
+**Antes → depois:** `usage/<stamp>.json` por run → 1 JSON por prompt (`runs[]`). Rollback: voltar a stamp.
 
 ---
 

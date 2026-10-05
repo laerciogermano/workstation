@@ -5,7 +5,7 @@
  *   npm run agent -- --prompt ../roteiros/jornada-comprador.md
  *   npm run agent -- --prompt "objetivo em texto"
  *   npm run agent -- --prompt ./meu.txt --device emulator-5554 --max-steps 20
- *   créditos: src/usage/<stamp>.json (--usage-dir)
+ *   créditos: src/usage/<promptId>.json (1 arquivo por prompt)
  *
  * Env: GEMINI_API_KEY (obrigatório) · GEMINI_MODEL (opcional)
  */
@@ -24,16 +24,16 @@ function argValue(flag) {
 }
 
 function loadPrompt(raw) {
-  if (!raw) return null;
+  if (!raw) return { text: null, promptId: null };
   const asPath = resolve(process.cwd(), raw);
   if (existsSync(asPath) && !raw.includes("\n")) {
-    return readFileSync(asPath, "utf8");
+    return { text: readFileSync(asPath, "utf8"), promptId: asPath };
   }
   const fromSrc = resolve(SRC_ROOT, raw);
   if (existsSync(fromSrc) && !raw.includes("\n")) {
-    return readFileSync(fromSrc, "utf8");
+    return { text: readFileSync(fromSrc, "utf8"), promptId: fromSrc };
   }
-  return raw;
+  return { text: raw, promptId: null };
 }
 
 function loadDeviceCfg() {
@@ -53,7 +53,7 @@ function loadSerial() {
 }
 
 const promptRaw = argValue("--prompt") || argValue("-p");
-const prompt = loadPrompt(promptRaw);
+const { text: prompt, promptId } = loadPrompt(promptRaw);
 const serial = loadSerial();
 const maxSteps = Number(argValue("--max-steps") || "40");
 const engine = argValue("--engine") || "rapidocr";
@@ -78,6 +78,7 @@ console.log(`runAgent serial=${serial} engine=${engine} maxSteps=${maxSteps}`);
 const result = await runAgent({
   serial,
   prompt,
+  promptId,
   maxSteps,
   engine,
   logDir,

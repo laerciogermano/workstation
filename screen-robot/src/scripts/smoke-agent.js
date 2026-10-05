@@ -42,17 +42,22 @@ function loadPrompt() {
   const raw = argValue("--prompt");
   if (raw) {
     const p = resolve(process.cwd(), raw);
-    if (existsSync(p)) return readFileSync(p, "utf8");
-    return raw;
+    if (existsSync(p)) return { text: readFileSync(p, "utf8"), promptId: p };
+    return { text: raw, promptId: null };
   }
   const roteiro = resolve(SRC_ROOT, "../roteiros/jornada-comprador.md");
   if (existsSync(roteiro)) {
-    return (
-      "Execute a jornada a seguir. Em cada passo escolha UMA ação JSON.\n\n" +
-      readFileSync(roteiro, "utf8").slice(0, 6000)
-    );
+    return {
+      text:
+        "Execute a jornada a seguir. Em cada passo escolha UMA ação JSON.\n\n" +
+        readFileSync(roteiro, "utf8").slice(0, 6000),
+      promptId: roteiro,
+    };
   }
-  return "Se houver Connect no OCR, tap nele; senão scroll down. Não clique Message.";
+  return {
+    text: "Se houver Connect no OCR, tap nele; senão scroll down. Não clique Message.",
+    promptId: "agent-smoke",
+  };
 }
 
 /** Decide offline: Connect exato → tap; senão scroll. */
@@ -86,7 +91,7 @@ async function heuristicDecide({ ocr, history }) {
 const serial = loadSerial();
 const maxSteps = Number(argValue("--max-steps", "2"));
 const useGemini = Boolean(process.env.GEMINI_API_KEY);
-const prompt = loadPrompt();
+const { text: prompt, promptId } = loadPrompt();
 const logDir = join(SRC_ROOT, "logs", "agent");
 const usageDir = join(SRC_ROOT, "usage");
 
@@ -103,6 +108,7 @@ const result = await runAgent(
   {
     serial,
     prompt,
+    promptId,
     maxSteps,
     engine: "rapidocr",
     logDir,

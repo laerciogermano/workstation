@@ -165,6 +165,29 @@ Tira screenshot do device online e grava em `screenshots/<nome>.png` (path absol
 
 ---
 
+## POC visão comprimida — `scripts/poc-vision-compress.js`
+
+```bash
+cd screen-robot/src
+npm run poc:vision
+# ou: node scripts/poc-vision-compress.js --input test/fixtures/linkedin-tela-inicial.png
+# flags: --width 540 --quality 60 --out test/output/poc-vision
+```
+
+Pega um PNG LinkedIn de fixture, reduz para largura 540 + WebP q60 e gera artefatos para colar numa IA multimodal (sem chamar API):
+
+| Arquivo | Uso |
+|---------|-----|
+| `test/output/poc-vision/compressed.webp` | Anexar na IA |
+| `test/output/poc-vision/prompt.md` | Colar como texto |
+| `test/output/poc-vision/meta.json` | Bytes, escala device, estimativa de tiles/tokens |
+
+Default input: `test/fixtures/linkedin-people-comprador-connect.png`. Coordenadas da IA estão na escala da WebP; para o AVD multiplique por `scaleToDevice` do `meta.json`.
+
+**Antes → depois:** não havia POC de compressão+prompt; só OCR/texto via `extract` / `npm run ocr`. Rollback: remover `scripts/poc-vision-compress.js`, script npm `poc:vision` e pasta `test/output/poc-vision/`.
+
+---
+
 ## OCR de imagens — `scripts/ocr-image.js`
 
 ```bash

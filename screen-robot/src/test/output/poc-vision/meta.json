@@ -1,0 +1,24 @@
+{
+  "input": "test/fixtures/linkedin-people-comprador-connect.png",
+  "inputBytes": 143579,
+  "outputBytes": 31320,
+  "ratio": 0.2181,
+  "original": {
+    "width": 540,
+    "height": 960
+  },
+  "compressed": {
+    "width": 540,
+    "height": 960,
+    "format": "webp",
+    "quality": 60
+  },
+  "scaleToDevice": 1,
+  "tokensImageGuess": 516,
+  "tilesGuess": 2,
+  "howToTest": [
+    "Abrir um chat multimodal (Gemini / ChatGPT / Claude).",
+    "Anexar test/output/poc-vision/compressed.webp",
+    "Colar o texto de prompt.md"
+  ]
+}

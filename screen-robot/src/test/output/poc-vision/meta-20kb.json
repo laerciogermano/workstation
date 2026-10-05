@@ -1,0 +1,16 @@
+{
+  "targetKb": 20,
+  "actualBytes": 20670,
+  "actualKb": 20.2,
+  "width": 400,
+  "height": 711,
+  "quality": 50,
+  "tilesGuess": 1,
+  "tokensImageGuess": 258,
+  "promptTokensGuess": 280,
+  "outTokensGuess": 300,
+  "priceInPerM": 0.075,
+  "priceOutPerM": 0.3,
+  "costUsd": 0.00013035,
+  "path": "test/output/poc-vision/compressed-20kb.webp"
+}

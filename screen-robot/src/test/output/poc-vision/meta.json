@@ -1,21 +1,21 @@
 {
   "input": "test/fixtures/linkedin-people-comprador-connect.png",
   "inputBytes": 143579,
-  "outputBytes": 31320,
-  "ratio": 0.2181,
+  "outputBytes": 16400,
+  "ratio": 0.1142,
   "original": {
     "width": 540,
     "height": 960
   },
   "compressed": {
-    "width": 540,
-    "height": 960,
+    "width": 360,
+    "height": 640,
     "format": "webp",
-    "quality": 60
+    "quality": 40
   },
-  "scaleToDevice": 1,
-  "tokensImageGuess": 516,
-  "tilesGuess": 2,
+  "scaleToDevice": 1.5,
+  "tokensImageGuess": 258,
+  "tilesGuess": 1,
   "howToTest": [
     "Abrir um chat multimodal (Gemini / ChatGPT / Claude).",
     "Anexar test/output/poc-vision/compressed.webp",

@@ -181,10 +181,12 @@ Pega um PNG LinkedIn de fixture, reduz para largura 540 + WebP q60 e gera artefa
 | `test/output/poc-vision/compressed.webp` | Anexar na IA |
 | `test/output/poc-vision/prompt.md` | Colar como texto |
 | `test/output/poc-vision/meta.json` | Bytes, escala device, estimativa de tiles/tokens |
+| `test/output/poc-vision/compressed-20kb.webp` | Variante ~20 KB (1 tile) |
+| [`test/output/poc-vision/custos-por-agente.md`](test/output/poc-vision/custos-por-agente.md) | Simulação US$/mês por agente (OCR vs imagem) |
 
 Default input: `test/fixtures/linkedin-people-comprador-connect.png`. Coordenadas da IA estão na escala da WebP; para o AVD multiplique por `scaleToDevice` do `meta.json`.
 
-**Antes → depois:** não havia POC de compressão+prompt; só OCR/texto via `extract` / `npm run ocr`. Rollback: remover `scripts/poc-vision-compress.js`, script npm `poc:vision` e pasta `test/output/poc-vision/`.
+**Antes → depois:** não havia POC de compressão+prompt; só OCR/texto via `extract` / `npm run ocr`. Custo era só em canvas Cursor → agora MD versionado em `custos-por-agente.md`. Rollback: remover `scripts/poc-vision-compress.js`, script npm `poc:vision` e pasta `test/output/poc-vision/`.
 
 ---
 

@@ -55,12 +55,30 @@ describe("agent-run (SC-32)", () => {
                   motivo: "Connect",
                 },
                 usage: { promptTokenCount: 10, candidatesTokenCount: 4, totalTokenCount: 14 },
+                requests: [
+                  {
+                    ok: true,
+                    prompt: "PROMPT_COMPLETO_STEP1",
+                    system: "SYSTEM_STEP1",
+                    response: '{"acao":{"type":"tap"}}',
+                    usage: { promptTokenCount: 10, candidatesTokenCount: 4, totalTokenCount: 14 },
+                  },
+                ],
               };
             }
             return {
               resumo: "ok",
               acao: { type: "done", motivo: "conectado" },
               usage: { promptTokenCount: 12, candidatesTokenCount: 3, totalTokenCount: 15 },
+              requests: [
+                {
+                  ok: true,
+                  prompt: "PROMPT_COMPLETO_STEP2",
+                  system: "SYSTEM_STEP2",
+                  response: '{"acao":{"type":"done"}}',
+                  usage: { promptTokenCount: 12, candidatesTokenCount: 3, totalTokenCount: 15 },
+                },
+              ],
             };
           },
           tapElement: (cfg) => taps.push(cfg),
@@ -92,6 +110,9 @@ describe("agent-run (SC-32)", () => {
       const req1 = JSON.parse(readFileSync(result.requestFiles[0], "utf8"));
       assert.equal(req1.step, 1);
       assert.equal(req1.usage.promptTokenCount, 10);
+      assert.equal(req1.prompt, "PROMPT_COMPLETO_STEP1");
+      assert.equal(req1.system, "SYSTEM_STEP1");
+      assert.equal(req1.response, '{"acao":{"type":"tap"}}');
     } finally {
       rmSync(logDir, { recursive: true, force: true });
       rmSync(usageDir, { recursive: true, force: true });

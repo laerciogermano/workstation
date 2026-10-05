@@ -183,6 +183,9 @@ function writeChatRequestFiles({ usageDir, runStamp, serial, engine, call }) {
       systemChars: req.systemChars,
       status: req.status,
       synthetic: req.synthetic || undefined,
+      system: req.system || undefined,
+      prompt: req.prompt || undefined,
+      response: req.response || undefined,
       usage: req.usage || call.usage || undefined,
     });
     paths.push(path);

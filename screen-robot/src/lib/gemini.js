@@ -140,14 +140,23 @@ export async function generateContent(opts, deps = {}) {
     opts.chainWaitMs ?? DEFAULT_CHAIN_WAIT_MS,
   );
 
-  const promptChars = String(opts.prompt || "").length;
-  const systemChars = String(opts.system || "").length;
+  const promptText = String(opts.prompt || "");
+  const systemText = String(opts.system || "");
+  const promptChars = promptText.length;
+  const systemChars = systemText.length;
   logFn(`cadeia modelos: ${models.join(" → ")} (rounds=${chainRounds})`);
 
   let lastMsg = "";
   let lastStatus = 0;
   /** @type {object[]} */
   const requests = [];
+
+  const baseReqMeta = () => ({
+    promptChars,
+    systemChars,
+    prompt: promptText,
+    system: systemText || undefined,
+  });
 
   for (let round = 1; round <= chainRounds; round++) {
     if (round > 1) {
@@ -213,8 +222,7 @@ export async function generateContent(opts, deps = {}) {
             ok: false,
             error: lastMsg,
             ms: Date.now() - t0,
-            promptChars,
-            systemChars,
+            ...baseReqMeta(),
           });
           if (isHighDemand(0, lastMsg) || /timeout/i.test(lastMsg)) {
             if (mi < models.length - 1) {
@@ -249,8 +257,7 @@ export async function generateContent(opts, deps = {}) {
             status: res.status,
             error: lastMsg,
             ms,
-            promptChars,
-            systemChars,
+            ...baseReqMeta(),
             usage: raw?.usageMetadata || undefined,
           });
 
@@ -301,8 +308,7 @@ export async function generateContent(opts, deps = {}) {
             ok: false,
             error: "empty response",
             ms,
-            promptChars,
-            systemChars,
+            ...baseReqMeta(),
             usage: raw?.usageMetadata || undefined,
           });
           if (mi < models.length - 1) {
@@ -325,8 +331,8 @@ export async function generateContent(opts, deps = {}) {
           round,
           ok: true,
           ms,
-          promptChars,
-          systemChars,
+          ...baseReqMeta(),
+          response: text,
           usage,
         });
 

@@ -35,6 +35,9 @@ describe("gemini", () => {
     assert.equal(out.text, '{"ok":true}');
     assert.equal(out.usage.promptTokenCount, 5);
     assert.equal(out.model, DEFAULT_MODEL);
+    assert.ok(out.requests?.length);
+    assert.equal(out.requests[0].prompt, "hi");
+    assert.equal(out.requests[0].response, '{"ok":true}');
   });
 
   it("falha sem api key", async () => {

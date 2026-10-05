@@ -35,7 +35,43 @@ Base dos logs (`src/logs/jornada-comprador/`):
 
 ---
 
-## 2. Custo de IA (Gemini Flash)
+## 2. Tokens por período (1 agente)
+
+Tokens **por operação** (estimativa Gemini Flash):
+
+| Modo | Tok in / op | Tok out / op | Tok total / op |
+|------|-------------|--------------|----------------|
+| Imagem ~20 KB (1 tile) | 538 | 300 | **838** |
+| Imagem ~31 KB (2 tiles) | 796 | 300 | **1.096** |
+| OCR JSON | 894 | 120 | **1.014** |
+
+Composição in: Imagem 20 KB = 258 (tile) + 280 (prompt) · Imagem 31 KB = 516 + 280 · OCR = 694 (JSON) + 200 (prompt).
+
+### Tokens × ops (40/dia · 280/sem · 1.200/mês)
+
+| Modo | Período | Ops | Tok in | Tok out | Tok total |
+|------|---------|-----|--------|---------|-----------|
+| Imagem ~20 KB | dia | 40 | 21.520 | 12.000 | **33.520** |
+| Imagem ~20 KB | semana | 280 | 150.640 | 84.000 | **234.640** |
+| Imagem ~20 KB | mês | 1.200 | 645.600 | 360.000 | **1.005.600** |
+| Imagem ~31 KB | dia | 40 | 31.840 | 12.000 | **43.840** |
+| Imagem ~31 KB | semana | 280 | 222.880 | 84.000 | **306.880** |
+| Imagem ~31 KB | mês | 1.200 | 955.200 | 360.000 | **1.315.200** |
+| OCR JSON | dia | 40 | 35.760 | 4.800 | **40.560** |
+| OCR JSON | semana | 280 | 250.320 | 33.600 | **283.920** |
+| OCR JSON | mês | 1.200 | 1.072.800 | 144.000 | **1.216.800** |
+
+Resumo (tok total / agente):
+
+| Modo | Dia | Semana | Mês |
+|------|-----|--------|-----|
+| Imagem ~20 KB | 33.520 | 234.640 | **1,01 M** |
+| Imagem ~31 KB | 43.840 | 306.880 | **1,32 M** |
+| OCR JSON | 40.560 | 283.920 | **1,22 M** |
+
+---
+
+## 3. Custo de IA (Gemini Flash) — valor em US$
 
 Preço: in US$ 0,075/1M · out US$ 0,30/1M · câmbio US$ 1 = R$ 5,50  
 US$/op: Imagem 20 KB ≈ 0,000130 · Imagem 31 KB ≈ 0,000150 · OCR ≈ 0,000103
@@ -50,7 +86,7 @@ Arquivo ~20 KB: [`compressed-20kb.webp`](compressed-20kb.webp) · [`meta-20kb.js
 
 ### N agentes / mês — custo monetário da API (dólares)
 
-Sim: valores em **US$** (quanto se paga à API Gemini no mês). Não é quantidade de operações.
+Sim: valores em **US$** (quanto se paga à API Gemini no mês). Não é quantidade de operações nem de tokens.
 
 | Agentes | Conexões/mês | Custo Imagem 20 KB | Custo Imagem 31 KB | Custo OCR |
 |---------|--------------|--------------------|--------------------|-----------|
@@ -67,4 +103,4 @@ Sim: valores em **US$** (quanto se paga à API Gemini no mês). Não é quantida
 - Runs ruins (OCR sem Connect): 10–24 ops/conexão — fora desta média.
 - Valor real de tokens: `usageMetadata` da API.
 
-**Antes → depois:** custo misturado com uso → seção **Utilização** primeiro (100 connects / 280 ops / 7d → dia e mês), depois custo. Rollback: estrutura anterior do MD.
+**Antes → depois:** após Utilização, nova seção **Tokens** (dia/semana/mês · OCR vs imagem); custo virou seção 3. Rollback: remover seção 2 e renumerar custo para 2.

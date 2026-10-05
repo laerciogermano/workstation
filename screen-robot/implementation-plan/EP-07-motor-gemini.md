@@ -62,8 +62,8 @@ npm run agent -- --prompt ../roteiros/jornada-comprador.md
 # ou: npm run agent -- --prompt "abra o LinkedIn e mostre as últimas 10 conexões"
 ```
 
-Env: `GEMINI_API_KEY` (obrigatório) · `GEMINI_MODEL` (default `gemini-3.8-flash`) · `GEMINI_RETRIES` (default 4) · `GEMINI_RETRY_MS` (default 2000).  
-Stdout: `[agent]` / `[decide]` / `[gemini]` — high demand / 429 → retry com backoff.
+Env: `GEMINI_API_KEY` · `GEMINI_MODEL` (default `gemini-3.8-flash`) · `GEMINI_RETRIES` (2/modelo) · `GEMINI_RETRY_MS` · `GEMINI_FALLBACK_MODELS` (default `3.7,3.6,3,2.5` Flash).  
+Stdout: `[gemini]` — high demand → retry → **fallback de modelo**.
 
 ---
 

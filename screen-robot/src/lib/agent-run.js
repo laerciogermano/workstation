@@ -134,22 +134,23 @@ function writeUsageFile(usagePath, payload) {
   writeFileSync(usagePath, JSON.stringify(payload, null, 2) + "\n", "utf8");
 }
 
-function padReq(n) {
-  return String(n).padStart(3, "0");
+/** Nome único sob usage/: timestamp com ms; se colidir, sufixa -2, -3… */
+function uniqueUsagePath(usageDir) {
+  let base = stamp();
+  let path = join(usageDir, `${base}.json`);
+  let n = 1;
+  while (existsSync(path)) {
+    n += 1;
+    path = join(usageDir, `${base}-${n}.json`);
+  }
+  return path;
 }
 
 /**
- * Um arquivo por request HTTP ao chat (Gemini).
- * @returns {{ paths: string[], nextSeq: number }}
+ * Um arquivo por request HTTP ao chat, flat em usage/<timestamp>.json
+ * @returns {string[]}
  */
-function writeChatRequestFiles({
-  runUsageDir,
-  runStamp,
-  serial,
-  engine,
-  call,
-  startSeq,
-}) {
+function writeChatRequestFiles({ usageDir, runStamp, serial, engine, call }) {
   const reqs =
     Array.isArray(call.requests) && call.requests.length > 0
       ? call.requests
@@ -163,13 +164,10 @@ function writeChatRequestFiles({
           },
         ];
   const paths = [];
-  let seq = startSeq;
   for (const req of reqs) {
-    seq += 1;
-    const path = join(runUsageDir, `req-${padReq(seq)}.json`);
+    const path = uniqueUsagePath(usageDir);
     writeUsageFile(path, {
       run: runStamp,
-      seq,
       step: call.step,
       at: new Date().toISOString(),
       serial,
@@ -188,9 +186,9 @@ function writeChatRequestFiles({
       usage: req.usage || call.usage || undefined,
     });
     paths.push(path);
-    log(`usage req → ${path}`);
+    log(`usage → ${path}`);
   }
-  return { paths, nextSeq: seq };
+  return paths;
 }
 
 function appendStepLog(logPath, step, { resumo, acao, ocr, resultado, usage }) {
@@ -258,19 +256,15 @@ export async function runAgent(cfg, deps = {}) {
   const startedAt = new Date().toISOString();
   const runStamp = stamp();
   const logDir = resolve(cfg.logDir || join(process.cwd(), "logs", "agent"));
-  const usageRoot = resolve(cfg.usageDir || join(process.cwd(), "usage"));
+  const usageDir = resolve(cfg.usageDir || join(process.cwd(), "usage"));
   if (!existsSync(logDir)) mkdirSync(logDir, { recursive: true });
-  if (!existsSync(usageRoot)) mkdirSync(usageRoot, { recursive: true });
+  if (!existsSync(usageDir)) mkdirSync(usageDir, { recursive: true });
   const logPath = join(logDir, `${runStamp}.md`);
-  // 1 pasta por execução; 1 arquivo por request ao chat + run.json agregado
-  const runUsageDir = join(usageRoot, runStamp);
-  mkdirSync(runUsageDir, { recursive: true });
-  const usagePath = join(runUsageDir, "run.json");
 
   const model = cfg.model || process.env.GEMINI_MODEL || DEFAULT_MODEL;
   log(`início serial=${serial} engine=${engine} model=${model} maxSteps=${maxSteps}`);
   log(`log → ${logPath}`);
-  log(`usage → ${runUsageDir}/ (1 arquivo por request)`);
+  log(`usage → ${usageDir}/<timestamp>.json (1 arquivo por request)`);
 
   writeFileSync(
     logPath,
@@ -300,54 +294,25 @@ export async function runAgent(cfg, deps = {}) {
   const usageCalls = [];
   /** @type {string[]} */
   const requestFiles = [];
-  let reqSeq = 0;
+  let lastUsagePath = null;
   let status = "running";
 
   const recordChatCall = (call) => {
     usageCalls.push(call);
-    const { paths, nextSeq } = writeChatRequestFiles({
-      runUsageDir,
+    const paths = writeChatRequestFiles({
+      usageDir,
       runStamp,
       serial,
       engine,
       call,
-      startSeq: reqSeq,
     });
-    reqSeq = nextSeq;
     requestFiles.push(...paths);
+    if (paths.length) lastUsagePath = paths[paths.length - 1];
   };
-
-  const flushUsage = () => {
-    // Ordem: totals/calls primeiro — prompt completo fica no log .md (não esconde o usage).
-    const prompt = String(cfg.prompt || "");
-    writeUsageFile(usagePath, {
-      started: startedAt,
-      ended: new Date().toISOString(),
-      serial,
-      engine,
-      model,
-      maxSteps,
-      logPath,
-      usageDir: runUsageDir,
-      status,
-      totals: sumUsage(usageCalls),
-      calls: usageCalls,
-      requestFiles: requestFiles.map((p) => p.replace(/\\/g, "/")),
-      requestCount: requestFiles.length,
-      promptChars: prompt.length,
-      promptPreview: prompt.slice(0, 240),
-    });
-  };
-  flushUsage();
 
   const onSignal = (sig) => {
     status = `aborted_${sig}`;
-    try {
-      flushUsage();
-    } catch {
-      /* ignore */
-    }
-    log(`sinal ${sig} — usage salvo em ${runUsageDir}`);
+    log(`sinal ${sig} — usage em ${usageDir} (${requestFiles.length} reqs)`);
     process.exit(130);
   };
   process.once("SIGINT", () => onSignal("SIGINT"));
@@ -375,9 +340,7 @@ export async function runAgent(cfg, deps = {}) {
       });
       steps.push({ step: i, error: true, resultado });
       history.push({ step: i, type: "sleep", motivo: resultado, error: resultado });
-      // extract não é request ao chat — só no agregado
       usageCalls.push({ step: i, error: resultado });
-      flushUsage();
       await sleep(recoverMs);
       continue;
     }
@@ -408,7 +371,6 @@ export async function runAgent(cfg, deps = {}) {
       );
     } catch (e) {
       const resultado = `erro decide: ${e.code || ""} ${e.message || e}`;
-      // Jamais abortar a run por timeout/503/rede — só registra e tenta de novo.
       log(`${resultado} — recupera e continua`);
       const errUsage = (e.requests || []).map((r) => r?.usage).find(Boolean);
       appendStepLog(logPath, i, {
@@ -427,12 +389,10 @@ export async function runAgent(cfg, deps = {}) {
         usage: errUsage || undefined,
         requests: e.requests || undefined,
       });
-      flushUsage();
       await sleep(recoverMs);
       continue;
     }
 
-    // Cada decide → 1+ arquivos req-NNN.json (1 por HTTP ao chat)
     recordChatCall({
       step: i,
       model: decision.model || model,
@@ -440,7 +400,6 @@ export async function runAgent(cfg, deps = {}) {
       requests: decision.requests || undefined,
       acao: decision.acao?.type,
     });
-    flushUsage();
 
     const { resumo, acao } = decision;
     log(
@@ -495,7 +454,6 @@ export async function runAgent(cfg, deps = {}) {
       log(`done — objetivo cumprido`);
       break;
     }
-    // fail da IA = intenção explícita; ainda assim não mata — só registra e segue
     if (acao.type === "fail") {
       log(`fail da IA (${acao.motivo || "sem motivo"}) — ignora e continua`);
       await sleep(recoverMs);
@@ -513,16 +471,15 @@ export async function runAgent(cfg, deps = {}) {
     "utf8",
   );
 
-  flushUsage();
   log(
-    `fim status=${status} steps=${steps.length} log=${logPath} usage=${runUsageDir} reqs=${requestFiles.length}`,
+    `fim status=${status} steps=${steps.length} log=${logPath} usageFiles=${requestFiles.length}`,
   );
   return {
     status,
     steps,
     logPath,
-    usagePath,
-    usageDir: runUsageDir,
+    usagePath: lastUsagePath,
+    usageDir,
     requestFiles,
     usage: sumUsage(usageCalls),
   };

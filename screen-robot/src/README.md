@@ -170,7 +170,7 @@ Tira screenshot do device online e grava em `screenshots/<nome>.png` (path absol
 
 ## Motor Gemini (EP-07) — `decide` / `runAgent`
 
-Loop genérico: OCR RapidOCR → Gemini 3.8 Flash → `tap`/`scroll`/`type`/`key` → log em `logs/agent/` e créditos em `usage/<timestamp>/` (**1 arquivo por request** + `run.json`). Prompt/roteiro entram como **input** (não hardcodar jornada).
+Loop genérico: OCR RapidOCR → Gemini 3.8 Flash → `tap`/`scroll`/`type`/`key` → log em `logs/agent/` e créditos em `usage/<timestamp>.json` (**1 arquivo por request**, flat). Prompt/roteiro entram como **input** (não hardcodar jornada).
 
 ```bash
 cd screen-robot/src
@@ -206,17 +206,13 @@ Testes: `node --test lib/gemini.test.js lib/agent-decide.test.js lib/agent-run.t
 Plano: [`../implementation-plan/EP-07-motor-gemini.md`](../implementation-plan/EP-07-motor-gemini.md).  
 POC custo/visão: [`test/output/poc-vision/custos-por-agente.md`](test/output/poc-vision/custos-por-agente.md).
 
-Cada `runAgent` grava `usage/<ISO-stamp-com-ms>/`:
-- `req-001.json`, `req-002.json`, … — **1 arquivo por request HTTP ao chat** (tokens daquela chamada)
-- `run.json` — agregado da execução (`totals` + `calls[]`)
+Cada `runAgent` grava em `usage/` (sem subpasta): **1 arquivo `<ISO-stamp-com-ms>.json` por request HTTP ao chat**. Colisão no mesmo ms → sufixo `-2`, `-3`….
 
-Abort (Ctrl+C) faz flush. Status mid-run: `running`.
+Abort (Ctrl+C) mantém os arquivos já gravados. Status mid-run: `running` no log.
 
 **Antes → depois (usage):** só gravava passo com `usageMetadata`; stamp sem ms podia sobrescrever; Ctrl+C perdia flush. Rollback: stamp `.slice(0,19)` e push só se `decision.usage`.
 
-**Antes → depois (usage legível):** embutia o roteiro inteiro no topo do JSON (escondia `calls`); agora `totals`/`calls` primeiro e prompt só preview. Rollback: campo `prompt` completo no payload.
-
-**Antes → depois (1 arquivo/request):** 1 JSON por execução → pasta `usage/<stamp>/` com `req-NNN.json` por chamada Gemini + `run.json`. Rollback: voltar a um único `<stamp>.json`.
+**Antes → depois (1 arquivo/request flat):** pasta `usage/<stamp>/req-NNN.json` → `usage/<timestamp>.json` direto sob `usage/`. Rollback: estrutura com subpasta + `run.json`.
 
 **Antes → depois:** `scroll down` somava y (lista People não andava no AVD); `type` tocava teclas até falhar e o fallback ADB concatenava (`cccomprador`). Agora `down` = dedo sobe; teclas resolvidas antes de tap; tecla QWERTY ausente interpolada; fallback ADB limpa o campo. Rollback: `y2 = y + distance` e type sem interpolação/limpeza.
 

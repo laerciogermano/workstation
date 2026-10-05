@@ -195,7 +195,7 @@ Custo monetário da API · ~429 conexões/mês por agente · câmbio US$ 1 = R$ 
 
 - Gargalo = limite semanal LinkedIn (100/7d), não tokens.
 - Runs ruins (OCR sem Connect): 10–24 ops/conexão — fora desta média.
-- Tokens OCR: média de `src/usage/**/req-*.json` / `run.json` (`promptTokenCount` / `candidatesTokenCount` + `thoughtsTokenCount`).
+- Tokens OCR: média de `src/usage/*.json` (`promptTokenCount` / `candidatesTokenCount` + `thoughtsTokenCount`).
 - **Gemini 3.8 Flash** = testado e aprovado na POC visão; demais Flash = elegíveis (multimodal).
 
 **Antes → depois:** OCR in/out **894/120 (estimativa)** → **2.657/373 (usage real, 66 ops)**; custo 3.8 Flash OCR /mês **US$ 1,34 → US$ 4,07**. Imagem mantida como estimativa POC até haver usage agent. Rollback: valores estimados da revisão anterior deste arquivo.

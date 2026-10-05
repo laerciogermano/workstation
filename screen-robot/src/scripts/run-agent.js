@@ -5,7 +5,7 @@
  *   npm run agent -- --prompt ../roteiros/jornada-comprador.md
  *   npm run agent -- --prompt "objetivo em texto"
  *   npm run agent -- --prompt ./meu.txt --device emulator-5554 --max-steps 20
- *   créditos: src/usage/<timestamp>/req-NNN.json (1 arquivo por request) + run.json
+ *   créditos: src/usage/<timestamp>.json (1 arquivo por request, flat)
  *
  * Env: GEMINI_API_KEY (obrigatório) · GEMINI_MODEL (opcional)
  */

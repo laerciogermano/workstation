@@ -72,36 +72,24 @@ describe("agent-run (SC-32)", () => {
       assert.equal(taps[0].x, 458);
       assert.ok(extracts >= 2);
       assert.ok(result.logPath);
-      assert.ok(result.usagePath);
       assert.ok(result.usageDir);
-      assert.equal(basename(result.usagePath), "run.json");
-      assert.match(basename(result.usageDir), /^\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}-\d{3}$/);
+      assert.equal(result.requestFiles.length, 2);
+      assert.ok(result.usagePath);
+      assert.match(basename(result.usagePath), /^\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}-\d{3}(-\d+)?\.json$/);
       const md = readFileSync(result.logPath, "utf8");
       assert.match(md, /### Decisão/);
       assert.match(md, /### OCR usado na decisão/);
       assert.match(md, /\*\*status:\*\* `done`/);
-      // política não hardcoded no motor — prompt genérico
       assert.match(md, /conectar num comprador/);
-      const usage = JSON.parse(readFileSync(result.usagePath, "utf8"));
-      assert.equal(usage.calls.length, 2);
-      assert.equal(usage.totals.promptTokenCount, 22);
-      assert.equal(usage.totals.candidatesTokenCount, 7);
-      assert.equal(usage.totals.totalTokenCount, 29);
-      assert.equal(result.usage.totalTokenCount, 29);
-      assert.ok(usage.totals);
-      assert.ok(!("prompt" in usage));
-      assert.equal(typeof usage.promptChars, "number");
-      assert.match(usage.promptPreview, /conectar/);
       assert.match(md, /usage: in=10 out=4/);
-      // 1 arquivo por request ao chat
-      const reqFiles = readdirSync(result.usageDir)
-        .filter((f) => /^req-\d+\.json$/.test(f))
-        .sort();
-      assert.equal(reqFiles.length, 2);
-      assert.deepEqual(reqFiles, ["req-001.json", "req-002.json"]);
-      assert.equal(result.requestFiles.length, 2);
-      const req1 = JSON.parse(readFileSync(join(result.usageDir, "req-001.json"), "utf8"));
-      assert.equal(req1.seq, 1);
+      assert.equal(result.usage.totalTokenCount, 29);
+      // flat em usage/: só .json com timestamp, sem pasta filha
+      const files = readdirSync(result.usageDir).filter((f) => f.endsWith(".json")).sort();
+      assert.equal(files.length, 2);
+      for (const f of files) {
+        assert.match(f, /^\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}-\d{3}(-\d+)?\.json$/);
+      }
+      const req1 = JSON.parse(readFileSync(result.requestFiles[0], "utf8"));
       assert.equal(req1.step, 1);
       assert.equal(req1.usage.promptTokenCount, 10);
     } finally {

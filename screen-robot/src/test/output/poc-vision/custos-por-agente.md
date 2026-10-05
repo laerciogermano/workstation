@@ -97,10 +97,24 @@ Sim: valores em **US$** (quanto se paga à API Gemini no mês). Não é quantida
 
 ---
 
+## 4. Prós e contras — OCR vs imagem
+
+| Critério | OCR (texto local → IA) | Imagem comprimida (visão) |
+|----------|------------------------|---------------------------|
+| **Prós** | Coords de texto precisas (pixel OCR); input previsível em telas simples; output pode ser só a ação (~120 tok); RapidOCR já no screen-robot; barato em telas com pouco texto | Vê ícones sem texto (lupa, back, Connect gráfico); entende layout/estado (modal, pill, disabled); input estável em lista densa (~1 tile se ≤360–400px); menos frágil a falha de OCR no pill Connect |
+| **Contras** | Não vê ícones/imagens; Connect às vezes some no OCR (histórico da jornada); input cresce com tela densa (~700+ tok JSON); depende do engine (tesseract vs rapidocr) | Coords aproximadas (precisa `scaleToDevice`); qualidade baixa demais illegible; 540px pode virar 2 tiles; se pedir “descrever tudo”, output sobe (~300 tok); depende de API multimodal |
+| **Custo (100 connects/sem)** | ~US$ 0,12/mês · ~1,22 M tok/mês | ~US$ 0,16/mês (20 KB) · ~1,01 M tok/mês |
+| **Melhor quando** | UI só texto, CTA legível no OCR, latência local importa | CTA visual, ícones, sheets, OCR instável no pill |
+| **Pior quando** | Pill Connect invisível no OCR → scroll infinito / tap errado | Compressão extrema (q1) ou pedir JSON enorme a cada frame |
+
+**Sugestão prática:** default **imagem ~20 KB (1 tile)** na lista People; OCR como fallback ou híbrido (OCR para validar texto do campo Search; visão para Connect/ícones).
+
+---
+
 ## Notas
 
 - Gargalo = limite semanal LinkedIn (100/7d), não tokens.
 - Runs ruins (OCR sem Connect): 10–24 ops/conexão — fora desta média.
 - Valor real de tokens: `usageMetadata` da API.
 
-**Antes → depois:** após Utilização, nova seção **Tokens** (dia/semana/mês · OCR vs imagem); custo virou seção 3. Rollback: remover seção 2 e renumerar custo para 2.
+**Antes → depois:** após Utilização + Tokens + Custo, seção **4. Prós e contras**. Rollback: remover seção 4.

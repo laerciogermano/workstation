@@ -2,7 +2,7 @@
  * US-25 / SC-32 — runAgent com stubs (sem device / sem API).
  */
 import assert from "node:assert/strict";
-import { mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { mkdtempSync, readFileSync, readdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { basename, join } from "node:path";
 import { describe, it } from "node:test";
@@ -73,7 +73,9 @@ describe("agent-run (SC-32)", () => {
       assert.ok(extracts >= 2);
       assert.ok(result.logPath);
       assert.ok(result.usagePath);
-      assert.match(basename(result.usagePath), /^\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}-\d{3}\.json$/);
+      assert.ok(result.usageDir);
+      assert.equal(basename(result.usagePath), "run.json");
+      assert.match(basename(result.usageDir), /^\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}-\d{3}$/);
       const md = readFileSync(result.logPath, "utf8");
       assert.match(md, /### Decisão/);
       assert.match(md, /### OCR usado na decisão/);
@@ -86,12 +88,22 @@ describe("agent-run (SC-32)", () => {
       assert.equal(usage.totals.candidatesTokenCount, 7);
       assert.equal(usage.totals.totalTokenCount, 29);
       assert.equal(result.usage.totalTokenCount, 29);
-      // usage legível: totals/calls antes; prompt só preview
       assert.ok(usage.totals);
       assert.ok(!("prompt" in usage));
       assert.equal(typeof usage.promptChars, "number");
       assert.match(usage.promptPreview, /conectar/);
       assert.match(md, /usage: in=10 out=4/);
+      // 1 arquivo por request ao chat
+      const reqFiles = readdirSync(result.usageDir)
+        .filter((f) => /^req-\d+\.json$/.test(f))
+        .sort();
+      assert.equal(reqFiles.length, 2);
+      assert.deepEqual(reqFiles, ["req-001.json", "req-002.json"]);
+      assert.equal(result.requestFiles.length, 2);
+      const req1 = JSON.parse(readFileSync(join(result.usageDir, "req-001.json"), "utf8"));
+      assert.equal(req1.seq, 1);
+      assert.equal(req1.step, 1);
+      assert.equal(req1.usage.promptTokenCount, 10);
     } finally {
       rmSync(logDir, { recursive: true, force: true });
       rmSync(usageDir, { recursive: true, force: true });

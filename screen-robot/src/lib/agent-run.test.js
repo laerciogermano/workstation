@@ -98,4 +98,42 @@ describe("agent-run (SC-32)", () => {
       (e) => e.code === "AGENT_NO_SERIAL",
     );
   });
+
+  it("runAgent não morre em erro decide — continua até done", async () => {
+    const logDir = mkdtempSync(join(tmpdir(), "sr-agent-"));
+    const usageDir = mkdtempSync(join(tmpdir(), "sr-usage-"));
+    let decides = 0;
+    try {
+      const result = await runAgent(
+        {
+          serial: "emulator-5554",
+          prompt: "x",
+          maxSteps: 5,
+          logDir,
+          usageDir,
+          stepDelayMs: 0,
+          recoverDelayMs: 0,
+        },
+        {
+          sleep: async () => {},
+          extract: async () => [{ type: "text", text: "Connect", x: 1, y: 2 }],
+          decide: async () => {
+            decides += 1;
+            if (decides === 1) {
+              const err = new Error("timeout 12000ms");
+              err.code = "GEMINI_REQUEST_FAILED";
+              throw err;
+            }
+            return { resumo: "ok", acao: { type: "done", motivo: "ok" } };
+          },
+        },
+      );
+      assert.equal(result.status, "done");
+      assert.ok(decides >= 2);
+      assert.ok(result.steps.some((s) => s.error));
+    } finally {
+      rmSync(logDir, { recursive: true, force: true });
+      rmSync(usageDir, { recursive: true, force: true });
+    }
+  });
 });

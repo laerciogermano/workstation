@@ -190,6 +190,8 @@ Stdout: `[agent]` / `[decide]` / `[gemini]`. Usa **só** `GEMINI_MODEL` (ex. `ge
 
 **Antes → depois (retry):** entre rounds saturados `4000×round` (8s no round 2) → `GEMINI_CHAIN_WAIT_MS×round` default **800** (1,6s); retry attempt default **250ms** (antes 800). Rollback: `export GEMINI_CHAIN_WAIT_MS=4000 GEMINI_RETRY_MS=800`.
 
+**Antes → depois (não morrer):** timeout/503/`fail` da API abortava a run → agora só registra, espera (`AGENT_RECOVER_MS` default 1500) e tenta o próximo passo até `done` ou `maxSteps`. Timeout request default **30s** (antes 12s). Rollback: restaurar `break` no catch do `decide`.
+
 ```js
 import { decide } from "./lib/agent-decide.js";
 import { runAgent } from "./lib/agent-run.js";

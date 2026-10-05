@@ -121,7 +121,10 @@ Saída: `{ status, steps, logPath, usagePath, usage }`.
 
 Fluxo por passo: extract → dump OCR stdout → decide → execute → append log → flush usage → se não terminal, repeat. Sem `ui_stable`.
 
-**Antes → depois:** arquivo agregado por roteiro → de novo 1 JSON por execução (timestamp). Rollback: agregar por promptId.
+Erro transitório (timeout/503/extract/operate/`fail` da IA): **não aborta** — sleep + próximo passo até `done`/`maxSteps`.
+
+**Antes → depois:** arquivo agregado por roteiro → de novo 1 JSON por execução (timestamp). Rollback: agregar por promptId.  
+**Antes → depois (resiliência):** `GEMINI_REQUEST_FAILED` matava a run → continua. Rollback: `break` no catch.
 
 ---
 

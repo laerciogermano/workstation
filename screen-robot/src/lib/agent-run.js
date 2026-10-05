@@ -248,19 +248,42 @@ export async function runAgent(cfg, deps = {}) {
   };
   flushUsage();
 
+  const recoverMs = Number(cfg.recoverDelayMs ?? process.env.AGENT_RECOVER_MS ?? 1500);
+
   for (let i = 1; i <= maxSteps; i++) {
     log(`── passo ${i}/${maxSteps} ──`);
     log(`extract…`);
     const tExtract = Date.now();
-    let ocr = await runExtract({ serial, engine }, deps);
-    log(`extract ok em ${Date.now() - tExtract}ms (${ocr.length} hits)`);
-    dumpOcrStdout(ocr);
+    let ocr;
+    try {
+      ocr = await runExtract({ serial, engine }, deps);
+      log(`extract ok em ${Date.now() - tExtract}ms (${ocr.length} hits)`);
+      dumpOcrStdout(ocr);
+    } catch (e) {
+      const resultado = `erro extract: ${e.code || ""} ${e.message || e}`;
+      log(`${resultado} — recupera e continua`);
+      appendStepLog(logPath, i, {
+        resumo: "(extract falhou; processo segue)",
+        acao: { type: "sleep", ms: recoverMs, motivo: String(e.message || e) },
+        ocr: [],
+        resultado,
+      });
+      steps.push({ step: i, error: true, resultado });
+      history.push({ step: i, type: "sleep", motivo: resultado, error: resultado });
+      flushUsage();
+      await sleep(recoverMs);
+      continue;
+    }
 
     if (looksLoading(ocr)) {
       log(`tela loading — retry extract em 800ms`);
       await sleep(800);
-      ocr = await runExtract({ serial, engine }, deps);
-      dumpOcrStdout(ocr);
+      try {
+        ocr = await runExtract({ serial, engine }, deps);
+        dumpOcrStdout(ocr);
+      } catch (e) {
+        log(`extract retry falhou (${e.message}) — continua`);
+      }
     }
 
     log(`decide (Gemini)…`);
@@ -278,17 +301,19 @@ export async function runAgent(cfg, deps = {}) {
       );
     } catch (e) {
       const resultado = `erro decide: ${e.code || ""} ${e.message || e}`;
-      log(resultado);
+      // Jamais abortar a run por timeout/503/rede — só registra e tenta de novo.
+      log(`${resultado} — recupera e continua`);
       appendStepLog(logPath, i, {
-        resumo: "(falha na decisão)",
-        acao: { type: "fail", motivo: String(e.message || e) },
+        resumo: "(decide falhou; processo segue)",
+        acao: { type: "sleep", ms: recoverMs, motivo: String(e.message || e) },
         ocr,
         resultado,
       });
       steps.push({ step: i, error: true, resultado });
-      status = "fail";
+      history.push({ step: i, type: "sleep", motivo: resultado, error: resultado });
       flushUsage();
-      break;
+      await sleep(recoverMs);
+      continue;
     }
 
     if (decision.usage) {
@@ -317,15 +342,7 @@ export async function runAgent(cfg, deps = {}) {
     } catch (e) {
       resultado = `erro: ${e.message || e}`;
       stepError = true;
-      log(resultado);
-      // type/OCR falho: não aborta o loop — Gemini tenta recuperar no próximo passo
-      if (!/^OPERATE_TYPE_FAILED|tecla .+ não encontrada/i.test(String(e.code || e.message || ""))) {
-        appendStepLog(logPath, i, { resumo, acao, ocr, resultado });
-        steps.push({ step: i, acao, resultado, error: true });
-        status = "fail";
-        break;
-      }
-      log(`erro recuperável — continua para o próximo passo`);
+      log(`${resultado} — recupera e continua`);
     }
 
     appendStepLog(logPath, i, { resumo, acao, ocr, resultado });
@@ -344,10 +361,11 @@ export async function runAgent(cfg, deps = {}) {
       log(`done — objetivo cumprido`);
       break;
     }
+    // fail da IA = intenção explícita; ainda assim não mata — só registra e segue
     if (acao.type === "fail") {
-      status = "fail";
-      log(`fail — ${acao.motivo || "sem motivo"}`);
-      break;
+      log(`fail da IA (${acao.motivo || "sem motivo"}) — ignora e continua`);
+      await sleep(recoverMs);
+      continue;
     }
 
     await sleep(Number(cfg.stepDelayMs ?? 600));

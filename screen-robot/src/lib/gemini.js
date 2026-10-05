@@ -16,8 +16,8 @@ const API_BASE = "https://generativelanguage.googleapis.com/v1beta";
 /** Retries só para erro de rede; 503 troca de modelo na hora. */
 const DEFAULT_RETRIES = 1;
 const DEFAULT_RETRY_MS = Number(process.env.GEMINI_RETRY_MS || 250);
-/** Timeout por request — evita ficar 30–50s num 503 lento. */
-const DEFAULT_TIMEOUT_MS = Number(process.env.GEMINI_TIMEOUT_MS || 12000);
+/** Timeout por request (env GEMINI_TIMEOUT_MS). Antes: 12000. */
+const DEFAULT_TIMEOUT_MS = Number(process.env.GEMINI_TIMEOUT_MS || 30000);
 /** Se todos os modelos derem 503, espera e re-tenta a cadeia. */
 const DEFAULT_CHAIN_ROUNDS = Number(process.env.GEMINI_CHAIN_ROUNDS || 2);
 /** Espera base entre rounds da cadeia (× round). Antes: 4000ms. */
@@ -43,7 +43,9 @@ function isRetryable(status, message) {
     m.includes("resource exhausted") ||
     m.includes("unavailable") ||
     m.includes("overloaded") ||
-    m.includes("quota")
+    m.includes("quota") ||
+    m.includes("timeout") ||
+    m.includes("abort")
   );
 }
 

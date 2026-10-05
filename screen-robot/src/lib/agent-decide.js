@@ -73,6 +73,10 @@ export function parseActionPayload(raw) {
     }
   }
   if (type === "type" && !out.text) {
+    const m = String(out.motivo || "").match(/'([^']+)'|"([^"]+)"/);
+    if (m) out.text = m[1] || m[2];
+  }
+  if (type === "type" && !out.text) {
     fail("AGENT_BAD_ACTION", "type exige text");
   }
   if (type === "key" && !out.code) {
@@ -108,12 +112,23 @@ Regras:
 - Coords de tap = mesma escala do OCR (device). Não invente scale.
 - tap: use x,y de um item OCR existente (centro do texto alvo).
 - scroll: direction down|up|left|right quando o próximo alvo não está visível.
-- type: digite text de uma vez.
+- type: digite text de uma vez (campo acao.text obrigatório). Se o histórico mostrar erro de tecla OCR, espere (sleep) e tente type de novo, ou key KEYCODE_BACK e reabra o campo.
 - key: code tipo KEYCODE_BACK.
 - sleep: ms quando a tela parece carregando.
 - done: objetivo cumprido.
 - fail: impossível continuar (motivo claro).
 - Não peça screenshot; decida só com o OCR e o prompt.`;
+}
+
+const MAX_PROMPT_CHARS = Number(process.env.GEMINI_MAX_PROMPT_CHARS || 6000);
+
+function clipPrompt(prompt) {
+  const s = String(prompt || "").trim();
+  if (s.length <= MAX_PROMPT_CHARS) return s;
+  return (
+    s.slice(0, MAX_PROMPT_CHARS) +
+    `\n…(roteiro truncado ${s.length}→${MAX_PROMPT_CHARS} chars)`
+  );
 }
 
 function buildUserPrompt({ prompt, ocr, history }) {
@@ -122,7 +137,7 @@ function buildUserPrompt({ prompt, ocr, history }) {
       ? `\nHistórico recente:\n${JSON.stringify(history.slice(-8), null, 0)}\n`
       : "";
   return `Objetivo / roteiro:
-${String(prompt || "").trim()}
+${clipPrompt(prompt)}
 ${hist}
 OCR atual (JSON):
 ${JSON.stringify(compactOcr(ocr))}

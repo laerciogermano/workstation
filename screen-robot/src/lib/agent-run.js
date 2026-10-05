@@ -5,8 +5,9 @@ import { mkdirSync, appendFileSync, writeFileSync, existsSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { extract } from "./extract.js";
 import { decide } from "./agent-decide.js";
+import { DEFAULT_MODEL } from "./gemini.js";
 import { tapElement, scroll, type, key } from "./operate.js";
-import { sleep as defaultSleep } from "./adb.js";
+import { adb, sleep as defaultSleep } from "./adb.js";
 
 function fail(code, msg) {
   const err = new Error(msg);
@@ -59,12 +60,29 @@ export async function executeAction(cfg, deps = {}) {
         deps,
       );
       return `scroll ${a.direction || "down"}`;
-    case "type":
-      await doType(
-        { serial, text: a.text, engine: cfg.engine },
-        deps,
-      );
+    case "type": {
+      const payload = { serial, text: a.text, engine: cfg.engine };
+      const adbFallback =
+        process.env.AGENT_TYPE_ADB_FALLBACK !== "0" &&
+        cfg.adbTypeFallback !== false;
+      try {
+        await doType(payload, deps);
+      } catch {
+        await sleep(1200);
+        try {
+          await doType(payload, deps);
+        } catch (e2) {
+          if (!adbFallback) throw e2;
+          // OCR do teclado incompleto (ex. sem "o") — fallback ADB no motor
+          const runAdb = deps.adb ?? adb;
+          const escaped = String(a.text).replace(/ /g, "%s");
+          log(`type OCR falhou (${e2.message}) — fallback adb input text`);
+          runAdb(serial, ["shell", "input", "text", escaped]);
+          return `type-adb ${JSON.stringify(a.text)}`;
+        }
+      }
       return `type ${JSON.stringify(a.text)}`;
+    }
     case "key":
       doKey({ serial, code: a.code }, deps);
       return `key ${a.code}`;
@@ -138,7 +156,7 @@ export async function runAgent(cfg, deps = {}) {
   if (!existsSync(logDir)) mkdirSync(logDir, { recursive: true });
   const logPath = join(logDir, `${stamp()}.md`);
 
-  const model = cfg.model || process.env.GEMINI_MODEL || "gemini-3.8-flash";
+  const model = cfg.model || process.env.GEMINI_MODEL || DEFAULT_MODEL;
   log(`início serial=${serial} engine=${engine} model=${model} maxSteps=${maxSteps}`);
   log(`log → ${logPath}`);
 
@@ -220,6 +238,7 @@ export async function runAgent(cfg, deps = {}) {
     if (resumo) log(`resumo: ${resumo.slice(0, 200)}`);
 
     let resultado = "";
+    let stepError = false;
     try {
       log(`executar ${acao.type}…`);
       resultado = await executeAction(
@@ -229,21 +248,27 @@ export async function runAgent(cfg, deps = {}) {
       log(`resultado: ${resultado}`);
     } catch (e) {
       resultado = `erro: ${e.message || e}`;
+      stepError = true;
       log(resultado);
-      appendStepLog(logPath, i, { resumo, acao, ocr, resultado });
-      steps.push({ step: i, acao, resultado, error: true });
-      status = "fail";
-      break;
+      // type/OCR falho: não aborta o loop — Gemini tenta recuperar no próximo passo
+      if (!/^OPERATE_TYPE_FAILED|tecla .+ não encontrada/i.test(String(e.code || e.message || ""))) {
+        appendStepLog(logPath, i, { resumo, acao, ocr, resultado });
+        steps.push({ step: i, acao, resultado, error: true });
+        status = "fail";
+        break;
+      }
+      log(`erro recuperável — continua para o próximo passo`);
     }
 
     appendStepLog(logPath, i, { resumo, acao, ocr, resultado });
-    steps.push({ step: i, acao, resultado });
+    steps.push({ step: i, acao, resultado, error: stepError });
     history.push({
       step: i,
       type: acao.type,
       motivo: acao.motivo,
       x: acao.x,
       y: acao.y,
+      error: stepError ? resultado : undefined,
     });
 
     if (acao.type === "done") {

@@ -175,16 +175,16 @@ Loop genérico: OCR RapidOCR → Gemini 3.8 Flash → `tap`/`scroll`/`type`/`key
 ```bash
 cd screen-robot/src
 export GEMINI_API_KEY=…          # obrigatório para decide real
+# default model: gemini-3.1-flash-lite (3.8 costuma 503; 2.5 bloqueado p/ contas novas)
 # opcional: export GEMINI_MODEL=gemini-3.8-flash
-# opcional: export GEMINI_RETRIES=2 GEMINI_RETRY_MS=1500
-# opcional: export GEMINI_FALLBACK_MODELS=gemini-3.7-flash,gemini-3-flash,gemini-2.5-flash
+# opcional: export GEMINI_MAX_PROMPT_CHARS=6000
 
 npm run agent -- --prompt ../roteiros/jornada-comprador.md
 npm run agent -- --prompt "abra o LinkedIn e mostre as últimas 10 conexões"
 npm run agent:smoke              # 1–2 passos no device; sem key = heurística Connect/scroll
 ```
 
-Stdout: `[agent]` / `[decide]` / `[gemini]`. High demand (503) → retry no modelo, depois **fallback** para outro Flash (`3.7` → `3.6` → `3` → `2.5`).
+Stdout: `[agent]` / `[decide]` / `[gemini]`. 503 high demand → **fallback imediato** (`3.1-lite` → `3.8` → `3.7` → `3.6`).
 
 ```js
 import { decide } from "./lib/agent-decide.js";

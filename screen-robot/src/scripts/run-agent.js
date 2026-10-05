@@ -6,6 +6,7 @@
  *   npm run agent -- --prompt "objetivo em texto"
  *   npm run agent -- --prompt ./meu.txt --device emulator-5554 --max-steps 20
  *   npm run agent -- --prompt ./meu.txt --history-steps 12
+ *   npm run agent -- --prompt ./meu.txt --history-steps 0   # sem histórico no prompt
  *   npm run agent -- --provider openai --model gpt-4o-mini --prompt ../roteiros/abrir-settings.md
  *   créditos: src/usage/<timestamp>.json (1 arquivo por request, flat)
  *

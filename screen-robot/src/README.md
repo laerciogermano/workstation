@@ -192,6 +192,7 @@ export GEMINI_MODEL=gemini-3.5-flash-lite
 npm run agent -- --prompt ../roteiros/jornada-comprador.md
 npm run agent -- --prompt ../roteiros/abrir-settings.md
 npm run agent -- --prompt ../roteiros/abrir-settings.md --history-steps 16
+npm run agent -- --prompt ../roteiros/jornada-completa.md --history-steps 0  # sem histórico no prompt
 npm run agent -- --provider openai --model gpt-4o-mini --prompt ../roteiros/abrir-settings.md
 npm run agent -- --prompt "abra o LinkedIn e mostre as últimas 10 conexões"
 npm run agent:smoke              # 1–2 passos no device; sem key = heurística Connect/scroll
@@ -210,6 +211,8 @@ Stdout: `[agent]` / `[decide]` / `[gemini]` ou `[openai]`. Provider default `gem
 **Antes → depois (OCR no histórico):** cada item de `history` inclui `ocr` compacto (`text,x,y`) da tela daquele passo, além de `resultado`/ação. Aumenta tokens no prompt. Rollback: omitir `ocr` no `history.push`.
 
 **Antes → depois (histórico configurável):** `history.slice(-8)` fixo → janela `historySteps` (default **12**), via `runAgent({ historySteps })` · `AGENT_HISTORY_STEPS` · `--history-steps`. Cada passo grava também `resultado` (ex. `scroll up`) no histórico enviado ao modelo. Rollback: `slice(-8)` sem `resultado`.
+
+**Antes → depois (`--history-steps 0`):** `0` era tratado como inválido e voltava ao default 12 (e `slice(-0)` mandaria o histórico inteiro). Agora **0 = sem bloco “Histórico recente” no prompt**. Rollback: `n < 1 → DEFAULT_HISTORY_STEPS`.
 
 **Antes → depois (home/Settings no system prompt):** lite fazia `scroll up` na home e reabria o shade; agora o system de `decide` manda shade→`KEYCODE_BACK`/`HOME`, gaveta→`scroll down`, tap em `Settings`. Roteiro: [`roteiros/abrir-settings.md`](../roteiros/abrir-settings.md). Rollback: remover o bloco “Home / Settings” de `buildSystemPrompt`.
 

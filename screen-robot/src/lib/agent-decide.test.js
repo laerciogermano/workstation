@@ -46,16 +46,18 @@ describe("agent-decide (SC-31)", () => {
     );
   });
 
-  it("resolveHistorySteps default 12; cfg/env", () => {
+  it("resolveHistorySteps default 12; cfg/env; 0 = sem histórico", () => {
     assert.equal(DEFAULT_HISTORY_STEPS, 12);
     assert.equal(resolveHistorySteps({}), 12);
     assert.equal(resolveHistorySteps({ historySteps: 2 }), 2);
-    assert.equal(resolveHistorySteps({ historySteps: 0 }), 12);
+    assert.equal(resolveHistorySteps({ historySteps: 0 }), 0);
+    assert.equal(resolveHistorySteps({ historySteps: -1 }), 12);
     const prev = process.env.AGENT_HISTORY_STEPS;
     process.env.AGENT_HISTORY_STEPS = "5";
     try {
       assert.equal(resolveHistorySteps({}), 5);
       assert.equal(resolveHistorySteps({ historySteps: 3 }), 3);
+      assert.equal(resolveHistorySteps({ historySteps: 0 }), 0);
     } finally {
       if (prev == null) delete process.env.AGENT_HISTORY_STEPS;
       else process.env.AGENT_HISTORY_STEPS = prev;
@@ -86,6 +88,22 @@ describe("agent-decide (SC-31)", () => {
     assert.match(prompt, /"step":3/);
     assert.doesNotMatch(prompt, /"step":1/);
     assert.match(prompt, /key KEYCODE_HOME/);
+  });
+
+  it("buildUserPrompt com historySteps=0 omite histórico", () => {
+    const history = [
+      { step: 1, type: "scroll", resultado: "scroll down" },
+      { step: 2, type: "tap", resultado: "tap 1,2" },
+    ];
+    const prompt = buildUserPrompt({
+      prompt: "abrir Settings",
+      ocr: [{ text: "Settings", x: 10, y: 20 }],
+      history,
+      historySteps: 0,
+    });
+    assert.doesNotMatch(prompt, /Histórico recente/);
+    assert.doesNotMatch(prompt, /"step":1/);
+    assert.doesNotMatch(prompt, /scroll down/);
   });
 
   it("decide com stub: tap no Connect da fixture", async () => {

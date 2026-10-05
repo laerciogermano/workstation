@@ -168,7 +168,7 @@ const MAX_PROMPT_CHARS = Number(process.env.GEMINI_MAX_PROMPT_CHARS || 6000);
 export const DEFAULT_HISTORY_STEPS = 12;
 
 /**
- * Resolve N da janela de histórico (≥1). cfg > env > default.
+ * Resolve N da janela de histórico (≥0; 0 = sem histórico no prompt). cfg > env > default.
  * @param {{ historySteps?: number } | null | undefined} [cfg]
  */
 export function resolveHistorySteps(cfg) {
@@ -177,7 +177,7 @@ export function resolveHistorySteps(cfg) {
     process.env.AGENT_HISTORY_STEPS ??
     DEFAULT_HISTORY_STEPS;
   const n = Number(raw);
-  if (!Number.isFinite(n) || n < 1) return DEFAULT_HISTORY_STEPS;
+  if (!Number.isFinite(n) || n < 0) return DEFAULT_HISTORY_STEPS;
   return Math.floor(n);
 }
 
@@ -201,8 +201,11 @@ function clipPrompt(prompt) {
 export function buildUserPrompt(cfg) {
   const { prompt, ocr, history } = cfg;
   const n = resolveHistorySteps(cfg);
+  // slice(-0) === slice(0) e devolveria o array inteiro — 0 = omitir histórico
   const window =
-    Array.isArray(history) && history.length ? history.slice(-n) : [];
+    n > 0 && Array.isArray(history) && history.length
+      ? history.slice(-n)
+      : [];
   const hist = window.length
     ? `\nHistórico recente (últimos ${window.length}/${n}):\n${JSON.stringify(window, null, 0)}\n`
     : "";

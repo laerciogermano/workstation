@@ -125,6 +125,13 @@ describe("agent-run (SC-32)", () => {
       assert.equal(req1.input.prompt, "PROMPT_COMPLETO_STEP1");
       assert.equal(req1.output.text, '{"acao":{"type":"tap"}}');
       assert.equal(req1.roteiro, "conectar num comprador");
+      assert.deepEqual(req1.acao, {
+        type: "tap",
+        x: 458,
+        y: 344,
+        motivo: "Connect",
+      });
+      assert.equal(req1.resumo, "Connect visível");
     } finally {
       rmSync(logDir, { recursive: true, force: true });
       rmSync(usageDir, { recursive: true, force: true });

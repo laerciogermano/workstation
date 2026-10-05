@@ -193,7 +193,10 @@ function writeChatRequestFiles({
       engine,
       model: req.model || call.model,
       ok: req.ok !== false && !call.error,
+      // decisão parseada (objeto completo; antes só acao.type string)
       acao: call.acao,
+      resumo: call.resumo,
+      elementos: call.elementos,
       error: req.error || call.error || undefined,
       attempt: req.attempt,
       round: req.round,
@@ -427,7 +430,9 @@ export async function runAgent(cfg, deps = {}) {
       model: decision.model || model,
       usage: decision.usage || undefined,
       requests: decision.requests || undefined,
-      acao: decision.acao?.type,
+      acao: decision.acao || undefined,
+      resumo: decision.resumo || undefined,
+      elementos: decision.elementos || undefined,
     });
 
     const { resumo, acao } = decision;

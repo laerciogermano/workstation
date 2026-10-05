@@ -219,6 +219,8 @@ Abort (Ctrl+C) mantém os arquivos já gravados. Status mid-run: `running` no lo
 
 **Antes → depois (input/output):** além de `system`/`prompt`/`response`, grava `input` (system + prompt + body HTTP) e `output` (text + raw da API) + `roteiro` original completo. Rollback: só campos textuais.
 
+**Antes → depois (acao no usage):** `acao` era só a string do `type` (`"scroll"`); agora grava o objeto parseado completo (`type`, `x`, `y`, `direction`, `motivo`, …) + `resumo` + `elementos`. A ação completa também continua em `response`/`output.text` (JSON string). Rollback: `acao: decision.acao?.type`.
+
 **Antes → depois:** `scroll down` somava y (lista People não andava no AVD); `type` tocava teclas até falhar e o fallback ADB concatenava (`cccomprador`). Agora `down` = dedo sobe; teclas resolvidas antes de tap; tecla QWERTY ausente interpolada; fallback ADB limpa o campo. Rollback: `y2 = y + distance` e type sem interpolação/limpeza.
 
 **Antes → depois:** IA no chat Cursor chama `extract`/`tap` à mão → `runAgent` + `GEMINI_API_KEY`. Rollback: não usar `npm run agent`; voltar ao fluxo manual do roteiro.

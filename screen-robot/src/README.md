@@ -179,7 +179,8 @@ export GEMINI_API_KEY=…          # obrigatório para decide real
 export GEMINI_MODEL=gemini-3.5-flash-lite
 # opcional: export GEMINI_FALLBACK_MODELS=gemini-3.1-flash-lite
 # opcional: export GEMINI_MAX_PROMPT_CHARS=6000
-# retry/indisponível (defaults curtos): GEMINI_RETRY_MS=250 · GEMINI_CHAIN_WAIT_MS=800
+# retry/indisponível: GEMINI_RETRY_MS=0 · GEMINI_CHAIN_WAIT_MS=0 · GEMINI_CHAIN_ROUNDS=30
+# (saturado → reenvia na hora, sem backoff; até N rounds)
 
 npm run agent -- --prompt ../roteiros/jornada-comprador.md
 npm run agent -- --prompt "abra o LinkedIn e mostre as últimas 10 conexões"
@@ -190,7 +191,7 @@ Stdout: `[agent]` / `[decide]` / `[gemini]`. Usa **só** `GEMINI_MODEL` (default
 
 **Antes → depois (modelo):** `gemini-2.5-flash-lite` (404 new users) → `gemini-3.5-flash-lite` (recomendado pela API). Rollback: `export GEMINI_MODEL=gemini-3.1-flash-lite`.
 
-**Antes → depois (retry):** entre rounds saturados `4000×round` (8s no round 2) → `GEMINI_CHAIN_WAIT_MS×round` default **800** (1,6s); retry attempt default **250ms** (antes 800). Rollback: `export GEMINI_CHAIN_WAIT_MS=4000 GEMINI_RETRY_MS=800`.
+**Antes → depois (retry saturado):** espera `GEMINI_CHAIN_WAIT_MS×round` (800) / `GEMINI_RETRY_MS` (250) → **0ms** (retry imediato) e **30** rounds. Rollback: `export GEMINI_CHAIN_WAIT_MS=800 GEMINI_RETRY_MS=250 GEMINI_CHAIN_ROUNDS=2`.
 
 **Antes → depois (não morrer):** timeout/503/`fail` da API abortava a run → agora só registra, espera (`AGENT_RECOVER_MS` default 1500) e tenta o próximo passo até `done` ou `maxSteps`. Timeout request default **30s** (antes 12s). Rollback: restaurar `break` no catch do `decide`.
 

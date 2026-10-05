@@ -9,15 +9,16 @@ const DEFAULT_MODEL = "gemini-3.5-flash-lite";
 /** Só usado se `GEMINI_FALLBACK_MODELS` / opts.fallbackModels for passado. */
 const DEFAULT_FALLBACKS = [];
 const API_BASE = "https://generativelanguage.googleapis.com/v1beta";
-/** Retries só para erro de rede; 503 troca de modelo na hora. */
-const DEFAULT_RETRIES = 1;
-const DEFAULT_RETRY_MS = Number(process.env.GEMINI_RETRY_MS || 250);
+/** Retries por modelo em cada round (rede/503). */
+const DEFAULT_RETRIES = Number(process.env.GEMINI_RETRIES || 2);
+/** Espera entre retries — 0 = reenvia na hora (sem backoff). */
+const DEFAULT_RETRY_MS = Number(process.env.GEMINI_RETRY_MS || 0);
 /** Timeout por request (env GEMINI_TIMEOUT_MS). Antes: 12000. */
 const DEFAULT_TIMEOUT_MS = Number(process.env.GEMINI_TIMEOUT_MS || 30000);
-/** Se todos os modelos derem 503, espera e re-tenta a cadeia. */
-const DEFAULT_CHAIN_ROUNDS = Number(process.env.GEMINI_CHAIN_ROUNDS || 2);
-/** Espera base entre rounds da cadeia (× round). Antes: 4000ms. */
-const DEFAULT_CHAIN_WAIT_MS = Number(process.env.GEMINI_CHAIN_WAIT_MS || 800);
+/** Rounds da cadeia até funcionar (saturado → tenta de novo sem espera). */
+const DEFAULT_CHAIN_ROUNDS = Number(process.env.GEMINI_CHAIN_ROUNDS || 30);
+/** Espera entre rounds — 0 = reenvia na hora. */
+const DEFAULT_CHAIN_WAIT_MS = Number(process.env.GEMINI_CHAIN_WAIT_MS || 0);
 
 function fail(code, msg, extra = {}) {
   const err = new Error(msg);
@@ -160,9 +161,13 @@ export async function generateContent(opts, deps = {}) {
 
   for (let round = 1; round <= chainRounds; round++) {
     if (round > 1) {
-      const wait = chainWaitMs * round;
-      logFn(`round ${round}/${chainRounds}: aguardando ${wait}ms (API saturada)`);
-      await sleepFn(wait);
+      if (chainWaitMs > 0) {
+        const wait = chainWaitMs * round;
+        logFn(`round ${round}/${chainRounds}: aguardando ${wait}ms (API saturada)`);
+        await sleepFn(wait);
+      } else {
+        logFn(`round ${round}/${chainRounds}: retry imediato (API saturada)`);
+      }
     }
 
     for (let mi = 0; mi < models.length; mi++) {
@@ -231,9 +236,13 @@ export async function generateContent(opts, deps = {}) {
             }
           }
           if (attempt <= retries && isRetryable(0, lastMsg)) {
-            const wait = retryMs * attempt;
-            logFn(`retry em ${wait}ms (rede)`);
-            await sleepFn(wait);
+            if (retryMs > 0) {
+              const wait = retryMs * attempt;
+              logFn(`retry em ${wait}ms (rede)`);
+              await sleepFn(wait);
+            } else {
+              logFn(`retry imediato (rede)`);
+            }
             continue;
           }
           break;
@@ -279,9 +288,13 @@ export async function generateContent(opts, deps = {}) {
             break;
           }
           if (attempt <= retries && isRetryable(res.status, lastMsg)) {
-            const wait = retryMs * attempt;
-            logFn(`retry em ${wait}ms (${res.status})`);
-            await sleepFn(wait);
+            if (retryMs > 0) {
+              const wait = retryMs * attempt;
+              logFn(`retry em ${wait}ms (${res.status})`);
+              await sleepFn(wait);
+            } else {
+              logFn(`retry imediato (${res.status})`);
+            }
             continue;
           }
           if (isRetryable(res.status, lastMsg) && mi < models.length - 1) {

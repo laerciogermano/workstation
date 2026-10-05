@@ -54,20 +54,20 @@ Passos (interfaces usadas)
    - esperar 1–2s (`sleep`)
    - log: hit Search + decisão tap
 
-3) Digitar "comprador" — **tecla a tecla com verificação**
-   - Alvo: a string `comprador` (9 caracteres). Digitar **um caractere por vez** (OCR do teclado / `type` de 1 glifo / fallback de digitação — **não** clicar no item `comprador` da lista; **não** usar `adb input text`).
-   - **Após cada tecla** (obrigatório, antes da próxima):
-     1. `screenshot({ serial, path })` — artefato em `src/screenshots/` (ex. `type-comprador-k{N}.png`); **não** decidir olhando a imagem.
+3) Digitar "comprador" — **tudo de uma vez; checar só no fim**
+   - Alvo: a string `comprador` (9 caracteres). Digitar a **palavra inteira de uma vez** (`type({ serial, text: "comprador", … })` / OCR do teclado — **não** clicar no item `comprador` da lista; **não** usar `adb input text`).
+   - **Proibido** checar após cada tecla/tap: sem `extract`/screenshot/prefixo entre caracteres; digitar tudo e só então validar.
+   - **Só após terminar a digitação** (obrigatório):
+     1. `screenshot({ serial, path })` — artefato em `src/screenshots/` (ex. `type-comprador.png`); **não** decidir olhando a imagem.
      2. `extract({ serial, engine: "rapidocr" })` — imprimir OCR completo no console.
-     3. Ler o texto do **campo Search** no OCR (`y < 120`, excluir relógio/`Search` placeholder) e comparar com o **prefixo esperado** `comprador.slice(0, N)` (N = teclas confirmadas + 1).
-     4. **OK** se o campo (normalizado: minúsculas, sem espaços) **começa com** ou **é igual a** esse prefixo → logar passo `3.k{N}` (Decisão + OCR + Resultado “ok: campo=…”) e seguir para a próxima tecla.
-     5. **Erro** se o campo divergir (letra errada, lixo, caractere a mais/menos) → **não** seguir: `KEYCODE_DEL` (ou limpar) até o último prefixo bom; re-tentar a tecla; novo print+OCR+checagem. Se após 3 tentativas na mesma posição ainda falhar → Encerramento com motivo `type_mismatch` (logar OCR + print).
-   - **Proibido** digitar o restante “às cegas” ou só validar no fim: sem checagem pós-tecla = passo 3 incompleto.
+     3. Ler o texto do **campo Search** no OCR (`y < 120`, excluir relógio/`Search` placeholder) e comparar com a string completa `comprador` (normalizado: minúsculas, sem espaços).
+     4. **OK** se o campo **é igual a** `comprador` (ou começa com `comprador` sem lixo extra relevante) → logar passo 3 (Decisão + OCR + Resultado “ok: campo=comprador”) e seguir.
+     5. **Erro** se o campo divergir → limpar (`KEYCODE_DEL` / limpar campo), **redigitar a palavra inteira de novo**, novo print+OCR+checagem do valor completo. Se após 3 tentativas ainda falhar → Encerramento com motivo `type_mismatch` (logar OCR + print).
    - **não** clicar no item `comprador` (autocomplete / recent)
-   - após as 9 teclas confirmadas (campo OCR = `comprador`), **remover o teclado** (`key(KEYCODE_BACK)` ou tap fora) para revelar `Show all results`
+   - após valor confirmado (campo OCR = `comprador`), **remover o teclado** (`key(KEYCODE_BACK)` ou tap fora) para revelar `Show all results`
    - esperar 0.8–1.5s
-   - log: resumo das 9 checagens + BACK teclado
-   - **Antes → depois:** digitava a palavra inteira e só OCR no fim (campo virava lixo tipo `cocompgdfoo`) → tecla a tecla com print+OCR+prefixo. Rollback: remover este bloco de verificação por tecla e voltar a validar só no fim do passo 3.
+   - log: digitação + checagem final + BACK teclado
+   - **Antes → depois:** tecla a tecla com print+OCR+prefixo após cada tap → digitar tudo e checar o valor completo só no fim. Rollback: restaurar verificação pós-tecla (prefixo `comprador.slice(0, N)` após cada caractere).
 
 4) Clicar em "Show all results"
    - após abrir os resultados (buscar "comprador"), localizar `Show all results`:
@@ -124,17 +124,17 @@ Passos (interfaces usadas)
    - **parar a execução de imediato** — proibido continuar scroll/tap/extract após o encerramento
 
 Critérios de aceite
-- A jornada: Search → digitar **tecla a tecla com print+OCR+prefixo** → fechar teclado → Show all results → People → Connect (e Skip); scroll infinito até achar `Connect`; para só em fim explícito ou limite LinkedIn.
+- A jornada: Search → digitar **tudo de uma vez e checar o valor completo só no fim** → fechar teclado → Show all results → People → Connect (e Skip); scroll infinito até achar `Connect`; para só em fim explícito ou limite LinkedIn.
 - Execução por **IA + este markdown**: sem script com o roteiro preso; cada passo = OCR → decisão em prosa no log → interface.
 - Após Encerramento, o AVD deixa de ser manipulado.
-- **Passo 3:** cada tecla tem screenshot + `extract` + checagem do prefixo no campo Search; divergência → corrigir ou `type_mismatch`; proibido só validar no fim.
+- **Passo 3:** digitar `comprador` inteiro sem checagem intermediária; só então screenshot + `extract` + checagem do valor completo no campo Search; divergência → limpar, redigitar tudo ou `type_mismatch`; proibido validar a cada tecla.
 - Passo 6: sem teto de rounds vazios; scroll só no centro; log `.md` com Decisão + OCR JSON por passo.
 - **Cada Connect contado** tem `### Comprador` com **todas** as infos disponíveis no item da lista (OCR do card); Connect sem esse registro não conta.
 - Só clica em `Connect`; **proibido** tap estimado; **jamais** `Message` (nem Pending/Follow/Following).
 - Após Connect, no sheet: só `Skip` — jamais `Add a note`.
 - Se `Withdraw invitation`: só `Cancel` — jamais confirmar Withdraw.
 - Se abrir Message/Premium: BACK via OCR até a lista; nunca enviar mensagem.
-- Decisões só via OCR/texto; no passo 3 o print é artefato — a checagem do prefixo usa o **texto OCR** do campo, não análise visual da imagem. Print+análise por imagem só em erro/debug fora desse fluxo.
+- Decisões só via OCR/texto; no passo 3 o print é artefato — a checagem final usa o **texto OCR** do campo, não análise visual da imagem. Print+análise por imagem só em erro/debug fora desse fluxo.
 
 Notas operacionais
 - Timeouts: esperar 1–3s entre ações; `findByText` com `minScore:0.75`.
@@ -144,8 +144,8 @@ Notas operacionais
 - Log: um `.md` por execução (documento: Decisão em prosa + OCR em JSON separado).
 - **Registro do comprador:** só a partir do OCR do card na lista (não abrir o perfil para “completar” dados). Se um campo não aparecer no OCR do item, não inventar — registrar o que houver.
 - **Antes → depois (registro):** log só com Decisão/OCR genérico do passo → cada Connect contado exige `### Comprador` com todos os textos do item. Rollback: remover a seção `### Comprador` / critério do passo 6 item 3 deste markdown.
-- Se OCR do teclado falhar, não clicar em `comprador` da lista — só digitar tecla a tecla (com print+OCR+prefixo) e depois fechar teclado → `Show all results` (não usar `adb input text`).
-- **Passo 3 — prints:** um arquivo por tecla em `src/screenshots/` (nome com índice `k1`…`k9`); decisão pelo OCR do campo (`y < 120`), não pela imagem.
+- Se OCR do teclado falhar, não clicar em `comprador` da lista — só digitar a palavra inteira (checagem só no fim) e depois fechar teclado → `Show all results` (não usar `adb input text`).
+- **Passo 3 — print:** um arquivo após a digitação completa em `src/screenshots/` (ex. `type-comprador.png`); decisão pelo OCR do campo (`y < 120`), não pela imagem.
 
 Como executar
 1. Abrir AVD e navegar ao LinkedIn (manual ou `npm run linkedin-login` só para login/home — **não** é runner desta jornada).

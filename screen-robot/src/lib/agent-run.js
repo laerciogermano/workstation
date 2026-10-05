@@ -32,10 +32,13 @@ function log(...args) {
 }
 
 function dumpOcrStdout(ocr) {
-  log(`OCR ${ocr?.length ?? 0} hits:`);
-  for (const e of ocr || []) {
+  const list = Array.isArray(ocr) ? ocr : [];
+  log(`OCR ${list.length} hits:`);
+  for (const e of list) {
     console.log(`  ${e.text}@${e.x},${e.y}`);
   }
+  log(`extract return:`);
+  console.log(JSON.stringify(list, null, 2));
 }
 
 /**

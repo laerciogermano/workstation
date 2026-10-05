@@ -6,13 +6,17 @@ Preço: input US$ 0,075/1M · output US$ 0,30/1M · câmbio US$ 1 = R$ 5,50
 
 ---
 
-## Por agente / mês
+## Por agente
 
-| Modo | Tok in | Tok out | US$/op | US$/dia | US$/mês | R$/mês |
-|------|--------|---------|--------|---------|---------|--------|
-| Imagem ~20 KB (1 tile) | 538 | 300 | 0,000130 | 1,88 | **56** | **309** |
-| Imagem ~31 KB (2 tiles) | 796 | 300 | 0,000150 | 2,16 | **65** | **357** |
-| OCR JSON | 894 | 120 | 0,000103 | 1,48 | **44** | **244** |
+Uso fixo por agente: **14.400 operações/dia** · **432.000 operações/mês** (×30).
+
+| Modo | Ops/dia | US$/dia | R$/dia | Ops/mês | US$/mês | R$/mês |
+|------|---------|---------|--------|---------|---------|--------|
+| Imagem ~20 KB (1 tile) | 14.400 | 1,88 | 10,34 | 432.000 | **56** | **309** |
+| Imagem ~31 KB (2 tiles) | 14.400 | 2,16 | 11,88 | 432.000 | **65** | **357** |
+| OCR JSON | 14.400 | 1,48 | 8,14 | 432.000 | **44** | **244** |
+
+Detalhe por op: Imagem 20 KB ≈ US$ 0,000130 · Imagem 31 KB ≈ US$ 0,000150 · OCR ≈ US$ 0,000103.
 
 Arquivo ~20 KB: [`compressed-20kb.webp`](compressed-20kb.webp) · meta: [`meta-20kb.json`](meta-20kb.json)
 

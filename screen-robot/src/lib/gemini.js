@@ -1,10 +1,11 @@
 /**
  * EP-07 — cliente Gemini generateContent (texto → JSON).
- * Default: gemini-2.5-flash-lite (menor custo).
+ * Default: gemini-3.5-flash-lite (mais barato disponível a novos usuários).
  * Sem fallback automático — só `GEMINI_MODEL` / opts.model (e `GEMINI_FALLBACK_MODELS` se setado).
+ * gemini-2.5-flash-lite → 404 "no longer available to new users".
  */
 
-const DEFAULT_MODEL = "gemini-2.5-flash-lite";
+const DEFAULT_MODEL = "gemini-3.5-flash-lite";
 /** Só usado se `GEMINI_FALLBACK_MODELS` / opts.fallbackModels for passado. */
 const DEFAULT_FALLBACKS = [];
 const API_BASE = "https://generativelanguage.googleapis.com/v1beta";

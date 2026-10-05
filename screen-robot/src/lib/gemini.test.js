@@ -61,9 +61,9 @@ describe("gemini", () => {
   });
 
   it("resolveModelChain: sem fallbacks = só o primary", () => {
-    assert.equal(DEFAULT_MODEL, "gemini-2.5-flash-lite");
+    assert.equal(DEFAULT_MODEL, "gemini-3.5-flash-lite");
     assert.deepEqual(resolveModelChain(DEFAULT_MODEL), [
-      "gemini-2.5-flash-lite",
+      "gemini-3.5-flash-lite",
     ]);
     assert.deepEqual(resolveModelChain("gemini-3.1-flash-lite", []), [
       "gemini-3.1-flash-lite",

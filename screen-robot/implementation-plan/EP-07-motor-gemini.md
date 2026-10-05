@@ -62,7 +62,7 @@ npm run agent -- --prompt ../roteiros/jornada-comprador.md
 # ou: npm run agent -- --prompt "abra o LinkedIn e mostre as últimas 10 conexões"
 ```
 
-Env: `GEMINI_API_KEY` · `GEMINI_MODEL` (default `gemini-2.5-flash-lite`, **único**) · `GEMINI_FALLBACK_MODELS` (opcional; sem isso = zero fallback) · `GEMINI_MAX_PROMPT_CHARS`.  
+Env: `GEMINI_API_KEY` · `GEMINI_MODEL` (default `gemini-3.5-flash-lite`, **único**) · `GEMINI_FALLBACK_MODELS` (opcional; sem isso = zero fallback) · `GEMINI_MAX_PROMPT_CHARS`.  
 Stdout: `[gemini]` — usa só o modelo do export; fallback só se `GEMINI_FALLBACK_MODELS` estiver definido.
 
 ---

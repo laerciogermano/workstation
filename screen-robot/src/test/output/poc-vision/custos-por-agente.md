@@ -160,6 +160,7 @@ Valores em **dólares** da API · modo Imagem ~20 KB (padrão aprovado na POC).
 
 - Gargalo = limite semanal LinkedIn (100/7d), não tokens.
 - Runs ruins (OCR sem Connect): 10–24 ops/conexão — fora desta média.
-- Valor real de tokens: `usageMetadata` da API.
+- Valor real de tokens/custo: `usageMetadata` da API + fatura Google.
+- **Gemini 3.8 Flash** = testado e aprovado na POC visão; demais Flash = elegíveis (multimodal).
 
-**Antes → depois:** após Utilização + Tokens + Custo, seção **4. Prós e contras**. Rollback: remover seção 4.
+**Antes → depois:** seção 3 com preço genérico → tabela de **Gemini Flash elegíveis** (preço oficial) e **3.8 em negrito (aprovado)**; seção 4 prós/contras mantida. Rollback: tabela única com preço antigo.

@@ -437,7 +437,7 @@ Loop: `extract` (RapidOCR) → `decide` → gesto → log `.md`.
 
 **Saída:** `{ status: "done"|"fail"|"max_steps", steps, logPath, usagePath, usage }`
 
-Créditos: `src/usage/<promptId>.json` (1 arquivo por prompt; `runs[]` + totais). **Antes:** `usage/<stamp>.json` por run. Rollback: nomear por stamp.
+Créditos: `src/usage/<timestamp>.json` (1 arquivo único por execução). **Antes:** `jornada-comprador.json` agregado. Rollback: agregar por promptId.
 
 ```js
 const result = await runAgent({

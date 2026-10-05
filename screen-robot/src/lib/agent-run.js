@@ -1,14 +1,8 @@
 /**
  * EP-07 / US-25 — loop extract → decide → operate → log.
  */
-import {
-  mkdirSync,
-  appendFileSync,
-  writeFileSync,
-  readFileSync,
-  existsSync,
-} from "node:fs";
-import { basename, join, resolve } from "node:path";
+import { mkdirSync, appendFileSync, writeFileSync, existsSync } from "node:fs";
+import { join, resolve } from "node:path";
 import { extract } from "./extract.js";
 import { decide } from "./agent-decide.js";
 import { DEFAULT_MODEL } from "./gemini.js";
@@ -135,36 +129,6 @@ function sumUsage(calls) {
   return totals;
 }
 
-/**
- * Nome estável do arquivo usage: 1 prompt → 1 JSON em usage/.
- * Preferir promptId (basename do .md); senão slug do texto inline.
- * @param {{ promptId?: string, prompt?: string }} cfg
- */
-export function usageKeyFromPrompt(cfg = {}) {
-  const rawId = cfg.promptId != null ? String(cfg.promptId).trim() : "";
-  let base = rawId
-    ? basename(rawId).replace(/\.[^.]+$/, "")
-    : String(cfg.prompt || "")
-        .trim()
-        .split(/\r?\n/)
-        .find((l) => l.trim()) || "prompt";
-  base = base
-    .toLowerCase()
-    .replace(/[^a-z0-9._-]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 80);
-  return base || "prompt";
-}
-
-function readUsageDoc(usagePath) {
-  if (!existsSync(usagePath)) return null;
-  try {
-    return JSON.parse(readFileSync(usagePath, "utf8"));
-  } catch {
-    return null;
-  }
-}
-
 function writeUsageFile(usagePath, payload) {
   writeFileSync(usagePath, JSON.stringify(payload, null, 2) + "\n", "utf8");
 }
@@ -208,7 +172,6 @@ function appendStepLog(logPath, step, { resumo, acao, ocr, resultado }) {
  *   engine?: string,
  *   logDir?: string,
  *   usageDir?: string,
- *   promptId?: string,
  *   keyboardRegion?: object,
  *   model?: string,
  *   apiKey?: string,
@@ -229,22 +192,16 @@ export async function runAgent(cfg, deps = {}) {
   const runStamp = stamp();
   const logDir = resolve(cfg.logDir || join(process.cwd(), "logs", "agent"));
   const usageDir = resolve(cfg.usageDir || join(process.cwd(), "usage"));
-  const promptId = usageKeyFromPrompt({
-    promptId: cfg.promptId,
-    prompt: cfg.prompt,
-  });
   if (!existsSync(logDir)) mkdirSync(logDir, { recursive: true });
   if (!existsSync(usageDir)) mkdirSync(usageDir, { recursive: true });
   const logPath = join(logDir, `${runStamp}.md`);
-  const usagePath = join(usageDir, `${promptId}.json`);
-  const priorUsage = readUsageDoc(usagePath);
-  /** @type {object[]} */
-  const priorRuns = Array.isArray(priorUsage?.runs) ? priorUsage.runs : [];
+  // 1 execução / 1 arquivo único (timestamp), não agregar por nome do roteiro
+  const usagePath = join(usageDir, `${runStamp}.json`);
 
   const model = cfg.model || process.env.GEMINI_MODEL || DEFAULT_MODEL;
   log(`início serial=${serial} engine=${engine} model=${model} maxSteps=${maxSteps}`);
   log(`log → ${logPath}`);
-  log(`usage → ${usagePath} (promptId=${promptId})`);
+  log(`usage → ${usagePath}`);
 
   writeFileSync(
     logPath,
@@ -255,7 +212,6 @@ export async function runAgent(cfg, deps = {}) {
       `- engine: \`${engine}\``,
       `- model: \`${model}\``,
       `- maxSteps: ${maxSteps}`,
-      `- promptId: \`${promptId}\``,
       `- started: ${new Date().toISOString()}`,
       "",
       "## Prompt",
@@ -276,25 +232,18 @@ export async function runAgent(cfg, deps = {}) {
   let status = "max_steps";
 
   const flushUsage = () => {
-    const current = {
+    writeUsageFile(usagePath, {
       started: startedAt,
       ended: new Date().toISOString(),
       serial,
       engine,
       model,
       maxSteps,
+      prompt: cfg.prompt,
       logPath,
       status,
       calls: usageCalls,
       totals: sumUsage(usageCalls),
-    };
-    const runs = [...priorRuns, current];
-    writeUsageFile(usagePath, {
-      promptId,
-      promptPreview: String(cfg.prompt).slice(0, 200),
-      updated: current.ended,
-      runs,
-      totals: sumUsage(runs.flatMap((r) => r.calls || [])),
     });
   };
   flushUsage();

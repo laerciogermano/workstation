@@ -170,7 +170,7 @@ Tira screenshot do device online e grava em `screenshots/<nome>.png` (path absol
 
 ## Motor Gemini (EP-07) — `decide` / `runAgent`
 
-Loop genérico: OCR RapidOCR → Gemini 3.8 Flash → `tap`/`scroll`/`type`/`key` → log em `logs/agent/` e créditos em `usage/<promptId>.json` (**1 arquivo por prompt**; `runs[]` + totais). Prompt/roteiro entram como **input** (não hardcodar jornada).
+Loop genérico: OCR RapidOCR → Gemini 3.8 Flash → `tap`/`scroll`/`type`/`key` → log em `logs/agent/` e créditos em `usage/<timestamp>.json` (**1 arquivo único por execução**). Prompt/roteiro entram como **input** (não hardcodar jornada).
 
 ```bash
 cd screen-robot/src
@@ -202,7 +202,7 @@ Testes: `node --test lib/gemini.test.js lib/agent-decide.test.js lib/agent-run.t
 Plano: [`../implementation-plan/EP-07-motor-gemini.md`](../implementation-plan/EP-07-motor-gemini.md).  
 POC custo/visão: [`test/output/poc-vision/custos-por-agente.md`](test/output/poc-vision/custos-por-agente.md).
 
-**Antes → depois (usage):** `usage/<ISO-stamp>.json` por run → `usage/<promptId>.json` (ex. `jornada-comprador.json`) com histórico em `runs[]`. Rollback: nomear por stamp.
+**Antes → depois (usage):** `jornada-comprador.json` agregado → de novo `usage/<ISO-stamp>.json` por execução (único). Rollback: agregar por promptId.
 
 **Antes → depois:** `scroll down` somava y (lista People não andava no AVD); `type` tocava teclas até falhar e o fallback ADB concatenava (`cccomprador`). Agora `down` = dedo sobe; teclas resolvidas antes de tap; tecla QWERTY ausente interpolada; fallback ADB limpa o campo. Rollback: `y2 = y + distance` e type sem interpolação/limpeza.
 

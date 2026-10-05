@@ -4,22 +4,11 @@
 import assert from "node:assert/strict";
 import { mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { basename, join } from "node:path";
 import { describe, it } from "node:test";
-import { executeAction, runAgent, usageKeyFromPrompt } from "./agent-run.js";
+import { executeAction, runAgent } from "./agent-run.js";
 
 describe("agent-run (SC-32)", () => {
-  it("usageKeyFromPrompt usa basename do arquivo", () => {
-    assert.equal(
-      usageKeyFromPrompt({ promptId: "../roteiros/jornada-comprador.md" }),
-      "jornada-comprador",
-    );
-    assert.equal(
-      usageKeyFromPrompt({ prompt: "conectar num comprador\nresto" }),
-      "conectar-num-comprador",
-    );
-  });
-
   it("executeAction tap chama tapElement", async () => {
     const calls = [];
     await executeAction(
@@ -41,7 +30,6 @@ describe("agent-run (SC-32)", () => {
         {
           serial: "emulator-5554",
           prompt: "conectar num comprador",
-          promptId: "jornada-comprador.md",
           maxSteps: 5,
           logDir,
           usageDir,
@@ -84,7 +72,8 @@ describe("agent-run (SC-32)", () => {
       assert.equal(taps[0].x, 458);
       assert.ok(extracts >= 2);
       assert.ok(result.logPath);
-      assert.ok(result.usagePath.endsWith("jornada-comprador.json"));
+      assert.ok(result.usagePath);
+      assert.match(basename(result.usagePath), /^\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}\.json$/);
       const md = readFileSync(result.logPath, "utf8");
       assert.match(md, /### Decisão/);
       assert.match(md, /### OCR usado na decisão/);
@@ -92,9 +81,7 @@ describe("agent-run (SC-32)", () => {
       // política não hardcoded no motor — prompt genérico
       assert.match(md, /conectar num comprador/);
       const usage = JSON.parse(readFileSync(result.usagePath, "utf8"));
-      assert.equal(usage.promptId, "jornada-comprador");
-      assert.equal(usage.runs.length, 1);
-      assert.equal(usage.runs[0].calls.length, 2);
+      assert.equal(usage.calls.length, 2);
       assert.equal(usage.totals.promptTokenCount, 22);
       assert.equal(usage.totals.candidatesTokenCount, 7);
       assert.equal(usage.totals.totalTokenCount, 29);

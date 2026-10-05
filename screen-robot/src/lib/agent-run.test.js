@@ -22,6 +22,7 @@ describe("agent-run (SC-32)", () => {
 
   it("runAgent: extract → decide tap → done (stubs)", async () => {
     const logDir = mkdtempSync(join(tmpdir(), "sr-agent-"));
+    const usageDir = mkdtempSync(join(tmpdir(), "sr-usage-"));
     let extracts = 0;
     const taps = [];
     try {
@@ -31,6 +32,7 @@ describe("agent-run (SC-32)", () => {
           prompt: "conectar num comprador",
           maxSteps: 5,
           logDir,
+          usageDir,
           stepDelayMs: 0,
         },
         {
@@ -52,11 +54,13 @@ describe("agent-run (SC-32)", () => {
                   y: ocr[0].y,
                   motivo: "Connect",
                 },
+                usage: { promptTokenCount: 10, candidatesTokenCount: 4, totalTokenCount: 14 },
               };
             }
             return {
               resumo: "ok",
               acao: { type: "done", motivo: "conectado" },
+              usage: { promptTokenCount: 12, candidatesTokenCount: 3, totalTokenCount: 15 },
             };
           },
           tapElement: (cfg) => taps.push(cfg),
@@ -68,14 +72,22 @@ describe("agent-run (SC-32)", () => {
       assert.equal(taps[0].x, 458);
       assert.ok(extracts >= 2);
       assert.ok(result.logPath);
+      assert.ok(result.usagePath);
       const md = readFileSync(result.logPath, "utf8");
       assert.match(md, /### Decisão/);
       assert.match(md, /### OCR usado na decisão/);
       assert.match(md, /\*\*status:\*\* `done`/);
       // política não hardcoded no motor — prompt genérico
       assert.match(md, /conectar num comprador/);
+      const usage = JSON.parse(readFileSync(result.usagePath, "utf8"));
+      assert.equal(usage.calls.length, 2);
+      assert.equal(usage.totals.promptTokenCount, 22);
+      assert.equal(usage.totals.candidatesTokenCount, 7);
+      assert.equal(usage.totals.totalTokenCount, 29);
+      assert.equal(result.usage.totalTokenCount, 29);
     } finally {
       rmSync(logDir, { recursive: true, force: true });
+      rmSync(usageDir, { recursive: true, force: true });
     }
   });
 

@@ -170,7 +170,7 @@ Tira screenshot do device online e grava em `screenshots/<nome>.png` (path absol
 
 ## Motor Gemini (EP-07) — `decide` / `runAgent`
 
-Loop genérico: OCR RapidOCR → Gemini 3.8 Flash → `tap`/`scroll`/`type`/`key` → log em `logs/agent/`. Prompt/roteiro entram como **input** (não hardcodar jornada).
+Loop genérico: OCR RapidOCR → Gemini 3.8 Flash → `tap`/`scroll`/`type`/`key` → log em `logs/agent/` e créditos (`usageMetadata`) em `usage/<stamp>.json` (um arquivo por prompt/run). Prompt/roteiro entram como **input** (não hardcodar jornada).
 
 ```bash
 cd screen-robot/src
@@ -192,12 +192,14 @@ import { decide } from "./lib/agent-decide.js";
 import { runAgent } from "./lib/agent-run.js";
 
 const { acao } = await decide({ prompt, ocr });
-const { status, logPath } = await runAgent({ serial, prompt, maxSteps: 40 });
+const { status, logPath, usagePath, usage } = await runAgent({ serial, prompt, maxSteps: 40 });
 ```
 
 Testes: `node --test lib/gemini.test.js lib/agent-decide.test.js lib/agent-run.test.js`.  
 Plano: [`../implementation-plan/EP-07-motor-gemini.md`](../implementation-plan/EP-07-motor-gemini.md).  
 POC custo/visão: [`test/output/poc-vision/custos-por-agente.md`](test/output/poc-vision/custos-por-agente.md).
+
+Cada `runAgent` grava `usage/<ISO-stamp>.json` com `calls[]` (`usageMetadata` da API por passo) e `totals`. Pasta: `--usage-dir` ou `src/usage/`. **Antes:** só `logs/agent/*.md`. Rollback: ignorar `usage/` e `usageDir`.
 
 **Antes → depois:** IA no chat Cursor chama `extract`/`tap` à mão → `runAgent` + `GEMINI_API_KEY`. Rollback: não usar `npm run agent`; voltar ao fluxo manual do roteiro.
 

@@ -88,6 +88,7 @@ const maxSteps = Number(argValue("--max-steps", "2"));
 const useGemini = Boolean(process.env.GEMINI_API_KEY);
 const prompt = loadPrompt();
 const logDir = join(SRC_ROOT, "logs", "agent");
+const usageDir = join(SRC_ROOT, "usage");
 
 if (!serial) {
   console.error("falta serial");
@@ -105,6 +106,7 @@ const result = await runAgent(
     maxSteps,
     engine: "rapidocr",
     logDir,
+    usageDir,
     stepDelayMs: 800,
   },
   useGemini ? {} : { decide: heuristicDecide },
@@ -124,6 +126,8 @@ console.log(
       firstAction: first,
       steps: result.steps.length,
       logPath: result.logPath,
+      usagePath: result.usagePath,
+      usage: result.usage,
       accepted: Boolean(ok),
     },
     null,

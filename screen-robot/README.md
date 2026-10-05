@@ -431,9 +431,11 @@ Decide a próxima ação via **Gemini 3.8 Flash** a partir do OCR (sem imagem).
 
 Loop: `extract` (RapidOCR) → `decide` → gesto → log `.md`.
 
-**Entrada:** `serial` · `prompt` · `maxSteps?` (40) · `engine?` (`rapidocr`) · `logDir?`
+**Entrada:** `serial` · `prompt` · `maxSteps?` (40) · `engine?` (`rapidocr`) · `logDir?` · `usageDir?`
 
-**Saída:** `{ status: "done"|"fail"|"max_steps", steps, logPath }`
+**Saída:** `{ status: "done"|"fail"|"max_steps", steps, logPath, usagePath, usage }`
+
+Créditos: `src/usage/<stamp>.json` (`usageMetadata` por passo + totais). **Antes:** só log md. Rollback: não ler `usage/`.
 
 ```js
 const result = await runAgent({

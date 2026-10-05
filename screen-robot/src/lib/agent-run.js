@@ -99,6 +99,32 @@ export async function executeAction(cfg, deps = {}) {
   }
 }
 
+function num(v) {
+  const n = Number(v);
+  return Number.isFinite(n) ? n : 0;
+}
+
+function sumUsage(calls) {
+  const totals = {
+    promptTokenCount: 0,
+    candidatesTokenCount: 0,
+    thoughtsTokenCount: 0,
+    totalTokenCount: 0,
+  };
+  for (const c of calls) {
+    const u = c?.usage || {};
+    totals.promptTokenCount += num(u.promptTokenCount);
+    totals.candidatesTokenCount += num(u.candidatesTokenCount);
+    totals.thoughtsTokenCount += num(u.thoughtsTokenCount);
+    totals.totalTokenCount += num(u.totalTokenCount);
+  }
+  return totals;
+}
+
+function writeUsageFile(usagePath, payload) {
+  writeFileSync(usagePath, JSON.stringify(payload, null, 2) + "\n", "utf8");
+}
+
 function appendStepLog(logPath, step, { resumo, acao, ocr, resultado }) {
   const block = [
     "",
@@ -137,6 +163,7 @@ function appendStepLog(logPath, step, { resumo, acao, ocr, resultado }) {
  *   maxSteps?: number,
  *   engine?: string,
  *   logDir?: string,
+ *   usageDir?: string,
  *   model?: string,
  *   apiKey?: string,
  * }} cfg
@@ -152,13 +179,19 @@ export async function runAgent(cfg, deps = {}) {
   const sleep = deps.sleep ?? defaultSleep;
   const runExtract = deps.extract ?? extract;
   const runDecide = deps.decide ?? decide;
+  const startedAt = new Date().toISOString();
+  const runStamp = stamp();
   const logDir = resolve(cfg.logDir || join(process.cwd(), "logs", "agent"));
+  const usageDir = resolve(cfg.usageDir || join(process.cwd(), "usage"));
   if (!existsSync(logDir)) mkdirSync(logDir, { recursive: true });
-  const logPath = join(logDir, `${stamp()}.md`);
+  if (!existsSync(usageDir)) mkdirSync(usageDir, { recursive: true });
+  const logPath = join(logDir, `${runStamp}.md`);
+  const usagePath = join(usageDir, `${runStamp}.json`);
 
   const model = cfg.model || process.env.GEMINI_MODEL || DEFAULT_MODEL;
   log(`início serial=${serial} engine=${engine} model=${model} maxSteps=${maxSteps}`);
   log(`log → ${logPath}`);
+  log(`usage → ${usagePath}`);
 
   writeFileSync(
     logPath,
@@ -184,7 +217,27 @@ export async function runAgent(cfg, deps = {}) {
   const history = [];
   /** @type {object[]} */
   const steps = [];
+  /** @type {object[]} */
+  const usageCalls = [];
   let status = "max_steps";
+
+  const flushUsage = (extra = {}) => {
+    writeUsageFile(usagePath, {
+      started: startedAt,
+      ended: new Date().toISOString(),
+      serial,
+      engine,
+      model,
+      maxSteps,
+      prompt: cfg.prompt,
+      logPath,
+      status,
+      calls: usageCalls,
+      totals: sumUsage(usageCalls),
+      ...extra,
+    });
+  };
+  flushUsage();
 
   for (let i = 1; i <= maxSteps; i++) {
     log(`── passo ${i}/${maxSteps} ──`);
@@ -225,7 +278,13 @@ export async function runAgent(cfg, deps = {}) {
       });
       steps.push({ step: i, error: true, resultado });
       status = "fail";
+      flushUsage();
       break;
+    }
+
+    if (decision.usage) {
+      usageCalls.push({ step: i, usage: decision.usage });
+      flushUsage();
     }
 
     const { resumo, acao } = decision;
@@ -291,6 +350,7 @@ export async function runAgent(cfg, deps = {}) {
     "utf8",
   );
 
-  log(`fim status=${status} steps=${steps.length} log=${logPath}`);
-  return { status, steps, logPath };
+  flushUsage();
+  log(`fim status=${status} steps=${steps.length} log=${logPath} usage=${usagePath}`);
+  return { status, steps, logPath, usagePath, usage: sumUsage(usageCalls) };
 }

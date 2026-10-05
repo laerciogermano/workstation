@@ -5,6 +5,7 @@
  *   npm run agent -- --prompt ../roteiros/jornada-comprador.md
  *   npm run agent -- --prompt "objetivo em texto"
  *   npm run agent -- --prompt ./meu.txt --device emulator-5554 --max-steps 20
+ *   créditos: src/usage/<stamp>.json (--usage-dir)
  *
  * Env: GEMINI_API_KEY (obrigatório) · GEMINI_MODEL (opcional)
  */
@@ -55,6 +56,7 @@ const serial = loadSerial();
 const maxSteps = Number(argValue("--max-steps") || "40");
 const engine = argValue("--engine") || "rapidocr";
 const logDir = argValue("--log-dir") || join(SRC_ROOT, "logs", "agent");
+const usageDir = argValue("--usage-dir") || join(SRC_ROOT, "usage");
 
 if (!prompt) {
   console.error("uso: npm run agent -- --prompt <texto|arquivo.md>");
@@ -76,6 +78,19 @@ const result = await runAgent({
   maxSteps,
   engine,
   logDir,
+  usageDir,
 });
-console.log(JSON.stringify({ status: result.status, steps: result.steps.length, logPath: result.logPath }, null, 2));
+console.log(
+  JSON.stringify(
+    {
+      status: result.status,
+      steps: result.steps.length,
+      logPath: result.logPath,
+      usagePath: result.usagePath,
+      usage: result.usage,
+    },
+    null,
+    2,
+  ),
+);
 process.exit(result.status === "done" ? 0 : 1);

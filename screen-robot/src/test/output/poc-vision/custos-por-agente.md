@@ -78,29 +78,67 @@ Composição in: Imagem 20 KB = 258 (tile) + 280 (prompt) · Imagem 31 KB = 516 
 
 ---
 
-## 3. Custo de IA (Gemini Flash) — valor em US$
+## 3. Custo de IA — modelos Gemini elegíveis (US$)
 
-Preço: in US$ 0,075/1M · out US$ 0,30/1M · câmbio US$ 1 = R$ 5,50  
-US$/op: Imagem 20 KB ≈ 0,000130 · Imagem 31 KB ≈ 0,000150 · OCR ≈ 0,000103
+Elegíveis = multimodal (texto+imagem), família Flash, aptos a decidir tap/scroll na jornada.  
+Preços oficiais paid tier (US$ / 1M tokens) — [Gemini API pricing](https://ai.google.dev/gemini-api/docs/pricing) · câmbio US$ 1 = R$ 5,50.  
+\* 3.6 / 3.7 / **3.8** Flash: preço introdutório até 31/12/2026 (depois in US$ 1,50 · out US$ 7,50).
 
-| Modo | Ops/dia | US$/dia | Ops/sem (280) | US$/sem | Ops/mês (1.200) | US$/mês | R$/mês |
-|------|---------|---------|---------------|---------|-----------------|---------|--------|
-| Imagem ~20 KB | 40 | 0,005 | 280 | **0,036** | 1.200 | **0,16** | 0,86 |
-| Imagem ~31 KB | 40 | 0,006 | 280 | **0,042** | 1.200 | **0,18** | 0,99 |
-| OCR JSON | 40 | 0,004 | 280 | **0,029** | 1.200 | **0,12** | 0,68 |
+**Modelo aprovado (testado nesta POC visão LinkedIn):** ***Gemini 3.8 Flash*** — em negrito nas tabelas.
+
+Tokens/op usados no cálculo (seção 2): Imagem ~20 KB = 538 in + 300 out · OCR = 894 in + 120 out · 40 ops/dia · 280/sem · 1.200/mês.
+
+### Preço por modelo
+
+| Modelo | US$/1M in | US$/1M out | Status |
+|--------|-----------|------------|--------|
+| Gemini 2.5 Flash-Lite | 0,10 | 0,40 | elegível (mais barato) |
+| Gemini 3.1 Flash-Lite | 0,25 | 1,50 | elegível |
+| Gemini 2.5 Flash | 0,30 | 2,50 | elegível |
+| Gemini 3 Flash | 0,50 | 3,00 | elegível |
+| Gemini 3.6 Flash\* | 0,75 | 3,75 | elegível |
+| Gemini 3.7 Flash\* | 0,75 | 3,75 | elegível |
+| **Gemini 3.8 Flash\*** | **0,75** | **3,75** | **testado e aprovado** |
+| Gemini 3.5 Flash | 1,50 | 9,00 | elegível (mais caro) |
+
+### Custo / agente — modo Imagem ~20 KB (recomendado)
+
+| Modelo | US$/op | US$/dia | US$/sem | US$/mês | R$/mês |
+|--------|--------|---------|---------|---------|--------|
+| Gemini 2.5 Flash-Lite | 0,000174 | 0,007 | 0,049 | 0,21 | 1,15 |
+| Gemini 3.1 Flash-Lite | 0,000584 | 0,023 | 0,164 | 0,70 | 3,86 |
+| Gemini 2.5 Flash | 0,000911 | 0,036 | 0,255 | 1,09 | 6,02 |
+| Gemini 3 Flash | 0,001169 | 0,047 | 0,327 | 1,40 | 7,72 |
+| Gemini 3.6 Flash\* | 0,001528 | 0,061 | 0,428 | 1,83 | 10,09 |
+| Gemini 3.7 Flash\* | 0,001528 | 0,061 | 0,428 | 1,83 | 10,09 |
+| **Gemini 3.8 Flash\*** | **0,001528** | **0,061** | **0,428** | **1,83** | **10,09** |
+| Gemini 3.5 Flash | 0,003507 | 0,140 | 0,982 | 4,21 | 23,15 |
+
+### Custo / agente — modo OCR JSON (comparativo)
+
+| Modelo | US$/op | US$/dia | US$/sem | US$/mês | R$/mês |
+|--------|--------|---------|---------|---------|--------|
+| Gemini 2.5 Flash-Lite | 0,000137 | 0,005 | 0,038 | 0,16 | 0,91 |
+| Gemini 3.1 Flash-Lite | 0,000404 | 0,016 | 0,113 | 0,48 | 2,66 |
+| Gemini 2.5 Flash | 0,000568 | 0,023 | 0,159 | 0,68 | 3,75 |
+| Gemini 3 Flash | 0,000807 | 0,032 | 0,226 | 0,97 | 5,33 |
+| Gemini 3.6 Flash\* | 0,001121 | 0,045 | 0,314 | 1,34 | 7,40 |
+| Gemini 3.7 Flash\* | 0,001121 | 0,045 | 0,314 | 1,34 | 7,40 |
+| **Gemini 3.8 Flash\*** | **0,001121** | **0,045** | **0,314** | **1,34** | **7,40** |
+| Gemini 3.5 Flash | 0,002421 | 0,097 | 0,678 | 2,91 | 15,98 |
 
 Arquivo ~20 KB: [`compressed-20kb.webp`](compressed-20kb.webp) · [`meta-20kb.json`](meta-20kb.json)
 
-### N agentes / mês — custo monetário da API (dólares)
+### N agentes / mês — **Gemini 3.8 Flash** aprovado (US$)
 
-Sim: valores em **US$** (quanto se paga à API Gemini no mês). Não é quantidade de operações nem de tokens.
+Valores em **dólares** da API · modo Imagem ~20 KB (padrão aprovado na POC).
 
-| Agentes | Conexões/mês | Custo Imagem 20 KB | Custo Imagem 31 KB | Custo OCR |
-|---------|--------------|--------------------|--------------------|-----------|
-| 1 | 429 | US$ 0,16 | US$ 0,18 | US$ 0,12 |
-| 5 | 2.143 | US$ 0,78 | US$ 0,90 | US$ 0,62 |
-| 10 | 4.286 | US$ 1,56 | US$ 1,80 | US$ 1,24 |
-| 50 | 21.429 | US$ 7,81 | US$ 9,00 | US$ 6,18 |
+| Agentes | Conexões/mês | **Gemini 3.8 Flash** (img 20 KB) | Gemini 3.8 Flash (OCR) |
+|---------|--------------|----------------------------------|------------------------|
+| 1 | 429 | **US$ 1,83** | US$ 1,34 |
+| 5 | 2.143 | **US$ 9,17** | US$ 6,72 |
+| 10 | 4.286 | **US$ 18,34** | US$ 13,45 |
+| 50 | 21.429 | **US$ 91,71** | US$ 67,23 |
 
 ---
 
@@ -110,7 +148,7 @@ Sim: valores em **US$** (quanto se paga à API Gemini no mês). Não é quantida
 |----------|------------------------|---------------------------|
 | **Prós** | Coords de texto precisas (pixel OCR); input previsível em telas simples; output pode ser só a ação (~120 tok); RapidOCR já no screen-robot; barato em telas com pouco texto | Vê ícones sem texto (lupa, back, Connect gráfico); entende layout/estado (modal, pill, disabled); input estável em lista densa (~1 tile se ≤360–400px); menos frágil a falha de OCR no pill Connect |
 | **Contras** | Não vê ícones/imagens; Connect às vezes some no OCR (histórico da jornada); input cresce com tela densa (~700+ tok JSON); depende do engine (tesseract vs rapidocr) | Coords aproximadas (precisa `scaleToDevice`); qualidade baixa demais illegible; 540px pode virar 2 tiles; se pedir “descrever tudo”, output sobe (~300 tok); depende de API multimodal |
-| **Custo (100 connects/sem)** | ~US$ 0,12/mês · ~1,22 M tok/mês | ~US$ 0,16/mês (20 KB) · ~1,01 M tok/mês |
+| **Custo (100 connects/sem · Gemini 3.8 Flash)** | ~US$ 1,34/mês · ~1,22 M tok/mês | ~US$ 1,83/mês (20 KB) · ~1,01 M tok/mês |
 | **Melhor quando** | UI só texto, CTA legível no OCR, latência local importa | CTA visual, ícones, sheets, OCR instável no pill |
 | **Pior quando** | Pill Connect invisível no OCR → scroll infinito / tap errado | Compressão extrema (q1) ou pedir JSON enorme a cada frame |
 

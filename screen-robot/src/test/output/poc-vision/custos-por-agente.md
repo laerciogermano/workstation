@@ -33,6 +33,31 @@ Arquivo ~20 KB: [`compressed-20kb.webp`](compressed-20kb.webp) · meta: [`meta-2
 
 ---
 
+## Ops reais para 100 conexões (logs jornada)
+
+Fonte: `src/logs/jornada-comprador/` · 1 op = 1 passo com extract/OCR + decisão.
+
+| Run | Conexões | Ops (passos) | Ops / conexão |
+|-----|----------|--------------|---------------|
+| 2026-10-04T19-04-51 | 106 | 319 | 3,01 |
+| 2026-10-04T18-50-27 | 45 | 113 | 2,51 |
+| 2026-10-04T19-42-45 | 8 | 15 | 1,88 |
+| **Média ponderada** | **159** | **447** | **2,81** |
+
+**Para 100 conexões (média):** ~**280 operações** (~172 scrolls + passos Connect/Skip; setup ~5 ops/run).
+
+Runs ruins (OCR sem Connect, muito scroll): 10–24 ops/conexão — fora da média estável.
+
+Com ~280 ops para 100 connects (não 14.400/dia):
+
+| Modo | US$ / 100 connects | R$ / 100 connects |
+|------|--------------------|-------------------|
+| Imagem ~20 KB | 0,036 | 0,20 |
+| Imagem ~31 KB | 0,042 | 0,23 |
+| OCR JSON | 0,029 | 0,16 |
+
+---
+
 ## Notas
 
 - Bytes ≠ tokens: WebP ~20 KB nesta resolução = 1 tile (~258 tok imagem).
@@ -40,4 +65,4 @@ Arquivo ~20 KB: [`compressed-20kb.webp`](compressed-20kb.webp) · meta: [`meta-2
 - OCR = JSON da fixture People (~84 textos). Telas densas encarecem o OCR; telas vazias o barateiam.
 - Valor real: `usageMetadata` da API Gemini.
 
-**Antes → depois:** simulação só em canvas Cursor → este MD versionado junto da POC. Rollback: apagar este arquivo.
+**Antes → depois:** simulação só em canvas Cursor → este MD versionado junto da POC; incluída média de ops dos logs da jornada. Rollback: apagar este arquivo.

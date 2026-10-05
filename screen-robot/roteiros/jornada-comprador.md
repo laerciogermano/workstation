@@ -1,7 +1,7 @@
 # Roteiro: Buscar "comprador" e conectar (UI via OCR)
 
 Objetivo
-- Automatizar a jornada do operador: buscar "comprador" no LinkedIn (AVD já na página do LinkedIn), abrir Show all results, clicar em People e conectar nos perfis (Skip se aparecer), **scrollando até achar `Connect`**, até fim explícito da lista ou limite do LinkedIn.
+- Automatizar a jornada do operador: buscar "comprador" no LinkedIn (AVD já na página do LinkedIn), abrir Show all results, clicar em People, **filtrar localização Campinas**, e conectar nos perfis (Skip se aparecer), **scrollando até achar `Connect`**, até fim explícito da lista ou limite do LinkedIn.
 - Em **cada nova conexão** bem-sucedida, **registrar no log** todas as informações do comprador disponíveis no item da lista (OCR do card), antes/no ato do Connect.
 
 Modo de execução (obrigatório) — IA + linguagem natural
@@ -83,6 +83,19 @@ Passos (interfaces usadas)
    - esperar 2–3s
    - log: OCR + decisão tap People
 
+5b) Filtrar cidade **Campinas** (obrigatório antes do primeiro Connect)
+   - Após People, aplicar filtro de localização = **Campinas**. Sem esse filtro aplicado, **não** iniciar o passo 6.
+   - Fluxo típico (decidir pelo OCR; textos PT/EN aceitos):
+     1. Abrir filtros: chip `Locations` / `Location` / `Localização` na barra (`y` baixo) **ou** ícone/`All filters` / `Filter by` / `Filtros`.
+     2. Entrar em localização: `Locations` / `Location` / `Add a location` / `Adicionar local` / `Cities` / `Cidades`.
+     3. Digitar **`Campinas`** de uma vez (`type({ serial, text: "Campinas", … })` — **não** `adb input text`); fechar teclado se cobrir a lista.
+     4. Selecionar o resultado da sugestão que seja Campinas (ex.: `Campinas, Sao Paulo` / `Campinas, São Paulo` / `Campinas, Brazil`) — preferir match que contenha `Campinas` + `Paulo`/`Brazil`.
+     5. Aplicar: `Show results` / `Done` / `Apply` / `Mostrar resultados` / `Concluído`.
+     6. Validar (obrigatório): `extract` e confirmar chip/badge de filtro com `Campinas` (ou lista já restrita). Se não houver evidência → reabrir filtro e repetir (máx. 3 tentativas); falha → Encerramento `filter_campinas_failed`.
+   - esperar 2–3s após aplicar
+   - log: Decisão + OCR de cada subpasso (abrir filtro → digitar → selecionar → Show results) + Resultado com evidência `Campinas`
+   - **Antes → depois:** People → Connect direto → People → filtro Campinas → Connect. Rollback: remover este passo 5b e a menção a Campinas no Objetivo/Critérios.
+
 6) Iterar perfis e conectar (um Connect por item da lista)
    - **Só clicar onde o OCR devolveu `Connect`** (match exato `^Connect$`, `180 < y < 850`). **Jamais** clicar em `Message` / `Pending` / `Follow` / `Following`.
    - **Proibido tap estimado** por grau/`x: ~458`: se o extract não tiver a palavra `Connect`, **não** há clique nesse item — só scroll e tentar de novo. (O estimado era a causa de clicar em Message e ter que dar BACK.)
@@ -119,12 +132,13 @@ Passos (interfaces usadas)
    - teclado fechado antes de qualquer scroll da lista (centro)
 
 7) Encerramento
-   - disparado por: fim explícito da lista (OCR) **ou** limite LinkedIn **ou** `type_mismatch` no passo 3 **ou** erro fatal (tudo documentado no log)
+   - disparado por: fim explícito da lista (OCR) **ou** limite LinkedIn **ou** `type_mismatch` no passo 3 **ou** `filter_campinas_failed` no passo 5b **ou** erro fatal (tudo documentado no log)
    - log final no `.md`: totais + motivo de parada; opcionalmente índice/resumo dos compradores conectados nesta run
    - **parar a execução de imediato** — proibido continuar scroll/tap/extract após o encerramento
 
 Critérios de aceite
-- A jornada: Search → digitar **tudo de uma vez e checar o valor completo só no fim** → fechar teclado → Show all results → People → Connect (e Skip); scroll infinito até achar `Connect`; para só em fim explícito ou limite LinkedIn.
+- A jornada: Search → digitar **tudo de uma vez e checar o valor completo só no fim** → fechar teclado → Show all results → People → **filtro localização Campinas** → Connect (e Skip); scroll infinito até achar `Connect`; para só em fim explícito ou limite LinkedIn.
+- **Passo 5b:** filtro Campinas aplicado e evidenciado no OCR antes do primeiro Connect; sem filtro → não conectar.
 - Execução por **IA + este markdown**: sem script com o roteiro preso; cada passo = OCR → decisão em prosa no log → interface.
 - Após Encerramento, o AVD deixa de ser manipulado.
 - **Passo 3:** digitar `comprador` inteiro sem checagem intermediária; só então screenshot + `extract` + checagem do valor completo no campo Search; divergência → limpar, redigitar tudo ou `type_mismatch`; proibido validar a cada tecla.

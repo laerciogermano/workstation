@@ -194,6 +194,7 @@ OCR das teclas → tap por caractere (sem `input text`).
 | `text` | sim | Texto |
 | `region` | | `{ x, y, width, height }` teclado |
 | `delayMs` | | Default `100` |
+| `engine` | | `"tesseract"` · `"macos-vision"` · `"rapidocr"` |
 
 **Saída:** `undefined`
 
@@ -408,7 +409,7 @@ npm run view             # scrcpy
 |-----|------|
 | Implementação / testes / CLI | [`src/README.md`](src/README.md) |
 | Stories · épicos · BDDs | [`1.stories.md`](1.stories.md) · [`2.epics.md`](2.epics.md) · [`5.bdds.md`](5.bdds.md) |
-| Jornada comprador (IA + OCR; digitar tudo e checar valor só no fim; `### Comprador` por Connect; sem script com roteiro preso) | [`roteiros/jornada-comprador.md`](roteiros/jornada-comprador.md) |
+| Jornada comprador (IA + OCR; filtro cidade Campinas após People; digitar tudo e checar valor só no fim; `### Comprador` por Connect; sem script com roteiro preso) | [`roteiros/jornada-comprador.md`](roteiros/jornada-comprador.md) |
 | Referência Instagram (ops Android/PT por funcionalidade; Help Center) | [`roteiros/instagram-referencia.md`](roteiros/instagram-referencia.md) |
 | OCR backends (tesseract / macos-vision / rapidocr) | [`src/README.md`](src/README.md) · [`src/lib/extract-engines.js`](src/lib/extract-engines.js) |
 | Identidade do aparelho (US-22) | [`pocs/README.md`](pocs/README.md#mascarar-identidade-do-aparelho) |

@@ -8,6 +8,14 @@ import { dirname, resolve } from "node:path";
 import { adb, adbOk, connectIfTcp as defaultConnectIfTcp, sleep as defaultSleep } from "./adb.js";
 import { captureFrame } from "./frame.js";
 import { ocrWords, regionToRectangle } from "./ocr.js";
+import { ocrWordsMacosVision } from "./ocr-macos-vision.js";
+import { ocrWordsRapidocr } from "./ocr-rapidocr.js";
+
+const OCR_ENGINES = {
+  tesseract: ocrWords,
+  "macos-vision": ocrWordsMacosVision,
+  rapidocr: ocrWordsRapidocr,
+};
 
 function fail(code, msg) {
   const err = new Error(msg);
@@ -62,18 +70,35 @@ export function buildKeyCenters(words) {
     const t = String(w?.text || "").trim();
     if (!t) continue;
     const chars = [...t];
-    if (chars.length !== 1) continue;
-    const ch = chars[0];
     const b = w.bounds || { x: 0, y: 0, w: 0, h: 0 };
-    const center = {
-      x: Math.floor(b.x + b.w / 2),
-      y: Math.floor(b.y + b.h / 2),
-    };
-    map.set(ch, center);
-    const lower = ch.toLowerCase();
-    const upper = ch.toUpperCase();
-    if (!map.has(lower)) map.set(lower, center);
-    if (!map.has(upper)) map.set(upper, center);
+    if (chars.length === 1) {
+      const ch = chars[0];
+      const center = {
+        x: Math.floor(b.x + b.w / 2),
+        y: Math.floor(b.y + b.h / 2),
+      };
+      map.set(ch, center);
+      const lower = ch.toLowerCase();
+      const upper = ch.toUpperCase();
+      if (!map.has(lower)) map.set(lower, center);
+      if (!map.has(upper)) map.set(upper, center);
+    } else {
+      const clean = t.replace(/[^a-zA-Z]/g, "").toUpperCase();
+      const isRow1 = clean.length >= 4 && /^[QWERTYUIOP]+$/.test(clean);
+      const isRow2 = clean.length >= 4 && /^[ASDFGHJKL]+$/.test(clean);
+      const isRow3 = clean.length >= 4 && /^[ZXCVBNM]+$/.test(clean);
+      if (isRow1 || isRow2 || isRow3) {
+        const step = b.w / clean.length;
+        [...clean].forEach((c, i) => {
+          const center = {
+            x: Math.floor(b.x + step * (i + 0.5)),
+            y: Math.floor(b.y + b.h / 2),
+          };
+          map.set(c, center);
+          map.set(c.toLowerCase(), center);
+        });
+      }
+    }
   }
   return map;
 }
@@ -157,6 +182,18 @@ export async function launch(cfg, deps = {}) {
 }
 
 /**
+ * @param {{ serial: string, package: string }} cfg
+ * @param {object} [deps]
+ */
+export function stop(cfg, deps = {}) {
+  const serial = requireSerial(cfg);
+  const d = resolveDeps(deps);
+  const pkg = cfg.package;
+  if (!pkg) fail("OPERATE_STOP_FAILED", "stop: falta package");
+  d.runAdb(serial, ["shell", "am", "force-stop", pkg]);
+}
+
+/**
  * @param {{ serial: string, x: number, y: number }} cfg
  * @param {object} [deps]
  */
@@ -224,7 +261,9 @@ export async function type(cfg, deps = {}) {
   try {
     const framePath = await d.capture(serial, d.deps);
     const rectangle = regionToRectangle(cfg.region);
-    const words = await d.recognize(framePath, {
+    const engine = cfg.engine || d.deps?.engine;
+    const recognizeFn = (engine && OCR_ENGINES[engine]) || d.recognize;
+    const words = await recognizeFn(framePath, {
       ...d.deps,
       rectangle: rectangle || undefined,
       region: cfg.region,
@@ -232,7 +271,13 @@ export async function type(cfg, deps = {}) {
     const keys = buildKeyCenters(words);
     const delayMs = Number(cfg.delayMs ?? 100);
     for (const ch of s) {
-      if (ch === " " || ch === "\n" || ch === "\t") continue;
+      if (ch === "\n" || ch === "\t") continue;
+      if (ch === " ") {
+        const spaceHit = keys.get(" ") || { x: 270, y: 845 };
+        tap({ serial, x: spaceHit.x, y: spaceHit.y }, deps);
+        if (delayMs > 0) await d.sleep(delayMs);
+        continue;
+      }
       const hit =
         keys.get(ch) || keys.get(ch.toLowerCase()) || keys.get(ch.toUpperCase());
       if (!hit) {

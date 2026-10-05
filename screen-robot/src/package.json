@@ -18,6 +18,8 @@
     "print": "node scripts/print.js",
     "ocr": "node scripts/ocr-image.js",
     "poc:vision": "node scripts/poc-vision-compress.js",
+    "agent": "node scripts/run-agent.js",
+    "agent:smoke": "node scripts/smoke-agent.js",
     "view": "bash scripts/view.sh",
     "test": "node --test 'lib/**/*.test.js'",
     "test:unit": "node --test 'lib/**/*.test.js'",

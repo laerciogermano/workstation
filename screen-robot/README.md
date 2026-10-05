@@ -10,11 +10,14 @@ import { on } from "./src/lib/events.js";
 import { installApk } from "./src/lib/apks.js";
 import { launch, tap, tapElement, type, scroll, screenshot, matchImage, openScrcpy } from "./src/lib/operate.js";
 import { extract, findByText } from "./src/lib/extract.js";
+import { decide } from "./src/lib/agent-decide.js";
+import { runAgent } from "./src/lib/agent-run.js";
 import { saveSession, restoreSession, removeSession } from "./src/lib/session.js";
 import { resetInstance } from "./src/lib/reset-instance.js";
 ```
 
-Pré-requisitos: Node ≥ 18 · `adb` · AVD (`kind: "avd"`, Mac) ou Linux+KVM (`kind: "docker-avd"`) · config [`src/device.config.json`](src/device.config.json).
+Pré-requisitos: Node ≥ 18 · `adb` · AVD (`kind: "avd"`, Mac) ou Linux+KVM (`kind: "docker-avd"`) · config [`src/device.config.json`](src/device.config.json).  
+Motor Gemini (EP-07): `GEMINI_API_KEY` · modelo default `gemini-3.8-flash`.
 
 ---
 
@@ -396,6 +399,63 @@ await removeSession({ path: "./state/session.json" });
 
 ---
 
+### `decide(cfg)` — EP-07
+
+Decide a próxima ação via **Gemini 3.8 Flash** a partir do OCR (sem imagem).
+
+**Entrada:** `prompt` · `ocr` (`{ text, x, y }[]`) · `history?` · `model?` · `apiKey?` (`GEMINI_API_KEY`)
+
+**Saída**
+
+```json
+{
+  "resumo": "lista People com Connect",
+  "acao": {
+    "type": "tap",
+    "x": 458,
+    "y": 344,
+    "direction": null,
+    "text": null,
+    "code": null,
+    "ms": null,
+    "motivo": "Connect"
+  }
+}
+```
+
+`acao.type`: `tap` | `scroll` | `type` | `key` | `sleep` | `done` | `fail`. Coords = escala do device (`extract`).
+
+---
+
+### `runAgent(cfg)` — EP-07
+
+Loop: `extract` (RapidOCR) → `decide` → gesto → log `.md`.
+
+**Entrada:** `serial` · `prompt` · `maxSteps?` (40) · `engine?` (`rapidocr`) · `logDir?`
+
+**Saída:** `{ status: "done"|"fail"|"max_steps", steps, logPath }`
+
+```js
+const result = await runAgent({
+  serial,
+  prompt: readFileSync("./roteiros/jornada-comprador.md", "utf8"),
+  maxSteps: 40,
+});
+```
+
+```bash
+cd screen-robot/src
+export GEMINI_API_KEY=…
+npm run agent -- --prompt ../roteiros/jornada-comprador.md
+npm run agent:smoke   # 1–2 passos; sem key usa heurística Connect/scroll
+```
+
+**Antes → depois:** decisão manual no chat → `runAgent` / `npm run agent`. Rollback: não chamar o motor; operar EP-04/05 + roteiro.
+
+Plano: [`implementation-plan/EP-07-motor-gemini.md`](implementation-plan/EP-07-motor-gemini.md).
+
+---
+
 ## Uso rápido
 
 ```bash
@@ -403,12 +463,14 @@ cd screen-robot/src
 npm test
 npm run linkedin-login   # piloto
 npm run view             # scrcpy
+npm run agent -- --prompt ../roteiros/jornada-comprador.md   # GEMINI_API_KEY
 ```
 
 | Doc | Link |
 |-----|------|
 | Implementação / testes / CLI | [`src/README.md`](src/README.md) |
 | Stories · épicos · BDDs | [`1.stories.md`](1.stories.md) · [`2.epics.md`](2.epics.md) · [`5.bdds.md`](5.bdds.md) |
+| Motor Gemini (EP-07) | [`implementation-plan/EP-07-motor-gemini.md`](implementation-plan/EP-07-motor-gemini.md) |
 | Jornada comprador (IA + OCR; filtro cidade Campinas após People; digitar tudo e checar valor só no fim; `### Comprador` por Connect; sem script com roteiro preso) | [`roteiros/jornada-comprador.md`](roteiros/jornada-comprador.md) |
 | Referência Instagram (ops Android/PT por funcionalidade; Help Center) | [`roteiros/instagram-referencia.md`](roteiros/instagram-referencia.md) |
 | OCR backends (tesseract / macos-vision / rapidocr) | [`src/README.md`](src/README.md) · [`src/lib/extract-engines.js`](src/lib/extract-engines.js) |

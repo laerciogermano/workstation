@@ -7,7 +7,7 @@
 
 ## Escopo atual
 
-EP-01 · EP-02 · EP-03 · EP-04 · EP-05 · EP-06.
+EP-01 · EP-02 · EP-03 · EP-04 · EP-05 · EP-06 · EP-07.
 
 ## Árvore
 
@@ -46,10 +46,13 @@ tasks/
 │   ├── TSK-026-extrair-listas/            # cancelado (absorvido em US-13)
 │   ├── TSK-027-extrair-imagens/           # cancelado (absorvido em US-13)
 │   └── TSK-037-buscar-por-texto/
-└── TSK-028-sessao/
-    ├── TSK-029-salvar-sessao/
-    ├── TSK-030-remover-sessao/
-    └── TSK-031-recuperar-sessao/
+├── TSK-028-sessao/
+│   ├── TSK-029-salvar-sessao/
+│   ├── TSK-030-remover-sessao/
+│   └── TSK-031-recuperar-sessao/
+└── TSK-038-motor-gemini/
+    ├── TSK-039-decide-gemini/
+    └── TSK-040-run-agent/
 ```
 
 | TSK | Atividade | Pasta |
@@ -71,3 +74,5 @@ tasks/
 | TSK-024..027 | Filhas EP-05 **canceladas / removidas** | sob `TSK-021-extrair-elementos/` |
 | TSK-028 | Sessão | [`TSK-028-sessao/`](TSK-028-sessao/README.md) |
 | TSK-029..031 | Filhas EP-06 | sob `TSK-028-sessao/` |
+| TSK-038 | Motor Gemini | [`TSK-038-motor-gemini/`](TSK-038-motor-gemini/README.md) |
+| TSK-039..040 | Filhas EP-07 | sob `TSK-038-motor-gemini/` |

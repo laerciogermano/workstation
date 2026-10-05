@@ -25,6 +25,8 @@ import { on } from "./lib/events.js";
 import { installApk } from "./lib/apks.js";
 import { launch, tap, tapElement, type, scroll, screenshot, matchImage, openScrcpy } from "./lib/operate.js";
 import { extract } from "./lib/extract.js";
+import { decide } from "./lib/agent-decide.js";
+import { runAgent } from "./lib/agent-run.js";
 import { saveSession, removeSession, restoreSession } from "./lib/session.js";
 import { resetInstance } from "./lib/reset-instance.js";
 ```
@@ -79,6 +81,7 @@ const elements = await extract({ serial });
 | `on` | [`lib/events.js`](lib/events.js) |
 | Gestos / captura | [`lib/operate.js`](lib/operate.js) |
 | `extract` | [`lib/extract.js`](lib/extract.js) |
+| `decide` / `runAgent` (EP-07 Gemini) | [`lib/agent-decide.js`](lib/agent-decide.js) · [`lib/agent-run.js`](lib/agent-run.js) · [`lib/gemini.js`](lib/gemini.js) |
 | Sessão | [`lib/session.js`](lib/session.js) |
 
 ---
@@ -162,6 +165,36 @@ npm run print -- -n teste.png
 Tira screenshot do device online e grava em `screenshots/<nome>.png` (path absoluto ou com `/` grava no caminho dado). Serial: `--device` → `ANDROID_SERIAL` → `device.config.json` → 1º device ADB.
 
 **Antes → depois:** não havia `npm run print`; equivalente antigo: `node cli.js shot ./screenshots/tela.png --device …`. Rollback: remover o script npm `print` e `scripts/print.js`.
+
+---
+
+## Motor Gemini (EP-07) — `decide` / `runAgent`
+
+Loop genérico: OCR RapidOCR → Gemini 3.8 Flash → `tap`/`scroll`/`type`/`key` → log em `logs/agent/`. Prompt/roteiro entram como **input** (não hardcodar jornada).
+
+```bash
+cd screen-robot/src
+export GEMINI_API_KEY=…          # obrigatório para decide real
+# opcional: export GEMINI_MODEL=gemini-3.8-flash
+
+npm run agent -- --prompt ../roteiros/jornada-comprador.md
+npm run agent -- --prompt "abra o LinkedIn e mostre as últimas 10 conexões"
+npm run agent:smoke              # 1–2 passos no device; sem key = heurística Connect/scroll
+```
+
+```js
+import { decide } from "./lib/agent-decide.js";
+import { runAgent } from "./lib/agent-run.js";
+
+const { acao } = await decide({ prompt, ocr });
+const { status, logPath } = await runAgent({ serial, prompt, maxSteps: 40 });
+```
+
+Testes: `node --test lib/gemini.test.js lib/agent-decide.test.js lib/agent-run.test.js`.  
+Plano: [`../implementation-plan/EP-07-motor-gemini.md`](../implementation-plan/EP-07-motor-gemini.md).  
+POC custo/visão: [`test/output/poc-vision/custos-por-agente.md`](test/output/poc-vision/custos-por-agente.md).
+
+**Antes → depois:** IA no chat Cursor chama `extract`/`tap` à mão → `runAgent` + `GEMINI_API_KEY`. Rollback: não usar `npm run agent`; voltar ao fluxo manual do roteiro.
 
 ---
 

@@ -238,6 +238,18 @@ POC custo/visão: [`test/output/poc-vision/custos-por-agente.md`](test/output/po
 
 Cada `runAgent` grava em `usage/` (sem subpasta): **1 arquivo `<ISO-stamp-com-ms>.json` por request HTTP ao chat**. Colisão no mesmo ms → sufixo `-2`, `-3`….
 
+### Relatório HTML de tokens
+
+```bash
+cd screen-robot/src
+npm run usage:report
+# abre usage/dashboard.html no browser
+```
+
+Gera [`usage/dashboard.html`](usage/dashboard.html) com cards (totais), barras por step (`promptTokenCount` / `candidatesTokenCount` / `totalTokenCount`), linha acumulada e tabela. Filtra por `run`. Fonte: só metadados de `usage/*.json` (não embute prompt completo).
+
+**Antes → depois:** usage só em JSON solto → relatório visual regenerável. Rollback: `rm usage/dashboard.html scripts/build-usage-dashboard.js` e remover script `usage:report` do `package.json`.
+
 Abort (Ctrl+C) mantém os arquivos já gravados. Status mid-run: `running` no log.
 
 **Antes → depois (usage):** só gravava passo com `usageMetadata`; stamp sem ms podia sobrescrever; Ctrl+C perdia flush. Rollback: stamp `.slice(0,19)` e push só se `decision.usage`.

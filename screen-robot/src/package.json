@@ -18,6 +18,7 @@
     "print": "node scripts/print.js",
     "ocr": "node scripts/ocr-image.js",
     "poc:vision": "node scripts/poc-vision-compress.js",
+    "usage:report": "node scripts/build-usage-dashboard.js",
     "agent": "node scripts/run-agent.js",
     "agent:smoke": "node scripts/smoke-agent.js",
     "view": "bash scripts/view.sh",

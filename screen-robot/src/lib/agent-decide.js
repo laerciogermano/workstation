@@ -73,19 +73,17 @@ function normElementKey(s) {
 }
 
 /**
- * Compacta extract para o prompt: id + text + x,y (IA copia x,y no tap).
+ * Compacta extract para o prompt: type + text + x,y (sem id — IA devolve x,y no tap).
  * @param {Array<{ text?: string, type?: string, x?: number, y?: number }>} ocr
  */
 export function compactOcr(ocr) {
-  return (ocr || []).map((e, i) => {
-    const id = `e${i}`;
+  return (ocr || []).map((e) => {
     const x = Number(e?.x);
     const y = Number(e?.y);
     if (e?.type === "icon") {
-      return { id, type: "icon", x, y };
+      return { type: "icon", x, y };
     }
     return {
-      id,
       type: "text",
       text: String(e?.text ?? ""),
       x,
@@ -170,8 +168,10 @@ export function parseActionPayload(raw) {
   if (type === "tap") {
     const hasXy = Number.isFinite(out.x) && Number.isFinite(out.y);
     if (!hasXy) {
-      fail("AGENT_BAD_ACTION", "tap exige x,y numéricos (copiados do extract)");
+      fail("AGENT_BAD_ACTION", "tap exige x,y numéricos (decididos pela IA a partir do extract)");
     }
+    // OCR/visão: resposta de tap é só x,y — não usar id/element da IA.
+    out.element = null;
   }
   if (type === "type" && !out.text) {
     const m = String(out.motivo || "").match(/'([^']+)'|"([^"]+)"/);
@@ -191,14 +191,13 @@ export function parseActionPayload(raw) {
 }
 
 export function buildSystemPrompt() {
-  return `Você opera um smartphone Android olhando só a lista extract da tela (id, type, text, x, y).
+  return `Você opera um smartphone Android olhando só a lista extract da tela (type, text, x, y). Sem id.
 
 Responda APENAS JSON válido (sem markdown) no formato:
 {
   "resumo": "2-4 frases do que tem na tela",
   "acao": {
     "type": "tap|scroll|type|key|sleep|done|fail",
-    "element": null,
     "x": null,
     "y": null,
     "direction": null,
@@ -210,10 +209,9 @@ Responda APENAS JSON válido (sem markdown) no formato:
 }
 
 Regras de tap (OCR):
-- tap: acao.x e acao.y = os números x,y EXATOS do item no extract (copie literalmente do JSON do prompt).
-- PROIBIDO recalcular, aproximar, somar offset ou inventar x,y. Só repetir o par x,y recebido no input.
-- acao.element = text EXATO desse mesmo item (opcional; ajuda auditoria). Icon sem text → element null, use o x,y do icon.
-- Sem o par x,y na lista → não tap. NÃO invente text/coords fora do extract.`;
+- tap: acao.x e acao.y = as coords que VOCÊ escolhe para clicar (use os x,y do extract como referência; pode ser o centro do item alvo).
+- PROIBIDO mandar id / element / e0 / e1. Só x,y.
+- Sem alvo claro no extract → não tap.`;
 }
 
 /**
@@ -230,7 +228,6 @@ Responda APENAS JSON válido (sem markdown) no formato:
   "resumo": "2-4 frases do que tem na tela",
   "acao": {
     "type": "tap|scroll|type|key|sleep|done|fail",
-    "element": null,
     "x": null,
     "y": null,
     "direction": null,
@@ -239,7 +236,9 @@ Responda APENAS JSON válido (sem markdown) no formato:
     "ms": null,
     "motivo": "..."
   }
-}`;
+}
+
+Regras de tap (visão): acao.x e acao.y na escala da imagem. PROIBIDO id/element.`;
 }
 
 /**

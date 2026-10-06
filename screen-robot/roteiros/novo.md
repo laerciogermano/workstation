@@ -4,7 +4,7 @@ Ordem obrigatória (nunca pule): 1→2→3→4/5→6→7→8→9.
 SEM type "comprador" no histórico desta run → PROIBIDO tap Show all / Showall / Show all results.
 SEM tap Search no histórico → PROIBIDO type. SEM type → PROIBIDO Show all. SEM Show all (ou lista já aberta) → PROIBIDO done.
 
-Tap: acao.x,y = números EXATOS do extract (copie do JSON). acao.element = text desse item. PROIBIDO recalcular x,y. PROIBIDO inventar coords/label (ex. OCR só "Show all" → NÃO tap "Show all results" com coords inventadas). Sem o par x,y no OCR → não tap.
+Tap: acao.x e acao.y = coords do alvo (use os x,y do extract). PROIBIDO id/element/e0. PROIBIDO inventar alvo que não está no OCR (ex. Show all results se só há Show all). Sem coords → não tap.
 
 Key: {"type":"key","code":"KEYCODE_BACK"} — NUNCA {"type":"KEYCODE_BACK"}.
 
@@ -29,8 +29,8 @@ Passos:
 
 3) Gaveta — Chrome + Calendar + LinkedIn/Linkedln NESTE extract
    OCR: Chrome@252 · Calendar@253 · LinkedIn@368 · Linkedln@369
-   Ação: tap LinkedIn ou Linkedln (id atual). Sem Chrome/Settings.
-   Sucesso: lista some → 4/6. Falha: 1 retap no id atual.
+   Ação: tap nas x,y do text LinkedIn ou Linkedln. Sem Chrome/Settings.
+   Sucesso: lista some → 4/6. Falha: 1 retap nas coords atuais do OCR.
 
 4) Splash — poucos hits, in@~476, SEM Chrome. Histórico TEM tap LinkedIn.
    OCR: 12:05 g in 0 •@23 · in@476
@@ -41,7 +41,7 @@ Passos:
 
 6) Feed LinkedIn — Search y<120 + Home/Network/Jobs. SEM Recent/Show all. Histórico SEM type.
    OCR: Search@79 · likes@144 · Home@872 · Network@872 · Jobs@872
-   Ação: tap Search (id do extract). ÚNICA ação. PROIBIDO Show all. PROIBIDO type. PROIBIDO done. PROIBIDO y=473 inventado.
+   Ação: tap nas x,y de Search (y<120). ÚNICA ação. PROIBIDO Show all. PROIBIDO type. PROIBIDO done. PROIBIDO y=473 inventado.
    Sucesso: teclado ou OCR pobre → 7. Falha: retap Search 1×; sem Search → sleep 1500.
 
 7) Type "comprador" — DEPOIS do tap Search. Histórico TEM tap Search. SEM type ainda.
@@ -55,10 +55,10 @@ Passos:
    1. "Show all results" ou "Showallresults" (y~470) se existir
    2. senão "Show all" ou "Showall" (y~152)
    OCR comum (só Show all, SEM Show all results): Search@80 · Showall@152 · Show all@153 · Recent@153 · Rafael@286
-   Ação: tap esse text/id. Sem inventar "Show all results". Sem Show translation. Sem Jobs y≥850.
+   Ação: tap nas x,y desse text. Sem inventar "Show all results". Sem Show translation. Sem Jobs y≥850.
    Teclado aberto e SEM Show all/Showall no OCR: {"type":"key","code":"KEYCODE_BACK"} 1×, depois tap no OCR novo.
    Sucesso: botão some OU lista com 1st/2nd / Clear all+Recent sem Show all → 9.
-   Falha: retap id atual 1×; senão fail show_all_nao_visivel.
+   Falha: retap nas coords atuais 1×; senão fail show_all_nao_visivel.
 
 9) Done — (A) histórico já tem tap Show all/Showall/Show all results OU (B) OCR = lista aberta: Recent/Clear all + cards 1st/2nd SEM Show all/Showall
    OCR lista aberta: Recent@81 · Clear all@81 · Rafael Nascimento · 2nd@156 · Campinas@229

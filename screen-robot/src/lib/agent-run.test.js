@@ -95,7 +95,7 @@ describe("agent-run (SC-32)", () => {
     );
   });
 
-  it("runAgent: ELEMENT_MISS não executa tap", async () => {
+  it("runAgent: TAP_NO_XY não executa tap", async () => {
     const logDir = mkdtempSync(join(tmpdir(), "sr-agent-"));
     const usageDir = mkdtempSync(join(tmpdir(), "sr-usage-"));
     const taps = [];
@@ -117,8 +117,8 @@ describe("agent-run (SC-32)", () => {
           ],
           decide: async () => ({
             resumo: "Connect",
-            elementos: [{ id: "e0", label: "Connect" }],
-            acao: { type: "tap", element: "Connect", motivo: "Connect" },
+            elementos: [{ label: "Connect" }],
+            acao: { type: "tap", element: "Connect", motivo: "sem xy" },
           }),
           tapElement: (cfg) => taps.push(cfg),
         },
@@ -126,7 +126,7 @@ describe("agent-run (SC-32)", () => {
       assert.equal(taps.length, 0);
       assert.ok(
         result.steps.some((s) =>
-          String(s.acao?.motivo || s.resultado || "").includes("ELEMENT_MISS"),
+          String(s.acao?.motivo || s.resultado || "").includes("TAP_NO_XY"),
         ),
       );
     } finally {
@@ -225,8 +225,8 @@ describe("agent-run (SC-32)", () => {
             assert.equal(history.length, 1);
             assert.equal(history[0].resultado, "tap 458,344");
             assert.deepEqual(history[0].ocr, [
-              { id: "e0", type: "text", text: "Connect", x: 458, y: 344 },
-              { id: "e1", type: "text", text: "People", x: 80, y: 150 },
+              { type: "text", text: "Connect", x: 458, y: 344 },
+              { type: "text", text: "People", x: 80, y: 150 },
             ]);
             return {
               resumo: "ok",

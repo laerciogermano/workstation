@@ -251,7 +251,7 @@ npm run agent:smoke              # 1–2 passos no device; sem key = heurística
 
 **Antes → depois (tap vs label OCR):** mini gravava `elementos.label=Connect` em coords cujo extract era `Comprador` (cargo) e o runtime tocava o xy. Agora: system pede copiar `text` do OCR; `runAgent` recusa tap se o label ≠ text no ponto (`TAP_LABEL_MISMATCH` → sleep) ou se não há text (`TAP_MISS`). Off: `AGENT_TAP_GROUND=0`. Rollback: omitir o guard / env=0.
 
-**Antes → depois (tap por element → x,y do extract):** OCR mandava só `element` (id `eN`); `decide`/`runAgent` resolviam coords. Problema: id muda a cada turno (`e10`=Search → `e10`=tecla `0`). Agora: prompt inclui `x,y`; system manda **copiar** o par do extract (proibido recalcular); `decide` exige `x,y` e não sobrescreve. Grounding `TAP_MISS`/`TAP_LABEL_MISMATCH` segue. Fallback: tap sem xy + `element` ainda resolve no `runAgent`. Rollback: `compactOcr` sem x; system/tap só por id.
+**Antes → depois (tap só x,y da IA):** OCR usava `element`/id `eN` (id muda a cada turno). Agora: prompt = `type,text,x,y` (sem id); system/schema **sem** `element`; `parseActionPayload` zera `element` e exige `x,y`; `runAgent` sem xy → `TAP_NO_XY`. Vision igual (x,y). Rollback: `compactOcr` com id; tap por `element` + `resolveTapElement`.
 
 **Antes → depois (comprador Campinas do zero):** o roteiro antigo assumia LinkedIn já aberto e o mini pulava busca/filtro. Agora: [`roteiros/jornada-linkedin-comprador-campinas.md`](../roteiros/jornada-linkedin-comprador-campinas.md) (FASE 0 abre o app). Rollback: [`jornada-linkedin-campinas.md`](../roteiros/jornada-linkedin-campinas.md).
 

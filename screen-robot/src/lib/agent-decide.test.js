@@ -30,14 +30,14 @@ const FIXTURE = join(
 );
 
 describe("agent-decide (SC-31)", () => {
-  it("compactOcr usa id+text+x+y", () => {
+  it("compactOcr usa text+x+y sem id", () => {
     const ocr = compactOcr([
       { type: "text", text: "Connect", x: 1, y: 2 },
       { type: "icon", x: 80, y: 140 },
     ]);
     assert.deepEqual(ocr, [
-      { id: "e0", type: "text", text: "Connect", x: 1, y: 2 },
-      { id: "e1", type: "icon", x: 80, y: 140 },
+      { type: "text", text: "Connect", x: 1, y: 2 },
+      { type: "icon", x: 80, y: 140 },
     ]);
   });
 
@@ -58,35 +58,35 @@ describe("agent-decide (SC-31)", () => {
       /\b(linkedin|instagram|tinder|campinas|connect|settings|calendar|gmail|chrome|comprador|nexus|sdk_gphone)\b/i;
     assert.equal(banned.test(ocr), false, ocr.match(banned)?.[0]);
     assert.equal(banned.test(vision), false, vision.match(banned)?.[0]);
-    assert.match(ocr, /copie literalmente|EXATOS/i);
-    assert.match(ocr, /PROIBIDO recalcular/);
+    assert.match(ocr, /PROIBIDO mandar id/i);
+    assert.match(ocr, /acao\.x/);
   });
 
-  it("parseActionPayload valida tap por x,y", () => {
+  it("parseActionPayload valida tap por x,y e ignora element", () => {
     const p = parseActionPayload({
       resumo: "lista People",
-      acao: { type: "tap", element: "Connect", x: 458, y: 344, motivo: "Connect" },
+      acao: { type: "tap", element: "e1", x: 458, y: 344, motivo: "Connect" },
     });
     assert.equal(p.acao.type, "tap");
-    assert.equal(p.acao.element, "Connect");
+    assert.equal(p.acao.element, null);
     assert.equal(p.acao.x, 458);
     assert.equal(p.acao.y, 344);
   });
 
-  it("decide OCR: mantém x,y copiados da IA", async () => {
+  it("decide OCR: mantém x,y da IA e zera element", async () => {
     const ocr = [
-      { id: "e0", text: "People", x: 80, y: 150 },
-      { id: "e1", text: "Connect", x: 458, y: 344 },
+      { text: "People", x: 80, y: 150 },
+      { text: "Connect", x: 458, y: 344 },
     ];
     const stub = async () => ({
       text: JSON.stringify({
         resumo: "Connect",
         acao: {
           type: "tap",
-          element: "Connect",
+          element: "e1",
           x: 458,
           y: 344,
-          motivo: "tap coords do extract",
+          motivo: "tap coords",
         },
       }),
     });
@@ -94,7 +94,7 @@ describe("agent-decide (SC-31)", () => {
       { prompt: "conectar", ocr, sense: "ocr" },
       { generateContent: stub },
     );
-    assert.equal(out.acao.element, "Connect");
+    assert.equal(out.acao.element, null);
     assert.equal(out.acao.x, 458);
     assert.equal(out.acao.y, 344);
   });
@@ -216,7 +216,7 @@ describe("agent-decide (SC-31)", () => {
       { generateContent: stub },
     );
     assert.equal(out.acao.type, "tap");
-    assert.equal(out.acao.element, "Connect");
+    assert.equal(out.acao.element, null);
     assert.equal(out.acao.x, 458);
     assert.equal(out.acao.y, 344);
     assert.match(out.acao.motivo, /Connect/i);

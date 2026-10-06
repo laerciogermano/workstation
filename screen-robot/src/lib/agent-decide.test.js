@@ -61,7 +61,9 @@ describe("agent-decide (SC-31)", () => {
     assert.match(ocr, /PROIBIDO id/i);
     assert.match(ocr, /alvo clicável/i);
     assert.match(ocr, /PROIBIDO fail/i);
-    assert.match(vision, /NÃO copie coords/i);
+    assert.match(ocr, /EXCLUSIVAMENTE do ÚLTIMO extract|ÚLTIMO extract/i);
+    assert.match(ocr, /PROIBIDO reusar/i);
+    assert.match(vision, /EXCLUSIVAMENTE desta imagem|PROIBIDO reusar/i);
     assert.match(ocr, /acao\.x/);
   });
 

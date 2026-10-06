@@ -501,7 +501,9 @@ export async function runAgent(cfg, deps = {}) {
 
   // recover entre falhas (device offline / extract). Default 2s. 0 = imediato (testes).
   const recoverMs = Number(cfg.recoverDelayMs ?? process.env.AGENT_RECOVER_MS ?? 2000);
-  const stepDelayMs = Number(cfg.stepDelayMs ?? process.env.AGENT_STEP_DELAY_MS ?? 0);
+  const stepDelayMs = Number(
+    cfg.stepDelayMs ?? process.env.AGENT_STEP_DELAY_MS ?? 3000,
+  );
 
   for (let i = 1; i <= maxSteps; i++) {
     log(`── passo ${i}/${maxSteps} ──`);

@@ -209,7 +209,8 @@ Responda APENAS JSON válido (sem markdown) no formato:
 }
 
 Regras de tap (OCR):
-- tap: acao.x e acao.y = as coords que VOCÊ escolhe para clicar (use os x,y do extract como referência; pode ser o centro do item alvo).
+- tap: acao.x e acao.y = as coords que VOCÊ escolhe para clicar (use os x,y do extract ATUAL como referência; pode ser o centro do item alvo).
+- NÃO use estritamente coords do roteiro/prompt/histórico: x,y de passos antigos ou exemplos do texto NÃO são válidos. Só o extract desta tela.
 - PROIBIDO mandar id / element / e0 / e1. Só x,y.
 - Sem alvo claro no extract → não tap.`;
 }
@@ -238,7 +239,7 @@ Responda APENAS JSON válido (sem markdown) no formato:
   }
 }
 
-Regras de tap (visão): acao.x e acao.y na escala da imagem. PROIBIDO id/element.`;
+Regras de tap (visão): acao.x e acao.y na escala DESTA imagem. NÃO copie coords do roteiro/prompt/histórico. PROIBIDO id/element.`;
 }
 
 /**

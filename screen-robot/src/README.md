@@ -306,6 +306,10 @@ Fallback default (`decide`): do modelo escolhido desce a escada `gemini-3.8-flas
 
 **Antes → depois (sem espera):** `AGENT_RECOVER_MS` 1500 / `stepDelayMs` 600 / loading 800ms / request timeout 30s → defaults **0** (retry na hora; request sem abort). Rollback: `export AGENT_RECOVER_MS=1500 AGENT_STEP_DELAY_MS=600 GEMINI_TIMEOUT_MS=30000`.
 
+**Antes → depois (stepDelay 3s):** default `AGENT_STEP_DELAY_MS` era **0** → **3000** (espera após cada ação antes do próximo extract). Override: `--step-delay` / `runAgent({ stepDelayMs })` / env. Rollback: `export AGENT_STEP_DELAY_MS=0`.
+
+**Antes → depois (coords do prompt):** system permitia tratar x,y do roteiro/histórico como tap. Agora: só extract/imagem atuais; proibido reusar coords do prompt. Rollback: remover a linha “NÃO use estritamente coords…” em `buildSystemPrompt` / vision.
+
 **Antes → depois (recover device offline):** extract falhava (`device not found`) e reentrava em 0ms até `maxSteps`. Default `AGENT_RECOVER_MS=2000`. Rollback: `export AGENT_RECOVER_MS=0`.
 
 ```js

@@ -79,7 +79,7 @@ describe("gemini", () => {
     assert.ok(c.includes("gemini-3.1-flash-lite"));
   });
 
-  it("high demand espera e retria o mesmo modelo", async () => {
+  it("high demand retria o mesmo modelo na hora", async () => {
     const modelsHit = [];
     const waits = [];
     let n = 0;
@@ -108,7 +108,7 @@ describe("gemini", () => {
         model: "gemini-3.8-flash",
         fallbackModels: ["gemini-3.1-flash-lite"],
         retries: 2,
-        retryMs: 1,
+        retryMs: 2000,
       },
       {
         fetch: fetchStub,
@@ -118,7 +118,7 @@ describe("gemini", () => {
     );
     assert.equal(out.model, "gemini-3.8-flash");
     assert.deepEqual(modelsHit, ["gemini-3.8-flash", "gemini-3.8-flash"]);
-    assert.ok(waits[0] >= 10000);
+    assert.equal(waits.length, 0);
   });
 
   it("isModelUnavailable detecta 404 / no longer available", () => {

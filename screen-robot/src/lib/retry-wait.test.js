@@ -45,15 +45,15 @@ describe("retry-wait", () => {
     );
   });
 
-  it("503 high demand usa piso 10s", () => {
+  it("503 high demand não espera", () => {
     assert.equal(
       resolveRetryWaitMs({
-        baseMs: 1,
+        baseMs: 2000,
         attempt: 1,
         status: 503,
         message: "high demand",
       }),
-      10000,
+      0,
     );
   });
 });

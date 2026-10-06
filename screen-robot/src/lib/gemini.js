@@ -297,17 +297,6 @@ export async function generateContent(opts, deps = {}) {
             output: { error: lastMsg },
           });
           if (isHighDemand(0, lastMsg) || /timeout/i.test(lastMsg)) {
-            if (attempt <= retries && isHighDemand(0, lastMsg)) {
-              const wait = resolveRetryWaitMs({
-                baseMs: retryMs,
-                attempt,
-                message: lastMsg,
-                status: 503,
-              });
-              logFn(`alta demanda — timeout ${wait}ms (rede)`);
-              if (wait > 0) await sleepFn(wait);
-              continue;
-            }
             if (mi < models.length - 1) {
               logFn(`fallback → ${models[mi + 1]} (${lastMsg})`);
               break;
@@ -367,20 +356,15 @@ export async function generateContent(opts, deps = {}) {
               model,
             });
           }
-          if (isHighDemand(res.status, lastMsg) && mi < models.length - 1) {
+          if (isHighDemand(res.status, lastMsg)) {
             if (attempt <= retries) {
-              const wait = resolveRetryWaitMs({
-                baseMs: retryMs,
-                attempt,
-                message: lastMsg,
-                status: res.status,
-              });
-              logFn(`alta demanda — timeout ${wait}ms antes de retry (${model})`);
-              if (wait > 0) await sleepFn(wait);
+              logFn(`alta demanda 503 — retry imediato (${model})`);
               continue;
             }
-            logFn(`fallback → ${models[mi + 1]} (high demand em ${model})`);
-            break;
+            if (mi < models.length - 1) {
+              logFn(`fallback → ${models[mi + 1]} (high demand em ${model})`);
+              break;
+            }
           }
           if (attempt <= retries && isRetryable(res.status, lastMsg)) {
             const wait = resolveRetryWaitMs({

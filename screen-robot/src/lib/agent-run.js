@@ -290,7 +290,7 @@ function writeChatRequestFiles({ usageDir, call }) {
   return paths;
 }
 
-function appendStepLog(logPath, step, { resumo, acao, ocr, vision, resultado, usage }) {
+function appendStepLog(logPath, step, { resumo, acao, ocr, vision, resultado, usage, proximoPasso }) {
   const u = usage || null;
   const usageLine = u
     ? `- usage: in=${u.promptTokenCount ?? "?"} out=${u.candidatesTokenCount ?? "?"}` +
@@ -323,6 +323,7 @@ function appendStepLog(logPath, step, { resumo, acao, ocr, vision, resultado, us
     resumo || "(sem resumo)",
     "",
     `- ação: \`${acao.type}\` ${acao.motivo ? `— ${acao.motivo}` : ""}`,
+    proximoPasso ? `- próximo passo: ${proximoPasso}` : null,
     acao.x != null ? `- coords: ${acao.x},${acao.y}` : null,
     acao.direction ? `- direction: ${acao.direction}` : null,
     acao.text ? `- text: ${acao.text}` : null,
@@ -456,6 +457,8 @@ export async function runAgent(cfg, deps = {}) {
   const stepDelayMs = Number(
     cfg.stepDelayMs ?? process.env.AGENT_STEP_DELAY_MS ?? 3000,
   );
+  /** Último proximoPasso bem-sucedido — injetado no user prompt do turno seguinte. */
+  let lastProximoPasso = null;
 
   for (let i = 1; i <= maxSteps; i++) {
     log(`── passo ${i}/${maxSteps} ──`);
@@ -568,6 +571,7 @@ export async function runAgent(cfg, deps = {}) {
               imageMeta: visionMeta,
               history,
               historySteps,
+              proximoPasso: lastProximoPasso,
               model: cfg.model,
               provider: cfg.provider,
               apiKey: cfg.apiKey,
@@ -580,6 +584,7 @@ export async function runAgent(cfg, deps = {}) {
               ocr,
               history,
               historySteps,
+              proximoPasso: lastProximoPasso,
               model: cfg.model,
               provider: cfg.provider,
               apiKey: cfg.apiKey,
@@ -639,7 +644,7 @@ export async function runAgent(cfg, deps = {}) {
       historySteps: decision.historySteps ?? historySteps,
     });
 
-    let { resumo, acao } = decision;
+    let { resumo, acao, proximoPasso } = decision;
     // Guards só genéricos (OCR/Android). Regras de app/jornada ficam no --prompt / roteiro.
     if (sense === "ocr" && acao.type === "tap" && !tapGroundOff(cfg)) {
       const hasXy =
@@ -737,6 +742,7 @@ export async function runAgent(cfg, deps = {}) {
         (acao.motivo ? ` — ${acao.motivo}` : ""),
     );
     if (resumo) log(`resumo: ${resumo.slice(0, 200)}`);
+    if (proximoPasso) log(`proximoPasso: ${String(proximoPasso).slice(0, 200)}`);
     if (decision.usage) {
       const u = decision.usage;
       log(
@@ -770,12 +776,16 @@ export async function runAgent(cfg, deps = {}) {
     appendStepLog(logPath, i, {
       resumo,
       acao,
+      proximoPasso: proximoPasso || undefined,
       ocr,
       vision: visionMeta || undefined,
       resultado,
       usage: decision.usage,
     });
-    steps.push({ step: i, acao, resultado, error: stepError });
+    steps.push({ step: i, acao, resultado, error: stepError, proximoPasso });
+    if (!stepError && proximoPasso) {
+      lastProximoPasso = String(proximoPasso);
+    }
     history.push({
       step: i,
       type: acao.type,
@@ -786,6 +796,7 @@ export async function runAgent(cfg, deps = {}) {
       direction: acao.direction,
       text: acao.text,
       code: acao.code,
+      proximoPasso: proximoPasso || undefined,
       resultado,
       error: stepError ? resultado : undefined,
       sense,

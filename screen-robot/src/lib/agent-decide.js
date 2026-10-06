@@ -185,6 +185,10 @@ export function parseActionPayload(raw) {
   }
   return {
     resumo: data.resumo == null ? "" : String(data.resumo),
+    proximoPasso:
+      data.proximoPasso == null || data.proximoPasso === ""
+        ? null
+        : String(data.proximoPasso),
     elementos: Array.isArray(data.elementos) ? data.elementos : [],
     acao: out,
   };
@@ -196,6 +200,7 @@ export function buildSystemPrompt() {
 Responda APENAS JSON válido (sem markdown) no formato:
 {
   "resumo": "2-4 frases do que tem na tela",
+  "proximoPasso": "texto do PRÓXIMO passo do roteiro a cumprir depois desta ação (número + instrução)",
   "acao": {
     "type": "tap|scroll|type|key|sleep|done|fail",
     "x": null,
@@ -204,9 +209,14 @@ Responda APENAS JSON válido (sem markdown) no formato:
     "text": null,
     "code": null,
     "ms": null,
-    "motivo": "..."
+    "motivo": "passo N em curso — ..."
   }
 }
+
+Jornada / próximo passo:
+- Em toda ação bem-sucedida (tap/type/key/scroll/sleep que avança), preencha proximoPasso com o passo SEGUINTE do roteiro (ex.: após tap Search → "2. digite comprador"). Esse texto vira o foco do turno seguinte.
+- done/fail: proximoPasso pode ser null.
+- Se o bloco "Próximo passo da jornada" vier no user prompt, cumpra ESSE passo agora (1 ação); depois atualize proximoPasso para o seguinte.
 
 Regras de tap (OCR):
 - Cada item type=text (e icon) do extract É um alvo clicável: use o text do passo e copie os x,y desse hit.
@@ -229,6 +239,7 @@ export function buildSystemPromptVision(size) {
 Responda APENAS JSON válido (sem markdown) no formato:
 {
   "resumo": "2-4 frases do que tem na tela",
+  "proximoPasso": "texto do PRÓXIMO passo do roteiro após esta ação",
   "acao": {
     "type": "tap|scroll|type|key|sleep|done|fail",
     "x": null,
@@ -237,9 +248,11 @@ Responda APENAS JSON válido (sem markdown) no formato:
     "text": null,
     "code": null,
     "ms": null,
-    "motivo": "..."
+    "motivo": "passo N em curso — ..."
   }
 }
+
+Jornada: em ação bem-sucedida preencha proximoPasso (passo seguinte do roteiro; vira foco do turno seguinte). done/fail → null. Se o user prompt trouxer "Próximo passo da jornada", cumpra esse agora.
 
 Regras de tap (visão): acao.x e acao.y EXCLUSIVAMENTE desta imagem (frame atual). PROIBIDO reusar coords do histórico/roteiro/taps anteriores. PROIBIDO id/element. Controles visíveis são clicáveis; PROIBIDO fail só por "sem elemento interativo".`;
 }
@@ -315,9 +328,13 @@ export function buildUserPrompt(cfg) {
   const hist = slim.length
     ? `\nHistórico recente (últimos ${slim.length}/${n}):\n${JSON.stringify(slim, null, 0)}\n`
     : "";
+  const foco = String(cfg.proximoPasso || "").trim();
+  const focoBlock = foco
+    ? `\nPróximo passo da jornada (cumprir AGORA; 1 ação):\n${foco}\n`
+    : "";
   return `Objetivo / roteiro:
 ${clipPrompt(prompt)}
-${hist}
+${hist}${focoBlock}
 OCR atual (JSON):
 ${JSON.stringify(compactOcr(ocr))}
 
@@ -344,11 +361,15 @@ export function buildUserPromptVision(cfg) {
   const hist = slim.length
     ? `\nHistórico recente (últimos ${slim.length}/${n}):\n${JSON.stringify(slim, null, 0)}\n`
     : "";
+  const foco = String(cfg.proximoPasso || "").trim();
+  const focoBlock = foco
+    ? `\nPróximo passo da jornada (cumprir AGORA; 1 ação):\n${foco}\n`
+    : "";
   const w = imageMeta?.width ?? "?";
   const h = imageMeta?.height ?? "?";
   return `Objetivo / roteiro:
 ${clipPrompt(prompt)}
-${hist}
+${hist}${focoBlock}
 Imagem anexada: captura da tela ${w}×${h} px (WebP). Use só ela + o roteiro.
 Defina a próxima ação (coords na escala da imagem).`;
 }

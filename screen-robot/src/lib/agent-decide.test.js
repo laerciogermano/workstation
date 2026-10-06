@@ -63,8 +63,22 @@ describe("agent-decide (SC-31)", () => {
     assert.match(ocr, /PROIBIDO fail/i);
     assert.match(ocr, /EXCLUSIVAMENTE do ÚLTIMO extract|ÚLTIMO extract/i);
     assert.match(ocr, /PROIBIDO reusar/i);
+    assert.match(ocr, /proximoPasso/i);
+    assert.match(ocr, /Próximo passo da jornada|passo SEGUINTE/i);
+    assert.match(vision, /proximoPasso/i);
     assert.match(vision, /EXCLUSIVAMENTE desta imagem|PROIBIDO reusar/i);
     assert.match(ocr, /acao\.x/);
+  });
+
+  it("buildUserPrompt injeta proximoPasso como foco do turno", async () => {
+    const { buildUserPrompt } = await import("./agent-decide.js");
+    const p = buildUserPrompt({
+      prompt: "roteiro",
+      ocr: [{ text: "Search", x: 1, y: 2 }],
+      proximoPasso: "2. digite comprador",
+    });
+    assert.match(p, /Próximo passo da jornada/);
+    assert.match(p, /2\. digite comprador/);
   });
 
   it("parseActionPayload valida tap por x,y e ignora element", () => {

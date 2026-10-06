@@ -1,6 +1,5 @@
 /**
  * raw-gpt: um caso por tela (PNG em fixtures) + mesmo prompt + OpenAI real.
- * Prompt único: test/fixtures/raw-gpt-decide.prompt.txt
  */
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
@@ -17,14 +16,12 @@ const SRC_ROOT = join(__dirname, "..");
 const FIXTURES = join(SRC_ROOT, "test/fixtures");
 loadEnvFiles([join(SRC_ROOT, ".env"), join(SRC_ROOT, ".env.local")]);
 
-const PROMPT = readFileSync(
-  join(FIXTURES, "raw-gpt-decide.prompt.txt"),
-  "utf8",
-).trim();
+const PROMPT_PATH = "raw-gpt-decide.prompt.txt";
 
-async function runCase({ image, expected }) {
+async function runCase({ image, prompt, expected }) {
   assert.ok(process.env.OPENAI_API_KEY, "falta OPENAI_API_KEY");
-  assert.ok(PROMPT.length >= 1, "prompt fixture vazio");
+  const promptText = readFileSync(join(FIXTURES, prompt), "utf8").trim();
+  assert.ok(promptText.length >= 1, `prompt vazio: ${prompt}`);
 
   const elements = await extractFromImage(join(FIXTURES, image), {
     engine: "all",
@@ -33,7 +30,7 @@ async function runCase({ image, expected }) {
   const ocr = compactOcr(elements);
   assert.ok(ocr.length >= 1, "OCR vazio");
 
-  const out = await decideRawAction({ prompt: PROMPT, ocr });
+  const out = await decideRawAction({ prompt: promptText, ocr });
   const action = { type: out.type, x: out.x, y: out.y };
   assert.deepEqual(action, expected);
   assert.deepEqual(Object.keys(parseActionTypeXY(out.raw)).sort(), [
@@ -50,6 +47,7 @@ describe("raw-gpt-decide", () => {
     async () => {
       await runCase({
         image: "linkedin-people-comprador-connect.png",
+        prompt: PROMPT_PATH,
         expected: { type: "tap", x: 455, y: 344 },
       });
     },
@@ -61,6 +59,7 @@ describe("raw-gpt-decide", () => {
     async () => {
       await runCase({
         image: "android-tela-inicial.png",
+        prompt: PROMPT_PATH,
         expected: { type: "scroll", x: null, y: null },
       });
     },

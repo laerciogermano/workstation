@@ -25,16 +25,19 @@ const prompt =
   process.argv.slice(2).find((a) => a !== "--") || "Me chama no insta";
 const model = process.env.OPENAI_MODEL || "gpt-4o-mini";
 
+const payload = {
+  model,
+  messages: [{ role: "user", content: prompt }],
+};
+console.log(payload);
+
 const res = await fetch("https://api.openai.com/v1/chat/completions", {
   method: "POST",
   headers: {
     Authorization: `Bearer ${apiKey}`,
     "Content-Type": "application/json",
   },
-  body: JSON.stringify({
-    model,
-    messages: [{ role: "user", content: prompt }],
-  }),
+  body: JSON.stringify(payload),
 });
 
 const data = await res.json();

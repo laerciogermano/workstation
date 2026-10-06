@@ -12,6 +12,10 @@ import { fileURLToPath } from "node:url";
 import { loadEnvFiles } from "../lib/load-env.js";
 import { compactOcr } from "../lib/agent-decide.js";
 import { extractFromImage } from "../lib/extract-engines.js";
+import {
+  DEFAULT_PROMPT,
+  decideRawAction,
+} from "../lib/raw-gpt-decide.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const SRC_ROOT = resolve(__dirname, "..");
@@ -21,41 +25,6 @@ const DEFAULT_IMAGE = join(
   SRC_ROOT,
   "test/fixtures/linkedin-people-comprador-connect.png",
 );
-const DEFAULT_PROMPT =
-  "Na tela People do LinkedIn, encontre o comprador e toque em Connect.";
-
-const SYSTEM_PROMPT = `Você é uma IA agente autônoma que controla um smartphone Android.
-Você recebe: (1) a jornada/objetivo e (2) o OCR da tela atual (lista extract: type, text, x, y).
-Decida UMA próxima ação e responda APENAS um JSON válido (sem markdown, sem texto fora do JSON).
-
-Formato único:
-{
-  "action": {
-    "type": "tap|scroll|type|key|sleep|done|fail",
-    "x": null,
-    "y": null,
-    "direction": null,
-    "text": null,
-    "code": null,
-    "ms": null,
-    "motivo": "passo em curso — ..."
-  }
-}
-
-Tipos (lib screen-robot):
-- tap: obrigatório x e y numéricos do OCR desta tela (centro do alvo)
-- scroll: direction up|down|left|right
-- type: text a digitar
-- key: code (ex. KEYCODE_BACK, KEYCODE_ENTER)
-- sleep: ms
-- done: jornada concluída
-- fail: só se impossível seguir
-
-Regras:
-- tap.x / tap.y = EXCLUSIVAMENTE de um hit do OCR atual; proibido inventar ou reusar coords de outro contexto
-- Cada item do OCR (text/icon) é clicável
-- Sem alvo do passo → sleep ou scroll; evite fail
-- Um único objeto JSON na resposta`;
 
 const apiKey = process.env.OPENAI_API_KEY;
 if (!apiKey) {
@@ -86,37 +55,6 @@ const elements = await extractFromImage(imagePath, {
 const ocr = compactOcr(elements);
 console.log({ imagePath, engine, hits: elements.length, ocr });
 
-const userText = `Jornada:
-${prompt}
-
-OCR atual (JSON):
-${JSON.stringify(ocr)}
-
-Defina a próxima action.`;
-
-const payload = {
-  model,
-  response_format: { type: "json_object" },
-  messages: [
-    { role: "system", content: SYSTEM_PROMPT },
-    { role: "user", content: userText },
-  ],
-};
-console.log(payload);
-
-const res = await fetch("https://api.openai.com/v1/chat/completions", {
-  method: "POST",
-  headers: {
-    Authorization: `Bearer ${apiKey}`,
-    "Content-Type": "application/json",
-  },
-  body: JSON.stringify(payload),
-});
-
-const data = await res.json();
-if (!res.ok) {
-  console.error(data?.error?.message || JSON.stringify(data));
-  process.exit(1);
-}
-
-process.stdout.write(String(data.choices?.[0]?.message?.content ?? ""));
+const out = await decideRawAction({ prompt, ocr, apiKey, model });
+console.log(out.payload);
+process.stdout.write(JSON.stringify({ type: out.type, x: out.x, y: out.y }));

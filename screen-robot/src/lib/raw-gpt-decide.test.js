@@ -111,4 +111,16 @@ describe("raw-gpt-decide", () => {
       });
     },
   );
+
+  it(
+    "LinkedIn People selected → tap Location",
+    { timeout: 300_000 },
+    async () => {
+      await runCase({
+        image: "linkedin-search-comprador-all-results-people-selected.png",
+        prompt: PROMPT + "\nvoce esta no passo 6",
+        expected: { type: "tap", x: 499, y: 152 },
+      });
+    },
+  );
 });

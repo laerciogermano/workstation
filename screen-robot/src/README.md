@@ -240,7 +240,7 @@ npm run agent:smoke              # 1–2 passos no device; sem key = heurística
 npm run raw-gpt -- --image test/fixtures/linkedin-people-comprador-connect.png --prompt "…"
 # --prompt obrigatório (sem DEFAULT_PROMPT). Antes: default "Na tela People…". Rollback: export DEFAULT_PROMPT.
 # Testes: node --test lib/raw-gpt-decide.test.js (prompt em test/fixtures/raw-gpt-decide.prompt.txt)
-# Casos: People/Connect (passo 11), passos 1–5 (Search→type→BACK→Show all→People; fixtures linkedin-search-*.png / linkedin-tela-inicial.png).
+# Casos: People/Connect (passo 11), passos 1–6 (Search→…→People→Location; fixtures linkedin-search-*.png / linkedin-tela-inicial.png).
 # Parse: só chaves presentes na IA; raiz obrigatória { "action": ... }. Rollback: aceitar acao/raiz.
 ```
 

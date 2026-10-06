@@ -186,6 +186,18 @@ describe("raw-gpt-decide", () => {
   );
 
   it(
+    "11c Connect (segundo)",
+    { timeout: 300_000 },
+    async () => {
+      await runCase({
+        image: "linkedin-search-comprador-connected.png",
+        prompt: PROMPT + "\nvoce esta no passo 11",
+        expected: { type: "tap", x: 453, y: 382 },
+      });
+    },
+  );
+
+  it(
     "12 Sem Connect → scroll down",
     { timeout: 300_000 },
     async () => {

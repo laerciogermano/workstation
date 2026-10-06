@@ -195,4 +195,16 @@ describe("raw-gpt-decide", () => {
       });
     },
   );
+
+  it(
+    "LinkedIn Connect note sheet → tap Skip",
+    { timeout: 300_000 },
+    async () => {
+      await runCase({
+        image: "linkedin-search-comprador-connect-skip.png",
+        prompt: PROMPT + "\nvoce esta no passo 13",
+        expected: { type: "tap", x: 269, y: 816 },
+      });
+    },
+  );
 });

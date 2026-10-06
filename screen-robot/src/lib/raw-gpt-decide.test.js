@@ -16,12 +16,14 @@ const SRC_ROOT = join(__dirname, "..");
 const FIXTURES = join(SRC_ROOT, "test/fixtures");
 loadEnvFiles([join(SRC_ROOT, ".env"), join(SRC_ROOT, ".env.local")]);
 
-const PROMPT_PATH = "raw-gpt-decide.prompt.txt";
+const PROMPT = readFileSync(
+  join(FIXTURES, "raw-gpt-decide.prompt.txt"),
+  "utf8",
+).trim();
 
 async function runCase({ image, prompt, expected }) {
   assert.ok(process.env.OPENAI_API_KEY, "falta OPENAI_API_KEY");
-  const promptText = readFileSync(join(FIXTURES, prompt), "utf8").trim();
-  assert.ok(promptText.length >= 1, `prompt vazio: ${prompt}`);
+  assert.ok(prompt.length >= 1, "prompt vazio");
 
   const elements = await extractFromImage(join(FIXTURES, image), {
     engine: "all",
@@ -30,7 +32,7 @@ async function runCase({ image, prompt, expected }) {
   const ocr = compactOcr(elements);
   assert.ok(ocr.length >= 1, "OCR vazio");
 
-  const out = await decideRawAction({ prompt: promptText, ocr });
+  const out = await decideRawAction({ prompt, ocr });
   const action = parseActionTypeXY(out.raw);
 
   console.log({ action });
@@ -44,7 +46,7 @@ describe("raw-gpt-decide", () => {
     async () => {
       await runCase({
         image: "linkedin-people-comprador-connect.png",
-        prompt: PROMPT_PATH,
+        prompt: PROMPT,
         expected: { type: "tap", x: 455, y: 344 },
       });
     },

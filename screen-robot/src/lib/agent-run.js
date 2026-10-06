@@ -9,10 +9,10 @@ import { DEFAULT_MODEL as DEFAULT_GEMINI_MODEL } from "./gemini.js";
 import { tapElement, scroll, type, typeViaAdb, key } from "./operate.js";
 import { adb, sleep as defaultSleep } from "./adb.js";
 
-/** `AGENT_TYPE_METHOD=adb|ocr` ou cfg.typeMethod — default ocr (US-09). */
+/** `AGENT_TYPE_METHOD=adb|ocr` ou cfg.typeMethod — default adb. */
 function resolveTypeMethod(cfg = {}) {
-  const raw = cfg.typeMethod ?? process.env.AGENT_TYPE_METHOD ?? "ocr";
-  return String(raw).toLowerCase() === "adb" ? "adb" : "ocr";
+  const raw = cfg.typeMethod ?? process.env.AGENT_TYPE_METHOD ?? "adb";
+  return String(raw).toLowerCase() === "ocr" ? "ocr" : "adb";
 }
 
 function fail(code, msg) {

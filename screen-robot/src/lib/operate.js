@@ -1,6 +1,6 @@
 /**
  * EP-04 — operações de tela (funções puras com `serial` no cfg).
- * type: default OCR das teclas → tap; `method: "adb"` → `adb shell input text`.
+ * type: default `adb shell input text`; `method: "ocr"` → OCR das teclas → tap.
  */
 import { spawn, spawnSync } from "node:child_process";
 import { mkdirSync, existsSync, writeFileSync } from "node:fs";
@@ -304,8 +304,8 @@ export function typeViaAdb(serial, text, deps = {}) {
 
 /**
  * Digita texto no campo focado.
- * - `method: "ocr"` (default): OCR das teclas + tap por caractere
- * - `method: "adb"`: `adb shell input text` (sem tap no teclado)
+ * - `method: "adb"` (default): `adb shell input text` (sem tap no teclado)
+ * - `method: "ocr"`: OCR das teclas + tap por caractere
  * @param {{ serial: string, text: string, method?: "ocr"|"adb", region?: object, delayMs?: number, engine?: string }} cfg
  * @param {object} [deps]
  */
@@ -314,7 +314,7 @@ export async function type(cfg, deps = {}) {
   const d = resolveDeps(deps);
   const s = String(cfg.text ?? "");
   if (!s.length) return;
-  const method = String(cfg.method || "ocr").toLowerCase() === "adb" ? "adb" : "ocr";
+  const method = String(cfg.method || "adb").toLowerCase() === "ocr" ? "ocr" : "adb";
   if (method === "adb") {
     typeViaAdb(serial, s, deps);
     return;

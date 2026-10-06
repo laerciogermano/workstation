@@ -20,13 +20,12 @@ describe("agent-run (SC-32)", () => {
     assert.deepEqual(calls[0], { serial: "s", x: 10, y: 20 });
   });
 
-  it("executeAction type com typeMethod=adb injeta via adb", async () => {
+  it("executeAction type default injeta via adb", async () => {
     const calls = [];
     const out = await executeAction(
       {
         serial: "s",
         acao: { type: "type", text: "comprador" },
-        typeMethod: "adb",
       },
       {
         typeViaAdb: (serial, text) => calls.push([serial, text]),

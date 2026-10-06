@@ -43,6 +43,7 @@ describe("operate", () => {
       {
         serial: "s",
         text: "129",
+        method: "ocr",
         region: { x: 0, y: 700, width: 720, height: 500 },
         delayMs: 0,
       },
@@ -72,10 +73,10 @@ describe("operate", () => {
     ]);
   });
 
-  it("type method=adb usa input text (sem OCR)", async () => {
+  it("type default (adb) usa input text (sem OCR)", async () => {
     const calls = [];
     await type(
-      { serial: "s", text: "Campinas SP", method: "adb" },
+      { serial: "s", text: "Campinas SP" },
       {
         adb: (_s, args) => {
           calls.push(args);
@@ -97,7 +98,7 @@ describe("operate", () => {
     await assert.rejects(
       () =>
         type(
-          { serial: "s", text: "5", delayMs: 0 },
+          { serial: "s", text: "5", method: "ocr", delayMs: 0 },
           {
             adb: () => {},
             connectIfTcp: () => {},

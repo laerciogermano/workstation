@@ -9,7 +9,7 @@ com base nas regras
 - quando for escrever, escreva tudo de uma vez e só depois analise o resultado se está correto
 - nao utilize nenhum comando adb, todos os comandos devem ser provenientes exclusivamente da interface
 - nao utilize eventos de ui stable, apenas extract e espere se o extract apontar que esta carregando e tente noamente ate encontrar o proximo passo
-- ao digitar: use a ação type da lib com injeção ADB (AGENT_TYPE_METHOD=adb / type method=adb) — proibido tap tecla a tecla via OCR do teclado
+- ao digitar: use a ação type da lib (default ADB) — proibido tap tecla a tecla via OCR do teclado
 - nao altere nenhum arquivo, apenas execute o fluxo
 
 
@@ -215,7 +215,7 @@ Digitar "comprador" — **tudo de uma vez; checar só no fim**
 
 
 
-Alvo: a string comprador (9 caracteres). Digitar a palavra inteira de uma vez (type({ serial, text: "comprador", method: "adb" }) — não clicar no item comprador da lista; não tap tecla a tecla via OCR).
+Alvo: a string comprador (9 caracteres). Digitar a palavra inteira de uma vez (type({ serial, text: "comprador" }) — não clicar no item comprador da lista; não tap tecla a tecla via OCR).
 
 
 
@@ -347,7 +347,7 @@ Entrar em localização: Locations / Location / Add a location / Adicionar local
 
 
 
-Digitar Campinas de uma vez (type({ serial, text: "Campinas", method: "adb" })); fechar teclado se cobrir a lista.
+Digitar Campinas de uma vez (type({ serial, text: "Campinas" })); fechar teclado se cobrir a lista.
 
 
 
@@ -627,7 +627,7 @@ Antes → depois (registro): log só com Decisão/OCR genérico do passo → cad
 
 
 
-Se a digitação falhar, não clicar em comprador da lista — só digitar a palavra inteira via type method=adb (checagem só no fim) e depois fechar teclado → Show all results.
+Se a digitação falhar, não clicar em comprador da lista — só digitar a palavra inteira via type (checagem só no fim) e depois fechar teclado → Show all results.
 
 
 
@@ -646,10 +646,10 @@ Abrir AVD e navegar ao LinkedIn (manual ou npm run linkedin-login só para login
 Pedir à IA: executar este roteiro; ela lê o markdown, chama extract/ações pontuais e decide em tempo real.
 
 ```bash
-cd screen-robot/src && AGENT_TYPE_METHOD=adb GEMINI_MODEL=gemini-3.5-flash npm run agent -- --prompt ../roteiros/jornada-completa.md --history-steps 0
+cd screen-robot/src && GEMINI_MODEL=gemini-3.5-flash npm run agent -- --prompt ../roteiros/jornada-completa.md --history-steps 0
 ```
 
-Digitação: `AGENT_TYPE_METHOD=adb` (obrigatório nesta jornada). Rollback: omitir a env → type volta a OCR/tap.
+Digitação: default ADB. Rollback OCR/tap: `AGENT_TYPE_METHOD=ocr`.
 
 
 

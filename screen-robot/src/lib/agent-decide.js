@@ -214,7 +214,7 @@ Responda APENAS JSON válido (sem markdown) no formato:
 }
 
 Jornada / próximo passo:
-- Em toda ação bem-sucedida (tap/type/key/scroll/sleep que avança), preencha proximoPasso com o passo SEGUINTE do roteiro (ex.: após tap Search → "2. digite comprador"). Esse texto vira o foco do turno seguinte.
+- Em toda ação bem-sucedida (tap/type/key/scroll/sleep que avança), preencha proximoPasso com o passo SEGUINTE do roteiro (ex.: após o passo 1 → "2. …"). Esse texto vira o foco do turno seguinte.
 - done/fail: proximoPasso pode ser null.
 - Se o bloco "Próximo passo da jornada" vier no user prompt, cumpra ESSE passo agora (1 ação); depois atualize proximoPasso para o seguinte.
 

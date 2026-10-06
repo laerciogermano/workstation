@@ -255,6 +255,8 @@ Stdout: `[agent]` / `[decide]` / `[gemini]` ou `[openai]`. Provider default `gem
 
 **Antes → depois (scroll após Search):** com teclado aberto o OCR às vezes só traz a hora; o modelo tratava como home e fazia `scroll down`, digitando lixo (`ty`/`tyl`) no campo. Agora: (1) system prompt: histórico com tap `y<120` + OCR só hora ≠ home — proibido scroll; (2) guard em `runAgent` troca esse `scroll` por `type` (texto do roteiro `type "…"`) ou `KEYCODE_BACK`. Rollback: remover a EXCEÇÃO em `buildSystemPrompt` e o bloco `lastWasSearchTap` em `agent-run.js`.
 
+**Antes → depois (tap no campo com teclado):** gpt-4o-mini repetia tap `y<120` em vez de `type`. Guard: QWERTY no OCR + tap no topo → `type` do roteiro (UI de local = último `type "…"` distinto; senão o primeiro). Se o sheet de local já mostrou `Add a location` abaixo e o modelo tapa o chip de cima, retarget para esse texto. Rollback: remover os guards `ocrHasQwertyKeyboard` / `findOcrHit` em `agent-run.js`.
+
 **Antes → depois (sense vision):** só OCR → também `--sense vision` / `--vision` / `AGENT_SENSE=vision`: `captureFrame` → [`lib/vision-frame.js`](lib/vision-frame.js) WebP (default width 540 q60; `VISION_WIDTH` / `VISION_QUALITY` / `--vision-width` / `--vision-quality`) → Gemini/OpenAI com imagem → JSON de ação; coords da IA × `scaleToDevice` antes do tap. Sem `extract`/OCR. Logs omitem base64. Rollback: `--sense ocr` (default).
 
 **Antes → depois (modelo):** `gemini-2.5-flash-lite` (404 new users) → `gemini-3.5-flash-lite` (recomendado pela API). Rollback: `export GEMINI_MODEL=gemini-3.1-flash-lite`.

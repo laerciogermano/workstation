@@ -436,9 +436,9 @@ Decide a próxima ação via **Gemini 3.8 Flash** a partir do OCR (sem imagem).
 
 ### `runAgent(cfg)` — EP-07
 
-Loop: `extract` (RapidOCR) → `decide` → gesto → log `.md`.
+Loop: `extract` (OCR) → `decide` → gesto → log `.md`.
 
-**Entrada:** `serial` · `prompt` · `maxSteps?` (40) · `engine?` (`all` = merge top-5 OCR) · `logDir?` · `usageDir?`
+**Entrada:** `serial` · `prompt` · `maxSteps?` (40) · `engine?` (`all` = merge top-5; jornada Campinas: `rapidocr`) · `logDir?` · `usageDir?`
 
 **Saída:** `{ status: "done"|"fail"|"max_steps", steps, logPath, usagePath, usage }`
 
@@ -456,6 +456,8 @@ const result = await runAgent({
 cd screen-robot/src
 export GEMINI_API_KEY=…
 npm run agent -- --prompt ../roteiros/jornada-comprador.md
+# gpt-4o-mini + RapidOCR (sem engine=all):
+npm run agent -- --provider openai --model gpt-4o-mini --no-prompt --engine rapidocr --max-steps 80 --prompt ../roteiros/jornada-linkedin-campinas.md
 npm run agent:smoke   # 1–2 passos; sem key usa heurística Connect/scroll
 ```
 
@@ -481,6 +483,7 @@ npm run agent -- --prompt ../roteiros/jornada-comprador.md   # GEMINI_API_KEY
 | Stories · épicos · BDDs | [`1.stories.md`](1.stories.md) · [`2.epics.md`](2.epics.md) · [`5.bdds.md`](5.bdds.md) |
 | Motor Gemini (EP-07) | [`implementation-plan/EP-07-motor-gemini.md`](implementation-plan/EP-07-motor-gemini.md) |
 | Jornada comprador (IA + OCR; filtro cidade Campinas após People; digitar tudo e checar valor só no fim; `### Comprador` por Connect; sem script com roteiro preso) | [`roteiros/jornada-comprador.md`](roteiros/jornada-comprador.md) |
+| Jornada LinkedIn Campinas (gpt-4o-mini; OCR só RapidOCR; Connect até limite de convites) | [`roteiros/jornada-linkedin-campinas.md`](roteiros/jornada-linkedin-campinas.md) |
 | Referência Instagram (ops Android/PT por funcionalidade; Help Center) | [`roteiros/instagram-referencia.md`](roteiros/instagram-referencia.md) |
 | OCR backends + merge `all` (5 engines) | [`src/README.md`](src/README.md) · [`src/lib/extract-engines.js`](src/lib/extract-engines.js) · [`src/lib/ocr-merge.js`](src/lib/ocr-merge.js) |
 | Identidade do aparelho (US-22) | [`pocs/README.md`](pocs/README.md#mascarar-identidade-do-aparelho) |

@@ -43,6 +43,49 @@ function looksLoading(ocr) {
   return /\b(loading|carregando|please wait|aguarde)\b/.test(t);
 }
 
+/** Teclado QWERTY no OCR (teclas isoladas). */
+export function ocrHasQwertyKeyboard(ocr) {
+  const singles = new Set(
+    (ocr || [])
+      .map((e) => String(e.text || "").toLowerCase().trim())
+      .filter((t) => t.length === 1),
+  );
+  return ["q", "w", "e"].every((k) => singles.has(k));
+}
+
+/** Todas as strings `type "…"` do roteiro, na ordem. */
+export function typeQuotesFromPrompt(prompt) {
+  const out = [];
+  const re = /type\s+"([^"]+)"/gi;
+  let m;
+  while ((m = re.exec(String(prompt || "")))) out.push(m[1]);
+  return out;
+}
+
+/**
+ * Campo no topo parece filtro de local → último type do roteiro; senão o primeiro (busca).
+ */
+export function pickForcedTypeText(prompt, ocr) {
+  const quotes = typeQuotesFromPrompt(prompt);
+  const unique = [...new Set(quotes)];
+  if (!unique.length) return null;
+  const blob = (ocr || [])
+    .map((e) => String(e.text || "").toLowerCase())
+    .join(" ");
+  const proper = unique.filter((q) => /^[A-ZÁÉÍÓÚÃÕ]/.test(q));
+  const locUi =
+    /(alocation|location|australia|united\s*states)/i.test(blob) ||
+    proper.some((p) => blob.includes(p.toLowerCase()));
+  if (unique.length > 1 && locUi && proper.length) {
+    return proper[proper.length - 1];
+  }
+  return unique[0];
+}
+
+export function findOcrHit(ocr, re) {
+  return (ocr || []).find((e) => re.test(String(e.text || "")));
+}
+
 function log(...args) {
   console.log(`[agent ${new Date().toISOString()}]`, ...args);
 }
@@ -635,6 +678,89 @@ export async function runAgent(cfg, deps = {}) {
           motivo: "guard: BACK após Search (bloqueou scroll sobre teclado)",
         };
       }
+    }
+    if (acao.type === "type") {
+      const forced = pickForcedTypeText(cfg.prompt, ocr);
+      if (
+        forced &&
+        forced !== acao.text &&
+        /^[A-ZÁÉÍÓÚÃÕ]/.test(forced)
+      ) {
+        log(
+          `guard: type ${JSON.stringify(acao.text)} → ${JSON.stringify(forced)} (roteiro/tela)`,
+        );
+        acao = { ...acao, text: forced, motivo: `guard: type ${forced}` };
+      }
+    }
+    if (
+      acao.type === "tap" &&
+      Number.isFinite(Number(acao.y)) &&
+      Number(acao.y) < 120 &&
+      ocrHasQwertyKeyboard(ocr)
+    ) {
+      const text = pickForcedTypeText(cfg.prompt, ocr);
+      if (text) {
+        log(
+          `guard: teclado visível + tap y<120 — força type ${JSON.stringify(text)}`,
+        );
+        acao = {
+          type: "type",
+          x: acao.x ?? null,
+          y: acao.y ?? null,
+          direction: null,
+          text,
+          code: null,
+          ms: null,
+          motivo: `guard: type com teclado aberto (bloqueou tap no campo)`,
+        };
+      }
+    }
+    const addLoc = findOcrHit(ocr, /add\s*a\s*locat/i);
+    if (
+      acao.type === "tap" &&
+      addLoc &&
+      Number.isFinite(Number(addLoc.y)) &&
+      Number(addLoc.y) > Number(acao.y) + 80
+    ) {
+      log(
+        `guard: retarget tap ${acao.x},${acao.y} → Add a location @${addLoc.x},${addLoc.y}`,
+      );
+      acao = {
+        type: "tap",
+        x: addLoc.x,
+        y: addLoc.y,
+        direction: null,
+        text: null,
+        code: null,
+        ms: null,
+        motivo: "guard: tap no campo Add a location (não no chip)",
+      };
+    }
+    const showRes = findOcrHit(ocr, /show\s*results/i);
+    const sameTap =
+      lastHist?.type === "tap" &&
+      Number(lastHist.x) === Number(acao.x) &&
+      Number(lastHist.y) === Number(acao.y);
+    if (
+      acao.type === "tap" &&
+      sameTap &&
+      showRes &&
+      Number.isFinite(Number(showRes.y)) &&
+      Number(showRes.y) > Number(acao.y) + 100
+    ) {
+      log(
+        `guard: tap repetido → Show results @${showRes.x},${showRes.y}`,
+      );
+      acao = {
+        type: "tap",
+        x: showRes.x,
+        y: showRes.y,
+        direction: null,
+        text: null,
+        code: null,
+        ms: null,
+        motivo: "guard: tap Show results após sugestão repetida",
+      };
     }
     log(
       `decisão: ${acao.type}` +

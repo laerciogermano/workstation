@@ -6,9 +6,35 @@ import { mkdtempSync, readFileSync, readdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { basename, join } from "node:path";
 import { describe, it } from "node:test";
-import { executeAction, runAgent } from "./agent-run.js";
+import { executeAction, runAgent, ocrHasQwertyKeyboard, pickForcedTypeText } from "./agent-run.js";
 
 describe("agent-run (SC-32)", () => {
+  it("ocrHasQwertyKeyboard + pickForcedTypeText (campo local vs busca)", () => {
+    assert.equal(
+      ocrHasQwertyKeyboard([
+        { text: "q", x: 1, y: 620 },
+        { text: "w", x: 2, y: 620 },
+        { text: "e", x: 3, y: 620 },
+      ]),
+      true,
+    );
+    const prompt = `type "comprador"\ntype "Campinas"\nPROIBIDO type "comprador"`;
+    assert.equal(
+      pickForcedTypeText(prompt, [
+        { text: "comprador", x: 169, y: 80 },
+        { text: "Australia", x: 72, y: 177 },
+      ]),
+      "Campinas",
+    );
+    assert.equal(
+      pickForcedTypeText(prompt, [{ text: "Add alocation", x: 169, y: 80 }]),
+      "Campinas",
+    );
+    assert.equal(
+      pickForcedTypeText(prompt, [{ text: "Search", x: 180, y: 80 }]),
+      "comprador",
+    );
+  });
   it("executeAction tap chama tapElement", async () => {
     const calls = [];
     await executeAction(

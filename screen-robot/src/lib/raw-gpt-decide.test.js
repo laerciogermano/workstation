@@ -191,7 +191,7 @@ describe("raw-gpt-decide", () => {
     async () => {
       await runCase({
         image: "12-scroll.png",
-        prompt: PROMPT + "\nvoce esta no passo 11",
+        prompt: PROMPT + "\nvoce esta no passo 12",
         expected: { type: "scroll", direction: "down" },
       });
     },

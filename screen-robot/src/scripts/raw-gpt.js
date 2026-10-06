@@ -1,18 +1,17 @@
 #!/usr/bin/env node
 /**
- * Chamada crua chat.completions + PNG via lib (compressFrame + buildUserContent).
- * Default: fixture LinkedIn (print).
+ * Extract (lib) num PNG LinkedIn → chat.completions cru com o OCR no prompt.
  *
  *   npm run raw-gpt
  *   npm run raw-gpt -- --image test/fixtures/linkedin-people-comprador-connect.png
- *   npm run raw-gpt -- --prompt "liste os botões" --image …
+ *   npm run raw-gpt -- --engine macos-vision --prompt "o que fazer?"
  */
 import { existsSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadEnvFiles } from "../lib/load-env.js";
-import { buildUserContent, sanitizeMessagesForLog } from "../lib/openai.js";
-import { compressFrame } from "../lib/vision-frame.js";
+import { compactOcr } from "../lib/agent-decide.js";
+import { extractFromImage } from "../lib/extract-engines.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const SRC_ROOT = resolve(__dirname, "..");
@@ -23,7 +22,7 @@ const DEFAULT_IMAGE = join(
   "test/fixtures/linkedin-tela-inicial.png",
 );
 const DEFAULT_PROMPT =
-  "Extraia o que aparece nesta tela do LinkedIn (textos, botões, seções).";
+  "Com base neste OCR da tela LinkedIn, diga o que aparece e o próximo passo.";
 
 const apiKey = process.env.OPENAI_API_KEY;
 if (!apiKey) {
@@ -39,6 +38,7 @@ function argValue(flag) {
 
 const prompt = argValue("--prompt") || DEFAULT_PROMPT;
 const imagePath = resolve(argValue("--image") || DEFAULT_IMAGE);
+const engine = argValue("--engine") || process.env.SCREEN_ROBOT_OCR || "macos-vision";
 const model = process.env.OPENAI_MODEL || "gpt-4o-mini";
 
 if (!existsSync(imagePath)) {
@@ -46,22 +46,16 @@ if (!existsSync(imagePath)) {
   process.exit(1);
 }
 
-const frame = await compressFrame(imagePath);
-const content = buildUserContent(prompt, [
-  { mimeType: frame.mimeType, base64: frame.base64 },
-]);
+const elements = await extractFromImage(imagePath, { engine });
+const ocr = compactOcr(elements);
+console.log({ imagePath, engine, hits: elements.length, ocr });
 
+const userText = `${prompt}\n\nOCR:\n${JSON.stringify(ocr)}`;
 const payload = {
   model,
-  messages: [{ role: "user", content }],
+  messages: [{ role: "user", content: userText }],
 };
-
-console.log(sanitizeMessagesForLog(payload.messages));
-console.log({
-  imagePath,
-  original: frame.original,
-  compressed: { width: frame.width, height: frame.height, bytes: frame.outputBytes },
-});
+console.log(payload);
 
 const res = await fetch("https://api.openai.com/v1/chat/completions", {
   method: "POST",

@@ -47,7 +47,7 @@ function renderMd(rows) {
     "",
     `![entrada](${imgRel})`,
     "",
-    "Gerado pelo teste `lib/extract.linkedin-calls.test.js`.",
+    "Gerado pelo teste `lib/extract.linkedin-calls.test.js` (todos icons=false, depois todos icons=true).",
     "",
     "| chamada | engine | icons | ms | ok | texts | icons | erro |",
     "|---------|--------|-------|----|----|-------|-------|------|",
@@ -87,8 +87,11 @@ describe("extract LinkedIn — engine × icons", () => {
     /** @type {object[]} */
     const rows = [];
 
-    for (const engine of ENGINES) {
-      for (const icons of [false, true]) {
+    const calls = [
+      ...ENGINES.map((engine) => ({ engine, icons: false })),
+      ...ENGINES.map((engine) => ({ engine, icons: true })),
+    ];
+    for (const { engine, icons } of calls) {
         const call = `extractFromImage({ engine: "${engine}", icons: ${icons} })`;
         const t0 = Date.now();
         /** @type {object} */
@@ -138,7 +141,6 @@ describe("extract LinkedIn — engine × icons", () => {
           `${call} ${row.ms}ms ok=${row.ok} texts=${c.texts} icons=${c.icons}` +
             (row.error ? ` err=${row.error.slice(0, 80)}` : ""),
         );
-      }
     }
 
     mkdirSync(OUT_DIR, { recursive: true });

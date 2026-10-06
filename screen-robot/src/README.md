@@ -111,6 +111,9 @@ node --test --test-timeout=120000 lib/extract.people-comprador.fixture.test.js
 # Comparar backends OCR na mesma fixture (quem vê Connect?)
 # Pré: darwin para macos-vision; `pip3 install --user rapidocr-onnxruntime` para rapidocr
 node --test --test-timeout=180000 lib/extract.ocr-backends.fixture.test.js
+
+# Merge engine=all nas fixtures LinkedIn (People/Connect + tela inicial)
+node --test --test-timeout=180000 lib/extract.linkedin-fixtures.test.js
 ```
 
 ---
@@ -137,6 +140,8 @@ Só LinkedIn (sem Instagram). Sem digitar credenciais e sem `saveSession`.
 
 **People/comprador OCR:** fixture [`test/fixtures/linkedin-people-comprador-connect.png`](test/fixtures/linkedin-people-comprador-connect.png) · teste [`lib/extract.people-comprador.fixture.test.js`](lib/extract.people-comprador.fixture.test.js) — print no console e grava [`test/output/linkedin-people-comprador-connect.ocr.json`](test/output/linkedin-people-comprador-connect.ocr.json) (+ `.txt`).
 
+**Merge LinkedIn (prints existentes):** [`lib/extract.linkedin-fixtures.test.js`](lib/extract.linkedin-fixtures.test.js) — `engine: "all"` em People (`Connect` + `People` + `comprador` + Campinas/Brazil) e tela inicial (`Sign in` / `Join`). Saída: `test/output/linkedin-people-merge.json` e `linkedin-tela-inicial-merge.json`.
+
 **OCR backends (Connect):** [`lib/extract-engines.js`](lib/extract-engines.js) + `extract({ engine })` / `findByText(..., { engine })`.
 
 Engines: `tesseract` · `macos-vision` · `rapidocr` · `paddleocr` · `easyocr` · **`all`** (merge paralelo das 5).
@@ -145,6 +150,7 @@ Engines: `tesseract` · `macos-vision` · `rapidocr` · `paddleocr` · `easyocr`
 - Pré: `pip3 install --user rapidocr-onnxruntime paddleocr paddlepaddle easyocr pytesseract` · macOS Vision (Swift) · `brew install tesseract` (opcional pytesseract).
 - Env: `SCREEN_ROBOT_OCR=all|rapidocr|…` · `OCR_MERGE_DIST_PX` (default 48).
 - Comparativo: [`lib/extract.ocr-backends.fixture.test.js`](lib/extract.ocr-backends.fixture.test.js).
+- Regressão merge nas prints: [`lib/extract.linkedin-fixtures.test.js`](lib/extract.linkedin-fixtures.test.js).
 
 Antes: um engine por extract (jornada `rapidocr`). Depois: merge top-5. Rollback: `extract({ engine: "rapidocr" })` / `SCREEN_ROBOT_OCR=rapidocr` / agent `engine: "rapidocr"`.
 

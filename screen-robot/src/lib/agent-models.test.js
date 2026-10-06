@@ -24,8 +24,8 @@ describe("agent-models", () => {
     assert.equal(parseModelSelection("all").length, AGENT_MODELS.length);
     const all = parseModelSelection("a");
     const i4 = all.findIndex((m) => m.id === "gpt-4o-mini");
-    const i25 = all.findIndex((m) => m.id === "gemini-2.5-flash");
-    assert.ok(i4 >= 0 && i25 >= 0 && i4 < i25);
+    const iPrev = all.findIndex((m) => m.id === "gemini-3-flash-preview");
+    assert.ok(i4 >= 0 && iPrev >= 0 && i4 < iPrev);
   });
 
   it("parseModelSelection: id direto", () => {

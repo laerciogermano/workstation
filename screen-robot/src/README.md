@@ -247,7 +247,7 @@ npm run agent:smoke              # 1–2 passos no device; sem key = heurística
 
 **Antes → depois (ordem `a`/todos):** catálogo terminava em `gpt-5-mini` → `gpt-4o-mini` é o **último** (roda por último em `--all-models` / escolha `a`). Rollback: trocar a ordem dos dois no `AGENT_MODELS`.
 
-**Antes → depois (ordem catálogo):** lite → … → 3.8 → OpenAI → agora `3.8` → … → `gpt-4o-mini` → `2.5-flash` → lites → `gpt-5-mini` (menu `1` / `a`). Rollback: ordem antiga em `AGENT_MODELS`.
+**Antes → depois (ordem catálogo):** lite → … → 3.8 → OpenAI → agora `3.8` → … → `gpt-4o-mini` → `3-flash-preview` → `2.5` → lites → `gpt-5-mini` (menu `1` / `a`). Rollback: ordem antiga em `AGENT_MODELS`.
 
 **Antes → depois (Calendar hoje):** prompt solto fazia gpt-4o-mini tap em "Nothing planned. Tap to create." / "+" e criar evento. Roteiro: [`roteiros/jornada-calendar-hoje.md`](../roteiros/jornada-calendar-hoje.md) (só leitura; done no vazio ou na lista). Rollback: `--prompt "abra o calendar…"`.
 
@@ -258,6 +258,8 @@ npm run agent:smoke              # 1–2 passos no device; sem key = heurística
 **Antes → depois (tap só x,y da IA):** OCR usava `element`/id `eN` (id muda a cada turno). Agora: prompt = `type,text,x,y` (sem id); system/schema **sem** `element`; `parseActionPayload` zera `element` e exige `x,y`; `runAgent` sem xy → `TAP_NO_XY`. Vision igual (x,y). Rollback: `compactOcr` com id; tap por `element` + `resolveTapElement`.
 
 **Antes → depois (comprador Campinas do zero):** o roteiro antigo assumia LinkedIn já aberto e o mini pulava busca/filtro. Agora: [`roteiros/jornada-linkedin-comprador-campinas.md`](../roteiros/jornada-linkedin-comprador-campinas.md) (FASE 0 abre o app). Rollback: [`jornada-linkedin-campinas.md`](../roteiros/jornada-linkedin-campinas.md).
+
+**Antes → depois (Show all sem type):** lite via `comprador` no OCR Recent e tapava Show all (seção Recent) sem `type` no histórico. Agora guard em [`lib/agent-run.js`](lib/agent-run.js) força `type` do roteiro se houver tap Search + Show all e ainda não houver `type`. Roteiro [`novo.md`](../roteiros/novo.md): OCR Recent ≠ type. Rollback: remover o bloco `bloqueia Show all sem type`.
 
 **Antes → depois (abrir LinkedIn / gpt-4o-mini):** jornada longa FASE 0–7 fazia mini `KEYCODE_BACK` na home e inventar `Show all results`/coords. Agora: [`roteiros/novo.md`](../roteiros/novo.md) — ordem rígida Search→type→Show all (text EXATO do OCR); key=`{"type":"key","code":"KEYCODE_BACK"}`; lista aberta (Recent/Clear all+1st/2nd sem Show all) = done. Rollback: `--prompt ../roteiros/jornada-linkedin-comprador-campinas.md`.
 

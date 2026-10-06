@@ -204,6 +204,8 @@ npm run agent:smoke              # 1–2 passos no device; sem key = heurística
 
 **Setup CLI (modelos):** em TTY, sem `--model` / `--no-prompt`, o agent lista o catálogo ([`lib/agent-models.js`](lib/agent-models.js)) e pede a escolha (`1`, `1,3`, `a`=todos, ou id). Vários modelos → roda em sequência, log em `logs/agent/<model>/`. Rollback: `--model <id>` ou `--no-prompt`.
 
+**Antes → depois (id Gemini 3 Flash):** catálogo usava `gemini-3-flash` (HTTP 404 na API) → `gemini-3-flash-preview`. Rollback: só se a API voltar a expor `gemini-3-flash`.
+
 Stdout: `[agent]` / `[decide]` / `[gemini]` ou `[openai]`. Provider default `gemini`; `AGENT_PROVIDER=openai` ou modelo `gpt-*` usa OpenAI. Fallback Gemini só se `GEMINI_FALLBACK_MODELS` estiver setado.
 
 **Antes → depois (.env local):** keys só via export → também `src/.env` / `.env.local` (gitignored), carregados por `run-agent` via [`lib/load-env.js`](lib/load-env.js). Modelo: [`.env.example`](.env.example). Rollback: apagar `.env` e exportar no shell.

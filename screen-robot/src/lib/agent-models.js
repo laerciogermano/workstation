@@ -18,9 +18,9 @@ export const AGENT_MODELS = [
     label: "Gemini 3.1 Flash-Lite",
   },
   {
-    id: "gemini-3-flash",
+    id: "gemini-3-flash-preview",
     provider: "gemini",
-    label: "Gemini 3 Flash",
+    label: "Gemini 3 Flash (preview)",
   },
   {
     id: "gemini-3.5-flash",

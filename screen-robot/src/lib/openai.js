@@ -4,10 +4,11 @@
  * Compatível com o contrato de gemini.generateContent (text, usage*, requests).
  */
 
+import { DEFAULT_RETRY_MS, resolveRetryWaitMs } from "./retry-wait.js";
+
 const DEFAULT_MODEL = "gpt-4o-mini";
 const API_URL = "https://api.openai.com/v1/chat/completions";
 const DEFAULT_RETRIES = Number(process.env.OPENAI_RETRIES || process.env.GEMINI_RETRIES || 2);
-const DEFAULT_RETRY_MS = Number(process.env.OPENAI_RETRY_MS || process.env.GEMINI_RETRY_MS || 0);
 /** 0 = sem abort (espera a API). */
 const DEFAULT_TIMEOUT_MS = Number(
   process.env.OPENAI_TIMEOUT_MS || process.env.GEMINI_TIMEOUT_MS || 0,
@@ -215,8 +216,16 @@ export async function generateContent(opts, deps = {}) {
         output: { error: lastMsg },
       });
       if (attempt <= retries && isRetryable(0, lastMsg)) {
-        if (retryMs > 0) await sleepFn(retryMs * attempt);
-        else logFn(`retry imediato (rede)`);
+        const wait = resolveRetryWaitMs({
+          baseMs: retryMs,
+          attempt,
+          message: lastMsg,
+          status: lastStatus,
+        });
+        if (wait > 0) {
+          logFn(`retry em ${wait}ms (rede)`);
+          await sleepFn(wait);
+        } else logFn(`retry imediato (rede)`);
         continue;
       }
       fail("OPENAI_REQUEST_FAILED", lastMsg, { status: lastStatus, model, requests });
@@ -244,8 +253,16 @@ export async function generateContent(opts, deps = {}) {
         output: { raw, error: lastMsg },
       });
       if (attempt <= retries && isRetryable(res.status, lastMsg)) {
-        if (retryMs > 0) await sleepFn(retryMs * attempt);
-        else logFn(`retry imediato (${res.status})`);
+        const wait = resolveRetryWaitMs({
+          baseMs: retryMs,
+          attempt,
+          message: lastMsg,
+          status: res.status,
+        });
+        if (wait > 0) {
+          logFn(`retry em ${wait}ms (${res.status})`);
+          await sleepFn(wait);
+        } else logFn(`retry imediato (${res.status})`);
         continue;
       }
       fail("OPENAI_REQUEST_FAILED", lastMsg, { status: lastStatus, model, requests });
@@ -266,7 +283,12 @@ export async function generateContent(opts, deps = {}) {
         output: { raw, error: lastMsg },
       });
       if (attempt <= retries) {
-        if (retryMs > 0) await sleepFn(retryMs * attempt);
+        const wait = resolveRetryWaitMs({
+          baseMs: retryMs,
+          attempt,
+          message: lastMsg,
+        });
+        if (wait > 0) await sleepFn(wait);
         continue;
       }
       fail("OPENAI_REQUEST_FAILED", lastMsg, { status: 0, model, requests });

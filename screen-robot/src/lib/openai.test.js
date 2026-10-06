@@ -43,6 +43,47 @@ describe("openai", () => {
     assert.equal(out.requests[0].response, '{"ok":true}');
   });
 
+  it("429 espera try again in / piso 2s", async () => {
+    let n = 0;
+    const waits = [];
+    const fetchStub = async () => {
+      n += 1;
+      if (n === 1) {
+        return {
+          ok: false,
+          status: 429,
+          json: async () => ({
+            error: {
+              message:
+                "Rate limit reached for gpt-4o-mini. Please try again in 728ms.",
+            },
+          }),
+        };
+      }
+      return {
+        ok: true,
+        json: async () => ({
+          choices: [{ message: { content: '{"ok":true}' } }],
+        }),
+      };
+    };
+    const out = await generateContent(
+      {
+        prompt: "hi",
+        apiKey: "k",
+        retries: 2,
+        retryMs: 2000,
+      },
+      {
+        fetch: fetchStub,
+        sleep: async (ms) => waits.push(ms),
+        log: () => {},
+      },
+    );
+    assert.equal(out.text, '{"ok":true}');
+    assert.equal(waits[0], 2000);
+  });
+
   it("falha sem api key", async () => {
     const prev = process.env.OPENAI_API_KEY;
     delete process.env.OPENAI_API_KEY;

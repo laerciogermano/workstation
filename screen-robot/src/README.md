@@ -203,8 +203,8 @@ export GEMINI_MODEL=gemini-3.5-flash-lite
 #   export OPENAI_API_KEY=…   # ou OPENAI_API_KEY=… no .env
 #   export AGENT_PROVIDER=openai
 #   # ou: --provider openai --model gpt-4o-mini
-# retry/indisponível: GEMINI_RETRY_MS=0 · GEMINI_CHAIN_WAIT_MS=0 · GEMINI_CHAIN_ROUNDS=30
-# (saturado → reenvia na hora, sem backoff; até N rounds)
+# retry/indisponível: GEMINI_RETRY_MS=2000 · OPENAI_RETRY_MS=2000 · GEMINI_CHAIN_ROUNDS=30
+# 429: espera max(try again in da API, piso×attempt). 0 no env volta ao piso 2s em 429.
 
 npm run agent -- --prompt ../roteiros/jornada-comprador.md
 npm run agent -- --prompt ../roteiros/abrir-settings.md
@@ -251,6 +251,8 @@ Stdout: `[agent]` / `[decide]` / `[gemini]` ou `[openai]`. Provider default `gem
 **Antes → depois (modelo):** `gemini-2.5-flash-lite` (404 new users) → `gemini-3.5-flash-lite` (recomendado pela API). Rollback: `export GEMINI_MODEL=gemini-3.1-flash-lite`.
 
 **Antes → depois (retry saturado):** espera `GEMINI_CHAIN_WAIT_MS×round` (800) / `GEMINI_RETRY_MS` (250) → **0ms** (retry imediato) e **30** rounds. Rollback: `export GEMINI_CHAIN_WAIT_MS=800 GEMINI_RETRY_MS=250 GEMINI_CHAIN_ROUNDS=2`.
+
+**Antes → depois (retry 429 / TPM):** retry imediato (0ms) estourava rate limit (`try again in 728ms`). Agora piso **2000ms** (`OPENAI_RETRY_MS` / `GEMINI_RETRY_MS`) e, se a API informar `try again in …`, usa o maior entre esse valor e o piso. [`lib/retry-wait.js`](lib/retry-wait.js). Rollback: `export OPENAI_RETRY_MS=0 GEMINI_RETRY_MS=0 GEMINI_CHAIN_WAIT_MS=0` (429 ainda espera 2s).
 
 **Antes → depois (não morrer):** timeout/503/`fail` da API abortava a run → agora só registra e tenta o próximo passo até `done` ou `maxSteps`.
 

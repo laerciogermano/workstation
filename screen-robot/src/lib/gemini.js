@@ -103,6 +103,52 @@ export function resolveModelChain(primary, fallbacks) {
 }
 
 /**
+ * Partes de imagem para Gemini (inlineData).
+ * @param {Array<{ mimeType?: string, data?: string, base64?: string }>|undefined} images
+ */
+function imageParts(images) {
+  if (!Array.isArray(images) || !images.length) return [];
+  return images
+    .map((img) => {
+      const data = img?.data || img?.base64;
+      if (!data) return null;
+      return {
+        inlineData: {
+          mimeType: img.mimeType || "image/webp",
+          data: String(data),
+        },
+      };
+    })
+    .filter(Boolean);
+}
+
+/** Body sem base64 gigante — só meta para usage/logs. */
+export function sanitizeBodyForLog(body) {
+  if (!body || typeof body !== "object") return body;
+  try {
+    const clone = structuredClone(body);
+    const parts = clone?.contents?.[0]?.parts;
+    if (Array.isArray(parts)) {
+      clone.contents[0].parts = parts.map((p) => {
+        if (p?.inlineData?.data) {
+          return {
+            inlineData: {
+              mimeType: p.inlineData.mimeType,
+              bytes: Buffer.byteLength(String(p.inlineData.data), "utf8"),
+              data: "[omitted]",
+            },
+          };
+        }
+        return p;
+      });
+    }
+    return clone;
+  } catch {
+    return { note: "body omitido (sanitize falhou)" };
+  }
+}
+
+/**
  * @param {{
  *   prompt: string,
  *   system?: string,
@@ -113,6 +159,7 @@ export function resolveModelChain(primary, fallbacks) {
  *   thinkingLevel?: "low"|"medium"|"high",
  *   retries?: number,
  *   retryMs?: number,
+ *   images?: Array<{ mimeType?: string, data?: string, base64?: string }>,
  * }} opts
  * @param {{ fetch?: typeof fetch, sleep?: Function, log?: Function }} [deps]
  * @returns {Promise<{ text: string, usage?: object, raw?: object, model: string }>}
@@ -152,15 +199,22 @@ export async function generateContent(opts, deps = {}) {
   /** @type {object[]} */
   const requests = [];
 
+  const imgs = imageParts(opts.images);
   const baseReqMeta = (body) => ({
     promptChars,
     systemChars,
     prompt: promptText,
     system: systemText || undefined,
+    images: imgs.length
+      ? imgs.map((p) => ({
+          mimeType: p.inlineData.mimeType,
+          bytes: Buffer.byteLength(String(p.inlineData.data), "utf8"),
+        }))
+      : undefined,
     input: {
       system: systemText || undefined,
       prompt: promptText,
-      body: body || undefined,
+      body: body ? sanitizeBodyForLog(body) : undefined,
     },
   });
 
@@ -181,7 +235,10 @@ export async function generateContent(opts, deps = {}) {
 
       const body = {
         contents: [
-          { role: "user", parts: [{ text: String(opts.prompt || "") }] },
+          {
+            role: "user",
+            parts: [{ text: String(opts.prompt || "") }, ...imgs],
+          },
         ],
         generationConfig: {},
       };

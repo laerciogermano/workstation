@@ -1,5 +1,5 @@
 /**
- * EP-07 / US-24 — decide próxima ação a partir de prompt + OCR (Gemini ou OpenAI).
+ * EP-07 / US-24 — decide próxima ação a partir de prompt + OCR ou imagem (vision).
  */
 import {
   generateContent as generateGemini,
@@ -9,6 +9,7 @@ import {
   generateContent as generateOpenAI,
   DEFAULT_MODEL as DEFAULT_OPENAI_MODEL,
 } from "./openai.js";
+import { scalePointToDevice } from "./vision-frame.js";
 
 const ACTION_TYPES = new Set([
   "tap",
@@ -164,6 +165,56 @@ Regras:
 - Não peça screenshot; decida só com o OCR e o prompt.`;
 }
 
+/**
+ * System prompt modo visão (imagem anexada; coords na escala da imagem).
+ * @param {{ width: number, height: number }} size
+ */
+export function buildSystemPromptVision(size) {
+  const w = size?.width || 540;
+  const h = size?.height || 960;
+  return `Você opera um smartphone Android olhando a captura de tela anexada (imagem ${w}×${h} px). Sem OCR.
+
+Responda APENAS JSON válido (sem markdown) no formato:
+{
+  "resumo": "2-4 frases do que tem na tela",
+  "elementos": [{ "label": "...", "tipo": "button|chip|card|text", "x": 0, "y": 0 }],
+  "acao": {
+    "type": "tap|scroll|type|key|sleep|done|fail",
+    "x": null,
+    "y": null,
+    "direction": null,
+    "text": null,
+    "code": null,
+    "ms": null,
+    "motivo": "..."
+  }
+}
+
+Regras:
+- Coords de tap/elementos = escala DESTA imagem (${w}×${h}). Centro do alvo. Não invente scale nem peça outra screenshot.
+- scroll: direction down|up|left|right quando o alvo não está visível.
+- Se vários scrolls e a tela parece igual, mude de estratégia (outro tap, type, KEYCODE_BACK).
+- Home / shade: Notifications/Clear all → KEYCODE_BACK ou HOME. Gaveta de apps → scroll down. Após tap Search (y pequeno no topo) + teclado: PROIBIDO scroll — type do roteiro ou BACK.
+- LinkedIn Connect: tap no pill Connect visível. Filtro localização: Add a location + type cidade se necessário.
+- type: acao.text obrigatório. key: KEYCODE_BACK/HOME. sleep: ms se loading. done / fail conforme objetivo.
+- Histórico traz ações já executadas (coords já em device); use só como contexto.`;
+}
+
+/**
+ * @param {"ocr"|"vision"|string|undefined} sense
+ */
+export function resolveSense(cfg) {
+  const raw = String(
+    cfg?.sense || process.env.AGENT_SENSE || "ocr",
+  )
+    .trim()
+    .toLowerCase();
+  if (raw === "vision" || raw === "image" || raw === "screenshot") {
+    return "vision";
+  }
+  return "ocr";
+}
+
 const MAX_PROMPT_CHARS = Number(process.env.GEMINI_MAX_PROMPT_CHARS || 6000);
 /** Janela de passos recentes no prompt (antes: 8 fixo). Env: AGENT_HISTORY_STEPS. */
 export const DEFAULT_HISTORY_STEPS = 12;
@@ -191,6 +242,13 @@ function clipPrompt(prompt) {
   );
 }
 
+function historyWindow(cfg) {
+  const n = resolveHistorySteps(cfg);
+  const history = cfg.history;
+  if (!(n > 0 && Array.isArray(history) && history.length)) return { n, window: [] };
+  return { n, window: history.slice(-n) };
+}
+
 /**
  * @param {{
  *   prompt: string,
@@ -200,13 +258,8 @@ function clipPrompt(prompt) {
  * }} cfg
  */
 export function buildUserPrompt(cfg) {
-  const { prompt, ocr, history } = cfg;
-  const n = resolveHistorySteps(cfg);
-  // slice(-0) === slice(0) e devolveria o array inteiro — 0 = omitir histórico
-  const window =
-    n > 0 && Array.isArray(history) && history.length
-      ? history.slice(-n)
-      : [];
+  const { prompt, ocr } = cfg;
+  const { n, window } = historyWindow(cfg);
   const hist = window.length
     ? `\nHistórico recente (últimos ${window.length}/${n}):\n${JSON.stringify(window, null, 0)}\n`
     : "";
@@ -222,7 +275,39 @@ Defina a próxima ação.`;
 /**
  * @param {{
  *   prompt: string,
- *   ocr: Array<{ text?: string, x?: number, y?: number }>,
+ *   history?: object[],
+ *   historySteps?: number,
+ *   imageMeta?: { width?: number, height?: number, scaleToDevice?: number },
+ * }} cfg
+ */
+export function buildUserPromptVision(cfg) {
+  const { prompt, imageMeta } = cfg;
+  const { n, window } = historyWindow(cfg);
+  // histórico vision: sem ocr[] (pesado / irrelevante)
+  const slim = window.map((h) => {
+    if (!h || typeof h !== "object") return h;
+    const { ocr: _o, ...rest } = h;
+    return rest;
+  });
+  const hist = slim.length
+    ? `\nHistórico recente (últimos ${slim.length}/${n}):\n${JSON.stringify(slim, null, 0)}\n`
+    : "";
+  const w = imageMeta?.width ?? "?";
+  const h = imageMeta?.height ?? "?";
+  return `Objetivo / roteiro:
+${clipPrompt(prompt)}
+${hist}
+Imagem anexada: captura da tela ${w}×${h} px (WebP). Use só ela + o roteiro.
+Defina a próxima ação (coords na escala da imagem).`;
+}
+
+/**
+ * @param {{
+ *   prompt: string,
+ *   ocr?: Array<{ text?: string, x?: number, y?: number }>,
+ *   sense?: "ocr"|"vision",
+ *   image?: { mimeType?: string, data?: string, base64?: string },
+ *   imageMeta?: { width?: number, height?: number, scaleToDevice?: number },
  *   history?: object[],
  *   historySteps?: number,
  *   model?: string,
@@ -238,14 +323,28 @@ function log(...args) {
 
 export async function decide(cfg, deps = {}) {
   if (!cfg?.prompt) fail("AGENT_NO_PROMPT", "decide: falta prompt");
-  if (!Array.isArray(cfg.ocr)) fail("AGENT_NO_OCR", "decide: falta ocr[]");
+  const sense = resolveSense(cfg);
+  if (sense === "ocr" && !Array.isArray(cfg.ocr)) {
+    fail("AGENT_NO_OCR", "decide: falta ocr[]");
+  }
+  if (sense === "vision") {
+    const data = cfg.image?.data || cfg.image?.base64;
+    if (!data) fail("AGENT_NO_IMAGE", "decide vision: falta image.data");
+    if (!cfg.imageMeta?.scaleToDevice) {
+      fail("AGENT_NO_SCALE", "decide vision: falta imageMeta.scaleToDevice");
+    }
+  }
 
   const logFn = deps.log ?? log;
   const provider = resolveProvider(cfg);
   const model = resolveDecideModel(cfg);
   const historySteps = resolveHistorySteps(cfg);
   logFn(
-    `início provider=${provider} model=${model} ocrHits=${cfg.ocr.length} history=${(cfg.history || []).length} historySteps=${historySteps}`,
+    `início sense=${sense} provider=${provider} model=${model}` +
+      (sense === "ocr"
+        ? ` ocrHits=${(cfg.ocr || []).length}`
+        : ` image=${cfg.imageMeta?.width}x${cfg.imageMeta?.height} scale=${cfg.imageMeta?.scaleToDevice}`) +
+      ` history=${(cfg.history || []).length} historySteps=${historySteps}`,
   );
 
   const gen =
@@ -256,17 +355,39 @@ export async function decide(cfg, deps = {}) {
   let usedModel = model;
   let requests;
   try {
-    const out = await gen(
-      {
-        system: buildSystemPrompt(),
-        prompt: buildUserPrompt({ ...cfg, historySteps }),
-        model,
-        apiKey: cfg.apiKey,
-        json: true,
-        thinkingLevel: cfg.thinkingLevel || "low",
-      },
-      deps,
-    );
+    const common = {
+      model,
+      apiKey: cfg.apiKey,
+      json: true,
+      thinkingLevel: cfg.thinkingLevel || "low",
+    };
+    const out =
+      sense === "vision"
+        ? await gen(
+            {
+              ...common,
+              system: buildSystemPromptVision({
+                width: cfg.imageMeta.width,
+                height: cfg.imageMeta.height,
+              }),
+              prompt: buildUserPromptVision({ ...cfg, historySteps }),
+              images: [
+                {
+                  mimeType: cfg.image.mimeType || "image/webp",
+                  data: cfg.image.data || cfg.image.base64,
+                },
+              ],
+            },
+            deps,
+          )
+        : await gen(
+            {
+              ...common,
+              system: buildSystemPrompt(),
+              prompt: buildUserPrompt({ ...cfg, historySteps }),
+            },
+            deps,
+          );
     text = out.text;
     usage = out.usage;
     usedModel = out.model || model;
@@ -277,13 +398,34 @@ export async function decide(cfg, deps = {}) {
   }
 
   const parsed = parseActionPayload(text);
+  if (sense === "vision" && parsed.acao.type === "tap") {
+    const scaled = scalePointToDevice(
+      { x: parsed.acao.x, y: parsed.acao.y },
+      cfg.imageMeta.scaleToDevice,
+    );
+    logFn(
+      `scale tap ${parsed.acao.x},${parsed.acao.y} ×${cfg.imageMeta.scaleToDevice} → ${scaled.x},${scaled.y}`,
+    );
+    parsed.acao.x = scaled.x;
+    parsed.acao.y = scaled.y;
+    if (Array.isArray(parsed.elementos)) {
+      parsed.elementos = parsed.elementos.map((el) => {
+        if (!el || typeof el !== "object") return el;
+        const p = scalePointToDevice(
+          { x: el.x, y: el.y },
+          cfg.imageMeta.scaleToDevice,
+        );
+        return { ...el, x: p.x, y: p.y };
+      });
+    }
+  }
   logFn(
     `ação=${parsed.acao.type}` +
       (parsed.acao.x != null ? ` @${parsed.acao.x},${parsed.acao.y}` : "") +
       (parsed.acao.direction ? ` dir=${parsed.acao.direction}` : "") +
       (parsed.acao.motivo ? ` — ${parsed.acao.motivo}` : ""),
   );
-  return { ...parsed, usage, model: usedModel, provider, requests };
+  return { ...parsed, usage, model: usedModel, provider, requests, sense };
 }
 
 export { ACTION_TYPES, DEFAULT_GEMINI_MODEL, DEFAULT_OPENAI_MODEL };

@@ -7,9 +7,12 @@
  *   npm run agent -- --prompt ./meu.txt --no-prompt   # sem menu (env/default)
  *   npm run agent -- --prompt ./meu.txt --all-models  # todos do catálogo
  *   npm run agent -- --provider openai --model gpt-4o-mini --prompt …
+ *   npm run agent -- --sense vision --prompt ../roteiros/teste.md   # print→WebP→IA
+ *   npm run agent -- --vision --prompt …                            # atalho sense=vision
  *
  * Sem --model em TTY: menu interativo para escolher 1+ modelos.
  * Env: GEMINI_API_KEY / OPENAI_API_KEY · AGENT_PROVIDER · GEMINI_MODEL / OPENAI_MODEL
+ *      AGENT_SENSE=ocr|vision · VISION_WIDTH · VISION_QUALITY
  * Keys também em src/.env (gitignored) — ver .env.example
  */
 import { readFileSync, existsSync } from "node:fs";
@@ -138,6 +141,21 @@ const historyStepsRaw = argValue("--history-steps");
 const historySteps = historyStepsRaw != null ? Number(historyStepsRaw) : undefined;
 const engine =
   argValue("--engine") || process.env.SCREEN_ROBOT_OCR || "all";
+const senseRaw =
+  argValue("--sense") ||
+  (hasFlag("--vision") ? "vision" : null) ||
+  process.env.AGENT_SENSE ||
+  "ocr";
+const sense = String(senseRaw).toLowerCase() === "vision" ||
+  String(senseRaw).toLowerCase() === "image"
+  ? "vision"
+  : "ocr";
+const visionWidth = argValue("--vision-width")
+  ? Number(argValue("--vision-width"))
+  : undefined;
+const visionQuality = argValue("--vision-quality")
+  ? Number(argValue("--vision-quality"))
+  : undefined;
 const baseLogDir = argValue("--log-dir") || join(SRC_ROOT, "logs", "agent");
 const usageDir = argValue("--usage-dir") || join(SRC_ROOT, "usage");
 const keyboardRegion = loadDeviceCfg().type?.keyboardRegion;
@@ -145,6 +163,7 @@ const keyboardRegion = loadDeviceCfg().type?.keyboardRegion;
 if (!prompt) {
   console.error("uso: npm run agent -- --prompt <texto|arquivo.md>");
   console.error("      (TTY) menu de modelos · --model ID · --all-models · --no-prompt");
+  console.error("      --sense ocr|vision · --vision (atalho) · --engine all (só ocr)");
   process.exit(2);
 }
 if (!serial) {
@@ -168,7 +187,9 @@ for (let i = 0; i < models.length; i++) {
     `\n======== [${i + 1}/${models.length}] ${m.id} (${provider}) ========`,
   );
   console.log(
-    `runAgent serial=${serial} engine=${engine} provider=${provider}` +
+    `runAgent serial=${serial} sense=${sense}` +
+      (sense === "ocr" ? ` engine=${engine}` : "") +
+      ` provider=${provider}` +
       ` model=${m.id}` +
       ` maxSteps=${maxSteps}` +
       (historySteps != null ? ` historySteps=${historySteps}` : "") +
@@ -182,7 +203,10 @@ for (let i = 0; i < models.length; i++) {
     historySteps,
     provider,
     model: m.id,
+    sense,
     engine,
+    visionWidth,
+    visionQuality,
     logDir,
     usageDir,
     keyboardRegion,

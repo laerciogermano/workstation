@@ -210,6 +210,69 @@ describe("agent-run (SC-32)", () => {
     }
   });
 
+  it("runAgent sense=vision: captura+compress → decide (sem extract)", async () => {
+    const logDir = mkdtempSync(join(tmpdir(), "sr-agent-"));
+    const usageDir = mkdtempSync(join(tmpdir(), "sr-usage-"));
+    let extractCalls = 0;
+    let decides = 0;
+    let decideCfg;
+    const taps = [];
+    try {
+      const result = await runAgent(
+        {
+          serial: "emulator-5554",
+          prompt: "conectar",
+          sense: "vision",
+          maxSteps: 5,
+          logDir,
+          usageDir,
+          stepDelayMs: 0,
+        },
+        {
+          sleep: async () => {},
+          extract: async () => {
+            extractCalls += 1;
+            return [];
+          },
+          captureFrame: async () => "/tmp/fake.png",
+          compressFrame: async () => ({
+            mimeType: "image/webp",
+            base64: "QQ==",
+            width: 540,
+            height: 960,
+            original: { width: 1080, height: 1920 },
+            scaleToDevice: 2,
+            inputBytes: 1000,
+            outputBytes: 200,
+          }),
+          decide: async (cfg) => {
+            decides += 1;
+            decideCfg = cfg;
+            if (decides === 1) {
+              return {
+                resumo: "Connect",
+                acao: { type: "tap", x: 454, y: 344, motivo: "Connect" },
+                sense: "vision",
+              };
+            }
+            return { resumo: "ok", acao: { type: "done", motivo: "ok" }, sense: "vision" };
+          },
+          tapElement: (cfg) => taps.push(cfg),
+        },
+      );
+      assert.equal(result.status, "done");
+      assert.equal(extractCalls, 0);
+      assert.equal(decideCfg.sense, "vision");
+      assert.ok(decideCfg.image?.data);
+      assert.equal(decideCfg.imageMeta.scaleToDevice, 2);
+      assert.deepEqual(taps[0], { serial: "emulator-5554", x: 454, y: 344 });
+      assert.match(readFileSync(result.logPath, "utf8"), /sense: `vision`/);
+    } finally {
+      rmSync(logDir, { recursive: true, force: true });
+      rmSync(usageDir, { recursive: true, force: true });
+    }
+  });
+
   it("runAgent passa historySteps customizado ao decide", async () => {
     const logDir = mkdtempSync(join(tmpdir(), "sr-agent-"));
     const usageDir = mkdtempSync(join(tmpdir(), "sr-usage-"));

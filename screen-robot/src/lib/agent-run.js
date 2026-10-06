@@ -1,13 +1,22 @@
 /**
- * EP-07 / US-25 — loop extract → decide → operate → log.
+ * EP-07 / US-25 — loop (OCR ou vision) → decide → operate → log.
  */
 import { mkdirSync, appendFileSync, writeFileSync, existsSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { extract } from "./extract.js";
-import { decide, resolveHistorySteps, resolveDecideModel, resolveProvider, compactOcr } from "./agent-decide.js";
+import {
+  decide,
+  resolveHistorySteps,
+  resolveDecideModel,
+  resolveProvider,
+  resolveSense,
+  compactOcr,
+} from "./agent-decide.js";
 import { DEFAULT_MODEL as DEFAULT_GEMINI_MODEL } from "./gemini.js";
 import { tapElement, scroll, type, typeViaAdb, key } from "./operate.js";
 import { adb, sleep as defaultSleep } from "./adb.js";
+import { captureFrame } from "./frame.js";
+import { compressFrame } from "./vision-frame.js";
 
 /** `AGENT_TYPE_METHOD=adb|ocr` ou cfg.typeMethod — default adb. */
 function resolveTypeMethod(cfg = {}) {
@@ -237,13 +246,30 @@ function writeChatRequestFiles({
   return paths;
 }
 
-function appendStepLog(logPath, step, { resumo, acao, ocr, resultado, usage }) {
+function appendStepLog(logPath, step, { resumo, acao, ocr, vision, resultado, usage }) {
   const u = usage || null;
   const usageLine = u
     ? `- usage: in=${u.promptTokenCount ?? "?"} out=${u.candidatesTokenCount ?? "?"}` +
       (u.thoughtsTokenCount ? ` thoughts=${u.thoughtsTokenCount}` : "") +
       (u.totalTokenCount != null ? ` total=${u.totalTokenCount}` : "")
     : null;
+  const senseBlock = vision
+    ? [
+        "### Vision (print comprimido)",
+        "",
+        "```json",
+        JSON.stringify(vision, null, 2),
+        "```",
+        "",
+      ]
+    : [
+        "### OCR usado na decisão",
+        "",
+        "```json",
+        JSON.stringify(ocr, null, 2),
+        "```",
+        "",
+      ];
   const block = [
     "",
     `## Passo ${step} — ${acao.type} (${new Date().toISOString()})`,
@@ -259,12 +285,7 @@ function appendStepLog(logPath, step, { resumo, acao, ocr, resultado, usage }) {
     acao.code ? `- code: ${acao.code}` : null,
     usageLine,
     "",
-    "### OCR usado na decisão",
-    "",
-    "```json",
-    JSON.stringify(ocr, null, 2),
-    "```",
-    "",
+    ...senseBlock,
     "### Resultado",
     "",
     resultado || "",
@@ -281,6 +302,9 @@ function appendStepLog(logPath, step, { resumo, acao, ocr, resultado, usage }) {
  *   prompt: string,
  *   maxSteps?: number,
  *   engine?: string,
+ *   sense?: "ocr"|"vision",
+ *   visionWidth?: number,
+ *   visionQuality?: number,
  *   logDir?: string,
  *   usageDir?: string,
  *   keyboardRegion?: object,
@@ -299,11 +323,14 @@ export async function runAgent(cfg, deps = {}) {
 
   const maxSteps = Number(cfg.maxSteps ?? 40);
   const historySteps = resolveHistorySteps(cfg);
-  // all = merge paralelo top-5 OCR (rapidocr+vision+paddle+easy+tesseract)
+  const sense = resolveSense(cfg);
+  // all = merge paralelo top-5 OCR (só sense=ocr)
   const engine = cfg.engine || process.env.SCREEN_ROBOT_OCR || "all";
   const sleep = deps.sleep ?? defaultSleep;
   const runExtract = deps.extract ?? extract;
   const runDecide = deps.decide ?? decide;
+  const runCapture = deps.captureFrame ?? captureFrame;
+  const runCompress = deps.compressFrame ?? compressFrame;
   const startedAt = new Date().toISOString();
   const runStamp = stamp();
   const logDir = resolve(cfg.logDir || join(process.cwd(), "logs", "agent"));
@@ -315,7 +342,9 @@ export async function runAgent(cfg, deps = {}) {
   const provider = resolveProvider(cfg);
   const model = resolveDecideModel(cfg) || DEFAULT_GEMINI_MODEL;
   log(
-    `início serial=${serial} engine=${engine} provider=${provider} model=${model} maxSteps=${maxSteps} historySteps=${historySteps}`,
+    `início serial=${serial} sense=${sense}` +
+      (sense === "ocr" ? ` engine=${engine}` : "") +
+      ` provider=${provider} model=${model} maxSteps=${maxSteps} historySteps=${historySteps}`,
   );
   log(`log → ${logPath}`);
   log(`usage → ${usageDir}/<timestamp>.json (1 arquivo por request)`);
@@ -326,7 +355,8 @@ export async function runAgent(cfg, deps = {}) {
       "# runAgent",
       "",
       `- serial: \`${serial}\``,
-      `- engine: \`${engine}\``,
+      `- sense: \`${sense}\``,
+      sense === "ocr" ? `- engine: \`${engine}\`` : null,
       `- provider: \`${provider}\``,
       `- model: \`${model}\``,
       `- maxSteps: ${maxSteps}`,
@@ -338,7 +368,9 @@ export async function runAgent(cfg, deps = {}) {
       cfg.prompt.slice(0, 4000),
       cfg.prompt.length > 4000 ? "\n…(truncado)\n" : "",
       "",
-    ].join("\n"),
+    ]
+      .filter((line) => line != null)
+      .join("\n"),
     "utf8",
   );
 
@@ -381,59 +413,129 @@ export async function runAgent(cfg, deps = {}) {
 
   for (let i = 1; i <= maxSteps; i++) {
     log(`── passo ${i}/${maxSteps} ──`);
-    log(`extract…`);
-    const tExtract = Date.now();
-    let ocr;
-    try {
-      ocr = await runExtract({ serial, engine }, deps);
-      log(`extract ok em ${Date.now() - tExtract}ms (${ocr.length} hits)`);
-      dumpOcrStdout(ocr);
-    } catch (e) {
-      const resultado = `erro extract: ${e.code || ""} ${e.message || e}`;
-      log(`${resultado} — recupera e continua`);
-      appendStepLog(logPath, i, {
-        resumo: "(extract falhou; processo segue)",
-        acao: { type: "sleep", ms: recoverMs, motivo: String(e.message || e) },
-        ocr: [],
-        resultado,
-      });
-      steps.push({ step: i, error: true, resultado });
-      history.push({
-        step: i,
-        type: "sleep",
-        motivo: resultado,
-        error: resultado,
-        resultado,
-        ocr: [],
-      });
-      usageCalls.push({ step: i, error: resultado });
-      await sleep(recoverMs);
-      continue;
-    }
+    /** @type {object[]} */
+    let ocr = [];
+    /** @type {object|null} */
+    let visionMeta = null;
+    /** @type {{ mimeType: string, data: string }|null} */
+    let visionImage = null;
 
-    if (looksLoading(ocr)) {
-      log(`tela loading — retry extract imediato`);
+    if (sense === "vision") {
+      log(`capture+compress (vision)…`);
+      const tCap = Date.now();
+      try {
+        const framePath = await runCapture(serial, deps);
+        const compressed = await runCompress(framePath, {
+          width: cfg.visionWidth,
+          quality: cfg.visionQuality,
+        });
+        visionMeta = {
+          width: compressed.width,
+          height: compressed.height,
+          scaleToDevice: compressed.scaleToDevice,
+          original: compressed.original,
+          inputBytes: compressed.inputBytes,
+          outputBytes: compressed.outputBytes,
+        };
+        visionImage = {
+          mimeType: compressed.mimeType,
+          data: compressed.base64,
+        };
+        log(
+          `vision ok em ${Date.now() - tCap}ms ` +
+            `${compressed.original.width}×${compressed.original.height} → ` +
+            `${compressed.width}×${compressed.height} ` +
+            `${compressed.outputBytes}B scale=${compressed.scaleToDevice}`,
+        );
+      } catch (e) {
+        const resultado = `erro vision: ${e.code || ""} ${e.message || e}`;
+        log(`${resultado} — recupera e continua`);
+        appendStepLog(logPath, i, {
+          resumo: "(vision falhou; processo segue)",
+          acao: { type: "sleep", ms: recoverMs, motivo: String(e.message || e) },
+          ocr: [],
+          resultado,
+        });
+        steps.push({ step: i, error: true, resultado });
+        history.push({
+          step: i,
+          type: "sleep",
+          motivo: resultado,
+          error: resultado,
+          resultado,
+          sense: "vision",
+        });
+        usageCalls.push({ step: i, error: resultado });
+        await sleep(recoverMs);
+        continue;
+      }
+    } else {
+      log(`extract…`);
+      const tExtract = Date.now();
       try {
         ocr = await runExtract({ serial, engine }, deps);
+        log(`extract ok em ${Date.now() - tExtract}ms (${ocr.length} hits)`);
         dumpOcrStdout(ocr);
       } catch (e) {
-        log(`extract retry falhou (${e.message}) — continua`);
+        const resultado = `erro extract: ${e.code || ""} ${e.message || e}`;
+        log(`${resultado} — recupera e continua`);
+        appendStepLog(logPath, i, {
+          resumo: "(extract falhou; processo segue)",
+          acao: { type: "sleep", ms: recoverMs, motivo: String(e.message || e) },
+          ocr: [],
+          resultado,
+        });
+        steps.push({ step: i, error: true, resultado });
+        history.push({
+          step: i,
+          type: "sleep",
+          motivo: resultado,
+          error: resultado,
+          resultado,
+          ocr: [],
+        });
+        usageCalls.push({ step: i, error: resultado });
+        await sleep(recoverMs);
+        continue;
+      }
+
+      if (looksLoading(ocr)) {
+        log(`tela loading — retry extract imediato`);
+        try {
+          ocr = await runExtract({ serial, engine }, deps);
+          dumpOcrStdout(ocr);
+        } catch (e) {
+          log(`extract retry falhou (${e.message}) — continua`);
+        }
       }
     }
 
-    log(`decide (${provider})…`);
+    log(`decide (${provider}, sense=${sense})…`);
     let decision;
     try {
       decision = await runDecide(
-        {
-          prompt: cfg.prompt,
-          ocr,
-          history,
-          historySteps,
-          model: cfg.model,
-          provider: cfg.provider,
-          apiKey: cfg.apiKey,
-        },
+        sense === "vision"
+          ? {
+              prompt: cfg.prompt,
+              sense: "vision",
+              image: visionImage,
+              imageMeta: visionMeta,
+              history,
+              historySteps,
+              model: cfg.model,
+              provider: cfg.provider,
+              apiKey: cfg.apiKey,
+            }
+          : {
+              prompt: cfg.prompt,
+              sense: "ocr",
+              ocr,
+              history,
+              historySteps,
+              model: cfg.model,
+              provider: cfg.provider,
+              apiKey: cfg.apiKey,
+            },
         deps,
       );
     } catch (e) {
@@ -444,6 +546,7 @@ export async function runAgent(cfg, deps = {}) {
         resumo: "(decide falhou; processo segue)",
         acao: { type: "sleep", ms: recoverMs, motivo: String(e.message || e) },
         ocr,
+        vision: visionMeta || undefined,
         resultado,
         usage: errUsage,
       });
@@ -454,7 +557,9 @@ export async function runAgent(cfg, deps = {}) {
         motivo: resultado,
         error: resultado,
         resultado,
-        ocr: compactOcr(ocr),
+        sense,
+        ocr: sense === "ocr" ? compactOcr(ocr) : undefined,
+        vision: visionMeta || undefined,
       });
       recordChatCall({
         step: i,
@@ -562,6 +667,7 @@ export async function runAgent(cfg, deps = {}) {
       resumo,
       acao,
       ocr,
+      vision: visionMeta || undefined,
       resultado,
       usage: decision.usage,
     });
@@ -577,7 +683,15 @@ export async function runAgent(cfg, deps = {}) {
       code: acao.code,
       resultado,
       error: stepError ? resultado : undefined,
-      ocr: compactOcr(ocr),
+      sense,
+      ocr: sense === "ocr" ? compactOcr(ocr) : undefined,
+      vision: visionMeta
+        ? {
+            width: visionMeta.width,
+            height: visionMeta.height,
+            scaleToDevice: visionMeta.scaleToDevice,
+          }
+        : undefined,
     });
 
     if (acao.type === "done") {

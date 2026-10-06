@@ -8,6 +8,7 @@ import { fileURLToPath } from "node:url";
 import { describe, it } from "node:test";
 import {
   buildUserPrompt,
+  buildUserPromptVision,
   compactOcr,
   decide,
   DEFAULT_HISTORY_STEPS,
@@ -15,6 +16,7 @@ import {
   resolveHistorySteps,
   resolveProvider,
   resolveDecideModel,
+  resolveSense,
 } from "./agent-decide.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -150,5 +152,60 @@ describe("agent-decide (SC-31)", () => {
     );
     assert.equal(out.acao.type, "scroll");
     assert.equal(out.acao.direction, "down");
+  });
+
+  it("resolveSense: vision via cfg/env", () => {
+    assert.equal(resolveSense({}), "ocr");
+    assert.equal(resolveSense({ sense: "vision" }), "vision");
+    const prev = process.env.AGENT_SENSE;
+    process.env.AGENT_SENSE = "vision";
+    try {
+      assert.equal(resolveSense({}), "vision");
+    } finally {
+      if (prev == null) delete process.env.AGENT_SENSE;
+      else process.env.AGENT_SENSE = prev;
+    }
+  });
+
+  it("buildUserPromptVision omite ocr do histórico", () => {
+    const p = buildUserPromptVision({
+      prompt: "conectar",
+      imageMeta: { width: 540, height: 960 },
+      history: [
+        { step: 1, type: "tap", x: 1, y: 2, ocr: [{ text: "X", x: 1, y: 2 }] },
+      ],
+      historySteps: 5,
+    });
+    assert.match(p, /Imagem anexada/);
+    assert.doesNotMatch(p, /"ocr"/);
+  });
+
+  it("decide vision: escala tap imagem→device e manda images", async () => {
+    let seen;
+    const stub = async (opts) => {
+      seen = opts;
+      return {
+        text: JSON.stringify({
+          resumo: "Connect na imagem",
+          elementos: [{ label: "Connect", tipo: "button", x: 227, y: 172 }],
+          acao: { type: "tap", x: 227, y: 172, motivo: "Connect" },
+        }),
+      };
+    };
+    const out = await decide(
+      {
+        prompt: "conectar",
+        sense: "vision",
+        image: { mimeType: "image/webp", data: "AAAA" },
+        imageMeta: { width: 540, height: 960, scaleToDevice: 2 },
+      },
+      { generateContent: stub },
+    );
+    assert.equal(out.sense, "vision");
+    assert.equal(out.acao.x, 454);
+    assert.equal(out.acao.y, 344);
+    assert.equal(out.elementos[0].x, 454);
+    assert.ok(seen.images?.[0]?.data);
+    assert.match(String(seen.system || ""), /captura de tela/i);
   });
 });

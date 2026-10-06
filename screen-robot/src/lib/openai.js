@@ -54,6 +54,52 @@ export function normalizeUsage(u) {
 }
 
 /**
+ * Conteúdo multimodal OpenAI (texto + imagens data-URL).
+ * @param {string} promptText
+ * @param {Array<{ mimeType?: string, data?: string, base64?: string }>|undefined} images
+ */
+export function buildUserContent(promptText, images) {
+  if (!Array.isArray(images) || !images.length) return promptText;
+  /** @type {object[]} */
+  const parts = [{ type: "text", text: promptText }];
+  for (const img of images) {
+    const data = img?.data || img?.base64;
+    if (!data) continue;
+    const mime = img.mimeType || "image/webp";
+    parts.push({
+      type: "image_url",
+      image_url: { url: `data:${mime};base64,${data}` },
+    });
+  }
+  return parts;
+}
+
+/** Remove data-URL gigante dos logs. */
+export function sanitizeMessagesForLog(messages) {
+  if (!Array.isArray(messages)) return messages;
+  return messages.map((m) => {
+    if (!Array.isArray(m?.content)) return m;
+    return {
+      ...m,
+      content: m.content.map((p) => {
+        if (p?.type === "image_url" && p.image_url?.url) {
+          const url = String(p.image_url.url);
+          return {
+            type: "image_url",
+            image_url: {
+              url: url.startsWith("data:")
+                ? `data:[omitted];bytes=${url.length}`
+                : url,
+            },
+          };
+        }
+        return p;
+      }),
+    };
+  });
+}
+
+/**
  * @param {{
  *   prompt: string,
  *   system?: string,
@@ -63,6 +109,7 @@ export function normalizeUsage(u) {
  *   retries?: number,
  *   retryMs?: number,
  *   timeoutMs?: number,
+ *   images?: Array<{ mimeType?: string, data?: string, base64?: string }>,
  * }} opts
  * @param {{ fetch?: typeof fetch, sleep?: Function, log?: Function }} [deps]
  * @returns {Promise<{ text: string, usage?: object, raw?: object, model: string, requests: object[] }>}
@@ -88,10 +135,11 @@ export async function generateContent(opts, deps = {}) {
   const promptChars = promptText.length;
   const systemChars = systemText.length;
 
+  const userContent = buildUserContent(promptText, opts.images);
   /** @type {object[]} */
   const messages = [];
   if (systemText) messages.push({ role: "system", content: systemText });
-  messages.push({ role: "user", content: promptText });
+  messages.push({ role: "user", content: userContent });
 
   const body = {
     model,
@@ -102,15 +150,25 @@ export async function generateContent(opts, deps = {}) {
     body.response_format = { type: "json_object" };
   }
 
+  const bodyForLog = {
+    ...body,
+    messages: sanitizeMessagesForLog(messages),
+  };
   const baseReqMeta = {
     promptChars,
     systemChars,
     prompt: promptText,
     system: systemText || undefined,
+    images: Array.isArray(opts.images)
+      ? opts.images.map((img) => ({
+          mimeType: img.mimeType || "image/webp",
+          bytes: Buffer.byteLength(String(img.data || img.base64 || ""), "utf8"),
+        }))
+      : undefined,
     input: {
       system: systemText || undefined,
       prompt: promptText,
-      body,
+      body: bodyForLog,
     },
   };
 

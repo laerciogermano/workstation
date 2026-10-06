@@ -81,7 +81,7 @@ const elements = await extract({ serial });
 | `on` | [`lib/events.js`](lib/events.js) |
 | Gestos / captura | [`lib/operate.js`](lib/operate.js) |
 | `extract` | [`lib/extract.js`](lib/extract.js) |
-| `decide` / `runAgent` (EP-07) | [`lib/agent-decide.js`](lib/agent-decide.js) · [`lib/agent-run.js`](lib/agent-run.js) · [`lib/gemini.js`](lib/gemini.js) · [`lib/openai.js`](lib/openai.js) |
+| `decide` / `runAgent` (EP-07) | [`lib/agent-decide.js`](lib/agent-decide.js) · [`lib/agent-run.js`](lib/agent-run.js) · [`lib/gemini.js`](lib/gemini.js) · [`lib/openai.js`](lib/openai.js) · [`lib/vision-frame.js`](lib/vision-frame.js) (`sense=vision`) |
 | Sessão | [`lib/session.js`](lib/session.js) |
 
 ---
@@ -185,7 +185,7 @@ Tira screenshot do device online e grava em `screenshots/<nome>.png` (path absol
 
 ## Motor Gemini (EP-07) — `decide` / `runAgent`
 
-Loop genérico: OCR RapidOCR → Gemini 3.8 Flash → `tap`/`scroll`/`type`/`key` → log em `logs/agent/` e créditos em `usage/<timestamp>.json` (**1 arquivo por request**, flat). Prompt/roteiro entram como **input** (não hardcodar jornada).
+Loop genérico: **sense=ocr** (default) extract OCR → decide → operate; ou **sense=vision** print → WebP → decide multimodal → operate. Log em `logs/agent/` e `usage/<timestamp>.json`. Prompt/roteiro entram como **input**.
 
 ```bash
 cd screen-robot/src
@@ -214,6 +214,9 @@ npm run agent -- --provider openai --model gpt-4o-mini --prompt ../roteiros/abri
 npm run agent -- --prompt "abra o LinkedIn e mostre as últimas 10 conexões"
 npm run agent -- --prompt ../roteiros/jornada-completa.md --all-models
 npm run agent -- --prompt ../roteiros/jornada-completa.md --no-prompt   # sem menu (env/default)
+# Vision (sem OCR): print → WebP → modelo multimodal → comandos
+npm run agent -- --sense vision --prompt ../roteiros/teste.md --no-prompt
+npm run agent -- --vision --provider openai --model gpt-4o-mini --prompt ../roteiros/teste.md
 npm run agent:smoke              # 1–2 passos no device; sem key = heurística Connect/scroll
 ```
 
@@ -242,6 +245,8 @@ Stdout: `[agent]` / `[decide]` / `[gemini]` ou `[openai]`. Provider default `gem
 **Antes → depois (home/Settings no system prompt):** lite fazia `scroll up` na home e reabria o shade; agora o system de `decide` manda shade→`KEYCODE_BACK`/`HOME`, gaveta→`scroll down`, tap em `Settings`. Roteiro: [`roteiros/abrir-settings.md`](../roteiros/abrir-settings.md). Rollback: remover o bloco “Home / Settings” de `buildSystemPrompt`.
 
 **Antes → depois (scroll após Search):** com teclado aberto o OCR às vezes só traz a hora; o modelo tratava como home e fazia `scroll down`, digitando lixo (`ty`/`tyl`) no campo. Agora: (1) system prompt: histórico com tap `y<120` + OCR só hora ≠ home — proibido scroll; (2) guard em `runAgent` troca esse `scroll` por `type` (texto do roteiro `type "…"`) ou `KEYCODE_BACK`. Rollback: remover a EXCEÇÃO em `buildSystemPrompt` e o bloco `lastWasSearchTap` em `agent-run.js`.
+
+**Antes → depois (sense vision):** só OCR → também `--sense vision` / `--vision` / `AGENT_SENSE=vision`: `captureFrame` → [`lib/vision-frame.js`](lib/vision-frame.js) WebP (default width 540 q60; `VISION_WIDTH` / `VISION_QUALITY` / `--vision-width` / `--vision-quality`) → Gemini/OpenAI com imagem → JSON de ação; coords da IA × `scaleToDevice` antes do tap. Sem `extract`/OCR. Logs omitem base64. Rollback: `--sense ocr` (default).
 
 **Antes → depois (modelo):** `gemini-2.5-flash-lite` (404 new users) → `gemini-3.5-flash-lite` (recomendado pela API). Rollback: `export GEMINI_MODEL=gemini-3.1-flash-lite`.
 

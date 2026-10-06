@@ -242,6 +242,7 @@ npm run raw-gpt -- --image test/fixtures/linkedin-people-comprador-connect.png -
 # Testes: node --test lib/raw-gpt-decide.test.js (prompt em test/fixtures/raw-gpt-decide.prompt.txt)
 # Casos: `it`/`fixtures` 01–13 (ordem do prompt); PNGs `01-search.png` … `13-skip.png` (+ `11-connect-people.png`, `linkedin-search-comprador-connected.png` = 11c 2º Connect).
 # Antes: nomes longos linkedin-search-*.png / linkedin-tela-inicial no raw-gpt. Rollback: git mv + nomes antigos no teste.
+# Prompt passo 9: reforço — tap sugestão "Campinas, São Paulo…" (y>120), proibido campo topo "Campinas" (y<120). Antes: só “não o campo”. Rollback: linha 9 antiga no .prompt.txt.
 # Parse: só chaves presentes na IA; raiz obrigatória { "action": ... }. Rollback: aceitar acao/raiz.
 ```
 

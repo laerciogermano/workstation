@@ -120,6 +120,10 @@ function parseAcao(raw, ocr) {
     return {
       ok: true,
       resumo: data.resumo == null ? "" : String(data.resumo),
+      proximoPasso:
+        data.proximoPasso == null || data.proximoPasso === ""
+          ? null
+          : String(data.proximoPasso),
       acao,
     };
   } catch (e) {
@@ -137,7 +141,7 @@ function resolveHistorySteps(cfg) {
 
 /**
  * Envia roteiro + OCR + histórico ao provider; devolve ação parseada.
- * @param {{ prompt: string, ocr: object[], history?: object[], historySteps?: number, model?: string, provider?: string, apiKey?: string }} cfg
+ * @param {{ prompt: string, ocr: object[], history?: object[], historySteps?: number, proximoPasso?: string|null, model?: string, provider?: string, apiKey?: string }} cfg
  */
 export async function askProvider(cfg, deps = {}) {
   const provider = resolveProvider(cfg);
@@ -155,10 +159,15 @@ export async function askProvider(cfg, deps = {}) {
   const histBlock = hist.length
     ? `\nHistórico (últimos ${hist.length}):\n${JSON.stringify(hist)}\n`
     : "";
+  const foco = String(cfg.proximoPasso || "").trim();
+  const focoBlock = foco
+    ? `\nPasso atual da jornada (continuar daqui; 1 ação):\n${foco}\n`
+    : "";
   const system = `Você opera Android só com a lista OCR (text,x,y). Responda APENAS JSON:
-{"resumo":"...","acao":{"type":"tap|scroll|type|key|sleep|done|fail","x":null,"y":null,"direction":null,"text":null,"code":null,"ms":null,"motivo":"..."}}
+{"resumo":"...","proximoPasso":"texto do PASSO ATUAL do roteiro (número + instrução) — onde você está AGORA","acao":{"type":"tap|scroll|type|key|sleep|done|fail","x":null,"y":null,"direction":null,"text":null,"code":null,"ms":null,"motivo":"..."}}
+proximoPasso = passo ATUAL em curso (não o seguinte). Só avance o número quando o passo atual estiver cumprido. done/fail → null.
 tap: OBRIGATÓRIO x,y do OCR atual. PROIBIDO reusar coords do histórico. Sem alvo → sleep/scroll. 1 ação.`;
-  const prompt = `Roteiro:\n${cfg.prompt}${histBlock}\nOCR:\n${JSON.stringify(ocr)}\n\nPróxima ação.`;
+  const prompt = `Roteiro:\n${cfg.prompt}${histBlock}${focoBlock}\nOCR:\n${JSON.stringify(ocr)}\n\nPróxima ação.`;
 
   log(`provider ${provider}/${model} history=${hist.length}…`);
   const out = await gen(
@@ -181,10 +190,15 @@ tap: OBRIGATÓRIO x,y do OCR atual. PROIBIDO reusar coords do histórico. Sem al
     log(`parse falhou: ${parsed.erro} — sleep e segue`);
     return {
       resumo: parsed.erro,
+      proximoPasso: foco || null,
       acao: { type: "sleep", ms: 1500, motivo: `parse: ${parsed.erro}` },
     };
   }
-  return { resumo: parsed.resumo, acao: parsed.acao };
+  return {
+    resumo: parsed.resumo,
+    proximoPasso: parsed.proximoPasso,
+    acao: parsed.acao,
+  };
 }
 
 /** @param {{ serial: string, acao: object, engine?: string, typeMethod?: string }} cfg */
@@ -268,6 +282,8 @@ export async function runAgent(cfg, deps = {}) {
   const history = [];
   const steps = [];
   let status = "running";
+  /** @type {string|null} */
+  let lastProximoPasso = null;
 
   log(
     `2.0 serial=${serial} engine=${engine} provider=${provider} model=${model} maxSteps=${maxSteps} historySteps=${historySteps}`,
@@ -291,13 +307,15 @@ export async function runAgent(cfg, deps = {}) {
 
     let acao;
     let resumo;
+    let proximoPasso;
     try {
-      ({ acao, resumo } = await ask(
+      ({ acao, resumo, proximoPasso } = await ask(
         {
           prompt: cfg.prompt,
           ocr,
           history,
           historySteps,
+          proximoPasso: lastProximoPasso,
           model: cfg.model,
           provider: cfg.provider,
           apiKey: cfg.apiKey,
@@ -320,6 +338,7 @@ export async function runAgent(cfg, deps = {}) {
         (acao.direction ? ` ${acao.direction}` : "") +
         (acao.motivo ? ` — ${acao.motivo}` : ""),
     );
+    if (proximoPasso) log(`proximoPasso: ${String(proximoPasso).slice(0, 200)}`);
     if (resumo) log(resumo.slice(0, 200));
 
     let resultado;
@@ -335,7 +354,16 @@ export async function runAgent(cfg, deps = {}) {
       log(resultado);
       await sleep(1500);
     }
-    steps.push({ step: i, acao, resultado, error: stepError || undefined });
+    steps.push({
+      step: i,
+      acao,
+      resultado,
+      proximoPasso: proximoPasso || undefined,
+      error: stepError || undefined,
+    });
+    if (!stepError && proximoPasso) {
+      lastProximoPasso = String(proximoPasso);
+    }
     history.push({
       step: i,
       type: acao.type,
@@ -345,6 +373,7 @@ export async function runAgent(cfg, deps = {}) {
       direction: acao.direction,
       text: acao.text,
       code: acao.code,
+      proximoPasso: proximoPasso || undefined,
       resultado,
       error: stepError || undefined,
     });

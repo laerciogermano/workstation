@@ -1,5 +1,6 @@
 /**
- * raw-gpt: um caso por tela (PNG + .prompt.txt em fixtures) + OpenAI real.
+ * raw-gpt: um caso por tela (PNG em fixtures) + mesmo prompt + OpenAI real.
+ * Prompt único: test/fixtures/raw-gpt-decide.prompt.txt
  */
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
@@ -16,14 +17,14 @@ const SRC_ROOT = join(__dirname, "..");
 const FIXTURES = join(SRC_ROOT, "test/fixtures");
 loadEnvFiles([join(SRC_ROOT, ".env"), join(SRC_ROOT, ".env.local")]);
 
-function readPrompt(name) {
-  return readFileSync(join(FIXTURES, name), "utf8").trim();
-}
+const PROMPT = readFileSync(
+  join(FIXTURES, "raw-gpt-decide.prompt.txt"),
+  "utf8",
+).trim();
 
-async function runCase({ image, promptFile, expected }) {
+async function runCase({ image, expected }) {
   assert.ok(process.env.OPENAI_API_KEY, "falta OPENAI_API_KEY");
-  const prompt = readPrompt(promptFile);
-  assert.ok(prompt.length >= 1, `prompt vazio: ${promptFile}`);
+  assert.ok(PROMPT.length >= 1, "prompt fixture vazio");
 
   const elements = await extractFromImage(join(FIXTURES, image), {
     engine: "all",
@@ -32,7 +33,7 @@ async function runCase({ image, promptFile, expected }) {
   const ocr = compactOcr(elements);
   assert.ok(ocr.length >= 1, "OCR vazio");
 
-  const out = await decideRawAction({ prompt, ocr });
+  const out = await decideRawAction({ prompt: PROMPT, ocr });
   const action = { type: out.type, x: out.x, y: out.y };
   assert.deepEqual(action, expected);
   assert.deepEqual(Object.keys(parseActionTypeXY(out.raw)).sort(), [
@@ -49,20 +50,18 @@ describe("raw-gpt-decide", () => {
     async () => {
       await runCase({
         image: "linkedin-people-comprador-connect.png",
-        promptFile: "linkedin-people-comprador-connect.prompt.txt",
         expected: { type: "tap", x: 455, y: 344 },
       });
     },
   );
 
   it(
-    "Android tela inicial → tap data",
+    "Android tela inicial → mesma jornada",
     { timeout: 300_000 },
     async () => {
       await runCase({
         image: "android-tela-inicial.png",
-        promptFile: "android-tela-inicial.prompt.txt",
-        expected: { type: "tap", x: 272, y: 118 },
+        expected: { type: "scroll", x: null, y: null },
       });
     },
   );

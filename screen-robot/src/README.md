@@ -198,8 +198,10 @@ cd screen-robot/src
 # cp .env.example .env   # depois preencha OPENAI_API_KEY / GEMINI_API_KEY
 export GEMINI_API_KEY=…          # obrigatório para decide Gemini (se não estiver no .env)
 # modelo ÚNICO = valor do export (sem fallback automático)
-export GEMINI_MODEL=gemini-3.5-flash-lite
-# opcional: export GEMINI_FALLBACK_MODELS=gemini-3.1-flash-lite
+export GEMINI_MODEL=gemini-3.8-flash
+# fallback default: desce a escada até gpt-4o-mini
+# desligar: export AGENT_FALLBACK_MODELS=off
+# custom: export AGENT_FALLBACK_MODELS=gemini-3.5-flash-lite,gpt-4o-mini
 # opcional: export GEMINI_MAX_PROMPT_CHARS=6000
 # opcional: export AGENT_HISTORY_STEPS=12   # janela de passos no prompt (default 12)
 # type: default adb; OCR do teclado: export AGENT_TYPE_METHOD=ocr
@@ -236,7 +238,10 @@ npm run agent:smoke              # 1–2 passos no device; sem key = heurística
 
 **Antes → depois (id Gemini 3 Flash):** catálogo usava `gemini-3-flash` (HTTP 404 na API) → `gemini-3-flash-preview`. Rollback: só se a API voltar a expor `gemini-3-flash`.
 
-Stdout: `[agent]` / `[decide]` / `[gemini]` ou `[openai]`. Provider default `gemini`; `AGENT_PROVIDER=openai` ou modelo `gpt-*` usa OpenAI. Fallback Gemini só se `GEMINI_FALLBACK_MODELS` estiver setado.
+Stdout: `[agent]` / `[decide]` / `[gemini]` ou `[openai]`. Provider default `gemini`; `AGENT_PROVIDER=openai` ou modelo `gpt-*` usa OpenAI.
+Fallback default (`decide`): do modelo escolhido desce a escada `gemini-3.8-flash` → `3.7` → `3.6` → `3.5` → `3-flash-preview` → `3.5-flash-lite` → `3.1-flash-lite` → `gpt-4o-mini`. Sem key do provider, pula. `AGENT_FALLBACK_MODELS=off` desliga. Override CSV em `AGENT_FALLBACK_MODELS` / `decide({ fallbackModels })`.
+
+**Antes → depois (cadeia até gpt-4o-mini):** Gemini único (ou `GEMINI_FALLBACK_MODELS` só Gemini) → escada até `gpt-4o-mini`. Rollback: `export AGENT_FALLBACK_MODELS=off`.
 
 **Antes → depois (.env local):** keys só via export → também `src/.env` / `.env.local` (gitignored), carregados por `run-agent` via [`lib/load-env.js`](lib/load-env.js). Modelo: [`.env.example`](.env.example). Rollback: apagar `.env` e exportar no shell.
 

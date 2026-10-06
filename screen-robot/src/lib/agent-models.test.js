@@ -1,6 +1,11 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { AGENT_MODELS, parseModelSelection } from "./agent-models.js";
+import {
+  AGENT_MODELS,
+  parseModelSelection,
+  providerForModel,
+  resolveFallbackLadder,
+} from "./agent-models.js";
 import { shouldPromptModels } from "./select-models.js";
 
 describe("agent-models", () => {
@@ -28,6 +33,34 @@ describe("agent-models", () => {
   it("parseModelSelection: vazio/inválido", () => {
     assert.deepEqual(parseModelSelection(""), []);
     assert.deepEqual(parseModelSelection("99"), []);
+  });
+
+  it("resolveFallbackLadder: desce do 3.8 até gpt-4o-mini", () => {
+    const c = resolveFallbackLadder("gemini-3.8-flash", { env: {} });
+    assert.equal(c[0], "gemini-3.8-flash");
+    assert.equal(c.at(-1), "gpt-4o-mini");
+    assert.ok(c.includes("gemini-3.5-flash-lite"));
+  });
+
+  it("resolveFallbackLadder: começa no modelo escolhido", () => {
+    const c = resolveFallbackLadder("gemini-3.5-flash", { env: {} });
+    assert.equal(c[0], "gemini-3.5-flash");
+    assert.equal(c.includes("gemini-3.8-flash"), false);
+    assert.equal(c.at(-1), "gpt-4o-mini");
+  });
+
+  it("resolveFallbackLadder: off = só primary", () => {
+    assert.deepEqual(
+      resolveFallbackLadder("gemini-3.8-flash", {
+        env: { AGENT_FALLBACK_MODELS: "off" },
+      }),
+      ["gemini-3.8-flash"],
+    );
+  });
+
+  it("providerForModel: gpt → openai", () => {
+    assert.equal(providerForModel("gpt-4o-mini"), "openai");
+    assert.equal(providerForModel("gemini-3.8-flash"), "gemini");
   });
 });
 

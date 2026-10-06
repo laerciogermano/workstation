@@ -10,6 +10,10 @@ import {
   DEFAULT_MODEL as DEFAULT_OPENAI_MODEL,
 } from "./openai.js";
 import { scalePointToDevice } from "./vision-frame.js";
+import {
+  providerForModel,
+  resolveFallbackLadder,
+} from "./agent-models.js";
 
 const ACTION_TYPES = new Set([
   "tap",
@@ -54,6 +58,12 @@ export function resolveDecideModel(cfg) {
     return process.env.OPENAI_MODEL || DEFAULT_OPENAI_MODEL;
   }
   return process.env.GEMINI_MODEL || DEFAULT_GEMINI_MODEL;
+}
+
+function hasApiKey(provider, cfg) {
+  if (cfg?.apiKey) return true;
+  if (provider === "openai") return Boolean(process.env.OPENAI_API_KEY);
+  return Boolean(process.env.GEMINI_API_KEY);
 }
 
 /**
@@ -310,11 +320,12 @@ Defina a próxima ação (coords na escala da imagem).`;
  *   imageMeta?: { width?: number, height?: number, scaleToDevice?: number },
  *   history?: object[],
  *   historySteps?: number,
- *   model?: string,
- *   provider?: string,
- *   apiKey?: string,
- *   thinkingLevel?: "low"|"medium"|"high",
- * }} cfg
+   *   model?: string,
+   *   provider?: string,
+   *   fallbackModels?: string[]|string,
+   *   apiKey?: string,
+   *   thinkingLevel?: "low"|"medium"|"high",
+   * }} cfg
  * @param {{ generateContent?: Function }} [deps]
  */
 function log(...args) {
@@ -339,62 +350,103 @@ export async function decide(cfg, deps = {}) {
   const provider = resolveProvider(cfg);
   const model = resolveDecideModel(cfg);
   const historySteps = resolveHistorySteps(cfg);
+  const chain = resolveFallbackLadder(model, {
+    fallbackModels: cfg.fallbackModels,
+  });
   logFn(
     `início sense=${sense} provider=${provider} model=${model}` +
+      ` cadeia=${chain.join(" → ")}` +
       (sense === "ocr"
         ? ` ocrHits=${(cfg.ocr || []).length}`
         : ` image=${cfg.imageMeta?.width}x${cfg.imageMeta?.height} scale=${cfg.imageMeta?.scaleToDevice}`) +
       ` history=${(cfg.history || []).length} historySteps=${historySteps}`,
   );
 
-  const gen =
-    deps.generateContent ??
-    (provider === "openai" ? generateOpenAI : generateGemini);
+  const system =
+    sense === "vision"
+      ? buildSystemPromptVision({
+          width: cfg.imageMeta.width,
+          height: cfg.imageMeta.height,
+        })
+      : buildSystemPrompt();
+  const prompt =
+    sense === "vision"
+      ? buildUserPromptVision({ ...cfg, historySteps })
+      : buildUserPrompt({ ...cfg, historySteps });
+  const images =
+    sense === "vision"
+      ? [
+          {
+            mimeType: cfg.image.mimeType || "image/webp",
+            data: cfg.image.data || cfg.image.base64,
+          },
+        ]
+      : undefined;
+
   let text;
   let usage;
   let usedModel = model;
-  let requests;
-  try {
-    const common = {
-      model,
-      apiKey: cfg.apiKey,
-      json: true,
-      thinkingLevel: cfg.thinkingLevel || "low",
-    };
-    const out =
-      sense === "vision"
-        ? await gen(
-            {
-              ...common,
-              system: buildSystemPromptVision({
-                width: cfg.imageMeta.width,
-                height: cfg.imageMeta.height,
-              }),
-              prompt: buildUserPromptVision({ ...cfg, historySteps }),
-              images: [
-                {
-                  mimeType: cfg.image.mimeType || "image/webp",
-                  data: cfg.image.data || cfg.image.base64,
-                },
-              ],
-            },
-            deps,
-          )
-        : await gen(
-            {
-              ...common,
-              system: buildSystemPrompt(),
-              prompt: buildUserPrompt({ ...cfg, historySteps }),
-            },
-            deps,
-          );
-    text = out.text;
-    usage = out.usage;
-    usedModel = out.model || model;
-    requests = out.requests;
-  } catch (e) {
-    logFn(`erro ${provider}: ${e.code || ""} ${e.message}`);
-    throw e;
+  let usedProvider = provider;
+  /** @type {object[]} */
+  const requests = [];
+  /** @type {Error|null} */
+  let lastErr = null;
+
+  for (let i = 0; i < chain.length; i++) {
+    const stepModel = chain[i];
+    const stepProvider = providerForModel(stepModel);
+    const gen =
+      deps.generateContent ??
+      (stepProvider === "openai" ? generateOpenAI : generateGemini);
+    if (!deps.generateContent && !hasApiKey(stepProvider, cfg)) {
+      logFn(`pula ${stepModel}: sem API key (${stepProvider})`);
+      continue;
+    }
+    try {
+      const out = await gen(
+        {
+          model: stepModel,
+          apiKey: cfg.apiKey,
+          json: true,
+          thinkingLevel: cfg.thinkingLevel || "low",
+          fallbackModels: [],
+          chainRounds: 1,
+          system,
+          prompt,
+          images,
+        },
+        deps,
+      );
+      text = out.text;
+      usage = out.usage;
+      usedModel = out.model || stepModel;
+      usedProvider = providerForModel(usedModel);
+      if (Array.isArray(out.requests)) requests.push(...out.requests);
+      if (i > 0) {
+        logFn(`ok fallback model=${usedModel} provider=${usedProvider}`);
+      }
+      lastErr = null;
+      break;
+    } catch (e) {
+      lastErr = e;
+      if (Array.isArray(e.requests)) requests.push(...e.requests);
+      const next = chain[i + 1];
+      logFn(
+        `erro ${stepProvider}/${stepModel}: ${e.code || ""} ${e.message}` +
+          (next ? ` — fallback → ${next}` : ""),
+      );
+    }
+  }
+
+  if (!text) {
+    if (lastErr) {
+      lastErr.requests = requests;
+      throw lastErr;
+    }
+    fail(
+      "AGENT_NO_MODEL",
+      `nenhum modelo da cadeia disponível (${chain.join(", ")})`,
+    );
   }
 
   const parsed = parseActionPayload(text);
@@ -430,7 +482,7 @@ export async function decide(cfg, deps = {}) {
     ...parsed,
     usage,
     model: usedModel,
-    provider,
+    provider: usedProvider,
     requests,
     sense,
     historyCount: hist.historyCount,
@@ -438,4 +490,9 @@ export async function decide(cfg, deps = {}) {
   };
 }
 
-export { ACTION_TYPES, DEFAULT_GEMINI_MODEL, DEFAULT_OPENAI_MODEL };
+export {
+  ACTION_TYPES,
+  DEFAULT_GEMINI_MODEL,
+  DEFAULT_OPENAI_MODEL,
+  resolveFallbackLadder,
+};

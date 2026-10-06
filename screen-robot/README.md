@@ -17,7 +17,7 @@ import { resetInstance } from "./src/lib/reset-instance.js";
 ```
 
 Pré-requisitos: Node ≥ 18 · `adb` · AVD (`kind: "avd"`, Mac) ou Linux+KVM (`kind: "docker-avd"`) · config [`src/device.config.json`](src/device.config.json).  
-Motor Gemini (EP-07): `GEMINI_API_KEY` · modelo default `gemini-3.8-flash`.
+Motor Gemini (EP-07): `GEMINI_API_KEY` · modelo default `gemini-3.8-flash`. Fallback: desce até `gpt-4o-mini` (`OPENAI_API_KEY`; `AGENT_FALLBACK_MODELS=off` desliga).
 
 ---
 

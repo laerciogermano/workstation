@@ -229,4 +229,35 @@ describe("agent-decide (SC-31)", () => {
     assert.ok(seen.images?.[0]?.data);
     assert.match(String(seen.system || ""), /captura de tela/i);
   });
+
+  it("decide: Gemini falha → gpt-4o-mini", async () => {
+    const models = [];
+    const stub = async (opts) => {
+      models.push(opts.model);
+      if (opts.model !== "gpt-4o-mini") {
+        const e = new Error("quota");
+        e.code = "GEMINI_REQUEST_FAILED";
+        throw e;
+      }
+      return {
+        text: JSON.stringify({
+          acao: { type: "done", motivo: "ok via mini" },
+        }),
+        model: opts.model,
+      };
+    };
+    const out = await decide(
+      {
+        prompt: "x",
+        ocr: [{ text: "A", x: 1, y: 2 }],
+        model: "gemini-3.8-flash",
+        fallbackModels: ["gpt-4o-mini"],
+      },
+      { generateContent: stub, log: () => {} },
+    );
+    assert.equal(out.acao.type, "done");
+    assert.equal(out.model, "gpt-4o-mini");
+    assert.equal(out.provider, "openai");
+    assert.deepEqual(models, ["gemini-3.8-flash", "gpt-4o-mini"]);
+  });
 });

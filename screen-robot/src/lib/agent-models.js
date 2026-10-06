@@ -5,6 +5,22 @@
 
 /** @typedef {{ id: string, provider: "gemini"|"openai", label: string }} AgentModel */
 
+/**
+ * Escada default (mais novo → mais barato) até gpt-4o-mini.
+ * `decide` começa no modelo escolhido e desce o resto.
+ * @type {string[]}
+ */
+export const FALLBACK_LADDER = [
+  "gemini-3.8-flash",
+  "gemini-3.7-flash",
+  "gemini-3.6-flash",
+  "gemini-3.5-flash",
+  "gemini-3-flash-preview",
+  "gemini-3.5-flash-lite",
+  "gemini-3.1-flash-lite",
+  "gpt-4o-mini",
+];
+
 /** @type {AgentModel[]} */
 export const AGENT_MODELS = [
   {
@@ -52,6 +68,64 @@ export const AGENT_MODELS = [
 export function findAgentModel(id) {
   const key = String(id || "").trim();
   return AGENT_MODELS.find((m) => m.id === key) || null;
+}
+
+/**
+ * @param {string} id
+ * @returns {"gemini"|"openai"}
+ */
+export function providerForModel(id) {
+  const hit = findAgentModel(id);
+  if (hit) return hit.provider;
+  if (/^gpt-/i.test(id) || /openai/i.test(id)) return "openai";
+  return "gemini";
+}
+
+function uniqueIds(ids) {
+  const seen = new Set();
+  const out = [];
+  for (const id of ids) {
+    const m = String(id || "").trim();
+    if (!m || seen.has(m)) continue;
+    seen.add(m);
+    out.push(m);
+  }
+  return out;
+}
+
+function parseFallbackList(raw) {
+  if (Array.isArray(raw)) return raw.map((s) => String(s).trim()).filter(Boolean);
+  if (typeof raw === "string") {
+    return raw.split(",").map((s) => s.trim()).filter(Boolean);
+  }
+  return null;
+}
+
+/**
+ * Cadeia de fallback: primary + o que está abaixo na escada, até gpt-4o-mini.
+ * Override: `cfg.fallbackModels` / `AGENT_FALLBACK_MODELS` (lista CSV).
+ * Desliga: `AGENT_FALLBACK_MODELS=off` (ou `0` / `none`).
+ * @param {string} primary
+ * @param {{ fallbackModels?: string[]|string, env?: NodeJS.ProcessEnv }} [opts]
+ * @returns {string[]}
+ */
+export function resolveFallbackLadder(primary, opts = {}) {
+  const p = String(primary || "").trim();
+  const env = opts.env || process.env;
+  const raw =
+    opts.fallbackModels !== undefined
+      ? opts.fallbackModels
+      : env.AGENT_FALLBACK_MODELS;
+  if (raw === "0" || raw === "none" || raw === "off") {
+    return p ? [p] : [];
+  }
+  const explicit = parseFallbackList(raw);
+  if (explicit) return uniqueIds([p, ...explicit]);
+
+  const idx = FALLBACK_LADDER.indexOf(p);
+  if (idx >= 0) return FALLBACK_LADDER.slice(idx);
+  if (!p) return [...FALLBACK_LADDER];
+  return uniqueIds([p, ...FALLBACK_LADDER]);
 }
 
 /**

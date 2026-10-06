@@ -187,7 +187,8 @@ tapElement({ serial, x: hit.x, y: hit.y });
 
 ### `type(cfg)`
 
-OCR das teclas → tap por caractere (sem `input text`).
+- `method: "ocr"` (default): OCR das teclas → tap por caractere
+- `method: "adb"`: `adb shell input text` no campo focado (espaços → `%s`)
 
 **Entrada**
 
@@ -195,15 +196,19 @@ OCR das teclas → tap por caractere (sem `input text`).
 |-------|--------|-----------|
 | `serial` | sim | Device |
 | `text` | sim | Texto |
-| `region` | | `{ x, y, width, height }` teclado |
-| `delayMs` | | Default `100` |
-| `engine` | | `"tesseract"` · `"macos-vision"` · `"rapidocr"` |
+| `method` | | `"ocr"` (default) · `"adb"` |
+| `region` | | `{ x, y, width, height }` teclado (só OCR) |
+| `delayMs` | | Default `100` (só OCR) |
+| `engine` | | `"tesseract"` · `"macos-vision"` · `"rapidocr"` (só OCR) |
 
 **Saída:** `undefined`
 
 ```js
 await type({ serial, text: "11999999999", region: { x: 0, y: 700, width: 720, height: 500 } });
+await type({ serial, text: "Campinas", method: "adb" });
 ```
+
+**Antes → depois:** só OCR/tap → também `method: "adb"`. Rollback: omitir `method` ou `method: "ocr"`.
 
 ---
 

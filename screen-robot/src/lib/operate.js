@@ -1,6 +1,6 @@
 /**
  * EP-04 — operações de tela (funções puras com `serial` no cfg).
- * type: OCR das teclas no frame → tap por caractere (sem input text / IME).
+ * type: default OCR das teclas → tap; `method: "adb"` → `adb shell input text`.
  */
 import { spawn, spawnSync } from "node:child_process";
 import { mkdirSync, existsSync, writeFileSync } from "node:fs";
@@ -282,8 +282,31 @@ export function tapElement(cfg, deps = {}) {
 }
 
 /**
- * Digita tocando teclas localizadas por OCR na imagem do teclado.
- * @param {{ serial: string, text: string, region?: object, delayMs?: number }} cfg
+ * Injeta texto via `adb shell input text` (espaços → `%s`).
+ * @param {string} serial
+ * @param {string} text
+ * @param {object} [deps]
+ */
+export function typeViaAdb(serial, text, deps = {}) {
+  const d = resolveDeps(deps);
+  try {
+    d.connectIfTcp(serial);
+    const escaped = String(text).replace(/ /g, "%s");
+    try {
+      d.runAdb(serial, ["shell", "input", "text", escaped]);
+    } catch {
+      d.runAdb(serial, ["shell", "cmd", "input", "text", escaped]);
+    }
+  } catch (e) {
+    fail("OPERATE_TYPE_FAILED", e.message || String(e));
+  }
+}
+
+/**
+ * Digita texto no campo focado.
+ * - `method: "ocr"` (default): OCR das teclas + tap por caractere
+ * - `method: "adb"`: `adb shell input text` (sem tap no teclado)
+ * @param {{ serial: string, text: string, method?: "ocr"|"adb", region?: object, delayMs?: number, engine?: string }} cfg
  * @param {object} [deps]
  */
 export async function type(cfg, deps = {}) {
@@ -291,6 +314,11 @@ export async function type(cfg, deps = {}) {
   const d = resolveDeps(deps);
   const s = String(cfg.text ?? "");
   if (!s.length) return;
+  const method = String(cfg.method || "ocr").toLowerCase() === "adb" ? "adb" : "ocr";
+  if (method === "adb") {
+    typeViaAdb(serial, s, deps);
+    return;
+  }
   try {
     const framePath = await d.capture(serial, d.deps);
     const rectangle = regionToRectangle(cfg.region);

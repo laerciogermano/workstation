@@ -72,6 +72,27 @@ describe("operate", () => {
     ]);
   });
 
+  it("type method=adb usa input text (sem OCR)", async () => {
+    const calls = [];
+    await type(
+      { serial: "s", text: "Campinas SP", method: "adb" },
+      {
+        adb: (_s, args) => {
+          calls.push(args);
+          return {};
+        },
+        connectIfTcp: () => {},
+        captureFrame: async () => {
+          throw new Error("não deve capturar frame");
+        },
+        ocrWords: async () => {
+          throw new Error("não deve OCR");
+        },
+      },
+    );
+    assert.deepEqual(calls[0], ["shell", "input", "text", "Campinas%sSP"]);
+  });
+
   it("type falha se tecla ausente no OCR", async () => {
     await assert.rejects(
       () =>

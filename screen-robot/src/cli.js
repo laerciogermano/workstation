@@ -34,7 +34,7 @@ function usage(code = 1) {
 Config (JSON): ver config.example.json
 Device padrão: ${DEFAULT_DEVICE} (ou ANDROID_SERIAL)
 
-Nota: type digita via OCR do teclado + tap em cada tecla (sem input text / ADBKeyboard).
+Nota: type default = OCR do teclado + tap; method=adb = adb shell input text.
       Região opcional no step: "region": { "x", "y", "width", "height" }.`);
   process.exit(code);
 }

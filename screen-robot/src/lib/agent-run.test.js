@@ -20,6 +20,25 @@ describe("agent-run (SC-32)", () => {
     assert.deepEqual(calls[0], { serial: "s", x: 10, y: 20 });
   });
 
+  it("executeAction type com typeMethod=adb injeta via adb", async () => {
+    const calls = [];
+    const out = await executeAction(
+      {
+        serial: "s",
+        acao: { type: "type", text: "comprador" },
+        typeMethod: "adb",
+      },
+      {
+        typeViaAdb: (serial, text) => calls.push([serial, text]),
+        type: async () => {
+          throw new Error("não deve OCR");
+        },
+      },
+    );
+    assert.equal(out, 'type-adb "comprador"');
+    assert.deepEqual(calls, [["s", "comprador"]]);
+  });
+
   it("runAgent: extract → decide tap → done (stubs)", async () => {
     const logDir = mkdtempSync(join(tmpdir(), "sr-agent-"));
     const usageDir = mkdtempSync(join(tmpdir(), "sr-usage-"));

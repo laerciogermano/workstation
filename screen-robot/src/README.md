@@ -182,6 +182,9 @@ export GEMINI_MODEL=gemini-3.5-flash-lite
 # opcional: export GEMINI_FALLBACK_MODELS=gemini-3.1-flash-lite
 # opcional: export GEMINI_MAX_PROMPT_CHARS=6000
 # opcional: export AGENT_HISTORY_STEPS=12   # janela de passos no prompt (default 12)
+# type via adb (não OCR do teclado):
+#   export AGENT_TYPE_METHOD=adb
+# fallback OCR→adb se OCR falhar (default on): AGENT_TYPE_ADB_FALLBACK=0 para desligar
 # OpenAI (gpt-4o-mini):
 #   export OPENAI_API_KEY=…   # ou OPENAI_API_KEY=… no .env
 #   export AGENT_PROVIDER=openai
@@ -213,6 +216,8 @@ Stdout: `[agent]` / `[decide]` / `[gemini]` ou `[openai]`. Provider default `gem
 **Antes → depois (histórico configurável):** `history.slice(-8)` fixo → janela `historySteps` (default **12**), via `runAgent({ historySteps })` · `AGENT_HISTORY_STEPS` · `--history-steps`. Cada passo grava também `resultado` (ex. `scroll up`) no histórico enviado ao modelo. Rollback: `slice(-8)` sem `resultado`.
 
 **Antes → depois (`--history-steps 0`):** `0` era tratado como inválido e voltava ao default 12 (e `slice(-0)` mandaria o histórico inteiro). Agora **0 = sem bloco “Histórico recente” no prompt**. Rollback: `n < 1 → DEFAULT_HISTORY_STEPS`.
+
+**Antes → depois (`AGENT_TYPE_METHOD`):** `type` no agent só OCR/tap (ADB só se OCR falhasse 2×). Agora `AGENT_TYPE_METHOD=adb` (ou `runAgent({ typeMethod: "adb" })`) injeta com `adb shell input text` direto. Rollback: unset / `AGENT_TYPE_METHOD=ocr`.
 
 **Antes → depois (home/Settings no system prompt):** lite fazia `scroll up` na home e reabria o shade; agora o system de `decide` manda shade→`KEYCODE_BACK`/`HOME`, gaveta→`scroll down`, tap em `Settings`. Roteiro: [`roteiros/abrir-settings.md`](../roteiros/abrir-settings.md). Rollback: remover o bloco “Home / Settings” de `buildSystemPrompt`.
 

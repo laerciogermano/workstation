@@ -6,8 +6,14 @@ import { join, resolve } from "node:path";
 import { extract } from "./extract.js";
 import { decide, resolveHistorySteps, resolveDecideModel, resolveProvider, compactOcr } from "./agent-decide.js";
 import { DEFAULT_MODEL as DEFAULT_GEMINI_MODEL } from "./gemini.js";
-import { tapElement, scroll, type, key } from "./operate.js";
+import { tapElement, scroll, type, typeViaAdb, key } from "./operate.js";
 import { adb, sleep as defaultSleep } from "./adb.js";
+
+/** `AGENT_TYPE_METHOD=adb|ocr` ou cfg.typeMethod — default ocr (US-09). */
+function resolveTypeMethod(cfg = {}) {
+  const raw = cfg.typeMethod ?? process.env.AGENT_TYPE_METHOD ?? "ocr";
+  return String(raw).toLowerCase() === "adb" ? "adb" : "ocr";
+}
 
 function fail(code, msg) {
   const err = new Error(msg);
@@ -65,12 +71,19 @@ export async function executeAction(cfg, deps = {}) {
       );
       return `scroll ${a.direction || "down"}`;
     case "type": {
+      const typeMethod = resolveTypeMethod(cfg);
       const payload = {
         serial,
         text: a.text,
+        method: typeMethod,
         engine: cfg.engine,
         region: cfg.keyboardRegion,
       };
+      if (typeMethod === "adb") {
+        const inject = deps.typeViaAdb ?? typeViaAdb;
+        inject(serial, a.text, deps);
+        return `type-adb ${JSON.stringify(a.text)}`;
+      }
       const adbFallback =
         process.env.AGENT_TYPE_ADB_FALLBACK !== "0" &&
         cfg.adbTypeFallback !== false;
@@ -83,13 +96,13 @@ export async function executeAction(cfg, deps = {}) {
         } catch (e2) {
           if (!adbFallback) throw e2;
           const runAdb = deps.adb ?? adb;
+          const inject = deps.typeViaAdb ?? typeViaAdb;
           log(`type OCR falhou (${e2.message}) — limpa campo e fallback adb input text`);
           runAdb(serial, ["shell", "input", "keyevent", "KEYCODE_MOVE_END"]);
           for (let i = 0; i < 40; i++) {
             runAdb(serial, ["shell", "input", "keyevent", "KEYCODE_DEL"]);
           }
-          const escaped = String(a.text).replace(/ /g, "%s");
-          runAdb(serial, ["shell", "input", "text", escaped]);
+          inject(serial, a.text, deps);
           return `type-adb ${JSON.stringify(a.text)}`;
         }
       }
@@ -272,6 +285,7 @@ function appendStepLog(logPath, step, { resumo, acao, ocr, resultado, usage }) {
  *   logDir?: string,
  *   usageDir?: string,
  *   keyboardRegion?: object,
+ *   typeMethod?: "ocr"|"adb",
  *   model?: string,
  *   provider?: string,
  *   apiKey?: string,
@@ -483,7 +497,14 @@ export async function runAgent(cfg, deps = {}) {
     try {
       log(`executar ${acao.type}…`);
       resultado = await executeAction(
-        { serial, acao, engine, keyboardRegion: cfg.keyboardRegion },
+        {
+          serial,
+          acao,
+          engine,
+          keyboardRegion: cfg.keyboardRegion,
+          typeMethod: cfg.typeMethod,
+          adbTypeFallback: cfg.adbTypeFallback,
+        },
         deps,
       );
       log(`resultado: ${resultado}`);

@@ -1,5 +1,6 @@
 /**
  * raw-gpt: um caso por tela (PNG em fixtures) + mesmo prompt + OpenAI real.
+ * Índices dos `it` / fixtures = ordem do cenário em raw-gpt-decide.prompt.txt.
  */
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
@@ -41,23 +42,11 @@ async function runCase({ image, prompt, expected }) {
 
 describe("raw-gpt-decide", () => {
   it(
-    "LinkedIn People/Connect → tap Connect",
+    "01 clique em Search",
     { timeout: 300_000 },
     async () => {
       await runCase({
-        image: "linkedin-people-comprador-connect.png",
-        prompt: PROMPT + "\nvoce esta no passo 11",
-        expected: { type: "tap", x: 455, y: 344 },
-      });
-    },
-  );
-
-  it(
-    "LinkedIn tela inicial → passo 1",
-    { timeout: 300_000 },
-    async () => {
-      await runCase({
-        image: "linkedin-tela-inicial.png",
+        image: "01-search.png",
         prompt: PROMPT + "\nvoce esta no passo 1",
         expected: { type: "tap", x: 177, y: 78 },
       });
@@ -65,11 +54,11 @@ describe("raw-gpt-decide", () => {
   );
 
   it(
-    "LinkedIn Search clicked → digitar comprador",
+    "02 digite comprador",
     { timeout: 300_000 },
     async () => {
       await runCase({
-        image: "linkedin-search-clicked.png",
+        image: "02-type-comprador.png",
         prompt: PROMPT + "\nvoce esta no passo 2",
         expected: { type: "type", text: "comprador" },
       });
@@ -77,11 +66,11 @@ describe("raw-gpt-decide", () => {
   );
 
   it(
-    "LinkedIn Search comprador + teclado → fechar teclado",
+    "03 feche o teclado",
     { timeout: 300_000 },
     async () => {
       await runCase({
-        image: "linkedin-search-comprador-keyboard-open.png",
+        image: "03-close-keyboard.png",
         prompt: PROMPT + "\nvoce esta no passo 3",
         expected: { type: "key", code: "KEYCODE_BACK" },
       });
@@ -89,11 +78,11 @@ describe("raw-gpt-decide", () => {
   );
 
   it(
-    "LinkedIn Search comprador teclado fechado → Show all results",
+    "04 clique em Show all results",
     { timeout: 300_000 },
     async () => {
       await runCase({
-        image: "linkedin-search-comprador-keyboard-closed.png",
+        image: "04-show-all-results.png",
         prompt: PROMPT + "\nvoce esta no passo 4",
         expected: { type: "tap", x: 270, y: 849 },
       });
@@ -101,11 +90,11 @@ describe("raw-gpt-decide", () => {
   );
 
   it(
-    "LinkedIn Search all results → tap People",
+    "05 clique em People",
     { timeout: 300_000 },
     async () => {
       await runCase({
-        image: "linkedin-search-comprador-all-results.png",
+        image: "05-people.png",
         prompt: PROMPT + "\nvoce esta no passo 5",
         expected: { type: "tap", x: 62, y: 153 },
       });
@@ -113,11 +102,11 @@ describe("raw-gpt-decide", () => {
   );
 
   it(
-    "LinkedIn People selected → tap Location",
+    "06 clique Location",
     { timeout: 300_000 },
     async () => {
       await runCase({
-        image: "linkedin-search-comprador-all-results-people-selected.png",
+        image: "06-location.png",
         prompt: PROMPT + "\nvoce esta no passo 6",
         expected: { type: "tap", x: 499, y: 152 },
       });
@@ -125,11 +114,11 @@ describe("raw-gpt-decide", () => {
   );
 
   it(
-    "LinkedIn Location sheet → tap Add a location",
+    "07 clique em Add a location",
     { timeout: 300_000 },
     async () => {
       await runCase({
-        image: "linkedin-search-comprador-all-results-location-selected.png",
+        image: "07-add-a-location.png",
         prompt: PROMPT + "\nvoce esta no passo 7",
         expected: { type: "tap", x: 127, y: 380 },
       });
@@ -137,11 +126,11 @@ describe("raw-gpt-decide", () => {
   );
 
   it(
-    "LinkedIn location search → digitar Campinas",
+    "08 digite campinas",
     { timeout: 300_000 },
     async () => {
       await runCase({
-        image: "linkedin-search-comprador-location-search.png",
+        image: "08-type-campinas.png",
         prompt: PROMPT + "\nvoce esta no passo 8",
         expected: { type: "type", text: "Campinas" },
       });
@@ -149,11 +138,11 @@ describe("raw-gpt-decide", () => {
   );
 
   it(
-    "LinkedIn location Campinas → tap primeira sugestão",
+    "09 clique na primeira opção Campinas",
     { timeout: 300_000 },
     async () => {
       await runCase({
-        image: "linkedin-search-comprador-location-search-campinas.png",
+        image: "09-campinas-option.png",
         prompt: PROMPT + "\nvoce esta no passo 9",
         expected: { type: "tap", x: 174, y: 177 },
       });
@@ -161,11 +150,11 @@ describe("raw-gpt-decide", () => {
   );
 
   it(
-    "LinkedIn Campinas selected → tap Show results",
+    "10 clique em Show results",
     { timeout: 300_000 },
     async () => {
       await runCase({
-        image: "linkedin-search-comprador-location-search-campinas-selected.png",
+        image: "10-show-results.png",
         prompt: PROMPT + "\nvoce esta no passo 10",
         expected: { type: "tap", x: 271, y: 849 },
       });
@@ -173,23 +162,11 @@ describe("raw-gpt-decide", () => {
   );
 
   it(
-    "LinkedIn People+Campinas → Connect ou scroll",
+    "11 Connect",
     { timeout: 300_000 },
     async () => {
       await runCase({
-        image: "linkedin-search-comprador-location-search-people-location.png",
-        prompt: PROMPT + "\nvoce esta no passo 11",
-        expected: { type: "scroll", direction: "down" },
-      });
-    },
-  );
-
-  it(
-    "LinkedIn Connect button → tap Connect",
-    { timeout: 300_000 },
-    async () => {
-      await runCase({
-        image: "linkedin-search-comprador-connect-button.png",
+        image: "11-connect.png",
         prompt: PROMPT + "\nvoce esta no passo 11",
         expected: { type: "tap", x: 453, y: 243 },
       });
@@ -197,11 +174,35 @@ describe("raw-gpt-decide", () => {
   );
 
   it(
-    "LinkedIn Connect note sheet → tap Skip",
+    "11b Connect (people)",
     { timeout: 300_000 },
     async () => {
       await runCase({
-        image: "linkedin-search-comprador-connect-skip.png",
+        image: "11-connect-people.png",
+        prompt: PROMPT + "\nvoce esta no passo 11",
+        expected: { type: "tap", x: 455, y: 344 },
+      });
+    },
+  );
+
+  it(
+    "12 Sem Connect → scroll down",
+    { timeout: 300_000 },
+    async () => {
+      await runCase({
+        image: "12-scroll.png",
+        prompt: PROMPT + "\nvoce esta no passo 11",
+        expected: { type: "scroll", direction: "down" },
+      });
+    },
+  );
+
+  it(
+    "13 Clicar no botao skip apos conectar",
+    { timeout: 300_000 },
+    async () => {
+      await runCase({
+        image: "13-skip.png",
         prompt: PROMPT + "\nvoce esta no passo 13",
         expected: { type: "tap", x: 269, y: 816 },
       });

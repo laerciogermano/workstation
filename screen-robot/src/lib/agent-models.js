@@ -25,34 +25,9 @@ export const FALLBACK_LADDER = [
 /** @type {AgentModel[]} */
 export const AGENT_MODELS = [
   {
-    id: "gemini-3.5-flash-lite",
+    id: "gemini-3.8-flash",
     provider: "gemini",
-    label: "Gemini 3.5 Flash-Lite (default / barato)",
-  },
-  {
-    id: "gemini-3.1-flash-lite",
-    provider: "gemini",
-    label: "Gemini 3.1 Flash-Lite",
-  },
-  {
-    id: "gemini-2.5-flash",
-    provider: "gemini",
-    label: "Gemini 2.5 Flash",
-  },
-  {
-    id: "gemini-3-flash-preview",
-    provider: "gemini",
-    label: "Gemini 3 Flash (preview)",
-  },
-  {
-    id: "gemini-3.5-flash",
-    provider: "gemini",
-    label: "Gemini 3.5 Flash",
-  },
-  {
-    id: "gemini-3.6-flash",
-    provider: "gemini",
-    label: "Gemini 3.6 Flash",
+    label: "Gemini 3.8 Flash (aprovado POC)",
   },
   {
     id: "gemini-3.7-flash",
@@ -60,9 +35,34 @@ export const AGENT_MODELS = [
     label: "Gemini 3.7 Flash",
   },
   {
-    id: "gemini-3.8-flash",
+    id: "gemini-3.6-flash",
     provider: "gemini",
-    label: "Gemini 3.8 Flash (aprovado POC)",
+    label: "Gemini 3.6 Flash",
+  },
+  {
+    id: "gemini-3.5-flash",
+    provider: "gemini",
+    label: "Gemini 3.5 Flash",
+  },
+  {
+    id: "gemini-3-flash-preview",
+    provider: "gemini",
+    label: "Gemini 3 Flash (preview)",
+  },
+  {
+    id: "gemini-2.5-flash",
+    provider: "gemini",
+    label: "Gemini 2.5 Flash",
+  },
+  {
+    id: "gemini-3.5-flash-lite",
+    provider: "gemini",
+    label: "Gemini 3.5 Flash-Lite (barato)",
+  },
+  {
+    id: "gemini-3.1-flash-lite",
+    provider: "gemini",
+    label: "Gemini 3.1 Flash-Lite",
   },
   {
     id: "gpt-5-mini",

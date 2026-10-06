@@ -86,7 +86,7 @@ const elements = await extract({ serial });
 | Gestos / captura | [`lib/operate.js`](lib/operate.js) |
 | `extract` | [`lib/extract.js`](lib/extract.js) · ícones [`lib/extract-icons.js`](lib/extract-icons.js) |
 | `npm run <acao>` | [`lib/run-action.js`](lib/run-action.js) · [`lib/README.md`](lib/README.md) |
-| `decide` / `runAgent` (EP-07) | [`lib/agent-decide.js`](lib/agent-decide.js) · [`lib/agent-run.js`](lib/agent-run.js) · [`lib/gemini.js`](lib/gemini.js) · [`lib/openai.js`](lib/openai.js) · [`lib/vision-frame.js`](lib/vision-frame.js) (`sense=vision`) |
+| `decide` / `runAgent` (EP-07) | [`lib/agent-decide.js`](lib/agent-decide.js) · [`lib/agent-run.js`](lib/agent-run.js) (shim → **2.0**) · [`lib/agent-run-2.0.js`](lib/agent-run-2.0.js) · [`lib/agent-run-v1.js`](lib/agent-run-v1.js) · [`lib/gemini.js`](lib/gemini.js) · [`lib/openai.js`](lib/openai.js) · [`lib/vision-frame.js`](lib/vision-frame.js) (`sense=vision`) |
 | Sessão | [`lib/session.js`](lib/session.js) |
 
 ---
@@ -191,7 +191,9 @@ Tira screenshot do device online e grava em `screenshots/<nome>.png` (path absol
 
 ## Motor Gemini (EP-07) — `decide` / `runAgent`
 
-Loop genérico: **sense=ocr** (default) extract OCR → decide → operate; ou **sense=vision** print → WebP → decide multimodal → operate. Log em `logs/agent/` e `usage-2.0/<timestamp>.json`. Prompt/roteiro entram como **input**.
+**Antes → depois (agent-run 2.0 temporário):** [`lib/agent-run.js`](lib/agent-run.js) era o loop completo → agora é shim que exporta [`lib/agent-run-2.0.js`](lib/agent-run-2.0.js) (só extract → decide → operate; sem log/usage/vision/history/recover). Original intacto em [`lib/agent-run-v1.js`](lib/agent-run-v1.js). Rollback: em `agent-run.js`, `export { runAgent, executeAction } from "./agent-run-v1.js"`.
+
+Loop genérico (v1): **sense=ocr** (default) extract OCR → decide → operate; ou **sense=vision** print → WebP → decide multimodal → operate. Log em `logs/agent/` e `usage-2.0/<timestamp>.json`. Prompt/roteiro entram como **input**. Ativo agora: **2.0** (OCR only, sem artefatos).
 
 ```bash
 cd screen-robot/src

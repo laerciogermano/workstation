@@ -6,9 +6,9 @@ import { mkdtempSync, readFileSync, readdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { basename, join } from "node:path";
 import { describe, it } from "node:test";
-import { executeAction, runAgent } from "./agent-run.js";
+import { executeAction, runAgent } from "./agent-run-v1.js";
 
-describe("agent-run (SC-32)", () => {
+describe("agent-run-v1 (SC-32)", () => {
   it("executeAction tap chama tapElement", async () => {
     const calls = [];
     await executeAction(

@@ -688,30 +688,35 @@ export async function runAgent(cfg, deps = {}) {
 
     let { resumo, acao } = decision;
     if (sense === "ocr" && acao.type === "tap" && !tapGroundOff(cfg)) {
-      const hit = resolveTapElement(ocr, acao.element);
-      if (!hit) {
-        log(`guard: ELEMENT_MISS ${JSON.stringify(acao.element)}`);
-        acao = {
-          type: "sleep",
-          element: acao.element ?? null,
-          x: null,
-          y: null,
-          direction: null,
-          text: null,
-          code: null,
-          ms: recoverMs,
-          motivo: `ELEMENT_MISS: ${acao.element || "(sem element)"}`,
-        };
-      } else {
-        log(
-          `resolve tap ${JSON.stringify(acao.element)} → ${hit.id} @${hit.x},${hit.y}`,
-        );
-        acao = {
-          ...acao,
-          element: hit.id,
-          x: hit.x,
-          y: hit.y,
-        };
+      const hasXy =
+        Number.isFinite(Number(acao.x)) && Number.isFinite(Number(acao.y));
+      if (!hasXy) {
+        // legado: só element → resolve coords no extract
+        const hit = resolveTapElement(ocr, acao.element);
+        if (!hit) {
+          log(`guard: ELEMENT_MISS ${JSON.stringify(acao.element)}`);
+          acao = {
+            type: "sleep",
+            element: acao.element ?? null,
+            x: null,
+            y: null,
+            direction: null,
+            text: null,
+            code: null,
+            ms: recoverMs,
+            motivo: `ELEMENT_MISS: ${acao.element || "(sem element)"}`,
+          };
+        } else {
+          log(
+            `resolve tap ${JSON.stringify(acao.element)} → ${hit.id} @${hit.x},${hit.y}`,
+          );
+          acao = {
+            ...acao,
+            element: hit.id,
+            x: hit.x,
+            y: hit.y,
+          };
+        }
       }
     }
     // Guard: após tap no Search (y<120), scroll com OCR “só hora” digita lixo no teclado (ty/tyl).

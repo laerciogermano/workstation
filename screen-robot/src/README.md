@@ -251,7 +251,7 @@ npm run agent:smoke              # 1–2 passos no device; sem key = heurística
 
 **Antes → depois (tap vs label OCR):** mini gravava `elementos.label=Connect` em coords cujo extract era `Comprador` (cargo) e o runtime tocava o xy. Agora: system pede copiar `text` do OCR; `runAgent` recusa tap se o label ≠ text no ponto (`TAP_LABEL_MISMATCH` → sleep) ou se não há text (`TAP_MISS`). Off: `AGENT_TAP_GROUND=0`. Rollback: omitir o guard / env=0.
 
-**Antes → depois (tap por element):** a IA mandava `acao.x,y` e o runtime clicava isso. Agora (OCR): `acao.element` = id `eN` (preferido) ou text; system **sem** campos x,y; `decide` zera x,y da IA e resolve coords via `resolveTapElement`. Extract/`tagExtractIds` grava `id:eN` em cada hit (prompt + stdout). Sem item → `ELEMENT_MISS`. Vision continua x,y. Rollback: system com x,y; tap OCR aceitar xy; extract sem id.
+**Antes → depois (tap por element → x,y do extract):** OCR mandava só `element` (id `eN`); `decide`/`runAgent` resolviam coords. Problema: id muda a cada turno (`e10`=Search → `e10`=tecla `0`). Agora: prompt inclui `x,y`; system manda **copiar** o par do extract (proibido recalcular); `decide` exige `x,y` e não sobrescreve. Grounding `TAP_MISS`/`TAP_LABEL_MISMATCH` segue. Fallback: tap sem xy + `element` ainda resolve no `runAgent`. Rollback: `compactOcr` sem x; system/tap só por id.
 
 **Antes → depois (comprador Campinas do zero):** o roteiro antigo assumia LinkedIn já aberto e o mini pulava busca/filtro. Agora: [`roteiros/jornada-linkedin-comprador-campinas.md`](../roteiros/jornada-linkedin-comprador-campinas.md) (FASE 0 abre o app). Rollback: [`jornada-linkedin-campinas.md`](../roteiros/jornada-linkedin-campinas.md).
 
@@ -276,7 +276,7 @@ Fallback default (`decide`): do modelo escolhido desce a escada `gemini-3.8-flas
 
 **Antes → depois (screencap):** `adb shell screencap` + pull podia travar no AVD → `adb exec-out screencap -p` em [`lib/frame.js`](lib/frame.js) / `screenshot`. Fallback shell+pull se exec-out falhar. Rollback: só shell+pull.
 
-**Antes → depois (OCR no histórico):** cada item de `history` inclui `ocr` compacto (`id,text,y`, sem x) da tela daquele passo, além de `resultado`/ação. O prompt do OCR omite x,y do histórico. Rollback: `compactOcr` com x,y e `JSON.stringify(window)` cru.
+**Antes → depois (OCR no histórico):** cada item de `history` inclui `ocr` da tela daquele passo + `resultado`/ação. Prompt atual manda `x,y` também no extract atual (tap copia coords). Rollback: omitir x no compact.
 
 **Antes → depois (histórico configurável):** `history.slice(-8)` fixo → janela `historySteps` (default **12**), via `runAgent({ historySteps })` · `AGENT_HISTORY_STEPS` · `--history-steps`. Cada passo grava também `resultado` (ex. `scroll up`) no histórico enviado ao modelo. Rollback: `slice(-8)` sem `resultado`.
 

@@ -1,7 +1,7 @@
 Objetivo: do ZERO abrir o LinkedIn → type "comprador" no Search → People → filtro cidade → type "Campinas" só no Add location → Connect+Skip até limite. 1 ação/turno. Nunca pule fase. Nunca done no Skip.
 Primeira digitação = type "comprador". Campinas só na FASE 6.
 
-Tap: acao.element = id (e0) ou text EXATO do extract. O código resolve x,y. Sem o texto no OCR → não tap. PROIBIDO x,y. PROIBIDO relabelar (ex. OCR "Comprador" → element "Connect").
+Tap: acao.x,y = números EXATOS do extract (copie do JSON). acao.element = text desse item. PROIBIDO recalcular x,y. PROIBIDO inventar coords. PROIBIDO relabelar (ex. OCR "Comprador" → element "Connect").
 
 Ordem obrigatória: FASE 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7. Sem FASE 6 concluída (chip Campinas FORA de y<120) → PROIBIDO Connect.
 

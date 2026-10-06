@@ -196,6 +196,8 @@ describe("agent-run (SC-32)", () => {
                 acao: {
                   type: "tap",
                   element: "Connect",
+                  x: 458,
+                  y: 344,
                   motivo: "Connect",
                 },
                 usage: { promptTokenCount: 10, candidatesTokenCount: 4, totalTokenCount: 14 },
@@ -223,8 +225,8 @@ describe("agent-run (SC-32)", () => {
             assert.equal(history.length, 1);
             assert.equal(history[0].resultado, "tap 458,344");
             assert.deepEqual(history[0].ocr, [
-              { id: "e0", type: "text", text: "Connect", y: 344 },
-              { id: "e1", type: "text", text: "People", y: 150 },
+              { id: "e0", type: "text", text: "Connect", x: 458, y: 344 },
+              { id: "e1", type: "text", text: "People", x: 80, y: 150 },
             ]);
             return {
               resumo: "ok",

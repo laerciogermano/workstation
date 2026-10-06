@@ -1,6 +1,6 @@
 Objetivo: LinkedIn → type "comprador" no Search → People → filtro cidade → tap em TODOS os "Connect" até limite. 1 ação/turno. NÃO done no Skip. Decida pelo OCR atual.
 
-Regra: tap só se o texto existe no OCR (acao.element = id ou text). Nunca x,y. Se o texto "Search" (ou QSearch) estiver no OCR com y<120 → TAP nele. PROIBIDO scroll/sleep/dizer que não está visível.
+Regra: tap com x,y EXATOS do extract (copie; não recalcule). Se "Search"/"QSearch" no OCR com y<120 → TAP nesse par. PROIBIDO scroll/sleep/dizer que não está visível.
 
 IF OCR (primeira linha que bater) → THEN:
 

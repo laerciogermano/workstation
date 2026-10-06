@@ -30,14 +30,14 @@ const FIXTURE = join(
 );
 
 describe("agent-decide (SC-31)", () => {
-  it("compactOcr usa id+text+y sem x", () => {
+  it("compactOcr usa id+text+x+y", () => {
     const ocr = compactOcr([
       { type: "text", text: "Connect", x: 1, y: 2 },
       { type: "icon", x: 80, y: 140 },
     ]);
     assert.deepEqual(ocr, [
-      { id: "e0", type: "text", text: "Connect", y: 2 },
-      { id: "e1", type: "icon", y: 140 },
+      { id: "e0", type: "text", text: "Connect", x: 1, y: 2 },
+      { id: "e1", type: "icon", x: 80, y: 140 },
     ]);
   });
 
@@ -58,21 +58,22 @@ describe("agent-decide (SC-31)", () => {
       /\b(linkedin|instagram|tinder|campinas|connect|settings|calendar|gmail|chrome|comprador|nexus|sdk_gphone)\b/i;
     assert.equal(banned.test(ocr), false, ocr.match(banned)?.[0]);
     assert.equal(banned.test(vision), false, vision.match(banned)?.[0]);
-    assert.match(ocr, /acao\.element/);
-    assert.match(ocr, /PROIBIDO mandar x,y/);
+    assert.match(ocr, /copie literalmente|EXATOS/i);
+    assert.match(ocr, /PROIBIDO recalcular/);
   });
 
-  it("parseActionPayload valida tap por element", () => {
+  it("parseActionPayload valida tap por x,y", () => {
     const p = parseActionPayload({
       resumo: "lista People",
-      acao: { type: "tap", element: "e1", motivo: "Connect" },
+      acao: { type: "tap", element: "Connect", x: 458, y: 344, motivo: "Connect" },
     });
     assert.equal(p.acao.type, "tap");
-    assert.equal(p.acao.element, "e1");
-    assert.equal(p.acao.x, null);
+    assert.equal(p.acao.element, "Connect");
+    assert.equal(p.acao.x, 458);
+    assert.equal(p.acao.y, 344);
   });
 
-  it("decide OCR: ignora x,y da IA e resolve pelo id", async () => {
+  it("decide OCR: mantém x,y copiados da IA", async () => {
     const ocr = [
       { id: "e0", text: "People", x: 80, y: 150 },
       { id: "e1", text: "Connect", x: 458, y: 344 },
@@ -82,10 +83,10 @@ describe("agent-decide (SC-31)", () => {
         resumo: "Connect",
         acao: {
           type: "tap",
-          element: "e1",
-          x: 999,
-          y: 1,
-          motivo: "tap id",
+          element: "Connect",
+          x: 458,
+          y: 344,
+          motivo: "tap coords do extract",
         },
       }),
     });
@@ -93,16 +94,16 @@ describe("agent-decide (SC-31)", () => {
       { prompt: "conectar", ocr, sense: "ocr" },
       { generateContent: stub },
     );
-    assert.equal(out.acao.element, "e1");
+    assert.equal(out.acao.element, "Connect");
     assert.equal(out.acao.x, 458);
     assert.equal(out.acao.y, 344);
   });
 
-  it("decide OCR: tap sem element falha", async () => {
+  it("decide OCR: tap sem x,y falha", async () => {
     const stub = async () => ({
       text: JSON.stringify({
-        resumo: "coords",
-        acao: { type: "tap", x: 10, y: 20, motivo: "sem id" },
+        resumo: "sem coords",
+        acao: { type: "tap", element: "Connect", motivo: "sem xy" },
       }),
     });
     await assert.rejects(
@@ -110,7 +111,7 @@ describe("agent-decide (SC-31)", () => {
         decide(
           {
             prompt: "x",
-            ocr: [{ text: "A", x: 10, y: 20 }],
+            ocr: [{ text: "Connect", x: 458, y: 344 }],
             sense: "ocr",
           },
           { generateContent: stub },
@@ -202,6 +203,8 @@ describe("agent-decide (SC-31)", () => {
         acao: {
           type: "tap",
           element: "Connect",
+          x: 458,
+          y: 344,
           motivo: "primeiro Connect OCR",
         },
       }),
@@ -213,7 +216,7 @@ describe("agent-decide (SC-31)", () => {
       { generateContent: stub },
     );
     assert.equal(out.acao.type, "tap");
-    assert.equal(out.acao.element, "e7");
+    assert.equal(out.acao.element, "Connect");
     assert.equal(out.acao.x, 458);
     assert.equal(out.acao.y, 344);
     assert.match(out.acao.motivo, /Connect/i);

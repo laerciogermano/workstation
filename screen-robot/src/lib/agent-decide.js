@@ -73,20 +73,22 @@ function normElementKey(s) {
 }
 
 /**
- * Compacta extract para o prompt: id + text/y (sem x — o runtime resolve o tap).
+ * Compacta extract para o prompt: id + text + x,y (IA copia x,y no tap).
  * @param {Array<{ text?: string, type?: string, x?: number, y?: number }>} ocr
  */
 export function compactOcr(ocr) {
   return (ocr || []).map((e, i) => {
     const id = `e${i}`;
+    const x = Number(e?.x);
     const y = Number(e?.y);
     if (e?.type === "icon") {
-      return { id, type: "icon", y };
+      return { id, type: "icon", x, y };
     }
     return {
       id,
       type: "text",
       text: String(e?.text ?? ""),
+      x,
       y,
     };
   });
@@ -166,13 +168,9 @@ export function parseActionPayload(raw) {
     motivo: acao.motivo == null ? "" : String(acao.motivo),
   };
   if (type === "tap") {
-    const hasEl = Boolean(out.element && out.element.trim());
     const hasXy = Number.isFinite(out.x) && Number.isFinite(out.y);
-    if (!hasEl && !hasXy) {
-      fail(
-        "AGENT_BAD_ACTION",
-        "tap exige element (id eN do extract; vision: x,y)",
-      );
+    if (!hasXy) {
+      fail("AGENT_BAD_ACTION", "tap exige x,y numéricos (copiados do extract)");
     }
   }
   if (type === "type" && !out.text) {
@@ -193,7 +191,7 @@ export function parseActionPayload(raw) {
 }
 
 export function buildSystemPrompt() {
-  return `Você opera um smartphone Android olhando só a lista extract da tela (id, type, text, y). Sem x.
+  return `Você opera um smartphone Android olhando só a lista extract da tela (id, type, text, x, y).
 
 Responda APENAS JSON válido (sem markdown) no formato:
 {
@@ -201,6 +199,8 @@ Responda APENAS JSON válido (sem markdown) no formato:
   "acao": {
     "type": "tap|scroll|type|key|sleep|done|fail",
     "element": null,
+    "x": null,
+    "y": null,
     "direction": null,
     "text": null,
     "code": null,
@@ -210,9 +210,10 @@ Responda APENAS JSON válido (sem markdown) no formato:
 }
 
 Regras de tap (OCR):
-- tap: acao.element = id do extract (e0, e1, …). Textos repetidos → use o id. Icon (sem text) → só id.
-- PROIBIDO mandar x,y (o código busca o item pelo id e clica). Sem o id na lista → não tap.
-- NÃO invente id nem text que não está no extract.`;
+- tap: acao.x e acao.y = os números x,y EXATOS do item no extract (copie literalmente do JSON do prompt).
+- PROIBIDO recalcular, aproximar, somar offset ou inventar x,y. Só repetir o par x,y recebido no input.
+- acao.element = text EXATO desse mesmo item (opcional; ajuda auditoria). Icon sem text → element null, use o x,y do icon.
+- Sem o par x,y na lista → não tap. NÃO invente text/coords fora do extract.`;
 }
 
 /**
@@ -493,23 +494,12 @@ export async function decide(cfg, deps = {}) {
 
   const parsed = parseActionPayload(text);
   if (sense === "ocr" && parsed.acao.type === "tap") {
-    // OCR: IA manda só element (id); ignora x,y inventados; runtime resolve coords.
-    parsed.acao.x = null;
-    parsed.acao.y = null;
-    if (!parsed.acao.element || !String(parsed.acao.element).trim()) {
+    // OCR: IA copia x,y do extract; não recalcular no runtime.
+    if (!Number.isFinite(parsed.acao.x) || !Number.isFinite(parsed.acao.y)) {
       fail(
         "AGENT_BAD_ACTION",
-        "tap OCR exige acao.element = id (e0, e1, …) do extract",
+        "tap OCR exige x,y copiados do extract",
       );
-    }
-    const hit = resolveTapElement(cfg.ocr, parsed.acao.element);
-    if (hit) {
-      logFn(
-        `resolve tap element=${JSON.stringify(parsed.acao.element)} → ${hit.id} @${hit.x},${hit.y}`,
-      );
-      parsed.acao.element = hit.id;
-      parsed.acao.x = hit.x;
-      parsed.acao.y = hit.y;
     }
   }
   if (sense === "vision" && parsed.acao.type === "tap") {

@@ -446,7 +446,7 @@ Decide a próxima ação via **Gemini 3.8 Flash** a partir do OCR (sem imagem).
 }
 ```
 
-`acao.type`: `tap` | `scroll` | `type` | `key` | `sleep` | `done` | `fail`. OCR: a IA manda `element` (id `eN` ou text do extract); o código preenche `x,y`. Vision: a IA manda `x,y` na escala da imagem.
+`acao.type`: `tap` | `scroll` | `type` | `key` | `sleep` | `done` | `fail`. OCR: a IA copia `x,y` do extract (não recalcula); `element` = text opcional. Vision: `x,y` na escala da imagem.
 
 ---
 

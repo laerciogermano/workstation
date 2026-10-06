@@ -1,11 +1,11 @@
-Objetivo: abrir o LinkedIn → tap Search → type "comprador". 1 ação por turno. done só quando ESTA run já fez type "comprador". NÃO done só porque o app abriu. NÃO done só porque Recent lista "comprador" (é busca antiga).
+Objetivo: abrir o LinkedIn → tap Search → type "comprador" → tap "Show all results". 1 ação por turno. done só quando ESTA run já fez tap em Show all results (depois do type). NÃO done só porque o app abriu ou porque digitou. NÃO done só porque Recent lista "comprador".
 
 Tap: acao.element = id (e0) ou text EXATO do extract. PROIBIDO x,y.
 
 Olhe o ÚLTIMO passo do histórico ANTES de classificar a tela. OCR pobre (só hora / "in" / 2–9 hits) NÃO é home se já houve tap.
 - último = tap LinkedIn/Linkedln → sleep 2000 (splash). NUNCA scroll. NUNCA BACK. Log: 12:02 g in O •@24 · in@476
 - último = tap Search → type "comprador" (teclado cobriu). NUNCA scroll. NUNCA BACK. NUNCA passo 2. Log: MO@23 · 12:02@24 · JU@485 · «@924
-- último = type comprador → done (passo 8)
+- último = type comprador → tap "Show all results" (passo 8). NUNCA done ainda. Log: comprador@81 · Show all@153 · Show all results@473
 - scroll down SÓ se histórico SEM tap LinkedIn E SEM tap Search E OCR home (Tuesday/Monday + sem Chrome)
 
 NUNCA KEYCODE_BACK na tela inicial. BACK não abre app.
@@ -53,14 +53,21 @@ Passos (nessa ordem). Depois de cada ação, olhe o OCR novo. Sucesso = ir ao pa
    A) Teclado cobriu (OCR pobre; último passo = tap Search). OCR exemplo: MO@23 · 12:02@24 · -@26 · JU@485 · «@924 · [|@924
       Parece home mas NÃO tem Tuesday e o histórico tem Search → type "comprador". PROIBIDO scroll. PROIBIDO BACK. PROIBIDO passo 2.
    B) Teclado visível (q/w/e / qwerty) SEM Add a location / Australia. OCR exemplo: comprador@81 · Recent@153 · Show all@153 · W@619 · qwertyuiobp@622 · ？123@848
-      Se o campo y<80 já é "comprador" E o histórico TEM type → passo 8. Senão: type "comprador". Sem tap. Sem scroll. Sem BACK. Sem Campinas.
+      Se o campo y<120 já é "comprador" E o histórico TEM type → passo 8 (Show all results). Senão: type "comprador". Sem tap. Sem scroll. Sem BACK. Sem Campinas.
    Sucesso: histórico tem type "comprador" → passo 8.
    Falha (teclado ainda aberto, sem type no histórico): type "comprador" de novo 1×. Falha (voltou feed Search+Home+Jobs, sem Recent): passo 6.
 
-8) Já digitou comprador nesta run (histórico tem type "comprador")
-   OCR exemplo: comprador@81 (campo y<120) · Recent@153 · Show all@153 · Rafael@286 · comprador@369 · qwertyuiobp@622
+8) Show all results — histórico TEM type "comprador". Ainda NÃO fez tap Show all results nesta run.
+   OCR exemplo: comprador@81 · Recent@153 · Show all@153 · Showallresults@472 · Show all results@473 · Rafael@286 · qwertyuiobp@622
+   Ação: tap no text EXATO "Show all results" ou "Showallresults" (y<800, não tab bar Jobs). Prefira esse, não "Show all"@153, não Show translation, não Post/Jobs y≥850.
+   Se "Show all results" NÃO está no extract e só há "Show all"@152: tap "Show all".
+   Se teclado aberto SEM Show all / Show all results: KEYCODE_BACK 1× (fecha teclado), depois tap no OCR novo. Sem type de novo.
+   Sucesso: botão some OU lista de resultados (People/Posts) → passo 9.
+   Falha (mesma tela, botão ainda visível): tap de novo no id ATUAL 1×. Sem botão e sem resultados: fail show_all_nao_visivel.
+
+9) Já deu tap em Show all results nesta run
    Ação: done.
    Sucesso: done (objetivo cumprido).
-   Falha (histórico SEM type "comprador"): mesmo OCR com "comprador" na lista Recent NÃO basta → passo 7. Sem type e sem teclado: classifique shade→1; home sem Search no histórico→2; gaveta→3; splash→4/5; feed→6.
+   Falha (histórico SEM tap Show all / Show all results): não done → passo 8. SEM type: passo 7. Feed sem Recent: passo 6.
 
-PROIBIDO: BACK porque "LinkedIn não está aberto"; copiar BACK do histórico na home; scroll down depois de tap Search; tap coords antigas; done no feed (Search+tab bar) sem type comprador; done só porque Recent tem comprador; fail na primeira falha de um passo (use a recuperação).
+PROIBIDO: BACK porque "LinkedIn não está aberto"; copiar BACK do histórico na home; scroll down depois de tap Search; tap coords antigas; done no feed ou só depois do type (falta Show all results); done só porque Recent tem comprador; tap Show translation / Jobs y≥850 no lugar de Show all results; fail na primeira falha de um passo (use a recuperação).

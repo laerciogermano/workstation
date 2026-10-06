@@ -239,9 +239,9 @@ npm run agent -- --vision --provider openai --model gpt-4o-mini --prompt ../rote
 npm run agent:smoke              # 1–2 passos no device; sem key = heurística Connect/scroll
 npm run raw-gpt -- --image test/fixtures/linkedin-people-comprador-connect.png --prompt "…"
 # --prompt obrigatório (sem DEFAULT_PROMPT). Antes: default "Na tela People…". Rollback: export DEFAULT_PROMPT.
-# Testes: node --test lib/raw-gpt-decide.test.js (prompt + step em runCase)
-#   people/connect passo 11 → tap Connect; tela-inicial passo 11 → scroll down
-# Decide: opts.step → "Você está no passo N." no user. Rollback: omitir step.
+# Testes: node --test lib/raw-gpt-decide.test.js (prompt em test/fixtures/raw-gpt-decide.prompt.txt)
+# Parse: só chaves presentes na IA; raiz obrigatória { "action": ... }. Rollback: aceitar acao/raiz.
+# Casos: people/connect + tela-inicial; runCase pode prefixar "Você está no passo N.".
 ```
 
 **Setup CLI (modelos):** em TTY, sem `--model` / `--force-model` / `--no-prompt`, o agent lista o catálogo ([`lib/agent-models.js`](lib/agent-models.js)) e pede a escolha (`1`, `1,3`, `a`=todos, ou id). Vários modelos → roda em sequência, log em `logs/agent/<model>/`. Rollback: `--model <id>` ou `--no-prompt`.

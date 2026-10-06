@@ -253,13 +253,13 @@ npm run agent:smoke              # 1–2 passos no device; sem key = heurística
 
 **Antes → depois (LinkedIn Campinas / gpt-4o-mini):** `engine=all` misturava overlay de setup; histórico 12 fazia o mini repetir taps. Roteiro IF-OCR: [`roteiros/jornada-linkedin-campinas.md`](../roteiros/jornada-linkedin-campinas.md) + `--engine rapidocr --history-steps 1`. Rollback: `--engine all --history-steps 12` e [`roteiros/jornada-comprador.md`](../roteiros/jornada-comprador.md).
 
-**Antes → depois (tap vs label OCR):** mini gravava `elementos.label=Connect` em coords cujo extract era `Comprador` (cargo) e o runtime tocava o xy. Agora: system pede copiar `text` do OCR; `runAgent` recusa tap se o label ≠ text no ponto (`TAP_LABEL_MISMATCH` → sleep) ou se não há text (`TAP_MISS`). Off: `AGENT_TAP_GROUND=0`. Rollback: omitir o guard / env=0.
+**Antes → depois (tap vs label OCR):** mini gravava `elementos.label=Connect` em coords cujo extract era `Comprador` (cargo). System ainda pede copiar `text` do OCR; **runtime não valida** label vs hit (`TAP_LABEL_MISMATCH` / `TAP_MISS` / `AGENT_TAP_GROUND` removidos). Rollback: restaurar `tapLabelMismatch` em `lib/agent-run.js`.
 
-**Antes → depois (tap só x,y da IA):** OCR usava `element`/id `eN` (id muda a cada turno). Agora: prompt = `type,text,x,y` (sem id); system/schema **sem** `element`; `parseActionPayload` zera `element` e exige `x,y`; `runAgent` sem xy → `TAP_NO_XY`. Vision igual (x,y). Rollback: `compactOcr` com id; tap por `element` + `resolveTapElement`.
+**Antes → depois (tap só x,y da IA):** OCR usava `element`/id `eN` (id muda a cada turno). Agora: prompt = `type,text,x,y` (sem id); system/schema **sem** `element`; `parseActionPayload` zera `element`. Runtime **não** bloqueia tap sem xy (`TAP_NO_XY` removido) — executa o que a IA mandar. Rollback: guard `TAP_NO_XY` + `compactOcr` com id.
 
 **Antes → depois (comprador Campinas do zero):** o roteiro antigo assumia LinkedIn já aberto e o mini pulava busca/filtro. Agora: [`roteiros/jornada-linkedin-comprador-campinas.md`](../roteiros/jornada-linkedin-comprador-campinas.md) (FASE 0 abre o app). Rollback: [`jornada-linkedin-campinas.md`](../roteiros/jornada-linkedin-campinas.md).
 
-**Antes → depois (guards só genéricos):** `agent-run` tinha regras LinkedIn (Show all sem type, Add location, Show results, Campinas/`pickForcedTypeText`, feed Show translation, Search+teclado). Agora só: TAP_NO_XY, TAP_MISS/LABEL_MISMATCH, splash (OCR pobre pós-tap), tab bar no rodapé vs scroll down. Jornada no `--prompt` / [`roteiros/novo.md`](../roteiros/novo.md) / [`roteiros/jornada-linkedin-comprador-campinas.md`](../roteiros/jornada-linkedin-comprador-campinas.md). Rollback: restaurar guards app-específicos em `lib/agent-run.js`.
+**Antes → depois (runAgent sem guards):** havia TAP_NO_XY, TAP_MISS/LABEL_MISMATCH, splash pós-tap, tab bar vs `scroll down`, e antes rules LinkedIn. Agora `runAgent` **executa a ação da IA sem reescrever** (tap x,y / scroll=swipe / type / key / sleep / done / fail). Jornada só no `--prompt` / roteiros. Rollback: restaurar bloco de guards em `lib/agent-run.js`.
 
 **Antes → depois (Show all sem type):** lite via `comprador` no OCR Recent e tapava Show all sem `type`. **Removido do agent** — regra só no roteiro [`novo.md`](../roteiros/novo.md). Rollback: reintroduzir guard `bloqueia Show all sem type` se necessário.
 
@@ -302,9 +302,9 @@ Fallback default (`decide`): do modelo escolhido desce a escada `gemini-3.8-flas
 
 **Antes → depois (home/gaveta no system prompt):** lite fazia `scroll up` na home e reabria o shade; agora shade→`KEYCODE_BACK`, gaveta→`scroll down`. Jornada Settings: [`roteiros/abrir-settings.md`](../roteiros/abrir-settings.md) (não no system). Rollback: prompt de Settings de volta no system.
 
-**Antes → depois (scroll após Search):** com teclado aberto o OCR às vezes só traz a hora; o modelo tratava como home e fazia `scroll down`, digitando lixo (`ty`/`tyl`) no campo. Agora: (1) system prompt: histórico com tap `y<120` + OCR só hora ≠ home — proibido scroll; (2) guard em `runAgent` troca esse `scroll` por `type` (texto do roteiro `type "…"`) ou `KEYCODE_BACK`. Rollback: remover a EXCEÇÃO em `buildSystemPrompt` e o bloco `lastWasSearchTap` em `agent-run.js`.
+**Antes → depois (scroll após Search):** com teclado aberto o OCR às vezes só traz a hora; o modelo tratava como home e fazia `scroll down`. System prompt ainda orienta (tap `y<120` + OCR só hora ≠ home). **Guard de runtime removido** — scroll/type/key vão direto. Rollback: reintroduzir `lastWasSearchTap` em `agent-run.js` se necessário.
 
-**Antes → depois (tap no campo com teclado):** gpt-4o-mini repetia tap `y<120` em vez de `type`. Guard: QWERTY no OCR + tap no topo → `type` do roteiro. Tab bar no rodapé + `scroll down` → sleep (não abre gaveta em cima do app). Rollback: remover guards em `agent-run.js`.
+**Antes → depois (tap no campo com teclado / tab bar):** guards QWERTY→type e tab bar→sleep **removidos**; IA manda, runtime executa. Rollback: restaurar guards em `agent-run.js`.
 
 **Antes → depois (sense vision):** só OCR → também `--sense vision` / `--vision` / `AGENT_SENSE=vision`: `captureFrame` → [`lib/vision-frame.js`](lib/vision-frame.js) WebP (default width 540 q60; `VISION_WIDTH` / `VISION_QUALITY` / `--vision-width` / `--vision-quality`) → Gemini/OpenAI com imagem → JSON de ação; coords da IA × `scaleToDevice` antes do tap. Sem `extract`/OCR. Logs omitem base64. Rollback: `--sense ocr` (default).
 

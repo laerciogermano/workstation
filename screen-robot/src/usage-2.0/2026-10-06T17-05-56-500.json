@@ -1,0 +1,55 @@
+{
+  "entrada": {
+    "model": "gpt-4o-mini",
+    "messages": [
+      {
+        "role": "system",
+        "content": "Você opera um smartphone Android olhando só a lista extract da tela (type, text, x, y). Sem id.\n\nResponda APENAS JSON válido (sem markdown) no formato:\n{\n  \"resumo\": \"2-4 frases do que tem na tela\",\n  \"proximoPasso\": \"texto do PRÓXIMO passo do roteiro a cumprir depois desta ação (número + instrução)\",\n  \"acao\": {\n    \"type\": \"tap|scroll|type|key|sleep|done|fail\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"passo N em curso — ...\"\n  }\n}\n\nJornada / próximo passo:\n- Em toda ação bem-sucedida (tap/type/key/scroll/sleep que avança), preencha proximoPasso com o passo SEGUINTE do roteiro (ex.: após o passo 1 → \"2. …\"). Esse texto vira o foco do turno seguinte.\n- done/fail: proximoPasso pode ser null.\n- Se o bloco \"Próximo passo da jornada\" vier no user prompt, cumpra ESSE passo agora (1 ação); depois atualize proximoPasso para o seguinte.\n\nRegras de tap (OCR):\n- Cada item type=text (e icon) do extract É um alvo clicável: use o text do passo e copie os x,y desse hit.\n- acao.x e acao.y do tap = EXCLUSIVAMENTE do ÚLTIMO extract (OCR desta tela / bloco atual). PROIBIDO reusar x,y do histórico, de passos anteriores, do roteiro ou de taps já feitos (mesmo que o motivo diga o mesmo passo).\n- Não repita passos anteriores que não surtiram efeitos, tente algo novo quando necessario.\n- Alvo do próximo passo do roteiro está no extract → tap/type/key nesse alvo. Sem alvo do passo → sleep ou scroll conforme o roteiro; não fail."
+      },
+      {
+        "role": "user",
+        "content": "Objetivo / roteiro:\nEm cada ação, diga no motivo qual passo está em curso. 1 ação/turno. Text/icon do extract = clicável (copie x,y).\n\n1. abra a gaveta — na home (OCR só hora/data, sem apps): scroll direction=down 1× (arrastar o dedo para cima). NÃO scroll up (abre notificações).\n2. clique em LinkedIn — na gaveta (Chrome/Calendar + apps): tap text EXATO \"LinkedIn\" ou \"Linkedln\". Sem scroll de novo.\n3. clique em Search — tap nas x,y do text \"Search\" (y<120). Única ação. (pode ser que nada aconteça / teclado não apareça — prossiga).\n4. digite comprador — type \"comprador\".\n6. clique em Show all results — tap text EXATO do OCR atual (\"Show all results\" ou \"Show all\"/\"Showall\"). Se sumiu do OCR → retap Search (passo 3) ou type de novo; NÃO scroll down no feed (Home/Network/Jobs). NÃO inventar coords antigas.\n7. clique em People — tap \"People\" (aba, y baixo/topo conforme OCR).\n8. clique Location — tap \"Location\" ou \"Locatior\".\n9. clique em Add a location — tap \"Add a location\"/\"Add alocation\" (campo do sheet, não o chip).\n10. digite campinas — type \"Campinas\".\n11. clique na primeira opção Campinas — tap a sugestão Campinas no sheet (não o campo).\n12. clique em Show results — tap \"Show results\".\n13. Connect — tap text EXATO \"Connect\" se houver no extract.\n14. Sem Connect → scroll down; repita desde o 13.\n\nPróximo passo da jornada (cumprir AGORA; 1 ação):\n7. clique em People — tap 'People' (aba, y baixo/topo conforme OCR).\n\nOCR atual (JSON):\n[{\"type\":\"text\",\"text\":\"Ma\",\"x\":185,\"y\":23},{\"type\":\"text\",\"text\":\"205\",\"x\":87,\"y\":24},{\"type\":\"text\",\"text\":\"2:05\",\"x\":124,\"y\":24},{\"type\":\"text\",\"text\":\"(\",\"x\":71,\"y\":81},{\"type\":\"text\",\"text\":\"comprador\",\"x\":144,\"y\":82},{\"type\":\"text\",\"text\":\"2nd\",\"x\":318,\"y\":152},{\"type\":\"text\",\"text\":\"=\",\"x\":36,\"y\":153},{\"type\":\"text\",\"text\":\"People\",\"x\":116,\"y\":153},{\"type\":\"text\",\"text\":\"1st\",\"x\":244,\"y\":153},{\"type\":\"text\",\"text\":\")(\",\"x\":283,\"y\":153},{\"type\":\"text\",\"text\":\")(\",\"x\":358,\"y\":153},{\"type\":\"text\",\"text\":\"3rd+\",\"x\":399,\"y\":153},{\"type\":\"text\",\"text\":\"Locatior\",\"x\":501,\"y\":153},{\"type\":\"text\",\"text\":\"Heitor\",\"x\":163,\"y\":233},{\"type\":\"text\",\"text\":\"-\",\"x\":216,\"y\":233},{\"type\":\"text\",\"text\":\"2nd\",\"x\":242,\"y\":233},{\"type\":\"text\",\"text\":\"O\",\"x\":403,\"y\":243},{\"type\":\"text\",\"text\":\"Pending\",\"x\":457,\"y\":244},{\"type\":\"text\",\"text\":\"Comprador IEBL Montag...\",\"x\":221,\"y\":250},{\"type\":\"text\",\"text\":\"Comprador\",\"x\":161,\"y\":260},{\"type\":\"text\",\"text\":\"Montag...\",\"x\":308,\"y\":260},{\"type\":\"text\",\"text\":\"Belo\",\"x\":129,\"y\":282},{\"type\":\"text\",\"text\":\"Minas\",\"x\":283,\"y\":282},{\"type\":\"text\",\"text\":\"BeloHorizonte,Minas\",\"x\":206,\"y\":284},{\"type\":\"text\",\"text\":\"7\",\"x\":47,\"y\":285},{\"type\":\"text\",\"text\":\"Gerais,Brazil\",\"x\":170,\"y\":310},{\"type\":\"text\",\"text\":\"Current:\",\"x\":138,\"y\":344},{\"type\":\"text\",\"text\":\"Current:Comprador atIEBLMontagens\",\"x\":257,\"y\":346},{\"type\":\"text\",\"text\":\"Montagens\",\"x\":378,\"y\":346},{\"type\":\"text\",\"text\":\"8\",\"x\":126,\"y\":386},{\"type\":\"text\",\"text\":\"1\",\"x\":154,\"y\":386},{\"type\":\"text\",\"text\":\"1mutual connection\",\"x\":212,\"y\":386},{\"type\":\"text\",\"text\":\"connection\",\"x\":268,\"y\":386},{\"type\":\"text\",\"text\":\"Sabrina\",\"x\":149,\"y\":454},{\"type\":\"text\",\"text\":\"SabrinaPatriciados\",\"x\":227,\"y\":454},{\"type\":\"text\",\"text\":\"dos\",\"x\":304,\"y\":454},{\"type\":\"text\",\"text\":\"O\",\"x\":403,\"y\":465},{\"type\":\"text\",\"text\":\"Pending\",\"x\":458,\"y\":466},{\"type\":\"text\",\"text\":\"Santos\",\"x\":159,\"y\":485},{\"type\":\"text\",\"text\":\"+\",\"x\":191,\"y\":485},{\"type\":\"text\",\"text\":\"2nd\",\"x\":217,\"y\":485},{\"type\":\"text\",\"text\":\"Analista\",\"x\":145,\"y\":510},{\"type\":\"text\",\"text\":\"AnalistadeSuprimentosI..\",\"x\":216,\"y\":511},{\"type\":\"text\",\"text\":\"Suprimentos\",\"x\":276,\"y\":512},{\"type\":\"text\",\"text\":\"|...\",\"x\":350,\"y\":512},{\"type\":\"text\",\"text\":\"Belo\",\"x\":129,\"y\":534},{\"type\":\"text\",\"text\":\"Minas\",\"x\":283,\"y\":534},{\"type\":\"text\",\"text\":\"Belo Horizonte,Minas\",\"x\":206,\"y\":536},{\"type\":\"text\",\"text\":\"Gerais,Brazil\",\"x\":170,\"y\":562},{\"type\":\"text\",\"text\":\"Saúde\",\"x\":357,\"y\":596},{\"type\":\"text\",\"text\":\"Past:CompradoratAberttaSaude\",\"x\":267,\"y\":597},{\"type\":\"text\",\"text\":\"Comprador\",\"x\":198,\"y\":598},{\"type\":\"text\",\"text\":\"Past:\",\"x\":126,\"y\":618},{\"type\":\"text\",\"text\":\"1\",\"x\":154,\"y\":638},{\"type\":\"text\",\"text\":\"1mutualconnection\",\"x\":213,\"y\":639},{\"type\":\"text\",\"text\":\"connection\",\"x\":269,\"y\":640},{\"type\":\"text\",\"text\":\"DanielleBarros·2nd\",\"x\":225,\"y\":707},{\"type\":\"text\",\"text\":\"-\",\"x\":278,\"y\":707},{\"type\":\"text\",\"text\":\"2nd\",\"x\":304,\"y\":707},{\"type\":\"text\",\"text\":\"Message\",\"x\":455,\"y\":718},{\"type\":\"text\",\"text\":\"1\",\"x\":92,\"y\":729},{\"type\":\"text\",\"text\":\"Compradora\",\"x\":166,\"y\":734},{\"type\":\"text\",\"text\":\"Belo\",\"x\":129,\"y\":756},{\"type\":\"text\",\"text\":\"Minas\",\"x\":283,\"y\":756},{\"type\":\"text\",\"text\":\"Belo Horizonte,Minas\",\"x\":206,\"y\":758},{\"type\":\"text\",\"text\":\"Brazil\",\"x\":201,\"y\":783},{\"type\":\"text\",\"text\":\"Gerais,Brazil\",\"x\":153,\"y\":785},{\"type\":\"text\",\"text\":\"Past:\",\"x\":126,\"y\":818},{\"type\":\"text\",\"text\":\"Verdemar\",\"x\":411,\"y\":818},{\"type\":\"text\",\"text\":\"Past:Comprador atOrganizacaoVerdemar\",\"x\":268,\"y\":819},{\"type\":\"text\",\"text\":\"Comprador\",\"x\":198,\"y\":820},{\"type\":\"text\",\"text\":\"Organização\",\"x\":317,\"y\":820},{\"type\":\"text\",\"text\":\"13\",\"x\":190,\"y\":859},{\"type\":\"text\",\"text\":\"mutual\",\"x\":232,\"y\":859},{\"type\":\"text\",\"text\":\"-\",\"x\":366,\"y\":859},{\"type\":\"text\",\"text\":\"followers\",\"x\":458,\"y\":859},{\"type\":\"text\",\"text\":\"13mutualconnections·3,766followers\",\"x\":325,\"y\":860},{\"type\":\"text\",\"text\":\"3,766\",\"x\":396,\"y\":860},{\"type\":\"text\",\"text\":\"right\",\"x\":174,\"y\":924},{\"type\":\"text\",\"text\":\"Sen\",\"x\":269,\"y\":930},{\"type\":\"text\",\"text\":\"Matheus,youmightbenefitfromunlimited\",\"x\":261,\"y\":935},{\"type\":\"text\",\"text\":\"from\",\"x\":346,\"y\":940},{\"type\":\"text\",\"text\":\"unlimited\",\"x\":428,\"y\":940},{\"type\":\"text\",\"text\":\"Matheus,\",\"x\":73,\"y\":942},{\"type\":\"text\",\"text\":\"might\",\"x\":204,\"y\":942},{\"type\":\"text\",\"text\":\"you\",\"x\":147,\"y\":945},{\"type\":\"icon\",\"x\":169,\"y\":23},{\"type\":\"icon\",\"x\":60,\"y\":477},{\"type\":\"icon\",\"x\":126,\"y\":637},{\"type\":\"icon\",\"x\":141,\"y\":859},{\"type\":\"icon\",\"x\":372,\"y\":931}]\n\nDefina a próxima ação."
+      }
+    ],
+    "temperature": 0,
+    "response_format": {
+      "type": "json_object"
+    }
+  },
+  "resposta": {
+    "id": "chatcmpl-EW2tuIXxJ9vM4yNKYoIf3CFSrfCeA",
+    "object": "chat.completion",
+    "created": 1791306354,
+    "model": "gpt-4o-mini-2024-07-18",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\n  \"resumo\": \"A tela exibe a aba de resultados da busca, onde é possível ver a opção 'People' entre outros textos relacionados a perfis. O objetivo é clicar na aba 'People' para prosseguir na jornada.\",\n  \"proximoPasso\": \"8. clique Location — tap 'Location' ou 'Locatior'.\",\n  \"acao\": {\n    \"type\": \"tap\",\n    \"x\": 116,\n    \"y\": 153,\n    \"direction\": null,\n    \"text\": \"People\",\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"passo 7 em curso — clicando na aba 'People'.\"\n  }\n}",
+          "refusal": null,
+          "annotations": []
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 2431,
+      "completion_tokens": 149,
+      "total_tokens": 2580,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "audio_tokens": 0
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0,
+        "audio_tokens": 0,
+        "accepted_prediction_tokens": 0,
+        "rejected_prediction_tokens": 0
+      }
+    },
+    "service_tier": "default",
+    "system_fingerprint": "fp_169c0f824d"
+  }
+}

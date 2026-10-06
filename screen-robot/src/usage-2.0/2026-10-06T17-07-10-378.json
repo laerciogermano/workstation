@@ -1,0 +1,55 @@
+{
+  "entrada": {
+    "model": "gpt-4o-mini",
+    "messages": [
+      {
+        "role": "system",
+        "content": "Você opera um smartphone Android olhando só a lista extract da tela (type, text, x, y). Sem id.\n\nResponda APENAS JSON válido (sem markdown) no formato:\n{\n  \"resumo\": \"2-4 frases do que tem na tela\",\n  \"proximoPasso\": \"texto do PRÓXIMO passo do roteiro a cumprir depois desta ação (número + instrução)\",\n  \"acao\": {\n    \"type\": \"tap|scroll|type|key|sleep|done|fail\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"passo N em curso — ...\"\n  }\n}\n\nJornada / próximo passo:\n- Em toda ação bem-sucedida (tap/type/key/scroll/sleep que avança), preencha proximoPasso com o passo SEGUINTE do roteiro (ex.: após o passo 1 → \"2. …\"). Esse texto vira o foco do turno seguinte.\n- done/fail: proximoPasso pode ser null.\n- Se o bloco \"Próximo passo da jornada\" vier no user prompt, cumpra ESSE passo agora (1 ação); depois atualize proximoPasso para o seguinte.\n\nRegras de tap (OCR):\n- Cada item type=text (e icon) do extract É um alvo clicável: use o text do passo e copie os x,y desse hit.\n- acao.x e acao.y do tap = EXCLUSIVAMENTE do ÚLTIMO extract (OCR desta tela / bloco atual). PROIBIDO reusar x,y do histórico, de passos anteriores, do roteiro ou de taps já feitos (mesmo que o motivo diga o mesmo passo).\n- Não repita passos anteriores que não surtiram efeitos, tente algo novo quando necessario.\n- Alvo do próximo passo do roteiro está no extract → tap/type/key nesse alvo. Sem alvo do passo → sleep ou scroll conforme o roteiro; não fail."
+      },
+      {
+        "role": "user",
+        "content": "Objetivo / roteiro:\nEm cada ação, diga no motivo qual passo está em curso. 1 ação/turno. Text/icon do extract = clicável (copie x,y).\n\n1. abra a gaveta — na home (OCR só hora/data, sem apps): scroll direction=down 1× (arrastar o dedo para cima). NÃO scroll up (abre notificações).\n2. clique em LinkedIn — na gaveta (Chrome/Calendar + apps): tap text EXATO \"LinkedIn\" ou \"Linkedln\". Sem scroll de novo.\n3. clique em Search — tap nas x,y do text \"Search\" (y<120). Única ação. (pode ser que nada aconteça / teclado não apareça — prossiga).\n4. digite comprador — type \"comprador\".\n6. clique em Show all results — tap text EXATO do OCR atual (\"Show all results\" ou \"Show all\"/\"Showall\"). Se sumiu do OCR → retap Search (passo 3) ou type de novo; NÃO scroll down no feed (Home/Network/Jobs). NÃO inventar coords antigas.\n7. clique em People — tap \"People\" (aba, y baixo/topo conforme OCR).\n8. clique Location — tap \"Location\" ou \"Locatior\".\n9. clique em Add a location — tap \"Add a location\"/\"Add alocation\" (campo do sheet, não o chip).\n10. digite campinas — type \"Campinas\".\n11. clique na primeira opção Campinas — tap a sugestão Campinas no sheet (não o campo).\n12. clique em Show results — tap \"Show results\".\n13. Connect — tap text EXATO \"Connect\" se houver no extract.\n14. Sem Connect → scroll down; repita desde o 13.\n\nPróximo passo da jornada (cumprir AGORA; 1 ação):\n7. clique em People — tap 'People' (aba, y baixo/topo conforme OCR).\n\nOCR atual (JSON):\n[{\"type\":\"text\",\"text\":\"Ci\",\"x\":439,\"y\":22},{\"type\":\"text\",\"text\":\"Ma\",\"x\":185,\"y\":23},{\"type\":\"text\",\"text\":\"207\",\"x\":87,\"y\":24},{\"type\":\"text\",\"text\":\"2:07 * in e\",\"x\":130,\"y\":24},{\"type\":\"text\",\"text\":\"Search\",\"x\":129,\"y\":81},{\"type\":\"text\",\"text\":\"compraaor,campinpas\",\"x\":220,\"y\":124},{\"type\":\"text\",\"text\":\"comprador,\",\"x\":157,\"y\":126},{\"type\":\"text\",\"text\":\"comprador, campinpas\",\"x\":217,\"y\":126},{\"type\":\"text\",\"text\":\"campinbas\",\"x\":283,\"y\":126},{\"type\":\"text\",\"text\":\"W\",\"x\":42,\"y\":127},{\"type\":\"text\",\"text\":\"(O\",\"x\":42,\"y\":194},{\"type\":\"text\",\"text\":\"Campinas\",\"x\":151,\"y\":195},{\"type\":\"text\",\"text\":\"views\",\"x\":248,\"y\":279},{\"type\":\"text\",\"text\":\"Today'snewsandviews\",\"x\":160,\"y\":280},{\"type\":\"text\",\"text\":\"Today's\",\"x\":64,\"y\":281},{\"type\":\"text\",\"text\":\"Today's news and views\",\"x\":150,\"y\":283},{\"type\":\"text\",\"text\":\"Como\",\"x\":56,\"y\":337},{\"type\":\"text\",\"text\":\"ComobrasileirosveemaIAno\",\"x\":169,\"y\":338},{\"type\":\"text\",\"text\":\"IA\",\"x\":296,\"y\":338},{\"type\":\"text\",\"text\":\"Como brasileiros veem a lA no\",\"x\":186,\"y\":339},{\"type\":\"text\",\"text\":\"veem\",\"x\":241,\"y\":339},{\"type\":\"text\",\"text\":\"no\",\"x\":338,\"y\":339},{\"type\":\"text\",\"text\":\"trabalho\",\"x\":68,\"y\":368},{\"type\":\"text\",\"text\":\"i\",\"x\":514,\"y\":371},{\"type\":\"text\",\"text\":\"4\",\"x\":514,\"y\":385},{\"type\":\"text\",\"text\":\"Senado\",\"x\":65,\"y\":447},{\"type\":\"text\",\"text\":\"inicia\",\"x\":141,\"y\":447},{\"type\":\"text\",\"text\":\"Senado inicia análise sobre fim da\",\"x\":208,\"y\":447},{\"type\":\"text\",\"text\":\"sobre\",\"x\":287,\"y\":447},{\"type\":\"text\",\"text\":\"fim\",\"x\":340,\"y\":447},{\"type\":\"text\",\"text\":\"da\",\"x\":378,\"y\":447},{\"type\":\"text\",\"text\":\"Senadoiniciaanalisesobrefimda\",\"x\":211,\"y\":448},{\"type\":\"text\",\"text\":\"escala\",\"x\":59,\"y\":477},{\"type\":\"text\",\"text\":\"escala6x1nestaterca\",\"x\":146,\"y\":478},{\"type\":\"text\",\"text\":\"escala 6x1 nesta terça\",\"x\":143,\"y\":479},{\"type\":\"text\",\"text\":\"terça\",\"x\":238,\"y\":480},{\"type\":\"text\",\"text\":\"Estagio e trainee: veja empresas\",\"x\":188,\"y\":558},{\"type\":\"text\",\"text\":\"Estdgio\",\"x\":65,\"y\":559},{\"type\":\"text\",\"text\":\"veja\",\"x\":237,\"y\":560},{\"type\":\"text\",\"text\":\"empresas\",\"x\":318,\"y\":562},{\"type\":\"text\",\"text\":\"|\",\"x\":515,\"y\":571},{\"type\":\"text\",\"text\":\"comvagasabertas\",\"x\":118,\"y\":581},{\"type\":\"text\",\"text\":\"abertas\",\"x\":188,\"y\":587},{\"type\":\"text\",\"text\":\"com\",\"x\":47,\"y\":589},{\"type\":\"text\",\"text\":\"com vagas abertas\",\"x\":125,\"y\":590},{\"type\":\"text\",\"text\":\"Dicas\",\"x\":54,\"y\":667},{\"type\":\"text\",\"text\":\"de\",\"x\":103,\"y\":667},{\"type\":\"text\",\"text\":\"outubro\",\"x\":291,\"y\":667},{\"type\":\"text\",\"text\":\"Dicasdeleituraparaoutubro\",\"x\":168,\"y\":668},{\"type\":\"text\",\"text\":\"Dicas de leitura para outubro\",\"x\":199,\"y\":672},{\"type\":\"text\",\"text\":\"eleitoral\",\"x\":159,\"y\":777},{\"type\":\"text\",\"text\":\"trabalho:\",\"x\":289,\"y\":777},{\"type\":\"text\",\"text\":\"saiba\",\"x\":372,\"y\":777},{\"type\":\"text\",\"text\":\"Assédio eleitoral no trabalho: saiba\",\"x\":213,\"y\":778},{\"type\":\"text\",\"text\":\"Assedioeleitoralnotrabalho:saiba\",\"x\":215,\"y\":789},{\"type\":\"text\",\"text\":\", [VOTO\",\"x\":461,\"y\":791},{\"type\":\"text\",\"text\":\"Br\",\"x\":480,\"y\":791},{\"type\":\"text\",\"text\":\"MANI\",\"x\":503,\"y\":792},{\"type\":\"text\",\"text\":\"Assédio\",\"x\":93,\"y\":801},{\"type\":\"text\",\"text\":\"=.\",\"x\":504,\"y\":805},{\"type\":\"text\",\"text\":\"0\",\"x\":31,\"y\":809},{\"type\":\"text\",\"text\":\"oqueeecomoseproteger\",\"x\":166,\"y\":810},{\"type\":\"text\",\"text\":\"o que é e como se proteger\",\"x\":171,\"y\":810},{\"type\":\"text\",\"text\":\"proteger\",\"x\":273,\"y\":810},{\"type\":\"text\",\"text\":\"que\",\"x\":64,\"y\":812},{\"type\":\"text\",\"text\":\"Com\",\"x\":49,\"y\":887},{\"type\":\"text\",\"text\":\"El\",\"x\":91,\"y\":887},{\"type\":\"text\",\"text\":\"Nifio,\",\"x\":135,\"y\":889},{\"type\":\"text\",\"text\":\"já\",\"x\":319,\"y\":889},{\"type\":\"text\",\"text\":\"reveem\",\"x\":371,\"y\":889},{\"type\":\"text\",\"text\":\"Com El Nino, seguradoras ja reveem\",\"x\":227,\"y\":890},{\"type\":\"text\",\"text\":\"calculosderisco\",\"x\":105,\"y\":918},{\"type\":\"text\",\"text\":\"cálculos de risco\",\"x\":114,\"y\":919},{\"type\":\"text\",\"text\":\"gjsco\",\"x\":177,\"y\":922},{\"type\":\"text\",\"text\":\"®\",\"x\":270,\"y\":924},{\"type\":\"text\",\"text\":\"[|\",\"x\":377,\"y\":924},{\"type\":\"icon\",\"x\":169,\"y\":23},{\"type\":\"icon\",\"x\":480,\"y\":470},{\"type\":\"icon\",\"x\":480,\"y\":690},{\"type\":\"icon\",\"x\":480,\"y\":910}]\n\nDefina a próxima ação."
+      }
+    ],
+    "temperature": 0,
+    "response_format": {
+      "type": "json_object"
+    }
+  },
+  "resposta": {
+    "id": "chatcmpl-EW2v6xDE0KCwoSTlIX1kgL1Ghdhjm",
+    "object": "chat.completion",
+    "created": 1791306428,
+    "model": "gpt-4o-mini-2024-07-18",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\n  \"resumo\": \"A tela atual apresenta a opção 'Search' e outras informações relacionadas a buscas. O próximo passo é clicar na aba 'People'.\",\n  \"proximoPasso\": \"8. clique Location — tap 'Location' ou 'Locatior'.\",\n  \"acao\": {\n    \"type\": \"tap\",\n    \"x\": 129,\n    \"y\": 81,\n    \"direction\": null,\n    \"text\": \"People\",\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"passo 7 em curso — clicando na aba 'People'.\"\n  }\n}",
+          "refusal": null,
+          "annotations": []
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 2288,
+      "completion_tokens": 133,
+      "total_tokens": 2421,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "audio_tokens": 0
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0,
+        "audio_tokens": 0,
+        "accepted_prediction_tokens": 0,
+        "rejected_prediction_tokens": 0
+      }
+    },
+    "service_tier": "default",
+    "system_fingerprint": "fp_169c0f824d"
+  }
+}

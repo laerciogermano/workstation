@@ -1,0 +1,53 @@
+{
+  "entrada": {
+    "model": "gpt-5-mini",
+    "messages": [
+      {
+        "role": "system",
+        "content": "Você opera um smartphone Android olhando só a lista extract da tela (type, text, x, y). Sem id.\n\nResponda APENAS JSON válido (sem markdown) no formato:\n{\n  \"resumo\": \"2-4 frases do que tem na tela\",\n  \"proximoPasso\": \"texto do PRÓXIMO passo do roteiro a cumprir depois desta ação (número + instrução)\",\n  \"acao\": {\n    \"type\": \"tap|scroll|type|key|sleep|done|fail\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"passo N em curso — ...\"\n  }\n}\n\nJornada / próximo passo:\n- Em toda ação bem-sucedida (tap/type/key/scroll/sleep que avança), preencha proximoPasso com o passo SEGUINTE do roteiro (ex.: após o passo 1 → \"2. …\"). Esse texto vira o foco do turno seguinte.\n- done/fail: proximoPasso pode ser null.\n- Se o bloco \"Próximo passo da jornada\" vier no user prompt, cumpra ESSE passo agora (1 ação); depois atualize proximoPasso para o seguinte.\n\nRegras de tap (OCR):\n- Cada item type=text (e icon) do extract É um alvo clicável: use o text do passo e copie os x,y desse hit.\n- acao.x e acao.y do tap = EXCLUSIVAMENTE do ÚLTIMO extract (OCR desta tela / bloco atual). PROIBIDO reusar x,y do histórico, de passos anteriores, do roteiro ou de taps já feitos (mesmo que o motivo diga o mesmo passo).\n- Não repita passos anteriores que não surtiram efeitos, tente algo novo quando necessario.\n- Alvo do próximo passo do roteiro está no extract → tap/type/key nesse alvo. Sem alvo do passo → sleep ou scroll conforme o roteiro; não fail."
+      },
+      {
+        "role": "user",
+        "content": "Objetivo / roteiro:\nEm cada ação, diga no motivo qual passo (1–12) está em curso.\n\nOrdem obrigatória 1→12. 1 ação/turno. Text/icon do extract = clicável (copie x,y).\nPROIBIDO fail se o text do passo atual estiver no OCR (ex. Search → tap; não fail).\nfail só se impossível após retentativa; histórico de fail NÃO impede tap.\n\n1. clique em Search — tap nas x,y do text \"Search\" (y<120). Única ação. (pode ser que nada aconteca que o teclado nao apareca, apenas prossiga para o proximo passo)\n2. digite comprador — type \"comprador\" (após Search; teclado ou campo aberto).\n3. feche o teclado — key KEYCODE_BACK 1×. EXCEÇÃO: se OCR JÁ tem \"Show all results\" / \"Show all\" / \"Showall\" → NÃO dê BACK (BACK fecha a busca). Vá direto ao 4 e tap nesse text. proximoPasso = 5.\n4. clique em Show all results — tap text EXATO do OCR atual (\"Show all results\" ou \"Show all\"/\"Showall\"). Se sumiu do OCR (ex. após BACK indevido) → retap Search (passo 1) ou type de novo; NÃO scroll down no feed (Home/Network/Jobs). NÃO inventar coords antigas.\n5. clique em People — tap \"People\" (aba, y baixo/topo conforme OCR).\n6. clique Location — tap \"Location\" ou \"Locatior\".\n7. clique em Add a location — tap \"Add a location\"/\"Add alocation\" (campo do sheet, não o chip).\n8. digite campinas — type \"Campinas\".\n9. clique na primeira opção Campinas — tap a sugestão Campinas no sheet (não o campo).\n10. clique em Show results — tap \"Show results\".\n11. Connect — tap text EXATO \"Connect\" se houver no extract.\n12. Sem Connect → scroll down; repita desde o 11.\n\nHistórico recente (últimos 1/10):\n[{\"step\":1,\"type\":\"sleep\",\"motivo\":\"passo 1 em curso — não encontrei o texto \\\"Search\\\" no OCR; aguardar 500ms para permitir carregar/atualizar a UI antes de tentar o próximo passo.\",\"element\":null,\"direction\":null,\"text\":null,\"code\":null,\"proximoPasso\":\"2. digite comprador — type \\\"comprador\\\" (após Search; teclado ou campo aberto).\",\"resultado\":\"sleep 500ms\",\"sense\":\"ocr\",\"ocr\":[{\"type\":\"text\",\"text\":\"in =\",\"x\":186,\"y\":23},{\"type\":\"text\",\"text\":\"2:12\",\"x\":105,\"y\":25},{\"type\":\"text\",\"text\":\"Tuesday, Oct 6\",\"x\":272,\"y\":119},{\"type\":\"text\",\"text\":\"OOo\",\"x\":260,\"y\":713},{\"type\":\"text\",\"text\":\"CEE\",\"x\":269,\"y\":824},{\"type\":\"text\",\"text\":\"|\",\"x\":160,\"y\":924},{\"type\":\"text\",\"text\":\"@®\",\"x\":268,\"y\":926}]}]\n\nPróximo passo da jornada (cumprir AGORA; 1 ação):\n2. digite comprador — type \"comprador\" (após Search; teclado ou campo aberto).\n\nOCR atual (JSON):\n[{\"type\":\"text\",\"text\":\"in =\",\"x\":186,\"y\":23},{\"type\":\"text\",\"text\":\"2:12\",\"x\":105,\"y\":25},{\"type\":\"text\",\"text\":\"Tuesday, Oct 6\",\"x\":272,\"y\":119},{\"type\":\"text\",\"text\":\"OOo\",\"x\":260,\"y\":713},{\"type\":\"text\",\"text\":\"CEE\",\"x\":269,\"y\":824},{\"type\":\"text\",\"text\":\"|\",\"x\":160,\"y\":924},{\"type\":\"text\",\"text\":\"@®\",\"x\":268,\"y\":926}]\n\nDefina a próxima ação."
+      }
+    ],
+    "response_format": {
+      "type": "json_object"
+    }
+  },
+  "resposta": {
+    "id": "chatcmpl-EW30dv0Uf3t1ko3b3rPMeAHZhOPQr",
+    "object": "chat.completion",
+    "created": 1791306771,
+    "model": "gpt-5-mini-2025-08-07",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\n  \"resumo\": \"Tela mostra o topo com hora e data ('2:12', 'Tuesday, Oct 6') e alguns textos dispersos ('in =', 'OOo', 'CEE'), sem nenhum campo 'Search' ou teclado visível. A interface atual não apresenta resultados ou opções relacionadas à busca.\",\n  \"proximoPasso\": \"3. feche o teclado — key KEYCODE_BACK 1×. EXCEÇÃO: se OCR JÁ tem \\\"Show all results\\\" / \\\"Show all\\\" / \\\"Showall\\\" → NÃO dê BACK (BACK fecha a busca). Vá direto ao 4 e tap nesse text. proximoPasso = 5.\",\n  \"acao\": {\n    \"type\": \"type\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": \"comprador\",\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"passo 2 em curso — digitando comprador no campo de busca (após Search)\"\n  }\n}",
+          "refusal": null,
+          "annotations": []
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1290,
+      "completion_tokens": 1124,
+      "total_tokens": 2414,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "audio_tokens": 0
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 896,
+        "audio_tokens": 0,
+        "accepted_prediction_tokens": 0,
+        "rejected_prediction_tokens": 0
+      }
+    },
+    "service_tier": "default",
+    "system_fingerprint": null
+  }
+}

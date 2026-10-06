@@ -1,0 +1,55 @@
+{
+  "entrada": {
+    "model": "gpt-4o-mini",
+    "messages": [
+      {
+        "role": "system",
+        "content": "Você opera um smartphone Android olhando só a lista extract da tela (type, text, x, y). Sem id.\n\nResponda APENAS JSON válido (sem markdown) no formato:\n{\n  \"resumo\": \"2-4 frases do que tem na tela\",\n  \"proximoPasso\": \"texto do PRÓXIMO passo do roteiro a cumprir depois desta ação (número + instrução)\",\n  \"acao\": {\n    \"type\": \"tap|scroll|type|key|sleep|done|fail\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"passo N em curso — ...\"\n  }\n}\n\nJornada / próximo passo:\n- Em toda ação bem-sucedida (tap/type/key/scroll/sleep que avança), preencha proximoPasso com o passo SEGUINTE do roteiro (ex.: após o passo 1 → \"2. …\"). Esse texto vira o foco do turno seguinte.\n- done/fail: proximoPasso pode ser null.\n- Se o bloco \"Próximo passo da jornada\" vier no user prompt, cumpra ESSE passo agora (1 ação); depois atualize proximoPasso para o seguinte.\n\nRegras de tap (OCR):\n- Cada item type=text (e icon) do extract É um alvo clicável: use o text do passo e copie os x,y desse hit.\n- acao.x e acao.y do tap = EXCLUSIVAMENTE do ÚLTIMO extract (OCR desta tela / bloco atual). PROIBIDO reusar x,y do histórico, de passos anteriores, do roteiro ou de taps já feitos (mesmo que o motivo diga o mesmo passo).\n- Não repita passos anteriores que não surtiram efeitos, tente algo novo quando necessario.\n- Alvo do próximo passo do roteiro está no extract → tap/type/key nesse alvo. Sem alvo do passo → sleep ou scroll conforme o roteiro; não fail."
+      },
+      {
+        "role": "user",
+        "content": "Objetivo / roteiro:\nEm cada ação, diga no motivo qual passo está em curso. 1 ação/turno. Text/icon do extract = clicável (copie x,y).\n\n1. abra a gaveta — na home (OCR só hora/data, sem apps): scroll direction=down 1× (arrastar o dedo para cima). NÃO scroll up (abre notificações).\n2. clique em LinkedIn — na gaveta (Chrome/Calendar + apps): tap text EXATO \"LinkedIn\" ou \"Linkedln\". Sem scroll de novo.\n3. clique em Search — tap nas x,y do text \"Search\" (y<120). Única ação. (pode ser que nada aconteça / teclado não apareça — prossiga).\n4. digite comprador — type \"comprador\".\n6. clique em Show all results — tap text EXATO do OCR atual (\"Show all results\" ou \"Show all\"/\"Showall\"). Se sumiu do OCR → retap Search (passo 3) ou type de novo; NÃO scroll down no feed (Home/Network/Jobs). NÃO inventar coords antigas.\n7. clique em People — tap \"People\" (aba, y baixo/topo conforme OCR).\n8. clique Location — tap \"Location\" ou \"Locatior\".\n9. clique em Add a location — tap \"Add a location\"/\"Add alocation\" (campo do sheet, não o chip).\n10. digite campinas — type \"Campinas\".\n11. clique na primeira opção Campinas — tap a sugestão Campinas no sheet (não o campo).\n12. clique em Show results — tap \"Show results\".\n13. Connect — tap text EXATO \"Connect\" se houver no extract.\n14. Sem Connect → scroll down; repita desde o 13.\n\nPróximo passo da jornada (cumprir AGORA; 1 ação):\n8. clique Location — tap 'Location' ou 'Locatior'.\n\nOCR atual (JSON):\n[{\"type\":\"text\",\"text\":\"|\",\"x\":470,\"y\":22},{\"type\":\"text\",\"text\":\"Ma\",\"x\":185,\"y\":23},{\"type\":\"text\",\"text\":\"Fil\",\"x\":428,\"y\":23},{\"type\":\"text\",\"text\":\"207\",\"x\":87,\"y\":24},{\"type\":\"text\",\"text\":\"2:07 đ l d\",\"x\":125,\"y\":24},{\"type\":\"text\",\"text\":\"\\\\\",\"x\":409,\"y\":25},{\"type\":\"text\",\"text\":\"e\",\"x\":35,\"y\":81},{\"type\":\"text\",\"text\":\"Search\",\"x\":129,\"y\":81},{\"type\":\"text\",\"text\":\"compraaor,campinpas\",\"x\":220,\"y\":124},{\"type\":\"text\",\"text\":\"comprador,\",\"x\":157,\"y\":126},{\"type\":\"text\",\"text\":\"comprador, campindas\",\"x\":217,\"y\":126},{\"type\":\"text\",\"text\":\"campinbas\",\"x\":283,\"y\":126},{\"type\":\"text\",\"text\":\"W\",\"x\":42,\"y\":127},{\"type\":\"text\",\"text\":\"(O\",\"x\":42,\"y\":194},{\"type\":\"text\",\"text\":\"Campinas\",\"x\":150,\"y\":195},{\"type\":\"text\",\"text\":\"views\",\"x\":248,\"y\":279},{\"type\":\"text\",\"text\":\"Today'snewsandviews\",\"x\":160,\"y\":280},{\"type\":\"text\",\"text\":\"Today's\",\"x\":64,\"y\":281},{\"type\":\"text\",\"text\":\"Today's news and views\",\"x\":150,\"y\":283},{\"type\":\"text\",\"text\":\"Como\",\"x\":56,\"y\":337},{\"type\":\"text\",\"text\":\"ComobrasileirosveemaIAno\",\"x\":170,\"y\":338},{\"type\":\"text\",\"text\":\"IA\",\"x\":296,\"y\":338},{\"type\":\"text\",\"text\":\"Como brasileiros veem a lA no\",\"x\":186,\"y\":339},{\"type\":\"text\",\"text\":\"veem\",\"x\":241,\"y\":339},{\"type\":\"text\",\"text\":\"no\",\"x\":339,\"y\":339},{\"type\":\"text\",\"text\":\"trabalho\",\"x\":68,\"y\":368},{\"type\":\"text\",\"text\":\"i\",\"x\":514,\"y\":371},{\"type\":\"text\",\"text\":\"4\",\"x\":514,\"y\":385},{\"type\":\"text\",\"text\":\"inicia análise sobre fim da\",\"x\":239,\"y\":445},{\"type\":\"text\",\"text\":\"S\",\"x\":31,\"y\":447},{\"type\":\"text\",\"text\":\"iniciaanalisesobrefimda\",\"x\":228,\"y\":447},{\"type\":\"text\",\"text\":\"sobre\",\"x\":287,\"y\":447},{\"type\":\"text\",\"text\":\"fim\",\"x\":340,\"y\":447},{\"type\":\"text\",\"text\":\"da\",\"x\":378,\"y\":447},{\"type\":\"text\",\"text\":\"=\",\"x\":68,\"y\":475},{\"type\":\"text\",\"text\":\"x1\",\"x\":122,\"y\":477},{\"type\":\"text\",\"text\":\"x1nestaterca\",\"x\":182,\"y\":479},{\"type\":\"text\",\"text\":\"ix1 nesta terça\",\"x\":184,\"y\":479},{\"type\":\"text\",\"text\":\"«\",\"x\":26,\"y\":480},{\"type\":\"text\",\"text\":\"Estagio e trainee: veja empresas\",\"x\":188,\"y\":558},{\"type\":\"text\",\"text\":\"Estágio\",\"x\":65,\"y\":559},{\"type\":\"text\",\"text\":\"veja\",\"x\":237,\"y\":560},{\"type\":\"text\",\"text\":\"empresas\",\"x\":318,\"y\":562},{\"type\":\"text\",\"text\":\"|\",\"x\":515,\"y\":572},{\"type\":\"text\",\"text\":\"comvagasabertas\",\"x\":118,\"y\":581},{\"type\":\"text\",\"text\":\"di\",\"x\":505,\"y\":586},{\"type\":\"text\",\"text\":\"abertas\",\"x\":188,\"y\":587},{\"type\":\"text\",\"text\":\"com\",\"x\":47,\"y\":589},{\"type\":\"text\",\"text\":\"com vagas abertas\",\"x\":125,\"y\":590},{\"type\":\"text\",\"text\":\"Dicas\",\"x\":54,\"y\":667},{\"type\":\"text\",\"text\":\"de\",\"x\":103,\"y\":667},{\"type\":\"text\",\"text\":\"outubro\",\"x\":291,\"y\":667},{\"type\":\"text\",\"text\":\"Dicasdeleituraparaoutubro\",\"x\":168,\"y\":668},{\"type\":\"text\",\"text\":\"Dicas de leitura para outubro\",\"x\":200,\"y\":672},{\"type\":\"text\",\"text\":\"eleitoral\",\"x\":159,\"y\":777},{\"type\":\"text\",\"text\":\"trabalho:\",\"x\":289,\"y\":777},{\"type\":\"text\",\"text\":\"saiba\",\"x\":372,\"y\":777},{\"type\":\"text\",\"text\":\"Assédio eleitoral no trabalho: saiba\",\"x\":213,\"y\":778},{\"type\":\"text\",\"text\":\"Assedioeleitoralnotrabalho:saiba\",\"x\":215,\"y\":789},{\"type\":\"text\",\"text\":\", [VOTO\",\"x\":462,\"y\":790},{\"type\":\"text\",\"text\":\"Br\",\"x\":480,\"y\":791},{\"type\":\"text\",\"text\":\"MANI\",\"x\":503,\"y\":792},{\"type\":\"text\",\"text\":\"Assédio\",\"x\":93,\"y\":801},{\"type\":\"text\",\"text\":\"=.\",\"x\":505,\"y\":806},{\"type\":\"text\",\"text\":\"0\",\"x\":31,\"y\":809},{\"type\":\"text\",\"text\":\"oqueeecomoseproteger\",\"x\":166,\"y\":810},{\"type\":\"text\",\"text\":\"o que é e como se proteger\",\"x\":171,\"y\":810},{\"type\":\"text\",\"text\":\"proteger\",\"x\":274,\"y\":810},{\"type\":\"text\",\"text\":\"que\",\"x\":64,\"y\":812},{\"type\":\"text\",\"text\":\"Cam E Niãa caauradancia ravnam\",\"x\":219,\"y\":883},{\"type\":\"text\",\"text\":\"ComELNlibo-coa\",\"x\":119,\"y\":884}]\n\nDefina a próxima ação."
+      }
+    ],
+    "temperature": 0,
+    "response_format": {
+      "type": "json_object"
+    }
+  },
+  "resposta": {
+    "id": "chatcmpl-EW2vDHoYyTeLTdeFeG6lA1Ck7b2Xu",
+    "object": "chat.completion",
+    "created": 1791306435,
+    "model": "gpt-4o-mini-2024-07-18",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\n  \"resumo\": \"A tela atual apresenta a hora e data, além de um campo de busca com sugestões relacionadas a 'comprador' e 'Campinas'. O próximo passo é clicar na aba 'Location'.\",\n  \"proximoPasso\": \"9. clique em Add a location — tap 'Add a location'/ 'Add alocation'.\",\n  \"acao\": {\n    \"type\": \"tap\",\n    \"x\": 150,\n    \"y\": 195,\n    \"direction\": null,\n    \"text\": \"Location\",\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"passo 8 em curso — clique Location.\"\n  }\n}",
+          "refusal": null,
+          "annotations": []
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 2135,
+      "completion_tokens": 144,
+      "total_tokens": 2279,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "audio_tokens": 0
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0,
+        "audio_tokens": 0,
+        "accepted_prediction_tokens": 0,
+        "rejected_prediction_tokens": 0
+      }
+    },
+    "service_tier": "default",
+    "system_fingerprint": "fp_169c0f824d"
+  }
+}

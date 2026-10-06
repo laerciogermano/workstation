@@ -8,7 +8,7 @@ import { defaultConfigPath, parseRunArgs, runAction } from "../lib/run-action.js
 
 function usage(code = 1) {
   console.error(`Uso (cwd: screen-robot/src):
-  npm run extract [-- --engine all] [-- --icons true]
+  npm run extract -- --engine all --icons true
   npm run find -- "Sign in with Email"
   npm run tap -- <x> <y>
   npm run type -- "texto"

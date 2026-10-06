@@ -4,15 +4,15 @@
 
 Serial: `device.config.json` (`provision.serial` / `device`). Override: `--device SERIAL`.
 
-Stdout de toda ação: JSON `{ ok, action, serial, result }`.
+Stdout de toda ação: JSON `{ ok, action, serial, result }`. Extract também: `engine`, `icons`.
 
 ---
 
 ## Loop
 
-1. `npm run extract` (`engine=all` default)
+1. `npm run extract -- --engine all --icons true` (ícones da UI sem OCR)
 2. Se textos de loading (`Loading`, `…`, tela vazia) → `npm run wait -- 1500` e extract de novo
-3. Escolher próximo passo pelos `{ text, x, y }` (e `icon` se `--icons true`)
+3. Decidir pelo `result`: `text` (tem `text`) ou `icon` (só `x,y`)
 4. Uma ação (`tap` / `type` / `scroll` / `launch` / `key`)
 5. Extract de novo até o objetivo
 
@@ -26,21 +26,36 @@ Stdout de toda ação: JSON `{ ok, action, serial, result }`.
 
 ```bash
 npm run extract
-npm run extract -- --engine all
-npm run extract -- --icons true
-npm run extract -- --engine rapidocr --icons true
+npm run extract -- --engine all --icons true
+npm run extract -- --icons
+npm run extract -- --no-icons
+npm run extract -- --engine rapidocr --icons false
 ```
 
-`result` default: só textos OCR. Com `--icons true`: + `{ type: "icon", x, y }` (blobs, sem IA). Tap usa `x,y`.
+| Flag / env | Default | Efeito |
+|------------|---------|--------|
+| `--engine all\|rapidocr\|macos-vision\|tesseract\|paddleocr\|easyocr` | `all` (CLI) | OCR |
+| `--icons` / `--icons true\|1\|on\|yes` | off | anexa blobs `{ type:"icon", x, y }` no fim |
+| `--icons false\|0\|off\|no` / `--no-icons` | | só OCR |
+| `SCREEN_ROBOT_ICONS=1` | | mesmo que `--icons true` se a flag não vier |
+
+`text`: `{ type, text, x, y }`. `icon`: `{ type, x, y }` — sem `text`, sem crop, sem IA. Blob que já contém um hit OCR é omitido. Falha de blob → só textos. Tap sempre em `x,y`.
 
 ```json
-[
-  { "type": "text", "text": "People", "x": 360, "y": 120 },
-  { "type": "icon", "x": 80, "y": 140 }
-]
+{
+  "ok": true,
+  "action": "extract",
+  "serial": "emulator-5554",
+  "engine": "all",
+  "icons": true,
+  "result": [
+    { "type": "text", "text": "People", "x": 360, "y": 120 },
+    { "type": "icon", "x": 80, "y": 140 }
+  ]
+}
 ```
 
-`--icons false` / `--no-icons` (default). Env: `SCREEN_ROBOT_ICONS=1`.
+Ícone = Search, overflow, avatar, Connect gráfico. Sem `--icons` a lista não tem esses pontos.
 
 ---
 
@@ -119,7 +134,7 @@ Só se o extract indicar loading. Sem `on` / `ui_stable`.
 
 ## Flag extra
 
-`--device emulator-5554` · `--engine all|rapidocr|macos-vision|tesseract|paddleocr|easyocr` · `--icons true|false` · `--method adb|ocr` (só `type`)
+`--device emulator-5554` · `--engine all|rapidocr|macos-vision|tesseract|paddleocr|easyocr` · `--icons` / `--icons true|false` / `--no-icons` · `--method adb|ocr` (só `type`) · `--config path`
 
 ---
 
@@ -148,4 +163,4 @@ Launcher/home: `npm run key -- KEYCODE_HOME`
 
 ## Antes → depois
 
-Antes: IA importava `lib/*.js` ou usava `cli.js` (adb cru). Depois: `npm run <acao>` → [`run-action.js`](run-action.js) → `extract` / `operate`. Rollback: `npm run` voltava a `node cli.js`; remover scripts `extract`/`tap`/… do `package.json`.
+Antes: IA importava `lib/*.js` ou usava `cli.js` (adb cru). Depois: `npm run <acao>` → [`run-action.js`](run-action.js) → `extract` / `operate`. Ícones: sempre on → opt-in `--icons true` (default só OCR). Rollback: `"run": "node cli.js"`; omitir `--icons`.

@@ -53,7 +53,7 @@ export function buildUserText(prompt, ocr) {
     .filter(Boolean);
   const connectHint =
     connectOrder.length >= 1
-      ? `\nHits text="Connect" na ordem do OCR (índice i): ${JSON.stringify(connectOrder)}. No passo 11 use SOMENTE o de menor i (${JSON.stringify(connectOrder[0])}).\n`
+      ? `\nBotões "Connect" na tela, de cima para baixo: ${JSON.stringify(connectOrder)}. No passo 11 toque SOMENTE no primeiro (${JSON.stringify(connectOrder[0])}).\n`
       : "";
 
   return `Jornada:

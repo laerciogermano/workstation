@@ -243,8 +243,8 @@ npm run raw-gpt -- --image test/fixtures/linkedin-people-comprador-connect.png -
 # Casos: `it`/`fixtures` 01–13 (ordem do prompt); PNGs `01-search.png` … `13-skip.png` (+ `11-connect-people.png`, `linkedin-search-comprador-connected.png` = 11c 2º Connect).
 # Antes: nomes longos linkedin-search-*.png / linkedin-tela-inicial no raw-gpt. Rollback: git mv + nomes antigos no teste.
 # Prompt raw-gpt: sem menção a x/y/thresholds; passo 9 por text (sugestão vs campo). Rollback: versão com y<120/y>120 no .prompt.txt.
-# Passo 11 (só no .prompt.txt): varre OCR e para no 1º text EXATO "Connect"; HARD no fim do prompt. Rollback: “tap text EXATO Connect se houver”.
-# raw-gpt-decide: `temperature: 0` (exceto gpt-5*), prompt depois do OCR, `motivo` ok, hint com ordem dos hits "Connect". Rollback: sem temperature/hint; prompt antes do OCR; proibir motivo.
+# Passo 11 (.prompt.txt em linguagem natural): primeiro "Connect" da lista; sem jargão OCR. Rollback: menções a OCR/hit/JSON no prompt.
+# raw-gpt-decide: `temperature: 0` (exceto gpt-5*), prompt depois do extract, `motivo` ok, hint dos "Connect" de cima p/ baixo. Rollback: sem temperature/hint; prompt antes; proibir motivo.
 # Parse: só chaves presentes na IA; raiz obrigatória { "action": ... }. Rollback: aceitar acao/raiz.
 ```
 

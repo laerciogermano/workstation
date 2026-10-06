@@ -1,25 +1,21 @@
 Em cada ação, diga no motivo qual passo (1–13) está em curso.
 
-Ordem obrigatória 1→13. 1 ação/turno. Text/icon do extract = clicável (use o hit do OCR atual).
-PROIBIDO fail se o text do passo atual estiver no OCR (ex. Search → tap; não fail).
-fail só se impossível após retentativa; histórico de fail NÃO impede tap.
+Ordem obrigatória 1→13. Uma ação por turno. Toque só em textos ou ícones que estão na tela agora.
+PROIBIDO fail se o texto do passo atual estiver na tela (ex. Search → toque; não fail).
+fail só se for impossível após tentar de novo; falhas antigas NÃO impedem um novo toque.
 
-1. clique em Search — tap no text "Search" da barra de busca (topo). Única ação. (pode ser que nada aconteca que o teclado nao apareca, apenas prossiga para o proximo passo)
-2. digite comprador — type "comprador" (após Search; teclado ou campo aberto).
-3. feche o teclado — key KEYCODE_BACK 1×. EXCEÇÃO: se OCR JÁ tem "Show all results" / "Show all" / "Showall" → NÃO dê BACK (BACK fecha a busca). Vá direto ao 4 e tap nesse text (passo atual = 4).
-4. clique em Show all results — tap text EXATO do OCR atual ("Show all results" ou "Show all"/"Showall"). Se sumiu do OCR (ex. após BACK indevido) → retap Search (passo 1) ou type de novo; NÃO scroll down no feed (Home/Network/Jobs). NÃO reusar hit de outro passo.
-5. clique em People — tap "People" (aba conforme OCR).
-6. clique Location — tap "Location" ou "Locatior".
-7. clique em Add a location — tap "Add a location"/"Add alocation" (campo do sheet, não o chip).
-8. digite campinas — type "Campinas" (teclado/campo já aberto; NÃO retap "Add a location").
-9. clique na primeira opção Campinas — tap a 1ª LINHA da lista de sugestões (ex. "Campinas, São Paulo, Brazil" / "Campinas,SaoPaulo,Brazil"). PROIBIDO tap no campo do topo (text só "Campinas") e PROIBIDO tap em teclado/sugestão Gboard.
-10. clique em Show results — tap "Show results".
-11. Connect — procedimento fixo (não “escolher” perfil):
-   (a) Varra o array OCR do início ao fim.
-   (b) Pare no PRIMEIRO hit cujo text seja EXATAMENTE "Connect" (igualdade estrita; ignore Pending/Message e qualquer Connect depois desse).
-   (c) tap com x,y DESSE hit — e só desse. Os 2º/3º/… Connect do JSON são inválidos neste passo.
-   Sem nenhum "Connect" no OCR → vá ao passo 12. No motivo diga: "passo 11: 1º Connect do OCR".
-12. Sem Connect → scroll down; repita desde o 11.
-13. Clicar no botao skip apos conectar — tap text EXATO "Skip" (sheet "Add a note"); PROIBIDO tap em "Connect"/"Add a note" se "Skip" estiver no OCR.
+1. clique em Search — toque em "Search" na barra de busca (topo). Única ação. (se o teclado não abrir, siga para o próximo passo)
+2. digite comprador — digite "comprador" (depois de Search; teclado ou campo aberto).
+3. feche o teclado — tecla KEYCODE_BACK 1×. EXCEÇÃO: se a tela JÁ mostra "Show all results" / "Show all" / "Showall" → NÃO dê BACK (BACK fecha a busca). Vá direto ao 4 e toque nesse texto (passo atual = 4).
+4. clique em Show all results — toque no texto exato da tela ("Show all results" ou "Show all"/"Showall"). Se sumiu (ex. após BACK indevido) → toque Search de novo (passo 1) ou digite de novo; NÃO role o feed (Home/Network/Jobs). NÃO reuse um alvo de outro passo.
+5. clique em People — toque em "People" (aba).
+6. clique Location — toque em "Location" ou "Locatior".
+7. clique em Add a location — toque em "Add a location"/"Add alocation" (campo do sheet, não o chip).
+8. digite campinas — digite "Campinas" (teclado/campo já aberto; NÃO toque de novo em "Add a location").
+9. clique na primeira opção Campinas — toque a 1ª linha da lista de sugestões (ex. "Campinas, São Paulo, Brazil" / "Campinas,SaoPaulo,Brazil"). PROIBIDO toque no campo do topo (só "Campinas") e PROIBIDO toque no teclado/sugestão do Gboard.
+10. clique em Show results — toque em "Show results".
+11. Connect — toque no primeiro botão "Connect" da lista de pessoas (o de cima / o que aparece antes dos outros). Ignore Pending, Message e qualquer "Connect" mais abaixo. Se não houver "Connect" na tela → vá ao passo 12. No motivo diga: "passo 11: primeiro Connect".
+12. Sem Connect → role para baixo; repita desde o 11.
+13. Clicar no botao skip apos conectar — toque no texto exato "Skip" (folha "Add a note"); PROIBIDO toque em "Connect"/"Add a note" se "Skip" estiver na tela.
 
-HARD: no passo 11, se a action não for o primeiro "Connect" do JSON do OCR, a resposta está errada.
+HARD: no passo 11, se o toque não for no primeiro "Connect" da lista, a resposta está errada.

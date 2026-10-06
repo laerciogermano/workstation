@@ -6,7 +6,7 @@ fail só se for impossível após tentar de novo; falhas antigas NÃO impedem um
 
 1. clique em Search — toque em "Search" na barra de busca (topo). Única ação. (se o teclado não abrir, siga para o próximo passo)
 2. digite comprador — digite "comprador" (depois de Search; teclado ou campo aberto).
-3. feche o teclado — tecla KEYCODE_BACK 1×. EXCEÇÃO: se a tela JÁ mostra "Show all results" / "Show all" / "Showall" → NÃO dê BACK (BACK fecha a busca). Vá direto ao 4 e toque nesse texto (passo atual = 4).
+3. feche o teclado — tecla KEYCODE_BACK 1×.
 4. clique em Show all results — toque no texto exato da tela ("Show all results" ou "Show all"/"Showall"). Se sumiu (ex. após BACK indevido) → toque Search de novo (passo 1) ou digite de novo; NÃO role o feed (Home/Network/Jobs). NÃO reuse um alvo de outro passo.
 5. clique em People — toque em "People" (aba).
 6. clique Location — toque em "Location" ou "Locatior".
@@ -17,5 +17,3 @@ fail só se for impossível após tentar de novo; falhas antigas NÃO impedem um
 11. Connect — toque no primeiro botão "Connect" da lista de pessoas (o de cima / o que aparece antes dos outros). Ignore Pending, Message e qualquer "Connect" mais abaixo. Se não houver "Connect" na tela → vá ao passo 12. No motivo diga: "passo 11: primeiro Connect".
 12. Sem Connect → role para baixo; repita desde o 11.
 13. Clicar no botao skip apos conectar — toque no texto exato "Skip" (folha "Add a note"); PROIBIDO toque em "Connect"/"Add a note" se "Skip" estiver na tela.
-
-HARD: no passo 11, se o toque não for no primeiro "Connect" da lista, a resposta está errada.

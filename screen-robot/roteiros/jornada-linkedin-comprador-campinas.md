@@ -46,9 +46,10 @@ FASE 5 — PEOPLE
 
 FASE 6 — FILTRO CAMPINAS (próxima ação depois de People; Campinas no Search y<120 NÃO conta; cidade no card NÃO conta)
 - 1st + 2nd + 3rd+ + Location/Locatior (mesmo OCR "Locatior") e SEM chip Campinas na barra (y~150, fora do campo y<120) → tap Location/Locatior. ÚNICA ação. PROIBIDO Connect. PROIBIDO tap "Comprador" (é cargo). PROIBIDO tap nome (Heitor/Sabrina/…). PROIBIDO People. Belo Horizonte nos cards = filtro AINDA NÃO aplicado.
-- "Add a location"/"Add alocation" SEM teclado → tap esse texto.
-- Teclado + Add location + Australia/UnitedStates → type "Campinas". Não tap. Não comprador.
+- "Add a location"/"Add alocation" SEM teclado → tap esse text (campo do sheet), NÃO o chip Location da lista acima.
+- Teclado + Add location + Australia/UnitedStates → type "Campinas". Não tap. Não comprador. Chip Location/Locatior sozinho NÃO muda o type para Campinas.
 - Campo y<120 contém Campinas + sugestão Campinas (Sao Paulo/Brazil) no sheet → tap a SUGESTÃO (não o campo).
+- Mesmo tap na sugestão 2× seguidas + "Show results" visível abaixo → tap Show results (não retap a sugestão).
 - Sugestão destacada + "Show results" → tap Show results.
 - "Filter by" + All/People/Jobs + Show results → tap People, depois Show results. Sem BACK.
 

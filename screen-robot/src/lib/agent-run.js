@@ -43,51 +43,7 @@ function looksLoading(ocr) {
   return /\b(loading|carregando|please wait|aguarde)\b/.test(t);
 }
 
-/** Teclado QWERTY no OCR (teclas isoladas). */
-export function ocrHasQwertyKeyboard(ocr) {
-  const singles = new Set(
-    (ocr || [])
-      .map((e) => String(e.text || "").toLowerCase().trim())
-      .filter((t) => t.length === 1),
-  );
-  return ["q", "w", "e"].every((k) => singles.has(k));
-}
-
-/** Strings `type "…"` do roteiro, na ordem. Ignora `PROIBIDO type "…"`. */
-export function typeQuotesFromPrompt(prompt) {
-  const out = [];
-  const re = /type\s+"([^"]+)"/gi;
-  const src = String(prompt || "");
-  let m;
-  while ((m = re.exec(src))) {
-    const before = src.slice(Math.max(0, m.index - 12), m.index);
-    if (/PROIBIDO\s+$/i.test(before)) continue;
-    out.push(m[1]);
-  }
-  return out;
-}
-
-/**
- * Sheet de cidade (Add location / Australia) → type da cidade; senão o primeiro type do roteiro (busca).
- * Chip "Location" da lista People NÃO conta — senão o guard injeta Campinas no Search.
- */
-export function pickForcedTypeText(prompt, ocr) {
-  const quotes = typeQuotesFromPrompt(prompt);
-  const unique = [...new Set(quotes)];
-  if (!unique.length) return null;
-  const blob = (ocr || [])
-    .map((e) => String(e.text || "").toLowerCase())
-    .join(" ");
-  const proper = unique.filter((q) => /^[A-ZÁÉÍÓÚÃÕ]/.test(q));
-  const locUi = /(add\s*a?\s*locat|alocation|australia|united\s*states)/i.test(
-    blob,
-  );
-  if (unique.length > 1 && locUi && proper.length) {
-    return proper[proper.length - 1];
-  }
-  return unique[0];
-}
-
+/** App com várias abas no rodapé (y>850, espalhadas em X) — genérico Android. */
 export function ocrHasBottomTabs(ocr) {
   const bottom = (ocr || []).filter((e) => {
     const t = String(e.text || "").trim();
@@ -97,41 +53,6 @@ export function ocrHasBottomTabs(ocr) {
   const xs = bottom.map((e) => Number(e.x)).filter((n) => Number.isFinite(n));
   if (xs.length < 3) return false;
   return Math.max(...xs) - Math.min(...xs) > 280;
-}
-
-export function findOcrHit(ocr, re) {
-  return (ocr || []).find((e) => re.test(String(e.text || "")));
-}
-
-/** Histórico desta run já tem `type` sem erro. OCR com o texto ≠ type. */
-export function historyHasType(history) {
-  return (history || []).some((h) => h?.type === "type" && !h.error);
-}
-
-/** Já houve tap no Search (y<120) nesta run. */
-export function historyHasSearchTap(history) {
-  return (history || []).some(
-    (h) =>
-      h?.type === "tap" &&
-      !h.error &&
-      Number.isFinite(Number(h.y)) &&
-      Number(h.y) < 120,
-  );
-}
-
-/** Tap perto de Show all / Showall / Show all results. */
-export function tapNearShowAll(ocr, acao, maxDist = 48) {
-  if (!acao || acao.type !== "tap") return false;
-  const x = Number(acao.x);
-  const y = Number(acao.y);
-  if (!Number.isFinite(x) || !Number.isFinite(y)) return false;
-  return (ocr || []).some((e) => {
-    if (!/show\s*all/i.test(String(e.text || ""))) return false;
-    if (!Number.isFinite(Number(e.x)) || !Number.isFinite(Number(e.y))) {
-      return false;
-    }
-    return distXy(x, y, e.x, e.y) <= maxDist;
-  });
 }
 
 function tapGroundOff(cfg = {}) {
@@ -719,6 +640,7 @@ export async function runAgent(cfg, deps = {}) {
     });
 
     let { resumo, acao } = decision;
+    // Guards só genéricos (OCR/Android). Regras de app/jornada ficam no --prompt / roteiro.
     if (sense === "ocr" && acao.type === "tap" && !tapGroundOff(cfg)) {
       const hasXy =
         Number.isFinite(Number(acao.x)) && Number.isFinite(Number(acao.y));
@@ -739,59 +661,7 @@ export async function runAgent(cfg, deps = {}) {
         acao = { ...acao, element: null };
       }
     }
-    // Guard: após tap no Search (y<120), scroll com OCR “só hora” digita lixo no teclado (ty/tyl).
     const lastHist = history[history.length - 1];
-    const lastWasSearchTap =
-      lastHist?.type === "tap" &&
-      Number.isFinite(Number(lastHist.y)) &&
-      Number(lastHist.y) < 120;
-    if (acao.type === "scroll" && lastWasSearchTap) {
-      const text = pickForcedTypeText(cfg.prompt, ocr);
-      if (text) {
-        log(
-          `guard: bloqueia scroll após tap Search (y<120) — força type ${JSON.stringify(text)}`,
-        );
-        acao = {
-          type: "type",
-          x: lastHist.x ?? null,
-          y: lastHist.y ?? null,
-          direction: null,
-          text,
-          code: null,
-          ms: null,
-          motivo: `guard: type após Search (bloqueou scroll que digitaria no teclado)`,
-        };
-      } else {
-        log(`guard: bloqueia scroll após tap Search — KEYCODE_BACK`);
-        acao = {
-          type: "key",
-          x: null,
-          y: null,
-          direction: null,
-          text: null,
-          code: "KEYCODE_BACK",
-          ms: null,
-          motivo: "guard: BACK após Search (bloqueou scroll sobre teclado)",
-        };
-      }
-    }
-    if (
-      acao.type === "scroll" &&
-      String(acao.direction || "down") === "down" &&
-      findOcrHit(ocr, /show\s*translation|following/i)
-    ) {
-      log(`guard: feed visível — scroll up (não down)`);
-      acao = {
-        type: "scroll",
-        x: null,
-        y: null,
-        direction: "up",
-        text: null,
-        code: null,
-        ms: null,
-        motivo: "guard: feed; scroll up para o Search",
-      };
-    }
     if (
       acao.type === "scroll" &&
       String(acao.direction || "down") === "down" &&
@@ -827,111 +697,6 @@ export async function runAgent(cfg, deps = {}) {
         code: null,
         ms: 1500,
         motivo: "guard: app aberto (tabs no rodapé); bloqueou scroll down da gaveta",
-      };
-    }
-    if (acao.type === "type") {
-      const forced = pickForcedTypeText(cfg.prompt, ocr);
-      if (forced && forced !== acao.text) {
-        log(
-          `guard: type ${JSON.stringify(acao.text)} → ${JSON.stringify(forced)} (roteiro/tela)`,
-        );
-        acao = { ...acao, text: forced, motivo: `guard: type ${forced}` };
-      }
-    }
-    if (
-      acao.type === "tap" &&
-      Number.isFinite(Number(acao.y)) &&
-      Number(acao.y) < 120 &&
-      ocrHasQwertyKeyboard(ocr)
-    ) {
-      const text = pickForcedTypeText(cfg.prompt, ocr);
-      if (text) {
-        log(
-          `guard: teclado visível + tap y<120 — força type ${JSON.stringify(text)}`,
-        );
-        acao = {
-          type: "type",
-          x: acao.x ?? null,
-          y: acao.y ?? null,
-          direction: null,
-          text,
-          code: null,
-          ms: null,
-          motivo: `guard: type com teclado aberto (bloqueou tap no campo)`,
-        };
-      }
-    }
-    // Show all da seção Recent ≠ busca: SEM type no histórico → força type (OCR "comprador" não conta).
-    if (
-      acao.type === "tap" &&
-      !historyHasType(history) &&
-      historyHasSearchTap(history) &&
-      tapNearShowAll(ocr, acao)
-    ) {
-      const text = pickForcedTypeText(cfg.prompt, ocr);
-      if (text) {
-        log(
-          `guard: bloqueia Show all sem type no histórico — força type ${JSON.stringify(text)}`,
-        );
-        acao = {
-          type: "type",
-          x: acao.x ?? null,
-          y: acao.y ?? null,
-          direction: null,
-          text,
-          code: null,
-          ms: null,
-          motivo: `guard: type antes de Show all (OCR Recent ≠ type)`,
-        };
-      }
-    }
-    const addLoc = findOcrHit(ocr, /add\s*a\s*locat/i);
-    if (
-      acao.type === "tap" &&
-      addLoc &&
-      Number.isFinite(Number(addLoc.y)) &&
-      Number(addLoc.y) > Number(acao.y) + 80
-    ) {
-      log(
-        `guard: retarget tap ${acao.x},${acao.y} → Add a location @${addLoc.x},${addLoc.y}`,
-      );
-      acao = {
-        type: "tap",
-        element: String(addLoc.text || "Add a location"),
-        x: addLoc.x,
-        y: addLoc.y,
-        direction: null,
-        text: null,
-        code: null,
-        ms: null,
-        motivo: "guard: tap no campo Add a location (não no chip)",
-      };
-    }
-    const showRes = findOcrHit(ocr, /show\s*results/i);
-    const sameTap =
-      lastHist?.type === "tap" &&
-      Number(lastHist.x) === Number(acao.x) &&
-      Number(lastHist.y) === Number(acao.y);
-    if (
-      acao.type === "tap" &&
-      sameTap &&
-      showRes &&
-      Number.isFinite(Number(showRes.y)) &&
-      Number(showRes.y) > Number(acao.y) + 100
-    ) {
-      log(
-        `guard: tap repetido → Show results @${showRes.x},${showRes.y}`,
-      );
-      acao = {
-        type: "tap",
-        element: String(showRes.text || "Show results"),
-        x: showRes.x,
-        y: showRes.y,
-        direction: null,
-        text: null,
-        code: null,
-        ms: null,
-        motivo: "guard: tap Show results após sugestão repetida",
       };
     }
     if (sense === "ocr" && tapGroundOff(cfg) && acao.type === "tap") {

@@ -1,4 +1,5 @@
 Objetivo: abrir LinkedIn → tap Search → type "comprador" → tap Show all (text EXATO do OCR) → done. 1 ação/turno.
+(Regras desta jornada só neste arquivo — o agent NÃO injeta Show all / Search / Campinas.)
 
 Ordem obrigatória (nunca pule): 1→2→3→4/5→6→7→8→9.
 SEM type "comprador" no histórico desta run → PROIBIDO tap Show all / Showall / Show all results / Recent / item do Recent.
@@ -11,10 +12,12 @@ Key: {"type":"key","code":"KEYCODE_BACK"} — NUNCA {"type":"KEYCODE_BACK"}.
 
 ÚLTIMO passo do histórico (antes de classificar OCR pobre):
 - tap LinkedIn/Linkedln → sleep 2000. Nunca scroll. Log: in@476
-- tap Search → type "comprador". Nunca scroll. Nunca Show all. Log: MO@23 · 12:02@24 · JU@485
+- tap Search → type "comprador". Nunca scroll (scroll no teclado digita lixo). Nunca Show all. Log: MO@23 · 12:02@24 · JU@485
 - type comprador → passo 8 (Show all do OCR). Nunca done ainda.
 - tap Show all/Showall/Show all results → passo 9 done.
 - scroll down SÓ se SEM tap LinkedIn E SEM tap Search E home (Tuesday + sem Chrome)
+- Show translation / Following no feed SEM Search y<120 → scroll up (nunca down)
+- Teclado aberto + campo Search y<120: type "comprador" (não retap Search; não Show all)
 
 Passos:
 

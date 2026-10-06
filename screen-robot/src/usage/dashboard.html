@@ -81,7 +81,7 @@
 </head>
 <body>
 <h1>Relatório de usage — screen-robot</h1>
-<p class="meta">Gerado em 2026-10-06T11:27:08.612Z · 1430 requests · 1352 com tokens · 119 runs · fonte: usage/*.json</p>
+<p class="meta">Gerado em 2026-10-06T11:28:05.942Z · 1430 requests · 1352 com tokens · 119 runs · fonte: usage/*.json</p>
 
 <div class="insights">
   <h2>Insights</h2>
@@ -596,7 +596,10 @@ function render() {
     },
   });
 
-  document.getElementById("tbody").innerHTML = list.map((r, i) => `
+  const tableLogs = list.slice().sort((a, b) =>
+    String(b.at).localeCompare(String(a.at)) || String(b.file).localeCompare(String(a.file))
+  );
+  document.getElementById("tbody").innerHTML = tableLogs.map((r, i) => `
     <tr>
       <td>${i + 1}</td>
       <td title="${r.file}">${r.file}</td>

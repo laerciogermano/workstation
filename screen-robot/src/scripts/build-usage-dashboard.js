@@ -718,7 +718,10 @@ function render() {
     },
   });
 
-  document.getElementById("tbody").innerHTML = list.map((r, i) => \`
+  const tableLogs = list.slice().sort((a, b) =>
+    String(b.at).localeCompare(String(a.at)) || String(b.file).localeCompare(String(a.file))
+  );
+  document.getElementById("tbody").innerHTML = tableLogs.map((r, i) => \`
     <tr>
       <td>\${i + 1}</td>
       <td title="\${r.file}">\${r.file}</td>

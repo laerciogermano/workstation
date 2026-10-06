@@ -8,7 +8,7 @@ Você recebe: (1) a jornada/objetivo e (2) o OCR da tela atual (lista extract: t
 Decida UMA próxima ação e responda APENAS um JSON válido (sem markdown, sem texto fora do JSON).
 O JSON raiz OBRIGATÓRIO é exatamente { "action": { ... } } — proibido devolver o objeto da ação na raiz.
 
-Formato único (só estes campos; PROIBIDO "motivo" ou qualquer outro):
+Formato único:
 {
   "action": {
     "type": "tap|scroll|type|key|sleep|done|fail",
@@ -18,7 +18,8 @@ Formato único (só estes campos; PROIBIDO "motivo" ou qualquer outro):
     "text": null,
     "code": null,
     "ms": null
-  }
+  },
+  "motivo": null
 }
 
 Tipos (lib screen-robot):
@@ -35,21 +36,35 @@ Regras:
 - tap.x / tap.y = EXCLUSIVAMENTE de um hit do OCR atual; proibido inventar ou reusar coords de outro contexto
 - Cada item do OCR (text/icon) é clicável
 - Sem alvo do passo → sleep ou scroll; evite fail
-- Um único objeto JSON na resposta, no formato { "action": { ... } }
-- NUNCA inclua "motivo"`;
+- Um único objeto JSON na resposta, no formato { "action": { ... } }"`;
 
 /**
  * @param {string} prompt
  * @param {unknown} ocr
  */
 export function buildUserText(prompt, ocr) {
+  const list = Array.isArray(ocr) ? ocr : [];
+  const connectOrder = list
+    .map((h, i) =>
+      h && typeof h === "object" && String(h.text || "") === "Connect"
+        ? { i, x: h.x, y: h.y }
+        : null,
+    )
+    .filter(Boolean);
+  const connectHint =
+    connectOrder.length >= 1
+      ? `\nHits text="Connect" na ordem do OCR (índice i): ${JSON.stringify(connectOrder)}. No passo 11 use SOMENTE o de menor i (${JSON.stringify(connectOrder[0])}).\n`
+      : "";
+
   return `Jornada:
-${prompt}
+
 
 OCR atual (JSON):
 ${JSON.stringify(ocr)}
+${connectHint}
+Defina a próxima action com base no OCR e no prompt abaixo.
 
-Defina a próxima action.`;
+${prompt}`;
 }
 
 /**
@@ -135,6 +150,9 @@ export async function decideRawAction(opts) {
       { role: "user", content: buildUserText(prompt, opts.ocr) },
     ],
   };
+  // gpt-5* só aceita temperature default; 0 → HTTP 400.
+  if (!/^gpt-5/i.test(model)) payload.temperature = 0;
+  console.log({ payload: JSON.stringify(payload, null, 2) });
 
   const res = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
@@ -151,5 +169,6 @@ export async function decideRawAction(opts) {
     throw err;
   }
   const raw = String(data.choices?.[0]?.message?.content ?? "");
+  console.log({ raw });
   return { ...parseActionTypeXY(raw), raw, payload };
 }

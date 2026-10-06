@@ -14,6 +14,12 @@ fail só se impossível após retentativa; histórico de fail NÃO impede tap.
 8. digite campinas — type "Campinas" (teclado/campo já aberto; NÃO retap "Add a location").
 9. clique na primeira opção Campinas — tap a 1ª LINHA da lista de sugestões (ex. "Campinas, São Paulo, Brazil" / "Campinas,SaoPaulo,Brazil"). PROIBIDO tap no campo do topo (text só "Campinas") e PROIBIDO tap em teclado/sugestão Gboard.
 10. clique em Show results — tap "Show results".
-11. Connect — OBRIGATÓRIO: tap só o PRIMEIRO text EXATO "Connect" do OCR (aparece primeiro no JSON / perfil mais acima da lista People). Se houver 2+ "Connect", use exclusivamente esse primeiro e IGNORE todos os outros. PROIBIDO tap no 2º/3º Connect, em "Pending", em "Message" ou em "+ Connect" se existir hit separado só "Connect" acima. Sem "Connect" → vá ao passo 12.
+11. Connect — procedimento fixo (não “escolher” perfil):
+   (a) Varra o array OCR do início ao fim.
+   (b) Pare no PRIMEIRO hit cujo text seja EXATAMENTE "Connect" (igualdade estrita; ignore Pending/Message e qualquer Connect depois desse).
+   (c) tap com x,y DESSE hit — e só desse. Os 2º/3º/… Connect do JSON são inválidos neste passo.
+   Sem nenhum "Connect" no OCR → vá ao passo 12. No motivo diga: "passo 11: 1º Connect do OCR".
 12. Sem Connect → scroll down; repita desde o 11.
 13. Clicar no botao skip apos conectar — tap text EXATO "Skip" (sheet "Add a note"); PROIBIDO tap em "Connect"/"Add a note" se "Skip" estiver no OCR.
+
+HARD: no passo 11, se a action não for o primeiro "Connect" do JSON do OCR, a resposta está errada.

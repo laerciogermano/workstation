@@ -224,6 +224,8 @@ npm run agent -- --provider openai --model gpt-4o-mini --no-prompt --prompt ../r
 npm run agent -- --provider openai --model gpt-4o-mini --no-prompt --engine rapidocr --max-steps 80 --history-steps 1 --prompt ../roteiros/jornada-linkedin-campinas.md
 # LinkedIn comprador Campinas do zero (abre o app; gpt-4o-mini)
 npm run agent -- --provider openai --model gpt-4o-mini --engine all --icons true --history-steps 10 --prompt ../roteiros/jornada-linkedin-comprador-campinas.md
+# só abrir LinkedIn (gpt-4o-mini; home → scroll down, não BACK)
+npm run agent -- --force-model gpt-4o-mini --engine all --icons true --history-steps 3 --prompt ../roteiros/novo.md
 npm run agent -- --prompt "abra o LinkedIn e mostre as últimas 10 conexões"
 npm run agent -- --prompt ../roteiros/jornada-completa.md --all-models
 npm run agent -- --prompt ../roteiros/jornada-completa.md --no-prompt   # sem menu (env/default)
@@ -252,6 +254,8 @@ npm run agent:smoke              # 1–2 passos no device; sem key = heurística
 **Antes → depois (tap por element):** a IA mandava `acao.x,y` e o runtime clicava isso. Agora (OCR): `acao.element` = id `eN` ou text do extract; `resolveTapElement` busca o item e preenche x,y. Sem item → `ELEMENT_MISS` (sleep, não clica). Extract no prompt: `id,type,text,y` (sem x). Vision continua x,y. Off: `AGENT_TAP_GROUND=0` (coords da IA + TAP_MISS/LABEL). Rollback: tap exige x,y; compactOcr com x,y; system antigo.
 
 **Antes → depois (comprador Campinas do zero):** o roteiro antigo assumia LinkedIn já aberto e o mini pulava busca/filtro. Agora: [`roteiros/jornada-linkedin-comprador-campinas.md`](../roteiros/jornada-linkedin-comprador-campinas.md) (FASE 0 abre o app). Rollback: [`jornada-linkedin-campinas.md`](../roteiros/jornada-linkedin-campinas.md).
+
+**Antes → depois (abrir LinkedIn / gpt-4o-mini):** jornada longa FASE 0–7 fazia mini `KEYCODE_BACK` na home (hora/data) e copiar BACK do histórico. Agora: [`roteiros/novo.md`](../roteiros/novo.md) — home = `scroll down`; BACK só shade; done com Search ou tab bar. Rollback: `--prompt ../roteiros/jornada-linkedin-comprador-campinas.md`.
 
 **Antes → depois (Search vs Campinas no mini):** IF punha feed/`Show translation` no mesmo bloco que Search; `type "Campinas"` vinha **antes** de `type "comprador"` → guard pós-tap Search injetava cidade no campo de busca e o mini Connectava. Agora: linha própria `Search y<120` → tap (proibido scroll); primeiro `type "…"` do arquivo é **comprador**; Campinas só no `Add alocation`; Campinas no Search ≠ filtro. Chip `Location`/`Locatior` da lista não dispara o type da cidade (`pickForcedTypeText` exige Add location / Australia). Rollback: ordem antiga (Campinas primeiro + Connect se Campinas no OCR; locUi com `location`).
 

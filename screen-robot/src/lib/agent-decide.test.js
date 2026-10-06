@@ -72,6 +72,53 @@ describe("agent-decide (SC-31)", () => {
     assert.equal(p.acao.x, null);
   });
 
+  it("decide OCR: ignora x,y da IA e resolve pelo id", async () => {
+    const ocr = [
+      { id: "e0", text: "People", x: 80, y: 150 },
+      { id: "e1", text: "Connect", x: 458, y: 344 },
+    ];
+    const stub = async () => ({
+      text: JSON.stringify({
+        resumo: "Connect",
+        acao: {
+          type: "tap",
+          element: "e1",
+          x: 999,
+          y: 1,
+          motivo: "tap id",
+        },
+      }),
+    });
+    const out = await decide(
+      { prompt: "conectar", ocr, sense: "ocr" },
+      { generateContent: stub },
+    );
+    assert.equal(out.acao.element, "e1");
+    assert.equal(out.acao.x, 458);
+    assert.equal(out.acao.y, 344);
+  });
+
+  it("decide OCR: tap sem element falha", async () => {
+    const stub = async () => ({
+      text: JSON.stringify({
+        resumo: "coords",
+        acao: { type: "tap", x: 10, y: 20, motivo: "sem id" },
+      }),
+    });
+    await assert.rejects(
+      () =>
+        decide(
+          {
+            prompt: "x",
+            ocr: [{ text: "A", x: 10, y: 20 }],
+            sense: "ocr",
+          },
+          { generateContent: stub },
+        ),
+      (e) => e.code === "AGENT_BAD_ACTION",
+    );
+  });
+
   it("parseActionPayload rejeita type inválido", () => {
     assert.throws(
       () => parseActionPayload({ acao: { type: "swipe" } }),

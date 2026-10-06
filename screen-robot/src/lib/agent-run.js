@@ -178,9 +178,11 @@ function log(...args) {
 function dumpOcrStdout(ocr) {
   const list = Array.isArray(ocr) ? ocr : [];
   log(`OCR ${list.length} hits:`);
-  for (const e of list) {
-    const label = e.type === "icon" ? "icon" : e.text;
-    console.log(`  ${label}@${e.x},${e.y}`);
+  for (let i = 0; i < list.length; i++) {
+    const e = list[i];
+    const id = e?.id || `e${i}`;
+    const label = e?.type === "icon" ? "icon" : e?.text;
+    console.log(`  ${id} ${label}@${e?.x},${e?.y}`);
   }
   log(`extract return:`);
   console.log(JSON.stringify(list, null, 2));

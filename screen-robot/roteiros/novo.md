@@ -4,7 +4,7 @@ Ordem obrigatória (nunca pule): 1→2→3→4/5→6→7→8→9.
 SEM type "comprador" no histórico desta run → PROIBIDO tap Show all / Showall / Show all results.
 SEM tap Search no histórico → PROIBIDO type. SEM type → PROIBIDO Show all. SEM Show all (ou lista já aberta) → PROIBIDO done.
 
-Tap: acao.element = id (e0) OU text EXATO que aparece no extract AGORA. PROIBIDO x,y. PROIBIDO inventar label (ex. OCR só "Show all" → NÃO tap "Show all results"). Sem o text no OCR → não tap.
+Tap: acao.element = id do extract (e0, e1, …). Prefira id; text EXATO do extract só se precisar. PROIBIDO x,y. PROIBIDO inventar id/label (ex. OCR só "Show all"/e11 → NÃO tap "Show all results"). Sem o id/text no OCR → não tap.
 
 Key: {"type":"key","code":"KEYCODE_BACK"} — NUNCA {"type":"KEYCODE_BACK"}.
 

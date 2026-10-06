@@ -251,7 +251,7 @@ npm run agent:smoke              # 1–2 passos no device; sem key = heurística
 
 **Antes → depois (tap vs label OCR):** mini gravava `elementos.label=Connect` em coords cujo extract era `Comprador` (cargo) e o runtime tocava o xy. Agora: system pede copiar `text` do OCR; `runAgent` recusa tap se o label ≠ text no ponto (`TAP_LABEL_MISMATCH` → sleep) ou se não há text (`TAP_MISS`). Off: `AGENT_TAP_GROUND=0`. Rollback: omitir o guard / env=0.
 
-**Antes → depois (tap por element):** a IA mandava `acao.x,y` e o runtime clicava isso. Agora (OCR): `acao.element` = id `eN` ou text do extract; `resolveTapElement` busca o item e preenche x,y. Sem item → `ELEMENT_MISS` (sleep, não clica). Extract no prompt: `id,type,text,y` (sem x). Vision continua x,y. Off: `AGENT_TAP_GROUND=0` (coords da IA + TAP_MISS/LABEL). Rollback: tap exige x,y; compactOcr com x,y; system antigo.
+**Antes → depois (tap por element):** a IA mandava `acao.x,y` e o runtime clicava isso. Agora (OCR): `acao.element` = id `eN` (preferido) ou text; system **sem** campos x,y; `decide` zera x,y da IA e resolve coords via `resolveTapElement`. Extract/`tagExtractIds` grava `id:eN` em cada hit (prompt + stdout). Sem item → `ELEMENT_MISS`. Vision continua x,y. Rollback: system com x,y; tap OCR aceitar xy; extract sem id.
 
 **Antes → depois (comprador Campinas do zero):** o roteiro antigo assumia LinkedIn já aberto e o mini pulava busca/filtro. Agora: [`roteiros/jornada-linkedin-comprador-campinas.md`](../roteiros/jornada-linkedin-comprador-campinas.md) (FASE 0 abre o app). Rollback: [`jornada-linkedin-campinas.md`](../roteiros/jornada-linkedin-campinas.md).
 

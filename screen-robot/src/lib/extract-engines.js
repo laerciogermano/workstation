@@ -194,7 +194,7 @@ export async function extractWithEngine(cfg, deps = {}) {
       const skip = engines.filter((e) => !e.ok).map((e) => `${e.engine}:${e.ms}ms`);
       log(`ocr-merge ok=[${ok.join(", ")}] skip=[${skip.join(", ")}] hits=${elements.length}`);
     }
-    return elements;
+    return elements.map((e, i) => ({ ...e, id: `e${i}` }));
   }
 
   if (!ENGINES[engine]) {
@@ -203,7 +203,8 @@ export async function extractWithEngine(cfg, deps = {}) {
     throw err;
   }
   const texts = await runOneEngine(framePath, engine, d);
-  return appendIcons(framePath, texts, d);
+  const withIcons = await appendIcons(framePath, texts, d);
+  return withIcons.map((e, i) => ({ ...e, id: `e${i}` }));
 }
 
 /** Hits cujo texto é Connect (exato ou contém a palavra). */

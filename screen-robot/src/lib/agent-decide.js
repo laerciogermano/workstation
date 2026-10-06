@@ -169,7 +169,10 @@ export function parseActionPayload(raw) {
     const hasEl = Boolean(out.element && out.element.trim());
     const hasXy = Number.isFinite(out.x) && Number.isFinite(out.y);
     if (!hasEl && !hasXy) {
-      fail("AGENT_BAD_ACTION", "tap exige element (id/text do extract) ou x,y");
+      fail(
+        "AGENT_BAD_ACTION",
+        "tap exige element (id eN do extract; vision: x,y)",
+      );
     }
   }
   if (type === "type" && !out.text) {
@@ -195,12 +198,9 @@ export function buildSystemPrompt() {
 Responda APENAS JSON válido (sem markdown) no formato:
 {
   "resumo": "2-4 frases do que tem na tela",
-  "elementos": [{ "id": "e0", "label": "...", "tipo": "button|chip|card|text" }],
   "acao": {
     "type": "tap|scroll|type|key|sleep|done|fail",
     "element": null,
-    "x": null,
-    "y": null,
     "direction": null,
     "text": null,
     "code": null,
@@ -209,20 +209,10 @@ Responda APENAS JSON válido (sem markdown) no formato:
   }
 }
 
-Regras (só SO/launcher e o contrato de ação; nomes de app, botões e done vêm do roteiro do usuário):
-- tap: acao.element = id (e0, e1, …) do item no extract. Textos repetidos → use o id. Icon (sem text) → só id. PROIBIDO mandar x,y (o código busca o item e clica). Sem o item na lista → não tap.
-- elementos[].id e elementos[].label = id e text do extract. PROIBIDO inventar label que não está no text do item.
-- scroll: direction down|up|left|right quando o próximo alvo do roteiro não está visível.
-- Se o histórico mostrar vários scrolls com o mesmo OCR (tela não mudou), NÃO scroll de novo: mude de estratégia (tap em outro elemento, type, key BACK).
-- Painel de notificações / overlay de setup do sistema (ex. Notifications, Clear all, AndroidSetup) SEM UI do app (abas, busca, conteúdo do roteiro) → KEYCODE_BACK. NÃO scroll.
-- UI do app visível (barra de abas, campo de busca, textos do roteiro) → o app está aberto. Ignore tokens de overlay de sistema misturados. PROIBIDO KEYCODE_HOME.
-- Tela de carregamento (logo / poucos tokens, sem lista de apps) → sleep. PROIBIDO scroll (abre a gaveta por cima) e HOME.
-- Launcher: OCR só hora/data, sem nomes de apps e sem UI do app, e o histórico NÃO tem tap recente em campo no topo (y baixo) → scroll down abre a gaveta. scroll up reabre o shade — evite.
-- Histórico com tap em campo no topo (y baixo) + OCR só hora/data = teclado cobrindo o app, NÃO é launcher. PROIBIDO scroll (swipe injeta lixo no campo). type do texto do roteiro ou KEYCODE_BACK 1× — sem loop de BACK.
-- Alvos, filtros e CTAs: só o que o roteiro pedir e que existir na lista (id/text OCR ou ícone). Sem o alvo → scroll ou sleep; não chute element. Não repita o mesmo element se a tela não mudou.
-- type: digite text de uma vez (campo acao.text obrigatório). Se o histórico mostrar erro de tecla OCR, sleep e tente type de novo, ou KEYCODE_BACK e reabra o campo.
-- key: KEYCODE_BACK / KEYCODE_HOME. sleep: ms se loading. done / fail conforme o roteiro.
-- Não peça screenshot; decida só com a lista extract (id+text+y) e o prompt do usuário.`;
+Regras de tap (OCR):
+- tap: acao.element = id do extract (e0, e1, …). Textos repetidos → use o id. Icon (sem text) → só id.
+- PROIBIDO mandar x,y (o código busca o item pelo id e clica). Sem o id na lista → não tap.
+- NÃO invente id nem text que não está no extract.`;
 }
 
 /**
@@ -237,7 +227,6 @@ export function buildSystemPromptVision(size) {
 Responda APENAS JSON válido (sem markdown) no formato:
 {
   "resumo": "2-4 frases do que tem na tela",
-  "elementos": [{ "label": "...", "tipo": "button|chip|card|text", "x": 0, "y": 0 }],
   "acao": {
     "type": "tap|scroll|type|key|sleep|done|fail",
     "element": null,
@@ -249,18 +238,7 @@ Responda APENAS JSON válido (sem markdown) no formato:
     "ms": null,
     "motivo": "..."
   }
-}
-
-Regras (só SO/launcher e o contrato de ação; nomes de app, botões e done vêm do roteiro do usuário):
-- Coords de tap/elementos = escala DESTA imagem (${w}×${h}). Centro do alvo. Não invente scale nem peça outra screenshot. NUNCA tap 0,0.
-- scroll: direction down|up|left|right quando o alvo do roteiro não está visível.
-- Se vários scrolls e a tela parece igual, mude de estratégia (outro tap, type, KEYCODE_BACK).
-- Painel de notificações / overlay de setup SEM UI do app → KEYCODE_BACK (não scroll). UI do app visível → não HOME.
-- Carregamento (logo / tela quase vazia) → sleep; não scroll nem HOME.
-- Launcher (só hora/data, sem apps) → scroll down (gaveta). Após tap em campo no topo + teclado: PROIBIDO scroll — type do roteiro ou BACK 1×.
-- Alvos só os do roteiro, visíveis. Sem o alvo → scroll/sleep; não chute coords. elementos[].label = o que está escrito no alvo na imagem; não invente outro nome no mesmo ponto.
-- type: acao.text obrigatório. key: KEYCODE_BACK/HOME. sleep: ms se loading. done / fail conforme o roteiro.
-- Histórico traz ações já executadas (coords já em device); use só como contexto.`;
+}`;
 }
 
 /**
@@ -514,7 +492,16 @@ export async function decide(cfg, deps = {}) {
   }
 
   const parsed = parseActionPayload(text);
-  if (sense === "ocr" && parsed.acao.type === "tap" && parsed.acao.element) {
+  if (sense === "ocr" && parsed.acao.type === "tap") {
+    // OCR: IA manda só element (id); ignora x,y inventados; runtime resolve coords.
+    parsed.acao.x = null;
+    parsed.acao.y = null;
+    if (!parsed.acao.element || !String(parsed.acao.element).trim()) {
+      fail(
+        "AGENT_BAD_ACTION",
+        "tap OCR exige acao.element = id (e0, e1, …) do extract",
+      );
+    }
     const hit = resolveTapElement(cfg.ocr, parsed.acao.element);
     if (hit) {
       logFn(

@@ -1,9 +1,10 @@
 /**
  * EP-05 — extract: frame → OCR (textos) + blobs visuais (ícones, sem IA).
- * Caller: extract({ serial }) → { type:"text", text, x, y } | { type:"icon", x, y }.
+ * Caller: extract({ serial }) → { id:"eN", type:"text", text, x, y } | { id:"eN", type:"icon", x, y }.
  * Cada chamada faz OCR de novo (sem cache). Proibido: uiautomator dump como fonte.
  * engine: tesseract|macos-vision|rapidocr|paddleocr|easyocr|all (merge paralelo top-5, spawn async).
  * Ícones: cfg.icons / deps.icons / SCREEN_ROBOT_ICONS (default false).
+ * id eN = índice estável para o agent (prompt / tap por element).
  */
 import { adb } from "./adb.js";
 import { captureFrame } from "./frame.js";
@@ -19,6 +20,13 @@ import { appendIcons } from "./extract-icons.js";
 
 const REMOTE_DUMP = "/sdcard/sr-window-dump.xml";
 
+/** @param {object[]|null|undefined} list */
+export function tagExtractIds(list) {
+  return (Array.isArray(list) ? list : []).map((e, i) => ({
+    ...(e && typeof e === "object" ? e : {}),
+    id: `e${i}`,
+  }));
+}
 /** @param {{ engine?: string, ocrRecognize?: Function }} src */
 function resolveRecognize(src = {}) {
   if (typeof src.ocrRecognize === "function") {
@@ -76,9 +84,16 @@ export async function extract(cfg, deps = {}) {
   const d = { ...deps, icons: cfg.icons !== undefined ? cfg.icons : deps.icons };
   // merge paralelo top-5 (ou lista cfg.engines)
   if (engine === "all" || engine === "merge" || cfg.engines?.length) {
-    return extractWithEngine(
-      { serial, engine: engine === "merge" ? "all" : engine, engines: cfg.engines, icons: d.icons },
-      { ...d, logMergeStats: true },
+    return tagExtractIds(
+      await extractWithEngine(
+        {
+          serial,
+          engine: engine === "merge" ? "all" : engine,
+          engines: cfg.engines,
+          icons: d.icons,
+        },
+        { ...d, logMergeStats: true },
+      ),
     );
   }
   if (typeof deps.ocrRecognize === "function") {
@@ -91,9 +106,11 @@ export async function extract(cfg, deps = {}) {
       const p = pointFromBounds(w.bounds);
       return { type: "text", text: w.text, x: p.x, y: p.y };
     });
-    return appendIcons(framePath, texts, d);
+    return tagExtractIds(await appendIcons(framePath, texts, d));
   }
-  return extractWithEngine({ serial, engine, icons: d.icons }, d);
+  return tagExtractIds(
+    await extractWithEngine({ serial, engine, icons: d.icons }, d),
+  );
 }
 
 /**

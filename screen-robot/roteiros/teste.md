@@ -1,14 +1,15 @@
-Abra o LinkedIn → Network → Search → digite comprador → Show all results → People → Location=Campinas → Connect → Skip.
+Fluxo (uma fase por vez; use OCR atual + histórico; NÃO refaça fase já feita):
 
-Tela inicial (só hora/data, sem apps): scroll direction=down (arrasta pra cima) → abre a gaveta. NÃO sleep.
-Na gaveta: tap em LinkedIn (OCR pode ser "Linkedln").
-Splash LinkedIn (ex. só "in", sem tab bar): sleep e espere o feed.
-Tab bar (Home + Network + Post + Notifications): tap em Network. Não KEYCODE_HOME, não reabra o app.
-Depois do tap Network: tap em Search (preferir y < 120; OCR pode ser "Search" / "QSearch").
-Campo Search aberto: type text=comprador de uma vez (não tap tecla a tecla; não tap no autocomplete "comprador").
-Após digitar: se o teclado cobrir a tela, KEYCODE_BACK uma vez para revelar "Show all results"; depois tap em Show all results (OCR "Show all" / "Show all results").
-Após Show all results: tap em People (chip/filtro, tipicamente y < 200).
-Após People: tap Location / Locations / Localização (ou Add a location); type text=Campinas; tap na sugestão Campinas (ex. Campinas, Sao Paulo); Apply / Show results / Done se aparecer.
-Com filtro Campinas: scroll direction=up até OCR ter text exato "Connect" (180 < y < 850). Só tap nesse Connect — nunca Message / Pending / Follow.
-Após Connect: tap em Skip (sheet Add a note). Um Connect + um Skip basta.
-Sucesso (done): Skip concluído. Não continue a lista.
+1) Home (só hora/data) → scroll down (gaveta).
+2) Gaveta → tap LinkedIn (OCR "Linkedln" ok).
+3) Splash ("in", sem tab bar) → sleep.
+4) Tab bar Home/Network/Post/Notifications → tap Network.
+5) Tap Search (text exato "Search" ou "QSearch", y<120). Só então type "comprador" (uma vez; não tap autocomplete).
+6) Se teclado cobrir → KEYCODE_BACK 1×. Tap "Show all results" / "Show all" (texto que contenha Show+all/results). NÃO confunda com "You've been selected" / cards.
+7) Chip People: text EXATO "People" e y<200. PROIBIDO tap em "Peoplehiring…", "People you may know", "Hiring", y≥200.
+8) Se OCR ainda tem Grow/Catch up/Invitations/Manage my network = ainda está na aba Network, NÃO no filtro People da busca → volte ao passo 5 (tap Search com y<120) e refaça 5–7.
+9) Lista People da busca → Location/Locations/Localização ou Add a location → type "Campinas" → tap sugestão Campinas → Apply/Show results/Done se houver.
+10) Scroll up até text EXATO "Connect" com 180<y<850 → tap Connect (nunca Message/Pending/Follow).
+11) Sheet → tap Skip → done.
+
+Anti-loop: se o histórico tem ≥2 taps nas mesmas coords e o OCR quase igual → mude de alvo (não repita). Se já type comprador no histórico, não digite de novo. done só após Skip.

@@ -14,8 +14,7 @@ import { compactOcr } from "../lib/agent-decide.js";
 import { extractFromImage } from "../lib/extract-engines.js";
 import {
   DEFAULT_PROMPT,
-  SYSTEM_PROMPT,
-  buildUserText,
+  decideRawAction,
 } from "../lib/raw-gpt-decide.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -56,29 +55,6 @@ const elements = await extractFromImage(imagePath, {
 const ocr = compactOcr(elements);
 console.log({ imagePath, engine, hits: elements.length, ocr });
 
-const payload = {
-  model,
-  response_format: { type: "json_object" },
-  messages: [
-    { role: "system", content: SYSTEM_PROMPT },
-    { role: "user", content: buildUserText(prompt, ocr) },
-  ],
-};
-console.log(payload);
-
-const res = await fetch("https://api.openai.com/v1/chat/completions", {
-  method: "POST",
-  headers: {
-    Authorization: `Bearer ${apiKey}`,
-    "Content-Type": "application/json",
-  },
-  body: JSON.stringify(payload),
-});
-
-const data = await res.json();
-if (!res.ok) {
-  console.error(data?.error?.message || JSON.stringify(data));
-  process.exit(1);
-}
-
-process.stdout.write(String(data.choices?.[0]?.message?.content ?? ""));
+const out = await decideRawAction({ prompt, ocr, apiKey, model });
+console.log(out.payload);
+process.stdout.write(JSON.stringify({ type: out.type, x: out.x, y: out.y }));

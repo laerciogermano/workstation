@@ -1,6 +1,7 @@
 Abra o LinkedIn.
 
-Sucesso (done): OCR com Home + Network + Post + Notifications (tab bar).
-Não use KEYCODE_HOME nem reabra o app se esses textos já estiverem na tela.
-Splash com pouco OCR (ex. "in"): sleep e espere o feed — não abandone.
-Na gaveta o rótulo pode sair como "Linkedln".
+Tela inicial (só hora/data, sem apps): scroll direction=down (arrasta pra cima) → abre a gaveta. NÃO sleep.
+Na gaveta: tap em LinkedIn (OCR pode ser "Linkedln").
+Splash LinkedIn (ex. só "in"): sleep e espere o feed.
+Sucesso (done): OCR com Home + Network + Post + Notifications.
+Não use KEYCODE_HOME nem reabra se a tab bar já estiver na tela.

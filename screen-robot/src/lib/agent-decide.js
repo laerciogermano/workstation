@@ -223,7 +223,7 @@ Regras de tap (OCR):
 - Cada item type=text (e icon) do extract É um alvo clicável: use o text do passo e copie os x,y desse hit.
 - acao.x e acao.y do tap = EXCLUSIVAMENTE do ÚLTIMO extract (OCR desta tela / bloco atual). PROIBIDO reusar x,y do histórico, de passos anteriores, do roteiro ou de taps já feitos (mesmo que o motivo diga o mesmo passo).
 - Não repita passos anteriores que não surtiram efeitos, tente algo novo quando necessario.
-- Alvo do passo atual do roteiro está no extract → tap/type/key nesse alvo. Sem alvo do passo → sleep ou scroll conforme o roteiro; não fail.`;
+- Alvo do passo atual do roteiro está no extract → tap/type/key nesse alvo. Sem alvo do passo → sleep ou scroll conforme o roteiro; PROIBIDO fail.`;
 }
 
 /**

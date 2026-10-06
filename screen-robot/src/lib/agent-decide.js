@@ -209,10 +209,11 @@ Responda APENAS JSON válido (sem markdown) no formato:
 }
 
 Regras de tap (OCR):
-- tap: acao.x e acao.y = as coords que VOCÊ escolhe para clicar (use os x,y do extract ATUAL como referência; pode ser o centro do item alvo).
-- NÃO use estritamente coords do roteiro/prompt/histórico: x,y de passos antigos ou exemplos do texto NÃO são válidos. Só o extract desta tela.
-- PROIBIDO mandar id / element / e0 / e1. Só x,y.
-- Sem alvo claro no extract → não tap.`;
+- Cada item type=text (e icon) do extract É um alvo clicável: use o text do passo e copie os x,y desse hit.
+- tap: acao.x e acao.y = coords do extract ATUAL (centro do text alvo). NÃO copie coords do roteiro/histórico.
+- PROIBIDO id / element / e0 / e1. Só x,y.
+- PROIBIDO fail só porque "não há botão"/elemento interativo: texto OCR conta. fail só se o objetivo for impossível após tentativas.
+- Alvo do próximo passo do roteiro está no extract → tap/type/key nesse alvo. Sem alvo do passo → sleep ou scroll conforme o roteiro; não fail.`;
 }
 
 /**
@@ -239,7 +240,7 @@ Responda APENAS JSON válido (sem markdown) no formato:
   }
 }
 
-Regras de tap (visão): acao.x e acao.y na escala DESTA imagem. NÃO copie coords do roteiro/prompt/histórico. PROIBIDO id/element.`;
+Regras de tap (visão): acao.x e acao.y na escala DESTA imagem. NÃO copie coords do roteiro/prompt/histórico. PROIBIDO id/element. Controles visíveis na imagem são clicáveis; PROIBIDO fail só por "sem elemento interativo".`;
 }
 
 /**

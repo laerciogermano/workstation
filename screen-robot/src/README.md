@@ -292,6 +292,8 @@ Fallback default (`decide`): do modelo escolhido desce a escada `gemini-3.8-flas
 
 **Antes → depois (`AGENT_TYPE_METHOD`):** default OCR/tap → default **adb** (`adb shell input text`). OCR: `AGENT_TYPE_METHOD=ocr` ou `runAgent({ typeMethod: "ocr" })`. Rollback: `AGENT_TYPE_METHOD=ocr`.
 
+**Antes → depois (fail “sem interativo”):** mini via `Search` no OCR e emitia `fail` (“não há elementos interativos”). Agora system: text/icon do extract = alvo clicável; `fail` proibido se o text do passo estiver no OCR. Roteiro [`novo.md`](../roteiros/novo.md) reforça. Rollback: linha antiga “Sem alvo claro → não tap”.
+
 **Antes → depois (system prompt sem apps):** `decide` citava LinkedIn/Connect/Campinas/Settings. Agora só SO/launcher + contrato de ação; nomes de app e CTAs ficam no `--prompt` / roteiro. Rollback: restaurar o bloco antigo em `buildSystemPrompt` / `buildSystemPromptVision`.
 
 **Antes → depois (home/gaveta no system prompt):** lite fazia `scroll up` na home e reabria o shade; agora shade→`KEYCODE_BACK`, gaveta→`scroll down`. Jornada Settings: [`roteiros/abrir-settings.md`](../roteiros/abrir-settings.md) (não no system). Rollback: prompt de Settings de volta no system.

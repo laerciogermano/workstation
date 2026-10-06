@@ -1,46 +1,43 @@
-Objetivo: LinkedIn → buscar "comprador" → People → filtro Campinas → tap em TODOS os "Connect" até limite semanal de convites (ou fim da lista). Uma ação por turno. NÃO done no Skip.
+Objetivo: LinkedIn → type "comprador" no Search → People → filtro cidade → tap em TODOS os "Connect" até limite. 1 ação/turno. NÃO done no Skip. Decida pelo OCR atual.
 
-Regra de ouro: tap só nas coords de um texto que EXISTE no OCR. Nunca 0,0. Nunca inventar botão.
+Regra: tap só se o texto existe no OCR. Nunca 0,0. Se o texto "Search" (ou QSearch) estiver no OCR com y<120 → TAP nele. PROIBIDO scroll/sleep/dizer que não está visível.
 
-Atalho (se a tela JÁ estiver no meio do fluxo, NÃO recomece):
-- "Add a location" / "Add alocation" visível e SEM teclado (sem q,w,e) → tap nesse texto. PRÓXIMO turno: type "Campinas".
-- Teclado visível (q,w,e / ?123) neste filtro → type "Campinas" NA HORA. Não tap o campo. Não tap Locatior.
-- Sugestão "Campinas" (Sao Paulo/Brazil) visível → tap nela. Depois Show results / Done / Apply.
-- "Filter by" (All / People / Jobs / Posts / Show results) → tap People nesta lista, depois "Show results". Nunca BACK. Nunca type.
-- Lista People (chips 1st/2nd/3rd+ e cards) SEM "Campinas" e SEM "Add a location" → tap Location/Locatior/Locations (só se esse texto existir no OCR). PROIBIDO tap People de novo. PROIBIDO type "comprador". PROIBIDO Search. PROIBIDO scroll/Connect. PROIBIDO BACK. Não repetir o mesmo tap se a tela não mudou.
-- Mesma lista COM "Campinas" → vá aos Connect (passo 17).
-- Campo y<120 já = "comprador" e "Showallresults" visível → tap Show all. Não type de novo.
-- OCR só relógio (1 hit) depois de um tap → sleep 1500. Não scroll.
+IF OCR (primeira linha que bater) → THEN:
 
-OCR só hora/data (ex. "8:24" + "Tuesday, Oct 6"), SEM apps SEM Search SEM Home+Network+Jobs:
-→ se o último passo NÃO foi tap Search nem type "comprador": scroll down (gaveta). PROIBIDO BACK. PROIBIDO HOME. PROIBIDO type.
-→ se o último passo FOI tap Search ou type: type "comprador" (teclado cobriu). Sem BACK em loop.
+Busca (antes de qualquer cidade):
+- Texto Search ou QSearch com y<120 (mesmo no feed, mesmo com Show translation / Following / Home/Network/Jobs) → tap Search. PROIBIDO scroll up/down. PROIBIDO type cidade.
+- Último passo foi tap Search (y<120) OU teclado (q,w,e) SEM "Add alocation"/Australia/UnitedStates → type "comprador". PROIBIDO scroll. PROIBIDO type "Campinas".
+- Campo y<120 é Campinas (ou outra cidade) SEM "Add alocation" SEM chip Location da lista People → busca errada: limpar/type "comprador". Não é filtro. PROIBIDO Connect. PROIBIDO Show all.
+- Campo y<120 = comprador + teclado → KEYCODE_BACK 1×.
+- Campo y<120 = comprador + Show all results / Showallresults (y<800, não tab bar) → tap Show all. Não Show translation. Não Post/Jobs y≥850.
+- People+Posts+Jobs y<180 SEM chips 1st/2nd → tap People y<180.
 
-Passos (nessa ordem; 1 ação) — só se o atalho acima NÃO aplicar:
-1) Shade (Notifications / Clear all / AndroidSetup) E SEM Search E SEM Home+Network+Jobs → KEYCODE_BACK. Sem scroll. Sem HOME.
-2) Home (só hora/data, sem apps) → scroll down. Nunca scroll up. Nunca BACK.
-3) Gaveta (LinkedIn + Chrome + Calendar) → tap EXATO "LinkedIn" ("Linkedln" ok). Não tap Chrome/Gmail/Calendar.
-4) Pós-tap LinkedIn: ainda gaveta → sleep 1500 e tap LinkedIn de novo. Sem scroll.
-5) Splash (só "in" no centro, sem Search) → sleep 2000. Sem scroll. Sem HOME.
-6) LinkedIn: Search/QSearch y<120 OU tab bar Home+Network+Jobs → NUNCA HOME. Ignore Android Setup / sdk_gphone.
-7) Search só se y<120. Nunca tap "Search" em y≥120 (isso é aba/chip, não o campo). Campo vazio y<120 → tap Search. PRÓXIMO turno: type "comprador".
-8) Teclado (q,w,e / ?123): se o filtro de cidade está aberto (Add a location no campo) → type "Campinas". Senão, se o campo de busca está vazio → type "comprador". Nunca scroll. Não type "comprador" se a lista People já está aberta.
-9) Campo y<120 com lixo (ty/tyl) → KEYCODE_DEL várias vezes, depois type "comprador".
-10) Campo = "comprador" + teclado aberto → KEYCODE_BACK 1× (fecha teclado). Não tap Recent "comprador". Não ENTER. Não "Show translation".
-11) "Show all results" / "Showallresults" / "Show all" (não "Show translation", não Home/Network/Post/Jobs) → tap nesse texto. Sem o texto → BACK 1× ou sleep 1500. Sem chute de x,y.
-12) Aba People: texto EXATO "People" junto de Posts/Jobs e y<180. Tap 1 vez só. Não tap People y≥200. Não repetir tap People se a lista (1st/2nd/3rd+) já está visível.
-13) Grow / Catch up / Invitations = Network → volte ao Search (passo 7).
-14) Lista People visível SEM "Campinas" → tap Location / Locatior / Locations. Sem scroll right nas abas People/Posts.
-15) Add a location / Add alocation → tap → type "Campinas" → tap sugestão Campinas (Sao Paulo/Brazil) → Show results / Done / Apply.
-16) Sem Campinas no OCR → NÃO Connect. Repita 14–15 (máx. 3). Falha → done filter_campinas_failed.
-17) SÓ com Campinas no OCR: text EXATO "Connect" e 180<y<850 → tap. Nunca Message / Pending / Follow. Sem Connect → scroll up curto no centro (distance ~180). Outra cidade (Belo Horizonte, etc.) sem Campinas → volte ao 14.
-18) Add a note → tap Skip. NÃO done.
-19) Após Skip: weekly limit / invitation+not sent / try again next week → done limite_convites. Senão outro Connect ou scroll up curto.
-20) Message / InMail / Premium → KEYCODE_BACK até People. Nunca Send.
-21) Withdraw invitation → tap Cancel.
-22) No more results / End of results / You've reached the end → done fim_lista.
-23) monthly limit for profile searches → done limite_busca.
+Filtro cidade (só depois de People / lista 1st 2nd):
+- Teclado (q,w,e) + "Add alocation"/Australia/UnitedStates → type "Campinas". Não tap. Não type "comprador".
+- Campo y<120 contém Campinas + sugestão "Campinas" (Sao Paulo/Brazil) + Add alocation/Location sheet → tap a sugestão (não o campo).
+- Sugestão Campinas já destacada + "Show results" → tap Show results.
+- "Add alocation" SEM teclado → tap Add alocation.
+- "Filter by" + All/People/Jobs + Show results → tap People, depois Show results. Sem BACK.
+- 1st + 2nd + 3rd+ + Locatior/Location SEM chip Campinas → tap Location/Locatior. Sem People. Sem type. Sem BACK. Sem Connect.
 
-PROIBIDO: HOME com Search ou tab bar; done no 1º Skip; tap sem o texto no OCR; scroll no splash ou com teclado; Connect/scroll/tap People de novo na lista sem Campinas; type "comprador" se a lista People já está aberta; BACK só porque Campinas não está no OCR (use Location / Filter by).
+Connect (só lista People COM chip/filtro Campinas, NÃO se Campinas estiver só no Search):
+- Lista People (2nd/Pending/Connect) COM filtro Campinas (chip Locations/Campinas fora de y<120) → tap EXATO "Connect" 180<y<850. Sem Connect → scroll up curto (~180).
+- "Add a note" → tap Skip. Não done.
+- weekly limit / invitation+not sent / try again next week → done limite_convites.
+- Message / InMail / Premium → KEYCODE_BACK.
+- Withdraw invitation → tap Cancel.
+- No more results / End of results → done fim_lista.
 
-done: N Connect+Skip ok + motivo. Só então type=done.
+Launcher / SO:
+- Chrome + Calendar + "Linkedln" ou "LinkedIn" (gaveta) → tap Linkedln/LinkedIn. PROIBIDO scroll.
+- Home + Network + Jobs (y≥850) SEM Search y<120 → sleep 1500. PROIBIDO scroll down.
+- Showtranslation / Following / feed SEM Search e SEM QSearch y<120 → scroll up curto. PROIBIDO scroll down.
+- OCR só hora/data, SEM apps: se o último passo foi tap Search ou type → type "comprador". Senão → scroll down. Sem BACK. Sem HOME.
+- Shade (Notifications/Clear all/AndroidSetup) SEM Search SEM tab bar → KEYCODE_BACK.
+- Splash só "in" → sleep 2000. Sem scroll. Sem HOME.
+- Grow/Catch up/Invitations → tap Search y<120.
+- OCR 1 hit (só relógio) após tap → sleep 1500. Sem scroll.
+
+PROIBIDO: HOME com Search/tab bar; done no Skip; type "Campinas" no Search (só no Add alocation); type "comprador" no filtro de cidade; Connect porque Campinas apareceu no campo Search; tap sem texto no OCR; scroll se Search y<120 existe.
+
+done: N Connect+Skip + motivo (limite_convites / fim_lista / filter_campinas_failed / limite_busca).

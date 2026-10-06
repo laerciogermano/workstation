@@ -245,6 +245,8 @@ npm run agent:smoke              # 1–2 passos no device; sem key = heurística
 
 **Antes → depois (LinkedIn Campinas / gpt-4o-mini):** `engine=all` misturava overlay de setup; histórico 12 fazia o mini repetir taps. Roteiro IF-OCR: [`roteiros/jornada-linkedin-campinas.md`](../roteiros/jornada-linkedin-campinas.md) + `--engine rapidocr --history-steps 1`. Rollback: `--engine all --history-steps 12` e [`roteiros/jornada-comprador.md`](../roteiros/jornada-comprador.md).
 
+**Antes → depois (Search vs Campinas no mini):** IF punha feed/`Show translation` no mesmo bloco que Search; `type "Campinas"` vinha **antes** de `type "comprador"` → guard pós-tap Search injetava cidade no campo de busca e o mini Connectava. Agora: linha própria `Search y<120` → tap (proibido scroll); primeiro `type "…"` do arquivo é **comprador**; Campinas só no `Add alocation`; Campinas no Search ≠ filtro. Rollback: ordem antiga (Campinas primeiro + Connect se Campinas no OCR).
+
 **Antes → depois (id Gemini 3 Flash):** catálogo usava `gemini-3-flash` (HTTP 404 na API) → `gemini-3-flash-preview`. Rollback: só se a API voltar a expor `gemini-3-flash`.
 
 **Antes → depois (Gemini 2.5 Flash):** catálogo só 3.x + OpenAI → também `gemini-2.5-flash` (menu CLI / `--model` / escada de fallback). Rollback: remover o id de `AGENT_MODELS` / `FALLBACK_LADDER`.

@@ -19,7 +19,7 @@ loadEnvFiles([join(SRC_ROOT, ".env"), join(SRC_ROOT, ".env.local")]);
 
 const DEFAULT_IMAGE = join(
   SRC_ROOT,
-  "test/fixtures/linkedin-tela-inicial.png",
+  "test/fixtures/linkedin-people-comprador-connect.png",
 );
 const DEFAULT_PROMPT =
   "Com base neste OCR da tela LinkedIn, diga o que aparece e o próximo passo.";

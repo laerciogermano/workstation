@@ -240,7 +240,7 @@ npm run agent:smoke              # 1–2 passos no device; sem key = heurística
 npm run raw-gpt                  # extractFromImage (PNG LinkedIn) → OCR no prompt → chat.completions
 npm run raw-gpt -- --image test/fixtures/linkedin-people-comprador-connect.png
 npm run raw-gpt -- --engine macos-vision --prompt "próximo passo"
-# Default: test/fixtures/linkedin-tela-inicial.png + engine macos-vision. Rollback: remover scripts/raw-gpt.js + script npm.
+# Default: test/fixtures/linkedin-people-comprador-connect.png + engine macos-vision. Rollback: remover scripts/raw-gpt.js + script npm.
 ```
 
 **Setup CLI (modelos):** em TTY, sem `--model` / `--force-model` / `--no-prompt`, o agent lista o catálogo ([`lib/agent-models.js`](lib/agent-models.js)) e pede a escolha (`1`, `1,3`, `a`=todos, ou id). Vários modelos → roda em sequência, log em `logs/agent/<model>/`. Rollback: `--model <id>` ou `--no-prompt`.

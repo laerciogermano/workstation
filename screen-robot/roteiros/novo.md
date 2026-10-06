@@ -2,9 +2,13 @@ Objetivo: abrir o LinkedIn → tap Search → type "comprador". 1 ação por tur
 
 Tap: acao.element = id (e0) ou text EXATO do extract. PROIBIDO x,y.
 
-NUNCA KEYCODE_BACK na tela inicial. BACK não abre app. Se o OCR for hora/data (Tuesday/Monday/…) SEM Chrome SEM Calendar E o histórico NÃO tem tap Search → a ação é scroll down, mesmo que o histórico esteja cheio de BACK.
+Olhe o ÚLTIMO passo do histórico ANTES de classificar a tela. OCR pobre (só hora / "in" / 2–9 hits) NÃO é home se já houve tap.
+- último = tap LinkedIn/Linkedln → sleep 2000 (splash). NUNCA scroll. NUNCA BACK. Log: 12:02 g in O •@24 · in@476
+- último = tap Search → type "comprador" (teclado cobriu). NUNCA scroll. NUNCA BACK. NUNCA passo 2. Log: MO@23 · 12:02@24 · JU@485 · «@924
+- último = type comprador → done (passo 8)
+- scroll down SÓ se histórico SEM tap LinkedIn E SEM tap Search E OCR home (Tuesday/Monday + sem Chrome)
 
-Depois de tap Search: OCR só hora/data NÃO é home. É teclado cobrindo. Ação: type "comprador". PROIBIDO scroll. PROIBIDO BACK. PROIBIDO tratar como passo 2.
+NUNCA KEYCODE_BACK na tela inicial. BACK não abre app.
 
 Passos (nessa ordem). Depois de cada ação, olhe o OCR novo. Sucesso = ir ao passo correspondente. Falha = só a recuperação abaixo (não invente BACK/HOME). Exemplos de OCR = logs reais (text,y). Bate o padrão, execute a ação.
 
@@ -14,8 +18,8 @@ Passos (nessa ordem). Depois de cada ação, olhe o OCR novo. Sucesso = ir ao pa
    Sucesso: OCR perdeu Notifications/Clear all. Vá ao passo 2, 3 ou 6 conforme a tela.
    Falha (shade ainda visível): KEYCODE_BACK de novo, no máximo 2× no total. Se continuar: KEYCODE_HOME 1×, depois passo 2. Nunca scroll no shade.
 
-2) Home — hora e data, SEM Chrome, SEM Calendar, SEM LinkedIn/Linkedln, SEM Search, SEM Network, E histórico SEM tap Search
-   OCR exemplo: 11:58m@@24 · in O •@25 · 11:58@26 · Tuesday, Oct 6@119 · OOo@713 · |@924 · @®@926
+2) Home — hora e data, SEM Chrome, SEM Calendar, SEM LinkedIn/Linkedln, SEM Search, SEM Network, E histórico SEM tap LinkedIn E SEM tap Search
+   OCR exemplo: 12:02m@@24 · Tuesday, Oct 6@117 · OOo@713 · CEE@824 · |@924 · @®@926
    Ação: scroll direction=down UMA vez. Sem tap. Sem BACK. Sem sleep. Sem scroll up.
    Sucesso: OCR tem Chrome + Calendar (gaveta). Vá ao passo 3.
    Falha (ainda só hora/data): scroll down mais 1× (máximo 2 down no total). Se ainda falhar: fail gaveta_nao_abriu. Nunca BACK. Nunca scroll up.
@@ -26,9 +30,10 @@ Passos (nessa ordem). Depois de cada ação, olhe o OCR novo. Sucesso = ir ao pa
    Sucesso: OCR perdeu a lista Chrome+Calendar. Splash (passo 4) ou LinkedIn aberto (passo 6).
    Falha (gaveta igual, LinkedIn ainda no extract): tap de novo no id ATUAL de LinkedIn/Linkedln (não coords antigas). 1 retentativa. Se o texto sumiu: passo 2 se home; passo 4/5 se poucos tokens; senão fail linkedin_nao_visivel.
 
-4) Splash / loading — poucos tokens, "in" no centro (~y 480), SEM Chrome
-   OCR exemplo: 11:59@24 · #目回@24 · 11:59 @ in ® •@25 · in@479
-   Ação: sleep 2000. Sem BACK. Sem scroll. Sem tap.
+4) Splash / loading — poucos tokens, "in" no centro (~y 476), SEM Chrome. Histórico TEM tap LinkedIn.
+   OCR exemplo: 12:02 g in O •@24 · in@476   (2 hits — NÃO é home; NÃO tem Tuesday)
+   Também: 11:59@24 · #目回@24 · 11:59 @ in ® •@25 · in@479
+   Ação: sleep 2000. Sem BACK. Sem scroll. Sem tap. Sem passo 2.
    Sucesso: Search y<120 ou Home+Network+Jobs → passo 6. Ou ainda splash → passo 5.
    Falha (voltou home hora/data): passo 2 (scroll down). Falha (voltou gaveta): passo 3. Nunca BACK no splash.
 
@@ -45,15 +50,15 @@ Passos (nessa ordem). Depois de cada ação, olhe o OCR novo. Sucesso = ir ao pa
    Falha (Search ainda no feed, tab bar igual): tap Search de novo 1×. Se Search y<120 sumiu: scroll up 1× (não down). Sem Search: sleep 1500.
 
 7) Type "comprador" — DEPOIS do tap Search. Duas telas possíveis:
-   A) Teclado cobriu (OCR pobre; histórico TEM tap Search). OCR exemplo: SMO@23 · 11:59@24 · 11:59@24 · -@26 · JU@485 · «@924 · [|@924
-      Ação: type "comprador". NÃO é home. PROIBIDO scroll down. PROIBIDO BACK. PROIBIDO passo 2.
-   B) Teclado visível (q/w/e) SEM Add a location / Australia. OCR exemplo: Search@81 · Recent@153 · Show all@152 · W@620 · e@621 · p@622 · ？123@848 · Q@847
-      Ação: type "comprador". Sem tap. Sem scroll. Sem BACK. Sem Campinas.
+   A) Teclado cobriu (OCR pobre; último passo = tap Search). OCR exemplo: MO@23 · 12:02@24 · -@26 · JU@485 · «@924 · [|@924
+      Parece home mas NÃO tem Tuesday e o histórico tem Search → type "comprador". PROIBIDO scroll. PROIBIDO BACK. PROIBIDO passo 2.
+   B) Teclado visível (q/w/e / qwerty) SEM Add a location / Australia. OCR exemplo: comprador@81 · Recent@153 · Show all@153 · W@619 · qwertyuiobp@622 · ？123@848
+      Se o campo y<80 já é "comprador" E o histórico TEM type → passo 8. Senão: type "comprador". Sem tap. Sem scroll. Sem BACK. Sem Campinas.
    Sucesso: histórico tem type "comprador" → passo 8.
    Falha (teclado ainda aberto, sem type no histórico): type "comprador" de novo 1×. Falha (voltou feed Search+Home+Jobs, sem Recent): passo 6.
 
 8) Já digitou comprador nesta run (histórico tem type "comprador")
-   OCR exemplo (busca Recent): Search@80 · Recent@153 · Show all@153 · Rafael@286 · comprador@369 · Campinas@440
+   OCR exemplo: comprador@81 (campo y<120) · Recent@153 · Show all@153 · Rafael@286 · comprador@369 · qwertyuiobp@622
    Ação: done.
    Sucesso: done (objetivo cumprido).
    Falha (histórico SEM type "comprador"): mesmo OCR com "comprador" na lista Recent NÃO basta → passo 7. Sem type e sem teclado: classifique shade→1; home sem Search no histórico→2; gaveta→3; splash→4/5; feed→6.

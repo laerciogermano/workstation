@@ -4,6 +4,8 @@
  *
  *   npm run agent -- --prompt ../roteiros/jornada-completa.md
  *   npm run agent -- --prompt ./meu.txt --model gemini-3.8-flash
+ *   npm run agent -- --prompt ./meu.txt --force-model gemini-2.5-flash  # só esse; sem fallback
+ *   npm run agent -- --prompt ./meu.txt --model gemini-2.5-flash --no-fallback
  *   npm run agent -- --prompt ./meu.txt --no-prompt   # sem menu (env/default)
  *   npm run agent -- --prompt ./meu.txt --all-models  # todos do catálogo
  *   npm run agent -- --provider openai --model gpt-4o-mini --prompt …
@@ -96,8 +98,18 @@ function requireKey(provider) {
 async function resolveModels() {
   const allModels = hasFlag("--all-models");
   const noPrompt = hasFlag("--no-prompt") || hasFlag("-y");
-  const modelArg = argValue("--model");
+  const forceModel = argValue("--force-model");
+  const modelArg = forceModel || argValue("--model");
   const providerArg = argValue("--provider") || undefined;
+
+  if (forceModel) {
+    const known = findAgentModel(forceModel);
+    if (known) return [known];
+    const provider =
+      providerArg ||
+      (String(forceModel).startsWith("gpt") ? "openai" : "gemini");
+    return [{ id: forceModel, provider, label: forceModel }];
+  }
 
   if (allModels) return [...AGENT_MODELS];
 
@@ -162,7 +174,7 @@ const keyboardRegion = loadDeviceCfg().type?.keyboardRegion;
 
 if (!prompt) {
   console.error("uso: npm run agent -- --prompt <texto|arquivo.md>");
-  console.error("      (TTY) menu de modelos · --model ID · --all-models · --no-prompt");
+  console.error("      (TTY) menu de modelos · --model ID · --force-model ID · --no-fallback · --all-models · --no-prompt");
   console.error("      --sense ocr|vision · --vision (atalho) · --engine all (só ocr)");
   process.exit(2);
 }
@@ -172,6 +184,9 @@ if (!serial) {
 }
 
 const models = await resolveModels();
+const noFallback =
+  Boolean(argValue("--force-model")) ||
+  hasFlag("--no-fallback");
 /** @type {object[]} */
 const results = [];
 let exitOk = true;
@@ -191,6 +206,7 @@ for (let i = 0; i < models.length; i++) {
       (sense === "ocr" ? ` engine=${engine}` : "") +
       ` provider=${provider}` +
       ` model=${m.id}` +
+      (noFallback ? " noFallback" : "") +
       ` maxSteps=${maxSteps}` +
       (historySteps != null ? ` historySteps=${historySteps}` : "") +
       ` logDir=${logDir}`,
@@ -203,6 +219,7 @@ for (let i = 0; i < models.length; i++) {
     historySteps,
     provider,
     model: m.id,
+    noFallback: noFallback || undefined,
     sense,
     engine,
     visionWidth,

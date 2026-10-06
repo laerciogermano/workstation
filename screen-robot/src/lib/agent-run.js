@@ -368,6 +368,8 @@ function appendStepLog(logPath, step, { resumo, acao, ocr, vision, resultado, us
  *   keyboardRegion?: object,
  *   typeMethod?: "ocr"|"adb",
  *   model?: string,
+ *   noFallback?: boolean,
+ *   fallbackModels?: string[]|string,
  *   provider?: string,
  *   apiKey?: string,
  *   historySteps?: number,
@@ -583,6 +585,8 @@ export async function runAgent(cfg, deps = {}) {
               model: cfg.model,
               provider: cfg.provider,
               apiKey: cfg.apiKey,
+              noFallback: cfg.noFallback,
+              fallbackModels: cfg.fallbackModels,
             }
           : {
               prompt: cfg.prompt,
@@ -593,6 +597,8 @@ export async function runAgent(cfg, deps = {}) {
               model: cfg.model,
               provider: cfg.provider,
               apiKey: cfg.apiKey,
+              noFallback: cfg.noFallback,
+              fallbackModels: cfg.fallbackModels,
             },
         deps,
       );

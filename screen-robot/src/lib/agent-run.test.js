@@ -381,4 +381,38 @@ describe("agent-run (SC-32)", () => {
       rmSync(usageDir, { recursive: true, force: true });
     }
   });
+
+  it("runAgent passa noFallback ao decide", async () => {
+    const logDir = mkdtempSync(join(tmpdir(), "sr-agent-"));
+    const usageDir = mkdtempSync(join(tmpdir(), "sr-usage-"));
+    let seen;
+    try {
+      const result = await runAgent(
+        {
+          serial: "emulator-5554",
+          prompt: "x",
+          maxSteps: 2,
+          model: "gemini-2.5-flash",
+          noFallback: true,
+          logDir,
+          usageDir,
+          stepDelayMs: 0,
+        },
+        {
+          sleep: async () => {},
+          extract: async () => [{ type: "text", text: "A", x: 1, y: 2 }],
+          decide: async (cfg) => {
+            seen = cfg;
+            return { resumo: "ok", acao: { type: "done", motivo: "ok" } };
+          },
+        },
+      );
+      assert.equal(result.status, "done");
+      assert.equal(seen.noFallback, true);
+      assert.equal(seen.model, "gemini-2.5-flash");
+    } finally {
+      rmSync(logDir, { recursive: true, force: true });
+      rmSync(usageDir, { recursive: true, force: true });
+    }
+  });
 });

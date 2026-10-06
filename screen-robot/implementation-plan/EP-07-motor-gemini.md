@@ -95,6 +95,7 @@ src/
 | `ocr` | sim | Lista `{ text, x, y }` (ou `{ type, text, x, y }`) |
 | `history` | | Passos anteriores (resumo curto) |
 | `model` | | Default `gemini-3.8-flash` |
+| `noFallback` | | `true` = só `model` (sem escada). CLI: `--force-model` / `--no-fallback`. Env: `AGENT_NO_FALLBACK=1` |
 | `apiKey` | | Default `process.env.GEMINI_API_KEY` |
 
 `acao.type`: `tap` | `scroll` | `type` | `key` | `sleep` | `done` | `fail`.
@@ -114,6 +115,8 @@ src/
 | `prompt` | sim | Texto do objetivo |
 | `maxSteps` | | Default 40 |
 | `engine` | | Default `rapidocr` |
+| `model` | | Default `gemini-3.8-flash` |
+| `noFallback` | | `true` = não desce a escada |
 | `logDir` | | Default `logs/agent/` |
 | `usageDir` | | Default `usage/` — `usage/<timestamp>.json` por execução |
 

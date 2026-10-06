@@ -329,6 +329,7 @@ Defina a próxima ação (coords na escala da imagem).`;
    *   model?: string,
    *   provider?: string,
    *   fallbackModels?: string[]|string,
+   *   noFallback?: boolean,
    *   apiKey?: string,
    *   thinkingLevel?: "low"|"medium"|"high",
    * }} cfg
@@ -358,6 +359,7 @@ export async function decide(cfg, deps = {}) {
   const historySteps = resolveHistorySteps(cfg);
   const chain = resolveFallbackLadder(model, {
     fallbackModels: cfg.fallbackModels,
+    noFallback: cfg.noFallback,
   });
   logFn(
     `início sense=${sense} provider=${provider} model=${model}` +

@@ -266,4 +266,28 @@ describe("agent-decide (SC-31)", () => {
     assert.equal(out.provider, "openai");
     assert.deepEqual(models, ["gemini-3.8-flash", "gpt-4o-mini"]);
   });
+
+  it("decide: noFallback não desce a escada", async () => {
+    const models = [];
+    const stub = async (opts) => {
+      models.push(opts.model);
+      const e = new Error("quota");
+      e.code = "GEMINI_REQUEST_FAILED";
+      throw e;
+    };
+    await assert.rejects(
+      () =>
+        decide(
+          {
+            prompt: "x",
+            ocr: [{ text: "A", x: 1, y: 2 }],
+            model: "gemini-2.5-flash",
+            noFallback: true,
+          },
+          { generateContent: stub, log: () => {} },
+        ),
+      (e) => e.code === "GEMINI_REQUEST_FAILED",
+    );
+    assert.deepEqual(models, ["gemini-2.5-flash"]);
+  });
 });

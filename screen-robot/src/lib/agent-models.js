@@ -112,17 +112,33 @@ function parseFallbackList(raw) {
   return null;
 }
 
+export function isTruthyEnv(v) {
+  return /^(1|true|on|yes)$/i.test(String(v ?? "").trim());
+}
+
+/**
+ * @param {{ noFallback?: boolean, env?: NodeJS.ProcessEnv }} [opts]
+ */
+export function resolveNoFallback(opts = {}) {
+  if (opts.noFallback === true) return true;
+  if (opts.noFallback === false) return false;
+  return isTruthyEnv((opts.env || process.env).AGENT_NO_FALLBACK);
+}
+
 /**
  * Cadeia de fallback: primary + o que está abaixo na escada, até gpt-4o-mini.
  * Override: `cfg.fallbackModels` / `AGENT_FALLBACK_MODELS` (lista CSV).
- * Desliga: `AGENT_FALLBACK_MODELS=off` (ou `0` / `none`).
+ * Desliga: `noFallback` / `AGENT_NO_FALLBACK=1` / `AGENT_FALLBACK_MODELS=off` (ou `0` / `none`).
  * @param {string} primary
- * @param {{ fallbackModels?: string[]|string, env?: NodeJS.ProcessEnv }} [opts]
+ * @param {{ fallbackModels?: string[]|string, noFallback?: boolean, env?: NodeJS.ProcessEnv }} [opts]
  * @returns {string[]}
  */
 export function resolveFallbackLadder(primary, opts = {}) {
   const p = String(primary || "").trim();
   const env = opts.env || process.env;
+  if (resolveNoFallback({ noFallback: opts.noFallback, env })) {
+    return p ? [p] : [];
+  }
   const raw =
     opts.fallbackModels !== undefined
       ? opts.fallbackModels

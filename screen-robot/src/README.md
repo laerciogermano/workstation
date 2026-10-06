@@ -198,10 +198,10 @@ cd screen-robot/src
 # keys: export … ou arquivo local .env (gitignored; modelo em .env.example)
 # cp .env.example .env   # depois preencha OPENAI_API_KEY / GEMINI_API_KEY
 export GEMINI_API_KEY=…          # obrigatório para decide Gemini (se não estiver no .env)
-# modelo ÚNICO = valor do export (sem fallback automático)
+# modelo (com fallback da escada, salvo --force-model / AGENT_NO_FALLBACK=1)
 export GEMINI_MODEL=gemini-3.8-flash
 # fallback default: desce a escada até gpt-4o-mini
-# desligar: export AGENT_FALLBACK_MODELS=off
+# desligar: export AGENT_FALLBACK_MODELS=off  |  AGENT_NO_FALLBACK=1
 # custom: export AGENT_FALLBACK_MODELS=gemini-3.5-flash-lite,gpt-4o-mini
 # opcional: export GEMINI_MAX_PROMPT_CHARS=6000
 # opcional: export AGENT_HISTORY_STEPS=12   # janela de passos no prompt (default 12)
@@ -225,13 +225,17 @@ npm run agent -- --provider openai --model gpt-4o-mini --no-prompt --engine rapi
 npm run agent -- --prompt "abra o LinkedIn e mostre as últimas 10 conexões"
 npm run agent -- --prompt ../roteiros/jornada-completa.md --all-models
 npm run agent -- --prompt ../roteiros/jornada-completa.md --no-prompt   # sem menu (env/default)
+npm run agent -- --force-model gemini-2.5-flash --prompt ../roteiros/abrir-settings.md
+npm run agent -- --model gemini-2.5-flash --no-fallback --prompt ../roteiros/abrir-settings.md
 # Vision (sem OCR): print → WebP → modelo multimodal → comandos
 npm run agent -- --sense vision --prompt ../roteiros/teste.md --no-prompt
 npm run agent -- --vision --provider openai --model gpt-4o-mini --prompt ../roteiros/teste.md
 npm run agent:smoke              # 1–2 passos no device; sem key = heurística Connect/scroll
 ```
 
-**Setup CLI (modelos):** em TTY, sem `--model` / `--no-prompt`, o agent lista o catálogo ([`lib/agent-models.js`](lib/agent-models.js)) e pede a escolha (`1`, `1,3`, `a`=todos, ou id). Vários modelos → roda em sequência, log em `logs/agent/<model>/`. Rollback: `--model <id>` ou `--no-prompt`.
+**Setup CLI (modelos):** em TTY, sem `--model` / `--force-model` / `--no-prompt`, o agent lista o catálogo ([`lib/agent-models.js`](lib/agent-models.js)) e pede a escolha (`1`, `1,3`, `a`=todos, ou id). Vários modelos → roda em sequência, log em `logs/agent/<model>/`. Rollback: `--model <id>` ou `--no-prompt`.
+
+**Antes → depois (forçar modelo):** `--model` ainda descia a escada de fallback → `--force-model <id>` (ou `--model` + `--no-fallback`, `decide`/`runAgent({ noFallback: true })`, `AGENT_NO_FALLBACK=1`) usa só esse id. Rollback: omitir as flags / env.
 
 **Antes → depois (gpt-5-mini):** catálogo só tinha `gpt-4o-mini` no OpenAI → também `gpt-5-mini`. Cliente omite `temperature` em `gpt-5*` (API rejeita 0). Rollback: remover o item do catálogo; voltar `temperature: 0` em todo request.
 
@@ -244,7 +248,7 @@ npm run agent:smoke              # 1–2 passos no device; sem key = heurística
 **Antes → depois (Gemini 2.5 Flash):** catálogo só 3.x + OpenAI → também `gemini-2.5-flash` (menu CLI / `--model` / escada de fallback). Rollback: remover o id de `AGENT_MODELS` / `FALLBACK_LADDER`.
 
 Stdout: `[agent]` / `[decide]` / `[gemini]` ou `[openai]`. Provider default `gemini`; `AGENT_PROVIDER=openai` ou modelo `gpt-*` usa OpenAI.
-Fallback default (`decide`): do modelo escolhido desce a escada `gemini-3.8-flash` → `3.7` → `3.6` → `3.5` → `3-flash-preview` → `2.5-flash` → `3.5-flash-lite` → `3.1-flash-lite` → `gpt-4o-mini`. Sem key do provider, pula. `AGENT_FALLBACK_MODELS=off` desliga. Override CSV em `AGENT_FALLBACK_MODELS` / `decide({ fallbackModels })`.
+Fallback default (`decide`): do modelo escolhido desce a escada `gemini-3.8-flash` → `3.7` → `3.6` → `3.5` → `3-flash-preview` → `2.5-flash` → `3.5-flash-lite` → `3.1-flash-lite` → `gpt-4o-mini`. Sem key do provider, pula. `AGENT_FALLBACK_MODELS=off` / `AGENT_NO_FALLBACK=1` / `--force-model` / `--no-fallback` desliga. Override CSV em `AGENT_FALLBACK_MODELS` / `decide({ fallbackModels })`.
 
 **Antes → depois (cadeia até gpt-4o-mini):** Gemini único (ou `GEMINI_FALLBACK_MODELS` só Gemini) → escada até `gpt-4o-mini`. Rollback: `export AGENT_FALLBACK_MODELS=off`.
 

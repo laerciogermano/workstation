@@ -73,6 +73,22 @@ describe("agent-models", () => {
     );
   });
 
+  it("resolveFallbackLadder: noFallback ignora escada e CSV", () => {
+    assert.deepEqual(
+      resolveFallbackLadder("gemini-2.5-flash", {
+        noFallback: true,
+        env: { AGENT_FALLBACK_MODELS: "gpt-4o-mini" },
+      }),
+      ["gemini-2.5-flash"],
+    );
+    assert.deepEqual(
+      resolveFallbackLadder("gemini-2.5-flash", {
+        env: { AGENT_NO_FALLBACK: "1" },
+      }),
+      ["gemini-2.5-flash"],
+    );
+  });
+
   it("providerForModel: gpt → openai", () => {
     assert.equal(providerForModel("gpt-4o-mini"), "openai");
     assert.equal(providerForModel("gpt-5-mini"), "openai");

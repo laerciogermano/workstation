@@ -191,7 +191,7 @@ Tira screenshot do device online e grava em `screenshots/<nome>.png` (path absol
 
 ## Motor Gemini (EP-07) — `decide` / `runAgent`
 
-**Antes → depois (agent-run 2.0 temporário):** [`lib/agent-run.js`](lib/agent-run.js) era o loop completo → agora é shim que exporta [`lib/agent-run-2.0.js`](lib/agent-run-2.0.js) (só extract → decide → operate; sem log/usage/vision/history/recover). Original intacto em [`lib/agent-run-v1.js`](lib/agent-run-v1.js). Rollback: em `agent-run.js`, `export { runAgent, executeAction } from "./agent-run-v1.js"`.
+**Antes → depois (agent-run 2.0 temporário):** [`lib/agent-run.js`](lib/agent-run.js) era o loop completo → shim → [`lib/agent-run-2.0.js`](lib/agent-run-2.0.js): extract → `askProvider` (generate Gemini/OpenAI + parse JSON) → operate. **Sem** [`agent-decide.js`](lib/agent-decide.js). Original em [`lib/agent-run-v1.js`](lib/agent-run-v1.js). Rollback: em `agent-run.js`, `export … from "./agent-run-v1.js"`.
 
 Loop genérico (v1): **sense=ocr** (default) extract OCR → decide → operate; ou **sense=vision** print → WebP → decide multimodal → operate. Log em `logs/agent/` e `usage-2.0/<timestamp>.json`. Prompt/roteiro entram como **input**. Ativo agora: **2.0** (OCR only, sem artefatos).
 

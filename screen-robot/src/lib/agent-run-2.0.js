@@ -1,12 +1,28 @@
 /**
- * runAgent 2.0 — loop mínimo: extract → decide (provider) → operate.
- * Temporário no lugar do v1 (`agent-run-v1.js`). Rollback: agent-run.js → v1.
+ * runAgent 2.0 — loop mínimo: extract → provider → operate.
+ * Sem agent-decide. Rollback: agent-run.js → agent-run-v1.js.
  */
 import { extract } from "./extract.js";
-import { decide, resolveDecideModel, resolveProvider } from "./agent-decide.js";
-import { DEFAULT_MODEL as DEFAULT_GEMINI_MODEL } from "./gemini.js";
+import {
+  generateContent as generateGemini,
+  DEFAULT_MODEL as DEFAULT_GEMINI_MODEL,
+} from "./gemini.js";
+import {
+  generateContent as generateOpenAI,
+  DEFAULT_MODEL as DEFAULT_OPENAI_MODEL,
+} from "./openai.js";
 import { tapElement, scroll, type, typeViaAdb, key } from "./operate.js";
 import { sleep as defaultSleep } from "./adb.js";
+
+const ACTIONS = new Set([
+  "tap",
+  "scroll",
+  "type",
+  "key",
+  "sleep",
+  "done",
+  "fail",
+]);
 
 function fail(code, msg) {
   const err = new Error(msg);
@@ -16,6 +32,95 @@ function fail(code, msg) {
 
 function log(...args) {
   console.log(`[agent2 ${new Date().toISOString()}]`, ...args);
+}
+
+function resolveProvider(cfg) {
+  const p = String(cfg?.provider || process.env.AGENT_PROVIDER || "")
+    .trim()
+    .toLowerCase();
+  if (p === "openai" || p === "gpt") return "openai";
+  if (p === "gemini" || p === "google") return "gemini";
+  const model = String(cfg?.model || process.env.OPENAI_MODEL || "");
+  if (/^gpt-/i.test(model)) return "openai";
+  return "gemini";
+}
+
+function resolveModel(cfg) {
+  if (cfg?.model) return cfg.model;
+  return resolveProvider(cfg) === "openai"
+    ? process.env.OPENAI_MODEL || DEFAULT_OPENAI_MODEL
+    : process.env.GEMINI_MODEL || DEFAULT_GEMINI_MODEL;
+}
+
+/** JSON da IA → { acao, resumo } */
+function parseAcao(raw) {
+  let data = raw;
+  if (typeof raw === "string") {
+    const t = raw.trim();
+    const fence = t.match(/```(?:json)?\s*([\s\S]*?)```/);
+    data = JSON.parse(fence ? fence[1].trim() : t);
+  }
+  const a = data?.acao;
+  if (!a || typeof a !== "object") fail("AGENT_BAD_ACTION", "falta acao");
+  const type = String(a.type || "").toLowerCase();
+  if (!ACTIONS.has(type)) fail("AGENT_BAD_ACTION", `type inválido: ${a.type}`);
+  const acao = {
+    type,
+    x: a.x == null ? null : Number(a.x),
+    y: a.y == null ? null : Number(a.y),
+    direction: a.direction == null ? null : String(a.direction),
+    text: a.text == null ? null : String(a.text),
+    code: a.code == null ? null : String(a.code),
+    ms: a.ms == null ? null : Number(a.ms),
+    motivo: a.motivo == null ? "" : String(a.motivo),
+  };
+  if (type === "tap" && !(Number.isFinite(acao.x) && Number.isFinite(acao.y))) {
+    fail("AGENT_BAD_ACTION", "tap exige x,y");
+  }
+  if (type === "type" && !acao.text) fail("AGENT_BAD_ACTION", "type exige text");
+  if (type === "key" && !acao.code) fail("AGENT_BAD_ACTION", "key exige code");
+  return {
+    resumo: data.resumo == null ? "" : String(data.resumo),
+    acao,
+  };
+}
+
+/**
+ * Envia roteiro + OCR ao provider; devolve ação parseada.
+ * @param {{ prompt: string, ocr: object[], model?: string, provider?: string, apiKey?: string }} cfg
+ */
+export async function askProvider(cfg, deps = {}) {
+  const provider = resolveProvider(cfg);
+  const model = resolveModel(cfg);
+  const gen =
+    deps.generateContent ??
+    (provider === "openai" ? generateOpenAI : generateGemini);
+  const ocr = (cfg.ocr || []).map((e) =>
+    e?.type === "icon"
+      ? { type: "icon", x: Number(e.x), y: Number(e.y) }
+      : { type: "text", text: String(e?.text ?? ""), x: Number(e?.x), y: Number(e?.y) },
+  );
+  const system = `Você opera Android só com a lista OCR (text,x,y). Responda APENAS JSON:
+{"resumo":"...","acao":{"type":"tap|scroll|type|key|sleep|done|fail","x":null,"y":null,"direction":null,"text":null,"code":null,"ms":null,"motivo":"..."}}
+tap: copie x,y do OCR. 1 ação por turno.`;
+  const prompt = `Roteiro:\n${cfg.prompt}\n\nOCR:\n${JSON.stringify(ocr)}\n\nPróxima ação.`;
+
+  log(`provider ${provider}/${model}…`);
+  const out = await gen(
+    {
+      model,
+      apiKey: cfg.apiKey,
+      json: true,
+      thinkingLevel: "low",
+      fallbackModels: [],
+      chainRounds: 1,
+      retries: 0,
+      system,
+      prompt,
+    },
+    deps,
+  );
+  return parseAcao(out.text);
 }
 
 /** @param {{ serial: string, acao: object, engine?: string, typeMethod?: string }} cfg */
@@ -43,8 +148,7 @@ export async function executeAction(cfg, deps = {}) {
       return `scroll ${a.direction || "down"}`;
     case "type": {
       if (typeMethod !== "ocr") {
-        const inject = deps.typeViaAdb ?? typeViaAdb;
-        inject(serial, a.text, deps);
+        (deps.typeViaAdb ?? typeViaAdb)(serial, a.text, deps);
         return `type-adb ${JSON.stringify(a.text)}`;
       }
       await doType(
@@ -80,8 +184,6 @@ export async function executeAction(cfg, deps = {}) {
  *   provider?: string,
  *   apiKey?: string,
  *   typeMethod?: string,
- *   noFallback?: boolean,
- *   fallbackModels?: string[]|string,
  * }} cfg
  */
 export async function runAgent(cfg, deps = {}) {
@@ -93,9 +195,9 @@ export async function runAgent(cfg, deps = {}) {
   const engine = cfg.engine || process.env.SCREEN_ROBOT_OCR || "all";
   const icons = cfg.icons;
   const runExtract = deps.extract ?? extract;
-  const runDecide = deps.decide ?? decide;
+  const ask = deps.askProvider ?? askProvider;
   const provider = resolveProvider(cfg);
-  const model = resolveDecideModel(cfg) || DEFAULT_GEMINI_MODEL;
+  const model = resolveModel(cfg);
   const steps = [];
   let status = "running";
 
@@ -107,19 +209,13 @@ export async function runAgent(cfg, deps = {}) {
     log(`── ${i}/${maxSteps} extract ──`);
     const ocr = await runExtract({ serial, engine, icons }, deps);
 
-    log(`decide…`);
-    const { acao, resumo } = await runDecide(
+    const { acao, resumo } = await ask(
       {
         prompt: cfg.prompt,
-        sense: "ocr",
         ocr,
-        history: [],
-        historySteps: 0,
         model: cfg.model,
         provider: cfg.provider,
         apiKey: cfg.apiKey,
-        noFallback: cfg.noFallback,
-        fallbackModels: cfg.fallbackModels,
       },
       deps,
     );
@@ -134,12 +230,7 @@ export async function runAgent(cfg, deps = {}) {
     if (resumo) log(resumo.slice(0, 200));
 
     const resultado = await executeAction(
-      {
-        serial,
-        acao,
-        engine,
-        typeMethod: cfg.typeMethod,
-      },
+      { serial, acao, engine, typeMethod: cfg.typeMethod },
       deps,
     );
     steps.push({ step: i, acao, resultado });

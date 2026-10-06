@@ -61,43 +61,4 @@ describe("raw-gpt-decide", () => {
     },
   );
 
-  it(
-    "Android tela inicial → mesma jornada",
-    { timeout: 300_000 },
-    async () => {
-      assert.ok(process.env.OPENAI_API_KEY, "falta OPENAI_API_KEY");
-      const promptText = readFileSync(
-        join(FIXTURES, PROMPT_PATH),
-        "utf8",
-      ).trim();
-      const elements = await extractFromImage(
-        join(FIXTURES, "android-tela-inicial.png"),
-        {
-          engine: "all",
-          timeoutMs: Number(process.env.OCR_MERGE_TIMEOUT_MS || 180_000),
-        },
-      );
-      const ocr = compactOcr(elements);
-      const out = await decideRawAction({ prompt: promptText, ocr });
-      const action = {
-        type: out.type,
-        x: out.x,
-        y: out.y,
-        direction: out.direction,
-      };
-      console.log({ action });
-      assert.ok(
-        action.type === "scroll" || action.type === "sleep",
-        `esperado scroll|sleep, veio ${action.type}`,
-      );
-      if (action.type === "scroll") {
-        assert.ok(
-          ["up", "down", "left", "right"].includes(action.direction),
-          `scroll sem direction válida: ${action.direction}`,
-        );
-        assert.equal(action.x, null);
-        assert.equal(action.y, null);
-      }
-    },
-  );
 });

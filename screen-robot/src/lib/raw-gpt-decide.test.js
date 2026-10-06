@@ -31,21 +31,10 @@ async function runCase({ image, prompt, expected }) {
   assert.ok(ocr.length >= 1, "OCR vazio");
 
   const out = await decideRawAction({ prompt: promptText, ocr });
-  const action = {
-    type: out.type,
-    x: out.x,
-    y: out.y,
-    direction: out.direction,
-  };
+  const action = parseActionTypeXY(out.raw);
 
   console.log({ action });
   assert.deepEqual(action, expected);
-  assert.deepEqual(Object.keys(parseActionTypeXY(out.raw)).sort(), [
-    "direction",
-    "type",
-    "x",
-    "y",
-  ]);
 }
 
 describe("raw-gpt-decide", () => {
@@ -56,9 +45,8 @@ describe("raw-gpt-decide", () => {
       await runCase({
         image: "linkedin-people-comprador-connect.png",
         prompt: PROMPT_PATH,
-        expected: { type: "tap", x: 455, y: 344, direction: null },
+        expected: { type: "tap", x: 455, y: 344 },
       });
     },
   );
-
 });

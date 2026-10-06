@@ -57,4 +57,5 @@ console.log({ imagePath, engine, hits: elements.length, ocr });
 
 const out = await decideRawAction({ prompt, ocr, apiKey, model });
 console.log(out.payload);
-process.stdout.write(JSON.stringify({ type: out.type, x: out.x, y: out.y }));
+const { raw, payload, ...action } = out;
+process.stdout.write(JSON.stringify(action));

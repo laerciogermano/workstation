@@ -212,6 +212,7 @@ npm run agent -- --prompt ../roteiros/abrir-settings.md --history-steps 16
 npm run agent -- --prompt ../roteiros/jornada-completa.md --history-steps 0  # sem histórico no prompt
 npm run agent -- --provider openai --model gpt-4o-mini --prompt ../roteiros/abrir-settings.md
 npm run agent -- --provider openai --model gpt-4o-mini --no-prompt --prompt ../roteiros/jornada-calendar-hoje.md
+npm run agent -- --provider openai --model gpt-4o-mini --no-prompt --max-steps 80 --prompt ../roteiros/jornada-linkedin-compradores-campinas.md
 npm run agent -- --prompt "abra o LinkedIn e mostre as últimas 10 conexões"
 npm run agent -- --prompt ../roteiros/jornada-completa.md --all-models
 npm run agent -- --prompt ../roteiros/jornada-completa.md --no-prompt   # sem menu (env/default)
@@ -224,6 +225,8 @@ npm run agent:smoke              # 1–2 passos no device; sem key = heurística
 **Setup CLI (modelos):** em TTY, sem `--model` / `--no-prompt`, o agent lista o catálogo ([`lib/agent-models.js`](lib/agent-models.js)) e pede a escolha (`1`, `1,3`, `a`=todos, ou id). Vários modelos → roda em sequência, log em `logs/agent/<model>/`. Rollback: `--model <id>` ou `--no-prompt`.
 
 **Antes → depois (Calendar hoje):** prompt solto fazia gpt-4o-mini tap em "Nothing planned. Tap to create." / "+" e criar evento. Roteiro: [`roteiros/jornada-calendar-hoje.md`](../roteiros/jornada-calendar-hoje.md) (só leitura; done no vazio ou na lista). Rollback: `--prompt "abra o calendar…"`.
+
+**Antes → depois (LinkedIn compradores Campinas / gpt-4o-mini):** `jornada-completa.md` / `jornada-comprador.md` longos faziam tap em Recent "comprador", KEYCODE_ENTER, scroll right em People/Posts (não acha Location) e `done` no 1º Skip. Roteiro curto: [`roteiros/jornada-linkedin-compradores-campinas.md`](../roteiros/jornada-linkedin-compradores-campinas.md) — type "comprador", Location nos chips 1st/2nd/3rd+, loop Connect+Skip até `limite_convites` / `fim_lista`. Rollback: `--prompt ../roteiros/jornada-comprador.md`. Default `--max-steps 40` corta o loop; usar `--max-steps 80`.
 
 **Antes → depois (id Gemini 3 Flash):** catálogo usava `gemini-3-flash` (HTTP 404 na API) → `gemini-3-flash-preview`. Rollback: só se a API voltar a expor `gemini-3-flash`.
 
@@ -292,7 +295,9 @@ npm run usage:report
 # abre usage/dashboard.html no browser
 ```
 
-Gera [`usage/dashboard.html`](usage/dashboard.html) a partir de **todos** os `usage/*.json`: insights (modelo dominante, taxa de falha, 503/429, OCR, latência, custo est., **historyCount vs prompt tokens**), cards, gráficos (requests/tokens por modelo, erros, ações, engine, dia, provider, latência) + tokens por request / **histórico no prompt** / acumulado / chars + tabela (`hist` = enviados/janela). Filtro: Todos ou por `run`. Regenerar: `npm run usage:report`.
+Gera [`usage/dashboard.html`](usage/dashboard.html) a partir de **todos** os `usage/*.json`: insights (modelo dominante, taxa de falha, 503/429, OCR, latência, **custo pago por modelo até agora + ritmo/30d**, historyCount vs prompt tokens), cards, gráficos (requests/tokens/custo por modelo, erros, ações, engine, dia, provider, latência) + tokens por request / **histórico no prompt** / acumulado / chars + tabelas (`hist` = enviados/janela; custo in/out oficial). Filtro: Todos ou por `run`. Regenerar: `npm run usage:report`.
+
+**Antes → depois (preços):** tabela interna usava Flash-Lite 0,10/0,40 e 3.8 Flash 0,30/2,50 (errado). Agora paid tier oficial 2026-10-06 (3.5 Flash-Lite 0,30/2,50 · 3.8/3.7/3.6 0,75/3,75 intro · 3.5 Flash 1,50/9,00 · gpt-4o-mini 0,15/0,60). Out Gemini soma `thoughts`. Dashboard: tabela + gráfico US$ por modelo + ritmo 30d = gasto ÷ dias com usage × 30. Free tier na prática = US$ 0. Rollback: taxas antigas e um único card “Custo est.”.
 
 **Antes → depois (historyCount no usage/dashboard):** o JSON não gravava quantos passos de histórico foram ao modelo; o HTML não correlacionava com tokens. Agora `usage/*.json` tem `historyCount`/`historySteps`; o relatório mostra card, insight (média de prompt tokens em hist 0 vs máx), gráficos (tokens vs count; média por count) e coluna `hist`. Arquivos antigos: parse de `Histórico recente (últimos N/M)` no prompt. Rollback: omitir os dois campos no writer e os charts `histTok`/`histAvg`.
 

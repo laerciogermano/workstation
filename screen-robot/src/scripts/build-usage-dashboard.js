@@ -223,6 +223,28 @@ const html = `<!DOCTYPE html>
   <div class="chart-wrap"><canvas id="cDays"></canvas></div>
   <div class="chart-wrap"><canvas id="cLatency"></canvas></div>
   <div class="chart-wrap"><canvas id="cProvider"></canvas></div>
+  <div class="chart-wrap"><canvas id="cCost"></canvas></div>
+</div>
+
+<p class="meta" id="priceNote"></p>
+<div class="table-wrap" style="margin-bottom:16px">
+<table>
+  <thead>
+    <tr>
+      <th>modelo</th>
+      <th>in / 1M</th>
+      <th>out / 1M</th>
+      <th>req</th>
+      <th>prompt tok</th>
+      <th>out+think</th>
+      <th>US$ até agora</th>
+      <th>% gasto</th>
+      <th>US$ / req</th>
+      <th>ritmo / 30d</th>
+    </tr>
+  </thead>
+  <tbody id="costBody"></tbody>
+</table>
 </div>
 
 <div class="chart-wrap"><canvas id="bars"></canvas></div>
@@ -258,19 +280,21 @@ const html = `<!DOCTYPE html>
 const DATA = ${JSON.stringify({ rows, byRun })};
 const ALL = "__all__";
 const PALETTE = ["#5b8def","#3dd68c","#f5a524","#f07178","#8b7cf6","#22d3ee","#fb7185","#a3e635","#fbbf24","#64748b","#2dd4bf"];
+/** Paid tier US$ / 1M tokens — Gemini 2026-10-06 (ai.google.dev/gemini-api/docs/pricing) · OpenAI developers.openai.com/api/docs */
 const USD_PER_M = {
   "gpt-4o-mini": { in: 0.15, out: 0.60 },
   "gpt-4.1-mini": { in: 0.40, out: 1.60 },
   "gpt-5": { in: 1.25, out: 10 },
-  "gemini-3.5-flash-lite": { in: 0.10, out: 0.40 },
-  "gemini-3.1-flash-lite": { in: 0.10, out: 0.40 },
-  "gemini-3.5-flash": { in: 0.30, out: 2.50 },
-  "gemini-3.6-flash": { in: 0.30, out: 2.50 },
-  "gemini-3.7-flash": { in: 0.30, out: 2.50 },
-  "gemini-3.8-flash": { in: 0.30, out: 2.50 },
-  "gemini-3-flash": { in: 0.30, out: 2.50 },
-  "gemini-3-flash-preview": { in: 0.30, out: 2.50 },
+  "gemini-3.5-flash-lite": { in: 0.30, out: 2.50 },
+  "gemini-3.1-flash-lite": { in: 0.25, out: 1.50 },
+  "gemini-3.5-flash": { in: 1.50, out: 9.00 },
+  "gemini-3.6-flash": { in: 0.75, out: 3.75 },
+  "gemini-3.7-flash": { in: 0.75, out: 3.75 },
+  "gemini-3.8-flash": { in: 0.75, out: 3.75 },
+  "gemini-3-flash": { in: 0.50, out: 3.00 },
+  "gemini-3-flash-preview": { in: 0.50, out: 3.00 },
 };
+const PRICE_NOTE = "Custo = paid tier oficial (não free). Out Gemini inclui thinking. 3.6/3.7/3.8 Flash = preço introdutório até 31/12/2026 (depois in 1.50 / out 7.50). Fontes: Gemini API pricing · OpenAI API pricing. Consulta 2026-10-06.";
 
 const runs = Object.keys(DATA.byRun).sort();
 const sel = document.getElementById("run");
@@ -289,7 +313,18 @@ for (const r of runs) {
 sel.value = ALL;
 
 function fmt(n) { return Number(n).toLocaleString("pt-BR"); }
-function usd(n) { return "US$ " + Number(n).toFixed(2); }
+function usd(n) {
+  const v = Number(n) || 0;
+  if (v === 0) return "US$ 0";
+  if (Math.abs(v) < 0.01) return "US$ " + v.toFixed(4);
+  return "US$ " + v.toFixed(2);
+}
+function outTokens(r) { return (r.candidates || 0) + (r.thoughts || 0); }
+function rowUsd(r) {
+  const p = USD_PER_M[r.model];
+  if (!p) return 0;
+  return (r.prompt / 1e6) * p.in + (outTokens(r) / 1e6) * p.out;
+}
 
 function countBy(list, key) {
   const m = {};
@@ -310,13 +345,25 @@ function sumBy(list, key, field) {
 }
 
 function estimateUsd(list) {
-  let v = 0;
+  return list.reduce((s, r) => s + rowUsd(r), 0);
+}
+
+function costByModel(list) {
+  const m = {};
   for (const r of list) {
-    const p = USD_PER_M[r.model];
-    if (!p) continue;
-    v += (r.prompt / 1e6) * p.in + (r.candidates / 1e6) * p.out;
+    const k = r.model || "—";
+    (m[k] ??= { model: k, n: 0, prompt: 0, out: 0, usd: 0 });
+    m[k].n += 1;
+    m[k].prompt += r.prompt || 0;
+    m[k].out += outTokens(r);
+    m[k].usd += rowUsd(r);
   }
-  return v;
+  return Object.values(m).sort((a, b) => b.usd - a.usd);
+}
+
+function spanDays(list) {
+  const days = [...new Set(list.map((r) => r.day).filter(Boolean))];
+  return Math.max(days.length, 1);
 }
 
 function selectedList() {
@@ -381,7 +428,10 @@ function insights(list) {
     avgMs ? "Latência média da API: " + fmt(avgMs) + " ms." : null,
     slow && "Modelo mais lento (média): " + slow[0] + " (" + fmt(slow[1]) + " ms).",
     done ? "done nesta janela: " + done + "." : "Nenhum done neste filtro.",
-    "Custo estimado (tabela pública aproximada): " + usd(estimateUsd(list)) + ".",
+    "Custo pago estimado até agora: " + usd(estimateUsd(list)) + " (" + spanDays(list) + " dia(s) com usage → ritmo ~" + usd(estimateUsd(list) / spanDays(list) * 30) + "/30d).",
+    ...costByModel(list).filter((x) => x.usd > 0).slice(0, 6).map((x) =>
+      x.model + ": " + usd(x.usd) + " (" + fmt(x.n) + " req)."
+    ),
   ];
   return out.filter(Boolean);
 }
@@ -468,8 +518,21 @@ function render() {
     <div class="card"><span>Total tokens</span><b>\${fmt(tTot)}</b></div>
     <div class="card"><span>Hist. no prompt</span><b>\${fmt(maxH)} / \${fmt(maxWin)}</b></div>
     <div class="card"><span>Latência média</span><b>\${fmt(avgMs)} ms</b></div>
-    <div class="card"><span>Custo est.</span><b>\${usd(estimateUsd(list))}</b></div>
+    <div class="card"><span>Custo até agora</span><b>\${usd(estimateUsd(list))}</b></div>
+    <div class="card"><span>Ritmo / 30d</span><b>\${usd(estimateUsd(list) / spanDays(list) * 30)}</b></div>
   \`;
+
+  document.getElementById("priceNote").textContent = PRICE_NOTE;
+  const costs = costByModel(list);
+  const totUsd = estimateUsd(list);
+  const days = spanDays(list);
+  document.getElementById("costBody").innerHTML = costs.map((x) => {
+    const rate = USD_PER_M[x.model];
+    const pct = totUsd > 0 ? (100 * x.usd / totUsd).toFixed(1) + "%" : "—";
+    const per = x.n ? usd(x.usd / x.n) : "—";
+    const month = usd(x.usd / days * 30);
+    return "<tr><td>" + x.model + "</td><td>" + (rate ? usd(rate.in) : "—") + "</td><td>" + (rate ? usd(rate.out) : "—") + "</td><td>" + fmt(x.n) + "</td><td>" + fmt(x.prompt) + "</td><td>" + fmt(x.out) + "</td><td>" + usd(x.usd) + "</td><td>" + pct + "</td><td>" + per + "</td><td>" + month + "</td></tr>";
+  }).join("");
 
   kill();
   charts.cModelsReq = doughnut("cModelsReq", "Requests por modelo", countBy(list, "model"));
@@ -494,6 +557,9 @@ function render() {
   for (const [k, v] of Object.entries(lat)) latAvg[k] = Math.round(v.s / v.n);
   charts.cLatency = barH("cLatency", "Latência média da API por modelo (ms)", latAvg, "ms");
   charts.cProvider = doughnut("cProvider", "Requests por provider", countBy(list, "provider"));
+  const costMap = {};
+  for (const x of costs) costMap[x.model] = Number(x.usd.toFixed(6));
+  charts.cCost = barH("cCost", "US$ gasto até agora por modelo (paid tier)", costMap, "US$");
 
   const labels = list.map((r, i) =>
     sel.value === ALL ? String(i + 1) : "s" + r.step

@@ -245,6 +245,8 @@ npm run agent:smoke              # 1–2 passos no device; sem key = heurística
 
 **Antes → depois (gpt-5-mini):** catálogo só tinha `gpt-4o-mini` no OpenAI → também `gpt-5-mini`. Cliente omite `temperature` em `gpt-5*` (API rejeita 0). Rollback: remover o item do catálogo; voltar `temperature: 0` em todo request.
 
+**Antes → depois (ordem `a`/todos):** catálogo terminava em `gpt-5-mini` → `gpt-4o-mini` é o **último** (roda por último em `--all-models` / escolha `a`). Rollback: trocar a ordem dos dois no `AGENT_MODELS`.
+
 **Antes → depois (Calendar hoje):** prompt solto fazia gpt-4o-mini tap em "Nothing planned. Tap to create." / "+" e criar evento. Roteiro: [`roteiros/jornada-calendar-hoje.md`](../roteiros/jornada-calendar-hoje.md) (só leitura; done no vazio ou na lista). Rollback: `--prompt "abra o calendar…"`.
 
 **Antes → depois (LinkedIn Campinas / gpt-4o-mini):** `engine=all` misturava overlay de setup; histórico 12 fazia o mini repetir taps. Roteiro IF-OCR: [`roteiros/jornada-linkedin-campinas.md`](../roteiros/jornada-linkedin-campinas.md) + `--engine rapidocr --history-steps 1`. Rollback: `--engine all --history-steps 12` e [`roteiros/jornada-comprador.md`](../roteiros/jornada-comprador.md).

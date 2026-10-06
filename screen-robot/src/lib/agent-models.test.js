@@ -22,6 +22,7 @@ describe("agent-models", () => {
     assert.equal(multi[1].id, AGENT_MODELS[2].id);
     assert.equal(parseModelSelection("a").length, AGENT_MODELS.length);
     assert.equal(parseModelSelection("all").length, AGENT_MODELS.length);
+    assert.equal(parseModelSelection("a").at(-1).id, "gpt-4o-mini");
   });
 
   it("parseModelSelection: id direto", () => {

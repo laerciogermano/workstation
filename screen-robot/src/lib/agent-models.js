@@ -65,14 +65,14 @@ export const AGENT_MODELS = [
     label: "Gemini 3.8 Flash (aprovado POC)",
   },
   {
-    id: "gpt-4o-mini",
-    provider: "openai",
-    label: "OpenAI GPT-4o mini",
-  },
-  {
     id: "gpt-5-mini",
     provider: "openai",
     label: "OpenAI GPT-5 mini",
+  },
+  {
+    id: "gpt-4o-mini",
+    provider: "openai",
+    label: "OpenAI GPT-4o mini",
   },
 ];
 

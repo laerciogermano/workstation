@@ -239,12 +239,12 @@ npm run agent -- --vision --provider openai --model gpt-4o-mini --prompt ../rote
 npm run agent:smoke              # 1–2 passos no device; sem key = heurística Connect/scroll
 npm run raw-gpt                  # extractFromImage → system agente + jornada/OCR → { type, x, y }
 npm run raw-gpt -- --image test/fixtures/linkedin-people-comprador-connect.png
-# Prompt do teste: test/fixtures/raw-gpt-decide.prompt.txt (lido pelo raw-gpt-decide.test.js → PROMPT).
-# Imagem: linkedin-people-comprador-connect.png. Home AVD: android-tela-inicial.png (fora deste assert).
-# Lógica: lib/raw-gpt-decide.js. Teste (OpenAI real, sem mock; precisa OPENAI_API_KEY):
+# Testes (1 por tela; OpenAI real; OPENAI_API_KEY):
 #   node --test lib/raw-gpt-decide.test.js
-# → espera action { type: tap, x: 455, y: 344 }.
-# Antes: PROMPT inline. Rollback: const PROMPT = "…" no .test.js; remover .prompt.txt.
+# Pares fixture: PNG + .prompt.txt em test/fixtures/
+#   linkedin-people-comprador-connect → tap (455,344)
+#   android-tela-inicial → tap (272,118)
+# Antes: um só caso + raw-gpt-decide.prompt.txt. Rollback: um it + prompt único.
 ```
 
 **Setup CLI (modelos):** em TTY, sem `--model` / `--force-model` / `--no-prompt`, o agent lista o catálogo ([`lib/agent-models.js`](lib/agent-models.js)) e pede a escolha (`1`, `1,3`, `a`=todos, ou id). Vários modelos → roda em sequência, log em `logs/agent/<model>/`. Rollback: `--model <id>` ou `--no-prompt`.

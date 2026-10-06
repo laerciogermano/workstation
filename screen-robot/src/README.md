@@ -258,6 +258,8 @@ Stdout: `[agent]` / `[decide]` / `[gemini]` ou `[openai]`. Provider default `gem
 
 **Antes → depois (sem espera):** `AGENT_RECOVER_MS` 1500 / `stepDelayMs` 600 / loading 800ms / request timeout 30s → defaults **0** (retry na hora; request sem abort). Rollback: `export AGENT_RECOVER_MS=1500 AGENT_STEP_DELAY_MS=600 GEMINI_TIMEOUT_MS=30000`.
 
+**Antes → depois (recover device offline):** extract falhava (`device not found`) e reentrava em 0ms até `maxSteps`. Default `AGENT_RECOVER_MS=2000`. Rollback: `export AGENT_RECOVER_MS=0`.
+
 ```js
 import { decide } from "./lib/agent-decide.js";
 import { runAgent } from "./lib/agent-run.js";

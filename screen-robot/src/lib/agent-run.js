@@ -407,8 +407,8 @@ export async function runAgent(cfg, deps = {}) {
   process.once("SIGINT", () => onSignal("SIGINT"));
   process.once("SIGTERM", () => onSignal("SIGTERM"));
 
-  // 0 = tenta de novo na hora (sem espera entre falhas / passos)
-  const recoverMs = Number(cfg.recoverDelayMs ?? process.env.AGENT_RECOVER_MS ?? 0);
+  // recover entre falhas (device offline / extract). Default 2s. 0 = imediato (testes).
+  const recoverMs = Number(cfg.recoverDelayMs ?? process.env.AGENT_RECOVER_MS ?? 2000);
   const stepDelayMs = Number(cfg.stepDelayMs ?? process.env.AGENT_STEP_DELAY_MS ?? 0);
 
   for (let i = 1; i <= maxSteps; i++) {

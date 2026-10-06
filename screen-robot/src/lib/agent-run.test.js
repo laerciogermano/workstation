@@ -210,6 +210,38 @@ describe("agent-run (SC-32)", () => {
     }
   });
 
+  it("runAgent espera recoverMs após extract falhar", async () => {
+    const logDir = mkdtempSync(join(tmpdir(), "sr-agent-"));
+    const usageDir = mkdtempSync(join(tmpdir(), "sr-usage-"));
+    const waits = [];
+    try {
+      const result = await runAgent(
+        {
+          serial: "emulator-5554",
+          prompt: "x",
+          maxSteps: 2,
+          logDir,
+          usageDir,
+          stepDelayMs: 0,
+          recoverDelayMs: 2000,
+        },
+        {
+          sleep: async (ms) => waits.push(ms),
+          extract: async () => {
+            const err = new Error("device 'emulator-5554' not found");
+            err.code = "EXTRACT_FRAME_FAILED";
+            throw err;
+          },
+        },
+      );
+      assert.equal(result.status, "max_steps");
+      assert.equal(waits.filter((ms) => ms === 2000).length, 2);
+    } finally {
+      rmSync(logDir, { recursive: true, force: true });
+      rmSync(usageDir, { recursive: true, force: true });
+    }
+  });
+
   it("runAgent sense=vision: captura+compress → decide (sem extract)", async () => {
     const logDir = mkdtempSync(join(tmpdir(), "sr-agent-"));
     const usageDir = mkdtempSync(join(tmpdir(), "sr-usage-"));

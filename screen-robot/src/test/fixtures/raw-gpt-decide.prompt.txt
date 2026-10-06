@@ -14,6 +14,6 @@ fail só se impossível após retentativa; histórico de fail NÃO impede tap.
 8. digite campinas — type "Campinas" (teclado/campo já aberto; NÃO retap "Add a location").
 9. clique na primeira opção Campinas — tap a 1ª LINHA da lista de sugestões (ex. "Campinas, São Paulo, Brazil" / "Campinas,SaoPaulo,Brazil"). PROIBIDO tap no campo do topo (text só "Campinas") e PROIBIDO tap em teclado/sugestão Gboard.
 10. clique em Show results — tap "Show results".
-11. Connect — tap o PRIMEIRO hit com text EXATO "Connect" na lista OCR (o primeiro "Connect" que aparecer no JSON = perfil mais acima). Se houver vários, ignore o 2º e os seguintes. PROIBIDO tap em "Pending". Sem "Connect" → vá ao passo 12.
+11. Connect — OBRIGATÓRIO: tap só o PRIMEIRO text EXATO "Connect" do OCR (aparece primeiro no JSON / perfil mais acima da lista People). Se houver 2+ "Connect", use exclusivamente esse primeiro e IGNORE todos os outros. PROIBIDO tap no 2º/3º Connect, em "Pending", em "Message" ou em "+ Connect" se existir hit separado só "Connect" acima. Sem "Connect" → vá ao passo 12.
 12. Sem Connect → scroll down; repita desde o 11.
 13. Clicar no botao skip apos conectar — tap text EXATO "Skip" (sheet "Add a note"); PROIBIDO tap em "Connect"/"Add a note" se "Skip" estiver no OCR.

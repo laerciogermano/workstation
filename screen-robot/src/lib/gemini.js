@@ -10,8 +10,6 @@ const DEFAULT_MODEL = "gemini-3.5-flash-lite";
 /** Só usado se `GEMINI_FALLBACK_MODELS` / opts.fallbackModels for passado. */
 const DEFAULT_FALLBACKS = [];
 const API_BASE = "https://generativelanguage.googleapis.com/v1beta";
-/** Retries por modelo em cada round (rede/503). */
-const DEFAULT_RETRIES = Number(process.env.GEMINI_RETRIES || 2);
 /** Timeout por request (env GEMINI_TIMEOUT_MS). 0 = sem abort (espera a API). */
 const DEFAULT_TIMEOUT_MS = Number(process.env.GEMINI_TIMEOUT_MS || 0);
 /** Rounds da cadeia até funcionar (saturado → tenta de novo sem espera). */
@@ -177,9 +175,6 @@ export async function generateContent(opts, deps = {}) {
     fail("GEMINI_NO_FETCH", "fetch indisponível (Node ≥ 18)");
   }
 
-  const retries = Number(
-    opts.retries ?? process.env.GEMINI_RETRIES ?? DEFAULT_RETRIES,
-  );
   const retryMs = Number(opts.retryMs ?? DEFAULT_RETRY_MS);
   const timeoutMs = Number(opts.timeoutMs ?? DEFAULT_TIMEOUT_MS);
   const chainRounds = Number(opts.chainRounds ?? DEFAULT_CHAIN_ROUNDS);
@@ -258,9 +253,8 @@ export async function generateContent(opts, deps = {}) {
         };
       }
 
-      for (let attempt = 1; attempt <= retries + 1; attempt++) {
         logFn(
-          `request model=${model} attempt=${attempt}/${retries + 1} ` +
+          `request model=${model} ` +
             `modelIdx=${mi + 1}/${models.length} round=${round} ` +
             `promptChars=${promptChars} systemChars=${systemChars}`,
         );
@@ -288,7 +282,7 @@ export async function generateContent(opts, deps = {}) {
           logFn(`network error: ${lastMsg}`);
           requests.push({
             model,
-            attempt,
+            attempt: 1,
             round,
             ok: false,
             error: lastMsg,
@@ -296,28 +290,10 @@ export async function generateContent(opts, deps = {}) {
             ...baseReqMeta(body),
             output: { error: lastMsg },
           });
-          if (isHighDemand(0, lastMsg) || /timeout/i.test(lastMsg)) {
-            if (mi < models.length - 1) {
-              logFn(`fallback → ${models[mi + 1]} (${lastMsg})`);
-              break;
-            }
+          if (mi < models.length - 1) {
+            logFn(`fallback → ${models[mi + 1]} (${lastMsg})`);
           }
-          if (attempt <= retries && isRetryable(0, lastMsg)) {
-            const wait = resolveRetryWaitMs({
-              baseMs: retryMs,
-              attempt,
-              message: lastMsg,
-              status: lastStatus,
-            });
-            if (wait > 0) {
-              logFn(`retry em ${wait}ms (rede)`);
-              await sleepFn(wait);
-            } else {
-              logFn(`retry imediato (rede)`);
-            }
-            continue;
-          }
-          break;
+          continue;
         }
         if (timer) clearTimeout(timer);
 
@@ -332,7 +308,7 @@ export async function generateContent(opts, deps = {}) {
           logFn(`HTTP ${res.status} em ${ms}ms: ${lastMsg}`);
           requests.push({
             model,
-            attempt,
+            attempt: 1,
             round,
             ok: false,
             status: res.status,
@@ -343,12 +319,7 @@ export async function generateContent(opts, deps = {}) {
             output: { raw, error: lastMsg },
           });
 
-          if (isModelUnavailable(res.status, lastMsg) && mi < models.length - 1) {
-            logFn(`fallback → ${models[mi + 1]} (modelo indisponível: ${model})`);
-            break;
-          }
-          // 404 permanente sem próximo modelo: não queima rounds
-          if (isModelUnavailable(res.status, lastMsg)) {
+          if (isModelUnavailable(res.status, lastMsg) && mi >= models.length - 1) {
             fail("GEMINI_REQUEST_FAILED", lastMsg, {
               status: res.status,
               models,
@@ -358,35 +329,8 @@ export async function generateContent(opts, deps = {}) {
           }
           if (mi < models.length - 1) {
             logFn(`fallback → ${models[mi + 1]} (HTTP ${res.status} em ${model})`);
-            break;
           }
-          if (isHighDemand(res.status, lastMsg)) {
-            if (attempt <= retries) {
-              logFn(`alta demanda 503 — retry imediato (${model})`);
-              continue;
-            }
-          }
-          if (attempt <= retries && isRetryable(res.status, lastMsg)) {
-            const wait = resolveRetryWaitMs({
-              baseMs: retryMs,
-              attempt,
-              message: lastMsg,
-              status: res.status,
-            });
-            if (wait > 0) {
-              logFn(`retry em ${wait}ms (${res.status})`);
-              await sleepFn(wait);
-            } else {
-              logFn(`retry imediato (${res.status})`);
-            }
-            continue;
-          }
-          if (isRetryable(res.status, lastMsg) && mi < models.length - 1) {
-            logFn(`fallback → ${models[mi + 1]}`);
-            break;
-          }
-          // último modelo do round: sai para próximo round
-          break;
+          continue;
         }
 
         const parts = raw?.candidates?.[0]?.content?.parts || [];
@@ -398,9 +342,10 @@ export async function generateContent(opts, deps = {}) {
           logFn(
             `empty response em ${ms}ms finishReason=${raw?.candidates?.[0]?.finishReason}`,
           );
+          lastMsg = "empty response";
           requests.push({
             model,
-            attempt,
+            attempt: 1,
             round,
             ok: false,
             error: "empty response",
@@ -411,7 +356,6 @@ export async function generateContent(opts, deps = {}) {
           });
           if (mi < models.length - 1) {
             logFn(`fallback → ${models[mi + 1]} (resposta vazia)`);
-            break;
           }
           continue;
         }
@@ -425,7 +369,7 @@ export async function generateContent(opts, deps = {}) {
         );
         requests.push({
           model,
-          attempt,
+          attempt: 1,
           round,
           ok: true,
           ms,
@@ -442,7 +386,6 @@ export async function generateContent(opts, deps = {}) {
           model,
           requests,
         };
-      }
     }
   }
 

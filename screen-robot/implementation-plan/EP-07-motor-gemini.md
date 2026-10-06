@@ -96,7 +96,7 @@ src/
 | `history` | | Passos anteriores (resumo curto) |
 | `model` | | Default `gemini-3.8-flash` |
 | `noFallback` | | `true` = só `model` (sem escada). CLI: `--force-model` / `--no-fallback`. Env: `AGENT_NO_FALLBACK=1` |
-| (cadeia) | | 1 falha no id → próximo da escada (`retries: 0`) |
+| (cadeia) | | 1 falha no id → próximo da escada; sem retry no mesmo modelo |
 | `apiKey` | | Default `process.env.GEMINI_API_KEY` |
 
 `acao.type`: `tap` | `scroll` | `type` | `key` | `sleep` | `done` | `fail`.

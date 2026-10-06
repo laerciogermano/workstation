@@ -112,40 +112,32 @@ describe("gemini", () => {
     assert.deepEqual(modelsHit, ["gemini-3.8-flash", "gemini-3.1-flash-lite"]);
   });
 
-  it("high demand retria o mesmo modelo se for o último da cadeia", async () => {
+  it("último da cadeia: 1 falha e para (sem retry no mesmo id)", async () => {
     const modelsHit = [];
-    let n = 0;
     const fetchStub = async (url) => {
       const m = decodeURIComponent(String(url).match(/models\/([^:]+)/)?.[1]);
       modelsHit.push(m);
-      n += 1;
-      if (n === 1) {
-        return {
-          ok: false,
-          status: 503,
-          json: async () => ({ error: { message: "high demand" } }),
-        };
-      }
       return {
-        ok: true,
-        json: async () => ({
-          candidates: [{ content: { parts: [{ text: '{"ok":true}' }] } }],
-        }),
+        ok: false,
+        status: 503,
+        json: async () => ({ error: { message: "high demand" } }),
       };
     };
-    const out = await generateContent(
-      {
-        prompt: "hi",
-        apiKey: "k",
-        model: "gemini-3.8-flash",
-        fallbackModels: [],
-        retries: 2,
-        chainRounds: 1,
-      },
-      { fetch: fetchStub, sleep: async () => {}, log: () => {} },
+    await assert.rejects(
+      () =>
+        generateContent(
+          {
+            prompt: "hi",
+            apiKey: "k",
+            model: "gemini-3.8-flash",
+            fallbackModels: [],
+            chainRounds: 1,
+          },
+          { fetch: fetchStub, sleep: async () => {}, log: () => {} },
+        ),
+      (e) => e.code === "GEMINI_REQUEST_FAILED",
     );
-    assert.equal(out.model, "gemini-3.8-flash");
-    assert.deepEqual(modelsHit, ["gemini-3.8-flash", "gemini-3.8-flash"]);
+    assert.deepEqual(modelsHit, ["gemini-3.8-flash"]);
   });
 
   it("isModelUnavailable detecta 404 / no longer available", () => {

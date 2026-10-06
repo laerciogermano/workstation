@@ -250,7 +250,7 @@ npm run agent:smoke              # 1–2 passos no device; sem key = heurística
 **Antes → depois (Gemini 2.5 Flash):** catálogo só 3.x + OpenAI → também `gemini-2.5-flash` (menu CLI / `--model` / escada de fallback). Rollback: remover o id de `AGENT_MODELS` / `FALLBACK_LADDER`.
 
 Stdout: `[agent]` / `[decide]` / `[gemini]` ou `[openai]`. Provider default `gemini`; `AGENT_PROVIDER=openai` ou modelo `gpt-*` usa OpenAI.
-Fallback default (`decide`): do modelo escolhido desce a escada `gemini-3.8-flash` → `3.7` → `3.6` → `3.5` → `3-flash-preview` → `2.5-flash` → `3.5-flash-lite` → `3.1-flash-lite` → `gpt-4o-mini`. **1 falha (503/404/…) → próximo id** (`retries: 0` no `decide`). Sem key do provider, pula. `AGENT_FALLBACK_MODELS=off` / `AGENT_NO_FALLBACK=1` / `--force-model` / `--no-fallback` desliga. Override CSV em `AGENT_FALLBACK_MODELS` / `decide({ fallbackModels })`.
+Fallback default (`decide`): do modelo escolhido desce a escada `gemini-3.8-flash` → `3.7` → `3.6` → `3.5` → `3-flash-preview` → `2.5-flash` → `3.5-flash-lite` → `3.1-flash-lite` → `gpt-4o-mini`. **1 falha (503/404/…) → próximo id; sem retry no mesmo modelo.** Sem key do provider, pula. `AGENT_FALLBACK_MODELS=off` / `AGENT_NO_FALLBACK=1` / `--force-model` / `--no-fallback` desliga. Override CSV em `AGENT_FALLBACK_MODELS` / `decide({ fallbackModels })`.
 
 **Antes → depois (cadeia até gpt-4o-mini):** Gemini único (ou `GEMINI_FALLBACK_MODELS` só Gemini) → escada até `gpt-4o-mini`. Rollback: `export AGENT_FALLBACK_MODELS=off`.
 
@@ -286,7 +286,7 @@ Fallback default (`decide`): do modelo escolhido desce a escada `gemini-3.8-flas
 
 **Antes → depois (retry 429 / TPM):** retry imediato (0ms) estourava rate limit (`try again in 728ms`). Agora piso **2000ms** (`OPENAI_RETRY_MS` / `GEMINI_RETRY_MS`) e, se a API informar `try again in …`, usa o maior entre esse valor e o piso. [`lib/retry-wait.js`](lib/retry-wait.js). Rollback: `export OPENAI_RETRY_MS=0 GEMINI_RETRY_MS=0 GEMINI_CHAIN_WAIT_MS=0` (429 ainda espera 2s).
 
-**Antes → depois (alta demanda 503):** 3 retries no mesmo modelo antes de descer a escada → **1 falha e próximo id**. Se o modelo for o último da cadeia Gemini, ainda retria. Rollback: `retries` default 2 no `decide` + 503 retry no mesmo id quando há fallback.
+**Antes → depois (alta demanda 503):** retries no mesmo id → **nunca retria o mesmo modelo**; 1 falha → próximo da escada (ou erro se for o último). Rollback: loop `attempt` + `GEMINI_RETRIES`.
 
 **Antes → depois (não morrer):** timeout/503/`fail` da API abortava a run → agora só registra e tenta o próximo passo até `done` ou `maxSteps`.
 

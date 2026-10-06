@@ -289,9 +289,9 @@ npm run usage:report
 # abre usage/dashboard.html no browser
 ```
 
-Gera [`usage/dashboard.html`](usage/dashboard.html) com **todos** os `usage/*.json` (inclusive falhas sem `usageMetadata`), cards, barras por request, acumulado e tabela. Filtro: Todos ou por `run`.
+Gera [`usage/dashboard.html`](usage/dashboard.html) a partir de **todos** os `usage/*.json`: insights (modelo dominante, taxa de falha, 503/429, OCR, latência, custo est.), cards, gráficos (requests/tokens por modelo, erros, ações, engine, dia, provider, latência) + tokens por request / acumulado / chars + tabela. Filtro: Todos ou por `run`. Regenerar: `npm run usage:report`.
 
-**Antes → depois:** usage só em JSON solto → relatório visual regenerável. Rollback: `rm usage/dashboard.html scripts/build-usage-dashboard.js` e remover script `usage:report` do `package.json`.
+**Antes → depois:** só tokens por request → relatório com insights + breakdown modelo/OCR/erro. Rollback: gerador anterior (3 charts + tabela).
 
 **Antes → depois (todos os arquivos):** o gerador filtrava `totalTokenCount > 0` e omitia requests com erro (ex. 503). Agora inclui 100% dos `.json` em `usage/`. Rollback: `.filter((r) => r.total > 0)`.
 

@@ -2,8 +2,7 @@
 /**
  * Extract (lib) num PNG LinkedIn → chat.completions cru (system = agente + JSON action).
  *
- *   npm run raw-gpt
- *   npm run raw-gpt -- --image test/fixtures/linkedin-people-comprador-connect.png
+ *   npm run raw-gpt -- --image test/fixtures/linkedin-people-comprador-connect.png --prompt "conecte no comprador"
  *   npm run raw-gpt -- --engine all --prompt "conecte no comprador"
  */
 import { existsSync } from "node:fs";
@@ -12,10 +11,7 @@ import { fileURLToPath } from "node:url";
 import { loadEnvFiles } from "../lib/load-env.js";
 import { compactOcr } from "../lib/agent-decide.js";
 import { extractFromImage } from "../lib/extract-engines.js";
-import {
-  DEFAULT_PROMPT,
-  decideRawAction,
-} from "../lib/raw-gpt-decide.js";
+import { decideRawAction } from "../lib/raw-gpt-decide.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const SRC_ROOT = resolve(__dirname, "..");
@@ -38,7 +34,11 @@ function argValue(flag) {
   return null;
 }
 
-const prompt = argValue("--prompt") || DEFAULT_PROMPT;
+const prompt = argValue("--prompt");
+if (!prompt) {
+  console.error("falta --prompt");
+  process.exit(1);
+}
 const imagePath = resolve(argValue("--image") || DEFAULT_IMAGE);
 const engine = argValue("--engine") || process.env.SCREEN_ROBOT_OCR || "all";
 const model = process.env.OPENAI_MODEL || "gpt-4o-mini";

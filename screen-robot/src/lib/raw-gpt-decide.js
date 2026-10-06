@@ -3,9 +3,6 @@
  * Retorno: { type, x, y, direction }.
  */
 
-export const DEFAULT_PROMPT =
-  "Na tela People do LinkedIn, encontre o comprador e toque em Connect.";
-
 export const SYSTEM_PROMPT = `Você é uma IA agente autônoma que controla um smartphone Android.
 Você recebe: (1) a jornada/objetivo e (2) o OCR da tela atual (lista extract: type, text, x, y).
 Decida UMA próxima ação e responda APENAS um JSON válido (sem markdown, sem texto fora do JSON).
@@ -108,7 +105,12 @@ export async function decideRawAction(opts) {
     err.code = "OPENAI_NO_API_KEY";
     throw err;
   }
-  const prompt = opts.prompt ?? DEFAULT_PROMPT;
+  const prompt = opts.prompt;
+  if (!prompt) {
+    const err = new Error("falta prompt");
+    err.code = "RAW_GPT_NO_PROMPT";
+    throw err;
+  }
   const model = opts.model || process.env.OPENAI_MODEL || "gpt-4o-mini";
 
   const payload = {

@@ -29,6 +29,7 @@
     "usage:report": "node scripts/build-usage-dashboard.js",
     "agent": "node scripts/run-agent.js",
     "agent:smoke": "node scripts/smoke-agent.js",
+    "raw-gpt": "node scripts/raw-gpt.js",
     "view": "bash scripts/view.sh",
     "test": "node --test 'lib/**/*.test.js'",
     "test:unit": "node --test 'lib/**/*.test.js'",

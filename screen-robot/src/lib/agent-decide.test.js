@@ -7,6 +7,8 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, it } from "node:test";
 import {
+  buildSystemPrompt,
+  buildSystemPromptVision,
   buildUserPrompt,
   buildUserPromptVision,
   compactOcr,
@@ -30,6 +32,15 @@ describe("agent-decide (SC-31)", () => {
   it("compactOcr mantém text,x,y", () => {
     const ocr = compactOcr([{ type: "text", text: "Connect", x: 1, y: 2 }]);
     assert.deepEqual(ocr, [{ text: "Connect", x: 1, y: 2 }]);
+  });
+
+  it("system prompt OCR/vision não cita apps nem jornadas", () => {
+    const ocr = buildSystemPrompt();
+    const vision = buildSystemPromptVision({ width: 540, height: 960 });
+    const banned =
+      /\b(linkedin|instagram|tinder|campinas|connect|settings|calendar|gmail|chrome|comprador|nexus|sdk_gphone)\b/i;
+    assert.equal(banned.test(ocr), false, ocr.match(banned)?.[0]);
+    assert.equal(banned.test(vision), false, vision.match(banned)?.[0]);
   });
 
   it("parseActionPayload valida tap", () => {

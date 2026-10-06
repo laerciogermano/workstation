@@ -300,7 +300,7 @@ npm run usage:report
 
 Gera [`usage/dashboard.html`](usage/dashboard.html) a partir de **todos** os `usage/*.json`: insights (modelo dominante, taxa de falha, 503/429, OCR, latência, **custo US$+R$ por modelo até agora + ritmo/30d**, historyCount vs prompt tokens), cards, gráficos (requests/tokens/custo por modelo, erros, ações, engine, dia, provider, latência) + tokens por request / **histórico no prompt** / acumulado / chars + tabelas. Filtro: Todos ou por `run`. Regenerar: `npm run usage:report`.
 
-**Antes → depois (preços):** tabela interna usava Flash-Lite 0,10/0,40 e 3.8 Flash 0,30/2,50. Agora paid tier oficial 2026-10-06 + **R$ (US$ 1 = R$ 5,50)** + linha **Total**. Out Gemini soma `thoughts`. Ritmo 30d = gasto ÷ dias × 30. Free tier = US$ 0. Rollback: só US$ / taxas antigas / sem Total.
+**Antes → depois (preços):** tabela interna usava Flash-Lite 0,10/0,40 e 3.8 Flash 0,30/2,50. Agora paid tier oficial 2026-10-06 + **R$ (US$ 1 = R$ 5,50)**. Out Gemini soma `thoughts`. Ritmo 30d = gasto ÷ dias × 30. Free tier = US$ 0. Rollback: só US$ / taxas antigas.
 
 **Antes → depois (historyCount no usage/dashboard):** o JSON não gravava quantos passos de histórico foram ao modelo; o HTML não correlacionava com tokens. Agora `usage/*.json` tem `historyCount`/`historySteps`; o relatório mostra card, insight (média de prompt tokens em hist 0 vs máx), gráficos (tokens vs count; média por count) e coluna `hist`. Arquivos antigos: parse de `Histórico recente (últimos N/M)` no prompt. Rollback: omitir os dois campos no writer e os charts `histTok`/`histAvg`.
 

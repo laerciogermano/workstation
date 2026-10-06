@@ -126,7 +126,7 @@ export function parseActionPayload(raw) {
   };
 }
 
-function buildSystemPrompt() {
+export function buildSystemPrompt() {
   return `Você opera um smartphone Android olhando só a lista OCR da tela (textos + coordenadas x,y na escala do device).
 
 Responda APENAS JSON válido (sem markdown) no formato:
@@ -145,24 +145,19 @@ Responda APENAS JSON válido (sem markdown) no formato:
   }
 }
 
-Regras:
-- Coords de tap = mesma escala do OCR (device). Não invente scale.
-- tap: use x,y de um item OCR existente (centro do texto alvo).
-- scroll: direction down|up|left|right quando o próximo alvo não está visível.
+Regras (só SO/launcher e o contrato de ação; nomes de app, botões e done vêm do roteiro do usuário):
+- Coords de tap = mesma escala do OCR (device). Não invente scale. Tap só em x,y de um item OCR existente; NUNCA 0,0.
+- scroll: direction down|up|left|right quando o próximo alvo do roteiro não está visível.
 - Se o histórico mostrar vários scrolls com o mesmo OCR (tela não mudou), NÃO scroll de novo: mude de estratégia (tap em outro elemento, type, key BACK).
-- Home / Settings (AVD Nexus Launcher):
-  - OCR com "Notifications" / "Clear all" / "AndroidSetup" = shade aberto → key KEYCODE_BACK ou KEYCODE_HOME (NÃO scroll).
-  - Tela inicial (só hora/data, sem apps) → scroll direction=down abre a gaveta. scroll up reabre o shade — evite.
-  - EXCEÇÃO: se o histórico recente tem tap com y<120 (Search/campo), OCR só com hora NÃO é home — é teclado cobrindo o app. PROIBIDO scroll (swipe digita lixo no campo, ex. "ty"). Faça type do texto do roteiro ou KEYCODE_BACK.
-  - Texto "Settings" no OCR → tap nessas coords. done só com Settings aberto (Search settings / Network / Apps / Battery).
-- Filtro de localização LinkedIn: se OCR tiver "Add a location" / "Add alocation" e a cidade alvo do roteiro (ex. Campinas) NÃO estiver na lista, faça tap em Add a location e depois type da cidade — NÃO fique só scrollando a lista.
-- Connect: só tap se text exato "Connect" e tipicamente 180 < y < 850. Se o histórico já tem tap nas mesmas coords e a tela não mudou, scroll ou outro Connect — não repita o mesmo tap.
-- type: digite text de uma vez (campo acao.text obrigatório). Se o histórico mostrar erro de tecla OCR, espere (sleep) e tente type de novo, ou key KEYCODE_BACK e reabra o campo.
-- key: code tipo KEYCODE_BACK / KEYCODE_HOME.
-- sleep: ms quando a tela parece carregando.
-- done: objetivo cumprido.
-- fail: impossível continuar (motivo claro).
-- Não peça screenshot; decida só com o OCR e o prompt.`;
+- Painel de notificações / overlay de setup do sistema (ex. Notifications, Clear all, AndroidSetup) SEM UI do app (abas, busca, conteúdo do roteiro) → KEYCODE_BACK. NÃO scroll.
+- UI do app visível (barra de abas, campo de busca, textos do roteiro) → o app está aberto. Ignore tokens de overlay de sistema misturados. PROIBIDO KEYCODE_HOME.
+- Tela de carregamento (logo / poucos tokens, sem lista de apps) → sleep. PROIBIDO scroll (abre a gaveta por cima) e HOME.
+- Launcher: OCR só hora/data, sem nomes de apps e sem UI do app, e o histórico NÃO tem tap recente em campo no topo (y baixo) → scroll down abre a gaveta. scroll up reabre o shade — evite.
+- Histórico com tap em y baixo (campo no topo) + OCR só hora/data = teclado cobrindo o app, NÃO é launcher. PROIBIDO scroll (swipe injeta lixo no campo). type do texto do roteiro ou KEYCODE_BACK 1× — sem loop de BACK.
+- Alvos, filtros e CTAs: só o que o roteiro pedir e que existir no OCR. Sem o texto no OCR → scroll ou sleep; não chute coords. Não repita tap nas mesmas coords se a tela não mudou.
+- type: digite text de uma vez (campo acao.text obrigatório). Se o histórico mostrar erro de tecla OCR, sleep e tente type de novo, ou KEYCODE_BACK e reabra o campo.
+- key: KEYCODE_BACK / KEYCODE_HOME. sleep: ms se loading. done / fail conforme o roteiro.
+- Não peça screenshot; decida só com o OCR e o prompt do usuário.`;
 }
 
 /**
@@ -190,13 +185,15 @@ Responda APENAS JSON válido (sem markdown) no formato:
   }
 }
 
-Regras:
-- Coords de tap/elementos = escala DESTA imagem (${w}×${h}). Centro do alvo. Não invente scale nem peça outra screenshot.
-- scroll: direction down|up|left|right quando o alvo não está visível.
+Regras (só SO/launcher e o contrato de ação; nomes de app, botões e done vêm do roteiro do usuário):
+- Coords de tap/elementos = escala DESTA imagem (${w}×${h}). Centro do alvo. Não invente scale nem peça outra screenshot. NUNCA tap 0,0.
+- scroll: direction down|up|left|right quando o alvo do roteiro não está visível.
 - Se vários scrolls e a tela parece igual, mude de estratégia (outro tap, type, KEYCODE_BACK).
-- Home / shade: Notifications/Clear all → KEYCODE_BACK ou HOME. Gaveta de apps → scroll down. Após tap Search (y pequeno no topo) + teclado: PROIBIDO scroll — type do roteiro ou BACK.
-- LinkedIn Connect: tap no pill Connect visível. Filtro localização: Add a location + type cidade se necessário.
-- type: acao.text obrigatório. key: KEYCODE_BACK/HOME. sleep: ms se loading. done / fail conforme objetivo.
+- Painel de notificações / overlay de setup SEM UI do app → KEYCODE_BACK (não scroll). UI do app visível → não HOME.
+- Carregamento (logo / tela quase vazia) → sleep; não scroll nem HOME.
+- Launcher (só hora/data, sem apps) → scroll down (gaveta). Após tap em campo no topo + teclado: PROIBIDO scroll — type do roteiro ou BACK 1×.
+- Alvos só os do roteiro, visíveis. Sem o alvo → scroll/sleep; não chute coords.
+- type: acao.text obrigatório. key: KEYCODE_BACK/HOME. sleep: ms se loading. done / fail conforme o roteiro.
 - Histórico traz ações já executadas (coords já em device); use só como contexto.`;
 }
 

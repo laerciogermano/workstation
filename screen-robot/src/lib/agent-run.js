@@ -376,7 +376,7 @@ export async function runAgent(cfg, deps = {}) {
   // recover entre falhas (device offline / extract). Default 2s. 0 = imediato (testes).
   const recoverMs = Number(cfg.recoverDelayMs ?? process.env.AGENT_RECOVER_MS ?? 2000);
   const stepDelayMs = Number(
-    cfg.stepDelayMs ?? process.env.AGENT_STEP_DELAY_MS ?? 3000,
+    cfg.stepDelayMs ?? process.env.AGENT_STEP_DELAY_MS ?? 0,
   );
   /** Último proximoPasso bem-sucedido — injetado no user prompt do turno seguinte. */
   let lastProximoPasso = null;

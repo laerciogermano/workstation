@@ -1,0 +1,1 @@
+se estiver na tela do comprador e com o people selecionado, entao eve buscar o botao connect para poder clicar

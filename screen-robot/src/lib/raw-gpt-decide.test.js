@@ -1,9 +1,10 @@
 /**
- * raw-gpt: extract PNG + OpenAI real (sem mock) — espelha:
- *   npm run raw-gpt -- --image test/fixtures/android-tela-inicial.png \
- *     --engine all --prompt "voce esta na tela inicial do android; abra o Chrome"
+ * raw-gpt: extract PNG + OpenAI real (sem mock).
+ * Prompt: test/fixtures/raw-gpt-decide.prompt.txt
+ * Image: test/fixtures/linkedin-people-comprador-connect.png
  */
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, it } from "node:test";
@@ -16,15 +17,22 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const SRC_ROOT = join(__dirname, "..");
 loadEnvFiles([join(SRC_ROOT, ".env"), join(SRC_ROOT, ".env.local")]);
 
-const IMAGE = join(SRC_ROOT, "test/fixtures/android-tela-inicial.png");
-const PROMPT = "voce esta na tela inicial do android; abra o Chrome";
+const IMAGE = join(
+  SRC_ROOT,
+  "test/fixtures/linkedin-people-comprador-connect.png",
+);
+const PROMPT = readFileSync(
+  join(SRC_ROOT, "test/fixtures/raw-gpt-decide.prompt.txt"),
+  "utf8",
+).trim();
 
 describe("raw-gpt-decide", () => {
   it(
-    "OpenAI real: home Android + engine all → action tap",
+    "OpenAI real: image+engine all+prompt fixture → action tap Connect",
     { timeout: 300_000 },
     async () => {
       assert.ok(process.env.OPENAI_API_KEY, "falta OPENAI_API_KEY");
+      assert.ok(PROMPT.length >= 1, "prompt fixture vazio");
 
       const elements = await extractFromImage(IMAGE, {
         engine: "all",
@@ -36,7 +44,7 @@ describe("raw-gpt-decide", () => {
       const out = await decideRawAction({ prompt: PROMPT, ocr });
       const action = { type: out.type, x: out.x, y: out.y };
 
-      assert.deepEqual(action, { type: "tap", x: 260, y: 713 });
+      assert.deepEqual(action, { type: "tap", x: 455, y: 344 });
       assert.deepEqual(Object.keys(parseActionTypeXY(out.raw)).sort(), [
         "type",
         "x",

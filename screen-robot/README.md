@@ -199,7 +199,7 @@ tapElement({ serial, x: hit.x, y: hit.y });
 | `method` | | `"adb"` (default) · `"ocr"` |
 | `region` | | `{ x, y, width, height }` teclado (só OCR) |
 | `delayMs` | | Default `100` (só OCR) |
-| `engine` | | `"tesseract"` · `"macos-vision"` · `"rapidocr"` (só OCR) |
+| `engine` | | `"tesseract"` · `"macos-vision"` · `"rapidocr"` · `"paddleocr"` · `"easyocr"` · `"all"` (merge) |
 
 **Saída:** `undefined`
 
@@ -438,7 +438,7 @@ Decide a próxima ação via **Gemini 3.8 Flash** a partir do OCR (sem imagem).
 
 Loop: `extract` (RapidOCR) → `decide` → gesto → log `.md`.
 
-**Entrada:** `serial` · `prompt` · `maxSteps?` (40) · `engine?` (`rapidocr`) · `logDir?` · `usageDir?`
+**Entrada:** `serial` · `prompt` · `maxSteps?` (40) · `engine?` (`all` = merge top-5 OCR) · `logDir?` · `usageDir?`
 
 **Saída:** `{ status: "done"|"fail"|"max_steps", steps, logPath, usagePath, usage }`
 
@@ -482,6 +482,6 @@ npm run agent -- --prompt ../roteiros/jornada-comprador.md   # GEMINI_API_KEY
 | Motor Gemini (EP-07) | [`implementation-plan/EP-07-motor-gemini.md`](implementation-plan/EP-07-motor-gemini.md) |
 | Jornada comprador (IA + OCR; filtro cidade Campinas após People; digitar tudo e checar valor só no fim; `### Comprador` por Connect; sem script com roteiro preso) | [`roteiros/jornada-comprador.md`](roteiros/jornada-comprador.md) |
 | Referência Instagram (ops Android/PT por funcionalidade; Help Center) | [`roteiros/instagram-referencia.md`](roteiros/instagram-referencia.md) |
-| OCR backends (tesseract / macos-vision / rapidocr) | [`src/README.md`](src/README.md) · [`src/lib/extract-engines.js`](src/lib/extract-engines.js) |
+| OCR backends + merge `all` (5 engines) | [`src/README.md`](src/README.md) · [`src/lib/extract-engines.js`](src/lib/extract-engines.js) · [`src/lib/ocr-merge.js`](src/lib/ocr-merge.js) |
 | Identidade do aparelho (US-22) | [`pocs/README.md`](pocs/README.md#mascarar-identidade-do-aparelho) |
 | Postmortem runtime | [`postmortem.md`](postmortem.md) |

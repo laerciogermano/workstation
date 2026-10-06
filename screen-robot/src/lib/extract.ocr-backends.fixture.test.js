@@ -21,7 +21,12 @@ const OUT_JSON = resolve(OUT_DIR, "ocr-backends-compare.json");
 describe("extract OCR backends — fixture People comprador", () => {
   it("identifica quais engines devolvem Connect", async () => {
     const engines = listOcrEngines();
-    assert.deepEqual(engines.sort(), ["macos-vision", "rapidocr", "tesseract"].sort());
+    assert.ok(engines.includes("rapidocr"));
+    assert.ok(engines.includes("macos-vision"));
+    assert.ok(engines.includes("tesseract"));
+    assert.ok(engines.includes("paddleocr"));
+    assert.ok(engines.includes("easyocr"));
+    assert.ok(engines.includes("all"));
 
     /** @type {Record<string, any>} */
     const report = { fixture: FIXTURE, engines: {} };

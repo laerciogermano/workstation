@@ -137,7 +137,16 @@ Só LinkedIn (sem Instagram). Sem digitar credenciais e sem `saveSession`.
 
 **People/comprador OCR:** fixture [`test/fixtures/linkedin-people-comprador-connect.png`](test/fixtures/linkedin-people-comprador-connect.png) · teste [`lib/extract.people-comprador.fixture.test.js`](lib/extract.people-comprador.fixture.test.js) — print no console e grava [`test/output/linkedin-people-comprador-connect.ocr.json`](test/output/linkedin-people-comprador-connect.ocr.json) (+ `.txt`).
 
-**OCR backends (Connect):** [`lib/extract-engines.js`](lib/extract-engines.js) + `extract({ engine })` / `findByText(..., { engine })` — `tesseract` (default se omitido) · `macos-vision` · `rapidocr`. Jornada comprador usa **`engine: "rapidocr"`** ([`roteiros/jornada-comprador.md`](../roteiros/jornada-comprador.md)). Pré RapidOCR: `pip3 install --user rapidocr-onnxruntime`. Comparativo: [`lib/extract.ocr-backends.fixture.test.js`](lib/extract.ocr-backends.fixture.test.js). Antes: jornada no tesseract (Connect invisível); depois: RapidOCR no roteiro. Rollback: tirar `engine: "rapidocr"` do roteiro / voltar tesseract.
+**OCR backends (Connect):** [`lib/extract-engines.js`](lib/extract-engines.js) + `extract({ engine })` / `findByText(..., { engine })`.
+
+Engines: `tesseract` · `macos-vision` · `rapidocr` · `paddleocr` · `easyocr` · **`all`** (merge paralelo das 5).
+
+- **`engine: "all"`** (default do agent): 1 frame → 5 OCR em paralelo → une hits comuns (texto+posição) e soma diferenças ([`lib/ocr-merge.js`](lib/ocr-merge.js)). Engine que falha é ignorado.
+- Pré: `pip3 install --user rapidocr-onnxruntime paddleocr paddlepaddle easyocr pytesseract` · macOS Vision (Swift) · `brew install tesseract` (opcional pytesseract).
+- Env: `SCREEN_ROBOT_OCR=all|rapidocr|…` · `OCR_MERGE_DIST_PX` (default 48).
+- Comparativo: [`lib/extract.ocr-backends.fixture.test.js`](lib/extract.ocr-backends.fixture.test.js).
+
+Antes: um engine por extract (jornada `rapidocr`). Depois: merge top-5. Rollback: `extract({ engine: "rapidocr" })` / `SCREEN_ROBOT_OCR=rapidocr` / agent `engine: "rapidocr"`.
 
 ---
 

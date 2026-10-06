@@ -136,7 +136,8 @@ const serial = loadSerial();
 const maxSteps = Number(argValue("--max-steps") || "40");
 const historyStepsRaw = argValue("--history-steps");
 const historySteps = historyStepsRaw != null ? Number(historyStepsRaw) : undefined;
-const engine = argValue("--engine") || "rapidocr";
+const engine =
+  argValue("--engine") || process.env.SCREEN_ROBOT_OCR || "all";
 const baseLogDir = argValue("--log-dir") || join(SRC_ROOT, "logs", "agent");
 const usageDir = argValue("--usage-dir") || join(SRC_ROOT, "usage");
 const keyboardRegion = loadDeviceCfg().type?.keyboardRegion;

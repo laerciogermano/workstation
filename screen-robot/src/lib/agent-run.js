@@ -299,7 +299,8 @@ export async function runAgent(cfg, deps = {}) {
 
   const maxSteps = Number(cfg.maxSteps ?? 40);
   const historySteps = resolveHistorySteps(cfg);
-  const engine = cfg.engine || "rapidocr";
+  // all = merge paralelo top-5 OCR (rapidocr+vision+paddle+easy+tesseract)
+  const engine = cfg.engine || process.env.SCREEN_ROBOT_OCR || "all";
   const sleep = deps.sleep ?? defaultSleep;
   const runExtract = deps.extract ?? extract;
   const runDecide = deps.decide ?? decide;

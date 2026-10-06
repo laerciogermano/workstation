@@ -2,12 +2,18 @@
  * EP-05 — extrair lista plana de textos via frame → OCR.
  * Caller: extract({ serial }) — só elementos type "text" (sem ícones/listas/imagens).
  * Cada chamada faz OCR de novo (sem cache). Proibido: uiautomator dump como fonte.
+ * engine: tesseract|macos-vision|rapidocr|paddleocr|easyocr|all (merge paralelo top-5).
  */
 import { adb } from "./adb.js";
 import { captureFrame } from "./frame.js";
 import { ocrWords } from "./ocr.js";
 import { ocrWordsMacosVision } from "./ocr-macos-vision.js";
 import { ocrWordsRapidocr } from "./ocr-rapidocr.js";
+import {
+  ocrWordsEasyocr,
+  ocrWordsPaddleocr,
+} from "./ocr-python-cli.js";
+import { extractWithEngine } from "./extract-engines.js";
 
 const REMOTE_DUMP = "/sdcard/sr-window-dump.xml";
 
@@ -19,6 +25,8 @@ function resolveRecognize(src = {}) {
   const engine = src.engine || process.env.SCREEN_ROBOT_OCR || "tesseract";
   if (engine === "rapidocr") return ocrWordsRapidocr;
   if (engine === "macos-vision") return ocrWordsMacosVision;
+  if (engine === "paddleocr") return ocrWordsPaddleocr;
+  if (engine === "easyocr") return ocrWordsEasyocr;
   return ocrWords;
 }
 
@@ -50,7 +58,7 @@ function toPublicElement(el) {
 }
 
 /**
- * @param {{ serial: string, engine?: "tesseract"|"rapidocr"|"macos-vision" }} cfg
+ * @param {{ serial: string, engine?: "tesseract"|"rapidocr"|"macos-vision"|"paddleocr"|"easyocr"|"all", engines?: string[] }} cfg
  * @param {object} [deps]
  * @returns {Promise<object[]>}
  */
@@ -61,16 +69,27 @@ export async function extract(cfg, deps = {}) {
     err.code = "EXTRACT_NO_SERIAL";
     throw err;
   }
-  const capture = deps.captureFrame
-    ? (s, d) => deps.captureFrame(s, d)
-    : captureFrame;
-  const recognize = resolveRecognize({ ...deps, ...cfg });
-  const framePath = await capture(serial, deps);
-  const words = await recognize(framePath, deps);
-  return words.map((w) => {
-    const p = pointFromBounds(w.bounds);
-    return { type: "text", text: w.text, x: p.x, y: p.y };
-  });
+  const engine =
+    cfg.engine || process.env.SCREEN_ROBOT_OCR || "tesseract";
+  // merge paralelo top-5 (ou lista cfg.engines)
+  if (engine === "all" || engine === "merge" || cfg.engines?.length) {
+    return extractWithEngine(
+      { serial, engine: engine === "merge" ? "all" : engine, engines: cfg.engines },
+      { ...deps, logMergeStats: true },
+    );
+  }
+  if (typeof deps.ocrRecognize === "function") {
+    const capture = deps.captureFrame
+      ? (s, d) => deps.captureFrame(s, d)
+      : captureFrame;
+    const framePath = await capture(serial, deps);
+    const words = await deps.ocrRecognize(framePath, deps);
+    return words.map((w) => {
+      const p = pointFromBounds(w.bounds);
+      return { type: "text", text: w.text, x: p.x, y: p.y };
+    });
+  }
+  return extractWithEngine({ serial, engine }, deps);
 }
 
 /**
@@ -79,11 +98,37 @@ export async function extract(cfg, deps = {}) {
  * @param {object} [deps]
  */
 export async function extractElements(serial, deps = {}) {
+  const engine = deps.engine || process.env.SCREEN_ROBOT_OCR || "tesseract";
   const capture = deps.captureFrame
     ? (s, d) => deps.captureFrame(s, d)
     : captureFrame;
-  const recognize = resolveRecognize(deps);
   const framePath = await capture(serial, deps);
+
+  if (engine === "all" || engine === "merge") {
+    const flat = await extractWithEngine(
+      { serial, engine: "all", engines: deps.engines },
+      { ...deps, captureFrame: async () => framePath },
+    );
+    const elements = flat.map((w, i) => ({
+      id: `e${i}`,
+      kind: "text",
+      type: "text",
+      label: w.text,
+      text: w.text,
+      contentDesc: "",
+      resourceId: "",
+      className: "",
+      clickable: true,
+      password: false,
+      bounds: { x: w.x, y: w.y, w: 1, h: 1 },
+      x: w.x,
+      y: w.y,
+      source: "ocr-merge",
+    }));
+    return { elements, framePath };
+  }
+
+  const recognize = resolveRecognize(deps);
   const words = await recognize(framePath, deps);
   const elements = words.map((w, i) => {
     const b = w.bounds;

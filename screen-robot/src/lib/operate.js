@@ -10,11 +10,17 @@ import { captureFrame } from "./frame.js";
 import { ocrWords, regionToRectangle } from "./ocr.js";
 import { ocrWordsMacosVision } from "./ocr-macos-vision.js";
 import { ocrWordsRapidocr } from "./ocr-rapidocr.js";
+import {
+  ocrWordsEasyocr,
+  ocrWordsPaddleocr,
+} from "./ocr-python-cli.js";
 
 const OCR_ENGINES = {
   tesseract: ocrWords,
   "macos-vision": ocrWordsMacosVision,
   rapidocr: ocrWordsRapidocr,
+  paddleocr: ocrWordsPaddleocr,
+  easyocr: ocrWordsEasyocr,
 };
 
 function fail(code, msg) {

@@ -1,6 +1,6 @@
 /**
  * Decisão crua via chat.completions (mesmo contrato do scripts/raw-gpt.js).
- * Retorno: { type, x, y }.
+ * Retorno: { type, x, y, direction }.
  */
 
 export const DEFAULT_PROMPT =
@@ -25,7 +25,7 @@ Formato único (só estes campos; PROIBIDO "motivo" ou qualquer outro):
 
 Tipos (lib screen-robot):
 - tap: obrigatório x e y numéricos do OCR desta tela (centro do alvo); demais campos null
-- scroll: direction up|down|left|right
+- scroll: direction up|down|left|right (obrigatório; x/y null)
 - type: text a digitar
 - key: code (ex. KEYCODE_BACK, KEYCODE_ENTER)
 - sleep: ms
@@ -54,9 +54,9 @@ Defina a próxima action.`;
 }
 
 /**
- * Extrai action e devolve só type, x, y.
+ * Extrai action: type, x, y, direction (scroll).
  * @param {string} content
- * @returns {{ type: string, x: number|null, y: number|null }}
+ * @returns {{ type: string, x: number|null, y: number|null, direction: string|null }}
  */
 export function parseActionTypeXY(content) {
   const data = JSON.parse(String(content || ""));
@@ -74,10 +74,20 @@ export function parseActionTypeXY(content) {
   }
   const x = a.x == null || a.x === "" ? null : Number(a.x);
   const y = a.y == null || a.y === "" ? null : Number(a.y);
+  const direction =
+    a.direction == null || a.direction === ""
+      ? null
+      : String(a.direction).toLowerCase();
+  if (type === "scroll" && !direction) {
+    const err = new Error("raw-gpt: scroll sem direction");
+    err.code = "RAW_GPT_BAD_ACTION";
+    throw err;
+  }
   return {
     type,
     x: Number.isFinite(x) ? x : null,
     y: Number.isFinite(y) ? y : null,
+    direction,
   };
 }
 
@@ -88,7 +98,7 @@ export function parseActionTypeXY(content) {
  *   apiKey?: string,
  *   model?: string,
  * }} opts
- * @returns {Promise<{ type: string, x: number|null, y: number|null, raw?: string, payload?: object }>}
+ * @returns {Promise<{ type: string, x: number|null, y: number|null, direction: string|null, raw?: string, payload?: object }>}
  */
 export async function decideRawAction(opts) {
   const apiKey = opts.apiKey ?? process.env.OPENAI_API_KEY;

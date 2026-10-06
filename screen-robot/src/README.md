@@ -237,12 +237,12 @@ npm run agent -- --model gemini-2.5-flash --no-fallback --prompt ../roteiros/abr
 npm run agent -- --sense vision --prompt ../roteiros/teste.md --no-prompt
 npm run agent -- --vision --provider openai --model gpt-4o-mini --prompt ../roteiros/teste.md
 npm run agent:smoke              # 1–2 passos no device; sem key = heurística Connect/scroll
-npm run raw-gpt                  # extractFromImage → system agente + jornada/OCR → { type, x, y }
+npm run raw-gpt                  # extractFromImage → system agente + jornada/OCR → { type, x, y, direction }
 npm run raw-gpt -- --image test/fixtures/linkedin-people-comprador-connect.png
 # Testes (1 por tela; mesmo prompt; OpenAI real; OPENAI_API_KEY):
 #   node --test lib/raw-gpt-decide.test.js
 # Prompt único passado em runCase({ prompt }): test/fixtures/raw-gpt-decide.prompt.txt
-# Antes: PROMPT lido no topo do arquivo. Rollback: const PROMPT = readFileSync(…).
+# Antes: parse só type/x/y (scroll sem direction). Rollback: remover direction do parse/assert.
 ```
 
 **Setup CLI (modelos):** em TTY, sem `--model` / `--force-model` / `--no-prompt`, o agent lista o catálogo ([`lib/agent-models.js`](lib/agent-models.js)) e pede a escolha (`1`, `1,3`, `a`=todos, ou id). Vários modelos → roda em sequência, log em `logs/agent/<model>/`. Rollback: `--model <id>` ou `--no-prompt`.

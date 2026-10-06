@@ -4,10 +4,10 @@ Ordem obrigatória 1→12. 1 ação/turno. Text/icon do extract = clicável (cop
 PROIBIDO fail se o text do passo atual estiver no OCR (ex. Search → tap; não fail).
 fail só se impossível após retentativa; histórico de fail NÃO impede tap.
 
-1. clique em Search — tap nas x,y do text "Search" (y<120). Única ação.
+1. clique em Search — tap nas x,y do text "Search" (y<120). Única ação. (pode ser que nada aconteca que o teclado nao apareca, apenas prossiga para o proximo passo)
 2. digite comprador — type "comprador" (após Search; teclado ou campo aberto).
-3. feche o teclado — key KEYCODE_BACK 1×.
-4. clique em Show all results — tap text EXATO do OCR ("Show all results" ou "Show all"/"Showall").
+3. feche o teclado — key KEYCODE_BACK 1×. EXCEÇÃO: se OCR JÁ tem "Show all results" / "Show all" / "Showall" → NÃO dê BACK (BACK fecha a busca). Vá direto ao 4 e tap nesse text. proximoPasso = 5.
+4. clique em Show all results — tap text EXATO do OCR atual ("Show all results" ou "Show all"/"Showall"). Se sumiu do OCR (ex. após BACK indevido) → retap Search (passo 1) ou type de novo; NÃO scroll down no feed (Home/Network/Jobs). NÃO inventar coords antigas.
 5. clique em People — tap "People" (aba, y baixo/topo conforme OCR).
 6. clique Location — tap "Location" ou "Locatior".
 7. clique em Add a location — tap "Add a location"/"Add alocation" (campo do sheet, não o chip).

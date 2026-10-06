@@ -171,4 +171,16 @@ describe("raw-gpt-decide", () => {
       });
     },
   );
+
+  it(
+    "LinkedIn People+Campinas → Connect ou scroll",
+    { timeout: 300_000 },
+    async () => {
+      await runCase({
+        image: "linkedin-search-comprador-location-search-people-location.png",
+        prompt: PROMPT + "\nvoce esta no passo 11",
+        expected: { type: "scroll", direction: "down" },
+      });
+    },
+  );
 });

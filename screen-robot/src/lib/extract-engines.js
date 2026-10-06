@@ -18,6 +18,7 @@ import {
   ocrWordsPaddleocr,
 } from "./ocr-python-cli.js";
 import { mergeOcrHits } from "./ocr-merge.js";
+import { withTimeout } from "./with-timeout.js";
 
 /** @typedef {"tesseract"|"macos-vision"|"rapidocr"|"paddleocr"|"easyocr"|"all"} OcrEngine */
 
@@ -75,18 +76,25 @@ async function runOneEngine(imagePath, engine, deps = {}) {
 
 /**
  * Roda engines em paralelo e une hits (comuns + diferenças).
- * Engines que falham são ignorados (log opcional); precisa ≥1 ok.
+ * Engines que falham ou excedem OCR_MERGE_TIMEOUT_MS são ignorados; precisa ≥1 ok.
  * @param {string} imagePath
- * @param {{ engines?: string[], keepEngines?: boolean, onEngineError?: Function }} [opts]
+ * @param {{ engines?: string[], keepEngines?: boolean, onEngineError?: Function, timeoutMs?: number }} [opts]
  * @param {object} [deps]
  */
 export async function extractMergedFromImage(imagePath, opts = {}, deps = {}) {
   const engines = opts.engines?.length ? opts.engines : MERGE_ENGINES;
+  const timeoutMs = Number(
+    opts.timeoutMs ?? process.env.OCR_MERGE_TIMEOUT_MS ?? 4000,
+  );
   const results = await Promise.all(
     engines.map(async (engine) => {
       const started = Date.now();
       try {
-        const hits = await runOneEngine(imagePath, engine, deps);
+        const hits = await withTimeout(
+          runOneEngine(imagePath, engine, deps),
+          timeoutMs,
+          engine,
+        );
         return {
           engine,
           ok: true,
@@ -164,6 +172,7 @@ export async function extractWithEngine(cfg, deps = {}) {
       {
         engines: cfg.engines,
         keepEngines: cfg.keepEngines,
+        timeoutMs: cfg.timeoutMs,
         onEngineError: ({ engine: e, error }) =>
           log(`ocr ${e} falhou: ${error.slice(0, 160)}`),
       },
@@ -171,7 +180,8 @@ export async function extractWithEngine(cfg, deps = {}) {
     );
     if (deps.logMergeStats) {
       const ok = engines.filter((e) => e.ok).map((e) => `${e.engine}:${e.hits.length}/${e.ms}ms`);
-      log(`ocr-merge ok=[${ok.join(", ")}] hits=${elements.length}`);
+      const skip = engines.filter((e) => !e.ok).map((e) => `${e.engine}:${e.ms}ms`);
+      log(`ocr-merge ok=[${ok.join(", ")}] skip=[${skip.join(", ")}] hits=${elements.length}`);
     }
     return elements;
   }

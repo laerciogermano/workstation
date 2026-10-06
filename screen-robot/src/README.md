@@ -146,13 +146,13 @@ Só LinkedIn (sem Instagram). Sem digitar credenciais e sem `saveSession`.
 
 Engines: `tesseract` · `macos-vision` · `rapidocr` · `paddleocr` · `easyocr` · **`all`** (merge paralelo das 5).
 
-- **`engine: "all"`** (default do agent): 1 frame → 5 OCR em paralelo → une hits comuns (texto+posição) e soma diferenças ([`lib/ocr-merge.js`](lib/ocr-merge.js)). Engine que falha é ignorado.
+- **`engine: "all"`** (default do agent): 1 frame → 5 OCR em paralelo → une hits comuns (texto+posição) e soma diferenças ([`lib/ocr-merge.js`](lib/ocr-merge.js)). Engine que falha **ou passa de `OCR_MERGE_TIMEOUT_MS` (default 4000)** é ignorado — extract não espera RapidOCR/Paddle (~20s).
 - Pré: `pip3 install --user rapidocr-onnxruntime paddleocr paddlepaddle easyocr pytesseract` · macOS Vision (Swift) · `brew install tesseract` (opcional pytesseract).
-- Env: `SCREEN_ROBOT_OCR=all|rapidocr|…` · `OCR_MERGE_DIST_PX` (default 48).
+- Env: `SCREEN_ROBOT_OCR=all|rapidocr|…` · `OCR_MERGE_DIST_PX` (default 48) · `OCR_MERGE_TIMEOUT_MS=4000` (`0` = sem timeout).
 - Comparativo: [`lib/extract.ocr-backends.fixture.test.js`](lib/extract.ocr-backends.fixture.test.js).
 - Regressão merge nas prints: [`lib/extract.linkedin-fixtures.test.js`](lib/extract.linkedin-fixtures.test.js).
 
-Antes: um engine por extract (jornada `rapidocr`). Depois: merge top-5. Rollback: `extract({ engine: "rapidocr" })` / `SCREEN_ROBOT_OCR=rapidocr` / agent `engine: "rapidocr"`.
+Antes: um engine por extract (jornada `rapidocr`). Depois: merge top-5. Rollback: `extract({ engine: "rapidocr" })` / `SCREEN_ROBOT_OCR=rapidocr` / agent `engine: "rapidocr"`. Timeout off: `OCR_MERGE_TIMEOUT_MS=0`.
 
 ---
 

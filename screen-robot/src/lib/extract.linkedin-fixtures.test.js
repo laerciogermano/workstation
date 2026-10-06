@@ -33,6 +33,7 @@ describe("extract LinkedIn fixtures — merge all", () => {
     assert.ok(existsSync(PEOPLE), `falta fixture ${PEOPLE}`);
 
     const { elements, engines } = await extractMergedFromImage(PEOPLE, {
+      timeoutMs: 180000,
       onEngineError: ({ engine, error }) =>
         console.log(`WARN ${engine}: ${String(error).slice(0, 120)}`),
     });
@@ -86,7 +87,10 @@ describe("extract LinkedIn fixtures — merge all", () => {
   it("tela inicial: merge encontra Sign in / Join (login)", async () => {
     assert.ok(existsSync(TELA_INICIAL), `falta fixture ${TELA_INICIAL}`);
 
-    const elements = await extractFromImage(TELA_INICIAL, { engine: "all" });
+    const elements = await extractFromImage(TELA_INICIAL, {
+      engine: "all",
+      timeoutMs: 180000,
+    });
 
     assert.ok(elements.length >= 5, `poucos hits: ${elements.length}`);
     assert.ok(

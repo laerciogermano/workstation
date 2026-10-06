@@ -46,7 +46,10 @@ if (!existsSync(imagePath)) {
   process.exit(1);
 }
 
-const elements = await extractFromImage(imagePath, { engine });
+const elements = await extractFromImage(imagePath, {
+  engine,
+  timeoutMs: Number(process.env.OCR_MERGE_TIMEOUT_MS || 180_000),
+});
 const ocr = compactOcr(elements);
 console.log({ imagePath, engine, hits: elements.length, ocr });
 

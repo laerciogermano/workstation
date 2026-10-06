@@ -84,6 +84,24 @@ describe("openai", () => {
     assert.equal(waits[0], 2000);
   });
 
+  it("gpt-5-mini omite temperature", async () => {
+    let sent;
+    const fetchStub = async (_url, init) => {
+      sent = JSON.parse(init.body);
+      return {
+        ok: true,
+        json: async () => ({
+          choices: [{ message: { content: '{"ok":true}' } }],
+        }),
+      };
+    };
+    await generateContent(
+      { prompt: "hi", apiKey: "k", model: "gpt-5-mini" },
+      { fetch: fetchStub, log: () => {} },
+    );
+    assert.equal("temperature" in sent, false);
+  });
+
   it("falha sem api key", async () => {
     const prev = process.env.OPENAI_API_KEY;
     delete process.env.OPENAI_API_KEY;

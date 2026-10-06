@@ -28,6 +28,9 @@ describe("agent-models", () => {
     const s = parseModelSelection("gemini-3.8-flash");
     assert.equal(s[0].id, "gemini-3.8-flash");
     assert.equal(s[0].provider, "gemini");
+    const mini = parseModelSelection("gpt-5-mini");
+    assert.equal(mini[0].id, "gpt-5-mini");
+    assert.equal(mini[0].provider, "openai");
   });
 
   it("parseModelSelection: vazio/inválido", () => {
@@ -60,6 +63,7 @@ describe("agent-models", () => {
 
   it("providerForModel: gpt → openai", () => {
     assert.equal(providerForModel("gpt-4o-mini"), "openai");
+    assert.equal(providerForModel("gpt-5-mini"), "openai");
     assert.equal(providerForModel("gemini-3.8-flash"), "gemini");
   });
 });

@@ -63,6 +63,11 @@ export const AGENT_MODELS = [
     provider: "openai",
     label: "OpenAI GPT-4o mini",
   },
+  {
+    id: "gpt-5-mini",
+    provider: "openai",
+    label: "OpenAI GPT-5 mini",
+  },
 ];
 
 export function findAgentModel(id) {

@@ -145,8 +145,9 @@ export async function generateContent(opts, deps = {}) {
   const body = {
     model,
     messages,
-    temperature: 0,
   };
+  // gpt-5* só aceita temperature default (1); 0 → HTTP 400.
+  if (!/^gpt-5/i.test(model)) body.temperature = 0;
   if (opts.json !== false) {
     body.response_format = { type: "json_object" };
   }

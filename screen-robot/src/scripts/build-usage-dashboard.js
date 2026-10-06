@@ -286,6 +286,7 @@ const USD_PER_M = {
   "gpt-4o-mini": { in: 0.15, out: 0.60 },
   "gpt-4.1-mini": { in: 0.40, out: 1.60 },
   "gpt-5": { in: 1.25, out: 10 },
+  "gpt-5-mini": { in: 0.25, out: 2.00 },
   "gemini-3.5-flash-lite": { in: 0.30, out: 2.50 },
   "gemini-3.1-flash-lite": { in: 0.25, out: 1.50 },
   "gemini-3.5-flash": { in: 1.50, out: 9.00 },

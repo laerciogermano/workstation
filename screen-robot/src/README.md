@@ -225,7 +225,7 @@ npm run agent -- --provider openai --model gpt-4o-mini --no-prompt --engine rapi
 # LinkedIn comprador Campinas do zero (abre o app; gpt-4o-mini)
 npm run agent -- --provider openai --model gpt-4o-mini --engine all --icons true --history-steps 10 --prompt ../roteiros/jornada-linkedin-comprador-campinas.md
 # só abrir LinkedIn (gpt-4o-mini; home → scroll down, não BACK)
-npm run agent -- --force-model gpt-4o-mini --engine all --icons true --history-steps 3 --prompt ../roteiros/novo.md
+npm run agent -- --force-model gpt-4o-mini --engine all --icons true --history-steps 10 --prompt ../roteiros/novo.md
 npm run agent -- --prompt "abra o LinkedIn e mostre as últimas 10 conexões"
 npm run agent -- --prompt ../roteiros/jornada-completa.md --all-models
 npm run agent -- --prompt ../roteiros/jornada-completa.md --no-prompt   # sem menu (env/default)

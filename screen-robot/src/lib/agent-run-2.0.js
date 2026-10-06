@@ -127,9 +127,17 @@ function parseAcao(raw, ocr) {
   }
 }
 
+function resolveHistorySteps(cfg) {
+  const n = Number(
+    cfg?.historySteps ?? process.env.AGENT_HISTORY_STEPS ?? 8,
+  );
+  if (!Number.isFinite(n) || n < 0) return 8;
+  return Math.floor(n);
+}
+
 /**
- * Envia roteiro + OCR ao provider; devolve ação parseada.
- * @param {{ prompt: string, ocr: object[], model?: string, provider?: string, apiKey?: string }} cfg
+ * Envia roteiro + OCR + histórico ao provider; devolve ação parseada.
+ * @param {{ prompt: string, ocr: object[], history?: object[], historySteps?: number, model?: string, provider?: string, apiKey?: string }} cfg
  */
 export async function askProvider(cfg, deps = {}) {
   const provider = resolveProvider(cfg);
@@ -142,12 +150,17 @@ export async function askProvider(cfg, deps = {}) {
       ? { type: "icon", x: Number(e.x), y: Number(e.y) }
       : { type: "text", text: String(e?.text ?? ""), x: Number(e?.x), y: Number(e?.y) },
   );
+  const n = resolveHistorySteps(cfg);
+  const hist = Array.isArray(cfg.history) && n > 0 ? cfg.history.slice(-n) : [];
+  const histBlock = hist.length
+    ? `\nHistórico (últimos ${hist.length}):\n${JSON.stringify(hist)}\n`
+    : "";
   const system = `Você opera Android só com a lista OCR (text,x,y). Responda APENAS JSON:
 {"resumo":"...","acao":{"type":"tap|scroll|type|key|sleep|done|fail","x":null,"y":null,"direction":null,"text":null,"code":null,"ms":null,"motivo":"..."}}
-tap: OBRIGATÓRIO copiar x,y numéricos do OCR atual. PROIBIDO tap com x/y null. Sem alvo no OCR → sleep ou scroll. 1 ação.`;
-  const prompt = `Roteiro:\n${cfg.prompt}\n\nOCR:\n${JSON.stringify(ocr)}\n\nPróxima ação.`;
+tap: OBRIGATÓRIO x,y do OCR atual. PROIBIDO reusar coords do histórico. Sem alvo → sleep/scroll. 1 ação.`;
+  const prompt = `Roteiro:\n${cfg.prompt}${histBlock}\nOCR:\n${JSON.stringify(ocr)}\n\nPróxima ação.`;
 
-  log(`provider ${provider}/${model}…`);
+  log(`provider ${provider}/${model} history=${hist.length}…`);
   const out = await gen(
     {
       model,
@@ -229,6 +242,7 @@ export async function executeAction(cfg, deps = {}) {
  *   serial: string,
  *   prompt: string,
  *   maxSteps?: number,
+ *   historySteps?: number,
  *   engine?: string,
  *   icons?: boolean,
  *   model?: string,
@@ -243,17 +257,20 @@ export async function runAgent(cfg, deps = {}) {
   if (!cfg?.prompt) fail("AGENT_NO_PROMPT", "runAgent: falta prompt");
 
   const maxSteps = Number(cfg.maxSteps ?? 40);
+  const historySteps = resolveHistorySteps(cfg);
   const engine = cfg.engine || process.env.SCREEN_ROBOT_OCR || "all";
   const icons = cfg.icons;
   const runExtract = deps.extract ?? extract;
   const ask = deps.askProvider ?? askProvider;
   const provider = resolveProvider(cfg);
   const model = resolveModel(cfg);
+  /** @type {object[]} */
+  const history = [];
   const steps = [];
   let status = "running";
 
   log(
-    `2.0 serial=${serial} engine=${engine} provider=${provider} model=${model} maxSteps=${maxSteps}`,
+    `2.0 serial=${serial} engine=${engine} provider=${provider} model=${model} maxSteps=${maxSteps} historySteps=${historySteps}`,
   );
 
   const sleep = deps.sleep ?? defaultSleep;
@@ -266,7 +283,9 @@ export async function runAgent(cfg, deps = {}) {
     } catch (e) {
       log(`extract erro: ${e.message || e} — sleep e segue`);
       await sleep(1500);
-      steps.push({ step: i, error: String(e.message || e) });
+      const erro = String(e.message || e);
+      steps.push({ step: i, error: erro });
+      history.push({ step: i, type: "sleep", motivo: erro, error: true });
       continue;
     }
 
@@ -277,6 +296,8 @@ export async function runAgent(cfg, deps = {}) {
         {
           prompt: cfg.prompt,
           ocr,
+          history,
+          historySteps,
           model: cfg.model,
           provider: cfg.provider,
           apiKey: cfg.apiKey,
@@ -286,7 +307,9 @@ export async function runAgent(cfg, deps = {}) {
     } catch (e) {
       log(`provider erro: ${e.message || e} — sleep e segue`);
       await sleep(1500);
-      steps.push({ step: i, error: String(e.message || e) });
+      const erro = String(e.message || e);
+      steps.push({ step: i, error: erro });
+      history.push({ step: i, type: "sleep", motivo: erro, error: true });
       continue;
     }
 
@@ -300,6 +323,7 @@ export async function runAgent(cfg, deps = {}) {
     if (resumo) log(resumo.slice(0, 200));
 
     let resultado;
+    let stepError = false;
     try {
       resultado = await executeAction(
         { serial, acao, engine, typeMethod: cfg.typeMethod },
@@ -307,13 +331,24 @@ export async function runAgent(cfg, deps = {}) {
       );
     } catch (e) {
       resultado = `erro: ${e.message || e}`;
+      stepError = true;
       log(resultado);
       await sleep(1500);
-      steps.push({ step: i, acao, resultado, error: true });
-      continue;
     }
-    steps.push({ step: i, acao, resultado });
-    log(`ok ${resultado}`);
+    steps.push({ step: i, acao, resultado, error: stepError || undefined });
+    history.push({
+      step: i,
+      type: acao.type,
+      motivo: acao.motivo,
+      x: acao.x,
+      y: acao.y,
+      direction: acao.direction,
+      text: acao.text,
+      code: acao.code,
+      resultado,
+      error: stepError || undefined,
+    });
+    if (!stepError) log(`ok ${resultado}`);
 
     if (acao.type === "done") {
       status = "done";

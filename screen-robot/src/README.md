@@ -289,7 +289,9 @@ npm run usage:report
 # abre usage/dashboard.html no browser
 ```
 
-Gera [`usage/dashboard.html`](usage/dashboard.html) a partir de **todos** os `usage/*.json`: insights (modelo dominante, taxa de falha, 503/429, OCR, latência, custo est.), cards, gráficos (requests/tokens por modelo, erros, ações, engine, dia, provider, latência) + tokens por request / acumulado / chars + tabela. Filtro: Todos ou por `run`. Regenerar: `npm run usage:report`.
+Gera [`usage/dashboard.html`](usage/dashboard.html) a partir de **todos** os `usage/*.json`: insights (modelo dominante, taxa de falha, 503/429, OCR, latência, custo est., **historyCount vs prompt tokens**), cards, gráficos (requests/tokens por modelo, erros, ações, engine, dia, provider, latência) + tokens por request / **histórico no prompt** / acumulado / chars + tabela (`hist` = enviados/janela). Filtro: Todos ou por `run`. Regenerar: `npm run usage:report`.
+
+**Antes → depois (historyCount no usage/dashboard):** o JSON não gravava quantos passos de histórico foram ao modelo; o HTML não correlacionava com tokens. Agora `usage/*.json` tem `historyCount`/`historySteps`; o relatório mostra card, insight (média de prompt tokens em hist 0 vs máx), gráficos (tokens vs count; média por count) e coluna `hist`. Arquivos antigos: parse de `Histórico recente (últimos N/M)` no prompt. Rollback: omitir os dois campos no writer e os charts `histTok`/`histAvg`.
 
 **Antes → depois:** só tokens por request → relatório com insights + breakdown modelo/OCR/erro. Rollback: gerador anterior (3 charts + tabela).
 

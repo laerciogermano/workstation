@@ -40,6 +40,27 @@ function providerOf(model) {
   return "outro";
 }
 
+function parseHistoryMeta(j) {
+  const text = String(j.prompt || j.input?.prompt || "");
+  const m = text.match(/Histórico recente \(últimos (\d+)\/(\d+)\)/);
+  const fromPrompt = m
+    ? { historyCount: Number(m[1]), historySteps: Number(m[2]) }
+    : null;
+  const count = Number(j.historyCount);
+  const steps = Number(j.historySteps);
+  if (j.historyCount != null && Number.isFinite(count) && count >= 0) {
+    return {
+      historyCount: count,
+      historySteps: Number.isFinite(steps) && steps >= 0 ? steps : (fromPrompt?.historySteps ?? count),
+    };
+  }
+  if (fromPrompt) return fromPrompt;
+  return {
+    historyCount: 0,
+    historySteps: Number.isFinite(steps) && steps >= 0 ? steps : 0,
+  };
+}
+
 function dayOf(at, file) {
   const s = String(at || file || "");
   const m = s.match(/^(\d{4}-\d{2}-\d{2})/);
@@ -78,6 +99,7 @@ const rows = readdirSync(usageDir)
       ms: Number(j.ms) || 0,
       promptChars: j.promptChars ?? 0,
       systemChars: j.systemChars ?? 0,
+      ...parseHistoryMeta(j),
       prompt,
       candidates,
       total,
@@ -170,7 +192,7 @@ const html = `<!DOCTYPE html>
     background: var(--panel);
   }
   th, td { padding: 8px 10px; text-align: right; border-bottom: 1px solid var(--border); white-space: nowrap; }
-  th:nth-child(-n+6), td:nth-child(-n+6) { text-align: left; }
+  th:nth-child(-n+7), td:nth-child(-n+7) { text-align: left; }
   th { color: var(--muted); font-weight: 600; background: #14171e; position: sticky; top: 0; }
   tr:last-child td { border-bottom: 0; }
   .ok { color: #3dd68c; }
@@ -204,6 +226,8 @@ const html = `<!DOCTYPE html>
 </div>
 
 <div class="chart-wrap"><canvas id="bars"></canvas></div>
+<div class="chart-wrap"><canvas id="histTok"></canvas></div>
+<div class="chart-wrap"><canvas id="histAvg"></canvas></div>
 <div class="chart-wrap"><canvas id="cumul"></canvas></div>
 <div class="chart-wrap"><canvas id="chars"></canvas></div>
 
@@ -217,6 +241,7 @@ const html = `<!DOCTYPE html>
       <th>modelo</th>
       <th>engine</th>
       <th>ação</th>
+      <th>hist</th>
       <th>prompt</th>
       <th>out</th>
       <th>total</th>
@@ -330,9 +355,23 @@ function insights(list) {
   const s503 = list.filter((r) => r.errorKind === "503 high demand").length;
   const s429 = list.filter((r) => r.errorKind === "429 rate limit").length;
   const done = (acoes.done || 0);
+  const byH = {};
+  for (const r of list) {
+    (byH[r.historyCount] ??= { n: 0, prompt: 0 });
+    byH[r.historyCount].n += 1;
+    byH[r.historyCount].prompt += r.prompt || 0;
+  }
+  const histKeys = Object.keys(byH).map(Number).sort((a, b) => a - b);
+  const maxH = histKeys.length ? histKeys[histKeys.length - 1] : 0;
+  const avg0 = byH[0]?.n ? Math.round(byH[0].prompt / byH[0].n) : null;
+  const avgMax = byH[maxH]?.n ? Math.round(byH[maxH].prompt / byH[maxH].n) : null;
   const out = [
     topModel && "Modelo mais usado: " + topModel[0] + " (" + fmt(topModel[1]) + " req, " + Math.round(100 * topModel[1] / n) + "%).",
     topTok && "Mais tokens: " + topTok[0] + " (" + fmt(topTok[1]) + ").",
+    "Histórico no prompt: máx " + maxH + " passos (janela típica " + (list[0] && list.reduce((m, r) => Math.max(m, r.historySteps || 0), 0)) + ").",
+    avg0 != null && avgMax != null && maxH > 0
+      ? "Prompt tokens médios: hist 0 = " + fmt(avg0) + " → hist " + maxH + " = " + fmt(avgMax) + " (" + (avgMax >= avg0 ? "+" : "") + fmt(avgMax - avg0) + ")."
+      : null,
     "Taxa de falha HTTP/decide: " + Math.round(100 * fail / n) + "% (" + fail + "/" + n + ").",
     s503 ? "503/high demand: " + s503 + " (" + Math.round(100 * s503 / n) + "% das req)." : null,
     s429 ? "429 rate limit: " + s429 + "." : null,
@@ -414,6 +453,9 @@ function render() {
     : 0;
   const modelsN = Object.keys(countBy(list, "model")).length;
 
+  const maxH = list.reduce((m, r) => Math.max(m, r.historyCount || 0), 0);
+  const maxWin = list.reduce((m, r) => Math.max(m, r.historySteps || 0), 0);
+
   document.getElementById("insights").innerHTML = insights(list)
     .map((t) => "<li>" + t + "</li>").join("");
 
@@ -424,6 +466,7 @@ function render() {
     <div class="card"><span>Prompt tokens</span><b>\${fmt(tPrompt)}</b></div>
     <div class="card"><span>Output tokens</span><b>\${fmt(tOut)}</b></div>
     <div class="card"><span>Total tokens</span><b>\${fmt(tTot)}</b></div>
+    <div class="card"><span>Hist. no prompt</span><b>\${fmt(maxH)} / \${fmt(maxWin)}</b></div>
     <div class="card"><span>Latência média</span><b>\${fmt(avgMs)} ms</b></div>
     <div class="card"><span>Custo est.</span><b>\${usd(estimateUsd(list))}</b></div>
   \`;
@@ -482,6 +525,77 @@ function render() {
       scales: axis,
     },
   });
+  const histAvgMap = {};
+  for (const r of list) {
+    (histAvgMap[r.historyCount] ??= { s: 0, n: 0 });
+    histAvgMap[r.historyCount].s += r.prompt || 0;
+    histAvgMap[r.historyCount].n += 1;
+  }
+  const histLabels = Object.keys(histAvgMap).map(Number).sort((a, b) => a - b);
+  const histAvgTok = {};
+  for (const k of histLabels) histAvgTok[String(k)] = Math.round(histAvgMap[k].s / histAvgMap[k].n);
+  charts.histTok = new Chart(document.getElementById("histTok"), {
+    type: "line",
+    data: {
+      labels,
+      datasets: [
+        {
+          label: "prompt tokens",
+          data: list.map((r) => r.prompt),
+          borderColor: "#5b8def",
+          yAxisID: "y",
+          tension: 0.15,
+          pointRadius: pt,
+        },
+        {
+          label: "historyCount",
+          data: list.map((r) => r.historyCount),
+          borderColor: "#fb7185",
+          yAxisID: "y2",
+          tension: 0.15,
+          pointRadius: pt,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        title: { display: true, text: "Prompt tokens vs historyCount", color: "#e8eaed" },
+        legend: { labels: { color: "#e8eaed" } },
+      },
+      scales: {
+        x: axis.x,
+        y: { ...axis.y, title: { display: true, text: "prompt tokens", color: "#9aa0a6" } },
+        y2: {
+          position: "right",
+          ticks: { color: "#9aa0a6" },
+          grid: { display: false },
+          title: { display: true, text: "historyCount", color: "#9aa0a6" },
+        },
+      },
+    },
+  });
+  charts.histAvg = new Chart(document.getElementById("histAvg"), {
+    type: "bar",
+    data: {
+      labels: histLabels.map(String),
+      datasets: [{
+        label: "prompt tokens médios",
+        data: histLabels.map((k) => histAvgTok[String(k)]),
+        backgroundColor: "#fb7185",
+      }],
+    },
+    options: {
+      plugins: {
+        title: { display: true, text: "Prompt tokens médios por historyCount", color: "#e8eaed" },
+        legend: { display: false },
+      },
+      scales: {
+        x: { ticks: { color: "#9aa0a6" }, grid: { display: false }, title: { display: true, text: "historyCount", color: "#9aa0a6" } },
+        y: { ticks: { color: "#9aa0a6" }, grid: { color: "#2a2f3a" } },
+      },
+    },
+  });
   charts.cumul = new Chart(document.getElementById("cumul"), {
     type: "line",
     data: {
@@ -532,6 +646,7 @@ function render() {
       <td>\${r.model}</td>
       <td>\${r.engine}</td>
       <td>\${r.acao}</td>
+      <td>\${r.historyCount}/\${r.historySteps}</td>
       <td>\${fmt(r.prompt)}</td>
       <td>\${fmt(r.candidates)}</td>
       <td>\${fmt(r.total)}</td>

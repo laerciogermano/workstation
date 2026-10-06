@@ -6,6 +6,7 @@ import { join, resolve } from "node:path";
 import { extract } from "./extract.js";
 import {
   decide,
+  historyWindow,
   resolveHistorySteps,
   resolveDecideModel,
   resolveProvider,
@@ -227,6 +228,8 @@ function writeChatRequestFiles({
       ms: req.ms,
       promptChars: req.promptChars,
       systemChars: req.systemChars,
+      historyCount: call.historyCount ?? 0,
+      historySteps: call.historySteps ?? 0,
       status: req.status,
       synthetic: req.synthetic || undefined,
       // input/output inteiros da request ao chat
@@ -561,13 +564,18 @@ export async function runAgent(cfg, deps = {}) {
         ocr: sense === "ocr" ? compactOcr(ocr) : undefined,
         vision: visionMeta || undefined,
       });
-      recordChatCall({
-        step: i,
-        error: resultado,
-        model: e.model || model,
-        usage: errUsage || undefined,
-        requests: e.requests || undefined,
-      });
+      {
+        const hist = historyWindow({ history, historySteps });
+        recordChatCall({
+          step: i,
+          error: resultado,
+          model: e.model || model,
+          usage: errUsage || undefined,
+          requests: e.requests || undefined,
+          historyCount: hist.historyCount,
+          historySteps: hist.historySteps,
+        });
+      }
       await sleep(recoverMs);
       continue;
     }
@@ -580,6 +588,8 @@ export async function runAgent(cfg, deps = {}) {
       acao: decision.acao || undefined,
       resumo: decision.resumo || undefined,
       elementos: decision.elementos || undefined,
+      historyCount: decision.historyCount ?? 0,
+      historySteps: decision.historySteps ?? historySteps,
     });
 
     let { resumo, acao } = decision;

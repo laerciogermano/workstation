@@ -242,11 +242,14 @@ function clipPrompt(prompt) {
   );
 }
 
-function historyWindow(cfg) {
+export function historyWindow(cfg) {
   const n = resolveHistorySteps(cfg);
   const history = cfg.history;
-  if (!(n > 0 && Array.isArray(history) && history.length)) return { n, window: [] };
-  return { n, window: history.slice(-n) };
+  if (!(n > 0 && Array.isArray(history) && history.length)) {
+    return { n, window: [], historyCount: 0, historySteps: n };
+  }
+  const window = history.slice(-n);
+  return { n, window, historyCount: window.length, historySteps: n };
 }
 
 /**
@@ -425,7 +428,17 @@ export async function decide(cfg, deps = {}) {
       (parsed.acao.direction ? ` dir=${parsed.acao.direction}` : "") +
       (parsed.acao.motivo ? ` — ${parsed.acao.motivo}` : ""),
   );
-  return { ...parsed, usage, model: usedModel, provider, requests, sense };
+  const hist = historyWindow({ ...cfg, historySteps });
+  return {
+    ...parsed,
+    usage,
+    model: usedModel,
+    provider,
+    requests,
+    sense,
+    historyCount: hist.historyCount,
+    historySteps: hist.historySteps,
+  };
 }
 
 export { ACTION_TYPES, DEFAULT_GEMINI_MODEL, DEFAULT_OPENAI_MODEL };

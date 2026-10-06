@@ -13,6 +13,7 @@ import {
   decide,
   DEFAULT_HISTORY_STEPS,
   parseActionPayload,
+  historyWindow,
   resolveHistorySteps,
   resolveProvider,
   resolveDecideModel,
@@ -54,6 +55,13 @@ describe("agent-decide (SC-31)", () => {
     assert.equal(resolveHistorySteps({ historySteps: 2 }), 2);
     assert.equal(resolveHistorySteps({ historySteps: 0 }), 0);
     assert.equal(resolveHistorySteps({ historySteps: -1 }), 12);
+    const w = historyWindow({
+      history: [{ step: 1 }, { step: 2 }, { step: 3 }],
+      historySteps: 2,
+    });
+    assert.equal(w.historyCount, 2);
+    assert.equal(w.historySteps, 2);
+    assert.equal(historyWindow({ history: [{ step: 1 }], historySteps: 0 }).historyCount, 0);
     const prev = process.env.AGENT_HISTORY_STEPS;
     process.env.AGENT_HISTORY_STEPS = "5";
     try {
@@ -133,6 +141,8 @@ describe("agent-decide (SC-31)", () => {
     assert.equal(out.acao.y, 344);
     assert.match(out.acao.motivo, /Connect/i);
     assert.ok(out.usage);
+    assert.equal(out.historyCount, 0);
+    assert.equal(out.historySteps, 12);
   });
 
   it("decide com stub: scroll quando sem Connect", async () => {

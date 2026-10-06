@@ -152,6 +152,8 @@ describe("agent-run (SC-32)", () => {
       assert.equal(req1.input.prompt, "PROMPT_COMPLETO_STEP1");
       assert.equal(req1.output.text, '{"acao":{"type":"tap"}}');
       assert.equal(req1.roteiro, "conectar num comprador");
+      assert.equal(req1.historyCount, 0);
+      assert.equal(req1.historySteps, 12);
       assert.deepEqual(req1.acao, {
         type: "tap",
         x: 458,

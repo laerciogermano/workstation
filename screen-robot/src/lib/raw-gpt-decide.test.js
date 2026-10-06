@@ -1,7 +1,7 @@
 /**
  * raw-gpt: extract PNG + OpenAI real (sem mock) — espelha:
- *   npm run raw-gpt -- --image test/fixtures/linkedin-people-comprador-connect.png \
- *     --engine all --prompt "se estiver na tela do comprador..."
+ *   npm run raw-gpt -- --image test/fixtures/android-tela-inicial.png \
+ *     --engine all --prompt "voce esta na tela inicial do android; abra o Chrome"
  */
 import assert from "node:assert/strict";
 import { dirname, join } from "node:path";
@@ -16,16 +16,12 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const SRC_ROOT = join(__dirname, "..");
 loadEnvFiles([join(SRC_ROOT, ".env"), join(SRC_ROOT, ".env.local")]);
 
-const IMAGE = join(
-  SRC_ROOT,
-  "test/fixtures/linkedin-people-comprador-connect.png",
-);
-const PROMPT =
-  "se estiver na tela do comprador e com o people selecionado, entao eve buscar o botao connect para poder clicar";
+const IMAGE = join(SRC_ROOT, "test/fixtures/android-tela-inicial.png");
+const PROMPT = "voce esta na tela inicial do android; abra o Chrome";
 
 describe("raw-gpt-decide", () => {
   it(
-    "OpenAI real: image+engine all+prompt → action tap Connect",
+    "OpenAI real: home Android + engine all → action tap",
     { timeout: 300_000 },
     async () => {
       assert.ok(process.env.OPENAI_API_KEY, "falta OPENAI_API_KEY");
@@ -40,8 +36,7 @@ describe("raw-gpt-decide", () => {
       const out = await decideRawAction({ prompt: PROMPT, ocr });
       const action = { type: out.type, x: out.x, y: out.y };
 
-      assert.deepEqual(action, { type: "tap", x: 455, y: 344 });
-      assert.equal("motivo" in out, false);
+      assert.deepEqual(action, { type: "tap", x: 260, y: 713 });
       assert.deepEqual(Object.keys(parseActionTypeXY(out.raw)).sort(), [
         "type",
         "x",

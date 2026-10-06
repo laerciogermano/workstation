@@ -238,12 +238,13 @@ npm run agent -- --sense vision --prompt ../roteiros/teste.md --no-prompt
 npm run agent -- --vision --provider openai --model gpt-4o-mini --prompt ../roteiros/teste.md
 npm run agent:smoke              # 1–2 passos no device; sem key = heurística Connect/scroll
 npm run raw-gpt                  # extractFromImage → system agente + jornada/OCR → { type, x, y }
-npm run raw-gpt -- --image test/fixtures/linkedin-people-comprador-connect.png
-npm run raw-gpt -- --engine all --prompt "se estiver na tela do comprador e com o people selecionado, entao eve buscar o botao connect para poder clicar"
+npm run raw-gpt -- --image test/fixtures/android-tela-inicial.png
+npm run raw-gpt -- --engine all --prompt "voce esta na tela inicial do android; abra o Chrome"
+# Fixture home: test/fixtures/android-tela-inicial.png (print AVD KEYCODE_HOME + npm run print).
 # Lógica: lib/raw-gpt-decide.js. Teste (OpenAI real, sem mock; precisa OPENAI_API_KEY):
 #   node --test lib/raw-gpt-decide.test.js
-# Espelha o comando acima → espera action { type: tap, x: 455, y: 344 }.
-# Antes: OCR fixture JSON + DEFAULT_PROMPT. Rollback: fixture agent-ocr-people-connect.json + assert perto de Connect.
+# → espera action { type: tap, x: 260, y: 713 }.
+# Antes: linkedin-people-comprador-connect.png + Connect (455,344). Rollback: trocar IMAGE/PROMPT/assert.
 ```
 
 **Setup CLI (modelos):** em TTY, sem `--model` / `--force-model` / `--no-prompt`, o agent lista o catálogo ([`lib/agent-models.js`](lib/agent-models.js)) e pede a escolha (`1`, `1,3`, `a`=todos, ou id). Vários modelos → roda em sequência, log em `logs/agent/<model>/`. Rollback: `--model <id>` ou `--no-prompt`.

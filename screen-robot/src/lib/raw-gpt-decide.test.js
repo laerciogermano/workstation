@@ -123,4 +123,16 @@ describe("raw-gpt-decide", () => {
       });
     },
   );
+
+  it(
+    "LinkedIn Location sheet → tap Add a location",
+    { timeout: 300_000 },
+    async () => {
+      await runCase({
+        image: "linkedin-search-comprador-all-results-location-selected.png",
+        prompt: PROMPT + "\nvoce esta no passo 7",
+        expected: { type: "tap", x: 127, y: 380 },
+      });
+    },
+  );
 });

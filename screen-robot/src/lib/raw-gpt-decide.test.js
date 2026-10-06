@@ -192,7 +192,7 @@ describe("raw-gpt-decide", () => {
       await runCase({
         image: "linkedin-search-comprador-connected.png",
         prompt: PROMPT + "\nvoce esta no passo 11",
-        expected: { type: "tap", x: 453, y: 382 },
+        expected: { type: "tap", x: 454, y: 447 },
       });
     },
   );

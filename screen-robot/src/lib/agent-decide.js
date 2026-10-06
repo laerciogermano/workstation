@@ -419,6 +419,7 @@ export async function decide(cfg, deps = {}) {
           thinkingLevel: cfg.thinkingLevel || "low",
           fallbackModels: [],
           chainRounds: 1,
+          retries: 0,
           system,
           prompt,
           images,

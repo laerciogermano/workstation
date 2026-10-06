@@ -267,6 +267,37 @@ describe("agent-decide (SC-31)", () => {
     assert.deepEqual(models, ["gemini-3.8-flash", "gpt-4o-mini"]);
   });
 
+  it("decide: 1 falha no modelo → próximo da cadeia (retries 0)", async () => {
+    const seen = [];
+    const stub = async (opts) => {
+      seen.push({ model: opts.model, retries: opts.retries });
+      if (opts.model === "gemini-3.8-flash") {
+        const e = new Error("high demand");
+        e.code = "GEMINI_REQUEST_FAILED";
+        throw e;
+      }
+      return {
+        text: JSON.stringify({ acao: { type: "done", motivo: "ok" } }),
+        model: opts.model,
+      };
+    };
+    const out = await decide(
+      {
+        prompt: "x",
+        ocr: [{ text: "A", x: 1, y: 2 }],
+        model: "gemini-3.8-flash",
+        fallbackModels: ["gemini-3.5-flash"],
+      },
+      { generateContent: stub, log: () => {} },
+    );
+    assert.equal(out.model, "gemini-3.5-flash");
+    assert.equal(seen[0].retries, 0);
+    assert.deepEqual(
+      seen.map((s) => s.model),
+      ["gemini-3.8-flash", "gemini-3.5-flash"],
+    );
+  });
+
   it("decide: noFallback não desce a escada", async () => {
     const models = [];
     const stub = async (opts) => {

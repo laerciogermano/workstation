@@ -79,9 +79,41 @@ describe("gemini", () => {
     assert.ok(c.includes("gemini-3.1-flash-lite"));
   });
 
-  it("high demand retria o mesmo modelo na hora", async () => {
+  it("high demand com fallback desce na hora (não retria o mesmo)", async () => {
     const modelsHit = [];
-    const waits = [];
+    const fetchStub = async (url) => {
+      const m = decodeURIComponent(String(url).match(/models\/([^:]+)/)?.[1]);
+      modelsHit.push(m);
+      if (m.includes("3.8")) {
+        return {
+          ok: false,
+          status: 503,
+          json: async () => ({ error: { message: "high demand" } }),
+        };
+      }
+      return {
+        ok: true,
+        json: async () => ({
+          candidates: [{ content: { parts: [{ text: '{"ok":true}' }] } }],
+        }),
+      };
+    };
+    const out = await generateContent(
+      {
+        prompt: "hi",
+        apiKey: "k",
+        model: "gemini-3.8-flash",
+        fallbackModels: ["gemini-3.1-flash-lite"],
+        retries: 2,
+      },
+      { fetch: fetchStub, sleep: async () => {}, log: () => {} },
+    );
+    assert.equal(out.model, "gemini-3.1-flash-lite");
+    assert.deepEqual(modelsHit, ["gemini-3.8-flash", "gemini-3.1-flash-lite"]);
+  });
+
+  it("high demand retria o mesmo modelo se for o último da cadeia", async () => {
+    const modelsHit = [];
     let n = 0;
     const fetchStub = async (url) => {
       const m = decodeURIComponent(String(url).match(/models\/([^:]+)/)?.[1]);
@@ -106,19 +138,14 @@ describe("gemini", () => {
         prompt: "hi",
         apiKey: "k",
         model: "gemini-3.8-flash",
-        fallbackModels: ["gemini-3.1-flash-lite"],
+        fallbackModels: [],
         retries: 2,
-        retryMs: 2000,
+        chainRounds: 1,
       },
-      {
-        fetch: fetchStub,
-        sleep: async (ms) => waits.push(ms),
-        log: () => {},
-      },
+      { fetch: fetchStub, sleep: async () => {}, log: () => {} },
     );
     assert.equal(out.model, "gemini-3.8-flash");
     assert.deepEqual(modelsHit, ["gemini-3.8-flash", "gemini-3.8-flash"]);
-    assert.equal(waits.length, 0);
   });
 
   it("isModelUnavailable detecta 404 / no longer available", () => {

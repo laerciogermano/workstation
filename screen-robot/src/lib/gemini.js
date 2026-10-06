@@ -356,14 +356,14 @@ export async function generateContent(opts, deps = {}) {
               model,
             });
           }
+          if (mi < models.length - 1) {
+            logFn(`fallback → ${models[mi + 1]} (HTTP ${res.status} em ${model})`);
+            break;
+          }
           if (isHighDemand(res.status, lastMsg)) {
             if (attempt <= retries) {
               logFn(`alta demanda 503 — retry imediato (${model})`);
               continue;
-            }
-            if (mi < models.length - 1) {
-              logFn(`fallback → ${models[mi + 1]} (high demand em ${model})`);
-              break;
             }
           }
           if (attempt <= retries && isRetryable(res.status, lastMsg)) {

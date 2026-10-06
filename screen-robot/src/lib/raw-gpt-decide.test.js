@@ -46,8 +46,20 @@ describe("raw-gpt-decide", () => {
     async () => {
       await runCase({
         image: "linkedin-people-comprador-connect.png",
-        prompt: PROMPT,
+        prompt: PROMPT + "\nvoce esta no passo 11",
         expected: { type: "tap", x: 455, y: 344 },
+      });
+    },
+  );
+
+  it(
+    "LinkedIn tela inicial → passo 1",
+    { timeout: 300_000 },
+    async () => {
+      await runCase({
+        image: "linkedin-tela-inicial.png",
+        prompt: PROMPT + "\nvoce esta no passo 1",
+        expected: { type: "tap", x: 177, y: 78 },
       });
     },
   );

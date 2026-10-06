@@ -646,7 +646,10 @@ Abrir AVD e navegar ao LinkedIn (manual ou npm run linkedin-login só para login
 Pedir à IA: executar este roteiro; ela lê o markdown, chama extract/ações pontuais e decide em tempo real.
 
 ```bash
-cd screen-robot/src && GEMINI_MODEL=gemini-3.5-flash npm run agent -- --prompt ../roteiros/jornada-completa.md --history-steps 0
+cd screen-robot/src
+npm run agent -- --prompt ../roteiros/jornada-completa.md --history-steps 10
+# TTY → menu de modelos (1 / 1,3 / a=todos / id)
+# sem menu: --model gemini-3.8-flash  |  --no-prompt  |  --all-models
 ```
 
 Digitação: default ADB. Rollback OCR/tap: `AGENT_TYPE_METHOD=ocr`.

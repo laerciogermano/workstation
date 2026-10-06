@@ -241,8 +241,10 @@ npm run agent:smoke              # 1–2 passos no device; sem key = heurística
 
 **Antes → depois (id Gemini 3 Flash):** catálogo usava `gemini-3-flash` (HTTP 404 na API) → `gemini-3-flash-preview`. Rollback: só se a API voltar a expor `gemini-3-flash`.
 
+**Antes → depois (Gemini 2.5 Flash):** catálogo só 3.x + OpenAI → também `gemini-2.5-flash` (menu CLI / `--model` / escada de fallback). Rollback: remover o id de `AGENT_MODELS` / `FALLBACK_LADDER`.
+
 Stdout: `[agent]` / `[decide]` / `[gemini]` ou `[openai]`. Provider default `gemini`; `AGENT_PROVIDER=openai` ou modelo `gpt-*` usa OpenAI.
-Fallback default (`decide`): do modelo escolhido desce a escada `gemini-3.8-flash` → `3.7` → `3.6` → `3.5` → `3-flash-preview` → `3.5-flash-lite` → `3.1-flash-lite` → `gpt-4o-mini`. Sem key do provider, pula. `AGENT_FALLBACK_MODELS=off` desliga. Override CSV em `AGENT_FALLBACK_MODELS` / `decide({ fallbackModels })`.
+Fallback default (`decide`): do modelo escolhido desce a escada `gemini-3.8-flash` → `3.7` → `3.6` → `3.5` → `3-flash-preview` → `2.5-flash` → `3.5-flash-lite` → `3.1-flash-lite` → `gpt-4o-mini`. Sem key do provider, pula. `AGENT_FALLBACK_MODELS=off` desliga. Override CSV em `AGENT_FALLBACK_MODELS` / `decide({ fallbackModels })`.
 
 **Antes → depois (cadeia até gpt-4o-mini):** Gemini único (ou `GEMINI_FALLBACK_MODELS` só Gemini) → escada até `gpt-4o-mini`. Rollback: `export AGENT_FALLBACK_MODELS=off`.
 

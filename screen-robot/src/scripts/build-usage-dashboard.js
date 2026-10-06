@@ -295,6 +295,7 @@ const USD_PER_M = {
   "gemini-3.8-flash": { in: 0.75, out: 3.75 },
   "gemini-3-flash": { in: 0.50, out: 3.00 },
   "gemini-3-flash-preview": { in: 0.50, out: 3.00 },
+  "gemini-2.5-flash": { in: 0.30, out: 2.50 },
 };
 const PRICE_NOTE = "Custo = paid tier oficial (não free) · US$ 1 = R$ 5,50. Out Gemini inclui thinking. 3.6/3.7/3.8 Flash = introdutório até 31/12/2026 (depois in 1.50 / out 7.50). Fontes: Gemini API pricing · OpenAI API pricing. Consulta 2026-10-06.";
 

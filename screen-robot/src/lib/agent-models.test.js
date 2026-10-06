@@ -31,6 +31,9 @@ describe("agent-models", () => {
     const mini = parseModelSelection("gpt-5-mini");
     assert.equal(mini[0].id, "gpt-5-mini");
     assert.equal(mini[0].provider, "openai");
+    const g25 = parseModelSelection("gemini-2.5-flash");
+    assert.equal(g25[0].id, "gemini-2.5-flash");
+    assert.equal(g25[0].provider, "gemini");
   });
 
   it("parseModelSelection: vazio/inválido", () => {
@@ -42,6 +45,7 @@ describe("agent-models", () => {
     const c = resolveFallbackLadder("gemini-3.8-flash", { env: {} });
     assert.equal(c[0], "gemini-3.8-flash");
     assert.equal(c.at(-1), "gpt-4o-mini");
+    assert.ok(c.includes("gemini-2.5-flash"));
     assert.ok(c.includes("gemini-3.5-flash-lite"));
   });
 
@@ -49,6 +53,14 @@ describe("agent-models", () => {
     const c = resolveFallbackLadder("gemini-3.5-flash", { env: {} });
     assert.equal(c[0], "gemini-3.5-flash");
     assert.equal(c.includes("gemini-3.8-flash"), false);
+    assert.equal(c.at(-1), "gpt-4o-mini");
+  });
+
+  it("resolveFallbackLadder: gemini-2.5-flash desce para lite e gpt-4o-mini", () => {
+    const c = resolveFallbackLadder("gemini-2.5-flash", { env: {} });
+    assert.equal(c[0], "gemini-2.5-flash");
+    assert.equal(c.includes("gemini-3.8-flash"), false);
+    assert.ok(c.includes("gemini-3.5-flash-lite"));
     assert.equal(c.at(-1), "gpt-4o-mini");
   });
 

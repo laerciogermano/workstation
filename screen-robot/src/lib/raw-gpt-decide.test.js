@@ -87,4 +87,16 @@ describe("raw-gpt-decide", () => {
       });
     },
   );
+
+  it(
+    "LinkedIn Search comprador teclado fechado → Show all results",
+    { timeout: 300_000 },
+    async () => {
+      await runCase({
+        image: "linkedin-search-comprador-keyboard-closed.png",
+        prompt: PROMPT + "\nvoce esta no passo 4",
+        expected: { type: "tap", x: 270, y: 849 },
+      });
+    },
+  );
 });

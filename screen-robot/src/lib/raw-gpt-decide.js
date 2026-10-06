@@ -1,6 +1,6 @@
 /**
  * Decisão crua via chat.completions (mesmo contrato do scripts/raw-gpt.js).
- * Retorno público do teste: { type, x, y } (sem motivo).
+ * Retorno: { type, x, y }.
  */
 
 export const DEFAULT_PROMPT =
@@ -19,8 +19,7 @@ Formato único:
     "direction": null,
     "text": null,
     "code": null,
-    "ms": null,
-    "motivo": "passo em curso — ..."
+    "ms": null
   }
 }
 
@@ -37,7 +36,8 @@ Regras:
 - tap.x / tap.y = EXCLUSIVAMENTE de um hit do OCR atual; proibido inventar ou reusar coords de outro contexto
 - Cada item do OCR (text/icon) é clicável
 - Sem alvo do passo → sleep ou scroll; evite fail
-- Um único objeto JSON na resposta`;
+- Um único objeto JSON na resposta
+- Não inclua campo motivo`;
 
 /**
  * @param {string} prompt
@@ -54,7 +54,7 @@ Defina a próxima action.`;
 }
 
 /**
- * Extrai action e devolve só type, x, y (sem motivo nem extras).
+ * Extrai action e devolve só type, x, y.
  * @param {string} content
  * @returns {{ type: string, x: number|null, y: number|null }}
  */
@@ -88,10 +88,9 @@ export function parseActionTypeXY(content) {
  *   apiKey?: string,
  *   model?: string,
  * }} opts
- * @param {{ fetch?: typeof fetch }} [deps]
  * @returns {Promise<{ type: string, x: number|null, y: number|null, raw?: string, payload?: object }>}
  */
-export async function decideRawAction(opts, deps = {}) {
+export async function decideRawAction(opts) {
   const apiKey = opts.apiKey ?? process.env.OPENAI_API_KEY;
   if (!apiKey) {
     const err = new Error("falta OPENAI_API_KEY");
@@ -100,7 +99,6 @@ export async function decideRawAction(opts, deps = {}) {
   }
   const prompt = opts.prompt ?? DEFAULT_PROMPT;
   const model = opts.model || process.env.OPENAI_MODEL || "gpt-4o-mini";
-  const fetchFn = deps.fetch ?? globalThis.fetch;
 
   const payload = {
     model,
@@ -111,7 +109,7 @@ export async function decideRawAction(opts, deps = {}) {
     ],
   };
 
-  const res = await fetchFn("https://api.openai.com/v1/chat/completions", {
+  const res = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${apiKey}`,

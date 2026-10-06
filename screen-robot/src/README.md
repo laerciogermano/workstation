@@ -240,7 +240,8 @@ npm run agent:smoke              # 1–2 passos no device; sem key = heurística
 npm run raw-gpt                  # extractFromImage → system agente + jornada/OCR → { type, x, y }
 npm run raw-gpt -- --image test/fixtures/linkedin-people-comprador-connect.png
 npm run raw-gpt -- --engine all --prompt "conecte no comprador"
-# Lógica: lib/raw-gpt-decide.js. Teste: node --test lib/raw-gpt-decide.test.js
+# Lógica: lib/raw-gpt-decide.js. Teste (OpenAI real, precisa OPENAI_API_KEY):
+#   node --test lib/raw-gpt-decide.test.js
 # Default: fixture people/connect + engine all. Rollback: remover raw-gpt.js + raw-gpt-decide.js(+test) + script npm.
 ```
 

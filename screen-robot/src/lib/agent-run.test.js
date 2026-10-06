@@ -14,9 +14,31 @@ import {
   ocrHasBottomTabs,
   ocrTextAt,
   tapLabelMismatch,
+  historyHasType,
+  historyHasSearchTap,
+  tapNearShowAll,
 } from "./agent-run.js";
 
 describe("agent-run (SC-32)", () => {
+  it("historyHasType / tapNearShowAll — OCR Recent ≠ type", () => {
+    assert.equal(historyHasType([]), false);
+    assert.equal(historyHasType([{ type: "tap", y: 79 }]), false);
+    assert.equal(historyHasType([{ type: "type", text: "comprador" }]), true);
+    assert.equal(
+      historyHasType([{ type: "type", text: "comprador", error: "falhou" }]),
+      false,
+    );
+    assert.equal(historyHasSearchTap([{ type: "tap", y: 79 }]), true);
+    assert.equal(historyHasSearchTap([{ type: "tap", y: 354 }]), false);
+    const ocr = [
+      { text: "Recent", x: 63, y: 153 },
+      { text: "Show all", x: 405, y: 153 },
+      { text: "comprador", x: 156, y: 369 },
+    ];
+    assert.equal(tapNearShowAll(ocr, { type: "tap", x: 405, y: 153 }), true);
+    assert.equal(tapNearShowAll(ocr, { type: "tap", x: 63, y: 153 }), false);
+  });
+
   it("ocrHasQwertyKeyboard + pickForcedTypeText (campo local vs busca)", () => {
     assert.equal(
       ocrHasQwertyKeyboard([
@@ -93,6 +115,85 @@ describe("agent-run (SC-32)", () => {
       ),
       null,
     );
+  });
+
+  it("runAgent: Show all sem type no histórico → força type", async () => {
+    const logDir = mkdtempSync(join(tmpdir(), "sr-agent-"));
+    const usageDir = mkdtempSync(join(tmpdir(), "sr-usage-"));
+    const types = [];
+    const taps = [];
+    let step = 0;
+    try {
+      const result = await runAgent(
+        {
+          serial: "emulator-5554",
+          prompt: 'type "comprador" → tap Show all',
+          maxSteps: 3,
+          logDir,
+          usageDir,
+          stepDelayMs: 0,
+          recoverDelayMs: 0,
+        },
+        {
+          sleep: async () => {},
+          extract: async () => {
+            // passo 1 = feed (Search, sem teclado); depois = Recent+Show all+teclado
+            if (step < 1) {
+              return [
+                { type: "text", text: "Search", x: 129, y: 81 },
+                { type: "text", text: "Home", x: 55, y: 872 },
+                { type: "text", text: "Network", x: 163, y: 872 },
+                { type: "text", text: "Jobs", x: 487, y: 872 },
+              ];
+            }
+            return [
+              { type: "text", text: "Search", x: 129, y: 81 },
+              { type: "text", text: "Recent", x: 63, y: 153 },
+              { type: "text", text: "Show all", x: 405, y: 153 },
+              { type: "text", text: "comprador", x: 156, y: 369 },
+              { type: "text", text: "q", x: 50, y: 620 },
+              { type: "text", text: "w", x: 100, y: 620 },
+              { type: "text", text: "e", x: 150, y: 620 },
+            ];
+          },
+          decide: async ({ history }) => {
+            step += 1;
+            if (step === 1) {
+              return {
+                resumo: "Search",
+                acao: { type: "tap", x: 129, y: 81, motivo: "Search" },
+              };
+            }
+            if (!historyHasType(history)) {
+              return {
+                resumo: "Show all errado",
+                acao: {
+                  type: "tap",
+                  x: 405,
+                  y: 153,
+                  motivo: "Show all sem type",
+                },
+              };
+            }
+            return { resumo: "ok", acao: { type: "done", motivo: "typed" } };
+          },
+          tapElement: (cfg) => taps.push(cfg),
+          typeViaAdb: (_s, text) => types.push(text),
+        },
+      );
+      assert.equal(result.status, "done");
+      assert.equal(taps.length, 1);
+      assert.equal(taps[0].x, 129);
+      assert.deepEqual(types, ["comprador"]);
+      assert.ok(
+        result.steps.some(
+          (s) => s.acao?.type === "type" && s.acao?.text === "comprador",
+        ),
+      );
+    } finally {
+      rmSync(logDir, { recursive: true, force: true });
+      rmSync(usageDir, { recursive: true, force: true });
+    }
   });
 
   it("runAgent: TAP_NO_XY não executa tap", async () => {

@@ -1,7 +1,8 @@
 Objetivo: abrir LinkedIn → tap Search → type "comprador" → tap Show all (text EXATO do OCR) → done. 1 ação/turno.
 
 Ordem obrigatória (nunca pule): 1→2→3→4/5→6→7→8→9.
-SEM type "comprador" no histórico desta run → PROIBIDO tap Show all / Showall / Show all results.
+SEM type "comprador" no histórico desta run → PROIBIDO tap Show all / Showall / Show all results / Recent / item do Recent.
+OCR com texto "comprador" em Recent ≠ type no histórico — só conta a ação type desta run.
 SEM tap Search no histórico → PROIBIDO type. SEM type → PROIBIDO Show all. SEM Show all (ou lista já aberta) → PROIBIDO done.
 
 Tap: acao.x e acao.y = coords do alvo (use os x,y do extract). PROIBIDO id/element/e0. PROIBIDO inventar alvo que não está no OCR (ex. Show all results se só há Show all). Sem coords → não tap.
@@ -46,7 +47,8 @@ Passos:
 
 7) Type "comprador" — DEPOIS do tap Search. Histórico TEM tap Search. SEM type ainda.
    A) OCR pobre (último=tap Search): type "comprador". NÃO é home. PROIBIDO scroll. PROIBIDO Show all.
-   B) Teclado q/w/e ou Recent+Show all SEM type no histórico: type "comprador". Sem tap Show all ainda.
+   B) Teclado q/w/e ou Recent+Show all SEM type no histórico: type "comprador". ÚNICA ação.
+      PROIBIDO tap Show all / Recent / "comprador" do histórico Recent (mesmo se o texto já aparece no OCR).
    Sucesso: type no histórico → 8.
    Falha: type de novo 1×; voltou feed → 6.
 
@@ -66,3 +68,4 @@ Passos:
    Falha: sem type → 7; type sem Show all e botão ainda no OCR → 8; feed → 6.
 
 PROIBIDO: inventar text fora do OCR; type:KEYCODE_BACK; Show all antes do type; Show all no feed (Search+Home); done só após type; retap Show all quando a lista já abriu; scroll após LinkedIn/Search; coords inventadas.
+

@@ -103,6 +103,37 @@ export function findOcrHit(ocr, re) {
   return (ocr || []).find((e) => re.test(String(e.text || "")));
 }
 
+/** Histórico desta run já tem `type` sem erro. OCR com o texto ≠ type. */
+export function historyHasType(history) {
+  return (history || []).some((h) => h?.type === "type" && !h.error);
+}
+
+/** Já houve tap no Search (y<120) nesta run. */
+export function historyHasSearchTap(history) {
+  return (history || []).some(
+    (h) =>
+      h?.type === "tap" &&
+      !h.error &&
+      Number.isFinite(Number(h.y)) &&
+      Number(h.y) < 120,
+  );
+}
+
+/** Tap perto de Show all / Showall / Show all results. */
+export function tapNearShowAll(ocr, acao, maxDist = 48) {
+  if (!acao || acao.type !== "tap") return false;
+  const x = Number(acao.x);
+  const y = Number(acao.y);
+  if (!Number.isFinite(x) || !Number.isFinite(y)) return false;
+  return (ocr || []).some((e) => {
+    if (!/show\s*all/i.test(String(e.text || ""))) return false;
+    if (!Number.isFinite(Number(e.x)) || !Number.isFinite(Number(e.y))) {
+      return false;
+    }
+    return distXy(x, y, e.x, e.y) <= maxDist;
+  });
+}
+
 function tapGroundOff(cfg = {}) {
   if (cfg.tapGround === false) return true;
   const raw = String(
@@ -827,6 +858,30 @@ export async function runAgent(cfg, deps = {}) {
           code: null,
           ms: null,
           motivo: `guard: type com teclado aberto (bloqueou tap no campo)`,
+        };
+      }
+    }
+    // Show all da seção Recent ≠ busca: SEM type no histórico → força type (OCR "comprador" não conta).
+    if (
+      acao.type === "tap" &&
+      !historyHasType(history) &&
+      historyHasSearchTap(history) &&
+      tapNearShowAll(ocr, acao)
+    ) {
+      const text = pickForcedTypeText(cfg.prompt, ocr);
+      if (text) {
+        log(
+          `guard: bloqueia Show all sem type no histórico — força type ${JSON.stringify(text)}`,
+        );
+        acao = {
+          type: "type",
+          x: acao.x ?? null,
+          y: acao.y ?? null,
+          direction: null,
+          text,
+          code: null,
+          ms: null,
+          motivo: `guard: type antes de Show all (OCR Recent ≠ type)`,
         };
       }
     }

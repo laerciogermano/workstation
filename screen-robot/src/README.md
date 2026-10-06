@@ -230,7 +230,9 @@ Stdout: `[agent]` / `[decide]` / `[gemini]` ou `[openai]`. Provider default `gem
 
 **Antes → depois (retry saturado):** espera `GEMINI_CHAIN_WAIT_MS×round` (800) / `GEMINI_RETRY_MS` (250) → **0ms** (retry imediato) e **30** rounds. Rollback: `export GEMINI_CHAIN_WAIT_MS=800 GEMINI_RETRY_MS=250 GEMINI_CHAIN_ROUNDS=2`.
 
-**Antes → depois (não morrer):** timeout/503/`fail` da API abortava a run → agora só registra, espera (`AGENT_RECOVER_MS` default 1500) e tenta o próximo passo até `done` ou `maxSteps`. Timeout request default **30s** (antes 12s). Rollback: restaurar `break` no catch do `decide`.
+**Antes → depois (não morrer):** timeout/503/`fail` da API abortava a run → agora só registra e tenta o próximo passo até `done` ou `maxSteps`.
+
+**Antes → depois (sem espera):** `AGENT_RECOVER_MS` 1500 / `stepDelayMs` 600 / loading 800ms / request timeout 30s → defaults **0** (retry na hora; request sem abort). Rollback: `export AGENT_RECOVER_MS=1500 AGENT_STEP_DELAY_MS=600 GEMINI_TIMEOUT_MS=30000`.
 
 ```js
 import { decide } from "./lib/agent-decide.js";

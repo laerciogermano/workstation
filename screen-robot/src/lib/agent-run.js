@@ -90,7 +90,6 @@ export async function executeAction(cfg, deps = {}) {
       try {
         await doType(payload, deps);
       } catch {
-        await sleep(1200);
         try {
           await doType(payload, deps);
         } catch (e2) {
@@ -375,7 +374,9 @@ export async function runAgent(cfg, deps = {}) {
   process.once("SIGINT", () => onSignal("SIGINT"));
   process.once("SIGTERM", () => onSignal("SIGTERM"));
 
-  const recoverMs = Number(cfg.recoverDelayMs ?? process.env.AGENT_RECOVER_MS ?? 1500);
+  // 0 = tenta de novo na hora (sem espera entre falhas / passos)
+  const recoverMs = Number(cfg.recoverDelayMs ?? process.env.AGENT_RECOVER_MS ?? 0);
+  const stepDelayMs = Number(cfg.stepDelayMs ?? process.env.AGENT_STEP_DELAY_MS ?? 0);
 
   for (let i = 1; i <= maxSteps; i++) {
     log(`── passo ${i}/${maxSteps} ──`);
@@ -410,8 +411,7 @@ export async function runAgent(cfg, deps = {}) {
     }
 
     if (looksLoading(ocr)) {
-      log(`tela loading — retry extract em 800ms`);
-      await sleep(800);
+      log(`tela loading — retry extract imediato`);
       try {
         ocr = await runExtract({ serial, engine }, deps);
         dumpOcrStdout(ocr);
@@ -547,7 +547,7 @@ export async function runAgent(cfg, deps = {}) {
       continue;
     }
 
-    await sleep(Number(cfg.stepDelayMs ?? 600));
+    if (stepDelayMs > 0) await sleep(stepDelayMs);
   }
 
   if (status === "running") status = "max_steps";

@@ -8,8 +8,9 @@ const DEFAULT_MODEL = "gpt-4o-mini";
 const API_URL = "https://api.openai.com/v1/chat/completions";
 const DEFAULT_RETRIES = Number(process.env.OPENAI_RETRIES || process.env.GEMINI_RETRIES || 2);
 const DEFAULT_RETRY_MS = Number(process.env.OPENAI_RETRY_MS || process.env.GEMINI_RETRY_MS || 0);
+/** 0 = sem abort (espera a API). */
 const DEFAULT_TIMEOUT_MS = Number(
-  process.env.OPENAI_TIMEOUT_MS || process.env.GEMINI_TIMEOUT_MS || 30000,
+  process.env.OPENAI_TIMEOUT_MS || process.env.GEMINI_TIMEOUT_MS || 0,
 );
 
 function fail(code, msg, extra = {}) {

@@ -41,6 +41,9 @@ describe("openai", () => {
     assert.equal(out.model, DEFAULT_MODEL);
     assert.ok(out.requests?.length);
     assert.equal(out.requests[0].response, '{"ok":true}');
+    assert.equal(out.requests[0].entrada.model, DEFAULT_MODEL);
+    assert.equal(out.requests[0].entrada.messages[1].content, "hi");
+    assert.equal(out.requests[0].resposta.choices[0].message.content, '{"ok":true}');
   });
 
   it("429 espera try again in / piso 2s", async () => {

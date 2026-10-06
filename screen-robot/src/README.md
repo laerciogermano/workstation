@@ -191,7 +191,7 @@ Tira screenshot do device online e grava em `screenshots/<nome>.png` (path absol
 
 ## Motor Gemini (EP-07) — `decide` / `runAgent`
 
-Loop genérico: **sense=ocr** (default) extract OCR → decide → operate; ou **sense=vision** print → WebP → decide multimodal → operate. Log em `logs/agent/` e `usage/<timestamp>.json`. Prompt/roteiro entram como **input**.
+Loop genérico: **sense=ocr** (default) extract OCR → decide → operate; ou **sense=vision** print → WebP → decide multimodal → operate. Log em `logs/agent/` e `usage-2.0/<timestamp>.json`. Prompt/roteiro entram como **input**.
 
 ```bash
 cd screen-robot/src
@@ -222,6 +222,8 @@ npm run agent -- --provider openai --model gpt-4o-mini --prompt ../roteiros/abri
 npm run agent -- --provider openai --model gpt-4o-mini --no-prompt --prompt ../roteiros/jornada-calendar-hoje.md
 # LinkedIn Campinas: 1 engine (rapidocr, melhor em Connect); sem merge all
 npm run agent -- --provider openai --model gpt-4o-mini --no-prompt --engine rapidocr --max-steps 80 --history-steps 1 --prompt ../roteiros/jornada-linkedin-campinas.md
+# LinkedIn comprador Campinas do zero (abre o app; gpt-4o-mini)
+npm run agent -- --provider openai --model gpt-4o-mini --engine all --icons true --history-steps 10 --prompt ../roteiros/jornada-linkedin-comprador-campinas.md
 npm run agent -- --prompt "abra o LinkedIn e mostre as últimas 10 conexões"
 npm run agent -- --prompt ../roteiros/jornada-completa.md --all-models
 npm run agent -- --prompt ../roteiros/jornada-completa.md --no-prompt   # sem menu (env/default)
@@ -244,6 +246,8 @@ npm run agent:smoke              # 1–2 passos no device; sem key = heurística
 **Antes → depois (Calendar hoje):** prompt solto fazia gpt-4o-mini tap em "Nothing planned. Tap to create." / "+" e criar evento. Roteiro: [`roteiros/jornada-calendar-hoje.md`](../roteiros/jornada-calendar-hoje.md) (só leitura; done no vazio ou na lista). Rollback: `--prompt "abra o calendar…"`.
 
 **Antes → depois (LinkedIn Campinas / gpt-4o-mini):** `engine=all` misturava overlay de setup; histórico 12 fazia o mini repetir taps. Roteiro IF-OCR: [`roteiros/jornada-linkedin-campinas.md`](../roteiros/jornada-linkedin-campinas.md) + `--engine rapidocr --history-steps 1`. Rollback: `--engine all --history-steps 12` e [`roteiros/jornada-comprador.md`](../roteiros/jornada-comprador.md).
+
+**Antes → depois (comprador Campinas do zero):** o roteiro antigo assumia LinkedIn já aberto e o mini pulava busca/filtro. Agora: [`roteiros/jornada-linkedin-comprador-campinas.md`](../roteiros/jornada-linkedin-comprador-campinas.md) (FASE 0 abre o app). Rollback: [`jornada-linkedin-campinas.md`](../roteiros/jornada-linkedin-campinas.md).
 
 **Antes → depois (Search vs Campinas no mini):** IF punha feed/`Show translation` no mesmo bloco que Search; `type "Campinas"` vinha **antes** de `type "comprador"` → guard pós-tap Search injetava cidade no campo de busca e o mini Connectava. Agora: linha própria `Search y<120` → tap (proibido scroll); primeiro `type "…"` do arquivo é **comprador**; Campinas só no `Add alocation`; Campinas no Search ≠ filtro. Rollback: ordem antiga (Campinas primeiro + Connect se Campinas no OCR).
 
@@ -313,17 +317,17 @@ Testes: `node --test lib/gemini.test.js lib/openai.test.js lib/agent-decide.test
 Plano: [`../implementation-plan/EP-07-motor-gemini.md`](../implementation-plan/EP-07-motor-gemini.md).  
 POC custo/visão: [`test/output/poc-vision/custos-por-agente.md`](test/output/poc-vision/custos-por-agente.md).
 
-Cada `runAgent` grava em `usage/` (sem subpasta): **1 arquivo `<ISO-stamp-com-ms>.json` por request HTTP ao chat**. Colisão no mesmo ms → sufixo `-2`, `-3`….
+Cada `runAgent` grava em `usage-2.0/` (sem subpasta): **1 arquivo `<ISO-stamp-com-ms>.json` por request HTTP ao chat**. Só `{ entrada, resposta }` — payload literal enviado à UA e payload literal da resposta. Colisão no mesmo ms → sufixo `-2`, `-3`…. `usage/` antigo permanece só como arquivo legado (não recebe writes novos).
 
 ### Relatório HTML de tokens
 
 ```bash
 cd screen-robot/src
 npm run usage:report
-# abre usage/dashboard.html no browser
+# abre usage-2.0/dashboard.html no browser
 ```
 
-Gera [`usage/dashboard.html`](usage/dashboard.html) a partir de **todos** os `usage/*.json`: insights (modelo dominante, taxa de falha, 503/429, OCR, latência, **custo US$+R$ por modelo até agora + ritmo/30d**, historyCount vs prompt tokens), cards, gráficos (requests/tokens/custo por modelo, erros, ações, engine, dia, provider, latência) + tokens por request / **histórico no prompt** / acumulado / chars + tabelas. Filtro: Todos ou por `run`. Regenerar: `npm run usage:report`.
+Gera [`usage-2.0/dashboard.html`](usage-2.0/README.md) a partir de `usage-2.0/*.json` (padrão novo) **e** do legado `usage/*.json`. Insights (modelo, taxa de falha, 503/429, OCR, latência, **custo US$+R$**, historyCount vs prompt tokens), cards, gráficos + tabelas. Filtro: Todos ou por `run`. Regenerar: `npm run usage:report`.
 
 **Antes → depois (preços):** tabela interna usava Flash-Lite 0,10/0,40 e 3.8 Flash 0,30/2,50. Agora paid tier oficial 2026-10-06 + **R$ (US$ 1 = R$ 5,50)** + linha **Total**. Out Gemini soma `thoughts`. Ritmo 30d = gasto ÷ dias × 30. Free tier = US$ 0. Rollback: só US$ / taxas antigas / sem Total.
 
@@ -341,7 +345,7 @@ Abort (Ctrl+C) mantém os arquivos já gravados. Status mid-run: `running` no lo
 
 **Antes → depois (1 arquivo/request flat):** pasta `usage/<stamp>/req-NNN.json` → `usage/<timestamp>.json` direto sob `usage/`. Rollback: estrutura com subpasta + `run.json`.
 
-**Antes → depois (prompt no usage):** só `promptChars`/`systemChars` → grava `prompt`, `system` e `response` completos em cada `usage/<timestamp>.json`. Rollback: omitir esses campos.
+**Antes → depois (usage-2.0):** cada JSON misturava run/step/acao/prompt/response extraídos. Agora pasta `usage-2.0/` e **apenas** `{ entrada, resposta }` (body HTTP literal + JSON literal da UA). Rollback: default `usage/` + writer antigo em `writeChatRequestFiles`.
 
 **Antes → depois (input/output):** além de `system`/`prompt`/`response`, grava `input` (system + prompt + body HTTP) e `output` (text + raw da API) + `roteiro` original completo. Rollback: só campos textuais.
 

@@ -457,7 +457,7 @@ Loop: `extract` (OCR) → `decide` → gesto → log `.md`.
 
 **Saída:** `{ status: "done"|"fail"|"max_steps", steps, logPath, usagePath, usage }`
 
-Créditos: `src/usage/<timestamp>.json` (1 arquivo único por execução). **Antes:** `jornada-comprador.json` agregado. Rollback: agregar por promptId.
+Créditos: `src/usage-2.0/<timestamp>.json` — só `{ entrada, resposta }` (payloads literais da UA). **Antes:** `src/usage/<timestamp>.json` com campos extraídos. Rollback: default `usage/` + writer antigo.
 
 ```js
 const result = await runAgent({
@@ -473,6 +473,8 @@ export GEMINI_API_KEY=…
 npm run agent -- --prompt ../roteiros/jornada-comprador.md
 # gpt-4o-mini + RapidOCR (sem engine=all):
 npm run agent -- --provider openai --model gpt-4o-mini --no-prompt --engine rapidocr --max-steps 80 --history-steps 1 --prompt ../roteiros/jornada-linkedin-campinas.md
+# gpt-4o-mini do ZERO (abre LinkedIn): engine=all + ícones
+npm run agent -- --provider openai --model gpt-4o-mini --engine all --icons true --history-steps 10 --prompt ../roteiros/jornada-linkedin-comprador-campinas.md
 npm run agent -- --model gemini-3.8-flash --engine all --icons true --prompt ../roteiros/jornada-comprador.md
 npm run agent:smoke   # 1–2 passos; sem key usa heurística Connect/scroll
 ```
@@ -502,6 +504,7 @@ npm run agent -- --prompt ../roteiros/jornada-comprador.md   # GEMINI_API_KEY
 | Motor Gemini (EP-07) | [`implementation-plan/EP-07-motor-gemini.md`](implementation-plan/EP-07-motor-gemini.md) |
 | Jornada comprador (IA + OCR; filtro cidade Campinas após People; digitar tudo e checar valor só no fim; `### Comprador` por Connect; sem script com roteiro preso) | [`roteiros/jornada-comprador.md`](roteiros/jornada-comprador.md) |
 | Jornada LinkedIn Campinas (gpt-4o-mini; OCR só RapidOCR; Connect até limite de convites) | [`roteiros/jornada-linkedin-campinas.md`](roteiros/jornada-linkedin-campinas.md) |
+| Jornada LinkedIn comprador Campinas do zero (gpt-4o-mini; abre o app; FASE 0→7) | [`roteiros/jornada-linkedin-comprador-campinas.md`](roteiros/jornada-linkedin-comprador-campinas.md) |
 | Referência Instagram (ops Android/PT por funcionalidade; Help Center) | [`roteiros/instagram-referencia.md`](roteiros/instagram-referencia.md) |
 | OCR backends + merge `all` (5 engines) | [`src/README.md`](src/README.md) · [`src/lib/extract-engines.js`](src/lib/extract-engines.js) · [`src/lib/ocr-merge.js`](src/lib/ocr-merge.js) |
 | Ícones no extract (opt-in `icons: true`) | [`src/lib/extract-icons.js`](src/lib/extract-icons.js) · relatório [`src/test/output/linkedin-people-extract-calls.md`](src/test/output/linkedin-people-extract-calls.md) |

@@ -181,7 +181,7 @@ const visionQuality = argValue("--vision-quality")
   ? Number(argValue("--vision-quality"))
   : undefined;
 const baseLogDir = argValue("--log-dir") || join(SRC_ROOT, "logs", "agent");
-const usageDir = argValue("--usage-dir") || join(SRC_ROOT, "usage");
+const usageDir = argValue("--usage-dir") || join(SRC_ROOT, "usage-2.0");
 const keyboardRegion = loadDeviceCfg().type?.keyboardRegion;
 
 if (!prompt) {

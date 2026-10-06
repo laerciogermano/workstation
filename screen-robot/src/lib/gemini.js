@@ -288,6 +288,8 @@ export async function generateContent(opts, deps = {}) {
             error: lastMsg,
             ms: Date.now() - t0,
             ...baseReqMeta(body),
+            entrada: structuredClone(body),
+            resposta: null,
             output: { error: lastMsg },
           });
           if (mi < models.length - 1) {
@@ -315,6 +317,8 @@ export async function generateContent(opts, deps = {}) {
             error: lastMsg,
             ms,
             ...baseReqMeta(body),
+            entrada: structuredClone(body),
+            resposta: raw,
             usage: raw?.usageMetadata || undefined,
             output: { raw, error: lastMsg },
           });
@@ -351,6 +355,8 @@ export async function generateContent(opts, deps = {}) {
             error: "empty response",
             ms,
             ...baseReqMeta(body),
+            entrada: structuredClone(body),
+            resposta: raw,
             usage: raw?.usageMetadata || undefined,
             output: { raw, error: "empty response" },
           });
@@ -374,6 +380,8 @@ export async function generateContent(opts, deps = {}) {
           ok: true,
           ms,
           ...baseReqMeta(body),
+          entrada: structuredClone(body),
+          resposta: raw,
           response: text,
           usage,
           output: { text, raw },

@@ -1,21 +1,22 @@
 #!/usr/bin/env node
 /**
- * Relatório HTML de usage/*.json: tokens, modelos, OCR, erros, insights.
+ * Relatório HTML de usage-2.0/*.json (+ legado usage/*.json).
  *
  * Uso:
  *   node scripts/build-usage-dashboard.js
  *   npm run usage:report
  *
- * Saída: usage/dashboard.html
+ * Saída: usage-2.0/dashboard.html
  */
 
-import { readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const SRC_ROOT = resolve(__dirname, "..");
-const usageDir = join(SRC_ROOT, "usage");
+const usageDirV1 = join(SRC_ROOT, "usage");
+const usageDir = join(SRC_ROOT, "usage-2.0");
 const out = join(usageDir, "dashboard.html");
 
 function classifyError(err) {
@@ -40,8 +41,80 @@ function providerOf(model) {
   return "outro";
 }
 
+function isUsageV2(j) {
+  return j && typeof j === "object" && "entrada" in j && "resposta" in j && !("run" in j);
+}
+
+function textFromEntrada(entrada) {
+  if (!entrada || typeof entrada !== "object") return "";
+  if (Array.isArray(entrada.messages)) {
+    return entrada.messages
+      .map((m) => {
+        if (typeof m?.content === "string") return m.content;
+        if (Array.isArray(m?.content)) {
+          return m.content.map((p) => p?.text || "").join("\n");
+        }
+        return "";
+      })
+      .join("\n");
+  }
+  const parts = [];
+  for (const p of entrada.systemInstruction?.parts || []) {
+    if (p?.text) parts.push(p.text);
+  }
+  for (const c of entrada.contents || []) {
+    for (const p of c?.parts || []) {
+      if (p?.text) parts.push(p.text);
+    }
+  }
+  return parts.join("\n");
+}
+
+function textFromResposta(resposta) {
+  if (!resposta || typeof resposta !== "object") return "";
+  const gemini = (resposta.candidates?.[0]?.content?.parts || [])
+    .map((p) => p?.text || "")
+    .filter(Boolean)
+    .join("");
+  if (gemini) return gemini;
+  return String(resposta.choices?.[0]?.message?.content || "");
+}
+
+function usageFromResposta(resposta) {
+  if (!resposta || typeof resposta !== "object") return {};
+  return resposta.usageMetadata || resposta.usage || {};
+}
+
+function modelFromV2(j) {
+  return (
+    j.entrada?.model ||
+    j.resposta?.model ||
+    j.resposta?.modelVersion ||
+    "—"
+  );
+}
+
+function errorFromV2(j) {
+  const r = j.resposta;
+  if (r == null) return "sem resposta";
+  if (typeof r.error === "string") return r.error;
+  if (r.error?.message) return String(r.error.message);
+  return "";
+}
+
+function acaoFromText(text) {
+  try {
+    const parsed = JSON.parse(text);
+    return parsed.acao?.type ?? (typeof parsed.acao === "string" ? parsed.acao : "—");
+  } catch {
+    return "—";
+  }
+}
+
 function parseHistoryMeta(j) {
-  const text = String(j.prompt || j.input?.prompt || "");
+  const text = String(
+    j.prompt || j.input?.prompt || (isUsageV2(j) ? textFromEntrada(j.entrada) : ""),
+  );
   const m = text.match(/Histórico recente \(últimos (\d+)\/(\d+)\)/);
   const fromPrompt = m
     ? { historyCount: Number(m[1]), historySteps: Number(m[2]) }
@@ -67,17 +140,18 @@ function dayOf(at, file) {
   return m ? m[1] : s.slice(0, 10);
 }
 
-const rows = readdirSync(usageDir)
-  .filter((f) => f.endsWith(".json"))
-  .map((f) => {
-    const j = JSON.parse(readFileSync(join(usageDir, f), "utf8"));
-    const u = j.usage || j.output?.raw?.usage || j.output?.raw?.usageMetadata || {};
-    const err =
-      typeof j.error === "string"
-        ? j.error
-        : j.error
-          ? JSON.stringify(j.error)
-          : "";
+function listJson(dir) {
+  if (!existsSync(dir)) return [];
+  return readdirSync(dir)
+    .filter((f) => f.endsWith(".json"))
+    .map((f) => ({ file: f, path: join(dir, f) }));
+}
+
+function rowFromFile({ file, path }) {
+  const j = JSON.parse(readFileSync(path, "utf8"));
+  if (isUsageV2(j)) {
+    const u = usageFromResposta(j.resposta);
+    const err = errorFromV2(j);
     const prompt = Number(u.promptTokenCount ?? u.prompt_tokens ?? 0) || 0;
     const candidates =
       Number(u.candidatesTokenCount ?? u.completion_tokens ?? 0) || 0;
@@ -85,31 +159,75 @@ const rows = readdirSync(usageDir)
       Number(u.totalTokenCount ?? u.total_tokens ?? prompt + candidates) || 0;
     const cached = Number(u.prompt_tokens_details?.cached_tokens ?? 0) || 0;
     const thoughts = Number(u.thoughtsTokenCount ?? 0) || 0;
-    const model = j.model ?? "—";
+    const model = modelFromV2(j);
+    const entradaText = textFromEntrada(j.entrada);
+    const respostaText = textFromResposta(j.resposta);
     return {
-      file: f,
-      run: j.run ?? "—",
-      step: j.step ?? 0,
-      at: j.at ?? f,
-      day: dayOf(j.at, f),
+      file,
+      run: "—",
+      step: 0,
+      at: file,
+      day: dayOf(null, file),
       model,
       provider: providerOf(model),
-      engine: j.engine ?? "—",
-      ok: j.ok !== false && !err,
-      ms: Number(j.ms) || 0,
-      promptChars: j.promptChars ?? 0,
-      systemChars: j.systemChars ?? 0,
+      engine: "—",
+      ok: j.resposta != null && !err,
+      ms: 0,
+      promptChars: entradaText.length,
+      systemChars: 0,
       ...parseHistoryMeta(j),
       prompt,
       candidates,
       total,
       cached,
       thoughts,
-      acao: j.acao?.type ?? (typeof j.acao === "string" ? j.acao : "—"),
+      acao: acaoFromText(respostaText),
       error: err.slice(0, 160),
       errorKind: classifyError(err),
     };
-  })
+  }
+  const u = j.usage || j.output?.raw?.usage || j.output?.raw?.usageMetadata || {};
+  const err =
+    typeof j.error === "string"
+      ? j.error
+      : j.error
+        ? JSON.stringify(j.error)
+        : "";
+  const prompt = Number(u.promptTokenCount ?? u.prompt_tokens ?? 0) || 0;
+  const candidates =
+    Number(u.candidatesTokenCount ?? u.completion_tokens ?? 0) || 0;
+  const total =
+    Number(u.totalTokenCount ?? u.total_tokens ?? prompt + candidates) || 0;
+  const cached = Number(u.prompt_tokens_details?.cached_tokens ?? 0) || 0;
+  const thoughts = Number(u.thoughtsTokenCount ?? 0) || 0;
+  const model = j.model ?? "—";
+  return {
+    file,
+    run: j.run ?? "—",
+    step: j.step ?? 0,
+    at: j.at ?? file,
+    day: dayOf(j.at, file),
+    model,
+    provider: providerOf(model),
+    engine: j.engine ?? "—",
+    ok: j.ok !== false && !err,
+    ms: Number(j.ms) || 0,
+    promptChars: j.promptChars ?? 0,
+    systemChars: j.systemChars ?? 0,
+    ...parseHistoryMeta(j),
+    prompt,
+    candidates,
+    total,
+    cached,
+    thoughts,
+    acao: j.acao?.type ?? (typeof j.acao === "string" ? j.acao : "—"),
+    error: err.slice(0, 160),
+    errorKind: classifyError(err),
+  };
+}
+
+const rows = [...listJson(usageDir), ...listJson(usageDirV1)]
+  .map(rowFromFile)
   .sort((a, b) => String(a.at).localeCompare(String(b.at)));
 
 const byRun = {};
@@ -203,7 +321,7 @@ const html = `<!DOCTYPE html>
 </head>
 <body>
 <h1>Relatório de usage — screen-robot</h1>
-<p class="meta">Gerado em ${generatedAt} · ${rows.length} requests · ${withTokens} com tokens · ${Object.keys(byRun).length} runs · fonte: usage/*.json</p>
+<p class="meta">Gerado em ${generatedAt} · ${rows.length} requests · ${withTokens} com tokens · ${Object.keys(byRun).length} runs · fonte: usage-2.0/*.json + usage/*.json</p>
 
 <div class="insights">
   <h2>Insights</h2>
@@ -749,6 +867,7 @@ render();
 </html>
 `;
 
+if (!existsSync(usageDir)) mkdirSync(usageDir, { recursive: true });
 writeFileSync(out, html);
 console.log("wrote", out);
 console.log("files=", rows.length, "withTokens=", withTokens, "runs=", Object.keys(byRun).length);

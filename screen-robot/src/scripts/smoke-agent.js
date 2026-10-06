@@ -88,7 +88,7 @@ const maxSteps = Number(argValue("--max-steps", "2"));
 const useGemini = Boolean(process.env.GEMINI_API_KEY);
 const prompt = loadPrompt();
 const logDir = join(SRC_ROOT, "logs", "agent");
-const usageDir = join(SRC_ROOT, "usage");
+const usageDir = join(SRC_ROOT, "usage-2.0");
 
 if (!serial) {
   console.error("falta serial");

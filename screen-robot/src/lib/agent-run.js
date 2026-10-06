@@ -214,7 +214,7 @@ function writeUsageFile(usagePath, payload) {
   writeFileSync(usagePath, JSON.stringify(payload, null, 2) + "\n", "utf8");
 }
 
-/** Nome único sob usage/: timestamp com ms; se colidir, sufixa -2, -3… */
+/** Nome único sob usage-2.0/: timestamp com ms; se colidir, sufixa -2, -3… */
 function uniqueUsagePath(usageDir) {
   let base = stamp();
   let path = join(usageDir, `${base}.json`);
@@ -226,77 +226,36 @@ function uniqueUsagePath(usageDir) {
   return path;
 }
 
+function literalEntrada(req, call) {
+  if (req?.entrada != null) return req.entrada;
+  if (req?.input?.body != null) return req.input.body;
+  if (call?.entrada != null) return call.entrada;
+  return null;
+}
+
+function literalResposta(req, call) {
+  if (req?.resposta !== undefined) return req.resposta;
+  if (req?.output?.raw !== undefined) return req.output.raw;
+  if (call?.resposta !== undefined) return call.resposta;
+  return null;
+}
+
 /**
- * Um arquivo por request HTTP ao chat, flat em usage/<timestamp>.json
+ * Um arquivo por request HTTP ao chat, flat em usage-2.0/<timestamp>.json
+ * Só o payload literal: { entrada, resposta }.
  * @returns {string[]}
  */
-function writeChatRequestFiles({
-  usageDir,
-  runStamp,
-  serial,
-  engine,
-  call,
-  roteiro,
-}) {
+function writeChatRequestFiles({ usageDir, call }) {
   const reqs =
     Array.isArray(call.requests) && call.requests.length > 0
       ? call.requests
-      : [
-          {
-            model: call.model,
-            ok: !call.error,
-            error: call.error || undefined,
-            usage: call.usage,
-            synthetic: true,
-            input: call.input,
-            output: call.output,
-          },
-        ];
+      : [{}];
   const paths = [];
   for (const req of reqs) {
     const path = uniqueUsagePath(usageDir);
-    const input =
-      req.input ||
-      (req.system || req.prompt
-        ? { system: req.system, prompt: req.prompt }
-        : undefined);
-    const output =
-      req.output ||
-      (req.response != null || req.error
-        ? { text: req.response, error: req.error }
-        : undefined);
     writeUsageFile(path, {
-      run: runStamp,
-      step: call.step,
-      at: new Date().toISOString(),
-      serial,
-      engine,
-      model: req.model || call.model,
-      ok: req.ok !== false && !call.error,
-      // decisão parseada (objeto completo; antes só acao.type string)
-      acao: call.acao,
-      resumo: call.resumo,
-      elementos: call.elementos,
-      error: req.error || call.error || undefined,
-      attempt: req.attempt,
-      round: req.round,
-      ms: req.ms,
-      promptChars: req.promptChars,
-      systemChars: req.systemChars,
-      historyCount: call.historyCount ?? 0,
-      historySteps: call.historySteps ?? 0,
-      status: req.status,
-      synthetic: req.synthetic || undefined,
-      // input/output inteiros da request ao chat
-      input,
-      output,
-      // aliases legíveis (mesmo conteúdo textual)
-      system: req.system || input?.system || undefined,
-      prompt: req.prompt || input?.prompt || undefined,
-      response: req.response || output?.text || undefined,
-      // roteiro original completo (pode ser maior que o prompt enviado se clipado)
-      roteiro: roteiro || undefined,
-      usage: req.usage || call.usage || undefined,
+      entrada: literalEntrada(req, call),
+      resposta: literalResposta(req, call),
     });
     paths.push(path);
     log(`usage → ${path}`);
@@ -396,7 +355,7 @@ export async function runAgent(cfg, deps = {}) {
   const startedAt = new Date().toISOString();
   const runStamp = stamp();
   const logDir = resolve(cfg.logDir || join(process.cwd(), "logs", "agent"));
-  const usageDir = resolve(cfg.usageDir || join(process.cwd(), "usage"));
+  const usageDir = resolve(cfg.usageDir || join(process.cwd(), "usage-2.0"));
   if (!existsSync(logDir)) mkdirSync(logDir, { recursive: true });
   if (!existsSync(usageDir)) mkdirSync(usageDir, { recursive: true });
   const logPath = join(logDir, `${runStamp}.md`);
@@ -452,14 +411,7 @@ export async function runAgent(cfg, deps = {}) {
 
   const recordChatCall = (call) => {
     usageCalls.push(call);
-    const paths = writeChatRequestFiles({
-      usageDir,
-      runStamp,
-      serial,
-      engine,
-      call,
-      roteiro: cfg.prompt,
-    });
+    const paths = writeChatRequestFiles({ usageDir, call });
     requestFiles.push(...paths);
     if (paths.length) lastUsagePath = paths[paths.length - 1];
   };

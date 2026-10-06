@@ -186,23 +186,11 @@ describe("agent-run (SC-32)", () => {
         assert.match(f, /^\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}-\d{3}(-\d+)?\.json$/);
       }
       const req1 = JSON.parse(readFileSync(result.requestFiles[0], "utf8"));
-      assert.equal(req1.step, 1);
-      assert.equal(req1.usage.promptTokenCount, 10);
-      assert.equal(req1.prompt, "PROMPT_COMPLETO_STEP1");
-      assert.equal(req1.system, "SYSTEM_STEP1");
-      assert.equal(req1.response, '{"acao":{"type":"tap"}}');
-      assert.equal(req1.input.prompt, "PROMPT_COMPLETO_STEP1");
-      assert.equal(req1.output.text, '{"acao":{"type":"tap"}}');
-      assert.equal(req1.roteiro, "conectar num comprador");
-      assert.equal(req1.historyCount, 0);
-      assert.equal(req1.historySteps, 12);
-      assert.deepEqual(req1.acao, {
-        type: "tap",
-        x: 458,
-        y: 344,
-        motivo: "Connect",
+      assert.deepEqual(Object.keys(req1).sort(), ["entrada", "resposta"]);
+      assert.deepEqual(req1.entrada, {
+        contents: [{ role: "user", parts: [{ text: "PROMPT_COMPLETO_STEP1" }] }],
       });
-      assert.equal(req1.resumo, "Connect visível");
+      assert.deepEqual(req1.resposta, { candidates: [] });
     } finally {
       rmSync(logDir, { recursive: true, force: true });
       rmSync(usageDir, { recursive: true, force: true });

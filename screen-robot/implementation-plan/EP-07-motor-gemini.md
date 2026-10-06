@@ -120,7 +120,7 @@ src/
 | `model` | | Default `gemini-3.8-flash` |
 | `noFallback` | | `true` = não desce a escada |
 | `logDir` | | Default `logs/agent/` |
-| `usageDir` | | Default `usage/` — `usage/<timestamp>.json` por execução |
+| `usageDir` | | Default `usage-2.0/` — `usage-2.0/<timestamp>.json` (`{ entrada, resposta }` literais) |
 
 Saída: `{ status, steps, logPath, usagePath, usage }`.
 

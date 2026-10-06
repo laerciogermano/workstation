@@ -214,6 +214,8 @@ export async function generateContent(opts, deps = {}) {
         error: lastMsg,
         ms: Date.now() - t0,
         ...baseReqMeta,
+        entrada: structuredClone(body),
+        resposta: null,
         output: { error: lastMsg },
       });
       if (attempt <= retries && isRetryable(0, lastMsg)) {
@@ -250,6 +252,8 @@ export async function generateContent(opts, deps = {}) {
         error: lastMsg,
         ms,
         ...baseReqMeta,
+        entrada: structuredClone(body),
+        resposta: raw,
         usage: normalizeUsage(raw?.usage),
         output: { raw, error: lastMsg },
       });
@@ -280,6 +284,8 @@ export async function generateContent(opts, deps = {}) {
         error: lastMsg,
         ms,
         ...baseReqMeta,
+        entrada: structuredClone(body),
+        resposta: raw,
         usage: normalizeUsage(raw?.usage),
         output: { raw, error: lastMsg },
       });
@@ -308,6 +314,8 @@ export async function generateContent(opts, deps = {}) {
       ok: true,
       ms,
       ...baseReqMeta,
+      entrada: structuredClone(body),
+      resposta: raw,
       response: text,
       usage,
       output: { text, raw },

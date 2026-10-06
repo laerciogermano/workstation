@@ -506,7 +506,7 @@ npm run agent -- --prompt ../roteiros/jornada-comprador.md   # GEMINI_API_KEY
 | Jornada comprador (IA + OCR; filtro cidade Campinas após People; digitar tudo e checar valor só no fim; `### Comprador` por Connect; sem script com roteiro preso) | [`roteiros/jornada-comprador.md`](roteiros/jornada-comprador.md) |
 | Jornada LinkedIn Campinas (gpt-4o-mini; OCR só RapidOCR; Connect até limite de convites) | [`roteiros/jornada-linkedin-campinas.md`](roteiros/jornada-linkedin-campinas.md) |
 | Jornada LinkedIn comprador Campinas do zero (gpt-4o-mini; abre o app; FASE 0→7) | [`roteiros/jornada-linkedin-comprador-campinas.md`](roteiros/jornada-linkedin-comprador-campinas.md) |
-| Abrir LinkedIn (gpt-4o-mini; home = scroll down, não BACK) | [`roteiros/novo.md`](roteiros/novo.md) |
+| Abrir LinkedIn + type comprador (gpt-4o-mini; home = scroll down, não BACK) | [`roteiros/novo.md`](roteiros/novo.md) |
 | Referência Instagram (ops Android/PT por funcionalidade; Help Center) | [`roteiros/instagram-referencia.md`](roteiros/instagram-referencia.md) |
 | OCR backends + merge `all` (5 engines) | [`src/README.md`](src/README.md) · [`src/lib/extract-engines.js`](src/lib/extract-engines.js) · [`src/lib/ocr-merge.js`](src/lib/ocr-merge.js) |
 | Ícones no extract (opt-in `icons: true`) | [`src/lib/extract-icons.js`](src/lib/extract-icons.js) · relatório [`src/test/output/linkedin-people-extract-calls.md`](src/test/output/linkedin-people-extract-calls.md) |

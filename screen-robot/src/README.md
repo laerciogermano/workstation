@@ -240,7 +240,7 @@ npm run agent:smoke              # 1–2 passos no device; sem key = heurística
 npm run raw-gpt -- --image test/fixtures/linkedin-people-comprador-connect.png --prompt "…"
 # --prompt obrigatório (sem DEFAULT_PROMPT). Antes: default "Na tela People…". Rollback: export DEFAULT_PROMPT.
 # Testes: node --test lib/raw-gpt-decide.test.js (prompt em test/fixtures/raw-gpt-decide.prompt.txt)
-# System: "NÃO retorne atributos null; omita a chave".
+# Parse: só chaves presentes na IA (sem inventar direction/null). Rollback: parse com x/y/direction sempre.
 ```
 
 **Setup CLI (modelos):** em TTY, sem `--model` / `--force-model` / `--no-prompt`, o agent lista o catálogo ([`lib/agent-models.js`](lib/agent-models.js)) e pede a escolha (`1`, `1,3`, `a`=todos, ou id). Vários modelos → roda em sequência, log em `logs/agent/<model>/`. Rollback: `--model <id>` ou `--no-prompt`.

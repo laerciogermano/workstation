@@ -146,7 +146,7 @@ Só LinkedIn (sem Instagram). Sem digitar credenciais e sem `saveSession`.
 
 Engines: `tesseract` · `macos-vision` · `rapidocr` · `paddleocr` · `easyocr` · **`all`** (merge paralelo das 5).
 
-- **`engine: "all"`** (default do agent): 1 frame → 5 OCR em paralelo → une hits comuns (texto+posição) e soma diferenças ([`lib/ocr-merge.js`](lib/ocr-merge.js)). Engine que falha **ou passa de `OCR_MERGE_TIMEOUT_MS` (default 4000)** é ignorado — extract não espera RapidOCR/Paddle (~20s).
+- **`engine: "all"`** (default do agent): 1 frame → 5 OCR em paralelo (`spawn` assíncrono, [`lib/spawn-captured.js`](lib/spawn-captured.js)) → une hits comuns (texto+posição) e soma diferenças ([`lib/ocr-merge.js`](lib/ocr-merge.js)). Engine que falha **ou passa de `OCR_MERGE_TIMEOUT_MS` (default 4000)** é ignorado e o processo filho leva SIGKILL — extract não espera RapidOCR/Paddle (~20s). **Antes:** `spawnSync` serializava os 5 (tempo = soma) e o timeout só corria depois de cada CLI. **Depois:** wall-clock ≈ max(engines ≤ timeout) + print. Rollback: voltar os OCR CLI a `spawnSync`.
 - Pré: `pip3 install --user rapidocr-onnxruntime paddleocr paddlepaddle easyocr pytesseract` · macOS Vision (Swift) · `brew install tesseract` (opcional pytesseract).
 - Env: `SCREEN_ROBOT_OCR=all|rapidocr|…` · `OCR_MERGE_DIST_PX` (default 48) · `OCR_MERGE_TIMEOUT_MS=4000` (`0` = sem timeout).
 - Comparativo: [`lib/extract.ocr-backends.fixture.test.js`](lib/extract.ocr-backends.fixture.test.js).
@@ -213,7 +213,7 @@ npm run agent -- --prompt ../roteiros/jornada-completa.md --history-steps 0  # s
 npm run agent -- --provider openai --model gpt-4o-mini --prompt ../roteiros/abrir-settings.md
 npm run agent -- --provider openai --model gpt-4o-mini --no-prompt --prompt ../roteiros/jornada-calendar-hoje.md
 # LinkedIn Campinas: 1 engine (rapidocr, melhor em Connect); sem merge all
-npm run agent -- --provider openai --model gpt-4o-mini --no-prompt --engine rapidocr --max-steps 80 --prompt ../roteiros/jornada-linkedin-campinas.md
+npm run agent -- --provider openai --model gpt-4o-mini --no-prompt --engine rapidocr --max-steps 80 --history-steps 1 --prompt ../roteiros/jornada-linkedin-campinas.md
 npm run agent -- --prompt "abra o LinkedIn e mostre as últimas 10 conexões"
 npm run agent -- --prompt ../roteiros/jornada-completa.md --all-models
 npm run agent -- --prompt ../roteiros/jornada-completa.md --no-prompt   # sem menu (env/default)
@@ -227,7 +227,7 @@ npm run agent:smoke              # 1–2 passos no device; sem key = heurística
 
 **Antes → depois (Calendar hoje):** prompt solto fazia gpt-4o-mini tap em "Nothing planned. Tap to create." / "+" e criar evento. Roteiro: [`roteiros/jornada-calendar-hoje.md`](../roteiros/jornada-calendar-hoje.md) (só leitura; done no vazio ou na lista). Rollback: `--prompt "abra o calendar…"`.
 
-**Antes → depois (LinkedIn Campinas / gpt-4o-mini):** `engine=all` misturava overlay de setup com chrome do app e o modelo dava HOME; tap sem hit OCR ia a `0,0`. Roteiro curto: [`roteiros/jornada-linkedin-campinas.md`](../roteiros/jornada-linkedin-campinas.md) + `--engine rapidocr`. Regras de app só no roteiro; `decide` não nomeia apps. Rollback: `--engine all` e [`roteiros/jornada-comprador.md`](../roteiros/jornada-comprador.md).
+**Antes → depois (LinkedIn Campinas / gpt-4o-mini):** `engine=all` misturava overlay de setup; histórico 12 fazia o mini repetir taps. Roteiro IF-OCR: [`roteiros/jornada-linkedin-campinas.md`](../roteiros/jornada-linkedin-campinas.md) + `--engine rapidocr --history-steps 1`. Rollback: `--engine all --history-steps 12` e [`roteiros/jornada-comprador.md`](../roteiros/jornada-comprador.md).
 
 **Antes → depois (id Gemini 3 Flash):** catálogo usava `gemini-3-flash` (HTTP 404 na API) → `gemini-3-flash-preview`. Rollback: só se a API voltar a expor `gemini-3-flash`.
 
@@ -255,7 +255,7 @@ Stdout: `[agent]` / `[decide]` / `[gemini]` ou `[openai]`. Provider default `gem
 
 **Antes → depois (scroll após Search):** com teclado aberto o OCR às vezes só traz a hora; o modelo tratava como home e fazia `scroll down`, digitando lixo (`ty`/`tyl`) no campo. Agora: (1) system prompt: histórico com tap `y<120` + OCR só hora ≠ home — proibido scroll; (2) guard em `runAgent` troca esse `scroll` por `type` (texto do roteiro `type "…"`) ou `KEYCODE_BACK`. Rollback: remover a EXCEÇÃO em `buildSystemPrompt` e o bloco `lastWasSearchTap` em `agent-run.js`.
 
-**Antes → depois (tap no campo com teclado):** gpt-4o-mini repetia tap `y<120` em vez de `type`. Guard: QWERTY no OCR + tap no topo → `type` do roteiro (UI de local = último `type "…"` distinto; senão o primeiro). Se o sheet de local já mostrou `Add a location` abaixo e o modelo tapa o chip de cima, retarget para esse texto. Rollback: remover os guards `ocrHasQwertyKeyboard` / `findOcrHit` em `agent-run.js`.
+**Antes → depois (tap no campo com teclado):** gpt-4o-mini repetia tap `y<120` em vez de `type`. Guard: QWERTY no OCR + tap no topo → `type` do roteiro. Tab bar no rodapé + `scroll down` → sleep (não abre gaveta em cima do app). Rollback: remover guards em `agent-run.js`.
 
 **Antes → depois (sense vision):** só OCR → também `--sense vision` / `--vision` / `AGENT_SENSE=vision`: `captureFrame` → [`lib/vision-frame.js`](lib/vision-frame.js) WebP (default width 540 q60; `VISION_WIDTH` / `VISION_QUALITY` / `--vision-width` / `--vision-quality`) → Gemini/OpenAI com imagem → JSON de ação; coords da IA × `scaleToDevice` antes do tap. Sem `extract`/OCR. Logs omitem base64. Rollback: `--sense ocr` (default).
 

@@ -2,7 +2,7 @@
  * EP-05 — extrair lista plana de textos via frame → OCR.
  * Caller: extract({ serial }) — só elementos type "text" (sem ícones/listas/imagens).
  * Cada chamada faz OCR de novo (sem cache). Proibido: uiautomator dump como fonte.
- * engine: tesseract|macos-vision|rapidocr|paddleocr|easyocr|all (merge paralelo top-5).
+ * engine: tesseract|macos-vision|rapidocr|paddleocr|easyocr|all (merge paralelo top-5, spawn async).
  */
 import { adb } from "./adb.js";
 import { captureFrame } from "./frame.js";

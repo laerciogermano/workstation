@@ -1,9 +1,9 @@
 /**
  * OCR genérico via CLI Python (JSON stdout → OcrWord[]).
  */
-import { spawnSync } from "node:child_process";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { spawnCaptured } from "./spawn-captured.js";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -11,24 +11,24 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
  * @param {string} cliRel path relativo a src/ (ex. tools/easyocr_cli.py)
  * @param {string} engineName nome para erro
  * @param {string} imagePath
- * @param {{ python?: string, timeoutMs?: number }} [deps]
+ * @param {{ python?: string, timeoutMs?: number, signal?: AbortSignal }} [deps]
  */
-export function ocrWordsPythonCli(cliRel, engineName, imagePath, deps = {}) {
+export async function ocrWordsPythonCli(cliRel, engineName, imagePath, deps = {}) {
   const python = deps.python || process.env.SCREEN_ROBOT_PYTHON || "python3";
   const cli = resolve(ROOT, cliRel);
-  const timeout = Number(deps.timeoutMs ?? process.env.OCR_CLI_TIMEOUT_MS ?? 180000);
-  const r = spawnSync(python, [cli, imagePath], {
-    encoding: "utf8",
+  const timeoutMs = Number(deps.timeoutMs ?? process.env.OCR_CLI_TIMEOUT_MS ?? 180000);
+  const r = await spawnCaptured(python, [cli, imagePath], {
     maxBuffer: 32 * 1024 * 1024,
-    timeout,
+    timeoutMs,
+    signal: deps.signal,
     env: {
       ...process.env,
       PADDLE_PDX_DISABLE_MODEL_SOURCE_CHECK: "True",
     },
   });
-  if (r.error || r.status !== 0) {
+  if (r.status !== 0) {
     const err = new Error(
-      `EXTRACT_OCR_FAILED: ${engineName} (${r.stderr || r.stdout || r.error?.message || r.status})`,
+      `EXTRACT_OCR_FAILED: ${engineName} (${r.stderr || r.stdout || r.status})`,
     );
     err.code = "EXTRACT_OCR_FAILED";
     err.engine = engineName;

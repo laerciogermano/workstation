@@ -19,4 +19,21 @@ describe("withTimeout", () => {
       (e) => e.code === "OCR_TIMEOUT" && /slow/.test(e.message),
     );
   });
+
+  it("onTimeout no prazo (kill spawn)", async () => {
+    let n = 0;
+    await assert.rejects(
+      () =>
+        withTimeout(
+          new Promise((r) => setTimeout(() => r("late"), 80)),
+          20,
+          "slow",
+          () => {
+            n += 1;
+          },
+        ),
+      (e) => e.code === "OCR_TIMEOUT",
+    );
+    assert.equal(n, 1);
+  });
 });

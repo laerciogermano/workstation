@@ -5,6 +5,7 @@ import { spawnSync } from "node:child_process";
 import { existsSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { spawnCaptured } from "./spawn-captured.js";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const BIN = resolve(ROOT, "bin/vision-ocr");
@@ -28,11 +29,16 @@ function ensureBinary() {
 
 /**
  * @param {string} imagePath
+ * @param {{ timeoutMs?: number, signal?: AbortSignal }} [deps]
  * @returns {Promise<{ text: string, bounds: { x:number,y:number,w:number,h:number }, confidence: number }[]>}
  */
-export async function ocrWordsMacosVision(imagePath) {
+export async function ocrWordsMacosVision(imagePath, deps = {}) {
   const bin = ensureBinary();
-  const r = spawnSync(bin, [imagePath], { encoding: "utf8", maxBuffer: 20 * 1024 * 1024 });
+  const r = await spawnCaptured(bin, [imagePath], {
+    maxBuffer: 20 * 1024 * 1024,
+    timeoutMs: deps.timeoutMs,
+    signal: deps.signal,
+  });
   if (r.status !== 0) {
     const err = new Error(`EXTRACT_OCR_FAILED: macos-vision ${r.stderr || r.stdout || r.status}`);
     err.code = "EXTRACT_OCR_FAILED";

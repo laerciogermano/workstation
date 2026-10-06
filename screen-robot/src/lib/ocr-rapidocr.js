@@ -1,23 +1,24 @@
 /**
  * OCR via RapidOCR (Python rapidocr-onnxruntime) — tools/rapidocr_cli.py.
  */
-import { spawnSync } from "node:child_process";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { spawnCaptured } from "./spawn-captured.js";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const CLI = resolve(ROOT, "tools/rapidocr_cli.py");
 
 /**
  * @param {string} imagePath
- * @param {{ python?: string }} [deps]
+ * @param {{ python?: string, timeoutMs?: number, signal?: AbortSignal }} [deps]
  * @returns {Promise<{ text: string, bounds: { x:number,y:number,w:number,h:number }, confidence: number }[]>}
  */
 export async function ocrWordsRapidocr(imagePath, deps = {}) {
   const python = deps.python || process.env.RAPIDOCR_PYTHON || "python3";
-  const r = spawnSync(python, [CLI, imagePath], {
-    encoding: "utf8",
+  const r = await spawnCaptured(python, [CLI, imagePath], {
     maxBuffer: 20 * 1024 * 1024,
+    timeoutMs: deps.timeoutMs,
+    signal: deps.signal,
   });
   if (r.status !== 0) {
     const err = new Error(

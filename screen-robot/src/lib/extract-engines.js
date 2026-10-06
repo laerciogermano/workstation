@@ -75,8 +75,8 @@ async function runOneEngine(imagePath, engine, deps = {}) {
 }
 
 /**
- * Roda engines em paralelo e une hits (comuns + diferenças).
- * Engines que falham ou excedem OCR_MERGE_TIMEOUT_MS são ignorados; precisa ≥1 ok.
+ * Roda engines em paralelo (CLI via spawn, não spawnSync) e une hits.
+ * Engines que falham ou excedem OCR_MERGE_TIMEOUT_MS são ignorados (SIGKILL); precisa ≥1 ok.
  * @param {string} imagePath
  * @param {{ engines?: string[], keepEngines?: boolean, onEngineError?: Function, timeoutMs?: number }} [opts]
  * @param {object} [deps]
@@ -89,11 +89,17 @@ export async function extractMergedFromImage(imagePath, opts = {}, deps = {}) {
   const results = await Promise.all(
     engines.map(async (engine) => {
       const started = Date.now();
+      const ac = new AbortController();
       try {
         const hits = await withTimeout(
-          runOneEngine(imagePath, engine, deps),
+          runOneEngine(imagePath, engine, {
+            ...deps,
+            signal: ac.signal,
+            timeoutMs,
+          }),
           timeoutMs,
           engine,
+          () => ac.abort(),
         );
         return {
           engine,

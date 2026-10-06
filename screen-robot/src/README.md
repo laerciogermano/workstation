@@ -2,9 +2,13 @@
 
 API **Node** (≥ 18) para controlar Android via ADB: provisionar agents, instalar APKs, eventos de UI, gestos, extração de textos (OCR) e sessão.
 
+**IA no chat (sem JS):** [`lib/README.md`](lib/README.md) — `npm run extract` / `tap` / `type` / `scroll` / `launch` / `key` / `wait`.
+
 Visão do projeto: [`../README.md`](../README.md) · Arquitetura: [`../arquitetura.md`](../arquitetura.md) · Runtimes: [`../pocs/`](../pocs/README.md) · Aceite: [`../5.bdds.md`](../5.bdds.md)
 
-Com o runtime no ar, o Android fica **disponível para controle humano**: espelhar a tela e operar (tap, digitar, scroll, …) via scrcpy — [`scripts/view.sh`](scripts/view.sh) (`npm run view`). A API automatiza as mesmas ações por código.
+Com o runtime no ar, o Android fica **disponível para controle humano**: espelhar a tela e operar (tap, digitar, scroll, …) via scrcpy — [`scripts/view.sh`](scripts/view.sh) (`npm run view`). A API automatiza as mesmas ações por código. A IA no Cursor chama as mesmas funções via `npm run <acao>` ([`lib/README.md`](lib/README.md)).
+
+**Antes → depois (`npm run`):** `node cli.js` (adb cru) → [`scripts/run-action.js`](scripts/run-action.js) → [`lib/run-action.js`](lib/run-action.js). JSON config legado: `node cli.js config.json`. Rollback: `"run": "node cli.js"` e remover scripts `extract`/`tap`/`type`/`scroll`/`launch`/`key`/`wait`/`find`.
 
 ---
 
@@ -81,6 +85,7 @@ const elements = await extract({ serial });
 | `on` | [`lib/events.js`](lib/events.js) |
 | Gestos / captura | [`lib/operate.js`](lib/operate.js) |
 | `extract` | [`lib/extract.js`](lib/extract.js) |
+| `npm run <acao>` | [`lib/run-action.js`](lib/run-action.js) · [`lib/README.md`](lib/README.md) |
 | `decide` / `runAgent` (EP-07) | [`lib/agent-decide.js`](lib/agent-decide.js) · [`lib/agent-run.js`](lib/agent-run.js) · [`lib/gemini.js`](lib/gemini.js) · [`lib/openai.js`](lib/openai.js) · [`lib/vision-frame.js`](lib/vision-frame.js) (`sense=vision`) |
 | Sessão | [`lib/session.js`](lib/session.js) |
 
@@ -378,13 +383,9 @@ Roda `ocrWords` (tesseract) sobre PNG local e imprime o texto. Sem path → `scr
 
 ## CLI legado
 
-Steps avulsos (serial explícito; preferir as funções de `lib/`):
+`npm run` agora é [`scripts/run-action.js`](scripts/run-action.js) ([`lib/README.md`](lib/README.md)). Steps JSON / adb cru:
 
 ```bash
 node cli.js tap 360 640 --device emulator-5554
-node cli.js setup-ime
-node cli.js type "olá"
-node cli.js shot ./screenshots/tela.png
-node cli.js launch com.linkedin.android
 node cli.js config.example.json
 ```

@@ -8,7 +8,15 @@
     "screen-robot": "./cli.js"
   },
   "scripts": {
-    "run": "node cli.js",
+    "run": "node scripts/run-action.js",
+    "extract": "node scripts/run-action.js extract",
+    "find": "node scripts/run-action.js find",
+    "tap": "node scripts/run-action.js tap",
+    "type": "node scripts/run-action.js type",
+    "scroll": "node scripts/run-action.js scroll",
+    "launch": "node scripts/run-action.js launch",
+    "key": "node scripts/run-action.js key",
+    "wait": "node scripts/run-action.js wait",
     "example": "node cli.js config.example.json",
     "linkedin-login": "node scripts/linkedin-login.js",
     "tinder-home": "node scripts/tinder-home.js",

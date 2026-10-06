@@ -2,7 +2,7 @@
 
 Agent Android via **Node**: frame → OCR → gestos. Sem dump uiautomator / árvore DOM.
 
-**Libs:** [`src/`](src/README.md) · **Stories:** [`1.stories.md`](1.stories.md) · **Arquitetura:** [`arquitetura.md`](arquitetura.md) · **Runtime AVD:** [`pocs/android-studio/`](pocs/android-studio/README.md) · **docker-avd (Linux):** [`pocs/docker-avd/`](pocs/docker-avd/README.md)
+**Libs:** [`src/`](src/README.md) · **IA (npm run):** [`src/lib/README.md`](src/lib/README.md) · **Stories:** [`1.stories.md`](1.stories.md) · **Arquitetura:** [`arquitetura.md`](arquitetura.md) · **Runtime AVD:** [`pocs/android-studio/`](pocs/android-studio/README.md) · **docker-avd (Linux):** [`pocs/docker-avd/`](pocs/docker-avd/README.md)
 
 ```js
 import { provisionEmulator } from "./src/lib/provision.js";
@@ -457,7 +457,7 @@ cd screen-robot/src
 export GEMINI_API_KEY=…
 npm run agent -- --prompt ../roteiros/jornada-comprador.md
 # gpt-4o-mini + RapidOCR (sem engine=all):
-npm run agent -- --provider openai --model gpt-4o-mini --no-prompt --engine rapidocr --max-steps 80 --prompt ../roteiros/jornada-linkedin-campinas.md
+npm run agent -- --provider openai --model gpt-4o-mini --no-prompt --engine rapidocr --max-steps 80 --history-steps 1 --prompt ../roteiros/jornada-linkedin-campinas.md
 npm run agent:smoke   # 1–2 passos; sem key usa heurística Connect/scroll
 ```
 
@@ -474,12 +474,14 @@ cd screen-robot/src
 npm test
 npm run linkedin-login   # piloto
 npm run view             # scrcpy
+npm run extract          # IA: OCR (engine=all) — ver src/lib/README.md
 npm run agent -- --prompt ../roteiros/jornada-comprador.md   # GEMINI_API_KEY
 ```
 
 | Doc | Link |
 |-----|------|
 | Implementação / testes / CLI | [`src/README.md`](src/README.md) |
+| IA: `npm run <acao>` no device | [`src/lib/README.md`](src/lib/README.md) |
 | Stories · épicos · BDDs | [`1.stories.md`](1.stories.md) · [`2.epics.md`](2.epics.md) · [`5.bdds.md`](5.bdds.md) |
 | Motor Gemini (EP-07) | [`implementation-plan/EP-07-motor-gemini.md`](implementation-plan/EP-07-motor-gemini.md) |
 | Jornada comprador (IA + OCR; filtro cidade Campinas após People; digitar tudo e checar valor só no fim; `### Comprador` por Connect; sem script com roteiro preso) | [`roteiros/jornada-comprador.md`](roteiros/jornada-comprador.md) |

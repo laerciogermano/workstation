@@ -241,6 +241,7 @@ npm run raw-gpt -- --image test/fixtures/linkedin-people-comprador-connect.png -
 # --prompt obrigatório (sem DEFAULT_PROMPT). Antes: default "Na tela People…". Rollback: export DEFAULT_PROMPT.
 # Testes: node --test lib/raw-gpt-decide.test.js (prompt em test/fixtures/raw-gpt-decide.prompt.txt; its em paralelo via describe concurrency)
 # Casos: `it`/`fixtures` 01–13 (ordem do prompt); PNGs `01-search.png` … `13-skip.png` (+ `11-connect-people.png`, `linkedin-search-comprador-connected.png` = 11c 2º Connect).
+# Passo 3: se a fixture já tem "Show all results", expected = tap nele (exceção do prompt); BACK só sem esse texto. Rollback: expected KEYCODE_BACK + fixture sem Show all.
 # Antes: nomes longos linkedin-search-*.png / linkedin-tela-inicial no raw-gpt. Rollback: git mv + nomes antigos no teste.
 # Prompt raw-gpt: sem menção a x/y/thresholds; passo 9 por text (sugestão vs campo). Rollback: versão com y<120/y>120 no .prompt.txt.
 # Passo 11 (.prompt.txt em linguagem natural): primeiro "Connect" da lista; sem jargão OCR. Rollback: menções a OCR/hit/JSON no prompt.

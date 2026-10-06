@@ -70,9 +70,10 @@ describe("raw-gpt-decide", () => {
     { timeout: 300_000 },
     async () => {
       await runCase({
+        // Fixture já tem "Show all results" → exceção do passo 3: não BACK; tap nesse texto (passo 4).
         image: "03-close-keyboard.png",
         prompt: PROMPT + "\nvoce esta no passo 3",
-        expected: { type: "key", code: "KEYCODE_BACK" },
+        expected: { type: "tap", x: 269, y: 472 },
       });
     },
   );

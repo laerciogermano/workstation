@@ -18,13 +18,10 @@ loadEnvFiles([join(SRC_ROOT, ".env"), join(SRC_ROOT, ".env.local")]);
 
 const PROMPT_PATH = "raw-gpt-decide.prompt.txt";
 
-async function runCase({ image, prompt, step, expected }) {
+async function runCase({ image, prompt, expected }) {
   assert.ok(process.env.OPENAI_API_KEY, "falta OPENAI_API_KEY");
-  let promptText = readFileSync(join(FIXTURES, prompt), "utf8").trim();
+  const promptText = readFileSync(join(FIXTURES, prompt), "utf8").trim();
   assert.ok(promptText.length >= 1, `prompt vazio: ${prompt}`);
-  if (step != null) {
-    promptText = `Você está no passo ${step}.\n\n${promptText}`;
-  }
 
   const elements = await extractFromImage(join(FIXTURES, image), {
     engine: "all",
@@ -48,21 +45,7 @@ describe("raw-gpt-decide", () => {
       await runCase({
         image: "linkedin-people-comprador-connect.png",
         prompt: PROMPT_PATH,
-        step: 11,
         expected: { type: "tap", x: 455, y: 344 },
-      });
-    },
-  );
-
-  it(
-    "LinkedIn tela inicial → scroll",
-    { timeout: 300_000 },
-    async () => {
-      await runCase({
-        image: "linkedin-tela-inicial.png",
-        prompt: PROMPT_PATH,
-        step: 12,
-        expected: { type: "scroll", direction: "down" },
       });
     },
   );

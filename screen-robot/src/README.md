@@ -211,6 +211,7 @@ npm run agent -- --prompt ../roteiros/abrir-settings.md
 npm run agent -- --prompt ../roteiros/abrir-settings.md --history-steps 16
 npm run agent -- --prompt ../roteiros/jornada-completa.md --history-steps 0  # sem histórico no prompt
 npm run agent -- --provider openai --model gpt-4o-mini --prompt ../roteiros/abrir-settings.md
+npm run agent -- --provider openai --model gpt-4o-mini --no-prompt --prompt ../roteiros/jornada-calendar-hoje.md
 npm run agent -- --prompt "abra o LinkedIn e mostre as últimas 10 conexões"
 npm run agent -- --prompt ../roteiros/jornada-completa.md --all-models
 npm run agent -- --prompt ../roteiros/jornada-completa.md --no-prompt   # sem menu (env/default)
@@ -221,6 +222,8 @@ npm run agent:smoke              # 1–2 passos no device; sem key = heurística
 ```
 
 **Setup CLI (modelos):** em TTY, sem `--model` / `--no-prompt`, o agent lista o catálogo ([`lib/agent-models.js`](lib/agent-models.js)) e pede a escolha (`1`, `1,3`, `a`=todos, ou id). Vários modelos → roda em sequência, log em `logs/agent/<model>/`. Rollback: `--model <id>` ou `--no-prompt`.
+
+**Antes → depois (Calendar hoje):** prompt solto fazia gpt-4o-mini tap em "Nothing planned. Tap to create." / "+" e criar evento. Roteiro: [`roteiros/jornada-calendar-hoje.md`](../roteiros/jornada-calendar-hoje.md) (só leitura; done no vazio ou na lista). Rollback: `--prompt "abra o calendar…"`.
 
 **Antes → depois (id Gemini 3 Flash):** catálogo usava `gemini-3-flash` (HTTP 404 na API) → `gemini-3-flash-preview`. Rollback: só se a API voltar a expor `gemini-3-flash`.
 

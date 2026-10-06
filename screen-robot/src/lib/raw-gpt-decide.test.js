@@ -159,4 +159,16 @@ describe("raw-gpt-decide", () => {
       });
     },
   );
+
+  it(
+    "LinkedIn Campinas selected → tap Show results",
+    { timeout: 300_000 },
+    async () => {
+      await runCase({
+        image: "linkedin-search-comprador-location-search-campinas-selected.png",
+        prompt: PROMPT + "\nvoce esta no passo 10",
+        expected: { type: "tap", x: 271, y: 849 },
+      });
+    },
+  );
 });

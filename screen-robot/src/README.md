@@ -292,7 +292,7 @@ Fallback default (`decide`): do modelo escolhido desce a escada `gemini-3.8-flas
 
 **Antes → depois (`AGENT_TYPE_METHOD`):** default OCR/tap → default **adb** (`adb shell input text`). OCR: `AGENT_TYPE_METHOD=ocr` ou `runAgent({ typeMethod: "ocr" })`. Rollback: `AGENT_TYPE_METHOD=ocr`.
 
-**Antes → depois (`proximoPasso`):** IA só tinha motivo/passo no mesmo turno e com `historySteps=0` recomeçava no 1. Agora JSON exige `proximoPasso` após ação bem-sucedida; `runAgent` guarda e injeta no user prompt como “Próximo passo da jornada (cumprir AGORA)”. Rollback: omitir campo e bloco em `buildSystemPrompt` / `buildUserPrompt` / `agent-run`.
+**Antes → depois (`proximoPasso`):** IA devolvia o passo *seguinte* e o runtime injetava “cumprir AGORA” — pulava etapas (ex. scroll no 7 → `proximoPasso` 8). Agora `proximoPasso` = **passo atual** em curso; user prompt: “Passo atual da jornada (continuar daqui)”; só avança o número quando o passo atual estiver cumprido. Rollback: texto “passo SEGUINTE” / “Próximo passo da jornada” em `buildSystemPrompt` / `buildUserPrompt`.
 
 **Antes → depois (coords só do último OCR):** mini reusava `@x,y` do histórico (Show all) e tapava card no ponto. Agora system: tap `x,y` **exclusivamente** do último extract; proibido reusar histórico/roteiro; se o text sumiu, não repetir coords. Rollback: linha curta “NÃO copie coords…”.
 

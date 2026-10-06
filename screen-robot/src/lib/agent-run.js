@@ -244,7 +244,7 @@ function appendStepLog(logPath, step, { resumo, acao, ocr, vision, resultado, us
     resumo || "(sem resumo)",
     "",
     `- ação: \`${acao.type}\` ${acao.motivo ? `— ${acao.motivo}` : ""}`,
-    proximoPasso ? `- próximo passo: ${proximoPasso}` : null,
+    proximoPasso ? `- passo atual: ${proximoPasso}` : null,
     acao.x != null ? `- coords: ${acao.x},${acao.y}` : null,
     acao.direction ? `- direction: ${acao.direction}` : null,
     acao.text ? `- text: ${acao.text}` : null,
@@ -378,7 +378,7 @@ export async function runAgent(cfg, deps = {}) {
   const stepDelayMs = Number(
     cfg.stepDelayMs ?? process.env.AGENT_STEP_DELAY_MS ?? 0,
   );
-  /** Último proximoPasso bem-sucedido — injetado no user prompt do turno seguinte. */
+  /** Último passo atual reportado — injetado no user prompt do turno seguinte. */
   let lastProximoPasso = null;
 
   for (let i = 1; i <= maxSteps; i++) {

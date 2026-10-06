@@ -135,4 +135,16 @@ describe("raw-gpt-decide", () => {
       });
     },
   );
+
+  it(
+    "LinkedIn location search → digitar Campinas",
+    { timeout: 300_000 },
+    async () => {
+      await runCase({
+        image: "linkedin-search-comprador-location-search.png",
+        prompt: PROMPT + "\nvoce esta no passo 8",
+        expected: { type: "type", text: "Campinas" },
+      });
+    },
+  );
 });

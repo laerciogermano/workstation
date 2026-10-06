@@ -170,6 +170,11 @@ tap: OBRIGATÓRIO x,y do OCR atual. PROIBIDO reusar coords do histórico. Sem al
   const prompt = `Roteiro:\n${cfg.prompt}${histBlock}${focoBlock}\nOCR:\n${JSON.stringify(ocr)}\n\nPróxima ação.`;
 
   log(`provider ${provider}/${model} history=${hist.length}…`);
+  log(`── entrada IA (system ${system.length} chars) ──`);
+  console.log(system);
+  log(`── entrada IA (user ${prompt.length} chars) ──`);
+  console.log(prompt);
+  log(`── fim entrada IA ──`);
   const out = await gen(
     {
       model,
@@ -184,7 +189,9 @@ tap: OBRIGATÓRIO x,y do OCR atual. PROIBIDO reusar coords do histórico. Sem al
     },
     deps,
   );
-  log(`raw: ${String(out.text || "").slice(0, 400)}`);
+  log(`── saída IA (raw) ──`);
+  console.log(String(out.text || ""));
+  log(`── fim saída IA ──`);
   const parsed = parseAcao(out.text, ocr);
   if (!parsed.ok) {
     log(`parse falhou: ${parsed.erro} — sleep e segue`);

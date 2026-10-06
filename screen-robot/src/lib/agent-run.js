@@ -1,9 +1,9 @@
 /**
- * Entry do agent — temporariamente aponta para 2.0 (loop mínimo).
+ * Entry do agent — aponta para o v1 (loop completo).
  *
- * - Ativo: [`agent-run-2.0.js`](./agent-run-2.0.js) — extract → askProvider → operate
- * - Preservado: [`agent-run-v1.js`](./agent-run-v1.js) — loop completo (log, usage, vision, history…)
+ * - Ativo: [`agent-run-v1.js`](./agent-run-v1.js) — extract → decide → operate + log/usage/vision/history
+ * - Alternativa: [`agent-run-2.0.js`](./agent-run-2.0.js) — loop mínimo (askProvider)
  *
- * Rollback: trocar o re-export abaixo para `./agent-run-v1.js`.
+ * Voltar ao 2.0: `export { runAgent, executeAction } from "./agent-run-2.0.js"`.
  */
-export { runAgent, executeAction } from "./agent-run-2.0.js";
+export { runAgent, executeAction } from "./agent-run-v1.js";

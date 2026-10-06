@@ -476,7 +476,50 @@ export async function runAgent(cfg, deps = {}) {
       elementos: decision.elementos || undefined,
     });
 
-    const { resumo, acao } = decision;
+    let { resumo, acao } = decision;
+    // Guard: após tap no Search (y<120), scroll com OCR “só hora” digita lixo no teclado (ty/tyl).
+    const lastHist = history[history.length - 1];
+    const lastWasSearchTap =
+      lastHist?.type === "tap" &&
+      Number.isFinite(Number(lastHist.y)) &&
+      Number(lastHist.y) < 120;
+    if (acao.type === "scroll" && lastWasSearchTap) {
+      const m =
+        String(cfg.prompt || "").match(
+          /type\s+(?:text=)?["']([^"']+)["']/i,
+        ) ||
+        String(cfg.prompt || "").match(
+          /type\s+"([^"]+)"/i,
+        );
+      const text = m?.[1] || null;
+      if (text) {
+        log(
+          `guard: bloqueia scroll após tap Search (y<120) — força type ${JSON.stringify(text)}`,
+        );
+        acao = {
+          type: "type",
+          x: lastHist.x ?? null,
+          y: lastHist.y ?? null,
+          direction: null,
+          text,
+          code: null,
+          ms: null,
+          motivo: `guard: type após Search (bloqueou scroll que digitaria no teclado)`,
+        };
+      } else {
+        log(`guard: bloqueia scroll após tap Search — KEYCODE_BACK`);
+        acao = {
+          type: "key",
+          x: null,
+          y: null,
+          direction: null,
+          text: null,
+          code: "KEYCODE_BACK",
+          ms: null,
+          motivo: "guard: BACK após Search (bloqueou scroll sobre teclado)",
+        };
+      }
+    }
     log(
       `decisão: ${acao.type}` +
         (acao.x != null ? ` @${acao.x},${acao.y}` : "") +

@@ -152,6 +152,7 @@ Regras:
 - Home / Settings (AVD Nexus Launcher):
   - OCR com "Notifications" / "Clear all" / "AndroidSetup" = shade aberto → key KEYCODE_BACK ou KEYCODE_HOME (NÃO scroll).
   - Tela inicial (só hora/data, sem apps) → scroll direction=down abre a gaveta. scroll up reabre o shade — evite.
+  - EXCEÇÃO: se o histórico recente tem tap com y<120 (Search/campo), OCR só com hora NÃO é home — é teclado cobrindo o app. PROIBIDO scroll (swipe digita lixo no campo, ex. "ty"). Faça type do texto do roteiro ou KEYCODE_BACK.
   - Texto "Settings" no OCR → tap nessas coords. done só com Settings aberto (Search settings / Network / Apps / Battery).
 - Filtro de localização LinkedIn: se OCR tiver "Add a location" / "Add alocation" e a cidade alvo do roteiro (ex. Campinas) NÃO estiver na lista, faça tap em Add a location e depois type da cidade — NÃO fique só scrollando a lista.
 - Connect: só tap se text exato "Connect" e tipicamente 180 < y < 850. Se o histórico já tem tap nas mesmas coords e a tela não mudou, scroll ou outro Connect — não repita o mesmo tap.

@@ -3,7 +3,7 @@
  * CLI — EP-07 runAgent (prompt como input; zero jornada embutida).
  *
  *   npm run agent -- --prompt ../roteiros/jornada-completa.md
- *   npm run agent -- --prompt ./meu.txt --model gemini-3.8-flash
+ *   npm run agent -- --model gemini-3.8-flash --engine all --icons true --prompt ../roteiros/jornada-comprador.md
  *   npm run agent -- --prompt ./meu.txt --force-model gemini-2.5-flash  # só esse; sem fallback
  *   npm run agent -- --prompt ./meu.txt --model gemini-2.5-flash --no-fallback
  *   npm run agent -- --prompt ./meu.txt --no-prompt   # sem menu (env/default)
@@ -32,6 +32,7 @@ import {
   selectModelsInteractive,
   shouldPromptModels,
 } from "../lib/select-models.js";
+import { parseIconsFlag } from "../lib/extract-icons.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const SRC_ROOT = resolve(__dirname, "..");
@@ -49,6 +50,16 @@ function argValue(flag) {
   const i = process.argv.indexOf(flag);
   if (i >= 0 && process.argv[i + 1]) return process.argv[i + 1];
   return null;
+}
+
+/** Mesmo contrato do extract: `--icons` / `--icons true` / `--no-icons`. */
+function parseAgentIcons() {
+  if (hasFlag("--no-icons")) return false;
+  const i = process.argv.indexOf("--icons");
+  if (i < 0) return undefined;
+  const parsed = parseIconsFlag(process.argv[i + 1]);
+  if (parsed != null) return parsed;
+  return true;
 }
 
 function loadPrompt(raw) {
@@ -153,6 +164,7 @@ const historyStepsRaw = argValue("--history-steps");
 const historySteps = historyStepsRaw != null ? Number(historyStepsRaw) : undefined;
 const engine =
   argValue("--engine") || process.env.SCREEN_ROBOT_OCR || "all";
+const icons = parseAgentIcons();
 const senseRaw =
   argValue("--sense") ||
   (hasFlag("--vision") ? "vision" : null) ||
@@ -175,7 +187,7 @@ const keyboardRegion = loadDeviceCfg().type?.keyboardRegion;
 if (!prompt) {
   console.error("uso: npm run agent -- --prompt <texto|arquivo.md>");
   console.error("      (TTY) menu de modelos · --model ID · --force-model ID · --no-fallback · --all-models · --no-prompt");
-  console.error("      --sense ocr|vision · --vision (atalho) · --engine all (só ocr)");
+  console.error("      --sense ocr|vision · --vision (atalho) · --engine all · --icons true · --no-icons");
   process.exit(2);
 }
 if (!serial) {
@@ -204,6 +216,7 @@ for (let i = 0; i < models.length; i++) {
   console.log(
     `runAgent serial=${serial} sense=${sense}` +
       (sense === "ocr" ? ` engine=${engine}` : "") +
+      (sense === "ocr" && icons != null ? ` icons=${icons}` : "") +
       ` provider=${provider}` +
       ` model=${m.id}` +
       (noFallback ? " noFallback" : "") +
@@ -222,6 +235,7 @@ for (let i = 0; i < models.length; i++) {
     noFallback: noFallback || undefined,
     sense,
     engine,
+    icons,
     visionWidth,
     visionQuality,
     logDir,

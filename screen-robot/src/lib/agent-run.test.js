@@ -415,4 +415,39 @@ describe("agent-run (SC-32)", () => {
       rmSync(usageDir, { recursive: true, force: true });
     }
   });
+
+  it("runAgent passa icons ao extract", async () => {
+    const logDir = mkdtempSync(join(tmpdir(), "sr-agent-"));
+    const usageDir = mkdtempSync(join(tmpdir(), "sr-usage-"));
+    let seen;
+    try {
+      const result = await runAgent(
+        {
+          serial: "emulator-5554",
+          prompt: "x",
+          maxSteps: 2,
+          icons: true,
+          logDir,
+          usageDir,
+          stepDelayMs: 0,
+        },
+        {
+          sleep: async () => {},
+          extract: async (cfg) => {
+            seen = cfg;
+            return [{ type: "text", text: "A", x: 1, y: 2 }];
+          },
+          decide: async () => ({
+            resumo: "ok",
+            acao: { type: "done", motivo: "ok" },
+          }),
+        },
+      );
+      assert.equal(result.status, "done");
+      assert.equal(seen.icons, true);
+    } finally {
+      rmSync(logDir, { recursive: true, force: true });
+      rmSync(usageDir, { recursive: true, force: true });
+    }
+  });
 });

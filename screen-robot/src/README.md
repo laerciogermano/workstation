@@ -225,7 +225,7 @@ npm run agent -- --provider openai --model gpt-4o-mini --no-prompt --engine rapi
 npm run agent -- --prompt "abra o LinkedIn e mostre as últimas 10 conexões"
 npm run agent -- --prompt ../roteiros/jornada-completa.md --all-models
 npm run agent -- --prompt ../roteiros/jornada-completa.md --no-prompt   # sem menu (env/default)
-npm run agent -- --force-model gemini-2.5-flash --prompt ../roteiros/abrir-settings.md
+npm run agent -- --model gemini-3.8-flash --engine all --icons true --prompt ../roteiros/jornada-comprador.md
 npm run agent -- --model gemini-2.5-flash --no-fallback --prompt ../roteiros/abrir-settings.md
 # Vision (sem OCR): print → WebP → modelo multimodal → comandos
 npm run agent -- --sense vision --prompt ../roteiros/teste.md --no-prompt
@@ -236,6 +236,8 @@ npm run agent:smoke              # 1–2 passos no device; sem key = heurística
 **Setup CLI (modelos):** em TTY, sem `--model` / `--force-model` / `--no-prompt`, o agent lista o catálogo ([`lib/agent-models.js`](lib/agent-models.js)) e pede a escolha (`1`, `1,3`, `a`=todos, ou id). Vários modelos → roda em sequência, log em `logs/agent/<model>/`. Rollback: `--model <id>` ou `--no-prompt`.
 
 **Antes → depois (forçar modelo):** `--model` ainda descia a escada de fallback → `--force-model <id>` (ou `--model` + `--no-fallback`, `decide`/`runAgent({ noFallback: true })`, `AGENT_NO_FALLBACK=1`) usa só esse id. Rollback: omitir as flags / env.
+
+**Antes → depois (agent `--icons`):** extract no loop do agent ignorava a flag → `--icons true` / `--no-icons` / `runAgent({ icons: true })` (mesmo contrato do `npm run extract`). Sem flag: `SCREEN_ROBOT_ICONS`. Rollback: omitir; default só OCR.
 
 **Antes → depois (gpt-5-mini):** catálogo só tinha `gpt-4o-mini` no OpenAI → também `gpt-5-mini`. Cliente omite `temperature` em `gpt-5*` (API rejeita 0). Rollback: remover o item do catálogo; voltar `temperature: 0` em todo request.
 

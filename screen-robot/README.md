@@ -453,7 +453,7 @@ Decide a próxima ação via **Gemini 3.8 Flash** a partir do OCR (sem imagem).
 
 Loop: `extract` (OCR) → `decide` → gesto → log `.md`.
 
-**Entrada:** `serial` · `prompt` · `maxSteps?` (40) · `engine?` (`all` = merge top-5; jornada Campinas: `rapidocr`) · `model?` · `noFallback?` (só esse modelo) · `logDir?` · `usageDir?`
+**Entrada:** `serial` · `prompt` · `maxSteps?` (40) · `engine?` (`all` = merge top-5; jornada Campinas: `rapidocr`) · `icons?` (`true` = blobs) · `model?` · `noFallback?` (só esse modelo) · `logDir?` · `usageDir?`
 
 **Saída:** `{ status: "done"|"fail"|"max_steps", steps, logPath, usagePath, usage }`
 
@@ -473,7 +473,7 @@ export GEMINI_API_KEY=…
 npm run agent -- --prompt ../roteiros/jornada-comprador.md
 # gpt-4o-mini + RapidOCR (sem engine=all):
 npm run agent -- --provider openai --model gpt-4o-mini --no-prompt --engine rapidocr --max-steps 80 --history-steps 1 --prompt ../roteiros/jornada-linkedin-campinas.md
-npm run agent -- --force-model gemini-2.5-flash --prompt ../roteiros/jornada-comprador.md
+npm run agent -- --model gemini-3.8-flash --engine all --icons true --prompt ../roteiros/jornada-comprador.md
 npm run agent:smoke   # 1–2 passos; sem key usa heurística Connect/scroll
 ```
 

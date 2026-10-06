@@ -115,6 +115,7 @@ src/
 | `prompt` | sim | Texto do objetivo |
 | `maxSteps` | | Default 40 |
 | `engine` | | Default `rapidocr` |
+| `icons` | | `true` = blobs no extract (CLI `--icons true`) |
 | `model` | | Default `gemini-3.8-flash` |
 | `noFallback` | | `true` = não desce a escada |
 | `logDir` | | Default `logs/agent/` |

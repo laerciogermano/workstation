@@ -360,6 +360,7 @@ function appendStepLog(logPath, step, { resumo, acao, ocr, vision, resultado, us
  *   prompt: string,
  *   maxSteps?: number,
  *   engine?: string,
+ *   icons?: boolean,
  *   sense?: "ocr"|"vision",
  *   visionWidth?: number,
  *   visionQuality?: number,
@@ -386,6 +387,7 @@ export async function runAgent(cfg, deps = {}) {
   const sense = resolveSense(cfg);
   // all = merge paralelo top-5 OCR (só sense=ocr)
   const engine = cfg.engine || process.env.SCREEN_ROBOT_OCR || "all";
+  const icons = cfg.icons;
   const sleep = deps.sleep ?? defaultSleep;
   const runExtract = deps.extract ?? extract;
   const runDecide = deps.decide ?? decide;
@@ -403,7 +405,9 @@ export async function runAgent(cfg, deps = {}) {
   const model = resolveDecideModel(cfg) || DEFAULT_GEMINI_MODEL;
   log(
     `início serial=${serial} sense=${sense}` +
-      (sense === "ocr" ? ` engine=${engine}` : "") +
+      (sense === "ocr"
+        ? ` engine=${engine} icons=${icons === true ? "true" : icons === false ? "false" : "default"}`
+        : "") +
       ` provider=${provider} model=${model} maxSteps=${maxSteps} historySteps=${historySteps}`,
   );
   log(`log → ${logPath}`);
@@ -417,6 +421,7 @@ export async function runAgent(cfg, deps = {}) {
       `- serial: \`${serial}\``,
       `- sense: \`${sense}\``,
       sense === "ocr" ? `- engine: \`${engine}\`` : null,
+      sense === "ocr" && icons != null ? `- icons: \`${icons}\`` : null,
       `- provider: \`${provider}\``,
       `- model: \`${model}\``,
       `- maxSteps: ${maxSteps}`,
@@ -533,7 +538,7 @@ export async function runAgent(cfg, deps = {}) {
       log(`extract…`);
       const tExtract = Date.now();
       try {
-        ocr = await runExtract({ serial, engine }, deps);
+        ocr = await runExtract({ serial, engine, icons }, deps);
         log(`extract ok em ${Date.now() - tExtract}ms (${ocr.length} hits)`);
         dumpOcrStdout(ocr);
       } catch (e) {
@@ -562,7 +567,7 @@ export async function runAgent(cfg, deps = {}) {
       if (looksLoading(ocr)) {
         log(`tela loading — retry extract imediato`);
         try {
-          ocr = await runExtract({ serial, engine }, deps);
+          ocr = await runExtract({ serial, engine, icons }, deps);
           dumpOcrStdout(ocr);
         } catch (e) {
           log(`extract retry falhou (${e.message}) — continua`);

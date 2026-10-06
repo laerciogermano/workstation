@@ -63,4 +63,16 @@ describe("raw-gpt-decide", () => {
       });
     },
   );
+
+  it(
+    "LinkedIn Search clicked → digitar comprador",
+    { timeout: 300_000 },
+    async () => {
+      await runCase({
+        image: "linkedin-search-clicked.png",
+        prompt: PROMPT + "\nvoce esta no passo 2",
+        expected: { type: "type", text: "comprador" },
+      });
+    },
+  );
 });

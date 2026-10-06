@@ -4,7 +4,7 @@
  *
  *   npm run raw-gpt
  *   npm run raw-gpt -- --image test/fixtures/linkedin-people-comprador-connect.png
- *   npm run raw-gpt -- --engine macos-vision --prompt "o que fazer?"
+ *   npm run raw-gpt -- --engine all --prompt "o que fazer?"
  */
 import { existsSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
@@ -38,7 +38,7 @@ function argValue(flag) {
 
 const prompt = argValue("--prompt") || DEFAULT_PROMPT;
 const imagePath = resolve(argValue("--image") || DEFAULT_IMAGE);
-const engine = argValue("--engine") || process.env.SCREEN_ROBOT_OCR || "macos-vision";
+const engine = argValue("--engine") || process.env.SCREEN_ROBOT_OCR || "all";
 const model = process.env.OPENAI_MODEL || "gpt-4o-mini";
 
 if (!existsSync(imagePath)) {

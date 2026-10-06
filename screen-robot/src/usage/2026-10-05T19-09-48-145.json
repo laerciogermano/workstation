@@ -1,0 +1,127 @@
+{
+  "run": "2026-10-05T19-08-53-108",
+  "step": 12,
+  "at": "2026-10-05T19:09:48.145Z",
+  "serial": "emulator-5554",
+  "engine": "rapidocr",
+  "model": "gemini-3.5-flash-lite",
+  "ok": true,
+  "acao": {
+    "type": "type",
+    "x": null,
+    "y": null,
+    "direction": null,
+    "text": "comprador",
+    "code": null,
+    "ms": null,
+    "motivo": "Digitar o termo comprador na barra de busca para prosseguir com a jornada do comprador."
+  },
+  "resumo": "A tela exibe a barra de pesquisa com o termo 'pearch' e sugestões de histórico recentes, além do teclado virtual aberto na parte inferior.",
+  "elementos": [
+    {
+      "label": "pearch",
+      "tipo": "text",
+      "x": 130,
+      "y": 81
+    },
+    {
+      "label": "Recent",
+      "tipo": "text",
+      "x": 62,
+      "y": 153
+    },
+    {
+      "label": "Show all",
+      "tipo": "button",
+      "x": 405,
+      "y": 152
+    },
+    {
+      "label": "comprador",
+      "tipo": "text",
+      "x": 156,
+      "y": 368
+    }
+  ],
+  "attempt": 1,
+  "round": 1,
+  "ms": 1366,
+  "promptChars": 2051,
+  "systemChars": 2082,
+  "input": {
+    "system": "Você opera um smartphone Android olhando só a lista OCR da tela (textos + coordenadas x,y na escala do device).\n\nResponda APENAS JSON válido (sem markdown) no formato:\n{\n  \"resumo\": \"2-4 frases do que tem na tela\",\n  \"elementos\": [{ \"label\": \"...\", \"tipo\": \"button|chip|card|text\", \"x\": 0, \"y\": 0 }],\n  \"acao\": {\n    \"type\": \"tap|scroll|type|key|sleep|done|fail\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"...\"\n  }\n}\n\nRegras:\n- Coords de tap = mesma escala do OCR (device). Não invente scale.\n- tap: use x,y de um item OCR existente (centro do texto alvo).\n- scroll: direction down|up|left|right quando o próximo alvo não está visível.\n- Se o histórico mostrar vários scrolls com o mesmo OCR (tela não mudou), NÃO scroll de novo: mude de estratégia (tap em outro elemento, type, key BACK).\n- Home / Settings (AVD Nexus Launcher):\n  - OCR com \"Notifications\" / \"Clear all\" / \"AndroidSetup\" = shade aberto → key KEYCODE_BACK ou KEYCODE_HOME (NÃO scroll).\n  - Tela inicial (só hora/data, sem apps) → scroll direction=down abre a gaveta. scroll up reabre o shade — evite.\n  - Texto \"Settings\" no OCR → tap nessas coords. done só com Settings aberto (Search settings / Network / Apps / Battery).\n- Filtro de localização LinkedIn: se OCR tiver \"Add a location\" / \"Add alocation\" e a cidade alvo do roteiro (ex. Campinas) NÃO estiver na lista, faça tap em Add a location e depois type da cidade — NÃO fique só scrollando a lista.\n- Connect: só tap se text exato \"Connect\" e tipicamente 180 < y < 850. Se o histórico já tem tap nas mesmas coords e a tela não mudou, scroll ou outro Connect — não repita o mesmo tap.\n- type: digite text de uma vez (campo acao.text obrigatório). Se o histórico mostrar erro de tecla OCR, espere (sleep) e tente type de novo, ou key KEYCODE_BACK e reabra o campo.\n- key: code tipo KEYCODE_BACK / KEYCODE_HOME.\n- sleep: ms quando a tela parece carregando.\n- done: objetivo cumprido.\n- fail: impossível continuar (motivo claro).\n- Não peça screenshot; decida só com o OCR e o prompt.",
+    "prompt": "Objetivo / roteiro:\nexecute\n\nscreen-robot/roteiros/jornada-comprador.md\n\ncom base nas regras\n- use apenas a lib do screen robot, \n- nao use script em js pra nada, \n- a IA deve extrair, analisar e decidir a cada iteracao\n- nao tire print para analisar a imagem\n- toda interacao entre o dispositivo deve ser exclusivamente feita via interface da lib\n- nao explore nenhum arquivo que nao seja o readme contendo as interfaces da lib\n- faca da forma mais objetiva possivel, seguindo apenas o essencial\n- quando for escrever, escreva tudo de uma vez e só depois analise o resultado se está correto\n- nao utilize nenhum comando adb, todos os comandos devem ser provenientes exclusivamente da interface\n- nao utilize eventos de ui stable, apenas extract e espere se o extract apontar que esta carregando e tente noamente ate encontrar o proximo passo\n- nao utilize tap da lib calculando o x e o y de cada tcla do keybpard,mas injetando o texto diretamente via adb\n- nao altere nenhum arquivo, apenas execute o fluxo\n\nOCR atual (JSON):\n[{\"text\":\"4:09回@\",\"x\":155,\"y\":23},{\"text\":\"pearch\",\"x\":130,\"y\":81},{\"text\":\"Recent\",\"x\":62,\"y\":153},{\"text\":\"Show all\",\"x\":405,\"y\":152},{\"text\":\"GQ09\",\"x\":176,\"y\":204},{\"text\":\"Douglas MarcelloLaercio\",\"x\":175,\"y\":287},{\"text\":\"Rodrigo\",\"x\":389,\"y\":287},{\"text\":\"Anne\",\"x\":498,\"y\":287},{\"text\":\"Marqu...Conect...\",\"x\":131,\"y\":318},{\"text\":\"Germa...Evaristo\",\"x\":336,\"y\":317},{\"text\":\"Apolin..\",\"x\":480,\"y\":317},{\"text\":\"comprador\",\"x\":156,\"y\":368},{\"text\":\"clmpladll\",\"x\":146,\"y\":439},{\"text\":\"rlmnlaall\",\"x\":145,\"y\":507},{\"text\":\"自\",\"x\":198,\"y\":545},{\"text\":\"cd screen-ro...\",\"x\":288,\"y\":548},{\"text\":\"3\",\"x\":151,\"y\":603},{\"text\":\"W\",\"x\":83,\"y\":622},{\"text\":\"e\",\"x\":136,\"y\":624},{\"text\":\"p\",\"x\":510,\"y\":625},{\"text\":\"a\",\"x\":56,\"y\":699},{\"text\":\"S\",\"x\":111,\"y\":698},{\"text\":\"d\",\"x\":163,\"y\":697},{\"text\":\"f\",\"x\":216,\"y\":692},{\"text\":\"k\",\"x\":428,\"y\":694},{\"text\":\"Z\",\"x\":110,\"y\":774},{\"text\":\"X\",\"x\":163,\"y\":775},{\"text\":\"C\",\"x\":216,\"y\":774},{\"text\":\"？123\",\"x\":44,\"y\":851},{\"text\":\"Q\",\"x\":495,\"y\":848}]\n\nDefina a próxima ação.",
+    "body": {
+      "contents": [
+        {
+          "role": "user",
+          "parts": [
+            {
+              "text": "Objetivo / roteiro:\nexecute\n\nscreen-robot/roteiros/jornada-comprador.md\n\ncom base nas regras\n- use apenas a lib do screen robot, \n- nao use script em js pra nada, \n- a IA deve extrair, analisar e decidir a cada iteracao\n- nao tire print para analisar a imagem\n- toda interacao entre o dispositivo deve ser exclusivamente feita via interface da lib\n- nao explore nenhum arquivo que nao seja o readme contendo as interfaces da lib\n- faca da forma mais objetiva possivel, seguindo apenas o essencial\n- quando for escrever, escreva tudo de uma vez e só depois analise o resultado se está correto\n- nao utilize nenhum comando adb, todos os comandos devem ser provenientes exclusivamente da interface\n- nao utilize eventos de ui stable, apenas extract e espere se o extract apontar que esta carregando e tente noamente ate encontrar o proximo passo\n- nao utilize tap da lib calculando o x e o y de cada tcla do keybpard,mas injetando o texto diretamente via adb\n- nao altere nenhum arquivo, apenas execute o fluxo\n\nOCR atual (JSON):\n[{\"text\":\"4:09回@\",\"x\":155,\"y\":23},{\"text\":\"pearch\",\"x\":130,\"y\":81},{\"text\":\"Recent\",\"x\":62,\"y\":153},{\"text\":\"Show all\",\"x\":405,\"y\":152},{\"text\":\"GQ09\",\"x\":176,\"y\":204},{\"text\":\"Douglas MarcelloLaercio\",\"x\":175,\"y\":287},{\"text\":\"Rodrigo\",\"x\":389,\"y\":287},{\"text\":\"Anne\",\"x\":498,\"y\":287},{\"text\":\"Marqu...Conect...\",\"x\":131,\"y\":318},{\"text\":\"Germa...Evaristo\",\"x\":336,\"y\":317},{\"text\":\"Apolin..\",\"x\":480,\"y\":317},{\"text\":\"comprador\",\"x\":156,\"y\":368},{\"text\":\"clmpladll\",\"x\":146,\"y\":439},{\"text\":\"rlmnlaall\",\"x\":145,\"y\":507},{\"text\":\"自\",\"x\":198,\"y\":545},{\"text\":\"cd screen-ro...\",\"x\":288,\"y\":548},{\"text\":\"3\",\"x\":151,\"y\":603},{\"text\":\"W\",\"x\":83,\"y\":622},{\"text\":\"e\",\"x\":136,\"y\":624},{\"text\":\"p\",\"x\":510,\"y\":625},{\"text\":\"a\",\"x\":56,\"y\":699},{\"text\":\"S\",\"x\":111,\"y\":698},{\"text\":\"d\",\"x\":163,\"y\":697},{\"text\":\"f\",\"x\":216,\"y\":692},{\"text\":\"k\",\"x\":428,\"y\":694},{\"text\":\"Z\",\"x\":110,\"y\":774},{\"text\":\"X\",\"x\":163,\"y\":775},{\"text\":\"C\",\"x\":216,\"y\":774},{\"text\":\"？123\",\"x\":44,\"y\":851},{\"text\":\"Q\",\"x\":495,\"y\":848}]\n\nDefina a próxima ação."
+            }
+          ]
+        }
+      ],
+      "generationConfig": {
+        "responseMimeType": "application/json"
+      },
+      "systemInstruction": {
+        "parts": [
+          {
+            "text": "Você opera um smartphone Android olhando só a lista OCR da tela (textos + coordenadas x,y na escala do device).\n\nResponda APENAS JSON válido (sem markdown) no formato:\n{\n  \"resumo\": \"2-4 frases do que tem na tela\",\n  \"elementos\": [{ \"label\": \"...\", \"tipo\": \"button|chip|card|text\", \"x\": 0, \"y\": 0 }],\n  \"acao\": {\n    \"type\": \"tap|scroll|type|key|sleep|done|fail\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"...\"\n  }\n}\n\nRegras:\n- Coords de tap = mesma escala do OCR (device). Não invente scale.\n- tap: use x,y de um item OCR existente (centro do texto alvo).\n- scroll: direction down|up|left|right quando o próximo alvo não está visível.\n- Se o histórico mostrar vários scrolls com o mesmo OCR (tela não mudou), NÃO scroll de novo: mude de estratégia (tap em outro elemento, type, key BACK).\n- Home / Settings (AVD Nexus Launcher):\n  - OCR com \"Notifications\" / \"Clear all\" / \"AndroidSetup\" = shade aberto → key KEYCODE_BACK ou KEYCODE_HOME (NÃO scroll).\n  - Tela inicial (só hora/data, sem apps) → scroll direction=down abre a gaveta. scroll up reabre o shade — evite.\n  - Texto \"Settings\" no OCR → tap nessas coords. done só com Settings aberto (Search settings / Network / Apps / Battery).\n- Filtro de localização LinkedIn: se OCR tiver \"Add a location\" / \"Add alocation\" e a cidade alvo do roteiro (ex. Campinas) NÃO estiver na lista, faça tap em Add a location e depois type da cidade — NÃO fique só scrollando a lista.\n- Connect: só tap se text exato \"Connect\" e tipicamente 180 < y < 850. Se o histórico já tem tap nas mesmas coords e a tela não mudou, scroll ou outro Connect — não repita o mesmo tap.\n- type: digite text de uma vez (campo acao.text obrigatório). Se o histórico mostrar erro de tecla OCR, espere (sleep) e tente type de novo, ou key KEYCODE_BACK e reabra o campo.\n- key: code tipo KEYCODE_BACK / KEYCODE_HOME.\n- sleep: ms quando a tela parece carregando.\n- done: objetivo cumprido.\n- fail: impossível continuar (motivo claro).\n- Não peça screenshot; decida só com o OCR e o prompt."
+          }
+        ]
+      }
+    }
+  },
+  "output": {
+    "text": "{\n  \"resumo\": \"A tela exibe a barra de pesquisa com o termo 'pearch' e sugestões de histórico recentes, além do teclado virtual aberto na parte inferior.\",\n  \"elementos\": [\n    { \"label\": \"pearch\", \"tipo\": \"text\", \"x\": 130, \"y\": 81 },\n    { \"label\": \"Recent\", \"tipo\": \"text\", \"x\": 62, \"y\": 153 },\n    { \"label\": \"Show all\", \"tipo\": \"button\", \"x\": 405, \"y\": 152 },\n    { \"label\": \"comprador\", \"tipo\": \"text\", \"x\": 156, \"y\": 368 }\n  ],\n  \"acao\": {\n    \"type\": \"type\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": \"comprador\",\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"Digitar o termo comprador na barra de busca para prosseguir com a jornada do comprador.\"\n  }\n}",
+    "raw": {
+      "candidates": [
+        {
+          "content": {
+            "parts": [
+              {
+                "text": "{\n  \"resumo\": \"A tela exibe a barra de pesquisa com o termo 'pearch' e sugestões de histórico recentes, além do teclado virtual aberto na parte inferior.\",\n  \"elementos\": [\n    { \"label\": \"pearch\", \"tipo\": \"text\", \"x\": 130, \"y\": 81 },\n    { \"label\": \"Recent\", \"tipo\": \"text\", \"x\": 62, \"y\": 153 },\n    { \"label\": \"Show all\", \"tipo\": \"button\", \"x\": 405, \"y\": 152 },\n    { \"label\": \"comprador\", \"tipo\": \"text\", \"x\": 156, \"y\": 368 }\n  ],\n  \"acao\": {\n    \"type\": \"type\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": \"comprador\",\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"Digitar o termo comprador na barra de busca para prosseguir com a jornada do comprador.\"\n  }\n}",
+                "thoughtSignature": "EmAKXgFpFH0TQCIoa9mb7cdIhu5AK4Mxt616G6we9Uq5EsWZTJHp8/yj1xN0Risvt57vdhZRw681tZO3wn4Ix/KPg2hTs4X5MDClCEPZe3a4+B/pj4Zd4rfZwc4hYQz8yIM="
+              }
+            ],
+            "role": "model"
+          },
+          "finishReason": "STOP",
+          "index": 0
+        }
+      ],
+      "usageMetadata": {
+        "promptTokenCount": 1400,
+        "candidatesTokenCount": 264,
+        "totalTokenCount": 1664,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 1400
+          }
+        ],
+        "serviceTier": "standard"
+      },
+      "modelVersion": "gemini-3.5-flash-lite",
+      "responseId": "-_XDasFUqeqq2w_H1JfgDg"
+    }
+  },
+  "system": "Você opera um smartphone Android olhando só a lista OCR da tela (textos + coordenadas x,y na escala do device).\n\nResponda APENAS JSON válido (sem markdown) no formato:\n{\n  \"resumo\": \"2-4 frases do que tem na tela\",\n  \"elementos\": [{ \"label\": \"...\", \"tipo\": \"button|chip|card|text\", \"x\": 0, \"y\": 0 }],\n  \"acao\": {\n    \"type\": \"tap|scroll|type|key|sleep|done|fail\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"...\"\n  }\n}\n\nRegras:\n- Coords de tap = mesma escala do OCR (device). Não invente scale.\n- tap: use x,y de um item OCR existente (centro do texto alvo).\n- scroll: direction down|up|left|right quando o próximo alvo não está visível.\n- Se o histórico mostrar vários scrolls com o mesmo OCR (tela não mudou), NÃO scroll de novo: mude de estratégia (tap em outro elemento, type, key BACK).\n- Home / Settings (AVD Nexus Launcher):\n  - OCR com \"Notifications\" / \"Clear all\" / \"AndroidSetup\" = shade aberto → key KEYCODE_BACK ou KEYCODE_HOME (NÃO scroll).\n  - Tela inicial (só hora/data, sem apps) → scroll direction=down abre a gaveta. scroll up reabre o shade — evite.\n  - Texto \"Settings\" no OCR → tap nessas coords. done só com Settings aberto (Search settings / Network / Apps / Battery).\n- Filtro de localização LinkedIn: se OCR tiver \"Add a location\" / \"Add alocation\" e a cidade alvo do roteiro (ex. Campinas) NÃO estiver na lista, faça tap em Add a location e depois type da cidade — NÃO fique só scrollando a lista.\n- Connect: só tap se text exato \"Connect\" e tipicamente 180 < y < 850. Se o histórico já tem tap nas mesmas coords e a tela não mudou, scroll ou outro Connect — não repita o mesmo tap.\n- type: digite text de uma vez (campo acao.text obrigatório). Se o histórico mostrar erro de tecla OCR, espere (sleep) e tente type de novo, ou key KEYCODE_BACK e reabra o campo.\n- key: code tipo KEYCODE_BACK / KEYCODE_HOME.\n- sleep: ms quando a tela parece carregando.\n- done: objetivo cumprido.\n- fail: impossível continuar (motivo claro).\n- Não peça screenshot; decida só com o OCR e o prompt.",
+  "prompt": "Objetivo / roteiro:\nexecute\n\nscreen-robot/roteiros/jornada-comprador.md\n\ncom base nas regras\n- use apenas a lib do screen robot, \n- nao use script em js pra nada, \n- a IA deve extrair, analisar e decidir a cada iteracao\n- nao tire print para analisar a imagem\n- toda interacao entre o dispositivo deve ser exclusivamente feita via interface da lib\n- nao explore nenhum arquivo que nao seja o readme contendo as interfaces da lib\n- faca da forma mais objetiva possivel, seguindo apenas o essencial\n- quando for escrever, escreva tudo de uma vez e só depois analise o resultado se está correto\n- nao utilize nenhum comando adb, todos os comandos devem ser provenientes exclusivamente da interface\n- nao utilize eventos de ui stable, apenas extract e espere se o extract apontar que esta carregando e tente noamente ate encontrar o proximo passo\n- nao utilize tap da lib calculando o x e o y de cada tcla do keybpard,mas injetando o texto diretamente via adb\n- nao altere nenhum arquivo, apenas execute o fluxo\n\nOCR atual (JSON):\n[{\"text\":\"4:09回@\",\"x\":155,\"y\":23},{\"text\":\"pearch\",\"x\":130,\"y\":81},{\"text\":\"Recent\",\"x\":62,\"y\":153},{\"text\":\"Show all\",\"x\":405,\"y\":152},{\"text\":\"GQ09\",\"x\":176,\"y\":204},{\"text\":\"Douglas MarcelloLaercio\",\"x\":175,\"y\":287},{\"text\":\"Rodrigo\",\"x\":389,\"y\":287},{\"text\":\"Anne\",\"x\":498,\"y\":287},{\"text\":\"Marqu...Conect...\",\"x\":131,\"y\":318},{\"text\":\"Germa...Evaristo\",\"x\":336,\"y\":317},{\"text\":\"Apolin..\",\"x\":480,\"y\":317},{\"text\":\"comprador\",\"x\":156,\"y\":368},{\"text\":\"clmpladll\",\"x\":146,\"y\":439},{\"text\":\"rlmnlaall\",\"x\":145,\"y\":507},{\"text\":\"自\",\"x\":198,\"y\":545},{\"text\":\"cd screen-ro...\",\"x\":288,\"y\":548},{\"text\":\"3\",\"x\":151,\"y\":603},{\"text\":\"W\",\"x\":83,\"y\":622},{\"text\":\"e\",\"x\":136,\"y\":624},{\"text\":\"p\",\"x\":510,\"y\":625},{\"text\":\"a\",\"x\":56,\"y\":699},{\"text\":\"S\",\"x\":111,\"y\":698},{\"text\":\"d\",\"x\":163,\"y\":697},{\"text\":\"f\",\"x\":216,\"y\":692},{\"text\":\"k\",\"x\":428,\"y\":694},{\"text\":\"Z\",\"x\":110,\"y\":774},{\"text\":\"X\",\"x\":163,\"y\":775},{\"text\":\"C\",\"x\":216,\"y\":774},{\"text\":\"？123\",\"x\":44,\"y\":851},{\"text\":\"Q\",\"x\":495,\"y\":848}]\n\nDefina a próxima ação.",
+  "response": "{\n  \"resumo\": \"A tela exibe a barra de pesquisa com o termo 'pearch' e sugestões de histórico recentes, além do teclado virtual aberto na parte inferior.\",\n  \"elementos\": [\n    { \"label\": \"pearch\", \"tipo\": \"text\", \"x\": 130, \"y\": 81 },\n    { \"label\": \"Recent\", \"tipo\": \"text\", \"x\": 62, \"y\": 153 },\n    { \"label\": \"Show all\", \"tipo\": \"button\", \"x\": 405, \"y\": 152 },\n    { \"label\": \"comprador\", \"tipo\": \"text\", \"x\": 156, \"y\": 368 }\n  ],\n  \"acao\": {\n    \"type\": \"type\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": \"comprador\",\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"Digitar o termo comprador na barra de busca para prosseguir com a jornada do comprador.\"\n  }\n}",
+  "roteiro": "execute\n\nscreen-robot/roteiros/jornada-comprador.md\n\ncom base nas regras\n- use apenas a lib do screen robot, \n- nao use script em js pra nada, \n- a IA deve extrair, analisar e decidir a cada iteracao\n- nao tire print para analisar a imagem\n- toda interacao entre o dispositivo deve ser exclusivamente feita via interface da lib\n- nao explore nenhum arquivo que nao seja o readme contendo as interfaces da lib\n- faca da forma mais objetiva possivel, seguindo apenas o essencial\n- quando for escrever, escreva tudo de uma vez e só depois analise o resultado se está correto\n- nao utilize nenhum comando adb, todos os comandos devem ser provenientes exclusivamente da interface\n- nao utilize eventos de ui stable, apenas extract e espere se o extract apontar que esta carregando e tente noamente ate encontrar o proximo passo\n- nao utilize tap da lib calculando o x e o y de cada tcla do keybpard,mas injetando o texto diretamente via adb\n- nao altere nenhum arquivo, apenas execute o fluxo\n",
+  "usage": {
+    "promptTokenCount": 1400,
+    "candidatesTokenCount": 264,
+    "totalTokenCount": 1664,
+    "promptTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 1400
+      }
+    ],
+    "serviceTier": "standard"
+  }
+}

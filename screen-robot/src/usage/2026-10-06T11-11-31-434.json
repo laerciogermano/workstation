@@ -1,0 +1,164 @@
+{
+  "run": "2026-10-06T11-11-09-591",
+  "step": 4,
+  "at": "2026-10-06T11:11:31.434Z",
+  "serial": "emulator-5554",
+  "engine": "macos-vision",
+  "model": "gpt-4o-mini",
+  "ok": true,
+  "acao": {
+    "type": "scroll",
+    "x": null,
+    "y": null,
+    "direction": "down",
+    "text": null,
+    "code": null,
+    "ms": null,
+    "motivo": "Precisamos rolar a tela para encontrar o dia de hoje no calendário."
+  },
+  "resumo": "O aplicativo Calendar foi aberto e a tela exibe os compromissos do dia. É necessário rolar a tela para encontrar o dia de hoje e verificar se há compromissos agendados.",
+  "elementos": [
+    {
+      "label": "8:11 $ in in •",
+      "tipo": "text",
+      "x": 149,
+      "y": 25
+    },
+    {
+      "label": "= Octo.. ? M",
+      "tipo": "text",
+      "x": 250,
+      "y": 95
+    },
+    {
+      "label": "Tue",
+      "tipo": "text",
+      "x": 46,
+      "y": 149
+    },
+    {
+      "label": "1 PM",
+      "tipo": "text",
+      "x": 47,
+      "y": 289
+    },
+    {
+      "label": "2 PM",
+      "tipo": "text",
+      "x": 46,
+      "y": 386
+    },
+    {
+      "label": "3 PM",
+      "tipo": "text",
+      "x": 44,
+      "y": 482
+    },
+    {
+      "label": "4 PM",
+      "tipo": "text",
+      "x": 45,
+      "y": 577
+    },
+    {
+      "label": "5 PM",
+      "tipo": "text",
+      "x": 46,
+      "y": 673
+    },
+    {
+      "label": "6 PM",
+      "tipo": "text",
+      "x": 46,
+      "y": 769
+    },
+    {
+      "label": "+",
+      "tipo": "text",
+      "x": 462,
+      "y": 819
+    },
+    {
+      "label": "7 PM",
+      "tipo": "text",
+      "x": 45,
+      "y": 864
+    }
+  ],
+  "attempt": 1,
+  "ms": 4693,
+  "promptChars": 3046,
+  "systemChars": 2310,
+  "input": {
+    "system": "Você opera um smartphone Android olhando só a lista OCR da tela (textos + coordenadas x,y na escala do device).\n\nResponda APENAS JSON válido (sem markdown) no formato:\n{\n  \"resumo\": \"2-4 frases do que tem na tela\",\n  \"elementos\": [{ \"label\": \"...\", \"tipo\": \"button|chip|card|text\", \"x\": 0, \"y\": 0 }],\n  \"acao\": {\n    \"type\": \"tap|scroll|type|key|sleep|done|fail\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"...\"\n  }\n}\n\nRegras:\n- Coords de tap = mesma escala do OCR (device). Não invente scale.\n- tap: use x,y de um item OCR existente (centro do texto alvo).\n- scroll: direction down|up|left|right quando o próximo alvo não está visível.\n- Se o histórico mostrar vários scrolls com o mesmo OCR (tela não mudou), NÃO scroll de novo: mude de estratégia (tap em outro elemento, type, key BACK).\n- Home / Settings (AVD Nexus Launcher):\n  - OCR com \"Notifications\" / \"Clear all\" / \"AndroidSetup\" = shade aberto → key KEYCODE_BACK ou KEYCODE_HOME (NÃO scroll).\n  - Tela inicial (só hora/data, sem apps) → scroll direction=down abre a gaveta. scroll up reabre o shade — evite.\n  - EXCEÇÃO: se o histórico recente tem tap com y<120 (Search/campo), OCR só com hora NÃO é home — é teclado cobrindo o app. PROIBIDO scroll (swipe digita lixo no campo, ex. \"ty\"). Faça type do texto do roteiro ou KEYCODE_BACK.\n  - Texto \"Settings\" no OCR → tap nessas coords. done só com Settings aberto (Search settings / Network / Apps / Battery).\n- Filtro de localização LinkedIn: se OCR tiver \"Add a location\" / \"Add alocation\" e a cidade alvo do roteiro (ex. Campinas) NÃO estiver na lista, faça tap em Add a location e depois type da cidade — NÃO fique só scrollando a lista.\n- Connect: só tap se text exato \"Connect\" e tipicamente 180 < y < 850. Se o histórico já tem tap nas mesmas coords e a tela não mudou, scroll ou outro Connect — não repita o mesmo tap.\n- type: digite text de uma vez (campo acao.text obrigatório). Se o histórico mostrar erro de tecla OCR, espere (sleep) e tente type de novo, ou key KEYCODE_BACK e reabra o campo.\n- key: code tipo KEYCODE_BACK / KEYCODE_HOME.\n- sleep: ms quando a tela parece carregando.\n- done: objetivo cumprido.\n- fail: impossível continuar (motivo claro).\n- Não peça screenshot; decida só com o OCR e o prompt.",
+    "prompt": "Objetivo / roteiro:\nabra o calendar, selecione o dia de hoje e veja se temos compromisso\n\nHistórico recente (últimos 3/3):\n[{\"step\":1,\"type\":\"scroll\",\"motivo\":\"Abrir a gaveta de aplicativos para acessar o calendário.\",\"x\":null,\"y\":null,\"direction\":\"down\",\"text\":null,\"code\":null,\"resultado\":\"scroll down\",\"sense\":\"ocr\",\"ocr\":[{\"text\":\"8:11\",\"x\":87,\"y\":26},{\"text\":\" in in•\",\"x\":180,\"y\":23},{\"text\":\"Tuesday, Oct 6\",\"x\":271,\"y\":121}]},{\"step\":2,\"type\":\"tap\",\"motivo\":\"Abrir o aplicativo Calendar para verificar compromissos.\",\"x\":70,\"y\":254,\"direction\":null,\"text\":null,\"code\":null,\"resultado\":\"tap 70,254\",\"sense\":\"ocr\",\"ocr\":[{\"text\":\"8:11\",\"x\":87,\"y\":26},{\"text\":\"G\",\"x\":71,\"y\":102},{\"text\":\"6\",\"x\":69,\"y\":198},{\"text\":\"Calendar\",\"x\":70,\"y\":254},{\"text\":\"Files\",\"x\":70,\"y\":370},{\"text\":\"Maps\",\"x\":69,\"y\":488},{\"text\":\"Play Sto...\",\"x\":70,\"y\":603},{\"text\":\"YT Music\",\"x\":67,\"y\":718},{\"text\":\"in\",\"x\":168,\"y\":24},{\"text\":\"in •\",\"x\":214,\"y\":23},{\"text\":\"Chrome\",\"x\":171,\"y\":252},{\"text\":\"Clock\",\"x\":269,\"y\":254},{\"text\":\"Gmail\",\"x\":169,\"y\":369},{\"text\":\"Google\",\"x\":268,\"y\":371},{\"text\":\"Meet\",\"x\":169,\"y\":485},{\"text\":\"Messag\",\"x\":269,\"y\":486},{\"text\":\"Settings\",\"x\":169,\"y\":603},{\"text\":\"Threads\",\"x\":271,\"y\":602},{\"text\":\"Contacts\",\"x\":369,\"y\":254},{\"text\":\"Instagra...\",\"x\":369,\"y\":371},{\"text\":\"Phone\",\"x\":369,\"y\":485},{\"text\":\"WebVie..\",\"x\":370,\"y\":601},{\"text\":\"Drive\",\"x\":469,\"y\":254},{\"text\":\"in\",\"x\":467,\"y\":314},{\"text\":\"Linkedln\",\"x\":469,\"y\":369},{\"text\":\"Photos\",\"x\":470,\"y\":486},{\"text\":\"YouTube\",\"x\":469,\"y\":602}]},{\"step\":3,\"type\":\"scroll\",\"motivo\":\"Precisamos rolar a tela para encontrar o dia de hoje no calendário.\",\"x\":null,\"y\":null,\"direction\":\"down\",\"text\":null,\"code\":null,\"resultado\":\"scroll down\",\"sense\":\"ocr\",\"ocr\":[{\"text\":\"8:11\",\"x\":87,\"y\":26},{\"text\":\"G\",\"x\":71,\"y\":102},{\"text\":\"6\",\"x\":67,\"y\":197},{\"text\":\"Calendar\",\"x\":70,\"y\":254},{\"text\":\"Files\",\"x\":70,\"y\":370},{\"text\":\"Maps\",\"x\":69,\"y\":488},{\"text\":\"Play Sto...\",\"x\":70,\"y\":603},{\"text\":\"YT Music\",\"x\":67,\"y\":718},{\"text\":\"in\",\"x\":171,\"y\":24},{\"text\":\"in •\",\"x\":214,\"y\":23},{\"text\":\"Chrome\",\"x\":171,\"y\":252},{\"text\":\"Clock\",\"x\":269,\"y\":254},{\"text\":\"Gmail\",\"x\":169,\"y\":369},{\"text\":\"Google\",\"x\":268,\"y\":371},{\"text\":\"Meet\",\"x\":169,\"y\":485},{\"text\":\"Messag\",\"x\":269,\"y\":486},{\"text\":\"Settings\",\"x\":169,\"y\":603},{\"text\":\"Threads\",\"x\":271,\"y\":602},{\"text\":\"Contacts\",\"x\":370,\"y\":253},{\"text\":\"Instagra...\",\"x\":369,\"y\":371},{\"text\":\"Phone\",\"x\":369,\"y\":485},{\"text\":\"WebVie..\",\"x\":370,\"y\":601},{\"text\":\"Drive\",\"x\":469,\"y\":254},{\"text\":\"in\",\"x\":467,\"y\":314},{\"text\":\"Linkedln\",\"x\":469,\"y\":369},{\"text\":\"Photos\",\"x\":470,\"y\":486},{\"text\":\"YouTube\",\"x\":469,\"y\":602}]}]\n\nOCR atual (JSON):\n[{\"text\":\"8:11 $ in in •\",\"x\":149,\"y\":25},{\"text\":\"= Octo.. ? M\",\"x\":250,\"y\":95},{\"text\":\"Tue\",\"x\":46,\"y\":149},{\"text\":\"1 PM\",\"x\":47,\"y\":289},{\"text\":\"2 PM\",\"x\":46,\"y\":386},{\"text\":\"3 PM\",\"x\":44,\"y\":482},{\"text\":\"4 PM\",\"x\":45,\"y\":577},{\"text\":\"5 PM\",\"x\":46,\"y\":673},{\"text\":\"6 PM\",\"x\":46,\"y\":769},{\"text\":\"+\",\"x\":462,\"y\":819},{\"text\":\"7 PM\",\"x\":45,\"y\":864}]\n\nDefina a próxima ação.",
+    "body": {
+      "model": "gpt-4o-mini",
+      "messages": [
+        {
+          "role": "system",
+          "content": "Você opera um smartphone Android olhando só a lista OCR da tela (textos + coordenadas x,y na escala do device).\n\nResponda APENAS JSON válido (sem markdown) no formato:\n{\n  \"resumo\": \"2-4 frases do que tem na tela\",\n  \"elementos\": [{ \"label\": \"...\", \"tipo\": \"button|chip|card|text\", \"x\": 0, \"y\": 0 }],\n  \"acao\": {\n    \"type\": \"tap|scroll|type|key|sleep|done|fail\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"...\"\n  }\n}\n\nRegras:\n- Coords de tap = mesma escala do OCR (device). Não invente scale.\n- tap: use x,y de um item OCR existente (centro do texto alvo).\n- scroll: direction down|up|left|right quando o próximo alvo não está visível.\n- Se o histórico mostrar vários scrolls com o mesmo OCR (tela não mudou), NÃO scroll de novo: mude de estratégia (tap em outro elemento, type, key BACK).\n- Home / Settings (AVD Nexus Launcher):\n  - OCR com \"Notifications\" / \"Clear all\" / \"AndroidSetup\" = shade aberto → key KEYCODE_BACK ou KEYCODE_HOME (NÃO scroll).\n  - Tela inicial (só hora/data, sem apps) → scroll direction=down abre a gaveta. scroll up reabre o shade — evite.\n  - EXCEÇÃO: se o histórico recente tem tap com y<120 (Search/campo), OCR só com hora NÃO é home — é teclado cobrindo o app. PROIBIDO scroll (swipe digita lixo no campo, ex. \"ty\"). Faça type do texto do roteiro ou KEYCODE_BACK.\n  - Texto \"Settings\" no OCR → tap nessas coords. done só com Settings aberto (Search settings / Network / Apps / Battery).\n- Filtro de localização LinkedIn: se OCR tiver \"Add a location\" / \"Add alocation\" e a cidade alvo do roteiro (ex. Campinas) NÃO estiver na lista, faça tap em Add a location e depois type da cidade — NÃO fique só scrollando a lista.\n- Connect: só tap se text exato \"Connect\" e tipicamente 180 < y < 850. Se o histórico já tem tap nas mesmas coords e a tela não mudou, scroll ou outro Connect — não repita o mesmo tap.\n- type: digite text de uma vez (campo acao.text obrigatório). Se o histórico mostrar erro de tecla OCR, espere (sleep) e tente type de novo, ou key KEYCODE_BACK e reabra o campo.\n- key: code tipo KEYCODE_BACK / KEYCODE_HOME.\n- sleep: ms quando a tela parece carregando.\n- done: objetivo cumprido.\n- fail: impossível continuar (motivo claro).\n- Não peça screenshot; decida só com o OCR e o prompt."
+        },
+        {
+          "role": "user",
+          "content": "Objetivo / roteiro:\nabra o calendar, selecione o dia de hoje e veja se temos compromisso\n\nHistórico recente (últimos 3/3):\n[{\"step\":1,\"type\":\"scroll\",\"motivo\":\"Abrir a gaveta de aplicativos para acessar o calendário.\",\"x\":null,\"y\":null,\"direction\":\"down\",\"text\":null,\"code\":null,\"resultado\":\"scroll down\",\"sense\":\"ocr\",\"ocr\":[{\"text\":\"8:11\",\"x\":87,\"y\":26},{\"text\":\" in in•\",\"x\":180,\"y\":23},{\"text\":\"Tuesday, Oct 6\",\"x\":271,\"y\":121}]},{\"step\":2,\"type\":\"tap\",\"motivo\":\"Abrir o aplicativo Calendar para verificar compromissos.\",\"x\":70,\"y\":254,\"direction\":null,\"text\":null,\"code\":null,\"resultado\":\"tap 70,254\",\"sense\":\"ocr\",\"ocr\":[{\"text\":\"8:11\",\"x\":87,\"y\":26},{\"text\":\"G\",\"x\":71,\"y\":102},{\"text\":\"6\",\"x\":69,\"y\":198},{\"text\":\"Calendar\",\"x\":70,\"y\":254},{\"text\":\"Files\",\"x\":70,\"y\":370},{\"text\":\"Maps\",\"x\":69,\"y\":488},{\"text\":\"Play Sto...\",\"x\":70,\"y\":603},{\"text\":\"YT Music\",\"x\":67,\"y\":718},{\"text\":\"in\",\"x\":168,\"y\":24},{\"text\":\"in •\",\"x\":214,\"y\":23},{\"text\":\"Chrome\",\"x\":171,\"y\":252},{\"text\":\"Clock\",\"x\":269,\"y\":254},{\"text\":\"Gmail\",\"x\":169,\"y\":369},{\"text\":\"Google\",\"x\":268,\"y\":371},{\"text\":\"Meet\",\"x\":169,\"y\":485},{\"text\":\"Messag\",\"x\":269,\"y\":486},{\"text\":\"Settings\",\"x\":169,\"y\":603},{\"text\":\"Threads\",\"x\":271,\"y\":602},{\"text\":\"Contacts\",\"x\":369,\"y\":254},{\"text\":\"Instagra...\",\"x\":369,\"y\":371},{\"text\":\"Phone\",\"x\":369,\"y\":485},{\"text\":\"WebVie..\",\"x\":370,\"y\":601},{\"text\":\"Drive\",\"x\":469,\"y\":254},{\"text\":\"in\",\"x\":467,\"y\":314},{\"text\":\"Linkedln\",\"x\":469,\"y\":369},{\"text\":\"Photos\",\"x\":470,\"y\":486},{\"text\":\"YouTube\",\"x\":469,\"y\":602}]},{\"step\":3,\"type\":\"scroll\",\"motivo\":\"Precisamos rolar a tela para encontrar o dia de hoje no calendário.\",\"x\":null,\"y\":null,\"direction\":\"down\",\"text\":null,\"code\":null,\"resultado\":\"scroll down\",\"sense\":\"ocr\",\"ocr\":[{\"text\":\"8:11\",\"x\":87,\"y\":26},{\"text\":\"G\",\"x\":71,\"y\":102},{\"text\":\"6\",\"x\":67,\"y\":197},{\"text\":\"Calendar\",\"x\":70,\"y\":254},{\"text\":\"Files\",\"x\":70,\"y\":370},{\"text\":\"Maps\",\"x\":69,\"y\":488},{\"text\":\"Play Sto...\",\"x\":70,\"y\":603},{\"text\":\"YT Music\",\"x\":67,\"y\":718},{\"text\":\"in\",\"x\":171,\"y\":24},{\"text\":\"in •\",\"x\":214,\"y\":23},{\"text\":\"Chrome\",\"x\":171,\"y\":252},{\"text\":\"Clock\",\"x\":269,\"y\":254},{\"text\":\"Gmail\",\"x\":169,\"y\":369},{\"text\":\"Google\",\"x\":268,\"y\":371},{\"text\":\"Meet\",\"x\":169,\"y\":485},{\"text\":\"Messag\",\"x\":269,\"y\":486},{\"text\":\"Settings\",\"x\":169,\"y\":603},{\"text\":\"Threads\",\"x\":271,\"y\":602},{\"text\":\"Contacts\",\"x\":370,\"y\":253},{\"text\":\"Instagra...\",\"x\":369,\"y\":371},{\"text\":\"Phone\",\"x\":369,\"y\":485},{\"text\":\"WebVie..\",\"x\":370,\"y\":601},{\"text\":\"Drive\",\"x\":469,\"y\":254},{\"text\":\"in\",\"x\":467,\"y\":314},{\"text\":\"Linkedln\",\"x\":469,\"y\":369},{\"text\":\"Photos\",\"x\":470,\"y\":486},{\"text\":\"YouTube\",\"x\":469,\"y\":602}]}]\n\nOCR atual (JSON):\n[{\"text\":\"8:11 $ in in •\",\"x\":149,\"y\":25},{\"text\":\"= Octo.. ? M\",\"x\":250,\"y\":95},{\"text\":\"Tue\",\"x\":46,\"y\":149},{\"text\":\"1 PM\",\"x\":47,\"y\":289},{\"text\":\"2 PM\",\"x\":46,\"y\":386},{\"text\":\"3 PM\",\"x\":44,\"y\":482},{\"text\":\"4 PM\",\"x\":45,\"y\":577},{\"text\":\"5 PM\",\"x\":46,\"y\":673},{\"text\":\"6 PM\",\"x\":46,\"y\":769},{\"text\":\"+\",\"x\":462,\"y\":819},{\"text\":\"7 PM\",\"x\":45,\"y\":864}]\n\nDefina a próxima ação."
+        }
+      ],
+      "temperature": 0,
+      "response_format": {
+        "type": "json_object"
+      }
+    }
+  },
+  "output": {
+    "text": "{\n  \"resumo\": \"O aplicativo Calendar foi aberto e a tela exibe os compromissos do dia. É necessário rolar a tela para encontrar o dia de hoje e verificar se há compromissos agendados.\",\n  \"elementos\": [\n    { \"label\": \"8:11 $ in in •\", \"tipo\": \"text\", \"x\": 149, \"y\": 25 },\n    { \"label\": \"= Octo.. ? M\", \"tipo\": \"text\", \"x\": 250, \"y\": 95 },\n    { \"label\": \"Tue\", \"tipo\": \"text\", \"x\": 46, \"y\": 149 },\n    { \"label\": \"1 PM\", \"tipo\": \"text\", \"x\": 47, \"y\": 289 },\n    { \"label\": \"2 PM\", \"tipo\": \"text\", \"x\": 46, \"y\": 386 },\n    { \"label\": \"3 PM\", \"tipo\": \"text\", \"x\": 44, \"y\": 482 },\n    { \"label\": \"4 PM\", \"tipo\": \"text\", \"x\": 45, \"y\": 577 },\n    { \"label\": \"5 PM\", \"tipo\": \"text\", \"x\": 46, \"y\": 673 },\n    { \"label\": \"6 PM\", \"tipo\": \"text\", \"x\": 46, \"y\": 769 },\n    { \"label\": \"+\", \"tipo\": \"text\", \"x\": 462, \"y\": 819 },\n    { \"label\": \"7 PM\", \"tipo\": \"text\", \"x\": 45, \"y\": 864 }\n  ],\n  \"acao\": {\n    \"type\": \"scroll\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": \"down\",\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"Precisamos rolar a tela para encontrar o dia de hoje no calendário.\"\n  }\n}",
+    "raw": {
+      "id": "chatcmpl-EVxMt52pT63Pz6qu1GYUllFulyBG4",
+      "object": "chat.completion",
+      "created": 1791285087,
+      "model": "gpt-4o-mini-2024-07-18",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "{\n  \"resumo\": \"O aplicativo Calendar foi aberto e a tela exibe os compromissos do dia. É necessário rolar a tela para encontrar o dia de hoje e verificar se há compromissos agendados.\",\n  \"elementos\": [\n    { \"label\": \"8:11 $ in in •\", \"tipo\": \"text\", \"x\": 149, \"y\": 25 },\n    { \"label\": \"= Octo.. ? M\", \"tipo\": \"text\", \"x\": 250, \"y\": 95 },\n    { \"label\": \"Tue\", \"tipo\": \"text\", \"x\": 46, \"y\": 149 },\n    { \"label\": \"1 PM\", \"tipo\": \"text\", \"x\": 47, \"y\": 289 },\n    { \"label\": \"2 PM\", \"tipo\": \"text\", \"x\": 46, \"y\": 386 },\n    { \"label\": \"3 PM\", \"tipo\": \"text\", \"x\": 44, \"y\": 482 },\n    { \"label\": \"4 PM\", \"tipo\": \"text\", \"x\": 45, \"y\": 577 },\n    { \"label\": \"5 PM\", \"tipo\": \"text\", \"x\": 46, \"y\": 673 },\n    { \"label\": \"6 PM\", \"tipo\": \"text\", \"x\": 46, \"y\": 769 },\n    { \"label\": \"+\", \"tipo\": \"text\", \"x\": 462, \"y\": 819 },\n    { \"label\": \"7 PM\", \"tipo\": \"text\", \"x\": 45, \"y\": 864 }\n  ],\n  \"acao\": {\n    \"type\": \"scroll\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": \"down\",\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"Precisamos rolar a tela para encontrar o dia de hoje no calendário.\"\n  }\n}",
+            "refusal": null,
+            "annotations": []
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 1744,
+        "completion_tokens": 430,
+        "total_tokens": 2174,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "service_tier": "default",
+      "system_fingerprint": "fp_9d49b1aeb9"
+    }
+  },
+  "system": "Você opera um smartphone Android olhando só a lista OCR da tela (textos + coordenadas x,y na escala do device).\n\nResponda APENAS JSON válido (sem markdown) no formato:\n{\n  \"resumo\": \"2-4 frases do que tem na tela\",\n  \"elementos\": [{ \"label\": \"...\", \"tipo\": \"button|chip|card|text\", \"x\": 0, \"y\": 0 }],\n  \"acao\": {\n    \"type\": \"tap|scroll|type|key|sleep|done|fail\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"...\"\n  }\n}\n\nRegras:\n- Coords de tap = mesma escala do OCR (device). Não invente scale.\n- tap: use x,y de um item OCR existente (centro do texto alvo).\n- scroll: direction down|up|left|right quando o próximo alvo não está visível.\n- Se o histórico mostrar vários scrolls com o mesmo OCR (tela não mudou), NÃO scroll de novo: mude de estratégia (tap em outro elemento, type, key BACK).\n- Home / Settings (AVD Nexus Launcher):\n  - OCR com \"Notifications\" / \"Clear all\" / \"AndroidSetup\" = shade aberto → key KEYCODE_BACK ou KEYCODE_HOME (NÃO scroll).\n  - Tela inicial (só hora/data, sem apps) → scroll direction=down abre a gaveta. scroll up reabre o shade — evite.\n  - EXCEÇÃO: se o histórico recente tem tap com y<120 (Search/campo), OCR só com hora NÃO é home — é teclado cobrindo o app. PROIBIDO scroll (swipe digita lixo no campo, ex. \"ty\"). Faça type do texto do roteiro ou KEYCODE_BACK.\n  - Texto \"Settings\" no OCR → tap nessas coords. done só com Settings aberto (Search settings / Network / Apps / Battery).\n- Filtro de localização LinkedIn: se OCR tiver \"Add a location\" / \"Add alocation\" e a cidade alvo do roteiro (ex. Campinas) NÃO estiver na lista, faça tap em Add a location e depois type da cidade — NÃO fique só scrollando a lista.\n- Connect: só tap se text exato \"Connect\" e tipicamente 180 < y < 850. Se o histórico já tem tap nas mesmas coords e a tela não mudou, scroll ou outro Connect — não repita o mesmo tap.\n- type: digite text de uma vez (campo acao.text obrigatório). Se o histórico mostrar erro de tecla OCR, espere (sleep) e tente type de novo, ou key KEYCODE_BACK e reabra o campo.\n- key: code tipo KEYCODE_BACK / KEYCODE_HOME.\n- sleep: ms quando a tela parece carregando.\n- done: objetivo cumprido.\n- fail: impossível continuar (motivo claro).\n- Não peça screenshot; decida só com o OCR e o prompt.",
+  "prompt": "Objetivo / roteiro:\nabra o calendar, selecione o dia de hoje e veja se temos compromisso\n\nHistórico recente (últimos 3/3):\n[{\"step\":1,\"type\":\"scroll\",\"motivo\":\"Abrir a gaveta de aplicativos para acessar o calendário.\",\"x\":null,\"y\":null,\"direction\":\"down\",\"text\":null,\"code\":null,\"resultado\":\"scroll down\",\"sense\":\"ocr\",\"ocr\":[{\"text\":\"8:11\",\"x\":87,\"y\":26},{\"text\":\" in in•\",\"x\":180,\"y\":23},{\"text\":\"Tuesday, Oct 6\",\"x\":271,\"y\":121}]},{\"step\":2,\"type\":\"tap\",\"motivo\":\"Abrir o aplicativo Calendar para verificar compromissos.\",\"x\":70,\"y\":254,\"direction\":null,\"text\":null,\"code\":null,\"resultado\":\"tap 70,254\",\"sense\":\"ocr\",\"ocr\":[{\"text\":\"8:11\",\"x\":87,\"y\":26},{\"text\":\"G\",\"x\":71,\"y\":102},{\"text\":\"6\",\"x\":69,\"y\":198},{\"text\":\"Calendar\",\"x\":70,\"y\":254},{\"text\":\"Files\",\"x\":70,\"y\":370},{\"text\":\"Maps\",\"x\":69,\"y\":488},{\"text\":\"Play Sto...\",\"x\":70,\"y\":603},{\"text\":\"YT Music\",\"x\":67,\"y\":718},{\"text\":\"in\",\"x\":168,\"y\":24},{\"text\":\"in •\",\"x\":214,\"y\":23},{\"text\":\"Chrome\",\"x\":171,\"y\":252},{\"text\":\"Clock\",\"x\":269,\"y\":254},{\"text\":\"Gmail\",\"x\":169,\"y\":369},{\"text\":\"Google\",\"x\":268,\"y\":371},{\"text\":\"Meet\",\"x\":169,\"y\":485},{\"text\":\"Messag\",\"x\":269,\"y\":486},{\"text\":\"Settings\",\"x\":169,\"y\":603},{\"text\":\"Threads\",\"x\":271,\"y\":602},{\"text\":\"Contacts\",\"x\":369,\"y\":254},{\"text\":\"Instagra...\",\"x\":369,\"y\":371},{\"text\":\"Phone\",\"x\":369,\"y\":485},{\"text\":\"WebVie..\",\"x\":370,\"y\":601},{\"text\":\"Drive\",\"x\":469,\"y\":254},{\"text\":\"in\",\"x\":467,\"y\":314},{\"text\":\"Linkedln\",\"x\":469,\"y\":369},{\"text\":\"Photos\",\"x\":470,\"y\":486},{\"text\":\"YouTube\",\"x\":469,\"y\":602}]},{\"step\":3,\"type\":\"scroll\",\"motivo\":\"Precisamos rolar a tela para encontrar o dia de hoje no calendário.\",\"x\":null,\"y\":null,\"direction\":\"down\",\"text\":null,\"code\":null,\"resultado\":\"scroll down\",\"sense\":\"ocr\",\"ocr\":[{\"text\":\"8:11\",\"x\":87,\"y\":26},{\"text\":\"G\",\"x\":71,\"y\":102},{\"text\":\"6\",\"x\":67,\"y\":197},{\"text\":\"Calendar\",\"x\":70,\"y\":254},{\"text\":\"Files\",\"x\":70,\"y\":370},{\"text\":\"Maps\",\"x\":69,\"y\":488},{\"text\":\"Play Sto...\",\"x\":70,\"y\":603},{\"text\":\"YT Music\",\"x\":67,\"y\":718},{\"text\":\"in\",\"x\":171,\"y\":24},{\"text\":\"in •\",\"x\":214,\"y\":23},{\"text\":\"Chrome\",\"x\":171,\"y\":252},{\"text\":\"Clock\",\"x\":269,\"y\":254},{\"text\":\"Gmail\",\"x\":169,\"y\":369},{\"text\":\"Google\",\"x\":268,\"y\":371},{\"text\":\"Meet\",\"x\":169,\"y\":485},{\"text\":\"Messag\",\"x\":269,\"y\":486},{\"text\":\"Settings\",\"x\":169,\"y\":603},{\"text\":\"Threads\",\"x\":271,\"y\":602},{\"text\":\"Contacts\",\"x\":370,\"y\":253},{\"text\":\"Instagra...\",\"x\":369,\"y\":371},{\"text\":\"Phone\",\"x\":369,\"y\":485},{\"text\":\"WebVie..\",\"x\":370,\"y\":601},{\"text\":\"Drive\",\"x\":469,\"y\":254},{\"text\":\"in\",\"x\":467,\"y\":314},{\"text\":\"Linkedln\",\"x\":469,\"y\":369},{\"text\":\"Photos\",\"x\":470,\"y\":486},{\"text\":\"YouTube\",\"x\":469,\"y\":602}]}]\n\nOCR atual (JSON):\n[{\"text\":\"8:11 $ in in •\",\"x\":149,\"y\":25},{\"text\":\"= Octo.. ? M\",\"x\":250,\"y\":95},{\"text\":\"Tue\",\"x\":46,\"y\":149},{\"text\":\"1 PM\",\"x\":47,\"y\":289},{\"text\":\"2 PM\",\"x\":46,\"y\":386},{\"text\":\"3 PM\",\"x\":44,\"y\":482},{\"text\":\"4 PM\",\"x\":45,\"y\":577},{\"text\":\"5 PM\",\"x\":46,\"y\":673},{\"text\":\"6 PM\",\"x\":46,\"y\":769},{\"text\":\"+\",\"x\":462,\"y\":819},{\"text\":\"7 PM\",\"x\":45,\"y\":864}]\n\nDefina a próxima ação.",
+  "response": "{\n  \"resumo\": \"O aplicativo Calendar foi aberto e a tela exibe os compromissos do dia. É necessário rolar a tela para encontrar o dia de hoje e verificar se há compromissos agendados.\",\n  \"elementos\": [\n    { \"label\": \"8:11 $ in in •\", \"tipo\": \"text\", \"x\": 149, \"y\": 25 },\n    { \"label\": \"= Octo.. ? M\", \"tipo\": \"text\", \"x\": 250, \"y\": 95 },\n    { \"label\": \"Tue\", \"tipo\": \"text\", \"x\": 46, \"y\": 149 },\n    { \"label\": \"1 PM\", \"tipo\": \"text\", \"x\": 47, \"y\": 289 },\n    { \"label\": \"2 PM\", \"tipo\": \"text\", \"x\": 46, \"y\": 386 },\n    { \"label\": \"3 PM\", \"tipo\": \"text\", \"x\": 44, \"y\": 482 },\n    { \"label\": \"4 PM\", \"tipo\": \"text\", \"x\": 45, \"y\": 577 },\n    { \"label\": \"5 PM\", \"tipo\": \"text\", \"x\": 46, \"y\": 673 },\n    { \"label\": \"6 PM\", \"tipo\": \"text\", \"x\": 46, \"y\": 769 },\n    { \"label\": \"+\", \"tipo\": \"text\", \"x\": 462, \"y\": 819 },\n    { \"label\": \"7 PM\", \"tipo\": \"text\", \"x\": 45, \"y\": 864 }\n  ],\n  \"acao\": {\n    \"type\": \"scroll\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": \"down\",\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"Precisamos rolar a tela para encontrar o dia de hoje no calendário.\"\n  }\n}",
+  "roteiro": "abra o calendar, selecione o dia de hoje e veja se temos compromisso",
+  "usage": {
+    "promptTokenCount": 1744,
+    "candidatesTokenCount": 430,
+    "totalTokenCount": 2174,
+    "prompt_tokens": 1744,
+    "completion_tokens": 430,
+    "total_tokens": 2174
+  }
+}

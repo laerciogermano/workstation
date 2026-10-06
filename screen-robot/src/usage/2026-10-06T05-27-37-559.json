@@ -1,0 +1,151 @@
+{
+  "run": "2026-10-06T05-27-34-106",
+  "step": 1,
+  "at": "2026-10-06T05:27:37.559Z",
+  "serial": "emulator-5554",
+  "engine": "all",
+  "model": "gemini-3.5-flash",
+  "ok": true,
+  "acao": {
+    "type": "scroll",
+    "x": 270,
+    "y": 500,
+    "direction": "down",
+    "text": null,
+    "code": null,
+    "ms": null,
+    "motivo": "Estamos na tela inicial apenas com data e hora. Conforme o passo 1 do roteiro, devemos fazer um scroll down para abrir a gaveta de aplicativos."
+  },
+  "resumo": "A tela mostra a tela inicial do Android (Home) contendo apenas a hora, a data, a barra de pesquisa do Google e três ícones de aplicativos na parte inferior. O objetivo atual é abrir a gaveta de aplicativos (passo 1).",
+  "elementos": [
+    {
+      "label": "Hora e Data",
+      "tipo": "text",
+      "x": 270,
+      "y": 120
+    },
+    {
+      "label": "Mensagens",
+      "tipo": "button",
+      "x": 312,
+      "y": 740
+    },
+    {
+      "label": "Play Store",
+      "tipo": "button",
+      "x": 498,
+      "y": 740
+    },
+    {
+      "label": "Chrome",
+      "tipo": "button",
+      "x": 684,
+      "y": 740
+    },
+    {
+      "label": "Google Search Bar",
+      "tipo": "card",
+      "x": 270,
+      "y": 856
+    }
+  ],
+  "attempt": 1,
+  "round": 1,
+  "ms": 2824,
+  "promptChars": 1755,
+  "systemChars": 1261,
+  "input": {
+    "system": "Você opera um smartphone Android olhando a captura de tela anexada (imagem 540×960 px). Sem OCR.\n\nResponda APENAS JSON válido (sem markdown) no formato:\n{\n  \"resumo\": \"2-4 frases do que tem na tela\",\n  \"elementos\": [{ \"label\": \"...\", \"tipo\": \"button|chip|card|text\", \"x\": 0, \"y\": 0 }],\n  \"acao\": {\n    \"type\": \"tap|scroll|type|key|sleep|done|fail\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"...\"\n  }\n}\n\nRegras:\n- Coords de tap/elementos = escala DESTA imagem (540×960). Centro do alvo. Não invente scale nem peça outra screenshot.\n- scroll: direction down|up|left|right quando o alvo não está visível.\n- Se vários scrolls e a tela parece igual, mude de estratégia (outro tap, type, KEYCODE_BACK).\n- Home / shade: Notifications/Clear all → KEYCODE_BACK ou HOME. Gaveta de apps → scroll down. Após tap Search (y pequeno no topo) + teclado: PROIBIDO scroll — type do roteiro ou BACK.\n- LinkedIn Connect: tap no pill Connect visível. Filtro localização: Add a location + type cidade se necessário.\n- type: acao.text obrigatório. key: KEYCODE_BACK/HOME. sleep: ms se loading. done / fail conforme objetivo.\n- Histórico traz ações já executadas (coords já em device); use só como contexto.",
+    "prompt": "Objetivo / roteiro:\nFluxo (uma fase por vez; use OCR atual + histórico; NÃO refaça fase já feita):\n\n1) Home (só hora/data) → scroll down (gaveta).\n2) Gaveta → tap LinkedIn (OCR \"Linkedln\" ok).\n3) Splash (\"in\", sem tab bar) → sleep.\n4) Tab bar Home/Network/Post/Notifications → tap Network.\n5) Tap Search (text exato \"Search\" ou \"QSearch\", y<120). Próxima ação OBRIGATÓRIA: type \"comprador\" — nunca scroll/sleep/tap nesse intervalo.\n   Após tap Search, se OCR vier só com hora (ex. \"1:51\") = teclado cobriu a tela, NÃO é home. type \"comprador\" na hora. Scroll aqui gera \"ty\"/\"tyl\".\n6) Campo y<120 deve ser \"comprador\". Se tyl/ty/lixo: KEYCODE_DEL várias vezes ou limpar, depois type \"comprador\" (type sozinho NÃO apaga o lixo). Teclado cobrindo → BACK 1×, nunca scroll. Tap \"Show all results\". NÃO confunda Recent \"comprador\" com o campo.\n7) Chip People: text EXATO \"People\" e y<200. PROIBIDO tap em \"Peoplehiring…\", \"People you may know\", \"Hiring\", y≥200.\n8) Se OCR ainda tem Grow/Catch up/Invitations/Manage my network = ainda está na aba Network, NÃO no filtro People da busca → volte ao passo 5 (tap Search com y<120) e refaça 5–7.\n9) Lista People da busca → Location/Locations/Localização ou Add a location → type \"Campinas\" → tap sugestão Campinas → Apply/Show results/Done se houver.\n10) Scroll up até text EXATO \"Connect\" com 180<y<850 → tap Connect (nunca Message/Pending/Follow).\n11) Sheet → tap Skip → done.\n\nAnti-loop: se o histórico tem ≥2 taps nas mesmas coords e o OCR quase igual → mude de alvo (não repita). OCR com teclas soltas (q,w,e… / ?123) = teclado aberto → type ou BACK, nunca scroll. done só após Skip.\n\nImagem anexada: captura da tela 540×960 px (WebP). Use só ela + o roteiro.\nDefina a próxima ação (coords na escala da imagem).",
+    "body": {
+      "contents": [
+        {
+          "role": "user",
+          "parts": [
+            {
+              "text": "Objetivo / roteiro:\nFluxo (uma fase por vez; use OCR atual + histórico; NÃO refaça fase já feita):\n\n1) Home (só hora/data) → scroll down (gaveta).\n2) Gaveta → tap LinkedIn (OCR \"Linkedln\" ok).\n3) Splash (\"in\", sem tab bar) → sleep.\n4) Tab bar Home/Network/Post/Notifications → tap Network.\n5) Tap Search (text exato \"Search\" ou \"QSearch\", y<120). Próxima ação OBRIGATÓRIA: type \"comprador\" — nunca scroll/sleep/tap nesse intervalo.\n   Após tap Search, se OCR vier só com hora (ex. \"1:51\") = teclado cobriu a tela, NÃO é home. type \"comprador\" na hora. Scroll aqui gera \"ty\"/\"tyl\".\n6) Campo y<120 deve ser \"comprador\". Se tyl/ty/lixo: KEYCODE_DEL várias vezes ou limpar, depois type \"comprador\" (type sozinho NÃO apaga o lixo). Teclado cobrindo → BACK 1×, nunca scroll. Tap \"Show all results\". NÃO confunda Recent \"comprador\" com o campo.\n7) Chip People: text EXATO \"People\" e y<200. PROIBIDO tap em \"Peoplehiring…\", \"People you may know\", \"Hiring\", y≥200.\n8) Se OCR ainda tem Grow/Catch up/Invitations/Manage my network = ainda está na aba Network, NÃO no filtro People da busca → volte ao passo 5 (tap Search com y<120) e refaça 5–7.\n9) Lista People da busca → Location/Locations/Localização ou Add a location → type \"Campinas\" → tap sugestão Campinas → Apply/Show results/Done se houver.\n10) Scroll up até text EXATO \"Connect\" com 180<y<850 → tap Connect (nunca Message/Pending/Follow).\n11) Sheet → tap Skip → done.\n\nAnti-loop: se o histórico tem ≥2 taps nas mesmas coords e o OCR quase igual → mude de alvo (não repita). OCR com teclas soltas (q,w,e… / ?123) = teclado aberto → type ou BACK, nunca scroll. done só após Skip.\n\nImagem anexada: captura da tela 540×960 px (WebP). Use só ela + o roteiro.\nDefina a próxima ação (coords na escala da imagem)."
+            },
+            {
+              "inlineData": {
+                "mimeType": "image/webp",
+                "bytes": 11152,
+                "data": "[omitted]"
+              }
+            }
+          ]
+        }
+      ],
+      "generationConfig": {
+        "responseMimeType": "application/json",
+        "thinkingConfig": {
+          "thinkingLevel": "low"
+        }
+      },
+      "systemInstruction": {
+        "parts": [
+          {
+            "text": "Você opera um smartphone Android olhando a captura de tela anexada (imagem 540×960 px). Sem OCR.\n\nResponda APENAS JSON válido (sem markdown) no formato:\n{\n  \"resumo\": \"2-4 frases do que tem na tela\",\n  \"elementos\": [{ \"label\": \"...\", \"tipo\": \"button|chip|card|text\", \"x\": 0, \"y\": 0 }],\n  \"acao\": {\n    \"type\": \"tap|scroll|type|key|sleep|done|fail\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"...\"\n  }\n}\n\nRegras:\n- Coords de tap/elementos = escala DESTA imagem (540×960). Centro do alvo. Não invente scale nem peça outra screenshot.\n- scroll: direction down|up|left|right quando o alvo não está visível.\n- Se vários scrolls e a tela parece igual, mude de estratégia (outro tap, type, KEYCODE_BACK).\n- Home / shade: Notifications/Clear all → KEYCODE_BACK ou HOME. Gaveta de apps → scroll down. Após tap Search (y pequeno no topo) + teclado: PROIBIDO scroll — type do roteiro ou BACK.\n- LinkedIn Connect: tap no pill Connect visível. Filtro localização: Add a location + type cidade se necessário.\n- type: acao.text obrigatório. key: KEYCODE_BACK/HOME. sleep: ms se loading. done / fail conforme objetivo.\n- Histórico traz ações já executadas (coords já em device); use só como contexto."
+          }
+        ]
+      }
+    }
+  },
+  "output": {
+    "text": "{\n  \"resumo\": \"A tela mostra a tela inicial do Android (Home) contendo apenas a hora, a data, a barra de pesquisa do Google e três ícones de aplicativos na parte inferior. O objetivo atual é abrir a gaveta de aplicativos (passo 1).\",\n  \"elementos\": [\n    { \"label\": \"Hora e Data\", \"tipo\": \"text\", \"x\": 270, \"y\": 120 },\n    { \"label\": \"Mensagens\", \"tipo\": \"button\", \"x\": 312, \"y\": 740 },\n    { \"label\": \"Play Store\", \"tipo\": \"button\", \"x\": 498, \"y\": 740 },\n    { \"label\": \"Chrome\", \"tipo\": \"button\", \"x\": 684, \"y\": 740 },\n    { \"label\": \"Google Search Bar\", \"tipo\": \"card\", \"x\": 270, \"y\": 856 }\n  ],\n  \"acao\": {\n    \"type\": \"scroll\",\n    \"x\": 270,\n    \"y\": 500,\n    \"direction\": \"down\",\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"Estamos na tela inicial apenas com data e hora. Conforme o passo 1 do roteiro, devemos fazer um scroll down para abrir a gaveta de aplicativos.\"\n  }\n}",
+    "raw": {
+      "candidates": [
+        {
+          "content": {
+            "parts": [
+              {
+                "text": "{\n  \"resumo\": \"A tela mostra a tela inicial do Android (Home) contendo apenas a hora, a data, a barra de pesquisa do Google e três ícones de aplicativos na parte inferior. O objetivo atual é abrir a gaveta de aplicativos (passo 1).\",\n  \"elementos\": [\n    { \"label\": \"Hora e Data\", \"tipo\": \"text\", \"x\": 270, \"y\": 120 },\n    { \"label\": \"Mensagens\", \"tipo\": \"button\", \"x\": 312, \"y\": 740 },\n    { \"label\": \"Play Store\", \"tipo\": \"button\", \"x\": 498, \"y\": 740 },\n    { \"label\": \"Chrome\", \"tipo\": \"button\", \"x\": 684, \"y\": 740 },\n    { \"label\": \"Google Search Bar\", \"tipo\": \"card\", \"x\": 270, \"y\": 856 }\n  ],\n  \"acao\": {\n    \"type\": \"scroll\",\n    \"x\": 270,\n    \"y\": 500,\n    \"direction\": \"down\",\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"Estamos na tela inicial apenas com data e hora. Conforme o passo 1 do roteiro, devemos fazer um scroll down para abrir a gaveta de aplicativos.\"\n  }\n}",
+                "thoughtSignature": "EmgKZgFpFH0TgavJ1ol4vumYaMrLcn7Ob0ncRmZhSe87zl3eb14hOP9ARuRaaBCfOyKylvizKIxnafczCuWKkGS8NZig0fv3ZNcRy4RKrqqFtxMUAEJAsOkTooQhHw0Ei9mvB+GmZulGPQ=="
+              }
+            ],
+            "role": "model"
+          },
+          "finishReason": "STOP",
+          "index": 0
+        }
+      ],
+      "usageMetadata": {
+        "promptTokenCount": 2066,
+        "candidatesTokenCount": 340,
+        "totalTokenCount": 2406,
+        "promptTokensDetails": [
+          {
+            "modality": "IMAGE",
+            "tokenCount": 1100
+          },
+          {
+            "modality": "TEXT",
+            "tokenCount": 966
+          }
+        ],
+        "serviceTier": "standard"
+      },
+      "modelVersion": "gemini-3.5-flash",
+      "responseId": "x4bEaorxDfLRz7IPqMKfoA8"
+    }
+  },
+  "system": "Você opera um smartphone Android olhando a captura de tela anexada (imagem 540×960 px). Sem OCR.\n\nResponda APENAS JSON válido (sem markdown) no formato:\n{\n  \"resumo\": \"2-4 frases do que tem na tela\",\n  \"elementos\": [{ \"label\": \"...\", \"tipo\": \"button|chip|card|text\", \"x\": 0, \"y\": 0 }],\n  \"acao\": {\n    \"type\": \"tap|scroll|type|key|sleep|done|fail\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"...\"\n  }\n}\n\nRegras:\n- Coords de tap/elementos = escala DESTA imagem (540×960). Centro do alvo. Não invente scale nem peça outra screenshot.\n- scroll: direction down|up|left|right quando o alvo não está visível.\n- Se vários scrolls e a tela parece igual, mude de estratégia (outro tap, type, KEYCODE_BACK).\n- Home / shade: Notifications/Clear all → KEYCODE_BACK ou HOME. Gaveta de apps → scroll down. Após tap Search (y pequeno no topo) + teclado: PROIBIDO scroll — type do roteiro ou BACK.\n- LinkedIn Connect: tap no pill Connect visível. Filtro localização: Add a location + type cidade se necessário.\n- type: acao.text obrigatório. key: KEYCODE_BACK/HOME. sleep: ms se loading. done / fail conforme objetivo.\n- Histórico traz ações já executadas (coords já em device); use só como contexto.",
+  "prompt": "Objetivo / roteiro:\nFluxo (uma fase por vez; use OCR atual + histórico; NÃO refaça fase já feita):\n\n1) Home (só hora/data) → scroll down (gaveta).\n2) Gaveta → tap LinkedIn (OCR \"Linkedln\" ok).\n3) Splash (\"in\", sem tab bar) → sleep.\n4) Tab bar Home/Network/Post/Notifications → tap Network.\n5) Tap Search (text exato \"Search\" ou \"QSearch\", y<120). Próxima ação OBRIGATÓRIA: type \"comprador\" — nunca scroll/sleep/tap nesse intervalo.\n   Após tap Search, se OCR vier só com hora (ex. \"1:51\") = teclado cobriu a tela, NÃO é home. type \"comprador\" na hora. Scroll aqui gera \"ty\"/\"tyl\".\n6) Campo y<120 deve ser \"comprador\". Se tyl/ty/lixo: KEYCODE_DEL várias vezes ou limpar, depois type \"comprador\" (type sozinho NÃO apaga o lixo). Teclado cobrindo → BACK 1×, nunca scroll. Tap \"Show all results\". NÃO confunda Recent \"comprador\" com o campo.\n7) Chip People: text EXATO \"People\" e y<200. PROIBIDO tap em \"Peoplehiring…\", \"People you may know\", \"Hiring\", y≥200.\n8) Se OCR ainda tem Grow/Catch up/Invitations/Manage my network = ainda está na aba Network, NÃO no filtro People da busca → volte ao passo 5 (tap Search com y<120) e refaça 5–7.\n9) Lista People da busca → Location/Locations/Localização ou Add a location → type \"Campinas\" → tap sugestão Campinas → Apply/Show results/Done se houver.\n10) Scroll up até text EXATO \"Connect\" com 180<y<850 → tap Connect (nunca Message/Pending/Follow).\n11) Sheet → tap Skip → done.\n\nAnti-loop: se o histórico tem ≥2 taps nas mesmas coords e o OCR quase igual → mude de alvo (não repita). OCR com teclas soltas (q,w,e… / ?123) = teclado aberto → type ou BACK, nunca scroll. done só após Skip.\n\nImagem anexada: captura da tela 540×960 px (WebP). Use só ela + o roteiro.\nDefina a próxima ação (coords na escala da imagem).",
+  "response": "{\n  \"resumo\": \"A tela mostra a tela inicial do Android (Home) contendo apenas a hora, a data, a barra de pesquisa do Google e três ícones de aplicativos na parte inferior. O objetivo atual é abrir a gaveta de aplicativos (passo 1).\",\n  \"elementos\": [\n    { \"label\": \"Hora e Data\", \"tipo\": \"text\", \"x\": 270, \"y\": 120 },\n    { \"label\": \"Mensagens\", \"tipo\": \"button\", \"x\": 312, \"y\": 740 },\n    { \"label\": \"Play Store\", \"tipo\": \"button\", \"x\": 498, \"y\": 740 },\n    { \"label\": \"Chrome\", \"tipo\": \"button\", \"x\": 684, \"y\": 740 },\n    { \"label\": \"Google Search Bar\", \"tipo\": \"card\", \"x\": 270, \"y\": 856 }\n  ],\n  \"acao\": {\n    \"type\": \"scroll\",\n    \"x\": 270,\n    \"y\": 500,\n    \"direction\": \"down\",\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"Estamos na tela inicial apenas com data e hora. Conforme o passo 1 do roteiro, devemos fazer um scroll down para abrir a gaveta de aplicativos.\"\n  }\n}",
+  "roteiro": "Fluxo (uma fase por vez; use OCR atual + histórico; NÃO refaça fase já feita):\n\n1) Home (só hora/data) → scroll down (gaveta).\n2) Gaveta → tap LinkedIn (OCR \"Linkedln\" ok).\n3) Splash (\"in\", sem tab bar) → sleep.\n4) Tab bar Home/Network/Post/Notifications → tap Network.\n5) Tap Search (text exato \"Search\" ou \"QSearch\", y<120). Próxima ação OBRIGATÓRIA: type \"comprador\" — nunca scroll/sleep/tap nesse intervalo.\n   Após tap Search, se OCR vier só com hora (ex. \"1:51\") = teclado cobriu a tela, NÃO é home. type \"comprador\" na hora. Scroll aqui gera \"ty\"/\"tyl\".\n6) Campo y<120 deve ser \"comprador\". Se tyl/ty/lixo: KEYCODE_DEL várias vezes ou limpar, depois type \"comprador\" (type sozinho NÃO apaga o lixo). Teclado cobrindo → BACK 1×, nunca scroll. Tap \"Show all results\". NÃO confunda Recent \"comprador\" com o campo.\n7) Chip People: text EXATO \"People\" e y<200. PROIBIDO tap em \"Peoplehiring…\", \"People you may know\", \"Hiring\", y≥200.\n8) Se OCR ainda tem Grow/Catch up/Invitations/Manage my network = ainda está na aba Network, NÃO no filtro People da busca → volte ao passo 5 (tap Search com y<120) e refaça 5–7.\n9) Lista People da busca → Location/Locations/Localização ou Add a location → type \"Campinas\" → tap sugestão Campinas → Apply/Show results/Done se houver.\n10) Scroll up até text EXATO \"Connect\" com 180<y<850 → tap Connect (nunca Message/Pending/Follow).\n11) Sheet → tap Skip → done.\n\nAnti-loop: se o histórico tem ≥2 taps nas mesmas coords e o OCR quase igual → mude de alvo (não repita). OCR com teclas soltas (q,w,e… / ?123) = teclado aberto → type ou BACK, nunca scroll. done só após Skip.\n",
+  "usage": {
+    "promptTokenCount": 2066,
+    "candidatesTokenCount": 340,
+    "totalTokenCount": 2406,
+    "promptTokensDetails": [
+      {
+        "modality": "IMAGE",
+        "tokenCount": 1100
+      },
+      {
+        "modality": "TEXT",
+        "tokenCount": 966
+      }
+    ],
+    "serviceTier": "standard"
+  }
+}

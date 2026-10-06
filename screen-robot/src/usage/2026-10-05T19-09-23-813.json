@@ -1,0 +1,121 @@
+{
+  "run": "2026-10-05T19-08-53-108",
+  "step": 7,
+  "at": "2026-10-05T19:09:23.813Z",
+  "serial": "emulator-5554",
+  "engine": "rapidocr",
+  "model": "gemini-3.5-flash-lite",
+  "ok": true,
+  "acao": {
+    "type": "scroll",
+    "x": null,
+    "y": null,
+    "direction": "down",
+    "text": null,
+    "code": null,
+    "ms": null,
+    "motivo": "Os perfis visíveis na tela atual já estão com o status Pending, sendo necessário rolar para baixo para encontrar novos compradores e prosseguir com o roteiro."
+  },
+  "resumo": "A tela exibe uma lista de pessoas com o filtro comprador no LinkedIn, mostrando vários perfis com status 'Pending'. Como os resultados visíveis já possuem convites pendentes ou exigem visualização de mais opções, é necessário rolar para baixo para encontrar novos perfis para conectar.",
+  "elementos": [
+    {
+      "label": "Leandra Zuleika",
+      "tipo": "card",
+      "x": 220,
+      "y": 444
+    },
+    {
+      "label": "Andrea Lopes",
+      "tipo": "card",
+      "x": 225,
+      "y": 666
+    },
+    {
+      "label": "Adriana Lopes",
+      "tipo": "card",
+      "x": 213,
+      "y": 855
+    }
+  ],
+  "attempt": 1,
+  "round": 1,
+  "ms": 1349,
+  "promptChars": 2501,
+  "systemChars": 2082,
+  "input": {
+    "system": "Você opera um smartphone Android olhando só a lista OCR da tela (textos + coordenadas x,y na escala do device).\n\nResponda APENAS JSON válido (sem markdown) no formato:\n{\n  \"resumo\": \"2-4 frases do que tem na tela\",\n  \"elementos\": [{ \"label\": \"...\", \"tipo\": \"button|chip|card|text\", \"x\": 0, \"y\": 0 }],\n  \"acao\": {\n    \"type\": \"tap|scroll|type|key|sleep|done|fail\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"...\"\n  }\n}\n\nRegras:\n- Coords de tap = mesma escala do OCR (device). Não invente scale.\n- tap: use x,y de um item OCR existente (centro do texto alvo).\n- scroll: direction down|up|left|right quando o próximo alvo não está visível.\n- Se o histórico mostrar vários scrolls com o mesmo OCR (tela não mudou), NÃO scroll de novo: mude de estratégia (tap em outro elemento, type, key BACK).\n- Home / Settings (AVD Nexus Launcher):\n  - OCR com \"Notifications\" / \"Clear all\" / \"AndroidSetup\" = shade aberto → key KEYCODE_BACK ou KEYCODE_HOME (NÃO scroll).\n  - Tela inicial (só hora/data, sem apps) → scroll direction=down abre a gaveta. scroll up reabre o shade — evite.\n  - Texto \"Settings\" no OCR → tap nessas coords. done só com Settings aberto (Search settings / Network / Apps / Battery).\n- Filtro de localização LinkedIn: se OCR tiver \"Add a location\" / \"Add alocation\" e a cidade alvo do roteiro (ex. Campinas) NÃO estiver na lista, faça tap em Add a location e depois type da cidade — NÃO fique só scrollando a lista.\n- Connect: só tap se text exato \"Connect\" e tipicamente 180 < y < 850. Se o histórico já tem tap nas mesmas coords e a tela não mudou, scroll ou outro Connect — não repita o mesmo tap.\n- type: digite text de uma vez (campo acao.text obrigatório). Se o histórico mostrar erro de tecla OCR, espere (sleep) e tente type de novo, ou key KEYCODE_BACK e reabra o campo.\n- key: code tipo KEYCODE_BACK / KEYCODE_HOME.\n- sleep: ms quando a tela parece carregando.\n- done: objetivo cumprido.\n- fail: impossível continuar (motivo claro).\n- Não peça screenshot; decida só com o OCR e o prompt.",
+    "prompt": "Objetivo / roteiro:\nexecute\n\nscreen-robot/roteiros/jornada-comprador.md\n\ncom base nas regras\n- use apenas a lib do screen robot, \n- nao use script em js pra nada, \n- a IA deve extrair, analisar e decidir a cada iteracao\n- nao tire print para analisar a imagem\n- toda interacao entre o dispositivo deve ser exclusivamente feita via interface da lib\n- nao explore nenhum arquivo que nao seja o readme contendo as interfaces da lib\n- faca da forma mais objetiva possivel, seguindo apenas o essencial\n- quando for escrever, escreva tudo de uma vez e só depois analise o resultado se está correto\n- nao utilize nenhum comando adb, todos os comandos devem ser provenientes exclusivamente da interface\n- nao utilize eventos de ui stable, apenas extract e espere se o extract apontar que esta carregando e tente noamente ate encontrar o proximo passo\n- nao utilize tap da lib calculando o x e o y de cada tcla do keybpard,mas injetando o texto diretamente via adb\n- nao altere nenhum arquivo, apenas execute o fluxo\n\nOCR atual (JSON):\n[{\"text\":\"4:09\",\"x\":97,\"y\":24},{\"text\":\"comprador\",\"x\":144,\"y\":81},{\"text\":\"People\",\"x\":116,\"y\":153},{\"text\":\"1st\",\"x\":244,\"y\":153},{\"text\":\"2nd\",\"x\":318,\"y\":153},{\"text\":\"3rd+\",\"x\":399,\"y\":153},{\"text\":\"Locatior\",\"x\":500,\"y\":153},{\"text\":\"ALEAPIERAINGELLIV\",\"x\":229,\"y\":195},{\"text\":\"Pending\",\"x\":458,\"y\":202},{\"text\":\"2nd\",\"x\":126,\"y\":223},{\"text\":\"PurchasingManager|Pr...\",\"x\":228,\"y\":249},{\"text\":\"SaoPaulo,SaoPaulo,\",\"x\":207,\"y\":272},{\"text\":\"Brazil\",\"x\":134,\"y\":299},{\"text\":\"Past:CompradorsenioratSabo\",\"x\":236,\"y\":334},{\"text\":\"6002500c\",\"x\":142,\"y\":365},{\"text\":\"2mutual connections\",\"x\":265,\"y\":375},{\"text\":\"LeandraZuleika·2nd\",\"x\":220,\"y\":444},{\"text\":\"Q\",\"x\":406,\"y\":453},{\"text\":\"Pending\",\"x\":455,\"y\":454},{\"text\":\"Compradora\",\"x\":167,\"y\":470},{\"text\":\"SantaLuzia,MinasGerais,\",\"x\":228,\"y\":494},{\"text\":\"Brazil\",\"x\":134,\"y\":521},{\"text\":\"Past:CompradorPlenoatRocaBrasilLtda\",\"x\":276,\"y\":556},{\"text\":\"3mutual connections\",\"x\":265,\"y\":597},{\"text\":\"Andrea Lopes ·2nd\",\"x\":225,\"y\":666},{\"text\":\"Pending\",\"x\":457,\"y\":676},{\"text\":\"CompradorSR\",\"x\":177,\"y\":692},{\"text\":\"Campinas,Sao Paulo,\",\"x\":208,\"y\":717},{\"text\":\"Brazil\",\"x\":134,\"y\":743},{\"text\":\"600c\",\"x\":128,\"y\":777},{\"text\":\"1mutual connection\",\"x\":229,\"y\":786},{\"text\":\"Adriana Lopes·2nd\",\"x\":213,\"y\":855},{\"text\":\"Pending\",\"x\":446,\"y\":865},{\"text\":\"Procurement|SupplyCh...\",\"x\":228,\"y\":881},{\"text\":\"BeloHorizonte,Minas\",\"x\":210,\"y\":905},{\"text\":\"Gerais,Brazil\",\"x\":168,\"y\":932}]\n\nDefina a próxima ação.",
+    "body": {
+      "contents": [
+        {
+          "role": "user",
+          "parts": [
+            {
+              "text": "Objetivo / roteiro:\nexecute\n\nscreen-robot/roteiros/jornada-comprador.md\n\ncom base nas regras\n- use apenas a lib do screen robot, \n- nao use script em js pra nada, \n- a IA deve extrair, analisar e decidir a cada iteracao\n- nao tire print para analisar a imagem\n- toda interacao entre o dispositivo deve ser exclusivamente feita via interface da lib\n- nao explore nenhum arquivo que nao seja o readme contendo as interfaces da lib\n- faca da forma mais objetiva possivel, seguindo apenas o essencial\n- quando for escrever, escreva tudo de uma vez e só depois analise o resultado se está correto\n- nao utilize nenhum comando adb, todos os comandos devem ser provenientes exclusivamente da interface\n- nao utilize eventos de ui stable, apenas extract e espere se o extract apontar que esta carregando e tente noamente ate encontrar o proximo passo\n- nao utilize tap da lib calculando o x e o y de cada tcla do keybpard,mas injetando o texto diretamente via adb\n- nao altere nenhum arquivo, apenas execute o fluxo\n\nOCR atual (JSON):\n[{\"text\":\"4:09\",\"x\":97,\"y\":24},{\"text\":\"comprador\",\"x\":144,\"y\":81},{\"text\":\"People\",\"x\":116,\"y\":153},{\"text\":\"1st\",\"x\":244,\"y\":153},{\"text\":\"2nd\",\"x\":318,\"y\":153},{\"text\":\"3rd+\",\"x\":399,\"y\":153},{\"text\":\"Locatior\",\"x\":500,\"y\":153},{\"text\":\"ALEAPIERAINGELLIV\",\"x\":229,\"y\":195},{\"text\":\"Pending\",\"x\":458,\"y\":202},{\"text\":\"2nd\",\"x\":126,\"y\":223},{\"text\":\"PurchasingManager|Pr...\",\"x\":228,\"y\":249},{\"text\":\"SaoPaulo,SaoPaulo,\",\"x\":207,\"y\":272},{\"text\":\"Brazil\",\"x\":134,\"y\":299},{\"text\":\"Past:CompradorsenioratSabo\",\"x\":236,\"y\":334},{\"text\":\"6002500c\",\"x\":142,\"y\":365},{\"text\":\"2mutual connections\",\"x\":265,\"y\":375},{\"text\":\"LeandraZuleika·2nd\",\"x\":220,\"y\":444},{\"text\":\"Q\",\"x\":406,\"y\":453},{\"text\":\"Pending\",\"x\":455,\"y\":454},{\"text\":\"Compradora\",\"x\":167,\"y\":470},{\"text\":\"SantaLuzia,MinasGerais,\",\"x\":228,\"y\":494},{\"text\":\"Brazil\",\"x\":134,\"y\":521},{\"text\":\"Past:CompradorPlenoatRocaBrasilLtda\",\"x\":276,\"y\":556},{\"text\":\"3mutual connections\",\"x\":265,\"y\":597},{\"text\":\"Andrea Lopes ·2nd\",\"x\":225,\"y\":666},{\"text\":\"Pending\",\"x\":457,\"y\":676},{\"text\":\"CompradorSR\",\"x\":177,\"y\":692},{\"text\":\"Campinas,Sao Paulo,\",\"x\":208,\"y\":717},{\"text\":\"Brazil\",\"x\":134,\"y\":743},{\"text\":\"600c\",\"x\":128,\"y\":777},{\"text\":\"1mutual connection\",\"x\":229,\"y\":786},{\"text\":\"Adriana Lopes·2nd\",\"x\":213,\"y\":855},{\"text\":\"Pending\",\"x\":446,\"y\":865},{\"text\":\"Procurement|SupplyCh...\",\"x\":228,\"y\":881},{\"text\":\"BeloHorizonte,Minas\",\"x\":210,\"y\":905},{\"text\":\"Gerais,Brazil\",\"x\":168,\"y\":932}]\n\nDefina a próxima ação."
+            }
+          ]
+        }
+      ],
+      "generationConfig": {
+        "responseMimeType": "application/json"
+      },
+      "systemInstruction": {
+        "parts": [
+          {
+            "text": "Você opera um smartphone Android olhando só a lista OCR da tela (textos + coordenadas x,y na escala do device).\n\nResponda APENAS JSON válido (sem markdown) no formato:\n{\n  \"resumo\": \"2-4 frases do que tem na tela\",\n  \"elementos\": [{ \"label\": \"...\", \"tipo\": \"button|chip|card|text\", \"x\": 0, \"y\": 0 }],\n  \"acao\": {\n    \"type\": \"tap|scroll|type|key|sleep|done|fail\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"...\"\n  }\n}\n\nRegras:\n- Coords de tap = mesma escala do OCR (device). Não invente scale.\n- tap: use x,y de um item OCR existente (centro do texto alvo).\n- scroll: direction down|up|left|right quando o próximo alvo não está visível.\n- Se o histórico mostrar vários scrolls com o mesmo OCR (tela não mudou), NÃO scroll de novo: mude de estratégia (tap em outro elemento, type, key BACK).\n- Home / Settings (AVD Nexus Launcher):\n  - OCR com \"Notifications\" / \"Clear all\" / \"AndroidSetup\" = shade aberto → key KEYCODE_BACK ou KEYCODE_HOME (NÃO scroll).\n  - Tela inicial (só hora/data, sem apps) → scroll direction=down abre a gaveta. scroll up reabre o shade — evite.\n  - Texto \"Settings\" no OCR → tap nessas coords. done só com Settings aberto (Search settings / Network / Apps / Battery).\n- Filtro de localização LinkedIn: se OCR tiver \"Add a location\" / \"Add alocation\" e a cidade alvo do roteiro (ex. Campinas) NÃO estiver na lista, faça tap em Add a location e depois type da cidade — NÃO fique só scrollando a lista.\n- Connect: só tap se text exato \"Connect\" e tipicamente 180 < y < 850. Se o histórico já tem tap nas mesmas coords e a tela não mudou, scroll ou outro Connect — não repita o mesmo tap.\n- type: digite text de uma vez (campo acao.text obrigatório). Se o histórico mostrar erro de tecla OCR, espere (sleep) e tente type de novo, ou key KEYCODE_BACK e reabra o campo.\n- key: code tipo KEYCODE_BACK / KEYCODE_HOME.\n- sleep: ms quando a tela parece carregando.\n- done: objetivo cumprido.\n- fail: impossível continuar (motivo claro).\n- Não peça screenshot; decida só com o OCR e o prompt."
+          }
+        ]
+      }
+    }
+  },
+  "output": {
+    "text": "{\n  \"resumo\": \"A tela exibe uma lista de pessoas com o filtro comprador no LinkedIn, mostrando vários perfis com status 'Pending'. Como os resultados visíveis já possuem convites pendentes ou exigem visualização de mais opções, é necessário rolar para baixo para encontrar novos perfis para conectar.\",\n  \"elementos\": [\n    { \"label\": \"Leandra Zuleika\", \"tipo\": \"card\", \"x\": 220, \"y\": 444 },\n    { \"label\": \"Andrea Lopes\", \"tipo\": \"card\", \"x\": 225, \"y\": 666 },\n    { \"label\": \"Adriana Lopes\", \"tipo\": \"card\", \"x\": 213, \"y\": 855 }\n  ],\n  \"acao\": {\n    \"type\": \"scroll\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": \"down\",\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"Os perfis visíveis na tela atual já estão com o status Pending, sendo necessário rolar para baixo para encontrar novos compradores e prosseguir com o roteiro.\"\n  }\n}",
+    "raw": {
+      "candidates": [
+        {
+          "content": {
+            "parts": [
+              {
+                "text": "{\n  \"resumo\": \"A tela exibe uma lista de pessoas com o filtro comprador no LinkedIn, mostrando vários perfis com status 'Pending'. Como os resultados visíveis já possuem convites pendentes ou exigem visualização de mais opções, é necessário rolar para baixo para encontrar novos perfis para conectar.\",\n  \"elementos\": [\n    { \"label\": \"Leandra Zuleika\", \"tipo\": \"card\", \"x\": 220, \"y\": 444 },\n    { \"label\": \"Andrea Lopes\", \"tipo\": \"card\", \"x\": 225, \"y\": 666 },\n    { \"label\": \"Adriana Lopes\", \"tipo\": \"card\", \"x\": 213, \"y\": 855 }\n  ],\n  \"acao\": {\n    \"type\": \"scroll\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": \"down\",\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"Os perfis visíveis na tela atual já estão com o status Pending, sendo necessário rolar para baixo para encontrar novos compradores e prosseguir com o roteiro.\"\n  }\n}",
+                "thoughtSignature": "EmAKXgFpFH0T+7+/Sd9Wq0vyNZR0yMC/QoMcYdA20SfY5ruKNq/sj/0BAFcbn8iemgyVBGgGyQGRu/HFDSBSl+zb8xfVxYaM8JbQPSJS+qgJJDEe6tjrdv05AbWN6ynvTyY="
+              }
+            ],
+            "role": "model"
+          },
+          "finishReason": "STOP",
+          "index": 0
+        }
+      ],
+      "usageMetadata": {
+        "promptTokenCount": 1569,
+        "candidatesTokenCount": 278,
+        "totalTokenCount": 1847,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 1569
+          }
+        ],
+        "serviceTier": "standard"
+      },
+      "modelVersion": "gemini-3.5-flash-lite",
+      "responseId": "4vXDaomAKqD_qtsP1pDBkAo"
+    }
+  },
+  "system": "Você opera um smartphone Android olhando só a lista OCR da tela (textos + coordenadas x,y na escala do device).\n\nResponda APENAS JSON válido (sem markdown) no formato:\n{\n  \"resumo\": \"2-4 frases do que tem na tela\",\n  \"elementos\": [{ \"label\": \"...\", \"tipo\": \"button|chip|card|text\", \"x\": 0, \"y\": 0 }],\n  \"acao\": {\n    \"type\": \"tap|scroll|type|key|sleep|done|fail\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"...\"\n  }\n}\n\nRegras:\n- Coords de tap = mesma escala do OCR (device). Não invente scale.\n- tap: use x,y de um item OCR existente (centro do texto alvo).\n- scroll: direction down|up|left|right quando o próximo alvo não está visível.\n- Se o histórico mostrar vários scrolls com o mesmo OCR (tela não mudou), NÃO scroll de novo: mude de estratégia (tap em outro elemento, type, key BACK).\n- Home / Settings (AVD Nexus Launcher):\n  - OCR com \"Notifications\" / \"Clear all\" / \"AndroidSetup\" = shade aberto → key KEYCODE_BACK ou KEYCODE_HOME (NÃO scroll).\n  - Tela inicial (só hora/data, sem apps) → scroll direction=down abre a gaveta. scroll up reabre o shade — evite.\n  - Texto \"Settings\" no OCR → tap nessas coords. done só com Settings aberto (Search settings / Network / Apps / Battery).\n- Filtro de localização LinkedIn: se OCR tiver \"Add a location\" / \"Add alocation\" e a cidade alvo do roteiro (ex. Campinas) NÃO estiver na lista, faça tap em Add a location e depois type da cidade — NÃO fique só scrollando a lista.\n- Connect: só tap se text exato \"Connect\" e tipicamente 180 < y < 850. Se o histórico já tem tap nas mesmas coords e a tela não mudou, scroll ou outro Connect — não repita o mesmo tap.\n- type: digite text de uma vez (campo acao.text obrigatório). Se o histórico mostrar erro de tecla OCR, espere (sleep) e tente type de novo, ou key KEYCODE_BACK e reabra o campo.\n- key: code tipo KEYCODE_BACK / KEYCODE_HOME.\n- sleep: ms quando a tela parece carregando.\n- done: objetivo cumprido.\n- fail: impossível continuar (motivo claro).\n- Não peça screenshot; decida só com o OCR e o prompt.",
+  "prompt": "Objetivo / roteiro:\nexecute\n\nscreen-robot/roteiros/jornada-comprador.md\n\ncom base nas regras\n- use apenas a lib do screen robot, \n- nao use script em js pra nada, \n- a IA deve extrair, analisar e decidir a cada iteracao\n- nao tire print para analisar a imagem\n- toda interacao entre o dispositivo deve ser exclusivamente feita via interface da lib\n- nao explore nenhum arquivo que nao seja o readme contendo as interfaces da lib\n- faca da forma mais objetiva possivel, seguindo apenas o essencial\n- quando for escrever, escreva tudo de uma vez e só depois analise o resultado se está correto\n- nao utilize nenhum comando adb, todos os comandos devem ser provenientes exclusivamente da interface\n- nao utilize eventos de ui stable, apenas extract e espere se o extract apontar que esta carregando e tente noamente ate encontrar o proximo passo\n- nao utilize tap da lib calculando o x e o y de cada tcla do keybpard,mas injetando o texto diretamente via adb\n- nao altere nenhum arquivo, apenas execute o fluxo\n\nOCR atual (JSON):\n[{\"text\":\"4:09\",\"x\":97,\"y\":24},{\"text\":\"comprador\",\"x\":144,\"y\":81},{\"text\":\"People\",\"x\":116,\"y\":153},{\"text\":\"1st\",\"x\":244,\"y\":153},{\"text\":\"2nd\",\"x\":318,\"y\":153},{\"text\":\"3rd+\",\"x\":399,\"y\":153},{\"text\":\"Locatior\",\"x\":500,\"y\":153},{\"text\":\"ALEAPIERAINGELLIV\",\"x\":229,\"y\":195},{\"text\":\"Pending\",\"x\":458,\"y\":202},{\"text\":\"2nd\",\"x\":126,\"y\":223},{\"text\":\"PurchasingManager|Pr...\",\"x\":228,\"y\":249},{\"text\":\"SaoPaulo,SaoPaulo,\",\"x\":207,\"y\":272},{\"text\":\"Brazil\",\"x\":134,\"y\":299},{\"text\":\"Past:CompradorsenioratSabo\",\"x\":236,\"y\":334},{\"text\":\"6002500c\",\"x\":142,\"y\":365},{\"text\":\"2mutual connections\",\"x\":265,\"y\":375},{\"text\":\"LeandraZuleika·2nd\",\"x\":220,\"y\":444},{\"text\":\"Q\",\"x\":406,\"y\":453},{\"text\":\"Pending\",\"x\":455,\"y\":454},{\"text\":\"Compradora\",\"x\":167,\"y\":470},{\"text\":\"SantaLuzia,MinasGerais,\",\"x\":228,\"y\":494},{\"text\":\"Brazil\",\"x\":134,\"y\":521},{\"text\":\"Past:CompradorPlenoatRocaBrasilLtda\",\"x\":276,\"y\":556},{\"text\":\"3mutual connections\",\"x\":265,\"y\":597},{\"text\":\"Andrea Lopes ·2nd\",\"x\":225,\"y\":666},{\"text\":\"Pending\",\"x\":457,\"y\":676},{\"text\":\"CompradorSR\",\"x\":177,\"y\":692},{\"text\":\"Campinas,Sao Paulo,\",\"x\":208,\"y\":717},{\"text\":\"Brazil\",\"x\":134,\"y\":743},{\"text\":\"600c\",\"x\":128,\"y\":777},{\"text\":\"1mutual connection\",\"x\":229,\"y\":786},{\"text\":\"Adriana Lopes·2nd\",\"x\":213,\"y\":855},{\"text\":\"Pending\",\"x\":446,\"y\":865},{\"text\":\"Procurement|SupplyCh...\",\"x\":228,\"y\":881},{\"text\":\"BeloHorizonte,Minas\",\"x\":210,\"y\":905},{\"text\":\"Gerais,Brazil\",\"x\":168,\"y\":932}]\n\nDefina a próxima ação.",
+  "response": "{\n  \"resumo\": \"A tela exibe uma lista de pessoas com o filtro comprador no LinkedIn, mostrando vários perfis com status 'Pending'. Como os resultados visíveis já possuem convites pendentes ou exigem visualização de mais opções, é necessário rolar para baixo para encontrar novos perfis para conectar.\",\n  \"elementos\": [\n    { \"label\": \"Leandra Zuleika\", \"tipo\": \"card\", \"x\": 220, \"y\": 444 },\n    { \"label\": \"Andrea Lopes\", \"tipo\": \"card\", \"x\": 225, \"y\": 666 },\n    { \"label\": \"Adriana Lopes\", \"tipo\": \"card\", \"x\": 213, \"y\": 855 }\n  ],\n  \"acao\": {\n    \"type\": \"scroll\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": \"down\",\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"Os perfis visíveis na tela atual já estão com o status Pending, sendo necessário rolar para baixo para encontrar novos compradores e prosseguir com o roteiro.\"\n  }\n}",
+  "roteiro": "execute\n\nscreen-robot/roteiros/jornada-comprador.md\n\ncom base nas regras\n- use apenas a lib do screen robot, \n- nao use script em js pra nada, \n- a IA deve extrair, analisar e decidir a cada iteracao\n- nao tire print para analisar a imagem\n- toda interacao entre o dispositivo deve ser exclusivamente feita via interface da lib\n- nao explore nenhum arquivo que nao seja o readme contendo as interfaces da lib\n- faca da forma mais objetiva possivel, seguindo apenas o essencial\n- quando for escrever, escreva tudo de uma vez e só depois analise o resultado se está correto\n- nao utilize nenhum comando adb, todos os comandos devem ser provenientes exclusivamente da interface\n- nao utilize eventos de ui stable, apenas extract e espere se o extract apontar que esta carregando e tente noamente ate encontrar o proximo passo\n- nao utilize tap da lib calculando o x e o y de cada tcla do keybpard,mas injetando o texto diretamente via adb\n- nao altere nenhum arquivo, apenas execute o fluxo\n",
+  "usage": {
+    "promptTokenCount": 1569,
+    "candidatesTokenCount": 278,
+    "totalTokenCount": 1847,
+    "promptTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 1569
+      }
+    ],
+    "serviceTier": "standard"
+  }
+}

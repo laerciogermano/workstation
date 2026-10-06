@@ -1,0 +1,55 @@
+{
+  "entrada": {
+    "model": "gpt-4o-mini",
+    "messages": [
+      {
+        "role": "system",
+        "content": "Você opera um smartphone Android olhando só a lista extract da tela (type, text, x, y). Sem id.\n\nResponda APENAS JSON válido (sem markdown) no formato:\n{\n  \"resumo\": \"2-4 frases do que tem na tela\",\n  \"acao\": {\n    \"type\": \"tap|scroll|type|key|sleep|done|fail\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"...\"\n  }\n}\n\nRegras de tap (OCR):\n- tap: acao.x e acao.y = as coords que VOCÊ escolhe para clicar (use os x,y do extract ATUAL como referência; pode ser o centro do item alvo).\n- NÃO use estritamente coords do roteiro/prompt/histórico: x,y de passos antigos ou exemplos do texto NÃO são válidos. Só o extract desta tela.\n- PROIBIDO mandar id / element / e0 / e1. Só x,y.\n- Sem alvo claro no extract → não tap."
+      },
+      {
+        "role": "user",
+        "content": "Objetivo / roteiro:\npara cada passo, me retorno o passo em que estou para eu saber qual o proximo\n\n1. clique em search\n2. digite comprador\n3. feche o teclado\n4. clique em show all results\n5. clique em people\n6. clique location\n7. clique em add a location\n8. digite campinas\n9. clique na primeira opcao campinas que aparecer\n10. clique em show results\n11. identifique os resultados que possuem como opcao \"connect\"\n12. Se nao tiver, role para baixo, repetindo o processo desde o 11\n\nOCR atual (JSON):\n[{\"type\":\"text\",\"text\":\"1:10\",\"x\":109,\"y\":24},{\"type\":\"text\",\"text\":\"α\",\"x\":148,\"y\":24},{\"type\":\"text\",\"text\":\"O\",\"x\":270,\"y\":466},{\"type\":\"text\",\"text\":\"in\",\"x\":269,\"y\":481}]\n\nDefina a próxima ação."
+      }
+    ],
+    "temperature": 0,
+    "response_format": {
+      "type": "json_object"
+    }
+  },
+  "resposta": {
+    "id": "chatcmpl-EW22eLlUDFJQtTu4e5AdULOQ3B2ys",
+    "object": "chat.completion",
+    "created": 1791303052,
+    "model": "gpt-4o-mini-2024-07-18",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\n  \"resumo\": \"A tela atual exibe alguns textos, mas não há elementos interativos claros para clicar. Não é possível identificar um botão de busca ou qualquer outra ação a ser realizada.\",\n  \"acao\": {\n    \"type\": \"fail\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"Não há elementos interativos disponíveis na tela para prosseguir com a ação.\"\n  }\n}",
+          "refusal": null,
+          "annotations": []
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 456,
+      "completion_tokens": 113,
+      "total_tokens": 569,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "audio_tokens": 0
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0,
+        "audio_tokens": 0,
+        "accepted_prediction_tokens": 0,
+        "rejected_prediction_tokens": 0
+      }
+    },
+    "service_tier": "default",
+    "system_fingerprint": "fp_e97a8f1690"
+  }
+}

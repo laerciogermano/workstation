@@ -1,0 +1,148 @@
+{
+  "run": "2026-10-05T19-36-05-844",
+  "step": 14,
+  "at": "2026-10-05T19:44:29.527Z",
+  "serial": "emulator-5554",
+  "engine": "rapidocr",
+  "model": "gemini-3.8-flash",
+  "ok": true,
+  "acao": {
+    "type": "tap",
+    "x": 478,
+    "y": 168,
+    "direction": null,
+    "text": null,
+    "code": null,
+    "ms": null,
+    "motivo": "Clicar na aba People para localizar profissionais da área de compras na empresa Vale."
+  },
+  "resumo": "A tela exibe a página da empresa Vale no LinkedIn. As abas superiores mostram Home, About, Posts, Jobs, Life e People. Na jornada de comprador, é comum navegar até a aba People para encontrar pessoas relevantes.",
+  "elementos": [
+    {
+      "label": "Vale",
+      "tipo": "text",
+      "x": 160,
+      "y": 87
+    },
+    {
+      "label": "Home",
+      "tipo": "chip",
+      "x": 46,
+      "y": 168
+    },
+    {
+      "label": "About",
+      "tipo": "chip",
+      "x": 139,
+      "y": 167
+    },
+    {
+      "label": "Posts",
+      "tipo": "chip",
+      "x": 231,
+      "y": 168
+    },
+    {
+      "label": "Jobs",
+      "tipo": "chip",
+      "x": 317,
+      "y": 168
+    },
+    {
+      "label": "Life",
+      "tipo": "chip",
+      "x": 394,
+      "y": 168
+    },
+    {
+      "label": "People",
+      "tipo": "chip",
+      "x": 478,
+      "y": 168
+    }
+  ],
+  "attempt": 1,
+  "round": 2,
+  "ms": 14951,
+  "promptChars": 1889,
+  "systemChars": 2082,
+  "input": {
+    "system": "Você opera um smartphone Android olhando só a lista OCR da tela (textos + coordenadas x,y na escala do device).\n\nResponda APENAS JSON válido (sem markdown) no formato:\n{\n  \"resumo\": \"2-4 frases do que tem na tela\",\n  \"elementos\": [{ \"label\": \"...\", \"tipo\": \"button|chip|card|text\", \"x\": 0, \"y\": 0 }],\n  \"acao\": {\n    \"type\": \"tap|scroll|type|key|sleep|done|fail\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"...\"\n  }\n}\n\nRegras:\n- Coords de tap = mesma escala do OCR (device). Não invente scale.\n- tap: use x,y de um item OCR existente (centro do texto alvo).\n- scroll: direction down|up|left|right quando o próximo alvo não está visível.\n- Se o histórico mostrar vários scrolls com o mesmo OCR (tela não mudou), NÃO scroll de novo: mude de estratégia (tap em outro elemento, type, key BACK).\n- Home / Settings (AVD Nexus Launcher):\n  - OCR com \"Notifications\" / \"Clear all\" / \"AndroidSetup\" = shade aberto → key KEYCODE_BACK ou KEYCODE_HOME (NÃO scroll).\n  - Tela inicial (só hora/data, sem apps) → scroll direction=down abre a gaveta. scroll up reabre o shade — evite.\n  - Texto \"Settings\" no OCR → tap nessas coords. done só com Settings aberto (Search settings / Network / Apps / Battery).\n- Filtro de localização LinkedIn: se OCR tiver \"Add a location\" / \"Add alocation\" e a cidade alvo do roteiro (ex. Campinas) NÃO estiver na lista, faça tap em Add a location e depois type da cidade — NÃO fique só scrollando a lista.\n- Connect: só tap se text exato \"Connect\" e tipicamente 180 < y < 850. Se o histórico já tem tap nas mesmas coords e a tela não mudou, scroll ou outro Connect — não repita o mesmo tap.\n- type: digite text de uma vez (campo acao.text obrigatório). Se o histórico mostrar erro de tecla OCR, espere (sleep) e tente type de novo, ou key KEYCODE_BACK e reabra o campo.\n- key: code tipo KEYCODE_BACK / KEYCODE_HOME.\n- sleep: ms quando a tela parece carregando.\n- done: objetivo cumprido.\n- fail: impossível continuar (motivo claro).\n- Não peça screenshot; decida só com o OCR e o prompt.",
+    "prompt": "Objetivo / roteiro:\nexecute\n\nscreen-robot/roteiros/jornada-comprador.md\n\ncom base nas regras\n- use apenas a lib do screen robot, \n- nao use script em js pra nada, \n- a IA deve extrair, analisar e decidir a cada iteracao\n- nao tire print para analisar a imagem\n- toda interacao entre o dispositivo deve ser exclusivamente feita via interface da lib\n- nao explore nenhum arquivo que nao seja o readme contendo as interfaces da lib\n- faca da forma mais objetiva possivel, seguindo apenas o essencial\n- quando for escrever, escreva tudo de uma vez e só depois analise o resultado se está correto\n- nao utilize nenhum comando adb, todos os comandos devem ser provenientes exclusivamente da interface\n- nao utilize eventos de ui stable, apenas extract e espere se o extract apontar que esta carregando e tente noamente ate encontrar o proximo passo\n- nao utilize tap da lib calculando o x e o y de cada tcla do keybpard,mas injetando o texto diretamente via adb\n- nao altere nenhum arquivo, apenas execute o fluxo\n\nOCR atual (JSON):\n[{\"text\":\"4:43\",\"x\":96,\"y\":24},{\"text\":\"回\",\"x\":156,\"y\":24},{\"text\":\"in\",\"x\":198,\"y\":23},{\"text\":\"Vale\",\"x\":160,\"y\":87},{\"text\":\"Home\",\"x\":46,\"y\":168},{\"text\":\"About\",\"x\":139,\"y\":167},{\"text\":\"Posts\",\"x\":231,\"y\":168},{\"text\":\"Jobs\",\"x\":317,\"y\":168},{\"text\":\"Life\",\"x\":394,\"y\":168},{\"text\":\"People\",\"x\":478,\"y\":168},{\"text\":\"Highlights\",\"x\":87,\"y\":263},{\"text\":\"5,425employeeswork inBelo\",\"x\":176,\"y\":349},{\"text\":\"Horizonte\",\"x\":71,\"y\":376},{\"text\":\"+99\",\"x\":377,\"y\":438},{\"text\":\"Allan, Diogo, Thiago,Fabiana, Roberta, and\",\"x\":216,\"y\":504},{\"text\":\"5,420more\",\"x\":71,\"y\":527},{\"text\":\"996 decision makers on Sales Navigator\",\"x\":235,\"y\":634},{\"text\":\"66+\",\"x\":377,\"y\":697},{\"text\":\"You're missing out on Decision Makers in Sales\",\"x\":243,\"y\":761},{\"text\":\"Navigator.\",\"x\":70,\"y\":785},{\"text\":\"TrySalesNavigator for R$O\",\"x\":271,\"y\":835}]\n\nDefina a próxima ação.",
+    "body": {
+      "contents": [
+        {
+          "role": "user",
+          "parts": [
+            {
+              "text": "Objetivo / roteiro:\nexecute\n\nscreen-robot/roteiros/jornada-comprador.md\n\ncom base nas regras\n- use apenas a lib do screen robot, \n- nao use script em js pra nada, \n- a IA deve extrair, analisar e decidir a cada iteracao\n- nao tire print para analisar a imagem\n- toda interacao entre o dispositivo deve ser exclusivamente feita via interface da lib\n- nao explore nenhum arquivo que nao seja o readme contendo as interfaces da lib\n- faca da forma mais objetiva possivel, seguindo apenas o essencial\n- quando for escrever, escreva tudo de uma vez e só depois analise o resultado se está correto\n- nao utilize nenhum comando adb, todos os comandos devem ser provenientes exclusivamente da interface\n- nao utilize eventos de ui stable, apenas extract e espere se o extract apontar que esta carregando e tente noamente ate encontrar o proximo passo\n- nao utilize tap da lib calculando o x e o y de cada tcla do keybpard,mas injetando o texto diretamente via adb\n- nao altere nenhum arquivo, apenas execute o fluxo\n\nOCR atual (JSON):\n[{\"text\":\"4:43\",\"x\":96,\"y\":24},{\"text\":\"回\",\"x\":156,\"y\":24},{\"text\":\"in\",\"x\":198,\"y\":23},{\"text\":\"Vale\",\"x\":160,\"y\":87},{\"text\":\"Home\",\"x\":46,\"y\":168},{\"text\":\"About\",\"x\":139,\"y\":167},{\"text\":\"Posts\",\"x\":231,\"y\":168},{\"text\":\"Jobs\",\"x\":317,\"y\":168},{\"text\":\"Life\",\"x\":394,\"y\":168},{\"text\":\"People\",\"x\":478,\"y\":168},{\"text\":\"Highlights\",\"x\":87,\"y\":263},{\"text\":\"5,425employeeswork inBelo\",\"x\":176,\"y\":349},{\"text\":\"Horizonte\",\"x\":71,\"y\":376},{\"text\":\"+99\",\"x\":377,\"y\":438},{\"text\":\"Allan, Diogo, Thiago,Fabiana, Roberta, and\",\"x\":216,\"y\":504},{\"text\":\"5,420more\",\"x\":71,\"y\":527},{\"text\":\"996 decision makers on Sales Navigator\",\"x\":235,\"y\":634},{\"text\":\"66+\",\"x\":377,\"y\":697},{\"text\":\"You're missing out on Decision Makers in Sales\",\"x\":243,\"y\":761},{\"text\":\"Navigator.\",\"x\":70,\"y\":785},{\"text\":\"TrySalesNavigator for R$O\",\"x\":271,\"y\":835}]\n\nDefina a próxima ação."
+            }
+          ]
+        }
+      ],
+      "generationConfig": {
+        "responseMimeType": "application/json",
+        "thinkingConfig": {
+          "thinkingLevel": "low"
+        }
+      },
+      "systemInstruction": {
+        "parts": [
+          {
+            "text": "Você opera um smartphone Android olhando só a lista OCR da tela (textos + coordenadas x,y na escala do device).\n\nResponda APENAS JSON válido (sem markdown) no formato:\n{\n  \"resumo\": \"2-4 frases do que tem na tela\",\n  \"elementos\": [{ \"label\": \"...\", \"tipo\": \"button|chip|card|text\", \"x\": 0, \"y\": 0 }],\n  \"acao\": {\n    \"type\": \"tap|scroll|type|key|sleep|done|fail\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"...\"\n  }\n}\n\nRegras:\n- Coords de tap = mesma escala do OCR (device). Não invente scale.\n- tap: use x,y de um item OCR existente (centro do texto alvo).\n- scroll: direction down|up|left|right quando o próximo alvo não está visível.\n- Se o histórico mostrar vários scrolls com o mesmo OCR (tela não mudou), NÃO scroll de novo: mude de estratégia (tap em outro elemento, type, key BACK).\n- Home / Settings (AVD Nexus Launcher):\n  - OCR com \"Notifications\" / \"Clear all\" / \"AndroidSetup\" = shade aberto → key KEYCODE_BACK ou KEYCODE_HOME (NÃO scroll).\n  - Tela inicial (só hora/data, sem apps) → scroll direction=down abre a gaveta. scroll up reabre o shade — evite.\n  - Texto \"Settings\" no OCR → tap nessas coords. done só com Settings aberto (Search settings / Network / Apps / Battery).\n- Filtro de localização LinkedIn: se OCR tiver \"Add a location\" / \"Add alocation\" e a cidade alvo do roteiro (ex. Campinas) NÃO estiver na lista, faça tap em Add a location e depois type da cidade — NÃO fique só scrollando a lista.\n- Connect: só tap se text exato \"Connect\" e tipicamente 180 < y < 850. Se o histórico já tem tap nas mesmas coords e a tela não mudou, scroll ou outro Connect — não repita o mesmo tap.\n- type: digite text de uma vez (campo acao.text obrigatório). Se o histórico mostrar erro de tecla OCR, espere (sleep) e tente type de novo, ou key KEYCODE_BACK e reabra o campo.\n- key: code tipo KEYCODE_BACK / KEYCODE_HOME.\n- sleep: ms quando a tela parece carregando.\n- done: objetivo cumprido.\n- fail: impossível continuar (motivo claro).\n- Não peça screenshot; decida só com o OCR e o prompt."
+          }
+        ]
+      }
+    }
+  },
+  "output": {
+    "text": "{\n  \"resumo\": \"A tela exibe a página da empresa Vale no LinkedIn. As abas superiores mostram Home, About, Posts, Jobs, Life e People. Na jornada de comprador, é comum navegar até a aba People para encontrar pessoas relevantes.\",\n  \"elementos\": [\n    { \"label\": \"Vale\", \"tipo\": \"text\", \"x\": 160, \"y\": 87 },\n    { \"label\": \"Home\", \"tipo\": \"chip\", \"x\": 46, \"y\": 168 },\n    { \"label\": \"About\", \"tipo\": \"chip\", \"x\": 139, \"y\": 167 },\n    { \"label\": \"Posts\", \"tipo\": \"chip\", \"x\": 231, \"y\": 168 },\n    { \"label\": \"Jobs\", \"tipo\": \"chip\", \"x\": 317, \"y\": 168 },\n    { \"label\": \"Life\", \"tipo\": \"chip\", \"x\": 394, \"y\": 168 },\n    { \"label\": \"People\", \"tipo\": \"chip\", \"x\": 478, \"y\": 168 }\n  ],\n  \"acao\": {\n    \"type\": \"tap\",\n    \"x\": 478,\n    \"y\": 168,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"Clicar na aba People para localizar profissionais da área de compras na empresa Vale.\"\n  }\n}",
+    "raw": {
+      "candidates": [
+        {
+          "content": {
+            "parts": [
+              {
+                "text": "{\n  \"resumo\": \"A tela exibe a página da empresa Vale no LinkedIn. As abas superiores mostram Home, About, Posts, Jobs, Life e People. Na jornada de comprador, é comum navegar até a aba People para encontrar pessoas relevantes.\",\n  \"elementos\": [\n    { \"label\": \"Vale\", \"tipo\": \"text\", \"x\": 160, \"y\": 87 },\n    { \"label\": \"Home\", \"tipo\": \"chip\", \"x\": 46, \"y\": 168 },\n    { \"label\": \"About\", \"tipo\": \"chip\", \"x\": 139, \"y\": 167 },\n    { \"label\": \"Posts\", \"tipo\": \"chip\", \"x\": 231, \"y\": 168 },\n    { \"label\": \"Jobs\", \"tipo\": \"chip\", \"x\": 317, \"y\": 168 },\n    { \"label\": \"Life\", \"tipo\": \"chip\", \"x\": 394, \"y\": 168 },\n    { \"label\": \"People\", \"tipo\": \"chip\", \"x\": 478, \"y\": 168 }\n  ],\n  \"acao\": {\n    \"type\": \"tap\",\n    \"x\": 478,\n    \"y\": 168,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"Clicar na aba People para localizar profissionais da área de compras na empresa Vale.\"\n  }\n}",
+                "thoughtSignature": "EmkKZwFpFH0T04Z4DYHDmB3htp3rLDeDS9H/uez5h8yPoIoRhwmgzzU7IldHZW3pI3tpC54Y/8MXWzRIG9a6mBiFQhaNXGDpnuzy52sMRWZc1thXtiuG3h2xNzEgGLYfaW4KEYxCFxNCTiQ="
+              }
+            ],
+            "role": "model"
+          },
+          "finishReason": "STOP",
+          "index": 0
+        }
+      ],
+      "usageMetadata": {
+        "promptTokenCount": 1266,
+        "candidatesTokenCount": 370,
+        "totalTokenCount": 1636,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 1266
+          }
+        ],
+        "serviceTier": "standard"
+      },
+      "modelVersion": "gemini-3.8-flash",
+      "responseId": "Dv7DaoD4MZfyqtsPq6CnsA0"
+    }
+  },
+  "system": "Você opera um smartphone Android olhando só a lista OCR da tela (textos + coordenadas x,y na escala do device).\n\nResponda APENAS JSON válido (sem markdown) no formato:\n{\n  \"resumo\": \"2-4 frases do que tem na tela\",\n  \"elementos\": [{ \"label\": \"...\", \"tipo\": \"button|chip|card|text\", \"x\": 0, \"y\": 0 }],\n  \"acao\": {\n    \"type\": \"tap|scroll|type|key|sleep|done|fail\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"...\"\n  }\n}\n\nRegras:\n- Coords de tap = mesma escala do OCR (device). Não invente scale.\n- tap: use x,y de um item OCR existente (centro do texto alvo).\n- scroll: direction down|up|left|right quando o próximo alvo não está visível.\n- Se o histórico mostrar vários scrolls com o mesmo OCR (tela não mudou), NÃO scroll de novo: mude de estratégia (tap em outro elemento, type, key BACK).\n- Home / Settings (AVD Nexus Launcher):\n  - OCR com \"Notifications\" / \"Clear all\" / \"AndroidSetup\" = shade aberto → key KEYCODE_BACK ou KEYCODE_HOME (NÃO scroll).\n  - Tela inicial (só hora/data, sem apps) → scroll direction=down abre a gaveta. scroll up reabre o shade — evite.\n  - Texto \"Settings\" no OCR → tap nessas coords. done só com Settings aberto (Search settings / Network / Apps / Battery).\n- Filtro de localização LinkedIn: se OCR tiver \"Add a location\" / \"Add alocation\" e a cidade alvo do roteiro (ex. Campinas) NÃO estiver na lista, faça tap em Add a location e depois type da cidade — NÃO fique só scrollando a lista.\n- Connect: só tap se text exato \"Connect\" e tipicamente 180 < y < 850. Se o histórico já tem tap nas mesmas coords e a tela não mudou, scroll ou outro Connect — não repita o mesmo tap.\n- type: digite text de uma vez (campo acao.text obrigatório). Se o histórico mostrar erro de tecla OCR, espere (sleep) e tente type de novo, ou key KEYCODE_BACK e reabra o campo.\n- key: code tipo KEYCODE_BACK / KEYCODE_HOME.\n- sleep: ms quando a tela parece carregando.\n- done: objetivo cumprido.\n- fail: impossível continuar (motivo claro).\n- Não peça screenshot; decida só com o OCR e o prompt.",
+  "prompt": "Objetivo / roteiro:\nexecute\n\nscreen-robot/roteiros/jornada-comprador.md\n\ncom base nas regras\n- use apenas a lib do screen robot, \n- nao use script em js pra nada, \n- a IA deve extrair, analisar e decidir a cada iteracao\n- nao tire print para analisar a imagem\n- toda interacao entre o dispositivo deve ser exclusivamente feita via interface da lib\n- nao explore nenhum arquivo que nao seja o readme contendo as interfaces da lib\n- faca da forma mais objetiva possivel, seguindo apenas o essencial\n- quando for escrever, escreva tudo de uma vez e só depois analise o resultado se está correto\n- nao utilize nenhum comando adb, todos os comandos devem ser provenientes exclusivamente da interface\n- nao utilize eventos de ui stable, apenas extract e espere se o extract apontar que esta carregando e tente noamente ate encontrar o proximo passo\n- nao utilize tap da lib calculando o x e o y de cada tcla do keybpard,mas injetando o texto diretamente via adb\n- nao altere nenhum arquivo, apenas execute o fluxo\n\nOCR atual (JSON):\n[{\"text\":\"4:43\",\"x\":96,\"y\":24},{\"text\":\"回\",\"x\":156,\"y\":24},{\"text\":\"in\",\"x\":198,\"y\":23},{\"text\":\"Vale\",\"x\":160,\"y\":87},{\"text\":\"Home\",\"x\":46,\"y\":168},{\"text\":\"About\",\"x\":139,\"y\":167},{\"text\":\"Posts\",\"x\":231,\"y\":168},{\"text\":\"Jobs\",\"x\":317,\"y\":168},{\"text\":\"Life\",\"x\":394,\"y\":168},{\"text\":\"People\",\"x\":478,\"y\":168},{\"text\":\"Highlights\",\"x\":87,\"y\":263},{\"text\":\"5,425employeeswork inBelo\",\"x\":176,\"y\":349},{\"text\":\"Horizonte\",\"x\":71,\"y\":376},{\"text\":\"+99\",\"x\":377,\"y\":438},{\"text\":\"Allan, Diogo, Thiago,Fabiana, Roberta, and\",\"x\":216,\"y\":504},{\"text\":\"5,420more\",\"x\":71,\"y\":527},{\"text\":\"996 decision makers on Sales Navigator\",\"x\":235,\"y\":634},{\"text\":\"66+\",\"x\":377,\"y\":697},{\"text\":\"You're missing out on Decision Makers in Sales\",\"x\":243,\"y\":761},{\"text\":\"Navigator.\",\"x\":70,\"y\":785},{\"text\":\"TrySalesNavigator for R$O\",\"x\":271,\"y\":835}]\n\nDefina a próxima ação.",
+  "response": "{\n  \"resumo\": \"A tela exibe a página da empresa Vale no LinkedIn. As abas superiores mostram Home, About, Posts, Jobs, Life e People. Na jornada de comprador, é comum navegar até a aba People para encontrar pessoas relevantes.\",\n  \"elementos\": [\n    { \"label\": \"Vale\", \"tipo\": \"text\", \"x\": 160, \"y\": 87 },\n    { \"label\": \"Home\", \"tipo\": \"chip\", \"x\": 46, \"y\": 168 },\n    { \"label\": \"About\", \"tipo\": \"chip\", \"x\": 139, \"y\": 167 },\n    { \"label\": \"Posts\", \"tipo\": \"chip\", \"x\": 231, \"y\": 168 },\n    { \"label\": \"Jobs\", \"tipo\": \"chip\", \"x\": 317, \"y\": 168 },\n    { \"label\": \"Life\", \"tipo\": \"chip\", \"x\": 394, \"y\": 168 },\n    { \"label\": \"People\", \"tipo\": \"chip\", \"x\": 478, \"y\": 168 }\n  ],\n  \"acao\": {\n    \"type\": \"tap\",\n    \"x\": 478,\n    \"y\": 168,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"Clicar na aba People para localizar profissionais da área de compras na empresa Vale.\"\n  }\n}",
+  "roteiro": "execute\n\nscreen-robot/roteiros/jornada-comprador.md\n\ncom base nas regras\n- use apenas a lib do screen robot, \n- nao use script em js pra nada, \n- a IA deve extrair, analisar e decidir a cada iteracao\n- nao tire print para analisar a imagem\n- toda interacao entre o dispositivo deve ser exclusivamente feita via interface da lib\n- nao explore nenhum arquivo que nao seja o readme contendo as interfaces da lib\n- faca da forma mais objetiva possivel, seguindo apenas o essencial\n- quando for escrever, escreva tudo de uma vez e só depois analise o resultado se está correto\n- nao utilize nenhum comando adb, todos os comandos devem ser provenientes exclusivamente da interface\n- nao utilize eventos de ui stable, apenas extract e espere se o extract apontar que esta carregando e tente noamente ate encontrar o proximo passo\n- nao utilize tap da lib calculando o x e o y de cada tcla do keybpard,mas injetando o texto diretamente via adb\n- nao altere nenhum arquivo, apenas execute o fluxo\n",
+  "usage": {
+    "promptTokenCount": 1266,
+    "candidatesTokenCount": 370,
+    "totalTokenCount": 1636,
+    "promptTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 1266
+      }
+    ],
+    "serviceTier": "standard"
+  }
+}

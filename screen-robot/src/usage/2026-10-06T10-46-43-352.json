@@ -1,0 +1,133 @@
+{
+  "run": "2026-10-06T10-46-23-251",
+  "step": 8,
+  "at": "2026-10-06T10:46:43.352Z",
+  "serial": "emulator-5554",
+  "engine": "macos-vision",
+  "model": "gemini-3.5-flash-lite",
+  "ok": true,
+  "acao": {
+    "type": "scroll",
+    "x": null,
+    "y": null,
+    "direction": "down",
+    "text": null,
+    "code": null,
+    "ms": null,
+    "motivo": "Role para baixo para exibir mais mensagens para atingir a contagem de 10 emails."
+  },
+  "resumo": "O Gmail está aberto na aba Social, mostrando alguns emails. O objetivo é rolar para baixo até ver 10 mensagens e listá-las.",
+  "elementos": [
+    {
+      "label": "Linkedln",
+      "tipo": "card",
+      "x": 165,
+      "y": 190
+    },
+    {
+      "label": "Tinder 4",
+      "tipo": "card",
+      "x": 165,
+      "y": 369
+    },
+    {
+      "label": "Google",
+      "tipo": "card",
+      "x": 162,
+      "y": 548
+    },
+    {
+      "label": "Google Play",
+      "tipo": "card",
+      "x": 190,
+      "y": 690
+    },
+    {
+      "label": "Google",
+      "tipo": "card",
+      "x": 159,
+      "y": 831
+    }
+  ],
+  "attempt": 1,
+  "round": 1,
+  "ms": 1397,
+  "promptChars": 1351,
+  "systemChars": 2310,
+  "input": {
+    "system": "Você opera um smartphone Android olhando só a lista OCR da tela (textos + coordenadas x,y na escala do device).\n\nResponda APENAS JSON válido (sem markdown) no formato:\n{\n  \"resumo\": \"2-4 frases do que tem na tela\",\n  \"elementos\": [{ \"label\": \"...\", \"tipo\": \"button|chip|card|text\", \"x\": 0, \"y\": 0 }],\n  \"acao\": {\n    \"type\": \"tap|scroll|type|key|sleep|done|fail\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"...\"\n  }\n}\n\nRegras:\n- Coords de tap = mesma escala do OCR (device). Não invente scale.\n- tap: use x,y de um item OCR existente (centro do texto alvo).\n- scroll: direction down|up|left|right quando o próximo alvo não está visível.\n- Se o histórico mostrar vários scrolls com o mesmo OCR (tela não mudou), NÃO scroll de novo: mude de estratégia (tap em outro elemento, type, key BACK).\n- Home / Settings (AVD Nexus Launcher):\n  - OCR com \"Notifications\" / \"Clear all\" / \"AndroidSetup\" = shade aberto → key KEYCODE_BACK ou KEYCODE_HOME (NÃO scroll).\n  - Tela inicial (só hora/data, sem apps) → scroll direction=down abre a gaveta. scroll up reabre o shade — evite.\n  - EXCEÇÃO: se o histórico recente tem tap com y<120 (Search/campo), OCR só com hora NÃO é home — é teclado cobrindo o app. PROIBIDO scroll (swipe digita lixo no campo, ex. \"ty\"). Faça type do texto do roteiro ou KEYCODE_BACK.\n  - Texto \"Settings\" no OCR → tap nessas coords. done só com Settings aberto (Search settings / Network / Apps / Battery).\n- Filtro de localização LinkedIn: se OCR tiver \"Add a location\" / \"Add alocation\" e a cidade alvo do roteiro (ex. Campinas) NÃO estiver na lista, faça tap em Add a location e depois type da cidade — NÃO fique só scrollando a lista.\n- Connect: só tap se text exato \"Connect\" e tipicamente 180 < y < 850. Se o histórico já tem tap nas mesmas coords e a tela não mudou, scroll ou outro Connect — não repita o mesmo tap.\n- type: digite text de uma vez (campo acao.text obrigatório). Se o histórico mostrar erro de tecla OCR, espere (sleep) e tente type de novo, ou key KEYCODE_BACK e reabra o campo.\n- key: code tipo KEYCODE_BACK / KEYCODE_HOME.\n- sleep: ms quando a tela parece carregando.\n- done: objetivo cumprido.\n- fail: impossível continuar (motivo claro).\n- Não peça screenshot; decida só com o OCR e o prompt.",
+    "prompt": "Objetivo / roteiro:\nabra o gmail, role para baixo ate aparecerem as primeiras 10 mensagens e  e liste os 10 primeiros emails e me liste\n\nOCR atual (JSON):\n[{\"text\":\"7:46\",\"x\":84,\"y\":27},{\"text\":\"ty it's you.\",\"x\":271,\"y\":16},{\"text\":\"Social\",\"x\":155,\"y\":85},{\"text\":\"Linkedln - _ Someone at ..\",\"x\":265,\"y\":122},{\"text\":\"Linkedln\",\"x\":165,\"y\":190},{\"text\":\"Ana, your pin is 486240. Please C...\",\"x\":282,\"y\":225},{\"text\":\"Copy code: 486240\",\"x\":240,\"y\":278},{\"text\":\"1 new\",\"x\":472,\"y\":103},{\"text\":\"Sep 21\",\"x\":476,\"y\":193},{\"text\":\"Tinder 4\",\"x\":165,\"y\":369},{\"text\":\"Let's get you verified\",\"x\":217,\"y\":403},{\"text\":\"Copy code: 404091\",\"x\":238,\"y\":452},{\"text\":\"Sep 20\",\"x\":473,\"y\":371},{\"text\":\"G\",\"x\":68,\"y\":563},{\"text\":\"Google\",\"x\":162,\"y\":548},{\"text\":\"v Código, conclua a configura...\",\"x\":290,\"y\":580},{\"text\":\"Concluir configuração →E\",\"x\":237,\"y\":611},{\"text\":\"Sep 20 •\",\"x\":461,\"y\":549},{\"text\":\"...\",\"x\":453,\"y\":613},{\"text\":\"G\",\"x\":65,\"y\":701},{\"text\":\"Google Play\",\"x\":190,\"y\":690},{\"text\":\"Sep 20\",\"x\":449,\"y\":691},{\"text\":\"Suas novas configurações de p...\",\"x\":285,\"y\":721},{\"text\":\"Olá, Código, Agora que você adici... W\",\"x\":308,\"y\":751},{\"text\":\"G\",\"x\":64,\"y\":841},{\"text\":\"Google\",\"x\":159,\"y\":831},{\"text\":\"Alerta de segurança\",\"x\":216,\"y\":864},{\"text\":\"Novo login no Asus ZenFone Max...\",\"x\":280,\"y\":894}]\n\nDefina a próxima ação.",
+    "body": {
+      "contents": [
+        {
+          "role": "user",
+          "parts": [
+            {
+              "text": "Objetivo / roteiro:\nabra o gmail, role para baixo ate aparecerem as primeiras 10 mensagens e  e liste os 10 primeiros emails e me liste\n\nOCR atual (JSON):\n[{\"text\":\"7:46\",\"x\":84,\"y\":27},{\"text\":\"ty it's you.\",\"x\":271,\"y\":16},{\"text\":\"Social\",\"x\":155,\"y\":85},{\"text\":\"Linkedln - _ Someone at ..\",\"x\":265,\"y\":122},{\"text\":\"Linkedln\",\"x\":165,\"y\":190},{\"text\":\"Ana, your pin is 486240. Please C...\",\"x\":282,\"y\":225},{\"text\":\"Copy code: 486240\",\"x\":240,\"y\":278},{\"text\":\"1 new\",\"x\":472,\"y\":103},{\"text\":\"Sep 21\",\"x\":476,\"y\":193},{\"text\":\"Tinder 4\",\"x\":165,\"y\":369},{\"text\":\"Let's get you verified\",\"x\":217,\"y\":403},{\"text\":\"Copy code: 404091\",\"x\":238,\"y\":452},{\"text\":\"Sep 20\",\"x\":473,\"y\":371},{\"text\":\"G\",\"x\":68,\"y\":563},{\"text\":\"Google\",\"x\":162,\"y\":548},{\"text\":\"v Código, conclua a configura...\",\"x\":290,\"y\":580},{\"text\":\"Concluir configuração →E\",\"x\":237,\"y\":611},{\"text\":\"Sep 20 •\",\"x\":461,\"y\":549},{\"text\":\"...\",\"x\":453,\"y\":613},{\"text\":\"G\",\"x\":65,\"y\":701},{\"text\":\"Google Play\",\"x\":190,\"y\":690},{\"text\":\"Sep 20\",\"x\":449,\"y\":691},{\"text\":\"Suas novas configurações de p...\",\"x\":285,\"y\":721},{\"text\":\"Olá, Código, Agora que você adici... W\",\"x\":308,\"y\":751},{\"text\":\"G\",\"x\":64,\"y\":841},{\"text\":\"Google\",\"x\":159,\"y\":831},{\"text\":\"Alerta de segurança\",\"x\":216,\"y\":864},{\"text\":\"Novo login no Asus ZenFone Max...\",\"x\":280,\"y\":894}]\n\nDefina a próxima ação."
+            }
+          ]
+        }
+      ],
+      "generationConfig": {
+        "responseMimeType": "application/json"
+      },
+      "systemInstruction": {
+        "parts": [
+          {
+            "text": "Você opera um smartphone Android olhando só a lista OCR da tela (textos + coordenadas x,y na escala do device).\n\nResponda APENAS JSON válido (sem markdown) no formato:\n{\n  \"resumo\": \"2-4 frases do que tem na tela\",\n  \"elementos\": [{ \"label\": \"...\", \"tipo\": \"button|chip|card|text\", \"x\": 0, \"y\": 0 }],\n  \"acao\": {\n    \"type\": \"tap|scroll|type|key|sleep|done|fail\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"...\"\n  }\n}\n\nRegras:\n- Coords de tap = mesma escala do OCR (device). Não invente scale.\n- tap: use x,y de um item OCR existente (centro do texto alvo).\n- scroll: direction down|up|left|right quando o próximo alvo não está visível.\n- Se o histórico mostrar vários scrolls com o mesmo OCR (tela não mudou), NÃO scroll de novo: mude de estratégia (tap em outro elemento, type, key BACK).\n- Home / Settings (AVD Nexus Launcher):\n  - OCR com \"Notifications\" / \"Clear all\" / \"AndroidSetup\" = shade aberto → key KEYCODE_BACK ou KEYCODE_HOME (NÃO scroll).\n  - Tela inicial (só hora/data, sem apps) → scroll direction=down abre a gaveta. scroll up reabre o shade — evite.\n  - EXCEÇÃO: se o histórico recente tem tap com y<120 (Search/campo), OCR só com hora NÃO é home — é teclado cobrindo o app. PROIBIDO scroll (swipe digita lixo no campo, ex. \"ty\"). Faça type do texto do roteiro ou KEYCODE_BACK.\n  - Texto \"Settings\" no OCR → tap nessas coords. done só com Settings aberto (Search settings / Network / Apps / Battery).\n- Filtro de localização LinkedIn: se OCR tiver \"Add a location\" / \"Add alocation\" e a cidade alvo do roteiro (ex. Campinas) NÃO estiver na lista, faça tap em Add a location e depois type da cidade — NÃO fique só scrollando a lista.\n- Connect: só tap se text exato \"Connect\" e tipicamente 180 < y < 850. Se o histórico já tem tap nas mesmas coords e a tela não mudou, scroll ou outro Connect — não repita o mesmo tap.\n- type: digite text de uma vez (campo acao.text obrigatório). Se o histórico mostrar erro de tecla OCR, espere (sleep) e tente type de novo, ou key KEYCODE_BACK e reabra o campo.\n- key: code tipo KEYCODE_BACK / KEYCODE_HOME.\n- sleep: ms quando a tela parece carregando.\n- done: objetivo cumprido.\n- fail: impossível continuar (motivo claro).\n- Não peça screenshot; decida só com o OCR e o prompt."
+          }
+        ]
+      }
+    }
+  },
+  "output": {
+    "text": "{\n  \"resumo\": \"O Gmail está aberto na aba Social, mostrando alguns emails. O objetivo é rolar para baixo até ver 10 mensagens e listá-las.\",\n  \"elementos\": [\n    { \"label\": \"Linkedln\", \"tipo\": \"card\", \"x\": 165, \"y\": 190 },\n    { \"label\": \"Tinder 4\", \"tipo\": \"card\", \"x\": 165, \"y\": 369 },\n    { \"label\": \"Google\", \"tipo\": \"card\", \"x\": 162, \"y\": 548 },\n    { \"label\": \"Google Play\", \"tipo\": \"card\", \"x\": 190, \"y\": 690 },\n    { \"label\": \"Google\", \"tipo\": \"card\", \"x\": 159, \"y\": 831 }\n  ],\n  \"acao\": {\n    \"type\": \"scroll\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": \"down\",\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"Role para baixo para exibir mais mensagens para atingir a contagem de 10 emails.\"\n  }\n}",
+    "raw": {
+      "candidates": [
+        {
+          "content": {
+            "parts": [
+              {
+                "text": "{\n  \"resumo\": \"O Gmail está aberto na aba Social, mostrando alguns emails. O objetivo é rolar para baixo até ver 10 mensagens e listá-las.\",\n  \"elementos\": [\n    { \"label\": \"Linkedln\", \"tipo\": \"card\", \"x\": 165, \"y\": 190 },\n    { \"label\": \"Tinder 4\", \"tipo\": \"card\", \"x\": 165, \"y\": 369 },\n    { \"label\": \"Google\", \"tipo\": \"card\", \"x\": 162, \"y\": 548 },\n    { \"label\": \"Google Play\", \"tipo\": \"card\", \"x\": 190, \"y\": 690 },\n    { \"label\": \"Google\", \"tipo\": \"card\", \"x\": 159, \"y\": 831 }\n  ],\n  \"acao\": {\n    \"type\": \"scroll\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": \"down\",\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"Role para baixo para exibir mais mensagens para atingir a contagem de 10 emails.\"\n  }\n}",
+                "thoughtSignature": "EmAKXgFpFH0TY/ZD3U3+dYX4ohuoxIqGOsN3rrCRJDKztCFQKiPvhNALUBhVnal0XOwo2jmEILmWPj6sgOBXFqYEATSlvvIudew4UXsw1vjtpd4em76i6YUJosRPcV60KRw="
+              }
+            ],
+            "role": "model"
+          },
+          "finishReason": "STOP",
+          "index": 0
+        }
+      ],
+      "usageMetadata": {
+        "promptTokenCount": 1296,
+        "candidatesTokenCount": 297,
+        "totalTokenCount": 1593,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 1296
+          }
+        ],
+        "serviceTier": "standard"
+      },
+      "modelVersion": "gemini-3.5-flash-lite",
+      "responseId": "ktHEapPMCYfRz7IPuY2cCQ"
+    }
+  },
+  "system": "Você opera um smartphone Android olhando só a lista OCR da tela (textos + coordenadas x,y na escala do device).\n\nResponda APENAS JSON válido (sem markdown) no formato:\n{\n  \"resumo\": \"2-4 frases do que tem na tela\",\n  \"elementos\": [{ \"label\": \"...\", \"tipo\": \"button|chip|card|text\", \"x\": 0, \"y\": 0 }],\n  \"acao\": {\n    \"type\": \"tap|scroll|type|key|sleep|done|fail\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"...\"\n  }\n}\n\nRegras:\n- Coords de tap = mesma escala do OCR (device). Não invente scale.\n- tap: use x,y de um item OCR existente (centro do texto alvo).\n- scroll: direction down|up|left|right quando o próximo alvo não está visível.\n- Se o histórico mostrar vários scrolls com o mesmo OCR (tela não mudou), NÃO scroll de novo: mude de estratégia (tap em outro elemento, type, key BACK).\n- Home / Settings (AVD Nexus Launcher):\n  - OCR com \"Notifications\" / \"Clear all\" / \"AndroidSetup\" = shade aberto → key KEYCODE_BACK ou KEYCODE_HOME (NÃO scroll).\n  - Tela inicial (só hora/data, sem apps) → scroll direction=down abre a gaveta. scroll up reabre o shade — evite.\n  - EXCEÇÃO: se o histórico recente tem tap com y<120 (Search/campo), OCR só com hora NÃO é home — é teclado cobrindo o app. PROIBIDO scroll (swipe digita lixo no campo, ex. \"ty\"). Faça type do texto do roteiro ou KEYCODE_BACK.\n  - Texto \"Settings\" no OCR → tap nessas coords. done só com Settings aberto (Search settings / Network / Apps / Battery).\n- Filtro de localização LinkedIn: se OCR tiver \"Add a location\" / \"Add alocation\" e a cidade alvo do roteiro (ex. Campinas) NÃO estiver na lista, faça tap em Add a location e depois type da cidade — NÃO fique só scrollando a lista.\n- Connect: só tap se text exato \"Connect\" e tipicamente 180 < y < 850. Se o histórico já tem tap nas mesmas coords e a tela não mudou, scroll ou outro Connect — não repita o mesmo tap.\n- type: digite text de uma vez (campo acao.text obrigatório). Se o histórico mostrar erro de tecla OCR, espere (sleep) e tente type de novo, ou key KEYCODE_BACK e reabra o campo.\n- key: code tipo KEYCODE_BACK / KEYCODE_HOME.\n- sleep: ms quando a tela parece carregando.\n- done: objetivo cumprido.\n- fail: impossível continuar (motivo claro).\n- Não peça screenshot; decida só com o OCR e o prompt.",
+  "prompt": "Objetivo / roteiro:\nabra o gmail, role para baixo ate aparecerem as primeiras 10 mensagens e  e liste os 10 primeiros emails e me liste\n\nOCR atual (JSON):\n[{\"text\":\"7:46\",\"x\":84,\"y\":27},{\"text\":\"ty it's you.\",\"x\":271,\"y\":16},{\"text\":\"Social\",\"x\":155,\"y\":85},{\"text\":\"Linkedln - _ Someone at ..\",\"x\":265,\"y\":122},{\"text\":\"Linkedln\",\"x\":165,\"y\":190},{\"text\":\"Ana, your pin is 486240. Please C...\",\"x\":282,\"y\":225},{\"text\":\"Copy code: 486240\",\"x\":240,\"y\":278},{\"text\":\"1 new\",\"x\":472,\"y\":103},{\"text\":\"Sep 21\",\"x\":476,\"y\":193},{\"text\":\"Tinder 4\",\"x\":165,\"y\":369},{\"text\":\"Let's get you verified\",\"x\":217,\"y\":403},{\"text\":\"Copy code: 404091\",\"x\":238,\"y\":452},{\"text\":\"Sep 20\",\"x\":473,\"y\":371},{\"text\":\"G\",\"x\":68,\"y\":563},{\"text\":\"Google\",\"x\":162,\"y\":548},{\"text\":\"v Código, conclua a configura...\",\"x\":290,\"y\":580},{\"text\":\"Concluir configuração →E\",\"x\":237,\"y\":611},{\"text\":\"Sep 20 •\",\"x\":461,\"y\":549},{\"text\":\"...\",\"x\":453,\"y\":613},{\"text\":\"G\",\"x\":65,\"y\":701},{\"text\":\"Google Play\",\"x\":190,\"y\":690},{\"text\":\"Sep 20\",\"x\":449,\"y\":691},{\"text\":\"Suas novas configurações de p...\",\"x\":285,\"y\":721},{\"text\":\"Olá, Código, Agora que você adici... W\",\"x\":308,\"y\":751},{\"text\":\"G\",\"x\":64,\"y\":841},{\"text\":\"Google\",\"x\":159,\"y\":831},{\"text\":\"Alerta de segurança\",\"x\":216,\"y\":864},{\"text\":\"Novo login no Asus ZenFone Max...\",\"x\":280,\"y\":894}]\n\nDefina a próxima ação.",
+  "response": "{\n  \"resumo\": \"O Gmail está aberto na aba Social, mostrando alguns emails. O objetivo é rolar para baixo até ver 10 mensagens e listá-las.\",\n  \"elementos\": [\n    { \"label\": \"Linkedln\", \"tipo\": \"card\", \"x\": 165, \"y\": 190 },\n    { \"label\": \"Tinder 4\", \"tipo\": \"card\", \"x\": 165, \"y\": 369 },\n    { \"label\": \"Google\", \"tipo\": \"card\", \"x\": 162, \"y\": 548 },\n    { \"label\": \"Google Play\", \"tipo\": \"card\", \"x\": 190, \"y\": 690 },\n    { \"label\": \"Google\", \"tipo\": \"card\", \"x\": 159, \"y\": 831 }\n  ],\n  \"acao\": {\n    \"type\": \"scroll\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": \"down\",\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"Role para baixo para exibir mais mensagens para atingir a contagem de 10 emails.\"\n  }\n}",
+  "roteiro": "abra o gmail, role para baixo ate aparecerem as primeiras 10 mensagens e  e liste os 10 primeiros emails e me liste",
+  "usage": {
+    "promptTokenCount": 1296,
+    "candidatesTokenCount": 297,
+    "totalTokenCount": 1593,
+    "promptTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 1296
+      }
+    ],
+    "serviceTier": "standard"
+  }
+}

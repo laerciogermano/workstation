@@ -1,0 +1,121 @@
+{
+  "run": "2026-10-05T18-13-05-491",
+  "step": 1,
+  "at": "2026-10-05T18:13:18.184Z",
+  "serial": "emulator-5554",
+  "engine": "rapidocr",
+  "model": "gemini-3.5-flash-lite",
+  "ok": true,
+  "acao": {
+    "type": "scroll",
+    "x": null,
+    "y": null,
+    "direction": "down",
+    "text": null,
+    "code": null,
+    "ms": null,
+    "motivo": "Abrir a gaveta de aplicativos a partir da tela inicial para localizar o app Settings."
+  },
+  "resumo": "A tela inicial exibe apenas a hora e a data (Monday, Oct 5), indicando que a gaveta de aplicativos ainda não foi aberta.",
+  "elementos": [
+    {
+      "label": "3:13",
+      "tipo": "text",
+      "x": 90,
+      "y": 24
+    },
+    {
+      "label": "in",
+      "tipo": "text",
+      "x": 134,
+      "y": 25
+    },
+    {
+      "label": "Monday, 0ct 5",
+      "tipo": "text",
+      "x": 272,
+      "y": 118
+    }
+  ],
+  "attempt": 1,
+  "round": 1,
+  "ms": 11651,
+  "promptChars": 912,
+  "systemChars": 2082,
+  "input": {
+    "system": "Você opera um smartphone Android olhando só a lista OCR da tela (textos + coordenadas x,y na escala do device).\n\nResponda APENAS JSON válido (sem markdown) no formato:\n{\n  \"resumo\": \"2-4 frases do que tem na tela\",\n  \"elementos\": [{ \"label\": \"...\", \"tipo\": \"button|chip|card|text\", \"x\": 0, \"y\": 0 }],\n  \"acao\": {\n    \"type\": \"tap|scroll|type|key|sleep|done|fail\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"...\"\n  }\n}\n\nRegras:\n- Coords de tap = mesma escala do OCR (device). Não invente scale.\n- tap: use x,y de um item OCR existente (centro do texto alvo).\n- scroll: direction down|up|left|right quando o próximo alvo não está visível.\n- Se o histórico mostrar vários scrolls com o mesmo OCR (tela não mudou), NÃO scroll de novo: mude de estratégia (tap em outro elemento, type, key BACK).\n- Home / Settings (AVD Nexus Launcher):\n  - OCR com \"Notifications\" / \"Clear all\" / \"AndroidSetup\" = shade aberto → key KEYCODE_BACK ou KEYCODE_HOME (NÃO scroll).\n  - Tela inicial (só hora/data, sem apps) → scroll direction=down abre a gaveta. scroll up reabre o shade — evite.\n  - Texto \"Settings\" no OCR → tap nessas coords. done só com Settings aberto (Search settings / Network / Apps / Battery).\n- Filtro de localização LinkedIn: se OCR tiver \"Add a location\" / \"Add alocation\" e a cidade alvo do roteiro (ex. Campinas) NÃO estiver na lista, faça tap em Add a location e depois type da cidade — NÃO fique só scrollando a lista.\n- Connect: só tap se text exato \"Connect\" e tipicamente 180 < y < 850. Se o histórico já tem tap nas mesmas coords e a tela não mudou, scroll ou outro Connect — não repita o mesmo tap.\n- type: digite text de uma vez (campo acao.text obrigatório). Se o histórico mostrar erro de tecla OCR, espere (sleep) e tente type de novo, ou key KEYCODE_BACK e reabra o campo.\n- key: code tipo KEYCODE_BACK / KEYCODE_HOME.\n- sleep: ms quando a tela parece carregando.\n- done: objetivo cumprido.\n- fail: impossível continuar (motivo claro).\n- Não peça screenshot; decida só com o OCR e o prompt.",
+    "prompt": "Objetivo / roteiro:\nObjetivo: abrir o app Settings (Configurações) do Android.\n\nPassos (nessa ordem; não invente atalho):\n1) Se o OCR tiver \"Notifications\" / \"Clear all\" / \"AndroidSetup\" = painel de notificações. Faça key KEYCODE_BACK (ou KEYCODE_HOME). NÃO scroll.\n2) Na tela inicial (OCR só com hora/data, sem lista de apps): faça scroll direction=down UMA vez para abrir a gaveta de apps. NÃO use scroll up (abre notificações de novo).\n3) Quando aparecer o texto \"Settings\" no OCR: tap nas coords x,y desse texto.\n4) Quando a tela de Settings abrir (OCR com Search settings / Network / Apps / Battery etc.): done.\n\nRegras:\n- Nunca scroll up neste fluxo.\n- Não fique repetindo HOME+scroll se Settings já estiver no OCR — só tap.\n- done só depois de Settings aberto.\n\nOCR atual (JSON):\n[{\"text\":\"3:13\",\"x\":90,\"y\":24},{\"text\":\"in\",\"x\":134,\"y\":25},{\"text\":\"Monday, 0ct 5\",\"x\":272,\"y\":118}]\n\nDefina a próxima ação.",
+    "body": {
+      "contents": [
+        {
+          "role": "user",
+          "parts": [
+            {
+              "text": "Objetivo / roteiro:\nObjetivo: abrir o app Settings (Configurações) do Android.\n\nPassos (nessa ordem; não invente atalho):\n1) Se o OCR tiver \"Notifications\" / \"Clear all\" / \"AndroidSetup\" = painel de notificações. Faça key KEYCODE_BACK (ou KEYCODE_HOME). NÃO scroll.\n2) Na tela inicial (OCR só com hora/data, sem lista de apps): faça scroll direction=down UMA vez para abrir a gaveta de apps. NÃO use scroll up (abre notificações de novo).\n3) Quando aparecer o texto \"Settings\" no OCR: tap nas coords x,y desse texto.\n4) Quando a tela de Settings abrir (OCR com Search settings / Network / Apps / Battery etc.): done.\n\nRegras:\n- Nunca scroll up neste fluxo.\n- Não fique repetindo HOME+scroll se Settings já estiver no OCR — só tap.\n- done só depois de Settings aberto.\n\nOCR atual (JSON):\n[{\"text\":\"3:13\",\"x\":90,\"y\":24},{\"text\":\"in\",\"x\":134,\"y\":25},{\"text\":\"Monday, 0ct 5\",\"x\":272,\"y\":118}]\n\nDefina a próxima ação."
+            }
+          ]
+        }
+      ],
+      "generationConfig": {
+        "responseMimeType": "application/json"
+      },
+      "systemInstruction": {
+        "parts": [
+          {
+            "text": "Você opera um smartphone Android olhando só a lista OCR da tela (textos + coordenadas x,y na escala do device).\n\nResponda APENAS JSON válido (sem markdown) no formato:\n{\n  \"resumo\": \"2-4 frases do que tem na tela\",\n  \"elementos\": [{ \"label\": \"...\", \"tipo\": \"button|chip|card|text\", \"x\": 0, \"y\": 0 }],\n  \"acao\": {\n    \"type\": \"tap|scroll|type|key|sleep|done|fail\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"...\"\n  }\n}\n\nRegras:\n- Coords de tap = mesma escala do OCR (device). Não invente scale.\n- tap: use x,y de um item OCR existente (centro do texto alvo).\n- scroll: direction down|up|left|right quando o próximo alvo não está visível.\n- Se o histórico mostrar vários scrolls com o mesmo OCR (tela não mudou), NÃO scroll de novo: mude de estratégia (tap em outro elemento, type, key BACK).\n- Home / Settings (AVD Nexus Launcher):\n  - OCR com \"Notifications\" / \"Clear all\" / \"AndroidSetup\" = shade aberto → key KEYCODE_BACK ou KEYCODE_HOME (NÃO scroll).\n  - Tela inicial (só hora/data, sem apps) → scroll direction=down abre a gaveta. scroll up reabre o shade — evite.\n  - Texto \"Settings\" no OCR → tap nessas coords. done só com Settings aberto (Search settings / Network / Apps / Battery).\n- Filtro de localização LinkedIn: se OCR tiver \"Add a location\" / \"Add alocation\" e a cidade alvo do roteiro (ex. Campinas) NÃO estiver na lista, faça tap em Add a location e depois type da cidade — NÃO fique só scrollando a lista.\n- Connect: só tap se text exato \"Connect\" e tipicamente 180 < y < 850. Se o histórico já tem tap nas mesmas coords e a tela não mudou, scroll ou outro Connect — não repita o mesmo tap.\n- type: digite text de uma vez (campo acao.text obrigatório). Se o histórico mostrar erro de tecla OCR, espere (sleep) e tente type de novo, ou key KEYCODE_BACK e reabra o campo.\n- key: code tipo KEYCODE_BACK / KEYCODE_HOME.\n- sleep: ms quando a tela parece carregando.\n- done: objetivo cumprido.\n- fail: impossível continuar (motivo claro).\n- Não peça screenshot; decida só com o OCR e o prompt."
+          }
+        ]
+      }
+    }
+  },
+  "output": {
+    "text": "{\n  \"resumo\": \"A tela inicial exibe apenas a hora e a data (Monday, Oct 5), indicando que a gaveta de aplicativos ainda não foi aberta.\",\n  \"elementos\": [\n    {\n      \"label\": \"3:13\",\n      \"tipo\": \"text\",\n      \"x\": 90,\n      \"y\": 24\n    },\n    {\n      \"label\": \"in\",\n      \"tipo\": \"text\",\n      \"x\": 134,\n      \"y\": 25\n    },\n    {\n      \"label\": \"Monday, 0ct 5\",\n      \"tipo\": \"text\",\n      \"x\": 272,\n      \"y\": 118\n    }\n  ],\n  \"acao\": {\n    \"type\": \"scroll\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": \"down\",\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"Abrir a gaveta de aplicativos a partir da tela inicial para localizar o app Settings.\"\n  }\n}",
+    "raw": {
+      "candidates": [
+        {
+          "content": {
+            "parts": [
+              {
+                "text": "{\n  \"resumo\": \"A tela inicial exibe apenas a hora e a data (Monday, Oct 5), indicando que a gaveta de aplicativos ainda não foi aberta.\",\n  \"elementos\": [\n    {\n      \"label\": \"3:13\",\n      \"tipo\": \"text\",\n      \"x\": 90,\n      \"y\": 24\n    },\n    {\n      \"label\": \"in\",\n      \"tipo\": \"text\",\n      \"x\": 134,\n      \"y\": 25\n    },\n    {\n      \"label\": \"Monday, 0ct 5\",\n      \"tipo\": \"text\",\n      \"x\": 272,\n      \"y\": 118\n    }\n  ],\n  \"acao\": {\n    \"type\": \"scroll\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": \"down\",\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"Abrir a gaveta de aplicativos a partir da tela inicial para localizar o app Settings.\"\n  }\n}",
+                "thoughtSignature": "EmAKXgFpFH0TtZgLFl9tTi/+SB6a+jTm9C1CJqm4Mbe4aCQCBd2kmVL6WD1WhbU+IOnUEwcfM36Q4aKljVzT2c7ix2Dc5VP+wiev1ngrt7TtM7wa8QcKZfQE14RH0A/YPu0="
+              }
+            ],
+            "role": "model"
+          },
+          "finishReason": "STOP",
+          "index": 0
+        }
+      ],
+      "usageMetadata": {
+        "promptTokenCount": 902,
+        "candidatesTokenCount": 265,
+        "totalTokenCount": 1167,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 902
+          }
+        ],
+        "serviceTier": "standard"
+      },
+      "modelVersion": "gemini-3.5-flash-lite",
+      "responseId": "s-jDauQLjJzPsg_FzOmJCg"
+    }
+  },
+  "system": "Você opera um smartphone Android olhando só a lista OCR da tela (textos + coordenadas x,y na escala do device).\n\nResponda APENAS JSON válido (sem markdown) no formato:\n{\n  \"resumo\": \"2-4 frases do que tem na tela\",\n  \"elementos\": [{ \"label\": \"...\", \"tipo\": \"button|chip|card|text\", \"x\": 0, \"y\": 0 }],\n  \"acao\": {\n    \"type\": \"tap|scroll|type|key|sleep|done|fail\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"...\"\n  }\n}\n\nRegras:\n- Coords de tap = mesma escala do OCR (device). Não invente scale.\n- tap: use x,y de um item OCR existente (centro do texto alvo).\n- scroll: direction down|up|left|right quando o próximo alvo não está visível.\n- Se o histórico mostrar vários scrolls com o mesmo OCR (tela não mudou), NÃO scroll de novo: mude de estratégia (tap em outro elemento, type, key BACK).\n- Home / Settings (AVD Nexus Launcher):\n  - OCR com \"Notifications\" / \"Clear all\" / \"AndroidSetup\" = shade aberto → key KEYCODE_BACK ou KEYCODE_HOME (NÃO scroll).\n  - Tela inicial (só hora/data, sem apps) → scroll direction=down abre a gaveta. scroll up reabre o shade — evite.\n  - Texto \"Settings\" no OCR → tap nessas coords. done só com Settings aberto (Search settings / Network / Apps / Battery).\n- Filtro de localização LinkedIn: se OCR tiver \"Add a location\" / \"Add alocation\" e a cidade alvo do roteiro (ex. Campinas) NÃO estiver na lista, faça tap em Add a location e depois type da cidade — NÃO fique só scrollando a lista.\n- Connect: só tap se text exato \"Connect\" e tipicamente 180 < y < 850. Se o histórico já tem tap nas mesmas coords e a tela não mudou, scroll ou outro Connect — não repita o mesmo tap.\n- type: digite text de uma vez (campo acao.text obrigatório). Se o histórico mostrar erro de tecla OCR, espere (sleep) e tente type de novo, ou key KEYCODE_BACK e reabra o campo.\n- key: code tipo KEYCODE_BACK / KEYCODE_HOME.\n- sleep: ms quando a tela parece carregando.\n- done: objetivo cumprido.\n- fail: impossível continuar (motivo claro).\n- Não peça screenshot; decida só com o OCR e o prompt.",
+  "prompt": "Objetivo / roteiro:\nObjetivo: abrir o app Settings (Configurações) do Android.\n\nPassos (nessa ordem; não invente atalho):\n1) Se o OCR tiver \"Notifications\" / \"Clear all\" / \"AndroidSetup\" = painel de notificações. Faça key KEYCODE_BACK (ou KEYCODE_HOME). NÃO scroll.\n2) Na tela inicial (OCR só com hora/data, sem lista de apps): faça scroll direction=down UMA vez para abrir a gaveta de apps. NÃO use scroll up (abre notificações de novo).\n3) Quando aparecer o texto \"Settings\" no OCR: tap nas coords x,y desse texto.\n4) Quando a tela de Settings abrir (OCR com Search settings / Network / Apps / Battery etc.): done.\n\nRegras:\n- Nunca scroll up neste fluxo.\n- Não fique repetindo HOME+scroll se Settings já estiver no OCR — só tap.\n- done só depois de Settings aberto.\n\nOCR atual (JSON):\n[{\"text\":\"3:13\",\"x\":90,\"y\":24},{\"text\":\"in\",\"x\":134,\"y\":25},{\"text\":\"Monday, 0ct 5\",\"x\":272,\"y\":118}]\n\nDefina a próxima ação.",
+  "response": "{\n  \"resumo\": \"A tela inicial exibe apenas a hora e a data (Monday, Oct 5), indicando que a gaveta de aplicativos ainda não foi aberta.\",\n  \"elementos\": [\n    {\n      \"label\": \"3:13\",\n      \"tipo\": \"text\",\n      \"x\": 90,\n      \"y\": 24\n    },\n    {\n      \"label\": \"in\",\n      \"tipo\": \"text\",\n      \"x\": 134,\n      \"y\": 25\n    },\n    {\n      \"label\": \"Monday, 0ct 5\",\n      \"tipo\": \"text\",\n      \"x\": 272,\n      \"y\": 118\n    }\n  ],\n  \"acao\": {\n    \"type\": \"scroll\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": \"down\",\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"Abrir a gaveta de aplicativos a partir da tela inicial para localizar o app Settings.\"\n  }\n}",
+  "roteiro": "Objetivo: abrir o app Settings (Configurações) do Android.\n\nPassos (nessa ordem; não invente atalho):\n1) Se o OCR tiver \"Notifications\" / \"Clear all\" / \"AndroidSetup\" = painel de notificações. Faça key KEYCODE_BACK (ou KEYCODE_HOME). NÃO scroll.\n2) Na tela inicial (OCR só com hora/data, sem lista de apps): faça scroll direction=down UMA vez para abrir a gaveta de apps. NÃO use scroll up (abre notificações de novo).\n3) Quando aparecer o texto \"Settings\" no OCR: tap nas coords x,y desse texto.\n4) Quando a tela de Settings abrir (OCR com Search settings / Network / Apps / Battery etc.): done.\n\nRegras:\n- Nunca scroll up neste fluxo.\n- Não fique repetindo HOME+scroll se Settings já estiver no OCR — só tap.\n- done só depois de Settings aberto.\n",
+  "usage": {
+    "promptTokenCount": 902,
+    "candidatesTokenCount": 265,
+    "totalTokenCount": 1167,
+    "promptTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 902
+      }
+    ],
+    "serviceTier": "standard"
+  }
+}

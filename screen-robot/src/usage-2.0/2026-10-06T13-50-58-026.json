@@ -1,0 +1,55 @@
+{
+  "entrada": {
+    "model": "gpt-4o-mini",
+    "messages": [
+      {
+        "role": "system",
+        "content": "Você opera um smartphone Android olhando só a lista extract da tela (text + icon, x,y na escala do device).\n\nResponda APENAS JSON válido (sem markdown) no formato:\n{\n  \"resumo\": \"2-4 frases do que tem na tela\",\n  \"elementos\": [{ \"label\": \"...\", \"tipo\": \"button|chip|card|text\", \"x\": 0, \"y\": 0 }],\n  \"acao\": {\n    \"type\": \"tap|scroll|type|key|sleep|done|fail\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"...\"\n  }\n}\n\nRegras (só SO/launcher e o contrato de ação; nomes de app, botões e done vêm do roteiro do usuário):\n- Coords de tap = mesma escala da lista (device). Não invente scale. Tap só em x,y de um item existente (type text ou type icon); NUNCA 0,0. icon não tem text — tap no centro do visual (avatar, nav, glyph).\n- elementos[].label e acao x,y: copie text,x,y de UM item do extract. PROIBIDO trocar o text do item (label ≠ string do OCR naquele ponto).\n- scroll: direction down|up|left|right quando o próximo alvo do roteiro não está visível.\n- Se o histórico mostrar vários scrolls com o mesmo OCR (tela não mudou), NÃO scroll de novo: mude de estratégia (tap em outro elemento, type, key BACK).\n- Painel de notificações / overlay de setup do sistema (ex. Notifications, Clear all, AndroidSetup) SEM UI do app (abas, busca, conteúdo do roteiro) → KEYCODE_BACK. NÃO scroll.\n- UI do app visível (barra de abas, campo de busca, textos do roteiro) → o app está aberto. Ignore tokens de overlay de sistema misturados. PROIBIDO KEYCODE_HOME.\n- Tela de carregamento (logo / poucos tokens, sem lista de apps) → sleep. PROIBIDO scroll (abre a gaveta por cima) e HOME.\n- Launcher: OCR só hora/data, sem nomes de apps e sem UI do app, e o histórico NÃO tem tap recente em campo no topo (y baixo) → scroll down abre a gaveta. scroll up reabre o shade — evite.\n- Histórico com tap em y baixo (campo no topo) + OCR só hora/data = teclado cobrindo o app, NÃO é launcher. PROIBIDO scroll (swipe injeta lixo no campo). type do texto do roteiro ou KEYCODE_BACK 1× — sem loop de BACK.\n- Alvos, filtros e CTAs: só o que o roteiro pedir e que existir na lista (texto OCR ou ícone). Sem o alvo → scroll ou sleep; não chute coords. Não repita tap nas mesmas coords se a tela não mudou.\n- type: digite text de uma vez (campo acao.text obrigatório). Se o histórico mostrar erro de tecla OCR, sleep e tente type de novo, ou KEYCODE_BACK e reabra o campo.\n- key: KEYCODE_BACK / KEYCODE_HOME. sleep: ms se loading. done / fail conforme o roteiro.\n- Não peça screenshot; decida só com a lista extract (text+icon) e o prompt do usuário."
+      },
+      {
+        "role": "user",
+        "content": "Objetivo / roteiro:\nObjetivo: do ZERO abrir o LinkedIn → Search \"comprador\" → People → filtro cidade Campinas → Connect+Skip até limite. 1 ação/turno. Nunca pule fase. Nunca done no Skip.\n\nTap: x,y = item da lista OCR com text. NUNCA 0,0. Sem o texto no OCR → não tap. elementos[].label = o text do OCR nesse x,y — PROIBIDO relabelar (ex. OCR \"Comprador\" → label \"Connect\").\n\nOrdem obrigatória: FASE 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7. Sem FASE 6 concluída (chip Campinas FORA de y<120) → PROIBIDO Connect.\n\nInterruptos (antes de qualquer fase):\n- \"Add a note\" / Skip visível → tap Skip. Não done. Não Connect.\n- Shade (Notifications / Clear all / AndroidSetup) SEM tab bar → KEYCODE_BACK. Sem tap. Sem scroll.\n- weekly limit / invitation not sent / try again next week → done limite_convites.\n- Message / InMail / Premium / About / Experience (perfil aberto, SEM lista 1st+Connect) → KEYCODE_BACK.\n- Withdraw invitation → tap Cancel.\n- OCR <15 hits, histórico já tem Search/People, SEM gaveta Chrome+Calendar → sleep 1500. Não é home. PROIBIDO scroll down. PROIBIDO tap 161,260.\n\nFASE 0 — ABRIR LINKEDIN (primeiro passo; ANTES de Search/type/Connect)\n0) Histórico recente = tap no texto LinkedIn/Linkedln → NÃO é home. OCR sem Chrome/Calendar = app abrindo ou perfil. PROIBIDO scroll down. sleep 2000 (loading) OU KEYCODE_BACK (perfil). NUNCA retap coords antigas.\n1) Home = OCR só hora/data, SEM LinkedIn, SEM Chrome, SEM Calendar, SEM Search, SEM tab bar, E histórico SEM tap LinkedIn → scroll down 1×. PROIBIDO tap. PROIBIDO 0,0. PROIBIDO sleep. PROIBIDO scroll up.\n2) Já na gaveta = Chrome + Calendar + \"LinkedIn\" ou \"Linkedln\" visíveis NESTE extract → tap EXATO no texto LinkedIn/Linkedln (x,y deste hit). NÃO scroll. NÃO tap Chrome/Calendar/Settings. NÃO tap coords de um passo antigo se o texto não está neste OCR.\n3) Histórico tem tap LinkedIn E este OCR NÃO tem Chrome+Calendar → o app JÁ abriu ou está carregando. PROIBIDO scroll. PROIBIDO tap 471,368. Ação: sleep 2000.\n4) Splash / loading (\"in\" no centro, poucos tokens, SEM tab bar, SEM Chrome) → sleep 2000. Sem scroll. Sem HOME. Sem tap.\n5) Home + Network + Jobs (y≥850) OU ícones na faixa y≥900 = LinkedIn ABERTO → FASE 1. PROIBIDO scroll down. PROIBIDO tap \"LinkedIn\".\n6) Perfil (About / Experience / headline SEM chips 1st/2nd y~150 SEM Search) → KEYCODE_BACK. Sem scroll. Sem Connect.\n\nFASE 1 — SEARCH (só com LinkedIn aberto)\n- Texto Search ou QSearch com y<120 → tap Search. PROIBIDO scroll. PROIBIDO type. PROIBIDO Connect.\n- Tab bar SEM Search y<120 → sleep 1500. PROIBIDO scroll down.\n- Show translation / Following / feed SEM Search y<120 → scroll up 1×. PROIBIDO scroll down.\n- Grow / Catch up / Invitations + Search y<120 → tap Search.\n\nFASE 2 — TYPE \"comprador\" (só depois do tap Search)\n- Teclado (q,w,e) SEM \"Add a location\"/\"Add alocation\"/Australia/UnitedStates → type \"comprador\". Sem scroll. Sem tap. PROIBIDO type \"Campinas\".\n- Campo y<120 é Campinas (ou outra cidade) SEM sheet Add location SEM chip Location da lista → busca errada: type \"comprador\". Não é filtro. PROIBIDO Connect.\n- OCR só hora/data DEPOIS de tap Search → type \"comprador\" (teclado cobriu). PROIBIDO scroll.\n\nFASE 3 — FECHAR TECLADO\n- Campo y<120 = comprador + \"Show all results\" já visível → NÃO BACK. Vá FASE 4.\n- Campo y<120 = comprador + teclado SEM Show all → KEYCODE_BACK 1×. Sem type. Sem tap.\n\nFASE 4 — SHOW ALL\n- Campo y<120 = comprador + \"Show all results\"/\"Showallresults\" (y<800, não tab bar) → tap Show all. Não Show translation. Não Post/Jobs y≥850.\n\nFASE 5 — PEOPLE\n- People + Posts + Jobs y<180 SEM chips 1st/2nd → tap People y<180. Não y≥200.\n- 1st/2nd já visível (y~150) → NÃO tap People. Vá FASE 6.\n\nFASE 6 — FILTRO CAMPINAS (próxima ação depois de People; Campinas no Search y<120 NÃO conta; cidade no card NÃO conta)\n- 1st + 2nd + 3rd+ + Location/Locatior (mesmo OCR \"Locatior\") e SEM chip Campinas na barra (y~150, fora do campo y<120) → tap Location/Locatior @x,y desse texto. ÚNICA ação. PROIBIDO Connect. PROIBIDO tap \"Comprador\" (é cargo). PROIBIDO tap nome (Heitor/Sabrina/…). PROIBIDO People. Belo Horizonte nos cards = filtro AINDA NÃO aplicado.\n- \"Add a location\"/\"Add alocation\" SEM teclado → tap esse texto.\n- Teclado + Add location + Australia/UnitedStates → type \"Campinas\". Não tap. Não type \"comprador\".\n- Campo y<120 contém Campinas + sugestão Campinas (Sao Paulo/Brazil) no sheet → tap a SUGESTÃO (não o campo).\n- Sugestão destacada + \"Show results\" → tap Show results.\n- \"Filter by\" + All/People/Jobs + Show results → tap People, depois Show results. Sem BACK.\n\nFASE 7 — CONNECT (só lista People COM chip Locations/Campinas na barra y~150, NÃO no campo Search)\n- Só tap se existir hit text EXATO \"Connect\" (não \"Comprador\", não \"Pending\", não \"Message\", não nome). Use x,y DESSE hit (costuma x>400). 180<y<850.\n- Sem hit \"Connect\" → scroll up curto (~180).\n- \"No more results\"/\"End of results\" → done fim_lista.\n\nPROIBIDO: HOME com Search/tab bar; done no Skip; type \"Campinas\" no Search; type \"comprador\" no filtro de cidade; Connect sem chip Campinas na barra; tap \"Comprador\"/nome no lugar de Connect; tap 0,0; tap sem o texto no OCR; scroll down no LinkedIn aberto; pular FASE 0 ou FASE 6.\n\ndone: N Connect+Skip + motivo (limite_convites / fim_lista / filter_campinas_failed).\n\nOCR atual (JSON):\n[{\"type\":\"text\",\"text\":\"10:50@\",\"x\":148,\"y\":24},{\"type\":\"text\",\"text\":\"Tuesday, Oct 6\",\"x\":272,\"y\":117},{\"type\":\"text\",\"text\":\"OOo\",\"x\":260,\"y\":713},{\"type\":\"text\",\"text\":\"CEE\",\"x\":269,\"y\":824},{\"type\":\"text\",\"text\":\"|\",\"x\":160,\"y\":924},{\"type\":\"text\",\"text\":\"@®\",\"x\":268,\"y\":926}]\n\nDefina a próxima ação."
+      }
+    ],
+    "temperature": 0,
+    "response_format": {
+      "type": "json_object"
+    }
+  },
+  "resposta": {
+    "id": "chatcmpl-EVzrDHgdWk0V3qgdj5WTqRYmOEW0X",
+    "object": "chat.completion",
+    "created": 1791294655,
+    "model": "gpt-4o-mini-2024-07-18",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\n  \"resumo\": \"A tela atual mostra apenas a hora e a data, sem a interface do LinkedIn. Portanto, é necessário abrir a gaveta de aplicativos para acessar o LinkedIn.\",\n  \"elementos\": [\n    { \"label\": \"10:50@\", \"tipo\": \"text\", \"x\": 148, \"y\": 24 },\n    { \"label\": \"Tuesday, Oct 6\", \"tipo\": \"text\", \"x\": 272, \"y\": 117 }\n  ],\n  \"acao\": {\n    \"type\": \"scroll\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": \"down\",\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"Abrir a gaveta de aplicativos para acessar o LinkedIn.\"\n  }\n}",
+          "refusal": null,
+          "annotations": []
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 2423,
+      "completion_tokens": 178,
+      "total_tokens": 2601,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "audio_tokens": 0
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0,
+        "audio_tokens": 0,
+        "accepted_prediction_tokens": 0,
+        "rejected_prediction_tokens": 0
+      }
+    },
+    "service_tier": "default",
+    "system_fingerprint": "fp_93b4cfa3f5"
+  }
+}

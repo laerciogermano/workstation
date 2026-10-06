@@ -1,0 +1,121 @@
+{
+  "run": "2026-10-05T18-19-34-949",
+  "step": 6,
+  "at": "2026-10-05T18:22:35.425Z",
+  "serial": "emulator-5554",
+  "engine": "rapidocr",
+  "model": "gemini-3.5-flash-lite",
+  "ok": true,
+  "acao": {
+    "type": "tap",
+    "x": 269,
+    "y": 457,
+    "direction": null,
+    "text": null,
+    "code": null,
+    "ms": null,
+    "motivo": "Conceder permissão para o Instagram usar a câmera para prosseguir com o uso do aplicativo."
+  },
+  "resumo": "Apareceu uma caixa de permissão solicitando acesso para o Instagram tirar fotos e gravar vídeos. O usuário deve conceder a permissão tocando em 'While using the app'.",
+  "elementos": [
+    {
+      "label": "While using the app",
+      "tipo": "button",
+      "x": 269,
+      "y": 457
+    },
+    {
+      "label": "Only this time",
+      "tipo": "button",
+      "x": 270,
+      "y": 542
+    },
+    {
+      "label": "Deny",
+      "tipo": "button",
+      "x": 269,
+      "y": 629
+    }
+  ],
+  "attempt": 1,
+  "round": 1,
+  "ms": 1431,
+  "promptChars": 1462,
+  "systemChars": 2082,
+  "input": {
+    "system": "Você opera um smartphone Android olhando só a lista OCR da tela (textos + coordenadas x,y na escala do device).\n\nResponda APENAS JSON válido (sem markdown) no formato:\n{\n  \"resumo\": \"2-4 frases do que tem na tela\",\n  \"elementos\": [{ \"label\": \"...\", \"tipo\": \"button|chip|card|text\", \"x\": 0, \"y\": 0 }],\n  \"acao\": {\n    \"type\": \"tap|scroll|type|key|sleep|done|fail\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"...\"\n  }\n}\n\nRegras:\n- Coords de tap = mesma escala do OCR (device). Não invente scale.\n- tap: use x,y de um item OCR existente (centro do texto alvo).\n- scroll: direction down|up|left|right quando o próximo alvo não está visível.\n- Se o histórico mostrar vários scrolls com o mesmo OCR (tela não mudou), NÃO scroll de novo: mude de estratégia (tap em outro elemento, type, key BACK).\n- Home / Settings (AVD Nexus Launcher):\n  - OCR com \"Notifications\" / \"Clear all\" / \"AndroidSetup\" = shade aberto → key KEYCODE_BACK ou KEYCODE_HOME (NÃO scroll).\n  - Tela inicial (só hora/data, sem apps) → scroll direction=down abre a gaveta. scroll up reabre o shade — evite.\n  - Texto \"Settings\" no OCR → tap nessas coords. done só com Settings aberto (Search settings / Network / Apps / Battery).\n- Filtro de localização LinkedIn: se OCR tiver \"Add a location\" / \"Add alocation\" e a cidade alvo do roteiro (ex. Campinas) NÃO estiver na lista, faça tap em Add a location e depois type da cidade — NÃO fique só scrollando a lista.\n- Connect: só tap se text exato \"Connect\" e tipicamente 180 < y < 850. Se o histórico já tem tap nas mesmas coords e a tela não mudou, scroll ou outro Connect — não repita o mesmo tap.\n- type: digite text de uma vez (campo acao.text obrigatório). Se o histórico mostrar erro de tecla OCR, espere (sleep) e tente type de novo, ou key KEYCODE_BACK e reabra o campo.\n- key: code tipo KEYCODE_BACK / KEYCODE_HOME.\n- sleep: ms quando a tela parece carregando.\n- done: objetivo cumprido.\n- fail: impossível continuar (motivo claro).\n- Não peça screenshot; decida só com o OCR e o prompt.",
+    "prompt": "Objetivo / roteiro:\nabra o instagram e envie uma mensagem oi para o laercio germano\n\nHistórico recente (últimos 5/12):\n[{\"step\":1,\"type\":\"scroll\",\"motivo\":\"Abrir a gaveta de aplicativos para localizar e abrir o Instagram.\",\"x\":null,\"y\":null,\"direction\":\"down\",\"text\":null,\"code\":null,\"resultado\":\"scroll down\"},{\"step\":2,\"type\":\"tap\",\"motivo\":\"Abrir o aplicativo do Instagram.\",\"x\":371,\"y\":370,\"direction\":null,\"text\":null,\"code\":null,\"resultado\":\"tap 371,370\"},{\"step\":3,\"type\":\"scroll\",\"motivo\":\"Rolar para baixo para encontrar e abrir o aplicativo do Instagram.\",\"x\":null,\"y\":null,\"direction\":\"down\",\"text\":null,\"code\":null,\"resultado\":\"scroll down\"},{\"step\":4,\"type\":\"tap\",\"motivo\":\"Tocar no ícone do Instagram para abrir o aplicativo conforme o objetivo.\",\"x\":371,\"y\":370,\"direction\":null,\"text\":null,\"code\":null,\"resultado\":\"tap 371,370\"},{\"step\":5,\"type\":\"scroll\",\"motivo\":\"Deslizar para a direita para acessar a aba de mensagens diretas (Direct) no Instagram e buscar o contato Laercio Germano.\",\"x\":null,\"y\":null,\"direction\":\"right\",\"text\":null,\"code\":null,\"resultado\":\"scroll right\"}]\n\nOCR atual (JSON):\n[{\"text\":\"Allow Instagram to take\",\"x\":270,\"y\":321},{\"text\":\"pictures and record video?\",\"x\":270,\"y\":356},{\"text\":\"While using the app\",\"x\":269,\"y\":457},{\"text\":\"Only this time\",\"x\":270,\"y\":542},{\"text\":\"Deny\",\"x\":269,\"y\":629},{\"text\":\"POST\",\"x\":183,\"y\":841},{\"text\":\"STORY\",\"x\":269,\"y\":842},{\"text\":\"REEL\",\"x\":365,\"y\":842}]\n\nDefina a próxima ação.",
+    "body": {
+      "contents": [
+        {
+          "role": "user",
+          "parts": [
+            {
+              "text": "Objetivo / roteiro:\nabra o instagram e envie uma mensagem oi para o laercio germano\n\nHistórico recente (últimos 5/12):\n[{\"step\":1,\"type\":\"scroll\",\"motivo\":\"Abrir a gaveta de aplicativos para localizar e abrir o Instagram.\",\"x\":null,\"y\":null,\"direction\":\"down\",\"text\":null,\"code\":null,\"resultado\":\"scroll down\"},{\"step\":2,\"type\":\"tap\",\"motivo\":\"Abrir o aplicativo do Instagram.\",\"x\":371,\"y\":370,\"direction\":null,\"text\":null,\"code\":null,\"resultado\":\"tap 371,370\"},{\"step\":3,\"type\":\"scroll\",\"motivo\":\"Rolar para baixo para encontrar e abrir o aplicativo do Instagram.\",\"x\":null,\"y\":null,\"direction\":\"down\",\"text\":null,\"code\":null,\"resultado\":\"scroll down\"},{\"step\":4,\"type\":\"tap\",\"motivo\":\"Tocar no ícone do Instagram para abrir o aplicativo conforme o objetivo.\",\"x\":371,\"y\":370,\"direction\":null,\"text\":null,\"code\":null,\"resultado\":\"tap 371,370\"},{\"step\":5,\"type\":\"scroll\",\"motivo\":\"Deslizar para a direita para acessar a aba de mensagens diretas (Direct) no Instagram e buscar o contato Laercio Germano.\",\"x\":null,\"y\":null,\"direction\":\"right\",\"text\":null,\"code\":null,\"resultado\":\"scroll right\"}]\n\nOCR atual (JSON):\n[{\"text\":\"Allow Instagram to take\",\"x\":270,\"y\":321},{\"text\":\"pictures and record video?\",\"x\":270,\"y\":356},{\"text\":\"While using the app\",\"x\":269,\"y\":457},{\"text\":\"Only this time\",\"x\":270,\"y\":542},{\"text\":\"Deny\",\"x\":269,\"y\":629},{\"text\":\"POST\",\"x\":183,\"y\":841},{\"text\":\"STORY\",\"x\":269,\"y\":842},{\"text\":\"REEL\",\"x\":365,\"y\":842}]\n\nDefina a próxima ação."
+            }
+          ]
+        }
+      ],
+      "generationConfig": {
+        "responseMimeType": "application/json"
+      },
+      "systemInstruction": {
+        "parts": [
+          {
+            "text": "Você opera um smartphone Android olhando só a lista OCR da tela (textos + coordenadas x,y na escala do device).\n\nResponda APENAS JSON válido (sem markdown) no formato:\n{\n  \"resumo\": \"2-4 frases do que tem na tela\",\n  \"elementos\": [{ \"label\": \"...\", \"tipo\": \"button|chip|card|text\", \"x\": 0, \"y\": 0 }],\n  \"acao\": {\n    \"type\": \"tap|scroll|type|key|sleep|done|fail\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"...\"\n  }\n}\n\nRegras:\n- Coords de tap = mesma escala do OCR (device). Não invente scale.\n- tap: use x,y de um item OCR existente (centro do texto alvo).\n- scroll: direction down|up|left|right quando o próximo alvo não está visível.\n- Se o histórico mostrar vários scrolls com o mesmo OCR (tela não mudou), NÃO scroll de novo: mude de estratégia (tap em outro elemento, type, key BACK).\n- Home / Settings (AVD Nexus Launcher):\n  - OCR com \"Notifications\" / \"Clear all\" / \"AndroidSetup\" = shade aberto → key KEYCODE_BACK ou KEYCODE_HOME (NÃO scroll).\n  - Tela inicial (só hora/data, sem apps) → scroll direction=down abre a gaveta. scroll up reabre o shade — evite.\n  - Texto \"Settings\" no OCR → tap nessas coords. done só com Settings aberto (Search settings / Network / Apps / Battery).\n- Filtro de localização LinkedIn: se OCR tiver \"Add a location\" / \"Add alocation\" e a cidade alvo do roteiro (ex. Campinas) NÃO estiver na lista, faça tap em Add a location e depois type da cidade — NÃO fique só scrollando a lista.\n- Connect: só tap se text exato \"Connect\" e tipicamente 180 < y < 850. Se o histórico já tem tap nas mesmas coords e a tela não mudou, scroll ou outro Connect — não repita o mesmo tap.\n- type: digite text de uma vez (campo acao.text obrigatório). Se o histórico mostrar erro de tecla OCR, espere (sleep) e tente type de novo, ou key KEYCODE_BACK e reabra o campo.\n- key: code tipo KEYCODE_BACK / KEYCODE_HOME.\n- sleep: ms quando a tela parece carregando.\n- done: objetivo cumprido.\n- fail: impossível continuar (motivo claro).\n- Não peça screenshot; decida só com o OCR e o prompt."
+          }
+        ]
+      }
+    }
+  },
+  "output": {
+    "text": "{\n  \"resumo\": \"Apareceu uma caixa de permissão solicitando acesso para o Instagram tirar fotos e gravar vídeos. O usuário deve conceder a permissão tocando em 'While using the app'.\",\n  \"elementos\": [\n    {\n      \"label\": \"While using the app\",\n      \"tipo\": \"button\",\n      \"x\": 269,\n      \"y\": 457\n    },\n    {\n      \"label\": \"Only this time\",\n      \"tipo\": \"button\",\n      \"x\": 270,\n      \"y\": 542\n    },\n    {\n      \"label\": \"Deny\",\n      \"tipo\": \"button\",\n      \"x\": 269,\n      \"y\": 629\n    }\n  ],\n  \"acao\": {\n    \"type\": \"tap\",\n    \"x\": 269,\n    \"y\": 457,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"Conceder permissão para o Instagram usar a câmera para prosseguir com o uso do aplicativo.\"\n  }\n}",
+    "raw": {
+      "candidates": [
+        {
+          "content": {
+            "parts": [
+              {
+                "text": "{\n  \"resumo\": \"Apareceu uma caixa de permissão solicitando acesso para o Instagram tirar fotos e gravar vídeos. O usuário deve conceder a permissão tocando em 'While using the app'.\",\n  \"elementos\": [\n    {\n      \"label\": \"While using the app\",\n      \"tipo\": \"button\",\n      \"x\": 269,\n      \"y\": 457\n    },\n    {\n      \"label\": \"Only this time\",\n      \"tipo\": \"button\",\n      \"x\": 270,\n      \"y\": 542\n    },\n    {\n      \"label\": \"Deny\",\n      \"tipo\": \"button\",\n      \"x\": 269,\n      \"y\": 629\n    }\n  ],\n  \"acao\": {\n    \"type\": \"tap\",\n    \"x\": 269,\n    \"y\": 457,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"Conceder permissão para o Instagram usar a câmera para prosseguir com o uso do aplicativo.\"\n  }\n}",
+                "thoughtSignature": "EmAKXgFpFH0TpNXF8UK0e1BDtrcgN8JmG44nVmjSyvd4rqoAd9SJ/zERbSQEKDEFlUkj8sWqekqfJFPHGcF4pUZbvtMQlDc7mAjlEo1LwEFn79YHUdkaxOOzXh7DANiDyYY="
+              }
+            ],
+            "role": "model"
+          },
+          "finishReason": "STOP",
+          "index": 0
+        }
+      ],
+      "usageMetadata": {
+        "promptTokenCount": 1106,
+        "candidatesTokenCount": 279,
+        "totalTokenCount": 1385,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 1106
+          }
+        ],
+        "serviceTier": "standard"
+      },
+      "modelVersion": "gemini-3.5-flash-lite",
+      "responseId": "6urDatb8DZusz7IPksGl4Qs"
+    }
+  },
+  "system": "Você opera um smartphone Android olhando só a lista OCR da tela (textos + coordenadas x,y na escala do device).\n\nResponda APENAS JSON válido (sem markdown) no formato:\n{\n  \"resumo\": \"2-4 frases do que tem na tela\",\n  \"elementos\": [{ \"label\": \"...\", \"tipo\": \"button|chip|card|text\", \"x\": 0, \"y\": 0 }],\n  \"acao\": {\n    \"type\": \"tap|scroll|type|key|sleep|done|fail\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"...\"\n  }\n}\n\nRegras:\n- Coords de tap = mesma escala do OCR (device). Não invente scale.\n- tap: use x,y de um item OCR existente (centro do texto alvo).\n- scroll: direction down|up|left|right quando o próximo alvo não está visível.\n- Se o histórico mostrar vários scrolls com o mesmo OCR (tela não mudou), NÃO scroll de novo: mude de estratégia (tap em outro elemento, type, key BACK).\n- Home / Settings (AVD Nexus Launcher):\n  - OCR com \"Notifications\" / \"Clear all\" / \"AndroidSetup\" = shade aberto → key KEYCODE_BACK ou KEYCODE_HOME (NÃO scroll).\n  - Tela inicial (só hora/data, sem apps) → scroll direction=down abre a gaveta. scroll up reabre o shade — evite.\n  - Texto \"Settings\" no OCR → tap nessas coords. done só com Settings aberto (Search settings / Network / Apps / Battery).\n- Filtro de localização LinkedIn: se OCR tiver \"Add a location\" / \"Add alocation\" e a cidade alvo do roteiro (ex. Campinas) NÃO estiver na lista, faça tap em Add a location e depois type da cidade — NÃO fique só scrollando a lista.\n- Connect: só tap se text exato \"Connect\" e tipicamente 180 < y < 850. Se o histórico já tem tap nas mesmas coords e a tela não mudou, scroll ou outro Connect — não repita o mesmo tap.\n- type: digite text de uma vez (campo acao.text obrigatório). Se o histórico mostrar erro de tecla OCR, espere (sleep) e tente type de novo, ou key KEYCODE_BACK e reabra o campo.\n- key: code tipo KEYCODE_BACK / KEYCODE_HOME.\n- sleep: ms quando a tela parece carregando.\n- done: objetivo cumprido.\n- fail: impossível continuar (motivo claro).\n- Não peça screenshot; decida só com o OCR e o prompt.",
+  "prompt": "Objetivo / roteiro:\nabra o instagram e envie uma mensagem oi para o laercio germano\n\nHistórico recente (últimos 5/12):\n[{\"step\":1,\"type\":\"scroll\",\"motivo\":\"Abrir a gaveta de aplicativos para localizar e abrir o Instagram.\",\"x\":null,\"y\":null,\"direction\":\"down\",\"text\":null,\"code\":null,\"resultado\":\"scroll down\"},{\"step\":2,\"type\":\"tap\",\"motivo\":\"Abrir o aplicativo do Instagram.\",\"x\":371,\"y\":370,\"direction\":null,\"text\":null,\"code\":null,\"resultado\":\"tap 371,370\"},{\"step\":3,\"type\":\"scroll\",\"motivo\":\"Rolar para baixo para encontrar e abrir o aplicativo do Instagram.\",\"x\":null,\"y\":null,\"direction\":\"down\",\"text\":null,\"code\":null,\"resultado\":\"scroll down\"},{\"step\":4,\"type\":\"tap\",\"motivo\":\"Tocar no ícone do Instagram para abrir o aplicativo conforme o objetivo.\",\"x\":371,\"y\":370,\"direction\":null,\"text\":null,\"code\":null,\"resultado\":\"tap 371,370\"},{\"step\":5,\"type\":\"scroll\",\"motivo\":\"Deslizar para a direita para acessar a aba de mensagens diretas (Direct) no Instagram e buscar o contato Laercio Germano.\",\"x\":null,\"y\":null,\"direction\":\"right\",\"text\":null,\"code\":null,\"resultado\":\"scroll right\"}]\n\nOCR atual (JSON):\n[{\"text\":\"Allow Instagram to take\",\"x\":270,\"y\":321},{\"text\":\"pictures and record video?\",\"x\":270,\"y\":356},{\"text\":\"While using the app\",\"x\":269,\"y\":457},{\"text\":\"Only this time\",\"x\":270,\"y\":542},{\"text\":\"Deny\",\"x\":269,\"y\":629},{\"text\":\"POST\",\"x\":183,\"y\":841},{\"text\":\"STORY\",\"x\":269,\"y\":842},{\"text\":\"REEL\",\"x\":365,\"y\":842}]\n\nDefina a próxima ação.",
+  "response": "{\n  \"resumo\": \"Apareceu uma caixa de permissão solicitando acesso para o Instagram tirar fotos e gravar vídeos. O usuário deve conceder a permissão tocando em 'While using the app'.\",\n  \"elementos\": [\n    {\n      \"label\": \"While using the app\",\n      \"tipo\": \"button\",\n      \"x\": 269,\n      \"y\": 457\n    },\n    {\n      \"label\": \"Only this time\",\n      \"tipo\": \"button\",\n      \"x\": 270,\n      \"y\": 542\n    },\n    {\n      \"label\": \"Deny\",\n      \"tipo\": \"button\",\n      \"x\": 269,\n      \"y\": 629\n    }\n  ],\n  \"acao\": {\n    \"type\": \"tap\",\n    \"x\": 269,\n    \"y\": 457,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"Conceder permissão para o Instagram usar a câmera para prosseguir com o uso do aplicativo.\"\n  }\n}",
+  "roteiro": "abra o instagram e envie uma mensagem oi para o laercio germano",
+  "usage": {
+    "promptTokenCount": 1106,
+    "candidatesTokenCount": 279,
+    "totalTokenCount": 1385,
+    "promptTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 1106
+      }
+    ],
+    "serviceTier": "standard"
+  }
+}

@@ -1,0 +1,133 @@
+{
+  "run": "2026-10-06T10-44-48-142",
+  "step": 8,
+  "at": "2026-10-06T10:45:14.058Z",
+  "serial": "emulator-5554",
+  "engine": "macos-vision",
+  "model": "gemini-3.5-flash-lite",
+  "ok": true,
+  "acao": {
+    "type": "scroll",
+    "x": null,
+    "y": null,
+    "direction": "down",
+    "text": null,
+    "code": null,
+    "ms": null,
+    "motivo": "Rolando para baixo para visualizar e listar os 10 primeiros emails conforme o objetivo."
+  },
+  "resumo": "A tela exibe o aplicativo do Gmail com vários emails listados, incluindo notificações do ChatGPT e do LinkedIn.",
+  "elementos": [
+    {
+      "label": "ChatGPT",
+      "tipo": "card",
+      "x": 173,
+      "y": 154
+    },
+    {
+      "label": "LinkedIn",
+      "tipo": "card",
+      "x": 163,
+      "y": 297
+    },
+    {
+      "label": "LinkedIn",
+      "tipo": "card",
+      "x": 169,
+      "y": 438
+    },
+    {
+      "label": "LinkedIn 3",
+      "tipo": "card",
+      "x": 180,
+      "y": 580
+    },
+    {
+      "label": "LinkedIn",
+      "tipo": "card",
+      "x": 169,
+      "y": 722
+    }
+  ],
+  "attempt": 1,
+  "round": 1,
+  "ms": 1456,
+  "promptChars": 1445,
+  "systemChars": 2310,
+  "input": {
+    "system": "Você opera um smartphone Android olhando só a lista OCR da tela (textos + coordenadas x,y na escala do device).\n\nResponda APENAS JSON válido (sem markdown) no formato:\n{\n  \"resumo\": \"2-4 frases do que tem na tela\",\n  \"elementos\": [{ \"label\": \"...\", \"tipo\": \"button|chip|card|text\", \"x\": 0, \"y\": 0 }],\n  \"acao\": {\n    \"type\": \"tap|scroll|type|key|sleep|done|fail\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"...\"\n  }\n}\n\nRegras:\n- Coords de tap = mesma escala do OCR (device). Não invente scale.\n- tap: use x,y de um item OCR existente (centro do texto alvo).\n- scroll: direction down|up|left|right quando o próximo alvo não está visível.\n- Se o histórico mostrar vários scrolls com o mesmo OCR (tela não mudou), NÃO scroll de novo: mude de estratégia (tap em outro elemento, type, key BACK).\n- Home / Settings (AVD Nexus Launcher):\n  - OCR com \"Notifications\" / \"Clear all\" / \"AndroidSetup\" = shade aberto → key KEYCODE_BACK ou KEYCODE_HOME (NÃO scroll).\n  - Tela inicial (só hora/data, sem apps) → scroll direction=down abre a gaveta. scroll up reabre o shade — evite.\n  - EXCEÇÃO: se o histórico recente tem tap com y<120 (Search/campo), OCR só com hora NÃO é home — é teclado cobrindo o app. PROIBIDO scroll (swipe digita lixo no campo, ex. \"ty\"). Faça type do texto do roteiro ou KEYCODE_BACK.\n  - Texto \"Settings\" no OCR → tap nessas coords. done só com Settings aberto (Search settings / Network / Apps / Battery).\n- Filtro de localização LinkedIn: se OCR tiver \"Add a location\" / \"Add alocation\" e a cidade alvo do roteiro (ex. Campinas) NÃO estiver na lista, faça tap em Add a location e depois type da cidade — NÃO fique só scrollando a lista.\n- Connect: só tap se text exato \"Connect\" e tipicamente 180 < y < 850. Se o histórico já tem tap nas mesmas coords e a tela não mudou, scroll ou outro Connect — não repita o mesmo tap.\n- type: digite text de uma vez (campo acao.text obrigatório). Se o histórico mostrar erro de tecla OCR, espere (sleep) e tente type de novo, ou key KEYCODE_BACK e reabra o campo.\n- key: code tipo KEYCODE_BACK / KEYCODE_HOME.\n- sleep: ms quando a tela parece carregando.\n- done: objetivo cumprido.\n- fail: impossível continuar (motivo claro).\n- Não peça screenshot; decida só com o OCR e o prompt.",
+    "prompt": "Objetivo / roteiro:\nabra o gmail e liste os 10 primeiros emails\n\nOCR atual (JSON):\n[{\"text\":\"9:45\",\"x\":86,\"y\":30},{\"text\":\"ФIND\",\"x\":168,\"y\":20},{\"text\":\"Resuma aocumentos iongos e...\",\"x\":282,\"y\":47},{\"text\":\"Destaque o que vale a pena conf... W\",\"x\":308,\"y\":77},{\"text\":\"ChatGPT\",\"x\":173,\"y\":154},{\"text\":\"Sep 22 •\",\"x\":462,\"y\":158},{\"text\":\"4 novos estilos de imagem para...\",\"x\":287,\"y\":188},{\"text\":\"Redesign de ambiente ou Foto es... W\",\"x\":308,\"y\":217},{\"text\":\"in\",\"x\":65,\"y\":312},{\"text\":\"Linkedln\",\"x\":163,\"y\":297},{\"text\":\"New device registration for Reme...\",\"x\":288,\"y\":331},{\"text\":\"Sep 22\",\"x\":474,\"y\":300},{\"text\":\"in\",\"x\":66,\"y\":457},{\"text\":\"LinkedIn\",\"x\":169,\"y\":438},{\"text\":\"Here's your verification code 3...\",\"x\":285,\"y\":475},{\"text\":\"Please verify it's you.\",\"x\":222,\"y\":505},{\"text\":\"Sep 22 •\",\"x\":462,\"y\":444},{\"text\":\"in\",\"x\":65,\"y\":597},{\"text\":\"LinkedIn 3\",\"x\":180,\"y\":580},{\"text\":\"Sep 22 •\",\"x\":462,\"y\":585},{\"text\":\"Ana, please verify your new de...\",\"x\":284,\"y\":616},{\"text\":\"Ana, please verify your new devic... W\",\"x\":309,\"y\":643},{\"text\":\"in\",\"x\":64,\"y\":740},{\"text\":\"LinkedIn\",\"x\":169,\"y\":722},{\"text\":\"Here's your verification code 7...\",\"x\":284,\"y\":758},{\"text\":\"Please verify it's you.\",\"x\":222,\"y\":789},{\"text\":\"Sep 22 •\",\"x\":461,\"y\":728},{\"text\":\"Social\",\"x\":157,\"y\":856},{\"text\":\"Linkedin\",\"x\":161,\"y\":894},{\"text\":\"1 new\",\"x\":471,\"y\":874},{\"text\":\"Someone ai\",\"x\":328,\"y\":894}]\n\nDefina a próxima ação.",
+    "body": {
+      "contents": [
+        {
+          "role": "user",
+          "parts": [
+            {
+              "text": "Objetivo / roteiro:\nabra o gmail e liste os 10 primeiros emails\n\nOCR atual (JSON):\n[{\"text\":\"9:45\",\"x\":86,\"y\":30},{\"text\":\"ФIND\",\"x\":168,\"y\":20},{\"text\":\"Resuma aocumentos iongos e...\",\"x\":282,\"y\":47},{\"text\":\"Destaque o que vale a pena conf... W\",\"x\":308,\"y\":77},{\"text\":\"ChatGPT\",\"x\":173,\"y\":154},{\"text\":\"Sep 22 •\",\"x\":462,\"y\":158},{\"text\":\"4 novos estilos de imagem para...\",\"x\":287,\"y\":188},{\"text\":\"Redesign de ambiente ou Foto es... W\",\"x\":308,\"y\":217},{\"text\":\"in\",\"x\":65,\"y\":312},{\"text\":\"Linkedln\",\"x\":163,\"y\":297},{\"text\":\"New device registration for Reme...\",\"x\":288,\"y\":331},{\"text\":\"Sep 22\",\"x\":474,\"y\":300},{\"text\":\"in\",\"x\":66,\"y\":457},{\"text\":\"LinkedIn\",\"x\":169,\"y\":438},{\"text\":\"Here's your verification code 3...\",\"x\":285,\"y\":475},{\"text\":\"Please verify it's you.\",\"x\":222,\"y\":505},{\"text\":\"Sep 22 •\",\"x\":462,\"y\":444},{\"text\":\"in\",\"x\":65,\"y\":597},{\"text\":\"LinkedIn 3\",\"x\":180,\"y\":580},{\"text\":\"Sep 22 •\",\"x\":462,\"y\":585},{\"text\":\"Ana, please verify your new de...\",\"x\":284,\"y\":616},{\"text\":\"Ana, please verify your new devic... W\",\"x\":309,\"y\":643},{\"text\":\"in\",\"x\":64,\"y\":740},{\"text\":\"LinkedIn\",\"x\":169,\"y\":722},{\"text\":\"Here's your verification code 7...\",\"x\":284,\"y\":758},{\"text\":\"Please verify it's you.\",\"x\":222,\"y\":789},{\"text\":\"Sep 22 •\",\"x\":461,\"y\":728},{\"text\":\"Social\",\"x\":157,\"y\":856},{\"text\":\"Linkedin\",\"x\":161,\"y\":894},{\"text\":\"1 new\",\"x\":471,\"y\":874},{\"text\":\"Someone ai\",\"x\":328,\"y\":894}]\n\nDefina a próxima ação."
+            }
+          ]
+        }
+      ],
+      "generationConfig": {
+        "responseMimeType": "application/json"
+      },
+      "systemInstruction": {
+        "parts": [
+          {
+            "text": "Você opera um smartphone Android olhando só a lista OCR da tela (textos + coordenadas x,y na escala do device).\n\nResponda APENAS JSON válido (sem markdown) no formato:\n{\n  \"resumo\": \"2-4 frases do que tem na tela\",\n  \"elementos\": [{ \"label\": \"...\", \"tipo\": \"button|chip|card|text\", \"x\": 0, \"y\": 0 }],\n  \"acao\": {\n    \"type\": \"tap|scroll|type|key|sleep|done|fail\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"...\"\n  }\n}\n\nRegras:\n- Coords de tap = mesma escala do OCR (device). Não invente scale.\n- tap: use x,y de um item OCR existente (centro do texto alvo).\n- scroll: direction down|up|left|right quando o próximo alvo não está visível.\n- Se o histórico mostrar vários scrolls com o mesmo OCR (tela não mudou), NÃO scroll de novo: mude de estratégia (tap em outro elemento, type, key BACK).\n- Home / Settings (AVD Nexus Launcher):\n  - OCR com \"Notifications\" / \"Clear all\" / \"AndroidSetup\" = shade aberto → key KEYCODE_BACK ou KEYCODE_HOME (NÃO scroll).\n  - Tela inicial (só hora/data, sem apps) → scroll direction=down abre a gaveta. scroll up reabre o shade — evite.\n  - EXCEÇÃO: se o histórico recente tem tap com y<120 (Search/campo), OCR só com hora NÃO é home — é teclado cobrindo o app. PROIBIDO scroll (swipe digita lixo no campo, ex. \"ty\"). Faça type do texto do roteiro ou KEYCODE_BACK.\n  - Texto \"Settings\" no OCR → tap nessas coords. done só com Settings aberto (Search settings / Network / Apps / Battery).\n- Filtro de localização LinkedIn: se OCR tiver \"Add a location\" / \"Add alocation\" e a cidade alvo do roteiro (ex. Campinas) NÃO estiver na lista, faça tap em Add a location e depois type da cidade — NÃO fique só scrollando a lista.\n- Connect: só tap se text exato \"Connect\" e tipicamente 180 < y < 850. Se o histórico já tem tap nas mesmas coords e a tela não mudou, scroll ou outro Connect — não repita o mesmo tap.\n- type: digite text de uma vez (campo acao.text obrigatório). Se o histórico mostrar erro de tecla OCR, espere (sleep) e tente type de novo, ou key KEYCODE_BACK e reabra o campo.\n- key: code tipo KEYCODE_BACK / KEYCODE_HOME.\n- sleep: ms quando a tela parece carregando.\n- done: objetivo cumprido.\n- fail: impossível continuar (motivo claro).\n- Não peça screenshot; decida só com o OCR e o prompt."
+          }
+        ]
+      }
+    }
+  },
+  "output": {
+    "text": "{\n  \"resumo\": \"A tela exibe o aplicativo do Gmail com vários emails listados, incluindo notificações do ChatGPT e do LinkedIn.\",\n  \"elementos\": [\n    {\n      \"label\": \"ChatGPT\",\n      \"tipo\": \"card\",\n      \"x\": 173,\n      \"y\": 154\n    },\n    {\n      \"label\": \"LinkedIn\",\n      \"tipo\": \"card\",\n      \"x\": 163,\n      \"y\": 297\n    },\n    {\n      \"label\": \"LinkedIn\",\n      \"tipo\": \"card\",\n      \"x\": 169,\n      \"y\": 438\n    },\n    {\n      \"label\": \"LinkedIn 3\",\n      \"tipo\": \"card\",\n      \"x\": 180,\n      \"y\": 580\n    },\n    {\n      \"label\": \"LinkedIn\",\n      \"tipo\": \"card\",\n      \"x\": 169,\n      \"y\": 722\n    }\n  ],\n  \"acao\": {\n    \"type\": \"scroll\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": \"down\",\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"Rolando para baixo para visualizar e listar os 10 primeiros emails conforme o objetivo.\"\n  }\n}",
+    "raw": {
+      "candidates": [
+        {
+          "content": {
+            "parts": [
+              {
+                "text": "{\n  \"resumo\": \"A tela exibe o aplicativo do Gmail com vários emails listados, incluindo notificações do ChatGPT e do LinkedIn.\",\n  \"elementos\": [\n    {\n      \"label\": \"ChatGPT\",\n      \"tipo\": \"card\",\n      \"x\": 173,\n      \"y\": 154\n    },\n    {\n      \"label\": \"LinkedIn\",\n      \"tipo\": \"card\",\n      \"x\": 163,\n      \"y\": 297\n    },\n    {\n      \"label\": \"LinkedIn\",\n      \"tipo\": \"card\",\n      \"x\": 169,\n      \"y\": 438\n    },\n    {\n      \"label\": \"LinkedIn 3\",\n      \"tipo\": \"card\",\n      \"x\": 180,\n      \"y\": 580\n    },\n    {\n      \"label\": \"LinkedIn\",\n      \"tipo\": \"card\",\n      \"x\": 169,\n      \"y\": 722\n    }\n  ],\n  \"acao\": {\n    \"type\": \"scroll\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": \"down\",\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"Rolando para baixo para visualizar e listar os 10 primeiros emails conforme o objetivo.\"\n  }\n}",
+                "thoughtSignature": "EmAKXgFpFH0TDBUeSjeAnKEhSJCksra4vV3WUS2KHd0Ma+vh7J3WpM2oRyDDY55TO3oXDp7H5NuOjvkG2iBlZHfhvPwxW5auNwf+yzma99Evo1xYx80+FiNgySE8E2p5L0o="
+              }
+            ],
+            "role": "model"
+          },
+          "finishReason": "STOP",
+          "index": 0
+        }
+      ],
+      "usageMetadata": {
+        "promptTokenCount": 1325,
+        "candidatesTokenCount": 334,
+        "totalTokenCount": 1659,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 1325
+          }
+        ],
+        "serviceTier": "standard"
+      },
+      "modelVersion": "gemini-3.5-flash-lite",
+      "responseId": "ONHEapzmL_usz7IPm43y-Qo"
+    }
+  },
+  "system": "Você opera um smartphone Android olhando só a lista OCR da tela (textos + coordenadas x,y na escala do device).\n\nResponda APENAS JSON válido (sem markdown) no formato:\n{\n  \"resumo\": \"2-4 frases do que tem na tela\",\n  \"elementos\": [{ \"label\": \"...\", \"tipo\": \"button|chip|card|text\", \"x\": 0, \"y\": 0 }],\n  \"acao\": {\n    \"type\": \"tap|scroll|type|key|sleep|done|fail\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"...\"\n  }\n}\n\nRegras:\n- Coords de tap = mesma escala do OCR (device). Não invente scale.\n- tap: use x,y de um item OCR existente (centro do texto alvo).\n- scroll: direction down|up|left|right quando o próximo alvo não está visível.\n- Se o histórico mostrar vários scrolls com o mesmo OCR (tela não mudou), NÃO scroll de novo: mude de estratégia (tap em outro elemento, type, key BACK).\n- Home / Settings (AVD Nexus Launcher):\n  - OCR com \"Notifications\" / \"Clear all\" / \"AndroidSetup\" = shade aberto → key KEYCODE_BACK ou KEYCODE_HOME (NÃO scroll).\n  - Tela inicial (só hora/data, sem apps) → scroll direction=down abre a gaveta. scroll up reabre o shade — evite.\n  - EXCEÇÃO: se o histórico recente tem tap com y<120 (Search/campo), OCR só com hora NÃO é home — é teclado cobrindo o app. PROIBIDO scroll (swipe digita lixo no campo, ex. \"ty\"). Faça type do texto do roteiro ou KEYCODE_BACK.\n  - Texto \"Settings\" no OCR → tap nessas coords. done só com Settings aberto (Search settings / Network / Apps / Battery).\n- Filtro de localização LinkedIn: se OCR tiver \"Add a location\" / \"Add alocation\" e a cidade alvo do roteiro (ex. Campinas) NÃO estiver na lista, faça tap em Add a location e depois type da cidade — NÃO fique só scrollando a lista.\n- Connect: só tap se text exato \"Connect\" e tipicamente 180 < y < 850. Se o histórico já tem tap nas mesmas coords e a tela não mudou, scroll ou outro Connect — não repita o mesmo tap.\n- type: digite text de uma vez (campo acao.text obrigatório). Se o histórico mostrar erro de tecla OCR, espere (sleep) e tente type de novo, ou key KEYCODE_BACK e reabra o campo.\n- key: code tipo KEYCODE_BACK / KEYCODE_HOME.\n- sleep: ms quando a tela parece carregando.\n- done: objetivo cumprido.\n- fail: impossível continuar (motivo claro).\n- Não peça screenshot; decida só com o OCR e o prompt.",
+  "prompt": "Objetivo / roteiro:\nabra o gmail e liste os 10 primeiros emails\n\nOCR atual (JSON):\n[{\"text\":\"9:45\",\"x\":86,\"y\":30},{\"text\":\"ФIND\",\"x\":168,\"y\":20},{\"text\":\"Resuma aocumentos iongos e...\",\"x\":282,\"y\":47},{\"text\":\"Destaque o que vale a pena conf... W\",\"x\":308,\"y\":77},{\"text\":\"ChatGPT\",\"x\":173,\"y\":154},{\"text\":\"Sep 22 •\",\"x\":462,\"y\":158},{\"text\":\"4 novos estilos de imagem para...\",\"x\":287,\"y\":188},{\"text\":\"Redesign de ambiente ou Foto es... W\",\"x\":308,\"y\":217},{\"text\":\"in\",\"x\":65,\"y\":312},{\"text\":\"Linkedln\",\"x\":163,\"y\":297},{\"text\":\"New device registration for Reme...\",\"x\":288,\"y\":331},{\"text\":\"Sep 22\",\"x\":474,\"y\":300},{\"text\":\"in\",\"x\":66,\"y\":457},{\"text\":\"LinkedIn\",\"x\":169,\"y\":438},{\"text\":\"Here's your verification code 3...\",\"x\":285,\"y\":475},{\"text\":\"Please verify it's you.\",\"x\":222,\"y\":505},{\"text\":\"Sep 22 •\",\"x\":462,\"y\":444},{\"text\":\"in\",\"x\":65,\"y\":597},{\"text\":\"LinkedIn 3\",\"x\":180,\"y\":580},{\"text\":\"Sep 22 •\",\"x\":462,\"y\":585},{\"text\":\"Ana, please verify your new de...\",\"x\":284,\"y\":616},{\"text\":\"Ana, please verify your new devic... W\",\"x\":309,\"y\":643},{\"text\":\"in\",\"x\":64,\"y\":740},{\"text\":\"LinkedIn\",\"x\":169,\"y\":722},{\"text\":\"Here's your verification code 7...\",\"x\":284,\"y\":758},{\"text\":\"Please verify it's you.\",\"x\":222,\"y\":789},{\"text\":\"Sep 22 •\",\"x\":461,\"y\":728},{\"text\":\"Social\",\"x\":157,\"y\":856},{\"text\":\"Linkedin\",\"x\":161,\"y\":894},{\"text\":\"1 new\",\"x\":471,\"y\":874},{\"text\":\"Someone ai\",\"x\":328,\"y\":894}]\n\nDefina a próxima ação.",
+  "response": "{\n  \"resumo\": \"A tela exibe o aplicativo do Gmail com vários emails listados, incluindo notificações do ChatGPT e do LinkedIn.\",\n  \"elementos\": [\n    {\n      \"label\": \"ChatGPT\",\n      \"tipo\": \"card\",\n      \"x\": 173,\n      \"y\": 154\n    },\n    {\n      \"label\": \"LinkedIn\",\n      \"tipo\": \"card\",\n      \"x\": 163,\n      \"y\": 297\n    },\n    {\n      \"label\": \"LinkedIn\",\n      \"tipo\": \"card\",\n      \"x\": 169,\n      \"y\": 438\n    },\n    {\n      \"label\": \"LinkedIn 3\",\n      \"tipo\": \"card\",\n      \"x\": 180,\n      \"y\": 580\n    },\n    {\n      \"label\": \"LinkedIn\",\n      \"tipo\": \"card\",\n      \"x\": 169,\n      \"y\": 722\n    }\n  ],\n  \"acao\": {\n    \"type\": \"scroll\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": \"down\",\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"Rolando para baixo para visualizar e listar os 10 primeiros emails conforme o objetivo.\"\n  }\n}",
+  "roteiro": "abra o gmail e liste os 10 primeiros emails",
+  "usage": {
+    "promptTokenCount": 1325,
+    "candidatesTokenCount": 334,
+    "totalTokenCount": 1659,
+    "promptTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 1325
+      }
+    ],
+    "serviceTier": "standard"
+  }
+}

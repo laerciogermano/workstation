@@ -1,24 +1,8 @@
 # Screen Robot
-    - Automatizar
-        - Conectar aos compradores
-            - [ok] Tirar prints e testar ocrs
-            - [ok] criar testes extraindo ocr
-            - criar robo que recebe texto e decide o que fazer
-                - [ok] testar texto e perguntar onde estou
-                - Realizar operações com IA com interface android junto a um prompt que define o que fazer
-                    - Identificar se possuem todos os comandos necessários
-                    - Extrair ocr com posicoes
-                    - Integrar com IA 
-                        - Testar primeiro com CURSOR
-            - criar lib que extrai dados formatados
-            - Calcular gasto reconhecimento de imagem com IA
-            - Calcular custo recinhecimento de texto com IA
-         - Pesquisar
-            - Dado um conjunto de filtros, pesquisar e ir para página de 
-            resultados
-        - Enviar mensagem
-    - Provisionar Agente -> Device operante com linkedin instalado
-    - Finalizar lib, principalmente estrutura de provisionamento
+    - Testar com reconhecimento de imagem
+    - Extrair o maximo de informacoes possivel ocr
+    - Enriquecer motor com memoria, planos e etc
+    - Treinar modelos gpt4 mini teste
 
 # Eternos Mutáveis
     - Reunir todos os áudios e transcricoes do iphone que nao estao aqui

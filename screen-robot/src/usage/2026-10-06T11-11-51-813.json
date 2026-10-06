@@ -1,0 +1,140 @@
+{
+  "run": "2026-10-06T11-11-09-591",
+  "step": 7,
+  "at": "2026-10-06T11:11:51.813Z",
+  "serial": "emulator-5554",
+  "engine": "macos-vision",
+  "model": "gpt-4o-mini",
+  "ok": true,
+  "acao": {
+    "type": "type",
+    "x": 167,
+    "y": 167,
+    "direction": null,
+    "text": "Novo Compromisso",
+    "code": null,
+    "ms": null,
+    "motivo": "Adicionar um título ao compromisso."
+  },
+  "resumo": "Estamos na tela de criação de um novo compromisso no calendário. O dia de hoje, terça-feira, 6 de outubro de 2026, está visível, mas não há compromissos planejados. Podemos adicionar um título ao evento.",
+  "elementos": [
+    {
+      "label": "Save",
+      "tipo": "button",
+      "x": 453,
+      "y": 93
+    },
+    {
+      "label": "Add title",
+      "tipo": "text",
+      "x": 167,
+      "y": 167
+    },
+    {
+      "label": "Event",
+      "tipo": "text",
+      "x": 141,
+      "y": 262
+    },
+    {
+      "label": "Task",
+      "tipo": "text",
+      "x": 237,
+      "y": 262
+    },
+    {
+      "label": "Birthday",
+      "tipo": "text",
+      "x": 350,
+      "y": 261
+    },
+    {
+      "label": "All-day",
+      "tipo": "text",
+      "x": 130,
+      "y": 370
+    },
+    {
+      "label": "Tue, Oct 6, 2026",
+      "tipo": "text",
+      "x": 185,
+      "y": 444
+    }
+  ],
+  "attempt": 1,
+  "ms": 3343,
+  "promptChars": 2810,
+  "systemChars": 2310,
+  "input": {
+    "system": "Você opera um smartphone Android olhando só a lista OCR da tela (textos + coordenadas x,y na escala do device).\n\nResponda APENAS JSON válido (sem markdown) no formato:\n{\n  \"resumo\": \"2-4 frases do que tem na tela\",\n  \"elementos\": [{ \"label\": \"...\", \"tipo\": \"button|chip|card|text\", \"x\": 0, \"y\": 0 }],\n  \"acao\": {\n    \"type\": \"tap|scroll|type|key|sleep|done|fail\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"...\"\n  }\n}\n\nRegras:\n- Coords de tap = mesma escala do OCR (device). Não invente scale.\n- tap: use x,y de um item OCR existente (centro do texto alvo).\n- scroll: direction down|up|left|right quando o próximo alvo não está visível.\n- Se o histórico mostrar vários scrolls com o mesmo OCR (tela não mudou), NÃO scroll de novo: mude de estratégia (tap em outro elemento, type, key BACK).\n- Home / Settings (AVD Nexus Launcher):\n  - OCR com \"Notifications\" / \"Clear all\" / \"AndroidSetup\" = shade aberto → key KEYCODE_BACK ou KEYCODE_HOME (NÃO scroll).\n  - Tela inicial (só hora/data, sem apps) → scroll direction=down abre a gaveta. scroll up reabre o shade — evite.\n  - EXCEÇÃO: se o histórico recente tem tap com y<120 (Search/campo), OCR só com hora NÃO é home — é teclado cobrindo o app. PROIBIDO scroll (swipe digita lixo no campo, ex. \"ty\"). Faça type do texto do roteiro ou KEYCODE_BACK.\n  - Texto \"Settings\" no OCR → tap nessas coords. done só com Settings aberto (Search settings / Network / Apps / Battery).\n- Filtro de localização LinkedIn: se OCR tiver \"Add a location\" / \"Add alocation\" e a cidade alvo do roteiro (ex. Campinas) NÃO estiver na lista, faça tap em Add a location e depois type da cidade — NÃO fique só scrollando a lista.\n- Connect: só tap se text exato \"Connect\" e tipicamente 180 < y < 850. Se o histórico já tem tap nas mesmas coords e a tela não mudou, scroll ou outro Connect — não repita o mesmo tap.\n- type: digite text de uma vez (campo acao.text obrigatório). Se o histórico mostrar erro de tecla OCR, espere (sleep) e tente type de novo, ou key KEYCODE_BACK e reabra o campo.\n- key: code tipo KEYCODE_BACK / KEYCODE_HOME.\n- sleep: ms quando a tela parece carregando.\n- done: objetivo cumprido.\n- fail: impossível continuar (motivo claro).\n- Não peça screenshot; decida só com o OCR e o prompt.",
+    "prompt": "Objetivo / roteiro:\nabra o calendar, selecione o dia de hoje e veja se temos compromisso\n\nHistórico recente (últimos 3/3):\n[{\"step\":4,\"type\":\"scroll\",\"motivo\":\"Precisamos rolar a tela para encontrar o dia de hoje no calendário.\",\"x\":null,\"y\":null,\"direction\":\"down\",\"text\":null,\"code\":null,\"resultado\":\"scroll down\",\"sense\":\"ocr\",\"ocr\":[{\"text\":\"8:11 $ in in •\",\"x\":149,\"y\":25},{\"text\":\"= Octo.. ? M\",\"x\":250,\"y\":95},{\"text\":\"Tue\",\"x\":46,\"y\":149},{\"text\":\"1 PM\",\"x\":47,\"y\":289},{\"text\":\"2 PM\",\"x\":46,\"y\":386},{\"text\":\"3 PM\",\"x\":44,\"y\":482},{\"text\":\"4 PM\",\"x\":45,\"y\":577},{\"text\":\"5 PM\",\"x\":46,\"y\":673},{\"text\":\"6 PM\",\"x\":46,\"y\":769},{\"text\":\"+\",\"x\":462,\"y\":819},{\"text\":\"7 PM\",\"x\":45,\"y\":864}]},{\"step\":5,\"type\":\"tap\",\"motivo\":\"Selecionar o dia de hoje, terça-feira, para verificar os compromissos.\",\"x\":46,\"y\":149,\"direction\":null,\"text\":null,\"code\":null,\"resultado\":\"tap 46,149\",\"sense\":\"ocr\",\"ocr\":[{\"text\":\"8:11 in in •\",\"x\":154,\"y\":23},{\"text\":\"= Octo.. • Q\",\"x\":173,\"y\":93},{\"text\":\"Tue\",\"x\":46,\"y\":149},{\"text\":\"6 PM\",\"x\":46,\"y\":313},{\"text\":\"7 PM\",\"x\":46,\"y\":406},{\"text\":\"8 PM\",\"x\":43,\"y\":506},{\"text\":\"9 PM\",\"x\":46,\"y\":601},{\"text\":\"10 PM\",\"x\":40,\"y\":697},{\"text\":\"11 PM\",\"x\":42,\"y\":791},{\"text\":\"+\",\"x\":461,\"y\":818}]},{\"step\":6,\"type\":\"tap\",\"motivo\":\"Criar um novo compromisso, pois não há nada planejado.\",\"x\":246,\"y\":209,\"direction\":null,\"text\":null,\"code\":null,\"resultado\":\"tap 246,209\",\"sense\":\"ocr\",\"ocr\":[{\"text\":\"8:11 € in in •\",\"x\":152,\"y\":22},{\"text\":\"= Octo...\",\"x\":114,\"y\":93},{\"text\":\"Tue\",\"x\":47,\"y\":171},{\"text\":\"Nothing planned. Tap to create.\",\"x\":246,\"y\":209},{\"text\":\"Oct 11 - 17\",\"x\":143,\"y\":261},{\"text\":\"Mon\",\"x\":47,\"y\":302},{\"text\":\"12\",\"x\":49,\"y\":331},{\"text\":\"Columbus Day\",\"x\":179,\"y\":319},{\"text\":\"Oct 18 - 24\",\"x\":140,\"y\":402},{\"text\":\"Oct 25 - 31\",\"x\":140,\"y\":450},{\"text\":\"Sat\",\"x\":48,\"y\":490},{\"text\":\"31\",\"x\":48,\"y\":518},{\"text\":\"Halloween\",\"x\":161,\"y\":507},{\"text\":\"November 2026\",\"x\":220,\"y\":618},{\"text\":\"+\",\"x\":462,\"y\":819},{\"text\":\"Nov 1 - 7\",\"x\":132,\"y\":876},{\"text\":\"Sun\",\"x\":47,\"y\":917},{\"text\":\"1\",\"x\":47,\"y\":944},{\"text\":\"Day\",\"x\":126,\"y\":936},{\"text\":\"it Savin\",\"x\":213,\"y\":934},{\"text\":\"me end\",\"x\":321,\"y\":934}]}]\n\nOCR atual (JSON):\n[{\"text\":\"8:11 $ in in •\",\"x\":153,\"y\":22},{\"text\":\"Save\",\"x\":453,\"y\":93},{\"text\":\"Add title\",\"x\":167,\"y\":167},{\"text\":\"Event\",\"x\":141,\"y\":262},{\"text\":\"Task\",\"x\":237,\"y\":262},{\"text\":\"Birthday\",\"x\":350,\"y\":261},{\"text\":\"All-day\",\"x\":130,\"y\":370},{\"text\":\"Tue, Oct 6, 2026\",\"x\":185,\"y\":444},{\"text\":\"Tue, Oct 6, 2026\",\"x\":184,\"y\":515},{\"text\":\"8:30 AM\",\"x\":471,\"y\":440},{\"text\":\"9:30 AM\",\"x\":470,\"y\":512},{\"text\":\"q'w'er't\",\"x\":141,\"y\":625},{\"text\":\"y й i°\",\"x\":354,\"y\":627},{\"text\":\"zxC\",\"x\":168,\"y\":785},{\"text\":\"v b\",\"x\":288,\"y\":781},{\"text\":\"nm‹\",\"x\":417,\"y\":784},{\"text\":\"?123\",\"x\":42,\"y\":857}]\n\nDefina a próxima ação.",
+    "body": {
+      "model": "gpt-4o-mini",
+      "messages": [
+        {
+          "role": "system",
+          "content": "Você opera um smartphone Android olhando só a lista OCR da tela (textos + coordenadas x,y na escala do device).\n\nResponda APENAS JSON válido (sem markdown) no formato:\n{\n  \"resumo\": \"2-4 frases do que tem na tela\",\n  \"elementos\": [{ \"label\": \"...\", \"tipo\": \"button|chip|card|text\", \"x\": 0, \"y\": 0 }],\n  \"acao\": {\n    \"type\": \"tap|scroll|type|key|sleep|done|fail\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"...\"\n  }\n}\n\nRegras:\n- Coords de tap = mesma escala do OCR (device). Não invente scale.\n- tap: use x,y de um item OCR existente (centro do texto alvo).\n- scroll: direction down|up|left|right quando o próximo alvo não está visível.\n- Se o histórico mostrar vários scrolls com o mesmo OCR (tela não mudou), NÃO scroll de novo: mude de estratégia (tap em outro elemento, type, key BACK).\n- Home / Settings (AVD Nexus Launcher):\n  - OCR com \"Notifications\" / \"Clear all\" / \"AndroidSetup\" = shade aberto → key KEYCODE_BACK ou KEYCODE_HOME (NÃO scroll).\n  - Tela inicial (só hora/data, sem apps) → scroll direction=down abre a gaveta. scroll up reabre o shade — evite.\n  - EXCEÇÃO: se o histórico recente tem tap com y<120 (Search/campo), OCR só com hora NÃO é home — é teclado cobrindo o app. PROIBIDO scroll (swipe digita lixo no campo, ex. \"ty\"). Faça type do texto do roteiro ou KEYCODE_BACK.\n  - Texto \"Settings\" no OCR → tap nessas coords. done só com Settings aberto (Search settings / Network / Apps / Battery).\n- Filtro de localização LinkedIn: se OCR tiver \"Add a location\" / \"Add alocation\" e a cidade alvo do roteiro (ex. Campinas) NÃO estiver na lista, faça tap em Add a location e depois type da cidade — NÃO fique só scrollando a lista.\n- Connect: só tap se text exato \"Connect\" e tipicamente 180 < y < 850. Se o histórico já tem tap nas mesmas coords e a tela não mudou, scroll ou outro Connect — não repita o mesmo tap.\n- type: digite text de uma vez (campo acao.text obrigatório). Se o histórico mostrar erro de tecla OCR, espere (sleep) e tente type de novo, ou key KEYCODE_BACK e reabra o campo.\n- key: code tipo KEYCODE_BACK / KEYCODE_HOME.\n- sleep: ms quando a tela parece carregando.\n- done: objetivo cumprido.\n- fail: impossível continuar (motivo claro).\n- Não peça screenshot; decida só com o OCR e o prompt."
+        },
+        {
+          "role": "user",
+          "content": "Objetivo / roteiro:\nabra o calendar, selecione o dia de hoje e veja se temos compromisso\n\nHistórico recente (últimos 3/3):\n[{\"step\":4,\"type\":\"scroll\",\"motivo\":\"Precisamos rolar a tela para encontrar o dia de hoje no calendário.\",\"x\":null,\"y\":null,\"direction\":\"down\",\"text\":null,\"code\":null,\"resultado\":\"scroll down\",\"sense\":\"ocr\",\"ocr\":[{\"text\":\"8:11 $ in in •\",\"x\":149,\"y\":25},{\"text\":\"= Octo.. ? M\",\"x\":250,\"y\":95},{\"text\":\"Tue\",\"x\":46,\"y\":149},{\"text\":\"1 PM\",\"x\":47,\"y\":289},{\"text\":\"2 PM\",\"x\":46,\"y\":386},{\"text\":\"3 PM\",\"x\":44,\"y\":482},{\"text\":\"4 PM\",\"x\":45,\"y\":577},{\"text\":\"5 PM\",\"x\":46,\"y\":673},{\"text\":\"6 PM\",\"x\":46,\"y\":769},{\"text\":\"+\",\"x\":462,\"y\":819},{\"text\":\"7 PM\",\"x\":45,\"y\":864}]},{\"step\":5,\"type\":\"tap\",\"motivo\":\"Selecionar o dia de hoje, terça-feira, para verificar os compromissos.\",\"x\":46,\"y\":149,\"direction\":null,\"text\":null,\"code\":null,\"resultado\":\"tap 46,149\",\"sense\":\"ocr\",\"ocr\":[{\"text\":\"8:11 in in •\",\"x\":154,\"y\":23},{\"text\":\"= Octo.. • Q\",\"x\":173,\"y\":93},{\"text\":\"Tue\",\"x\":46,\"y\":149},{\"text\":\"6 PM\",\"x\":46,\"y\":313},{\"text\":\"7 PM\",\"x\":46,\"y\":406},{\"text\":\"8 PM\",\"x\":43,\"y\":506},{\"text\":\"9 PM\",\"x\":46,\"y\":601},{\"text\":\"10 PM\",\"x\":40,\"y\":697},{\"text\":\"11 PM\",\"x\":42,\"y\":791},{\"text\":\"+\",\"x\":461,\"y\":818}]},{\"step\":6,\"type\":\"tap\",\"motivo\":\"Criar um novo compromisso, pois não há nada planejado.\",\"x\":246,\"y\":209,\"direction\":null,\"text\":null,\"code\":null,\"resultado\":\"tap 246,209\",\"sense\":\"ocr\",\"ocr\":[{\"text\":\"8:11 € in in •\",\"x\":152,\"y\":22},{\"text\":\"= Octo...\",\"x\":114,\"y\":93},{\"text\":\"Tue\",\"x\":47,\"y\":171},{\"text\":\"Nothing planned. Tap to create.\",\"x\":246,\"y\":209},{\"text\":\"Oct 11 - 17\",\"x\":143,\"y\":261},{\"text\":\"Mon\",\"x\":47,\"y\":302},{\"text\":\"12\",\"x\":49,\"y\":331},{\"text\":\"Columbus Day\",\"x\":179,\"y\":319},{\"text\":\"Oct 18 - 24\",\"x\":140,\"y\":402},{\"text\":\"Oct 25 - 31\",\"x\":140,\"y\":450},{\"text\":\"Sat\",\"x\":48,\"y\":490},{\"text\":\"31\",\"x\":48,\"y\":518},{\"text\":\"Halloween\",\"x\":161,\"y\":507},{\"text\":\"November 2026\",\"x\":220,\"y\":618},{\"text\":\"+\",\"x\":462,\"y\":819},{\"text\":\"Nov 1 - 7\",\"x\":132,\"y\":876},{\"text\":\"Sun\",\"x\":47,\"y\":917},{\"text\":\"1\",\"x\":47,\"y\":944},{\"text\":\"Day\",\"x\":126,\"y\":936},{\"text\":\"it Savin\",\"x\":213,\"y\":934},{\"text\":\"me end\",\"x\":321,\"y\":934}]}]\n\nOCR atual (JSON):\n[{\"text\":\"8:11 $ in in •\",\"x\":153,\"y\":22},{\"text\":\"Save\",\"x\":453,\"y\":93},{\"text\":\"Add title\",\"x\":167,\"y\":167},{\"text\":\"Event\",\"x\":141,\"y\":262},{\"text\":\"Task\",\"x\":237,\"y\":262},{\"text\":\"Birthday\",\"x\":350,\"y\":261},{\"text\":\"All-day\",\"x\":130,\"y\":370},{\"text\":\"Tue, Oct 6, 2026\",\"x\":185,\"y\":444},{\"text\":\"Tue, Oct 6, 2026\",\"x\":184,\"y\":515},{\"text\":\"8:30 AM\",\"x\":471,\"y\":440},{\"text\":\"9:30 AM\",\"x\":470,\"y\":512},{\"text\":\"q'w'er't\",\"x\":141,\"y\":625},{\"text\":\"y й i°\",\"x\":354,\"y\":627},{\"text\":\"zxC\",\"x\":168,\"y\":785},{\"text\":\"v b\",\"x\":288,\"y\":781},{\"text\":\"nm‹\",\"x\":417,\"y\":784},{\"text\":\"?123\",\"x\":42,\"y\":857}]\n\nDefina a próxima ação."
+        }
+      ],
+      "temperature": 0,
+      "response_format": {
+        "type": "json_object"
+      }
+    }
+  },
+  "output": {
+    "text": "{\n  \"resumo\": \"Estamos na tela de criação de um novo compromisso no calendário. O dia de hoje, terça-feira, 6 de outubro de 2026, está visível, mas não há compromissos planejados. Podemos adicionar um título ao evento.\",\n  \"elementos\": [\n    { \"label\": \"Save\", \"tipo\": \"button\", \"x\": 453, \"y\": 93 },\n    { \"label\": \"Add title\", \"tipo\": \"text\", \"x\": 167, \"y\": 167 },\n    { \"label\": \"Event\", \"tipo\": \"text\", \"x\": 141, \"y\": 262 },\n    { \"label\": \"Task\", \"tipo\": \"text\", \"x\": 237, \"y\": 262 },\n    { \"label\": \"Birthday\", \"tipo\": \"text\", \"x\": 350, \"y\": 261 },\n    { \"label\": \"All-day\", \"tipo\": \"text\", \"x\": 130, \"y\": 370 },\n    { \"label\": \"Tue, Oct 6, 2026\", \"tipo\": \"text\", \"x\": 185, \"y\": 444 }\n  ],\n  \"acao\": {\n    \"type\": \"type\",\n    \"x\": 167,\n    \"y\": 167,\n    \"text\": \"Novo Compromisso\",\n    \"motivo\": \"Adicionar um título ao compromisso.\"\n  }\n}",
+    "raw": {
+      "id": "chatcmpl-EVxNExBR2JxE2UMSvzYBLKdS95Bzv",
+      "object": "chat.completion",
+      "created": 1791285108,
+      "model": "gpt-4o-mini-2024-07-18",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "{\n  \"resumo\": \"Estamos na tela de criação de um novo compromisso no calendário. O dia de hoje, terça-feira, 6 de outubro de 2026, está visível, mas não há compromissos planejados. Podemos adicionar um título ao evento.\",\n  \"elementos\": [\n    { \"label\": \"Save\", \"tipo\": \"button\", \"x\": 453, \"y\": 93 },\n    { \"label\": \"Add title\", \"tipo\": \"text\", \"x\": 167, \"y\": 167 },\n    { \"label\": \"Event\", \"tipo\": \"text\", \"x\": 141, \"y\": 262 },\n    { \"label\": \"Task\", \"tipo\": \"text\", \"x\": 237, \"y\": 262 },\n    { \"label\": \"Birthday\", \"tipo\": \"text\", \"x\": 350, \"y\": 261 },\n    { \"label\": \"All-day\", \"tipo\": \"text\", \"x\": 130, \"y\": 370 },\n    { \"label\": \"Tue, Oct 6, 2026\", \"tipo\": \"text\", \"x\": 185, \"y\": 444 }\n  ],\n  \"acao\": {\n    \"type\": \"type\",\n    \"x\": 167,\n    \"y\": 167,\n    \"text\": \"Novo Compromisso\",\n    \"motivo\": \"Adicionar um título ao compromisso.\"\n  }\n}",
+            "refusal": null,
+            "annotations": []
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 1704,
+        "completion_tokens": 307,
+        "total_tokens": 2011,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "service_tier": "default",
+      "system_fingerprint": "fp_9d49b1aeb9"
+    }
+  },
+  "system": "Você opera um smartphone Android olhando só a lista OCR da tela (textos + coordenadas x,y na escala do device).\n\nResponda APENAS JSON válido (sem markdown) no formato:\n{\n  \"resumo\": \"2-4 frases do que tem na tela\",\n  \"elementos\": [{ \"label\": \"...\", \"tipo\": \"button|chip|card|text\", \"x\": 0, \"y\": 0 }],\n  \"acao\": {\n    \"type\": \"tap|scroll|type|key|sleep|done|fail\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"...\"\n  }\n}\n\nRegras:\n- Coords de tap = mesma escala do OCR (device). Não invente scale.\n- tap: use x,y de um item OCR existente (centro do texto alvo).\n- scroll: direction down|up|left|right quando o próximo alvo não está visível.\n- Se o histórico mostrar vários scrolls com o mesmo OCR (tela não mudou), NÃO scroll de novo: mude de estratégia (tap em outro elemento, type, key BACK).\n- Home / Settings (AVD Nexus Launcher):\n  - OCR com \"Notifications\" / \"Clear all\" / \"AndroidSetup\" = shade aberto → key KEYCODE_BACK ou KEYCODE_HOME (NÃO scroll).\n  - Tela inicial (só hora/data, sem apps) → scroll direction=down abre a gaveta. scroll up reabre o shade — evite.\n  - EXCEÇÃO: se o histórico recente tem tap com y<120 (Search/campo), OCR só com hora NÃO é home — é teclado cobrindo o app. PROIBIDO scroll (swipe digita lixo no campo, ex. \"ty\"). Faça type do texto do roteiro ou KEYCODE_BACK.\n  - Texto \"Settings\" no OCR → tap nessas coords. done só com Settings aberto (Search settings / Network / Apps / Battery).\n- Filtro de localização LinkedIn: se OCR tiver \"Add a location\" / \"Add alocation\" e a cidade alvo do roteiro (ex. Campinas) NÃO estiver na lista, faça tap em Add a location e depois type da cidade — NÃO fique só scrollando a lista.\n- Connect: só tap se text exato \"Connect\" e tipicamente 180 < y < 850. Se o histórico já tem tap nas mesmas coords e a tela não mudou, scroll ou outro Connect — não repita o mesmo tap.\n- type: digite text de uma vez (campo acao.text obrigatório). Se o histórico mostrar erro de tecla OCR, espere (sleep) e tente type de novo, ou key KEYCODE_BACK e reabra o campo.\n- key: code tipo KEYCODE_BACK / KEYCODE_HOME.\n- sleep: ms quando a tela parece carregando.\n- done: objetivo cumprido.\n- fail: impossível continuar (motivo claro).\n- Não peça screenshot; decida só com o OCR e o prompt.",
+  "prompt": "Objetivo / roteiro:\nabra o calendar, selecione o dia de hoje e veja se temos compromisso\n\nHistórico recente (últimos 3/3):\n[{\"step\":4,\"type\":\"scroll\",\"motivo\":\"Precisamos rolar a tela para encontrar o dia de hoje no calendário.\",\"x\":null,\"y\":null,\"direction\":\"down\",\"text\":null,\"code\":null,\"resultado\":\"scroll down\",\"sense\":\"ocr\",\"ocr\":[{\"text\":\"8:11 $ in in •\",\"x\":149,\"y\":25},{\"text\":\"= Octo.. ? M\",\"x\":250,\"y\":95},{\"text\":\"Tue\",\"x\":46,\"y\":149},{\"text\":\"1 PM\",\"x\":47,\"y\":289},{\"text\":\"2 PM\",\"x\":46,\"y\":386},{\"text\":\"3 PM\",\"x\":44,\"y\":482},{\"text\":\"4 PM\",\"x\":45,\"y\":577},{\"text\":\"5 PM\",\"x\":46,\"y\":673},{\"text\":\"6 PM\",\"x\":46,\"y\":769},{\"text\":\"+\",\"x\":462,\"y\":819},{\"text\":\"7 PM\",\"x\":45,\"y\":864}]},{\"step\":5,\"type\":\"tap\",\"motivo\":\"Selecionar o dia de hoje, terça-feira, para verificar os compromissos.\",\"x\":46,\"y\":149,\"direction\":null,\"text\":null,\"code\":null,\"resultado\":\"tap 46,149\",\"sense\":\"ocr\",\"ocr\":[{\"text\":\"8:11 in in •\",\"x\":154,\"y\":23},{\"text\":\"= Octo.. • Q\",\"x\":173,\"y\":93},{\"text\":\"Tue\",\"x\":46,\"y\":149},{\"text\":\"6 PM\",\"x\":46,\"y\":313},{\"text\":\"7 PM\",\"x\":46,\"y\":406},{\"text\":\"8 PM\",\"x\":43,\"y\":506},{\"text\":\"9 PM\",\"x\":46,\"y\":601},{\"text\":\"10 PM\",\"x\":40,\"y\":697},{\"text\":\"11 PM\",\"x\":42,\"y\":791},{\"text\":\"+\",\"x\":461,\"y\":818}]},{\"step\":6,\"type\":\"tap\",\"motivo\":\"Criar um novo compromisso, pois não há nada planejado.\",\"x\":246,\"y\":209,\"direction\":null,\"text\":null,\"code\":null,\"resultado\":\"tap 246,209\",\"sense\":\"ocr\",\"ocr\":[{\"text\":\"8:11 € in in •\",\"x\":152,\"y\":22},{\"text\":\"= Octo...\",\"x\":114,\"y\":93},{\"text\":\"Tue\",\"x\":47,\"y\":171},{\"text\":\"Nothing planned. Tap to create.\",\"x\":246,\"y\":209},{\"text\":\"Oct 11 - 17\",\"x\":143,\"y\":261},{\"text\":\"Mon\",\"x\":47,\"y\":302},{\"text\":\"12\",\"x\":49,\"y\":331},{\"text\":\"Columbus Day\",\"x\":179,\"y\":319},{\"text\":\"Oct 18 - 24\",\"x\":140,\"y\":402},{\"text\":\"Oct 25 - 31\",\"x\":140,\"y\":450},{\"text\":\"Sat\",\"x\":48,\"y\":490},{\"text\":\"31\",\"x\":48,\"y\":518},{\"text\":\"Halloween\",\"x\":161,\"y\":507},{\"text\":\"November 2026\",\"x\":220,\"y\":618},{\"text\":\"+\",\"x\":462,\"y\":819},{\"text\":\"Nov 1 - 7\",\"x\":132,\"y\":876},{\"text\":\"Sun\",\"x\":47,\"y\":917},{\"text\":\"1\",\"x\":47,\"y\":944},{\"text\":\"Day\",\"x\":126,\"y\":936},{\"text\":\"it Savin\",\"x\":213,\"y\":934},{\"text\":\"me end\",\"x\":321,\"y\":934}]}]\n\nOCR atual (JSON):\n[{\"text\":\"8:11 $ in in •\",\"x\":153,\"y\":22},{\"text\":\"Save\",\"x\":453,\"y\":93},{\"text\":\"Add title\",\"x\":167,\"y\":167},{\"text\":\"Event\",\"x\":141,\"y\":262},{\"text\":\"Task\",\"x\":237,\"y\":262},{\"text\":\"Birthday\",\"x\":350,\"y\":261},{\"text\":\"All-day\",\"x\":130,\"y\":370},{\"text\":\"Tue, Oct 6, 2026\",\"x\":185,\"y\":444},{\"text\":\"Tue, Oct 6, 2026\",\"x\":184,\"y\":515},{\"text\":\"8:30 AM\",\"x\":471,\"y\":440},{\"text\":\"9:30 AM\",\"x\":470,\"y\":512},{\"text\":\"q'w'er't\",\"x\":141,\"y\":625},{\"text\":\"y й i°\",\"x\":354,\"y\":627},{\"text\":\"zxC\",\"x\":168,\"y\":785},{\"text\":\"v b\",\"x\":288,\"y\":781},{\"text\":\"nm‹\",\"x\":417,\"y\":784},{\"text\":\"?123\",\"x\":42,\"y\":857}]\n\nDefina a próxima ação.",
+  "response": "{\n  \"resumo\": \"Estamos na tela de criação de um novo compromisso no calendário. O dia de hoje, terça-feira, 6 de outubro de 2026, está visível, mas não há compromissos planejados. Podemos adicionar um título ao evento.\",\n  \"elementos\": [\n    { \"label\": \"Save\", \"tipo\": \"button\", \"x\": 453, \"y\": 93 },\n    { \"label\": \"Add title\", \"tipo\": \"text\", \"x\": 167, \"y\": 167 },\n    { \"label\": \"Event\", \"tipo\": \"text\", \"x\": 141, \"y\": 262 },\n    { \"label\": \"Task\", \"tipo\": \"text\", \"x\": 237, \"y\": 262 },\n    { \"label\": \"Birthday\", \"tipo\": \"text\", \"x\": 350, \"y\": 261 },\n    { \"label\": \"All-day\", \"tipo\": \"text\", \"x\": 130, \"y\": 370 },\n    { \"label\": \"Tue, Oct 6, 2026\", \"tipo\": \"text\", \"x\": 185, \"y\": 444 }\n  ],\n  \"acao\": {\n    \"type\": \"type\",\n    \"x\": 167,\n    \"y\": 167,\n    \"text\": \"Novo Compromisso\",\n    \"motivo\": \"Adicionar um título ao compromisso.\"\n  }\n}",
+  "roteiro": "abra o calendar, selecione o dia de hoje e veja se temos compromisso",
+  "usage": {
+    "promptTokenCount": 1704,
+    "candidatesTokenCount": 307,
+    "totalTokenCount": 2011,
+    "prompt_tokens": 1704,
+    "completion_tokens": 307,
+    "total_tokens": 2011
+  }
+}

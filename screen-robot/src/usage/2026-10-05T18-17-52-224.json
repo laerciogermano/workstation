@@ -1,0 +1,157 @@
+{
+  "run": "2026-10-05T18-14-07-283",
+  "step": 22,
+  "at": "2026-10-05T18:17:52.224Z",
+  "serial": "emulator-5554",
+  "engine": "rapidocr",
+  "model": "gemini-3.5-flash-lite",
+  "ok": true,
+  "acao": {
+    "type": "sleep",
+    "x": null,
+    "y": null,
+    "direction": null,
+    "text": null,
+    "code": null,
+    "ms": 5000,
+    "motivo": "O Instagram está concluindo o download e instalação na Google Play Store. Vamos aguardar alguns segundos para que termine de instalar."
+  },
+  "resumo": "A tela mostra a Google Play Store fazendo o download do Instagram (100% de 79.69 MB). O aplicativo está em processo de instalação.",
+  "elementos": [
+    {
+      "label": "Instagzam",
+      "tipo": "text",
+      "x": 262,
+      "y": 91
+    },
+    {
+      "label": "Google Play",
+      "tipo": "text",
+      "x": 161,
+      "y": 257
+    },
+    {
+      "label": "X",
+      "tipo": "button",
+      "x": 497,
+      "y": 257
+    },
+    {
+      "label": "Threads",
+      "tipo": "text",
+      "x": 161,
+      "y": 351
+    },
+    {
+      "label": "Cancel",
+      "tipo": "button",
+      "x": 463,
+      "y": 376
+    },
+    {
+      "label": "100%of 79.69 MB",
+      "tipo": "text",
+      "x": 204,
+      "y": 384
+    },
+    {
+      "label": "Facebook",
+      "tipo": "text",
+      "x": 59,
+      "y": 701
+    },
+    {
+      "label": "TikTok",
+      "tipo": "text",
+      "x": 213,
+      "y": 700
+    },
+    {
+      "label": "More apps to try",
+      "tipo": "text",
+      "x": 122,
+      "y": 852
+    }
+  ],
+  "attempt": 1,
+  "round": 1,
+  "ms": 1778,
+  "promptChars": 3757,
+  "systemChars": 2082,
+  "input": {
+    "system": "Você opera um smartphone Android olhando só a lista OCR da tela (textos + coordenadas x,y na escala do device).\n\nResponda APENAS JSON válido (sem markdown) no formato:\n{\n  \"resumo\": \"2-4 frases do que tem na tela\",\n  \"elementos\": [{ \"label\": \"...\", \"tipo\": \"button|chip|card|text\", \"x\": 0, \"y\": 0 }],\n  \"acao\": {\n    \"type\": \"tap|scroll|type|key|sleep|done|fail\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"...\"\n  }\n}\n\nRegras:\n- Coords de tap = mesma escala do OCR (device). Não invente scale.\n- tap: use x,y de um item OCR existente (centro do texto alvo).\n- scroll: direction down|up|left|right quando o próximo alvo não está visível.\n- Se o histórico mostrar vários scrolls com o mesmo OCR (tela não mudou), NÃO scroll de novo: mude de estratégia (tap em outro elemento, type, key BACK).\n- Home / Settings (AVD Nexus Launcher):\n  - OCR com \"Notifications\" / \"Clear all\" / \"AndroidSetup\" = shade aberto → key KEYCODE_BACK ou KEYCODE_HOME (NÃO scroll).\n  - Tela inicial (só hora/data, sem apps) → scroll direction=down abre a gaveta. scroll up reabre o shade — evite.\n  - Texto \"Settings\" no OCR → tap nessas coords. done só com Settings aberto (Search settings / Network / Apps / Battery).\n- Filtro de localização LinkedIn: se OCR tiver \"Add a location\" / \"Add alocation\" e a cidade alvo do roteiro (ex. Campinas) NÃO estiver na lista, faça tap em Add a location e depois type da cidade — NÃO fique só scrollando a lista.\n- Connect: só tap se text exato \"Connect\" e tipicamente 180 < y < 850. Se o histórico já tem tap nas mesmas coords e a tela não mudou, scroll ou outro Connect — não repita o mesmo tap.\n- type: digite text de uma vez (campo acao.text obrigatório). Se o histórico mostrar erro de tecla OCR, espere (sleep) e tente type de novo, ou key KEYCODE_BACK e reabra o campo.\n- key: code tipo KEYCODE_BACK / KEYCODE_HOME.\n- sleep: ms quando a tela parece carregando.\n- done: objetivo cumprido.\n- fail: impossível continuar (motivo claro).\n- Não peça screenshot; decida só com o OCR e o prompt.",
+    "prompt": "Objetivo / roteiro:\nabra o instagram e envie uma mensagem oi para o laercio germano\n\nHistórico recente (últimos 12/12):\n[{\"step\":10,\"type\":\"scroll\",\"motivo\":\"Deslizar para a esquerda para abrir a tela de mensagens (Direct) do Instagram.\",\"x\":null,\"y\":null,\"direction\":\"left\",\"text\":null,\"code\":null,\"resultado\":\"scroll left\"},{\"step\":11,\"type\":\"scroll\",\"motivo\":\"Deslizar para a direita para acessar a aba de Direct ou mensagens onde podemos buscar o Laercio Germano.\",\"x\":null,\"y\":null,\"direction\":\"right\",\"text\":null,\"code\":null,\"resultado\":\"scroll right\"},{\"step\":12,\"type\":\"tap\",\"motivo\":\"Tocar no ícone de mensagens no canto superior direito para abrir a tela de Direct e poder buscar o contato Laercio Germano.\",\"x\":466,\"y\":224,\"direction\":null,\"text\":null,\"code\":null,\"resultado\":\"tap 466,224\"},{\"step\":13,\"type\":\"tap\",\"motivo\":\"Tocar no ícone de mensagens (Direct) no canto superior direito para abrir a tela de conversas e buscar o Laercio Germano.\",\"x\":466,\"y\":224,\"direction\":null,\"text\":null,\"code\":null,\"resultado\":\"tap 466,224\"},{\"step\":14,\"type\":\"scroll\",\"motivo\":\"Como os cliques no canto superior direito não abriram o direct, vamos rolar para atualizar o feed ou explorar a interface para encontrar a barra de pesquisa ou botão de direct.\",\"x\":null,\"y\":null,\"direction\":\"up\",\"text\":null,\"code\":null,\"resultado\":\"scroll up\"},{\"step\":15,\"type\":\"tap\",\"motivo\":\"Tocar no ícone de Direct na posição exata detectada no OCR para abrir as mensagens e buscar o Laercio Germano.\",\"x\":465,\"y\":225,\"direction\":null,\"text\":null,\"code\":null,\"resultado\":\"tap 465,225\"},{\"step\":16,\"type\":\"scroll\",\"motivo\":\"Rolar a tela para baixo para atualizar o feed e procurar por novos elementos ou barras de navegação que permitam acessar o Direct.\",\"x\":null,\"y\":null,\"direction\":\"down\",\"text\":null,\"code\":null,\"resultado\":\"scroll down\"},{\"step\":17,\"type\":\"tap\",\"motivo\":\"Tocar no nome de laerciogermano que aparece no rodapé do post para acessar o perfil e poder enviar a mensagem oi.\",\"x\":298,\"y\":633,\"direction\":null,\"text\":null,\"code\":null,\"resultado\":\"tap 298,633\"},{\"step\":18,\"type\":\"tap\",\"motivo\":\"Clicar no perfil de laerciogermano para acessar sua página e poder enviar a mensagem oi.\",\"x\":269,\"y\":633,\"direction\":null,\"text\":null,\"code\":null,\"resultado\":\"tap 269,633\"},{\"step\":19,\"type\":\"tap\",\"motivo\":\"Clicar no botão Install na Google Play Store para instalar o Instagram e poder enviar a mensagem para Laercio Germano.\",\"x\":271,\"y\":592,\"direction\":null,\"text\":null,\"code\":null,\"resultado\":\"tap 271,592\"},{\"step\":20,\"type\":\"tap\",\"motivo\":\"Tocar novamente no botão de instalação do Instagram na Google Play Store para garantir que o download seja iniciado.\",\"x\":271,\"y\":592,\"direction\":null,\"text\":null,\"code\":null,\"resultado\":\"tap 271,592\"},{\"step\":21,\"type\":\"key\",\"motivo\":\"O Instagram não está instalado corretamente ou estamos presos na Play Store; vamos voltar para tentar encontrar o aplicativo instalado na gaveta de apps.\",\"x\":null,\"y\":null,\"direction\":null,\"text\":null,\"code\":\"KEYCODE_BACK\",\"resultado\":\"key KEYCODE_BACK\"}]\n\nOCR atual (JSON):\n[{\"text\":\"3:17\",\"x\":88,\"y\":25},{\"text\":\"Instagzam\",\"x\":262,\"y\":91},{\"text\":\"Google Play\",\"x\":161,\"y\":257},{\"text\":\"X\",\"x\":497,\"y\":257},{\"text\":\"Threads\",\"x\":161,\"y\":351},{\"text\":\"Cancel\",\"x\":463,\"y\":376},{\"text\":\"100%of 79.69 MB\",\"x\":204,\"y\":384},{\"text\":\"Sponsored·Suggested for you\",\"x\":183,\"y\":480},{\"text\":\"f\",\"x\":100,\"y\":605},{\"text\":\"小\",\"x\":262,\"y\":594},{\"text\":\"Facebook\",\"x\":59,\"y\":701},{\"text\":\"TikTok\",\"x\":213,\"y\":700},{\"text\":\"TikTok Lite -\",\"x\":406,\"y\":700},{\"text\":\"4.8★\",\"x\":47,\"y\":732},{\"text\":\"4.4★\",\"x\":214,\"y\":731},{\"text\":\"SeriesCurtas\",\"x\":412,\"y\":723},{\"text\":\"ne\",\"x\":530,\"y\":724},{\"text\":\"4.3★\",\"x\":383,\"y\":754},{\"text\":\"More apps to try\",\"x\":122,\"y\":852}]\n\nDefina a próxima ação.",
+    "body": {
+      "contents": [
+        {
+          "role": "user",
+          "parts": [
+            {
+              "text": "Objetivo / roteiro:\nabra o instagram e envie uma mensagem oi para o laercio germano\n\nHistórico recente (últimos 12/12):\n[{\"step\":10,\"type\":\"scroll\",\"motivo\":\"Deslizar para a esquerda para abrir a tela de mensagens (Direct) do Instagram.\",\"x\":null,\"y\":null,\"direction\":\"left\",\"text\":null,\"code\":null,\"resultado\":\"scroll left\"},{\"step\":11,\"type\":\"scroll\",\"motivo\":\"Deslizar para a direita para acessar a aba de Direct ou mensagens onde podemos buscar o Laercio Germano.\",\"x\":null,\"y\":null,\"direction\":\"right\",\"text\":null,\"code\":null,\"resultado\":\"scroll right\"},{\"step\":12,\"type\":\"tap\",\"motivo\":\"Tocar no ícone de mensagens no canto superior direito para abrir a tela de Direct e poder buscar o contato Laercio Germano.\",\"x\":466,\"y\":224,\"direction\":null,\"text\":null,\"code\":null,\"resultado\":\"tap 466,224\"},{\"step\":13,\"type\":\"tap\",\"motivo\":\"Tocar no ícone de mensagens (Direct) no canto superior direito para abrir a tela de conversas e buscar o Laercio Germano.\",\"x\":466,\"y\":224,\"direction\":null,\"text\":null,\"code\":null,\"resultado\":\"tap 466,224\"},{\"step\":14,\"type\":\"scroll\",\"motivo\":\"Como os cliques no canto superior direito não abriram o direct, vamos rolar para atualizar o feed ou explorar a interface para encontrar a barra de pesquisa ou botão de direct.\",\"x\":null,\"y\":null,\"direction\":\"up\",\"text\":null,\"code\":null,\"resultado\":\"scroll up\"},{\"step\":15,\"type\":\"tap\",\"motivo\":\"Tocar no ícone de Direct na posição exata detectada no OCR para abrir as mensagens e buscar o Laercio Germano.\",\"x\":465,\"y\":225,\"direction\":null,\"text\":null,\"code\":null,\"resultado\":\"tap 465,225\"},{\"step\":16,\"type\":\"scroll\",\"motivo\":\"Rolar a tela para baixo para atualizar o feed e procurar por novos elementos ou barras de navegação que permitam acessar o Direct.\",\"x\":null,\"y\":null,\"direction\":\"down\",\"text\":null,\"code\":null,\"resultado\":\"scroll down\"},{\"step\":17,\"type\":\"tap\",\"motivo\":\"Tocar no nome de laerciogermano que aparece no rodapé do post para acessar o perfil e poder enviar a mensagem oi.\",\"x\":298,\"y\":633,\"direction\":null,\"text\":null,\"code\":null,\"resultado\":\"tap 298,633\"},{\"step\":18,\"type\":\"tap\",\"motivo\":\"Clicar no perfil de laerciogermano para acessar sua página e poder enviar a mensagem oi.\",\"x\":269,\"y\":633,\"direction\":null,\"text\":null,\"code\":null,\"resultado\":\"tap 269,633\"},{\"step\":19,\"type\":\"tap\",\"motivo\":\"Clicar no botão Install na Google Play Store para instalar o Instagram e poder enviar a mensagem para Laercio Germano.\",\"x\":271,\"y\":592,\"direction\":null,\"text\":null,\"code\":null,\"resultado\":\"tap 271,592\"},{\"step\":20,\"type\":\"tap\",\"motivo\":\"Tocar novamente no botão de instalação do Instagram na Google Play Store para garantir que o download seja iniciado.\",\"x\":271,\"y\":592,\"direction\":null,\"text\":null,\"code\":null,\"resultado\":\"tap 271,592\"},{\"step\":21,\"type\":\"key\",\"motivo\":\"O Instagram não está instalado corretamente ou estamos presos na Play Store; vamos voltar para tentar encontrar o aplicativo instalado na gaveta de apps.\",\"x\":null,\"y\":null,\"direction\":null,\"text\":null,\"code\":\"KEYCODE_BACK\",\"resultado\":\"key KEYCODE_BACK\"}]\n\nOCR atual (JSON):\n[{\"text\":\"3:17\",\"x\":88,\"y\":25},{\"text\":\"Instagzam\",\"x\":262,\"y\":91},{\"text\":\"Google Play\",\"x\":161,\"y\":257},{\"text\":\"X\",\"x\":497,\"y\":257},{\"text\":\"Threads\",\"x\":161,\"y\":351},{\"text\":\"Cancel\",\"x\":463,\"y\":376},{\"text\":\"100%of 79.69 MB\",\"x\":204,\"y\":384},{\"text\":\"Sponsored·Suggested for you\",\"x\":183,\"y\":480},{\"text\":\"f\",\"x\":100,\"y\":605},{\"text\":\"小\",\"x\":262,\"y\":594},{\"text\":\"Facebook\",\"x\":59,\"y\":701},{\"text\":\"TikTok\",\"x\":213,\"y\":700},{\"text\":\"TikTok Lite -\",\"x\":406,\"y\":700},{\"text\":\"4.8★\",\"x\":47,\"y\":732},{\"text\":\"4.4★\",\"x\":214,\"y\":731},{\"text\":\"SeriesCurtas\",\"x\":412,\"y\":723},{\"text\":\"ne\",\"x\":530,\"y\":724},{\"text\":\"4.3★\",\"x\":383,\"y\":754},{\"text\":\"More apps to try\",\"x\":122,\"y\":852}]\n\nDefina a próxima ação."
+            }
+          ]
+        }
+      ],
+      "generationConfig": {
+        "responseMimeType": "application/json"
+      },
+      "systemInstruction": {
+        "parts": [
+          {
+            "text": "Você opera um smartphone Android olhando só a lista OCR da tela (textos + coordenadas x,y na escala do device).\n\nResponda APENAS JSON válido (sem markdown) no formato:\n{\n  \"resumo\": \"2-4 frases do que tem na tela\",\n  \"elementos\": [{ \"label\": \"...\", \"tipo\": \"button|chip|card|text\", \"x\": 0, \"y\": 0 }],\n  \"acao\": {\n    \"type\": \"tap|scroll|type|key|sleep|done|fail\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"...\"\n  }\n}\n\nRegras:\n- Coords de tap = mesma escala do OCR (device). Não invente scale.\n- tap: use x,y de um item OCR existente (centro do texto alvo).\n- scroll: direction down|up|left|right quando o próximo alvo não está visível.\n- Se o histórico mostrar vários scrolls com o mesmo OCR (tela não mudou), NÃO scroll de novo: mude de estratégia (tap em outro elemento, type, key BACK).\n- Home / Settings (AVD Nexus Launcher):\n  - OCR com \"Notifications\" / \"Clear all\" / \"AndroidSetup\" = shade aberto → key KEYCODE_BACK ou KEYCODE_HOME (NÃO scroll).\n  - Tela inicial (só hora/data, sem apps) → scroll direction=down abre a gaveta. scroll up reabre o shade — evite.\n  - Texto \"Settings\" no OCR → tap nessas coords. done só com Settings aberto (Search settings / Network / Apps / Battery).\n- Filtro de localização LinkedIn: se OCR tiver \"Add a location\" / \"Add alocation\" e a cidade alvo do roteiro (ex. Campinas) NÃO estiver na lista, faça tap em Add a location e depois type da cidade — NÃO fique só scrollando a lista.\n- Connect: só tap se text exato \"Connect\" e tipicamente 180 < y < 850. Se o histórico já tem tap nas mesmas coords e a tela não mudou, scroll ou outro Connect — não repita o mesmo tap.\n- type: digite text de uma vez (campo acao.text obrigatório). Se o histórico mostrar erro de tecla OCR, espere (sleep) e tente type de novo, ou key KEYCODE_BACK e reabra o campo.\n- key: code tipo KEYCODE_BACK / KEYCODE_HOME.\n- sleep: ms quando a tela parece carregando.\n- done: objetivo cumprido.\n- fail: impossível continuar (motivo claro).\n- Não peça screenshot; decida só com o OCR e o prompt."
+          }
+        ]
+      }
+    }
+  },
+  "output": {
+    "text": "{\n  \"resumo\": \"A tela mostra a Google Play Store fazendo o download do Instagram (100% de 79.69 MB). O aplicativo está em processo de instalação.\",\n  \"elementos\": [\n    {\"label\": \"Instagzam\", \"tipo\": \"text\", \"x\": 262, \"y\": 91},\n    {\"label\": \"Google Play\", \"tipo\": \"text\", \"x\": 161, \"y\": 257},\n    {\"label\": \"X\", \"tipo\": \"button\", \"x\": 497, \"y\": 257},\n    {\"label\": \"Threads\", \"tipo\": \"text\", \"x\": 161, \"y\": 351},\n    {\"label\": \"Cancel\", \"tipo\": \"button\", \"x\": 463, \"y\": 376},\n    {\"label\": \"100%of 79.69 MB\", \"tipo\": \"text\", \"x\": 204, \"y\": 384},\n    {\"label\": \"Facebook\", \"tipo\": \"text\", \"x\": 59, \"y\": 701},\n    {\"label\": \"TikTok\", \"tipo\": \"text\", \"x\": 213, \"y\": 700},\n    {\"label\": \"More apps to try\", \"tipo\": \"text\", \"x\": 122, \"y\": 852}\n  ],\n  \"acao\": {\n    \"type\": \"sleep\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": 5000,\n    \"motivo\": \"O Instagram está concluindo o download e instalação na Google Play Store. Vamos aguardar alguns segundos para que termine de instalar.\"\n  }\n}",
+    "raw": {
+      "candidates": [
+        {
+          "content": {
+            "parts": [
+              {
+                "text": "{\n  \"resumo\": \"A tela mostra a Google Play Store fazendo o download do Instagram (100% de 79.69 MB). O aplicativo está em processo de instalação.\",\n  \"elementos\": [\n    {\"label\": \"Instagzam\", \"tipo\": \"text\", \"x\": 262, \"y\": 91},\n    {\"label\": \"Google Play\", \"tipo\": \"text\", \"x\": 161, \"y\": 257},\n    {\"label\": \"X\", \"tipo\": \"button\", \"x\": 497, \"y\": 257},\n    {\"label\": \"Threads\", \"tipo\": \"text\", \"x\": 161, \"y\": 351},\n    {\"label\": \"Cancel\", \"tipo\": \"button\", \"x\": 463, \"y\": 376},\n    {\"label\": \"100%of 79.69 MB\", \"tipo\": \"text\", \"x\": 204, \"y\": 384},\n    {\"label\": \"Facebook\", \"tipo\": \"text\", \"x\": 59, \"y\": 701},\n    {\"label\": \"TikTok\", \"tipo\": \"text\", \"x\": 213, \"y\": 700},\n    {\"label\": \"More apps to try\", \"tipo\": \"text\", \"x\": 122, \"y\": 852}\n  ],\n  \"acao\": {\n    \"type\": \"sleep\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": 5000,\n    \"motivo\": \"O Instagram está concluindo o download e instalação na Google Play Store. Vamos aguardar alguns segundos para que termine de instalar.\"\n  }\n}",
+                "thoughtSignature": "EmAKXgFpFH0TSAnbriYYRZ/U4hKhuCnOJEmB6v/lCbw9AnnoHCcWMLxX1vmOH8g9V8VWEPjCh7hazSAAjP4rS08fRH3uR3bDAJbQTkqFcNMnIyji2DUv30IWtVtbgsy9uI4="
+              }
+            ],
+            "role": "model"
+          },
+          "finishReason": "STOP",
+          "index": 0
+        }
+      ],
+      "usageMetadata": {
+        "promptTokenCount": 1865,
+        "candidatesTokenCount": 434,
+        "totalTokenCount": 2299,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 1865
+          }
+        ],
+        "serviceTier": "standard"
+      },
+      "modelVersion": "gemini-3.5-flash-lite",
+      "responseId": "zunDaubzKvmtz7IP4Oyp-Ak"
+    }
+  },
+  "system": "Você opera um smartphone Android olhando só a lista OCR da tela (textos + coordenadas x,y na escala do device).\n\nResponda APENAS JSON válido (sem markdown) no formato:\n{\n  \"resumo\": \"2-4 frases do que tem na tela\",\n  \"elementos\": [{ \"label\": \"...\", \"tipo\": \"button|chip|card|text\", \"x\": 0, \"y\": 0 }],\n  \"acao\": {\n    \"type\": \"tap|scroll|type|key|sleep|done|fail\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"...\"\n  }\n}\n\nRegras:\n- Coords de tap = mesma escala do OCR (device). Não invente scale.\n- tap: use x,y de um item OCR existente (centro do texto alvo).\n- scroll: direction down|up|left|right quando o próximo alvo não está visível.\n- Se o histórico mostrar vários scrolls com o mesmo OCR (tela não mudou), NÃO scroll de novo: mude de estratégia (tap em outro elemento, type, key BACK).\n- Home / Settings (AVD Nexus Launcher):\n  - OCR com \"Notifications\" / \"Clear all\" / \"AndroidSetup\" = shade aberto → key KEYCODE_BACK ou KEYCODE_HOME (NÃO scroll).\n  - Tela inicial (só hora/data, sem apps) → scroll direction=down abre a gaveta. scroll up reabre o shade — evite.\n  - Texto \"Settings\" no OCR → tap nessas coords. done só com Settings aberto (Search settings / Network / Apps / Battery).\n- Filtro de localização LinkedIn: se OCR tiver \"Add a location\" / \"Add alocation\" e a cidade alvo do roteiro (ex. Campinas) NÃO estiver na lista, faça tap em Add a location e depois type da cidade — NÃO fique só scrollando a lista.\n- Connect: só tap se text exato \"Connect\" e tipicamente 180 < y < 850. Se o histórico já tem tap nas mesmas coords e a tela não mudou, scroll ou outro Connect — não repita o mesmo tap.\n- type: digite text de uma vez (campo acao.text obrigatório). Se o histórico mostrar erro de tecla OCR, espere (sleep) e tente type de novo, ou key KEYCODE_BACK e reabra o campo.\n- key: code tipo KEYCODE_BACK / KEYCODE_HOME.\n- sleep: ms quando a tela parece carregando.\n- done: objetivo cumprido.\n- fail: impossível continuar (motivo claro).\n- Não peça screenshot; decida só com o OCR e o prompt.",
+  "prompt": "Objetivo / roteiro:\nabra o instagram e envie uma mensagem oi para o laercio germano\n\nHistórico recente (últimos 12/12):\n[{\"step\":10,\"type\":\"scroll\",\"motivo\":\"Deslizar para a esquerda para abrir a tela de mensagens (Direct) do Instagram.\",\"x\":null,\"y\":null,\"direction\":\"left\",\"text\":null,\"code\":null,\"resultado\":\"scroll left\"},{\"step\":11,\"type\":\"scroll\",\"motivo\":\"Deslizar para a direita para acessar a aba de Direct ou mensagens onde podemos buscar o Laercio Germano.\",\"x\":null,\"y\":null,\"direction\":\"right\",\"text\":null,\"code\":null,\"resultado\":\"scroll right\"},{\"step\":12,\"type\":\"tap\",\"motivo\":\"Tocar no ícone de mensagens no canto superior direito para abrir a tela de Direct e poder buscar o contato Laercio Germano.\",\"x\":466,\"y\":224,\"direction\":null,\"text\":null,\"code\":null,\"resultado\":\"tap 466,224\"},{\"step\":13,\"type\":\"tap\",\"motivo\":\"Tocar no ícone de mensagens (Direct) no canto superior direito para abrir a tela de conversas e buscar o Laercio Germano.\",\"x\":466,\"y\":224,\"direction\":null,\"text\":null,\"code\":null,\"resultado\":\"tap 466,224\"},{\"step\":14,\"type\":\"scroll\",\"motivo\":\"Como os cliques no canto superior direito não abriram o direct, vamos rolar para atualizar o feed ou explorar a interface para encontrar a barra de pesquisa ou botão de direct.\",\"x\":null,\"y\":null,\"direction\":\"up\",\"text\":null,\"code\":null,\"resultado\":\"scroll up\"},{\"step\":15,\"type\":\"tap\",\"motivo\":\"Tocar no ícone de Direct na posição exata detectada no OCR para abrir as mensagens e buscar o Laercio Germano.\",\"x\":465,\"y\":225,\"direction\":null,\"text\":null,\"code\":null,\"resultado\":\"tap 465,225\"},{\"step\":16,\"type\":\"scroll\",\"motivo\":\"Rolar a tela para baixo para atualizar o feed e procurar por novos elementos ou barras de navegação que permitam acessar o Direct.\",\"x\":null,\"y\":null,\"direction\":\"down\",\"text\":null,\"code\":null,\"resultado\":\"scroll down\"},{\"step\":17,\"type\":\"tap\",\"motivo\":\"Tocar no nome de laerciogermano que aparece no rodapé do post para acessar o perfil e poder enviar a mensagem oi.\",\"x\":298,\"y\":633,\"direction\":null,\"text\":null,\"code\":null,\"resultado\":\"tap 298,633\"},{\"step\":18,\"type\":\"tap\",\"motivo\":\"Clicar no perfil de laerciogermano para acessar sua página e poder enviar a mensagem oi.\",\"x\":269,\"y\":633,\"direction\":null,\"text\":null,\"code\":null,\"resultado\":\"tap 269,633\"},{\"step\":19,\"type\":\"tap\",\"motivo\":\"Clicar no botão Install na Google Play Store para instalar o Instagram e poder enviar a mensagem para Laercio Germano.\",\"x\":271,\"y\":592,\"direction\":null,\"text\":null,\"code\":null,\"resultado\":\"tap 271,592\"},{\"step\":20,\"type\":\"tap\",\"motivo\":\"Tocar novamente no botão de instalação do Instagram na Google Play Store para garantir que o download seja iniciado.\",\"x\":271,\"y\":592,\"direction\":null,\"text\":null,\"code\":null,\"resultado\":\"tap 271,592\"},{\"step\":21,\"type\":\"key\",\"motivo\":\"O Instagram não está instalado corretamente ou estamos presos na Play Store; vamos voltar para tentar encontrar o aplicativo instalado na gaveta de apps.\",\"x\":null,\"y\":null,\"direction\":null,\"text\":null,\"code\":\"KEYCODE_BACK\",\"resultado\":\"key KEYCODE_BACK\"}]\n\nOCR atual (JSON):\n[{\"text\":\"3:17\",\"x\":88,\"y\":25},{\"text\":\"Instagzam\",\"x\":262,\"y\":91},{\"text\":\"Google Play\",\"x\":161,\"y\":257},{\"text\":\"X\",\"x\":497,\"y\":257},{\"text\":\"Threads\",\"x\":161,\"y\":351},{\"text\":\"Cancel\",\"x\":463,\"y\":376},{\"text\":\"100%of 79.69 MB\",\"x\":204,\"y\":384},{\"text\":\"Sponsored·Suggested for you\",\"x\":183,\"y\":480},{\"text\":\"f\",\"x\":100,\"y\":605},{\"text\":\"小\",\"x\":262,\"y\":594},{\"text\":\"Facebook\",\"x\":59,\"y\":701},{\"text\":\"TikTok\",\"x\":213,\"y\":700},{\"text\":\"TikTok Lite -\",\"x\":406,\"y\":700},{\"text\":\"4.8★\",\"x\":47,\"y\":732},{\"text\":\"4.4★\",\"x\":214,\"y\":731},{\"text\":\"SeriesCurtas\",\"x\":412,\"y\":723},{\"text\":\"ne\",\"x\":530,\"y\":724},{\"text\":\"4.3★\",\"x\":383,\"y\":754},{\"text\":\"More apps to try\",\"x\":122,\"y\":852}]\n\nDefina a próxima ação.",
+  "response": "{\n  \"resumo\": \"A tela mostra a Google Play Store fazendo o download do Instagram (100% de 79.69 MB). O aplicativo está em processo de instalação.\",\n  \"elementos\": [\n    {\"label\": \"Instagzam\", \"tipo\": \"text\", \"x\": 262, \"y\": 91},\n    {\"label\": \"Google Play\", \"tipo\": \"text\", \"x\": 161, \"y\": 257},\n    {\"label\": \"X\", \"tipo\": \"button\", \"x\": 497, \"y\": 257},\n    {\"label\": \"Threads\", \"tipo\": \"text\", \"x\": 161, \"y\": 351},\n    {\"label\": \"Cancel\", \"tipo\": \"button\", \"x\": 463, \"y\": 376},\n    {\"label\": \"100%of 79.69 MB\", \"tipo\": \"text\", \"x\": 204, \"y\": 384},\n    {\"label\": \"Facebook\", \"tipo\": \"text\", \"x\": 59, \"y\": 701},\n    {\"label\": \"TikTok\", \"tipo\": \"text\", \"x\": 213, \"y\": 700},\n    {\"label\": \"More apps to try\", \"tipo\": \"text\", \"x\": 122, \"y\": 852}\n  ],\n  \"acao\": {\n    \"type\": \"sleep\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": 5000,\n    \"motivo\": \"O Instagram está concluindo o download e instalação na Google Play Store. Vamos aguardar alguns segundos para que termine de instalar.\"\n  }\n}",
+  "roteiro": "abra o instagram e envie uma mensagem oi para o laercio germano",
+  "usage": {
+    "promptTokenCount": 1865,
+    "candidatesTokenCount": 434,
+    "totalTokenCount": 2299,
+    "promptTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 1865
+      }
+    ],
+    "serviceTier": "standard"
+  }
+}

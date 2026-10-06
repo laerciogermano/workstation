@@ -1,0 +1,91 @@
+{
+  "run": "2026-10-05T18-06-06-623",
+  "step": 7,
+  "at": "2026-10-05T18:06:29.937Z",
+  "serial": "emulator-5554",
+  "engine": "rapidocr",
+  "model": "gemini-3.5-flash-lite",
+  "ok": true,
+  "acao": "scroll",
+  "attempt": 1,
+  "round": 1,
+  "ms": 1119,
+  "promptChars": 1307,
+  "systemChars": 1666,
+  "input": {
+    "system": "Você opera um smartphone Android olhando só a lista OCR da tela (textos + coordenadas x,y na escala do device).\n\nResponda APENAS JSON válido (sem markdown) no formato:\n{\n  \"resumo\": \"2-4 frases do que tem na tela\",\n  \"elementos\": [{ \"label\": \"...\", \"tipo\": \"button|chip|card|text\", \"x\": 0, \"y\": 0 }],\n  \"acao\": {\n    \"type\": \"tap|scroll|type|key|sleep|done|fail\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"...\"\n  }\n}\n\nRegras:\n- Coords de tap = mesma escala do OCR (device). Não invente scale.\n- tap: use x,y de um item OCR existente (centro do texto alvo).\n- scroll: direction down|up|left|right quando o próximo alvo não está visível.\n- Se o histórico mostrar vários scrolls com o mesmo OCR (tela não mudou), NÃO scroll de novo: mude de estratégia (tap em outro elemento, type, key BACK).\n- Filtro de localização LinkedIn: se OCR tiver \"Add a location\" / \"Add alocation\" e a cidade alvo do roteiro (ex. Campinas) NÃO estiver na lista, faça tap em Add a location e depois type da cidade — NÃO fique só scrollando a lista.\n- Connect: só tap se text exato \"Connect\" e tipicamente 180 < y < 850. Se o histórico já tem tap nas mesmas coords e a tela não mudou, scroll ou outro Connect — não repita o mesmo tap.\n- type: digite text de uma vez (campo acao.text obrigatório). Se o histórico mostrar erro de tecla OCR, espere (sleep) e tente type de novo, ou key KEYCODE_BACK e reabra o campo.\n- key: code tipo KEYCODE_BACK.\n- sleep: ms quando a tela parece carregando.\n- done: objetivo cumprido.\n- fail: impossível continuar (motivo claro).\n- Não peça screenshot; decida só com o OCR e o prompt.",
+    "prompt": "Objetivo / roteiro:\nabra as configuracoes do android entrando no menu de aplicacoes e clicando em confifuracoes\n\nHistórico recente:\n[{\"step\":1,\"type\":\"scroll\",\"motivo\":\"Os ícones de aplicativos e configurações não estão visíveis na tela atual, sendo necessário navegar para a gaveta de aplicativos.\",\"x\":null,\"y\":null},{\"step\":2,\"type\":\"key\",\"motivo\":\"Para abrir as configurações do Android a partir do menu de aplicativos, precisamos ir para a tela inicial do dispositivo primeiro.\",\"x\":null,\"y\":null},{\"step\":3,\"type\":\"scroll\",\"motivo\":\"Para acessar a gaveta de aplicativos e encontrar o ícone de configurações, é necessário deslizar a tela para cima.\",\"x\":null,\"y\":null},{\"step\":4,\"type\":\"key\",\"motivo\":\"Para acessar o menu de aplicativos e as configurações do Android, precisamos voltar para a tela inicial (Home).\",\"x\":null,\"y\":null},{\"step\":5,\"type\":\"scroll\",\"motivo\":\"Deslizando a tela inicial para cima para abrir o menu de aplicativos e localizar as configurações.\",\"x\":null,\"y\":null},{\"step\":6,\"type\":\"key\",\"motivo\":\"Estamos no painel de notificações. Precisamos pressionar a tecla Home para ir à tela principal e buscar o menu de aplicativos e configurações.\",\"x\":null,\"y\":null}]\n\nOCR atual (JSON):\n[{\"text\":\"3:06\",\"x\":122,\"y\":24},{\"text\":\"Monday, 0ct 5\",\"x\":272,\"y\":118}]\n\nDefina a próxima ação.",
+    "body": {
+      "contents": [
+        {
+          "role": "user",
+          "parts": [
+            {
+              "text": "Objetivo / roteiro:\nabra as configuracoes do android entrando no menu de aplicacoes e clicando em confifuracoes\n\nHistórico recente:\n[{\"step\":1,\"type\":\"scroll\",\"motivo\":\"Os ícones de aplicativos e configurações não estão visíveis na tela atual, sendo necessário navegar para a gaveta de aplicativos.\",\"x\":null,\"y\":null},{\"step\":2,\"type\":\"key\",\"motivo\":\"Para abrir as configurações do Android a partir do menu de aplicativos, precisamos ir para a tela inicial do dispositivo primeiro.\",\"x\":null,\"y\":null},{\"step\":3,\"type\":\"scroll\",\"motivo\":\"Para acessar a gaveta de aplicativos e encontrar o ícone de configurações, é necessário deslizar a tela para cima.\",\"x\":null,\"y\":null},{\"step\":4,\"type\":\"key\",\"motivo\":\"Para acessar o menu de aplicativos e as configurações do Android, precisamos voltar para a tela inicial (Home).\",\"x\":null,\"y\":null},{\"step\":5,\"type\":\"scroll\",\"motivo\":\"Deslizando a tela inicial para cima para abrir o menu de aplicativos e localizar as configurações.\",\"x\":null,\"y\":null},{\"step\":6,\"type\":\"key\",\"motivo\":\"Estamos no painel de notificações. Precisamos pressionar a tecla Home para ir à tela principal e buscar o menu de aplicativos e configurações.\",\"x\":null,\"y\":null}]\n\nOCR atual (JSON):\n[{\"text\":\"3:06\",\"x\":122,\"y\":24},{\"text\":\"Monday, 0ct 5\",\"x\":272,\"y\":118}]\n\nDefina a próxima ação."
+            }
+          ]
+        }
+      ],
+      "generationConfig": {
+        "responseMimeType": "application/json"
+      },
+      "systemInstruction": {
+        "parts": [
+          {
+            "text": "Você opera um smartphone Android olhando só a lista OCR da tela (textos + coordenadas x,y na escala do device).\n\nResponda APENAS JSON válido (sem markdown) no formato:\n{\n  \"resumo\": \"2-4 frases do que tem na tela\",\n  \"elementos\": [{ \"label\": \"...\", \"tipo\": \"button|chip|card|text\", \"x\": 0, \"y\": 0 }],\n  \"acao\": {\n    \"type\": \"tap|scroll|type|key|sleep|done|fail\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"...\"\n  }\n}\n\nRegras:\n- Coords de tap = mesma escala do OCR (device). Não invente scale.\n- tap: use x,y de um item OCR existente (centro do texto alvo).\n- scroll: direction down|up|left|right quando o próximo alvo não está visível.\n- Se o histórico mostrar vários scrolls com o mesmo OCR (tela não mudou), NÃO scroll de novo: mude de estratégia (tap em outro elemento, type, key BACK).\n- Filtro de localização LinkedIn: se OCR tiver \"Add a location\" / \"Add alocation\" e a cidade alvo do roteiro (ex. Campinas) NÃO estiver na lista, faça tap em Add a location e depois type da cidade — NÃO fique só scrollando a lista.\n- Connect: só tap se text exato \"Connect\" e tipicamente 180 < y < 850. Se o histórico já tem tap nas mesmas coords e a tela não mudou, scroll ou outro Connect — não repita o mesmo tap.\n- type: digite text de uma vez (campo acao.text obrigatório). Se o histórico mostrar erro de tecla OCR, espere (sleep) e tente type de novo, ou key KEYCODE_BACK e reabra o campo.\n- key: code tipo KEYCODE_BACK.\n- sleep: ms quando a tela parece carregando.\n- done: objetivo cumprido.\n- fail: impossível continuar (motivo claro).\n- Não peça screenshot; decida só com o OCR e o prompt."
+          }
+        ]
+      }
+    }
+  },
+  "output": {
+    "text": "{\n  \"resumo\": \"A tela atual mostra a hora e a data (Monday, Oct 5), indicando que estamos na tela de bloqueio ou tela inicial.\",\n  \"elementos\": [\n    {\n      \"label\": \"Monday, 0ct 5\",\n      \"tipo\": \"text\",\n      \"x\": 272,\n      \"y\": 118\n    }\n  ],\n  \"acao\": {\n    \"type\": \"scroll\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": \"up\",\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"Deslizando a tela de bloqueio/inicial para cima para acessar o menu de aplicativos e encontrar as configurações.\"\n  }\n}",
+    "raw": {
+      "candidates": [
+        {
+          "content": {
+            "parts": [
+              {
+                "text": "{\n  \"resumo\": \"A tela atual mostra a hora e a data (Monday, Oct 5), indicando que estamos na tela de bloqueio ou tela inicial.\",\n  \"elementos\": [\n    {\n      \"label\": \"Monday, 0ct 5\",\n      \"tipo\": \"text\",\n      \"x\": 272,\n      \"y\": 118\n    }\n  ],\n  \"acao\": {\n    \"type\": \"scroll\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": \"up\",\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"Deslizando a tela de bloqueio/inicial para cima para acessar o menu de aplicativos e encontrar as configurações.\"\n  }\n}",
+                "thoughtSignature": "EmAKXgFpFH0TC8iuWktXPXCOWCSRGR8E8kKAAuQOyW1jdilXsO37qc4M/qQ/kpOyD11MZbAXgbVeiHHDY6sxorz7v985yYSR+FKgYJZNYJUbASQ0BCo8O2huXMPQI2PC7vM="
+              }
+            ],
+            "role": "model"
+          },
+          "finishReason": "STOP",
+          "index": 0
+        }
+      ],
+      "usageMetadata": {
+        "promptTokenCount": 856,
+        "candidatesTokenCount": 186,
+        "totalTokenCount": 1042,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 856
+          }
+        ],
+        "serviceTier": "standard"
+      },
+      "modelVersion": "gemini-3.5-flash-lite",
+      "responseId": "JefDatLwDPKhz7IPhMT80As"
+    }
+  },
+  "system": "Você opera um smartphone Android olhando só a lista OCR da tela (textos + coordenadas x,y na escala do device).\n\nResponda APENAS JSON válido (sem markdown) no formato:\n{\n  \"resumo\": \"2-4 frases do que tem na tela\",\n  \"elementos\": [{ \"label\": \"...\", \"tipo\": \"button|chip|card|text\", \"x\": 0, \"y\": 0 }],\n  \"acao\": {\n    \"type\": \"tap|scroll|type|key|sleep|done|fail\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"...\"\n  }\n}\n\nRegras:\n- Coords de tap = mesma escala do OCR (device). Não invente scale.\n- tap: use x,y de um item OCR existente (centro do texto alvo).\n- scroll: direction down|up|left|right quando o próximo alvo não está visível.\n- Se o histórico mostrar vários scrolls com o mesmo OCR (tela não mudou), NÃO scroll de novo: mude de estratégia (tap em outro elemento, type, key BACK).\n- Filtro de localização LinkedIn: se OCR tiver \"Add a location\" / \"Add alocation\" e a cidade alvo do roteiro (ex. Campinas) NÃO estiver na lista, faça tap em Add a location e depois type da cidade — NÃO fique só scrollando a lista.\n- Connect: só tap se text exato \"Connect\" e tipicamente 180 < y < 850. Se o histórico já tem tap nas mesmas coords e a tela não mudou, scroll ou outro Connect — não repita o mesmo tap.\n- type: digite text de uma vez (campo acao.text obrigatório). Se o histórico mostrar erro de tecla OCR, espere (sleep) e tente type de novo, ou key KEYCODE_BACK e reabra o campo.\n- key: code tipo KEYCODE_BACK.\n- sleep: ms quando a tela parece carregando.\n- done: objetivo cumprido.\n- fail: impossível continuar (motivo claro).\n- Não peça screenshot; decida só com o OCR e o prompt.",
+  "prompt": "Objetivo / roteiro:\nabra as configuracoes do android entrando no menu de aplicacoes e clicando em confifuracoes\n\nHistórico recente:\n[{\"step\":1,\"type\":\"scroll\",\"motivo\":\"Os ícones de aplicativos e configurações não estão visíveis na tela atual, sendo necessário navegar para a gaveta de aplicativos.\",\"x\":null,\"y\":null},{\"step\":2,\"type\":\"key\",\"motivo\":\"Para abrir as configurações do Android a partir do menu de aplicativos, precisamos ir para a tela inicial do dispositivo primeiro.\",\"x\":null,\"y\":null},{\"step\":3,\"type\":\"scroll\",\"motivo\":\"Para acessar a gaveta de aplicativos e encontrar o ícone de configurações, é necessário deslizar a tela para cima.\",\"x\":null,\"y\":null},{\"step\":4,\"type\":\"key\",\"motivo\":\"Para acessar o menu de aplicativos e as configurações do Android, precisamos voltar para a tela inicial (Home).\",\"x\":null,\"y\":null},{\"step\":5,\"type\":\"scroll\",\"motivo\":\"Deslizando a tela inicial para cima para abrir o menu de aplicativos e localizar as configurações.\",\"x\":null,\"y\":null},{\"step\":6,\"type\":\"key\",\"motivo\":\"Estamos no painel de notificações. Precisamos pressionar a tecla Home para ir à tela principal e buscar o menu de aplicativos e configurações.\",\"x\":null,\"y\":null}]\n\nOCR atual (JSON):\n[{\"text\":\"3:06\",\"x\":122,\"y\":24},{\"text\":\"Monday, 0ct 5\",\"x\":272,\"y\":118}]\n\nDefina a próxima ação.",
+  "response": "{\n  \"resumo\": \"A tela atual mostra a hora e a data (Monday, Oct 5), indicando que estamos na tela de bloqueio ou tela inicial.\",\n  \"elementos\": [\n    {\n      \"label\": \"Monday, 0ct 5\",\n      \"tipo\": \"text\",\n      \"x\": 272,\n      \"y\": 118\n    }\n  ],\n  \"acao\": {\n    \"type\": \"scroll\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": \"up\",\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"Deslizando a tela de bloqueio/inicial para cima para acessar o menu de aplicativos e encontrar as configurações.\"\n  }\n}",
+  "roteiro": "abra as configuracoes do android entrando no menu de aplicacoes e clicando em confifuracoes",
+  "usage": {
+    "promptTokenCount": 856,
+    "candidatesTokenCount": 186,
+    "totalTokenCount": 1042,
+    "promptTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 856
+      }
+    ],
+    "serviceTier": "standard"
+  }
+}

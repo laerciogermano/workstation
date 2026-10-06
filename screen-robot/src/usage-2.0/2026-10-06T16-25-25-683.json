@@ -1,0 +1,55 @@
+{
+  "entrada": {
+    "model": "gpt-4o-mini",
+    "messages": [
+      {
+        "role": "system",
+        "content": "Você opera um smartphone Android olhando só a lista extract da tela (type, text, x, y). Sem id.\n\nResponda APENAS JSON válido (sem markdown) no formato:\n{\n  \"resumo\": \"2-4 frases do que tem na tela\",\n  \"acao\": {\n    \"type\": \"tap|scroll|type|key|sleep|done|fail\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"...\"\n  }\n}\n\nRegras de tap (OCR):\n- Cada item type=text (e icon) do extract É um alvo clicável: use o text do passo e copie os x,y desse hit.\n- tap: acao.x e acao.y = coords do extract ATUAL (centro do text alvo). NÃO copie coords do roteiro/histórico.\n- PROIBIDO id / element / e0 / e1. Só x,y.\n- PROIBIDO fail só porque \"não há botão\"/elemento interativo: texto OCR conta. fail só se o objetivo for impossível após tentativas.\n- Alvo do próximo passo do roteiro está no extract → tap/type/key nesse alvo. Sem alvo do passo → sleep ou scroll conforme o roteiro; não fail."
+      },
+      {
+        "role": "user",
+        "content": "Objetivo / roteiro:\nEm cada ação, diga no motivo qual passo (1–12) está em curso.\n\nOrdem obrigatória 1→12. 1 ação/turno. Text/icon do extract = clicável (copie x,y).\nPROIBIDO fail se o text do passo atual estiver no OCR (ex. Search → tap; não fail).\nfail só se impossível após retentativa; histórico de fail NÃO impede tap.\n\n1. clique em Search — tap nas x,y do text \"Search\" (y<120). Única ação.\n2. digite comprador — type \"comprador\" (após Search; teclado ou campo aberto).\n3. feche o teclado — key KEYCODE_BACK 1×.\n4. clique em Show all results — tap text EXATO do OCR (\"Show all results\" ou \"Show all\"/\"Showall\").\n5. clique em People — tap \"People\" (aba, y baixo/topo conforme OCR).\n6. clique Location — tap \"Location\" ou \"Locatior\".\n7. clique em Add a location — tap \"Add a location\"/\"Add alocation\" (campo do sheet, não o chip).\n8. digite campinas — type \"Campinas\".\n9. clique na primeira opção Campinas — tap a sugestão Campinas no sheet (não o campo).\n10. clique em Show results — tap \"Show results\".\n11. Connect — tap text EXATO \"Connect\" se houver no extract.\n12. Sem Connect → scroll down; repita desde o 11.\n\nOCR atual (JSON):\n[{\"type\":\"text\",\"text\":\"vil\",\"x\":440,\"y\":22},{\"type\":\"text\",\"text\":\"Ma\",\"x\":185,\"y\":23},{\"type\":\"text\",\"text\":\"125\",\"x\":88,\"y\":24},{\"type\":\"text\",\"text\":\"1:25\",\"x\":130,\"y\":25},{\"type\":\"text\",\"text\":\"+\",\"x\":39,\"y\":80},{\"type\":\"text\",\"text\":\"E\",\"x\":35,\"y\":81},{\"type\":\"text\",\"text\":\"comprador\",\"x\":148,\"y\":81},{\"type\":\"text\",\"text\":\"o\",\"x\":478,\"y\":81},{\"type\":\"text\",\"text\":\"文\",\"x\":478,\"y\":82},{\"type\":\"text\",\"text\":\"R\",\"x\":491,\"y\":152},{\"type\":\"text\",\"text\":\"O\",\"x\":42,\"y\":153},{\"type\":\"text\",\"text\":\"comprador\",\"x\":154,\"y\":155},{\"type\":\"text\",\"text\":\"O\",\"x\":42,\"y\":231},{\"type\":\"text\",\"text\":\"LN\",\"x\":489,\"y\":232},{\"type\":\"text\",\"text\":\"compradorcomprador\",\"x\":214,\"y\":233},{\"type\":\"text\",\"text\":\"O\",\"x\":42,\"y\":309},{\"type\":\"text\",\"text\":\"comprador\",\"x\":155,\"y\":310},{\"type\":\"text\",\"text\":\"comprador we we comprador\",\"x\":251,\"y\":310},{\"type\":\"text\",\"text\":\"comprador wewe comprador\",\"x\":254,\"y\":310},{\"type\":\"text\",\"text\":\"comprador\",\"x\":353,\"y\":310},{\"type\":\"text\",\"text\":\"LN\",\"x\":489,\"y\":310},{\"type\":\"text\",\"text\":\"LN\",\"x\":491,\"y\":386},{\"type\":\"text\",\"text\":\"Q\",\"x\":43,\"y\":388},{\"type\":\"text\",\"text\":\"compradorjunior\",\"x\":171,\"y\":388},{\"type\":\"text\",\"text\":\"comprador junior\",\"x\":188,\"y\":388},{\"type\":\"text\",\"text\":\"junior\",\"x\":250,\"y\":388},{\"type\":\"text\",\"text\":\"LN\",\"x\":489,\"y\":465},{\"type\":\"text\",\"text\":\"jr\",\"x\":225,\"y\":466},{\"type\":\"text\",\"text\":\"comprador\",\"x\":151,\"y\":467},{\"type\":\"text\",\"text\":\"=\",\"x\":54,\"y\":474},{\"type\":\"text\",\"text\":\"Comprador\",\"x\":157,\"y\":544},{\"type\":\"text\",\"text\":\"Comprador Ltd. • Company • Financial S...\",\"x\":254,\"y\":544},{\"type\":\"text\",\"text\":\"-\",\"x\":274,\"y\":544},{\"type\":\"text\",\"text\":\"+\",\"x\":380,\"y\":544},{\"type\":\"text\",\"text\":\"Financial\",\"x\":431,\"y\":544},{\"type\":\"text\",\"text\":\"S\",\"x\":484,\"y\":544},{\"type\":\"text\",\"text\":\"CompradorLtd.·Company·Financial S...\",\"x\":314,\"y\":545},{\"type\":\"text\",\"text\":\"COMPRADOR\",\"x\":170,\"y\":620},{\"type\":\"text\",\"text\":\"COMPRADORX·Company·Informatio..\",\"x\":278,\"y\":621},{\"type\":\"text\",\"text\":\"+\",\"x\":274,\"y\":622},{\"type\":\"text\",\"text\":\"+\",\"x\":380,\"y\":622},{\"type\":\"text\",\"text\":\"Informatio\",\"x\":438,\"y\":622},{\"type\":\"text\",\"text\":\"COMPRADOR X • Company • Informatio...\",\"x\":313,\"y\":624},{\"type\":\"text\",\"text\":\"sã\",\"x\":43,\"y\":699},{\"type\":\"text\",\"text\":\"Comprador\",\"x\":157,\"y\":700},{\"type\":\"text\",\"text\":\"+\",\"x\":273,\"y\":700},{\"type\":\"text\",\"text\":\"+\",\"x\":379,\"y\":700},{\"type\":\"text\",\"text\":\"Business\",\"x\":431,\"y\":700},{\"type\":\"text\",\"text\":\"C\",\"x\":486,\"y\":700},{\"type\":\"text\",\"text\":\"Top\",\"x\":243,\"y\":701},{\"type\":\"text\",\"text\":\"Comprador Top·Company·Business C..\",\"x\":310,\"y\":702},{\"type\":\"text\",\"text\":\"Show\",\"x\":216,\"y\":849},{\"type\":\"text\",\"text\":\"Show all results\",\"x\":270,\"y\":849},{\"type\":\"text\",\"text\":\"results\",\"x\":319,\"y\":849},{\"type\":\"text\",\"text\":\"Showall results\",\"x\":268,\"y\":850},{\"type\":\"text\",\"text\":\"4\",\"x\":270,\"y\":924}]\n\nDefina a próxima ação."
+      }
+    ],
+    "temperature": 0,
+    "response_format": {
+      "type": "json_object"
+    }
+  },
+  "resposta": {
+    "id": "chatcmpl-EW2GitHCcTM5wip4ztqcs63XNlGO1",
+    "object": "chat.completion",
+    "created": 1791303924,
+    "model": "gpt-4o-mini-2024-07-18",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\n  \"resumo\": \"A tela exibe várias opções relacionadas ao termo 'comprador', incluindo um botão para 'Show all results'.\",\n  \"acao\": {\n    \"type\": \"tap\",\n    \"x\": 270,\n    \"y\": 849,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"Passo 4\"\n  }\n}",
+          "refusal": null,
+          "annotations": []
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1589,
+      "completion_tokens": 94,
+      "total_tokens": 1683,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "audio_tokens": 0
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0,
+        "audio_tokens": 0,
+        "accepted_prediction_tokens": 0,
+        "rejected_prediction_tokens": 0
+      }
+    },
+    "service_tier": "default",
+    "system_fingerprint": "fp_e97a8f1690"
+  }
+}

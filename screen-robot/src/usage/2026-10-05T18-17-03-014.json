@@ -1,0 +1,121 @@
+{
+  "run": "2026-10-05T18-14-07-283",
+  "step": 11,
+  "at": "2026-10-05T18:17:03.014Z",
+  "serial": "emulator-5554",
+  "engine": "rapidocr",
+  "model": "gemini-3.5-flash-lite",
+  "ok": true,
+  "acao": {
+    "type": "scroll",
+    "x": null,
+    "y": null,
+    "direction": "right",
+    "text": null,
+    "code": null,
+    "ms": null,
+    "motivo": "Deslizar para a direita para acessar a aba de Direct ou mensagens onde podemos buscar o Laercio Germano."
+  },
+  "resumo": "A tela atual mostra os Reels do Instagram, com conteúdos de vídeo e botões de interação como 'Follow'. Precisamos navegar para a aba de mensagens para encontrar o contato Laercio Germano.",
+  "elementos": [
+    {
+      "label": "Reels",
+      "tipo": "text",
+      "x": 166,
+      "y": 93
+    },
+    {
+      "label": "Friends",
+      "tipo": "text",
+      "x": 309,
+      "y": 94
+    },
+    {
+      "label": "Follow",
+      "tipo": "button",
+      "x": 390,
+      "y": 713
+    }
+  ],
+  "attempt": 1,
+  "round": 1,
+  "ms": 1493,
+  "promptChars": 3043,
+  "systemChars": 2082,
+  "input": {
+    "system": "Você opera um smartphone Android olhando só a lista OCR da tela (textos + coordenadas x,y na escala do device).\n\nResponda APENAS JSON válido (sem markdown) no formato:\n{\n  \"resumo\": \"2-4 frases do que tem na tela\",\n  \"elementos\": [{ \"label\": \"...\", \"tipo\": \"button|chip|card|text\", \"x\": 0, \"y\": 0 }],\n  \"acao\": {\n    \"type\": \"tap|scroll|type|key|sleep|done|fail\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"...\"\n  }\n}\n\nRegras:\n- Coords de tap = mesma escala do OCR (device). Não invente scale.\n- tap: use x,y de um item OCR existente (centro do texto alvo).\n- scroll: direction down|up|left|right quando o próximo alvo não está visível.\n- Se o histórico mostrar vários scrolls com o mesmo OCR (tela não mudou), NÃO scroll de novo: mude de estratégia (tap em outro elemento, type, key BACK).\n- Home / Settings (AVD Nexus Launcher):\n  - OCR com \"Notifications\" / \"Clear all\" / \"AndroidSetup\" = shade aberto → key KEYCODE_BACK ou KEYCODE_HOME (NÃO scroll).\n  - Tela inicial (só hora/data, sem apps) → scroll direction=down abre a gaveta. scroll up reabre o shade — evite.\n  - Texto \"Settings\" no OCR → tap nessas coords. done só com Settings aberto (Search settings / Network / Apps / Battery).\n- Filtro de localização LinkedIn: se OCR tiver \"Add a location\" / \"Add alocation\" e a cidade alvo do roteiro (ex. Campinas) NÃO estiver na lista, faça tap em Add a location e depois type da cidade — NÃO fique só scrollando a lista.\n- Connect: só tap se text exato \"Connect\" e tipicamente 180 < y < 850. Se o histórico já tem tap nas mesmas coords e a tela não mudou, scroll ou outro Connect — não repita o mesmo tap.\n- type: digite text de uma vez (campo acao.text obrigatório). Se o histórico mostrar erro de tecla OCR, espere (sleep) e tente type de novo, ou key KEYCODE_BACK e reabra o campo.\n- key: code tipo KEYCODE_BACK / KEYCODE_HOME.\n- sleep: ms quando a tela parece carregando.\n- done: objetivo cumprido.\n- fail: impossível continuar (motivo claro).\n- Não peça screenshot; decida só com o OCR e o prompt.",
+    "prompt": "Objetivo / roteiro:\nabra o instagram e envie uma mensagem oi para o laercio germano\n\nHistórico recente (últimos 10/12):\n[{\"step\":1,\"type\":\"scroll\",\"motivo\":\"Abrir a gaveta de aplicativos para encontrar e abrir o Instagram.\",\"x\":null,\"y\":null,\"direction\":\"down\",\"text\":null,\"code\":null,\"resultado\":\"scroll down\"},{\"step\":2,\"type\":\"tap\",\"motivo\":\"Abrir o aplicativo do Instagram para enviar a mensagem ao Laercio Germano.\",\"x\":371,\"y\":370,\"direction\":null,\"text\":null,\"code\":null,\"resultado\":\"tap 371,370\"},{\"step\":3,\"type\":\"sleep\",\"motivo\":\"Aguardar o Instagram carregar totalmente a interface para podermos buscar o contato do Laercio Germano.\",\"x\":null,\"y\":null,\"direction\":null,\"text\":null,\"code\":null,\"resultado\":\"sleep 3000ms\"},{\"step\":4,\"type\":\"scroll\",\"motivo\":\"Navegar para a tela de mensagens (Direct) para encontrar o contato Laercio Germano.\",\"x\":null,\"y\":null,\"direction\":\"right\",\"text\":null,\"code\":null,\"resultado\":\"scroll right\"},{\"step\":5,\"type\":\"tap\",\"motivo\":\"Conceder permissão para o Instagram usar a câmera enquanto o aplicativo estiver em uso.\",\"x\":269,\"y\":457,\"direction\":null,\"text\":null,\"code\":null,\"resultado\":\"tap 269,457\"},{\"step\":6,\"type\":\"tap\",\"motivo\":\"Clicar em Open Settings ou no botão de permitir para conceder o acesso à câmera e ao microfone solicitado pelo Instagram.\",\"x\":271,\"y\":657,\"direction\":null,\"text\":null,\"code\":null,\"resultado\":\"tap 271,657\"},{\"step\":7,\"type\":\"key\",\"motivo\":\"A caixa de diálogo de permissão está persistente após o clique. Vamos voltar para tentar reabrir o Instagram ou conceder permissão de outra forma.\",\"x\":null,\"y\":null,\"direction\":null,\"text\":null,\"code\":\"KEYCODE_BACK\",\"resultado\":\"key KEYCODE_BACK\"},{\"step\":8,\"type\":\"tap\",\"motivo\":\"Clicar no ícone de mensagens (Direct) no canto superior direito para poder pesquisar e enviar mensagem para Laercio Germano.\",\"x\":466,\"y\":224,\"direction\":null,\"text\":null,\"code\":null,\"resultado\":\"tap 466,224\"},{\"step\":9,\"type\":\"tap\",\"motivo\":\"Clicar no ícone de mensagens (Direct) no canto superior direito para acessar a lista de conversas e buscar o contato Laercio Germano.\",\"x\":466,\"y\":224,\"direction\":null,\"text\":null,\"code\":null,\"resultado\":\"tap 466,224\"},{\"step\":10,\"type\":\"scroll\",\"motivo\":\"Deslizar para a esquerda para abrir a tela de mensagens (Direct) do Instagram.\",\"x\":null,\"y\":null,\"direction\":\"left\",\"text\":null,\"code\":null,\"resultado\":\"scroll left\"}]\n\nOCR atual (JSON):\n[{\"text\":\"+\",\"x\":35,\"y\":93},{\"text\":\"Reels\",\"x\":166,\"y\":93},{\"text\":\"Friends\",\"x\":309,\"y\":94},{\"text\":\"657K\",\"x\":495,\"y\":290},{\"text\":\"14.1K\",\"x\":495,\"y\":390},{\"text\":\"65.5K\",\"x\":495,\"y\":492},{\"text\":\"POV: Me and my cousin gossiping\",\"x\":269,\"y\":544},{\"text\":\"at 2 AM during our sleepover\",\"x\":270,\"y\":571},{\"text\":\"when we are supposed to be\",\"x\":270,\"y\":598},{\"text\":\"690K\",\"x\":494,\"y\":592},{\"text\":\"asleep.\",\"x\":266,\"y\":624},{\"text\":\"deshpandesamruddhi\",\"x\":196,\"y\":699},{\"text\":\"26.4K\",\"x\":496,\"y\":694},{\"text\":\"Follow\",\"x\":390,\"y\":713},{\"text\":\"and_kritikaaa.aaa\",\"x\":176,\"y\":725},{\"text\":\"Late night Tea\",\"x\":104,\"y\":774}]\n\nDefina a próxima ação.",
+    "body": {
+      "contents": [
+        {
+          "role": "user",
+          "parts": [
+            {
+              "text": "Objetivo / roteiro:\nabra o instagram e envie uma mensagem oi para o laercio germano\n\nHistórico recente (últimos 10/12):\n[{\"step\":1,\"type\":\"scroll\",\"motivo\":\"Abrir a gaveta de aplicativos para encontrar e abrir o Instagram.\",\"x\":null,\"y\":null,\"direction\":\"down\",\"text\":null,\"code\":null,\"resultado\":\"scroll down\"},{\"step\":2,\"type\":\"tap\",\"motivo\":\"Abrir o aplicativo do Instagram para enviar a mensagem ao Laercio Germano.\",\"x\":371,\"y\":370,\"direction\":null,\"text\":null,\"code\":null,\"resultado\":\"tap 371,370\"},{\"step\":3,\"type\":\"sleep\",\"motivo\":\"Aguardar o Instagram carregar totalmente a interface para podermos buscar o contato do Laercio Germano.\",\"x\":null,\"y\":null,\"direction\":null,\"text\":null,\"code\":null,\"resultado\":\"sleep 3000ms\"},{\"step\":4,\"type\":\"scroll\",\"motivo\":\"Navegar para a tela de mensagens (Direct) para encontrar o contato Laercio Germano.\",\"x\":null,\"y\":null,\"direction\":\"right\",\"text\":null,\"code\":null,\"resultado\":\"scroll right\"},{\"step\":5,\"type\":\"tap\",\"motivo\":\"Conceder permissão para o Instagram usar a câmera enquanto o aplicativo estiver em uso.\",\"x\":269,\"y\":457,\"direction\":null,\"text\":null,\"code\":null,\"resultado\":\"tap 269,457\"},{\"step\":6,\"type\":\"tap\",\"motivo\":\"Clicar em Open Settings ou no botão de permitir para conceder o acesso à câmera e ao microfone solicitado pelo Instagram.\",\"x\":271,\"y\":657,\"direction\":null,\"text\":null,\"code\":null,\"resultado\":\"tap 271,657\"},{\"step\":7,\"type\":\"key\",\"motivo\":\"A caixa de diálogo de permissão está persistente após o clique. Vamos voltar para tentar reabrir o Instagram ou conceder permissão de outra forma.\",\"x\":null,\"y\":null,\"direction\":null,\"text\":null,\"code\":\"KEYCODE_BACK\",\"resultado\":\"key KEYCODE_BACK\"},{\"step\":8,\"type\":\"tap\",\"motivo\":\"Clicar no ícone de mensagens (Direct) no canto superior direito para poder pesquisar e enviar mensagem para Laercio Germano.\",\"x\":466,\"y\":224,\"direction\":null,\"text\":null,\"code\":null,\"resultado\":\"tap 466,224\"},{\"step\":9,\"type\":\"tap\",\"motivo\":\"Clicar no ícone de mensagens (Direct) no canto superior direito para acessar a lista de conversas e buscar o contato Laercio Germano.\",\"x\":466,\"y\":224,\"direction\":null,\"text\":null,\"code\":null,\"resultado\":\"tap 466,224\"},{\"step\":10,\"type\":\"scroll\",\"motivo\":\"Deslizar para a esquerda para abrir a tela de mensagens (Direct) do Instagram.\",\"x\":null,\"y\":null,\"direction\":\"left\",\"text\":null,\"code\":null,\"resultado\":\"scroll left\"}]\n\nOCR atual (JSON):\n[{\"text\":\"+\",\"x\":35,\"y\":93},{\"text\":\"Reels\",\"x\":166,\"y\":93},{\"text\":\"Friends\",\"x\":309,\"y\":94},{\"text\":\"657K\",\"x\":495,\"y\":290},{\"text\":\"14.1K\",\"x\":495,\"y\":390},{\"text\":\"65.5K\",\"x\":495,\"y\":492},{\"text\":\"POV: Me and my cousin gossiping\",\"x\":269,\"y\":544},{\"text\":\"at 2 AM during our sleepover\",\"x\":270,\"y\":571},{\"text\":\"when we are supposed to be\",\"x\":270,\"y\":598},{\"text\":\"690K\",\"x\":494,\"y\":592},{\"text\":\"asleep.\",\"x\":266,\"y\":624},{\"text\":\"deshpandesamruddhi\",\"x\":196,\"y\":699},{\"text\":\"26.4K\",\"x\":496,\"y\":694},{\"text\":\"Follow\",\"x\":390,\"y\":713},{\"text\":\"and_kritikaaa.aaa\",\"x\":176,\"y\":725},{\"text\":\"Late night Tea\",\"x\":104,\"y\":774}]\n\nDefina a próxima ação."
+            }
+          ]
+        }
+      ],
+      "generationConfig": {
+        "responseMimeType": "application/json"
+      },
+      "systemInstruction": {
+        "parts": [
+          {
+            "text": "Você opera um smartphone Android olhando só a lista OCR da tela (textos + coordenadas x,y na escala do device).\n\nResponda APENAS JSON válido (sem markdown) no formato:\n{\n  \"resumo\": \"2-4 frases do que tem na tela\",\n  \"elementos\": [{ \"label\": \"...\", \"tipo\": \"button|chip|card|text\", \"x\": 0, \"y\": 0 }],\n  \"acao\": {\n    \"type\": \"tap|scroll|type|key|sleep|done|fail\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"...\"\n  }\n}\n\nRegras:\n- Coords de tap = mesma escala do OCR (device). Não invente scale.\n- tap: use x,y de um item OCR existente (centro do texto alvo).\n- scroll: direction down|up|left|right quando o próximo alvo não está visível.\n- Se o histórico mostrar vários scrolls com o mesmo OCR (tela não mudou), NÃO scroll de novo: mude de estratégia (tap em outro elemento, type, key BACK).\n- Home / Settings (AVD Nexus Launcher):\n  - OCR com \"Notifications\" / \"Clear all\" / \"AndroidSetup\" = shade aberto → key KEYCODE_BACK ou KEYCODE_HOME (NÃO scroll).\n  - Tela inicial (só hora/data, sem apps) → scroll direction=down abre a gaveta. scroll up reabre o shade — evite.\n  - Texto \"Settings\" no OCR → tap nessas coords. done só com Settings aberto (Search settings / Network / Apps / Battery).\n- Filtro de localização LinkedIn: se OCR tiver \"Add a location\" / \"Add alocation\" e a cidade alvo do roteiro (ex. Campinas) NÃO estiver na lista, faça tap em Add a location e depois type da cidade — NÃO fique só scrollando a lista.\n- Connect: só tap se text exato \"Connect\" e tipicamente 180 < y < 850. Se o histórico já tem tap nas mesmas coords e a tela não mudou, scroll ou outro Connect — não repita o mesmo tap.\n- type: digite text de uma vez (campo acao.text obrigatório). Se o histórico mostrar erro de tecla OCR, espere (sleep) e tente type de novo, ou key KEYCODE_BACK e reabra o campo.\n- key: code tipo KEYCODE_BACK / KEYCODE_HOME.\n- sleep: ms quando a tela parece carregando.\n- done: objetivo cumprido.\n- fail: impossível continuar (motivo claro).\n- Não peça screenshot; decida só com o OCR e o prompt."
+          }
+        ]
+      }
+    }
+  },
+  "output": {
+    "text": "{\n  \"resumo\": \"A tela atual mostra os Reels do Instagram, com conteúdos de vídeo e botões de interação como 'Follow'. Precisamos navegar para a aba de mensagens para encontrar o contato Laercio Germano.\",\n  \"elementos\": [\n    { \"label\": \"Reels\", \"tipo\": \"text\", \"x\": 166, \"y\": 93 },\n    { \"label\": \"Friends\", \"tipo\": \"text\", \"x\": 309, \"y\": 94 },\n    { \"label\": \"Follow\", \"tipo\": \"button\", \"x\": 390, \"y\": 713 }\n  ],\n  \"acao\": {\n    \"type\": \"scroll\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": \"right\",\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"Deslizar para a direita para acessar a aba de Direct ou mensagens onde podemos buscar o Laercio Germano.\"\n  }\n}",
+    "raw": {
+      "candidates": [
+        {
+          "content": {
+            "parts": [
+              {
+                "text": "{\n  \"resumo\": \"A tela atual mostra os Reels do Instagram, com conteúdos de vídeo e botões de interação como 'Follow'. Precisamos navegar para a aba de mensagens para encontrar o contato Laercio Germano.\",\n  \"elementos\": [\n    { \"label\": \"Reels\", \"tipo\": \"text\", \"x\": 166, \"y\": 93 },\n    { \"label\": \"Friends\", \"tipo\": \"text\", \"x\": 309, \"y\": 94 },\n    { \"label\": \"Follow\", \"tipo\": \"button\", \"x\": 390, \"y\": 713 }\n  ],\n  \"acao\": {\n    \"type\": \"scroll\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": \"right\",\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"Deslizar para a direita para acessar a aba de Direct ou mensagens onde podemos buscar o Laercio Germano.\"\n  }\n}",
+                "thoughtSignature": "EmAKXgFpFH0Tz2JXF8ltsjdip/grkf67Q898+JTzzhEvhlhN3IAYcov5wes66kRGB3omE6da4/ZPwIXUuIkexhIKo7x53SC9f3UBl59ZXV0tMyG208DWhW+dpAeNj6bmTSc="
+              }
+            ],
+            "role": "model"
+          },
+          "finishReason": "STOP",
+          "index": 0
+        }
+      ],
+      "usageMetadata": {
+        "promptTokenCount": 1647,
+        "candidatesTokenCount": 243,
+        "totalTokenCount": 1890,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 1647
+          }
+        ],
+        "serviceTier": "standard"
+      },
+      "modelVersion": "gemini-3.5-flash-lite",
+      "responseId": "nenDasC_MITUz7IPtpKX-Ak"
+    }
+  },
+  "system": "Você opera um smartphone Android olhando só a lista OCR da tela (textos + coordenadas x,y na escala do device).\n\nResponda APENAS JSON válido (sem markdown) no formato:\n{\n  \"resumo\": \"2-4 frases do que tem na tela\",\n  \"elementos\": [{ \"label\": \"...\", \"tipo\": \"button|chip|card|text\", \"x\": 0, \"y\": 0 }],\n  \"acao\": {\n    \"type\": \"tap|scroll|type|key|sleep|done|fail\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"...\"\n  }\n}\n\nRegras:\n- Coords de tap = mesma escala do OCR (device). Não invente scale.\n- tap: use x,y de um item OCR existente (centro do texto alvo).\n- scroll: direction down|up|left|right quando o próximo alvo não está visível.\n- Se o histórico mostrar vários scrolls com o mesmo OCR (tela não mudou), NÃO scroll de novo: mude de estratégia (tap em outro elemento, type, key BACK).\n- Home / Settings (AVD Nexus Launcher):\n  - OCR com \"Notifications\" / \"Clear all\" / \"AndroidSetup\" = shade aberto → key KEYCODE_BACK ou KEYCODE_HOME (NÃO scroll).\n  - Tela inicial (só hora/data, sem apps) → scroll direction=down abre a gaveta. scroll up reabre o shade — evite.\n  - Texto \"Settings\" no OCR → tap nessas coords. done só com Settings aberto (Search settings / Network / Apps / Battery).\n- Filtro de localização LinkedIn: se OCR tiver \"Add a location\" / \"Add alocation\" e a cidade alvo do roteiro (ex. Campinas) NÃO estiver na lista, faça tap em Add a location e depois type da cidade — NÃO fique só scrollando a lista.\n- Connect: só tap se text exato \"Connect\" e tipicamente 180 < y < 850. Se o histórico já tem tap nas mesmas coords e a tela não mudou, scroll ou outro Connect — não repita o mesmo tap.\n- type: digite text de uma vez (campo acao.text obrigatório). Se o histórico mostrar erro de tecla OCR, espere (sleep) e tente type de novo, ou key KEYCODE_BACK e reabra o campo.\n- key: code tipo KEYCODE_BACK / KEYCODE_HOME.\n- sleep: ms quando a tela parece carregando.\n- done: objetivo cumprido.\n- fail: impossível continuar (motivo claro).\n- Não peça screenshot; decida só com o OCR e o prompt.",
+  "prompt": "Objetivo / roteiro:\nabra o instagram e envie uma mensagem oi para o laercio germano\n\nHistórico recente (últimos 10/12):\n[{\"step\":1,\"type\":\"scroll\",\"motivo\":\"Abrir a gaveta de aplicativos para encontrar e abrir o Instagram.\",\"x\":null,\"y\":null,\"direction\":\"down\",\"text\":null,\"code\":null,\"resultado\":\"scroll down\"},{\"step\":2,\"type\":\"tap\",\"motivo\":\"Abrir o aplicativo do Instagram para enviar a mensagem ao Laercio Germano.\",\"x\":371,\"y\":370,\"direction\":null,\"text\":null,\"code\":null,\"resultado\":\"tap 371,370\"},{\"step\":3,\"type\":\"sleep\",\"motivo\":\"Aguardar o Instagram carregar totalmente a interface para podermos buscar o contato do Laercio Germano.\",\"x\":null,\"y\":null,\"direction\":null,\"text\":null,\"code\":null,\"resultado\":\"sleep 3000ms\"},{\"step\":4,\"type\":\"scroll\",\"motivo\":\"Navegar para a tela de mensagens (Direct) para encontrar o contato Laercio Germano.\",\"x\":null,\"y\":null,\"direction\":\"right\",\"text\":null,\"code\":null,\"resultado\":\"scroll right\"},{\"step\":5,\"type\":\"tap\",\"motivo\":\"Conceder permissão para o Instagram usar a câmera enquanto o aplicativo estiver em uso.\",\"x\":269,\"y\":457,\"direction\":null,\"text\":null,\"code\":null,\"resultado\":\"tap 269,457\"},{\"step\":6,\"type\":\"tap\",\"motivo\":\"Clicar em Open Settings ou no botão de permitir para conceder o acesso à câmera e ao microfone solicitado pelo Instagram.\",\"x\":271,\"y\":657,\"direction\":null,\"text\":null,\"code\":null,\"resultado\":\"tap 271,657\"},{\"step\":7,\"type\":\"key\",\"motivo\":\"A caixa de diálogo de permissão está persistente após o clique. Vamos voltar para tentar reabrir o Instagram ou conceder permissão de outra forma.\",\"x\":null,\"y\":null,\"direction\":null,\"text\":null,\"code\":\"KEYCODE_BACK\",\"resultado\":\"key KEYCODE_BACK\"},{\"step\":8,\"type\":\"tap\",\"motivo\":\"Clicar no ícone de mensagens (Direct) no canto superior direito para poder pesquisar e enviar mensagem para Laercio Germano.\",\"x\":466,\"y\":224,\"direction\":null,\"text\":null,\"code\":null,\"resultado\":\"tap 466,224\"},{\"step\":9,\"type\":\"tap\",\"motivo\":\"Clicar no ícone de mensagens (Direct) no canto superior direito para acessar a lista de conversas e buscar o contato Laercio Germano.\",\"x\":466,\"y\":224,\"direction\":null,\"text\":null,\"code\":null,\"resultado\":\"tap 466,224\"},{\"step\":10,\"type\":\"scroll\",\"motivo\":\"Deslizar para a esquerda para abrir a tela de mensagens (Direct) do Instagram.\",\"x\":null,\"y\":null,\"direction\":\"left\",\"text\":null,\"code\":null,\"resultado\":\"scroll left\"}]\n\nOCR atual (JSON):\n[{\"text\":\"+\",\"x\":35,\"y\":93},{\"text\":\"Reels\",\"x\":166,\"y\":93},{\"text\":\"Friends\",\"x\":309,\"y\":94},{\"text\":\"657K\",\"x\":495,\"y\":290},{\"text\":\"14.1K\",\"x\":495,\"y\":390},{\"text\":\"65.5K\",\"x\":495,\"y\":492},{\"text\":\"POV: Me and my cousin gossiping\",\"x\":269,\"y\":544},{\"text\":\"at 2 AM during our sleepover\",\"x\":270,\"y\":571},{\"text\":\"when we are supposed to be\",\"x\":270,\"y\":598},{\"text\":\"690K\",\"x\":494,\"y\":592},{\"text\":\"asleep.\",\"x\":266,\"y\":624},{\"text\":\"deshpandesamruddhi\",\"x\":196,\"y\":699},{\"text\":\"26.4K\",\"x\":496,\"y\":694},{\"text\":\"Follow\",\"x\":390,\"y\":713},{\"text\":\"and_kritikaaa.aaa\",\"x\":176,\"y\":725},{\"text\":\"Late night Tea\",\"x\":104,\"y\":774}]\n\nDefina a próxima ação.",
+  "response": "{\n  \"resumo\": \"A tela atual mostra os Reels do Instagram, com conteúdos de vídeo e botões de interação como 'Follow'. Precisamos navegar para a aba de mensagens para encontrar o contato Laercio Germano.\",\n  \"elementos\": [\n    { \"label\": \"Reels\", \"tipo\": \"text\", \"x\": 166, \"y\": 93 },\n    { \"label\": \"Friends\", \"tipo\": \"text\", \"x\": 309, \"y\": 94 },\n    { \"label\": \"Follow\", \"tipo\": \"button\", \"x\": 390, \"y\": 713 }\n  ],\n  \"acao\": {\n    \"type\": \"scroll\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": \"right\",\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"Deslizar para a direita para acessar a aba de Direct ou mensagens onde podemos buscar o Laercio Germano.\"\n  }\n}",
+  "roteiro": "abra o instagram e envie uma mensagem oi para o laercio germano",
+  "usage": {
+    "promptTokenCount": 1647,
+    "candidatesTokenCount": 243,
+    "totalTokenCount": 1890,
+    "promptTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 1647
+      }
+    ],
+    "serviceTier": "standard"
+  }
+}

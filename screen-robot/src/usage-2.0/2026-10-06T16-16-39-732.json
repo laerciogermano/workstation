@@ -1,0 +1,55 @@
+{
+  "entrada": {
+    "contents": [
+      {
+        "role": "user",
+        "parts": [
+          {
+            "text": "Objetivo / roteiro:\nEm cada ação, diga no motivo qual passo (1–12) está em curso.\n\nOrdem obrigatória 1→12. 1 ação/turno. Text/icon do extract = clicável (copie x,y).\nPROIBIDO fail se o text do passo atual estiver no OCR (ex. Search → tap; não fail).\nfail só se impossível após retentativa; histórico de fail NÃO impede tap.\n\n1. clique em Search — tap nas x,y do text \"Search\" (y<120). Única ação.\n2. digite comprador — type \"comprador\" (após Search; teclado ou campo aberto).\n3. feche o teclado — key KEYCODE_BACK 1×.\n4. clique em Show all results — tap text EXATO do OCR (\"Show all results\" ou \"Show all\"/\"Showall\").\n5. clique em People — tap \"People\" (aba, y baixo/topo conforme OCR).\n6. clique Location — tap \"Location\" ou \"Locatior\".\n7. clique em Add a location — tap \"Add a location\"/\"Add alocation\" (campo do sheet, não o chip).\n8. digite campinas — type \"Campinas\".\n9. clique na primeira opção Campinas — tap a sugestão Campinas no sheet (não o campo).\n10. clique em Show results — tap \"Show results\".\n11. Connect — tap text EXATO \"Connect\" se houver no extract.\n12. Sem Connect → scroll down; repita desde o 11.\n\nOCR atual (JSON):\n[{\"type\":\"text\",\"text\":\"&\",\"x\":168,\"y\":22},{\"type\":\"text\",\"text\":\"&\",\"x\":135,\"y\":23},{\"type\":\"text\",\"text\":\"116\",\"x\":88,\"y\":24},{\"type\":\"text\",\"text\":\"1:16\",\"x\":97,\"y\":25},{\"type\":\"text\",\"text\":\"(\",\"x\":71,\"y\":81},{\"type\":\"text\",\"text\":\"+\",\"x\":35,\"y\":82},{\"type\":\"text\",\"text\":\"comprador\",\"x\":143,\"y\":82},{\"type\":\"text\",\"text\":\"=\",\"x\":36,\"y\":153},{\"type\":\"text\",\"text\":\"1st\",\"x\":243,\"y\":153},{\"type\":\"text\",\"text\":\")(\",\"x\":283,\"y\":153},{\"type\":\"text\",\"text\":\"2nd\",\"x\":317,\"y\":153},{\"type\":\"text\",\"text\":\")(\",\"x\":358,\"y\":153},{\"type\":\"text\",\"text\":\"3rd+\",\"x\":399,\"y\":153},{\"type\":\"text\",\"text\":\"Locatior\",\"x\":500,\"y\":153},{\"type\":\"text\",\"text\":\"People\",\"x\":122,\"y\":155},{\"type\":\"text\",\"text\":\"Heitor\",\"x\":163,\"y\":233},{\"type\":\"text\",\"text\":\"-\",\"x\":216,\"y\":233},{\"type\":\"text\",\"text\":\"2nd\",\"x\":242,\"y\":233},{\"type\":\"text\",\"text\":\"Heitor M. • 2nd\",\"x\":184,\"y\":234},{\"type\":\"text\",\"text\":\"O\",\"x\":403,\"y\":243},{\"type\":\"text\",\"text\":\"Pending\",\"x\":453,\"y\":243},{\"type\":\"text\",\"text\":\"Comprador IEBL Montag...\",\"x\":224,\"y\":253},{\"type\":\"text\",\"text\":\"Comprador\",\"x\":161,\"y\":260},{\"type\":\"text\",\"text\":\"Montag...\",\"x\":308,\"y\":260},{\"type\":\"text\",\"text\":\"Belo\",\"x\":129,\"y\":282},{\"type\":\"text\",\"text\":\"Minas\",\"x\":283,\"y\":282},{\"type\":\"text\",\"text\":\"BeloHorizonte,Minas\",\"x\":206,\"y\":284},{\"type\":\"text\",\"text\":\"7\",\"x\":47,\"y\":285},{\"type\":\"text\",\"text\":\"Belo Horizonte, Minas\",\"x\":208,\"y\":285},{\"type\":\"text\",\"text\":\"Gerais,Brazil\",\"x\":169,\"y\":311},{\"type\":\"text\",\"text\":\"Current:\",\"x\":138,\"y\":344},{\"type\":\"text\",\"text\":\"Current:Comprador atIEBLMontagens\",\"x\":257,\"y\":346},{\"type\":\"text\",\"text\":\"Montagens\",\"x\":378,\"y\":346},{\"type\":\"text\",\"text\":\"Current: Comprador at IEBL Montagens\",\"x\":263,\"y\":347},{\"type\":\"text\",\"text\":\"8\",\"x\":126,\"y\":386},{\"type\":\"text\",\"text\":\"1\",\"x\":154,\"y\":386},{\"type\":\"text\",\"text\":\"1mutual connection\",\"x\":212,\"y\":386},{\"type\":\"text\",\"text\":\"1 mutual connection\",\"x\":250,\"y\":386},{\"type\":\"text\",\"text\":\"Sabrina\",\"x\":149,\"y\":454},{\"type\":\"text\",\"text\":\"SabrinaPatriciados\",\"x\":227,\"y\":454},{\"type\":\"text\",\"text\":\"dos\",\"x\":304,\"y\":454},{\"type\":\"text\",\"text\":\"Sabrina Patricia dos\",\"x\":213,\"y\":455},{\"type\":\"text\",\"text\":\"O\",\"x\":403,\"y\":465},{\"type\":\"text\",\"text\":\"Pending\",\"x\":454,\"y\":467},{\"type\":\"text\",\"text\":\"Santos\",\"x\":163,\"y\":485},{\"type\":\"text\",\"text\":\"+\",\"x\":191,\"y\":485},{\"type\":\"text\",\"text\":\"2nd\",\"x\":217,\"y\":485},{\"type\":\"text\",\"text\":\"Analista\",\"x\":145,\"y\":510},{\"type\":\"text\",\"text\":\"AnalistadeSuprimentosI..\",\"x\":216,\"y\":511},{\"type\":\"text\",\"text\":\"|...\",\"x\":350,\"y\":512},{\"type\":\"text\",\"text\":\"Analista de Suprimentos I...\",\"x\":255,\"y\":513},{\"type\":\"text\",\"text\":\"Belo\",\"x\":129,\"y\":534},{\"type\":\"text\",\"text\":\"Minas\",\"x\":283,\"y\":534},{\"type\":\"text\",\"text\":\"Belo Horizonte,Minas\",\"x\":207,\"y\":536},{\"type\":\"text\",\"text\":\"Gerais,Brazil\",\"x\":169,\"y\":563},{\"type\":\"text\",\"text\":\"Saúde\",\"x\":357,\"y\":596},{\"type\":\"text\",\"text\":\"Past:CompradoratAberttaSaude\",\"x\":267,\"y\":597},{\"type\":\"text\",\"text\":\"Past: Comprador at Abertta Saúde\",\"x\":222,\"y\":598},{\"type\":\"text\",\"text\":\"Past:\",\"x\":126,\"y\":618},{\"type\":\"text\",\"text\":\"1\",\"x\":154,\"y\":638},{\"type\":\"text\",\"text\":\"1mutualconnection\",\"x\":213,\"y\":639},{\"type\":\"text\",\"text\":\"1 mutual connection\",\"x\":250,\"y\":639},{\"type\":\"text\",\"text\":\"Danielle Barros • 2nd\",\"x\":214,\"y\":707},{\"type\":\"text\",\"text\":\"DanielleBarros·2nd\",\"x\":225,\"y\":707},{\"type\":\"text\",\"text\":\"-\",\"x\":278,\"y\":707},{\"type\":\"text\",\"text\":\"2nd\",\"x\":304,\"y\":707},{\"type\":\"text\",\"text\":\"Message\",\"x\":448,\"y\":718},{\"type\":\"text\",\"text\":\"1\",\"x\":92,\"y\":729},{\"type\":\"text\",\"text\":\"Compradora\",\"x\":165,\"y\":734},{\"type\":\"text\",\"text\":\"Belo\",\"x\":129,\"y\":756},{\"type\":\"text\",\"text\":\"Minas\",\"x\":283,\"y\":756},{\"type\":\"text\",\"text\":\"Belo Horizonte,Minas\",\"x\":207,\"y\":758},{\"type\":\"text\",\"text\":\"Gerais,Brazil\",\"x\":169,\"y\":785},{\"type\":\"text\",\"text\":\"Past:\",\"x\":126,\"y\":818},{\"type\":\"text\",\"text\":\"Verdemar\",\"x\":411,\"y\":818},{\"type\":\"text\",\"text\":\"Past:Comprador atOrganizacaoVerdemar\",\"x\":268,\"y\":819},{\"type\":\"text\",\"text\":\"Comprador\",\"x\":198,\"y\":820},{\"type\":\"text\",\"text\":\"Past: Comprador at Organização Verdemar\",\"x\":298,\"y\":821},{\"type\":\"text\",\"text\":\"12\",\"x\":190,\"y\":859},{\"type\":\"text\",\"text\":\"mutual\",\"x\":232,\"y\":859},{\"type\":\"text\",\"text\":\"-\",\"x\":366,\"y\":859},{\"type\":\"text\",\"text\":\"followers\",\"x\":458,\"y\":859},{\"type\":\"text\",\"text\":\"12mutualconnections·3,766followers\",\"x\":325,\"y\":860},{\"type\":\"text\",\"text\":\"12 mutual connections • 3,766 followers\",\"x\":339,\"y\":860},{\"type\":\"text\",\"text\":\"3,766\",\"x\":396,\"y\":860},{\"type\":\"text\",\"text\":\"right\",\"x\":174,\"y\":924},{\"type\":\"text\",\"text\":\"Sen\",\"x\":269,\"y\":930},{\"type\":\"text\",\"text\":\"Matheus,youmightbenefitfromunlimited\",\"x\":261,\"y\":935},{\"type\":\"text\",\"text\":\"from\",\"x\":346,\"y\":940},{\"type\":\"text\",\"text\":\"unlimited\",\"x\":428,\"y\":940},{\"type\":\"text\",\"text\":\"Matheus,\",\"x\":73,\"y\":942},{\"type\":\"text\",\"text\":\"might\",\"x\":204,\"y\":942},{\"type\":\"text\",\"text\":\"Matheus, you might benefit from unlimited\",\"x\":253,\"y\":943},{\"type\":\"text\",\"text\":\"you\",\"x\":147,\"y\":945},{\"type\":\"icon\",\"x\":60,\"y\":477},{\"type\":\"icon\",\"x\":126,\"y\":637},{\"type\":\"icon\",\"x\":141,\"y\":859},{\"type\":\"icon\",\"x\":372,\"y\":931}]\n\nDefina a próxima ação."
+          }
+        ]
+      }
+    ],
+    "generationConfig": {
+      "responseMimeType": "application/json"
+    },
+    "systemInstruction": {
+      "parts": [
+        {
+          "text": "Você opera um smartphone Android olhando só a lista extract da tela (type, text, x, y). Sem id.\n\nResponda APENAS JSON válido (sem markdown) no formato:\n{\n  \"resumo\": \"2-4 frases do que tem na tela\",\n  \"acao\": {\n    \"type\": \"tap|scroll|type|key|sleep|done|fail\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"...\"\n  }\n}\n\nRegras de tap (OCR):\n- Cada item type=text (e icon) do extract É um alvo clicável: use o text do passo e copie os x,y desse hit.\n- tap: acao.x e acao.y = coords do extract ATUAL (centro do text alvo). NÃO copie coords do roteiro/histórico.\n- PROIBIDO id / element / e0 / e1. Só x,y.\n- PROIBIDO fail só porque \"não há botão\"/elemento interativo: texto OCR conta. fail só se o objetivo for impossível após tentativas.\n- Alvo do próximo passo do roteiro está no extract → tap/type/key nesse alvo. Sem alvo do passo → sleep ou scroll conforme o roteiro; não fail."
+        }
+      ]
+    }
+  },
+  "resposta": {
+    "candidates": [
+      {
+        "content": {
+          "parts": [
+            {
+              "text": "{\n  \"resumo\": \"A tela de resultados de busca está aberta com a pesquisa por 'comprador'. O próximo passo é realizar o filtro de localização, mas a opção 'Location' já está visível na parte superior.\",\n  \"acao\": {\n    \"type\": \"tap\",\n    \"x\": 500,\n    \"y\": 153,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"Passo 6: Clicar em Location para prosseguir com o refinamento da busca.\"\n  }\n}",
+              "thoughtSignature": "EnMKcQFpFH0TWRi7y7ygPDPZ4Tkmy3JbXW1mZ2CjPIsDHDST2vXJVFFCOVN0fLBm/A7Ougvi6CRVVIJ/tlS4UoKU69gVJCFuqrFnP17eoDuRP00YmbKWfUqXvC2I99yCjy0KinHlOO4KUKz7UjLFfSftXmwk"
+            }
+          ],
+          "role": "model"
+        },
+        "finishReason": "STOP",
+        "index": 0
+      }
+    ],
+    "usageMetadata": {
+      "promptTokenCount": 2819,
+      "candidatesTokenCount": 143,
+      "totalTokenCount": 2962,
+      "promptTokensDetails": [
+        {
+          "modality": "TEXT",
+          "tokenCount": 2819
+        }
+      ],
+      "serviceTier": "standard"
+    },
+    "modelVersion": "gemini-3.1-flash-lite",
+    "responseId": "4h7FauXjHO_Uz7IP-fCrmQ8"
+  }
+}

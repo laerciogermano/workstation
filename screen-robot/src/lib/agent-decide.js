@@ -221,9 +221,7 @@ Jornada / próximo passo:
 Regras de tap (OCR):
 - Cada item type=text (e icon) do extract É um alvo clicável: use o text do passo e copie os x,y desse hit.
 - acao.x e acao.y do tap = EXCLUSIVAMENTE do ÚLTIMO extract (OCR desta tela / bloco atual). PROIBIDO reusar x,y do histórico, de passos anteriores, do roteiro ou de taps já feitos (mesmo que o motivo diga o mesmo passo).
-- Se o text do alvo sumiu do extract atual → NÃO repita as coords antigas; avance o passo ou sleep/scroll conforme o roteiro.
-- PROIBIDO id / element / e0 / e1. Só x,y.
-- PROIBIDO fail só porque "não há botão"/elemento interativo: texto OCR conta. fail só se o objetivo for impossível após tentativas.
+- Não repita passos anteriores que não surtiram efeitos, tente algo novo quando necessario.
 - Alvo do próximo passo do roteiro está no extract → tap/type/key nesse alvo. Sem alvo do passo → sleep ou scroll conforme o roteiro; não fail.`;
 }
 

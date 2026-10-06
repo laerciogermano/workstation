@@ -1,0 +1,55 @@
+{
+  "entrada": {
+    "model": "gpt-4o-mini",
+    "messages": [
+      {
+        "role": "system",
+        "content": "Você opera um smartphone Android olhando só a lista extract da tela (type, text, x, y). Sem id.\n\nResponda APENAS JSON válido (sem markdown) no formato:\n{\n  \"resumo\": \"2-4 frases do que tem na tela\",\n  \"acao\": {\n    \"type\": \"tap|scroll|type|key|sleep|done|fail\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"...\"\n  }\n}\n\nRegras de tap (OCR):\n- Cada item type=text (e icon) do extract É um alvo clicável: use o text do passo e copie os x,y desse hit.\n- tap: acao.x e acao.y = coords do extract ATUAL (centro do text alvo). NÃO copie coords do roteiro/histórico.\n- PROIBIDO id / element / e0 / e1. Só x,y.\n- PROIBIDO fail só porque \"não há botão\"/elemento interativo: texto OCR conta. fail só se o objetivo for impossível após tentativas.\n- Alvo do próximo passo do roteiro está no extract → tap/type/key nesse alvo. Sem alvo do passo → sleep ou scroll conforme o roteiro; não fail."
+      },
+      {
+        "role": "user",
+        "content": "Objetivo / roteiro:\nEm cada ação, diga no motivo qual passo (1–12) está em curso.\n\nOrdem obrigatória 1→12. 1 ação/turno. Text/icon do extract = clicável (copie x,y).\nPROIBIDO fail se o text do passo atual estiver no OCR (ex. Search → tap; não fail).\nfail só se impossível após retentativa; histórico de fail NÃO impede tap.\n\n1. clique em Search — tap nas x,y do text \"Search\" (y<120). Única ação.\n2. digite comprador — type \"comprador\" (após Search; teclado ou campo aberto).\n3. feche o teclado — key KEYCODE_BACK 1×.\n4. clique em Show all results — tap text EXATO do OCR (\"Show all results\" ou \"Show all\"/\"Showall\").\n5. clique em People — tap \"People\" (aba, y baixo/topo conforme OCR).\n6. clique Location — tap \"Location\" ou \"Locatior\".\n7. clique em Add a location — tap \"Add a location\"/\"Add alocation\" (campo do sheet, não o chip).\n8. digite campinas — type \"Campinas\".\n9. clique na primeira opção Campinas — tap a sugestão Campinas no sheet (não o campo).\n10. clique em Show results — tap \"Show results\".\n11. Connect — tap text EXATO \"Connect\" se houver no extract.\n12. Sem Connect → scroll down; repita desde o 11.\n\nOCR atual (JSON):\n[{\"type\":\"text\",\"text\":\"1:23\",\"x\":122,\"y\":24},{\"type\":\"text\",\"text\":\"Tuesday, Oct 6\",\"x\":272,\"y\":117},{\"type\":\"text\",\"text\":\"OOo\",\"x\":260,\"y\":713},{\"type\":\"text\",\"text\":\"CEE\",\"x\":269,\"y\":824},{\"type\":\"text\",\"text\":\"|\",\"x\":160,\"y\":924},{\"type\":\"text\",\"text\":\"@®\",\"x\":268,\"y\":926}]\n\nDefina a próxima ação."
+      }
+    ],
+    "temperature": 0,
+    "response_format": {
+      "type": "json_object"
+    }
+  },
+  "resposta": {
+    "id": "chatcmpl-EW2FAtdzQ9D7ISSt1SwUBtZAw3Qtm",
+    "object": "chat.completion",
+    "created": 1791303828,
+    "model": "gpt-4o-mini-2024-07-18",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\n  \"resumo\": \"A tela atual não apresenta o texto 'Search', portanto, não é possível realizar a ação 1. O conteúdo exibido inclui a data e hora, mas não há elementos interativos disponíveis.\",\n  \"acao\": {\n    \"type\": \"scroll\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": \"down\",\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null,\n    \"motivo\": \"Passo 1: Não foi possível encontrar o texto 'Search' para clicar.\"\n  }\n}",
+          "refusal": null,
+          "annotations": []
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 724,
+      "completion_tokens": 121,
+      "total_tokens": 845,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "audio_tokens": 0
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0,
+        "audio_tokens": 0,
+        "accepted_prediction_tokens": 0,
+        "rejected_prediction_tokens": 0
+      }
+    },
+    "service_tier": "default",
+    "system_fingerprint": "fp_e97a8f1690"
+  }
+}

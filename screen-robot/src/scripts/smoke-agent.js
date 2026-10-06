@@ -71,8 +71,7 @@ async function heuristicDecide({ ocr, history }) {
       resumo: "smoke heurística: Connect no OCR",
       acao: {
         type: "tap",
-        x: connect.x,
-        y: connect.y,
+        element: "Connect",
         motivo: "Connect",
       },
     };

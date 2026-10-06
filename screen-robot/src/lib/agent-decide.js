@@ -66,22 +66,66 @@ function hasApiKey(provider, cfg) {
   return Boolean(process.env.GEMINI_API_KEY);
 }
 
+function normElementKey(s) {
+  return String(s || "")
+    .trim()
+    .toLowerCase();
+}
+
 /**
- * Compacta extract para o prompt: text → { type, text, x, y }; icon → { type, x, y }.
+ * Compacta extract para o prompt: id + text/y (sem x — o runtime resolve o tap).
  * @param {Array<{ text?: string, type?: string, x?: number, y?: number }>} ocr
  */
 export function compactOcr(ocr) {
-  return (ocr || []).map((e) => {
+  return (ocr || []).map((e, i) => {
+    const id = `e${i}`;
+    const y = Number(e?.y);
     if (e?.type === "icon") {
-      return { type: "icon", x: Number(e?.x), y: Number(e?.y) };
+      return { id, type: "icon", y };
     }
     return {
+      id,
       type: "text",
       text: String(e?.text ?? ""),
-      x: Number(e?.x),
-      y: Number(e?.y),
+      y,
     };
   });
+}
+
+/**
+ * Encontra o item do extract a partir de acao.element (id `eN`, índice ou text).
+ * @returns {{ id: string, index: number, x: number, y: number, text?: string, type?: string } | null}
+ */
+export function resolveTapElement(ocr, element) {
+  const key = String(element ?? "").trim();
+  if (!key) return null;
+  const list = Array.isArray(ocr) ? ocr : [];
+
+  let idx = -1;
+  const idm = /^e(\d+)$/i.exec(key);
+  if (idm) idx = Number(idm[1]);
+  else if (/^\d+$/.test(key)) idx = Number(key);
+
+  const asHit = (e, i) => {
+    if (!e) return null;
+    const x = Number(e.x);
+    const y = Number(e.y);
+    if (!Number.isFinite(x) || !Number.isFinite(y)) return null;
+    return { ...e, id: `e${i}`, index: i, x, y };
+  };
+
+  if (idx >= 0 && idx < list.length) return asHit(list[idx], idx);
+
+  const n = normElementKey(key);
+  for (let i = 0; i < list.length; i++) {
+    const e = list[i];
+    if (e?.type === "icon") continue;
+    if (normElementKey(e?.text) === n) {
+      const hit = asHit(e, i);
+      if (hit) return hit;
+    }
+  }
+  return null;
 }
 
 /**
@@ -112,6 +156,7 @@ export function parseActionPayload(raw) {
   }
   const out = {
     type,
+    element: acao.element == null ? null : String(acao.element),
     x: acao.x == null ? null : Number(acao.x),
     y: acao.y == null ? null : Number(acao.y),
     direction: acao.direction == null ? null : String(acao.direction),
@@ -121,8 +166,10 @@ export function parseActionPayload(raw) {
     motivo: acao.motivo == null ? "" : String(acao.motivo),
   };
   if (type === "tap") {
-    if (!Number.isFinite(out.x) || !Number.isFinite(out.y)) {
-      fail("AGENT_BAD_ACTION", "tap exige x,y numéricos");
+    const hasEl = Boolean(out.element && out.element.trim());
+    const hasXy = Number.isFinite(out.x) && Number.isFinite(out.y);
+    if (!hasEl && !hasXy) {
+      fail("AGENT_BAD_ACTION", "tap exige element (id/text do extract) ou x,y");
     }
   }
   if (type === "type" && !out.text) {
@@ -143,14 +190,15 @@ export function parseActionPayload(raw) {
 }
 
 export function buildSystemPrompt() {
-  return `Você opera um smartphone Android olhando só a lista extract da tela (text + icon, x,y na escala do device).
+  return `Você opera um smartphone Android olhando só a lista extract da tela (id, type, text, y). Sem x.
 
 Responda APENAS JSON válido (sem markdown) no formato:
 {
   "resumo": "2-4 frases do que tem na tela",
-  "elementos": [{ "label": "...", "tipo": "button|chip|card|text", "x": 0, "y": 0 }],
+  "elementos": [{ "id": "e0", "label": "...", "tipo": "button|chip|card|text" }],
   "acao": {
     "type": "tap|scroll|type|key|sleep|done|fail",
+    "element": null,
     "x": null,
     "y": null,
     "direction": null,
@@ -162,19 +210,19 @@ Responda APENAS JSON válido (sem markdown) no formato:
 }
 
 Regras (só SO/launcher e o contrato de ação; nomes de app, botões e done vêm do roteiro do usuário):
-- Coords de tap = mesma escala da lista (device). Não invente scale. Tap só em x,y de um item existente (type text ou type icon); NUNCA 0,0. icon não tem text — tap no centro do visual (avatar, nav, glyph).
-- elementos[].label e acao x,y: copie text,x,y de UM item do extract. PROIBIDO trocar o text do item (label ≠ string do OCR naquele ponto).
+- tap: acao.element = id (e0, e1, …) do item no extract. Textos repetidos → use o id. Icon (sem text) → só id. PROIBIDO mandar x,y (o código busca o item e clica). Sem o item na lista → não tap.
+- elementos[].id e elementos[].label = id e text do extract. PROIBIDO inventar label que não está no text do item.
 - scroll: direction down|up|left|right quando o próximo alvo do roteiro não está visível.
 - Se o histórico mostrar vários scrolls com o mesmo OCR (tela não mudou), NÃO scroll de novo: mude de estratégia (tap em outro elemento, type, key BACK).
 - Painel de notificações / overlay de setup do sistema (ex. Notifications, Clear all, AndroidSetup) SEM UI do app (abas, busca, conteúdo do roteiro) → KEYCODE_BACK. NÃO scroll.
 - UI do app visível (barra de abas, campo de busca, textos do roteiro) → o app está aberto. Ignore tokens de overlay de sistema misturados. PROIBIDO KEYCODE_HOME.
 - Tela de carregamento (logo / poucos tokens, sem lista de apps) → sleep. PROIBIDO scroll (abre a gaveta por cima) e HOME.
 - Launcher: OCR só hora/data, sem nomes de apps e sem UI do app, e o histórico NÃO tem tap recente em campo no topo (y baixo) → scroll down abre a gaveta. scroll up reabre o shade — evite.
-- Histórico com tap em y baixo (campo no topo) + OCR só hora/data = teclado cobrindo o app, NÃO é launcher. PROIBIDO scroll (swipe injeta lixo no campo). type do texto do roteiro ou KEYCODE_BACK 1× — sem loop de BACK.
-- Alvos, filtros e CTAs: só o que o roteiro pedir e que existir na lista (texto OCR ou ícone). Sem o alvo → scroll ou sleep; não chute coords. Não repita tap nas mesmas coords se a tela não mudou.
+- Histórico com tap em campo no topo (y baixo) + OCR só hora/data = teclado cobrindo o app, NÃO é launcher. PROIBIDO scroll (swipe injeta lixo no campo). type do texto do roteiro ou KEYCODE_BACK 1× — sem loop de BACK.
+- Alvos, filtros e CTAs: só o que o roteiro pedir e que existir na lista (id/text OCR ou ícone). Sem o alvo → scroll ou sleep; não chute element. Não repita o mesmo element se a tela não mudou.
 - type: digite text de uma vez (campo acao.text obrigatório). Se o histórico mostrar erro de tecla OCR, sleep e tente type de novo, ou KEYCODE_BACK e reabra o campo.
 - key: KEYCODE_BACK / KEYCODE_HOME. sleep: ms se loading. done / fail conforme o roteiro.
-- Não peça screenshot; decida só com a lista extract (text+icon) e o prompt do usuário.`;
+- Não peça screenshot; decida só com a lista extract (id+text+y) e o prompt do usuário.`;
 }
 
 /**
@@ -192,6 +240,7 @@ Responda APENAS JSON válido (sem markdown) no formato:
   "elementos": [{ "label": "...", "tipo": "button|chip|card|text", "x": 0, "y": 0 }],
   "acao": {
     "type": "tap|scroll|type|key|sleep|done|fail",
+    "element": null,
     "x": null,
     "y": null,
     "direction": null,
@@ -277,8 +326,13 @@ export function historyWindow(cfg) {
 export function buildUserPrompt(cfg) {
   const { prompt, ocr } = cfg;
   const { n, window } = historyWindow(cfg);
-  const hist = window.length
-    ? `\nHistórico recente (últimos ${window.length}/${n}):\n${JSON.stringify(window, null, 0)}\n`
+  const slim = window.map((h) => {
+    if (!h || typeof h !== "object") return h;
+    const { x: _x, y: _y, ...rest } = h;
+    return rest;
+  });
+  const hist = slim.length
+    ? `\nHistórico recente (últimos ${slim.length}/${n}):\n${JSON.stringify(slim, null, 0)}\n`
     : "";
   return `Objetivo / roteiro:
 ${clipPrompt(prompt)}
@@ -460,7 +514,21 @@ export async function decide(cfg, deps = {}) {
   }
 
   const parsed = parseActionPayload(text);
+  if (sense === "ocr" && parsed.acao.type === "tap" && parsed.acao.element) {
+    const hit = resolveTapElement(cfg.ocr, parsed.acao.element);
+    if (hit) {
+      logFn(
+        `resolve tap element=${JSON.stringify(parsed.acao.element)} → ${hit.id} @${hit.x},${hit.y}`,
+      );
+      parsed.acao.element = hit.id;
+      parsed.acao.x = hit.x;
+      parsed.acao.y = hit.y;
+    }
+  }
   if (sense === "vision" && parsed.acao.type === "tap") {
+    if (!Number.isFinite(parsed.acao.x) || !Number.isFinite(parsed.acao.y)) {
+      fail("AGENT_BAD_ACTION", "tap vision exige x,y numéricos");
+    }
     const scaled = scalePointToDevice(
       { x: parsed.acao.x, y: parsed.acao.y },
       cfg.imageMeta.scaleToDevice,
@@ -483,6 +551,7 @@ export async function decide(cfg, deps = {}) {
   }
   logFn(
     `ação=${parsed.acao.type}` +
+      (parsed.acao.element ? ` element=${parsed.acao.element}` : "") +
       (parsed.acao.x != null ? ` @${parsed.acao.x},${parsed.acao.y}` : "") +
       (parsed.acao.direction ? ` dir=${parsed.acao.direction}` : "") +
       (parsed.acao.motivo ? ` — ${parsed.acao.motivo}` : ""),

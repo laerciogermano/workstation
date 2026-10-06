@@ -434,6 +434,7 @@ Decide a próxima ação via **Gemini 3.8 Flash** a partir do OCR (sem imagem).
   "resumo": "lista People com Connect",
   "acao": {
     "type": "tap",
+    "element": "e7",
     "x": 458,
     "y": 344,
     "direction": null,
@@ -445,7 +446,7 @@ Decide a próxima ação via **Gemini 3.8 Flash** a partir do OCR (sem imagem).
 }
 ```
 
-`acao.type`: `tap` | `scroll` | `type` | `key` | `sleep` | `done` | `fail`. Coords = escala do device (`extract`).
+`acao.type`: `tap` | `scroll` | `type` | `key` | `sleep` | `done` | `fail`. OCR: a IA manda `element` (id `eN` ou text do extract); o código preenche `x,y`. Vision: a IA manda `x,y` na escala da imagem.
 
 ---
 

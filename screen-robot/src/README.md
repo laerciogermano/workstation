@@ -249,6 +249,8 @@ npm run agent:smoke              # 1–2 passos no device; sem key = heurística
 
 **Antes → depois (tap vs label OCR):** mini gravava `elementos.label=Connect` em coords cujo extract era `Comprador` (cargo) e o runtime tocava o xy. Agora: system pede copiar `text` do OCR; `runAgent` recusa tap se o label ≠ text no ponto (`TAP_LABEL_MISMATCH` → sleep) ou se não há text (`TAP_MISS`). Off: `AGENT_TAP_GROUND=0`. Rollback: omitir o guard / env=0.
 
+**Antes → depois (tap por element):** a IA mandava `acao.x,y` e o runtime clicava isso. Agora (OCR): `acao.element` = id `eN` ou text do extract; `resolveTapElement` busca o item e preenche x,y. Sem item → `ELEMENT_MISS` (sleep, não clica). Extract no prompt: `id,type,text,y` (sem x). Vision continua x,y. Off: `AGENT_TAP_GROUND=0` (coords da IA + TAP_MISS/LABEL). Rollback: tap exige x,y; compactOcr com x,y; system antigo.
+
 **Antes → depois (comprador Campinas do zero):** o roteiro antigo assumia LinkedIn já aberto e o mini pulava busca/filtro. Agora: [`roteiros/jornada-linkedin-comprador-campinas.md`](../roteiros/jornada-linkedin-comprador-campinas.md) (FASE 0 abre o app). Rollback: [`jornada-linkedin-campinas.md`](../roteiros/jornada-linkedin-campinas.md).
 
 **Antes → depois (Search vs Campinas no mini):** IF punha feed/`Show translation` no mesmo bloco que Search; `type "Campinas"` vinha **antes** de `type "comprador"` → guard pós-tap Search injetava cidade no campo de busca e o mini Connectava. Agora: linha própria `Search y<120` → tap (proibido scroll); primeiro `type "…"` do arquivo é **comprador**; Campinas só no `Add alocation`; Campinas no Search ≠ filtro. Rollback: ordem antiga (Campinas primeiro + Connect se Campinas no OCR).
@@ -270,7 +272,7 @@ Fallback default (`decide`): do modelo escolhido desce a escada `gemini-3.8-flas
 
 **Antes → depois (screencap):** `adb shell screencap` + pull podia travar no AVD → `adb exec-out screencap -p` em [`lib/frame.js`](lib/frame.js) / `screenshot`. Fallback shell+pull se exec-out falhar. Rollback: só shell+pull.
 
-**Antes → depois (OCR no histórico):** cada item de `history` inclui `ocr` compacto (`text,x,y`) da tela daquele passo, além de `resultado`/ação. Aumenta tokens no prompt. Rollback: omitir `ocr` no `history.push`.
+**Antes → depois (OCR no histórico):** cada item de `history` inclui `ocr` compacto (`id,text,y`, sem x) da tela daquele passo, além de `resultado`/ação. O prompt do OCR omite x,y do histórico. Rollback: `compactOcr` com x,y e `JSON.stringify(window)` cru.
 
 **Antes → depois (histórico configurável):** `history.slice(-8)` fixo → janela `historySteps` (default **12**), via `runAgent({ historySteps })` · `AGENT_HISTORY_STEPS` · `--history-steps`. Cada passo grava também `resultado` (ex. `scroll up`) no histórico enviado ao modelo. Rollback: `slice(-8)` sem `resultado`.
 
@@ -351,7 +353,7 @@ Abort (Ctrl+C) mantém os arquivos já gravados. Status mid-run: `running` no lo
 
 **Antes → depois (input/output):** além de `system`/`prompt`/`response`, grava `input` (system + prompt + body HTTP) e `output` (text + raw da API) + `roteiro` original completo. Rollback: só campos textuais.
 
-**Antes → depois (acao no usage):** `acao` era só a string do `type` (`"scroll"`); agora grava o objeto parseado completo (`type`, `x`, `y`, `direction`, `motivo`, …) + `resumo` + `elementos`. A ação completa também continua em `response`/`output.text` (JSON string). Rollback: `acao: decision.acao?.type`.
+**Antes → depois (acao no usage):** `acao` era só a string do `type` (`"scroll"`); agora grava o objeto parseado completo (`type`, `element`, `x`, `y`, `direction`, `motivo`, …) + `resumo` + `elementos`. A ação completa também continua em `response`/`output.text` (JSON string). Rollback: `acao: decision.acao?.type`.
 
 **Antes → depois:** `scroll down` somava y (lista People não andava no AVD); `type` tocava teclas até falhar e o fallback ADB concatenava (`cccomprador`). Agora `down` = dedo sobe; teclas resolvidas antes de tap; tecla QWERTY ausente interpolada; fallback ADB limpa o campo. Rollback: `y2 = y + distance` e type sem interpolação/limpeza.
 

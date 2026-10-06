@@ -87,7 +87,7 @@ describe("agent-run (SC-32)", () => {
     );
   });
 
-  it("runAgent: TAP_LABEL_MISMATCH não executa tap", async () => {
+  it("runAgent: ELEMENT_MISS não executa tap", async () => {
     const logDir = mkdtempSync(join(tmpdir(), "sr-agent-"));
     const usageDir = mkdtempSync(join(tmpdir(), "sr-usage-"));
     const taps = [];
@@ -109,8 +109,8 @@ describe("agent-run (SC-32)", () => {
           ],
           decide: async () => ({
             resumo: "Connect",
-            elementos: [{ label: "Connect", x: 161, y: 260 }],
-            acao: { type: "tap", x: 161, y: 260, motivo: "Connect" },
+            elementos: [{ id: "e0", label: "Connect" }],
+            acao: { type: "tap", element: "Connect", motivo: "Connect" },
           }),
           tapElement: (cfg) => taps.push(cfg),
         },
@@ -118,7 +118,7 @@ describe("agent-run (SC-32)", () => {
       assert.equal(taps.length, 0);
       assert.ok(
         result.steps.some((s) =>
-          String(s.acao?.motivo || s.resultado || "").includes("TAP_LABEL_MISMATCH"),
+          String(s.acao?.motivo || s.resultado || "").includes("ELEMENT_MISS"),
         ),
       );
     } finally {
@@ -187,8 +187,7 @@ describe("agent-run (SC-32)", () => {
                 resumo: "Connect visível",
                 acao: {
                   type: "tap",
-                  x: ocr[0].x,
-                  y: ocr[0].y,
+                  element: "Connect",
                   motivo: "Connect",
                 },
                 usage: { promptTokenCount: 10, candidatesTokenCount: 4, totalTokenCount: 14 },
@@ -216,8 +215,8 @@ describe("agent-run (SC-32)", () => {
             assert.equal(history.length, 1);
             assert.equal(history[0].resultado, "tap 458,344");
             assert.deepEqual(history[0].ocr, [
-              { type: "text", text: "Connect", x: 458, y: 344 },
-              { type: "text", text: "People", x: 80, y: 150 },
+              { id: "e0", type: "text", text: "Connect", y: 344 },
+              { id: "e1", type: "text", text: "People", y: 150 },
             ]);
             return {
               resumo: "ok",

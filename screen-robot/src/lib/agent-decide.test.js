@@ -20,6 +20,7 @@ import {
   resolveProvider,
   resolveDecideModel,
   resolveSense,
+  resolveTapElement,
 } from "./agent-decide.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -29,15 +30,25 @@ const FIXTURE = join(
 );
 
 describe("agent-decide (SC-31)", () => {
-  it("compactOcr mantém type/text,x,y e icon sem text", () => {
+  it("compactOcr usa id+text+y sem x", () => {
     const ocr = compactOcr([
       { type: "text", text: "Connect", x: 1, y: 2 },
       { type: "icon", x: 80, y: 140 },
     ]);
     assert.deepEqual(ocr, [
-      { type: "text", text: "Connect", x: 1, y: 2 },
-      { type: "icon", x: 80, y: 140 },
+      { id: "e0", type: "text", text: "Connect", y: 2 },
+      { id: "e1", type: "icon", y: 140 },
     ]);
+  });
+
+  it("resolveTapElement por id e por text", () => {
+    const ocr = [
+      { type: "text", text: "People", x: 80, y: 150 },
+      { type: "text", text: "Connect", x: 458, y: 344 },
+    ];
+    assert.equal(resolveTapElement(ocr, "e1").x, 458);
+    assert.equal(resolveTapElement(ocr, "Connect").id, "e1");
+    assert.equal(resolveTapElement(ocr, "Comprador"), null);
   });
 
   it("system prompt OCR/vision não cita apps nem jornadas", () => {
@@ -47,18 +58,18 @@ describe("agent-decide (SC-31)", () => {
       /\b(linkedin|instagram|tinder|campinas|connect|settings|calendar|gmail|chrome|comprador|nexus|sdk_gphone)\b/i;
     assert.equal(banned.test(ocr), false, ocr.match(banned)?.[0]);
     assert.equal(banned.test(vision), false, vision.match(banned)?.[0]);
-    assert.match(ocr, /copie text,x,y/);
-    assert.match(ocr, /PROIBIDO trocar o text/);
+    assert.match(ocr, /acao\.element/);
+    assert.match(ocr, /PROIBIDO mandar x,y/);
   });
 
-  it("parseActionPayload valida tap", () => {
+  it("parseActionPayload valida tap por element", () => {
     const p = parseActionPayload({
       resumo: "lista People",
-      acao: { type: "tap", x: 458, y: 344, motivo: "Connect" },
+      acao: { type: "tap", element: "e1", motivo: "Connect" },
     });
     assert.equal(p.acao.type, "tap");
-    assert.equal(p.acao.x, 458);
-    assert.equal(p.acao.y, 344);
+    assert.equal(p.acao.element, "e1");
+    assert.equal(p.acao.x, null);
   });
 
   it("parseActionPayload rejeita type inválido", () => {
@@ -143,8 +154,7 @@ describe("agent-decide (SC-31)", () => {
         elementos: [{ label: "Connect", tipo: "button", x: 458, y: 344 }],
         acao: {
           type: "tap",
-          x: 458,
-          y: 344,
+          element: "Connect",
           motivo: "primeiro Connect OCR",
         },
       }),
@@ -156,6 +166,7 @@ describe("agent-decide (SC-31)", () => {
       { generateContent: stub },
     );
     assert.equal(out.acao.type, "tap");
+    assert.equal(out.acao.element, "e7");
     assert.equal(out.acao.x, 458);
     assert.equal(out.acao.y, 344);
     assert.match(out.acao.motivo, /Connect/i);

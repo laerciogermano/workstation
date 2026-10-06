@@ -12,6 +12,7 @@ import {
   resolveProvider,
   resolveSense,
   compactOcr,
+  resolveTapElement,
 } from "./agent-decide.js";
 import { DEFAULT_MODEL as DEFAULT_GEMINI_MODEL } from "./gemini.js";
 import { tapElement, scroll, type, typeViaAdb, key } from "./operate.js";
@@ -678,6 +679,33 @@ export async function runAgent(cfg, deps = {}) {
     });
 
     let { resumo, acao } = decision;
+    if (sense === "ocr" && acao.type === "tap" && !tapGroundOff(cfg)) {
+      const hit = resolveTapElement(ocr, acao.element);
+      if (!hit) {
+        log(`guard: ELEMENT_MISS ${JSON.stringify(acao.element)}`);
+        acao = {
+          type: "sleep",
+          element: acao.element ?? null,
+          x: null,
+          y: null,
+          direction: null,
+          text: null,
+          code: null,
+          ms: recoverMs,
+          motivo: `ELEMENT_MISS: ${acao.element || "(sem element)"}`,
+        };
+      } else {
+        log(
+          `resolve tap ${JSON.stringify(acao.element)} → ${hit.id} @${hit.x},${hit.y}`,
+        );
+        acao = {
+          ...acao,
+          element: hit.id,
+          x: hit.x,
+          y: hit.y,
+        };
+      }
+    }
     // Guard: após tap no Search (y<120), scroll com OCR “só hora” digita lixo no teclado (ty/tyl).
     const lastHist = history[history.length - 1];
     const lastWasSearchTap =
@@ -823,6 +851,7 @@ export async function runAgent(cfg, deps = {}) {
       );
       acao = {
         type: "tap",
+        element: String(addLoc.text || "Add a location"),
         x: addLoc.x,
         y: addLoc.y,
         direction: null,
@@ -849,6 +878,7 @@ export async function runAgent(cfg, deps = {}) {
       );
       acao = {
         type: "tap",
+        element: String(showRes.text || "Show results"),
         x: showRes.x,
         y: showRes.y,
         direction: null,
@@ -858,7 +888,7 @@ export async function runAgent(cfg, deps = {}) {
         motivo: "guard: tap Show results após sugestão repetida",
       };
     }
-    if (sense === "ocr" && !tapGroundOff(cfg) && acao.type === "tap") {
+    if (sense === "ocr" && tapGroundOff(cfg) && acao.type === "tap") {
       const bad = tapLabelMismatch(ocr, acao, decision.elementos);
       if (bad?.code === "TAP_MISS") {
         log(`guard: TAP_MISS @${acao.x},${acao.y} — nenhum text OCR`);
@@ -890,6 +920,7 @@ export async function runAgent(cfg, deps = {}) {
     }
     log(
       `decisão: ${acao.type}` +
+        (acao.element ? ` ${acao.element}` : "") +
         (acao.x != null ? ` @${acao.x},${acao.y}` : "") +
         (acao.direction ? ` ${acao.direction}` : "") +
         (acao.motivo ? ` — ${acao.motivo}` : ""),
@@ -938,6 +969,7 @@ export async function runAgent(cfg, deps = {}) {
       step: i,
       type: acao.type,
       motivo: acao.motivo,
+      element: acao.element,
       x: acao.x,
       y: acao.y,
       direction: acao.direction,

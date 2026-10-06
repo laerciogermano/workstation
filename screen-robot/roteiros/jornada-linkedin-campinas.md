@@ -1,6 +1,6 @@
 Objetivo: LinkedIn → type "comprador" no Search → People → filtro cidade → tap em TODOS os "Connect" até limite. 1 ação/turno. NÃO done no Skip. Decida pelo OCR atual.
 
-Regra: tap só se o texto existe no OCR. Nunca 0,0. Se o texto "Search" (ou QSearch) estiver no OCR com y<120 → TAP nele. PROIBIDO scroll/sleep/dizer que não está visível.
+Regra: tap só se o texto existe no OCR (acao.element = id ou text). Nunca x,y. Se o texto "Search" (ou QSearch) estiver no OCR com y<120 → TAP nele. PROIBIDO scroll/sleep/dizer que não está visível.
 
 IF OCR (primeira linha que bater) → THEN:
 
@@ -21,7 +21,7 @@ Filtro cidade (só depois de People / lista 1st 2nd):
 - 1st + 2nd + 3rd+ + Locatior/Location SEM chip Campinas → tap Location/Locatior. Sem People. Sem type. Sem BACK. Sem Connect.
 
 Connect (só lista People COM chip/filtro Campinas, NÃO se Campinas estiver só no Search):
-- Lista People (2nd/Pending/Connect) COM filtro Campinas (chip Locations/Campinas fora de y<120) → tap EXATO "Connect" 180<y<850. Sem Connect → scroll up curto (~180).
+- Lista People (2nd/Pending/Connect) COM filtro Campinas (chip Locations/Campinas fora de y<120) → tap EXATO "Connect" 180<y<850 (element desse hit). Sem Connect → scroll up curto (~180).
 - "Add a note" → tap Skip. Não done.
 - weekly limit / invitation+not sent / try again next week → done limite_convites.
 - Message / InMail / Premium → KEYCODE_BACK.

@@ -6,6 +6,7 @@
 export const SYSTEM_PROMPT = `Você é uma IA agente autônoma que controla um smartphone Android.
 Você recebe: (1) a jornada/objetivo e (2) o OCR da tela atual (lista extract: type, text, x, y).
 Decida UMA próxima ação e responda APENAS um JSON válido (sem markdown, sem texto fora do JSON).
+O JSON raiz OBRIGATÓRIO é exatamente { "action": { ... } } — proibido devolver o objeto da ação na raiz.
 
 Formato único (só estes campos; PROIBIDO "motivo" ou qualquer outro):
 {
@@ -34,7 +35,7 @@ Regras:
 - tap.x / tap.y = EXCLUSIVAMENTE de um hit do OCR atual; proibido inventar ou reusar coords de outro contexto
 - Cada item do OCR (text/icon) é clicável
 - Sem alvo do passo → sleep ou scroll; evite fail
-- Um único objeto JSON na resposta
+- Um único objeto JSON na resposta, no formato { "action": { ... } }
 - NUNCA inclua "motivo"`;
 
 /**
@@ -58,7 +59,12 @@ Defina a próxima action.`;
  */
 export function parseActionTypeXY(content) {
   const data = JSON.parse(String(content || ""));
-  const a = data?.action ?? data?.acao ?? data;
+  if (!data || typeof data !== "object" || !("action" in data)) {
+    const err = new Error('raw-gpt: resposta deve ser { "action": ... }');
+    err.code = "RAW_GPT_BAD_ACTION";
+    throw err;
+  }
+  const a = data.action;
   if (!a || typeof a !== "object") {
     const err = new Error("raw-gpt: falta action");
     err.code = "RAW_GPT_BAD_ACTION";

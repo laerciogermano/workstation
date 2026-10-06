@@ -21,7 +21,7 @@ describe("Cenário: US-13 Extrair textos", () => {
     async () => {
       const list = await extract({ serial });
       assert.ok(Array.isArray(list));
-      assert.ok(list.every((e) => e.type === "text"));
+      assert.ok(list.every((e) => e.type === "text" || e.type === "icon"));
       assert.ok(list.every((e) => e.children === undefined));
     },
     { timeout: 120_000 },

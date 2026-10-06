@@ -84,7 +84,7 @@ const elements = await extract({ serial });
 | `installApk` | [`lib/apks.js`](lib/apks.js) |
 | `on` | [`lib/events.js`](lib/events.js) |
 | Gestos / captura | [`lib/operate.js`](lib/operate.js) |
-| `extract` | [`lib/extract.js`](lib/extract.js) |
+| `extract` | [`lib/extract.js`](lib/extract.js) · ícones [`lib/extract-icons.js`](lib/extract-icons.js) |
 | `npm run <acao>` | [`lib/run-action.js`](lib/run-action.js) · [`lib/README.md`](lib/README.md) |
 | `decide` / `runAgent` (EP-07) | [`lib/agent-decide.js`](lib/agent-decide.js) · [`lib/agent-run.js`](lib/agent-run.js) · [`lib/gemini.js`](lib/gemini.js) · [`lib/openai.js`](lib/openai.js) · [`lib/vision-frame.js`](lib/vision-frame.js) (`sense=vision`) |
 | Sessão | [`lib/session.js`](lib/session.js) |
@@ -152,6 +152,7 @@ Só LinkedIn (sem Instagram). Sem digitar credenciais e sem `saveSession`.
 Engines: `tesseract` · `macos-vision` · `rapidocr` · `paddleocr` · `easyocr` · **`all`** (merge paralelo das 5).
 
 - **`engine: "all"`** (default do agent): 1 frame → 5 OCR em paralelo (`spawn` assíncrono, [`lib/spawn-captured.js`](lib/spawn-captured.js)) → une hits comuns (texto+posição) e soma diferenças ([`lib/ocr-merge.js`](lib/ocr-merge.js)). Engine que falha **ou passa de `OCR_MERGE_TIMEOUT_MS` (default 4000)** é ignorado e o processo filho leva SIGKILL — extract não espera RapidOCR/Paddle (~20s). **Antes:** `spawnSync` serializava os 5 (tempo = soma) e o timeout só corria depois de cada CLI. **Depois:** wall-clock ≈ max(engines ≤ timeout) + print. Rollback: voltar os OCR CLI a `spawnSync`.
+- **Ícones (sem IA):** no mesmo frame, blobs ≠ fundo ([`lib/extract-icons.js`](lib/extract-icons.js)) viram `{ type:"icon", x, y }` no fim da lista. Blob que contém um ponto OCR é omitido. **Antes:** só textos. **Depois:** text+icon. Rollback: `SCREEN_ROBOT_ICONS=0` / `extract(..., { icons: false })`.
 - Pré: `pip3 install --user rapidocr-onnxruntime paddleocr paddlepaddle easyocr pytesseract` · macOS Vision (Swift) · `brew install tesseract` (opcional pytesseract).
 - Env: `SCREEN_ROBOT_OCR=all|rapidocr|…` · `OCR_MERGE_DIST_PX` (default 48) · `OCR_MERGE_TIMEOUT_MS=4000` (`0` = sem timeout).
 - Comparativo: [`lib/extract.ocr-backends.fixture.test.js`](lib/extract.ocr-backends.fixture.test.js).

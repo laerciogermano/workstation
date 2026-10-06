@@ -29,9 +29,15 @@ const FIXTURE = join(
 );
 
 describe("agent-decide (SC-31)", () => {
-  it("compactOcr mantém text,x,y", () => {
-    const ocr = compactOcr([{ type: "text", text: "Connect", x: 1, y: 2 }]);
-    assert.deepEqual(ocr, [{ text: "Connect", x: 1, y: 2 }]);
+  it("compactOcr mantém type/text,x,y e icon sem text", () => {
+    const ocr = compactOcr([
+      { type: "text", text: "Connect", x: 1, y: 2 },
+      { type: "icon", x: 80, y: 140 },
+    ]);
+    assert.deepEqual(ocr, [
+      { type: "text", text: "Connect", x: 1, y: 2 },
+      { type: "icon", x: 80, y: 140 },
+    ]);
   });
 
   it("system prompt OCR/vision não cita apps nem jornadas", () => {

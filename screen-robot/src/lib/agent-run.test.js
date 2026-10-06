@@ -6,7 +6,7 @@ import { mkdtempSync, readFileSync, readdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { basename, join } from "node:path";
 import { describe, it } from "node:test";
-import { executeAction, runAgent, ocrHasQwertyKeyboard, pickForcedTypeText } from "./agent-run.js";
+import { executeAction, runAgent, ocrHasQwertyKeyboard, pickForcedTypeText, ocrHasBottomTabs } from "./agent-run.js";
 
 describe("agent-run (SC-32)", () => {
   it("ocrHasQwertyKeyboard + pickForcedTypeText (campo local vs busca)", () => {
@@ -33,6 +33,22 @@ describe("agent-run (SC-32)", () => {
     assert.equal(
       pickForcedTypeText(prompt, [{ text: "Search", x: 180, y: 80 }]),
       "comprador",
+    );
+    assert.equal(
+      ocrHasBottomTabs([
+        { text: "Home", x: 54, y: 872 },
+        { text: "Network", x: 163, y: 872 },
+        { text: "Jobs", x: 487, y: 872 },
+      ]),
+      true,
+    );
+    assert.equal(
+      ocrHasBottomTabs([
+        { text: "PESSOAS", x: 456, y: 834 },
+        { text: "PROCESSOS", x: 462, y: 845 },
+        { text: "TECNOLOGIA", x: 464, y: 856 },
+      ]),
+      false,
     );
   });
   it("executeAction tap chama tapElement", async () => {
@@ -124,8 +140,8 @@ describe("agent-run (SC-32)", () => {
             assert.equal(history.length, 1);
             assert.equal(history[0].resultado, "tap 458,344");
             assert.deepEqual(history[0].ocr, [
-              { text: "Connect", x: 458, y: 344 },
-              { text: "People", x: 80, y: 150 },
+              { type: "text", text: "Connect", x: 458, y: 344 },
+              { type: "text", text: "People", x: 80, y: 150 },
             ]);
             return {
               resumo: "ok",

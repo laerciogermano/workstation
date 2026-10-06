@@ -12,7 +12,7 @@ Stdout de toda ação: JSON `{ ok, action, serial, result }`.
 
 1. `npm run extract` (`engine=all` default)
 2. Se textos de loading (`Loading`, `…`, tela vazia) → `npm run wait -- 1500` e extract de novo
-3. Escolher próximo passo pelos `{ text, x, y }`
+3. Escolher próximo passo pelos itens (`text` ou `icon` + `x,y`)
 4. Uma ação (`tap` / `type` / `scroll` / `launch` / `key`)
 5. Extract de novo até o objetivo
 
@@ -29,9 +29,16 @@ npm run extract
 npm run extract -- --engine all
 ```
 
-`result`: `[{ "type": "text", "text": "People", "x": 360, "y": 120 }, …]`
+`result`: textos OCR + ícones (blobs, sem IA). Tap usa `x,y`.
 
-Tap usa esses `x,y`.
+```json
+[
+  { "type": "text", "text": "People", "x": 360, "y": 120 },
+  { "type": "icon", "x": 80, "y": 140 }
+]
+```
+
+Ícones off: `SCREEN_ROBOT_ICONS=0`.
 
 ---
 

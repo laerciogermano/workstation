@@ -1,6 +1,7 @@
 /**
  * extract com OCR pluggable + merge paralelo (engine=all).
- * Contrato de saída: [{ type:"text", text, x, y }].
+ * Contrato: textos OCR + ícones (blobs, sem IA) [{ type:"text", text, x, y } | { type:"icon", x, y }].
+ * Rollback ícones: SCREEN_ROBOT_ICONS=0 ou deps.icons=false.
  *
  * Top-5 (UI / mobile OCR):
  *  1. rapidocr — PP-OCR ONNX, bom em Connect
@@ -18,6 +19,7 @@ import {
   ocrWordsPaddleocr,
 } from "./ocr-python-cli.js";
 import { mergeOcrHits } from "./ocr-merge.js";
+import { appendIcons } from "./extract-icons.js";
 import { withTimeout } from "./with-timeout.js";
 
 /** @typedef {"tesseract"|"macos-vision"|"rapidocr"|"paddleocr"|"easyocr"|"all"} OcrEngine */
@@ -135,7 +137,8 @@ export async function extractMergedFromImage(imagePath, opts = {}, deps = {}) {
     okBatches.map((r) => ({ engine: r.engine, hits: r.hits })),
     { keepEngines: opts.keepEngines === true },
   );
-  return { elements: merged, engines: results };
+  const elements = await appendIcons(imagePath, merged, deps);
+  return { elements, engines: results };
 }
 
 /**
@@ -146,10 +149,11 @@ export async function extractMergedFromImage(imagePath, opts = {}, deps = {}) {
 export async function extractFromImage(imagePath, opts = {}) {
   const engine = opts.engine || "tesseract";
   if (engine === "all" || engine === "merge") {
-    const { elements } = await extractMergedFromImage(imagePath, opts);
+    const { elements } = await extractMergedFromImage(imagePath, opts, opts);
     return elements;
   }
-  return runOneEngine(imagePath, engine, opts);
+  const texts = await runOneEngine(imagePath, engine, opts);
+  return appendIcons(imagePath, texts, opts);
 }
 
 /**
@@ -197,7 +201,8 @@ export async function extractWithEngine(cfg, deps = {}) {
     err.code = "OCR_ENGINE_UNKNOWN";
     throw err;
   }
-  return runOneEngine(framePath, engine, deps);
+  const texts = await runOneEngine(framePath, engine, deps);
+  return appendIcons(framePath, texts, deps);
 }
 
 /** Hits cujo texto é Connect (exato ou contém a palavra). */

@@ -1,8 +1,9 @@
 /**
- * EP-05 — extrair lista plana de textos via frame → OCR.
- * Caller: extract({ serial }) — só elementos type "text" (sem ícones/listas/imagens).
+ * EP-05 — extract: frame → OCR (textos) + blobs visuais (ícones, sem IA).
+ * Caller: extract({ serial }) → { type:"text", text, x, y } | { type:"icon", x, y }.
  * Cada chamada faz OCR de novo (sem cache). Proibido: uiautomator dump como fonte.
  * engine: tesseract|macos-vision|rapidocr|paddleocr|easyocr|all (merge paralelo top-5, spawn async).
+ * Ícones off: SCREEN_ROBOT_ICONS=0 / deps.icons=false.
  */
 import { adb } from "./adb.js";
 import { captureFrame } from "./frame.js";
@@ -14,6 +15,7 @@ import {
   ocrWordsPaddleocr,
 } from "./ocr-python-cli.js";
 import { extractWithEngine } from "./extract-engines.js";
+import { appendIcons } from "./extract-icons.js";
 
 const REMOTE_DUMP = "/sdcard/sr-window-dump.xml";
 
@@ -84,10 +86,11 @@ export async function extract(cfg, deps = {}) {
       : captureFrame;
     const framePath = await capture(serial, deps);
     const words = await deps.ocrRecognize(framePath, deps);
-    return words.map((w) => {
+    const texts = words.map((w) => {
       const p = pointFromBounds(w.bounds);
       return { type: "text", text: w.text, x: p.x, y: p.y };
     });
+    return appendIcons(framePath, texts, deps);
   }
   return extractWithEngine({ serial, engine }, deps);
 }

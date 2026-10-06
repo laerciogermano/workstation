@@ -12,6 +12,7 @@ import { fileURLToPath } from "node:url";
 import { describe, it } from "node:test";
 import sharp from "sharp";
 import { ocrWords } from "./ocr.js";
+import { detectIconBoxes } from "./extract-icons.js";
 
 const SHOTS = resolve(dirname(fileURLToPath(import.meta.url)), "../screenshots");
 
@@ -27,100 +28,6 @@ function outPathFor(pngName) {
 
 function visualsDirFor(pngName) {
   return resolve(SHOTS, basename(pngName, ".png"));
-}
-
-/** Média RGB das bordas → cor de fundo. */
-function sampleBg(data, W, H) {
-  let r = 0,
-    g = 0,
-    b = 0,
-    n = 0;
-  const add = (x, y) => {
-    const o = (y * W + x) * 4;
-    r += data[o];
-    g += data[o + 1];
-    b += data[o + 2];
-    n++;
-  };
-  for (let x = 0; x < W; x++) {
-    add(x, 0);
-    add(x, H - 1);
-  }
-  for (let y = 0; y < H; y++) {
-    add(0, y);
-    add(W - 1, y);
-  }
-  return [Math.round(r / n), Math.round(g / n), Math.round(b / n)];
-}
-
-/**
- * Componentes conectados (4-vizinhos) → bboxes.
- * @returns {{ x: number, y: number, w: number, h: number, area: number }[]}
- */
-function connectedComponents(mask, W, H) {
-  const labels = new Int32Array(W * H);
-  const parent = [0];
-  const find = (x) => {
-    while (parent[x] !== x) {
-      parent[x] = parent[parent[x]];
-      x = parent[x];
-    }
-    return x;
-  };
-  const unite = (a, b) => {
-    a = find(a);
-    b = find(b);
-    if (a !== b) parent[b] = a;
-  };
-
-  let next = 1;
-  for (let y = 0; y < H; y++) {
-    for (let x = 0; x < W; x++) {
-      const i = y * W + x;
-      if (!mask[i]) continue;
-      const left = x > 0 ? labels[i - 1] : 0;
-      const up = y > 0 ? labels[i - W] : 0;
-      if (left && up) {
-        labels[i] = left;
-        unite(left, up);
-      } else if (left) {
-        labels[i] = left;
-      } else if (up) {
-        labels[i] = up;
-      } else {
-        parent[next] = next;
-        labels[i] = next++;
-      }
-    }
-  }
-
-  /** @type {Map<number, { minX: number, minY: number, maxX: number, maxY: number, area: number }>} */
-  const boxes = new Map();
-  for (let y = 0; y < H; y++) {
-    for (let x = 0; x < W; x++) {
-      const i = y * W + x;
-      if (!labels[i]) continue;
-      const root = find(labels[i]);
-      let b = boxes.get(root);
-      if (!b) {
-        b = { minX: x, minY: y, maxX: x, maxY: y, area: 0 };
-        boxes.set(root, b);
-      }
-      if (x < b.minX) b.minX = x;
-      if (y < b.minY) b.minY = y;
-      if (x > b.maxX) b.maxX = x;
-      if (y > b.maxY) b.maxY = y;
-      b.area++;
-    }
-  }
-
-  return [...boxes.values()].map((b) => ({
-    x: b.minX,
-    y: b.minY,
-    w: b.maxX - b.minX + 1,
-    h: b.maxY - b.minY + 1,
-    area: b.area,
-  }));
 }
 
 /**
@@ -217,44 +124,7 @@ function attachLabels(visuals, words) {
  * @returns {Promise<{ type: string, bounds: object, path: string }[]>}
  */
 async function extractVisuals(imagePath, outDir) {
-  const { data, info } = await sharp(imagePath)
-    .ensureAlpha()
-    .raw()
-    .toBuffer({ resolveWithObject: true });
-  const W = info.width;
-  const H = info.height;
-  const bg = sampleBg(data, W, H);
-  const tol = 28;
-  const mask = new Uint8Array(W * H);
-  for (let i = 0; i < W * H; i++) {
-    const o = i * 4;
-    const d =
-      Math.abs(data[o] - bg[0]) +
-      Math.abs(data[o + 1] - bg[1]) +
-      Math.abs(data[o + 2] - bg[2]);
-    if (d > tol) mask[i] = 1;
-  }
-
-  const minArea = Math.max(400, Math.floor(W * H * 0.00015));
-  const maxArea = Math.floor(W * H * 0.35);
-  const boxes = connectedComponents(mask, W, H)
-    .filter((b) => {
-      const boxArea = b.w * b.h;
-      const fill = b.area / boxArea;
-      const ar = b.w / b.h;
-      // descarta faixa full-width (status/nav/teclado) e blobs minúsculos
-      if (b.w > W * 0.85 && b.h < H * 0.2) return false;
-      return (
-        b.area >= minArea &&
-        boxArea <= maxArea &&
-        ar > 0.35 &&
-        ar < 2.8 &&
-        fill > 0.12 &&
-        b.w >= 16 &&
-        b.h >= 16
-      );
-    })
-    .sort((a, b) => a.y - b.y || a.x - b.x);
+  const boxes = await detectIconBoxes(imagePath);
 
   if (existsSync(outDir)) rmSync(outDir, { recursive: true, force: true });
   mkdirSync(outDir, { recursive: true });

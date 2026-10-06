@@ -1,6 +1,6 @@
 /**
  * Legado — heurísticas icon/list/image (não usadas por `extract()`).
- * `extract()` devolve só textos OCR. Visão ativa: template match (US-12 / matchImage).
+ * Ícones no extract: [`extract-icons.js`](extract-icons.js) (blobs, sem IA).
  */
 
 /**

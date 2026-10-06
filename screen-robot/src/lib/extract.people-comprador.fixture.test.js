@@ -24,12 +24,24 @@ describe("extract — fixture People comprador", () => {
 
     assert.ok(Array.isArray(els), "extract deve devolver array");
     assert.ok(els.length > 0, "OCR não pode ser vazio");
-    assert.ok(els.every((e) => e.type === "text"));
-    assert.ok(els.every((e) => typeof e.text === "string"));
+    const texts = els.filter((e) => e.type === "text");
+    const icons = els.filter((e) => e.type === "icon");
+    assert.ok(els.every((e) => e.type === "text" || e.type === "icon"));
+    assert.ok(texts.every((e) => typeof e.text === "string"));
     assert.ok(els.every((e) => typeof e.x === "number" && typeof e.y === "number"));
+    assert.ok(icons.length >= 1, "fixture deve ter ao menos 1 ícone");
+    assert.ok(icons.every((e) => e.text === undefined));
 
-    const payload = els.map(({ text, x, y }) => ({ text, x, y }));
-    const lines = els.map((e) => `${JSON.stringify(e.text)} @${e.x},${e.y}`);
+    const payload = els.map((e) =>
+      e.type === "icon"
+        ? { type: "icon", x: e.x, y: e.y }
+        : { type: "text", text: e.text, x: e.x, y: e.y },
+    );
+    const lines = els.map((e) =>
+      e.type === "icon"
+        ? `icon @${e.x},${e.y}`
+        : `${JSON.stringify(e.text)} @${e.x},${e.y}`,
+    );
     mkdirSync(OUT_DIR, { recursive: true });
     writeFileSync(OUT_JSON, JSON.stringify(payload, null, 2) + "\n", "utf8");
     writeFileSync(OUT_TXT, [`hits=${els.length}`, ...lines, ""].join("\n"), "utf8");
@@ -42,7 +54,7 @@ describe("extract — fixture People comprador", () => {
     console.log("=== fim OCR ===\n");
 
     assert.ok(
-      els.some((e) => /comprador/i.test(String(e.text || ""))),
+      texts.some((e) => /comprador/i.test(String(e.text || ""))),
       "esperado token comprador na fixture",
     );
   });

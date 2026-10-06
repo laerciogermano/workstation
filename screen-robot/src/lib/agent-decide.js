@@ -67,15 +67,21 @@ function hasApiKey(provider, cfg) {
 }
 
 /**
- * Compacta OCR para o prompt (só text,x,y).
+ * Compacta extract para o prompt: text → { type, text, x, y }; icon → { type, x, y }.
  * @param {Array<{ text?: string, type?: string, x?: number, y?: number }>} ocr
  */
 export function compactOcr(ocr) {
-  return (ocr || []).map((e) => ({
-    text: String(e?.text ?? ""),
-    x: Number(e?.x),
-    y: Number(e?.y),
-  }));
+  return (ocr || []).map((e) => {
+    if (e?.type === "icon") {
+      return { type: "icon", x: Number(e?.x), y: Number(e?.y) };
+    }
+    return {
+      type: "text",
+      text: String(e?.text ?? ""),
+      x: Number(e?.x),
+      y: Number(e?.y),
+    };
+  });
 }
 
 /**
@@ -137,7 +143,7 @@ export function parseActionPayload(raw) {
 }
 
 export function buildSystemPrompt() {
-  return `Você opera um smartphone Android olhando só a lista OCR da tela (textos + coordenadas x,y na escala do device).
+  return `Você opera um smartphone Android olhando só a lista extract da tela (text + icon, x,y na escala do device).
 
 Responda APENAS JSON válido (sem markdown) no formato:
 {
@@ -156,7 +162,7 @@ Responda APENAS JSON válido (sem markdown) no formato:
 }
 
 Regras (só SO/launcher e o contrato de ação; nomes de app, botões e done vêm do roteiro do usuário):
-- Coords de tap = mesma escala do OCR (device). Não invente scale. Tap só em x,y de um item OCR existente; NUNCA 0,0.
+- Coords de tap = mesma escala da lista (device). Não invente scale. Tap só em x,y de um item existente (type text ou type icon); NUNCA 0,0. icon não tem text — tap no centro do visual (avatar, nav, glyph).
 - scroll: direction down|up|left|right quando o próximo alvo do roteiro não está visível.
 - Se o histórico mostrar vários scrolls com o mesmo OCR (tela não mudou), NÃO scroll de novo: mude de estratégia (tap em outro elemento, type, key BACK).
 - Painel de notificações / overlay de setup do sistema (ex. Notifications, Clear all, AndroidSetup) SEM UI do app (abas, busca, conteúdo do roteiro) → KEYCODE_BACK. NÃO scroll.
@@ -164,10 +170,10 @@ Regras (só SO/launcher e o contrato de ação; nomes de app, botões e done vê
 - Tela de carregamento (logo / poucos tokens, sem lista de apps) → sleep. PROIBIDO scroll (abre a gaveta por cima) e HOME.
 - Launcher: OCR só hora/data, sem nomes de apps e sem UI do app, e o histórico NÃO tem tap recente em campo no topo (y baixo) → scroll down abre a gaveta. scroll up reabre o shade — evite.
 - Histórico com tap em y baixo (campo no topo) + OCR só hora/data = teclado cobrindo o app, NÃO é launcher. PROIBIDO scroll (swipe injeta lixo no campo). type do texto do roteiro ou KEYCODE_BACK 1× — sem loop de BACK.
-- Alvos, filtros e CTAs: só o que o roteiro pedir e que existir no OCR. Sem o texto no OCR → scroll ou sleep; não chute coords. Não repita tap nas mesmas coords se a tela não mudou.
+- Alvos, filtros e CTAs: só o que o roteiro pedir e que existir na lista (texto OCR ou ícone). Sem o alvo → scroll ou sleep; não chute coords. Não repita tap nas mesmas coords se a tela não mudou.
 - type: digite text de uma vez (campo acao.text obrigatório). Se o histórico mostrar erro de tecla OCR, sleep e tente type de novo, ou KEYCODE_BACK e reabra o campo.
 - key: KEYCODE_BACK / KEYCODE_HOME. sleep: ms se loading. done / fail conforme o roteiro.
-- Não peça screenshot; decida só com o OCR e o prompt do usuário.`;
+- Não peça screenshot; decida só com a lista extract (text+icon) e o prompt do usuário.`;
 }
 
 /**

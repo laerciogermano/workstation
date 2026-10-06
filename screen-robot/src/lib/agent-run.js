@@ -82,6 +82,17 @@ export function pickForcedTypeText(prompt, ocr) {
   return unique[0];
 }
 
+export function ocrHasBottomTabs(ocr) {
+  const bottom = (ocr || []).filter((e) => {
+    const t = String(e.text || "").trim();
+    return Number(e.y) > 850 && t.length > 0 && t.length <= 14;
+  });
+  if (bottom.length < 3) return false;
+  const xs = bottom.map((e) => Number(e.x)).filter((n) => Number.isFinite(n));
+  if (xs.length < 3) return false;
+  return Math.max(...xs) - Math.min(...xs) > 280;
+}
+
 export function findOcrHit(ocr, re) {
   return (ocr || []).find((e) => re.test(String(e.text || "")));
 }
@@ -94,7 +105,8 @@ function dumpOcrStdout(ocr) {
   const list = Array.isArray(ocr) ? ocr : [];
   log(`OCR ${list.length} hits:`);
   for (const e of list) {
-    console.log(`  ${e.text}@${e.x},${e.y}`);
+    const label = e.type === "icon" ? "icon" : e.text;
+    console.log(`  ${label}@${e.x},${e.y}`);
   }
   log(`extract return:`);
   console.log(JSON.stringify(list, null, 2));
@@ -678,6 +690,60 @@ export async function runAgent(cfg, deps = {}) {
           motivo: "guard: BACK após Search (bloqueou scroll sobre teclado)",
         };
       }
+    }
+    if (
+      acao.type === "scroll" &&
+      String(acao.direction || "down") === "down" &&
+      findOcrHit(ocr, /show\s*translation|following/i)
+    ) {
+      log(`guard: feed visível — scroll up (não down)`);
+      acao = {
+        type: "scroll",
+        x: null,
+        y: null,
+        direction: "up",
+        text: null,
+        code: null,
+        ms: null,
+        motivo: "guard: feed; scroll up para o Search",
+      };
+    }
+    if (
+      acao.type === "scroll" &&
+      String(acao.direction || "down") === "down" &&
+      lastHist?.type === "tap" &&
+      Number(lastHist.y) > 200 &&
+      Number(lastHist.y) < 800 &&
+      (ocr || []).length < 8
+    ) {
+      log(`guard: splash após tap no app — sleep 2000`);
+      acao = {
+        type: "sleep",
+        x: null,
+        y: null,
+        direction: null,
+        text: null,
+        code: null,
+        ms: 2000,
+        motivo: "guard: app carregando; bloqueou scroll down",
+      };
+    }
+    if (
+      acao.type === "scroll" &&
+      String(acao.direction || "down") === "down" &&
+      ocrHasBottomTabs(ocr)
+    ) {
+      log(`guard: scroll down com tab bar no rodapé — sleep 1500`);
+      acao = {
+        type: "sleep",
+        x: null,
+        y: null,
+        direction: null,
+        text: null,
+        code: null,
+        ms: 1500,
+        motivo: "guard: app aberto (tabs no rodapé); bloqueou scroll down da gaveta",
+      };
     }
     if (acao.type === "type") {
       const forced = pickForcedTypeText(cfg.prompt, ocr);

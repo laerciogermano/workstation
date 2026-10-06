@@ -22,7 +22,10 @@ describe("agent-models", () => {
     assert.equal(multi[1].id, AGENT_MODELS[2].id);
     assert.equal(parseModelSelection("a").length, AGENT_MODELS.length);
     assert.equal(parseModelSelection("all").length, AGENT_MODELS.length);
-    assert.equal(parseModelSelection("a").at(-1).id, "gpt-4o-mini");
+    const all = parseModelSelection("a");
+    const i4 = all.findIndex((m) => m.id === "gpt-4o-mini");
+    const i25 = all.findIndex((m) => m.id === "gemini-2.5-flash");
+    assert.ok(i4 >= 0 && i25 >= 0 && i4 < i25);
   });
 
   it("parseModelSelection: id direto", () => {

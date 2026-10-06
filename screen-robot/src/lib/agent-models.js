@@ -50,6 +50,11 @@ export const AGENT_MODELS = [
     label: "Gemini 3 Flash (preview)",
   },
   {
+    id: "gpt-4o-mini",
+    provider: "openai",
+    label: "OpenAI GPT-4o mini",
+  },
+  {
     id: "gemini-2.5-flash",
     provider: "gemini",
     label: "Gemini 2.5 Flash",
@@ -68,11 +73,6 @@ export const AGENT_MODELS = [
     id: "gpt-5-mini",
     provider: "openai",
     label: "OpenAI GPT-5 mini",
-  },
-  {
-    id: "gpt-4o-mini",
-    provider: "openai",
-    label: "OpenAI GPT-4o mini",
   },
 ];
 

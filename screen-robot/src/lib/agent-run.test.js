@@ -39,7 +39,15 @@ describe("agent-run (SC-32)", () => {
       "Campinas",
     );
     assert.equal(
-      pickForcedTypeText(prompt, [{ text: "Search", x: 180, y: 80 }]),
+      pickForcedTypeText(prompt, [{ text: "Campinas", x: 180, y: 80 }]),
+      "comprador",
+    );
+    assert.equal(
+      pickForcedTypeText(prompt, [{ text: "Location", x: 72, y: 150 }]),
+      "comprador",
+    );
+    assert.equal(
+      pickForcedTypeText(prompt, [{ text: "Locatior", x: 72, y: 150 }]),
       "comprador",
     );
     assert.equal(

@@ -54,17 +54,23 @@ export function ocrHasQwertyKeyboard(ocr) {
   return ["q", "w", "e"].every((k) => singles.has(k));
 }
 
-/** Todas as strings `type "…"` do roteiro, na ordem. */
+/** Strings `type "…"` do roteiro, na ordem. Ignora `PROIBIDO type "…"`. */
 export function typeQuotesFromPrompt(prompt) {
   const out = [];
   const re = /type\s+"([^"]+)"/gi;
+  const src = String(prompt || "");
   let m;
-  while ((m = re.exec(String(prompt || "")))) out.push(m[1]);
+  while ((m = re.exec(src))) {
+    const before = src.slice(Math.max(0, m.index - 12), m.index);
+    if (/PROIBIDO\s+$/i.test(before)) continue;
+    out.push(m[1]);
+  }
   return out;
 }
 
 /**
- * Campo no topo parece filtro de local → último type do roteiro; senão o primeiro (busca).
+ * Sheet de cidade (Add location / Australia) → type da cidade; senão o primeiro type do roteiro (busca).
+ * Chip "Location" da lista People NÃO conta — senão o guard injeta Campinas no Search.
  */
 export function pickForcedTypeText(prompt, ocr) {
   const quotes = typeQuotesFromPrompt(prompt);
@@ -74,9 +80,9 @@ export function pickForcedTypeText(prompt, ocr) {
     .map((e) => String(e.text || "").toLowerCase())
     .join(" ");
   const proper = unique.filter((q) => /^[A-ZÁÉÍÓÚÃÕ]/.test(q));
-  const locUi =
-    /(alocation|location|australia|united\s*states)/i.test(blob) ||
-    proper.some((p) => blob.includes(p.toLowerCase()));
+  const locUi = /(add\s*a?\s*locat|alocation|australia|united\s*states)/i.test(
+    blob,
+  );
   if (unique.length > 1 && locUi && proper.length) {
     return proper[proper.length - 1];
   }
@@ -713,14 +719,7 @@ export async function runAgent(cfg, deps = {}) {
       Number.isFinite(Number(lastHist.y)) &&
       Number(lastHist.y) < 120;
     if (acao.type === "scroll" && lastWasSearchTap) {
-      const m =
-        String(cfg.prompt || "").match(
-          /type\s+(?:text=)?["']([^"']+)["']/i,
-        ) ||
-        String(cfg.prompt || "").match(
-          /type\s+"([^"]+)"/i,
-        );
-      const text = m?.[1] || null;
+      const text = pickForcedTypeText(cfg.prompt, ocr);
       if (text) {
         log(
           `guard: bloqueia scroll após tap Search (y<120) — força type ${JSON.stringify(text)}`,
@@ -805,11 +804,7 @@ export async function runAgent(cfg, deps = {}) {
     }
     if (acao.type === "type") {
       const forced = pickForcedTypeText(cfg.prompt, ocr);
-      if (
-        forced &&
-        forced !== acao.text &&
-        /^[A-ZÁÉÍÓÚÃÕ]/.test(forced)
-      ) {
+      if (forced && forced !== acao.text) {
         log(
           `guard: type ${JSON.stringify(acao.text)} → ${JSON.stringify(forced)} (roteiro/tela)`,
         );

@@ -1,4 +1,5 @@
-Objetivo: do ZERO abrir o LinkedIn → Search "comprador" → People → filtro cidade Campinas → Connect+Skip até limite. 1 ação/turno. Nunca pule fase. Nunca done no Skip.
+Objetivo: do ZERO abrir o LinkedIn → type "comprador" no Search → People → filtro cidade → type "Campinas" só no Add location → Connect+Skip até limite. 1 ação/turno. Nunca pule fase. Nunca done no Skip.
+Primeira digitação = type "comprador". Campinas só na FASE 6.
 
 Tap: acao.element = id (e0) ou text EXATO do extract. O código resolve x,y. Sem o texto no OCR → não tap. PROIBIDO x,y. PROIBIDO relabelar (ex. OCR "Comprador" → element "Connect").
 
@@ -28,7 +29,7 @@ FASE 1 — SEARCH (só com LinkedIn aberto)
 - Grow / Catch up / Invitations + Search y<120 → tap Search.
 
 FASE 2 — TYPE "comprador" (só depois do tap Search)
-- Teclado (q,w,e) SEM "Add a location"/"Add alocation"/Australia/UnitedStates → type "comprador". Sem scroll. Sem tap. PROIBIDO type "Campinas".
+- Teclado (q,w,e) SEM "Add a location"/"Add alocation"/Australia/UnitedStates → type "comprador". Sem scroll. Sem tap. PROIBIDO Campinas neste campo.
 - Campo y<120 é Campinas (ou outra cidade) SEM sheet Add location SEM chip Location da lista → busca errada: type "comprador". Não é filtro. PROIBIDO Connect.
 - OCR só hora/data DEPOIS de tap Search → type "comprador" (teclado cobriu). PROIBIDO scroll.
 
@@ -46,7 +47,7 @@ FASE 5 — PEOPLE
 FASE 6 — FILTRO CAMPINAS (próxima ação depois de People; Campinas no Search y<120 NÃO conta; cidade no card NÃO conta)
 - 1st + 2nd + 3rd+ + Location/Locatior (mesmo OCR "Locatior") e SEM chip Campinas na barra (y~150, fora do campo y<120) → tap Location/Locatior. ÚNICA ação. PROIBIDO Connect. PROIBIDO tap "Comprador" (é cargo). PROIBIDO tap nome (Heitor/Sabrina/…). PROIBIDO People. Belo Horizonte nos cards = filtro AINDA NÃO aplicado.
 - "Add a location"/"Add alocation" SEM teclado → tap esse texto.
-- Teclado + Add location + Australia/UnitedStates → type "Campinas". Não tap. Não type "comprador".
+- Teclado + Add location + Australia/UnitedStates → type "Campinas". Não tap. Não comprador.
 - Campo y<120 contém Campinas + sugestão Campinas (Sao Paulo/Brazil) no sheet → tap a SUGESTÃO (não o campo).
 - Sugestão destacada + "Show results" → tap Show results.
 - "Filter by" + All/People/Jobs + Show results → tap People, depois Show results. Sem BACK.
@@ -56,6 +57,6 @@ FASE 7 — CONNECT (só lista People COM chip Locations/Campinas na barra y~150,
 - Sem hit "Connect" → scroll up curto (~180).
 - "No more results"/"End of results" → done fim_lista.
 
-PROIBIDO: HOME com Search/tab bar; done no Skip; type "Campinas" no Search; type "comprador" no filtro de cidade; Connect sem chip Campinas na barra; tap "Comprador"/nome no lugar de Connect; tap sem o texto no OCR; mandar x,y no tap; scroll down no LinkedIn aberto; pular FASE 0 ou FASE 6.
+PROIBIDO: HOME com Search/tab bar; done no Skip; Campinas no Search; comprador no filtro de cidade; Connect sem chip Campinas na barra; tap "Comprador"/nome no lugar de Connect; tap sem o texto no OCR; mandar x,y no tap; scroll down no LinkedIn aberto; pular FASE 0 ou FASE 6.
 
 done: N Connect+Skip + motivo (limite_convites / fim_lista / filter_campinas_failed).

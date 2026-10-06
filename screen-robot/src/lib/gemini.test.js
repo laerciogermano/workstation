@@ -79,12 +79,15 @@ describe("gemini", () => {
     assert.ok(c.includes("gemini-3.1-flash-lite"));
   });
 
-  it("high demand troca de modelo na hora (sem retry no congestionado)", async () => {
+  it("high demand espera e retria o mesmo modelo", async () => {
     const modelsHit = [];
+    const waits = [];
+    let n = 0;
     const fetchStub = async (url) => {
       const m = decodeURIComponent(String(url).match(/models\/([^:]+)/)?.[1]);
       modelsHit.push(m);
-      if (m.includes("3.8")) {
+      n += 1;
+      if (n === 1) {
         return {
           ok: false,
           status: 503,
@@ -107,10 +110,15 @@ describe("gemini", () => {
         retries: 2,
         retryMs: 1,
       },
-      { fetch: fetchStub, sleep: async () => {}, log: () => {} },
+      {
+        fetch: fetchStub,
+        sleep: async (ms) => waits.push(ms),
+        log: () => {},
+      },
     );
-    assert.equal(out.model, "gemini-3.1-flash-lite");
-    assert.deepEqual(modelsHit, ["gemini-3.8-flash", "gemini-3.1-flash-lite"]);
+    assert.equal(out.model, "gemini-3.8-flash");
+    assert.deepEqual(modelsHit, ["gemini-3.8-flash", "gemini-3.8-flash"]);
+    assert.ok(waits[0] >= 10000);
   });
 
   it("isModelUnavailable detecta 404 / no longer available", () => {

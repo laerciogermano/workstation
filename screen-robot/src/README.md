@@ -254,6 +254,8 @@ Stdout: `[agent]` / `[decide]` / `[gemini]` ou `[openai]`. Provider default `gem
 
 **Antes → depois (retry 429 / TPM):** retry imediato (0ms) estourava rate limit (`try again in 728ms`). Agora piso **2000ms** (`OPENAI_RETRY_MS` / `GEMINI_RETRY_MS`) e, se a API informar `try again in …`, usa o maior entre esse valor e o piso. [`lib/retry-wait.js`](lib/retry-wait.js). Rollback: `export OPENAI_RETRY_MS=0 GEMINI_RETRY_MS=0 GEMINI_CHAIN_WAIT_MS=0` (429 ainda espera 2s).
 
+**Antes → depois (alta demanda 503):** Gemini 503/`high demand` pulava de modelo na hora. Agora espera **10s** (`GEMINI_HIGH_DEMAND_MS`) e retria o mesmo modelo; fallback só depois dos retries. Rollback: o bloco `isHighDemand` que fazia `break` imediato.
+
 **Antes → depois (não morrer):** timeout/503/`fail` da API abortava a run → agora só registra e tenta o próximo passo até `done` ou `maxSteps`.
 
 **Antes → depois (sem espera):** `AGENT_RECOVER_MS` 1500 / `stepDelayMs` 600 / loading 800ms / request timeout 30s → defaults **0** (retry na hora; request sem abort). Rollback: `export AGENT_RECOVER_MS=1500 AGENT_STEP_DELAY_MS=600 GEMINI_TIMEOUT_MS=30000`.

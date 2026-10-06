@@ -243,7 +243,7 @@ npm run raw-gpt -- --image test/fixtures/linkedin-people-comprador-connect.png -
 # Casos: `it`/`fixtures` 01–13 (ordem do prompt); PNGs `01-search.png` … `13-skip.png` (+ `11-connect-people.png`, `linkedin-search-comprador-connected.png` = 11c 2º Connect).
 # Antes: nomes longos linkedin-search-*.png / linkedin-tela-inicial no raw-gpt. Rollback: git mv + nomes antigos no teste.
 # Prompt raw-gpt: sem menção a x/y/thresholds; passo 9 por text (sugestão vs campo). Rollback: versão com y<120/y>120 no .prompt.txt.
-# Passo 11: primeiro Connect no OCR; 11b/11c reforçam no suffix do teste (1º Denise / 2º Matheus). Rollback: só "voce esta no passo 11".
+# Passo 11 (só no .prompt.txt): primeiro Connect do OCR; sem suffix nos testes. Rollback: “tap text EXATO Connect se houver”.
 # Parse: só chaves presentes na IA; raiz obrigatória { "action": ... }. Rollback: aceitar acao/raiz.
 ```
 

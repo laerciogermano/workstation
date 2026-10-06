@@ -7,6 +7,14 @@ describe("parseRunArgs", () => {
     const p = parseRunArgs(["extract", "--engine", "all"]);
     assert.equal(p.action, "extract");
     assert.equal(p.engine, "all");
+    assert.equal(p.icons, false);
+  });
+
+  it("extract --icons true / --no-icons", () => {
+    assert.equal(parseRunArgs(["extract", "--icons"]).icons, true);
+    assert.equal(parseRunArgs(["extract", "--icons", "true"]).icons, true);
+    assert.equal(parseRunArgs(["extract", "--icons", "false"]).icons, false);
+    assert.equal(parseRunArgs(["extract", "--no-icons"]).icons, false);
   });
 
   it("tap x y", () => {
@@ -32,11 +40,26 @@ describe("runAction", () => {
       { extract: async (cfg) => {
         assert.equal(cfg.serial, serial);
         assert.equal(cfg.engine, "all");
+        assert.equal(cfg.icons, false);
         return els;
       } },
     );
     assert.equal(out.ok, true);
+    assert.equal(out.icons, false);
     assert.deepEqual(out.result, els);
+  });
+
+  it("extract --icons true passa cfg.icons", async () => {
+    const out = await runAction(
+      { action: "extract", serial, engine: "rapidocr", icons: true },
+      {
+        extract: async (cfg) => {
+          assert.equal(cfg.icons, true);
+          return [];
+        },
+      },
+    );
+    assert.equal(out.icons, true);
   });
 
   it("tap chama a lib", async () => {

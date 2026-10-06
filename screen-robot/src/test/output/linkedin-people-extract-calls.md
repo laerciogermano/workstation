@@ -1,0 +1,4366 @@
+# Extract LinkedIn — chamadas (engine × icons)
+
+Imagem de entrada: [`src/test/fixtures/linkedin-people-comprador-connect.png`](../fixtures/linkedin-people-comprador-connect.png)
+
+![entrada](../fixtures/linkedin-people-comprador-connect.png)
+
+Gerado pelo teste `lib/extract.linkedin-calls.test.js`.
+
+| chamada | engine | icons | ms | ok | texts | icons | erro |
+|---------|--------|-------|----|----|-------|-------|------|
+| `extractFromImage({ engine: "tesseract", icons: false })` | tesseract | false | 772 | true | 84 | 0 |  |
+| `extractFromImage({ engine: "tesseract", icons: true })` | tesseract | true | 822 | true | 84 | 5 |  |
+| `extractFromImage({ engine: "macos-vision", icons: false })` | macos-vision | false | 7091 | true | 32 | 0 |  |
+| `extractFromImage({ engine: "macos-vision", icons: true })` | macos-vision | true | 308 | true | 32 | 8 |  |
+| `extractFromImage({ engine: "rapidocr", icons: false })` | rapidocr | false | 1585 | true | 33 | 0 |  |
+| `extractFromImage({ engine: "rapidocr", icons: true })` | rapidocr | true | 1301 | true | 33 | 8 |  |
+| `extractFromImage({ engine: "paddleocr", icons: false })` | paddleocr | false | 9816 | true | 33 | 0 |  |
+| `extractFromImage({ engine: "paddleocr", icons: true })` | paddleocr | true | 8449 | true | 33 | 8 |  |
+| `extractFromImage({ engine: "easyocr", icons: false })` | easyocr | false | 4579 | true | 38 | 0 |  |
+| `extractFromImage({ engine: "easyocr", icons: true })` | easyocr | true | 3997 | true | 38 | 9 |  |
+| `extractFromImage({ engine: "all", icons: false })` | all | false | 9477 | true | 110 | 0 |  |
+| `extractFromImage({ engine: "all", icons: true })` | all | true | 9056 | true | 110 | 3 |  |
+
+## extractFromImage({ engine: "tesseract", icons: false })
+
+- imagem: `src/test/fixtures/linkedin-people-comprador-connect.png`
+- engine: `tesseract`
+- icons: `false`
+- duração: **772 ms**
+- ok: true
+- hits: 84 (texts=84, icons=0)
+
+```json
+[
+  {
+    "type": "text",
+    "text": "3:30",
+    "x": 87,
+    "y": 24
+  },
+  {
+    "type": "text",
+    "text": "&",
+    "x": 135,
+    "y": 23
+  },
+  {
+    "type": "text",
+    "text": "(",
+    "x": 71,
+    "y": 81
+  },
+  {
+    "type": "text",
+    "text": "comprador",
+    "x": 143,
+    "y": 82
+  },
+  {
+    "type": "text",
+    "text": "=",
+    "x": 36,
+    "y": 153
+  },
+  {
+    "type": "text",
+    "text": "1st",
+    "x": 243,
+    "y": 152
+  },
+  {
+    "type": "text",
+    "text": ")(",
+    "x": 283,
+    "y": 153
+  },
+  {
+    "type": "text",
+    "text": "2nd",
+    "x": 318,
+    "y": 152
+  },
+  {
+    "type": "text",
+    "text": ")(",
+    "x": 358,
+    "y": 153
+  },
+  {
+    "type": "text",
+    "text": "3rd+",
+    "x": 399,
+    "y": 152
+  },
+  {
+    "type": "text",
+    "text": "Locatior",
+    "x": 502,
+    "y": 152
+  },
+  {
+    "type": "text",
+    "text": "Veiais,",
+    "x": 139,
+    "y": 194
+  },
+  {
+    "type": "text",
+    "text": "Past:",
+    "x": 126,
+    "y": 223
+  },
+  {
+    "type": "text",
+    "text": "Comprador",
+    "x": 198,
+    "y": 225
+  },
+  {
+    "type": "text",
+    "text": "Técnico",
+    "x": 279,
+    "y": 223
+  },
+  {
+    "type": "text",
+    "text": "at",
+    "x": 322,
+    "y": 224
+  },
+  {
+    "type": "text",
+    "text": "Neuman",
+    "x": 369,
+    "y": 223
+  },
+  {
+    "type": "text",
+    "text": "&",
+    "x": 413,
+    "y": 223
+  },
+  {
+    "type": "text",
+    "text": "Esser",
+    "x": 445,
+    "y": 223
+  },
+  {
+    "type": "text",
+    "text": "DB",
+    "x": 124,
+    "y": 264
+  },
+  {
+    "type": "text",
+    "text": "1",
+    "x": 154,
+    "y": 265
+  },
+  {
+    "type": "text",
+    "text": "mutual",
+    "x": 192,
+    "y": 264
+  },
+  {
+    "type": "text",
+    "text": "connection",
+    "x": 268,
+    "y": 265
+  },
+  {
+    "type": "text",
+    "text": "Denise",
+    "x": 145,
+    "y": 339
+  },
+  {
+    "type": "text",
+    "text": "dos",
+    "x": 207,
+    "y": 333
+  },
+  {
+    "type": "text",
+    "text": "Anjos",
+    "x": 262,
+    "y": 336
+  },
+  {
+    "type": "text",
+    "text": "-",
+    "x": 301,
+    "y": 334
+  },
+  {
+    "type": "text",
+    "text": "2nd",
+    "x": 327,
+    "y": 334
+  },
+  {
+    "type": "text",
+    "text": "Senior",
+    "x": 138,
+    "y": 359
+  },
+  {
+    "type": "text",
+    "text": "Procurement",
+    "x": 233,
+    "y": 359
+  },
+  {
+    "type": "text",
+    "text": "Spec...",
+    "x": 327,
+    "y": 361
+  },
+  {
+    "type": "text",
+    "text": "Campinas,",
+    "x": 157,
+    "y": 385
+  },
+  {
+    "type": "text",
+    "text": "São",
+    "x": 228,
+    "y": 383
+  },
+  {
+    "type": "text",
+    "text": "Paulo,",
+    "x": 280,
+    "y": 384
+  },
+  {
+    "type": "text",
+    "text": "Brazil",
+    "x": 133,
+    "y": 410
+  },
+  {
+    "type": "text",
+    "text": "Past:",
+    "x": 126,
+    "y": 445
+  },
+  {
+    "type": "text",
+    "text": "Comprador",
+    "x": 198,
+    "y": 447
+  },
+  {
+    "type": "text",
+    "text": "sénior",
+    "x": 273,
+    "y": 445
+  },
+  {
+    "type": "text",
+    "text": "at",
+    "x": 309,
+    "y": 446
+  },
+  {
+    "type": "text",
+    "text": "Eldor",
+    "x": 342,
+    "y": 445
+  },
+  {
+    "type": "text",
+    "text": "Do",
+    "x": 376,
+    "y": 445
+  },
+  {
+    "type": "text",
+    "text": "Brasil",
+    "x": 413,
+    "y": 445
+  },
+  {
+    "type": "text",
+    "text": "Componentes",
+    "x": 164,
+    "y": 470
+  },
+  {
+    "type": "text",
+    "text": "Automotivos.",
+    "x": 276,
+    "y": 468
+  },
+  {
+    "type": "text",
+    "text": "3",
+    "x": 126,
+    "y": 511
+  },
+  {
+    "type": "text",
+    "text": "1",
+    "x": 154,
+    "y": 510
+  },
+  {
+    "type": "text",
+    "text": "mutual",
+    "x": 193,
+    "y": 512
+  },
+  {
+    "type": "text",
+    "text": "connection",
+    "x": 269,
+    "y": 512
+  },
+  {
+    "type": "text",
+    "text": "Gustavo",
+    "x": 152,
+    "y": 584
+  },
+  {
+    "type": "text",
+    "text": "Nucci",
+    "x": 233,
+    "y": 578
+  },
+  {
+    "type": "text",
+    "text": "@",
+    "x": 281,
+    "y": 578
+  },
+  {
+    "type": "text",
+    "text": "-",
+    "x": 302,
+    "y": 579
+  },
+  {
+    "type": "text",
+    "text": "2nd",
+    "x": 328,
+    "y": 579
+  },
+  {
+    "type": "text",
+    "text": "Purchasing",
+    "x": 161,
+    "y": 606
+  },
+  {
+    "type": "text",
+    "text": "|",
+    "x": 221,
+    "y": 606
+  },
+  {
+    "type": "text",
+    "text": "Procuremen...",
+    "x": 292,
+    "y": 604
+  },
+  {
+    "type": "text",
+    "text": "Brazil",
+    "x": 133,
+    "y": 628
+  },
+  {
+    "type": "text",
+    "text": "Past:",
+    "x": 126,
+    "y": 663
+  },
+  {
+    "type": "text",
+    "text": "Comprador",
+    "x": 198,
+    "y": 665
+  },
+  {
+    "type": "text",
+    "text": "at",
+    "x": 256,
+    "y": 664
+  },
+  {
+    "type": "text",
+    "text": "AsGa",
+    "x": 289,
+    "y": 663
+  },
+  {
+    "type": "text",
+    "text": "S/A",
+    "x": 330,
+    "y": 664
+  },
+  {
+    "type": "text",
+    "text": "R$",
+    "x": 139,
+    "y": 704
+  },
+  {
+    "type": "text",
+    "text": "3",
+    "x": 185,
+    "y": 704
+  },
+  {
+    "type": "text",
+    "text": "mutual",
+    "x": 222,
+    "y": 704
+  },
+  {
+    "type": "text",
+    "text": "connections",
+    "x": 302,
+    "y": 705
+  },
+  {
+    "type": "text",
+    "text": "Weslley",
+    "x": 149,
+    "y": 775
+  },
+  {
+    "type": "text",
+    "text": "Amorim",
+    "x": 238,
+    "y": 773
+  },
+  {
+    "type": "text",
+    "text": "+",
+    "x": 290,
+    "y": 774
+  },
+  {
+    "type": "text",
+    "text": "2nd",
+    "x": 316,
+    "y": 774
+  },
+  {
+    "type": "text",
+    "text": "comprador",
+    "x": 159,
+    "y": 801
+  },
+  {
+    "type": "text",
+    "text": "Belo",
+    "x": 129,
+    "y": 823
+  },
+  {
+    "type": "text",
+    "text": "Horizonte,",
+    "x": 202,
+    "y": 825
+  },
+  {
+    "type": "text",
+    "text": "Minas",
+    "x": 283,
+    "y": 823
+  },
+  {
+    "type": "text",
+    "text": "Gerais,",
+    "x": 139,
+    "y": 852
+  },
+  {
+    "type": "text",
+    "text": "Brazil",
+    "x": 201,
+    "y": 850
+  },
+  {
+    "type": "text",
+    "text": "Current:",
+    "x": 138,
+    "y": 885
+  },
+  {
+    "type": "text",
+    "text": "Comprador",
+    "x": 222,
+    "y": 887
+  },
+  {
+    "type": "text",
+    "text": "at",
+    "x": 280,
+    "y": 886
+  },
+  {
+    "type": "text",
+    "text": "Hospital",
+    "x": 325,
+    "y": 887
+  },
+  {
+    "type": "text",
+    "text": "da",
+    "x": 372,
+    "y": 885
+  },
+  {
+    "type": "text",
+    "text": "Baleia",
+    "x": 411,
+    "y": 885
+  },
+  {
+    "type": "text",
+    "text": "à",
+    "x": 126,
+    "y": 928
+  },
+  {
+    "type": "text",
+    "text": "[|",
+    "x": 375,
+    "y": 926
+  }
+]
+```
+
+
+## extractFromImage({ engine: "tesseract", icons: true })
+
+- imagem: `src/test/fixtures/linkedin-people-comprador-connect.png`
+- engine: `tesseract`
+- icons: `true`
+- duração: **822 ms**
+- ok: true
+- hits: 89 (texts=84, icons=5)
+
+```json
+[
+  {
+    "type": "text",
+    "text": "3:30",
+    "x": 87,
+    "y": 24
+  },
+  {
+    "type": "text",
+    "text": "&",
+    "x": 135,
+    "y": 23
+  },
+  {
+    "type": "text",
+    "text": "(",
+    "x": 71,
+    "y": 81
+  },
+  {
+    "type": "text",
+    "text": "comprador",
+    "x": 143,
+    "y": 82
+  },
+  {
+    "type": "text",
+    "text": "=",
+    "x": 36,
+    "y": 153
+  },
+  {
+    "type": "text",
+    "text": "1st",
+    "x": 243,
+    "y": 152
+  },
+  {
+    "type": "text",
+    "text": ")(",
+    "x": 283,
+    "y": 153
+  },
+  {
+    "type": "text",
+    "text": "2nd",
+    "x": 318,
+    "y": 152
+  },
+  {
+    "type": "text",
+    "text": ")(",
+    "x": 358,
+    "y": 153
+  },
+  {
+    "type": "text",
+    "text": "3rd+",
+    "x": 399,
+    "y": 152
+  },
+  {
+    "type": "text",
+    "text": "Locatior",
+    "x": 502,
+    "y": 152
+  },
+  {
+    "type": "text",
+    "text": "Veiais,",
+    "x": 139,
+    "y": 194
+  },
+  {
+    "type": "text",
+    "text": "Past:",
+    "x": 126,
+    "y": 223
+  },
+  {
+    "type": "text",
+    "text": "Comprador",
+    "x": 198,
+    "y": 225
+  },
+  {
+    "type": "text",
+    "text": "Técnico",
+    "x": 279,
+    "y": 223
+  },
+  {
+    "type": "text",
+    "text": "at",
+    "x": 322,
+    "y": 224
+  },
+  {
+    "type": "text",
+    "text": "Neuman",
+    "x": 369,
+    "y": 223
+  },
+  {
+    "type": "text",
+    "text": "&",
+    "x": 413,
+    "y": 223
+  },
+  {
+    "type": "text",
+    "text": "Esser",
+    "x": 445,
+    "y": 223
+  },
+  {
+    "type": "text",
+    "text": "DB",
+    "x": 124,
+    "y": 264
+  },
+  {
+    "type": "text",
+    "text": "1",
+    "x": 154,
+    "y": 265
+  },
+  {
+    "type": "text",
+    "text": "mutual",
+    "x": 192,
+    "y": 264
+  },
+  {
+    "type": "text",
+    "text": "connection",
+    "x": 268,
+    "y": 265
+  },
+  {
+    "type": "text",
+    "text": "Denise",
+    "x": 145,
+    "y": 339
+  },
+  {
+    "type": "text",
+    "text": "dos",
+    "x": 207,
+    "y": 333
+  },
+  {
+    "type": "text",
+    "text": "Anjos",
+    "x": 262,
+    "y": 336
+  },
+  {
+    "type": "text",
+    "text": "-",
+    "x": 301,
+    "y": 334
+  },
+  {
+    "type": "text",
+    "text": "2nd",
+    "x": 327,
+    "y": 334
+  },
+  {
+    "type": "text",
+    "text": "Senior",
+    "x": 138,
+    "y": 359
+  },
+  {
+    "type": "text",
+    "text": "Procurement",
+    "x": 233,
+    "y": 359
+  },
+  {
+    "type": "text",
+    "text": "Spec...",
+    "x": 327,
+    "y": 361
+  },
+  {
+    "type": "text",
+    "text": "Campinas,",
+    "x": 157,
+    "y": 385
+  },
+  {
+    "type": "text",
+    "text": "São",
+    "x": 228,
+    "y": 383
+  },
+  {
+    "type": "text",
+    "text": "Paulo,",
+    "x": 280,
+    "y": 384
+  },
+  {
+    "type": "text",
+    "text": "Brazil",
+    "x": 133,
+    "y": 410
+  },
+  {
+    "type": "text",
+    "text": "Past:",
+    "x": 126,
+    "y": 445
+  },
+  {
+    "type": "text",
+    "text": "Comprador",
+    "x": 198,
+    "y": 447
+  },
+  {
+    "type": "text",
+    "text": "sénior",
+    "x": 273,
+    "y": 445
+  },
+  {
+    "type": "text",
+    "text": "at",
+    "x": 309,
+    "y": 446
+  },
+  {
+    "type": "text",
+    "text": "Eldor",
+    "x": 342,
+    "y": 445
+  },
+  {
+    "type": "text",
+    "text": "Do",
+    "x": 376,
+    "y": 445
+  },
+  {
+    "type": "text",
+    "text": "Brasil",
+    "x": 413,
+    "y": 445
+  },
+  {
+    "type": "text",
+    "text": "Componentes",
+    "x": 164,
+    "y": 470
+  },
+  {
+    "type": "text",
+    "text": "Automotivos.",
+    "x": 276,
+    "y": 468
+  },
+  {
+    "type": "text",
+    "text": "3",
+    "x": 126,
+    "y": 511
+  },
+  {
+    "type": "text",
+    "text": "1",
+    "x": 154,
+    "y": 510
+  },
+  {
+    "type": "text",
+    "text": "mutual",
+    "x": 193,
+    "y": 512
+  },
+  {
+    "type": "text",
+    "text": "connection",
+    "x": 269,
+    "y": 512
+  },
+  {
+    "type": "text",
+    "text": "Gustavo",
+    "x": 152,
+    "y": 584
+  },
+  {
+    "type": "text",
+    "text": "Nucci",
+    "x": 233,
+    "y": 578
+  },
+  {
+    "type": "text",
+    "text": "@",
+    "x": 281,
+    "y": 578
+  },
+  {
+    "type": "text",
+    "text": "-",
+    "x": 302,
+    "y": 579
+  },
+  {
+    "type": "text",
+    "text": "2nd",
+    "x": 328,
+    "y": 579
+  },
+  {
+    "type": "text",
+    "text": "Purchasing",
+    "x": 161,
+    "y": 606
+  },
+  {
+    "type": "text",
+    "text": "|",
+    "x": 221,
+    "y": 606
+  },
+  {
+    "type": "text",
+    "text": "Procuremen...",
+    "x": 292,
+    "y": 604
+  },
+  {
+    "type": "text",
+    "text": "Brazil",
+    "x": 133,
+    "y": 628
+  },
+  {
+    "type": "text",
+    "text": "Past:",
+    "x": 126,
+    "y": 663
+  },
+  {
+    "type": "text",
+    "text": "Comprador",
+    "x": 198,
+    "y": 665
+  },
+  {
+    "type": "text",
+    "text": "at",
+    "x": 256,
+    "y": 664
+  },
+  {
+    "type": "text",
+    "text": "AsGa",
+    "x": 289,
+    "y": 663
+  },
+  {
+    "type": "text",
+    "text": "S/A",
+    "x": 330,
+    "y": 664
+  },
+  {
+    "type": "text",
+    "text": "R$",
+    "x": 139,
+    "y": 704
+  },
+  {
+    "type": "text",
+    "text": "3",
+    "x": 185,
+    "y": 704
+  },
+  {
+    "type": "text",
+    "text": "mutual",
+    "x": 222,
+    "y": 704
+  },
+  {
+    "type": "text",
+    "text": "connections",
+    "x": 302,
+    "y": 705
+  },
+  {
+    "type": "text",
+    "text": "Weslley",
+    "x": 149,
+    "y": 775
+  },
+  {
+    "type": "text",
+    "text": "Amorim",
+    "x": 238,
+    "y": 773
+  },
+  {
+    "type": "text",
+    "text": "+",
+    "x": 290,
+    "y": 774
+  },
+  {
+    "type": "text",
+    "text": "2nd",
+    "x": 316,
+    "y": 774
+  },
+  {
+    "type": "text",
+    "text": "comprador",
+    "x": 159,
+    "y": 801
+  },
+  {
+    "type": "text",
+    "text": "Belo",
+    "x": 129,
+    "y": 823
+  },
+  {
+    "type": "text",
+    "text": "Horizonte,",
+    "x": 202,
+    "y": 825
+  },
+  {
+    "type": "text",
+    "text": "Minas",
+    "x": 283,
+    "y": 823
+  },
+  {
+    "type": "text",
+    "text": "Gerais,",
+    "x": 139,
+    "y": 852
+  },
+  {
+    "type": "text",
+    "text": "Brazil",
+    "x": 201,
+    "y": 850
+  },
+  {
+    "type": "text",
+    "text": "Current:",
+    "x": 138,
+    "y": 885
+  },
+  {
+    "type": "text",
+    "text": "Comprador",
+    "x": 222,
+    "y": 887
+  },
+  {
+    "type": "text",
+    "text": "at",
+    "x": 280,
+    "y": 886
+  },
+  {
+    "type": "text",
+    "text": "Hospital",
+    "x": 325,
+    "y": 887
+  },
+  {
+    "type": "text",
+    "text": "da",
+    "x": 372,
+    "y": 885
+  },
+  {
+    "type": "text",
+    "text": "Baleia",
+    "x": 411,
+    "y": 885
+  },
+  {
+    "type": "text",
+    "text": "à",
+    "x": 126,
+    "y": 928
+  },
+  {
+    "type": "text",
+    "text": "[|",
+    "x": 375,
+    "y": 926
+  },
+  {
+    "type": "icon",
+    "x": 131,
+    "y": 153
+  },
+  {
+    "type": "icon",
+    "x": 60,
+    "y": 356
+  },
+  {
+    "type": "icon",
+    "x": 60,
+    "y": 601
+  },
+  {
+    "type": "icon",
+    "x": 60,
+    "y": 796
+  },
+  {
+    "type": "icon",
+    "x": 271,
+    "y": 924
+  }
+]
+```
+
+
+## extractFromImage({ engine: "macos-vision", icons: false })
+
+- imagem: `src/test/fixtures/linkedin-people-comprador-connect.png`
+- engine: `macos-vision`
+- icons: `false`
+- duração: **7091 ms**
+- ok: true
+- hits: 32 (texts=32, icons=0)
+
+```json
+[
+  {
+    "type": "text",
+    "text": "3:30",
+    "x": 86,
+    "y": 27
+  },
+  {
+    "type": "text",
+    "text": "comprador",
+    "x": 142,
+    "y": 82
+  },
+  {
+    "type": "text",
+    "text": "People •",
+    "x": 127,
+    "y": 156
+  },
+  {
+    "type": "text",
+    "text": "1st",
+    "x": 241,
+    "y": 153
+  },
+  {
+    "type": "text",
+    "text": "2nd",
+    "x": 319,
+    "y": 152
+  },
+  {
+    "type": "text",
+    "text": "3rd+",
+    "x": 399,
+    "y": 153
+  },
+  {
+    "type": "text",
+    "text": "velaio, viacil",
+    "x": 168,
+    "y": 194
+  },
+  {
+    "type": "text",
+    "text": "Past: Comprador Técnico at Neuman & Esser",
+    "x": 287,
+    "y": 224
+  },
+  {
+    "type": "text",
+    "text": "1 mutual connection",
+    "x": 232,
+    "y": 264
+  },
+  {
+    "type": "text",
+    "text": "Locatior",
+    "x": 498,
+    "y": 154
+  },
+  {
+    "type": "text",
+    "text": "Denise dos Anjos • 2nd",
+    "x": 225,
+    "y": 335
+  },
+  {
+    "type": "text",
+    "text": "Senior Procurement Spec...",
+    "x": 231,
+    "y": 362
+  },
+  {
+    "type": "text",
+    "text": "Campinas, São Paulo,",
+    "x": 210,
+    "y": 387
+  },
+  {
+    "type": "text",
+    "text": "Brazil",
+    "x": 133,
+    "y": 410
+  },
+  {
+    "type": "text",
+    "text": "Past: Comprador sênior at Eldor Do Brasiil",
+    "x": 269,
+    "y": 448
+  },
+  {
+    "type": "text",
+    "text": "Componentes Automotivos...",
+    "x": 225,
+    "y": 471
+  },
+  {
+    "type": "text",
+    "text": "Sạ0g",
+    "x": 128,
+    "y": 499
+  },
+  {
+    "type": "text",
+    "text": "1 mutual connection",
+    "x": 230,
+    "y": 509
+  },
+  {
+    "type": "text",
+    "text": "•+ Connect",
+    "x": 445,
+    "y": 344
+  },
+  {
+    "type": "text",
+    "text": "Gustavo Nucci © • 2nd",
+    "x": 228,
+    "y": 579
+  },
+  {
+    "type": "text",
+    "text": "Purchasing | Procuremen...",
+    "x": 232,
+    "y": 607
+  },
+  {
+    "type": "text",
+    "text": "Brazil",
+    "x": 134,
+    "y": 629
+  },
+  {
+    "type": "text",
+    "text": "Past: Comprador at AsGa S/A",
+    "x": 224,
+    "y": 665
+  },
+  {
+    "type": "text",
+    "text": "3 mutual connections",
+    "x": 266,
+    "y": 704
+  },
+  {
+    "type": "text",
+    "text": "a+ Connect",
+    "x": 444,
+    "y": 591
+  },
+  {
+    "type": "text",
+    "text": "Weslley Amorim • 2nd",
+    "x": 222,
+    "y": 775
+  },
+  {
+    "type": "text",
+    "text": "comprador",
+    "x": 158,
+    "y": 802
+  },
+  {
+    "type": "text",
+    "text": "Belo Horizonte, Minas",
+    "x": 210,
+    "y": 827
+  },
+  {
+    "type": "text",
+    "text": "Gerais, Brazil",
+    "x": 167,
+    "y": 853
+  },
+  {
+    "type": "text",
+    "text": "Current: Comprador at Hospital da Baleia",
+    "x": 270,
+    "y": 887
+  },
+  {
+    "type": "text",
+    "text": "mutual connection",
+    "x": 238,
+    "y": 927
+  },
+  {
+    "type": "text",
+    "text": "•+ Connect",
+    "x": 444,
+    "y": 785
+  }
+]
+```
+
+
+## extractFromImage({ engine: "macos-vision", icons: true })
+
+- imagem: `src/test/fixtures/linkedin-people-comprador-connect.png`
+- engine: `macos-vision`
+- icons: `true`
+- duração: **308 ms**
+- ok: true
+- hits: 40 (texts=32, icons=8)
+
+```json
+[
+  {
+    "type": "text",
+    "text": "3:30",
+    "x": 86,
+    "y": 27
+  },
+  {
+    "type": "text",
+    "text": "comprador",
+    "x": 142,
+    "y": 82
+  },
+  {
+    "type": "text",
+    "text": "People •",
+    "x": 127,
+    "y": 156
+  },
+  {
+    "type": "text",
+    "text": "1st",
+    "x": 241,
+    "y": 153
+  },
+  {
+    "type": "text",
+    "text": "2nd",
+    "x": 319,
+    "y": 152
+  },
+  {
+    "type": "text",
+    "text": "3rd+",
+    "x": 399,
+    "y": 153
+  },
+  {
+    "type": "text",
+    "text": "velaio, viacil",
+    "x": 168,
+    "y": 194
+  },
+  {
+    "type": "text",
+    "text": "Past: Comprador Técnico at Neuman & Esser",
+    "x": 287,
+    "y": 224
+  },
+  {
+    "type": "text",
+    "text": "1 mutual connection",
+    "x": 232,
+    "y": 264
+  },
+  {
+    "type": "text",
+    "text": "Locatior",
+    "x": 498,
+    "y": 154
+  },
+  {
+    "type": "text",
+    "text": "Denise dos Anjos • 2nd",
+    "x": 225,
+    "y": 335
+  },
+  {
+    "type": "text",
+    "text": "Senior Procurement Spec...",
+    "x": 231,
+    "y": 362
+  },
+  {
+    "type": "text",
+    "text": "Campinas, São Paulo,",
+    "x": 210,
+    "y": 387
+  },
+  {
+    "type": "text",
+    "text": "Brazil",
+    "x": 133,
+    "y": 410
+  },
+  {
+    "type": "text",
+    "text": "Past: Comprador sênior at Eldor Do Brasiil",
+    "x": 269,
+    "y": 448
+  },
+  {
+    "type": "text",
+    "text": "Componentes Automotivos...",
+    "x": 225,
+    "y": 471
+  },
+  {
+    "type": "text",
+    "text": "Sạ0g",
+    "x": 128,
+    "y": 499
+  },
+  {
+    "type": "text",
+    "text": "1 mutual connection",
+    "x": 230,
+    "y": 509
+  },
+  {
+    "type": "text",
+    "text": "•+ Connect",
+    "x": 445,
+    "y": 344
+  },
+  {
+    "type": "text",
+    "text": "Gustavo Nucci © • 2nd",
+    "x": 228,
+    "y": 579
+  },
+  {
+    "type": "text",
+    "text": "Purchasing | Procuremen...",
+    "x": 232,
+    "y": 607
+  },
+  {
+    "type": "text",
+    "text": "Brazil",
+    "x": 134,
+    "y": 629
+  },
+  {
+    "type": "text",
+    "text": "Past: Comprador at AsGa S/A",
+    "x": 224,
+    "y": 665
+  },
+  {
+    "type": "text",
+    "text": "3 mutual connections",
+    "x": 266,
+    "y": 704
+  },
+  {
+    "type": "text",
+    "text": "a+ Connect",
+    "x": 444,
+    "y": 591
+  },
+  {
+    "type": "text",
+    "text": "Weslley Amorim • 2nd",
+    "x": 222,
+    "y": 775
+  },
+  {
+    "type": "text",
+    "text": "comprador",
+    "x": 158,
+    "y": 802
+  },
+  {
+    "type": "text",
+    "text": "Belo Horizonte, Minas",
+    "x": 210,
+    "y": 827
+  },
+  {
+    "type": "text",
+    "text": "Gerais, Brazil",
+    "x": 167,
+    "y": 853
+  },
+  {
+    "type": "text",
+    "text": "Current: Comprador at Hospital da Baleia",
+    "x": 270,
+    "y": 887
+  },
+  {
+    "type": "text",
+    "text": "mutual connection",
+    "x": 238,
+    "y": 927
+  },
+  {
+    "type": "text",
+    "text": "•+ Connect",
+    "x": 444,
+    "y": 785
+  },
+  {
+    "type": "icon",
+    "x": 126,
+    "y": 264
+  },
+  {
+    "type": "icon",
+    "x": 60,
+    "y": 356
+  },
+  {
+    "type": "icon",
+    "x": 60,
+    "y": 601
+  },
+  {
+    "type": "icon",
+    "x": 141,
+    "y": 704
+  },
+  {
+    "type": "icon",
+    "x": 60,
+    "y": 796
+  },
+  {
+    "type": "icon",
+    "x": 126,
+    "y": 926
+  },
+  {
+    "type": "icon",
+    "x": 271,
+    "y": 924
+  },
+  {
+    "type": "icon",
+    "x": 377,
+    "y": 924
+  }
+]
+```
+
+
+## extractFromImage({ engine: "rapidocr", icons: false })
+
+- imagem: `src/test/fixtures/linkedin-people-comprador-connect.png`
+- engine: `rapidocr`
+- icons: `false`
+- duração: **1585 ms**
+- ok: true
+- hits: 33 (texts=33, icons=0)
+
+```json
+[
+  {
+    "type": "text",
+    "text": "3:30",
+    "x": 91,
+    "y": 25
+  },
+  {
+    "type": "text",
+    "text": "中",
+    "x": 135,
+    "y": 24
+  },
+  {
+    "type": "text",
+    "text": "comprador",
+    "x": 144,
+    "y": 81
+  },
+  {
+    "type": "text",
+    "text": "People",
+    "x": 117,
+    "y": 154
+  },
+  {
+    "type": "text",
+    "text": "1st",
+    "x": 244,
+    "y": 153
+  },
+  {
+    "type": "text",
+    "text": "2nd",
+    "x": 318,
+    "y": 153
+  },
+  {
+    "type": "text",
+    "text": "3rd+",
+    "x": 399,
+    "y": 153
+  },
+  {
+    "type": "text",
+    "text": "Locatior",
+    "x": 500,
+    "y": 153
+  },
+  {
+    "type": "text",
+    "text": "iai,ia1",
+    "x": 168,
+    "y": 193
+  },
+  {
+    "type": "text",
+    "text": "Past:CompradorTecnicoat Neuman&Esser",
+    "x": 287,
+    "y": 224
+  },
+  {
+    "type": "text",
+    "text": "1mutualconnection",
+    "x": 232,
+    "y": 265
+  },
+  {
+    "type": "text",
+    "text": "DenisedosAnjos·2nd",
+    "x": 227,
+    "y": 335
+  },
+  {
+    "type": "text",
+    "text": "Connect",
+    "x": 458,
+    "y": 344
+  },
+  {
+    "type": "text",
+    "text": "SeniorProcurementSpec...",
+    "x": 232,
+    "y": 360
+  },
+  {
+    "type": "text",
+    "text": "Campinas,Sao Paulo,",
+    "x": 208,
+    "y": 384
+  },
+  {
+    "type": "text",
+    "text": "Brazil",
+    "x": 134,
+    "y": 411
+  },
+  {
+    "type": "text",
+    "text": "Past:CompradorsenioratEldorDoBrasil",
+    "x": 272,
+    "y": 445
+  },
+  {
+    "type": "text",
+    "text": "ComponentesAutomotivos...",
+    "x": 225,
+    "y": 469
+  },
+  {
+    "type": "text",
+    "text": "1mutual connection",
+    "x": 232,
+    "y": 510
+  },
+  {
+    "type": "text",
+    "text": "GustavoNucciO·2nd",
+    "x": 228,
+    "y": 579
+  },
+  {
+    "type": "text",
+    "text": "Connect",
+    "x": 457,
+    "y": 589
+  },
+  {
+    "type": "text",
+    "text": "PurchasingIProcuremen...",
+    "x": 231,
+    "y": 606
+  },
+  {
+    "type": "text",
+    "text": "Brazil",
+    "x": 134,
+    "y": 629
+  },
+  {
+    "type": "text",
+    "text": "Past:CompradoratAsGaS/A",
+    "x": 227,
+    "y": 664
+  },
+  {
+    "type": "text",
+    "text": "3mutualconnections",
+    "x": 265,
+    "y": 705
+  },
+  {
+    "type": "text",
+    "text": "WeslleyAmorim·2nd",
+    "x": 222,
+    "y": 774
+  },
+  {
+    "type": "text",
+    "text": "Connect",
+    "x": 459,
+    "y": 784
+  },
+  {
+    "type": "text",
+    "text": "comprador",
+    "x": 160,
+    "y": 801
+  },
+  {
+    "type": "text",
+    "text": "OWORK",
+    "x": 60,
+    "y": 825
+  },
+  {
+    "type": "text",
+    "text": "Belo Horizonte,Minas",
+    "x": 209,
+    "y": 824
+  },
+  {
+    "type": "text",
+    "text": "Gerais,Brazil",
+    "x": 168,
+    "y": 851
+  },
+  {
+    "type": "text",
+    "text": "Current:CompradoratHospitaldaBaleia",
+    "x": 272,
+    "y": 886
+  },
+  {
+    "type": "text",
+    "text": "nutualconriection",
+    "x": 240,
+    "y": 927
+  }
+]
+```
+
+
+## extractFromImage({ engine: "rapidocr", icons: true })
+
+- imagem: `src/test/fixtures/linkedin-people-comprador-connect.png`
+- engine: `rapidocr`
+- icons: `true`
+- duração: **1301 ms**
+- ok: true
+- hits: 41 (texts=33, icons=8)
+
+```json
+[
+  {
+    "type": "text",
+    "text": "3:30",
+    "x": 91,
+    "y": 25
+  },
+  {
+    "type": "text",
+    "text": "中",
+    "x": 135,
+    "y": 24
+  },
+  {
+    "type": "text",
+    "text": "comprador",
+    "x": 144,
+    "y": 81
+  },
+  {
+    "type": "text",
+    "text": "People",
+    "x": 117,
+    "y": 154
+  },
+  {
+    "type": "text",
+    "text": "1st",
+    "x": 244,
+    "y": 153
+  },
+  {
+    "type": "text",
+    "text": "2nd",
+    "x": 318,
+    "y": 153
+  },
+  {
+    "type": "text",
+    "text": "3rd+",
+    "x": 399,
+    "y": 153
+  },
+  {
+    "type": "text",
+    "text": "Locatior",
+    "x": 500,
+    "y": 153
+  },
+  {
+    "type": "text",
+    "text": "iai,ia1",
+    "x": 168,
+    "y": 193
+  },
+  {
+    "type": "text",
+    "text": "Past:CompradorTecnicoat Neuman&Esser",
+    "x": 287,
+    "y": 224
+  },
+  {
+    "type": "text",
+    "text": "1mutualconnection",
+    "x": 232,
+    "y": 265
+  },
+  {
+    "type": "text",
+    "text": "DenisedosAnjos·2nd",
+    "x": 227,
+    "y": 335
+  },
+  {
+    "type": "text",
+    "text": "Connect",
+    "x": 458,
+    "y": 344
+  },
+  {
+    "type": "text",
+    "text": "SeniorProcurementSpec...",
+    "x": 232,
+    "y": 360
+  },
+  {
+    "type": "text",
+    "text": "Campinas,Sao Paulo,",
+    "x": 208,
+    "y": 384
+  },
+  {
+    "type": "text",
+    "text": "Brazil",
+    "x": 134,
+    "y": 411
+  },
+  {
+    "type": "text",
+    "text": "Past:CompradorsenioratEldorDoBrasil",
+    "x": 272,
+    "y": 445
+  },
+  {
+    "type": "text",
+    "text": "ComponentesAutomotivos...",
+    "x": 225,
+    "y": 469
+  },
+  {
+    "type": "text",
+    "text": "1mutual connection",
+    "x": 232,
+    "y": 510
+  },
+  {
+    "type": "text",
+    "text": "GustavoNucciO·2nd",
+    "x": 228,
+    "y": 579
+  },
+  {
+    "type": "text",
+    "text": "Connect",
+    "x": 457,
+    "y": 589
+  },
+  {
+    "type": "text",
+    "text": "PurchasingIProcuremen...",
+    "x": 231,
+    "y": 606
+  },
+  {
+    "type": "text",
+    "text": "Brazil",
+    "x": 134,
+    "y": 629
+  },
+  {
+    "type": "text",
+    "text": "Past:CompradoratAsGaS/A",
+    "x": 227,
+    "y": 664
+  },
+  {
+    "type": "text",
+    "text": "3mutualconnections",
+    "x": 265,
+    "y": 705
+  },
+  {
+    "type": "text",
+    "text": "WeslleyAmorim·2nd",
+    "x": 222,
+    "y": 774
+  },
+  {
+    "type": "text",
+    "text": "Connect",
+    "x": 459,
+    "y": 784
+  },
+  {
+    "type": "text",
+    "text": "comprador",
+    "x": 160,
+    "y": 801
+  },
+  {
+    "type": "text",
+    "text": "OWORK",
+    "x": 60,
+    "y": 825
+  },
+  {
+    "type": "text",
+    "text": "Belo Horizonte,Minas",
+    "x": 209,
+    "y": 824
+  },
+  {
+    "type": "text",
+    "text": "Gerais,Brazil",
+    "x": 168,
+    "y": 851
+  },
+  {
+    "type": "text",
+    "text": "Current:CompradoratHospitaldaBaleia",
+    "x": 272,
+    "y": 886
+  },
+  {
+    "type": "text",
+    "text": "nutualconriection",
+    "x": 240,
+    "y": 927
+  },
+  {
+    "type": "icon",
+    "x": 126,
+    "y": 264
+  },
+  {
+    "type": "icon",
+    "x": 60,
+    "y": 356
+  },
+  {
+    "type": "icon",
+    "x": 126,
+    "y": 509
+  },
+  {
+    "type": "icon",
+    "x": 60,
+    "y": 601
+  },
+  {
+    "type": "icon",
+    "x": 141,
+    "y": 704
+  },
+  {
+    "type": "icon",
+    "x": 126,
+    "y": 926
+  },
+  {
+    "type": "icon",
+    "x": 271,
+    "y": 924
+  },
+  {
+    "type": "icon",
+    "x": 377,
+    "y": 924
+  }
+]
+```
+
+
+## extractFromImage({ engine: "paddleocr", icons: false })
+
+- imagem: `src/test/fixtures/linkedin-people-comprador-connect.png`
+- engine: `paddleocr`
+- icons: `false`
+- duração: **9816 ms**
+- ok: true
+- hits: 33 (texts=33, icons=0)
+
+```json
+[
+  {
+    "type": "text",
+    "text": "3:30",
+    "x": 88,
+    "y": 23
+  },
+  {
+    "type": "text",
+    "text": "à",
+    "x": 133,
+    "y": 22
+  },
+  {
+    "type": "text",
+    "text": "comprador",
+    "x": 142,
+    "y": 81
+  },
+  {
+    "type": "text",
+    "text": "People",
+    "x": 115,
+    "y": 152
+  },
+  {
+    "type": "text",
+    "text": "1st",
+    "x": 243,
+    "y": 152
+  },
+  {
+    "type": "text",
+    "text": "2nd",
+    "x": 317,
+    "y": 151
+  },
+  {
+    "type": "text",
+    "text": "3rd+",
+    "x": 399,
+    "y": 151
+  },
+  {
+    "type": "text",
+    "text": "Location",
+    "x": 499,
+    "y": 152
+  },
+  {
+    "type": "text",
+    "text": "GeiaiS, DiaZII",
+    "x": 166,
+    "y": 191
+  },
+  {
+    "type": "text",
+    "text": "Past: Comprador Técnico at Neuman & Esser",
+    "x": 286,
+    "y": 223
+  },
+  {
+    "type": "text",
+    "text": "1 mutual connection",
+    "x": 230,
+    "y": 264
+  },
+  {
+    "type": "text",
+    "text": "Denise dos Anjos • 2nd",
+    "x": 225,
+    "y": 333
+  },
+  {
+    "type": "text",
+    "text": "Connect",
+    "x": 457,
+    "y": 343
+  },
+  {
+    "type": "text",
+    "text": "Senior Procurement Spec...",
+    "x": 231,
+    "y": 359
+  },
+  {
+    "type": "text",
+    "text": "Campinas, São Paulo,",
+    "x": 207,
+    "y": 384
+  },
+  {
+    "type": "text",
+    "text": "Brazil",
+    "x": 132,
+    "y": 410
+  },
+  {
+    "type": "text",
+    "text": "Past: Comprador sênior at Eldor Do Brasil",
+    "x": 269,
+    "y": 444
+  },
+  {
+    "type": "text",
+    "text": "Componentes Automotivos...",
+    "x": 223,
+    "y": 468
+  },
+  {
+    "type": "text",
+    "text": "1 mutual connection",
+    "x": 230,
+    "y": 509
+  },
+  {
+    "type": "text",
+    "text": "Gustavo Nucci·2nd",
+    "x": 226,
+    "y": 578
+  },
+  {
+    "type": "text",
+    "text": "Connect",
+    "x": 458,
+    "y": 588
+  },
+  {
+    "type": "text",
+    "text": "Purchasing | Procuremen...",
+    "x": 229,
+    "y": 604
+  },
+  {
+    "type": "text",
+    "text": "Brazil",
+    "x": 133,
+    "y": 628
+  },
+  {
+    "type": "text",
+    "text": "Past: Comprador at AsGa S/A",
+    "x": 225,
+    "y": 663
+  },
+  {
+    "type": "text",
+    "text": "3 mutual connections",
+    "x": 264,
+    "y": 704
+  },
+  {
+    "type": "text",
+    "text": "Weslley Amorim· 2nd",
+    "x": 221,
+    "y": 773
+  },
+  {
+    "type": "text",
+    "text": "Connect",
+    "x": 457,
+    "y": 783
+  },
+  {
+    "type": "text",
+    "text": "comprador",
+    "x": 158,
+    "y": 799
+  },
+  {
+    "type": "text",
+    "text": "RK",
+    "x": 67,
+    "y": 823
+  },
+  {
+    "type": "text",
+    "text": "Belo Horizonte, Minas",
+    "x": 207,
+    "y": 823
+  },
+  {
+    "type": "text",
+    "text": "Gerais, Brazil",
+    "x": 166,
+    "y": 850
+  },
+  {
+    "type": "text",
+    "text": "Current: Comprador at Hospital da Baleia",
+    "x": 270,
+    "y": 885
+  },
+  {
+    "type": "text",
+    "text": "1mutual connection",
+    "x": 232,
+    "y": 926
+  }
+]
+```
+
+
+## extractFromImage({ engine: "paddleocr", icons: true })
+
+- imagem: `src/test/fixtures/linkedin-people-comprador-connect.png`
+- engine: `paddleocr`
+- icons: `true`
+- duração: **8449 ms**
+- ok: true
+- hits: 41 (texts=33, icons=8)
+
+```json
+[
+  {
+    "type": "text",
+    "text": "3:30",
+    "x": 88,
+    "y": 23
+  },
+  {
+    "type": "text",
+    "text": "à",
+    "x": 133,
+    "y": 22
+  },
+  {
+    "type": "text",
+    "text": "comprador",
+    "x": 142,
+    "y": 81
+  },
+  {
+    "type": "text",
+    "text": "People",
+    "x": 115,
+    "y": 152
+  },
+  {
+    "type": "text",
+    "text": "1st",
+    "x": 243,
+    "y": 152
+  },
+  {
+    "type": "text",
+    "text": "2nd",
+    "x": 317,
+    "y": 151
+  },
+  {
+    "type": "text",
+    "text": "3rd+",
+    "x": 399,
+    "y": 151
+  },
+  {
+    "type": "text",
+    "text": "Location",
+    "x": 499,
+    "y": 152
+  },
+  {
+    "type": "text",
+    "text": "GeiaiS, DiaZII",
+    "x": 166,
+    "y": 191
+  },
+  {
+    "type": "text",
+    "text": "Past: Comprador Técnico at Neuman & Esser",
+    "x": 286,
+    "y": 223
+  },
+  {
+    "type": "text",
+    "text": "1 mutual connection",
+    "x": 230,
+    "y": 264
+  },
+  {
+    "type": "text",
+    "text": "Denise dos Anjos • 2nd",
+    "x": 225,
+    "y": 333
+  },
+  {
+    "type": "text",
+    "text": "Connect",
+    "x": 457,
+    "y": 343
+  },
+  {
+    "type": "text",
+    "text": "Senior Procurement Spec...",
+    "x": 231,
+    "y": 359
+  },
+  {
+    "type": "text",
+    "text": "Campinas, São Paulo,",
+    "x": 207,
+    "y": 384
+  },
+  {
+    "type": "text",
+    "text": "Brazil",
+    "x": 132,
+    "y": 410
+  },
+  {
+    "type": "text",
+    "text": "Past: Comprador sênior at Eldor Do Brasil",
+    "x": 269,
+    "y": 444
+  },
+  {
+    "type": "text",
+    "text": "Componentes Automotivos...",
+    "x": 223,
+    "y": 468
+  },
+  {
+    "type": "text",
+    "text": "1 mutual connection",
+    "x": 230,
+    "y": 509
+  },
+  {
+    "type": "text",
+    "text": "Gustavo Nucci·2nd",
+    "x": 226,
+    "y": 578
+  },
+  {
+    "type": "text",
+    "text": "Connect",
+    "x": 458,
+    "y": 588
+  },
+  {
+    "type": "text",
+    "text": "Purchasing | Procuremen...",
+    "x": 229,
+    "y": 604
+  },
+  {
+    "type": "text",
+    "text": "Brazil",
+    "x": 133,
+    "y": 628
+  },
+  {
+    "type": "text",
+    "text": "Past: Comprador at AsGa S/A",
+    "x": 225,
+    "y": 663
+  },
+  {
+    "type": "text",
+    "text": "3 mutual connections",
+    "x": 264,
+    "y": 704
+  },
+  {
+    "type": "text",
+    "text": "Weslley Amorim· 2nd",
+    "x": 221,
+    "y": 773
+  },
+  {
+    "type": "text",
+    "text": "Connect",
+    "x": 457,
+    "y": 783
+  },
+  {
+    "type": "text",
+    "text": "comprador",
+    "x": 158,
+    "y": 799
+  },
+  {
+    "type": "text",
+    "text": "RK",
+    "x": 67,
+    "y": 823
+  },
+  {
+    "type": "text",
+    "text": "Belo Horizonte, Minas",
+    "x": 207,
+    "y": 823
+  },
+  {
+    "type": "text",
+    "text": "Gerais, Brazil",
+    "x": 166,
+    "y": 850
+  },
+  {
+    "type": "text",
+    "text": "Current: Comprador at Hospital da Baleia",
+    "x": 270,
+    "y": 885
+  },
+  {
+    "type": "text",
+    "text": "1mutual connection",
+    "x": 232,
+    "y": 926
+  },
+  {
+    "type": "icon",
+    "x": 126,
+    "y": 264
+  },
+  {
+    "type": "icon",
+    "x": 60,
+    "y": 356
+  },
+  {
+    "type": "icon",
+    "x": 126,
+    "y": 509
+  },
+  {
+    "type": "icon",
+    "x": 60,
+    "y": 601
+  },
+  {
+    "type": "icon",
+    "x": 141,
+    "y": 704
+  },
+  {
+    "type": "icon",
+    "x": 126,
+    "y": 926
+  },
+  {
+    "type": "icon",
+    "x": 271,
+    "y": 924
+  },
+  {
+    "type": "icon",
+    "x": 377,
+    "y": 924
+  }
+]
+```
+
+
+## extractFromImage({ engine: "easyocr", icons: false })
+
+- imagem: `src/test/fixtures/linkedin-people-comprador-connect.png`
+- engine: `easyocr`
+- icons: `false`
+- duração: **4579 ms**
+- ok: true
+- hits: 38 (texts=38, icons=0)
+
+```json
+[
+  {
+    "type": "text",
+    "text": "3.30",
+    "x": 87,
+    "y": 24
+  },
+  {
+    "type": "text",
+    "text": "0",
+    "x": 136,
+    "y": 24
+  },
+  {
+    "type": "text",
+    "text": "comprador",
+    "x": 142,
+    "y": 81
+  },
+  {
+    "type": "text",
+    "text": "=",
+    "x": 38,
+    "y": 154
+  },
+  {
+    "type": "text",
+    "text": "People",
+    "x": 116,
+    "y": 154
+  },
+  {
+    "type": "text",
+    "text": "Ist",
+    "x": 244,
+    "y": 152
+  },
+  {
+    "type": "text",
+    "text": "2nd",
+    "x": 317,
+    "y": 152
+  },
+  {
+    "type": "text",
+    "text": "3rd+",
+    "x": 399,
+    "y": 152
+  },
+  {
+    "type": "text",
+    "text": "Locatior",
+    "x": 499,
+    "y": 152
+  },
+  {
+    "type": "text",
+    "text": "UcIa19,",
+    "x": 141,
+    "y": 193
+  },
+  {
+    "type": "text",
+    "text": "Dlazil",
+    "x": 203,
+    "y": 194
+  },
+  {
+    "type": "text",
+    "text": "Past: Comprador Técnico at Neuman & Esser",
+    "x": 287,
+    "y": 224
+  },
+  {
+    "type": "text",
+    "text": "mutual connection",
+    "x": 238,
+    "y": 265
+  },
+  {
+    "type": "text",
+    "text": "Denise dos Anjos",
+    "x": 202,
+    "y": 334
+  },
+  {
+    "type": "text",
+    "text": "2nd",
+    "x": 328,
+    "y": 334
+  },
+  {
+    "type": "text",
+    "text": "Connect",
+    "x": 459,
+    "y": 344
+  },
+  {
+    "type": "text",
+    "text": "Senior Procurement Spec",
+    "x": 226,
+    "y": 361
+  },
+  {
+    "type": "text",
+    "text": "Campinas, São Paulo,",
+    "x": 209,
+    "y": 384
+  },
+  {
+    "type": "text",
+    "text": "Brazil",
+    "x": 134,
+    "y": 410
+  },
+  {
+    "type": "text",
+    "text": "Past: Comprador sênior at Eldor Do Brasil",
+    "x": 271,
+    "y": 446
+  },
+  {
+    "type": "text",
+    "text": "Componentes Automotivos",
+    "x": 218,
+    "y": 470
+  },
+  {
+    "type": "text",
+    "text": "mutual connection",
+    "x": 238,
+    "y": 511
+  },
+  {
+    "type": "text",
+    "text": "Gustavo Nucci",
+    "x": 186,
+    "y": 579
+  },
+  {
+    "type": "text",
+    "text": "2nd",
+    "x": 329,
+    "y": 580
+  },
+  {
+    "type": "text",
+    "text": "Connect",
+    "x": 459,
+    "y": 588
+  },
+  {
+    "type": "text",
+    "text": "Purchasing",
+    "x": 160,
+    "y": 604
+  },
+  {
+    "type": "text",
+    "text": "Procuremen _",
+    "x": 290,
+    "y": 605
+  },
+  {
+    "type": "text",
+    "text": "Brazil",
+    "x": 135,
+    "y": 628
+  },
+  {
+    "type": "text",
+    "text": "Past: Comprador at AsGa S/A",
+    "x": 226,
+    "y": 664
+  },
+  {
+    "type": "text",
+    "text": "3 mutual connections",
+    "x": 266,
+    "y": 704
+  },
+  {
+    "type": "text",
+    "text": "Weslley Amorim",
+    "x": 194,
+    "y": 773
+  },
+  {
+    "type": "text",
+    "text": "2nd",
+    "x": 317,
+    "y": 774
+  },
+  {
+    "type": "text",
+    "text": "Connect",
+    "x": 459,
+    "y": 784
+  },
+  {
+    "type": "text",
+    "text": "comprador",
+    "x": 159,
+    "y": 801
+  },
+  {
+    "type": "text",
+    "text": "Belo Horizonte; Minas",
+    "x": 210,
+    "y": 824
+  },
+  {
+    "type": "text",
+    "text": "Gerais, Brazil",
+    "x": 167,
+    "y": 850
+  },
+  {
+    "type": "text",
+    "text": "Current: Comprador at Hospital da Baleia",
+    "x": 272,
+    "y": 887
+  },
+  {
+    "type": "text",
+    "text": "nutual connection",
+    "x": 241,
+    "y": 927
+  }
+]
+```
+
+
+## extractFromImage({ engine: "easyocr", icons: true })
+
+- imagem: `src/test/fixtures/linkedin-people-comprador-connect.png`
+- engine: `easyocr`
+- icons: `true`
+- duração: **3997 ms**
+- ok: true
+- hits: 47 (texts=38, icons=9)
+
+```json
+[
+  {
+    "type": "text",
+    "text": "3.30",
+    "x": 87,
+    "y": 24
+  },
+  {
+    "type": "text",
+    "text": "0",
+    "x": 136,
+    "y": 24
+  },
+  {
+    "type": "text",
+    "text": "comprador",
+    "x": 142,
+    "y": 81
+  },
+  {
+    "type": "text",
+    "text": "=",
+    "x": 38,
+    "y": 154
+  },
+  {
+    "type": "text",
+    "text": "People",
+    "x": 116,
+    "y": 154
+  },
+  {
+    "type": "text",
+    "text": "Ist",
+    "x": 244,
+    "y": 152
+  },
+  {
+    "type": "text",
+    "text": "2nd",
+    "x": 317,
+    "y": 152
+  },
+  {
+    "type": "text",
+    "text": "3rd+",
+    "x": 399,
+    "y": 152
+  },
+  {
+    "type": "text",
+    "text": "Locatior",
+    "x": 499,
+    "y": 152
+  },
+  {
+    "type": "text",
+    "text": "UcIa19,",
+    "x": 141,
+    "y": 193
+  },
+  {
+    "type": "text",
+    "text": "Dlazil",
+    "x": 203,
+    "y": 194
+  },
+  {
+    "type": "text",
+    "text": "Past: Comprador Técnico at Neuman & Esser",
+    "x": 287,
+    "y": 224
+  },
+  {
+    "type": "text",
+    "text": "mutual connection",
+    "x": 238,
+    "y": 265
+  },
+  {
+    "type": "text",
+    "text": "Denise dos Anjos",
+    "x": 202,
+    "y": 334
+  },
+  {
+    "type": "text",
+    "text": "2nd",
+    "x": 328,
+    "y": 334
+  },
+  {
+    "type": "text",
+    "text": "Connect",
+    "x": 459,
+    "y": 344
+  },
+  {
+    "type": "text",
+    "text": "Senior Procurement Spec",
+    "x": 226,
+    "y": 361
+  },
+  {
+    "type": "text",
+    "text": "Campinas, São Paulo,",
+    "x": 209,
+    "y": 384
+  },
+  {
+    "type": "text",
+    "text": "Brazil",
+    "x": 134,
+    "y": 410
+  },
+  {
+    "type": "text",
+    "text": "Past: Comprador sênior at Eldor Do Brasil",
+    "x": 271,
+    "y": 446
+  },
+  {
+    "type": "text",
+    "text": "Componentes Automotivos",
+    "x": 218,
+    "y": 470
+  },
+  {
+    "type": "text",
+    "text": "mutual connection",
+    "x": 238,
+    "y": 511
+  },
+  {
+    "type": "text",
+    "text": "Gustavo Nucci",
+    "x": 186,
+    "y": 579
+  },
+  {
+    "type": "text",
+    "text": "2nd",
+    "x": 329,
+    "y": 580
+  },
+  {
+    "type": "text",
+    "text": "Connect",
+    "x": 459,
+    "y": 588
+  },
+  {
+    "type": "text",
+    "text": "Purchasing",
+    "x": 160,
+    "y": 604
+  },
+  {
+    "type": "text",
+    "text": "Procuremen _",
+    "x": 290,
+    "y": 605
+  },
+  {
+    "type": "text",
+    "text": "Brazil",
+    "x": 135,
+    "y": 628
+  },
+  {
+    "type": "text",
+    "text": "Past: Comprador at AsGa S/A",
+    "x": 226,
+    "y": 664
+  },
+  {
+    "type": "text",
+    "text": "3 mutual connections",
+    "x": 266,
+    "y": 704
+  },
+  {
+    "type": "text",
+    "text": "Weslley Amorim",
+    "x": 194,
+    "y": 773
+  },
+  {
+    "type": "text",
+    "text": "2nd",
+    "x": 317,
+    "y": 774
+  },
+  {
+    "type": "text",
+    "text": "Connect",
+    "x": 459,
+    "y": 784
+  },
+  {
+    "type": "text",
+    "text": "comprador",
+    "x": 159,
+    "y": 801
+  },
+  {
+    "type": "text",
+    "text": "Belo Horizonte; Minas",
+    "x": 210,
+    "y": 824
+  },
+  {
+    "type": "text",
+    "text": "Gerais, Brazil",
+    "x": 167,
+    "y": 850
+  },
+  {
+    "type": "text",
+    "text": "Current: Comprador at Hospital da Baleia",
+    "x": 272,
+    "y": 887
+  },
+  {
+    "type": "text",
+    "text": "nutual connection",
+    "x": 241,
+    "y": 927
+  },
+  {
+    "type": "icon",
+    "x": 126,
+    "y": 264
+  },
+  {
+    "type": "icon",
+    "x": 60,
+    "y": 356
+  },
+  {
+    "type": "icon",
+    "x": 126,
+    "y": 509
+  },
+  {
+    "type": "icon",
+    "x": 60,
+    "y": 601
+  },
+  {
+    "type": "icon",
+    "x": 141,
+    "y": 704
+  },
+  {
+    "type": "icon",
+    "x": 60,
+    "y": 796
+  },
+  {
+    "type": "icon",
+    "x": 126,
+    "y": 926
+  },
+  {
+    "type": "icon",
+    "x": 271,
+    "y": 924
+  },
+  {
+    "type": "icon",
+    "x": 377,
+    "y": 924
+  }
+]
+```
+
+
+## extractFromImage({ engine: "all", icons: false })
+
+- imagem: `src/test/fixtures/linkedin-people-comprador-connect.png`
+- engine: `all`
+- icons: `false`
+- duração: **9477 ms**
+- ok: true
+- hits: 110 (texts=110, icons=0)
+
+```json
+[
+  {
+    "type": "text",
+    "text": "à",
+    "x": 133,
+    "y": 22
+  },
+  {
+    "type": "text",
+    "text": "&",
+    "x": 135,
+    "y": 23
+  },
+  {
+    "type": "text",
+    "text": "中",
+    "x": 135,
+    "y": 24
+  },
+  {
+    "type": "text",
+    "text": "3:30",
+    "x": 96,
+    "y": 25
+  },
+  {
+    "type": "text",
+    "text": "(",
+    "x": 71,
+    "y": 81
+  },
+  {
+    "type": "text",
+    "text": "comprador",
+    "x": 143,
+    "y": 82
+  },
+  {
+    "type": "text",
+    "text": "Ist",
+    "x": 244,
+    "y": 152
+  },
+  {
+    "type": "text",
+    "text": "2nd",
+    "x": 318,
+    "y": 152
+  },
+  {
+    "type": "text",
+    "text": "3rd+",
+    "x": 399,
+    "y": 152
+  },
+  {
+    "type": "text",
+    "text": "Location",
+    "x": 499,
+    "y": 152
+  },
+  {
+    "type": "text",
+    "text": "=",
+    "x": 36,
+    "y": 153
+  },
+  {
+    "type": "text",
+    "text": "1st",
+    "x": 243,
+    "y": 153
+  },
+  {
+    "type": "text",
+    "text": ")(",
+    "x": 283,
+    "y": 153
+  },
+  {
+    "type": "text",
+    "text": ")(",
+    "x": 358,
+    "y": 153
+  },
+  {
+    "type": "text",
+    "text": "Locatior",
+    "x": 500,
+    "y": 153
+  },
+  {
+    "type": "text",
+    "text": "=",
+    "x": 38,
+    "y": 154
+  },
+  {
+    "type": "text",
+    "text": "People",
+    "x": 119,
+    "y": 154
+  },
+  {
+    "type": "text",
+    "text": "GeiaiS, DiaZII",
+    "x": 166,
+    "y": 191
+  },
+  {
+    "type": "text",
+    "text": "UcIa19,",
+    "x": 141,
+    "y": 193
+  },
+  {
+    "type": "text",
+    "text": "iai,ia1",
+    "x": 168,
+    "y": 193
+  },
+  {
+    "type": "text",
+    "text": "Veiais,",
+    "x": 139,
+    "y": 194
+  },
+  {
+    "type": "text",
+    "text": "velaio, viacil",
+    "x": 168,
+    "y": 194
+  },
+  {
+    "type": "text",
+    "text": "Dlazil",
+    "x": 203,
+    "y": 194
+  },
+  {
+    "type": "text",
+    "text": "Past:",
+    "x": 126,
+    "y": 223
+  },
+  {
+    "type": "text",
+    "text": "Neuman",
+    "x": 369,
+    "y": 223
+  },
+  {
+    "type": "text",
+    "text": "&",
+    "x": 413,
+    "y": 223
+  },
+  {
+    "type": "text",
+    "text": "Esser",
+    "x": 445,
+    "y": 223
+  },
+  {
+    "type": "text",
+    "text": "Past: Comprador Técnico at Neuman & Esser",
+    "x": 287,
+    "y": 224
+  },
+  {
+    "type": "text",
+    "text": "Past:CompradorTecnicoat Neuman&Esser",
+    "x": 296,
+    "y": 224
+  },
+  {
+    "type": "text",
+    "text": "Comprador",
+    "x": 198,
+    "y": 225
+  },
+  {
+    "type": "text",
+    "text": "DB",
+    "x": 124,
+    "y": 264
+  },
+  {
+    "type": "text",
+    "text": "1 mutual connection",
+    "x": 242,
+    "y": 264
+  },
+  {
+    "type": "text",
+    "text": "1",
+    "x": 154,
+    "y": 265
+  },
+  {
+    "type": "text",
+    "text": "1mutualconnection",
+    "x": 212,
+    "y": 265
+  },
+  {
+    "type": "text",
+    "text": "Denise dos Anjos • 2nd",
+    "x": 217,
+    "y": 334
+  },
+  {
+    "type": "text",
+    "text": "-",
+    "x": 301,
+    "y": 334
+  },
+  {
+    "type": "text",
+    "text": "2nd",
+    "x": 328,
+    "y": 334
+  },
+  {
+    "type": "text",
+    "text": "DenisedosAnjos·2nd",
+    "x": 232,
+    "y": 335
+  },
+  {
+    "type": "text",
+    "text": "Denise",
+    "x": 145,
+    "y": 339
+  },
+  {
+    "type": "text",
+    "text": "Connect",
+    "x": 455,
+    "y": 344
+  },
+  {
+    "type": "text",
+    "text": "Senior",
+    "x": 138,
+    "y": 359
+  },
+  {
+    "type": "text",
+    "text": "SeniorProcurementSpec...",
+    "x": 233,
+    "y": 360
+  },
+  {
+    "type": "text",
+    "text": "Senior Procurement Spec...",
+    "x": 229,
+    "y": 361
+  },
+  {
+    "type": "text",
+    "text": "Spec...",
+    "x": 327,
+    "y": 361
+  },
+  {
+    "type": "text",
+    "text": "Paulo,",
+    "x": 280,
+    "y": 384
+  },
+  {
+    "type": "text",
+    "text": "Campinas,",
+    "x": 157,
+    "y": 385
+  },
+  {
+    "type": "text",
+    "text": "Campinas,Sao Paulo,",
+    "x": 212,
+    "y": 385
+  },
+  {
+    "type": "text",
+    "text": "Brazil",
+    "x": 133,
+    "y": 411
+  },
+  {
+    "type": "text",
+    "text": "Past:",
+    "x": 126,
+    "y": 445
+  },
+  {
+    "type": "text",
+    "text": "Past: Comprador sênior at Eldor Do Brasil",
+    "x": 270,
+    "y": 445
+  },
+  {
+    "type": "text",
+    "text": "Past:CompradorsenioratEldorDoBrasil",
+    "x": 285,
+    "y": 445
+  },
+  {
+    "type": "text",
+    "text": "Eldor",
+    "x": 359,
+    "y": 445
+  },
+  {
+    "type": "text",
+    "text": "Brasil",
+    "x": 413,
+    "y": 445
+  },
+  {
+    "type": "text",
+    "text": "Comprador",
+    "x": 198,
+    "y": 447
+  },
+  {
+    "type": "text",
+    "text": "Past: Comprador sênior at Eldor Do Brasiil",
+    "x": 269,
+    "y": 448
+  },
+  {
+    "type": "text",
+    "text": "Automotivos.",
+    "x": 276,
+    "y": 468
+  },
+  {
+    "type": "text",
+    "text": "ComponentesAutomotivos...",
+    "x": 225,
+    "y": 469
+  },
+  {
+    "type": "text",
+    "text": "Componentes",
+    "x": 164,
+    "y": 470
+  },
+  {
+    "type": "text",
+    "text": "Componentes Automotivos...",
+    "x": 222,
+    "y": 470
+  },
+  {
+    "type": "text",
+    "text": "Sạ0g",
+    "x": 128,
+    "y": 499
+  },
+  {
+    "type": "text",
+    "text": "1",
+    "x": 154,
+    "y": 510
+  },
+  {
+    "type": "text",
+    "text": "1 mutual connection",
+    "x": 243,
+    "y": 510
+  },
+  {
+    "type": "text",
+    "text": "3",
+    "x": 126,
+    "y": 511
+  },
+  {
+    "type": "text",
+    "text": "1mutual connection",
+    "x": 221,
+    "y": 511
+  },
+  {
+    "type": "text",
+    "text": "@",
+    "x": 281,
+    "y": 578
+  },
+  {
+    "type": "text",
+    "text": "Gustavo Nucci © • 2nd",
+    "x": 213,
+    "y": 579
+  },
+  {
+    "type": "text",
+    "text": "GustavoNucciO·2nd",
+    "x": 231,
+    "y": 579
+  },
+  {
+    "type": "text",
+    "text": "-",
+    "x": 302,
+    "y": 579
+  },
+  {
+    "type": "text",
+    "text": "2nd",
+    "x": 329,
+    "y": 580
+  },
+  {
+    "type": "text",
+    "text": "Gustavo",
+    "x": 152,
+    "y": 584
+  },
+  {
+    "type": "text",
+    "text": "Connect",
+    "x": 455,
+    "y": 589
+  },
+  {
+    "type": "text",
+    "text": "Purchasing",
+    "x": 161,
+    "y": 605
+  },
+  {
+    "type": "text",
+    "text": "Procuremen _",
+    "x": 291,
+    "y": 605
+  },
+  {
+    "type": "text",
+    "text": "|",
+    "x": 221,
+    "y": 606
+  },
+  {
+    "type": "text",
+    "text": "PurchasingIProcuremen...",
+    "x": 231,
+    "y": 606
+  },
+  {
+    "type": "text",
+    "text": "Purchasing | Procuremen...",
+    "x": 231,
+    "y": 606
+  },
+  {
+    "type": "text",
+    "text": "Brazil",
+    "x": 134,
+    "y": 629
+  },
+  {
+    "type": "text",
+    "text": "Past:",
+    "x": 126,
+    "y": 663
+  },
+  {
+    "type": "text",
+    "text": "AsGa",
+    "x": 289,
+    "y": 663
+  },
+  {
+    "type": "text",
+    "text": "Past: Comprador at AsGa S/A",
+    "x": 225,
+    "y": 664
+  },
+  {
+    "type": "text",
+    "text": "S/A",
+    "x": 330,
+    "y": 664
+  },
+  {
+    "type": "text",
+    "text": "Past:CompradoratAsGaS/A",
+    "x": 227,
+    "y": 665
+  },
+  {
+    "type": "text",
+    "text": "R$",
+    "x": 139,
+    "y": 704
+  },
+  {
+    "type": "text",
+    "text": "3",
+    "x": 185,
+    "y": 704
+  },
+  {
+    "type": "text",
+    "text": "3 mutual connections",
+    "x": 274,
+    "y": 704
+  },
+  {
+    "type": "text",
+    "text": "3mutualconnections",
+    "x": 244,
+    "y": 705
+  },
+  {
+    "type": "text",
+    "text": "Weslley Amorim • 2nd",
+    "x": 213,
+    "y": 774
+  },
+  {
+    "type": "text",
+    "text": "WeslleyAmorim·2nd",
+    "x": 230,
+    "y": 774
+  },
+  {
+    "type": "text",
+    "text": "+",
+    "x": 290,
+    "y": 774
+  },
+  {
+    "type": "text",
+    "text": "2nd",
+    "x": 317,
+    "y": 774
+  },
+  {
+    "type": "text",
+    "text": "Weslley",
+    "x": 149,
+    "y": 775
+  },
+  {
+    "type": "text",
+    "text": "Connect",
+    "x": 455,
+    "y": 784
+  },
+  {
+    "type": "text",
+    "text": "comprador",
+    "x": 159,
+    "y": 801
+  },
+  {
+    "type": "text",
+    "text": "Belo",
+    "x": 129,
+    "y": 823
+  },
+  {
+    "type": "text",
+    "text": "Minas",
+    "x": 283,
+    "y": 823
+  },
+  {
+    "type": "text",
+    "text": "OWORK",
+    "x": 64,
+    "y": 824
+  },
+  {
+    "type": "text",
+    "text": "Belo Horizonte,Minas",
+    "x": 208,
+    "y": 825
+  },
+  {
+    "type": "text",
+    "text": "Gerais,Brazil",
+    "x": 168,
+    "y": 851
+  },
+  {
+    "type": "text",
+    "text": "Current:",
+    "x": 138,
+    "y": 885
+  },
+  {
+    "type": "text",
+    "text": "da",
+    "x": 372,
+    "y": 885
+  },
+  {
+    "type": "text",
+    "text": "Baleia",
+    "x": 411,
+    "y": 885
+  },
+  {
+    "type": "text",
+    "text": "Current: Comprador at Hospital da Baleia",
+    "x": 271,
+    "y": 886
+  },
+  {
+    "type": "text",
+    "text": "Current:CompradoratHospitaldaBaleia",
+    "x": 276,
+    "y": 886
+  },
+  {
+    "type": "text",
+    "text": "Comprador",
+    "x": 222,
+    "y": 887
+  },
+  {
+    "type": "text",
+    "text": "Hospital",
+    "x": 325,
+    "y": 887
+  },
+  {
+    "type": "text",
+    "text": "[|",
+    "x": 375,
+    "y": 926
+  },
+  {
+    "type": "text",
+    "text": "1mutual connection",
+    "x": 235,
+    "y": 927
+  },
+  {
+    "type": "text",
+    "text": "nutualconriection",
+    "x": 240,
+    "y": 927
+  },
+  {
+    "type": "text",
+    "text": "nutual connection",
+    "x": 241,
+    "y": 927
+  },
+  {
+    "type": "text",
+    "text": "à",
+    "x": 126,
+    "y": 928
+  }
+]
+```
+
+
+## extractFromImage({ engine: "all", icons: true })
+
+- imagem: `src/test/fixtures/linkedin-people-comprador-connect.png`
+- engine: `all`
+- icons: `true`
+- duração: **9056 ms**
+- ok: true
+- hits: 113 (texts=110, icons=3)
+
+```json
+[
+  {
+    "type": "text",
+    "text": "à",
+    "x": 133,
+    "y": 22
+  },
+  {
+    "type": "text",
+    "text": "&",
+    "x": 135,
+    "y": 23
+  },
+  {
+    "type": "text",
+    "text": "中",
+    "x": 135,
+    "y": 24
+  },
+  {
+    "type": "text",
+    "text": "3:30",
+    "x": 96,
+    "y": 25
+  },
+  {
+    "type": "text",
+    "text": "(",
+    "x": 71,
+    "y": 81
+  },
+  {
+    "type": "text",
+    "text": "comprador",
+    "x": 143,
+    "y": 82
+  },
+  {
+    "type": "text",
+    "text": "Ist",
+    "x": 244,
+    "y": 152
+  },
+  {
+    "type": "text",
+    "text": "2nd",
+    "x": 318,
+    "y": 152
+  },
+  {
+    "type": "text",
+    "text": "3rd+",
+    "x": 399,
+    "y": 152
+  },
+  {
+    "type": "text",
+    "text": "Location",
+    "x": 499,
+    "y": 152
+  },
+  {
+    "type": "text",
+    "text": "=",
+    "x": 36,
+    "y": 153
+  },
+  {
+    "type": "text",
+    "text": "1st",
+    "x": 243,
+    "y": 153
+  },
+  {
+    "type": "text",
+    "text": ")(",
+    "x": 283,
+    "y": 153
+  },
+  {
+    "type": "text",
+    "text": ")(",
+    "x": 358,
+    "y": 153
+  },
+  {
+    "type": "text",
+    "text": "Locatior",
+    "x": 500,
+    "y": 153
+  },
+  {
+    "type": "text",
+    "text": "=",
+    "x": 38,
+    "y": 154
+  },
+  {
+    "type": "text",
+    "text": "People",
+    "x": 119,
+    "y": 154
+  },
+  {
+    "type": "text",
+    "text": "GeiaiS, DiaZII",
+    "x": 166,
+    "y": 191
+  },
+  {
+    "type": "text",
+    "text": "UcIa19,",
+    "x": 141,
+    "y": 193
+  },
+  {
+    "type": "text",
+    "text": "iai,ia1",
+    "x": 168,
+    "y": 193
+  },
+  {
+    "type": "text",
+    "text": "Veiais,",
+    "x": 139,
+    "y": 194
+  },
+  {
+    "type": "text",
+    "text": "velaio, viacil",
+    "x": 168,
+    "y": 194
+  },
+  {
+    "type": "text",
+    "text": "Dlazil",
+    "x": 203,
+    "y": 194
+  },
+  {
+    "type": "text",
+    "text": "Past:",
+    "x": 126,
+    "y": 223
+  },
+  {
+    "type": "text",
+    "text": "Neuman",
+    "x": 369,
+    "y": 223
+  },
+  {
+    "type": "text",
+    "text": "&",
+    "x": 413,
+    "y": 223
+  },
+  {
+    "type": "text",
+    "text": "Esser",
+    "x": 445,
+    "y": 223
+  },
+  {
+    "type": "text",
+    "text": "Past: Comprador Técnico at Neuman & Esser",
+    "x": 287,
+    "y": 224
+  },
+  {
+    "type": "text",
+    "text": "Past:CompradorTecnicoat Neuman&Esser",
+    "x": 296,
+    "y": 224
+  },
+  {
+    "type": "text",
+    "text": "Comprador",
+    "x": 198,
+    "y": 225
+  },
+  {
+    "type": "text",
+    "text": "DB",
+    "x": 124,
+    "y": 264
+  },
+  {
+    "type": "text",
+    "text": "1 mutual connection",
+    "x": 242,
+    "y": 264
+  },
+  {
+    "type": "text",
+    "text": "1",
+    "x": 154,
+    "y": 265
+  },
+  {
+    "type": "text",
+    "text": "1mutualconnection",
+    "x": 212,
+    "y": 265
+  },
+  {
+    "type": "text",
+    "text": "Denise dos Anjos • 2nd",
+    "x": 217,
+    "y": 334
+  },
+  {
+    "type": "text",
+    "text": "-",
+    "x": 301,
+    "y": 334
+  },
+  {
+    "type": "text",
+    "text": "2nd",
+    "x": 328,
+    "y": 334
+  },
+  {
+    "type": "text",
+    "text": "DenisedosAnjos·2nd",
+    "x": 232,
+    "y": 335
+  },
+  {
+    "type": "text",
+    "text": "Denise",
+    "x": 145,
+    "y": 339
+  },
+  {
+    "type": "text",
+    "text": "Connect",
+    "x": 455,
+    "y": 344
+  },
+  {
+    "type": "text",
+    "text": "Senior",
+    "x": 138,
+    "y": 359
+  },
+  {
+    "type": "text",
+    "text": "SeniorProcurementSpec...",
+    "x": 233,
+    "y": 360
+  },
+  {
+    "type": "text",
+    "text": "Senior Procurement Spec...",
+    "x": 229,
+    "y": 361
+  },
+  {
+    "type": "text",
+    "text": "Spec...",
+    "x": 327,
+    "y": 361
+  },
+  {
+    "type": "text",
+    "text": "Paulo,",
+    "x": 280,
+    "y": 384
+  },
+  {
+    "type": "text",
+    "text": "Campinas,",
+    "x": 157,
+    "y": 385
+  },
+  {
+    "type": "text",
+    "text": "Campinas,Sao Paulo,",
+    "x": 212,
+    "y": 385
+  },
+  {
+    "type": "text",
+    "text": "Brazil",
+    "x": 133,
+    "y": 411
+  },
+  {
+    "type": "text",
+    "text": "Past:",
+    "x": 126,
+    "y": 445
+  },
+  {
+    "type": "text",
+    "text": "Past: Comprador sênior at Eldor Do Brasil",
+    "x": 270,
+    "y": 445
+  },
+  {
+    "type": "text",
+    "text": "Past:CompradorsenioratEldorDoBrasil",
+    "x": 285,
+    "y": 445
+  },
+  {
+    "type": "text",
+    "text": "Eldor",
+    "x": 359,
+    "y": 445
+  },
+  {
+    "type": "text",
+    "text": "Brasil",
+    "x": 413,
+    "y": 445
+  },
+  {
+    "type": "text",
+    "text": "Comprador",
+    "x": 198,
+    "y": 447
+  },
+  {
+    "type": "text",
+    "text": "Past: Comprador sênior at Eldor Do Brasiil",
+    "x": 269,
+    "y": 448
+  },
+  {
+    "type": "text",
+    "text": "Automotivos.",
+    "x": 276,
+    "y": 468
+  },
+  {
+    "type": "text",
+    "text": "ComponentesAutomotivos...",
+    "x": 225,
+    "y": 469
+  },
+  {
+    "type": "text",
+    "text": "Componentes",
+    "x": 164,
+    "y": 470
+  },
+  {
+    "type": "text",
+    "text": "Componentes Automotivos...",
+    "x": 222,
+    "y": 470
+  },
+  {
+    "type": "text",
+    "text": "Sạ0g",
+    "x": 128,
+    "y": 499
+  },
+  {
+    "type": "text",
+    "text": "1",
+    "x": 154,
+    "y": 510
+  },
+  {
+    "type": "text",
+    "text": "1 mutual connection",
+    "x": 243,
+    "y": 510
+  },
+  {
+    "type": "text",
+    "text": "3",
+    "x": 126,
+    "y": 511
+  },
+  {
+    "type": "text",
+    "text": "1mutual connection",
+    "x": 221,
+    "y": 511
+  },
+  {
+    "type": "text",
+    "text": "@",
+    "x": 281,
+    "y": 578
+  },
+  {
+    "type": "text",
+    "text": "Gustavo Nucci © • 2nd",
+    "x": 213,
+    "y": 579
+  },
+  {
+    "type": "text",
+    "text": "GustavoNucciO·2nd",
+    "x": 231,
+    "y": 579
+  },
+  {
+    "type": "text",
+    "text": "-",
+    "x": 302,
+    "y": 579
+  },
+  {
+    "type": "text",
+    "text": "2nd",
+    "x": 329,
+    "y": 580
+  },
+  {
+    "type": "text",
+    "text": "Gustavo",
+    "x": 152,
+    "y": 584
+  },
+  {
+    "type": "text",
+    "text": "Connect",
+    "x": 455,
+    "y": 589
+  },
+  {
+    "type": "text",
+    "text": "Purchasing",
+    "x": 161,
+    "y": 605
+  },
+  {
+    "type": "text",
+    "text": "Procuremen _",
+    "x": 291,
+    "y": 605
+  },
+  {
+    "type": "text",
+    "text": "|",
+    "x": 221,
+    "y": 606
+  },
+  {
+    "type": "text",
+    "text": "PurchasingIProcuremen...",
+    "x": 231,
+    "y": 606
+  },
+  {
+    "type": "text",
+    "text": "Purchasing | Procuremen...",
+    "x": 231,
+    "y": 606
+  },
+  {
+    "type": "text",
+    "text": "Brazil",
+    "x": 134,
+    "y": 629
+  },
+  {
+    "type": "text",
+    "text": "Past:",
+    "x": 126,
+    "y": 663
+  },
+  {
+    "type": "text",
+    "text": "AsGa",
+    "x": 289,
+    "y": 663
+  },
+  {
+    "type": "text",
+    "text": "Past: Comprador at AsGa S/A",
+    "x": 225,
+    "y": 664
+  },
+  {
+    "type": "text",
+    "text": "S/A",
+    "x": 330,
+    "y": 664
+  },
+  {
+    "type": "text",
+    "text": "Past:CompradoratAsGaS/A",
+    "x": 227,
+    "y": 665
+  },
+  {
+    "type": "text",
+    "text": "R$",
+    "x": 139,
+    "y": 704
+  },
+  {
+    "type": "text",
+    "text": "3",
+    "x": 185,
+    "y": 704
+  },
+  {
+    "type": "text",
+    "text": "3 mutual connections",
+    "x": 274,
+    "y": 704
+  },
+  {
+    "type": "text",
+    "text": "3mutualconnections",
+    "x": 244,
+    "y": 705
+  },
+  {
+    "type": "text",
+    "text": "Weslley Amorim • 2nd",
+    "x": 213,
+    "y": 774
+  },
+  {
+    "type": "text",
+    "text": "WeslleyAmorim·2nd",
+    "x": 230,
+    "y": 774
+  },
+  {
+    "type": "text",
+    "text": "+",
+    "x": 290,
+    "y": 774
+  },
+  {
+    "type": "text",
+    "text": "2nd",
+    "x": 317,
+    "y": 774
+  },
+  {
+    "type": "text",
+    "text": "Weslley",
+    "x": 149,
+    "y": 775
+  },
+  {
+    "type": "text",
+    "text": "Connect",
+    "x": 455,
+    "y": 784
+  },
+  {
+    "type": "text",
+    "text": "comprador",
+    "x": 159,
+    "y": 801
+  },
+  {
+    "type": "text",
+    "text": "Belo",
+    "x": 129,
+    "y": 823
+  },
+  {
+    "type": "text",
+    "text": "Minas",
+    "x": 283,
+    "y": 823
+  },
+  {
+    "type": "text",
+    "text": "OWORK",
+    "x": 64,
+    "y": 824
+  },
+  {
+    "type": "text",
+    "text": "Belo Horizonte,Minas",
+    "x": 208,
+    "y": 825
+  },
+  {
+    "type": "text",
+    "text": "Gerais,Brazil",
+    "x": 168,
+    "y": 851
+  },
+  {
+    "type": "text",
+    "text": "Current:",
+    "x": 138,
+    "y": 885
+  },
+  {
+    "type": "text",
+    "text": "da",
+    "x": 372,
+    "y": 885
+  },
+  {
+    "type": "text",
+    "text": "Baleia",
+    "x": 411,
+    "y": 885
+  },
+  {
+    "type": "text",
+    "text": "Current: Comprador at Hospital da Baleia",
+    "x": 271,
+    "y": 886
+  },
+  {
+    "type": "text",
+    "text": "Current:CompradoratHospitaldaBaleia",
+    "x": 276,
+    "y": 886
+  },
+  {
+    "type": "text",
+    "text": "Comprador",
+    "x": 222,
+    "y": 887
+  },
+  {
+    "type": "text",
+    "text": "Hospital",
+    "x": 325,
+    "y": 887
+  },
+  {
+    "type": "text",
+    "text": "[|",
+    "x": 375,
+    "y": 926
+  },
+  {
+    "type": "text",
+    "text": "1mutual connection",
+    "x": 235,
+    "y": 927
+  },
+  {
+    "type": "text",
+    "text": "nutualconriection",
+    "x": 240,
+    "y": 927
+  },
+  {
+    "type": "text",
+    "text": "nutual connection",
+    "x": 241,
+    "y": 927
+  },
+  {
+    "type": "text",
+    "text": "à",
+    "x": 126,
+    "y": 928
+  },
+  {
+    "type": "icon",
+    "x": 60,
+    "y": 356
+  },
+  {
+    "type": "icon",
+    "x": 60,
+    "y": 601
+  },
+  {
+    "type": "icon",
+    "x": 271,
+    "y": 924
+  }
+]
+```

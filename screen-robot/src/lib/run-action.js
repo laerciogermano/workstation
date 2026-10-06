@@ -7,6 +7,7 @@ import { resolve } from "node:path";
 import { spawnSync } from "node:child_process";
 import { sleep as defaultSleep } from "./adb.js";
 import { extract, findByText } from "./extract.js";
+import { parseIconsFlag } from "./extract-icons.js";
 import { key, launch, scroll, tap, type } from "./operate.js";
 
 export const ACTIONS = [
@@ -73,6 +74,7 @@ export function parseRunArgs(argv) {
     action: null,
     serial: null,
     engine: "all",
+    icons: false,
     method: "adb",
     configPath: null,
     positional: [],
@@ -96,6 +98,21 @@ export function parseRunArgs(argv) {
     }
     if (a === "--engine") {
       out.engine = args[++i];
+      continue;
+    }
+    if (a === "--no-icons") {
+      out.icons = false;
+      continue;
+    }
+    if (a === "--icons") {
+      const next = args[i + 1];
+      const parsed = parseIconsFlag(next);
+      if (parsed != null) {
+        i += 1;
+        out.icons = parsed;
+      } else {
+        out.icons = true;
+      }
       continue;
     }
     if (a === "--method") {
@@ -150,11 +167,12 @@ export async function runAction(cfg = {}, deps = {}) {
   const config = cfg.config ?? loadDeviceConfig(cfg.configPath, deps);
   const serial = resolveSerial({ ...cfg, config }, deps);
   const engine = cfg.engine || "all";
+  const icons = parseIconsFlag(cfg.icons) ?? false;
 
   if (action === "extract") {
     const doExtract = deps.extract ?? extract;
-    const result = await doExtract({ serial, engine }, deps);
-    return { ok: true, action, serial, engine, result };
+    const result = await doExtract({ serial, engine, icons }, deps);
+    return { ok: true, action, serial, engine, icons, result };
   }
   if (action === "find") {
     const query = cfg.query;

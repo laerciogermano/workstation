@@ -165,11 +165,27 @@ export async function detectIconBoxes(imagePath) {
     .sort((a, b) => a.y - b.y || a.x - b.x);
 }
 
-export function iconsEnabled(deps = {}) {
-  if (deps.icons === false) return false;
-  const v = String(process.env.SCREEN_ROBOT_ICONS || "").toLowerCase();
-  if (v === "0" || v === "off" || v === "false") return false;
-  return true;
+/**
+ * true/false explícito; senão SCREEN_ROBOT_ICONS; default false (só OCR).
+ * @param {unknown} value
+ * @returns {boolean | null}
+ */
+export function parseIconsFlag(value) {
+  if (value === true || value === 1) return true;
+  if (value === false || value === 0) return false;
+  const v = String(value ?? "").trim().toLowerCase();
+  if (!v) return null;
+  if (["1", "true", "on", "yes"].includes(v)) return true;
+  if (["0", "false", "off", "no"].includes(v)) return false;
+  return null;
+}
+
+export function iconsEnabled(src = {}) {
+  const fromSrc = parseIconsFlag(src.icons);
+  if (fromSrc != null) return fromSrc;
+  const fromEnv = parseIconsFlag(process.env.SCREEN_ROBOT_ICONS);
+  if (fromEnv != null) return fromEnv;
+  return false;
 }
 
 /**

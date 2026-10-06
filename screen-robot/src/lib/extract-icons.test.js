@@ -56,4 +56,9 @@ describe("extract-icons", () => {
     });
     assert.deepEqual(out, [{ type: "text", text: "A", x: 1, y: 2 }]);
   });
+
+  it("appendIcons default (sem flag) não detecta", async () => {
+    const out = await appendIcons("/nope.png", [{ type: "text", text: "A", x: 1, y: 2 }]);
+    assert.deepEqual(out, [{ type: "text", text: "A", x: 1, y: 2 }]);
+  });
 });

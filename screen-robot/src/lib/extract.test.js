@@ -19,13 +19,24 @@ const WORDS = [
 ];
 
 describe("extract (OCR)", () => {
-  it("devolve textos + ícones (deps.detectIcons)", async () => {
+  it("icons=false (default): só textos", async () => {
     const deps = {
       captureFrame: async () => "/tmp/fake.png",
       ocrRecognize: async () => WORDS,
       detectIcons: async () => [{ type: "icon", x: 80, y: 140 }],
     };
     const t1 = await extract({ serial: "s" }, deps);
+    assert.equal(t1.length, 2);
+    assert.ok(t1.every((e) => e.type === "text"));
+  });
+
+  it("icons=true: textos + ícones (deps.detectIcons)", async () => {
+    const deps = {
+      captureFrame: async () => "/tmp/fake.png",
+      ocrRecognize: async () => WORDS,
+      detectIcons: async () => [{ type: "icon", x: 80, y: 140 }],
+    };
+    const t1 = await extract({ serial: "s", icons: true }, deps);
     assert.ok(Array.isArray(t1));
     assert.equal(t1.length, 3);
     const texts = t1.filter((e) => e.type === "text");
@@ -38,7 +49,7 @@ describe("extract (OCR)", () => {
     assert.equal(icons[0].x, 80);
     assert.equal(icons[0].y, 140);
 
-    const t2 = await extract({ serial: "s" }, deps);
+    const t2 = await extract({ serial: "s", icons: true }, deps);
     assert.equal(t2.length, t1.length);
     assert.ok(t2.every((e) => typeof e.x === "number" && typeof e.y === "number"));
     assert.ok(t2.every((e) => e.bounds === undefined && e.center === undefined));

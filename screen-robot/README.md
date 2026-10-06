@@ -308,8 +308,17 @@ Frame → OCR + blobs visuais (sem IA) → lista plana.
 |-------|--------|-----------|
 | `serial` | sim | Device |
 | `engine` | | OCR: `tesseract` · `rapidocr` · `macos-vision` · `paddleocr` · `easyocr` · `all` |
+| `icons` | | `true` anexa `{ type:"icon", x, y }`. Default `false` |
 
-**Saída**
+**Saída** (default, `icons: false`)
+
+```json
+[
+  { "type": "text", "text": "Sign", "x": 273, "y": 833 }
+]
+```
+
+Com `icons: true`:
 
 ```json
 [
@@ -320,12 +329,13 @@ Frame → OCR + blobs visuais (sem IA) → lista plana.
 
 `text` tem `text`+`x,y`. `icon` só `x,y` (centro do blob; sem `text`). Blob que já contém um hit OCR é omitido.
 
-Ícones off: `SCREEN_ROBOT_ICONS=0` ou `extract(..., { icons: false })`.
+CLI: `npm run extract -- --icons true` · `--no-icons`. Env: `SCREEN_ROBOT_ICONS=1`.
 
-**Antes → depois:** só `{ type:"text", text, x, y }` → textos + `{ type:"icon", x, y }`. Rollback: `SCREEN_ROBOT_ICONS=0`.
+**Antes → depois:** ícones sempre on → opt-in `icons: true` (default só OCR). Rollback: omitir a flag / `icons: false`.
 
 ```js
-const elements = await extract({ serial });
+const texts = await extract({ serial });
+const both = await extract({ serial, icons: true });
 ```
 
 ---
@@ -479,7 +489,7 @@ cd screen-robot/src
 npm test
 npm run linkedin-login   # piloto
 npm run view             # scrcpy
-npm run extract          # IA: OCR + ícones (engine=all) — ver src/lib/README.md
+npm run extract          # IA: OCR (engine=all); `--icons true` para blobs
 npm run agent -- --prompt ../roteiros/jornada-comprador.md   # GEMINI_API_KEY
 ```
 
@@ -493,6 +503,6 @@ npm run agent -- --prompt ../roteiros/jornada-comprador.md   # GEMINI_API_KEY
 | Jornada LinkedIn Campinas (gpt-4o-mini; OCR só RapidOCR; Connect até limite de convites) | [`roteiros/jornada-linkedin-campinas.md`](roteiros/jornada-linkedin-campinas.md) |
 | Referência Instagram (ops Android/PT por funcionalidade; Help Center) | [`roteiros/instagram-referencia.md`](roteiros/instagram-referencia.md) |
 | OCR backends + merge `all` (5 engines) | [`src/README.md`](src/README.md) · [`src/lib/extract-engines.js`](src/lib/extract-engines.js) · [`src/lib/ocr-merge.js`](src/lib/ocr-merge.js) |
-| Ícones no extract (blobs, sem IA) | [`src/lib/extract-icons.js`](src/lib/extract-icons.js) · rollback `SCREEN_ROBOT_ICONS=0` |
+| Ícones no extract (opt-in `icons: true`) | [`src/lib/extract-icons.js`](src/lib/extract-icons.js) · relatório [`src/test/output/linkedin-people-extract-calls.md`](src/test/output/linkedin-people-extract-calls.md) |
 | Identidade do aparelho (US-22) | [`pocs/README.md`](pocs/README.md#mascarar-identidade-do-aparelho) |
 | Postmortem runtime | [`postmortem.md`](postmortem.md) |

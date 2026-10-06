@@ -8,7 +8,7 @@ import { defaultConfigPath, parseRunArgs, runAction } from "../lib/run-action.js
 
 function usage(code = 1) {
   console.error(`Uso (cwd: screen-robot/src):
-  npm run extract [-- --engine all]
+  npm run extract [-- --engine all] [-- --icons true]
   npm run find -- "Sign in with Email"
   npm run tap -- <x> <y>
   npm run type -- "texto"
@@ -17,7 +17,7 @@ function usage(code = 1) {
   npm run key -- KEYCODE_BACK
   npm run wait -- 1500
 
-Flags: --device SERIAL  --engine all|rapidocr|…  --method adb|ocr  --config path
+Flags: --device SERIAL  --engine all|rapidocr|…  --icons true|false  --no-icons  --method adb|ocr  --config path
 Stdout: JSON { ok, action, serial, result }`);
   process.exit(code);
 }

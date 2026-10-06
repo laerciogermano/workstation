@@ -12,7 +12,7 @@ Stdout de toda ação: JSON `{ ok, action, serial, result }`.
 
 1. `npm run extract` (`engine=all` default)
 2. Se textos de loading (`Loading`, `…`, tela vazia) → `npm run wait -- 1500` e extract de novo
-3. Escolher próximo passo pelos itens (`text` ou `icon` + `x,y`)
+3. Escolher próximo passo pelos `{ text, x, y }` (e `icon` se `--icons true`)
 4. Uma ação (`tap` / `type` / `scroll` / `launch` / `key`)
 5. Extract de novo até o objetivo
 
@@ -27,9 +27,11 @@ Stdout de toda ação: JSON `{ ok, action, serial, result }`.
 ```bash
 npm run extract
 npm run extract -- --engine all
+npm run extract -- --icons true
+npm run extract -- --engine rapidocr --icons true
 ```
 
-`result`: textos OCR + ícones (blobs, sem IA). Tap usa `x,y`.
+`result` default: só textos OCR. Com `--icons true`: + `{ type: "icon", x, y }` (blobs, sem IA). Tap usa `x,y`.
 
 ```json
 [
@@ -38,7 +40,7 @@ npm run extract -- --engine all
 ]
 ```
 
-Ícones off: `SCREEN_ROBOT_ICONS=0`.
+`--icons false` / `--no-icons` (default). Env: `SCREEN_ROBOT_ICONS=1`.
 
 ---
 
@@ -117,7 +119,7 @@ Só se o extract indicar loading. Sem `on` / `ui_stable`.
 
 ## Flag extra
 
-`--device emulator-5554` · `--engine all|rapidocr|macos-vision|tesseract|paddleocr|easyocr` · `--method adb|ocr` (só `type`)
+`--device emulator-5554` · `--engine all|rapidocr|macos-vision|tesseract|paddleocr|easyocr` · `--icons true|false` · `--method adb|ocr` (só `type`)
 
 ---
 

@@ -1,7 +1,7 @@
 /**
  * extract com OCR pluggable + merge paralelo (engine=all).
  * Contrato: textos OCR + ícones (blobs, sem IA) [{ type:"text", text, x, y } | { type:"icon", x, y }].
- * Rollback ícones: SCREEN_ROBOT_ICONS=0 ou deps.icons=false.
+ * Ícones: opts/cfg/deps.icons (default false). SCREEN_ROBOT_ICONS=1 força on.
  *
  * Top-5 (UI / mobile OCR):
  *  1. rapidocr — PP-OCR ONNX, bom em Connect
@@ -144,7 +144,7 @@ export async function extractMergedFromImage(imagePath, opts = {}, deps = {}) {
 /**
  * OCR direto de um arquivo de imagem (sem device).
  * @param {string} imagePath
- * @param {{ engine?: OcrEngine, engines?: string[], keepEngines?: boolean }} [opts]
+ * @param {{ engine?: OcrEngine, engines?: string[], keepEngines?: boolean, icons?: boolean }} [opts]
  */
 export async function extractFromImage(imagePath, opts = {}) {
   const engine = opts.engine || "tesseract";
@@ -158,7 +158,7 @@ export async function extractFromImage(imagePath, opts = {}) {
 
 /**
  * Igual extract(), mas escolhe o backend OCR (ou all = merge paralelo).
- * @param {{ serial: string, engine?: OcrEngine, engines?: string[] }} cfg
+ * @param {{ serial: string, engine?: OcrEngine, engines?: string[], icons?: boolean }} cfg
  * @param {object} [deps]
  */
 export async function extractWithEngine(cfg, deps = {}) {
@@ -169,14 +169,15 @@ export async function extractWithEngine(cfg, deps = {}) {
     throw err;
   }
   const engine = cfg.engine || "tesseract";
-  const capture = deps.captureFrame
-    ? (s, d) => deps.captureFrame(s, d)
+  const d = { ...deps, icons: cfg.icons !== undefined ? cfg.icons : deps.icons };
+  const capture = d.captureFrame
+    ? (s, dep) => d.captureFrame(s, dep)
     : captureFrame;
-  const framePath = await capture(serial, deps);
+  const framePath = await capture(serial, d);
 
   if (engine === "all" || engine === "merge") {
     const log =
-      typeof deps.log === "function" ? deps.log : () => {};
+      typeof d.log === "function" ? d.log : () => {};
     const { elements, engines } = await extractMergedFromImage(
       framePath,
       {
@@ -186,9 +187,9 @@ export async function extractWithEngine(cfg, deps = {}) {
         onEngineError: ({ engine: e, error }) =>
           log(`ocr ${e} falhou: ${error.slice(0, 160)}`),
       },
-      deps,
+      d,
     );
-    if (deps.logMergeStats) {
+    if (d.logMergeStats) {
       const ok = engines.filter((e) => e.ok).map((e) => `${e.engine}:${e.hits.length}/${e.ms}ms`);
       const skip = engines.filter((e) => !e.ok).map((e) => `${e.engine}:${e.ms}ms`);
       log(`ocr-merge ok=[${ok.join(", ")}] skip=[${skip.join(", ")}] hits=${elements.length}`);
@@ -201,8 +202,8 @@ export async function extractWithEngine(cfg, deps = {}) {
     err.code = "OCR_ENGINE_UNKNOWN";
     throw err;
   }
-  const texts = await runOneEngine(framePath, engine, deps);
-  return appendIcons(framePath, texts, deps);
+  const texts = await runOneEngine(framePath, engine, d);
+  return appendIcons(framePath, texts, d);
 }
 
 /** Hits cujo texto é Connect (exato ou contém a palavra). */

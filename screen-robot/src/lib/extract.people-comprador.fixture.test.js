@@ -18,7 +18,7 @@ const OUT_TXT = resolve(OUT_DIR, "linkedin-people-comprador-connect.ocr.txt");
 describe("extract — fixture People comprador", () => {
   it("OCR da fixture, print no console e salva em test/output", async () => {
     const els = await extract(
-      { serial: "fixture" },
+      { serial: "fixture", icons: true },
       { captureFrame: async () => FIXTURE },
     );
 

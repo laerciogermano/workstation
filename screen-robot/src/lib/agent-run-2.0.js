@@ -52,37 +52,79 @@ function resolveModel(cfg) {
     : process.env.GEMINI_MODEL || DEFAULT_GEMINI_MODEL;
 }
 
-/** JSON da IA → { acao, resumo } */
-function parseAcao(raw) {
-  let data = raw;
-  if (typeof raw === "string") {
-    const t = raw.trim();
-    const fence = t.match(/```(?:json)?\s*([\s\S]*?)```/);
-    data = JSON.parse(fence ? fence[1].trim() : t);
+/** Se tap veio sem x,y, tenta achar no OCR pelo text/element/motivo. */
+function fillTapFromOcr(acao, ocr) {
+  if (acao.type !== "tap") return acao;
+  if (Number.isFinite(acao.x) && Number.isFinite(acao.y)) return acao;
+  const needle = String(acao.text || acao.element || "")
+    .trim()
+    .toLowerCase();
+  const fromMotivo = String(acao.motivo || "").match(
+    /['"]([^'"]+)['"]|tap\s+(?:em\s+)?(\w+)/i,
+  );
+  const key =
+    needle ||
+    (fromMotivo ? String(fromMotivo[1] || fromMotivo[2] || "").toLowerCase() : "");
+  if (!key) return acao;
+  for (const e of ocr || []) {
+    if (e?.type === "icon") continue;
+    if (String(e?.text || "").toLowerCase() === key) {
+      const x = Number(e.x);
+      const y = Number(e.y);
+      if (Number.isFinite(x) && Number.isFinite(y)) {
+        return { ...acao, x, y, text: String(e.text) };
+      }
+    }
   }
-  const a = data?.acao;
-  if (!a || typeof a !== "object") fail("AGENT_BAD_ACTION", "falta acao");
-  const type = String(a.type || "").toLowerCase();
-  if (!ACTIONS.has(type)) fail("AGENT_BAD_ACTION", `type inválido: ${a.type}`);
-  const acao = {
-    type,
-    x: a.x == null ? null : Number(a.x),
-    y: a.y == null ? null : Number(a.y),
-    direction: a.direction == null ? null : String(a.direction),
-    text: a.text == null ? null : String(a.text),
-    code: a.code == null ? null : String(a.code),
-    ms: a.ms == null ? null : Number(a.ms),
-    motivo: a.motivo == null ? "" : String(a.motivo),
-  };
-  if (type === "tap" && !(Number.isFinite(acao.x) && Number.isFinite(acao.y))) {
-    fail("AGENT_BAD_ACTION", "tap exige x,y");
+  return acao;
+}
+
+/** JSON da IA → { acao, resumo }. Não lança: devolve { ok:false, erro } se inválido. */
+function parseAcao(raw, ocr) {
+  try {
+    let data = raw;
+    if (typeof raw === "string") {
+      const t = raw.trim();
+      const fence = t.match(/```(?:json)?\s*([\s\S]*?)```/);
+      data = JSON.parse(fence ? fence[1].trim() : t);
+    }
+    const a = data?.acao;
+    if (!a || typeof a !== "object") {
+      return { ok: false, erro: "falta acao", raw };
+    }
+    const type = String(a.type || "").toLowerCase();
+    if (!ACTIONS.has(type)) {
+      return { ok: false, erro: `type inválido: ${a.type}`, raw };
+    }
+    let acao = {
+      type,
+      element: a.element == null ? null : String(a.element),
+      x: a.x == null ? null : Number(a.x),
+      y: a.y == null ? null : Number(a.y),
+      direction: a.direction == null ? null : String(a.direction),
+      text: a.text == null ? null : String(a.text),
+      code: a.code == null ? null : String(a.code),
+      ms: a.ms == null ? null : Number(a.ms),
+      motivo: a.motivo == null ? "" : String(a.motivo),
+    };
+    acao = fillTapFromOcr(acao, ocr);
+    if (type === "tap" && !(Number.isFinite(acao.x) && Number.isFinite(acao.y))) {
+      return { ok: false, erro: "tap sem x,y (e OCR não resolveu)", raw, acao };
+    }
+    if (type === "type" && !acao.text) {
+      return { ok: false, erro: "type exige text", raw };
+    }
+    if (type === "key" && !acao.code) {
+      return { ok: false, erro: "key exige code", raw };
+    }
+    return {
+      ok: true,
+      resumo: data.resumo == null ? "" : String(data.resumo),
+      acao,
+    };
+  } catch (e) {
+    return { ok: false, erro: String(e.message || e), raw };
   }
-  if (type === "type" && !acao.text) fail("AGENT_BAD_ACTION", "type exige text");
-  if (type === "key" && !acao.code) fail("AGENT_BAD_ACTION", "key exige code");
-  return {
-    resumo: data.resumo == null ? "" : String(data.resumo),
-    acao,
-  };
 }
 
 /**
@@ -102,7 +144,7 @@ export async function askProvider(cfg, deps = {}) {
   );
   const system = `Você opera Android só com a lista OCR (text,x,y). Responda APENAS JSON:
 {"resumo":"...","acao":{"type":"tap|scroll|type|key|sleep|done|fail","x":null,"y":null,"direction":null,"text":null,"code":null,"ms":null,"motivo":"..."}}
-tap: copie x,y do OCR. 1 ação por turno.`;
+tap: OBRIGATÓRIO copiar x,y numéricos do OCR atual. PROIBIDO tap com x/y null. Sem alvo no OCR → sleep ou scroll. 1 ação.`;
   const prompt = `Roteiro:\n${cfg.prompt}\n\nOCR:\n${JSON.stringify(ocr)}\n\nPróxima ação.`;
 
   log(`provider ${provider}/${model}…`);
@@ -120,7 +162,16 @@ tap: copie x,y do OCR. 1 ação por turno.`;
     },
     deps,
   );
-  return parseAcao(out.text);
+  log(`raw: ${String(out.text || "").slice(0, 400)}`);
+  const parsed = parseAcao(out.text, ocr);
+  if (!parsed.ok) {
+    log(`parse falhou: ${parsed.erro} — sleep e segue`);
+    return {
+      resumo: parsed.erro,
+      acao: { type: "sleep", ms: 1500, motivo: `parse: ${parsed.erro}` },
+    };
+  }
+  return { resumo: parsed.resumo, acao: parsed.acao };
 }
 
 /** @param {{ serial: string, acao: object, engine?: string, typeMethod?: string }} cfg */
@@ -205,20 +256,39 @@ export async function runAgent(cfg, deps = {}) {
     `2.0 serial=${serial} engine=${engine} provider=${provider} model=${model} maxSteps=${maxSteps}`,
   );
 
+  const sleep = deps.sleep ?? defaultSleep;
+
   for (let i = 1; i <= maxSteps; i++) {
     log(`── ${i}/${maxSteps} extract ──`);
-    const ocr = await runExtract({ serial, engine, icons }, deps);
+    let ocr;
+    try {
+      ocr = await runExtract({ serial, engine, icons }, deps);
+    } catch (e) {
+      log(`extract erro: ${e.message || e} — sleep e segue`);
+      await sleep(1500);
+      steps.push({ step: i, error: String(e.message || e) });
+      continue;
+    }
 
-    const { acao, resumo } = await ask(
-      {
-        prompt: cfg.prompt,
-        ocr,
-        model: cfg.model,
-        provider: cfg.provider,
-        apiKey: cfg.apiKey,
-      },
-      deps,
-    );
+    let acao;
+    let resumo;
+    try {
+      ({ acao, resumo } = await ask(
+        {
+          prompt: cfg.prompt,
+          ocr,
+          model: cfg.model,
+          provider: cfg.provider,
+          apiKey: cfg.apiKey,
+        },
+        deps,
+      ));
+    } catch (e) {
+      log(`provider erro: ${e.message || e} — sleep e segue`);
+      await sleep(1500);
+      steps.push({ step: i, error: String(e.message || e) });
+      continue;
+    }
 
     log(
       `${acao.type}` +
@@ -229,10 +299,19 @@ export async function runAgent(cfg, deps = {}) {
     );
     if (resumo) log(resumo.slice(0, 200));
 
-    const resultado = await executeAction(
-      { serial, acao, engine, typeMethod: cfg.typeMethod },
-      deps,
-    );
+    let resultado;
+    try {
+      resultado = await executeAction(
+        { serial, acao, engine, typeMethod: cfg.typeMethod },
+        deps,
+      );
+    } catch (e) {
+      resultado = `erro: ${e.message || e}`;
+      log(resultado);
+      await sleep(1500);
+      steps.push({ step: i, acao, resultado, error: true });
+      continue;
+    }
     steps.push({ step: i, acao, resultado });
     log(`ok ${resultado}`);
 

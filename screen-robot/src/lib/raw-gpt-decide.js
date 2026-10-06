@@ -10,7 +10,7 @@ export const SYSTEM_PROMPT = `Você é uma IA agente autônoma que controla um s
 Você recebe: (1) a jornada/objetivo e (2) o OCR da tela atual (lista extract: type, text, x, y).
 Decida UMA próxima ação e responda APENAS um JSON válido (sem markdown, sem texto fora do JSON).
 
-Formato único:
+Formato único (só estes campos; PROIBIDO "motivo" ou qualquer outro):
 {
   "action": {
     "type": "tap|scroll|type|key|sleep|done|fail",
@@ -24,7 +24,7 @@ Formato único:
 }
 
 Tipos (lib screen-robot):
-- tap: obrigatório x e y numéricos do OCR desta tela (centro do alvo)
+- tap: obrigatório x e y numéricos do OCR desta tela (centro do alvo); demais campos null
 - scroll: direction up|down|left|right
 - type: text a digitar
 - key: code (ex. KEYCODE_BACK, KEYCODE_ENTER)
@@ -37,7 +37,7 @@ Regras:
 - Cada item do OCR (text/icon) é clicável
 - Sem alvo do passo → sleep ou scroll; evite fail
 - Um único objeto JSON na resposta
-- Não inclua campo motivo`;
+- NUNCA inclua "motivo"`;
 
 /**
  * @param {string} prompt

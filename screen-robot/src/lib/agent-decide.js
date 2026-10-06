@@ -163,6 +163,7 @@ Responda APENAS JSON válido (sem markdown) no formato:
 
 Regras (só SO/launcher e o contrato de ação; nomes de app, botões e done vêm do roteiro do usuário):
 - Coords de tap = mesma escala da lista (device). Não invente scale. Tap só em x,y de um item existente (type text ou type icon); NUNCA 0,0. icon não tem text — tap no centro do visual (avatar, nav, glyph).
+- elementos[].label e acao x,y: copie text,x,y de UM item do extract. PROIBIDO trocar o text do item (label ≠ string do OCR naquele ponto).
 - scroll: direction down|up|left|right quando o próximo alvo do roteiro não está visível.
 - Se o histórico mostrar vários scrolls com o mesmo OCR (tela não mudou), NÃO scroll de novo: mude de estratégia (tap em outro elemento, type, key BACK).
 - Painel de notificações / overlay de setup do sistema (ex. Notifications, Clear all, AndroidSetup) SEM UI do app (abas, busca, conteúdo do roteiro) → KEYCODE_BACK. NÃO scroll.
@@ -208,7 +209,7 @@ Regras (só SO/launcher e o contrato de ação; nomes de app, botões e done vê
 - Painel de notificações / overlay de setup SEM UI do app → KEYCODE_BACK (não scroll). UI do app visível → não HOME.
 - Carregamento (logo / tela quase vazia) → sleep; não scroll nem HOME.
 - Launcher (só hora/data, sem apps) → scroll down (gaveta). Após tap em campo no topo + teclado: PROIBIDO scroll — type do roteiro ou BACK 1×.
-- Alvos só os do roteiro, visíveis. Sem o alvo → scroll/sleep; não chute coords.
+- Alvos só os do roteiro, visíveis. Sem o alvo → scroll/sleep; não chute coords. elementos[].label = o que está escrito no alvo na imagem; não invente outro nome no mesmo ponto.
 - type: acao.text obrigatório. key: KEYCODE_BACK/HOME. sleep: ms se loading. done / fail conforme o roteiro.
 - Histórico traz ações já executadas (coords já em device); use só como contexto.`;
 }

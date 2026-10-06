@@ -97,6 +97,73 @@ export function findOcrHit(ocr, re) {
   return (ocr || []).find((e) => re.test(String(e.text || "")));
 }
 
+function tapGroundOff(cfg = {}) {
+  if (cfg.tapGround === false) return true;
+  const raw = String(
+    cfg.tapGround ?? process.env.AGENT_TAP_GROUND ?? "1",
+  ).trim();
+  return raw === "0" || /^off|false|no$/i.test(raw);
+}
+
+function distXy(ax, ay, bx, by) {
+  return Math.hypot(Number(ax) - Number(bx), Number(ay) - Number(by));
+}
+
+function normLabel(s) {
+  return String(s || "")
+    .trim()
+    .toLowerCase();
+}
+
+/** Hit OCR (text) mais próximo de x,y, ou null se além de maxDist. */
+export function ocrTextAt(ocr, x, y, maxDist = 8) {
+  let best = null;
+  for (const e of ocr || []) {
+    if (e?.type === "icon") continue;
+    const t = String(e?.text || "").trim();
+    if (!t) continue;
+    if (!Number.isFinite(Number(e.x)) || !Number.isFinite(Number(e.y))) continue;
+    const d = distXy(x, y, e.x, e.y);
+    if (d > maxDist) continue;
+    if (!best || d < best.d) best = { ...e, text: t, d };
+  }
+  return best;
+}
+
+/**
+ * Tap em coords de um text OCR cujo label declarado (elementos) não é esse text.
+ * @returns {null|{ code: string, hit?: object, claimed?: string }}
+ */
+export function tapLabelMismatch(ocr, acao, elementos, maxDist = 8) {
+  if (!acao || acao.type !== "tap") return null;
+  const x = Number(acao.x);
+  const y = Number(acao.y);
+  if (!Number.isFinite(x) || !Number.isFinite(y)) return null;
+  const hit = ocrTextAt(ocr, x, y, maxDist);
+  if (!hit) {
+    const nearIcon = (ocr || []).some(
+      (e) =>
+        e?.type === "icon" &&
+        Number.isFinite(Number(e.x)) &&
+        distXy(x, y, e.x, e.y) <= maxDist,
+    );
+    if (nearIcon) return null;
+    return { code: "TAP_MISS" };
+  }
+  const claimedEl = (elementos || []).find(
+    (el) =>
+      el &&
+      Number.isFinite(Number(el.x)) &&
+      distXy(x, y, el.x, el.y) <= maxDist &&
+      String(el.label || "").trim(),
+  );
+  const claimed = claimedEl ? String(claimedEl.label).trim() : "";
+  if (claimed && normLabel(claimed) !== normLabel(hit.text)) {
+    return { code: "TAP_LABEL_MISMATCH", hit, claimed };
+  }
+  return null;
+}
+
 function log(...args) {
   console.log(`[agent ${new Date().toISOString()}]`, ...args);
 }
@@ -790,6 +857,36 @@ export async function runAgent(cfg, deps = {}) {
         ms: null,
         motivo: "guard: tap Show results após sugestão repetida",
       };
+    }
+    if (sense === "ocr" && !tapGroundOff(cfg) && acao.type === "tap") {
+      const bad = tapLabelMismatch(ocr, acao, decision.elementos);
+      if (bad?.code === "TAP_MISS") {
+        log(`guard: TAP_MISS @${acao.x},${acao.y} — nenhum text OCR`);
+        acao = {
+          type: "sleep",
+          x: acao.x,
+          y: acao.y,
+          direction: null,
+          text: null,
+          code: null,
+          ms: recoverMs,
+          motivo: `TAP_MISS: sem text OCR em ${acao.x},${acao.y}`,
+        };
+      } else if (bad?.code === "TAP_LABEL_MISMATCH") {
+        log(
+          `guard: TAP_LABEL_MISMATCH claimed=${JSON.stringify(bad.claimed)} ocr=${JSON.stringify(bad.hit.text)} @${acao.x},${acao.y}`,
+        );
+        acao = {
+          type: "sleep",
+          x: acao.x,
+          y: acao.y,
+          direction: null,
+          text: null,
+          code: null,
+          ms: recoverMs,
+          motivo: `TAP_LABEL_MISMATCH: OCR="${bad.hit.text}" ≠ label="${bad.claimed}"`,
+        };
+      }
     }
     log(
       `decisão: ${acao.type}` +

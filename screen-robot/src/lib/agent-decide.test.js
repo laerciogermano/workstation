@@ -47,6 +47,8 @@ describe("agent-decide (SC-31)", () => {
       /\b(linkedin|instagram|tinder|campinas|connect|settings|calendar|gmail|chrome|comprador|nexus|sdk_gphone)\b/i;
     assert.equal(banned.test(ocr), false, ocr.match(banned)?.[0]);
     assert.equal(banned.test(vision), false, vision.match(banned)?.[0]);
+    assert.match(ocr, /copie text,x,y/);
+    assert.match(ocr, /PROIBIDO trocar o text/);
   });
 
   it("parseActionPayload valida tap", () => {

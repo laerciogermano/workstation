@@ -6,7 +6,15 @@ import { mkdtempSync, readFileSync, readdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { basename, join } from "node:path";
 import { describe, it } from "node:test";
-import { executeAction, runAgent, ocrHasQwertyKeyboard, pickForcedTypeText, ocrHasBottomTabs } from "./agent-run.js";
+import {
+  executeAction,
+  runAgent,
+  ocrHasQwertyKeyboard,
+  pickForcedTypeText,
+  ocrHasBottomTabs,
+  ocrTextAt,
+  tapLabelMismatch,
+} from "./agent-run.js";
 
 describe("agent-run (SC-32)", () => {
   it("ocrHasQwertyKeyboard + pickForcedTypeText (campo local vs busca)", () => {
@@ -51,6 +59,74 @@ describe("agent-run (SC-32)", () => {
       false,
     );
   });
+  it("tapLabelMismatch: Connect no ponto de Comprador", () => {
+    const ocr = [
+      { type: "text", text: "Heitor", x: 163, y: 233 },
+      { type: "text", text: "Pending", x: 453, y: 244 },
+      { type: "text", text: "Comprador", x: 161, y: 260 },
+    ];
+    const bad = tapLabelMismatch(
+      ocr,
+      { type: "tap", x: 161, y: 260 },
+      [{ label: "Connect", x: 161, y: 260 }],
+    );
+    assert.equal(bad?.code, "TAP_LABEL_MISMATCH");
+    assert.equal(bad.hit.text, "Comprador");
+    assert.equal(ocrTextAt(ocr, 161, 260).text, "Comprador");
+    assert.equal(
+      tapLabelMismatch(ocr, { type: "tap", x: 0, y: 0 }, [])?.code,
+      "TAP_MISS",
+    );
+    assert.equal(
+      tapLabelMismatch(
+        ocr,
+        { type: "tap", x: 161, y: 260 },
+        [{ label: "Comprador", x: 161, y: 260 }],
+      ),
+      null,
+    );
+  });
+
+  it("runAgent: TAP_LABEL_MISMATCH não executa tap", async () => {
+    const logDir = mkdtempSync(join(tmpdir(), "sr-agent-"));
+    const usageDir = mkdtempSync(join(tmpdir(), "sr-usage-"));
+    const taps = [];
+    try {
+      const result = await runAgent(
+        {
+          serial: "emulator-5554",
+          prompt: "conectar",
+          maxSteps: 3,
+          logDir,
+          usageDir,
+          stepDelayMs: 0,
+          recoverDelayMs: 0,
+        },
+        {
+          sleep: async () => {},
+          extract: async () => [
+            { type: "text", text: "Comprador", x: 161, y: 260 },
+          ],
+          decide: async () => ({
+            resumo: "Connect",
+            elementos: [{ label: "Connect", x: 161, y: 260 }],
+            acao: { type: "tap", x: 161, y: 260, motivo: "Connect" },
+          }),
+          tapElement: (cfg) => taps.push(cfg),
+        },
+      );
+      assert.equal(taps.length, 0);
+      assert.ok(
+        result.steps.some((s) =>
+          String(s.acao?.motivo || s.resultado || "").includes("TAP_LABEL_MISMATCH"),
+        ),
+      );
+    } finally {
+      rmSync(logDir, { recursive: true, force: true });
+      rmSync(usageDir, { recursive: true, force: true });
+    }
+  });
+
   it("executeAction tap chama tapElement", async () => {
     const calls = [];
     await executeAction(

@@ -179,7 +179,10 @@ describe("raw-gpt-decide", () => {
     async () => {
       await runCase({
         image: "11-connect-people.png",
-        prompt: PROMPT + "\nvoce esta no passo 11",
+        prompt:
+          PROMPT +
+          "\nvoce esta no passo 11" +
+          "\nOBRIGATORIO: tap no PRIMEIRO Connect da lista OCR (perfil mais acima, ex. Denise). Ignore o 2º e o 3º Connect.",
         expected: { type: "tap", x: 455, y: 344 },
       });
     },
@@ -191,7 +194,10 @@ describe("raw-gpt-decide", () => {
     async () => {
       await runCase({
         image: "linkedin-search-comprador-connected.png",
-        prompt: PROMPT + "\nvoce esta no passo 11",
+        prompt:
+          PROMPT +
+          "\nvoce esta no passo 11" +
+          "\nOBRIGATORIO: tap no SEGUNDO Connect da lista OCR (ex. Matheus). Ignore o 1º Connect do topo.",
         expected: { type: "tap", x: 453, y: 382 },
       });
     },

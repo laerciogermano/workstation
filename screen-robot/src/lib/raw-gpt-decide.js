@@ -34,17 +34,22 @@ Regras:
 - NÃO retorne atributos com valor null; omita a chave
 - tap.x / tap.y = EXCLUSIVAMENTE de um hit do OCR atual; proibido inventar ou reusar coords de outro contexto
 - Cada item do OCR (text/icon) é clicável
-- Sem alvo do passo → sleep ou scroll; evite fail
+- Sem alvo do passo → sleep ou scroll; PROIBIDO fail só porque o text do passo não está no OCR
 - Um único objeto JSON na resposta, no formato { "action": { ... } }
 - NUNCA inclua "motivo"`;
 
 /**
  * @param {string} prompt
  * @param {unknown} ocr
+ * @param {number|string|null|undefined} [step]
  */
-export function buildUserText(prompt, ocr) {
+export function buildUserText(prompt, ocr, step) {
+  const stepLine =
+    step != null && String(step).trim() !== ""
+      ? `Você está no passo ${String(step).trim()}.\n\n`
+      : "";
   return `Jornada:
-${prompt}
+${stepLine}${prompt}
 
 OCR atual (JSON):
 ${JSON.stringify(ocr)}
@@ -107,6 +112,7 @@ export function parseActionTypeXY(content) {
  * @param {{
  *   prompt?: string,
  *   ocr: unknown,
+ *   step?: number|string,
  *   apiKey?: string,
  *   model?: string,
  * }} opts
@@ -132,7 +138,7 @@ export async function decideRawAction(opts) {
     response_format: { type: "json_object" },
     messages: [
       { role: "system", content: SYSTEM_PROMPT },
-      { role: "user", content: buildUserText(prompt, opts.ocr) },
+      { role: "user", content: buildUserText(prompt, opts.ocr, opts.step) },
     ],
   };
 

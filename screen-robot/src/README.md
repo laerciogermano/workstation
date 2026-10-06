@@ -255,7 +255,7 @@ npm run agent:smoke              # 1–2 passos no device; sem key = heurística
 
 **Antes → depois (comprador Campinas do zero):** o roteiro antigo assumia LinkedIn já aberto e o mini pulava busca/filtro. Agora: [`roteiros/jornada-linkedin-comprador-campinas.md`](../roteiros/jornada-linkedin-comprador-campinas.md) (FASE 0 abre o app). Rollback: [`jornada-linkedin-campinas.md`](../roteiros/jornada-linkedin-campinas.md).
 
-**Antes → depois (abrir LinkedIn / gpt-4o-mini):** jornada longa FASE 0–7 fazia mini `KEYCODE_BACK` na home (hora/data) e copiar BACK do histórico. Agora: [`roteiros/novo.md`](../roteiros/novo.md) — home = `scroll down`; BACK só shade; done com Search ou tab bar. Rollback: `--prompt ../roteiros/jornada-linkedin-comprador-campinas.md`.
+**Antes → depois (abrir LinkedIn / gpt-4o-mini):** jornada longa FASE 0–7 fazia mini `KEYCODE_BACK` na home (hora/data) e copiar BACK do histórico. Agora: [`roteiros/novo.md`](../roteiros/novo.md) — home = `scroll down`; BACK só shade; cada passo tem sucesso/falha (retry limitado, depois `fail`). Rollback: `--prompt ../roteiros/jornada-linkedin-comprador-campinas.md`.
 
 **Antes → depois (Search vs Campinas no mini):** IF punha feed/`Show translation` no mesmo bloco que Search; `type "Campinas"` vinha **antes** de `type "comprador"` → guard pós-tap Search injetava cidade no campo de busca e o mini Connectava. Agora: linha própria `Search y<120` → tap (proibido scroll); primeiro `type "…"` do arquivo é **comprador**; Campinas só no `Add alocation`; Campinas no Search ≠ filtro. Chip `Location`/`Locatior` da lista não dispara o type da cidade (`pickForcedTypeText` exige Add location / Australia). Rollback: ordem antiga (Campinas primeiro + Connect se Campinas no OCR; locUi com `location`).
 

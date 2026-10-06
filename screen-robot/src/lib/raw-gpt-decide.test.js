@@ -183,4 +183,16 @@ describe("raw-gpt-decide", () => {
       });
     },
   );
+
+  it(
+    "LinkedIn Connect button → tap Connect",
+    { timeout: 300_000 },
+    async () => {
+      await runCase({
+        image: "linkedin-search-comprador-connect-button.png",
+        prompt: PROMPT + "\nvoce esta no passo 11",
+        expected: { type: "tap", x: 453, y: 243 },
+      });
+    },
+  );
 });

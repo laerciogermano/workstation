@@ -237,9 +237,9 @@ const html = `<!DOCTYPE html>
       <th>req</th>
       <th>prompt tok</th>
       <th>out+think</th>
-      <th>US$ até agora</th>
+      <th>gasto até agora</th>
       <th>% gasto</th>
-      <th>US$ / req</th>
+      <th>por req</th>
       <th>ritmo / 30d</th>
     </tr>
   </thead>
@@ -294,7 +294,7 @@ const USD_PER_M = {
   "gemini-3-flash": { in: 0.50, out: 3.00 },
   "gemini-3-flash-preview": { in: 0.50, out: 3.00 },
 };
-const PRICE_NOTE = "Custo = paid tier oficial (não free). Out Gemini inclui thinking. 3.6/3.7/3.8 Flash = preço introdutório até 31/12/2026 (depois in 1.50 / out 7.50). Fontes: Gemini API pricing · OpenAI API pricing. Consulta 2026-10-06.";
+const PRICE_NOTE = "Custo = paid tier oficial (não free) · US$ 1 = R$ 5,50. Out Gemini inclui thinking. 3.6/3.7/3.8 Flash = introdutório até 31/12/2026 (depois in 1.50 / out 7.50). Fontes: Gemini API pricing · OpenAI API pricing. Consulta 2026-10-06.";
 
 const runs = Object.keys(DATA.byRun).sort();
 const sel = document.getElementById("run");
@@ -319,6 +319,14 @@ function usd(n) {
   if (Math.abs(v) < 0.01) return "US$ " + v.toFixed(4);
   return "US$ " + v.toFixed(2);
 }
+const BRL_PER_USD = 5.50;
+function brl(nUsd) {
+  const v = (Number(nUsd) || 0) * BRL_PER_USD;
+  if (v === 0) return "R$ 0";
+  const digits = Math.abs(v) < 0.01 ? 4 : 2;
+  return "R$ " + v.toLocaleString("pt-BR", { minimumFractionDigits: digits, maximumFractionDigits: digits });
+}
+function money(nUsd) { return usd(nUsd) + " · " + brl(nUsd); }
 function outTokens(r) { return (r.candidates || 0) + (r.thoughts || 0); }
 function rowUsd(r) {
   const p = USD_PER_M[r.model];
@@ -428,9 +436,9 @@ function insights(list) {
     avgMs ? "Latência média da API: " + fmt(avgMs) + " ms." : null,
     slow && "Modelo mais lento (média): " + slow[0] + " (" + fmt(slow[1]) + " ms).",
     done ? "done nesta janela: " + done + "." : "Nenhum done neste filtro.",
-    "Custo pago estimado até agora: " + usd(estimateUsd(list)) + " (" + spanDays(list) + " dia(s) com usage → ritmo ~" + usd(estimateUsd(list) / spanDays(list) * 30) + "/30d).",
+    "Custo pago estimado até agora: " + money(estimateUsd(list)) + " (" + spanDays(list) + " dia(s) com usage → ritmo ~" + money(estimateUsd(list) / spanDays(list) * 30) + "/30d).",
     ...costByModel(list).filter((x) => x.usd > 0).slice(0, 6).map((x) =>
-      x.model + ": " + usd(x.usd) + " (" + fmt(x.n) + " req)."
+      x.model + ": " + money(x.usd) + " (" + fmt(x.n) + " req)."
     ),
   ];
   return out.filter(Boolean);
@@ -518,8 +526,8 @@ function render() {
     <div class="card"><span>Total tokens</span><b>\${fmt(tTot)}</b></div>
     <div class="card"><span>Hist. no prompt</span><b>\${fmt(maxH)} / \${fmt(maxWin)}</b></div>
     <div class="card"><span>Latência média</span><b>\${fmt(avgMs)} ms</b></div>
-    <div class="card"><span>Custo até agora</span><b>\${usd(estimateUsd(list))}</b></div>
-    <div class="card"><span>Ritmo / 30d</span><b>\${usd(estimateUsd(list) / spanDays(list) * 30)}</b></div>
+    <div class="card"><span>Custo até agora</span><b>\${money(estimateUsd(list))}</b></div>
+    <div class="card"><span>Ritmo / 30d</span><b>\${money(estimateUsd(list) / spanDays(list) * 30)}</b></div>
   \`;
 
   document.getElementById("priceNote").textContent = PRICE_NOTE;
@@ -529,9 +537,9 @@ function render() {
   document.getElementById("costBody").innerHTML = costs.map((x) => {
     const rate = USD_PER_M[x.model];
     const pct = totUsd > 0 ? (100 * x.usd / totUsd).toFixed(1) + "%" : "—";
-    const per = x.n ? usd(x.usd / x.n) : "—";
-    const month = usd(x.usd / days * 30);
-    return "<tr><td>" + x.model + "</td><td>" + (rate ? usd(rate.in) : "—") + "</td><td>" + (rate ? usd(rate.out) : "—") + "</td><td>" + fmt(x.n) + "</td><td>" + fmt(x.prompt) + "</td><td>" + fmt(x.out) + "</td><td>" + usd(x.usd) + "</td><td>" + pct + "</td><td>" + per + "</td><td>" + month + "</td></tr>";
+    const per = x.n ? money(x.usd / x.n) : "—";
+    const month = money(x.usd / days * 30);
+    return "<tr><td>" + x.model + "</td><td>" + (rate ? money(rate.in) : "—") + "</td><td>" + (rate ? money(rate.out) : "—") + "</td><td>" + fmt(x.n) + "</td><td>" + fmt(x.prompt) + "</td><td>" + fmt(x.out) + "</td><td>" + money(x.usd) + "</td><td>" + pct + "</td><td>" + per + "</td><td>" + month + "</td></tr>";
   }).join("");
 
   kill();

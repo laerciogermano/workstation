@@ -99,4 +99,16 @@ describe("raw-gpt-decide", () => {
       });
     },
   );
+
+  it(
+    "LinkedIn Search all results → tap People",
+    { timeout: 300_000 },
+    async () => {
+      await runCase({
+        image: "linkedin-search-comprador-all-results.png",
+        prompt: PROMPT + "\nvoce esta no passo 5",
+        expected: { type: "tap", x: 62, y: 153 },
+      });
+    },
+  );
 });

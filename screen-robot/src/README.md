@@ -212,6 +212,8 @@ npm run agent -- --prompt ../roteiros/abrir-settings.md --history-steps 16
 npm run agent -- --prompt ../roteiros/jornada-completa.md --history-steps 0  # sem histórico no prompt
 npm run agent -- --provider openai --model gpt-4o-mini --prompt ../roteiros/abrir-settings.md
 npm run agent -- --provider openai --model gpt-4o-mini --no-prompt --prompt ../roteiros/jornada-calendar-hoje.md
+# LinkedIn Campinas: 1 engine (rapidocr, melhor em Connect); sem merge all
+npm run agent -- --provider openai --model gpt-4o-mini --no-prompt --engine rapidocr --max-steps 80 --prompt ../roteiros/jornada-linkedin-campinas.md
 npm run agent -- --prompt "abra o LinkedIn e mostre as últimas 10 conexões"
 npm run agent -- --prompt ../roteiros/jornada-completa.md --all-models
 npm run agent -- --prompt ../roteiros/jornada-completa.md --no-prompt   # sem menu (env/default)
@@ -224,6 +226,8 @@ npm run agent:smoke              # 1–2 passos no device; sem key = heurística
 **Setup CLI (modelos):** em TTY, sem `--model` / `--no-prompt`, o agent lista o catálogo ([`lib/agent-models.js`](lib/agent-models.js)) e pede a escolha (`1`, `1,3`, `a`=todos, ou id). Vários modelos → roda em sequência, log em `logs/agent/<model>/`. Rollback: `--model <id>` ou `--no-prompt`.
 
 **Antes → depois (Calendar hoje):** prompt solto fazia gpt-4o-mini tap em "Nothing planned. Tap to create." / "+" e criar evento. Roteiro: [`roteiros/jornada-calendar-hoje.md`](../roteiros/jornada-calendar-hoje.md) (só leitura; done no vazio ou na lista). Rollback: `--prompt "abra o calendar…"`.
+
+**Antes → depois (LinkedIn Campinas / gpt-4o-mini):** `engine=all` misturava overlay de setup com chrome do app e o modelo dava HOME; tap sem hit OCR ia a `0,0`. Roteiro curto: [`roteiros/jornada-linkedin-campinas.md`](../roteiros/jornada-linkedin-campinas.md) + `--engine rapidocr`. Regras de app só no roteiro; `decide` não nomeia apps. Rollback: `--engine all` e [`roteiros/jornada-comprador.md`](../roteiros/jornada-comprador.md).
 
 **Antes → depois (id Gemini 3 Flash):** catálogo usava `gemini-3-flash` (HTTP 404 na API) → `gemini-3-flash-preview`. Rollback: só se a API voltar a expor `gemini-3-flash`.
 
@@ -245,7 +249,9 @@ Stdout: `[agent]` / `[decide]` / `[gemini]` ou `[openai]`. Provider default `gem
 
 **Antes → depois (`AGENT_TYPE_METHOD`):** default OCR/tap → default **adb** (`adb shell input text`). OCR: `AGENT_TYPE_METHOD=ocr` ou `runAgent({ typeMethod: "ocr" })`. Rollback: `AGENT_TYPE_METHOD=ocr`.
 
-**Antes → depois (home/Settings no system prompt):** lite fazia `scroll up` na home e reabria o shade; agora o system de `decide` manda shade→`KEYCODE_BACK`/`HOME`, gaveta→`scroll down`, tap em `Settings`. Roteiro: [`roteiros/abrir-settings.md`](../roteiros/abrir-settings.md). Rollback: remover o bloco “Home / Settings” de `buildSystemPrompt`.
+**Antes → depois (system prompt sem apps):** `decide` citava LinkedIn/Connect/Campinas/Settings. Agora só SO/launcher + contrato de ação; nomes de app e CTAs ficam no `--prompt` / roteiro. Rollback: restaurar o bloco antigo em `buildSystemPrompt` / `buildSystemPromptVision`.
+
+**Antes → depois (home/gaveta no system prompt):** lite fazia `scroll up` na home e reabria o shade; agora shade→`KEYCODE_BACK`, gaveta→`scroll down`. Jornada Settings: [`roteiros/abrir-settings.md`](../roteiros/abrir-settings.md) (não no system). Rollback: prompt de Settings de volta no system.
 
 **Antes → depois (scroll após Search):** com teclado aberto o OCR às vezes só traz a hora; o modelo tratava como home e fazia `scroll down`, digitando lixo (`ty`/`tyl`) no campo. Agora: (1) system prompt: histórico com tap `y<120` + OCR só hora ≠ home — proibido scroll; (2) guard em `runAgent` troca esse `scroll` por `type` (texto do roteiro `type "…"`) ou `KEYCODE_BACK`. Rollback: remover a EXCEÇÃO em `buildSystemPrompt` e o bloco `lastWasSearchTap` em `agent-run.js`.
 
@@ -294,7 +300,7 @@ npm run usage:report
 
 Gera [`usage/dashboard.html`](usage/dashboard.html) a partir de **todos** os `usage/*.json`: insights (modelo dominante, taxa de falha, 503/429, OCR, latência, **custo US$+R$ por modelo até agora + ritmo/30d**, historyCount vs prompt tokens), cards, gráficos (requests/tokens/custo por modelo, erros, ações, engine, dia, provider, latência) + tokens por request / **histórico no prompt** / acumulado / chars + tabelas. Filtro: Todos ou por `run`. Regenerar: `npm run usage:report`.
 
-**Antes → depois (preços):** tabela interna usava Flash-Lite 0,10/0,40 e 3.8 Flash 0,30/2,50. Agora paid tier oficial 2026-10-06 + **R$ (US$ 1 = R$ 5,50)**. Out Gemini soma `thoughts`. Ritmo 30d = gasto ÷ dias × 30. Free tier = US$ 0. Rollback: só US$ / taxas antigas.
+**Antes → depois (preços):** tabela interna usava Flash-Lite 0,10/0,40 e 3.8 Flash 0,30/2,50. Agora paid tier oficial 2026-10-06 + **R$ (US$ 1 = R$ 5,50)** + linha **Total**. Out Gemini soma `thoughts`. Ritmo 30d = gasto ÷ dias × 30. Free tier = US$ 0. Rollback: só US$ / taxas antigas / sem Total.
 
 **Antes → depois (historyCount no usage/dashboard):** o JSON não gravava quantos passos de histórico foram ao modelo; o HTML não correlacionava com tokens. Agora `usage/*.json` tem `historyCount`/`historySteps`; o relatório mostra card, insight (média de prompt tokens em hist 0 vs máx), gráficos (tokens vs count; média por count) e coluna `hist`. Arquivos antigos: parse de `Histórico recente (últimos N/M)` no prompt. Rollback: omitir os dois campos no writer e os charts `histTok`/`histAvg`.
 

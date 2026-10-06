@@ -195,6 +195,7 @@ const html = `<!DOCTYPE html>
   th:nth-child(-n+7), td:nth-child(-n+7) { text-align: left; }
   th { color: var(--muted); font-weight: 600; background: #14171e; position: sticky; top: 0; }
   tr:last-child td { border-bottom: 0; }
+  tr.total td { font-weight: 700; background: #14171e; border-top: 1px solid var(--border); }
   .ok { color: #3dd68c; }
   .fail { color: #f07178; }
   .err { color: #f07178; max-width: 240px; overflow: hidden; text-overflow: ellipsis; }
@@ -534,13 +535,18 @@ function render() {
   const costs = costByModel(list);
   const totUsd = estimateUsd(list);
   const days = spanDays(list);
-  document.getElementById("costBody").innerHTML = costs.map((x) => {
+  const totN = costs.reduce((s, x) => s + x.n, 0);
+  const totPrompt = costs.reduce((s, x) => s + x.prompt, 0);
+  const totOutTok = costs.reduce((s, x) => s + x.out, 0);
+  const rowsHtml = costs.map((x) => {
     const rate = USD_PER_M[x.model];
     const pct = totUsd > 0 ? (100 * x.usd / totUsd).toFixed(1) + "%" : "—";
     const per = x.n ? money(x.usd / x.n) : "—";
     const month = money(x.usd / days * 30);
     return "<tr><td>" + x.model + "</td><td>" + (rate ? money(rate.in) : "—") + "</td><td>" + (rate ? money(rate.out) : "—") + "</td><td>" + fmt(x.n) + "</td><td>" + fmt(x.prompt) + "</td><td>" + fmt(x.out) + "</td><td>" + money(x.usd) + "</td><td>" + pct + "</td><td>" + per + "</td><td>" + month + "</td></tr>";
   }).join("");
+  const totalRow = "<tr class=\"total\"><td>Total</td><td>—</td><td>—</td><td>" + fmt(totN) + "</td><td>" + fmt(totPrompt) + "</td><td>" + fmt(totOutTok) + "</td><td>" + money(totUsd) + "</td><td>100%</td><td>" + (totN ? money(totUsd / totN) : "—") + "</td><td>" + money(totUsd / days * 30) + "</td></tr>";
+  document.getElementById("costBody").innerHTML = rowsHtml + totalRow;
 
   kill();
   charts.cModelsReq = doughnut("cModelsReq", "Requests por modelo", countBy(list, "model"));

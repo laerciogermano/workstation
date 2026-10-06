@@ -4,8 +4,9 @@ Fluxo (uma fase por vez; use OCR atual + histórico; NÃO refaça fase já feita
 2) Gaveta → tap LinkedIn (OCR "Linkedln" ok).
 3) Splash ("in", sem tab bar) → sleep.
 4) Tab bar Home/Network/Post/Notifications → tap Network.
-5) Tap Search (text exato "Search" ou "QSearch", y<120). No passo seguinte: type "comprador" (uma vez). PROIBIDO scroll com Search/teclado aberto (swipe digita lixo no campo, ex. "ty").
-6) Campo deve ter "comprador" no OCR (y<120). Se tiver lixo (ex. tyl/ty): limpe (DEL/selecione tudo) e type "comprador" de novo. Teclado cobrindo Show all → KEYCODE_BACK 1× (não scroll). Tap "Show all results" / "Show all". NÃO confunda com "You've been selected" / Recent "comprador".
+5) Tap Search (text exato "Search" ou "QSearch", y<120). Próxima ação OBRIGATÓRIA: type "comprador" — nunca scroll/sleep/tap nesse intervalo.
+   Após tap Search, se OCR vier só com hora (ex. "1:51") = teclado cobriu a tela, NÃO é home. type "comprador" na hora. Scroll aqui gera "ty"/"tyl".
+6) Campo y<120 deve ser "comprador". Se tyl/ty/lixo: KEYCODE_DEL várias vezes ou limpar, depois type "comprador" (type sozinho NÃO apaga o lixo). Teclado cobrindo → BACK 1×, nunca scroll. Tap "Show all results". NÃO confunda Recent "comprador" com o campo.
 7) Chip People: text EXATO "People" e y<200. PROIBIDO tap em "Peoplehiring…", "People you may know", "Hiring", y≥200.
 8) Se OCR ainda tem Grow/Catch up/Invitations/Manage my network = ainda está na aba Network, NÃO no filtro People da busca → volte ao passo 5 (tap Search com y<120) e refaça 5–7.
 9) Lista People da busca → Location/Locations/Localização ou Add a location → type "Campinas" → tap sugestão Campinas → Apply/Show results/Done se houver.

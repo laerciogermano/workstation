@@ -6,7 +6,7 @@
 export const SYSTEM_PROMPT = `Você é uma IA agente autônoma que controla um smartphone Android.
 Você recebe: (1) a jornada/objetivo, (2) o OCR da tela atual (lista extract: type, text, x, y) e (3) o passo atual ("voce esta no passo N").
 Decida UMA próxima ação e responda APENAS um JSON válido (sem markdown, sem texto fora do JSON).
-O JSON raiz OBRIGATÓRIO é exatamente { "action": { ... }, "passo": N } — proibido devolver o objeto da ação na raiz.
+O JSON raiz OBRIGATÓRIO é exatamente { "action": { ... }, "proximoPasso": N } — proibido devolver o objeto da ação na raiz.
 
 Formato único:
 {
@@ -20,7 +20,7 @@ Formato único:
     "ms": null
   },
   "motivo": null,
-  "passo": null
+  "proximoPasso": null
 }
 
 Tipos (lib screen-robot):
@@ -32,18 +32,19 @@ Tipos (lib screen-robot):
 - done: jornada concluída
 - fail: só se impossível seguir
 
-passo (raiz, numérico, obrigatório):
+proximoPasso (raiz, numérico, obrigatório):
 - número a usar no PRÓXIMO turno (o runtime reenvia como step)
 - se esta ação cumpriu o passo atual → avance (N+1, ou o indicado pela jornada)
 - se ainda no mesmo passo (sleep/scroll/retry) → devolva o mesmo N
 - NUNCA invente passo fora da jornada
 
 Regras:
+- "voce esta no passo N" = execute SOMENTE o passo N; PROIBIDO refazer passos < N
 - NÃO retorne atributos com valor null; omita a chave
 - tap.x / tap.y = EXCLUSIVAMENTE de um hit do OCR atual; proibido inventar ou reusar coords de outro contexto
 - Cada item do OCR (text/icon) é clicável
 - Sem alvo do passo → sleep ou scroll; evite fail
-- Um único objeto JSON na resposta, no formato { "action": { ... }, "passo": N }"`;
+- Um único objeto JSON na resposta, no formato { "action": { ... }, "proximoPasso": N }"`;
 
 /**
  * @param {string} prompt
@@ -65,7 +66,7 @@ export function buildUserText(prompt, ocr, step) {
       : "";
   const stepNum = step != null && step !== "" ? Number(step) : NaN;
   const stepLine = Number.isFinite(stepNum)
-    ? `\nvoce esta no passo ${stepNum}\n`
+    ? `\nvoce esta no passo ${stepNum}. Execute APENAS esse passo. PROIBIDO voltar a passos anteriores (ex. no 2 NÃO tap Search; faça type).\n`
     : "";
 
   return `Jornada:
@@ -80,9 +81,9 @@ ${prompt}`;
 }
 
 /**
- * Extrai action (+ passo raiz) do JSON da IA: só as chaves presentes (não inventa null).
+ * Extrai action (+ proximoPasso raiz) do JSON da IA: só as chaves presentes (não inventa null).
  * @param {string} content
- * @returns {{ type: string, x?: number, y?: number, direction?: string, text?: string, code?: string, ms?: number, passo?: number }}
+ * @returns {{ type: string, x?: number, y?: number, direction?: string, text?: string, code?: string, ms?: number, proximoPasso?: number }}
  */
 export function parseActionTypeXY(content) {
   const data = JSON.parse(String(content || ""));
@@ -103,7 +104,7 @@ export function parseActionTypeXY(content) {
     err.code = "RAW_GPT_BAD_ACTION";
     throw err;
   }
-  /** @type {{ type: string, x?: number, y?: number, direction?: string, text?: string, code?: string, ms?: number, passo?: number }} */
+  /** @type {{ type: string, x?: number, y?: number, direction?: string, text?: string, code?: string, ms?: number, proximoPasso?: number }} */
   const out = { type };
   if (a.x != null && a.x !== "") {
     const x = Number(a.x);
@@ -122,9 +123,9 @@ export function parseActionTypeXY(content) {
     const ms = Number(a.ms);
     if (Number.isFinite(ms)) out.ms = ms;
   }
-  if (data.passo != null && data.passo !== "") {
-    const passo = Number(data.passo);
-    if (Number.isFinite(passo)) out.passo = passo;
+  if (data.proximoPasso != null && data.proximoPasso !== "") {
+    const proximoPasso = Number(data.proximoPasso);
+    if (Number.isFinite(proximoPasso)) out.proximoPasso = proximoPasso;
   }
   if (type === "scroll" && !out.direction) {
     const err = new Error("raw-gpt: scroll sem direction");
@@ -142,7 +143,7 @@ export function parseActionTypeXY(content) {
  *   apiKey?: string,
  *   model?: string,
  * }} opts
- * @returns {Promise<{ type: string, x?: number, y?: number, direction?: string, text?: string, code?: string, ms?: number, passo?: number, raw?: string, payload?: object }>}
+ * @returns {Promise<{ type: string, x?: number, y?: number, direction?: string, text?: string, code?: string, ms?: number, proximoPasso?: number, raw?: string, payload?: object }>}
  */
 export async function decideRawAction(opts) {
   const apiKey = opts.apiKey ?? process.env.OPENAI_API_KEY;

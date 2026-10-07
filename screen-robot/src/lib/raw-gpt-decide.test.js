@@ -36,11 +36,11 @@ async function runCase({ image, prompt, step, expected }) {
 
   const out = await decideRawAction({ prompt, ocr, step });
   const parsed = parseActionTypeXY(out.raw);
-  const { passo, ...action } = parsed;
+  const { proximoPasso, ...action } = parsed;
 
-  console.log({ action, passo });
+  console.log({ action, proximoPasso });
   assert.deepEqual(action, expected);
-  assert.ok(Number.isFinite(passo), "resposta sem passo numérico");
+  assert.ok(Number.isFinite(proximoPasso), "resposta sem proximoPasso numérico");
 }
 
 describe("raw-gpt-decide", () => {

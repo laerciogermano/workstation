@@ -247,7 +247,7 @@ npm run raw-gpt -- --image test/fixtures/linkedin-people-comprador-connect.png -
 # Passo 11 (.prompt.txt em linguagem natural): primeiro "Connect" da lista; sem jargão OCR. Rollback: menções a OCR/hit/JSON no prompt.
 # raw-gpt-decide: `temperature: 0` (exceto gpt-5*), prompt depois do extract, `motivo` ok, hint dos "Connect" de cima p/ baixo. Rollback: sem temperature/hint; prompt antes; proibir motivo.
 # Parse: só chaves presentes na IA; raiz obrigatória { "action": ... }. Rollback: aceitar acao/raiz.
-# step: `decideRawAction({ prompt, ocr, step })` injeta "voce esta no passo N"; resposta `passo` (raiz) = próximo input do loop (`step = out.passo`). CLI: `--step N`. Antes: sufixo no prompt string. Rollback: concatenar "voce esta no passo N" no prompt e ignorar `opts.step` / `data.passo`.
+# step: `decideRawAction({ prompt, ocr, step })` injeta "voce esta no passo N" (+ proibido voltar); resposta `proximoPasso` (raiz) = próximo input (`step = out.proximoPasso`). CLI: `--step N`. Antes: campo `passo` / sufixo no prompt. Rollback: parse `data.passo` e `step = out.passo`.
 ```
 
 **Setup CLI (modelos):** em TTY, sem `--model` / `--force-model` / `--no-prompt`, o agent lista o catálogo ([`lib/agent-models.js`](lib/agent-models.js)) e pede a escolha (`1`, `1,3`, `a`=todos, ou id). Vários modelos → roda em sequência, log em `logs/agent/<model>/`. Rollback: `--model <id>` ou `--no-prompt`.

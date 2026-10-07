@@ -38,7 +38,7 @@ async function runCase({ image, prompt, step, expected }) {
   const parsed = parseActionTypeXY(out.raw);
   const { proximoPasso, ...action } = parsed;
 
-  console.log({ action, proximoPasso });
+  console.log({ action, proximoPasso, step, image });
   assert.deepEqual(action, expected);
   assert.ok(Number.isFinite(proximoPasso), "resposta sem proximoPasso numérico");
 }

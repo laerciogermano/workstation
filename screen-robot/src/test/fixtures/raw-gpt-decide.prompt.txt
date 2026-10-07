@@ -1,19 +1,13 @@
-Em cada ação, diga no motivo qual passo (1–13) está em curso.
-
-Ordem obrigatória 1→13. Uma ação por turno. Toque só em textos ou ícones que estão na tela agora.
-PROIBIDO fail se o texto do passo atual estiver na tela (ex. Search → toque; não fail).
-fail só se for impossível após tentar de novo; falhas antigas NÃO impedem um novo toque.
-
-1. clique em Search — toque em "Search" na barra de busca (topo). Única ação. (se o teclado não abrir, siga para o próximo passo)
-2. digite comprador — digite "comprador" (depois de Search; teclado ou campo aberto).
-3. feche o teclado — tecla KEYCODE_BACK 1×.
-4. clique em Show all results — toque no texto exato da tela ("Show all results" ou "Show all"/"Showall"). Se sumiu (ex. após BACK indevido) → toque Search de novo (passo 1) ou digite de novo; NÃO role o feed (Home/Network/Jobs). NÃO reuse um alvo de outro passo.
-5. clique em People — toque em "People" (aba).
-6. clique Location — toque em "Location" ou "Locatior".
-7. clique em Add a location — toque em "Add a location"/"Add alocation" (campo do sheet, não o chip).
-8. digite campinas — digite "Campinas" (teclado/campo já aberto; NÃO toque de novo em "Add a location").
-9. clique na primeira opção Campinas — toque a 1ª linha da lista de sugestões (ex. "Campinas, São Paulo, Brazil" / "Campinas,SaoPaulo,Brazil"). PROIBIDO toque no campo do topo (só "Campinas") e PROIBIDO toque no teclado/sugestão do Gboard.
-10. clique em Show results — toque em "Show results".
-11. Connect — toque no primeiro botão "Connect" da lista de pessoas (o de cima / o que aparece antes dos outros). Ignore Pending, Message e qualquer "Connect" mais abaixo. Se não houver "Connect" na tela → vá ao passo 12. No motivo diga: "passo 11: primeiro Connect".
+1. clique em Search 
+2. digite comprador 
+3. feche o teclado 
+4. clique em Show all results 
+5. clique em People 
+6. clique Location 
+7. clique em Add a location 
+8. digite "Campinas"
+9. clique na primeira opção Campinas 
+10. clique em Show results
+11. Connect — toque no primeiro botão "Connect" da lista de pessoas (o de cima / o que aparece antes dos outros). Ignore Pending, Message e qualquer "Connect" mais abaixo. Se não houver "Connect" na tela → vá ao passo 12.
 12. Sem Connect → role para baixo; repita desde o 11.
-13. Clicar no botao skip apos conectar — toque no texto exato "Skip" (folha "Add a note"); PROIBIDO toque em "Connect"/"Add a note" se "Skip" estiver na tela.
+13. Clicar no botao skip apos conectar

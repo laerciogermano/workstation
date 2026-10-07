@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /**
- * Loop raw-gpt (motor2): AVD/serial → screenshot → decideFromImage → executeAction → wait → repeat.
+ * Loop raw-gpt (motor2): AVD/serial → screenshot → decideFromImage → executeAction → repeat.
+ * Espera entre turnos: ação `esperar`/`sleep` (ms). Default `--wait-ms 0` (sem delay fixo).
  *
  *   npm run raw-gpt:loop -- --avd ConnectMax_Cam --prompt test/fixtures/raw-gpt-decide.prompt.txt
  *   npm run raw-gpt:loop -- --prompt test/fixtures/raw-gpt-decide.prompt.txt --step 1
@@ -109,7 +110,7 @@ if (avd) {
 }
 
 const engine = argValue("--engine") || process.env.SCREEN_ROBOT_OCR || "all";
-const waitMs = Number(argValue("--wait-ms") || 2000);
+const waitMs = Number(argValue("--wait-ms") ?? 0);
 const maxSteps = Number(argValue("--max-steps") || 50);
 let step =
   argValue("--step") != null && String(argValue("--step")).trim() !== ""
@@ -200,8 +201,10 @@ for (let i = 1; i <= maxSteps; i++) {
     step = String(proximoPasso).trim();
   }
 
-  console.log(`wait ${waitMs}ms…`);
-  await sleep(waitMs);
+  if (waitMs > 0) {
+    console.log(`wait ${waitMs}ms…`);
+    await sleep(waitMs);
+  }
 }
 
 console.log("loop encerrado");

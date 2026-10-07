@@ -17,7 +17,7 @@ O JSON raiz OBRIGATÓRIO é exatamente { "action": { ... }, "proximoPasso": "…
 Formato único:
 {
   "action": {
-    "type": "tap|scroll|type|key|sleep|done|fail",
+    "type": "tap|scroll|type|key|esperar|sleep|done|fail",
     "x": null,
     "y": null,
     "direction": null,
@@ -34,7 +34,8 @@ Tipos (lib screen-robot):
 - scroll: direction up|down|left|right (obrigatório; x/y null)
 - type: text a digitar
 - key: code (ex. KEYCODE_BACK, KEYCODE_ENTER)
-- sleep: ms
+- esperar: ms (obrigatório; ex. 1000). Use para aguardar UI/carregamento — NÃO há delay fixo entre turnos
+- sleep: alias de esperar (mesmo contrato: ms)
 - done: jornada concluída
 - fail: só se impossível seguir
 
@@ -42,7 +43,7 @@ proximoPasso (raiz, texto, obrigatório):
 - valor a usar no PRÓXIMO turno (o runtime reenvia como step)
 - formato livre, alinhado à jornada: número ("3"), id ("connect"), ou resumo curto em linguagem natural ("digite comprador")
 - se esta ação cumpriu o passo atual → avance para o próximo da jornada
-- se ainda no mesmo passo (sleep/scroll/retry) → devolva o mesmo step
+- se ainda no mesmo passo (esperar/scroll/retry) → devolva o mesmo step
 - NUNCA invente passo fora da jornada
 
 Regras:
@@ -50,7 +51,8 @@ Regras:
 - NÃO retorne atributos com valor null; omita a chave
 - tap.x / tap.y = EXCLUSIVAMENTE de um hit do OCR atual; proibido inventar ou reusar coords de outro contexto
 - Cada item do OCR (text/icon) é clicável
-- Sem alvo do passo → sleep ou scroll; evite fail
+- Sem alvo do passo / UI ainda carregando → esperar (ms) ou scroll; evite fail
+- Prefira type "esperar" (não sleep) quando for aguardar
 - Um único objeto JSON na resposta, no formato { "action": { ... }, "proximoPasso": "…" }"`;
 
 /**
@@ -126,12 +128,13 @@ export function parseActionTypeXY(content) {
     err.code = "RAW_GPT_BAD_ACTION";
     throw err;
   }
-  const type = String(a.type || "").toLowerCase();
+  let type = String(a.type || "").toLowerCase();
   if (!type) {
     const err = new Error("raw-gpt: action.type vazio");
     err.code = "RAW_GPT_BAD_ACTION";
     throw err;
   }
+  if (type === "sleep") type = "esperar";
   /** @type {{ type: string, x?: number, y?: number, direction?: string, text?: string, code?: string, ms?: number, proximoPasso?: string }} */
   const out = { type };
   if (a.x != null && a.x !== "") {

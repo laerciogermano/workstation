@@ -116,7 +116,7 @@ describe("raw-gpt-decide provider", () => {
       );
       assert.equal(seen[0].model, "gemini-3.8-flash");
       assert.equal(out.provider, "gemini");
-      assert.equal(out.type, "sleep");
+      assert.equal(out.type, "esperar");
       assert.equal(out.ms, 500);
       assert.equal(out.usage?.prompt_tokens, 4);
       assert.equal(out.usage?.total_tokens, 9);

@@ -126,10 +126,11 @@ export async function executeAction(cfg, deps = {}) {
     case "key":
       doKey({ serial, code: a.code }, deps);
       return `key ${a.code}`;
+    case "esperar":
     case "sleep": {
       const ms = Number(a.ms ?? 1000);
       await sleep(ms);
-      return `sleep ${ms}ms`;
+      return `${a.type} ${ms}ms`;
     }
     case "done":
     case "fail":

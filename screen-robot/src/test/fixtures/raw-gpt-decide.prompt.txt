@@ -1,5 +1,8 @@
+Regra global: NÃO há delay fixo entre turnos. Se a UI ainda não mostrou o alvo → action type="esperar" com ms (ex. 1000); proximoPasso = passo atual. Preferir esperar a fail/scroll cego.
+
 1. clique em Search — tap no texto "Search" da barra (topo).
 - action: tap no hit "Search"
+- Sem "Search" → esperar ms=1000; proximoPasso "1"
 - PROIBIDO type / scroll / fail se "Search" estiver no OCR
 
 2. digite comprador — type "comprador" (campo/teclado já aberto após Search).
@@ -9,7 +12,7 @@
 
 3. feche o teclado — KEYCODE_BACK no máximo 1×.
 - Teclado visível (letras q/w/e… no OCR) → key KEYCODE_BACK; proximoPasso OBRIGATÓRIO "4" (PROIBIDO ficar em "3")
-- Teclado JÁ fechado (sem q/w/e…; "Show all results" no OCR) → PROIBIDO BACK (2º BACK fecha a busca e volta ao feed); sleep; proximoPasso "4"
+- Teclado JÁ fechado (sem q/w/e…; "Show all results" no OCR) → PROIBIDO BACK (2º BACK fecha a busca e volta ao feed); esperar ms=1000; proximoPasso "4"
 - PROIBIDO tap em "Show all results" neste passo (isso é o passo 4)
 
 4. clique em Show all results — tap no texto "Show all results" (ou "Showallresults").
@@ -56,4 +59,4 @@
 - Há "Skip" no OCR? → tap nesses x,y; proximoPasso "11"
 - PROIBIDO tap em "Add a note", "Add", "note", "Add a note to your request?", fragmentos do título, "Connect", "Pending"
 - Sheet aberta (título "Add a note…" + botões) = o alvo é o botão de BAIXO "Skip", nunca o título nem o botão "Add a note"
-- Sem "Skip" ainda → sleep; proximoPasso "12"
+- Sem "Skip" ainda → esperar ms=1000; proximoPasso "12"

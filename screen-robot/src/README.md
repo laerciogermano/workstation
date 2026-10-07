@@ -245,14 +245,15 @@ npm run raw-gpt -- --image test/fixtures/linkedin-people-comprador-connect.png -
 #   npm run raw-gpt:loop -- --avd ConnectMax_Cam --prompt test/fixtures/raw-gpt-decide.prompt.txt --step 1 --model gemini-3.8-flash
 # --model: ids do catálogo [`lib/agent-models.js`](lib/agent-models.js) (OpenAI `gpt-*` / Gemini `gemini-*`). Default: `RAW_GPT_MODEL` → `OPENAI_MODEL` → `GEMINI_MODEL` → `gpt-4o-mini`. Provider pela id (`providerForModel`). Keys: `OPENAI_API_KEY` / `GEMINI_API_KEY`.
 # Antes: só OpenAI chat.completions em `decideRawAction`. Depois: OpenAI ou Gemini via `openai.js` / `gemini.js`. Rollback: fixar `generateOpenAI` e exigir `OPENAI_API_KEY`.
-# Loop: AVD/serial → screenshot → decideFromImage → executeAction → wait. Default `--wait-ms 2000` (antes: 5000). Flags: --wait-ms, --max-steps, --model, --engine, --device/--serial.
+# Loop: AVD/serial → screenshot → decideFromImage → executeAction. Default `--wait-ms 0` (antes: 2000 → 5000). Espera via action `esperar`/`sleep` (ms) no prompt/lib — sem delay fixo. Flags: --wait-ms, --max-steps, --model, --engine, --device/--serial.
+# Action `esperar`: alias runtime de sleep (`executeAction`); `parseActionTypeXY` normaliza sleep→esperar. Rollback: só `sleep` + `--wait-ms 2000`.
 # raw-gpt / loop: cada request grava `usage-2.0/<timestamp>.json` ({ entrada, resposta }). Writer: [`lib/usage-write.js`](lib/usage-write.js). Rollback: omitir `writeUsage20` em `decideRawAction`.
 # Antes: só CLI pontual (raw-gpt). Rollback: remover raw-gpt-from-image.js, raw-gpt-loop.js e scripts npm.
 # --prompt obrigatório (sem DEFAULT_PROMPT). Antes: default "Na tela People…". Rollback: export DEFAULT_PROMPT.
 # Testes: node --test lib/raw-gpt-decide.test.js (prompt em test/fixtures/raw-gpt-decide.prompt.txt; its em paralelo via describe concurrency)
 # Prompt curto: `test/fixtures/raw-gpt-decide.prompt.simple.txt` (jornada 1→12 Rio; trazido da main). Uso: `--prompt test/fixtures/raw-gpt-decide.prompt.simple.txt`. Rollback: remover o arquivo.
 # Casos: `it`/`fixtures` 01–13 (ordem do prompt); PNGs `01-search.png` … `13-skip.png` (+ `11-connect-people.png`, `linkedin-search-comprador-connected.png` = 11c 2º Connect).
-# Passo 3: teclado (q/w/e…) → BACK 1× e proximoPasso "4"; teclado já fechado + "Show all results" → sleep, proximoPasso "4" (PROIBIDO 2º BACK). Rollback: só "action BACK" sem regra de nextStep/teclado fechado.
+# Passo 3: teclado (q/w/e…) → BACK 1× e proximoPasso "4"; teclado já fechado + "Show all results" → esperar ms=1000, proximoPasso "4" (PROIBIDO 2º BACK). Rollback: só "action BACK" sem regra de nextStep/teclado fechado.
 # Passo 12: tap só text EXATO "Skip"; PROIBIDO Add/note/título da sheet. Rollback: "escolha Skip, NÃO Add a note" sem listar fragmentos.
 # Antes: nomes longos linkedin-search-*.png / linkedin-tela-inicial no raw-gpt. Rollback: git mv + nomes antigos no teste.
 # Prompt raw-gpt: sem menção a x/y/thresholds; passo 9 por text (sugestão vs campo). Rollback: versão com y<120/y>120 no .prompt.txt.

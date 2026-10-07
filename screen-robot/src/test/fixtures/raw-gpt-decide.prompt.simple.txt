@@ -1,3 +1,5 @@
+Regra: sem delay fixo entre turnos. Sem alvo do passo → action esperar (ms, ex. 1000); nextStep = passo atual.
+
 1. clique em Search 
 2. digite comprador 
 3. feche o teclado 
@@ -9,4 +11,4 @@
 9. toque a 1ª linha da lista: "Rio de Janeiro, Brazil"
 10. clique em Show results
 11. Connect — LOOP: toque no primeiro "Connect" (menor y). Sem "Connect" → scroll down; nextStep=11 (repete até achar). Ignore Pending, Message.
-12. Clicar no botao Skip apos conectar — após Skip → nextStep=11 (volta ao loop Connect)
+12. Clicar no botao Skip apos conectar — após Skip → nextStep=11 (volta ao loop Connect). Sem Skip → esperar ms=1000; nextStep=12

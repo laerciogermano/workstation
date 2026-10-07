@@ -1,0 +1,404 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Painel Agente Comprador</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: barra de premissas no topo → KPIs → grade 2 colunas de gráficos → tabelas de detalhe */
+:root{
+  --bg:#f3f5f7; --surface:#ffffff; --ink:#14212b; --muted:#5b6b78; --line:#dde3e8;
+  --accent:#0d7c74; --accent-soft:#d5efec; --accent-2:#b4561f; --accent-2-soft:#f6e3d6;
+  --bar:#9fb3c2; --good:#1f7a3f; --warn:#a86b00; --bad:#b3261e;
+  --display:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f161c; --surface:#16212a; --ink:#e4ebf0; --muted:#93a4b1; --line:#26343f;
+  --accent:#3fc1b4; --accent-soft:#17403d; --accent-2:#f0915a; --accent-2-soft:#4a2b1a;
+  --bar:#4b6274; --good:#5cc985; --warn:#e5b34c; --bad:#f07a72; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f161c; --surface:#16212a; --ink:#e4ebf0; --muted:#93a4b1; --line:#26343f;
+  --accent:#3fc1b4; --accent-soft:#17403d; --accent-2:#f0915a; --accent-2-soft:#4a2b1a;
+  --bar:#4b6274; --good:#5cc985; --warn:#e5b34c; --bad:#f07a72; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--display);font-size:14px;line-height:1.5}
+.wrap{max-width:1180px;margin:0 auto;padding-inline:20px;padding-block:28px 48px;display:flex;flex-direction:column;gap:22px}
+header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:12px}
+h1{font-size:1.65rem;font-weight:700;margin:0;letter-spacing:-.01em;text-wrap:balance}
+.sub{color:var(--muted);margin:4px 0 0;max-width:68ch}
+.stamp{font-family:var(--mono);font-size:.75rem;color:var(--muted)}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.label{font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}
+
+/* premissas */
+.controls{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px 18px}
+.ctl{display:flex;flex-direction:column;gap:6px;min-width:0}
+.ctl label{font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600;display:flex;justify-content:space-between;gap:6px}
+.ctl label output{font-family:var(--mono);color:var(--ink);text-transform:none;letter-spacing:0}
+select,input[type=number]{font:inherit;font-size:.9rem;padding:7px 9px;border:1px solid var(--line);border-radius:7px;background:var(--bg);color:var(--ink);width:100%}
+input[type=range]{width:100%;accent-color:var(--accent)}
+select:focus-visible,input:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.seg{display:flex;border:1px solid var(--line);border-radius:7px;overflow:hidden}
+.seg button{flex:1;font:inherit;font-size:.85rem;padding:7px 0;border:0;background:var(--bg);color:var(--muted);cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--accent);color:var(--surface);font-weight:600}
+
+/* KPIs */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:12px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.kpi .v{font-family:var(--mono);font-size:1.45rem;font-weight:600;font-variant-numeric:tabular-nums;line-height:1.2;overflow-wrap:anywhere}
+.kpi .h{font-size:.78rem;color:var(--muted)}
+.kpi.lead{background:var(--accent-soft);border-color:transparent}
+.kpi.lead .v{color:var(--accent)}
+.kpi.fun{border-color:var(--accent-2-soft)}.kpi.fun .label{color:var(--accent-2)}
+.kpi.lead2{background:var(--accent-2-soft);border-color:transparent}.kpi.lead2 .v{color:var(--accent-2)}
+
+/* alertas */
+.notes{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.note{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:10px;background:var(--surface);border:1px solid var(--line);min-width:0}
+.pill{font-size:.66rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 7px;border-radius:99px;white-space:nowrap;border:1px solid currentColor}
+.pill.good{color:var(--good)} .pill.warn{color:var(--warn)} .pill.bad{color:var(--bad)} .pill.info{color:var(--accent)}
+.note p{margin:0;font-size:.86rem}
+
+/* painéis */
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+@media (max-width:820px){.grid{grid-template-columns:1fr}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.panel h2{font-size:1rem;margin:0;font-weight:600}
+.panel .cap{color:var(--muted);font-size:.8rem;margin:-6px 0 0}
+.full{grid-column:1/-1}
+
+/* barras horizontais */
+.hbars{display:flex;flex-direction:column;gap:7px}
+.hrow{display:grid;grid-template-columns:minmax(110px,150px) 1fr minmax(84px,auto);gap:10px;align-items:center;font-size:.82rem}
+.hrow .n{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.track{height:14px;background:var(--bg);border-radius:4px;position:relative;overflow:hidden}
+.fill{position:absolute;inset:0 auto 0 0;background:var(--bar);border-radius:4px;transition:width .35s ease}
+.hrow.sel .fill{background:var(--accent)} .hrow.sel .n{font-weight:700}
+.hrow .val{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:.78rem}
+
+/* colunas */
+.cols{display:flex;align-items:flex-end;gap:8px;height:190px;padding-top:18px;border-bottom:1px solid var(--line);position:relative}
+.col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;min-width:0;position:relative}
+.stack{width:100%;max-width:46px;display:flex;flex-direction:column-reverse;border-radius:4px 4px 0 0;overflow:hidden}
+.seg-in{background:var(--bar)} .seg-out{background:var(--accent-2)}
+.col.hot .seg-in{background:var(--accent)}
+.col .top{font-family:var(--mono);font-size:.68rem;color:var(--muted);margin-bottom:3px;white-space:nowrap}
+.xlab{display:flex;gap:8px}
+.xlab span{flex:1;text-align:center;font-size:.68rem;color:var(--muted);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:.76rem;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.refline{position:absolute;left:0;right:0;border-top:1.5px dashed var(--accent-2);pointer-events:none}
+.refline span{position:absolute;right:0;top:-17px;font-family:var(--mono);font-size:.66rem;color:var(--accent-2);background:var(--surface);padding:0 3px}
+
+/* tabelas */
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.82rem}
+th,td{padding:7px 10px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+th{font-size:.68rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:600}
+th:first-child,td:first-child{text-align:left}
+td{font-family:var(--mono);font-variant-numeric:tabular-nums}
+td:first-child{font-family:var(--display)}
+tr.sel td{background:var(--accent-soft)}
+.tag{font-size:.66rem;padding:1px 6px;border-radius:99px;margin-left:6px;font-family:var(--display);color:var(--muted);border:1px solid var(--line)}
+/* projeção de ganhos */
+.gains{border-color:var(--accent);gap:16px}
+.gctl{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px 16px;padding:12px;background:var(--bg);border-radius:8px}
+.gkpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.gk{display:flex;flex-direction:column;gap:2px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;min-width:0}
+.gk .v{font-family:var(--mono);font-size:1.15rem;font-weight:600;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.gk.lead{background:var(--accent-soft);border-color:transparent}.gk.lead .v{color:var(--accent)}
+.gk .h{font-size:.74rem;color:var(--muted)}
+td.pos{color:var(--good);font-weight:600} td.neg{color:var(--bad);font-weight:600}
+.gcols{height:210px}
+.gcol{flex:1;display:flex;align-items:flex-end;justify-content:center;gap:4px;height:100%;min-width:0}
+.gbar{flex:1;max-width:34px;border-radius:3px 3px 0 0;position:relative;min-height:2px}
+.gbar span{position:absolute;bottom:100%;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:.62rem;color:var(--muted);white-space:nowrap;padding-bottom:2px}
+.gbar.b1{background:var(--bar)}.gbar.b2{background:var(--accent-2)}.gbar.b3{background:var(--accent)}
+.agrow{display:flex;gap:8px;align-items:center}.agrow input[type=range]{flex:1;min-width:0}.agrow input[type=number]{width:88px;flex:none}
+.agentsctl{grid-column:span 2}@media (max-width:560px){.agentsctl{grid-column:auto}}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips button{font:inherit;font-size:.74rem;padding:3px 9px;border-radius:99px;border:1px solid var(--line);background:var(--bg);color:var(--muted);cursor:pointer}
+.chips button[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:var(--surface);font-weight:600}
+.ctl .chk{display:flex;justify-content:flex-start;align-items:center;gap:8px;font-size:.85rem;color:var(--ink);text-transform:none;letter-spacing:0;font-weight:400;padding-top:6px}
+.msim{display:flex;flex-direction:column;gap:10px}
+.mhead{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 12px;align-items:baseline}
+.mprice{font-size:.76rem;color:var(--muted)}
+.mchips{display:flex;flex-wrap:wrap;gap:6px}
+.mchips button{font:inherit;font-size:.8rem;padding:6px 12px;border-radius:99px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.mchips button:hover{border-color:var(--accent)}
+.mchips button[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:var(--surface);font-weight:600}
+.mchips button[data-id=custom]{border-style:dashed}
+.mcustom{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,260px));gap:12px}
+footer{color:var(--muted);font-size:.76rem;display:flex;flex-direction:column;gap:4px}
+@media (prefers-reduced-motion:reduce){.fill{transition:none}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Agente Comprador · custo × utilização</h1>
+      <p class="sub">Quanto custa cada conexão no LinkedIn com o agente de OCR, considerando o teto de 100 conexões por conta a cada 7 dias. Ajuste as premissas e todo o painel recalcula.</p>
+    </div>
+    <span class="stamp">base: usage-2.0 07/10/2026 (84 calls) · runs 04/10 · câmbio editável</span>
+  </header>
+
+  <section class="controls" aria-label="Premissas">
+    <div class="ctl agentsctl"><label for="agentsN">Agentes (contas) <output id="agentsOut">1</output></label>
+      <div class="agrow"><input type="range" id="agents" min="0" max="100" value="0" aria-label="Agentes, escala logarítmica de 1 a 10.000"><input type="number" id="agentsN" min="1" max="10000" value="1"></div>
+      <div class="chips" role="group" aria-label="Atalhos de agentes"><button data-n="1">1</button><button data-n="10">10</button><button data-n="50">50</button><button data-n="100">100</button><button data-n="1000">1 mil</button><button data-n="10000">10 mil</button></div></div>
+    <div class="ctl"><label for="model">Modelo</label><select id="model"></select></div>
+    <div class="ctl"><label for="base">Tokens por operação</label><select id="base"></select></div>
+    <div class="ctl"><label for="opc">Ops por conexão <output id="opcOut"></output></label>
+      <input type="range" id="opc" min="1.5" max="24" step="0.01" value="2.81"></div>
+    <div class="ctl"><label for="cpw">Conexões / semana / conta</label><input type="number" id="cpw" min="1" max="200" value="100"></div>
+    <div class="ctl"><label for="fx">Câmbio (R$ por US$)</label><input type="number" id="fx" step="0.01" min="1" value="5.50"></div>
+    <div class="ctl"><span class="label">Moeda</span>
+      <div class="seg" role="group" aria-label="Moeda"><button id="curBRL" aria-pressed="true">R$</button><button id="curUSD" aria-pressed="false">US$</button></div></div>
+  </section>
+
+  <section class="msim" aria-label="Modelo para simulação">
+    <div class="mhead"><span class="label">Simular custo com o modelo</span><span class="mprice num" id="mPrice"></span></div>
+    <div class="mchips" id="mChips" role="group" aria-label="Modelos"></div>
+    <div class="mcustom" id="mCustom" hidden>
+      <div class="ctl"><label for="cIn">Entrada · US$ por 1M tokens</label><input type="number" id="cIn" step="0.01" min="0" value="0.20"></div>
+      <div class="ctl"><label for="cOut">Saída · US$ por 1M tokens</label><input type="number" id="cOut" step="0.01" min="0" value="0.80"></div>
+    </div>
+  </section>
+
+  <section class="kpis" id="kpis" aria-label="Indicadores"></section>
+  <section class="notes" id="notes" aria-label="Leituras"></section>
+
+  <section class="panel gains" aria-label="Projeção de ganhos">
+    <div class="ghead">
+      <div>
+        <h2>Projeção de ganhos</h2>
+        <p class="cap" id="capGains"></p>
+      </div>
+    </div>
+    <div class="gctl">
+      <div class="ctl"><label for="convCli">Conexão → cliente (%)</label><input type="number" id="convCli" step="0.01" min="0" value="0.30"></div>
+      <div class="ctl"><label for="convPed">Conexão → pedido (%)</label><input type="number" id="convPed" step="0.01" min="0" value="0.40"></div>
+      <div class="ctl"><label for="ticket">Ticket médio (R$)</label><input type="number" id="ticket" step="1" min="0" value="625"></div>
+      <div class="ctl"><label for="margin">Margem de lucro (%)</label><input type="number" id="margin" step="0.5" min="0" value="19"></div>
+      <div class="ctl"><label for="extra">Outros custos / agente / mês (R$)</label><input type="number" id="extra" step="0.5" min="0" value="0"></div>
+    </div>
+    <div class="gkpis" id="gkpis"></div>
+    <div class="tbl"><table id="tblGains"></table></div>
+    <div class="cols gcols" id="chartGains"></div><div class="xlab" id="xGains"></div>
+    <div class="legend"><span><i style="background:var(--bar)"></i>lucro bruto</span><span><i style="background:var(--accent-2)"></i>custo dos agentes</span><span><i style="background:var(--accent)"></i>lucro após custo</span></div>
+  </section>
+
+  <section class="grid">
+    <div class="panel">
+      <h2>Custo mensal por modelo</h2>
+      <p class="cap" id="capModels"></p>
+      <div class="hbars" id="chartModels"></div>
+    </div>
+    <div class="panel">
+      <h2>Custo mensal conforme a frota cresce</h2>
+      <p class="cap" id="capScale"></p>
+      <div class="cols" id="chartScale"></div><div class="xlab" id="xScale"></div>
+    </div>
+    <div class="panel">
+      <h2>Tokens por passo da jornada</h2>
+      <p class="cap">Última jornada gpt-5-mini (07/10 ~20:28). Saída inclui tokens de raciocínio.</p>
+      <div class="cols" id="chartSteps"></div><div class="xlab" id="xSteps"></div>
+      <div class="legend"><span><i style="background:var(--accent)"></i>entrada (prompt)</span><span><i style="background:var(--accent-2)"></i>saída (+ raciocínio)</span></div>
+    </div>
+    <div class="panel">
+      <h2>Eficiência por execução</h2>
+      <p class="cap">Operações gastas por conexão em cada run de 04/10. A linha tracejada é a premissa em uso.</p>
+      <div class="cols" id="chartRuns"></div><div class="xlab" id="xRuns"></div>
+    </div>
+
+    <div class="panel full">
+      <h2>Projeção por período</h2>
+      <p class="cap" id="capPeriod"></p>
+      <div class="tbl"><table id="tblPeriod"></table></div>
+    </div>
+    <div class="panel full">
+      <h2>Tabela de modelos</h2>
+      <p class="cap">Preço por 1M de tokens e custo resultante na base de tokens selecionada.</p>
+      <div class="tbl"><table id="tblModels"></table></div>
+    </div>
+  </section>
+
+  <footer>
+    <span>1 operação = 1 tela analisada + 1 decisão do modelo. Mês = 30 dias. Preços Gemini 3.6/3.7/3.8 Flash são introdutórios até 31/12/2026.</span>
+    <span>gpt-5-mini: preço de referência (US$ 0,25 in / US$ 2,00 out por 1M); tokens medidos em 72 chamadas de 07/10 (média 2.607 / 731, ~669 de raciocínio).</span>
+    <span>Modo imagem é estimativa de POC sem o roteiro completo do agente, então tende a subestimar.</span>
+  </footer>
+</div>
+
+<script>
+const MODELS=[
+ {id:"g25lite",n:"Gemini 2.5 Flash-Lite",i:.10,o:.40},
+ {id:"4omini",n:"gpt-4o-mini",i:.15,o:.60,tag:"em produção"},
+ {id:"g31lite",n:"Gemini 3.1 Flash-Lite",i:.25,o:1.50},
+ {id:"5mini",n:"gpt-5-mini",i:.25,o:2.00,tag:"ref."},
+ {id:"g25",n:"Gemini 2.5 Flash",i:.30,o:2.50},
+ {id:"g3",n:"Gemini 3 Flash",i:.50,o:3.00},
+ {id:"g38",n:"Gemini 3.6–3.8 Flash",i:.75,o:3.75,tag:"intro"},
+ {id:"g35",n:"Gemini 3.5 Flash",i:1.50,o:9.00},
+ {id:"custom",n:"Personalizado",i:.20,o:.80,tag:"seu preço"}
+];
+const BASES=[
+ {id:"hoje",n:"OCR · gpt-4o-mini hoje (1.589 / 51)",i:1589,o:51},
+ {id:"md",n:"OCR · planilha anterior (3.189 / 51)",i:3189,o:51},
+ {id:"g5",n:"OCR · gpt-5-mini c/ raciocínio (2.607 / 731)",i:2607,o:731},
+ {id:"img",n:"Imagem ~20 KB · estimativa (538 / 300)",i:538,o:300}
+];
+const STEPS=[
+ {l:"1 Search",i:2552,o:768,hot:1},{l:"2 type",i:2250,o:1082,hot:1},{l:"3 BACK",i:3623,o:578,hot:1},
+ {l:"4 Show all",i:3302,o:706,hot:1},{l:"5 People",i:3647,o:640,hot:1},{l:"6 Location",i:3774,o:639,hot:1},
+ {l:"7 Add loc.",i:2816,o:578,hot:1},{l:"8 Contagem",i:2303,o:699,hot:1},{l:"9 city",i:3226,o:643,hot:1},
+ {l:"10 Show res",i:2763,o:764,hot:1},{l:"11 Connect",i:2264,o:1213,hot:1}
+];
+const RUNS=[{l:"04/10 18:50",c:45,op:113},{l:"04/10 19:04",c:106,op:319},{l:"04/10 19:42",c:8,op:15}];
+
+const $=id=>document.getElementById(id);
+const S={agents:1,model:"4omini",base:"hoje",opc:2.81,cpw:100,fx:5.5,cur:"BRL"};
+$("model").innerHTML=MODELS.map(m=>`<option value="${m.id}">${m.n}${m.tag?" ("+m.tag+")":""}</option>`).join("");
+$("base").innerHTML=BASES.map(b=>`<option value="${b.id}">${b.n}</option>`).join("");
+$("model").value=S.model;$("base").value=S.base;
+
+const nf=(v,d=0)=>v.toLocaleString("pt-BR",{minimumFractionDigits:d,maximumFractionDigits:d});
+function money(usd,d){const v=S.cur==="BRL"?usd*S.fx:usd;const p=S.cur==="BRL"?"R$ ":"US$ ";
+  if(d==null)d=Math.abs(v)<0.01?4:Math.abs(v)<1?3:2;return p+nf(v,d);}
+function compact(n){return n>=1e6?nf(n/1e6,2)+" M":n>=1e3?nf(n/1e3,1)+" k":nf(n)}
+const costOp=(m,b)=>(b.i*m.i+b.o*m.o)/1e6;
+
+function calc(){
+  const cm=MODELS.find(x=>x.id==="custom");cm.i=Math.max(0,+$("cIn").value||0);cm.o=Math.max(0,+$("cOut").value||0);
+  const m=MODELS.find(x=>x.id===S.model), b=BASES.find(x=>x.id===S.base);
+  const connMonthAgent=Math.round(S.cpw*30/7), opsMonthAgent=connMonthAgent*S.opc;
+  const cop=costOp(m,b);
+  return {m,b,cop,connMonthAgent,opsMonthAgent,
+    connMonth:connMonthAgent*S.agents, opsMonth:opsMonthAgent*S.agents,
+    tokMonth:opsMonthAgent*S.agents*(b.i+b.o),
+    costMonth:cop*opsMonthAgent*S.agents, costConn:cop*S.opc};
+}
+
+function render(){
+  const r=calc();
+  $("agentsOut").textContent=nf(S.agents);
+  $("mChips").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.id===S.model));
+  $("mCustom").hidden=S.model!=="custom";
+  $("mPrice").textContent="US$ "+nf(r.m.i,2)+" entrada · US$ "+nf(r.m.o,2)+" saída por 1M tokens · "+money(r.cop,5)+" por operação";$("opcOut").textContent=nf(S.opc,2);
+  const ag=S.agents===1?"1 conta":nf(S.agents)+" contas";
+  $("kpis").innerHTML=[
+    ["lead","Custo de IA / mês",money(r.costMonth,2),ag+" · "+r.m.n],
+    ["","Conexões / mês",nf(r.connMonth),nf(r.connMonthAgent,0)+" por conta (teto)"],
+    ["","Custo por conexão",money(r.costConn),nf(S.opc,2)+" ops × "+money(r.cop)],
+    ["","Custo por 1.000 conexões",money(r.costConn*1000,2),"independe do nº de contas"],
+    ["","Operações / mês",nf(r.opsMonth),nf(r.opsMonth/30,0)+" por dia"],
+    ["","Tokens / mês",compact(r.tokMonth),nf(r.b.i+r.b.o)+" por operação"],
+    ...(()=>{const cli=r.connMonth*(+$("convCli").value/100||0), ped=r.connMonth*(+$("convPed").value/100||0),
+      fat=ped*(+$("ticket").value||0), luc=fat*(+$("margin").value/100||0), cst=r.costMonth*S.fx+(+$("extra").value||0)*S.agents, liq=luc-cst;
+      const p=v=>nf(v,2)+"%";
+      return [
+        ["fun","Novos clientes / mês",nf(cli,cli<10?2:0),p(r.connMonth?cli/r.connMonth*100:0)+" das conexões"],
+        ["fun","Pedidos / mês",nf(ped,ped<10?2:0),p(r.connMonth?ped/r.connMonth*100:0)+" das conexões · "+nf(cli?ped/cli:0,2)+" por cliente"],
+        ["fun","Faturamento / mês",brl(fat),brl(+$("ticket").value||0)+" por pedido"],
+        ["fun","Lucro bruto / mês",brl(luc),nf(+$("margin").value||0,1)+"% do faturamento"],
+        ["fun lead2","Lucro após custo / mês",brl(liq),"custo dos agentes: "+brl(cst)]
+      ];})()
+  ].map(([c,l,v,h])=>`<div class="kpi ${c}"><span class="label">${l}</span><span class="v">${v}</span><span class="h">${h}</span></div>`).join("");
+
+  // leituras
+  const mini=MODELS[1], g5=MODELS[3];
+  const cMini=costOp(mini,BASES[0])*S.opc, cG5=costOp(g5,BASES[2])*S.opc;
+  const badOpc=24, costBad=r.cop*badOpc*r.connMonthAgent*S.agents;
+  const notes=[
+    ["info","Gargalo","O limite é o LinkedIn: "+nf(S.cpw)+" conexões/semana por conta. Escalar volume exige mais contas; o custo de IA cresce linear com elas."],
+    ["good","Prompt menor","Os logs de hoje (gpt-4o-mini) mostram "+nf(1589)+" tokens de entrada por operação, 50% abaixo dos "+nf(3189)+" da planilha anterior."],
+    ["warn","gpt-5-mini","O raciocínio eleva a saída para ~731 tokens/op (72 calls). Cada conexão sai por "+money(cG5)+" contra "+money(cMini)+" no gpt-4o-mini ("+nf(cG5/cMini,1)+"×)."],
+    ["bad","Runs ruins","Quando o OCR perde o botão Connect, o agente chega a 24 ops/conexão. Neste cenário o mês iria a "+money(costBad,2)+" ("+nf(badOpc/S.opc,1)+"×)."]
+  ];
+  $("notes").innerHTML=notes.map(([k,t,p])=>`<div class="note"><span class="pill ${k}">${t}</span><p>${p}</p></div>`).join("");
+
+  // custo por modelo
+  const rows=MODELS.map(m=>({m,v:costOp(m,r.b)*r.opsMonth})).sort((a,b)=>a.v-b.v);
+  const mx=Math.max(...rows.map(x=>x.v));
+  $("capModels").textContent=ag+" · "+r.b.n.split(" (")[0]+" · "+nf(r.opsMonth)+" ops/mês";
+  $("chartModels").innerHTML=rows.map(x=>`<div class="hrow ${x.m.id===S.model?"sel":""}"><span class="n" title="${x.m.n}">${x.m.n}</span><span class="track"><span class="fill" style="width:${(x.v/mx*100).toFixed(1)}%"></span></span><span class="val">${money(x.v,2)}</span></div>`).join("");
+
+  // escala
+  const ns=[1,100,1000,2500,5000,10000]; const perAgent=r.cop*r.opsMonthAgent; const mxS=perAgent*10000;
+  $("capScale").textContent=r.m.n+" · "+money(perAgent,2)+" por conta/mês · "+nf(r.connMonthAgent,0)+" conexões por conta";
+  $("chartScale").innerHTML=ns.map(n=>{const v=perAgent*n;return `<div class="col ${n===S.agents?"hot":""}"><span class="top">${money(v,v<10?2:0)}</span><div class="stack" style="height:${Math.max(2,v/mxS*100)}%"><div class="seg-in" style="flex:1;${n===S.agents?"background:var(--accent)":""}"></div></div></div>`}).join("");
+  $("xScale").innerHTML=ns.map(n=>`<span>${n} ${n===1?"conta":"contas"}</span>`).join("");
+
+  // runs
+  const mxR=Math.max(S.opc,...RUNS.map(x=>x.op/x.c))*1.15;
+  $("chartRuns").innerHTML=RUNS.map(x=>{const v=x.op/x.c;return `<div class="col"><span class="top">${nf(v,2)} · ${x.c} conex.</span><div class="stack" style="height:${v/mxR*100}%"><div class="seg-in" style="flex:1"></div></div></div>`}).join("")
+    +`<div class="refline" style="bottom:${S.opc/mxR*100*(172/190)}%"><span>premissa ${nf(S.opc,2)}</span></div>`;
+  $("xRuns").innerHTML=RUNS.map(x=>`<span>${x.l}</span>`).join("");
+
+  // período
+  const per=[["Dia",1],["Semana (teto)",7],["Mês",30]];
+  $("capPeriod").textContent=ag+" · "+r.m.n+" · "+r.b.n.split(" (")[0];
+  $("tblPeriod").innerHTML=`<thead><tr><th>Período</th><th>Conexões</th><th>Operações</th><th>Tokens entrada</th><th>Tokens saída</th><th>Custo</th></tr></thead><tbody>`+
+    per.map(([l,d])=>{const c=S.cpw/7*d*S.agents,o=c*S.opc;return `<tr><td>${l}</td><td>${nf(c)}</td><td>${nf(o)}</td><td>${nf(o*r.b.i)}</td><td>${nf(o*r.b.o)}</td><td>${money(o*r.cop,2)}</td></tr>`}).join("")+`</tbody>`;
+
+  // tabela modelos
+  $("tblModels").innerHTML=`<thead><tr><th>Modelo</th><th>US$ in / 1M</th><th>US$ out / 1M</th><th>Por operação</th><th>Por conexão</th><th>Por conta / mês</th><th>${ag} / mês</th></tr></thead><tbody>`+
+    MODELS.map(m=>{const c=costOp(m,r.b);return `<tr class="${m.id===S.model?"sel":""}"><td>${m.n}${m.tag?`<span class="tag">${m.tag}</span>`:""}</td><td>${nf(m.i,2)}</td><td>${nf(m.o,2)}</td><td>${money(c,5)}</td><td>${money(c*S.opc,4)}</td><td>${money(c*r.opsMonthAgent,2)}</td><td>${money(c*r.opsMonth,2)}</td></tr>`}).join("")+`</tbody>`;
+  renderGains(r);
+}
+["convCli","convPed","ticket","margin","extra"].forEach(id=>$(id).addEventListener("input",render));
+const toPos=n=>Math.round(Math.log10(Math.max(1,n))*25), toN=p=>{const v=Math.pow(10,p/25);return v<20?Math.round(v):v<200?Math.round(v/5)*5:v<2000?Math.round(v/50)*50:Math.round(v/500)*500};
+function setAgents(n,from){n=Math.min(10000,Math.max(1,Math.round(n)||1));S.agents=n;if(from!=="range")$("agents").value=toPos(n);if(from!=="num")$("agentsN").value=n;
+  document.querySelectorAll(".chips button").forEach(b=>b.setAttribute("aria-pressed",+b.dataset.n===n));render();}
+
+const brl=(v,d=2)=>money(v/S.fx,d);
+function renderGains(r){
+  const G={cli:+$("convCli").value/100||0,ped:+$("convPed").value/100||0,tk:+$("ticket").value||0,mg:+$("margin").value/100||0,ex:+$("extra").value||0};
+  const iaAgentBRL=r.costMonth*S.fx/S.agents;
+  const costMonth=(iaAgentBRL+G.ex)*S.agents;
+  const ag=S.agents===1?"1 agente":nf(S.agents)+" agentes";
+  $("capGains").textContent=ag+" · "+nf(r.connMonthAgent)+" conexões/mês por agente · custo do agente = IA ("+r.m.n+", "+brl(iaAgentBRL)+"/agente/mês)"+(G.ex?" + "+brl(G.ex)+" outros":"");
+  const per=[["1 mês",1],["3 meses",3],["6 meses",6],["12 meses",12]].map(([l,m])=>{
+    const conn=r.connMonth*m, cli=conn*G.cli, ped=conn*G.ped, fat=ped*G.tk, luc=fat*G.mg, cst=costMonth*m;
+    return {l,m,conn,cli,ped,fat,luc,cst,liq:luc-cst};
+  });
+  const y=per[3], m1=per[0];
+  const roi=m1.cst>0?m1.liq/m1.cst:0;
+  const cpa=m1.cli>0?m1.cst/m1.cli:0;
+  $("gkpis").innerHTML=[
+    ["lead","Lucro após custo / mês",brl(m1.liq),"12 meses: "+brl(y.liq)],
+    ["","Faturamento / mês",brl(m1.fat),nf(m1.ped,1)+" pedidos × "+brl(G.tk)],
+    ["","Novos clientes / mês",nf(m1.cli,1),nf(G.cli*100,2)+"% das conexões"],
+    ["","Custo por novo cliente",brl(cpa),"custo dos agentes ÷ clientes"],
+    ["","Retorno sobre o custo",nf(roi,0)+"×","lucro líquido ÷ custo"]
+  ].map(([c,l,v,h])=>`<div class="gk ${c}"><span class="label">${l}</span><span class="v">${v}</span><span class="h">${h}</span></div>`).join("");
+  $("tblGains").innerHTML=`<thead><tr><th>Período</th><th>Agentes</th><th>Novas conexões</th><th>Novos clientes</th><th>Pedidos</th><th>Faturamento</th><th>Lucro (${nf(G.mg*100,1)}%)</th><th>Custo dos agentes</th><th>Lucro após custo</th></tr></thead><tbody>`+
+    per.map(p=>`<tr><td>${p.l}</td><td>${nf(S.agents)}</td><td>${nf(p.conn)}</td><td>${nf(p.cli,2)}</td><td>${nf(p.ped,1)}</td><td>${brl(p.fat)}</td><td>${brl(p.luc)}</td><td>${brl(p.cst)}</td><td class="${p.liq>=0?"pos":"neg"}">${brl(p.liq)}</td></tr>`).join("")+`</tbody>`;
+  const mx=Math.max(...per.map(p=>Math.max(p.luc,p.cst,p.liq)))||1;
+  const h=v=>Math.max(0,v)/mx*88;
+  $("chartGains").innerHTML=per.map(p=>`<div class="gcol"><div class="gbar b1" style="height:${h(p.luc)}%" title="Lucro bruto ${brl(p.luc)}"></div><div class="gbar b2" style="height:${h(p.cst)}%" title="Custo ${brl(p.cst)}"></div><div class="gbar b3" style="height:${h(p.liq)}%" title="Lucro após custo ${brl(p.liq)}"><span>${brl(p.liq,0)}</span></div></div>`).join("");
+  $("xGains").innerHTML=per.map(p=>`<span>${p.l}</span>`).join("");
+}
+
+function drawSteps(){
+  const mx=Math.max(...STEPS.map(s=>s.i+s.o));
+  $("chartSteps").innerHTML=STEPS.map(s=>`<div class="col ${s.hot?"hot":""}"><span class="top">${compact(s.i+s.o)}</span><div class="stack" style="height:${(s.i+s.o)/mx*100}%"><div class="seg-in" style="flex:${s.i}"></div><div class="seg-out" style="flex:${s.o}"></div></div></div>`).join("");
+  $("xSteps").innerHTML=STEPS.map(s=>`<span title="${s.l}">${s.l}</span>`).join("");
+}
+
+$("agents").addEventListener("input",e=>setAgents(toN(+e.target.value),"range"));
+$("agentsN").addEventListener("input",e=>{if(+e.target.value>0)setAgents(+e.target.value,"num")});
+document.querySelectorAll(".chips button").forEach(b=>b.addEventListener("click",()=>setAgents(+b.dataset.n)));
+$("opc").addEventListener("input",e=>{S.opc=+e.target.value;render()});
+function setModel(id){S.model=id;$("model").value=id;render()}
+$("model").addEventListener("change",e=>setModel(e.target.value));
+$("mChips").innerHTML=MODELS.map(m=>`<button data-id="${m.id}">${m.n}</button>`).join("");
+$("mChips").querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>setModel(b.dataset.id)));
+["cIn","cOut"].forEach(id=>$(id).addEventListener("input",render));
+$("base").addEventListener("change",e=>{S.base=e.target.value;render()});
+$("cpw").addEventListener("input",e=>{const v=+e.target.value;if(v>0){S.cpw=v;render()}});
+$("fx").addEventListener("input",e=>{const v=+e.target.value;if(v>0){S.fx=v;render()}});
+["BRL","USD"].forEach(c=>$("cur"+c).addEventListener("click",()=>{S.cur=c;$("curBRL").setAttribute("aria-pressed",c==="BRL");$("curUSD").setAttribute("aria-pressed",c==="USD");render()}));
+drawSteps();setAgents(1);
+</script>
+
+</body></html>

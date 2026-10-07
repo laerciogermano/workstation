@@ -8,7 +8,11 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, it } from "node:test";
 import { loadEnvFiles } from "./load-env.js";
-import { decideFromImage } from "./raw-gpt-decide.js";
+import {
+  DEFAULT_SYSTEM,
+  DEFAULT_USER_REGRAS,
+  decideFromImage,
+} from "./raw-gpt-decide.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const SRC_ROOT = join(__dirname, "..");
@@ -28,17 +32,16 @@ async function runCase({ image, prompt, step, expected }) {
 
   const out = await decideFromImage({
     imagePath: join(FIXTURES, image),
-    prompt,
-    step,
+    system: DEFAULT_SYSTEM,
+    user: {
+      jornada: prompt,
+      step,
+      regras: DEFAULT_USER_REGRAS,
+    },
   });
   assert.ok(out.ocr.length >= 1, "OCR vazio");
   console.log({ step, image, ocr: out.ocr });
-  console.log({
-    action: out.action,
-    proximoPasso: out.proximoPasso,
-    step,
-    image,
-  });
+  console.log(out);
   assert.deepEqual(out.action, expected);
   assert.equal(typeof out.proximoPasso, "string");
   assert.ok(out.proximoPasso.trim().length >= 1, "resposta sem proximoPasso");

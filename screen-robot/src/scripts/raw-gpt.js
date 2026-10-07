@@ -9,7 +9,11 @@ import { existsSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadEnvFiles } from "../lib/load-env.js";
-import { decideFromImage } from "../lib/raw-gpt-decide.js";
+import {
+  DEFAULT_SYSTEM,
+  DEFAULT_USER_REGRAS,
+  decideFromImage,
+} from "../lib/raw-gpt-decide.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const SRC_ROOT = resolve(__dirname, "..");
@@ -53,8 +57,12 @@ if (!existsSync(imagePath)) {
 
 const out = await decideFromImage({
   imagePath,
-  prompt,
-  step,
+  system: DEFAULT_SYSTEM,
+  user: {
+    jornada: prompt,
+    step,
+    regras: DEFAULT_USER_REGRAS,
+  },
   apiKey,
   model,
   engine,

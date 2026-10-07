@@ -79,6 +79,12 @@ ${JSON.stringify(ocr)}
 ${connectHint}${stepLine}
 Defina a próxima action com base no OCR e no prompt abaixo.
 
+Em cada ação, diga no motivo qual passo (1–13) está em curso.
+
+Ordem obrigatória 1→N (N=último passo). Uma ação por turno. Toque só em textos ou ícones que estão na tela agora.
+PROIBIDO fail se o texto do passo atual estiver na tela (ex. texto do passo atual → toque; não fail).
+fail só se for impossível após tentar de novo; falhas antigas NÃO impedem um novo toque.
+
 ${prompt}`;
 }
 

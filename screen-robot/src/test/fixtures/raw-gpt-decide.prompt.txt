@@ -1,5 +1,5 @@
-1.  clique em Search 
-2.  digite comprador 
+1. clique em Search 
+2. digite comprador 
 3. feche o teclado 
 4. clique em Show all results 
 5. clique em People 

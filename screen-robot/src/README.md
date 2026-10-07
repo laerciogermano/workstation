@@ -240,9 +240,9 @@ npm run agent:smoke              # 1–2 passos no device; sem key = heurística
 npm run raw-gpt -- --image test/fixtures/linkedin-people-comprador-connect.png --prompt "…" --step 11
 npm run raw-gpt:loop -- --avd ConnectMax_Cam --prompt test/fixtures/raw-gpt-decide.prompt.txt --step 1
 # Loop device: provision AVD (ou --device SERIAL) → screenshot → decideFromImage (gpt-4o-mini) → executeAction → wait → repeat.
-# Flags: --avd NAME · --wait-ms 1000 · --max-steps 50 · --device SERIAL · --engine all. Shots em screenshots/raw-gpt-loop/.
+# Flags: --avd NAME · --wait-ms 5000 · --max-steps 50 · --device SERIAL · --engine all. Shots em screenshots/raw-gpt-loop/.
 # Sem --prompt: usa test/fixtures/raw-gpt-decide.prompt.txt. Parar: done/fail ou max-steps.
-# Antes: wait default 5000ms / loop só com serial. Rollback: `--wait-ms 5000`; omitir --avd → serial via device.config / --device.
+# Antes: wait default 1000ms. Rollback: `--wait-ms 1000`. Sem --avd → serial via device.config / --device.
 # --prompt obrigatório no one-shot raw-gpt (sem DEFAULT_PROMPT). Antes: default "Na tela People…". Rollback: export DEFAULT_PROMPT.
 # Testes: node --test lib/raw-gpt-decide.test.js (prompt em test/fixtures/raw-gpt-decide.prompt.txt; versão curta: raw-gpt-decide.prompt.simple.txt — testes usam só o .prompt.txt)
 # Casos: `it`/`fixtures` 01–13 (ordem do prompt); PNGs `01-search.png` … `13-skip.png` (+ `11-connect-people.png`, `linkedin-search-comprador-connected.png` = 11c 2º Connect).

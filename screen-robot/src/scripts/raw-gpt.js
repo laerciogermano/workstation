@@ -66,5 +66,6 @@ console.log({
   ocr: out.ocr,
 });
 console.log(out.payload);
-const { raw, payload, ocr, elements, ...action } = out;
-process.stdout.write(JSON.stringify(action));
+process.stdout.write(
+  JSON.stringify({ action: out.action, proximoPasso: out.proximoPasso }),
+);

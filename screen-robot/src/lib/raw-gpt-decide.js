@@ -205,6 +205,7 @@ export async function decideRawAction(opts) {
 
 /**
  * extractFromImage → compactOcr → decideRawAction.
+ * Retorno: action já formatada (sem null) + proximoPasso.
  * @param {{
  *   imagePath: string,
  *   prompt: string,
@@ -214,7 +215,14 @@ export async function decideRawAction(opts) {
  *   engine?: string,
  *   timeoutMs?: number,
  * }} opts
- * @returns {Promise<{ type: string, x?: number, y?: number, direction?: string, text?: string, code?: string, ms?: number, proximoPasso?: string, raw?: string, payload?: object, ocr: object[], elements: object[] }>}
+ * @returns {Promise<{
+ *   action: { type: string, x?: number, y?: number, direction?: string, text?: string, code?: string, ms?: number },
+ *   proximoPasso?: string,
+ *   ocr: object[],
+ *   elements: object[],
+ *   raw?: string,
+ *   payload?: object,
+ * }>}
  */
 export async function decideFromImage(opts) {
   const imagePath = opts.imagePath;
@@ -235,5 +243,6 @@ export async function decideFromImage(opts) {
     apiKey: opts.apiKey,
     model: opts.model,
   });
-  return { ...out, ocr, elements };
+  const { raw, payload, proximoPasso, ...action } = out;
+  return { action, proximoPasso, ocr, elements, raw, payload };
 }

@@ -238,6 +238,9 @@ npm run agent -- --sense vision --prompt ../roteiros/teste.md --no-prompt
 npm run agent -- --vision --provider openai --model gpt-4o-mini --prompt ../roteiros/teste.md
 npm run agent:smoke              # 1–2 passos no device; sem key = heurística Connect/scroll
 npm run raw-gpt -- --image test/fixtures/linkedin-people-comprador-connect.png --prompt "…" --step 11
+npm run raw-gpt:loop -- --avd ConnectMax_Cam --prompt test/fixtures/raw-gpt-decide.prompt.txt --step 1
+# Loop: AVD/serial → screenshot → decideFromImage → executeAction → wait. Flags: --wait-ms, --max-steps, --model, --engine, --device/--serial.
+# Antes: sem CLI de loop (só decide pontual). Rollback: remover scripts/raw-gpt-loop.js e o script npm.
 # --prompt obrigatório (sem DEFAULT_PROMPT). Antes: default "Na tela People…". Rollback: export DEFAULT_PROMPT.
 # Testes: node --test lib/raw-gpt-decide.test.js (prompt em test/fixtures/raw-gpt-decide.prompt.txt; versão curta: raw-gpt-decide.prompt.simple.txt — testes usam só o .prompt.txt)
 # Casos: `it`/`fixtures` 01–13 (ordem do prompt); PNGs `01-search.png` … `13-skip.png` (+ `11-connect-people.png`, `linkedin-search-comprador-connected.png` = 11c 2º Connect).

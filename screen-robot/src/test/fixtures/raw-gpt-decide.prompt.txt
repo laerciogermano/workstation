@@ -45,16 +45,18 @@ ocr exemplo: [{"type":"text","text":"Add a location","x":127,"y":380},{"type":"t
 - PROIBIDO tap de novo em "Add a location"
 ocr exemplo: [{"type":"text","text":"Add a location","x":174,"y":81},{"type":"text","text":"q","x":32,"y":619},{"type":"text","text":"a","x":58,"y":696}]
 
-9. clique na 1ª opção Rio de Janeiro — tap na linha completa "Rio de Janeiro, Rio de Janeiro".
-- action: tap no hit com cidade+estado (texto completo com vírgula)
-- Aceita também "Rio de Janeiro,Rio de Janeiro" (mesmo y≈177)
-- PROIBIDO "Rio de Janeiro," (fragmento); PROIBIDO só "Rio de Janeiro" do campo topo (y≈81); PROIBIDO teclado/Gboard
-ocr exemplo: [{"type":"text","text":"Rio de Janeiro","x":149,"y":81},{"type":"text","text":"Rio de Janeiro, Rio de Janeiro","x":174,"y":177},{"type":"text","text":"Rio de Janeiro,Rio de Janeiro","x":169,"y":177},{"type":"text","text":"Rio de Janeiro,","x":80,"y":179}]
+9. clique na opção cidade+estado — tap no hit EXATO "Rio de Janeiro, Rio de Janeiro, Brazil" (y≈249).
+- action: tap no texto completo com DUAS ocorrências de "Rio de Janeiro" + ", Brazil"
+- Alvo OCR real: "Rio de Janeiro, Rio de Janeiro, Brazil" (x≈221, y≈249)
+- PROIBIDO "Rio de Janeiro, Brazil" / "Rio deJaneiro,Brazil" (só país, y≈177 — ERRADO)
+- PROIBIDO "Greater Rio de Janeiro"; PROIBIDO Duque/São Gonçalo/outras cidades
+- PROIBIDO fragmentos ("Rio","de","Janeiro,","Brazil"); PROIBIDO campo topo (y≈81); PROIBIDO teclado/Gboard
+ocr exemplo: [{"type":"text","text":"Rio de Janeiro, Brazil","x":137,"y":177},{"type":"text","text":"Rio de Janeiro, Rio de Janeiro, Brazil","x":221,"y":249},{"type":"text","text":"Greater Rio de Janeiro","x":142,"y":321},{"type":"text","text":"Duque de Caxias, Rio de Janeiro, Brazil","x":232,"y":393}]
 
 10. clique em Show results — tap em "Show results".
 - action: tap "Show results"
 - PROIBIDO "Add a location" / linha Rio de Janeiro de novo
-ocr exemplo: [{"type":"text","text":"Show results","x":271,"y":849},{"type":"text","text":"Rio de Janeiro, Rio de Janeiro","x":152,"y":399},{"type":"text","text":"Q Add a location","x":134,"y":308}]
+ocr exemplo: [{"type":"text","text":"Show results","x":271,"y":849},{"type":"text","text":"Rio de Janeiro, Rio de Janeiro, Brazil","x":221,"y":399},{"type":"text","text":"Q Add a location","x":134,"y":308}]
 
 11. Connect — LOOP: achar "Connect" no OCR atual ou rolar até achar.
 - Há text exato "Connect"? → tap no de MENOR y (primeiro da lista). Ignore "Pending", "Message", "+ Connect"

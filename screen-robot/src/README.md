@@ -243,8 +243,8 @@ npm run raw-gpt -- --image test/fixtures/linkedin-people-comprador-connect.png -
 # Casos: `it`/`fixtures` 01–13 (ordem do prompt); PNGs `01-search.png` … `13-skip.png` (+ `11-connect-people.png`, `linkedin-search-comprador-connected.png` = 11c 2º Connect).
 # Passo 3: se a fixture já tem "Show all results", expected = tap nele (exceção do prompt); BACK só sem esse texto. Rollback: expected KEYCODE_BACK + fixture sem Show all.
 # Antes: nomes longos linkedin-search-*.png / linkedin-tela-inicial no raw-gpt. Rollback: git mv + nomes antigos no teste.
-# Prompt raw-gpt: sem menção a x/y/thresholds; passo 9 por text (sugestão vs campo). Rollback: versão com y<120/y>120 no .prompt.txt.
-# Passo 11 (.prompt.txt em linguagem natural): primeiro "Connect" da lista; sem jargão OCR. Rollback: menções a OCR/hit/JSON no prompt.
+# Prompt raw-gpt: cada passo 1–13 com bullets + `ocr:` (hits reais de extractFromImage+compactOcr das fixtures). Copiar x/y do OCR atual. Rollback: prompt só com linhas curtas sem ocr/bullets.
+# Passo 9: linha completa "Campinas, São Paulo, Brazil"; PROIBIDO fragmento "Campinas," / campo topo. Passo 11: menor y entre "Connect".
 # raw-gpt-decide: `temperature: 0` (exceto gpt-5*), prompt depois do extract, `motivo` ok, hint dos "Connect" de cima p/ baixo. Rollback: sem temperature/hint; prompt antes; proibir motivo.
 # Parse: só chaves presentes na IA; raiz obrigatória { "action": ... }. Rollback: aceitar acao/raiz.
 # step: `decideRawAction({ prompt, ocr, step })` injeta "voce esta no passo N" (+ proibido voltar); resposta `proximoPasso` (raiz) = próximo input (`step = out.proximoPasso`). CLI: `--step N`. Antes: campo `passo` / sufixo no prompt. Rollback: parse `data.passo` e `step = out.passo`.

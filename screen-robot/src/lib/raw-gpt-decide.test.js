@@ -33,6 +33,7 @@ async function runCase({ image, prompt, step, expected }) {
   });
   const ocr = compactOcr(elements);
   assert.ok(ocr.length >= 1, "OCR vazio");
+  console.log({ step, image, ocr });
 
   const out = await decideRawAction({ prompt, ocr, step });
   const parsed = parseActionTypeXY(out.raw);

@@ -3,7 +3,7 @@
  * Extract (lib) num PNG LinkedIn → chat.completions cru (system = agente + JSON action).
  *
  *   npm run raw-gpt -- --image test/fixtures/linkedin-people-comprador-connect.png --prompt "conecte no comprador" --step 11
- *   npm run raw-gpt -- --engine all --prompt "conecte no comprador" --step 1
+ *   npm run raw-gpt -- --engine all --prompt "conecte no comprador" --step "digite comprador"
  */
 import { existsSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
@@ -44,8 +44,8 @@ const engine = argValue("--engine") || process.env.SCREEN_ROBOT_OCR || "all";
 const model = process.env.OPENAI_MODEL || "gpt-4o-mini";
 const stepRaw = argValue("--step");
 const step =
-  stepRaw != null && stepRaw !== "" && Number.isFinite(Number(stepRaw))
-    ? Number(stepRaw)
+  stepRaw != null && String(stepRaw).trim() !== ""
+    ? String(stepRaw).trim()
     : undefined;
 
 if (!existsSync(imagePath)) {

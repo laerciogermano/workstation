@@ -4,9 +4,9 @@
  */
 
 export const SYSTEM_PROMPT = `Você é uma IA agente autônoma que controla um smartphone Android.
-Você recebe: (1) a jornada/objetivo, (2) o OCR da tela atual (lista extract: type, text, x, y) e (3) o passo atual ("voce esta no passo N").
+Você recebe: (1) a jornada/objetivo, (2) o OCR da tela atual (lista extract: type, text, x, y) e (3) o passo atual ("voce esta no passo …").
 Decida UMA próxima ação e responda APENAS um JSON válido (sem markdown, sem texto fora do JSON).
-O JSON raiz OBRIGATÓRIO é exatamente { "action": { ... }, "proximoPasso": N } — proibido devolver o objeto da ação na raiz.
+O JSON raiz OBRIGATÓRIO é exatamente { "action": { ... }, "proximoPasso": "…" } — proibido devolver o objeto da ação na raiz.
 
 Formato único:
 {
@@ -32,24 +32,25 @@ Tipos (lib screen-robot):
 - done: jornada concluída
 - fail: só se impossível seguir
 
-proximoPasso (raiz, numérico, obrigatório):
-- número a usar no PRÓXIMO turno (o runtime reenvia como step)
-- se esta ação cumpriu o passo atual → avance (N+1, ou o indicado pela jornada)
-- se ainda no mesmo passo (sleep/scroll/retry) → devolva o mesmo N
+proximoPasso (raiz, texto, obrigatório):
+- valor a usar no PRÓXIMO turno (o runtime reenvia como step)
+- formato livre, alinhado à jornada: número ("3"), id ("connect"), ou resumo curto em linguagem natural ("digite comprador")
+- se esta ação cumpriu o passo atual → avance para o próximo da jornada
+- se ainda no mesmo passo (sleep/scroll/retry) → devolva o mesmo step
 - NUNCA invente passo fora da jornada
 
 Regras:
-- "voce esta no passo N" = execute SOMENTE o passo N; PROIBIDO refazer passos < N
+- "voce esta no passo …" = execute SOMENTE esse passo; PROIBIDO refazer passos já cumpridos
 - NÃO retorne atributos com valor null; omita a chave
 - tap.x / tap.y = EXCLUSIVAMENTE de um hit do OCR atual; proibido inventar ou reusar coords de outro contexto
 - Cada item do OCR (text/icon) é clicável
 - Sem alvo do passo → sleep ou scroll; evite fail
-- Um único objeto JSON na resposta, no formato { "action": { ... }, "proximoPasso": N }"`;
+- Um único objeto JSON na resposta, no formato { "action": { ... }, "proximoPasso": "…" }"`;
 
 /**
  * @param {string} prompt
  * @param {unknown} ocr
- * @param {number|string|null|undefined} [step]
+ * @param {string|number|null|undefined} [step]
  */
 export function buildUserText(prompt, ocr, step) {
   const list = Array.isArray(ocr) ? ocr : [];
@@ -64,9 +65,10 @@ export function buildUserText(prompt, ocr, step) {
     connectOrder.length >= 1
       ? `\nBotões "Connect" na tela, de cima para baixo: ${JSON.stringify(connectOrder)}. No passo 11 toque SOMENTE no primeiro (${JSON.stringify(connectOrder[0])}).\n`
       : "";
-  const stepNum = step != null && step !== "" ? Number(step) : NaN;
-  const stepLine = Number.isFinite(stepNum)
-    ? `\nvoce esta no passo ${stepNum}. Execute APENAS esse passo. PROIBIDO voltar a passos anteriores (ex. no 2 NÃO tap Search; faça type).\n`
+  const stepText =
+    step != null && String(step).trim() !== "" ? String(step).trim() : "";
+  const stepLine = stepText
+    ? `\nvoce esta no passo ${stepText}. Execute APENAS esse passo. PROIBIDO voltar a passos anteriores (ex. no 2 NÃO tap Search; faça type).\n`
     : "";
 
   return `Jornada:
@@ -83,7 +85,7 @@ ${prompt}`;
 /**
  * Extrai action (+ proximoPasso raiz) do JSON da IA: só as chaves presentes (não inventa null).
  * @param {string} content
- * @returns {{ type: string, x?: number, y?: number, direction?: string, text?: string, code?: string, ms?: number, proximoPasso?: number }}
+ * @returns {{ type: string, x?: number, y?: number, direction?: string, text?: string, code?: string, ms?: number, proximoPasso?: string }}
  */
 export function parseActionTypeXY(content) {
   const data = JSON.parse(String(content || ""));
@@ -104,7 +106,7 @@ export function parseActionTypeXY(content) {
     err.code = "RAW_GPT_BAD_ACTION";
     throw err;
   }
-  /** @type {{ type: string, x?: number, y?: number, direction?: string, text?: string, code?: string, ms?: number, proximoPasso?: number }} */
+  /** @type {{ type: string, x?: number, y?: number, direction?: string, text?: string, code?: string, ms?: number, proximoPasso?: string }} */
   const out = { type };
   if (a.x != null && a.x !== "") {
     const x = Number(a.x);
@@ -124,8 +126,8 @@ export function parseActionTypeXY(content) {
     if (Number.isFinite(ms)) out.ms = ms;
   }
   if (data.proximoPasso != null && data.proximoPasso !== "") {
-    const proximoPasso = Number(data.proximoPasso);
-    if (Number.isFinite(proximoPasso)) out.proximoPasso = proximoPasso;
+    const proximoPasso = String(data.proximoPasso).trim();
+    if (proximoPasso) out.proximoPasso = proximoPasso;
   }
   if (type === "scroll" && !out.direction) {
     const err = new Error("raw-gpt: scroll sem direction");
@@ -139,11 +141,11 @@ export function parseActionTypeXY(content) {
  * @param {{
  *   prompt?: string,
  *   ocr: unknown,
- *   step?: number|string|null,
+ *   step?: string|number|null,
  *   apiKey?: string,
  *   model?: string,
  * }} opts
- * @returns {Promise<{ type: string, x?: number, y?: number, direction?: string, text?: string, code?: string, ms?: number, proximoPasso?: number, raw?: string, payload?: object }>}
+ * @returns {Promise<{ type: string, x?: number, y?: number, direction?: string, text?: string, code?: string, ms?: number, proximoPasso?: string, raw?: string, payload?: object }>}
  */
 export async function decideRawAction(opts) {
   const apiKey = opts.apiKey ?? process.env.OPENAI_API_KEY;

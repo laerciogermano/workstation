@@ -25,7 +25,7 @@ const PROMPT = readFileSync(
 async function runCase({ image, prompt, step, expected }) {
   assert.ok(process.env.OPENAI_API_KEY, "falta OPENAI_API_KEY");
   assert.ok(prompt.length >= 1, "prompt vazio");
-  assert.ok(Number.isFinite(Number(step)), "falta step");
+  assert.ok(String(step ?? "").trim(), "falta step");
 
   const elements = await extractFromImage(join(FIXTURES, image), {
     engine: "all",
@@ -34,13 +34,14 @@ async function runCase({ image, prompt, step, expected }) {
   const ocr = compactOcr(elements);
   assert.ok(ocr.length >= 1, "OCR vazio");
 
-  const out = await decideRawAction({ prompt, ocr, step });
+  const out = await decideRawAction({ prompt, ocr, step: String(step) });
   const parsed = parseActionTypeXY(out.raw);
   const { proximoPasso, ...action } = parsed;
 
   console.log({ action, proximoPasso });
   assert.deepEqual(action, expected);
-  assert.ok(Number.isFinite(proximoPasso), "resposta sem proximoPasso numérico");
+  assert.equal(typeof proximoPasso, "string");
+  assert.ok(proximoPasso.trim().length >= 1, "resposta sem proximoPasso");
 }
 
 describe("raw-gpt-decide", () => {

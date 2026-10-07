@@ -244,15 +244,16 @@ npm run raw-gpt:loop -- --avd ConnectMax_Cam --prompt test/fixtures/raw-gpt-deci
 # Sem --prompt: usa test/fixtures/raw-gpt-decide.prompt.txt. Parar: done/fail ou max-steps.
 # Antes: wait default 1000ms. Rollback: `--wait-ms 1000`. Sem --avd → serial via device.config / --device.
 # --prompt obrigatório no one-shot raw-gpt (sem DEFAULT_PROMPT). Antes: default "Na tela People…". Rollback: export DEFAULT_PROMPT.
-# Testes: node --test lib/raw-gpt-decide.test.js (prompt em test/fixtures/raw-gpt-decide.prompt.txt; versão curta: raw-gpt-decide.prompt.simple.txt — testes usam só o .prompt.txt)
-# Casos: `it`/`fixtures` 01–12 (prompt); PNGs `01-search.png` … `13-skip.png` (= passo 12 Skip). Passo 11 = LOOP Connect: com Connect → tap menor y; sem → scroll down + nextStep 11 (repete). Passo 12 = Skip → nextStep 11. Antes: 13 passos (12=scroll, 13=Skip) / Skip sem voltar ao 11. Rollback: prompt sem “LOOP” / Skip sem nextStep 11.
+# Default loop (`raw-gpt-decide.prompt.txt`): passo 1 = abrir gaveta com `scroll direction="down"` (PROIBIDO `up` = shade). Antes: jornada LinkedIn 1→12 nesse arquivo. Rollback: copiar de `raw-gpt-decide.prompt.linkedin.txt` ou `--prompt test/fixtures/raw-gpt-decide.prompt.linkedin.txt`.
+# Testes: node --test lib/raw-gpt-decide.test.js (jornada LinkedIn em `raw-gpt-decide.prompt.linkedin.txt`; curta: `.simple.txt`). Antes: testes liam `.prompt.txt`.
+# Casos LinkedIn: `it`/`fixtures` 01–12; PNGs `01-search.png` … `13-skip.png` (= passo 12 Skip). Passo 11 = LOOP Connect: com Connect → tap menor y; sem → scroll down + nextStep 11 (repete). Passo 12 = Skip → nextStep 11. Antes: 13 passos (12=scroll, 13=Skip) / Skip sem voltar ao 11. Rollback: prompt sem “LOOP” / Skip sem nextStep 11.
 # (+ `11-connect-people.png`, `linkedin-search-comprador-connected.png` = 11c 2º Connect; `12-scroll.png` = 11d sem Connect).
 # Passo 3: se a fixture já tem "Show all results", expected = tap nele (exceção do prompt); BACK só sem esse texto. Rollback: expected KEYCODE_BACK + fixture sem Show all.
 # Antes: nomes longos linkedin-search-*.png / linkedin-tela-inicial no raw-gpt. Rollback: git mv + nomes antigos no teste.
 # Prompt raw-gpt: cada passo com bullets + `ocr exemplo:` (hits de fixture; só referência). Copiar x/y do OCR atual. Antes: label `ocr:`. Rollback: `ocr:` / prompt curto sem blocos.
 # Passo 9: linha completa "Campinas, São Paulo, Brazil"; PROIBIDO fragmento "Campinas," / campo topo. Passo 11: menor y entre "Connect".
 # raw-gpt-decide: `decideFromImage({ system, user, imagePath })` — system/user JSON em inglês (keys+textos); messages = `JSON.stringify`. Defaults: `DEFAULT_SYSTEM` / `DEFAULT_USER_RULES`. Retorno `{ action, nextStep, ocr, elements, raw, payload, system, user }`. Antes: chaves PT (`jornada`, `proximoPasso`, `regras`). Rollback: objetos PT + parse `proximoPasso`.
-# Journey fixtures (`raw-gpt-decide.prompt.txt` / `.simple.txt`) permanecem em português; só o schema system/user é EN.
+# Journey fixtures (`.prompt.txt` gaveta / `.prompt.linkedin.txt` / `.simple.txt`) permanecem em português; só o schema system/user é EN.
 # nextStep: schema `"…"` (não `""`); após último passo `"14"`/`"done"`. Parse aceita `nextStep` (fallback `proximoPasso`).
 # raw-gpt-decide: `temperature: 0` (exceto gpt-5*), prompt depois do extract, `reason` ok, hint dos "Connect" de cima p/ baixo.
 # Parse: só chaves presentes na IA; raiz `{ "action": ..., "nextStep": "…" }`.

@@ -1,6 +1,6 @@
 /**
  * raw-gpt: um caso por tela (PNG em fixtures) + mesmo prompt + OpenAI real.
- * Índices dos `it` / fixtures = ordem do cenário em raw-gpt-decide.prompt.txt.
+ * Índices dos `it` / fixtures = ordem do cenário em raw-gpt-decide.prompt.linkedin.txt.
  */
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
@@ -20,7 +20,7 @@ const FIXTURES = join(SRC_ROOT, "test/fixtures");
 loadEnvFiles([join(SRC_ROOT, ".env"), join(SRC_ROOT, ".env.local")]);
 
 const PROMPT = readFileSync(
-  join(FIXTURES, "raw-gpt-decide.prompt.txt"),
+  join(FIXTURES, "raw-gpt-decide.prompt.linkedin.txt"),
   "utf8",
 ).trim();
 

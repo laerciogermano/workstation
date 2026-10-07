@@ -109,7 +109,7 @@ if (avd) {
 }
 
 const engine = argValue("--engine") || process.env.SCREEN_ROBOT_OCR || "all";
-const waitMs = Number(argValue("--wait-ms") || 5000);
+const waitMs = Number(argValue("--wait-ms") || 2000);
 const maxSteps = Number(argValue("--max-steps") || 50);
 let step =
   argValue("--step") != null && String(argValue("--step")).trim() !== ""

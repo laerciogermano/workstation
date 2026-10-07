@@ -245,7 +245,7 @@ npm run raw-gpt -- --image test/fixtures/linkedin-people-comprador-connect.png -
 #   npm run raw-gpt:loop -- --avd ConnectMax_Cam --prompt test/fixtures/raw-gpt-decide.prompt.txt --step 1 --model gemini-3.8-flash
 # --model: ids do catálogo [`lib/agent-models.js`](lib/agent-models.js) (OpenAI `gpt-*` / Gemini `gemini-*`). Default: `RAW_GPT_MODEL` → `OPENAI_MODEL` → `GEMINI_MODEL` → `gpt-4o-mini`. Provider pela id (`providerForModel`). Keys: `OPENAI_API_KEY` / `GEMINI_API_KEY`.
 # Antes: só OpenAI chat.completions em `decideRawAction`. Depois: OpenAI ou Gemini via `openai.js` / `gemini.js`. Rollback: fixar `generateOpenAI` e exigir `OPENAI_API_KEY`.
-# Loop: AVD/serial → screenshot → decideFromImage → executeAction → wait. Default `--wait-ms 5000`. Flags: --wait-ms, --max-steps, --model, --engine, --device/--serial.
+# Loop: AVD/serial → screenshot → decideFromImage → executeAction → wait. Default `--wait-ms 2000` (antes: 5000). Flags: --wait-ms, --max-steps, --model, --engine, --device/--serial.
 # raw-gpt / loop: cada request grava `usage-2.0/<timestamp>.json` ({ entrada, resposta }). Writer: [`lib/usage-write.js`](lib/usage-write.js). Rollback: omitir `writeUsage20` em `decideRawAction`.
 # Antes: só CLI pontual (raw-gpt). Rollback: remover raw-gpt-from-image.js, raw-gpt-loop.js e scripts npm.
 # --prompt obrigatório (sem DEFAULT_PROMPT). Antes: default "Na tela People…". Rollback: export DEFAULT_PROMPT.

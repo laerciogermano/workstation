@@ -11,7 +11,7 @@ import { fileURLToPath } from "node:url";
 import { loadEnvFiles } from "../lib/load-env.js";
 import {
   DEFAULT_SYSTEM,
-  DEFAULT_USER_REGRAS,
+  DEFAULT_USER_RULES,
   decideFromImage,
 } from "../lib/raw-gpt-decide.js";
 
@@ -59,9 +59,9 @@ const out = await decideFromImage({
   imagePath,
   system: DEFAULT_SYSTEM,
   user: {
-    jornada: prompt,
+    journey: prompt,
     step,
-    regras: DEFAULT_USER_REGRAS,
+    rules: DEFAULT_USER_RULES,
   },
   apiKey,
   model,
@@ -75,5 +75,5 @@ console.log({
 });
 console.log(out.payload);
 process.stdout.write(
-  JSON.stringify({ action: out.action, proximoPasso: out.proximoPasso }),
+  JSON.stringify({ action: out.action, nextStep: out.nextStep }),
 );

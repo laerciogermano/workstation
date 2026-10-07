@@ -245,11 +245,11 @@ npm run raw-gpt -- --image test/fixtures/linkedin-people-comprador-connect.png -
 # Antes: nomes longos linkedin-search-*.png / linkedin-tela-inicial no raw-gpt. Rollback: git mv + nomes antigos no teste.
 # Prompt raw-gpt: cada passo 1–13 com bullets + `ocr:` (hits reais de extractFromImage+compactOcr das fixtures). Copiar x/y do OCR atual. Rollback: prompt só com linhas curtas sem ocr/bullets.
 # Passo 9: linha completa "Campinas, São Paulo, Brazil"; PROIBIDO fragmento "Campinas," / campo topo. Passo 11: menor y entre "Connect".
-# raw-gpt-decide: `decideFromImage({ system, user, imagePath })` — system/user são objetos JSON; messages = `JSON.stringify` de cada um (seções = chaves). Defaults: `DEFAULT_SYSTEM` / `DEFAULT_USER_REGRAS`. Retorno `{ action, proximoPasso, ocr, elements, raw, payload, system, user }`. Antes: prosa SYSTEM_PROMPT + buildUserText. Rollback: strings longas em messages.
-# proximoPasso: schema com `"…"` (não `""`); após último passo `"14"`/`"done"`. Antes: `raizObrigatoria.proximoPasso: ""` → modelo devolvia vazio no 13. Rollback: `""` no schema.
-# raw-gpt-decide: `temperature: 0` (exceto gpt-5*), prompt depois do extract, `motivo` ok, hint dos "Connect" de cima p/ baixo. Rollback: sem temperature/hint; prompt antes; proibir motivo.
-# Parse: só chaves presentes na IA; raiz obrigatória { "action": ... }. Rollback: aceitar acao/raiz.
-# step e proximoPasso: mesmo tipo string (`"3"` / id / NL). Saída de um turno = entrada do próximo (`step = out.proximoPasso`). CLI: `--step "…"`. Antes: número. Rollback: `Number(...)` em step/proximoPasso.
+# raw-gpt-decide: `decideFromImage({ system, user, imagePath })` — system/user JSON em inglês (keys+textos); messages = `JSON.stringify`. Defaults: `DEFAULT_SYSTEM` / `DEFAULT_USER_RULES`. Retorno `{ action, nextStep, ocr, elements, raw, payload, system, user }`. Antes: chaves PT (`jornada`, `proximoPasso`, `regras`). Rollback: objetos PT + parse `proximoPasso`.
+# nextStep: schema `"…"` (não `""`); após último passo `"14"`/`"done"`. Parse aceita `nextStep` (fallback `proximoPasso`).
+# raw-gpt-decide: `temperature: 0` (exceto gpt-5*), prompt depois do extract, `reason` ok, hint dos "Connect" de cima p/ baixo.
+# Parse: só chaves presentes na IA; raiz `{ "action": ..., "nextStep": "…" }`.
+# step e nextStep: string (`"3"` / id / NL). Saída = entrada do próximo (`step = out.nextStep`). CLI: `--step "…"`.
 ```
 
 **Setup CLI (modelos):** em TTY, sem `--model` / `--force-model` / `--no-prompt`, o agent lista o catálogo ([`lib/agent-models.js`](lib/agent-models.js)) e pede a escolha (`1`, `1,3`, `a`=todos, ou id). Vários modelos → roda em sequência, log em `logs/agent/<model>/`. Rollback: `--model <id>` ou `--no-prompt`.

@@ -10,7 +10,7 @@ import { describe, it } from "node:test";
 import { loadEnvFiles } from "./load-env.js";
 import {
   DEFAULT_SYSTEM,
-  DEFAULT_USER_REGRAS,
+  DEFAULT_USER_RULES,
   decideFromImage,
 } from "./raw-gpt-decide.js";
 
@@ -34,17 +34,17 @@ async function runCase({ image, prompt, step, expected }) {
     imagePath: join(FIXTURES, image),
     system: DEFAULT_SYSTEM,
     user: {
-      jornada: prompt,
+      journey: prompt,
       step,
-      regras: DEFAULT_USER_REGRAS,
+      rules: DEFAULT_USER_RULES,
     },
   });
   assert.ok(out.ocr.length >= 1, "OCR vazio");
   console.log({ step, image, ocr: out.ocr });
   console.log(out);
   assert.deepEqual(out.action, expected);
-  assert.equal(typeof out.proximoPasso, "string");
-  assert.ok(out.proximoPasso.trim().length >= 1, "resposta sem proximoPasso");
+  assert.equal(typeof out.nextStep, "string");
+  assert.ok(out.nextStep.trim().length >= 1, "response missing nextStep");
 }
 
 describe("raw-gpt-decide", () => {

@@ -1,20 +1,19 @@
 /**
- * Decisão crua via chat.completions (mesmo contrato do scripts/raw-gpt.js).
- * System/user vão à API como JSON (seções = chaves do objeto).
- * Retorno: action só com chaves presentes na resposta da IA.
+ * Raw decision via chat.completions (same contract as scripts/raw-gpt.js).
+ * System/user are sent as JSON (sections = object keys).
+ * Return: action with only keys present in the model response.
  */
 
 import { compactOcr } from "./agent-decide.js";
 import { extractFromImage } from "./extract-engines.js";
 
-/** Regras system padrão (entrada de decideFromImage / decideRawAction). */
+/** Default system object (decideFromImage / decideRawAction input). */
 export const DEFAULT_SYSTEM = {
-  papel:
-    "IA agente autônoma que controla um smartphone Android via lib screen-robot",
-  recebe: ["jornada", "ocr", "step"],
-  resposta: {
-    raizObrigatoria: { action: {}, proximoPasso: "…" },
-    formato: {
+  role: "Autonomous AI agent that controls an Android smartphone via the screen-robot lib",
+  receives: ["journey", "ocr", "step"],
+  response: {
+    requiredRoot: { action: {}, nextStep: "…" },
+    format: {
       action: {
         type: "tap|scroll|type|key|sleep|done|fail",
         x: null,
@@ -24,61 +23,66 @@ export const DEFAULT_SYSTEM = {
         code: null,
         ms: null,
       },
-      motivo: null,
-      proximoPasso: null,
+      reason: null,
+      nextStep: null,
     },
-    soJson: true,
-    omitirNull: true,
-    proibidoActionNaRaiz: true,
-    proximoPassoNuncaVazio: true,
+    jsonOnly: true,
+    omitNull: true,
+    forbidActionAtRoot: true,
+    nextStepNeverEmpty: true,
   },
-  tipos: {
-    tap: "obrigatório x e y numéricos do OCR desta tela (centro do alvo)",
-    scroll: "direction up|down|left|right (obrigatório; x/y omitidos)",
-    type: "text a digitar",
-    key: "code (ex. KEYCODE_BACK, KEYCODE_ENTER)",
+  types: {
+    tap: "required numeric x and y from current-screen OCR (target center)",
+    scroll: "direction up|down|left|right (required; omit x/y)",
+    type: "text to type",
+    key: "code (e.g. KEYCODE_BACK, KEYCODE_ENTER)",
     sleep: "ms",
-    done: "jornada concluída",
-    fail: "só se impossível seguir",
+    done: "journey finished",
+    fail: "only if impossible to continue",
   },
   step: {
-    tipo: "texto livre (mesmo de proximoPasso)",
-    exemplos: ["3", "connect", "digite comprador", "14", "done"],
-    proximoPassoViraStepDoProximoTurno: true,
-    seCumpriuAvance: true,
-    seSleepScrollRetryMesmoTexto: true,
-    proibidoInventarPassoForaDaJornada: true,
-    aposUltimoPasso: "proximoPasso = \"14\" ou \"done\" (nunca \"\")",
+    type: "free text (same as nextStep)",
+    examples: ["3", "connect", "type buyer", "14", "done"],
+    nextStepBecomesNextTurnStep: true,
+    ifCompletedAdvance: true,
+    ifSleepScrollRetrySameText: true,
+    forbidInventingStepOutsideJourney: true,
+    afterLastStep: 'nextStep = "14" or "done" (never "")',
   },
-  regras: [
-    "voce esta no passo … = execute SOMENTE esse passo; PROIBIDO refazer passos já cumpridos",
-    "proximoPasso do turno N = step do turno N+1 (copiar o valor); se cumpriu → avance; sleep/scroll/retry → mesmo texto",
-    "proximoPasso OBRIGATÓRIO e não vazio; PROIBIDO \"\" / null",
-    "tap.x / tap.y = EXCLUSIVAMENTE de um hit do OCR atual; proibido inventar ou reusar coords",
-    "Cada item do OCR (text/icon) é clicável",
-    "Sem alvo do passo → sleep ou scroll; evite fail",
-    "Um único objeto JSON na resposta: { action, proximoPasso }",
+  rules: [
+    "you are on step … = execute ONLY that step; FORBIDDEN to redo completed steps",
+    "nextStep of turn N = step of turn N+1 (copy the value); if completed → advance; sleep/scroll/retry → same text",
+    'nextStep is REQUIRED and non-empty; FORBIDDEN "" / null',
+    "tap.x / tap.y = EXCLUSIVELY from a hit in the current OCR; inventing or reusing other coords is forbidden",
+    "Every OCR item (text/icon) is tappable",
+    "No target for the step → sleep or scroll; avoid fail",
+    "Single JSON object in the response: { action, nextStep }",
   ],
 };
 
-/** Regras user padrão (seção `regras` do input user). */
-export const DEFAULT_USER_REGRAS = [
-  "Defina a próxima action com base no OCR e na jornada",
-  "Em cada ação, diga no motivo qual passo (1–13) está em curso",
-  "Ordem obrigatória 1→X (X=ultimo passo). Uma ação por turno",
-  "Após cumprir o último passo, proximoPasso = \"14\" ou \"done\" (nunca string vazia)",
-  "Toque só em textos ou ícones que estão na tela agora",
-  "PROIBIDO fail se o texto do passo atual estiver na tela",
-  "fail só se for impossível após tentar de novo; falhas antigas NÃO impedem um novo toque",
+/** Default user rules (user.rules section). */
+export const DEFAULT_USER_RULES = [
+  "Choose the next action from the OCR and the journey",
+  "In every action, put in reason which step (1–13) is in progress",
+  "Mandatory order 1→X (X=last step). One action per turn",
+  'After completing the last step, nextStep = "14" or "done" (never empty string)',
+  "Tap only texts or icons present on the screen now",
+  "FORBIDDEN fail if the current step text is on screen",
+  "fail only if impossible after retry; past failures do NOT block a new tap",
 ];
 
+/** @deprecated use DEFAULT_USER_RULES */
+export const DEFAULT_USER_REGRAS = DEFAULT_USER_RULES;
+
 /**
- * Monta o objeto user enviado à IA (seções = chaves).
+ * Build the user object sent to the model (sections = keys).
  * @param {{
+ *   journey?: string,
  *   jornada?: string,
  *   prompt?: string,
  *   ocr?: unknown,
  *   step?: string|null,
+ *   rules?: string[],
  *   regras?: string[],
  *   [key: string]: unknown,
  * }} opts
@@ -99,34 +103,38 @@ export function buildUserInput(opts = {}) {
       : String(opts.step).trim() || undefined;
 
   const {
-    jornada: _j,
-    prompt: _p,
-    ocr: _o,
-    step: _s,
-    regras: _r,
-    connectOrder: _c,
+    journey: _journey,
+    jornada: _jornada,
+    prompt: _prompt,
+    ocr: _ocr,
+    step: _step,
+    rules: _rules,
+    regras: _regras,
+    connectOrder: _connect,
+    stepInstruction: _si,
+    connectInstruction: _ci,
     ...extra
   } = opts;
 
   /** @type {Record<string, unknown>} */
   const user = {
-    jornada: opts.jornada ?? opts.prompt ?? "",
+    journey: opts.journey ?? opts.jornada ?? opts.prompt ?? "",
     ocr: opts.ocr ?? [],
-    regras: opts.regras ?? DEFAULT_USER_REGRAS,
+    rules: opts.rules ?? opts.regras ?? DEFAULT_USER_RULES,
     ...extra,
   };
   if (stepText) {
     user.step = stepText;
-    user.instrucaoStep = `voce esta no passo ${stepText}. Execute APENAS esse passo. PROIBIDO voltar a passos anteriores (ex. no 2 NÃO tap Search; faça type).`;
+    user.stepInstruction = `you are on step ${stepText}. Execute ONLY that step. FORBIDDEN to go back to earlier steps (e.g. on 2 do NOT tap Search; type instead).`;
   }
   if (connectOrder.length >= 1) {
     user.connectOrder = connectOrder;
-    user.instrucaoConnect = `Botões Connect de cima para baixo. No passo 11 toque SOMENTE no primeiro: ${JSON.stringify(connectOrder[0])}`;
+    user.connectInstruction = `Connect buttons top to bottom. On step 11 tap ONLY the first: ${JSON.stringify(connectOrder[0])}`;
   }
   return user;
 }
 
-/** @deprecated use buildUserInput + JSON.stringify; mantido para callers antigos */
+/** @deprecated use buildUserInput + JSON.stringify */
 export function buildUserText(prompt, ocr, step) {
   return JSON.stringify(buildUserInput({ prompt, ocr, step }));
 }
@@ -135,30 +143,31 @@ export function buildUserText(prompt, ocr, step) {
 export const SYSTEM_PROMPT = JSON.stringify(DEFAULT_SYSTEM);
 
 /**
- * Extrai action (+ proximoPasso raiz) do JSON da IA: só as chaves presentes (não inventa null).
+ * Parse action (+ nextStep at root) from model JSON: only present keys (no invented nulls).
+ * Accepts nextStep; falls back to proximoPasso for older replies.
  * @param {string} content
- * @returns {{ type: string, x?: number, y?: number, direction?: string, text?: string, code?: string, ms?: number, proximoPasso?: string }}
+ * @returns {{ type: string, x?: number, y?: number, direction?: string, text?: string, code?: string, ms?: number, nextStep?: string }}
  */
 export function parseActionTypeXY(content) {
   const data = JSON.parse(String(content || ""));
   if (!data || typeof data !== "object" || !("action" in data)) {
-    const err = new Error('raw-gpt: resposta deve ser { "action": ... }');
+    const err = new Error('raw-gpt: response must be { "action": ... }');
     err.code = "RAW_GPT_BAD_ACTION";
     throw err;
   }
   const a = data.action;
   if (!a || typeof a !== "object") {
-    const err = new Error("raw-gpt: falta action");
+    const err = new Error("raw-gpt: missing action");
     err.code = "RAW_GPT_BAD_ACTION";
     throw err;
   }
   const type = String(a.type || "").toLowerCase();
   if (!type) {
-    const err = new Error("raw-gpt: action.type vazio");
+    const err = new Error("raw-gpt: empty action.type");
     err.code = "RAW_GPT_BAD_ACTION";
     throw err;
   }
-  /** @type {{ type: string, x?: number, y?: number, direction?: string, text?: string, code?: string, ms?: number, proximoPasso?: string }} */
+  /** @type {{ type: string, x?: number, y?: number, direction?: string, text?: string, code?: string, ms?: number, nextStep?: string }} */
   const out = { type };
   if (a.x != null && a.x !== "") {
     const x = Number(a.x);
@@ -177,12 +186,13 @@ export function parseActionTypeXY(content) {
     const ms = Number(a.ms);
     if (Number.isFinite(ms)) out.ms = ms;
   }
-  if (data.proximoPasso != null && data.proximoPasso !== "") {
-    const proximoPasso = String(data.proximoPasso).trim();
-    if (proximoPasso) out.proximoPasso = proximoPasso;
+  const nextRaw = data.nextStep ?? data.proximoPasso;
+  if (nextRaw != null && nextRaw !== "") {
+    const nextStep = String(nextRaw).trim();
+    if (nextStep) out.nextStep = nextStep;
   }
   if (type === "scroll" && !out.direction) {
-    const err = new Error("raw-gpt: scroll sem direction");
+    const err = new Error("raw-gpt: scroll without direction");
     err.code = "RAW_GPT_BAD_ACTION";
     throw err;
   }
@@ -194,6 +204,7 @@ export function parseActionTypeXY(content) {
  *   system?: object,
  *   user?: object,
  *   prompt?: string,
+ *   journey?: string,
  *   jornada?: string,
  *   ocr?: unknown,
  *   step?: string|null,
@@ -204,29 +215,31 @@ export function parseActionTypeXY(content) {
 export async function decideRawAction(opts) {
   const apiKey = opts.apiKey ?? process.env.OPENAI_API_KEY;
   if (!apiKey) {
-    const err = new Error("falta OPENAI_API_KEY");
+    const err = new Error("missing OPENAI_API_KEY");
     err.code = "OPENAI_NO_API_KEY";
     throw err;
   }
   const system = opts.system ?? DEFAULT_SYSTEM;
   if (!system || typeof system !== "object") {
-    const err = new Error("falta system (objeto JSON)");
+    const err = new Error("missing system (JSON object)");
     err.code = "RAW_GPT_NO_SYSTEM";
     throw err;
   }
 
   const user = buildUserInput({
     ...(opts.user && typeof opts.user === "object" ? opts.user : {}),
-    jornada:
+    journey:
+      opts.user?.journey ??
       opts.user?.jornada ??
       opts.user?.prompt ??
+      opts.journey ??
       opts.jornada ??
       opts.prompt,
     ocr: opts.ocr ?? opts.user?.ocr,
     step: opts.step ?? opts.user?.step,
   });
-  if (!String(user.jornada || "").trim()) {
-    const err = new Error("falta user.jornada / prompt");
+  if (!String(user.journey || "").trim()) {
+    const err = new Error("missing user.journey / prompt");
     err.code = "RAW_GPT_NO_PROMPT";
     throw err;
   }
@@ -240,7 +253,7 @@ export async function decideRawAction(opts) {
       { role: "user", content: JSON.stringify(user) },
     ],
   };
-  // gpt-5* só aceita temperature default; 0 → HTTP 400.
+  // gpt-5* only accepts default temperature; 0 → HTTP 400.
   if (!/^gpt-5/i.test(model)) payload.temperature = 0;
 
   const res = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -264,12 +277,13 @@ export async function decideRawAction(opts) {
 
 /**
  * extractFromImage → compactOcr → decideRawAction.
- * Entrada: system/user como objetos JSON (seções = chaves); OCR preenchido aqui.
+ * Input: system/user as JSON objects (sections = keys); OCR filled here.
  * @param {{
  *   imagePath: string,
  *   system?: object,
  *   user?: object,
  *   prompt?: string,
+ *   journey?: string,
  *   jornada?: string,
  *   step?: string|null,
  *   apiKey?: string,
@@ -279,7 +293,7 @@ export async function decideRawAction(opts) {
  * }} opts
  * @returns {Promise<{
  *   action: { type: string, x?: number, y?: number, direction?: string, text?: string, code?: string, ms?: number },
- *   proximoPasso?: string,
+ *   nextStep?: string,
  *   ocr: object[],
  *   elements: object[],
  *   raw?: string,
@@ -291,13 +305,13 @@ export async function decideRawAction(opts) {
 export async function decideFromImage(opts) {
   const imagePath = opts.imagePath;
   if (!imagePath) {
-    const err = new Error("falta imagePath");
+    const err = new Error("missing imagePath");
     err.code = "RAW_GPT_NO_IMAGE";
     throw err;
   }
   const system = opts.system ?? DEFAULT_SYSTEM;
   if (!system || typeof system !== "object") {
-    const err = new Error("falta system (objeto JSON)");
+    const err = new Error("missing system (JSON object)");
     err.code = "RAW_GPT_NO_SYSTEM";
     throw err;
   }
@@ -310,16 +324,16 @@ export async function decideFromImage(opts) {
     system,
     user: opts.user,
     prompt: opts.prompt,
-    jornada: opts.jornada,
+    journey: opts.journey ?? opts.jornada,
     ocr,
     step: opts.step,
     apiKey: opts.apiKey,
     model: opts.model,
   });
-  const { raw, payload, proximoPasso, system: sys, user, ...action } = out;
+  const { raw, payload, nextStep, system: sys, user, ...action } = out;
   return {
     action,
-    proximoPasso,
+    nextStep,
     ocr,
     elements,
     raw,

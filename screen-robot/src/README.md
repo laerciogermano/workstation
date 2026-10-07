@@ -252,9 +252,9 @@ npm run raw-gpt -- --image test/fixtures/linkedin-people-comprador-connect.png -
 # --prompt obrigatório (sem DEFAULT_PROMPT). Antes: default "Na tela People…". Rollback: export DEFAULT_PROMPT.
 # Testes: node --test lib/raw-gpt-decide.test.js (prompt em test/fixtures/raw-gpt-decide.prompt.txt; its em paralelo via describe concurrency)
 # Prompt curto: `test/fixtures/raw-gpt-decide.prompt.simple.txt` (jornada 1→12 Rio; trazido da main). Uso: `--prompt test/fixtures/raw-gpt-decide.prompt.simple.txt`. Rollback: remover o arquivo.
-# Prompts: entre cada operação → `esperar ms=3000` (antes: 1000 / sem intercalação). Rollback: tirar a regra e os "depois esperar" dos passos.
+# Prompt principal: passos 1–12 sem `esperar` intercalado (antes: esperar ms=3000 entre ops / índices com buracos). Rollback: reinserir passos esperar e renumerar.
 # Casos: `it`/`fixtures` 01–13 (ordem do prompt); PNGs `01-search.png` … `13-skip.png` (+ `11-connect-people.png`, `linkedin-search-comprador-connected.png` = 11c 2º Connect).
-# Passo 3: teclado (q/w/e…) → BACK 1× e proximoPasso "4"; teclado já fechado + "Show all results" → esperar ms=1000, proximoPasso "4" (PROIBIDO 2º BACK). Rollback: só "action BACK" sem regra de nextStep/teclado fechado.
+# Passo 3: teclado (q/w/e…) → BACK 1× e proximoPasso "4"; teclado já fechado + "Show all results" → PROIBIDO BACK, proximoPasso "4". Rollback: só "action BACK" sem regra de nextStep/teclado fechado.
 # Passo 12: tap só text EXATO "Skip"; PROIBIDO Add/note/título da sheet. Rollback: "escolha Skip, NÃO Add a note" sem listar fragmentos.
 # Antes: nomes longos linkedin-search-*.png / linkedin-tela-inicial no raw-gpt. Rollback: git mv + nomes antigos no teste.
 # Prompt raw-gpt: sem menção a x/y/thresholds; passo 9 por text (sugestão vs campo). Rollback: versão com y<120/y>120 no .prompt.txt.

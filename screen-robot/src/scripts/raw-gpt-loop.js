@@ -4,7 +4,7 @@
  *
  *   npm run raw-gpt:loop -- --avd ConnectMax_Cam --prompt test/fixtures/raw-gpt-decide.prompt.txt
  *   npm run raw-gpt:loop -- --prompt test/fixtures/raw-gpt-decide.prompt.txt --step 1
- *   npm run raw-gpt:loop -- --avd ConnectMax_Cam --prompt "…" --step 1 --max-steps 40 --wait-ms 5000
+ *   npm run raw-gpt:loop -- --avd ConnectMax_Cam --prompt "…" --step 1 --max-steps 40 --wait-ms 0
  */
 import { existsSync, mkdirSync, readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
@@ -90,7 +90,7 @@ if (avd) {
 
 const model = argValue("--model") || process.env.OPENAI_MODEL || "gpt-4o-mini";
 const engine = argValue("--engine") || process.env.SCREEN_ROBOT_OCR || "all";
-const waitMs = Number(argValue("--wait-ms") || 5000);
+const waitMs = Number(argValue("--wait-ms") || 0);
 const maxSteps = Number(argValue("--max-steps") || 50);
 let step =
   argValue("--step") != null && String(argValue("--step")).trim() !== ""

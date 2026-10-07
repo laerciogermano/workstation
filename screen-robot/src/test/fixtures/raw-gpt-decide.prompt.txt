@@ -32,19 +32,19 @@ Copie tap.x/tap.y EXATAMENTE de um hit do OCR atual (mesmo text).
 - action: tap no campo Add a location
 - PROIBIDO tap em chips Brazil/São Paulo/Minas; PROIBIDO "Show results" ainda
 
-8. digite Belo Horizonte — type "Belo Horizonte" (teclado/campo já aberto).
-- action: type text="Belo Horizonte"
+8. digite Contagem — type "Contagem" (teclado/campo já aberto).
+- action: type text="Contagem"
 - PROIBIDO tap de novo em "Add a location"
 
-9. clique na opção cidade+estado — tap no hit EXATO "Belo Horizonte, Minas Gerais, Brazil" (y≈249).
-- action: tap no texto completo cidade+estado+país ("Belo Horizonte, Minas Gerais, Brazil")
-- Alvo OCR: "Belo Horizonte, Minas Gerais, Brazil" (ou "BeloHorizonte,MinasGerais,Brazil")
-- PROIBIDO "Belo Horizonte, Brazil" / "BeloHorizonte,Brazil" (sem Minas Gerais — ERRADO)
+9. clique na opção cidade+estado — tap no hit EXATO "Contagem, Minas Gerais, Brazil" (y≈249).
+- action: tap no texto completo cidade+estado+país ("Contagem, Minas Gerais, Brazil")
+- Alvo OCR: "Contagem, Minas Gerais, Brazil" (ou "Contagem,MinasGerais,Brazil")
+- PROIBIDO "Contagem, Brazil" / "Contagem,Brazil" (sem Minas Gerais — ERRADO)
 - PROIBIDO outras cidades/regiões; PROIBIDO fragmentos; PROIBIDO campo topo (y≈81); PROIBIDO teclado/Gboard
 
 10. clique em Show results — tap em "Show results".
 - action: tap "Show results"
-- PROIBIDO "Add a location" / linha Belo Horizonte de novo
+- PROIBIDO "Add a location" / linha Contagem de novo
 
 11. Connect — LOOP: achar "Connect" no OCR atual ou rolar até achar.
 - Há text exato "Connect"? → tap no de MENOR y (primeiro da lista). Ignore "Pending", "Message", "+ Connect"

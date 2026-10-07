@@ -237,7 +237,7 @@ npm run agent -- --model gemini-2.5-flash --no-fallback --prompt ../roteiros/abr
 npm run agent -- --sense vision --prompt ../roteiros/teste.md --no-prompt
 npm run agent -- --vision --provider openai --model gpt-4o-mini --prompt ../roteiros/teste.md
 npm run agent:smoke              # 1–2 passos no device; sem key = heurística Connect/scroll
-npm run raw-gpt -- --image test/fixtures/linkedin-people-comprador-connect.png --prompt "…"
+npm run raw-gpt -- --image test/fixtures/linkedin-people-comprador-connect.png --prompt "…" --step 11
 # --prompt obrigatório (sem DEFAULT_PROMPT). Antes: default "Na tela People…". Rollback: export DEFAULT_PROMPT.
 # Testes: node --test lib/raw-gpt-decide.test.js (prompt em test/fixtures/raw-gpt-decide.prompt.txt; its em paralelo via describe concurrency)
 # Casos: `it`/`fixtures` 01–13 (ordem do prompt); PNGs `01-search.png` … `13-skip.png` (+ `11-connect-people.png`, `linkedin-search-comprador-connected.png` = 11c 2º Connect).
@@ -247,6 +247,7 @@ npm run raw-gpt -- --image test/fixtures/linkedin-people-comprador-connect.png -
 # Passo 11 (.prompt.txt em linguagem natural): primeiro "Connect" da lista; sem jargão OCR. Rollback: menções a OCR/hit/JSON no prompt.
 # raw-gpt-decide: `temperature: 0` (exceto gpt-5*), prompt depois do extract, `motivo` ok, hint dos "Connect" de cima p/ baixo. Rollback: sem temperature/hint; prompt antes; proibir motivo.
 # Parse: só chaves presentes na IA; raiz obrigatória { "action": ... }. Rollback: aceitar acao/raiz.
+# step: `decideRawAction({ prompt, ocr, step })` injeta "voce esta no passo N"; resposta `passo` (raiz) = próximo input do loop (`step = out.passo`). CLI: `--step N`. Antes: sufixo no prompt string. Rollback: concatenar "voce esta no passo N" no prompt e ignorar `opts.step` / `data.passo`.
 ```
 
 **Setup CLI (modelos):** em TTY, sem `--model` / `--force-model` / `--no-prompt`, o agent lista o catálogo ([`lib/agent-models.js`](lib/agent-models.js)) e pede a escolha (`1`, `1,3`, `a`=todos, ou id). Vários modelos → roda em sequência, log em `logs/agent/<model>/`. Rollback: `--model <id>` ou `--no-prompt`.

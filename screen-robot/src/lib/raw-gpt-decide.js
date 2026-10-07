@@ -4,9 +4,9 @@
  */
 
 export const SYSTEM_PROMPT = `Você é uma IA agente autônoma que controla um smartphone Android.
-Você recebe: (1) a jornada/objetivo e (2) o OCR da tela atual (lista extract: type, text, x, y).
+Você recebe: (1) a jornada/objetivo, (2) o OCR da tela atual (lista extract: type, text, x, y) e (3) o passo atual ("voce esta no passo N").
 Decida UMA próxima ação e responda APENAS um JSON válido (sem markdown, sem texto fora do JSON).
-O JSON raiz OBRIGATÓRIO é exatamente { "action": { ... } } — proibido devolver o objeto da ação na raiz.
+O JSON raiz OBRIGATÓRIO é exatamente { "action": { ... }, "passo": N } — proibido devolver o objeto da ação na raiz.
 
 Formato único:
 {
@@ -19,7 +19,8 @@ Formato único:
     "code": null,
     "ms": null
   },
-  "motivo": null
+  "motivo": null,
+  "passo": null
 }
 
 Tipos (lib screen-robot):
@@ -31,18 +32,25 @@ Tipos (lib screen-robot):
 - done: jornada concluída
 - fail: só se impossível seguir
 
+passo (raiz, numérico, obrigatório):
+- número a usar no PRÓXIMO turno (o runtime reenvia como step)
+- se esta ação cumpriu o passo atual → avance (N+1, ou o indicado pela jornada)
+- se ainda no mesmo passo (sleep/scroll/retry) → devolva o mesmo N
+- NUNCA invente passo fora da jornada
+
 Regras:
 - NÃO retorne atributos com valor null; omita a chave
 - tap.x / tap.y = EXCLUSIVAMENTE de um hit do OCR atual; proibido inventar ou reusar coords de outro contexto
 - Cada item do OCR (text/icon) é clicável
 - Sem alvo do passo → sleep ou scroll; evite fail
-- Um único objeto JSON na resposta, no formato { "action": { ... } }"`;
+- Um único objeto JSON na resposta, no formato { "action": { ... }, "passo": N }"`;
 
 /**
  * @param {string} prompt
  * @param {unknown} ocr
+ * @param {number|string|null|undefined} [step]
  */
-export function buildUserText(prompt, ocr) {
+export function buildUserText(prompt, ocr, step) {
   const list = Array.isArray(ocr) ? ocr : [];
   const connectOrder = list
     .map((h, i) =>
@@ -55,22 +63,26 @@ export function buildUserText(prompt, ocr) {
     connectOrder.length >= 1
       ? `\nBotões "Connect" na tela, de cima para baixo: ${JSON.stringify(connectOrder)}. No passo 11 toque SOMENTE no primeiro (${JSON.stringify(connectOrder[0])}).\n`
       : "";
+  const stepNum = step != null && step !== "" ? Number(step) : NaN;
+  const stepLine = Number.isFinite(stepNum)
+    ? `\nvoce esta no passo ${stepNum}\n`
+    : "";
 
   return `Jornada:
 
 
 OCR atual (JSON):
 ${JSON.stringify(ocr)}
-${connectHint}
+${connectHint}${stepLine}
 Defina a próxima action com base no OCR e no prompt abaixo.
 
 ${prompt}`;
 }
 
 /**
- * Extrai action do JSON da IA: só as chaves presentes (não inventa null).
+ * Extrai action (+ passo raiz) do JSON da IA: só as chaves presentes (não inventa null).
  * @param {string} content
- * @returns {{ type: string, x?: number, y?: number, direction?: string, text?: string, code?: string, ms?: number }}
+ * @returns {{ type: string, x?: number, y?: number, direction?: string, text?: string, code?: string, ms?: number, passo?: number }}
  */
 export function parseActionTypeXY(content) {
   const data = JSON.parse(String(content || ""));
@@ -91,7 +103,7 @@ export function parseActionTypeXY(content) {
     err.code = "RAW_GPT_BAD_ACTION";
     throw err;
   }
-  /** @type {{ type: string, x?: number, y?: number, direction?: string, text?: string, code?: string, ms?: number }} */
+  /** @type {{ type: string, x?: number, y?: number, direction?: string, text?: string, code?: string, ms?: number, passo?: number }} */
   const out = { type };
   if (a.x != null && a.x !== "") {
     const x = Number(a.x);
@@ -110,6 +122,10 @@ export function parseActionTypeXY(content) {
     const ms = Number(a.ms);
     if (Number.isFinite(ms)) out.ms = ms;
   }
+  if (data.passo != null && data.passo !== "") {
+    const passo = Number(data.passo);
+    if (Number.isFinite(passo)) out.passo = passo;
+  }
   if (type === "scroll" && !out.direction) {
     const err = new Error("raw-gpt: scroll sem direction");
     err.code = "RAW_GPT_BAD_ACTION";
@@ -122,10 +138,11 @@ export function parseActionTypeXY(content) {
  * @param {{
  *   prompt?: string,
  *   ocr: unknown,
+ *   step?: number|string|null,
  *   apiKey?: string,
  *   model?: string,
  * }} opts
- * @returns {Promise<{ type: string, x?: number, y?: number, direction?: string, text?: string, code?: string, ms?: number, raw?: string, payload?: object }>}
+ * @returns {Promise<{ type: string, x?: number, y?: number, direction?: string, text?: string, code?: string, ms?: number, passo?: number, raw?: string, payload?: object }>}
  */
 export async function decideRawAction(opts) {
   const apiKey = opts.apiKey ?? process.env.OPENAI_API_KEY;
@@ -147,7 +164,7 @@ export async function decideRawAction(opts) {
     response_format: { type: "json_object" },
     messages: [
       { role: "system", content: SYSTEM_PROMPT },
-      { role: "user", content: buildUserText(prompt, opts.ocr) },
+      { role: "user", content: buildUserText(prompt, opts.ocr, opts.step) },
     ],
   };
   // gpt-5* só aceita temperature default; 0 → HTTP 400.

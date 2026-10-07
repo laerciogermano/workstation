@@ -2,8 +2,8 @@
 /**
  * Extract (lib) num PNG LinkedIn → chat.completions cru (system = agente + JSON action).
  *
- *   npm run raw-gpt -- --image test/fixtures/linkedin-people-comprador-connect.png --prompt "conecte no comprador"
- *   npm run raw-gpt -- --engine all --prompt "conecte no comprador"
+ *   npm run raw-gpt -- --image test/fixtures/linkedin-people-comprador-connect.png --prompt "conecte no comprador" --step 11
+ *   npm run raw-gpt -- --engine all --prompt "conecte no comprador" --step 1
  */
 import { existsSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
@@ -42,6 +42,11 @@ if (!prompt) {
 const imagePath = resolve(argValue("--image") || DEFAULT_IMAGE);
 const engine = argValue("--engine") || process.env.SCREEN_ROBOT_OCR || "all";
 const model = process.env.OPENAI_MODEL || "gpt-4o-mini";
+const stepRaw = argValue("--step");
+const step =
+  stepRaw != null && stepRaw !== "" && Number.isFinite(Number(stepRaw))
+    ? Number(stepRaw)
+    : undefined;
 
 if (!existsSync(imagePath)) {
   console.error(`PNG não encontrado: ${imagePath}`);
@@ -55,7 +60,7 @@ const elements = await extractFromImage(imagePath, {
 const ocr = compactOcr(elements);
 console.log({ imagePath, engine, hits: elements.length, ocr });
 
-const out = await decideRawAction({ prompt, ocr, apiKey, model });
+const out = await decideRawAction({ prompt, ocr, step, apiKey, model });
 console.log(out.payload);
 const { raw, payload, ...action } = out;
 process.stdout.write(JSON.stringify(action));

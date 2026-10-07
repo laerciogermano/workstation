@@ -22,9 +22,10 @@ const PROMPT = readFileSync(
   "utf8",
 ).trim();
 
-async function runCase({ image, prompt, expected }) {
+async function runCase({ image, prompt, step, expected }) {
   assert.ok(process.env.OPENAI_API_KEY, "falta OPENAI_API_KEY");
   assert.ok(prompt.length >= 1, "prompt vazio");
+  assert.ok(Number.isFinite(Number(step)), "falta step");
 
   const elements = await extractFromImage(join(FIXTURES, image), {
     engine: "all",
@@ -33,11 +34,13 @@ async function runCase({ image, prompt, expected }) {
   const ocr = compactOcr(elements);
   assert.ok(ocr.length >= 1, "OCR vazio");
 
-  const out = await decideRawAction({ prompt, ocr });
-  const action = parseActionTypeXY(out.raw);
+  const out = await decideRawAction({ prompt, ocr, step });
+  const parsed = parseActionTypeXY(out.raw);
+  const { passo, ...action } = parsed;
 
-  console.log({ action });
+  console.log({ action, passo });
   assert.deepEqual(action, expected);
+  assert.ok(Number.isFinite(passo), "resposta sem passo numérico");
 }
 
 describe("raw-gpt-decide", () => {
@@ -47,7 +50,8 @@ describe("raw-gpt-decide", () => {
     async () => {
       await runCase({
         image: "01-search.png",
-        prompt: PROMPT + "\nvoce esta no passo 1",
+        prompt: PROMPT,
+        step: 1,
         expected: { type: "tap", x: 177, y: 78 },
       });
     },
@@ -59,7 +63,8 @@ describe("raw-gpt-decide", () => {
     async () => {
       await runCase({
         image: "02-type-comprador.png",
-        prompt: PROMPT + "\nvoce esta no passo 2",
+        prompt: PROMPT,
+        step: 2,
         expected: { type: "type", text: "comprador" },
       });
     },
@@ -71,7 +76,8 @@ describe("raw-gpt-decide", () => {
     async () => {
       await runCase({
         image: "03-close-keyboard.png",
-        prompt: PROMPT + "\nvoce esta no passo 3",
+        prompt: PROMPT,
+        step: 3,
         expected: { type: "key", code: "KEYCODE_BACK" },
       });
     },
@@ -83,7 +89,8 @@ describe("raw-gpt-decide", () => {
     async () => {
       await runCase({
         image: "04-show-all-results.png",
-        prompt: PROMPT + "\nvoce esta no passo 4",
+        prompt: PROMPT,
+        step: 4,
         expected: { type: "tap", x: 270, y: 849 },
       });
     },
@@ -95,7 +102,8 @@ describe("raw-gpt-decide", () => {
     async () => {
       await runCase({
         image: "05-people.png",
-        prompt: PROMPT + "\nvoce esta no passo 5",
+        prompt: PROMPT,
+        step: 5,
         expected: { type: "tap", x: 62, y: 153 },
       });
     },
@@ -107,7 +115,8 @@ describe("raw-gpt-decide", () => {
     async () => {
       await runCase({
         image: "06-location.png",
-        prompt: PROMPT + "\nvoce esta no passo 6",
+        prompt: PROMPT,
+        step: 6,
         expected: { type: "tap", x: 499, y: 152 },
       });
     },
@@ -119,7 +128,8 @@ describe("raw-gpt-decide", () => {
     async () => {
       await runCase({
         image: "07-add-a-location.png",
-        prompt: PROMPT + "\nvoce esta no passo 7",
+        prompt: PROMPT,
+        step: 7,
         expected: { type: "tap", x: 127, y: 380 },
       });
     },
@@ -131,7 +141,8 @@ describe("raw-gpt-decide", () => {
     async () => {
       await runCase({
         image: "08-type-campinas.png",
-        prompt: PROMPT + "\nvoce esta no passo 8",
+        prompt: PROMPT,
+        step: 8,
         expected: { type: "type", text: "Campinas" },
       });
     },
@@ -143,7 +154,8 @@ describe("raw-gpt-decide", () => {
     async () => {
       await runCase({
         image: "09-campinas-option.png",
-        prompt: PROMPT + "\nvoce esta no passo 9",
+        prompt: PROMPT,
+        step: 9,
         expected: { type: "tap", x: 174, y: 177 },
       });
     },
@@ -155,7 +167,8 @@ describe("raw-gpt-decide", () => {
     async () => {
       await runCase({
         image: "10-show-results.png",
-        prompt: PROMPT + "\nvoce esta no passo 10",
+        prompt: PROMPT,
+        step: 10,
         expected: { type: "tap", x: 271, y: 849 },
       });
     },
@@ -167,7 +180,8 @@ describe("raw-gpt-decide", () => {
     async () => {
       await runCase({
         image: "11-connect.png",
-        prompt: PROMPT + "\nvoce esta no passo 11",
+        prompt: PROMPT,
+        step: 11,
         expected: { type: "tap", x: 453, y: 243 },
       });
     },
@@ -179,7 +193,8 @@ describe("raw-gpt-decide", () => {
     async () => {
       await runCase({
         image: "11-connect-people.png",
-        prompt: PROMPT + "\nvoce esta no passo 11",
+        prompt: PROMPT,
+        step: 11,
         expected: { type: "tap", x: 455, y: 344 },
       });
     },
@@ -191,7 +206,8 @@ describe("raw-gpt-decide", () => {
     async () => {
       await runCase({
         image: "linkedin-search-comprador-connected.png",
-        prompt: PROMPT + "\nvoce esta no passo 11",
+        prompt: PROMPT,
+        step: 11,
         expected: { type: "tap", x: 454, y: 447 },
       });
     },
@@ -203,7 +219,8 @@ describe("raw-gpt-decide", () => {
     async () => {
       await runCase({
         image: "12-scroll.png",
-        prompt: PROMPT + "\nvoce esta no passo 12",
+        prompt: PROMPT,
+        step: 12,
         expected: { type: "scroll", direction: "down" },
       });
     },
@@ -215,7 +232,8 @@ describe("raw-gpt-decide", () => {
     async () => {
       await runCase({
         image: "13-skip.png",
-        prompt: PROMPT + "\nvoce esta no passo 13",
+        prompt: PROMPT,
+        step: 13,
         expected: { type: "tap", x: 269, y: 816 },
       });
     },

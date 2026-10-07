@@ -248,6 +248,7 @@ npm run raw-gpt -- --image test/fixtures/linkedin-people-comprador-connect.png -
 # Testes: node --test lib/raw-gpt-decide.test.js (prompt em test/fixtures/raw-gpt-decide.prompt.txt; its em paralelo via describe concurrency)
 # Casos: `it`/`fixtures` 01–13 (ordem do prompt); PNGs `01-search.png` … `13-skip.png` (+ `11-connect-people.png`, `linkedin-search-comprador-connected.png` = 11c 2º Connect).
 # Passo 3: teclado (q/w/e…) → BACK 1× e proximoPasso "4"; teclado já fechado + "Show all results" → sleep, proximoPasso "4" (PROIBIDO 2º BACK). Rollback: só "action BACK" sem regra de nextStep/teclado fechado.
+# Passo 12: tap só text EXATO "Skip"; PROIBIDO Add/note/título da sheet. Rollback: "escolha Skip, NÃO Add a note" sem listar fragmentos.
 # Antes: nomes longos linkedin-search-*.png / linkedin-tela-inicial no raw-gpt. Rollback: git mv + nomes antigos no teste.
 # Prompt raw-gpt: sem menção a x/y/thresholds; passo 9 por text (sugestão vs campo). Rollback: versão com y<120/y>120 no .prompt.txt.
 # Passo 11 (.prompt.txt em linguagem natural): primeiro "Connect" da lista; sem jargão OCR. Rollback: menções a OCR/hit/JSON no prompt.

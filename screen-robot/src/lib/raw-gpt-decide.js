@@ -3,6 +3,9 @@
  * Retorno: action só com chaves presentes na resposta da IA.
  */
 
+import { compactOcr } from "./agent-decide.js";
+import { extractFromImage } from "./extract-engines.js";
+
 export const SYSTEM_PROMPT = `Você é uma IA agente autônoma que controla um smartphone Android.
 Você recebe: (1) a jornada/objetivo, (2) o OCR da tela atual (lista extract: type, text, x, y) e (3) o passo atual em texto ("voce esta no passo …") — o mesmo formato de proximoPasso do turno anterior.
 Decida UMA próxima ação e responda APENAS um JSON válido (sem markdown, sem texto fora do JSON).
@@ -198,4 +201,39 @@ export async function decideRawAction(opts) {
   const raw = String(data.choices?.[0]?.message?.content ?? "");
   console.log({ raw });
   return { ...parseActionTypeXY(raw), raw, payload };
+}
+
+/**
+ * extractFromImage → compactOcr → decideRawAction.
+ * @param {{
+ *   imagePath: string,
+ *   prompt: string,
+ *   step?: string|null,
+ *   apiKey?: string,
+ *   model?: string,
+ *   engine?: string,
+ *   timeoutMs?: number,
+ * }} opts
+ * @returns {Promise<{ type: string, x?: number, y?: number, direction?: string, text?: string, code?: string, ms?: number, proximoPasso?: string, raw?: string, payload?: object, ocr: object[], elements: object[] }>}
+ */
+export async function decideFromImage(opts) {
+  const imagePath = opts.imagePath;
+  if (!imagePath) {
+    const err = new Error("falta imagePath");
+    err.code = "RAW_GPT_NO_IMAGE";
+    throw err;
+  }
+  const engine = opts.engine || process.env.SCREEN_ROBOT_OCR || "all";
+  const timeoutMs =
+    opts.timeoutMs ?? Number(process.env.OCR_MERGE_TIMEOUT_MS || 180_000);
+  const elements = await extractFromImage(imagePath, { engine, timeoutMs });
+  const ocr = compactOcr(elements);
+  const out = await decideRawAction({
+    prompt: opts.prompt,
+    ocr,
+    step: opts.step,
+    apiKey: opts.apiKey,
+    model: opts.model,
+  });
+  return { ...out, ocr, elements };
 }

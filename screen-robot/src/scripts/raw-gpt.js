@@ -9,9 +9,7 @@ import { existsSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadEnvFiles } from "../lib/load-env.js";
-import { compactOcr } from "../lib/agent-decide.js";
-import { extractFromImage } from "../lib/extract-engines.js";
-import { decideRawAction } from "../lib/raw-gpt-decide.js";
+import { decideFromImage } from "../lib/raw-gpt-decide.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const SRC_ROOT = resolve(__dirname, "..");
@@ -53,14 +51,20 @@ if (!existsSync(imagePath)) {
   process.exit(1);
 }
 
-const elements = await extractFromImage(imagePath, {
+const out = await decideFromImage({
+  imagePath,
+  prompt,
+  step,
+  apiKey,
+  model,
   engine,
-  timeoutMs: Number(process.env.OCR_MERGE_TIMEOUT_MS || 180_000),
 });
-const ocr = compactOcr(elements);
-console.log({ imagePath, engine, hits: elements.length, ocr });
-
-const out = await decideRawAction({ prompt, ocr, step, apiKey, model });
+console.log({
+  imagePath,
+  engine,
+  hits: out.elements.length,
+  ocr: out.ocr,
+});
 console.log(out.payload);
-const { raw, payload, ...action } = out;
+const { raw, payload, ocr, elements, ...action } = out;
 process.stdout.write(JSON.stringify(action));

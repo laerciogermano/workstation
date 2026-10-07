@@ -245,6 +245,7 @@ npm run raw-gpt -- --image test/fixtures/linkedin-people-comprador-connect.png -
 # Antes: nomes longos linkedin-search-*.png / linkedin-tela-inicial no raw-gpt. Rollback: git mv + nomes antigos no teste.
 # Prompt raw-gpt: cada passo 1–13 com bullets + `ocr:` (hits reais de extractFromImage+compactOcr das fixtures). Copiar x/y do OCR atual. Rollback: prompt só com linhas curtas sem ocr/bullets.
 # Passo 9: linha completa "Campinas, São Paulo, Brazil"; PROIBIDO fragmento "Campinas," / campo topo. Passo 11: menor y entre "Connect".
+# raw-gpt-decide: `decideFromImage` = extractFromImage → compactOcr → decideRawAction (teste + CLI). Antes: pipeline solto no teste/script. Rollback: chamar as 3 funções à mão.
 # raw-gpt-decide: `temperature: 0` (exceto gpt-5*), prompt depois do extract, `motivo` ok, hint dos "Connect" de cima p/ baixo. Rollback: sem temperature/hint; prompt antes; proibir motivo.
 # Parse: só chaves presentes na IA; raiz obrigatória { "action": ... }. Rollback: aceitar acao/raiz.
 # step e proximoPasso: mesmo tipo string (`"3"` / id / NL). Saída de um turno = entrada do próximo (`step = out.proximoPasso`). CLI: `--step "…"`. Antes: número. Rollback: `Number(...)` em step/proximoPasso.

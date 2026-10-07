@@ -7,10 +7,8 @@ import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, it } from "node:test";
-import { compactOcr } from "./agent-decide.js";
-import { extractFromImage } from "./extract-engines.js";
 import { loadEnvFiles } from "./load-env.js";
-import { decideRawAction, parseActionTypeXY } from "./raw-gpt-decide.js";
+import { decideFromImage, parseActionTypeXY } from "./raw-gpt-decide.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const SRC_ROOT = join(__dirname, "..");
@@ -28,15 +26,14 @@ async function runCase({ image, prompt, step, expected }) {
   assert.equal(typeof step, "string");
   assert.ok(step.trim(), "falta step");
 
-  const elements = await extractFromImage(join(FIXTURES, image), {
-    engine: "all",
-    timeoutMs: Number(process.env.OCR_MERGE_TIMEOUT_MS || 180_000),
+  const out = await decideFromImage({
+    imagePath: join(FIXTURES, image),
+    prompt,
+    step,
   });
-  const ocr = compactOcr(elements);
-  assert.ok(ocr.length >= 1, "OCR vazio");
-  console.log({ step, image, ocr });
+  assert.ok(out.ocr.length >= 1, "OCR vazio");
+  console.log({ step, image, ocr: out.ocr });
 
-  const out = await decideRawAction({ prompt, ocr, step });
   const parsed = parseActionTypeXY(out.raw);
   const { proximoPasso, ...action } = parsed;
 

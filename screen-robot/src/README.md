@@ -421,13 +421,13 @@ Pega um PNG LinkedIn de fixture, reduz para largura 540 + WebP q60 e gera artefa
 | `test/output/poc-vision/prompt.md` | Colar como texto |
 | `test/output/poc-vision/meta.json` | Bytes, escala device, estimativa de tiles/tokens |
 | `test/output/poc-vision/compressed-20kb.webp` | Variante ~20 KB (1 tile) |
-| [`test/output/poc-vision/custos-por-agente.md`](test/output/poc-vision/custos-por-agente.md) | Custo US$/mês por agente — OCR com tokens medidos em `usage/` · imagem ainda estimativa POC |
+| [`test/output/poc-vision/custos-por-agente.md`](test/output/poc-vision/custos-por-agente.md) | Custo US$/mês por agente — OCR gpt-4o-mini medido em `usage-2.0/` · imagem ainda estimativa POC |
 
 Default input: `test/fixtures/linkedin-people-comprador-connect.png`. Coordenadas da IA estão na escala da WebP; para o AVD multiplique por `scaleToDevice` do `meta.json`.
 
 **Antes → depois:** não havia POC de compressão+prompt; só OCR/texto via `extract` / `npm run ocr`. Custo era só em canvas Cursor → agora MD versionado em `custos-por-agente.md`. Rollback: remover `scripts/poc-vision-compress.js`, script npm `poc:vision` e pasta `test/output/poc-vision/`.
 
-**Antes → depois (custos):** OCR in/out estimados 894/120 → **2.657/373** (média `usageMetadata` em `usage/`, 66 ops). Custo 3.8 Flash OCR /mês US$ 1,34 → **US$ 4,07**. Imagem ~20 KB segue estimativa POC até haver usage agent. Rollback: valores estimados na revisão anterior de `custos-por-agente.md`.
+**Antes → depois (custos):** OCR in/out **2.657/373** (Gemini `usage/`) → **3.189/51** (gpt-4o-mini `usage-2.0`, 3 ops 2026-10-07). Custo OCR /mês **US$ 4,07 (3.8 Flash) → US$ 0,61 (gpt-4o-mini)**. Imagem ~20 KB segue estimativa POC. Rollback: valores Gemini da revisão anterior de `custos-por-agente.md`.
 
 ---
 

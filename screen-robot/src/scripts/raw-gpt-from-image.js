@@ -69,12 +69,22 @@ const out = await decideFromImage({
   step,
   model,
   engine,
+  usageDir: join(SRC_ROOT, "usage-2.0"),
 });
+const u = out.resposta?.usage;
 console.log({
   imagePath,
   engine,
   hits: out.elements.length,
   ocr: out.ocr,
+  usagePath: out.usagePath,
+  tokens: u
+    ? {
+        prompt: u.prompt_tokens,
+        completion: u.completion_tokens,
+        total: u.total_tokens,
+      }
+    : undefined,
 });
 console.log(out.payload);
 process.stdout.write(

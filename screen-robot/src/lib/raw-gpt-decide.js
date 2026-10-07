@@ -1,7 +1,9 @@
 /**
  * Decisão crua via chat.completions (mesmo contrato do scripts/raw-gpt.js).
  * Retorno: action só com chaves presentes na resposta da IA.
+ * Cada request grava usage-2.0/<timestamp>.json ({ entrada, resposta }).
  */
+import { writeUsage20 } from "./usage-write.js";
 
 export const SYSTEM_PROMPT = `Você é uma IA agente autônoma que controla um smartphone Android.
 Você recebe: (1) a jornada/objetivo, (2) o OCR da tela atual (lista extract: type, text, x, y) e (3) o passo atual ("voce esta no passo …").
@@ -150,8 +152,9 @@ export function parseActionTypeXY(content) {
  *   step?: string|number|null,
  *   apiKey?: string,
  *   model?: string,
+ *   usageDir?: string,
  * }} opts
- * @returns {Promise<{ type: string, x?: number, y?: number, direction?: string, text?: string, code?: string, ms?: number, proximoPasso?: string, raw?: string, payload?: object }>}
+ * @returns {Promise<{ type: string, x?: number, y?: number, direction?: string, text?: string, code?: string, ms?: number, proximoPasso?: string, raw?: string, payload?: object, resposta?: object, usagePath?: string }>}
  */
 export async function decideRawAction(opts) {
   const apiKey = opts.apiKey ?? process.env.OPENAI_API_KEY;
@@ -189,12 +192,19 @@ export async function decideRawAction(opts) {
     body: JSON.stringify(payload),
   });
   const data = await res.json();
+  const usagePath = writeUsage20({
+    usageDir: opts.usageDir,
+    entrada: payload,
+    resposta: data,
+  });
+  console.log(`usage → ${usagePath}`);
   if (!res.ok) {
     const err = new Error(data?.error?.message || JSON.stringify(data));
     err.code = "OPENAI_REQUEST_FAILED";
+    err.usagePath = usagePath;
     throw err;
   }
   const raw = String(data.choices?.[0]?.message?.content ?? "");
   console.log({ raw });
-  return { ...parseActionTypeXY(raw), raw, payload };
+  return { ...parseActionTypeXY(raw), raw, payload, resposta: data, usagePath };
 }

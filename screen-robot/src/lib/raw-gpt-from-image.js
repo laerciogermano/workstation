@@ -15,6 +15,7 @@ import { decideRawAction } from "./raw-gpt-decide.js";
  *   model?: string,
  *   engine?: string,
  *   timeoutMs?: number,
+ *   usageDir?: string,
  * }} opts
  * @returns {Promise<{
  *   action: { type: string, x?: number, y?: number, direction?: string, text?: string, code?: string, ms?: number },
@@ -23,6 +24,8 @@ import { decideRawAction } from "./raw-gpt-decide.js";
  *   elements: object[],
  *   raw?: string,
  *   payload?: object,
+ *   resposta?: object,
+ *   usagePath?: string,
  * }>}
  */
 export async function decideFromImage(opts) {
@@ -43,7 +46,8 @@ export async function decideFromImage(opts) {
     step: opts.step,
     apiKey: opts.apiKey,
     model: opts.model,
+    usageDir: opts.usageDir,
   });
-  const { raw, payload, proximoPasso, ...action } = out;
-  return { action, proximoPasso, ocr, elements, raw, payload };
+  const { raw, payload, resposta, usagePath, proximoPasso, ...action } = out;
+  return { action, proximoPasso, ocr, elements, raw, payload, resposta, usagePath };
 }

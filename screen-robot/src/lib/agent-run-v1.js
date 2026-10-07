@@ -20,6 +20,7 @@ import { tapElement, scroll, type, typeViaAdb, key } from "./operate.js";
 import { adb, sleep as defaultSleep } from "./adb.js";
 import { captureFrame } from "./frame.js";
 import { compressFrame } from "./vision-frame.js";
+import { writeUsage20 } from "./usage-write.js";
 
 /** `AGENT_TYPE_METHOD=adb|ocr` ou cfg.typeMethod — default adb. */
 function resolveTypeMethod(cfg = {}) {
@@ -160,22 +161,6 @@ function sumUsage(calls) {
   return totals;
 }
 
-function writeUsageFile(usagePath, payload) {
-  writeFileSync(usagePath, JSON.stringify(payload, null, 2) + "\n", "utf8");
-}
-
-/** Nome único sob usage-2.0/: timestamp com ms; se colidir, sufixa -2, -3… */
-function uniqueUsagePath(usageDir) {
-  let base = stamp();
-  let path = join(usageDir, `${base}.json`);
-  let n = 1;
-  while (existsSync(path)) {
-    n += 1;
-    path = join(usageDir, `${base}-${n}.json`);
-  }
-  return path;
-}
-
 function literalEntrada(req, call) {
   if (req?.entrada != null) return req.entrada;
   if (req?.input?.body != null) return req.input.body;
@@ -202,8 +187,8 @@ function writeChatRequestFiles({ usageDir, call }) {
       : [{}];
   const paths = [];
   for (const req of reqs) {
-    const path = uniqueUsagePath(usageDir);
-    writeUsageFile(path, {
+    const path = writeUsage20({
+      usageDir,
       entrada: literalEntrada(req, call),
       resposta: literalResposta(req, call),
     });

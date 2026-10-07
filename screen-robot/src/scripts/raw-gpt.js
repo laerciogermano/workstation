@@ -60,7 +60,24 @@ const elements = await extractFromImage(imagePath, {
 const ocr = compactOcr(elements);
 console.log({ imagePath, engine, hits: elements.length, ocr });
 
-const out = await decideRawAction({ prompt, ocr, step, apiKey, model });
+const out = await decideRawAction({
+  prompt,
+  ocr,
+  step,
+  apiKey,
+  model,
+  usageDir: join(SRC_ROOT, "usage-2.0"),
+});
 console.log(out.payload);
-const { raw, payload, ...action } = out;
+const { raw, payload, resposta, usagePath, ...action } = out;
+console.log({
+  usagePath,
+  tokens: resposta?.usage
+    ? {
+        prompt: resposta.usage.prompt_tokens,
+        completion: resposta.usage.completion_tokens,
+        total: resposta.usage.total_tokens,
+      }
+    : undefined,
+});
 process.stdout.write(JSON.stringify(action));

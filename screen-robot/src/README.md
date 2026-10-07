@@ -243,6 +243,7 @@ npm run raw-gpt -- --image test/fixtures/linkedin-people-comprador-connect.png -
 #   npm run raw-gpt:from-image -- --image test/fixtures/01-search.png --prompt test/fixtures/raw-gpt-decide.prompt.txt --step 1
 #   npm run raw-gpt:loop -- --avd ConnectMax_Cam --prompt test/fixtures/raw-gpt-decide.prompt.txt --step 1
 # Loop: AVD/serial → screenshot → decideFromImage → executeAction → wait. Default `--wait-ms 5000`. Flags: --wait-ms, --max-steps, --model, --engine, --device/--serial.
+# raw-gpt / loop: cada chat.completions grava `usage-2.0/<timestamp>.json` ({ entrada, resposta } com `usage.prompt_tokens` etc.). Writer: [`lib/usage-write.js`](lib/usage-write.js). Rollback: omitir `writeUsage20` em `decideRawAction`.
 # Antes: só CLI pontual (raw-gpt). Rollback: remover raw-gpt-from-image.js, raw-gpt-loop.js e scripts npm.
 # --prompt obrigatório (sem DEFAULT_PROMPT). Antes: default "Na tela People…". Rollback: export DEFAULT_PROMPT.
 # Testes: node --test lib/raw-gpt-decide.test.js (prompt em test/fixtures/raw-gpt-decide.prompt.txt; its em paralelo via describe concurrency)
@@ -251,7 +252,7 @@ npm run raw-gpt -- --image test/fixtures/linkedin-people-comprador-connect.png -
 # Passo 12: tap só text EXATO "Skip"; PROIBIDO Add/note/título da sheet. Rollback: "escolha Skip, NÃO Add a note" sem listar fragmentos.
 # Antes: nomes longos linkedin-search-*.png / linkedin-tela-inicial no raw-gpt. Rollback: git mv + nomes antigos no teste.
 # Prompt raw-gpt: sem menção a x/y/thresholds; passo 9 por text (sugestão vs campo). Rollback: versão com y<120/y>120 no .prompt.txt.
-# Passo 11 (.prompt.txt em linguagem natural): primeiro "Connect" da lista; sem jargão OCR. Rollback: menções a OCR/hit/JSON no prompt.
+# Passo 11 (.prompt.txt): tap 1º "Connect"; sem Connect na lista People → scroll; tela errada (Location/teclado/cidades) → KEYCODE_BACK, fica no 11 (PROIBIDO scroll). Antes: só loop scroll sem escape. Rollback: bloco "LOOP… scroll de novo até achar" sem regra de tela errada.
 # raw-gpt-decide: `temperature: 0` (exceto gpt-5*), prompt depois do extract, `motivo` ok, hint dos "Connect" de cima p/ baixo. Rollback: sem temperature/hint; prompt antes; proibir motivo.
 # Parse: só chaves presentes na IA; raiz obrigatória { "action": ... }. Rollback: aceitar acao/raiz.
 # step/proximoPasso: texto livre (`"3"`, id, ou resumo NL). `decideRawAction({ prompt, ocr, step })` injeta "voce esta no passo …"; `step = out.proximoPasso`. CLI: `--step "…"`. Antes: só número / campo `passo`. Rollback: `Number(data.proximoPasso)`.

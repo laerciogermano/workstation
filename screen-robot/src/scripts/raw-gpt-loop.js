@@ -98,7 +98,9 @@ let step =
     : "1";
 
 const shotDir = join(SRC_ROOT, "screenshots", "raw-gpt-loop");
+const usageDir = join(SRC_ROOT, "usage-2.0");
 mkdirSync(shotDir, { recursive: true });
+mkdirSync(usageDir, { recursive: true });
 
 console.log(
   JSON.stringify(
@@ -119,12 +121,27 @@ for (let i = 1; i <= maxSteps; i++) {
     step,
     model,
     engine,
+    usageDir,
   });
 
-  const { action, proximoPasso, ocr } = out;
+  const { action, proximoPasso, ocr, usagePath, resposta } = out;
+  const u = resposta?.usage;
   console.log(
     JSON.stringify(
-      { action, proximoPasso, ocrHits: ocr?.length, step },
+      {
+        action,
+        proximoPasso,
+        ocrHits: ocr?.length,
+        step,
+        usagePath,
+        tokens: u
+          ? {
+              prompt: u.prompt_tokens,
+              completion: u.completion_tokens,
+              total: u.total_tokens,
+            }
+          : undefined,
+      },
       null,
       2,
     ),

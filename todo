@@ -1,4 +1,5 @@
 # Screen Robot
+    - Criar motor 1.0 com step e proximoPasso (teria q ser ingles)
     - Testar com OCR  das telas, Dado que estou na tela, entao fazer tal coisa
     - Testar com reconhecimento de imagem
     - Extrair o maximo de informacoes possivel ocr

@@ -242,7 +242,7 @@ npm run raw-gpt -- --image test/fixtures/linkedin-people-comprador-connect.png -
 #   lib/raw-gpt-from-image.js → decideFromImage = extract → compactOcr → decideRawAction
 #   npm run raw-gpt:from-image -- --image test/fixtures/01-search.png --prompt test/fixtures/raw-gpt-decide.prompt.txt --step 1
 #   npm run raw-gpt:loop -- --avd ConnectMax_Cam --prompt test/fixtures/raw-gpt-decide.prompt.txt --step 1
-# Loop: AVD/serial → screenshot → decideFromImage → executeAction → wait. Default `--wait-ms 0`. Flags: --wait-ms, --max-steps, --model, --engine, --device/--serial. Antes: default 5000. Rollback: `|| 5000` em raw-gpt-loop.js.
+# Loop: AVD/serial → screenshot → decideFromImage → executeAction → wait. Default `--wait-ms 5000`. Flags: --wait-ms, --max-steps, --model, --engine, --device/--serial.
 # Antes: só CLI pontual (raw-gpt). Rollback: remover raw-gpt-from-image.js, raw-gpt-loop.js e scripts npm.
 # --prompt obrigatório (sem DEFAULT_PROMPT). Antes: default "Na tela People…". Rollback: export DEFAULT_PROMPT.
 # Testes: node --test lib/raw-gpt-decide.test.js (prompt em test/fixtures/raw-gpt-decide.prompt.txt; its em paralelo via describe concurrency)

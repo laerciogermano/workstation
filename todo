@@ -1,8 +1,11 @@
 # Screen Robot
+    - Testar com OCR  das telas, Dado que estou na tela, entao fazer tal coisa
     - Testar com reconhecimento de imagem
     - Extrair o maximo de informacoes possivel ocr
     - Enriquecer motor com memoria, planos e etc
     - Treinar modelos gpt4 mini teste
+    - adicionar assets de imagens de icones para buscar na tela e dar a posicao, enriquecendo
+        o extractor
 
 # Eternos Mutáveis
     - Reunir todos os áudios e transcricoes do iphone que nao estao aqui

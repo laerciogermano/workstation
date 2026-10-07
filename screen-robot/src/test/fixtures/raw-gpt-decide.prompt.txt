@@ -59,12 +59,12 @@ ocr: [{"type":"text","text":"Show results","x":271,"y":849},{"type":"text","text
 - action: tap no Connect de menor y entre os hits "Connect"
 - Ignore "Pending", "Message", "+ Connect" e qualquer Connect mais abaixo
 - Sem "Connect" no OCR → vá ao passo 12
-- reason: "step 11: first Connect"
+- motivo: "passo 11: primeiro Connect"
 ocr: [{"type":"text","text":"Connect","x":453,"y":243},{"type":"text","text":"Connect","x":454,"y":447},{"type":"text","text":"Message","x":452,"y":644}]
 ocr (lista com Pending no topo — escolha o Connect de menor y): [{"type":"text","text":"Pending","x":453,"y":243},{"type":"text","text":"Connect","x":454,"y":447},{"type":"text","text":"Message","x":452,"y":644}]
 ocr (vários Connect): [{"type":"text","text":"Connect","x":455,"y":344},{"type":"text","text":"Connect","x":455,"y":589},{"type":"text","text":"Connect","x":455,"y":784}]
 
-12. Sem Connect → scroll down; nextStep stays 12 (then repeat 11).
+12. Sem Connect → scroll down; proximoPasso permanece 12 (depois repita 11).
 - action: scroll direction="down"
 - Só se NÃO houver text exato "Connect" no OCR
 - Se houver Pending/Message mas nenhum Connect → scroll
@@ -73,5 +73,5 @@ ocr: [{"type":"text","text":"Pending","x":453,"y":243},{"type":"text","text":"Pe
 13. Clicar no botão Skip após conectar — tap no texto exato "Skip".
 - action: tap "Skip"
 - Sheet "Add a note…" na tela: escolha Skip, NÃO "Add a note", NÃO "Connect"
-- after Skip: nextStep "14" or "done" (never "")
+- após Skip: proximoPasso "14" ou "done" (nunca "")
 ocr: [{"type":"text","text":"Add a note to your request?","x":190,"y":570},{"type":"text","text":"Add a note","x":270,"y":725},{"type":"text","text":"Skip","x":269,"y":816},{"type":"text","text":"Connect","x":456,"y":447}]

@@ -246,6 +246,7 @@ npm run raw-gpt -- --image test/fixtures/linkedin-people-comprador-connect.png -
 # Prompt raw-gpt: cada passo 1–13 com bullets + `ocr:` (hits reais de extractFromImage+compactOcr das fixtures). Copiar x/y do OCR atual. Rollback: prompt só com linhas curtas sem ocr/bullets.
 # Passo 9: linha completa "Campinas, São Paulo, Brazil"; PROIBIDO fragmento "Campinas," / campo topo. Passo 11: menor y entre "Connect".
 # raw-gpt-decide: `decideFromImage({ system, user, imagePath })` — system/user JSON em inglês (keys+textos); messages = `JSON.stringify`. Defaults: `DEFAULT_SYSTEM` / `DEFAULT_USER_RULES`. Retorno `{ action, nextStep, ocr, elements, raw, payload, system, user }`. Antes: chaves PT (`jornada`, `proximoPasso`, `regras`). Rollback: objetos PT + parse `proximoPasso`.
+# Journey fixtures (`raw-gpt-decide.prompt.txt` / `.simple.txt`) permanecem em português; só o schema system/user é EN.
 # nextStep: schema `"…"` (não `""`); após último passo `"14"`/`"done"`. Parse aceita `nextStep` (fallback `proximoPasso`).
 # raw-gpt-decide: `temperature: 0` (exceto gpt-5*), prompt depois do extract, `reason` ok, hint dos "Connect" de cima p/ baixo.
 # Parse: só chaves presentes na IA; raiz `{ "action": ..., "nextStep": "…" }`.

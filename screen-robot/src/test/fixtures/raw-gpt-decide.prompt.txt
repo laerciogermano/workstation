@@ -1,6 +1,3 @@
-Jornada LinkedIn (passos 1→12). Uma ação por turno. "voce esta no passo N" = faça SÓ o passo N.
-Copie tap.x/tap.y EXATAMENTE de um hit do OCR atual (mesmo text).
-
 1. clique em Search — tap no texto "Search" da barra (topo).
 - action: tap no hit "Search"
 - PROIBIDO type / scroll / fail se "Search" estiver no OCR
@@ -46,13 +43,14 @@ Copie tap.x/tap.y EXATAMENTE de um hit do OCR atual (mesmo text).
 - action: tap "Show results"
 - PROIBIDO "Add a location" / linha Contagem de novo
 
-11. Connect — LOOP: achar "Connect" no OCR atual ou rolar até achar.
-- Há text exato "Connect"? → tap no de MENOR y (primeiro da lista). Ignore "Pending", "Message", "+ Connect"
-- NÃO há "Connect"? → OBRIGATÓRIO scroll direction="down"; nextStep="11" (fica no 11); PROIBIDO tap / done / fail / avançar
-- Após o scroll o turno seguinte é de novo o passo 11: se ainda sem Connect → scroll de novo (repete em loop até achar)
+11. Connect — achar "Connect" no OCR da lista People ou recuperar se saiu da tela.
+- Tela ERRADA no passo 11 (NÃO é lista People): teclado (q/w/e…), "Add a location", lista de cidades (Toronto/Tokyo/Canada/Japan), sheet Location → key KEYCODE_BACK; nextStep="11"; PROIBIDO scroll / type / tap em cidade
+- Há text exato "Connect"? → tap no de MENOR y (primeiro da lista). Ignore "Pending", "Message", "+ Connect"; nextStep "12"
+- Lista People visível ("People" + "comprador" no OCR) e SEM "Connect" → scroll direction="down"; nextStep="11"
+- Só "LinkedIn Member" / "Pending" / "Message" sem "Connect" → scroll down; nextStep="11" (não tap nesses)
+- PROIBIDO scroll se a tela não for a lista People
 - Use SOMENTE o OCR atual do turno
-- Após tap Connect com sucesso → nextStep "12"
-- motivo: "passo 11: primeiro Connect" ou "passo 11: sem Connect, scroll; nextStep 11"
+- motivo: "passo 11: primeiro Connect" | "passo 11: sem Connect, scroll" | "passo 11: tela errada, BACK"
 
 12. Clicar no botão Skip após conectar — tap SOMENTE no hit com text EXATO "Skip".
 - Há "Skip" no OCR? → tap nesses x,y; proximoPasso "11"

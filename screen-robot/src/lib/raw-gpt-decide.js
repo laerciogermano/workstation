@@ -42,12 +42,12 @@ export const DEFAULT_SYSTEM = {
   },
   step: {
     type: "free text (same as nextStep)",
-    examples: ["3", "connect", "type buyer", "14", "done"],
+    examples: ["3", "connect", "type buyer", "13", "done"],
     nextStepBecomesNextTurnStep: true,
     ifCompletedAdvance: true,
     ifSleepScrollRetrySameText: true,
     forbidInventingStepOutsideJourney: true,
-    afterLastStep: 'nextStep = "14" or "done" (never "")',
+    afterLastStep: 'nextStep = "13" or "done" (never "")',
   },
   rules: [
     "you are on step … = execute ONLY that step; FORBIDDEN to redo completed steps",
@@ -63,9 +63,9 @@ export const DEFAULT_SYSTEM = {
 /** Default user rules (user.rules section). */
 export const DEFAULT_USER_RULES = [
   "Choose the next action from the OCR and the journey",
-  "In every action, put in reason which step (1–13) is in progress",
+  "In every action, put in reason which step (1–12) is in progress",
   "Mandatory order 1→X (X=last step). One action per turn",
-  'After completing the last step, nextStep = "14" or "done" (never empty string)',
+  'After completing the last step, nextStep = "13" or "done" (never empty string)',
   "Tap only texts or icons present on the screen now",
   "FORBIDDEN fail if the current step text is on screen",
   "fail only if impossible after retry; past failures do NOT block a new tap",

@@ -218,26 +218,26 @@ describe("raw-gpt-decide", () => {
   );
 
   it(
-    "12 Sem Connect → scroll down",
+    "11d Sem Connect → scroll (regra do passo 11)",
     { timeout: 300_000 },
     async () => {
       await runCase({
         image: "12-scroll.png",
         prompt: PROMPT,
-        step: "12",
+        step: "11",
         expected: { type: "scroll", direction: "down" },
       });
     },
   );
 
   it(
-    "13 Clicar no botao skip apos conectar",
+    "12 Clicar no botao Skip apos conectar",
     { timeout: 300_000 },
     async () => {
       await runCase({
         image: "13-skip.png",
         prompt: PROMPT,
-        step: "13",
+        step: "12",
         expected: { type: "tap", x: 269, y: 816 },
       });
     },

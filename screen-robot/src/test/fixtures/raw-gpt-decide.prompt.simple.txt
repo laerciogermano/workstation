@@ -8,6 +8,5 @@
 8. digite "Campinas"
 9. toque a 1ª linha da lista: "Campinas, São Paulo, Brazil"
 10. clique em Show results
-11. Connect — toque no primeiro botão "Connect" da lista de pessoas (o de cima / o que aparece antes dos outros). Ignore Pending, Message e qualquer "Connect" mais abaixo. Se não houver "Connect" na tela → vá ao passo 12.
-12. Sem Connect → role para baixo; repita desde o 11.
-13. Clicar no botao skip apos conectar
+11. Connect — toque no primeiro botão "Connect" da lista (o de cima). Ignore Pending, Message e Connect mais abaixo. Sem "Connect" na tela → scroll down e continue no passo 11.
+12. Clicar no botao Skip apos conectar

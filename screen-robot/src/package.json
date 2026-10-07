@@ -30,6 +30,8 @@
     "agent": "node scripts/run-agent.js",
     "agent:smoke": "node scripts/smoke-agent.js",
     "raw-gpt": "node scripts/raw-gpt.js",
+    "raw-gpt:from-image": "node scripts/raw-gpt-from-image.js",
+    "raw-gpt:loop": "node scripts/raw-gpt-loop.js",
     "view": "bash scripts/view.sh",
     "test": "node --test 'lib/**/*.test.js'",
     "test:unit": "node --test 'lib/**/*.test.js'",

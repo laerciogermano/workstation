@@ -1,14 +1,14 @@
-Regra: sem delay fixo entre turnos. Sem alvo do passo → action esperar (ms, ex. 1000); nextStep = passo atual.
+Regra: sem delay fixo no runtime. Entre CADA operação (após tap/type/key/scroll) → no próximo turno OBRIGATÓRIO esperar ms=3000; depois avance. Sem alvo → esperar ms=3000; nextStep = passo atual.
 
-1. clique em Search 
-2. digite comprador 
-3. feche o teclado 
-4. clique em Show all results 
-5. clique em People 
-6. clique Location 
-7. clique em Add a location 
-8. digite "Rio de Janeiro"
-9. toque a 1ª linha da lista: "Rio de Janeiro, Brazil"
-10. clique em Show results
-11. Connect — LOOP: toque no primeiro "Connect" (menor y). Sem "Connect" → scroll down; nextStep=11 (repete até achar). Ignore Pending, Message.
-12. Clicar no botao Skip apos conectar — após Skip → nextStep=11 (volta ao loop Connect). Sem Skip → esperar ms=1000; nextStep=12
+1. clique em Search → depois esperar 3s
+2. digite comprador → depois esperar 3s
+3. feche o teclado → depois esperar 3s
+4. clique em Show all results → depois esperar 3s
+5. clique em People → depois esperar 3s
+6. clique Location → depois esperar 3s
+7. clique em Add a location → depois esperar 3s
+8. digite "Rio de Janeiro" → depois esperar 3s
+9. toque a 1ª linha da lista: "Rio de Janeiro, Brazil" → depois esperar 3s
+10. clique em Show results → depois esperar 3s
+11. Connect — LOOP: toque no primeiro "Connect" (menor y). Sem "Connect" → scroll down; nextStep=11 (repete até achar). Ignore Pending, Message. Após tap/scroll → esperar 3s
+12. Clicar no botao Skip apos conectar — após Skip → esperar 3s; nextStep=11 (volta ao loop Connect). Sem Skip → esperar ms=3000; nextStep=12

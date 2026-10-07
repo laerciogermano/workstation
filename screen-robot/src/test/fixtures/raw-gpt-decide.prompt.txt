@@ -55,19 +55,21 @@ ocr exemplo: [{"type":"text","text":"Campinas","x":149,"y":81},{"type":"text","t
 - PROIBIDO "Add a location" / linha Campinas de novo
 ocr exemplo: [{"type":"text","text":"Show results","x":271,"y":849},{"type":"text","text":"Campinas, São Paulo, Brazil","x":152,"y":399},{"type":"text","text":"Q Add a location","x":134,"y":308}]
 
-11. Connect — tap no PRIMEIRO "Connect" da lista (menor y / o de cima) **só se existir no OCR atual**.
-- Se OCR atual tem text exato "Connect" → tap no de menor y; Ignore "Pending", "Message", "+ Connect"
-- Se OCR atual NÃO tem text exato "Connect" (só Pending/Message/etc.) → OBRIGATÓRIO scroll direction="down"; nextStep="11"; PROIBIDO tap
-- PROIBIDO copiar x,y dos blocos "ocr exemplo" abaixo — use SOMENTE o OCR atual do turno
+11. Connect — LOOP: achar "Connect" no OCR atual ou rolar até achar.
+- Há text exato "Connect"? → tap no de MENOR y (primeiro da lista). Ignore "Pending", "Message", "+ Connect"
+- NÃO há "Connect"? → OBRIGATÓRIO scroll direction="down"; nextStep="11" (fica no 11); PROIBIDO tap / done / fail / avançar
+- Após o scroll o turno seguinte é de novo o passo 11: se ainda sem Connect → scroll de novo (repete em loop até achar)
+- PROIBIDO copiar x,y dos blocos "ocr exemplo" — use SOMENTE o OCR atual do turno
 - Após tap Connect com sucesso → nextStep "12"
-- motivo: "passo 11: primeiro Connect" ou "passo 11: sem Connect, scroll"
+- motivo: "passo 11: primeiro Connect" ou "passo 11: sem Connect, scroll; nextStep 11"
 ocr exemplo (com Connect): [{"type":"text","text":"Connect","x":453,"y":243},{"type":"text","text":"Connect","x":454,"y":447},{"type":"text","text":"Message","x":452,"y":644}]
 ocr exemplo (Pending no topo + Connect mais abaixo): [{"type":"text","text":"Pending","x":453,"y":243},{"type":"text","text":"Connect","x":454,"y":447},{"type":"text","text":"Message","x":452,"y":644}]
 ocr exemplo (vários Connect): [{"type":"text","text":"Connect","x":455,"y":344},{"type":"text","text":"Connect","x":455,"y":589},{"type":"text","text":"Connect","x":455,"y":784}]
-ocr exemplo (SEM Connect — só scroll): [{"type":"text","text":"Pending","x":453,"y":243},{"type":"text","text":"Pending","x":451,"y":488},{"type":"text","text":"Pending","x":451,"y":683}]
+ocr exemplo (SEM Connect — só scroll, nextStep 11): [{"type":"text","text":"Pending","x":453,"y":243},{"type":"text","text":"Pending","x":451,"y":488},{"type":"text","text":"Pending","x":451,"y":683}]
 
 12. Clicar no botão Skip após conectar — tap no texto exato "Skip".
 - action: tap "Skip"
 - Sheet "Add a note…" na tela: escolha Skip, NÃO "Add a note", NÃO "Connect"
 - Se a sheet ainda não apareceu → sleep; nextStep permanece "12"
+- Após Skip com sucesso → nextStep "11" (volta ao loop Connect / scroll)
 ocr exemplo: [{"type":"text","text":"Add a note to your request?","x":190,"y":570},{"type":"text","text":"Add a note","x":270,"y":725},{"type":"text","text":"Skip","x":269,"y":816},{"type":"text","text":"Connect","x":456,"y":447}]

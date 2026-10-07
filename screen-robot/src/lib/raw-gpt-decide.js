@@ -4,7 +4,7 @@
  */
 
 export const SYSTEM_PROMPT = `Você é uma IA agente autônoma que controla um smartphone Android.
-Você recebe: (1) a jornada/objetivo, (2) o OCR da tela atual (lista extract: type, text, x, y) e (3) o passo atual ("voce esta no passo …").
+Você recebe: (1) a jornada/objetivo, (2) o OCR da tela atual (lista extract: type, text, x, y) e (3) o passo atual em texto ("voce esta no passo …") — o mesmo formato de proximoPasso do turno anterior.
 Decida UMA próxima ação e responda APENAS um JSON válido (sem markdown, sem texto fora do JSON).
 O JSON raiz OBRIGATÓRIO é exatamente { "action": { ... }, "proximoPasso": "…" } — proibido devolver o objeto da ação na raiz.
 
@@ -32,11 +32,10 @@ Tipos (lib screen-robot):
 - done: jornada concluída
 - fail: só se impossível seguir
 
-proximoPasso (raiz, texto, obrigatório):
-- valor a usar no PRÓXIMO turno (o runtime reenvia como step)
-- formato livre, alinhado à jornada: número ("3"), id ("connect"), ou resumo curto em linguagem natural ("digite comprador")
-- se esta ação cumpriu o passo atual → avance para o próximo da jornada
-- se ainda no mesmo passo (sleep/scroll/retry) → devolva o mesmo step
+step (entrada) e proximoPasso (saída): mesmo tipo — texto livre.
+- número como string ("3"), id ("connect"), ou resumo NL curto ("digite comprador")
+- proximoPasso do turno N = step do turno N+1 (copiar o valor)
+- se esta ação cumpriu o passo atual → avance; se sleep/scroll/retry → mesmo texto
 - NUNCA invente passo fora da jornada
 
 Regras:
@@ -50,7 +49,7 @@ Regras:
 /**
  * @param {string} prompt
  * @param {unknown} ocr
- * @param {string|number|null|undefined} [step]
+ * @param {string|null|undefined} [step] texto (mesmo formato de proximoPasso)
  */
 export function buildUserText(prompt, ocr, step) {
   const list = Array.isArray(ocr) ? ocr : [];
@@ -65,8 +64,7 @@ export function buildUserText(prompt, ocr, step) {
     connectOrder.length >= 1
       ? `\nBotões "Connect" na tela, de cima para baixo: ${JSON.stringify(connectOrder)}. No passo 11 toque SOMENTE no primeiro (${JSON.stringify(connectOrder[0])}).\n`
       : "";
-  const stepText =
-    step != null && String(step).trim() !== "" ? String(step).trim() : "";
+  const stepText = typeof step === "string" ? step.trim() : "";
   const stepLine = stepText
     ? `\nvoce esta no passo ${stepText}. Execute APENAS esse passo. PROIBIDO voltar a passos anteriores (ex. no 2 NÃO tap Search; faça type).\n`
     : "";
@@ -141,7 +139,7 @@ export function parseActionTypeXY(content) {
  * @param {{
  *   prompt?: string,
  *   ocr: unknown,
- *   step?: string|number|null,
+ *   step?: string|null,
  *   apiKey?: string,
  *   model?: string,
  * }} opts
@@ -161,13 +159,17 @@ export async function decideRawAction(opts) {
     throw err;
   }
   const model = opts.model || process.env.OPENAI_MODEL || "gpt-4o-mini";
+  const step =
+    opts.step == null || opts.step === ""
+      ? undefined
+      : String(opts.step).trim() || undefined;
 
   const payload = {
     model,
     response_format: { type: "json_object" },
     messages: [
       { role: "system", content: SYSTEM_PROMPT },
-      { role: "user", content: buildUserText(prompt, opts.ocr, opts.step) },
+      { role: "user", content: buildUserText(prompt, opts.ocr, step) },
     ],
   };
   // gpt-5* só aceita temperature default; 0 → HTTP 400.

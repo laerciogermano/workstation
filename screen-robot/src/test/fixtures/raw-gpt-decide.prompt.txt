@@ -1,2 +1,4 @@
-1. Abra a caixa de apps — scroll direction="down" (dedo sobe). PROIBIDO scroll up (abre o shade de notificações).
-2. Abra o app linkedin
+1. Abra a caixa de apps — na home (OCR só hora/data, sem grade de apps): scroll direction="down" 1× (dedo sobe). PROIBIDO scroll up (abre o shade).
+- Já na gaveta (Chrome/Calendar/Gmail/LinkedIn visíveis) → NÃO scroll de novo; nextStep="2"
+- Após scroll com sucesso → nextStep="2"
+2. Abra o LinkedIn — na gaveta: tap no texto EXATO "LinkedIn" (ou OCR "Linkedln"). PROIBIDO scroll. PROIBIDO tap em Chrome/Calendar/Instagram.

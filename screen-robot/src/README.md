@@ -374,10 +374,14 @@ Cada `runAgent` grava em `usage-2.0/` (sem subpasta): **1 arquivo `<ISO-stamp-co
 ```bash
 cd screen-robot/src
 npm run usage:report
-# abre usage-2.0/dashboard.html no browser
+# HTTP (Chart.js CDN; file:// no preview do Cursor falha):
+cd usage-2.0 && python3 -m http.server 8765
+# abrir http://127.0.0.1:8765/dashboard.html
 ```
 
 Gera [`usage-2.0/dashboard.html`](usage-2.0/README.md) a partir de `usage-2.0/*.json` (padrão novo) **e** do legado `usage/*.json`. Insights (modelo, taxa de falha, 503/429, OCR, latência, **custo US$+R$**, historyCount vs prompt tokens), cards, gráficos + tabelas. Filtro: Todos ou por `run`. Regenerar: `npm run usage:report`.
+
+**Antes → depois (JS quebrado):** linha Total do custo usava `class=\"total\"` no template do gerador → HTML com string JS inválida e página sem dados. Agora `class='total'`. Rollback: aspas escapadas antigas.
 
 **Antes → depois (preços):** tabela interna usava Flash-Lite 0,10/0,40 e 3.8 Flash 0,30/2,50. Agora paid tier oficial 2026-10-06 + **R$ (US$ 1 = R$ 5,50)** + linha **Total**. Out Gemini soma `thoughts`. Ritmo 30d = gasto ÷ dias × 30. Free tier = US$ 0. Rollback: só US$ / taxas antigas / sem Total.
 

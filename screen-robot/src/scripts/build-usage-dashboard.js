@@ -665,7 +665,8 @@ function render() {
     const month = money(x.usd / days * 30);
     return "<tr><td>" + x.model + "</td><td>" + (rate ? money(rate.in) : "—") + "</td><td>" + (rate ? money(rate.out) : "—") + "</td><td>" + fmt(x.n) + "</td><td>" + fmt(x.prompt) + "</td><td>" + fmt(x.out) + "</td><td>" + money(x.usd) + "</td><td>" + pct + "</td><td>" + per + "</td><td>" + month + "</td></tr>";
   }).join("");
-  const totalRow = "<tr class=\"total\"><td>Total</td><td>—</td><td>—</td><td>" + fmt(totN) + "</td><td>" + fmt(totPrompt) + "</td><td>" + fmt(totOutTok) + "</td><td>" + money(totUsd) + "</td><td>100%</td><td>" + (totN ? money(totUsd / totN) : "—") + "</td><td>" + money(totUsd / days * 30) + "</td></tr>";
+  // aspas simples no HTML: o JS do relatório vive num template literal do Node; \" vira " e quebra o script
+  const totalRow = "<tr class='total'><td>Total</td><td>—</td><td>—</td><td>" + fmt(totN) + "</td><td>" + fmt(totPrompt) + "</td><td>" + fmt(totOutTok) + "</td><td>" + money(totUsd) + "</td><td>100%</td><td>" + (totN ? money(totUsd / totN) : "—") + "</td><td>" + money(totUsd / days * 30) + "</td></tr>";
   document.getElementById("costBody").innerHTML = rowsHtml + totalRow;
 
   kill();

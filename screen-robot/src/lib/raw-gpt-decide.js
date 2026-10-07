@@ -77,6 +77,12 @@ ${JSON.stringify(ocr)}
 ${connectHint}${stepLine}
 Defina a próxima action com base no OCR e no prompt abaixo.
 
+Em cada ação, diga no motivo qual passo (1–13) está em curso.
+
+Ordem obrigatória 1→X (X=ultimo passo). Uma ação por turno. Toque só em textos ou ícones que estão na tela agora.
+PROIBIDO fail se o texto do passo atual estiver na tela (ex. existe elemento na tela → toque; não fail).
+fail só se for impossível após tentar de novo; falhas antigas NÃO impedem um novo toque.
+
 ${prompt}`;
 }
 
@@ -174,7 +180,6 @@ export async function decideRawAction(opts) {
   };
   // gpt-5* só aceita temperature default; 0 → HTTP 400.
   if (!/^gpt-5/i.test(model)) payload.temperature = 0;
-  console.log({ payload: JSON.stringify(payload, null, 2) });
 
   const res = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",

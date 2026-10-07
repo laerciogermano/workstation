@@ -73,4 +73,5 @@ ocr: [{"type":"text","text":"Pending","x":453,"y":243},{"type":"text","text":"Pe
 13. Clicar no botão Skip após conectar — tap no texto exato "Skip".
 - action: tap "Skip"
 - Sheet "Add a note…" na tela: escolha Skip, NÃO "Add a note", NÃO "Connect"
+- após Skip: proximoPasso "14" ou "done" (nunca "")
 ocr: [{"type":"text","text":"Add a note to your request?","x":190,"y":570},{"type":"text","text":"Add a note","x":270,"y":725},{"type":"text","text":"Skip","x":269,"y":816},{"type":"text","text":"Connect","x":456,"y":447}]

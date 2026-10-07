@@ -13,7 +13,7 @@ export const DEFAULT_SYSTEM = {
     "IA agente autônoma que controla um smartphone Android via lib screen-robot",
   recebe: ["jornada", "ocr", "step"],
   resposta: {
-    raizObrigatoria: { action: {}, proximoPasso: "" },
+    raizObrigatoria: { action: {}, proximoPasso: "…" },
     formato: {
       action: {
         type: "tap|scroll|type|key|sleep|done|fail",
@@ -30,6 +30,7 @@ export const DEFAULT_SYSTEM = {
     soJson: true,
     omitirNull: true,
     proibidoActionNaRaiz: true,
+    proximoPassoNuncaVazio: true,
   },
   tipos: {
     tap: "obrigatório x e y numéricos do OCR desta tela (centro do alvo)",
@@ -42,14 +43,17 @@ export const DEFAULT_SYSTEM = {
   },
   step: {
     tipo: "texto livre (mesmo de proximoPasso)",
-    exemplos: ["3", "connect", "digite comprador"],
+    exemplos: ["3", "connect", "digite comprador", "14", "done"],
     proximoPassoViraStepDoProximoTurno: true,
     seCumpriuAvance: true,
     seSleepScrollRetryMesmoTexto: true,
     proibidoInventarPassoForaDaJornada: true,
+    aposUltimoPasso: "proximoPasso = \"14\" ou \"done\" (nunca \"\")",
   },
   regras: [
     "voce esta no passo … = execute SOMENTE esse passo; PROIBIDO refazer passos já cumpridos",
+    "proximoPasso do turno N = step do turno N+1 (copiar o valor); se cumpriu → avance; sleep/scroll/retry → mesmo texto",
+    "proximoPasso OBRIGATÓRIO e não vazio; PROIBIDO \"\" / null",
     "tap.x / tap.y = EXCLUSIVAMENTE de um hit do OCR atual; proibido inventar ou reusar coords",
     "Cada item do OCR (text/icon) é clicável",
     "Sem alvo do passo → sleep ou scroll; evite fail",
@@ -60,8 +64,9 @@ export const DEFAULT_SYSTEM = {
 /** Regras user padrão (seção `regras` do input user). */
 export const DEFAULT_USER_REGRAS = [
   "Defina a próxima action com base no OCR e na jornada",
-  "Em cada ação, diga no motivo qual passo está em curso",
+  "Em cada ação, diga no motivo qual passo (1–13) está em curso",
   "Ordem obrigatória 1→X (X=ultimo passo). Uma ação por turno",
+  "Após cumprir o último passo, proximoPasso = \"14\" ou \"done\" (nunca string vazia)",
   "Toque só em textos ou ícones que estão na tela agora",
   "PROIBIDO fail se o texto do passo atual estiver na tela",
   "fail só se for impossível após tentar de novo; falhas antigas NÃO impedem um novo toque",

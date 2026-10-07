@@ -1,0 +1,12 @@
+1. clique em Search 
+2. digite comprador 
+3. feche o teclado 
+4. clique em Show all results 
+5. clique em People 
+6. clique Location 
+7. clique em Add a location 
+8. digite "Rio de Janeiro"
+9. toque a 1ª linha da lista: "Rio de Janeiro, Brazil"
+10. clique em Show results
+11. Connect — LOOP: toque no primeiro "Connect" (menor y). Sem "Connect" → scroll down; nextStep=11 (repete até achar). Ignore Pending, Message.
+12. Clicar no botao Skip apos conectar — após Skip → nextStep=11 (volta ao loop Connect)

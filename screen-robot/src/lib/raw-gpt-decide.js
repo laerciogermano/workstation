@@ -1,8 +1,12 @@
 /**
- * Decisão crua via chat.completions (mesmo contrato do scripts/raw-gpt.js).
+ * Decisão crua via OpenAI chat.completions ou Gemini generateContent.
  * Retorno: action só com chaves presentes na resposta da IA.
  * Cada request grava usage-2.0/<timestamp>.json ({ entrada, resposta }).
+ * Modelos: catálogo em agent-models.js (gpt-* / gemini-*).
  */
+import { providerForModel } from "./agent-models.js";
+import { generateContent as generateGemini } from "./gemini.js";
+import { generateContent as generateOpenAI } from "./openai.js";
 import { writeUsage20 } from "./usage-write.js";
 
 export const SYSTEM_PROMPT = `Você é uma IA agente autônoma que controla um smartphone Android.
@@ -48,6 +52,20 @@ Regras:
 - Cada item do OCR (text/icon) é clicável
 - Sem alvo do passo → sleep ou scroll; evite fail
 - Um único objeto JSON na resposta, no formato { "action": { ... }, "proximoPasso": "…" }"`;
+
+/**
+ * @param {string} [model]
+ * @returns {string}
+ */
+export function resolveRawGptModel(model) {
+  return String(
+    (model != null && String(model).trim()) ||
+      process.env.RAW_GPT_MODEL ||
+      process.env.OPENAI_MODEL ||
+      process.env.GEMINI_MODEL ||
+      "gpt-4o-mini",
+  ).trim();
+}
 
 /**
  * @param {string} prompt
@@ -145,6 +163,18 @@ export function parseActionTypeXY(content) {
   return out;
 }
 
+function usageTokens(usage) {
+  if (!usage || typeof usage !== "object") return undefined;
+  return {
+    prompt_tokens: usage.prompt_tokens ?? usage.promptTokenCount,
+    completion_tokens: usage.completion_tokens ?? usage.candidatesTokenCount,
+    total_tokens: usage.total_tokens ?? usage.totalTokenCount,
+    promptTokenCount: usage.promptTokenCount ?? usage.prompt_tokens,
+    candidatesTokenCount: usage.candidatesTokenCount ?? usage.completion_tokens,
+    totalTokenCount: usage.totalTokenCount ?? usage.total_tokens,
+  };
+}
+
 /**
  * @param {{
  *   prompt?: string,
@@ -152,59 +182,98 @@ export function parseActionTypeXY(content) {
  *   step?: string|number|null,
  *   apiKey?: string,
  *   model?: string,
+ *   provider?: "openai"|"gemini"|string,
  *   usageDir?: string,
+ *   thinkingLevel?: string,
+ *   retries?: number,
  * }} opts
- * @returns {Promise<{ type: string, x?: number, y?: number, direction?: string, text?: string, code?: string, ms?: number, proximoPasso?: string, raw?: string, payload?: object, resposta?: object, usagePath?: string }>}
+ * @param {{ generateContent?: Function, fetch?: typeof fetch, sleep?: Function, log?: Function }} [deps]
+ * @returns {Promise<{ type: string, x?: number, y?: number, direction?: string, text?: string, code?: string, ms?: number, proximoPasso?: string, raw?: string, payload?: object, resposta?: object, usage?: object, provider?: string, model?: string, usagePath?: string }>}
  */
-export async function decideRawAction(opts) {
-  const apiKey = opts.apiKey ?? process.env.OPENAI_API_KEY;
-  if (!apiKey) {
-    const err = new Error("falta OPENAI_API_KEY");
-    err.code = "OPENAI_NO_API_KEY";
-    throw err;
-  }
+export async function decideRawAction(opts, deps = {}) {
   const prompt = opts.prompt;
   if (!prompt) {
     const err = new Error("falta prompt");
     err.code = "RAW_GPT_NO_PROMPT";
     throw err;
   }
-  const model = opts.model || process.env.OPENAI_MODEL || "gpt-4o-mini";
+  const model = resolveRawGptModel(opts.model);
+  const provider =
+    opts.provider === "openai" || opts.provider === "gemini"
+      ? opts.provider
+      : providerForModel(model);
 
-  const payload = {
-    model,
-    response_format: { type: "json_object" },
-    messages: [
-      { role: "system", content: SYSTEM_PROMPT },
-      { role: "user", content: buildUserText(prompt, opts.ocr, opts.step) },
-    ],
-  };
-  // gpt-5* só aceita temperature default; 0 → HTTP 400.
-  if (!/^gpt-5/i.test(model)) payload.temperature = 0;
-  console.log({ payload: JSON.stringify(payload, null, 2) });
+  const apiKey =
+    opts.apiKey ??
+    (provider === "openai"
+      ? process.env.OPENAI_API_KEY
+      : process.env.GEMINI_API_KEY);
+  if (!apiKey) {
+    const err = new Error(
+      provider === "openai" ? "falta OPENAI_API_KEY" : "falta GEMINI_API_KEY",
+    );
+    err.code = provider === "openai" ? "OPENAI_NO_API_KEY" : "GEMINI_NO_API_KEY";
+    throw err;
+  }
 
-  const res = await fetch("https://api.openai.com/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload),
-  });
-  const data = await res.json();
+  const userText = buildUserText(prompt, opts.ocr, opts.step);
+  const gen =
+    deps.generateContent ??
+    (provider === "openai" ? generateOpenAI : generateGemini);
+
+  let out;
+  try {
+    out = await gen(
+      {
+        model,
+        apiKey,
+        json: true,
+        system: SYSTEM_PROMPT,
+        prompt: userText,
+        thinkingLevel: opts.thinkingLevel || "low",
+        fallbackModels: [],
+        chainRounds: 1,
+        retries: opts.retries ?? 0,
+      },
+      deps,
+    );
+  } catch (e) {
+    const lastReq = Array.isArray(e.requests) ? e.requests.at(-1) : null;
+    if (lastReq) {
+      const usagePath = writeUsage20({
+        usageDir: opts.usageDir,
+        entrada: lastReq.entrada ?? { model, provider },
+        resposta: lastReq.resposta ?? { error: e.message },
+      });
+      e.usagePath = usagePath;
+      console.log(`usage → ${usagePath}`);
+    }
+    throw e;
+  }
+
+  const lastReq = Array.isArray(out.requests) ? out.requests.at(-1) : null;
+  const payload =
+    lastReq?.entrada ??
+    { model, provider, system: SYSTEM_PROMPT, prompt: userText };
+  const resposta = lastReq?.resposta ?? out.raw ?? {};
+  const usage = usageTokens(out.usage || lastReq?.usage || resposta?.usage || resposta?.usageMetadata);
   const usagePath = writeUsage20({
     usageDir: opts.usageDir,
     entrada: payload,
-    resposta: data,
+    resposta,
   });
   console.log(`usage → ${usagePath}`);
-  if (!res.ok) {
-    const err = new Error(data?.error?.message || JSON.stringify(data));
-    err.code = "OPENAI_REQUEST_FAILED";
-    err.usagePath = usagePath;
-    throw err;
-  }
-  const raw = String(data.choices?.[0]?.message?.content ?? "");
-  console.log({ raw });
-  return { ...parseActionTypeXY(raw), raw, payload, resposta: data, usagePath };
+
+  const raw = String(out.text || "");
+  console.log({ provider, model: out.model || model, raw });
+  return {
+    ...parseActionTypeXY(raw),
+    raw,
+    payload,
+    resposta,
+    usage,
+    provider,
+    model: out.model || model,
+    usagePath,
+  };
 }

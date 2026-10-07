@@ -4,17 +4,23 @@
  *
  *   npm run raw-gpt:loop -- --avd ConnectMax_Cam --prompt test/fixtures/raw-gpt-decide.prompt.txt
  *   npm run raw-gpt:loop -- --prompt test/fixtures/raw-gpt-decide.prompt.txt --step 1
- *   npm run raw-gpt:loop -- --avd ConnectMax_Cam --prompt "…" --step 1 --max-steps 40 --wait-ms 5000
+ *   npm run raw-gpt:loop -- --avd ConnectMax_Cam --prompt test/fixtures/raw-gpt-decide.prompt.txt --step 1 --model gpt-4o-mini
+ *   npm run raw-gpt:loop -- --avd ConnectMax_Cam --prompt test/fixtures/raw-gpt-decide.prompt.txt --step 1 --model gemini-3.8-flash
+ *
+ * --model: ids do catálogo lib/agent-models.js (OpenAI gpt-* / Gemini gemini-*).
+ * Env: OPENAI_API_KEY / GEMINI_API_KEY · RAW_GPT_MODEL · OPENAI_MODEL · GEMINI_MODEL
  */
 import { existsSync, mkdirSync, readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { executeAction } from "../lib/agent-run.js";
+import { AGENT_MODELS, providerForModel } from "../lib/agent-models.js";
 import { sleep } from "../lib/adb.js";
 import { loadEnvFiles } from "../lib/load-env.js";
 import { screenshot } from "../lib/operate.js";
 import { provisionEmulator } from "../lib/provision.js";
 import { decideFromImage } from "../lib/raw-gpt-from-image.js";
+import { resolveRawGptModel } from "../lib/raw-gpt-decide.js";
 import { resolveSerial } from "../lib/run-action.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -48,8 +54,19 @@ function loadDeviceCfg() {
   }
 }
 
-if (!process.env.OPENAI_API_KEY) {
-  console.error("falta OPENAI_API_KEY");
+function requireApiKey(model) {
+  const provider = providerForModel(model);
+  const key =
+    provider === "openai"
+      ? process.env.OPENAI_API_KEY
+      : process.env.GEMINI_API_KEY;
+  if (key) return provider;
+  const need =
+    provider === "openai" ? "OPENAI_API_KEY" : "GEMINI_API_KEY";
+  console.error(`falta ${need} (model=${model})`);
+  console.error(
+    `modelos: ${AGENT_MODELS.map((m) => `${m.id} (${m.provider})`).join(", ")}`,
+  );
   process.exit(1);
 }
 
@@ -62,6 +79,9 @@ if (!prompt) {
   console.error("falta --prompt (texto ou path)");
   process.exit(1);
 }
+
+const model = resolveRawGptModel(argValue("--model"));
+const provider = requireApiKey(model);
 
 const avd =
   argValue("--avd") ||
@@ -88,7 +108,6 @@ if (avd) {
   });
 }
 
-const model = argValue("--model") || process.env.OPENAI_MODEL || "gpt-4o-mini";
 const engine = argValue("--engine") || process.env.SCREEN_ROBOT_OCR || "all";
 const waitMs = Number(argValue("--wait-ms") || 5000);
 const maxSteps = Number(argValue("--max-steps") || 50);
@@ -104,7 +123,16 @@ mkdirSync(usageDir, { recursive: true });
 
 console.log(
   JSON.stringify(
-    { avd: avd || undefined, serial, model, engine, waitMs, maxSteps, step },
+    {
+      avd: avd || undefined,
+      serial,
+      model,
+      provider,
+      engine,
+      waitMs,
+      maxSteps,
+      step,
+    },
     null,
     2,
   ),
@@ -120,12 +148,13 @@ for (let i = 1; i <= maxSteps; i++) {
     prompt,
     step,
     model,
+    provider,
     engine,
     usageDir,
   });
 
-  const { action, proximoPasso, ocr, usagePath, resposta } = out;
-  const u = resposta?.usage;
+  const { action, proximoPasso, ocr, usagePath, usage, resposta } = out;
+  const u = usage || resposta?.usage || resposta?.usageMetadata;
   console.log(
     JSON.stringify(
       {
@@ -133,12 +162,14 @@ for (let i = 1; i <= maxSteps; i++) {
         proximoPasso,
         ocrHits: ocr?.length,
         step,
+        model: out.model || model,
+        provider: out.provider || provider,
         usagePath,
         tokens: u
           ? {
-              prompt: u.prompt_tokens,
-              completion: u.completion_tokens,
-              total: u.total_tokens,
+              prompt: u.prompt_tokens ?? u.promptTokenCount,
+              completion: u.completion_tokens ?? u.candidatesTokenCount,
+              total: u.total_tokens ?? u.totalTokenCount,
             }
           : undefined,
       },

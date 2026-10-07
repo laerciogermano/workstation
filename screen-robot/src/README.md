@@ -237,13 +237,16 @@ npm run agent -- --model gemini-2.5-flash --no-fallback --prompt ../roteiros/abr
 npm run agent -- --sense vision --prompt ../roteiros/teste.md --no-prompt
 npm run agent -- --vision --provider openai --model gpt-4o-mini --prompt ../roteiros/teste.md
 npm run agent:smoke              # 1–2 passos no device; sem key = heurística Connect/scroll
-npm run raw-gpt -- --image test/fixtures/linkedin-people-comprador-connect.png --prompt "…" --step 11
-# Motor paralelo (estilo branch motor2), sem alterar raw-gpt-decide.js / raw-gpt.js:
+npm run raw-gpt -- --image test/fixtures/linkedin-people-comprador-connect.png --prompt "…" --step 11 --model gpt-4o-mini
+# Motor paralelo (estilo branch motor2):
 #   lib/raw-gpt-from-image.js → decideFromImage = extract → compactOcr → decideRawAction
-#   npm run raw-gpt:from-image -- --image test/fixtures/01-search.png --prompt test/fixtures/raw-gpt-decide.prompt.txt --step 1
-#   npm run raw-gpt:loop -- --avd ConnectMax_Cam --prompt test/fixtures/raw-gpt-decide.prompt.txt --step 1
+#   npm run raw-gpt:from-image -- --image test/fixtures/01-search.png --prompt test/fixtures/raw-gpt-decide.prompt.txt --step 1 --model gpt-4o-mini
+#   npm run raw-gpt:loop -- --avd ConnectMax_Cam --prompt test/fixtures/raw-gpt-decide.prompt.txt --step 1 --model gpt-4o-mini
+#   npm run raw-gpt:loop -- --avd ConnectMax_Cam --prompt test/fixtures/raw-gpt-decide.prompt.txt --step 1 --model gemini-3.8-flash
+# --model: ids do catálogo [`lib/agent-models.js`](lib/agent-models.js) (OpenAI `gpt-*` / Gemini `gemini-*`). Default: `RAW_GPT_MODEL` → `OPENAI_MODEL` → `GEMINI_MODEL` → `gpt-4o-mini`. Provider pela id (`providerForModel`). Keys: `OPENAI_API_KEY` / `GEMINI_API_KEY`.
+# Antes: só OpenAI chat.completions em `decideRawAction`. Depois: OpenAI ou Gemini via `openai.js` / `gemini.js`. Rollback: fixar `generateOpenAI` e exigir `OPENAI_API_KEY`.
 # Loop: AVD/serial → screenshot → decideFromImage → executeAction → wait. Default `--wait-ms 5000`. Flags: --wait-ms, --max-steps, --model, --engine, --device/--serial.
-# raw-gpt / loop: cada chat.completions grava `usage-2.0/<timestamp>.json` ({ entrada, resposta } com `usage.prompt_tokens` etc.). Writer: [`lib/usage-write.js`](lib/usage-write.js). Rollback: omitir `writeUsage20` em `decideRawAction`.
+# raw-gpt / loop: cada request grava `usage-2.0/<timestamp>.json` ({ entrada, resposta }). Writer: [`lib/usage-write.js`](lib/usage-write.js). Rollback: omitir `writeUsage20` em `decideRawAction`.
 # Antes: só CLI pontual (raw-gpt). Rollback: remover raw-gpt-from-image.js, raw-gpt-loop.js e scripts npm.
 # --prompt obrigatório (sem DEFAULT_PROMPT). Antes: default "Na tela People…". Rollback: export DEFAULT_PROMPT.
 # Testes: node --test lib/raw-gpt-decide.test.js (prompt em test/fixtures/raw-gpt-decide.prompt.txt; its em paralelo via describe concurrency)

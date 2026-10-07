@@ -4,12 +4,17 @@
  * Não altera scripts/raw-gpt.js.
  *
  *   npm run raw-gpt:from-image -- --image test/fixtures/01-search.png --prompt test/fixtures/raw-gpt-decide.prompt.txt --step 1
+ *   npm run raw-gpt:from-image -- --image test/fixtures/01-search.png --prompt test/fixtures/raw-gpt-decide.prompt.txt --step 1 --model gemini-3.8-flash
+ *
+ * --model: ids do catálogo lib/agent-models.js (OpenAI gpt-* / Gemini gemini-*).
  */
 import { existsSync, readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { AGENT_MODELS, providerForModel } from "../lib/agent-models.js";
 import { loadEnvFiles } from "../lib/load-env.js";
 import { decideFromImage } from "../lib/raw-gpt-from-image.js";
+import { resolveRawGptModel } from "../lib/raw-gpt-decide.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const SRC_ROOT = resolve(__dirname, "..");
@@ -19,11 +24,6 @@ const DEFAULT_IMAGE = join(
   SRC_ROOT,
   "test/fixtures/linkedin-people-comprador-connect.png",
 );
-
-if (!process.env.OPENAI_API_KEY) {
-  console.error("falta OPENAI_API_KEY");
-  process.exit(1);
-}
 
 function argValue(flag) {
   const i = process.argv.indexOf(flag);
@@ -51,7 +51,17 @@ if (!prompt) {
 }
 const imagePath = resolve(argValue("--image") || DEFAULT_IMAGE);
 const engine = argValue("--engine") || process.env.SCREEN_ROBOT_OCR || "all";
-const model = argValue("--model") || process.env.OPENAI_MODEL || "gpt-4o-mini";
+const model = resolveRawGptModel(argValue("--model"));
+const provider = providerForModel(model);
+const needKey =
+  provider === "openai" ? "OPENAI_API_KEY" : "GEMINI_API_KEY";
+if (!process.env[needKey]) {
+  console.error(`falta ${needKey} (model=${model})`);
+  console.error(
+    `modelos: ${AGENT_MODELS.map((m) => `${m.id} (${m.provider})`).join(", ")}`,
+  );
+  process.exit(1);
+}
 const stepRaw = argValue("--step");
 const step =
   stepRaw != null && String(stepRaw).trim() !== ""
@@ -68,21 +78,24 @@ const out = await decideFromImage({
   prompt,
   step,
   model,
+  provider,
   engine,
   usageDir: join(SRC_ROOT, "usage-2.0"),
 });
-const u = out.resposta?.usage;
+const u = out.usage || out.resposta?.usage || out.resposta?.usageMetadata;
 console.log({
   imagePath,
   engine,
+  model: out.model || model,
+  provider: out.provider || provider,
   hits: out.elements.length,
   ocr: out.ocr,
   usagePath: out.usagePath,
   tokens: u
     ? {
-        prompt: u.prompt_tokens,
-        completion: u.completion_tokens,
-        total: u.total_tokens,
+        prompt: u.prompt_tokens ?? u.promptTokenCount,
+        completion: u.completion_tokens ?? u.candidatesTokenCount,
+        total: u.total_tokens ?? u.totalTokenCount,
       }
     : undefined,
 });

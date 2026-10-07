@@ -13,6 +13,7 @@ import { decideRawAction } from "./raw-gpt-decide.js";
  *   step?: string|number|null,
  *   apiKey?: string,
  *   model?: string,
+ *   provider?: "openai"|"gemini"|string,
  *   engine?: string,
  *   timeoutMs?: number,
  *   usageDir?: string,
@@ -25,6 +26,9 @@ import { decideRawAction } from "./raw-gpt-decide.js";
  *   raw?: string,
  *   payload?: object,
  *   resposta?: object,
+ *   usage?: object,
+ *   provider?: string,
+ *   model?: string,
  *   usagePath?: string,
  * }>}
  */
@@ -46,8 +50,31 @@ export async function decideFromImage(opts) {
     step: opts.step,
     apiKey: opts.apiKey,
     model: opts.model,
+    provider: opts.provider,
     usageDir: opts.usageDir,
   });
-  const { raw, payload, resposta, usagePath, proximoPasso, ...action } = out;
-  return { action, proximoPasso, ocr, elements, raw, payload, resposta, usagePath };
+  const {
+    raw,
+    payload,
+    resposta,
+    usage,
+    provider,
+    model,
+    usagePath,
+    proximoPasso,
+    ...action
+  } = out;
+  return {
+    action,
+    proximoPasso,
+    ocr,
+    elements,
+    raw,
+    payload,
+    resposta,
+    usage,
+    provider,
+    model,
+    usagePath,
+  };
 }

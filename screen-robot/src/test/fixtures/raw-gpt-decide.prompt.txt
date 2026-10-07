@@ -1,73 +1,73 @@
 Jornada LinkedIn (passos 1→12). Uma ação por turno. "voce esta no passo N" = faça SÓ o passo N.
-Copie tap.x/tap.y EXATAMENTE de um hit do OCR atual (mesmo text). Os blocos "ocr:" abaixo são exemplos reais do extract (compactOcr); no turno use o OCR atual.
+Copie tap.x/tap.y EXATAMENTE de um hit do OCR atual (mesmo text). Os blocos "ocr exemplo" abaixo são só referência (extract/fixtures); no turno use o OCR atual.
 
 1. clique em Search — tap no texto "Search" da barra (topo).
 - action: tap no hit "Search"
 - PROIBIDO type / scroll / fail se "Search" estiver no OCR
-ocr: [{"type":"text","text":"Search","x":177,"y":78}]
+ocr exemplo: [{"type":"text","text":"Search","x":177,"y":78}]
 
 2. digite comprador — type "comprador" (campo/teclado já aberto após Search).
 - action: type text="comprador"
 - PROIBIDO tap em "Search"/"Fearch"/"pearch" de novo (passo 1 já feito)
 - PROIBIDO tap em "Show all" / Recent / nomes
-ocr: [{"type":"text","text":"Search","x":128,"y":80},{"type":"text","text":"Fearch","x":129,"y":80},{"type":"text","text":"pearch","x":130,"y":81},{"type":"text","text":"Show all","x":405,"y":152},{"type":"text","text":"comprador","x":156,"y":440}]
+ocr exemplo: [{"type":"text","text":"Search","x":128,"y":80},{"type":"text","text":"Fearch","x":129,"y":80},{"type":"text","text":"pearch","x":130,"y":81},{"type":"text","text":"Show all","x":405,"y":152},{"type":"text","text":"comprador","x":156,"y":440}]
 
 3. feche o teclado — key KEYCODE_BACK 1×.
 - action: key code="KEYCODE_BACK"
 - PROIBIDO tap em "Show all results" neste passo (isso é o passo 4)
 - Teclado visível (letras q/w/e… no OCR) = BACK
-ocr: [{"type":"text","text":"comprador","x":150,"y":81},{"type":"text","text":"Show all results","x":269,"y":472},{"type":"text","text":"q","x":32,"y":619},{"type":"text","text":"Q","x":495,"y":846}]
+ocr exemplo: [{"type":"text","text":"comprador","x":150,"y":81},{"type":"text","text":"Show all results","x":269,"y":472},{"type":"text","text":"q","x":32,"y":619},{"type":"text","text":"Q","x":495,"y":846}]
 
 4. clique em Show all results — tap no texto "Show all results" (ou "Showallresults").
 - action: tap no hit completo "Show all results"
 - Prefira o texto completo, não só "results"
 - Se sumiu → volte ao passo 1 (Search); PROIBIDO scroll no feed
-ocr: [{"type":"text","text":"Show all results","x":270,"y":849},{"type":"text","text":"Showallresults","x":268,"y":850},{"type":"text","text":"results","x":319,"y":849}]
+ocr exemplo: [{"type":"text","text":"Show all results","x":270,"y":849},{"type":"text","text":"Showallresults","x":268,"y":850},{"type":"text","text":"results","x":319,"y":849}]
 
 5. clique em People — tap na aba "People" (chip y≈150).
 - action: tap no "People" da barra de abas (topo)
 - PROIBIDO tap no "People" que aparece no card/lista mais abaixo
-ocr: [{"type":"text","text":"People","x":62,"y":153},{"type":"text","text":"Posts","x":163,"y":153},{"type":"text","text":"Jobs","x":256,"y":152},{"type":"text","text":"People","x":71,"y":244}]
+ocr exemplo: [{"type":"text","text":"People","x":62,"y":153},{"type":"text","text":"Posts","x":163,"y":153},{"type":"text","text":"Jobs","x":256,"y":152},{"type":"text","text":"People","x":71,"y":244}]
 
 6. clique Location — tap em "Location" ou OCR "Locatior".
 - action: tap no chip Location (direita da barra de filtros)
 - PROIBIDO tap em "People" / "1st" / "2nd" / "3rd+"
-ocr: [{"type":"text","text":"Location","x":499,"y":152},{"type":"text","text":"Locatior","x":500,"y":153},{"type":"text","text":"People","x":119,"y":154},{"type":"text","text":"1st","x":243,"y":153}]
+ocr exemplo: [{"type":"text","text":"Location","x":499,"y":152},{"type":"text","text":"Locatior","x":500,"y":153},{"type":"text","text":"People","x":119,"y":154},{"type":"text","text":"1st","x":243,"y":153}]
 
 7. clique em Add a location — tap no campo "Add a location" / "Add alocation" do sheet.
 - action: tap no campo Add a location
 - PROIBIDO tap em chips Brazil/São Paulo/Minas; PROIBIDO "Show results" ainda
-ocr: [{"type":"text","text":"Add a location","x":127,"y":380},{"type":"text","text":"Add alocation","x":145,"y":380},{"type":"text","text":"Locations","x":77,"y":294},{"type":"text","text":"Show results","x":271,"y":849}]
+ocr exemplo: [{"type":"text","text":"Add a location","x":127,"y":380},{"type":"text","text":"Add alocation","x":145,"y":380},{"type":"text","text":"Locations","x":77,"y":294},{"type":"text","text":"Show results","x":271,"y":849}]
 
 8. digite Campinas — type "Campinas" (teclado/campo já aberto).
 - action: type text="Campinas"
 - PROIBIDO tap de novo em "Add a location"
-ocr: [{"type":"text","text":"Add a location","x":174,"y":81},{"type":"text","text":"q","x":32,"y":619},{"type":"text","text":"a","x":58,"y":696}]
+ocr exemplo: [{"type":"text","text":"Add a location","x":174,"y":81},{"type":"text","text":"q","x":32,"y":619},{"type":"text","text":"a","x":58,"y":696}]
 
 9. clique na 1ª opção Campinas — tap na linha completa "Campinas, São Paulo, Brazil".
 - action: tap no hit com cidade+estado+país (texto completo com vírgulas)
 - Aceita também "Campinas,SaoPaulo,Brazil" (mesmo y≈177)
 - PROIBIDO "Campinas," (fragmento); PROIBIDO só "Campinas" do campo topo (y≈81); PROIBIDO teclado/Gboard
-ocr: [{"type":"text","text":"Campinas","x":149,"y":81},{"type":"text","text":"Campinas, São Paulo, Brazil","x":174,"y":177},{"type":"text","text":"Campinas,SaoPaulo,Brazil","x":169,"y":177},{"type":"text","text":"Campinas,","x":80,"y":179},{"type":"text","text":"Greater Campinas","x":121,"y":249}]
+ocr exemplo: [{"type":"text","text":"Campinas","x":149,"y":81},{"type":"text","text":"Campinas, São Paulo, Brazil","x":174,"y":177},{"type":"text","text":"Campinas,SaoPaulo,Brazil","x":169,"y":177},{"type":"text","text":"Campinas,","x":80,"y":179},{"type":"text","text":"Greater Campinas","x":121,"y":249}]
 
 10. clique em Show results — tap em "Show results".
 - action: tap "Show results"
 - PROIBIDO "Add a location" / linha Campinas de novo
-ocr: [{"type":"text","text":"Show results","x":271,"y":849},{"type":"text","text":"Campinas, São Paulo, Brazil","x":152,"y":399},{"type":"text","text":"Q Add a location","x":134,"y":308}]
+ocr exemplo: [{"type":"text","text":"Show results","x":271,"y":849},{"type":"text","text":"Campinas, São Paulo, Brazil","x":152,"y":399},{"type":"text","text":"Q Add a location","x":134,"y":308}]
 
 11. Connect — tap no PRIMEIRO "Connect" da lista (menor y / o de cima) **só se existir no OCR atual**.
 - Se OCR atual tem text exato "Connect" → tap no de menor y; Ignore "Pending", "Message", "+ Connect"
 - Se OCR atual NÃO tem text exato "Connect" (só Pending/Message/etc.) → OBRIGATÓRIO scroll direction="down"; nextStep="11"; PROIBIDO tap
-- PROIBIDO copiar x,y dos blocos "ocr:" de exemplo abaixo — use SOMENTE o OCR atual do turno
+- PROIBIDO copiar x,y dos blocos "ocr exemplo" abaixo — use SOMENTE o OCR atual do turno
 - Após tap Connect com sucesso → nextStep "12"
 - motivo: "passo 11: primeiro Connect" ou "passo 11: sem Connect, scroll"
-ocr (com Connect): [{"type":"text","text":"Connect","x":453,"y":243},{"type":"text","text":"Connect","x":454,"y":447},{"type":"text","text":"Message","x":452,"y":644}]
-ocr (Pending no topo + Connect mais abaixo): [{"type":"text","text":"Pending","x":453,"y":243},{"type":"text","text":"Connect","x":454,"y":447},{"type":"text","text":"Message","x":452,"y":644}]
-ocr (vários Connect): [{"type":"text","text":"Connect","x":455,"y":344},{"type":"text","text":"Connect","x":455,"y":589},{"type":"text","text":"Connect","x":455,"y":784}]
-ocr (SEM Connect — só scroll): [{"type":"text","text":"Pending","x":453,"y":243},{"type":"text","text":"Pending","x":451,"y":488},{"type":"text","text":"Pending","x":451,"y":683}]
+ocr exemplo (com Connect): [{"type":"text","text":"Connect","x":453,"y":243},{"type":"text","text":"Connect","x":454,"y":447},{"type":"text","text":"Message","x":452,"y":644}]
+ocr exemplo (Pending no topo + Connect mais abaixo): [{"type":"text","text":"Pending","x":453,"y":243},{"type":"text","text":"Connect","x":454,"y":447},{"type":"text","text":"Message","x":452,"y":644}]
+ocr exemplo (vários Connect): [{"type":"text","text":"Connect","x":455,"y":344},{"type":"text","text":"Connect","x":455,"y":589},{"type":"text","text":"Connect","x":455,"y":784}]
+ocr exemplo (SEM Connect — só scroll): [{"type":"text","text":"Pending","x":453,"y":243},{"type":"text","text":"Pending","x":451,"y":488},{"type":"text","text":"Pending","x":451,"y":683}]
 
 12. Clicar no botão Skip após conectar — tap no texto exato "Skip".
 - action: tap "Skip"
 - Sheet "Add a note…" na tela: escolha Skip, NÃO "Add a note", NÃO "Connect"
 - Se a sheet ainda não apareceu → sleep; nextStep permanece "12"
-ocr: [{"type":"text","text":"Add a note to your request?","x":190,"y":570},{"type":"text","text":"Add a note","x":270,"y":725},{"type":"text","text":"Skip","x":269,"y":816},{"type":"text","text":"Connect","x":456,"y":447}]
+ocr exemplo: [{"type":"text","text":"Add a note to your request?","x":190,"y":570},{"type":"text","text":"Add a note","x":270,"y":725},{"type":"text","text":"Skip","x":269,"y":816},{"type":"text","text":"Connect","x":456,"y":447}]

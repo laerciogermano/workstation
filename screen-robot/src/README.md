@@ -249,7 +249,7 @@ npm run raw-gpt:loop -- --avd ConnectMax_Cam --prompt test/fixtures/raw-gpt-deci
 # (+ `11-connect-people.png`, `linkedin-search-comprador-connected.png` = 11c 2º Connect; `12-scroll.png` = 11d sem Connect).
 # Passo 3: se a fixture já tem "Show all results", expected = tap nele (exceção do prompt); BACK só sem esse texto. Rollback: expected KEYCODE_BACK + fixture sem Show all.
 # Antes: nomes longos linkedin-search-*.png / linkedin-tela-inicial no raw-gpt. Rollback: git mv + nomes antigos no teste.
-# Prompt raw-gpt: cada passo 1–13 com bullets + `ocr:` (hits reais de extractFromImage+compactOcr das fixtures). Copiar x/y do OCR atual. Rollback: prompt só com linhas curtas sem ocr/bullets.
+# Prompt raw-gpt: cada passo com bullets + `ocr exemplo:` (hits de fixture; só referência). Copiar x/y do OCR atual. Antes: label `ocr:`. Rollback: `ocr:` / prompt curto sem blocos.
 # Passo 9: linha completa "Campinas, São Paulo, Brazil"; PROIBIDO fragmento "Campinas," / campo topo. Passo 11: menor y entre "Connect".
 # raw-gpt-decide: `decideFromImage({ system, user, imagePath })` — system/user JSON em inglês (keys+textos); messages = `JSON.stringify`. Defaults: `DEFAULT_SYSTEM` / `DEFAULT_USER_RULES`. Retorno `{ action, nextStep, ocr, elements, raw, payload, system, user }`. Antes: chaves PT (`jornada`, `proximoPasso`, `regras`). Rollback: objetos PT + parse `proximoPasso`.
 # Journey fixtures (`raw-gpt-decide.prompt.txt` / `.simple.txt`) permanecem em português; só o schema system/user é EN.

@@ -11,20 +11,24 @@ Umbrella ConnectMax + **screen-robot** na raiz do works:
 **Dependências:** `linkedin-agent` consome `screen-robot`; `vendas` consome `linkedin-agent` para ações no LinkedIn. O robô **não** conhece LinkedIn nem regras de venda; o agente LinkedIn **não** conhece fila/faturamento.
 
 Prompts (timeline compartilhada): [`prompts/`](prompts/README.md).  
-Config IA (umbrella): [`config/config-ia.md`](config/config-ia.md).
+Config IA (umbrella): [`config/config-ia.md`](config/config-ia.md).  
+Docs transversais: [`docs/`](docs/README.md).
 
 ## Ordem sugerida
 
 ```text
-screen-robot (ver → decidir → atuar na tela)
+screen-robot (ver → atuar na tela; lib)
         ↓
-linkedin-agent (login, busca, perfil, conexão, mensagem)
+linkedin-agent (scripts por operação LinkedIn; sem IA no crítico)
         ↓
-vendas (cadência, fila, distribuição, faturamento)
+vendas (board, fila, device pool, cadência)
 ```
+
+**Plano de implementação (scripts + pool):** [`docs/plano-implementacao-prospeccao-scripts.md`](docs/plano-implementacao-prospeccao-scripts.md).
 
 ## Próximos passos
 
+→ [`docs/plano-implementacao-prospeccao-scripts.md`](docs/plano-implementacao-prospeccao-scripts.md) — arquitetura e ordem de construção  
 → [`screen-robot/README.md`](../screen-robot/README.md) — capacidades Node de tela  
 → [`linkedin-agent/README.md`](linkedin-agent/README.md) — operações LinkedIn  
 → [`vendas/README.md`](vendas/README.md) — esteira de produto de vendas

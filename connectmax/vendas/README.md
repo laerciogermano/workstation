@@ -168,4 +168,5 @@ Leitura da unidade como **fonte de renda**: time, capacidade de gerar demanda e 
 
 ## Próximos passos
 
+→ Plano (scripts + pool): [`../docs/plano-implementacao-prospeccao-scripts.md`](../docs/plano-implementacao-prospeccao-scripts.md)  
 → [`docs/functionalities.md`](docs/functionalities.md) → `user-stories.md` (a produzir)

@@ -54,5 +54,6 @@ vendas (cadência, fila, distribuição, faturamento)
 
 ## Próximos passos
 
+→ Plano (scripts + pool): [`../docs/plano-implementacao-prospeccao-scripts.md`](../docs/plano-implementacao-prospeccao-scripts.md)  
 → Detalhar e validar [`docs/functionalities.md`](docs/functionalities.md)  
-→ Consumir APIs/scripts do [`../../screen-robot/src/`](../../screen-robot/src/README.md)
+→ Consumir APIs/scripts do [`../../screen-robot/src/README.md`](../../screen-robot/src/README.md)

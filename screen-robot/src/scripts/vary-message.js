@@ -59,3 +59,8 @@ if (!text) {
 }
 
 console.log(text);
+
+const u = data.usage || {};
+console.error(
+  `usage: prompt=${u.prompt_tokens ?? "?"} completion=${u.completion_tokens ?? "?"} total=${u.total_tokens ?? "?"}`,
+);

@@ -100,6 +100,7 @@ const elements = await extract({ serial });
 | **SC-30 LinkedIn** (fixture, sem device) | ver abaixo |
 | Piloto LinkedIn ao vivo | `npm run linkedin-login` |
 | Exemplo mínimo (provision + scrcpy) | `npm run sample` |
+| Variação de mensagem (gpt-4o-mini) | `npm run vary-message` |
 
 ```bash
 cd screen-robot/src
@@ -237,6 +238,10 @@ npm run agent -- --model gemini-2.5-flash --no-fallback --prompt ../roteiros/abr
 npm run agent -- --sense vision --prompt ../roteiros/teste.md --no-prompt
 npm run agent -- --vision --provider openai --model gpt-4o-mini --prompt ../roteiros/teste.md
 npm run agent:smoke              # 1–2 passos no device; sem key = heurística Connect/scroll
+# Variação de mensagem (só texto → gpt-4o-mini). Default: oferta de cartela. Custom: npm run vary-message -- "texto"
+# Antes: inexistente. Rollback: rm scripts/vary-message.js + script npm vary-message.
+npm run vary-message
+
 npm run raw-gpt -- --image test/fixtures/linkedin-people-comprador-connect.png --prompt "…" --step 11 --model gpt-4o-mini
 # Motor paralelo (estilo branch motor2):
 #   lib/raw-gpt-from-image.js → decideFromImage = extract → compactOcr → decideRawAction

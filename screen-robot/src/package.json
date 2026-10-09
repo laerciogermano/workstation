@@ -32,6 +32,7 @@
     "raw-gpt": "node scripts/raw-gpt.js",
     "raw-gpt:from-image": "node scripts/raw-gpt-from-image.js",
     "raw-gpt:loop": "node scripts/raw-gpt-loop.js",
+    "vary-message": "node scripts/vary-message.js",
     "view": "bash scripts/view.sh",
     "test": "node --test 'lib/**/*.test.js'",
     "test:unit": "node --test 'lib/**/*.test.js'",

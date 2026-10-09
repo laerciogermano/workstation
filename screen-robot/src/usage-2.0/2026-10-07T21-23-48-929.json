@@ -1,0 +1,53 @@
+{
+  "entrada": {
+    "model": "gpt-5-mini",
+    "messages": [
+      {
+        "role": "system",
+        "content": "Você é uma IA agente autônoma que controla um smartphone Android.\nVocê recebe: (1) a jornada/objetivo, (2) o OCR da tela atual (lista extract: type, text, x, y) e (3) o passo atual (\"voce esta no passo …\").\nDecida UMA próxima ação e responda APENAS um JSON válido (sem markdown, sem texto fora do JSON).\nO JSON raiz OBRIGATÓRIO é exatamente { \"action\": { ... }, \"proximoPasso\": \"…\" } — proibido devolver o objeto da ação na raiz.\n\nFormato único:\n{\n  \"action\": {\n    \"type\": \"tap|scroll|type|key|esperar|sleep|done|fail\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null\n  },\n  \"motivo\": null,\n  \"proximoPasso\": null\n}\n\nTipos (lib screen-robot):\n- tap: obrigatório x e y numéricos do OCR desta tela (centro do alvo); demais campos null\n- scroll: direction up|down|left|right (obrigatório; x/y null)\n- type: text a digitar\n- key: code (ex. KEYCODE_BACK, KEYCODE_ENTER)\n- esperar: ms (obrigatório; ex. 1000). Use para aguardar UI/carregamento — NÃO há delay fixo entre turnos\n- sleep: alias de esperar (mesmo contrato: ms)\n- done: jornada concluída\n- fail: só se impossível seguir\n\nproximoPasso (raiz, texto, obrigatório):\n- valor a usar no PRÓXIMO turno (o runtime reenvia como step)\n- formato livre, alinhado à jornada: número (\"3\"), id (\"connect\"), ou resumo curto em linguagem natural (\"digite comprador\")\n- se esta ação cumpriu o passo atual → avance para o próximo da jornada\n- se ainda no mesmo passo (esperar/scroll/retry) → devolva o mesmo step\n- NUNCA invente passo fora da jornada\n\nRegras:\n- \"voce esta no passo …\" = execute SOMENTE esse passo; PROIBIDO refazer passos já cumpridos\n- NÃO retorne atributos com valor null; omita a chave\n- tap.x / tap.y = EXCLUSIVAMENTE de um hit do OCR atual; proibido inventar ou reusar coords de outro contexto\n- Cada item do OCR (text/icon) é clicável\n- Sem alvo do passo / UI ainda carregando → esperar (ms) ou scroll; evite fail\n- Prefira type \"esperar\" (não sleep) quando for aguardar\n- Um único objeto JSON na resposta, no formato { \"action\": { ... }, \"proximoPasso\": \"…\" }\""
+      },
+      {
+        "role": "user",
+        "content": "Jornada:\n\n\nOCR atual (JSON):\n[{\"type\":\"text\",\"text\":\"6:23\",\"x\":108,\"y\":23},{\"type\":\"text\",\"text\":\"©\",\"x\":168,\"y\":23},{\"type\":\"text\",\"text\":\"×\",\"x\":477,\"y\":80},{\"type\":\"text\",\"text\":\"ã\",\"x\":35,\"y\":81},{\"type\":\"text\",\"text\":\"comprador\",\"x\":148,\"y\":81},{\"type\":\"text\",\"text\":\"文\",\"x\":478,\"y\":82},{\"type\":\"text\",\"text\":\"7\",\"x\":490,\"y\":151},{\"type\":\"text\",\"text\":\"①\",\"x\":42,\"y\":152},{\"type\":\"text\",\"text\":\"(O\",\"x\":42,\"y\":153},{\"type\":\"text\",\"text\":\"comprador junior\",\"x\":186,\"y\":153},{\"type\":\"text\",\"text\":\"LN\",\"x\":492,\"y\":153},{\"type\":\"text\",\"text\":\"compradorjunior\",\"x\":170,\"y\":154},{\"type\":\"text\",\"text\":\"junior\",\"x\":249,\"y\":154},{\"type\":\"text\",\"text\":\"7\",\"x\":490,\"y\":229},{\"type\":\"text\",\"text\":\"①\",\"x\":42,\"y\":230},{\"type\":\"text\",\"text\":\"O\",\"x\":42,\"y\":231},{\"type\":\"text\",\"text\":\"compradorcomprador\",\"x\":215,\"y\":232},{\"type\":\"text\",\"text\":\"LN\",\"x\":490,\"y\":233},{\"type\":\"text\",\"text\":\"7\",\"x\":490,\"y\":307},{\"type\":\"text\",\"text\":\"①\",\"x\":42,\"y\":308},{\"type\":\"text\",\"text\":\"?\",\"x\":491,\"y\":308},{\"type\":\"text\",\"text\":\"O\",\"x\":42,\"y\":309},{\"type\":\"text\",\"text\":\"LN\",\"x\":492,\"y\":309},{\"type\":\"text\",\"text\":\"comprador\",\"x\":154,\"y\":310},{\"type\":\"text\",\"text\":\"7\",\"x\":490,\"y\":385},{\"type\":\"text\",\"text\":\"Q\",\"x\":42,\"y\":387},{\"type\":\"text\",\"text\":\"comprador jr\",\"x\":164,\"y\":387},{\"type\":\"text\",\"text\":\"jr\",\"x\":227,\"y\":387},{\"type\":\"text\",\"text\":\"LN\",\"x\":492,\"y\":387},{\"type\":\"text\",\"text\":\"Comprador Ltd. • Company • Financial S...\",\"x\":298,\"y\":465},{\"type\":\"text\",\"text\":\"Comprador\",\"x\":169,\"y\":466},{\"type\":\"text\",\"text\":\"Comprador Ltd. • Company • Finaancial S...\",\"x\":254,\"y\":466},{\"type\":\"text\",\"text\":\"-\",\"x\":274,\"y\":466},{\"type\":\"text\",\"text\":\"+\",\"x\":380,\"y\":466},{\"type\":\"text\",\"text\":\"Financial\",\"x\":436,\"y\":466},{\"type\":\"text\",\"text\":\"S..\",\"x\":488,\"y\":466},{\"type\":\"text\",\"text\":\"CompradorLtd.·Company·Financial S..\",\"x\":318,\"y\":467},{\"type\":\"text\",\"text\":\"COMPRADOR\",\"x\":170,\"y\":542},{\"type\":\"text\",\"text\":\"X\",\"x\":42,\"y\":543},{\"type\":\"text\",\"text\":\"+\",\"x\":274,\"y\":544},{\"type\":\"text\",\"text\":\"COMPRADORX·Company·Informatio...\",\"x\":276,\"y\":544},{\"type\":\"text\",\"text\":\"+\",\"x\":380,\"y\":544},{\"type\":\"text\",\"text\":\"Informatio\",\"x\":440,\"y\":544},{\"type\":\"text\",\"text\":\"COMPRADOR X • Company • Informatio...\",\"x\":307,\"y\":545},{\"type\":\"text\",\"text\":\"COMPRADOR X . Company\",\"x\":235,\"y\":546},{\"type\":\"text\",\"text\":\"sã\",\"x\":43,\"y\":621},{\"type\":\"text\",\"text\":\"Comprador\",\"x\":169,\"y\":622},{\"type\":\"text\",\"text\":\"+\",\"x\":273,\"y\":622},{\"type\":\"text\",\"text\":\"+\",\"x\":379,\"y\":622},{\"type\":\"text\",\"text\":\"Business\",\"x\":436,\"y\":622},{\"type\":\"text\",\"text\":\"C..\",\"x\":490,\"y\":622},{\"type\":\"text\",\"text\":\"Top\",\"x\":242,\"y\":623},{\"type\":\"text\",\"text\":\"Comprador Top·Company·Business C...\",\"x\":311,\"y\":623},{\"type\":\"text\",\"text\":\"2s\",\"x\":41,\"y\":693},{\"type\":\"text\",\"text\":\"CompradorDoidao·Company·Busine...\",\"x\":280,\"y\":699},{\"type\":\"text\",\"text\":\"Comprador\",\"x\":157,\"y\":700},{\"type\":\"text\",\"text\":\"Comprador Doidão • Company • Busine...\",\"x\":283,\"y\":700},{\"type\":\"text\",\"text\":\"+\",\"x\":309,\"y\":700},{\"type\":\"text\",\"text\":\"+\",\"x\":415,\"y\":700},{\"type\":\"text\",\"text\":\"Busine\",\"x\":459,\"y\":700},{\"type\":\"text\",\"text\":\"Company\",\"x\":362,\"y\":702},{\"type\":\"text\",\"text\":\"Show\",\"x\":216,\"y\":849},{\"type\":\"text\",\"text\":\"Show all results\",\"x\":270,\"y\":849},{\"type\":\"text\",\"text\":\"results\",\"x\":319,\"y\":849},{\"type\":\"text\",\"text\":\"Showallresults\",\"x\":268,\"y\":850},{\"type\":\"text\",\"text\":\"«\",\"x\":160,\"y\":924},{\"type\":\"text\",\"text\":\"[|\",\"x\":377,\"y\":924},{\"type\":\"text\",\"text\":\"()\",\"x\":268,\"y\":927}]\n\nvoce esta no passo 8. Execute APENAS esse passo. PROIBIDO voltar a passos anteriores (ex. no 2 NÃO tap Search; faça type).\n\nDefina a próxima action com base no OCR e no prompt abaixo.\n\nEm cada ação, diga no motivo qual passo (1–13) está em curso.\n\nOrdem obrigatória 1→N (N=último passo). Uma ação por turno. Toque só em textos ou ícones que estão na tela agora.\nPROIBIDO fail se o texto do passo atual estiver na tela (ex. texto do passo atual → toque; não fail).\nfail só se for impossível após tentar de novo; falhas antigas NÃO impedem um novo toque.\n\n1 scroll down\n2 abra o linkedin\n3 espere 3s\n4 clique em search\n5 Espere 2s\n6 digite a palavra \"comprador\"\n7 baixe o teclado\n8 clique em show all results\n9 espere 2s\n10. Clique em peoople\n11 espere 2s\n12 clique em location\n13 Clique em add a location\n14 Digite Curitiba"
+      }
+    ],
+    "response_format": {
+      "type": "json_object"
+    }
+  },
+  "resposta": {
+    "id": "chatcmpl-EWTOzXhdbMesiMRiAuDG1FObPMFc9",
+    "object": "chat.completion",
+    "created": 1791408225,
+    "model": "gpt-5-mini-2025-08-07",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\n  \"action\": {\n    \"type\": \"tap\",\n    \"x\": 270,\n    \"y\": 849\n  },\n  \"motivo\": \"passo 8: clique em show all results\",\n  \"proximoPasso\": \"9\"\n}",
+          "refusal": null,
+          "annotations": []
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 2051,
+      "completion_tokens": 386,
+      "total_tokens": 2437,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "audio_tokens": 0
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 320,
+        "audio_tokens": 0,
+        "accepted_prediction_tokens": 0,
+        "rejected_prediction_tokens": 0
+      }
+    },
+    "service_tier": "default",
+    "system_fingerprint": null
+  }
+}

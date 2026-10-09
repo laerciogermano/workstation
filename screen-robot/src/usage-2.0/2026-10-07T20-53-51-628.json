@@ -1,0 +1,53 @@
+{
+  "entrada": {
+    "model": "gpt-5-mini",
+    "messages": [
+      {
+        "role": "system",
+        "content": "Você é uma IA agente autônoma que controla um smartphone Android.\nVocê recebe: (1) a jornada/objetivo, (2) o OCR da tela atual (lista extract: type, text, x, y) e (3) o passo atual (\"voce esta no passo …\").\nDecida UMA próxima ação e responda APENAS um JSON válido (sem markdown, sem texto fora do JSON).\nO JSON raiz OBRIGATÓRIO é exatamente { \"action\": { ... }, \"proximoPasso\": \"…\" } — proibido devolver o objeto da ação na raiz.\n\nFormato único:\n{\n  \"action\": {\n    \"type\": \"tap|scroll|type|key|esperar|sleep|done|fail\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null\n  },\n  \"motivo\": null,\n  \"proximoPasso\": null\n}\n\nTipos (lib screen-robot):\n- tap: obrigatório x e y numéricos do OCR desta tela (centro do alvo); demais campos null\n- scroll: direction up|down|left|right (obrigatório; x/y null)\n- type: text a digitar\n- key: code (ex. KEYCODE_BACK, KEYCODE_ENTER)\n- esperar: ms (obrigatório; ex. 1000). Use para aguardar UI/carregamento — NÃO há delay fixo entre turnos\n- sleep: alias de esperar (mesmo contrato: ms)\n- done: jornada concluída\n- fail: só se impossível seguir\n\nproximoPasso (raiz, texto, obrigatório):\n- valor a usar no PRÓXIMO turno (o runtime reenvia como step)\n- formato livre, alinhado à jornada: número (\"3\"), id (\"connect\"), ou resumo curto em linguagem natural (\"digite comprador\")\n- se esta ação cumpriu o passo atual → avance para o próximo da jornada\n- se ainda no mesmo passo (esperar/scroll/retry) → devolva o mesmo step\n- NUNCA invente passo fora da jornada\n\nRegras:\n- \"voce esta no passo …\" = execute SOMENTE esse passo; PROIBIDO refazer passos já cumpridos\n- NÃO retorne atributos com valor null; omita a chave\n- tap.x / tap.y = EXCLUSIVAMENTE de um hit do OCR atual; proibido inventar ou reusar coords de outro contexto\n- Cada item do OCR (text/icon) é clicável\n- Sem alvo do passo / UI ainda carregando → esperar (ms) ou scroll; evite fail\n- Prefira type \"esperar\" (não sleep) quando for aguardar\n- Um único objeto JSON na resposta, no formato { \"action\": { ... }, \"proximoPasso\": \"…\" }\""
+      },
+      {
+        "role": "user",
+        "content": "Jornada:\n\n\nOCR atual (JSON):\n[{\"type\":\"text\",\"text\":\"5:539\",\"x\":97,\"y\":24},{\"type\":\"text\",\"text\":\"5:58 FFoflow\",\"x\":136,\"y\":30},{\"type\":\"text\",\"text\":\"Fow\",\"x\":162,\"y\":30},{\"type\":\"text\",\"text\":\"'FGow\",\"x\":175,\"y\":31},{\"type\":\"text\",\"text\":\"+Fotlow\",\"x\":160,\"y\":32},{\"type\":\"text\",\"text\":\"@\",\"x\":278,\"y\":110},{\"type\":\"text\",\"text\":\"Ruy\",\"x\":116,\"y\":112},{\"type\":\"text\",\"text\":\"Ruy Magalhaes\",\"x\":193,\"y\":112},{\"type\":\"text\",\"text\":\"Influencer\",\"x\":175,\"y\":136},{\"type\":\"text\",\"text\":\"Influencer of the Year\",\"x\":231,\"y\":136},{\"type\":\"text\",\"text\":\"—\",\"x\":338,\"y\":136},{\"type\":\"text\",\"text\":\"DPW Awards\",\"x\":407,\"y\":136},{\"type\":\"text\",\"text\":\"InfluenceroftheYear-DPWAwards\",\"x\":290,\"y\":137},{\"type\":\"text\",\"text\":\"Influencer of the Year - DPW Awards\",\"x\":296,\"y\":137},{\"type\":\"text\",\"text\":\"2026, Amsterdã\",\"x\":184,\"y\":163},{\"type\":\"text\",\"text\":\"Café\",\"x\":387,\"y\":163},{\"type\":\"text\",\"text\":\"Com...\",\"x\":485,\"y\":163},{\"type\":\"text\",\"text\":\"2026,Amsterda|Founder@CafecomCom...\",\"x\":301,\"y\":164},{\"type\":\"text\",\"text\":\"Café com Com:\",\"x\":435,\"y\":164},{\"type\":\"text\",\"text\":\"2026,\",\"x\":122,\"y\":165},{\"type\":\"text\",\"text\":\"|\",\"x\":251,\"y\":165},{\"type\":\"text\",\"text\":\"2026, Amsterdã | Founder @ Café com Com...\",\"x\":306,\"y\":165},{\"type\":\"text\",\"text\":\"@\",\"x\":351,\"y\":166},{\"type\":\"text\",\"text\":\"=\",\"x\":55,\"y\":167},{\"type\":\"text\",\"text\":\"Followed\",\"x\":132,\"y\":186},{\"type\":\"text\",\"text\":\"Followed by 8 connections\",\"x\":201,\"y\":187},{\"type\":\"text\",\"text\":\"connections\",\"x\":257,\"y\":187},{\"type\":\"text\",\"text\":\"Followedby8connections\",\"x\":195,\"y\":188},{\"type\":\"text\",\"text\":\"+\",\"x\":126,\"y\":233},{\"type\":\"text\",\"text\":\"Follow\",\"x\":167,\"y\":233},{\"type\":\"text\",\"text\":\"Showmore\",\"x\":234,\"y\":319},{\"type\":\"text\",\"text\":\"Show more →\",\"x\":267,\"y\":319},{\"type\":\"text\",\"text\":\"—\",\"x\":334,\"y\":319},{\"type\":\"text\",\"text\":\"Enedina\",\"x\":98,\"y\":388},{\"type\":\"text\",\"text\":\"EnedinaCardosofollowsthispage\",\"x\":186,\"y\":388},{\"type\":\"text\",\"text\":\"this\",\"x\":282,\"y\":388},{\"type\":\"text\",\"text\":\"3\",\"x\":510,\"y\":388},{\"type\":\"text\",\"text\":\"&\",\"x\":36,\"y\":389},{\"type\":\"text\",\"text\":\"Enedina Cardoso follows this page\",\"x\":210,\"y\":389},{\"type\":\"text\",\"text\":\"page\",\"x\":321,\"y\":392},{\"type\":\"text\",\"text\":\"Full English\",\"x\":160,\"y\":444},{\"type\":\"text\",\"text\":\"ED\",\"x\":56,\"y\":465},{\"type\":\"text\",\"text\":\"22,718 followers\",\"x\":175,\"y\":468},{\"type\":\"text\",\"text\":\"22,718followers\",\"x\":149,\"y\":469},{\"type\":\"text\",\"text\":\"Promoted\",\"x\":141,\"y\":489},{\"type\":\"text\",\"text\":\"É\",\"x\":55,\"y\":522},{\"type\":\"text\",\"text\":\"aprendizado com contrato; sem enrolação_\",\"x\":256,\"y\":525},{\"type\":\"text\",\"text\":\"aprendizado\",\"x\":123,\"y\":526},{\"type\":\"text\",\"text\":\"com\",\"x\":206,\"y\":526},{\"type\":\"text\",\"text\":\"aprendizadocomcontrato,semenrolacao\",\"x\":266,\"y\":526},{\"type\":\"text\",\"text\":\"sem\",\"x\":339,\"y\":526},{\"type\":\"text\",\"text\":\"enrolação.\",\"x\":412,\"y\":526},{\"type\":\"text\",\"text\":\"1\",\"x\":31,\"y\":530},{\"type\":\"text\",\"text\":\"Show\",\"x\":45,\"y\":572},{\"type\":\"text\",\"text\":\"Show translation\",\"x\":98,\"y\":573},{\"type\":\"text\",\"text\":\"Showtranslation\",\"x\":112,\"y\":573},{\"type\":\"text\",\"text\":\"FALE INGLES\",\"x\":266,\"y\":693},{\"type\":\"text\",\"text\":\"EM12 MESES\",\"x\":274,\"y\":753},{\"type\":\"text\",\"text\":\"EM12MESES\",\"x\":274,\"y\":755},{\"type\":\"text\",\"text\":\"EM 12 MESES\",\"x\":276,\"y\":755},{\"type\":\"text\",\"text\":\"-\",\"x\":280,\"y\":787},{\"type\":\"text\",\"text\":\"=.\",\"x\":245,\"y\":815},{\"type\":\"text\",\"text\":\"|\",\"x\":331,\"y\":853},{\"type\":\"text\",\"text\":\"&\",\"x\":286,\"y\":861},{\"type\":\"text\",\"text\":\"-~\",\"x\":179,\"y\":864},{\"type\":\"text\",\"text\":\"N\",\"x\":391,\"y\":884},{\"type\":\"text\",\"text\":\"A\",\"x\":335,\"y\":921},{\"type\":\"text\",\"text\":\"[\",\"x\":225,\"y\":940},{\"type\":\"text\",\"text\":\"-\",\"x\":354,\"y\":948}]\n\nvoce esta no passo 1. Execute APENAS esse passo. PROIBIDO voltar a passos anteriores (ex. no 2 NÃO tap Search; faça type).\n\nDefina a próxima action com base no OCR e no prompt abaixo.\n\nEm cada ação, diga no motivo qual passo (1–13) está em curso.\n\nOrdem obrigatória 1→N (N=último passo). Uma ação por turno. Toque só em textos ou ícones que estão na tela agora.\nPROIBIDO fail se o texto do passo atual estiver na tela (ex. texto do passo atual → toque; não fail).\nfail só se for impossível após tentar de novo; falhas antigas NÃO impedem um novo toque.\n\nCaso esteja na tela inical do android\n- scroll down\nCaso esteja na tela de apps\n- abra o linkedin\nCaso esteja no splash screen do linkedin\n- espere 3s\nCaso esteja na home\n- clique em search"
+      }
+    ],
+    "response_format": {
+      "type": "json_object"
+    }
+  },
+  "resposta": {
+    "id": "chatcmpl-EWSvstx2hqVOJnzPTMrRQCaXbsRJI",
+    "object": "chat.completion",
+    "created": 1791406420,
+    "model": "gpt-5-mini-2025-08-07",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\n  \"action\": {\n    \"type\": \"scroll\",\n    \"direction\": \"up\"\n  },\n  \"motivo\": \"passo 1\",\n  \"proximoPasso\": \"1\"\n}",
+          "refusal": null,
+          "annotations": []
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 2079,
+      "completion_tokens": 1077,
+      "total_tokens": 3156,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "audio_tokens": 0
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 1024,
+        "audio_tokens": 0,
+        "accepted_prediction_tokens": 0,
+        "rejected_prediction_tokens": 0
+      }
+    },
+    "service_tier": "default",
+    "system_fingerprint": null
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "entrada": {
+    "model": "gpt-5-mini",
+    "messages": [
+      {
+        "role": "system",
+        "content": "Você é uma IA agente autônoma que controla um smartphone Android.\nVocê recebe: (1) a jornada/objetivo, (2) o OCR da tela atual (lista extract: type, text, x, y) e (3) o passo atual (\"voce esta no passo …\").\nDecida UMA próxima ação e responda APENAS um JSON válido (sem markdown, sem texto fora do JSON).\nO JSON raiz OBRIGATÓRIO é exatamente { \"action\": { ... }, \"proximoPasso\": \"…\" } — proibido devolver o objeto da ação na raiz.\n\nFormato único:\n{\n  \"action\": {\n    \"type\": \"tap|scroll|type|key|esperar|sleep|done|fail\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null\n  },\n  \"motivo\": null,\n  \"proximoPasso\": null\n}\n\nTipos (lib screen-robot):\n- tap: obrigatório x e y numéricos do OCR desta tela (centro do alvo); demais campos null\n- scroll: direction up|down|left|right (obrigatório; x/y null)\n- type: text a digitar\n- key: code (ex. KEYCODE_BACK, KEYCODE_ENTER)\n- esperar: ms (obrigatório; ex. 1000). Use para aguardar UI/carregamento — NÃO há delay fixo entre turnos\n- sleep: alias de esperar (mesmo contrato: ms)\n- done: jornada concluída\n- fail: só se impossível seguir\n\nproximoPasso (raiz, texto, obrigatório):\n- valor a usar no PRÓXIMO turno (o runtime reenvia como step)\n- formato livre, alinhado à jornada: número (\"3\"), id (\"connect\"), ou resumo curto em linguagem natural (\"digite comprador\")\n- se esta ação cumpriu o passo atual → avance para o próximo da jornada\n- se ainda no mesmo passo (esperar/scroll/retry) → devolva o mesmo step\n- NUNCA invente passo fora da jornada\n\nRegras:\n- \"voce esta no passo …\" = execute SOMENTE esse passo; PROIBIDO refazer passos já cumpridos\n- NÃO retorne atributos com valor null; omita a chave\n- tap.x / tap.y = EXCLUSIVAMENTE de um hit do OCR atual; proibido inventar ou reusar coords de outro contexto\n- Cada item do OCR (text/icon) é clicável\n- Sem alvo do passo / UI ainda carregando → esperar (ms) ou scroll; evite fail\n- Prefira type \"esperar\" (não sleep) quando for aguardar\n- Um único objeto JSON na resposta, no formato { \"action\": { ... }, \"proximoPasso\": \"…\" }\""
+      },
+      {
+        "role": "user",
+        "content": "Jornada:\n\n\nOCR atual (JSON):\n[{\"type\":\"text\",\"text\":\"6:17\",\"x\":113,\"y\":23},{\"type\":\"text\",\"text\":\"É\",\"x\":135,\"y\":23},{\"type\":\"text\",\"text\":\"©\",\"x\":168,\"y\":23},{\"type\":\"text\",\"text\":\"617\",\"x\":88,\"y\":24},{\"type\":\"text\",\"text\":\"0\",\"x\":136,\"y\":24},{\"type\":\"text\",\"text\":\"(\",\"x\":71,\"y\":81},{\"type\":\"text\",\"text\":\"comprador\",\"x\":143,\"y\":82},{\"type\":\"text\",\"text\":\"Schools\",\"x\":358,\"y\":151},{\"type\":\"text\",\"text\":\"Jobs\",\"x\":256,\"y\":152},{\"type\":\"text\",\"text\":\"People\",\"x\":62,\"y\":153},{\"type\":\"text\",\"text\":\"Posts\",\"x\":163,\"y\":153},{\"type\":\"text\",\"text\":\"Courses\",\"x\":478,\"y\":153},{\"type\":\"text\",\"text\":\"People\",\"x\":71,\"y\":244},{\"type\":\"text\",\"text\":\"2nd\",\"x\":120,\"y\":313},{\"type\":\"text\",\"text\":\"3rd+\",\"x\":201,\"y\":313},{\"type\":\"text\",\"text\":\"Ist\",\"x\":46,\"y\":314},{\"type\":\"text\",\"text\":\"1st\",\"x\":45,\"y\":315},{\"type\":\"text\",\"text\":\"Charles\",\"x\":148,\"y\":381},{\"type\":\"text\",\"text\":\"CharlesRomao·2nd\",\"x\":217,\"y\":381},{\"type\":\"text\",\"text\":\"Roméo\",\"x\":234,\"y\":381},{\"type\":\"text\",\"text\":\"Charles Romão • 2nd\",\"x\":208,\"y\":382},{\"type\":\"text\",\"text\":\"-\",\"x\":280,\"y\":382},{\"type\":\"text\",\"text\":\"2nd\",\"x\":307,\"y\":382},{\"type\":\"text\",\"text\":\"O\",\"x\":403,\"y\":392},{\"type\":\"text\",\"text\":\"Pending\",\"x\":455,\"y\":392},{\"type\":\"text\",\"text\":\"Comprador\",\"x\":161,\"y\":409},{\"type\":\"text\",\"text\":\"|\",\"x\":220,\"y\":409},{\"type\":\"text\",\"text\":\"Comprador|Suprimentos...\",\"x\":234,\"y\":409},{\"type\":\"text\",\"text\":\"Suprimentos_\",\"x\":291,\"y\":409},{\"type\":\"text\",\"text\":\"Greater\",\"x\":142,\"y\":431},{\"type\":\"text\",\"text\":\"Greater Belo Horizonte\",\"x\":213,\"y\":431},{\"type\":\"text\",\"text\":\"Horizonte\",\"x\":273,\"y\":431},{\"type\":\"text\",\"text\":\"GreaterBeloHorizonte\",\"x\":208,\"y\":432},{\"type\":\"text\",\"text\":\"d\",\"x\":44,\"y\":433},{\"type\":\"text\",\"text\":\"Current:\",\"x\":138,\"y\":466},{\"type\":\"text\",\"text\":\"Construcoes\",\"x\":397,\"y\":466},{\"type\":\"text\",\"text\":\"Current: Comprador at Salum Construcoes\",\"x\":278,\"y\":467},{\"type\":\"text\",\"text\":\"Current:CompradoratSalumConstrucoes\",\"x\":292,\"y\":467},{\"type\":\"text\",\"text\":\"Comprador\",\"x\":222,\"y\":468},{\"type\":\"text\",\"text\":\"3mual\",\"x\":215,\"y\":507},{\"type\":\"text\",\"text\":\"3 mutual connections\",\"x\":265,\"y\":507},{\"type\":\"text\",\"text\":\"3mutual connections\",\"x\":280,\"y\":509},{\"type\":\"text\",\"text\":\"Sabrina Patricia dos\",\"x\":215,\"y\":575},{\"type\":\"text\",\"text\":\"Sabrina\",\"x\":149,\"y\":576},{\"type\":\"text\",\"text\":\"dos\",\"x\":304,\"y\":576},{\"type\":\"text\",\"text\":\"SabrinaPatriciados\",\"x\":227,\"y\":577},{\"type\":\"text\",\"text\":\"O\",\"x\":403,\"y\":587},{\"type\":\"text\",\"text\":\"Pending\",\"x\":455,\"y\":587},{\"type\":\"text\",\"text\":\"Santos\",\"x\":161,\"y\":607},{\"type\":\"text\",\"text\":\"+\",\"x\":191,\"y\":607},{\"type\":\"text\",\"text\":\"2nd\",\"x\":218,\"y\":608},{\"type\":\"text\",\"text\":\"Analista\",\"x\":145,\"y\":632},{\"type\":\"text\",\"text\":\"Analista deSuprimentos I.\",\"x\":216,\"y\":633},{\"type\":\"text\",\"text\":\"Analista de Suprimentos I...\",\"x\":242,\"y\":634},{\"type\":\"text\",\"text\":\"|...\",\"x\":350,\"y\":634},{\"type\":\"text\",\"text\":\"Belo\",\"x\":129,\"y\":656},{\"type\":\"text\",\"text\":\"Minas\",\"x\":283,\"y\":656},{\"type\":\"text\",\"text\":\"Belo Horizonte, Minas\",\"x\":209,\"y\":657},{\"type\":\"text\",\"text\":\"BeloHorizonte,Minas\",\"x\":206,\"y\":658},{\"type\":\"text\",\"text\":\"Gerais,Brazil\",\"x\":168,\"y\":685},{\"type\":\"text\",\"text\":\"Past:\",\"x\":126,\"y\":718},{\"type\":\"text\",\"text\":\"Abertta\",\"x\":298,\"y\":718},{\"type\":\"text\",\"text\":\"Saúde\",\"x\":357,\"y\":718},{\"type\":\"text\",\"text\":\"Past: Comprador at Abertta Saúde\",\"x\":244,\"y\":719},{\"type\":\"text\",\"text\":\"Past:CompradoratAberttaSaude\",\"x\":233,\"y\":720},{\"type\":\"text\",\"text\":\"009\",\"x\":131,\"y\":748},{\"type\":\"text\",\"text\":\"1\",\"x\":154,\"y\":760},{\"type\":\"text\",\"text\":\"1mutual connection\",\"x\":221,\"y\":760},{\"type\":\"text\",\"text\":\"1 mutual connection\",\"x\":244,\"y\":760},{\"type\":\"text\",\"text\":\"2°\",\"x\":126,\"y\":761},{\"type\":\"text\",\"text\":\"Eduardo Lima\",\"x\":185,\"y\":828},{\"type\":\"text\",\"text\":\"&\",\"x\":280,\"y\":828},{\"type\":\"text\",\"text\":\"EduardoLima·2nd\",\"x\":228,\"y\":829},{\"type\":\"text\",\"text\":\"2nd\",\"x\":318,\"y\":830},{\"type\":\"text\",\"text\":\"(GQ\",\"x\":403,\"y\":839},{\"type\":\"text\",\"text\":\"Pending\",\"x\":455,\"y\":839},{\"type\":\"text\",\"text\":\"Comprador\",\"x\":161,\"y\":855},{\"type\":\"text\",\"text\":\"Belo\",\"x\":129,\"y\":878},{\"type\":\"text\",\"text\":\"Minas\",\"x\":283,\"y\":878},{\"type\":\"text\",\"text\":\"Belo Horizonte, Minas\",\"x\":209,\"y\":879},{\"type\":\"text\",\"text\":\"BeloHorizonte,Minas\",\"x\":206,\"y\":880},{\"type\":\"text\",\"text\":\"Gerais,Brazil\",\"x\":174,\"y\":907},{\"type\":\"text\",\"text\":\"Minasce\",\"x\":326,\"y\":940},{\"type\":\"text\",\"text\":\"Current: Comprador at Minascentro\",\"x\":249,\"y\":941},{\"type\":\"text\",\"text\":\"Current:CompradoratMinascentro\",\"x\":250,\"y\":941},{\"type\":\"text\",\"text\":\"Current:\",\"x\":138,\"y\":942}]\n\nvoce esta no passo 10. Execute APENAS esse passo. PROIBIDO voltar a passos anteriores (ex. no 2 NÃO tap Search; faça type).\n\nDefina a próxima action com base no OCR e no prompt abaixo.\n\nEm cada ação, diga no motivo qual passo (1–13) está em curso.\n\nOrdem obrigatória 1→N (N=último passo). Uma ação por turno. Toque só em textos ou ícones que estão na tela agora.\nPROIBIDO fail se o texto do passo atual estiver na tela (ex. texto do passo atual → toque; não fail).\nfail só se for impossível após tentar de novo; falhas antigas NÃO impedem um novo toque.\n\n1. scroll down\n2. abra o linkedin\n3. espere 3s\n4. clique em search\n5. Espere 2s\n6. digite a palavra \"comprador\"\n7. baixe o teclado\n8. clique em show all results\n9. espere 2s\n10. Clique em peoople\n11. clique em location\n12. Clique em add a location\n13. Digite Curitiba"
+      }
+    ],
+    "response_format": {
+      "type": "json_object"
+    }
+  },
+  "resposta": {
+    "id": "chatcmpl-EWTJOX9IwIeRvwbSRyujaAxRCuLWK",
+    "object": "chat.completion",
+    "created": 1791407878,
+    "model": "gpt-5-mini-2025-08-07",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\n  \"action\": {\n    \"type\": \"tap\",\n    \"x\": 62,\n    \"y\": 153\n  },\n  \"motivo\": \"Passo 10: Clique em People\",\n  \"proximoPasso\": \"11\"\n}",
+          "refusal": null,
+          "annotations": []
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 2409,
+      "completion_tokens": 384,
+      "total_tokens": 2793,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "audio_tokens": 0
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 320,
+        "audio_tokens": 0,
+        "accepted_prediction_tokens": 0,
+        "rejected_prediction_tokens": 0
+      }
+    },
+    "service_tier": "default",
+    "system_fingerprint": null
+  }
+}

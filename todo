@@ -1,8 +1,96 @@
+# connect
+    - valor que deixei de ganhar nesses meses (calcular)
+    - A connect precisa faturar 112k pra conseguir pagar todas as contas?
+    - Existe algo com que eu tenha que me preocupar? sua movimentacao
+    - Valores do cartao que paguei e esta dentro da empresa
+    - 200k hoje, 260k + 40k = 300k -> taxa ate preencher (100k) (2 anos)
+    - flaar com marcelo onde esta o estoque?
+    - as contas da empresa estao saudaveis?
+    - Marcelo some...
+
 # Screen Robot
+    - Definir primeira versao
+        - De tempos em tempos
+        - Threesholds
+            - Número de profiles <= x -> 
+        - Cada dispositivo opera uma responsabilidade
+        - prioridade
+            - ler mensagem
+            - enviar mensagem
+            - conectar 
+            - prospectar
+    - Extrair perfis
+        - criar script de extrair perfis -> searchs
+    - Extrair urls
+    - Conectar
+    - Enviar mensagem
+    - Captar contato
+    -----------------
+    - Calcular custo de cada agente por máquina
+        - Cada máquina custa 300 reais e pode operar 4 devices por vez 
+            - (1 agente -> 1 device), (1 máquina - 4 devices por vez)  (1 máquina - n agentes intercalando entre devices)
+            - Agentes podem intercalar entre os 4 devices por vez para que todos possam ter a sua vez de operar
+        - cada agente opera
+            - par subir um device levam 3 minutos
+            - extrair lista -> 24/7 (n usa IA), 5 minutos -> 100
+            - pegar link -> 24/7 -> (usa 2k token ia), 4 minutos -> 1 linkedin url
+            - conectar -> 24/7 (nao usa IA), 4 minutos -> 1 perfil
+            - enviar mensagem -> (8h as 12h da segunda feira) (nao usa IA),  4 minutos -> 1 mensagem
+            - ler mensagem e salvar-> 24/7 (usa IA) - 2k token, 4 minutos -> 1 whatswpp ou 1 email
+            - filtro
+                - 1 agente, 426 conexoes, 1,29 clientes, 1,72 pedidos, 1.072 de faturamento, 203 lucro bruto
+            -  Calcular projecao acumulativa de ganhos (cada mes acumula o faturamento anterior)
+
+            por agente
+            - 15 horas, 5 minutos por operacao, 180 mensagens por dia
+            - 24 horas, 5 minutos por operacao, 288 conexoes por dia
+            - 24 horas, 5 minutos por operacao, 288 wpp e msg
+
+            Agente
+            - 400 conexoes por mes, 50% aceitam, 200 conexoes, 50 mensagens por semana, 5 dias por semana, 10 mensagens por dia
+            - 400 conexoes, 7 dias por semana, 400 / 7 = 13,3 por dia
+                - 10 segundos por conexao
+                - 120 segundos aprox, 2 minutos aprox, em  3 + 2 = 5 minutos e 10 conecta 13, 2,6 por minuto, 1,3 minutos por conexao
+        
+        - 1 celular custa 700 reais e opera apenas 1 agente por vez
+       
+    - senha contabo: 
+        vds
+            - ssh root@185.250.37.82 m54b2NYwSro5zZUo
+            - 144.126.154.90, Pz2mZRgZT8z2Iow8
+    - Definir processo
+        - Board
+            - searchs (palavras chaves)
+                - comprador
+                - purchaseer
+            - profiles
+            - Lead
+            - Conectado
+            - Mensagem Enviada
+            - Mensagem Recebida
+    - Criar interface de operacoes (Misto de IA e Comandos)
+        - Extrair lista de searchs
+        - Extrair lista de urls linkedin
+        - Conectar dado uma url (entrar direto)
+        - Enviar mensagem
+        - Ler mensagem de um perfil especifico
+
+    calcular custo de cada agente por máquina e por celular e a caacidade de operacoes, funis e etc para identificarmos
+    a viabilidade do projeto e retorno financeiro com base no documento antrior
+
+
+
+    -------------------
+
+        
+    - Testar 
+
+    - calcular custo fisico agente hardware infraestrutura
     - Testar com reconhecimento de imagem
     - Extrair o maximo de informacoes possivel ocr
     - Enriquecer motor com memoria, planos e etc
     - Treinar modelos gpt4 mini teste
+    - criar um motor de input e output identicos mesmo estado objeto
 
 # Eternos Mutáveis
     - Reunir todos os áudios e transcricoes do iphone que nao estao aqui

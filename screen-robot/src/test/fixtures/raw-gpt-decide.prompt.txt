@@ -1,60 +1,62 @@
+Regra global: NÃO há delay fixo no runtime. Entre CADA operação (após tap/type/key/scroll) → no próximo turno OBRIGATÓRIO action type="esperar" ms=3000; depois avance. Sem alvo → esperar ms=3000; proximoPasso = passo atual. Preferir esperar a fail/scroll cego.
+
 1. clique em Search — tap no texto "Search" da barra (topo).
-- action: tap no hit "Search"; proximoPasso "2"
-- Sem "Search" → proximoPasso "1"
+- action: tap no hit "Search" → em seguida esperar ms=3000 antes do passo 2
+- Sem "Search" → esperar ms=3000; proximoPasso "1"
 - PROIBIDO type / scroll / fail se "Search" estiver no OCR
 
 2. digite comprador — type "comprador" (campo/teclado já aberto após Search).
-- action: type text="comprador"; proximoPasso "3"
+- action: type text="comprador" → em seguida esperar ms=3000 antes do passo 3
 - PROIBIDO tap em "Search"/"Fearch"/"pearch" de novo (passo 1 já feito)
 - PROIBIDO tap em "Show all" / Recent / nomes
 
 3. feche o teclado — KEYCODE_BACK no máximo 1×.
-- Teclado visível (letras q/w/e… no OCR) → key KEYCODE_BACK; proximoPasso OBRIGATÓRIO "4" (PROIBIDO ficar em "3")
-- Teclado JÁ fechado (sem q/w/e…; "Show all results" no OCR) → PROIBIDO BACK (2º BACK fecha a busca e volta ao feed); proximoPasso "4"
+- Teclado visível (letras q/w/e… no OCR) → key KEYCODE_BACK; depois esperar ms=3000; proximoPasso OBRIGATÓRIO "4" (PROIBIDO ficar em "3")
+- Teclado JÁ fechado (sem q/w/e…; "Show all results" no OCR) → PROIBIDO BACK (2º BACK fecha a busca e volta ao feed); esperar ms=3000; proximoPasso "4"
 - PROIBIDO tap em "Show all results" neste passo (isso é o passo 4)
 
 4. clique em Show all results — tap no texto "Show all results" (ou "Showallresults").
-- action: tap no hit completo "Show all results"; proximoPasso "5"
+- action: tap no hit completo "Show all results" → em seguida esperar ms=3000 antes do passo 5
 - Prefira o texto completo, não só "results"
 - Se sumiu → volte ao passo 1 (Search); PROIBIDO scroll no feed
 
 5. clique em People — tap na aba "People" (chip y≈150).
-- action: tap no "People" da barra de abas (topo); proximoPasso "6"
+- action: tap no "People" da barra de abas (topo) → em seguida esperar ms=3000 antes do passo 6
 - PROIBIDO tap no "People" que aparece no card/lista mais abaixo
 
 6. clique Location — tap em "Location" ou OCR "Locatior".
-- action: tap no chip Location (direita da barra de filtros); proximoPasso "7"
+- action: tap no chip Location (direita da barra de filtros) → em seguida esperar ms=3000 antes do passo 7
 - PROIBIDO tap em "People" / "1st" / "2nd" / "3rd+"
 
 7. clique em Add a location — tap no campo "Add a location" / "Add alocation" do sheet.
-- action: tap no campo Add a location; proximoPasso "8"
+- action: tap no campo Add a location → em seguida esperar ms=3000 antes do passo 8
 - PROIBIDO tap em chips Brazil/São Paulo/Minas; PROIBIDO "Show results" ainda
 
 8. digite Contagem — type "Contagem" (teclado/campo já aberto).
-- action: type text="Contagem"; proximoPasso "9"
+- action: type text="Contagem" → em seguida esperar ms=3000 antes do passo 9
 - PROIBIDO tap de novo em "Add a location"
 
 9. clique na opção cidade+estado — tap no hit EXATO "Contagem, Minas Gerais, Brazil" (y≈249).
-- action: tap no texto completo cidade+estado+país ("Contagem, Minas Gerais, Brazil"); proximoPasso "10"
+- action: tap no texto completo cidade+estado+país ("Contagem, Minas Gerais, Brazil") → em seguida esperar ms=3000 antes do passo 10
 - Alvo OCR: "Contagem, Minas Gerais, Brazil" (ou "Contagem,MinasGerais,Brazil")
 - PROIBIDO "Contagem, Brazil" / "Contagem,Brazil" (sem Minas Gerais — ERRADO)
 - PROIBIDO outras cidades/regiões; PROIBIDO fragmentos; PROIBIDO campo topo (y≈81); PROIBIDO teclado/Gboard
 
 10. clique em Show results — tap em "Show results".
-- action: tap "Show results"; proximoPasso "11"
+- action: tap "Show results" → em seguida esperar ms=3000 antes do passo 11
 - PROIBIDO "Add a location" / linha Contagem de novo
 
 11. Connect — achar "Connect" no OCR da lista People ou recuperar se saiu da tela.
-- Tela ERRADA no passo 11 (NÃO é lista People): teclado (q/w/e…), "Add a location", lista de cidades (Toronto/Tokyo/Canada/Japan), sheet Location → key KEYCODE_BACK; nextStep="11"; PROIBIDO scroll / type / tap em cidade
-- Há text exato "Connect"? → tap no de MENOR y (primeiro da lista). Ignore "Pending", "Message", "+ Connect"; nextStep "12"
-- Lista People visível ("People" + "comprador" no OCR) e SEM "Connect" → scroll direction="down"; nextStep="11"
-- Só "LinkedIn Member" / "Pending" / "Message" sem "Connect" → scroll down; nextStep="11" (não tap nesses)
+- Tela ERRADA no passo 11 (NÃO é lista People): teclado (q/w/e…), "Add a location", lista de cidades (Toronto/Tokyo/Canada/Japan), sheet Location → key KEYCODE_BACK; depois esperar ms=3000; nextStep="11"; PROIBIDO scroll / type / tap em cidade
+- Há text exato "Connect"? → tap no de MENOR y (primeiro da lista). Ignore "Pending", "Message", "+ Connect"; depois esperar ms=3000; nextStep "12"
+- Lista People visível ("People" + "comprador" no OCR) e SEM "Connect" → scroll direction="down"; depois esperar ms=3000; nextStep="11"
+- Só "LinkedIn Member" / "Pending" / "Message" sem "Connect" → scroll down; depois esperar ms=3000; nextStep="11" (não tap nesses)
 - PROIBIDO scroll se a tela não for a lista People
 - Use SOMENTE o OCR atual do turno
 - motivo: "passo 11: primeiro Connect" | "passo 11: sem Connect, scroll" | "passo 11: tela errada, BACK"
 
 12. Clicar no botão Skip após conectar — tap SOMENTE no hit com text EXATO "Skip".
-- Há "Skip" no OCR? → tap nesses x,y; proximoPasso "11"
+- Há "Skip" no OCR? → tap nesses x,y; depois esperar ms=3000; proximoPasso "11"
 - PROIBIDO tap em "Add a note", "Add", "note", "Add a note to your request?", fragmentos do título, "Connect", "Pending"
 - Sheet aberta (título "Add a note…" + botões) = o alvo é o botão de BAIXO "Skip", nunca o título nem o botão "Add a note"
-- Sem "Skip" ainda → proximoPasso "12"
+- Sem "Skip" ainda → esperar ms=3000; proximoPasso "12"

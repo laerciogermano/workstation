@@ -6,6 +6,7 @@
 
 Derivados: [`docs/`](docs/).  
 Apresentação visual do artigo: [`apresentacao.md`](apresentacao.md) · versão em bullets: [`bullets.md`](bullets.md).  
+Primeiro artigo completo: [`artigos/01-eternos-mutaveis.md`](artigos/01-eternos-mutaveis.md).  
 Timeline de prompts: [`prompts/`](prompts/).  
 Regras para a IA: [`config/config-ia.md`](config/config-ia.md).
 

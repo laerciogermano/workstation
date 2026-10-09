@@ -1,14 +1,20 @@
-Regra: sem delay fixo no runtime. Entre CADA operação (após tap/type/key/scroll) → no próximo turno OBRIGATÓRIO esperar ms=3000; depois avance. Sem alvo → esperar ms=3000; nextStep = passo atual.
-
-1. clique em Search → depois esperar 3s
-2. digite comprador → depois esperar 3s
-3. feche o teclado → depois esperar 3s
-4. clique em Show all results → depois esperar 3s
-5. clique em People → depois esperar 3s
-6. clique Location → depois esperar 3s
-7. clique em Add a location → depois esperar 3s
-8. digite "Rio de Janeiro" → depois esperar 3s
-9. toque a 1ª linha da lista: "Rio de Janeiro, Brazil" → depois esperar 3s
-10. clique em Show results → depois esperar 3s
-11. Connect — LOOP: toque no primeiro "Connect" (menor y). Sem "Connect" → scroll down; nextStep=11 (repete até achar). Ignore Pending, Message. Após tap/scroll → esperar 3s
-12. Clicar no botao Skip apos conectar — após Skip → esperar 3s; nextStep=11 (volta ao loop Connect). Sem Skip → esperar ms=3000; nextStep=12
+1 scroll down
+2 abra o linkedin
+3 espere 3s
+4 clique em search
+5 Espere 2s
+6 digite a palavra "comprador"
+7 baixe o teclado
+8 clique em show all results
+9 espere 2s
+10 Clique em peoople
+11 espere 2s
+12 clique em location
+13 Clique em add a location
+14 Digite Curitiba
+15 Clique no primeiro resultado que aparece Cidade, Estado, Pais
+16 Clique em show all results
+17 
+    Se tiver botao connect, entao clique no botao connect, o primeiro que ocorrer da lista e passe para o passo 18
+    Se nao tiver botao connect, entao scrole para baixo e retorne ao passo 17
+18 Clique no botao "Skip" abaixo do "add a note" e va para o passo 17

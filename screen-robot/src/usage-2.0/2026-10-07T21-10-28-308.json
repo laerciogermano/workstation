@@ -1,0 +1,53 @@
+{
+  "entrada": {
+    "model": "gpt-5-mini",
+    "messages": [
+      {
+        "role": "system",
+        "content": "Você é uma IA agente autônoma que controla um smartphone Android.\nVocê recebe: (1) a jornada/objetivo, (2) o OCR da tela atual (lista extract: type, text, x, y) e (3) o passo atual (\"voce esta no passo …\").\nDecida UMA próxima ação e responda APENAS um JSON válido (sem markdown, sem texto fora do JSON).\nO JSON raiz OBRIGATÓRIO é exatamente { \"action\": { ... }, \"proximoPasso\": \"…\" } — proibido devolver o objeto da ação na raiz.\n\nFormato único:\n{\n  \"action\": {\n    \"type\": \"tap|scroll|type|key|esperar|sleep|done|fail\",\n    \"x\": null,\n    \"y\": null,\n    \"direction\": null,\n    \"text\": null,\n    \"code\": null,\n    \"ms\": null\n  },\n  \"motivo\": null,\n  \"proximoPasso\": null\n}\n\nTipos (lib screen-robot):\n- tap: obrigatório x e y numéricos do OCR desta tela (centro do alvo); demais campos null\n- scroll: direction up|down|left|right (obrigatório; x/y null)\n- type: text a digitar\n- key: code (ex. KEYCODE_BACK, KEYCODE_ENTER)\n- esperar: ms (obrigatório; ex. 1000). Use para aguardar UI/carregamento — NÃO há delay fixo entre turnos\n- sleep: alias de esperar (mesmo contrato: ms)\n- done: jornada concluída\n- fail: só se impossível seguir\n\nproximoPasso (raiz, texto, obrigatório):\n- valor a usar no PRÓXIMO turno (o runtime reenvia como step)\n- formato livre, alinhado à jornada: número (\"3\"), id (\"connect\"), ou resumo curto em linguagem natural (\"digite comprador\")\n- se esta ação cumpriu o passo atual → avance para o próximo da jornada\n- se ainda no mesmo passo (esperar/scroll/retry) → devolva o mesmo step\n- NUNCA invente passo fora da jornada\n\nRegras:\n- \"voce esta no passo …\" = execute SOMENTE esse passo; PROIBIDO refazer passos já cumpridos\n- NÃO retorne atributos com valor null; omita a chave\n- tap.x / tap.y = EXCLUSIVAMENTE de um hit do OCR atual; proibido inventar ou reusar coords de outro contexto\n- Cada item do OCR (text/icon) é clicável\n- Sem alvo do passo / UI ainda carregando → esperar (ms) ou scroll; evite fail\n- Prefira type \"esperar\" (não sleep) quando for aguardar\n- Um único objeto JSON na resposta, no formato { \"action\": { ... }, \"proximoPasso\": \"…\" }\""
+      },
+      {
+        "role": "user",
+        "content": "Jornada:\n\n\nOCR atual (JSON):\n[{\"type\":\"text\",\"text\":\"回\",\"x\":151,\"y\":21},{\"type\":\"text\",\"text\":\"&\",\"x\":138,\"y\":23},{\"type\":\"text\",\"text\":\"O\",\"x\":168,\"y\":23},{\"type\":\"text\",\"text\":\"610\",\"x\":87,\"y\":24},{\"type\":\"text\",\"text\":\"6:10\",\"x\":104,\"y\":24},{\"type\":\"text\",\"text\":\"A\",\"x\":307,\"y\":102},{\"type\":\"text\",\"text\":\"Caler\",\"x\":55,\"y\":191},{\"type\":\"text\",\"text\":\"C\",\"x\":55,\"y\":251},{\"type\":\"text\",\"text\":\"U\",\"x\":55,\"y\":252},{\"type\":\"text\",\"text\":\"File\",\"x\":63,\"y\":307},{\"type\":\"text\",\"text\":\"Ma\",\"x\":60,\"y\":423},{\"type\":\"text\",\"text\":\"in\",\"x\":304,\"y\":492},{\"type\":\"text\",\"text\":\"Play\",\"x\":52,\"y\":539},{\"type\":\"text\",\"text\":\"YT M\",\"x\":53,\"y\":654},{\"type\":\"text\",\"text\":\"YTM\",\"x\":53,\"y\":655},{\"type\":\"text\",\"text\":\"<4\",\"x\":163,\"y\":927},{\"type\":\"text\",\"text\":\"@®\",\"x\":268,\"y\":927}]\n\nvoce esta no passo 3. Execute APENAS esse passo. PROIBIDO voltar a passos anteriores (ex. no 2 NÃO tap Search; faça type).\n\nDefina a próxima action com base no OCR e no prompt abaixo.\n\nEm cada ação, diga no motivo qual passo (1–13) está em curso.\n\nOrdem obrigatória 1→N (N=último passo). Uma ação por turno. Toque só em textos ou ícones que estão na tela agora.\nPROIBIDO fail se o texto do passo atual estiver na tela (ex. texto do passo atual → toque; não fail).\nfail só se for impossível após tentar de novo; falhas antigas NÃO impedem um novo toque.\n\n1. scroll down\n2. abra o linkedin\n3. espere 3s\n4. clique em search\n5. Espere 2s\n6. digite a palavra \"comprador\"\n7. baixe o teclado\n8. clique em show all results"
+      }
+    ],
+    "response_format": {
+      "type": "json_object"
+    }
+  },
+  "resposta": {
+    "id": "chatcmpl-EWTC2SZC55B7RQHiSptPuZdd5jltK",
+    "object": "chat.completion",
+    "created": 1791407422,
+    "model": "gpt-5-mini-2025-08-07",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\n  \"action\": {\n    \"type\": \"esperar\",\n    \"ms\": 3000\n  },\n  \"motivo\": \"passo 3: espere 3s\",\n  \"proximoPasso\": \"4\"\n}",
+          "refusal": null,
+          "annotations": []
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1107,
+      "completion_tokens": 572,
+      "total_tokens": 1679,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "audio_tokens": 0
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 512,
+        "audio_tokens": 0,
+        "accepted_prediction_tokens": 0,
+        "rejected_prediction_tokens": 0
+      }
+    },
+    "service_tier": "default",
+    "system_fingerprint": null
+  }
+}

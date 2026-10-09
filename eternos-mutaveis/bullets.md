@@ -178,6 +178,7 @@
 ![Banner do capítulo 4](assets/banner-cap-4-conhecimento-que-liberta.jpg)
 
 - Insight: a chave da metafísica estava na linguagem e no software
+- A dor do software é a mesma da filosofia e da espiritualidade: a linguagem
 - Caminho técnico: abstratos, essencialismo, deturpação da OOP
 - Cadeia: linguagem → metafísica → gnose
 - Gnose: libertação por compreensão, não por fé ou obediência

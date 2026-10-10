@@ -14,7 +14,7 @@ Regras para a IA: [`config/config-ia.md`](config/config-ia.md).
 
 ## Visão
 
-**Eternos Mutáveis** é o livro de **alfabetização espiritual** que ensina a ler o real como **um só**: eterno e, ao mesmo tempo, mutável. A obra existe para que **todas as pessoas entendam que todos somos um** — e para **projetar** essa leitura no Brasil e fora dele. No caminho, **refuta Aristóteles** (a ontologia da substância separada e da essência fixa) e **aponta o maior erro da programação**: repetir essa ontologia no código, como se o mundo fosse uma coleção de objetos isolados.
+**Eternos Mutáveis** é o livro de **alfabetização espiritual**: o objetivo principal é **ensinar o que é Deus e o mundo espiritual** aos homens **presos no mundo da matéria**. A partir disso, a obra ensina a ler o real como **um só** — eterno e, ao mesmo tempo, mutável — para que **todas as pessoas entendam que todos somos um**, com **projeção** no Brasil e fora dele. No caminho, **refuta Aristóteles** (a ontologia da substância separada e da essência fixa) e **aponta o maior erro da programação**: repetir essa ontologia no código, como se o mundo fosse uma coleção de objetos isolados.
 
 ## Problema
 
@@ -23,25 +23,28 @@ A separação é ensinada como fato. Quem busca unidade esbarra em jargão, em r
 | Dor | O que acontece hoje |
 |-----|---------------------|
 | **Separação vivida como fato** | Cada pessoa se experimenta como um indivíduo isolado. “Todos somos um” soa slogan, não leitura do real. |
-| **Sem alfabeto espiritual** | Falta um percurso claro para ler espírito, unidade e mudança. Quem busca ou se perde no misticismo opaco ou desiste. |
+| **Presos na matéria** | A consciência fica colada no mundo material: Deus e o espiritual soam abstratos, distantes ou inacessíveis. |
+| **Sem alfabeto espiritual** | Falta um percurso claro para ensinar o que é Deus, o mundo espiritual, unidade e mudança. Quem busca ou se perde no misticismo opaco ou desiste. |
 | **Aristóteles no fundo da cultura** | Substância, essência e categorias separam o mundo em coisas-com-identidade. Essa ontologia quase não é questionada. |
 | **O mesmo erro no código** | A programação modela o real como objetos, classes e identidades. O maior erro não é um bug de sintaxe: é copiar a substância aristotélica para o software. |
 | **A tese não atravessa fronteira** | Sem obra publicada e traduzível, a ideia fica no caderno ou no círculo íntimo. Falta **projeção nacional e internacional**. |
 
-As pessoas **já sentem** que a separação não fecha. O que falta é um livro que **alfabetize** essa intuição, mostre onde a herança aristotélica (e a programação que a herdou) erra, e leve a tese — **todos somos um** — a um público amplo.
+As pessoas **já sentem** que a separação não fecha, mas permanecem **presas na matéria**. O que falta é um livro que **alfabetize espiritualmente** — ensine o que é Deus e o mundo espiritual —, mostre onde a herança aristotélica (e a programação que a herdou) erra, e leve a tese — **todos somos um** — a um público amplo.
 
 ## Para quem
 
 | Persona | Para quem | Necessidade |
 |---------|-----------|-------------|
-| **Leitor** | Quem busca sentido e unidade sem já ter vocabulário espiritual | Um alfabeto: palavras e percurso para ler que todos somos um |
+| **Leitor** | Quem vive preso no mundo da matéria e busca sentido sem vocabulário espiritual | Um alfabeto: o que é Deus, o mundo espiritual e o percurso para ler que todos somos um |
 | **Pensador** | Quem herdou categorias ocidentais na escola, na lógica e no senso comum | Ver onde a ontologia da substância falha |
 | **Programador** | Quem constrói sistemas com objetos, tipos e identidades | Reconhecer o maior erro da programação e a alternativa (fluxo / eternos mutáveis) |
 | **Difusor** | Quem pode levar a tese a público (canal, tradução, conversa) | Uma obra clara o bastante para **projetar** a ideia no país e no exterior |
 
 ## Objetivo
 
-Ser o livro que **alfabetiza espiritualmente** o leitor para a unidade do real — **todos somos um** — com **projeção nacional e internacional**: refutar a ontologia aristotélica da substância e **apontar o maior erro da programação** como a repetição dessa ontologia no código.
+**Objetivo principal:** alfabetização espiritual — **ensinar o que é Deus e o mundo espiritual** aos homens **presos no mundo da matéria**.
+
+A partir disso: alfabetizar o leitor para a unidade do real — **todos somos um** — com **projeção nacional e internacional**; refutar a ontologia aristotélica da substância e **apontar o maior erro da programação** como a repetição dessa ontologia no código.
 
 ## Proposta de valor
 
@@ -50,6 +53,7 @@ Eternos Mutáveis trata espírito, filosofia e programação como **a mesma leit
 | Necessidade | O que o livro faz |
 |-------------|-------------------|
 | Entender que todos somos um | Tornar a unidade legível, não só sentida |
+| Sair da prisão da matéria | Ensinar **o que é Deus e o mundo espiritual** a quem só lê o material |
 | Aprender o vocabulário do espírito | **Alfabetização espiritual**: nomes, distinções e percurso de leitura |
 | Desmontar a substância | **Refutar Aristóteles** onde ele recorta o ser em coisas separadas de essência fixa |
 | Ver o erro no software | **Apontar o maior erro da programação**: objetos/essências no lugar do fluxo uno e mutável |
@@ -57,7 +61,7 @@ Eternos Mutáveis trata espírito, filosofia e programação como **a mesma leit
 
 ### Exemplos
 
-**Alfabeto** — Alguém chega com a intuição de unidade e sai com palavras para eternidade, mudança e o Uno — capaz de ler a própria vida sem depender de jargão fechado.
+**Alfabeto** — Alguém chega preso no mundo da matéria e sai sabendo o que é Deus e o mundo espiritual, com palavras para eternidade, mudança e o Uno — capaz de ler a própria vida sem depender de jargão fechado.
 
 **Aristóteles no cotidiano** — A mesa, o “eu”, o arquivo no disco parecem coisas-com-essência. O livro mostra que esse recorte é herança, não o real: o que há é eterno-mutável, não substâncias lado a lado.
 
@@ -67,12 +71,13 @@ Eternos Mutáveis trata espírito, filosofia e programação como **a mesma leit
 
 ## Princípios
 
-1. **Todos somos um** — tese central, não apêndice espiritual no fim do livro.
-2. **Alfabetizar, não ofuscar** — a obra ensina a ler; não exige iniciação prévia nem jargão de seita.
-3. **Refutar a substância** — o alvo é a ontologia aristotélica que separa e fixa essências, não um ataque biográfico a um nome.
-4. **O erro da programação é ontológico** — não é “qual linguagem usar”; é modelar o real como objetos separados.
-5. **Eterno não é imóvel; mutável não é caos** — o real é **eterno-mutável**: permanece sendo um enquanto muda.
-6. **Obra para o mundo** — clareza e estrutura pensadas para **projeção nacional e internacional**.
+1. **Alfabetização espiritual primeiro** — ensinar o que é Deus e o mundo espiritual a quem está preso na matéria; sem isso, a tese não chega.
+2. **Todos somos um** — tese central, não apêndice espiritual no fim do livro.
+3. **Alfabetizar, não ofuscar** — a obra ensina a ler; não exige iniciação prévia nem jargão de seita.
+4. **Refutar a substância** — o alvo é a ontologia aristotélica que separa e fixa essências, não um ataque biográfico a um nome.
+5. **O erro da programação é ontológico** — não é “qual linguagem usar”; é modelar o real como objetos separados.
+6. **Eterno não é imóvel; mutável não é caos** — o real é **eterno-mutável**: permanece sendo um enquanto muda.
+7. **Obra para o mundo** — clareza e estrutura pensadas para **projeção nacional e internacional**.
 
 ## Escopo da visão
 
@@ -81,7 +86,7 @@ Eternos Mutáveis trata espírito, filosofia e programação como **a mesma leit
 | Área | Em escopo |
 |------|-----------|
 | **Tese** | Todos somos um; o real é eterno e mutável |
-| **Alfabetização espiritual** | Vocabulário, imagens e percurso para o leitor leigo |
+| **Alfabetização espiritual** | Ensinar o que é Deus e o mundo espiritual; vocabulário, imagens e percurso para quem está preso na matéria |
 | **Crítica** | Refutação da ontologia da substância / essência fixa (Aristóteles) |
 | **Programação** | Nomear e explicar o **maior erro da programação** como herança dessa ontologia |
 | **Estrutura publicável** | Partes e capítulos pensados para leitura contínua, tradução e circulação |
@@ -111,7 +116,7 @@ A figura aristotélica da coisa com essência e identidade própria, distinta da
 
 ### Alfabetização espiritual
 
-O percurso pelo qual o leitor ganha **letras** para o espírito: distinguir unidade de fusão vaga, eternidade de imobilidade, mudança de dissolução.
+Objetivo principal da obra: ensinar **o que é Deus e o mundo espiritual** aos homens presos no mundo da matéria. O percurso pelo qual o leitor ganha **letras** para o espírito: distinguir unidade de fusão vaga, eternidade de imobilidade, mudança de dissolução.
 
 ### Maior erro da programação
 
@@ -123,7 +128,7 @@ A obra como veículo público da tese: publicação, tradução e circulação n
 
 ## Critérios de sucesso
 
-- Um leitor leigo consegue **dizer com as próprias palavras** que todos somos um, sem copiar jargão.
+- Um leitor preso na matéria consegue **dizer com as próprias palavras** o que é Deus e o mundo espiritual — e que todos somos um — sem copiar jargão.
 - A refutação de Aristóteles é **acompanhável** (substância, essência, separação), não só um recado polêmico.
 - Um programador reconhece o **maior erro da programação** no próprio ofício e vê a ligação com a tese da unidade.
 - A estrutura da obra aguenta **tradução** e circulação além do círculo imediato (projeção).
@@ -134,7 +139,8 @@ A obra como veículo público da tese: publicação, tradução e circulação n
 | Termo | Significado |
 |-------|-------------|
 | **Eternos mutáveis** | Modo de ser da obra: o que é uno permanece (eterno) enquanto se transforma (mutável) |
-| **Alfabetização espiritual** | Ensinar a *ler* espírito, unidade e mudança, como se ensina um alfabeto |
+| **Alfabetização espiritual** | Objetivo principal: ensinar o que é Deus e o mundo espiritual a quem está preso na matéria; *ler* espírito, unidade e mudança como se ensina um alfabeto |
+| **Mundo da matéria** | Recorte em que a consciência fica presa ao sensível/material e perde o acesso legível a Deus e ao espiritual |
 | **Unidade** | Tese de que todos somos um; a separação é recorte, não o fundo do real |
 | **Substância** | Coisa com essência e identidade própria (figura aristotélica que a obra refuta) |
 | **Essência** | O “o que é” fixo atribuído a cada substância; trava a mutabilidade do uno |
@@ -144,7 +150,7 @@ A obra como veículo público da tese: publicação, tradução e circulação n
 
 ## Regras da obra (v1)
 
-- Todo capítulo serve à tese **todos somos um** ou à alfabetização que a torna legível; trecho que só enfeita fica de fora.
+- Todo capítulo serve à **alfabetização espiritual** (Deus e o mundo espiritual para quem está na matéria) ou à tese **todos somos um**; trecho que só enfeita fica de fora.
 - A crítica a Aristóteles mira a **ontologia da substância**, não a biografia nem um inventário erudito de tratados.
 - O **maior erro da programação** é nomeado como erro **ontológico** (objeto/substância), não como dica de framework.
 - Vocabulário espiritual se **define na obra**; o leitor não precisa de corpus prévio.

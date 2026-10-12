@@ -132,19 +132,18 @@ cd screen-robot/src
 npm run login-extract-profiles
 ```
 
-Script [`scripts/login-extract-profiles.js`](scripts/login-extract-profiles.js) — só lib (`extract`, `operate`, `provision`, `frame`). Cliques fixos em `COORDS` (AVD 720×1280):
+Script [`scripts/login-extract-profiles.js`](scripts/login-extract-profiles.js) — **sem IA**, **sem People**, **sem abrir perfil**. Só `extract` + scroll. Cliques em `COORDS`:
 
 | Alvo | text OCR | x | y |
 |------|----------|---|---|
 | Search | `Search` | 175 | 79 |
 | Show all | `Show all results` | 269 | 850 |
-| People | `People` | 63 | 154 |
 
-1. `stop` apps + `launch` LinkedIn → Search → `comprador` → Show all → People
-2. Loop: OCR lista → achar cards (Connect/Pending/Message) → tap nome → OCR perfil → salvar `screenshots/login-extract-profiles/<stamp>/` → print quantidade + último perfil completo → BACK → scroll
-3. Para quando não há candidatos novos e o frame estabiliza 2×
+1. `stop` apps + `launch` → Search → `comprador` → Show all
+2. Loop: `extract` → cards no padrão → `onProfile(profile, ctx)` → scroll (não exige fim da página; cap `MAX_ROUNDS`)
+3. Callback default: salva JSON + print quantidade/último
 
-**Antes → depois:** só scroll até o fim → extrai/entra/salva cada perfil até acabar. Rollback: remover `extractProfilesLoop`. Coords: `npm run extract -- --engine all` → `COORDS`.
+**Antes → depois:** tap People + fim da página → só Show all + descer com callback. Rollback: passo People + `STABLE_EMPTY`. Coords: `npm run extract -- --engine all` → `COORDS`.
 
 ---
 

@@ -1,14 +1,12 @@
 #!/usr/bin/env node
 /**
- * LinkedIn: mata apps → launch → Search → "comprador" → Show all →
- * extrai OCR, entra em cada perfil, salva e imprime quantidade + último
- * até não haver mais perfis (fim da lista).
+ * LinkedIn: stop apps → launch → Search → "comprador" → Show all →
+ * desce a lista com `extract` por demanda (sem IA, sem People, sem abrir perfil).
+ * Cada card no padrão dispara `onProfile(profile, ctx)`.
  *
  * Uso (cwd: screen-robot/src):
  *   npm run login-extract-profiles
- *   node scripts/login-extract-profiles.js --config ./device.config.json
  */
-import { createHash } from "node:crypto";
 import {
   readFileSync,
   existsSync,
@@ -20,16 +18,7 @@ import { fileURLToPath } from "node:url";
 
 import { sleep } from "../lib/adb.js";
 import { extract } from "../lib/extract.js";
-import { captureFrame } from "../lib/frame.js";
-import {
-  key,
-  launch,
-  scroll,
-  screenshot,
-  stop,
-  tapElement,
-  type,
-} from "../lib/operate.js";
+import { key, launch, scroll, stop, tapElement, type } from "../lib/operate.js";
 import { provisionEmulator } from "../lib/provision.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -38,20 +27,19 @@ const WAIT_AFTER_LINKEDIN_MS = 5_000;
 const SCROLL_DELAY_MS = 400;
 const SCROLL_DISTANCE = 700;
 const SCROLL_BURST = 2;
-const MAX_PROFILES = 80;
-const MAX_ROUNDS = 60;
-const STABLE_EMPTY_NEEDED = 2;
+const MAX_PROFILES = 200;
+const MAX_ROUNDS = 40;
+const OCR_ENGINE = "all";
 
-/** Coords OCR (extract --engine all) — recalibrar se resolução/layout mudar. */
+/** Coords OCR — recalibrar se resolução/layout mudar. */
 const COORDS = {
   search: { x: 175, y: 79, text: "Search" },
   showAll: { x: 269, y: 850, text: "Show all results" },
-  people: { x: 63, y: 154, text: "People" },
 };
 
 const ACTION_RE = /^(connect|\+?\s*connect|pending|message|follow)$/i;
-const NOISE_RE =
-  /^(people|posts|jobs|schools|courses|1st|2nd|3rd\+|past:|current:|mutual|connections?|connection|brazil|show|search|home|network|notifications|location|locatior|·|-|\+)$/i;
+const BAD_NAME_RE =
+  /\b(month|cancel|premium|try|free|dismiss|skip|ignore|linkedin|connect|pending|message|follow|current|past|mutual|connection|comprador|gest[aã]o|university|pramet|dormer|construtora|brazil|location)\b/i;
 
 function loadConfig(path) {
   const abs = resolve(path);
@@ -78,16 +66,58 @@ function stopAllApps(serial, apps) {
   }
 }
 
-async function frameHash(serial) {
-  const path = await captureFrame(serial);
-  return createHash("sha1").update(readFileSync(path)).digest("hex");
+function cleanName(raw) {
+  const words = String(raw || "")
+    .trim()
+    .replace(/[·•].*$/, "")
+    .replace(/\s*[-–]\s*\d*(st|nd|rd|th)?\+?.*$/i, "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
+  const out = [];
+  for (const w of words) {
+    if (out.length && out[out.length - 1].toLowerCase() === w.toLowerCase()) {
+      continue;
+    }
+    out.push(w);
+  }
+  return out.join(" ");
 }
 
-/**
- * Cards da lista People: âncora Connect/Pending/Message + nome na faixa.
- * @param {{ text?: string, x: number, y: number }[]} elements
- */
-function findListProfiles(elements) {
+function isValidProfileName(name) {
+  const n = cleanName(name);
+  if (n.length < 5 || n.length > 60) return false;
+  if (BAD_NAME_RE.test(n)) return false;
+  if (/[a-z][A-Z]/.test(n)) return false;
+  if (/current:|past:|,/i.test(n)) return false;
+  const words = n.split(/\s+/).filter(Boolean);
+  if (words.length < 2) return false;
+  if (!words.every((w) => /^[\p{L}']+$/u.test(w))) return false;
+  if (!words.every((w) => /^[\p{Lu}]/u.test(w))) return false;
+  return true;
+}
+
+function pickNameAboveAction(elements, act) {
+  const band = elements.filter(
+    (e) => e.y >= act.y - 130 && e.y <= act.y - 6 && e.x < 400 && e.y > 170,
+  );
+  /** @type {{ name: string, x: number, y: number, score: number }[]} */
+  const scored = [];
+  for (const e of band) {
+    const name = cleanName(e.text);
+    if (!isValidProfileName(name)) continue;
+    let score = name.length;
+    if (/\s/.test(String(e.text || ""))) score += 40;
+    if (name.split(/\s+/).length >= 2) score += 20;
+    scored.push({ name, x: e.x, y: e.y, score });
+  }
+  scored.sort((a, b) => b.score - a.score || a.y - b.y);
+  return scored[0] || null;
+}
+
+/** Cards no padrão (botão Connect/Pending/Message + nome válido). */
+function profilesFromExtract(elements) {
   const actions = elements
     .filter(
       (e) =>
@@ -97,188 +127,124 @@ function findListProfiles(elements) {
     )
     .sort((a, b) => a.y - b.y);
 
-  /** @type {{ name: string, key: string, x: number, y: number, action: string, card: object[] }[]} */
+  /** @type {object[]} */
   const out = [];
   const seen = new Set();
 
-  for (const act of actions) {
-    const band = elements.filter(
-      (e) => e.y >= act.y - 100 && e.y <= act.y + 60 && e.x < 400,
-    );
-    const nameParts = band
-      .filter((e) => {
-        const t = String(e.text || "").trim();
-        if (t.length < 2 || NOISE_RE.test(t) || ACTION_RE.test(t)) return false;
-        if (/^\d+$/.test(t) || /^[^\p{L}]+$/u.test(t)) return false;
-        return /^[\p{L}]/u.test(t);
-      })
-      .sort((a, b) => a.y - b.y || a.x - b.x);
+  for (let i = 0; i < actions.length; i++) {
+    const act = actions[i];
+    const picked = pickNameAboveAction(elements, act);
+    if (!picked) continue;
 
-    if (!nameParts.length) continue;
-    const y0 = nameParts[0].y;
-    const line = nameParts.filter((e) => Math.abs(e.y - y0) < 24);
-    const name = line
-      .map((e) => String(e.text).trim())
-      .join(" ")
-      .replace(/\s+/g, " ")
-      .trim();
-    if (name.length < 3) continue;
-    const key = name.toLowerCase();
+    const yTop =
+      i === 0
+        ? Math.max(170, act.y - 160)
+        : Math.floor((actions[i - 1].y + act.y) / 2);
+    const yBot =
+      i === actions.length - 1
+        ? act.y + 100
+        : Math.floor((act.y + actions[i + 1].y) / 2);
+
+    const card = elements
+      .filter((e) => e.y >= yTop && e.y < yBot && e.x < 520)
+      .sort((a, b) => a.y - b.y || a.x - b.x)
+      .map((e) => ({ text: e.text, x: e.x, y: e.y }));
+
+    const key = picked.name.toLowerCase();
     if (seen.has(key)) continue;
     seen.add(key);
+
     out.push({
-      name,
+      name: picked.name,
       key,
-      x: line[0].x,
-      y: line[0].y,
       action: String(act.text),
-      card: band.map((e) => ({ text: e.text, x: e.x, y: e.y })),
+      x: picked.x,
+      y: picked.y,
+      texts: card.map((e) => e.text),
+      ocr: card,
     });
   }
   return out;
 }
 
-function isListScreen(elements) {
-  const texts = elements.map((e) => String(e.text || "").toLowerCase());
-  const hasPeople = texts.some((t) => t === "people");
-  const hasChip =
-    texts.some((t) => t === "posts") || texts.some((t) => t === "jobs");
-  return hasPeople && hasChip;
-}
-
-async function backToList(serial) {
-  for (let i = 0; i < 4; i++) {
-    const els = await extract({ serial, engine: "all" });
-    if (isListScreen(els)) return els;
-    key({ serial, code: "KEYCODE_BACK" });
-    await sleep(1_200);
-  }
-  return extract({ serial, engine: "all" });
-}
-
 /**
- * Abre o perfil, OCR completo, salva artefatos e volta à lista.
+ * Callback default: salva JSON + imprime quantidade e último perfil.
+ * @param {object} profile
+ * @param {{ count: number, outDir: string, saved: object[] }} ctx
  */
-async function openAndSaveProfile(serial, candidate, outDir, index) {
-  console.log(`   abrir perfil #${index}: "${candidate.name}" x=${candidate.x} y=${candidate.y}`);
-  tapElement({ serial, x: candidate.x, y: candidate.y });
-  await sleep(2_500);
-
-  const ocr = await extract({ serial, engine: "all" });
-  const slug = String(index).padStart(3, "0");
-  const shotPath = join(outDir, `profile-${slug}.png`);
-  screenshot({ serial, path: shotPath });
-
-  const profile = {
-    index,
-    listName: candidate.name,
-    listAction: candidate.action,
-    listCard: candidate.card,
-    extractedAt: new Date().toISOString(),
-    screenshot: shotPath,
-    ocr,
-    texts: ocr.map((e) => e.text),
-  };
+async function defaultOnProfile(profile, ctx) {
+  const { outDir, saved, count } = ctx;
   writeFileSync(
-    join(outDir, `profile-${slug}.json`),
+    join(outDir, `profile-${String(count).padStart(3, "0")}.json`),
     JSON.stringify(profile, null, 2),
     "utf8",
   );
-
-  key({ serial, code: "KEYCODE_BACK" });
-  await sleep(1_500);
-  await backToList(serial);
-  return profile;
-}
-
-function printProgress(saved) {
-  const last = saved[saved.length - 1];
-  console.log(`\n========== quantidade: ${saved.length} ==========`);
+  writeFileSync(join(outDir, "profiles.json"), JSON.stringify(saved, null, 2), "utf8");
+  console.log(`\n========== quantidade: ${count} ==========`);
   console.log("ultimo perfil extraido:");
-  console.log(
-    JSON.stringify(
-      {
-        index: last.index,
-        listName: last.listName,
-        listAction: last.listAction,
-        extractedAt: last.extractedAt,
-        screenshot: last.screenshot,
-        texts: last.texts,
-        ocr: last.ocr,
-      },
-      null,
-      2,
-    ),
-  );
+  console.log(JSON.stringify(profile, null, 2));
   console.log("==============================================\n");
 }
 
-async function extractProfilesLoop(serial, outDir) {
+/**
+ * Desce a lista: extract → callback nos que batem o padrão → scroll.
+ * Não exige fim da página.
+ *
+ * @param {string} serial
+ * @param {string} outDir
+ * @param {{ onProfile?: Function, maxRounds?: number, maxProfiles?: number }} [opts]
+ */
+async function extractProfilesLoop(serial, outDir, opts = {}) {
+  const onProfile = opts.onProfile ?? defaultOnProfile;
+  const maxRounds = opts.maxRounds ?? MAX_ROUNDS;
+  const maxProfiles = opts.maxProfiles ?? MAX_PROFILES;
   /** @type {object[]} */
   const saved = [];
   const seen = new Set();
-  let stableEmpty = 0;
-  let prevHash = await frameHash(serial);
 
-  for (let round = 1; round <= MAX_ROUNDS && saved.length < MAX_PROFILES; round++) {
-    console.log(`9.${round}) OCR lista…`);
-    const els = await extract({ serial, engine: "all" });
+  for (let round = 1; round <= maxRounds && saved.length < maxProfiles; round++) {
+    console.log(`${round}) extract…`);
+    const els = await extract({ serial, engine: OCR_ENGINE });
     writeFileSync(
       join(outDir, `list-round-${String(round).padStart(3, "0")}.json`),
       JSON.stringify(els, null, 2),
       "utf8",
     );
 
-    const candidates = findListProfiles(els).filter((p) => !seen.has(p.key));
-    console.log(`   candidatos novos: ${candidates.length}`);
-
-    if (candidates.length === 0) {
-      for (let b = 0; b < SCROLL_BURST; b++) {
-        scroll({ serial, direction: "down", distance: SCROLL_DISTANCE });
-        await sleep(SCROLL_DELAY_MS);
-      }
-      const nextHash = await frameHash(serial);
-      if (nextHash === prevHash) {
-        stableEmpty += 1;
-        console.log(
-          `   sem novos + frame estável (${stableEmpty}/${STABLE_EMPTY_NEEDED})`,
-        );
-        if (stableEmpty >= STABLE_EMPTY_NEEDED) {
-          console.log("   fim: não há mais perfis");
-          break;
-        }
-      } else {
-        stableEmpty = 0;
-        prevHash = nextHash;
-        console.log("   scroll avançou — continua");
-      }
-      continue;
+    const fresh = profilesFromExtract(els).filter((p) => !seen.has(p.key));
+    console.log(`   no padrão: ${fresh.length}`);
+    if (fresh.length) {
+      console.log(`   nomes: ${fresh.map((p) => p.name).join(" | ")}`);
     }
 
-    stableEmpty = 0;
-    for (const c of candidates) {
-      if (saved.length >= MAX_PROFILES) break;
-      seen.add(c.key);
-      const profile = await openAndSaveProfile(
-        serial,
-        c,
-        outDir,
-        saved.length + 1,
-      );
+    for (const p of fresh) {
+      if (saved.length >= maxProfiles) break;
+      seen.add(p.key);
+      const profile = {
+        index: saved.length + 1,
+        name: p.name,
+        action: p.action,
+        extractedAt: new Date().toISOString(),
+        round,
+        x: p.x,
+        y: p.y,
+        texts: p.texts,
+        ocr: p.ocr,
+      };
       saved.push(profile);
-      writeFileSync(
-        join(outDir, "profiles.json"),
-        JSON.stringify(saved, null, 2),
-        "utf8",
-      );
-      printProgress(saved);
+      await onProfile(profile, {
+        count: saved.length,
+        outDir,
+        saved,
+        serial,
+        round,
+      });
     }
 
     for (let b = 0; b < SCROLL_BURST; b++) {
       scroll({ serial, direction: "down", distance: SCROLL_DISTANCE });
       await sleep(SCROLL_DELAY_MS);
     }
-    prevHash = await frameHash(serial);
   }
 
   return saved;
@@ -327,12 +293,10 @@ async function main() {
   tapAt(serial, COORDS.showAll, "showAll");
   await sleep(2_000);
 
-  console.log("8) Aba People…");
-  tapAt(serial, COORDS.people, "people");
-  await sleep(1_500);
-
-  console.log("9) Extrair perfis até o fim…");
-  const saved = await extractProfilesLoop(serial, outDir);
+  console.log("8) Descer + extract por demanda (callback onProfile)…");
+  const saved = await extractProfilesLoop(serial, outDir, {
+    onProfile: defaultOnProfile,
+  });
 
   console.log(`OK — ${saved.length} perfis em ${outDir}`);
 }

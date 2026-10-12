@@ -100,6 +100,7 @@ const elements = await extract({ serial });
 | **SC-30 LinkedIn** (fixture, sem device) | ver abaixo |
 | Piloto LinkedIn ao vivo | `npm run linkedin-login` |
 | LinkedIn Search comprador → See all | `npm run login-extract-profiles` |
+| LinkedIn boolean por perfil + abrir | `npm run login-visit-profiles` |
 | Parse cards lista (fixtures OCR) | `node --test lib/linkedin-list-profiles.fixture.test.js` |
 | Exemplo mínimo (provision + scrcpy) | `npm run sample` |
 | Variação de mensagem (gpt-4o-mini) | `npm run vary-message` |
@@ -156,6 +157,25 @@ node --test --test-timeout=120000 lib/linkedin-list-profiles.fixture.test.js
 **Antes → depois:** teste lia OCR JSON → extrai da PNG com `extract({ engine: macos-vision })`. Rollback: carregar `.ocr.json`.
 
 **INJECT_EVENTS no scroll:** Android nega `adb input swipe` se outro app/overlay tem foco. A script faz retry com `KEYCODE_BACK` + `launch` LinkedIn (`safeScroll`). Se persistir: fechar diálogos/scrcpy conflitante e relançar.
+
+---
+
+## login-visit-profiles
+
+```bash
+cd screen-robot/src
+npm run login-visit-profiles -- --profiles screenshots/login-extract-profiles/<stamp>/profiles.json
+npm run login-visit-profiles   # último profiles.json em login-extract-profiles/
+# opcional: --offset N --limit M
+```
+
+Script [`scripts/login-visit-profiles.js`](scripts/login-visit-profiles.js) — lê a saída de `login-extract-profiles` e, para cada linha, pesquisa booleana e abre o perfil (**sem IA**). Query em [`lib/linkedin-boolean-query.js`](lib/linkedin-boolean-query.js): `"Nome" AND "Empresa"` (empresa de `current` após `at`) ou só `"Nome"`.
+
+1. `stop` apps + `launch` LinkedIn
+2. Por perfil: focar Search → limpar → `type` da query → See/Show all (mesmo critério da extract) → People (se chip y<200) → tap no nome → `extract` → `KEYCODE_BACK`
+3. Saída: `screenshots/login-visit-profiles/<stamp>/visited-NNN.json` + `visited.json` (resumo). Rollback: apagar a pasta `<stamp>`.
+
+**Antes → depois:** não existia visita por boolean; só listagem scroll. Rollback: usar só `login-extract-profiles`.
 
 ---
 

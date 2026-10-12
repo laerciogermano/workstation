@@ -20,6 +20,7 @@
     "example": "node cli.js config.example.json",
     "linkedin-login": "node scripts/linkedin-login.js",
     "login-extract-profiles": "node scripts/login-extract-profiles.js",
+    "login-visit-profiles": "node scripts/login-visit-profiles.js",
     "tinder-home": "node scripts/tinder-home.js",
     "instagram-home": "node scripts/instagram-home.js",
     "sample": "node scripts/sample.js",

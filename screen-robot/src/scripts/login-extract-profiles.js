@@ -229,11 +229,15 @@ async function main() {
   await type({ serial, text: "comprador" });
   await sleep(1_000);
 
-  console.log("7) Clicar em Show all…");
+  console.log("7) Baixar teclado…");
+  key({ serial, code: "KEYCODE_BACK" });
+  await sleep(800);
+
+  console.log("8) Clicar em Show all…");
   tapAt(serial, COORDS.showAll, "showAll");
   await sleep(2_000);
 
-  console.log("8) Descer + extract por demanda (callback onProfile)…");
+  console.log("9) Descer + extract por demanda (callback onProfile)…");
   const saved = await extractProfilesLoop(serial, outDir, {
     onProfile: defaultOnProfile,
   });

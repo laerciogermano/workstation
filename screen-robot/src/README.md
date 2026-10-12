@@ -140,7 +140,7 @@ Script [`scripts/login-extract-profiles.js`](scripts/login-extract-profiles.js) 
 | Search | `Search` | 175 | 79 |
 | Show all | `Show all results` | 269 | 850 |
 
-1. `stop` apps + `launch` → Search → `comprador` → Show all
+1. `stop` apps + `launch` → Search → `comprador` → `KEYCODE_BACK` (baixa teclado) → Show all
 2. Loop: `extract` → cards no padrão → `onProfile` → scroll curto (280 / 900ms) até o **fim do scroll** (SHA1 do frame igual 3× seguidas)
 3. Callback: objeto `{ name, title, level, connection, city, mutualConnections, current, past }`
 

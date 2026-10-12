@@ -132,19 +132,19 @@ cd screen-robot/src
 npm run login-extract-profiles
 ```
 
-Script [`scripts/login-extract-profiles.js`](scripts/login-extract-profiles.js) — só lib (`adb` sleep, `operate` stop/launch/tap/type, `provision`). Cliques = coords OCR fixas em `COORDS` (AVD 720×1280, `extract --engine all`):
+Script [`scripts/login-extract-profiles.js`](scripts/login-extract-profiles.js) — só lib (`extract`, `operate`, `provision`, `frame`). Cliques fixos em `COORDS` (AVD 720×1280):
 
 | Alvo | text OCR | x | y |
 |------|----------|---|---|
 | Search | `Search` | 175 | 79 |
 | Show all | `Show all results` | 269 | 850 |
+| People | `People` | 63 | 154 |
 
-1. `provisionEmulator`
-2. `stop` em todos `cfg.apps.*.package` + `KEYCODE_HOME`
-3. `launch` LinkedIn → sleep 5s → tap Search → `type("comprador")` → tap Show all
-4. `scroll down` distance=1000, burst=3, delay=350ms; checa SHA1 do frame a cada burst até estabilizar 2× (cap 25)
+1. `stop` apps + `launch` LinkedIn → Search → `comprador` → Show all → People
+2. Loop: OCR lista → achar cards (Connect/Pending/Message) → tap nome → OCR perfil → salvar `screenshots/login-extract-profiles/<stamp>/` → print quantidade + último perfil completo → BACK → scroll
+3. Para quando não há candidatos novos e o frame estabiliza 2×
 
-**Antes → depois:** scroll lento (~0.35h / 1200ms / 1 a 1) → scrolls grandes e rápidos em burst. Rollback: `distance` default, `SCROLL_DELAY_MS=1200`, `SCROLL_BURST=1`. Coords: `npm run extract -- --engine all` → `COORDS`.
+**Antes → depois:** só scroll até o fim → extrai/entra/salva cada perfil até acabar. Rollback: remover `extractProfilesLoop`. Coords: `npm run extract -- --engine all` → `COORDS`.
 
 ---
 

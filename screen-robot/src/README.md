@@ -99,7 +99,7 @@ const elements = await extract({ serial });
 | BDD e2e US/EP (runtime real) | `npm run test:e2e` |
 | **SC-30 LinkedIn** (fixture, sem device) | ver abaixo |
 | Piloto LinkedIn ao vivo | `npm run linkedin-login` |
-| LinkedIn Search comprador → Show all | `npm run login-extract-profiles` |
+| LinkedIn Search comprador → See all | `npm run login-extract-profiles` |
 | Parse cards lista (fixtures OCR) | `node --test lib/linkedin-list-profiles.fixture.test.js` |
 | Exemplo mínimo (provision + scrcpy) | `npm run sample` |
 | Variação de mensagem (gpt-4o-mini) | `npm run vary-message` |
@@ -133,17 +133,19 @@ cd screen-robot/src
 npm run login-extract-profiles
 ```
 
-Script [`scripts/login-extract-profiles.js`](scripts/login-extract-profiles.js) — **sem IA**, **sem People**, **sem abrir perfil**. Só `extract` + scroll. Cliques em `COORDS`:
+Script [`scripts/login-extract-profiles.js`](scripts/login-extract-profiles.js) — **sem IA**, **sem People**, **sem abrir perfil**. Só `extract` + scroll. Cliques via `findByText` → `tapElement(x,y)` do hit (sem coords fixas):
 
-| Alvo | text OCR | x | y |
-|------|----------|---|---|
-| Search | `Search` | 175 | 79 |
-| Show all | `Show all results` | 269 | 850 |
+| Alvo | query OCR |
+|------|-----------|
+| Search | `Search` |
+| See all | `See all results` (fallback `See all`) |
 
-1. `stop` apps + `launch` → Search → `comprador` → `KEYCODE_BACK` (baixa teclado) → Show all
+1. `stop` apps + `launch` → Search → `comprador` → `KEYCODE_BACK` (baixa teclado) → See all results
 2. Loop: `extract` → cards no padrão → `onProfile` → scroll curto (280 / 900ms) até o **fim do scroll** (SHA1 do frame igual 3× seguidas)
 3. Callback: objeto `{ name, title, level, connection, city, mutualConnections, current, past }`
 4. A cada perfil novo regrava `screenshots/login-extract-profiles/<stamp>/profiles.json` (array acumulado no mesmo formato do log). Também grava `profile-NNN.json` completo. Rollback: apagar a pasta `<stamp>`.
+
+**Antes → depois (See all):** era tap fixo em `Show all results` @ 269,850. Agora `findByText("See all results")` e clique no x,y do OCR. Rollback: restaurar `COORDS.showAll`.
 
 Parse em [`lib/linkedin-list-profiles.js`](lib/linkedin-list-profiles.js). Fixtures: PNG (`test/fixtures/linkedin-list-profiles-{01,02,03}.png`) + `.expected.json`. Teste: print salva → `extract` na imagem → assert exacto por atributo.
 

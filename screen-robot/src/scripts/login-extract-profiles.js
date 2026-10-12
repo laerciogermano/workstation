@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * LinkedIn: stop apps → launch → Search → "comprador" → Show all →
+ * LinkedIn: stop apps → launch → Search → "comprador" → See all results →
  * desce com `extract` por demanda até o fim do scroll (frame estável).
  * Cada card no padrão dispara `onProfile(profile, ctx)`.
  *
@@ -18,7 +18,7 @@ import { dirname, resolve, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { sleep } from "../lib/adb.js";
-import { extract } from "../lib/extract.js";
+import { extract, findByText } from "../lib/extract.js";
 import { captureFrame } from "../lib/frame.js";
 import { profilesFromExtract } from "../lib/linkedin-list-profiles.js";
 import { key, launch, scroll, stop, tapElement, type } from "../lib/operate.js";
@@ -37,11 +37,7 @@ const MAX_PROFILES = 500;
 const MAX_ROUNDS = 500;
 const SCROLL_END_STABLE_NEEDED = 3;
 const OCR_ENGINE = process.env.SCREEN_ROBOT_OCR || "macos-vision";
-
-const COORDS = {
-  search: { x: 175, y: 79, text: "Search" },
-  showAll: { x: 269, y: 850, text: "Show all results" },
-};
+const SEE_ALL_QUERIES = ["See all results", "See all"];
 
 function loadConfig(path) {
   const abs = resolve(path);
@@ -49,9 +45,29 @@ function loadConfig(path) {
   return JSON.parse(readFileSync(abs, "utf8"));
 }
 
-function tapAt(serial, point, label) {
-  console.log(`   → ${label} "${point.text}" x=${point.x} y=${point.y}`);
-  tapElement({ serial, x: point.x, y: point.y });
+/** Busca texto via OCR e clica no x,y do hit. */
+async function tapByText(serial, queries, label, opts = {}) {
+  const list = Array.isArray(queries) ? queries : [queries];
+  const attempts = opts.attempts ?? 4;
+  const minScore = opts.minScore ?? 0.75;
+  for (let attempt = 1; attempt <= attempts; attempt++) {
+    for (const q of list) {
+      const hit = await findByText(serial, q, {
+        minScore,
+        engine: OCR_ENGINE,
+      });
+      if (hit?.x != null && hit?.y != null) {
+        console.log(
+          `   → ${label} "${hit.text}" x=${hit.x} y=${hit.y} (query="${q}" score=${hit.score?.toFixed?.(2) ?? hit.score})`,
+        );
+        tapElement({ serial, x: hit.x, y: hit.y });
+        return hit;
+      }
+    }
+    console.log(`   ${label}: texto não encontrado (${attempt}/${attempts}) — ${list.join(" | ")}`);
+    await sleep(1_000);
+  }
+  throw new Error(`${label}: não encontrado — ${list.join(" | ")}`);
 }
 
 function stopAllApps(serial, apps) {
@@ -265,7 +281,7 @@ async function main() {
   await sleep(WAIT_AFTER_LINKEDIN_MS);
 
   console.log("5) Clicar em Search…");
-  tapAt(serial, COORDS.search, "search");
+  await tapByText(serial, "Search", "search");
   await sleep(1_000);
 
   console.log('6) Digitar "comprador"…');
@@ -276,8 +292,8 @@ async function main() {
   key({ serial, code: "KEYCODE_BACK" });
   await sleep(800);
 
-  console.log("8) Clicar em Show all…");
-  tapAt(serial, COORDS.showAll, "showAll");
+  console.log("8) Clicar em See all results…");
+  await tapByText(serial, SEE_ALL_QUERIES, "seeAll");
   await sleep(2_000);
 
   console.log("9) Descer + extract por demanda (callback onProfile)…");

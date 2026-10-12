@@ -143,7 +143,7 @@ Script [`scripts/login-extract-profiles.js`](scripts/login-extract-profiles.js) 
 2. Loop: `extract` → cards no padrão → `onProfile` → scroll curto (280 / 900ms) até o **fim do scroll** (SHA1 do frame igual 3× seguidas)
 3. Callback: print resumo (`nome`, `nivel`, `status`, `cidade`, `mutualConnections`, `headline`, `current`/`past`) + JSON
 
-**Antes → depois:** parava no cap de rounds → só para no fim real do scroll. Rollback: `MAX_ROUNDS=40` sem `frameHash`. Coords: `npm run extract -- --engine all` → `COORDS`.
+**Antes → depois:** `ACTION_RE` exact falhava em `© Pending` / `i+ Connect` e nomes com `de`/`da` → `parseActionLabel` + partículas. Rollback: regex exact. Coords: `npm run extract -- --engine all` → `COORDS`.
 
 ---
 

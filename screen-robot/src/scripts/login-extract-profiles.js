@@ -1,12 +1,13 @@
 #!/usr/bin/env node
 /**
  * LinkedIn: stop apps → launch → Search → "comprador" → Show all →
- * desce a lista com `extract` por demanda (sem IA, sem People, sem abrir perfil).
+ * desce com `extract` por demanda até o fim do scroll (frame estável).
  * Cada card no padrão dispara `onProfile(profile, ctx)`.
  *
  * Uso (cwd: screen-robot/src):
  *   npm run login-extract-profiles
  */
+import { createHash } from "node:crypto";
 import {
   readFileSync,
   existsSync,
@@ -18,6 +19,7 @@ import { fileURLToPath } from "node:url";
 
 import { sleep } from "../lib/adb.js";
 import { extract } from "../lib/extract.js";
+import { captureFrame } from "../lib/frame.js";
 import { key, launch, scroll, stop, tapElement, type } from "../lib/operate.js";
 import { provisionEmulator } from "../lib/provision.js";
 
@@ -28,8 +30,10 @@ const WAIT_AFTER_LINKEDIN_MS = 5_000;
 const SCROLL_DELAY_MS = 900;
 const SCROLL_DISTANCE = 280;
 const SCROLL_BURST = 1;
-const MAX_PROFILES = 200;
-const MAX_ROUNDS = 40;
+const MAX_PROFILES = 500;
+/** Só segurança; a saída real é fim do scroll (frame estável). */
+const MAX_ROUNDS = 500;
+const SCROLL_END_STABLE_NEEDED = 3;
 const OCR_ENGINE = "all";
 
 /** Coords OCR — recalibrar se resolução/layout mudar. */
@@ -301,9 +305,14 @@ async function defaultOnProfile(profile, ctx) {
   printProfileSummary(profile, count);
 }
 
+async function frameHash(serial) {
+  const path = await captureFrame(serial);
+  return createHash("sha1").update(readFileSync(path)).digest("hex");
+}
+
 /**
  * Desce a lista: extract → callback nos que batem o padrão → scroll.
- * Não exige fim da página.
+ * Para só no fim do scroll (frame sem mudança N vezes) ou teto de segurança.
  *
  * @param {string} serial
  * @param {string} outDir
@@ -316,6 +325,8 @@ async function extractProfilesLoop(serial, outDir, opts = {}) {
   /** @type {object[]} */
   const saved = [];
   const seen = new Set();
+  let stableEnd = 0;
+  let prevHash = await frameHash(serial);
 
   for (let round = 1; round <= maxRounds && saved.length < maxProfiles; round++) {
     console.log(`${round}) extract…`);
@@ -360,6 +371,21 @@ async function extractProfilesLoop(serial, outDir, opts = {}) {
     for (let b = 0; b < SCROLL_BURST; b++) {
       scroll({ serial, direction: "down", distance: SCROLL_DISTANCE });
       await sleep(SCROLL_DELAY_MS);
+    }
+
+    const nextHash = await frameHash(serial);
+    if (nextHash === prevHash) {
+      stableEnd += 1;
+      console.log(
+        `   fim do scroll? frame igual (${stableEnd}/${SCROLL_END_STABLE_NEEDED})`,
+      );
+      if (stableEnd >= SCROLL_END_STABLE_NEEDED) {
+        console.log("   fim: scroll não avança mais — encerrando");
+        break;
+      }
+    } else {
+      stableEnd = 0;
+      prevHash = nextHash;
     }
   }
 

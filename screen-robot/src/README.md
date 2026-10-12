@@ -140,10 +140,10 @@ Script [`scripts/login-extract-profiles.js`](scripts/login-extract-profiles.js) 
 | Show all | `Show all results` | 269 | 850 |
 
 1. `stop` apps + `launch` → Search → `comprador` → Show all
-2. Loop: `extract` → cards no padrão → `onProfile(profile, ctx)` → scroll curto (distance=280, delay=900ms, burst=1; cap `MAX_ROUNDS`)
-3. Callback default: salva JSON + print resumo (`nome`, `nivel`, `status` Connect/Pending, `cidade`, `mutualConnections`, `headline`, `current`/`past`)
+2. Loop: `extract` → cards no padrão → `onProfile` → scroll curto (280 / 900ms) até o **fim do scroll** (SHA1 do frame igual 3× seguidas)
+3. Callback: print resumo (`nome`, `nivel`, `status`, `cidade`, `mutualConnections`, `headline`, `current`/`past`) + JSON
 
-**Antes → depois:** scroll grande (700×2 / 400ms) → scroll curto/lento para não pular perfil. Rollback: `SCROLL_DISTANCE=700`, `SCROLL_BURST=2`, `SCROLL_DELAY_MS=400`. Coords: `npm run extract -- --engine all` → `COORDS`.
+**Antes → depois:** parava no cap de rounds → só para no fim real do scroll. Rollback: `MAX_ROUNDS=40` sem `frameHash`. Coords: `npm run extract -- --engine all` → `COORDS`.
 
 ---
 

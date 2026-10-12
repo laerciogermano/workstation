@@ -143,6 +143,7 @@ Script [`scripts/login-extract-profiles.js`](scripts/login-extract-profiles.js) 
 1. `stop` apps + `launch` → Search → `comprador` → `KEYCODE_BACK` (baixa teclado) → Show all
 2. Loop: `extract` → cards no padrão → `onProfile` → scroll curto (280 / 900ms) até o **fim do scroll** (SHA1 do frame igual 3× seguidas)
 3. Callback: objeto `{ name, title, level, connection, city, mutualConnections, current, past }`
+4. A cada perfil novo regrava `screenshots/login-extract-profiles/<stamp>/profiles.json` (array acumulado no mesmo formato do log). Também grava `profile-NNN.json` completo. Rollback: apagar a pasta `<stamp>`.
 
 Parse em [`lib/linkedin-list-profiles.js`](lib/linkedin-list-profiles.js). Fixtures: PNG (`test/fixtures/linkedin-list-profiles-{01,02,03}.png`) + `.expected.json`. Teste: print salva → `extract` na imagem → assert exacto por atributo.
 

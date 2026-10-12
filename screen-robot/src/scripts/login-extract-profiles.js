@@ -68,36 +68,41 @@ function stopAllApps(serial, apps) {
   }
 }
 
-function printProfileSummary(profile, count) {
+function profileRow(profile) {
   const f = profile.fields || {};
+  return {
+    name: f.name || profile.name || null,
+    title: f.title || null,
+    level: f.level || null,
+    connection: f.connection || profile.action || null,
+    city: f.city || null,
+    mutualConnections: f.mutualConnections || null,
+    current: f.current || null,
+    past: f.past || null,
+  };
+}
+
+function writeProfilesJson(outDir, rows) {
+  const path = join(outDir, "profiles.json");
+  writeFileSync(path, JSON.stringify(rows, null, 2), "utf8");
+  return path;
+}
+
+function printProfileSummary(profile, count) {
   console.log(`\n========== quantidade: ${count} ==========`);
-  console.log(
-    JSON.stringify(
-      {
-        name: f.name || profile.name || null,
-        title: f.title || null,
-        level: f.level || null,
-        connection: f.connection || profile.action || null,
-        city: f.city || null,
-        mutualConnections: f.mutualConnections || null,
-        current: f.current || null,
-        past: f.past || null,
-      },
-      null,
-      2,
-    ),
-  );
+  console.log(JSON.stringify(profileRow(profile), null, 2));
   console.log("==============================================\n");
 }
 
 async function defaultOnProfile(profile, ctx) {
-  const { outDir, saved, count } = ctx;
+  const { outDir, rows, count } = ctx;
   writeFileSync(
     join(outDir, `profile-${String(count).padStart(3, "0")}.json`),
     JSON.stringify(profile, null, 2),
     "utf8",
   );
-  writeFileSync(join(outDir, "profiles.json"), JSON.stringify(saved, null, 2), "utf8");
+  const path = writeProfilesJson(outDir, rows);
+  console.log(`   → ${path} (${rows.length})`);
   printProfileSummary(profile, count);
 }
 
@@ -144,9 +149,12 @@ async function extractProfilesLoop(serial, outDir, opts = {}) {
   const maxProfiles = opts.maxProfiles ?? MAX_PROFILES;
   /** @type {object[]} */
   const saved = [];
+  /** @type {object[]} linhas limpas em profiles.json */
+  const rows = [];
   const seen = new Set();
   let stableEnd = 0;
   let prevHash = await frameHash(serial);
+  writeProfilesJson(outDir, rows);
 
   for (let round = 1; round <= maxRounds && saved.length < maxProfiles; round++) {
     console.log(`${round}) extract…`);
@@ -189,10 +197,13 @@ async function extractProfilesLoop(serial, outDir, opts = {}) {
         ocr: p.ocr,
       };
       saved.push(profile);
+      rows.push(profileRow(profile));
+      writeProfilesJson(outDir, rows);
       await onProfile(profile, {
         count: saved.length,
         outDir,
         saved,
+        rows,
         serial,
         round,
       });
@@ -275,7 +286,9 @@ async function main() {
     linkedinPkg,
   });
 
-  console.log(`OK — ${saved.length} perfis em ${outDir}`);
+  writeProfilesJson(outDir, saved.map(profileRow));
+  console.log(`OK — ${saved.length} perfis`);
+  console.log(`profiles.json: ${join(outDir, "profiles.json")}`);
 }
 
 main().catch((e) => {

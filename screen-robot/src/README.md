@@ -100,6 +100,7 @@ const elements = await extract({ serial });
 | **SC-30 LinkedIn** (fixture, sem device) | ver abaixo |
 | Piloto LinkedIn ao vivo | `npm run linkedin-login` |
 | LinkedIn Search comprador → Show all | `npm run login-extract-profiles` |
+| Parse cards lista (fixtures OCR) | `node --test lib/linkedin-list-profiles.fixture.test.js` |
 | Exemplo mínimo (provision + scrcpy) | `npm run sample` |
 | Variação de mensagem (gpt-4o-mini) | `npm run vary-message` |
 
@@ -143,7 +144,9 @@ Script [`scripts/login-extract-profiles.js`](scripts/login-extract-profiles.js) 
 2. Loop: `extract` → cards no padrão → `onProfile` → scroll curto (280 / 900ms) até o **fim do scroll** (SHA1 do frame igual 3× seguidas)
 3. Callback: print resumo (`nome`, `nivel`, `status`, `cidade`, `mutualConnections`, `headline`, `current`/`past`) + JSON
 
-**Antes → depois:** `ACTION_RE` exact falhava em `© Pending` / `i+ Connect` e nomes com `de`/`da` → `parseActionLabel` + partículas. Rollback: regex exact. Coords: `npm run extract -- --engine all` → `COORDS`.
+Parse em [`lib/linkedin-list-profiles.js`](lib/linkedin-list-profiles.js). Fixtures PNG+OCR+expected: `test/fixtures/linkedin-list-profiles-{01,02,03}.*`. Teste: `node --test lib/linkedin-list-profiles.fixture.test.js` (assert exacto por atributo).
+
+**Antes → depois:** parse só no script → lib + testes com prints. Rollback: remover lib/teste/fixtures.
 
 ---
 

@@ -1,22 +1,25 @@
 /**
- * Parse de cards LinkedIn a partir de OCR golden das prints da lista.
- * Cada perfil: assert exacto de name, nivel, status, cidade, mutual, headline, current, past.
+ * Prints salvas (PNG) → extract(OCR na imagem) → parse → assert exacto por atributo.
  */
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, it } from "node:test";
+import { extract } from "./extract.js";
 import { profilesFromExtract } from "./linkedin-list-profiles.js";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const OUT_DIR = resolve(ROOT, "test/output");
+const ENGINE = process.env.SCREEN_ROBOT_OCR || "macos-vision";
+
 const FIX = (id) => ({
-  ocr: resolve(ROOT, `test/fixtures/linkedin-list-profiles-${id}.ocr.json`),
+  id,
+  png: resolve(ROOT, `test/fixtures/linkedin-list-profiles-${id}.png`),
   expected: resolve(
     ROOT,
     `test/fixtures/linkedin-list-profiles-${id}.expected.json`,
   ),
-  png: resolve(ROOT, `test/fixtures/linkedin-list-profiles-${id}.png`),
 });
 
 const FIELD_KEYS = [
@@ -34,17 +37,34 @@ function loadJson(path) {
   return JSON.parse(readFileSync(path, "utf8"));
 }
 
-describe("linkedin-list-profiles — fixtures lista People", () => {
+/**
+ * Print salva (PNG) → extract OCR da imagem.
+ * @param {string} pngPath
+ */
+async function extractFromImage(pngPath) {
+  assert.ok(existsSync(pngPath), `print ausente: ${pngPath}`);
+  const els = await extract(
+    { serial: "fixture", engine: ENGINE },
+    { captureFrame: async () => pngPath },
+  );
+  assert.ok(Array.isArray(els) && els.length > 0, "extract da imagem vazio");
+  return els;
+}
+
+describe("linkedin-list-profiles — print → extract imagem → atributos", () => {
   for (const id of ["01", "02", "03"]) {
     const paths = FIX(id);
 
-    it(`fixture ${id}: extrai exatamente cada atributo de cada perfil`, () => {
-      const ocr = loadJson(paths.ocr);
+    it(`fixture ${id}: print PNG → extract → cada atributo exacto`, async () => {
       const expected = loadJson(paths.expected);
-      assert.ok(Array.isArray(ocr) && ocr.length > 0, "OCR fixture vazia");
-      assert.ok(
-        Array.isArray(expected) && expected.length > 0,
-        "expected fixture vazia",
+      assert.ok(expected.length > 0, "expected vazio");
+
+      const ocr = await extractFromImage(paths.png);
+      mkdirSync(OUT_DIR, { recursive: true });
+      writeFileSync(
+        resolve(OUT_DIR, `linkedin-list-profiles-${id}.from-image.ocr.json`),
+        JSON.stringify(ocr, null, 2) + "\n",
+        "utf8",
       );
 
       const got = profilesFromExtract(ocr).map((p) => p.fields);
@@ -65,11 +85,7 @@ describe("linkedin-list-profiles — fixtures lista People", () => {
             `perfil[${i}] (${exp.name}).${key}: got=${JSON.stringify(actual[key])} expected=${JSON.stringify(exp[key])}`,
           );
         }
-        assert.deepEqual(
-          actual,
-          exp,
-          `perfil[${i}] fields completos devem bater`,
-        );
+        assert.deepEqual(actual, exp, `perfil[${i}] fields completos`);
       }
     });
   }

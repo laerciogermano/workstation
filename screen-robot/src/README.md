@@ -144,9 +144,13 @@ Script [`scripts/login-extract-profiles.js`](scripts/login-extract-profiles.js) 
 2. Loop: `extract` → cards no padrão → `onProfile` → scroll curto (280 / 900ms) até o **fim do scroll** (SHA1 do frame igual 3× seguidas)
 3. Callback: print resumo (`nome`, `nivel`, `status`, `cidade`, `mutualConnections`, `headline`, `current`/`past`) + JSON
 
-Parse em [`lib/linkedin-list-profiles.js`](lib/linkedin-list-profiles.js). Fixtures PNG+OCR+expected: `test/fixtures/linkedin-list-profiles-{01,02,03}.*`. Teste: `node --test lib/linkedin-list-profiles.fixture.test.js` (assert exacto por atributo).
+Parse em [`lib/linkedin-list-profiles.js`](lib/linkedin-list-profiles.js). Fixtures: PNG (`test/fixtures/linkedin-list-profiles-{01,02,03}.png`) + `.expected.json`. Teste: print salva → `extract` na imagem → assert exacto por atributo.
 
-**Antes → depois:** parse só no script → lib + testes com prints. Rollback: remover lib/teste/fixtures.
+```bash
+node --test --test-timeout=120000 lib/linkedin-list-profiles.fixture.test.js
+```
+
+**Antes → depois:** teste lia OCR JSON → extrai da PNG com `extract({ engine: macos-vision })`. Rollback: carregar `.ocr.json`.
 
 ---
 

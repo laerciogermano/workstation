@@ -25,6 +25,10 @@ import { provisionEmulator } from "../lib/provision.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, "..");
+/** Merge all: default 4s mata todos os engines sob carga — sobe para esta script. */
+if (!process.env.OCR_MERGE_TIMEOUT_MS) {
+  process.env.OCR_MERGE_TIMEOUT_MS = "20000";
+}
 const WAIT_AFTER_LINKEDIN_MS = 5_000;
 /** Scroll curto e lento — evita pular cards entre extracts. */
 const SCROLL_DELAY_MS = 900;
@@ -363,7 +367,17 @@ async function extractProfilesLoop(serial, outDir, opts = {}) {
 
   for (let round = 1; round <= maxRounds && saved.length < maxProfiles; round++) {
     console.log(`${round}) extract…`);
-    const els = await extract({ serial, engine: OCR_ENGINE });
+    let els;
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      try {
+        els = await extract({ serial, engine: OCR_ENGINE });
+        break;
+      } catch (e) {
+        console.log(`   extract falhou (${attempt}/3): ${e.message || e}`);
+        if (attempt === 3) throw e;
+        await sleep(1_500);
+      }
+    }
     writeFileSync(
       join(outDir, `list-round-${String(round).padStart(3, "0")}.json`),
       JSON.stringify(els, null, 2),

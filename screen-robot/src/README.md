@@ -140,10 +140,10 @@ Script [`scripts/login-extract-profiles.js`](scripts/login-extract-profiles.js) 
 | Show all | `Show all results` | 269 | 850 |
 
 1. `stop` apps + `launch` → Search → `comprador` → Show all
-2. Loop: `extract` → cards no padrão → `onProfile(profile, ctx)` → scroll (não exige fim da página; cap `MAX_ROUNDS`)
-3. Callback default: salva JSON + print quantidade/último
+2. Loop: `extract` → cards no padrão → `onProfile(profile, ctx)` → scroll curto (distance=280, delay=900ms, burst=1; cap `MAX_ROUNDS`)
+3. Callback default: salva JSON + print resumo (`nome`, `nivel`, `status` Connect/Pending, `cidade`, `mutualConnections`, `headline`, `current`/`past`)
 
-**Antes → depois:** tap People + fim da página → só Show all + descer com callback. Rollback: passo People + `STABLE_EMPTY`. Coords: `npm run extract -- --engine all` → `COORDS`.
+**Antes → depois:** scroll grande (700×2 / 400ms) → scroll curto/lento para não pular perfil. Rollback: `SCROLL_DISTANCE=700`, `SCROLL_BURST=2`, `SCROLL_DELAY_MS=400`. Coords: `npm run extract -- --engine all` → `COORDS`.
 
 ---
 

@@ -24,9 +24,10 @@ import { provisionEmulator } from "../lib/provision.js";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, "..");
 const WAIT_AFTER_LINKEDIN_MS = 5_000;
-const SCROLL_DELAY_MS = 400;
-const SCROLL_DISTANCE = 700;
-const SCROLL_BURST = 2;
+/** Scroll curto e lento — evita pular cards entre extracts. */
+const SCROLL_DELAY_MS = 900;
+const SCROLL_DISTANCE = 280;
+const SCROLL_BURST = 1;
 const MAX_PROFILES = 200;
 const MAX_ROUNDS = 40;
 const OCR_ENGINE = "all";
@@ -116,6 +117,119 @@ function pickNameAboveAction(elements, act) {
   return scored[0] || null;
 }
 
+/**
+ * Campos legíveis a partir do OCR do card.
+ * @param {{ name: string, action: string, texts: string[], ocr: object[] }} card
+ */
+function parseCardFields(card) {
+  const texts = (card.texts || []).map((t) => String(t || "").trim()).filter(Boolean);
+  const joined = texts.join(" | ");
+
+  let nivel = null;
+  const nivelHit = joined.match(/\b(1st|2nd|3rd\+)\b/i);
+  if (nivelHit) nivel = nivelHit[1].replace(/^\w/, (c) => c.toLowerCase()) === "3rd+"
+    ? "3rd+"
+    : nivelHit[1].toLowerCase().replace("rd+", "rd+");
+  // normaliza 1st/2nd/3rd+
+  if (nivelHit) {
+    const n = nivelHit[1].toLowerCase();
+    nivel = n.startsWith("1") ? "1st" : n.startsWith("2") ? "2nd" : "3rd+";
+  }
+
+  const statusRaw = String(card.action || "").trim();
+  let status = statusRaw;
+  if (/^pending$/i.test(statusRaw)) status = "Pending";
+  else if (/connect/i.test(statusRaw)) status = "Connect";
+  else if (/^message$/i.test(statusRaw)) status = "Message";
+  else if (/^follow$/i.test(statusRaw)) status = "Follow";
+
+  let mutualConnections = null;
+  const mutualJoined = texts.find((t) => /mutual\s*connections?/i.test(t));
+  if (mutualJoined) {
+    const m = mutualJoined.match(/(\d+)\s*mutual/i);
+    mutualConnections = m
+      ? `${m[1]} mutual connections`
+      : mutualJoined.replace(/\s+/g, " ");
+  } else {
+    const hasMutual = texts.some((t) => /^mutual$/i.test(t) || /^connections?$/i.test(t));
+    if (hasMutual) {
+      const num = texts.find((t) => /^\d+$/.test(t));
+      mutualConnections = num
+        ? `${num} mutual connections`
+        : "mutual connections";
+    }
+  }
+
+  let cidade = null;
+  const cityLine = texts.find(
+    (t) =>
+      /,\s*(Brazil|Brasil|SP|RJ|MG|PR|RS|BA|PE|CE)/i.test(t) ||
+      /\b(São Paulo|Sao Paulo|Campinas|Belo Horizonte|Rio de Janeiro|Curitiba|Porto Alegre|Brasília|Brasilia)\b/i.test(
+        t,
+      ),
+  );
+  if (cityLine) {
+    cidade = cityLine.replace(/\s+/g, " ").trim();
+  } else {
+    // fragmentos OCR: "Belo" + "Horizonte, Minas" + "Gerais,Brazil"
+    const cityish = texts.filter(
+      (t) =>
+        /\b(paulo|horizonte|campinas|janeiro|curitiba|alegre|bras[ií]lia|minas|gerais|brazil|brasil)\b/i.test(
+          t,
+        ) && !/premium|cancel|month|activate/i.test(t),
+    );
+    if (cityish.length) {
+      cidade = [...new Set(cityish.map((t) => t.replace(/\s+/g, " ").trim()))]
+        .join(" ")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+  }
+
+  let headline = null;
+  const headlineHit = texts.find(
+    (t) =>
+      /\|/.test(t) &&
+      t.length >= 8 &&
+      !/premium|cancel|mutual|brazil|paulo|horizonte/i.test(t) &&
+      !ACTION_RE.test(t),
+  );
+  if (headlineHit) headline = headlineHit.replace(/\s+/g, " ").trim();
+
+  let current = null;
+  const currentHit = texts.find((t) => /^current:\s*/i.test(t) || /current:\s*\S/i.test(t));
+  if (currentHit) current = currentHit.replace(/\s+/g, " ").trim();
+
+  let past = null;
+  const pastHit = texts.find((t) => /^past:\s*/i.test(t) || /past:\s*\S/i.test(t));
+  if (pastHit) past = pastHit.replace(/\s+/g, " ").trim();
+
+  return {
+    name: card.name,
+    nivel,
+    status,
+    cidade,
+    mutualConnections,
+    headline,
+    current,
+    past,
+  };
+}
+
+function printProfileSummary(profile, count) {
+  const f = profile.fields || {};
+  console.log(`\n========== quantidade: ${count} ==========`);
+  console.log(`nome:                 ${f.name || profile.name || "—"}`);
+  console.log(`nivel:                ${f.nivel || "—"}`);
+  console.log(`conexao / status:     ${f.status || profile.action || "—"}`);
+  console.log(`cidade:               ${f.cidade || "—"}`);
+  console.log(`mutual connections:   ${f.mutualConnections || "—"}`);
+  console.log(`headline:             ${f.headline || "—"}`);
+  console.log(`current:              ${f.current || "—"}`);
+  console.log(`past:                 ${f.past || "—"}`);
+  console.log("==============================================\n");
+}
+
 /** Cards no padrão (botão Connect/Pending/Message + nome válido). */
 function profilesFromExtract(elements) {
   const actions = elements
@@ -154,7 +268,7 @@ function profilesFromExtract(elements) {
     if (seen.has(key)) continue;
     seen.add(key);
 
-    out.push({
+    const base = {
       name: picked.name,
       key,
       action: String(act.text),
@@ -162,13 +276,17 @@ function profilesFromExtract(elements) {
       y: picked.y,
       texts: card.map((e) => e.text),
       ocr: card,
+    };
+    out.push({
+      ...base,
+      fields: parseCardFields(base),
     });
   }
   return out;
 }
 
 /**
- * Callback default: salva JSON + imprime quantidade e último perfil.
+ * Callback default: salva JSON + imprime resumo (nome, nível, status, cidade…).
  * @param {object} profile
  * @param {{ count: number, outDir: string, saved: object[] }} ctx
  */
@@ -180,10 +298,7 @@ async function defaultOnProfile(profile, ctx) {
     "utf8",
   );
   writeFileSync(join(outDir, "profiles.json"), JSON.stringify(saved, null, 2), "utf8");
-  console.log(`\n========== quantidade: ${count} ==========`);
-  console.log("ultimo perfil extraido:");
-  console.log(JSON.stringify(profile, null, 2));
-  console.log("==============================================\n");
+  printProfileSummary(profile, count);
 }
 
 /**
@@ -224,6 +339,7 @@ async function extractProfilesLoop(serial, outDir, opts = {}) {
         index: saved.length + 1,
         name: p.name,
         action: p.action,
+        fields: p.fields,
         extractedAt: new Date().toISOString(),
         round,
         x: p.x,

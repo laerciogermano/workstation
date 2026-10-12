@@ -142,8 +142,9 @@ Script [`scripts/login-extract-profiles.js`](scripts/login-extract-profiles.js) 
 1. `provisionEmulator`
 2. `stop` em todos `cfg.apps.*.package` + `KEYCODE_HOME`
 3. `launch` LinkedIn → sleep 5s → tap Search → `type("comprador")` → tap Show all
+4. `scroll down` distance=1000, burst=3, delay=350ms; checa SHA1 do frame a cada burst até estabilizar 2× (cap 25)
 
-**Antes → depois:** gaveta+tap LinkedIn → `stop` todos os apps da config + `launch` LinkedIn. Recalibrar coords: `npm run extract -- --engine all` → `COORDS`. Rollback: gaveta/`findByText`.
+**Antes → depois:** scroll lento (~0.35h / 1200ms / 1 a 1) → scrolls grandes e rápidos em burst. Rollback: `distance` default, `SCROLL_DELAY_MS=1200`, `SCROLL_BURST=1`. Coords: `npm run extract -- --engine all` → `COORDS`.
 
 ---
 

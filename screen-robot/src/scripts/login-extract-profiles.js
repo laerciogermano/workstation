@@ -1,23 +1,32 @@
 #!/usr/bin/env node
 /**
- * LinkedIn: mata apps → launch → Search → "comprador" → Show all.
+ * LinkedIn: mata apps → launch → Search → "comprador" → Show all → scroll até o fim.
  * Cliques usam coords OCR fixas (engine=all, AVD 720×1280).
  *
  * Uso (cwd: screen-robot/src):
  *   npm run login-extract-profiles
  *   node scripts/login-extract-profiles.js --config ./device.config.json
  */
+import { createHash } from "node:crypto";
 import { readFileSync, existsSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { sleep } from "../lib/adb.js";
-import { key, launch, stop, tapElement, type } from "../lib/operate.js";
+import { captureFrame } from "../lib/frame.js";
+import { key, launch, scroll, stop, tapElement, type } from "../lib/operate.js";
 import { provisionEmulator } from "../lib/provision.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, "..");
 const WAIT_AFTER_LINKEDIN_MS = 5_000;
+const SCROLL_MAX = 25;
+const SCROLL_STABLE_NEEDED = 2;
+const SCROLL_DELAY_MS = 350;
+/** Quase uma tela (AVD 1280 de altura); default da lib é ~0.35h. */
+const SCROLL_DISTANCE = 1_000;
+/** Scrolls por checagem de fim (menos screenshots = mais rápido). */
+const SCROLL_BURST = 3;
 
 /** Coords OCR (extract --engine all) — recalibrar se resolução/layout mudar. */
 const COORDS = {
@@ -49,6 +58,39 @@ function stopAllApps(serial, apps) {
       console.log(`   force-stop ${pkg} (ignorado: ${e.message || e})`);
     }
   }
+}
+
+async function frameHash(serial) {
+  const path = await captureFrame(serial);
+  return createHash("sha1").update(readFileSync(path)).digest("hex");
+}
+
+/** Scroll down (grande + rápido) até o frame não mudar N vezes seguidas. */
+async function scrollToEnd(serial) {
+  let prev = await frameHash(serial);
+  let stable = 0;
+  let n = 0;
+  while (n < SCROLL_MAX) {
+    for (let b = 0; b < SCROLL_BURST && n < SCROLL_MAX; b++) {
+      n += 1;
+      scroll({ serial, direction: "down", distance: SCROLL_DISTANCE });
+      await sleep(SCROLL_DELAY_MS);
+    }
+    const next = await frameHash(serial);
+    if (next === prev) {
+      stable += 1;
+      console.log(`   após ${n} scrolls: sem mudança (${stable}/${SCROLL_STABLE_NEEDED})`);
+      if (stable >= SCROLL_STABLE_NEEDED) {
+        console.log("   fim da página");
+        return;
+      }
+    } else {
+      stable = 0;
+      prev = next;
+      console.log(`   após ${n} scrolls: avançou`);
+    }
+  }
+  console.log(`   limite de ${SCROLL_MAX} scrolls — para`);
 }
 
 async function main() {
@@ -87,8 +129,12 @@ async function main() {
 
   console.log("7) Clicar em Show all…");
   tapAt(serial, COORDS.showAll, "showAll");
+  await sleep(2_000);
 
-  console.log("OK — login-extract-profiles (até Show all)");
+  console.log("8) Rolar até o fim da página…");
+  await scrollToEnd(serial);
+
+  console.log("OK — login-extract-profiles (Show all + fim da lista)");
 }
 
 main().catch((e) => {

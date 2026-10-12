@@ -38,7 +38,8 @@ const MAX_PROFILES = 500;
 /** Só segurança; a saída real é fim do scroll (frame estável). */
 const MAX_ROUNDS = 500;
 const SCROLL_END_STABLE_NEEDED = 3;
-const OCR_ENGINE = "all";
+/** Um engine — merge `all` satura e estoura timeout em runs longas. */
+const OCR_ENGINE = process.env.SCREEN_ROBOT_OCR || "macos-vision";
 
 /** Coords OCR — recalibrar se resolução/layout mudar. */
 const COORDS = {

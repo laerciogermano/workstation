@@ -99,6 +99,7 @@ const elements = await extract({ serial });
 | BDD e2e US/EP (runtime real) | `npm run test:e2e` |
 | **SC-30 LinkedIn** (fixture, sem device) | ver abaixo |
 | Piloto LinkedIn ao vivo | `npm run linkedin-login` |
+| LinkedIn Search comprador → Show all | `npm run login-extract-profiles` |
 | Exemplo mínimo (provision + scrcpy) | `npm run sample` |
 | Variação de mensagem (gpt-4o-mini) | `npm run vary-message` |
 
@@ -121,6 +122,25 @@ node --test --test-timeout=180000 lib/extract.ocr-backends.fixture.test.js
 # Merge engine=all nas fixtures LinkedIn (People/Connect + tela inicial)
 node --test --test-timeout=180000 lib/extract.linkedin-fixtures.test.js
 ```
+
+---
+
+## login-extract-profiles
+
+```bash
+cd screen-robot/src
+npm run login-extract-profiles
+```
+
+Script [`scripts/login-extract-profiles.js`](scripts/login-extract-profiles.js) — só lib (`adb` sleep, `extract`/`findByText`, `operate`, `provision`):
+
+1. `provisionEmulator`
+2. `KEYCODE_HOME` + `scroll down` (gaveta)
+3. tap `LinkedIn` / `Linkedln`
+4. sleep 5s
+5. tap `Search` → `type("comprador")` → tap `Show all` (KEYCODE_BACK se o teclado cobrir)
+
+**Antes → depois:** não havia runner fixo até Show all (só agent/roteiro ou trecho em `linkedin-login`). Rollback: remover o script npm e o arquivo.
 
 ---
 

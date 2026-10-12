@@ -132,15 +132,18 @@ cd screen-robot/src
 npm run login-extract-profiles
 ```
 
-Script [`scripts/login-extract-profiles.js`](scripts/login-extract-profiles.js) — só lib (`adb` sleep, `extract`/`findByText`, `operate`, `provision`):
+Script [`scripts/login-extract-profiles.js`](scripts/login-extract-profiles.js) — só lib (`adb` sleep, `operate` stop/launch/tap/type, `provision`). Cliques = coords OCR fixas em `COORDS` (AVD 720×1280, `extract --engine all`):
+
+| Alvo | text OCR | x | y |
+|------|----------|---|---|
+| Search | `Search` | 175 | 79 |
+| Show all | `Show all results` | 269 | 850 |
 
 1. `provisionEmulator`
-2. `KEYCODE_HOME` + `scroll down` (gaveta)
-3. tap `LinkedIn` / `Linkedln`
-4. sleep 5s
-5. tap `Search` → `type("comprador")` → tap `Show all` (KEYCODE_BACK se o teclado cobrir)
+2. `stop` em todos `cfg.apps.*.package` + `KEYCODE_HOME`
+3. `launch` LinkedIn → sleep 5s → tap Search → `type("comprador")` → tap Show all
 
-**Antes → depois:** não havia runner fixo até Show all (só agent/roteiro ou trecho em `linkedin-login`). Rollback: remover o script npm e o arquivo.
+**Antes → depois:** gaveta+tap LinkedIn → `stop` todos os apps da config + `launch` LinkedIn. Recalibrar coords: `npm run extract -- --engine all` → `COORDS`. Rollback: gaveta/`findByText`.
 
 ---
 

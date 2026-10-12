@@ -42,9 +42,37 @@ const COORDS = {
   showAll: { x: 269, y: 850, text: "Show all results" },
 };
 
-const ACTION_RE = /^(connect|\+?\s*connect|pending|message|follow)$/i;
+/** Partículas de nome BR/PT (OCR traz "de"/"da" em minúsculo). */
+const NAME_PARTICLES = new Set([
+  "de",
+  "da",
+  "do",
+  "dos",
+  "das",
+  "e",
+  "di",
+  "del",
+  "van",
+  "von",
+]);
 const BAD_NAME_RE =
   /\b(month|cancel|premium|try|free|dismiss|skip|ignore|linkedin|connect|pending|message|follow|current|past|mutual|connection|comprador|gest[aã]o|university|pramet|dormer|construtora|brazil|location)\b/i;
+
+/**
+ * OCR do botão: "© Pending", "i+ Connect", "+ Connect", "+ Follow".
+ * Ignora "mutual connections".
+ * @returns {"Connect"|"Pending"|"Message"|"Follow"|null}
+ */
+function parseActionLabel(text) {
+  const raw = String(text || "").trim();
+  if (!raw || /mutual|connection/i.test(raw)) return null;
+  if (!/\b(connect|pending|message|follow)\b/i.test(raw)) return null;
+  if (/\bpending\b/i.test(raw)) return "Pending";
+  if (/\bconnect\b/i.test(raw)) return "Connect";
+  if (/\bfollow\b/i.test(raw)) return "Follow";
+  if (/\bmessage\b/i.test(raw)) return "Message";
+  return null;
+}
 
 function loadConfig(path) {
   const abs = resolve(path);
@@ -76,6 +104,7 @@ function cleanName(raw) {
     .trim()
     .replace(/[·•].*$/, "")
     .replace(/\s*[-–]\s*\d*(st|nd|rd|th)?\+?.*$/i, "")
+    .replace(/\s+[A-Za-z]$/, "") // lixo OCR final ("Mendes O")
     .replace(/\s+/g, " ")
     .trim()
     .split(/\s+/)
@@ -92,29 +121,37 @@ function cleanName(raw) {
 
 function isValidProfileName(name) {
   const n = cleanName(name);
-  if (n.length < 5 || n.length > 60) return false;
+  if (n.length < 5 || n.length > 70) return false;
   if (BAD_NAME_RE.test(n)) return false;
   if (/[a-z][A-Z]/.test(n)) return false;
   if (/current:|past:|,/i.test(n)) return false;
   const words = n.split(/\s+/).filter(Boolean);
   if (words.length < 2) return false;
   if (!words.every((w) => /^[\p{L}']+$/u.test(w))) return false;
-  if (!words.every((w) => /^[\p{Lu}]/u.test(w))) return false;
+  if (!/^[\p{Lu}]/u.test(words[0])) return false;
+  for (const w of words.slice(1)) {
+    if (NAME_PARTICLES.has(w.toLowerCase())) continue;
+    if (!/^[\p{Lu}]/u.test(w)) return false;
+  }
   return true;
 }
 
 function pickNameAboveAction(elements, act) {
   const band = elements.filter(
-    (e) => e.y >= act.y - 130 && e.y <= act.y - 6 && e.x < 400 && e.y > 170,
+    (e) => e.y >= act.y - 140 && e.y <= act.y + 20 && e.x < 420 && e.y > 160,
   );
   /** @type {{ name: string, x: number, y: number, score: number }[]} */
   const scored = [];
   for (const e of band) {
-    const name = cleanName(e.text);
+    const raw = String(e.text || "");
+    if (parseActionLabel(raw)) continue;
+    const name = cleanName(raw);
     if (!isValidProfileName(name)) continue;
     let score = name.length;
-    if (/\s/.test(String(e.text || ""))) score += 40;
+    if (/\s/.test(raw)) score += 40;
     if (name.split(/\s+/).length >= 2) score += 20;
+    // linha típica LinkedIn: "Nome Sobrenome • 2nd"
+    if (/[•·]/.test(raw) || /\b(1st|2nd|3rd)/i.test(raw)) score += 60;
     scored.push({ name, x: e.x, y: e.y, score });
   }
   scored.sort((a, b) => b.score - a.score || a.y - b.y);
@@ -140,12 +177,8 @@ function parseCardFields(card) {
     nivel = n.startsWith("1") ? "1st" : n.startsWith("2") ? "2nd" : "3rd+";
   }
 
-  const statusRaw = String(card.action || "").trim();
-  let status = statusRaw;
-  if (/^pending$/i.test(statusRaw)) status = "Pending";
-  else if (/connect/i.test(statusRaw)) status = "Connect";
-  else if (/^message$/i.test(statusRaw)) status = "Message";
-  else if (/^follow$/i.test(statusRaw)) status = "Follow";
+  const status =
+    parseActionLabel(card.action) || String(card.action || "").trim() || null;
 
   let mutualConnections = null;
   const mutualJoined = texts.find((t) => /mutual\s*connections?/i.test(t));
@@ -196,7 +229,7 @@ function parseCardFields(card) {
       /\|/.test(t) &&
       t.length >= 8 &&
       !/premium|cancel|mutual|brazil|paulo|horizonte/i.test(t) &&
-      !ACTION_RE.test(t),
+      !parseActionLabel(t),
   );
   if (headlineHit) headline = headlineHit.replace(/\s+/g, " ").trim();
 
@@ -234,15 +267,15 @@ function printProfileSummary(profile, count) {
   console.log("==============================================\n");
 }
 
-/** Cards no padrão (botão Connect/Pending/Message + nome válido). */
+/** Cards no padrão (botão Connect/Pending/Message/Follow + nome válido). */
 function profilesFromExtract(elements) {
   const actions = elements
-    .filter(
-      (e) =>
-        ACTION_RE.test(String(e.text || "").trim()) &&
-        e.y > 170 &&
-        e.y < 860,
-    )
+    .map((e) => {
+      const label = parseActionLabel(e.text);
+      if (!label || e.y <= 160 || e.y >= 980) return null;
+      return { ...e, actionLabel: label };
+    })
+    .filter(Boolean)
     .sort((a, b) => a.y - b.y);
 
   /** @type {object[]} */
@@ -256,15 +289,15 @@ function profilesFromExtract(elements) {
 
     const yTop =
       i === 0
-        ? Math.max(170, act.y - 160)
+        ? Math.max(160, act.y - 160)
         : Math.floor((actions[i - 1].y + act.y) / 2);
     const yBot =
       i === actions.length - 1
-        ? act.y + 100
+        ? act.y + 120
         : Math.floor((act.y + actions[i + 1].y) / 2);
 
     const card = elements
-      .filter((e) => e.y >= yTop && e.y < yBot && e.x < 520)
+      .filter((e) => e.y >= yTop && e.y < yBot && e.x < 540)
       .sort((a, b) => a.y - b.y || a.x - b.x)
       .map((e) => ({ text: e.text, x: e.x, y: e.y }));
 
@@ -275,7 +308,7 @@ function profilesFromExtract(elements) {
     const base = {
       name: picked.name,
       key,
-      action: String(act.text),
+      action: act.actionLabel,
       x: picked.x,
       y: picked.y,
       texts: card.map((e) => e.text),

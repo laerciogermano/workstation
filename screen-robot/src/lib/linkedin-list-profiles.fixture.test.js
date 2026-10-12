@@ -24,11 +24,11 @@ const FIX = (id) => ({
 
 const FIELD_KEYS = [
   "name",
-  "nivel",
-  "status",
-  "cidade",
+  "title",
+  "level",
+  "connection",
+  "city",
   "mutualConnections",
-  "headline",
   "current",
   "past",
 ];

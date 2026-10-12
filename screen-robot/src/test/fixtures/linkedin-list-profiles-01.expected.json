@@ -1,32 +1,32 @@
 [
   {
     "name": "Alexandre Silva",
-    "nivel": "2nd",
-    "status": "Pending",
-    "cidade": "Belo Horizonte, Minas",
+    "title": "Comprador/Planejador / ...",
+    "level": "2nd",
+    "connection": "Pending",
+    "city": "Belo Horizonte, Minas",
     "mutualConnections": "2 mutual connections",
-    "headline": "Comprador/Planejador / ...",
-    "current": "Current: Comprador at Grupo GPS",
+    "current": "Comprador at Grupo GPS",
     "past": null
   },
   {
     "name": "Nayara Alves",
-    "nivel": "2nd",
-    "status": "Connect",
-    "cidade": "Greater Belo Horizonte",
+    "title": "Comprador da empresa ...",
+    "level": "2nd",
+    "connection": "Connect",
+    "city": "Greater Belo Horizonte",
     "mutualConnections": "1 mutual connections",
-    "headline": "Comprador da empresa ...",
-    "current": "Current: Comprador at MG CINTO",
+    "current": "Comprador at MG CINTO",
     "past": null
   },
   {
     "name": "Alexander Valle Santos",
-    "nivel": "2nd",
-    "status": "Connect",
-    "cidade": "Belo Horizonte, Minas",
+    "title": "Comprador Construção ...",
+    "level": "2nd",
+    "connection": "Connect",
+    "city": "Belo Horizonte, Minas",
     "mutualConnections": "1 mutual connections",
-    "headline": "Comprador Construção ...",
-    "current": "Current: Comprador sênior at Sólido Construções",
+    "current": "Comprador sênior at Sólido Construções",
     "past": null
   }
 ]

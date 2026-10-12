@@ -1,32 +1,32 @@
 [
   {
     "name": "Adriana Vidal Wildner",
-    "nivel": "2nd",
-    "status": "Pending",
-    "cidade": "São Paulo, São Paulo,",
+    "title": "Procurement Coordinator...",
+    "level": "2nd",
+    "connection": "Pending",
+    "city": "São Paulo, São Paulo,",
     "mutualConnections": "4 mutual connections",
-    "headline": "Procurement Coordinator...",
     "current": null,
-    "past": "Past: Senior Raw Materials Purchaser / Comprador"
+    "past": "Senior Raw Materials Purchaser / Comprador"
   },
   {
     "name": "Danielle Bazanelli",
-    "nivel": "2nd",
-    "status": "Pending",
-    "cidade": "Indaiatuba, São Paulo,",
+    "title": "Supervisora de Compras...",
+    "level": "2nd",
+    "connection": "Pending",
+    "city": "Indaiatuba, São Paulo,",
     "mutualConnections": "5 mutual connections",
-    "headline": "Supervisora de Compras...",
     "current": null,
-    "past": "Past: Comprador Pleno at The HEINEKEN"
+    "past": "Comprador Pleno at The HEINEKEN"
   },
   {
     "name": "Rosilene Silva",
-    "nivel": "2nd",
-    "status": "Pending",
-    "cidade": "Contagem, Minas Gerais,",
+    "title": "Compradora",
+    "level": "2nd",
+    "connection": "Pending",
+    "city": "Contagem, Minas Gerais,",
     "mutualConnections": "2 mutual connections",
-    "headline": "Compradora",
     "current": null,
-    "past": "Past: Comprador at Hospital Madre Teresa"
+    "past": "Comprador at Hospital Madre Teresa"
   }
 ]

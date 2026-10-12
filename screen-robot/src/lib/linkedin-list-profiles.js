@@ -155,36 +155,43 @@ export function parseCardFields(card) {
     }
   }
 
-  let headline = null;
-  const headlineHit = texts.find(
+  let title = null;
+  const titleHit = texts.find(
     (t) =>
-      (/\|/.test(t) || /\.\.\.$/.test(t) || /Comprador|Procurement|Coordenador|Supervisora|Planejador/i.test(t)) &&
+      (/\|/.test(t) ||
+        /\.\.\.$/.test(t) ||
+        /Comprador|Procurement|Coordenador|Supervisora|Planejador/i.test(t)) &&
       t.length >= 6 &&
       !/premium|cancel|mutual|brazil|current:|past:/i.test(t) &&
       !parseActionLabel(t) &&
       !/^\d/.test(t),
   );
-  if (headlineHit) headline = headlineHit.replace(/\s+/g, " ").trim();
+  if (titleHit) title = titleHit.replace(/\s+/g, " ").trim();
 
   let current = null;
   const currentHit = texts.find(
     (t) => /^current:\s*/i.test(t) || /current:\s*\S/i.test(t),
   );
-  if (currentHit) current = currentHit.replace(/\s+/g, " ").trim();
+  if (currentHit) {
+    current = currentHit.replace(/\s+/g, " ").replace(/^current:\s*/i, "").trim();
+  }
 
   let past = null;
   const pastHit = texts.find(
     (t) => /^past:\s*/i.test(t) || /past:\s*\S/i.test(t),
   );
-  if (pastHit) past = pastHit.replace(/\s+/g, " ").trim();
+  if (pastHit) {
+    past = pastHit.replace(/\s+/g, " ").replace(/^past:\s*/i, "").trim();
+  }
 
+  /** Objeto canônico do perfil na lista. */
   return {
     name: card.name,
-    nivel,
-    status,
-    cidade,
+    title,
+    level: nivel,
+    connection: status,
+    city: cidade,
     mutualConnections,
-    headline,
     current,
     past,
   };

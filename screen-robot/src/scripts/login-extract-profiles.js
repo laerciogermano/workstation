@@ -71,14 +71,22 @@ function stopAllApps(serial, apps) {
 function printProfileSummary(profile, count) {
   const f = profile.fields || {};
   console.log(`\n========== quantidade: ${count} ==========`);
-  console.log(`nome:                 ${f.name || profile.name || "—"}`);
-  console.log(`nivel:                ${f.nivel || "—"}`);
-  console.log(`conexao / status:     ${f.status || profile.action || "—"}`);
-  console.log(`cidade:               ${f.cidade || "—"}`);
-  console.log(`mutual connections:   ${f.mutualConnections || "—"}`);
-  console.log(`headline:             ${f.headline || "—"}`);
-  console.log(`current:              ${f.current || "—"}`);
-  console.log(`past:                 ${f.past || "—"}`);
+  console.log(
+    JSON.stringify(
+      {
+        name: f.name || profile.name || null,
+        title: f.title || null,
+        level: f.level || null,
+        connection: f.connection || profile.action || null,
+        city: f.city || null,
+        mutualConnections: f.mutualConnections || null,
+        current: f.current || null,
+        past: f.past || null,
+      },
+      null,
+      2,
+    ),
+  );
   console.log("==============================================\n");
 }
 

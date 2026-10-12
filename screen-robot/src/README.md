@@ -142,7 +142,7 @@ Script [`scripts/login-extract-profiles.js`](scripts/login-extract-profiles.js) 
 
 1. `stop` apps + `launch` → Search → `comprador` → Show all
 2. Loop: `extract` → cards no padrão → `onProfile` → scroll curto (280 / 900ms) até o **fim do scroll** (SHA1 do frame igual 3× seguidas)
-3. Callback: print resumo (`nome`, `nivel`, `status`, `cidade`, `mutualConnections`, `headline`, `current`/`past`) + JSON
+3. Callback: objeto `{ name, title, level, connection, city, mutualConnections, current, past }`
 
 Parse em [`lib/linkedin-list-profiles.js`](lib/linkedin-list-profiles.js). Fixtures: PNG (`test/fixtures/linkedin-list-profiles-{01,02,03}.png`) + `.expected.json`. Teste: print salva → `extract` na imagem → assert exacto por atributo.
 

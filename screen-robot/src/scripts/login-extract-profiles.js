@@ -37,7 +37,12 @@ const MAX_PROFILES = 500;
 const MAX_ROUNDS = 500;
 const SCROLL_END_STABLE_NEEDED = 3;
 const OCR_ENGINE = process.env.SCREEN_ROBOT_OCR || "macos-vision";
-const SEE_ALL_QUERIES = ["See all results", "See all"];
+const SEE_ALL_QUERIES = [
+  "See all results",
+  "Show all results",
+  "See all",
+  "Show all",
+];
 
 function loadConfig(path) {
   const abs = resolve(path);
@@ -45,24 +50,35 @@ function loadConfig(path) {
   return JSON.parse(readFileSync(abs, "utf8"));
 }
 
+/** Uma passada de findByText nas queries; null se nenhuma bater. */
+async function findFirstByText(serial, queries, opts = {}) {
+  const list = Array.isArray(queries) ? queries : [queries];
+  const minScore = opts.minScore ?? 0.75;
+  for (const q of list) {
+    const hit = await findByText(serial, q, {
+      minScore,
+      engine: OCR_ENGINE,
+    });
+    if (hit?.x != null && hit?.y != null) {
+      return { hit, query: q };
+    }
+  }
+  return null;
+}
+
 /** Busca texto via OCR e clica no x,y do hit. */
 async function tapByText(serial, queries, label, opts = {}) {
   const list = Array.isArray(queries) ? queries : [queries];
   const attempts = opts.attempts ?? 4;
-  const minScore = opts.minScore ?? 0.75;
   for (let attempt = 1; attempt <= attempts; attempt++) {
-    for (const q of list) {
-      const hit = await findByText(serial, q, {
-        minScore,
-        engine: OCR_ENGINE,
-      });
-      if (hit?.x != null && hit?.y != null) {
-        console.log(
-          `   → ${label} "${hit.text}" x=${hit.x} y=${hit.y} (query="${q}" score=${hit.score?.toFixed?.(2) ?? hit.score})`,
-        );
-        tapElement({ serial, x: hit.x, y: hit.y });
-        return hit;
-      }
+    const found = await findFirstByText(serial, list, opts);
+    if (found) {
+      const { hit, query } = found;
+      console.log(
+        `   → ${label} "${hit.text}" x=${hit.x} y=${hit.y} (query="${query}" score=${hit.score?.toFixed?.(2) ?? hit.score})`,
+      );
+      tapElement({ serial, x: hit.x, y: hit.y });
+      return hit;
     }
     console.log(`   ${label}: texto não encontrado (${attempt}/${attempts}) — ${list.join(" | ")}`);
     await sleep(1_000);
@@ -288,12 +304,21 @@ async function main() {
   await type({ serial, text: "comprador" });
   await sleep(1_000);
 
-  console.log("7) Baixar teclado…");
-  key({ serial, code: "KEYCODE_BACK" });
-  await sleep(800);
-
-  console.log("8) Clicar em See all results…");
-  await tapByText(serial, SEE_ALL_QUERIES, "seeAll");
+  console.log("7) See/Show all results (antes do teclado)…");
+  const seeAllEarly = await findFirstByText(serial, SEE_ALL_QUERIES);
+  if (seeAllEarly) {
+    const { hit, query } = seeAllEarly;
+    console.log(
+      `   → seeAll (teclado aberto) "${hit.text}" x=${hit.x} y=${hit.y} (query="${query}")`,
+    );
+    tapElement({ serial, x: hit.x, y: hit.y });
+  } else {
+    console.log("7b) Não achou — baixar teclado…");
+    key({ serial, code: "KEYCODE_BACK" });
+    await sleep(800);
+    console.log("8) Clicar em See/Show all results…");
+    await tapByText(serial, SEE_ALL_QUERIES, "seeAll");
+  }
   await sleep(2_000);
 
   console.log("9) Descer + extract por demanda (callback onProfile)…");

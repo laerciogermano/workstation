@@ -106,8 +106,40 @@ async function frameHash(serial) {
   return createHash("sha1").update(readFileSync(path)).digest("hex");
 }
 
+/**
+ * Scroll com retry: INJECT_EVENTS costuma aparecer com overlay / app sem foco.
+ * Recupera com BACK + launch LinkedIn.
+ */
+async function safeScroll(serial, linkedinPkg) {
+  for (let attempt = 1; attempt <= 4; attempt++) {
+    try {
+      scroll({ serial, direction: "down", distance: SCROLL_DISTANCE });
+      return;
+    } catch (e) {
+      const msg = String(e.message || e);
+      const inject =
+        /INJECT_EVENTS|SecurityException|device offline/i.test(msg);
+      console.log(
+        `   scroll falhou (${attempt}/4): ${msg.split("\n")[0].slice(0, 120)}`,
+      );
+      if (!inject || attempt === 4) throw e;
+      try {
+        key({ serial, code: "KEYCODE_BACK" });
+      } catch {
+        /* ignore */
+      }
+      await sleep(600);
+      if (linkedinPkg) {
+        await launch({ serial, package: linkedinPkg });
+        await sleep(1_500);
+      }
+    }
+  }
+}
+
 async function extractProfilesLoop(serial, outDir, opts = {}) {
   const onProfile = opts.onProfile ?? defaultOnProfile;
+  const linkedinPkg = opts.linkedinPkg;
   const maxRounds = opts.maxRounds ?? MAX_ROUNDS;
   const maxProfiles = opts.maxProfiles ?? MAX_PROFILES;
   /** @type {object[]} */
@@ -167,7 +199,7 @@ async function extractProfilesLoop(serial, outDir, opts = {}) {
     }
 
     for (let b = 0; b < SCROLL_BURST; b++) {
-      scroll({ serial, direction: "down", distance: SCROLL_DISTANCE });
+      await safeScroll(serial, linkedinPkg);
       await sleep(SCROLL_DELAY_MS);
     }
 
@@ -240,6 +272,7 @@ async function main() {
   console.log("9) Descer + extract por demanda (callback onProfile)…");
   const saved = await extractProfilesLoop(serial, outDir, {
     onProfile: defaultOnProfile,
+    linkedinPkg,
   });
 
   console.log(`OK — ${saved.length} perfis em ${outDir}`);

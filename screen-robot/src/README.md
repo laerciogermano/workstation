@@ -152,6 +152,8 @@ node --test --test-timeout=120000 lib/linkedin-list-profiles.fixture.test.js
 
 **Antes → depois:** teste lia OCR JSON → extrai da PNG com `extract({ engine: macos-vision })`. Rollback: carregar `.ocr.json`.
 
+**INJECT_EVENTS no scroll:** Android nega `adb input swipe` se outro app/overlay tem foco. A script faz retry com `KEYCODE_BACK` + `launch` LinkedIn (`safeScroll`). Se persistir: fechar diálogos/scrcpy conflitante e relançar.
+
 ---
 
 ## Piloto LinkedIn

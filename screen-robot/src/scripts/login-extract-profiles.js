@@ -29,8 +29,10 @@ const ROOT = resolve(__dirname, "..");
 if (!process.env.OCR_MERGE_TIMEOUT_MS) {
   process.env.OCR_MERGE_TIMEOUT_MS = "20000";
 }
-const WAIT_SEARCH_TIMEOUT_MS = 30_000;
-const WAIT_SEARCH_INTERVAL_MS = 1_000;
+const WAIT_TEXT_TIMEOUT_MS = 30_000;
+const WAIT_TEXT_INTERVAL_MS = 1_000;
+/** Primeira tentativa de See/Show all ainda com teclado aberto. */
+const WAIT_SEE_ALL_KEYBOARD_MS = 8_000;
 const SCROLL_DELAY_MS = 900;
 const SCROLL_DISTANCE = 280;
 const SCROLL_BURST = 1;
@@ -296,8 +298,8 @@ async function main() {
 
   console.log("4) Esperar Search e clicar…");
   const searchHit = await waitForText(serial, "Search", {
-    timeoutMs: WAIT_SEARCH_TIMEOUT_MS,
-    intervalMs: WAIT_SEARCH_INTERVAL_MS,
+    timeoutMs: WAIT_TEXT_TIMEOUT_MS,
+    intervalMs: WAIT_TEXT_INTERVAL_MS,
     engine: OCR_ENGINE,
   });
   console.log(
@@ -306,28 +308,36 @@ async function main() {
   tapElement({ serial, x: searchHit.x, y: searchHit.y });
   await sleep(1_000);
 
-  console.log('6) Digitar "comprador"…');
+  console.log('5) Digitar "comprador"…');
   await type({ serial, text: "comprador" });
-  await sleep(1_000);
+  await sleep(800);
 
-  console.log("7) See/Show all results (antes do teclado)…");
-  const seeAllEarly = await findFirstByText(serial, SEE_ALL_QUERIES);
-  if (seeAllEarly) {
-    const { hit, query } = seeAllEarly;
-    console.log(
-      `   → seeAll (teclado aberto) "${hit.text}" x=${hit.x} y=${hit.y} (query="${query}")`,
-    );
-    tapElement({ serial, x: hit.x, y: hit.y });
-  } else {
-    console.log("7b) Não achou — baixar teclado…");
+  console.log("6) Esperar See/Show all e clicar…");
+  let seeAllHit;
+  try {
+    seeAllHit = await waitForText(serial, SEE_ALL_QUERIES, {
+      timeoutMs: WAIT_SEE_ALL_KEYBOARD_MS,
+      intervalMs: WAIT_TEXT_INTERVAL_MS,
+      engine: OCR_ENGINE,
+    });
+    console.log("   (com teclado aberto)");
+  } catch {
+    console.log("   não achou com teclado — KEYCODE_BACK…");
     key({ serial, code: "KEYCODE_BACK" });
     await sleep(800);
-    console.log("8) Clicar em See/Show all results…");
-    await tapByText(serial, SEE_ALL_QUERIES, "seeAll");
+    seeAllHit = await waitForText(serial, SEE_ALL_QUERIES, {
+      timeoutMs: WAIT_TEXT_TIMEOUT_MS,
+      intervalMs: WAIT_TEXT_INTERVAL_MS,
+      engine: OCR_ENGINE,
+    });
   }
+  console.log(
+    `   → seeAll "${seeAllHit.text}" x=${seeAllHit.x} y=${seeAllHit.y} (query="${seeAllHit.query}" score=${seeAllHit.score?.toFixed?.(2) ?? seeAllHit.score})`,
+  );
+  tapElement({ serial, x: seeAllHit.x, y: seeAllHit.y });
   await sleep(2_000);
 
-  console.log("9) Descer + extract por demanda (callback onProfile)…");
+  console.log("7) Descer + extract por demanda (callback onProfile)…");
   const saved = await extractProfilesLoop(serial, outDir, {
     onProfile: defaultOnProfile,
     linkedinPkg,

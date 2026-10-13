@@ -210,7 +210,9 @@ async function extractProfilesLoop(serial, outDir, opts = {}) {
       "utf8",
     );
 
-    const fresh = profilesFromExtract(els).filter((p) => !seen.has(p.key));
+    const fresh = profilesFromExtract(els, { engine: OCR_ENGINE }).filter(
+      (p) => !seen.has(p.key),
+    );
     console.log(`   no padrão: ${fresh.length}`);
     if (fresh.length) {
       console.log(`   nomes: ${fresh.map((p) => p.name).join(" | ")}`);

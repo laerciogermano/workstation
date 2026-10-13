@@ -102,6 +102,7 @@ const elements = await extract({ serial });
 | LinkedIn Search comprador → See all | `npm run login-extract-profiles` |
 | LinkedIn boolean por perfil + abrir | `npm run login-visit-profiles` |
 | Parse cards lista (fixtures OCR) | `node --test lib/linkedin-list-profiles.fixture.test.js` |
+| Parse cards × engines (vision/rapid/tess) | `node --test --test-timeout=180000 lib/linkedin-list-profiles.engines.fixture.test.js` |
 | Exemplo mínimo (provision + scrcpy) | `npm run sample` |
 | Variação de mensagem (gpt-4o-mini) | `npm run vary-message` |
 
@@ -150,13 +151,23 @@ Script [`scripts/login-extract-profiles.js`](scripts/login-extract-profiles.js) 
 
 **Antes → depois (See all):** `findFirstByText` one-shot / `tapByText` → `waitForText(SEE_ALL_QUERIES)` (8s teclado aberto; senão BACK + wait 30s). Rollback: one-shot + `tapByText`.
 
-Parse em [`lib/linkedin-list-profiles.js`](lib/linkedin-list-profiles.js). Fixtures: PNG (`test/fixtures/linkedin-list-profiles-{01,02,03}.png`) + `.expected.json`. Teste: print salva → `extract` na imagem → assert exacto por atributo.
+Parse em [`lib/linkedin-list-profiles.js`](lib/linkedin-list-profiles.js) + pré-processamento por engine em [`lib/linkedin-list-profiles-engines.js`](lib/linkedin-list-profiles-engines.js) (`profilesFromExtract(els, { engine })`):
+
+| engine | ajuste |
+|--------|--------|
+| `macos-vision` | sem mudança |
+| `rapidocr` | descola CamelCase / `at` / `de` / `senior` / `mutual` |
+| `tesseract` | une tokens da mesma linha; ancora Connect se OCR não ler o botão |
+
+Fixtures: PNG (`test/fixtures/linkedin-list-profiles-{01,02,03}.png`) + `.expected.json` (gold vision).
 
 ```bash
 node --test --test-timeout=120000 lib/linkedin-list-profiles.fixture.test.js
+# rapidocr + tesseract vs gold (logs exact/soft/ocr-gap)
+node --test --test-timeout=180000 lib/linkedin-list-profiles.engines.fixture.test.js
 ```
 
-**Antes → depois:** teste lia OCR JSON → extrai da PNG com `extract({ engine: macos-vision })`. Rollback: carregar `.ocr.json`.
+**Antes → depois:** parse só afinado no vision; rapidocr/tesseract falhavam (texto colado / nomes fatiados / sem Connect). Agora `opts.engine` escolhe o pré-processamento. Rollback: `profilesFromExtract(els)` sem `engine` (trata como vision).
 
 **INJECT_EVENTS no scroll:** Android nega `adb input swipe` se outro app/overlay tem foco. A script faz retry com `KEYCODE_BACK` + `launch` LinkedIn (`safeScroll`). Se persistir: fechar diálogos/scrcpy conflitante e relançar.
 

@@ -67,7 +67,7 @@ describe("linkedin-list-profiles — print → extract imagem → atributos", ()
         "utf8",
       );
 
-      const got = profilesFromExtract(ocr).map((p) => p.fields);
+      const got = profilesFromExtract(ocr, { engine: ENGINE }).map((p) => p.fields);
       assert.equal(
         got.length,
         expected.length,

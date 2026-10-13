@@ -1,7 +1,10 @@
 /**
  * Parse de cards da lista LinkedIn People a partir do OCR (sem IA).
  * Usado por scripts/login-extract-profiles.js e testes de fixture.
+ * Engine: `opts.engine` → pré-processamento em linkedin-list-profiles-engines.js
+ * (rapidocr descola texto; tesseract une linhas / ancora ações).
  */
+import { prepareElementsForEngine } from "./linkedin-list-profiles-engines.js";
 
 /** Partículas de nome BR/PT (OCR traz "de"/"da" em minúsculo). */
 export const NAME_PARTICLES = new Set([
@@ -18,7 +21,7 @@ export const NAME_PARTICLES = new Set([
 ]);
 
 const BAD_NAME_RE =
-  /\b(month|cancel|premium|try|free|dismiss|skip|ignore|linkedin|connect|pending|message|follow|current|past|mutual|connection|comprador|gest[aã]o|university|pramet|dormer|construtora|brazil|location|specialist|buyer|coordinator|procurement)\b/i;
+  /\b(month|cancel|premium|try|free|dismiss|skip|ignore|linkedin|connect|pending|message|follow|current|past|mutual|connection|comprador|gest[aã]o|university|pramet|dormer|construtora|brazil|location|specialist|buyer|coordinator|procurement|jobs|posts|schools|courses|people|ltda|llc|inc)\b/i;
 
 /**
  * OCR do botão: "© Pending", "i+ Connect", "+ Connect", "+ Follow".
@@ -63,8 +66,9 @@ export function isValidProfileName(name) {
   if (/[a-z][A-Z]/.test(n)) return false;
   if (/current:|past:|,/i.test(n)) return false;
   const words = n.split(/\s+/).filter(Boolean);
-  if (words.length < 2) return false;
+  if (words.length < 2 || words.length > 4) return false;
   if (!words.every((w) => /^[\p{L}']+$/u.test(w))) return false;
+  if (words.some((w) => w.length >= 3 && w === w.toUpperCase())) return false;
   if (!/^[\p{Lu}]/u.test(words[0])) return false;
   for (const w of words.slice(1)) {
     if (NAME_PARTICLES.has(w.toLowerCase())) continue;
@@ -200,9 +204,13 @@ export function parseCardFields(card) {
 /**
  * Cards da lista a partir do OCR.
  * @param {{ text?: string, x: number, y: number }[]} elements
+ * @param {{ engine?: string }} [opts] `rapidocr` | `tesseract` | `macos-vision` | …
  */
-export function profilesFromExtract(elements) {
-  const actions = elements
+export function profilesFromExtract(elements, opts = {}) {
+  const engine = opts.engine || process.env.SCREEN_ROBOT_OCR || "macos-vision";
+  const els = prepareElementsForEngine(elements, engine);
+
+  const actionsRaw = els
     .map((e) => {
       const label = parseActionLabel(e.text);
       if (!label || e.y <= 160 || e.y >= 980) return null;
@@ -210,6 +218,13 @@ export function profilesFromExtract(elements) {
     })
     .filter(Boolean)
     .sort((a, b) => a.y - b.y);
+  // Uma ação por card (OCR/pré-processamento pode duplicar Pending/Connect no mesmo y)
+  /** @type {typeof actionsRaw} */
+  const actions = [];
+  for (const a of actionsRaw) {
+    if (actions.some((o) => Math.abs(o.y - a.y) <= 28)) continue;
+    actions.push(a);
+  }
 
   /** @type {object[]} */
   const out = [];
@@ -217,7 +232,7 @@ export function profilesFromExtract(elements) {
 
   for (let i = 0; i < actions.length; i++) {
     const act = actions[i];
-    const picked = pickNameAboveAction(elements, act);
+    const picked = pickNameAboveAction(els, act);
     if (!picked) continue;
 
     // Faixa a partir do nome (não do topo da tela) — evita misturar card anterior.
@@ -230,7 +245,7 @@ export function profilesFromExtract(elements) {
             Math.max(act.y, picked.y) + 220,
           );
 
-    const card = elements
+    const card = els
       .filter((e) => e.y >= yTop && e.y < yBot && e.x < 540)
       .sort((a, b) => a.y - b.y || a.x - b.x)
       .map((e) => ({ text: e.text, x: e.x, y: e.y }));

@@ -8,6 +8,7 @@
 **Infra de tela:** [`../../screen-robot/`](../../screen-robot/README.md) — usada via linkedin-agent.
 
 Derivados: [`docs/`](docs/README.md).  
+API (POST perfis → Postgres): [`api/README.md`](api/README.md).  
 Timeline de prompts: [`../prompts/`](../prompts/README.md).  
 Regras para a IA: [`config/config-ia.md`](config/config-ia.md).
 

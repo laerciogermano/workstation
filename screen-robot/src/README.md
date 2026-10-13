@@ -146,8 +146,11 @@ Script [`scripts/login-extract-profiles.js`](scripts/login-extract-profiles.js) 
 2. Loop: `extract` → cards no padrão → `onProfile` → scroll curto (280 / 900ms) até o **fim do scroll** (SHA1 do frame igual 3× seguidas)
 3. Callback: objeto `{ name, title, level, connection, city, mutualConnections, current, past }`
 4. A cada perfil novo regrava `screenshots/login-extract-profiles/<stamp>/profiles.json` (array acumulado no mesmo formato do log). Também grava `profile-NNN.json` completo. Rollback: apagar a pasta `<stamp>`.
+5. Se `PROFILES_API_URL` estiver definida (ex. `http://localhost:3000`), cada perfil também é enviado em `POST /profiles` para [`connectmax/vendas/api`](../../connectmax/vendas/api/README.md). Sem a env, só JSON local.
 
 **Antes → depois (Search):** sleep fixo 5s pós-launch → `waitForText("Search")` (poll OCR, timeout 30s) e só então tap. Rollback: `await sleep(5000)` + `tapByText(…, "Search")`.
+
+**Antes → depois (API):** extract só gravava disco → opcionalmente persiste no Postgres via Nest. Rollback: unset `PROFILES_API_URL`.
 
 **Antes → depois (See all):** `findFirstByText` one-shot / `tapByText` → `waitForText(SEE_ALL_QUERIES)` (8s teclado aberto; senão BACK + wait 30s). Rollback: one-shot + `tapByText`.
 

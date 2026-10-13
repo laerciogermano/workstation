@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: connectmax-postgres
+    environment:
+      POSTGRES_USER: connectmax
+      POSTGRES_PASSWORD: connectmax
+      POSTGRES_DB: connectmax
+    ports:
+      - "5432:5432"
+    volumes:
+      - connectmax_pg:/var/lib/postgresql/data
+
+volumes:
+  connectmax_pg:

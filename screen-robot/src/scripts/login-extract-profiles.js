@@ -40,6 +40,8 @@ const MAX_PROFILES = 500;
 const MAX_ROUNDS = 500;
 const SCROLL_END_STABLE_NEEDED = 3;
 const OCR_ENGINE = process.env.SCREEN_ROBOT_OCR || "macos-vision";
+/** Base da API Nest (ex.: http://localhost:3000). Vazio = só JSON local. */
+const PROFILES_API_URL = (process.env.PROFILES_API_URL || "").replace(/\/$/, "");
 const SEE_ALL_QUERIES = [
   "See all results",
   "Show all results",
@@ -117,6 +119,31 @@ function profileRow(profile) {
   };
 }
 
+/** Payload HTTP alinhado a POST /profiles (vendas/api). */
+function profileApiPayload(profile) {
+  return {
+    ...profileRow(profile),
+    extractedAt: profile.extractedAt || null,
+    round: profile.round ?? null,
+  };
+}
+
+async function postProfileToApi(profile) {
+  if (!PROFILES_API_URL) return;
+  const url = `${PROFILES_API_URL}/profiles`;
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(profileApiPayload(profile)),
+  });
+  if (!res.ok) {
+    const body = await res.text().catch(() => "");
+    throw new Error(
+      `POST ${url} → ${res.status} ${res.statusText}${body ? `: ${body.slice(0, 200)}` : ""}`,
+    );
+  }
+}
+
 function writeProfilesJson(outDir, rows) {
   const path = join(outDir, "profiles.json");
   writeFileSync(path, JSON.stringify(rows, null, 2), "utf8");
@@ -138,6 +165,10 @@ async function defaultOnProfile(profile, ctx) {
   );
   const path = writeProfilesJson(outDir, rows);
   console.log(`   → ${path} (${rows.length})`);
+  if (PROFILES_API_URL) {
+    await postProfileToApi(profile);
+    console.log(`   → POST ${PROFILES_API_URL}/profiles`);
+  }
   printProfileSummary(profile, count);
 }
 

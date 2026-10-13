@@ -6,7 +6,7 @@ Umbrella ConnectMax + **screen-robot** na raiz do works:
 |---------|-------|--------|
 | **screen-robot** | Robô de tela: provisiona agent, lê UI, executa gestos | [`screen-robot/`](../screen-robot/README.md) |
 | **linkedin-agent** | Agente LinkedIn: automatiza operações no app usando o screen-robot | [`linkedin-agent/`](linkedin-agent/README.md) |
-| **vendas** | Processo de vendas / prospecção (cadência, fila, faturamento) | [`vendas/`](vendas/README.md) |
+| **vendas** | Processo de vendas / prospecção (cadência, fila, faturamento) | [`vendas/`](vendas/README.md) · [`api/`](vendas/api/README.md) |
 
 **Dependências:** `linkedin-agent` consome `screen-robot`; `vendas` consome `linkedin-agent` para ações no LinkedIn. O robô **não** conhece LinkedIn nem regras de venda; o agente LinkedIn **não** conhece fila/faturamento.
 

@@ -8,6 +8,20 @@ import {
   parseActionLabel,
 } from "./linkedin-list-profiles.js";
 
+// mesmas partículas do parse (cópia local — evita import circular)
+const NAME_PARTICLES_SET = new Set([
+  "de",
+  "da",
+  "do",
+  "dos",
+  "das",
+  "e",
+  "di",
+  "del",
+  "van",
+  "von",
+]);
+
 /**
  * RapidOCR cola CamelCase / "at" / Current: — descola sem partir "Comprador"/"Greater".
  * @param {string} text
@@ -26,12 +40,18 @@ export function expandRapidocrText(text) {
 
   s = s.replace(/^(Current|Past):(?=\S)/i, "$1: ");
   s = s.replace(/([a-zá-ú])at([A-ZÁ-Ú])/g, "$1 at $2");
+  // "SabrinaPatriciadosSantos" / "CoordenadordeSuprime" (sem "do" — parte SolidoConstrucoes)
+  s = s.replace(/([a-zá-ú])(dos|das)([A-ZÁ-Ú])/g, "$1 $2 $3");
+  s = s.replace(/([a-zá-ú]{3,})(da|de)([A-ZÁ-Ú])/g, "$1 $2 $3");
   // só minúsculas (não partir "Danielle")
   s = s.replace(/\b(da|de|do|dos|das)(?=[a-zá-ú]{4,})/g, "$1 ");
-  // "CoordenadordeSuprime" → após CamelCase ainda "Coordenadorde Suprime"
-  s = s.replace(/([a-zá-ú])de([A-ZÁ-Ú])/g, "$1 de $2");
   s = s.replace(/([a-zá-ú])(s[eê]nior)\b/gi, "$1 $2");
   s = s.replace(/([a-zà-ú])([A-ZÁ-Ú])/g, "$1 $2");
+  // "Patriciados" após CamelCase
+  s = s.replace(/\b([\p{L}]{4,})(dos|das)\b/gu, "$1 $2");
+  // "UdsondaSilva" se ainda colado
+  s = s.replace(/\b([\p{L}]{4,})(da)(?=[A-ZÁ-Ú])/gu, "$1 $2 ");
+  s = s.replace(/\b(Junior)(de)\b/gi, "$1 $2");
   // só casos conhecidos (não partir HEINEKEN)
   s = s.replace(/\b(MG)(CINTO)\b/g, "$1 $2");
   s = s.replace(/(\d)(mutual)/gi, "$1 $2");
@@ -85,7 +105,8 @@ export function mergeTesseractLines(elements, opts = {}) {
     lines.push({ parts: [e], y: e.y });
   }
 
-  return lines.map((l) => {
+  const merged = lines.map((l) => {
+    // só por x: jitter de y no mesmo nome (Alves y=539, Nayara y=542) não pode inverter
     const parts = [...l.parts].sort((a, b) => a.x - b.x);
     const text = parts
       .map((p) => String(p.text || "").trim())
@@ -101,6 +122,64 @@ export function mergeTesseractLines(elements, opts = {}) {
       y: Math.round(l.y),
     };
   });
+  return stitchTesseractSurnames(merged);
+}
+
+/**
+ * Live: sobrenome ~20–40px abaixo ("Simões" → "Carvalho @ - 2nd").
+ * Só costura se o texto combinado formar um nome válido melhor.
+ * @param {{ text: string, x: number, y: number }[]} lines
+ */
+const STITCH_NOISE_RE =
+  /comprador|current|past|mutual|brazil|brasil|paulo|horizonte|minas|gerais|procurement|coordenador|analista|pending|connect|follow|greater|empresa|planejador|suprime|jobs|posts/i;
+
+export function stitchTesseractSurnames(lines) {
+  /** @type {typeof lines} */
+  const out = [];
+  for (let i = 0; i < lines.length; i++) {
+    const cur = lines[i];
+    const next = lines[i + 1];
+    const dy = next ? next.y - cur.y : 0;
+    if (
+      next &&
+      dy >= 12 &&
+      dy <= 42 &&
+      !STITCH_NOISE_RE.test(cur.text) &&
+      !STITCH_NOISE_RE.test(next.text)
+    ) {
+      const nextBits = String(next.text)
+        .replace(/[©®@•·&{}+\-]+/g, " ")
+        .replace(/\b(1st|2nd|3rd\+?)\b/gi, " ")
+        .trim();
+      const nextWords = nextBits
+        .split(/\s+/)
+        .filter((w) => w.length >= 2 || NAME_PARTICLES_SET.has(w.toLowerCase()));
+      // sobrenome: 1 token Capitalizado, ou partícula + sobrenome
+      const surnameOk =
+        (nextWords.length === 1 && /^[\p{Lu}]/u.test(nextWords[0])) ||
+        (nextWords.length === 2 &&
+          NAME_PARTICLES_SET.has(nextWords[0].toLowerCase()) &&
+          /^[\p{Lu}]/u.test(nextWords[1]));
+      if (surnameOk) {
+        const base = nameFromTesseractLine(cur.text);
+        // só costura se a linha de cima já é um nome válido (prenome)
+        if (base) {
+          const better = nameFromTesseractLine(`${cur.text} ${next.text}`);
+          if (better && better.split(/\s+/).length > base.split(/\s+/).length) {
+            out.push({
+              ...cur,
+              text: `${cur.text} ${next.text}`.replace(/\s+/g, " ").trim(),
+              y: Math.round((cur.y + next.y) / 2),
+            });
+            i += 1;
+            continue;
+          }
+        }
+      }
+    }
+    out.push(cur);
+  }
+  return out;
 }
 
 /**
@@ -109,13 +188,18 @@ export function mergeTesseractLines(elements, opts = {}) {
 export function nameFromTesseractLine(line) {
   let s = String(line || "");
   s = s
-    .replace(/[©®@•·&]+/g, " ")
+    .replace(/[©®@•·&{}+]+/g, " ")
     .replace(/\b(1st|2nd|3rd\+?)\b/gi, " ")
     .replace(/[-–|/(GQ]+/g, " ")
     .replace(/\b(pending|connect|follow|message)\b/gi, " ")
     .replace(/\b(ltda|llc|inc|s\.?a\.?)\b/gi, " ")
     .replace(/\s+/g, " ")
     .trim();
+  // remove letras soltas do OCR ("O", "a") antes de validar
+  s = s
+    .split(/\s+/)
+    .filter((w) => w.length >= 2 || NAME_PARTICLES_SET.has(w.toLowerCase()))
+    .join(" ");
   const name = cleanName(s);
   return isValidProfileName(name) ? name : null;
 }

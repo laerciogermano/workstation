@@ -37,13 +37,23 @@ export function softField(value) {
   return String(value ?? "")
     .normalize("NFD")
     .replace(/\p{M}/gu, "")
+    .replace(/^\/\s*/, "")
     .replace(/\s*\/\s*/g, "/")
     .replace(/\.+$/g, "...")
     .replace(/\s*\.\.\.\s*/g, "...")
     .replace(/\.{2,}/g, "...")
+    .replace(/,/g, " ")
     .replace(/\s+/g, " ")
     .trim()
     .toLowerCase();
+}
+
+function tokenBag(s) {
+  return softField(s)
+    .replace(/\//g, " ")
+    .split(/\s+/)
+    .map((w) => w.replace(/\.+$/g, ""))
+    .filter((w) => w && w !== "...");
 }
 
 function fieldsMatchSoft(got, exp, key) {
@@ -51,18 +61,20 @@ function fieldsMatchSoft(got, exp, key) {
   const g = softField(got);
   const e = softField(exp);
   if (g === e) return "soft";
-  // AtkinsRéalis vs Atkins Realis (espaço OCR)
   if (g.replace(/\s/g, "") === e.replace(/\s/g, "")) return "soft";
-  // título truncado / reticências OCR
+  // tesseract embaralha ordem (Current: GPS at Comprador Grupo)
   if (
-    (key === "title" || key === "current" || key === "past") &&
+    ["title", "current", "past", "city"].includes(key) &&
     g &&
-    e &&
-    (e.startsWith(g.replace(/\.\.\.$/, "")) || g.startsWith(e.replace(/\.\.\.$/, "")))
+    e
   ) {
-    return "soft";
+    const bag = tokenBag(got);
+    const need = tokenBag(exp);
+    if (need.length && need.every((w) => bag.includes(w))) return "soft";
+    if (bag.length && need.length && bag.every((w) => need.includes(w))) {
+      return "soft";
+    }
   }
-  // OCR gap: grau / mutual às vezes sumidos no tesseract
   if (
     (key === "level" || key === "mutualConnections") &&
     got == null &&
@@ -100,6 +112,14 @@ describe("expandRapidocrText", () => {
       "Coordenador de Suprime...",
     );
     assert.equal(expandRapidocrText("Danielle Bazanelli"), "Danielle Bazanelli");
+    assert.equal(
+      expandRapidocrText("SabrinaPatriciadosSantos"),
+      "Sabrina Patricia dos Santos",
+    );
+    assert.equal(
+      expandRapidocrText("RafaelUdsondaSilva"),
+      "Rafael Udson da Silva",
+    );
   });
 });
 

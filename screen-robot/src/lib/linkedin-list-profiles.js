@@ -21,7 +21,7 @@ export const NAME_PARTICLES = new Set([
 ]);
 
 const BAD_NAME_RE =
-  /\b(month|cancel|premium|try|free|dismiss|skip|ignore|linkedin|connect|pending|message|follow|current|past|mutual|connection|comprador|gest[aã]o|university|pramet|dormer|construtora|brazil|location|specialist|buyer|coordinator|procurement|jobs|posts|schools|courses|people|ltda|llc|inc)\b/i;
+  /\b(month|cancel|premium|try|free|dismiss|skip|ignore|linkedin|connect|pending|message|follow|current|past|mutual|connection|comprador|compradora|gest[aã]o|university|pramet|dormer|construtora|brazil|brasil|location|specialist|buyer|coordinator|procurement|jobs|posts|schools|courses|people|ltda|llc|inc|chain|supply|suprimentos|compras|analista|edited|yesterday|today|hour|minute|viewed|horizonte|paulo|minas|gerais|campinas|contagem|indaiatuba|sarzedo|curitiba|pendin)\b/i;
 
 /**
  * OCR do botão: "© Pending", "i+ Connect", "+ Connect", "+ Follow".
@@ -66,7 +66,22 @@ export function isValidProfileName(name) {
   if (/[a-z][A-Z]/.test(n)) return false;
   if (/current:|past:|,/i.test(n)) return false;
   const words = n.split(/\s+/).filter(Boolean);
-  if (words.length < 2 || words.length > 4) return false;
+  if (words.length < 2 || words.length > 5) return false;
+  if (words[0].length < 2) return false;
+  // "Sabrina Patricia dos" / "Artur de" = sobrenome incompleto (OCR cortou)
+  if (NAME_PARTICLES.has(words[words.length - 1].toLowerCase())) return false;
+  // "Cristiane Simões O Carvalho" / "Bl OA" — letras soltas ou siglas OCR
+  if (
+    words.some(
+      (w) =>
+        (w.length < 2 && !NAME_PARTICLES.has(w.toLowerCase())) ||
+        (w.length <= 2 &&
+          w === w.toUpperCase() &&
+          !NAME_PARTICLES.has(w.toLowerCase())),
+    )
+  ) {
+    return false;
+  }
   if (!words.every((w) => /^[\p{L}']+$/u.test(w))) return false;
   if (words.some((w) => w.length >= 3 && w === w.toUpperCase())) return false;
   if (!/^[\p{Lu}]/u.test(words[0])) return false;

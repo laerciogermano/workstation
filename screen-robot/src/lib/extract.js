@@ -256,6 +256,69 @@ export async function findByText(serial, query, opts = {}) {
 }
 
 /**
+ * Poll `findByText` até achar o texto ou estourar timeout.
+ * `query` pode ser string ou lista (primeira que bater em cada poll).
+ *
+ * @param {string} serial
+ * @param {string|string[]} query
+ * @param {{
+ *   timeoutMs?: number,
+ *   intervalMs?: number,
+ *   minScore?: number,
+ *   engine?: string,
+ *   findByText?: Function,
+ *   sleep?: Function,
+ *   now?: Function,
+ * }} [opts]
+ * @returns {Promise<{ elements: object[], score: number, text: string, x: number, y: number, query: string }>}
+ */
+export async function waitForText(serial, query, opts = {}) {
+  const queries = (Array.isArray(query) ? query : [query])
+    .map((q) => String(q ?? "").trim())
+    .filter(Boolean);
+  if (!queries.length) {
+    const err = new Error("waitForText: query vazia");
+    err.code = "WAIT_FOR_TEXT_BAD_QUERY";
+    throw err;
+  }
+  const timeoutMs = Number(opts.timeoutMs ?? 30_000);
+  const intervalMs = Number(opts.intervalMs ?? 1_000);
+  const doFind = opts.findByText ?? findByText;
+  const sleepFn = opts.sleep ?? ((ms) => new Promise((r) => setTimeout(r, ms)));
+  const now = opts.now ?? Date.now;
+  const t0 = now();
+  const findOpts = { ...opts };
+  delete findOpts.timeoutMs;
+  delete findOpts.intervalMs;
+  delete findOpts.findByText;
+  delete findOpts.sleep;
+  delete findOpts.now;
+
+  let lastErr = null;
+  while (now() - t0 < timeoutMs) {
+    for (const q of queries) {
+      try {
+        const hit = await doFind(serial, q, findOpts);
+        if (hit?.x != null && hit?.y != null) {
+          return { ...hit, query: q };
+        }
+      } catch (e) {
+        lastErr = e;
+      }
+    }
+    const left = timeoutMs - (now() - t0);
+    if (left <= 0) break;
+    await sleepFn(Math.min(intervalMs, left));
+  }
+  const err = new Error(
+    `waitForText: timeout ${timeoutMs}ms — ${queries.join(" | ")}` +
+      (lastErr ? ` (último: ${lastErr.message || lastErr})` : ""),
+  );
+  err.code = "WAIT_FOR_TEXT_TIMEOUT";
+  throw err;
+}
+
+/**
  * Match síncrono sobre lista já extraída (uso interno / testes).
  * @param {object[]|object} elementsOrTree
  * @param {string} query

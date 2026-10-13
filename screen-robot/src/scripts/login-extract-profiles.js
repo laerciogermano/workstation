@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
- * LinkedIn: stop apps → launch → Search → "comprador" → See all results →
- * desce com `extract` por demanda até o fim do scroll (frame estável).
+ * LinkedIn: stop apps → launch → waitForText(Search) → tap → "comprador" →
+ * See all results → desce com `extract` por demanda até o fim do scroll.
  * Cada card no padrão dispara `onProfile(profile, ctx)`.
  *
  * Uso (cwd: screen-robot/src):
@@ -18,7 +18,7 @@ import { dirname, resolve, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { sleep } from "../lib/adb.js";
-import { extract, findByText } from "../lib/extract.js";
+import { extract, findByText, waitForText } from "../lib/extract.js";
 import { captureFrame } from "../lib/frame.js";
 import { profilesFromExtract } from "../lib/linkedin-list-profiles.js";
 import { key, launch, scroll, stop, tapElement, type } from "../lib/operate.js";
@@ -29,7 +29,8 @@ const ROOT = resolve(__dirname, "..");
 if (!process.env.OCR_MERGE_TIMEOUT_MS) {
   process.env.OCR_MERGE_TIMEOUT_MS = "20000";
 }
-const WAIT_AFTER_LINKEDIN_MS = 5_000;
+const WAIT_SEARCH_TIMEOUT_MS = 30_000;
+const WAIT_SEARCH_INTERVAL_MS = 1_000;
 const SCROLL_DELAY_MS = 900;
 const SCROLL_DISTANCE = 280;
 const SCROLL_BURST = 1;
@@ -293,11 +294,16 @@ async function main() {
   console.log("3) Iniciar LinkedIn…");
   await launch({ serial, package: linkedinPkg });
 
-  console.log(`4) Esperar ${WAIT_AFTER_LINKEDIN_MS / 1000}s…`);
-  await sleep(WAIT_AFTER_LINKEDIN_MS);
-
-  console.log("5) Clicar em Search…");
-  await tapByText(serial, "Search", "search");
+  console.log("4) Esperar Search e clicar…");
+  const searchHit = await waitForText(serial, "Search", {
+    timeoutMs: WAIT_SEARCH_TIMEOUT_MS,
+    intervalMs: WAIT_SEARCH_INTERVAL_MS,
+    engine: OCR_ENGINE,
+  });
+  console.log(
+    `   → search "${searchHit.text}" x=${searchHit.x} y=${searchHit.y} (score=${searchHit.score?.toFixed?.(2) ?? searchHit.score})`,
+  );
+  tapElement({ serial, x: searchHit.x, y: searchHit.y });
   await sleep(1_000);
 
   console.log('6) Digitar "comprador"…');

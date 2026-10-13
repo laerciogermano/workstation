@@ -9,7 +9,7 @@ import { provisionEmulator } from "./src/lib/provision.js";
 import { on } from "./src/lib/events.js";
 import { installApk } from "./src/lib/apks.js";
 import { launch, tap, tapElement, type, scroll, screenshot, matchImage, openScrcpy } from "./src/lib/operate.js";
-import { extract, findByText } from "./src/lib/extract.js";
+import { extract, findByText, waitForText } from "./src/lib/extract.js";
 import { decide } from "./src/lib/agent-decide.js";
 import { runAgent } from "./src/lib/agent-run.js";
 import { saveSession, restoreSession, removeSession } from "./src/lib/session.js";
@@ -375,6 +375,31 @@ Sem match: `null`.
 const hit = await findByText(serial, "Sign in with Email", { minScore: 0.8 });
 if (hit) tapElement({ serial, x: hit.x, y: hit.y });
 ```
+
+---
+
+### `waitForText(serial, query, opts?)`
+
+Poll de `findByText` até achar o texto ou timeout. `query` = string ou lista (primeira que bater).
+
+**Entrada**
+
+| Campo | Obrig. | Descrição |
+|-------|--------|-----------|
+| `serial` | sim | Device |
+| `query` | sim | Ex. `"Search"` ou `["See all", "Show all"]` |
+| `opts.timeoutMs` | | Default `30000` |
+| `opts.intervalMs` | | Default `1000` |
+| `opts.minScore` | | Igual `findByText` |
+
+**Saída:** mesmo shape de `findByText` + `query` (qual string bateu). Timeout → erro `WAIT_FOR_TEXT_TIMEOUT`.
+
+```js
+const hit = await waitForText(serial, "Search", { timeoutMs: 30_000 });
+tapElement({ serial, x: hit.x, y: hit.y });
+```
+
+**Antes → depois:** sleep fixo pós-launch → espera o texto aparecer. Rollback: `sleep` + `findByText`/`tapByText`.
 
 ---
 

@@ -141,10 +141,12 @@ Script [`scripts/login-extract-profiles.js`](scripts/login-extract-profiles.js) 
 | Search | `Search` |
 | See/Show all | `See all results` / `Show all results` (fallback `See all` / `Show all`) |
 
-1. `stop` apps + `launch` → Search → `comprador` → se OCR achar See/Show all results **com teclado aberto**, clica direto; senão `KEYCODE_BACK` e busca de novo
+1. `stop` apps + `launch` → `waitForText("Search")` → tap → `comprador` → se OCR achar See/Show all results **com teclado aberto**, clica direto; senão `KEYCODE_BACK` e busca de novo
 2. Loop: `extract` → cards no padrão → `onProfile` → scroll curto (280 / 900ms) até o **fim do scroll** (SHA1 do frame igual 3× seguidas)
 3. Callback: objeto `{ name, title, level, connection, city, mutualConnections, current, past }`
 4. A cada perfil novo regrava `screenshots/login-extract-profiles/<stamp>/profiles.json` (array acumulado no mesmo formato do log). Também grava `profile-NNN.json` completo. Rollback: apagar a pasta `<stamp>`.
+
+**Antes → depois (Search):** sleep fixo 5s pós-launch → `waitForText("Search")` (poll OCR, timeout 30s) e só então tap. Rollback: `await sleep(5000)` + `tapByText(…, "Search")`.
 
 **Antes → depois (See all):** era sempre `KEYCODE_BACK` e depois tap. Agora tenta See/Show all com teclado aberto; BACK só se não achar. Rollback: BACK fixo + `tapByText` depois.
 

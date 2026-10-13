@@ -3,7 +3,7 @@
  */
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { findByText, matchByText } from "./extract.js";
+import { findByText, matchByText, waitForText } from "./extract.js";
 
 const SIGN_IN_SPLIT = [
   { type: "text", text: "Sign", bounds: { x: 236, y: 815, w: 75, h: 37 } },
@@ -76,5 +76,50 @@ describe("findByText", () => {
     assert.ok(hit);
     assert.equal(hit.elements.length, 4);
     assert.match(hit.text, /sign in with email/);
+  });
+});
+
+describe("waitForText", () => {
+  it("retorna no poll em que o texto aparece", async () => {
+    let n = 0;
+    const hit = await waitForText("s", "Search", {
+      timeoutMs: 5_000,
+      intervalMs: 1,
+      sleep: async () => {},
+      now: (() => {
+        let t = 0;
+        return () => (t += 10);
+      })(),
+      findByText: async () => {
+        n += 1;
+        if (n < 3) return null;
+        return { text: "Search", x: 100, y: 80, score: 1, elements: [] };
+      },
+    });
+    assert.equal(n, 3);
+    assert.equal(hit.text, "Search");
+    assert.equal(hit.query, "Search");
+    assert.equal(hit.x, 100);
+  });
+
+  it("timeout com WAIT_FOR_TEXT_TIMEOUT", async () => {
+    await assert.rejects(
+      () =>
+        waitForText("s", "Search", {
+          timeoutMs: 30,
+          intervalMs: 10,
+          sleep: async () => {},
+          now: (() => {
+            let t = 0;
+            return () => {
+              const cur = t;
+              t += 20;
+              return cur;
+            };
+          })(),
+          findByText: async () => null,
+        }),
+      (e) => e.code === "WAIT_FOR_TEXT_TIMEOUT",
+    );
   });
 });

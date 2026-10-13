@@ -5,9 +5,11 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
   buildKeyCenters,
+  escapeAdbInputText,
   launch,
   tap,
   type,
+  typeViaAdb,
   scroll,
   screenshot,
   matchImage,
@@ -92,6 +94,22 @@ describe("operate", () => {
       },
     );
     assert.deepEqual(calls[0], ["shell", "input", "text", "Campinas%sSP"]);
+  });
+
+  it("typeViaAdb escapa aspas/parênteses da boolean LinkedIn", () => {
+    assert.equal(
+      escapeAdbInputText('("compradora") AND "Minas Gerais"'),
+      "%28%22compradora%22%29%sAND%s%22Minas%sGerais%22",
+    );
+    const calls = [];
+    typeViaAdb("s", '("a" OR "b")', {
+      adb: (_s, args) => {
+        calls.push(args);
+        return {};
+      },
+      connectIfTcp: () => {},
+    });
+    assert.equal(calls[0][3], "%28%22a%22%sOR%s%22b%22%29");
   });
 
   it("type falha se tecla ausente no OCR", async () => {

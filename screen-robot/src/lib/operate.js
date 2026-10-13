@@ -288,7 +288,26 @@ export function tapElement(cfg, deps = {}) {
 }
 
 /**
- * Injeta texto via `adb shell input text` (espaços → `%s`).
+ * Escape para `adb shell input text` (boolean LinkedIn: aspas, parênteses, etc.).
+ * Espaço → `%s`; demais via %XX (hex do code point).
+ * @param {string} text
+ */
+export function escapeAdbInputText(text) {
+  return [...String(text)]
+    .map((ch) => {
+      if (ch === " ") return "%s";
+      if (ch === "%") return "%25";
+      if (/[A-Za-z0-9._-]/.test(ch)) return ch;
+      const code = ch.codePointAt(0);
+      if (code <= 0xff) return `%${code.toString(16).toUpperCase().padStart(2, "0")}`;
+      // BMP+ : dois bytes UTF-16 LE não cabem no input text — deixa literal
+      return ch;
+    })
+    .join("");
+}
+
+/**
+ * Injeta texto via `adb shell input text` (espaços → `%s`; aspas/() via %XX).
  * @param {string} serial
  * @param {string} text
  * @param {object} [deps]
@@ -297,7 +316,7 @@ export function typeViaAdb(serial, text, deps = {}) {
   const d = resolveDeps(deps);
   try {
     d.connectIfTcp(serial);
-    const escaped = String(text).replace(/ /g, "%s");
+    const escaped = escapeAdbInputText(text);
     try {
       d.runAdb(serial, ["shell", "input", "text", escaped]);
     } catch {

@@ -169,6 +169,8 @@ node --test --test-timeout=180000 lib/linkedin-list-profiles.engines.fixture.tes
 
 **Antes → depois:** parse só afinado no vision; rapidocr/tesseract falhavam (texto colado / nomes fatiados / sem Connect). Agora `opts.engine` escolhe o pré-processamento. Rollback: `profilesFromExtract(els)` sem `engine` (trata como vision).
 
+**Live (não só fixture):** tesseract ainda pode inverter tokens / cortar sobrenome; a lib rejeita nome terminando em partícula (`dos`/`de`), siglas OCR, costura sobrenome 1 linha abaixo, e rapidocr parte `Patriciados`/`Juniorde`. Qualidade ≠ vision: OCR pior → campos `current`/`city` mais frouxos; nomes/connection é o contrato duro.
+
 **INJECT_EVENTS no scroll:** Android nega `adb input swipe` se outro app/overlay tem foco. A script faz retry com `KEYCODE_BACK` + `launch` LinkedIn (`safeScroll`). Se persistir: fechar diálogos/scrcpy conflitante e relançar.
 
 ---

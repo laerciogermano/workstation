@@ -99,7 +99,7 @@ const elements = await extract({ serial });
 | BDD e2e US/EP (runtime real) | `npm run test:e2e` |
 | **SC-30 LinkedIn** (fixture, sem device) | ver abaixo |
 | Piloto LinkedIn ao vivo | `npm run linkedin-login` |
-| LinkedIn boolean comprador(a)+MG → See all | `npm run login-extract-profiles` |
+| LinkedIn Search comprador → See all | `npm run login-extract-profiles` |
 | LinkedIn boolean por perfil + abrir | `npm run login-visit-profiles` |
 | Parse cards lista (fixtures OCR) | `node --test lib/linkedin-list-profiles.fixture.test.js` |
 | Parse cards × engines (vision/rapid/tess) | `node --test --test-timeout=180000 lib/linkedin-list-profiles.engines.fixture.test.js` |
@@ -142,14 +142,10 @@ Script [`scripts/login-extract-profiles.js`](scripts/login-extract-profiles.js) 
 | Search | `Search` |
 | See/Show all | `See all results` / `Show all results` (fallback `See all` / `Show all`) |
 
-1. `stop` apps + `launch` → `waitForText("Search")` → tap → boolean `("comprador" OR "compradora") AND "Minas Gerais"` → `waitForText(See/Show all)` (8s com teclado; se timeout → `KEYCODE_BACK` + wait 30s) → tap
+1. `stop` apps + `launch` → `waitForText("Search")` → tap → `comprador` → `waitForText(See/Show all)` (8s com teclado; se timeout → `KEYCODE_BACK` + wait 30s) → tap
 2. Loop: `extract` → cards no padrão → `onProfile` → scroll curto (280 / 900ms) até o **fim do scroll** (SHA1 do frame igual 3× seguidas)
 3. Callback: objeto `{ name, title, level, connection, city, mutualConnections, current, past }`
 4. A cada perfil novo regrava `screenshots/login-extract-profiles/<stamp>/profiles.json` (array acumulado no mesmo formato do log). Também grava `profile-NNN.json` completo. Rollback: apagar a pasta `<stamp>`.
-
-Override da query: `SCREEN_ROBOT_SEARCH_QUERY='…' npm run login-extract-profiles`.
-
-**Antes → depois (query):** `type("comprador")` → boolean comprador(a) + Minas Gerais (`typeViaAdb` escapa aspas/`()`). Rollback: `type({ text: "comprador" })` / `SCREEN_ROBOT_SEARCH_QUERY=comprador`.
 
 **Antes → depois (Search):** sleep fixo 5s pós-launch → `waitForText("Search")` (poll OCR, timeout 30s) e só então tap. Rollback: `await sleep(5000)` + `tapByText(…, "Search")`.
 

@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 /**
- * LinkedIn: stop apps → launch → waitForText(Search) → tap → boolean
- * ("comprador" OR "compradora") AND "Minas Gerais" → See all → extract+scroll.
- * Override: SCREEN_ROBOT_SEARCH_QUERY='...'
+ * LinkedIn: stop apps → launch → waitForText(Search) → tap → "comprador" →
+ * See all results → desce com `extract` por demanda até o fim do scroll.
+ * Cada card no padrão dispara `onProfile(profile, ctx)`.
  *
  * Uso (cwd: screen-robot/src):
  *   npm run login-extract-profiles
@@ -40,10 +40,6 @@ const MAX_PROFILES = 500;
 const MAX_ROUNDS = 500;
 const SCROLL_END_STABLE_NEEDED = 3;
 const OCR_ENGINE = process.env.SCREEN_ROBOT_OCR || "macos-vision";
-/** Boolean LinkedIn: comprador(a) em Minas Gerais. */
-const SEARCH_QUERY =
-  process.env.SCREEN_ROBOT_SEARCH_QUERY ||
-  '("comprador" OR "compradora") AND "Minas Gerais"';
 const SEE_ALL_QUERIES = [
   "See all results",
   "Show all results",
@@ -314,8 +310,8 @@ async function main() {
   tapElement({ serial, x: searchHit.x, y: searchHit.y });
   await sleep(1_000);
 
-  console.log(`5) Digitar boolean: ${SEARCH_QUERY}`);
-  await type({ serial, text: SEARCH_QUERY });
+  console.log('5) Digitar "comprador"…');
+  await type({ serial, text: "comprador" });
   await sleep(800);
 
   console.log("6) Esperar See/Show all e clicar…");

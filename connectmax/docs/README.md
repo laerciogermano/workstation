@@ -6,3 +6,4 @@
 | Artefato | Arquivo | Papel | Status |
 |----------|---------|-------|--------|
 | Plano prospecção por scripts | [`plano-implementacao-prospeccao-scripts.md`](plano-implementacao-prospeccao-scripts.md) | Arquitetura 3 camadas, jobs do funil, device pool, ordem de construção (sem IA no crítico) | Feito |
+| Arquitetura API perfis | [`arquitetura.md`](arquitetura.md) | C4, diagramas de classe e sequência (extract → Nest → Postgres) | Feito |

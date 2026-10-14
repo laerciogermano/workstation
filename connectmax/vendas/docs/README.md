@@ -11,7 +11,7 @@
 | Artefato | Arquivo | Papel no fluxo | Status |
 |----------|---------|----------------|--------|
 | Plano scripts + pool | [`../../docs/plano-implementacao-prospeccao-scripts.md`](../../docs/plano-implementacao-prospeccao-scripts.md) | Funil/jobs, device pool e ordem de construção (umbrella) | Feito |
-| Arquitetura API perfis | [`../api/docs/arquitetura.md`](../api/docs/arquitetura.md) | C4, classes e sequências extract → Nest → Postgres | Feito |
+| Arquitetura API perfis | [`../../docs/arquitetura.md`](../../docs/arquitetura.md) | C4, classes e sequências extract → Nest → Postgres | Feito |
 | Funcionalidades | [`functionalities.md`](functionalities.md) | Capacidades do processo de vendas em bullets | Feito |
 | Histórias de usuário | `user-stories.md` | O *quê* desejado pelo usuário (Como… quero… para…) | A produzir |
 | Cenários BDD | `bdd.md` | Critérios de aceite por história (Dado / Quando / Então) | A produzir |

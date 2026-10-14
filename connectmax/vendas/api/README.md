@@ -2,7 +2,8 @@
 
 API NestJS mínima: recebe POST do extract (`login-extract-profiles`) e persiste cards em PostgreSQL.
 
-**Umbrella:** [`../../README.md`](../../README.md) · **Visão vendas:** [`../README.md`](../README.md) · **Script extract:** [`../../../screen-robot/src/scripts/login-extract-profiles.js`](../../../screen-robot/src/scripts/login-extract-profiles.js)
+**Umbrella:** [`../../README.md`](../../README.md) · **Visão vendas:** [`../README.md`](../README.md) · **Script extract:** [`../../../screen-robot/src/scripts/login-extract-profiles.js`](../../../screen-robot/src/scripts/login-extract-profiles.js)  
+**Arquitetura (C4 + classes + sequências):** [`docs/arquitetura.md`](docs/arquitetura.md)
 
 ---
 

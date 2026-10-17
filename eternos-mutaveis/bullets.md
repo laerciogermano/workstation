@@ -404,6 +404,7 @@ O óbvio precisa ser dito para se tornar unânime; sem síntese acessível, cada
 - Correção: objetos não possuem verbos; verbos possuem objetos
 - Impacto na OOP: classes com comportamento e característica coladas
 - Maior erro da programação: repetir a ontologia da substância no código
+- Um dos principais problemas: a falta de domínio da linguagem — sem distinguir verbo e objeto, estado e movimento, o símbolo acopla o que deveria permanecer separado
 - Paradoxo do barbeiro: separar papéis fecha a lógica
 - Aristóteles funciona como o demiurgo gnóstico: carnificou o espírito ao fundir os dois mundos platônicos na substância
 - Contradição: ele nega Platão, mas forma e matéria já é visão platônica

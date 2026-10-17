@@ -229,7 +229,7 @@ Classes com características e comportamentos colados; instâncias que “fazem�
 
 ### 5.4 Maior erro da programação
 
-O maior erro da programação não é um framework ruim: é repetir a ontologia da substância no código — objetos e essências no lugar do fluxo. O paradoxo do barbeiro ilustra o dano: quando o comportamento é colado ao ser, surgem contradições; quando se separam os papéis — barbeiro, cliente —, a lógica fecha. (O Navio de Teseu virá no alfabeto; a cura do software, na superação.)
+O maior erro da programação não é um framework ruim: é repetir a ontologia da substância no código — objetos e essências no lugar do fluxo. Um dos principais problemas por trás disso — e por trás da própria confusão filosófica — é a falta de domínio da linguagem: sem distinguir verbo e objeto, estado e movimento, o símbolo acopla o que deveria permanecer separado. O paradoxo do barbeiro ilustra o dano: quando o comportamento é colado ao ser, surgem contradições; quando se separam os papéis — barbeiro, cliente —, a lógica fecha. (O Navio de Teseu virá no alfabeto; a cura do software, na superação.)
 
 ---
 

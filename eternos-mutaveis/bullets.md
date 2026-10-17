@@ -103,6 +103,10 @@ Espiritualidade não como mais uma religião nem como fé por si só, mas como o
 Ponte: o que vem a seguir sempre esteve diante dos olhos; de tão simples, nunca foi percebido em sua grandeza.
 **Imagem:** Pessoa atravessando uma ponte óbvia sob o sol; só ao olhar para trás percebe a grandeza da estrutura que sempre esteve ali.
 
+### 0.22 O conhecimento mais importante que o homem pode alcançar em toda a eternidade
+O que será passado aqui é o conhecimento mais importante que um homem pode alcançar em toda a eternidade.
+**Imagem:** Figura pequena diante de um horizonte infinito; na mão, um único livro de luz que ofusca templos, telescópios e bibliotecas ao fundo — o essencial acima de tudo o mais.
+
 ---
 
 ## 1. Era adâmica — o problema

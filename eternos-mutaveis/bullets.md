@@ -28,42 +28,135 @@
 
 ---
 
+
+
 ## 1. Era adâmica — o problema
 
 ![Banner do capítulo 1](assets/banner-cap-1-era-adamica.jpg)
 
-- Queda / encarnação: espírito acoplado à matéria, que esquece a origem
-- Prisão ao mundo material: guiado pelos sentidos, vê só um cisco da realidade
-- Ignorância estrutural: estruturas metafísicas só o intelecto alcança
-- Crença herdada: mapa do mundo recebido antes de poder questionar
-- Analfabetismo espiritual: o problema central
-- Metafísica (estudo da estrutura) × espiritualidade (experiência dela)
-- O homem se acostuma ao mundo material e esquece outras estruturas igualmente presentes, mas invisíveis: as religiões as chamam de espirituais; os filósofos, de substância oculta ou metafísica
-- Esse lado oculto é o "mundo que transforma o mundo", um agente processador invisível aos olhos
-- Parece místico, mas pode ser compreendido pelo intelecto, por via diferente da ciência experimental
-- A experiência é produto de algo maior que ordena tudo por trás
-- Metafísica: *meta* (além) + *physis* (físico); o suprassensível, o mundo dos verbos, dos vazios, dos movimentos, das ideias, dos espíritos, que divide espaço com a matéria
-- Muito do que se sabe sobre Deus e o lado espiritual está equivocado
-- O conhecimento que separa a era adâmica da superação adâmica: o homem encarnado que transcende a matéria
-- A criação de Adão como metáfora: o homem adâmico (a personalidade) ainda existe e deve ser superado
-- Somos centelha divina num corpo transitório, sob o véu do esquecimento
-- O homem primitivo é guiado por impressões sensoriais e não entende a origem das próprias decisões nem o sentido da existência
-- A ignorância se perpetua de forma inconsciente; "o homem não é mau, reproduz comportamentos sem perceber"
-- A linguagem do homem é contraditória e mal compreendida
-- Não existe um manual sintético e acessível da vida; o mundo espiritual vira paranormal e gera medo
-- Civilização analfabeta espiritual: divergência, conflito e guerra; sintomas listados: violência, desigualdade, complexo de identidade, excesso de informação, baile de máscaras
-- Alfabetização metafísica: ensinar os padrões e símbolos desde a infância, numa linguagem unificada
-- Homem tem intelecto, mas ignora a própria condição de autômato e reduz-se a corpo e instinto
-- Crença herdada já molda a ação: mapa recebido vira comportamento antes do questionamento
-- Estamos mais em contato com criações humanas do que com a natureza; isso deturpa a visão da realidade
-- Aparência × essência: a matéria é véu; o que se vê não é o que rege
-- Sem metafísica (filosofia primeira, causa dos efeitos) Deus permanece incompreensível
-- Não confundir a incapacidade humana de explicar Deus com a inexistência de Deus
-- Metafísica como “religião sem santidade”: acesso pelo intelecto, sem culto nem fé cega
-- Insatisfação e busca por sentido nascem da visão deturpada da realidade
-- O óbvio precisa ser dito para se tornar unânime; sem síntese acessível, cada um inventa o seu mapa
+### 1.1 Queda / encarnação
+Espírito acoplado à matéria, que esquece a origem (homem nascendo e vendo a natureza).
+**Imagem:** Homem recém-nascido no chão de terra, olhos abertos pela primeira vez; atrás dele, uma silhueta de luz se desfaz ao entrar no corpo. Floresta ao redor, nitidez só no que está perto.
+
+### 1.2 Prisão ao mundo material
+Guiado pelos sentidos, vê só um cisco da realidade.
+**Imagem:** Figura de olhos vendados por cinco fios (visão, tato, audição, olfato, gosto), caminhando num labirinto de pedra. Fora dos muros, um céu geométrico e luminoso que ela não vê.
+
+### 1.3 Ignorância estrutural
+Estruturas metafísicas só o intelecto alcança.
+**Imagem:** Sala escura com uma única lâmpada sobre uma mesa: livros e diagramas. Fora da janela, estruturas translúcidas flutuam no ar — só quem lê as enxerga.
+
+### 1.4 Crença herdada
+Mapa do mundo recebido antes de poder questionar.
+**Imagem:** Criança pequena recebendo um mapa antigo e rasgado das mãos de um adulto; o mapa cobre seu rosto. Ao fundo, caminhos reais divergem do traçado.
+
+### 1.5 Analfabetismo espiritual
+O problema central.
+**Imagem:** Multidão diante de um mural cheio de símbolos; ninguém sabe ler. Uma pessoa aponta, outra copia o gesto, nenhuma compreende.
+
+### 1.6 Metafísica × espiritualidade
+Metafísica (estudo da estrutura) × espiritualidade (experiência dela).
+**Imagem:** Díptico: à esquerda, arquiteto medindo um esquema geométrico no ar; à direita, a mesma pessoa de olhos fechados, mão no peito, sentindo a mesma estrutura.
+
+### 1.7 Acostume ao material
+O homem se acostuma ao mundo material e esquece outras estruturas igualmente presentes, mas invisíveis: as religiões as chamam de espirituais; os filósofos, de substância oculta ou metafísica.
+**Imagem:** Cidade densa em primeiro plano; por trás, como vidro embaçado, uma segunda cidade de linhas e fluxos — quase apagada pela rotina.
+
+### 1.8 Mundo que transforma o mundo
+Esse lado oculto é o "mundo que transforma o mundo", um agente processador invisível aos olhos.
+**Imagem:** Engrenagens e fios invisíveis (só contornos de luz) movendo prédios, pessoas e tempestades; o “operador” não aparece, só o efeito.
+
+### 1.9 Parece místico, intelecto alcança
+Parece místico, mas pode ser compreendido pelo intelecto, por via diferente da ciência experimental.
+**Imagem:** Porta marcada “mistério” que, ao abrir, revela um quadro-negro com diagramas claros — não fantasmas, e sim ordem legível.
+
+### 1.10 Experiência como produto
+A experiência é produto de algo maior que ordena tudo por trás.
+**Imagem:** Teatro: o público vê só o palco iluminado; nos bastidores, um mecanismo ordena cenários, luzes e atores — a peça é efeito, não causa.
+
+### 1.11 Metafísica: além + físico
+*Meta* (além) + *physis* (físico); o suprassensível, o mundo dos verbos, dos vazios, dos movimentos, das ideias, dos espíritos, que divide espaço com a matéria.
+**Imagem:** Espaço dividido: sólido (objetos, corpos) e o vazio entre eles preenchido por setas, verbos escritos no ar e silhuetas de espírito — mesmos cômodos, duas camadas.
+
+### 1.12 Equívocos sobre Deus e o espiritual
+Muito do que se sabe sobre Deus e o lado espiritual está equivocado.
+**Imagem:** Biblioteca com prateleiras tortas: livros rotulados “Deus”, “alma”, “céu” tombando; no centro, uma página em branco aguardando reescrita.
+
+### 1.13 Conhecimento que separa as eras
+O conhecimento que separa a era adâmica da superação adâmica: o homem encarnado que transcende a matéria.
+**Imagem:** Homem de um lado preso a correntes de pedra; do outro, a mesma figura atravessando um limiar de luz — matéria atrás, entendimento à frente.
+
+### 1.14 Adão como metáfora
+A criação de Adão como metáfora: o homem adâmico (a personalidade) ainda existe e deve ser superado.
+**Imagem:** Estátua de barro (Adão) ainda de pé numa praça moderna; uma pessoa comum passa e se reconhece no espelho da base — a personalidade adâmica ainda vive.
+
+### 1.15 Centelha sob o véu
+Somos centelha divina num corpo transitório, sob o véu do esquecimento.
+**Imagem:** Corpo humano translúcido; no peito, uma chama pequena e constante; um véu fino cobre o rosto e a chama quase some.
+
+### 1.16 Homem primitivo sensorial
+O homem primitivo é guiado por impressões sensoriais e não entende a origem das próprias decisões nem o sentido da existência.
+**Imagem:** Figura primitiva seguindo rastros, sons e cheiros na floresta; balões de pensamento vazios onde deveria haver “por quê” e “para quê”.
+
+### 1.17 Ignorância que se perpetua
+A ignorância se perpetua de forma inconsciente; "o homem não é mau, reproduz comportamentos sem perceber".
+**Imagem:** Cadeia de pessoas em fila, cada uma copiando o gesto da anterior (mesmo erro, mesmo olhar perdido); nenhuma parece má — só automática.
+
+### 1.18 Linguagem contraditória
+A linguagem do homem é contraditória e mal compreendida.
+**Imagem:** Duas bocas falando a mesma palavra; de uma sai um sentido, da outra outro — linhas se cruzam e formam um nó no meio.
+
+### 1.19 Sem manual da vida
+Não existe um manual sintético e acessível da vida; o mundo espiritual vira paranormal e gera medo.
+**Imagem:** Estante vazia onde deveria haver um “manual da vida”; ao lado, cartazes de “fantasma” e “medo”, com gente se afastando.
+
+### 1.20 Civilização analfabeta espiritual
+Divergência, conflito e guerra; sintomas: violência, desigualdade, complexo de identidade, excesso de informação, baile de máscaras.
+**Imagem:** Panorama urbano rachado: violência numa esquina, máscaras numa festa, telas saturadas, abismos entre ricos e pobres — um único rótulo no céu: “sintomas”.
+
+### 1.21 Alfabetização metafísica
+Ensinar os padrões e símbolos desde a infância, numa linguagem unificada.
+**Imagem:** Sala de aula: crianças desenhando padrões e símbolos simples no quadro; um alfabeto unificado de formas, não de letras sozinhas.
+
+### 1.22 Intelecto reduzido a corpo e instinto
+Homem tem intelecto, mas ignora a própria condição de autômato e reduz-se a corpo e instinto.
+**Imagem:** Homem com cérebro iluminado, mas o corpo puxa-o para baixo como ímã; ele olha o reflexo e vê só carne e fome.
+
+### 1.23 Crença herdada molda a ação
+Mapa recebido vira comportamento antes do questionamento.
+**Imagem:** Mapa antigo colado nas mãos; os pés já estão no caminho marcado antes que a cabeça questione — movimento sem pausa.
+
+### 1.24 Criações humanas × natureza
+Estamos mais em contato com criações humanas do que com a natureza; isso deturpa a visão da realidade.
+**Imagem:** Pessoa cercada de telas, concreto e logos; ao fundo, uma árvore e um rio quase fora de foco, como paisagem esquecida.
+
+### 1.25 Aparência × essência
+A matéria é véu; o que se vê não é o que rege.
+**Imagem:** Véu de tecido denso cobrindo um mecanismo luminoso; o que se vê é a superfície; o que move está por baixo, só entrevisto.
+
+### 1.26 Sem metafísica, Deus incompreensível
+Sem metafísica (filosofia primeira, causa dos efeitos) Deus permanece incompreensível.
+**Imagem:** Figura erguendo as mãos a um céu vazio; sem diagrama nem causa, só silêncio — ausência de “filosofia primeira”.
+
+### 1.27 Incapacidade ≠ inexistência
+Não confundir a incapacidade humana de explicar Deus com a inexistência de Deus.
+**Imagem:** Pessoa pequena diante de um horizonte infinito; um balão “não sei explicar” não apaga o sol no céu — o sol continua lá.
+
+### 1.28 Religião sem santidade
+Metafísica como “religião sem santidade”: acesso pelo intelecto, sem culto nem fé cega.
+**Imagem:** Templo sem altares nem fiéis: só uma mesa, luz natural e alguém estudando esquemas — intelecto no lugar do culto.
+
+### 1.29 Insatisfação pela visão deturpada
+Insatisfação e busca por sentido nascem da visão deturpada da realidade.
+**Imagem:** Espelho distorcido: a realidade aparece torta; a pessoa ao lado segura o peito, inquieta, sem achar o “porquê” na imagem falsa.
+
+### 1.30 O óbvio precisa ser dito
+O óbvio precisa ser dito para se tornar unânime; sem síntese acessível, cada um inventa o seu mapa.
+**Imagem:** Praça: cada um segura um mapa diferente e improvisado; no centro, um cartaz simples e claro que ninguém ainda leu em voz alta — a síntese que faltava.
 
 ---
+
+
 
 ## 2. Busca por respostas — contexto histórico
 
@@ -121,6 +214,8 @@
 
 ---
 
+
+
 ## 3. Consequências — o inferno cíclico
 
 ![Banner do capítulo 3](assets/banner-cap-3-inferno-ciclico.jpg)
@@ -173,6 +268,8 @@
 
 ---
 
+
+
 ## 4. Existe um conhecimento que liberta
 
 ![Banner do capítulo 4](assets/banner-cap-4-conhecimento-que-liberta.jpg)
@@ -219,6 +316,8 @@
 
 ---
 
+
+
 ## 5. O erro — Aristóteles e a substância
 
 ![Banner do capítulo 5](assets/banner-cap-5-erro-aristoteles.jpg)
@@ -260,6 +359,8 @@
 - Linguagem tradicional falha ao acoplar ação ao sujeito e modelar o mundo como OO
 
 ---
+
+
 
 ## 6. O conhecimento secreto — alfabeto da dualidade
 
@@ -320,6 +421,8 @@
 
 ---
 
+
+
 ## 7. Superação adâmica — aplicação
 
 ![Banner do capítulo 7](assets/banner-cap-7-superacao-adamica.jpg)
@@ -365,3 +468,4 @@
 - Experimento: se controlasse todos os personagens num jogo imersivo — ou vivesse todas as vidas — o que faria diferente hoje?
 - Software: separar roteiros e objetos; bons desenvolvedores são roteiristas de autômatos; catálogo de estórias reutilizáveis
 - Observe histórias na natureza; use o verbo a favor; o estado define o próximo movimento
+

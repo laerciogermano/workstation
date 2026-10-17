@@ -40,6 +40,7 @@ As pessoas **já sentem** que a separação não fecha, mas permanecem **presas 
 | Persona | Para quem | Necessidade |
 |---------|-----------|-------------|
 | **Leitor** | Quem vive preso no mundo da matéria e busca sentido sem vocabulário espiritual | Um alfabeto: o que é Deus, o mundo espiritual e o percurso para ler que todos somos um |
+| **Religioso** | Quem já crê e pratica, mas sente que a fé pede bases lógicas | Compreender Deus e o espírito sem abrir mão da fé — gnose que sustenta a crença |
 | **Pensador** | Quem herdou categorias ocidentais na escola, na lógica e no senso comum | Ver onde a ontologia da substância falha |
 | **Programador** | Quem constrói sistemas com objetos, tipos e identidades | Reconhecer o maior erro da programação e a alternativa (fluxo / eternos mutáveis) |
 | **Difusor** | Quem pode levar a tese a público (canal, tradução, conversa) | Uma obra clara o bastante para **projetar** a ideia no país e no exterior |

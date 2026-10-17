@@ -9,6 +9,7 @@ Alfabetização espiritual: ensinar o que é Deus e o mundo espiritual — pela 
 | Persona | Quem | O que busca |
 |---------|------|-------------|
 | **Leitor** | Preso na matéria, sem vocabulário espiritual | Alfabeto: Deus, mundo espiritual, unidade |
+| **Religioso** | Já crê e pratica, mas sente que a fé pede bases lógicas | Compreender Deus e o espírito sem abrir mão da fé — gnose que sustenta a crença |
 | **Pensador** | Herdou categorias ocidentais na escola e no senso comum | Ver onde a substância aristotélica falha |
 | **Programador** | Modela sistemas com objetos, tipos e identidades | Reconhecer o erro ontológico no código e a alternativa (fluxo / eternos mutáveis) |
 | **Cético lógico** | Só aceita o espiritual com explicação coerente | Gnose: libertação pelo conhecimento, não pela fé cega |

@@ -9,7 +9,7 @@ Apresentação visual do artigo: [`apresentacao.md`](apresentacao.md) · versão
 
 Em [`bullets.md`](bullets.md): ordem **dentro de cada capítulo** = storytelling. O arquivo tem duas seções espelhando os mesmos capítulos — **`# Bullets`** (só títulos em lista) e **`# Imagens`** (conceito + descrição visual).
 
-**Cap. 0 (abertura)** em categorias: objetivo → perguntas → excesso → preço da ignorância → jornada do autor → chave e ponte.
+**Cap. 0 (abertura)** em categorias (storytelling): perguntas → excesso → preço → jornada → chave/ponte → **objetivo no fecho**.
 
 **Cap. 1 (era adâmica)** em categorias: encarna → sentidos → além da matéria → intelecto/metafísica → crença → civilização → saída.
 

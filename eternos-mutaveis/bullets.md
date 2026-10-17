@@ -138,6 +138,7 @@ Leitores que **já sentem** que a separação e a matéria não fecham a conta, 
 - 1.28 Há um conhecimento que tira o homem da matéria
 - 1.29 Alfabetizar a metafísica desde a infância
 - 1.30 O óbvio só une quando é dito em voz alta
+- 1.31 A solução definitiva da metafísica que todos buscavam
 
 ---
 

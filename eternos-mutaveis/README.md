@@ -9,8 +9,6 @@ Apresentação visual do artigo: [`apresentacao.md`](apresentacao.md) · versão
 
 Em [`bullets.md`](bullets.md), a ordem **dentro de cada capítulo** segue arco de storytelling (gancho → desenvolvimento → clímax/fecho), não a ordem cronológica de escrita. Renumeração `N.1…N.k` acompanha essa ordem.
 
-**Era adâmica (cap. 1):** três níveis — `##` capítulo → `###` seção-pai → `####` conceito (com imagem). Seções: (1) encarna/sentidos/além da matéria; (2) analfabetismo e intelecto; (3) perpetuação; (4) saída/alfabetização.
-
 **Regenerar PDF:** converter `bullets.md` → HTML (markdown) e imprimir com Chrome headless (`--print-to-pdf=bullets.pdf`). Antes → depois: só existia o `.md`; o `.pdf` é derivado. Remover `bullets.pdf` reverte ao fluxo só-markdown.  
 Primeiro artigo completo: [`artigos/01-eternos-mutaveis.md`](artigos/01-eternos-mutaveis.md).  
 Timeline de prompts: [`prompts/`](prompts/).  

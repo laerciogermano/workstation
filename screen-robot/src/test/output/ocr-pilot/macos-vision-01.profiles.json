@@ -1,0 +1,32 @@
+[
+  {
+    "name": "Alexandre Silva",
+    "title": "Comprador/Planejador / ...",
+    "level": "2nd",
+    "connection": "Pending",
+    "city": "Belo Horizonte, Minas",
+    "mutualConnections": "2 mutual connections",
+    "current": "Comprador at Grupo GPS",
+    "past": null
+  },
+  {
+    "name": "Nayara Alves",
+    "title": "Comprador da empresa ...",
+    "level": "2nd",
+    "connection": "Connect",
+    "city": "Greater Belo Horizonte",
+    "mutualConnections": "1 mutual connections",
+    "current": "Comprador at MG CINTO",
+    "past": null
+  },
+  {
+    "name": "Alexander Valle Santos",
+    "title": "Comprador Construção ...",
+    "level": "2nd",
+    "connection": "Connect",
+    "city": "Belo Horizonte, Minas",
+    "mutualConnections": "1 mutual connections",
+    "current": "Comprador sênior at Sólido Construções",
+    "past": null
+  }
+]

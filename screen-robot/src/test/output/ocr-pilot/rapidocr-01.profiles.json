@@ -1,0 +1,22 @@
+[
+  {
+    "name": "Alexandre Silva",
+    "title": "Comprador/Planejador/...",
+    "level": "2nd",
+    "connection": "Pending",
+    "city": "Gerais,Brazil",
+    "mutualConnections": "2 mutual connections",
+    "current": "CompradoratGrupoGPS",
+    "past": null
+  },
+  {
+    "name": "Nayara Alves",
+    "title": "Comprador daempresa...",
+    "level": "2nd",
+    "connection": "Connect",
+    "city": null,
+    "mutualConnections": "1 mutual connections",
+    "current": "CompradoratMGCINTO",
+    "past": null
+  }
+]

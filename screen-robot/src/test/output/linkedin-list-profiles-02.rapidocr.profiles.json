@@ -1,0 +1,32 @@
+[
+  {
+    "name": "Alexander Valle Santos",
+    "title": "Comprador Construcao.",
+    "level": "2nd",
+    "connection": "Connect",
+    "city": "Belo Horizonte, Minas",
+    "mutualConnections": "1 mutual connections",
+    "current": "Comprador senior at Solido Construcoes",
+    "past": null
+  },
+  {
+    "name": "Marco Santos",
+    "title": "Coordenador de Suprime...",
+    "level": "2nd",
+    "connection": "Pending",
+    "city": "Belo Horizonte, Minas",
+    "mutualConnections": "5 mutual connections",
+    "current": null,
+    "past": "Comprador Master at Atkins Realis"
+  },
+  {
+    "name": "Adriana Vidal Wildner",
+    "title": "Procurement Coordinator...",
+    "level": "2nd",
+    "connection": "Pending",
+    "city": "Sao Paulo, Säo Paulo,",
+    "mutualConnections": "4 mutual connections",
+    "current": null,
+    "past": "Senior Raw Materials Purchaser/Comprador"
+  }
+]

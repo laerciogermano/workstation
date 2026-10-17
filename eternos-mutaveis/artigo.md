@@ -5,7 +5,7 @@
 ## Objetivo
 
 - **Principal:** alfabetização espiritual — ensinar o que é Deus e o mundo espiritual a quem está preso na matéria
-- Explicar o conhecimento mais importante que um homem pode alcançar em toda a eternidade
+- Explicar o conhecimento mais importante que um homem pode alcançar em toda a eternidade: a síntese do que todos estavam buscando
 - Pela **lógica**, não pela fé cega
 - Responder às perguntas eternas: origem, existência, eternidade, céu e inferno
 - Síntese acessível (manual lógico da existência)

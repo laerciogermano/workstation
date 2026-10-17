@@ -3,7 +3,7 @@
 ## Objetivo
 
 - **Principal:** alfabetização espiritual — ensinar o que é Deus e o mundo espiritual a quem está preso na matéria
-- Explicar o conhecimento mais importante que um homem pode alcançar em toda a eternidade
+- Explicar o conhecimento mais importante que um homem pode alcançar em toda a eternidade: a síntese do que todos estavam buscando
 - Pela **lógica**, não pela fé cega
 - Responder às perguntas eternas: origem, existência, eternidade, céu e inferno
 - Síntese acessível (manual lógico da existência)
@@ -117,8 +117,8 @@ Espiritualidade não como mais uma religião nem como fé por si só, mas como o
 Ponte: o que vem a seguir sempre esteve diante dos olhos; de tão simples, nunca foi percebido em sua grandeza.
 **Imagem:** Pessoa atravessando uma ponte óbvia sob o sol; só ao olhar para trás percebe a grandeza da estrutura que sempre esteve ali.
 
-### 0.22 O conhecimento mais importante que o homem pode alcançar em toda a eternidade
-O que será passado aqui é o conhecimento mais importante que um homem pode alcançar em toda a eternidade.
+### 0.22 O conhecimento mais importante: a síntese do que todos estavam buscando
+O que será passado aqui é o conhecimento mais importante que um homem pode alcançar em toda a eternidade: a síntese do que todos estavam buscando.
 **Imagem:** Figura pequena diante de um horizonte infinito; na mão, um único livro de luz que ofusca templos, telescópios e bibliotecas ao fundo — o essencial acima de tudo o mais.
 
 ---

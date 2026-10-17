@@ -80,6 +80,7 @@ Leitores que **já sentem** que a separação e a matéria não fecham a conta, 
 
 - 0.21 A realidade se explica pela lógica, não pela fé
 - 0.22 O conhecimento mais importante: a síntese do que todos estavam buscando
+- 0.23 Anos sintetizando uma forma fácil e objetiva de explicar o todo
 
 ---
 

@@ -4,7 +4,14 @@
 
 ## Objetivo
 
-Alfabetização espiritual: ensinar o que é Deus e o mundo espiritual — pela lógica, não pela fé — a quem está preso no mundo da matéria. Responder às perguntas eternas (origem, existência, eternidade, céu e inferno) com uma síntese acessível; mostrar que todos somos um; refutar a ontologia aristotélica da substância e apontar o maior erro da programação: repetir essa ontologia no código.
+- **Principal:** alfabetização espiritual — ensinar o que é Deus e o mundo espiritual a quem está preso na matéria
+- Pela **lógica**, não pela fé cega
+- Responder às perguntas eternas: origem, existência, eternidade, céu e inferno
+- Síntese acessível (manual lógico da existência)
+- Mostrar que **todos somos um**
+- Refutar a ontologia aristotélica da substância
+- Apontar o maior erro da programação: repetir essa ontologia no código
+- Libertação do espírito pelo conhecimento (gnose)
 
 ## Público-alvo
 

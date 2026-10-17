@@ -52,9 +52,14 @@ Leitores que **já sentem** que a separação e a matéria não fecham a conta, 
 
 ## Objetivo
 
-**Objetivo principal:** alfabetização espiritual — **ensinar o que é Deus e o mundo espiritual** aos homens **presos no mundo da matéria**.
-
-A partir disso: alfabetizar o leitor para a unidade do real — **todos somos um** — com **projeção nacional e internacional**; refutar a ontologia aristotélica da substância e **apontar o maior erro da programação** como a repetição dessa ontologia no código.
+- **Principal:** alfabetização espiritual — **ensinar o que é Deus e o mundo espiritual** aos homens **presos no mundo da matéria**
+- Pela **lógica**, não pela fé cega
+- Responder às perguntas eternas: origem, existência, eternidade, céu e inferno
+- Síntese acessível (manual lógico da existência)
+- Mostrar que **todos somos um** (projeção nacional e internacional)
+- Refutar a ontologia aristotélica da substância
+- Apontar o maior erro da programação: repetir essa ontologia no código
+- Libertação do espírito pelo conhecimento (gnose)
 
 ## Proposta de valor
 

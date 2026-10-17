@@ -6,13 +6,18 @@ Alfabetização espiritual: ensinar o que é Deus e o mundo espiritual — pela 
 
 ## Público-alvo
 
-| Persona | Quem | O que busca |
-|---------|------|-------------|
-| **Leitor** | Preso na matéria, sem vocabulário espiritual | Alfabeto: Deus, mundo espiritual, unidade |
-| **Religioso** | Já crê e pratica, mas sente que a fé pede bases lógicas | Compreender Deus e o espírito sem abrir mão da fé — gnose que sustenta a crença |
-| **Pensador** | Herdou categorias ocidentais na escola e no senso comum | Ver onde a substância aristotélica falha |
-| **Programador** | Modela sistemas com objetos, tipos e identidades | Reconhecer o erro ontológico no código e a alternativa (fluxo / eternos mutáveis) |
-| **Cético lógico** | Só aceita o espiritual com explicação coerente | Gnose: libertação pelo conhecimento, não pela fé cega |
+Leitores que **já sentem** que a separação e a matéria não fecham a conta, mas não têm alfabeto para Deus, o espírito e a unidade. A obra fala a quem aceita **lógica** (mesmo quem crê) e rejeita só fé cega, misticismo opaco ou jargão de seita.
+
+| Persona | Idade | Quem é | Características | Dor | O que a obra entrega |
+|---------|-------|--------|-----------------|-----|----------------------|
+| **Buscador sem mapa** | 18–45 | Preso no material; pergunta “por que estou aqui?” sem vocabulário espiritual | Curioso, ansioso ou sem sentido; consome informação demais e síntese de menos; já tentou religiões/autoajuda e abandonou | Vida sem norte; Deus e o pós-morte soam distantes ou infantis | Alfabetização: o que é Deus, mundo espiritual, eternidade; alívio e bússola lógica |
+| **Religioso inquieto** | 25–60 | Já crê e pratica (igreja, centro, tradição), mas a fé sozinha não basta | Devoto e honesto; incomodado com dogmas sem explicação; quer Deus inteligível sem “trair” a crença | Religião pede fé sem base; essencial não é transmitido; conversas viram lúdico ou briga | Gnose que **sustenta** a fé: Deus e o espírito pela lógica, sem culto novo |
+| **Cético lógico / ex-ateu** | 20–50 | Só aceita o espiritual se fizer sentido; desconfia de crentes “bitolados” | Racional, cético, orgulhoso da lógica; pode ter sido ateu; evita fé cega e fantasma de Halloween | Ou descarta Deus, ou vive o vazio de ter desistido das perguntas eternas | Explicação coerente (estilo matemática): libertação pelo conhecimento, não pela obediência |
+| **Pensador / estudante de filosofia** | 18–55 | Herdou categorias da escola ocidental; lê ou já leu Platão, Aristóteles, Kant, linguagem | Analítico, gosta de estrutura; sente que a metafísica ficou em aberto ou “proibida” | Substância, identidade rígida e jogos de linguagem emperram a compreensão do real | Onde Aristóteles falha; dualidade eterno×mutável; linguagem isomórfica como saída |
+| **Programador / engenheiro** | 18–45 | Constrói sistemas com objetos, classes, estados; sofre com manutenção e OOP | Prático, técnico; intui que arquitetura é filosofia; busca regras eternas no código | Software caro de manter; conceitos OOP confusos; modelo do mundo deturpado vaza no código | Maior erro da programação = substância no código; abstratos, Flow, histórias > objetos |
+| **Difusor** | 25–55 | Professor, criador de conteúdo, líder de círculo, tradutor, quem multiplica ideias | Articulado; quer material claro para ensinar ou projetar a tese | Conteúdo espiritual ou é opaco ou é autoajuda rasa — difícil levar a público amplo | Obra sintética e traduzível: projeção nacional/internacional, base para Logos Academy / palestras |
+
+**Traços comuns aos leitores:** insatisfação com o “eu” isolado; cansaço de excesso de crenças sem lógica; desejo de unidade (“todos somos um”) legível, não slogan; abertura a filosofia **e** a software como metáfora do real; busca de alívio, esperança e conduta prática (não só teoria).
 
 ---
 

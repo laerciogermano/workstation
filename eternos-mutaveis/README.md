@@ -37,13 +37,18 @@ As pessoas **já sentem** que a separação não fecha, mas permanecem **presas 
 
 ## Para quem
 
-| Persona | Para quem | Necessidade |
-|---------|-----------|-------------|
-| **Leitor** | Quem vive preso no mundo da matéria e busca sentido sem vocabulário espiritual | Um alfabeto: o que é Deus, o mundo espiritual e o percurso para ler que todos somos um |
-| **Religioso** | Quem já crê e pratica, mas sente que a fé pede bases lógicas | Compreender Deus e o espírito sem abrir mão da fé — gnose que sustenta a crença |
-| **Pensador** | Quem herdou categorias ocidentais na escola, na lógica e no senso comum | Ver onde a ontologia da substância falha |
-| **Programador** | Quem constrói sistemas com objetos, tipos e identidades | Reconhecer o maior erro da programação e a alternativa (fluxo / eternos mutáveis) |
-| **Difusor** | Quem pode levar a tese a público (canal, tradução, conversa) | Uma obra clara o bastante para **projetar** a ideia no país e no exterior |
+Leitores que **já sentem** que a separação e a matéria não fecham a conta, mas não têm alfabeto para Deus, o espírito e a unidade. A obra fala a quem aceita **lógica** (mesmo quem crê) e rejeita só fé cega, misticismo opaco ou jargão de seita.
+
+| Persona | Idade | Quem é | Características | Dor | O que a obra entrega |
+|---------|-------|--------|-----------------|-----|----------------------|
+| **Buscador sem mapa** | 18–45 | Preso no material; pergunta “por que estou aqui?” sem vocabulário espiritual | Curioso, ansioso ou sem sentido; informação demais, síntese de menos; já tentou religiões/autoajuda e abandonou | Vida sem norte; Deus e o pós-morte soam distantes ou infantis | Alfabetização: Deus, mundo espiritual, eternidade; alívio e bússola lógica |
+| **Religioso inquieto** | 25–60 | Já crê e pratica, mas a fé sozinha não basta | Devoto e honesto; incomodado com dogmas sem explicação; quer Deus inteligível sem “trair” a crença | Religião pede fé sem base; essencial não é transmitido | Gnose que **sustenta** a fé: espírito pela lógica, sem culto novo |
+| **Cético lógico / ex-ateu** | 20–50 | Só aceita o espiritual se fizer sentido | Racional, cético; pode ter sido ateu; evita fé cega e explicações lúdicas | Descarta Deus ou vive o vazio de ter desistido das perguntas eternas | Explicação coerente; libertação pelo conhecimento, não pela obediência |
+| **Pensador / estudante de filosofia** | 18–55 | Herdou categorias ocidentais; lê estrutura e metafísica | Analítico; sente a metafísica em aberto ou “proibida” | Substância, identidade rígida e jogos de linguagem | Onde Aristóteles falha; eterno×mutável; linguagem isomórfica |
+| **Programador / engenheiro** | 18–45 | Modela objetos/classes; sofre manutenção e OOP | Prático; intui arquitetura = filosofia; busca regras eternas no código | Software caro; OOP confusa; visão deturpada vaza no código | Erro da substância no código; abstratos, Flow, histórias > objetos |
+| **Difusor** | 25–55 | Professor, criador, líder de círculo, tradutor | Articulado; quer material claro para ensinar e projetar | Espiritual opaco ou autoajuda rasa | Obra sintética/traduzível; projeção; base para palestras / Logos Academy |
+
+**Traços comuns:** insatisfação com o “eu” isolado; cansaço de crenças sem lógica; unidade legível (não slogan); abertura a filosofia e a software como metáfora; alívio, esperança e conduta prática.
 
 ## Objetivo
 

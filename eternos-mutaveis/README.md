@@ -7,6 +7,8 @@
 Derivados: [`docs/`](docs/).  
 Apresentação visual do artigo: [`apresentacao.md`](apresentacao.md) · versão em bullets: [`bullets.md`](bullets.md) · PDF: [`bullets.pdf`](bullets.pdf).
 
+Em [`bullets.md`](bullets.md), a ordem **dentro de cada capítulo** segue arco de storytelling (gancho → desenvolvimento → clímax/fecho), não a ordem cronológica de escrita. Renumeração `N.1…N.k` acompanha essa ordem.
+
 **Regenerar PDF:** converter `bullets.md` → HTML (markdown) e imprimir com Chrome headless (`--print-to-pdf=bullets.pdf`). Antes → depois: só existia o `.md`; o `.pdf` é derivado. Remover `bullets.pdf` reverte ao fluxo só-markdown.  
 Primeiro artigo completo: [`artigos/01-eternos-mutaveis.md`](artigos/01-eternos-mutaveis.md).  
 Timeline de prompts: [`prompts/`](prompts/).  

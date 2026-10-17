@@ -53,6 +53,7 @@ Leitores que **já sentem** que a separação e a matéria não fecham a conta, 
 ## Objetivo
 
 - **Principal:** alfabetização espiritual — **ensinar o que é Deus e o mundo espiritual** aos homens **presos no mundo da matéria**
+- Explicar o conhecimento mais importante que um homem pode alcançar em toda a eternidade
 - Pela **lógica**, não pela fé cega
 - Responder às perguntas eternas: origem, existência, eternidade, céu e inferno
 - Síntese acessível (manual lógico da existência)

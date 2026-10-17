@@ -34,123 +34,123 @@
 
 ![Banner do capítulo 1](assets/banner-cap-1-era-adamica.jpg)
 
-### 1.1 Queda / encarnação
+### 1.1 O espírito vira carne e esquece de onde veio
 Espírito acoplado à matéria, que esquece a origem (homem nascendo e vendo a natureza).
 **Imagem:** Homem recém-nascido no chão de terra, olhos abertos pela primeira vez; atrás dele, uma silhueta de luz se desfaz ao entrar no corpo. Floresta ao redor, nitidez só no que está perto.
 
-### 1.2 Prisão ao mundo material
+### 1.2 Os sentidos mostram só um cisco e o homem toma pelo todo
 Guiado pelos sentidos, vê só um cisco da realidade.
 **Imagem:** Figura de olhos vendados por cinco fios (visão, tato, audição, olfato, gosto), caminhando num labirinto de pedra. Fora dos muros, um céu geométrico e luminoso que ela não vê.
 
-### 1.3 Ignorância estrutural
+### 1.3 O mundo espiritual só é alcançado pelo intelecto
 Estruturas metafísicas só o intelecto alcança.
 **Imagem:** Sala escura com uma única lâmpada sobre uma mesa: livros e diagramas. Fora da janela, estruturas translúcidas flutuam no ar — só quem lê as enxerga.
 
-### 1.4 Crença herdada
+### 1.4 O mapa chega antes da pergunta
 Mapa do mundo recebido antes de poder questionar.
 **Imagem:** Criança pequena recebendo um mapa antigo e rasgado das mãos de um adulto; o mapa cobre seu rosto. Ao fundo, caminhos reais divergem do traçado.
 
-### 1.5 Analfabetismo espiritual
+### 1.5 O problema central é o analfabetismo espiritual
 O problema central.
 **Imagem:** Multidão diante de um mural cheio de símbolos; ninguém sabe ler. Uma pessoa aponta, outra copia o gesto, nenhuma compreende.
 
-### 1.6 Metafísica × espiritualidade
+### 1.6 Estudar a estrutura não é o mesmo que vivê-la
 Metafísica (estudo da estrutura) × espiritualidade (experiência dela).
 **Imagem:** Díptico: à esquerda, arquiteto medindo um esquema geométrico no ar; à direita, a mesma pessoa de olhos fechados, mão no peito, sentindo a mesma estrutura.
 
-### 1.7 Acostume ao material
+### 1.7 A matéria acostuma; o invisível some da vista
 O homem se acostuma ao mundo material e esquece outras estruturas igualmente presentes, mas invisíveis: as religiões as chamam de espirituais; os filósofos, de substância oculta ou metafísica.
 **Imagem:** Cidade densa em primeiro plano; por trás, como vidro embaçado, uma segunda cidade de linhas e fluxos — quase apagada pela rotina.
 
-### 1.8 Mundo que transforma o mundo
+### 1.8 Há um mundo que transforma o mundo e os olhos não o veem
 Esse lado oculto é o "mundo que transforma o mundo", um agente processador invisível aos olhos.
 **Imagem:** Engrenagens e fios invisíveis (só contornos de luz) movendo prédios, pessoas e tempestades; o “operador” não aparece, só o efeito.
 
-### 1.9 Parece místico, intelecto alcança
+### 1.9 O que parece mistério cabe no intelecto
 Parece místico, mas pode ser compreendido pelo intelecto, por via diferente da ciência experimental.
 **Imagem:** Porta marcada “mistério” que, ao abrir, revela um quadro-negro com diagramas claros — não fantasmas, e sim ordem legível.
 
-### 1.10 Experiência como produto
+### 1.10 A experiência é efeito; a ordem está nos bastidores
 A experiência é produto de algo maior que ordena tudo por trás.
 **Imagem:** Teatro: o público vê só o palco iluminado; nos bastidores, um mecanismo ordena cenários, luzes e atores — a peça é efeito, não causa.
 
-### 1.11 Metafísica: além + físico
+### 1.11 Além do físico: verbos, vazios e espíritos no mesmo espaço
 *Meta* (além) + *physis* (físico); o suprassensível, o mundo dos verbos, dos vazios, dos movimentos, das ideias, dos espíritos, que divide espaço com a matéria.
 **Imagem:** Espaço dividido: sólido (objetos, corpos) e o vazio entre eles preenchido por setas, verbos escritos no ar e silhuetas de espírito — mesmos cômodos, duas camadas.
 
-### 1.12 Equívocos sobre Deus e o espiritual
+### 1.12 Quase tudo que se diz de Deus está errado
 Muito do que se sabe sobre Deus e o lado espiritual está equivocado.
 **Imagem:** Biblioteca com prateleiras tortas: livros rotulados “Deus”, “alma”, “céu” tombando; no centro, uma página em branco aguardando reescrita.
 
-### 1.13 Conhecimento que separa as eras
+### 1.13 Há um conhecimento que tira o homem da matéria
 O conhecimento que separa a era adâmica da superação adâmica: o homem encarnado que transcende a matéria.
 **Imagem:** Homem de um lado preso a correntes de pedra; do outro, a mesma figura atravessando um limiar de luz — matéria atrás, entendimento à frente.
 
-### 1.14 Adão como metáfora
+### 1.14 Adão ainda vive: a personalidade a superar
 A criação de Adão como metáfora: o homem adâmico (a personalidade) ainda existe e deve ser superado.
 **Imagem:** Estátua de barro (Adão) ainda de pé numa praça moderna; uma pessoa comum passa e se reconhece no espelho da base — a personalidade adâmica ainda vive.
 
-### 1.15 Centelha sob o véu
+### 1.15 Centelha divina sob o véu do esquecimento
 Somos centelha divina num corpo transitório, sob o véu do esquecimento.
 **Imagem:** Corpo humano translúcido; no peito, uma chama pequena e constante; um véu fino cobre o rosto e a chama quase some.
 
-### 1.16 Homem primitivo sensorial
+### 1.16 O primitivo segue o sentido e não sabe por quê age
 O homem primitivo é guiado por impressões sensoriais e não entende a origem das próprias decisões nem o sentido da existência.
 **Imagem:** Figura primitiva seguindo rastros, sons e cheiros na floresta; balões de pensamento vazios onde deveria haver “por quê” e “para quê”.
 
-### 1.17 Ignorância que se perpetua
+### 1.17 O homem não é mau: copia sem perceber
 A ignorância se perpetua de forma inconsciente; "o homem não é mau, reproduz comportamentos sem perceber".
 **Imagem:** Cadeia de pessoas em fila, cada uma copiando o gesto da anterior (mesmo erro, mesmo olhar perdido); nenhuma parece má — só automática.
 
-### 1.18 Linguagem contraditória
+### 1.18 A língua do homem se contradiz e ninguém se entende
 A linguagem do homem é contraditória e mal compreendida.
 **Imagem:** Duas bocas falando a mesma palavra; de uma sai um sentido, da outra outro — linhas se cruzam e formam um nó no meio.
 
-### 1.19 Sem manual da vida
+### 1.19 Sem manual da vida, o espiritual vira medo
 Não existe um manual sintético e acessível da vida; o mundo espiritual vira paranormal e gera medo.
 **Imagem:** Estante vazia onde deveria haver um “manual da vida”; ao lado, cartazes de “fantasma” e “medo”, com gente se afastando.
 
-### 1.20 Civilização analfabeta espiritual
+### 1.20 Civilização que não lê o espírito: guerra e máscaras
 Divergência, conflito e guerra; sintomas: violência, desigualdade, complexo de identidade, excesso de informação, baile de máscaras.
 **Imagem:** Panorama urbano rachado: violência numa esquina, máscaras numa festa, telas saturadas, abismos entre ricos e pobres — um único rótulo no céu: “sintomas”.
 
-### 1.21 Alfabetização metafísica
+### 1.21 Alfabetizar a metafísica desde a infância
 Ensinar os padrões e símbolos desde a infância, numa linguagem unificada.
 **Imagem:** Sala de aula: crianças desenhando padrões e símbolos simples no quadro; um alfabeto unificado de formas, não de letras sozinhas.
 
-### 1.22 Intelecto reduzido a corpo e instinto
+### 1.22 Tem intelecto, mas vive como autômato de carne
 Homem tem intelecto, mas ignora a própria condição de autômato e reduz-se a corpo e instinto.
 **Imagem:** Homem com cérebro iluminado, mas o corpo puxa-o para baixo como ímã; ele olha o reflexo e vê só carne e fome.
 
-### 1.23 Crença herdada molda a ação
+### 1.23 A crença já move o pé antes da dúvida
 Mapa recebido vira comportamento antes do questionamento.
 **Imagem:** Mapa antigo colado nas mãos; os pés já estão no caminho marcado antes que a cabeça questione — movimento sem pausa.
 
-### 1.24 Criações humanas × natureza
+### 1.24 Mais concreto e tela que natureza: a visão se deturpa
 Estamos mais em contato com criações humanas do que com a natureza; isso deturpa a visão da realidade.
 **Imagem:** Pessoa cercada de telas, concreto e logos; ao fundo, uma árvore e um rio quase fora de foco, como paisagem esquecida.
 
-### 1.25 Aparência × essência
+### 1.25 A matéria é véu: o que se vê não é o que rege
 A matéria é véu; o que se vê não é o que rege.
 **Imagem:** Véu de tecido denso cobrindo um mecanismo luminoso; o que se vê é a superfície; o que move está por baixo, só entrevisto.
 
-### 1.26 Sem metafísica, Deus incompreensível
+### 1.26 Sem metafísica, Deus permanece incompreensível
 Sem metafísica (filosofia primeira, causa dos efeitos) Deus permanece incompreensível.
 **Imagem:** Figura erguendo as mãos a um céu vazio; sem diagrama nem causa, só silêncio — ausência de “filosofia primeira”.
 
-### 1.27 Incapacidade ≠ inexistência
+### 1.27 Não saber explicar Deus não prova que Ele não é
 Não confundir a incapacidade humana de explicar Deus com a inexistência de Deus.
 **Imagem:** Pessoa pequena diante de um horizonte infinito; um balão “não sei explicar” não apaga o sol no céu — o sol continua lá.
 
-### 1.28 Religião sem santidade
+### 1.28 Metafísica: religião sem santidade, só intelecto
 Metafísica como “religião sem santidade”: acesso pelo intelecto, sem culto nem fé cega.
 **Imagem:** Templo sem altares nem fiéis: só uma mesa, luz natural e alguém estudando esquemas — intelecto no lugar do culto.
 
-### 1.29 Insatisfação pela visão deturpada
+### 1.29 A insatisfação nasce da realidade vista torta
 Insatisfação e busca por sentido nascem da visão deturpada da realidade.
 **Imagem:** Espelho distorcido: a realidade aparece torta; a pessoa ao lado segura o peito, inquieta, sem achar o “porquê” na imagem falsa.
 
-### 1.30 O óbvio precisa ser dito
+### 1.30 O óbvio só une quando é dito em voz alta
 O óbvio precisa ser dito para se tornar unânime; sem síntese acessível, cada um inventa o seu mapa.
 **Imagem:** Praça: cada um segura um mapa diferente e improvisado; no centro, um cartaz simples e claro que ninguém ainda leu em voz alta — a síntese que faltava.
 

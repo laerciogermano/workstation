@@ -29,8 +29,6 @@ Leitores que **já sentem** que a separação e a matéria não fecham a conta, 
 
 ---
 
----
-
 # Bullets
 
 Só os títulos — um bullet por conceito, na ordem de storytelling de cada capítulo.

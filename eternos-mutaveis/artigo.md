@@ -2,6 +2,19 @@
 
 *Ordem de exposição: [`roadmap.md`](roadmap.md).*
 
+## Objetivo
+
+Alfabetização espiritual: ensinar o que é Deus e o mundo espiritual — pela lógica, não pela fé — a quem está preso no mundo da matéria. Responder às perguntas eternas (origem, existência, eternidade, céu e inferno) com uma síntese acessível; mostrar que todos somos um; refutar a ontologia aristotélica da substância e apontar o maior erro da programação: repetir essa ontologia no código.
+
+## Público-alvo
+
+| Persona | Quem | O que busca |
+|---------|------|-------------|
+| **Leitor** | Preso na matéria, sem vocabulário espiritual | Alfabeto: Deus, mundo espiritual, unidade |
+| **Pensador** | Herdou categorias ocidentais na escola e no senso comum | Ver onde a substância aristotélica falha |
+| **Programador** | Modela sistemas com objetos, tipos e identidades | Reconhecer o erro ontológico no código e a alternativa (fluxo / eternos mutáveis) |
+| **Cético lógico** | Só aceita o espiritual com explicação coerente | Gnose: libertação pelo conhecimento, não pela fé cega |
+
 ---
 
 ## 0. Abertura — as perguntas que não envelhecem

@@ -1,30 +1,107 @@
 # Eternos Mutáveis — Bullets por capítulo
 
+## Objetivo
+
+Alfabetização espiritual: ensinar o que é Deus e o mundo espiritual — pela lógica, não pela fé — a quem está preso no mundo da matéria. Responder às perguntas eternas (origem, existência, eternidade, céu e inferno) com uma síntese acessível; mostrar que todos somos um; refutar a ontologia aristotélica da substância e apontar o maior erro da programação: repetir essa ontologia no código.
+
+## Público-alvo
+
+| Persona | Quem | O que busca |
+|---------|------|-------------|
+| **Leitor** | Preso na matéria, sem vocabulário espiritual | Alfabeto: Deus, mundo espiritual, unidade |
+| **Pensador** | Herdou categorias ocidentais na escola e no senso comum | Ver onde a substância aristotélica falha |
+| **Programador** | Modela sistemas com objetos, tipos e identidades | Reconhecer o erro ontológico no código e a alternativa (fluxo / eternos mutáveis) |
+| **Cético lógico** | Só aceita o espiritual com explicação coerente | Gnose: libertação pelo conhecimento, não pela fé cega |
+
+---
+
 ## 0. Abertura — as perguntas que não envelhecem
 
 ![Banner do capítulo 0](assets/banner-cap-0-abertura.jpg)
 
-- Objetivo: entender o que é a realidade, pela lógica e não pela fé
-- Perguntas eternas: Deus, vida, mundo espiritual, depois da morte, por que há algo e não o nada, do que é feita a existência, por que estamos aqui
-- Milênios de tentativas (templos, tratados, telescópios) sem consenso
-- Contraste com a matemática: dois e dois são quatro em qualquer língua e século; no espírito não há consenso
-- Religiões, escolas filosóficas e ciência explicam a origem de tudo: cada uma ilumina uma parte, nenhuma enxerga o todo
-- Perdidos no excesso: informação demais, síntese de menos
-- Cada pessoa lida de um jeito com o espiritual: herda a fé e a mantém, entra num grupo e não consegue seguir, segue um tempo e abandona, pula de tradição em tradição, acredita mas não frequenta, nem tenta porque não acredita
-- Cada um explica Deus à sua maneira; a conversa escorrega para o lúdico ou o sombrio e termina em divergência
-- Religiões pedem fé sem base lógica; o essencial não está sendo transmitido
-- Preço da ignorância espiritual: evoluímos em tecnologia, medicina e engenharia, mas engatinhamos no conhecimento mais importante
-- Com tanta desinformação o homem sofre: tenta viver bem, acerta, erra, recomeça; muitos vivem atormentados e em condições precárias (financeiras, psicológicas, mentais), com ansiedade e vida sem sentido
-- Desvio pelo palpável: cansado da frustração, o autor se apaixona pela programação
-- Programação aplica-se à vida inteira: decisão de arquitetura é decisão filosófica (o que separar, o que unir, do que cada parte depende)
-- Bom programador é bom gestor de processos: quem planeja e organiza entrega qualquer projeto, de software ou de vida
-- Busca da estrutura perfeita do software por mais de uma década; nos últimos três anos, períodos sabáticos estudando filosofias, tradições espirituais e o Caibalion
-- Um livro mudou a lente sobre o código: a programação virou base para compreender a espiritualidade
-- O ateu que queria lógica: via os crentes como bitolados, sem ceticismo, trocando lógica por fé; só aceitaria Deus com explicação lógica e coerente
-- As perguntas de que havia desistido estavam na programação, nas camadas profundas de sistemas
-- A chave: sólidos e abstratos
-- Espiritualidade não como mais uma religião nem como fé por si só, mas como o conhecimento que leva a Deus
-- Ponte: o que vem a seguir sempre esteve diante dos olhos; de tão simples, nunca foi percebido em sua grandeza
+### 0.1 A realidade se explica pela lógica, não pela fé
+Objetivo: entender o que é a realidade, pela lógica e não pela fé.
+**Imagem:** Figura solitária diante de uma balança: de um lado um coração em chama (fé), do outro um diagrama geométrico luminoso (lógica); a balança pende para o diagrama.
+
+### 0.2 As perguntas que não envelhecem
+Perguntas eternas: Deus, vida, mundo espiritual, depois da morte, por que há algo e não o nada, do que é feita a existência, por que estamos aqui.
+**Imagem:** Céu noturno onde constelações formam interrogações douradas; abaixo, gerações de silhuetas olhando para cima, do templo antigo ao telescópio moderno.
+
+### 0.3 Milênios de tentativas, nenhum consenso
+Milênios de tentativas (templos, tratados, telescópios) sem consenso.
+**Imagem:** Linha do tempo: templo, pergaminho, telescópio e acelerador lado a lado; no centro, um ponto de interrogação que nunca se fecha.
+
+### 0.4 Dois e dois são quatro; no espírito, ninguém concorda
+Contraste com a matemática: dois e dois são quatro em qualquer língua e século; no espírito não há consenso.
+**Imagem:** Quadro dividido: à esquerda equações idênticas em várias línguas; à direita, bocas gritando símbolos religiosos diferentes que se chocam.
+
+### 0.5 Cada escola ilumina uma parte; nenhuma vê o todo
+Religiões, escolas filosóficas e ciência explicam a origem de tudo: cada uma ilumina uma parte, nenhuma enxerga o todo.
+**Imagem:** Sala circular com holofotes coloridos; cada feixe revela um fragmento de uma esfera central — a esfera inteira permanece na penumbra.
+
+### 0.6 Informação demais, síntese de menos
+Perdidos no excesso: informação demais, síntese de menos.
+**Imagem:** Pessoa afundando num mar de páginas e telas; no fundo do mar, um único fio dourado de síntese quase invisível.
+
+### 0.7 Cada um lida com o espiritual à sua maneira
+Cada pessoa lida de um jeito com o espiritual: herda a fé e a mantém, entra num grupo e não consegue seguir, segue um tempo e abandona, pula de tradição em tradição, acredita mas não frequenta, nem tenta porque não acredita.
+**Imagem:** Corredor com várias portas abertas e fechadas; figuras diferentes em cada limiar — uma ajoelhada, outra saindo, outra sem entrar.
+
+### 0.8 A conversa sobre Deus escorrega e diverge
+Cada um explica Deus à sua maneira; a conversa escorrega para o lúdico ou o sombrio e termina em divergência.
+**Imagem:** Mesa de bar: balões de fala viram caricaturas e sombras; as linhas se afastam em vez de se encontrar.
+
+### 0.9 Pedem fé sem base lógica; o essencial não chega
+Religiões pedem fé sem base lógica; o essencial não está sendo transmitido.
+**Imagem:** Púlpito com microfone; o fio do som está cortado — a mensagem essencial cai no chão como papel em branco.
+
+### 0.10 Evoluímos em tudo, menos no que mais importa
+Preço da ignorância espiritual: evoluímos em tecnologia, medicina e engenharia, mas engatinhamos no conhecimento mais importante.
+**Imagem:** Cidade high-tech brilhante; no primeiro plano, um bebê engatinhando diante de um livro espiritual empoeirado.
+
+### 0.11 Desinformação gera sofrimento e vida sem sentido
+Com tanta desinformação o homem sofre: tenta viver bem, acerta, erra, recomeça; muitos vivem atormentados e em condições precárias (financeiras, psicológicas, mentais), com ansiedade e vida sem sentido.
+**Imagem:** Figura em labirinto de setas contraditórias; rosto cansado, mãos no peito; ao fundo, casas precárias e relógios ansiosos.
+
+### 0.12 Cansado de frustração, o autor abraça o palpável
+Desvio pelo palpável: cansado da frustração, o autor se apaixona pela programação.
+**Imagem:** Mãos deixando um pergaminho místico e tocando um teclado luminoso — o brilho do código substitui a névoa.
+
+### 0.13 Arquitetura de software é filosofia aplicada
+Programação aplica-se à vida inteira: decisão de arquitetura é decisão filosófica (o que separar, o que unir, do que cada parte depende).
+**Imagem:** Diagrama de caixas e setas que, ao zoom out, vira um mapa da vida: relações, dependências, fronteiras.
+
+### 0.14 Quem organiza entrega qualquer projeto — código ou vida
+Bom programador é bom gestor de processos: quem planeja e organiza entrega qualquer projeto, de software ou de vida.
+**Imagem:** Mesma figura planejando num quadro branco; à esquerda um sistema, à direita uma linha do tempo pessoal — mesmo gesto.
+
+### 0.15 Uma década atrás da estrutura perfeita
+Busca da estrutura perfeita do software por mais de uma década; nos últimos três anos, períodos sabáticos estudando filosofias, tradições espirituais e o Caibalion.
+**Imagem:** Biblioteca híbrida: prateleiras de código e de tratados herméticos; relógio marcando anos sobre a mesma mesa.
+
+### 0.16 Um livro virou a lente: código como porta ao espírito
+Um livro mudou a lente sobre o código: a programação virou base para compreender a espiritualidade.
+**Imagem:** Livro aberto sobre um monitor; o texto reflete como lentes ópticas que reenquadram o código em padrões espirituais.
+
+### 0.17 O ateu que só aceitaria Deus com lógica
+O ateu que queria lógica: via os crentes como bitolados, sem ceticismo, trocando lógica por fé; só aceitaria Deus com explicação lógica e coerente.
+**Imagem:** Homem de braços cruzados diante de um altar; entre ele e o altar, um cadeado marcado “prova lógica”.
+
+### 0.18 As perguntas estavam no fundo do sistema
+As perguntas de que havia desistido estavam na programação, nas camadas profundas de sistemas.
+**Imagem:** Corte transversal de um software em camadas; nas mais profundas, as mesmas interrogações douradas da abertura.
+
+### 0.19 A chave: sólidos e abstratos
+A chave: sólidos e abstratos.
+**Imagem:** Chave dourada partida em duas: uma metade de tijolo sólido, outra de contorno geométrico vazio — juntas abrem uma porta.
+
+### 0.20 Espiritualidade como o conhecimento que leva a Deus
+Espiritualidade não como mais uma religião nem como fé por si só, mas como o conhecimento que leva a Deus.
+**Imagem:** Caminho de pedras intelectuais (diagramas) levando a um horizonte luminoso — sem templo, só compreensão.
+
+### 0.21 Estava diante dos olhos; de tão simples, ninguém viu
+Ponte: o que vem a seguir sempre esteve diante dos olhos; de tão simples, nunca foi percebido em sua grandeza.
+**Imagem:** Pessoa atravessando uma ponte óbvia sob o sol; só ao olhar para trás percebe a grandeza da estrutura que sempre esteve ali.
 
 ---
 

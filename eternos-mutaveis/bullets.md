@@ -363,39 +363,40 @@ Leitores que **já sentem** que a separação e a matéria não fecham a conta, 
 - 6.17 Estado é história condensada; estória (padrão) × história (instância)
 - 6.18 Porta: fechada → abrir → aberta; verbos dentro de verbos
 - 6.19 Fita de cinema: vemos estados; o verbo entre eles é invisível
-- 6.20 Ato é o agora; potência, o que pode vir a ser
-- 6.21 O mesmo verbo serve ao particular e ao geral
-- 6.22 Abstração: espaço com critérios onde qualquer objeto encaixa
-- 6.23 Colapso do movimento: espaço preenchido vira novo estado
-- 6.24 Histórias se repetem com outras notas e outros personagens
-- 6.25 Não é o objeto que é polimórfico: a história abstrai
-- 6.26 A utilidade está na história, não no objeto isolado
-- 6.27 Movimentos enxergam características, não elementos
-- 6.28 Estado atual = o todo das relações, não só o objeto
-- 6.29 Todo elemento pertence a uma história; uma qualidade por vez
-- 6.30 Gênero hermético: macho = sólido, fêmea = abstrato
-- 6.31 Forma é o espaço que a matéria preenche
-- 6.32 Navio de Teseu: identidade no critério, não no componente
-- 6.33 O navio é o critério na história, não as tábuas
-- 6.34 Formas não se criam nem se destroem: arquétipos eternos
-- 6.35 Melodia: identidade atemporal independente dos instrumentos
-- 6.36 Logos: ordem entre os verbos; tudo é isomórfico
-- 6.37 Deus como Verbo; céu e inferno como estados de consciência
-- 6.38 Deus é o próprio movimento: Demiurgo polimórfico, o Verbo
-- 6.39 Deus não é ente criador: é a metafísica, o que sempre é
-- 6.40 “Deus existe” é equívoco: Ele é
-- 6.41 Não houve criação: o universo já nasceu pronto
-- 6.42 Princípio, movimento e matéria
-- 6.43 O homem também é verbo; a ignorância deturpa sua ordem
-- 6.44 Verbos têm compatibilidade; a mudança de estado é o tempo
-- 6.45 Espírito único isomórfico; corpos polimórficos da mesma estrutura
-- 6.46 Espírito não se cria nem se destrói; ver o outro como a si
-- 6.47 Imperativo: controle no sujeito; declarativo: inversão de controle
-- 6.48 O verbo é fractal; a trindade é cortina sobre a dualidade
-- 6.49 Mundo da Verdade (padrões) × Mundo da Existência (manifestações)
-- 6.50 Mônada: estado inicial + movimento + estado final (0↔1)
-- 6.51 Indução: quais histórias preenche?; dedução: do geral ao endereço
-- 6.52 Cadeia: verdade → fato → história → ser/devir → verbo/estado
+- 6.20 Teoria do movimento (pixels): não se movem uns aos outros; são “movidos” por processamentos — na verdade, não se movem: são recomputados
+- 6.21 Ato é o agora; potência, o que pode vir a ser
+- 6.22 O mesmo verbo serve ao particular e ao geral
+- 6.23 Abstração: espaço com critérios onde qualquer objeto encaixa
+- 6.24 Colapso do movimento: espaço preenchido vira novo estado
+- 6.25 Histórias se repetem com outras notas e outros personagens
+- 6.26 Não é o objeto que é polimórfico: a história abstrai
+- 6.27 A utilidade está na história, não no objeto isolado
+- 6.28 Movimentos enxergam características, não elementos
+- 6.29 Estado atual = o todo das relações, não só o objeto
+- 6.30 Todo elemento pertence a uma história; uma qualidade por vez
+- 6.31 Gênero hermético: macho = sólido, fêmea = abstrato
+- 6.32 Forma é o espaço que a matéria preenche
+- 6.33 Navio de Teseu: identidade no critério, não no componente
+- 6.34 O navio é o critério na história, não as tábuas
+- 6.35 Formas não se criam nem se destroem: arquétipos eternos
+- 6.36 Melodia: identidade atemporal independente dos instrumentos
+- 6.37 Logos: ordem entre os verbos; tudo é isomórfico
+- 6.38 Deus como Verbo; céu e inferno como estados de consciência
+- 6.39 Deus é o próprio movimento: Demiurgo polimórfico, o Verbo
+- 6.40 Deus não é ente criador: é a metafísica, o que sempre é
+- 6.41 “Deus existe” é equívoco: Ele é
+- 6.42 Não houve criação: o universo já nasceu pronto
+- 6.43 Princípio, movimento e matéria
+- 6.44 O homem também é verbo; a ignorância deturpa sua ordem
+- 6.45 Verbos têm compatibilidade; a mudança de estado é o tempo
+- 6.46 Espírito único isomórfico; corpos polimórficos da mesma estrutura
+- 6.47 Espírito não se cria nem se destrói; ver o outro como a si
+- 6.48 Imperativo: controle no sujeito; declarativo: inversão de controle
+- 6.49 O verbo é fractal; a trindade é cortina sobre a dualidade
+- 6.50 Mundo da Verdade (padrões) × Mundo da Existência (manifestações)
+- 6.51 Mônada: estado inicial + movimento + estado final (0↔1)
+- 6.52 Indução: quais histórias preenche?; dedução: do geral ao endereço
+- 6.53 Cadeia: verdade → fato → história → ser/devir → verbo/estado
 
 ---
 

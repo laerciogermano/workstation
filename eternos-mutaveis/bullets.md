@@ -387,16 +387,17 @@ Leitores que **já sentem** que a separação e a matéria não fecham a conta, 
 - 6.41 “Deus existe” é equívoco: Ele é
 - 6.42 Não houve criação: o universo já nasceu pronto
 - 6.43 Princípio, movimento e matéria
-- 6.44 O homem também é verbo; a ignorância deturpa sua ordem
-- 6.45 Verbos têm compatibilidade; a mudança de estado é o tempo
-- 6.46 Espírito único isomórfico; corpos polimórficos da mesma estrutura
-- 6.47 Espírito não se cria nem se destrói; ver o outro como a si
-- 6.48 Imperativo: controle no sujeito; declarativo: inversão de controle
-- 6.49 O verbo é fractal; a trindade é cortina sobre a dualidade
-- 6.50 Mundo da Verdade (padrões) × Mundo da Existência (manifestações)
-- 6.51 Mônada: estado inicial + movimento + estado final (0↔1)
-- 6.52 Indução: quais histórias preenche?; dedução: do geral ao endereço
-- 6.53 Cadeia: verdade → fato → história → ser/devir → verbo/estado
+- 6.44 Matéria: infinita para cima e para baixo; finita no sentido temporal, não espacial
+- 6.45 O homem também é verbo; a ignorância deturpa sua ordem
+- 6.46 Verbos têm compatibilidade; a mudança de estado é o tempo
+- 6.47 Espírito único isomórfico; corpos polimórficos da mesma estrutura
+- 6.48 Espírito não se cria nem se destrói; ver o outro como a si
+- 6.49 Imperativo: controle no sujeito; declarativo: inversão de controle
+- 6.50 O verbo é fractal; a trindade é cortina sobre a dualidade
+- 6.51 Mundo da Verdade (padrões) × Mundo da Existência (manifestações)
+- 6.52 Mônada: estado inicial + movimento + estado final (0↔1)
+- 6.53 Indução: quais histórias preenche?; dedução: do geral ao endereço
+- 6.54 Cadeia: verdade → fato → história → ser/devir → verbo/estado
 
 ---
 

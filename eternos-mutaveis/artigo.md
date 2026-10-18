@@ -39,6 +39,8 @@ Leitores que **já sentem** que a separação e a matéria não fecham a conta, 
 
 O objetivo desta mensagem é fazer o leitor compreender o que é a realidade — e responder, pela via da lógica e não da fé, às perguntas que a humanidade carrega desde que aprendeu a falar. O que será revelado sempre esteve diante dos nossos olhos. De tão simples, nunca foi percebido em toda a sua grandeza.
 
+E o verdadeiro objetivo da vida é despertar para esse conhecimento e viver em harmonia com a verdadeira identidade.
+
 ### 0.2 As perguntas que não envelhecem
 
 Desde o início dos tempos, o homem tenta responder às mesmas perguntas:

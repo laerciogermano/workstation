@@ -20,6 +20,8 @@
 
 Este texto tem um objetivo só: fazer você compreender o que é a realidade. Não pela fé, não pela autoridade de quem fala, não pelo medo — pela lógica. O que vou mostrar sempre esteve diante dos nossos olhos. De tão simples, nunca foi percebido em toda a sua grandeza.
 
+E o verdadeiro objetivo da vida é despertar para esse conhecimento e viver em harmonia com a verdadeira identidade.
+
 ### As mesmas perguntas, há milênios
 
 Desde o início dos tempos, desde que aprendemos a falar e a raciocinar, fazemos as mesmas perguntas:

@@ -81,6 +81,7 @@ Leitores que **já sentem** que a separação e a matéria não fecham a conta, 
 - 0.21 A realidade se explica pela lógica, não pela fé
 - 0.22 O conhecimento mais importante: a síntese do que todos estavam buscando
 - 0.23 Anos sintetizando uma forma fácil e objetiva de explicar o todo
+- 0.24 O verdadeiro objetivo da vida: despertar para esse conhecimento e viver em harmonia com a verdadeira identidade
 
 ---
 

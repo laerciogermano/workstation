@@ -9,7 +9,7 @@ Apresentação visual do artigo: [`apresentacao.md`](apresentacao.md) · versão
 
 Em [`bullets.md`](bullets.md): uma seção **`# Bullets`** — capítulos com **capa (banner)** + títulos em lista (categorias nos caps 0 e 1). Ordem = storytelling. Descrições detalhadas de imagem foram removidas; histórico em commits anteriores se precisar reverter.
 
-**Cap. 0:** perguntas → excesso → preço → jornada → chave/ponte → objetivo (compreender a realidade; despertar e viver em harmonia com a verdadeira identidade).
+**Cap. 0:** perguntas → excesso → preço → jornada → chave/ponte → objetivo no fecho.
 
 **Cap. 1:** encarna → sentidos → além da matéria → intelecto/metafísica → crença → civilização → saída.
 

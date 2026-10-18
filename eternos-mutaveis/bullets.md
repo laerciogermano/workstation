@@ -313,17 +313,28 @@ Leitores que **já sentem** que a separação e a matéria não fecham a conta, 
 
 ![Banner do capítulo 4](assets/banner-cap-4-conhecimento-que-liberta.jpg)
 
+### Gnose: libertação por compreensão
+
 - 4.1 Promessa: libertação do espírito pelo conhecimento, com lógica
 - 4.2 Gnose: libertação por compreensão, não por fé ou obediência
 - 4.3 A verdade liberta; o espiritual com exatidão da matemática
+
+### Insight: a chave na linguagem e no software
+
 - 4.4 A chave da metafísica estava na linguagem e no software
 - 4.5 A mesma dor: software, filosofia e espírito — a linguagem
 - 4.6 O mesmo problema em quatro campos: falta domínio da linguagem
 - 4.7 Sem compreender a linguagem não se compreende a realidade
+
+### Cadeia de resolução
+
 - 4.8 Objetivo: dar significado e estrutura à linguagem
 - 4.9 Resolver a linguagem muda Deus, eternidade, identidade e tempo
 - 4.10 Cadeia: linguagem → metafísica → gnose
 - 4.11 Cadeia prática: linguagem → software → filosofia → espírito
+
+### Caminho técnico: do software à ontologia
+
 - 4.12 Quinze anos atrás de regras eternas no código
 - 4.13 Trajetória inversa: software perfeito → ontologia → espírito → linguagem
 - 4.14 A chave estava no software: abstratos e Arquitetura Limpa
@@ -334,18 +345,27 @@ Leitores que **já sentem** que a separação e a matéria não fecham a conta, 
 - 4.19 Sólido tem endereço; abstrato não — e abre o mundo espiritual
 - 4.20 Depender de abstrações, não de instâncias: a chave técnica
 - 4.21 Essência é o que se repete: aprende-se por histórias
+
+### Tratado, filósofos da linguagem e Flow
+
 - 4.22 Caminho pelos filósofos da linguagem
 - 4.23 Deus é perfeito, logo imutável; no mundo tudo muda — o que não muda?
 - 4.24 Quem reconhece o padrão antevê o que vem
 - 4.25 Tratado: 14 teses — história, verbo, Logos, metafísica, linguagem
 - 4.26 Flow: linguagem visual do plano das mudanças
 - 4.27 Flow: um só modo de desenvolver; princípios além do software
+
+### O que a obra oferece
+
 - 4.28 O que a obra oferece: Deus lógico, análise, conduta, eternidade
 - 4.29 Código de conduta pela correspondência, estilo 48 leis
 - 4.30 Não é moral do que fazer: são as regras do jogo
 - 4.31 Manual da vida: lógico, sintético e acessível
 - 4.32 Não haverá salvador: a salvação parte de cada um
 - 4.33 Para combater o veneno, é preciso conhecer o veneno
+
+### Frutos da libertação
+
 - 4.34 Gnose: batismo pelo conhecimento; acesso ao Éden
 - 4.35 Libertação: conhecer o verbo e reconciliar-se com a ordem
 - 4.36 Viveremos eternamente; o presente define a eternidade

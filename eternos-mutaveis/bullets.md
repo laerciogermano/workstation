@@ -322,56 +322,57 @@ Leitores que **já sentem** que a separação e a matéria não fecham a conta, 
 ### Insight: a chave na linguagem e no software
 
 - 4.4 A chave da metafísica estava na linguagem e no software
-- 4.5 A mesma dor: software, filosofia e espírito — a linguagem
-- 4.6 O mesmo problema em quatro campos: falta domínio da linguagem
-- 4.7 Sem compreender a linguagem não se compreende a realidade
+- 4.5 Compreensão dos sólidos × abstratos: a chave que abre a metafísica
+- 4.6 A mesma dor: software, filosofia e espírito — a linguagem
+- 4.7 O mesmo problema em quatro campos: falta domínio da linguagem
+- 4.8 Sem compreender a linguagem não se compreende a realidade
 
 ### Cadeia de resolução
 
-- 4.8 Objetivo: dar significado e estrutura à linguagem
-- 4.9 Resolver a linguagem muda Deus, eternidade, identidade e tempo
-- 4.10 Cadeia: linguagem → metafísica → gnose
-- 4.11 Cadeia prática: linguagem → software → filosofia → espírito
+- 4.9 Objetivo: dar significado e estrutura à linguagem
+- 4.10 Resolver a linguagem muda Deus, eternidade, identidade e tempo
+- 4.11 Cadeia: linguagem → metafísica → gnose
+- 4.12 Cadeia prática: linguagem → software → filosofia → espírito
 
 ### Caminho técnico: do software à ontologia
 
-- 4.12 Quinze anos atrás de regras eternas no código
-- 4.13 Trajetória inversa: software perfeito → ontologia → espírito → linguagem
-- 4.14 A chave estava no software: abstratos e Arquitetura Limpa
-- 4.15 Caminho técnico: abstratos, essencialismo, OOP deturpada
-- 4.16 Arquitetura Limpa confirma regras imutáveis — e estruturas óbvias
-- 4.17 Programadores não dominam os pilares que vieram da filosofia
-- 4.18 Há mais filosofia na programação do que se imagina
-- 4.19 Sólido tem endereço; abstrato não — e abre o mundo espiritual
-- 4.20 Depender de abstrações, não de instâncias: a chave técnica
-- 4.21 Essência é o que se repete: aprende-se por histórias
+- 4.13 Quinze anos atrás de regras eternas no código
+- 4.14 Trajetória inversa: software perfeito → ontologia → espírito → linguagem
+- 4.15 A chave estava no software: abstratos e Arquitetura Limpa
+- 4.16 Caminho técnico: abstratos, essencialismo, OOP deturpada
+- 4.17 Arquitetura Limpa confirma regras imutáveis — e estruturas óbvias
+- 4.18 Programadores não dominam os pilares que vieram da filosofia
+- 4.19 Há mais filosofia na programação do que se imagina
+- 4.20 Sólido tem endereço; abstrato não — e abre o mundo espiritual
+- 4.21 Depender de abstrações, não de instâncias: a chave técnica
+- 4.22 Essência é o que se repete: aprende-se por histórias
 
 ### Tratado, filósofos da linguagem e Flow
 
-- 4.22 Caminho pelos filósofos da linguagem
-- 4.23 Deus é perfeito, logo imutável; no mundo tudo muda — o que não muda?
-- 4.24 Quem reconhece o padrão antevê o que vem
-- 4.25 Tratado: 14 teses — história, verbo, Logos, metafísica, linguagem
-- 4.26 Flow: linguagem visual do plano das mudanças
-- 4.27 Flow: um só modo de desenvolver; princípios além do software
+- 4.23 Caminho pelos filósofos da linguagem
+- 4.24 Deus é perfeito, logo imutável; no mundo tudo muda — o que não muda?
+- 4.25 Quem reconhece o padrão antevê o que vem
+- 4.26 Tratado: 14 teses — história, verbo, Logos, metafísica, linguagem
+- 4.27 Flow: linguagem visual do plano das mudanças
+- 4.28 Flow: um só modo de desenvolver; princípios além do software
 
 ### O que a obra oferece
 
-- 4.28 O que a obra oferece: Deus lógico, análise, conduta, eternidade
-- 4.29 Código de conduta pela correspondência, estilo 48 leis
-- 4.30 Não é moral do que fazer: são as regras do jogo
-- 4.31 Manual da vida: lógico, sintético e acessível
-- 4.32 Não haverá salvador: a salvação parte de cada um
-- 4.33 Para combater o veneno, é preciso conhecer o veneno
+- 4.29 O que a obra oferece: Deus lógico, análise, conduta, eternidade
+- 4.30 Código de conduta pela correspondência, estilo 48 leis
+- 4.31 Não é moral do que fazer: são as regras do jogo
+- 4.32 Manual da vida: lógico, sintético e acessível
+- 4.33 Não haverá salvador: a salvação parte de cada um
+- 4.34 Para combater o veneno, é preciso conhecer o veneno
 
 ### Frutos da libertação
 
-- 4.34 Gnose: batismo pelo conhecimento; acesso ao Éden
-- 4.35 Libertação: conhecer o verbo e reconciliar-se com a ordem
-- 4.36 Viveremos eternamente; o presente define a eternidade
-- 4.37 Sensações pretendidas: alívio, esperança, felicidade
-- 4.38 Ajustar as lentes muda o software e a vida
-- 4.39 Dominar a linguagem é dominar software, filosofia e realidade
+- 4.35 Gnose: batismo pelo conhecimento; acesso ao Éden
+- 4.36 Libertação: conhecer o verbo e reconciliar-se com a ordem
+- 4.37 Viveremos eternamente; o presente define a eternidade
+- 4.38 Sensações pretendidas: alívio, esperança, felicidade
+- 4.39 Ajustar as lentes muda o software e a vida
+- 4.40 Dominar a linguagem é dominar software, filosofia e realidade
 
 ---
 

@@ -17,7 +17,7 @@ Em [`bullets.md`](bullets.md): uma seção **`# Bullets`** — capítulos com **
 
 **Cap. 3:** mazelas → máscaras/excesso → autômato → identidade → desejo/tédio → inferno cíclico → céu/dor → dor do software.
 
-**Cap. 4:** gnose → insight linguagem/software → cadeia → caminho técnico → tratado/Flow → o que a obra oferece → frutos.
+**Cap. 4:** gnose → insight (linguagem/software + sólidos×abstratos) → cadeia → caminho técnico → tratado/Flow → o que a obra oferece → frutos.
 
 **Cap. 5:** Platão → substância/Aristóteles → correção verbo×objeto → erro da programação → ecos língua/cotidiano.
 

@@ -147,15 +147,26 @@ Leitores que **já sentem** que a separação e a matéria não fecham a conta, 
 
 ![Banner do capítulo 2](assets/banner-cap-2-busca-por-respostas.jpg)
 
+### Por que a busca começa
+
 - 2.1 A experiência sozinha não responde: a busca começa
 - 2.2 Quando a linguagem chega, a experiência deixa de bastar
+
+### Oriente: dualidades que se respondem
+
 - 2.3 Oriente: dualidades que se respondem
 - 2.4 Persas e taoísmo: dualidade que se relaciona
 - 2.5 Budismo, hinduísmo, judaísmo: roda, Gita e “Sou o que sou”
+
+### Egito hermético e o fio do Verbo
+
 - 2.6 Egito hermético: o Todo e o Caibalion
 - 2.7 Caibalion: sete princípios de como o universo opera
 - 2.8 Hermetismo: Corpus, Roseta e princípios do Caibalion
 - 2.9 Judaísmo, Logos e Cabala no mesmo fio
+
+### Gregos: do mito ao logos
+
 - 2.10 Gregos: inventário dos que perguntaram pela estrutura
 - 2.11 Gregos: do mito ao logos e às ordens iniciáticas
 - 2.12 Tales e Anaximandro: a arché sob a aparência
@@ -165,34 +176,58 @@ Leitores que **já sentem** que a separação e a matéria não fecham a conta, 
 - 2.16 Platão: ideias de um lado, sentidos do outro; Demiurgo no meio
 - 2.17 Platão une o que não muda e o que muda
 - 2.18 Aristóteles: forma e matéria fundidas; causa primeira
+
+### Cristianismo, gnose e a ponte à fé
+
 - 2.19 Cristianismo e gnósticos no mesmo horizonte
 - 2.20 Cristianismo fala hermético: Terra como céu, Verbo como Logos
 - 2.21 Gnose: libertar o espírito pelo conhecimento, não pela fé
 - 2.22 Apócrifo de João: Aion, Sophia e o demiurgo maligno
 - 2.23 Plotino: Uno e emanação como ponte ao cristianismo
 - 2.24 Agostinho e Tomás: Platão e Aristóteles a serviço da fé
+
+### Da fogueira à razão: Renascimento, Iluminismo e ordens
+
 - 2.25 Idade Média: perseguição e monopólio do saber
 - 2.26 Da fogueira medieval à razão e às ordens
 - 2.27 Idade Média queima; Renascimento pinta; Iluminismo ilumina
 - 2.28 Renascimento: Ficino e Pico retomam o fio hermético
 - 2.29 Ordens e matemáticos: o eterno como língua de Deus
 - 2.30 Abraâmicos como herdeiros órfãos de Hermes
+
+### Explicações lúdicas deturpadas
+
 - 2.31 Deus virado fantasma: explicações lúdicas
 - 2.32 Anjos, demônios e “conexão direta” entre planos
+
+### Ciência ocupa o trono da metafísica
+
 - 2.33 Ciência vê o particular; metafísica, o geral
 - 2.34 Ciência prova o que não é; metafísica pensa o geral; Deus não se experiencia
 - 2.35 A ciência ocupa o trono da metafísica; o espírito atrasa
+
+### Críticos modernos e o retorno dos arquétipos
+
 - 2.36 Críticos da metafísica: Kant, Nietzsche, Schopenhauer
 - 2.37 Kant a Jung: a metafísica sob o olhar moderno
 - 2.38 Jung: arquétipos anteriores ao próprio homem
 - 2.39 Heidegger: esquecimento do ser
+
+### O problema da linguagem
+
 - 2.40 Um nome, vários sentidos; vários nomes, um sentido
 - 2.41 Saussure: só é porque não é
 - 2.42 A linguagem é o nó: Russell, Whitehead, Wittgenstein
 - 2.43 Busca de linguagem única: do Tractatus aos jogos
 - 2.44 O referente precisa existir antes do predicado
 - 2.45 Esta obra continua Russell e Whitehead: linguagem isomórfica
+
+### Do software à ontologia
+
 - 2.46 Do software à ontologia: a origem do autor
+
+### Resultado provisório: a metafísica em aberto
+
 - 2.47 Metafísica entre realismo e idealismo, sem acordo
 - 2.48 Avanços de todos; manual lógico da existência, de ninguém
 - 2.49 Resultado provisório: a metafísica segue em aberto

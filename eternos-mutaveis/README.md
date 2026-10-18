@@ -7,11 +7,13 @@
 Derivados: [`docs/`](docs/).  
 Apresentação visual do artigo: [`apresentacao.md`](apresentacao.md) · versão em bullets: [`bullets.md`](bullets.md) · PDF: [`bullets.pdf`](bullets.pdf).
 
-Em [`bullets.md`](bullets.md): uma seção **`# Bullets`** — capítulos com **capa (banner)** + títulos em lista (categorias nos caps 0 e 1). Ordem = storytelling. Descrições detalhadas de imagem foram removidas; histórico em commits anteriores se precisar reverter.
+Em [`bullets.md`](bullets.md): uma seção **`# Bullets`** — capítulos com **capa (banner)** + títulos em lista (categorias nos caps 0, 1 e 2). Ordem = storytelling. Descrições detalhadas de imagem foram removidas; histórico em commits anteriores se precisar reverter.
 
 **Cap. 0:** perguntas → excesso → preço → jornada → chave/ponte → objetivo no fecho.
 
 **Cap. 1:** encarna → sentidos → além da matéria → intelecto/metafísica → crença → civilização → saída.
+
+**Cap. 2:** busca começa → Oriente → hermético/Verbo → gregos → cristianismo/gnose → fogueira→razão → lúdico → ciência × metafísica → críticos/arquétipos → linguagem → software→ontologia → provisório.
 
 **Regenerar PDF:** converter `bullets.md` → HTML (markdown) e imprimir com Chrome headless (`--print-to-pdf=bullets.pdf`). Antes → depois: só existia o `.md`; o `.pdf` é derivado. Remover `bullets.pdf` reverte ao fluxo só-markdown.  
 Primeiro artigo completo: [`artigos/01-eternos-mutaveis.md`](artigos/01-eternos-mutaveis.md).  

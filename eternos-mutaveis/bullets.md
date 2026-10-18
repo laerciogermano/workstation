@@ -379,13 +379,21 @@ Leitores que **já sentem** que a separação e a matéria não fecham a conta, 
 
 ![Banner do capítulo 5](assets/banner-cap-5-erro-aristoteles.jpg)
 
+### Platão: dois mundos
+
 - 5.1 Platão: dois mundos — o que muda e o que não muda
 - 5.2 Platão acerta: separar o perfeito do mutável
+
+### Teoria da substância: o erro de Aristóteles
+
 - 5.3 Aristóteles cola o verbo ao objeto na substância
 - 5.4 Nega Platão, mas forma e matéria já é visão platônica
 - 5.5 Aristóteles como demiurgo gnóstico: carnificou o espírito
 - 5.6 Erro: prender o movimento ao elemento
 - 5.7 Ato puro e motor imóvel sustentam a prova de Tomás
+
+### Correção ontológica: verbo e objeto
+
 - 5.8 Objetos não possuem verbos; verbos possuem objetos
 - 5.9 Há dois: o ser constante e o devir mutável
 - 5.10 Se seguisse Platão: verbos no plano das ideias, Logos de Heráclito
@@ -401,6 +409,9 @@ Leitores que **já sentem** que a separação e a matéria não fecham a conta, 
 - 5.20 Atribuir o ser ao comportamento, não o comportamento ao ser
 - 5.21 Sem distinguir verbo e objeto, o símbolo acopla o que deveria separar
 - 5.22 Polimorfismo do símbolo sustenta o erro aristotélico
+
+### Maior erro da programação
+
 - 5.23 OOP cola comportamento e característica na mesma classe
 - 5.24 Na OOP a menor unidade é o objeto com estado e comportamento
 - 5.25 Maior erro da programação: substância aristotélica no código
@@ -411,6 +422,9 @@ Leitores que **já sentem** que a separação e a matéria não fecham a conta, 
 - 5.30 Identidade como ilusão: Navio de Teseu
 - 5.31 A saída: separar movimento eterno de estado mutável
 - 5.32 Software deve separar unidade de ação e unidade de estado
+
+### Ecos no cotidiano e na língua
+
 - 5.33 Acoplamento ecoa: imperativo acorrenta espírito à carne
 - 5.34 Foco nos objetos gera sofrimento; histórias possuem objetos
 - 5.35 A língua tradicional falha ao acoplar ação ao sujeito
@@ -422,13 +436,21 @@ Leitores que **já sentem** que a separação e a matéria não fecham a conta, 
 
 ![Banner do capítulo 6](assets/banner-cap-6-alfabeto-da-dualidade.jpg)
 
+### Acesso: dualidade e correspondência
+
 - 6.1 A realidade é dual; assim em cima como embaixo
+
+### Criação por contraste
+
 - 6.2 Criação por contraste: ponto branco no preto; verbo entre fotogramas
 - 6.3 Sem contraste não há percepção: bola preta no preto
 - 6.4 Para ser, é preciso não ser: frio e calor, luz e sombra
 - 6.5 Todo significado é referencial: o não ser define o ser
 - 6.6 Guerra dos opostos: tudo surge pelo contraste
 - 6.7 Existência surge na contraposição: presença pelo contraste
+
+### Pares da dualidade
+
 - 6.8 Pares fundamentais: ser × devir, movimento × estado, ato × potência
 - 6.9 Verbo × objeto, abstrato × sólido, espírito × corpo
 - 6.10 Isomórfico × polimórfico, imperativo × declarativo, causa × efeito
@@ -437,6 +459,9 @@ Leitores que **já sentem** que a separação e a matéria não fecham a conta, 
 - 6.13 O eterno é perfeito porque não muda; o mutável muda porque é imperfeito
 - 6.14 Ser não pode deixar de ser; devir pode deixar de vir a ser
 - 6.15 Ser = movimento imutável; estado = o transitório
+
+### Ontologia: história, movimento e abstração
+
 - 6.16 A menor unidade da realidade é a história
 - 6.17 Estado é história condensada; estória (padrão) × história (instância)
 - 6.18 Porta: fechada → abrir → aberta; verbos dentro de verbos
@@ -458,6 +483,9 @@ Leitores que **já sentem** que a separação e a matéria não fecham a conta, 
 - 6.34 O navio é o critério na história, não as tábuas
 - 6.35 Formas não se criam nem se destroem: arquétipos eternos
 - 6.36 Melodia: identidade atemporal independente dos instrumentos
+
+### Logos, Deus e matéria
+
 - 6.37 Logos: ordem entre os verbos; tudo é isomórfico
 - 6.38 Deus como Verbo; céu e inferno como estados de consciência
 - 6.39 Deus é o próprio movimento: Demiurgo polimórfico, o Verbo
@@ -470,6 +498,9 @@ Leitores que **já sentem** que a separação e a matéria não fecham a conta, 
 - 6.46 Verbos têm compatibilidade; a mudança de estado é o tempo
 - 6.47 Espírito único isomórfico; corpos polimórficos da mesma estrutura
 - 6.48 Espírito não se cria nem se destrói; ver o outro como a si
+
+### Axiomas finais: mônada e cadeia
+
 - 6.49 Imperativo: controle no sujeito; declarativo: inversão de controle
 - 6.50 O verbo é fractal; a trindade é cortina sobre a dualidade
 - 6.51 Mundo da Verdade (padrões) × Mundo da Existência (manifestações)
@@ -483,12 +514,17 @@ Leitores que **já sentem** que a separação e a matéria não fecham a conta, 
 
 ![Banner do capítulo 7](assets/banner-cap-7-superacao-adamica.jpg)
 
+### Resolução cruzada e superação adâmica
+
 - 7.1 Objetivo: libertar e viver em harmonia com a própria identidade
 - 7.2 Resolução cruzada: existência, filosofia, espírito e software
 - 7.3 A mensagem remove os véus e mostra a face de Deus
 - 7.4 Superação adâmica: da visão vertical de objetos ao fluxo horizontal
 - 7.5 Histórias são padrões eternos; objetos, personagens mutáveis
 - 7.6 Ajustar as lentes melhora código, língua e visão do espírito
+
+### Software sob as regras eternas
+
 - 7.7 Software sob regras eternas: menos custo, mais qualidade
 - 7.8 Separar imutável de mutável: software sólido
 - 7.9 Reutilizar histórias eternas com elementos diferentes
@@ -497,14 +533,23 @@ Leitores que **já sentem** que a separação e a matéria não fecham a conta, 
 - 7.12 Separe roteiros e objetos; catálogo de estórias reutilizáveis
 - 7.13 Para bom software, é preciso conhecer filosofia
 - 7.14 Conhecer o plano dos verbos é conhecer as regras do jogo
+
+### De ator a autor
+
 - 7.15 Seja o autor: escolher o papel interrompe os ciclos
 - 7.16 Observador: você não é o ator nem a mente; consciência eterna
 - 7.17 Equilíbrio: morte do ego, eterno presente, de ator a autor
 - 7.18 Vencer o desejo cíclico: acompanhar as fases que vão e voltam
+
+### Fases da perfeição e da imperfeição
+
 - 7.19 Armadilha da perfeição: superioridade e nova queda
 - 7.20 Fase da imperfeição: condenar o outro é condenar-se
 - 7.21 Perfeição é ato de aperfeiçoar, não resultado final
 - 7.22 Equilíbrio: nem tanto, nem tão pouco; excesso é falta
+
+### Código de conduta
+
 - 7.23 Um só mandamento: ver o outro como a si
 - 7.24 Misericórdia: a outra face; vingança real é perdoar
 - 7.25 Você lida com situações, não com pessoas; todos sofrem
@@ -517,11 +562,17 @@ Leitores que **já sentem** que a separação e a matéria não fecham a conta, 
 - 7.32 Em tudo que focar, cresce; acoplamento e excesso serão punidos
 - 7.33 Lógica inversa: pequeno é grande; renúncia é vitória
 - 7.34 Faça do presente a eternidade: cada ato é plantio
+
+### Prática e Flow
+
 - 7.35 Prática: ambiente, plano, mente, tempo diário para lembrar
 - 7.36 Tenha o plano, veja o plano, siga o plano; o próximo passo importa
 - 7.37 Estado de Flow: eliminar o que não é essencial ao fluxo
 - 7.38 Diário Flow: desenhar o plano; próximo estado liga o próximo movimento
 - 7.39 Observe histórias na natureza; o estado define o próximo movimento
+
+### Experimento e fecho
+
 - 7.40 Experimento: se vivesse todas as vidas, o que mudaria hoje?
 - 7.41 Fecho: as perguntas da abertura respondidas; a verdade liberta
 

@@ -383,7 +383,7 @@ Leitores que **já sentem** que a separação e a matéria não fecham a conta, 
 ### Platão: dois mundos
 
 - 5.1 Platão: dois mundos — o que muda e o que não muda
-- 5.2 Platão acerta: separar o perfeito do mutável
+- 5.2 Platão acerta: separar o eterno do mutável
 
 ### Teoria da substância: o erro de Aristóteles
 

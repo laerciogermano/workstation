@@ -238,21 +238,35 @@ Leitores que **já sentem** que a separação e a matéria não fecham a conta, 
 
 ![Banner do capítulo 3](assets/banner-cap-3-inferno-ciclico.jpg)
 
+### Mazelas do analfabetismo espiritual
+
 - 3.1 Problemas nascem da forma deturpada de ver a realidade
 - 3.2 O analfabetismo espiritual fere o indivíduo, a família e a sociedade
 - 3.3 Violência e desigualdade nascem da ignorância
+
+### Baile de máscaras e excesso sem base
+
 - 3.4 Baile de máscaras: quem finge saber confunde mentes
 - 3.5 Máscaras + manada: confiança confundida com verdade
 - 3.6 Excesso de opções e crenças sem bússola lógica
+
+### O homem como autômato
+
 - 3.7 Crença deturpada gera comportamento torto
 - 3.8 Autômato: crença, DNA e ambiente empurram a ação
 - 3.9 Livre-arbítrio ilusório: não se escolhe o que se acredita
 - 3.10 O universo opera como um grande autômato
+
+### Identidade ilusória
+
 - 3.11 O ego nasce da separação do todo na infância
 - 3.12 A identidade vista como linha reta é ilusão
 - 3.13 Não existe identidade fixa: tudo muda a cada instante
 - 3.14 Se os estados mudam, somos muitos — não um
 - 3.15 O cérebro reinicia em pulsos e ignora o comum
+
+### Dialética e esquecimento: desejo e tédio
+
 - 3.16 Memória limitada: desejo e tédio em círculo
 - 3.17 Desejo, posse, hábito, tédio, novo desejo: o ciclo
 - 3.18 Desejo é medo do oposto; o pêndulo começa no medo
@@ -261,17 +275,26 @@ Leitores que **já sentem** que a separação e a matéria não fecham a conta, 
 - 3.21 Dialética como perda de memória: a mosca que volta
 - 3.22 Conto da mosca: lembrar é poder; uma decisão quebra o ciclo
 - 3.23 Sem memória, o ciclo é eterno: mosca e homem em loop
+
+### Inferno cíclico: atores em loop
+
 - 3.24 Inferno cíclico: atores repetindo os mesmos erros
 - 3.25 O ator carrega o carma dos personagens
 - 3.26 Futuro = passado com novos atores
 - 3.27 Sísifo: saco sem fundo; trabalhar só para pagar contas
 - 3.28 Querer ser especial cega para os ciclos já conhecidos
 - 3.29 Envelhecer encurta o tempo sentido: mais repetição
+
+### Céu, inferno e a dor como justiceira
+
 - 3.30 Céu e inferno aqui e agora; o mal ao outro é a si
 - 3.31 O mal é a mente desordenada, não o mundo
 - 3.32 Sem dor não há valor: a dor como justiceira
 - 3.33 A natureza é o manual de Deus: dor tem causa e antídoto
 - 3.34 Vencer o ciclo: ir na correnteza; tudo passa e retorna
+
+### Produtos deturpados e dor do software
+
 - 3.35 Dor do software: manutenção cara e OOP centrada em objetos
 - 3.36 Software começa rápido e depois não escala
 - 3.37 Manutenção consome ~80%: criar é fácil, manter é difícil

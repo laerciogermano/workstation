@@ -92,9 +92,16 @@ export function isValidProfileName(name) {
   return true;
 }
 
+/** Card em destaque: nome bem acima do Connect (~187px). Lista comum: ~0–80px. */
+const NAME_ABOVE_ACTION_PX = 220;
+
 export function pickNameAboveAction(elements, act) {
   const band = elements.filter(
-    (e) => e.y >= act.y - 140 && e.y <= act.y + 20 && e.x < 420 && e.y > 160,
+    (e) =>
+      e.y >= act.y - NAME_ABOVE_ACTION_PX &&
+      e.y <= act.y + 20 &&
+      e.x < 420 &&
+      e.y > 160,
   );
   /** @type {{ name: string, x: number, y: number, score: number }[]} */
   const scored = [];

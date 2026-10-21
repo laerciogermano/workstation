@@ -709,15 +709,18 @@ async function main() {
   const name = String(profile.name || "").trim();
   if (!name) throw new Error("perfil sem name");
   console.log(`   name=${name}`);
-  // Busca LinkedIn (Search/Show all/People) desligada — só deep link.
-  // if (!fromProfile) console.log(`   query: ${typeQueryFromProfile(profile)}`);
+  if (!fromProfile) {
+    console.log(`   query: ${typeQueryFromProfile(profile)}`);
+  } else {
+    console.log("   modo --from-profile (deep link)");
+  }
 
   const stamp = new Date().toISOString().replace(/[:.]/g, "-");
   const outDir = resolve(ROOT, "screenshots", "login-extract-profile-detail", stamp);
   mkdirSync(outDir, { recursive: true });
   writeFileSync(
     join(outDir, "source-profile.json"),
-    JSON.stringify({ ...profile, fromProfile: true, profileUrlArg }, null, 2),
+    JSON.stringify({ ...profile, fromProfile, profileUrlArg }, null, 2),
     "utf8",
   );
   console.log(`saida: ${outDir}`);
@@ -726,18 +729,20 @@ async function main() {
   const { serial } = await provisionEmulator(cfg);
   console.log(`   OK ${serial}`);
 
-  const openedName = name;
+  let openedName = name;
+  /** @type {string|null} */
+  let knownProfileUrl = null;
 
-  /*
-  // --- busca LinkedIn (comentada) ---
   if (!fromProfile) {
     console.log("3) Remover apps em execução…");
     stopAllApps(serial, cfg.apps);
     key({ serial, code: "KEYCODE_HOME" });
     await sleep(500);
+
     console.log("4) Iniciar LinkedIn…");
     await launch({ serial, package: linkedinPkg });
     await sleep(WAIT_AFTER_LINKEDIN_MS);
+
     console.log("5) Digitar → Show all → People → 1ª pessoa…");
     await ensureSearchFocused(serial);
     await clearSearchField(serial);
@@ -747,21 +752,20 @@ async function main() {
     const opened = await openFirstPerson(serial, { outDir });
     openedName = String(opened?.name || name).trim();
     await sleep(WAIT_AFTER_PROFILE_MS);
+  } else {
+    console.log("3) Abrir perfil direto (deep link)…");
+    knownProfileUrl =
+      normalizeLinkedInProfileUrl(profileUrlArg) ||
+      (await fetchStoredProfileUrl(profileId));
+    if (!knownProfileUrl) {
+      throw new Error(
+        "--from-profile exige --url https://www.linkedin.com/in/… (ou profileUrl já salvo)",
+      );
+    }
+    openProfileByUrl(serial, linkedinPkg, knownProfileUrl);
+    await sleep(WAIT_AFTER_DEEPLINK_MS);
+    console.log("4–5) skip busca (deep link)");
   }
-  */
-
-  console.log("3) Abrir perfil direto (deep link)…");
-  let knownProfileUrl =
-    normalizeLinkedInProfileUrl(profileUrlArg) ||
-    (await fetchStoredProfileUrl(profileId));
-  if (!knownProfileUrl) {
-    throw new Error(
-      "passe --url https://www.linkedin.com/in/… (ou profileUrl já salvo na API)",
-    );
-  }
-  openProfileByUrl(serial, linkedinPkg, knownProfileUrl);
-  await sleep(WAIT_AFTER_DEEPLINK_MS);
-  console.log("4–5) skip busca (deep link)");
 
   console.log("6) ⋯ → Share via → Copy → POST URL…");
   let profileUrl = null;

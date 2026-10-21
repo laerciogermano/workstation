@@ -408,7 +408,24 @@ async function openFirstPerson(serial, opts = {}) {
       console.log(
         `   sugestões: ${suggestions.map((s) => `${s.name}@y${s.y}`).join(" | ") || "(nenhuma)"}`,
       );
-      const pick = cards[0] || suggestions[0] || null;
+      const want = sanitizeSearchText(
+        opts.profile?.name || opts.nameHint || "",
+      ).toLowerCase();
+      const wantFirst = want.split(/\s+/).filter(Boolean)[0] || "";
+      const scoreName = (c) => {
+        const n = sanitizeSearchText(c?.name || "").toLowerCase();
+        if (!want || !n) return 0;
+        if (n === want) return 3;
+        if (want.length >= 5 && n.includes(want)) return 2;
+        if (wantFirst && n.startsWith(wantFirst)) return 1;
+        return 0;
+      };
+      const ranked = [...cards, ...suggestions].sort(
+        (a, b) => scoreName(b) - scoreName(a) || Number(a.y) - Number(b.y),
+      );
+      // Prefere match do nome; senão 1ª aparição (menor y).
+      const pick =
+        ranked.find((c) => scoreName(c) > 0) || ranked[0] || null;
 
       if (pick) {
         // Tap no nome (esquerda), não em Current:/cargo à direita.

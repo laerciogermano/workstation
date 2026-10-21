@@ -143,7 +143,9 @@ Script [`scripts/login-extract-profiles.js`](scripts/login-extract-profiles.js) 
 | See/Show all | `See all results` / `Show all results` (fallback `See all` / `Show all`) |
 
 1. `stop` apps + `launch` → `waitForText("Search")` → tap → `comprador` → `waitForText(See/Show all)` (8s com teclado; se timeout → `KEYCODE_BACK` + wait 30s) → tap
-2. Loop: `extract` → cards no padrão → `onProfile` → scroll curto (280 / 900ms) até o **fim do scroll** (SHA1 do frame igual 3× seguidas)
+2. Loop: `extract` → cards no padrão → `onProfile` → scroll curto (280 / 900ms) até o **fim do scroll**: (a) sem cards novos + fingerprint OCR da lista igual 2×, ou (b) SHA1 do frame igual 2×. Ao terminar, `process.exit(0)`.
+
+**Antes → depois (fim do scroll):** só SHA1 do frame 3× (falhava com UI animada e o processo não parava) → conteúdo OCR estável sem novos + frame, 2×, e exit explícito. Rollback: só `frameHash` com `SCROLL_END_STABLE_NEEDED = 3` e sem `process.exit(0)`.
 3. Callback: objeto `{ name, title, level, connection, city, mutualConnections, current, past }`
 4. A cada perfil novo regrava `screenshots/login-extract-profiles/<stamp>/profiles.json` (array acumulado no mesmo formato do log). Também grava `profile-NNN.json` completo. Rollback: apagar a pasta `<stamp>`.
 5. Se `PROFILES_API_URL` estiver definida (ex. `http://localhost:3000`), cada perfil também é enviado em `POST /profiles` para [`connectmax/vendas/api`](../../connectmax/vendas/api/README.md). Sem a env, só JSON local.

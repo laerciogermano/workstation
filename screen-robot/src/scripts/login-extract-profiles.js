@@ -38,7 +38,8 @@ const SCROLL_DISTANCE = 280;
 const SCROLL_BURST = 1;
 const MAX_PROFILES = 500;
 const MAX_ROUNDS = 500;
-const SCROLL_END_STABLE_NEEDED = 3;
+/** Rodadas seguidas sem avanço (mesmo conteúdo OCR / frame) → fim. */
+const SCROLL_END_STABLE_NEEDED = 2;
 const OCR_ENGINE = process.env.SCREEN_ROBOT_OCR || "macos-vision";
 /** Base da API Nest (ex.: http://localhost:3000). Vazio = só JSON local. */
 const PROFILES_API_URL = (process.env.PROFILES_API_URL || "").replace(/\/$/, "");
@@ -177,6 +178,24 @@ async function frameHash(serial) {
   return createHash("sha1").update(readFileSync(path)).digest("hex");
 }
 
+/** Fingerprint estável da lista visível (keys dos cards; senão textos OCR). */
+function contentFingerprint(els) {
+  const keys = profilesFromExtract(els, { engine: OCR_ENGINE })
+    .map((p) => p.key)
+    .filter(Boolean)
+    .sort()
+    .join("\n");
+  if (keys) {
+    return createHash("sha1").update(keys).digest("hex");
+  }
+  const texts = (els || [])
+    .map((e) => String(e?.text || "").trim().toLowerCase())
+    .filter(Boolean)
+    .sort()
+    .join("\n");
+  return createHash("sha1").update(texts).digest("hex");
+}
+
 /**
  * Scroll com retry: INJECT_EVENTS costuma aparecer com overlay / app sem foco.
  * Recupera com BACK + launch LinkedIn.
@@ -218,7 +237,9 @@ async function extractProfilesLoop(serial, outDir, opts = {}) {
   /** @type {object[]} linhas limpas em profiles.json */
   const rows = [];
   const seen = new Set();
-  let stableEnd = 0;
+  let contentStable = 0;
+  let frameStable = 0;
+  let prevContentFp = null;
   let prevHash = await frameHash(serial);
   writeProfilesJson(outDir, rows);
 
@@ -241,9 +262,9 @@ async function extractProfilesLoop(serial, outDir, opts = {}) {
       "utf8",
     );
 
-    const fresh = profilesFromExtract(els, { engine: OCR_ENGINE }).filter(
-      (p) => !seen.has(p.key),
-    );
+    const parsed = profilesFromExtract(els, { engine: OCR_ENGINE });
+    const fresh = parsed.filter((p) => !seen.has(p.key));
+    const contentFp = contentFingerprint(els);
     console.log(`   no padrão: ${fresh.length}`);
     if (fresh.length) {
       console.log(`   nomes: ${fresh.map((p) => p.name).join(" | ")}`);
@@ -277,6 +298,21 @@ async function extractProfilesLoop(serial, outDir, opts = {}) {
       });
     }
 
+    // Sem cards novos + mesma lista visível → não dá mais pra descer (útil quando o SHA do frame oscila).
+    if (fresh.length === 0 && prevContentFp != null && contentFp === prevContentFp) {
+      contentStable += 1;
+      console.log(
+        `   fim do scroll? conteúdo igual sem novos (${contentStable}/${SCROLL_END_STABLE_NEEDED})`,
+      );
+      if (contentStable >= SCROLL_END_STABLE_NEEDED) {
+        console.log("   fim: scroll não avança mais (conteúdo) — encerrando");
+        break;
+      }
+    } else {
+      contentStable = 0;
+      prevContentFp = contentFp;
+    }
+
     for (let b = 0; b < SCROLL_BURST; b++) {
       await safeScroll(serial, linkedinPkg);
       await sleep(SCROLL_DELAY_MS);
@@ -284,16 +320,16 @@ async function extractProfilesLoop(serial, outDir, opts = {}) {
 
     const nextHash = await frameHash(serial);
     if (nextHash === prevHash) {
-      stableEnd += 1;
+      frameStable += 1;
       console.log(
-        `   fim do scroll? frame igual (${stableEnd}/${SCROLL_END_STABLE_NEEDED})`,
+        `   fim do scroll? frame igual (${frameStable}/${SCROLL_END_STABLE_NEEDED})`,
       );
-      if (stableEnd >= SCROLL_END_STABLE_NEEDED) {
-        console.log("   fim: scroll não avança mais — encerrando");
+      if (frameStable >= SCROLL_END_STABLE_NEEDED) {
+        console.log("   fim: scroll não avança mais (frame) — encerrando");
         break;
       }
     } else {
-      stableEnd = 0;
+      frameStable = 0;
       prevHash = nextHash;
     }
   }
@@ -379,6 +415,7 @@ async function main() {
   writeProfilesJson(outDir, saved.map(profileRow));
   console.log(`OK — ${saved.length} perfis`);
   console.log(`profiles.json: ${join(outDir, "profiles.json")}`);
+  process.exit(0);
 }
 
 main().catch((e) => {

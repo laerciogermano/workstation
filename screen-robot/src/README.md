@@ -135,7 +135,9 @@ cd screen-robot/src
 PROFILES_API_URL=http://localhost:3000 npm run login-extract-profile-detail -- --id <uuid>
 ```
 
-Script [`scripts/login-extract-profile-detail.js`](scripts/login-extract-profile-detail.js) — **1 perfil** da base (`GET /profiles` filtrado por `--id`): Search → digita **só o nome** → **clica a 1ª sugestão** → **Share/URL no topo** → **scroll down até fim** (conteúdo/frame estável; máx. 40 páginas; sem scroll up) → `POST /profile-details` → **`process.exit(0)`**.
+Script [`scripts/login-extract-profile-detail.js`](scripts/login-extract-profile-detail.js) — **1 perfil** da base (`GET /profiles` filtrado por `--id`): Search → digita **nome + título limpo + cidade** (sem `%`/aspas/boolean; título de `title` ou cargo em `current`) → **clica a 1ª sugestão** → **Share/URL no topo** → **scroll down até fim** (conteúdo/frame estável; máx. 40 páginas; sem scroll up) → `POST /profile-details` → **`process.exit(0)`**.
+
+**Antes → depois (query):** só `name` → `sanitizeSearchText(name + title + city)`. Rollback: `return name` em `typeQueryFromProfile`.
 
 **Antes → depois (See all / clique):** See all + parser de cards Connect → sugestões do dropdown (`• 1st/2nd/3rd`), sempre a de menor `y` (sem reordenar por match de nome). Rollback: `submitSeeAll` + `profilesFromExtract` / `preferredName`+`nameMatchScore`.
 

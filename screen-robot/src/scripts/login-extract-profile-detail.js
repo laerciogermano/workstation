@@ -212,18 +212,47 @@ async function typeSearchQuery(serial, query) {
 }
 
 /**
- * Query de busca: só o nome (AND/empresa no mobile cai em Posts/Premium e atrapalha digitação).
- * Mantém booleanQueryForProfile só como referência no log.
+ * Texto seguro p/ busca LinkedIn mobile: só letras/números/espaço.
+ * Remove %, aspas, boolean e pontuação que quebra a pesquisa.
+ */
+function sanitizeSearchText(raw) {
+  return String(raw || "")
+    .normalize("NFKC")
+    .replace(/[%&|"'<>()[\]{}\\/*+=!?.;:@#^~`]/g, " ")
+    .replace(/[^\p{L}\p{N}\s]/gu, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+/** Título do cargo: `title` ou trecho antes de " at "/" @" em `current`. */
+function titleForSearch(profile) {
+  const direct = sanitizeSearchText(profile?.title);
+  if (direct) return direct;
+  const current = String(profile?.current || "").trim();
+  if (!current) return "";
+  const beforeAt = current.split(/\s+(?:at|@)\s+/i)[0];
+  return sanitizeSearchText(beforeAt);
+}
+
+/**
+ * Query: nome + título limpo + cidade (se houver). Sem % / boolean / especiais.
  */
 function typeQueryFromProfile(profile) {
-  const name = String(profile?.name || "").trim();
+  const name = sanitizeSearchText(profile?.name);
   if (!name) throw new Error("perfil sem name");
+  const title = titleForSearch(profile);
+  const city = sanitizeSearchText(profile?.city);
+  const parts = [name];
+  if (title && title.toLowerCase() !== name.toLowerCase()) parts.push(title);
+  if (city) parts.push(city);
+  const q = parts.join(" ").replace(/\s+/g, " ").trim();
   try {
     console.log(`   boolean ref: ${booleanQueryForProfile(profile)}`);
   } catch {
     /* ignore */
   }
-  return name;
+  console.log(`   query sanitize: ${q}`);
+  return q;
 }
 
 /**

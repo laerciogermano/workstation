@@ -39,15 +39,25 @@ export function parseProfilePageOcr(els, opts = {}) {
 
   for (const t of texts) {
     const key = t.replace(/\s+/g, " ").trim();
-    if (SECTION_RE.test(key)) {
-      const s = key.toLowerCase();
+    const low = key.toLowerCase();
+    // Âncora exata ou linha que começa com a seção (OCR costuma juntar).
+    let anchored = null;
+    if (SECTION_RE.test(key)) anchored = low;
+    else {
+      const m = low.match(/^(about|experience|education|skills)\b/);
+      if (m) anchored = m[1];
+    }
+    if (anchored) {
       section =
-        s === "about" ||
-        s === "experience" ||
-        s === "education" ||
-        s === "skills"
-          ? s
+        anchored === "about" ||
+        anchored === "experience" ||
+        anchored === "education" ||
+        anchored === "skills"
+          ? anchored
           : "other";
+      // se a linha tem mais texto além do título, guarda o resto
+      const rest = key.replace(/^(about|experience|education|skills)\b[:\s-]*/i, "").trim();
+      if (rest && buckets[section]) buckets[section].push(rest);
       continue;
     }
     if (buckets[section]) buckets[section].push(t);

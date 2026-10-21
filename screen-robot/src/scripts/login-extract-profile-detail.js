@@ -376,19 +376,33 @@ function readDeviceClipboard(serial) {
 
 /**
  * Share no perfil → Copy link / OCR da sheet com linkedin.com/in/…
+ * Sem tap aproximado (quebrava a tela do perfil).
  */
 async function captureProfileUrl(serial, outDir) {
   console.log("   capturar URL (Share)…");
+  // Volta ao topo do perfil antes do Share
+  for (let i = 0; i < 3; i++) {
+    try {
+      scroll({ serial, direction: "up", distance: SCROLL_DISTANCE });
+    } catch {
+      /* ignore */
+    }
+    await sleep(400);
+  }
+
   const shareQueries = [
-    "Share",
     "Share profile",
+    "Share via",
+    "Share",
     "Send profile",
     "More",
   ];
   let opened = false;
   for (const q of shareQueries) {
-    const hit = await findFirstByText(serial, q, { minScore: 0.7 });
-    if (!hit || hit.hit.y > 220) continue;
+    const hit = await findFirstByText(serial, q, { minScore: 0.68 });
+    if (!hit) continue;
+    // Share/More ficam no header ou no bloco de ações (não no feed baixo)
+    if (hit.hit.y > 520) continue;
     console.log(`   → ${q} "${hit.hit.text}" x=${hit.hit.x} y=${hit.hit.y}`);
     tapElement({ serial, x: hit.hit.x, y: hit.hit.y });
     opened = true;
@@ -396,10 +410,8 @@ async function captureProfileUrl(serial, outDir) {
     break;
   }
   if (!opened) {
-    // ícone share costuma estar no topo direito — tap aproximado
-    console.log("   Share OCR não achou — tap topo-direita");
-    tapElement({ serial, x: 500, y: 80 });
-    await sleep(1_500);
+    console.log("   Share/More não visível no OCR — URL fica null");
+    return null;
   }
 
   const sheetPng = join(outDir, "share-sheet.png");
@@ -428,8 +440,8 @@ async function captureProfileUrl(serial, outDir) {
 
   const copyHit = await findFirstByText(
     serial,
-    ["Copy", "Copy link", "Copy to clipboard", "Copy Link"],
-    { minScore: 0.7 },
+    ["Copy link", "Copy to clipboard", "Copy Link", "Copy"],
+    { minScore: 0.68 },
   );
   if (copyHit) {
     console.log(
@@ -441,7 +453,6 @@ async function captureProfileUrl(serial, outDir) {
     if (url) console.log(`   URL (clipboard): ${url}`);
   }
 
-  // fecha sheet se ainda aberta
   key({ serial, code: "KEYCODE_BACK" });
   await sleep(600);
   return url;
@@ -574,15 +585,7 @@ async function main() {
   const openedName = String(opened?.name || name).trim();
   await sleep(WAIT_AFTER_PROFILE_MS);
 
-  console.log("6) URL do perfil (Share)…");
-  let profileUrl = null;
-  try {
-    profileUrl = await captureProfileUrl(serial, outDir);
-  } catch (e) {
-    console.log(`   URL: ${e.message || e}`);
-  }
-
-  console.log("7) Extract + scroll na página…");
+  console.log("6) Extract + scroll na página…");
   /** @type {object[]} */
   const allEls = [];
   for (let i = 0; i <= PROFILE_SCROLLS; i++) {
@@ -607,10 +610,17 @@ async function main() {
   }
 
   const parsed = parseProfilePageOcr(allEls, { nameHint: openedName });
-  if (!profileUrl && parsed.profileUrl) {
-    profileUrl = parsed.profileUrl;
-    console.log(`   URL (OCR páginas): ${profileUrl}`);
+
+  console.log("7) URL do perfil (Share)…");
+  let profileUrl = parsed.profileUrl || null;
+  try {
+    const fromShare = await captureProfileUrl(serial, outDir);
+    if (fromShare) profileUrl = fromShare;
+  } catch (e) {
+    console.log(`   URL: ${e.message || e}`);
   }
+  if (profileUrl) console.log(`   URL final: ${profileUrl}`);
+  else console.log("   URL final: (não obtida)");
 
   const payload = {
     profileId,

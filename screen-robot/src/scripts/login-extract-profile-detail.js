@@ -46,8 +46,6 @@ const SEE_ALL_QUERIES = [
   "See all",
   "Show all",
 ];
-const PEOPLE_QUERIES = ["People"];
-
 function loadConfig(path) {
   const abs = resolve(path);
   if (!existsSync(abs)) throw new Error(`Config não encontrada: ${abs}`);
@@ -175,26 +173,6 @@ async function submitSeeAll(serial) {
   await sleep(WAIT_AFTER_SEARCH_MS);
 }
 
-async function maybeTapPeople(serial, opts = {}) {
-  const attempts = opts.attempts ?? 4;
-  for (let attempt = 1; attempt <= attempts; attempt++) {
-    const hit = await findFirstByText(serial, PEOPLE_QUERIES, {
-      minScore: 0.7,
-    });
-    if (hit && hit.hit.y <= 220) {
-      console.log(
-        `   → People "${hit.hit.text}" x=${hit.hit.x} y=${hit.hit.y}`,
-      );
-      tapElement({ serial, x: hit.hit.x, y: hit.hit.y });
-      await sleep(1_800);
-      return true;
-    }
-    console.log(`   People chip não visto (${attempt}/${attempts})`);
-    await sleep(800);
-  }
-  return false;
-}
-
 /** Mobile LinkedIn: aspas da booleana viram lixo (%22) no campo — tipar sem aspas. */
 function typeQueryFromProfile(profile) {
   return booleanQueryForProfile(profile).replace(/"/g, "");
@@ -260,19 +238,6 @@ async function openProfileByName(serial, name, opts = {}) {
           "utf8",
         );
         console.log(`   → ${listPng}`);
-      }
-      const peopleEl = els.find(
-        (e) =>
-          /^people$/i.test(String(e?.text || "").trim()) &&
-          Number(e.y) <= 220,
-      );
-      if (peopleEl?.x != null) {
-        console.log(
-          `   → People (fallback OCR) x=${peopleEl.x} y=${peopleEl.y}`,
-        );
-        tapElement({ serial, x: peopleEl.x, y: peopleEl.y });
-        await sleep(1_800);
-        continue;
       }
       const cards = profilesFromExtract(els, { engine: OCR_ENGINE });
       let best = null;
@@ -433,11 +398,7 @@ async function main() {
   await sleep(1_000);
   await submitSeeAll(serial);
   await sleep(1_500);
-  const people = await maybeTapPeople(serial, { attempts: 5 });
-  if (!people) {
-    console.log("   People chip não visto — seguindo na lista atual");
-  }
-  await sleep(1_200);
+  // Busca direta na lista de resultados (sem tap em People).
   await openProfileByName(serial, name, { outDir });
   await sleep(WAIT_AFTER_PROFILE_MS);
 

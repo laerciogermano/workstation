@@ -144,7 +144,7 @@ Script [`scripts/login-extract-profile-detail.js`](scripts/login-extract-profile
 
 **Antes → depois (People):** Show all → 1º → Show all → People → 1º. Rollback: remover `tapPeopleChip`.
 
-**Antes → depois (query):** só `name` / espaços → `parts.join(" AND ")` com `title|current|past|city`; sanitize ASCII. Rollback: `return name`.
+**Antes → depois (query):** `AND` entre campos → só espaços (`nome title current past city`); sanitize ASCII. Rollback: `parts.join(" AND ")`.
 
 **Antes → depois (See all / clique):** See all + parser de cards Connect → sugestões do dropdown (`• 1st/2nd/3rd`), sempre a de menor `y` (sem reordenar por match de nome). Rollback: `submitSeeAll` + `profilesFromExtract` / `preferredName`+`nameMatchScore`.
 

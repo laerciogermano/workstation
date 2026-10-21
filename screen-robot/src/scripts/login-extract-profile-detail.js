@@ -214,8 +214,7 @@ function sanitizeSearchText(raw) {
 const SEARCH_PROFILE_FIELDS = ["title", "current", "past", "city"];
 
 /**
- * Query: `Nome AND titulo AND current AND past AND cidade`
- * (só partes definidas; sem level/connection/mutual).
+ * Query: nome + title + current + past + city (só espaços; sem AND/%/aspas).
  */
 function typeQueryFromProfile(profile) {
   const name = sanitizeSearchText(profile?.name);
@@ -232,7 +231,7 @@ function typeQueryFromProfile(profile) {
     parts.push(v);
   }
 
-  const q = parts.join(" AND ");
+  const q = parts.join(" ").replace(/\s+/g, " ").trim();
   try {
     console.log(`   boolean ref: ${booleanQueryForProfile(profile)}`);
   } catch {

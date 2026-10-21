@@ -210,14 +210,28 @@ function sanitizeSearchText(raw) {
     .trim();
 }
 
+/** Título: `title` ou cargo antes de " at "/" @" em `current`. */
+function titleForSearch(profile) {
+  const direct = sanitizeSearchText(profile?.title);
+  if (direct) return direct;
+  const current = String(profile?.current || "").trim();
+  if (!current) return "";
+  return sanitizeSearchText(current.split(/\s+(?:at|@)\s+/i)[0]);
+}
+
 /**
- * Query: só nome + cidade (espaços; sem title/current/past).
+ * Query: nome + cidade + título (nessa ordem; só espaços).
  */
 function typeQueryFromProfile(profile) {
   const name = sanitizeSearchText(profile?.name);
   if (!name) throw new Error("perfil sem name");
   const city = sanitizeSearchText(profile?.city);
-  const q = [name, city].filter(Boolean).join(" ").replace(/\s+/g, " ").trim();
+  const title = titleForSearch(profile);
+  const q = [name, city, title]
+    .filter(Boolean)
+    .join(" ")
+    .replace(/\s+/g, " ")
+    .trim();
   try {
     console.log(`   boolean ref: ${booleanQueryForProfile(profile)}`);
   } catch {

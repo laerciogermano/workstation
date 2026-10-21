@@ -212,8 +212,8 @@ async function typeSearchQuery(serial, query) {
 }
 
 /**
- * Texto seguro p/ busca LinkedIn mobile: só letras/números/espaço.
- * Remove %, aspas, boolean e pontuação que quebra a pesquisa.
+ * Texto de campo p/ busca: só letras/números/espaço.
+ * Remove %, aspas e pontuação — o AND fica só entre campos.
  */
 function sanitizeSearchText(raw) {
   return String(raw || "")
@@ -224,34 +224,35 @@ function sanitizeSearchText(raw) {
     .trim();
 }
 
-/** Título do cargo: `title` ou trecho antes de " at "/" @" em `current`. */
-function titleForSearch(profile) {
-  const direct = sanitizeSearchText(profile?.title);
-  if (direct) return direct;
-  const current = String(profile?.current || "").trim();
-  if (!current) return "";
-  const beforeAt = current.split(/\s+(?:at|@)\s+/i)[0];
-  return sanitizeSearchText(beforeAt);
-}
+/** Campos do perfil úteis na busca (definidos + pesquisáveis). */
+const SEARCH_PROFILE_FIELDS = ["title", "current", "past", "city"];
 
 /**
- * Query: nome + título limpo + cidade (se houver). Sem % / boolean / especiais.
+ * Query: `Nome AND titulo AND current AND past AND cidade`
+ * (só partes definidas; sem level/connection/mutual).
  */
 function typeQueryFromProfile(profile) {
   const name = sanitizeSearchText(profile?.name);
   if (!name) throw new Error("perfil sem name");
-  const title = titleForSearch(profile);
-  const city = sanitizeSearchText(profile?.city);
+
+  const seen = new Set([name.toLowerCase()]);
   const parts = [name];
-  if (title && title.toLowerCase() !== name.toLowerCase()) parts.push(title);
-  if (city) parts.push(city);
-  const q = parts.join(" ").replace(/\s+/g, " ").trim();
+  for (const key of SEARCH_PROFILE_FIELDS) {
+    const v = sanitizeSearchText(profile?.[key]);
+    if (!v) continue;
+    const low = v.toLowerCase();
+    if (seen.has(low)) continue;
+    seen.add(low);
+    parts.push(v);
+  }
+
+  const q = parts.join(" AND ");
   try {
     console.log(`   boolean ref: ${booleanQueryForProfile(profile)}`);
   } catch {
     /* ignore */
   }
-  console.log(`   query sanitize: ${q}`);
+  console.log(`   query: ${q}`);
   return q;
 }
 

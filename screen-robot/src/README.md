@@ -128,6 +128,22 @@ node --test --test-timeout=180000 lib/extract.linkedin-fixtures.test.js
 
 ---
 
+## login-extract-profile-detail
+
+```bash
+cd screen-robot/src
+PROFILES_API_URL=http://localhost:3000 npm run login-extract-profile-detail -- --id <uuid>
+```
+
+Script [`scripts/login-extract-profile-detail.js`](scripts/login-extract-profile-detail.js) — **1 perfil** da base (`GET /profiles` filtrado por `--id`): Search booleana → abre perfil → scroll ×3 + extract → `POST /profile-details`.
+
+Saída: `screenshots/login-extract-profile-detail/<stamp>/` (`page-NN.png`, `detail.json`). Parser: [`lib/linkedin-profile-page.js`](lib/linkedin-profile-page.js).
+
+**Antes → depois:** visit só gravava OCR local (`login-visit-profiles`) → detalhe estruturado no Postgres.  
+**Rollback:** não rode o script; remova tabela/`ProfileDetailsModule` na API.
+
+---
+
 ## login-extract-profiles
 
 ```bash

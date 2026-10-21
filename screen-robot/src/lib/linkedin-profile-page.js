@@ -16,11 +16,158 @@ const CHROME_RE =
 const DATE_RANGE_RE =
   /\b(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{4}\s*[-–]\s*(?:Present|(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{4})\b/i;
 
+const HEADER_STOP_RE =
+  /^(about|experience|education|skills|activity|open to work|featured|interests)\b/i;
+const LOCATION_RE =
+  /,\s*|brazil|brasil|minas|paulo|horizonte|campinas|remote|united states|portugal/i;
+const CONNECTIONS_RE = /^(\d[\d,]*)\s*connections?\b/i;
+const NAME_DEGREE_RE = /^(.*?)\s*[•·]\s*(1st|2nd|3rd\+?)\s*$/i;
+
+/**
+ * Cabeçalho do perfil (topo da página): nome, empresas, conexões, Connect/Message.
+ * Usa ordem por y quando disponível.
+ * @param {object[]} els
+ * @param {{ nameHint?: string }} [opts]
+ */
+export function parseProfileHeader(els, opts = {}) {
+  const nameHint = String(opts.nameHint || "")
+    .trim()
+    .toLowerCase();
+  const hintFirst = nameHint.split(/\s+/).filter(Boolean)[0] || "";
+
+  // Preferir y quando há coords (page-00); senão ordem do array.
+  const sorted = (Array.isArray(els) ? els : [])
+    .map((e) => ({
+      text: String(e?.text || "").replace(/\s+/g, " ").trim(),
+      y: Number(e?.y),
+    }))
+    .filter((e) => e.text)
+    .sort((a, b) => {
+      const ay = Number.isFinite(a.y) ? a.y : 1e9;
+      const by = Number.isFinite(b.y) ? b.y : 1e9;
+      if (ay !== by) return ay - by;
+      return 0;
+    });
+
+  let name = null;
+  let connectionDegree = null;
+  let location = null;
+  let connections = null;
+  /** @type {string[]} */
+  const companyLines = [];
+  /** @type {string[]} */
+  const mutualParts = [];
+  let canConnect = false;
+  let canMessage = false;
+  let pastName = false;
+
+  for (const { text: t } of sorted) {
+    if (HEADER_STOP_RE.test(t)) break;
+
+    const degInline = t.match(NAME_DEGREE_RE);
+    if (degInline) {
+      name = degInline[1].replace(/\s+/g, " ").trim();
+      connectionDegree = degInline[2];
+      pastName = true;
+      continue;
+    }
+
+    if (/^(1st|2nd|3rd\+?)$/i.test(t)) {
+      if (!connectionDegree) connectionDegree = t;
+      continue;
+    }
+
+    if (/connect/i.test(t) && !/connections?/i.test(t) && !/mutual/i.test(t)) {
+      canConnect = true;
+      continue;
+    }
+    if (/\bmessage\b/i.test(t) && !/send profile/i.test(t)) {
+      canMessage = true;
+      continue;
+    }
+
+    const conn = t.match(CONNECTIONS_RE);
+    if (conn) {
+      connections = `${conn[1].replace(/,/g, "")} connections`;
+      pastName = true;
+      continue;
+    }
+
+    if (/mutual/i.test(t) || (/^connections?$/i.test(t) && mutualParts.length)) {
+      mutualParts.push(t);
+      continue;
+    }
+
+    // nome sem bullet (só hint)
+    if (
+      !name &&
+      hintFirst &&
+      t.toLowerCase().includes(hintFirst) &&
+      t.length >= 5 &&
+      t.length <= 120 &&
+      !LOCATION_RE.test(t) &&
+      !/followers|open to/i.test(t)
+    ) {
+      name = t.replace(/\s*[•·].*$/, "").trim();
+      pastName = true;
+      const m = t.match(/\b(1st|2nd|3rd\+?)\b/i);
+      if (m) connectionDegree = m[1];
+      continue;
+    }
+
+    if (LOCATION_RE.test(t) && t.length <= 120 && !/connections?/i.test(t)) {
+      location = t;
+      pastName = true;
+      continue;
+    }
+
+    // linhas de empresa: entre nome e location (ou antes de connections)
+    if (
+      pastName &&
+      !location &&
+      !connections &&
+      t.length >= 3 &&
+      t.length <= 120 &&
+      !isChromeLine(t) &&
+      !/followers|mutual|show details|#opentowork/i.test(t) &&
+      !/^\d{1,2}:\d{2}/.test(t) &&
+      !/^search$/i.test(t)
+    ) {
+      companyLines.push(t);
+    }
+  }
+
+  let mutualConnections = null;
+  if (mutualParts.length) {
+    const joined = mutualParts.join(" ").replace(/\s+/g, " ").trim();
+    mutualConnections = /mutual/i.test(joined)
+      ? joined
+      : `${joined} mutual connections`;
+  }
+
+  return {
+    name,
+    company: companyLines.length ? companyLines.join("\n") : null,
+    location,
+    connections,
+    mutualConnections,
+    connectionDegree,
+    canConnect,
+    canMessage,
+  };
+}
+
 /**
  * @param {object[]} els elementos do extract ({ text, x, y })
  * @returns {{
+ *   name: string|null,
+ *   company: string|null,
  *   headline: string|null,
  *   location: string|null,
+ *   connections: string|null,
+ *   mutualConnections: string|null,
+ *   canConnect: boolean,
+ *   canMessage: boolean,
  *   about: string|null,
  *   experience: string|null,
  *   education: string|null,
@@ -37,6 +184,10 @@ export function parseProfilePageOcr(els, opts = {}) {
   const texts = (Array.isArray(els) ? els : [])
     .map((e) => String(e?.text || "").trim())
     .filter(Boolean);
+
+  // Cabeçalho só do 1º frame (evita misturar y de páginas do scroll).
+  const headerEls = Array.isArray(opts.headerEls) ? opts.headerEls : els;
+  const header = parseProfileHeader(headerEls, opts);
 
   /** @type {Record<string, string[]>} */
   const buckets = {
@@ -82,41 +233,45 @@ export function parseProfilePageOcr(els, opts = {}) {
     return cleaned.length ? cleaned.join("\n") : null;
   };
 
+  // headline = cargo (não empresa). Evita pegar "Rede Mater Dei" como headline.
   let headline = null;
-  let location = null;
-  let connectionDegree = null;
+  const companySet = new Set(
+    String(header.company || "")
+      .split("\n")
+      .map((s) => s.toLowerCase())
+      .filter(Boolean),
+  );
   const others = buckets.other;
-  for (let i = 0; i < others.length; i++) {
-    const t = others[i];
+  for (const t of others) {
     const low = t.toLowerCase();
-    if (/\b(1st|2nd|3rd\+?)\b/i.test(t) && !connectionDegree) {
-      const m = t.match(/\b(1st|2nd|3rd\+?)\b/i);
-      if (m) connectionDegree = m[1];
-    }
+    if (companySet.has(low)) continue;
+    if (header.name && low === header.name.toLowerCase()) continue;
     if (nameHint && low.includes(nameHint.split(/\s+/)[0])) continue;
     if (/^(connect|message|pending|follow|more|1st|2nd|3rd)/i.test(t)) continue;
-    if (!headline && t.length >= 8 && t.length <= 180) {
+    if (CONNECTIONS_RE.test(t) || /mutual/i.test(t)) continue;
+    if (LOCATION_RE.test(t)) continue;
+    if (isChromeLine(t)) continue;
+    // cargo típico: sem vírgula de cidade, não é só empresa repetida
+    if (!headline && t.length >= 8 && t.length <= 180 && !/brazil|brasil/i.test(t)) {
       headline = t;
-      continue;
-    }
-    if (
-      !location &&
-      headline &&
-      /,\s*|brazil|brasil|minas|paulo|horizon|campinas|remote/i.test(t) &&
-      t.length <= 120
-    ) {
-      location = t;
+      break;
     }
   }
 
   return {
+    name: header.name,
+    company: header.company,
     headline,
-    location,
+    location: header.location,
+    connections: header.connections,
+    mutualConnections: header.mutualConnections,
+    canConnect: header.canConnect,
+    canMessage: header.canMessage,
     about: join(buckets.about),
     experience: formatExperienceBlocks(buckets.experience),
     education: join(buckets.education),
     skills: join(buckets.skills),
-    connectionDegree,
+    connectionDegree: header.connectionDegree,
     profileUrl: findLinkedInProfileUrl(texts),
     texts,
   };

@@ -868,6 +868,8 @@ async function main() {
   console.log("7) Extract + scroll down até o fim…");
   /** @type {object[]} */
   const allEls = [];
+  /** @type {object[]|null} */
+  let headerEls = null;
   let contentStable = 0;
   let frameStable = 0;
   let prevContentFp = null;
@@ -879,6 +881,7 @@ async function main() {
     const els = await extractWithPng(serial, png);
     const contentFp = pageContentFingerprint(els);
     console.log(`   page-${pad}: ${els.length} els → ${png}`);
+    if (i === 0) headerEls = els;
     allEls.push(...els);
     writeFileSync(
       join(outDir, `page-${pad}.json`),
@@ -928,14 +931,22 @@ async function main() {
   }
 
   console.log("   fim do scroll — montando payload");
-  const parsed = parseProfilePageOcr(allEls, { nameHint: openedName });
+  const parsed = parseProfilePageOcr(allEls, {
+    nameHint: openedName,
+    headerEls: headerEls || allEls,
+  });
   if (!profileUrl && parsed.profileUrl) profileUrl = parsed.profileUrl;
 
   const payload = {
     profileId,
-    name: openedName,
+    name: parsed.name || openedName || profile.name || null,
+    company: parsed.company || null,
     headline: parsed.headline || profile.title || null,
     location: parsed.location || profile.city || null,
+    connections: parsed.connections || null,
+    mutualConnections: parsed.mutualConnections || null,
+    canConnect: parsed.canConnect ?? null,
+    canMessage: parsed.canMessage ?? null,
     profileUrl: profileUrl || null,
     connectionDegree: parsed.connectionDegree || profile.level || null,
     about: parsed.about,
@@ -953,7 +964,7 @@ async function main() {
   );
   console.log(`   → ${join(outDir, "detail.json")}`);
   console.log(
-    `   campos: headline=${!!payload.headline} about=${!!payload.about} exp=${!!payload.experience} edu=${!!payload.education} skills=${!!payload.skills} url=${payload.profileUrl || "-"}`,
+    `   campos: name=${payload.name || "-"} company=${!!payload.company} conn=${payload.connections || "-"} mutual=${!!payload.mutualConnections} connect=${payload.canConnect} msg=${payload.canMessage} headline=${!!payload.headline} about=${!!payload.about} exp=${!!payload.experience} edu=${!!payload.education} skills=${!!payload.skills} url=${payload.profileUrl || "-"}`,
   );
 
   console.log("8) POST /profile-details e encerrar…");

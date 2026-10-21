@@ -150,7 +150,7 @@ Script [`scripts/login-extract-profile-detail.js`](scripts/login-extract-profile
 
 **Antes → depois (People / digitar / URL):** ver histórico no git; chip People removido; query só `name` com verify OCR; Share sem tap cego.
 
-Saída: `screenshots/login-extract-profile-detail/<stamp>/` (`page-NN.png`, `detail.json`). Parser: [`lib/linkedin-profile-page.js`](lib/linkedin-profile-page.js).
+Saída: `screenshots/login-extract-profile-detail/<stamp>/` (`page-NN.png`, `detail.json`). Parser: [`lib/linkedin-profile-page.js`](lib/linkedin-profile-page.js) — **Experience** até Interests (blocos cargo/empresa/datas, sem More profiles / dups de scroll).
 
 **Antes → depois:** visit só gravava OCR local (`login-visit-profiles`) → detalhe estruturado no Postgres.  
 **Rollback:** não rode o script; remova tabela/`ProfileDetailsModule` na API.

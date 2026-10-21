@@ -226,14 +226,14 @@ function titleForSearch(profile) {
 }
 
 /**
- * Query: nome + cidade + título (nessa ordem; só espaços).
+ * Query: nome + 1ª palavra do título + cidade (nessa ordem; só espaços).
  */
 function typeQueryFromProfile(profile) {
   const name = sanitizeSearchText(profile?.name);
   if (!name) throw new Error("perfil sem name");
   const city = sanitizeSearchText(profile?.city);
   const title = titleForSearch(profile);
-  const q = [name, city, title]
+  const q = [name, title, city]
     .filter(Boolean)
     .join(" ")
     .replace(/\s+/g, " ")

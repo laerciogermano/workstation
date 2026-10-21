@@ -35,7 +35,8 @@ if (!process.env.OCR_MERGE_TIMEOUT_MS) {
 
 const WAIT_AFTER_LINKEDIN_MS = 5_000;
 const WAIT_AFTER_PROFILE_MS = 2_500;
-const WAIT_AFTER_TYPE_MS = 1_800;
+const WAIT_AFTER_TYPE_MS = 1_200;
+const WAIT_AFTER_ENTER_MS = 2_500;
 const CLEAR_DEL_COUNT = 40;
 /** Máximo de páginas OCR no perfil (safety). Fim real = conteúdo/frame estável. */
 const MAX_PROFILE_PAGES = 40;
@@ -272,7 +273,7 @@ function searchSuggestionsFromExtract(els) {
     const y = Number(e?.y);
     const x = Number(e?.x);
     if (!text || x == null || Number.isNaN(y)) continue;
-    if (y < LIST_MIN_Y || y > 520) continue; // barra / teclado
+    if (y < LIST_MIN_Y || y > 820) continue; // barra / teclado residual
     if (/^show all/i.test(text)) continue;
     if (!/•/.test(text) && !/\b(1st|2nd|3rd\+?)\b/i.test(text)) continue;
     const namePart = text.split(/•/)[0].replace(/\s+/g, " ").trim();
@@ -283,11 +284,18 @@ function searchSuggestionsFromExtract(els) {
   return out;
 }
 
+/** Submete a busca no campo focado (Enter). */
+async function submitSearchEnter(serial) {
+  console.log("   Enter (submeter busca)…");
+  key({ serial, code: "KEYCODE_ENTER" });
+  await sleep(WAIT_AFTER_ENTER_MS);
+}
+
 /**
- * Abre a 1ª pessoa que aparecer na pesquisa (dropdown) — sempre menor y.
+ * Abre a 1ª pessoa na lista pós-submit — sempre menor y.
  */
 async function openFirstPerson(serial, opts = {}) {
-  const attempts = opts.attempts ?? 5;
+  const attempts = opts.attempts ?? 8;
 
   for (let attempt = 1; attempt <= attempts; attempt++) {
     console.log(`   sugestões pesquisa (${attempt}/${attempts})…`);
@@ -341,7 +349,7 @@ async function openFirstPerson(serial, opts = {}) {
       }
 
       const sample = els
-        .filter((e) => Number(e.y) >= LIST_MIN_Y && Number(e.y) < 520)
+        .filter((e) => Number(e.y) >= LIST_MIN_Y && Number(e.y) < 820)
         .slice(0, 8)
         .map((e) => e.text)
         .join(" | ");
@@ -349,7 +357,7 @@ async function openFirstPerson(serial, opts = {}) {
     } catch (e) {
       console.log(`   lista: ${e.message || e}`);
     }
-    await sleep(1_200);
+    await sleep(1_500);
   }
   throw new Error("nenhuma pessoa na lista de resultados");
 }
@@ -579,11 +587,12 @@ async function main() {
   await launch({ serial, package: linkedinPkg });
   await sleep(WAIT_AFTER_LINKEDIN_MS);
 
-  console.log("5) Search + digitar + abrir 1ª pessoa (sem See all)…");
+  console.log("5) Search + digitar + Enter + 1ª pessoa…");
   await ensureSearchFocused(serial);
   await clearSearchField(serial);
   await typeSearchQuery(serial, query);
   await sleep(WAIT_AFTER_TYPE_MS);
+  await submitSearchEnter(serial);
   const opened = await openFirstPerson(serial, { outDir });
   const openedName = String(opened?.name || name).trim();
   await sleep(WAIT_AFTER_PROFILE_MS);

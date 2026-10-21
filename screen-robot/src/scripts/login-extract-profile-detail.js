@@ -822,13 +822,12 @@ async function main() {
     await launch({ serial, package: linkedinPkg });
     await sleep(WAIT_AFTER_LINKEDIN_MS);
 
-    console.log("5) Digitar → Show all → People → 1ª pessoa…");
+    console.log("5) Digitar → Show all → 1ª pessoa…");
     await ensureSearchFocused(serial);
     await clearSearchField(serial);
     await typeSearchQuery(serial, typeQueryFromProfile(profile));
     await submitShowAllResults(serial);
-    // People evita cair em Jobs; 1ª pessoa (não cargo/filtro).
-    await tapPeopleChip(serial);
+    // Nunca People — 1ª pessoa após Show all (não cargo/filtro/Jobs).
     const opened = await openFirstPerson(serial, { outDir, profile });
     openedName = String(opened?.name || name).trim();
     await sleep(WAIT_AFTER_PROFILE_MS);

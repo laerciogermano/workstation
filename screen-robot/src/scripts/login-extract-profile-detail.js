@@ -460,90 +460,129 @@ function pageContentFingerprint(els) {
   return createHash("sha1").update(texts).digest("hex");
 }
 
-/**
- * Botão ⋯ na linha Connect / Message / More (não o sino do header).
- * Preferência: OCR "Message" → tap à direita; senão uiautomator (menor clique à direita).
- */
-async function tapProfileMoreButton(serial) {
-  const msg = await findFirstByText(serial, ["Message"], { minScore: 0.75 });
-  if (msg && Number(msg.hit.y) > 400 && Number(msg.hit.y) < 750) {
-    const x = Math.min(520, Number(msg.hit.x) + 120);
-    const y = Number(msg.hit.y);
-    console.log(`   → ⋯ (à direita de Message) x=${x} y=${y}`);
-    tapElement({ serial, x, y });
-    return true;
-  }
-
+/** Largura física do display (px). */
+function displayWidth(serial) {
   try {
-    adb(serial, ["shell", "uiautomator", "dump", "/sdcard/uidump.xml"]);
-    const r = adb(serial, ["shell", "cat", "/sdcard/uidump.xml"]);
-    const xml = String(r.stdout || "");
-    /** @type {{ x1:number,y1:number,x2:number,y2:number }[]} */
-    const clicks = [];
-    for (const m of xml.matchAll(/<node ([^/]*?)\/>/g)) {
-      const attrs = m[1];
-      if (!/clickable="true"/.test(attrs)) continue;
-      const bm = attrs.match(/bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"/);
-      if (!bm) continue;
-      const x1 = Number(bm[1]);
-      const y1 = Number(bm[2]);
-      const x2 = Number(bm[3]);
-      const y2 = Number(bm[4]);
-      const w = x2 - x1;
-      // mesma linha Connect/Message: botão pequeno ⋯ à direita
-      if (y1 < 520 || y1 > 720) continue;
-      if (w > 120) continue;
-      if (x1 < 400) continue;
-      clicks.push({ x1, y1, x2, y2 });
-    }
-    clicks.sort((a, b) => b.x1 - a.x1 || a.y1 - b.y1);
-    if (clicks[0]) {
-      const c = clicks[0];
-      const x = Math.round((c.x1 + c.x2) / 2);
-      const y = Math.round((c.y1 + c.y2) / 2);
-      console.log(`   → ⋯ (linha Message) x=${x} y=${y}`);
-      tapElement({ serial, x, y });
-      return true;
-    }
-  } catch (e) {
-    console.log(`   uiautomator More: ${e.message || e}`);
+    const r = adb(serial, ["shell", "wm", "size"]);
+    const m = String(r.stdout || "").match(/(\d+)x(\d+)/);
+    if (m) return Number(m[1]);
+  } catch {
+    /* ignore */
   }
+  return 540;
+}
 
-  console.log("   fallback: tap ⋯ mesma linha Message (coords)");
-  tapElement({ serial, x: 492, y: 637 });
-  return true;
+/** Menu More aberto? (Share via / Send profile / Contact info). */
+async function moreMenuOpen(serial) {
+  return Boolean(
+    await findFirstByText(
+      serial,
+      [
+        "Share via..",
+        "Share via…",
+        "Share via",
+        "Send profile in a message",
+        "Contact info",
+        "About this member",
+      ],
+      { minScore: 0.6 },
+    ),
+  );
 }
 
 /**
- * ⋯ (ao lado de Message) → Share via → Copy → clipboard.
+ * Botão ⋯ à direita de Message (círculo ~width-48).
+ * Message.x+120 (≈468) acerta a borda e NÃO abre — usar ~492.
+ */
+async function tapProfileMoreButton(serial) {
+  const w = displayWidth(serial);
+  const msg = await findFirstByText(
+    serial,
+    ["Message", "1 Message"],
+    { minScore: 0.7 },
+  );
+  const y =
+    msg && Number(msg.hit.y) > 400 && Number(msg.hit.y) < 750
+      ? Number(msg.hit.y)
+      : 639;
+  // candidatos: canto direito da action row (⋯), depois um pouco à esquerda
+  const candidates = [
+    w - 48,
+    w - 36,
+    w - 60,
+    msg ? Math.min(w - 30, Number(msg.hit.x) + 145) : null,
+    492,
+  ].filter((x) => x != null);
+
+  const tried = new Set();
+  for (const raw of candidates) {
+    const x = Math.round(Number(raw));
+    if (tried.has(x) || x < 400) continue;
+    tried.add(x);
+    console.log(`   → ⋯ x=${x} y=${y}`);
+    tapElement({ serial, x, y });
+    await sleep(1_400);
+    if (await moreMenuOpen(serial)) return true;
+    console.log("   ⋯ sem menu — tentar outro x");
+  }
+  return false;
+}
+
+/** URL /in/… a partir de linhas OCR (pode vir partida em 2). */
+function urlFromOcrEls(els) {
+  const joined = (els || [])
+    .map((e) => String(e?.text || "").trim())
+    .filter(Boolean)
+    .join("")
+    .replace(/\s+/g, "");
+  return normalizeLinkedInProfileUrl(joined);
+}
+
+/**
+ * ⋯ → Share via → Copy → URL (clipboard ou OCR da sheet).
  * Não dá BACK se falhar no menu — evita voltar ao Search.
  */
 async function captureProfileUrl(serial, outDir) {
   console.log("   ⋯ → Share via → Copy…");
 
-  await tapProfileMoreButton(serial);
-  await sleep(1_600);
+  const opened = await tapProfileMoreButton(serial);
+  if (!opened) {
+    console.log("   ⋯ não abriu menu — permanece no perfil");
+    try {
+      await extract(
+        { serial, engine: OCR_ENGINE },
+        { outPath: join(outDir, "more-menu-fail.png") },
+      );
+    } catch {
+      /* ignore */
+    }
+    return null;
+  }
 
   // 2) Share via
   let shareVia = null;
   for (let attempt = 1; attempt <= 4; attempt++) {
     shareVia = await findFirstByText(
       serial,
-      ["Share via…", "Share via", "Share Via", "Share profile via"],
-      { minScore: 0.62 },
+      [
+        "Share via..",
+        "Share via…",
+        "Share via",
+        "Share Via",
+        "Share profile via",
+      ],
+      { minScore: 0.58 },
     );
     if (shareVia) break;
     console.log(`   Share via não visível (${attempt}/4)`);
-    await sleep(900);
+    await sleep(700);
   }
   if (!shareVia) {
     console.log("   Share via não encontrado — permanece no perfil (sem BACK)");
-    // fecha só o bottom sheet do More, se aberto
-    const sheetPngFail = join(outDir, "more-menu-fail.png");
     try {
       await extract(
         { serial, engine: OCR_ENGINE },
-        { outPath: sheetPngFail },
+        { outPath: join(outDir, "more-menu-fail.png") },
       );
     } catch {
       /* ignore */
@@ -557,19 +596,23 @@ async function captureProfileUrl(serial, outDir) {
   await sleep(1_800);
 
   const sheetPng = join(outDir, "share-via-sheet.png");
+  let sheetEls = [];
   try {
-    const els = await extract(
+    sheetEls = await extract(
       { serial, engine: OCR_ENGINE },
       { outPath: sheetPng },
     );
     writeFileSync(
       join(outDir, "share-via-sheet.json"),
-      JSON.stringify(els, null, 2),
+      JSON.stringify(sheetEls, null, 2),
       "utf8",
     );
   } catch (e) {
     console.log(`   share-via extract: ${e.message || e}`);
   }
+
+  let url = urlFromOcrEls(sheetEls);
+  if (url) console.log(`   URL (OCR sheet): ${url}`);
 
   // 3) Copy
   const copyHit = await findFirstByText(
@@ -578,10 +621,10 @@ async function captureProfileUrl(serial, outDir) {
     { minScore: 0.65 },
   );
   if (!copyHit) {
-    console.log("   Copy não encontrado — BACK só no share sheet");
+    console.log("   Copy não encontrado — usa OCR se houver; BACK no sheet");
     key({ serial, code: "KEYCODE_BACK" });
     await sleep(600);
-    return null;
+    return url;
   }
   console.log(
     `   → Copy "${copyHit.hit.text}" x=${copyHit.hit.x} y=${copyHit.hit.y}`,
@@ -589,15 +632,18 @@ async function captureProfileUrl(serial, outDir) {
   tapElement({ serial, x: copyHit.hit.x, y: copyHit.hit.y });
   await sleep(1_000);
 
-  let url = readDeviceClipboard(serial);
-  if (!url) {
+  let clip = readDeviceClipboard(serial);
+  if (!clip) {
     await sleep(800);
-    url = readDeviceClipboard(serial);
+    clip = readDeviceClipboard(serial);
   }
-  if (url) console.log(`   URL (clipboard): ${url}`);
-  else console.log("   clipboard sem linkedin.com/in/…");
+  if (clip) {
+    console.log(`   URL (clipboard): ${clip}`);
+    url = clip;
+  } else if (!url) {
+    console.log("   clipboard sem linkedin.com/in/…");
+  }
 
-  // Copy costuma fechar o sheet; um BACK só se ainda houver overlay
   await sleep(400);
   return url;
 }

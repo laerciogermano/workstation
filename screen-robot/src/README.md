@@ -147,7 +147,9 @@ Script [`scripts/login-extract-profiles.js`](scripts/login-extract-profiles.js) 
 
 **Antes → depois (fim do scroll):** só SHA1 do frame 3× (falhava com UI animada e o processo não parava) → conteúdo OCR estável sem novos + frame, 2×, e exit explícito. Rollback: só `frameHash` com `SCROLL_END_STABLE_NEEDED = 3` e sem `process.exit(0)`.
 3. Callback: objeto `{ name, title, level, connection, city, mutualConnections, current, past }`
-4. A cada perfil novo regrava `screenshots/login-extract-profiles/<stamp>/profiles.json` (array acumulado no mesmo formato do log). Também grava `profile-NNN.json` completo. Rollback: apagar a pasta `<stamp>`.
+4. A cada perfil novo regrava `screenshots/login-extract-profiles/<stamp>/profiles.json` (array acumulado no mesmo formato do log). Também grava `profile-NNN.json` completo, `list-round-NNN.json`, e PNGs: `frame-000.png`, `round-NNN.png` (extract), `frame-after-NNN.png` (pós-scroll). Rollback: apagar a pasta `<stamp>`.
+
+**Antes → depois (prints):** `captureFrame` só em `/tmp` → também em `<stamp>/round-*.png` e `frame-*.png` via `outPath`. Rollback: chamar `extract`/`frameHash` sem `outPath`.
 5. Se `PROFILES_API_URL` estiver definida (ex. `http://localhost:3000`), cada perfil também é enviado em `POST /profiles` para [`connectmax/vendas/api`](../../connectmax/vendas/api/README.md). Sem a env, só JSON local.
 
 **Antes → depois (Search):** sleep fixo 5s pós-launch → `waitForText("Search")` (poll OCR, timeout 30s) e só então tap. Rollback: `await sleep(5000)` + `tapByText(…, "Search")`.

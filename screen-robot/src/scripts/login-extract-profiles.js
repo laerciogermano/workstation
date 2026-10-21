@@ -173,8 +173,8 @@ async function defaultOnProfile(profile, ctx) {
   printProfileSummary(profile, count);
 }
 
-async function frameHash(serial) {
-  const path = await captureFrame(serial);
+async function frameHash(serial, outPath) {
+  const path = await captureFrame(serial, outPath ? { outPath } : {});
   return createHash("sha1").update(readFileSync(path)).digest("hex");
 }
 
@@ -240,15 +240,20 @@ async function extractProfilesLoop(serial, outDir, opts = {}) {
   let contentStable = 0;
   let frameStable = 0;
   let prevContentFp = null;
-  let prevHash = await frameHash(serial);
+  let prevHash = await frameHash(serial, join(outDir, "frame-000.png"));
   writeProfilesJson(outDir, rows);
 
   for (let round = 1; round <= maxRounds && saved.length < maxProfiles; round++) {
+    const roundPad = String(round).padStart(3, "0");
+    const roundPng = join(outDir, `round-${roundPad}.png`);
     console.log(`${round}) extract…`);
     let els;
     for (let attempt = 1; attempt <= 3; attempt++) {
       try {
-        els = await extract({ serial, engine: OCR_ENGINE });
+        els = await extract(
+          { serial, engine: OCR_ENGINE },
+          { outPath: roundPng },
+        );
         break;
       } catch (e) {
         console.log(`   extract falhou (${attempt}/3): ${e.message || e}`);
@@ -256,8 +261,9 @@ async function extractProfilesLoop(serial, outDir, opts = {}) {
         await sleep(1_500);
       }
     }
+    console.log(`   → ${roundPng}`);
     writeFileSync(
-      join(outDir, `list-round-${String(round).padStart(3, "0")}.json`),
+      join(outDir, `list-round-${roundPad}.json`),
       JSON.stringify(els, null, 2),
       "utf8",
     );
@@ -318,7 +324,10 @@ async function extractProfilesLoop(serial, outDir, opts = {}) {
       await sleep(SCROLL_DELAY_MS);
     }
 
-    const nextHash = await frameHash(serial);
+    const nextHash = await frameHash(
+      serial,
+      join(outDir, `frame-after-${roundPad}.png`),
+    );
     if (nextHash === prevHash) {
       frameStable += 1;
       console.log(

@@ -16,7 +16,7 @@ import { dirname, resolve, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { adb, sleep } from "../lib/adb.js";
-import { extract, findByText } from "../lib/extract.js";
+import { extract, findByText, waitForText } from "../lib/extract.js";
 import { captureFrame } from "../lib/frame.js";
 import { booleanQueryForProfile } from "../lib/linkedin-boolean-query.js";
 import { profilesFromExtract } from "../lib/linkedin-list-profiles.js";
@@ -180,42 +180,13 @@ async function ensureSearchFocused(serial) {
   await sleep(1_200);
 }
 
-/** Confirma via OCR que o início do nome está no campo (y baixo). */
-async function searchBarContains(serial, needle) {
-  const token = String(needle || "")
-    .trim()
-    .split(/\s+/)[0]
-    .toLowerCase();
-  if (!token) return false;
-  try {
-    const els = await extract({ serial, engine: OCR_ENGINE });
-    const top = els
-      .filter((e) => Number(e.y) < 140)
-      .map((e) => String(e.text || "").toLowerCase())
-      .join(" ");
-    console.log(`   barra OCR: ${top.slice(0, 120)}`);
-    return top.includes(token);
-  } catch (e) {
-    console.log(`   barra OCR falhou: ${e.message || e}`);
-    return false;
-  }
-}
-
+/** Digita a query e segue — sem revalidar OCR / sem procurar Search de novo. */
 async function typeSearchQuery(serial, query) {
   const q = String(query || "").trim();
   if (!q) throw new Error("query vazia");
   console.log(`   digitar: ${q}`);
   await type({ serial, text: q });
-  await sleep(1_200);
-  if (await searchBarContains(serial, q)) return;
-  console.log("   query não apareceu — refocus + digitar de novo");
-  await ensureSearchFocused(serial);
-  await sleep(400);
-  await type({ serial, text: q });
-  await sleep(1_200);
-  if (!(await searchBarContains(serial, q))) {
-    throw new Error(`digitação falhou — campo sem "${q.split(/\s+/)[0]}"`);
-  }
+  await sleep(WAIT_AFTER_TYPE_MS);
 }
 
 /**
@@ -291,30 +262,48 @@ function searchSuggestionsFromExtract(els) {
 }
 
 /**
- * Clica Show/See all results após digitar (Enter no mobile não submete).
- * Tenta com teclado aberto; senão KEYCODE_BACK e tenta de novo.
+ * Clica Show/See all results logo após digitar (sem voltar a procurar Search).
+ * Com teclado → OCR; se falhar, BACK e tenta de novo; senão tap na faixa inferior.
  */
 async function submitShowAllResults(serial) {
   console.log("   Show all results…");
-  const early = await findFirstByText(serial, SHOW_ALL_QUERIES, {
-    minScore: 0.7,
-  });
-  if (early) {
-    const { hit, query } = early;
+  try {
+    const hit = await waitForText(serial, SHOW_ALL_QUERIES, {
+      timeoutMs: 8_000,
+      intervalMs: 1_000,
+      engine: OCR_ENGINE,
+      minScore: 0.68,
+    });
     console.log(
-      `   → showAll "${hit.text}" x=${hit.x} y=${hit.y} (query="${query}")`,
+      `   → showAll "${hit.text}" x=${hit.x} y=${hit.y} (query="${hit.query}")`,
     );
     tapElement({ serial, x: hit.x, y: hit.y });
     await sleep(WAIT_AFTER_SHOW_ALL_MS);
     return;
+  } catch {
+    console.log("   não achou com teclado — KEYCODE_BACK…");
   }
-  console.log("   não achou com teclado — KEYCODE_BACK…");
   key({ serial, code: "KEYCODE_BACK" });
-  await sleep(800);
-  await tapByText(serial, SHOW_ALL_QUERIES, "showAll", {
-    attempts: 6,
-    minScore: 0.7,
-  });
+  await sleep(900);
+  try {
+    const hit = await waitForText(serial, SHOW_ALL_QUERIES, {
+      timeoutMs: 12_000,
+      intervalMs: 1_000,
+      engine: OCR_ENGINE,
+      minScore: 0.68,
+    });
+    console.log(
+      `   → showAll "${hit.text}" x=${hit.x} y=${hit.y} (query="${hit.query}")`,
+    );
+    tapElement({ serial, x: hit.x, y: hit.y });
+    await sleep(WAIT_AFTER_SHOW_ALL_MS);
+    return;
+  } catch {
+    /* fallback geometria */
+  }
+  // Faixa inferior onde o botão costuma ficar (ex. y≈836 em 888).
+  console.log("   fallback: tap faixa inferior (Show all)…");
+  tapElement({ serial, x: 270, y: 850 });
   await sleep(WAIT_AFTER_SHOW_ALL_MS);
 }
 
@@ -347,24 +336,18 @@ async function openFirstPerson(serial, opts = {}) {
         console.log(`   → ${listPng}`);
       }
 
+      // Após Show all: cards da lista; senão sugestões do dropdown.
+      const cards = profilesFromExtract(els, { engine: OCR_ENGINE })
+        .filter((c) => c?.x != null && Number(c.y) >= LIST_MIN_Y)
+        .sort((a, b) => Number(a.y) - Number(b.y));
       const suggestions = searchSuggestionsFromExtract(els);
+      console.log(
+        `   cards: ${cards.map((c) => `${c.name}@y${c.y}`).join(" | ") || "(nenhum)"}`,
+      );
       console.log(
         `   sugestões: ${suggestions.map((s) => `${s.name}@y${s.y}`).join(" | ") || "(nenhuma)"}`,
       );
-
-      // Sempre a 1ª sugestão (menor y) — não trocar por match de nome.
-      let pick = suggestions[0] || null;
-
-      // Fallback: cards People (Connect) se já estiver em lista full
-      if (!pick) {
-        const cards = profilesFromExtract(els, { engine: OCR_ENGINE })
-          .filter((c) => c?.x != null && Number(c.y) >= LIST_MIN_Y)
-          .sort((a, b) => Number(a.y) - Number(b.y));
-        console.log(
-          `   cards: ${cards.map((c) => `${c.name}@y${c.y}`).join(" | ") || "(nenhum)"}`,
-        );
-        pick = cards[0] || null;
-      }
+      let pick = cards[0] || suggestions[0] || null;
 
       if (pick) {
         console.log(
@@ -422,37 +405,57 @@ function pageContentFingerprint(els) {
 }
 
 /**
- * Share no perfil → Copy link / OCR da sheet com linkedin.com/in/…
- * Chamar no topo (antes do scroll down). Sem scroll up.
+ * Abre menu ⋯ (More) no topo → Share / Copy link → URL → fecha modal.
+ * Rodar no topo do perfil, antes do scroll de extract.
  */
 async function captureProfileUrl(serial, outDir) {
-  console.log("   capturar URL (Share)…");
+  console.log("   URL via ⋯ / More…");
 
-  const shareQueries = [
-    "Share profile",
-    "Share via",
-    "Send profile",
-    "Share",
-    "More",
-  ];
+  // 1) Abrir overflow (3 pontos) — OCR "More" ou tap canto superior direito.
   let opened = false;
-  for (const q of shareQueries) {
-    const hit = await findFirstByText(serial, q, { minScore: 0.78 });
+  for (const q of ["More", "More options", "Overflow"]) {
+    const hit = await findFirstByText(serial, q, { minScore: 0.72 });
     if (!hit) continue;
     const label = String(hit.hit.text || "").trim();
-    // Evita post do feed ("…shares will be…"): só rótulos curtos de botão.
-    if (label.length > 24) continue;
-    if (!/^(share(\s+(profile|via))?|send profile|more)$/i.test(label)) continue;
-    // Header / ações do perfil (não Activity/feed)
-    if (hit.hit.y > 420) continue;
-    console.log(`   → ${q} "${label}" x=${hit.hit.x} y=${hit.hit.y}`);
+    if (label.length > 20) continue;
+    if (hit.hit.y > 160) continue; // só header
+    console.log(`   → more "${label}" x=${hit.hit.x} y=${hit.hit.y}`);
     tapElement({ serial, x: hit.hit.x, y: hit.hit.y });
     opened = true;
-    await sleep(1_500);
+    await sleep(1_200);
     break;
   }
   if (!opened) {
-    console.log("   Share/More (botão) não visível no OCR — URL fica null");
+    console.log("   fallback: tap ⋯ canto superior direito…");
+    tapElement({ serial, x: 500, y: 80 });
+    await sleep(1_200);
+  }
+
+  // 2) Opção Share / Copy no sheet
+  const menuQueries = [
+    "Share via",
+    "Share profile",
+    "Send profile in a message",
+    "Copy link to profile",
+    "Copy link",
+    "Share",
+  ];
+  let tappedShare = false;
+  for (const q of menuQueries) {
+    const hit = await findFirstByText(serial, q, { minScore: 0.7 });
+    if (!hit) continue;
+    const label = String(hit.hit.text || "").trim();
+    if (label.length > 40) continue;
+    console.log(`   → menu "${label}" x=${hit.hit.x} y=${hit.hit.y}`);
+    tapElement({ serial, x: hit.hit.x, y: hit.hit.y });
+    tappedShare = true;
+    await sleep(1_500);
+    break;
+  }
+  if (!tappedShare) {
+    console.log("   menu Share/Copy não visível — fecha e segue");
+    key({ serial, code: "KEYCODE_BACK" });
+    await sleep(600);
     return null;
   }
 
@@ -477,13 +480,15 @@ async function captureProfileUrl(serial, outDir) {
     console.log(`   URL (OCR sheet): ${url}`);
     key({ serial, code: "KEYCODE_BACK" });
     await sleep(600);
+    key({ serial, code: "KEYCODE_BACK" });
+    await sleep(500);
     return url;
   }
 
   const copyHit = await findFirstByText(
     serial,
-    ["Copy link", "Copy to clipboard", "Copy Link", "Copy"],
-    { minScore: 0.68 },
+    ["Copy link", "Copy to clipboard", "Copy Link", "Copy link to profile", "Copy"],
+    { minScore: 0.65 },
   );
   if (copyHit) {
     console.log(
@@ -495,6 +500,9 @@ async function captureProfileUrl(serial, outDir) {
     if (url) console.log(`   URL (clipboard): ${url}`);
   }
 
+  // Fecha modal(s)
+  key({ serial, code: "KEYCODE_BACK" });
+  await sleep(500);
   key({ serial, code: "KEYCODE_BACK" });
   await sleep(600);
   return url;
@@ -614,26 +622,26 @@ async function main() {
   await launch({ serial, package: linkedinPkg });
   await sleep(WAIT_AFTER_LINKEDIN_MS);
 
-  console.log("5) Search + digitar + Show all + 1ª pessoa…");
+  console.log("5) Digitar → Show all → 1ª pessoa…");
   await ensureSearchFocused(serial);
   await clearSearchField(serial);
   await typeSearchQuery(serial, query);
-  await sleep(WAIT_AFTER_TYPE_MS);
   await submitShowAllResults(serial);
   const opened = await openFirstPerson(serial, { outDir });
   const openedName = String(opened?.name || name).trim();
   await sleep(WAIT_AFTER_PROFILE_MS);
 
-  // Share no topo (antes de descer) — evita scroll up depois.
-  console.log("6) URL do perfil (Share no topo)…");
+  console.log("6) ⋯ More → URL do perfil (antes do scroll)…");
   let profileUrl = null;
   try {
     profileUrl = await captureProfileUrl(serial, outDir);
   } catch (e) {
     console.log(`   URL: ${e.message || e}`);
   }
+  if (profileUrl) console.log(`   URL: ${profileUrl}`);
+  else console.log("   URL: (não obtida)");
 
-  console.log("7) Extract + scroll down até o fim…");
+  console.log("7) Extract + scroll down até o fim (só então finaliza)…");
   /** @type {object[]} */
   const allEls = [];
   let contentStable = 0;
@@ -695,10 +703,9 @@ async function main() {
     }
   }
 
+  console.log("   fim do scroll — montando payload");
   const parsed = parseProfilePageOcr(allEls, { nameHint: openedName });
   if (!profileUrl && parsed.profileUrl) profileUrl = parsed.profileUrl;
-  if (profileUrl) console.log(`   URL final: ${profileUrl}`);
-  else console.log("   URL final: (não obtida)");
 
   const payload = {
     profileId,

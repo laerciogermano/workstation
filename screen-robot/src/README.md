@@ -135,9 +135,9 @@ cd screen-robot/src
 PROFILES_API_URL=http://localhost:3000 npm run login-extract-profile-detail -- --id <uuid>
 ```
 
-Script [`scripts/login-extract-profile-detail.js`](scripts/login-extract-profile-detail.js) — **1 perfil** da base (`GET /profiles` filtrado por `--id`): Search → digita **`Nome AND title AND current AND past AND city`** (sanitize ASCII) → **Show all results** → **clica a 1ª pessoa** → **Share/URL no topo** → **scroll down até fim** → `POST /profile-details` → **`process.exit(0)`**.
+Script [`scripts/login-extract-profile-detail.js`](scripts/login-extract-profile-detail.js) — **1 perfil**: digita query → **Show all results** (sem revalidar Search) → **1ª pessoa** → **⋯ More → URL** → **scroll até fim** → `POST /profile-details` → exit.
 
-**Antes → depois (submit):** Enter → `submitShowAllResults` (Show/See all). Rollback: `submitSearchEnter` / `KEYCODE_ENTER`.
+**Antes → depois (fluxo):** OCR-verify da barra bloqueava Show all; Share depois do scroll → digita→Show all→1º→⋯/URL→scroll até estável. Rollback: `searchBarContains` + Share após pages.
 
 **Antes → depois (query):** só `name` / espaços → `parts.join(" AND ")` com `title|current|past|city`; sanitize ASCII. Rollback: `return name`.
 

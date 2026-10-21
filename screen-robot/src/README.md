@@ -133,11 +133,11 @@ node --test --test-timeout=180000 lib/extract.linkedin-fixtures.test.js
 ```bash
 cd screen-robot/src
 PROFILES_API_URL=http://localhost:3000 npm run login-extract-profile-detail -- --id <uuid>
-# perfil já aberto no emulador (pula busca / Show all / People):
-PROFILES_API_URL=http://localhost:3000 npm run login-extract-profile-detail -- --id <uuid> --from-profile
+# abre o perfil direto pelo link (pula Search / Show all / People):
+PROFILES_API_URL=http://localhost:3000 npm run login-extract-profile-detail -- --id <uuid> --from-profile --url 'https://www.linkedin.com/in/…'
 ```
 
-Script [`scripts/login-extract-profile-detail.js`](scripts/login-extract-profile-detail.js) — digita → Show all → People → 1º → **⋯ → Share via → Copy (clipboard)** → **POST URL** → scroll até fim → POST completo → exit. Com `--from-profile` começa no passo da URL.
+Script [`scripts/login-extract-profile-detail.js`](scripts/login-extract-profile-detail.js) — digita → Show all → People → 1º → **⋯ → Share via → Copy** → POST URL → scroll → POST. Com `--from-profile --url` abre via `am start VIEW` e segue da URL/scroll.
 
 **Antes → depois (URL):** Share genérico / OCR sheet → `Share via` + `Copy` + clipboard + POST antecipado. Rollback: `captureProfileUrl` antigo.
 

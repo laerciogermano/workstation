@@ -4,8 +4,8 @@
  *
  * Uso (cwd: screen-robot/src):
  *   PROFILES_API_URL=http://localhost:3000 npm run login-extract-profile-detail -- --id <uuid>
- *   # perfil já aberto no device — pula busca / Show all / People:
- *   … -- --id <uuid> --from-profile
+ *   # abre o perfil direto pelo link (pula busca):
+ *   … -- --id <uuid> --from-profile --url https://www.linkedin.com/in/…
  */
 import { createHash } from "node:crypto";
 import {
@@ -602,16 +602,53 @@ function parseArgs(argv) {
   let configPath = resolve(ROOT, "device.config.json");
   let profileId = null;
   let fromProfile = false;
+  let profileUrlArg = null;
   for (let i = 0; i < argv.length; i++) {
     if (argv[i] === "--config") configPath = resolve(argv[++i]);
     else if (argv[i] === "--id") profileId = String(argv[++i] || "").trim();
     else if (argv[i] === "--from-profile") fromProfile = true;
+    else if (argv[i] === "--url") profileUrlArg = String(argv[++i] || "").trim();
   }
-  return { configPath, profileId, fromProfile };
+  return { configPath, profileId, fromProfile, profileUrlArg };
+}
+
+/** Abre perfil LinkedIn via deep link (pula Search). */
+function openProfileByUrl(serial, linkedinPkg, rawUrl) {
+  const url =
+    normalizeLinkedInProfileUrl(rawUrl) ||
+    String(rawUrl || "").trim().replace(/\/$/, "");
+  if (!/linkedin\.com\/in\//i.test(url)) {
+    throw new Error(`--url inválida (precisa linkedin.com/in/…): ${rawUrl}`);
+  }
+  console.log(`   am start VIEW ${url}`);
+  adb(serial, [
+    "shell",
+    "am",
+    "start",
+    "-a",
+    "android.intent.action.VIEW",
+    "-d",
+    url,
+    "-p",
+    linkedinPkg,
+  ]);
+}
+
+async function fetchStoredProfileUrl(profileId) {
+  try {
+    const res = await fetch(`${PROFILES_API_URL}/profile-details/${profileId}`);
+    if (!res.ok) return null;
+    const row = await res.json();
+    return normalizeLinkedInProfileUrl(row?.profileUrl) || null;
+  } catch {
+    return null;
+  }
 }
 
 async function main() {
-  const { configPath, profileId, fromProfile } = parseArgs(process.argv.slice(2));
+  const { configPath, profileId, fromProfile, profileUrlArg } = parseArgs(
+    process.argv.slice(2),
+  );
   if (!profileId) {
     throw new Error("passe --id <uuid> (id em linkedin_profiles / GET /profiles)");
   }
@@ -625,9 +662,7 @@ async function main() {
   const name = String(profile.name || "").trim();
   if (!name) throw new Error("perfil sem name");
   console.log(`   name=${name}`);
-  if (fromProfile) {
-    console.log("   modo --from-profile: perfil já aberto — pula busca");
-  } else {
+  if (!fromProfile) {
     console.log(`   query: ${typeQueryFromProfile(profile)}`);
   }
 
@@ -636,7 +671,7 @@ async function main() {
   mkdirSync(outDir, { recursive: true });
   writeFileSync(
     join(outDir, "source-profile.json"),
-    JSON.stringify({ ...profile, fromProfile }, null, 2),
+    JSON.stringify({ ...profile, fromProfile, profileUrlArg }, null, 2),
     "utf8",
   );
   console.log(`saida: ${outDir}`);
@@ -666,8 +701,18 @@ async function main() {
     openedName = String(opened?.name || name).trim();
     await sleep(WAIT_AFTER_PROFILE_MS);
   } else {
-    console.log("3–5) skip (perfil já aberto no device)");
-    await sleep(800);
+    console.log("3) Abrir perfil direto (deep link)…");
+    let openUrl =
+      normalizeLinkedInProfileUrl(profileUrlArg) ||
+      (await fetchStoredProfileUrl(profileId));
+    if (!openUrl) {
+      throw new Error(
+        "--from-profile exige --url https://www.linkedin.com/in/… (ou profileUrl já salvo na API)",
+      );
+    }
+    openProfileByUrl(serial, linkedinPkg, openUrl);
+    await sleep(WAIT_AFTER_PROFILE_MS);
+    console.log("4–5) skip busca (perfil aberto via URL)");
   }
 
   console.log("6) ⋯ → Share via → Copy → POST URL…");

@@ -212,14 +212,17 @@ async function typeSearchQuery(serial, query) {
 }
 
 /**
- * Texto de campo p/ busca: só letras/números/espaço.
- * Remove %, aspas e pontuação — o AND fica só entre campos.
+ * Texto de campo p/ busca: ASCII letras/números/espaço.
+ * Sem acentos (adb `input text` vira %XX e o LinkedIn mostra `sa%fade`).
+ * Sem %, aspas e pontuação — o AND fica só entre campos.
  */
 function sanitizeSearchText(raw) {
   return String(raw || "")
-    .normalize("NFKC")
-    .replace(/[%&|"'<>()[\]{}\\/*+=!?.;:@#^~`]/g, " ")
-    .replace(/[^\p{L}\p{N}\s]/gu, " ")
+    .normalize("NFD")
+    .replace(/\p{M}/gu, "")
+    .replace(/%[0-9A-Fa-f]{2}/g, " ")
+    .replace(/%/g, " ")
+    .replace(/[^A-Za-z0-9\s]/g, " ")
     .replace(/\s+/g, " ")
     .trim();
 }

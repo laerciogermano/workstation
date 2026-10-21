@@ -393,24 +393,28 @@ async function captureProfileUrl(serial, outDir) {
   const shareQueries = [
     "Share profile",
     "Share via",
-    "Share",
     "Send profile",
+    "Share",
     "More",
   ];
   let opened = false;
   for (const q of shareQueries) {
-    const hit = await findFirstByText(serial, q, { minScore: 0.68 });
+    const hit = await findFirstByText(serial, q, { minScore: 0.78 });
     if (!hit) continue;
-    // Share/More ficam no header ou no bloco de ações (não no feed baixo)
-    if (hit.hit.y > 520) continue;
-    console.log(`   → ${q} "${hit.hit.text}" x=${hit.hit.x} y=${hit.hit.y}`);
+    const label = String(hit.hit.text || "").trim();
+    // Evita post do feed ("…shares will be…"): só rótulos curtos de botão.
+    if (label.length > 24) continue;
+    if (!/^(share(\s+(profile|via))?|send profile|more)$/i.test(label)) continue;
+    // Header / ações do perfil (não Activity/feed)
+    if (hit.hit.y > 420) continue;
+    console.log(`   → ${q} "${label}" x=${hit.hit.x} y=${hit.hit.y}`);
     tapElement({ serial, x: hit.hit.x, y: hit.hit.y });
     opened = true;
     await sleep(1_500);
     break;
   }
   if (!opened) {
-    console.log("   Share/More não visível no OCR — URL fica null");
+    console.log("   Share/More (botão) não visível no OCR — URL fica null");
     return null;
   }
 

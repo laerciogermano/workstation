@@ -34,7 +34,7 @@ const WAIT_AFTER_PROFILE_MS = 2_500;
 const WAIT_SEE_ALL_KEYBOARD_MS = 8_000;
 const WAIT_TEXT_TIMEOUT_MS = 30_000;
 const WAIT_TEXT_INTERVAL_MS = 1_000;
-const CLEAR_DEL_COUNT = 80;
+const CLEAR_DEL_COUNT = 40;
 const PROFILE_SCROLLS = 3;
 const SCROLL_DISTANCE = 320;
 const SCROLL_DELAY_MS = 900;
@@ -105,14 +105,27 @@ function stopAllApps(serial, apps) {
 async function clearSearchField(serial) {
   const clearHit = await findFirstByText(
     serial,
-    ["Clear text", "Clear", "×"],
-    { minScore: 0.65 },
+    ["Clear text", "Clear"],
+    { minScore: 0.7 },
   );
-  if (clearHit) {
+  if (clearHit && clearHit.hit.y < 160) {
     const { hit } = clearHit;
     console.log(`   → clear "${hit.text}" x=${hit.x} y=${hit.y}`);
     tapElement({ serial, x: hit.x, y: hit.y });
     await sleep(400);
+    return;
+  }
+  // Só DEL se o campo já parece ter texto (evita 40 DEL com foco perdido).
+  const bar = await findFirstByText(
+    serial,
+    ["Search", "Search people", "AND"],
+    { minScore: 0.55 },
+  );
+  const looksEmpty =
+    bar &&
+    /^(search|search people)$/i.test(String(bar.hit.text || "").trim());
+  if (looksEmpty) {
+    console.log("   campo parece vazio — skip clear");
     return;
   }
   try {
@@ -127,24 +140,75 @@ async function clearSearchField(serial) {
 }
 
 async function ensureSearchFocused(serial) {
-  const bar = await findFirstByText(serial, ["Search", "Search people"], {
+  // Preferir "Search people" (vai direto a pessoas, sem chip People).
+  const peopleSearch = await findFirstByText(serial, ["Search people"], {
     minScore: 0.7,
   });
-  if (bar) {
-    tapElement({ serial, x: bar.hit.x, y: bar.hit.y });
-    await sleep(800);
+  if (peopleSearch) {
+    console.log(
+      `   → search people "${peopleSearch.hit.text}" x=${peopleSearch.hit.x} y=${peopleSearch.hit.y}`,
+    );
+    tapElement({ serial, x: peopleSearch.hit.x, y: peopleSearch.hit.y });
+    await sleep(1_200);
     return;
   }
-  const any = await findFirstByText(serial, ["AND", "See all", "Show all"], {
-    minScore: 0.6,
-  });
-  if (any && any.hit.y < 160) {
-    tapElement({ serial, x: any.hit.x, y: any.hit.y });
-    await sleep(800);
+  const bar = await findFirstByText(serial, ["Search"], { minScore: 0.7 });
+  if (bar) {
+    console.log(
+      `   → search "${bar.hit.text}" x=${bar.hit.x} y=${bar.hit.y}`,
+    );
+    tapElement({ serial, x: bar.hit.x, y: bar.hit.y });
+    await sleep(1_200);
+    // 2º tap no campo (às vezes o 1º só abre a tela de busca)
+    const again = await findFirstByText(serial, ["Search", "Search people"], {
+      minScore: 0.65,
+    });
+    if (again && again.hit.y < 160) {
+      tapElement({ serial, x: again.hit.x, y: again.hit.y });
+      await sleep(600);
+    }
     return;
   }
   await tapByText(serial, "Search", "search");
-  await sleep(800);
+  await sleep(1_200);
+}
+
+/** Confirma via OCR que o início do nome está no campo (y baixo). */
+async function searchBarContains(serial, needle) {
+  const token = String(needle || "")
+    .trim()
+    .split(/\s+/)[0]
+    .toLowerCase();
+  if (!token) return false;
+  try {
+    const els = await extract({ serial, engine: OCR_ENGINE });
+    const top = els
+      .filter((e) => Number(e.y) < 140)
+      .map((e) => String(e.text || "").toLowerCase())
+      .join(" ");
+    console.log(`   barra OCR: ${top.slice(0, 120)}`);
+    return top.includes(token);
+  } catch (e) {
+    console.log(`   barra OCR falhou: ${e.message || e}`);
+    return false;
+  }
+}
+
+async function typeSearchQuery(serial, query) {
+  const q = String(query || "").trim();
+  if (!q) throw new Error("query vazia");
+  console.log(`   digitar: ${q}`);
+  await type({ serial, text: q });
+  await sleep(1_200);
+  if (await searchBarContains(serial, q)) return;
+  console.log("   query não apareceu — refocus + digitar de novo");
+  await ensureSearchFocused(serial);
+  await sleep(400);
+  await type({ serial, text: q });
+  await sleep(1_200);
+  if (!(await searchBarContains(serial, q))) {
+    throw new Error(`digitação falhou — campo sem "${q.split(/\s+/)[0]}"`);
+  }
 }
 
 async function submitSeeAll(serial) {
@@ -173,9 +237,19 @@ async function submitSeeAll(serial) {
   await sleep(WAIT_AFTER_SEARCH_MS);
 }
 
-/** Mobile LinkedIn: aspas da booleana viram lixo (%22) no campo — tipar sem aspas. */
+/**
+ * Query de busca: só o nome (AND/empresa no mobile cai em Posts/Premium e atrapalha digitação).
+ * Mantém booleanQueryForProfile só como referência no log.
+ */
 function typeQueryFromProfile(profile) {
-  return booleanQueryForProfile(profile).replace(/"/g, "");
+  const name = String(profile?.name || "").trim();
+  if (!name) throw new Error("perfil sem name");
+  try {
+    console.log(`   boolean ref: ${booleanQueryForProfile(profile)}`);
+  } catch {
+    /* ignore */
+  }
+  return name;
 }
 
 function nameMatchScore(candidate, target) {
@@ -245,11 +319,6 @@ async function openProfileByName(serial, name, opts = {}) {
         const score = nameMatchScore(c.name, name);
         if (score < 0.45) continue;
         if (!best || score > best.score) best = { card: c, score };
-      }
-      // Sem match forte: 1º card da lista (1º caso — destravar fluxo)
-      if (!best && cards.length && cards[0].x != null && cards[0].y >= 160) {
-        best = { card: cards[0], score: 0 };
-        console.log(`   sem match de nome — abrindo 1º card "${cards[0].name}"`);
       }
       if (best?.card?.x != null && best.card.y != null && best.card.y >= 160) {
         console.log(
@@ -391,14 +460,13 @@ async function main() {
   await launch({ serial, package: linkedinPkg });
   await sleep(WAIT_AFTER_LINKEDIN_MS);
 
-  console.log("5) Search + abrir perfil…");
+  console.log("5) Search + digitar + abrir perfil…");
   await ensureSearchFocused(serial);
   await clearSearchField(serial);
-  await type({ serial, text: query });
-  await sleep(1_000);
+  await typeSearchQuery(serial, query);
   await submitSeeAll(serial);
   await sleep(1_500);
-  // Busca direta na lista de resultados (sem tap em People).
+  // Busca direta na lista (sem chip People).
   await openProfileByName(serial, name, { outDir });
   await sleep(WAIT_AFTER_PROFILE_MS);
 

@@ -211,18 +211,18 @@ function sanitizeSearchText(raw) {
 }
 
 /** Primeiras N palavras do texto (após sanitize). */
-function firstWords(text, n = 3) {
+function firstWords(text, n = 2) {
   const parts = sanitizeSearchText(text).split(/\s+/).filter(Boolean);
   return parts.slice(0, n).join(" ");
 }
 
-/** Título: `title` ou cargo antes de " at "/" @" em `current` — só as 3 primeiras palavras. */
+/** Título: `title` ou cargo antes de " at "/" @" em `current` — só as 2 primeiras palavras. */
 function titleForSearch(profile) {
-  const direct = firstWords(profile?.title, 3);
+  const direct = firstWords(profile?.title, 2);
   if (direct) return direct;
   const current = String(profile?.current || "").trim();
   if (!current) return "";
-  return firstWords(current.split(/\s+(?:at|@)\s+/i)[0], 3);
+  return firstWords(current.split(/\s+(?:at|@)\s+/i)[0], 2);
 }
 
 /**

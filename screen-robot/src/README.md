@@ -132,12 +132,11 @@ node --test --test-timeout=180000 lib/extract.linkedin-fixtures.test.js
 
 ```bash
 cd screen-robot/src
-PROFILES_API_URL=http://localhost:3000 npm run login-extract-profile-detail -- --id <uuid>
-# abre o perfil direto pelo link (pula Search / Show all / People):
-PROFILES_API_URL=http://localhost:3000 npm run login-extract-profile-detail -- --id <uuid> --from-profile --url 'https://www.linkedin.com/in/…'
+# busca LinkedIn comentada — abre só via deep link:
+PROFILES_API_URL=http://localhost:3000 npm run login-extract-profile-detail -- --id <uuid> --url 'https://www.linkedin.com/in/…'
 ```
 
-Script [`scripts/login-extract-profile-detail.js`](scripts/login-extract-profile-detail.js) — digita → Show all → People → 1º → **⋯ → Share via → Copy** → POST URL → scroll → POST. Com `--from-profile --url` abre via `am start VIEW` e segue da URL/scroll.
+Script [`scripts/login-extract-profile-detail.js`](scripts/login-extract-profile-detail.js) — **deep link** → ⋯ Share via → Copy → POST URL → scroll → POST. Bloco Search/Show all/People está comentado no `main`.
 
 **Antes → depois (URL):** Share genérico / OCR sheet → `Share via` + `Copy` + clipboard + POST antecipado. Rollback: `captureProfileUrl` antigo.
 

@@ -135,11 +135,13 @@ cd screen-robot/src
 PROFILES_API_URL=http://localhost:3000 npm run login-extract-profile-detail -- --id <uuid>
 ```
 
-Script [`scripts/login-extract-profile-detail.js`](scripts/login-extract-profile-detail.js) — **1 perfil** da base (`GET /profiles` filtrado por `--id`): Search (preferir Search people) → digita **só o nome** (com verificação OCR da barra) → See all → abre perfil na lista (sem chip People; sem fallback do 1º card) → scroll ×3 + extract → `POST /profile-details`.
+Script [`scripts/login-extract-profile-detail.js`](scripts/login-extract-profile-detail.js) — **1 perfil** da base (`GET /profiles` filtrado por `--id`): Search → digita **só o nome** → See all → **abre a 1ª pessoa** da lista (prefere match do nome) → Share/Copy para **URL** `linkedin.com/in/…` → scroll ×5 + extract (About/Experience/Education/Skills/grau) → `POST /profile-details`.
 
 **Antes → depois (People):** tap no chip People → busca direta nos resultados após See all. Rollback: restaurar `maybeTapPeople` após `submitSeeAll`.
 
 **Antes → depois (digitar):** `type` sem checagem + query `Nome AND Empresa` → `typeSearchQuery` verifica barra OCR; query só `name`. Rollback: `type({ text: boolean… })` sem verify.
+
+**Antes → depois (1ª pessoa + URL):** só match estrito do nome, 3 scrolls, sem URL → `openFirstPerson` + Share/OCR URL + 5 scrolls + `profileUrl`/`skills`/`connectionDegree` na API. Rollback: `openProfileByName` sem Share.
 
 Saída: `screenshots/login-extract-profile-detail/<stamp>/` (`page-NN.png`, `detail.json`). Parser: [`lib/linkedin-profile-page.js`](lib/linkedin-profile-page.js).
 

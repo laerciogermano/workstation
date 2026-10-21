@@ -14,11 +14,14 @@ import {
 import { dirname, resolve, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { sleep } from "../lib/adb.js";
+import { adb, sleep } from "../lib/adb.js";
 import { extract, findByText, waitForText } from "../lib/extract.js";
 import { booleanQueryForProfile } from "../lib/linkedin-boolean-query.js";
 import { profilesFromExtract } from "../lib/linkedin-list-profiles.js";
-import { parseProfilePageOcr } from "../lib/linkedin-profile-page.js";
+import {
+  findLinkedInProfileUrl,
+  parseProfilePageOcr,
+} from "../lib/linkedin-profile-page.js";
 import { key, launch, scroll, stop, tapElement, type } from "../lib/operate.js";
 import { provisionEmulator } from "../lib/provision.js";
 
@@ -35,7 +38,7 @@ const WAIT_SEE_ALL_KEYBOARD_MS = 8_000;
 const WAIT_TEXT_TIMEOUT_MS = 30_000;
 const WAIT_TEXT_INTERVAL_MS = 1_000;
 const CLEAR_DEL_COUNT = 40;
-const PROFILE_SCROLLS = 3;
+const PROFILE_SCROLLS = 5;
 const SCROLL_DISTANCE = 320;
 const SCROLL_DELAY_MS = 900;
 const OCR_ENGINE = process.env.SCREEN_ROBOT_OCR || "macos-vision";
@@ -270,32 +273,16 @@ function nameMatchScore(candidate, target) {
   return overlap / Math.max(ap.length, bp.length);
 }
 
-async function openProfileByName(serial, name, opts = {}) {
+/**
+ * Abre a 1ª pessoa da lista de resultados.
+ * Se preferredName bater num card, prefere esse; senão o primeiro card People.
+ */
+async function openFirstPerson(serial, opts = {}) {
+  const preferredName = String(opts.preferredName || "").trim();
   const attempts = opts.attempts ?? 5;
-  const parts = String(name).trim().split(/\s+/).filter(Boolean);
-  const queries = [name];
-  if (parts.length >= 2) {
-    queries.push(`${parts[0]} ${parts[parts.length - 1]}`);
-  }
-  if (parts[0]) queries.push(parts[0]);
 
   for (let attempt = 1; attempt <= attempts; attempt++) {
-    for (const q of queries) {
-      const hit = await findByText(serial, q, {
-        minScore: 0.65,
-        engine: OCR_ENGINE,
-      });
-      if (hit?.x == null || hit?.y == null) continue;
-      if (hit.y < 160) continue;
-      console.log(
-        `   → abrir perfil "${hit.text}" x=${hit.x} y=${hit.y} (q="${q}" score=${hit.score?.toFixed?.(2) ?? hit.score})`,
-      );
-      tapElement({ serial, x: hit.x, y: hit.y });
-      return hit;
-    }
-
-    // Fallback: extract da lista → tap no card com melhor match de nome
-    console.log(`   fallback extract lista (${attempt}/${attempts})…`);
+    console.log(`   lista pessoas (${attempt}/${attempts})…`);
     try {
       const listPng = join(
         opts.outDir || ROOT,
@@ -307,43 +294,157 @@ async function openProfileByName(serial, name, opts = {}) {
       );
       if (opts.outDir) {
         writeFileSync(
-          join(opts.outDir, `list-fallback-${String(attempt).padStart(2, "0")}.json`),
+          join(
+            opts.outDir,
+            `list-fallback-${String(attempt).padStart(2, "0")}.json`,
+          ),
           JSON.stringify(els, null, 2),
           "utf8",
         );
         console.log(`   → ${listPng}`);
       }
-      const cards = profilesFromExtract(els, { engine: OCR_ENGINE });
-      let best = null;
-      for (const c of cards) {
-        const score = nameMatchScore(c.name, name);
-        if (score < 0.45) continue;
-        if (!best || score > best.score) best = { card: c, score };
-      }
-      if (best?.card?.x != null && best.card.y != null && best.card.y >= 160) {
-        console.log(
-          `   → abrir perfil (lista) "${best.card.name}" x=${best.card.x} y=${best.card.y} score=${best.score.toFixed(2)}`,
-        );
-        tapElement({ serial, x: best.card.x, y: best.card.y });
-        return best.card;
-      }
-      console.log(
-        `   cards na lista: ${cards.map((c) => c.name).join(" | ") || "(nenhum)"}`,
-      );
-      const sample = els
-        .slice(0, 12)
-        .map((e) => e.text)
-        .filter(Boolean)
-        .join(" | ");
-      if (sample) console.log(`   ocr sample: ${sample}`);
-    } catch (e) {
-      console.log(`   fallback extract: ${e.message || e}`);
-    }
 
-    console.log(`   nome na lista não achado (${attempt}/${attempts}): ${name}`);
+      const cards = profilesFromExtract(els, { engine: OCR_ENGINE }).filter(
+        (c) => c?.x != null && Number(c.y) >= 160,
+      );
+      console.log(
+        `   cards: ${cards.map((c) => c.name).join(" | ") || "(nenhum)"}`,
+      );
+
+      let pick = cards[0] || null;
+      if (preferredName && cards.length) {
+        let best = null;
+        for (const c of cards) {
+          const score = nameMatchScore(c.name, preferredName);
+          if (score < 0.5) continue;
+          if (!best || score > best.score) best = { card: c, score };
+        }
+        if (best) {
+          pick = best.card;
+          console.log(
+            `   preferiu match "${pick.name}" score=${best.score.toFixed(2)}`,
+          );
+        }
+      }
+
+      if (pick) {
+        console.log(
+          `   → abrir 1ª pessoa "${pick.name}" x=${pick.x} y=${pick.y}`,
+        );
+        tapElement({ serial, x: pick.x, y: pick.y });
+        return pick;
+      }
+
+      // Sem parser de card: tenta o nome preferido via findByText
+      if (preferredName) {
+        const hit = await findByText(serial, preferredName, {
+          minScore: 0.65,
+          engine: OCR_ENGINE,
+        });
+        if (hit?.x != null && hit.y >= 160) {
+          console.log(
+            `   → abrir por texto "${hit.text}" x=${hit.x} y=${hit.y}`,
+          );
+          tapElement({ serial, x: hit.x, y: hit.y });
+          return { name: hit.text, x: hit.x, y: hit.y };
+        }
+      }
+    } catch (e) {
+      console.log(`   lista: ${e.message || e}`);
+    }
     await sleep(1_200);
   }
-  throw new Error(`perfil na lista não encontrado: ${name}`);
+  throw new Error("nenhuma pessoa na lista de resultados");
+}
+
+/** Lê clipboard do device (best-effort). */
+function readDeviceClipboard(serial) {
+  try {
+    const r = adb(serial, ["shell", "dumpsys", "clipboard"]);
+    const out = String(r.stdout || "");
+    const m = out.match(/(?:https?:\/\/)?(?:www\.)?linkedin\.com\/in\/[A-Za-z0-9._%-]+/i);
+    if (m) {
+      let url = m[0];
+      if (!/^https?:\/\//i.test(url)) url = `https://${url}`;
+      return url.replace(/\/$/, "");
+    }
+  } catch {
+    /* ignore */
+  }
+  return null;
+}
+
+/**
+ * Share no perfil → Copy link / OCR da sheet com linkedin.com/in/…
+ */
+async function captureProfileUrl(serial, outDir) {
+  console.log("   capturar URL (Share)…");
+  const shareQueries = [
+    "Share",
+    "Share profile",
+    "Send profile",
+    "More",
+  ];
+  let opened = false;
+  for (const q of shareQueries) {
+    const hit = await findFirstByText(serial, q, { minScore: 0.7 });
+    if (!hit || hit.hit.y > 220) continue;
+    console.log(`   → ${q} "${hit.hit.text}" x=${hit.hit.x} y=${hit.hit.y}`);
+    tapElement({ serial, x: hit.hit.x, y: hit.hit.y });
+    opened = true;
+    await sleep(1_500);
+    break;
+  }
+  if (!opened) {
+    // ícone share costuma estar no topo direito — tap aproximado
+    console.log("   Share OCR não achou — tap topo-direita");
+    tapElement({ serial, x: 500, y: 80 });
+    await sleep(1_500);
+  }
+
+  const sheetPng = join(outDir, "share-sheet.png");
+  let els = [];
+  try {
+    els = await extract(
+      { serial, engine: OCR_ENGINE },
+      { outPath: sheetPng },
+    );
+    writeFileSync(
+      join(outDir, "share-sheet.json"),
+      JSON.stringify(els, null, 2),
+      "utf8",
+    );
+  } catch (e) {
+    console.log(`   share extract: ${e.message || e}`);
+  }
+
+  let url = findLinkedInProfileUrl(els.map((e) => e.text));
+  if (url) {
+    console.log(`   URL (OCR sheet): ${url}`);
+    key({ serial, code: "KEYCODE_BACK" });
+    await sleep(600);
+    return url;
+  }
+
+  const copyHit = await findFirstByText(
+    serial,
+    ["Copy", "Copy link", "Copy to clipboard", "Copy Link"],
+    { minScore: 0.7 },
+  );
+  if (copyHit) {
+    console.log(
+      `   → copy "${copyHit.hit.text}" x=${copyHit.hit.x} y=${copyHit.hit.y}`,
+    );
+    tapElement({ serial, x: copyHit.hit.x, y: copyHit.hit.y });
+    await sleep(800);
+    url = readDeviceClipboard(serial);
+    if (url) console.log(`   URL (clipboard): ${url}`);
+  }
+
+  // fecha sheet se ainda aberta
+  key({ serial, code: "KEYCODE_BACK" });
+  await sleep(600);
+  return url;
 }
 
 async function leaveProfile(serial) {
@@ -460,17 +561,28 @@ async function main() {
   await launch({ serial, package: linkedinPkg });
   await sleep(WAIT_AFTER_LINKEDIN_MS);
 
-  console.log("5) Search + digitar + abrir perfil…");
+  console.log("5) Search + digitar + abrir 1ª pessoa…");
   await ensureSearchFocused(serial);
   await clearSearchField(serial);
   await typeSearchQuery(serial, query);
   await submitSeeAll(serial);
   await sleep(1_500);
-  // Busca direta na lista (sem chip People).
-  await openProfileByName(serial, name, { outDir });
+  const opened = await openFirstPerson(serial, {
+    outDir,
+    preferredName: name,
+  });
+  const openedName = String(opened?.name || name).trim();
   await sleep(WAIT_AFTER_PROFILE_MS);
 
-  console.log("6) Extract + scroll na página…");
+  console.log("6) URL do perfil (Share)…");
+  let profileUrl = null;
+  try {
+    profileUrl = await captureProfileUrl(serial, outDir);
+  } catch (e) {
+    console.log(`   URL: ${e.message || e}`);
+  }
+
+  console.log("7) Extract + scroll na página…");
   /** @type {object[]} */
   const allEls = [];
   for (let i = 0; i <= PROFILE_SCROLLS; i++) {
@@ -494,15 +606,23 @@ async function main() {
     }
   }
 
-  const parsed = parseProfilePageOcr(allEls, { nameHint: name });
+  const parsed = parseProfilePageOcr(allEls, { nameHint: openedName });
+  if (!profileUrl && parsed.profileUrl) {
+    profileUrl = parsed.profileUrl;
+    console.log(`   URL (OCR páginas): ${profileUrl}`);
+  }
+
   const payload = {
     profileId,
-    name,
+    name: openedName,
     headline: parsed.headline || profile.title || null,
     location: parsed.location || profile.city || null,
+    profileUrl: profileUrl || null,
+    connectionDegree: parsed.connectionDegree || profile.level || null,
     about: parsed.about,
     experience: parsed.experience,
     education: parsed.education,
+    skills: parsed.skills,
     rawOcr: { elements: allEls },
     extractedAt: new Date().toISOString(),
   };
@@ -513,10 +633,15 @@ async function main() {
     "utf8",
   );
   console.log(`   → ${join(outDir, "detail.json")}`);
+  console.log(
+    `   campos: headline=${!!payload.headline} about=${!!payload.about} exp=${!!payload.experience} edu=${!!payload.education} skills=${!!payload.skills} url=${payload.profileUrl || "-"}`,
+  );
 
-  console.log("7) POST /profile-details…");
+  console.log("8) POST /profile-details…");
   const saved = await postProfileDetail(payload);
-  console.log(`   OK id=${saved.id} profileId=${saved.profileId}`);
+  console.log(
+    `   OK id=${saved.id} profileId=${saved.profileId} url=${saved.profileUrl || "-"}`,
+  );
 
   await leaveProfile(serial);
   console.log("OK — detalhe persistido");

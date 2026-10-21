@@ -5,6 +5,7 @@
  * Uso (cwd: screen-robot/src):
  *   PROFILES_API_URL=http://localhost:3000 npm run login-extract-profile-detail -- --id <uuid>
  */
+import { createHash } from "node:crypto";
 import {
   readFileSync,
   existsSync,
@@ -16,6 +17,7 @@ import { fileURLToPath } from "node:url";
 
 import { adb, sleep } from "../lib/adb.js";
 import { extract, findByText } from "../lib/extract.js";
+import { captureFrame } from "../lib/frame.js";
 import { booleanQueryForProfile } from "../lib/linkedin-boolean-query.js";
 import { profilesFromExtract } from "../lib/linkedin-list-profiles.js";
 import {
@@ -35,7 +37,9 @@ const WAIT_AFTER_LINKEDIN_MS = 5_000;
 const WAIT_AFTER_PROFILE_MS = 2_500;
 const WAIT_AFTER_TYPE_MS = 1_800;
 const CLEAR_DEL_COUNT = 40;
-const PROFILE_SCROLLS = 5;
+/** Máximo de páginas OCR no perfil (safety). Fim real = conteúdo/frame estável. */
+const MAX_PROFILE_PAGES = 40;
+const SCROLL_END_STABLE_NEEDED = 2;
 const SCROLL_DISTANCE = 320;
 const SCROLL_DELAY_MS = 900;
 /** Resultados do dropdown de busca começam abaixo da barra. */
@@ -334,21 +338,27 @@ function readDeviceClipboard(serial) {
   return null;
 }
 
+async function frameHash(serial, outPath) {
+  const path = await captureFrame(serial, outPath ? { outPath } : {});
+  return createHash("sha1").update(readFileSync(path)).digest("hex");
+}
+
+/** Fingerprint do OCR visível (textos) — detecta fim do scroll no perfil. */
+function pageContentFingerprint(els) {
+  const texts = (els || [])
+    .map((e) => String(e?.text || "").trim().toLowerCase())
+    .filter(Boolean)
+    .sort()
+    .join("\n");
+  return createHash("sha1").update(texts).digest("hex");
+}
+
 /**
  * Share no perfil → Copy link / OCR da sheet com linkedin.com/in/…
- * Sem tap aproximado (quebrava a tela do perfil).
+ * Chamar no topo (antes do scroll down). Sem scroll up.
  */
 async function captureProfileUrl(serial, outDir) {
   console.log("   capturar URL (Share)…");
-  // Volta ao topo do perfil antes do Share
-  for (let i = 0; i < 3; i++) {
-    try {
-      scroll({ serial, direction: "up", distance: SCROLL_DISTANCE });
-    } catch {
-      /* ignore */
-    }
-    await sleep(400);
-  }
 
   const shareQueries = [
     "Share profile",
@@ -545,13 +555,28 @@ async function main() {
   const openedName = String(opened?.name || name).trim();
   await sleep(WAIT_AFTER_PROFILE_MS);
 
-  console.log("6) Extract + scroll na página…");
+  // Share no topo (antes de descer) — evita scroll up depois.
+  console.log("6) URL do perfil (Share no topo)…");
+  let profileUrl = null;
+  try {
+    profileUrl = await captureProfileUrl(serial, outDir);
+  } catch (e) {
+    console.log(`   URL: ${e.message || e}`);
+  }
+
+  console.log("7) Extract + scroll down até o fim…");
   /** @type {object[]} */
   const allEls = [];
-  for (let i = 0; i <= PROFILE_SCROLLS; i++) {
+  let contentStable = 0;
+  let frameStable = 0;
+  let prevContentFp = null;
+  let prevHash = await frameHash(serial, join(outDir, "frame-000.png"));
+
+  for (let i = 0; i < MAX_PROFILE_PAGES; i++) {
     const pad = String(i).padStart(2, "0");
     const png = join(outDir, `page-${pad}.png`);
     const els = await extractWithPng(serial, png);
+    const contentFp = pageContentFingerprint(els);
     console.log(`   page-${pad}: ${els.length} els → ${png}`);
     allEls.push(...els);
     writeFileSync(
@@ -559,26 +584,50 @@ async function main() {
       JSON.stringify(els, null, 2),
       "utf8",
     );
-    if (i < PROFILE_SCROLLS) {
-      try {
-        scroll({ serial, direction: "down", distance: SCROLL_DISTANCE });
-      } catch (e) {
-        console.log(`   scroll: ${e.message || e}`);
+
+    if (prevContentFp != null && contentFp === prevContentFp) {
+      contentStable += 1;
+      console.log(
+        `   fim do scroll? conteúdo igual (${contentStable}/${SCROLL_END_STABLE_NEEDED})`,
+      );
+      if (contentStable >= SCROLL_END_STABLE_NEEDED) {
+        console.log("   fim: scroll não avança mais (conteúdo)");
+        break;
       }
-      await sleep(SCROLL_DELAY_MS);
+    } else {
+      contentStable = 0;
+      prevContentFp = contentFp;
+    }
+
+    try {
+      scroll({ serial, direction: "down", distance: SCROLL_DISTANCE });
+    } catch (e) {
+      console.log(`   scroll: ${e.message || e}`);
+      break;
+    }
+    await sleep(SCROLL_DELAY_MS);
+
+    const nextHash = await frameHash(
+      serial,
+      join(outDir, `frame-after-${pad}.png`),
+    );
+    if (nextHash === prevHash) {
+      frameStable += 1;
+      console.log(
+        `   fim do scroll? frame igual (${frameStable}/${SCROLL_END_STABLE_NEEDED})`,
+      );
+      if (frameStable >= SCROLL_END_STABLE_NEEDED) {
+        console.log("   fim: scroll não avança mais (frame)");
+        break;
+      }
+    } else {
+      frameStable = 0;
+      prevHash = nextHash;
     }
   }
 
   const parsed = parseProfilePageOcr(allEls, { nameHint: openedName });
-
-  console.log("7) URL do perfil (Share)…");
-  let profileUrl = parsed.profileUrl || null;
-  try {
-    const fromShare = await captureProfileUrl(serial, outDir);
-    if (fromShare) profileUrl = fromShare;
-  } catch (e) {
-    console.log(`   URL: ${e.message || e}`);
-  }
+  if (!profileUrl && parsed.profileUrl) profileUrl = parsed.profileUrl;
   if (profileUrl) console.log(`   URL final: ${profileUrl}`);
   else console.log("   URL final: (não obtida)");
 
@@ -607,7 +656,7 @@ async function main() {
     `   campos: headline=${!!payload.headline} about=${!!payload.about} exp=${!!payload.experience} edu=${!!payload.education} skills=${!!payload.skills} url=${payload.profileUrl || "-"}`,
   );
 
-  console.log("8) POST /profile-details…");
+  console.log("8) POST /profile-details e encerrar…");
   const saved = await postProfileDetail(payload);
   console.log(
     `   OK id=${saved.id} profileId=${saved.profileId} url=${saved.profileUrl || "-"}`,

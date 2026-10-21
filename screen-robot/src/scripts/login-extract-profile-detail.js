@@ -15,7 +15,7 @@ import { dirname, resolve, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { adb, sleep } from "../lib/adb.js";
-import { extract, findByText, waitForText } from "../lib/extract.js";
+import { extract, findByText } from "../lib/extract.js";
 import { booleanQueryForProfile } from "../lib/linkedin-boolean-query.js";
 import { profilesFromExtract } from "../lib/linkedin-list-profiles.js";
 import {
@@ -32,23 +32,16 @@ if (!process.env.OCR_MERGE_TIMEOUT_MS) {
 }
 
 const WAIT_AFTER_LINKEDIN_MS = 5_000;
-const WAIT_AFTER_SEARCH_MS = 2_000;
 const WAIT_AFTER_PROFILE_MS = 2_500;
-const WAIT_SEE_ALL_KEYBOARD_MS = 8_000;
-const WAIT_TEXT_TIMEOUT_MS = 30_000;
-const WAIT_TEXT_INTERVAL_MS = 1_000;
+const WAIT_AFTER_TYPE_MS = 1_800;
 const CLEAR_DEL_COUNT = 40;
 const PROFILE_SCROLLS = 5;
 const SCROLL_DISTANCE = 320;
 const SCROLL_DELAY_MS = 900;
+/** Resultados do dropdown de busca começam abaixo da barra. */
+const LIST_MIN_Y = 130;
 const OCR_ENGINE = process.env.SCREEN_ROBOT_OCR || "macos-vision";
 const PROFILES_API_URL = (process.env.PROFILES_API_URL || "").replace(/\/$/, "");
-const SEE_ALL_QUERIES = [
-  "See all results",
-  "Show all results",
-  "See all",
-  "Show all",
-];
 function loadConfig(path) {
   const abs = resolve(path);
   if (!existsSync(abs)) throw new Error(`Config não encontrada: ${abs}`);
@@ -214,32 +207,6 @@ async function typeSearchQuery(serial, query) {
   }
 }
 
-async function submitSeeAll(serial) {
-  let seeAllHit;
-  try {
-    seeAllHit = await waitForText(serial, SEE_ALL_QUERIES, {
-      timeoutMs: WAIT_SEE_ALL_KEYBOARD_MS,
-      intervalMs: WAIT_TEXT_INTERVAL_MS,
-      engine: OCR_ENGINE,
-    });
-    console.log("   (com teclado aberto)");
-  } catch {
-    console.log("   não achou com teclado — KEYCODE_BACK…");
-    key({ serial, code: "KEYCODE_BACK" });
-    await sleep(800);
-    seeAllHit = await waitForText(serial, SEE_ALL_QUERIES, {
-      timeoutMs: WAIT_TEXT_TIMEOUT_MS,
-      intervalMs: WAIT_TEXT_INTERVAL_MS,
-      engine: OCR_ENGINE,
-    });
-  }
-  console.log(
-    `   → seeAll "${seeAllHit.text}" x=${seeAllHit.x} y=${seeAllHit.y} (query="${seeAllHit.query}" score=${seeAllHit.score?.toFixed?.(2) ?? seeAllHit.score})`,
-  );
-  tapElement({ serial, x: seeAllHit.x, y: seeAllHit.y });
-  await sleep(WAIT_AFTER_SEARCH_MS);
-}
-
 /**
  * Query de busca: só o nome (AND/empresa no mobile cai em Posts/Premium e atrapalha digitação).
  * Mantém booleanQueryForProfile só como referência no log.
@@ -305,7 +272,7 @@ async function openFirstPerson(serial, opts = {}) {
       }
 
       const cards = profilesFromExtract(els, { engine: OCR_ENGINE }).filter(
-        (c) => c?.x != null && Number(c.y) >= 160,
+        (c) => c?.x != null && Number(c.y) >= LIST_MIN_Y,
       );
       console.log(
         `   cards: ${cards.map((c) => c.name).join(" | ") || "(nenhum)"}`,
@@ -341,7 +308,7 @@ async function openFirstPerson(serial, opts = {}) {
           minScore: 0.65,
           engine: OCR_ENGINE,
         });
-        if (hit?.x != null && hit.y >= 160) {
+        if (hit?.x != null && hit.y >= LIST_MIN_Y) {
           console.log(
             `   → abrir por texto "${hit.text}" x=${hit.x} y=${hit.y}`,
           );
@@ -576,12 +543,11 @@ async function main() {
   await launch({ serial, package: linkedinPkg });
   await sleep(WAIT_AFTER_LINKEDIN_MS);
 
-  console.log("5) Search + digitar + abrir 1ª pessoa…");
+  console.log("5) Search + digitar + abrir 1ª pessoa (sem See all)…");
   await ensureSearchFocused(serial);
   await clearSearchField(serial);
   await typeSearchQuery(serial, query);
-  await submitSeeAll(serial);
-  await sleep(1_500);
+  await sleep(WAIT_AFTER_TYPE_MS);
   const opened = await openFirstPerson(serial, {
     outDir,
     preferredName: name,
@@ -657,8 +623,7 @@ async function main() {
     `   OK id=${saved.id} profileId=${saved.profileId} url=${saved.profileUrl || "-"}`,
   );
 
-  await leaveProfile(serial);
-  console.log("OK — detalhe persistido");
+  console.log("OK — detalhe persistido — encerrando processo");
   process.exit(0);
 }
 

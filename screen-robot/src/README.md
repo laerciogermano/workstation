@@ -135,13 +135,11 @@ cd screen-robot/src
 PROFILES_API_URL=http://localhost:3000 npm run login-extract-profile-detail -- --id <uuid>
 ```
 
-Script [`scripts/login-extract-profile-detail.js`](scripts/login-extract-profile-detail.js) — **1 perfil** da base (`GET /profiles` filtrado por `--id`): Search → digita **só o nome** → See all → **abre a 1ª pessoa** da lista (prefere match do nome) → Share/Copy para **URL** `linkedin.com/in/…` → scroll ×5 + extract (About/Experience/Education/Skills/grau) → `POST /profile-details`.
+Script [`scripts/login-extract-profile-detail.js`](scripts/login-extract-profile-detail.js) — **1 perfil** da base (`GET /profiles` filtrado por `--id`): Search → digita **só o nome** → **abre a 1ª pessoa do dropdown** (sem See all) → scroll ×5 + extract → Share/URL → `POST /profile-details` → **`process.exit(0)`**.
 
-**Antes → depois (People):** tap no chip People → busca direta nos resultados após See all. Rollback: restaurar `maybeTapPeople` após `submitSeeAll`.
+**Antes → depois (See all):** clicava See/Show all results → só o 1º resultado da pesquisa. Rollback: restaurar `submitSeeAll` antes de `openFirstPerson`.
 
-**Antes → depois (digitar):** `type` sem checagem + query `Nome AND Empresa` → `typeSearchQuery` verifica barra OCR; query só `name`. Rollback: `type({ text: boolean… })` sem verify.
-
-**Antes → depois (1ª pessoa + URL):** só match estrito do nome, 3 scrolls, sem URL → `openFirstPerson` + Share/OCR URL + 5 scrolls + `profileUrl`/`skills`/`connectionDegree` na API. Rollback: `openProfileByName` sem Share.
+**Antes → depois (People / digitar / URL):** ver histórico no git; chip People removido; query só `name` com verify OCR; Share sem tap cego.
 
 Saída: `screenshots/login-extract-profile-detail/<stamp>/` (`page-NN.png`, `detail.json`). Parser: [`lib/linkedin-profile-page.js`](lib/linkedin-profile-page.js).
 

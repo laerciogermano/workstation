@@ -210,13 +210,19 @@ function sanitizeSearchText(raw) {
     .trim();
 }
 
-/** Título: `title` ou cargo antes de " at "/" @" em `current`. */
+/** Primeiras N palavras do texto (após sanitize). */
+function firstWords(text, n = 3) {
+  const parts = sanitizeSearchText(text).split(/\s+/).filter(Boolean);
+  return parts.slice(0, n).join(" ");
+}
+
+/** Título: `title` ou cargo antes de " at "/" @" em `current` — só as 3 primeiras palavras. */
 function titleForSearch(profile) {
-  const direct = sanitizeSearchText(profile?.title);
+  const direct = firstWords(profile?.title, 3);
   if (direct) return direct;
   const current = String(profile?.current || "").trim();
   if (!current) return "";
-  return sanitizeSearchText(current.split(/\s+(?:at|@)\s+/i)[0]);
+  return firstWords(current.split(/\s+(?:at|@)\s+/i)[0], 3);
 }
 
 /**
@@ -336,19 +342,26 @@ async function tapPeopleChip(serial) {
   throw new Error("People: chip não encontrado no topo");
 }
 
-/** Nome de pessoa (não cargo/filtro tipo "Comprador"). */
+/** Nome de pessoa (não cargo/filtro/tempo tipo "1 month ago"). */
 function looksLikePersonName(name, opts = {}) {
   const n = String(name || "")
     .replace(/\s+/g, " ")
     .trim();
   if (n.length < 5) return false;
   if (/^(current|past|comprador|compradora)\b/i.test(n)) return false;
+  if (/\b(ago|yesterday|today|hour|minute|edited|viewed)\b/i.test(n)) {
+    return false;
+  }
+  if (/^\d+\s*(month|year|day|hr|min)/i.test(n)) return false;
   const title = String(opts.excludeTitle || "").trim();
   if (title && n.toLowerCase() === title.toLowerCase()) return false;
   // cargo sozinho / título de filtro
   if (!/\s/.test(n) && /^(analyst|engineer|manager|buyer|seller)$/i.test(n)) {
     return false;
   }
+  // precisa parecer nome (ao menos 2 tokens com letra)
+  const tokens = n.split(/\s+/).filter((t) => /[A-Za-zÀ-ÿ]/.test(t));
+  if (tokens.length < 2) return false;
   return true;
 }
 
@@ -809,12 +822,13 @@ async function main() {
     await launch({ serial, package: linkedinPkg });
     await sleep(WAIT_AFTER_LINKEDIN_MS);
 
-    console.log("5) Digitar → Show all → 1ª pessoa…");
+    console.log("5) Digitar → Show all → People → 1ª pessoa…");
     await ensureSearchFocused(serial);
     await clearSearchField(serial);
     await typeSearchQuery(serial, typeQueryFromProfile(profile));
     await submitShowAllResults(serial);
-    // Sem People: 1ª aparição logo após Show all (não clicar cargo/filtro).
+    // People evita cair em Jobs; 1ª pessoa (não cargo/filtro).
+    await tapPeopleChip(serial);
     const opened = await openFirstPerson(serial, { outDir, profile });
     openedName = String(opened?.name || name).trim();
     await sleep(WAIT_AFTER_PROFILE_MS);

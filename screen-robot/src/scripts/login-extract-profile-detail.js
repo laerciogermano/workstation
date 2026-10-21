@@ -15,8 +15,9 @@ import { dirname, resolve, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { sleep } from "../lib/adb.js";
-import { extract, findByText } from "../lib/extract.js";
+import { extract, findByText, waitForText } from "../lib/extract.js";
 import { booleanQueryForProfile } from "../lib/linkedin-boolean-query.js";
+import { profilesFromExtract } from "../lib/linkedin-list-profiles.js";
 import { parseProfilePageOcr } from "../lib/linkedin-profile-page.js";
 import { key, launch, scroll, stop, tapElement, type } from "../lib/operate.js";
 import { provisionEmulator } from "../lib/provision.js";
@@ -30,6 +31,9 @@ if (!process.env.OCR_MERGE_TIMEOUT_MS) {
 const WAIT_AFTER_LINKEDIN_MS = 5_000;
 const WAIT_AFTER_SEARCH_MS = 2_000;
 const WAIT_AFTER_PROFILE_MS = 2_500;
+const WAIT_SEE_ALL_KEYBOARD_MS = 8_000;
+const WAIT_TEXT_TIMEOUT_MS = 30_000;
+const WAIT_TEXT_INTERVAL_MS = 1_000;
 const CLEAR_DEL_COUNT = 80;
 const PROFILE_SCROLLS = 3;
 const SCROLL_DISTANCE = 320;
@@ -146,32 +150,72 @@ async function ensureSearchFocused(serial) {
 }
 
 async function submitSeeAll(serial) {
-  const early = await findFirstByText(serial, SEE_ALL_QUERIES);
-  if (early) {
-    const { hit, query } = early;
-    console.log(
-      `   → seeAll (teclado aberto) "${hit.text}" x=${hit.x} y=${hit.y} (query="${query}")`,
-    );
-    tapElement({ serial, x: hit.x, y: hit.y });
-  } else {
-    console.log("   baixar teclado…");
+  let seeAllHit;
+  try {
+    seeAllHit = await waitForText(serial, SEE_ALL_QUERIES, {
+      timeoutMs: WAIT_SEE_ALL_KEYBOARD_MS,
+      intervalMs: WAIT_TEXT_INTERVAL_MS,
+      engine: OCR_ENGINE,
+    });
+    console.log("   (com teclado aberto)");
+  } catch {
+    console.log("   não achou com teclado — KEYCODE_BACK…");
     key({ serial, code: "KEYCODE_BACK" });
     await sleep(800);
-    await tapByText(serial, SEE_ALL_QUERIES, "seeAll");
+    seeAllHit = await waitForText(serial, SEE_ALL_QUERIES, {
+      timeoutMs: WAIT_TEXT_TIMEOUT_MS,
+      intervalMs: WAIT_TEXT_INTERVAL_MS,
+      engine: OCR_ENGINE,
+    });
   }
+  console.log(
+    `   → seeAll "${seeAllHit.text}" x=${seeAllHit.x} y=${seeAllHit.y} (query="${seeAllHit.query}" score=${seeAllHit.score?.toFixed?.(2) ?? seeAllHit.score})`,
+  );
+  tapElement({ serial, x: seeAllHit.x, y: seeAllHit.y });
   await sleep(WAIT_AFTER_SEARCH_MS);
 }
 
-async function maybeTapPeople(serial) {
-  const hit = await findFirstByText(serial, PEOPLE_QUERIES, { minScore: 0.8 });
-  if (!hit) return false;
-  if (hit.hit.y > 200) return false;
-  console.log(
-    `   → People "${hit.hit.text}" x=${hit.hit.x} y=${hit.hit.y}`,
-  );
-  tapElement({ serial, x: hit.hit.x, y: hit.hit.y });
-  await sleep(1_500);
-  return true;
+async function maybeTapPeople(serial, opts = {}) {
+  const attempts = opts.attempts ?? 4;
+  for (let attempt = 1; attempt <= attempts; attempt++) {
+    const hit = await findFirstByText(serial, PEOPLE_QUERIES, {
+      minScore: 0.7,
+    });
+    if (hit && hit.hit.y <= 220) {
+      console.log(
+        `   → People "${hit.hit.text}" x=${hit.hit.x} y=${hit.hit.y}`,
+      );
+      tapElement({ serial, x: hit.hit.x, y: hit.hit.y });
+      await sleep(1_800);
+      return true;
+    }
+    console.log(`   People chip não visto (${attempt}/${attempts})`);
+    await sleep(800);
+  }
+  return false;
+}
+
+/** Mobile LinkedIn: aspas da booleana viram lixo (%22) no campo — tipar sem aspas. */
+function typeQueryFromProfile(profile) {
+  return booleanQueryForProfile(profile).replace(/"/g, "");
+}
+
+function nameMatchScore(candidate, target) {
+  const a = String(candidate || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/\p{M}/gu, "");
+  const b = String(target || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/\p{M}/gu, "");
+  if (!a || !b) return 0;
+  if (a === b) return 1;
+  if (a.includes(b) || b.includes(a)) return 0.9;
+  const ap = a.split(/\s+/);
+  const bp = b.split(/\s+/);
+  const overlap = ap.filter((p) => bp.includes(p)).length;
+  return overlap / Math.max(ap.length, bp.length);
 }
 
 async function openProfileByName(serial, name, opts = {}) {
@@ -186,7 +230,7 @@ async function openProfileByName(serial, name, opts = {}) {
   for (let attempt = 1; attempt <= attempts; attempt++) {
     for (const q of queries) {
       const hit = await findByText(serial, q, {
-        minScore: 0.72,
+        minScore: 0.65,
         engine: OCR_ENGINE,
       });
       if (hit?.x == null || hit?.y == null) continue;
@@ -197,8 +241,73 @@ async function openProfileByName(serial, name, opts = {}) {
       tapElement({ serial, x: hit.x, y: hit.y });
       return hit;
     }
+
+    // Fallback: extract da lista → tap no card com melhor match de nome
+    console.log(`   fallback extract lista (${attempt}/${attempts})…`);
+    try {
+      const listPng = join(
+        opts.outDir || ROOT,
+        `list-fallback-${String(attempt).padStart(2, "0")}.png`,
+      );
+      const els = await extract(
+        { serial, engine: OCR_ENGINE },
+        opts.outDir ? { outPath: listPng } : {},
+      );
+      if (opts.outDir) {
+        writeFileSync(
+          join(opts.outDir, `list-fallback-${String(attempt).padStart(2, "0")}.json`),
+          JSON.stringify(els, null, 2),
+          "utf8",
+        );
+        console.log(`   → ${listPng}`);
+      }
+      const peopleEl = els.find(
+        (e) =>
+          /^people$/i.test(String(e?.text || "").trim()) &&
+          Number(e.y) <= 220,
+      );
+      if (peopleEl?.x != null) {
+        console.log(
+          `   → People (fallback OCR) x=${peopleEl.x} y=${peopleEl.y}`,
+        );
+        tapElement({ serial, x: peopleEl.x, y: peopleEl.y });
+        await sleep(1_800);
+        continue;
+      }
+      const cards = profilesFromExtract(els, { engine: OCR_ENGINE });
+      let best = null;
+      for (const c of cards) {
+        const score = nameMatchScore(c.name, name);
+        if (score < 0.45) continue;
+        if (!best || score > best.score) best = { card: c, score };
+      }
+      // Sem match forte: 1º card da lista (1º caso — destravar fluxo)
+      if (!best && cards.length && cards[0].x != null && cards[0].y >= 160) {
+        best = { card: cards[0], score: 0 };
+        console.log(`   sem match de nome — abrindo 1º card "${cards[0].name}"`);
+      }
+      if (best?.card?.x != null && best.card.y != null && best.card.y >= 160) {
+        console.log(
+          `   → abrir perfil (lista) "${best.card.name}" x=${best.card.x} y=${best.card.y} score=${best.score.toFixed(2)}`,
+        );
+        tapElement({ serial, x: best.card.x, y: best.card.y });
+        return best.card;
+      }
+      console.log(
+        `   cards na lista: ${cards.map((c) => c.name).join(" | ") || "(nenhum)"}`,
+      );
+      const sample = els
+        .slice(0, 12)
+        .map((e) => e.text)
+        .filter(Boolean)
+        .join(" | ");
+      if (sample) console.log(`   ocr sample: ${sample}`);
+    } catch (e) {
+      console.log(`   fallback extract: ${e.message || e}`);
+    }
+
     console.log(`   nome na lista não achado (${attempt}/${attempts}): ${name}`);
-    await sleep(1_000);
+    await sleep(1_200);
   }
   throw new Error(`perfil na lista não encontrado: ${name}`);
 }
@@ -290,9 +399,9 @@ async function main() {
   const profile = await fetchProfileById(profileId);
   const name = String(profile.name || "").trim();
   if (!name) throw new Error("perfil sem name");
-  const query = booleanQueryForProfile(profile);
+  const query = typeQueryFromProfile(profile);
   console.log(`   name=${name}`);
-  console.log(`   boolean: ${query}`);
+  console.log(`   query (sem aspas): ${query}`);
 
   const stamp = new Date().toISOString().replace(/[:.]/g, "-");
   const outDir = resolve(ROOT, "screenshots", "login-extract-profile-detail", stamp);
@@ -323,8 +432,13 @@ async function main() {
   await type({ serial, text: query });
   await sleep(1_000);
   await submitSeeAll(serial);
-  await maybeTapPeople(serial);
-  await openProfileByName(serial, name);
+  await sleep(1_500);
+  const people = await maybeTapPeople(serial, { attempts: 5 });
+  if (!people) {
+    console.log("   People chip não visto — seguindo na lista atual");
+  }
+  await sleep(1_200);
+  await openProfileByName(serial, name, { outDir });
   await sleep(WAIT_AFTER_PROFILE_MS);
 
   console.log("6) Extract + scroll na página…");

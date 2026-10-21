@@ -44,6 +44,8 @@ const SHOW_ALL_QUERIES = [
   "Show all",
   "See all",
 ];
+const PEOPLE_QUERIES = ["People"];
+const WAIT_AFTER_PEOPLE_MS = 2_000;
 /** Máximo de páginas OCR no perfil (safety). Fim real = conteúdo/frame estável. */
 const MAX_PROFILE_PAGES = 40;
 const SCROLL_END_STABLE_NEEDED = 2;
@@ -305,6 +307,31 @@ async function submitShowAllResults(serial) {
   console.log("   fallback: tap faixa inferior (Show all)…");
   tapElement({ serial, x: 270, y: 850 });
   await sleep(WAIT_AFTER_SHOW_ALL_MS);
+}
+
+/**
+ * Chip/tab People no topo da lista (após Show all) — não "X people" no meio.
+ */
+async function tapPeopleChip(serial) {
+  console.log("   People…");
+  for (let attempt = 1; attempt <= 6; attempt++) {
+    const hit = await findFirstByText(serial, PEOPLE_QUERIES, {
+      minScore: 0.78,
+    });
+    if (hit && hit.hit.y <= 220) {
+      console.log(
+        `   → People "${hit.hit.text}" x=${hit.hit.x} y=${hit.hit.y}`,
+      );
+      tapElement({ serial, x: hit.hit.x, y: hit.hit.y });
+      await sleep(WAIT_AFTER_PEOPLE_MS);
+      return;
+    }
+    console.log(
+      `   People não no topo (${attempt}/6)${hit ? ` y=${hit.hit.y}` : ""}`,
+    );
+    await sleep(1_000);
+  }
+  throw new Error("People: chip não encontrado no topo");
 }
 
 /**
@@ -622,11 +649,12 @@ async function main() {
   await launch({ serial, package: linkedinPkg });
   await sleep(WAIT_AFTER_LINKEDIN_MS);
 
-  console.log("5) Digitar → Show all → 1ª pessoa…");
+  console.log("5) Digitar → Show all → People → 1ª pessoa…");
   await ensureSearchFocused(serial);
   await clearSearchField(serial);
   await typeSearchQuery(serial, query);
   await submitShowAllResults(serial);
+  await tapPeopleChip(serial);
   const opened = await openFirstPerson(serial, { outDir });
   const openedName = String(opened?.name || name).trim();
   await sleep(WAIT_AFTER_PROFILE_MS);

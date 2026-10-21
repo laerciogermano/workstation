@@ -133,11 +133,15 @@ node --test --test-timeout=180000 lib/extract.linkedin-fixtures.test.js
 ```bash
 cd screen-robot/src
 PROFILES_API_URL=http://localhost:3000 npm run login-extract-profile-detail -- --id <uuid>
+# perfil já aberto no emulador (pula busca / Show all / People):
+PROFILES_API_URL=http://localhost:3000 npm run login-extract-profile-detail -- --id <uuid> --from-profile
 ```
 
-Script [`scripts/login-extract-profile-detail.js`](scripts/login-extract-profile-detail.js) — **1 perfil**: digita → **Show all** → **People** → **1ª pessoa** → **⋯ More → URL** → **scroll até fim** → `POST /profile-details` → exit.
+Script [`scripts/login-extract-profile-detail.js`](scripts/login-extract-profile-detail.js) — digita → Show all → People → 1º → **⋯ → Share via → Copy (clipboard)** → **POST URL** → scroll até fim → POST completo → exit. Com `--from-profile` começa no passo da URL.
 
-**Antes → depois (People):** Show all → 1º direto → Show all → chip People (y≤220) → 1º. Rollback: remover `tapPeopleChip`.
+**Antes → depois (URL):** Share genérico / OCR sheet → `Share via` + `Copy` + clipboard + POST antecipado. Rollback: `captureProfileUrl` antigo.
+
+**Antes → depois (People):** Show all → 1º → Show all → People → 1º. Rollback: remover `tapPeopleChip`.
 
 **Antes → depois (query):** só `name` / espaços → `parts.join(" AND ")` com `title|current|past|city`; sanitize ASCII. Rollback: `return name`.
 

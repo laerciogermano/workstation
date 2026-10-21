@@ -4,6 +4,8 @@
  *
  * Uso (cwd: screen-robot/src):
  *   PROFILES_API_URL=http://localhost:3000 npm run login-extract-profile-detail -- --id <uuid>
+ *   # perfil já aberto no device — pula busca / Show all / People:
+ *   … -- --id <uuid> --from-profile
  */
 import { createHash } from "node:crypto";
 import {
@@ -399,17 +401,23 @@ async function openFirstPerson(serial, opts = {}) {
   throw new Error("nenhuma pessoa na lista de resultados");
 }
 
-/** Lê clipboard do device (best-effort). */
+/** Canonicaliza URL do perfil (tira utm_* / query). */
+function normalizeLinkedInProfileUrl(raw) {
+  const s = String(raw || "");
+  const m = s.match(
+    /(?:https?:\/\/)?(?:www\.)?linkedin\.com\/in\/([A-Za-z0-9._%-]+)/i,
+  );
+  if (!m) return null;
+  return `https://www.linkedin.com/in/${m[1]}`;
+}
+
+/** Lê clipboard do device (best-effort) → URL /in/… */
 function readDeviceClipboard(serial) {
   try {
     const r = adb(serial, ["shell", "dumpsys", "clipboard"]);
     const out = String(r.stdout || "");
-    const m = out.match(/(?:https?:\/\/)?(?:www\.)?linkedin\.com\/in\/[A-Za-z0-9._%-]+/i);
-    if (m) {
-      let url = m[0];
-      if (!/^https?:\/\//i.test(url)) url = `https://${url}`;
-      return url.replace(/\/$/, "");
-    }
+    const url = normalizeLinkedInProfileUrl(out);
+    if (url) return url;
   } catch {
     /* ignore */
   }
@@ -432,104 +440,96 @@ function pageContentFingerprint(els) {
 }
 
 /**
- * Abre menu ⋯ (More) no topo → Share / Copy link → URL → fecha modal.
- * Rodar no topo do perfil, antes do scroll de extract.
+ * ⋯ More → "Share via" → "Copy" → clipboard → fecha modais.
+ * Ex. clipboard: linkedin.com/in/…?utm_source=share_via&…
  */
 async function captureProfileUrl(serial, outDir) {
-  console.log("   URL via ⋯ / More…");
+  console.log("   ⋯ → Share via → Copy…");
 
-  // 1) Abrir overflow (3 pontos) — OCR "More" ou tap canto superior direito.
+  // 1) Três pontos (header)
   let opened = false;
-  for (const q of ["More", "More options", "Overflow"]) {
+  for (const q of ["More", "More options"]) {
     const hit = await findFirstByText(serial, q, { minScore: 0.72 });
     if (!hit) continue;
     const label = String(hit.hit.text || "").trim();
-    if (label.length > 20) continue;
-    if (hit.hit.y > 160) continue; // só header
+    if (label.length > 20 || hit.hit.y > 160) continue;
     console.log(`   → more "${label}" x=${hit.hit.x} y=${hit.hit.y}`);
     tapElement({ serial, x: hit.hit.x, y: hit.hit.y });
     opened = true;
-    await sleep(1_200);
+    await sleep(1_400);
     break;
   }
   if (!opened) {
     console.log("   fallback: tap ⋯ canto superior direito…");
     tapElement({ serial, x: 500, y: 80 });
-    await sleep(1_200);
+    await sleep(1_400);
   }
 
-  // 2) Opção Share / Copy no sheet
-  const menuQueries = [
-    "Share via",
-    "Share profile",
-    "Send profile in a message",
-    "Copy link to profile",
-    "Copy link",
-    "Share",
-  ];
-  let tappedShare = false;
-  for (const q of menuQueries) {
-    const hit = await findFirstByText(serial, q, { minScore: 0.7 });
-    if (!hit) continue;
-    const label = String(hit.hit.text || "").trim();
-    if (label.length > 40) continue;
-    console.log(`   → menu "${label}" x=${hit.hit.x} y=${hit.hit.y}`);
-    tapElement({ serial, x: hit.hit.x, y: hit.hit.y });
-    tappedShare = true;
-    await sleep(1_500);
-    break;
-  }
-  if (!tappedShare) {
-    console.log("   menu Share/Copy não visível — fecha e segue");
+  // 2) Share via (obrigatório)
+  const shareVia = await findFirstByText(
+    serial,
+    ["Share via", "Share Via", "Share profile via"],
+    { minScore: 0.68 },
+  );
+  if (!shareVia) {
+    console.log("   Share via não encontrado — fecha e segue");
     key({ serial, code: "KEYCODE_BACK" });
-    await sleep(600);
+    await sleep(500);
     return null;
   }
+  console.log(
+    `   → Share via "${shareVia.hit.text}" x=${shareVia.hit.x} y=${shareVia.hit.y}`,
+  );
+  tapElement({ serial, x: shareVia.hit.x, y: shareVia.hit.y });
+  await sleep(1_800);
 
-  const sheetPng = join(outDir, "share-sheet.png");
-  let els = [];
+  const sheetPng = join(outDir, "share-via-sheet.png");
   try {
-    els = await extract(
+    const els = await extract(
       { serial, engine: OCR_ENGINE },
       { outPath: sheetPng },
     );
     writeFileSync(
-      join(outDir, "share-sheet.json"),
+      join(outDir, "share-via-sheet.json"),
       JSON.stringify(els, null, 2),
       "utf8",
     );
   } catch (e) {
-    console.log(`   share extract: ${e.message || e}`);
+    console.log(`   share-via extract: ${e.message || e}`);
   }
 
-  let url = findLinkedInProfileUrl(els.map((e) => e.text));
-  if (url) {
-    console.log(`   URL (OCR sheet): ${url}`);
-    key({ serial, code: "KEYCODE_BACK" });
-    await sleep(600);
-    key({ serial, code: "KEYCODE_BACK" });
-    await sleep(500);
-    return url;
-  }
-
+  // 3) Copy no share sheet do Android
   const copyHit = await findFirstByText(
     serial,
-    ["Copy link", "Copy to clipboard", "Copy Link", "Copy link to profile", "Copy"],
+    ["Copy", "Copy link", "Copy to clipboard", "Copy Link"],
     { minScore: 0.65 },
   );
-  if (copyHit) {
-    console.log(
-      `   → copy "${copyHit.hit.text}" x=${copyHit.hit.x} y=${copyHit.hit.y}`,
-    );
-    tapElement({ serial, x: copyHit.hit.x, y: copyHit.hit.y });
+  if (!copyHit) {
+    console.log("   Copy não encontrado no share sheet");
+    key({ serial, code: "KEYCODE_BACK" });
+    await sleep(500);
+    key({ serial, code: "KEYCODE_BACK" });
+    await sleep(500);
+    return null;
+  }
+  console.log(
+    `   → Copy "${copyHit.hit.text}" x=${copyHit.hit.x} y=${copyHit.hit.y}`,
+  );
+  tapElement({ serial, x: copyHit.hit.x, y: copyHit.hit.y });
+  await sleep(1_000);
+
+  let url = readDeviceClipboard(serial);
+  if (!url) {
+    // retry clipboard
     await sleep(800);
     url = readDeviceClipboard(serial);
-    if (url) console.log(`   URL (clipboard): ${url}`);
   }
+  if (url) console.log(`   URL (clipboard): ${url}`);
+  else console.log("   clipboard sem linkedin.com/in/…");
 
-  // Fecha modal(s)
+  // Fecha residual (share / more)
   key({ serial, code: "KEYCODE_BACK" });
-  await sleep(500);
+  await sleep(400);
   key({ serial, code: "KEYCODE_BACK" });
   await sleep(600);
   return url;
@@ -601,15 +601,17 @@ async function extractWithPng(serial, outPath) {
 function parseArgs(argv) {
   let configPath = resolve(ROOT, "device.config.json");
   let profileId = null;
+  let fromProfile = false;
   for (let i = 0; i < argv.length; i++) {
     if (argv[i] === "--config") configPath = resolve(argv[++i]);
     else if (argv[i] === "--id") profileId = String(argv[++i] || "").trim();
+    else if (argv[i] === "--from-profile") fromProfile = true;
   }
-  return { configPath, profileId };
+  return { configPath, profileId, fromProfile };
 }
 
 async function main() {
-  const { configPath, profileId } = parseArgs(process.argv.slice(2));
+  const { configPath, profileId, fromProfile } = parseArgs(process.argv.slice(2));
   if (!profileId) {
     throw new Error("passe --id <uuid> (id em linkedin_profiles / GET /profiles)");
   }
@@ -622,16 +624,19 @@ async function main() {
   const profile = await fetchProfileById(profileId);
   const name = String(profile.name || "").trim();
   if (!name) throw new Error("perfil sem name");
-  const query = typeQueryFromProfile(profile);
   console.log(`   name=${name}`);
-  console.log(`   query (sem aspas): ${query}`);
+  if (fromProfile) {
+    console.log("   modo --from-profile: perfil já aberto — pula busca");
+  } else {
+    console.log(`   query: ${typeQueryFromProfile(profile)}`);
+  }
 
   const stamp = new Date().toISOString().replace(/[:.]/g, "-");
   const outDir = resolve(ROOT, "screenshots", "login-extract-profile-detail", stamp);
   mkdirSync(outDir, { recursive: true });
   writeFileSync(
     join(outDir, "source-profile.json"),
-    JSON.stringify(profile, null, 2),
+    JSON.stringify({ ...profile, fromProfile }, null, 2),
     "utf8",
   );
   console.log(`saida: ${outDir}`);
@@ -640,36 +645,60 @@ async function main() {
   const { serial } = await provisionEmulator(cfg);
   console.log(`   OK ${serial}`);
 
-  console.log("3) Remover apps em execução…");
-  stopAllApps(serial, cfg.apps);
-  key({ serial, code: "KEYCODE_HOME" });
-  await sleep(500);
+  let openedName = name;
+  if (!fromProfile) {
+    console.log("3) Remover apps em execução…");
+    stopAllApps(serial, cfg.apps);
+    key({ serial, code: "KEYCODE_HOME" });
+    await sleep(500);
 
-  console.log("4) Iniciar LinkedIn…");
-  await launch({ serial, package: linkedinPkg });
-  await sleep(WAIT_AFTER_LINKEDIN_MS);
+    console.log("4) Iniciar LinkedIn…");
+    await launch({ serial, package: linkedinPkg });
+    await sleep(WAIT_AFTER_LINKEDIN_MS);
 
-  console.log("5) Digitar → Show all → People → 1ª pessoa…");
-  await ensureSearchFocused(serial);
-  await clearSearchField(serial);
-  await typeSearchQuery(serial, query);
-  await submitShowAllResults(serial);
-  await tapPeopleChip(serial);
-  const opened = await openFirstPerson(serial, { outDir });
-  const openedName = String(opened?.name || name).trim();
-  await sleep(WAIT_AFTER_PROFILE_MS);
+    console.log("5) Digitar → Show all → People → 1ª pessoa…");
+    await ensureSearchFocused(serial);
+    await clearSearchField(serial);
+    await typeSearchQuery(serial, typeQueryFromProfile(profile));
+    await submitShowAllResults(serial);
+    await tapPeopleChip(serial);
+    const opened = await openFirstPerson(serial, { outDir });
+    openedName = String(opened?.name || name).trim();
+    await sleep(WAIT_AFTER_PROFILE_MS);
+  } else {
+    console.log("3–5) skip (perfil já aberto no device)");
+    await sleep(800);
+  }
 
-  console.log("6) ⋯ More → URL do perfil (antes do scroll)…");
+  console.log("6) ⋯ → Share via → Copy → POST URL…");
   let profileUrl = null;
   try {
     profileUrl = await captureProfileUrl(serial, outDir);
   } catch (e) {
     console.log(`   URL: ${e.message || e}`);
   }
-  if (profileUrl) console.log(`   URL: ${profileUrl}`);
-  else console.log("   URL: (não obtida)");
+  if (profileUrl) {
+    console.log(`   URL: ${profileUrl}`);
+    try {
+      const early = await postProfileDetail({
+        profileId,
+        name: openedName,
+        profileUrl,
+        connectionDegree: profile.level || null,
+        location: profile.city || null,
+        extractedAt: new Date().toISOString(),
+      });
+      console.log(
+        `   POST URL ok id=${early.id} url=${early.profileUrl || "-"}`,
+      );
+    } catch (e) {
+      console.log(`   POST URL falhou: ${e.message || e}`);
+    }
+  } else {
+    console.log("   URL: (não obtida) — segue sem POST antecipado");
+  }
 
-  console.log("7) Extract + scroll down até o fim (só então finaliza)…");
+  console.log("7) Extract + scroll down até o fim…");
   /** @type {object[]} */
   const allEls = [];
   let contentStable = 0;

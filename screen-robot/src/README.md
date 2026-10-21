@@ -135,9 +135,9 @@ cd screen-robot/src
 PROFILES_API_URL=http://localhost:3000 npm run login-extract-profile-detail -- --id <uuid>
 ```
 
-Script [`scripts/login-extract-profile-detail.js`](scripts/login-extract-profile-detail.js) — **1 perfil** da base (`GET /profiles` filtrado por `--id`): Search → digita **só o nome** → **abre a 1ª pessoa do dropdown** (sem See all) → scroll ×5 + extract → Share/URL → `POST /profile-details` → **`process.exit(0)`**.
+Script [`scripts/login-extract-profile-detail.js`](scripts/login-extract-profile-detail.js) — **1 perfil** da base (`GET /profiles` filtrado por `--id`): Search → digita **só o nome** → **clica a 1ª sugestão** (`Nome • 2nd • …`, sem See all) → scroll ×5 + extract → Share/URL → `POST /profile-details` → **`process.exit(0)`**.
 
-**Antes → depois (See all):** clicava See/Show all results → só o 1º resultado da pesquisa. Rollback: restaurar `submitSeeAll` antes de `openFirstPerson`.
+**Antes → depois (See all / clique):** See all + parser de cards Connect → sugestões do dropdown (`• 1st/2nd/3rd`). Rollback: `submitSeeAll` + `profilesFromExtract`.
 
 **Antes → depois (People / digitar / URL):** ver histórico no git; chip People removido; query só `name` com verify OCR; Share sem tap cego.
 

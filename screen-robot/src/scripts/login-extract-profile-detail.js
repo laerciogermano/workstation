@@ -241,15 +241,38 @@ function nameMatchScore(candidate, target) {
 }
 
 /**
- * Abre a 1ª pessoa da lista de resultados.
- * Se preferredName bater num card, prefere esse; senão o primeiro card People.
+ * Sugestões do dropdown de busca LinkedIn: "Nome • 2nd • Empresa…"
+ * (não têm Connect — profilesFromExtract não serve aqui).
+ */
+function searchSuggestionsFromExtract(els) {
+  /** @type {{ name: string, x: number, y: number, text: string }[]} */
+  const out = [];
+  for (const e of els || []) {
+    const text = String(e?.text || "").trim();
+    const y = Number(e?.y);
+    const x = Number(e?.x);
+    if (!text || x == null || Number.isNaN(y)) continue;
+    if (y < LIST_MIN_Y || y > 520) continue; // barra / teclado
+    if (/^show all/i.test(text)) continue;
+    if (!/•/.test(text) && !/\b(1st|2nd|3rd\+?)\b/i.test(text)) continue;
+    const namePart = text.split(/•/)[0].replace(/\s+/g, " ").trim();
+    if (namePart.length < 5) continue;
+    out.push({ name: namePart, x, y, text });
+  }
+  out.sort((a, b) => a.y - b.y || a.x - b.x);
+  return out;
+}
+
+/**
+ * Abre a 1ª pessoa que aparecer na pesquisa (dropdown).
+ * Prefere sugestão com match do nome; senão a primeira sugestão.
  */
 async function openFirstPerson(serial, opts = {}) {
   const preferredName = String(opts.preferredName || "").trim();
   const attempts = opts.attempts ?? 5;
 
   for (let attempt = 1; attempt <= attempts; attempt++) {
-    console.log(`   lista pessoas (${attempt}/${attempts})…`);
+    console.log(`   sugestões pesquisa (${attempt}/${attempts})…`);
     try {
       const listPng = join(
         opts.outDir || ROOT,
@@ -271,20 +294,18 @@ async function openFirstPerson(serial, opts = {}) {
         console.log(`   → ${listPng}`);
       }
 
-      const cards = profilesFromExtract(els, { engine: OCR_ENGINE }).filter(
-        (c) => c?.x != null && Number(c.y) >= LIST_MIN_Y,
-      );
+      const suggestions = searchSuggestionsFromExtract(els);
       console.log(
-        `   cards: ${cards.map((c) => c.name).join(" | ") || "(nenhum)"}`,
+        `   sugestões: ${suggestions.map((s) => s.name).join(" | ") || "(nenhuma)"}`,
       );
 
-      let pick = cards[0] || null;
-      if (preferredName && cards.length) {
+      let pick = suggestions[0] || null;
+      if (preferredName && suggestions.length) {
         let best = null;
-        for (const c of cards) {
-          const score = nameMatchScore(c.name, preferredName);
-          if (score < 0.5) continue;
-          if (!best || score > best.score) best = { card: c, score };
+        for (const s of suggestions) {
+          const score = nameMatchScore(s.name, preferredName);
+          if (score < 0.45) continue;
+          if (!best || score > best.score) best = { card: s, score };
         }
         if (best) {
           pick = best.card;
@@ -294,28 +315,32 @@ async function openFirstPerson(serial, opts = {}) {
         }
       }
 
+      // Fallback: cards People (Connect) se já estiver em lista full
+      if (!pick) {
+        const cards = profilesFromExtract(els, { engine: OCR_ENGINE }).filter(
+          (c) => c?.x != null && Number(c.y) >= LIST_MIN_Y,
+        );
+        console.log(
+          `   cards: ${cards.map((c) => c.name).join(" | ") || "(nenhum)"}`,
+        );
+        pick = cards[0] || null;
+      }
+
       if (pick) {
         console.log(
           `   → abrir 1ª pessoa "${pick.name}" x=${pick.x} y=${pick.y}`,
         );
         tapElement({ serial, x: pick.x, y: pick.y });
+        await sleep(800);
         return pick;
       }
 
-      // Sem parser de card: tenta o nome preferido via findByText
-      if (preferredName) {
-        const hit = await findByText(serial, preferredName, {
-          minScore: 0.65,
-          engine: OCR_ENGINE,
-        });
-        if (hit?.x != null && hit.y >= LIST_MIN_Y) {
-          console.log(
-            `   → abrir por texto "${hit.text}" x=${hit.x} y=${hit.y}`,
-          );
-          tapElement({ serial, x: hit.x, y: hit.y });
-          return { name: hit.text, x: hit.x, y: hit.y };
-        }
-      }
+      const sample = els
+        .filter((e) => Number(e.y) >= LIST_MIN_Y && Number(e.y) < 520)
+        .slice(0, 8)
+        .map((e) => e.text)
+        .join(" | ");
+      if (sample) console.log(`   ocr sample: ${sample}`);
     } catch (e) {
       console.log(`   lista: ${e.message || e}`);
     }

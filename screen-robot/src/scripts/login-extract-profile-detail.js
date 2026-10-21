@@ -700,6 +700,8 @@ async function main() {
     const opened = await openFirstPerson(serial, { outDir });
     openedName = String(opened?.name || name).trim();
     await sleep(WAIT_AFTER_PROFILE_MS);
+  }
+
   /** URL conhecida (deep link) — fallback se Share via/clipboard falhar. */
   let knownProfileUrl = null;
   if (fromProfile) {

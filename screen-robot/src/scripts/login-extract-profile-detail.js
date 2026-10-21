@@ -700,17 +700,19 @@ async function main() {
     const opened = await openFirstPerson(serial, { outDir });
     openedName = String(opened?.name || name).trim();
     await sleep(WAIT_AFTER_PROFILE_MS);
-  } else {
+  /** URL conhecida (deep link) — fallback se Share via/clipboard falhar. */
+  let knownProfileUrl = null;
+  if (fromProfile) {
     console.log("3) Abrir perfil direto (deep link)…");
-    let openUrl =
+    knownProfileUrl =
       normalizeLinkedInProfileUrl(profileUrlArg) ||
       (await fetchStoredProfileUrl(profileId));
-    if (!openUrl) {
+    if (!knownProfileUrl) {
       throw new Error(
         "--from-profile exige --url https://www.linkedin.com/in/… (ou profileUrl já salvo na API)",
       );
     }
-    openProfileByUrl(serial, linkedinPkg, openUrl);
+    openProfileByUrl(serial, linkedinPkg, knownProfileUrl);
     await sleep(WAIT_AFTER_PROFILE_MS);
     console.log("4–5) skip busca (perfil aberto via URL)");
   }
@@ -721,6 +723,10 @@ async function main() {
     profileUrl = await captureProfileUrl(serial, outDir);
   } catch (e) {
     console.log(`   URL: ${e.message || e}`);
+  }
+  if (!profileUrl && knownProfileUrl) {
+    profileUrl = knownProfileUrl;
+    console.log(`   URL (do --url / deep link): ${profileUrl}`);
   }
   if (profileUrl) {
     console.log(`   URL: ${profileUrl}`);

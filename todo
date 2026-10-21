@@ -20,12 +20,16 @@
             - enviar mensagem
             - conectar 
             - prospectar
-    - Extrair perfis
+    - 1. Extrair perfis
         - criar script de extrair perfis -> searchs
-    - Extrair urls
-    - Conectar
-    - Enviar mensagem
-    - Captar contato
+    - 2. Extrair perfil (
+        - profile url
+        - name
+        - ...
+    )
+    - 3. Conectar
+    - 4. Enviar mensagem
+    - 5. Captar contato
     -----------------
     - Calcular custo de cada agente por máquina
         - Cada máquina custa 300 reais e pode operar 4 devices por vez 
@@ -58,7 +62,7 @@
     - senha contabo: 
         vds
             - ssh root@185.250.37.82 m54b2NYwSro5zZUo
-            - 144.126.154.90, Pz2mZRgZT8z2Iow8
+            - ssh root@144.126.154.90, Pz2mZRgZT8z2Iow8
     - Definir processo
         - Board
             - searchs (palavras chaves)

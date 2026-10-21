@@ -210,28 +210,14 @@ function sanitizeSearchText(raw) {
     .trim();
 }
 
-/** Campos do perfil úteis na busca (definidos + pesquisáveis). */
-const SEARCH_PROFILE_FIELDS = ["title", "current", "past", "city"];
-
 /**
- * Query: nome + title + current + past + city (só espaços; sem AND/%/aspas).
+ * Query: só nome + cidade (espaços; sem title/current/past).
  */
 function typeQueryFromProfile(profile) {
   const name = sanitizeSearchText(profile?.name);
   if (!name) throw new Error("perfil sem name");
-
-  const seen = new Set([name.toLowerCase()]);
-  const parts = [name];
-  for (const key of SEARCH_PROFILE_FIELDS) {
-    const v = sanitizeSearchText(profile?.[key]);
-    if (!v) continue;
-    const low = v.toLowerCase();
-    if (seen.has(low)) continue;
-    seen.add(low);
-    parts.push(v);
-  }
-
-  const q = parts.join(" ").replace(/\s+/g, " ").trim();
+  const city = sanitizeSearchText(profile?.city);
+  const q = [name, city].filter(Boolean).join(" ").replace(/\s+/g, " ").trim();
   try {
     console.log(`   boolean ref: ${booleanQueryForProfile(profile)}`);
   } catch {

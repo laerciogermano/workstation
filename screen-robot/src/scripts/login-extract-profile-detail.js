@@ -36,8 +36,14 @@ if (!process.env.OCR_MERGE_TIMEOUT_MS) {
 const WAIT_AFTER_LINKEDIN_MS = 5_000;
 const WAIT_AFTER_PROFILE_MS = 2_500;
 const WAIT_AFTER_TYPE_MS = 1_200;
-const WAIT_AFTER_ENTER_MS = 2_500;
+const WAIT_AFTER_SHOW_ALL_MS = 2_500;
 const CLEAR_DEL_COUNT = 40;
+const SHOW_ALL_QUERIES = [
+  "Show all results",
+  "See all results",
+  "Show all",
+  "See all",
+];
 /** Máximo de páginas OCR no perfil (safety). Fim real = conteúdo/frame estável. */
 const MAX_PROFILE_PAGES = 40;
 const SCROLL_END_STABLE_NEEDED = 2;
@@ -284,11 +290,32 @@ function searchSuggestionsFromExtract(els) {
   return out;
 }
 
-/** Submete a busca no campo focado (Enter). */
-async function submitSearchEnter(serial) {
-  console.log("   Enter (submeter busca)…");
-  key({ serial, code: "KEYCODE_ENTER" });
-  await sleep(WAIT_AFTER_ENTER_MS);
+/**
+ * Clica Show/See all results após digitar (Enter no mobile não submete).
+ * Tenta com teclado aberto; senão KEYCODE_BACK e tenta de novo.
+ */
+async function submitShowAllResults(serial) {
+  console.log("   Show all results…");
+  const early = await findFirstByText(serial, SHOW_ALL_QUERIES, {
+    minScore: 0.7,
+  });
+  if (early) {
+    const { hit, query } = early;
+    console.log(
+      `   → showAll "${hit.text}" x=${hit.x} y=${hit.y} (query="${query}")`,
+    );
+    tapElement({ serial, x: hit.x, y: hit.y });
+    await sleep(WAIT_AFTER_SHOW_ALL_MS);
+    return;
+  }
+  console.log("   não achou com teclado — KEYCODE_BACK…");
+  key({ serial, code: "KEYCODE_BACK" });
+  await sleep(800);
+  await tapByText(serial, SHOW_ALL_QUERIES, "showAll", {
+    attempts: 6,
+    minScore: 0.7,
+  });
+  await sleep(WAIT_AFTER_SHOW_ALL_MS);
 }
 
 /**
@@ -587,12 +614,12 @@ async function main() {
   await launch({ serial, package: linkedinPkg });
   await sleep(WAIT_AFTER_LINKEDIN_MS);
 
-  console.log("5) Search + digitar + Enter + 1ª pessoa…");
+  console.log("5) Search + digitar + Show all + 1ª pessoa…");
   await ensureSearchFocused(serial);
   await clearSearchField(serial);
   await typeSearchQuery(serial, query);
   await sleep(WAIT_AFTER_TYPE_MS);
-  await submitSearchEnter(serial);
+  await submitShowAllResults(serial);
   const opened = await openFirstPerson(serial, { outDir });
   const openedName = String(opened?.name || name).trim();
   await sleep(WAIT_AFTER_PROFILE_MS);

@@ -138,11 +138,9 @@ PROFILES_API_URL=http://localhost:3000 npm run login-extract-profile-detail -- -
 PROFILES_API_URL=http://localhost:3000 npm run login-extract-profile-detail -- --id <uuid> --from-profile --url 'https://www.linkedin.com/in/…'
 ```
 
-Script [`scripts/login-extract-profile-detail.js`](scripts/login-extract-profile-detail.js) — digita → Show all → People → 1º → ⋯ Share via → Copy → POST URL → scroll → POST.
+Script [`scripts/login-extract-profile-detail.js`](scripts/login-extract-profile-detail.js) — digita → Show all → **1ª pessoa** (sem People; ignora cargo/filtro tipo Comprador) → ⋯ Share via → Copy → POST → scroll → POST.
 
-**Antes → depois (URL):** Share genérico / OCR sheet → `Share via` + `Copy` + clipboard + POST antecipado. Rollback: `captureProfileUrl` antigo.
-
-**Antes → depois (People):** Show all → 1º → Show all → People → 1º. Rollback: remover `tapPeopleChip`.
+**Antes → depois (lista):** People + risco de tap em cargo → Show all → 1º nome (`looksLikePersonName`). Rollback: `tapPeopleChip`.
 
 **Antes → depois (query):** só nome+cidade → **nome + cidade + título** (`title` ou cargo de `current`). Rollback: omitir `titleForSearch`.
 

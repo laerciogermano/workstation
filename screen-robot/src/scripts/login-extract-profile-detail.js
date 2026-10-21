@@ -336,14 +336,31 @@ async function tapPeopleChip(serial) {
   throw new Error("People: chip não encontrado no topo");
 }
 
+/** Nome de pessoa (não cargo/filtro tipo "Comprador"). */
+function looksLikePersonName(name, opts = {}) {
+  const n = String(name || "")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (n.length < 5) return false;
+  if (/^(current|past|comprador|compradora)\b/i.test(n)) return false;
+  const title = String(opts.excludeTitle || "").trim();
+  if (title && n.toLowerCase() === title.toLowerCase()) return false;
+  // cargo sozinho / título de filtro
+  if (!/\s/.test(n) && /^(analyst|engineer|manager|buyer|seller)$/i.test(n)) {
+    return false;
+  }
+  return true;
+}
+
 /**
- * Abre a 1ª pessoa na lista pós-submit — sempre menor y.
+ * Após Show all: clica a 1ª pessoa da lista (menor y) — nunca cargo/filtro.
  */
 async function openFirstPerson(serial, opts = {}) {
   const attempts = opts.attempts ?? 8;
+  const excludeTitle = titleForSearch(opts.profile || {});
 
   for (let attempt = 1; attempt <= attempts; attempt++) {
-    console.log(`   sugestões pesquisa (${attempt}/${attempts})…`);
+    console.log(`   1ª aparição (${attempt}/${attempts})…`);
     try {
       const listPng = join(
         opts.outDir || ROOT,
@@ -365,24 +382,28 @@ async function openFirstPerson(serial, opts = {}) {
         console.log(`   → ${listPng}`);
       }
 
-      // Após Show all: cards da lista; senão sugestões do dropdown.
       const cards = profilesFromExtract(els, { engine: OCR_ENGINE })
         .filter((c) => c?.x != null && Number(c.y) >= LIST_MIN_Y)
+        .filter((c) => looksLikePersonName(c.name, { excludeTitle }))
         .sort((a, b) => Number(a.y) - Number(b.y));
-      const suggestions = searchSuggestionsFromExtract(els);
+      const suggestions = searchSuggestionsFromExtract(els).filter((s) =>
+        looksLikePersonName(s.name, { excludeTitle }),
+      );
       console.log(
         `   cards: ${cards.map((c) => `${c.name}@y${c.y}`).join(" | ") || "(nenhum)"}`,
       );
       console.log(
         `   sugestões: ${suggestions.map((s) => `${s.name}@y${s.y}`).join(" | ") || "(nenhuma)"}`,
       );
-      let pick = cards[0] || suggestions[0] || null;
+      const pick = cards[0] || suggestions[0] || null;
 
       if (pick) {
+        // Tap no nome (esquerda), não em Current:/cargo à direita.
+        const x = Math.min(Number(pick.x), 280);
         console.log(
-          `   → abrir 1ª pessoa "${pick.name}" x=${pick.x} y=${pick.y}`,
+          `   → abrir 1ª pessoa "${pick.name}" x=${x} y=${pick.y}`,
         );
-        tapElement({ serial, x: pick.x, y: pick.y });
+        tapElement({ serial, x, y: pick.y });
         await sleep(800);
         return pick;
       }
@@ -742,13 +763,13 @@ async function main() {
     await launch({ serial, package: linkedinPkg });
     await sleep(WAIT_AFTER_LINKEDIN_MS);
 
-    console.log("5) Digitar → Show all → People → 1ª pessoa…");
+    console.log("5) Digitar → Show all → 1ª pessoa…");
     await ensureSearchFocused(serial);
     await clearSearchField(serial);
     await typeSearchQuery(serial, typeQueryFromProfile(profile));
     await submitShowAllResults(serial);
-    await tapPeopleChip(serial);
-    const opened = await openFirstPerson(serial, { outDir });
+    // Sem People: 1ª aparição logo após Show all (não clicar cargo/filtro).
+    const opened = await openFirstPerson(serial, { outDir, profile });
     openedName = String(opened?.name || name).trim();
     await sleep(WAIT_AFTER_PROFILE_MS);
   } else {

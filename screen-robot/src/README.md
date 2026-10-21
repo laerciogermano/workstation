@@ -137,7 +137,7 @@ PROFILES_API_URL=http://localhost:3000 npm run login-extract-profile-detail -- -
 
 Script [`scripts/login-extract-profile-detail.js`](scripts/login-extract-profile-detail.js) — **1 perfil** da base (`GET /profiles` filtrado por `--id`): Search → digita **só o nome** → **clica a 1ª sugestão** (`Nome • 2nd • …`, sem See all) → scroll ×5 + extract → Share/URL → `POST /profile-details` → **`process.exit(0)`**.
 
-**Antes → depois (See all / clique):** See all + parser de cards Connect → sugestões do dropdown (`• 1st/2nd/3rd`). Rollback: `submitSeeAll` + `profilesFromExtract`.
+**Antes → depois (See all / clique):** See all + parser de cards Connect → sugestões do dropdown (`• 1st/2nd/3rd`), sempre a de menor `y` (sem reordenar por match de nome). Rollback: `submitSeeAll` + `profilesFromExtract` / `preferredName`+`nameMatchScore`.
 
 **Antes → depois (People / digitar / URL):** ver histórico no git; chip People removido; query só `name` com verify OCR; Share sem tap cego.
 

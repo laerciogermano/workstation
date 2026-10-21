@@ -222,27 +222,10 @@ function typeQueryFromProfile(profile) {
   return name;
 }
 
-function nameMatchScore(candidate, target) {
-  const a = String(candidate || "")
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/\p{M}/gu, "");
-  const b = String(target || "")
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/\p{M}/gu, "");
-  if (!a || !b) return 0;
-  if (a === b) return 1;
-  if (a.includes(b) || b.includes(a)) return 0.9;
-  const ap = a.split(/\s+/);
-  const bp = b.split(/\s+/);
-  const overlap = ap.filter((p) => bp.includes(p)).length;
-  return overlap / Math.max(ap.length, bp.length);
-}
-
 /**
  * Sugestões do dropdown de busca LinkedIn: "Nome • 2nd • Empresa…"
  * (não têm Connect — profilesFromExtract não serve aqui).
+ * Ordenadas por y crescente — [0] = primeira opção visível.
  */
 function searchSuggestionsFromExtract(els) {
   /** @type {{ name: string, x: number, y: number, text: string }[]} */
@@ -264,11 +247,9 @@ function searchSuggestionsFromExtract(els) {
 }
 
 /**
- * Abre a 1ª pessoa que aparecer na pesquisa (dropdown).
- * Prefere sugestão com match do nome; senão a primeira sugestão.
+ * Abre a 1ª pessoa que aparecer na pesquisa (dropdown) — sempre menor y.
  */
 async function openFirstPerson(serial, opts = {}) {
-  const preferredName = String(opts.preferredName || "").trim();
   const attempts = opts.attempts ?? 5;
 
   for (let attempt = 1; attempt <= attempts; attempt++) {
@@ -296,32 +277,19 @@ async function openFirstPerson(serial, opts = {}) {
 
       const suggestions = searchSuggestionsFromExtract(els);
       console.log(
-        `   sugestões: ${suggestions.map((s) => s.name).join(" | ") || "(nenhuma)"}`,
+        `   sugestões: ${suggestions.map((s) => `${s.name}@y${s.y}`).join(" | ") || "(nenhuma)"}`,
       );
 
+      // Sempre a 1ª sugestão (menor y) — não trocar por match de nome.
       let pick = suggestions[0] || null;
-      if (preferredName && suggestions.length) {
-        let best = null;
-        for (const s of suggestions) {
-          const score = nameMatchScore(s.name, preferredName);
-          if (score < 0.45) continue;
-          if (!best || score > best.score) best = { card: s, score };
-        }
-        if (best) {
-          pick = best.card;
-          console.log(
-            `   preferiu match "${pick.name}" score=${best.score.toFixed(2)}`,
-          );
-        }
-      }
 
       // Fallback: cards People (Connect) se já estiver em lista full
       if (!pick) {
-        const cards = profilesFromExtract(els, { engine: OCR_ENGINE }).filter(
-          (c) => c?.x != null && Number(c.y) >= LIST_MIN_Y,
-        );
+        const cards = profilesFromExtract(els, { engine: OCR_ENGINE })
+          .filter((c) => c?.x != null && Number(c.y) >= LIST_MIN_Y)
+          .sort((a, b) => Number(a.y) - Number(b.y));
         console.log(
-          `   cards: ${cards.map((c) => c.name).join(" | ") || "(nenhum)"}`,
+          `   cards: ${cards.map((c) => `${c.name}@y${c.y}`).join(" | ") || "(nenhum)"}`,
         );
         pick = cards[0] || null;
       }
@@ -573,10 +541,7 @@ async function main() {
   await clearSearchField(serial);
   await typeSearchQuery(serial, query);
   await sleep(WAIT_AFTER_TYPE_MS);
-  const opened = await openFirstPerson(serial, {
-    outDir,
-    preferredName: name,
-  });
+  const opened = await openFirstPerson(serial, { outDir });
   const openedName = String(opened?.name || name).trim();
   await sleep(WAIT_AFTER_PROFILE_MS);
 

@@ -406,7 +406,17 @@ async function openFirstPerson(serial, opts = {}) {
           x: e.x,
           y: e.y,
         }))
-        .filter((c) => looksLikePersonName(c.name, { excludeTitle }));
+        .filter((c) => looksLikePersonName(c.name, { excludeTitle }))
+        .filter((c) => {
+          const n = c.name;
+          // não headline/local/botão
+          if (/[|…]|\.\.\./.test(n)) return false;
+          if (/\b(connect|follow|message|mutual|brazil|brasil|gest[aã]o|coordenador|assistente)\b/i.test(n)) {
+            return false;
+          }
+          if (/,/.test(n)) return false;
+          return true;
+        });
 
       const cards = profilesFromExtract(els, { engine: OCR_ENGINE })
         .filter((c) => c?.x != null && Number(c.y) >= LIST_MIN_Y)

@@ -395,35 +395,22 @@ async function openFirstPerson(serial, opts = {}) {
         console.log(`   → ${listPng}`);
       }
 
-      const want = sanitizeSearchText(
-        opts.profile?.name || opts.nameHint || "",
-      ).toLowerCase();
-      const wantFirst = want.split(/\s+/).filter(Boolean)[0] || "";
-      const scoreName = (c) => {
-        const n = sanitizeSearchText(c?.name || "").toLowerCase();
-        if (!want || !n) return 0;
-        if (n === want) return 3;
-        if (want.length >= 5 && n.includes(want)) return 2;
-        if (wantFirst.length >= 4 && n.includes(wantFirst)) return 2;
-        if (wantFirst && n.startsWith(wantFirst)) return 1;
-        return 0;
-      };
-
       // Card em destaque: OCR do nome mesmo se profilesFromExtract falhar.
       const ocrNameHits = (els || [])
         .filter((e) => Number(e.y) >= LIST_MIN_Y && Number(e.y) < 900)
         .map((e) => ({
-          name: String(e.text || "").replace(/[©®•·].*$/g, "").trim(),
+          name: String(e.text || "")
+            .replace(/[©®•·].*$/g, "")
+            .replace(/\s+[A-Za-z]$/g, "")
+            .trim(),
           x: e.x,
           y: e.y,
         }))
-        .filter((c) => looksLikePersonName(c.name, { excludeTitle }))
-        .filter((c) => scoreName(c) >= 2);
+        .filter((c) => looksLikePersonName(c.name, { excludeTitle }));
 
       const cards = profilesFromExtract(els, { engine: OCR_ENGINE })
         .filter((c) => c?.x != null && Number(c.y) >= LIST_MIN_Y)
-        .filter((c) => looksLikePersonName(c.name, { excludeTitle }))
-        .sort((a, b) => Number(a.y) - Number(b.y));
+        .filter((c) => looksLikePersonName(c.name, { excludeTitle }));
       const suggestions = searchSuggestionsFromExtract(els).filter((s) =>
         looksLikePersonName(s.name, { excludeTitle }),
       );
@@ -438,12 +425,17 @@ async function openFirstPerson(serial, opts = {}) {
           `   ocr-nome: ${ocrNameHits.map((c) => `${c.name}@y${c.y}`).join(" | ")}`,
         );
       }
-      const ranked = [...ocrNameHits, ...cards, ...suggestions].sort(
-        (a, b) => scoreName(b) - scoreName(a) || Number(a.y) - Number(b.y),
-      );
-      // Prefere match do nome (destaque incluso); senão 1ª aparição.
-      const pick =
-        ranked.find((c) => scoreName(c) > 0) || ranked[0] || null;
+      // Sempre a 1ª aparição na tela (menor y) — não rankear por match exato.
+      const seen = new Set();
+      const ranked = [...ocrNameHits, ...cards, ...suggestions]
+        .filter((c) => {
+          const k = `${sanitizeSearchText(c.name).toLowerCase()}@${Math.round(Number(c.y) / 20)}`;
+          if (seen.has(k)) return false;
+          seen.add(k);
+          return true;
+        })
+        .sort((a, b) => Number(a.y) - Number(b.y));
+      const pick = ranked[0] || null;
 
       if (pick) {
         // Tap no nome (esquerda), não em Current:/cargo à direita.

@@ -9,6 +9,7 @@
     - Marcelo some...
 
 # Screen Robot
+    - vincular extracao a conta
     - proxy
     - Definir primeira versao
         - De tempos em tempos
@@ -151,4 +152,14 @@
 
 # Jiu Jtsu
     - Definir documento de visão
+
+# Trello CLI (app IA Mac)
+    - Chave de API: b32320e3df032a77c8dadebd5253d2b8
+    - Segredo: bdc01f7d496c4dec9b879e822e9063f981508bdc1422066af153debbe0f79209
+    - Token: ATTA7c5d078384cd50a18bce9f6b46df8e752018436730e4d7bfc8f571be2d264fd2DDFE47F9
+    - Bin: `~/.local/bin/trello` (symlink → `~/.local/trello-cli/node_modules/.bin/trello`)
+    - PATH: já em `~/.zshrc` via `$HOME/.local/bin`
+    - Config: `~/.trello-cli/default/config.json`
+    - Uso: `trello board:list` / `trello --help`
+    - Se agente não achar: `export PATH="$HOME/.local/bin:$PATH"` ou `which trello`
 

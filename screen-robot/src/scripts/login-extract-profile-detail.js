@@ -34,7 +34,7 @@ if (!process.env.OCR_MERGE_TIMEOUT_MS) {
   process.env.OCR_MERGE_TIMEOUT_MS = "20000";
 }
 
-const WAIT_AFTER_LINKEDIN_MS = 5_000;
+const WAIT_AFTER_LINKEDIN_MS = 8_000;
 const WAIT_AFTER_PROFILE_MS = 4_000;
 const WAIT_AFTER_DEEPLINK_MS = 5_000;
 const WAIT_AFTER_TYPE_MS = 1_200;
@@ -148,36 +148,45 @@ async function clearSearchField(serial) {
 }
 
 async function ensureSearchFocused(serial) {
-  // Preferir "Search people" (vai direto a pessoas, sem chip People).
-  const peopleSearch = await findFirstByText(serial, ["Search people"], {
-    minScore: 0.7,
-  });
-  if (peopleSearch) {
-    console.log(
-      `   → search people "${peopleSearch.hit.text}" x=${peopleSearch.hit.x} y=${peopleSearch.hit.y}`,
-    );
-    tapElement({ serial, x: peopleSearch.hit.x, y: peopleSearch.hit.y });
-    await sleep(1_200);
-    return;
-  }
-  const bar = await findFirstByText(serial, ["Search"], { minScore: 0.7 });
-  if (bar) {
-    console.log(
-      `   → search "${bar.hit.text}" x=${bar.hit.x} y=${bar.hit.y}`,
-    );
-    tapElement({ serial, x: bar.hit.x, y: bar.hit.y });
-    await sleep(1_200);
-    // 2º tap no campo (às vezes o 1º só abre a tela de busca)
-    const again = await findFirstByText(serial, ["Search", "Search people"], {
-      minScore: 0.65,
+  // LinkedIn lento: poll até Search / Search people (não falhar em 4 taps).
+  const t0 = Date.now();
+  const timeoutMs = 45_000;
+  while (Date.now() - t0 < timeoutMs) {
+    const peopleSearch = await findFirstByText(serial, ["Search people"], {
+      minScore: 0.7,
     });
-    if (again && again.hit.y < 160) {
-      tapElement({ serial, x: again.hit.x, y: again.hit.y });
-      await sleep(600);
+    if (peopleSearch) {
+      console.log(
+        `   → search people "${peopleSearch.hit.text}" x=${peopleSearch.hit.x} y=${peopleSearch.hit.y}`,
+      );
+      tapElement({ serial, x: peopleSearch.hit.x, y: peopleSearch.hit.y });
+      await sleep(1_200);
+      return;
     }
-    return;
+    const bar = await findFirstByText(serial, ["Search"], { minScore: 0.7 });
+    if (bar && Number(bar.hit.y) < 200) {
+      console.log(
+        `   → search "${bar.hit.text}" x=${bar.hit.x} y=${bar.hit.y}`,
+      );
+      tapElement({ serial, x: bar.hit.x, y: bar.hit.y });
+      await sleep(1_200);
+      const again = await findFirstByText(serial, ["Search", "Search people"], {
+        minScore: 0.65,
+      });
+      if (again && again.hit.y < 160) {
+        tapElement({ serial, x: again.hit.x, y: again.hit.y });
+        await sleep(600);
+      }
+      return;
+    }
+    console.log(
+      `   Search ainda não visível (${Math.round((Date.now() - t0) / 1000)}s)…`,
+    );
+    await sleep(1_500);
   }
-  await tapByText(serial, "Search", "search");
+  // Último recurso: ícone lupa (topo)
+  console.log("   fallback: tap lupa Search (x=270 y=80)…");
+  tapElement({ serial, x: 270, y: 80 });
   await sleep(1_200);
 }
 

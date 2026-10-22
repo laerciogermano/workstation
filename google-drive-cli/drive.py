@@ -12,7 +12,10 @@ from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 
-SCOPES = ["https://www.googleapis.com/auth/drive.readonly"]
+SCOPES = [
+    "https://www.googleapis.com/auth/drive.readonly",
+    "https://www.googleapis.com/auth/spreadsheets",
+]
 CONFIG_DIR = Path.home() / ".config" / "google-drive-cli"
 CREDENTIALS_PATH = CONFIG_DIR / "credentials.json"
 TOKEN_PATH = CONFIG_DIR / "token.json"

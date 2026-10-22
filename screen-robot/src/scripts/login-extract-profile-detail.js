@@ -497,32 +497,32 @@ async function moreMenuOpen(serial) {
  * Botão ⋯ à direita de Message (círculo ~width-48).
  * Message.x+120 (≈468) acerta a borda e NÃO abre — usar ~492.
  */
+/**
+ * ⋯ = mesma linha de Message/Connect (y dinâmico) + x à direita da tela.
+ * Não usar y fixo: perfis longos empurram a action row para baixo (>750).
+ */
 async function tapProfileMoreButton(serial) {
   const w = displayWidth(serial);
   const msg = await findFirstByText(
     serial,
-    ["Message", "1 Message"],
-    { minScore: 0.7 },
+    ["Message", "1 Message", "Connect", "&+ Connect", "i+ Connect"],
+    { minScore: 0.65 },
   );
-  const y =
-    msg && Number(msg.hit.y) > 400 && Number(msg.hit.y) < 750
-      ? Number(msg.hit.y)
-      : 639;
-  // candidatos: canto direito da action row (⋯), depois um pouco à esquerda
-  const candidates = [
-    w - 48,
-    w - 36,
-    w - 60,
-    msg ? Math.min(w - 30, Number(msg.hit.x) + 145) : null,
-    492,
-  ].filter((x) => x != null);
+  let y = 639;
+  if (msg && Number(msg.hit.y) > 200 && Number(msg.hit.y) < 920) {
+    y = Number(msg.hit.y);
+  }
+  // x quase fixo na borda direita (círculo ⋯); y vem do Message/Connect
+  const candidates = [w - 48, w - 36, w - 60, 492];
 
   const tried = new Set();
   for (const raw of candidates) {
     const x = Math.round(Number(raw));
     if (tried.has(x) || x < 400) continue;
     tried.add(x);
-    console.log(`   → ⋯ x=${x} y=${y}`);
+    console.log(
+      `   → ⋯ x=${x} y=${y}${msg ? ` (âncora "${msg.hit.text}")` : " (fallback y)"}`,
+    );
     tapElement({ serial, x, y });
     await sleep(1_400);
     if (await moreMenuOpen(serial)) return true;

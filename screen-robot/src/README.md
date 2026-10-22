@@ -155,7 +155,7 @@ Script [`scripts/login-extract-profile-detail.js`](scripts/login-extract-profile
 
 **Antes → depois (detail):** scroll + OCR completo → **somente `profileUrl`**. Rollback: restaurar passo 7–8 de extract+scroll.
 
-**Antes → depois (⋯):** Message.x+120 (~468) não abria menu → `width-48` (~492) + retry + OCR sheet. Rollback: offset +120.
+**Antes → depois (⋯):** y fixo/teto 750 falhava em perfis longos → **y do Message/Connect** + x=`width-48`. Rollback: `y < 750 ? msg.y : 639`.
 
 **Antes → depois (query):** cidade inteira → **1ª palavra** também (`cityForSearch`); ordem **nome + título(1) + cidade(1)**. Rollback: `sanitizeSearchText(profile.city)`.
 

@@ -977,8 +977,10 @@ async function main() {
     canConnect: false,
     canMessage: false,
   };
+  /** @type {object[]|null} */
+  let cardEls = null;
   try {
-    const cardEls = await extract(
+    cardEls = await extract(
       { serial, engine: OCR_ENGINE },
       { outPath: cardPng },
     );
@@ -1015,14 +1017,17 @@ async function main() {
   let photoBase64 = null;
   /** @type {string|null} */
   let coverBase64 = null;
+  /** @type {string|null} */
+  let cardBase64 = null;
   if (existsSync(cardPng)) {
     try {
-      console.log("7b) Crop foto + capa…");
+      console.log("7b) Crop foto + capa + card…");
       const media = await cropProfilePhotoAndCover(cardPng, outDir);
       photoBase64 = media.photoBase64;
       coverBase64 = media.coverBase64;
+      cardBase64 = media.cardBase64;
       console.log(
-        `   photo=${media.photoPath || "-"} cover=${media.coverPath || "-"} b64=${photoBase64 ? "ok" : "-"}/${coverBase64 ? "ok" : "-"}`,
+        `   photo=${media.photoPath || "-"} cover=${media.coverPath || "-"} card=${media.cardPath || "-"}`,
       );
     } catch (e) {
       console.log(`   crop: ${e.message || e}`);
@@ -1043,9 +1048,10 @@ async function main() {
       header.connectionDegree || profile.level || null,
     photoBase64,
     coverBase64,
+    cardBase64,
+    rawOcr: cardEls ? { elements: cardEls } : null,
     extractedAt: new Date().toISOString(),
   };
-  // detail.json sem base64 gigante — só flags
   writeFileSync(
     join(outDir, "detail.json"),
     JSON.stringify(
@@ -1053,6 +1059,8 @@ async function main() {
         ...payload,
         photoBase64: photoBase64 ? `[base64 ${photoBase64.length} chars]` : null,
         coverBase64: coverBase64 ? `[base64 ${coverBase64.length} chars]` : null,
+        cardBase64: cardBase64 ? `[base64 ${cardBase64.length} chars]` : null,
+        rawOcr: cardEls ? { elements: cardEls.length } : null,
       },
       null,
       2,
@@ -1061,12 +1069,12 @@ async function main() {
   );
   console.log(`   → ${join(outDir, "detail.json")}`);
 
-  console.log("8) POST /profile-details (URL + cartão + foto/capa) e encerrar…");
+  console.log("8) POST /profile-details (URL + foto/capa/card) e encerrar…");
   const saved = await postProfileDetail(payload);
   console.log(
-    `   OK id=${saved.id} profileId=${saved.profileId} url=${saved.profileUrl || "-"} name=${saved.name || "-"} photo=${saved.photoBase64 ? "sim" : "não"} cover=${saved.coverBase64 ? "sim" : "não"}`,
+    `   OK id=${saved.id} profileId=${saved.profileId} url=${saved.profileUrl || "-"} name=${saved.name || "-"} photo=${saved.photoBase64 ? "sim" : "não"} cover=${saved.coverBase64 ? "sim" : "não"} card=${saved.cardBase64 ? "sim" : "não"}`,
   );
-  console.log("OK — URL + cartão + foto/capa persistidos — encerrando processo");
+  console.log("OK — URL + foto/capa/card persistidos — encerrando processo");
   process.exit(0);
 }
 

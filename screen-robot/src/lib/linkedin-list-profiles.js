@@ -276,12 +276,22 @@ export function profilesFromExtract(elements, opts = {}) {
     if (seen.has(key)) continue;
     seen.add(key);
 
+    const cardTop = Math.max(0, Math.min(yTop, picked.y - 24));
+    const cardBot = Math.max(cardTop + 80, Math.min(980, yBot));
     const base = {
       name: picked.name,
       key,
       action: act.actionLabel,
       x: picked.x,
       y: picked.y,
+      actionY: act.y,
+      /** Região do card na lista (px no OCR / frame 540×960). */
+      cardBounds: {
+        left: 8,
+        top: cardTop,
+        width: 524,
+        height: cardBot - cardTop,
+      },
       texts: card.map((e) => e.text),
       ocr: card,
     };

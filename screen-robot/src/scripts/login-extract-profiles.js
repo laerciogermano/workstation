@@ -21,6 +21,7 @@ import { sleep } from "../lib/adb.js";
 import { extract, findByText, waitForText } from "../lib/extract.js";
 import { captureFrame } from "../lib/frame.js";
 import { profilesFromExtract } from "../lib/linkedin-list-profiles.js";
+import { cropListProfilePhotoAndCard } from "../lib/linkedin-profile-photo-crop.js";
 import { searchQueryFromCard } from "../lib/linkedin-search-query.js";
 import { key, launch, scroll, stop, tapElement, type } from "../lib/operate.js";
 import { provisionEmulator } from "../lib/provision.js";
@@ -123,6 +124,9 @@ function profileRow(profile) {
     mutualConnections: f.mutualConnections || null,
     current,
     past: f.past || null,
+    photoBase64: profile.photoBase64 || null,
+    cardBase64: profile.cardBase64 || null,
+    rawOcr: profile.rawOcr || null,
   };
 }
 
@@ -132,6 +136,26 @@ function profileApiPayload(profile) {
     ...profileRow(profile),
     extractedAt: profile.extractedAt || null,
     round: profile.round ?? null,
+  };
+}
+
+/** Resumo sem base64 (logs / profiles.json). */
+function profileRowForJson(profile) {
+  const row = profileRow(profile);
+  const els = row.rawOcr?.elements;
+  return {
+    ...row,
+    photoBase64: row.photoBase64
+      ? `[base64 ${row.photoBase64.length} chars]`
+      : null,
+    cardBase64: row.cardBase64
+      ? `[base64 ${row.cardBase64.length} chars]`
+      : null,
+    rawOcr: Array.isArray(els)
+      ? { elements: els.length }
+      : row.rawOcr
+        ? { ok: true }
+        : null,
   };
 }
 
@@ -159,7 +183,7 @@ function writeProfilesJson(outDir, rows) {
 
 function printProfileSummary(profile, count) {
   console.log(`\n========== quantidade: ${count} ==========`);
-  console.log(JSON.stringify(profileRow(profile), null, 2));
+  console.log(JSON.stringify(profileRowForJson(profile), null, 2));
   console.log("==============================================\n");
 }
 
@@ -285,8 +309,29 @@ async function extractProfilesLoop(serial, outDir, opts = {}) {
     for (const p of fresh) {
       if (saved.length >= maxProfiles) break;
       seen.add(p.key);
+      const index = saved.length + 1;
+      const filePrefix = `profile-${String(index).padStart(3, "0")}`;
+      /** @type {string|null} */
+      let photoBase64 = null;
+      /** @type {string|null} */
+      let cardBase64 = null;
+      try {
+        const media = await cropListProfilePhotoAndCard(
+          roundPng,
+          p,
+          outDir,
+          filePrefix,
+        );
+        photoBase64 = media.photoBase64;
+        cardBase64 = media.cardBase64;
+        console.log(
+          `   crop ${p.name}: photo=${media.photoPath || "-"} card=${media.cardPath || "-"}`,
+        );
+      } catch (e) {
+        console.log(`   crop ${p.name}: ${e.message || e}`);
+      }
       const profile = {
-        index: saved.length + 1,
+        index,
         name: p.name,
         action: p.action,
         fields: p.fields,
@@ -294,11 +339,15 @@ async function extractProfilesLoop(serial, outDir, opts = {}) {
         round,
         x: p.x,
         y: p.y,
+        cardBounds: p.cardBounds,
+        photoBase64,
+        cardBase64,
         texts: p.texts,
         ocr: p.ocr,
+        rawOcr: { elements: p.ocr || [] },
       };
       saved.push(profile);
-      rows.push(profileRow(profile));
+      rows.push(profileRowForJson(profile));
       writeProfilesJson(outDir, rows);
       await onProfile(profile, {
         count: saved.length,
@@ -427,7 +476,7 @@ async function main() {
     linkedinPkg,
   });
 
-  writeProfilesJson(outDir, saved.map(profileRow));
+  writeProfilesJson(outDir, saved.map(profileRowForJson));
   console.log(`OK — ${saved.length} perfis`);
   console.log(`profiles.json: ${join(outDir, "profiles.json")}`);
   process.exit(0);

@@ -153,7 +153,7 @@ PROFILES_API_URL=http://localhost:3000 npm run login-extract-profile-detail -- -
 
 Script [`scripts/login-extract-profile-detail.js`](scripts/login-extract-profile-detail.js) — digita (**nome + `searchQuery` + 1ª cidade**) → Show all → **1ª pessoa** → **OCR cartão** → crop **foto + capa** (`photo.png` / `cover.png` + base64 no POST) → **⋯** Share/Copy URL → **POST**. Sem scroll/Experience.
 
-**Antes → depois (mídia):** só texto/URL → também crop avatar+capa via [`lib/linkedin-profile-photo-crop.js`](lib/linkedin-profile-photo-crop.js) → `photoBase64`/`coverBase64`. Rollback: remova o crop e os campos no POST.
+**Antes → depois (mídia):** só texto/URL → crop avatar+capa+card + `rawOcr` do card via [`lib/linkedin-profile-photo-crop.js`](lib/linkedin-profile-photo-crop.js). Rollback: remova o crop/`rawOcr` do POST.
 
 **Antes → depois (detail):** só URL → URL + campos do cartão (`parseProfileHeader` na 1ª tela). Rollback: omitir passo 6 (card OCR).
 
@@ -199,7 +199,7 @@ Script [`scripts/login-extract-profiles.js`](scripts/login-extract-profiles.js) 
 
 **Antes → depois (fim do scroll):** só SHA1 do frame 3× (falhava com UI animada e o processo não parava) → conteúdo OCR estável sem novos + frame, 2×, e exit explícito. Rollback: só `frameHash` com `SCROLL_END_STABLE_NEEDED = 3` e sem `process.exit(0)`.
 3. Callback: objeto `{ name, title, level, connection, city, mutualConnections, current, past }`
-4. A cada perfil novo regrava `screenshots/login-extract-profiles/<stamp>/profiles.json` (array acumulado no mesmo formato do log). Também grava `profile-NNN.json` completo, `list-round-NNN.json`, e PNGs: `frame-000.png`, `round-NNN.png` (extract), `frame-after-NNN.png` (pós-scroll). Rollback: apagar a pasta `<stamp>`.
+4. A cada perfil novo: crop **avatar + card** (`profile-NNN-photo.png` / `profile-NNN-card.png`) + `rawOcr` → `POST /profiles` (`photoBase64`, `cardBase64`, `rawOcr`). Regrava `profiles.json`, `profile-NNN.json`, `list-round-NNN.json`, `round-NNN.png`. Rollback: remova crop/`rawOcr` do script e colunas na API.
 
 **Antes → depois (prints):** `captureFrame` só em `/tmp` → também em `<stamp>/round-*.png` e `frame-*.png` via `outPath`. Rollback: chamar `extract`/`frameHash` sem `outPath`.
 5. Se `PROFILES_API_URL` estiver definida (ex. `http://localhost:3000`), cada perfil também é enviado em `POST /profiles` para [`connectmax/vendas/api`](../../connectmax/vendas/api/README.md). Sem a env, só JSON local.

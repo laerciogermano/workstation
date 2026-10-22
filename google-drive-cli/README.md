@@ -33,9 +33,11 @@ Credenciais locais:
 | `~/.config/google-drive-cli/credentials.json` | client OAuth (Desktop) |
 | `~/.config/google-drive-cli/token.json` | token do usuário (criado no `auth`) |
 
-Escopos: `drive.readonly` + `spreadsheets` (ler Drive; ler/escrever planilhas).
+Escopos: `drive.readonly` + `spreadsheets` + `documents` (ler Drive; ler/escrever planilhas e Docs).
 
-Pré-requisito GCP: **Google Sheets API** ativada no mesmo projeto do cliente OAuth.
+Pré-requisito GCP: **Google Sheets API** e **Google Docs API** ativadas no mesmo projeto do cliente OAuth.
+
+Troca de escopo: apague `token.json` e rode `auth` de novo.
 
 ## Caminho inverso / rollback
 

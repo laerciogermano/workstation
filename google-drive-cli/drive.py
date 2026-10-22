@@ -15,6 +15,7 @@ from googleapiclient.discovery import build
 SCOPES = [
     "https://www.googleapis.com/auth/drive.readonly",
     "https://www.googleapis.com/auth/spreadsheets",
+    "https://www.googleapis.com/auth/documents",
 ]
 CONFIG_DIR = Path.home() / ".config" / "google-drive-cli"
 CREDENTIALS_PATH = CONFIG_DIR / "credentials.json"

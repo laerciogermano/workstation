@@ -161,7 +161,7 @@ Script [`scripts/login-extract-profile-detail.js`](scripts/login-extract-profile
 
 **Antes → depois (card destaque):** faixa nome↔Connect 140px perdia resultado hero (~187px) → `NAME_ABOVE_ACTION_PX=220` + OCR-nome. Rollback: 140.
 
-**Antes → depois (abrir perfil):** rank por match exato do nome (pegava 3º Diogo) → **sempre 1ª aparição (menor y)**. Rollback: `scoreName` no sort.
+**Antes → depois (abrir perfil):** rank por nome / OCR misturado com feed → **cards Connect primeiro**; rejeita "From my network". Rollback: ranked OCR+cards por y.
 
 **Antes → depois (See all / clique):** See all + parser de cards Connect → sugestões do dropdown (`• 1st/2nd/3rd`), sempre a de menor `y` (sem reordenar por match de nome). Rollback: `submitSeeAll` + `profilesFromExtract` / `preferredName`+`nameMatchScore`.
 

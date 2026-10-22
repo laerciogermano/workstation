@@ -311,26 +311,36 @@ async function tapPeopleChip(serial) {
   throw new Error("People: chip não encontrado no topo");
 }
 
-/** Nome de pessoa (não cargo/filtro/tempo tipo "1 month ago"). */
+/** Nome de pessoa (não cargo/filtro/feed/chrome). */
 function looksLikePersonName(name, opts = {}) {
   const n = String(name || "")
     .replace(/\s+/g, " ")
     .trim();
-  if (n.length < 5) return false;
+  if (n.length < 5 || n.length > 70) return false;
   if (/^(current|past|comprador|compradora)\b/i.test(n)) return false;
   if (/\b(ago|yesterday|today|hour|minute|edited|viewed)\b/i.test(n)) {
     return false;
   }
   if (/^\d+\s*(month|year|day|hr|min)/i.test(n)) return false;
+  // chips / feed / UI (Andrey: clicou "From my network")
+  if (
+    /\b(from my network|past\s+\d|view full profile|view my newsletter|other similar|show (all|translation)|people you may|collaborative posts|follow|newsletter|parceria|fornecedor)\b/i.test(
+      n,
+    )
+  ) {
+    return false;
+  }
   const title = String(opts.excludeTitle || "").trim();
   if (title && n.toLowerCase() === title.toLowerCase()) return false;
-  // cargo sozinho / título de filtro
   if (!/\s/.test(n) && /^(analyst|engineer|manager|buyer|seller)$/i.test(n)) {
     return false;
   }
-  // precisa parecer nome (ao menos 2 tokens com letra)
   const tokens = n.split(/\s+/).filter((t) => /[A-Za-zÀ-ÿ]/.test(t));
-  if (tokens.length < 2) return false;
+  if (tokens.length < 2 || tokens.length > 5) return false;
+  // cada token de nome começa com maiúscula (OCR de pessoa)
+  if (!tokens.every((t) => /^[\p{Lu}]/u.test(t) || /^(de|da|do|dos|das|e)$/i.test(t))) {
+    return false;
+  }
   return true;
 }
 
@@ -404,20 +414,16 @@ async function openFirstPerson(serial, opts = {}) {
           `   ocr-nome: ${ocrNameHits.map((c) => `${c.name}@y${c.y}`).join(" | ")}`,
         );
       }
-      // Sempre a 1ª aparição na tela (menor y) — não rankear por match exato.
-      const seen = new Set();
-      const ranked = [...ocrNameHits, ...cards, ...suggestions]
-        .filter((c) => {
-          const k = `${sanitizeSearchText(c.name).toLowerCase()}@${Math.round(Number(c.y) / 20)}`;
-          if (seen.has(k)) return false;
-          seen.add(k);
-          return true;
-        })
-        .sort((a, b) => Number(a.y) - Number(b.y));
-      const pick = ranked[0] || null;
+      // Prioridade: cards com Connect (lista People) → sugestões → OCR nome.
+      // Evita feed ("From my network") quando não há cards.
+      const byY = (a, b) => Number(a.y) - Number(b.y);
+      const pick =
+        [...cards].sort(byY)[0] ||
+        [...suggestions].sort(byY)[0] ||
+        [...ocrNameHits].sort(byY)[0] ||
+        null;
 
       if (pick) {
-        // Tap no nome (esquerda), não em Current:/cargo à direita.
         const x = Math.min(Number(pick.x), 280);
         console.log(
           `   → abrir 1ª pessoa "${pick.name}" x=${x} y=${pick.y}`,
@@ -433,6 +439,15 @@ async function openFirstPerson(serial, opts = {}) {
         .map((e) => e.text)
         .join(" | ");
       if (sample) console.log(`   ocr sample: ${sample}`);
+      // Sem cards: provavelmente Posts/feed — tenta Show all de novo
+      if (/from my network|newsletter|show translation/i.test(sample)) {
+        console.log("   parece feed/Posts — Show all de novo…");
+        try {
+          await submitShowAllResults(serial);
+        } catch {
+          /* ignore */
+        }
+      }
     } catch (e) {
       console.log(`   lista: ${e.message || e}`);
     }

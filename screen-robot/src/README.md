@@ -151,9 +151,9 @@ PROFILES_API_URL=http://localhost:3000 npm run login-extract-profile-detail -- -
 PROFILES_API_URL=http://localhost:3000 npm run login-extract-profile-detail -- --id <uuid> --from-profile --url 'https://www.linkedin.com/in/…'
 ```
 
-Script [`scripts/login-extract-profile-detail.js`](scripts/login-extract-profile-detail.js) — digita (**nome + `searchQuery` + 1ª palavra da cidade**) → Show all → **1ª pessoa** → **⋯** → Share via → Copy → **POST só URL** e encerra (sem scroll/About/Experience).
+Script [`scripts/login-extract-profile-detail.js`](scripts/login-extract-profile-detail.js) — digita (**nome + `searchQuery` + 1ª cidade**) → Show all → **1ª pessoa** → **OCR cartão** (nome/empresa/conexões/Connect/Message) → **⋯** Share/Copy URL → **POST** (URL + cartão). Sem scroll/Experience.
 
-**Antes → depois (detail):** scroll + OCR completo → **somente `profileUrl`**. Rollback: restaurar passo 7–8 de extract+scroll.
+**Antes → depois (detail):** só URL → URL + campos do cartão (`parseProfileHeader` na 1ª tela). Rollback: omitir passo 6 (card OCR).
 
 **Antes → depois (⋯):** y fixo/teto 750 falhava em perfis longos → **y do Message/Connect** + x=`width-48`. Rollback: `y < 750 ? msg.y : 639`.
 

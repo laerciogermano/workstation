@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * 1 perfil da API → Search → abre 1ª pessoa → Share/Copy URL → POST /profile-details (só URL).
+ * 1 perfil da API → Search → abre 1ª pessoa → OCR cartão (1ª tela) → Share/Copy URL → POST.
  *
  * Uso (cwd: screen-robot/src):
  *   PROFILES_API_URL=http://localhost:3000 npm run login-extract-profile-detail -- --id <uuid>
@@ -20,6 +20,7 @@ import { adb, sleep } from "../lib/adb.js";
 import { extract, findByText, waitForText } from "../lib/extract.js";
 import { booleanQueryForProfile } from "../lib/linkedin-boolean-query.js";
 import { profilesFromExtract } from "../lib/linkedin-list-profiles.js";
+import { parseProfileHeader } from "../lib/linkedin-profile-page.js";
 import {
   sanitizeSearchText,
   typeQueryFromProfile as buildTypeQuery,
@@ -818,7 +819,38 @@ async function main() {
     console.log("4–5) skip busca (deep link)");
   }
 
-  console.log("6) ⋯ → Share via → Copy → POST URL…");
+  // Cartão da 1ª tela (antes do ⋯): nome, empresa, conexões, Connect/Message.
+  console.log("6) OCR cartão (1ª tela)…");
+  const cardPng = join(outDir, "card-00.png");
+  let header = {
+    name: null,
+    company: null,
+    location: null,
+    connections: null,
+    mutualConnections: null,
+    connectionDegree: null,
+    canConnect: false,
+    canMessage: false,
+  };
+  try {
+    const cardEls = await extract(
+      { serial, engine: OCR_ENGINE },
+      { outPath: cardPng },
+    );
+    writeFileSync(
+      join(outDir, "card-00.json"),
+      JSON.stringify(cardEls, null, 2),
+      "utf8",
+    );
+    header = parseProfileHeader(cardEls, { nameHint: openedName || name });
+    console.log(
+      `   card: name=${header.name || "-"} company=${!!header.company} loc=${header.location || "-"} conn=${header.connections || "-"} mutual=${!!header.mutualConnections} connect=${header.canConnect} msg=${header.canMessage} grau=${header.connectionDegree || "-"}`,
+    );
+  } catch (e) {
+    console.log(`   card OCR: ${e.message || e}`);
+  }
+
+  console.log("7) ⋯ → Share via → Copy → URL…");
   let profileUrl = null;
   try {
     profileUrl = await captureProfileUrl(serial, outDir);
@@ -830,16 +862,22 @@ async function main() {
     console.log(`   URL (do --url / deep link): ${profileUrl}`);
   }
   if (!profileUrl) {
-    throw new Error("URL linkedin.com/in/… não obtida — encerrando sem scroll");
+    throw new Error("URL linkedin.com/in/… não obtida");
   }
-
   console.log(`   URL: ${profileUrl}`);
+
   const payload = {
     profileId,
-    name: openedName || profile.name || null,
+    name: header.name || openedName || profile.name || null,
+    company: header.company || null,
+    location: header.location || profile.city || null,
+    connections: header.connections || null,
+    mutualConnections: header.mutualConnections || null,
+    canConnect: header.canConnect ?? null,
+    canMessage: header.canMessage ?? null,
     profileUrl,
-    connectionDegree: profile.level || null,
-    location: profile.city || null,
+    connectionDegree:
+      header.connectionDegree || profile.level || null,
     extractedAt: new Date().toISOString(),
   };
   writeFileSync(
@@ -849,12 +887,12 @@ async function main() {
   );
   console.log(`   → ${join(outDir, "detail.json")}`);
 
-  console.log("7) POST /profile-details (só URL) e encerrar…");
+  console.log("8) POST /profile-details (URL + cartão) e encerrar…");
   const saved = await postProfileDetail(payload);
   console.log(
-    `   OK id=${saved.id} profileId=${saved.profileId} url=${saved.profileUrl || "-"}`,
+    `   OK id=${saved.id} profileId=${saved.profileId} url=${saved.profileUrl || "-"} name=${saved.name || "-"}`,
   );
-  console.log("OK — URL persistida — encerrando processo");
+  console.log("OK — URL + cartão persistidos — encerrando processo");
   process.exit(0);
 }
 

@@ -46,6 +46,8 @@ const SHOW_ALL_QUERIES = [
   "Show all",
   "See all",
 ];
+/** Show all fica acima do teclado — "Clear all" (Recent y≈80) não pode casar. */
+const SHOW_ALL_MIN_Y = 620;
 const PEOPLE_QUERIES = ["People"];
 const WAIT_AFTER_PEOPLE_MS = 2_000;
 /** Resultados do dropdown de busca começam abaixo da barra. */
@@ -240,50 +242,70 @@ function searchSuggestionsFromExtract(els) {
   return out;
 }
 
+/** Hit de Show all válido (não "Clear all" da tela Recent). */
+function isValidShowAllHit(hit) {
+  if (!hit || hit.x == null || hit.y == null) return false;
+  const t = String(hit.text || "").trim();
+  if (/clear\s*all/i.test(t)) return false;
+  if (Number(hit.y) < SHOW_ALL_MIN_Y) return false;
+  return true;
+}
+
 /**
  * Clica Show/See all results logo após digitar (sem voltar a procurar Search).
- * Com teclado → OCR; se falhar, BACK e tenta de novo; senão tap na faixa inferior.
+ * Ignora "Clear all" (Recent) — Andrey: OCR casou Clear all@y154 e abriu Elaina.
  */
 async function submitShowAllResults(serial) {
   console.log("   Show all results…");
-  try {
-    const hit = await waitForText(serial, SHOW_ALL_QUERIES, {
-      timeoutMs: 8_000,
-      intervalMs: 1_000,
-      engine: OCR_ENGINE,
-      minScore: 0.68,
-    });
-    console.log(
-      `   → showAll "${hit.text}" x=${hit.x} y=${hit.y} (query="${hit.query}")`,
-    );
-    tapElement({ serial, x: hit.x, y: hit.y });
-    await sleep(WAIT_AFTER_SHOW_ALL_MS);
-    return;
-  } catch {
+  const tryFind = async (timeoutMs) => {
+    const t0 = Date.now();
+    while (Date.now() - t0 < timeoutMs) {
+      for (const q of SHOW_ALL_QUERIES) {
+        const hit = await findByText(serial, q, {
+          minScore: 0.78,
+          engine: OCR_ENGINE,
+        });
+        if (isValidShowAllHit(hit)) {
+          return { ...hit, query: q };
+        }
+        if (hit && !isValidShowAllHit(hit)) {
+          console.log(
+            `   ignore showAll-falso "${hit.text}" y=${hit.y} (query="${q}")`,
+          );
+        }
+      }
+      await sleep(900);
+    }
+    return null;
+  };
+
+  let hit = await tryFind(8_000);
+  if (!hit) {
     console.log("   não achou com teclado — KEYCODE_BACK…");
+    key({ serial, code: "KEYCODE_BACK" });
+    await sleep(900);
+    hit = await tryFind(10_000);
   }
-  key({ serial, code: "KEYCODE_BACK" });
-  await sleep(900);
-  try {
-    const hit = await waitForText(serial, SHOW_ALL_QUERIES, {
-      timeoutMs: 12_000,
-      intervalMs: 1_000,
-      engine: OCR_ENGINE,
-      minScore: 0.68,
-    });
+  if (hit) {
     console.log(
       `   → showAll "${hit.text}" x=${hit.x} y=${hit.y} (query="${hit.query}")`,
     );
     tapElement({ serial, x: hit.x, y: hit.y });
     await sleep(WAIT_AFTER_SHOW_ALL_MS);
     return;
-  } catch {
-    /* fallback geometria */
   }
-  // Faixa inferior onde o botão costuma ficar (ex. y≈836 em 888).
   console.log("   fallback: tap faixa inferior (Show all)…");
   tapElement({ serial, x: 270, y: 850 });
   await sleep(WAIT_AFTER_SHOW_ALL_MS);
+}
+
+/** Tela "Recent" / "Clear all" — histórico, não resultados. */
+function isRecentSearchScreen(els) {
+  const top = (els || [])
+    .filter((e) => Number(e.y) < 160)
+    .map((e) => String(e.text || "").trim())
+    .join(" ");
+  return /\brecent\b/i.test(top) && /clear\s*all/i.test(top);
 }
 
 /**
@@ -345,11 +367,12 @@ function looksLikePersonName(name, opts = {}) {
 }
 
 /**
- * Após Show all: clica a 1ª pessoa da lista (menor y) — nunca cargo/filtro.
+ * Após Show all: clica a 1ª pessoa da lista (menor y) — nunca cargo/filtro/Recent.
  */
 async function openFirstPerson(serial, opts = {}) {
   const attempts = opts.attempts ?? 8;
   const excludeTitle = titleForSearch(opts.profile || {});
+  const preferred = sanitizeSearchText(opts.profile?.name || "").toLowerCase();
 
   for (let attempt = 1; attempt <= attempts; attempt++) {
     console.log(`   1ª aparição (${attempt}/${attempts})…`);
@@ -374,6 +397,17 @@ async function openFirstPerson(serial, opts = {}) {
         console.log(`   → ${listPng}`);
       }
 
+      if (isRecentSearchScreen(els)) {
+        console.log("   tela Recent/Clear all — refocus + digitar + Show all…");
+        const q = typeQueryFromProfile(opts.profile || {});
+        await ensureSearchFocused(serial);
+        await clearSearchField(serial);
+        await typeSearchQuery(serial, q);
+        await submitShowAllResults(serial);
+        await sleep(1_000);
+        continue;
+      }
+
       // Card em destaque: OCR do nome mesmo se profilesFromExtract falhar.
       const ocrNameHits = (els || [])
         .filter((e) => Number(e.y) >= LIST_MIN_Y && Number(e.y) < 900)
@@ -388,12 +422,15 @@ async function openFirstPerson(serial, opts = {}) {
         .filter((c) => looksLikePersonName(c.name, { excludeTitle }))
         .filter((c) => {
           const n = c.name;
-          // não headline/local/botão
           if (/[|…]|\.\.\./.test(n)) return false;
           if (/\b(connect|follow|message|mutual|brazil|brasil|gest[aã]o|coordenador|assistente)\b/i.test(n)) {
             return false;
           }
           if (/,/.test(n)) return false;
+          // histórico de query ("Nome Cargo Cidade") sem grau — não é perfil
+          if (excludeTitle && new RegExp(`\\b${excludeTitle}\\b`, "i").test(n)) {
+            return false;
+          }
           return true;
         });
 
@@ -414,14 +451,18 @@ async function openFirstPerson(serial, opts = {}) {
           `   ocr-nome: ${ocrNameHits.map((c) => `${c.name}@y${c.y}`).join(" | ")}`,
         );
       }
-      // Prioridade: cards com Connect (lista People) → sugestões → OCR nome.
-      // Evita feed ("From my network") quando não há cards.
       const byY = (a, b) => Number(a.y) - Number(b.y);
+      const preferName = (list) => {
+        const sorted = [...list].sort(byY);
+        if (!preferred) return sorted[0] || null;
+        const hit = sorted.find((c) =>
+          sanitizeSearchText(c.name).toLowerCase().includes(preferred),
+        );
+        return hit || sorted[0] || null;
+      };
+      // Cards Connect → sugestões com • grau → OCR (sem queries de histórico)
       const pick =
-        [...cards].sort(byY)[0] ||
-        [...suggestions].sort(byY)[0] ||
-        [...ocrNameHits].sort(byY)[0] ||
-        null;
+        preferName(cards) || preferName(suggestions) || preferName(ocrNameHits);
 
       if (pick) {
         const x = Math.min(Number(pick.x), 280);
@@ -439,7 +480,6 @@ async function openFirstPerson(serial, opts = {}) {
         .map((e) => e.text)
         .join(" | ");
       if (sample) console.log(`   ocr sample: ${sample}`);
-      // Sem cards: provavelmente Posts/feed — tenta Show all de novo
       if (/from my network|newsletter|show translation/i.test(sample)) {
         console.log("   parece feed/Posts — Show all de novo…");
         try {

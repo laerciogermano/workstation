@@ -202,7 +202,7 @@ Script [`scripts/login-extract-profiles.js`](scripts/login-extract-profiles.js) 
 4. A cada perfil novo: crop **avatar + card** (`profile-NNN-photo.png` / `profile-NNN-card.png`) + `rawOcr` → `POST /profiles` (`photoBase64`, `cardBase64`, `rawOcr`). Regrava `profiles.json`, `profile-NNN.json`, `list-round-NNN.json`, `round-NNN.png`. Rollback: remova crop/`rawOcr` do script e colunas na API.
 
 **Antes → depois (prints):** `captureFrame` só em `/tmp` → também em `<stamp>/round-*.png` e `frame-*.png` via `outPath`. Rollback: chamar `extract`/`frameHash` sem `outPath`.
-5. Se `PROFILES_API_URL` estiver definida (ex. `http://localhost:3000`), cada perfil também é enviado em `POST /profiles` para [`connectmax/vendas/api`](../../connectmax/vendas/api/README.md). Sem a env, só JSON local.
+5. Se `PROFILES_API_URL` estiver definida (ex. `http://localhost:3000`), cada perfil também é enviado em `POST /profiles` para [`connectmax/vendas/api`](../../connectmax/vendas/api/README.md). Sem a env, só JSON local. Falha pontual do POST (ex. 413) **não** aborta o scroll — grava aviso e segue (JSON local já salvo). Rollback: `await postProfileToApi` sem try/catch em `defaultOnProfile`.
 
 **Antes → depois (Search):** sleep fixo 5s pós-launch → `waitForText("Search")` (poll OCR, timeout 30s) e só então tap. Rollback: `await sleep(5000)` + `tapByText(…, "Search")`.
 

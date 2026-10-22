@@ -197,8 +197,13 @@ async function defaultOnProfile(profile, ctx) {
   const path = writeProfilesJson(outDir, rows);
   console.log(`   → ${path} (${rows.length})`);
   if (PROFILES_API_URL) {
-    await postProfileToApi(profile);
-    console.log(`   → POST ${PROFILES_API_URL}/profiles`);
+    try {
+      await postProfileToApi(profile);
+      console.log(`   → POST ${PROFILES_API_URL}/profiles`);
+    } catch (e) {
+      // JSON local já gravado; não abortar o scroll por falha pontual da API
+      console.error(`   ⚠ POST API falhou (continua): ${e.message}`);
+    }
   }
   printProfileSummary(profile, count);
 }

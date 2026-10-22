@@ -40,8 +40,15 @@ const SCROLL_DISTANCE = 280;
 const SCROLL_BURST = 1;
 const MAX_PROFILES = 500;
 const MAX_ROUNDS = 500;
-/** Rodadas seguidas sem avanço (mesmo conteúdo OCR / frame) → fim. */
-const SCROLL_END_STABLE_NEEDED = 2;
+/**
+ * Rodadas seguidas sem avanço → fim.
+ * Antes: 2 (conteúdo OU frame) — OCR fragmentado (“no padrão: 0” com nomes na tela)
+ * fazia o extract parar cedo (~9 perfis) com code=0.
+ * Agora: precisa conteúdo E frame estáveis (menos falso fim).
+ */
+const SCROLL_END_STABLE_NEEDED = Number(
+  process.env.EXTRACT_SCROLL_STABLE || 4,
+);
 const OCR_ENGINE = process.env.SCREEN_ROBOT_OCR || "macos-vision";
 /** Base da API Nest (ex.: http://localhost:3000). Vazio = só JSON local. */
 const PROFILES_API_URL = (process.env.PROFILES_API_URL || "").replace(/\/$/, "");
@@ -364,16 +371,13 @@ async function extractProfilesLoop(serial, outDir, opts = {}) {
       });
     }
 
-    // Sem cards novos + mesma lista visível → não dá mais pra descer (útil quando o SHA do frame oscila).
+    // Sem cards novos + mesma lista visível (parser). Sozinho não encerra — OCR
+    // costuma falhar o padrão com nomes ainda na tela; exige frame estável também.
     if (fresh.length === 0 && prevContentFp != null && contentFp === prevContentFp) {
       contentStable += 1;
       console.log(
         `   fim do scroll? conteúdo igual sem novos (${contentStable}/${SCROLL_END_STABLE_NEEDED})`,
       );
-      if (contentStable >= SCROLL_END_STABLE_NEEDED) {
-        console.log("   fim: scroll não avança mais (conteúdo) — encerrando");
-        break;
-      }
     } else {
       contentStable = 0;
       prevContentFp = contentFp;
@@ -393,13 +397,19 @@ async function extractProfilesLoop(serial, outDir, opts = {}) {
       console.log(
         `   fim do scroll? frame igual (${frameStable}/${SCROLL_END_STABLE_NEEDED})`,
       );
-      if (frameStable >= SCROLL_END_STABLE_NEEDED) {
-        console.log("   fim: scroll não avança mais (frame) — encerrando");
-        break;
-      }
     } else {
       frameStable = 0;
       prevHash = nextHash;
+    }
+
+    if (
+      contentStable >= SCROLL_END_STABLE_NEEDED &&
+      frameStable >= SCROLL_END_STABLE_NEEDED
+    ) {
+      console.log(
+        "   fim: scroll não avança mais (conteúdo + frame) — encerrando",
+      );
+      break;
     }
   }
 

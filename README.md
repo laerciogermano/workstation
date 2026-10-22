@@ -51,3 +51,4 @@ Hub de projetos, board, tasks e processo de desenvolvimento.
 | 🎲 | [**Hurble**](hurble/README.md) | Rede social para conhecer pessoas (roulette + perfil/amigos/DM/posts/stories) | [visão](hurble/README.md) · [pesquisa](hurble/docs/pesquisa-referencias.md) · [docs](hurble/docs/README.md) · [config IA](hurble/config/config-ia.md) |
 | 🧾 | [**e-notas**](e-notas/README.md) | Índice de preços via QR de nota fiscal | [visão](e-notas/README.md) · [docs](e-notas/docs/README.md) · [config IA](e-notas/config/config-ia.md) |
 | 📚 | [**Aulas**](aulas/README.md) | Árvore de seções / conteúdo didático | [visão](aulas/README.md) |
+| 📂 | [**google-drive-cli**](google-drive-cli/README.md) | CLI da Drive API (OAuth usuário) | [visão](google-drive-cli/README.md) |

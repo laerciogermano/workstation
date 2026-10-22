@@ -151,7 +151,9 @@ PROFILES_API_URL=http://localhost:3000 npm run login-extract-profile-detail -- -
 PROFILES_API_URL=http://localhost:3000 npm run login-extract-profile-detail -- --id <uuid> --from-profile --url 'https://www.linkedin.com/in/…'
 ```
 
-Script [`scripts/login-extract-profile-detail.js`](scripts/login-extract-profile-detail.js) — digita (**nome + 1ª palavra do título + 1ª palavra da cidade**) → Show all → **1ª pessoa** (nunca People) → **⋯** → Share via → Copy → POST → scroll → POST.
+Script [`scripts/login-extract-profile-detail.js`](scripts/login-extract-profile-detail.js) — digita (**nome + `searchQuery` + 1ª palavra da cidade**) → Show all → **1ª pessoa** → **⋯** → Share via → Copy → **POST só URL** e encerra (sem scroll/About/Experience).
+
+**Antes → depois (detail):** scroll + OCR completo → **somente `profileUrl`**. Rollback: restaurar passo 7–8 de extract+scroll.
 
 **Antes → depois (⋯):** Message.x+120 (~468) não abria menu → `width-48` (~492) + retry + OCR sheet. Rollback: offset +120.
 

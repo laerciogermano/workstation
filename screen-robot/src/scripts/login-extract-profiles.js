@@ -21,6 +21,7 @@ import { sleep } from "../lib/adb.js";
 import { extract, findByText, waitForText } from "../lib/extract.js";
 import { captureFrame } from "../lib/frame.js";
 import { profilesFromExtract } from "../lib/linkedin-list-profiles.js";
+import { searchQueryFromCard } from "../lib/linkedin-search-query.js";
 import { key, launch, scroll, stop, tapElement, type } from "../lib/operate.js";
 import { provisionEmulator } from "../lib/provision.js";
 
@@ -108,14 +109,19 @@ function stopAllApps(serial, apps) {
 
 function profileRow(profile) {
   const f = profile.fields || {};
+  const title = f.title || null;
+  const current = f.current || null;
+  const searchQuery =
+    searchQueryFromCard({ title, current }) || null;
   return {
     name: f.name || profile.name || null,
-    title: f.title || null,
+    title,
+    searchQuery,
     level: f.level || null,
     connection: f.connection || profile.action || null,
     city: f.city || null,
     mutualConnections: f.mutualConnections || null,
-    current: f.current || null,
+    current,
     past: f.past || null,
   };
 }

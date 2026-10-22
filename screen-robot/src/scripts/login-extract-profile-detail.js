@@ -1,17 +1,16 @@
 #!/usr/bin/env node
 /**
- * 1 perfil da API → Search booleana → abre perfil → scroll + extract → POST /profile-details.
+ * 1 perfil da API → Search → abre 1ª pessoa → Share/Copy URL → POST /profile-details (só URL).
  *
  * Uso (cwd: screen-robot/src):
  *   PROFILES_API_URL=http://localhost:3000 npm run login-extract-profile-detail -- --id <uuid>
  *   # abre o perfil direto pelo link (pula busca):
  *   … -- --id <uuid> --from-profile --url https://www.linkedin.com/in/…
  */
-import { createHash } from "node:crypto";
 import {
-  readFileSync,
   existsSync,
   mkdirSync,
+  readFileSync,
   writeFileSync,
 } from "node:fs";
 import { dirname, resolve, join } from "node:path";
@@ -19,14 +18,13 @@ import { fileURLToPath } from "node:url";
 
 import { adb, sleep } from "../lib/adb.js";
 import { extract, findByText, waitForText } from "../lib/extract.js";
-import { captureFrame } from "../lib/frame.js";
 import { booleanQueryForProfile } from "../lib/linkedin-boolean-query.js";
 import { profilesFromExtract } from "../lib/linkedin-list-profiles.js";
 import {
-  findLinkedInProfileUrl,
-  parseProfilePageOcr,
-} from "../lib/linkedin-profile-page.js";
-import { key, launch, scroll, stop, tapElement, type } from "../lib/operate.js";
+  sanitizeSearchText,
+  typeQueryFromProfile as buildTypeQuery,
+} from "../lib/linkedin-search-query.js";
+import { key, launch, stop, tapElement, type } from "../lib/operate.js";
 import { provisionEmulator } from "../lib/provision.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -49,11 +47,6 @@ const SHOW_ALL_QUERIES = [
 ];
 const PEOPLE_QUERIES = ["People"];
 const WAIT_AFTER_PEOPLE_MS = 2_000;
-/** Máximo de páginas OCR no perfil (safety). Fim real = conteúdo/frame estável. */
-const MAX_PROFILE_PAGES = 40;
-const SCROLL_END_STABLE_NEEDED = 2;
-const SCROLL_DISTANCE = 320;
-const SCROLL_DELAY_MS = 900;
 /** Resultados do dropdown de busca começam abaixo da barra. */
 const LIST_MIN_Y = 130;
 const OCR_ENGINE = process.env.SCREEN_ROBOT_OCR || "macos-vision";
@@ -194,57 +187,9 @@ async function typeSearchQuery(serial, query) {
   await sleep(WAIT_AFTER_TYPE_MS);
 }
 
-/**
- * Texto de campo p/ busca: ASCII letras/números/espaço.
- * Sem acentos (adb `input text` vira %XX e o LinkedIn mostra `sa%fade`).
- * Sem %, aspas e pontuação — o AND fica só entre campos.
- */
-function sanitizeSearchText(raw) {
-  return String(raw || "")
-    .normalize("NFD")
-    .replace(/\p{M}/gu, "")
-    .replace(/%[0-9A-Fa-f]{2}/g, " ")
-    .replace(/%/g, " ")
-    .replace(/[^A-Za-z0-9\s]/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
-/** Primeiras N palavras do texto (após sanitize). */
-function firstWords(text, n = 1) {
-  const parts = sanitizeSearchText(text).split(/\s+/).filter(Boolean);
-  return parts.slice(0, n).join(" ");
-}
-
-/** Título: `title` ou cargo antes de " at "/" @" em `current` — só a 1ª palavra. */
-function titleForSearch(profile) {
-  const direct = firstWords(profile?.title, 1);
-  if (direct) return direct;
-  const current = String(profile?.current || "").trim();
-  if (!current) return "";
-  return firstWords(current.split(/\s+(?:at|@)\s+/i)[0], 1);
-}
-
-/** Cidade: só a 1ª palavra (ex.: "Belo Horizonte, Minas" → "Belo"). */
-function cityForSearch(profile) {
-  return firstWords(profile?.city, 1);
-}
-
-/**
- * Query: nome + 1ª palavra do título + 1ª palavra da cidade.
- * Se cidade == título (dado sujo na base), omite a cidade.
- */
+/** Query: nome + searchQuery + 1ª palavra da cidade. */
 function typeQueryFromProfile(profile) {
-  const name = sanitizeSearchText(profile?.name);
-  if (!name) throw new Error("perfil sem name");
-  const title = titleForSearch(profile);
-  let city = cityForSearch(profile);
-  if (city && title && city.toLowerCase() === title.toLowerCase()) city = "";
-  const q = [name, title, city]
-    .filter(Boolean)
-    .join(" ")
-    .replace(/\s+/g, " ")
-    .trim();
+  const q = buildTypeQuery(profile);
   try {
     console.log(`   boolean ref: ${booleanQueryForProfile(profile)}`);
   } catch {
@@ -252,6 +197,22 @@ function typeQueryFromProfile(profile) {
   }
   console.log(`   query: ${q}`);
   return q;
+}
+
+/** Termo p/ filtrar cargo na lista (searchQuery ou 1ª palavra do title). */
+function titleForSearch(profile) {
+  const sq = sanitizeSearchText(profile?.searchQuery);
+  if (sq) return sq.split(/\s+/).filter(Boolean)[0] || "";
+  const fromTitle =
+    sanitizeSearchText(profile?.title).split(/\s+/).filter(Boolean)[0] || "";
+  if (fromTitle) return fromTitle;
+  const current = String(profile?.current || "").trim();
+  if (!current) return "";
+  return (
+    sanitizeSearchText(current.split(/\s+(?:at|@)\s+/i)[0])
+      .split(/\s+/)
+      .filter(Boolean)[0] || ""
+  );
 }
 
 /**
@@ -502,21 +463,6 @@ function readDeviceClipboard(serial) {
   return null;
 }
 
-async function frameHash(serial, outPath) {
-  const path = await captureFrame(serial, outPath ? { outPath } : {});
-  return createHash("sha1").update(readFileSync(path)).digest("hex");
-}
-
-/** Fingerprint do OCR visível (textos) — detecta fim do scroll no perfil. */
-function pageContentFingerprint(els) {
-  const texts = (els || [])
-    .map((e) => String(e?.text || "").trim().toLowerCase())
-    .filter(Boolean)
-    .sort()
-    .join("\n");
-  return createHash("sha1").update(texts).digest("hex");
-}
-
 /** Largura física do display (px). */
 function displayWidth(serial) {
   try {
@@ -750,24 +696,6 @@ async function postProfileDetail(payload) {
   return res.json();
 }
 
-async function extractWithPng(serial, outPath) {
-  let els = [];
-  for (let attempt = 1; attempt <= 3; attempt++) {
-    try {
-      els = await extract(
-        { serial, engine: OCR_ENGINE },
-        { outPath },
-      );
-      break;
-    } catch (e) {
-      console.log(`   extract falhou (${attempt}/3): ${e.message || e}`);
-      if (attempt === 3) throw e;
-      await sleep(1_500);
-    }
-  }
-  return els;
-}
-
 function parseArgs(argv) {
   let configPath = resolve(ROOT, "device.config.json");
   let profileId = null;
@@ -901,136 +829,32 @@ async function main() {
     profileUrl = knownProfileUrl;
     console.log(`   URL (do --url / deep link): ${profileUrl}`);
   }
-  if (profileUrl) {
-    console.log(`   URL: ${profileUrl}`);
-    try {
-      const early = await postProfileDetail({
-        profileId,
-        name: openedName,
-        profileUrl,
-        connectionDegree: profile.level || null,
-        location: profile.city || null,
-        extractedAt: new Date().toISOString(),
-      });
-      console.log(
-        `   POST URL ok id=${early.id} url=${early.profileUrl || "-"}`,
-      );
-    } catch (e) {
-      console.log(`   POST URL falhou: ${e.message || e}`);
-    }
-  } else {
-    console.log("   URL: (não obtida) — segue sem POST antecipado");
+  if (!profileUrl) {
+    throw new Error("URL linkedin.com/in/… não obtida — encerrando sem scroll");
   }
 
-  console.log("7) Extract + scroll down até o fim…");
-  /** @type {object[]} */
-  const allEls = [];
-  /** @type {object[]|null} */
-  let headerEls = null;
-  let contentStable = 0;
-  let frameStable = 0;
-  let prevContentFp = null;
-  let prevHash = await frameHash(serial, join(outDir, "frame-000.png"));
-
-  for (let i = 0; i < MAX_PROFILE_PAGES; i++) {
-    const pad = String(i).padStart(2, "0");
-    const png = join(outDir, `page-${pad}.png`);
-    const els = await extractWithPng(serial, png);
-    const contentFp = pageContentFingerprint(els);
-    console.log(`   page-${pad}: ${els.length} els → ${png}`);
-    if (i === 0) headerEls = els;
-    allEls.push(...els);
-    writeFileSync(
-      join(outDir, `page-${pad}.json`),
-      JSON.stringify(els, null, 2),
-      "utf8",
-    );
-
-    if (prevContentFp != null && contentFp === prevContentFp) {
-      contentStable += 1;
-      console.log(
-        `   fim do scroll? conteúdo igual (${contentStable}/${SCROLL_END_STABLE_NEEDED})`,
-      );
-      if (contentStable >= SCROLL_END_STABLE_NEEDED) {
-        console.log("   fim: scroll não avança mais (conteúdo)");
-        break;
-      }
-    } else {
-      contentStable = 0;
-      prevContentFp = contentFp;
-    }
-
-    try {
-      scroll({ serial, direction: "down", distance: SCROLL_DISTANCE });
-    } catch (e) {
-      console.log(`   scroll: ${e.message || e}`);
-      break;
-    }
-    await sleep(SCROLL_DELAY_MS);
-
-    const nextHash = await frameHash(
-      serial,
-      join(outDir, `frame-after-${pad}.png`),
-    );
-    if (nextHash === prevHash) {
-      frameStable += 1;
-      console.log(
-        `   fim do scroll? frame igual (${frameStable}/${SCROLL_END_STABLE_NEEDED})`,
-      );
-      if (frameStable >= SCROLL_END_STABLE_NEEDED) {
-        console.log("   fim: scroll não avança mais (frame)");
-        break;
-      }
-    } else {
-      frameStable = 0;
-      prevHash = nextHash;
-    }
-  }
-
-  console.log("   fim do scroll — montando payload");
-  const parsed = parseProfilePageOcr(allEls, {
-    nameHint: openedName,
-    headerEls: headerEls || allEls,
-  });
-  if (!profileUrl && parsed.profileUrl) profileUrl = parsed.profileUrl;
-
+  console.log(`   URL: ${profileUrl}`);
   const payload = {
     profileId,
-    name: parsed.name || openedName || profile.name || null,
-    company: parsed.company || null,
-    headline: parsed.headline || profile.title || null,
-    location: parsed.location || profile.city || null,
-    connections: parsed.connections || null,
-    mutualConnections: parsed.mutualConnections || null,
-    canConnect: parsed.canConnect ?? null,
-    canMessage: parsed.canMessage ?? null,
-    profileUrl: profileUrl || null,
-    connectionDegree: parsed.connectionDegree || profile.level || null,
-    about: parsed.about,
-    experience: parsed.experience,
-    education: parsed.education,
-    skills: parsed.skills,
-    rawOcr: { elements: allEls },
+    name: openedName || profile.name || null,
+    profileUrl,
+    connectionDegree: profile.level || null,
+    location: profile.city || null,
     extractedAt: new Date().toISOString(),
   };
-
   writeFileSync(
     join(outDir, "detail.json"),
     JSON.stringify(payload, null, 2),
     "utf8",
   );
   console.log(`   → ${join(outDir, "detail.json")}`);
-  console.log(
-    `   campos: name=${payload.name || "-"} company=${!!payload.company} conn=${payload.connections || "-"} mutual=${!!payload.mutualConnections} connect=${payload.canConnect} msg=${payload.canMessage} headline=${!!payload.headline} about=${!!payload.about} exp=${!!payload.experience} edu=${!!payload.education} skills=${!!payload.skills} url=${payload.profileUrl || "-"}`,
-  );
 
-  console.log("8) POST /profile-details e encerrar…");
+  console.log("7) POST /profile-details (só URL) e encerrar…");
   const saved = await postProfileDetail(payload);
   console.log(
     `   OK id=${saved.id} profileId=${saved.profileId} url=${saved.profileUrl || "-"}`,
   );
-
-  console.log("OK — detalhe persistido — encerrando processo");
+  console.log("OK — URL persistida — encerrando processo");
   process.exit(0);
 }
 

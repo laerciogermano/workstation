@@ -151,11 +151,11 @@ PROFILES_API_URL=http://localhost:3000 npm run login-extract-profile-detail -- -
 PROFILES_API_URL=http://localhost:3000 npm run login-extract-profile-detail -- --id <uuid> --from-profile --url 'https://www.linkedin.com/in/…'
 ```
 
-Script [`scripts/login-extract-profile-detail.js`](scripts/login-extract-profile-detail.js) — digita (**nome + 1ª palavra do título + cidade**) → Show all → **1ª pessoa** (nunca People) → **⋯** → Share via → Copy → POST → scroll → POST.
+Script [`scripts/login-extract-profile-detail.js`](scripts/login-extract-profile-detail.js) — digita (**nome + 1ª palavra do título + 1ª palavra da cidade**) → Show all → **1ª pessoa** (nunca People) → **⋯** → Share via → Copy → POST → scroll → POST.
 
 **Antes → depois (⋯):** Message.x+120 (~468) não abria menu → `width-48` (~492) + retry + OCR sheet. Rollback: offset +120.
 
-**Antes → depois (query):** título inteiro → **1ª palavra** do `title`/`current`; ordem **nome + título + cidade**. Rollback: sanitize completo / ordem `name, city, title`.
+**Antes → depois (query):** cidade inteira → **1ª palavra** também (`cityForSearch`); ordem **nome + título(1) + cidade(1)**. Rollback: `sanitizeSearchText(profile.city)`.
 
 **Antes → depois (card destaque):** faixa nome↔Connect 140px perdia resultado hero (~187px) → `NAME_ABOVE_ACTION_PX=220` + OCR-nome. Rollback: 140.
 

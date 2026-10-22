@@ -225,14 +225,21 @@ function titleForSearch(profile) {
   return firstWords(current.split(/\s+(?:at|@)\s+/i)[0], 1);
 }
 
+/** Cidade: só a 1ª palavra (ex.: "Belo Horizonte, Minas" → "Belo"). */
+function cityForSearch(profile) {
+  return firstWords(profile?.city, 1);
+}
+
 /**
- * Query: nome + 1ª palavra do título + cidade (nessa ordem; só espaços).
+ * Query: nome + 1ª palavra do título + 1ª palavra da cidade.
+ * Se cidade == título (dado sujo na base), omite a cidade.
  */
 function typeQueryFromProfile(profile) {
   const name = sanitizeSearchText(profile?.name);
   if (!name) throw new Error("perfil sem name");
-  const city = sanitizeSearchText(profile?.city);
   const title = titleForSearch(profile);
+  let city = cityForSearch(profile);
+  if (city && title && city.toLowerCase() === title.toLowerCase()) city = "";
   const q = [name, title, city]
     .filter(Boolean)
     .join(" ")

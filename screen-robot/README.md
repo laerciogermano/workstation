@@ -538,3 +538,4 @@ npm run agent -- --prompt ../roteiros/jornada-comprador.md   # GEMINI_API_KEY
 | Ícones no extract (opt-in `icons: true`) | [`src/lib/extract-icons.js`](src/lib/extract-icons.js) · relatório [`src/test/output/linkedin-people-extract-calls.md`](src/test/output/linkedin-people-extract-calls.md) |
 | Identidade do aparelho (US-22) | [`pocs/README.md`](pocs/README.md#mascarar-identidade-do-aparelho) |
 | Postmortem runtime | [`postmortem.md`](postmortem.md) |
+| Postmortem limite comercial LinkedIn (busca/view de perfis, 2026-10-22) | [`postmortem-linkedin-profile-search-limit-2026-10-22.md`](postmortem-linkedin-profile-search-limit-2026-10-22.md) |

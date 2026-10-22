@@ -128,6 +128,19 @@ node --test --test-timeout=180000 lib/extract.linkedin-fixtures.test.js
 
 ---
 
+## Fila priorizada (mais dados primeiro)
+
+```bash
+PROFILES_API_URL=http://localhost:3000 node scripts/queue-profile-details-by-richness.js > /tmp/profile-detail-queue.txt
+# score = title×3 + city×3 + current×2 + past/mutual/level/connection×1; ignora quem já tem profile-detail
+while IFS=$'\t' read -r id name score; do
+  [ -z "$id" ] && continue
+  PROFILES_API_URL=http://localhost:3000 npm run login-extract-profile-detail -- --id "$id"
+done < /tmp/profile-detail-queue.txt
+```
+
+**Antes → depois:** fila em ordem da API → ordem por riqueza de campos (pula já extraídos). Rollback: iterar `GET /profiles` na ordem original.
+
 ## login-extract-profile-detail
 
 ```bash

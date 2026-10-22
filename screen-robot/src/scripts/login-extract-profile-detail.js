@@ -20,6 +20,7 @@ import { adb, sleep } from "../lib/adb.js";
 import { extract, findByText } from "../lib/extract.js";
 import { booleanQueryForProfile } from "../lib/linkedin-boolean-query.js";
 import { profilesFromExtract } from "../lib/linkedin-list-profiles.js";
+import { cropProfilePhotoAndCover } from "../lib/linkedin-profile-photo-crop.js";
 import { parseProfileHeader } from "../lib/linkedin-profile-page.js";
 import {
   sanitizeSearchText,
@@ -1010,6 +1011,24 @@ async function main() {
   }
   console.log(`   URL: ${profileUrl}`);
 
+  /** @type {string|null} */
+  let photoBase64 = null;
+  /** @type {string|null} */
+  let coverBase64 = null;
+  if (existsSync(cardPng)) {
+    try {
+      console.log("7b) Crop foto + capa…");
+      const media = await cropProfilePhotoAndCover(cardPng, outDir);
+      photoBase64 = media.photoBase64;
+      coverBase64 = media.coverBase64;
+      console.log(
+        `   photo=${media.photoPath || "-"} cover=${media.coverPath || "-"} b64=${photoBase64 ? "ok" : "-"}/${coverBase64 ? "ok" : "-"}`,
+      );
+    } catch (e) {
+      console.log(`   crop: ${e.message || e}`);
+    }
+  }
+
   const payload = {
     profileId,
     name: header.name || openedName || profile.name || null,
@@ -1022,21 +1041,32 @@ async function main() {
     profileUrl,
     connectionDegree:
       header.connectionDegree || profile.level || null,
+    photoBase64,
+    coverBase64,
     extractedAt: new Date().toISOString(),
   };
+  // detail.json sem base64 gigante — só flags
   writeFileSync(
     join(outDir, "detail.json"),
-    JSON.stringify(payload, null, 2),
+    JSON.stringify(
+      {
+        ...payload,
+        photoBase64: photoBase64 ? `[base64 ${photoBase64.length} chars]` : null,
+        coverBase64: coverBase64 ? `[base64 ${coverBase64.length} chars]` : null,
+      },
+      null,
+      2,
+    ),
     "utf8",
   );
   console.log(`   → ${join(outDir, "detail.json")}`);
 
-  console.log("8) POST /profile-details (URL + cartão) e encerrar…");
+  console.log("8) POST /profile-details (URL + cartão + foto/capa) e encerrar…");
   const saved = await postProfileDetail(payload);
   console.log(
-    `   OK id=${saved.id} profileId=${saved.profileId} url=${saved.profileUrl || "-"} name=${saved.name || "-"}`,
+    `   OK id=${saved.id} profileId=${saved.profileId} url=${saved.profileUrl || "-"} name=${saved.name || "-"} photo=${saved.photoBase64 ? "sim" : "não"} cover=${saved.coverBase64 ? "sim" : "não"}`,
   );
-  console.log("OK — URL + cartão persistidos — encerrando processo");
+  console.log("OK — URL + cartão + foto/capa persistidos — encerrando processo");
   process.exit(0);
 }
 

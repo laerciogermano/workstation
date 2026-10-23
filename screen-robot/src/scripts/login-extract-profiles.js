@@ -300,6 +300,39 @@ async function matchConnectionInBase(listCard) {
   }
 }
 
+/**
+ * Reporta skips “já existe” p/ a API (saturação da busca).
+ * @param {{ viewportFails?: number, fails?: number }} opts
+ */
+async function reportExtractFails(opts) {
+  if (!PROFILES_API_URL) return null;
+  const url = `${PROFILES_API_URL}/extract/fails`;
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        viewportFails: opts.viewportFails,
+        fails: opts.fails,
+      }),
+    });
+    if (!res.ok) {
+      console.log(`   ⚠ POST extract/fails → ${res.status}`);
+      return null;
+    }
+    const body = await res.json().catch(() => null);
+    if (body?.fails != null) {
+      console.log(
+        `   → fails=${body.fails} lastViewportFails=${body.lastViewportFails ?? opts.viewportFails ?? "-"}`,
+      );
+    }
+    return body;
+  } catch (e) {
+    console.log(`   ⚠ extract/fails falhou: ${e.message || e}`);
+    return null;
+  }
+}
+
 /** profileUrl já gravada em linkedin_profile_details? (1:1). */
 async function profileUrlAlreadyInBase(rawUrl) {
   if (!PROFILES_API_URL || !rawUrl) return { exists: false };
@@ -578,6 +611,7 @@ async function extractProfilesLoop(serial, outDir, opts = {}) {
     if (fresh.length > 0) {
       /** @type {object|null} */
       let chosen = null;
+      let viewportFails = 0;
       for (const p of fresh) {
         seen.add(p.key);
         if (!PEOPLE_CARD_ACTIONS.has(p.action)) {
@@ -588,6 +622,7 @@ async function extractProfilesLoop(serial, outDir, opts = {}) {
         }
         const connMatch = await matchConnectionInBase(p);
         if (connMatch.matched) {
+          viewportFails += 1;
           console.log(
             `   skip (já na base src=${connMatch.source || "?"} score=${Number(connMatch.matchScore || 0).toFixed(3)} nameSim=${Number(connMatch.nameSimilarity || 0).toFixed(3)}): ${p.name}${connMatch.clienteNome ? ` ≈ ${connMatch.clienteNome}` : ""}${connMatch.agentId ? ` agent=${connMatch.agentId}` : ""}${connMatch.profileId ? ` profileId=${connMatch.profileId}` : ""}`,
           );
@@ -595,6 +630,10 @@ async function extractProfilesLoop(serial, outDir, opts = {}) {
         }
         chosen = p;
         break;
+      }
+
+      if (viewportFails > 0) {
+        await reportExtractFails({ viewportFails });
       }
 
       if (!chosen) {

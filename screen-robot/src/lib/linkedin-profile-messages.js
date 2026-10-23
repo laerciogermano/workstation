@@ -99,6 +99,8 @@ export function messagesFromUiXml(xml) {
   let curSender = null;
   let curTime = null;
   let curFrom = /** @type {"me"|"peer"|"unknown"} */ ("unknown");
+  /** avatar imediatamente acima do próximo body → peer (só aquela bolha / grupo) */
+  let peerBubblePending = false;
 
   for (const ev of events) {
     if (ev.kind === "sender") {
@@ -107,22 +109,15 @@ export function messagesFromUiXml(xml) {
       curTime = p.time;
       curFrom =
         peer && curSender.toLowerCase() === peer.toLowerCase() ? "peer" : "me";
+      peerBubblePending = curFrom === "peer";
       continue;
     }
     if (ev.kind === "avatar") {
-      // avatar do interlocutor na bolha → mensagens seguintes sem label são dele
-      if (peer) {
-        curSender = peer;
-        curFrom = "peer";
-      }
+      peerBubblePending = true;
       continue;
     }
     if (ev.kind === "receipt") {
-      // LinkedIn marca "Message sent" também em bolhas do peer — só usa se unknown
-      if (curFrom === "unknown") {
-        curFrom = "me";
-        if (!curSender || curSender === "unknown") curSender = "me";
-      }
+      // recibo sozinho não vira "me" se o bloco atual é peer
       continue;
     }
     if (ev.kind !== "body") continue;
@@ -130,23 +125,33 @@ export function messagesFromUiXml(xml) {
     let sender = curSender || "unknown";
     let from = curFrom;
     let time = curTime;
-    const nearAvatar = events.some(
-      (e) => e.kind === "avatar" && Math.abs(e.y - ev.y) <= 80,
+
+    // avatar logo acima deste body e sem sender_name "me" recente na mesma faixa
+    const avatarJustAbove = events.some(
+      (e) =>
+        e.kind === "avatar" && e.y <= ev.y && ev.y - e.y <= 40,
     );
-    // avatar na bolha (ou herdado do grupo) → sempre peer
-    if (nearAvatar && peer) {
+    const senderJustAbove = [...events]
+      .filter((e) => e.kind === "sender" && e.y <= ev.y && ev.y - e.y <= 60)
+      .sort((a, b) => b.y - a.y)[0];
+
+    if (senderJustAbove) {
+      const p = parseSenderNameLine(senderJustAbove.text || "");
+      sender = p.sender;
+      time = p.time ?? time;
+      from =
+        peer && sender.toLowerCase() === peer.toLowerCase() ? "peer" : "me";
+      curSender = sender;
+      curTime = time;
+      curFrom = from;
+      peerBubblePending = from === "peer";
+    } else if ((peerBubblePending || avatarJustAbove) && peer) {
       sender = peer;
       from = "peer";
       curSender = peer;
       curFrom = "peer";
     } else if (from === "unknown" || sender === "unknown") {
-      const nearReceipt = events.some(
-        (e) => e.kind === "receipt" && Math.abs(e.y - ev.y) <= 50,
-      );
-      if (nearReceipt) {
-        from = "me";
-        if (sender === "unknown") sender = "me";
-      }
+      // sem label: herda estado; se ainda unknown, deixa unknown
     }
 
     messages.push({

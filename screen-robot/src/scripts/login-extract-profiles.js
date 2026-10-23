@@ -2,7 +2,7 @@
 /**
  * LinkedIn: stop apps → launch → waitForText(Search) → tap → colar "comprador" →
  * See all → por card: se já há conexão (score nome/cargo/cidade/empresa) → skip;
- * senão tap → OCR 1ª tela + URL → se profileUrl já na base → skip save;
+ * senão tap → uidump (fallback OCR) 1ª tela + URL → se profileUrl já na base → skip save;
  * BACK → próximo até `-n`. Não usa botão Connect/Pending da UI.
  *
  * Uso (cwd: screen-robot/src):
@@ -20,7 +20,13 @@ import { dirname, resolve, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { sleep } from "../lib/adb.js";
-import { extract, findByText, waitForText } from "../lib/extract.js";
+import {
+  dumpUiXml,
+  extract,
+  extractPreferDump,
+  findByText,
+  waitForText,
+} from "../lib/extract.js";
 import { captureFrame } from "../lib/frame.js";
 import {
   captureProfileUrl,
@@ -30,6 +36,7 @@ import {
   PEOPLE_CARD_ACTIONS,
   profilesFromExtract,
 } from "../lib/linkedin-list-profiles.js";
+import { parseProfileHeaderFromUiXml } from "../lib/linkedin-profile-from-uidump.js";
 import { parseProfileHeader } from "../lib/linkedin-profile-page.js";
 import {
   cropListProfilePhotoAndCard,
@@ -401,7 +408,7 @@ async function defaultOnProfile(profile, ctx) {
 }
 
 /**
- * Abre o card da lista → OCR 1ª tela → URL → BACK para a lista.
+ * Abre o card da lista → uidump (fallback OCR) 1ª tela → URL → BACK para a lista.
  * @returns {Promise<{ header: object, profileUrl: string|null, photoBase64: string|null, coverBase64: string|null, cardBase64: string|null, rawOcr: object|null }>}
  */
 async function openProfileAndExtract(serial, listCard, outDir, filePrefix) {
@@ -432,22 +439,33 @@ async function openProfileAndExtract(serial, listCard, outDir, filePrefix) {
   };
   /** @type {object[]|null} */
   let cardEls = null;
+  let pageSource = "uidump";
   try {
-    cardEls = await extract(
-      { serial, engine: OCR_ENGINE },
-      { outPath: cardPng },
-    );
+    const xml = dumpUiXml(serial);
+    writeFileSync(join(outDir, `${filePrefix}-page.xml`), xml, "utf8");
+    const parsed = parseProfileHeaderFromUiXml(xml, {
+      nameHint: listCard.name,
+    });
+    header = parsed.header;
+    cardEls = parsed.elements;
+    if (!header?.name) {
+      pageSource = "ocr";
+      cardEls = await extractPreferDump(
+        { serial, engine: OCR_ENGINE, preferDump: false },
+        { outPath: cardPng },
+      );
+      header = parseProfileHeader(cardEls, { nameHint: listCard.name });
+    }
     writeFileSync(
       join(outDir, `${filePrefix}-page.json`),
       JSON.stringify(cardEls, null, 2),
       "utf8",
     );
-    header = parseProfileHeader(cardEls, { nameHint: listCard.name });
     console.log(
-      `   page: name=${header.name || "-"} headline=${header.headline || "-"} company=${header.company || "-"} loc=${header.location || "-"} status=${header.inviteStatus || "-"}`,
+      `   page (${pageSource}): name=${header.name || "-"} headline=${header.headline || "-"} company=${header.company || "-"} loc=${header.location || "-"} status=${header.inviteStatus || "-"}`,
     );
   } catch (e) {
-    console.log(`   page OCR: ${e.message || e}`);
+    console.log(`   page: ${e.message || e}`);
   }
 
   /** @type {string|null} */
@@ -456,8 +474,11 @@ async function openProfileAndExtract(serial, listCard, outDir, filePrefix) {
   let coverBase64 = null;
   /** @type {string|null} */
   let cardBase64 = null;
-  if (existsSync(cardPng)) {
-    try {
+  try {
+    if (!existsSync(cardPng)) {
+      await captureFrame(serial, { outPath: cardPng });
+    }
+    if (existsSync(cardPng)) {
       const media = await cropProfilePhotoAndCover(cardPng, outDir);
       photoBase64 = media.photoBase64;
       coverBase64 = media.coverBase64;
@@ -465,9 +486,9 @@ async function openProfileAndExtract(serial, listCard, outDir, filePrefix) {
       console.log(
         `   crop page: photo=${media.photoPath || "-"} cover=${media.coverPath || "-"}`,
       );
-    } catch (e) {
-      console.log(`   crop page: ${e.message || e}`);
     }
+  } catch (e) {
+    console.log(`   crop page: ${e.message || e}`);
   }
 
   /** @type {string|null} */
@@ -578,10 +599,13 @@ async function extractProfilesLoop(serial, outDir, opts = {}) {
     let els;
     for (let attempt = 1; attempt <= 3; attempt++) {
       try {
-        els = await extract(
+        els = await extractPreferDump(
           { serial, engine: OCR_ENGINE },
           { outPath: roundPng },
         );
+        if (!existsSync(roundPng)) {
+          await captureFrame(serial, { outPath: roundPng });
+        }
         break;
       } catch (e) {
         console.log(`   extract falhou (${attempt}/3): ${e.message || e}`);
@@ -589,14 +613,25 @@ async function extractProfilesLoop(serial, outDir, opts = {}) {
         await sleep(1_500);
       }
     }
+    let parsed = profilesFromExtract(els, { engine: OCR_ENGINE });
+    // Dump sem cards People → OCR (lista RecyclerView às vezes sem text nos nodes)
+    if (
+      !parsed.length &&
+      els?.some((e) => e?.source === "uidump")
+    ) {
+      console.log("   uidump sem cards People → OCR…");
+      els = await extract(
+        { serial, engine: OCR_ENGINE },
+        { outPath: roundPng },
+      );
+      parsed = profilesFromExtract(els, { engine: OCR_ENGINE });
+    }
     console.log(`   → ${roundPng}`);
     writeFileSync(
       join(outDir, `list-round-${roundPad}.json`),
       JSON.stringify(els, null, 2),
       "utf8",
     );
-
-    const parsed = profilesFromExtract(els, { engine: OCR_ENGINE });
     const fresh = parsed
       .filter((p) => !seen.has(p.key))
       .sort((a, b) => (a.y ?? 0) - (b.y ?? 0));

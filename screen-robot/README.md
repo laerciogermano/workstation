@@ -342,7 +342,7 @@ const both = await extract({ serial, icons: true });
 
 ### `findByText(serial, query, opts?)`
 
-OCR interno; elementos lado a lado contidos na query.
+Preferência: **uiautomator dump** (`lib/ui-dump.js`); fallback OCR. Desligar dump: `SCREEN_ROBOT_UIDUMP=0` ou `preferDump: false`. `extractPreferDump` idem para listas. Elementos lado a lado contidos na query.
 
 **Entrada**
 

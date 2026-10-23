@@ -8,7 +8,7 @@ import { mkdirSync } from "node:fs";
 import { join } from "node:path";
 
 import { adb, sleep } from "./adb.js";
-import { dumpUiXml, extract } from "./extract.js";
+import { dumpUiXml, extractPreferDump } from "./extract.js";
 import {
   findMoreOverflow,
   normalizeLinkedInProfileUrl,
@@ -322,7 +322,11 @@ async function openComposer(serial, steps, outDir) {
       steps.push(`composer:round${round}`);
       return true;
     }
-    const els = await extract({ serial, engine: OCR, icons: true });
+    const els = await extractPreferDump({
+      serial,
+      engine: OCR,
+      icons: true,
+    });
     const msg = findHeaderMessage(els || []);
     if (msg) {
       steps.push(`message@${msg.x},${msg.y}`);

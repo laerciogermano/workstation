@@ -1,12 +1,12 @@
 /**
  * Extrai as N conexões mais recentes:
- * LinkedIn → Network → Manage my network → Connections → scroll/OCR.
+ * LinkedIn → Network → Manage my network → Connections → scroll (uidump/OCR).
  */
 import { mkdirSync } from "node:fs";
 import { join } from "node:path";
 
 import { sleep } from "./adb.js";
-import { extract, findByText } from "./extract.js";
+import { extractPreferDump, findByText } from "./extract.js";
 import {
   notifyRecentConnectionsAccepted,
   resolveAgentId,
@@ -83,7 +83,7 @@ export async function extractRecentConnections(opts) {
 
   // Garante tab bar (Home/Network) — se ainda em Connections, BACK até achar
   for (let back = 0; back < 4; back++) {
-    const els = await extract({ serial, engine: OCR });
+    const els = await extractPreferDump({ serial, engine: OCR });
     const hasTab = (els || []).some(
       (e) =>
         /^network$/i.test(String(e?.text || "").trim()) &&
@@ -127,7 +127,7 @@ export async function extractRecentConnections(opts) {
 
   while (list.length < n && round < MAX_ROUNDS) {
     round++;
-    const els = await extract({ serial, engine: OCR });
+    const els = await extractPreferDump({ serial, engine: OCR });
     const batch = connectionsFromExtract(els || []);
     const before = list.length;
     list = mergeConnections(list, batch);

@@ -154,7 +154,9 @@ PROFILES_API_URL=http://localhost:3000 npm run login-extract-profile-detail -- -
 curl 'http://localhost:3000/extract/by-url/start?url=https://www.linkedin.com/in/…'
 ```
 
-Script [`scripts/login-extract-profile-detail.js`](scripts/login-extract-profile-detail.js) — digita (**nome + `searchQuery` + 1ª cidade**) → Show all → **1ª pessoa** → **OCR cartão** (nome, cargo/`headline`, empresa, cidade, conexões, mutual, grau, `inviteStatus` connect|pending|connected, `canMessage`) → **crop foto/capa/card** → **POST** `/profile-details`. Com `--url` / `by-url`: deep link e **não** abre Share/Copy (URL já conhecida). Sem `--url`: ainda captura URL via ⋯. API Nest: `GET /extract/by-url/start?url=`.
+Script [`scripts/login-extract-profile-detail.js`](scripts/login-extract-profile-detail.js) — digita (**nome + `searchQuery` + 1ª cidade**) → Show all → **1ª pessoa** → **uidump cartão** (fallback OCR; [`lib/linkedin-profile-from-uidump.js`](lib/linkedin-profile-from-uidump.js)) → **crop foto/capa/card** → **POST** `/profile-details`. Com `--url` / `by-url`: deep link e **não** abre Share/Copy (URL já conhecida). Sem `--url`: ainda captura URL via ⋯. API Nest: `GET /extract/by-url/start?url=`.
+
+**Antes → depois (detail cartão):** OCR da 1ª tela → `dumpUiXml` + `parseProfileHeaderFromUiXml`; sem nome → OCR. Rollback: `SCREEN_ROBOT_UIDUMP=0`.
 
 **Antes → depois (by-url / cartão):** sempre Share/Copy URL + nome frágil → com URL conhecida skip Share; parser preenche headline/empresa/`inviteStatus`. Rollback: forçar `captureProfileUrl`; parser antigo sem `inviteStatus`.
 
@@ -196,7 +198,7 @@ npm run login-extract-profiles -- -n 10   # para após 10 perfis
 # aliases: --max-profiles / --limit / -n
 ```
 
-Script [`scripts/login-extract-profiles.js`](scripts/login-extract-profiles.js) — **sem IA**, **sem People**. Após See all: **abre cada card**, OCR da 1ª tela + URL (`⋯` → Share via → Copy via [`lib/linkedin-capture-profile-url.js`](lib/linkedin-capture-profile-url.js)), `KEYCODE_BACK`, próximo — até `-n` ou fim do scroll. Cliques via `findByText` / coords do nome no card:
+Script [`scripts/login-extract-profiles.js`](scripts/login-extract-profiles.js) — **sem IA**, **sem People**. Após See all: **abre cada card**, **uidump** da 1ª tela (fallback OCR) + URL (`⋯` → Share via → Copy via [`lib/linkedin-capture-profile-url.js`](lib/linkedin-capture-profile-url.js)), `KEYCODE_BACK`, próximo — até `-n` ou fim do scroll. Lista: `extractPreferDump` (sem cards People → OCR). Cliques via `findByText` (dump→OCR) / coords do nome no card:
 
 | Alvo | query OCR |
 |------|-----------|
@@ -204,7 +206,9 @@ Script [`scripts/login-extract-profiles.js`](scripts/login-extract-profiles.js) 
 | See/Show all | `See all results` / `Show all results` (fallback `See all` / `Show all`) |
 
 1. `stop` apps + `launch` → `waitForText("Search")` → tap → colar `comprador` (`pasteCleanMessage` / ADBKeyboard) → `waitForText(See/Show all)` (8s com teclado; se timeout → `KEYCODE_BACK` + wait 30s) → tap
-2. Loop: `extract` lista → **1º card novo** (menor `y`) → `GET /client-connections-linkedin/match` (score nome/cargo/cidade/empresa; **não** usa Connect/Pending da UI) → se matched, **skip** → senão tap → OCR + URL → `GET /profile-details/by-url` → se URL já 1:1 na base, **skip save** → senão `onProfile` → BACK → re-extract. Sem novos → scroll. Para em `-n` ou fim do scroll (`EXTRACT_SCROLL_STABLE`, default **4**). Exige `PROFILES_API_URL` para skip; sem API, abre todos.
+2. Loop: `extractPreferDump` lista → **1º card novo** (menor `y`) → `GET /client-connections-linkedin/match` (score nome/cargo/cidade/empresa; **não** usa Connect/Pending da UI) → se matched, **skip** → senão tap → uidump/OCR + URL → `GET /profile-details/by-url` → se URL já 1:1 na base, **skip save** → senão `onProfile` → BACK → re-extract. Sem novos → scroll. Para em `-n` ou fim do scroll (`EXTRACT_SCROLL_STABLE`, default **4**). Exige `PROFILES_API_URL` para skip; sem API, abre todos.
+
+**Antes → depois (uidump):** OCR em lista/perfil/`findByText` → dump primeiro (`lib/ui-dump.js`, `extractPreferDump`, `SCREEN_ROBOT_UIDUMP` default on). Rollback: `SCREEN_ROBOT_UIDUMP=0`.
 
 **Antes → depois (abrir perfil):** só OCR da lista + scroll, sem URL → abre cada card, grava `profileUrl` + header e volta. Rollback: processar `fresh` só com crop de lista, sem `openProfileAndExtract`.
 

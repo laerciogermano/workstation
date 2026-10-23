@@ -117,9 +117,12 @@ export function elementsFromUiXml(xml) {
   return out;
 }
 
-/** Dump fresco + elements. */
+/** Dump fresco + elements. Requer deps.dumpUiXml(serial). */
 export function dumpElements(serial, deps = {}) {
-  const xml = dumpUiXml(serial, deps);
+  if (typeof deps.dumpUiXml !== "function") {
+    throw new Error("dumpElements: dumpUiXml obrigatório em deps");
+  }
+  const xml = deps.dumpUiXml(serial);
   return { xml, elements: elementsFromUiXml(xml) };
 }
 
@@ -138,7 +141,11 @@ export function findByTextInUiDump(serialOrXml, query, opts = {}) {
   let elements = opts.elements;
   if (!elements) {
     const raw = String(serialOrXml || "");
-    const xml = raw.includes("<node") ? raw : dumpUiXml(serialOrXml, opts);
+    let xml = raw.includes("<node") ? raw : "";
+    if (!xml) {
+      if (typeof opts.dumpUiXml !== "function") return null;
+      xml = opts.dumpUiXml(serialOrXml);
+    }
     elements = elementsFromUiXml(xml);
   }
   if (!elements.length) return null;

@@ -20,10 +20,10 @@ const SAMPLE = `
 `;
 
 describe("linkedin-profile-from-uidump", () => {
-  it("profileElementsFromUiXml ordena por y", () => {
+  it("profileElementsFromUiXml ordena por y e filtra Search", () => {
     const els = profileElementsFromUiXml(SAMPLE);
     assert.ok(els.length >= 5);
-    assert.equal(els[0].text, "Search");
+    assert.ok(!els.some((e) => /^search$/i.test(e.text)));
     const name = els.find((e) => e.text === "Rafaela Ferreira");
     assert.ok(name);
     assert.equal(name.y, 240);

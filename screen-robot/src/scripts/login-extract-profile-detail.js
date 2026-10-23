@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * 1 perfil da API → Search (ou deep link) → OCR cartão (nome/cargo/cidade/conexões/pending|connect|message)
+ * 1 perfil da API → Search (ou deep link) → uidump/OCR cartão (nome/cargo/cidade/conexões/pending|connect|message)
  * → crop avatar → POST /profile-details. Com --url, não captura Share/Copy (URL já conhecida).
  *
  * Uso (cwd: screen-robot/src):
@@ -18,11 +18,17 @@ import { dirname, resolve, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { adb, sleep } from "../lib/adb.js";
-import { extract, findByText } from "../lib/extract.js";
+import {
+  dumpUiXml,
+  extractPreferDump,
+  findByText,
+} from "../lib/extract.js";
+import { captureFrame } from "../lib/frame.js";
 import { booleanQueryForProfile } from "../lib/linkedin-boolean-query.js";
 import { captureProfileUrl } from "../lib/linkedin-capture-profile-url.js";
 import { normalizeLinkedInProfileUrl } from "../lib/linkedin-connect.js";
 import { profilesFromExtract } from "../lib/linkedin-list-profiles.js";
+import { parseProfileHeaderFromUiXml } from "../lib/linkedin-profile-from-uidump.js";
 import { cropProfilePhotoAndCover } from "../lib/linkedin-profile-photo-crop.js";
 import {
   nameHintFromLinkedInUrl,
@@ -314,7 +320,7 @@ async function submitShowAllResults(serial) {
     const t0 = Date.now();
     while (Date.now() - t0 < timeoutMs) {
       try {
-        const els = await extract({ serial, engine: OCR_ENGINE });
+        const els = await extractPreferDump({ serial, engine: OCR_ENGINE });
         const fromScan = findShowAllInElements(els);
         if (fromScan) return fromScan;
       } catch {
@@ -356,7 +362,7 @@ async function submitShowAllResults(serial) {
   }
   // Só fallback geométrico se ainda parece busca (não Home/Post)
   try {
-    const els = await extract({ serial, engine: OCR_ENGINE });
+    const els = await extractPreferDump({ serial, engine: OCR_ENGINE });
     const blob = (els || []).map((e) => e.text).join(" ");
     if (/collaborative posts|recommended for you|^home$/i.test(blob)) {
       console.log("   saiu da busca — não tap fallback");
@@ -462,10 +468,13 @@ async function openFirstPerson(serial, opts = {}) {
         opts.outDir || ROOT,
         `list-fallback-${String(attempt).padStart(2, "0")}.png`,
       );
-      const els = await extract(
+      const els = await extractPreferDump(
         { serial, engine: OCR_ENGINE },
         opts.outDir ? { outPath: listPng } : {},
       );
+      if (opts.outDir && !existsSync(listPng)) {
+        await captureFrame(serial, { outPath: listPng });
+      }
       if (opts.outDir) {
         writeFileSync(
           join(
@@ -746,8 +755,8 @@ async function main() {
     console.log("4–5) skip busca (deep link)");
   }
 
-  // Cartão da 1ª tela: nome, cargo, empresa, cidade, conexões, pending/connect/message.
-  console.log("6) OCR cartão (1ª tela)…");
+  // Cartão da 1ª tela: uidump → fallback OCR.
+  console.log("6) cartão (1ª tela, uidump/OCR)…");
   const cardPng = join(outDir, "card-00.png");
   let header = {
     name: null,
@@ -767,22 +776,31 @@ async function main() {
     nameHintFromLinkedInUrl(knownProfileUrl || profileUrlArg || "") ||
     openedName ||
     name;
+  let cardSource = "uidump";
   try {
-    cardEls = await extract(
-      { serial, engine: OCR_ENGINE },
-      { outPath: cardPng },
-    );
+    const xml = dumpUiXml(serial);
+    writeFileSync(join(outDir, "card-00.xml"), xml, "utf8");
+    const parsed = parseProfileHeaderFromUiXml(xml, { nameHint });
+    header = parsed.header;
+    cardEls = parsed.elements;
+    if (!header?.name) {
+      cardSource = "ocr";
+      cardEls = await extractPreferDump(
+        { serial, engine: OCR_ENGINE, preferDump: false },
+        { outPath: cardPng },
+      );
+      header = parseProfileHeader(cardEls, { nameHint });
+    }
     writeFileSync(
       join(outDir, "card-00.json"),
       JSON.stringify(cardEls, null, 2),
       "utf8",
     );
-    header = parseProfileHeader(cardEls, { nameHint });
     console.log(
-      `   card: name=${header.name || "-"} headline=${header.headline || "-"} company=${header.company || "-"} loc=${header.location || "-"} conn=${header.connections || "-"} mutual=${header.mutualConnections || "-"} status=${header.inviteStatus || "-"} connect=${header.canConnect} msg=${header.canMessage} grau=${header.connectionDegree || "-"}`,
+      `   card (${cardSource}): name=${header.name || "-"} headline=${header.headline || "-"} company=${header.company || "-"} loc=${header.location || "-"} conn=${header.connections || "-"} mutual=${header.mutualConnections || "-"} status=${header.inviteStatus || "-"} connect=${header.canConnect} msg=${header.canMessage} grau=${header.connectionDegree || "-"}`,
     );
   } catch (e) {
-    console.log(`   card OCR: ${e.message || e}`);
+    console.log(`   card: ${e.message || e}`);
   }
 
   /** @type {string|null} */
@@ -791,8 +809,11 @@ async function main() {
   let coverBase64 = null;
   /** @type {string|null} */
   let cardBase64 = null;
-  if (existsSync(cardPng)) {
-    try {
+  try {
+    if (!existsSync(cardPng)) {
+      await captureFrame(serial, { outPath: cardPng });
+    }
+    if (existsSync(cardPng)) {
       console.log("6b) Crop foto + capa + card…");
       const media = await cropProfilePhotoAndCover(cardPng, outDir);
       photoBase64 = media.photoBase64;
@@ -801,9 +822,9 @@ async function main() {
       console.log(
         `   photo=${media.photoPath || "-"} cover=${media.coverPath || "-"} card=${media.cardPath || "-"}`,
       );
-    } catch (e) {
-      console.log(`   crop: ${e.message || e}`);
     }
+  } catch (e) {
+    console.log(`   crop: ${e.message || e}`);
   }
 
   /** URL: se já veio no --url / deep link, não abre Share/Copy. */

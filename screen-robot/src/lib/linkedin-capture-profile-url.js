@@ -3,11 +3,12 @@
  * ⋯ → Share via → Copy (clipboard ou OCR da sheet).
  * Usado por login-extract-profiles e login-extract-profile-detail.
  */
-import { writeFileSync } from "node:fs";
+import { existsSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 import { adb, sleep } from "./adb.js";
-import { extract, findByText } from "./extract.js";
+import { extractPreferDump, findByText } from "./extract.js";
+import { captureFrame } from "./frame.js";
 import { normalizeLinkedInProfileUrl } from "./linkedin-connect.js";
 import { key, tapElement } from "./operate.js";
 
@@ -127,10 +128,9 @@ export async function captureProfileUrl(serial, outDir, opts = {}) {
   if (!opened) {
     console.log("   ⋯ não abriu menu — permanece no perfil");
     try {
-      await extract(
-        { serial, engine },
-        { outPath: join(outDir, "more-menu-fail.png") },
-      );
+      await captureFrame(serial, {
+        outPath: join(outDir, "more-menu-fail.png"),
+      });
     } catch {
       /* ignore */
     }
@@ -157,10 +157,9 @@ export async function captureProfileUrl(serial, outDir, opts = {}) {
   if (!shareVia) {
     console.log("   Share via não encontrado — permanece no perfil (sem BACK)");
     try {
-      await extract(
-        { serial, engine },
-        { outPath: join(outDir, "more-menu-fail.png") },
-      );
+      await captureFrame(serial, {
+        outPath: join(outDir, "more-menu-fail.png"),
+      });
     } catch {
       /* ignore */
     }
@@ -175,7 +174,13 @@ export async function captureProfileUrl(serial, outDir, opts = {}) {
   const sheetPng = join(outDir, "share-via-sheet.png");
   let sheetEls = [];
   try {
-    sheetEls = await extract({ serial, engine }, { outPath: sheetPng });
+    sheetEls = await extractPreferDump(
+      { serial, engine },
+      { outPath: sheetPng },
+    );
+    if (!existsSync(sheetPng)) {
+      await captureFrame(serial, { outPath: sheetPng });
+    }
     writeFileSync(
       join(outDir, "share-via-sheet.json"),
       JSON.stringify(sheetEls, null, 2),
@@ -186,7 +191,7 @@ export async function captureProfileUrl(serial, outDir, opts = {}) {
   }
 
   let url = urlFromOcrEls(sheetEls);
-  if (url) console.log(`   URL (OCR sheet): ${url}`);
+  if (url) console.log(`   URL (dump/OCR sheet): ${url}`);
 
   const copyHit = await findFirstByText(
     serial,

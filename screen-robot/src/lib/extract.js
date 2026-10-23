@@ -253,19 +253,71 @@ export function findEditableFields(elements) {
 }
 
 /**
- * US-23 / SC-29 — busca por texto; encapsula `extractElements` (OCR interno).
- * Caller: `findByText(serial, query)` — **não** passa lista de elementos.
- * Retorno: elementos **lado a lado** cujo texto unido está **contido na string maior** (query).
+ * US-23 / SC-29 — busca por texto.
+ * Preferência: uiautomator dump (`SCREEN_ROBOT_UIDUMP≠0`); fallback OCR.
+ * `query` string ou lista (primeira com score ≥ minScore).
  *
  * @param {string} serial
- * @param {string} query
- * @param {{ minScore?: number, engine?: string, extractElements?: Function, captureFrame?: Function, ocrRecognize?: Function }} [opts]
- * @returns {Promise<{ elements: object[], score: number, text: string, x: number, y: number } | null>}
+ * @param {string|string[]} query
+ * @param {{ minScore?: number, engine?: string, preferDump?: boolean, extractElements?: Function, captureFrame?: Function, ocrRecognize?: Function }} [opts]
+ * @returns {Promise<{ elements: object[], score: number, text: string, x: number, y: number, source?: string } | null>}
  */
 export async function findByText(serial, query, opts = {}) {
+  const { findByTextInUiDump, uidumpEnabled } = await import("./ui-dump.js");
+  // extractElements custom (testes) → só OCR; senão dump primeiro
+  const tryDump =
+    uidumpEnabled(opts) && typeof opts.extractElements !== "function";
+  if (tryDump) {
+    try {
+      const hit = findByTextInUiDump(serial, query, {
+        ...opts,
+        dumpUiXml: (s) => dumpUiXml(s, opts),
+      });
+      if (hit?.x != null && hit?.y != null) return hit;
+    } catch {
+      /* fallback OCR */
+    }
+  }
+  if (opts.preferDump === true && opts.ocrFallback === false) return null;
+
   const runExtract = opts.extractElements ?? extractElements;
   const { elements } = await runExtract(serial, opts);
-  return matchByText(elements, query, opts);
+  const queries = Array.isArray(query) ? query : [query];
+  for (const q of queries) {
+    const hit = matchByText(elements, q, opts);
+    if (hit) return { ...hit, source: hit.source || "ocr" };
+  }
+  return null;
+}
+
+/**
+ * Lista de textos: dump se ≥ minDumpElements; senão OCR (`extract`).
+ * @param {{ serial: string, engine?: string, preferDump?: boolean, minDumpElements?: number }} cfg
+ */
+export async function extractPreferDump(cfg, deps = {}) {
+  const { elementsFromUiXml, uidumpEnabled } = await import("./ui-dump.js");
+  if (uidumpEnabled(cfg)) {
+    try {
+      const xml = dumpUiXml(cfg.serial, deps);
+      const raw = elementsFromUiXml(xml);
+      const min = cfg.minDumpElements ?? 5;
+      if (raw.length >= min) {
+        return raw.map((el, i) => ({
+          id: `d${i}`,
+          type: "text",
+          text: el.text,
+          x: el.x,
+          y: el.y,
+          bounds: el.bounds,
+          resourceId: el.resourceId,
+          source: "uidump",
+        }));
+      }
+    } catch {
+      /* OCR */
+    }
+  }
+  return extract(cfg, deps);
 }
 
 /**

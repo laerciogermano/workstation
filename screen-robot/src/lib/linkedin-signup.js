@@ -1,7 +1,7 @@
 /**
  * Criar conta LinkedIn (jornada signup) — passos incrementais com print.
  *
- * Fluxo: stop → Join now → nomes → email → password → Continue.
+ * Fluxo: stop → Join now → nomes → email → password → location → job title.
  */
 import { mkdirSync } from "node:fs";
 import { join } from "node:path";
@@ -146,12 +146,99 @@ async function fillFieldExact(serial, field, value) {
 }
 
 /**
+ * Centro do 1º EditText no dump (sheet Job title sem resource-id).
+ * @param {string} xml
+ */
+function findFirstEditText(xml) {
+  for (const n of String(xml || "").match(/<node\b[^>]*>/g) || []) {
+    if (!n.includes("android.widget.EditText")) continue;
+    const b = n.match(/bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"/);
+    if (!b) continue;
+    return {
+      x: Math.floor((Number(b[1]) + Number(b[3])) / 2),
+      y: Math.floor((Number(b[2]) + Number(b[4])) / 2),
+      text: (n.match(/\btext="([^"]*)"/) || [])[1] || "",
+    };
+  }
+  return null;
+}
+
+/** @param {string} xml @param {string} text */
+function findNodeByText(xml, text) {
+  const needle = `text="${text}"`;
+  for (const n of String(xml || "").match(/<node\b[^>]*>/g) || []) {
+    if (!n.includes(needle)) continue;
+    const b = n.match(/bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"/);
+    if (!b) continue;
+    return {
+      x: Math.floor((Number(b[1]) + Number(b[3])) / 2),
+      y: Math.floor((Number(b[2]) + Number(b[4])) / 2),
+    };
+  }
+  return null;
+}
+
+/**
+ * Job title: abre sheet → digita palavra a palavra (`input text` trunca frases longas).
+ * @param {string} serial
+ * @param {string} jobTitle
+ * @param {string[]} steps
+ * @param {string|null|undefined} outDir
+ */
+async function fillJobTitle(serial, jobTitle, steps, outDir) {
+  const title = String(jobTitle || "").trim();
+  if (!title) throw new Error("fillJobTitle: falta jobTitle");
+
+  await waitForText(serial, ["Job title*", "Job title", "most recent experience"], {
+    timeoutMs: NAME_TIMEOUT_MS,
+    intervalMs: 1_000,
+    sense: "dump",
+  });
+  await shot(serial, outDir, "16-antes-job-title.png");
+
+  const xml0 = dumpUiXml(serial);
+  const label =
+    findNodeByText(xml0, "Job title*") || findNodeByText(xml0, "Job title");
+  if (label) tapElement({ serial, x: label.x, y: label.y + 80 });
+  else tapElement({ serial, x: 540, y: 1000 });
+  await sleep(2_000);
+
+  let edit = null;
+  const t0 = Date.now();
+  while (Date.now() - t0 < NAME_TIMEOUT_MS) {
+    edit = findFirstEditText(dumpUiXml(serial));
+    if (edit) break;
+    await sleep(800);
+  }
+  if (!edit) throw new Error("linkedin-signup: sheet Job title sem EditText");
+
+  tapElement({ serial, x: edit.x, y: edit.y });
+  await sleep(400);
+  const words = title.split(/\s+/).filter(Boolean);
+  for (let i = 0; i < words.length; i++) {
+    const chunk = words[i] + (i < words.length - 1 ? " " : "");
+    await type({ serial, text: chunk });
+    await sleep(280);
+  }
+  await sleep(600);
+  await shot(serial, outDir, "17-apos-job-title-typed.png");
+
+  const done = findNodeByText(dumpUiXml(serial), "Done");
+  if (!done) throw new Error("linkedin-signup: Done no sheet Job title");
+  tapElement({ serial, x: done.x, y: done.y });
+  steps.push(`job-title:${title}`);
+  await sleep(WAIT_MS);
+  await shot(serial, outDir, "18-apos-job-title-done.png");
+}
+
+/**
  * @param {{
  *   serial: string,
  *   firstName: string,
  *   lastName: string,
  *   email: string,
  *   password: string,
+ *   jobTitle?: string,
  *   linkedinPackage?: string,
  *   outDir?: string|null,
  * }} opts
@@ -164,10 +251,12 @@ export async function linkedinSignupJoinNow(opts) {
   const lastName = String(opts.lastName || "").trim();
   const email = String(opts.email || "").trim();
   const password = String(opts.password || "");
+  const jobTitle = String(opts.jobTitle || "").trim();
   if (!firstName) throw new Error("linkedinSignupJoinNow: falta firstName");
   if (!lastName) throw new Error("linkedinSignupJoinNow: falta lastName");
   if (!email) throw new Error("linkedinSignupJoinNow: falta email");
   if (!password) throw new Error("linkedinSignupJoinNow: falta password");
+  if (!jobTitle) throw new Error("linkedinSignupJoinNow: falta jobTitle");
 
   const pkg = opts.linkedinPackage || "com.linkedin.android";
   const steps = [];
@@ -238,6 +327,25 @@ export async function linkedinSignupJoinNow(opts) {
   await shot(serial, opts.outDir, "13-apos-password.png");
 
   await tapContinue(serial, steps, opts.outDir, "14");
+
+  // Location: usa sugestão pré-preenchida (ex. Curitiba) e Continue (TextView).
+  await waitForText(serial, ["add your location", "Location*", "Location"], {
+    timeoutMs: NAME_TIMEOUT_MS,
+    intervalMs: 1_200,
+    sense: "dump",
+  });
+  await shot(serial, opts.outDir, "15-antes-location.png");
+  {
+    const locDone =
+      findNodeByText(dumpUiXml(serial), "Continue") ||
+      (await waitForContinue(serial));
+    tapElement({ serial, x: locDone.x, y: locDone.y });
+    steps.push("tap-continue-location");
+    await sleep(WAIT_MS + 1_500);
+    await shot(serial, opts.outDir, "15-apos-location.png");
+  }
+
+  await fillJobTitle(serial, jobTitle, steps, opts.outDir);
 
   return { steps, serial, outDir: opts.outDir || null };
 }

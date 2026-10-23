@@ -99,7 +99,7 @@ const elements = await extract({ serial });
 | BDD e2e US/EP (runtime real) | `npm run test:e2e` |
 | **SC-30 LinkedIn** (fixture, sem device) | ver abaixo |
 | Piloto LinkedIn ao vivo | `npm run linkedin-login` |
-| LinkedIn signup (nomes→email→password→Continue) | `npm run linkedin-signup -- --device 127.0.0.1:5658 --firstname Ana --lastname Silva --email user@mail.com --password 'senha'` · email/senha via ADBKeyboard (`ADB_INPUT_TEXT`; `input text` deixa `%40` literal) · prints em `screenshots/linkedin-signup/<stamp>/` · rollback: parar no passo email (sem `--password`) |
+| LinkedIn signup (…→password→location→job title) | `npm run linkedin-signup -- --device 127.0.0.1:5658 --firstname Ana --lastname Silva --email user@mail.com --password 'senha' --job-title 'Especialista em suprimentos e itens corporativos'` · email/senha via ADBKeyboard; job title palavra a palavra (frase longa trunca no `input text`) · prints em `screenshots/linkedin-signup/<stamp>/` · rollback: omitir `--job-title` |
 | LinkedIn Search comprador → See all | `npm run login-extract-profiles` |
 | LinkedIn conectar por URL (Connect→Skip→Pending) | `npm run linkedin-connect` · API `npm run linkedin-connect-api` |
 | LinkedIn boolean por perfil + abrir | `npm run login-visit-profiles` |

@@ -6,7 +6,8 @@
  *   npm run linkedin-signup -- --device 127.0.0.1:5658 \
  *     --firstname Ana --lastname Silva \
  *     --email metafisicoprogramador@gmail.com \
- *     --password 'senha@linkedin@123'
+ *     --password 'senha@linkedin@123' \
+ *     --job-title 'Especialista em suprimentos e itens corporativos'
  */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
@@ -30,6 +31,7 @@ function parseArgs(argv) {
   let lastName = null;
   let email = null;
   let password = null;
+  let jobTitle = null;
   let configPath = resolve(ROOT, "device.config.json");
   let noShot = false;
   for (let i = 0; i < argv.length; i++) {
@@ -42,23 +44,44 @@ function parseArgs(argv) {
       lastName = String(argv[++i] || "").trim();
     else if (a === "--email") email = String(argv[++i] || "").trim();
     else if (a === "--password") password = String(argv[++i] ?? "");
+    else if (a === "--job-title" || a === "--jobtitle")
+      jobTitle = String(argv[++i] || "").trim();
     else if (a === "--config") configPath = resolve(argv[++i]);
     else if (a === "--no-shot") noShot = true;
     else if (a === "--help" || a === "-h") {
       console.log(
-        `Uso: npm run linkedin-signup -- --device 127.0.0.1:5658 --firstname Ana --lastname Silva --email user@mail.com --password 'senha'`,
+        `Uso: npm run linkedin-signup -- --device 127.0.0.1:5658 --firstname Ana --lastname Silva --email user@mail.com --password 'senha' --job-title 'Cargo'`,
       );
       process.exit(0);
     }
   }
-  return { device, firstName, lastName, email, password, configPath, noShot };
+  return {
+    device,
+    firstName,
+    lastName,
+    email,
+    password,
+    jobTitle,
+    configPath,
+    noShot,
+  };
 }
 
 async function main() {
-  const { device, firstName, lastName, email, password, configPath, noShot } =
-    parseArgs(process.argv.slice(2));
-  if (!firstName || !lastName || !email || !password) {
-    throw new Error("passe --firstname, --lastname, --email e --password");
+  const {
+    device,
+    firstName,
+    lastName,
+    email,
+    password,
+    jobTitle,
+    configPath,
+    noShot,
+  } = parseArgs(process.argv.slice(2));
+  if (!firstName || !lastName || !email || !password || !jobTitle) {
+    throw new Error(
+      "passe --firstname, --lastname, --email, --password e --job-title",
+    );
   }
 
   const cfg = loadConfig(configPath);
@@ -76,7 +99,7 @@ async function main() {
   if (outDir) mkdirSync(outDir, { recursive: true });
 
   console.error(
-    `serial=${serial} firstName=${firstName} lastName=${lastName} email=${email} password=***`,
+    `serial=${serial} firstName=${firstName} lastName=${lastName} email=${email} password=*** jobTitle=${jobTitle}`,
   );
   const result = await linkedinSignupJoinNow({
     serial,
@@ -84,6 +107,7 @@ async function main() {
     lastName,
     email,
     password,
+    jobTitle,
     linkedinPackage: linkedinPkg,
     outDir,
   });

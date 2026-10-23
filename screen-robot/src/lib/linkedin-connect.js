@@ -3,10 +3,11 @@
  *
  * Fluxo (prints: screenshots/jornada-conectar-por-url/):
  * 1. am start VIEW linkedin.com/in/…
- * 2. Connect no header → tap; senão só Follow → ⋮ → Connect no sheet
- * 3. Skip no dialog "Add a note"
- * 4. Sucesso **somente** se OCR mostrar Pending após Skip
- * 5. Em sucesso → POST na API (convite feito)
+ * 2. Se OCR = "This page doesn't exist" → erro (perfil inexistente)
+ * 3. Connect no header → tap; senão só Follow → ⋮ → Connect no sheet
+ * 4. Skip no dialog "Add a note"
+ * 5. Sucesso **somente** se OCR mostrar Pending após Skip
+ * 6. Em sucesso → POST na API (convite feito)
  */
 import { mkdirSync } from "node:fs";
 import { join } from "node:path";
@@ -181,6 +182,23 @@ export function hasFollow(els) {
 export function hasPending(els) {
   return (els || []).some((el) =>
     /^pending$/i.test(String(el?.text || "").trim()),
+  );
+}
+
+/**
+ * LinkedIn 404: "This page doesn't exist" / "Please check your URL…".
+ * Junta textos OCR (podem vir partidos) e normaliza apóstrofo.
+ */
+export function hasPageDoesNotExist(els) {
+  const blob = (els || [])
+    .map((el) => String(el?.text || "").trim())
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase()
+    .replace(/[\u2019\u2018`´]/g, "'");
+  return (
+    /this\s+page\s+doesn'?t\s+exist/.test(blob) ||
+    /please\s+check\s+your\s+url/.test(blob)
   );
 }
 
@@ -496,6 +514,19 @@ export async function connectByLinkedInUrl(opts) {
       icons: true,
     });
     const texts = els || [];
+
+    if (hasPageDoesNotExist(texts)) {
+      steps.push("page_does_not_exist");
+      await shot(serial, opts.outDir, "99-page-does-not-exist.png");
+      return {
+        ok: false,
+        status: "not_found",
+        url,
+        steps,
+        error:
+          "perfil inexistente (This page doesn't exist / Please check your URL)",
+      };
+    }
 
     // Pending antes de Skip = já tinha convite — ainda sincroniza status 1
     if (hasPending(texts) && !skipped) {

@@ -412,13 +412,14 @@ curl -s -X POST http://127.0.0.1:3099/connect \
 Lib [`lib/linkedin-connect.js`](lib/linkedin-connect.js):
 
 1. `am start VIEW` no package LinkedIn
-2. Connect no header **ou** Follow → ⋮ → Connect no sheet
-3. Skip no dialog (nunca Add a note)
-4. **Sucesso só com Pending no OCR após Skip** — sem Pending → `ok: false`
-5. Sucesso (ou já Pending) → sempre `POST …/client-connections-linkedin` `{ profileUrl, agentId, status: 1 }` (default API `:3000`; `agentId` = `AGENT_ID` ou `provision.name`). API robot → 502 se não gravar.
+2. OCR 404 **"This page doesn't exist"** → `ok: false`, `status: not_found` (print `99-page-does-not-exist.png`)
+3. Connect no header **ou** Follow → ⋮ → Connect no sheet
+4. Skip no dialog (nunca Add a note)
+5. **Sucesso só com Pending no OCR após Skip** — sem Pending → `ok: false`
+6. Sucesso (ou já Pending) → sempre `POST …/client-connections-linkedin` `{ profileUrl, agentId, status: 1 }` (default API `:3000`; `agentId` = `AGENT_ID` ou `provision.name`). API robot → 502 se não gravar.
 
-**Antes → depois:** POST opcional → obrigatório (status 1); listagem de Connections marca status 2 via `mark-accepted`.  
-**Rollback:** `notifyApi: false` / ignore o POST; `DROP TABLE client_connection_linkedin` se necessário.
+**Antes → depois:** POST opcional → obrigatório (status 1); listagem de Connections marca status 2 via `mark-accepted`; 404 LinkedIn agora falha com `not_found` em vez de timeout.  
+**Rollback:** `notifyApi: false` / ignore o POST; `DROP TABLE client_connection_linkedin` se necessário; remover `hasPageDoesNotExist`.
 
 ---
 

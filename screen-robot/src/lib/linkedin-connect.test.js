@@ -8,6 +8,7 @@ import {
   findMoreOverflow,
   findSkip,
   hasFollow,
+  hasPageDoesNotExist,
   hasPending,
   normalizeLinkedInProfileUrl,
   syncConnectionFromInviteStatus,
@@ -67,6 +68,24 @@ describe("linkedin-connect helpers", () => {
       y: 816,
     });
     assert.equal(hasFollow([{ text: "+ Follow" }]), true);
+  });
+
+  it("hasPageDoesNotExist (404 LinkedIn)", () => {
+    assert.equal(
+      hasPageDoesNotExist([
+        { text: "This page doesn’t exist" },
+        { text: "Please check your URL or return to LinkedIn home." },
+      ]),
+      true,
+    );
+    assert.equal(
+      hasPageDoesNotExist([
+        { text: "This page" },
+        { text: "doesn't exist" },
+      ]),
+      true,
+    );
+    assert.equal(hasPageDoesNotExist([{ text: "Connect" }]), false);
   });
 
   it("findMoreOverflow usa icon à direita de Message", () => {

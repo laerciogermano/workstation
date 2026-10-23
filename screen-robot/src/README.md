@@ -321,10 +321,11 @@ curl -s -X POST http://127.0.0.1:3099/profile-messages \
 Fluxo: **stopAllApps** → deep link perfil → **Message** → scroll down (fim) → coleta dump; se `count < maxResults`, **scroll up** e merge.  
 Cada item: `sender`, `message`, `time`, `from` (`me`|`peer`). Ordem cronológica; retorna as **últimas** `maxResults`.  
 Antes do POST: `dedupeMessagesForDb` (texto normalizado) e descarta `from=unknown`. Persistência = **update** da bolha existente (API).  
+Scroll do fio: sobe até a **página visível** repetir `PAGE_STABLE` (default 3) vezes ou 2 dumps vazios — para no topo, sem swipe eterno.  
 Lib: [`lib/linkedin-profile-messages.js`](lib/linkedin-profile-messages.js).
 
-**Antes → depois:** key `time|msg` + POST de unknown → duplicatas; agora key=corpo normalizado + só me/peer.  
-**Rollback:** restaurar `messageKey` antigo; remover `dedupeMessagesForDb`.
+**Antes → depois:** `STABLE=8`+`TOP_CONFIRM` scrollava sem fim no topo; agora para em `stop:page-unchanged`.  
+**Rollback:** `LINKEDIN_PM_PAGE_STABLE=8`; restaurar loop por `merged.length` estável.
 
 ---
 

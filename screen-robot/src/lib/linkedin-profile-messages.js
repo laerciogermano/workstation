@@ -7,7 +7,7 @@
 import { mkdirSync } from "node:fs";
 import { join } from "node:path";
 
-import { sleep } from "./adb.js";
+import { adb, sleep } from "./adb.js";
 import { dumpUiXml, extract } from "./extract.js";
 import {
   findMoreOverflow,
@@ -31,9 +31,15 @@ import {
 const OCR = process.env.SCREEN_ROBOT_OCR || "rapidocr";
 const WAIT_VIEW_MS = Number(process.env.LINKEDIN_PM_WAIT_VIEW_MS || 8_000);
 const WAIT_TAP_MS = Number(process.env.LINKEDIN_PM_WAIT_TAP_MS || 3_000);
-const SCROLL_MS = Number(process.env.LINKEDIN_PM_SCROLL_MS || 1_200);
-const SCROLL_DIST = Number(process.env.LINKEDIN_PM_SCROLL_DIST || 280);
-const STABLE_NEEDED = Number(process.env.LINKEDIN_PM_STABLE || 3);
+/** Espera pós-scroll (lista lazy do LinkedIn). */
+const SCROLL_MS = Number(process.env.LINKEDIN_PM_SCROLL_MS || 1_400);
+/** Swipe na lista (px). */
+const SCROLL_DIST = Number(process.env.LINKEDIN_PM_SCROLL_DIST || 420);
+/**
+ * Para no topo quando a **página visível** não muda N vezes seguidas
+ * (antes: só olhava total merged + TOP_CONFIRM → scroll eterno no topo).
+ */
+const PAGE_STABLE_NEEDED = Number(process.env.LINKEDIN_PM_PAGE_STABLE || 3);
 const MAX_ROUNDS = Number(process.env.LINKEDIN_PM_MAX_ROUNDS || 40);
 
 /**
@@ -244,6 +250,42 @@ async function shot(serial, outDir, name) {
   screenshot({ serial, path: join(outDir, name) });
 }
 
+/**
+ * Swipe na lista do chat. `up` = conteúdo sobe = mensagens mais antigas.
+ * Duração maior que o `scroll()` genérico (300ms) p/ o RecyclerView carregar.
+ */
+function scrollMessages(serial, direction) {
+  const x = 270;
+  const y = 360;
+  const dist = SCROLL_DIST;
+  const durationMs = 450;
+  if (direction === "down") {
+    // dedo sobe → ver mais recentes
+    adb(serial, [
+      "shell",
+      "input",
+      "swipe",
+      String(x),
+      String(y),
+      String(x),
+      String(Math.max(40, y - dist)),
+      String(durationMs),
+    ]);
+    return;
+  }
+  // up: dedo desce
+  adb(serial, [
+    "shell",
+    "input",
+    "swipe",
+    String(x),
+    String(Math.max(80, y - 80)),
+    String(x),
+    String(y - 80 + dist),
+    String(durationMs),
+  ]);
+}
+
 /** Chat real: toolbar/composer — evita falso positivo de dump antigo com só message_list. */
 function isMessagingChatXml(xml) {
   const s = String(xml || "");
@@ -341,48 +383,62 @@ export async function listProfileMessages(opts) {
   await shot(serial, opts.outDir, "02-chat.png");
 
   // garante fundo (mensagens mais recentes)
-  for (let i = 0; i < 3; i++) {
-    scroll({
-      serial,
-      direction: "down",
-      distance: SCROLL_DIST,
-      x: 270,
-      y: 320,
-    });
-    await sleep(600);
+  for (let i = 0; i < 4; i++) {
+    scrollMessages(serial, "down");
+    await sleep(700);
   }
   steps.push("scroll:bottom");
 
   let peer = null;
   /** @type {Array<{ sender: string, message: string, time: string|null, from: string }>} */
   let merged = [];
-  let stable = 0;
-  let prevLen = 0;
+  let prevPageSig = "";
+  let pageStable = 0;
+  let emptyPages = 0;
 
   for (let round = 0; round < MAX_ROUNDS; round++) {
     const xml = dumpUiXml(serial);
     const page = messagesFromUiXml(xml);
     if (page.peer) peer = page.peer;
+    const before = merged.length;
     merged = mergeMessagesChronological(merged, page.messages);
-    steps.push(`page:${round}:found=${page.messages.length}:total=${merged.length}`);
-
-    if (merged.length >= maxResults) break;
-    if (merged.length === prevLen) {
-      stable += 1;
-      if (stable >= STABLE_NEEDED) break;
-    } else {
-      stable = 0;
-      prevLen = merged.length;
+    const pageSig = (page.messages || []).map((m) => messageKey(m)).join("|");
+    steps.push(
+      `page:${round}:found=${page.messages.length}:total=${merged.length}`,
+    );
+    if (merged.length > before) {
+      steps.push(`grew:+${merged.length - before}`);
     }
 
-    // sobe para carregar mensagens mais antigas
-    scroll({
-      serial,
-      direction: "up",
-      distance: SCROLL_DIST,
-      x: 270,
-      y: 320,
-    });
+    if (merged.length >= maxResults) {
+      steps.push("stop:maxResults");
+      break;
+    }
+
+    // tela vazia (dump no meio do swipe) — 2 seguidas = topo/fim
+    if (!page.messages.length) {
+      emptyPages += 1;
+      if (emptyPages >= 2 && merged.length) {
+        steps.push("stop:empty-page");
+        break;
+      }
+    } else {
+      emptyPages = 0;
+    }
+
+    // mesma página visível após swipe = já no topo (lista não anda)
+    if (pageSig && pageSig === prevPageSig) {
+      pageStable += 1;
+      if (pageStable >= PAGE_STABLE_NEEDED) {
+        steps.push(`stop:page-unchanged:${pageStable}`);
+        break;
+      }
+    } else {
+      pageStable = 0;
+      prevPageSig = pageSig;
+    }
+
+    scrollMessages(serial, "up");
     await sleep(SCROLL_MS);
   }
 

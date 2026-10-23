@@ -18,7 +18,7 @@ import {
   normalizeLinkedInProfileUrl,
   openProfileByUrl,
 } from "./linkedin-connect.js";
-import { screenshot, tapElement } from "./operate.js";
+import { key, screenshot, stopAllApps, tapElement } from "./operate.js";
 
 const OCR = process.env.SCREEN_ROBOT_OCR || "rapidocr";
 const WAIT_VIEW_MS = Number(process.env.LINKEDIN_MSG_WAIT_VIEW_MS || 8_000);
@@ -274,6 +274,7 @@ async function shot(serial, outDir, name) {
  *   text: string,
  *   outDir?: string|null,
  *   dryRun?: boolean,
+ *   apps?: Record<string, { package?: string }>,
  * }} opts
  */
 export async function sendLinkedInMessage(opts) {
@@ -287,10 +288,24 @@ export async function sendLinkedInMessage(opts) {
   }
 
   const steps = [];
+  if (opts.outDir) mkdirSync(opts.outDir, { recursive: true });
+
+  // 1) Fecha todos os apps de terceiros → HOME → 2) abre LinkedIn pela URL
+  const extras = Object.values(opts.apps || {})
+    .map((a) => a?.package)
+    .filter(Boolean);
+  const { stopped } = stopAllApps({
+    serial,
+    extraPackages: [...extras, pkg],
+  });
+  steps.push(`stop-all:${stopped.length}`);
+  key({ serial, code: "KEYCODE_HOME" });
+  await sleep(800);
+  await shot(serial, opts.outDir, "00-home.png");
+
   const url = openProfileByUrl(serial, pkg, opts.url);
   steps.push(`view:${url}`);
   await sleep(WAIT_VIEW_MS);
-  if (opts.outDir) mkdirSync(opts.outDir, { recursive: true });
   await shot(serial, opts.outDir, "01-perfil.png");
 
   let openedComposer = false;

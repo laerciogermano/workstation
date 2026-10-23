@@ -233,6 +233,50 @@ export function stop(cfg, deps = {}) {
 }
 
 /**
+ * Force-stop de todos os pacotes de terceiros (`pm list packages -3`) + HOME.
+ * Usar antes de abrir LinkedIn para tela limpa.
+ * @param {{ serial: string, extraPackages?: string[] }} cfg
+ * @param {object} [deps]
+ * @returns {{ stopped: string[] }}
+ */
+export function stopAllApps(cfg, deps = {}) {
+  const serial = requireSerial(cfg);
+  const d = resolveDeps(deps);
+  const stopped = [];
+  let listed = "";
+  try {
+    listed = String(
+      d.runAdb(serial, ["shell", "pm", "list", "packages", "-3"]).stdout || "",
+    );
+  } catch {
+    listed = "";
+  }
+  const pkgs = new Set(
+    listed
+      .split("\n")
+      .map((l) => l.replace(/^package:/, "").trim())
+      .filter(Boolean),
+  );
+  for (const p of cfg.extraPackages || []) {
+    if (p) pkgs.add(String(p));
+  }
+  for (const pkg of pkgs) {
+    try {
+      d.runAdb(serial, ["shell", "am", "force-stop", pkg]);
+      stopped.push(pkg);
+    } catch {
+      /* ignore */
+    }
+  }
+  try {
+    d.runAdb(serial, ["shell", "input", "keyevent", "KEYCODE_HOME"]);
+  } catch {
+    /* ignore */
+  }
+  return { stopped };
+}
+
+/**
  * @param {{ serial: string, x: number, y: number }} cfg
  * @param {object} [deps]
  */

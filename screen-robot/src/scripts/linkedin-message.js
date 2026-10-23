@@ -80,6 +80,7 @@ async function main() {
     text,
     outDir,
     dryRun,
+    apps: cfg.apps,
   });
   if (outDir) {
     writeFileSync(join(outDir, "result.json"), JSON.stringify(result, null, 2));

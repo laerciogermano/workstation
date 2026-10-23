@@ -270,12 +270,12 @@ curl -s -X POST http://127.0.0.1:3099/message \
   -d '{"url":"https://www.linkedin.com/in/laerciogermano","text":"Oi!"}'
 ```
 
-Fluxo: deep link → **Message** (ou ⋮ → Send a message) → **Write a message** → injeta texto **exato** (`ADBKeyboard` `ADB_INPUT_B64`) → **Send**.  
-Campo vazio → só cola; com texto → limpa (`ADB_CLEAR_TEXT`) e cola.  
-Lib: [`lib/linkedin-message.js`](lib/linkedin-message.js). APK: `apks/ADBKeyboard.apk`.
+Fluxo: **fecha todos os apps** (`pm list packages -3` + force-stop) → HOME → deep link → **Message** (ou ⋮) → **Write a message** → `ADB_INPUT_B64` → **Send**.  
+Campo vazio → só cola; com texto → limpa e cola.  
+Lib: [`lib/linkedin-message.js`](lib/linkedin-message.js) · `stopAllApps` em [`lib/operate.js`](lib/operate.js).
 
-**Antes → depois:** clipboard Mac↔AVD (mojibake √ß) → ADBKeyboard B64 UTF-8 idêntico.  
-**Rollback:** `KEYCODE_PASTE` + `pbcopy`; remova `POST /message`.
+**Antes → depois:** abria LinkedIn por cima de apps abertos → mata todos antes. Clipboard → ADBKeyboard B64.  
+**Rollback:** remover `stopAllApps` no início de `sendLinkedInMessage`.
 
 ---
 

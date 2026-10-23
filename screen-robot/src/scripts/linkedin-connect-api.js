@@ -63,7 +63,7 @@ async function withDevice(fn) {
   const cfg = loadConfig();
   const linkedinPkg = cfg.apps?.linkedin?.package || "com.linkedin.android";
   const { serial } = await provisionEmulator(cfg);
-  return fn({ serial, linkedinPkg });
+  return fn({ serial, linkedinPkg, apps: cfg.apps });
 }
 
 function enqueue(fn) {
@@ -192,13 +192,14 @@ const server = createServer(async (req, res) => {
     }
     try {
       const result = await runExclusive(() =>
-        withDevice(({ serial, linkedinPkg }) =>
+        withDevice(({ serial, linkedinPkg, apps }) =>
           sendLinkedInMessage({
             serial,
             linkedinPackage: linkedinPkg,
             url,
             text,
             outDir: null,
+            apps,
           }),
         ),
       );

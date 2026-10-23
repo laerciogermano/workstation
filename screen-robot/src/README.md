@@ -270,11 +270,12 @@ curl -s -X POST http://127.0.0.1:3099/message \
   -d '{"url":"https://www.linkedin.com/in/laerciogermano","text":"Oi!"}'
 ```
 
-Fluxo: deep link → **Message** (ou ⋮ → Send a message) → **Write a message** → **cola** (`pbcopy` + `KEYCODE_PASTE`, acentos OK) → **Send**.  
-Lib: [`lib/linkedin-message.js`](lib/linkedin-message.js). Prints: `screenshots/jornada-enviar-mensagem/`.
+Fluxo: deep link → **Message** (ou ⋮ → Send a message) → **Write a message** → injeta texto **exato** (`ADBKeyboard` `ADB_INPUT_B64`) → **Send**.  
+Campo vazio → só cola; com texto → limpa (`ADB_CLEAR_TEXT`) e cola.  
+Lib: [`lib/linkedin-message.js`](lib/linkedin-message.js). APK: `apks/ADBKeyboard.apk`.
 
-**Antes → depois:** `input text` com `%` literal → paste via clipboard do host.  
-**Rollback:** `typeCleanMessage` / `input text`; remova `POST /message`.
+**Antes → depois:** clipboard Mac↔AVD (mojibake √ß) → ADBKeyboard B64 UTF-8 idêntico.  
+**Rollback:** `KEYCODE_PASTE` + `pbcopy`; remova `POST /message`.
 
 ---
 

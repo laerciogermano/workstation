@@ -1,19 +1,17 @@
 /**
  * Enviar mensagem LinkedIn via URL de perfil.
  *
- * Fluxo (prints: screenshots/jornada-enviar-mensagem/):
+ * Fluxo:
  * 1. am start VIEW linkedin.com/in/…
- * 2. Message no header → tap; senão ⋮ → Send a message / Message
- * 3. Tap "Write a message…"
- * 4. **Cola** o texto (clipboard host → KEYCODE_PASTE) — sem `input text` / %XX
- * 5. Tap Send
+ * 2. Message (ou ⋮ → Send a message)
+ * 3. Write a message…
+ * 4. Injeta texto **exato** via ADBKeyboard (ADB_INPUT_B64) — sem clipboard Mac↔AVD
+ * 5. Send
  */
 import { mkdirSync } from "node:fs";
 import { join } from "node:path";
-import { spawnSync } from "node:child_process";
-import { platform } from "node:os";
 
-import { adb, sleep } from "./adb.js";
+import { adb, adbOk, sleep } from "./adb.js";
 import { extract } from "./extract.js";
 import {
   findMoreOverflow,
@@ -25,36 +23,11 @@ import { screenshot, tapElement } from "./operate.js";
 const OCR = process.env.SCREEN_ROBOT_OCR || "rapidocr";
 const WAIT_VIEW_MS = Number(process.env.LINKEDIN_MSG_WAIT_VIEW_MS || 8_000);
 const WAIT_TAP_MS = Number(process.env.LINKEDIN_MSG_WAIT_TAP_MS || 3_000);
-const WAIT_CLIP_MS = Number(process.env.LINKEDIN_MSG_WAIT_CLIP_MS || 800);
 const MAX_ROUNDS = 12;
 
-/** Copia texto para o clipboard do host (AVD costuma espelhar no Mac). */
-export function copyToHostClipboard(text) {
-  const s = String(text ?? "");
-  const os = platform();
-  if (os === "darwin") {
-    const r = spawnSync("pbcopy", [], { input: s, encoding: "utf8" });
-    if (r.status !== 0) {
-      throw new Error(`pbcopy falhou: ${(r.stderr || r.error || "").toString()}`);
-    }
-    return { via: "pbcopy" };
-  }
-  if (os === "linux") {
-    const r = spawnSync("xclip", ["-selection", "clipboard"], {
-      input: s,
-      encoding: "utf8",
-    });
-    if (r.status !== 0) {
-      const r2 = spawnSync("wl-copy", [], { input: s, encoding: "utf8" });
-      if (r2.status !== 0) {
-        throw new Error("clipboard: instale xclip ou wl-copy");
-      }
-      return { via: "wl-copy" };
-    }
-    return { via: "xclip" };
-  }
-  throw new Error(`clipboard host não suportado em ${os}`);
-}
+const ADB_IME = "com.android.adbkeyboard/.AdbIME";
+const LATIN_IME =
+  "com.google.android.inputmethod.latin/com.android.inputmethod.latin.LatinIME";
 
 /** Campo vazio = placeholder "Write a message…" no OCR. */
 export function isMessageFieldEmpty(els) {
@@ -67,44 +40,78 @@ export function isMessageFieldEmpty(els) {
   });
 }
 
-/** Limpa o campo focado (só quando não está vazio). */
-function clearFocusedField(serial) {
-  adb(serial, [
+function enableAdbIme(serial) {
+  const cur = String(
+    adb(serial, ["shell", "settings", "get", "secure", "default_input_method"])
+      .stdout || "",
+  ).trim();
+  adbOk(serial, [
     "shell",
-    "input",
-    "keyevent",
-    "--longpress",
-    "KEYCODE_CTRL_LEFT",
-    "KEYCODE_A",
+    "settings",
+    "put",
+    "secure",
+    "enabled_input_methods",
+    `${ADB_IME}:${LATIN_IME}`,
   ]);
-  adb(serial, ["shell", "input", "keyevent", "KEYCODE_DEL"]);
-  for (let i = 0; i < 15; i++) {
-    adb(serial, ["shell", "input", "keyevent", "KEYCODE_DEL"]);
+  adbOk(serial, ["shell", "ime", "enable", ADB_IME]);
+  adb(serial, ["shell", "ime", "set", ADB_IME]);
+  return cur || LATIN_IME;
+}
+
+function restoreIme(serial, imeId) {
+  const id = imeId || LATIN_IME;
+  adbOk(serial, ["shell", "ime", "set", id]);
+}
+
+/** Limpa via ADBKeyboard (exato) ou fallback DEL. */
+function clearFocusedField(serial) {
+  adbOk(serial, [
+    "shell",
+    "am",
+    "broadcast",
+    "-a",
+    "ADB_CLEAR_TEXT",
+  ]);
+  // fallback curto
+  for (let i = 0; i < 8; i++) {
+    adbOk(serial, ["shell", "input", "keyevent", "KEYCODE_DEL"]);
   }
 }
 
 /**
- * Cola a mensagem (acentos OK).
- * - campo vazio (placeholder) → só cola
- * - campo com texto → limpa, depois cola
- * opts.els: OCR atual (se omitido e clear não forçado, assume limpar)
- * opts.forceClear / opts.skipClear: override
+ * Injeta o texto **exatamente** (UTF-8) via ADBKeyboard base64.
+ * - campo vazio → só injeta
+ * - campo com texto → limpa, depois injeta
+ * Não usa clipboard do Mac (evita √ß / mojibake).
  */
 export async function pasteCleanMessage(serial, text, opts = {}) {
   const s = String(text ?? "");
   if (!s.trim()) return;
+
   let shouldClear = true;
   if (opts.skipClear) shouldClear = false;
   else if (opts.forceClear) shouldClear = true;
   else if (opts.els) shouldClear = !isMessageFieldEmpty(opts.els);
 
-  if (shouldClear) clearFocusedField(serial);
-  copyToHostClipboard(s);
-  await sleep(WAIT_CLIP_MS);
-  copyToHostClipboard(s);
-  await sleep(300);
-  adb(serial, ["shell", "input", "keyevent", "KEYCODE_PASTE"]);
-  await sleep(500);
+  const prevIme = enableAdbIme(serial);
+  await sleep(400);
+  try {
+    if (shouldClear) clearFocusedField(serial);
+    const b64 = Buffer.from(s, "utf8").toString("base64");
+    adb(serial, [
+      "shell",
+      "am",
+      "broadcast",
+      "-a",
+      "ADB_INPUT_B64",
+      "--es",
+      "msg",
+      b64,
+    ]);
+    await sleep(600);
+  } finally {
+    restoreIme(serial, prevIme);
+  }
 }
 
 /** OCR do composer não deve ter nomes errados; deve ter um token do texto. */

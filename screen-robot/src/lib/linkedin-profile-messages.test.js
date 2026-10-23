@@ -77,10 +77,10 @@ describe("linkedin-profile-messages", () => {
         from: "me",
       },
       { sender: "Matheus", message: "oi", time: "8:47 AM", from: "me" },
-      { sender: "Laércio", message: "oi", time: null, from: "peer" },
+      { sender: "Laércio", message: "oi", time: null, from: "peer" }, // falso
     ]);
-    // unknown fica com key x|…; me/peer "oi" separados
-    assert.equal(out.filter((m) => m.from === "me" || m.from === "peer").length, 3);
-    assert.equal(out.filter((m) => m.message === "oi").length, 2);
+    // peer "oi" sem hora cai se já existe me "oi"
+    assert.equal(out.filter((m) => m.message === "oi").length, 1);
+    assert.equal(out.find((m) => m.message === "oi").from, "me");
   });
 });

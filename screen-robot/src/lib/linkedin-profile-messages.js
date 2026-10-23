@@ -153,13 +153,20 @@ export function messagesFromUiXml(xml) {
       curTime = time;
       curFrom = from;
       peerBubblePending = from === "peer";
-    } else if ((peerBubblePending || avatarJustAbove) && peer) {
+    } else if (avatarJustAbove && peer) {
+      // avatar à esquerda = bolha do peer
       sender = peer;
       from = "peer";
       curSender = peer;
       curFrom = "peer";
+      peerBubblePending = true;
+    } else if (peerBubblePending && peer && curFrom === "peer") {
+      // corpos seguidos do peer (sem novo sender_name)
+      sender = peer;
+      from = "peer";
     } else if (from === "unknown" || sender === "unknown") {
-      // sem label: herda estado; se ainda unknown, deixa unknown
+      from = "unknown";
+      sender = "unknown";
     }
 
     messages.push({
@@ -207,6 +214,18 @@ export function dedupeMessagesForDb(messages) {
     if (!key || key.endsWith("|")) continue;
     const prev = map.get(key);
     if (!prev || rankMsg(m) >= rankMsg(prev)) map.set(key, m);
+  }
+  // se existe "me" com o mesmo texto, descarta peer/unknown sem hora (falso positivo)
+  const meBodies = new Set(
+    [...map.values()]
+      .filter((m) => m.from === "me")
+      .map((m) => normalizeMessageBody(m.message)),
+  );
+  for (const [key, m] of [...map.entries()]) {
+    if (m.from === "me") continue;
+    const body = normalizeMessageBody(m.message);
+    if (!meBodies.has(body)) continue;
+    if (!m.time || m.from === "unknown") map.delete(key);
   }
   return [...map.values()];
 }

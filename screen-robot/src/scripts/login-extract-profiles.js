@@ -1,15 +1,17 @@
 #!/usr/bin/env node
 /**
- * LinkedIn: stop apps → launch → waitForText(Search) → tap → colar "comprador" →
- * See all → por card: se já há conexão (score nome/cargo/cidade/empresa) → skip;
- * senão tap → dump|ocr (SCREEN_ROBOT_SENSE / --sense) 1ª tela + URL → só então salva/POST
- * (lista nunca grava sozinha; sem profileUrl → skip save); se URL já na base → skip save
- * (ainda sync conexão se Pending/Connected no cartão); BACK → próximo até `-n`.
+ * LinkedIn: stop apps → launch → waitForText(Search) → tap → colar termo (`--query`,
+ * default "comprador") → See all → por card: se já há conexão (score nome/cargo/
+ * cidade/empresa) → skip; senão tap → dump|ocr (SCREEN_ROBOT_SENSE / --sense)
+ * 1ª tela + URL → só então salva/POST (lista nunca grava sozinha; sem profileUrl →
+ * skip save); se URL já na base → skip save (ainda sync conexão se Pending/Connected
+ * no cartão); BACK → próximo até `-n`.
  * Cartão: Connect → só perfil; Pending/Connected → upsert client-connections-linkedin.
  *
  * Uso (cwd: screen-robot/src):
  *   npm run login-extract-profiles
  *   npm run login-extract-profiles -- -n 10
+ *   npm run login-extract-profiles -- -n 10 --query "tech recruiter"
  */
 import { createHash } from "node:crypto";
 import {
@@ -906,6 +908,8 @@ async function main() {
   const { sense, argv } = takeSenseArg(process.argv.slice(2));
   let configPath = resolve(ROOT, "device.config.json");
   let maxProfiles = MAX_PROFILES;
+  /** Termo colado no Search LinkedIn (UI / API `q`). Default histórico. */
+  let searchTerm = "comprador";
   for (let i = 0; i < argv.length; i++) {
     if (argv[i] === "--config") configPath = resolve(argv[++i]);
     if (argv[i] === "--max-profiles" || argv[i] === "--limit" || argv[i] === "-n") {
@@ -913,6 +917,10 @@ async function main() {
       if (Number.isFinite(n) && n >= 1) {
         maxProfiles = Math.min(500, Math.floor(n));
       }
+    }
+    if (argv[i] === "--query" || argv[i] === "--q" || argv[i] === "--search") {
+      const t = String(argv[++i] ?? "").trim();
+      if (t) searchTerm = t.slice(0, 200);
     }
   }
 
@@ -950,8 +958,8 @@ async function main() {
   tapElement({ serial, x: searchHit.x, y: searchHit.y });
   await sleep(1_000);
 
-  console.log('5) Colar "comprador" (ADBKeyboard)…');
-  await pasteCleanMessage(serial, "comprador", { forceClear: true });
+  console.log(`5) Colar "${searchTerm}" (ADBKeyboard)…`);
+  await pasteCleanMessage(serial, searchTerm, { forceClear: true });
   await sleep(800);
 
   console.log("6) Esperar See/Show all e clicar…");

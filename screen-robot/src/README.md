@@ -200,8 +200,11 @@ cd screen-robot/src
 npm run login-extract-profiles
 npm run login-extract-profiles -- -n 10 --sense dump
 npm run login-extract-profiles -- -n 10 --sense ocr
-# aliases: --max-profiles / --limit / -n
+npm run login-extract-profiles -- -n 10 --query "tech recruiter"
+# aliases: --max-profiles / --limit / -n ; --query / --q / --search (default: comprador)
 ```
+
+**Antes → depois (query):** termo fixo `comprador` → `--query` / API `?q=`. **Rollback:** omita o flag (volta ao default).
 
 Script [`scripts/login-extract-profiles.js`](scripts/login-extract-profiles.js) — **sem IA**, **sem People**. Após See all: **abre cada card**, 1ª tela + lista via **`--sense dump|ocr`** (default dump; sem misturar) + URL (`⋯` → Share via → Copy via [`lib/linkedin-capture-profile-url.js`](lib/linkedin-capture-profile-url.js)), `KEYCODE_BACK`, próximo — até `-n` ou fim do scroll. Cliques via `findByText` no mesmo sense / coords do nome no card:
 

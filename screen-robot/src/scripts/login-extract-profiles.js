@@ -37,7 +37,10 @@ import {
   profilesFromExtract,
 } from "../lib/linkedin-list-profiles.js";
 import { parseProfileHeaderFromUiXml } from "../lib/linkedin-profile-from-uidump.js";
-import { parseProfileHeader } from "../lib/linkedin-profile-page.js";
+import {
+  nameHintFromLinkedInUrl,
+  parseProfileHeader,
+} from "../lib/linkedin-profile-page.js";
 import { resolveSense, takeSenseArg } from "../lib/sense.js";
 import {
   cropListProfilePhotoAndCard,
@@ -508,6 +511,25 @@ async function openProfileAndExtract(serial, listCard, outDir, filePrefix) {
   }
   if (profileUrl) {
     console.log(`   URL: ${profileUrl}`);
+    // Mesmo hint do by-url / deep link (slug), não só o nome do card da lista
+    const urlHint =
+      nameHintFromLinkedInUrl(profileUrl) || listCard.name || null;
+    try {
+      if (sense === "dump" && pageXml) {
+        const parsed = parseProfileHeaderFromUiXml(pageXml, {
+          nameHint: urlHint,
+        });
+        header = parsed.header;
+        cardEls = parsed.elements;
+      } else if (cardEls) {
+        header = parseProfileHeader(cardEls, { nameHint: urlHint });
+      }
+      console.log(
+        `   page (hint url): name=${header.name || "-"} headline=${header.headline || "-"} company=${header.company || "-"}`,
+      );
+    } catch (e) {
+      console.log(`   page reparse: ${e.message || e}`);
+    }
   } else {
     console.log("   ⚠ URL linkedin.com/in/… não obtida");
   }

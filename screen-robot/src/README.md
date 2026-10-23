@@ -221,6 +221,8 @@ Script [`scripts/login-extract-profiles.js`](scripts/login-extract-profiles.js) 
 
 **Antes → depois (lista ≈ by-url):** header da lista só com `nameHint` do card → após Share/Copy, reparse com `nameHintFromLinkedInUrl` (mesmo hint do deep link). Rollback: um único parse com `listCard.name`.
 
+**Antes → depois (voltar do perfil):** `leaveProfile` parava em qualquer `Search`/`Show all` → BACK a mais caía na busca do comprador. Agora só aceita lista People (≥2 Connect/Pending ou graus); se cair na compose, tenta Show all e **não** dá mais BACK. Sheet após Copy só fecha se ainda aberta. Rollback: loop 4× BACK + `findByText(Search|People|Show all)`.
+
 **Antes → depois (Helen / Activity@0 + slug id):** `Activity` offscreen encerrava o header → nome caía no hint `Helen Nogueira 6bb660189` → HEADER_STOP só após nome; `isLinkedInSlugId` tira id alfanumérico do slug. Rollback: `break` no 1º Activity; hint só com `^\d{5,}$`.
 
 **Antes → depois (nome = tela):** hint da URL bloqueava/substituía o dump → nome só do texto na tela; hint só ranqueia (`foldNameKey`); payload não usa slug como nome. Rollback: `hintOk` rígido + fallback `nameHint`.

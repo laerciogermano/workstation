@@ -536,7 +536,7 @@ async function openProfileAndExtract(serial, listCard, outDir, filePrefix) {
 
   const left = await leaveProfile(serial, { engine: OCR_ENGINE });
   if (!left) {
-    console.log("   ⚠ leaveProfile: Search/lista não confirmada após BACK");
+    console.log("   ⚠ leaveProfile: lista People não confirmada após BACK");
   }
   await sleep(800);
 

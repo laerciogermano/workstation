@@ -222,22 +222,158 @@ export async function captureProfileUrl(serial, outDir, opts = {}) {
     console.log("   clipboard sem linkedin.com/in/…");
   }
 
+  // Fecha sheet só se ainda estiver aberta — BACK cego sai do perfil.
+  if (await shareSheetOpen(serial, { engine })) {
+    console.log("   sheet ainda aberta após Copy — KEYCODE_BACK");
+    key({ serial, code: "KEYCODE_BACK" });
+    await sleep(600);
+  }
+
   await sleep(400);
   return url;
 }
 
-/** KEYCODE_BACK até Search / lista de resultados. */
+/** Textos normalizados do extract/dump. */
+function elTexts(els) {
+  return (els || [])
+    .map((e) => String(e?.text || "").trim())
+    .filter(Boolean);
+}
+
+/** Share sheet (Copy / apps) ainda visível? */
+export async function shareSheetOpen(serial, opts = {}) {
+  return Boolean(
+    await findFirstByText(
+      serial,
+      [
+        "Copy link",
+        "Copy to clipboard",
+        "Copy Link",
+        "WhatsApp",
+        "Messenger",
+        "Gmail",
+        "Nearby Share",
+      ],
+      { minScore: 0.62, engine: opts.engine || OCR_ENGINE },
+    ),
+  );
+}
+
+/**
+ * Tela de digitar busca / sugestões (não é a lista People).
+ * "Search" sozinho NÃO basta — aparece no chrome de quase toda tela.
+ */
+export function isSearchComposeScreen(els) {
+  const texts = elTexts(els);
+  const blob = texts.join("\n");
+  if (/show all results|see all results/i.test(blob)) return true;
+  if (/\brecent\b/i.test(blob) && /clear\s*all/i.test(blob)) return true;
+  if (/try searching for|no results found|search results/i.test(blob)) {
+    return true;
+  }
+  return false;
+}
+
+/**
+ * Lista People (cards Connect/Pending + graus) após Show all.
+ * Perfil aberto tem no máx. 1 Connect — não conta como lista.
+ */
+export function isPeopleResultsScreen(els) {
+  if (isSearchComposeScreen(els)) return false;
+  const texts = elTexts(els);
+  const blob = texts.join("\n");
+  // perfil: seções / mutual longo
+  if (
+    /\b(about|activity|featured|experience|education|skills)\b/i.test(blob) &&
+    !/\bpending\b/i.test(blob)
+  ) {
+    const pills = countListActionPills(texts);
+    if (pills <= 1) return false;
+  }
+  const pills = countListActionPills(texts);
+  const degrees = texts.filter((t) =>
+    /^(1st|2nd|3rd)$/i.test(t.replace(/[•·].*$/, "").trim()) ||
+    /\b(1st|2nd|3rd)\b/i.test(t),
+  ).length;
+  if (pills >= 2 || degrees >= 2) return true;
+  const peopleChip = texts.some((t) => /^people$/i.test(t));
+  return peopleChip && pills >= 1 && degrees >= 1;
+}
+
+function countListActionPills(texts) {
+  let n = 0;
+  for (const raw of texts) {
+    const t = String(raw)
+      .replace(/^[&+i]+\s*/i, "")
+      .trim();
+    if (/^(connect|pending)$/i.test(t)) n += 1;
+    else if (/^pending$/i.test(t) || /^\+?\s*connect$/i.test(t)) n += 1;
+  }
+  return n;
+}
+
+/**
+ * KEYCODE_BACK até a lista People — nunca parar só em "Search"
+ * (tela de digitar comprador também tem Search → BACK a mais).
+ * @returns {Promise<boolean>}
+ */
 export async function leaveProfile(serial, opts = {}) {
   const engine = opts.engine || OCR_ENGINE;
-  for (let i = 0; i < 4; i++) {
+
+  const snap = async () => {
+    try {
+      return await extractBySense({ serial, engine });
+    } catch {
+      return [];
+    }
+  };
+
+  // Fecha menu/sheet antes de sair do perfil
+  if (
+    (await moreMenuOpen(serial, { engine })) ||
+    (await shareSheetOpen(serial, { engine }))
+  ) {
+    console.log("   leaveProfile: fecha menu/sheet");
     key({ serial, code: "KEYCODE_BACK" });
     await sleep(700);
-    const search = await findFirstByText(
-      serial,
-      ["Search", "See all results", "Show all results", "People"],
-      { minScore: 0.7, engine },
-    );
-    if (search) return true;
+  }
+
+  let els = await snap();
+  if (isPeopleResultsScreen(els)) {
+    console.log("   leaveProfile: já na lista People");
+    return true;
+  }
+
+  for (let i = 0; i < 3; i++) {
+    console.log(`   leaveProfile: KEYCODE_BACK (${i + 1}/3)`);
+    key({ serial, code: "KEYCODE_BACK" });
+    await sleep(800);
+    els = await snap();
+    if (isPeopleResultsScreen(els)) {
+      console.log("   leaveProfile: lista People ok");
+      return true;
+    }
+    if (isSearchComposeScreen(els)) {
+      console.log(
+        "   leaveProfile: caiu na busca (Show all/Recent) — recupera Show all",
+      );
+      const show = await findFirstByText(
+        serial,
+        ["Show all results", "See all results", "Show all", "See all"],
+        { minScore: 0.65, engine },
+      );
+      if (show) {
+        console.log(
+          `   → Show all "${show.hit.text}" x=${show.hit.x} y=${show.hit.y}`,
+        );
+        tapElement({ serial, x: show.hit.x, y: show.hit.y });
+        await sleep(1_500);
+        els = await snap();
+        if (isPeopleResultsScreen(els)) return true;
+      }
+      // não dar mais BACK — piora (Home)
+      return false;
+    }
   }
   return false;
 }

@@ -26,7 +26,10 @@ import {
   captureProfileUrl,
   leaveProfile,
 } from "../lib/linkedin-capture-profile-url.js";
-import { profilesFromExtract } from "../lib/linkedin-list-profiles.js";
+import {
+  PEOPLE_CARD_ACTIONS,
+  profilesFromExtract,
+} from "../lib/linkedin-list-profiles.js";
 import { parseProfileHeader } from "../lib/linkedin-profile-page.js";
 import {
   cropListProfilePhotoAndCard,
@@ -570,119 +573,138 @@ async function extractProfilesLoop(serial, outDir, opts = {}) {
       console.log(`   nomes: ${fresh.map((p) => p.name).join(" | ")}`);
     }
 
-    // Um perfil por rodada (topo → baixo): match base → tap → page+URL → BACK.
+    // Percorre cards da tela (topo→baixo): só padrão Connect|Pending|Message;
+    // skip se já na base; abre o 1º elegível e re-extrai.
     if (fresh.length > 0) {
-      const p = fresh[0];
-      seen.add(p.key);
+      /** @type {object|null} */
+      let chosen = null;
+      for (const p of fresh) {
+        seen.add(p.key);
+        if (!PEOPLE_CARD_ACTIONS.has(p.action)) {
+          console.log(
+            `   skip (fora do padrão People action=${p.action || "-"}): ${p.name}`,
+          );
+          continue;
+        }
+        const connMatch = await matchConnectionInBase(p);
+        if (connMatch.matched) {
+          console.log(
+            `   skip (já na base src=${connMatch.source || "?"} score=${Number(connMatch.matchScore || 0).toFixed(3)} nameSim=${Number(connMatch.nameSimilarity || 0).toFixed(3)}): ${p.name}${connMatch.clienteNome ? ` ≈ ${connMatch.clienteNome}` : ""}${connMatch.agentId ? ` agent=${connMatch.agentId}` : ""}${connMatch.profileId ? ` profileId=${connMatch.profileId}` : ""}`,
+          );
+          continue;
+        }
+        chosen = p;
+        break;
+      }
 
-      const connMatch = await matchConnectionInBase(p);
-      if (connMatch.matched) {
-        console.log(
-          `   skip (já na base src=${connMatch.source || "?"} score=${Number(connMatch.matchScore || 0).toFixed(3)} nameSim=${Number(connMatch.nameSimilarity || 0).toFixed(3)}): ${p.name}${connMatch.clienteNome ? ` ≈ ${connMatch.clienteNome}` : ""}${connMatch.agentId ? ` agent=${connMatch.agentId}` : ""}${connMatch.profileId ? ` profileId=${connMatch.profileId}` : ""}`,
-        );
+      if (!chosen) {
+        // Todos da viewport foram skip — scroll p/ próximos.
         contentStable = 0;
         frameStable = 0;
         prevContentFp = null;
+        console.log("   nenhum elegível nesta tela — scroll…");
+      } else {
+        const p = chosen;
+        const index = saved.length + 1;
+        const filePrefix = `profile-${String(index).padStart(3, "0")}`;
+
+        /** @type {string|null} */
+        let listPhotoBase64 = null;
+        /** @type {string|null} */
+        let listCardBase64 = null;
+        try {
+          const media = await cropListProfilePhotoAndCard(
+            roundPng,
+            p,
+            outDir,
+            `${filePrefix}-list`,
+          );
+          listPhotoBase64 = media.photoBase64;
+          listCardBase64 = media.cardBase64;
+          console.log(
+            `   crop lista ${p.name}: photo=${media.photoPath || "-"} card=${media.cardPath || "-"}`,
+          );
+        } catch (e) {
+          console.log(`   crop lista ${p.name}: ${e.message || e}`);
+        }
+
+        /** @type {object} */
+        let pageData = {
+          header: {},
+          profileUrl: null,
+          photoBase64: null,
+          coverBase64: null,
+          cardBase64: null,
+          rawOcr: null,
+        };
+        try {
+          pageData = await openProfileAndExtract(
+            serial,
+            p,
+            outDir,
+            filePrefix,
+          );
+        } catch (e) {
+          console.error(
+            `   ⚠ abrir/extrair falhou (continua): ${e.message || e}`,
+          );
+          try {
+            await leaveProfile(serial, { engine: OCR_ENGINE });
+          } catch {
+            /* ignore */
+          }
+        }
+
+        if (pageData.profileUrl) {
+          const urlHit = await profileUrlAlreadyInBase(pageData.profileUrl);
+          if (urlHit.exists) {
+            console.log(
+              `   skip save (profileUrl já 1:1 na base): ${pageData.profileUrl} → profileId=${urlHit.profileId || "-"}`,
+            );
+            contentStable = 0;
+            frameStable = 0;
+            prevContentFp = null;
+            continue;
+          }
+        }
+
+        const profile = {
+          index,
+          name: pageData.header?.name || p.name,
+          action: p.action,
+          fields: p.fields,
+          header: pageData.header || {},
+          profileUrl: pageData.profileUrl || null,
+          extractedAt: new Date().toISOString(),
+          round,
+          x: p.x,
+          y: p.y,
+          cardBounds: p.cardBounds,
+          photoBase64: pageData.photoBase64 || listPhotoBase64,
+          coverBase64: pageData.coverBase64 || null,
+          cardBase64: pageData.cardBase64 || listCardBase64,
+          texts: p.texts,
+          ocr: p.ocr,
+          rawOcr: pageData.rawOcr || { elements: p.ocr || [] },
+        };
+        saved.push(profile);
+        rows.push(profileRowForJson(profile));
+        writeProfilesJson(outDir, rows);
+        await onProfile(profile, {
+          count: saved.length,
+          outDir,
+          saved,
+          rows,
+          serial,
+          round,
+        });
+
+        contentStable = 0;
+        frameStable = 0;
+        prevContentFp = null;
+        // Sem scroll: próxima rodada re-extrai e pega o próximo elegível.
         continue;
       }
-
-      const index = saved.length + 1;
-      const filePrefix = `profile-${String(index).padStart(3, "0")}`;
-
-      /** @type {string|null} */
-      let listPhotoBase64 = null;
-      /** @type {string|null} */
-      let listCardBase64 = null;
-      try {
-        const media = await cropListProfilePhotoAndCard(
-          roundPng,
-          p,
-          outDir,
-          `${filePrefix}-list`,
-        );
-        listPhotoBase64 = media.photoBase64;
-        listCardBase64 = media.cardBase64;
-        console.log(
-          `   crop lista ${p.name}: photo=${media.photoPath || "-"} card=${media.cardPath || "-"}`,
-        );
-      } catch (e) {
-        console.log(`   crop lista ${p.name}: ${e.message || e}`);
-      }
-
-      /** @type {object} */
-      let pageData = {
-        header: {},
-        profileUrl: null,
-        photoBase64: null,
-        coverBase64: null,
-        cardBase64: null,
-        rawOcr: null,
-      };
-      try {
-        pageData = await openProfileAndExtract(
-          serial,
-          p,
-          outDir,
-          filePrefix,
-        );
-      } catch (e) {
-        console.error(`   ⚠ abrir/extrair falhou (continua): ${e.message || e}`);
-        try {
-          await leaveProfile(serial, { engine: OCR_ENGINE });
-        } catch {
-          /* ignore */
-        }
-      }
-
-      if (pageData.profileUrl) {
-        const urlHit = await profileUrlAlreadyInBase(pageData.profileUrl);
-        if (urlHit.exists) {
-          console.log(
-            `   skip save (profileUrl já 1:1 na base): ${pageData.profileUrl} → profileId=${urlHit.profileId || "-"}`,
-          );
-          contentStable = 0;
-          frameStable = 0;
-          prevContentFp = null;
-          continue;
-        }
-      }
-
-      const profile = {
-        index,
-        name: pageData.header?.name || p.name,
-        action: p.action,
-        fields: p.fields,
-        header: pageData.header || {},
-        profileUrl: pageData.profileUrl || null,
-        extractedAt: new Date().toISOString(),
-        round,
-        x: p.x,
-        y: p.y,
-        cardBounds: p.cardBounds,
-        photoBase64: pageData.photoBase64 || listPhotoBase64,
-        coverBase64: pageData.coverBase64 || null,
-        cardBase64: pageData.cardBase64 || listCardBase64,
-        texts: p.texts,
-        ocr: p.ocr,
-        rawOcr: pageData.rawOcr || { elements: p.ocr || [] },
-      };
-      saved.push(profile);
-      rows.push(profileRowForJson(profile));
-      writeProfilesJson(outDir, rows);
-      await onProfile(profile, {
-        count: saved.length,
-        outDir,
-        saved,
-        rows,
-        serial,
-        round,
-      });
-
-      contentStable = 0;
-      frameStable = 0;
-      prevContentFp = null;
-      // Sem scroll: próxima rodada re-extrai a lista (mesmo viewport) e pega o próximo.
-      continue;
     }
 
     // Sem cards novos + mesma lista visível (parser). Sozinho não encerra — OCR

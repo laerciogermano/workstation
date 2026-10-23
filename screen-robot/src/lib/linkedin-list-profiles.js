@@ -21,7 +21,10 @@ export const NAME_PARTICLES = new Set([
 ]);
 
 const BAD_NAME_RE =
-  /\b(month|cancel|premium|try|free|dismiss|skip|ignore|linkedin|connect|pending|message|follow|current|past|mutual|connection|comprador|compradora|gest[aã]o|university|pramet|dormer|construtora|brazil|brasil|location|specialist|buyer|coordinator|procurement|jobs|posts|schools|courses|people|ltda|llc|inc|chain|supply|suprimentos|compras|analista|edited|yesterday|today|hour|minute|viewed|horizonte|paulo|minas|gerais|campinas|contagem|indaiatuba|sarzedo|curitiba|pendin)\b/i;
+  /\b(month|cancel|premium|try|free|dismiss|skip|ignore|linkedin|connect|pending|message|follow|current|past|mutual|connection|comprador|compradora|gest[aã]o|university|pramet|dormer|construtora|brazil|brasil|location|specialist|buyer|coordinator|procurement|jobs|posts|schools|courses|people|ltda|llc|inc|chain|supply|suprimentos|compras|analista|edited|yesterday|today|hour|minute|viewed|horizonte|paulo|minas|gerais|campinas|contagem|indaiatuba|sarzedo|curitiba|pendin|reforma|tribut[aá]ria|founder|ceo|desafios|profissionais|aplicada)\b/i;
+
+/** Ações do card People (padrão da lista de prospecção). */
+export const PEOPLE_CARD_ACTIONS = new Set(["Connect", "Pending", "Message"]);
 
 /**
  * OCR do botão: "© Pending", "i+ Connect", "+ Connect", "+ Follow".

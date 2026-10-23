@@ -12,7 +12,7 @@ import { mkdirSync } from "node:fs";
 import { join } from "node:path";
 
 import { adb, adbOk, sleep } from "./adb.js";
-import { extract } from "./extract.js";
+import { dumpUiXml, extract } from "./extract.js";
 import {
   findMoreOverflow,
   normalizeLinkedInProfileUrl,
@@ -196,28 +196,65 @@ export function findWriteAMessage(els) {
   return null;
 }
 
-export function findSendButton(els, writeY = null) {
-  for (const el of els || []) {
-    const t = String(el?.text || "").trim();
-    if (!/^send$/i.test(t)) continue;
-    if (el.x == null || el.y == null) continue;
-    return { text: t, x: el.x, y: el.y, via: "text" };
+/**
+ * Estado do draft no EditText do composer.
+ * @returns {"empty"|"draft"|"unknown"}
+ */
+export function composerDraftState(serial) {
+  const xml = dumpUiXml(serial);
+  for (const n of xml.match(/<node\b[^>]*>/g) || []) {
+    if (!/messaging_keyboard_text_input_container/.test(n)) continue;
+    const m = n.match(/\btext="([^"]*)"/);
+    const t = (m?.[1] || "")
+      .replace(/&#10;/g, "\n")
+      .replace(/&amp;/g, "&")
+      .replace(/&quot;/g, '"')
+      .trim();
+    // hint "Write a message…" às vezes vem no text=
+    if (!t || /^write\s*a\s*message/i.test(t)) return "empty";
+    return "draft";
   }
-  // Ícone avião à direita do campo (prints: ~x=500, mesma y do Write a message)
-  const y0 = writeY != null ? writeY : 460;
-  const icons = (els || []).filter(
-    (e) =>
-      e?.type === "icon" &&
-      e.x != null &&
-      e.y != null &&
-      e.x >= 420 &&
-      Math.abs(e.y - y0) <= 100,
-  );
-  if (icons.length) {
-    icons.sort((a, b) => b.x - a.x);
-    return { text: "icon", x: icons[0].x, y: icons[0].y, via: "icon" };
+  return "unknown";
+}
+
+export function composerDraftNonEmpty(serial) {
+  return composerDraftState(serial) === "draft";
+}
+
+/**
+ * Centro do botão Send (só content-desc=Send / send_button).
+ * Com campo vazio o LinkedIn troca por mic — não clicar nisso.
+ */
+export function findSendViaUiDump(serial) {
+  const xml = dumpUiXml(serial);
+  for (const n of xml.match(/<node\b[^>]*>/g) || []) {
+    if (/content-desc="Send"/.test(n) && /clickable="true"/.test(n)) {
+      const m = n.match(/bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"/);
+      if (!m) continue;
+      const x1 = Number(m[1]);
+      const y1 = Number(m[2]);
+      const x2 = Number(m[3]);
+      const y2 = Number(m[4]);
+      return {
+        x: Math.floor((x1 + x2) / 2),
+        y: Math.floor((y1 + y2) / 2),
+        via: "uiautomator-Send",
+      };
+    }
   }
-  return { text: "geom", x: 500, y: y0, via: "geom" };
+  for (const n of xml.match(/<node\b[^>]*>/g) || []) {
+    if (!/messaging_keyboard_send_button/.test(n)) continue;
+    if (!/clickable="true"/.test(n)) continue;
+    if (/content-desc="Record|Voice|microphone/i.test(n)) continue;
+    const m = n.match(/bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"/);
+    if (!m) continue;
+    return {
+      x: Math.floor((Number(m[1]) + Number(m[3])) / 2),
+      y: Math.floor((Number(m[2]) + Number(m[4])) / 2),
+      via: "uiautomator-send_button",
+    };
+  }
+  return null;
 }
 
 function isComposer(els) {
@@ -355,11 +392,45 @@ export async function sendLinkedInMessage(opts) {
             };
           }
           await shot(serial, opts.outDir, "03-pasted.png");
-          const sendBtn = findSendButton(pasted.els || [], write.y);
-          steps.push(`send@${sendBtn.x},${sendBtn.y}:${sendBtn.via}`);
           await shot(serial, opts.outDir, "04-before-send.png");
-          tapElement({ serial, x: sendBtn.x, y: sendBtn.y });
-          await sleep(WAIT_TAP_MS);
+          // ENTER no multiline NÃO envia. Só content-desc=Send (nunca o mic).
+          let sentOk = false;
+          for (let attempt = 1; attempt <= 2; attempt++) {
+            const sendBtn = findSendViaUiDump(serial);
+            if (!sendBtn) {
+              steps.push(`send:missing:try${attempt}`);
+              break;
+            }
+            steps.push(`send@${sendBtn.x},${sendBtn.y}:${sendBtn.via}:try${attempt}`);
+            tapElement({ serial, x: sendBtn.x, y: sendBtn.y });
+            await sleep(WAIT_TAP_MS);
+            const st = composerDraftState(serial);
+            steps.push(`send:state:${st}`);
+            if (st === "empty") {
+              sentOk = true;
+              break;
+            }
+            if (st === "unknown") {
+              // dialog/overlay — BACK e reavalia
+              key({ serial, code: "KEYCODE_BACK" });
+              await sleep(800);
+              if (composerDraftState(serial) === "empty") {
+                sentOk = true;
+                break;
+              }
+            }
+          }
+          if (!sentOk) {
+            return {
+              ok: false,
+              status: "failed",
+              url,
+              text: message,
+              steps,
+              error: "tap Send (uiautomator) não limpou o draft",
+            };
+          }
+          steps.push("send:confirmed-empty");
         }
         await shot(serial, opts.outDir, "05-sent.png");
         return {

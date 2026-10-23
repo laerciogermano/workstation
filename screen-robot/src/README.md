@@ -270,12 +270,12 @@ curl -s -X POST http://127.0.0.1:3099/message \
   -d '{"url":"https://www.linkedin.com/in/laerciogermano","text":"Oi!"}'
 ```
 
-Fluxo: **fecha todos os apps** (`pm list packages -3` + force-stop) → HOME → deep link → **Message** (ou ⋮) → **Write a message** → `ADB_INPUT_B64` → **Send**.  
-Campo vazio → só cola; com texto → limpa e cola.  
-Lib: [`lib/linkedin-message.js`](lib/linkedin-message.js) · `stopAllApps` em [`lib/operate.js`](lib/operate.js).
+Fluxo: **fecha todos os apps** → HOME → deep link → **Message** → cola (`ADB_INPUT_B64`) → tap **Send** só se `content-desc="Send"` no dump.  
+Com campo vazio o mesmo slot vira **mic** — não retapar coords fixas. Confirma: EditText `empty`.  
+`KEYCODE_ENTER` **não** envia (multiline). Lib: [`lib/linkedin-message.js`](lib/linkedin-message.js).
 
-**Antes → depois:** abria LinkedIn por cima de apps abertos → mata todos antes. Clipboard → ADBKeyboard B64.  
-**Rollback:** remover `stopAllApps` no início de `sendLinkedInMessage`.
+**Antes → depois:** geom/ENTER → dump `content-desc=Send` + estado empty/draft/unknown.  
+**Rollback:** geom `~505,475`.
 
 ---
 

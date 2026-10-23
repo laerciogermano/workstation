@@ -4,7 +4,6 @@ import { describe, it } from "node:test";
 import {
   escapeMessageForAdb,
   findHeaderMessage,
-  findSendButton,
   findSendMessageInSheet,
   findWriteAMessage,
   isMessageFieldEmpty,
@@ -22,14 +21,13 @@ describe("linkedin-message helpers", () => {
     );
   });
 
-  it("findWriteAMessage / Send", () => {
+  it("findWriteAMessage", () => {
     assert.ok(
       findWriteAMessage([{ text: "Write a message...", x: 186, y: 459 }]),
     );
     assert.ok(
       findWriteAMessage([{ text: "Writeamessage...", x: 186, y: 836 }]),
     );
-    assert.equal(findSendButton([{ text: "Send", x: 500, y: 500 }]).via, "text");
   });
 
   it("findSendMessageInSheet", () => {

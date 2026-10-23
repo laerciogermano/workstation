@@ -24,6 +24,7 @@
     "login-visit-profiles": "node scripts/login-visit-profiles.js",
     "linkedin-connect": "node scripts/linkedin-connect.js",
     "linkedin-connect-api": "node scripts/linkedin-connect-api.js",
+    "linkedin-extract-connections": "node scripts/linkedin-extract-connections.js",
     "tinder-home": "node scripts/tinder-home.js",
     "instagram-home": "node scripts/instagram-home.js",
     "sample": "node scripts/sample.js",

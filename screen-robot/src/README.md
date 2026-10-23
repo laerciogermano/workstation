@@ -256,6 +256,26 @@ Script [`scripts/login-visit-profiles.js`](scripts/login-visit-profiles.js) — 
 
 ---
 
+## linkedin-extract-connections (N mais recentes)
+
+```bash
+cd screen-robot/src
+npm run linkedin-extract-connections -- --n 20
+
+# API (mesma porta do connect)
+npm run linkedin-connect-api
+curl -s -X POST http://127.0.0.1:3099/connections -H 'content-type: application/json' -d '{"n":20}'
+# ou: GET http://127.0.0.1:3099/connections?n=20
+```
+
+Fluxo: Network → Manage my network → Connections → scroll/OCR até `n`.  
+Lib: [`lib/linkedin-extract-connections.js`](lib/linkedin-extract-connections.js) · parser [`lib/linkedin-connections-list.js`](lib/linkedin-connections-list.js).
+
+**Antes → depois:** sem extract de Connections → endpoint `/connections` retorna JSON `{ connections: [...] }`.  
+**Rollback:** não chame `/connections`; remova os scripts `linkedin-extract-connections*`.
+
+---
+
 ## linkedin-connect (URL → Connect → Skip → Pending)
 
 Prints de referência: [`screenshots/jornada-conectar-por-url/README.md`](screenshots/jornada-conectar-por-url/README.md) · roteiro: [`../roteiros/jornada-conectar-por-url.md`](../roteiros/jornada-conectar-por-url.md)

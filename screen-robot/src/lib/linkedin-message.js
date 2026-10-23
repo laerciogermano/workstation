@@ -16,7 +16,9 @@ import { dumpUiXml, extract } from "./extract.js";
 import {
   findMoreOverflow,
   normalizeLinkedInProfileUrl,
+  notifyLinkedInMessages,
   openProfileByUrl,
+  resolveAgentId,
 } from "./linkedin-connect.js";
 import { key, screenshot, stopAllApps, tapElement } from "./operate.js";
 
@@ -433,12 +435,26 @@ export async function sendLinkedInMessage(opts) {
           steps.push("send:confirmed-empty");
         }
         await shot(serial, opts.outDir, "05-sent.png");
+        let db = null;
+        try {
+          db = await notifyLinkedInMessages({
+            profileUrl: url,
+            agentId: resolveAgentId(),
+            direction: "sent",
+            message,
+            occurredAt: new Date().toISOString(),
+          });
+          steps.push(db.notified ? "db:message:sent" : `db:skip:${db.reason}`);
+        } catch (e) {
+          steps.push(`db:error:${String(e?.message || e).slice(0, 120)}`);
+        }
         return {
           ok: true,
           status: "sent",
           url,
           text: message,
           steps,
+          db,
         };
       }
       await sleep(1_000);

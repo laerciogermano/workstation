@@ -12,7 +12,9 @@ import { dumpUiXml, extract } from "./extract.js";
 import {
   findMoreOverflow,
   normalizeLinkedInProfileUrl,
+  notifyLinkedInMessages,
   openProfileByUrl,
+  resolveAgentId,
 } from "./linkedin-connect.js";
 import {
   findHeaderMessage,
@@ -364,6 +366,30 @@ export async function listProfileMessages(opts) {
     from,
   }));
 
+  let db = null;
+  if (messages.length) {
+    try {
+      db = await notifyLinkedInMessages({
+        profileUrl: url,
+        agentId: resolveAgentId(),
+        peerName: peer,
+        messages: messages.map((m) => ({
+          direction: m.from === "me" ? "sent" : "received",
+          message: m.message,
+          sender: m.sender,
+          time: m.time,
+        })),
+      });
+      steps.push(
+        db.notified
+          ? `db:messages:${db.data?.count ?? messages.length}`
+          : `db:skip:${db.reason}`,
+      );
+    } catch (e) {
+      steps.push(`db:error:${String(e?.message || e).slice(0, 120)}`);
+    }
+  }
+
   return {
     ok: true,
     status: "ok",
@@ -373,5 +399,6 @@ export async function listProfileMessages(opts) {
     count: messages.length,
     messages,
     steps,
+    db,
   };
 }

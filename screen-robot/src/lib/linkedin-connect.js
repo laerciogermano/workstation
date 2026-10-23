@@ -197,6 +197,62 @@ export async function notifyInviteSent({
   return { notified: true, url, data };
 }
 
+/**
+ * Persiste mensagens em `client_linkedin_message` (vendas/api).
+ * POST {base}/client-linkedin-messages
+ *
+ * @param {{
+ *   profileUrl: string,
+ *   agentId?: string,
+ *   peerName?: string|null,
+ *   messages?: Array<{ direction: "sent"|"received", message: string, sender?: string|null, time?: string|null }>,
+ *   direction?: "sent"|"received",
+ *   message?: string,
+ *   sender?: string|null,
+ *   time?: string|null,
+ *   baseUrl?: string,
+ * }} opts
+ */
+export async function notifyLinkedInMessages(opts = {}) {
+  const base = String(opts.baseUrl || invitesApiBase() || "").replace(/\/$/, "");
+  if (!base) {
+    return { notified: false, reason: "INVITES_API_URL/PROFILES_API_URL ausente" };
+  }
+  const url = `${base}/client-linkedin-messages`;
+  const body = {
+    profileUrl: opts.profileUrl,
+    agentId: String(opts.agentId || resolveAgentId() || "default").trim() || "default",
+    peerName: opts.peerName || null,
+  };
+  if (opts.messages?.length) {
+    body.messages = opts.messages;
+  } else {
+    body.direction = opts.direction || "sent";
+    body.message = opts.message;
+    body.sender = opts.sender ?? null;
+    body.time = opts.time ?? null;
+    if (opts.occurredAt) body.occurredAt = opts.occurredAt;
+  }
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  const text = await res.text().catch(() => "");
+  if (!res.ok) {
+    throw new Error(
+      `POST ${url} → ${res.status} ${res.statusText}${text ? `: ${text.slice(0, 240)}` : ""}`,
+    );
+  }
+  let data = null;
+  try {
+    data = text ? JSON.parse(text) : null;
+  } catch {
+    data = { raw: text };
+  }
+  return { notified: true, url, data };
+}
+
 /** Após Skip: poll até Pending ou esgota tentativas. */
 async function waitForPending(serial, { outDir, steps }) {
   for (let i = 0; i < PENDING_TRIES; i++) {

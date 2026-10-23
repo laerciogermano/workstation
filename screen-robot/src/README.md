@@ -272,10 +272,11 @@ curl -s -X POST http://127.0.0.1:3099/message \
 
 Fluxo: **fecha todos os apps** → HOME → deep link → **Message** → cola (`ADB_INPUT_B64`) → tap **Send** só se `content-desc="Send"` no dump.  
 Com campo vazio o mesmo slot vira **mic** — não retapar coords fixas. Confirma: EditText `empty`.  
-`KEYCODE_ENTER` **não** envia (multiline). Lib: [`lib/linkedin-message.js`](lib/linkedin-message.js).
+`KEYCODE_ENTER` **não** envia (multiline). Em sucesso → `POST {PROFILES_API_URL}/client-linkedin-messages` (`direction: sent`).  
+Lib: [`lib/linkedin-message.js`](lib/linkedin-message.js).
 
-**Antes → depois:** geom/ENTER → dump `content-desc=Send` + estado empty/draft/unknown.  
-**Rollback:** geom `~505,475`.
+**Antes → depois:** geom/ENTER → dump `content-desc=Send` + persistência em `client_linkedin_message`.  
+**Rollback:** geom `~505,475`; unset `PROFILES_API_URL`.
 
 ---
 
@@ -316,9 +317,10 @@ curl -s -X POST http://127.0.0.1:3099/profile-messages \
 
 Fluxo: **stopAllApps** → deep link perfil → **Message** → scroll down (fim) → coleta dump; se `count < maxResults`, **scroll up** e merge.  
 Cada item: `sender`, `message`, `time`, `from` (`me`|`peer`). Ordem cronológica; retorna as **últimas** `maxResults`.  
+Em sucesso → upsert lote em `POST {PROFILES_API_URL}/client-linkedin-messages`.  
 Lib: [`lib/linkedin-profile-messages.js`](lib/linkedin-profile-messages.js).
 
-**Antes → depois:** não existia. **Rollback:** remover script/lib/`POST /profile-messages`.
+**Antes → depois:** não existia. **Rollback:** remover script/lib/`POST /profile-messages`; unset API.
 
 ---
 

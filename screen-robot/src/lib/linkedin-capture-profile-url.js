@@ -1,6 +1,6 @@
 /**
  * Captura URL linkedin.com/in/… a partir do perfil aberto:
- * ⋯ → Share via → Copy (clipboard ou OCR da sheet).
+ * ⋯ → Share via → Copy → só clipboard (nunca OCR).
  * Usado por login-extract-profiles e login-extract-profile-detail.
  */
 import { existsSync, writeFileSync } from "node:fs";
@@ -105,76 +105,79 @@ export async function tapProfileMoreButton(serial, opts = {}) {
   return false;
 }
 
-/** URL /in/… a partir de linhas OCR (pode vir partida em 2). */
-export function urlFromOcrEls(els) {
-  const joined = (els || [])
-    .map((e) => String(e?.text || "").trim())
-    .filter(Boolean)
-    .join("")
-    .replace(/\s+/g, "");
-  return normalizeLinkedInProfileUrl(joined);
-}
+const SHARE_VIA_QUERIES = [
+  "Share via..",
+  "Share via…",
+  "Share via",
+  "Share Via",
+  "Share profile via",
+];
 
-/**
- * ⋯ → Share via → Copy → URL (clipboard ou OCR da sheet).
- * Não dá BACK se falhar no menu — evita voltar ao Search.
- * @returns {Promise<string|null>}
- */
-export async function captureProfileUrl(serial, outDir, opts = {}) {
-  const engine = opts.engine || OCR_ENGINE;
-  console.log("   ⋯ → Share via → Copy…");
+const COPY_QUERIES = [
+  "Copy",
+  "Copy link",
+  "Copy to clipboard",
+  "Copy Link",
+];
 
-  const opened = await tapProfileMoreButton(serial, { engine });
-  if (!opened) {
-    console.log("   ⋯ não abriu menu — permanece no perfil");
-    try {
-      await captureFrame(serial, {
-        outPath: join(outDir, "more-menu-fail.png"),
-      });
-    } catch {
-      /* ignore */
-    }
-    return null;
+/** Abre Share via a partir do menu More (ou reabre se sheet fechou). */
+async function openShareViaSheet(serial, engine) {
+  if (!(await moreMenuOpen(serial, { engine }))) {
+    const opened = await tapProfileMoreButton(serial, { engine });
+    if (!opened) return null;
   }
 
   let shareVia = null;
   for (let attempt = 1; attempt <= 4; attempt++) {
-    shareVia = await findFirstByText(
-      serial,
-      [
-        "Share via..",
-        "Share via…",
-        "Share via",
-        "Share Via",
-        "Share profile via",
-      ],
-      { minScore: 0.58, engine },
-    );
+    shareVia = await findFirstByText(serial, SHARE_VIA_QUERIES, {
+      minScore: 0.58,
+      engine,
+    });
     if (shareVia) break;
     console.log(`   Share via não visível (${attempt}/4)`);
     await sleep(700);
   }
-  if (!shareVia) {
-    console.log("   Share via não encontrado — permanece no perfil (sem BACK)");
-    try {
-      await captureFrame(serial, {
-        outPath: join(outDir, "more-menu-fail.png"),
-      });
-    } catch {
-      /* ignore */
-    }
-    return null;
-  }
+  if (!shareVia) return null;
+
   console.log(
     `   → Share via "${shareVia.hit.text}" x=${shareVia.hit.x} y=${shareVia.hit.y}`,
   );
   tapElement({ serial, x: shareVia.hit.x, y: shareVia.hit.y });
   await sleep(1_800);
+  return shareVia;
+}
+
+/**
+ * ⋯ → Share via → Copy → URL só via clipboard (nunca OCR).
+ * Se clipboard vazio, clica Copy de novo até obter URL ou esgotar tentativas.
+ * Não dá BACK se falhar no menu — evita voltar ao Search.
+ * @returns {Promise<string|null>}
+ */
+export async function captureProfileUrl(serial, outDir, opts = {}) {
+  const engine = opts.engine || OCR_ENGINE;
+  const maxCopyAttempts = Math.max(
+    1,
+    Number(opts.copyAttempts || process.env.CAPTURE_URL_COPY_ATTEMPTS || 10) ||
+      10,
+  );
+  console.log("   ⋯ → Share via → Copy (só clipboard)…");
+
+  const shareVia = await openShareViaSheet(serial, engine);
+  if (!shareVia) {
+    console.log("   Share via / ⋯ falhou — permanece no perfil (sem BACK)");
+    try {
+      await captureFrame(serial, {
+        outPath: join(outDir, "more-menu-fail.png"),
+      });
+    } catch {
+      /* ignore */
+    }
+    return null;
+  }
 
   const sheetPng = join(outDir, "share-via-sheet.png");
-  let sheetEls = [];
   try {
-    sheetEls = await extractBySense(
+    const sheetEls = await extractBySense(
       { serial, engine },
       { outPath: sheetPng },
     );
@@ -190,36 +193,53 @@ export async function captureProfileUrl(serial, outDir, opts = {}) {
     console.log(`   share-via extract: ${e.message || e}`);
   }
 
-  let url = urlFromOcrEls(sheetEls);
-  if (url) console.log(`   URL (dump/OCR sheet): ${url}`);
+  let url = null;
+  for (let attempt = 1; attempt <= maxCopyAttempts; attempt++) {
+    if (!(await shareSheetOpen(serial, { engine }))) {
+      console.log(
+        `   sheet fechada (${attempt}/${maxCopyAttempts}) — reabre Share via`,
+      );
+      const again = await openShareViaSheet(serial, engine);
+      if (!again) {
+        console.log("   não reabriu Share via");
+        break;
+      }
+    }
 
-  const copyHit = await findFirstByText(
-    serial,
-    ["Copy", "Copy link", "Copy to clipboard", "Copy Link"],
-    { minScore: 0.65, engine },
-  );
-  if (!copyHit) {
-    console.log("   Copy não encontrado — usa OCR se houver; BACK no sheet");
-    key({ serial, code: "KEYCODE_BACK" });
-    await sleep(600);
-    return url;
-  }
-  console.log(
-    `   → Copy "${copyHit.hit.text}" x=${copyHit.hit.x} y=${copyHit.hit.y}`,
-  );
-  tapElement({ serial, x: copyHit.hit.x, y: copyHit.hit.y });
-  await sleep(1_000);
+    const copyHit = await findFirstByText(serial, COPY_QUERIES, {
+      minScore: 0.65,
+      engine,
+    });
+    if (!copyHit) {
+      console.log(`   Copy não encontrado (${attempt}/${maxCopyAttempts})`);
+      await sleep(700);
+      continue;
+    }
+    console.log(
+      `   → Copy "${copyHit.hit.text}" x=${copyHit.hit.x} y=${copyHit.hit.y} (${attempt}/${maxCopyAttempts})`,
+    );
+    tapElement({ serial, x: copyHit.hit.x, y: copyHit.hit.y });
+    await sleep(1_000);
 
-  let clip = readDeviceClipboard(serial);
-  if (!clip) {
-    await sleep(800);
-    clip = readDeviceClipboard(serial);
+    let clip = readDeviceClipboard(serial);
+    if (!clip) {
+      await sleep(800);
+      clip = readDeviceClipboard(serial);
+    }
+    if (clip) {
+      console.log(`   URL (clipboard): ${clip}`);
+      url = clip;
+      break;
+    }
+    console.log(
+      `   clipboard sem linkedin.com/in/… (${attempt}/${maxCopyAttempts}) — Copy de novo`,
+    );
   }
-  if (clip) {
-    console.log(`   URL (clipboard): ${clip}`);
-    url = clip;
-  } else if (!url) {
-    console.log("   clipboard sem linkedin.com/in/…");
+
+  if (!url) {
+    console.log(
+      `   falhou: clipboard sem URL após ${maxCopyAttempts}× Copy (sem OCR)`,
+    );
   }
 
   // Fecha sheet só se ainda estiver aberta — BACK cego sai do perfil.

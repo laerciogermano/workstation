@@ -166,6 +166,8 @@ Script [`scripts/login-extract-profile-detail.js`](scripts/login-extract-profile
 
 **Antes → depois (conexão no extract):** só `POST /profile-details` → após o cartão, se `inviteStatus` = `pending`|`connected`, upsert `POST /client-connections-linkedin` (status 1|2); se `connect`/ausente, **não** cria conexão (só perfil). Mesmo fluxo em busca (`login-extract-profiles`) e URL (`login-extract-profile-detail`). Rollback: remover `syncConnectionFromInviteStatus` dos scripts.
 
+**Antes → depois (URL clipboard):** Share sheet OCR + clipboard → **só clipboard** após Copy; se vazio, re-tap Copy até `CAPTURE_URL_COPY_ATTEMPTS` (default **10**); sheet fechada → reabre Share via. Rollback: voltar a `urlFromOcrEls` como fallback em `captureProfileUrl`.
+
 **Antes → depois (ordem mídia):** crop depois do Share (avatar coberto pelo sheet) → crop **antes** da URL, a partir do `card-00.png`. Rollback: mover o bloco `cropProfilePhotoAndCover` para depois de `captureProfileUrl`.
 
 **Antes → depois (mídia):** só texto/URL → crop avatar+capa+card + `rawOcr` do card via [`lib/linkedin-profile-photo-crop.js`](lib/linkedin-profile-photo-crop.js). Rollback: remova o crop/`rawOcr` do POST.
@@ -208,7 +210,7 @@ npm run login-extract-profiles -- -n 10 --query "tech recruiter"
 
 **Antes → depois (query):** termo fixo `comprador` → `--query` / API `?q=`. **Rollback:** omita o flag (volta ao default).
 
-Script [`scripts/login-extract-profiles.js`](scripts/login-extract-profiles.js) — **sem IA**, **sem People**. Após See all: **abre cada card**, 1ª tela + lista via **`--sense dump|ocr`** (default dump; sem misturar) + URL (`⋯` → Share via → Copy via [`lib/linkedin-capture-profile-url.js`](lib/linkedin-capture-profile-url.js)), `KEYCODE_BACK`, próximo — até `-n` ou fim do scroll. Cliques via `findByText` no mesmo sense / coords do nome no card:
+Script [`scripts/login-extract-profiles.js`](scripts/login-extract-profiles.js) — **sem IA**, **sem People**. Após See all: **abre cada card**, 1ª tela + lista via **`--sense dump|ocr`** (default dump; sem misturar) + URL (`⋯` → Share via → Copy → **clipboard only**, retry Copy; [`lib/linkedin-capture-profile-url.js`](lib/linkedin-capture-profile-url.js)), `KEYCODE_BACK`, próximo — até `-n` ou fim do scroll. Cliques via `findByText` no mesmo sense / coords do nome no card:
 
 | Alvo | query OCR |
 |------|-----------|

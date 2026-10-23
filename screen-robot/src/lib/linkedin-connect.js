@@ -235,15 +235,62 @@ async function shot(serial, outDir, name) {
 }
 
 /**
- * Notifica a API que o convite foi feito (Pending confirmado).
+ * Mapeia `inviteStatus` do cartão (parseProfileHeader) → status da conexão.
+ * `connect` / ausente → null (só sobe perfil; não cria/atualiza conexão).
+ * @param {string|null|undefined} inviteStatus
+ * @returns {0|1|2|null}
+ */
+export function connectionStatusFromInviteStatus(inviteStatus) {
+  const s = String(inviteStatus || "")
+    .toLowerCase()
+    .trim();
+  if (s === "pending") return CONNECTION_STATUS.PENDING;
+  if (s === "connected") return CONNECTION_STATUS.CONNECTED;
+  return null;
+}
+
+/**
+ * Após extrair perfil: se Pending/Connected no cartão → upsert conexão;
+ * se Connect (não conectado) → não toca conexão.
  * POST {base}/client-connections-linkedin
- * body: { profileUrl, agentId, status: 1, invitedAt, steps }
+ */
+export async function syncConnectionFromInviteStatus({
+  profileUrl,
+  inviteStatus,
+  peerName = null,
+  steps = ["extract-profile"],
+  agentId = resolveAgentId(),
+  baseUrl = invitesApiBase(),
+} = {}) {
+  const status = connectionStatusFromInviteStatus(inviteStatus);
+  if (status == null) {
+    return {
+      notified: false,
+      reason: "inviteStatus sem conexão (connect/ausente)",
+      inviteStatus: inviteStatus ?? null,
+    };
+  }
+  return notifyInviteSent({
+    profileUrl,
+    peerName,
+    steps,
+    agentId,
+    status,
+    baseUrl,
+  });
+}
+
+/**
+ * Upsert em `client_connection_linkedin`.
+ * POST {base}/client-connections-linkedin
+ * body: { profileUrl, agentId, status, invitedAt?, connectedAt?, peerName?, steps }
  */
 export async function notifyInviteSent({
   profileUrl,
   steps = [],
   agentId = resolveAgentId(),
   status = CONNECTION_STATUS.PENDING,
+  peerName = null,
   baseUrl = invitesApiBase(),
 } = {}) {
   const base = String(baseUrl || "").replace(/\/$/, "");
@@ -255,9 +302,15 @@ export async function notifyInviteSent({
     profileUrl,
     agentId: String(agentId || "default").trim() || "default",
     status,
-    invitedAt: new Date().toISOString(),
     steps,
   };
+  if (peerName) body.peerName = String(peerName).trim();
+  if (status === CONNECTION_STATUS.PENDING) {
+    body.invitedAt = new Date().toISOString();
+  }
+  if (status === CONNECTION_STATUS.CONNECTED) {
+    body.connectedAt = new Date().toISOString();
+  }
   const res = await fetch(url, {
     method: "POST",
     headers: { "content-type": "application/json" },
@@ -275,7 +328,7 @@ export async function notifyInviteSent({
   } catch {
     data = { raw: text };
   }
-  return { notified: true, url, data };
+  return { notified: true, url, data, status };
 }
 
 /**

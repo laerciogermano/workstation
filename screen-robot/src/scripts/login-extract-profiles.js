@@ -3,8 +3,9 @@
  * LinkedIn: stop apps → launch → waitForText(Search) → tap → colar "comprador" →
  * See all → por card: se já há conexão (score nome/cargo/cidade/empresa) → skip;
  * senão tap → dump|ocr (SCREEN_ROBOT_SENSE / --sense) 1ª tela + URL → só então salva/POST
- * (lista nunca grava sozinha; sem profileUrl → skip save); se URL já na base → skip save;
- * BACK → próximo até `-n`. Não usa botão Connect/Pending da UI.
+ * (lista nunca grava sozinha; sem profileUrl → skip save); se URL já na base → skip save
+ * (ainda sync conexão se Pending/Connected no cartão); BACK → próximo até `-n`.
+ * Cartão: Connect → só perfil; Pending/Connected → upsert client-connections-linkedin.
  *
  * Uso (cwd: screen-robot/src):
  *   npm run login-extract-profiles
@@ -33,6 +34,7 @@ import {
   captureProfileUrl,
   leaveProfile,
 } from "../lib/linkedin-capture-profile-url.js";
+import { syncConnectionFromInviteStatus } from "../lib/linkedin-connect.js";
 import {
   PEOPLE_CARD_ACTIONS,
   profilesFromExtract,
@@ -403,6 +405,29 @@ async function defaultOnProfile(profile, ctx) {
         } catch (e) {
           console.error(`   ⚠ POST profile-details falhou (continua): ${e.message}`);
         }
+        try {
+          const sync = await syncConnectionFromInviteStatus({
+            profileUrl: profile.profileUrl,
+            inviteStatus:
+              profile.header?.inviteStatus || profile.inviteStatus || null,
+            peerName: profile.header?.name || profile.name || null,
+            steps: ["login-extract-profiles"],
+            baseUrl: PROFILES_API_URL,
+          });
+          if (sync.notified) {
+            console.log(
+              `   → POST client-connections-linkedin status=${sync.status} (${profile.header?.inviteStatus || profile.inviteStatus})`,
+            );
+          } else {
+            console.log(
+              `   → conexão: skip (${sync.reason || "n/a"}; inviteStatus=${profile.header?.inviteStatus || profile.inviteStatus || "-"})`,
+            );
+          }
+        } catch (e) {
+          console.error(
+            `   ⚠ POST client-connections-linkedin falhou (continua): ${e.message}`,
+          );
+        }
       }
     } catch (e) {
       // JSON local já gravado; não abortar o scroll por falha pontual da API
@@ -766,6 +791,27 @@ async function extractProfilesLoop(serial, outDir, opts = {}) {
           console.log(
             `   skip save (profileUrl já 1:1 na base): ${pageData.profileUrl} → profileId=${urlHit.profileId || "-"}`,
           );
+          // Mesmo sem novo POST de perfil: Pending/Connected → upsert conexão
+          if (PROFILES_API_URL && pageData.profileUrl) {
+            try {
+              const sync = await syncConnectionFromInviteStatus({
+                profileUrl: pageData.profileUrl,
+                inviteStatus: pageData.header?.inviteStatus || null,
+                peerName: pageData.header?.name || p.name || null,
+                steps: ["login-extract-profiles", "skip-save-url-exists"],
+                baseUrl: PROFILES_API_URL,
+              });
+              if (sync.notified) {
+                console.log(
+                  `   → POST client-connections-linkedin status=${sync.status} (${pageData.header?.inviteStatus})`,
+                );
+              }
+            } catch (e) {
+              console.error(
+                `   ⚠ POST client-connections-linkedin falhou (continua): ${e.message}`,
+              );
+            }
+          }
           contentStable = 0;
           frameStable = 0;
           prevContentFp = null;

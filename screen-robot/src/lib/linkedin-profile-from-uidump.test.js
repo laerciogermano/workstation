@@ -39,4 +39,33 @@ describe("linkedin-profile-from-uidump", () => {
     assert.equal(header.canConnect, true);
     assert.equal(header.inviteStatus, "connect");
   });
+
+  it("inviteStatus pending quando botão Pending", () => {
+    const xml = SAMPLE.replace(
+      'content-desc="Connect"',
+      'content-desc="Pending"',
+    );
+    const { header } = parseProfileHeaderFromUiXml(xml, {
+      nameHint: "Rafaela Ferreira",
+    });
+    assert.equal(header.inviteStatus, "pending");
+    assert.equal(header.canConnect, false);
+  });
+
+  it("inviteStatus connected quando Message sem Connect (1st)", () => {
+    const xml = `
+<hierarchy>
+  <node text="Ana Silva" resource-id="com.linkedin.android:id/profile_top_card_name" bounds="[24,220][400,260]" />
+  <node text="• 1st" bounds="[410,220][480,260]" />
+  <node text="Buyer" bounds="[24,270][500,300]" />
+  <node content-desc="Message" clickable="true" bounds="[40,430][200,490]" />
+</hierarchy>
+`;
+    const { header } = parseProfileHeaderFromUiXml(xml, {
+      nameHint: "Ana Silva",
+    });
+    assert.equal(header.inviteStatus, "connected");
+    assert.equal(header.canConnect, false);
+    assert.equal(header.canMessage, true);
+  });
 });

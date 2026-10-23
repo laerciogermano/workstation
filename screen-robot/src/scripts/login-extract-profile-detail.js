@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 /**
  * 1 perfil da API → Search (ou deep link) → cartão dump|ocr (--sense)
- * → crop avatar → POST /profile-details. Com --url, não captura Share/Copy (URL já conhecida).
+ * → crop avatar → POST /profile-details → se Pending/Connected, upsert conexão
+ * (Connect → só perfil). Com --url, não captura Share/Copy (URL já conhecida).
  *
  * Uso (cwd: screen-robot/src):
  *   PROFILES_API_URL=http://localhost:3000 npm run login-extract-profile-detail -- --id <uuid>
@@ -27,7 +28,10 @@ import {
 import { captureFrame } from "../lib/frame.js";
 import { booleanQueryForProfile } from "../lib/linkedin-boolean-query.js";
 import { captureProfileUrl } from "../lib/linkedin-capture-profile-url.js";
-import { normalizeLinkedInProfileUrl } from "../lib/linkedin-connect.js";
+import {
+  normalizeLinkedInProfileUrl,
+  syncConnectionFromInviteStatus,
+} from "../lib/linkedin-connect.js";
 import { profilesFromExtract } from "../lib/linkedin-list-profiles.js";
 import { parseProfileHeaderFromUiXml } from "../lib/linkedin-profile-from-uidump.js";
 import { cropProfilePhotoAndCover } from "../lib/linkedin-profile-photo-crop.js";
@@ -899,6 +903,31 @@ async function main() {
   console.log(
     `   OK id=${saved.id} profileId=${saved.profileId} name=${saved.name || "-"} headline=${saved.headline || "-"} status=${saved.inviteStatus || "-"} msg=${saved.canMessage} photo=${saved.photoBase64 ? "sim" : "não"}`,
   );
+
+  console.log("9) Sync conexão (Pending/Connected → upsert; Connect → só perfil)…");
+  try {
+    const sync = await syncConnectionFromInviteStatus({
+      profileUrl,
+      inviteStatus: header.inviteStatus || null,
+      peerName: header.name || openedName || null,
+      steps: ["login-extract-profile-detail"],
+      baseUrl: PROFILES_API_URL,
+    });
+    if (sync.notified) {
+      console.log(
+        `   → POST client-connections-linkedin status=${sync.status} (${header.inviteStatus})`,
+      );
+    } else {
+      console.log(
+        `   → conexão: skip (${sync.reason || "n/a"}; inviteStatus=${header.inviteStatus || "-"})`,
+      );
+    }
+  } catch (e) {
+    console.error(
+      `   ⚠ POST client-connections-linkedin falhou (continua): ${e.message || e}`,
+    );
+  }
+
   console.log("OK — cartão persistido — encerrando processo");
   process.exit(0);
 }

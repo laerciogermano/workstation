@@ -2,15 +2,41 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
 import {
+  CONNECTION_STATUS,
+  connectionStatusFromInviteStatus,
   findExactConnect,
   findMoreOverflow,
   findSkip,
   hasFollow,
   hasPending,
   normalizeLinkedInProfileUrl,
+  syncConnectionFromInviteStatus,
 } from "./linkedin-connect.js";
 
 describe("linkedin-connect helpers", () => {
+  it("connectionStatusFromInviteStatus", () => {
+    assert.equal(
+      connectionStatusFromInviteStatus("pending"),
+      CONNECTION_STATUS.PENDING,
+    );
+    assert.equal(
+      connectionStatusFromInviteStatus("connected"),
+      CONNECTION_STATUS.CONNECTED,
+    );
+    assert.equal(connectionStatusFromInviteStatus("connect"), null);
+    assert.equal(connectionStatusFromInviteStatus(null), null);
+  });
+
+  it("syncConnectionFromInviteStatus skip quando Connect", async () => {
+    const out = await syncConnectionFromInviteStatus({
+      profileUrl: "https://www.linkedin.com/in/ana",
+      inviteStatus: "connect",
+      baseUrl: "http://127.0.0.1:9",
+    });
+    assert.equal(out.notified, false);
+    assert.match(String(out.reason), /sem conexão/i);
+  });
+
   it("normalizeLinkedInProfileUrl", () => {
     assert.equal(
       normalizeLinkedInProfileUrl(

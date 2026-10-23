@@ -162,6 +162,8 @@ Script [`scripts/login-extract-profile-detail.js`](scripts/login-extract-profile
 
 **Antes → depois (by-url / cartão):** sempre Share/Copy URL + nome frágil → com URL conhecida skip Share; parser preenche headline/empresa/`inviteStatus`. Rollback: forçar `captureProfileUrl`; parser antigo sem `inviteStatus`.
 
+**Antes → depois (conexão no extract):** só `POST /profile-details` → após o cartão, se `inviteStatus` = `pending`|`connected`, upsert `POST /client-connections-linkedin` (status 1|2); se `connect`/ausente, **não** cria conexão (só perfil). Mesmo fluxo em busca (`login-extract-profiles`) e URL (`login-extract-profile-detail`). Rollback: remover `syncConnectionFromInviteStatus` dos scripts.
+
 **Antes → depois (ordem mídia):** crop depois do Share (avatar coberto pelo sheet) → crop **antes** da URL, a partir do `card-00.png`. Rollback: mover o bloco `cropProfilePhotoAndCover` para depois de `captureProfileUrl`.
 
 **Antes → depois (mídia):** só texto/URL → crop avatar+capa+card + `rawOcr` do card via [`lib/linkedin-profile-photo-crop.js`](lib/linkedin-profile-photo-crop.js). Rollback: remova o crop/`rawOcr` do POST.
@@ -239,7 +241,7 @@ Script [`scripts/login-extract-profiles.js`](scripts/login-extract-profiles.js) 
 
 **Antes → depois (fim do scroll):** só SHA1 do frame 3× (falhava com UI animada e o processo não parava) → conteúdo OCR estável sem novos + frame, 2×, e exit explícito. Rollback: só `frameHash` com `SCROLL_END_STABLE_NEEDED = 3` e sem `process.exit(0)`.
 3. Callback / `profiles.json`: lista + `profileUrl`, `headline`, `company`, `connections`, `inviteStatus`, `canConnect`, `canMessage`
-4. A cada perfil: crop lista (`profile-NNN-list-*`) + page (`profile-NNN-page.png`) → `POST /profiles`; se API devolve `id` e há URL → `POST /profile-details`. Regrava `profiles.json`, `profile-NNN.json`, `list-round-NNN.json`, `round-NNN.png`.
+4. A cada perfil: crop lista (`profile-NNN-list-*`) + page (`profile-NNN-page.png`) → `POST /profiles`; se API devolve `id` e há URL → `POST /profile-details` → se cartão `pending`/`connected` → `POST /client-connections-linkedin` (1|2); se botão `Connect`, só perfil. Regrava `profiles.json`, `profile-NNN.json`, `list-round-NNN.json`, `round-NNN.png`.
 
 **Antes → depois (prints):** `captureFrame` só em `/tmp` → também em `<stamp>/round-*.png` e `frame-*.png` via `outPath`. Rollback: chamar `extract`/`frameHash` sem `outPath`.
 5. Se `PROFILES_API_URL` estiver definida (ex. `http://localhost:3000`), cada perfil também é enviado em `POST /profiles` (+ detail quando possível) para [`connectmax/vendas/api`](../../connectmax/vendas/api/README.md). Sem a env, só JSON local. Falha pontual do POST **não** aborta o loop. Rollback: só `POST /profiles` sem detail.

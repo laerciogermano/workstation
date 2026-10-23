@@ -377,6 +377,14 @@ export function parseProfileHeader(els, opts = {}) {
   if (!inviteStatus && canMessage && !canConnect) {
     inviteStatus = "connected";
   }
+  // 1st sem Connect/Pending na UI = já conectado
+  if (
+    !inviteStatus &&
+    !canConnect &&
+    /^1st$/i.test(String(connectionDegree || ""))
+  ) {
+    inviteStatus = "connected";
+  }
   if (inviteStatus === "pending") canConnect = false;
 
   return {

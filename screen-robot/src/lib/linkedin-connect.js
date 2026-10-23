@@ -298,11 +298,18 @@ export async function notifyLinkedInMessages(opts = {}) {
     body.time = opts.time ?? null;
     if (opts.occurredAt) body.occurredAt = opts.occurredAt;
   }
-  const res = await fetch(url, {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify(body),
-  });
+  let res;
+  try {
+    res = await fetch(url, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(body),
+    });
+  } catch (e) {
+    throw new Error(
+      `vendas/api inacessível (${url}) — confirme start:dev em :3000 (${String(e?.message || e).slice(0, 80)})`,
+    );
+  }
   const text = await res.text().catch(() => "");
   if (!res.ok) {
     throw new Error(

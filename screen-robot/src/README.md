@@ -150,9 +150,11 @@ cd screen-robot/src
 PROFILES_API_URL=http://localhost:3000 npm run login-extract-profile-detail -- --id <uuid>
 # opcional: deep link (pula busca):
 PROFILES_API_URL=http://localhost:3000 npm run login-extract-profile-detail -- --id <uuid> --from-profile --url 'https://www.linkedin.com/in/…'
+# via API (cria stub se URL nova + dispara o mesmo script):
+curl 'http://localhost:3000/extract/by-url/start?url=https://www.linkedin.com/in/…'
 ```
 
-Script [`scripts/login-extract-profile-detail.js`](scripts/login-extract-profile-detail.js) — digita (**nome + `searchQuery` + 1ª cidade**) → Show all → **1ª pessoa** → **print + OCR cartão** → **crop foto/capa/card (base64)** → **⋯** Share/Copy URL → **POST** `/profile-details` (upsert; API espelha avatar no card da lista). Sem scroll/Experience.
+Script [`scripts/login-extract-profile-detail.js`](scripts/login-extract-profile-detail.js) — digita (**nome + `searchQuery` + 1ª cidade**) → Show all → **1ª pessoa** → **print + OCR cartão** → **crop foto/capa/card (base64)** → **⋯** Share/Copy URL → **POST** `/profile-details` (upsert; API espelha avatar no card da lista). Sem scroll/Experience. API Nest: `GET /extract/by-url/start?url=` (deep link + upsert).
 
 **Antes → depois (ordem mídia):** crop depois do Share (avatar coberto pelo sheet) → crop **antes** da URL, a partir do `card-00.png`. Rollback: mover o bloco `cropProfilePhotoAndCover` para depois de `captureProfileUrl`.
 

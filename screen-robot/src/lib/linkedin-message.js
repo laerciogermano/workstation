@@ -14,6 +14,7 @@ import { join } from "node:path";
 import { adb, adbOk, sleep } from "./adb.js";
 import { dumpUiXml, extract } from "./extract.js";
 import {
+  assertConnectionAcceptedForSend,
   findMoreOverflow,
   normalizeLinkedInProfileUrl,
   notifyLinkedInMessages,
@@ -328,6 +329,11 @@ export async function sendLinkedInMessage(opts) {
   if (!normalizeLinkedInProfileUrl(opts.url)) {
     throw new Error(`URL inválida: ${opts.url}`);
   }
+
+  await assertConnectionAcceptedForSend({
+    profileUrl: opts.url,
+    agentId: resolveAgentId(),
+  });
 
   const steps = [];
   if (opts.outDir) mkdirSync(opts.outDir, { recursive: true });

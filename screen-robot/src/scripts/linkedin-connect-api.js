@@ -286,6 +286,9 @@ const server = createServer(async (req, res) => {
       return sendWithDb(res, result);
     } catch (e) {
       if (e?.code === "BUSY") return send(res, 409, { ok: false, error: e.message });
+      if (e?.code === "CONNECTION_NOT_ACCEPTED") {
+        return send(res, 403, { ok: false, error: e.message, code: e.code });
+      }
       return send(res, 500, { ok: false, error: String(e?.message || e) });
     }
   }

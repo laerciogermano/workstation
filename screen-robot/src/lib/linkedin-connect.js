@@ -65,6 +65,71 @@ export const CONNECTION_STATUS = Object.freeze({
   CONNECTED: 2,
 });
 
+/**
+ * Lê status da conexão agente↔perfil na vendas/api.
+ * @returns {Promise<{ status: number|null, row: object|null }>}
+ */
+export async function fetchConnectionStatus(opts = {}) {
+  const base = String(opts.baseUrl || invitesApiBase() || "").replace(/\/$/, "");
+  if (!base) {
+    throw new Error("INVITES_API_URL/PROFILES_API_URL ausente");
+  }
+  const profileUrl =
+    normalizeLinkedInProfileUrl(opts.profileUrl || opts.url || "") ||
+    String(opts.profileUrl || opts.url || "").trim();
+  if (!profileUrl) throw new Error("profileUrl obrigatório");
+  const agentId =
+    String(opts.agentId || resolveAgentId() || "default").trim() || "default";
+  const q = new URLSearchParams({
+    profileUrl,
+    agentId,
+    limit: "1",
+  });
+  const url = `${base}/client-connections-linkedin?${q}`;
+  let res;
+  try {
+    res = await fetch(url);
+  } catch (e) {
+    throw new Error(
+      `vendas/api inacessível (${url}) — ${String(e?.message || e).slice(0, 80)}`,
+    );
+  }
+  const text = await res.text().catch(() => "");
+  if (!res.ok) {
+    throw new Error(
+      `GET conexão → ${res.status} ${res.statusText}${text ? `: ${text.slice(0, 160)}` : ""}`,
+    );
+  }
+  let data = null;
+  try {
+    data = text ? JSON.parse(text) : null;
+  } catch {
+    data = null;
+  }
+  const row = Array.isArray(data?.data) ? data.data[0] : null;
+  return {
+    status: row?.status == null ? null : Number(row.status),
+    row: row ?? null,
+  };
+}
+
+/**
+ * Envio de mensagem só com conexão aceita (`status === 2`).
+ * @throws {{ code: "CONNECTION_NOT_ACCEPTED" }}
+ */
+export async function assertConnectionAcceptedForSend(opts = {}) {
+  const { status } = await fetchConnectionStatus(opts);
+  if (status !== CONNECTION_STATUS.CONNECTED) {
+    const err = new Error(
+      status == null
+        ? "conexão não encontrada; só é possível enviar mensagem após aceite (status conectado)"
+        : `conexão ainda não aceita (status=${status}); só envia com status conectado (2)`,
+    );
+    err.code = "CONNECTION_NOT_ACCEPTED";
+    throw err;
+  }
+}
+
 
 /** Canonicaliza URL do perfil (tira utm_* / query). */
 export function normalizeLinkedInProfileUrl(raw) {

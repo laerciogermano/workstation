@@ -55,10 +55,10 @@ describe("linkedin-profile-messages", () => {
     assert.equal(m.length, 3);
     assert.equal(m[0].message, "old");
     assert.equal(m[2].message, "new");
-    assert.equal(messageKey(m[0]), "old");
+    assert.equal(messageKey(m[0]), "me|old");
   });
 
-  it("dedupeMessagesForDb colapsa acento/unknown", () => {
+  it("dedupeMessagesForDb colapsa acento/unknown e mantém oi me≠peer", () => {
     assert.equal(
       normalizeMessageBody("Bom dia Laércio"),
       normalizeMessageBody("Bom dia Laercio"),
@@ -76,9 +76,11 @@ describe("linkedin-profile-messages", () => {
         time: "8:45 AM",
         from: "me",
       },
+      { sender: "Matheus", message: "oi", time: "8:47 AM", from: "me" },
+      { sender: "Laércio", message: "oi", time: null, from: "peer" },
     ]);
-    assert.equal(out.length, 1);
-    assert.equal(out[0].from, "me");
-    assert.match(out[0].message, /Laércio/);
+    // unknown fica com key x|…; me/peer "oi" separados
+    assert.equal(out.filter((m) => m.from === "me" || m.from === "peer").length, 3);
+    assert.equal(out.filter((m) => m.message === "oi").length, 2);
   });
 });

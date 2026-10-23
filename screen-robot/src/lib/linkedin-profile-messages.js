@@ -184,10 +184,11 @@ export function normalizeMessageBody(message) {
     .trim();
 }
 
-/** @param {{ sender: string, message: string, time: string|null }} m */
+/** @param {{ sender: string, message: string, time: string|null, from?: string }} m */
 export function messageKey(m) {
-  // identidade = corpo normalizado (time/from oscilam no OCR e geravam duplicata)
-  return normalizeMessageBody(m.message).slice(0, 200);
+  // from+corpo: "oi" meu ≠ "oi" do peer
+  const from = m.from === "me" || m.from === "peer" ? m.from : "x";
+  return `${from}|${normalizeMessageBody(m.message).slice(0, 200)}`;
 }
 
 function rankMsg(m) {
@@ -198,12 +199,12 @@ function rankMsg(m) {
   return s;
 }
 
-/** Antes do POST: 1 linha por texto; preferir me/peer + sender + time. */
+/** Antes do POST: 1 bolha por (from+texto); preferir sender/time. */
 export function dedupeMessagesForDb(messages) {
   const map = new Map();
   for (const m of messages || []) {
     const key = messageKey(m);
-    if (!key) continue;
+    if (!key || key.endsWith("|")) continue;
     const prev = map.get(key);
     if (!prev || rankMsg(m) >= rankMsg(prev)) map.set(key, m);
   }

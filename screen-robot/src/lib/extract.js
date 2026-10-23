@@ -48,10 +48,17 @@ export function dumpUiXml(serial, deps = {}) {
   } catch {
     /* ignore */
   }
-  const dump = runAdb(serial, ["shell", "uiautomator", "dump", REMOTE_DUMP]);
-  if (dump?.code && dump.code !== 0) return "";
-  const r = runAdb(serial, ["shell", "cat", REMOTE_DUMP]);
-  return r.stdout || "";
+  try {
+    runAdb(serial, ["shell", "uiautomator", "dump", REMOTE_DUMP]);
+  } catch {
+    return "";
+  }
+  try {
+    const r = runAdb(serial, ["shell", "cat", REMOTE_DUMP]);
+    return r.stdout || "";
+  } catch {
+    return "";
+  }
 }
 
 /** Centro do bounds OCR → ponto de clique { x, y }. */

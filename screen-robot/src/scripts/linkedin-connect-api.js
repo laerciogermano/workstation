@@ -59,11 +59,23 @@ function readJson(req) {
   });
 }
 
-function send(res, status, body) {
+function corsHeaders(req) {
+  const origin = String(req?.headers?.origin || "*");
+  return {
+    "access-control-allow-origin": origin || "*",
+    "access-control-allow-methods": "GET,POST,OPTIONS",
+    "access-control-allow-headers": "content-type",
+    "access-control-allow-credentials": "true",
+    vary: "Origin",
+  };
+}
+
+function send(res, status, body, req = null) {
   const data = JSON.stringify(body);
   res.writeHead(status, {
     "content-type": "application/json; charset=utf-8",
     "content-length": Buffer.byteLength(data),
+    ...corsHeaders(req),
   });
   res.end(data);
 }
@@ -83,18 +95,38 @@ async function withDevice(fn) {
 }
 
 /** LinkedIn ok mas base não gravou → 502. */
-function sendWithDb(res, result) {
+function sendWithDb(res, result, { kind = "client_linkedin_message" } = {}) {
   if (!result?.ok) return send(res, 502, result);
-  if (result.db && result.db.notified === false) {
+  const notify = result.db || result.notify;
+  if (notify && notify.notified === false) {
     return send(res, 502, {
       ...result,
-      error: result.db.reason || "falha ao persistir em client_linkedin_message",
+      error:
+        notify.error ||
+        notify.reason ||
+        `falha ao persistir em ${kind}`,
     });
   }
   if (result.steps?.some((s) => String(s).startsWith("db:error:"))) {
     return send(res, 502, {
       ...result,
-      error: "falha ao persistir em client_linkedin_message",
+      error: `falha ao persistir em ${kind}`,
+    });
+  }
+  if (
+    result.steps?.some((s) =>
+      String(s).startsWith("api:client-connections-linkedin:fail:"),
+    )
+  ) {
+    return send(res, 502, {
+      ...result,
+      error: "falha ao persistir em client_connection_linkedin",
+    });
+  }
+  if (result.steps?.some((s) => String(s).startsWith("api:mark-accepted:fail:"))) {
+    return send(res, 502, {
+      ...result,
+      error: "falha ao marcar aceitos em client_connection_linkedin",
     });
   }
   return send(res, 200, result);
@@ -173,7 +205,7 @@ const server = createServer(async (req, res) => {
           }),
         ),
       );
-      return send(res, result.ok ? 200 : 502, result);
+      return sendWithDb(res, result, { kind: "client_connection_linkedin" });
     } catch (e) {
       if (e?.code === "BUSY") return send(res, 409, { ok: false, error: e.message });
       return send(res, 500, { ok: false, error: String(e?.message || e) });
@@ -197,6 +229,7 @@ const server = createServer(async (req, res) => {
       return send(res, 400, { ok: false, error: "passe n entre 1 e 500" });
     }
     try {
+      const agentId = resolveAgentId(loadConfig());
       const result = await runExclusive(() =>
         withDevice(({ serial, linkedinPkg }) =>
           extractRecentConnections({
@@ -204,10 +237,11 @@ const server = createServer(async (req, res) => {
             linkedinPackage: linkedinPkg,
             n,
             outDir: null,
+            agentId,
           }),
         ),
       );
-      return send(res, result.ok ? 200 : 502, result);
+      return sendWithDb(res, result, { kind: "client_connection_linkedin" });
     } catch (e) {
       if (e?.code === "BUSY") return send(res, 409, { ok: false, error: e.message });
       return send(res, 500, { ok: false, error: String(e?.message || e) });

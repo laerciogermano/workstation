@@ -22,12 +22,15 @@ const WAIT_PENDING_MS = Number(process.env.LINKEDIN_CONNECT_WAIT_PENDING_MS || 2
 const PENDING_TRIES = Number(process.env.LINKEDIN_CONNECT_PENDING_TRIES || 5);
 const MAX_ROUNDS = 10;
 
-/** Base da API (sem path). Default: mesma do extract. */
+/**
+ * Base da API de conexões (`client_connection_linkedin`).
+ * Default `http://127.0.0.1:3000` — connect/listagem sempre tentam persistir.
+ */
 export function invitesApiBase() {
   return (
     process.env.INVITES_API_URL ||
     process.env.PROFILES_API_URL ||
-    ""
+    "http://127.0.0.1:3000"
   ).replace(/\/$/, "");
 }
 
@@ -211,6 +214,55 @@ export async function notifyInviteSent({
 }
 
 /**
+ * Após listar N conexões recentes: promove pendentes → conectado (status 2).
+ * POST {base}/client-connections-linkedin/mark-accepted
+ * body: { agentId, connections: [{ name, title?, connectedOn? }] }
+ */
+export async function notifyRecentConnectionsAccepted({
+  connections = [],
+  agentId = resolveAgentId(),
+  baseUrl = invitesApiBase(),
+} = {}) {
+  const base = String(baseUrl || "").replace(/\/$/, "");
+  if (!base) {
+    return { notified: false, reason: "INVITES_API_URL/PROFILES_API_URL ausente" };
+  }
+  const list = (Array.isArray(connections) ? connections : [])
+    .map((c) => ({
+      name: String(c?.name || "").trim(),
+      title: c?.title ?? null,
+      connectedOn: c?.connectedOn ?? null,
+    }))
+    .filter((c) => c.name);
+  if (!list.length) {
+    return { notified: false, reason: "lista de conexões vazia" };
+  }
+  const url = `${base}/client-connections-linkedin/mark-accepted`;
+  const body = {
+    agentId: String(agentId || "default").trim() || "default",
+    connections: list,
+  };
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  const text = await res.text().catch(() => "");
+  if (!res.ok) {
+    throw new Error(
+      `POST ${url} → ${res.status} ${res.statusText}${text ? `: ${text.slice(0, 240)}` : ""}`,
+    );
+  }
+  let data = null;
+  try {
+    data = text ? JSON.parse(text) : null;
+  } catch {
+    data = { raw: text };
+  }
+  return { notified: true, url, data };
+}
+
+/**
  * Persiste mensagens em `client_linkedin_message` (vendas/api).
  * POST {base}/client-linkedin-messages
  *
@@ -316,17 +368,42 @@ export async function connectByLinkedInUrl(opts) {
     });
     const texts = els || [];
 
-    // Pending antes de Skip = já tinha convite
+    // Pending antes de Skip = já tinha convite — ainda sincroniza status 1
     if (hasPending(texts) && !skipped) {
       steps.push("already_pending");
       await shot(serial, opts.outDir, "99-already-pending.png");
       key({ serial, code: "KEYCODE_BACK" });
+
+      /** @type {{ notified: boolean, reason?: string, url?: string, data?: unknown, error?: string }} */
+      let notify = { notified: false, reason: "notify desligado" };
+      if (notifyApi && !dryRun) {
+        try {
+          notify = await notifyInviteSent({
+            profileUrl: url,
+            steps,
+            agentId,
+            status: CONNECTION_STATUS.PENDING,
+          });
+          steps.push(
+            notify.notified
+              ? "api:client-connections-linkedin:ok"
+              : `api:client-connections-linkedin:skip:${notify.reason}`,
+          );
+        } catch (e) {
+          notify = {
+            notified: false,
+            error: String(e?.message || e),
+          };
+          steps.push(`api:client-connections-linkedin:fail:${notify.error}`);
+        }
+      }
+
       return {
         ok: true,
         status: "already",
         url,
         steps,
-        notify: { notified: false, reason: "já estava Pending" },
+        notify,
       };
     }
 

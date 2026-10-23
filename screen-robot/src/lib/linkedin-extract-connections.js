@@ -8,6 +8,10 @@ import { join } from "node:path";
 import { sleep } from "./adb.js";
 import { extract, findByText } from "./extract.js";
 import {
+  notifyRecentConnectionsAccepted,
+  resolveAgentId,
+} from "./linkedin-connect.js";
+import {
   connectionsFromExtract,
   mergeConnections,
 } from "./linkedin-connections-list.js";
@@ -51,12 +55,16 @@ async function shot(serial, outDir, name) {
  *   linkedinPackage?: string,
  *   n: number,
  *   outDir?: string|null,
+ *   notifyApi?: boolean,
+ *   agentId?: string,
  * }} opts
  */
 export async function extractRecentConnections(opts) {
   const serial = opts.serial;
   const pkg = opts.linkedinPackage || "com.linkedin.android";
   const n = Math.max(1, Math.floor(Number(opts.n) || 1));
+  const notifyApi = opts.notifyApi !== false;
+  const agentId = opts.agentId || resolveAgentId();
   const steps = [];
 
   if (opts.outDir) mkdirSync(opts.outDir, { recursive: true });
@@ -151,6 +159,25 @@ export async function extractRecentConnections(opts) {
 
   await shot(serial, opts.outDir, "99-done.png");
 
+  /** @type {{ notified: boolean, reason?: string, url?: string, data?: unknown, error?: string }} */
+  let db = { notified: false, reason: "notify desligado" };
+  if (notifyApi && connections.length) {
+    try {
+      db = await notifyRecentConnectionsAccepted({
+        connections,
+        agentId,
+      });
+      steps.push(
+        db.notified
+          ? `api:mark-accepted:ok:${db.data?.updated?.length ?? 0}`
+          : `api:mark-accepted:skip:${db.reason}`,
+      );
+    } catch (e) {
+      db = { notified: false, error: String(e?.message || e) };
+      steps.push(`api:mark-accepted:fail:${db.error}`);
+    }
+  }
+
   return {
     ok: connections.length > 0,
     n,
@@ -158,5 +185,6 @@ export async function extractRecentConnections(opts) {
     connections,
     steps,
     truncated: connections.length < n,
+    db,
   };
 }

@@ -338,10 +338,11 @@ curl -s -X POST http://127.0.0.1:3099/connections -H 'content-type: application/
 ```
 
 Fluxo: Network → Manage my network → Connections → scroll/OCR até `n`.  
+Em sucesso → `POST …/client-connections-linkedin/mark-accepted` com os nomes; cruza com convites `status: 1` do agente e promove a `2` (conectado). Default API `:3000`. API robot → 502 se o POST falhar.  
 Lib: [`lib/linkedin-extract-connections.js`](lib/linkedin-extract-connections.js) · parser [`lib/linkedin-connections-list.js`](lib/linkedin-connections-list.js).
 
-**Antes → depois:** sem extract de Connections → endpoint `/connections` retorna JSON `{ connections: [...] }`.  
-**Rollback:** não chame `/connections`; remova os scripts `linkedin-extract-connections*`.
+**Antes → depois:** só JSON da lista → também marca aceitos na vendas/api.  
+**Rollback:** `notifyApi: false` / ignore `mark-accepted`; remova os scripts `linkedin-extract-connections*`.
 
 ---
 
@@ -366,10 +367,10 @@ Lib [`lib/linkedin-connect.js`](lib/linkedin-connect.js):
 2. Connect no header **ou** Follow → ⋮ → Connect no sheet
 3. Skip no dialog (nunca Add a note)
 4. **Sucesso só com Pending no OCR após Skip** — sem Pending → `ok: false`
-5. Sucesso → `POST {PROFILES_API_URL|INVITES_API_URL}/client-connections-linkedin` `{ profileUrl, agentId, status: 1 }` (`agentId` = `AGENT_ID` ou `provision.name`)
+5. Sucesso (ou já Pending) → sempre `POST …/client-connections-linkedin` `{ profileUrl, agentId, status: 1 }` (default API `:3000`; `agentId` = `AGENT_ID` ou `provision.name`). API robot → 502 se não gravar.
 
-**Antes → depois:** conexão só via lista People → deep link por URL + Pending obrigatório + callback `/client-connections-linkedin` (status int: `0` nao_enviado · `1` pendente · `2` conectado).  
-**Rollback:** não rode `linkedin-connect*`; ignore o POST na vendas/api (`DROP TABLE client_connection_linkedin` se necessário).
+**Antes → depois:** POST opcional → obrigatório (status 1); listagem de Connections marca status 2 via `mark-accepted`.  
+**Rollback:** `notifyApi: false` / ignore o POST; `DROP TABLE client_connection_linkedin` se necessário.
 
 ---
 

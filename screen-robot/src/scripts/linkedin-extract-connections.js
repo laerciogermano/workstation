@@ -9,6 +9,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { resolveAgentId } from "../lib/linkedin-connect.js";
 import { extractRecentConnections } from "../lib/linkedin-extract-connections.js";
 import { provisionEmulator } from "../lib/provision.js";
 
@@ -53,12 +54,13 @@ async function main() {
     : resolve(ROOT, "screenshots", "linkedin-extract-connections", stamp);
   if (outDir) mkdirSync(outDir, { recursive: true });
 
-  console.error(`serial=${serial} n=${n}`);
+  console.error(`serial=${serial} n=${n} agent=${resolveAgentId(cfg)}`);
   const result = await extractRecentConnections({
     serial,
     linkedinPackage: linkedinPkg,
     n,
     outDir,
+    agentId: resolveAgentId(cfg),
   });
   if (outDir) {
     writeFileSync(join(outDir, "connections.json"), JSON.stringify(result, null, 2));

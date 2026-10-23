@@ -19,6 +19,6 @@ Fluxo capturado no AVD (`emulator-5554`).
 3. Senão, se só `Follow` → tap ícone ⋮ (direita de Message, ~icon x=492 y=652) → tap `Connect` no sheet
 4. Se `Add a note` / `Skip` → tap `Skip` (nunca Add a note)
 5. **Sucesso só se `Pending` aparecer depois do Skip.** Sem Pending → falha.
-6. Em sucesso → `POST {PROFILES_API_URL}/invites` `{ profileUrl, status: "Pending" }`
+6. Em sucesso → `POST …/client-connections-linkedin` `{ profileUrl, agentId, status: 1 }`
 
 Proibido: tap `Message`, `Follow`, `Personalize invite`, `Add a note`.

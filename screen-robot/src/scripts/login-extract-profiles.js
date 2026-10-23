@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 /**
  * LinkedIn: stop apps → launch → waitForText(Search) → tap → colar "comprador" →
- * See all results → para cada card: tap → OCR 1ª tela + URL (⋯ Share/Copy) → BACK →
- * próximo, até `-n` / `--max-profiles` (default 500). Scroll quando a tela não tem novos.
+ * See all → por card: se já há conexão (score nome/cargo/cidade/empresa) → skip;
+ * senão tap → OCR 1ª tela + URL → se profileUrl já na base → skip save;
+ * BACK → próximo até `-n`. Não usa botão Connect/Pending da UI.
  *
  * Uso (cwd: screen-robot/src):
  *   npm run login-extract-profiles
@@ -260,6 +261,62 @@ async function postProfileDetailToApi(profile, profileId) {
   return res.json().catch(() => null);
 }
 
+/**
+ * Já existe conexão (qualquer agente) com score alto?
+ * Não olha Connect/Pending na tela — só CRM.
+ * @returns {Promise<{ matched: boolean, matchScore?: number, clienteNome?: string|null }>}
+ */
+async function matchConnectionInBase(listCard) {
+  if (!PROFILES_API_URL) return { matched: false };
+  const f = listCard.fields || {};
+  const params = new URLSearchParams();
+  params.set("name", String(listCard.name || "").trim());
+  if (f.title) params.set("title", String(f.title));
+  if (f.city) params.set("city", String(f.city));
+  if (f.current) params.set("current", String(f.current));
+  const url = `${PROFILES_API_URL}/client-connections-linkedin/match?${params}`;
+  try {
+    const res = await fetch(url);
+    if (!res.ok) {
+      console.log(`   ⚠ match conexões ${res.status} — segue sem skip`);
+      return { matched: false };
+    }
+    const body = await res.json();
+    return {
+      matched: Boolean(body?.matched),
+      matchScore: body?.matchScore,
+      clienteNome: body?.clienteNome ?? null,
+      agentId: body?.agentId ?? null,
+    };
+  } catch (e) {
+    console.log(`   ⚠ match conexões falhou — segue: ${e.message || e}`);
+    return { matched: false };
+  }
+}
+
+/** profileUrl já gravada em linkedin_profile_details? (1:1). */
+async function profileUrlAlreadyInBase(rawUrl) {
+  if (!PROFILES_API_URL || !rawUrl) return { exists: false };
+  const params = new URLSearchParams({ url: String(rawUrl) });
+  const url = `${PROFILES_API_URL}/profile-details/by-url?${params}`;
+  try {
+    const res = await fetch(url);
+    if (!res.ok) {
+      console.log(`   ⚠ by-url ${res.status} — trata como novo`);
+      return { exists: false };
+    }
+    const body = await res.json();
+    return {
+      exists: Boolean(body?.exists),
+      profileId: body?.profileId ?? null,
+      profileUrl: body?.profileUrl ?? null,
+    };
+  } catch (e) {
+    console.log(`   ⚠ by-url falhou — trata como novo: ${e.message || e}`);
+    return { exists: false };
+  }
+}
+
 function writeProfilesJson(outDir, rows) {
   const path = join(outDir, "profiles.json");
   writeFileSync(path, JSON.stringify(rows, null, 2), "utf8");
@@ -510,10 +567,22 @@ async function extractProfilesLoop(serial, outDir, opts = {}) {
       console.log(`   nomes: ${fresh.map((p) => p.name).join(" | ")}`);
     }
 
-    // Um perfil por rodada (topo → baixo): tap → page+URL → BACK → re-extract.
+    // Um perfil por rodada (topo → baixo): match base → tap → page+URL → BACK.
     if (fresh.length > 0) {
       const p = fresh[0];
       seen.add(p.key);
+
+      const connMatch = await matchConnectionInBase(p);
+      if (connMatch.matched) {
+        console.log(
+          `   skip (já na base conexões score=${Number(connMatch.matchScore || 0).toFixed(3)}): ${p.name}${connMatch.clienteNome ? ` ≈ ${connMatch.clienteNome}` : ""}${connMatch.agentId ? ` agent=${connMatch.agentId}` : ""}`,
+        );
+        contentStable = 0;
+        frameStable = 0;
+        prevContentFp = null;
+        continue;
+      }
+
       const index = saved.length + 1;
       const filePrefix = `profile-${String(index).padStart(3, "0")}`;
 
@@ -559,6 +628,19 @@ async function extractProfilesLoop(serial, outDir, opts = {}) {
           await leaveProfile(serial, { engine: OCR_ENGINE });
         } catch {
           /* ignore */
+        }
+      }
+
+      if (pageData.profileUrl) {
+        const urlHit = await profileUrlAlreadyInBase(pageData.profileUrl);
+        if (urlHit.exists) {
+          console.log(
+            `   skip save (profileUrl já 1:1 na base): ${pageData.profileUrl} → profileId=${urlHit.profileId || "-"}`,
+          );
+          contentStable = 0;
+          frameStable = 0;
+          prevContentFp = null;
+          continue;
         }
       }
 

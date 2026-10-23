@@ -204,9 +204,11 @@ Script [`scripts/login-extract-profiles.js`](scripts/login-extract-profiles.js) 
 | See/Show all | `See all results` / `Show all results` (fallback `See all` / `Show all`) |
 
 1. `stop` apps + `launch` → `waitForText("Search")` → tap → colar `comprador` (`pasteCleanMessage` / ADBKeyboard) → `waitForText(See/Show all)` (8s com teclado; se timeout → `KEYCODE_BACK` + wait 30s) → tap
-2. Loop: `extract` lista → **1º card novo** (menor `y`) → tap nome → OCR página (`parseProfileHeader`) + crop page → `captureProfileUrl` → `leaveProfile` (BACK) → `onProfile` → re-extract **sem scroll**. Sem novos → scroll curto (280 / 900ms). Para em `-n` / `--max-profiles` ou fim do scroll (conteúdo + frame estáveis `EXTRACT_SCROLL_STABLE`, default **4**).
+2. Loop: `extract` lista → **1º card novo** (menor `y`) → `GET /client-connections-linkedin/match` (score nome/cargo/cidade/empresa; **não** usa Connect/Pending da UI) → se matched, **skip** → senão tap → OCR + URL → `GET /profile-details/by-url` → se URL já 1:1 na base, **skip save** → senão `onProfile` → BACK → re-extract. Sem novos → scroll. Para em `-n` ou fim do scroll (`EXTRACT_SCROLL_STABLE`, default **4**). Exige `PROFILES_API_URL` para skip; sem API, abre todos.
 
-**Antes → depois (abrir perfil):** só OCR da lista + scroll, sem URL → abre cada card, grava `profileUrl` + header (headline/company/inviteStatus/…) e volta. Rollback: processar `fresh` só com crop de lista, sem `openProfileAndExtract`.
+**Antes → depois (abrir perfil):** só OCR da lista + scroll, sem URL → abre cada card, grava `profileUrl` + header e volta. Rollback: processar `fresh` só com crop de lista, sem `openProfileAndExtract`.
+
+**Antes → depois (dedupe):** abria/salvava mesmo com conexão ou URL já na base → skip por match de conexões + `profileUrl` único. Rollback: remover `matchConnectionInBase` / `profileUrlAlreadyInBase` do loop.
 
 **Antes → depois (busca comprador):** `type` / `adb shell input text` cortava a query (ex. só `ou`) → `pasteCleanMessage` (`ADB_INPUT_B64`). Rollback: `await type({ serial, text: "comprador" })`.
 

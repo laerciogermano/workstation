@@ -192,9 +192,11 @@ Saída: `screenshots/login-extract-profile-detail/<stamp>/` (`page-NN.png`, `det
 ```bash
 cd screen-robot/src
 npm run login-extract-profiles
+npm run login-extract-profiles -- -n 10   # para após 10 perfis
+# aliases: --max-profiles / --limit / -n
 ```
 
-Script [`scripts/login-extract-profiles.js`](scripts/login-extract-profiles.js) — **sem IA**, **sem People**, **sem abrir perfil**. Só `extract` + scroll. Cliques via `findByText` → `tapElement(x,y)` do hit (sem coords fixas):
+Script [`scripts/login-extract-profiles.js`](scripts/login-extract-profiles.js) — **sem IA**, **sem People**. Após See all: **abre cada card**, OCR da 1ª tela + URL (`⋯` → Share via → Copy via [`lib/linkedin-capture-profile-url.js`](lib/linkedin-capture-profile-url.js)), `KEYCODE_BACK`, próximo — até `-n` ou fim do scroll. Cliques via `findByText` / coords do nome no card:
 
 | Alvo | query OCR |
 |------|-----------|
@@ -202,16 +204,18 @@ Script [`scripts/login-extract-profiles.js`](scripts/login-extract-profiles.js) 
 | See/Show all | `See all results` / `Show all results` (fallback `See all` / `Show all`) |
 
 1. `stop` apps + `launch` → `waitForText("Search")` → tap → colar `comprador` (`pasteCleanMessage` / ADBKeyboard) → `waitForText(See/Show all)` (8s com teclado; se timeout → `KEYCODE_BACK` + wait 30s) → tap
-2. Loop: `extract` → cards no padrão → `onProfile` → scroll curto (280 / 900ms) até o **fim do scroll**: (a) sem cards novos + fingerprint OCR da lista igual 2×, ou (b) SHA1 do frame igual 2×. Ao terminar, `process.exit(0)`.
+2. Loop: `extract` lista → **1º card novo** (menor `y`) → tap nome → OCR página (`parseProfileHeader`) + crop page → `captureProfileUrl` → `leaveProfile` (BACK) → `onProfile` → re-extract **sem scroll**. Sem novos → scroll curto (280 / 900ms). Para em `-n` / `--max-profiles` ou fim do scroll (conteúdo + frame estáveis `EXTRACT_SCROLL_STABLE`, default **4**).
+
+**Antes → depois (abrir perfil):** só OCR da lista + scroll, sem URL → abre cada card, grava `profileUrl` + header (headline/company/inviteStatus/…) e volta. Rollback: processar `fresh` só com crop de lista, sem `openProfileAndExtract`.
 
 **Antes → depois (busca comprador):** `type` / `adb shell input text` cortava a query (ex. só `ou`) → `pasteCleanMessage` (`ADB_INPUT_B64`). Rollback: `await type({ serial, text: "comprador" })`.
 
 **Antes → depois (fim do scroll):** só SHA1 do frame 3× (falhava com UI animada e o processo não parava) → conteúdo OCR estável sem novos + frame, 2×, e exit explícito. Rollback: só `frameHash` com `SCROLL_END_STABLE_NEEDED = 3` e sem `process.exit(0)`.
-3. Callback: objeto `{ name, title, level, connection, city, mutualConnections, current, past }`
-4. A cada perfil novo: crop **avatar + card** (`profile-NNN-photo.png` / `profile-NNN-card.png`) + `rawOcr` → `POST /profiles` (`photoBase64`, `cardBase64`, `rawOcr`). Regrava `profiles.json`, `profile-NNN.json`, `list-round-NNN.json`, `round-NNN.png`. Rollback: remova crop/`rawOcr` do script e colunas na API.
+3. Callback / `profiles.json`: lista + `profileUrl`, `headline`, `company`, `connections`, `inviteStatus`, `canConnect`, `canMessage`
+4. A cada perfil: crop lista (`profile-NNN-list-*`) + page (`profile-NNN-page.png`) → `POST /profiles`; se API devolve `id` e há URL → `POST /profile-details`. Regrava `profiles.json`, `profile-NNN.json`, `list-round-NNN.json`, `round-NNN.png`.
 
 **Antes → depois (prints):** `captureFrame` só em `/tmp` → também em `<stamp>/round-*.png` e `frame-*.png` via `outPath`. Rollback: chamar `extract`/`frameHash` sem `outPath`.
-5. Se `PROFILES_API_URL` estiver definida (ex. `http://localhost:3000`), cada perfil também é enviado em `POST /profiles` para [`connectmax/vendas/api`](../../connectmax/vendas/api/README.md). Sem a env, só JSON local. Falha pontual do POST (ex. 413) **não** aborta o scroll — grava aviso e segue (JSON local já salvo). Rollback: `await postProfileToApi` sem try/catch em `defaultOnProfile`.
+5. Se `PROFILES_API_URL` estiver definida (ex. `http://localhost:3000`), cada perfil também é enviado em `POST /profiles` (+ detail quando possível) para [`connectmax/vendas/api`](../../connectmax/vendas/api/README.md). Sem a env, só JSON local. Falha pontual do POST **não** aborta o loop. Rollback: só `POST /profiles` sem detail.
 
 6. Fim do scroll: só encerra com **conteúdo e frame** estáveis `EXTRACT_SCROLL_STABLE` vezes (default **4**). Antes: 2× conteúdo **ou** 2× frame → parava cedo com `no padrão: 0` enquanto o OCR ainda tinha nomes (parser não montava card). Rollback: `SCROLL_END_STABLE_NEEDED = 2` e `break` separado por conteúdo/frame.
 

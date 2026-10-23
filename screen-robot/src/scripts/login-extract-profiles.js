@@ -1,11 +1,12 @@
 #!/usr/bin/env node
 /**
  * LinkedIn: stop apps → launch → waitForText(Search) → tap → colar "comprador" →
- * See all results → desce com `extract` por demanda até o fim do scroll.
- * Cada card no padrão dispara `onProfile(profile, ctx)`.
+ * See all results → para cada card: tap → OCR 1ª tela + URL (⋯ Share/Copy) → BACK →
+ * próximo, até `-n` / `--max-profiles` (default 500). Scroll quando a tela não tem novos.
  *
  * Uso (cwd: screen-robot/src):
  *   npm run login-extract-profiles
+ *   npm run login-extract-profiles -- -n 10
  */
 import { createHash } from "node:crypto";
 import {
@@ -20,8 +21,16 @@ import { fileURLToPath } from "node:url";
 import { sleep } from "../lib/adb.js";
 import { extract, findByText, waitForText } from "../lib/extract.js";
 import { captureFrame } from "../lib/frame.js";
+import {
+  captureProfileUrl,
+  leaveProfile,
+} from "../lib/linkedin-capture-profile-url.js";
 import { profilesFromExtract } from "../lib/linkedin-list-profiles.js";
-import { cropListProfilePhotoAndCard } from "../lib/linkedin-profile-photo-crop.js";
+import { parseProfileHeader } from "../lib/linkedin-profile-page.js";
+import {
+  cropListProfilePhotoAndCard,
+  cropProfilePhotoAndCover,
+} from "../lib/linkedin-profile-photo-crop.js";
 import { searchQueryFromCard } from "../lib/linkedin-search-query.js";
 import { pasteCleanMessage } from "../lib/linkedin-message.js";
 import { key, launch, scroll, stop, tapElement } from "../lib/operate.js";
@@ -36,6 +45,7 @@ const WAIT_TEXT_TIMEOUT_MS = 30_000;
 const WAIT_TEXT_INTERVAL_MS = 1_000;
 /** Primeira tentativa de See/Show all ainda com teclado aberto. */
 const WAIT_SEE_ALL_KEYBOARD_MS = 8_000;
+const WAIT_AFTER_PROFILE_MS = 3_000;
 const SCROLL_DELAY_MS = 900;
 const SCROLL_DISTANCE = 280;
 const SCROLL_BURST = 1;
@@ -118,32 +128,78 @@ function stopAllApps(serial, apps) {
 
 function profileRow(profile) {
   const f = profile.fields || {};
-  const title = f.title || null;
-  const current = f.current || null;
+  const h = profile.header || {};
+  const title = f.title || h.headline || null;
+  const current = f.current || h.company || null;
   const searchQuery =
     searchQueryFromCard({ title, current }) || null;
   return {
-    name: f.name || profile.name || null,
+    name: h.name || f.name || profile.name || null,
     title,
     searchQuery,
-    level: f.level || null,
+    level: h.connectionDegree || f.level || null,
     connection: f.connection || profile.action || null,
-    city: f.city || null,
-    mutualConnections: f.mutualConnections || null,
+    city: h.location || f.city || null,
+    mutualConnections:
+      h.mutualConnections || f.mutualConnections || null,
     current,
     past: f.past || null,
+    profileUrl: profile.profileUrl || null,
+    headline: h.headline || null,
+    company: h.company || null,
+    connections: h.connections || null,
+    inviteStatus: h.inviteStatus || null,
+    canConnect: h.canConnect ?? null,
+    canMessage: h.canMessage ?? null,
     photoBase64: profile.photoBase64 || null,
     cardBase64: profile.cardBase64 || null,
+    coverBase64: profile.coverBase64 || null,
     rawOcr: profile.rawOcr || null,
   };
 }
 
 /** Payload HTTP alinhado a POST /profiles (vendas/api). */
 function profileApiPayload(profile) {
+  const row = profileRow(profile);
   return {
-    ...profileRow(profile),
+    name: row.name,
+    title: row.title,
+    searchQuery: row.searchQuery,
+    level: row.level,
+    connection: row.connection,
+    city: row.city,
+    mutualConnections: row.mutualConnections,
+    current: row.current,
+    past: row.past,
+    photoBase64: row.photoBase64,
+    cardBase64: row.cardBase64,
+    rawOcr: row.rawOcr,
     extractedAt: profile.extractedAt || null,
     round: profile.round ?? null,
+  };
+}
+
+/** Payload POST /profile-details (precisa profileId da API). */
+function profileDetailApiPayload(profile, profileId) {
+  const h = profile.header || {};
+  return {
+    profileId,
+    name: h.name || profile.name || null,
+    headline: h.headline || null,
+    company: h.company || null,
+    location: h.location || null,
+    connections: h.connections || null,
+    mutualConnections: h.mutualConnections || null,
+    canConnect: h.canConnect ?? null,
+    canMessage: h.canMessage ?? null,
+    inviteStatus: h.inviteStatus || null,
+    profileUrl: profile.profileUrl || null,
+    connectionDegree: h.connectionDegree || null,
+    photoBase64: profile.photoBase64 || null,
+    coverBase64: profile.coverBase64 || null,
+    cardBase64: profile.cardBase64 || null,
+    rawOcr: profile.rawOcr || null,
+    extractedAt: profile.extractedAt || null,
   };
 }
 
@@ -159,6 +215,9 @@ function profileRowForJson(profile) {
     cardBase64: row.cardBase64
       ? `[base64 ${row.cardBase64.length} chars]`
       : null,
+    coverBase64: row.coverBase64
+      ? `[base64 ${row.coverBase64.length} chars]`
+      : null,
     rawOcr: Array.isArray(els)
       ? { elements: els.length }
       : row.rawOcr
@@ -168,7 +227,7 @@ function profileRowForJson(profile) {
 }
 
 async function postProfileToApi(profile) {
-  if (!PROFILES_API_URL) return;
+  if (!PROFILES_API_URL) return null;
   const url = `${PROFILES_API_URL}/profiles`;
   const res = await fetch(url, {
     method: "POST",
@@ -181,6 +240,24 @@ async function postProfileToApi(profile) {
       `POST ${url} → ${res.status} ${res.statusText}${body ? `: ${body.slice(0, 200)}` : ""}`,
     );
   }
+  return res.json().catch(() => null);
+}
+
+async function postProfileDetailToApi(profile, profileId) {
+  if (!PROFILES_API_URL || !profileId) return null;
+  const url = `${PROFILES_API_URL}/profile-details`;
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(profileDetailApiPayload(profile, profileId)),
+  });
+  if (!res.ok) {
+    const body = await res.text().catch(() => "");
+    throw new Error(
+      `POST ${url} → ${res.status} ${res.statusText}${body ? `: ${body.slice(0, 200)}` : ""}`,
+    );
+  }
+  return res.json().catch(() => null);
 }
 
 function writeProfilesJson(outDir, rows) {
@@ -206,14 +283,126 @@ async function defaultOnProfile(profile, ctx) {
   console.log(`   → ${path} (${rows.length})`);
   if (PROFILES_API_URL) {
     try {
-      await postProfileToApi(profile);
-      console.log(`   → POST ${PROFILES_API_URL}/profiles`);
+      const saved = await postProfileToApi(profile);
+      const profileId = saved?.id || null;
+      console.log(
+        `   → POST ${PROFILES_API_URL}/profiles${profileId ? ` id=${profileId}` : ""}`,
+      );
+      if (profileId && profile.profileUrl) {
+        try {
+          await postProfileDetailToApi(profile, profileId);
+          console.log(`   → POST ${PROFILES_API_URL}/profile-details`);
+        } catch (e) {
+          console.error(`   ⚠ POST profile-details falhou (continua): ${e.message}`);
+        }
+      }
     } catch (e) {
       // JSON local já gravado; não abortar o scroll por falha pontual da API
       console.error(`   ⚠ POST API falhou (continua): ${e.message}`);
     }
   }
   printProfileSummary(profile, count);
+}
+
+/**
+ * Abre o card da lista → OCR 1ª tela → URL → BACK para a lista.
+ * @returns {Promise<{ header: object, profileUrl: string|null, photoBase64: string|null, coverBase64: string|null, cardBase64: string|null, rawOcr: object|null }>}
+ */
+async function openProfileAndExtract(serial, listCard, outDir, filePrefix) {
+  const tapX = Number(listCard.x);
+  const tapY = Number(listCard.y);
+  if (!Number.isFinite(tapX) || !Number.isFinite(tapY)) {
+    throw new Error(`coords inválidas para tap: x=${listCard.x} y=${listCard.y}`);
+  }
+  console.log(
+    `   → abrir "${listCard.name}" x=${tapX} y=${tapY}`,
+  );
+  tapElement({ serial, x: tapX, y: tapY });
+  await sleep(WAIT_AFTER_PROFILE_MS);
+
+  const cardPng = join(outDir, `${filePrefix}-page.png`);
+  /** @type {object} */
+  let header = {
+    name: null,
+    headline: null,
+    company: null,
+    location: null,
+    connections: null,
+    mutualConnections: null,
+    connectionDegree: null,
+    canConnect: false,
+    canMessage: false,
+    inviteStatus: null,
+  };
+  /** @type {object[]|null} */
+  let cardEls = null;
+  try {
+    cardEls = await extract(
+      { serial, engine: OCR_ENGINE },
+      { outPath: cardPng },
+    );
+    writeFileSync(
+      join(outDir, `${filePrefix}-page.json`),
+      JSON.stringify(cardEls, null, 2),
+      "utf8",
+    );
+    header = parseProfileHeader(cardEls, { nameHint: listCard.name });
+    console.log(
+      `   page: name=${header.name || "-"} headline=${header.headline || "-"} company=${header.company || "-"} loc=${header.location || "-"} status=${header.inviteStatus || "-"}`,
+    );
+  } catch (e) {
+    console.log(`   page OCR: ${e.message || e}`);
+  }
+
+  /** @type {string|null} */
+  let photoBase64 = null;
+  /** @type {string|null} */
+  let coverBase64 = null;
+  /** @type {string|null} */
+  let cardBase64 = null;
+  if (existsSync(cardPng)) {
+    try {
+      const media = await cropProfilePhotoAndCover(cardPng, outDir);
+      photoBase64 = media.photoBase64;
+      coverBase64 = media.coverBase64;
+      cardBase64 = media.cardBase64;
+      console.log(
+        `   crop page: photo=${media.photoPath || "-"} cover=${media.coverPath || "-"}`,
+      );
+    } catch (e) {
+      console.log(`   crop page: ${e.message || e}`);
+    }
+  }
+
+  /** @type {string|null} */
+  let profileUrl = null;
+  try {
+    profileUrl = await captureProfileUrl(serial, outDir, {
+      engine: OCR_ENGINE,
+    });
+  } catch (e) {
+    console.log(`   URL: ${e.message || e}`);
+  }
+  if (profileUrl) {
+    console.log(`   URL: ${profileUrl}`);
+  } else {
+    console.log("   ⚠ URL linkedin.com/in/… não obtida");
+  }
+
+  const left = await leaveProfile(serial, { engine: OCR_ENGINE });
+  if (!left) {
+    console.log("   ⚠ leaveProfile: Search/lista não confirmada após BACK");
+  }
+  await sleep(800);
+
+  return {
+    header,
+    profileUrl,
+    photoBase64,
+    coverBase64,
+    cardBase64,
+    rawOcr: cardEls ? { elements: cardEls } : null,
+  };
 }
 
 async function frameHash(serial, outPath) {
@@ -289,7 +478,7 @@ async function extractProfilesLoop(serial, outDir, opts = {}) {
   for (let round = 1; round <= maxRounds && saved.length < maxProfiles; round++) {
     const roundPad = String(round).padStart(3, "0");
     const roundPng = join(outDir, `round-${roundPad}.png`);
-    console.log(`${round}) extract…`);
+    console.log(`${round}) extract lista… (${saved.length}/${maxProfiles})`);
     let els;
     for (let attempt = 1; attempt <= 3; attempt++) {
       try {
@@ -312,52 +501,85 @@ async function extractProfilesLoop(serial, outDir, opts = {}) {
     );
 
     const parsed = profilesFromExtract(els, { engine: OCR_ENGINE });
-    const fresh = parsed.filter((p) => !seen.has(p.key));
+    const fresh = parsed
+      .filter((p) => !seen.has(p.key))
+      .sort((a, b) => (a.y ?? 0) - (b.y ?? 0));
     const contentFp = contentFingerprint(els);
-    console.log(`   no padrão: ${fresh.length}`);
+    console.log(`   novos na tela: ${fresh.length}`);
     if (fresh.length) {
       console.log(`   nomes: ${fresh.map((p) => p.name).join(" | ")}`);
     }
 
-    for (const p of fresh) {
-      if (saved.length >= maxProfiles) break;
+    // Um perfil por rodada (topo → baixo): tap → page+URL → BACK → re-extract.
+    if (fresh.length > 0) {
+      const p = fresh[0];
       seen.add(p.key);
       const index = saved.length + 1;
       const filePrefix = `profile-${String(index).padStart(3, "0")}`;
+
       /** @type {string|null} */
-      let photoBase64 = null;
+      let listPhotoBase64 = null;
       /** @type {string|null} */
-      let cardBase64 = null;
+      let listCardBase64 = null;
       try {
         const media = await cropListProfilePhotoAndCard(
           roundPng,
           p,
           outDir,
-          filePrefix,
+          `${filePrefix}-list`,
         );
-        photoBase64 = media.photoBase64;
-        cardBase64 = media.cardBase64;
+        listPhotoBase64 = media.photoBase64;
+        listCardBase64 = media.cardBase64;
         console.log(
-          `   crop ${p.name}: photo=${media.photoPath || "-"} card=${media.cardPath || "-"}`,
+          `   crop lista ${p.name}: photo=${media.photoPath || "-"} card=${media.cardPath || "-"}`,
         );
       } catch (e) {
-        console.log(`   crop ${p.name}: ${e.message || e}`);
+        console.log(`   crop lista ${p.name}: ${e.message || e}`);
       }
+
+      /** @type {object} */
+      let pageData = {
+        header: {},
+        profileUrl: null,
+        photoBase64: null,
+        coverBase64: null,
+        cardBase64: null,
+        rawOcr: null,
+      };
+      try {
+        pageData = await openProfileAndExtract(
+          serial,
+          p,
+          outDir,
+          filePrefix,
+        );
+      } catch (e) {
+        console.error(`   ⚠ abrir/extrair falhou (continua): ${e.message || e}`);
+        try {
+          await leaveProfile(serial, { engine: OCR_ENGINE });
+        } catch {
+          /* ignore */
+        }
+      }
+
       const profile = {
         index,
-        name: p.name,
+        name: pageData.header?.name || p.name,
         action: p.action,
         fields: p.fields,
+        header: pageData.header || {},
+        profileUrl: pageData.profileUrl || null,
         extractedAt: new Date().toISOString(),
         round,
         x: p.x,
         y: p.y,
         cardBounds: p.cardBounds,
-        photoBase64,
-        cardBase64,
+        photoBase64: pageData.photoBase64 || listPhotoBase64,
+        coverBase64: pageData.coverBase64 || null,
+        cardBase64: pageData.cardBase64 || listCardBase64,
         texts: p.texts,
         ocr: p.ocr,
-        rawOcr: { elements: p.ocr || [] },
+        rawOcr: pageData.rawOcr || { elements: p.ocr || [] },
       };
       saved.push(profile);
       rows.push(profileRowForJson(profile));
@@ -370,11 +592,17 @@ async function extractProfilesLoop(serial, outDir, opts = {}) {
         serial,
         round,
       });
+
+      contentStable = 0;
+      frameStable = 0;
+      prevContentFp = null;
+      // Sem scroll: próxima rodada re-extrai a lista (mesmo viewport) e pega o próximo.
+      continue;
     }
 
     // Sem cards novos + mesma lista visível (parser). Sozinho não encerra — OCR
     // costuma falhar o padrão com nomes ainda na tela; exige frame estável também.
-    if (fresh.length === 0 && prevContentFp != null && contentFp === prevContentFp) {
+    if (prevContentFp != null && contentFp === prevContentFp) {
       contentStable += 1;
       console.log(
         `   fim do scroll? conteúdo igual sem novos (${contentStable}/${SCROLL_END_STABLE_NEEDED})`,
@@ -494,7 +722,7 @@ async function main() {
   await sleep(2_000);
 
   console.log(
-    `7) Descer + extract por demanda (callback onProfile, máx. ${maxProfiles})…`,
+    `7) Lista → abrir cada perfil (OCR + URL) → BACK até ${maxProfiles}…`,
   );
   const saved = await extractProfilesLoop(serial, outDir, {
     onProfile: defaultOnProfile,

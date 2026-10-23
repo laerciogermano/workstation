@@ -7,6 +7,7 @@ import {
   findSendButton,
   findSendMessageInSheet,
   findWriteAMessage,
+  isMessageFieldEmpty,
 } from "./linkedin-message.js";
 
 describe("linkedin-message helpers", () => {
@@ -43,5 +44,16 @@ describe("linkedin-message helpers", () => {
     assert.equal(e.includes(","), true);
     assert.match(e, /Bom%s/);
     assert.match(e, /Laércio/);
+  });
+
+  it("isMessageFieldEmpty", () => {
+    assert.equal(
+      isMessageFieldEmpty([{ text: "Write a message...", y: 836 }]),
+      true,
+    );
+    assert.equal(
+      isMessageFieldEmpty([{ text: "Bom dia Laércio", y: 800 }]),
+      false,
+    );
   });
 });

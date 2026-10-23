@@ -56,12 +56,19 @@ export function copyToHostClipboard(text) {
   throw new Error(`clipboard host não suportado em ${os}`);
 }
 
-/**
- * Limpa o campo focado — poucas teclas (240 DEL travava o AVD).
- * Preferir: campo vazio (placeholder "Write a message") → não limpa.
- */
+/** Campo vazio = placeholder "Write a message…" no OCR. */
+export function isMessageFieldEmpty(els) {
+  return (els || []).some((e) => {
+    const t = String(e?.text || "").replace(/\s+/g, " ").trim();
+    const glued = t.replace(/\s+/g, "");
+    return (
+      /write\s*a\s*message/i.test(t) || /^writeamessage/i.test(glued)
+    );
+  });
+}
+
+/** Limpa o campo focado (só quando não está vazio). */
 function clearFocusedField(serial) {
-  // select-all (Ctrl+A) + delete — 1–2 keyevents
   adb(serial, [
     "shell",
     "input",
@@ -71,20 +78,27 @@ function clearFocusedField(serial) {
     "KEYCODE_A",
   ]);
   adb(serial, ["shell", "input", "keyevent", "KEYCODE_DEL"]);
-  // fallback curto se select-all falhar
   for (let i = 0; i < 15; i++) {
     adb(serial, ["shell", "input", "keyevent", "KEYCODE_DEL"]);
   }
 }
 
 /**
- * Cola a mensagem (acentos OK). Evita colar Iracema: sempre pbcopy do `text` passado.
- * Se o campo já está vazio (placeholder), não gasta tempo limpando.
+ * Cola a mensagem (acentos OK).
+ * - campo vazio (placeholder) → só cola
+ * - campo com texto → limpa, depois cola
+ * opts.els: OCR atual (se omitido e clear não forçado, assume limpar)
+ * opts.forceClear / opts.skipClear: override
  */
 export async function pasteCleanMessage(serial, text, opts = {}) {
   const s = String(text ?? "");
   if (!s.trim()) return;
-  if (!opts.skipClear) clearFocusedField(serial);
+  let shouldClear = true;
+  if (opts.skipClear) shouldClear = false;
+  else if (opts.forceClear) shouldClear = true;
+  else if (opts.els) shouldClear = !isMessageFieldEmpty(opts.els);
+
+  if (shouldClear) clearFocusedField(serial);
   copyToHostClipboard(s);
   await sleep(WAIT_CLIP_MS);
   copyToHostClipboard(s);
@@ -209,11 +223,19 @@ function isComposer(els) {
   );
 }
 
-async function pasteAndConfirm(serial, message, steps, writeY) {
+async function pasteAndConfirm(serial, message, steps, writeY, elsBefore = null) {
+  let els = elsBefore;
   for (let attempt = 1; attempt <= 3; attempt++) {
-    // 1ª tentativa: assume campo vazio se placeholder; depois limpa
+    if (!els) {
+      els = await extract({ serial, engine: OCR, icons: true });
+    }
+    const empty = isMessageFieldEmpty(els);
+    steps.push(empty ? `paste:campo-vazio:try${attempt}` : `paste:limpa:try${attempt}`);
     await pasteCleanMessage(serial, message, {
-      skipClear: attempt === 1,
+      els,
+      // retry: força limpar o que colou errado
+      forceClear: attempt > 1 && !empty ? false : undefined,
+      skipClear: empty,
     });
     await sleep(1_200);
     const after = await extract({ serial, engine: OCR, icons: true });
@@ -223,7 +245,10 @@ async function pasteAndConfirm(serial, message, steps, writeY) {
       return { ok: true, els: after, writeY };
     }
     steps.push(`paste:retry${attempt}:${wrong}`);
-    clearFocusedField(serial);
+    // falhou → próximo round limpa
+    els = after;
+    await pasteCleanMessage(serial, message, { forceClear: true });
+    els = null;
     await sleep(300);
   }
   return { ok: false, els: null, writeY };
@@ -288,11 +313,14 @@ export async function sendLinkedInMessage(opts) {
         if (!dryRun) {
           tapElement({ serial, x: write.x, y: write.y });
           await sleep(800);
+          // OCR pós-tap: decide limpar ou só colar
+          const afterTap = await extract({ serial, engine: OCR, icons: true });
           const pasted = await pasteAndConfirm(
             serial,
             message,
             steps,
             write.y,
+            afterTap || list,
           );
           if (!pasted.ok) {
             return {

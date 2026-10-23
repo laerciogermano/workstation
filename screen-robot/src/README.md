@@ -209,7 +209,9 @@ Script [`scripts/login-extract-profiles.js`](scripts/login-extract-profiles.js) 
 | See/Show all | `See all results` / `Show all results` (fallback `See all` / `Show all`) |
 
 1. `stop` apps + `launch` → `waitForText("Search")` → tap → colar `comprador` (`pasteCleanMessage` / ADBKeyboard) → `waitForText(See/Show all)` (8s com teclado; se timeout → `KEYCODE_BACK` + wait 30s) → tap
-2. Loop: `extractBySense` lista → **1º card novo** (menor `y`) → `GET /client-connections-linkedin/match` (score nome/cargo/cidade/empresa; **não** usa Connect/Pending da UI) → se matched, **skip** → senão tap → dump|ocr + URL → `GET /profile-details/by-url` → se URL já 1:1 na base, **skip save** → senão `onProfile` → BACK → re-extract. Sem novos → scroll. Para em `-n` ou fim do scroll (`EXTRACT_SCROLL_STABLE`, default **4**). Exige `PROFILES_API_URL` para skip; sem API, abre todos.
+2. Loop: `extractBySense` lista → **1º card novo** (menor `y`) → `GET /client-connections-linkedin/match` (score nome/cargo/cidade/empresa; **não** usa Connect/Pending da UI) → se matched, **skip** → senão **tap no perfil** → dump|ocr + URL → `GET /profile-details/by-url` → se URL já 1:1 na base, **skip save** → senão `onProfile`/POST → BACK → re-extract. Lista só descobre; **sem `profileUrl` (não abriu/Share) não salva**. Sem novos → scroll. Para em `-n` ou fim do scroll (`EXTRACT_SCROLL_STABLE`, default **4**). Exige `PROFILES_API_URL` para skip; sem API, abre todos.
+
+**Antes → depois (save só no perfil):** se `openProfileAndExtract` falhasse, ainda gravava card da lista → exige `profileUrl` pós-abrir; senão `skip save`. Rollback: salvar com `pageData.header || p` mesmo sem URL.
 
 **Antes → depois (sense):** dump+OCR unidos → `SCREEN_ROBOT_SENSE` / `--sense ocr|dump` isolados ([`lib/sense.js`](lib/sense.js), default `dump`). Rollback: `--sense ocr`.
 

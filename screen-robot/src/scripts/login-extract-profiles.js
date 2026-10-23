@@ -2,7 +2,8 @@
 /**
  * LinkedIn: stop apps → launch → waitForText(Search) → tap → colar "comprador" →
  * See all → por card: se já há conexão (score nome/cargo/cidade/empresa) → skip;
- * senão tap → dump|ocr (SCREEN_ROBOT_SENSE / --sense) 1ª tela + URL → se profileUrl já na base → skip save;
+ * senão tap → dump|ocr (SCREEN_ROBOT_SENSE / --sense) 1ª tela + URL → só então salva/POST
+ * (lista nunca grava sozinha; sem profileUrl → skip save); se URL já na base → skip save;
  * BACK → próximo até `-n`. Não usa botão Connect/Pending da UI.
  *
  * Uso (cwd: screen-robot/src):
@@ -727,6 +728,7 @@ async function extractProfilesLoop(serial, outDir, opts = {}) {
           cardBase64: null,
           rawOcr: null,
         };
+        let openedOk = false;
         try {
           pageData = await openProfileAndExtract(
             serial,
@@ -734,9 +736,10 @@ async function extractProfilesLoop(serial, outDir, opts = {}) {
             outDir,
             filePrefix,
           );
+          openedOk = Boolean(pageData?.profileUrl);
         } catch (e) {
           console.error(
-            `   ⚠ abrir/extrair falhou (continua): ${e.message || e}`,
+            `   ⚠ abrir/extrair falhou (não salva lista): ${e.message || e}`,
           );
           try {
             await leaveProfile(serial, { engine: OCR_ENGINE });
@@ -745,17 +748,27 @@ async function extractProfilesLoop(serial, outDir, opts = {}) {
           }
         }
 
-        if (pageData.profileUrl) {
-          const urlHit = await profileUrlAlreadyInBase(pageData.profileUrl);
-          if (urlHit.exists) {
-            console.log(
-              `   skip save (profileUrl já 1:1 na base): ${pageData.profileUrl} → profileId=${urlHit.profileId || "-"}`,
-            );
-            contentStable = 0;
-            frameStable = 0;
-            prevContentFp = null;
-            continue;
-          }
+        // Só persiste após entrar no perfil (URL via ⋯/Share/Copy).
+        // Lista = descoberta/skip; nunca POST só com card da busca.
+        if (!openedOk) {
+          console.log(
+            `   skip save (sem profileUrl — não confirma perfil aberto): ${p.name}`,
+          );
+          contentStable = 0;
+          frameStable = 0;
+          prevContentFp = null;
+          continue;
+        }
+
+        const urlHit = await profileUrlAlreadyInBase(pageData.profileUrl);
+        if (urlHit.exists) {
+          console.log(
+            `   skip save (profileUrl já 1:1 na base): ${pageData.profileUrl} → profileId=${urlHit.profileId || "-"}`,
+          );
+          contentStable = 0;
+          frameStable = 0;
+          prevContentFp = null;
+          continue;
         }
 
         const profile = {
@@ -764,7 +777,7 @@ async function extractProfilesLoop(serial, outDir, opts = {}) {
           action: p.action,
           fields: p.fields,
           header: pageData.header || {},
-          profileUrl: pageData.profileUrl || null,
+          profileUrl: pageData.profileUrl,
           extractedAt: new Date().toISOString(),
           round,
           x: p.x,

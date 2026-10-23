@@ -59,23 +59,20 @@ function readJson(req) {
   });
 }
 
-function corsHeaders(req) {
-  const origin = String(req?.headers?.origin || "*");
+function corsHeaders() {
   return {
-    "access-control-allow-origin": origin || "*",
+    "access-control-allow-origin": "*",
     "access-control-allow-methods": "GET,POST,OPTIONS",
     "access-control-allow-headers": "content-type",
-    "access-control-allow-credentials": "true",
-    vary: "Origin",
   };
 }
 
-function send(res, status, body, req = null) {
+function send(res, status, body) {
   const data = JSON.stringify(body);
   res.writeHead(status, {
     "content-type": "application/json; charset=utf-8",
     "content-length": Buffer.byteLength(data),
-    ...corsHeaders(req),
+    ...corsHeaders(),
   });
   res.end(data);
 }
@@ -161,6 +158,12 @@ function parseN(raw) {
 }
 
 const server = createServer(async (req, res) => {
+  if (req.method === "OPTIONS") {
+    res.writeHead(204, corsHeaders());
+    res.end();
+    return;
+  }
+
   const u = new URL(req.url || "/", `http://${HOST}`);
   const path = u.pathname;
 

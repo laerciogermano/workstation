@@ -1,6 +1,5 @@
 /**
- * uiautomator dump → texto/coords (alternativa ao OCR quando a árvore expõe o node).
- * findByText / waitForText tentam dump primeiro (SCREEN_ROBOT_UIDUMP≠0).
+ * uiautomator dump → texto/coords (modo `sense=dump`, isolado do OCR).
  * Passar opts.dumpUiXml(serial) quando serial (evita ciclo com extract.js).
  */
 
@@ -175,14 +174,6 @@ export function findByTextInUiDump(serialOrXml, query, opts = {}) {
     x: best.x,
     y: best.y,
     query: best.query,
-    source: "uidump",
+    source: "dump",
   };
-}
-
-export function uidumpEnabled(opts = {}) {
-  if (opts.preferDump === false) return false;
-  if (opts.preferDump === true) return true;
-  const env = process.env.SCREEN_ROBOT_UIDUMP;
-  if (env === "0" || env === "false") return false;
-  return true; // default on
 }

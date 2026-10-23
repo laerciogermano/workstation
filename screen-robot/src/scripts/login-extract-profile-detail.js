@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * 1 perfil da API → Search (ou deep link) → uidump/OCR cartão (nome/cargo/cidade/conexões/pending|connect|message)
+ * 1 perfil da API → Search (ou deep link) → cartão dump|ocr (--sense)
  * → crop avatar → POST /profile-details. Com --url, não captura Share/Copy (URL já conhecida).
  *
  * Uso (cwd: screen-robot/src):
@@ -20,7 +20,8 @@ import { fileURLToPath } from "node:url";
 import { adb, sleep } from "../lib/adb.js";
 import {
   dumpUiXml,
-  extractPreferDump,
+  extract,
+  extractBySense,
   findByText,
 } from "../lib/extract.js";
 import { captureFrame } from "../lib/frame.js";
@@ -34,6 +35,7 @@ import {
   nameHintFromLinkedInUrl,
   parseProfileHeader,
 } from "../lib/linkedin-profile-page.js";
+import { resolveSense, takeSenseArg } from "../lib/sense.js";
 import {
   sanitizeSearchText,
   typeQueryFromProfile as buildTypeQuery,
@@ -320,7 +322,7 @@ async function submitShowAllResults(serial) {
     const t0 = Date.now();
     while (Date.now() - t0 < timeoutMs) {
       try {
-        const els = await extractPreferDump({ serial, engine: OCR_ENGINE });
+        const els = await extractBySense({ serial, engine: OCR_ENGINE });
         const fromScan = findShowAllInElements(els);
         if (fromScan) return fromScan;
       } catch {
@@ -362,7 +364,7 @@ async function submitShowAllResults(serial) {
   }
   // Só fallback geométrico se ainda parece busca (não Home/Post)
   try {
-    const els = await extractPreferDump({ serial, engine: OCR_ENGINE });
+    const els = await extractBySense({ serial, engine: OCR_ENGINE });
     const blob = (els || []).map((e) => e.text).join(" ");
     if (/collaborative posts|recommended for you|^home$/i.test(blob)) {
       console.log("   saiu da busca — não tap fallback");
@@ -468,7 +470,7 @@ async function openFirstPerson(serial, opts = {}) {
         opts.outDir || ROOT,
         `list-fallback-${String(attempt).padStart(2, "0")}.png`,
       );
-      const els = await extractPreferDump(
+      const els = await extractBySense(
         { serial, engine: OCR_ENGINE },
         opts.outDir ? { outPath: listPng } : {},
       );
@@ -633,7 +635,8 @@ async function postProfileDetail(payload) {
   return res.json();
 }
 
-function parseArgs(argv) {
+function parseArgs(rawArgv) {
+  const { sense, argv } = takeSenseArg(rawArgv);
   let configPath = resolve(ROOT, "device.config.json");
   let profileId = null;
   let fromProfile = false;
@@ -644,7 +647,7 @@ function parseArgs(argv) {
     else if (argv[i] === "--from-profile") fromProfile = true;
     else if (argv[i] === "--url") profileUrlArg = String(argv[++i] || "").trim();
   }
-  return { configPath, profileId, fromProfile, profileUrlArg };
+  return { configPath, profileId, fromProfile, profileUrlArg, sense };
 }
 
 /** Abre perfil LinkedIn via deep link (pula Search). */
@@ -681,9 +684,10 @@ async function fetchStoredProfileUrl(profileId) {
 }
 
 async function main() {
-  const { configPath, profileId, fromProfile, profileUrlArg } = parseArgs(
+  const { configPath, profileId, fromProfile, profileUrlArg, sense } = parseArgs(
     process.argv.slice(2),
   );
+  console.log(`sense: ${sense} (SCREEN_ROBOT_SENSE / --sense ocr|dump)`);
   if (!profileId) {
     throw new Error("passe --id <uuid> (id em linkedin_profiles / GET /profiles)");
   }
@@ -755,8 +759,8 @@ async function main() {
     console.log("4–5) skip busca (deep link)");
   }
 
-  // Cartão da 1ª tela: uidump → fallback OCR.
-  console.log("6) cartão (1ª tela, uidump/OCR)…");
+  const sense = resolveSense();
+  console.log(`6) cartão (1ª tela, sense=${sense})…`);
   const cardPng = join(outDir, "card-00.png");
   let header = {
     name: null,
@@ -776,17 +780,16 @@ async function main() {
     nameHintFromLinkedInUrl(knownProfileUrl || profileUrlArg || "") ||
     openedName ||
     name;
-  let cardSource = "uidump";
   try {
-    const xml = dumpUiXml(serial);
-    writeFileSync(join(outDir, "card-00.xml"), xml, "utf8");
-    const parsed = parseProfileHeaderFromUiXml(xml, { nameHint });
-    header = parsed.header;
-    cardEls = parsed.elements;
-    if (!header?.name) {
-      cardSource = "ocr";
-      cardEls = await extractPreferDump(
-        { serial, engine: OCR_ENGINE, preferDump: false },
+    if (sense === "dump") {
+      const xml = dumpUiXml(serial);
+      writeFileSync(join(outDir, "card-00.xml"), xml, "utf8");
+      const parsed = parseProfileHeaderFromUiXml(xml, { nameHint });
+      header = parsed.header;
+      cardEls = parsed.elements;
+    } else {
+      cardEls = await extract(
+        { serial, engine: OCR_ENGINE },
         { outPath: cardPng },
       );
       header = parseProfileHeader(cardEls, { nameHint });
@@ -797,7 +800,7 @@ async function main() {
       "utf8",
     );
     console.log(
-      `   card (${cardSource}): name=${header.name || "-"} headline=${header.headline || "-"} company=${header.company || "-"} loc=${header.location || "-"} conn=${header.connections || "-"} mutual=${header.mutualConnections || "-"} status=${header.inviteStatus || "-"} connect=${header.canConnect} msg=${header.canMessage} grau=${header.connectionDegree || "-"}`,
+      `   card (${sense}): name=${header.name || "-"} headline=${header.headline || "-"} company=${header.company || "-"} loc=${header.location || "-"} conn=${header.connections || "-"} mutual=${header.mutualConnections || "-"} status=${header.inviteStatus || "-"} connect=${header.canConnect} msg=${header.canMessage} grau=${header.connectionDegree || "-"}`,
     );
   } catch (e) {
     console.log(`   card: ${e.message || e}`);

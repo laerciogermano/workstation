@@ -12,7 +12,7 @@ import { mkdirSync } from "node:fs";
 import { join } from "node:path";
 
 import { adb, adbOk, sleep } from "./adb.js";
-import { dumpUiXml, extractPreferDump } from "./extract.js";
+import { dumpUiXml, extractBySense } from "./extract.js";
 import {
   assertConnectionAcceptedForSend,
   findMoreOverflow,
@@ -277,7 +277,7 @@ async function pasteAndConfirm(serial, message, steps, writeY, elsBefore = null)
   let els = elsBefore;
   for (let attempt = 1; attempt <= 3; attempt++) {
     if (!els) {
-      els = await extractPreferDump({ serial, engine: OCR, icons: true });
+      els = await extractBySense({ serial, engine: OCR, icons: true });
     }
     const empty = isMessageFieldEmpty(els);
     steps.push(empty ? `paste:campo-vazio:try${attempt}` : `paste:limpa:try${attempt}`);
@@ -288,7 +288,7 @@ async function pasteAndConfirm(serial, message, steps, writeY, elsBefore = null)
       skipClear: empty,
     });
     await sleep(1_200);
-    const after = await extractPreferDump({ serial, engine: OCR, icons: true });
+    const after = await extractBySense({ serial, engine: OCR, icons: true });
     const wrong = pasteLooksWrong(after || [], message);
     if (!wrong) {
       steps.push(`paste:ok:try${attempt}`);
@@ -359,7 +359,7 @@ export async function sendLinkedInMessage(opts) {
   let openedComposer = false;
 
   for (let round = 0; round < MAX_ROUNDS; round++) {
-    const els = await extractPreferDump({ serial, engine: OCR, icons: true });
+    const els = await extractBySense({ serial, engine: OCR, icons: true });
     const list = els || [];
 
     if (isComposer(list) && !openedComposer) {
@@ -384,7 +384,7 @@ export async function sendLinkedInMessage(opts) {
           tapElement({ serial, x: write.x, y: write.y });
           await sleep(800);
           // OCR pós-tap: decide limpar ou só colar
-          const afterTap = await extractPreferDump({ serial, engine: OCR, icons: true });
+          const afterTap = await extractBySense({ serial, engine: OCR, icons: true });
           const pasted = await pasteAndConfirm(
             serial,
             message,

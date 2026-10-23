@@ -254,31 +254,28 @@ export function findEditableFields(elements) {
 
 /**
  * US-23 / SC-29 — busca por texto.
- * Preferência: uiautomator dump (`SCREEN_ROBOT_UIDUMP≠0`); fallback OCR.
- * `query` string ou lista (primeira com score ≥ minScore).
+ * Modo isolado: `sense: "ocr"|"dump"` / `SCREEN_ROBOT_SENSE` (default dump).
+ * Sem fallback cruzado. `extractElements` custom → sempre OCR (testes).
  *
  * @param {string} serial
  * @param {string|string[]} query
- * @param {{ minScore?: number, engine?: string, preferDump?: boolean, extractElements?: Function, captureFrame?: Function, ocrRecognize?: Function }} [opts]
+ * @param {{ minScore?: number, engine?: string, sense?: "ocr"|"dump", extractElements?: Function, captureFrame?: Function, ocrRecognize?: Function }} [opts]
  * @returns {Promise<{ elements: object[], score: number, text: string, x: number, y: number, source?: string } | null>}
  */
 export async function findByText(serial, query, opts = {}) {
-  const { findByTextInUiDump, uidumpEnabled } = await import("./ui-dump.js");
-  // extractElements custom (testes) → só OCR; senão dump primeiro
-  const tryDump =
-    uidumpEnabled(opts) && typeof opts.extractElements !== "function";
-  if (tryDump) {
-    try {
-      const hit = findByTextInUiDump(serial, query, {
-        ...opts,
-        dumpUiXml: (s) => dumpUiXml(s, opts),
-      });
-      if (hit?.x != null && hit?.y != null) return hit;
-    } catch {
-      /* fallback OCR */
-    }
+  const { resolveSense } = await import("./sense.js");
+  const sense =
+    typeof opts.extractElements === "function"
+      ? "ocr"
+      : resolveSense(opts);
+
+  if (sense === "dump") {
+    const { findByTextInUiDump } = await import("./ui-dump.js");
+    return findByTextInUiDump(serial, query, {
+      ...opts,
+      dumpUiXml: (s) => dumpUiXml(s, opts),
+    });
   }
-  if (opts.preferDump === true && opts.ocrFallback === false) return null;
 
   const runExtract = opts.extractElements ?? extractElements;
   const { elements } = await runExtract(serial, opts);
@@ -291,32 +288,31 @@ export async function findByText(serial, query, opts = {}) {
 }
 
 /**
- * Lista de textos: dump se ≥ minDumpElements; senão OCR (`extract`).
- * @param {{ serial: string, engine?: string, preferDump?: boolean, minDumpElements?: number }} cfg
+ * Só dump (uiautomator) → lista `{ type:"text", text, x, y, source:"dump" }`.
+ * @param {{ serial: string }} cfg
  */
-export async function extractPreferDump(cfg, deps = {}) {
-  const { elementsFromUiXml, uidumpEnabled } = await import("./ui-dump.js");
-  if (uidumpEnabled(cfg)) {
-    try {
-      const xml = dumpUiXml(cfg.serial, deps);
-      const raw = elementsFromUiXml(xml);
-      const min = cfg.minDumpElements ?? 5;
-      if (raw.length >= min) {
-        return raw.map((el, i) => ({
-          id: `d${i}`,
-          type: "text",
-          text: el.text,
-          x: el.x,
-          y: el.y,
-          bounds: el.bounds,
-          resourceId: el.resourceId,
-          source: "uidump",
-        }));
-      }
-    } catch {
-      /* OCR */
-    }
-  }
+export async function extractDump(cfg, deps = {}) {
+  const { elementsFromUiXml } = await import("./ui-dump.js");
+  const xml = dumpUiXml(cfg.serial, deps);
+  return elementsFromUiXml(xml).map((el, i) => ({
+    id: `d${i}`,
+    type: "text",
+    text: el.text,
+    x: el.x,
+    y: el.y,
+    bounds: el.bounds,
+    resourceId: el.resourceId,
+    source: "dump",
+  }));
+}
+
+/**
+ * Extrai textos no modo escolhido (`ocr` | `dump`) — sem misturar.
+ * @param {{ serial: string, engine?: string, sense?: "ocr"|"dump", icons?: boolean }} cfg
+ */
+export async function extractBySense(cfg, deps = {}) {
+  const { resolveSense } = await import("./sense.js");
+  if (resolveSense(cfg) === "dump") return extractDump(cfg, deps);
   return extract(cfg, deps);
 }
 

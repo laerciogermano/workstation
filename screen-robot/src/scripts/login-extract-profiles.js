@@ -2,7 +2,7 @@
 /**
  * LinkedIn: stop apps → launch → waitForText(Search) → tap → colar "comprador" →
  * See all → por card: se já há conexão (score nome/cargo/cidade/empresa) → skip;
- * senão tap → uidump (fallback OCR) 1ª tela + URL → se profileUrl já na base → skip save;
+ * senão tap → dump|ocr (SCREEN_ROBOT_SENSE / --sense) 1ª tela + URL → se profileUrl já na base → skip save;
  * BACK → próximo até `-n`. Não usa botão Connect/Pending da UI.
  *
  * Uso (cwd: screen-robot/src):
@@ -23,7 +23,7 @@ import { sleep } from "../lib/adb.js";
 import {
   dumpUiXml,
   extract,
-  extractPreferDump,
+  extractBySense,
   findByText,
   waitForText,
 } from "../lib/extract.js";
@@ -38,6 +38,7 @@ import {
 } from "../lib/linkedin-list-profiles.js";
 import { parseProfileHeaderFromUiXml } from "../lib/linkedin-profile-from-uidump.js";
 import { parseProfileHeader } from "../lib/linkedin-profile-page.js";
+import { resolveSense, takeSenseArg } from "../lib/sense.js";
 import {
   cropListProfilePhotoAndCard,
   cropProfilePhotoAndCover,
@@ -408,10 +409,11 @@ async function defaultOnProfile(profile, ctx) {
 }
 
 /**
- * Abre o card da lista → uidump (fallback OCR) 1ª tela → URL → BACK para a lista.
+ * Abre o card da lista → 1ª tela (só dump ou só OCR) → URL → BACK para a lista.
  * @returns {Promise<{ header: object, profileUrl: string|null, photoBase64: string|null, coverBase64: string|null, cardBase64: string|null, rawOcr: object|null }>}
  */
 async function openProfileAndExtract(serial, listCard, outDir, filePrefix) {
+  const sense = resolveSense();
   const tapX = Number(listCard.x);
   const tapY = Number(listCard.y);
   if (!Number.isFinite(tapX) || !Number.isFinite(tapY)) {
@@ -439,19 +441,18 @@ async function openProfileAndExtract(serial, listCard, outDir, filePrefix) {
   };
   /** @type {object[]|null} */
   let cardEls = null;
-  let pageSource = "uidump";
   try {
-    const xml = dumpUiXml(serial);
-    writeFileSync(join(outDir, `${filePrefix}-page.xml`), xml, "utf8");
-    const parsed = parseProfileHeaderFromUiXml(xml, {
-      nameHint: listCard.name,
-    });
-    header = parsed.header;
-    cardEls = parsed.elements;
-    if (!header?.name) {
-      pageSource = "ocr";
-      cardEls = await extractPreferDump(
-        { serial, engine: OCR_ENGINE, preferDump: false },
+    if (sense === "dump") {
+      const xml = dumpUiXml(serial);
+      writeFileSync(join(outDir, `${filePrefix}-page.xml`), xml, "utf8");
+      const parsed = parseProfileHeaderFromUiXml(xml, {
+        nameHint: listCard.name,
+      });
+      header = parsed.header;
+      cardEls = parsed.elements;
+    } else {
+      cardEls = await extract(
+        { serial, engine: OCR_ENGINE },
         { outPath: cardPng },
       );
       header = parseProfileHeader(cardEls, { nameHint: listCard.name });
@@ -462,7 +463,7 @@ async function openProfileAndExtract(serial, listCard, outDir, filePrefix) {
       "utf8",
     );
     console.log(
-      `   page (${pageSource}): name=${header.name || "-"} headline=${header.headline || "-"} company=${header.company || "-"} loc=${header.location || "-"} status=${header.inviteStatus || "-"}`,
+      `   page (${sense}): name=${header.name || "-"} headline=${header.headline || "-"} company=${header.company || "-"} loc=${header.location || "-"} status=${header.inviteStatus || "-"}`,
     );
   } catch (e) {
     console.log(`   page: ${e.message || e}`);
@@ -599,7 +600,7 @@ async function extractProfilesLoop(serial, outDir, opts = {}) {
     let els;
     for (let attempt = 1; attempt <= 3; attempt++) {
       try {
-        els = await extractPreferDump(
+        els = await extractBySense(
           { serial, engine: OCR_ENGINE },
           { outPath: roundPng },
         );
@@ -613,20 +614,8 @@ async function extractProfilesLoop(serial, outDir, opts = {}) {
         await sleep(1_500);
       }
     }
-    let parsed = profilesFromExtract(els, { engine: OCR_ENGINE });
-    // Dump sem cards People → OCR (lista RecyclerView às vezes sem text nos nodes)
-    if (
-      !parsed.length &&
-      els?.some((e) => e?.source === "uidump")
-    ) {
-      console.log("   uidump sem cards People → OCR…");
-      els = await extract(
-        { serial, engine: OCR_ENGINE },
-        { outPath: roundPng },
-      );
-      parsed = profilesFromExtract(els, { engine: OCR_ENGINE });
-    }
-    console.log(`   → ${roundPng}`);
+    const parsed = profilesFromExtract(els, { engine: OCR_ENGINE });
+    console.log(`   → ${roundPng} (${resolveSense()})`);
     writeFileSync(
       join(outDir, `list-round-${roundPad}.json`),
       JSON.stringify(els, null, 2),
@@ -827,7 +816,7 @@ async function extractProfilesLoop(serial, outDir, opts = {}) {
 }
 
 async function main() {
-  const argv = process.argv.slice(2);
+  const { sense, argv } = takeSenseArg(process.argv.slice(2));
   let configPath = resolve(ROOT, "device.config.json");
   let maxProfiles = MAX_PROFILES;
   for (let i = 0; i < argv.length; i++) {
@@ -840,6 +829,7 @@ async function main() {
     }
   }
 
+  console.log(`sense: ${sense} (SCREEN_ROBOT_SENSE / --sense ocr|dump)`);
   const cfg = loadConfig(configPath);
   const linkedinPkg = cfg.apps?.linkedin?.package;
   if (!linkedinPkg) throw new Error('App "linkedin" ausente em device.config.json');

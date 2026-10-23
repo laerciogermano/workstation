@@ -342,7 +342,7 @@ const both = await extract({ serial, icons: true });
 
 ### `findByText(serial, query, opts?)`
 
-Preferência: **uiautomator dump** (`lib/ui-dump.js`); fallback OCR. Desligar dump: `SCREEN_ROBOT_UIDUMP=0` ou `preferDump: false`. `extractPreferDump` idem para listas. Elementos lado a lado contidos na query.
+Modo isolado: `sense: "ocr"|"dump"` / `SCREEN_ROBOT_SENSE` / `--sense` (default `dump`). Sem fallback cruzado. `extractBySense` / `extractDump` / `extract`. Ver [`src/lib/sense.js`](src/lib/sense.js).
 
 **Entrada**
 

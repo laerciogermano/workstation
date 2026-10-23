@@ -1,10 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import {
-  elementsFromUiXml,
-  findByTextInUiDump,
-  uidumpEnabled,
-} from "./ui-dump.js";
+import { elementsFromUiXml, findByTextInUiDump } from "./ui-dump.js";
 
 const SAMPLE = `
 <hierarchy>
@@ -26,13 +22,8 @@ describe("ui-dump", () => {
       minScore: 0.7,
     });
     assert.ok(hit);
-    assert.equal(hit.source, "uidump");
+    assert.equal(hit.source, "dump");
     assert.equal(hit.x, 120);
     assert.equal(hit.y, 920);
-  });
-
-  it("uidumpEnabled default on", () => {
-    assert.equal(uidumpEnabled({}), true);
-    assert.equal(uidumpEnabled({ preferDump: false }), false);
   });
 });

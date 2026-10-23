@@ -19,7 +19,7 @@ import { dirname, resolve, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { sleep } from "../lib/adb.js";
-import { extractPreferDump, findByText } from "../lib/extract.js";
+import { extractBySense, findByText } from "../lib/extract.js";
 import { booleanQueryForProfile } from "../lib/linkedin-boolean-query.js";
 import { key, launch, stop, tapElement, type } from "../lib/operate.js";
 import { provisionEmulator } from "../lib/provision.js";
@@ -269,7 +269,7 @@ async function visitOneProfile(serial, profile, ctx) {
   let els = [];
   for (let attempt = 1; attempt <= 3; attempt++) {
     try {
-      els = await extractPreferDump({ serial, engine: OCR_ENGINE });
+      els = await extractBySense({ serial, engine: OCR_ENGINE });
       break;
     } catch (e) {
       console.log(`   extract perfil falhou (${attempt}/3): ${e.message || e}`);

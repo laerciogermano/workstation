@@ -65,7 +65,7 @@ npm run extract -- --engine rapidocr --icons false
 npm run find -- "Sign in with Email"
 ```
 
-`result`: `{ elements, score, text, x, y }` ou `null`. Dump UI primeiro (`SCREEN_ROBOT_UIDUMP≠0`); senão OCR.
+`result`: `{ elements, score, text, x, y }` ou `null`. Modo: `SCREEN_ROBOT_SENSE=ocr|dump` (default dump) — isolados.
 
 ---
 

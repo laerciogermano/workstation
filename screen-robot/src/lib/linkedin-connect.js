@@ -12,7 +12,7 @@ import { mkdirSync } from "node:fs";
 import { join } from "node:path";
 
 import { adb, sleep } from "./adb.js";
-import { extractPreferDump } from "./extract.js";
+import { extractBySense } from "./extract.js";
 import { key, screenshot, tapElement } from "./operate.js";
 
 const OCR = process.env.SCREEN_ROBOT_OCR || "rapidocr";
@@ -393,7 +393,7 @@ export async function notifyLinkedInMessages(opts = {}) {
 /** Após Skip: poll até Pending ou esgota tentativas. */
 async function waitForPending(serial, { outDir, steps }) {
   for (let i = 0; i < PENDING_TRIES; i++) {
-    const els = await extractPreferDump({
+    const els = await extractBySense({
       serial,
       engine: OCR,
       icons: true,
@@ -437,7 +437,7 @@ export async function connectByLinkedInUrl(opts) {
   let skipped = false;
 
   for (let round = 0; round < MAX_ROUNDS; round++) {
-    const els = await extractPreferDump({
+    const els = await extractBySense({
       serial,
       engine: OCR,
       icons: true,

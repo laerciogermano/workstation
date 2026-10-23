@@ -12,7 +12,7 @@ import { dirname, resolve, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { sleep } from "../lib/adb.js";
-import { extractPreferDump, findByText } from "../lib/extract.js";
+import { extractBySense, findByText } from "../lib/extract.js";
 import { screenshot, tapElement, type } from "../lib/operate.js";
 import { provisionEmulator } from "../lib/provision.js";
 
@@ -41,7 +41,7 @@ function findTab(elements, label) {
 
 async function tapTab(serial, outDir, label, step) {
   console.log(`${step}) Extrair + clicar "${label}"…`);
-  const elements = await extractPreferDump({ serial });
+  const elements = await extractBySense({ serial });
   const slug = label.toLowerCase();
   writeFileSync(
     resolve(outDir, `elements-antes-${slug}.json`),
@@ -84,7 +84,7 @@ async function main() {
   console.log("OK — tabs: Network → Post → Notifications → Jobs");
   try {
     console.log("Executando busca 'comprador' e abrindo Show all results…");
-    const els = await extractPreferDump({ serial });
+    const els = await extractBySense({ serial });
     const searchEl = els.find((e) => /^search$/i.test(String(e.text || ""))) || els.find((e) => /search/i.test(e.text || ""));
     if (searchEl) {
       tapElement({ serial, x: searchEl.x, y: searchEl.y });
@@ -92,7 +92,7 @@ async function main() {
       try {
         await type({ serial, text: "comprador", delayMs: 120 });
         await sleep(800);
-        const after = await extractPreferDump({ serial });
+        const after = await extractBySense({ serial });
         const auto = after.find((e) => /^comprador$/i.test(String(e.text || "")));
         if (auto) {
           // clicar no item para remover teclado/autocomplete
@@ -101,7 +101,7 @@ async function main() {
         }
       } catch {
         // fallback: buscar autocomplete e tocar
-        const after = await extractPreferDump({ serial });
+        const after = await extractBySense({ serial });
         const auto = after.find((e) => /^comprador$/i.test(String(e.text || "")));
         if (auto) {
           tapElement({ serial, x: auto.x, y: auto.y });
@@ -111,7 +111,7 @@ async function main() {
       // procurar Show all results e clicar
       let show = await findByText(serial, "Show all", { minScore: 0.75 });
       if (!show) {
-        const after2 = await extractPreferDump({ serial });
+        const after2 = await extractBySense({ serial });
         const s = after2.find((e) => /^show$/i.test(String(e.text || "")));
         const a = after2.find((e) => /^all$/i.test(String(e.text || "")) && Math.abs(e.y - (s?.y || 0)) < 40);
         if (s && a) show = { x: Math.floor((s.x + a.x) / 2), y: s.y };

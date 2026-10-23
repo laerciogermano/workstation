@@ -6,7 +6,7 @@ import { mkdirSync } from "node:fs";
 import { join } from "node:path";
 
 import { sleep } from "./adb.js";
-import { extractPreferDump, findByText } from "./extract.js";
+import { extractBySense, findByText } from "./extract.js";
 import {
   notifyRecentConnectionsAccepted,
   resolveAgentId,
@@ -83,7 +83,7 @@ export async function extractRecentConnections(opts) {
 
   // Garante tab bar (Home/Network) — se ainda em Connections, BACK até achar
   for (let back = 0; back < 4; back++) {
-    const els = await extractPreferDump({ serial, engine: OCR });
+    const els = await extractBySense({ serial, engine: OCR });
     const hasTab = (els || []).some(
       (e) =>
         /^network$/i.test(String(e?.text || "").trim()) &&
@@ -127,7 +127,7 @@ export async function extractRecentConnections(opts) {
 
   while (list.length < n && round < MAX_ROUNDS) {
     round++;
-    const els = await extractPreferDump({ serial, engine: OCR });
+    const els = await extractBySense({ serial, engine: OCR });
     const batch = connectionsFromExtract(els || []);
     const before = list.length;
     list = mergeConnections(list, batch);

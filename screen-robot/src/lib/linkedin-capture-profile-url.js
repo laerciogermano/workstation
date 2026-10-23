@@ -7,7 +7,7 @@ import { existsSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 import { adb, sleep } from "./adb.js";
-import { extractPreferDump, findByText } from "./extract.js";
+import { extractBySense, findByText } from "./extract.js";
 import { captureFrame } from "./frame.js";
 import { normalizeLinkedInProfileUrl } from "./linkedin-connect.js";
 import { key, tapElement } from "./operate.js";
@@ -174,7 +174,7 @@ export async function captureProfileUrl(serial, outDir, opts = {}) {
   const sheetPng = join(outDir, "share-via-sheet.png");
   let sheetEls = [];
   try {
-    sheetEls = await extractPreferDump(
+    sheetEls = await extractBySense(
       { serial, engine },
       { outPath: sheetPng },
     );

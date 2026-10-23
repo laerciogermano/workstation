@@ -6,11 +6,54 @@
     - 200k hoje, 260k + 40k = 300k -> taxa ate preencher (100k) (2 anos)
     - flaar com marcelo onde esta o estoque?
     - as contas da empresa estao saudaveis?
-    - Marcelo some...
+    ---
+    - Desenvolver identidade visual de componentes design system
+    - organizar processos, agendas e etc
+    - baixar extrato do banco completo
+
+# Estudos
+    - Estudar orca orquestrador de IA
+
+# Procurar emprego
+    - Robo linkedin
+         - buscar todas as empresas
+         - buscar todos os tech recruiters
+         - Buscar todas as vagas de emprego
+            - sites proprios
+            - plataformas de emprego
+                - linkedin
+                - indeed
+                - glassdoor
+                - monster
+                - careerbuilder
+                - ziprecruiter
+                - jobscan...
 
 # Screen Robot
+    - Criar board
+        - Respondidos
+        - Abordados
+        - Conectados
+        - Convidados
+        - Perfil Extraído
+        - Candidatos
+    - criar regra de prioridades (Board)
+        @ Mensageiro:checa ultimas mensagens nao lidas
+        - se tiver mensagem respondida, ler a mensagem e salvar no banco de dados
+        @ Conector:checa ultimas conexoes nao aceitas
+        - se tiver convites aceitos, enviar mensagem
+        @ Conector: checa no banco de dados se tem fila para conectar
+        - se tiver fila para conectar, conectar
+        @ checa no banco de dados se tem fila para extrair perfil
+        - se tiver fila para extrair perfil, extrair perfil
+        @ checa no banco de dados se tem fila para coletar candidatos
+        - se tiver fila para coletar candidatos, coletar candidatos
+    - cadastrar agente
+    - criar painel de mensagens controladores de agentes
+    - criar board com elemento unico que vai de cada coluna para a proxima
     - vincular extracao a conta
-    - proxy
+    - configurar vpn
+    - modificar o nome do dispostiivo qemu system aarch64
     - Definir primeira versao
         - De tempos em tempos
         - Threesholds

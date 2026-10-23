@@ -49,6 +49,16 @@ export function isLinkedInSlugId(part) {
   );
 }
 
+/** Cargo/keyword no slug: `barbaraoliveira-comprador` — não é sobrenome. */
+const SLUG_NON_NAME_RE =
+  /^(comprador(?:a)?|buyer|procurement|sourcing|supply|chain|compras|analista|coordenador(?:a)?|manager|engineer|consultant|freelance|official)$/i;
+
+export function isSlugNonNamePart(part) {
+  const p = String(part || "").trim();
+  if (!p) return false;
+  return SLUG_NON_NAME_RE.test(p);
+}
+
 /** Remove id do slug no fim: "Helen Nogueira 6bb660189" → "Helen Nogueira". */
 export function stripLinkedInSlugIdFromName(raw) {
   const words = String(raw || "")
@@ -56,10 +66,23 @@ export function stripLinkedInSlugIdFromName(raw) {
     .trim()
     .split(/\s+/)
     .filter(Boolean);
-  while (words.length >= 2 && isLinkedInSlugId(words[words.length - 1])) {
+  while (
+    words.length >= 2 &&
+    (isLinkedInSlugId(words[words.length - 1]) ||
+      isSlugNonNamePart(words[words.length - 1]))
+  ) {
     words.pop();
   }
   return words.join(" ");
+}
+
+/** minúsculas sem acento / sem não-alfanum (p/ match slug colado). */
+export function foldNameKey(s) {
+  return String(s || "")
+    .normalize("NFD")
+    .replace(/\p{M}/gu, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "");
 }
 
 export function nameHintFromLinkedInUrl(rawUrl) {
@@ -67,7 +90,11 @@ export function nameHintFromLinkedInUrl(rawUrl) {
   const slug = decodeURIComponent(m?.[1] || "").replace(/\/$/, "");
   if (!slug) return "";
   const parts = slug.split("-").filter(Boolean);
-  while (parts.length && isLinkedInSlugId(parts[parts.length - 1])) {
+  while (
+    parts.length &&
+    (isLinkedInSlugId(parts[parts.length - 1]) ||
+      isSlugNonNamePart(parts[parts.length - 1]))
+  ) {
     parts.pop();
   }
   return parts
@@ -86,25 +113,50 @@ function looksLikePersonName(t) {
   if (PROFILE_A11Y_NOISE_RE.test(s)) return false;
   if (/^\d/.test(s)) return false;
   // frases UI ("Manage …", "View …") não são nome
-  if (/^(manage|view|invite|see|open|send|share)\b/i.test(s)) return false;
+  if (/^(manage|view|invite|see|open|send|share|follow)\b/i.test(s)) return false;
   // 1–4 palavras, maioria com letra inicial maiúscula (OCR EN/PT)
-  const words = s.split(/\s+/).filter(Boolean);
+  const words = s.split(/\s+/).filter((w) => w && w !== "/" && w !== "|");
   if (words.length < 1 || words.length > 5) return false;
-  // nome de pessoa: sem "is/a/the/of" no meio (ex. "X is a Premium member")
-  if (words.some((w) => /^(is|a|an|the|of|about)$/i.test(w))) return false;
+  // nome de pessoa: sem "is/a/the/of" / pronomes (Ela / Dela)
+  if (
+    words.some((w) =>
+      /^(is|a|an|the|of|about|ela|dela|ele|dele|she|her|he|him|they|them)$/i.test(
+        w,
+      ),
+    )
+  ) {
+    return false;
+  }
+  if (isSlugNonNamePart(words[0]) && words.length === 1) return false;
   const capped = words.filter((w) => /^[\p{L}]/u.test(w)).length;
   return capped >= Math.min(1, words.length);
 }
 
-/** Score 0..1 do candidato vs nameHint (tokens). */
+/** Score 0..1 do candidato vs nameHint (tokens; slug colado ≈ nome com espaço). */
 function nameHintScore(candidate, hintTokens) {
   if (!hintTokens.length) return 0;
-  const low = String(candidate || "").toLowerCase();
+  const candFold = foldNameKey(candidate);
+  if (!candFold) return 0;
   let hit = 0;
+  let considered = 0;
   for (const tok of hintTokens) {
-    if (low.includes(tok)) hit += 1;
+    if (isSlugNonNamePart(tok)) continue;
+    const tf = foldNameKey(tok);
+    if (tf.length < 3) continue;
+    considered += 1;
+    if (
+      candFold.includes(tf) ||
+      tf.includes(candFold) ||
+      (tf.length >= 6 &&
+        candFold.length >= 6 &&
+        (tf.startsWith(candFold.slice(0, 6)) ||
+          candFold.startsWith(tf.slice(0, 6))))
+    ) {
+      hit += 1;
+    }
   }
-  return hit / hintTokens.length;
+  if (!considered) return 0;
+  return hit / considered;
 }
 
 /**
@@ -113,10 +165,11 @@ function nameHintScore(candidate, hintTokens) {
  * @param {{ nameHint?: string }} [opts]
  */
 export function parseProfileHeader(els, opts = {}) {
-  const nameHint = String(opts.nameHint || "")
-    .trim()
+  const nameHint = stripLinkedInSlugIdFromName(String(opts.nameHint || "").trim())
     .toLowerCase();
-  const hintTokens = nameHint.split(/[\s-]+/).filter((t) => t.length >= 3);
+  const hintTokens = nameHint
+    .split(/[\s-]+/)
+    .filter((t) => t.length >= 3 && !isSlugNonNamePart(t));
 
   const sorted = (Array.isArray(els) ? els : [])
     .map((e) => ({
@@ -239,24 +292,28 @@ export function parseProfileHeader(els, opts = {}) {
     }
 
     if (looksLikePersonName(t)) {
-      const cleaned = t
-        .replace(/\b(verified|verificado)\b/gi, " ")
-        .replace(/\s*[•·].*$/, "")
-        .replace(/\s+/g, " ")
-        .trim();
-      const score =
-        nameHintScore(cleaned, hintTokens) + (source === "text" ? 0.2 : 0);
-      const hintOk =
-        !hintTokens.length ||
-        hintTokens.some((tok) => cleaned.toLowerCase().includes(tok));
-      const best = nameCandidates.reduce((m, c) => Math.max(m, c.score), 0);
-      // só consome como nome se ainda não há match forte; senão vira mid (cargo/empresa)
-      if (hintOk && (best < 0.85 || score > best)) {
-        nameCandidates.push({ text: cleaned, score, y: 0, source });
-        pastName = true;
-        const m = t.match(/\b(1st|2nd|3rd\+?)\b/i);
-        if (m) connectionDegree = m[1];
-        continue;
+      const cleaned = stripLinkedInSlugIdFromName(
+        t
+          .replace(/\b(verified|verificado)\b/gi, " ")
+          .replace(/\s*[•·].*$/, "")
+          .replace(/\s+/g, " ")
+          .trim(),
+      );
+      if (!cleaned || !looksLikePersonName(cleaned)) {
+        // cai no mid se for cargo etc.
+      } else {
+        const hintSim = nameHintScore(cleaned, hintTokens);
+        const score = hintSim + (source === "text" ? 0.2 : 0);
+        // hint só ranqueia: slug colado sem acento não pode bloquear "Bárbara Oliveira"
+        const hintOk = !hintTokens.length || hintSim >= 0.34 || !nameCandidates.length;
+        const best = nameCandidates.reduce((m, c) => Math.max(m, c.score), 0);
+        if (hintOk && (best < 0.85 || score > best)) {
+          nameCandidates.push({ text: cleaned, score, y: 0, source });
+          pastName = true;
+          const m = t.match(/\b(1st|2nd|3rd\+?)\b/i);
+          if (m) connectionDegree = m[1];
+          continue;
+        }
       }
     }
 

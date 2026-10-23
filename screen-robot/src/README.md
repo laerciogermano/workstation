@@ -223,6 +223,8 @@ Script [`scripts/login-extract-profiles.js`](scripts/login-extract-profiles.js) 
 
 **Antes → depois (Helen / Activity@0 + slug id):** `Activity` offscreen encerrava o header → nome caía no hint `Helen Nogueira 6bb660189` → HEADER_STOP só após nome; `isLinkedInSlugId` tira id alfanumérico do slug. Rollback: `break` no 1º Activity; hint só com `^\d{5,}$`.
 
+**Antes → depois (Bárbara / slug-comprador):** hint `barbaraoliveira-comprador` não batia em `Bárbara Oliveira` (acento/cola) e bloqueava o dump → match por `foldNameKey`; tira cargo do slug (`comprador`); rejeita `Ela / Dela`. Rollback: `includes` literal + hintOk rígido.
+
 **Antes → depois (busca comprador):** `type` / `adb shell input text` cortava a query (ex. só `ou`) → `pasteCleanMessage` (`ADB_INPUT_B64`). Rollback: `await type({ serial, text: "comprador" })`.
 
 **Antes → depois (fim do scroll):** só SHA1 do frame 3× (falhava com UI animada e o processo não parava) → conteúdo OCR estável sem novos + frame, 2×, e exit explícito. Rollback: só `frameHash` com `SCROLL_END_STABLE_NEEDED = 3` e sem `process.exit(0)`.

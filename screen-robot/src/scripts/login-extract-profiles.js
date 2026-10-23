@@ -285,8 +285,11 @@ async function matchConnectionInBase(listCard) {
     return {
       matched: Boolean(body?.matched),
       matchScore: body?.matchScore,
+      nameSimilarity: body?.nameSimilarity,
+      source: body?.source ?? null,
       clienteNome: body?.clienteNome ?? null,
       agentId: body?.agentId ?? null,
+      profileId: body?.profileId ?? null,
     };
   } catch (e) {
     console.log(`   ⚠ match conexões falhou — segue: ${e.message || e}`);
@@ -575,7 +578,7 @@ async function extractProfilesLoop(serial, outDir, opts = {}) {
       const connMatch = await matchConnectionInBase(p);
       if (connMatch.matched) {
         console.log(
-          `   skip (já na base conexões score=${Number(connMatch.matchScore || 0).toFixed(3)}): ${p.name}${connMatch.clienteNome ? ` ≈ ${connMatch.clienteNome}` : ""}${connMatch.agentId ? ` agent=${connMatch.agentId}` : ""}`,
+          `   skip (já na base src=${connMatch.source || "?"} score=${Number(connMatch.matchScore || 0).toFixed(3)} nameSim=${Number(connMatch.nameSimilarity || 0).toFixed(3)}): ${p.name}${connMatch.clienteNome ? ` ≈ ${connMatch.clienteNome}` : ""}${connMatch.agentId ? ` agent=${connMatch.agentId}` : ""}${connMatch.profileId ? ` profileId=${connMatch.profileId}` : ""}`,
         );
         contentStable = 0;
         frameStable = 0;

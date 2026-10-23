@@ -223,7 +223,7 @@ Script [`scripts/login-extract-profiles.js`](scripts/login-extract-profiles.js) 
 
 **Antes → depois (Helen / Activity@0 + slug id):** `Activity` offscreen encerrava o header → nome caía no hint `Helen Nogueira 6bb660189` → HEADER_STOP só após nome; `isLinkedInSlugId` tira id alfanumérico do slug. Rollback: `break` no 1º Activity; hint só com `^\d{5,}$`.
 
-**Antes → depois (Bárbara / slug-comprador):** hint `barbaraoliveira-comprador` não batia em `Bárbara Oliveira` (acento/cola) e bloqueava o dump → match por `foldNameKey`; tira cargo do slug (`comprador`); rejeita `Ela / Dela`. Rollback: `includes` literal + hintOk rígido.
+**Antes → depois (nome = tela):** hint da URL bloqueava/substituía o dump → nome só do texto na tela; hint só ranqueia (`foldNameKey`); payload não usa slug como nome. Rollback: `hintOk` rígido + fallback `nameHint`.
 
 **Antes → depois (busca comprador):** `type` / `adb shell input text` cortava a query (ex. só `ou`) → `pasteCleanMessage` (`ADB_INPUT_B64`). Rollback: `await type({ serial, text: "comprador" })`.
 

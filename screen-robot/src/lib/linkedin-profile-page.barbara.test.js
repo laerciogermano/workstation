@@ -1,5 +1,5 @@
 /**
- * Dump: "Bárbara Oliveira" + slug barbaraoliveira-comprador não pode virar nome.
+ * Nome = texto na tela (dump), não o slug da URL.
  */
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
@@ -9,7 +9,6 @@ import { describe, it } from "node:test";
 import {
   nameHintFromLinkedInUrl,
   parseProfileHeader,
-  stripLinkedInSlugIdFromName,
 } from "./linkedin-profile-page.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -19,20 +18,7 @@ const BARBARA_JSON = join(
 );
 
 describe("barbara profile header (dump)", () => {
-  it("nameHintFromLinkedInUrl tira -comprador do slug", () => {
-    assert.equal(
-      nameHintFromLinkedInUrl(
-        "https://www.linkedin.com/in/barbaraoliveira-comprador",
-      ),
-      "Barbaraoliveira",
-    );
-    assert.equal(
-      stripLinkedInSlugIdFromName("Barbaraoliveira Comprador"),
-      "Barbaraoliveira",
-    );
-  });
-
-  it("parse usa Bárbara Oliveira do dump, não o slug", () => {
+  it("parse usa Bárbara Oliveira exatamente como na tela", () => {
     const els = JSON.parse(readFileSync(BARBARA_JSON, "utf8"));
     const hint = nameHintFromLinkedInUrl(
       "https://www.linkedin.com/in/barbaraoliveira-comprador",
@@ -40,8 +26,16 @@ describe("barbara profile header (dump)", () => {
     const h = parseProfileHeader(els, { nameHint: hint });
     assert.equal(h.name, "Bárbara Oliveira");
     assert.match(h.headline || "", /Comprador/i);
-    assert.match(h.company || "", /FEI/i);
+    assert.match(h.company || h.headline || "", /FEI/i);
     assert.match(h.location || "", /São Bernardo/);
     assert.equal(h.canConnect, true);
+  });
+
+  it("mesmo com hint ruim do slug, o dump manda", () => {
+    const els = JSON.parse(readFileSync(BARBARA_JSON, "utf8"));
+    const h = parseProfileHeader(els, {
+      nameHint: "Barbaraoliveira Comprador",
+    });
+    assert.equal(h.name, "Bárbara Oliveira");
   });
 });

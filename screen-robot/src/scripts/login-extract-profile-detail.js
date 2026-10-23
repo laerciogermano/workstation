@@ -855,9 +855,12 @@ async function main() {
 
   const payload = {
     profileId,
-    name: stripLinkedInSlugIdFromName(
-      header.name || nameHint || openedName || profile.name || "",
-    ) || null,
+    // Nome = o que está na tela (header); slug/hint nunca vira nome final
+    name:
+      header.name ||
+      openedName ||
+      stripLinkedInSlugIdFromName(profile.name || "") ||
+      null,
     headline: header.headline || null,
     company: header.company || null,
     location: header.location || profile.city || null,

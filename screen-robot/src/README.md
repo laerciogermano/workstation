@@ -300,6 +300,28 @@ Lib: [`lib/linkedin-unread-messages.js`](lib/linkedin-unread-messages.js).
 
 ---
 
+## linkedin-profile-messages (URL → últimas mensagens do chat)
+
+```bash
+cd screen-robot/src
+npm run linkedin-profile-messages -- \
+  --url 'https://www.linkedin.com/in/laerciogermano' \
+  --max-results 10
+
+# API
+curl -s -X POST http://127.0.0.1:3099/profile-messages \
+  -H 'content-type: application/json' \
+  -d '{"url":"https://www.linkedin.com/in/laerciogermano","maxResults":10}'
+```
+
+Fluxo: **stopAllApps** → deep link perfil → **Message** → scroll down (fim) → coleta dump; se `count < maxResults`, **scroll up** e merge.  
+Cada item: `sender`, `message`, `time`, `from` (`me`|`peer`). Ordem cronológica; retorna as **últimas** `maxResults`.  
+Lib: [`lib/linkedin-profile-messages.js`](lib/linkedin-profile-messages.js).
+
+**Antes → depois:** não existia. **Rollback:** remover script/lib/`POST /profile-messages`.
+
+---
+
 ## linkedin-extract-connections (N mais recentes)
 
 ```bash

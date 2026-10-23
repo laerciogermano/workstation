@@ -229,32 +229,35 @@ export function composerDraftNonEmpty(serial) {
  */
 export function findSendViaUiDump(serial) {
   const xml = dumpUiXml(serial);
-  for (const n of xml.match(/<node\b[^>]*>/g) || []) {
-    if (/content-desc="Send"/.test(n) && /clickable="true"/.test(n)) {
-      const m = n.match(/bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"/);
-      if (!m) continue;
-      const x1 = Number(m[1]);
-      const y1 = Number(m[2]);
-      const x2 = Number(m[3]);
-      const y2 = Number(m[4]);
-      return {
-        x: Math.floor((x1 + x2) / 2),
-        y: Math.floor((y1 + y2) / 2),
-        via: "uiautomator-Send",
-      };
-    }
-  }
-  for (const n of xml.match(/<node\b[^>]*>/g) || []) {
-    if (!/messaging_keyboard_send_button/.test(n)) continue;
-    if (!/clickable="true"/.test(n)) continue;
-    if (/content-desc="Record|Voice|microphone/i.test(n)) continue;
+  const center = (n, via) => {
     const m = n.match(/bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"/);
-    if (!m) continue;
+    if (!m) return null;
     return {
       x: Math.floor((Number(m[1]) + Number(m[3])) / 2),
       y: Math.floor((Number(m[2]) + Number(m[4])) / 2),
-      via: "uiautomator-send_button",
+      via,
     };
+  };
+
+  for (const n of xml.match(/<node\b[^>]*>/g) || []) {
+    if (/content-desc="Send"/.test(n) && /clickable="true"/.test(n)) {
+      const hit = center(n, "uiautomator-Send");
+      if (hit) return hit;
+    }
+  }
+  for (const n of xml.match(/<node\b[^>]*>/g) || []) {
+    if (!/messaging_keyboard_send_button|keyboard_send_button/.test(n)) continue;
+    if (!/clickable="true"/.test(n)) continue;
+    if (/content-desc="(Record|Voice|microphone)/i.test(n)) continue;
+    const hit = center(n, "uiautomator-send_button");
+    if (hit) return hit;
+  }
+  // geom do avião (campo com texto, teclado aberto) — último recurso
+  if (/messaging_keyboard_text_input_container/.test(xml)) {
+    const draft = composerDraftState(serial);
+    if (draft === "draft") {
+      return { x: 504, y: 475, via: "geom-send" };
+    }
   }
   return null;
 }

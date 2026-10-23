@@ -1,10 +1,17 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
+import { readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+
 import {
   isPeopleResultsScreen,
+  isProfileScreen,
   isSearchComposeScreen,
 } from "./linkedin-capture-profile-url.js";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 function els(...texts) {
   return texts.map((text, i) => ({ text, x: 100, y: 200 + i * 40 }));
@@ -26,6 +33,28 @@ describe("leaveProfile screen classifiers", () => {
     assert.equal(isPeopleResultsScreen(e), true);
   });
 
+  it("lista com Invite…connect + Skills no cargo → ainda é lista", () => {
+    const e = els(
+      "Filter by People",
+      "Michelle Fernandes Costa Verified • 2nd",
+      "Invite Michelle Fernandes Costa to connect",
+      "Compradora | Category Management | Skills",
+      "Thais Ricci Verified • 2nd",
+      "Invite Thais Ricci to connect",
+    );
+    assert.equal(isProfileScreen(e), false);
+    assert.equal(isPeopleResultsScreen(e), true);
+  });
+
+  it("dump real list-round-022 (Michelle) → lista", () => {
+    const path = join(
+      __dirname,
+      "../screenshots/login-extract-profiles/2026-10-23T17-25-56-640Z/list-round-022.json",
+    );
+    const dump = JSON.parse(readFileSync(path, "utf8"));
+    assert.equal(isPeopleResultsScreen(dump), true);
+  });
+
   it("perfil aberto (1 Connect + About) → não é lista", () => {
     const e = els(
       "DENISE ALVES DE OLIVEIRA",
@@ -37,6 +66,7 @@ describe("leaveProfile screen classifiers", () => {
       "500+ connections",
       "Americana, São Paulo, Brazil",
     );
+    assert.equal(isProfileScreen(e), true);
     assert.equal(isPeopleResultsScreen(e), false);
   });
 

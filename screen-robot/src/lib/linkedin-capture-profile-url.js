@@ -274,30 +274,48 @@ export function isSearchComposeScreen(els) {
   return false;
 }
 
+/** Contagem de graus 1st/2nd/3rd (linha "Nome • 2nd" ou só "2nd"). */
+function countDegreeMarkers(texts) {
+  return texts.filter(
+    (t) =>
+      /^(1st|2nd|3rd\+?)$/i.test(t.replace(/[•·].*$/, "").trim()) ||
+      /\b(1st|2nd|3rd\+?)\b/i.test(t),
+  ).length;
+}
+
 /**
- * Lista People (cards Connect/Pending + graus) após Show all.
- * Perfil aberto tem no máx. 1 Connect — não conta como lista.
+ * Lista People (cards Connect/Pending/Invite + graus) após Show all.
+ * Não usar \bskills\b no blob — headline de card tem "Skills" e gerava falso perfil.
  */
 export function isPeopleResultsScreen(els) {
   if (isSearchComposeScreen(els)) return false;
+  if (isProfileScreen(els)) return false;
   const texts = elTexts(els);
-  const blob = texts.join("\n");
-  // perfil: seções / mutual longo
-  if (
-    /\b(about|activity|featured|experience|education|skills)\b/i.test(blob) &&
-    !/\bpending\b/i.test(blob)
-  ) {
-    const pills = countListActionPills(texts);
-    if (pills <= 1) return false;
-  }
   const pills = countListActionPills(texts);
-  const degrees = texts.filter((t) =>
-    /^(1st|2nd|3rd)$/i.test(t.replace(/[•·].*$/, "").trim()) ||
-    /\b(1st|2nd|3rd)\b/i.test(t),
-  ).length;
+  const degrees = countDegreeMarkers(texts);
   if (pills >= 2 || degrees >= 2) return true;
-  const peopleChip = texts.some((t) => /^people$/i.test(t));
-  return peopleChip && pills >= 1 && degrees >= 1;
+  const peopleChip = texts.some(
+    (t) => /^people$/i.test(t) || /^filter by people$/i.test(t),
+  );
+  return peopleChip && (pills >= 1 || degrees >= 1);
+}
+
+/**
+ * Perfil aberto (seções About/Activity…), não lista.
+ * Só labels de seção no início da linha — evita "Skills" no cargo.
+ */
+export function isProfileScreen(els) {
+  if (isSearchComposeScreen(els)) return false;
+  const texts = elTexts(els);
+  const section = texts.some((t) =>
+    /^(about|activity|featured|experience|education|skills)\b/i.test(t),
+  );
+  if (!section) return false;
+  const pills = countListActionPills(texts);
+  const degrees = countDegreeMarkers(texts);
+  // lista com vários cards não é perfil mesmo se um cargo diga Experience
+  if (pills >= 2 || degrees >= 2) return false;
+  return true;
 }
 
 function countListActionPills(texts) {
@@ -307,14 +325,40 @@ function countListActionPills(texts) {
       .replace(/^[&+i]+\s*/i, "")
       .trim();
     if (/^(connect|pending)$/i.test(t)) n += 1;
-    else if (/^pending$/i.test(t) || /^\+?\s*connect$/i.test(t)) n += 1;
+    else if (/^\+?\s*connect$/i.test(t)) n += 1;
+    else if (/\binvite\b.+\bconnect\b/i.test(t)) n += 1;
+    else if (/^pending\b/i.test(t) || /\bpending,.+withdraw\b/i.test(t)) {
+      n += 1;
+    }
   }
   return n;
 }
 
+async function recoverShowAll(serial, engine) {
+  console.log(
+    "   leaveProfile: caiu na busca (Show all/Recent) — recupera Show all",
+  );
+  const show = await findFirstByText(
+    serial,
+    ["Show all results", "See all results", "Show all", "See all"],
+    { minScore: 0.65, engine },
+  );
+  if (!show) return false;
+  console.log(
+    `   → Show all "${show.hit.text}" x=${show.hit.x} y=${show.hit.y}`,
+  );
+  tapElement({ serial, x: show.hit.x, y: show.hit.y });
+  await sleep(1_500);
+  try {
+    return isPeopleResultsScreen(await extractBySense({ serial, engine }));
+  } catch {
+    return false;
+  }
+}
+
 /**
- * KEYCODE_BACK até a lista People — nunca parar só em "Search"
- * (tela de digitar comprador também tem Search → BACK a mais).
+ * KEYCODE_BACK até a lista People.
+ * 2º BACK só se ainda for perfil — evita BACK a mais → busca do comprador.
  * @returns {Promise<boolean>}
  */
 export async function leaveProfile(serial, opts = {}) {
@@ -328,7 +372,7 @@ export async function leaveProfile(serial, opts = {}) {
     }
   };
 
-  // Fecha menu/sheet antes de sair do perfil
+  // Fecha menu/sheet antes de sair do perfil (não conta como leave)
   if (
     (await moreMenuOpen(serial, { engine })) ||
     (await shareSheetOpen(serial, { engine }))
@@ -344,36 +388,35 @@ export async function leaveProfile(serial, opts = {}) {
     return true;
   }
 
-  for (let i = 0; i < 3; i++) {
-    console.log(`   leaveProfile: KEYCODE_BACK (${i + 1}/3)`);
+  console.log("   leaveProfile: KEYCODE_BACK (1/2)");
+  key({ serial, code: "KEYCODE_BACK" });
+  await sleep(900);
+  els = await snap();
+  if (isPeopleResultsScreen(els)) {
+    console.log("   leaveProfile: lista People ok");
+    return true;
+  }
+  if (isSearchComposeScreen(els)) {
+    return recoverShowAll(serial, engine);
+  }
+
+  // 2º BACK só se ainda parece perfil (sheet/overlay fechou no 1º)
+  if (isProfileScreen(els)) {
+    console.log("   leaveProfile: ainda no perfil — KEYCODE_BACK (2/2)");
     key({ serial, code: "KEYCODE_BACK" });
-    await sleep(800);
+    await sleep(900);
     els = await snap();
     if (isPeopleResultsScreen(els)) {
       console.log("   leaveProfile: lista People ok");
       return true;
     }
     if (isSearchComposeScreen(els)) {
-      console.log(
-        "   leaveProfile: caiu na busca (Show all/Recent) — recupera Show all",
-      );
-      const show = await findFirstByText(
-        serial,
-        ["Show all results", "See all results", "Show all", "See all"],
-        { minScore: 0.65, engine },
-      );
-      if (show) {
-        console.log(
-          `   → Show all "${show.hit.text}" x=${show.hit.x} y=${show.hit.y}`,
-        );
-        tapElement({ serial, x: show.hit.x, y: show.hit.y });
-        await sleep(1_500);
-        els = await snap();
-        if (isPeopleResultsScreen(els)) return true;
-      }
-      // não dar mais BACK — piora (Home)
-      return false;
+      return recoverShowAll(serial, engine);
     }
+  } else {
+    // não-perfil / não-compose após 1 BACK → assume lista (sinais fracos)
+    console.log("   leaveProfile: após 1 BACK não-perfil — assume lista");
+    return true;
   }
   return false;
 }

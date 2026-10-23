@@ -152,7 +152,9 @@ PROFILES_API_URL=http://localhost:3000 npm run login-extract-profile-detail -- -
 PROFILES_API_URL=http://localhost:3000 npm run login-extract-profile-detail -- --id <uuid> --from-profile --url 'https://www.linkedin.com/in/…'
 ```
 
-Script [`scripts/login-extract-profile-detail.js`](scripts/login-extract-profile-detail.js) — digita (**nome + `searchQuery` + 1ª cidade**) → Show all → **1ª pessoa** → **OCR cartão** → crop **foto + capa** (`photo.png` / `cover.png` + base64 no POST) → **⋯** Share/Copy URL → **POST**. Sem scroll/Experience.
+Script [`scripts/login-extract-profile-detail.js`](scripts/login-extract-profile-detail.js) — digita (**nome + `searchQuery` + 1ª cidade**) → Show all → **1ª pessoa** → **print + OCR cartão** → **crop foto/capa/card (base64)** → **⋯** Share/Copy URL → **POST** `/profile-details` (upsert; API espelha avatar no card da lista). Sem scroll/Experience.
+
+**Antes → depois (ordem mídia):** crop depois do Share (avatar coberto pelo sheet) → crop **antes** da URL, a partir do `card-00.png`. Rollback: mover o bloco `cropProfilePhotoAndCover` para depois de `captureProfileUrl`.
 
 **Antes → depois (mídia):** só texto/URL → crop avatar+capa+card + `rawOcr` do card via [`lib/linkedin-profile-photo-crop.js`](lib/linkedin-profile-photo-crop.js). Rollback: remova o crop/`rawOcr` do POST.
 
@@ -318,10 +320,11 @@ curl -s -X POST http://127.0.0.1:3099/profile-messages \
 
 Fluxo: **stopAllApps** → deep link perfil → **Message** → scroll down (fim) → coleta dump; se `count < maxResults`, **scroll up** e merge.  
 Cada item: `sender`, `message`, `time`, `from` (`me`|`peer`). Ordem cronológica; retorna as **últimas** `maxResults`.  
-Em sucesso → upsert lote em `POST …/client-linkedin-messages` (default `:3000`). API robot → 502 se DB falhar.  
+Antes do POST: `dedupeMessagesForDb` (texto normalizado) e descarta `from=unknown`. Persistência = **update** da bolha existente (API).  
 Lib: [`lib/linkedin-profile-messages.js`](lib/linkedin-profile-messages.js).
 
-**Antes → depois:** não existia. **Rollback:** remover script/lib/`POST /profile-messages`.
+**Antes → depois:** key `time|msg` + POST de unknown → duplicatas; agora key=corpo normalizado + só me/peer.  
+**Rollback:** restaurar `messageKey` antigo; remover `dedupeMessagesForDb`.
 
 ---
 

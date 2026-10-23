@@ -997,6 +997,28 @@ async function main() {
     console.log(`   card OCR: ${e.message || e}`);
   }
 
+  // Crop ANTES do ⋯/Share: o print (card-00) já foi tirado; menu Share cobre o avatar.
+  /** @type {string|null} */
+  let photoBase64 = null;
+  /** @type {string|null} */
+  let coverBase64 = null;
+  /** @type {string|null} */
+  let cardBase64 = null;
+  if (existsSync(cardPng)) {
+    try {
+      console.log("6b) Crop foto + capa + card (antes da URL)…");
+      const media = await cropProfilePhotoAndCover(cardPng, outDir);
+      photoBase64 = media.photoBase64;
+      coverBase64 = media.coverBase64;
+      cardBase64 = media.cardBase64;
+      console.log(
+        `   photo=${media.photoPath || "-"} cover=${media.coverPath || "-"} card=${media.cardPath || "-"}`,
+      );
+    } catch (e) {
+      console.log(`   crop: ${e.message || e}`);
+    }
+  }
+
   console.log("7) ⋯ → Share via → Copy → URL…");
   let profileUrl = null;
   try {
@@ -1012,27 +1034,6 @@ async function main() {
     throw new Error("URL linkedin.com/in/… não obtida");
   }
   console.log(`   URL: ${profileUrl}`);
-
-  /** @type {string|null} */
-  let photoBase64 = null;
-  /** @type {string|null} */
-  let coverBase64 = null;
-  /** @type {string|null} */
-  let cardBase64 = null;
-  if (existsSync(cardPng)) {
-    try {
-      console.log("7b) Crop foto + capa + card…");
-      const media = await cropProfilePhotoAndCover(cardPng, outDir);
-      photoBase64 = media.photoBase64;
-      coverBase64 = media.coverBase64;
-      cardBase64 = media.cardBase64;
-      console.log(
-        `   photo=${media.photoPath || "-"} cover=${media.coverPath || "-"} card=${media.cardPath || "-"}`,
-      );
-    } catch (e) {
-      console.log(`   crop: ${e.message || e}`);
-    }
-  }
 
   const payload = {
     profileId,

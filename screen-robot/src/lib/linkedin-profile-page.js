@@ -22,8 +22,9 @@ const DATE_RANGE_RE =
 
 const HEADER_STOP_RE =
   /^(about|experience|education|skills|activity|open to work|featured|interests)\b/i;
+/** Cidade típica (evita “Pontifícia … de Minas Gerais” virar location). */
 const LOCATION_RE =
-  /,\s*|brazil|brasil|minas|paulo|horizonte|campinas|remote|united states|portugal/i;
+  /,\s*(brazil|brasil|[A-Z]{2}\b)|^(greater\s+)?(belo horizonte|s[aã]o paulo|rio de janeiro|campinas|curitiba|bras[ií]lia|porto alegre|contagem|betim)|remote|united states|portugal/i;
 const CONNECTIONS_RE = /^(\d[\d,]*)\+?\s*connections?\b/i;
 const NAME_DEGREE_RE = /^(.*?)\s*[•·]\s*(1st|2nd|3rd\+?)\s*$/i;
 const DEGREE_ONLY_RE = /^[•·]?\s*(1st|2nd|3rd\+?)\s*$/i;
@@ -34,12 +35,39 @@ const AD_RE =
  * slug `bruno-toyomoto-923870410` → `Bruno Toyomoto` (hint de nome p/ OCR).
  * @param {string} rawUrl
  */
+/** Trecho final do slug LinkedIn: `923870410` ou `6bb660189`. */
+export function isLinkedInSlugId(part) {
+  const p = String(part || "").trim();
+  if (!p) return false;
+  if (/^\d{5,}$/.test(p)) return true;
+  // alfanumérico com dígito (não palavra pura)
+  return (
+    p.length >= 6 &&
+    p.length <= 14 &&
+    /[0-9]/.test(p) &&
+    /^[a-z0-9]+$/i.test(p)
+  );
+}
+
+/** Remove id do slug no fim: "Helen Nogueira 6bb660189" → "Helen Nogueira". */
+export function stripLinkedInSlugIdFromName(raw) {
+  const words = String(raw || "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
+  while (words.length >= 2 && isLinkedInSlugId(words[words.length - 1])) {
+    words.pop();
+  }
+  return words.join(" ");
+}
+
 export function nameHintFromLinkedInUrl(rawUrl) {
   const m = String(rawUrl || "").match(/linkedin\.com\/in\/([^/?#]+)/i);
   const slug = decodeURIComponent(m?.[1] || "").replace(/\/$/, "");
   if (!slug) return "";
   const parts = slug.split("-").filter(Boolean);
-  while (parts.length && /^\d{5,}$/.test(parts[parts.length - 1])) {
+  while (parts.length && isLinkedInSlugId(parts[parts.length - 1])) {
     parts.pop();
   }
   return parts
@@ -123,7 +151,9 @@ export function parseProfileHeader(els, opts = {}) {
   let pendingConnCount = null;
 
   for (const { text: t, source } of sorted) {
-    if (HEADER_STOP_RE.test(t)) break;
+    // Activity/About… só encerra o header depois do nome (dump traz Activity@0 offscreen)
+    if (pastName && HEADER_STOP_RE.test(t)) break;
+    if (!pastName && HEADER_STOP_RE.test(t)) continue;
     if (AD_RE.test(t)) continue;
     if (/^\d{1,2}:\d{2}/.test(t) || /^search$/i.test(t)) continue;
 
@@ -248,7 +278,7 @@ export function parseProfileHeader(els, opts = {}) {
 
   if (nameCandidates.length) {
     nameCandidates.sort((a, b) => b.score - a.score || a.y - b.y);
-    name = nameCandidates[0].text;
+    name = stripLinkedInSlugIdFromName(nameCandidates[0].text);
   }
 
   // mid: cargo(s) + empresa (última linha curta costuma ser empresa)
@@ -262,6 +292,10 @@ export function parseProfileHeader(els, opts = {}) {
     // empresa típica: curta, sem "em"/"de" de cargo longo
     if (last.length <= 48 && rest.join(" ").length >= 8) {
       company = last;
+      headline = rest.join(" ");
+    } else if (/[·•]/.test(last) && rest.length) {
+      // "Elba … · Pontifícia Universidade…" → 1º segmento = empresa
+      company = last.split(/\s*[·•]\s*/)[0].trim() || last;
       headline = rest.join(" ");
     } else {
       headline = midLines.join(" ");

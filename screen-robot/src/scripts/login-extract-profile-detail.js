@@ -34,6 +34,7 @@ import { cropProfilePhotoAndCover } from "../lib/linkedin-profile-photo-crop.js"
 import {
   nameHintFromLinkedInUrl,
   parseProfileHeader,
+  stripLinkedInSlugIdFromName,
 } from "../lib/linkedin-profile-page.js";
 import { takeSenseArg } from "../lib/sense.js";
 import {
@@ -854,7 +855,9 @@ async function main() {
 
   const payload = {
     profileId,
-    name: header.name || nameHint || openedName || profile.name || null,
+    name: stripLinkedInSlugIdFromName(
+      header.name || nameHint || openedName || profile.name || "",
+    ) || null,
     headline: header.headline || null,
     company: header.company || null,
     location: header.location || profile.city || null,

@@ -35,7 +35,7 @@ import {
   nameHintFromLinkedInUrl,
   parseProfileHeader,
 } from "../lib/linkedin-profile-page.js";
-import { resolveSense, takeSenseArg } from "../lib/sense.js";
+import { takeSenseArg } from "../lib/sense.js";
 import {
   sanitizeSearchText,
   typeQueryFromProfile as buildTypeQuery,
@@ -759,7 +759,6 @@ async function main() {
     console.log("4–5) skip busca (deep link)");
   }
 
-  const sense = resolveSense();
   console.log(`6) cartão (1ª tela, sense=${sense})…`);
   const cardPng = join(outDir, "card-00.png");
   let header = {

@@ -1,11 +1,12 @@
 #!/usr/bin/env node
 /**
- * 1 perfil da API → Search → abre 1ª pessoa → OCR cartão (1ª tela) → Share/Copy URL → POST.
+ * 1 perfil da API → Search (ou deep link) → OCR cartão (nome/cargo/cidade/conexões/pending|connect|message)
+ * → crop avatar → POST /profile-details. Com --url, não captura Share/Copy (URL já conhecida).
  *
  * Uso (cwd: screen-robot/src):
  *   PROFILES_API_URL=http://localhost:3000 npm run login-extract-profile-detail -- --id <uuid>
- *   # abre o perfil direto pelo link (pula busca):
  *   … -- --id <uuid> --from-profile --url https://www.linkedin.com/in/…
+ *   # ou API: GET /extract/by-url/start?url=…
  */
 import {
   existsSync,
@@ -21,7 +22,10 @@ import { extract, findByText } from "../lib/extract.js";
 import { booleanQueryForProfile } from "../lib/linkedin-boolean-query.js";
 import { profilesFromExtract } from "../lib/linkedin-list-profiles.js";
 import { cropProfilePhotoAndCover } from "../lib/linkedin-profile-photo-crop.js";
-import { parseProfileHeader } from "../lib/linkedin-profile-page.js";
+import {
+  nameHintFromLinkedInUrl,
+  parseProfileHeader,
+} from "../lib/linkedin-profile-page.js";
 import {
   sanitizeSearchText,
   typeQueryFromProfile as buildTypeQuery,
@@ -964,11 +968,12 @@ async function main() {
     console.log("4–5) skip busca (deep link)");
   }
 
-  // Cartão da 1ª tela (antes do ⋯): nome, empresa, conexões, Connect/Message.
+  // Cartão da 1ª tela: nome, cargo, empresa, cidade, conexões, pending/connect/message.
   console.log("6) OCR cartão (1ª tela)…");
   const cardPng = join(outDir, "card-00.png");
   let header = {
     name: null,
+    headline: null,
     company: null,
     location: null,
     connections: null,
@@ -976,9 +981,14 @@ async function main() {
     connectionDegree: null,
     canConnect: false,
     canMessage: false,
+    inviteStatus: null,
   };
   /** @type {object[]|null} */
   let cardEls = null;
+  const nameHint =
+    nameHintFromLinkedInUrl(knownProfileUrl || profileUrlArg || "") ||
+    openedName ||
+    name;
   try {
     cardEls = await extract(
       { serial, engine: OCR_ENGINE },
@@ -989,15 +999,14 @@ async function main() {
       JSON.stringify(cardEls, null, 2),
       "utf8",
     );
-    header = parseProfileHeader(cardEls, { nameHint: openedName || name });
+    header = parseProfileHeader(cardEls, { nameHint });
     console.log(
-      `   card: name=${header.name || "-"} company=${!!header.company} loc=${header.location || "-"} conn=${header.connections || "-"} mutual=${!!header.mutualConnections} connect=${header.canConnect} msg=${header.canMessage} grau=${header.connectionDegree || "-"}`,
+      `   card: name=${header.name || "-"} headline=${header.headline || "-"} company=${header.company || "-"} loc=${header.location || "-"} conn=${header.connections || "-"} mutual=${header.mutualConnections || "-"} status=${header.inviteStatus || "-"} connect=${header.canConnect} msg=${header.canMessage} grau=${header.connectionDegree || "-"}`,
     );
   } catch (e) {
     console.log(`   card OCR: ${e.message || e}`);
   }
 
-  // Crop ANTES do ⋯/Share: o print (card-00) já foi tirado; menu Share cobre o avatar.
   /** @type {string|null} */
   let photoBase64 = null;
   /** @type {string|null} */
@@ -1006,7 +1015,7 @@ async function main() {
   let cardBase64 = null;
   if (existsSync(cardPng)) {
     try {
-      console.log("6b) Crop foto + capa + card (antes da URL)…");
+      console.log("6b) Crop foto + capa + card…");
       const media = await cropProfilePhotoAndCover(cardPng, outDir);
       photoBase64 = media.photoBase64;
       coverBase64 = media.coverBase64;
@@ -1019,31 +1028,34 @@ async function main() {
     }
   }
 
-  console.log("7) ⋯ → Share via → Copy → URL…");
-  let profileUrl = null;
-  try {
-    profileUrl = await captureProfileUrl(serial, outDir);
-  } catch (e) {
-    console.log(`   URL: ${e.message || e}`);
+  /** URL: se já veio no --url / deep link, não abre Share/Copy. */
+  let profileUrl = knownProfileUrl || null;
+  if (profileUrl) {
+    console.log(`7) URL já conhecida — skip Share/Copy: ${profileUrl}`);
+  } else {
+    console.log("7) ⋯ → Share via → Copy → URL…");
+    try {
+      profileUrl = await captureProfileUrl(serial, outDir);
+    } catch (e) {
+      console.log(`   URL: ${e.message || e}`);
+    }
+    if (!profileUrl) {
+      throw new Error("URL linkedin.com/in/… não obtida");
+    }
+    console.log(`   URL: ${profileUrl}`);
   }
-  if (!profileUrl && knownProfileUrl) {
-    profileUrl = knownProfileUrl;
-    console.log(`   URL (do --url / deep link): ${profileUrl}`);
-  }
-  if (!profileUrl) {
-    throw new Error("URL linkedin.com/in/… não obtida");
-  }
-  console.log(`   URL: ${profileUrl}`);
 
   const payload = {
     profileId,
-    name: header.name || openedName || profile.name || null,
+    name: header.name || nameHint || openedName || profile.name || null,
+    headline: header.headline || null,
     company: header.company || null,
     location: header.location || profile.city || null,
     connections: header.connections || null,
     mutualConnections: header.mutualConnections || null,
     canConnect: header.canConnect ?? null,
     canMessage: header.canMessage ?? null,
+    inviteStatus: header.inviteStatus || null,
     profileUrl,
     connectionDegree:
       header.connectionDegree || profile.level || null,
@@ -1070,12 +1082,12 @@ async function main() {
   );
   console.log(`   → ${join(outDir, "detail.json")}`);
 
-  console.log("8) POST /profile-details (URL + foto/capa/card) e encerrar…");
+  console.log("8) POST /profile-details (cartão + mídia) e encerrar…");
   const saved = await postProfileDetail(payload);
   console.log(
-    `   OK id=${saved.id} profileId=${saved.profileId} url=${saved.profileUrl || "-"} name=${saved.name || "-"} photo=${saved.photoBase64 ? "sim" : "não"} cover=${saved.coverBase64 ? "sim" : "não"} card=${saved.cardBase64 ? "sim" : "não"}`,
+    `   OK id=${saved.id} profileId=${saved.profileId} name=${saved.name || "-"} headline=${saved.headline || "-"} status=${saved.inviteStatus || "-"} msg=${saved.canMessage} photo=${saved.photoBase64 ? "sim" : "não"}`,
   );
-  console.log("OK — URL + foto/capa/card persistidos — encerrando processo");
+  console.log("OK — cartão persistido — encerrando processo");
   process.exit(0);
 }
 

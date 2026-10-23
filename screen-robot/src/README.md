@@ -154,7 +154,9 @@ PROFILES_API_URL=http://localhost:3000 npm run login-extract-profile-detail -- -
 curl 'http://localhost:3000/extract/by-url/start?url=https://www.linkedin.com/in/…'
 ```
 
-Script [`scripts/login-extract-profile-detail.js`](scripts/login-extract-profile-detail.js) — digita (**nome + `searchQuery` + 1ª cidade**) → Show all → **1ª pessoa** → **print + OCR cartão** → **crop foto/capa/card (base64)** → **⋯** Share/Copy URL → **POST** `/profile-details` (upsert; API espelha avatar no card da lista). Sem scroll/Experience. API Nest: `GET /extract/by-url/start?url=` (deep link + upsert).
+Script [`scripts/login-extract-profile-detail.js`](scripts/login-extract-profile-detail.js) — digita (**nome + `searchQuery` + 1ª cidade**) → Show all → **1ª pessoa** → **OCR cartão** (nome, cargo/`headline`, empresa, cidade, conexões, mutual, grau, `inviteStatus` connect|pending|connected, `canMessage`) → **crop foto/capa/card** → **POST** `/profile-details`. Com `--url` / `by-url`: deep link e **não** abre Share/Copy (URL já conhecida). Sem `--url`: ainda captura URL via ⋯. API Nest: `GET /extract/by-url/start?url=`.
+
+**Antes → depois (by-url / cartão):** sempre Share/Copy URL + nome frágil → com URL conhecida skip Share; parser preenche headline/empresa/`inviteStatus`. Rollback: forçar `captureProfileUrl`; parser antigo sem `inviteStatus`.
 
 **Antes → depois (ordem mídia):** crop depois do Share (avatar coberto pelo sheet) → crop **antes** da URL, a partir do `card-00.png`. Rollback: mover o bloco `cropProfilePhotoAndCover` para depois de `captureProfileUrl`.
 

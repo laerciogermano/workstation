@@ -11,7 +11,7 @@ const SECTION_STOP_RE =
 const URL_RE = /(?:https?:\/\/)?(?:www\.)?linkedin\.com\/in\/[A-Za-z0-9._%-]+\/?/i;
 
 const CHROME_RE =
-  /^(search|connect|message|pending|follow|\+ follow|i\+ connect|1 message|• message|show all.*|page|\d{1,2}:\d{2}\s*\$?|premium)$/i;
+  /^(search|connect|message|pending|follow|\+ follow|i\+ connect|1 message|• message|• pending|show all.*|page|\d{1,2}:\d{2}\s*\$?|premium)$/i;
 
 const DATE_RANGE_RE =
   /\b(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{4}\s*[-–]\s*(?:Present|(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{4})\b/i;
@@ -22,10 +22,45 @@ const LOCATION_RE =
   /,\s*|brazil|brasil|minas|paulo|horizonte|campinas|remote|united states|portugal/i;
 const CONNECTIONS_RE = /^(\d[\d,]*)\s*connections?\b/i;
 const NAME_DEGREE_RE = /^(.*?)\s*[•·]\s*(1st|2nd|3rd\+?)\s*$/i;
+const DEGREE_ONLY_RE = /^[•·]?\s*(1st|2nd|3rd\+?)\s*$/i;
+const AD_RE =
+  /^(aqui sua empresa|economiza\+?|try premium|advertisement)\b/i;
 
 /**
- * Cabeçalho do perfil (topo da página): nome, empresas, conexões, Connect/Message.
- * Usa ordem por y quando disponível.
+ * slug `bruno-toyomoto-923870410` → `Bruno Toyomoto` (hint de nome p/ OCR).
+ * @param {string} rawUrl
+ */
+export function nameHintFromLinkedInUrl(rawUrl) {
+  const m = String(rawUrl || "").match(/linkedin\.com\/in\/([^/?#]+)/i);
+  const slug = decodeURIComponent(m?.[1] || "").replace(/\/$/, "");
+  if (!slug) return "";
+  const parts = slug.split("-").filter(Boolean);
+  while (parts.length && /^\d{5,}$/.test(parts[parts.length - 1])) {
+    parts.pop();
+  }
+  return parts
+    .map((p) => p.charAt(0).toUpperCase() + p.slice(1).toLowerCase())
+    .join(" ")
+    .trim();
+}
+
+function looksLikePersonName(t) {
+  const s = String(t || "").replace(/\s+/g, " ").trim();
+  if (s.length < 3 || s.length > 80) return false;
+  if (LOCATION_RE.test(s) || /connections?|mutual|followers|open to/i.test(s)) {
+    return false;
+  }
+  if (DEGREE_ONLY_RE.test(s) || AD_RE.test(s) || isChromeLine(s)) return false;
+  if (/^\d/.test(s)) return false;
+  // 1–4 palavras, maioria com letra inicial maiúscula (OCR EN/PT)
+  const words = s.split(/\s+/).filter(Boolean);
+  if (words.length < 1 || words.length > 5) return false;
+  const capped = words.filter((w) => /^[\p{L}]/u.test(w)).length;
+  return capped >= Math.min(1, words.length);
+}
+
+/**
+ * Cabeçalho do perfil (topo): nome, cargo, empresa, cidade, conexões, pending/connect/message.
  * @param {object[]} els
  * @param {{ nameHint?: string }} [opts]
  */
@@ -33,9 +68,8 @@ export function parseProfileHeader(els, opts = {}) {
   const nameHint = String(opts.nameHint || "")
     .trim()
     .toLowerCase();
-  const hintFirst = nameHint.split(/\s+/).filter(Boolean)[0] || "";
+  const hintTokens = nameHint.split(/[\s-]+/).filter((t) => t.length >= 3);
 
-  // Preferir y quando há coords (page-00); senão ordem do array.
   const sorted = (Array.isArray(els) ? els : [])
     .map((e) => ({
       text: String(e?.text || "").replace(/\s+/g, " ").trim(),
@@ -54,31 +88,49 @@ export function parseProfileHeader(els, opts = {}) {
   let location = null;
   let connections = null;
   /** @type {string[]} */
-  const companyLines = [];
+  const midLines = [];
   /** @type {string[]} */
   const mutualParts = [];
   let canConnect = false;
   let canMessage = false;
+  /** @type {'connect'|'pending'|'connected'|null} */
+  let inviteStatus = null;
   let pastName = false;
 
   for (const { text: t } of sorted) {
     if (HEADER_STOP_RE.test(t)) break;
+    if (AD_RE.test(t)) continue;
+    if (/^\d{1,2}:\d{2}/.test(t) || /^search$/i.test(t)) continue;
+
+    const degOnly = t.match(DEGREE_ONLY_RE);
+    if (degOnly) {
+      if (!connectionDegree) connectionDegree = degOnly[1];
+      continue;
+    }
 
     const degInline = t.match(NAME_DEGREE_RE);
     if (degInline) {
-      name = degInline[1].replace(/\s+/g, " ").trim();
+      const n = degInline[1].replace(/\s+/g, " ").trim();
+      if (n.length >= 2) {
+        name = n;
+        pastName = true;
+      }
       connectionDegree = degInline[2];
-      pastName = true;
       continue;
     }
 
-    if (/^(1st|2nd|3rd\+?)$/i.test(t)) {
-      if (!connectionDegree) connectionDegree = t;
+    if (/\bpending\b/i.test(t)) {
+      inviteStatus = "pending";
+      canConnect = false;
       continue;
     }
-
-    if (/connect/i.test(t) && !/connections?/i.test(t) && !/mutual/i.test(t)) {
+    if (
+      /\bconnect\b/i.test(t) &&
+      !/connections?/i.test(t) &&
+      !/mutual/i.test(t)
+    ) {
       canConnect = true;
+      if (inviteStatus !== "pending") inviteStatus = "connect";
       continue;
     }
     if (/\bmessage\b/i.test(t) && !/send profile/i.test(t)) {
@@ -98,15 +150,17 @@ export function parseProfileHeader(els, opts = {}) {
       continue;
     }
 
-    // nome sem bullet (só hint)
+    if (LOCATION_RE.test(t) && t.length <= 120 && !/connections?/i.test(t)) {
+      location = t;
+      pastName = true;
+      continue;
+    }
+
     if (
       !name &&
-      hintFirst &&
-      t.toLowerCase().includes(hintFirst) &&
-      t.length >= 5 &&
-      t.length <= 120 &&
-      !LOCATION_RE.test(t) &&
-      !/followers|open to/i.test(t)
+      looksLikePersonName(t) &&
+      (hintTokens.length === 0 ||
+        hintTokens.some((tok) => t.toLowerCase().includes(tok)))
     ) {
       name = t.replace(/\s*[•·].*$/, "").trim();
       pastName = true;
@@ -115,25 +169,48 @@ export function parseProfileHeader(els, opts = {}) {
       continue;
     }
 
-    if (LOCATION_RE.test(t) && t.length <= 120 && !/connections?/i.test(t)) {
-      location = t;
+    // Sem hint: 1º nome plausível após grau / antes de location
+    if (
+      !name &&
+      !hintTokens.length &&
+      looksLikePersonName(t) &&
+      (connectionDegree || pastName === false)
+    ) {
+      name = t.replace(/\s*[•·].*$/, "").trim();
       pastName = true;
       continue;
     }
 
-    // linhas de empresa: entre nome e location (ou antes de connections)
     if (
       pastName &&
       !location &&
       !connections &&
       t.length >= 3 &&
-      t.length <= 120 &&
+      t.length <= 140 &&
       !isChromeLine(t) &&
-      !/followers|mutual|show details|#opentowork/i.test(t) &&
-      !/^\d{1,2}:\d{2}/.test(t) &&
-      !/^search$/i.test(t)
+      !DEGREE_ONLY_RE.test(t) &&
+      !AD_RE.test(t) &&
+      !/followers|mutual|show details|#opentowork/i.test(t)
     ) {
-      companyLines.push(t);
+      midLines.push(t);
+    }
+  }
+
+  // mid: cargo(s) + empresa (última linha curta costuma ser empresa)
+  let headline = null;
+  let company = null;
+  if (midLines.length === 1) {
+    headline = midLines[0];
+  } else if (midLines.length >= 2) {
+    const last = midLines[midLines.length - 1];
+    const rest = midLines.slice(0, -1);
+    // empresa típica: curta, sem "em"/"de" de cargo longo
+    if (last.length <= 48 && rest.join(" ").length >= 8) {
+      company = last;
+      headline = rest.join(" ");
+    } else {
+      headline = midLines.join(" ");
+      company = null;
     }
   }
 
@@ -145,15 +222,22 @@ export function parseProfileHeader(els, opts = {}) {
       : `${joined} mutual connections`;
   }
 
+  if (!inviteStatus && canMessage && !canConnect) {
+    inviteStatus = "connected";
+  }
+  if (inviteStatus === "pending") canConnect = false;
+
   return {
     name,
-    company: companyLines.length ? companyLines.join("\n") : null,
+    headline,
+    company,
     location,
     connections,
     mutualConnections,
     connectionDegree,
     canConnect,
     canMessage,
+    inviteStatus,
   };
 }
 
@@ -233,28 +317,28 @@ export function parseProfilePageOcr(els, opts = {}) {
     return cleaned.length ? cleaned.join("\n") : null;
   };
 
-  // headline = cargo (não empresa). Evita pegar "Rede Mater Dei" como headline.
-  let headline = null;
-  const companySet = new Set(
-    String(header.company || "")
-      .split("\n")
-      .map((s) => s.toLowerCase())
-      .filter(Boolean),
-  );
-  const others = buckets.other;
-  for (const t of others) {
-    const low = t.toLowerCase();
-    if (companySet.has(low)) continue;
-    if (header.name && low === header.name.toLowerCase()) continue;
-    if (nameHint && low.includes(nameHint.split(/\s+/)[0])) continue;
-    if (/^(connect|message|pending|follow|more|1st|2nd|3rd)/i.test(t)) continue;
-    if (CONNECTIONS_RE.test(t) || /mutual/i.test(t)) continue;
-    if (LOCATION_RE.test(t)) continue;
-    if (isChromeLine(t)) continue;
-    // cargo típico: sem vírgula de cidade, não é só empresa repetida
-    if (!headline && t.length >= 8 && t.length <= 180 && !/brazil|brasil/i.test(t)) {
-      headline = t;
-      break;
+  // headline do header; fallback: 1ª linha útil em "other"
+  let headline = header.headline || null;
+  if (!headline) {
+    const companySet = new Set(
+      String(header.company || "")
+        .split("\n")
+        .map((s) => s.toLowerCase())
+        .filter(Boolean),
+    );
+    for (const t of buckets.other) {
+      const low = t.toLowerCase();
+      if (companySet.has(low)) continue;
+      if (header.name && low === header.name.toLowerCase()) continue;
+      if (nameHint && low.includes(nameHint.split(/\s+/)[0])) continue;
+      if (/^(connect|message|pending|follow|more|1st|2nd|3rd)/i.test(t)) continue;
+      if (CONNECTIONS_RE.test(t) || /mutual/i.test(t)) continue;
+      if (LOCATION_RE.test(t)) continue;
+      if (isChromeLine(t)) continue;
+      if (t.length >= 8 && t.length <= 180 && !/brazil|brasil/i.test(t)) {
+        headline = t;
+        break;
+      }
     }
   }
 
@@ -267,6 +351,7 @@ export function parseProfilePageOcr(els, opts = {}) {
     mutualConnections: header.mutualConnections,
     canConnect: header.canConnect,
     canMessage: header.canMessage,
+    inviteStatus: header.inviteStatus ?? null,
     about: join(buckets.about),
     experience: formatExperienceBlocks(buckets.experience),
     education: join(buckets.education),

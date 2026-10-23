@@ -100,6 +100,7 @@ const elements = await extract({ serial });
 | **SC-30 LinkedIn** (fixture, sem device) | ver abaixo |
 | Piloto LinkedIn ao vivo | `npm run linkedin-login` |
 | LinkedIn Search comprador → See all | `npm run login-extract-profiles` |
+| LinkedIn conectar por URL (Connect→Skip→Pending) | `npm run linkedin-connect` · API `npm run linkedin-connect-api` |
 | LinkedIn boolean por perfil + abrir | `npm run login-visit-profiles` |
 | Parse cards lista (fixtures OCR) | `node --test lib/linkedin-list-profiles.fixture.test.js` |
 | Parse cards × engines (vision/rapid/tess) | `node --test --test-timeout=180000 lib/linkedin-list-profiles.engines.fixture.test.js` |
@@ -252,6 +253,34 @@ Script [`scripts/login-visit-profiles.js`](scripts/login-visit-profiles.js) — 
 3. Saída: `screenshots/login-visit-profiles/<stamp>/visited-NNN.json` + `visited.json` (resumo). Rollback: apagar a pasta `<stamp>`.
 
 **Antes → depois:** não existia visita por boolean; só listagem scroll. Rollback: usar só `login-extract-profiles`.
+
+---
+
+## linkedin-connect (URL → Connect → Skip → Pending)
+
+Prints de referência: [`screenshots/jornada-conectar-por-url/README.md`](screenshots/jornada-conectar-por-url/README.md) · roteiro: [`../roteiros/jornada-conectar-por-url.md`](../roteiros/jornada-conectar-por-url.md)
+
+```bash
+cd screen-robot/src
+PROFILES_API_URL=http://localhost:3000 npm run linkedin-connect -- --url 'https://www.linkedin.com/in/…'
+
+# API HTTP (1 job por vez)
+PROFILES_API_URL=http://localhost:3000 npm run linkedin-connect-api
+curl -s -X POST http://127.0.0.1:3099/connect \
+  -H 'content-type: application/json' \
+  -d '{"url":"https://www.linkedin.com/in/…"}'
+```
+
+Lib [`lib/linkedin-connect.js`](lib/linkedin-connect.js):
+
+1. `am start VIEW` no package LinkedIn
+2. Connect no header **ou** Follow → ⋮ → Connect no sheet
+3. Skip no dialog (nunca Add a note)
+4. **Sucesso só com Pending no OCR após Skip** — sem Pending → `ok: false`
+5. Sucesso → `POST {PROFILES_API_URL|INVITES_API_URL}/invites` `{ profileUrl, status: "Pending" }`
+
+**Antes → depois:** conexão só via lista People → deep link por URL + Pending obrigatório + callback `/invites`.  
+**Rollback:** não rode `linkedin-connect*`; ignore `POST /invites` na vendas/api.
 
 ---
 

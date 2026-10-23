@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { Invite } from './invites/invite.entity';
+import { InvitesModule } from './invites/invites.module';
 import { Profile } from './profiles/profile.entity';
 import { ProfilesModule } from './profiles/profiles.module';
 
@@ -16,11 +18,12 @@ import { ProfilesModule } from './profiles/profiles.module';
         username: config.get<string>('DB_USER', 'connectmax'),
         password: config.get<string>('DB_PASSWORD', 'connectmax'),
         database: config.get<string>('DB_NAME', 'connectmax'),
-        entities: [Profile],
+        entities: [Profile, Invite],
         synchronize: config.get<string>('DB_SYNC', 'true') === 'true',
       }),
     }),
     ProfilesModule,
+    InvitesModule,
   ],
 })
 export class AppModule {}

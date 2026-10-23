@@ -1,0 +1,335 @@
+/**
+ * Conectar em perfil LinkedIn via URL (deep link VIEW).
+ *
+ * Fluxo (prints: screenshots/jornada-conectar-por-url/):
+ * 1. am start VIEW linkedin.com/in/…
+ * 2. Connect no header → tap; senão só Follow → ⋮ → Connect no sheet
+ * 3. Skip no dialog "Add a note"
+ * 4. Sucesso **somente** se OCR mostrar Pending após Skip
+ * 5. Em sucesso → POST na API (convite feito)
+ */
+import { mkdirSync } from "node:fs";
+import { join } from "node:path";
+
+import { adb, sleep } from "./adb.js";
+import { extract } from "./extract.js";
+import { key, screenshot, tapElement } from "./operate.js";
+
+const OCR = process.env.SCREEN_ROBOT_OCR || "rapidocr";
+const WAIT_AFTER_VIEW_MS = Number(process.env.LINKEDIN_CONNECT_WAIT_VIEW_MS || 8_000);
+const WAIT_AFTER_TAP_MS = Number(process.env.LINKEDIN_CONNECT_WAIT_TAP_MS || 3_000);
+const WAIT_PENDING_MS = Number(process.env.LINKEDIN_CONNECT_WAIT_PENDING_MS || 2_000);
+const PENDING_TRIES = Number(process.env.LINKEDIN_CONNECT_PENDING_TRIES || 5);
+const MAX_ROUNDS = 10;
+
+/** Base da API (sem path). Default: mesma do extract. */
+export function invitesApiBase() {
+  return (
+    process.env.INVITES_API_URL ||
+    process.env.PROFILES_API_URL ||
+    ""
+  ).replace(/\/$/, "");
+}
+
+/** Canonicaliza URL do perfil (tira utm_* / query). */
+export function normalizeLinkedInProfileUrl(raw) {
+  const s = String(raw || "");
+  const m = s.match(
+    /(?:https?:\/\/)?(?:www\.)?linkedin\.com\/in\/([A-Za-z0-9._%-]+)/i,
+  );
+  if (!m) return null;
+  return `https://www.linkedin.com/in/${decodeURIComponent(m[1])}`;
+}
+
+export function openProfileByUrl(serial, linkedinPkg, rawUrl) {
+  const url = normalizeLinkedInProfileUrl(rawUrl);
+  if (!url) {
+    throw new Error(`URL inválida (precisa linkedin.com/in/…): ${rawUrl}`);
+  }
+  adb(serial, [
+    "shell",
+    "am",
+    "start",
+    "-a",
+    "android.intent.action.VIEW",
+    "-d",
+    url,
+    "-p",
+    linkedinPkg,
+  ]);
+  return url;
+}
+
+/** Hit de botão Connect — exclui "connections" / "mutual". */
+export function findExactConnect(els) {
+  const list = Array.isArray(els) ? els : [];
+  for (const el of list) {
+    const t = String(el?.text || "").trim();
+    if (!/^[\+＋]?\s*connect$/i.test(t)) continue;
+    if (el.x == null || el.y == null) continue;
+    return { text: t, x: el.x, y: el.y };
+  }
+  return null;
+}
+
+export function hasFollow(els) {
+  return (els || []).some((el) =>
+    /^[\+＋]?\s*follow$/i.test(String(el?.text || "").trim()),
+  );
+}
+
+export function hasPending(els) {
+  return (els || []).some((el) =>
+    /^pending$/i.test(String(el?.text || "").trim()),
+  );
+}
+
+export function findSkip(els) {
+  for (const el of els || []) {
+    const t = String(el?.text || "").trim();
+    if (/^(skip|ignorar)$/i.test(t) && el.x != null && el.y != null) {
+      return { text: t, x: el.x, y: el.y };
+    }
+  }
+  return null;
+}
+
+/**
+ * Ícone ⋮ à direita de Message (ou do Follow) na faixa de CTAs do perfil.
+ */
+export function findMoreOverflow(els) {
+  const list = Array.isArray(els) ? els : [];
+  const message = list.find(
+    (el) =>
+      /\bmessage\b/i.test(String(el?.text || "")) &&
+      !/send profile/i.test(String(el?.text || "")),
+  );
+  const follow = list.find((el) =>
+    /^[\+＋]?\s*follow$/i.test(String(el?.text || "").trim()),
+  );
+  const anchor = message || follow;
+  if (!anchor || anchor.y == null) return null;
+
+  const icons = list.filter(
+    (el) =>
+      el?.type === "icon" &&
+      el.x != null &&
+      el.y != null &&
+      Math.abs(el.y - anchor.y) <= 40 &&
+      el.x > (anchor.x || 0) + 40,
+  );
+  if (icons.length) {
+    icons.sort((a, b) => a.x - b.x);
+    return { x: icons[0].x, y: icons[0].y, via: "icon" };
+  }
+  return {
+    x: Math.min(520, (anchor.x || 350) + 140),
+    y: anchor.y,
+    via: "geom",
+  };
+}
+
+async function shot(serial, outDir, name) {
+  if (!outDir) return;
+  screenshot({ serial, path: join(outDir, name) });
+}
+
+/**
+ * Notifica a API que o convite foi feito (Pending confirmado).
+ * POST {base}/invites — body: { profileUrl, status: "Pending", invitedAt }
+ */
+export async function notifyInviteSent({
+  profileUrl,
+  steps = [],
+  baseUrl = invitesApiBase(),
+} = {}) {
+  const base = String(baseUrl || "").replace(/\/$/, "");
+  if (!base) {
+    return { notified: false, reason: "INVITES_API_URL/PROFILES_API_URL ausente" };
+  }
+  const url = `${base}/invites`;
+  const body = {
+    profileUrl,
+    status: "Pending",
+    invitedAt: new Date().toISOString(),
+    steps,
+  };
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  const text = await res.text().catch(() => "");
+  if (!res.ok) {
+    throw new Error(
+      `POST ${url} → ${res.status} ${res.statusText}${text ? `: ${text.slice(0, 240)}` : ""}`,
+    );
+  }
+  let data = null;
+  try {
+    data = text ? JSON.parse(text) : null;
+  } catch {
+    data = { raw: text };
+  }
+  return { notified: true, url, data };
+}
+
+/** Após Skip: poll até Pending ou esgota tentativas. */
+async function waitForPending(serial, { outDir, steps }) {
+  for (let i = 0; i < PENDING_TRIES; i++) {
+    const els = await extract({ serial, engine: OCR, icons: true });
+    if (hasPending(els || [])) {
+      steps.push(`pending:try${i + 1}`);
+      await shot(serial, outDir, "99-pending.png");
+      return true;
+    }
+    steps.push(`pending-miss:try${i + 1}`);
+    await sleep(WAIT_PENDING_MS);
+  }
+  return false;
+}
+
+/**
+ * @param {{
+ *   serial: string,
+ *   linkedinPackage: string,
+ *   url: string,
+ *   outDir?: string|null,
+ *   dryRun?: boolean,
+ *   notifyApi?: boolean,
+ * }} opts
+ */
+export async function connectByLinkedInUrl(opts) {
+  const serial = opts.serial;
+  const pkg = opts.linkedinPackage || "com.linkedin.android";
+  const dryRun = Boolean(opts.dryRun);
+  const notifyApi = opts.notifyApi !== false;
+  const steps = [];
+  const url = openProfileByUrl(serial, pkg, opts.url);
+  steps.push(`view:${url}`);
+  await sleep(WAIT_AFTER_VIEW_MS);
+
+  if (opts.outDir) mkdirSync(opts.outDir, { recursive: true });
+  await shot(serial, opts.outDir, "01-perfil.png");
+
+  let skipped = false;
+
+  for (let round = 0; round < MAX_ROUNDS; round++) {
+    const els = await extract({
+      serial,
+      engine: OCR,
+      icons: true,
+    });
+    const texts = els || [];
+
+    // Pending antes de Skip = já tinha convite
+    if (hasPending(texts) && !skipped) {
+      steps.push("already_pending");
+      await shot(serial, opts.outDir, "99-already-pending.png");
+      key({ serial, code: "KEYCODE_BACK" });
+      return {
+        ok: true,
+        status: "already",
+        url,
+        steps,
+        notify: { notified: false, reason: "já estava Pending" },
+      };
+    }
+
+    const skip = findSkip(texts);
+    if (skip) {
+      steps.push(`skip@${skip.x},${skip.y}`);
+      await shot(serial, opts.outDir, "03-add-note-skip.png");
+      if (!dryRun) {
+        tapElement({ serial, x: skip.x, y: skip.y });
+        await sleep(WAIT_AFTER_TAP_MS);
+      }
+      skipped = true;
+
+      const pending = dryRun
+        ? true
+        : await waitForPending(serial, { outDir: opts.outDir, steps });
+      if (!pending) {
+        await shot(serial, opts.outDir, "99-sem-pending.png");
+        return {
+          ok: false,
+          status: "failed",
+          url,
+          steps,
+          error: "Skip ok mas Pending não apareceu — convite não confirmado",
+        };
+      }
+
+      key({ serial, code: "KEYCODE_BACK" });
+
+      /** @type {{ notified: boolean, reason?: string, url?: string, data?: unknown, error?: string }} */
+      let notify = { notified: false, reason: "notify desligado" };
+      if (notifyApi && !dryRun) {
+        try {
+          notify = await notifyInviteSent({ profileUrl: url, steps });
+          steps.push(notify.notified ? "api:invites:ok" : `api:invites:skip:${notify.reason}`);
+        } catch (e) {
+          notify = {
+            notified: false,
+            error: String(e?.message || e),
+          };
+          steps.push(`api:invites:fail:${notify.error}`);
+          // Convite na UI ok; falha de API não anula o Pending
+        }
+      }
+
+      return {
+        ok: true,
+        status: "pending",
+        url,
+        steps,
+        notify,
+      };
+    }
+
+    const connect = findExactConnect(texts);
+    if (connect) {
+      steps.push(`connect@${connect.x},${connect.y}`);
+      await shot(serial, opts.outDir, "02-connect.png");
+      if (!dryRun) {
+        tapElement({ serial, x: connect.x, y: connect.y });
+        await sleep(WAIT_AFTER_TAP_MS);
+      }
+      continue;
+    }
+
+    // Só Follow → ⋮ → Connect no sheet
+    if (hasFollow(texts)) {
+      const more = findMoreOverflow(texts);
+      if (!more) {
+        return {
+          ok: false,
+          status: "failed",
+          url,
+          steps,
+          error: "Follow visível mas ⋮ não encontrado",
+        };
+      }
+      steps.push(`more@${more.x},${more.y}:${more.via}`);
+      await shot(serial, opts.outDir, "02-follow-more.png");
+      if (!dryRun) {
+        tapElement({ serial, x: more.x, y: more.y });
+        await sleep(WAIT_AFTER_TAP_MS);
+      }
+      continue;
+    }
+
+    steps.push(`wait:round${round}`);
+    await sleep(1_500);
+  }
+
+  return {
+    ok: false,
+    status: "failed",
+    url,
+    steps,
+    error: skipped
+      ? "Skip ok mas Pending não apareceu — convite não confirmado"
+      : "não concluiu Connect+Skip+Pending",
+  };
+}

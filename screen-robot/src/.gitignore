@@ -1,11 +1,15 @@
 node_modules/
-screenshots/
+# ignora conteúdo de screenshots/, exceto a jornada de referência
+screenshots/*
+!screenshots/jornada-conectar-por-url/
+!screenshots/jornada-conectar-por-url/**
 state/
 apks/*.xapk
 apks/*.apk
 !apks/ADBKeyboard.apk
 *.png
 !test/fixtures/**/*.png
+!screenshots/jornada-conectar-por-url/**/*.png
 *.traineddata
 .DS_Store
 meu-fluxo.json

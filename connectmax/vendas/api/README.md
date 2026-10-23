@@ -68,6 +68,24 @@ Upsert por `(name, current)`.
 { "profiles": [ { "name": "..." }, ... ] }
 ```
 
+### `POST /invites`
+
+Callback do `linkedin-connect` após Connect → Skip → **Pending** confirmado na UI.
+
+```json
+{
+  "profileUrl": "https://www.linkedin.com/in/…",
+  "status": "Pending",
+  "invitedAt": "2026-10-23T10:55:00.000Z",
+  "steps": ["view:…", "more@…", "connect@…", "skip@…", "pending:try1"]
+}
+```
+
+Upsert por `profileUrl` → tabela `linkedin_invites`.
+
+**Antes → depois:** sem registro de convite → Persiste invite quando Pending aparece no AVD.  
+**Rollback:** ignore o POST no robot (`sem PROFILES_API_URL` / `INVITES_API_URL`); drop table `linkedin_invites` se necessário.
+
 ---
 
 ## Extract → API

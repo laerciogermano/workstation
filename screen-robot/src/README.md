@@ -201,8 +201,10 @@ Script [`scripts/login-extract-profiles.js`](scripts/login-extract-profiles.js) 
 | Search | `Search` |
 | See/Show all | `See all results` / `Show all results` (fallback `See all` / `Show all`) |
 
-1. `stop` apps + `launch` → `waitForText("Search")` → tap → `comprador` → `waitForText(See/Show all)` (8s com teclado; se timeout → `KEYCODE_BACK` + wait 30s) → tap
+1. `stop` apps + `launch` → `waitForText("Search")` → tap → colar `comprador` (`pasteCleanMessage` / ADBKeyboard) → `waitForText(See/Show all)` (8s com teclado; se timeout → `KEYCODE_BACK` + wait 30s) → tap
 2. Loop: `extract` → cards no padrão → `onProfile` → scroll curto (280 / 900ms) até o **fim do scroll**: (a) sem cards novos + fingerprint OCR da lista igual 2×, ou (b) SHA1 do frame igual 2×. Ao terminar, `process.exit(0)`.
+
+**Antes → depois (busca comprador):** `type` / `adb shell input text` cortava a query (ex. só `ou`) → `pasteCleanMessage` (`ADB_INPUT_B64`). Rollback: `await type({ serial, text: "comprador" })`.
 
 **Antes → depois (fim do scroll):** só SHA1 do frame 3× (falhava com UI animada e o processo não parava) → conteúdo OCR estável sem novos + frame, 2×, e exit explícito. Rollback: só `frameHash` com `SCROLL_END_STABLE_NEEDED = 3` e sem `process.exit(0)`.
 3. Callback: objeto `{ name, title, level, connection, city, mutualConnections, current, past }`

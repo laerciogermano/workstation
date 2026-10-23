@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * LinkedIn: stop apps → launch → waitForText(Search) → tap → "comprador" →
+ * LinkedIn: stop apps → launch → waitForText(Search) → tap → colar "comprador" →
  * See all results → desce com `extract` por demanda até o fim do scroll.
  * Cada card no padrão dispara `onProfile(profile, ctx)`.
  *
@@ -23,7 +23,8 @@ import { captureFrame } from "../lib/frame.js";
 import { profilesFromExtract } from "../lib/linkedin-list-profiles.js";
 import { cropListProfilePhotoAndCard } from "../lib/linkedin-profile-photo-crop.js";
 import { searchQueryFromCard } from "../lib/linkedin-search-query.js";
-import { key, launch, scroll, stop, tapElement, type } from "../lib/operate.js";
+import { pasteCleanMessage } from "../lib/linkedin-message.js";
+import { key, launch, scroll, stop, tapElement } from "../lib/operate.js";
 import { provisionEmulator } from "../lib/provision.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -463,8 +464,8 @@ async function main() {
   tapElement({ serial, x: searchHit.x, y: searchHit.y });
   await sleep(1_000);
 
-  console.log('5) Digitar "comprador"…');
-  await type({ serial, text: "comprador" });
+  console.log('5) Colar "comprador" (ADBKeyboard)…');
+  await pasteCleanMessage(serial, "comprador", { forceClear: true });
   await sleep(800);
 
   console.log("6) Esperar See/Show all e clicar…");

@@ -72,7 +72,32 @@ async function withDevice(fn) {
   const cfg = loadConfig();
   const linkedinPkg = cfg.apps?.linkedin?.package || "com.linkedin.android";
   const { serial } = await provisionEmulator(cfg);
-  return fn({ serial, linkedinPkg, apps: cfg.apps });
+  // mensagens/conexões → vendas/api (default local)
+  if (!process.env.PROFILES_API_URL && !process.env.MESSAGES_API_URL) {
+    process.env.PROFILES_API_URL = "http://127.0.0.1:3000";
+  }
+  if (!process.env.AGENT_ID) {
+    process.env.AGENT_ID = resolveAgentId(cfg);
+  }
+  return fn({ serial, linkedinPkg, apps: cfg.apps, cfg });
+}
+
+/** LinkedIn ok mas base não gravou → 502. */
+function sendWithDb(res, result) {
+  if (!result?.ok) return send(res, 502, result);
+  if (result.db && result.db.notified === false) {
+    return send(res, 502, {
+      ...result,
+      error: result.db.reason || "falha ao persistir em client_linkedin_message",
+    });
+  }
+  if (result.steps?.some((s) => String(s).startsWith("db:error:"))) {
+    return send(res, 502, {
+      ...result,
+      error: "falha ao persistir em client_linkedin_message",
+    });
+  }
+  return send(res, 200, result);
 }
 
 function enqueue(fn) {
@@ -217,7 +242,7 @@ const server = createServer(async (req, res) => {
           }),
         ),
       );
-      return send(res, result.ok ? 200 : 502, result);
+      return sendWithDb(res, result);
     } catch (e) {
       if (e?.code === "BUSY") return send(res, 409, { ok: false, error: e.message });
       return send(res, 500, { ok: false, error: String(e?.message || e) });
@@ -302,7 +327,7 @@ const server = createServer(async (req, res) => {
           }),
         ),
       );
-      return send(res, result.ok ? 200 : 502, result);
+      return sendWithDb(res, result);
     } catch (e) {
       if (e?.code === "BUSY") return send(res, 409, { ok: false, error: e.message });
       return send(res, 500, { ok: false, error: String(e?.message || e) });

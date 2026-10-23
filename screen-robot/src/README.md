@@ -272,11 +272,12 @@ curl -s -X POST http://127.0.0.1:3099/message \
 
 Fluxo: **fecha todos os apps** → HOME → deep link → **Message** → cola (`ADB_INPUT_B64`) → tap **Send** só se `content-desc="Send"` no dump.  
 Com campo vazio o mesmo slot vira **mic** — não retapar coords fixas. Confirma: EditText `empty`.  
-`KEYCODE_ENTER` **não** envia (multiline). Em sucesso → `POST {PROFILES_API_URL}/client-linkedin-messages` (`direction: sent`).  
+`KEYCODE_ENTER` **não** envia (multiline). Em sucesso → sempre `POST …/client-linkedin-messages` (`direction: sent`; default API `http://127.0.0.1:3000`).  
+Na API robot (`:3099`), falha de persistência → HTTP 502.  
 Lib: [`lib/linkedin-message.js`](lib/linkedin-message.js).
 
-**Antes → depois:** geom/ENTER → dump `content-desc=Send` + persistência em `client_linkedin_message`.  
-**Rollback:** geom `~505,475`; unset `PROFILES_API_URL`.
+**Antes → depois:** persistência opcional (env) → obrigatória no fluxo send/read (default :3000).  
+**Rollback:** `MESSAGES_API_URL=` vazio + remover `sendWithDb`; geom `~505,475`.
 
 ---
 
@@ -317,10 +318,10 @@ curl -s -X POST http://127.0.0.1:3099/profile-messages \
 
 Fluxo: **stopAllApps** → deep link perfil → **Message** → scroll down (fim) → coleta dump; se `count < maxResults`, **scroll up** e merge.  
 Cada item: `sender`, `message`, `time`, `from` (`me`|`peer`). Ordem cronológica; retorna as **últimas** `maxResults`.  
-Em sucesso → upsert lote em `POST {PROFILES_API_URL}/client-linkedin-messages`.  
+Em sucesso → upsert lote em `POST …/client-linkedin-messages` (default `:3000`). API robot → 502 se DB falhar.  
 Lib: [`lib/linkedin-profile-messages.js`](lib/linkedin-profile-messages.js).
 
-**Antes → depois:** não existia. **Rollback:** remover script/lib/`POST /profile-messages`; unset API.
+**Antes → depois:** não existia. **Rollback:** remover script/lib/`POST /profile-messages`.
 
 ---
 

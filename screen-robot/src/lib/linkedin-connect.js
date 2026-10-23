@@ -32,6 +32,19 @@ export function invitesApiBase() {
 }
 
 /**
+ * Base para `client_linkedin_message`.
+ * Default `http://127.0.0.1:3000` — envio/leitura sempre tentam persistir.
+ */
+export function messagesApiBase() {
+  return (
+    process.env.MESSAGES_API_URL ||
+    process.env.INVITES_API_URL ||
+    process.env.PROFILES_API_URL ||
+    "http://127.0.0.1:3000"
+  ).replace(/\/$/, "");
+}
+
+/**
  * Agente que dispara o convite (`AGENT_ID` ou `provision.name` do device config).
  * @param {{ provision?: { name?: string } }|null} [cfg]
  */
@@ -214,9 +227,9 @@ export async function notifyInviteSent({
  * }} opts
  */
 export async function notifyLinkedInMessages(opts = {}) {
-  const base = String(opts.baseUrl || invitesApiBase() || "").replace(/\/$/, "");
+  const base = String(opts.baseUrl || messagesApiBase() || "").replace(/\/$/, "");
   if (!base) {
-    return { notified: false, reason: "INVITES_API_URL/PROFILES_API_URL ausente" };
+    return { notified: false, reason: "MESSAGES_API_URL/PROFILES_API_URL ausente" };
   }
   const url = `${base}/client-linkedin-messages`;
   const body = {

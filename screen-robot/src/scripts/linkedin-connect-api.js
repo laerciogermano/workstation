@@ -4,6 +4,7 @@
  *   POST /connect     { "url": "https://www.linkedin.com/in/…" }
  *   POST /connections { "n": 20 }  → JSON das N conexões mais recentes
  *   GET  /connections?n=20
+ *   POST /message     { "url": "…", "text": "Oi!" }
  *
  * Uso (cwd: screen-robot/src):
  *   npm run linkedin-connect-api
@@ -15,6 +16,7 @@ import { fileURLToPath } from "node:url";
 
 import { connectByLinkedInUrl, normalizeLinkedInProfileUrl } from "../lib/linkedin-connect.js";
 import { extractRecentConnections } from "../lib/linkedin-extract-connections.js";
+import { sendLinkedInMessage } from "../lib/linkedin-message.js";
 import { provisionEmulator } from "../lib/provision.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -101,7 +103,12 @@ const server = createServer(async (req, res) => {
       ok: true,
       busy,
       service: "linkedin-robot",
-      endpoints: ["POST /connect", "POST /connections", "GET /connections?n="],
+      endpoints: [
+        "POST /connect",
+        "POST /connections",
+        "GET /connections?n=",
+        "POST /message",
+      ],
     });
   }
 
@@ -168,6 +175,40 @@ const server = createServer(async (req, res) => {
     }
   }
 
+  if (req.method === "POST" && path === "/message") {
+    let body;
+    try {
+      body = await readJson(req);
+    } catch {
+      return send(res, 400, { ok: false, error: "JSON inválido" });
+    }
+    const url = normalizeLinkedInProfileUrl(body?.url || body?.profileUrl);
+    const text = String(body?.text || body?.message || "").trim();
+    if (!url) {
+      return send(res, 400, { ok: false, error: "passe url linkedin.com/in/…" });
+    }
+    if (!text) {
+      return send(res, 400, { ok: false, error: "passe text da mensagem" });
+    }
+    try {
+      const result = await runExclusive(() =>
+        withDevice(({ serial, linkedinPkg }) =>
+          sendLinkedInMessage({
+            serial,
+            linkedinPackage: linkedinPkg,
+            url,
+            text,
+            outDir: null,
+          }),
+        ),
+      );
+      return send(res, result.ok ? 200 : 502, result);
+    } catch (e) {
+      if (e?.code === "BUSY") return send(res, 409, { ok: false, error: e.message });
+      return send(res, 500, { ok: false, error: String(e?.message || e) });
+    }
+  }
+
   send(res, 404, { ok: false, error: "not found" });
 });
 
@@ -175,4 +216,5 @@ server.listen(PORT, HOST, () => {
   console.log(`linkedin-robot-api http://${HOST}:${PORT}`);
   console.log(`POST /connect {"url":"…"}`);
   console.log(`POST /connections {"n":20}`);
+  console.log(`POST /message {"url":"…","text":"…"}`);
 });

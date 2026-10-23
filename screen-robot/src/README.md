@@ -256,6 +256,28 @@ Script [`scripts/login-visit-profiles.js`](scripts/login-visit-profiles.js) — 
 
 ---
 
+## linkedin-message (URL → Message → Write a message → Send)
+
+```bash
+cd screen-robot/src
+npm run linkedin-message -- \
+  --url 'https://www.linkedin.com/in/laerciogermano' \
+  --text 'Oi! Tudo bem?'
+
+# API
+curl -s -X POST http://127.0.0.1:3099/message \
+  -H 'content-type: application/json' \
+  -d '{"url":"https://www.linkedin.com/in/laerciogermano","text":"Oi!"}'
+```
+
+Fluxo: deep link → **Message** (ou ⋮ → Send a message) → **Write a message** → **cola** (`pbcopy` + `KEYCODE_PASTE`, acentos OK) → **Send**.  
+Lib: [`lib/linkedin-message.js`](lib/linkedin-message.js). Prints: `screenshots/jornada-enviar-mensagem/`.
+
+**Antes → depois:** `input text` com `%` literal → paste via clipboard do host.  
+**Rollback:** `typeCleanMessage` / `input text`; remova `POST /message`.
+
+---
+
 ## linkedin-extract-connections (N mais recentes)
 
 ```bash

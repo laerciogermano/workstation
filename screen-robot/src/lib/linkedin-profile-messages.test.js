@@ -53,6 +53,6 @@ describe("linkedin-profile-messages", () => {
     assert.equal(m.length, 3);
     assert.equal(m[0].message, "old");
     assert.equal(m[2].message, "new");
-    assert.equal(messageKey(m[0]), "a|1|old");
+    assert.equal(messageKey(m[0]), "1|old");
   });
 });

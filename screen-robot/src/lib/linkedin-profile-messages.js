@@ -57,7 +57,7 @@ export function parseSenderNameLine(text) {
  */
 export function messagesFromUiXml(xml) {
   let peer = null;
-  /** @type {Array<{ kind: string, text: string, y: number }>} */
+  /** @type {Array<{ kind: string, text?: string, y: number }>} */
   const events = [];
 
   for (const n of String(xml || "").match(/<node\b[^>]*>/g) || []) {
@@ -79,33 +79,80 @@ export function messagesFromUiXml(xml) {
       events.push({ kind: "sender", text: text.trim(), y });
       continue;
     }
+    if (r === "message_sender_image") {
+      events.push({ kind: "avatar", y });
+      continue;
+    }
+    if (r === "messaging_send_receipt_indicator") {
+      events.push({ kind: "receipt", y });
+      continue;
+    }
     if (r === "body" && text.trim()) {
       events.push({ kind: "body", text, y });
     }
   }
 
-  events.sort((a, b) => a.y - b.y || (a.kind === "sender" ? -1 : 1));
+  events.sort((a, b) => a.y - b.y || (a.kind === "sender" || a.kind === "avatar" ? -1 : 1));
 
   /** @type {Array<{ sender: string, message: string, time: string|null, from: "me"|"peer"|"unknown", y: number }>} */
   const messages = [];
   let curSender = null;
   let curTime = null;
+  let curFrom = /** @type {"me"|"peer"|"unknown"} */ ("unknown");
 
   for (const ev of events) {
     if (ev.kind === "sender") {
-      const p = parseSenderNameLine(ev.text);
+      const p = parseSenderNameLine(ev.text || "");
       curSender = p.sender;
       curTime = p.time;
+      curFrom =
+        peer && curSender.toLowerCase() === peer.toLowerCase() ? "peer" : "me";
       continue;
     }
-    const sender = curSender || "unknown";
-    let from = "unknown";
-    if (peer && sender.toLowerCase() === peer.toLowerCase()) from = "peer";
-    else if (curSender) from = "me";
+    if (ev.kind === "avatar") {
+      // avatar do interlocutor na bolha → mensagens seguintes sem label são dele
+      if (peer) {
+        curSender = peer;
+        curFrom = "peer";
+      }
+      continue;
+    }
+    if (ev.kind === "receipt") {
+      // LinkedIn marca "Message sent" também em bolhas do peer — só usa se unknown
+      if (curFrom === "unknown") {
+        curFrom = "me";
+        if (!curSender || curSender === "unknown") curSender = "me";
+      }
+      continue;
+    }
+    if (ev.kind !== "body") continue;
+
+    let sender = curSender || "unknown";
+    let from = curFrom;
+    let time = curTime;
+    const nearAvatar = events.some(
+      (e) => e.kind === "avatar" && Math.abs(e.y - ev.y) <= 80,
+    );
+    // avatar na bolha (ou herdado do grupo) → sempre peer
+    if (nearAvatar && peer) {
+      sender = peer;
+      from = "peer";
+      curSender = peer;
+      curFrom = "peer";
+    } else if (from === "unknown" || sender === "unknown") {
+      const nearReceipt = events.some(
+        (e) => e.kind === "receipt" && Math.abs(e.y - ev.y) <= 50,
+      );
+      if (nearReceipt) {
+        from = "me";
+        if (sender === "unknown") sender = "me";
+      }
+    }
+
     messages.push({
       sender,
-      message: ev.text,
-      time: curTime,
+      message: ev.text || "",
+      time,
       from,
       y: ev.y,
     });
@@ -116,7 +163,16 @@ export function messagesFromUiXml(xml) {
 
 /** @param {{ sender: string, message: string, time: string|null }} m */
 export function messageKey(m) {
-  return `${String(m.sender || "").toLowerCase()}|${m.time || ""}|${String(m.message || "").slice(0, 120)}`;
+  // sem sender: mesma bolha pode aparecer como unknown após scroll
+  return `${m.time || ""}|${String(m.message || "").slice(0, 160)}`;
+}
+
+function rankMsg(m) {
+  let s = 0;
+  if (m.time) s += 2;
+  if (m.sender && m.sender !== "unknown" && m.sender !== "me") s += 2;
+  if (m.from === "me" || m.from === "peer") s += 1;
+  return s;
 }
 
 /**
@@ -126,26 +182,30 @@ export function messageKey(m) {
 export function mergeMessagesChronological(existing, pageMsgs) {
   const map = new Map();
   const order = [];
-  const add = (m, atStart) => {
+  const upsert = (m, atStart) => {
     const k = messageKey(m);
-    if (map.has(k)) return;
-    map.set(k, {
+    const row = {
       sender: m.sender,
       message: m.message,
       time: m.time,
       from: m.from,
-    });
+    };
+    if (map.has(k)) {
+      const prev = map.get(k);
+      if (rankMsg(row) > rankMsg(prev)) map.set(k, row);
+      return;
+    }
+    map.set(k, row);
     if (atStart) order.unshift(k);
     else order.push(k);
   };
-  for (const m of existing || []) add(m, false);
-  // page: se tem keys novas no topo, prepend em ordem da página
+  for (const m of existing || []) upsert(m, false);
   const existingKeys = new Set((existing || []).map(messageKey));
   const novel = (pageMsgs || []).filter((m) => !existingKeys.has(messageKey(m)));
   if (novel.length && existing?.length) {
-    for (let i = novel.length - 1; i >= 0; i--) add(novel[i], true);
+    for (let i = novel.length - 1; i >= 0; i--) upsert(novel[i], true);
   } else {
-    for (const m of pageMsgs || []) add(m, false);
+    for (const m of pageMsgs || []) upsert(m, false);
   }
   return order.map((k) => map.get(k));
 }

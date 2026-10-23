@@ -156,6 +156,8 @@ curl 'http://localhost:3000/extract/by-url/start?url=https://www.linkedin.com/in
 
 Script [`scripts/login-extract-profile-detail.js`](scripts/login-extract-profile-detail.js) — digita (**nome + `searchQuery` + 1ª cidade**) → Show all → **1ª pessoa** → cartão **só dump ou só OCR** (`--sense` / `SCREEN_ROBOT_SENSE`) → **crop foto/capa/card** → **POST** `/profile-details`. Com `--url` / `by-url`: deep link e **não** abre Share/Copy (URL já conhecida). Sem `--url`: ainda captura URL via ⋯. API Nest: `GET /extract/by-url/start?url=`.
 
+**Antes → depois (lookup por id):** varria `GET /profiles` (só Candidatos; pendente/conectado sumiam → “não encontrado”) → `GET /profiles/:id`. **Rollback:** listar a home e `find` por id.
+
 **Antes → depois (detail cartão):** OCR misturado → `sense=dump|ocr` isolados ([`lib/sense.js`](lib/sense.js)). Rollback: `--sense ocr`.
 
 **Antes → depois (foto/capa):** crop fixo 540×960 → bounds exatos do dump (`Cover photo` / `Profile photo` via [`lib/linkedin-profile-media-from-uidump.js`](lib/linkedin-profile-media-from-uidump.js)). Rollback: omitir `uiXml` em `cropProfilePhotoAndCover`.

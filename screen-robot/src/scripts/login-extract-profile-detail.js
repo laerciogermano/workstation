@@ -612,15 +612,19 @@ async function fetchProfileById(profileId) {
   if (!PROFILES_API_URL) {
     throw new Error("PROFILES_API_URL obrigatória (ex. http://localhost:3000)");
   }
-  const url = `${PROFILES_API_URL}/profiles`;
+  // Por id — lista GET /profiles é só Candidatos (exclui pendente/conectado).
+  const url = `${PROFILES_API_URL}/profiles/${encodeURIComponent(profileId)}`;
   const res = await fetch(url);
+  if (res.status === 404) {
+    throw new Error(`perfil id=${profileId} não encontrado em GET /profiles/:id`);
+  }
   if (!res.ok) {
     throw new Error(`GET ${url} → ${res.status} ${res.statusText}`);
   }
-  const body = await res.json();
-  const list = Array.isArray(body?.data) ? body.data : Array.isArray(body) ? body : [];
-  const row = list.find((p) => p?.id === profileId);
-  if (!row) throw new Error(`perfil id=${profileId} não encontrado em GET /profiles`);
+  const row = await res.json();
+  if (!row?.id) {
+    throw new Error(`perfil id=${profileId} resposta inválida em GET /profiles/:id`);
+  }
   return row;
 }
 

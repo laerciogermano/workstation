@@ -419,8 +419,15 @@ async function extractProfilesLoop(serial, outDir, opts = {}) {
 async function main() {
   const argv = process.argv.slice(2);
   let configPath = resolve(ROOT, "device.config.json");
+  let maxProfiles = MAX_PROFILES;
   for (let i = 0; i < argv.length; i++) {
     if (argv[i] === "--config") configPath = resolve(argv[++i]);
+    if (argv[i] === "--max-profiles" || argv[i] === "--limit" || argv[i] === "-n") {
+      const n = Number(argv[++i]);
+      if (Number.isFinite(n) && n >= 1) {
+        maxProfiles = Math.min(500, Math.floor(n));
+      }
+    }
   }
 
   const cfg = loadConfig(configPath);
@@ -485,10 +492,13 @@ async function main() {
   tapElement({ serial, x: seeAllHit.x, y: seeAllHit.y });
   await sleep(2_000);
 
-  console.log("7) Descer + extract por demanda (callback onProfile)…");
+  console.log(
+    `7) Descer + extract por demanda (callback onProfile, máx. ${maxProfiles})…`,
+  );
   const saved = await extractProfilesLoop(serial, outDir, {
     onProfile: defaultOnProfile,
     linkedinPkg,
+    maxProfiles,
   });
 
   writeProfilesJson(outDir, saved.map(profileRowForJson));

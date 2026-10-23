@@ -57,20 +57,54 @@ export function copyToHostClipboard(text) {
 }
 
 /**
- * Limpa o campo e cola a mensagem (acentos OK: Laércio, escritório…).
- * Requer espelhamento de clipboard do emulador (default no AVD Mac).
+ * Limpa o campo focado — poucas teclas (240 DEL travava o AVD).
+ * Preferir: campo vazio (placeholder "Write a message") → não limpa.
  */
-export async function pasteCleanMessage(serial, text) {
-  const s = String(text ?? "");
-  if (!s.trim()) return;
-  copyToHostClipboard(s);
-  await sleep(WAIT_CLIP_MS);
-  // limpa campo anterior
-  for (let i = 0; i < 80; i++) {
+function clearFocusedField(serial) {
+  // select-all (Ctrl+A) + delete — 1–2 keyevents
+  adb(serial, [
+    "shell",
+    "input",
+    "keyevent",
+    "--longpress",
+    "KEYCODE_CTRL_LEFT",
+    "KEYCODE_A",
+  ]);
+  adb(serial, ["shell", "input", "keyevent", "KEYCODE_DEL"]);
+  // fallback curto se select-all falhar
+  for (let i = 0; i < 15; i++) {
     adb(serial, ["shell", "input", "keyevent", "KEYCODE_DEL"]);
   }
+}
+
+/**
+ * Cola a mensagem (acentos OK). Evita colar Iracema: sempre pbcopy do `text` passado.
+ * Se o campo já está vazio (placeholder), não gasta tempo limpando.
+ */
+export async function pasteCleanMessage(serial, text, opts = {}) {
+  const s = String(text ?? "");
+  if (!s.trim()) return;
+  if (!opts.skipClear) clearFocusedField(serial);
+  copyToHostClipboard(s);
+  await sleep(WAIT_CLIP_MS);
+  copyToHostClipboard(s);
+  await sleep(300);
   adb(serial, ["shell", "input", "keyevent", "KEYCODE_PASTE"]);
-  await sleep(400);
+  await sleep(500);
+}
+
+/** OCR do composer não deve ter nomes errados; deve ter um token do texto. */
+export function pasteLooksWrong(els, expectedText) {
+  const blob = (els || [])
+    .map((e) => String(e?.text || ""))
+    .join(" ")
+    .toLowerCase();
+  if (/iracema/.test(blob)) return "ainda Iracema no composer";
+  const expect = String(expectedText || "").toLowerCase();
+  if (/laércio|laercio/.test(expect) && !/laércio|laercio/.test(blob)) {
+    return "Laércio não apareceu após paste";
+  }
+  return null;
 }
 
 /** @deprecated use pasteCleanMessage — mantido p/ testes de escape legado */
@@ -166,10 +200,33 @@ export function findSendButton(els, writeY = null) {
 }
 
 function isComposer(els) {
+  const blob = (els || []).map((e) => String(e?.text || "")).join(" ");
   return Boolean(
     findWriteAMessage(els) ||
-      (els || []).some((e) => /new\s*message/i.test(String(e?.text || ""))),
+      /new\s*message/i.test(blob) ||
+      /active\s*now/i.test(blob) ||
+      /writeamessage/i.test(blob.replace(/\s+/g, "")),
   );
+}
+
+async function pasteAndConfirm(serial, message, steps, writeY) {
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    // 1ª tentativa: assume campo vazio se placeholder; depois limpa
+    await pasteCleanMessage(serial, message, {
+      skipClear: attempt === 1,
+    });
+    await sleep(1_200);
+    const after = await extract({ serial, engine: OCR, icons: true });
+    const wrong = pasteLooksWrong(after || [], message);
+    if (!wrong) {
+      steps.push(`paste:ok:try${attempt}`);
+      return { ok: true, els: after, writeY };
+    }
+    steps.push(`paste:retry${attempt}:${wrong}`);
+    clearFocusedField(serial);
+    await sleep(300);
+  }
+  return { ok: false, els: null, writeY };
 }
 
 async function shot(serial, outDir, name) {
@@ -216,25 +273,41 @@ export async function sendLinkedInMessage(opts) {
       await shot(serial, opts.outDir, "02-composer.png");
     }
 
-    // Já no composer: Write a message → type → Send
+    // Já no composer / chat: Write a message → cola (só Laércio) → Send
     if (openedComposer || isComposer(list)) {
       openedComposer = true;
-      const write = findWriteAMessage(list);
+      let write = findWriteAMessage(list);
+      // chat já aberto: campo costuma ficar no rodapé (~y 800+)
+      if (!write && /active\s*now|new\s*message/i.test(
+        (list || []).map((e) => e.text).join(" "),
+      )) {
+        write = { text: "geom-field", x: 270, y: 860 };
+      }
       if (write) {
         steps.push(`write@${write.x},${write.y}`);
         if (!dryRun) {
           tapElement({ serial, x: write.x, y: write.y });
           await sleep(800);
-          await pasteCleanMessage(serial, message);
-          await sleep(WAIT_TAP_MS);
-        }
-        await shot(serial, opts.outDir, "03-typed.png");
-
-        const after = await extract({ serial, engine: OCR, icons: true });
-        const sendBtn = findSendButton(after || [], write.y);
-        steps.push(`send@${sendBtn.x},${sendBtn.y}:${sendBtn.via}`);
-        await shot(serial, opts.outDir, "04-before-send.png");
-        if (!dryRun) {
+          const pasted = await pasteAndConfirm(
+            serial,
+            message,
+            steps,
+            write.y,
+          );
+          if (!pasted.ok) {
+            return {
+              ok: false,
+              status: "failed",
+              url,
+              text: message,
+              steps,
+              error: "paste não confirmou texto do Laércio (evitou Iracema)",
+            };
+          }
+          await shot(serial, opts.outDir, "03-pasted.png");
+          const sendBtn = findSendButton(pasted.els || [], write.y);
+          steps.push(`send@${sendBtn.x},${sendBtn.y}:${sendBtn.via}`);
+          await shot(serial, opts.outDir, "04-before-send.png");
           tapElement({ serial, x: sendBtn.x, y: sendBtn.y });
           await sleep(WAIT_TAP_MS);
         }
@@ -246,19 +319,6 @@ export async function sendLinkedInMessage(opts) {
           text: message,
           steps,
         };
-      }
-      // composer sem placeholder — campo já focado
-      if (!dryRun && /new\s*message/i.test(JSON.stringify(list))) {
-        steps.push("paste:focused");
-        await pasteCleanMessage(serial, message);
-        await sleep(WAIT_TAP_MS);
-        const after = await extract({ serial, engine: OCR, icons: true });
-        const sendBtn = findSendButton(after || [], 460);
-        steps.push(`send@${sendBtn.x},${sendBtn.y}:${sendBtn.via}`);
-        tapElement({ serial, x: sendBtn.x, y: sendBtn.y });
-        await sleep(WAIT_TAP_MS);
-        await shot(serial, opts.outDir, "05-sent.png");
-        return { ok: true, status: "sent", url, text: message, steps };
       }
       await sleep(1_000);
       continue;

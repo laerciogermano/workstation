@@ -17,6 +17,17 @@ describe("ui-dump", () => {
     assert.equal(els.find((e) => e.text === "Show all")?.y, 920);
   });
 
+  it("ignora nó com bounds zero (Activity offscreen)", () => {
+    const xml = `
+<hierarchy>
+  <node text="Maranei Mara" bounds="[24,354][250,396]" />
+  <node text="Parabéns! &#127881;" bounds="[0,0][0,0]" />
+</hierarchy>`;
+    const els = elementsFromUiXml(xml);
+    assert.equal(els.length, 1);
+    assert.equal(els[0].text, "Maranei Mara");
+  });
+
   it("findByTextInUiDump", () => {
     const hit = findByTextInUiDump(SAMPLE, ["Show all results", "Show all"], {
       minScore: 0.7,

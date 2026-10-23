@@ -68,6 +68,8 @@ export function parseUiNode(nodeTag) {
   if (!label) return null;
   const w = x2 - x1;
   const h = y2 - y1;
+  // offscreen / zero (ex. corpo de post Activity @ [0,0][0,0] "Parabéns! …")
+  if (w <= 0 || h <= 0) return null;
   if (h > 400 && w > 400 && !text) return null;
   return {
     text: label,

@@ -85,11 +85,27 @@ export function nameHintFromLinkedInUrl(rawUrl) {
     .trim();
 }
 
+/** Tokens de nome (só letras; ignora entidade HTML / emoji / pontuação). */
+function nameLetterWords(t) {
+  return String(t || "")
+    .replace(/&#\d+;/g, " ")
+    .replace(/\p{Extended_Pictographic}/gu, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .split(/\s+/)
+    .map((w) => w.replace(/^[^\p{L}]+|[^\p{L}'’-]+$/gu, ""))
+    .filter((w) => w.length >= 2 && /^[\p{L}][\p{L}'’-]*$/u.test(w));
+}
+
 function looksLikePersonName(t) {
   const s = String(t || "").replace(/\s+/g, " ").trim();
   if (s.length < 3 || s.length > 80) return false;
   // rótulo UI com barra ("Ela / Dela") — não é nome na tela
   if (/\//.test(s)) return false;
+  // post Activity / celebração: "Parabéns! &#127881;"
+  if (/&#\d+;/.test(s) || /!/.test(s) || /\p{Extended_Pictographic}/u.test(s)) {
+    return false;
+  }
   if (LOCATION_RE.test(s) || /connections?|mutual|followers|open to/i.test(s)) {
     return false;
   }
@@ -97,11 +113,10 @@ function looksLikePersonName(t) {
   if (PROFILE_A11Y_NOISE_RE.test(s)) return false;
   if (/^\d/.test(s)) return false;
   if (/^(manage|view|invite|see|open|send|share|follow)\b/i.test(s)) return false;
-  const words = s.split(/\s+/).filter((w) => w && w !== "|");
+  const words = nameLetterWords(s);
   if (words.length < 1 || words.length > 5) return false;
   if (words.some((w) => /^(is|a|an|the|of|about)$/i.test(w))) return false;
-  const capped = words.filter((w) => /^[\p{L}]/u.test(w)).length;
-  return capped >= Math.min(1, words.length);
+  return true;
 }
 
 /** Score 0..1: quanto o texto da tela se parece com o hint (slug), só p/ desempate. */
@@ -269,20 +284,22 @@ export function parseProfileHeader(els, opts = {}) {
         t.replace(/\s*[•·].*$/, "").replace(/\s+/g, " ").trim(),
       );
       const solidName = nameCandidates.some(
-        (c) => String(c.text).trim().split(/\s+/).length >= 2,
+        (c) => nameLetterWords(c.text).length >= 2,
       );
       // Já há nome composto na tela → próximas linhas person-like são cargo/empresa
       if (cleaned && looksLikePersonName(cleaned) && !solidName) {
-        const words = cleaned.split(/\s+/).filter(Boolean).length;
+        const words = nameLetterWords(cleaned).length;
+        const yy = Number.isFinite(y) ? y : 0;
         const score =
           nameHintScore(cleaned, hintTokens) +
           (source === "text" ? 0.2 : 0) +
           (x > 0 && x < 280 ? 0.15 : 0) +
-          (words >= 2 ? 0.25 : 0);
+          (words >= 2 ? 0.25 : 0) +
+          (yy >= 150 ? 0.2 : yy > 0 ? 0 : -1);
         nameCandidates.push({
           text: cleaned,
           score,
-          y: Number.isFinite(y) ? y : 0,
+          y: yy,
           x,
           source,
         });

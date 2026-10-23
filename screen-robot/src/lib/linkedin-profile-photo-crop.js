@@ -1,36 +1,53 @@
 /**
- * Crops de mídia LinkedIn (detail: avatar+capa; lista: avatar+card inteiro).
- * Coordenadas calibradas em 540×960; escalam com o tamanho real.
+ * Crops de mídia LinkedIn.
+ * Detail: prefer bounds do dump (Cover photo / Profile photo); fallback heurística 540×960.
+ * Lista: avatar+card por coords do card.
  */
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import sharp from "sharp";
 
-/** Referência do emulator. */
+import { parseProfileMediaBoundsFromUiXml } from "./linkedin-profile-media-from-uidump.js";
+
+/** Referência do emulator (só fallback sem dump). */
 const REF_W = 540;
 const REF_H = 960;
 
-/** Capa (detail): banner abaixo da search, acima do avatar. */
-const COVER = { left: 0, top: 100, width: 540, height: 110 };
-/** Foto (detail): círculo do avatar. */
-const PHOTO = { left: 24, top: 220, width: 140, height: 140 };
+const COVER_FALLBACK = { left: 0, top: 117, width: 540, height: 135 };
+const PHOTO_FALLBACK = { left: 24, top: 180, width: 156, height: 156 };
 
 /** Avatar na lista People (à esquerda do nome). */
 const LIST_AVATAR_SIZE = 92;
 const LIST_AVATAR_LEFT = 16;
-/** Avatar top ≈ name.y − offset (OCR do nome fica um pouco abaixo do centro). */
 const LIST_AVATAR_Y_OFF = -10;
 
-function scaleBox(box, w, h) {
-  const sx = w / REF_W;
-  const sy = h / REF_H;
-  const left = Math.max(0, Math.round(box.left * sx));
-  const top = Math.max(0, Math.round(box.top * sy));
+/**
+ * Escala box do espaço dump → pixels do PNG.
+ * @param {{ left: number, top: number, width: number, height: number }} box
+ * @param {number} imgW
+ * @param {number} imgH
+ * @param {{ width: number, height: number }|null} dumpSize
+ */
+export function scaleDumpBoxToImage(box, imgW, imgH, dumpSize) {
+  const dw = dumpSize?.width || imgW;
+  const dh = dumpSize?.height || imgH;
+  // Largura igual → bounds do dump já são px do screencap (hierarchy pode ser mais baixa que o PNG).
+  const sameW = Math.abs(dw - imgW) <= 2;
+  const sx = sameW ? 1 : imgW / dw;
+  const sy = sameW ? 1 : imgH / dh;
+  let left = Math.round(box.left * sx);
+  let top = Math.round(box.top * sy);
   let width = Math.round(box.width * sx);
   let height = Math.round(box.height * sy);
-  if (left + width > w) width = Math.max(1, w - left);
-  if (top + height > h) height = Math.max(1, h - top);
+  left = Math.max(0, Math.min(left, imgW - 1));
+  top = Math.max(0, Math.min(top, imgH - 1));
+  if (left + width > imgW) width = Math.max(1, imgW - left);
+  if (top + height > imgH) height = Math.max(1, imgH - top);
   return { left, top, width, height };
+}
+
+function scaleBoxRef(box, w, h) {
+  return scaleDumpBoxToImage(box, w, h, { width: REF_W, height: REF_H });
 }
 
 async function extractPng(srcPath, box) {
@@ -38,26 +55,48 @@ async function extractPng(srcPath, box) {
 }
 
 /**
- * Detail: crop avatar + capa a partir do card-00.png.
+ * Detail: crop avatar + capa.
+ * Se `opts.uiXml` tiver Cover/Profile photo → recorte exato desses bounds.
+ *
  * @param {string} cardPngPath
  * @param {string} [outDir]
+ * @param {{ uiXml?: string }} [opts]
  */
-export async function cropProfilePhotoAndCover(cardPngPath, outDir) {
+export async function cropProfilePhotoAndCover(cardPngPath, outDir, opts = {}) {
   const meta = await sharp(cardPngPath).metadata();
   const w = Number(meta.width) || REF_W;
   const h = Number(meta.height) || REF_H;
 
-  const photoBuf = await extractPng(cardPngPath, scaleBox(PHOTO, w, h));
-  const coverBuf = await extractPng(cardPngPath, scaleBox(COVER, w, h));
+  let photoBox = scaleBoxRef(PHOTO_FALLBACK, w, h);
+  let coverBox = scaleBoxRef(COVER_FALLBACK, w, h);
+  let source = "fallback";
 
-  /** @type {{ photoBase64: string|null, coverBase64: string|null, cardBase64: string|null, photoPath?: string, coverPath?: string, cardPath?: string }} */
+  const xml = opts.uiXml != null ? String(opts.uiXml) : "";
+  if (xml.includes("<node")) {
+    const media = parseProfileMediaBoundsFromUiXml(xml);
+    if (media.photo) {
+      photoBox = scaleDumpBoxToImage(media.photo, w, h, media.dumpSize);
+      source = "dump";
+    }
+    if (media.cover) {
+      coverBox = scaleDumpBoxToImage(media.cover, w, h, media.dumpSize);
+      source = "dump";
+    }
+  }
+
+  const photoBuf = await extractPng(cardPngPath, photoBox);
+  const coverBuf = await extractPng(cardPngPath, coverBox);
+
+  /** @type {{ photoBase64: string|null, coverBase64: string|null, cardBase64: string|null, photoPath?: string, coverPath?: string, cardPath?: string, source: string, photoBox: object, coverBox: object }} */
   const out = {
     photoBase64: photoBuf.toString("base64"),
     coverBase64: coverBuf.toString("base64"),
     cardBase64: null,
+    source,
+    photoBox,
+    coverBox,
   };
 
-  // Card inteiro = o próprio frame do cartão (1ª tela)
   try {
     const cardBuf = await sharp(cardPngPath).png().toBuffer();
     out.cardBase64 = cardBuf.toString("base64");
@@ -87,7 +126,7 @@ export async function cropProfilePhotoAndCover(cardPngPath, outDir) {
  * @param {string} roundPngPath
  * @param {{ y: number, cardBounds?: { left: number, top: number, width: number, height: number } }} profile
  * @param {string} [outDir]
- * @param {string} [filePrefix] — ex. profile-001
+ * @param {string} [filePrefix]
  */
 export async function cropListProfilePhotoAndCard(
   roundPngPath,
@@ -123,7 +162,7 @@ export async function cropListProfilePhotoAndCard(
     width: 524,
     height: 220,
   };
-  const cardBox = scaleBox(b, w, h);
+  const cardBox = scaleBoxRef(b, w, h);
 
   const photoBuf = await extractPng(roundPngPath, photoBox);
   const cardBuf = await extractPng(roundPngPath, cardBox);

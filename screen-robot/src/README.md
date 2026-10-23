@@ -158,6 +158,8 @@ Script [`scripts/login-extract-profile-detail.js`](scripts/login-extract-profile
 
 **Antes → depois (detail cartão):** OCR misturado → `sense=dump|ocr` isolados ([`lib/sense.js`](lib/sense.js)). Rollback: `--sense ocr`.
 
+**Antes → depois (foto/capa):** crop fixo 540×960 → bounds exatos do dump (`Cover photo` / `Profile photo` via [`lib/linkedin-profile-media-from-uidump.js`](lib/linkedin-profile-media-from-uidump.js)). Rollback: omitir `uiXml` em `cropProfilePhotoAndCover`.
+
 **Antes → depois (by-url / cartão):** sempre Share/Copy URL + nome frágil → com URL conhecida skip Share; parser preenche headline/empresa/`inviteStatus`. Rollback: forçar `captureProfileUrl`; parser antigo sem `inviteStatus`.
 
 **Antes → depois (ordem mídia):** crop depois do Share (avatar coberto pelo sheet) → crop **antes** da URL, a partir do `card-00.png`. Rollback: mover o bloco `cropProfilePhotoAndCover` para depois de `captureProfileUrl`.

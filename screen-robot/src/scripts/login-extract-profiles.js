@@ -441,11 +441,14 @@ async function openProfileAndExtract(serial, listCard, outDir, filePrefix) {
   };
   /** @type {object[]|null} */
   let cardEls = null;
+  /** @type {string} */
+  let pageXml = "";
   try {
+    // dump sempre p/ bounds de foto/capa; header só se sense=dump
+    pageXml = dumpUiXml(serial);
+    writeFileSync(join(outDir, `${filePrefix}-page.xml`), pageXml, "utf8");
     if (sense === "dump") {
-      const xml = dumpUiXml(serial);
-      writeFileSync(join(outDir, `${filePrefix}-page.xml`), xml, "utf8");
-      const parsed = parseProfileHeaderFromUiXml(xml, {
+      const parsed = parseProfileHeaderFromUiXml(pageXml, {
         nameHint: listCard.name,
       });
       header = parsed.header;
@@ -480,12 +483,14 @@ async function openProfileAndExtract(serial, listCard, outDir, filePrefix) {
       await captureFrame(serial, { outPath: cardPng });
     }
     if (existsSync(cardPng)) {
-      const media = await cropProfilePhotoAndCover(cardPng, outDir);
+      const media = await cropProfilePhotoAndCover(cardPng, outDir, {
+        uiXml: pageXml,
+      });
       photoBase64 = media.photoBase64;
       coverBase64 = media.coverBase64;
       cardBase64 = media.cardBase64;
       console.log(
-        `   crop page: photo=${media.photoPath || "-"} cover=${media.coverPath || "-"}`,
+        `   crop page (${media.source}): photo=${media.photoPath || "-"} ${JSON.stringify(media.photoBox)} cover=${media.coverPath || "-"} ${JSON.stringify(media.coverBox)}`,
       );
     }
   } catch (e) {

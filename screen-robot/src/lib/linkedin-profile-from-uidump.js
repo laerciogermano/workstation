@@ -20,18 +20,34 @@ export function profileElementsFromUiXml(xml) {
   const seen = new Set();
   for (const el of elementsFromUiXml(xml)) {
     if (
-      /^(search|home|my network|notifications|jobs|post)$/i.test(el.text)
+      /^(search|home|my network|notifications|jobs|post|back button|cover photo|profile photo|more)$/i.test(
+        el.text,
+      )
     ) {
       continue;
     }
-    const key = `${el.text}|${el.y}|${el.x}`;
+    // a11y do topo (Premium / notifications / verifications) — não entra no header
+    if (
+      /\bis a premium member\b|\bmanage notifications\b|\bview .+ verifications\b/i.test(
+        el.text,
+      )
+    ) {
+      continue;
+    }
+    // "Invite X to connect" → Connect (content-desc do botão)
+    let text = el.text;
+    if (/\binvite\b.+\bto connect\b/i.test(text)) {
+      text = "Connect";
+    }
+    const key = `${text}|${el.y}|${el.x}`;
     if (seen.has(key)) continue;
     seen.add(key);
     out.push({
-      text: el.text,
+      text,
       x: el.x,
       y: el.y,
       resourceId: el.resourceId,
+      source: el.source,
     });
   }
   return out;

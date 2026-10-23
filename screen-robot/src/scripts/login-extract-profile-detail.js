@@ -775,15 +775,17 @@ async function main() {
   };
   /** @type {object[]|null} */
   let cardEls = null;
+  /** @type {string} */
+  let pageXml = "";
   const nameHint =
     nameHintFromLinkedInUrl(knownProfileUrl || profileUrlArg || "") ||
     openedName ||
     name;
   try {
+    pageXml = dumpUiXml(serial);
+    writeFileSync(join(outDir, "card-00.xml"), pageXml, "utf8");
     if (sense === "dump") {
-      const xml = dumpUiXml(serial);
-      writeFileSync(join(outDir, "card-00.xml"), xml, "utf8");
-      const parsed = parseProfileHeaderFromUiXml(xml, { nameHint });
+      const parsed = parseProfileHeaderFromUiXml(pageXml, { nameHint });
       header = parsed.header;
       cardEls = parsed.elements;
     } else {
@@ -816,13 +818,15 @@ async function main() {
       await captureFrame(serial, { outPath: cardPng });
     }
     if (existsSync(cardPng)) {
-      console.log("6b) Crop foto + capa + card…");
-      const media = await cropProfilePhotoAndCover(cardPng, outDir);
+      console.log("6b) Crop foto + capa (bounds dump)…");
+      const media = await cropProfilePhotoAndCover(cardPng, outDir, {
+        uiXml: pageXml,
+      });
       photoBase64 = media.photoBase64;
       coverBase64 = media.coverBase64;
       cardBase64 = media.cardBase64;
       console.log(
-        `   photo=${media.photoPath || "-"} cover=${media.coverPath || "-"} card=${media.cardPath || "-"}`,
+        `   crop (${media.source}): photo=${media.photoPath || "-"} ${JSON.stringify(media.photoBox)} cover=${media.coverPath || "-"} ${JSON.stringify(media.coverBox)}`,
       );
     }
   } catch (e) {

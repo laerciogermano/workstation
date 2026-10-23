@@ -71,12 +71,15 @@ export function parseUiNode(nodeTag) {
   if (h > 400 && w > 400 && !text) return null;
   return {
     text: label,
+    /** texto visível do attr `text` (vazio se só content-desc) */
+    visibleText: text,
     x: Math.round((x1 + x2) / 2),
     y: Math.round((y1 + y2) / 2),
     w,
     h,
     resourceId,
     contentDesc,
+    source: text ? "text" : "desc",
     clickable: /clickable="true"/.test(n),
   };
 }
@@ -110,6 +113,8 @@ export function elementsFromUiXml(xml) {
         h: node.h,
       },
       resourceId: node.resourceId || undefined,
+      source: node.source,
+      visibleText: node.visibleText || undefined,
     });
   }
   out.sort((a, b) => a.y - b.y || a.x - b.x);

@@ -11,7 +11,11 @@ const SECTION_STOP_RE =
 const URL_RE = /(?:https?:\/\/)?(?:www\.)?linkedin\.com\/in\/[A-Za-z0-9._%-]+\/?/i;
 
 const CHROME_RE =
-  /^(search|connect|message|pending|follow|\+ follow|i\+ connect|1 message|• message|• pending|show all.*|page|\d{1,2}:\d{2}\s*\$?|premium)$/i;
+  /^(search|connect|message|pending|follow|\+ follow|i\+ connect|1 message|• message|• pending|show all.*|page|\d{1,2}:\d{2}\s*\$?|premium|back button|cover photo|profile photo|more)$/i;
+
+/** content-desc / a11y do topo do perfil LinkedIn — não é nome/cargo */
+const PROFILE_A11Y_NOISE_RE =
+  /\bis a premium member\b|\bmanage notifications\b|\bview .+ verifications\b|\binvite .+ to connect\b|\bsee your contact info\b|\bnotify .+ about\b/i;
 
 const DATE_RANGE_RE =
   /\b(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{4}\s*[-–]\s*(?:Present|(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{4})\b/i;
@@ -20,7 +24,7 @@ const HEADER_STOP_RE =
   /^(about|experience|education|skills|activity|open to work|featured|interests)\b/i;
 const LOCATION_RE =
   /,\s*|brazil|brasil|minas|paulo|horizonte|campinas|remote|united states|portugal/i;
-const CONNECTIONS_RE = /^(\d[\d,]*)\s*connections?\b/i;
+const CONNECTIONS_RE = /^(\d[\d,]*)\+?\s*connections?\b/i;
 const NAME_DEGREE_RE = /^(.*?)\s*[•·]\s*(1st|2nd|3rd\+?)\s*$/i;
 const DEGREE_ONLY_RE = /^[•·]?\s*(1st|2nd|3rd\+?)\s*$/i;
 const AD_RE =
@@ -51,12 +55,28 @@ function looksLikePersonName(t) {
     return false;
   }
   if (DEGREE_ONLY_RE.test(s) || AD_RE.test(s) || isChromeLine(s)) return false;
+  if (PROFILE_A11Y_NOISE_RE.test(s)) return false;
   if (/^\d/.test(s)) return false;
+  // frases UI ("Manage …", "View …") não são nome
+  if (/^(manage|view|invite|see|open|send|share)\b/i.test(s)) return false;
   // 1–4 palavras, maioria com letra inicial maiúscula (OCR EN/PT)
   const words = s.split(/\s+/).filter(Boolean);
   if (words.length < 1 || words.length > 5) return false;
+  // nome de pessoa: sem "is/a/the/of" no meio (ex. "X is a Premium member")
+  if (words.some((w) => /^(is|a|an|the|of|about)$/i.test(w))) return false;
   const capped = words.filter((w) => /^[\p{L}]/u.test(w)).length;
   return capped >= Math.min(1, words.length);
+}
+
+/** Score 0..1 do candidato vs nameHint (tokens). */
+function nameHintScore(candidate, hintTokens) {
+  if (!hintTokens.length) return 0;
+  const low = String(candidate || "").toLowerCase();
+  let hit = 0;
+  for (const tok of hintTokens) {
+    if (low.includes(tok)) hit += 1;
+  }
+  return hit / hintTokens.length;
 }
 
 /**
@@ -74,6 +94,7 @@ export function parseProfileHeader(els, opts = {}) {
     .map((e) => ({
       text: String(e?.text || "").replace(/\s+/g, " ").trim(),
       y: Number(e?.y),
+      source: e?.source === "desc" ? "desc" : e?.source === "text" ? "text" : null,
     }))
     .filter((e) => e.text)
     .sort((a, b) => {
@@ -96,8 +117,12 @@ export function parseProfileHeader(els, opts = {}) {
   /** @type {'connect'|'pending'|'connected'|null} */
   let inviteStatus = null;
   let pastName = false;
+  /** @type {{ text: string, score: number, y: number, source: string|null }[]} */
+  const nameCandidates = [];
+  /** pending "500+" antes de "connections" no dump */
+  let pendingConnCount = null;
 
-  for (const { text: t } of sorted) {
+  for (const { text: t, source } of sorted) {
     if (HEADER_STOP_RE.test(t)) break;
     if (AD_RE.test(t)) continue;
     if (/^\d{1,2}:\d{2}/.test(t) || /^search$/i.test(t)) continue;
@@ -111,15 +136,25 @@ export function parseProfileHeader(els, opts = {}) {
     const degInline = t.match(NAME_DEGREE_RE);
     if (degInline) {
       const n = degInline[1].replace(/\s+/g, " ").trim();
-      if (n.length >= 2) {
-        name = n;
+      if (n.length >= 2 && looksLikePersonName(n)) {
+        nameCandidates.push({
+          text: n,
+          score: nameHintScore(n, hintTokens) + (source === "text" ? 0.15 : 0),
+          y: 0,
+          source,
+        });
         pastName = true;
       }
       connectionDegree = degInline[2];
       continue;
     }
 
-    if (/\bpending\b/i.test(t)) {
+    if (/\binvite\b.+\bconnect\b/i.test(t)) {
+      canConnect = true;
+      if (inviteStatus !== "pending") inviteStatus = "connect";
+      continue;
+    }
+    if (/\bpending\b/i.test(t) && !/manage notifications/i.test(t)) {
       inviteStatus = "pending";
       canConnect = false;
       continue;
@@ -138,9 +173,23 @@ export function parseProfileHeader(els, opts = {}) {
       continue;
     }
 
+    // chrome / a11y depois de grau e CTAs
+    if (PROFILE_A11Y_NOISE_RE.test(t) || isChromeLine(t)) continue;
+
     const conn = t.match(CONNECTIONS_RE);
     if (conn) {
       connections = `${conn[1].replace(/,/g, "")} connections`;
+      pendingConnCount = null;
+      pastName = true;
+      continue;
+    }
+    if (/^(\d[\d,]*)\+?$/.test(t) && !connections) {
+      pendingConnCount = t.replace(/,/g, "");
+      continue;
+    }
+    if (/^connections?$/i.test(t) && pendingConnCount && !connections) {
+      connections = `${pendingConnCount} connections`;
+      pendingConnCount = null;
       pastName = true;
       continue;
     }
@@ -156,29 +205,22 @@ export function parseProfileHeader(els, opts = {}) {
       continue;
     }
 
-    if (
-      !name &&
-      looksLikePersonName(t) &&
-      (hintTokens.length === 0 ||
-        hintTokens.some((tok) => t.toLowerCase().includes(tok)))
-    ) {
-      name = t.replace(/\s*[•·].*$/, "").trim();
-      pastName = true;
-      const m = t.match(/\b(1st|2nd|3rd\+?)\b/i);
-      if (m) connectionDegree = m[1];
-      continue;
-    }
-
-    // Sem hint: 1º nome plausível após grau / antes de location
-    if (
-      !name &&
-      !hintTokens.length &&
-      looksLikePersonName(t) &&
-      (connectionDegree || pastName === false)
-    ) {
-      name = t.replace(/\s*[•·].*$/, "").trim();
-      pastName = true;
-      continue;
+    if (looksLikePersonName(t)) {
+      const cleaned = t.replace(/\s*[•·].*$/, "").trim();
+      const score =
+        nameHintScore(cleaned, hintTokens) + (source === "text" ? 0.2 : 0);
+      const hintOk =
+        !hintTokens.length ||
+        hintTokens.some((tok) => cleaned.toLowerCase().includes(tok));
+      const best = nameCandidates.reduce((m, c) => Math.max(m, c.score), 0);
+      // só consome como nome se ainda não há match forte; senão vira mid (cargo/empresa)
+      if (hintOk && (best < 0.85 || score > best)) {
+        nameCandidates.push({ text: cleaned, score, y: 0, source });
+        pastName = true;
+        const m = t.match(/\b(1st|2nd|3rd\+?)\b/i);
+        if (m) connectionDegree = m[1];
+        continue;
+      }
     }
 
     if (
@@ -186,14 +228,20 @@ export function parseProfileHeader(els, opts = {}) {
       !location &&
       !connections &&
       t.length >= 3 &&
-      t.length <= 140 &&
+      t.length <= 280 &&
       !isChromeLine(t) &&
+      !PROFILE_A11Y_NOISE_RE.test(t) &&
       !DEGREE_ONLY_RE.test(t) &&
       !AD_RE.test(t) &&
       !/followers|mutual|show details|#opentowork/i.test(t)
     ) {
       midLines.push(t);
     }
+  }
+
+  if (nameCandidates.length) {
+    nameCandidates.sort((a, b) => b.score - a.score || a.y - b.y);
+    name = nameCandidates[0].text;
   }
 
   // mid: cargo(s) + empresa (última linha curta costuma ser empresa)
@@ -212,6 +260,15 @@ export function parseProfileHeader(els, opts = {}) {
       headline = midLines.join(" ");
       company = null;
     }
+  }
+  // empresa não pode ser o próprio nome
+  if (
+    company &&
+    name &&
+    company.replace(/\s+/g, " ").trim().toLowerCase() ===
+      name.replace(/\s+/g, " ").trim().toLowerCase()
+  ) {
+    company = null;
   }
 
   let mutualConnections = null;

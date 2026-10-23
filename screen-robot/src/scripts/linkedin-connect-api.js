@@ -91,23 +91,27 @@ async function withDevice(fn) {
   return fn({ serial, linkedinPkg, apps: cfg.apps, cfg });
 }
 
-/** LinkedIn ok mas base não gravou → 502. */
+/**
+ * LinkedIn ok + base ok → 200.
+ * LinkedIn ok + base falhou → 200 com `warning` (envio no app não é revertido).
+ * LinkedIn falhou → 502.
+ */
 function sendWithDb(res, result, { kind = "client_linkedin_message" } = {}) {
   if (!result?.ok) return send(res, 502, result);
   const notify = result.db || result.notify;
-  if (notify && notify.notified === false) {
-    return send(res, 502, {
+  const dbErrStep = (result.steps || []).find((s) =>
+    String(s).startsWith("db:error:"),
+  );
+  if ((notify && notify.notified === false) || dbErrStep) {
+    const detail =
+      notify?.error ||
+      notify?.reason ||
+      (dbErrStep ? String(dbErrStep).replace(/^db:error:/, "") : null) ||
+      `falha ao persistir em ${kind}`;
+    return send(res, 200, {
       ...result,
-      error:
-        notify.error ||
-        notify.reason ||
-        `falha ao persistir em ${kind}`,
-    });
-  }
-  if (result.steps?.some((s) => String(s).startsWith("db:error:"))) {
-    return send(res, 502, {
-      ...result,
-      error: `falha ao persistir em ${kind}`,
+      warning: detail,
+      error: undefined,
     });
   }
   if (
@@ -115,15 +119,15 @@ function sendWithDb(res, result, { kind = "client_linkedin_message" } = {}) {
       String(s).startsWith("api:client-connections-linkedin:fail:"),
     )
   ) {
-    return send(res, 502, {
+    return send(res, 200, {
       ...result,
-      error: "falha ao persistir em client_connection_linkedin",
+      warning: "falha ao persistir em client_connection_linkedin",
     });
   }
   if (result.steps?.some((s) => String(s).startsWith("api:mark-accepted:fail:"))) {
-    return send(res, 502, {
+    return send(res, 200, {
       ...result,
-      error: "falha ao marcar aceitos em client_connection_linkedin",
+      warning: "falha ao marcar aceitos em client_connection_linkedin",
     });
   }
   return send(res, 200, result);

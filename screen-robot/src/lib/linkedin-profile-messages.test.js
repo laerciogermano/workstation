@@ -2,9 +2,11 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
 import {
+  dedupeMessagesForDb,
   mergeMessagesChronological,
   messageKey,
   messagesFromUiXml,
+  normalizeMessageBody,
   parseSenderNameLine,
 } from "./linkedin-profile-messages.js";
 
@@ -53,6 +55,30 @@ describe("linkedin-profile-messages", () => {
     assert.equal(m.length, 3);
     assert.equal(m[0].message, "old");
     assert.equal(m[2].message, "new");
-    assert.equal(messageKey(m[0]), "1|old");
+    assert.equal(messageKey(m[0]), "old");
+  });
+
+  it("dedupeMessagesForDb colapsa acento/unknown", () => {
+    assert.equal(
+      normalizeMessageBody("Bom dia Laércio"),
+      normalizeMessageBody("Bom dia Laercio"),
+    );
+    const out = dedupeMessagesForDb([
+      {
+        sender: "unknown",
+        message: "Bom dia Laercio, oi",
+        time: null,
+        from: "unknown",
+      },
+      {
+        sender: "Matheus ConectMax",
+        message: "Bom dia Laércio, oi",
+        time: "8:45 AM",
+        from: "me",
+      },
+    ]);
+    assert.equal(out.length, 1);
+    assert.equal(out[0].from, "me");
+    assert.match(out[0].message, /Laércio/);
   });
 });

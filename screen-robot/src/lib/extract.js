@@ -43,7 +43,13 @@ function resolveRecognize(src = {}) {
 /** @deprecated legado eventos EP-02 — não usar para extract */
 export function dumpUiXml(serial, deps = {}) {
   const runAdb = deps.adb ?? adb;
-  runAdb(serial, ["shell", "uiautomator", "dump", REMOTE_DUMP]);
+  try {
+    runAdb(serial, ["shell", "rm", "-f", REMOTE_DUMP]);
+  } catch {
+    /* ignore */
+  }
+  const dump = runAdb(serial, ["shell", "uiautomator", "dump", REMOTE_DUMP]);
+  if (dump?.code && dump.code !== 0) return "";
   const r = runAdb(serial, ["shell", "cat", REMOTE_DUMP]);
   return r.stdout || "";
 }

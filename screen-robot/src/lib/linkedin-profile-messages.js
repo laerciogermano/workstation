@@ -168,10 +168,20 @@ export function messagesFromUiXml(xml) {
   return { peer, messages };
 }
 
+/** Texto estável p/ dedupe (acento/case/espaços) — alinha com vendas/api. */
+export function normalizeMessageBody(message) {
+  return String(message || "")
+    .normalize("NFD")
+    .replace(/\p{M}/gu, "")
+    .toLowerCase()
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 /** @param {{ sender: string, message: string, time: string|null }} m */
 export function messageKey(m) {
-  // sem sender: mesma bolha pode aparecer como unknown após scroll
-  return `${m.time || ""}|${String(m.message || "").slice(0, 160)}`;
+  // identidade = corpo normalizado (time/from oscilam no OCR e geravam duplicata)
+  return normalizeMessageBody(m.message).slice(0, 200);
 }
 
 function rankMsg(m) {
@@ -180,6 +190,18 @@ function rankMsg(m) {
   if (m.sender && m.sender !== "unknown" && m.sender !== "me") s += 2;
   if (m.from === "me" || m.from === "peer") s += 1;
   return s;
+}
+
+/** Antes do POST: 1 linha por texto; preferir me/peer + sender + time. */
+export function dedupeMessagesForDb(messages) {
+  const map = new Map();
+  for (const m of messages || []) {
+    const key = messageKey(m);
+    if (!key) continue;
+    const prev = map.get(key);
+    if (!prev || rankMsg(m) >= rankMsg(prev)) map.set(key, m);
+  }
+  return [...map.values()];
 }
 
 /**
@@ -222,10 +244,19 @@ async function shot(serial, outDir, name) {
   screenshot({ serial, path: join(outDir, name) });
 }
 
+/** Chat real: toolbar/composer — evita falso positivo de dump antigo com só message_list. */
+function isMessagingChatXml(xml) {
+  const s = String(xml || "");
+  return (
+    /messaging_toolbar_title|messaging_keyboard|Write a message/i.test(s) ||
+    (/message_list/i.test(s) && /sender_name|message_sender_image|:id\/body\b/i.test(s))
+  );
+}
+
 async function openComposer(serial, steps, outDir) {
   for (let round = 0; round < 10; round++) {
     const xml = dumpUiXml(serial);
-    if (/message_list|messaging_keyboard|Write a message/i.test(xml)) {
+    if (isMessagingChatXml(xml)) {
       steps.push(`composer:round${round}`);
       return true;
     }
@@ -367,27 +398,32 @@ export async function listProfileMessages(opts) {
   }));
 
   let db = null;
-  if (messages.length) {
+  const forDb = dedupeMessagesForDb(messages).filter(
+    (m) => m.from === "me" || m.from === "peer",
+  );
+  if (forDb.length) {
     try {
       db = await notifyLinkedInMessages({
         profileUrl: url,
         agentId: resolveAgentId(),
         peerName: peer,
-        messages: messages.map((m) => ({
+        messages: forDb.map((m) => ({
           direction: m.from === "me" ? "sent" : "received",
           message: m.message,
-          sender: m.sender,
+          sender: m.sender && m.sender !== "unknown" ? m.sender : null,
           time: m.time,
         })),
       });
       steps.push(
         db.notified
-          ? `db:messages:${db.data?.count ?? messages.length}`
+          ? `db:messages:${db.data?.count ?? forDb.length}`
           : `db:skip:${db.reason}`,
       );
     } catch (e) {
       steps.push(`db:error:${String(e?.message || e).slice(0, 120)}`);
     }
+  } else if (messages.length) {
+    steps.push("db:skip:só unknown após dedupe");
   }
 
   return {

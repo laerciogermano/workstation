@@ -279,6 +279,27 @@ Com campo vazio o mesmo slot vira **mic** — não retapar coords fixas. Confirm
 
 ---
 
+## linkedin-unread-messages (Messaging → Unread → lista)
+
+```bash
+cd screen-robot/src
+npm run linkedin-unread-messages -- --max-results 20
+
+# API
+curl -s -X POST http://127.0.0.1:3099/unread-messages \
+  -H 'content-type: application/json' \
+  -d '{"maxResults":20}'
+# GET /unread-messages?maxResults=20
+```
+
+Fluxo: **stopAllApps** → launch LinkedIn → ícone **Messaging** (`home_messaging`) → chip **Unread** → parse dump até `maxResults`.  
+Cada item: `name`, `message`, `unreadCount`, `time` (dia/hora do preview).  
+Lib: [`lib/linkedin-unread-messages.js`](lib/linkedin-unread-messages.js).
+
+**Antes → depois:** não existia listagem unread. **Rollback:** remover script/lib/endpoint.
+
+---
+
 ## linkedin-extract-connections (N mais recentes)
 
 ```bash

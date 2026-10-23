@@ -5,6 +5,8 @@
  *   POST /connections { "n": 20 }  → JSON das N conexões mais recentes
  *   GET  /connections?n=20
  *   POST /message     { "url": "…", "text": "Oi!" }
+ *   POST /unread-messages { "maxResults": 20 }
+ *   GET  /unread-messages?maxResults=20
  *
  * Uso (cwd: screen-robot/src):
  *   npm run linkedin-connect-api
@@ -17,6 +19,7 @@ import { fileURLToPath } from "node:url";
 import { connectByLinkedInUrl, normalizeLinkedInProfileUrl } from "../lib/linkedin-connect.js";
 import { extractRecentConnections } from "../lib/linkedin-extract-connections.js";
 import { sendLinkedInMessage } from "../lib/linkedin-message.js";
+import { listUnreadMessages } from "../lib/linkedin-unread-messages.js";
 import { provisionEmulator } from "../lib/provision.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -108,6 +111,8 @@ const server = createServer(async (req, res) => {
         "POST /connections",
         "GET /connections?n=",
         "POST /message",
+        "POST /unread-messages",
+        "GET /unread-messages?maxResults=",
       ],
     });
   }
@@ -210,6 +215,51 @@ const server = createServer(async (req, res) => {
     }
   }
 
+  if (
+    (req.method === "POST" || req.method === "GET") &&
+    path === "/unread-messages"
+  ) {
+    let body = {};
+    if (req.method === "POST") {
+      try {
+        body = await readJson(req);
+      } catch {
+        return send(res, 400, { ok: false, error: "JSON inválido" });
+      }
+    }
+    const maxResults = parseN(
+      body?.maxResults ??
+        body?.max_results ??
+        body?.n ??
+        u.searchParams.get("maxResults") ??
+        u.searchParams.get("max-results") ??
+        u.searchParams.get("n") ??
+        20,
+    );
+    if (maxResults == null) {
+      return send(res, 400, {
+        ok: false,
+        error: "passe maxResults entre 1 e 500",
+      });
+    }
+    try {
+      const result = await runExclusive(() =>
+        withDevice(({ serial, linkedinPkg }) =>
+          listUnreadMessages({
+            serial,
+            linkedinPackage: linkedinPkg,
+            maxResults,
+            outDir: null,
+          }),
+        ),
+      );
+      return send(res, result.ok ? 200 : 502, result);
+    } catch (e) {
+      if (e?.code === "BUSY") return send(res, 409, { ok: false, error: e.message });
+      return send(res, 500, { ok: false, error: String(e?.message || e) });
+    }
+  }
+
   send(res, 404, { ok: false, error: "not found" });
 });
 
@@ -218,4 +268,5 @@ server.listen(PORT, HOST, () => {
   console.log(`POST /connect {"url":"…"}`);
   console.log(`POST /connections {"n":20}`);
   console.log(`POST /message {"url":"…","text":"…"}`);
+  console.log(`POST /unread-messages {"maxResults":20}`);
 });

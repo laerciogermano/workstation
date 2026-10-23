@@ -26,6 +26,7 @@
     "linkedin-connect-api": "node scripts/linkedin-connect-api.js",
     "linkedin-extract-connections": "node scripts/linkedin-extract-connections.js",
     "linkedin-message": "node scripts/linkedin-message.js",
+    "linkedin-unread-messages": "node scripts/linkedin-unread-messages.js",
     "tinder-home": "node scripts/tinder-home.js",
     "instagram-home": "node scripts/instagram-home.js",
     "sample": "node scripts/sample.js",

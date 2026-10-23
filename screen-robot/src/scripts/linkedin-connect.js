@@ -12,7 +12,11 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { connectByLinkedInUrl, normalizeLinkedInProfileUrl } from "../lib/linkedin-connect.js";
+import {
+  connectByLinkedInUrl,
+  normalizeLinkedInProfileUrl,
+  resolveAgentId,
+} from "../lib/linkedin-connect.js";
 import { provisionEmulator } from "../lib/provision.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -74,6 +78,7 @@ async function main() {
     url: rawUrl,
     outDir,
     dryRun,
+    agentId: resolveAgentId(cfg),
   });
 
   if (outDir) {

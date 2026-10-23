@@ -31,6 +31,25 @@ export function invitesApiBase() {
   ).replace(/\/$/, "");
 }
 
+/**
+ * Agente que dispara o convite (`AGENT_ID` ou `provision.name` do device config).
+ * @param {{ provision?: { name?: string } }|null} [cfg]
+ */
+export function resolveAgentId(cfg = null) {
+  const fromEnv = String(process.env.AGENT_ID || "").trim();
+  if (fromEnv) return fromEnv;
+  const fromCfg = String(cfg?.provision?.name || "").trim();
+  return fromCfg || "default";
+}
+
+/** Status int em `client_connection_linkedin` (vendas/api). */
+export const CONNECTION_STATUS = Object.freeze({
+  NOT_SENT: 0,
+  PENDING: 1,
+  CONNECTED: 2,
+});
+
+
 /** Canonicaliza URL do perfil (tira utm_* / query). */
 export function normalizeLinkedInProfileUrl(raw) {
   const s = String(raw || "");
@@ -136,21 +155,25 @@ async function shot(serial, outDir, name) {
 
 /**
  * Notifica a API que o convite foi feito (Pending confirmado).
- * POST {base}/invites — body: { profileUrl, status: "Pending", invitedAt }
+ * POST {base}/client-connections-linkedin
+ * body: { profileUrl, agentId, status: 1, invitedAt, steps }
  */
 export async function notifyInviteSent({
   profileUrl,
   steps = [],
+  agentId = resolveAgentId(),
+  status = CONNECTION_STATUS.PENDING,
   baseUrl = invitesApiBase(),
 } = {}) {
   const base = String(baseUrl || "").replace(/\/$/, "");
   if (!base) {
     return { notified: false, reason: "INVITES_API_URL/PROFILES_API_URL ausente" };
   }
-  const url = `${base}/invites`;
+  const url = `${base}/client-connections-linkedin`;
   const body = {
     profileUrl,
-    status: "Pending",
+    agentId: String(agentId || "default").trim() || "default",
+    status,
     invitedAt: new Date().toISOString(),
     steps,
   };
@@ -197,6 +220,7 @@ async function waitForPending(serial, { outDir, steps }) {
  *   outDir?: string|null,
  *   dryRun?: boolean,
  *   notifyApi?: boolean,
+ *   agentId?: string,
  * }} opts
  */
 export async function connectByLinkedInUrl(opts) {
@@ -204,6 +228,7 @@ export async function connectByLinkedInUrl(opts) {
   const pkg = opts.linkedinPackage || "com.linkedin.android";
   const dryRun = Boolean(opts.dryRun);
   const notifyApi = opts.notifyApi !== false;
+  const agentId = opts.agentId || resolveAgentId();
   const steps = [];
   const url = openProfileByUrl(serial, pkg, opts.url);
   steps.push(`view:${url}`);
@@ -266,14 +291,23 @@ export async function connectByLinkedInUrl(opts) {
       let notify = { notified: false, reason: "notify desligado" };
       if (notifyApi && !dryRun) {
         try {
-          notify = await notifyInviteSent({ profileUrl: url, steps });
-          steps.push(notify.notified ? "api:invites:ok" : `api:invites:skip:${notify.reason}`);
+          notify = await notifyInviteSent({
+            profileUrl: url,
+            steps,
+            agentId,
+            status: CONNECTION_STATUS.PENDING,
+          });
+          steps.push(
+            notify.notified
+              ? "api:client-connections-linkedin:ok"
+              : `api:client-connections-linkedin:skip:${notify.reason}`,
+          );
         } catch (e) {
           notify = {
             notified: false,
             error: String(e?.message || e),
           };
-          steps.push(`api:invites:fail:${notify.error}`);
+          steps.push(`api:client-connections-linkedin:fail:${notify.error}`);
           // Convite na UI ok; falha de API não anula o Pending
         }
       }

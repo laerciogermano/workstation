@@ -363,10 +363,10 @@ Lib [`lib/linkedin-connect.js`](lib/linkedin-connect.js):
 2. Connect no header **ou** Follow → ⋮ → Connect no sheet
 3. Skip no dialog (nunca Add a note)
 4. **Sucesso só com Pending no OCR após Skip** — sem Pending → `ok: false`
-5. Sucesso → `POST {PROFILES_API_URL|INVITES_API_URL}/invites` `{ profileUrl, status: "Pending" }`
+5. Sucesso → `POST {PROFILES_API_URL|INVITES_API_URL}/client-connections-linkedin` `{ profileUrl, agentId, status: 1 }` (`agentId` = `AGENT_ID` ou `provision.name`)
 
-**Antes → depois:** conexão só via lista People → deep link por URL + Pending obrigatório + callback `/invites`.  
-**Rollback:** não rode `linkedin-connect*`; ignore `POST /invites` na vendas/api.
+**Antes → depois:** conexão só via lista People → deep link por URL + Pending obrigatório + callback `/client-connections-linkedin` (status int: `0` nao_enviado · `1` pendente · `2` conectado).  
+**Rollback:** não rode `linkedin-connect*`; ignore o POST na vendas/api (`DROP TABLE client_connection_linkedin` se necessário).
 
 ---
 

@@ -17,7 +17,11 @@ import { existsSync, readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { connectByLinkedInUrl, normalizeLinkedInProfileUrl } from "../lib/linkedin-connect.js";
+import {
+  connectByLinkedInUrl,
+  normalizeLinkedInProfileUrl,
+  resolveAgentId,
+} from "../lib/linkedin-connect.js";
 import { extractRecentConnections } from "../lib/linkedin-extract-connections.js";
 import { sendLinkedInMessage } from "../lib/linkedin-message.js";
 import { listProfileMessages } from "../lib/linkedin-profile-messages.js";
@@ -132,6 +136,7 @@ const server = createServer(async (req, res) => {
       return send(res, 400, { ok: false, error: "passe url linkedin.com/in/…" });
     }
     try {
+      const agentId = resolveAgentId(loadConfig());
       const result = await runExclusive(() =>
         withDevice(({ serial, linkedinPkg }) =>
           connectByLinkedInUrl({
@@ -139,6 +144,7 @@ const server = createServer(async (req, res) => {
             linkedinPackage: linkedinPkg,
             url,
             outDir: null,
+            agentId,
           }),
         ),
       );

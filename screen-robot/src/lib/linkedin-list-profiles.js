@@ -41,10 +41,32 @@ export function parseActionLabel(text) {
   return null;
 }
 
+/** Badge a11y do LinkedIn no mesmo text do nome (dump): "Nome Verified • 2nd". */
+const VERIFIED_BADGE_RE = /\b(verified|verificado)\b/gi;
+
+/**
+ * Dump às vezes traz nome em caixa alta ("DENISE ALVES DE OLIVEIRA").
+ * @param {string[]} words
+ */
+function maybeTitleCaseAllCaps(words) {
+  const content = words.filter((w) => !NAME_PARTICLES.has(w.toLowerCase()));
+  if (
+    !content.length ||
+    !content.every((w) => w.length >= 2 && w === w.toUpperCase())
+  ) {
+    return words;
+  }
+  return words.map((w) => {
+    if (NAME_PARTICLES.has(w.toLowerCase())) return w.toLowerCase();
+    return w.charAt(0).toUpperCase() + w.slice(1).toLowerCase();
+  });
+}
+
 export function cleanName(raw) {
   const words = String(raw || "")
     .trim()
     .replace(/[©®]/g, " ")
+    .replace(VERIFIED_BADGE_RE, " ")
     .replace(/[·•].*$/, "")
     .replace(/\s*[-–]\s*\d*(st|nd|rd|th)?\+?.*$/i, "")
     .replace(/\s+[A-Za-z]$/, "")
@@ -59,7 +81,7 @@ export function cleanName(raw) {
     }
     out.push(w);
   }
-  return out.join(" ");
+  return maybeTitleCaseAllCaps(out).join(" ");
 }
 
 export function isValidProfileName(name) {
@@ -111,12 +133,16 @@ export function pickNameAboveAction(elements, act) {
   for (const e of band) {
     const raw = String(e.text || "");
     if (parseActionLabel(raw)) continue;
+    // avatar content-desc (x~60) — não misturar com o card de cima
+    if (Number(e.x) < 100) continue;
     const name = cleanName(raw);
     if (!isValidProfileName(name)) continue;
     let score = name.length;
     if (/\s/.test(raw)) score += 40;
     if (name.split(/\s+/).length >= 2) score += 20;
     if (/[•·]/.test(raw) || /\b(1st|2nd|3rd)/i.test(raw)) score += 60;
+    // dump: nome na mesma altura do Invite/Connect (evita roubar card anterior)
+    score -= Math.abs(Number(e.y) - Number(act.y));
     scored.push({ name, x: e.x, y: e.y, score });
   }
   scored.sort((a, b) => b.score - a.score || a.y - b.y);

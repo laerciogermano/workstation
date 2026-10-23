@@ -135,7 +135,10 @@ export function parseProfileHeader(els, opts = {}) {
 
     const degInline = t.match(NAME_DEGREE_RE);
     if (degInline) {
-      const n = degInline[1].replace(/\s+/g, " ").trim();
+      const n = degInline[1]
+        .replace(/\b(verified|verificado)\b/gi, " ")
+        .replace(/\s+/g, " ")
+        .trim();
       if (n.length >= 2 && looksLikePersonName(n)) {
         nameCandidates.push({
           text: n,
@@ -206,7 +209,11 @@ export function parseProfileHeader(els, opts = {}) {
     }
 
     if (looksLikePersonName(t)) {
-      const cleaned = t.replace(/\s*[•·].*$/, "").trim();
+      const cleaned = t
+        .replace(/\b(verified|verificado)\b/gi, " ")
+        .replace(/\s*[•·].*$/, "")
+        .replace(/\s+/g, " ")
+        .trim();
       const score =
         nameHintScore(cleaned, hintTokens) + (source === "text" ? 0.2 : 0);
       const hintOk =

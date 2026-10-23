@@ -66,26 +66,21 @@ function restoreIme(serial, imeId) {
   adbOk(serial, ["shell", "ime", "set", id]);
 }
 
-/** Limpa via ADBKeyboard (exato) ou fallback DEL. */
+/** Limpa campo focado: ADB_CLEAR + DEL em loop no device (evita N adb roundtrips). */
 function clearFocusedField(serial) {
+  adb(serial, ["shell", "am", "broadcast", "-a", "ADB_CLEAR_TEXT"]);
   adbOk(serial, [
     "shell",
-    "am",
-    "broadcast",
-    "-a",
-    "ADB_CLEAR_TEXT",
+    "sh",
+    "-c",
+    "input keyevent KEYCODE_MOVE_END; i=0; while [ $i -lt 64 ]; do input keyevent KEYCODE_DEL; i=$((i+1)); done",
   ]);
-  // fallback curto
-  for (let i = 0; i < 8; i++) {
-    adbOk(serial, ["shell", "input", "keyevent", "KEYCODE_DEL"]);
-  }
 }
 
 /**
- * Injeta o texto **exatamente** (UTF-8) via ADBKeyboard base64.
- * - campo vazio → só injeta
- * - campo com texto → limpa, depois injeta
- * Não usa clipboard do Mac (evita √ß / mojibake).
+ * Injeta texto exato via ADBKeyboard.
+ * Prefer `ADB_INPUT_TEXT` (aceita `@`); B64 como fallback.
+ * Não usa clipboard Mac↔AVD.
  */
 export async function pasteCleanMessage(serial, text, opts = {}) {
   const s = String(text ?? "");
@@ -97,21 +92,35 @@ export async function pasteCleanMessage(serial, text, opts = {}) {
   else if (opts.els) shouldClear = !isMessageFieldEmpty(opts.els);
 
   const prevIme = enableAdbIme(serial);
-  await sleep(400);
+  await sleep(600);
   try {
     if (shouldClear) clearFocusedField(serial);
-    const b64 = Buffer.from(s, "utf8").toString("base64");
+    // TEXT primeiro: no Google API 30 o B64 às vezes não aplica; `@` ok via TEXT.
     adb(serial, [
       "shell",
       "am",
       "broadcast",
       "-a",
-      "ADB_INPUT_B64",
+      "ADB_INPUT_TEXT",
       "--es",
       "msg",
-      b64,
+      s,
     ]);
-    await sleep(600);
+    await sleep(400);
+    if (opts.preferB64) {
+      const b64 = Buffer.from(s, "utf8").toString("base64");
+      adb(serial, [
+        "shell",
+        "am",
+        "broadcast",
+        "-a",
+        "ADB_INPUT_B64",
+        "--es",
+        "msg",
+        b64,
+      ]);
+      await sleep(400);
+    }
   } finally {
     restoreIme(serial, prevIme);
   }

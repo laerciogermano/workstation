@@ -1,14 +1,22 @@
 /**
  * Criar conta LinkedIn (jornada signup) — passos incrementais com print.
  *
- * Fluxo atual: stopAllApps → launch → Join now → First name / Last name.
+ * Fluxo: stop → Join now → nomes → email → password → Continue.
  */
 import { mkdirSync } from "node:fs";
 import { join } from "node:path";
 
 import { sleep } from "./adb.js";
 import { dumpUiXml, waitForText } from "./extract.js";
-import { launch, screenshot, stopAllApps, tapElement, type } from "./operate.js";
+import { pasteCleanMessage } from "./linkedin-message.js";
+import {
+  key,
+  launch,
+  screenshot,
+  stopAllApps,
+  tapElement,
+  type,
+} from "./operate.js";
 
 const WAIT_MS = Number(process.env.LINKEDIN_SIGNUP_WAIT_MS || 4_000);
 const JOIN_TIMEOUT_MS = Number(
@@ -20,14 +28,21 @@ const NAME_TIMEOUT_MS = Number(
 
 const RID_FIRST = "growth_join_split_form_first_name";
 const RID_LAST = "growth_join_split_form_last_name";
+const RID_EMAIL = "growth_join_split_form_email_address";
+const RID_PASSWORD = "growth_join_split_form_password";
+const RID_CONTINUE = "growth_join_split_form_join_button";
 
 async function shot(serial, outDir, name) {
   if (!outDir) return;
-  screenshot({ serial, path: join(outDir, name) });
+  try {
+    screenshot({ serial, path: join(outDir, name) });
+  } catch (e) {
+    console.error(`aviso: screenshot ${name}: ${e.message || e}`);
+  }
 }
 
 /**
- * Centro do EditText pelo resource-id (suffix após /).
+ * Centro do node pelo resource-id (suffix após /).
  * @param {string} xml
  * @param {string} resourceIdSuffix
  * @returns {{ x: number, y: number, text: string }|null}
@@ -46,6 +61,44 @@ export function findEditByResourceId(xml, resourceIdSuffix) {
     };
   }
   return null;
+}
+
+/** @param {string} serial @param {string} rid @param {string} label */
+async function waitForResource(serial, rid, label) {
+  const t0 = Date.now();
+  while (Date.now() - t0 < NAME_TIMEOUT_MS) {
+    const xml = dumpUiXml(serial);
+    const hit = findEditByResourceId(xml, rid);
+    if (hit) return hit;
+    await sleep(1_000);
+  }
+  throw new Error(`linkedin-signup: timeout ${NAME_TIMEOUT_MS}ms — ${label}`);
+}
+
+/** @param {string} serial */
+async function waitForContinue(serial) {
+  return waitForResource(serial, RID_CONTINUE, "Continue");
+}
+
+/** @param {string} serial */
+async function dismissKeyboard(serial) {
+  try {
+    key({ serial, code: "KEYCODE_BACK" });
+    await sleep(600);
+  } catch {
+    /* ignore */
+  }
+}
+
+/** @param {string} serial @param {string[]} steps @param {string|null|undefined} outDir @param {string} shotName */
+async function tapContinue(serial, steps, outDir, shotName) {
+  await dismissKeyboard(serial);
+  await shot(serial, outDir, `${shotName}-antes-continue.png`);
+  const cont = await waitForContinue(serial);
+  tapElement({ serial, x: cont.x, y: cont.y });
+  steps.push("tap-continue");
+  await sleep(WAIT_MS + 1_000);
+  await shot(serial, outDir, `${shotName}-apos-continue.png`);
 }
 
 /**
@@ -67,8 +120,7 @@ async function waitForNameFields(serial) {
 }
 
 /**
- * Tap no campo + injeta texto (`adb input text`).
- * (Clipboard do emulador Google API 30 não expõe `cmd clipboard`.)
+ * Tap no campo + injeta texto (`adb input text` — ok p/ nomes sem @).
  * @param {string} serial
  * @param {{ x: number, y: number }} field
  * @param {string} value
@@ -81,10 +133,25 @@ async function fillField(serial, field, value) {
 }
 
 /**
+ * Email/@ via ADBKeyboard — `input text` deixa `%40` literal no EditText.
+ * @param {string} serial
+ * @param {{ x: number, y: number }} field
+ * @param {string} value
+ */
+async function fillFieldExact(serial, field, value) {
+  tapElement({ serial, x: field.x, y: field.y });
+  await sleep(400);
+  await pasteCleanMessage(serial, String(value), { forceClear: true });
+  await sleep(500);
+}
+
+/**
  * @param {{
  *   serial: string,
  *   firstName: string,
  *   lastName: string,
+ *   email: string,
+ *   password: string,
  *   linkedinPackage?: string,
  *   outDir?: string|null,
  * }} opts
@@ -95,8 +162,12 @@ export async function linkedinSignupJoinNow(opts) {
   if (!serial) throw new Error("linkedinSignupJoinNow: falta serial");
   const firstName = String(opts.firstName || "").trim();
   const lastName = String(opts.lastName || "").trim();
+  const email = String(opts.email || "").trim();
+  const password = String(opts.password || "");
   if (!firstName) throw new Error("linkedinSignupJoinNow: falta firstName");
   if (!lastName) throw new Error("linkedinSignupJoinNow: falta lastName");
+  if (!email) throw new Error("linkedinSignupJoinNow: falta email");
+  if (!password) throw new Error("linkedinSignupJoinNow: falta password");
 
   const pkg = opts.linkedinPackage || "com.linkedin.android";
   const steps = [];
@@ -142,12 +213,31 @@ export async function linkedinSignupJoinNow(opts) {
   steps.push(`first-name:${firstName}`);
   await shot(serial, opts.outDir, "06-apos-first-name.png");
 
-  // re-dump: teclado pode ter movido o last name
   const afterFirst = await waitForNameFields(serial);
   await fillField(serial, afterFirst.last, lastName);
   steps.push(`last-name:${lastName}`);
   await sleep(800);
   await shot(serial, opts.outDir, "07-apos-last-name.png");
+
+  await tapContinue(serial, steps, opts.outDir, "08");
+
+  const emailField = await waitForResource(serial, RID_EMAIL, "email");
+  await shot(serial, opts.outDir, "09-antes-email.png");
+  await fillFieldExact(serial, emailField, email);
+  steps.push(`email:${email}`);
+  await sleep(800);
+  await shot(serial, opts.outDir, "10-apos-email.png");
+
+  await tapContinue(serial, steps, opts.outDir, "11");
+
+  const passwordField = await waitForResource(serial, RID_PASSWORD, "password");
+  await shot(serial, opts.outDir, "12-antes-password.png");
+  await fillFieldExact(serial, passwordField, password);
+  steps.push("password:set");
+  await sleep(800);
+  await shot(serial, opts.outDir, "13-apos-password.png");
+
+  await tapContinue(serial, steps, opts.outDir, "14");
 
   return { steps, serial, outDir: opts.outDir || null };
 }

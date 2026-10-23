@@ -815,9 +815,8 @@ async function main() {
   /** @type {string|null} */
   let cardBase64 = null;
   try {
-    if (!existsSync(cardPng)) {
-      await captureFrame(serial, { outPath: cardPng });
-    }
+    // Sempre screencap fresco (sense=dump não grava cardPng no extract).
+    await captureFrame(serial, { outPath: cardPng });
     if (existsSync(cardPng)) {
       console.log("6b) Crop foto + capa (bounds dump)…");
       const media = await cropProfilePhotoAndCover(cardPng, outDir, {

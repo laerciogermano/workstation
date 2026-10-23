@@ -483,9 +483,10 @@ async function openProfileAndExtract(serial, listCard, outDir, filePrefix) {
   /** @type {string|null} */
   let cardBase64 = null;
   try {
-    if (!existsSync(cardPng)) {
-      await captureFrame(serial, { outPath: cardPng });
-    }
+    // Sempre screencap fresco. sense=dump não grava cardPng no extract;
+    // skip save reusa o mesmo filePrefix (saved.length+1) e existsSync
+    // pegaria foto/capa do perfil anterior → base64 repetido.
+    await captureFrame(serial, { outPath: cardPng });
     if (existsSync(cardPng)) {
       const media = await cropProfilePhotoAndCover(cardPng, outDir, {
         uiXml: pageXml,

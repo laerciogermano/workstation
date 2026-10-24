@@ -19,12 +19,15 @@ import { dirname, resolve, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { adb, sleep } from "../lib/adb.js";
+import { installConnectmaxApiAuth } from "../lib/connectmax-api-auth.js";
 import {
   dumpUiXml,
   extract,
   extractBySense,
   findByText,
 } from "../lib/extract.js";
+
+installConnectmaxApiAuth();
 import { captureFrame } from "../lib/frame.js";
 import { booleanQueryForProfile } from "../lib/linkedin-boolean-query.js";
 import { captureProfileUrl } from "../lib/linkedin-capture-profile-url.js";

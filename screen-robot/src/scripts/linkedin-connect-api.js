@@ -17,6 +17,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { installConnectmaxApiAuth } from "../lib/connectmax-api-auth.js";
 import {
   connectByLinkedInUrl,
   normalizeLinkedInProfileUrl,
@@ -27,6 +28,8 @@ import { sendLinkedInMessage } from "../lib/linkedin-message.js";
 import { listProfileMessages } from "../lib/linkedin-profile-messages.js";
 import { listUnreadMessages } from "../lib/linkedin-unread-messages.js";
 import { provisionEmulator } from "../lib/provision.js";
+
+installConnectmaxApiAuth();
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, "..");

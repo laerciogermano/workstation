@@ -107,6 +107,14 @@
         vds
             - ssh root@185.250.37.82 m54b2NYwSro5zZUo
             - ssh root@144.126.154.90, Pz2mZRgZT8z2Iow8
+        postgres (connectmax @ 144.126.154.90:5432)
+            - user: connectmax
+            - pass: jL592CN6B0F801pKkgV9fkR2WOpxv8
+            - db: connectmax
+            - jdbc: jdbc:postgresql://144.126.154.90:5432/connectmax
+        painel connectmax (http://144.126.154.90/ / local :5173)
+            - email: admin@connectmax.local
+            - password: sQJCnVbsqd3WruapfVQK
     - senha linkedin signup (agent-d / Ana Silva):
         - email: metafisicoprogramador@gmail.com
         - password: senha@linkedin@123

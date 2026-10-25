@@ -95,8 +95,8 @@ function adbInputBroadcast(serial, action, msg) {
 }
 
 /**
- * Injeta texto exato via ADBKeyboard.
- * B64 primeiro (payload sem espaço); TEXT em seguida (API 30 / `@`).
+ * Injeta texto exato via ADBKeyboard (uma vez — B64+TEXT duplicava no EditText).
+ * Default: B64 (espaço/`@` ok). `preferText: true` → só TEXT quoted.
  * Não usa clipboard Mac↔AVD.
  */
 export async function pasteCleanMessage(serial, text, opts = {}) {
@@ -112,15 +112,13 @@ export async function pasteCleanMessage(serial, text, opts = {}) {
   await sleep(600);
   try {
     if (shouldClear) clearFocusedField(serial);
-    // B64: sobrevive a `adb shell` que concatena args sem quote.
-    const b64 = Buffer.from(s, "utf8").toString("base64");
-    adbInputBroadcast(serial, "ADB_INPUT_B64", b64);
-    await sleep(400);
-    // TEXT reforço (API 30 às vezes ignora B64; `@` ok). Sempre quoted.
-    if (!opts.skipText) {
+    if (opts.preferText) {
       adbInputBroadcast(serial, "ADB_INPUT_TEXT", s);
-      await sleep(400);
+    } else {
+      const b64 = Buffer.from(s, "utf8").toString("base64");
+      adbInputBroadcast(serial, "ADB_INPUT_B64", b64);
     }
+    await sleep(400);
   } finally {
     restoreIme(serial, prevIme);
   }

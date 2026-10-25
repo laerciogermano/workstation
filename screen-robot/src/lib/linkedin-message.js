@@ -5,7 +5,7 @@
  * 1. am start VIEW linkedin.com/in/…
  * 2. Message (ou ⋮ → Send a message)
  * 3. Write a message…
- * 4. Injeta texto **exato** via ADBKeyboard (ADB_INPUT_B64) — sem clipboard Mac↔AVD
+ * 4. Injeta texto **exato** via ADBKeyboard (B64 + TEXT quoted) — sem clipboard Mac↔AVD
  * 5. Send
  */
 import { mkdirSync } from "node:fs";
@@ -78,8 +78,25 @@ function clearFocusedField(serial) {
 }
 
 /**
+ * Quote p/ um único `adb shell '…'` — `adb shell am … --es msg foo bar`
+ * vira `pkg=bar` (espaço parte o arg).
+ */
+export function shellSingleQuote(s) {
+  return `'${String(s).replace(/'/g, `'\\''`)}'`;
+}
+
+/** Broadcast ADBKeyboard com `--es msg` seguro p/ espaços. */
+function adbInputBroadcast(serial, action, msg) {
+  // Um arg após `shell` → device recebe a linha intacta (sem split em pkg=).
+  adb(serial, [
+    "shell",
+    `am broadcast -a ${action} --es msg ${shellSingleQuote(msg)}`,
+  ]);
+}
+
+/**
  * Injeta texto exato via ADBKeyboard.
- * Prefer `ADB_INPUT_TEXT` (aceita `@`); B64 como fallback.
+ * B64 primeiro (payload sem espaço); TEXT em seguida (API 30 / `@`).
  * Não usa clipboard Mac↔AVD.
  */
 export async function pasteCleanMessage(serial, text, opts = {}) {
@@ -95,30 +112,13 @@ export async function pasteCleanMessage(serial, text, opts = {}) {
   await sleep(600);
   try {
     if (shouldClear) clearFocusedField(serial);
-    // TEXT primeiro: no Google API 30 o B64 às vezes não aplica; `@` ok via TEXT.
-    adb(serial, [
-      "shell",
-      "am",
-      "broadcast",
-      "-a",
-      "ADB_INPUT_TEXT",
-      "--es",
-      "msg",
-      s,
-    ]);
+    // B64: sobrevive a `adb shell` que concatena args sem quote.
+    const b64 = Buffer.from(s, "utf8").toString("base64");
+    adbInputBroadcast(serial, "ADB_INPUT_B64", b64);
     await sleep(400);
-    if (opts.preferB64) {
-      const b64 = Buffer.from(s, "utf8").toString("base64");
-      adb(serial, [
-        "shell",
-        "am",
-        "broadcast",
-        "-a",
-        "ADB_INPUT_B64",
-        "--es",
-        "msg",
-        b64,
-      ]);
+    // TEXT reforço (API 30 às vezes ignora B64; `@` ok). Sempre quoted.
+    if (!opts.skipText) {
+      adbInputBroadcast(serial, "ADB_INPUT_TEXT", s);
       await sleep(400);
     }
   } finally {

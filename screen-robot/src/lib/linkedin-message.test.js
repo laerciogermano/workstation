@@ -7,9 +7,15 @@ import {
   findSendMessageInSheet,
   findWriteAMessage,
   isMessageFieldEmpty,
+  shellSingleQuote,
 } from "./linkedin-message.js";
 
 describe("linkedin-message helpers", () => {
+  it("shellSingleQuote protege espaço (evita pkg= no am broadcast)", () => {
+    assert.equal(shellSingleQuote("comprador campinas"), "'comprador campinas'");
+    assert.equal(shellSingleQuote("a'b"), `'a'\\''b'`);
+  });
+
   it("findHeaderMessage", () => {
     assert.deepEqual(
       findHeaderMessage([{ text: "Message", x: 255, y: 602 }]),

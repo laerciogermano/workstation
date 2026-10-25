@@ -247,6 +247,8 @@ Script [`scripts/login-extract-profiles.js`](scripts/login-extract-profiles.js) 
 
 **Antes → depois (busca comprador):** `type` / `adb shell input text` cortava a query (ex. só `ou`) → `pasteCleanMessage` (`ADB_INPUT_B64`). Rollback: `await type({ serial, text: "comprador" })`.
 
+**Antes → depois (colar com espaço):** `ADB_INPUT_TEXT` via `adb shell am … --es msg comprador campinas` → Intent `pkg=campinas` (See all timeout) → B64 + TEXT com `shell` num único arg + `shellSingleQuote`. Rollback: args separados sem quote / só TEXT.
+
 **Antes → depois (fim do scroll):** só SHA1 do frame 3× (falhava com UI animada e o processo não parava) → conteúdo OCR estável sem novos + frame, 2×, e exit explícito. Rollback: só `frameHash` com `SCROLL_END_STABLE_NEEDED = 3` e sem `process.exit(0)`.
 3. Callback / `profiles.json`: lista + `profileUrl`, `headline`, `company`, `connections`, `inviteStatus`, `canConnect`, `canMessage`
 4. A cada perfil: crop lista (`profile-NNN-list-*`) + page (`profile-NNN-page.png`) → `POST /profiles`; se API devolve `id` e há URL → `POST /profile-details` → se cartão `pending`/`connected` → `POST /client-connections-linkedin` (1|2); se botão `Connect`, só perfil. Regrava `profiles.json`, `profile-NNN.json`, `list-round-NNN.json`, `round-NNN.png`.

@@ -233,3 +233,7 @@ Fonte: [`input/documento-de-visao-role(1).pdf`](input/documento-de-visao-role(1)
 ## Protótipo frontend (E01)
 
 Telas navegáveis de conta, onboarding e perfil: [`web/README.md`](web/README.md).
+
+## Deploy
+
+Em breve em `rolego.com.br` (nginx Contabo): [`deploy/README.md`](deploy/README.md).

@@ -2,6 +2,8 @@
 
 Modelo de estrutura/layout para o card de identidade visual do RoleGo.
 
+**Card Trello:** https://trello.com/c/gU37I2lg (`6adfa306d2ba6a3e29c5f07d`) — board [RoleGo](https://trello.com/b/Qe6mVdfL/rolego) · lista todo.
+
 ## Fonte
 
 Cópia do manual **ConectTech v1** (último documento de identidade da linha ConectMax/ConectTech em `conectmax/connectmax/marca/`).

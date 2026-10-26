@@ -44,7 +44,7 @@ Protótipo React das telas: [`web/README.md`](web/README.md) (`npm run dev` em `
 - Escolher preferências de tipo de evento (festa, show, evento privado etc.)
 - Informar / selecionar cidade
 - Solicitar e gravar permissão de localização
-- Definir raio de busca (ex.: 5, 20 ou 50 km)
+- Definir raio de busca (range contínuo de 1 km a 100 km)
 - Concluir onboarding e entrar no app com preferências aplicadas à descoberta
 
 ### Perfil
@@ -64,7 +64,7 @@ Protótipo React das telas: [`web/README.md`](web/README.md) (`npm run dev` em `
 
 ![Capa do épico E02 — Publicação e descoberta de eventos](assets/epic-e02-cover.png)
 
-Lado oferta: anfitriões, casas e produtores criam e publicam o evento (público ou privado, com controle de lista e revelação de local). Lado demanda: o usuário encontra o que está rolando perto por geolocalização e raio configurável (ex.: 5, 20 ou 50 km), com modos Feed, Tinder (swipe), Lista e Mapa (conforme premium/patrocínio), filtros por tipo e dia, destaque de eventos patrocinados e radar dinâmico — oferta e descoberta no mesmo loop, unificando o que hoje está espalhado em Instagram, Google, sites e WhatsApp.
+Lado oferta: anfitriões, casas e produtores criam e publicam o evento (público ou privado, com controle de lista e revelação de local). Lado demanda: o usuário encontra o que está rolando perto por geolocalização e raio configurável (1–100 km), com modos Feed, Tinder (swipe), Lista e Mapa (conforme premium/patrocínio), filtros por tipo e dia, destaque de eventos patrocinados e radar dinâmico — oferta e descoberta no mesmo loop, unificando o que hoje está espalhado em Instagram, Google, sites e WhatsApp.
 
 ## E03 — Ciclo de vida do evento
 

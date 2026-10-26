@@ -25,7 +25,7 @@ Abre em http://localhost:5173 — menu lateral para pular entre telas.
 | `/onboarding/preferencias` | Tipos de evento |
 | `/onboarding/cidade` | Cidade |
 | `/onboarding/localizacao` | Permissão de localização |
-| `/onboarding/raio` | Raio de busca |
+| `/onboarding/raio` | Raio de busca (slider 1–100 km) |
 | `/home` | Stub pós-onboarding (descoberta = E02) |
 | `/perfil` | Perfil + logout |
 | `/perfil/editar` | Nome, e-mail, telefone |
@@ -37,4 +37,5 @@ Abre em http://localhost:5173 — menu lateral para pular entre telas.
 - **Antes:** só docs/wireframes do E01, sem app web.
 - **Depois:** protótipo navegável em `web/`.
 - **Cadastro:** e-mail + senha + confirmar senha; sem nome/celular no formulário (antes: nome + telefone opcional).
-- **Voltar:** remover a pasta `web/` (ou reverter o commit); no cadastro, restaurar campos nome/telefone do commit anterior.
+- **Raio:** slider contínuo 1–100 km (antes: chips 5 / 20 / 50 km).
+- **Voltar:** remover a pasta `web/` (ou reverter o commit); no cadastro, restaurar campos nome/telefone; no raio, voltar aos chips fixos.

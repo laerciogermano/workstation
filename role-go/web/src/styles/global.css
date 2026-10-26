@@ -198,6 +198,19 @@ a {
   box-shadow: 0 0 0 3px rgba(135, 73, 255, 0.2);
 }
 
+.field input[type='range'] {
+  padding: 0;
+  border: none;
+  background: transparent;
+  accent-color: var(--purple);
+  box-shadow: none;
+}
+
+.field input[type='range']:focus {
+  border: none;
+  box-shadow: none;
+}
+
 .btn {
   display: inline-flex;
   align-items: center;

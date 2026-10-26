@@ -113,25 +113,7 @@
         
         - 1 celular custa 700 reais e opera apenas 1 agente por vez
        
-    - senha contabo: 
-        vds
-            - ssh root@185.250.37.82 m54b2NYwSro5zZUo
-            - ssh root@144.126.154.90, Pz2mZRgZT8z2Iow8
-        postgres (connectmax @ 144.126.154.90:5432)
-            - user: connectmax
-            - pass: jL592CN6B0F801pKkgV9fkR2WOpxv8
-            - db: connectmax
-            - jdbc: jdbc:postgresql://144.126.154.90:5432/connectmax
-        painel connectmax (http://144.126.154.90/ / local :5173)
-            - email: admin@connectmax.local
-            - password: sQJCnVbsqd3WruapfVQK
-        mailcow (https://mail.clozzy.com.br/admin/ — Entrar como administrador)
-            - user: admin
-            - password: ClozzyMail26Admin
-            - path: /opt/mailcow-dockerized @ 144.126.154.90
-    - senha linkedin signup (agent-d / Ana Silva):
-        - email: metafisicoprogramador@gmail.com
-        - password: senha@linkedin@123
+    - Credenciais (Contabo, Connectmax, Mailcow, LinkedIn signup): ver [`credenciais.md`](credenciais.md)
     - Definir processo
         - Board
             - searchs (palavras chaves)
@@ -222,13 +204,7 @@
     - Definir documento de visão
 
 # Trello CLI (app IA Mac)
-    - Chave de API: b32320e3df032a77c8dadebd5253d2b8
-    - Segredo: bdc01f7d496c4dec9b879e822e9063f981508bdc1422066af153debbe0f79209
-    - Token: ATTA7c5d078384cd50a18bce9f6b46df8e752018436730e4d7bfc8f571be2d264fd2DDFE47F9
-    - Bin: `~/.local/bin/trello` (symlink → `~/.local/trello-cli/node_modules/.bin/trello`)
-    - PATH: já em `~/.zshrc` via `$HOME/.local/bin`
-    - Config: `~/.trello-cli/default/config.json`
-    - Uso: `trello board:list` / `trello --help`
+    - Credenciais e setup: ver [`credenciais.md`](credenciais.md) (seção Trello CLI)
     - Se agente não achar: `export PATH="$HOME/.local/bin:$PATH"` ou `which trello`
 
 # Tinder

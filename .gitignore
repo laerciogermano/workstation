@@ -11,3 +11,9 @@
 **/dist/
 **/.env
 coverage/
+
+# Segredos locais (não versionar)
+/credenciais.md
+/credenciais.txt
+/credentials.md
+/credentials.txt

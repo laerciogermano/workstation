@@ -337,7 +337,7 @@ table.t td{padding:7px 8px;border-bottom:1px solid #191F36;vertical-align:middle
 <!-- =============================== 04 LOGO =============================== -->
 <section class="page">
   <div class="eyebrow"><b>03</b> Logo</div>
-  <div class="sec" style="--bar:var(--rg-violet)"><div><h2>Wordmark e símbolo</h2><p style="color:#B79BFF">“Role” em branco, “Go” em neon, e o “o” vira o radar do rolê.</p></div></div>
+  <div class="sec" style="--bar:var(--rg-violet)"><div><h2>Wordmark e símbolo</h2><p style="color:#B79BFF">“Role” em branco, “Go” em neon, e o “o” vira o pin do rolê.</p></div></div>
   <div class="grid" style="grid-template-columns:1.55fr 1fr;gap:16px;flex:1;min-height:0">
     <div class="card" style="position:relative;overflow:hidden;display:grid;place-items:center;background:var(--rg-bg-slide);padding:0">
       <div class="glow" style="width:300px;height:300px;left:50%;top:50%;transform:translate(-50%,-50%);background:#6539CB;opacity:.35;z-index:0"></div>
@@ -350,20 +350,20 @@ table.t td{padding:7px 8px;border-bottom:1px solid #191F36;vertical-align:middle
           <span style="position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:10px;color:var(--rg-cyan);font-weight:700">x</span>
           <span style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);font-size:10px;color:var(--rg-cyan);font-weight:700">x</span>
         </div>
-        <p class="small muted" style="margin-top:14px">Área de proteção: <b style="color:#fff">x</b> = altura do anel do “o”, em todos os lados.</p>
+        <p class="small muted" style="margin-top:14px">Área de proteção: <b style="color:#fff">x</b> = altura do “o” minúsculo, em todos os lados.</p>
       </div>
     </div>
     <div style="display:flex;flex-direction:column;gap:12px">
       <div class="card" style="display:flex;gap:16px;align-items:center">
         <div class="sym" style="--s:76px"><span>R</span><i></i></div>
-        <div><h3>Símbolo / ícone do app</h3><p class="small muted">“R” sobre o gradiente de marca, com o <span class="hl-c">ping ciano</span>, o mesmo ponto que fica no centro do “o” do logo.</p></div>
+        <div><h3>Símbolo / ícone do app</h3><p class="small muted">“R” sobre o gradiente de marca, com o <span class="hl-c">ping ciano</span>, o mesmo ponto que fica no miolo do “o” do logo.</p></div>
       </div>
       <div class="card">
         <h3>Construção</h3>
         <ul class="dots small" style="--acc:var(--rg-violet)">
           <li>Poppins ExtraBold <b>Itálico</b> (800): movimento, cara de rolê.</li>
           <li>“Role” em branco; “Go” em gradiente <b>#00E5E5 → #8749FF → #FF1F7A</b>.</li>
-          <li>O “o” é o radar: anel neon com o <span class="hl-c">ping ciano</span> do ícone no centro.</li>
+          <li>O “o” vira pin de localização: a letra da Poppins com uma ponta embaixo e o <span class="hl-c">ping ciano</span> do ícone no miolo.</li>
           <li>Slogan “Viva o Rolê” em ciano, itálico, caixa alta.</li>
         </ul>
       </div>
@@ -1111,7 +1111,7 @@ document.querySelectorAll(".page").forEach((pg,i)=>{
   const n=pg.querySelector(".foot span:last-child");if(n)n.textContent=String(i+1).padStart(2,"0");
 });
 
-/* ======== wordmark: "Role" + "G" + o-radar com o ping do ícone ======== */
+/* ======== wordmark: "Role" + "Go", com o "o" virando pin de localização (ping do ícone no miolo) ======== */
 function buildLogos(){
   const ns="http://www.w3.org/2000/svg";let n=0;
   document.querySelectorAll(".wm").forEach(el=>{
@@ -1119,31 +1119,37 @@ function buildLogos(){
     const white=c.contains("white"), black=c.contains("black"), light=c.contains("onlight");
     const roleC=el.dataset.role||(black?"#05070F":light?"#0B0B1A":"#fff");
     const cols=(el.dataset.g||(white?"#fff,#fff":black?"#05070F,#05070F":"#00E5E5,#8749FF,#FF1F7A")).split(",");
-    const dotC=black?"#05070F":"#00E5E5", outline=el.hasAttribute("data-outline"), thin=el.hasAttribute("data-thin");
-    const id="lg"+(n++), svg=document.createElementNS(ns,"svg");
+    const dotC=black?"#fff":"#00E5E5", outline=el.hasAttribute("data-outline"), thin=el.hasAttribute("data-thin");
+    const id="lg"+(n++), svg=document.createElementNS(ns,"svg"), st=`font-family:Poppins;font-weight:800;font-style:italic;font-size:${fs}px;letter-spacing:-.02em`;
     svg.style.cssText="display:block;overflow:visible";
-    svg.innerHTML=`<defs><linearGradient id="${id}" gradientUnits="userSpaceOnUse"></linearGradient></defs><text style="font-family:Poppins;font-weight:800;font-style:italic;font-size:${fs}px;letter-spacing:-.02em"><tspan>Role</tspan><tspan>G</tspan></text>`;
+    svg.innerHTML=`<defs><linearGradient id="${id}" gradientUnits="userSpaceOnUse"></linearGradient></defs><text style="${st}"><tspan>Role</tspan><tspan>Go</tspan></text><text style="${st}">o</text>`;
     el.replaceChildren(svg);
-    const t=svg.querySelector("text"), [t1,t2]=t.querySelectorAll("tspan"), base=fs*.86;
+    const [t,probe]=svg.querySelectorAll("text"), [t1,t2]=t.querySelectorAll("tspan"), base=fs*.86;
     t.setAttribute("y",base);
     if(thin) t2.style.fontWeight="400";
     const paint=(node,col)=>{ if(outline){node.setAttribute("fill","none");node.setAttribute("stroke",col);node.setAttribute("stroke-width",fs*.025);} else node.setAttribute("fill",col); };
     paint(t1,roleC); paint(t2,`url(#${id})`);
-    const wRole=t1.getComputedTextLength(), wAll=t.getComputedTextLength();
-    const r=fs*.23, sw=thin?fs*.06:fs*.115, cx=wAll+fs*.03+r+sw/2, cy=base-fs*.285, end=cx+r+sw/2;
-    const g=t.ownerSVGElement.querySelector("linearGradient");
-    g.setAttribute("x1",wRole);g.setAttribute("x2",end);g.setAttribute("y1",0);g.setAttribute("y2",0);
+    const wRole=t1.getComputedTextLength(), wAll=t.getComputedTextLength(), wo=probe.getComputedTextLength();
+    probe.remove();
+    /* pin: o "o" ganha uma ponta embaixo (inclinada como o itálico); o ping do ícone fica no miolo */
+    const cx=wAll-wo/2+fs*.01, cy=base-fs*.285, R=fs*.285;
+    const pt=a=>{a*=Math.PI/180;return [cx+R*Math.cos(a)-R*Math.sin(a)*.19, cy+R*Math.sin(a)];};
+    const [ax,ay]=pt(28),[bx,by]=pt(152), tx=cx-fs*.075, ty=base+fs*.2, end=wAll+fs*.04;
+    const g=svg.querySelector("linearGradient");
+    g.setAttribute("x1",wRole);g.setAttribute("x2",wAll);g.setAttribute("y1",0);g.setAttribute("y2",0);
     g.innerHTML=cols.map((cl,i)=>`<stop offset="${cols.length>1?i/(cols.length-1):0}" stop-color="${cl}"/>`).join("");
-    const gr=g.cloneNode(true);gr.id=id+"r";gr.setAttribute("x1",wRole-cx);gr.setAttribute("x2",r+sw/2);g.parentNode.appendChild(gr);
-    const ring=document.createElementNS(ns,"g");
-    ring.setAttribute("transform",`translate(${cx} ${cy}) skewX(-11)`);
-    ring.innerHTML=`<circle r="${r}" fill="none" stroke="url(#${id}r)" stroke-width="${outline?fs*.025:sw}"/>`+
-      (outline?"":`${black?"":`<circle r="${fs*.12}" fill="${dotC}" opacity=".28"/>`}<circle r="${fs*.07}" fill="${dotC}"/>`);
-    svg.appendChild(ring);
-    svg.setAttribute("width",end+fs*.06);svg.setAttribute("height",fs);
+    const tail=document.createElementNS(ns,"path");
+    tail.setAttribute("d",`M${ax} ${ay} L${tx} ${ty} L${bx} ${by}${outline?"":" Z"}`);tail.setAttribute("stroke-linejoin","round");
+    if(outline){tail.setAttribute("fill","none");tail.setAttribute("stroke",`url(#${id})`);tail.setAttribute("stroke-width",fs*.025);}
+    else{tail.setAttribute("fill",`url(#${id})`);tail.setAttribute("stroke",`url(#${id})`);tail.setAttribute("stroke-width",fs*.01);}
+    svg.appendChild(tail);
+    const ping=document.createElementNS(ns,"circle");
+    ping.setAttribute("cx",cx-fs*.005);ping.setAttribute("cy",cy);ping.setAttribute("r",fs*.045);ping.setAttribute("fill",dotC);
+    if(!outline) svg.appendChild(ping);
+    svg.setAttribute("width",end);svg.setAttribute("height",fs*1.08);
   });
 }
-document.fonts.ready.then(()=>{buildLogos();gradText();});
+document.fonts.load("italic 800 40px Poppins").then(()=>document.fonts.ready).then(()=>{buildLogos();gradText();});
 </script>
 </body>
 </html>

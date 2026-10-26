@@ -6,7 +6,7 @@
 <title>RoleGo | Identidade visual v1</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
 <style>
 /* =========================================================
    Tokens da marca RoleGo (v1) — fonte: role-go/identidade-visual.md
@@ -15,10 +15,10 @@
 :root{
   --rg-bg:#04050B;
   --rg-bg-slide:#09091A;
-  --rg-surface:#10162B;
-  --rg-surface-2:#151525;
-  --rg-surface-3:#1A1B28;
-  --rg-line:#232A44;
+  --rg-surface:#15151B;
+  --rg-surface-2:#1C1C23;
+  --rg-surface-3:#24242C;
+  --rg-line:#2A2A33;
   --rg-text:#FFFFFF;
   --rg-muted:#9CA3AF;
   --rg-faint:#6B7286;
@@ -44,10 +44,10 @@
   --rg-radius-sm:10px;
   --rg-pill:999px;
   --rg-font-head:"Poppins", system-ui, "Segoe UI", sans-serif;
-  --rg-font-body:"Inter", system-ui, "Segoe UI", sans-serif;
+  --rg-font-body:"Poppins", system-ui, "Segoe UI", sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{background:#1B1E2B;color:var(--rg-text);font-family:var(--rg-font-body);font-size:13px;line-height:1.55;
+html,body{background:#1B1E2B;color:var(--rg-text);font-family:var(--rg-font-body);font-size:12.5px;line-height:1.55;
   -webkit-print-color-adjust:exact;print-color-adjust:exact}
 body{padding:24px 0}
 svg.i{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
@@ -85,11 +85,11 @@ svg.i{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke
 h1,h2,h3,h4{font-family:var(--rg-font-head);letter-spacing:-.01em}
 .sec{display:flex;align-items:stretch;gap:14px;margin:8px 0 16px}
 .sec::before{content:"";width:6px;border-radius:3px;flex:none;background:linear-gradient(180deg,var(--bar,var(--rg-magenta)),var(--bar2,var(--rg-violet)));box-shadow:0 0 14px var(--bar,var(--rg-magenta))}
-.sec h2{font-size:33px;line-height:1.05;font-weight:800;text-transform:uppercase;letter-spacing:.005em}
+.sec h2{font-size:33px;line-height:1.05;font-weight:800;font-style:italic;text-transform:uppercase;letter-spacing:-.005em}
 .uline{height:3px;width:150px;border-radius:2px;background:var(--rg-grad-line);box-shadow:0 0 10px rgba(0,229,229,.5)}
 .lockup{display:flex;align-items:center;gap:10px}
 .lockup .rmark{font-family:var(--rg-font-head);font-weight:900;line-height:1;letter-spacing:-.04em;background:linear-gradient(135deg,#00E5E5 0%,#4F3BFF 50%,#B13CFF 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
-.lockup .sl{display:flex;align-items:center;gap:6px;font-family:var(--rg-font-head);font-weight:600;letter-spacing:.32em;text-transform:uppercase;color:#E3E5EC;margin-top:4px}
+.lockup .sl{display:flex;align-items:center;gap:6px;font-family:var(--rg-font-head);font-weight:800;font-style:italic;letter-spacing:.16em;text-transform:uppercase;color:#E3E5EC;margin-top:5px}
 .lockup .sl i{width:6px;height:6px;border-radius:50%;background:#B13CFF;box-shadow:0 0 6px #B13CFF}
 .sec p{font-family:var(--rg-font-head);font-size:13px;font-weight:600;color:var(--bar,var(--rg-magenta));margin-top:4px}
 h3{font-size:15px;font-weight:700;line-height:1.3;margin-bottom:6px}
@@ -108,7 +108,7 @@ h3{font-size:15px;font-weight:700;line-height:1.3;margin-bottom:6px}
 .g3{grid-template-columns:repeat(3,1fr)}
 .g4{grid-template-columns:repeat(4,1fr)}
 .g5{grid-template-columns:repeat(5,1fr)}
-.card{border-radius:var(--rg-radius);padding:16px;background:var(--rg-surface);border:1px solid var(--rg-line)}
+.card{border-radius:var(--rg-radius);padding:16px;background:var(--rg-surface);border:0}
 .card.acc{border-left:3px solid var(--acc,var(--rg-violet))}
 .card .ic{color:var(--acc,var(--rg-violet));margin-bottom:8px}
 .card .ic svg.i{width:22px;height:22px;filter:drop-shadow(0 0 5px currentColor)}
@@ -117,12 +117,10 @@ ul.dots li{position:relative;padding-left:16px}
 ul.dots li::before{content:"";position:absolute;left:0;top:.6em;width:6px;height:6px;border-radius:50%;background:var(--acc,var(--rg-cyan));box-shadow:0 0 6px var(--acc,var(--rg-cyan))}
 
 /* ---------- wordmark ---------- */
-.wm{display:inline-block;font-family:var(--rg-font-head);font-weight:800;letter-spacing:-.035em;line-height:1;white-space:nowrap;
-  background:var(--rg-grad-logo);-webkit-background-clip:text;background-clip:text;color:transparent}
-.wm.glowing{filter:drop-shadow(0 0 18px rgba(135,73,255,.45))}
-.wm.white{background:none;color:#fff}
-.wm.black{background:none;color:#05070F}
-.slogan{font-family:var(--rg-font-head);font-weight:700;letter-spacing:.32em;text-transform:uppercase;color:var(--rg-cyan)}
+.wm{display:inline-block;font-family:var(--rg-font-head);font-weight:800;font-style:italic;letter-spacing:-.02em;line-height:1;white-space:nowrap;color:#fff}
+.wm.glowing{filter:drop-shadow(0 0 14px rgba(135,73,255,.55)) drop-shadow(0 0 4px rgba(0,229,229,.35))}
+.rawlogo{font-family:var(--rg-font-head);font-weight:800;font-style:italic;line-height:1;color:#fff}
+.slogan{font-family:var(--rg-font-head);font-weight:800;font-style:italic;letter-spacing:.16em;text-transform:uppercase;color:var(--rg-cyan)}
 /* símbolo / ícone do app: "R" + ping do rolê */
 .sym{position:relative;width:var(--s,96px);height:var(--s,96px);border-radius:calc(var(--s,96px)*.26);background:var(--rg-grad);
   display:grid;place-items:center;flex:none;box-shadow:0 10px 30px rgba(69,46,255,.35), inset 0 1px 0 rgba(255,255,255,.25)}
@@ -130,7 +128,7 @@ ul.dots li::before{content:"";position:absolute;left:0;top:.6em;width:6px;height
 .sym i{position:absolute;right:20%;top:20%;width:calc(var(--s,96px)*.15);height:calc(var(--s,96px)*.15);border-radius:50%;background:var(--rg-cyan);
   box-shadow:0 0 0 calc(var(--s,96px)*.04) rgba(0,229,229,.28),0 0 12px var(--rg-cyan)}
 .sym.mono{background:#fff;box-shadow:none}.sym.mono span{color:#05070F}.sym.mono i{background:#05070F;box-shadow:none}
-.sym.dark{background:var(--rg-surface);border:1px solid var(--rg-line)}
+.sym.dark{background:#000;border:1px solid var(--rg-line)}
 .sym.dark span{background:var(--rg-grad-logo);-webkit-background-clip:text;background-clip:text;color:transparent}
 
 /* ---------- botões, chips, inputs, badges ---------- */
@@ -158,7 +156,7 @@ ul.dots li::before{content:"";position:absolute;left:0;top:.6em;width:6px;height
 .badge svg.i{width:12px;height:12px}
 
 /* ---------- cor ---------- */
-.sw{border-radius:var(--rg-radius);overflow:hidden;background:var(--rg-surface);border:1px solid var(--rg-line);display:flex;flex-direction:column}
+.sw{border-radius:var(--rg-radius);overflow:hidden;background:var(--rg-surface);border:0;display:flex;flex-direction:column}
 .sw .c{height:58px;position:relative}
 .sw .t{padding:10px 12px 12px}
 .sw b{font-family:var(--rg-font-head);font-size:13px;display:block}
@@ -169,10 +167,21 @@ ul.dots li::before{content:"";position:absolute;left:0;top:.6em;width:6px;height
 .phone{--pc:#8749FF;width:210px;height:430px;border-radius:34px;padding:5px;background:#000;border:2px solid var(--pc);flex:none;
   box-shadow:0 0 6px var(--pc),0 0 28px -4px var(--pc),inset 0 0 6px var(--pc)}
 .phone.c{--pc:#00E5E5}.phone.y{--pc:#FFCC00}.phone.m{--pc:#FF1F7A}
-.phone.sm{width:150px;height:306px;border-radius:26px;padding:4px}.phone.sm .scr{border-radius:21px;padding:10px 10px}
-.phone.sm .notch{width:44px;height:12px;top:5px}
-.opt{border-radius:12px;padding:8px 10px;border:1.5px solid var(--oc,#00E5E5);box-shadow:0 0 12px -2px var(--oc,#00E5E5),inset 0 0 10px -4px var(--oc,#00E5E5);background:rgba(255,255,255,.02)}
-.phone .scr{width:100%;height:100%;border-radius:27px;background:#05060C;overflow:hidden;position:relative;display:flex;flex-direction:column;padding:12px 14px}
+.phone.sm{zoom:.72}
+.scr .island{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:58px;height:17px;border-radius:10px;background:#000;z-index:3}
+.scr .sb{display:flex;justify-content:space-between;align-items:center;font-size:9.5px;font-weight:600;padding:0 6px 0 8px;height:17px;margin-bottom:6px}
+.scr .hd{display:flex;align-items:center;justify-content:space-between;height:24px;margin-bottom:8px;font-weight:700;font-size:12px}
+.scr .hd svg.i{width:15px;height:15px}
+.scr svg.i{width:12px;height:12px}
+.av{width:var(--a,26px);height:var(--a,26px);border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:calc(var(--a,26px)*.42);color:#fff;flex:none;
+  border:1.5px solid #05060C;box-shadow:0 0 0 1.5px var(--ac,#FF1F7A),0 0 8px var(--ac,#FF1F7A)}
+.seg{display:flex;background:#121216;border-radius:999px;padding:3px;font-size:9px;font-weight:600;color:var(--rg-muted)}
+.seg span{flex:1;text-align:center;padding:4px 0;border-radius:999px}.seg .on{background:var(--rg-grad-cta);color:#fff}
+.lrow{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #18181D;font-size:10px;line-height:1.25}
+.chip.xs{height:20px;padding:0 9px;font-size:9px;gap:4px}
+.rbtn{border-radius:50%;display:grid;place-items:center;flex:none}
+.opt{border-radius:12px;padding:8px 10px;border:1.5px solid var(--oc,#00E5E5);box-shadow:0 0 12px -2px var(--oc,#00E5E5);background:#000}
+.phone .scr{text-align:left;width:100%;height:100%;border-radius:27px;background:#000;overflow:hidden;position:relative;display:flex;flex-direction:column;padding:12px 14px}
 .phone .st{display:flex;justify-content:space-between;font-size:9px;font-weight:600;color:#fff;padding:0 6px 8px}
 .phone .notch{position:absolute;top:7px;left:50%;transform:translateX(-50%);width:62px;height:16px;border-radius:10px;background:#000}
 .tabbar{margin-top:auto;display:flex;justify-content:space-around;padding-top:8px;border-top:1px solid var(--rg-line);color:var(--rg-faint)}
@@ -218,6 +227,14 @@ table.t td{padding:7px 8px;border-bottom:1px solid #191F36;vertical-align:middle
   <symbol id="i-wallet" viewBox="0 0 24 24"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></symbol>
   <symbol id="i-nav" viewBox="0 0 24 24"><path d="m3 11 19-9-9 19-2-8-8-2z"/></symbol>
   <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></symbol>
+  <symbol id="i-dots" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></symbol>
+  <symbol id="i-share" viewBox="0 0 24 24"><path d="M12 3v12M7 8l5-5 5 5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></symbol>
+  <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1 6.2L12 17.3 6.5 20.2l1-6.2L3 9.6l6.2-.9Z"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
   <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V21H3z"/><path d="M9 21v-6h6v6"/></symbol>
   <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
   <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
@@ -233,7 +250,7 @@ table.t td{padding:7px 8px;border-bottom:1px solid #191F36;vertical-align:middle
   <div class="fl" style="left:142mm;top:40mm;width:30px;height:30px;color:#FF1F7A"><svg class="i"><use href="#i-heart"/></svg></div>
   <div class="fl" style="right:9mm;top:92mm;width:34px;height:34px;color:#00E5E5"><svg class="i"><use href="#i-pin"/></svg></div>
   <div class="fl" style="right:12mm;top:150mm;width:30px;height:30px;color:#B13CFF"><svg class="i"><use href="#i-ticket"/></svg></div>
-  <div style="position:absolute;top:14mm;right:18mm" class="lockup"><span class="rmark" style="font-size:58px">R</span><div><div class="wm" style="font-size:40px">RoleGo</div><div class="sl" style="font-size:10px">Viva o Rolê<i></i></div></div></div>
+  <div style="position:absolute;top:14mm;right:18mm" class="lockup"><div class="sym" style="--s:49px"><span>R</span><i></i></div><div><div class="wm" style="font-size:40px">RoleGo</div><div class="sl" style="font-size:10px">Viva o Rolê<i></i></div></div></div>
   <div style="position:absolute;left:18mm;top:16mm;width:128mm">
     <span class="chipn" style="font-size:22px">v1</span>
     <div class="sec" style="--bar:#00E5E5;--bar2:#8749FF;margin:22px 0 14px"><div><h2 style="font-size:66px;line-height:1">Identidade<br>visual</h2></div></div>
@@ -246,34 +263,6 @@ table.t td{padding:7px 8px;border-bottom:1px solid #191F36;vertical-align:middle
       <div style="text-align:center;font-family:var(--rg-font-head);font-size:10px;font-weight:600;letter-spacing:.04em"><div class="fl" style="position:static;width:40px;height:40px;margin:0 auto 8px;color:#FFCC00"><svg class="i"><use href="#i-crown"/></svg></div>GAMIFICAÇÃO</div>
     </div>
   </div>
-  <div style="position:absolute;right:20mm;bottom:20mm;display:flex;gap:16px;align-items:flex-end">
-    <div class="phone sm y" style="transform:translateY(14px)"><div class="scr">
-      <div class="notch"></div><div class="st"><span>9:41</span><span>5G</span></div>
-      <div style="font-family:var(--rg-font-head);font-weight:700;font-size:11px;text-align:center;margin-bottom:10px">Benefícios</div>
-      <div style="text-align:center"><svg class="i" style="width:46px;height:46px;color:#FFCC00;filter:drop-shadow(0 0 8px #FFCC00)"><use href="#i-crown"/></svg>
-        <div style="font-family:var(--rg-font-head);font-weight:800;font-size:15px;margin-top:4px">VIP MEMBER</div></div>
-      <div class="opt" style="--oc:#00E5E5;text-align:center;font-size:9.5px;font-weight:600;color:#00E5E5;margin:10px 0">Desconto em bares</div>
-      <div style="display:grid;gap:6px;font-size:9px">
-        <div style="display:flex;justify-content:space-between"><span>★ Rolê Gold</span><b style="color:#FFCC00">+500</b></div>
-        <div style="display:flex;justify-content:space-between"><span>★ Ranking</span><b>#1</b></div></div>
-    </div></div>
-    <div class="phone sm c" style="transform:translateY(-16px)"><div class="scr">
-      <div class="notch"></div><div class="st"><span>9:41</span><span>5G</span></div>
-      <div style="font-family:var(--rg-font-head);font-weight:700;font-size:11px;text-align:center;margin-bottom:8px">Explorar</div>
-      <div class="poster" style="flex:1;display:flex;align-items:flex-end;padding:10px"><div style="position:relative;z-index:1;font-family:var(--rg-font-head);font-weight:800;font-size:13px;line-height:1.1">Neon Pulse<br>Festival</div></div>
-      <div style="display:flex;justify-content:center;gap:14px;margin-top:10px">
-        <span style="width:34px;height:34px;border-radius:50%;border:1.5px solid #FF1F7A;display:grid;place-items:center;color:#FF1F7A"><svg class="i" style="width:14px;height:14px"><use href="#i-x"/></svg></span>
-        <span style="width:34px;height:34px;border-radius:50%;background:var(--rg-grad-cta);display:grid;place-items:center"><svg class="i" style="width:14px;height:14px;color:#fff"><use href="#i-heart"/></svg></span></div>
-    </div></div>
-    <div class="phone sm" style="transform:translateY(4px)"><div class="scr">
-      <div class="notch"></div><div class="st"><span>9:41</span><span>5G</span></div>
-      <div style="font-family:var(--rg-font-head);font-weight:700;font-size:11px;text-align:center;margin-bottom:10px">Minha carteira</div>
-      <div class="qr" id="qr5" style="width:88px;margin:0 auto;box-shadow:0 0 0 3px #00E5E5,0 0 20px #00E5E5"></div>
-      <div style="text-align:center;font-family:var(--rg-font-head);font-weight:700;font-size:10px;margin:12px 0 2px">ROLEGO FEST</div>
-      <div style="text-align:center;font-size:8.5px;color:var(--rg-muted)">Sáb · 22h · Pista</div>
-      <div style="text-align:center;margin-top:8px"><span class="badge g" style="height:18px;font-size:9px"><svg class="i"><use href="#i-check"/></svg>Validado</span></div>
-    </div></div>
-  </div>
   <div style="position:absolute;left:18mm;bottom:12mm;font-size:11px;color:var(--rg-faint)">Manual de identidade visual · 2026 · Curitiba, cidade piloto</div>
 </section>
 
@@ -285,7 +274,7 @@ table.t td{padding:7px 8px;border-bottom:1px solid #191F36;vertical-align:middle
   <div class="grid" style="grid-template-columns:1.25fr 1fr;gap:18px;flex:1;min-height:0">
     <div style="display:flex;flex-direction:column;gap:14px">
       <p class="lead">O RoleGo centraliza festas, shows, bares e eventos privados num raio definido pelo usuário. A pessoa vê quem vai, curte, faz match com o grupo, compra o ingresso e cai direto no chat do evento.</p>
-      <div class="card" style="background:linear-gradient(135deg,rgba(135,73,255,.22),rgba(69,46,255,.08));border-color:rgba(135,73,255,.45);padding:20px">
+      <div class="card" style="padding:20px">
         <div class="label" style="color:#B79BFF">Slogan</div>
         <div class="slogan" style="font-size:26px;letter-spacing:.24em">Viva o Rolê</div>
         <div class="label" style="color:#B79BFF;margin-top:16px">Linha de apoio</div>
@@ -348,7 +337,7 @@ table.t td{padding:7px 8px;border-bottom:1px solid #191F36;vertical-align:middle
 <!-- =============================== 04 LOGO =============================== -->
 <section class="page">
   <div class="eyebrow"><b>03</b> Logo</div>
-  <div class="sec" style="--bar:var(--rg-violet)"><div><h2>Wordmark e símbolo</h2><p style="color:#B79BFF">“Role” no roxo, “Go” no azul, num gradiente contínuo.</p></div></div>
+  <div class="sec" style="--bar:var(--rg-violet)"><div><h2>Wordmark e símbolo</h2><p style="color:#B79BFF">“Role” em branco, “Go” em neon, e o “o” vira o radar do rolê.</p></div></div>
   <div class="grid" style="grid-template-columns:1.55fr 1fr;gap:16px;flex:1;min-height:0">
     <div class="card" style="position:relative;overflow:hidden;display:grid;place-items:center;background:var(--rg-bg-slide);padding:0">
       <div class="glow" style="width:300px;height:300px;left:50%;top:50%;transform:translate(-50%,-50%);background:#6539CB;opacity:.35;z-index:0"></div>
@@ -361,21 +350,21 @@ table.t td{padding:7px 8px;border-bottom:1px solid #191F36;vertical-align:middle
           <span style="position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:10px;color:var(--rg-cyan);font-weight:700">x</span>
           <span style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);font-size:10px;color:var(--rg-cyan);font-weight:700">x</span>
         </div>
-        <p class="small muted" style="margin-top:14px">Área de proteção: <b style="color:#fff">x</b> = altura do “o” minúsculo, em todos os lados.</p>
+        <p class="small muted" style="margin-top:14px">Área de proteção: <b style="color:#fff">x</b> = altura do anel do “o”, em todos os lados.</p>
       </div>
     </div>
     <div style="display:flex;flex-direction:column;gap:12px">
       <div class="card" style="display:flex;gap:16px;align-items:center">
         <div class="sym" style="--s:76px"><span>R</span><i></i></div>
-        <div><h3>Símbolo / ícone do app</h3><p class="small muted">“R” do wordmark sobre o gradiente de marca, com o <span class="hl-c">ping ciano</span>: o ponto do rolê no radar.</p></div>
+        <div><h3>Símbolo / ícone do app</h3><p class="small muted">“R” sobre o gradiente de marca, com o <span class="hl-c">ping ciano</span>, o mesmo ponto que fica no centro do “o” do logo.</p></div>
       </div>
       <div class="card">
         <h3>Construção</h3>
         <ul class="dots small" style="--acc:var(--rg-violet)">
-          <li>Poppins ExtraBold (800), tracking −3,5%, sem caixa alta.</li>
-          <li>Gradiente 100°: <b>#B13CFF</b> → <b>#8749FF</b> → <b>#4F3BFF</b>.</li>
-          <li>Sobre fundo escuro, glow roxo opcional (blur 18 px, 45%).</li>
-          <li>Slogan “Viva o Rolê” em ciano, caixa alta, tracking +32%.</li>
+          <li>Poppins ExtraBold <b>Itálico</b> (800): movimento, cara de rolê.</li>
+          <li>“Role” em branco; “Go” em gradiente <b>#00E5E5 → #8749FF → #FF1F7A</b>.</li>
+          <li>O “o” é o radar: anel neon com o <span class="hl-c">ping ciano</span> do ícone no centro.</li>
+          <li>Slogan “Viva o Rolê” em ciano, itálico, caixa alta.</li>
         </ul>
       </div>
       <div class="grid g2" style="gap:12px">
@@ -394,11 +383,11 @@ table.t td{padding:7px 8px;border-bottom:1px solid #191F36;vertical-align:middle
 <!-- =============================== 05 VERSÕES E USOS INCORRETOS =============================== -->
 <section class="page">
   <div class="eyebrow"><b>03</b> Logo</div>
-  <div class="sec" style="--bar:var(--rg-violet)"><div><h2>Versões e usos incorretos</h2><p style="color:#B79BFF">Gradiente sempre que possível. Monocromático só quando a impressão exigir.</p></div></div>
+  <div class="sec" style="--bar:var(--rg-violet)"><div><h2>Versões e usos incorretos</h2><p style="color:#B79BFF">Branco + neon sempre que possível. Uma cor só quando a impressão exigir.</p></div></div>
   <div class="grid g4" style="margin-bottom:8px">
-    <div><div class="card" style="height:118px;display:grid;place-items:center;background:var(--rg-bg)"><div class="wm glowing" style="font-size:40px">RoleGo</div></div><p class="small" style="margin-top:6px"><b>Principal</b> · gradiente sobre dark</p></div>
+    <div><div class="card" style="height:118px;display:grid;place-items:center;background:var(--rg-bg)"><div class="wm glowing" style="font-size:40px">RoleGo</div></div><p class="small" style="margin-top:6px"><b>Principal</b> · branco + neon sobre dark</p></div>
     <div><div class="card" style="height:118px;display:grid;place-items:center;background:var(--rg-grad);border:0"><div class="wm white" style="font-size:40px">RoleGo</div></div><p class="small" style="margin-top:6px"><b>Sobre gradiente</b> · branco</p></div>
-    <div><div class="card" style="height:118px;display:grid;place-items:center;background:#fff;border:0"><div class="wm" style="font-size:40px">RoleGo</div></div><p class="small" style="margin-top:6px"><b>Sobre claro</b> · gradiente (uso pontual)</p></div>
+    <div><div class="card" style="height:118px;display:grid;place-items:center;background:#fff;border:0"><div class="wm onlight" style="font-size:40px">RoleGo</div></div><p class="small" style="margin-top:6px"><b>Sobre claro</b> · preto + neon (uso pontual)</p></div>
     <div><div class="card" style="height:118px;display:grid;place-items:center;background:#fff;border:0"><div class="wm black" style="font-size:40px">RoleGo</div></div><p class="small" style="margin-top:6px"><b>Mono</b> · preto ou branco (1 cor)</p></div>
   </div>
   <div class="grid" style="grid-template-columns:repeat(4,auto) 1fr;gap:14px;align-items:center;margin:4px 0 14px">
@@ -412,12 +401,12 @@ table.t td{padding:7px 8px;border-bottom:1px solid #191F36;vertical-align:middle
   <div class="grid g4" style="gap:12px;row-gap:10px;align-content:start">
     <div><div class="card no" style="height:86px;display:grid;place-items:center;background:var(--rg-bg)"><div class="wm" style="font-size:34px;transform:scaleX(1.45)">RoleGo</div></div><p class="small muted" style="margin-top:5px">Esticar ou distorcer</p></div>
     <div><div class="card no" style="height:86px;display:grid;place-items:center;background:var(--rg-bg)"><div class="wm" style="font-size:34px;transform:rotate(-12deg)">RoleGo</div></div><p class="small muted" style="margin-top:5px">Rotacionar</p></div>
-    <div><div class="card no" style="height:86px;display:grid;place-items:center;background:var(--rg-bg)"><div class="wm" style="font-size:34px;background:linear-gradient(90deg,#00FF00,#FFCC00);-webkit-background-clip:text;background-clip:text">RoleGo</div></div><p class="small muted" style="margin-top:5px">Trocar as cores do gradiente</p></div>
-    <div><div class="card no" style="height:86px;display:grid;place-items:center;background:var(--rg-bg)"><div class="wm" style="font-size:34px;text-transform:uppercase">RoleGo</div></div><p class="small muted" style="margin-top:5px">Caixa alta</p></div>
-    <div><div class="card no" style="height:86px;display:grid;place-items:center;background:var(--rg-bg)"><div style="font-family:Georgia,serif;font-size:34px;font-style:italic;background:var(--rg-grad-logo);-webkit-background-clip:text;background-clip:text;color:transparent">RoleGo</div></div><p class="small muted" style="margin-top:5px">Trocar a fonte</p></div>
-    <div><div class="card no" style="height:86px;display:grid;place-items:center;background:#8749FF;border:0"><div class="wm" style="font-size:34px">RoleGo</div></div><p class="small muted" style="margin-top:5px">Gradiente sobre roxo (some)</p></div>
-    <div><div class="card no" style="height:86px;display:grid;place-items:center;background:var(--rg-bg)"><div class="wm" style="font-size:34px;-webkit-text-stroke:1.5px #00E5E5;color:transparent;background:none">RoleGo</div></div><p class="small muted" style="margin-top:5px">Só contorno</p></div>
-    <div><div class="card no" style="height:86px;display:grid;place-items:center;background:var(--rg-bg)"><div class="wm" style="font-size:34px">Role<span style="font-weight:400">Go</span></div></div><p class="small muted" style="margin-top:5px">Separar pesos ou espaços</p></div>
+    <div><div class="card no" style="height:86px;display:grid;place-items:center;background:var(--rg-bg)"><div class="wm" data-role="#FFCC00" data-g="#00FF00,#FFCC00" style="font-size:34px">RoleGo</div></div><p class="small muted" style="margin-top:5px">Trocar as cores do gradiente</p></div>
+    <div><div class="card no" style="height:86px;display:grid;place-items:center;background:var(--rg-bg)"><div class="rawlogo" style="font-size:34px">ROLEG<span style="color:#00E5E5">O</span></div></div><p class="small muted" style="margin-top:5px">Caixa alta</p></div>
+    <div><div class="card no" style="height:86px;display:grid;place-items:center;background:var(--rg-bg)"><div style="font-family:Georgia,serif;font-size:34px;font-style:italic;color:#fff">Role<span style="color:#8749FF">Go</span></div></div><p class="small muted" style="margin-top:5px">Trocar a fonte</p></div>
+    <div><div class="card no" style="height:86px;display:grid;place-items:center;background:#8749FF;border:0"><div class="wm" style="font-size:34px">RoleGo</div></div><p class="small muted" style="margin-top:5px">Neon sobre roxo (o “Go” some)</p></div>
+    <div><div class="card no" style="height:86px;display:grid;place-items:center;background:var(--rg-bg)"><div class="wm" data-outline style="font-size:34px">RoleGo</div></div><p class="small muted" style="margin-top:5px">Só contorno</p></div>
+    <div><div class="card no" style="height:86px;display:grid;place-items:center;background:var(--rg-bg)"><div class="wm" data-thin style="font-size:34px">RoleGo</div></div><p class="small muted" style="margin-top:5px">Separar pesos ou espaços</p></div>
   </div>
   <div class="foot"><span class="wm">RoleGo</span><span>Identidade visual v1 · Versões do logo</span><span>05</span></div>
 </section>
@@ -451,7 +440,7 @@ table.t td{padding:7px 8px;border-bottom:1px solid #191F36;vertical-align:middle
       <div class="grid g5" style="gap:10px">
         <div class="sw"><div class="c" style="height:40px;background:#05070F;border-bottom:1px solid var(--rg-line)"></div><div class="t"><b>Fundo</b><code>#04050B</code></div></div>
         <div class="sw"><div class="c" style="height:40px;background:#09091A;border-bottom:1px solid var(--rg-line)"></div><div class="t"><b>Fundo slide</b><code>#09091A</code></div></div>
-        <div class="sw"><div class="c" style="height:40px;background:#10162B"></div><div class="t"><b>Surface</b><code>#10162B</code></div></div>
+        <div class="sw"><div class="c" style="height:40px;background:#15151B;border-bottom:1px solid var(--rg-line)"></div><div class="t"><b>Surface</b><code>#15151B</code></div></div>
         <div class="sw"><div class="c" style="height:40px;background:#FFFFFF"></div><div class="t"><b>Texto</b><code>#FFFFFF</code></div></div>
         <div class="sw"><div class="c" style="height:40px;background:#9CA3AF"></div><div class="t"><b>Secundário</b><code>#9CA3AF</code></div></div>
       </div>
@@ -459,7 +448,7 @@ table.t td{padding:7px 8px;border-bottom:1px solid #191F36;vertical-align:middle
     <div>
       <div class="label">Proporção de uso por tela</div>
       <div style="display:flex;height:40px;border-radius:12px;overflow:hidden;border:1px solid var(--rg-line)">
-        <div style="flex:70;background:#05070F"></div><div style="flex:15;background:#10162B"></div><div style="flex:10;background:var(--rg-grad)"></div><div style="flex:5;background:#00E5E5"></div>
+        <div style="flex:70;background:#04050B"></div><div style="flex:15;background:#15151B"></div><div style="flex:10;background:var(--rg-grad)"></div><div style="flex:5;background:#00E5E5"></div>
       </div>
       <div style="display:flex;font-size:10.5px;color:var(--rg-muted);margin-top:6px"><span style="flex:70">70% fundo</span><span style="flex:15">15%</span><span style="flex:10">10%</span><span style="flex:5">5%</span></div>
       <p class="small muted" style="margin-top:6px">Fundo domina, surface organiza, gradiente chama a ação e o neon pontua.</p>
@@ -473,10 +462,10 @@ table.t td{padding:7px 8px;border-bottom:1px solid #191F36;vertical-align:middle
   <div class="eyebrow"><b>04</b> Cor</div>
   <div class="sec" style="--bar:var(--rg-yellow)"><div><h2>Código de cores por categoria</h2><p style="color:var(--rg-yellow)">Cada feature tem um neon fixo de assinatura: barra lateral + ícone.</p></div></div>
   <div class="grid g4" style="margin-bottom:16px">
-    <div class="card acc" style="--acc:var(--rg-cyan);background:linear-gradient(160deg,rgba(0,229,229,.1),var(--rg-surface) 60%)"><div class="ic"><svg class="i"><use href="#i-bell"/></svg></div><h3>Descoberta e alertas</h3><p class="small muted">Radar, raio de busca, push de evento perto, links e localização.</p></div>
-    <div class="card acc" style="--acc:var(--rg-magenta);background:linear-gradient(160deg,rgba(255,31,122,.1),var(--rg-surface) 60%)"><div class="ic"><svg class="i"><use href="#i-chat"/></svg></div><h3>Social e match</h3><p class="small muted">Like, match coletivo, chat do evento, Modo Solo e amigos.</p></div>
-    <div class="card acc" style="--acc:var(--rg-green);background:linear-gradient(160deg,rgba(0,255,0,.08),var(--rg-surface) 60%)"><div class="ic"><svg class="i"><use href="#i-shield"/></svg></div><h3>Segurança</h3><p class="small muted">Localização em tempo real, contatos de confiança, status ativo.</p></div>
-    <div class="card acc" style="--acc:var(--rg-yellow);background:linear-gradient(160deg,rgba(255,204,0,.08),var(--rg-surface) 60%)"><div class="ic"><svg class="i"><use href="#i-crown"/></svg></div><h3>Gamificação e VIP</h3><p class="small muted">Rolê Gold, Platina, pontos, rankings, selos e transporte seguro.</p></div>
+    <div class="card acc" style="--acc:var(--rg-cyan);"><div class="ic"><svg class="i"><use href="#i-bell"/></svg></div><h3>Descoberta e alertas</h3><p class="small muted">Radar, raio de busca, push de evento perto, links e localização.</p></div>
+    <div class="card acc" style="--acc:var(--rg-magenta);"><div class="ic"><svg class="i"><use href="#i-chat"/></svg></div><h3>Social e match</h3><p class="small muted">Like, match coletivo, chat do evento, Modo Solo e amigos.</p></div>
+    <div class="card acc" style="--acc:var(--rg-green);"><div class="ic"><svg class="i"><use href="#i-shield"/></svg></div><h3>Segurança</h3><p class="small muted">Localização em tempo real, contatos de confiança, status ativo.</p></div>
+    <div class="card acc" style="--acc:var(--rg-yellow);"><div class="ic"><svg class="i"><use href="#i-crown"/></svg></div><h3>Gamificação e VIP</h3><p class="small muted">Rolê Gold, Platina, pontos, rankings, selos e transporte seguro.</p></div>
   </div>
   <div class="grid" style="grid-template-columns:1.3fr 1fr;gap:16px;align-items:start">
     <div class="card" style="padding:12px 14px">
@@ -522,36 +511,39 @@ table.t td{padding:7px 8px;border-bottom:1px solid #191F36;vertical-align:middle
 <!-- =============================== 08 TIPOGRAFIA =============================== -->
 <section class="page">
   <div class="eyebrow"><b>05</b> Tipografia</div>
-  <div class="sec" style="--bar:var(--rg-magenta)"><div><h2>Poppins + Inter</h2><p>Geométrica e bold para impacto. Neutra e legível para ler rápido.</p></div></div>
-  <div class="grid g2" style="gap:16px;margin-bottom:14px">
+  <div class="sec" style="--bar:var(--rg-magenta)"><div><h2>Poppins em tudo</h2><p>Uma família só, redonda e geométrica. O itálico pesado dá o movimento do rolê.</p></div></div>
+  <div class="grid" style="grid-template-columns:1fr 1.25fr;gap:16px;margin-bottom:14px">
     <div class="card" style="padding:18px 20px;position:relative;overflow:hidden">
-      <div style="position:absolute;right:14px;top:12px;font-family:var(--rg-font-head);font-weight:800;font-size:96px;line-height:1;background:var(--rg-grad-logo);-webkit-background-clip:text;background-clip:text;color:transparent">Aa</div>
-      <div class="label">Títulos, logo, botões</div>
-      <div style="font-family:var(--rg-font-head);font-size:34px;font-weight:800;line-height:1.05">Poppins</div>
-      <p class="small muted" style="margin-top:6px">Medium 500 · SemiBold 600 · Bold 700 · ExtraBold 800</p>
-      <p style="font-family:var(--rg-font-head);font-weight:600;font-size:13px;margin-top:10px;letter-spacing:.02em">ABCDEFGHIJKLMNOPQRSTUVWXYZ<br>abcdefghijklmnopqrstuvwxyz 0123456789</p>
+      <div style="position:absolute;right:16px;top:8px;font-weight:900;font-style:italic;font-size:104px;line-height:1;background:linear-gradient(110deg,#00E5E5,#8749FF 55%,#FF1F7A);-webkit-background-clip:text;background-clip:text;color:transparent">Aa</div>
+      <div class="label">Títulos, textos, botões, tudo</div>
+      <div style="font-size:38px;font-weight:800;font-style:italic;line-height:1.05">Poppins</div>
+      <p class="small muted" style="margin-top:4px">Google Fonts · licença OFL</p>
+      <p style="font-weight:600;font-size:12.5px;margin-top:14px;letter-spacing:.02em">ABCDEFGHIJKLMNOPQRSTUVWXYZ<br>abcdefghijklmnopqrstuvwxyz<br>0123456789 !?@#&amp;</p>
     </div>
-    <div class="card" style="padding:18px 20px;position:relative;overflow:hidden">
-      <div style="position:absolute;right:14px;top:12px;font-family:var(--rg-font-body);font-weight:700;font-size:96px;line-height:1;color:#2A3254">Aa</div>
-      <div class="label">Corpo, interface, legendas</div>
-      <div style="font-family:var(--rg-font-body);font-size:34px;font-weight:700;line-height:1.05;position:relative">Inter</div>
-      <p class="small muted" style="margin-top:6px;position:relative">Regular 400 · Medium 500 · SemiBold 600 · Bold 700</p>
-      <p style="font-size:13px;margin-top:10px;position:relative">ABCDEFGHIJKLMNOPQRSTUVWXYZ<br>abcdefghijklmnopqrstuvwxyz 0123456789</p>
+    <div class="card" style="padding:16px 20px;display:grid;grid-template-columns:repeat(4,1fr);gap:6px 10px;align-items:end">
+      <div><div style="font-size:30px;font-weight:400;line-height:1.1">Rolê</div><span class="small muted">Regular 400</span></div>
+      <div><div style="font-size:30px;font-weight:500;line-height:1.1">Rolê</div><span class="small muted">Medium 500</span></div>
+      <div><div style="font-size:30px;font-weight:600;line-height:1.1">Rolê</div><span class="small muted">SemiBold 600</span></div>
+      <div><div style="font-size:30px;font-weight:700;line-height:1.1">Rolê</div><span class="small muted">Bold 700</span></div>
+      <div><div style="font-size:30px;font-weight:800;line-height:1.1">Rolê</div><span class="small muted">ExtraBold 800</span></div>
+      <div><div style="font-size:30px;font-weight:900;line-height:1.1">Rolê</div><span class="small muted">Black 900</span></div>
+      <div><div style="font-size:30px;font-weight:800;font-style:italic;line-height:1.1;color:#00E5E5">Rolê</div><span class="small muted">ExtraBold Itálico</span></div>
+      <div><div style="font-size:30px;font-weight:900;font-style:italic;line-height:1.1;color:#FF1F7A">Rolê</div><span class="small muted">Black Itálico</span></div>
     </div>
   </div>
-  <div class="card" style="flex:1;min-height:0;padding:14px 20px;display:grid;grid-template-columns:210px 1fr;row-gap:10px;align-items:center">
-    <span class="small muted">Display · Poppins 800 · 48/52</span>
-    <div style="font-family:var(--rg-font-head);font-weight:800;font-size:40px;line-height:1.1">O seu próximo rolê</div>
-    <span class="small muted">Título de seção · Poppins 800 · 28 · caixa alta</span>
+  <div class="card" style="flex:1;min-height:0;padding:12px 20px;display:grid;grid-template-columns:220px 1fr;row-gap:8px;align-items:center">
+    <span class="small muted">Display · Black Itálico 900 · 44</span>
+    <div style="font-weight:900;font-style:italic;font-size:42px;line-height:1.05">Bora pro <span style="color:#00E5E5;text-shadow:0 0 18px rgba(0,229,229,.6)">rolê</span>?</div>
+    <span class="small muted">Título de seção · ExtraBold Itálico 800 · 28 · caixa alta</span>
     <div class="sec" style="margin:0;--bar:var(--rg-cyan)"><h2 style="font-size:24px">Radar dinâmico</h2></div>
-    <span class="small muted">Título de card · Poppins 700 · 16</span>
-    <div style="font-family:var(--rg-font-head);font-weight:700;font-size:16px">Neon Pulse Festival</div>
-    <span class="small muted">Corpo · Inter 400 · 14/22</span>
-    <div style="font-size:14px;color:#C9CDD8">Descubra festas, shows e eventos perto de você em <span class="hl-c">segundos</span>. Uma palavra-chave em neon por frase.</div>
-    <span class="small muted">Rótulo · Inter 600 · 12</span>
+    <span class="small muted">Título de card · Bold 700 · 16</span>
+    <div style="font-weight:700;font-size:16px">Neon Pulse Festival</div>
+    <span class="small muted">Corpo · Regular 400 · 13/20</span>
+    <div style="font-size:13px;color:#C9CDD8">Descubra festas, shows e eventos perto de você em <span class="hl-c">segundos</span>. Uma palavra-chave em neon por frase.</div>
+    <span class="small muted">Rótulo · SemiBold 600 · 11</span>
     <div style="display:flex;gap:8px"><span class="chip on">Festa</span><span class="chip">Show</span><span class="chip">Evento privado</span><span class="badge y">Rolê Gold</span></div>
   </div>
-  <div class="foot"><span class="wm">RoleGo</span><span>Identidade visual v1 · Tipografia · Google Fonts, licença OFL</span><span>08</span></div>
+  <div class="foot"><span class="wm">RoleGo</span><span>Identidade visual v1 · Tipografia</span><span>08</span></div>
 </section>
 
 <!-- =============================== 09 ELEMENTOS GRÁFICOS =============================== -->
@@ -646,7 +638,7 @@ table.t td{padding:7px 8px;border-bottom:1px solid #191F36;vertical-align:middle
           <div style="height:6px;border-radius:3px;background:var(--rg-surface-3);position:relative"><div style="width:42%;height:100%;border-radius:3px;background:var(--rg-grad)"></div><div style="position:absolute;left:42%;top:50%;width:16px;height:16px;border-radius:50%;background:#fff;transform:translate(-50%,-50%);box-shadow:0 0 0 4px rgba(135,73,255,.4)"></div></div>
         </div>
       </div>
-      <div class="card" style="text-align:center;background:radial-gradient(120% 90% at 50% 0%,rgba(255,204,0,.16),var(--rg-surface) 65%);border:1px solid rgba(255,204,0,.55);box-shadow:0 0 24px rgba(255,204,0,.12)">
+      <div class="card" style="text-align:center;border:1px solid rgba(255,204,0,.55);box-shadow:0 0 24px rgba(255,204,0,.12)">
         <svg class="i" style="width:34px;height:34px;color:var(--rg-yellow)"><use href="#i-crown"/></svg>
         <h3 style="margin-top:4px">VIP MEMBER</h3>
         <p class="small" style="color:var(--rg-cyan)">Furo de fila desbloqueado</p>
@@ -693,65 +685,16 @@ table.t td{padding:7px 8px;border-bottom:1px solid #191F36;vertical-align:middle
 <!-- =============================== 11 APLICAÇÃO: APP =============================== -->
 <section class="page slide">
   <div class="glow" style="width:420px;height:420px;left:30%;top:20%;background:#6539CB;opacity:.3"></div>
-  <div class="fl" style="left:12mm;top:150mm;width:30px;height:30px;color:#FFCC00"><svg class="i"><use href="#i-crown"/></svg></div>
-  <div class="fl" style="left:96mm;top:44mm;width:28px;height:28px;color:#00E5E5"><svg class="i"><use href="#i-pin"/></svg></div>
-  <div class="fl" style="right:14mm;top:150mm;width:30px;height:30px;color:#FF1F7A"><svg class="i"><use href="#i-heart"/></svg></div>
+  <div class="fl" style="left:8mm;top:118mm;width:28px;height:28px;color:#FFCC00"><svg class="i"><use href="#i-crown"/></svg></div>
+  <div class="fl" style="right:8mm;top:70mm;width:28px;height:28px;color:#FF1F7A"><svg class="i"><use href="#i-heart"/></svg></div>
   <div class="waves" style="height:120px;opacity:.7"></div>
   <div class="eyebrow"><b>08</b> Aplicações</div>
-  <div class="sec" style="--bar:var(--rg-magenta)"><div><h2>App: splash, swipe e match</h2><p>Dark como padrão, gradiente nas ações e neon nas categorias.</p></div></div>
-  <div style="display:flex;gap:26px;justify-content:center;align-items:center;flex:1;min-height:0">
-    <!-- splash -->
-    <div class="phone"><div class="scr" style="background:radial-gradient(90% 60% at 50% 35%,rgba(101,57,203,.45),#05060C 70%)">
-      <div class="notch"></div><div class="st"><span>22:14</span><span>5G</span></div>
-      <div style="margin:auto 0;text-align:center">
-        <div class="sym" style="--s:58px;margin:0 auto 18px"><span>R</span><i></i></div>
-        <div class="wm glowing" style="font-size:40px">RoleGo</div>
-        <div class="slogan" style="font-size:9px;margin-top:8px">Viva o Rolê</div>
-        <p style="font-size:10px;color:var(--rg-muted);margin-top:14px;line-height:1.4">Chega de sofrer para<br>decidir onde sair.</p>
-      </div>
-      <span class="btn pri" style="width:100%;height:36px;font-size:12px">Começar</span>
-      <p style="font-size:9px;color:var(--rg-muted);text-align:center;margin-top:8px">Já tem conta? <span style="color:var(--rg-cyan)">Entrar</span></p>
-    </div></div>
-    <!-- swipe -->
-    <div class="phone c" style="transform:translateY(-10px)"><div class="scr">
-      <div class="notch"></div><div class="st"><span>22:15</span><span>5G</span></div>
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span class="wm" style="font-size:16px">RoleGo</span><span class="badge c" style="height:18px;font-size:9px"><svg class="i"><use href="#i-pin"/></svg>Curitiba · 20 km</span></div>
-      <div class="poster" style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;padding:12px;min-height:0">
-        <div style="position:relative;z-index:1">
-          <span class="badge m" style="height:18px;font-size:9px;background:rgba(5,7,15,.55)"><svg class="i"><use href="#i-heart"/></svg>4 amigos curtiram</span>
-          <div style="font-family:var(--rg-font-head);font-weight:800;font-size:17px;margin-top:6px;line-height:1.1">Neon Pulse Festival</div>
-          <div style="font-size:9.5px;color:#E3E5EC;margin-top:2px">Sáb, 15 nov · 22:00 · a 3,2 km</div>
-        </div>
-      </div>
-      <div style="display:flex;justify-content:center;gap:22px;margin:12px 0 8px">
-        <span style="width:44px;height:44px;border-radius:50%;border:1.5px solid var(--rg-magenta);display:grid;place-items:center;color:var(--rg-magenta)"><svg class="i"><use href="#i-x"/></svg></span>
-        <span style="width:44px;height:44px;border-radius:50%;background:var(--rg-grad);display:grid;place-items:center;box-shadow:0 0 18px rgba(135,73,255,.6)"><svg class="i" style="color:#fff"><use href="#i-heart"/></svg></span>
-        <span style="width:44px;height:44px;border-radius:50%;border:1.5px solid var(--rg-cyan);display:grid;place-items:center;color:var(--rg-cyan)"><svg class="i"><use href="#i-ticket"/></svg></span>
-      </div>
-      <div class="tabbar"><svg class="i on"><use href="#i-flame"/></svg><svg class="i"><use href="#i-map"/></svg><svg class="i"><use href="#i-chat"/></svg><svg class="i"><use href="#i-wallet"/></svg><svg class="i"><use href="#i-user"/></svg></div>
-    </div></div>
-    <!-- match -->
-    <div class="phone m"><div class="scr">
-      <div class="notch"></div><div class="st"><span>22:16</span><span>5G</span></div>
-      <div style="text-align:center;padding:14px 0 10px;border-radius:16px;background:linear-gradient(135deg,#FF1F7A,#8749FF);margin-bottom:12px">
-        <div style="font-family:var(--rg-font-head);font-weight:800;font-size:19px">Match coletivo!</div>
-        <div style="font-size:9.5px;opacity:.9">Todo o grupo curtiu o Neon Pulse</div>
-      </div>
-      <div style="font-family:var(--rg-font-head);font-weight:700;font-size:11px;margin-bottom:8px">Quem vai com você</div>
-      <div style="display:grid;gap:7px;font-size:10.5px">
-        <div style="display:flex;align-items:center;gap:8px"><span style="width:24px;height:24px;border-radius:50%;background:#FF1F7A"></span>Bruna<span style="margin-left:auto;color:var(--rg-green);font-size:9px">confirmou</span></div>
-        <div style="display:flex;align-items:center;gap:8px"><span style="width:24px;height:24px;border-radius:50%;background:#00E5E5"></span>João<span style="margin-left:auto;color:var(--rg-green);font-size:9px">confirmou</span></div>
-        <div style="display:flex;align-items:center;gap:8px"><span style="width:24px;height:24px;border-radius:50%;background:#FFCC00"></span>Lia<span style="margin-left:auto;color:var(--rg-green);font-size:9px">confirmou</span></div>
-        <div style="display:flex;align-items:center;gap:8px"><span style="width:24px;height:24px;border-radius:50%;background:#8749FF"></span>Rafa<span style="margin-left:auto;color:var(--rg-muted);font-size:9px">curtiu</span></div>
-      </div>
-      <div style="margin-top:12px;padding:9px 10px;border-radius:12px;background:var(--rg-surface);border:1px solid rgba(255,31,122,.4);font-size:9.5px"><b style="color:var(--rg-magenta)">Sistema RoleGo</b><br>Chat do grupo criado. Bora combinar o Uber?</div>
-      <div style="display:flex;gap:6px;margin-top:auto"><span class="btn sec sm" style="flex:1;padding:0;font-size:10px">Abrir chat</span><span class="btn pri sm" style="flex:1;padding:0;font-size:10px">Comprar</span></div>
-    </div></div>
-    <div style="width:200px;flex:none;display:flex;flex-direction:column;gap:12px">
-      <div class="card acc small" style="--acc:var(--rg-violet);padding:12px"><b>Splash</b><br><span class="muted">Ícone + wordmark com glow + slogan. Um único CTA em gradiente.</span></div>
-      <div class="card acc small" style="--acc:var(--rg-magenta);padding:12px"><b>Swipe</b><br><span class="muted">Pôster ocupa a tela. Like = gradiente; descartar = magenta; ingresso = ciano.</span></div>
-      <div class="card acc small" style="--acc:var(--rg-cyan);padding:12px"><b>Match</b><br><span class="muted">Celebração em magenta → violeta e entrada direta no chat.</span></div>
-    </div>
+  <div class="sec" style="--bar:var(--rg-magenta)"><div><h2>App: telas principais</h2><p>Aro preto, contorno neon por tela, cards com borda acesa e CTA ciano → violeta.</p></div></div>
+  <div style="display:flex;gap:16px;justify-content:center;align-items:flex-start;flex:1;min-height:0;margin-top:2px;zoom:1.1">
+    <div style="text-align:center"><div class="phone" data-s="splash"></div><p class="small muted" style="margin-top:10px"><b style="color:#fff">Splash</b> · ícone, logo e um CTA</p></div>
+    <div style="text-align:center"><div class="phone c" data-s="explorar"></div><p class="small muted" style="margin-top:10px"><b style="color:#fff">Explorar</b> · swipe de eventos</p></div>
+    <div style="text-align:center"><div class="phone m" data-s="quemvai"></div><p class="small muted" style="margin-top:10px"><b style="color:#fff">Quem vai com você</b> · match coletivo</p></div>
+    <div style="text-align:center"><div class="phone y" data-s="mapa"></div><p class="small muted" style="margin-top:10px"><b style="color:#fff">Mapa</b> · raio de busca com range</p></div>
   </div>
   <div class="foot"><span class="wm">RoleGo</span><span>Identidade visual v1 · Aplicação no app</span><span>11</span></div>
 </section>
@@ -770,35 +713,16 @@ table.t td{padding:7px 8px;border-bottom:1px solid #191F36;vertical-align:middle
         <div class="fl" style="right:28px;top:250px;width:40px;height:40px;color:#FFCC00"><svg class="i"><use href="#i-spark"/></svg></div>
         <div class="fl" style="left:40px;top:430px;width:40px;height:40px;color:#FF1F7A"><svg class="i"><use href="#i-heart"/></svg></div>
         <span class="chipn" style="position:absolute;left:44px;top:34px;font-size:36px">E02</span>
-        <div class="lockup" style="position:absolute;right:40px;top:36px"><span class="rmark" style="font-size:58px">R</span><div><div class="wm" style="font-size:40px">RoleGo</div><div class="sl" style="font-size:10px">Viva o Rolê<i></i></div></div></div>
+        <div class="lockup" style="position:absolute;right:40px;top:36px"><div class="sym" style="--s:49px"><span>R</span><i></i></div><div><div class="wm" style="font-size:40px">RoleGo</div><div class="sl" style="font-size:10px">Viva o Rolê<i></i></div></div></div>
         <div style="position:absolute;left:44px;top:120px">
           <div class="sec" style="--bar:#00E5E5;--bar2:#8749FF;margin:0 0 16px"><div><h2 style="font-size:50px;line-height:1">Descoberta<br>de eventos</h2></div></div>
           <div class="uline" style="width:180px;margin-left:20px"></div>
           <p style="font-size:16px;color:#C9CDD8;margin:16px 0 0 20px;line-height:1.5">Feed, swipe e mapa.<br>O rolê certo em segundos.</p>
         </div>
-        <div style="position:absolute;right:28px;bottom:30px;display:flex;gap:12px;align-items:flex-end">
-          <div class="phone sm y"><div class="scr"><div class="notch"></div><div class="st"><span>9:41</span><span>5G</span></div>
-            <div style="font-family:var(--rg-font-head);font-weight:700;font-size:11px;text-align:center;margin-bottom:8px">Feed</div>
-            <div style="display:grid;gap:7px">
-              <div style="display:flex;gap:7px;align-items:center;font-size:9px"><div class="poster" style="width:34px;height:34px;border-radius:8px;flex:none"></div><div><b>Neon Pulse</b><br><span class="muted">3 km · 22h</span></div></div>
-              <div style="display:flex;gap:7px;align-items:center;font-size:9px"><div class="poster b" style="width:34px;height:34px;border-radius:8px;flex:none"></div><div><b>Samba da Lapa</b><br><span class="muted">2 km · 20h</span></div></div>
-              <div style="display:flex;gap:7px;align-items:center;font-size:9px"><div class="poster c" style="width:34px;height:34px;border-radius:8px;flex:none"></div><div><b>Techno Night</b><br><span class="muted">5 km · 23h</span></div></div>
-              <div style="display:flex;gap:7px;align-items:center;font-size:9px"><div class="poster" style="width:34px;height:34px;border-radius:8px;flex:none"></div><div><b>Social do Léo</b><br><span class="muted">1 km · 19h</span></div></div>
-            </div></div></div>
-          <div class="phone sm m" style="transform:translateY(-18px)"><div class="scr"><div class="notch"></div><div class="st"><span>9:41</span><span>5G</span></div>
-            <div style="font-family:var(--rg-font-head);font-weight:700;font-size:11px;text-align:center;margin-bottom:8px">Swipe</div>
-            <div class="poster" style="flex:1;display:flex;align-items:flex-end;padding:10px"><div style="position:relative;z-index:1;font-family:var(--rg-font-head);font-weight:800;font-size:13px;line-height:1.1">Neon Pulse<br>Festival</div></div>
-            <div style="display:flex;gap:8px;margin-top:10px"><span class="btn sm" style="flex:1;padding:0;background:#FF1F7A"><svg class="i" style="width:13px;height:13px"><use href="#i-x"/></svg></span><span class="btn pri sm" style="flex:1;padding:0"><svg class="i" style="width:13px;height:13px"><use href="#i-heart"/></svg></span></div>
-          </div></div>
-          <div class="phone sm"><div class="scr"><div class="notch"></div><div class="st"><span>9:41</span><span>5G</span></div>
-            <div style="font-family:var(--rg-font-head);font-weight:700;font-size:11px;text-align:center;margin-bottom:8px">Mapa</div>
-            <svg viewBox="0 0 120 150" style="flex:1;width:100%" fill="none">
-              <path d="M0 40 L120 70 M0 110 L120 90 M30 0 L50 150 M90 0 L80 150" stroke="#1E2540" stroke-width="3"/>
-              <circle cx="60" cy="75" r="44" stroke="rgba(0,229,229,.3)"/><circle cx="60" cy="75" r="24" stroke="rgba(0,229,229,.45)"/>
-              <circle cx="60" cy="75" r="5" fill="#00E5E5"/><circle cx="34" cy="44" r="4" fill="#FF1F7A"/><circle cx="88" cy="58" r="4" fill="#B13CFF"/><circle cx="80" cy="112" r="4" fill="#FFCC00"/><circle cx="30" cy="100" r="4" fill="#B13CFF"/>
-            </svg>
-            <div style="display:flex;justify-content:space-between;font-size:8px;color:var(--rg-muted);margin-top:4px"><span>5 km</span><span style="color:#00E5E5">20 km</span><span>50 km</span></div>
-          </div></div>
+        <div style="position:absolute;right:26px;bottom:26px;display:flex;gap:12px;align-items:flex-end">
+          <div class="phone sm y" data-s="feed"></div>
+          <div class="phone sm m" data-s="explorar"></div>
+          <div class="phone sm" data-s="mapa"></div>
         </div>
       </div>
     </div>
@@ -816,13 +740,13 @@ table.t td{padding:7px 8px;border-bottom:1px solid #191F36;vertical-align:middle
           <li><b>Chip do épico</b> (E01…E12): borda em gradiente ciano → violeta, canto superior esquerdo.</li>
           <li><b>Título</b> em Poppins 800, caixa alta, branco, até 2 linhas, com barra vertical em gradiente.</li>
           <li><b>Sublinhado</b> ciano → violeta → magenta e uma linha de apoio em cinza.</li>
-          <li><b>Logo</b> no canto superior direito: wordmark ou assinatura “R + RoleGo + Viva o Rolê”.</li>
+          <li><b>Logo</b> no canto superior direito: wordmark ou assinatura “ícone + RoleGo + Viva o Rolê”.</li>
           <li><b>Três celulares</b> de aro preto, cada um com contorno neon de uma cor (amarelo, magenta, violeta, ciano).</li>
           <li><b>Ícones flutuantes</b> de traço neon com glow e <b>ondas</b> na base.</li>
         </ul>
       </div>
       <div class="card" style="padding:14px 16px;display:flex;gap:14px;align-items:center">
-        <div class="lockup"><span class="rmark" style="font-size:44px">R</span><div><div class="wm" style="font-size:28px">RoleGo</div><div class="sl" style="font-size:8px">Viva o Rolê<i></i></div></div></div>
+        <div class="lockup"><div class="sym" style="--s:37px"><span>R</span><i></i></div><div><div class="wm" style="font-size:28px">RoleGo</div><div class="sl" style="font-size:8px">Viva o Rolê<i></i></div></div></div>
         <p class="small muted">Assinatura horizontal dos banners. Use em capas e materiais largos.</p>
       </div>
     </div>
@@ -849,7 +773,7 @@ table.t td{padding:7px 8px;border-bottom:1px solid #191F36;vertical-align:middle
       </div>
     </div>
     <!-- wallet -->
-    <div class="card" style="display:flex;flex-direction:column;gap:10px;background:linear-gradient(180deg,rgba(135,73,255,.14),var(--rg-surface) 40%)">
+    <div class="card" style="display:flex;flex-direction:column;gap:10px;">
       <div style="display:flex;align-items:center;gap:10px"><svg class="i" style="color:var(--rg-violet);width:22px;height:22px"><use href="#i-wallet"/></svg><div><h3 style="margin:0">RoleGo Wallet</h3><p class="small" style="color:#B79BFF">12 experiências registradas</p></div><span class="badge y" style="margin-left:auto"><svg class="i"><use href="#i-crown"/></svg>Rolê Gold</span></div>
       <div style="display:flex;gap:10px;align-items:center;padding:10px;border-radius:12px;background:var(--rg-surface-2)"><div class="poster" style="width:40px;height:40px;border-radius:10px;flex:none"></div><div class="small"><b>Neon Pulse Festival</b><br><span class="muted">15 nov · ★ 5,0</span></div><span class="badge c" style="margin-left:auto">QR</span></div>
       <div style="display:flex;gap:10px;align-items:center;padding:10px;border-radius:12px;background:var(--rg-surface-2)"><div class="poster c" style="width:40px;height:40px;border-radius:10px;flex:none"></div><div class="small"><b>Techno Night Bar</b><br><span class="muted">08 nov · ★ 4,5</span></div></div>
@@ -864,13 +788,13 @@ table.t td{padding:7px 8px;border-bottom:1px solid #191F36;vertical-align:middle
     </div>
     <!-- push -->
     <div style="border-radius:20px;padding:16px;background:
-      radial-gradient(80% 60% at 20% 10%,rgba(255,31,122,.35),transparent 60%),radial-gradient(80% 60% at 90% 90%,rgba(0,229,229,.3),transparent 60%),#141833;display:flex;flex-direction:column;gap:10px">
+      radial-gradient(80% 60% at 20% 10%,rgba(255,31,122,.22),transparent 60%),radial-gradient(80% 60% at 90% 90%,rgba(0,229,229,.18),transparent 60%),#000;display:flex;flex-direction:column;gap:10px">
       <div style="text-align:center;font-family:var(--rg-font-head);font-weight:600;font-size:40px;line-height:1;margin:6px 0 4px">21:47</div>
       <div style="text-align:center;font-size:10px;color:#C9CDD8;margin-bottom:6px">sexta-feira, 14 de novembro</div>
-      <div style="display:flex;gap:10px;padding:10px 12px;border-radius:16px;background:rgba(20,24,46,.82);border:1px solid rgba(255,255,255,.08)"><div class="sym" style="--s:30px"><span>R</span><i></i></div><div style="font-size:10.5px;line-height:1.4"><b>RoleGo</b> <span class="muted">· agora</span><br>Surgiu uma festa social a <span class="hl-c">3 km</span> de você. Começa às 22h.</div></div>
-      <div style="display:flex;gap:10px;padding:10px 12px;border-radius:16px;background:rgba(20,24,46,.82);border:1px solid rgba(255,255,255,.08)"><div class="sym" style="--s:30px"><span>R</span><i></i></div><div style="font-size:10.5px;line-height:1.4"><b>RoleGo</b> <span class="muted">· 5 min</span><br>Alguém curtiu você no <span class="hl-m">Neon Pulse</span>. Vai lá dar oi?</div></div>
-      <div style="display:flex;gap:10px;padding:10px 12px;border-radius:16px;background:rgba(20,24,46,.82);border:1px solid rgba(255,255,255,.08)"><div class="sym" style="--s:30px"><span>R</span><i></i></div><div style="font-size:10.5px;line-height:1.4"><b>RoleGo</b> <span class="muted">· 1 h</span><br>Ingresso garantido. Seu QR já está na <span style="color:var(--rg-yellow);font-weight:600">Wallet</span>.</div></div>
-      <div style="display:flex;gap:10px;padding:10px 12px;border-radius:16px;background:rgba(20,24,46,.82);border:1px solid rgba(255,255,255,.08)"><div class="sym" style="--s:30px"><span>R</span><i></i></div><div style="font-size:10.5px;line-height:1.4"><b>RoleGo</b> <span class="muted">· 2 h</span><br><span style="color:var(--rg-green);font-weight:600">Modo Segurança</span> ativo. 2 contatos acompanham seu trajeto.</div></div>
+      <div style="display:flex;gap:10px;padding:10px 12px;border-radius:16px;background:#141418;border:1px solid #25252D"><div class="sym" style="--s:30px"><span>R</span><i></i></div><div style="font-size:10.5px;line-height:1.4"><b>RoleGo</b> <span class="muted">· agora</span><br>Surgiu uma festa social a <span class="hl-c">3 km</span> de você. Começa às 22h.</div></div>
+      <div style="display:flex;gap:10px;padding:10px 12px;border-radius:16px;background:#141418;border:1px solid #25252D"><div class="sym" style="--s:30px"><span>R</span><i></i></div><div style="font-size:10.5px;line-height:1.4"><b>RoleGo</b> <span class="muted">· 5 min</span><br>Alguém curtiu você no <span class="hl-m">Neon Pulse</span>. Vai lá dar oi?</div></div>
+      <div style="display:flex;gap:10px;padding:10px 12px;border-radius:16px;background:#141418;border:1px solid #25252D"><div class="sym" style="--s:30px"><span>R</span><i></i></div><div style="font-size:10.5px;line-height:1.4"><b>RoleGo</b> <span class="muted">· 1 h</span><br>Ingresso garantido. Seu QR já está na <span style="color:var(--rg-yellow);font-weight:600">Wallet</span>.</div></div>
+      <div style="display:flex;gap:10px;padding:10px 12px;border-radius:16px;background:#141418;border:1px solid #25252D"><div class="sym" style="--s:30px"><span>R</span><i></i></div><div style="font-size:10.5px;line-height:1.4"><b>RoleGo</b> <span class="muted">· 2 h</span><br><span style="color:var(--rg-green);font-weight:600">Modo Segurança</span> ativo. 2 contatos acompanham seu trajeto.</div></div>
       <div style="margin-top:auto;display:flex;justify-content:space-between;padding:0 30px"><span style="width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.12)"></span><span style="width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.12)"></span></div>
     </div>
   </div>
@@ -1038,6 +962,102 @@ function qr(el){
 }
 ["qr","qr2","qr3","qr4","qr5"].forEach(id=>qr(document.getElementById(id)));
 
+/* ======== telas do app (padrão dos banners) ======== */
+const I=(id,st="")=>`<svg class="i" style="${st}"><use href="#i-${id}"/></svg>`;
+const SB=`<div class="island"></div><div class="sb"><span>9:41</span><span style="display:flex;gap:4px;align-items:center">
+<svg viewBox="0 0 16 10" width="13" height="8"><rect x="0" y="6" width="3" height="4" rx=".6" fill="#fff"/><rect x="4.3" y="4" width="3" height="6" rx=".6" fill="#fff"/><rect x="8.6" y="2" width="3" height="8" rx=".6" fill="#fff"/><rect x="12.9" y="0" width="3" height="10" rx=".6" fill="#fff"/></svg>
+<svg viewBox="0 0 16 12" width="11" height="8"><path d="M8 11.5 5.6 9a3.4 3.4 0 0 1 4.8 0zM3.4 6.8a6.5 6.5 0 0 1 9.2 0l-1.4 1.4a4.5 4.5 0 0 0-6.4 0zM1 4.4a10 10 0 0 1 14 0l-1.4 1.4a8 8 0 0 0-11.2 0z" fill="#fff"/></svg>
+<svg viewBox="0 0 24 12" width="19" height="9"><rect x=".5" y=".5" width="20" height="11" rx="3" fill="none" stroke="#fff" stroke-opacity=".5"/><rect x="2" y="2" width="15" height="8" rx="1.6" fill="#fff"/><rect x="21.5" y="4" width="2" height="4" rx="1" fill="#fff" fill-opacity=".5"/></svg></span></div>`;
+const HD=(l,t,r)=>`<div class="hd">${I(l)}<span>${t}</span>${r?I(r):'<i style="width:15px"></i>'}</div>`;
+const AV=(l,bg,ac,a=26)=>`<span class="av" style="--a:${a}px;--ac:${ac};background:${bg}">${l}</span>`;
+const G={m:"linear-gradient(135deg,#FF1F7A,#8749FF)",c:"linear-gradient(135deg,#00E5E5,#452EFF)",y:"linear-gradient(135deg,#FFCC00,#FF1F7A)",v:"linear-gradient(135deg,#B13CFF,#452EFF)"};
+const TAB=`<div class="tabbar">${I("flame","color:#8749FF;filter:drop-shadow(0 0 4px #8749FF);width:16px;height:16px")}${I("map","width:16px;height:16px")}${I("chat","width:16px;height:16px")}${I("wallet","width:16px;height:16px")}${I("user","width:16px;height:16px")}</div>`;
+const CTA=(t,ic)=>`<span class="btn pri" style="width:100%;height:34px;font-size:11px;margin-top:auto;flex:none">${ic?I(ic,"width:13px;height:13px"):""}${t}</span>`;
+function mapSvg(){
+  const pin=(x,y,c,o=1)=>`<g transform="translate(${x} ${y})" opacity="${o}" filter="url(#mg)"><path d="M0 0c-6-7-9-11-9-15a9 9 0 0 1 18 0c0 4-3 8-9 15z" fill="${c}"/><circle cy="-15" r="3.3" fill="#05060C"/></g>`;
+  let minor="";for(let x=-10;x<200;x+=22)minor+=`M${x} 0 L${x+18} 240 `;for(let y=8;y<240;y+=24)minor+=`M0 ${y} L180 ${y-10} `;
+  return `<svg viewBox="0 0 172 230" preserveAspectRatio="xMidYMid slice" style="position:absolute;inset:0;width:100%;height:100%">
+  <defs><filter id="mg" x="-1" y="-1" width="3" height="3"><feGaussianBlur stdDeviation="2.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <radialGradient id="rf"><stop offset="0" stop-color="#00E5E5" stop-opacity=".16"/><stop offset="1" stop-color="#00E5E5" stop-opacity=".04"/></radialGradient></defs>
+  <rect width="172" height="230" fill="#050507"/>
+  <path d="M110 0 L172 0 L172 70 Q140 60 120 40 Z" fill="#0A1412"/>
+  <path d="M-5 168 Q60 150 90 185 T180 175" stroke="#0B1626" stroke-width="9" fill="none"/>
+  <path d="${minor}" stroke="#121218" stroke-width="1.6" fill="none"/>
+  <path d="M0 60 L172 95 M0 140 L172 120 M40 0 L62 230 M128 0 L112 230" stroke="#1E1E28" stroke-width="5" fill="none"/>
+  <circle cx="86" cy="112" r="64" fill="url(#rf)" stroke="#00E5E5" stroke-opacity=".75" stroke-dasharray="4 4" filter="url(#mg)"/>
+  ${pin(52,78,"#B13CFF")}${pin(118,84,"#FF1F7A")}${pin(124,150,"#00E5E5")}${pin(60,150,"#FFCC00")}${pin(96,58,"#8749FF")}${pin(160,30,"#8749FF",.35)}${pin(16,206,"#FF1F7A",.35)}
+  <circle cx="86" cy="112" r="11" fill="#00E5E5" fill-opacity=".22"/><circle cx="86" cy="112" r="4.5" fill="#00E5E5" stroke="#fff" stroke-width="1.5"/>
+  </svg>`;
+}
+const RANGE=(pct=50)=>`<div style="margin-top:9px;flex:none"><div style="display:flex;justify-content:space-between;font-size:10px;font-weight:600"><span>Raio de busca</span><span style="color:#00E5E5">20 km</span></div>
+<div style="position:relative;height:16px;margin:6px 6px 3px"><div style="position:absolute;left:0;right:0;top:6px;height:4px;border-radius:2px;background:#1A2140"></div>
+<div style="position:absolute;left:0;width:${pct}%;top:6px;height:4px;border-radius:2px;background:var(--rg-grad-cta);box-shadow:0 0 8px rgba(0,229,229,.7)"></div>
+<div style="position:absolute;left:${pct}%;top:1px;width:14px;height:14px;margin-left:-7px;border-radius:50%;background:#fff;box-shadow:0 0 0 3px rgba(0,229,229,.35),0 0 10px #00E5E5"></div></div>
+<div style="display:flex;justify-content:space-between;font-size:8.5px;color:var(--rg-muted)"><span>5 km</span><span style="color:#fff;font-weight:600">20 km</span><span>50 km</span></div></div>`;
+const SCREENS={
+ splash:()=>`<div class="scr">${SB}
+  <div style="margin:auto 0;text-align:center"><div class="sym" style="--s:62px;margin:0 auto 18px"><span>R</span><i></i></div>
+  <div class="wm glowing" style="font-size:36px">RoleGo</div><div class="slogan" style="font-size:9.5px;margin-top:10px">Viva o Rolê</div>
+  <p style="font-size:10.5px;color:#C9CDD8;margin-top:14px;line-height:1.45">Chega de sofrer para<br>decidir onde sair.</p></div>
+  ${CTA("Começar")}<p style="font-size:9.5px;color:var(--rg-muted);text-align:center;margin-top:8px">Já tem conta? <b style="color:#00E5E5">Entrar</b></p></div>`,
+ explorar:()=>`<div class="scr">${SB}${HD("menu","Explorar","sliders")}
+  <div style="display:flex;gap:5px;margin-bottom:8px"><span class="chip on xs">Festa</span><span class="chip xs">Show</span><span class="chip c xs">${I("pin","width:9px;height:9px")}20 km</span></div>
+  <div class="poster" style="flex:1;min-height:0;display:flex;flex-direction:column;justify-content:flex-end;padding:10px;border-radius:16px;box-shadow:0 0 18px rgba(255,31,122,.25)">
+   <span class="badge m" style="position:absolute;top:8px;left:8px;z-index:1;height:18px;font-size:8.5px;background:rgba(5,7,15,.6)">${I("flame","width:10px;height:10px")}Bombando</span>
+   <div style="position:relative;z-index:1">
+    <div style="display:flex;align-items:center;margin-bottom:6px">${AV("B",G.m,"#FF1F7A",18)}<span style="margin-left:-5px">${AV("J",G.c,"#00E5E5",18)}</span><span style="margin-left:-5px">${AV("L",G.y,"#FFCC00",18)}</span><span style="font-size:8.5px;margin-left:6px;font-weight:600">4 amigos curtiram</span></div>
+    <div style="font-weight:900;font-style:italic;font-size:19px;line-height:1.02">Neon Pulse<br>Festival</div>
+    <div style="display:flex;gap:8px;font-size:8.5px;margin-top:5px;color:#E3E5EC;align-items:center"><span style="display:flex;gap:2px;align-items:center">${I("pin","width:10px;height:10px")}3,2 km</span><span style="display:flex;gap:2px;align-items:center">${I("clock","width:10px;height:10px")}Sáb 22h</span><span style="margin-left:auto;font-weight:700">R$ 60</span></div>
+   </div></div>
+  <div style="display:flex;justify-content:center;align-items:center;gap:16px;margin:10px 0 6px">
+   <span class="rbtn" style="width:38px;height:38px;border:1.5px solid #FF1F7A;color:#FF1F7A;box-shadow:0 0 10px -2px #FF1F7A">${I("x","width:15px;height:15px")}</span>
+   <span class="rbtn" style="width:50px;height:50px;background:var(--rg-grad-cta);box-shadow:0 0 18px rgba(135,73,255,.7)">${I("heart","width:20px;height:20px;color:#fff")}</span>
+   <span class="rbtn" style="width:38px;height:38px;border:1.5px solid #00E5E5;color:#00E5E5;box-shadow:0 0 10px -2px #00E5E5">${I("ticket","width:15px;height:15px")}</span></div>${TAB}</div>`,
+ quemvai:()=>`<div class="scr">${SB}${HD("back","Neon Pulse","dots")}
+  <div class="opt" style="--oc:#FF1F7A;text-align:center;padding:10px 8px;margin-bottom:9px">
+   <div style="display:flex;justify-content:center;margin-bottom:7px">${AV("B",G.m,"#FF1F7A",30)}<span style="margin-left:-7px">${AV("J",G.c,"#00E5E5",30)}</span><span style="margin-left:-7px">${AV("L",G.y,"#FFCC00",30)}</span><span style="margin-left:-7px">${AV("V",G.v,"#8749FF",30)}</span></div>
+   <div style="font-weight:900;font-style:italic;font-size:16px;line-height:1">Match coletivo!</div>
+   <div style="font-size:8.5px;color:#C9CDD8;margin-top:3px">Você + 3 amigos curtiram este rolê</div></div>
+  <div class="seg" style="margin-bottom:4px"><span class="on">Confirmados 128</span><span>Interessados 312</span></div>
+  <div class="lrow">${AV("B",G.m,"#FF1F7A",24)}<div style="flex:1"><b>Bruna</b><br><span style="color:#FF1F7A;font-size:8.5px;font-weight:600">${I("heart","width:9px;height:9px")} deu like em você</span></div><span class="rbtn" style="width:24px;height:24px;background:#FF1F7A;box-shadow:0 0 10px #FF1F7A">${I("heart","width:11px;height:11px;color:#fff")}</span></div>
+  <div class="lrow">${AV("J",G.c,"#00E5E5",24)}<div style="flex:1"><b>João</b><br><span class="muted" style="font-size:8.5px">vai com 3 amigos</span></div><span class="chip c xs">${I("plus","width:9px;height:9px")}Amigo</span></div>
+  <div class="lrow">${AV("L",G.y,"#FFCC00",24)}<div style="flex:1"><b>Lia</b><br><span style="color:#FFCC00;font-size:8.5px;font-weight:600">${I("crown","width:9px;height:9px")} Rolê Gold</span></div><span class="rbtn" style="width:24px;height:24px;border:1.5px solid #FF1F7A;color:#FF1F7A">${I("heart","width:11px;height:11px")}</span></div>
+  <div class="lrow" style="border:0">${AV("R",G.v,"#8749FF",24)}<div style="flex:1"><b>Rafa</b><br><span style="color:#B79BFF;font-size:8.5px;font-weight:600">Modo Solo</span></div><span class="rbtn" style="width:24px;height:24px;border:1.5px solid #8749FF;color:#B79BFF">${I("chat","width:11px;height:11px")}</span></div>
+  ${CTA("Entrar no chat do grupo","chat")}</div>`,
+ mapa:()=>`<div class="scr">${SB}${HD("back","Mapa","sliders")}
+  <div style="display:flex;gap:5px;margin-bottom:8px"><span class="chip on xs">${I("pin","width:9px;height:9px")}Curitiba</span><span class="chip xs">12 eventos</span></div>
+  <div style="flex:1;min-height:0;border-radius:14px;overflow:hidden;position:relative;border:1px solid #1C1C24">${mapSvg()}
+   <div style="position:absolute;left:7px;right:7px;bottom:7px;display:flex;gap:7px;align-items:center;padding:6px;border-radius:10px;background:#000;border:1.5px solid #FF1F7A;box-shadow:0 0 10px rgba(255,31,122,.45)">
+    <div class="poster" style="width:28px;height:28px;border-radius:7px;flex:none"></div><div style="font-size:8.5px;line-height:1.3;flex:1"><b>Neon Pulse Festival</b><br><span style="color:#00E5E5">3,2 km</span> · Sáb 22h</div>${I("heart","width:12px;height:12px;color:#FF1F7A")}</div></div>
+  ${RANGE(50)}</div>`,
+ feed:()=>`<div class="scr">${SB}${HD("menu","Feed","bell")}
+  <div style="border-radius:14px;overflow:hidden;border:1.5px solid #FFCC00;box-shadow:0 0 12px -2px #FFCC00;margin-bottom:8px;flex:none">
+   <div class="poster c" style="height:78px;border-radius:0;padding:7px"><span class="badge y" style="position:relative;z-index:1;height:17px;font-size:8px;background:rgba(5,7,15,.6)">${I("star","width:9px;height:9px")}Patrocinado</span></div>
+   <div style="padding:6px 9px;font-size:9px"><b style="font-size:11px">Techno Night Bar</b><br><span class="muted">5 km · Hoje 23h · 218 vão</span></div></div>
+  ${[["Neon Pulse Festival","3,2 km · Sáb 22h",""],["Samba da Lapa","2 km · Sex 20h","b"],["Social do Léo","1 km · Sáb 19h · privado",""]].map(([t,m,c])=>`<div class="lrow"><div class="poster ${c}" style="width:34px;height:34px;border-radius:9px;flex:none"></div><div style="flex:1"><b>${t}</b><br><span class="muted" style="font-size:8.5px">${m}</span></div>${I("heart","width:13px;height:13px;color:#FF1F7A")}</div>`).join("")}
+  ${TAB}</div>`,
+ carteira:()=>`<div class="scr">${SB}${HD("back","Minha carteira","share")}
+  <div style="flex:1;border-radius:14px;background:#000;border:1.5px solid #00E5E5;box-shadow:0 0 12px -3px #00E5E5;padding:10px;display:flex;flex-direction:column;align-items:center;text-align:center">
+   <div style="align-self:flex-start;display:flex;gap:5px;align-items:center;font-weight:700;font-size:10.5px;margin-bottom:10px">${I("ticket","width:13px;height:13px;color:#00E5E5")}INGRESSO</div>
+   <div class="qr qrgen" style="width:104px;box-shadow:0 0 0 3px #00E5E5,0 0 22px #00E5E5"></div>
+   <div style="font-weight:800;font-style:italic;font-size:13px;margin-top:12px">ROLEGO FEST</div>
+   <div style="font-size:9px;color:#C9CDD8">Sábado, 15/11 · 22h</div><div style="font-size:9px;color:var(--rg-muted)">Pista · Lote 1</div>
+   <span class="badge g" style="margin-top:8px">${I("check","width:11px;height:11px")}Validado</span></div>
+  <p style="font-size:8.5px;color:var(--rg-muted);text-align:center;margin-top:8px">Apresente este QR na entrada · ${I("shield","width:10px;height:10px;color:#00FF00")} 100% seguro</p></div>`,
+ vip:()=>`<div class="scr">${SB}${HD("back","Benefícios","")}
+  <div style="width:92px;height:92px;margin:2px auto 8px;border-radius:50%;border:3px solid #FFCC00;box-shadow:0 0 18px #FFCC00,inset 0 0 16px rgba(255,204,0,.45);display:grid;place-items:center;text-align:center;flex:none">
+   <div>${I("crown","width:26px;height:26px;color:#FFCC00;filter:drop-shadow(0 0 5px #FFCC00)")}<div style="font-weight:900;font-style:italic;font-size:16px;color:#FFCC00;line-height:1">VIP</div><div style="font-size:7.5px;font-weight:700;letter-spacing:.12em">MEMBER</div></div></div>
+  <div class="opt" style="--oc:#00E5E5;text-align:center;font-size:10px;font-weight:700;color:#00E5E5;margin-bottom:9px;flex:none">Desconto em bares</div>
+  <div style="font-weight:700;font-size:11px;margin-bottom:2px">Ranking da semana</div>
+  <div class="lrow"><b style="color:#FFCC00;width:12px">1</b>${AV("V",G.v,"#FFCC00",22)}<span style="flex:1">Você</span><b style="color:#FFCC00">2.340</b></div>
+  <div class="lrow"><b style="width:12px">2</b>${AV("B",G.m,"#FF1F7A",22)}<span style="flex:1">Bruna</span><b>1.985</b></div>
+  <div class="lrow" style="border:0"><b style="width:12px">3</b>${AV("J",G.c,"#00E5E5",22)}<span style="flex:1">João</span><b>1.760</b></div>
+  ${CTA("Resgatar","spark")}</div>`
+};
+document.querySelectorAll(".phone[data-s]").forEach(ph=>{ph.innerHTML=SCREENS[ph.dataset.s]();});
+document.querySelectorAll(".qrgen").forEach(qr);
+
+
 /* Texto em gradiente → SVG. O Chrome desenha uma caixa fina em volta de
    background-clip:text ao gerar PDF; com <text fill="url(#grad)"> isso some. */
 function gradText(){
@@ -1090,7 +1110,40 @@ document.querySelectorAll(".page").forEach((pg,i)=>{
   }
   const n=pg.querySelector(".foot span:last-child");if(n)n.textContent=String(i+1).padStart(2,"0");
 });
-document.fonts.ready.then(gradText);
+
+/* ======== wordmark: "Role" + "G" + o-radar com o ping do ícone ======== */
+function buildLogos(){
+  const ns="http://www.w3.org/2000/svg";let n=0;
+  document.querySelectorAll(".wm").forEach(el=>{
+    const fs=parseFloat(getComputedStyle(el).fontSize), c=el.classList;
+    const white=c.contains("white"), black=c.contains("black"), light=c.contains("onlight");
+    const roleC=el.dataset.role||(black?"#05070F":light?"#0B0B1A":"#fff");
+    const cols=(el.dataset.g||(white?"#fff,#fff":black?"#05070F,#05070F":"#00E5E5,#8749FF,#FF1F7A")).split(",");
+    const dotC=black?"#05070F":"#00E5E5", outline=el.hasAttribute("data-outline"), thin=el.hasAttribute("data-thin");
+    const id="lg"+(n++), svg=document.createElementNS(ns,"svg");
+    svg.style.cssText="display:block;overflow:visible";
+    svg.innerHTML=`<defs><linearGradient id="${id}" gradientUnits="userSpaceOnUse"></linearGradient></defs><text style="font-family:Poppins;font-weight:800;font-style:italic;font-size:${fs}px;letter-spacing:-.02em"><tspan>Role</tspan><tspan>G</tspan></text>`;
+    el.replaceChildren(svg);
+    const t=svg.querySelector("text"), [t1,t2]=t.querySelectorAll("tspan"), base=fs*.86;
+    t.setAttribute("y",base);
+    if(thin) t2.style.fontWeight="400";
+    const paint=(node,col)=>{ if(outline){node.setAttribute("fill","none");node.setAttribute("stroke",col);node.setAttribute("stroke-width",fs*.025);} else node.setAttribute("fill",col); };
+    paint(t1,roleC); paint(t2,`url(#${id})`);
+    const wRole=t1.getComputedTextLength(), wAll=t.getComputedTextLength();
+    const r=fs*.23, sw=thin?fs*.06:fs*.115, cx=wAll+fs*.03+r+sw/2, cy=base-fs*.285, end=cx+r+sw/2;
+    const g=t.ownerSVGElement.querySelector("linearGradient");
+    g.setAttribute("x1",wRole);g.setAttribute("x2",end);g.setAttribute("y1",0);g.setAttribute("y2",0);
+    g.innerHTML=cols.map((cl,i)=>`<stop offset="${cols.length>1?i/(cols.length-1):0}" stop-color="${cl}"/>`).join("");
+    const gr=g.cloneNode(true);gr.id=id+"r";gr.setAttribute("x1",wRole-cx);gr.setAttribute("x2",r+sw/2);g.parentNode.appendChild(gr);
+    const ring=document.createElementNS(ns,"g");
+    ring.setAttribute("transform",`translate(${cx} ${cy}) skewX(-11)`);
+    ring.innerHTML=`<circle r="${r}" fill="none" stroke="url(#${id}r)" stroke-width="${outline?fs*.025:sw}"/>`+
+      (outline?"":`${black?"":`<circle r="${fs*.12}" fill="${dotC}" opacity=".28"/>`}<circle r="${fs*.07}" fill="${dotC}"/>`);
+    svg.appendChild(ring);
+    svg.setAttribute("width",end+fs*.06);svg.setAttribute("height",fs);
+  });
+}
+document.fonts.ready.then(()=>{buildLogos();gradText();});
 </script>
 </body>
 </html>

@@ -12,7 +12,7 @@ Manual completo, 16 páginas em A4 paisagem, no estilo dos banners de [`../epics
 
 Tokens e regras: [`../identidade-visual.md`](../identidade-visual.md) · molde: [`../input/referencia-marca/README.md`](../input/referencia-marca/README.md) · card: https://trello.com/c/gU37I2lg
 
-Texto em gradiente é convertido para SVG no carregamento (script no fim do HTML): `background-clip:text` gera uma caixa fina em volta das letras no PDF do Chrome.
+O wordmark e as telas do app são montados por script no fim do HTML (`buildLogos`, `SCREENS`). Texto em gradiente vira SVG no carregamento: `background-clip:text` gera uma caixa fina em volta das letras no PDF do Chrome.
 
 ## Gerar PDF de novo
 

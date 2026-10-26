@@ -22,7 +22,7 @@ Tema **dark** (fundo quase preto/azul-marinho), com **acentos neon** em gradient
 |-----|----------------|------------|
 | Fundo principal (telas do app) | `#050716` – `#0A0F22` | Quase preto, com leve tom azulado |
 | Fundo principal (slides) | `#09091A` | Mesma família, tela cheia |
-| Superfície / card | `#10162B`, `#151525`, `#1A1B28` | Cards, inputs, blocos de feature — um tom acima do fundo |
+| Superfície / card | `#15151B`, `#1C1C23`, `#24242C` | Grafite neutro sólido, sem borda; dentro do app as telas e cards são preto `#000` com contorno neon |
 | Texto principal | `#FFFFFF` | Títulos e labels |
 | Texto secundário | cinza claro (~`#9CA3AF`) | Subtítulos, descrições, placeholders |
 
@@ -50,8 +50,8 @@ Cada categoria de feature usa uma cor neon fixa como “assinatura” (barra lat
 
 ## 3. Tipografia
 
-- Fonte **sans-serif bold**, estilo geométrico (aparência tipo Inter/Poppins/Montserrat).
-- **Títulos de seção**: caixa alta, peso bold, branco, com uma barra vertical colorida (magenta/ciano/verde/amarelo) à esquerda.
+- Fonte única: **Poppins** (títulos, textos, botões e legendas). Itálico pesado (800/900) nos títulos para dar movimento.
+- **Títulos de seção**: caixa alta, Poppins ExtraBold Itálico, branco, com uma barra vertical colorida (magenta/ciano/verde/amarelo) à esquerda.
 - **Hero/logo**: texto grande, bold, com preenchimento em gradiente (roxo → azul).
 - **Ênfase dentro de parágrafo**: uma palavra-chave em cor neon (ex.: “segundos” em ciano, “descontos em bares parceiros” em ciano-bold) dentro de texto branco/cinza normal.
 - **Corpo de texto**: branco ou cinza claro, peso regular, tamanho menor.
@@ -74,8 +74,9 @@ Cada categoria de feature usa uma cor neon fixa como “assinatura” (barra lat
 
 ## 5. Logo
 
-- Wordmark **“RoleGo”**, sem serifa, bold.
-- “**Role**” em tom roxo/magenta do gradiente; “**Go**” em tom azul/ciano do gradiente — leitura contínua em um único gradiente diagonal.
+- Wordmark **“RoleGo”** em Poppins ExtraBold Itálico.
+- “**Role**” em branco; “**Go**” em gradiente ciano → violeta → magenta (`#00E5E5 → #8749FF → #FF1F7A`). O “o” é um anel neon com o ping ciano no centro (o mesmo do ícone).
+- Ícone do app: “R” branco sobre o gradiente roxo → azul, com o ping ciano.
 - Usado sozinho (splash) ou acompanhado do slogan: **“Viva o Rolê”**
 - Linha de apoio (proposta de valor): *“Chega de sofrer para decidir onde sair.”*
 - Domínio oficial: **rolego.com.br** · Instagram: **@rolego**
@@ -86,7 +87,7 @@ Cada categoria de feature usa uma cor neon fixa como “assinatura” (barra lat
 
 ```
 Fundo:              #04050B (telas/banners)  /  #09091A (slides)
-Surface:            #10162B / #151525
+Surface:            #15151B / #1C1C23 (manual) · #000 (telas do app)
 Gradiente primário: #8749FF → #452EFF (roxo → azul) — logo/ícone
 Gradiente de ação:  #00E5E5 → #8749FF (ciano → violeta) — botões
 Acento ciano:       #00E5E5 (aprox.)

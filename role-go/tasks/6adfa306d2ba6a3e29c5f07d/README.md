@@ -32,7 +32,7 @@ Espelha a descrição do card Trello.
 
 ## Entrega
 
-Manual completo (15 páginas) em [`../../marca/README.md`](../../marca/README.md):
+Manual completo (16 páginas, estilo dos banners do `epics.pdf`) em [`../../marca/README.md`](../../marca/README.md):
 
 - `identidade-visual-rolego-v1.html`
 - `identidade-visual-rolego-v1.pdf`

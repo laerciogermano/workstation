@@ -61,7 +61,7 @@ Cada categoria de feature usa uma cor neon fixa como “assinatura” (barra lat
 
 ## 4. Padrões de UI
 
-- **Botão primário**: fundo em gradiente roxo → azul, texto branco bold, cantos totalmente arredondados (pill).
+- **Botão primário**: fundo em gradiente ciano → violeta (`#00E5E5 → #8749FF`, como nos banners de `epics.pdf`), texto branco bold, cantos totalmente arredondados (pill). O gradiente roxo → azul fica para logo, ícone do app e chip ativo.
 - **Botão secundário / login social** (Google, Apple): fundo escuro (transparente/surface), borda fina neon (ciano ou magenta), texto branco.
 - **Chips / filtros** (tipo de evento, cidade): formato pill; estado **ativo** = fundo roxo sólido; estado **inativo** = apenas borda cinza fina, fundo transparente.
 - **Cards de feature** (ex.: telas de segurança, gamificação): fundo surface escuro, barra de acento colorida na borda esquerda, ícone na cor do acento.
@@ -84,9 +84,10 @@ Cada categoria de feature usa uma cor neon fixa como “assinatura” (barra lat
 ## 6. Aplicação rápida (resumo para dev/design)
 
 ```
-Fundo:              #05070F (telas)  /  #09091A (slides)
+Fundo:              #04050B (telas/banners)  /  #09091A (slides)
 Surface:            #10162B / #151525
-Gradiente primário: #8749FF → #452EFF (roxo → azul)
+Gradiente primário: #8749FF → #452EFF (roxo → azul) — logo/ícone
+Gradiente de ação:  #00E5E5 → #8749FF (ciano → violeta) — botões
 Acento ciano:       #00E5E5 (aprox.)
 Acento magenta:     #FF1F7A (aprox.)
 Acento verde:       #00FF00

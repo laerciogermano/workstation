@@ -6,9 +6,28 @@
 
 ## Insumos
 
-- Tokens: [`../../identidade-visual.md`](../../identidade-visual.md)
-- Referência de estrutura (ConectTech v1): [`../../input/referencia-marca/README.md`](../../input/referencia-marca/README.md)
-- Mockups: [`../../input/`](../../input/)
+Espelha a descrição do card Trello.
+
+### Tokens e regras locais
+
+- [`../../identidade-visual.md`](../../identidade-visual.md) — paleta, tipografia e padrões RoleGo
+- [`../../README.md`](../../README.md) — visão (markdown)
+- [`../../epics.md`](../../epics.md) — épicos
+
+### Documentos em `input/`
+
+- [`../../input/documento-de-visao-role.pdf`](../../input/documento-de-visao-role.pdf) — visão do produto
+- [`../../input/documento-de-visao-role(1).pdf`](../../input/documento-de-visao-role(1).pdf) — visão (variante)
+- [`../../input/rolego_mvp_completo_dark.pdf`](../../input/rolego_mvp_completo_dark.pdf) — wireframes MVP
+- [`../../input/rolego_slides_publico.pdf`](../../input/rolego_slides_publico.pdf) — slides públicos
+
+### Referência de estrutura de marca
+
+- [`../../input/referencia-marca/README.md`](../../input/referencia-marca/README.md)
+- [`../../input/referencia-marca/identidade-visual-conect-tech-v1.html`](../../input/referencia-marca/identidade-visual-conect-tech-v1.html)
+- [`../../input/referencia-marca/identidade-visual-conect-tech-v1.pdf`](../../input/referencia-marca/identidade-visual-conect-tech-v1.pdf)
+- [`../../input/referencia-marca/identidade-visual-conect-tech-v1.zip`](../../input/referencia-marca/identidade-visual-conect-tech-v1.zip)
+- [`../../input/referencia-marca/assets-conectmax/`](../../input/referencia-marca/assets-conectmax/) — assets do molde (não copiar marca Conect)
 
 ## Entrega esperada
 

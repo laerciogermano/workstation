@@ -24,7 +24,6 @@ export function Cadastro() {
     updateUser({
       name: '',
       email,
-      phone: '',
       loggedIn: true,
       onboarded: false,
     })
@@ -35,7 +34,6 @@ export function Cadastro() {
     updateUser({
       name: `Usuário ${provider}`,
       email: email || `demo@${provider.toLowerCase()}.com`,
-      phone: '',
       loggedIn: true,
       onboarded: false,
     })

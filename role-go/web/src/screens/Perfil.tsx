@@ -33,7 +33,6 @@ export function Perfil() {
         {user.city || 'Cidade não definida'}
         <br />
         {user.email || '—'}
-        {user.phone ? ` · ${user.phone}` : ''}
       </p>
 
       <div className="stat-row" style={{ gridTemplateColumns: '1fr' }}>

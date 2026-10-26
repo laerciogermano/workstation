@@ -8,12 +8,11 @@ export function EditarPerfil() {
   const { user, updateUser } = usePrototype()
   const [name, setName] = useState(user.name)
   const [email, setEmail] = useState(user.email)
-  const [phone, setPhone] = useState(user.phone)
   const [saved, setSaved] = useState(false)
 
   function submit(e: FormEvent) {
     e.preventDefault()
-    updateUser({ name, email, phone })
+    updateUser({ name, email })
     setSaved(true)
   }
 
@@ -35,10 +34,6 @@ export function EditarPerfil() {
         <div className="field">
           <label>E-mail</label>
           <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-        </div>
-        <div className="field">
-          <label>Telefone (opcional)</label>
-          <input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="(41) 99999-9999" />
         </div>
         <button className="btn btn-primary" type="submit">
           Salvar

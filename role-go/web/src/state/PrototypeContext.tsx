@@ -9,7 +9,6 @@ import {
 export type UserProfile = {
   name: string
   email: string
-  phone: string
   photoUrl: string | null
   city: string
   eventTypes: string[]
@@ -29,7 +28,6 @@ type PrototypeState = {
 const defaultUser: UserProfile = {
   name: '',
   email: '',
-  phone: '',
   photoUrl: null,
   city: '',
   eventTypes: [],

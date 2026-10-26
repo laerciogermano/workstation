@@ -28,7 +28,7 @@ Abre em http://localhost:5173 — menu lateral para pular entre telas.
 | `/onboarding/raio` | Raio de busca (slider 1–100 km) |
 | `/home` | Stub pós-onboarding (descoberta = E02) |
 | `/perfil` | Perfil + logout |
-| `/perfil/editar` | Nome, e-mail, telefone |
+| `/perfil/editar` | Nome, e-mail |
 | `/perfil/foto` | Foto de perfil |
 
 ## Antes → depois / rollback
@@ -38,4 +38,5 @@ Abre em http://localhost:5173 — menu lateral para pular entre telas.
 - **Cadastro:** e-mail + senha + confirmar senha; sem nome/celular no formulário (antes: nome + telefone opcional).
 - **Raio:** slider contínuo 1–100 km (antes: chips 5 / 20 / 50 km).
 - **Amigos:** removidos do E01/perfil (antes: lista e contagem no perfil); social fica fora de escopo.
-- **Voltar:** remover a pasta `web/` (ou reverter o commit); no cadastro, restaurar campos nome/telefone; no raio, voltar aos chips fixos; restaurar rota `/amigos` se necessário.
+- **Telefone:** removido da edição de perfil (antes: campo opcional).
+- **Voltar:** remover a pasta `web/` (ou reverter o commit); no cadastro, restaurar campos nome/telefone; no raio, voltar aos chips fixos; restaurar rota `/amigos` / campo telefone no editar perfil se necessário.

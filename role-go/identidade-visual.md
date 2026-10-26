@@ -4,7 +4,7 @@ Extraído dos mockups em [`input/rolego_mvp_completo_dark.pdf`](input/rolego_mvp
 
 **Estrutura de card/manual (insumo):** modelo ConectTech v1 em [`input/referencia-marca/README.md`](input/referencia-marca/README.md) — layout A4 e seções; cores/logo RoleGo ficam neste documento.
 
-**Card Trello (entrega):** [Criar identidade visual RoleGo (manual HTML → PDF)](https://trello.com/c/gU37I2lg)
+**Manual HTML/PDF v1:** [`marca/README.md`](marca/README.md) · [card Trello](https://trello.com/c/gU37I2lg)
 
 ---
 

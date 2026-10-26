@@ -125,6 +125,10 @@
         painel connectmax (http://144.126.154.90/ / local :5173)
             - email: admin@connectmax.local
             - password: sQJCnVbsqd3WruapfVQK
+        mailcow (https://mail.clozzy.com.br/admin/ — Entrar como administrador)
+            - user: admin
+            - password: ClozzyMail26Admin
+            - path: /opt/mailcow-dockerized @ 144.126.154.90
     - senha linkedin signup (agent-d / Ana Silva):
         - email: metafisicoprogramador@gmail.com
         - password: senha@linkedin@123

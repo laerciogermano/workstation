@@ -48,7 +48,9 @@ O usuário cria conta, configura preferências de descoberta e mantém um perfil
 ### Perfil
 - Definir / alterar foto de perfil
 - Exibir contagem e lista de amigos feitos no app
-- Editar dados básicos do perfil (nome e demais campos de identidade necessários ao uso)
+- Editar nome completo
+- Editar e-mail
+- Editar telefone (opcional; também usado no login)
 
 ### Fora de escopo deste épico
 - Descoberta/publicação de eventos → [E02](#e02--publicação-e-descoberta-de-eventos)

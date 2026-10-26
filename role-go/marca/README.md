@@ -10,7 +10,7 @@ Manual completo, 16 páginas em A4 paisagem, no estilo dos banners de [`../epics
 | [`identidade-visual-rolego-v1.pdf`](identidade-visual-rolego-v1.pdf) | PDF gerado do HTML |
 | [`identidade-visual-rolego-v1.zip`](identidade-visual-rolego-v1.zip) | Pacote HTML + PDF |
 
-Tokens e regras: [`../identidade-visual.md`](../identidade-visual.md) · molde: [`../input/referencia-marca/README.md`](../input/referencia-marca/README.md) · card: https://trello.com/c/gU37I2lg
+Tokens e regras: [`../identidade-visual.md`](../identidade-visual.md) · molde: [`../input/referencia-marca/README.md`](../input/referencia-marca/README.md) · card manual: https://trello.com/c/gU37I2lg · card logo: https://trello.com/c/S7jWwUbC
 
 O wordmark e as telas do app são montados por script no fim do HTML (`buildLogos`, `SCREENS`). Texto em gradiente vira SVG no carregamento: `background-clip:text` gera uma caixa fina em volta das letras no PDF do Chrome.
 

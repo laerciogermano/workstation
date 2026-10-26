@@ -28,7 +28,36 @@ Cada épico agrupa um conjunto coerente de valor; histórias e BDD vêm depois.
 
 ![Capa do épico E01 — Conta, onboarding e perfil](assets/epic-e01-cover.png)
 
-O usuário cria conta (email, Google ou Apple), configura preferências de tipo de evento, cidade, raio e localização, e mantém um perfil com foto, histórico de eventos, amigos, fotos por evento e selos. A entrada rápida e o perfil alimentam descoberta, social e gamificação.
+O usuário cria conta, configura preferências de descoberta e mantém um perfil que alimenta social e gamificação. Escopo abaixo — para análise e aprovação.
+
+### Conta e autenticação
+- Criar conta com e-mail e senha
+- Entrar com conta Google
+- Entrar com conta Apple
+- Login com conta já existente (e-mail ou social)
+- Recuperar acesso / redefinir senha (fluxo e-mail)
+- Encerrar sessão (logout)
+
+### Onboarding
+- Escolher preferências de tipo de evento (festa, show, evento privado etc.)
+- Informar / selecionar cidade
+- Solicitar e gravar permissão de localização
+- Definir raio de busca (ex.: 5, 20 ou 50 km)
+- Concluir onboarding e entrar no app com preferências aplicadas à descoberta
+
+### Perfil
+- Definir / alterar foto de perfil
+- Exibir histórico de eventos frequentados
+- Exibir fotos vinculadas por evento (acúmulo pós-participação)
+- Exibir contagem e lista de amigos feitos no app
+- Exibir selos / status no perfil (ex.: Rolê Gold, Platina — origem em outros épicos)
+- Editar dados básicos do perfil (nome e demais campos de identidade necessários ao uso)
+
+### Fora de escopo deste épico
+- Descoberta/publicação de eventos → [E02](#e02--publicação-e-descoberta-de-eventos)
+- Curtidas, direct e convite a amigo no evento → social em [E02](#e02--publicação-e-descoberta-de-eventos) / jornada
+- Regras de pontuação e conquista de selos → [E06](#e06--gamificação-e-rolego-wallet)
+- Avaliação anfitrião–convidado → [E11](#e11--reputação-anfitriãoconvidado)
 
 ## E02 — Publicação e descoberta de eventos
 

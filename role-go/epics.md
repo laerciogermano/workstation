@@ -30,6 +30,8 @@ Cada épico agrupa um conjunto coerente de valor; histórias e BDD vêm depois.
 
 O usuário cria conta, configura preferências de descoberta e mantém um perfil social básico. Escopo abaixo — para análise e aprovação.
 
+Protótipo React das telas: [`web/README.md`](web/README.md) (`npm run dev` em `web/`).
+
 ### Conta e autenticação
 - Criar conta com e-mail e senha
 - Entrar com conta Google

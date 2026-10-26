@@ -1,0 +1,21 @@
+:root {
+  --bg: #05070f;
+  --bg-elevated: #0a0f22;
+  --surface: #10162b;
+  --surface-2: #151525;
+  --text: #ffffff;
+  --text-muted: #9ca3af;
+  --border: rgba(156, 163, 175, 0.35);
+  --purple: #8749ff;
+  --blue: #452eff;
+  --gradient: linear-gradient(135deg, #8749ff 0%, #452eff 100%);
+  --cyan: #00e5e5;
+  --magenta: #ff1f7a;
+  --green: #00ff00;
+  --yellow: #ffcc00;
+  --radius-pill: 999px;
+  --radius-md: 16px;
+  --font: 'Poppins', system-ui, sans-serif;
+  --phone-w: 390px;
+  --phone-h: 844px;
+}

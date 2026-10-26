@@ -227,3 +227,9 @@ O critério de priorização são cidades com forte cena de eventos e vida notur
 Este documento foi estruturado a partir de uma sessão de brainstorm em áudio e reflete o estágio inicial de ideação do produto. Recomenda-se validação com usuários reais e refinamento do modelo de monetização (percentuais de comissão, split com parceiros) antes da fase de desenvolvimento.
 
 Fonte: [`input/documento-de-visao-role(1).pdf`](input/documento-de-visao-role(1).pdf)
+
+---
+
+## Protótipo frontend (E01)
+
+Telas navegáveis de conta, onboarding e perfil: [`web/README.md`](web/README.md).

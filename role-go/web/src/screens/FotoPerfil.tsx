@@ -1,6 +1,8 @@
 import { useRef, type ChangeEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { PhoneShell } from '../components/PhoneShell'
+import { TopBar } from '../components/Brand'
+import { Icon } from '../components/Icon'
 import { usePrototype } from '../state/PrototypeContext'
 
 export function FotoPerfil() {
@@ -22,18 +24,20 @@ export function FotoPerfil() {
 
   return (
     <PhoneShell>
-      <div className="top-bar">
-        <button className="back-btn" onClick={() => navigate('/perfil')}>
-          ←
-        </button>
-        <span className="logo-wordmark sm">Foto de perfil</span>
-      </div>
+      <TopBar back="/perfil" title="Foto de perfil" />
       <p className="screen-sub">Defina ou altere a foto exibida no seu perfil.</p>
 
-      <div className="avatar" style={{ width: 140, height: 140, fontSize: '2.6rem' }}>
-        {user.photoUrl ? <img src={user.photoUrl} alt="" /> : initial}
-        <button className="avatar-edit" type="button" onClick={() => inputRef.current?.click()}>
-          Escolher
+      <div className="avatar" style={{ ['--size' as string]: '148px' }}>
+        <div className="avatar-inner">
+          {user.photoUrl ? <img src={user.photoUrl} alt="" /> : initial}
+        </div>
+        <button
+          className="avatar-edit"
+          type="button"
+          aria-label="Escolher foto"
+          onClick={() => inputRef.current?.click()}
+        >
+          <Icon name="camera" size={18} />
         </button>
       </div>
 

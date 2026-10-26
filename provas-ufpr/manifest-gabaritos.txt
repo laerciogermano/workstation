@@ -1,0 +1,14 @@
+PS2026	https://servicos.nc.ufpr.br/documentos/ps2026/provas/definitivo/Geral.pdf	/Users/laerciogermano/Documents/works/provas-ufpr/PS2026/gabaritos/gabarito-definitivo-Geral.pdf
+PS2026	https://servicos.nc.ufpr.br/documentos/ps2026/provas/definitivo/relatorio-anuladas-alteradas.pdf	/Users/laerciogermano/Documents/works/provas-ufpr/PS2026/gabaritos/relatorio-anuladas-alteradas.pdf
+PS2026	https://servicos.nc.ufpr.br/documentos/ps2026/provas/provisorio/Geral.pdf	/Users/laerciogermano/Documents/works/provas-ufpr/PS2026/gabaritos/gabarito-preliminar-Geral.pdf
+PS2025	https://servicos.nc.ufpr.br/documentos/ps2025/provas/Geral.pdf	/Users/laerciogermano/Documents/works/provas-ufpr/PS2025/gabaritos/gabarito-geral.pdf
+PS2025	https://servicos.nc.ufpr.br/documentos/ps2025/provas/anuladas_alteradas_ps2025.pdf	/Users/laerciogermano/Documents/works/provas-ufpr/PS2025/gabaritos/anuladas_alteradas_ps2025.pdf
+PS2025	https://servicos.nc.ufpr.br/documentos/ps2025/provas/definitivo/Geral.pdf	/Users/laerciogermano/Documents/works/provas-ufpr/PS2025/gabaritos/gabarito-definitivo-Geral.pdf
+PS2025	https://servicos.nc.ufpr.br/documentos/ps2025/provas/definitivo/anuladas_alteradas_ps2025.pdf	/Users/laerciogermano/Documents/works/provas-ufpr/PS2025/gabaritos/anuladas_alteradas_ps2025.pdf
+PS2024	https://servicos.nc.ufpr.br/documentos/ps2024/provas/Geral.pdf	/Users/laerciogermano/Documents/works/provas-ufpr/PS2024/gabaritos/gabarito-geral.pdf
+PS2023	https://servicos.nc.ufpr.br/documentos/ps2023/provas/Geral.pdf	/Users/laerciogermano/Documents/works/provas-ufpr/PS2023/gabaritos/gabarito-geral.pdf
+PS2022	https://servicos.nc.ufpr.br/documentos/PS2022/provas/Geral.pdf	/Users/laerciogermano/Documents/works/provas-ufpr/PS2022/gabaritos/gabarito-geral.pdf
+PS2022	https://servicos.nc.ufpr.br/documentos/ps2022/provas/Geral.pdf	/Users/laerciogermano/Documents/works/provas-ufpr/PS2022/gabaritos/gabarito-geral.pdf
+PS2017	http://www.nc.ufpr.br/concursos_institucionais/ufpr/ps2017/provas2fase/gabarito_fisica_2017.pdf	/Users/laerciogermano/Documents/works/provas-ufpr/PS2017/gabaritos/gabarito_fisica_2017.pdf
+PS2010	http://www.nc.ufpr.br/concursos_institucionais/ufpr/ps2010/provas1fase/PS2010gabarito_geral.pdf	/Users/laerciogermano/Documents/works/provas-ufpr/PS2010/gabaritos/PS2010gabarito_geral.pdf
+PS2006	http://www.nc.ufpr.br/concursos_institucionais/ufpr/ps2006/prova_1fase/ps2006_gabarito1fase.pdf	/Users/laerciogermano/Documents/works/provas-ufpr/PS2006/gabaritos/ps2006_gabarito1fase.pdf

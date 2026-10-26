@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#05070f" />
+    <meta name="theme-color" content="#04050b" />
     <meta
       name="description"
       content="RoleGo — Viva o Rolê. Em breve: descubra eventos perto de você."
@@ -12,17 +12,20 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,800;1,800&display=swap"
       rel="stylesheet"
     />
     <style>
+      /* Tokens RoleGo v1 — ../../marca/identidade-visual-rolego-v1.html */
       :root {
-        --bg: #05070f;
-        --text: #ffffff;
-        --text-muted: #9ca3af;
-        --gradient: linear-gradient(135deg, #8749ff 0%, #452eff 100%);
-        --cyan: #00e5e5;
-        --font: 'Poppins', system-ui, sans-serif;
+        --rg-bg: #04050b;
+        --rg-text-soft: #c9cdd8;
+        --rg-cyan: #00e5e5;
+        --rg-grad: linear-gradient(120deg, #8749ff 0%, #452eff 100%);
+            --rg-grad-cta: linear-gradient(90deg, #00e5e5 0%, #8749ff 100%);
+        --rg-grad-line: linear-gradient(90deg, #00e5e5 0%, #8749ff 55%, #ff1f7a 100%);
+        --rg-font-head: 'Poppins', system-ui, sans-serif;
+        --rg-font-body: 'Poppins', system-ui, sans-serif;
       }
 
       * {
@@ -35,13 +38,22 @@
         min-height: 100%;
       }
 
+      /* Fundo com estrelas + dois glows (violeta e ciano) */
       body {
-        font-family: var(--font);
-        color: var(--text);
+        font-family: var(--rg-font-body);
+        color: #fff;
         background:
-          radial-gradient(ellipse at 20% 0%, rgba(135, 73, 255, 0.22), transparent 50%),
-          radial-gradient(ellipse at 85% 100%, rgba(69, 46, 255, 0.2), transparent 45%),
-          var(--bg);
+          radial-gradient(1.6px 1.6px at 8% 14%, rgba(255, 204, 0, 0.8), transparent),
+          radial-gradient(1.2px 1.2px at 23% 72%, rgba(255, 255, 255, 0.55), transparent),
+          radial-gradient(1.4px 1.4px at 41% 9%, rgba(0, 229, 229, 0.7), transparent),
+          radial-gradient(1.2px 1.2px at 57% 86%, rgba(255, 255, 255, 0.45), transparent),
+          radial-gradient(1.6px 1.6px at 69% 22%, rgba(255, 204, 0, 0.7), transparent),
+          radial-gradient(1.2px 1.2px at 83% 63%, rgba(135, 73, 255, 0.9), transparent),
+          radial-gradient(1.4px 1.4px at 94% 38%, rgba(255, 255, 255, 0.5), transparent),
+          radial-gradient(1.2px 1.2px at 3% 90%, rgba(255, 31, 122, 0.7), transparent),
+          radial-gradient(50% 50% at 50% 38%, rgba(101, 57, 203, 0.45), transparent 70%),
+          radial-gradient(40% 40% at 90% 100%, rgba(0, 184, 196, 0.2), transparent 70%),
+          var(--rg-bg);
         -webkit-font-smoothing: antialiased;
         min-height: 100vh;
         display: grid;
@@ -54,68 +66,140 @@
         max-width: 28rem;
       }
 
-      .logo {
-        font-size: clamp(2.75rem, 10vw, 4rem);
+      /* Símbolo: "R" no gradiente de marca + ping ciano */
+      .sym {
+        --s: 84px;
+        position: relative;
+        width: var(--s);
+        height: var(--s);
+        margin: 0 auto 1.75rem;
+        border-radius: calc(var(--s) * 0.26);
+        background: var(--rg-grad);
+        display: grid;
+        place-items: center;
+        box-shadow:
+          0 10px 30px rgba(69, 46, 255, 0.35),
+          inset 0 1px 0 rgba(255, 255, 255, 0.25);
+      }
+
+      .sym span {
+        font-family: var(--rg-font-head);
         font-weight: 800;
-        letter-spacing: -0.03em;
+        font-size: calc(var(--s) * 0.6);
         line-height: 1;
-        background: var(--gradient);
-        -webkit-background-clip: text;
-        background-clip: text;
-        color: transparent;
-        margin: 0;
+        letter-spacing: -0.04em;
+        transform: translate(-4%, 2%);
+      }
+
+      .sym i {
+        position: absolute;
+        right: 20%;
+        top: 20%;
+        width: calc(var(--s) * 0.15);
+        height: calc(var(--s) * 0.15);
+        border-radius: 50%;
+        background: var(--rg-cyan);
+        box-shadow:
+          0 0 0 calc(var(--s) * 0.04) rgba(0, 229, 229, 0.28),
+          0 0 12px var(--rg-cyan);
+      }
+
+      /* Wordmark: "Role" branco + "Go" neon, o "o" vira pin com o ping do ícone */
+      .logo {
+        display: block;
+        width: min(80vw, 22rem);
+        height: auto;
+        margin: 0 auto;
+        overflow: visible;
+        filter: drop-shadow(0 0 14px rgba(135, 73, 255, 0.55)) drop-shadow(0 0 4px rgba(0, 229, 229, 0.35));
+      }
+
+      .logo text {
+        font-family: var(--rg-font-head);
+        font-size: 100px;
+        font-weight: 800;
+        font-style: italic;
+        letter-spacing: -2px;
       }
 
       .slogan {
-        margin: 1rem 0 0.35rem;
-        font-size: 1.05rem;
-        font-weight: 600;
-        letter-spacing: 0.08em;
+        margin: 0.9rem 0 0;
+        font-family: var(--rg-font-head);
+        font-size: 0.9rem;
+        font-weight: 800;
+        font-style: italic;
+        letter-spacing: 0.16em;
         text-transform: uppercase;
-        background: var(--gradient);
-        -webkit-background-clip: text;
-        background-clip: text;
-        color: transparent;
+        color: var(--rg-cyan);
+      }
+
+      .uline {
+        width: 120px;
+        height: 3px;
+        margin: 1.4rem auto;
+        border-radius: 2px;
+        background: var(--rg-grad-line);
+        box-shadow: 0 0 10px rgba(0, 229, 229, 0.5);
       }
 
       .tagline {
         margin: 0;
-        color: var(--text-muted);
-        font-size: 0.95rem;
-        font-weight: 500;
-        line-height: 1.5;
+        color: var(--rg-text-soft);
+        font-size: 1rem;
+        line-height: 1.55;
       }
 
+      /* "Em breve": chip com contorno no gradiente de ação */
       .badge {
         display: inline-block;
-        margin-top: 2rem;
-        padding: 0.65rem 1.35rem;
-        border-radius: 999px;
-        font-size: 0.8rem;
-        font-weight: 700;
+        margin: 2rem 0 0;
+        padding: 0.55rem 1.4rem;
+        border-radius: 12px;
+        border: 2px solid transparent;
+        background:
+          linear-gradient(#06070f, #06070f) padding-box,
+          var(--rg-grad-cta) border-box;
+        box-shadow:
+          0 0 18px rgba(0, 229, 229, 0.3),
+          0 0 18px rgba(135, 73, 255, 0.3);
+        font-family: var(--rg-font-head);
+        font-size: 0.85rem;
+        font-weight: 800;
         letter-spacing: 0.12em;
         text-transform: uppercase;
-        color: var(--text);
-        background: var(--gradient);
-        box-shadow: 0 0 32px rgba(135, 73, 255, 0.35);
       }
 
       .hint {
         margin: 1.5rem 0 0;
-        color: var(--text-muted);
-        font-size: 0.85rem;
-        font-weight: 500;
+        color: var(--rg-text-soft);
+        font-size: 0.9rem;
       }
 
       .hint span {
-        color: var(--cyan);
+        color: var(--rg-cyan);
+        font-weight: 600;
       }
     </style>
   </head>
   <body>
     <main>
-      <h1 class="logo">RoleGo</h1>
+      <div class="sym" aria-hidden="true"><span>R</span><i></i></div>
+      <h1 style="margin: 0">
+        <svg class="logo" viewBox="0 0 354 108" role="img" aria-label="RoleGo">
+          <defs>
+            <linearGradient id="go" gradientUnits="userSpaceOnUse" x1="214.11" x2="349.41" y1="0" y2="0">
+              <stop offset="0" stop-color="#00E5E5" />
+              <stop offset="0.5" stop-color="#8749FF" />
+              <stop offset="1" stop-color="#FF1F7A" />
+            </linearGradient>
+          </defs>
+          <text y="86"><tspan fill="#fff">Role</tspan><tspan fill="url(#go)">Go</tspan></text>
+          <path d="M342.2 70.9 L312.1 106 L291.9 70.9 Z" fill="url(#go)" stroke="url(#go)" stroke-width="1" stroke-linejoin="round" />
+          <circle cx="319.1" cy="57.5" r="4.5" fill="#00E5E5" />
+        </svg>
+      </h1>
       <p class="slogan">Viva o Rolê</p>
+      <div class="uline"></div>
       <p class="tagline">Chega de sofrer para decidir onde sair.</p>
       <p class="badge">Em breve</p>
       <p class="hint">Descubra o que está rolando <span>perto de você</span>.</p>

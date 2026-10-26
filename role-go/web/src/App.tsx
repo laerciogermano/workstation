@@ -12,10 +12,12 @@ import { Perfil } from './screens/Perfil'
 import { EditarPerfil } from './screens/EditarPerfil'
 import { FotoPerfil } from './screens/FotoPerfil'
 import { usePrototype } from './state/PrototypeContext'
+import { BrandSymbol, Wordmark } from './components/Brand'
 
 const NAV = [
   {
     group: 'Conta',
+    bar: 'var(--rg-violet)',
     items: [
       { to: '/', label: 'Splash' },
       { to: '/cadastro', label: 'Cadastro' },
@@ -25,6 +27,7 @@ const NAV = [
   },
   {
     group: 'Onboarding',
+    bar: 'var(--rg-cyan)',
     items: [
       { to: '/onboarding/preferencias', label: 'Preferências' },
       { to: '/onboarding/cidade', label: 'Cidade' },
@@ -34,6 +37,7 @@ const NAV = [
   },
   {
     group: 'App (pós E01)',
+    bar: 'var(--rg-magenta)',
     items: [
       { to: '/home', label: 'Home (stub E02)' },
       { to: '/perfil', label: 'Perfil' },
@@ -49,12 +53,19 @@ export default function App() {
   return (
     <div className="app-shell">
       <aside className="nav-panel">
-        <h1>RoleGo · E01</h1>
-        <p>Protótipo frontend — conta, onboarding e perfil.</p>
+        <div className="nav-lockup">
+          <BrandSymbol size={36} />
+          <Wordmark size={24} />
+          <span className="chipn">E01</span>
+        </div>
+        <div className="uline" />
+        <p>Protótipo frontend: conta, onboarding e perfil.</p>
         <nav>
           {NAV.map((section) => (
             <div key={section.group}>
-              <div className="nav-group">{section.group}</div>
+              <div className="nav-group" style={{ ['--bar' as string]: section.bar }}>
+                {section.group}
+              </div>
               {section.items.map((item) => (
                 <NavLink
                   key={item.to}

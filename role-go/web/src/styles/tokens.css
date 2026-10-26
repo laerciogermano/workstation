@@ -1,21 +1,41 @@
+/* Tokens da marca RoleGo v1 — fonte: ../../marca/identidade-visual-rolego-v1.html */
 :root {
-  --bg: #05070f;
-  --bg-elevated: #0a0f22;
-  --surface: #10162b;
-  --surface-2: #151525;
-  --text: #ffffff;
-  --text-muted: #9ca3af;
-  --border: rgba(156, 163, 175, 0.35);
-  --purple: #8749ff;
-  --blue: #452eff;
-  --gradient: linear-gradient(135deg, #8749ff 0%, #452eff 100%);
-  --cyan: #00e5e5;
-  --magenta: #ff1f7a;
-  --green: #00ff00;
-  --yellow: #ffcc00;
-  --radius-pill: 999px;
-  --radius-md: 16px;
-  --font: 'Poppins', system-ui, sans-serif;
+  --rg-bg: #04050b;
+  --rg-bg-slide: #09091a;
+  --rg-screen: #000;
+  --rg-surface: #000;
+  --rg-surface-2: #0f0f13;
+  --rg-surface-3: #1a1a20;
+  --rg-line: #1e1e25;
+  --rg-line-strong: #3a4057;
+  --rg-text: #ffffff;
+  --rg-text-soft: #c9cdd8;
+  --rg-muted: #9ca3af;
+  --rg-faint: #6b7286;
+
+  --rg-violet: #8749ff;
+  --rg-violet-text: #b79bff;
+  --rg-violet-deep: #6539cb;
+  --rg-blue: #452eff;
+
+  --rg-cyan: #00e5e5;
+  --rg-magenta: #ff1f7a;
+  --rg-green: #00ff00;
+  --rg-yellow: #ffcc00;
+
+  --rg-grad: linear-gradient(120deg, #8749ff 0%, #452eff 100%);
+  --rg-grad-logo: linear-gradient(100deg, #b13cff 0%, #8749ff 42%, #4f3bff 100%);
+  --rg-grad-neon: linear-gradient(120deg, #ff1f7a 0%, #8749ff 50%, #00e5e5 100%);
+  --rg-grad-cta: linear-gradient(90deg, #00e5e5 0%, #8749ff 100%);
+  --rg-grad-go: linear-gradient(90deg, #00e5e5 0%, #8749ff 100%);
+  --rg-grad-line: linear-gradient(90deg, #00e5e5 0%, #8749ff 55%, #ff1f7a 100%);
+
+  --rg-radius: 16px;
+  --rg-radius-sm: 12px;
+  --rg-pill: 999px;
+  --rg-font-head: 'Poppins', system-ui, 'Segoe UI', sans-serif;
+  --rg-font-body: 'Poppins', system-ui, 'Segoe UI', sans-serif;
+
   --phone-w: 390px;
   --phone-h: 844px;
 }

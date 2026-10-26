@@ -1,6 +1,8 @@
 import { useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { PhoneShell } from '../components/PhoneShell'
+import { TopBar } from '../components/Brand'
+import { Field } from '../components/Field'
 import { usePrototype } from '../state/PrototypeContext'
 
 export function Login() {
@@ -26,48 +28,37 @@ export function Login() {
 
   return (
     <PhoneShell>
-      <div className="top-bar">
-        <button className="back-btn" onClick={() => navigate('/')}>
-          ←
-        </button>
-        <span className="logo-wordmark sm">RoleGo</span>
-      </div>
+      <TopBar back="/" />
       <h2 className="screen-title">Entrar</h2>
       <p className="screen-sub">Entre na sua conta com e-mail ou social.</p>
 
       <form onSubmit={submit}>
-        <div className="field">
-          <label>E-mail</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            placeholder="voce@email.com"
-            autoComplete="email"
-          />
-        </div>
-        <div className="field">
-          <label>Senha</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            placeholder="••••••"
-          />
-        </div>
+        <Field
+          label="E-mail"
+          icon="mail"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          placeholder="voce@email.com"
+          autoComplete="email"
+        />
+        <Field
+          label="Senha"
+          icon="lock"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          placeholder="••••••"
+        />
         <button className="btn btn-primary" type="submit">
           Entrar
         </button>
       </form>
 
       <p className="link-row">
-        <button
-          className="btn-ghost"
-          style={{ width: 'auto', display: 'inline', padding: 0, color: 'var(--cyan)' }}
-          onClick={() => navigate('/recuperar-senha')}
-        >
+        <button className="link" type="button" onClick={() => navigate('/recuperar-senha')}>
           Esqueci minha senha
         </button>
       </p>
@@ -77,18 +68,14 @@ export function Login() {
         <button className="btn btn-secondary" type="button" onClick={() => goIn()}>
           Login com Google
         </button>
-        <button className="btn btn-secondary" type="button" onClick={() => goIn()}>
+        <button className="btn btn-secondary m" type="button" onClick={() => goIn()}>
           Login com Apple
         </button>
       </div>
 
       <p className="link-row">
         Novo aqui?{' '}
-        <button
-          className="btn-ghost"
-          style={{ width: 'auto', display: 'inline', padding: 0, color: 'var(--cyan)' }}
-          onClick={() => navigate('/cadastro')}
-        >
+        <button className="link" type="button" onClick={() => navigate('/cadastro')}>
           Criar conta
         </button>
       </p>

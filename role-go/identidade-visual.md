@@ -75,7 +75,7 @@ Cada categoria de feature usa uma cor neon fixa como “assinatura” (barra lat
 ## 5. Logo
 
 - Wordmark **“RoleGo”** em Poppins ExtraBold Itálico.
-- “**Role**” em branco; “**Go**” em gradiente ciano → violeta → magenta (`#00E5E5 → #8749FF → #FF1F7A`). O “o” é um anel neon com o ping ciano no centro (o mesmo do ícone).
+- “**Role**” em branco; “**Go**” em gradiente ciano → violeta → magenta (`#00E5E5 → #8749FF → #FF1F7A`). O “o” vira um pin de localização: a letra da própria Poppins com uma ponta embaixo, e o ping ciano do ícone no miolo.
 - Ícone do app: “R” branco sobre o gradiente roxo → azul, com o ping ciano.
 - Usado sozinho (splash) ou acompanhado do slogan: **“Viva o Rolê”**
 - Linha de apoio (proposta de valor): *“Chega de sofrer para decidir onde sair.”*

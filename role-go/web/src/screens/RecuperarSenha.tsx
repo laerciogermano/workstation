@@ -1,6 +1,9 @@
 import { useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { PhoneShell } from '../components/PhoneShell'
+import { TopBar } from '../components/Brand'
+import { Field } from '../components/Field'
+import { Icon } from '../components/Icon'
 
 export function RecuperarSenha() {
   const navigate = useNavigate()
@@ -14,45 +17,38 @@ export function RecuperarSenha() {
 
   return (
     <PhoneShell>
-      <div className="top-bar">
-        <button className="back-btn" onClick={() => navigate('/login')}>
-          ←
-        </button>
-        <span className="logo-wordmark sm">RoleGo</span>
-      </div>
+      <TopBar back="/login" />
       <h2 className="screen-title">Recuperar acesso</h2>
       <p className="screen-sub">
         Enviaremos um link de redefinição de senha para o e-mail da conta.
       </p>
 
       <form onSubmit={submit}>
-        <div className="field">
-          <label>E-mail</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            placeholder="voce@email.com"
-          />
-        </div>
+        <Field
+          label="E-mail"
+          icon="mail"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          placeholder="voce@email.com"
+        />
         <button className="btn btn-primary" type="submit">
           Enviar link
         </button>
       </form>
 
       {sent && (
-        <div className="toast">
-          Link de redefinição enviado para {email} (protótipo — sem backend).
+        <div className="toast" role="status">
+          <Icon name="mail" />
+          <span>
+            Link de redefinição enviado para <b className="hl-c">{email}</b> (protótipo, sem backend).
+          </span>
         </div>
       )}
 
       <p className="link-row">
-        <button
-          className="btn-ghost"
-          style={{ width: 'auto', display: 'inline', padding: 0, color: 'var(--cyan)' }}
-          onClick={() => navigate('/login')}
-        >
+        <button className="link" type="button" onClick={() => navigate('/login')}>
           Voltar ao login
         </button>
       </p>

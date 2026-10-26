@@ -15,10 +15,10 @@
 :root{
   --rg-bg:#04050B;
   --rg-bg-slide:#09091A;
-  --rg-surface:#15151B;
-  --rg-surface-2:#1C1C23;
-  --rg-surface-3:#24242C;
-  --rg-line:#2A2A33;
+  --rg-surface:#000000;
+  --rg-surface-2:#0F0F13;
+  --rg-surface-3:#1A1A20;
+  --rg-line:#1E1E25;
   --rg-text:#FFFFFF;
   --rg-muted:#9CA3AF;
   --rg-faint:#6B7286;
@@ -108,7 +108,7 @@ h3{font-size:15px;font-weight:700;line-height:1.3;margin-bottom:6px}
 .g3{grid-template-columns:repeat(3,1fr)}
 .g4{grid-template-columns:repeat(4,1fr)}
 .g5{grid-template-columns:repeat(5,1fr)}
-.card{border-radius:var(--rg-radius);padding:16px;background:var(--rg-surface);border:0}
+.card{border-radius:var(--rg-radius);padding:16px;background:var(--rg-surface);border:1px solid var(--rg-line)}
 .card.acc{border-left:3px solid var(--acc,var(--rg-violet))}
 .card .ic{color:var(--acc,var(--rg-violet));margin-bottom:8px}
 .card .ic svg.i{width:22px;height:22px;filter:drop-shadow(0 0 5px currentColor)}
@@ -156,7 +156,7 @@ ul.dots li::before{content:"";position:absolute;left:0;top:.6em;width:6px;height
 .badge svg.i{width:12px;height:12px}
 
 /* ---------- cor ---------- */
-.sw{border-radius:var(--rg-radius);overflow:hidden;background:var(--rg-surface);border:0;display:flex;flex-direction:column}
+.sw{border-radius:var(--rg-radius);overflow:hidden;background:var(--rg-surface);border:1px solid var(--rg-line);display:flex;flex-direction:column}
 .sw .c{height:58px;position:relative}
 .sw .t{padding:10px 12px 12px}
 .sw b{font-family:var(--rg-font-head);font-size:13px;display:block}
@@ -440,7 +440,7 @@ table.t td{padding:7px 8px;border-bottom:1px solid #191F36;vertical-align:middle
       <div class="grid g5" style="gap:10px">
         <div class="sw"><div class="c" style="height:40px;background:#05070F;border-bottom:1px solid var(--rg-line)"></div><div class="t"><b>Fundo</b><code>#04050B</code></div></div>
         <div class="sw"><div class="c" style="height:40px;background:#09091A;border-bottom:1px solid var(--rg-line)"></div><div class="t"><b>Fundo slide</b><code>#09091A</code></div></div>
-        <div class="sw"><div class="c" style="height:40px;background:#15151B;border-bottom:1px solid var(--rg-line)"></div><div class="t"><b>Surface</b><code>#15151B</code></div></div>
+        <div class="sw"><div class="c" style="height:40px;background:#000;border-bottom:1px solid var(--rg-line)"></div><div class="t"><b>Card</b><code>#000000</code></div></div>
         <div class="sw"><div class="c" style="height:40px;background:#FFFFFF"></div><div class="t"><b>Texto</b><code>#FFFFFF</code></div></div>
         <div class="sw"><div class="c" style="height:40px;background:#9CA3AF"></div><div class="t"><b>Secundário</b><code>#9CA3AF</code></div></div>
       </div>
@@ -448,7 +448,7 @@ table.t td{padding:7px 8px;border-bottom:1px solid #191F36;vertical-align:middle
     <div>
       <div class="label">Proporção de uso por tela</div>
       <div style="display:flex;height:40px;border-radius:12px;overflow:hidden;border:1px solid var(--rg-line)">
-        <div style="flex:70;background:#04050B"></div><div style="flex:15;background:#15151B"></div><div style="flex:10;background:var(--rg-grad)"></div><div style="flex:5;background:#00E5E5"></div>
+        <div style="flex:70;background:#04050B"></div><div style="flex:15;background:#000;border-left:1px solid var(--rg-line)"></div><div style="flex:10;background:var(--rg-grad)"></div><div style="flex:5;background:#00E5E5"></div>
       </div>
       <div style="display:flex;font-size:10.5px;color:var(--rg-muted);margin-top:6px"><span style="flex:70">70% fundo</span><span style="flex:15">15%</span><span style="flex:10">10%</span><span style="flex:5">5%</span></div>
       <p class="small muted" style="margin-top:6px">Fundo domina, surface organiza, gradiente chama a ação e o neon pontua.</p>

@@ -22,7 +22,7 @@ Tema **dark** (fundo quase preto/azul-marinho), com **acentos neon** em gradient
 |-----|----------------|------------|
 | Fundo principal (telas do app) | `#050716` – `#0A0F22` | Quase preto, com leve tom azulado |
 | Fundo principal (slides) | `#09091A` | Mesma família, tela cheia |
-| Superfície / card | `#15151B`, `#1C1C23`, `#24242C` | Grafite neutro sólido, sem borda; dentro do app as telas e cards são preto `#000` com contorno neon |
+| Superfície / card | `#000000` (card), `#0F0F13`, `#1A1A20` | Cards em preto sólido com fio neutro `#1E1E25`; dentro do app, telas e cards em preto `#000` com contorno neon |
 | Texto principal | `#FFFFFF` | Títulos e labels |
 | Texto secundário | cinza claro (~`#9CA3AF`) | Subtítulos, descrições, placeholders |
 
@@ -87,7 +87,7 @@ Cada categoria de feature usa uma cor neon fixa como “assinatura” (barra lat
 
 ```
 Fundo:              #04050B (telas/banners)  /  #09091A (slides)
-Surface:            #15151B / #1C1C23 (manual) · #000 (telas do app)
+Card:               #000000 (borda #1E1E25) · campos #0F0F13
 Gradiente primário: #8749FF → #452EFF (roxo → azul) — logo/ícone
 Gradiente de ação:  #00E5E5 → #8749FF (ciano → violeta) — botões
 Acento ciano:       #00E5E5 (aprox.)

@@ -76,7 +76,8 @@ Cada categoria de feature usa uma cor neon fixa como “assinatura” (barra lat
 
 - Wordmark **“RoleGo”**, sem serifa, bold.
 - “**Role**” em tom roxo/magenta do gradiente; “**Go**” em tom azul/ciano do gradiente — leitura contínua em um único gradiente diagonal.
-- Usado sozinho (splash) ou acompanhado do slogan: *“Chega de sofrer para decidir onde sair.”*
+- Usado sozinho (splash) ou acompanhado do slogan: **“Viva o Rolê”**
+- Linha de apoio (proposta de valor): *“Chega de sofrer para decidir onde sair.”*
 
 ---
 

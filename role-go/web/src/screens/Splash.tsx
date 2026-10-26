@@ -9,7 +9,23 @@ export function Splash() {
       <div className="spacer" />
       <div style={{ textAlign: 'center', marginBottom: 32 }}>
         <div className="logo-wordmark">RoleGo</div>
-        <p className="screen-sub" style={{ marginTop: 16 }}>
+        <p
+          style={{
+            marginTop: 16,
+            marginBottom: 8,
+            fontSize: '1.15rem',
+            fontWeight: 600,
+            letterSpacing: '0.04em',
+            textTransform: 'uppercase',
+            background: 'var(--gradient)',
+            WebkitBackgroundClip: 'text',
+            backgroundClip: 'text',
+            color: 'transparent',
+          }}
+        >
+          Viva o Rolê
+        </p>
+        <p className="screen-sub" style={{ marginTop: 0 }}>
           Chega de sofrer para decidir onde sair.
         </p>
       </div>

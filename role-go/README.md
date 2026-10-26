@@ -236,4 +236,4 @@ Telas navegáveis de conta, onboarding e perfil: [`web/README.md`](web/README.md
 
 ## Deploy
 
-Em breve em `rolego.com.br` (nginx Contabo): [`deploy/README.md`](deploy/README.md).
+Protótipo E01 em https://rolego.com.br (nginx Contabo): [`deploy/README.md`](deploy/README.md).

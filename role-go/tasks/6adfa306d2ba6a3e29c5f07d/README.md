@@ -30,13 +30,11 @@ Espelha a descrição do card Trello.
 - [`../../input/referencia-marca/identidade-visual-conect-tech-v1.zip`](../../input/referencia-marca/identidade-visual-conect-tech-v1.zip)
 - [`../../input/referencia-marca/assets-conectmax/`](../../input/referencia-marca/assets-conectmax/) — assets do molde (não copiar marca Conect)
 
-## Entrega
+## Entrega esperada
 
-Feito — card em **done**. Arquivos em [`../../marca/README.md`](../../marca/README.md):
+`identidade-visual-rolego-v1.html` (+ PDF/ZIP opcionais), anexada no card.
 
-- `identidade-visual-rolego-v1.html`
-- `identidade-visual-rolego-v1.pdf`
-- `identidade-visual-rolego-v1.zip` (anexados no card)
+> Entrega v1 anterior removida do card e do repo (qualidade insuficiente). Card de volta em **todo**.
 
 ## Rollback
 

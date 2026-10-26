@@ -13,6 +13,7 @@ Espelha a descrição do card Trello.
 - [`../../identidade-visual.md`](../../identidade-visual.md) — paleta, tipografia e padrões RoleGo
 - [`../../README.md`](../../README.md) — visão (markdown)
 - [`../../epics.md`](../../epics.md) — épicos
+- [`../../epics.pdf`](../../epics.pdf) — épicos (PDF; anexado no card)
 
 ### Documentos em `input/`
 

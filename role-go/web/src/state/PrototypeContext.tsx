@@ -6,8 +6,6 @@ import {
   type ReactNode,
 } from 'react'
 
-export type Friend = { id: string; name: string; status: 'online' | 'offline' }
-
 export type UserProfile = {
   name: string
   email: string
@@ -23,19 +21,10 @@ export type UserProfile = {
 
 type PrototypeState = {
   user: UserProfile
-  friends: Friend[]
   updateUser: (patch: Partial<UserProfile>) => void
-  setFriends: (friends: Friend[]) => void
   logout: () => void
   resetDemo: () => void
 }
-
-const defaultFriends: Friend[] = [
-  { id: '1', name: 'Maria', status: 'online' },
-  { id: '2', name: 'João', status: 'online' },
-  { id: '3', name: 'Ana', status: 'offline' },
-  { id: '4', name: 'Pedro', status: 'online' },
-]
 
 const defaultUser: UserProfile = {
   name: '',
@@ -54,26 +43,20 @@ const Ctx = createContext<PrototypeState | null>(null)
 
 export function PrototypeProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<UserProfile>(defaultUser)
-  const [friends, setFriends] = useState<Friend[]>(defaultFriends)
 
   const value = useMemo<PrototypeState>(
     () => ({
       user,
-      friends,
       updateUser: (patch) => setUser((u) => ({ ...u, ...patch })),
-      setFriends,
       logout: () =>
         setUser((u) => ({
           ...u,
           loggedIn: false,
           onboarded: false,
         })),
-      resetDemo: () => {
-        setUser(defaultUser)
-        setFriends(defaultFriends)
-      },
+      resetDemo: () => setUser(defaultUser),
     }),
-    [user, friends],
+    [user],
   )
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>

@@ -49,14 +49,13 @@ Protótipo React das telas: [`web/README.md`](web/README.md) (`npm run dev` em `
 
 ### Perfil
 - Definir / alterar foto de perfil
-- Exibir contagem e lista de amigos feitos no app
 - Editar nome completo
 - Editar e-mail
 - Editar telefone (opcional; não exigido no cadastro nesta etapa)
 
 ### Fora de escopo deste épico
 - Descoberta/publicação de eventos → [E02](#e02--publicação-e-descoberta-de-eventos)
-- Curtidas, direct e convite a amigo no evento → social em [E02](#e02--publicação-e-descoberta-de-eventos) / jornada
+- Amigos, curtidas, direct e convite a amigo no evento → social em [E02](#e02--publicação-e-descoberta-de-eventos) / jornada
 - Histórico de eventos, fotos por evento e selos/status no perfil → [E03](#e03--ciclo-de-vida-do-evento) / [E06](#e06--gamificação-e-rolego-wallet)
 - Avaliação anfitrião–convidado → [E11](#e11--reputação-anfitriãoconvidado)
 

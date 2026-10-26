@@ -11,7 +11,6 @@ import { Home } from './screens/Home'
 import { Perfil } from './screens/Perfil'
 import { EditarPerfil } from './screens/EditarPerfil'
 import { FotoPerfil } from './screens/FotoPerfil'
-import { Amigos } from './screens/Amigos'
 import { usePrototype } from './state/PrototypeContext'
 
 const NAV = [
@@ -40,7 +39,6 @@ const NAV = [
       { to: '/perfil', label: 'Perfil' },
       { to: '/perfil/editar', label: 'Editar perfil' },
       { to: '/perfil/foto', label: 'Foto' },
-      { to: '/amigos', label: 'Amigos' },
     ],
   },
 ]
@@ -93,7 +91,6 @@ export default function App() {
         <Route path="/perfil" element={<Perfil />} />
         <Route path="/perfil/editar" element={<EditarPerfil />} />
         <Route path="/perfil/foto" element={<FotoPerfil />} />
-        <Route path="/amigos" element={<Amigos />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </div>

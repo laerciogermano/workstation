@@ -30,7 +30,6 @@ Abre em http://localhost:5173 — menu lateral para pular entre telas.
 | `/perfil` | Perfil + logout |
 | `/perfil/editar` | Nome, e-mail, telefone |
 | `/perfil/foto` | Foto de perfil |
-| `/amigos` | Lista/contagem de amigos |
 
 ## Antes → depois / rollback
 
@@ -38,4 +37,5 @@ Abre em http://localhost:5173 — menu lateral para pular entre telas.
 - **Depois:** protótipo navegável em `web/`.
 - **Cadastro:** e-mail + senha + confirmar senha; sem nome/celular no formulário (antes: nome + telefone opcional).
 - **Raio:** slider contínuo 1–100 km (antes: chips 5 / 20 / 50 km).
-- **Voltar:** remover a pasta `web/` (ou reverter o commit); no cadastro, restaurar campos nome/telefone; no raio, voltar aos chips fixos.
+- **Amigos:** removidos do E01/perfil (antes: lista e contagem no perfil); social fica fora de escopo.
+- **Voltar:** remover a pasta `web/` (ou reverter o commit); no cadastro, restaurar campos nome/telefone; no raio, voltar aos chips fixos; restaurar rota `/amigos` se necessário.

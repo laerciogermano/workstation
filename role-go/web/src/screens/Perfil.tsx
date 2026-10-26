@@ -5,7 +5,7 @@ import { usePrototype } from '../state/PrototypeContext'
 
 export function Perfil() {
   const navigate = useNavigate()
-  const { user, friends, logout } = usePrototype()
+  const { user, logout } = usePrototype()
   const initial = (user.name || 'V').trim().charAt(0).toUpperCase()
 
   function handleLogout() {
@@ -36,11 +36,7 @@ export function Perfil() {
         {user.phone ? ` · ${user.phone}` : ''}
       </p>
 
-      <div className="stat-row">
-        <button className="stat-card" style={{ cursor: 'pointer' }} onClick={() => navigate('/amigos')}>
-          <strong>{friends.length}</strong>
-          <span>Amigos</span>
-        </button>
+      <div className="stat-row" style={{ gridTemplateColumns: '1fr' }}>
         <div className="stat-card">
           <strong>{user.radiusKm}</strong>
           <span>km raio</span>

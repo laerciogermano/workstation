@@ -4,6 +4,12 @@
 - **URL:** https://trello.com/c/S7jWwUbC
 - **Board:** [RoleGo](https://trello.com/b/Qe6mVdfL/rolego) · lista `todo`
 
+## Palavras-chave (direção visual)
+
+- **Localização** — pin, mapa, “onde sair”, descoberta de lugar
+- **Drinks** — vida noturna, bar, copo/taça, rolê
+- **Pessoas** — encontro, grupo, social, match / sair junto
+
 ## Insumos
 
 Espelha a descrição do card Trello. Identidade visual v1 anexada no card.

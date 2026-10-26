@@ -28,7 +28,7 @@ Cada épico agrupa um conjunto coerente de valor; histórias e BDD vêm depois.
 
 ![Capa do épico E01 — Conta, onboarding e perfil](assets/epic-e01-cover.png)
 
-O usuário cria conta, configura preferências de descoberta e mantém um perfil que alimenta social e gamificação. Escopo abaixo — para análise e aprovação.
+O usuário cria conta, configura preferências de descoberta e mantém um perfil social básico. Escopo abaixo — para análise e aprovação.
 
 ### Conta e autenticação
 - Criar conta com e-mail e senha
@@ -47,16 +47,13 @@ O usuário cria conta, configura preferências de descoberta e mantém um perfil
 
 ### Perfil
 - Definir / alterar foto de perfil
-- Exibir histórico de eventos frequentados
-- Exibir fotos vinculadas por evento (acúmulo pós-participação)
 - Exibir contagem e lista de amigos feitos no app
-- Exibir selos / status no perfil (ex.: Rolê Gold, Platina — origem em outros épicos)
 - Editar dados básicos do perfil (nome e demais campos de identidade necessários ao uso)
 
 ### Fora de escopo deste épico
 - Descoberta/publicação de eventos → [E02](#e02--publicação-e-descoberta-de-eventos)
 - Curtidas, direct e convite a amigo no evento → social em [E02](#e02--publicação-e-descoberta-de-eventos) / jornada
-- Regras de pontuação e conquista de selos → [E06](#e06--gamificação-e-rolego-wallet)
+- Histórico de eventos, fotos por evento e selos/status no perfil → [E03](#e03--ciclo-de-vida-do-evento) / [E06](#e06--gamificação-e-rolego-wallet)
 - Avaliação anfitrião–convidado → [E11](#e11--reputação-anfitriãoconvidado)
 
 ## E02 — Publicação e descoberta de eventos

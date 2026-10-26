@@ -2,6 +2,8 @@
 
 Extraído dos mockups em [`input/rolego_mvp_completo_dark.pdf`](input/rolego_mvp_completo_dark.pdf) (telas do app) e [`input/rolego_slides_publico.pdf`](input/rolego_slides_publico.pdf) (slides públicos do produto). Serve de referência rápida de cor, tipografia e padrões de UI para telas, protótipo e componentes.
 
+**Estrutura de card/manual (insumo):** modelo ConectTech v1 em [`input/referencia-marca/README.md`](input/referencia-marca/README.md) — layout A4 e seções; cores/logo RoleGo ficam neste documento.
+
 ---
 
 ## 1. Conceito

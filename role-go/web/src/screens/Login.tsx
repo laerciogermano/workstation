@@ -6,14 +6,13 @@ import { usePrototype } from '../state/PrototypeContext'
 export function Login() {
   const navigate = useNavigate()
   const { user, updateUser } = usePrototype()
-  const [identifier, setIdentifier] = useState(user.email || '')
+  const [email, setEmail] = useState(user.email || '')
   const [password, setPassword] = useState('')
 
   function goIn(onboarded = user.onboarded) {
     updateUser({
       loggedIn: true,
-      email: identifier.includes('@') ? identifier : user.email || identifier,
-      phone: identifier.includes('@') ? user.phone : identifier,
+      email: email || user.email,
       name: user.name || 'Você',
       onboarded,
     })
@@ -34,16 +33,18 @@ export function Login() {
         <span className="logo-wordmark sm">RoleGo</span>
       </div>
       <h2 className="screen-title">Entrar</h2>
-      <p className="screen-sub">Entre na sua conta com e-mail/telefone ou social.</p>
+      <p className="screen-sub">Entre na sua conta com e-mail ou social.</p>
 
       <form onSubmit={submit}>
         <div className="field">
-          <label>E-mail ou telefone</label>
+          <label>E-mail</label>
           <input
-            value={identifier}
-            onChange={(e) => setIdentifier(e.target.value)}
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             required
             placeholder="voce@email.com"
+            autoComplete="email"
           />
         </div>
         <div className="field">

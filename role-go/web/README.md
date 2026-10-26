@@ -19,8 +19,8 @@ Abre em http://localhost:5173 — menu lateral para pular entre telas.
 | Rota | Tela |
 |------|------|
 | `/` | Splash |
-| `/cadastro` | Criar conta (e-mail + Google/Apple) |
-| `/login` | Login |
+| `/cadastro` | Criar conta (e-mail, senha, confirmar senha; + Google/Apple) |
+| `/login` | Login (e-mail + senha) |
 | `/recuperar-senha` | Recuperar senha |
 | `/onboarding/preferencias` | Tipos de evento |
 | `/onboarding/cidade` | Cidade |
@@ -36,4 +36,5 @@ Abre em http://localhost:5173 — menu lateral para pular entre telas.
 
 - **Antes:** só docs/wireframes do E01, sem app web.
 - **Depois:** protótipo navegável em `web/`.
-- **Voltar:** remover a pasta `web/` (ou reverter o commit que a introduziu).
+- **Cadastro:** e-mail + senha + confirmar senha; sem nome/celular no formulário (antes: nome + telefone opcional).
+- **Voltar:** remover a pasta `web/` (ou reverter o commit); no cadastro, restaurar campos nome/telefone do commit anterior.

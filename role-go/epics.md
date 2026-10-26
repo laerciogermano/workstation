@@ -33,7 +33,7 @@ O usuário cria conta, configura preferências de descoberta e mantém um perfil
 Protótipo React das telas: [`web/README.md`](web/README.md) (`npm run dev` em `web/`).
 
 ### Conta e autenticação
-- Criar conta com e-mail e senha
+- Criar conta com e-mail, senha e confirmar senha (sem celular no cadastro)
 - Entrar com conta Google
 - Entrar com conta Apple
 - Login com conta já existente (e-mail ou social)
@@ -52,7 +52,7 @@ Protótipo React das telas: [`web/README.md`](web/README.md) (`npm run dev` em `
 - Exibir contagem e lista de amigos feitos no app
 - Editar nome completo
 - Editar e-mail
-- Editar telefone (opcional; também usado no login)
+- Editar telefone (opcional; não exigido no cadastro nesta etapa)
 
 ### Fora de escopo deste épico
 - Descoberta/publicação de eventos → [E02](#e02--publicação-e-descoberta-de-eventos)

@@ -6,9 +6,7 @@ import { usePrototype } from '../state/PrototypeContext'
 export function Cadastro() {
   const navigate = useNavigate()
   const { updateUser } = usePrototype()
-  const [name, setName] = useState('')
   const [email, setEmail] = useState('')
-  const [phone, setPhone] = useState('')
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
   const [error, setError] = useState('')
@@ -24,9 +22,9 @@ export function Cadastro() {
       return
     }
     updateUser({
-      name,
+      name: '',
       email,
-      phone,
+      phone: '',
       loggedIn: true,
       onboarded: false,
     })
@@ -35,8 +33,9 @@ export function Cadastro() {
 
   function social(provider: string) {
     updateUser({
-      name: name || `Usuário ${provider}`,
+      name: `Usuário ${provider}`,
       email: email || `demo@${provider.toLowerCase()}.com`,
+      phone: '',
       loggedIn: true,
       onboarded: false,
     })
@@ -56,10 +55,6 @@ export function Cadastro() {
 
       <form onSubmit={submit}>
         <div className="field">
-          <label>Nome completo</label>
-          <input value={name} onChange={(e) => setName(e.target.value)} required placeholder="Seu nome" />
-        </div>
-        <div className="field">
           <label>E-mail</label>
           <input
             type="email"
@@ -67,6 +62,7 @@ export function Cadastro() {
             onChange={(e) => setEmail(e.target.value)}
             required
             placeholder="voce@email.com"
+            autoComplete="email"
           />
         </div>
         <div className="field">
@@ -77,6 +73,7 @@ export function Cadastro() {
             onChange={(e) => setPassword(e.target.value)}
             required
             placeholder="••••••"
+            autoComplete="new-password"
           />
         </div>
         <div className="field">
@@ -87,17 +84,14 @@ export function Cadastro() {
             onChange={(e) => setConfirm(e.target.value)}
             required
             placeholder="••••••"
+            autoComplete="new-password"
           />
         </div>
-        <div className="field">
-          <label>Telefone (opcional)</label>
-          <input
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            placeholder="(41) 99999-9999"
-          />
-        </div>
-        {error && <div className="toast" style={{ color: 'var(--magenta)', borderColor: 'rgba(255,31,122,.4)' }}>{error}</div>}
+        {error && (
+          <div className="toast" style={{ color: 'var(--magenta)', borderColor: 'rgba(255,31,122,.4)' }}>
+            {error}
+          </div>
+        )}
         <button className="btn btn-primary" type="submit" style={{ marginTop: 8 }}>
           Criar Conta
         </button>

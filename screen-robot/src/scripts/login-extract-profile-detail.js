@@ -77,6 +77,16 @@ const WAIT_AFTER_PEOPLE_MS = 2_000;
 const LIST_MIN_Y = 130;
 const OCR_ENGINE = process.env.SCREEN_ROBOT_OCR || "macos-vision";
 const PROFILES_API_URL = (process.env.PROFILES_API_URL || "").replace(/\/$/, "");
+const AGENT_API_KEY = (process.env.AGENT_API_KEY || "").trim();
+
+function apiHeaders(extra = {}) {
+  return {
+    "content-type": "application/json",
+    ...(AGENT_API_KEY ? { "x-api-key": AGENT_API_KEY } : {}),
+    ...extra,
+  };
+}
+
 function loadConfig(path) {
   const abs = resolve(path);
   if (!existsSync(abs)) throw new Error(`Config não encontrada: ${abs}`);
@@ -617,7 +627,7 @@ async function fetchProfileById(profileId) {
   }
   // Por id — lista GET /profiles é só Candidatos (exclui pendente/conectado).
   const url = `${PROFILES_API_URL}/profiles/${encodeURIComponent(profileId)}`;
-  const res = await fetch(url);
+  const res = await fetch(url, { headers: apiHeaders() });
   if (res.status === 404) {
     throw new Error(`perfil id=${profileId} não encontrado em GET /profiles/:id`);
   }
@@ -635,7 +645,7 @@ async function postProfileDetail(payload) {
   const url = `${PROFILES_API_URL}/profile-details`;
   const res = await fetch(url, {
     method: "POST",
-    headers: { "content-type": "application/json" },
+    headers: apiHeaders(),
     body: JSON.stringify(payload),
   });
   if (!res.ok) {
@@ -686,7 +696,10 @@ function openProfileByUrl(serial, linkedinPkg, rawUrl) {
 
 async function fetchStoredProfileUrl(profileId) {
   try {
-    const res = await fetch(`${PROFILES_API_URL}/profile-details/${profileId}`);
+    const res = await fetch(
+      `${PROFILES_API_URL}/profile-details/${profileId}`,
+      { headers: apiHeaders() },
+    );
     if (!res.ok) return null;
     const row = await res.json();
     return normalizeLinkedInProfileUrl(row?.profileUrl) || null;

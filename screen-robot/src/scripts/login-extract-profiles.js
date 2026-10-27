@@ -86,6 +86,17 @@ const SCROLL_END_STABLE_NEEDED = Number(
 const OCR_ENGINE = process.env.SCREEN_ROBOT_OCR || "macos-vision";
 /** Base da API Nest (ex.: http://localhost:3000). Vazio = só JSON local. */
 const PROFILES_API_URL = (process.env.PROFILES_API_URL || "").replace(/\/$/, "");
+/** Mesma chave do worker (`X-Api-Key`) — POST /profiles exige auth. */
+const AGENT_API_KEY = (process.env.AGENT_API_KEY || "").trim();
+
+function apiHeaders(extra = {}) {
+  return {
+    "content-type": "application/json",
+    ...(AGENT_API_KEY ? { "x-api-key": AGENT_API_KEY } : {}),
+    ...extra,
+  };
+}
+
 const SEE_ALL_QUERIES = [
   "See all results",
   "Show all results",
@@ -254,7 +265,7 @@ async function postProfileToApi(profile) {
   const url = `${PROFILES_API_URL}/profiles`;
   const res = await fetch(url, {
     method: "POST",
-    headers: { "content-type": "application/json" },
+    headers: apiHeaders(),
     body: JSON.stringify(profileApiPayload(profile)),
   });
   if (!res.ok) {
@@ -271,7 +282,7 @@ async function postProfileDetailToApi(profile, profileId) {
   const url = `${PROFILES_API_URL}/profile-details`;
   const res = await fetch(url, {
     method: "POST",
-    headers: { "content-type": "application/json" },
+    headers: apiHeaders(),
     body: JSON.stringify(profileDetailApiPayload(profile, profileId)),
   });
   if (!res.ok) {
@@ -298,7 +309,7 @@ async function matchConnectionInBase(listCard) {
   if (f.current) params.set("current", String(f.current));
   const url = `${PROFILES_API_URL}/client-connections-linkedin/match?${params}`;
   try {
-    const res = await fetch(url);
+    const res = await fetch(url, { headers: apiHeaders() });
     if (!res.ok) {
       console.log(`   ⚠ match conexões ${res.status} — segue sem skip`);
       return { matched: false };
@@ -329,7 +340,7 @@ async function reportExtractFails(opts) {
   try {
     const res = await fetch(url, {
       method: "POST",
-      headers: { "content-type": "application/json" },
+      headers: apiHeaders(),
       body: JSON.stringify({
         viewportFails: opts.viewportFails,
         fails: opts.fails,
@@ -358,7 +369,7 @@ async function profileUrlAlreadyInBase(rawUrl) {
   const params = new URLSearchParams({ url: String(rawUrl) });
   const url = `${PROFILES_API_URL}/profile-details/by-url?${params}`;
   try {
-    const res = await fetch(url);
+    const res = await fetch(url, { headers: apiHeaders() });
     if (!res.ok) {
       console.log(`   ⚠ by-url ${res.status} — trata como novo`);
       return { exists: false };

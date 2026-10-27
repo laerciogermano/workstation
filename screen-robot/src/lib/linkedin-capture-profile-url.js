@@ -1,6 +1,6 @@
 /**
  * Captura URL linkedin.com/in/… a partir do perfil aberto:
- * ⋯ → Share via → Copy → só clipboard (nunca OCR).
+ * ⋯ → Share via → URL no dump da sheet (texto UI); clipboard só fallback.
  * Usado por login-extract-profiles e login-extract-profile-detail.
  */
 import { existsSync, writeFileSync } from "node:fs";
@@ -38,6 +38,23 @@ export function readDeviceClipboard(serial) {
     if (url) return url;
   } catch {
     /* ignore */
+  }
+  return null;
+}
+
+/**
+ * URL /in/… a partir dos textos do dump/OCR da share sheet
+ * (LinkedIn mostra o link na UI; dumpsys clipboard costuma vir vazio no AVD).
+ */
+export function urlFromShareSheetEls(els) {
+  const list = Array.isArray(els) ? els : [];
+  for (const el of list) {
+    const raw = [el?.text, el?.contentDescription, el?.desc]
+      .map((x) => String(x || "").trim())
+      .filter(Boolean)
+      .join(" ");
+    const url = normalizeLinkedInProfileUrl(raw);
+    if (url) return url;
   }
   return null;
 }
@@ -148,8 +165,7 @@ async function openShareViaSheet(serial, engine) {
 }
 
 /**
- * ⋯ → Share via → Copy → URL só via clipboard (nunca OCR).
- * Se clipboard vazio, clica Copy de novo até obter URL ou esgotar tentativas.
+ * ⋯ → Share via → URL no dump da sheet; clipboard só se o dump não tiver /in/….
  * Não dá BACK se falhar no menu — evita voltar ao Search.
  * @returns {Promise<string|null>}
  */
@@ -160,7 +176,7 @@ export async function captureProfileUrl(serial, outDir, opts = {}) {
     Number(opts.copyAttempts || process.env.CAPTURE_URL_COPY_ATTEMPTS || 10) ||
       10,
   );
-  console.log("   ⋯ → Share via → Copy (só clipboard)…");
+  console.log("   ⋯ → Share via → URL (dump sheet; clipboard fallback)…");
 
   const shareVia = await openShareViaSheet(serial, engine);
   if (!shareVia) {
@@ -176,8 +192,9 @@ export async function captureProfileUrl(serial, outDir, opts = {}) {
   }
 
   const sheetPng = join(outDir, "share-via-sheet.png");
+  let sheetEls = [];
   try {
-    const sheetEls = await extractBySense(
+    sheetEls = await extractBySense(
       { serial, engine },
       { outPath: sheetPng },
     );
@@ -193,8 +210,17 @@ export async function captureProfileUrl(serial, outDir, opts = {}) {
     console.log(`   share-via extract: ${e.message || e}`);
   }
 
-  let url = null;
-  for (let attempt = 1; attempt <= maxCopyAttempts; attempt++) {
+  let url = urlFromShareSheetEls(sheetEls);
+  if (url) {
+    console.log(`   URL (share sheet dump): ${url}`);
+  }
+
+  // Fallback: Copy + clipboard (em vários AVDs dumpsys clipboard é vazio).
+  for (
+    let attempt = 1;
+    !url && attempt <= maxCopyAttempts;
+    attempt++
+  ) {
     if (!(await shareSheetOpen(serial, { engine }))) {
       console.log(
         `   sheet fechada (${attempt}/${maxCopyAttempts}) — reabre Share via`,
@@ -203,6 +229,16 @@ export async function captureProfileUrl(serial, outDir, opts = {}) {
       if (!again) {
         console.log("   não reabriu Share via");
         break;
+      }
+      try {
+        sheetEls = await extractBySense({ serial, engine }, { outPath: sheetPng });
+        url = urlFromShareSheetEls(sheetEls);
+        if (url) {
+          console.log(`   URL (share sheet dump): ${url}`);
+          break;
+        }
+      } catch {
+        /* ignore */
       }
     }
 
@@ -238,13 +274,13 @@ export async function captureProfileUrl(serial, outDir, opts = {}) {
 
   if (!url) {
     console.log(
-      `   falhou: clipboard sem URL após ${maxCopyAttempts}× Copy (sem OCR)`,
+      `   falhou: sem URL no dump da sheet nem no clipboard após ${maxCopyAttempts}× Copy`,
     );
   }
 
   // Fecha sheet só se ainda estiver aberta — BACK cego sai do perfil.
   if (await shareSheetOpen(serial, { engine })) {
-    console.log("   sheet ainda aberta após Copy — KEYCODE_BACK");
+    console.log("   sheet ainda aberta — KEYCODE_BACK");
     key({ serial, code: "KEYCODE_BACK" });
     await sleep(600);
   }
@@ -266,9 +302,11 @@ export async function shareSheetOpen(serial, opts = {}) {
     await findFirstByText(
       serial,
       [
+        "Copy",
         "Copy link",
         "Copy to clipboard",
         "Copy Link",
+        "Quick Share",
         "WhatsApp",
         "Messenger",
         "Gmail",

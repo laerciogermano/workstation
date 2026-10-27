@@ -76,6 +76,14 @@ describe("linkedin-connect helpers", () => {
 
   it("hasPending / findSkip / hasFollow", () => {
     assert.equal(hasPending([{ text: "Pending" }]), true);
+    assert.equal(
+      hasPending([
+        {
+          text: "Pending, click to withdraw invitation sent to Jeisiane Coelho",
+        },
+      ]),
+      true,
+    );
     assert.equal(hasPending([{ text: "Connect" }]), false);
     assert.deepEqual(findSkip([{ text: "Skip", x: 269, y: 816 }]), {
       text: "Skip",

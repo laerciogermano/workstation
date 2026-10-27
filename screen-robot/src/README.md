@@ -428,6 +428,8 @@ Lib [`lib/linkedin-connect.js`](lib/linkedin-connect.js):
 
 **Antes → depois (Connect CTA):** só text `Connect` → também content-desc **`Invite … to connect`** (`findExactConnect`). Sem isso o fluxo abria o perfil e só fazia `wait:round*`. Rollback: regex só `/^connect$/i`.
 
+**Antes → depois (Pending):** só `^Pending$` → também **`Pending, click to withdraw…`**. Sem isso Connect+Skip ok falhava com “Pending não apareceu”. Rollback: `/^pending$/i`.
+
 ---
 
 ## Piloto LinkedIn

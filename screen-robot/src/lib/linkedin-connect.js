@@ -195,9 +195,13 @@ export function hasFollow(els) {
 }
 
 export function hasPending(els) {
-  return (els || []).some((el) =>
-    /^pending$/i.test(String(el?.text || "").trim()),
-  );
+  return (els || []).some((el) => {
+    const t = String(
+      el?.text || el?.contentDesc || el?.contentDescription || "",
+    ).trim();
+    // text "Pending" ou content-desc "Pending, click to withdraw invitation…"
+    return /^pending\b/i.test(t) || /\bpending\b.+\bwithdraw\b/i.test(t);
+  });
 }
 
 /**

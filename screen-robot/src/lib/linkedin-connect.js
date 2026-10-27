@@ -13,6 +13,7 @@ import { mkdirSync } from "node:fs";
 import { join } from "node:path";
 
 import { adb, sleep } from "./adb.js";
+import { installConnectmaxApiAuth } from "./connectmax-api-auth.js";
 import { extractBySense } from "./extract.js";
 import { key, screenshot, tapElement } from "./operate.js";
 
@@ -330,6 +331,7 @@ export async function notifyInviteSent({
   peerName = null,
   baseUrl = invitesApiBase(),
 } = {}) {
+  installConnectmaxApiAuth();
   const base = String(baseUrl || "").replace(/\/$/, "");
   if (!base) {
     return { notified: false, reason: "INVITES_API_URL/PROFILES_API_URL ausente" };
@@ -348,9 +350,12 @@ export async function notifyInviteSent({
   if (status === CONNECTION_STATUS.CONNECTED) {
     body.connectedAt = new Date().toISOString();
   }
+  const headers = { "content-type": "application/json" };
+  const apiKey = String(process.env.AGENT_API_KEY || "").trim();
+  if (apiKey) headers["x-api-key"] = apiKey;
   const res = await fetch(url, {
     method: "POST",
-    headers: { "content-type": "application/json" },
+    headers,
     body: JSON.stringify(body),
   });
   const text = await res.text().catch(() => "");
@@ -547,9 +552,10 @@ export async function connectByLinkedInUrl(opts) {
       };
     }
 
-    // Pending antes de Skip = já tinha convite — ainda sincroniza status 1
+    // Já Pending na UI → não toca Connect; só upsert status=1 no banco.
     if (hasPending(texts) && !skipped) {
       steps.push("already_pending");
+      console.log("   já Pending na UI — só atualiza client_connections_linkedin");
       await shot(serial, opts.outDir, "99-already-pending.png");
       key({ serial, code: "KEYCODE_BACK" });
 
@@ -575,6 +581,16 @@ export async function connectByLinkedInUrl(opts) {
           };
           steps.push(`api:client-connections-linkedin:fail:${notify.error}`);
         }
+      }
+      if (notifyApi && !dryRun && !notify.notified) {
+        return {
+          ok: false,
+          status: "failed",
+          url,
+          steps,
+          notify,
+          error: `já Pending mas falhou upsert API: ${notify.error || notify.reason || "n/a"}`,
+        };
       }
 
       return {

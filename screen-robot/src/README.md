@@ -430,6 +430,8 @@ Lib [`lib/linkedin-connect.js`](lib/linkedin-connect.js):
 
 **Antes → depois (Pending):** só `^Pending$` → também **`Pending, click to withdraw…`**. Sem isso Connect+Skip ok falhava com “Pending não apareceu”. Rollback: `/^pending$/i`.
 
+**Antes → depois (já Pending):** podia falhar/ignorar API → **só upsert status=1** (sem tap Connect); exige POST ok (`X-Api-Key` via `installConnectmaxApiAuth`). Rollback: retorno `ok` sem exigir notify.
+
 ---
 
 ## Piloto LinkedIn

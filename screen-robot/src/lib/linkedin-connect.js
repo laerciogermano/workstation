@@ -135,11 +135,19 @@ export async function assertConnectionAcceptedForSend(opts = {}) {
 /** Canonicaliza URL do perfil (tira utm_* / query). */
 export function normalizeLinkedInProfileUrl(raw) {
   const s = String(raw || "");
+  // Slug pode ter acentos (dump UI: /in/vitória-…); [A-Za-z0-9] cortava cedo.
   const m = s.match(
-    /(?:https?:\/\/)?(?:www\.)?linkedin\.com\/in\/([A-Za-z0-9._%-]+)/i,
+    /(?:https?:\/\/)?(?:www\.)?linkedin\.com\/in\/([^\s/?#]+)/i,
   );
   if (!m) return null;
-  return `https://www.linkedin.com/in/${decodeURIComponent(m[1])}`;
+  let slug = m[1].replace(/[.,;:!?)\]}>'"]+$/g, "");
+  try {
+    slug = decodeURIComponent(slug);
+  } catch {
+    /* keep raw */
+  }
+  if (!slug) return null;
+  return `https://www.linkedin.com/in/${slug}`;
 }
 
 export function openProfileByUrl(serial, linkedinPkg, rawUrl) {

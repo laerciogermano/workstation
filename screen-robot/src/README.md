@@ -167,7 +167,7 @@ Script [`scripts/login-extract-profile-detail.js`](scripts/login-extract-profile
 
 **Antes → depois (conexão no extract):** só `POST /profile-details` → após o cartão, se `inviteStatus` = `pending`|`connected`, upsert `POST /client-connections-linkedin` (status 1|2); se `connect`/ausente, **não** cria conexão (só perfil). Mesmo fluxo em busca (`login-extract-profiles`) e URL (`login-extract-profile-detail`). Rollback: remover `syncConnectionFromInviteStatus` dos scripts.
 
-**Antes → depois (URL share sheet):** só clipboard após Copy (`dumpsys` vazio no AVD) → **URL no dump da sheet** (`urlFromShareSheetEls`); clipboard só fallback; `shareSheetOpen` inclui `Copy`/`Quick Share`. Rollback: remover leitura do dump e voltar ao loop Copy-only.
+**Antes → depois (URL share sheet):** só clipboard após Copy (`dumpsys` vazio no AVD) → **URL no dump da sheet** (`urlFromShareSheetEls`); clipboard só fallback; `shareSheetOpen` inclui `Copy`/`Quick Share`. Slug com acento (`vitória-…`) — regex `[A-Za-z0-9]` cortava → `[^\s/?#]+`. Rollback: remover leitura do dump e voltar ao loop Copy-only / charset ASCII.
 
 **Antes → depois (ordem mídia):** crop depois do Share (avatar coberto pelo sheet) → crop **antes** da URL, a partir do `card-00.png`. Rollback: mover o bloco `cropProfilePhotoAndCover` para depois de `captureProfileUrl`.
 

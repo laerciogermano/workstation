@@ -59,6 +59,21 @@ describe("linkedin-connect helpers", () => {
     );
   });
 
+  it("findExactConnect aceita Invite … to connect (content-desc)", () => {
+    assert.deepEqual(
+      findExactConnect([
+        { text: "Invite Artur Elias to connect", x: 129, y: 637 },
+      ]),
+      { text: "Invite Artur Elias to connect", x: 129, y: 637 },
+    );
+    assert.equal(
+      findExactConnect([
+        { text: "Marcello and Marcello are mutual connections", x: 1, y: 1 },
+      ]),
+      null,
+    );
+  });
+
   it("hasPending / findSkip / hasFollow", () => {
     assert.equal(hasPending([{ text: "Pending" }]), true);
     assert.equal(hasPending([{ text: "Connect" }]), false);

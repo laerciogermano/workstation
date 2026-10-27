@@ -173,8 +173,15 @@ export function openProfileByUrl(serial, linkedinPkg, rawUrl) {
 export function findExactConnect(els) {
   const list = Array.isArray(els) ? els : [];
   for (const el of list) {
-    const t = String(el?.text || "").trim();
-    if (!/^[\+＋]?\s*connect$/i.test(t)) continue;
+    const t = String(el?.text || el?.contentDesc || el?.contentDescription || "")
+      .trim();
+    if (!t) continue;
+    // Dump/UI: content-desc "Invite Artur Elias to connect" (sem text=Connect).
+    const inviteToConnect = /\binvite\b.+\bto connect\b/i.test(t);
+    const exactConnect = /^[\+＋]?\s*connect$/i.test(t);
+    if (!inviteToConnect && !exactConnect) continue;
+    // Evita "500+ connections" / "mutual connections".
+    if (/\bconnections?\b/i.test(t) && !inviteToConnect) continue;
     if (el.x == null || el.y == null) continue;
     return { text: t, x: el.x, y: el.y };
   }

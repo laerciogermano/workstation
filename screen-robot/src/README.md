@@ -426,6 +426,8 @@ Lib [`lib/linkedin-connect.js`](lib/linkedin-connect.js):
 **Antes → depois:** POST opcional → obrigatório (status 1); listagem de Connections marca status 2 via `mark-accepted`; 404 LinkedIn agora falha com `not_found` em vez de timeout.  
 **Rollback:** `notifyApi: false` / ignore o POST; `DROP TABLE client_connection_linkedin` se necessário; remover `hasPageDoesNotExist`.
 
+**Antes → depois (Connect CTA):** só text `Connect` → também content-desc **`Invite … to connect`** (`findExactConnect`). Sem isso o fluxo abria o perfil e só fazia `wait:round*`. Rollback: regex só `/^connect$/i`.
+
 ---
 
 ## Piloto LinkedIn

@@ -56,7 +56,9 @@ npm install
 npm run dev
 ```
 
-Abre `http://localhost:5173`. Em dev, Vite faz proxy de `/profiles`, `/dashboard`, `/profile-details`, `/extract`, `/linkedin-base`, `/empresas`, `/agentes`, `/gestores` → `http://localhost:3000` (HTML em `/mensagens`, `/funil`, `/empresas`, `/agentes` e `/dashboard` cai no SPA). Em `/profiles`, SPA só no detalhe `/profiles/:uuid`; `GET /profiles?page=` (navegação no browser) vai para a API.
+Abre `http://localhost:5173`. Em dev, Vite faz proxy de `/profiles`, `/dashboard`, `/profile-details`, `/extract`, `/linkedin-base`, `/empresas`, `/agentes`, `/gestores`, `/users` → `http://localhost:3000` (HTML em `/mensagens`, `/funil`, `/empresas`, `/agentes`, `/usuarios`, `/executivo` e `/dashboard` cai no SPA). Em `/profiles`, SPA só no detalhe `/profiles/:uuid`; `GET /profiles?page=` (navegação no browser) vai para a API.
+
+**`/usuarios`:** só com role **admin** (`users:read`). Login local seed: `AUTH_ADMIN_EMAIL` / `AUTH_ADMIN_PASSWORD` no `.env` da API (default `admin@connectmax.local` / `ChangeMeAdmin!2026`). Sem admin o item some do menu e `GET /users` responde 403.
 
 **Antes → depois (`/profiles` proxy):** qualquer `Accept: text/html` em `/profiles` → SPA; agora lista com query → API. **Rollback:** bypass antigo (`if accept text/html → index.html`) em `vite.config.js`.
 

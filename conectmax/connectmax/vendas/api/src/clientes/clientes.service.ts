@@ -200,7 +200,10 @@ export class ClientesService {
     page?: number;
     limit?: number;
     q?: string;
-    /** Se setado: livres + reservados (status=0) deste agente. */
+    /**
+     * Se setado: só reservados (`status=0`) deste agente.
+     * Pool livre (sem 0|1|2) fica no claim do worker — não no funil.
+     */
     agentId?: string;
   }): Promise<{
     meta: { total: number; page: number; limit: number; pages: number };
@@ -660,19 +663,13 @@ export class ClientesService {
       .where('li.deletedAt IS NULL');
 
     if (agentId) {
-      // Livres (ninguém 0|1|2) ou já reservados por este agente (status=0).
+      // Funil por agente: só fila já claimada por ele (status=0).
       qb.andWhere(
-        `(
-          EXISTS (
-            SELECT 1 FROM client_connection_linkedin mine
-            WHERE mine.cliente_linkedin_id = li.id
-              AND mine.agent_id = :agentId
-              AND mine.status = 0
-          )
-          OR NOT EXISTS (
-            SELECT 1 FROM client_connection_linkedin cc
-            WHERE cc.cliente_linkedin_id = li.id AND cc.status IN (0, 1, 2)
-          )
+        `EXISTS (
+          SELECT 1 FROM client_connection_linkedin mine
+          WHERE mine.cliente_linkedin_id = li.id
+            AND mine.agent_id = :agentId
+            AND mine.status = 0
         )`,
         { agentId },
       );

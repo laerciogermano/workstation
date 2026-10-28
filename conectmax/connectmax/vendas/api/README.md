@@ -195,7 +195,9 @@ Auth worker: JWT, `AGENT_API_KEY` global **ou** chave emitida em `POST /agentes/
 **Antes → depois:** loop dry → [`../worker/README.md`](../worker/README.md) pull + heartbeat + key por agente.  
 **Rollback:** ignore colunas novas; use só `AGENT_API_KEY` global; `DROP` colunas `api_key_hash` / heartbeat se quiser.
 
-**Antes → depois (AC-04 leads):** Candidatos globais (sem 1\|2) → **livres (ninguém 0\|1\|2) + reservados `status=0` do agente**. Rollback: `NOT EXISTS … status IN (1,2)` global.
+**Antes → depois (AC-04 leads):** Candidatos globais (sem 1\|2) → **livres (ninguém 0\|1\|2) + reservados `status=0` do agente** (worker/`countLeads`). Rollback: `NOT EXISTS … status IN (1,2)` global.
+
+**Antes → depois (funil `?agentId=`):** `GET /profiles?agentId=` misturava **pool livre** (igual em todos os agentes) + reservados → **só `status=0` daquele agente** (sem repetir leads livres). Worker continua claimando o pool livre. Rollback: `OR NOT EXISTS (… status IN (0,1,2))` em `buildActiveLinkedinQuery`.
 
 **Antes → depois (AC-03 / ownership):** dois agentes podiam pegar o mesmo perfil → ao conectar, **reserva `NOT_SENT`**; se outro já tem 0\|1\|2, pula; unique parcial `UQ_ccl_one_active_owner`. Rollback: dropar o índice; listar só sem 1\|2; upsert 409 só em 1\|2.
 

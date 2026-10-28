@@ -18,7 +18,7 @@ export class ProfilesController {
 
   /**
    * Lista perfis ativos (mais recentes primeiro). Soft-deleted ficam de fora.
-   * Query: `page`, `limit`, `q`, `agentId` (livres + reservados status=0 desse agente).
+   * Query: `page`, `limit`, `q`, `agentId` (só reservados status=0 desse agente).
    */
   @Get()
   findAll(

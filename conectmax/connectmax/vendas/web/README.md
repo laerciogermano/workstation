@@ -94,7 +94,7 @@ npm run dev
 - Funil (SPA `/funil`): board **por agente** (select no header; `?agent=` + `localStorage` `cx-funil-agent`); todas as colunas filtram `agentId`; fontes:
   | Coluna | API | Cards |
   |--------|-----|-------|
-  | Candidatos | `GET /profiles?agentId=` | fila do agente (paginado) |
+  | Candidatos | `GET /profiles?agentId=` | só reservados `status=0` do agente (não o pool livre) |
   | Convidados | `GET /linkedin-base/connections?status=1&agentId=` | convites do agente |
   | Conectados | `GET /linkedin-base/connections?status=2&agentId=` | aceites do agente |
   | Abordados | `GET /linkedin-base/messages?direction=sent&agentId=` | 1 por peer |

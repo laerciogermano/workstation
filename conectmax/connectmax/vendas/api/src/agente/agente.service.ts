@@ -34,7 +34,9 @@ const DEFAULT_AVD_IMAGE =
 
 export type EnrollResult = {
   id: string;
+  /** Sempre `agentes.id` (uuid). */
   agentId: string;
+  nome: string;
   created: boolean;
   needsLinkedin: boolean;
   hasApiKey: boolean;
@@ -84,6 +86,25 @@ export class AgenteService {
     private readonly dataSource: DataSource,
     private readonly config: ConfigService,
   ) {}
+
+  /**
+   * agentId canônico = `agentes.id` (uuid). Path ainda aceita `nome` legado.
+   */
+  private async resolveAgente(agentIdRaw: string): Promise<Agente> {
+    const key = String(agentIdRaw || '').trim();
+    if (!key) throw new BadRequestException('agentId obrigatório');
+    const byId = await this.agentesCadastro.findOneBy({ id: key });
+    if (byId) return byId;
+    const byNome = await this.agentesCadastro.findOneBy({ nome: key });
+    if (byNome) return byNome;
+    throw new NotFoundException(`agente ${key} não encontrado`);
+  }
+
+  /** Normaliza path/env para uuid usado em jobs/conexões/runtime. */
+  private async canonicalAgentId(agentIdRaw: string): Promise<string> {
+    const row = await this.resolveAgente(agentIdRaw);
+    return row.id;
+  }
 
   private inboxIntervalMs(): number {
     const n = Number(this.config.get('AGENT_INBOX_INTERVAL_MS', '900000'));
@@ -344,8 +365,7 @@ export class AgenteService {
     agentIdRaw: string,
     opts?: { hostInstanceId?: string; workerVersion?: string },
   ): Promise<AgentRuntime & { online: boolean }> {
-    const agentId = String(agentIdRaw || '').trim();
-    if (!agentId) throw new BadRequestException('agentId obrigatório');
+    const agentId = await this.canonicalAgentId(agentIdRaw);
     const runtime = await this.ensureRuntime(agentId);
     runtime.lastHeartbeatAt = new Date();
     if (opts?.hostInstanceId !== undefined) {
@@ -362,8 +382,7 @@ export class AgenteService {
    * Materializa jobs a partir do banco (AC-01…04) e faz claim SKIP LOCKED.
    */
   async claimNext(agentIdRaw: string): Promise<ClaimResult> {
-    const agentId = String(agentIdRaw || '').trim();
-    if (!agentId) throw new BadRequestException('agentId obrigatório');
+    const agentId = await this.canonicalAgentId(agentIdRaw);
 
     await this.releaseStaleClaims(agentId);
     await this.materializeJobs(agentId);
@@ -396,10 +415,11 @@ export class AgenteService {
   }
 
   async complete(
-    agentId: string,
+    agentIdRaw: string,
     jobId: string,
     opts?: { result?: Record<string, unknown> },
   ): Promise<AgentJob> {
+    const agentId = await this.canonicalAgentId(agentIdRaw);
     const job = await this.findOwnedJob(agentId, jobId);
     if (job.status !== 'claimed' && job.status !== 'pending') {
       throw new BadRequestException(
@@ -430,10 +450,11 @@ export class AgenteService {
   }
 
   async fail(
-    agentId: string,
+    agentIdRaw: string,
     jobId: string,
     error: string,
   ): Promise<AgentJob> {
+    const agentId = await this.canonicalAgentId(agentIdRaw);
     const job = await this.findOwnedJob(agentId, jobId);
     job.status = 'failed';
     job.completedAt = new Date();
@@ -480,8 +501,7 @@ export class AgenteService {
       heartbeatStaleMs: number;
     };
   }> {
-    const agentId = String(agentIdRaw || '').trim();
-    if (!agentId) throw new BadRequestException('agentId obrigatório');
+    const agentId = await this.canonicalAgentId(agentIdRaw);
     await this.materializeJobs(agentId);
     const runtime = await this.ensureRuntime(agentId);
 
@@ -560,16 +580,16 @@ export class AgenteService {
   async runtimeStatus(
     agentIdRaw: string,
   ): Promise<AgentRuntime & { online: boolean }> {
-    const runtime = await this.ensureRuntime(String(agentIdRaw || '').trim());
+    const agentId = await this.canonicalAgentId(agentIdRaw);
+    const runtime = await this.ensureRuntime(agentId);
     return Object.assign(runtime, { online: this.isOnline(runtime) });
   }
 
   async listJobs(
-    agentId: string,
+    agentIdRaw: string,
     opts?: { status?: string; limit?: number },
   ): Promise<AgentJob[]> {
-    const id = String(agentId || '').trim();
-    if (!id) throw new BadRequestException('agentId obrigatório');
+    const id = await this.canonicalAgentId(agentIdRaw);
     const limit = Math.min(100, Math.max(1, Number(opts?.limit) || 50));
     const qb = this.jobs
       .createQueryBuilder('j')
@@ -614,7 +634,7 @@ export class AgenteService {
     for (const [key, agentes] of byHost) {
       for (const a of agentes) {
         try {
-          await this.materializeJobs(a.nome);
+          await this.materializeJobs(a.id);
         } catch (err) {
           this.logger.warn(
             `slots materialize ${a.nome}: ${err instanceof Error ? err.message : err}`,
@@ -625,7 +645,7 @@ export class AgenteService {
       const withPending: SlotAgentView[] = [];
       for (const a of agentes) {
         const pendingJobs = await this.jobs.count({
-          where: { agentId: a.nome, status: 'pending' },
+          where: { agentId: a.id, status: 'pending' },
         });
         withPending.push(this.toSlotAgent(a, pendingJobs));
       }
@@ -657,7 +677,7 @@ export class AgenteService {
   private toSlotAgent(a: Agente, pendingJobs: number): SlotAgentView {
     return {
       id: a.id,
-      agentId: a.nome,
+      agentId: a.id,
       nome: a.nome,
       serial: a.serial,
       containerName: a.containerName,
@@ -674,12 +694,7 @@ export class AgenteService {
     agentIdRaw: string,
     status: 'ativo' | 'dormindo',
   ): Promise<Agente> {
-    const agentId = String(agentIdRaw || '').trim();
-    if (!agentId) throw new BadRequestException('agentId obrigatório');
-    const row = await this.agentesCadastro.findOneBy({ nome: agentId });
-    if (!row) {
-      throw new NotFoundException(`agente nome=${agentId} não encontrado`);
-    }
+    const row = await this.resolveAgente(agentIdRaw);
     row.status = status;
     row.lastError = null;
     return this.agentesCadastro.save(row);
@@ -691,24 +706,28 @@ export class AgenteService {
    * Bootstrap de create: use `AGENT_API_KEY` global (chave scoped só após existir).
    */
   async enroll(agentIdRaw: string, dto: EnrollDto = {}): Promise<EnrollResult> {
-    const agentId = String(agentIdRaw || '').trim();
-    if (!agentId) throw new BadRequestException('agentId obrigatório');
+    const key = String(agentIdRaw || '').trim();
+    if (!key) throw new BadRequestException('agentId obrigatório');
 
-    let row = await this.agentesCadastro.findOneBy({ nome: agentId });
+    let row =
+      (await this.agentesCadastro.findOneBy({ id: key })) ||
+      (await this.agentesCadastro.findOneBy({ nome: key }));
     const created = !row;
+    /** Rótulo do device (container/serial); path pode ser uuid. */
+    const nomeKey = row?.nome || key;
 
     const adbPort =
       dto.adbPort ??
       row?.adbPort ??
-      portForAgenteName(agentId);
+      portForAgenteName(nomeKey);
     const serial =
       String(dto.serial || '').trim() ||
       row?.serial ||
-      serialForAgente(agentId, adbPort);
+      serialForAgente(nomeKey, adbPort);
     const containerName =
       String(dto.containerName || '').trim() ||
       row?.containerName ||
-      containerNameForAgente(agentId);
+      containerNameForAgente(nomeKey);
     const image =
       String(dto.image || '').trim() ||
       row?.image ||
@@ -727,14 +746,18 @@ export class AgenteService {
       String(dto.hostNome || '').trim() ||
       row?.hostNome ||
       String(dto.hostname || '').trim() ||
-      (localhost ? 'localhost' : agentId);
+      (localhost ? 'localhost' : nomeKey);
     const hostname =
       String(dto.hostname || '').trim() || row?.hostname || null;
     const status = dto.status || row?.status || 'dormindo';
 
     if (!row) {
+      // Path uuid sem cadastro: criar pelo painel; slug ainda auto-cria (legado).
+      if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(key)) {
+        throw new NotFoundException(`agente ${key} não encontrado`);
+      }
       row = this.agentesCadastro.create({
-        nome: agentId,
+        nome: nomeKey,
         hostNome,
         provedor: null,
         produto: null,
@@ -767,7 +790,7 @@ export class AgenteService {
         linkedinInfracoes: [],
       });
       row = await this.agentesCadastro.save(row);
-      this.logger.log(`enroll created agentId=${agentId} id=${row.id}`);
+      this.logger.log(`enroll created nome=${nomeKey} id=${row.id}`);
     } else {
       row.serial = serial;
       row.containerName = containerName;
@@ -805,7 +828,7 @@ export class AgenteService {
         .execute();
     }
 
-    const runtime = await this.heartbeat(agentId, {
+    const runtime = await this.heartbeat(row.id, {
       hostInstanceId: dto.hostInstanceId,
       workerVersion: dto.workerVersion,
     });
@@ -814,7 +837,8 @@ export class AgenteService {
 
     return {
       id: row.id,
-      agentId: row.nome,
+      agentId: row.id,
+      nome: row.nome,
       created,
       needsLinkedin,
       hasApiKey: Boolean(apiKey) || hadKey,
@@ -913,7 +937,7 @@ export class AgenteService {
       ),
     );
 
-    const agente = await this.agentesCadastro.findOneBy({ nome: agentId });
+    const agente = await this.agentesCadastro.findOneBy({ id: agentId });
     const profileUrl =
       String(agente?.linkedinProfileUrl || '').trim() || null;
 

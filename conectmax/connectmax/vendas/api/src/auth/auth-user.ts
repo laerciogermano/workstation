@@ -9,6 +9,8 @@ export type AuthPrincipal = {
   /** Compat: primeira role / admin se presente. */
   role: UserRole | 'service';
   kind: 'user' | 'service' | 'agent';
-  /** Preenchido quando kind=agent (X-Api-Key por agente). */
+  /** Preenchido quando kind=agent (X-Api-Key por agente) = `agentes.id`. */
   agentId?: string;
+  /** Rótulo (`agentes.nome`) — compat de path `/agente/:agentId` antigo. */
+  agentNome?: string;
 };

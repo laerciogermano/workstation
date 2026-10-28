@@ -444,9 +444,11 @@ export default function Funil({
   }, []);
 
   const agentOpts = useMemo(() => {
-    const names = [...new Set(agentes.map((a) => a.nome).filter(Boolean))];
-    names.sort((a, b) => a.localeCompare(b, 'pt-BR'));
-    return names;
+    const rows = agentes
+      .filter((a) => a?.id)
+      .map((a) => ({ id: a.id, nome: a.nome || a.id }));
+    rows.sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
+    return rows;
   }, [agentes]);
 
   useEffect(() => {
@@ -478,14 +480,14 @@ export default function Funil({
     };
   }, []);
 
-  /** Garante agentId válido quando a lista chega. */
+  /** Garante agentId (uuid) válido quando a lista chega. */
   useEffect(() => {
     if (agentesLoading || !agentOpts.length) return;
-    if (agentId && agentOpts.includes(agentId)) {
+    if (agentId && agentOpts.some((a) => a.id === agentId)) {
       persistAgent(agentId);
       return;
     }
-    const next = agentOpts[0];
+    const next = agentOpts[0].id;
     setAgentId(next);
     persistAgent(next);
   }, [agentesLoading, agentOpts, agentId]);
@@ -772,7 +774,16 @@ export default function Funil({
           <h1>Funil</h1>
           <p className="subtitle">
             Board por agente — etapas do{' '}
-            {agentId ? <code>{agentId}</code> : '…'}
+            {agentId
+              ? (
+                  <>
+                    <strong>
+                      {agentOpts.find((a) => a.id === agentId)?.nome || '…'}
+                    </strong>
+                    <span className="muted"> · {agentId}</span>
+                  </>
+                )
+              : '…'}
           </p>
         </div>
         <div className="header-actions">
@@ -789,9 +800,9 @@ export default function Funil({
                   {agentesLoading ? 'Carregando…' : 'Nenhum agente'}
                 </option>
               )}
-              {agentOpts.map((nome) => (
-                <option key={nome} value={nome}>
-                  {nome}
+              {agentOpts.map((a) => (
+                <option key={a.id} value={a.id}>
+                  {a.nome}
                 </option>
               ))}
             </select>

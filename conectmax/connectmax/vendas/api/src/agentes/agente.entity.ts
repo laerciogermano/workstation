@@ -26,14 +26,14 @@ export type AgenteLinkedinInfracao = {
 
 /**
  * Agente = vendedor operacional: host (IP/SSH) + device (ADB) + LinkedIn numa linha.
- * `nome` = agentId (`provision.name`). Não há tabela `vendedores` separada.
+ * `id` = agentId (fila/worker/funil). `nome` = rótulo editável.
  */
 @Entity('agentes')
 export class Agente {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  /** Nome lógico / agentId (único). */
+  /** Rótulo único (não é a chave da fila). */
   @Index({ unique: true })
   @Column({ type: 'varchar', length: 120 })
   nome!: string;

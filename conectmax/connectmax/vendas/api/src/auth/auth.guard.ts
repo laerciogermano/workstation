@@ -67,13 +67,14 @@ export class AuthGuard
         .addSelect('a.apiKeyHash')
         .where('a.apiKeyHash = :hash', { hash })
         .getOne();
-      if (agent?.nome) {
+      if (agent?.id) {
         req.user = {
           sub: agent.id,
           roles: [],
           role: 'service',
           kind: 'agent',
-          agentId: agent.nome,
+          agentId: agent.id,
+          agentNome: agent.nome,
         };
         return true;
       }

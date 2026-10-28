@@ -27,7 +27,7 @@ export class GestorAgente {
   @JoinColumn({ name: 'gestor_id' })
   gestor!: User;
 
-  /** Identificador do agente (ex.: `provision.name` / `avds.nome`). */
+  /** Identificador do agente = `agentes.id` (uuid). */
   @Index({ unique: true })
   @Column({ name: 'agent_id', type: 'varchar', length: 120 })
   agentId!: string;

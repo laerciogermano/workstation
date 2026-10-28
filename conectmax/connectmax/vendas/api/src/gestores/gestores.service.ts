@@ -17,7 +17,12 @@ export type GestorRow = {
   nome: string;
   email: string;
   active: boolean;
-  agentes: { id: string; agentId: string; createdAt: Date }[];
+  agentes: {
+    id: string;
+    agentId: string;
+    nome?: string;
+    createdAt: Date;
+  }[];
   createdAt: Date;
   updatedAt: Date;
 };
@@ -33,10 +38,15 @@ export class GestoresService {
     private readonly agentesCadastro: Repository<Agente>,
   ) {}
 
-  private toRow(
+  private async toRow(
     user: User,
     agentes: GestorAgente[],
-  ): GestorRow {
+  ): Promise<GestorRow> {
+    const ids = agentes.map((a) => a.agentId).filter(Boolean);
+    const cadastro = ids.length
+      ? await this.agentesCadastro.find({ where: { id: In(ids) } })
+      : [];
+    const nomeById = new Map(cadastro.map((a) => [a.id, a.nome]));
     return {
       id: user.id,
       nome: user.nome,
@@ -45,6 +55,7 @@ export class GestoresService {
       agentes: agentes.map((a) => ({
         id: a.id,
         agentId: a.agentId,
+        nome: nomeById.get(a.agentId),
         createdAt: a.createdAt,
       })),
       createdAt: user.createdAt,
@@ -67,6 +78,7 @@ export class GestoresService {
   async listAgenteOptions(): Promise<{
     data: {
       agentId: string;
+      nome: string;
       agenteId: string;
       hostNome: string | null;
       gestorId: string | null;
@@ -88,9 +100,10 @@ export class GestoresService {
     );
     return {
       data: agentes.map((a) => {
-        const link = byAgent.get(a.nome);
+        const link = byAgent.get(a.id);
         return {
-          agentId: a.nome,
+          agentId: a.id,
+          nome: a.nome,
           agenteId: a.id,
           hostNome: a.hostNome ?? null,
           gestorId: link?.gestorId ?? null,
@@ -167,7 +180,9 @@ export class GestoresService {
 
     return {
       meta: { total, page: safePage, limit, pages },
-      data: users.map((u) => this.toRow(u, byGestor.get(u.id) ?? [])),
+      data: await Promise.all(
+        users.map((u) => this.toRow(u, byGestor.get(u.id) ?? [])),
+      ),
     };
   }
 
@@ -199,12 +214,12 @@ export class GestoresService {
   ): Promise<void> {
     if (!agentIds.length) return;
 
-    const found = await this.agentesCadastro.find({ where: { nome: In(agentIds) } });
-    const known = new Set(found.map((a) => a.nome));
+    const found = await this.agentesCadastro.find({ where: { id: In(agentIds) } });
+    const known = new Set(found.map((a) => a.id));
     const missing = agentIds.filter((id) => !known.has(id));
     if (missing.length) {
       throw new NotFoundException(
-        `agente(s) / AVD não encontrado(s): ${missing.join(', ')}`,
+        `agente(s) não encontrado(s): ${missing.join(', ')}`,
       );
     }
 

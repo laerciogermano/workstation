@@ -110,9 +110,9 @@ Cadastro B2B a partir do funil Conect. Seed: [`../../docs/planilhas-funil/empres
 |--------|--------|
 | `GET /agentes` | Lista (`grouped`, `sync`, `q`, `hostKey`, `status`) |
 | `POST /agentes` | Cria (host inline ou `copyHostFromAgenteId`; LI opcional; `provisionDevice=false` só cadastro) |
-| `PATCH /agentes/:id` | `nome` (agentId; reatribui `agent_id` em conexões/jobs/mensagens/runtime/`gestor_agentes`) / host / notas / LinkedIn |
+| `PATCH /agentes/:id` | `nome` (rótulo; não é chave da fila) / host / notas / LinkedIn |
 
-**Antes → depois (renomear agente):** só mudava `agentes.nome` (+ `gestor_agentes`) → funil/dashboard ficavam vazios no nome novo. Agora o PATCH reescreve `agent_id` nas tabelas de fila. **Rollback:** remova `reassignAgentIdRefs`.
+**Antes → depois (agentId ≠ nome):** `agent_id` / funil / worker usavam `agentes.nome` → passam a usar `agentes.id` (uuid); `nome` é rótulo editável. Path `/agente/:agentId` ainda resolve por nome legado. Worker: `AGENT_ID=<uuid>` (enroll devolve `agentId` canônico). **Rollback:** volte lookups/`agentId:` para `a.nome` e dados de fila para o slug.
 | `POST /agentes/sync` | docker ps nos hosts já cadastrados |
 | `POST /agentes/:id/sleep\|wake\|ping\|backup` | ops device |
 | `DELETE /agentes/:id` | remove container + linha |

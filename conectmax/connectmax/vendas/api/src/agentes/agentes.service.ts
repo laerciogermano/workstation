@@ -228,21 +228,21 @@ export class AgentesService implements OnModuleInit {
 
   private async linkGestorIfNeeded(
     creator: AuthPrincipal | undefined,
-    agentNome: string,
+    agenteId: string,
   ): Promise<void> {
     if (!creator || creator.kind !== 'user') return;
     if (!userHasRole(creator.roles, UserRole.Gestor)) return;
-    const taken = await this.gestorAgentes.findOneBy({ agentId: agentNome });
+    const taken = await this.gestorAgentes.findOneBy({ agentId: agenteId });
     if (taken && taken.gestorId !== creator.sub) {
       throw new ConflictException(
-        `agente ${agentNome} já vinculado a outro gestor`,
+        `agente ${agenteId} já vinculado a outro gestor`,
       );
     }
     if (taken) return;
     await this.gestorAgentes.save(
       this.gestorAgentes.create({
         gestorId: creator.sub,
-        agentId: agentNome,
+        agentId: agenteId,
       }),
     );
   }
@@ -464,7 +464,7 @@ export class AgentesService implements OnModuleInit {
       }),
     );
 
-    await this.linkGestorIfNeeded(opts?.creator, nome);
+    await this.linkGestorIfNeeded(opts?.creator, row.id);
 
     if (!provision) {
       return row;
@@ -502,7 +502,7 @@ export class AgentesService implements OnModuleInit {
    */
   async rotateApiKey(
     id: string,
-  ): Promise<{ agentId: string; apiKey: string; hasApiKey: true }> {
+  ): Promise<{ agentId: string; nome: string; apiKey: string; hasApiKey: true }> {
     const row = await this.findOne(id);
     const apiKey = generateApiKey();
     await this.agentes
@@ -511,7 +511,7 @@ export class AgentesService implements OnModuleInit {
       .set({ apiKeyHash: hashApiKey(apiKey) })
       .where('id = :id', { id: row.id })
       .execute();
-    return { agentId: row.nome, apiKey, hasApiKey: true };
+    return { agentId: row.id, nome: row.nome, apiKey, hasApiKey: true };
   }
 
   /** Indica se o agente já tem chave (sem revelar hash). */
@@ -525,45 +525,7 @@ export class AgentesService implements OnModuleInit {
     return Boolean(row.apiKeyHash);
   }
 
-  /**
-   * `nome` = agentId em conexões/jobs/mensagens/runtime/gestores.
-   * Renomear sem isso esvazia o funil (filtra por agentId).
-   */
-  private async reassignAgentIdRefs(
-    oldNome: string,
-    newNome: string,
-  ): Promise<void> {
-    const ds = this.agentes.manager;
-    const tables = [
-      'client_connection_linkedin',
-      'client_linkedin_message',
-      'agent_jobs',
-      'gestor_agentes',
-    ] as const;
-    for (const table of tables) {
-      await ds.query(
-        `UPDATE ${table} SET agent_id = $1 WHERE agent_id = $2`,
-        [newNome, oldNome],
-      );
-    }
-    // PK em agent_runtime: se já existe o novo, apaga o antigo; senão renomeia.
-    const existing = await ds.query(
-      `SELECT 1 FROM agent_runtime WHERE agent_id = $1 LIMIT 1`,
-      [newNome],
-    );
-    if (Array.isArray(existing) && existing.length) {
-      await ds.query(`DELETE FROM agent_runtime WHERE agent_id = $1`, [
-        oldNome,
-      ]);
-    } else {
-      await ds.query(
-        `UPDATE agent_runtime SET agent_id = $1 WHERE agent_id = $2`,
-        [newNome, oldNome],
-      );
-    }
-  }
-
-  /** Atualiza nome / host / notas / LinkedIn (não mexe no container). */
+  /** Atualiza nome (rótulo) / host / notas / LinkedIn (não mexe no container). */
   async update(id: string, dto: UpdateAgenteDto): Promise<Agente> {
     const row = await this.findOne(id);
     if (dto.nome !== undefined) {
@@ -578,9 +540,7 @@ export class AgentesService implements OnModuleInit {
             `já existe agente nome=${nome} (${clash.id})`,
           );
         }
-        const oldNome = row.nome;
         row.nome = nome;
-        await this.reassignAgentIdRefs(oldNome, nome);
       }
     }
     if (dto.hostNome !== undefined) row.hostNome = dto.hostNome.trim();

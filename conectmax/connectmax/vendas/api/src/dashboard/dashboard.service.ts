@@ -388,7 +388,7 @@ export class DashboardService {
   private buildByAgent(
     agentesRows: Pick<
       Agente,
-      'nome' | 'linkedinNome' | 'status' | 'linkedinStatus'
+      'id' | 'nome' | 'linkedinNome' | 'status' | 'linkedinStatus'
     >[],
     runtimeRows: Pick<AgentRuntime, 'agentId' | 'status' | 'lastHeartbeatAt'>[],
     byAgentStatusRaw: { agentId: string; status: string | number; count: string }[],
@@ -416,7 +416,7 @@ export class DashboardService {
     const out: AgentInsight[] = [];
 
     for (const a of agentesRows) {
-      const agentId = a.nome;
+      const agentId = a.id;
       seen.add(agentId);
       const c = counts.get(agentId) ?? {
         notSent: 0,
@@ -424,9 +424,13 @@ export class DashboardService {
         connected: 0,
       };
       const rt = runtimeById.get(agentId);
+      const label =
+        (a.linkedinNome && a.linkedinNome.trim()) ||
+        (a.nome && a.nome.trim()) ||
+        agentId;
       out.push({
         agentId,
-        name: (a.linkedinNome && a.linkedinNome.trim()) || agentId,
+        name: label,
         status: a.status ?? null,
         linkedinStatus: a.linkedinStatus ?? null,
         notSent: c.notSent,

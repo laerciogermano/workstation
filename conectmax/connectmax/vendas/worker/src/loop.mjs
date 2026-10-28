@@ -3,7 +3,8 @@
  * agent-worker — pull uniforme (servidor ou gestor).
  *
  * Single (1 AVD):
- *   AGENT_ID=agent-d AGENT_API_KEY=… SERIAL=127.0.0.1:5560 npm start
+ *   AGENT_ID=<agentes.id uuid> AGENT_API_KEY=… SERIAL=127.0.0.1:5560 npm start
+ *   (path ainda aceita nome legado; enroll devolve agentId=uuid)
  *
  * Host supervisor (N slots, rodízio de AVDs):
  *   MODE=host HOST_KEY=localhost AGENT_API_KEY=… npm run start:host
@@ -26,7 +27,9 @@ const API_URL = (process.env.API_URL || 'http://localhost:3000').replace(
   /\/$/,
   '',
 );
-const AGENT_ID = process.env.AGENT_ID || 'agent-d';
+const AGENT_ID_ENV = process.env.AGENT_ID || 'agent-d';
+/** agentId canônico (uuid) após enroll; até lá usa o env. */
+let AGENT_ID = AGENT_ID_ENV;
 const API_KEY = process.env.AGENT_API_KEY || '';
 const DRY = process.env.DRY === '1';
 const ONCE = process.env.ONCE === '1';
@@ -61,7 +64,8 @@ async function enroll() {
     if (CONTAINER) body.containerName = CONTAINER;
     if (Number.isFinite(ADB_PORT) && ADB_PORT > 0) body.adbPort = ADB_PORT;
     if (HOST_NOME) body.hostNome = HOST_NOME;
-    const res = await api.enroll(AGENT_ID, body);
+    const res = await api.enroll(AGENT_ID_ENV, body);
+    if (res?.agentId) AGENT_ID = res.agentId;
     console.log(
       `[${AGENT_ID}] enroll created=${res.created ? 1 : 0} needsLinkedin=${res.needsLinkedin ? 1 : 0} online=${res.online ? 1 : 0}`,
     );
@@ -100,9 +104,10 @@ async function main() {
     );
   }
   console.log(
-    `agent-worker API=${API_URL} AGENT=${AGENT_ID} DRY=${DRY ? 1 : 0} SERIAL=${SERIAL || '(env)'}`,
+    `agent-worker API=${API_URL} AGENT=${AGENT_ID_ENV} DRY=${DRY ? 1 : 0} SERIAL=${SERIAL || '(env)'}`,
   );
   await enroll();
+  console.log(`agent-worker agentId canônico=${AGENT_ID}`);
   const hb = setInterval(heartbeat, HEARTBEAT_MS);
 
   try {

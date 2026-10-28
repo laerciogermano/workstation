@@ -16,7 +16,7 @@ No start chama `POST /agente/:id/enroll` (cria cadastro magro se faltar; bootstr
 ```bash
 cd vendas/worker
 API_URL=http://localhost:3000 \
-AGENT_ID=agent-d \
+AGENT_ID=<agentes.id uuid> \
 AGENT_API_KEY=$AGENT_API_KEY_GLOBAL \
 SERIAL=127.0.0.1:5560 \
 HOST_KIND=localhost \

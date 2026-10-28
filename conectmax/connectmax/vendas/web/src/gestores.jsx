@@ -212,7 +212,7 @@ export default function Gestores() {
             </thead>
             <tbody>
               {rows.map((g) => {
-                const ids = agentIdsOf(g);
+                const agents = Array.isArray(g.agentes) ? g.agentes : [];
                 return (
                   <tr key={g.id}>
                     <td>
@@ -220,11 +220,15 @@ export default function Gestores() {
                     </td>
                     <td className="muted">{g.email || '—'}</td>
                     <td>
-                      {ids.length ? (
+                      {agents.length ? (
                         <div className="gest-agents">
-                          {ids.map((id) => (
-                            <span key={id} className="tag">
-                              {id}
+                          {agents.map((a) => (
+                            <span
+                              key={a.agentId || a.id}
+                              className="tag"
+                              title={a.agentId}
+                            >
+                              {a.nome || a.agentId}
                             </span>
                           ))}
                         </div>
@@ -312,11 +316,11 @@ export default function Gestores() {
                           onChange={() => toggleAgent(a.agentId)}
                         />
                         <span>
-                          {a.agentId}
-                          {a.agenteId ? (
-                            <span className="muted" title={a.agenteId}>
+                          {a.nome || a.agentId}
+                          {a.agentId ? (
+                            <span className="muted" title={a.agentId}>
                               {' '}
-                              · {a.agenteId}
+                              · {a.agentId}
                             </span>
                           ) : null}
                           {a.hostNome ? (

@@ -390,16 +390,14 @@ curl -s -X POST http://127.0.0.1:3099/connections -H 'content-type: application/
 # ou: GET http://127.0.0.1:3099/connections?n=20
 ```
 
-Fluxo (dump, sem OCR): se já na lista (`Connected on…`) extrai; senão abre `--url` / `LINKEDIN_PROFILE_URL` do agente → tap em **`N connections`** (número qualquer) → scroll até `n`.  
-Em sucesso → `POST …/client-connections-linkedin/mark-accepted`. Default API `:3000`.  
+Fluxo (dump, sem OCR): **deep link** `--url` / `LINKEDIN_PROFILE_URL` / default `https://www.linkedin.com/in/me/` → tap **`N connections`** (número qualquer) → scroll até `n` → `mark-accepted`.  
 Lib: [`lib/linkedin-extract-connections.js`](lib/linkedin-extract-connections.js) · parser [`lib/linkedin-connections-list.js`](lib/linkedin-connections-list.js).
 
 ```bash
-npm run linkedin-extract-connections -- --n 20 --url 'https://www.linkedin.com/in/…'
+npm run linkedin-extract-connections -- --n 20 --url 'https://www.linkedin.com/in/me/'
 ```
 
-**Antes → depois (nav):** Network → Manage my network → Connections → **perfil do agente → tap `N connections` → lista**. Rollback: restaurar taps Manage/Connections.  
-**Antes → depois (sense):** OCR → **só dump**. Rollback: `sense: "ocr"`.  
+**Antes → depois (nav):** Manage my network / menu → **sempre deep link do perfil → `N connections`**. Rollback: voltar taps Network/Manage.  
 **Rollback mark-accepted:** `notifyApi: false`.
 
 ---

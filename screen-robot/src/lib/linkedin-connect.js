@@ -412,9 +412,12 @@ export async function notifyRecentConnectionsAccepted({
     agentId: String(agentId || "default").trim() || "default",
     connections: list,
   };
+  const headers = { "content-type": "application/json" };
+  const apiKey = String(process.env.AGENT_API_KEY || "").trim();
+  if (apiKey) headers["x-api-key"] = apiKey;
   const res = await fetch(url, {
     method: "POST",
-    headers: { "content-type": "application/json" },
+    headers,
     body: JSON.stringify(body),
   });
   const text = await res.text().catch(() => "");

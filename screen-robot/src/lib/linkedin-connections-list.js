@@ -53,9 +53,17 @@ function isChrome(t) {
   const s = String(t || "").trim();
   if (!s) return true;
   if (HEADER_RE.test(s)) return true;
-  if (/^\d+\s*connections?$/i.test(s)) return true;
+  if (/^\d[\d,.]*\+?\s*connections?$/i.test(s)) return true;
   if (/^\d{1,2}:\d{2}/.test(s)) return true;
   if (/^[\d@回回]+$/.test(s)) return true;
+  // dump a11y / chrome da lista Connections
+  if (/^go back$/i.test(s)) return true;
+  if (/profile picture$/i.test(s)) return true;
+  if (/^send a message to /i.test(s)) return true;
+  if (/^more actions for /i.test(s)) return true;
+  if (/^search by name$/i.test(s)) return true;
+  if (/^filter by /i.test(s)) return true;
+  if (/^more filters$/i.test(s)) return true;
   return false;
 }
 

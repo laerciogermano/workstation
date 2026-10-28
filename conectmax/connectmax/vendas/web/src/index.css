@@ -786,6 +786,30 @@ code {
   color: var(--muted);
 }
 
+.kpi-value-neg {
+  color: #d93a40;
+}
+
+.proj-group .proj-custo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem 0.75rem;
+  margin: 0 0 0.65rem;
+}
+
+.proj-group .proj-custo input {
+  width: 7.5rem;
+  padding: 0.35rem 0.55rem;
+  border: 1px solid var(--border, #2a3142);
+  border-radius: var(--radius);
+  background: var(--bg, transparent);
+  color: var(--text);
+  font-family: var(--cx-font-head);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
 .agent-kpi-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));

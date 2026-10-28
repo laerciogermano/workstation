@@ -79,7 +79,7 @@ npm run dev
 
 ## Uso
 
-- Menu transversal (`src/app-nav.jsx`): sidebar (**Funil** · **Mensagens** · **Agentes** · **Gestores** · **Dashboards** · **Usuários**) + tema no rodapé. **Antes → depois:** **Candidatos** e **Empresas** removidos; `/` e `/empresas` → `/funil`. **Rollback:** links `perfis`/`empresas` no `LINKS` + `empresas.jsx` / grid home no git.
+- Menu transversal (`src/app-nav.jsx`): sidebar (**Funil** · **Agentes** · **Dashboards** · **Usuários**) + tema no rodapé. **Antes → depois:** **Candidatos**, **Empresas**, **Mensagens** e **Gestores** fora do nav (rotas `/mensagens` e `/gestores` seguem no SPA). `/` e `/empresas` → `/funil`. **Rollback:** recolocar itens no `LINKS`.
 - Agentes (`/agentes`): vendedor operacional = host + device + LinkedIn; Sync Docker; Ping / Dormir / Acordar / Backup / Remover; gestores cadastram. API: [`../api/README.md`](../api/README.md#agentes-agentes).
 - Perfil (`/profiles/:id`): abre a partir do funil; **Voltar** → `history.back()` (fallback `/funil`); **Extrair informações** → `GET /extract/by-url/start?url=`; **Remover** → `DELETE /profiles/:id` (volta ao funil). Conectado → **Enviar mensagem** (`/mensagens?profileId=`); não conectado → **Conectar** (`POST /linkedin-robot/connect`).
 - Sem detalhe / sem URL → omite o link

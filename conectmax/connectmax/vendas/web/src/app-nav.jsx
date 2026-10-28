@@ -1,12 +1,10 @@
 import {
   ChartBar,
-  ChatCircle,
   DownloadSimple,
   Funnel,
   Robot,
   SignOut,
   UserGear,
-  UsersThree,
 } from '@phosphor-icons/react';
 import { clearSession, getUser, hasPermission } from './auth.js';
 import { BrandLogo, ThemeToggle } from './brand.jsx';
@@ -26,25 +24,11 @@ const LINKS = [
     permission: 'profiles:read',
   },
   {
-    id: 'mensagens',
-    href: '/mensagens',
-    label: 'Mensagens',
-    Icon: ChatCircle,
-    permission: 'messages:read',
-  },
-  {
     id: 'agentes',
     href: '/agentes',
     label: 'Agentes',
     Icon: Robot,
     permission: 'agentes:read',
-  },
-  {
-    id: 'gestores',
-    href: '/gestores',
-    label: 'Gestores',
-    Icon: UsersThree,
-    permission: 'gestores:read',
   },
   {
     id: 'dashboard',

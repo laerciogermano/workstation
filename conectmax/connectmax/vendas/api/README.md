@@ -198,7 +198,9 @@ cd ../worker && DRY=1 ONCE=1 AGENT_ID=agent-d AGENT_API_KEY=… npm start
 Auth worker: JWT, `AGENT_API_KEY` global **ou** chave emitida em `POST /agentes/:id/api-key` / enroll (escopo só daquele `agentId`). Campos: `agentes.api_key_hash`, `agentes.host_kind`, `agent_runtime.last_heartbeat_at` (+ instance/version). Offline se heartbeat &gt; `AGENT_HEARTBEAT_STALE_MS` (default 120s).
 
 **Antes → depois:** loop dry → [`../worker/README.md`](../worker/README.md) pull + heartbeat + key por agente.  
-**Antes → depois (enroll):** cadastro só via `POST /agentes` → worker `POST /agente/:id/enroll` cria linha magra + heartbeat; painel completa LinkedIn (`needsLinkedin`). Create exige key global; update aceita key do próprio agente. **Rollback:** remova rota/método `enroll` e a chamada no `worker/src/loop.mjs`.  
+**Antes → depois (enroll):** cadastro só via `POST /agentes` → worker `POST /agente/:id/enroll` cria linha magra + heartbeat; painel completa LinkedIn (`needsLinkedin`). Create exige key global; update aceita key do próprio agente. **Rollback:** remova rota/método `enroll` e a chamada no `worker/src/loop.mjs`.
+
+**Antes → depois (schema boot):** entity tinha `host_kind` / `api_key_hash` / `discard_reason` mas prod com `DB_SYNC=false` → 500 `column … does not exist`. Boot agora faz `ADD COLUMN IF NOT EXISTS` (agentes + conexões). **Rollback:** `ALTER TABLE … DROP COLUMN` se precisar voltar.  
 **Rollback:** ignore colunas novas; use só `AGENT_API_KEY` global; `DROP` colunas `api_key_hash` / heartbeat se quiser.
 
 **Antes → depois (AC-04 leads):** Candidatos globais (sem 1\|2) → **livres (ninguém 0\|1\|2) + reservados `status=0` do agente** (worker/`countLeads`). Rollback: `NOT EXISTS … status IN (1,2)` global.

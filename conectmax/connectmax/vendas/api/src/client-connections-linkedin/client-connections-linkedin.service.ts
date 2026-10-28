@@ -4,6 +4,7 @@ import {
   Injectable,
   Logger,
   NotFoundException,
+  OnModuleInit,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -89,7 +90,7 @@ export function normalizePersonName(raw: string): string {
 }
 
 @Injectable()
-export class ClientConnectionsLinkedinService {
+export class ClientConnectionsLinkedinService implements OnModuleInit {
   private readonly logger = new Logger(ClientConnectionsLinkedinService.name);
 
   constructor(
@@ -100,6 +101,17 @@ export class ClientConnectionsLinkedinService {
     @InjectRepository(Cliente)
     private readonly clientes: Repository<Cliente>,
   ) {}
+
+  async onModuleInit(): Promise<void> {
+    try {
+      await this.connections.manager.connection.query(
+        `ALTER TABLE client_connection_linkedin ADD COLUMN IF NOT EXISTS discard_reason varchar(500)`,
+      );
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      this.logger.warn(`ensureSchema discard_reason: ${msg}`);
+    }
+  }
 
   async upsertOne(
     dto: CreateClientConnectionLinkedinDto,

@@ -79,9 +79,28 @@ export class AgentesService implements OnModuleInit {
   ) {}
 
   async onModuleInit(): Promise<void> {
+    await this.ensureSchemaColumns();
     await this.migrateAvdsServidoresIntoAgentes();
     await this.migrateLinkedinFromLegacyTable();
     await this.dropLegacyVendedoresTable();
+  }
+
+  /** Colunas novas com DB_SYNC=false (prod). Idempotente. */
+  private async ensureSchemaColumns(): Promise<void> {
+    const ds = this.agentes.manager.connection;
+    const stmts = [
+      `ALTER TABLE agentes ADD COLUMN IF NOT EXISTS host_kind varchar(32) NOT NULL DEFAULT 'server'`,
+      `ALTER TABLE agentes ADD COLUMN IF NOT EXISTS api_key_hash varchar(128)`,
+      `UPDATE agentes SET host_kind = 'localhost' WHERE localhost = true AND (host_kind IS NULL OR host_kind = 'server')`,
+    ];
+    for (const sql of stmts) {
+      try {
+        await ds.query(sql);
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
+        this.logger.warn(`ensureSchema agentes: ${msg}`);
+      }
+    }
   }
 
   /** Copia avds+servidores → agentes (idempotente; preserva id do AVD). */

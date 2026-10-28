@@ -16,7 +16,6 @@ const EMPTY_FORM = {
   linkedinUsuario: '',
   linkedinProfileUrl: '',
   linkedinHeadline: '',
-  linkedinStatus: 'ativa',
 };
 
 function statusLabel(s) {
@@ -135,7 +134,6 @@ export default function Agentes() {
       linkedinUsuario: row.linkedinUsuario || '',
       linkedinProfileUrl: row.linkedinProfileUrl || '',
       linkedinHeadline: row.linkedinHeadline || '',
-      linkedinStatus: row.linkedinStatus || 'ativa',
     });
     setFormNote(null);
     setFormOpen(true);
@@ -166,7 +164,6 @@ export default function Agentes() {
           linkedinUsuario: form.linkedinUsuario.trim() || null,
           linkedinProfileUrl: form.linkedinProfileUrl.trim() || null,
           linkedinHeadline: form.linkedinHeadline.trim() || null,
-          linkedinStatus: form.linkedinStatus || 'ativa',
         };
         const res = await fetch(`${AGENTES_URL}/${editingId}`, {
           method: 'PATCH',
@@ -192,7 +189,6 @@ export default function Agentes() {
         start: Boolean(form.start),
         provisionDevice: Boolean(form.provisionDevice),
         notas: form.notas.trim() || null,
-        linkedinStatus: form.linkedinStatus || 'ativa',
       };
       if (form.copyHostFromAgenteId) {
         payload.copyHostFromAgenteId = form.copyHostFromAgenteId;
@@ -581,18 +577,6 @@ export default function Agentes() {
                   value={form.linkedinHeadline}
                   onChange={(e) => setField('linkedinHeadline', e.target.value)}
                 />
-              </label>
-              <label>
-                Status LI
-                <select
-                  value={form.linkedinStatus}
-                  onChange={(e) => setField('linkedinStatus', e.target.value)}
-                >
-                  <option value="ativa">ativa</option>
-                  <option value="restrita">restrita</option>
-                  <option value="banida">banida</option>
-                  <option value="inativa">inativa</option>
-                </select>
               </label>
               <label className="srv-form-span">
                 Notas

@@ -172,6 +172,13 @@ export class CreateAgenteDto {
 }
 
 export class UpdateAgenteDto {
+  /** agentId lógico (`provision.name`); único. */
+  @IsOptional()
+  @IsString()
+  @MinLength(1)
+  @MaxLength(120)
+  nome?: string;
+
   @IsOptional()
   @IsString()
   @MinLength(1)

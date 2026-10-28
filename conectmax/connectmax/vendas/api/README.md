@@ -110,7 +110,7 @@ Cadastro B2B a partir do funil Conect. Seed: [`../../docs/planilhas-funil/empres
 |--------|--------|
 | `GET /agentes` | Lista (`grouped`, `sync`, `q`, `hostKey`, `status`) |
 | `POST /agentes` | Cria (host inline ou `copyHostFromAgenteId`; LI opcional; `provisionDevice=false` só cadastro) |
-| `PATCH /agentes/:id` | Host / notas / LinkedIn |
+| `PATCH /agentes/:id` | `nome` (agentId; atualiza `gestor_agentes`) / host / notas / LinkedIn |
 | `POST /agentes/sync` | docker ps nos hosts já cadastrados |
 | `POST /agentes/:id/sleep\|wake\|ping\|backup` | ops device |
 | `DELETE /agentes/:id` | remove container + linha |

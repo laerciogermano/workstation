@@ -528,6 +528,26 @@ export class AgentesService implements OnModuleInit {
   /** Atualiza host / notas / LinkedIn (não mexe no container). */
   async update(id: string, dto: UpdateAgenteDto): Promise<Agente> {
     const row = await this.findOne(id);
+    if (dto.nome !== undefined) {
+      const nome = dto.nome.trim();
+      if (!nome) {
+        throw new BadRequestException('nome é obrigatório');
+      }
+      if (nome !== row.nome) {
+        const clash = await this.agentes.findOneBy({ nome });
+        if (clash && clash.id !== id) {
+          throw new ConflictException(
+            `já existe agente nome=${nome} (${clash.id})`,
+          );
+        }
+        const oldNome = row.nome;
+        row.nome = nome;
+        await this.gestorAgentes.update(
+          { agentId: oldNome },
+          { agentId: nome },
+        );
+      }
+    }
     if (dto.hostNome !== undefined) row.hostNome = dto.hostNome.trim();
     if (dto.provedor !== undefined) row.provedor = dto.provedor?.trim() || null;
     if (dto.produto !== undefined) row.produto = dto.produto?.trim() || null;

@@ -35,8 +35,9 @@ function errMsg(json, res) {
 
 function hostLabel(a) {
   if (!a) return '—';
-  if (a.localhost) return `${a.hostNome || 'local'} · localhost`;
-  return `${a.hostNome || '—'} · ${a.ipPublico || a.ipPrivado || '—'}`;
+  const name = a.hostNome || a.nome || '—';
+  if (a.localhost) return `${name} · localhost`;
+  return `${name} · ${a.ipPublico || a.ipPrivado || '—'}`;
 }
 
 function liLabel(a) {
@@ -157,8 +158,20 @@ export default function Agentes() {
     setFormNote(null);
     try {
       if (editingId) {
+        const nome = form.nome.trim();
+        if (!nome) {
+          setFormNote('Nome é obrigatório.');
+          setSaving(false);
+          return;
+        }
+        if (!form.hostNome.trim()) {
+          setFormNote('Host: informe hostNome.');
+          setSaving(false);
+          return;
+        }
         const payload = {
-          hostNome: form.hostNome.trim() || undefined,
+          nome,
+          hostNome: form.hostNome.trim(),
           notas: form.notas.trim() || null,
           linkedinNome: form.linkedinNome.trim() || null,
           linkedinUsuario: form.linkedinUsuario.trim() || null,
@@ -302,7 +315,12 @@ export default function Agentes() {
                   <td>
                     <div className="emp-person-text">
                       <span className="emp-person-name">{a.nome}</span>
-                      <span className="muted">{a.containerName}</span>
+                      <span className="muted" title={a.id}>
+                        {a.id}
+                      </span>
+                      {a.containerName ? (
+                        <span className="muted">{a.containerName}</span>
+                      ) : null}
                     </div>
                   </td>
                   <td className="muted">{hostLabel(a)}</td>
@@ -468,17 +486,21 @@ export default function Agentes() {
               </button>
             </header>
             <form className="srv-form" onSubmit={submitForm}>
-              {!editingId && (
-                <label>
-                  Nome (agentId) *
-                  <input
-                    required
-                    value={form.nome}
-                    onChange={(e) => setField('nome', e.target.value)}
-                    placeholder="agent-d"
-                  />
+              {editingId && (
+                <label className="srv-form-span">
+                  Id
+                  <input value={editingId} disabled readOnly />
                 </label>
               )}
+              <label>
+                Nome *
+                <input
+                  required
+                  value={form.nome}
+                  onChange={(e) => setField('nome', e.target.value)}
+                  placeholder="agent-d"
+                />
+              </label>
               {!editingId && (
                 <label className="srv-form-span">
                   Copiar host de
@@ -491,22 +513,21 @@ export default function Agentes() {
                     <option value="">— novo host —</option>
                     {allRows.map((a) => (
                       <option key={a.id} value={a.id}>
-                        {a.nome} · {hostLabel(a)}
+                        {a.nome} · {a.id.slice(0, 8)} · {hostLabel(a)}
                       </option>
                     ))}
                   </select>
                 </label>
               )}
               {(editingId || !form.copyHostFromAgenteId) && (
-                <>
-                  <label>
-                    Nome do host *
-                    <input
-                      value={form.hostNome}
-                      onChange={(e) => setField('hostNome', e.target.value)}
-                    />
-                  </label>
-                </>
+                <label>
+                  Nome do host *
+                  <input
+                    required={Boolean(editingId) || !form.copyHostFromAgenteId}
+                    value={form.hostNome}
+                    onChange={(e) => setField('hostNome', e.target.value)}
+                  />
+                </label>
               )}
               {!editingId && (
                 <>

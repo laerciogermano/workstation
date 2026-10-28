@@ -313,6 +313,12 @@ export default function Gestores() {
                         />
                         <span>
                           {a.agentId}
+                          {a.agenteId ? (
+                            <span className="muted" title={a.agenteId}>
+                              {' '}
+                              · {a.agenteId}
+                            </span>
+                          ) : null}
                           {a.hostNome ? (
                             <span className="muted"> · {a.hostNome}</span>
                           ) : null}

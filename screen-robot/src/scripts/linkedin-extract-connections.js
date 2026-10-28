@@ -27,19 +27,25 @@ function parseArgs(argv) {
   let device = null;
   let configPath = resolve(ROOT, "device.config.json");
   let noShot = false;
+  let profileUrl = null;
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === "--n" || a === "-n") n = Number(argv[++i]);
     else if (a === "--device" || a === "-s") device = String(argv[++i] || "").trim();
     else if (a === "--config") configPath = resolve(argv[++i]);
     else if (a === "--no-shot") noShot = true;
+    else if (a === "--url" || a === "--profile-url") {
+      profileUrl = String(argv[++i] || "").trim() || null;
+    }
   }
   if (!Number.isFinite(n) || n < 1) throw new Error("--n deve ser >= 1");
-  return { n, device, configPath, noShot };
+  return { n, device, configPath, noShot, profileUrl };
 }
 
 async function main() {
-  const { n, device, configPath, noShot } = parseArgs(process.argv.slice(2));
+  const { n, device, configPath, noShot, profileUrl } = parseArgs(
+    process.argv.slice(2),
+  );
   const cfg = loadConfig(configPath);
   if (device) {
     cfg.device = device;
@@ -54,13 +60,16 @@ async function main() {
     : resolve(ROOT, "screenshots", "linkedin-extract-connections", stamp);
   if (outDir) mkdirSync(outDir, { recursive: true });
 
-  console.error(`serial=${serial} n=${n} agent=${resolveAgentId(cfg)}`);
+  console.error(
+    `serial=${serial} n=${n} agent=${resolveAgentId(cfg)} url=${profileUrl || process.env.LINKEDIN_PROFILE_URL || "(tela atual)"}`,
+  );
   const result = await extractRecentConnections({
     serial,
     linkedinPackage: linkedinPkg,
     n,
     outDir,
     agentId: resolveAgentId(cfg),
+    profileUrl,
   });
   if (outDir) {
     writeFileSync(join(outDir, "connections.json"), JSON.stringify(result, null, 2));

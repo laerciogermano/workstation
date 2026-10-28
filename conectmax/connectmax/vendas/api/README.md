@@ -191,6 +191,8 @@ Auth worker: JWT, `AGENT_API_KEY` global **ou** chave emitida em `POST /agentes/
 
 **Antes → depois (lotes connect):** limite diário contínuo (default 10) → **15/dia**, **5** por lote, pausa **2 h** após cada múltiplo de 5 (`invitedAt` do último do lote). Peek: `connectBatchSize`, `connectBatchIntervalMs`, `connectSlotsNow`. Rollback: `AGENT_CONNECT_DAILY_LIMIT=10`, `BATCH_SIZE=15` (ou omitir batch = defaults antigos via env `BATCH_SIZE=999` + intervalo baixo); ou reverter `connectSlotsNow`/`enqueueConectar`.
 
+**Antes → depois (subset de jobs):** todos os tipos → `AGENT_MATERIALIZE_TYPES` (csv; vazio = todos). Ex. teste connect: `verificar_conexoes,conectar` — cancela pending dos demais e claim só desses. Flag extra: `AGENT_ENVIAR_PROSPECCAO_ENABLED=0` só quando a lista está vazia. Rollback: unset `AGENT_MATERIALIZE_TYPES`.
+
 #### `GET /clientes`
 
 Lista paginada (com `linkedin` se existir). Query: `page`, `limit` (máx. 100), `q`.

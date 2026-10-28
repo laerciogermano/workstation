@@ -17,6 +17,7 @@ import { ClientLinkedinMessageDirection } from '../client-linkedin-messages/clie
 import { AgentJob } from './agent-job.entity';
 import {
   AGENT_JOB_PRIORITY,
+  AGENT_JOB_TYPES,
   type AgentJobType,
 } from './agent-job-types';
 import { AgentRuntime } from './agent-runtime.entity';
@@ -94,6 +95,54 @@ export class AgenteService {
       this.config.get('AGENT_CONNECT_BATCH_INTERVAL_MS', '7200000'),
     );
     return Number.isFinite(n) && n >= 60_000 ? n : 7_200_000;
+  }
+
+  /**
+   * Subconjunto de tipos a materializar/claimar.
+   * Env `AGENT_MATERIALIZE_TYPES=verificar_conexoes,conectar` (vazio = todos).
+   * `AGENT_ENVIAR_PROSPECCAO_ENABLED=0` ainda desliga só AC-02 quando a lista está vazia.
+   */
+  private materializeTypeSet(): Set<AgentJobType> | null {
+    const raw = String(this.config.get('AGENT_MATERIALIZE_TYPES', '') || '')
+      .trim();
+    if (!raw) return null;
+    const set = new Set<AgentJobType>();
+    for (const part of raw.split(/[,;\s]+/)) {
+      const t = part.trim();
+      if ((AGENT_JOB_TYPES as readonly string[]).includes(t)) {
+        set.add(t as AgentJobType);
+      }
+    }
+    return set.size ? set : null;
+  }
+
+  private jobTypeEnabled(type: AgentJobType): boolean {
+    const set = this.materializeTypeSet();
+    if (set) return set.has(type);
+    if (type === 'enviar_prospeccao') {
+      const raw = String(
+        this.config.get('AGENT_ENVIAR_PROSPECCAO_ENABLED', '1'),
+      )
+        .trim()
+        .toLowerCase();
+      return !['0', 'false', 'off', 'no'].includes(raw);
+    }
+    return true;
+  }
+
+  /** Cancela pending de tipos fora do allowlist / flag. */
+  private async cancelDisabledPending(agentId: string): Promise<void> {
+    for (const type of AGENT_JOB_TYPES) {
+      if (this.jobTypeEnabled(type)) continue;
+      await this.jobs.update(
+        { agentId, type, status: 'pending' },
+        {
+          status: 'cancelled',
+          lastError: `tipo desligado (AGENT_MATERIALIZE_TYPES / flag)`,
+          completedAt: new Date(),
+        },
+      );
+    }
   }
 
   private startOfLocalDay(): Date {
@@ -612,11 +661,22 @@ export class AgenteService {
 
   /** Cria/atualiza filas a partir do estado atual do CRM. */
   private async materializeJobs(agentId: string): Promise<void> {
-    await this.enqueueInboxIfDue(agentId);
-    await this.enqueueConnectionsIfDue(agentId);
-    await this.enqueueProspeccao(agentId);
-    await this.enqueueConectar(agentId);
-    await this.enqueueExtrairIfLow(agentId);
+    await this.cancelDisabledPending(agentId);
+    if (this.jobTypeEnabled('ler_mensagens')) {
+      await this.enqueueInboxIfDue(agentId);
+    }
+    if (this.jobTypeEnabled('verificar_conexoes')) {
+      await this.enqueueConnectionsIfDue(agentId);
+    }
+    if (this.jobTypeEnabled('enviar_prospeccao')) {
+      await this.enqueueProspeccao(agentId);
+    }
+    if (this.jobTypeEnabled('conectar')) {
+      await this.enqueueConectar(agentId);
+    }
+    if (this.jobTypeEnabled('extrair_leads')) {
+      await this.enqueueExtrairIfLow(agentId);
+    }
   }
 
   /** AC-01: ler mensagens se passou o intervalo. */
@@ -1008,16 +1068,23 @@ export class AgenteService {
   }
 
   private async claimPendingRow(agentId: string): Promise<AgentJob | null> {
+    const allowed = this.materializeTypeSet();
+    const types = allowed
+      ? [...allowed]
+      : AGENT_JOB_TYPES.filter((t) => this.jobTypeEnabled(t));
+    if (!types.length) return null;
+
     return this.dataSource.transaction(async (manager) => {
       const rows: AgentJob[] = await manager.query(
         `
         SELECT id FROM agent_jobs
         WHERE agent_id = $1 AND status = 'pending'
+          AND type = ANY($2::text[])
         ORDER BY priority ASC, created_at ASC
         FOR UPDATE SKIP LOCKED
         LIMIT 1
         `,
-        [agentId],
+        [agentId, types],
       );
       if (!rows.length) return null;
       const id = rows[0].id;

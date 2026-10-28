@@ -78,8 +78,22 @@ export class AgenteService {
 
   /** Máx. convites Connect por agente / dia civil (TZ do processo). */
   private connectDailyLimit(): number {
-    const n = Number(this.config.get('AGENT_CONNECT_DAILY_LIMIT', '10'));
-    return Number.isFinite(n) && n >= 0 ? Math.floor(n) : 10;
+    const n = Number(this.config.get('AGENT_CONNECT_DAILY_LIMIT', '15'));
+    return Number.isFinite(n) && n >= 0 ? Math.floor(n) : 15;
+  }
+
+  /** Tamanho do lote de connects antes do intervalo. */
+  private connectBatchSize(): number {
+    const n = Number(this.config.get('AGENT_CONNECT_BATCH_SIZE', '5'));
+    return Number.isFinite(n) && n >= 1 ? Math.floor(n) : 5;
+  }
+
+  /** Pausa entre lotes de connect (default 2h). */
+  private connectBatchIntervalMs(): number {
+    const n = Number(
+      this.config.get('AGENT_CONNECT_BATCH_INTERVAL_MS', '7200000'),
+    );
+    return Number.isFinite(n) && n >= 60_000 ? n : 7_200_000;
   }
 
   private startOfLocalDay(): Date {
@@ -129,6 +143,81 @@ export class AgenteService {
       .andWhere('c.invitedAt IS NOT NULL')
       .andWhere('c.invitedAt >= :day', { day: this.startOfLocalDay() })
       .getCount();
+  }
+
+  /** Último invitedAt de hoje (para cooldown entre lotes). */
+  private async lastInvitedAtToday(agentId: string): Promise<Date | null> {
+    const row = await this.connections
+      .createQueryBuilder('c')
+      .select('MAX(c.invitedAt)', 'max')
+      .where('c.agentId = :agentId', { agentId })
+      .andWhere('c.status IN (:...st)', {
+        st: [
+          ClientConnectionLinkedinStatus.PENDING,
+          ClientConnectionLinkedinStatus.CONNECTED,
+        ],
+      })
+      .andWhere('c.invitedAt IS NOT NULL')
+      .andWhere('c.invitedAt >= :day', { day: this.startOfLocalDay() })
+      .getRawOne<{ max: Date | string | null }>();
+    if (!row?.max) return null;
+    const d = row.max instanceof Date ? row.max : new Date(row.max);
+    return Number.isNaN(d.getTime()) ? null : d;
+  }
+
+  /**
+   * Quantos connects ainda podem começar agora: resto do lote atual,
+   * ou lote novo se passou o intervalo após múltiplo de batchSize.
+   */
+  private async connectSlotsNow(
+    agentId: string,
+    invitedToday: number,
+  ): Promise<{
+    slots: number;
+    batchSize: number;
+    batchIntervalMs: number;
+    reason: string | null;
+  }> {
+    const dailyLimit = this.connectDailyLimit();
+    const batchSize = this.connectBatchSize();
+    const batchIntervalMs = this.connectBatchIntervalMs();
+    const remainingDaily = Math.max(0, dailyLimit - invitedToday);
+
+    if (remainingDaily <= 0) {
+      return {
+        slots: 0,
+        batchSize,
+        batchIntervalMs,
+        reason: `connect daily limit ${invitedToday}/${dailyLimit}`,
+      };
+    }
+
+    const inBatch = invitedToday % batchSize;
+    if (inBatch === 0 && invitedToday > 0) {
+      const lastAt = await this.lastInvitedAtToday(agentId);
+      const elapsed = lastAt ? Date.now() - lastAt.getTime() : batchIntervalMs;
+      if (elapsed < batchIntervalMs) {
+        return {
+          slots: 0,
+          batchSize,
+          batchIntervalMs,
+          reason: `connect batch cooldown ${invitedToday}/${dailyLimit} (lote ${batchSize}, falta ${Math.ceil((batchIntervalMs - elapsed) / 60_000)}min)`,
+        };
+      }
+      return {
+        slots: Math.min(batchSize, remainingDaily),
+        batchSize,
+        batchIntervalMs,
+        reason: null,
+      };
+    }
+
+    return {
+      slots: Math.min(batchSize - inBatch, remainingDaily),
+      batchSize,
+      batchIntervalMs,
+      reason: null,
+    };
   }
 
   private maxSlotsPerServer(): number {
@@ -309,7 +398,10 @@ export class AgenteService {
       leadThreshold: number;
       leadsNaFila: number;
       connectDailyLimit: number;
+      connectBatchSize: number;
+      connectBatchIntervalMs: number;
       connectsToday: number;
+      connectSlotsNow: number;
       heartbeatStaleMs: number;
     };
   }> {
@@ -367,6 +459,7 @@ export class AgenteService {
 
     const leadsNaFila = await this.countLeadsCandidatos(agentId);
     const connectsToday = await this.countInvitedToday(agentId);
+    const batchNow = await this.connectSlotsNow(agentId, connectsToday);
 
     return {
       agentId,
@@ -380,7 +473,10 @@ export class AgenteService {
         leadThreshold: this.leadThreshold(),
         leadsNaFila,
         connectDailyLimit: this.connectDailyLimit(),
+        connectBatchSize: batchNow.batchSize,
+        connectBatchIntervalMs: batchNow.batchIntervalMs,
         connectsToday,
+        connectSlotsNow: batchNow.slots,
         heartbeatStaleMs: this.heartbeatStaleMs(),
       },
     };
@@ -649,19 +745,20 @@ export class AgenteService {
 
   /**
    * AC-03: 1º candidato **deste** agente (já status=0) ou lead livre (ninguém 0|1|2)
-   * → reserva NOT_SENT para o agente. Máx. AGENT_CONNECT_DAILY_LIMIT/dia.
+   * → reserva NOT_SENT. Máx. AGENT_CONNECT_DAILY_LIMIT/dia em lotes
+   * AGENT_CONNECT_BATCH_SIZE com pausa AGENT_CONNECT_BATCH_INTERVAL_MS.
    */
   private async enqueueConectar(agentId: string): Promise<void> {
     const dailyLimit = this.connectDailyLimit();
     const invitedToday = await this.countInvitedToday(agentId);
-    const remaining = Math.max(0, dailyLimit - invitedToday);
+    const batch = await this.connectSlotsNow(agentId, invitedToday);
 
-    if (remaining <= 0) {
+    if (batch.slots <= 0) {
       await this.jobs.update(
         { agentId, type: 'conectar', status: 'pending' },
         {
           status: 'cancelled',
-          lastError: `connect daily limit ${invitedToday}/${dailyLimit}`,
+          lastError: batch.reason || 'connect batch blocked',
           completedAt: new Date(),
         },
       );
@@ -676,7 +773,10 @@ export class AgenteService {
         .map((j) => String(j.payload?.clienteLinkedinId || ''))
         .filter(Boolean),
     );
-    const slots = Math.max(0, Math.min(1, remaining - claimedJobs.length));
+    const slots = Math.max(
+      0,
+      Math.min(1, batch.slots - claimedJobs.length),
+    );
 
     await this.jobs.update(
       { agentId, type: 'conectar', status: 'pending' },
@@ -728,6 +828,8 @@ export class AgenteService {
     if (!conn || !nextLi) return;
     if (conn.status !== ClientConnectionLinkedinStatus.NOT_SENT) return;
 
+    const queuePos = (invitedToday % batch.batchSize) + claimedJobs.length + 1;
+
     await this.insertJob({
       agentId,
       type: 'conectar',
@@ -738,10 +840,12 @@ export class AgenteService {
         clienteLinkedinId: nextLi.id,
         profileUrl: nextLi.profileUrl,
         name: nextLi.cliente?.nome ?? null,
-        queuePos: 1,
+        queuePos,
         hint: 'lead do agente (reservado status=0) ou livre → claim',
         connectsToday: invitedToday,
         connectDailyLimit: dailyLimit,
+        connectBatchSize: batch.batchSize,
+        connectBatchIntervalMs: batch.batchIntervalMs,
       },
     });
   }

@@ -146,7 +146,7 @@ Cada AVD/conta (`agentId` = `provision.name`, ex. `agent-d`) puxa o próximo tra
 | 1 | `ler_mensagens` | Inbox due (`AGENT_INBOX_INTERVAL_MS`, default 15 min) |
 | 2 | `verificar_conexoes` | Há pending (`status=1`) e due (`AGENT_CONNECTIONS_INTERVAL_MS`, default 30 min) → listar **20** recentes (`AGENT_CONNECTIONS_CHECK_N`) via perfil → tap `N connections` + `mark-accepted` |
 | 3 | `enviar_prospeccao` | Conexão status `2` sem mensagem `sent` |
-| 4 | `conectar` | Lead do agente (`status=0`) ou livre (ninguém 0\|1\|2) → reserva `0` + job; máx. `AGENT_CONNECT_DAILY_LIMIT` (default **10**)/dia |
+| 4 | `conectar` | Lead do agente (`status=0`) ou livre (ninguém 0\|1\|2) → reserva `0` + job; máx. `AGENT_CONNECT_DAILY_LIMIT` (default **15**)/dia em lotes de `AGENT_CONNECT_BATCH_SIZE` (default **5**) com pausa `AGENT_CONNECT_BATCH_INTERVAL_MS` (default **2 h**) entre lotes |
 | 5 | `extrair_leads` | Leads do agente (livres + `status=0` dele) &lt; `AGENT_LEAD_THRESHOLD` (default 20) |
 
 **Antes → depois (`verificar_conexoes`):** pending→conectado só via robot manual (`POST :3099/connections` / `npm run linkedin-extract-connections`) → mesmo script, agendado no claim (`AGENT_CONNECTIONS_INTERVAL_MS`, default 30 min) quando há `status=1`. Falha também grava `last_connections_at` (backoff). **Rollback:** remova o tipo do worker/`AGENT_JOB_TYPES`; ignore `last_connections_at`; volte a chamar o script/API robot à mão.
@@ -188,6 +188,8 @@ Auth worker: JWT, `AGENT_API_KEY` global **ou** chave emitida em `POST /agentes/
 **Antes → depois (AC-03 / ownership):** dois agentes podiam pegar o mesmo perfil → ao conectar, **reserva `NOT_SENT`**; se outro já tem 0\|1\|2, pula; unique parcial `UQ_ccl_one_active_owner`. Rollback: dropar o índice; listar só sem 1\|2; upsert 409 só em 1\|2.
 
 **Antes → depois (fila Candidatos):** 1º de `GET /profiles` global → **1º lead do agente** (já `0`) ou próximo livre claimado; `GET /profiles?agentId=` no funil. Rollback: `listCandidatosLivres` sem filtro 0.
+
+**Antes → depois (lotes connect):** limite diário contínuo (default 10) → **15/dia**, **5** por lote, pausa **2 h** após cada múltiplo de 5 (`invitedAt` do último do lote). Peek: `connectBatchSize`, `connectBatchIntervalMs`, `connectSlotsNow`. Rollback: `AGENT_CONNECT_DAILY_LIMIT=10`, `BATCH_SIZE=15` (ou omitir batch = defaults antigos via env `BATCH_SIZE=999` + intervalo baixo); ou reverter `connectSlotsNow`/`enqueueConectar`.
 
 #### `GET /clientes`
 

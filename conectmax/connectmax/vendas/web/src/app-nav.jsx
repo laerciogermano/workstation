@@ -1,5 +1,4 @@
 import {
-  Buildings,
   ChartBar,
   ChatCircle,
   DownloadSimple,
@@ -32,13 +31,6 @@ const LINKS = [
     label: 'Mensagens',
     Icon: ChatCircle,
     permission: 'messages:read',
-  },
-  {
-    id: 'empresas',
-    href: '/empresas',
-    label: 'Empresas',
-    Icon: Buildings,
-    permission: 'empresas:read',
   },
   {
     id: 'agentes',

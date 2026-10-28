@@ -19,7 +19,6 @@ const Dashboard = lazy(() => import('./dashboard.jsx'));
 const Executivo = lazy(() => import('./executivo.jsx'));
 const Mensagens = lazy(() => import('./mensagens.jsx'));
 const Funil = lazy(() => import('./funil.jsx'));
-const Empresas = lazy(() => import('./empresas.jsx'));
 const Agentes = lazy(() => import('./agentes.jsx'));
 const Usuarios = lazy(() => import('./usuarios.jsx'));
 const Gestores = lazy(() => import('./gestores.jsx'));
@@ -69,7 +68,7 @@ function routeFromPath(pathname = window.location.pathname) {
     return { name: 'funil', profileId: null };
   }
   if (pathname === '/empresas' || pathname === '/empresas/') {
-    return { name: 'empresas', profileId: null };
+    return { name: 'funil', profileId: null };
   }
   if (pathname === '/agentes' || pathname === '/agentes/') {
     return { name: 'agentes', profileId: null };
@@ -530,10 +529,10 @@ export default function App() {
     return () => window.removeEventListener('popstate', onPop);
   }, []);
 
-  /** `/` (antiga Candidatos) → `/funil`. */
+  /** `/` (antiga Candidatos) e `/empresas` → `/funil`. */
   useEffect(() => {
     const path = window.location.pathname;
-    if (path === '/' || path === '') {
+    if (path === '/' || path === '' || path === '/empresas' || path === '/empresas/') {
       window.history.replaceState(null, '', '/funil');
     }
   }, []);
@@ -627,25 +626,6 @@ export default function App() {
           onGoHome={goHome}
           onNavigate={navigate}
           onOpenProfile={openProfile}
-        />
-      </Suspense>,
-    );
-  }
-
-  if (route.name === 'empresas') {
-    return shell(
-      <Suspense
-        fallback={
-          <div className="page page-empresas">
-            <p className="muted">Carregando empresas…</p>
-          </div>
-        }
-      >
-        <Empresas
-          theme={theme}
-          onToggleTheme={toggleTheme}
-          onGoHome={goHome}
-          onNavigate={navigate}
         />
       </Suspense>,
     );

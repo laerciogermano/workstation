@@ -21,7 +21,7 @@ SPA React (Vite) que lista cards paginados de `GET /profiles`, abre `/profiles/:
 | Funil comercial só nas planilhas xlsx | Rota **`/executivo`**: faturamento por vendedor (ranking, participação, evolução), funil orçamentos → aprovados → pedidos → faturamento por mês/ano, barras de cada vendedor por mês, conversão, sazonalidade, leitura executiva automática e tabela por vendedor ([card Trello](../../tasks/6ad9f22cf14c52879b6b565a/README.md)) |
 | Mensagens só via curl/API | Rota SPA **`/mensagens`**: lista conexões (`/linkedin-base/connections`), ao clicar carrega o fio (`/linkedin-base/messages`) e envia via robot `POST :3099/message` |
 | Funil LinkedIn só no todo | Rota SPA **`/funil`**: board Candidatos → Convidados → Conectados → Abordados → Respondidos; cada coluna lista cards da API correspondente |
-| Empresas só nas planilhas/portal | Rota SPA **`/empresas`**: lista `GET /empresas` (CNPJ, razão, pedidos/orçamentos) |
+| Empresas só nas planilhas/portal | Rota SPA `/empresas` existiu; **removida do nav** (API `/empresas` permanece) |
 | Servidores / AVDs / Contas LI separados | Só **`/agentes`**: host + ADB + LinkedIn na mesma linha; gestores com `agentes:write` cadastram |
 | Nav por página + filtro “Buscar nome, cargo, cidade” | Menu transversal `AppNav` (Funil · Mensagens · Empresas · Agentes · Gestores · Dashboards); home `/` redireciona ao funil |
 | Nav só texto / SVG manual | Ícones **Phosphor** (`@phosphor-icons/react`, peso `thin`) no `AppNav` + `ExtractIcon` |
@@ -56,7 +56,9 @@ npm install
 npm run dev
 ```
 
-Abre `http://localhost:5173`. Em dev, Vite faz proxy de `/profiles`, `/dashboard`, `/profile-details`, `/extract`, `/linkedin-base`, `/empresas`, `/agentes`, `/gestores`, `/users` → `http://localhost:3000` (HTML em `/mensagens`, `/funil`, `/empresas`, `/agentes`, `/usuarios`, `/executivo` e `/dashboard` cai no SPA). Em `/profiles`, SPA só no detalhe `/profiles/:uuid`; `GET /profiles?page=` (navegação no browser) vai para a API.
+Abre `http://localhost:5173`. Em dev, Vite faz proxy de `/profiles`, `/dashboard`, `/profile-details`, `/extract`, `/linkedin-base`, `/empresas` (API), `/agentes`, `/gestores`, `/users` → `http://localhost:3000` (HTML em `/mensagens`, `/funil`, `/agentes`, `/usuarios`, `/executivo` e `/dashboard` cai no SPA; `/empresas` HTML → `/funil`). Em `/profiles`, SPA só no detalhe `/profiles/:uuid`; `GET /profiles?page=` (navegação no browser) vai para a API.
+
+**Antes → depois (sem tela Empresas):** nav + `empresas.jsx` → removidos; bookmark `/empresas` redireciona ao funil. API `GET /empresas` intacta. **Rollback:** restaure `empresas.jsx` + item nav + rota em `App.jsx`.
 
 **`/usuarios`:** só com role **admin** (`users:read`). Login local seed: `AUTH_ADMIN_EMAIL` / `AUTH_ADMIN_PASSWORD` no `.env` da API (default `admin@connectmax.local` / `ChangeMeAdmin!2026`). Sem admin o item some do menu e `GET /users` responde 403.
 
@@ -77,7 +79,7 @@ npm run dev
 
 ## Uso
 
-- Menu transversal (`src/app-nav.jsx`): sidebar vertical à esquerda (`app-shell`) com **logo conect** no topo, links (**Funil** · **Mensagens** · **Empresas** · **Agentes** · **Gestores** · **Dashboards**) e **Hero Dia/Noite** no rodapé (`ThemeToggle`). `BrandBar` só eyebrow. **Antes → depois:** item **Candidatos** (`/`) removido; `/` → `/funil`. **Rollback:** recolocar link `perfis` no `LINKS` + grid em `App.jsx`.
+- Menu transversal (`src/app-nav.jsx`): sidebar (**Funil** · **Mensagens** · **Agentes** · **Gestores** · **Dashboards** · **Usuários**) + tema no rodapé. **Antes → depois:** **Candidatos** e **Empresas** removidos; `/` e `/empresas` → `/funil`. **Rollback:** links `perfis`/`empresas` no `LINKS` + `empresas.jsx` / grid home no git.
 - Agentes (`/agentes`): vendedor operacional = host + device + LinkedIn; Sync Docker; Ping / Dormir / Acordar / Backup / Remover; gestores cadastram. API: [`../api/README.md`](../api/README.md#agentes-agentes).
 - Perfil (`/profiles/:id`): abre a partir do funil; **Voltar** → `history.back()` (fallback `/funil`); **Extrair informações** → `GET /extract/by-url/start?url=`; **Remover** → `DELETE /profiles/:id` (volta ao funil). Conectado → **Enviar mensagem** (`/mensagens?profileId=`); não conectado → **Conectar** (`POST /linkedin-robot/connect`).
 - Sem detalhe / sem URL → omite o link

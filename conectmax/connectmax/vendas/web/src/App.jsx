@@ -19,7 +19,6 @@ const Dashboard = lazy(() => import('./dashboard.jsx'));
 const Executivo = lazy(() => import('./executivo.jsx'));
 const Mensagens = lazy(() => import('./mensagens.jsx'));
 const Funil = lazy(() => import('./funil.jsx'));
-const Conexoes = lazy(() => import('./conexoes.jsx'));
 const Empresas = lazy(() => import('./empresas.jsx'));
 const Agentes = lazy(() => import('./agentes.jsx'));
 const Usuarios = lazy(() => import('./usuarios.jsx'));
@@ -33,22 +32,12 @@ const CONNECTIONS_URL =
   import.meta.env.VITE_LINKEDIN_CONNECTIONS_URL ??
   '/linkedin-base/connections';
 const ROBOT_URL = import.meta.env.VITE_LINKEDIN_ROBOT_URL ?? '/linkedin-robot';
-const PAGE_SIZE = 100;
 const ACTION_ICON = { size: 18, weight: 'thin', 'aria-hidden': true };
 
 function photoSrc(base64) {
   if (!base64) return null;
   if (base64.startsWith('data:')) return base64;
   return `data:image/png;base64,${base64}`;
-}
-
-function initials(name) {
-  return (name ?? '?')
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((w) => w[0]?.toUpperCase() ?? '')
-    .join('');
 }
 
 function formatExtractedAt(iso) {
@@ -64,6 +53,9 @@ function profileIdFromPath(pathname = window.location.pathname) {
 }
 
 function routeFromPath(pathname = window.location.pathname) {
+  if (pathname === '/' || pathname === '') {
+    return { name: 'funil', profileId: null };
+  }
   if (pathname === '/dashboard' || pathname === '/dashboard/') {
     return { name: 'dashboard', profileId: null };
   }
@@ -90,19 +82,7 @@ function routeFromPath(pathname = window.location.pathname) {
   }
   const profileId = profileIdFromPath(pathname);
   if (profileId) return { name: 'profile', profileId };
-  return { name: 'home', profileId: null };
-}
-
-function Avatar({ name, photoBase64, className = '' }) {
-  const src = photoSrc(photoBase64);
-  if (src) {
-    return <img src={src} alt={name ?? 'perfil'} loading="lazy" className={className} />;
-  }
-  return (
-    <div className={`avatar-fallback ${className}`.trim()} aria-hidden>
-      {initials(name)}
-    </div>
-  );
+  return { name: 'funil', profileId: null };
 }
 
 function LinkedInLink({ url, className = '' }) {
@@ -127,44 +107,6 @@ function Field({ label, children, className = '' }) {
       <span className="field-label">{label}</span>
       <div className="field-value">{children}</div>
     </div>
-  );
-}
-
-function ProfileCard({ profile, onOpen }) {
-  return (
-    <button
-      type="button"
-      className="card"
-      onClick={() => onOpen(profile)}
-      aria-label={profile.name ? `Abrir perfil de ${profile.name}` : 'Abrir perfil'}
-    >
-      <div className="card-media">
-        <Avatar name={profile.name} photoBase64={profile.photoBase64} />
-      </div>
-      <div className="card-body">
-        <Field label="Nome">
-          <h2>{profile.name ?? '—'}</h2>
-        </Field>
-        <Field label="Cargo">{profile.title}</Field>
-        <Field label="Nível">{profile.level}</Field>
-        <Field label="Conexão">
-          <ConnectionStatusBadge
-            inviteStatus={profile.inviteStatus || profile.connection}
-          />
-        </Field>
-        <Field label="Cidade">{profile.city}</Field>
-        <Field label="Atual">{profile.current}</Field>
-        <Field label="Em comum" className="muted">
-          {profile.mutualConnections}
-        </Field>
-        <Field label="Extraído" className="muted">
-          {formatExtractedAt(profile.extractedAt ?? profile.createdAt)}
-        </Field>
-        <Field label="LinkedIn">
-          {profile.profileUrl ? <LinkedInLink url={profile.profileUrl} /> : null}
-        </Field>
-      </div>
-    </button>
   );
 }
 
@@ -576,20 +518,8 @@ function ProfilePage({
 
 export default function App() {
   const { theme, toggle: toggleTheme } = useTheme();
-  const [profiles, setProfiles] = useState([]);
-  const [total, setTotal] = useState(0);
-  const [page, setPage] = useState(1);
-  const [pages, setPages] = useState(1);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [route, setRoute] = useState(() => routeFromPath());
   const [cachedProfile, setCachedProfile] = useState(null);
-  const [extractRunning, setExtractRunning] = useState(false);
-  const [extractNote, setExtractNote] = useState(null);
-  const [extractLimit, setExtractLimit] = useState(50);
-  const [extractQuery, setExtractQuery] = useState('');
-  const sentinelRef = useRef(null);
-  const hasMore = page < pages;
 
   useEffect(() => {
     const onPop = () => {
@@ -600,157 +530,13 @@ export default function App() {
     return () => window.removeEventListener('popstate', onPop);
   }, []);
 
+  /** `/` (antiga Candidatos) → `/funil`. */
   useEffect(() => {
-    if (route.name !== 'home') return undefined;
-    let cancelled = false;
-    (async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const params = new URLSearchParams({
-          page: String(page),
-          limit: String(PAGE_SIZE),
-        });
-        const profilesRes = await fetch(`${PROFILES_URL}?${params}`);
-        if (!profilesRes.ok) throw new Error(`HTTP ${profilesRes.status}`);
-        const json = await profilesRes.json();
-        const rows = Array.isArray(json.data) ? json.data : [];
-        if (cancelled) return;
-        setTotal(json.meta?.total ?? rows.length);
-        setPages(json.meta?.pages ?? 1);
-        setProfiles((prev) => {
-          if (page <= 1) return rows;
-          const seen = new Set(prev.map((p) => p.id));
-          return [...prev, ...rows.filter((r) => r.id && !seen.has(r.id))];
-        });
-      } catch (e) {
-        if (!cancelled) setError(e.message ?? 'Falha ao carregar');
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [page, route.name]);
-
-  useEffect(() => {
-    if (route.name !== 'home' || !hasMore || loading) return undefined;
-    const el = sentinelRef.current;
-    if (!el) return undefined;
-    const io = new IntersectionObserver(
-      (entries) => {
-        if (entries[0]?.isIntersecting) setPage((p) => p + 1);
-      },
-      { rootMargin: '280px' },
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, [route.name, hasMore, loading, page, pages]);
-
-  /** Recarrega 1ª página e mescla novos IDs (sem spinner) — usado durante extract. */
-  const refreshProfilesSoft = useCallback(async () => {
-    try {
-      const params = new URLSearchParams({
-        page: '1',
-        limit: String(PAGE_SIZE),
-      });
-      const profilesRes = await fetch(`${PROFILES_URL}?${params}`);
-      if (!profilesRes.ok) return;
-      const json = await profilesRes.json();
-      const rows = Array.isArray(json.data) ? json.data : [];
-      setTotal(json.meta?.total ?? rows.length);
-      setPages(json.meta?.pages ?? 1);
-      setProfiles((prev) => {
-        const byId = new Map();
-        for (const r of rows) {
-          if (r?.id) byId.set(r.id, r);
-        }
-        for (const p of prev) {
-          if (p?.id && !byId.has(p.id)) byId.set(p.id, p);
-        }
-        // novos da API primeiro (ordem da 1ª página), depois o restante já carregado
-        const head = rows.filter((r) => r?.id);
-        const headIds = new Set(head.map((r) => r.id));
-        const tail = [...byId.values()].filter((p) => !headIds.has(p.id));
-        return [...head, ...tail];
-      });
-    } catch {
-      /* ignore */
+    const path = window.location.pathname;
+    if (path === '/' || path === '') {
+      window.history.replaceState(null, '', '/funil');
     }
   }, []);
-
-  useEffect(() => {
-    if (route.name !== 'home') return undefined;
-    let cancelled = false;
-    let wasRunning = extractRunning;
-    async function poll() {
-      try {
-        const res = await fetch(`${EXTRACT_URL}/status`);
-        if (!res.ok) return;
-        const json = await res.json();
-        if (cancelled) return;
-        const running = Boolean(json?.running);
-        setExtractRunning(running);
-        if (running) {
-          await refreshProfilesSoft();
-        } else if (wasRunning && json?.exitCode != null) {
-          await refreshProfilesSoft();
-          setExtractNote(
-            json.exitCode === 0
-              ? 'Extract concluído'
-              : `Extract terminou com código ${json.exitCode}`,
-          );
-        }
-        wasRunning = running;
-      } catch {
-        /* API offline */
-      }
-    }
-    poll();
-    const id = window.setInterval(poll, extractRunning ? 4000 : 15000);
-    return () => {
-      cancelled = true;
-      window.clearInterval(id);
-    };
-  }, [route.name, extractRunning, refreshProfilesSoft]);
-
-  async function startExtract() {
-    setExtractNote(null);
-    const limit = Math.min(
-      500,
-      Math.max(1, Math.floor(Number(extractLimit) || 50)),
-    );
-    setExtractLimit(limit);
-    const qText = extractQuery.trim();
-    try {
-      const q = new URLSearchParams({ limit: String(limit) });
-      if (qText) q.set('q', qText);
-      const res = await fetch(`${EXTRACT_URL}/start?${q}`);
-      const json = await res.json().catch(() => ({}));
-      if (res.status === 409 || json?.running) {
-        setExtractRunning(true);
-        setExtractNote('Extract já em execução');
-        return;
-      }
-      if (!res.ok) {
-        const msg =
-          json?.message ||
-          (Array.isArray(json?.message) ? json.message.join(', ') : null) ||
-          `${res.status} ${res.statusText}`;
-        throw new Error(msg);
-      }
-      setExtractRunning(true);
-      const term = qText || 'comprador';
-      setExtractNote(
-        json?.pid
-          ? `Extract “${term}” (até ${limit}, pid ${json.pid})`
-          : `Extract “${term}” (até ${limit} perfis)`,
-      );
-    } catch (e) {
-      setExtractNote(String(e?.message || e));
-    }
-  }
 
   function openProfile(profile) {
     if (!profile?.id) return;
@@ -761,8 +547,8 @@ export default function App() {
 
   function goHome() {
     setCachedProfile(null);
-    setRoute({ name: 'home', profileId: null });
-    window.history.pushState(null, '', '/');
+    setRoute({ name: 'funil', profileId: null });
+    window.history.pushState(null, '', '/funil');
   }
 
   function goBack() {
@@ -783,10 +569,7 @@ export default function App() {
     navigate(`/mensagens?profileId=${encodeURIComponent(profileId)}`);
   }
 
-  const navActive =
-    route.name === 'home' || route.name === 'profile'
-      ? 'perfis'
-      : route.name;
+  const navActive = route.name === 'profile' ? 'funil' : route.name;
 
   const appNav = (
     <AppNav
@@ -953,99 +736,30 @@ export default function App() {
       <ProfilePage
         profileId={route.profileId}
         cachedProfile={
-          cachedProfile?.id === route.profileId
-            ? cachedProfile
-            : profiles.find((p) => p.id === route.profileId) ?? null
+          cachedProfile?.id === route.profileId ? cachedProfile : null
         }
         onBack={goBack}
         onMessage={openMessages}
-        onRemoved={(id) => {
-          setProfiles((prev) => prev.filter((p) => p.id !== id));
-          setTotal((t) => Math.max(0, t - 1));
-          goHome();
-        }}
+        onRemoved={() => goHome()}
       />,
     );
   }
 
   return shell(
-    <div className="page">
-      <BrandBar eyebrow="Prospecção LinkedIn" />
-      <header className="header">
-        <div>
-          <h1>Candidatos</h1>
-          <p className="subtitle">
-            {loading && profiles.length === 0
-              ? 'Carregando…'
-              : `${profiles.length} de ${total} cadastrados`}
-          </p>
+    <Suspense
+      fallback={
+        <div className="page page-funil">
+          <p className="muted">Carregando funil…</p>
         </div>
-        <div className="header-actions perfis-extract">
-          <input
-            className="search"
-            type="search"
-            placeholder="Pesquisar…"
-            value={extractQuery}
-            onChange={(e) => setExtractQuery(e.target.value)}
-            disabled={extractRunning}
-            aria-label="Termo de pesquisa LinkedIn"
-          />
-          <label className="extract-qty">
-            <span className="muted">Qtd</span>
-            <input
-              type="number"
-              min={1}
-              max={500}
-              value={extractLimit}
-              disabled={extractRunning}
-              onChange={(e) => setExtractLimit(e.target.value)}
-              aria-label="Quantidade de perfis a extrair"
-            />
-          </label>
-          <button
-            type="button"
-            className="btn-primary btn-extract"
-            onClick={startExtract}
-            disabled={extractRunning}
-            title="Dispara login-extract-profiles no screen-robot"
-          >
-            <ExtractIcon className="btn-extract-icon" />
-            {extractRunning ? 'Extraindo…' : 'Extrair'}
-          </button>
-        </div>
-      </header>
-
-      {extractNote && <p className="muted">{extractNote}</p>}
-
-      {error && (
-        <p className="error">
-          Erro: {error}. Confirme a API em{' '}
-          <code>http://localhost:3000/profiles</code>.
-        </p>
-      )}
-
-      {!loading && !error && profiles.length === 0 && (
-        <p className="empty">Nenhum perfil encontrado.</p>
-      )}
-
-      <div className="grid">
-        {profiles.map((p) => (
-          <ProfileCard
-            key={p.id ?? `${p.name}-${p.current}`}
-            profile={p}
-            onOpen={openProfile}
-          />
-        ))}
-      </div>
-
-      <div ref={sentinelRef} className="scroll-sentinel" aria-hidden>
-        {loading && profiles.length > 0 && (
-          <p className="muted">Carregando mais…</p>
-        )}
-        {!loading && !hasMore && profiles.length > 0 && (
-          <p className="muted">Fim da lista</p>
-        )}
-      </div>
-    </div>,
+      }
+    >
+      <Funil
+        theme={theme}
+        onToggleTheme={toggleTheme}
+        onGoHome={goHome}
+        onNavigate={navigate}
+        onOpenProfile={openProfile}
+      />
+    </Suspense>,
   );
 }

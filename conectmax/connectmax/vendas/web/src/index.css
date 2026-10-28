@@ -1674,6 +1674,14 @@ code {
   flex-direction: column;
 }
 
+.funil-agent-filter {
+  margin: 0;
+}
+
+.funil-agent-filter select {
+  min-width: 10rem;
+}
+
 .funil-board {
   display: flex;
   gap: 0.75rem;

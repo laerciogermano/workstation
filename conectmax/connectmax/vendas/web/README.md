@@ -23,7 +23,7 @@ SPA React (Vite) que lista cards paginados de `GET /profiles`, abre `/profiles/:
 | Funil LinkedIn só no todo | Rota SPA **`/funil`**: board Candidatos → Convidados → Conectados → Abordados → Respondidos; cada coluna lista cards da API correspondente |
 | Empresas só nas planilhas/portal | Rota SPA **`/empresas`**: lista `GET /empresas` (CNPJ, razão, pedidos/orçamentos) |
 | Servidores / AVDs / Contas LI separados | Só **`/agentes`**: host + ADB + LinkedIn na mesma linha; gestores com `agentes:write` cadastram |
-| Nav por página + filtro “Buscar nome, cargo, cidade” | Menu transversal `AppNav` (Candidatos · Funil · Mensagens · Empresas · Agentes · Gestores · Dashboards); **Pesquisar + Qtd + Extrair** só em Candidatos; lista sem filtro `q` |
+| Nav por página + filtro “Buscar nome, cargo, cidade” | Menu transversal `AppNav` (Funil · Mensagens · Empresas · Agentes · Gestores · Dashboards); home `/` redireciona ao funil |
 | Nav só texto / SVG manual | Ícones **Phosphor** (`@phosphor-icons/react`, peso `thin`) no `AppNav` + `ExtractIcon` |
 | `AppNav` horizontal no topo de cada página | Sidebar vertical à esquerda (`app-shell` + `.app-nav` sticky); páginas só no `.app-main` |
 | Logo no `BrandBar` de cada página | Logo `conect` no topo do menu esquerdo (`BrandLogo` em `AppNav`); `BrandBar` só eyebrow |
@@ -75,20 +75,9 @@ npm run dev
 
 ## Uso
 
-- Menu transversal (`src/app-nav.jsx`): sidebar vertical à esquerda (`app-shell`) com **logo conect** no topo, links (**Candidatos** · **Funil** · **Mensagens** · **Empresas** · **Agentes** · **Gestores** · **Dashboards**) e **Hero Dia/Noite** no rodapé (`ThemeToggle`). `BrandBar` só eyebrow. **Antes → depois:** tema no brand-bar → rodapé do menu; label Perfis → Candidatos. **Rollback:** `ThemeToggle` de volta no `BrandBar`; label `Perfis`.
+- Menu transversal (`src/app-nav.jsx`): sidebar vertical à esquerda (`app-shell`) com **logo conect** no topo, links (**Funil** · **Mensagens** · **Empresas** · **Agentes** · **Gestores** · **Dashboards**) e **Hero Dia/Noite** no rodapé (`ThemeToggle`). `BrandBar` só eyebrow. **Antes → depois:** item **Candidatos** (`/`) removido; `/` → `/funil`. **Rollback:** recolocar link `perfis` no `LINKS` + grid em `App.jsx`.
 - Agentes (`/agentes`): vendedor operacional = host + device + LinkedIn; Sync Docker; Ping / Dormir / Acordar / Backup / Remover; gestores cadastram. API: [`../api/README.md`](../api/README.md#agentes-agentes).
-- Home (`/` · Candidatos): `GET /profiles?page=&limit=100`; **Pesquisar** + **Qtd** + **Extrair** → `GET /extract/start?limit=&q=` (`q` vazio → robô usa `comprador`); infinite scroll; poll `GET /extract/status` ~4s (soft-refresh). Sem filtro “Buscar nome, cargo, cidade”. **Rollback:** filtro com debounce/`q` na lista; extract sem `q`.
-- Clique → `/profiles/:id` com Avatar + link LinkedIn; **Voltar** → `history.back()` (fallback `/` se não houver histórico)
-- Perfil (`/profiles/:id`): botão **Extrair informações** → `GET /extract/by-url/start?url=` (deep link na URL do detail/`profileUrl`; desabilitado sem URL); poll `GET /extract/status` ~4s enquanto roda; soft-reload do card + detail ao terminar; botão **Remover** → `DELETE /profiles/:id` (exclusão lógica `deleted_at`; confirmação; volta à home e tira o card da lista). Status de conexão via `GET /linkedin-base/connections?clienteLinkedinId=` (+ fallback `inviteStatus`): se **conectado** → **Enviar mensagem** navega para `/mensagens?profileId=:id` (seleciona a conversa); se **não conectado** (`none`) → **Conectar** (`POST /linkedin-robot/connect`). Pendente não mostra Conectar. **Antes → depois:** Voltar → `/` fixo → `history.back()`; compose inline no perfil → `/mensagens?profileId=`. **Rollback:** `onBack={goHome}`; compose `POST /linkedin-robot/message` no perfil; remova `openMessages`/`initialProfileId`.
-
-**Antes → depois (extract no perfil):** `GET /extract/detail/start?id=` → `GET /extract/by-url/start?url=` com a URL LinkedIn do perfil. **Rollback:** volte `startDetailExtract` em `App.jsx` para `detail/start?id=`.
-**Antes → depois (remover perfil):** só soft-delete em massa via API → botão Remover no detalhe (`DELETE /profiles/:id`). **Rollback:** remova o botão/`removeProfile`/`onRemoved` em `App.jsx`.
-- Re-extrair detalhe (`POST /profile-details`) atualiza campos e avatar na lista (API faz upsert + sync no card pai)
-
-**Antes → depois (botão Extrair):** extract só via curl/`npm run` → em **Candidatos** **Pesquisar** + **Qtd** (default **50**) → `GET /extract/start?limit=&q=`; em `/mensagens` (fio) **Extrair** + Qtd (default **100**) → `POST /linkedin-robot/profile-messages`.  
-**Antes → depois (lista ao extrair):** lista só ao recarregar → soft-refresh a cada poll de status + ao terminar.  
-**Antes → depois (extract no perfil):** detalhe só via curl/`npm run login-extract-profile-detail` → botão no header de `/profiles/:id`.  
-**Rollback:** remover inputs/handlers; home sem `?limit=`; mensagens sem Extrair; tirar `refreshProfilesSoft` do poll; no perfil remover `startDetailExtract` + botão/poll.
+- Perfil (`/profiles/:id`): abre a partir do funil; **Voltar** → `history.back()` (fallback `/funil`); **Extrair informações** → `GET /extract/by-url/start?url=`; **Remover** → `DELETE /profiles/:id` (volta ao funil). Conectado → **Enviar mensagem** (`/mensagens?profileId=`); não conectado → **Conectar** (`POST /linkedin-robot/connect`).
 - Sem detalhe / sem URL → omite o link
 - Executivo (SPA `/executivo`): filtros Ano / Mês / Vendedor; KPIs com Δ vs mesmo período do ano anterior; funil em quantidade e valor; ranking e evolução do faturamento por vendedor; “Vendedor por mês” (um gráfico de barras por vendedor, mesma escala, métrica selecionável: faturamento, valor em pedidos, pedidos, orçamentos); conversão mensal; sazonalidade ano × ano; desempenho por vendedor (taxa de aprovação, ticket médio, dias orç → pedido); maiores clientes; notas de qualidade dos dados. Não depende da API.
 - Dashboard (SPA `/dashboard`): `GET /dashboard` — KPIs (% conectados/pendentes/sem convite, aceites, hoje), gráficos (atividade diária extract/convite/aceite, pie de status, grau, top cargos/cidades/empresas) e tabelas; **sem** OCR/foto/cobertura; poll **5s**.
@@ -100,15 +89,18 @@ npm run dev
 
 **Antes → depois (poll mensagens):** fio só ao clicar / Recarregar → `setInterval` 5s silencioso no peer selecionado. **Rollback:** remova o `setInterval` em `mensagens.jsx` (volte ao `useEffect` que só chama `loadMessages(selected)`).
 
-- Funil (SPA `/funil`): board horizontal L→R; cabeçalho só título + contagem; fontes:
+- Funil (SPA `/funil`): board **por agente** (select no header; `?agent=` + `localStorage` `cx-funil-agent`); todas as colunas filtram `agentId`; fontes:
   | Coluna | API | Cards |
   |--------|-----|-------|
-  | Candidatos | `GET /profiles` | cards de busca (paginado, “Carregar mais”) |
-  | Convidados | `GET /linkedin-base/connections?status=1` | cada convite pendente |
-  | Conectados | `GET /linkedin-base/connections?status=2` | cada conexão aceita |
-  | Abordados | `GET /linkedin-base/messages?direction=sent` | 1 por peer |
-  | Respondidos | `GET /linkedin-base/messages?direction=received` | 1 por peer (dedupe `clienteLinkedinId`) |
+  | Candidatos | `GET /profiles?agentId=` | fila do agente (paginado) |
+  | Convidados | `GET /linkedin-base/connections?status=1&agentId=` | convites do agente |
+  | Conectados | `GET /linkedin-base/connections?status=2&agentId=` | aceites do agente |
+  | Abordados | `GET /linkedin-base/messages?direction=sent&agentId=` | 1 por peer |
+  | Respondidos | `GET /linkedin-base/messages?direction=received&agentId=` | 1 por peer |
+  | Descartados | `GET /linkedin-base/connections?status=3&agentId=` | descartes do agente |
 
+**Antes → depois (funil por agente):** board misturava todos os agentes (`VITE_FUNIL_AGENT_ID` só em Candidatos) → select + `agentId` em todas as colunas. **Rollback:** tire o select e as query `agentId`; volte `FUNIL_AGENT_ID` só em candidatos.  
+**Antes → depois (sem tela Candidatos):** grid `/` + Extrair em massa → removidos; leads só na coluna Candidatos do funil. Extract em massa via API/`curl`. **Rollback:** restaure o item nav + home em `App.jsx`.  
 **Antes → depois (funil):** etapas só no todo Screen Robot → board em `/funil` lendo as APIs acima.  
 **Antes → depois (sem Perfil Extraído):** coluna `GET /profile-details?hasUrl=1` no board → removida (Candidatos já cobre extract).  
 **Antes → depois (abrir perfil no funil):** só Candidatos tinham “Abrir” → clique em qualquer card (com `profileId` ou URL) abre `/profiles/:id` (ensure via `GET /profiles/ensure?url=` se preciso); lá há **Extrair informações**.  

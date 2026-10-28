@@ -7,7 +7,6 @@ import {
   Robot,
   SignOut,
   UserGear,
-  Users,
   UsersThree,
 } from '@phosphor-icons/react';
 import { clearSession, getUser, hasPermission } from './auth.js';
@@ -20,13 +19,6 @@ export function ExtractIcon({ className }) {
 }
 
 const LINKS = [
-  {
-    id: 'perfis',
-    href: '/',
-    label: 'Candidatos',
-    Icon: Users,
-    permission: 'profiles:read',
-  },
   {
     id: 'funil',
     href: '/funil',

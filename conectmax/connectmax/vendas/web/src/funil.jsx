@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { BrandBar } from './brand.jsx';
 import { ConnectionStatusBadge } from './connection-status.jsx';
 
@@ -8,10 +8,39 @@ const CONNECTIONS_URL =
   '/linkedin-base/connections';
 const MESSAGES_URL =
   import.meta.env.VITE_LINKEDIN_MESSAGES_URL ?? '/linkedin-base/messages';
-/** Agente cujo próximo conectar destaca no funil. */
-const FUNIL_AGENT_ID = import.meta.env.VITE_FUNIL_AGENT_ID || 'local';
+const AGENTES_URL = import.meta.env.VITE_AGENTES_URL ?? '/agentes';
+const FUNIL_AGENT_KEY = 'cx-funil-agent';
 
 const PAGE_SIZE = 100;
+
+function agentFromUrl() {
+  try {
+    return new URLSearchParams(window.location.search).get('agent')?.trim() || '';
+  } catch {
+    return '';
+  }
+}
+
+function agentFromStorage() {
+  try {
+    return localStorage.getItem(FUNIL_AGENT_KEY)?.trim() || '';
+  } catch {
+    return '';
+  }
+}
+
+function persistAgent(agentId) {
+  try {
+    if (agentId) localStorage.setItem(FUNIL_AGENT_KEY, agentId);
+    else localStorage.removeItem(FUNIL_AGENT_KEY);
+  } catch {
+    /* ignore */
+  }
+  const url = new URL(window.location.href);
+  if (agentId) url.searchParams.set('agent', agentId);
+  else url.searchParams.delete('agent');
+  window.history.replaceState(null, '', `${url.pathname}${url.search}`);
+}
 
 /** Colunas do board — funil L→R. Cada uma = 1 API. */
 const COLUMNS = [
@@ -399,6 +428,10 @@ export default function Funil({
   onNavigate,
   onOpenProfile,
 }) {
+  const [agentes, setAgentes] = useState([]);
+  const [agentesLoading, setAgentesLoading] = useState(true);
+  const [agentesError, setAgentesError] = useState(null);
+  const [agentId, setAgentId] = useState(() => agentFromUrl() || agentFromStorage());
   const [cols, setCols] = useState(() =>
     Object.fromEntries(COLUMNS.map((c) => [c.id, emptyCol()])),
   );
@@ -410,11 +443,66 @@ export default function Funil({
     setCols((prev) => ({ ...prev, [id]: { ...prev[id], ...patch } }));
   }, []);
 
+  const agentOpts = useMemo(() => {
+    const names = [...new Set(agentes.map((a) => a.nome).filter(Boolean))];
+    names.sort((a, b) => a.localeCompare(b, 'pt-BR'));
+    return names;
+  }, [agentes]);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      setAgentesLoading(true);
+      setAgentesError(null);
+      try {
+        const json = await fetchJson(AGENTES_URL);
+        const rows = Array.isArray(json?.data)
+          ? json.data
+          : Array.isArray(json)
+            ? json
+            : [
+                ...(json?.ativos || []),
+                ...(json?.dormindo || []),
+                ...(json?.outros || []),
+              ];
+        if (cancelled) return;
+        setAgentes(rows);
+      } catch (e) {
+        if (!cancelled) setAgentesError(String(e?.message || e));
+      } finally {
+        if (!cancelled) setAgentesLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  /** Garante agentId válido quando a lista chega. */
+  useEffect(() => {
+    if (agentesLoading || !agentOpts.length) return;
+    if (agentId && agentOpts.includes(agentId)) {
+      persistAgent(agentId);
+      return;
+    }
+    const next = agentOpts[0];
+    setAgentId(next);
+    persistAgent(next);
+  }, [agentesLoading, agentOpts, agentId]);
+
+  function selectAgent(next) {
+    const id = String(next || '').trim();
+    setAgentId(id);
+    persistAgent(id);
+  }
+
   const loadRespondidos = useCallback(async () => {
+    if (!agentId) return;
     setCol('respondidos', { loading: true, error: null });
     try {
       const { data } = await fetchAllPages(MESSAGES_URL, {
         direction: 'received',
+        agentId,
       });
       const cards = cardsFromMessages(data);
       setCol('respondidos', {
@@ -433,12 +521,16 @@ export default function Funil({
         hasMore: false,
       });
     }
-  }, [setCol]);
+  }, [setCol, agentId]);
 
   const loadAbordados = useCallback(async () => {
+    if (!agentId) return;
     setCol('abordados', { loading: true, error: null });
     try {
-      const { data } = await fetchAllPages(MESSAGES_URL, { direction: 'sent' });
+      const { data } = await fetchAllPages(MESSAGES_URL, {
+        direction: 'sent',
+        agentId,
+      });
       const cards = cardsFromMessages(data);
       setCol('abordados', {
         cards,
@@ -456,13 +548,15 @@ export default function Funil({
         hasMore: false,
       });
     }
-  }, [setCol]);
+  }, [setCol, agentId]);
 
   const loadConectados = useCallback(async () => {
+    if (!agentId) return;
     setCol('conectados', { loading: true, error: null });
     try {
       const { data, total } = await fetchAllPages(CONNECTIONS_URL, {
         status: '2',
+        agentId,
       });
       setCol('conectados', {
         cards: cardsFromConnections(data),
@@ -480,13 +574,15 @@ export default function Funil({
         hasMore: false,
       });
     }
-  }, [setCol]);
+  }, [setCol, agentId]);
 
   const loadConvidados = useCallback(async () => {
+    if (!agentId) return;
     setCol('convidados', { loading: true, error: null });
     try {
       const { data, total } = await fetchAllPages(CONNECTIONS_URL, {
         status: '1',
+        agentId,
       });
       setCol('convidados', {
         cards: cardsFromConnections(data),
@@ -504,13 +600,15 @@ export default function Funil({
         hasMore: false,
       });
     }
-  }, [setCol]);
+  }, [setCol, agentId]);
 
   const loadDescartados = useCallback(async () => {
+    if (!agentId) return;
     setCol('descartados', { loading: true, error: null });
     try {
       const { data, total } = await fetchAllPages(CONNECTIONS_URL, {
         status: '3',
+        agentId,
       });
       setCol('descartados', {
         cards: cardsFromConnections(data),
@@ -528,16 +626,17 @@ export default function Funil({
         hasMore: false,
       });
     }
-  }, [setCol]);
+  }, [setCol, agentId]);
 
   const loadCandidatos = useCallback(
     async (page = 1, append = false) => {
+      if (!agentId) return;
       setCol('candidatos', { loading: true, error: null });
       try {
         const q = new URLSearchParams({
           page: String(page),
           limit: String(PAGE_SIZE),
-          agentId: FUNIL_AGENT_ID,
+          agentId,
         });
         const json = await fetchJson(`${PROFILES_URL}?${q}`);
         const chunk = cardsFromProfiles(json?.data ?? []);
@@ -571,10 +670,11 @@ export default function Funil({
         }));
       }
     },
-    [setCol],
+    [setCol, agentId],
   );
 
   const reloadAll = useCallback(() => {
+    if (!agentId) return;
     loadRespondidos();
     loadAbordados();
     loadConectados();
@@ -582,6 +682,7 @@ export default function Funil({
     loadDescartados();
     loadCandidatos(1, false);
   }, [
+    agentId,
     loadRespondidos,
     loadAbordados,
     loadConectados,
@@ -591,15 +692,23 @@ export default function Funil({
   ]);
 
   useEffect(() => {
+    if (!agentId) return;
+    setCols(Object.fromEntries(COLUMNS.map((c) => [c.id, emptyCol()])));
     reloadAll();
-  }, [reloadAll]);
+  }, [agentId, reloadAll]);
 
   /** Destaca o 1º da fila de conectar (mesmo agente do worker). */
   useEffect(() => {
+    if (!agentId) {
+      setNextConnect(null);
+      return undefined;
+    }
     let cancelled = false;
     async function loadNext() {
       try {
-        const json = await fetchJson(`/agente/${encodeURIComponent(FUNIL_AGENT_ID)}/peek`);
+        const json = await fetchJson(
+          `/agente/${encodeURIComponent(agentId)}/peek`,
+        );
         if (!cancelled) setNextConnect(json?.nextConnect ?? null);
       } catch {
         if (!cancelled) setNextConnect(null);
@@ -611,7 +720,7 @@ export default function Funil({
       cancelled = true;
       clearInterval(t);
     };
-  }, []);
+  }, [agentId]);
 
   function go(path) {
     if (onNavigate) {
@@ -662,44 +771,74 @@ export default function Funil({
         <div>
           <h1>Funil</h1>
           <p className="subtitle">
-            Board por etapa — Candidatos: topo = próximo connect do agente{' '}
-            <code>{FUNIL_AGENT_ID}</code>
+            Board por agente — etapas do{' '}
+            {agentId ? <code>{agentId}</code> : '…'}
           </p>
         </div>
         <div className="header-actions">
+          <label className="filter funil-agent-filter">
+            Agente
+            <select
+              value={agentId}
+              disabled={agentesLoading || !agentOpts.length}
+              onChange={(e) => selectAgent(e.target.value)}
+              aria-label="Filtrar funil por agente"
+            >
+              {!agentOpts.length && (
+                <option value="">
+                  {agentesLoading ? 'Carregando…' : 'Nenhum agente'}
+                </option>
+              )}
+              {agentOpts.map((nome) => (
+                <option key={nome} value={nome}>
+                  {nome}
+                </option>
+              ))}
+            </select>
+          </label>
           <button
             type="button"
             className="btn-secondary"
             onClick={reloadAll}
-            disabled={Object.values(cols).some((c) => c.loading)}
+            disabled={!agentId || Object.values(cols).some((c) => c.loading)}
           >
             Atualizar
           </button>
         </div>
       </header>
 
+      {agentesError && (
+        <p className="error">Erro ao listar agentes: {agentesError}</p>
+      )}
       {openError && <p className="error">Erro ao abrir perfil: {openError}</p>}
 
-      <div className="funil-board" role="list">
-        {(() => {
-          const board = dedupeBoardColumns(cols);
-          return COLUMNS.map((column) => (
-            <FunilColumn
-              key={column.id}
-              column={column}
-              state={board[column.id]}
-              onOpenProfile={openProfile}
-              openingCardId={openingCardId}
-              nextConnect={nextConnect}
-              onLoadMore={
-                column.id === 'candidatos'
-                  ? () => loadCandidatos((cols.candidatos.page || 1) + 1, true)
-                  : undefined
-              }
-            />
-          ));
-        })()}
-      </div>
+      {!agentId && !agentesLoading && (
+        <p className="empty">Cadastre um agente em /agentes para ver o funil.</p>
+      )}
+
+      {agentId && (
+        <div className="funil-board" role="list">
+          {(() => {
+            const board = dedupeBoardColumns(cols);
+            return COLUMNS.map((column) => (
+              <FunilColumn
+                key={`${agentId}-${column.id}`}
+                column={column}
+                state={board[column.id]}
+                onOpenProfile={openProfile}
+                openingCardId={openingCardId}
+                nextConnect={nextConnect}
+                onLoadMore={
+                  column.id === 'candidatos'
+                    ? () =>
+                        loadCandidatos((cols.candidatos.page || 1) + 1, true)
+                    : undefined
+                }
+              />
+            ));
+          })()}
+        </div>
+      )}
     </div>
   );
 }

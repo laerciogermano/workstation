@@ -10,7 +10,6 @@ import { ClienteLinkedin } from '../clientes/cliente-linkedin.entity';
 import {
   INVITE_STATUS_LABEL,
   InviteStatus,
-  normalizeInviteStatus,
 } from '../clientes/invite-status';
 
 type CountRow = { label: string; count: number; pct?: number };
@@ -85,13 +84,9 @@ export class DashboardService {
   async insights(): Promise<DashboardInsights> {
     const [
       profilesTotal,
-      inviteConnected,
-      invitePending,
-      inviteConnect,
       connConnected,
       connPending,
       connNotSent,
-      byInviteRaw,
       byConnStatusRaw,
       byDegreeRaw,
       byCityRaw,
@@ -106,21 +101,8 @@ export class DashboardService {
       extractedToday,
     ] = await Promise.all([
       this.linkedin.count({ where: { deletedAt: IsNull() } }),
-      this.active()
-        .andWhere('LOWER(TRIM(li.inviteStatus)) IN (:...s)', {
-          s: ['connected', 'conectado', 'accepted'],
-        })
-        .getCount(),
-      this.active()
-        .andWhere('LOWER(TRIM(li.inviteStatus)) IN (:...s)', {
-          s: ['pending', 'pendente', 'convidado'],
-        })
-        .getCount(),
-      this.active()
-        .andWhere('LOWER(TRIM(li.inviteStatus)) IN (:...s)', {
-          s: ['connect', 'nao_enviado', 'não enviado', 'nao enviado', 'not_sent', 'none'],
-        })
-        .getCount(),
+      // Funil = client_connection_linkedin (mesmo critério do board /profiles?agentId=).
+      // Não usar li.inviteStatus — fica desatualizado após claim/convite do agente.
       this.connections.count({
         where: { status: ClientConnectionLinkedinStatus.CONNECTED },
       }),
@@ -130,16 +112,17 @@ export class DashboardService {
       this.connections.count({
         where: { status: ClientConnectionLinkedinStatus.NOT_SENT },
       }),
-      this.active()
-        .select('li.inviteStatus', 'label')
-        .addSelect('COUNT(*)', 'count')
-        .groupBy('li.inviteStatus')
-        .orderBy('count', 'DESC')
-        .getRawMany<{ label: string | null; count: string }>(),
       this.connections
         .createQueryBuilder('c')
         .select('c.status', 'label')
         .addSelect('COUNT(*)', 'count')
+        .where('c.status IN (:...sts)', {
+          sts: [
+            ClientConnectionLinkedinStatus.NOT_SENT,
+            ClientConnectionLinkedinStatus.PENDING,
+            ClientConnectionLinkedinStatus.CONNECTED,
+          ],
+        })
         .groupBy('c.status')
         .orderBy('count', 'DESC')
         .getRawMany<{ label: string | number | null; count: string }>(),
@@ -260,15 +243,12 @@ export class DashboardService {
       return { label, count, pct: pct(count, connTotal) };
     });
 
+    /** Mesmos buckets do funil (status 0|1|2), labels de invite para o gráfico. */
     const inviteBuckets: Record<InviteStatus, number> = {
-      connect: 0,
-      pending: 0,
-      connected: 0,
+      connect: connNotSent,
+      pending: connPending,
+      connected: connConnected,
     };
-    for (const r of byInviteRaw) {
-      const key = normalizeInviteStatus(r.label) ?? 'connect';
-      inviteBuckets[key] += Number(r.count) || 0;
-    }
     const inviteLabeled: CountRow[] = (
       ['connect', 'pending', 'connected'] as InviteStatus[]
     ).map((key) => ({
@@ -288,28 +268,28 @@ export class DashboardService {
         {
           group: 'funil',
           label: 'Sem convite',
-          value: inviteConnect,
+          value: connNotSent,
           hint:
             profilesTotal > 0
-              ? `${pct(inviteConnect, profilesTotal)}% · ainda não convidados`
-              : 'ainda não convidados',
+              ? `${pct(connNotSent, profilesTotal)}% · fila status=0 (candidatos)`
+              : 'fila status=0 (candidatos)',
         },
         {
           group: 'funil',
           label: 'Aguardando aceite',
-          value: invitePending,
+          value: connPending,
           hint:
             profilesTotal > 0
-              ? `${pct(invitePending, profilesTotal)}% · convite enviado`
+              ? `${pct(connPending, profilesTotal)}% · convite enviado`
               : 'convite enviado',
         },
         {
           group: 'funil',
           label: 'Conectados',
-          value: inviteConnected,
+          value: connConnected,
           hint:
             profilesTotal > 0
-              ? `${pct(inviteConnected, profilesTotal)}% · aceitaram o convite`
+              ? `${pct(connConnected, profilesTotal)}% · aceitaram o convite`
               : 'aceitaram o convite',
         },
         {

@@ -643,6 +643,7 @@ curl http://localhost:3000/dashboard
 **Antes → depois (invite_status):** valores OCR tipo `Connect` apareciam no dashboard → só 3 buckets (`connect`/`pending`/`connected` = não enviado/pendente/conectado); gravação passa por `normalizeInviteStatus` (`clientes/invite-status.ts`).
 **Antes → depois (soft-delete):** só ativos (`deleted_at IS NULL`).
 **Antes → depois (KPIs):** cards misturavam `%` e “Conexões aceitas” (tabela do agente) com “Conectados” (invite do perfil) → dois grupos (`funil` / `hoje`), valor = **número absoluto**, `%` só no `hint`. Web: seções “Funil de convites” e “Hoje”.
+**Antes → depois (fonte do funil):** KPIs Sem convite / Aguardando / Conectados + `byInviteStatus` liam `cliente_linkedin.invite_status` (OCR, podia ficar em `connect` após convite) → contam `client_connection_linkedin.status` 0|1|2 (igual coluna Candidatos / Convidados / Conectados do funil). **Rollback:** volte os `getCount`/`groupBy` em `li.inviteStatus` no `DashboardService`.
 **Rollback:** restaure o `DashboardService` anterior (com `coverage`/`withPhoto`/`withOcr`); no web, volte os painéis Radar/cobertura; remova `normalizeInviteStatus` nos upserts. Para KPIs: volte `value` em `%` e o card “Conexões aceitas”; no web, um único `.kpi-grid` sem `group`.
 
 ```bash

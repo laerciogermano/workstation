@@ -1,0 +1,6 @@
+Prints do site ConectMax (https://www.conectmax.com/) anexados em insumo-conectmax-site-prints.pdf (9 páginas):
+
+1–5. Home: hero, franquia teaser, features (boleto/prazo), clientes, visão/valores
+6–9. /franquias/: hero, formulário, diferenciais, portal do franqueado
+
+Paleta observada: azul corporativo + laranja CTA + branco/preto; logo globe/network + CONECTMAX italic.

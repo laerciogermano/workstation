@@ -1,0 +1,54 @@
+{
+  "card": {
+    "id": "6ad9f22cf14c52879b6b565a",
+    "name": "Dashboard executivo: faturamento por vendedor + funil (mês/ano)",
+    "desc": "## Objetivo\nCriar um **dashboard executivo** para acompanhar o funil comercial da ConectMax (portal franqueado), com visão clara de desempenho por vendedor e por período.\n\n## Escopo\n- **Faturamento por vendedor** (comparativo, ranking, evolução)\n- **Funil completo por período** (mês / ano): orçamentos → pedidos → faturamento\n- **Insights adicionais** úteis para visão executiva (ex.: conversão, ticket médio, sazonalidade, concentração por vendedor, meses atípicos)\n- Usar a **identidade visual** (HTML anexado) como insumo de UI/marca no dashboard\n\n## Insumos anexados\n- Planilha Orçamentos 2025–2026 (abas mensais + Resumo + Resumo vendedores)\n- Planilha Pedidos 2025–2026 (abas mensais + Resumo + Resumo vendedores)\n- Planilha Faturamento 2025–2026 (abas mensais + Resumo + Resumo vendedores)\n- `identidade-visual-conect-v1.html` — manual de marca (cores, tipografia, aplicações)\n\n## Entrega esperada\nDashboard (web ou BI) consumindo esses dados, alinhado à identidade Conect, pronto para leitura executiva periódica (mês/ano).\n\n## Fora de escopo (neste card)\n- Reextrair dados do portal (usar os xlsx anexados como base)\n- Alterar o ERP/portal franqueado",
+    "url": "https://trello.com/c/DwkWgoK2/79-dashboard-executivo-faturamento-por-vendedor-funil-m%C3%AAs-ano",
+    "shortUrl": "https://trello.com/c/DwkWgoK2",
+    "idList": "69f8f2bc3eb716695572c8c8",
+    "due": null
+  },
+  "attachments": [
+    {
+      "id": "6ad9f2733d439d25b57ce2a1",
+      "name": "Funil-Orcamentos-2025-2026.xlsx",
+      "bytes": 147088,
+      "url": "https://trello.com/1/cards/6ad9f22cf14c52879b6b565a/attachments/6ad9f2733d439d25b57ce2a1/download/Funil-Orcamentos-2025-2026.xlsx",
+      "saved_as": "anexos/Funil-Orcamentos-2025-2026.xlsx",
+      "kind": "file",
+      "ok": true,
+      "size": 147088
+    },
+    {
+      "id": "6ad9f2b0cff9c3b8d14818d3",
+      "name": "Funil-Pedidos-2025-2026.xlsx",
+      "bytes": 73956,
+      "url": "https://trello.com/1/cards/6ad9f22cf14c52879b6b565a/attachments/6ad9f2b0cff9c3b8d14818d3/download/Funil-Pedidos-2025-2026.xlsx",
+      "saved_as": "anexos/Funil-Pedidos-2025-2026.xlsx",
+      "kind": "file",
+      "ok": true,
+      "size": 73956
+    },
+    {
+      "id": "6ad9f2ed137efe563f167040",
+      "name": "Funil-Faturamento-2025-2026.xlsx",
+      "bytes": 52247,
+      "url": "https://trello.com/1/cards/6ad9f22cf14c52879b6b565a/attachments/6ad9f2ed137efe563f167040/download/Funil-Faturamento-2025-2026.xlsx",
+      "saved_as": "anexos/Funil-Faturamento-2025-2026.xlsx",
+      "kind": "file",
+      "ok": true,
+      "size": 52247
+    },
+    {
+      "id": "6ad9f32a5e7085e99857e9b8",
+      "name": "insumo-identidade-visual-conect-v1.html",
+      "bytes": 62498,
+      "url": "https://trello.com/1/cards/6ad9f22cf14c52879b6b565a/attachments/6ad9f32a5e7085e99857e9b8/download/identidade-visual-conect-v1.html",
+      "saved_as": "anexos/insumo-identidade-visual-conect-v1.html",
+      "kind": "file",
+      "ok": true,
+      "size": 62498
+    }
+  ],
+  "comments_count": 0
+}

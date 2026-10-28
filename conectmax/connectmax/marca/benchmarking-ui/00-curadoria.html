@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Connect — Benchmarking UI (web + mobile)</title>
+<style>
+  :root{--bg:#0A0C12;--card:#151A26;--line:#262D3D;--text:#F3F5F9;--muted:#8C95A8;--blue:#2563EB;--ok:#1F9D6B}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"Plus Jakarta Sans",system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.55;padding:40px 24px}
+  .wrap{max-width:920px;margin:0 auto}
+  h1{font-size:28px;letter-spacing:-.02em;margin-bottom:8px}
+  .lead{color:var(--muted);margin-bottom:28px;max-width:640px}
+  h2{font-size:18px;margin:28px 0 12px;color:#fff}
+  .meta{font-size:12px;color:var(--muted);margin-bottom:24px}
+  table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:8px}
+  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.04em}
+  a{color:var(--blue);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .tag{display:inline-block;padding:2px 8px;border-radius:999px;background:#1a2233;color:#B4BCCC;font-size:11px;margin-right:4px}
+  .tag.web{background:#12233f;color:#6EA2FF}
+  .tag.mobile{background:#1a2a1f;color:#5ddea0}
+  .tag.ds{background:#2a1f3d;color:#c4a3ff}
+  ul{margin:8px 0 8px 18px;color:#B4BCCC;font-size:14px}
+  li{margin-bottom:6px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:12px 0}
+  .foot{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Benchmarking de componentes UI</h1>
+  <p class="lead">Curadoria do que há de mais moderno (gringo) em web e mobile — Dribbble, Behance, design systems e produtos referência — para alimentar a identidade visual / design system do Connect.</p>
+  <p class="meta">Card Trello · Connect · Doing · 2026-10-23 · Prints em 1440×900 anexados no card</p>
+
+  <h2>1. Referências prioritárias (o que olhar de perto)</h2>
+  <table>
+    <thead><tr><th>Fonte</th><th>Por quê</th><th>Escopo</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><a href="https://www.untitledui.com/">Untitled UI</a></td>
+        <td>Design system SaaS completo (tokens, componentes, screens). Padrão “premium Figma → produto”.</td>
+        <td><span class="tag web">web</span><span class="tag ds">DS</span></td>
+      </tr>
+      <tr>
+        <td><a href="https://ui.shadcn.com/">shadcn/ui</a></td>
+        <td>Componentes acessíveis, dark/light, bento grids, handoff código-design. Estética minimal atual.</td>
+        <td><span class="tag web">web</span><span class="tag ds">DS</span></td>
+      </tr>
+      <tr>
+        <td><a href="https://linear.app/">Linear</a></td>
+        <td>Referência de densidade, tipografia e microinterações em SaaS B2B.</td>
+        <td><span class="tag web">web</span></td>
+      </tr>
+      <tr>
+        <td><a href="https://vercel.com/design">Vercel Design</a></td>
+        <td>Sistema visual preto/branco, precisão tipográfica, componentes de produto.</td>
+        <td><span class="tag web">web</span><span class="tag ds">DS</span></td>
+      </tr>
+      <tr>
+        <td><a href="https://dribbble.com/search/shots/popular/web-design?q=saas%20dashboard%20components">Dribbble — SaaS dashboard components</a></td>
+        <td>Glassmorphism, cards de métricas, tables, calendários, CRM — tendência visual 2025/26.</td>
+        <td><span class="tag web">web</span></td>
+      </tr>
+      <tr>
+        <td><a href="https://dribbble.com/search/shots/popular/mobile?q=mobile%20ui%20kit">Dribbble — Mobile UI kit</a></td>
+        <td>Kits mobile, fintech, onboarding, bottom sheets, lists.</td>
+        <td><span class="tag mobile">mobile</span></td>
+      </tr>
+      <tr>
+        <td><a href="https://www.behance.net/search/projects/ui%20design%20system">Behance — UI Design System</a></td>
+        <td>Cases long-form de DS (tokens, grids, libs de componentes).</td>
+        <td><span class="tag web">web</span><span class="tag mobile">mobile</span><span class="tag ds">DS</span></td>
+      </tr>
+      <tr>
+        <td><a href="https://m3.material.io/components">Material You (M3)</a></td>
+        <td>Baseline mobile/Android: estados, density, theming dinâmico.</td>
+        <td><span class="tag mobile">mobile</span><span class="tag ds">DS</span></td>
+      </tr>
+      <tr>
+        <td><a href="https://developer.apple.com/design/human-interface-guidelines/">Apple HIG</a></td>
+        <td>Baseline iOS: navigation, sheets, typography SF, spacing.</td>
+        <td><span class="tag mobile">mobile</span><span class="tag ds">DS</span></td>
+      </tr>
+      <tr>
+        <td><a href="https://www.raycast.com/">Raycast</a></td>
+        <td>Command palette, densidade alta, dark UI — bom para ferramentas internas.</td>
+        <td><span class="tag web">web</span></td>
+      </tr>
+      <tr>
+        <td><a href="https://mobbin.com/">Mobbin</a></td>
+        <td>Biblioteca de padrões mobile reais (flows, screens).</td>
+        <td><span class="tag mobile">mobile</span></td>
+      </tr>
+      <tr>
+        <td><a href="https://coreui.design/">CORE Mobile DS</a></td>
+        <td>Kit mobile Figma com variáveis, light/dark, variantes.</td>
+        <td><span class="tag mobile">mobile</span><span class="tag ds">DS</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>2. Shots Dribbble em destaque (curadoria)</h2>
+  <div class="card">
+    <ul>
+      <li><strong>Caleican — Calendar SaaS</strong> (Keitoto) — glass cards, sidebar, CTA forte · ~293k views</li>
+      <li><strong>SaaS Dashboard Components – Analytics</strong> (Ofspace) — charts, progress rings, campaign cards</li>
+      <li><strong>Data Table UI</strong> (Exalt Studio) — tabelas limpas, badges de status, sparklines</li>
+      <li><strong>Input — Dashboard SAAS Component</strong> (Vektora) · ~183k views — forms/inputs premium</li>
+      <li><strong>Teamly Design System — Dark UI</strong> (Eugene Dobrik) — DS dark para SaaS</li>
+      <li><strong>CRM / Notification / Chart components</strong> — padrões recorrentes de B2B dashboard</li>
+    </ul>
+  </div>
+
+  <h2>3. Padrões a levar para o Connect</h2>
+  <div class="card">
+    <ul>
+      <li><strong>Tokens:</strong> cor semântica (brand/ok/err/stone), radius 12–16px, sombra suave, spacing modular 4/8</li>
+      <li><strong>Tipografia:</strong> sans geométrica + mono para dados (já alinhado à v1: Plus Jakarta / JetBrains Mono)</li>
+      <li><strong>Web:</strong> sidebar + content, cards de métrica, tables com badge/status, filtros chip, empty states</li>
+      <li><strong>Mobile:</strong> bottom nav / sheets, listas densas, CTAs full-width, safe areas, dark mode nativo</li>
+      <li><strong>Estética:</strong> menos “card pesado”, mais superfície plana + hierarquia tipográfica (Linear/Vercel/shadcn)</li>
+      <li><strong>Evitar:</strong> glassmorphism exagerado e roxo genérico — usar azul Connect (#2563EB) como âncora</li>
+    </ul>
+  </div>
+
+  <h2>4. Anexos neste card</h2>
+  <p class="lead" style="margin:0">Prints PNG 1440×900 das fontes acima + este HTML de curadoria. Usar como base visual antes de evoluir o design system de componentes.</p>
+
+  <p class="foot">Connect · benchmarking-ui · caminho inverso: pasta <code>conectmax/connectmax/marca/benchmarking-ui/</code></p>
+</div>
+</body>
+</html>

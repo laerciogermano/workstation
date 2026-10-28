@@ -1,0 +1,15 @@
+Seções obrigatórias do documento de identidade visual Conect (v1 simples/essencial)
+
+Base: Softplan, Thoughtworks (só o núcleo), HashiCorp, AVIO, Clavis/FIT e `insumo-identidade_visual_v1.0.pdf`. Objetivo = usar a marca sem ambiguidade, não catalogar tudo.
+
+• Capa / identificação — nome da marca (Conect), versão (v1), data, uma linha de posicionamento
+• Quem somos (1/2 página) — o que a Conect faz (consultoria + software), para quem; sem manifesto longo
+• Logo — versão principal, negativa/mono, área de proteção, tamanho mínimo
+• Usos incorretos do logo — 4–6 “não faça” (distorcer, recolorir, etc.)
+• Paleta de cores — primária + neutros (ex.: azul / preto / branco); HEX + RGB (+ CMYK se fácil)
+• Tipografia — 1 fonte de título + 1 de corpo (ou família única); pesos e hierarquia básica (H1/H2/body)
+• Tom de voz (curto) — 3–5 adjetivos + 2 exemplos de frase on/off brand
+• Aplicações essenciais (só o que vamos usar agora) — site/landing (hero + botão), apresentação/PDF, post LinkedIn ou avatar
+• Checklist rápido — “antes de publicar” (logo certo, cor certa, contraste, área de proteção)
+
+Fora da v1 (deixar para depois): iconografia completa, fotografia/art direction, patterns, merch, templates de e-mail, submarcas, grid tipográfico avançado.

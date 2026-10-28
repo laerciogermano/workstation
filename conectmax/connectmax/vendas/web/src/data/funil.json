@@ -1,0 +1,5801 @@
+{
+ "geradoEm": "2026-10-22",
+ "fonte": "docs/planilhas-funil (snapshot Portal Franqueado)",
+ "meses": [
+  "2025-01",
+  "2025-02",
+  "2025-03",
+  "2025-04",
+  "2025-05",
+  "2025-06",
+  "2025-07",
+  "2025-08",
+  "2025-09",
+  "2025-10",
+  "2025-11",
+  "2025-12",
+  "2026-01",
+  "2026-02",
+  "2026-03",
+  "2026-04",
+  "2026-05",
+  "2026-06",
+  "2026-07",
+  "2026-08",
+  "2026-09",
+  "2026-10"
+ ],
+ "vendedores": [
+  "Olívia",
+  "Guilherme",
+  "Marcello",
+  "Gabriele",
+  "Erickson",
+  "Bruno Toyo",
+  "(sem vendedor)"
+ ],
+ "rows": [
+  {
+   "mes": "2025-01",
+   "vendedor": "(sem vendedor)",
+   "orc_qtd": 8,
+   "orc_aprov": 0,
+   "orc_perdido": 8,
+   "orc_valor": 41188.62,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2025-01",
+   "vendedor": "Bruno Toyo",
+   "orc_qtd": 0,
+   "orc_aprov": 0,
+   "orc_perdido": 0,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2025-01",
+   "vendedor": "Erickson",
+   "orc_qtd": 44,
+   "orc_aprov": 13,
+   "orc_perdido": 31,
+   "orc_valor": 324279.84,
+   "orc_aprov_valor": 31653.15,
+   "ped_qtd": 12,
+   "ped_valor": 30643.7,
+   "fat_valor": 9949.1
+  },
+  {
+   "mes": "2025-01",
+   "vendedor": "Gabriele",
+   "orc_qtd": 0,
+   "orc_aprov": 0,
+   "orc_perdido": 0,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2025-01",
+   "vendedor": "Guilherme",
+   "orc_qtd": 27,
+   "orc_aprov": 4,
+   "orc_perdido": 23,
+   "orc_valor": 1555206.75,
+   "orc_aprov_valor": 6664.9,
+   "ped_qtd": 8,
+   "ped_valor": 35995.7,
+   "fat_valor": 33125.6
+  },
+  {
+   "mes": "2025-01",
+   "vendedor": "Marcello",
+   "orc_qtd": 15,
+   "orc_aprov": 2,
+   "orc_perdido": 13,
+   "orc_valor": 586761.87,
+   "orc_aprov_valor": 2892.95,
+   "ped_qtd": 2,
+   "ped_valor": 2893.0,
+   "fat_valor": 274.8
+  },
+  {
+   "mes": "2025-01",
+   "vendedor": "Olívia",
+   "orc_qtd": 22,
+   "orc_aprov": 5,
+   "orc_perdido": 17,
+   "orc_valor": 254535.65,
+   "orc_aprov_valor": 3444.5,
+   "ped_qtd": 4,
+   "ped_valor": 2124.5,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2025-02",
+   "vendedor": "(sem vendedor)",
+   "orc_qtd": 7,
+   "orc_aprov": 0,
+   "orc_perdido": 7,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2025-02",
+   "vendedor": "Bruno Toyo",
+   "orc_qtd": 0,
+   "orc_aprov": 0,
+   "orc_perdido": 0,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2025-02",
+   "vendedor": "Erickson",
+   "orc_qtd": 58,
+   "orc_aprov": 22,
+   "orc_perdido": 36,
+   "orc_valor": 7211104.87,
+   "orc_aprov_valor": 35932.37,
+   "ped_qtd": 25,
+   "ped_valor": 37112.9,
+   "fat_valor": 29592.9
+  },
+  {
+   "mes": "2025-02",
+   "vendedor": "Gabriele",
+   "orc_qtd": 0,
+   "orc_aprov": 0,
+   "orc_perdido": 0,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2025-02",
+   "vendedor": "Guilherme",
+   "orc_qtd": 36,
+   "orc_aprov": 10,
+   "orc_perdido": 26,
+   "orc_valor": 2203305.05,
+   "orc_aprov_valor": 17297.81,
+   "ped_qtd": 10,
+   "ped_valor": 17297.9,
+   "fat_valor": 8003.9
+  },
+  {
+   "mes": "2025-02",
+   "vendedor": "Marcello",
+   "orc_qtd": 9,
+   "orc_aprov": 0,
+   "orc_perdido": 9,
+   "orc_valor": 498763.42,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 1,
+   "ped_valor": 3976.3,
+   "fat_valor": 2618.2
+  },
+  {
+   "mes": "2025-02",
+   "vendedor": "Olívia",
+   "orc_qtd": 46,
+   "orc_aprov": 15,
+   "orc_perdido": 31,
+   "orc_valor": 408232.06,
+   "orc_aprov_valor": 41843.96,
+   "ped_qtd": 13,
+   "ped_valor": 51932.5,
+   "fat_valor": 22348.6
+  },
+  {
+   "mes": "2025-03",
+   "vendedor": "(sem vendedor)",
+   "orc_qtd": 8,
+   "orc_aprov": 0,
+   "orc_perdido": 8,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2025-03",
+   "vendedor": "Bruno Toyo",
+   "orc_qtd": 0,
+   "orc_aprov": 0,
+   "orc_perdido": 0,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2025-03",
+   "vendedor": "Erickson",
+   "orc_qtd": 30,
+   "orc_aprov": 13,
+   "orc_perdido": 17,
+   "orc_valor": 279500.06,
+   "orc_aprov_valor": 33138.26,
+   "ped_qtd": 13,
+   "ped_valor": 34438.4,
+   "fat_valor": 41210.7
+  },
+  {
+   "mes": "2025-03",
+   "vendedor": "Gabriele",
+   "orc_qtd": 0,
+   "orc_aprov": 0,
+   "orc_perdido": 0,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2025-03",
+   "vendedor": "Guilherme",
+   "orc_qtd": 27,
+   "orc_aprov": 5,
+   "orc_perdido": 22,
+   "orc_valor": 429224.61,
+   "orc_aprov_valor": 90589.35,
+   "ped_qtd": 5,
+   "ped_valor": 90589.3,
+   "fat_valor": 26228.5
+  },
+  {
+   "mes": "2025-03",
+   "vendedor": "Marcello",
+   "orc_qtd": 9,
+   "orc_aprov": 1,
+   "orc_perdido": 8,
+   "orc_valor": 39213.17,
+   "orc_aprov_valor": 3976.33,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2025-03",
+   "vendedor": "Olívia",
+   "orc_qtd": 37,
+   "orc_aprov": 7,
+   "orc_perdido": 30,
+   "orc_valor": 1863984.93,
+   "orc_aprov_valor": 40592.55,
+   "ped_qtd": 17,
+   "ped_valor": 49734.6,
+   "fat_valor": 49979.9
+  },
+  {
+   "mes": "2025-04",
+   "vendedor": "(sem vendedor)",
+   "orc_qtd": 4,
+   "orc_aprov": 0,
+   "orc_perdido": 4,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2025-04",
+   "vendedor": "Bruno Toyo",
+   "orc_qtd": 0,
+   "orc_aprov": 0,
+   "orc_perdido": 0,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2025-04",
+   "vendedor": "Erickson",
+   "orc_qtd": 16,
+   "orc_aprov": 3,
+   "orc_perdido": 13,
+   "orc_valor": 181765.9,
+   "orc_aprov_valor": 5988.0,
+   "ped_qtd": 3,
+   "ped_valor": 5284.9,
+   "fat_valor": 11570.3
+  },
+  {
+   "mes": "2025-04",
+   "vendedor": "Gabriele",
+   "orc_qtd": 0,
+   "orc_aprov": 0,
+   "orc_perdido": 0,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2025-04",
+   "vendedor": "Guilherme",
+   "orc_qtd": 25,
+   "orc_aprov": 9,
+   "orc_perdido": 16,
+   "orc_valor": 272837.17,
+   "orc_aprov_valor": 67618.53,
+   "ped_qtd": 8,
+   "ped_valor": 69642.0,
+   "fat_valor": 117662.0
+  },
+  {
+   "mes": "2025-04",
+   "vendedor": "Marcello",
+   "orc_qtd": 4,
+   "orc_aprov": 1,
+   "orc_perdido": 3,
+   "orc_valor": 58503.99,
+   "orc_aprov_valor": 1551.8,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2025-04",
+   "vendedor": "Olívia",
+   "orc_qtd": 38,
+   "orc_aprov": 10,
+   "orc_perdido": 28,
+   "orc_valor": 940744.69,
+   "orc_aprov_valor": 24114.65,
+   "ped_qtd": 11,
+   "ped_valor": 16965.2,
+   "fat_valor": 32314.3
+  },
+  {
+   "mes": "2025-05",
+   "vendedor": "(sem vendedor)",
+   "orc_qtd": 1,
+   "orc_aprov": 0,
+   "orc_perdido": 1,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2025-05",
+   "vendedor": "Bruno Toyo",
+   "orc_qtd": 0,
+   "orc_aprov": 0,
+   "orc_perdido": 0,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2025-05",
+   "vendedor": "Erickson",
+   "orc_qtd": 29,
+   "orc_aprov": 9,
+   "orc_perdido": 20,
+   "orc_valor": 218715.61,
+   "orc_aprov_valor": 62232.0,
+   "ped_qtd": 5,
+   "ped_valor": 24540.0,
+   "fat_valor": 36349.8
+  },
+  {
+   "mes": "2025-05",
+   "vendedor": "Gabriele",
+   "orc_qtd": 0,
+   "orc_aprov": 0,
+   "orc_perdido": 0,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2025-05",
+   "vendedor": "Guilherme",
+   "orc_qtd": 30,
+   "orc_aprov": 13,
+   "orc_perdido": 17,
+   "orc_valor": 200650.08,
+   "orc_aprov_valor": 119044.5,
+   "ped_qtd": 16,
+   "ped_valor": 122042.1,
+   "fat_valor": 93329.9
+  },
+  {
+   "mes": "2025-05",
+   "vendedor": "Marcello",
+   "orc_qtd": 6,
+   "orc_aprov": 2,
+   "orc_perdido": 4,
+   "orc_valor": 41500.89,
+   "orc_aprov_valor": 2206.0,
+   "ped_qtd": 2,
+   "ped_valor": 2751.5,
+   "fat_valor": 1551.8
+  },
+  {
+   "mes": "2025-05",
+   "vendedor": "Olívia",
+   "orc_qtd": 23,
+   "orc_aprov": 8,
+   "orc_perdido": 15,
+   "orc_valor": 146992.91,
+   "orc_aprov_valor": 20820.46,
+   "ped_qtd": 10,
+   "ped_valor": 37849.9,
+   "fat_valor": 24013.6
+  },
+  {
+   "mes": "2025-06",
+   "vendedor": "(sem vendedor)",
+   "orc_qtd": 3,
+   "orc_aprov": 0,
+   "orc_perdido": 3,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2025-06",
+   "vendedor": "Bruno Toyo",
+   "orc_qtd": 0,
+   "orc_aprov": 0,
+   "orc_perdido": 0,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2025-06",
+   "vendedor": "Erickson",
+   "orc_qtd": 20,
+   "orc_aprov": 5,
+   "orc_perdido": 15,
+   "orc_valor": 140003.0,
+   "orc_aprov_valor": 28538.0,
+   "ped_qtd": 8,
+   "ped_valor": 33886.0,
+   "fat_valor": 29450.1
+  },
+  {
+   "mes": "2025-06",
+   "vendedor": "Gabriele",
+   "orc_qtd": 0,
+   "orc_aprov": 0,
+   "orc_perdido": 0,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2025-06",
+   "vendedor": "Guilherme",
+   "orc_qtd": 13,
+   "orc_aprov": 7,
+   "orc_perdido": 6,
+   "orc_valor": 193833.66,
+   "orc_aprov_valor": 42122.22,
+   "ped_qtd": 6,
+   "ped_valor": 41222.2,
+   "fat_valor": 84573.6
+  },
+  {
+   "mes": "2025-06",
+   "vendedor": "Marcello",
+   "orc_qtd": 1,
+   "orc_aprov": 0,
+   "orc_perdido": 1,
+   "orc_valor": 3909.89,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 1,
+   "ped_valor": 1006.3,
+   "fat_valor": 2206.0
+  },
+  {
+   "mes": "2025-06",
+   "vendedor": "Olívia",
+   "orc_qtd": 25,
+   "orc_aprov": 7,
+   "orc_perdido": 18,
+   "orc_valor": 115743.7,
+   "orc_aprov_valor": 19767.5,
+   "ped_qtd": 10,
+   "ped_valor": 59878.3,
+   "fat_valor": 65315.9
+  },
+  {
+   "mes": "2025-07",
+   "vendedor": "(sem vendedor)",
+   "orc_qtd": 3,
+   "orc_aprov": 0,
+   "orc_perdido": 3,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2025-07",
+   "vendedor": "Bruno Toyo",
+   "orc_qtd": 0,
+   "orc_aprov": 0,
+   "orc_perdido": 0,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2025-07",
+   "vendedor": "Erickson",
+   "orc_qtd": 23,
+   "orc_aprov": 5,
+   "orc_perdido": 18,
+   "orc_valor": 390189.55,
+   "orc_aprov_valor": 7184.6,
+   "ped_qtd": 5,
+   "ped_valor": 5393.6,
+   "fat_valor": 14061.6
+  },
+  {
+   "mes": "2025-07",
+   "vendedor": "Gabriele",
+   "orc_qtd": 0,
+   "orc_aprov": 0,
+   "orc_perdido": 0,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2025-07",
+   "vendedor": "Guilherme",
+   "orc_qtd": 14,
+   "orc_aprov": 2,
+   "orc_perdido": 12,
+   "orc_valor": 823039.35,
+   "orc_aprov_valor": 40099.16,
+   "ped_qtd": 4,
+   "ped_valor": 43498.9,
+   "fat_valor": 11837.1
+  },
+  {
+   "mes": "2025-07",
+   "vendedor": "Marcello",
+   "orc_qtd": 2,
+   "orc_aprov": 1,
+   "orc_perdido": 1,
+   "orc_valor": 11504.4,
+   "orc_aprov_valor": 98.7,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2025-07",
+   "vendedor": "Olívia",
+   "orc_qtd": 27,
+   "orc_aprov": 6,
+   "orc_perdido": 21,
+   "orc_valor": 363892.01,
+   "orc_aprov_valor": 5601.1,
+   "ped_qtd": 3,
+   "ped_valor": 4725.5,
+   "fat_valor": 24028.4
+  },
+  {
+   "mes": "2025-08",
+   "vendedor": "(sem vendedor)",
+   "orc_qtd": 1,
+   "orc_aprov": 0,
+   "orc_perdido": 1,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2025-08",
+   "vendedor": "Bruno Toyo",
+   "orc_qtd": 0,
+   "orc_aprov": 0,
+   "orc_perdido": 0,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2025-08",
+   "vendedor": "Erickson",
+   "orc_qtd": 0,
+   "orc_aprov": 0,
+   "orc_perdido": 0,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2025-08",
+   "vendedor": "Gabriele",
+   "orc_qtd": 0,
+   "orc_aprov": 0,
+   "orc_perdido": 0,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2025-08",
+   "vendedor": "Guilherme",
+   "orc_qtd": 18,
+   "orc_aprov": 7,
+   "orc_perdido": 11,
+   "orc_valor": 143767.46,
+   "orc_aprov_valor": 64884.48,
+   "ped_qtd": 6,
+   "ped_valor": 62287.0,
+   "fat_valor": 4106.9
+  },
+  {
+   "mes": "2025-08",
+   "vendedor": "Marcello",
+   "orc_qtd": 30,
+   "orc_aprov": 5,
+   "orc_perdido": 25,
+   "orc_valor": 107423.11,
+   "orc_aprov_valor": 6542.9,
+   "ped_qtd": 6,
+   "ped_valor": 8881.9,
+   "fat_valor": 8407.4
+  },
+  {
+   "mes": "2025-08",
+   "vendedor": "Olívia",
+   "orc_qtd": 86,
+   "orc_aprov": 24,
+   "orc_perdido": 62,
+   "orc_valor": 959345.0,
+   "orc_aprov_valor": 44430.41,
+   "ped_qtd": 22,
+   "ped_valor": 34579.7,
+   "fat_valor": 10975.5
+  },
+  {
+   "mes": "2025-09",
+   "vendedor": "(sem vendedor)",
+   "orc_qtd": 8,
+   "orc_aprov": 0,
+   "orc_perdido": 8,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2025-09",
+   "vendedor": "Bruno Toyo",
+   "orc_qtd": 0,
+   "orc_aprov": 0,
+   "orc_perdido": 0,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2025-09",
+   "vendedor": "Erickson",
+   "orc_qtd": 0,
+   "orc_aprov": 0,
+   "orc_perdido": 0,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2025-09",
+   "vendedor": "Gabriele",
+   "orc_qtd": 0,
+   "orc_aprov": 0,
+   "orc_perdido": 0,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2025-09",
+   "vendedor": "Guilherme",
+   "orc_qtd": 10,
+   "orc_aprov": 3,
+   "orc_perdido": 7,
+   "orc_valor": 315094.07,
+   "orc_aprov_valor": 5443.77,
+   "ped_qtd": 6,
+   "ped_valor": 10490.1,
+   "fat_valor": 69579.1
+  },
+  {
+   "mes": "2025-09",
+   "vendedor": "Marcello",
+   "orc_qtd": 74,
+   "orc_aprov": 10,
+   "orc_perdido": 62,
+   "orc_valor": 875824.57,
+   "orc_aprov_valor": 23968.51,
+   "ped_qtd": 10,
+   "ped_valor": 7674.4,
+   "fat_valor": 5300.3
+  },
+  {
+   "mes": "2025-09",
+   "vendedor": "Olívia",
+   "orc_qtd": 78,
+   "orc_aprov": 36,
+   "orc_perdido": 42,
+   "orc_valor": 802596.71,
+   "orc_aprov_valor": 142422.49,
+   "ped_qtd": 35,
+   "ped_valor": 150717.2,
+   "fat_valor": 38630.9
+  },
+  {
+   "mes": "2025-10",
+   "vendedor": "(sem vendedor)",
+   "orc_qtd": 1,
+   "orc_aprov": 0,
+   "orc_perdido": 1,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2025-10",
+   "vendedor": "Bruno Toyo",
+   "orc_qtd": 0,
+   "orc_aprov": 0,
+   "orc_perdido": 0,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2025-10",
+   "vendedor": "Gabriele",
+   "orc_qtd": 10,
+   "orc_aprov": 0,
+   "orc_perdido": 10,
+   "orc_valor": 19720.78,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2025-10",
+   "vendedor": "Guilherme",
+   "orc_qtd": 11,
+   "orc_aprov": 7,
+   "orc_perdido": 4,
+   "orc_valor": 76976.77,
+   "orc_aprov_valor": 41368.52,
+   "ped_qtd": 8,
+   "ped_valor": 43616.47,
+   "fat_valor": 24420.14
+  },
+  {
+   "mes": "2025-10",
+   "vendedor": "Marcello",
+   "orc_qtd": 74,
+   "orc_aprov": 12,
+   "orc_perdido": 60,
+   "orc_valor": 358877.96,
+   "orc_aprov_valor": 21922.8,
+   "ped_qtd": 9,
+   "ped_valor": 23058.03,
+   "fat_valor": 25645.75
+  },
+  {
+   "mes": "2025-10",
+   "vendedor": "Olívia",
+   "orc_qtd": 52,
+   "orc_aprov": 24,
+   "orc_perdido": 28,
+   "orc_valor": 456045.16,
+   "orc_aprov_valor": 80333.17,
+   "ped_qtd": 34,
+   "ped_valor": 97475.76,
+   "fat_valor": 170298.3
+  },
+  {
+   "mes": "2025-11",
+   "vendedor": "(sem vendedor)",
+   "orc_qtd": 4,
+   "orc_aprov": 0,
+   "orc_perdido": 4,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2025-11",
+   "vendedor": "Bruno Toyo",
+   "orc_qtd": 0,
+   "orc_aprov": 0,
+   "orc_perdido": 0,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2025-11",
+   "vendedor": "Erickson",
+   "orc_qtd": 0,
+   "orc_aprov": 0,
+   "orc_perdido": 0,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2025-11",
+   "vendedor": "Gabriele",
+   "orc_qtd": 4,
+   "orc_aprov": 0,
+   "orc_perdido": 4,
+   "orc_valor": 34496.87,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2025-11",
+   "vendedor": "Guilherme",
+   "orc_qtd": 9,
+   "orc_aprov": 5,
+   "orc_perdido": 4,
+   "orc_valor": 41335.12,
+   "orc_aprov_valor": 11628.35,
+   "ped_qtd": 4,
+   "ped_valor": 11092.35,
+   "fat_valor": 34233.13
+  },
+  {
+   "mes": "2025-11",
+   "vendedor": "Marcello",
+   "orc_qtd": 74,
+   "orc_aprov": 8,
+   "orc_perdido": 65,
+   "orc_valor": 712482.99,
+   "orc_aprov_valor": 36477.19,
+   "ped_qtd": 8,
+   "ped_valor": 25066.9,
+   "fat_valor": 13724.1
+  },
+  {
+   "mes": "2025-11",
+   "vendedor": "Olívia",
+   "orc_qtd": 41,
+   "orc_aprov": 17,
+   "orc_perdido": 24,
+   "orc_valor": 476190.65,
+   "orc_aprov_valor": 49343.9,
+   "ped_qtd": 18,
+   "ped_valor": 43034.18,
+   "fat_valor": 70140.35
+  },
+  {
+   "mes": "2025-12",
+   "vendedor": "(sem vendedor)",
+   "orc_qtd": 4,
+   "orc_aprov": 0,
+   "orc_perdido": 4,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2025-12",
+   "vendedor": "Bruno Toyo",
+   "orc_qtd": 0,
+   "orc_aprov": 0,
+   "orc_perdido": 0,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2025-12",
+   "vendedor": "Erickson",
+   "orc_qtd": 0,
+   "orc_aprov": 0,
+   "orc_perdido": 0,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2025-12",
+   "vendedor": "Gabriele",
+   "orc_qtd": 12,
+   "orc_aprov": 3,
+   "orc_perdido": 9,
+   "orc_valor": 126455.76,
+   "orc_aprov_valor": 12205.41,
+   "ped_qtd": 7,
+   "ped_valor": 52660.87,
+   "fat_valor": 13452.28
+  },
+  {
+   "mes": "2025-12",
+   "vendedor": "Guilherme",
+   "orc_qtd": 5,
+   "orc_aprov": 1,
+   "orc_perdido": 3,
+   "orc_valor": 190301.13,
+   "orc_aprov_valor": 1021.25,
+   "ped_qtd": 2,
+   "ped_valor": 1557.25,
+   "fat_valor": 7228.3
+  },
+  {
+   "mes": "2025-12",
+   "vendedor": "Marcello",
+   "orc_qtd": 16,
+   "orc_aprov": 4,
+   "orc_perdido": 10,
+   "orc_valor": 40762.4,
+   "orc_aprov_valor": 13463.1,
+   "ped_qtd": 4,
+   "ped_valor": 18637.8,
+   "fat_valor": 22416.5
+  },
+  {
+   "mes": "2025-12",
+   "vendedor": "Olívia",
+   "orc_qtd": 19,
+   "orc_aprov": 5,
+   "orc_perdido": 14,
+   "orc_valor": 477256.52,
+   "orc_aprov_valor": 91588.12,
+   "ped_qtd": 9,
+   "ped_valor": 104240.12,
+   "fat_valor": 133147.75
+  },
+  {
+   "mes": "2026-01",
+   "vendedor": "(sem vendedor)",
+   "orc_qtd": 2,
+   "orc_aprov": 0,
+   "orc_perdido": 2,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2026-01",
+   "vendedor": "Bruno Toyo",
+   "orc_qtd": 0,
+   "orc_aprov": 0,
+   "orc_perdido": 0,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2026-01",
+   "vendedor": "Erickson",
+   "orc_qtd": 0,
+   "orc_aprov": 0,
+   "orc_perdido": 0,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2026-01",
+   "vendedor": "Gabriele",
+   "orc_qtd": 13,
+   "orc_aprov": 0,
+   "orc_perdido": 13,
+   "orc_valor": 143605.45,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 8,
+   "ped_valor": 21518.83,
+   "fat_valor": 19330.85
+  },
+  {
+   "mes": "2026-01",
+   "vendedor": "Guilherme",
+   "orc_qtd": 22,
+   "orc_aprov": 14,
+   "orc_perdido": 8,
+   "orc_valor": 142271.41,
+   "orc_aprov_valor": 93844.02,
+   "ped_qtd": 10,
+   "ped_valor": 93458.86,
+   "fat_valor": 7844.81
+  },
+  {
+   "mes": "2026-01",
+   "vendedor": "Marcello",
+   "orc_qtd": 36,
+   "orc_aprov": 6,
+   "orc_perdido": 29,
+   "orc_valor": 792945.82,
+   "orc_aprov_valor": 2667.0,
+   "ped_qtd": 7,
+   "ped_valor": 2691.8,
+   "fat_valor": 12663.2
+  },
+  {
+   "mes": "2026-01",
+   "vendedor": "Olívia",
+   "orc_qtd": 33,
+   "orc_aprov": 6,
+   "orc_perdido": 27,
+   "orc_valor": 1045556.37,
+   "orc_aprov_valor": 5375.25,
+   "ped_qtd": 2,
+   "ped_valor": 1438.75,
+   "fat_valor": 1643.62
+  },
+  {
+   "mes": "2026-02",
+   "vendedor": "(sem vendedor)",
+   "orc_qtd": 2,
+   "orc_aprov": 0,
+   "orc_perdido": 2,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2026-02",
+   "vendedor": "Bruno Toyo",
+   "orc_qtd": 0,
+   "orc_aprov": 0,
+   "orc_perdido": 0,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2026-02",
+   "vendedor": "Erickson",
+   "orc_qtd": 0,
+   "orc_aprov": 0,
+   "orc_perdido": 0,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2026-02",
+   "vendedor": "Gabriele",
+   "orc_qtd": 12,
+   "orc_aprov": 3,
+   "orc_perdido": 9,
+   "orc_valor": 128522.33,
+   "orc_aprov_valor": 17499.97,
+   "ped_qtd": 3,
+   "ped_valor": 17499.97,
+   "fat_valor": 17499.97
+  },
+  {
+   "mes": "2026-02",
+   "vendedor": "Guilherme",
+   "orc_qtd": 5,
+   "orc_aprov": 2,
+   "orc_perdido": 3,
+   "orc_valor": 84701.62,
+   "orc_aprov_valor": 15938.06,
+   "ped_qtd": 8,
+   "ped_valor": 63581.6,
+   "fat_valor": 81825.14
+  },
+  {
+   "mes": "2026-02",
+   "vendedor": "Marcello",
+   "orc_qtd": 42,
+   "orc_aprov": 21,
+   "orc_perdido": 20,
+   "orc_valor": 116752.22,
+   "orc_aprov_valor": 38341.72,
+   "ped_qtd": 7,
+   "ped_valor": 14878.42,
+   "fat_valor": 3266.3
+  },
+  {
+   "mes": "2026-02",
+   "vendedor": "Olívia",
+   "orc_qtd": 46,
+   "orc_aprov": 16,
+   "orc_perdido": 30,
+   "orc_valor": 1210166.28,
+   "orc_aprov_valor": 109806.5,
+   "ped_qtd": 19,
+   "ped_valor": 109106.75,
+   "fat_valor": 65816.75
+  },
+  {
+   "mes": "2026-03",
+   "vendedor": "(sem vendedor)",
+   "orc_qtd": 1,
+   "orc_aprov": 0,
+   "orc_perdido": 1,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2026-03",
+   "vendedor": "Bruno Toyo",
+   "orc_qtd": 0,
+   "orc_aprov": 0,
+   "orc_perdido": 0,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2026-03",
+   "vendedor": "Erickson",
+   "orc_qtd": 0,
+   "orc_aprov": 0,
+   "orc_perdido": 0,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2026-03",
+   "vendedor": "Gabriele",
+   "orc_qtd": 12,
+   "orc_aprov": 1,
+   "orc_perdido": 11,
+   "orc_valor": 735666.37,
+   "orc_aprov_valor": 6825.04,
+   "ped_qtd": 2,
+   "ped_valor": 13650.08,
+   "fat_valor": 6825.04
+  },
+  {
+   "mes": "2026-03",
+   "vendedor": "Guilherme",
+   "orc_qtd": 14,
+   "orc_aprov": 3,
+   "orc_perdido": 11,
+   "orc_valor": 185534.17,
+   "orc_aprov_valor": 6421.15,
+   "ped_qtd": 4,
+   "ped_valor": 19427.61,
+   "fat_valor": 61295.16
+  },
+  {
+   "mes": "2026-03",
+   "vendedor": "Marcello",
+   "orc_qtd": 44,
+   "orc_aprov": 10,
+   "orc_perdido": 33,
+   "orc_valor": 158788.06,
+   "orc_aprov_valor": 17286.2,
+   "ped_qtd": 22,
+   "ped_valor": 36086.9,
+   "fat_valor": 22692.02
+  },
+  {
+   "mes": "2026-03",
+   "vendedor": "Olívia",
+   "orc_qtd": 29,
+   "orc_aprov": 9,
+   "orc_perdido": 20,
+   "orc_valor": 161332.12,
+   "orc_aprov_valor": 58529.25,
+   "ped_qtd": 11,
+   "ped_valor": 27918.0,
+   "fat_valor": 50960.03
+  },
+  {
+   "mes": "2026-04",
+   "vendedor": "Bruno Toyo",
+   "orc_qtd": 0,
+   "orc_aprov": 0,
+   "orc_perdido": 0,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2026-04",
+   "vendedor": "Erickson",
+   "orc_qtd": 0,
+   "orc_aprov": 0,
+   "orc_perdido": 0,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2026-04",
+   "vendedor": "Gabriele",
+   "orc_qtd": 12,
+   "orc_aprov": 0,
+   "orc_perdido": 11,
+   "orc_valor": 139191.95,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2026-04",
+   "vendedor": "Guilherme",
+   "orc_qtd": 6,
+   "orc_aprov": 2,
+   "orc_perdido": 4,
+   "orc_valor": 48766.7,
+   "orc_aprov_valor": 16239.5,
+   "ped_qtd": 3,
+   "ped_valor": 19713.15,
+   "fat_valor": 2947.5
+  },
+  {
+   "mes": "2026-04",
+   "vendedor": "Marcello",
+   "orc_qtd": 42,
+   "orc_aprov": 10,
+   "orc_perdido": 31,
+   "orc_valor": 349077.61,
+   "orc_aprov_valor": 24504.91,
+   "ped_qtd": 12,
+   "ped_valor": 14769.71,
+   "fat_valor": 21279.9
+  },
+  {
+   "mes": "2026-04",
+   "vendedor": "Olívia",
+   "orc_qtd": 33,
+   "orc_aprov": 8,
+   "orc_perdido": 25,
+   "orc_valor": 520632.41,
+   "orc_aprov_valor": 9397.0,
+   "ped_qtd": 14,
+   "ped_valor": 59201.47,
+   "fat_valor": 67968.0
+  },
+  {
+   "mes": "2026-05",
+   "vendedor": "(sem vendedor)",
+   "orc_qtd": 2,
+   "orc_aprov": 0,
+   "orc_perdido": 2,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2026-05",
+   "vendedor": "Bruno Toyo",
+   "orc_qtd": 1,
+   "orc_aprov": 0,
+   "orc_perdido": 1,
+   "orc_valor": 9932.16,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2026-05",
+   "vendedor": "Erickson",
+   "orc_qtd": 0,
+   "orc_aprov": 0,
+   "orc_perdido": 0,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2026-05",
+   "vendedor": "Gabriele",
+   "orc_qtd": 28,
+   "orc_aprov": 11,
+   "orc_perdido": 17,
+   "orc_valor": 1798762.44,
+   "orc_aprov_valor": 36784.03,
+   "ped_qtd": 6,
+   "ped_valor": 12944.05,
+   "fat_valor": 10102.11
+  },
+  {
+   "mes": "2026-05",
+   "vendedor": "Guilherme",
+   "orc_qtd": 3,
+   "orc_aprov": 0,
+   "orc_perdido": 3,
+   "orc_valor": 11225.52,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 19713.15
+  },
+  {
+   "mes": "2026-05",
+   "vendedor": "Marcello",
+   "orc_qtd": 48,
+   "orc_aprov": 10,
+   "orc_perdido": 34,
+   "orc_valor": 523774.97,
+   "orc_aprov_valor": 8537.3,
+   "ped_qtd": 11,
+   "ped_valor": 33297.8,
+   "fat_valor": 11027.6
+  },
+  {
+   "mes": "2026-05",
+   "vendedor": "Olívia",
+   "orc_qtd": 58,
+   "orc_aprov": 18,
+   "orc_perdido": 40,
+   "orc_valor": 582035.7,
+   "orc_aprov_valor": 74442.55,
+   "ped_qtd": 17,
+   "ped_valor": 65518.55,
+   "fat_valor": 39220.97
+  },
+  {
+   "mes": "2026-06",
+   "vendedor": "(sem vendedor)",
+   "orc_qtd": 1,
+   "orc_aprov": 0,
+   "orc_perdido": 1,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2026-06",
+   "vendedor": "Bruno Toyo",
+   "orc_qtd": 0,
+   "orc_aprov": 0,
+   "orc_perdido": 0,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2026-06",
+   "vendedor": "Erickson",
+   "orc_qtd": 0,
+   "orc_aprov": 0,
+   "orc_perdido": 0,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2026-06",
+   "vendedor": "Gabriele",
+   "orc_qtd": 24,
+   "orc_aprov": 9,
+   "orc_perdido": 15,
+   "orc_valor": 133714.64,
+   "orc_aprov_valor": 18620.12,
+   "ped_qtd": 12,
+   "ped_valor": 24623.9,
+   "fat_valor": 8121.21
+  },
+  {
+   "mes": "2026-06",
+   "vendedor": "Guilherme",
+   "orc_qtd": 0,
+   "orc_aprov": 0,
+   "orc_perdido": 0,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2026-06",
+   "vendedor": "Marcello",
+   "orc_qtd": 23,
+   "orc_aprov": 12,
+   "orc_perdido": 10,
+   "orc_valor": 90837.48,
+   "orc_aprov_valor": 44240.89,
+   "ped_qtd": 12,
+   "ped_valor": 46993.59,
+   "fat_valor": 47593.3
+  },
+  {
+   "mes": "2026-06",
+   "vendedor": "Olívia",
+   "orc_qtd": 44,
+   "orc_aprov": 19,
+   "orc_perdido": 25,
+   "orc_valor": 383313.7,
+   "orc_aprov_valor": 75930.2,
+   "ped_qtd": 19,
+   "ped_valor": 67080.15,
+   "fat_valor": 72012.2
+  },
+  {
+   "mes": "2026-07",
+   "vendedor": "(sem vendedor)",
+   "orc_qtd": 3,
+   "orc_aprov": 0,
+   "orc_perdido": 3,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2026-07",
+   "vendedor": "Bruno Toyo",
+   "orc_qtd": 15,
+   "orc_aprov": 2,
+   "orc_perdido": 13,
+   "orc_valor": 75670.55,
+   "orc_aprov_valor": 8338.78,
+   "ped_qtd": 2,
+   "ped_valor": 8338.79,
+   "fat_valor": 8338.79
+  },
+  {
+   "mes": "2026-07",
+   "vendedor": "Erickson",
+   "orc_qtd": 0,
+   "orc_aprov": 0,
+   "orc_perdido": 0,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2026-07",
+   "vendedor": "Gabriele",
+   "orc_qtd": 36,
+   "orc_aprov": 12,
+   "orc_perdido": 22,
+   "orc_valor": 330599.39,
+   "orc_aprov_valor": 12408.05,
+   "ped_qtd": 13,
+   "ped_valor": 12642.29,
+   "fat_valor": 27038.76
+  },
+  {
+   "mes": "2026-07",
+   "vendedor": "Guilherme",
+   "orc_qtd": 0,
+   "orc_aprov": 0,
+   "orc_perdido": 0,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2026-07",
+   "vendedor": "Marcello",
+   "orc_qtd": 36,
+   "orc_aprov": 6,
+   "orc_perdido": 26,
+   "orc_valor": 1338833.63,
+   "orc_aprov_valor": 29861.79,
+   "ped_qtd": 9,
+   "ped_valor": 31927.19,
+   "fat_valor": 31877.3
+  },
+  {
+   "mes": "2026-07",
+   "vendedor": "Olívia",
+   "orc_qtd": 43,
+   "orc_aprov": 15,
+   "orc_perdido": 28,
+   "orc_valor": 1165822.39,
+   "orc_aprov_valor": 95233.03,
+   "ped_qtd": 21,
+   "ped_valor": 115221.7,
+   "fat_valor": 96915.07
+  },
+  {
+   "mes": "2026-08",
+   "vendedor": "(sem vendedor)",
+   "orc_qtd": 1,
+   "orc_aprov": 0,
+   "orc_perdido": 1,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2026-08",
+   "vendedor": "Bruno Toyo",
+   "orc_qtd": 14,
+   "orc_aprov": 5,
+   "orc_perdido": 9,
+   "orc_valor": 35778.05,
+   "orc_aprov_valor": 6175.95,
+   "ped_qtd": 3,
+   "ped_valor": 3819.2,
+   "fat_valor": 6319.03
+  },
+  {
+   "mes": "2026-08",
+   "vendedor": "Erickson",
+   "orc_qtd": 0,
+   "orc_aprov": 0,
+   "orc_perdido": 0,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2026-08",
+   "vendedor": "Gabriele",
+   "orc_qtd": 20,
+   "orc_aprov": 4,
+   "orc_perdido": 15,
+   "orc_valor": 207140.29,
+   "orc_aprov_valor": 10406.27,
+   "ped_qtd": 2,
+   "ped_valor": 7053.47,
+   "fat_valor": 5018.6
+  },
+  {
+   "mes": "2026-08",
+   "vendedor": "Guilherme",
+   "orc_qtd": 0,
+   "orc_aprov": 0,
+   "orc_perdido": 0,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2026-08",
+   "vendedor": "Marcello",
+   "orc_qtd": 22,
+   "orc_aprov": 1,
+   "orc_perdido": 18,
+   "orc_valor": 148594.44,
+   "orc_aprov_valor": 799.9,
+   "ped_qtd": 2,
+   "ped_valor": 1129.6,
+   "fat_valor": 2129.69
+  },
+  {
+   "mes": "2026-08",
+   "vendedor": "Olívia",
+   "orc_qtd": 40,
+   "orc_aprov": 20,
+   "orc_perdido": 20,
+   "orc_valor": 332603.0,
+   "orc_aprov_valor": 62393.35,
+   "ped_qtd": 22,
+   "ped_valor": 69847.48,
+   "fat_valor": 57444.33
+  },
+  {
+   "mes": "2026-09",
+   "vendedor": "(sem vendedor)",
+   "orc_qtd": 1,
+   "orc_aprov": 0,
+   "orc_perdido": 1,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2026-09",
+   "vendedor": "Bruno Toyo",
+   "orc_qtd": 32,
+   "orc_aprov": 9,
+   "orc_perdido": 19,
+   "orc_valor": 4281126.92,
+   "orc_aprov_valor": 21370.05,
+   "ped_qtd": 3,
+   "ped_valor": 2955.79,
+   "fat_valor": 716.7
+  },
+  {
+   "mes": "2026-09",
+   "vendedor": "Erickson",
+   "orc_qtd": 0,
+   "orc_aprov": 0,
+   "orc_perdido": 0,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2026-09",
+   "vendedor": "Gabriele",
+   "orc_qtd": 58,
+   "orc_aprov": 10,
+   "orc_perdido": 35,
+   "orc_valor": 5882473.13,
+   "orc_aprov_valor": 14586.61,
+   "ped_qtd": 9,
+   "ped_valor": 21424.4,
+   "fat_valor": 18097.37
+  },
+  {
+   "mes": "2026-09",
+   "vendedor": "Guilherme",
+   "orc_qtd": 0,
+   "orc_aprov": 0,
+   "orc_perdido": 0,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2026-09",
+   "vendedor": "Marcello",
+   "orc_qtd": 0,
+   "orc_aprov": 0,
+   "orc_perdido": 0,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2026-09",
+   "vendedor": "Olívia",
+   "orc_qtd": 35,
+   "orc_aprov": 21,
+   "orc_perdido": 9,
+   "orc_valor": 266215.7,
+   "orc_aprov_valor": 93902.4,
+   "ped_qtd": 22,
+   "ped_valor": 86639.2,
+   "fat_valor": 50991.4
+  },
+  {
+   "mes": "2026-10",
+   "vendedor": "(sem vendedor)",
+   "orc_qtd": 1,
+   "orc_aprov": 0,
+   "orc_perdido": 0,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2026-10",
+   "vendedor": "Bruno Toyo",
+   "orc_qtd": 25,
+   "orc_aprov": 2,
+   "orc_perdido": 1,
+   "orc_valor": 1144416.81,
+   "orc_aprov_valor": 2295.3,
+   "ped_qtd": 10,
+   "ped_valor": 23066.31,
+   "fat_valor": 2680.42
+  },
+  {
+   "mes": "2026-10",
+   "vendedor": "Erickson",
+   "orc_qtd": 0,
+   "orc_aprov": 0,
+   "orc_perdido": 0,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2026-10",
+   "vendedor": "Gabriele",
+   "orc_qtd": 46,
+   "orc_aprov": 1,
+   "orc_perdido": 2,
+   "orc_valor": 267520.86,
+   "orc_aprov_valor": 38778.66,
+   "ped_qtd": 5,
+   "ped_valor": 45387.67,
+   "fat_valor": 1416.43
+  },
+  {
+   "mes": "2026-10",
+   "vendedor": "Guilherme",
+   "orc_qtd": 0,
+   "orc_aprov": 0,
+   "orc_perdido": 0,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2026-10",
+   "vendedor": "Marcello",
+   "orc_qtd": 0,
+   "orc_aprov": 0,
+   "orc_perdido": 0,
+   "orc_valor": 0.0,
+   "orc_aprov_valor": 0.0,
+   "ped_qtd": 0,
+   "ped_valor": 0.0,
+   "fat_valor": 0.0
+  },
+  {
+   "mes": "2026-10",
+   "vendedor": "Olívia",
+   "orc_qtd": 14,
+   "orc_aprov": 2,
+   "orc_perdido": 1,
+   "orc_valor": 196657.23,
+   "orc_aprov_valor": 5556.0,
+   "ped_qtd": 4,
+   "ped_valor": 20349.0,
+   "fat_valor": 58196.0
+  }
+ ],
+ "status": {
+  "2025-01": {
+   "Cancelado": 90,
+   "Aprovado": 24,
+   "Reprovado": 2
+  },
+  "2025-02": {
+   "Cancelado": 106,
+   "Aprovado": 47,
+   "Reprovado": 3
+  },
+  "2025-03": {
+   "Reprovado": 2,
+   "Cancelado": 83,
+   "Aprovado": 26
+  },
+  "2025-04": {
+   "Cancelado": 62,
+   "Aprovado": 23,
+   "Reprovado": 2
+  },
+  "2025-05": {
+   "Cancelado": 55,
+   "Aprovado": 32,
+   "Reprovado": 2
+  },
+  "2025-06": {
+   "Aprovado": 19,
+   "Cancelado": 43
+  },
+  "2025-07": {
+   "Aprovado": 14,
+   "Cancelado": 55
+  },
+  "2025-08": {
+   "Aprovado": 36,
+   "Cancelado": 96,
+   "Reprovado": 3
+  },
+  "2025-09": {
+   "Cancelado": 117,
+   "Aprovado": 49,
+   "Reprovado": 2,
+   "Contra proposta": 2
+  },
+  "2025-10": {
+   "Cancelado": 101,
+   "Aprovado": 43,
+   "Reprovado": 2,
+   "Contra proposta": 2
+  },
+  "2025-11": {
+   "Aprovado": 30,
+   "Cancelado": 100,
+   "Contra proposta": 1,
+   "Reprovado": 1
+  },
+  "2025-12": {
+   "Cancelado": 39,
+   "Contra proposta": 3,
+   "Aprovado": 13,
+   "Reprovado": 1
+  },
+  "2026-01": {
+   "Cancelado": 76,
+   "Aprovado": 26,
+   "Contra proposta": 1,
+   "Reprovado": 3
+  },
+  "2026-02": {
+   "Cancelado": 63,
+   "Aprovado": 42,
+   "Contra proposta": 1,
+   "Reprovado": 1
+  },
+  "2026-03": {
+   "Cancelado": 74,
+   "Aprovado": 23,
+   "Contra proposta": 1,
+   "Reprovado": 2
+  },
+  "2026-04": {
+   "Aprovado": 20,
+   "Cancelado": 69,
+   "Contra proposta": 2,
+   "Reprovado": 2
+  },
+  "2026-05": {
+   "Aprovado": 39,
+   "Cancelado": 95,
+   "Contra proposta": 4,
+   "Reprovado": 2
+  },
+  "2026-06": {
+   "Aprovado": 40,
+   "Cancelado": 51,
+   "Contra proposta": 1
+  },
+  "2026-07": {
+   "Cancelado": 91,
+   "Aprovado": 35,
+   "Reprovado": 1,
+   "Contra proposta": 6
+  },
+  "2026-08": {
+   "Cancelado": 62,
+   "Aprovado": 30,
+   "Reprovado": 1,
+   "Contra proposta": 4
+  },
+  "2026-09": {
+   "Cancelado": 64,
+   "Aprovado": 40,
+   "Contra proposta": 3,
+   "Enviado": 19
+  },
+  "2026-10": {
+   "Enviado": 67,
+   "Aprovado": 5,
+   "Cancelado": 4,
+   "Em aberto": 8,
+   "Contra proposta": 2
+  }
+ },
+ "leadTime": [
+  {
+   "mes": "2025-01",
+   "vendedor": "Erickson",
+   "dias": 0
+  },
+  {
+   "mes": "2025-01",
+   "vendedor": "Erickson",
+   "dias": 1
+  },
+  {
+   "mes": "2025-01",
+   "vendedor": "Erickson",
+   "dias": 0
+  },
+  {
+   "mes": "2025-01",
+   "vendedor": "Erickson",
+   "dias": 0
+  },
+  {
+   "mes": "2025-01",
+   "vendedor": "Erickson",
+   "dias": 0
+  },
+  {
+   "mes": "2025-01",
+   "vendedor": "Guilherme",
+   "dias": 3
+  },
+  {
+   "mes": "2025-01",
+   "vendedor": "Erickson",
+   "dias": 6
+  },
+  {
+   "mes": "2025-01",
+   "vendedor": "Erickson",
+   "dias": 0
+  },
+  {
+   "mes": "2025-01",
+   "vendedor": "Erickson",
+   "dias": 0
+  },
+  {
+   "mes": "2025-01",
+   "vendedor": "Erickson",
+   "dias": 0
+  },
+  {
+   "mes": "2025-01",
+   "vendedor": "Erickson",
+   "dias": 0
+  },
+  {
+   "mes": "2025-01",
+   "vendedor": "Erickson",
+   "dias": 3
+  },
+  {
+   "mes": "2025-01",
+   "vendedor": "Guilherme",
+   "dias": 0
+  },
+  {
+   "mes": "2025-01",
+   "vendedor": "Guilherme",
+   "dias": 0
+  },
+  {
+   "mes": "2025-01",
+   "vendedor": "Guilherme",
+   "dias": 0
+  },
+  {
+   "mes": "2025-01",
+   "vendedor": "Marcello",
+   "dias": 12
+  },
+  {
+   "mes": "2025-01",
+   "vendedor": "Olívia",
+   "dias": 11
+  },
+  {
+   "mes": "2025-01",
+   "vendedor": "Erickson",
+   "dias": 14
+  },
+  {
+   "mes": "2025-01",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2025-01",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2025-01",
+   "vendedor": "Marcello",
+   "dias": 0
+  },
+  {
+   "mes": "2025-01",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2025-02",
+   "vendedor": "Erickson",
+   "dias": 0
+  },
+  {
+   "mes": "2025-02",
+   "vendedor": "Erickson",
+   "dias": 0
+  },
+  {
+   "mes": "2025-02",
+   "vendedor": "Marcello",
+   "dias": 1
+  },
+  {
+   "mes": "2025-02",
+   "vendedor": "Guilherme",
+   "dias": 0
+  },
+  {
+   "mes": "2025-02",
+   "vendedor": "Olívia",
+   "dias": 31
+  },
+  {
+   "mes": "2025-02",
+   "vendedor": "Guilherme",
+   "dias": 1
+  },
+  {
+   "mes": "2025-02",
+   "vendedor": "Guilherme",
+   "dias": 1
+  },
+  {
+   "mes": "2025-02",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2025-02",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2025-02",
+   "vendedor": "Erickson",
+   "dias": 5
+  },
+  {
+   "mes": "2025-02",
+   "vendedor": "Erickson",
+   "dias": 1
+  },
+  {
+   "mes": "2025-02",
+   "vendedor": "Guilherme",
+   "dias": 9
+  },
+  {
+   "mes": "2025-02",
+   "vendedor": "Erickson",
+   "dias": 7
+  },
+  {
+   "mes": "2025-02",
+   "vendedor": "Guilherme",
+   "dias": 2
+  },
+  {
+   "mes": "2025-02",
+   "vendedor": "Erickson",
+   "dias": 41
+  },
+  {
+   "mes": "2025-02",
+   "vendedor": "Erickson",
+   "dias": 11
+  },
+  {
+   "mes": "2025-02",
+   "vendedor": "Erickson",
+   "dias": 0
+  },
+  {
+   "mes": "2025-02",
+   "vendedor": "Olívia",
+   "dias": 25
+  },
+  {
+   "mes": "2025-02",
+   "vendedor": "Erickson",
+   "dias": 0
+  },
+  {
+   "mes": "2025-02",
+   "vendedor": "Erickson",
+   "dias": 0
+  },
+  {
+   "mes": "2025-02",
+   "vendedor": "Erickson",
+   "dias": 0
+  },
+  {
+   "mes": "2025-02",
+   "vendedor": "Erickson",
+   "dias": 0
+  },
+  {
+   "mes": "2025-02",
+   "vendedor": "Erickson",
+   "dias": 20
+  },
+  {
+   "mes": "2025-02",
+   "vendedor": "Erickson",
+   "dias": 20
+  },
+  {
+   "mes": "2025-02",
+   "vendedor": "Erickson",
+   "dias": 0
+  },
+  {
+   "mes": "2025-02",
+   "vendedor": "Erickson",
+   "dias": 0
+  },
+  {
+   "mes": "2025-02",
+   "vendedor": "Erickson",
+   "dias": 0
+  },
+  {
+   "mes": "2025-02",
+   "vendedor": "Erickson",
+   "dias": 8
+  },
+  {
+   "mes": "2025-02",
+   "vendedor": "Erickson",
+   "dias": 8
+  },
+  {
+   "mes": "2025-02",
+   "vendedor": "Olívia",
+   "dias": 43
+  },
+  {
+   "mes": "2025-02",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2025-02",
+   "vendedor": "Guilherme",
+   "dias": 8
+  },
+  {
+   "mes": "2025-02",
+   "vendedor": "Erickson",
+   "dias": 13
+  },
+  {
+   "mes": "2025-02",
+   "vendedor": "Guilherme",
+   "dias": 0
+  },
+  {
+   "mes": "2025-02",
+   "vendedor": "Olívia",
+   "dias": 2
+  },
+  {
+   "mes": "2025-02",
+   "vendedor": "Olívia",
+   "dias": 3
+  },
+  {
+   "mes": "2025-02",
+   "vendedor": "Olívia",
+   "dias": 1
+  },
+  {
+   "mes": "2025-02",
+   "vendedor": "Olívia",
+   "dias": 3
+  },
+  {
+   "mes": "2025-02",
+   "vendedor": "Erickson",
+   "dias": 0
+  },
+  {
+   "mes": "2025-02",
+   "vendedor": "Erickson",
+   "dias": 12
+  },
+  {
+   "mes": "2025-02",
+   "vendedor": "Erickson",
+   "dias": 6
+  },
+  {
+   "mes": "2025-02",
+   "vendedor": "Erickson",
+   "dias": 12
+  },
+  {
+   "mes": "2025-02",
+   "vendedor": "Erickson",
+   "dias": 12
+  },
+  {
+   "mes": "2025-02",
+   "vendedor": "Guilherme",
+   "dias": 2
+  },
+  {
+   "mes": "2025-02",
+   "vendedor": "Guilherme",
+   "dias": 1
+  },
+  {
+   "mes": "2025-02",
+   "vendedor": "Olívia",
+   "dias": 9
+  },
+  {
+   "mes": "2025-02",
+   "vendedor": "Guilherme",
+   "dias": 11
+  },
+  {
+   "mes": "2025-02",
+   "vendedor": "Olívia",
+   "dias": 4
+  },
+  {
+   "mes": "2025-02",
+   "vendedor": "Olívia",
+   "dias": 9
+  },
+  {
+   "mes": "2025-03",
+   "vendedor": "Olívia",
+   "dias": 6
+  },
+  {
+   "mes": "2025-03",
+   "vendedor": "Olívia",
+   "dias": 6
+  },
+  {
+   "mes": "2025-03",
+   "vendedor": "Olívia",
+   "dias": 7
+  },
+  {
+   "mes": "2025-03",
+   "vendedor": "Olívia",
+   "dias": 2
+  },
+  {
+   "mes": "2025-03",
+   "vendedor": "Olívia",
+   "dias": 1
+  },
+  {
+   "mes": "2025-03",
+   "vendedor": "Erickson",
+   "dias": 0
+  },
+  {
+   "mes": "2025-03",
+   "vendedor": "Olívia",
+   "dias": 14
+  },
+  {
+   "mes": "2025-03",
+   "vendedor": "Olívia",
+   "dias": 14
+  },
+  {
+   "mes": "2025-03",
+   "vendedor": "Olívia",
+   "dias": 14
+  },
+  {
+   "mes": "2025-03",
+   "vendedor": "Olívia",
+   "dias": 14
+  },
+  {
+   "mes": "2025-03",
+   "vendedor": "Olívia",
+   "dias": 14
+  },
+  {
+   "mes": "2025-03",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2025-03",
+   "vendedor": "Olívia",
+   "dias": 1
+  },
+  {
+   "mes": "2025-03",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2025-03",
+   "vendedor": "Guilherme",
+   "dias": 3
+  },
+  {
+   "mes": "2025-03",
+   "vendedor": "Guilherme",
+   "dias": 0
+  },
+  {
+   "mes": "2025-03",
+   "vendedor": "Olívia",
+   "dias": 5
+  },
+  {
+   "mes": "2025-03",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2025-03",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2025-03",
+   "vendedor": "Erickson",
+   "dias": 3
+  },
+  {
+   "mes": "2025-03",
+   "vendedor": "Erickson",
+   "dias": 14
+  },
+  {
+   "mes": "2025-03",
+   "vendedor": "Erickson",
+   "dias": 27
+  },
+  {
+   "mes": "2025-03",
+   "vendedor": "Erickson",
+   "dias": 7
+  },
+  {
+   "mes": "2025-03",
+   "vendedor": "Erickson",
+   "dias": 8
+  },
+  {
+   "mes": "2025-03",
+   "vendedor": "Erickson",
+   "dias": 7
+  },
+  {
+   "mes": "2025-03",
+   "vendedor": "Erickson",
+   "dias": 7
+  },
+  {
+   "mes": "2025-03",
+   "vendedor": "Erickson",
+   "dias": 7
+  },
+  {
+   "mes": "2025-03",
+   "vendedor": "Erickson",
+   "dias": 7
+  },
+  {
+   "mes": "2025-03",
+   "vendedor": "Erickson",
+   "dias": 0
+  },
+  {
+   "mes": "2025-03",
+   "vendedor": "Erickson",
+   "dias": 0
+  },
+  {
+   "mes": "2025-03",
+   "vendedor": "Olívia",
+   "dias": 12
+  },
+  {
+   "mes": "2025-03",
+   "vendedor": "Erickson",
+   "dias": 6
+  },
+  {
+   "mes": "2025-03",
+   "vendedor": "Guilherme",
+   "dias": 7
+  },
+  {
+   "mes": "2025-03",
+   "vendedor": "Guilherme",
+   "dias": 4
+  },
+  {
+   "mes": "2025-03",
+   "vendedor": "Guilherme",
+   "dias": 0
+  },
+  {
+   "mes": "2025-04",
+   "vendedor": "Erickson",
+   "dias": 5
+  },
+  {
+   "mes": "2025-04",
+   "vendedor": "Guilherme",
+   "dias": 0
+  },
+  {
+   "mes": "2025-04",
+   "vendedor": "Guilherme",
+   "dias": 0
+  },
+  {
+   "mes": "2025-04",
+   "vendedor": "Erickson",
+   "dias": 39
+  },
+  {
+   "mes": "2025-04",
+   "vendedor": "Olívia",
+   "dias": 4
+  },
+  {
+   "mes": "2025-04",
+   "vendedor": "Guilherme",
+   "dias": 1
+  },
+  {
+   "mes": "2025-04",
+   "vendedor": "Guilherme",
+   "dias": 2
+  },
+  {
+   "mes": "2025-04",
+   "vendedor": "Guilherme",
+   "dias": 7
+  },
+  {
+   "mes": "2025-04",
+   "vendedor": "Olívia",
+   "dias": 14
+  },
+  {
+   "mes": "2025-04",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2025-04",
+   "vendedor": "Olívia",
+   "dias": 41
+  },
+  {
+   "mes": "2025-04",
+   "vendedor": "Olívia",
+   "dias": 16
+  },
+  {
+   "mes": "2025-04",
+   "vendedor": "Olívia",
+   "dias": 9
+  },
+  {
+   "mes": "2025-04",
+   "vendedor": "Olívia",
+   "dias": 9
+  },
+  {
+   "mes": "2025-04",
+   "vendedor": "Olívia",
+   "dias": 1
+  },
+  {
+   "mes": "2025-04",
+   "vendedor": "Guilherme",
+   "dias": 14
+  },
+  {
+   "mes": "2025-04",
+   "vendedor": "Guilherme",
+   "dias": 1
+  },
+  {
+   "mes": "2025-04",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2025-04",
+   "vendedor": "Olívia",
+   "dias": 1
+  },
+  {
+   "mes": "2025-04",
+   "vendedor": "Olívia",
+   "dias": 11
+  },
+  {
+   "mes": "2025-04",
+   "vendedor": "Guilherme",
+   "dias": 0
+  },
+  {
+   "mes": "2025-04",
+   "vendedor": "Erickson",
+   "dias": 2
+  },
+  {
+   "mes": "2025-05",
+   "vendedor": "Olívia",
+   "dias": 27
+  },
+  {
+   "mes": "2025-05",
+   "vendedor": "Olívia",
+   "dias": 6
+  },
+  {
+   "mes": "2025-05",
+   "vendedor": "Guilherme",
+   "dias": 1
+  },
+  {
+   "mes": "2025-05",
+   "vendedor": "Erickson",
+   "dias": 1
+  },
+  {
+   "mes": "2025-05",
+   "vendedor": "Guilherme",
+   "dias": 21
+  },
+  {
+   "mes": "2025-05",
+   "vendedor": "Erickson",
+   "dias": 0
+  },
+  {
+   "mes": "2025-05",
+   "vendedor": "Guilherme",
+   "dias": 24
+  },
+  {
+   "mes": "2025-05",
+   "vendedor": "Guilherme",
+   "dias": 1
+  },
+  {
+   "mes": "2025-05",
+   "vendedor": "Olívia",
+   "dias": 4
+  },
+  {
+   "mes": "2025-05",
+   "vendedor": "Guilherme",
+   "dias": 5
+  },
+  {
+   "mes": "2025-05",
+   "vendedor": "Guilherme",
+   "dias": 5
+  },
+  {
+   "mes": "2025-05",
+   "vendedor": "Erickson",
+   "dias": 13
+  },
+  {
+   "mes": "2025-05",
+   "vendedor": "Erickson",
+   "dias": 15
+  },
+  {
+   "mes": "2025-05",
+   "vendedor": "Erickson",
+   "dias": 8
+  },
+  {
+   "mes": "2025-05",
+   "vendedor": "Marcello",
+   "dias": 14
+  },
+  {
+   "mes": "2025-05",
+   "vendedor": "Guilherme",
+   "dias": 0
+  },
+  {
+   "mes": "2025-05",
+   "vendedor": "Marcello",
+   "dias": 1
+  },
+  {
+   "mes": "2025-05",
+   "vendedor": "Olívia",
+   "dias": 1
+  },
+  {
+   "mes": "2025-05",
+   "vendedor": "Guilherme",
+   "dias": 2
+  },
+  {
+   "mes": "2025-05",
+   "vendedor": "Olívia",
+   "dias": 1
+  },
+  {
+   "mes": "2025-05",
+   "vendedor": "Olívia",
+   "dias": 3
+  },
+  {
+   "mes": "2025-05",
+   "vendedor": "Guilherme",
+   "dias": 3
+  },
+  {
+   "mes": "2025-05",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2025-05",
+   "vendedor": "Guilherme",
+   "dias": 16
+  },
+  {
+   "mes": "2025-05",
+   "vendedor": "Guilherme",
+   "dias": 6
+  },
+  {
+   "mes": "2025-05",
+   "vendedor": "Guilherme",
+   "dias": 0
+  },
+  {
+   "mes": "2025-05",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2025-05",
+   "vendedor": "Guilherme",
+   "dias": 10
+  },
+  {
+   "mes": "2025-05",
+   "vendedor": "Guilherme",
+   "dias": 0
+  },
+  {
+   "mes": "2025-05",
+   "vendedor": "Guilherme",
+   "dias": 0
+  },
+  {
+   "mes": "2025-05",
+   "vendedor": "Guilherme",
+   "dias": 0
+  },
+  {
+   "mes": "2025-05",
+   "vendedor": "Olívia",
+   "dias": 8
+  },
+  {
+   "mes": "2025-05",
+   "vendedor": "Olívia",
+   "dias": 8
+  },
+  {
+   "mes": "2025-06",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2025-06",
+   "vendedor": "Erickson",
+   "dias": 30
+  },
+  {
+   "mes": "2025-06",
+   "vendedor": "Erickson",
+   "dias": 7
+  },
+  {
+   "mes": "2025-06",
+   "vendedor": "Erickson",
+   "dias": 9
+  },
+  {
+   "mes": "2025-06",
+   "vendedor": "Erickson",
+   "dias": 6
+  },
+  {
+   "mes": "2025-06",
+   "vendedor": "Guilherme",
+   "dias": 0
+  },
+  {
+   "mes": "2025-06",
+   "vendedor": "Guilherme",
+   "dias": 0
+  },
+  {
+   "mes": "2025-06",
+   "vendedor": "Marcello",
+   "dias": 9
+  },
+  {
+   "mes": "2025-06",
+   "vendedor": "Guilherme",
+   "dias": 0
+  },
+  {
+   "mes": "2025-06",
+   "vendedor": "Erickson",
+   "dias": 6
+  },
+  {
+   "mes": "2025-06",
+   "vendedor": "Erickson",
+   "dias": 0
+  },
+  {
+   "mes": "2025-06",
+   "vendedor": "Olívia",
+   "dias": 27
+  },
+  {
+   "mes": "2025-06",
+   "vendedor": "Olívia",
+   "dias": 19
+  },
+  {
+   "mes": "2025-06",
+   "vendedor": "Olívia",
+   "dias": 6
+  },
+  {
+   "mes": "2025-06",
+   "vendedor": "Olívia",
+   "dias": 2
+  },
+  {
+   "mes": "2025-06",
+   "vendedor": "Olívia",
+   "dias": 1
+  },
+  {
+   "mes": "2025-06",
+   "vendedor": "Guilherme",
+   "dias": 3
+  },
+  {
+   "mes": "2025-06",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2025-06",
+   "vendedor": "Erickson",
+   "dias": 8
+  },
+  {
+   "mes": "2025-06",
+   "vendedor": "Guilherme",
+   "dias": 3
+  },
+  {
+   "mes": "2025-06",
+   "vendedor": "Olívia",
+   "dias": 32
+  },
+  {
+   "mes": "2025-06",
+   "vendedor": "Erickson",
+   "dias": 3
+  },
+  {
+   "mes": "2025-06",
+   "vendedor": "Olívia",
+   "dias": 8
+  },
+  {
+   "mes": "2025-06",
+   "vendedor": "Guilherme",
+   "dias": 0
+  },
+  {
+   "mes": "2025-06",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2025-07",
+   "vendedor": "Guilherme",
+   "dias": 13
+  },
+  {
+   "mes": "2025-07",
+   "vendedor": "Erickson",
+   "dias": 29
+  },
+  {
+   "mes": "2025-07",
+   "vendedor": "Olívia",
+   "dias": 4
+  },
+  {
+   "mes": "2025-07",
+   "vendedor": "Erickson",
+   "dias": 13
+  },
+  {
+   "mes": "2025-07",
+   "vendedor": "Erickson",
+   "dias": 4
+  },
+  {
+   "mes": "2025-07",
+   "vendedor": "Guilherme",
+   "dias": 89
+  },
+  {
+   "mes": "2025-07",
+   "vendedor": "Olívia",
+   "dias": 6
+  },
+  {
+   "mes": "2025-07",
+   "vendedor": "Guilherme",
+   "dias": 0
+  },
+  {
+   "mes": "2025-07",
+   "vendedor": "Erickson",
+   "dias": 10
+  },
+  {
+   "mes": "2025-07",
+   "vendedor": "Erickson",
+   "dias": 8
+  },
+  {
+   "mes": "2025-07",
+   "vendedor": "Guilherme",
+   "dias": 24
+  },
+  {
+   "mes": "2025-07",
+   "vendedor": "Olívia",
+   "dias": 3
+  },
+  {
+   "mes": "2025-08",
+   "vendedor": "Olívia",
+   "dias": 7
+  },
+  {
+   "mes": "2025-08",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2025-08",
+   "vendedor": "Olívia",
+   "dias": 1
+  },
+  {
+   "mes": "2025-08",
+   "vendedor": "Olívia",
+   "dias": 9
+  },
+  {
+   "mes": "2025-08",
+   "vendedor": "Marcello",
+   "dias": 8
+  },
+  {
+   "mes": "2025-08",
+   "vendedor": "Guilherme",
+   "dias": 2
+  },
+  {
+   "mes": "2025-08",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2025-08",
+   "vendedor": "Marcello",
+   "dias": 12
+  },
+  {
+   "mes": "2025-08",
+   "vendedor": "Olívia",
+   "dias": 14
+  },
+  {
+   "mes": "2025-08",
+   "vendedor": "Guilherme",
+   "dias": 1
+  },
+  {
+   "mes": "2025-08",
+   "vendedor": "Olívia",
+   "dias": 8
+  },
+  {
+   "mes": "2025-08",
+   "vendedor": "Guilherme",
+   "dias": 0
+  },
+  {
+   "mes": "2025-08",
+   "vendedor": "Marcello",
+   "dias": 0
+  },
+  {
+   "mes": "2025-08",
+   "vendedor": "Marcello",
+   "dias": 3
+  },
+  {
+   "mes": "2025-08",
+   "vendedor": "Marcello",
+   "dias": 2
+  },
+  {
+   "mes": "2025-08",
+   "vendedor": "Olívia",
+   "dias": 5
+  },
+  {
+   "mes": "2025-08",
+   "vendedor": "Guilherme",
+   "dias": 14
+  },
+  {
+   "mes": "2025-08",
+   "vendedor": "Marcello",
+   "dias": 0
+  },
+  {
+   "mes": "2025-08",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2025-08",
+   "vendedor": "Olívia",
+   "dias": 13
+  },
+  {
+   "mes": "2025-08",
+   "vendedor": "Olívia",
+   "dias": 14
+  },
+  {
+   "mes": "2025-08",
+   "vendedor": "Olívia",
+   "dias": 21
+  },
+  {
+   "mes": "2025-08",
+   "vendedor": "Guilherme",
+   "dias": 13
+  },
+  {
+   "mes": "2025-08",
+   "vendedor": "Olívia",
+   "dias": 12
+  },
+  {
+   "mes": "2025-08",
+   "vendedor": "Olívia",
+   "dias": 26
+  },
+  {
+   "mes": "2025-08",
+   "vendedor": "Olívia",
+   "dias": 23
+  },
+  {
+   "mes": "2025-08",
+   "vendedor": "Olívia",
+   "dias": 24
+  },
+  {
+   "mes": "2025-08",
+   "vendedor": "Olívia",
+   "dias": 24
+  },
+  {
+   "mes": "2025-08",
+   "vendedor": "Guilherme",
+   "dias": 6
+  },
+  {
+   "mes": "2025-08",
+   "vendedor": "Olívia",
+   "dias": 24
+  },
+  {
+   "mes": "2025-08",
+   "vendedor": "Olívia",
+   "dias": 1
+  },
+  {
+   "mes": "2025-08",
+   "vendedor": "Olívia",
+   "dias": 15
+  },
+  {
+   "mes": "2025-08",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2025-08",
+   "vendedor": "Olívia",
+   "dias": 18
+  },
+  {
+   "mes": "2025-09",
+   "vendedor": "Guilherme",
+   "dias": 3
+  },
+  {
+   "mes": "2025-09",
+   "vendedor": "Olívia",
+   "dias": 1
+  },
+  {
+   "mes": "2025-09",
+   "vendedor": "Olívia",
+   "dias": 1
+  },
+  {
+   "mes": "2025-09",
+   "vendedor": "Olívia",
+   "dias": 6
+  },
+  {
+   "mes": "2025-09",
+   "vendedor": "Marcello",
+   "dias": 20
+  },
+  {
+   "mes": "2025-09",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2025-09",
+   "vendedor": "Guilherme",
+   "dias": 21
+  },
+  {
+   "mes": "2025-09",
+   "vendedor": "Olívia",
+   "dias": 6
+  },
+  {
+   "mes": "2025-09",
+   "vendedor": "Olívia",
+   "dias": 3
+  },
+  {
+   "mes": "2025-09",
+   "vendedor": "Olívia",
+   "dias": 2
+  },
+  {
+   "mes": "2025-09",
+   "vendedor": "Olívia",
+   "dias": 14
+  },
+  {
+   "mes": "2025-09",
+   "vendedor": "Olívia",
+   "dias": 6
+  },
+  {
+   "mes": "2025-09",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2025-09",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2025-09",
+   "vendedor": "Guilherme",
+   "dias": 0
+  },
+  {
+   "mes": "2025-09",
+   "vendedor": "Olívia",
+   "dias": 2
+  },
+  {
+   "mes": "2025-09",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2025-09",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2025-09",
+   "vendedor": "Marcello",
+   "dias": 7
+  },
+  {
+   "mes": "2025-09",
+   "vendedor": "Guilherme",
+   "dias": 5
+  },
+  {
+   "mes": "2025-09",
+   "vendedor": "Marcello",
+   "dias": 1
+  },
+  {
+   "mes": "2025-09",
+   "vendedor": "Marcello",
+   "dias": 0
+  },
+  {
+   "mes": "2025-09",
+   "vendedor": "Olívia",
+   "dias": 1
+  },
+  {
+   "mes": "2025-09",
+   "vendedor": "Guilherme",
+   "dias": 24
+  },
+  {
+   "mes": "2025-09",
+   "vendedor": "Olívia",
+   "dias": 4
+  },
+  {
+   "mes": "2025-09",
+   "vendedor": "Olívia",
+   "dias": 3
+  },
+  {
+   "mes": "2025-09",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2025-09",
+   "vendedor": "Olívia",
+   "dias": 19
+  },
+  {
+   "mes": "2025-09",
+   "vendedor": "Marcello",
+   "dias": 0
+  },
+  {
+   "mes": "2025-09",
+   "vendedor": "Marcello",
+   "dias": 0
+  },
+  {
+   "mes": "2025-09",
+   "vendedor": "Marcello",
+   "dias": 0
+  },
+  {
+   "mes": "2025-09",
+   "vendedor": "Marcello",
+   "dias": 0
+  },
+  {
+   "mes": "2025-09",
+   "vendedor": "Marcello",
+   "dias": 0
+  },
+  {
+   "mes": "2025-09",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2025-09",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2025-09",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2025-09",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2025-09",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2025-09",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2025-09",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2025-09",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2025-09",
+   "vendedor": "Marcello",
+   "dias": 1
+  },
+  {
+   "mes": "2025-09",
+   "vendedor": "Olívia",
+   "dias": 3
+  },
+  {
+   "mes": "2025-09",
+   "vendedor": "Olívia",
+   "dias": 7
+  },
+  {
+   "mes": "2025-09",
+   "vendedor": "Olívia",
+   "dias": 18
+  },
+  {
+   "mes": "2025-09",
+   "vendedor": "Olívia",
+   "dias": 1
+  },
+  {
+   "mes": "2025-09",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2025-09",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2025-09",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2025-09",
+   "vendedor": "Olívia",
+   "dias": 6
+  },
+  {
+   "mes": "2025-09",
+   "vendedor": "Guilherme",
+   "dias": 6
+  },
+  {
+   "mes": "2025-10",
+   "vendedor": "Olívia",
+   "dias": 34
+  },
+  {
+   "mes": "2025-10",
+   "vendedor": "Olívia",
+   "dias": 24
+  },
+  {
+   "mes": "2025-10",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2025-10",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2025-10",
+   "vendedor": "Olívia",
+   "dias": 12
+  },
+  {
+   "mes": "2025-10",
+   "vendedor": "Olívia",
+   "dias": 56
+  },
+  {
+   "mes": "2025-10",
+   "vendedor": "Olívia",
+   "dias": 4
+  },
+  {
+   "mes": "2025-10",
+   "vendedor": "Olívia",
+   "dias": 3
+  },
+  {
+   "mes": "2025-10",
+   "vendedor": "Olívia",
+   "dias": 21
+  },
+  {
+   "mes": "2025-10",
+   "vendedor": "Olívia",
+   "dias": 1
+  },
+  {
+   "mes": "2025-10",
+   "vendedor": "Guilherme",
+   "dias": 1
+  },
+  {
+   "mes": "2025-10",
+   "vendedor": "Olívia",
+   "dias": 7
+  },
+  {
+   "mes": "2025-10",
+   "vendedor": "Marcello",
+   "dias": 8
+  },
+  {
+   "mes": "2025-10",
+   "vendedor": "Olívia",
+   "dias": 6
+  },
+  {
+   "mes": "2025-10",
+   "vendedor": "Olívia",
+   "dias": 1
+  },
+  {
+   "mes": "2025-10",
+   "vendedor": "Olívia",
+   "dias": 52
+  },
+  {
+   "mes": "2025-10",
+   "vendedor": "Marcello",
+   "dias": 6
+  },
+  {
+   "mes": "2025-10",
+   "vendedor": "Olívia",
+   "dias": 26
+  },
+  {
+   "mes": "2025-10",
+   "vendedor": "Olívia",
+   "dias": 42
+  },
+  {
+   "mes": "2025-10",
+   "vendedor": "Marcello",
+   "dias": 2
+  },
+  {
+   "mes": "2025-10",
+   "vendedor": "Marcello",
+   "dias": 6
+  },
+  {
+   "mes": "2025-10",
+   "vendedor": "Olívia",
+   "dias": 37
+  },
+  {
+   "mes": "2025-10",
+   "vendedor": "Guilherme",
+   "dias": 0
+  },
+  {
+   "mes": "2025-10",
+   "vendedor": "Olívia",
+   "dias": 4
+  },
+  {
+   "mes": "2025-10",
+   "vendedor": "Olívia",
+   "dias": 1
+  },
+  {
+   "mes": "2025-10",
+   "vendedor": "Olívia",
+   "dias": 1
+  },
+  {
+   "mes": "2025-10",
+   "vendedor": "Marcello",
+   "dias": 4
+  },
+  {
+   "mes": "2025-10",
+   "vendedor": "Olívia",
+   "dias": 5
+  },
+  {
+   "mes": "2025-10",
+   "vendedor": "Guilherme",
+   "dias": 5
+  },
+  {
+   "mes": "2025-10",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2025-10",
+   "vendedor": "Olívia",
+   "dias": 6
+  },
+  {
+   "mes": "2025-10",
+   "vendedor": "Guilherme",
+   "dias": 70
+  },
+  {
+   "mes": "2025-10",
+   "vendedor": "Olívia",
+   "dias": 17
+  },
+  {
+   "mes": "2025-10",
+   "vendedor": "Olívia",
+   "dias": 14
+  },
+  {
+   "mes": "2025-10",
+   "vendedor": "Olívia",
+   "dias": 20
+  },
+  {
+   "mes": "2025-10",
+   "vendedor": "Guilherme",
+   "dias": 1
+  },
+  {
+   "mes": "2025-10",
+   "vendedor": "Guilherme",
+   "dias": 2
+  },
+  {
+   "mes": "2025-10",
+   "vendedor": "Guilherme",
+   "dias": 2
+  },
+  {
+   "mes": "2025-10",
+   "vendedor": "Olívia",
+   "dias": 29
+  },
+  {
+   "mes": "2025-10",
+   "vendedor": "Olívia",
+   "dias": 4
+  },
+  {
+   "mes": "2025-10",
+   "vendedor": "Olívia",
+   "dias": 26
+  },
+  {
+   "mes": "2025-10",
+   "vendedor": "Marcello",
+   "dias": 7
+  },
+  {
+   "mes": "2025-10",
+   "vendedor": "Olívia",
+   "dias": 2
+  },
+  {
+   "mes": "2025-10",
+   "vendedor": "Guilherme",
+   "dias": 1
+  },
+  {
+   "mes": "2025-10",
+   "vendedor": "Olívia",
+   "dias": 1
+  },
+  {
+   "mes": "2025-10",
+   "vendedor": "Olívia",
+   "dias": 17
+  },
+  {
+   "mes": "2025-10",
+   "vendedor": "Olívia",
+   "dias": 30
+  },
+  {
+   "mes": "2025-10",
+   "vendedor": "Marcello",
+   "dias": 7
+  },
+  {
+   "mes": "2025-10",
+   "vendedor": "Marcello",
+   "dias": 6
+  },
+  {
+   "mes": "2025-10",
+   "vendedor": "Marcello",
+   "dias": 7
+  },
+  {
+   "mes": "2025-10",
+   "vendedor": "Olívia",
+   "dias": 3
+  },
+  {
+   "mes": "2025-11",
+   "vendedor": "Olívia",
+   "dias": 5
+  },
+  {
+   "mes": "2025-11",
+   "vendedor": "Olívia",
+   "dias": 4
+  },
+  {
+   "mes": "2025-11",
+   "vendedor": "Olívia",
+   "dias": 1
+  },
+  {
+   "mes": "2025-11",
+   "vendedor": "Marcello",
+   "dias": 6
+  },
+  {
+   "mes": "2025-11",
+   "vendedor": "Olívia",
+   "dias": 35
+  },
+  {
+   "mes": "2025-11",
+   "vendedor": "Marcello",
+   "dias": 5
+  },
+  {
+   "mes": "2025-11",
+   "vendedor": "Olívia",
+   "dias": 4
+  },
+  {
+   "mes": "2025-11",
+   "vendedor": "Marcello",
+   "dias": 15
+  },
+  {
+   "mes": "2025-11",
+   "vendedor": "Marcello",
+   "dias": 15
+  },
+  {
+   "mes": "2025-11",
+   "vendedor": "Marcello",
+   "dias": 15
+  },
+  {
+   "mes": "2025-11",
+   "vendedor": "Guilherme",
+   "dias": 1
+  },
+  {
+   "mes": "2025-11",
+   "vendedor": "Guilherme",
+   "dias": 1
+  },
+  {
+   "mes": "2025-11",
+   "vendedor": "Olívia",
+   "dias": 5
+  },
+  {
+   "mes": "2025-11",
+   "vendedor": "Olívia",
+   "dias": 12
+  },
+  {
+   "mes": "2025-11",
+   "vendedor": "Guilherme",
+   "dias": 1
+  },
+  {
+   "mes": "2025-11",
+   "vendedor": "Olívia",
+   "dias": 10
+  },
+  {
+   "mes": "2025-11",
+   "vendedor": "Olívia",
+   "dias": 17
+  },
+  {
+   "mes": "2025-11",
+   "vendedor": "Olívia",
+   "dias": 10
+  },
+  {
+   "mes": "2025-11",
+   "vendedor": "Olívia",
+   "dias": 2
+  },
+  {
+   "mes": "2025-11",
+   "vendedor": "Marcello",
+   "dias": 9
+  },
+  {
+   "mes": "2025-11",
+   "vendedor": "Olívia",
+   "dias": 3
+  },
+  {
+   "mes": "2025-11",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2025-11",
+   "vendedor": "Marcello",
+   "dias": 2
+  },
+  {
+   "mes": "2025-11",
+   "vendedor": "Olívia",
+   "dias": 2
+  },
+  {
+   "mes": "2025-11",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2025-11",
+   "vendedor": "Guilherme",
+   "dias": 13
+  },
+  {
+   "mes": "2025-11",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2025-11",
+   "vendedor": "Marcello",
+   "dias": 6
+  },
+  {
+   "mes": "2025-11",
+   "vendedor": "Olívia",
+   "dias": 2
+  },
+  {
+   "mes": "2025-11",
+   "vendedor": "Olívia",
+   "dias": 4
+  },
+  {
+   "mes": "2025-12",
+   "vendedor": "Olívia",
+   "dias": 5
+  },
+  {
+   "mes": "2025-12",
+   "vendedor": "Marcello",
+   "dias": 25
+  },
+  {
+   "mes": "2025-12",
+   "vendedor": "Olívia",
+   "dias": 7
+  },
+  {
+   "mes": "2025-12",
+   "vendedor": "Olívia",
+   "dias": 7
+  },
+  {
+   "mes": "2025-12",
+   "vendedor": "Marcello",
+   "dias": 9
+  },
+  {
+   "mes": "2025-12",
+   "vendedor": "Olívia",
+   "dias": 1
+  },
+  {
+   "mes": "2025-12",
+   "vendedor": "Gabriele",
+   "dias": 14
+  },
+  {
+   "mes": "2025-12",
+   "vendedor": "Olívia",
+   "dias": 2
+  },
+  {
+   "mes": "2025-12",
+   "vendedor": "Olívia",
+   "dias": 14
+  },
+  {
+   "mes": "2025-12",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2025-12",
+   "vendedor": "Guilherme",
+   "dias": 0
+  },
+  {
+   "mes": "2025-12",
+   "vendedor": "Marcello",
+   "dias": 0
+  },
+  {
+   "mes": "2025-12",
+   "vendedor": "Guilherme",
+   "dias": 19
+  },
+  {
+   "mes": "2025-12",
+   "vendedor": "Marcello",
+   "dias": 0
+  },
+  {
+   "mes": "2025-12",
+   "vendedor": "Olívia",
+   "dias": 1
+  },
+  {
+   "mes": "2025-12",
+   "vendedor": "Olívia",
+   "dias": 2
+  },
+  {
+   "mes": "2025-12",
+   "vendedor": "Gabriele",
+   "dias": 2
+  },
+  {
+   "mes": "2025-12",
+   "vendedor": "Gabriele",
+   "dias": 2
+  },
+  {
+   "mes": "2025-12",
+   "vendedor": "Gabriele",
+   "dias": 2
+  },
+  {
+   "mes": "2025-12",
+   "vendedor": "Gabriele",
+   "dias": 34
+  },
+  {
+   "mes": "2025-12",
+   "vendedor": "Gabriele",
+   "dias": 34
+  },
+  {
+   "mes": "2025-12",
+   "vendedor": "Gabriele",
+   "dias": 34
+  },
+  {
+   "mes": "2026-01",
+   "vendedor": "Gabriele",
+   "dias": 6
+  },
+  {
+   "mes": "2026-01",
+   "vendedor": "Marcello",
+   "dias": 12
+  },
+  {
+   "mes": "2026-01",
+   "vendedor": "Marcello",
+   "dias": 12
+  },
+  {
+   "mes": "2026-01",
+   "vendedor": "Guilherme",
+   "dias": 0
+  },
+  {
+   "mes": "2026-01",
+   "vendedor": "Gabriele",
+   "dias": 48
+  },
+  {
+   "mes": "2026-01",
+   "vendedor": "Gabriele",
+   "dias": 26
+  },
+  {
+   "mes": "2026-01",
+   "vendedor": "Gabriele",
+   "dias": 26
+  },
+  {
+   "mes": "2026-01",
+   "vendedor": "Gabriele",
+   "dias": 49
+  },
+  {
+   "mes": "2026-01",
+   "vendedor": "Guilherme",
+   "dias": 1
+  },
+  {
+   "mes": "2026-01",
+   "vendedor": "Olívia",
+   "dias": 2
+  },
+  {
+   "mes": "2026-01",
+   "vendedor": "Guilherme",
+   "dias": 8
+  },
+  {
+   "mes": "2026-01",
+   "vendedor": "Guilherme",
+   "dias": 2
+  },
+  {
+   "mes": "2026-01",
+   "vendedor": "Gabriele",
+   "dias": 51
+  },
+  {
+   "mes": "2026-01",
+   "vendedor": "Marcello",
+   "dias": 1
+  },
+  {
+   "mes": "2026-01",
+   "vendedor": "Marcello",
+   "dias": 2
+  },
+  {
+   "mes": "2026-01",
+   "vendedor": "Guilherme",
+   "dias": 1
+  },
+  {
+   "mes": "2026-01",
+   "vendedor": "Guilherme",
+   "dias": 10
+  },
+  {
+   "mes": "2026-01",
+   "vendedor": "Guilherme",
+   "dias": 2
+  },
+  {
+   "mes": "2026-01",
+   "vendedor": "Guilherme",
+   "dias": 1
+  },
+  {
+   "mes": "2026-01",
+   "vendedor": "Guilherme",
+   "dias": 1
+  },
+  {
+   "mes": "2026-01",
+   "vendedor": "Guilherme",
+   "dias": 2
+  },
+  {
+   "mes": "2026-01",
+   "vendedor": "Gabriele",
+   "dias": 37
+  },
+  {
+   "mes": "2026-01",
+   "vendedor": "Marcello",
+   "dias": 7
+  },
+  {
+   "mes": "2026-01",
+   "vendedor": "Marcello",
+   "dias": 12
+  },
+  {
+   "mes": "2026-01",
+   "vendedor": "Marcello",
+   "dias": 6
+  },
+  {
+   "mes": "2026-01",
+   "vendedor": "Olívia",
+   "dias": 2
+  },
+  {
+   "mes": "2026-01",
+   "vendedor": "Gabriele",
+   "dias": 66
+  },
+  {
+   "mes": "2026-02",
+   "vendedor": "Olívia",
+   "dias": 14
+  },
+  {
+   "mes": "2026-02",
+   "vendedor": "Olívia",
+   "dias": 5
+  },
+  {
+   "mes": "2026-02",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2026-02",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2026-02",
+   "vendedor": "Guilherme",
+   "dias": 6
+  },
+  {
+   "mes": "2026-02",
+   "vendedor": "Guilherme",
+   "dias": 6
+  },
+  {
+   "mes": "2026-02",
+   "vendedor": "Guilherme",
+   "dias": 6
+  },
+  {
+   "mes": "2026-02",
+   "vendedor": "Guilherme",
+   "dias": 6
+  },
+  {
+   "mes": "2026-02",
+   "vendedor": "Guilherme",
+   "dias": 6
+  },
+  {
+   "mes": "2026-02",
+   "vendedor": "Guilherme",
+   "dias": 0
+  },
+  {
+   "mes": "2026-02",
+   "vendedor": "Olívia",
+   "dias": 27
+  },
+  {
+   "mes": "2026-02",
+   "vendedor": "Olívia",
+   "dias": 1
+  },
+  {
+   "mes": "2026-02",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2026-02",
+   "vendedor": "Olívia",
+   "dias": 10
+  },
+  {
+   "mes": "2026-02",
+   "vendedor": "Olívia",
+   "dias": 6
+  },
+  {
+   "mes": "2026-02",
+   "vendedor": "Olívia",
+   "dias": 6
+  },
+  {
+   "mes": "2026-02",
+   "vendedor": "Olívia",
+   "dias": 1
+  },
+  {
+   "mes": "2026-02",
+   "vendedor": "Marcello",
+   "dias": 4
+  },
+  {
+   "mes": "2026-02",
+   "vendedor": "Gabriele",
+   "dias": 7
+  },
+  {
+   "mes": "2026-02",
+   "vendedor": "Gabriele",
+   "dias": 7
+  },
+  {
+   "mes": "2026-02",
+   "vendedor": "Gabriele",
+   "dias": 5
+  },
+  {
+   "mes": "2026-02",
+   "vendedor": "Olívia",
+   "dias": 1
+  },
+  {
+   "mes": "2026-02",
+   "vendedor": "Olívia",
+   "dias": 5
+  },
+  {
+   "mes": "2026-02",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2026-02",
+   "vendedor": "Marcello",
+   "dias": 8
+  },
+  {
+   "mes": "2026-02",
+   "vendedor": "Guilherme",
+   "dias": 8
+  },
+  {
+   "mes": "2026-02",
+   "vendedor": "Marcello",
+   "dias": 13
+  },
+  {
+   "mes": "2026-02",
+   "vendedor": "Marcello",
+   "dias": 4
+  },
+  {
+   "mes": "2026-02",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2026-02",
+   "vendedor": "Olívia",
+   "dias": 7
+  },
+  {
+   "mes": "2026-02",
+   "vendedor": "Marcello",
+   "dias": 2
+  },
+  {
+   "mes": "2026-02",
+   "vendedor": "Marcello",
+   "dias": 3
+  },
+  {
+   "mes": "2026-02",
+   "vendedor": "Olívia",
+   "dias": 1
+  },
+  {
+   "mes": "2026-02",
+   "vendedor": "Olívia",
+   "dias": 1
+  },
+  {
+   "mes": "2026-02",
+   "vendedor": "Olívia",
+   "dias": 3
+  },
+  {
+   "mes": "2026-02",
+   "vendedor": "Guilherme",
+   "dias": 29
+  },
+  {
+   "mes": "2026-02",
+   "vendedor": "Marcello",
+   "dias": 4
+  },
+  {
+   "mes": "2026-03",
+   "vendedor": "Marcello",
+   "dias": 0
+  },
+  {
+   "mes": "2026-03",
+   "vendedor": "Marcello",
+   "dias": 5
+  },
+  {
+   "mes": "2026-03",
+   "vendedor": "Marcello",
+   "dias": 5
+  },
+  {
+   "mes": "2026-03",
+   "vendedor": "Marcello",
+   "dias": 5
+  },
+  {
+   "mes": "2026-03",
+   "vendedor": "Marcello",
+   "dias": 5
+  },
+  {
+   "mes": "2026-03",
+   "vendedor": "Marcello",
+   "dias": 5
+  },
+  {
+   "mes": "2026-03",
+   "vendedor": "Marcello",
+   "dias": 5
+  },
+  {
+   "mes": "2026-03",
+   "vendedor": "Marcello",
+   "dias": 5
+  },
+  {
+   "mes": "2026-03",
+   "vendedor": "Marcello",
+   "dias": 5
+  },
+  {
+   "mes": "2026-03",
+   "vendedor": "Marcello",
+   "dias": 5
+  },
+  {
+   "mes": "2026-03",
+   "vendedor": "Marcello",
+   "dias": 5
+  },
+  {
+   "mes": "2026-03",
+   "vendedor": "Marcello",
+   "dias": 5
+  },
+  {
+   "mes": "2026-03",
+   "vendedor": "Guilherme",
+   "dias": 43
+  },
+  {
+   "mes": "2026-03",
+   "vendedor": "Marcello",
+   "dias": 6
+  },
+  {
+   "mes": "2026-03",
+   "vendedor": "Olívia",
+   "dias": 7
+  },
+  {
+   "mes": "2026-03",
+   "vendedor": "Gabriele",
+   "dias": 2
+  },
+  {
+   "mes": "2026-03",
+   "vendedor": "Marcello",
+   "dias": 0
+  },
+  {
+   "mes": "2026-03",
+   "vendedor": "Olívia",
+   "dias": 1
+  },
+  {
+   "mes": "2026-03",
+   "vendedor": "Olívia",
+   "dias": 1
+  },
+  {
+   "mes": "2026-03",
+   "vendedor": "Olívia",
+   "dias": 1
+  },
+  {
+   "mes": "2026-03",
+   "vendedor": "Marcello",
+   "dias": 17
+  },
+  {
+   "mes": "2026-03",
+   "vendedor": "Guilherme",
+   "dias": 1
+  },
+  {
+   "mes": "2026-03",
+   "vendedor": "Olívia",
+   "dias": 1
+  },
+  {
+   "mes": "2026-03",
+   "vendedor": "Olívia",
+   "dias": 14
+  },
+  {
+   "mes": "2026-03",
+   "vendedor": "Olívia",
+   "dias": 4
+  },
+  {
+   "mes": "2026-03",
+   "vendedor": "Guilherme",
+   "dias": 1
+  },
+  {
+   "mes": "2026-03",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2026-03",
+   "vendedor": "Guilherme",
+   "dias": 53
+  },
+  {
+   "mes": "2026-03",
+   "vendedor": "Olívia",
+   "dias": 5
+  },
+  {
+   "mes": "2026-03",
+   "vendedor": "Marcello",
+   "dias": 11
+  },
+  {
+   "mes": "2026-03",
+   "vendedor": "Marcello",
+   "dias": 11
+  },
+  {
+   "mes": "2026-03",
+   "vendedor": "Marcello",
+   "dias": 1
+  },
+  {
+   "mes": "2026-03",
+   "vendedor": "Marcello",
+   "dias": 1
+  },
+  {
+   "mes": "2026-03",
+   "vendedor": "Marcello",
+   "dias": 53
+  },
+  {
+   "mes": "2026-03",
+   "vendedor": "Marcello",
+   "dias": 23
+  },
+  {
+   "mes": "2026-03",
+   "vendedor": "Olívia",
+   "dias": 7
+  },
+  {
+   "mes": "2026-03",
+   "vendedor": "Gabriele",
+   "dias": 23
+  },
+  {
+   "mes": "2026-03",
+   "vendedor": "Marcello",
+   "dias": 3
+  },
+  {
+   "mes": "2026-03",
+   "vendedor": "Olívia",
+   "dias": 5
+  },
+  {
+   "mes": "2026-04",
+   "vendedor": "Olívia",
+   "dias": 13
+  },
+  {
+   "mes": "2026-04",
+   "vendedor": "Olívia",
+   "dias": 7
+  },
+  {
+   "mes": "2026-04",
+   "vendedor": "Olívia",
+   "dias": 20
+  },
+  {
+   "mes": "2026-04",
+   "vendedor": "Olívia",
+   "dias": 7
+  },
+  {
+   "mes": "2026-04",
+   "vendedor": "Marcello",
+   "dias": 7
+  },
+  {
+   "mes": "2026-04",
+   "vendedor": "Marcello",
+   "dias": 7
+  },
+  {
+   "mes": "2026-04",
+   "vendedor": "Marcello",
+   "dias": 5
+  },
+  {
+   "mes": "2026-04",
+   "vendedor": "Olívia",
+   "dias": 6
+  },
+  {
+   "mes": "2026-04",
+   "vendedor": "Marcello",
+   "dias": 0
+  },
+  {
+   "mes": "2026-04",
+   "vendedor": "Marcello",
+   "dias": 22
+  },
+  {
+   "mes": "2026-04",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2026-04",
+   "vendedor": "Marcello",
+   "dias": 2
+  },
+  {
+   "mes": "2026-04",
+   "vendedor": "Marcello",
+   "dias": 2
+  },
+  {
+   "mes": "2026-04",
+   "vendedor": "Marcello",
+   "dias": 4
+  },
+  {
+   "mes": "2026-04",
+   "vendedor": "Olívia",
+   "dias": 4
+  },
+  {
+   "mes": "2026-04",
+   "vendedor": "Olívia",
+   "dias": 1
+  },
+  {
+   "mes": "2026-04",
+   "vendedor": "Guilherme",
+   "dias": 26
+  },
+  {
+   "mes": "2026-04",
+   "vendedor": "Guilherme",
+   "dias": 5
+  },
+  {
+   "mes": "2026-04",
+   "vendedor": "Marcello",
+   "dias": 0
+  },
+  {
+   "mes": "2026-04",
+   "vendedor": "Marcello",
+   "dias": 8
+  },
+  {
+   "mes": "2026-04",
+   "vendedor": "Olívia",
+   "dias": 8
+  },
+  {
+   "mes": "2026-04",
+   "vendedor": "Olívia",
+   "dias": 14
+  },
+  {
+   "mes": "2026-04",
+   "vendedor": "Olívia",
+   "dias": 11
+  },
+  {
+   "mes": "2026-04",
+   "vendedor": "Marcello",
+   "dias": 21
+  },
+  {
+   "mes": "2026-04",
+   "vendedor": "Olívia",
+   "dias": 4
+  },
+  {
+   "mes": "2026-04",
+   "vendedor": "Olívia",
+   "dias": 1
+  },
+  {
+   "mes": "2026-04",
+   "vendedor": "Olívia",
+   "dias": 62
+  },
+  {
+   "mes": "2026-04",
+   "vendedor": "Guilherme",
+   "dias": 5
+  },
+  {
+   "mes": "2026-04",
+   "vendedor": "Marcello",
+   "dias": 0
+  },
+  {
+   "mes": "2026-05",
+   "vendedor": "Marcello",
+   "dias": 4
+  },
+  {
+   "mes": "2026-05",
+   "vendedor": "Olívia",
+   "dias": 6
+  },
+  {
+   "mes": "2026-05",
+   "vendedor": "Gabriele",
+   "dias": 1
+  },
+  {
+   "mes": "2026-05",
+   "vendedor": "Olívia",
+   "dias": 1
+  },
+  {
+   "mes": "2026-05",
+   "vendedor": "Olívia",
+   "dias": 47
+  },
+  {
+   "mes": "2026-05",
+   "vendedor": "Olívia",
+   "dias": 1
+  },
+  {
+   "mes": "2026-05",
+   "vendedor": "Olívia",
+   "dias": 1
+  },
+  {
+   "mes": "2026-05",
+   "vendedor": "Olívia",
+   "dias": 1
+  },
+  {
+   "mes": "2026-05",
+   "vendedor": "Marcello",
+   "dias": 4
+  },
+  {
+   "mes": "2026-05",
+   "vendedor": "Marcello",
+   "dias": 1
+  },
+  {
+   "mes": "2026-05",
+   "vendedor": "Marcello",
+   "dias": 0
+  },
+  {
+   "mes": "2026-05",
+   "vendedor": "Olívia",
+   "dias": 2
+  },
+  {
+   "mes": "2026-05",
+   "vendedor": "Olívia",
+   "dias": 3
+  },
+  {
+   "mes": "2026-05",
+   "vendedor": "Olívia",
+   "dias": 1
+  },
+  {
+   "mes": "2026-05",
+   "vendedor": "Marcello",
+   "dias": 6
+  },
+  {
+   "mes": "2026-05",
+   "vendedor": "Olívia",
+   "dias": 7
+  },
+  {
+   "mes": "2026-05",
+   "vendedor": "Olívia",
+   "dias": 1
+  },
+  {
+   "mes": "2026-05",
+   "vendedor": "Olívia",
+   "dias": 2
+  },
+  {
+   "mes": "2026-05",
+   "vendedor": "Olívia",
+   "dias": 1
+  },
+  {
+   "mes": "2026-05",
+   "vendedor": "Marcello",
+   "dias": 2
+  },
+  {
+   "mes": "2026-05",
+   "vendedor": "Marcello",
+   "dias": 5
+  },
+  {
+   "mes": "2026-05",
+   "vendedor": "Marcello",
+   "dias": 6
+  },
+  {
+   "mes": "2026-05",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2026-05",
+   "vendedor": "Marcello",
+   "dias": 6
+  },
+  {
+   "mes": "2026-05",
+   "vendedor": "Gabriele",
+   "dias": 6
+  },
+  {
+   "mes": "2026-05",
+   "vendedor": "Gabriele",
+   "dias": 0
+  },
+  {
+   "mes": "2026-05",
+   "vendedor": "Gabriele",
+   "dias": 1
+  },
+  {
+   "mes": "2026-05",
+   "vendedor": "Marcello",
+   "dias": 1
+  },
+  {
+   "mes": "2026-05",
+   "vendedor": "Marcello",
+   "dias": 2
+  },
+  {
+   "mes": "2026-05",
+   "vendedor": "Olívia",
+   "dias": 7
+  },
+  {
+   "mes": "2026-05",
+   "vendedor": "Gabriele",
+   "dias": 3
+  },
+  {
+   "mes": "2026-05",
+   "vendedor": "Gabriele",
+   "dias": 0
+  },
+  {
+   "mes": "2026-05",
+   "vendedor": "Olívia",
+   "dias": 1
+  },
+  {
+   "mes": "2026-05",
+   "vendedor": "Olívia",
+   "dias": 2
+  },
+  {
+   "mes": "2026-06",
+   "vendedor": "Gabriele",
+   "dias": 5
+  },
+  {
+   "mes": "2026-06",
+   "vendedor": "Marcello",
+   "dias": 2
+  },
+  {
+   "mes": "2026-06",
+   "vendedor": "Marcello",
+   "dias": 0
+  },
+  {
+   "mes": "2026-06",
+   "vendedor": "Marcello",
+   "dias": 0
+  },
+  {
+   "mes": "2026-06",
+   "vendedor": "Olívia",
+   "dias": 24
+  },
+  {
+   "mes": "2026-06",
+   "vendedor": "Olívia",
+   "dias": 60
+  },
+  {
+   "mes": "2026-06",
+   "vendedor": "Gabriele",
+   "dias": 35
+  },
+  {
+   "mes": "2026-06",
+   "vendedor": "Gabriele",
+   "dias": 7
+  },
+  {
+   "mes": "2026-06",
+   "vendedor": "Olívia",
+   "dias": 11
+  },
+  {
+   "mes": "2026-06",
+   "vendedor": "Marcello",
+   "dias": 7
+  },
+  {
+   "mes": "2026-06",
+   "vendedor": "Marcello",
+   "dias": 6
+  },
+  {
+   "mes": "2026-06",
+   "vendedor": "Marcello",
+   "dias": 32
+  },
+  {
+   "mes": "2026-06",
+   "vendedor": "Olívia",
+   "dias": 13
+  },
+  {
+   "mes": "2026-06",
+   "vendedor": "Gabriele",
+   "dias": 14
+  },
+  {
+   "mes": "2026-06",
+   "vendedor": "Gabriele",
+   "dias": 8
+  },
+  {
+   "mes": "2026-06",
+   "vendedor": "Gabriele",
+   "dias": 1
+  },
+  {
+   "mes": "2026-06",
+   "vendedor": "Olívia",
+   "dias": 14
+  },
+  {
+   "mes": "2026-06",
+   "vendedor": "Olívia",
+   "dias": 1
+  },
+  {
+   "mes": "2026-06",
+   "vendedor": "Olívia",
+   "dias": 15
+  },
+  {
+   "mes": "2026-06",
+   "vendedor": "Gabriele",
+   "dias": 13
+  },
+  {
+   "mes": "2026-06",
+   "vendedor": "Marcello",
+   "dias": 9
+  },
+  {
+   "mes": "2026-06",
+   "vendedor": "Olívia",
+   "dias": 2
+  },
+  {
+   "mes": "2026-06",
+   "vendedor": "Olívia",
+   "dias": 2
+  },
+  {
+   "mes": "2026-06",
+   "vendedor": "Gabriele",
+   "dias": 4
+  },
+  {
+   "mes": "2026-06",
+   "vendedor": "Olívia",
+   "dias": 61
+  },
+  {
+   "mes": "2026-06",
+   "vendedor": "Gabriele",
+   "dias": 16
+  },
+  {
+   "mes": "2026-06",
+   "vendedor": "Gabriele",
+   "dias": 2
+  },
+  {
+   "mes": "2026-06",
+   "vendedor": "Gabriele",
+   "dias": 2
+  },
+  {
+   "mes": "2026-06",
+   "vendedor": "Marcello",
+   "dias": 0
+  },
+  {
+   "mes": "2026-06",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2026-06",
+   "vendedor": "Marcello",
+   "dias": 9
+  },
+  {
+   "mes": "2026-06",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2026-06",
+   "vendedor": "Olívia",
+   "dias": 1
+  },
+  {
+   "mes": "2026-06",
+   "vendedor": "Olívia",
+   "dias": 10
+  },
+  {
+   "mes": "2026-06",
+   "vendedor": "Marcello",
+   "dias": 4
+  },
+  {
+   "mes": "2026-06",
+   "vendedor": "Marcello",
+   "dias": 36
+  },
+  {
+   "mes": "2026-06",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2026-06",
+   "vendedor": "Olívia",
+   "dias": 22
+  },
+  {
+   "mes": "2026-06",
+   "vendedor": "Gabriele",
+   "dias": 1
+  },
+  {
+   "mes": "2026-06",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2026-06",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2026-06",
+   "vendedor": "Olívia",
+   "dias": 1
+  },
+  {
+   "mes": "2026-06",
+   "vendedor": "Marcello",
+   "dias": 0
+  },
+  {
+   "mes": "2026-07",
+   "vendedor": "Olívia",
+   "dias": 7
+  },
+  {
+   "mes": "2026-07",
+   "vendedor": "Marcello",
+   "dias": 9
+  },
+  {
+   "mes": "2026-07",
+   "vendedor": "Gabriele",
+   "dias": 0
+  },
+  {
+   "mes": "2026-07",
+   "vendedor": "Olívia",
+   "dias": 1
+  },
+  {
+   "mes": "2026-07",
+   "vendedor": "Marcello",
+   "dias": 3
+  },
+  {
+   "mes": "2026-07",
+   "vendedor": "Olívia",
+   "dias": 8
+  },
+  {
+   "mes": "2026-07",
+   "vendedor": "Olívia",
+   "dias": 8
+  },
+  {
+   "mes": "2026-07",
+   "vendedor": "Olívia",
+   "dias": 44
+  },
+  {
+   "mes": "2026-07",
+   "vendedor": "Olívia",
+   "dias": 2
+  },
+  {
+   "mes": "2026-07",
+   "vendedor": "Olívia",
+   "dias": 11
+  },
+  {
+   "mes": "2026-07",
+   "vendedor": "Olívia",
+   "dias": 8
+  },
+  {
+   "mes": "2026-07",
+   "vendedor": "Gabriele",
+   "dias": 44
+  },
+  {
+   "mes": "2026-07",
+   "vendedor": "Marcello",
+   "dias": 38
+  },
+  {
+   "mes": "2026-07",
+   "vendedor": "Marcello",
+   "dias": 7
+  },
+  {
+   "mes": "2026-07",
+   "vendedor": "Marcello",
+   "dias": 4
+  },
+  {
+   "mes": "2026-07",
+   "vendedor": "Gabriele",
+   "dias": 7
+  },
+  {
+   "mes": "2026-07",
+   "vendedor": "Gabriele",
+   "dias": 8
+  },
+  {
+   "mes": "2026-07",
+   "vendedor": "Olívia",
+   "dias": 7
+  },
+  {
+   "mes": "2026-07",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2026-07",
+   "vendedor": "Bruno Toyo",
+   "dias": 7
+  },
+  {
+   "mes": "2026-07",
+   "vendedor": "Olívia",
+   "dias": 3
+  },
+  {
+   "mes": "2026-07",
+   "vendedor": "Olívia",
+   "dias": 27
+  },
+  {
+   "mes": "2026-07",
+   "vendedor": "Olívia",
+   "dias": 42
+  },
+  {
+   "mes": "2026-07",
+   "vendedor": "Bruno Toyo",
+   "dias": 3
+  },
+  {
+   "mes": "2026-07",
+   "vendedor": "Gabriele",
+   "dias": 1
+  },
+  {
+   "mes": "2026-07",
+   "vendedor": "Olívia",
+   "dias": 1
+  },
+  {
+   "mes": "2026-07",
+   "vendedor": "Gabriele",
+   "dias": 15
+  },
+  {
+   "mes": "2026-07",
+   "vendedor": "Marcello",
+   "dias": 2
+  },
+  {
+   "mes": "2026-07",
+   "vendedor": "Olívia",
+   "dias": 39
+  },
+  {
+   "mes": "2026-07",
+   "vendedor": "Olívia",
+   "dias": 2
+  },
+  {
+   "mes": "2026-07",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2026-07",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2026-07",
+   "vendedor": "Marcello",
+   "dias": 7
+  },
+  {
+   "mes": "2026-07",
+   "vendedor": "Marcello",
+   "dias": 20
+  },
+  {
+   "mes": "2026-07",
+   "vendedor": "Olívia",
+   "dias": 8
+  },
+  {
+   "mes": "2026-07",
+   "vendedor": "Olívia",
+   "dias": 2
+  },
+  {
+   "mes": "2026-07",
+   "vendedor": "Gabriele",
+   "dias": 6
+  },
+  {
+   "mes": "2026-07",
+   "vendedor": "Gabriele",
+   "dias": 8
+  },
+  {
+   "mes": "2026-07",
+   "vendedor": "Gabriele",
+   "dias": 6
+  },
+  {
+   "mes": "2026-07",
+   "vendedor": "Gabriele",
+   "dias": 6
+  },
+  {
+   "mes": "2026-07",
+   "vendedor": "Olívia",
+   "dias": 21
+  },
+  {
+   "mes": "2026-07",
+   "vendedor": "Marcello",
+   "dias": 1
+  },
+  {
+   "mes": "2026-07",
+   "vendedor": "Gabriele",
+   "dias": 3
+  },
+  {
+   "mes": "2026-07",
+   "vendedor": "Gabriele",
+   "dias": 3
+  },
+  {
+   "mes": "2026-07",
+   "vendedor": "Gabriele",
+   "dias": 0
+  },
+  {
+   "mes": "2026-08",
+   "vendedor": "Olívia",
+   "dias": 1
+  },
+  {
+   "mes": "2026-08",
+   "vendedor": "Olívia",
+   "dias": 1
+  },
+  {
+   "mes": "2026-08",
+   "vendedor": "Olívia",
+   "dias": 4
+  },
+  {
+   "mes": "2026-08",
+   "vendedor": "Olívia",
+   "dias": 1
+  },
+  {
+   "mes": "2026-08",
+   "vendedor": "Marcello",
+   "dias": 89
+  },
+  {
+   "mes": "2026-08",
+   "vendedor": "Olívia",
+   "dias": 1
+  },
+  {
+   "mes": "2026-08",
+   "vendedor": "Olívia",
+   "dias": 1
+  },
+  {
+   "mes": "2026-08",
+   "vendedor": "Olívia",
+   "dias": 2
+  },
+  {
+   "mes": "2026-08",
+   "vendedor": "Olívia",
+   "dias": 4
+  },
+  {
+   "mes": "2026-08",
+   "vendedor": "Olívia",
+   "dias": 5
+  },
+  {
+   "mes": "2026-08",
+   "vendedor": "Olívia",
+   "dias": 25
+  },
+  {
+   "mes": "2026-08",
+   "vendedor": "Olívia",
+   "dias": 7
+  },
+  {
+   "mes": "2026-08",
+   "vendedor": "Olívia",
+   "dias": 4
+  },
+  {
+   "mes": "2026-08",
+   "vendedor": "Bruno Toyo",
+   "dias": 0
+  },
+  {
+   "mes": "2026-08",
+   "vendedor": "Bruno Toyo",
+   "dias": 1
+  },
+  {
+   "mes": "2026-08",
+   "vendedor": "Bruno Toyo",
+   "dias": 4
+  },
+  {
+   "mes": "2026-08",
+   "vendedor": "Olívia",
+   "dias": 4
+  },
+  {
+   "mes": "2026-08",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2026-08",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2026-08",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2026-08",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2026-08",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2026-08",
+   "vendedor": "Marcello",
+   "dias": 8
+  },
+  {
+   "mes": "2026-08",
+   "vendedor": "Olívia",
+   "dias": 10
+  },
+  {
+   "mes": "2026-08",
+   "vendedor": "Olívia",
+   "dias": 2
+  },
+  {
+   "mes": "2026-08",
+   "vendedor": "Olívia",
+   "dias": 7
+  },
+  {
+   "mes": "2026-08",
+   "vendedor": "Olívia",
+   "dias": 17
+  },
+  {
+   "mes": "2026-08",
+   "vendedor": "Gabriele",
+   "dias": 5
+  },
+  {
+   "mes": "2026-08",
+   "vendedor": "Gabriele",
+   "dias": 0
+  },
+  {
+   "mes": "2026-09",
+   "vendedor": "Bruno Toyo",
+   "dias": 2
+  },
+  {
+   "mes": "2026-09",
+   "vendedor": "Olívia",
+   "dias": 15
+  },
+  {
+   "mes": "2026-09",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2026-09",
+   "vendedor": "Olívia",
+   "dias": 13
+  },
+  {
+   "mes": "2026-09",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2026-09",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2026-09",
+   "vendedor": "Gabriele",
+   "dias": 9
+  },
+  {
+   "mes": "2026-09",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2026-09",
+   "vendedor": "Gabriele",
+   "dias": 1
+  },
+  {
+   "mes": "2026-09",
+   "vendedor": "Gabriele",
+   "dias": 11
+  },
+  {
+   "mes": "2026-09",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2026-09",
+   "vendedor": "Bruno Toyo",
+   "dias": 24
+  },
+  {
+   "mes": "2026-09",
+   "vendedor": "Olívia",
+   "dias": 2
+  },
+  {
+   "mes": "2026-09",
+   "vendedor": "Gabriele",
+   "dias": 0
+  },
+  {
+   "mes": "2026-09",
+   "vendedor": "Olívia",
+   "dias": 4
+  },
+  {
+   "mes": "2026-09",
+   "vendedor": "Olívia",
+   "dias": 6
+  },
+  {
+   "mes": "2026-09",
+   "vendedor": "Olívia",
+   "dias": 6
+  },
+  {
+   "mes": "2026-09",
+   "vendedor": "Bruno Toyo",
+   "dias": 8
+  },
+  {
+   "mes": "2026-09",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2026-09",
+   "vendedor": "Gabriele",
+   "dias": 3
+  },
+  {
+   "mes": "2026-09",
+   "vendedor": "Olívia",
+   "dias": 4
+  },
+  {
+   "mes": "2026-09",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2026-09",
+   "vendedor": "Olívia",
+   "dias": 0
+  },
+  {
+   "mes": "2026-09",
+   "vendedor": "Olívia",
+   "dias": 1
+  },
+  {
+   "mes": "2026-09",
+   "vendedor": "Olívia",
+   "dias": 6
+  },
+  {
+   "mes": "2026-09",
+   "vendedor": "Olívia",
+   "dias": 6
+  },
+  {
+   "mes": "2026-09",
+   "vendedor": "Gabriele",
+   "dias": 9
+  },
+  {
+   "mes": "2026-09",
+   "vendedor": "Olívia",
+   "dias": 7
+  },
+  {
+   "mes": "2026-09",
+   "vendedor": "Olívia",
+   "dias": 7
+  },
+  {
+   "mes": "2026-09",
+   "vendedor": "Olívia",
+   "dias": 4
+  },
+  {
+   "mes": "2026-09",
+   "vendedor": "Gabriele",
+   "dias": 8
+  },
+  {
+   "mes": "2026-09",
+   "vendedor": "Gabriele",
+   "dias": 13
+  },
+  {
+   "mes": "2026-09",
+   "vendedor": "Gabriele",
+   "dias": 59
+  },
+  {
+   "mes": "2026-09",
+   "vendedor": "Olívia",
+   "dias": 2
+  },
+  {
+   "mes": "2026-10",
+   "vendedor": "Gabriele",
+   "dias": 8
+  },
+  {
+   "mes": "2026-10",
+   "vendedor": "Gabriele",
+   "dias": 8
+  },
+  {
+   "mes": "2026-10",
+   "vendedor": "Gabriele",
+   "dias": 10
+  },
+  {
+   "mes": "2026-10",
+   "vendedor": "Gabriele",
+   "dias": 11
+  },
+  {
+   "mes": "2026-10",
+   "vendedor": "Olívia",
+   "dias": 3
+  },
+  {
+   "mes": "2026-10",
+   "vendedor": "Olívia",
+   "dias": 5
+  },
+  {
+   "mes": "2026-10",
+   "vendedor": "Gabriele",
+   "dias": 0
+  },
+  {
+   "mes": "2026-10",
+   "vendedor": "Olívia",
+   "dias": 12
+  },
+  {
+   "mes": "2026-10",
+   "vendedor": "Olívia",
+   "dias": 50
+  },
+  {
+   "mes": "2026-10",
+   "vendedor": "Bruno Toyo",
+   "dias": 14
+  },
+  {
+   "mes": "2026-10",
+   "vendedor": "Bruno Toyo",
+   "dias": 14
+  },
+  {
+   "mes": "2026-10",
+   "vendedor": "Bruno Toyo",
+   "dias": 14
+  },
+  {
+   "mes": "2026-10",
+   "vendedor": "Bruno Toyo",
+   "dias": 14
+  },
+  {
+   "mes": "2026-10",
+   "vendedor": "Bruno Toyo",
+   "dias": 14
+  },
+  {
+   "mes": "2026-10",
+   "vendedor": "Bruno Toyo",
+   "dias": 14
+  },
+  {
+   "mes": "2026-10",
+   "vendedor": "Bruno Toyo",
+   "dias": 14
+  },
+  {
+   "mes": "2026-10",
+   "vendedor": "Bruno Toyo",
+   "dias": 17
+  },
+  {
+   "mes": "2026-10",
+   "vendedor": "Bruno Toyo",
+   "dias": 5
+  },
+  {
+   "mes": "2026-10",
+   "vendedor": "Bruno Toyo",
+   "dias": 0
+  }
+ ],
+ "topClientes": [
+  {
+   "cliente": "BORBOREMA MINERACAO LTDA",
+   "valor": 478604.53,
+   "pedidos": 74,
+   "vendedores": [
+    "Gabriele",
+    "Guilherme",
+    "Marcello",
+    "Olívia"
+   ]
+  },
+  {
+   "cliente": "VALID SOLUCOES S A",
+   "valor": 287377.53,
+   "pedidos": 85,
+   "vendedores": [
+    "Olívia"
+   ]
+  },
+  {
+   "cliente": "PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA",
+   "valor": 278402.75,
+   "pedidos": 56,
+   "vendedores": [
+    "Gabriele",
+    "Olívia"
+   ]
+  },
+  {
+   "cliente": "AMERICANAS S.A - EM RECUPERACAO JUDICIAL",
+   "valor": 223591.14,
+   "pedidos": 15,
+   "vendedores": [
+    "Guilherme"
+   ]
+  },
+  {
+   "cliente": "PROFARMA DISTRIBUIDORA DE PRODUTOS FARMACEUTICOS SA",
+   "valor": 190700.75,
+   "pedidos": 81,
+   "vendedores": [
+    "Erickson",
+    "Marcello"
+   ]
+  },
+  {
+   "cliente": "POSTO BEIRA RIO LTDA",
+   "valor": 134817.3,
+   "pedidos": 13,
+   "vendedores": [
+    "Olívia"
+   ]
+  },
+  {
+   "cliente": "INDUSTRIA DRYKO LTDA",
+   "valor": 118742.7,
+   "pedidos": 67,
+   "vendedores": [
+    "Olívia"
+   ]
+  },
+  {
+   "cliente": "LIGA DAS SENHORAS CATOLICAS DE SAO PAULO",
+   "valor": 80328.44,
+   "pedidos": 46,
+   "vendedores": [
+    "Olívia"
+   ]
+  },
+  {
+   "cliente": "FUNDACAO DE APOIO CIENTIFICO E TECNOLOGICO DO TOCANTINS",
+   "valor": 66864.3,
+   "pedidos": 9,
+   "vendedores": [
+    "Guilherme"
+   ]
+  },
+  {
+   "cliente": "EVOLUA ENERGIA PARTICIPACOES S/A",
+   "valor": 59159.1,
+   "pedidos": 5,
+   "vendedores": [
+    "Guilherme"
+   ]
+  },
+  {
+   "cliente": "BRASIF S/A EXPORTACAO IMPORTACAO",
+   "valor": 55554.09,
+   "pedidos": 10,
+   "vendedores": [
+    "Gabriele"
+   ]
+  },
+  {
+   "cliente": "UNIVERSO AGV ASSOCIACAO GESTAO VEICULAR UNIVERSO",
+   "valor": 54356.9,
+   "pedidos": 11,
+   "vendedores": [
+    "Erickson",
+    "Gabriele",
+    "Marcello",
+    "Olívia"
+   ]
+  },
+  {
+   "cliente": "ALPHA MINERALS BRAZIL PARTICIPACOES LTDA",
+   "valor": 53020.5,
+   "pedidos": 5,
+   "vendedores": [
+    "Gabriele",
+    "Marcello",
+    "Olívia"
+   ]
+  },
+  {
+   "cliente": "LALLEMAND SOLUÇÕES BIOLÓGICAS LTDA",
+   "valor": 52640.15,
+   "pedidos": 21,
+   "vendedores": [
+    "Guilherme",
+    "Olívia"
+   ]
+  },
+  {
+   "cliente": "BORBOREMA RECURSOS MINERAIS LTDA",
+   "valor": 42933.29,
+   "pedidos": 6,
+   "vendedores": [
+    "Gabriele",
+    "Guilherme",
+    "Olívia"
+   ]
+  }
+ ],
+ "maioresOrcamentos": [
+  {
+   "mes": "2025-02",
+   "vendedor": "Erickson",
+   "valor": 6741877.4,
+   "cliente": "DROGARIA CIPRIANO DE SANTA ROSA S.A.",
+   "status": "Cancelado"
+  },
+  {
+   "mes": "2026-09",
+   "vendedor": "Gabriele",
+   "valor": 2115954.0,
+   "cliente": "SERVIÇO SOCIAL DO COMÉRCIO - SESC AR/ES",
+   "status": "Cancelado"
+  },
+  {
+   "mes": "2025-02",
+   "vendedor": "Guilherme",
+   "valor": 1934329.0,
+   "cliente": "AMERICANAS S.A",
+   "status": "Cancelado"
+  },
+  {
+   "mes": "2026-09",
+   "vendedor": "Gabriele",
+   "valor": 1483568.1,
+   "cliente": "SERVIÇO SOCIAL DO COMÉRCIO - SESC AR/ES",
+   "status": "Cancelado"
+  },
+  {
+   "mes": "2026-09",
+   "vendedor": "Bruno Toyo",
+   "valor": 1429904.85,
+   "cliente": "ALGAR TELECOM S/A",
+   "status": "Cancelado"
+  },
+  {
+   "mes": "2026-05",
+   "vendedor": "Gabriele",
+   "valor": 1279385.45,
+   "cliente": "CONCESSIONARIA ROTA DOURADA S.A.",
+   "status": "Cancelado"
+  },
+  {
+   "mes": "2025-01",
+   "vendedor": "Guilherme",
+   "valor": 1248175.0,
+   "cliente": "AMERICANAS S.A",
+   "status": "Cancelado"
+  },
+  {
+   "mes": "2025-03",
+   "vendedor": "Olívia",
+   "valor": 1132875.0,
+   "cliente": "SUPERMERCADOS PGM PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA",
+   "status": "Cancelado"
+  }
+ ],
+ "qualidade": {
+  "faturamentoMesesFuturosDescartados": [
+   "2026-11",
+   "2026-12"
+  ],
+  "orcamentosSemVendedor": 66,
+  "pedidosLigadosAOrcamento": 722,
+  "pedidosTotal": 726
+ }
+}

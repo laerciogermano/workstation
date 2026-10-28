@@ -1,0 +1,7622 @@
+{
+  "geradoEm": "2026-10-23",
+  "fonte": "portal contasareceber (01/01/2025–31/12/2026) + planilhas Pedidos/Orçamentos 2025–2026",
+  "total": 503,
+  "comCnpj": 200,
+  "semCnpj": 303,
+  "empresas": [
+    {
+      "cnpj": "43.093.229/0004-73",
+      "razaoSocial": "BORBOREMA MINERACAO LTDA.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 74,
+      "pedidosValor": 478604.53,
+      "orcamentosQtd": 29,
+      "orcamentosValor": 247384.38,
+      "vendedores": [
+        "Gabriele",
+        "Guilherme",
+        "Marcello",
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": "33.113.309/0045-68",
+      "razaoSocial": "VALID SOLUCOES S A",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 85,
+      "pedidosValor": 287377.53,
+      "orcamentosQtd": 188,
+      "orcamentosValor": 2372626.02,
+      "vendedores": [
+        "Marcello",
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": "60.494.416/0048-07",
+      "razaoSocial": "PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 56,
+      "pedidosValor": 278402.75,
+      "orcamentosQtd": 28,
+      "orcamentosValor": 1257850.94,
+      "vendedores": [
+        "Gabriele",
+        "Guilherme",
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": "00.776.574/0015-51",
+      "razaoSocial": "AMERICANAS S.A - EM RECUPERACAO JUDICIAL",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 15,
+      "pedidosValor": 223591.14,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": [
+        "Guilherme"
+      ]
+    },
+    {
+      "cnpj": "45.453.214/0037-62",
+      "razaoSocial": "PROFARMA DISTRIBUIDORA DE PRODUTOS FARMACEUTICOS SA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 81,
+      "pedidosValor": 190700.75,
+      "orcamentosQtd": 154,
+      "orcamentosValor": 647206.8,
+      "vendedores": [
+        "Erickson",
+        "Gabriele",
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": "18.723.817/0001-53",
+      "razaoSocial": "POSTO BEIRA RIO LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 16,
+      "pedidosValor": 158376.0,
+      "orcamentosQtd": 28,
+      "orcamentosValor": 600458.88,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": "03.081.895/0005-58",
+      "razaoSocial": "INDUSTRIA DRYKO LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 67,
+      "pedidosValor": 118742.7,
+      "orcamentosQtd": 112,
+      "orcamentosValor": 526472.95,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": "60.597.044/0013-06",
+      "razaoSocial": "LIGA DAS SENHORAS CATOLICAS DE SAO PAULO",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 46,
+      "pedidosValor": 80328.44,
+      "orcamentosQtd": 66,
+      "orcamentosValor": 625744.66,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": "06.343.763/0002-00",
+      "razaoSocial": "FUNDACAO DE APOIO CIENTIFICO E TECNOLOGICO DO TOCANTINS",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 9,
+      "pedidosValor": 66864.3,
+      "orcamentosQtd": 54,
+      "orcamentosValor": 916578.84,
+      "vendedores": [
+        "Gabriele",
+        "Guilherme",
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": "35.064.555/0001-81",
+      "razaoSocial": "EVOLUA ENERGIA PARTICIPACOES S/A",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 5,
+      "pedidosValor": 59159.1,
+      "orcamentosQtd": 10,
+      "orcamentosValor": 94552.8,
+      "vendedores": [
+        "Guilherme"
+      ]
+    },
+    {
+      "cnpj": "52.226.073/0001-08",
+      "razaoSocial": "BRASIF S/A EXPORTACAO IMPORTACAO",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 10,
+      "pedidosValor": 55554.09,
+      "orcamentosQtd": 28,
+      "orcamentosValor": 298845.97,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": "14.777.297/0001-00",
+      "razaoSocial": "UNIVERSO AGV ASSOCIACAO GESTAO VEICULAR UNIVERSO",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 11,
+      "pedidosValor": 54356.9,
+      "orcamentosQtd": 33,
+      "orcamentosValor": 322633.33,
+      "vendedores": [
+        "Erickson",
+        "Gabriele",
+        "Marcello",
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": "43.093.229/0002-01",
+      "razaoSocial": "ALPHA MINERALS BRAZIL PARTICIPACOES LTDA.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 5,
+      "pedidosValor": 53020.5,
+      "orcamentosQtd": 11,
+      "orcamentosValor": 112744.3,
+      "vendedores": [
+        "Gabriele",
+        "Guilherme",
+        "Marcello",
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": "27.268.763/0001-74",
+      "razaoSocial": "LALLEMAND SOLUÇÕES BIOLÓGICAS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 21,
+      "pedidosValor": 52640.15,
+      "orcamentosQtd": 73,
+      "orcamentosValor": 600057.87,
+      "vendedores": [
+        "Gabriele",
+        "Guilherme",
+        "Marcello",
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": "41.981.870/0011-48",
+      "razaoSocial": "BORBOREMA RECURSOS MINERAIS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 6,
+      "pedidosValor": 42933.29,
+      "orcamentosQtd": 8,
+      "orcamentosValor": 82972.2,
+      "vendedores": [
+        "Gabriele",
+        "Guilherme",
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": "27.039.151/0001-00",
+      "razaoSocial": "PARKER LOG LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 2,
+      "pedidosValor": 35813.5,
+      "orcamentosQtd": 15,
+      "orcamentosValor": 104535.91,
+      "vendedores": [
+        "Gabriele",
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": "00.776.574/0019-85",
+      "razaoSocial": "AMERICANAS S.A",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 11,
+      "pedidosValor": 31716.3,
+      "orcamentosQtd": 37,
+      "orcamentosValor": 3576854.14,
+      "vendedores": [
+        "Guilherme",
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": "00.881.775/0001-13",
+      "razaoSocial": "REZEK FERREIRA INFORMÁTICA LTDA.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 3,
+      "pedidosValor": 24519.2,
+      "orcamentosQtd": 15,
+      "orcamentosValor": 67362.75,
+      "vendedores": [
+        "Erickson",
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": "62.052.132/0002-03",
+      "razaoSocial": "ALURION RECURSOS ESTRATEGICOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 2,
+      "pedidosValor": 24341.8,
+      "orcamentosQtd": 2,
+      "orcamentosValor": 24341.8,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": "27.139.994/0001-88",
+      "razaoSocial": "SANTA LUZIA COMBUSTIVEIS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 1,
+      "pedidosValor": 23194.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 23194.0,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": "62.052.132/0001-14",
+      "razaoSocial": "AMARGOSA RECURSOS MINERAIS LTDA.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 2,
+      "pedidosValor": 20686.3,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": [
+        "Guilherme",
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": "07.917.303/0037-23",
+      "razaoSocial": "CIX CITIZEN EXPERIENCE S/A",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 4,
+      "pedidosValor": 18767.25,
+      "orcamentosQtd": 17,
+      "orcamentosValor": 514294.05,
+      "vendedores": [
+        "Bruno Toyo"
+      ]
+    },
+    {
+      "cnpj": "35.654.688/0024-02",
+      "razaoSocial": "AUTOMOB PARTICIPACOES S.A.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 20,
+      "pedidosValor": 17441.9,
+      "orcamentosQtd": 80,
+      "orcamentosValor": 1502691.07,
+      "vendedores": [
+        "Marcello",
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": "49.995.984/0001-87",
+      "razaoSocial": "UAI COMBUSTIVEIS DE BURITIZEIRO LTDA",
+      "nomeFantasia": "POSTO ALEM PARAIBA COMBUSTIVEIS",
+      "fontes": [
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 2,
+      "pedidosValor": 17172.5,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": "00.881.775/0002-02",
+      "razaoSocial": "REZEK FERREIRA INFORMATICA LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 5,
+      "pedidosValor": 13854.07,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": "60.057.166/0002-57",
+      "razaoSocial": "BRASIF SOLUCOES E EQUIPAMENTOS S.A.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 2,
+      "pedidosValor": 13650.08,
+      "orcamentosQtd": 5,
+      "orcamentosValor": 162851.67,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": "24.051.760/0001-96",
+      "razaoSocial": "PRIME GESTAO LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 1,
+      "pedidosValor": 13372.5,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 4749.05,
+      "vendedores": [
+        "Erickson",
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": "59.107.938/0001-58",
+      "razaoSocial": "TRANSZERO TRANSPORTADORA DE VEICULOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 10,
+      "pedidosValor": 13345.07,
+      "orcamentosQtd": 8,
+      "orcamentosValor": 13636.16,
+      "vendedores": [
+        "Gabriele",
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": "05.305.785/0001-24",
+      "razaoSocial": "SERVIÇO SOCIAL DO COMÉRCIO - SESC AR/ES",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 1,
+      "pedidosValor": 12438.7,
+      "orcamentosQtd": 15,
+      "orcamentosValor": 4035157.39,
+      "vendedores": [
+        "Erickson",
+        "Gabriele",
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": "60.395.589/0023-01",
+      "razaoSocial": "BRAZUL TRANSPORTE DE VEICULOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 14,
+      "pedidosValor": 10078.26,
+      "orcamentosQtd": 16,
+      "orcamentosValor": 29339.64,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": "36.504.841/0001-83",
+      "razaoSocial": "VALID HUB CONSULTORIA EM TECNOLOGIA E TRATAMENTO DE DADOS S.A",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 3,
+      "pedidosValor": 10025.5,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 6025.5,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": "19.791.896/0007-98",
+      "razaoSocial": "SUPERGASBRAS ENERGIA LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 1,
+      "pedidosValor": 9930.78,
+      "orcamentosQtd": 8,
+      "orcamentosValor": 83272.64,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": "00.447.821/0007-66",
+      "razaoSocial": "DROGARIA ROSARIO S/A",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 3,
+      "pedidosValor": 8733.5,
+      "orcamentosQtd": 11,
+      "orcamentosValor": 32180.2,
+      "vendedores": [
+        "Erickson",
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": "50.956.440/0001-95",
+      "razaoSocial": "ASSOC.DE PAIS E AMIGOS DOS EXCEPC.APAE DE JUNDIAI",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 5,
+      "pedidosValor": 8638.05,
+      "orcamentosQtd": 20,
+      "orcamentosValor": 62318.2,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": "29.403.763/0001-65",
+      "razaoSocial": "COMPANHIA NILZA CORDEIRO HERDY DE EDUCACAO E CULTURA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 1,
+      "pedidosValor": 8233.3,
+      "orcamentosQtd": 2,
+      "orcamentosValor": 9853.26,
+      "vendedores": [
+        "Erickson"
+      ]
+    },
+    {
+      "cnpj": "10.626.896/0005-04",
+      "razaoSocial": "INSTITUTO FEDERAL DE EDUCACAO, CIENCIA E TECNOLOGIA DE MINAS GERAIS",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 1,
+      "pedidosValor": 7600.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 7600.0,
+      "vendedores": [
+        "Guilherme"
+      ]
+    },
+    {
+      "cnpj": "17.516.199/0001-08",
+      "razaoSocial": "RIX CONSTRUCOES LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 2,
+      "pedidosValor": 6727.8,
+      "orcamentosQtd": 4,
+      "orcamentosValor": 25760.42,
+      "vendedores": [
+        "Guilherme"
+      ]
+    },
+    {
+      "cnpj": "07.781.007/0035-86",
+      "razaoSocial": "DROGARIA CIPRIANO DE SANTA ROSA S.A.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 5,
+      "pedidosValor": 6617.6,
+      "orcamentosQtd": 19,
+      "orcamentosValor": 6879592.8,
+      "vendedores": [
+        "Erickson",
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": "47.965.851/0001-32",
+      "razaoSocial": "CONVENIENCIA PIO XII LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 1,
+      "pedidosValor": 5950.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": "03.962.539/0010-00",
+      "razaoSocial": "UNITED AUTO NAGOYA COMERCIO DE VEICULOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 9,
+      "pedidosValor": 5900.3,
+      "orcamentosQtd": 9,
+      "orcamentosValor": 19496.6,
+      "vendedores": [
+        "Gabriele",
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": "14.121.957/0001-09",
+      "razaoSocial": "VALID CERTIFICADORA DIGITAL LTDA.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 4,
+      "pedidosValor": 5895.0,
+      "orcamentosQtd": 4,
+      "orcamentosValor": 11226.0,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": "60.894.136/0023-20",
+      "razaoSocial": "ORIGINAL VEICULOS S A",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 3,
+      "pedidosValor": 5433.8,
+      "orcamentosQtd": 17,
+      "orcamentosValor": 40032.65,
+      "vendedores": [
+        "Gabriele",
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": "42.225.938/0120-85",
+      "razaoSocial": "CSB DROGARIAS S/A",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 3,
+      "pedidosValor": 5419.6,
+      "orcamentosQtd": 9,
+      "orcamentosValor": 12134.5,
+      "vendedores": [
+        "Erickson",
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": "13.320.441/0001-12",
+      "razaoSocial": "INSTITUTO CYRELA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 7,
+      "pedidosValor": 5348.01,
+      "orcamentosQtd": 7,
+      "orcamentosValor": 5348.01,
+      "vendedores": [
+        "Bruno Toyo"
+      ]
+    },
+    {
+      "cnpj": "23.075.186/0006-58",
+      "razaoSocial": "COLEGIO E CURSO AO CUBO LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 1,
+      "pedidosValor": 5306.01,
+      "orcamentosQtd": 8,
+      "orcamentosValor": 34764.6,
+      "vendedores": [
+        "Bruno Toyo"
+      ]
+    },
+    {
+      "cnpj": "07.571.746/0080-06",
+      "razaoSocial": "MG VIDROS AUTOMOTIVOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 3,
+      "pedidosValor": 5180.0,
+      "orcamentosQtd": 18,
+      "orcamentosValor": 390256.0,
+      "vendedores": [
+        "Erickson"
+      ]
+    },
+    {
+      "cnpj": "02.227.267/0001-41",
+      "razaoSocial": "MAXUM MAQUINAS E EQUIPAMENTOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 1,
+      "pedidosValor": 4957.82,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": "20.734.604/0019-06",
+      "razaoSocial": "MISSAO SAL DA TERRA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 2,
+      "pedidosValor": 4895.5,
+      "orcamentosQtd": 5,
+      "orcamentosValor": 9455.5,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": "21.219.576/0001-14",
+      "razaoSocial": "RAIZ EDUCACAO S.A.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 2,
+      "pedidosValor": 4802.48,
+      "orcamentosQtd": 4,
+      "orcamentosValor": 97587.96,
+      "vendedores": [
+        "Bruno Toyo"
+      ]
+    },
+    {
+      "cnpj": "43.574.008/0001-74",
+      "razaoSocial": "AMERICA FUTEBOL CLUBE SOCIEDADE ANONIMA DO FUTEBOL",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 2,
+      "pedidosValor": 4524.4,
+      "orcamentosQtd": 3,
+      "orcamentosValor": 10159.23,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": "56.577.059/0001-00",
+      "razaoSocial": "FUNDACAO FACULDADE DE MEDICINA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 1,
+      "pedidosValor": 3899.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 3899.0,
+      "vendedores": [
+        "Erickson"
+      ]
+    },
+    {
+      "cnpj": "03.962.539/0008-96",
+      "razaoSocial": "UNITED AUTO NAGOYA COM.VEICULOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 1,
+      "pedidosValor": 3599.9,
+      "orcamentosQtd": 8,
+      "orcamentosValor": 11118.8,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": "05.385.004/0002-30",
+      "razaoSocial": "EURO IMPORT COMERCIO E SERVICOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 5,
+      "pedidosValor": 3492.19,
+      "orcamentosQtd": 12,
+      "orcamentosValor": 5945.58,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": "03.388.388/0005-61",
+      "razaoSocial": "UNITED AUTO SAO PAULO COMERCIO DE VEICULOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 2,
+      "pedidosValor": 2707.77,
+      "orcamentosQtd": 10,
+      "orcamentosValor": 12982.27,
+      "vendedores": [
+        "Gabriele",
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": "50.864.799/0001-32",
+      "razaoSocial": "BELEM AUTOMOVEIS E PECAS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 1,
+      "pedidosValor": 2618.2,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 2618.15,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": "03.447.242/0076-33",
+      "razaoSocial": "SERVICO NACIONAL DE APRENDIZAGEM COMERCIAL - SENAC MINAS",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 2,
+      "pedidosValor": 2559.8,
+      "orcamentosQtd": 3,
+      "orcamentosValor": 3089.7,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": "03.447.242/0001-16",
+      "razaoSocial": "SENAC MINAS",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 1,
+      "pedidosValor": 2495.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 2495.0,
+      "vendedores": [
+        "Erickson"
+      ]
+    },
+    {
+      "cnpj": "63.024.009/0001-52",
+      "razaoSocial": "KURA SOLUCOES FINANCEIRAS LTDA.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 1,
+      "pedidosValor": 2366.41,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 2366.41,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": "32.728.800/0005-43",
+      "razaoSocial": "SOCIEDADE EDUCACIONAL E CULTURAL SERGIPE DEL REY LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 1,
+      "pedidosValor": 2353.8,
+      "orcamentosQtd": 2,
+      "orcamentosValor": 18005.37,
+      "vendedores": [
+        "Erickson"
+      ]
+    },
+    {
+      "cnpj": "28.946.334/0001-71",
+      "razaoSocial": "CENTRO DE CIENCIAS EM SAUDE DE ITAJUBA S.A",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 2,
+      "pedidosValor": 2308.6,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 2308.0,
+      "vendedores": [
+        "Erickson"
+      ]
+    },
+    {
+      "cnpj": "21.563.676/0002-44",
+      "razaoSocial": "UAI PARA TODOS GERENCIAMENTO DE UNIDADES MINEIRAS DE ATENDIMENTO INTEGRADO S.A.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 1,
+      "pedidosValor": 2298.75,
+      "orcamentosQtd": 2,
+      "orcamentosValor": 3754.62,
+      "vendedores": [
+        "Bruno Toyo"
+      ]
+    },
+    {
+      "cnpj": "60.395.589/0018-44",
+      "razaoSocial": "BRAZUL TRANSPORTE DE VEÍCULOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 1,
+      "pedidosValor": 2038.75,
+      "orcamentosQtd": 7,
+      "orcamentosValor": 74634.15,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": "21.909.778/0001-98",
+      "razaoSocial": "INSTITUTO DE ENSINO SUPERIOR DO PIAUI S.A.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 1,
+      "pedidosValor": 1920.5,
+      "orcamentosQtd": 2,
+      "orcamentosValor": 8790.5,
+      "vendedores": [
+        "Erickson"
+      ]
+    },
+    {
+      "cnpj": "21.367.945/0001-16",
+      "razaoSocial": "PROFARMA SPECIALTY S.A.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 1,
+      "pedidosValor": 1873.5,
+      "orcamentosQtd": 2,
+      "orcamentosValor": 10117.5,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": "47.873.674/0008-30",
+      "razaoSocial": "SONNERVIG AUTOMOVEIS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 1,
+      "pedidosValor": 1749.9,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 1749.9,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": "45.949.514/0003-98",
+      "razaoSocial": "ORIGINAL NEW ENGLAND COMERCIO DE MOTOCICLETAS SA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 1,
+      "pedidosValor": 1588.9,
+      "orcamentosQtd": 4,
+      "orcamentosValor": 5653.1,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": "48.923.330/0009-32",
+      "razaoSocial": "ORIGINAL NACIONAL COMERCIO DE VEICULOS SEMINOVOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 4,
+      "pedidosValor": 1519.5,
+      "orcamentosQtd": 12,
+      "orcamentosValor": 7998.35,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": "13.705.543/0003-18",
+      "razaoSocial": "SUL IMPORT VEICULOS E SERVICOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 2,
+      "pedidosValor": 1499.8,
+      "orcamentosQtd": 3,
+      "orcamentosValor": 1689.7,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": "45.454.718/0002-77",
+      "razaoSocial": "ORIGINAL TOKYO COMERCIO DE VEICULOS SA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 2,
+      "pedidosValor": 1433.6,
+      "orcamentosQtd": 12,
+      "orcamentosValor": 10409.3,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": "08.373.156/0001-20",
+      "razaoSocial": "PONTO VEICULOS S A",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 1,
+      "pedidosValor": 1339.95,
+      "orcamentosQtd": 3,
+      "orcamentosValor": 7539.6,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": "18.703.805/0004-00",
+      "razaoSocial": "VIA TRUCKS SAO PAULO COMERCIO DE CAMINHOES LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 3,
+      "pedidosValor": 1224.2,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 97.5,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": "45.454.718/0006-09",
+      "razaoSocial": "ORIGINAL TOKYO COMERCIO DE VEICULOS S A",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 2,
+      "pedidosValor": 1079.5,
+      "orcamentosQtd": 8,
+      "orcamentosValor": 11563.59,
+      "vendedores": [
+        "Gabriele",
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": "08.306.537/0001-96",
+      "razaoSocial": "INSTITUTO PROFARMA DE RESPONSABILIDADE SOCIAL",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 1,
+      "pedidosValor": 1049.9,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 1049.9,
+      "vendedores": [
+        "Erickson"
+      ]
+    },
+    {
+      "cnpj": "38.364.749/0001-90",
+      "razaoSocial": "VAMOS COMERCIO DE MAQUINAS AGRICOLAS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 1,
+      "pedidosValor": 999.9,
+      "orcamentosQtd": 6,
+      "orcamentosValor": 63189.65,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": "13.232.008/0001-25",
+      "razaoSocial": "BIKESTAR COMERCIO DE MOTOCICLETAS S.A.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 1,
+      "pedidosValor": 949.9,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 949.9,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": "13.783.222/0001-70",
+      "razaoSocial": "INSTITUTO DE EDUCACAO SUPERIOR DO VALE DO PARNAIBA S.A.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 1,
+      "pedidosValor": 949.8,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": [
+        "Erickson"
+      ]
+    },
+    {
+      "cnpj": "06.059.439/0001-76",
+      "razaoSocial": "DROGARIA V R GONCALENSE LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 1,
+      "pedidosValor": 850.0,
+      "orcamentosQtd": 2,
+      "orcamentosValor": 1700.0,
+      "vendedores": [
+        "Erickson"
+      ]
+    },
+    {
+      "cnpj": "18.489.886/0001-44",
+      "razaoSocial": "VIA TRUCKS COMERCIO DE CAMINHÕES LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 1,
+      "pedidosValor": 764.8,
+      "orcamentosQtd": 3,
+      "orcamentosValor": 3654.9,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": "11.726.521/0017-04",
+      "razaoSocial": "TRANSRIO CAMINHOES, ONIBUS, MAQUINAS E MOTORES LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 2,
+      "pedidosValor": 764.6,
+      "orcamentosQtd": 5,
+      "orcamentosValor": 13944.1,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": "24.526.123/0004-71",
+      "razaoSocial": "GREEN VILLE COMERCIO DE VEICULOS S A",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 2,
+      "pedidosValor": 749.88,
+      "orcamentosQtd": 7,
+      "orcamentosValor": 12548.0,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": "15.243.624/0001-07",
+      "razaoSocial": "AMERICAN STAR COMERCIO DE VEICULOS S.A.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 1,
+      "pedidosValor": 729.99,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 729.99,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": "19.167.683/0001-02",
+      "razaoSocial": "SOMATTOS ENGENHARIA E COMERCIO LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 1,
+      "pedidosValor": 699.9,
+      "orcamentosQtd": 6,
+      "orcamentosValor": 9132.99,
+      "vendedores": [
+        "Gabriele",
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": "57.213.191/0001-97",
+      "razaoSocial": "VAMOS MAQUINAS E EQUIPAMENTOS S.A.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 2,
+      "pedidosValor": 699.9,
+      "orcamentosQtd": 9,
+      "orcamentosValor": 17727.0,
+      "vendedores": [
+        "Gabriele",
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": "16.614.075/0008-79",
+      "razaoSocial": "DIRECIONAL ENGENHARIA S/A",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 1,
+      "pedidosValor": 657.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 1129.97,
+      "vendedores": [
+        "Marcello",
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": "25.436.130/0001-00",
+      "razaoSocial": "AUTOSERVICE LOGISTICA LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 2,
+      "pedidosValor": 607.5,
+      "orcamentosQtd": 2,
+      "orcamentosValor": 607.5,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": "00.609.334/0005-90",
+      "razaoSocial": "IMPACTO AUDITORIA EM SAUDE LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 1,
+      "pedidosValor": 605.58,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": "08.596.557/0020-01",
+      "razaoSocial": "MAQMOB COMERCIO DE MAQUINAS LINHA AMARELA LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 1,
+      "pedidosValor": 579.9,
+      "orcamentosQtd": 5,
+      "orcamentosValor": 10106.4,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": "86.704.160/0015-32",
+      "razaoSocial": "QI - QUALIDADE INTEGRAL DE ENSINO LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 1,
+      "pedidosValor": 532.95,
+      "orcamentosQtd": 4,
+      "orcamentosValor": 3061.55,
+      "vendedores": [
+        "Bruno Toyo"
+      ]
+    },
+    {
+      "cnpj": "39.250.213/0001-07",
+      "razaoSocial": "PRIMEPET DISTRIBUIDORA LTDA.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 1,
+      "pedidosValor": 403.5,
+      "orcamentosQtd": 2,
+      "orcamentosValor": 16695.51,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": "07.833.406/0001-02",
+      "razaoSocial": "MAXPAR IKE ASSISTENCIA LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 1,
+      "pedidosValor": 400.0,
+      "orcamentosQtd": 4,
+      "orcamentosValor": 14361.5,
+      "vendedores": [
+        "Erickson",
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": "14.138.961/0001-71",
+      "razaoSocial": "SBR COMERCIO E SERVICOS DE BLINDAGENS S.A.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 1,
+      "pedidosValor": 299.9,
+      "orcamentosQtd": 3,
+      "orcamentosValor": 991.7,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": "17.745.613/0071-63",
+      "razaoSocial": "SUPERMERCADO BAHAMAS S/A",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 1,
+      "pedidosValor": 274.8,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 274.8,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": "17.214.149/0001-76",
+      "razaoSocial": "HOSPITAL FELICIO ROCHO",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 1,
+      "pedidosValor": 260.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": [
+        "Guilherme"
+      ]
+    },
+    {
+      "cnpj": "08.964.646/0001-09",
+      "razaoSocial": "CVK AUTO COMERCIO DE VEICULOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 1,
+      "pedidosValor": 234.9,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 234.9,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": "84.944.297/0002-14",
+      "razaoSocial": "DHL- DISTRIBUIDORA DE PECAS E SERVICOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 1,
+      "pedidosValor": 189.9,
+      "orcamentosQtd": 2,
+      "orcamentosValor": 669.6,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": "02.385.669/0001-74",
+      "razaoSocial": "FIOTEC - FUNDACAO PARA O DESENVOLVIMENTO CIENTIFICO E TECNOLOGICO EM SAUDE",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 1,
+      "pedidosValor": 98.7,
+      "orcamentosQtd": 13,
+      "orcamentosValor": 84412.9,
+      "vendedores": [
+        "Gabriele",
+        "Marcello",
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": "44.266.768/0001-87",
+      "razaoSocial": "BONITO EMPREENDIMENTOS IMOBILIARIOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos",
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 1,
+      "pedidosValor": 83.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 83.0,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": "43.093.229/0001-20",
+      "razaoSocial": "ALPHA MINERALS BRAZIL PARTICIPACOES LTDA.",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "00.776.574/0014-70",
+      "razaoSocial": "AMERICANAS S.A",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "00.776.574/0007-41",
+      "razaoSocial": "AMERICANAS S.A - EM RECUPERACAO JUDICIAL",
+      "nomeFantasia": "AMERICANAS S.A",
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "00.776.574/0320-07",
+      "razaoSocial": "AMERICANAS S.A - EM RECUPERACAO JUDICIAL",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "00.776.574/1944-14",
+      "razaoSocial": "AMERICANAS S.A - EM RECUPERACAO JUDICIAL",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "35.654.688/0025-85",
+      "razaoSocial": "AUTOMOB PARTICIPACOES S.A",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "35.654.688/0013-41",
+      "razaoSocial": "AUTOMOB PARTICIPACOES S.A.",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "35.654.688/0009-65",
+      "razaoSocial": "AUTOMOB PARTICIPACOES S.A.",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "35.654.688/0006-12",
+      "razaoSocial": "AUTOMOB PARTICIPACOES S.A.",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "35.654.688/0005-31",
+      "razaoSocial": "AUTOMOB PARTICIPACOES S.A.",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "35.654.688/0027-47",
+      "razaoSocial": "AUTOMOB PARTICIPACOES S.A.",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "35.654.688/0003-70",
+      "razaoSocial": "AUTOMOB PARTICIPACOES S.A.",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "35.654.688/0022-32",
+      "razaoSocial": "AUTOMOB PARTICIPACOES S.A.",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "35.654.688/0017-75",
+      "razaoSocial": "AUTOMOB PARTICIPACOES S.A.",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "41.981.870/0003-38",
+      "razaoSocial": "BORBOREMA MINERACAO LTDA.",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "41.981.870/0001-76",
+      "razaoSocial": "BORBOREMA MINERACAO LTDA.",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "41.981.870/0010-67",
+      "razaoSocial": "BORBOREMA RECURSOS MINERAIS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "41.981.870/0013-00",
+      "razaoSocial": "BORBOREMA RECURSOS MINERAIS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "41.981.870/0004-19",
+      "razaoSocial": "BORBOREMA RECURSOS MINERAIS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "52.226.073/0025-77",
+      "razaoSocial": "BRASIF S/A EXPORTACAO IMPORTACAO",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "52.226.073/0015-03",
+      "razaoSocial": "BRASIF S/A EXPORTACAO IMPORTACAO",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "60.395.589/0001-04",
+      "razaoSocial": "BRAZUL TRANSPORTE DE VEICULOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "07.917.303/0001-12",
+      "razaoSocial": "CIX CITIZEN EXPERIENCE S/A",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "19.974.518/0003-16",
+      "razaoSocial": "CONSTRUTORA MARTINS LANNA LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "42.225.938/0001-50",
+      "razaoSocial": "CSB DROGARIAS S/A",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "07.781.007/0021-80",
+      "razaoSocial": "DROGARIA CIPRIANO DE SANTA ROSA S.A.",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "07.781.007/0034-03",
+      "razaoSocial": "DROGARIA CIPRIANO DE SANTA ROSA S.A.",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "07.781.007/0053-68",
+      "razaoSocial": "DROGARIA CIPRIANO DE SANTA ROSA S.A.",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "00.447.821/0001-70",
+      "razaoSocial": "DROGARIA ROSARIO S/A",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "05.385.004/0004-00",
+      "razaoSocial": "EURO IMPORT COMERCIO E SERVICOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "05.385.004/0011-20",
+      "razaoSocial": "EURO IMPORT COMERCIO E SERVICOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "06.343.763/0001-11",
+      "razaoSocial": "FUNDACAO DE APOIO CIENTIFICO E TECNOLOGICO DO TOCANTINS",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "24.526.123/0003-90",
+      "razaoSocial": "GREEN VILLE COMERCIO DE VEICULOS S A",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "27.268.763/0002-55",
+      "razaoSocial": "LALLEMAND SOLUÇÕES BIOLÓGICAS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "60.597.044/0043-21",
+      "razaoSocial": "LIGA DAS SENHORAS CATOLICAS DE SAO PAULO",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "60.597.044/0001-72",
+      "razaoSocial": "LIGA DAS SENHORAS CATOLICAS DE SAO PAULO",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "60.597.044/0008-49",
+      "razaoSocial": "LIGA DAS SENHORAS CATOLICAS DE SAO PAULO",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "60.597.044/0016-59",
+      "razaoSocial": "LIGA DAS SENHORAS CATOLICAS DE SAO PAULO",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "60.597.044/0041-60",
+      "razaoSocial": "LIGA DAS SENHORAS CATOLICAS DE SAO PAULO",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "60.597.044/0032-79",
+      "razaoSocial": "LIGA DAS SENHORAS CATOLICAS DE SAO PAULO",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "60.597.044/0010-63",
+      "razaoSocial": "LIGA DAS SENHORAS CATOLICAS DE SAO PAULO",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "60.597.044/0053-01",
+      "razaoSocial": "LIGA DAS SENHORAS CATOLICAS DE SAO PAULO",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "60.597.044/0054-84",
+      "razaoSocial": "LIGA DAS SENHORAS CATOLICAS DE SAO PAULO",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "60.597.044/0025-40",
+      "razaoSocial": "LIGA DAS SENHORAS CATOLICAS DE SAO PAULO",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "60.597.044/0048-36",
+      "razaoSocial": "LIGA DAS SENHORAS CATOLICAS DE SAO PAULO",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "60.597.044/0019-00",
+      "razaoSocial": "LIGA DAS SENHORAS CATOLICAS DE SAO PAULO",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "60.597.044/0049-17",
+      "razaoSocial": "LIGA DAS SENHORAS CATOLICAS DE SAO PAULO",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "60.597.044/0039-45",
+      "razaoSocial": "LIGA DAS SENHORAS CATOLICAS DE SAO PAULO",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "60.597.044/0035-11",
+      "razaoSocial": "LIGA DAS SENHORAS CATOLICAS DE SAO PAULO",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "48.923.330/0003-47",
+      "razaoSocial": "ORIGINAL NACIONAL COMERCIO DE VEICULOS SEMINOVOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "48.923.330/0015-80",
+      "razaoSocial": "ORIGINAL NACIONAL COMERCIO DE VEICULOS SEMINOVOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "45.454.718/0008-62",
+      "razaoSocial": "ORIGINAL TOKYO COMERCIO DE VEICULOS S A",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "60.894.136/0046-16",
+      "razaoSocial": "ORIGINAL VEICULOS S A",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "27.865.522/0001-02",
+      "razaoSocial": "PAFIL CONSTRUTORA E EMPREENDIMENTOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "60.494.416/0044-75",
+      "razaoSocial": "PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "60.494.416/0033-12",
+      "razaoSocial": "PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "60.494.416/0042-03",
+      "razaoSocial": "PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "60.494.416/0025-02",
+      "razaoSocial": "PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "60.494.416/0019-64",
+      "razaoSocial": "PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "60.494.416/0038-27",
+      "razaoSocial": "PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "60.494.416/0018-83",
+      "razaoSocial": "PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "33.296.465/0001-90",
+      "razaoSocial": "PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "60.494.416/0010-26",
+      "razaoSocial": "PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "60.494.416/0027-74",
+      "razaoSocial": "PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "60.494.416/0046-37",
+      "razaoSocial": "PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "60.494.416/0020-06",
+      "razaoSocial": "PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "60.494.416/0004-88",
+      "razaoSocial": "PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "60.494.416/0003-05",
+      "razaoSocial": "PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "60.494.416/0017-00",
+      "razaoSocial": "PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "60.494.416/0009-92",
+      "razaoSocial": "PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "60.494.416/0006-40",
+      "razaoSocial": "PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "60.494.416/0014-50",
+      "razaoSocial": "PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "60.494.416/0022-60",
+      "razaoSocial": "PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "37.581.490/0001-77",
+      "razaoSocial": "POSTO ALEM PARAIBA COMBUSTIVEIS",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "45.453.214/0001-51",
+      "razaoSocial": "PROFARMA DISTRIBUIDORA DE PRODUTOS FARMACEUTICOS SA",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "45.453.214/0020-14",
+      "razaoSocial": "PROFARMA DISTRIBUIDORA DE PRODUTOS FARMACEUTICOS SA",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "45.453.214/0024-48",
+      "razaoSocial": "PROFARMA DISTRIBUIDORA DE PRODUTOS FARMACEUTICOS SA",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "45.453.214/0026-00",
+      "razaoSocial": "PROFARMA DISTRIBUIDORA DE PRODUTOS FARMACEUTICOS SA",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "45.453.214/0023-67",
+      "razaoSocial": "PROFARMA DISTRIBUIDORA DE PRODUTOS FARMACEUTICOS SA",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "45.453.214/0029-52",
+      "razaoSocial": "PROFARMA DISTRIBUIDORA DE PRODUTOS FARMACEUTICOS SA",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "45.453.214/0027-90",
+      "razaoSocial": "PROFARMA DISTRIBUIDORA DE PRODUTOS FARMACEUTICOS SA",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "45.453.214/0025-29",
+      "razaoSocial": "PROFARMA DISTRIBUIDORA DE PRODUTOS FARMACEUTICOS SA",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "45.453.214/0036-81",
+      "razaoSocial": "PROFARMA DISTRIBUIDORA DE PRODUTOS FARMACEUTICOS SA",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "45.453.214/0018-08",
+      "razaoSocial": "PROFARMA DISTRIBUIDORA DE PRODUTOS FARMACEUTICOS SA",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "45.453.214/0010-42",
+      "razaoSocial": "PROFARMA DISTRIBUIDORA DE PRODUTOS FARMACEUTICOS SA",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "45.453.214/0038-43",
+      "razaoSocial": "PROFARMA DISTRIBUIDORA DE PRODUTOS FARMACEUTICOS SA",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "45.453.214/0042-20",
+      "razaoSocial": "PROFARMA DISTRIBUIDORA DE PRODUTOS FARMACEUTICOS SA",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "45.453.214/0031-77",
+      "razaoSocial": "PROFARMA DISTRIBUIDORA DE PRODUTOS FARMACEUTICOS SA",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "45.453.214/0022-86",
+      "razaoSocial": "PROFARMA DISTRIBUIDORA DE PRODUTOS FARMACEUTICOS SA",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "00.881.775/0003-85",
+      "razaoSocial": "REZEK FERREIRA INFORMÁTICA LTDA.",
+      "nomeFantasia": "REZEK FERREIRA INFORMATICA LTDA",
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "03.962.539/0009-77",
+      "razaoSocial": "UNITED AUTO NAGOYA COMERCIO DE VEICULOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "03.962.539/0002-09",
+      "razaoSocial": "UNITED AUTO NAGOYA COMERCIO DE VEICULOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "03.962.539/0005-43",
+      "razaoSocial": "UNITED AUTO NAGOYA COMERCIO DE VEICULOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "03.962.539/0001-10",
+      "razaoSocial": "UNITED AUTO NAGOYA COMERCIO DE VEICULOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "03.388.388/0001-38",
+      "razaoSocial": "UNITED AUTO SAO PAULO COMERCIO DE VEICULOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "33.113.309/0001-47",
+      "razaoSocial": "VALID SOLUCOES S A",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "33.113.309/0048-00",
+      "razaoSocial": "VALID SOLUCOES S A",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "33.113.309/0053-78",
+      "razaoSocial": "VALID SOLUCOES S A",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "33.113.309/0071-50",
+      "razaoSocial": "VALID SOLUCOES S A",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "33.113.309/0017-04",
+      "razaoSocial": "VALID SOLUCOES S A",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "33.113.309/0024-33",
+      "razaoSocial": "VALID SOLUCOES S A",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "33.113.309/0072-30",
+      "razaoSocial": "VALID SOLUCOES S A",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": "18.703.805/0001-67",
+      "razaoSocial": "VIA TRUCKS SAO PAULO COMERCIO DE CAMINHOES LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "portal_contas_receber"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 0,
+      "orcamentosValor": 0.0,
+      "vendedores": []
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "VALID SOLUÇÕES SA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos"
+      ],
+      "pedidosQtd": 5,
+      "pedidosValor": 39145.0,
+      "orcamentosQtd": 3,
+      "orcamentosValor": 16607.22,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "VIA JAP COMERCIO DE VEICULOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos"
+      ],
+      "pedidosQtd": 4,
+      "pedidosValor": 5092.1,
+      "orcamentosQtd": 10,
+      "orcamentosValor": 19248.63,
+      "vendedores": [
+        "Marcello",
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "OOGTK LIBRA PRODUÇÃO DE PETROLEO LTDA.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos"
+      ],
+      "pedidosQtd": 1,
+      "pedidosValor": 3976.3,
+      "orcamentosQtd": 10,
+      "orcamentosValor": 44890.4,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "SADA TRANSPORTES E ARMAZENAGENS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos"
+      ],
+      "pedidosQtd": 1,
+      "pedidosValor": 1709.0,
+      "orcamentosQtd": 6,
+      "orcamentosValor": 59403.22,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "BRASIF S/A EXPORTACAO IMPORTACAO BRASIF",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos"
+      ],
+      "pedidosQtd": 1,
+      "pedidosValor": 1083.45,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 1083.45,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "TRENSRJ PERMISSIONARIA DE SERVICO FERROVIARIO S.A",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos"
+      ],
+      "pedidosQtd": 1,
+      "pedidosValor": 599.04,
+      "orcamentosQtd": 3,
+      "orcamentosValor": 212866.37,
+      "vendedores": [
+        "Bruno Toyo"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "PRACA SETE CENTRAL DE ATENDIMENTO AO CIDADAO S/A",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos",
+        "planilha_pedidos"
+      ],
+      "pedidosQtd": 1,
+      "pedidosValor": 525.6,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 525.6,
+      "vendedores": [
+        "Bruno Toyo"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": ": FUNDACAO DE APOIO CIENTIFICO E TECNOLOGICO DO TOCANTINS FUNDACAO DE APOIO CIENTIFICO E TECNOLOGICO DO TOCANTINS",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 23039.5,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "AFYA EDUCACAO MEDICA RIBEIRAO PRETO",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 13380.0,
+      "vendedores": [
+        "Erickson"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "AFYA EDUCACAO MEDICA TERESINA AFYA PARTICIPACOES S.A.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 21646.2,
+      "vendedores": [
+        "Erickson"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "AFYA FACULDADE DE CIENCIAS MEDICAS DE PALMAS ITPAC INSTITUTO TOCANTINENSE PRESIDENTE ANTONIO CARLOS S.A",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 9897.0,
+      "vendedores": [
+        "Erickson"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "AFYA PARTICIPACOES S.A.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 2,
+      "orcamentosValor": 7200.0,
+      "vendedores": [
+        "Erickson"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "AGROMERCANTIL COMMODITIES",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 2,
+      "orcamentosValor": 67676.15,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "ALGAR TELECOM S/A",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 7,
+      "orcamentosValor": 3831659.94,
+      "vendedores": [
+        "Bruno Toyo"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "ALPHA MINERALS BRAZIL PARTICIPACOES LTDA ALPHA MINERALS BRAZIL PARTICIPACOES LTDA.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 1456.8,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "ALPHA MINERALS BRAZIL PARTICIPACOES LTDA. ALPHA MINERALS BRAZIL PARTICIPACOES LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 11352.0,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "ALTA COMERCIAL DE VEICULOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 2,
+      "orcamentosValor": 4429.5,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "ALURION RECURSOS ESTRATEGICOS LTDA AMARGOSA RECURSOS MINERAIS LTDA.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 6495.0,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "AMARGOSA RECURSOS MINERAIS LTDA AMARGOSA RECURSOS MINERAIS LTDA ( BORBOREMA)",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 14191.3,
+      "vendedores": [
+        "Guilherme"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "AMERICANAS S.A - BA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 175.0,
+      "vendedores": [
+        "Guilherme"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "AMERICANAS S.A - EM RECUPERACAO JUDICIAL AMERICANAS S.A",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 2,
+      "orcamentosValor": 1877.87,
+      "vendedores": [
+        "Guilherme",
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "AMERICANAS S.A - MG",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 195.0,
+      "vendedores": [
+        "Guilherme"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "AMERICANAS S.A - PR",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 5299.8,
+      "vendedores": [
+        "Guilherme"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "AMERICANAS S.A - PR AMERICANAS S.A",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 525.0,
+      "vendedores": [
+        "Guilherme"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "AMERICANAS S.A - RJ AMERICANAS S.A",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 4,
+      "orcamentosValor": 17600.0,
+      "vendedores": [
+        "Guilherme"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "AMERICANAS S.A - RS AMERICANAS S.A",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 525.0,
+      "vendedores": [
+        "Guilherme"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "AMERICANAS S.A - SP",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 2,
+      "orcamentosValor": 4120.25,
+      "vendedores": [
+        "Guilherme"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "AMERICANAS S.A - SP AMERICANAS S.A",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 2,
+      "orcamentosValor": 44025.0,
+      "vendedores": [
+        "Guilherme"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "AMERICANAS S.A AMERICANAS S.A - EM RECUPERACAO JUDICIAL",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 34,
+      "orcamentosValor": 1488240.98,
+      "vendedores": [
+        "Guilherme",
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "ANJUN EXPRESS LOGISTICA E TRANSPORTES LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 3,
+      "orcamentosValor": 38627.26,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "AO CUBO BARRA - MARAPENDI",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 3,
+      "orcamentosValor": 16844.88,
+      "vendedores": [
+        "Bruno Toyo"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "AO CUBO BOTAFOGO",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 3,
+      "orcamentosValor": 17598.81,
+      "vendedores": [
+        "Bruno Toyo"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "ARAPOEMA EMPREENDIMENTOS IMOBILIARIOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 739.75,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "ARAPUA EMPREENDIMENTOS IMOBILIARIOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 1000.0,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "ARARAS EMPREENDIMENTOS IMOBILIARIOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 6990.0,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "ARES AEROESPACIAL E DEFESA S.A.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 2581.32,
+      "vendedores": [
+        "Guilherme"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "ARES AEROESPACIAL E DEFESA SA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 2,
+      "orcamentosValor": 4740.8,
+      "vendedores": [
+        "Guilherme"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "ARISLA LINO PINHEIRO",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 15299.9,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "ASILO DE INVÁLIDOS DE SANTOS",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 2,
+      "orcamentosValor": 7680.94,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "ASSOCIACAO DE SAUDE, ESPORTE, LAZER E CULTURA - ASELC",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 3133.78,
+      "vendedores": [
+        "Bruno Toyo"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "ASSOCIACAO GESTAO VEICULAR UNIVERSO",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 9,
+      "orcamentosValor": 55965.46,
+      "vendedores": [
+        "Gabriele",
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "ASSOCIACAO GESTAO VEICULAR UNIVERSO PRIME GESTAO LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 2,
+      "orcamentosValor": 26745.0,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "ASSOCIACAO GESTAO VEICULAR UNIVERSO UNIVERSO AGV ASSOCIACAO GESTAO VEICULAR UNIVERSO",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 2,
+      "orcamentosValor": 3920.0,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "ASSOCIAÇÃO DO CONDOMÍNIO DO SHOPPING PARQUE DAS BANDEIRAS",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 62149.08,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "ATU 18 ARRENDATARIA PORTUARIA SPE S.A",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 3700.0,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "AURICCHIO",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 5,
+      "orcamentosValor": 13579.19,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "AUTO GREEN VEICULOS SA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 2,
+      "orcamentosValor": 4849.7,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "AUTOMOB PARTICIPACOES S.A. BIKESTAR COMERCIO DE MOTOCICLETAS S.A.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 2,
+      "orcamentosValor": 1669.8,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "AUTOMOB S.A. AUTOMOB PARTICIPACOES S.A.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 139.9,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "AUTOSTAR",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 3999.9,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "AVILAGES PARTICIPACOES E EMPREENDIMENTOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 6264.9,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "BEST SÊNIOR OPERADORA DE SAÚDE LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 3,
+      "orcamentosValor": 80732.93,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "BLUE POINT FRANCHISER",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 5120.0,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "BORBOREMA BORBOREMA MINERACAO LTDA.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 8,
+      "orcamentosValor": 88213.75,
+      "vendedores": [
+        "Guilherme",
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "BORBOREMA MINERACAO LTDA BH BORBOREMA MINERACAO LTDA.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 2255.0,
+      "vendedores": [
+        "Guilherme"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "BORBOREMA MINERACAO LTDA BORBOREMA MINERACAO LTDA.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 35,
+      "orcamentosValor": 238815.94,
+      "vendedores": [
+        "Guilherme",
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "BORBOREMA RECURSOS MINERAIS LTDA BORBOREMA MINERACAO LTDA.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 17,
+      "orcamentosValor": 94527.7,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "BRASIF LOCADORA LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 540.75,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "BRASIF S/A ADMINISTRACAO E PARTICIPACOES",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 2445.75,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "BRASIF SOLUCOES E EQUIPAMENTOS S.A. BRASIF S/A EXPORTACAO IMPORTACAO",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 43402.0,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "BRASIL TELECOM CALL CENTER",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 0.0,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "BRK AMBIENTAL CAÇADOR S.A.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 2814.14,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "BUNTECH TECNOLOGIA EM INSUMOS LTDA.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 2,
+      "orcamentosValor": 11099.95,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "C&A MODAS S.A.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 2,
+      "orcamentosValor": 430541.25,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "CABRAL EMPREENDIMENTOS IMOBILIARIOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 2,
+      "orcamentosValor": 65698.9,
+      "vendedores": [
+        "Gabriele",
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "CALMON EMPREENDIMENTOS IMOBILIARIOS LTDA - SCP",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 2,
+      "orcamentosValor": 4051.31,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "CAMPO AZUL EMPREENDIMENTOS IMOBILIARIOS LTDA : CAMPO AZUL EMPREENDIMENTOS IMOBILIARIOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 1800.0,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "CAMPOS SALES EMPREENDIMENTOS IMOBILIARIOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 2,
+      "orcamentosValor": 1005.01,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "CANARIO ENGENHARIA LTDA.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 75.0,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "CASAS PERNAMBUCANAS",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 1994.7,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "CCS CAMBORIU CABLE SYSTEM DE TELECOMUNICACOES LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 15422.5,
+      "vendedores": [
+        "Guilherme"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "CEARA SERVICOS DE ATENDIMENTO AO CIDADAO S/A",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 36733.86,
+      "vendedores": [
+        "Bruno Toyo"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "CEMAF CONSTRUÇAO E SERVICOS DE ENGENHARIA LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 3,
+      "orcamentosValor": 31289.9,
+      "vendedores": [
+        "Erickson"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "CENTRAL DE DISTRIBUICAO SENAC SERVICO NACIONAL DE APRENDIZAGEM COMERCIAL - SENAC MINAS",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 2,
+      "orcamentosValor": 137810.0,
+      "vendedores": [
+        "Erickson"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "CENTRO DE ATIVIDADES DE VITORIA CAV SERVICO SOCIAL DO COMERCIO SESC AR ES",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 2404.9,
+      "vendedores": [
+        "Guilherme"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "CICLUS AMAZONIA S.A.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 4,
+      "orcamentosValor": 18567.2,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "CIS BRASIL LTDA.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 2,
+      "orcamentosValor": 1690.2,
+      "vendedores": [
+        "Guilherme"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "CLINICA MULTIDISCIPLINAR MENTHALHELP LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 9562.5,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "COLEGIO E CURSO MATRIZ EDUCACAO LTDA.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 2,
+      "orcamentosValor": 454681.47,
+      "vendedores": [
+        "Bruno Toyo"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "COMPOMIG COMPONENTES LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 7,
+      "orcamentosValor": 81703.76,
+      "vendedores": [
+        "Bruno Toyo",
+        "Guilherme",
+        "Marcello",
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "CONCEITO AUTOMOVEIS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 33040.0,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "CONCESSIONARIA BAHIA NORTE S.A.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 15089.56,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "CONCESSIONARIA CS MOBI CUIABA SPE S.A.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 249.9,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "CONCESSIONARIA DE RODOVIAS ROTA DA INTEGRACAO SPE S.A.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 57764.7,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "CONCESSIONARIA ROTA DO ATLANTICO S.A.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 388882.26,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "CONCESSIONARIA ROTA DOURADA S.A.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 1279385.45,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "CONCREMAT ENGENHARIA E CONSTRUCAO LTDA.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 9,
+      "orcamentosValor": 1101759.19,
+      "vendedores": [
+        "Guilherme",
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "CONCREMAT ENGENHARIA E TECNOLOGIA S/A",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 4,
+      "orcamentosValor": 101717.79,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "CONDOMINIO DO CONJUNTO DO SHOPPING DO VALE DO ACO",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 575.75,
+      "vendedores": [
+        "Bruno Toyo"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "CONDOMÍNIO RESIDENCIAL DIROMA EXCLUSIVE A",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 78290.71,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "CONDOMÍNIO RESIDENCIAL DIROMA EXCLUSIVE B",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 38522.56,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "CONDOMÍNIO RESIDENCIAL LACQUA DIROMA I. A",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 142990.84,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "CONDOMÍNIO RESIDENCIAL LACQUA DIROMA I. B",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 143286.13,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "CONSORCIO RJ CIDADAO",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 3060.0,
+      "vendedores": [
+        "Bruno Toyo"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "CONSTRUTORA CENTRAL DO BRASIL S.A",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 1558.6,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "CONTAGEM MALL S.A.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 3,
+      "orcamentosValor": 690.9,
+      "vendedores": [
+        "Marcello",
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "CONTIPLAN INDÚSTRIA GRÁFICA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 7487.5,
+      "vendedores": [
+        "Guilherme"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "COOPERATIVA CENTRAL DOS PRODUTORES RURAIS DE MINAS GERAIS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 2605.36,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "CRECHE ESCOLA GLOBAL TREE LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 4,
+      "orcamentosValor": 9074.39,
+      "vendedores": [
+        "Bruno Toyo"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "CS BRASIL FROTAS S.A.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 10,
+      "orcamentosValor": 28800.53,
+      "vendedores": [
+        "Gabriele",
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "CS BRASIL TRANSPORTES DE PASSAGEIROS E SERVICOS AMBIENTAIS LTDA.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 1110.0,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "DCA COMERCIO IMPORTACAO, EXPORTACAO E NEGOCIOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 2,
+      "orcamentosValor": 3683.38,
+      "vendedores": [
+        "Bruno Toyo"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "DEMATIC SISTEMAS E EQUIPAMENTOS DE MOVIMENTACAO DE MATERIAIS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 8142.63,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "DEVA VEICULOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 1317.12,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "DIRECIONAL ENGENHARIA S.A RUY BARBOSA EMPRENDIMENTOS IMOBILIARIOS S.A",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 10669.89,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "DIRECIONAL ENGENHARIA S.A.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 19800.0,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "DIRECIONAL ENGENHARIA SA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 657.0,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "DIRECIONAL ENGENHARIA SA - FILIAL MANAUS",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 371.25,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "DIRECIONAL SANTO ANTÔNIO EMPREENDIMENTOS IMOBILIÁRIOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 262.5,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "DROGARIA F V DE ICARAI LTDA DROGARIA TAMOIO",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 2050.0,
+      "vendedores": [
+        "Erickson"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "DROGARIA VR GONCALENSE LTDA DROGARIA TAMOIO",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 850.0,
+      "vendedores": [
+        "Erickson"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "EBER BIO ENERGIA E AGRICULTURA LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 2,
+      "orcamentosValor": 17425.5,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "EDILSON ANTONIO PIAIA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 13999.8,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "EDP ESPIRITO SANTO DISTRIBUICAO DE ENERGIA S.A.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 22,
+      "orcamentosValor": 207672.45,
+      "vendedores": [
+        "Erickson",
+        "Gabriele",
+        "Marcello",
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "EDP SAO PAULO DISTRIBUICAO DE ENERGIA S.A.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 12,
+      "orcamentosValor": 697154.58,
+      "vendedores": [
+        "Erickson",
+        "Marcello",
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "EDP SP SAO PAULO",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 63219.0,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "EDP TRANSMISSAO GOIAS SA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 2,
+      "orcamentosValor": 173849.4,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "EDP TRANSMISSAO NORTE 2 S.A",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 2924.0,
+      "vendedores": [
+        "Erickson"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "EDP TRANSMISSAO NORTE S/A",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 5848.0,
+      "vendedores": [
+        "Erickson"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "EFICAZ SERVICOS EFICAZ SERVICOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 15956.25,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "EMPRESA DE ENERGIA SAO MANOEL S.A.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 2,
+      "orcamentosValor": 40498.9,
+      "vendedores": [
+        "Erickson",
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "ENTRERIOS AGRO LTDA.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 2336.3,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "ENZO AUTOMOVEIS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 11405.7,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "ERICA SILVA DE MORAIS",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 379.8,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "ES SERVIÇO SOCIAL DO COMÉRCIO - SESC AR/ES SERVIÇO SOCIAL DO COMÉRCIO - SESC AR/ES",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 8320.0,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "ESCOLAS INTEGRADAS RAIZ LTDA ESCOLAS INTEGRADAS RAIZ LTDA.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 676.24,
+      "vendedores": [
+        "Bruno Toyo"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "ESCOLAS INTEGRADAS RAIZ LTDA.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 4,
+      "orcamentosValor": 2933.49,
+      "vendedores": [
+        "Bruno Toyo"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "EURO IMPORT COMERCIO E SERVICO LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 2039.7,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "EVOLUA EVOLUA ENERGIA PARTICIPACOES S/A",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 270.75,
+      "vendedores": [
+        "Guilherme"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "FABRICADORA DE ESPUMAS E COLCHOES NORTE PARANAENSE LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 32225.0,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "FEDERAÇÃO INTERFEDERATIVA DAS COOPERATIVAS DE TRABALHO MÉDICO DO ESTADO DE MINAS GERAIS",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 95840.0,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "FUNDACAO HOSPITALAR SAO FRANCISCO DE ASSIS - FHSFA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 3140.99,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "FUNDAÇÃO HOSPITALAR SÃO FRANCISCO DE ASSIS",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 4,
+      "orcamentosValor": 28436.65,
+      "vendedores": [
+        "Marcello",
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "GEORG FISCHER FGS INDUSTRIA E COMERCIO LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 3683.75,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "GH DO BRASIL INDUSTRIA E COMERCIO LTDA.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 1836.4,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "GLOBAL LINES NETWORK TELECOMUNICACOES DO BRASIL LTDA GLOBAL LINES",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 14639.38,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "GOLD ARMAZEM LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 1848.75,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "GRAOS DO PIAUI CONCESSIONARIA DE RODOVIAS SPE S.A GRAOS DO PIAUI",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 1995.0,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "GRAOS DO PIAUI CONCESSIONARIA DE RODOVIAS SPE S.A.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 3,
+      "orcamentosValor": 20997.69,
+      "vendedores": [
+        "Gabriele",
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "GV COMERCIO LOCACOES REPRESENTACOES E TRANSPORTES ESPECIAIS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 5766.24,
+      "vendedores": [
+        "Bruno Toyo"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "HOSPITAL FELICIO ROCHO FUNDACAO FELICE ROSSO HOSPITAL FELICIO ROCHO",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 8,
+      "orcamentosValor": 211957.55,
+      "vendedores": [
+        "Guilherme",
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "IESVAP INSTITUTO DE EDUCACAO SUPERIOR DO VALE DO PARNAIBA S.A.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 2,
+      "orcamentosValor": 2829.7,
+      "vendedores": [
+        "Erickson"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "IMPACTO AUDITORIA EM SAÚDE LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 605.58,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "IMPERATRIZ EMPREENDIMENTOS IMOBILIARIOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 2,
+      "orcamentosValor": 13200.0,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "INCORPORADORA HRH N 45 EMPREENDIMENTOS IMOBILIARIOS SPE LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 2,
+      "orcamentosValor": 20505.1,
+      "vendedores": [
+        "Erickson",
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "INDUSTRIAS XHARA LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 722.02,
+      "vendedores": [
+        "Guilherme"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "INDÚSTRIA E COMÉRCIO DE RAPADURA TERRA LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 8,
+      "orcamentosValor": 32493.68,
+      "vendedores": [
+        "Gabriele",
+        "Marcello",
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "INSTITUTO D'OR DE GESTAO DE SAUDE PUBLICA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 7,
+      "orcamentosValor": 12203.82,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "INSTITUTO D'OR DE GESTÃO DE SAÚDE PÚBLICA INSTITUTO D'OR DE GESTAO DE SAUDE PUBLICA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 10,
+      "orcamentosValor": 30921.17,
+      "vendedores": [
+        "Guilherme",
+        "Marcello",
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "INSTITUTO EUVALDO LODI - GOIAS",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 72270.5,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "INSTITUTO FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DE MINAS GERAIS - CAMPUS CONGONHAS. INSTITUTO FEDERAL DE EDUCACAO, CIENCIA E TECNOLOGIA DE MINAS GERAIS",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 4,
+      "orcamentosValor": 52206.28,
+      "vendedores": [
+        "Guilherme",
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "INSTITUTO FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DE MINAS GERAIS - IFMG INSTITUTO FEDERAL DE EDUCACAO, CIENCIA E TECNOLOGIA DE MINAS GERAIS",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 7869.6,
+      "vendedores": [
+        "Guilherme"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "INVESTCO",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 7990.0,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "INVESTCO SA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 35990.0,
+      "vendedores": [
+        "Erickson"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "IPTAN - INSTITUTO DE ENSINO SUPERIOR PRESIDENTE TANCREDO DE ALMEIDA NEVES S.A.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 4230.0,
+      "vendedores": [
+        "Erickson"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "IPTAN INSTITUTO DE ENSINO SUPERIOR PRESIDENTE TANCREDO DE ALMEIDA NEVES S.A.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 4499.0,
+      "vendedores": [
+        "Erickson"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "ITAPEMA EMPREENDIMENTOS IMOBILIÁRIOS SPE LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 2,
+      "orcamentosValor": 35102.5,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "ITARANA EMPREENDIMENTOS IMOBILIARIOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 2,
+      "orcamentosValor": 541.85,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "ITPAC INSTITUTO TOCANTINENSE PRESIDENTE ANTONIO CARLOS S.A",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 2,
+      "orcamentosValor": 6677.5,
+      "vendedores": [
+        "Erickson"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "ITPAC ITPAC INSTITUTO TOCANTINENSE PRESIDENTE ANTONIO CARLOS S.A",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 4,
+      "orcamentosValor": 35064.7,
+      "vendedores": [
+        "Erickson"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "ITPAC PORTO NACIONAL - INSTITUTO TOCANTINENSE PRESIDENTE ANTONIO CARLOS PORTO S.A.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 6199.9,
+      "vendedores": [
+        "Erickson"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "JAPARAIBA EMPR. IMOB. LTDA - SCP CASTELO ITATIAIA 1",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 2,
+      "orcamentosValor": 27436.25,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "JARAGUA COUNTRY CLUB",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 4,
+      "orcamentosValor": 18914.21,
+      "vendedores": [
+        "Gabriele",
+        "Guilherme",
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "JARDIM SALINAS EMPREENDIMENTOS IMOBILIARIOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 179.43,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "JSL S.A.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 61,
+      "orcamentosValor": 658654.07,
+      "vendedores": [
+        "Gabriele",
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "LAGAMAR EMPREENDIMENTOS IMOBILIAROS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 1750.0,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "LAJEADO EMPREENDIMENTOS IMOBILIARIOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 967.5,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "LALLEMAND SOLUÇÕES BIOLÓGICAS LTDA AMERICANAS S.A",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 960.0,
+      "vendedores": [
+        "Guilherme"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "LALLEMAND SOLUÇÕES BIOLÓGICAS LTDA MG",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 2499.69,
+      "vendedores": [
+        "Guilherme"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "LALLEMAND SOLUÇÕES BIOLÓGICAS LTDA MG LALLEMAND SOLUÇÕES BIOLÓGICAS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 2,
+      "orcamentosValor": 19007.5,
+      "vendedores": [
+        "Guilherme"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "LALLEMAND SOLUÇÕES BIOLÓGICAS LTDA SP LALLEMAND SOLUÇÕES BIOLÓGICAS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 7,
+      "orcamentosValor": 6732.56,
+      "vendedores": [
+        "Guilherme"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "LE CREUSET DO BRASIL LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 5736.4,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "LIGA DAS SENHORAS CATOLICAS DE SAO PAULO PROJETO CASULO",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 115.0,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "LIGA SOLIDÁRIA LIGA DAS SENHORAS CATOLICAS DE SAO PAULO",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 519.5,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "LS-MG COMERCIO DE VEICULOS LTDA VIA NATSU",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 183.75,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "MAHLE METAL LEVE S.A.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 2,
+      "orcamentosValor": 4055.0,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "MATRIZ EDUCACAO COLEGIO E CURSO MATRIZ EDUCACAO LTDA. MATRIZ ROCHA MIRANDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 114.99,
+      "vendedores": [
+        "Bruno Toyo"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "MD AL LANAI BEACH SPE LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 3499.8,
+      "vendedores": [
+        "Erickson"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "MOGI MOB TRANSPORTES DE PASSAGEIROS LTDA.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 1058.0,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "MOVIDA PARTICIPACOES S.A.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 15,
+      "orcamentosValor": 452313.74,
+      "vendedores": [
+        "Gabriele",
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "MULTI FORMATO DISTRIBUIDORA SOCIEDADE ANONIMA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 48000.0,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "MUNDO PLANALTO, COMUNIDADES PARQUES E RESORTS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 19983.96,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "MUNIQUE EMPREENDIMENTOS IMOBILIARIOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 276.0,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "NORQUIMA PRODUTOS QUIMICOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 4579.0,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "NTA SERVICOS ADMINISTRATIVOS E CONSULTORIA LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 40577.8,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "O SESC - DEPARTAMENTO REGIONAL DO ESPÍRITO SANTO SERVIÇO SOCIAL DO COMÉRCIO - SESC AR/ES",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 97663.0,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "OLARIA EMPREENDIMENTOS IMOBILIARIOS LTDA - SCP BARRO PRETO",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 3886.8,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "ONFLY TECNOLOGIA LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 1770.0,
+      "vendedores": [
+        "Erickson"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "ORIGINAL DETROIT COMÉRCIO DE VEÍCULOS LTDA.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 5102.3,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "ORIGINAL NEW SUECIA COMERCIO DE VEICULOS PECAS E SERVICOS SA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 3,
+      "orcamentosValor": 2949.2,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "ORIGINAL PROVENCE COMERCIO DE VEICULOS S A",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 5,
+      "orcamentosValor": 7679.4,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "ORIGINAL TURIM COMERCIO DE VEICULOS PECAS E SERVICOS SA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 2599.9,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "ORIGINAL XANGAI COMERCIO DE VEICULOS S.A.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 2,
+      "orcamentosValor": 3036.9,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "ORIGINAL XIAN COMERCIO DE VEICULOS S A",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 699.9,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "ORLEANS EMPREENDIMENTOS IMOBILIARIOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 360.0,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "OXITEC DO BRASIL TECNOLOGIA DE INSETOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 8749.5,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA 1013",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 8524.5,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA 1019",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 7821.0,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA 1020",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 5214.0,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA 1025",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 2607.0,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA 1027",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 5214.0,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA 1029",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 2607.0,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA 1030",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 5114.7,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA 1032",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 5214.0,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA 1034",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 2607.0,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA 1035",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 5214.0,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA 1038",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 2607.0,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA 1039",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 3409.8,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA 1048",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 7821.0,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA LOJA 1001",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 5214.0,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA LOJA 1004",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 2607.0,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA LOJA 1006",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 2607.0,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA LOJA 1007",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 2607.0,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA LOJA 1008",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 13639.2,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA LOJA 1009",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 3409.8,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA LOJA 1011",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 2607.0,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA LOJA 1013",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 8524.5,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA LOJA 1015",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 5114.7,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA LOJA 1019",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 5114.7,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA LOJA 1037",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 5114.7,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA LOJA 1047",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 1704.9,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "PLANALTO SOLUCOES IMOBILIARIAS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 7,
+      "orcamentosValor": 138766.51,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "POLO WEAR INFORMATICA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 8,
+      "orcamentosValor": 508671.75,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "POLO WEAR INFORMATICA POLO WEAR",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 1492.0,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "PORTOAGIL LOGISTICA SPE S.A.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 145958.06,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "POSTO ALEM PARAIBA COMBUSTIVEIS CONVENIENCIA PIO XII LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 1200.9,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "POSTO ALEM PARAIBA COMBUSTIVEIS POSTO BEIRA RIO LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 6,
+      "orcamentosValor": 84771.05,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "POSTO ALEM PARAIBA COMBUSTIVEIS UAI COMBUSTIVEIS DE BURITIZEIRO LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 2,
+      "orcamentosValor": 17172.5,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "POSTO BEIRA RIO POSTO ALEM PARAIBA COMBUSTIVEIS",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 3,
+      "orcamentosValor": 18553.3,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "POSTO BEIRA RIO POSTO BEIRA RIO LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 4,
+      "orcamentosValor": 21452.5,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "PV CLEAN SERVICE PV CLEAN SERVICOS DE MANUTENCAO EM SISTEMAS FOTOVOLTAICOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 2,
+      "orcamentosValor": 12564.59,
+      "vendedores": [
+        "Guilherme"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "QI - QUALIDADE INTEGRAL DE ENSINO LTDA QI VALQUEIRE",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 1135.21,
+      "vendedores": [
+        "Bruno Toyo"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "R POINT COMERCIAL DE AUTOMOVEIS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 3,
+      "orcamentosValor": 5453.7,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "RED BULL BRAGANTINO FUTEBOL LTDA.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 8736.5,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "REGUS DO BRASIL LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 4,
+      "orcamentosValor": 253128.0,
+      "vendedores": [
+        "Erickson"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "REPROMAQ COMERCIO E SERVICOS DE TECNOLOGIA LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 8318.75,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "RIO DO SUL EMPREENDIMENTOS IMOBILIARIOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 629.3,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "RL QUATA EMPREENDIMENTO IMOBILIARIO SPE LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 470.0,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "SABRAR RIO REFRIGERACAO E ENGENHARIA LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 1573.85,
+      "vendedores": [
+        "Bruno Toyo"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "SADA BIO-ENERGIA E AGRICULTURA LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 2365.0,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "SADA SIDERURGIA LTDA.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 8,
+      "orcamentosValor": 191717.71,
+      "vendedores": [
+        "Gabriele",
+        "Marcello",
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "SAFENET TECNOLOGIA LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 4,
+      "orcamentosValor": 654430.0,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "SBA EDGE BRASIL INTERNET, LTDA.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 6999.49,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "SBM DO BRASIL LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 41023.5,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "SBM OFFSHORE DO BRASIL LTDA.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 28740.0,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "SERRA AZUL WATER PARK S.A",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 3,
+      "orcamentosValor": 64985.3,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "SERRA GRANDE EMPREENDIMENTOS IMOBILIARIOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 2925.0,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "SERVICO NACIONAL DE APRENDIZAGEM COMERCIAL SENAC",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 5839.99,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "SERVICO NACIONAL DE APRENDIZAGEM DO COOPERATIVISMO NO ESTADO DO RIO DE JANEIRO",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 2,
+      "orcamentosValor": 22128.7,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "SERVICO SOCIAL DO COMERCIO SESC AR ES",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 3179.9,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "SERVICO SOCIAL DO COMERCIO SESC AR ES CENTRO DE ATIVIDADES DE ARACRUZ CENTRO DE ATIVIDADES DE ARACRUZ",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 10806.6,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "SERVICO SOCIAL DO COMERCIO SESC AR ES CENTRO DE ATIVIDADES DE BAIXO GUANDU CENTRO DE ATIVIDADES DE BAIXO GUANDU",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 12294.3,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "SERVICO SOCIAL DO COMERCIO SESC AR ES CENTRO DE ATIVIDADES DE COLATINA CAC",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 2,
+      "orcamentosValor": 154257.1,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "SERVICO SOCIAL DO COMERCIO SESC AR ES CENTRO DE ATIVIDADES DE LINHARES CAL",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 12651.2,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "SERVICO SOCIAL DO COMERCIO SESC AR ES CENTRO DE ATIVIDADES DE VILA VELHA CAVV CENTRO DE ATIVIDADES DE VILA VELHA CAVV",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 7914.7,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "SERVICO SOCIAL DO COMERCIO SESC AR ES CENTRO DE ATIVIDADES SAO MATEUS",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 12294.3,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "SERVICO SOCIAL DO COMERCIO SESC AR ES CENTRO DE ESPORTE E LAZER DE CARIACICA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 12294.3,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "SERVICO SOCIAL DO COMERCIO SESC AR ES CENTRO ESPORTIVO DE VILA VELHA CEVV",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 2,
+      "orcamentosValor": 9759.3,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "SERVIÇO SOCIAL DO COMÉRCIO SESC AR ES SERVIÇO SOCIAL DO COMÉRCIO - SESC AR/ES",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 12,
+      "orcamentosValor": 244583.4,
+      "vendedores": [
+        "Marcello",
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "SESCOOP/RJ SERVICO NACIONAL DE APRENDIZAGEM DO COOPERATIVISMO NO ESTADO DO RIO DE JANEIRO",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 8659.75,
+      "vendedores": [
+        "Bruno Toyo"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "SIMPAR",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 18,
+      "orcamentosValor": 41358.95,
+      "vendedores": [
+        "Marcello",
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "SIMPAR MOVIDA PARTICIPACOES S.A.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 18900.0,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "SIMPAR S.A.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 15,
+      "orcamentosValor": 91845.86,
+      "vendedores": [
+        "Gabriele",
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "SINAL SERVICOS DE INTEGRACAO INDUSTRIAL S A",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 929.4,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "SISTEL COMERCIO E SERVICOS ELETRO-ELETRONICOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 2,
+      "orcamentosValor": 10000.0,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "SITRAN SINALIZACAO DE TRANSITO INDUSTRIAL LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 719.7,
+      "vendedores": [
+        "Guilherme"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "SOCIEDADE DE EDUCACAO, CULTURA E TECNOLOGIA DA AMAZONIA S/A",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 18000.0,
+      "vendedores": [
+        "Erickson"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "SOCIEDADE PADRAO DE EDUCACAO SUPERIOR LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 3,
+      "orcamentosValor": 9098.9,
+      "vendedores": [
+        "Erickson"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "SOLUÇÕES INTELIGENTES DE APOIO A NEGOCIO",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 4257.5,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "SOMATTOS ALVARENGA PEIXOTO EMPREENDIMENTOS IMOBILIARIOS SPE LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 2,
+      "orcamentosValor": 12544.0,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "SOMATTOS ANTONIO ALEIXO EMPREENDIMENTOS IMOBILIARIOS SPE LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 2,
+      "orcamentosValor": 5072.5,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "SOMATTOS ANTONIO ALEIXO EMPREENDIMENTOS IMOBILIARIOS SPE LTDA SOMATTOS ENGENHARIA E COMERCIO LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 4619.9,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "SOMATTOS PATRIMAR QUADRA 40 EMPREENDIMENTOS IMOBILIARIOS SPE LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 1599.99,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "SOMATTOS PENTAGNA EMPREENDIMENTOS IMOBILIARIOS SPE LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 2,
+      "orcamentosValor": 13139.5,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "SOMATTOS SAVASSI EMPREENDIMENTOS IMOBILIARIOS SPE LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 1204.5,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "SPE PRAIA DE BOA VIAGEM EMP. IMOB. LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 3,
+      "orcamentosValor": 10251.1,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "SUL IMPORT VEICULOS E SERVICOS SA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 197.0,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "SUPERMERCADOS PGM PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 163,
+      "orcamentosValor": 4512686.92,
+      "vendedores": [
+        "Gabriele",
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "TESTE ANA 19/05 EVOLUA ENERGIA PARTICIPACOES S/A",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 145.0,
+      "vendedores": [
+        "Guilherme"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "TEXTILE XTRA CO. LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 4575.0,
+      "vendedores": [
+        "Erickson"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "TRANSZERO TRANSPORTADORA DE VEICULOS LTD",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 9,
+      "orcamentosValor": 34598.37,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "TRIVALE INSTITUICAO DE PAGAMENTO LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 2,
+      "orcamentosValor": 16866.9,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "TUOPU DO BRASIL AUTOPECAS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 8159.2,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "UAB MOTORS PARTICIPACOES LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 1299.0,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "UAI COMBUSTIVEIS DE BURITIZEIRO LTDA POSTO ALEM PARAIBA COMBUSTIVEIS",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 6905.43,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "UNIFICADO ZONA SUL",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 4405.14,
+      "vendedores": [
+        "Bruno Toyo"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "VALID SOLUCOES S A VALID CERTIFICADORA DIGITAL LTDA.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 2,
+      "orcamentosValor": 2605.0,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "VALID SOLUCOES S A VALID HUB CONSULTORIA EM TECNOLOGIA E TRATAMENTO DE DADOS S.A",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 3,
+      "orcamentosValor": 7225.0,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "VALID SOLUCOES S A VALID SOLUÇÕES SA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 6,
+      "orcamentosValor": 55309.0,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "VALID SOLUÇÕES SA VALID SOLUCOES S A",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 2,
+      "orcamentosValor": 116072.5,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "VALORGAS FEIRA DE SANTANA LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 3639.66,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "VAMOS LOCACAO DE CAMINHOES, MAQUINAS E EQUIPAMENTOS S.A.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 4,
+      "orcamentosValor": 66749.1,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "VIA BRASIL FASHION COMERCIO DE ROUPAS LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 9,
+      "orcamentosValor": 215955.82,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "VIA TRUCKS - UNIDADE GOVERNADOR VALADARES",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 395.18,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "VIA TRUCKS GRU VIA TRUCKS COMERCIO DE CAMINHÕES LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 2,
+      "orcamentosValor": 17268.75,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "VIA TRUCKS GRU VIA TRUCKS SAO PAULO COMERCIO DE CAMINHOES LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 3,
+      "orcamentosValor": 1355.0,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "VIA TRUCKS SAO PAULO - UNIDADE GUARULHOS",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 3909.89,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "VIAPAULISTA S.A.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 7498.5,
+      "vendedores": [
+        "Marcello"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "VIDEL TRANSPORTE E LOGISTICA LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 8375.0,
+      "vendedores": [
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "W1 CONSULTORIA E PLANEJAMENTO LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 2,
+      "orcamentosValor": 13785.17,
+      "vendedores": [
+        "Gabriele"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "W1 INC S.A",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 9,
+      "orcamentosValor": 595569.25,
+      "vendedores": [
+        "Guilherme",
+        "Olívia"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "ZACARINI E CIA LTDA",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 1,
+      "orcamentosValor": 850.0,
+      "vendedores": [
+        "Erickson"
+      ]
+    },
+    {
+      "cnpj": null,
+      "razaoSocial": "ZETTA ENGENHARIA LTDA.",
+      "nomeFantasia": null,
+      "fontes": [
+        "planilha_orcamentos"
+      ],
+      "pedidosQtd": 0,
+      "pedidosValor": 0.0,
+      "orcamentosQtd": 4,
+      "orcamentosValor": 262478.4,
+      "vendedores": [
+        "Bruno Toyo"
+      ]
+    }
+  ]
+}

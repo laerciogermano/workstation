@@ -1,0 +1,27 @@
+# ConnectMax vendas — Documentação
+
+**Por quê:** índice da esteira do processo de vendas.  
+**Visão:** [`../README.md`](../README.md).  
+**Umbrella:** [`../../README.md`](../../README.md).  
+**Agente LinkedIn:** [`../../linkedin-agent/`](../../linkedin-agent/README.md).  
+**Robô de tela:** [`../../../screen-robot/`](../../../screen-robot/README.md).  
+**Prompts:** [`../../prompts/timeline.md`](../../prompts/timeline.md).  
+**Config IA:** [`../config/config-ia.md`](../config/config-ia.md).
+
+| Artefato | Arquivo | Papel no fluxo | Status |
+|----------|---------|----------------|--------|
+| Plano scripts + pool | [`../../docs/plano-implementacao-prospeccao-scripts.md`](../../docs/plano-implementacao-prospeccao-scripts.md) | Funil/jobs, device pool e ordem de construção (umbrella) | Feito |
+| Arquitetura API perfis | [`../../docs/arquitetura.md`](../../docs/arquitetura.md) | C4, classes e sequências extract → Nest → Postgres | Feito |
+| Funcionalidades | [`functionalities.md`](functionalities.md) | Capacidades do processo de vendas em bullets | Feito |
+| Histórias de usuário | `user-stories.md` | O *quê* desejado pelo usuário (Como… quero… para…) | A produzir |
+| Cenários BDD | `bdd.md` | Critérios de aceite por história (Dado / Quando / Então) | A produzir |
+| Telas | `screens.md` | Superfícies de UI e o que cada uma faz | A produzir |
+| Screens BDD | `screens-bdd.md` | Mesmos critérios, agrupados por tela | A produzir |
+| Componentes | `components.md` | Inventário de UI para implementar | A produzir |
+| Protótipo | `prototype.html` | Validação visual/interativa do que foi especificado | A produzir |
+
+## Próximos passos
+
+→ Plano: [`../../docs/plano-implementacao-prospeccao-scripts.md`](../../docs/plano-implementacao-prospeccao-scripts.md)  
+→ Esteira: [`functionalities.md`](functionalities.md) → `user-stories.md` (a produzir)  
+→ Ações no LinkedIn: consumir [`../../linkedin-agent/README.md`](../../linkedin-agent/README.md)

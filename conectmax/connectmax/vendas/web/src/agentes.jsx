@@ -7,8 +7,6 @@ const EMPTY_FORM = {
   nome: '',
   copyHostFromAgenteId: '',
   hostNome: '',
-  ipPublico: '',
-  localhost: false,
   fromBackup: '',
   adbPort: '',
   start: true,
@@ -132,8 +130,6 @@ export default function Agentes() {
       ...EMPTY_FORM,
       nome: row.nome || '',
       hostNome: row.hostNome || '',
-      ipPublico: row.ipPublico || '',
-      localhost: Boolean(row.localhost),
       notas: row.notas || '',
       linkedinNome: row.linkedinNome || '',
       linkedinUsuario: row.linkedinUsuario || '',
@@ -165,7 +161,6 @@ export default function Agentes() {
       if (editingId) {
         const payload = {
           hostNome: form.hostNome.trim() || undefined,
-          localhost: Boolean(form.localhost),
           notas: form.notas.trim() || null,
           linkedinNome: form.linkedinNome.trim() || null,
           linkedinUsuario: form.linkedinUsuario.trim() || null,
@@ -173,14 +168,6 @@ export default function Agentes() {
           linkedinHeadline: form.linkedinHeadline.trim() || null,
           linkedinStatus: form.linkedinStatus || 'ativa',
         };
-        if (!payload.localhost) {
-          if (!form.ipPublico.trim()) {
-            setFormNote('ipPublico obrigatório (ou marque localhost).');
-            setSaving(false);
-            return;
-          }
-          payload.ipPublico = form.ipPublico.trim();
-        }
         const res = await fetch(`${AGENTES_URL}/${editingId}`, {
           method: 'PATCH',
           headers: { 'content-type': 'application/json' },
@@ -216,15 +203,8 @@ export default function Agentes() {
           return;
         }
         payload.hostNome = form.hostNome.trim();
-        payload.localhost = Boolean(form.localhost);
-        if (!payload.localhost) {
-          if (!form.ipPublico.trim()) {
-            setFormNote('ipPublico obrigatório (ou marque localhost).');
-            setSaving(false);
-            return;
-          }
-          payload.ipPublico = form.ipPublico.trim();
-        }
+        // Sem IP/localhost na UI: host novo = máquina da API.
+        payload.localhost = true;
       }
       if (form.fromBackup.trim()) payload.fromBackup = form.fromBackup.trim();
       const adb = Number(form.adbPort);
@@ -530,23 +510,6 @@ export default function Agentes() {
                       onChange={(e) => setField('hostNome', e.target.value)}
                     />
                   </label>
-                  <label className="srv-check">
-                    <input
-                      type="checkbox"
-                      checked={form.localhost}
-                      onChange={(e) => setField('localhost', e.target.checked)}
-                    />
-                    Localhost (API)
-                  </label>
-                  {!form.localhost && (
-                    <label>
-                      IP público *
-                      <input
-                        value={form.ipPublico}
-                        onChange={(e) => setField('ipPublico', e.target.value)}
-                      />
-                    </label>
-                  )}
                 </>
               )}
               {!editingId && (

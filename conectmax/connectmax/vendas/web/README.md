@@ -80,7 +80,8 @@ npm run dev
 ## Uso
 
 - Menu transversal (`src/app-nav.jsx`): sidebar (**Funil** · **Agentes** · **Dashboards** · **Usuários**) + tema no rodapé. **Antes → depois:** **Candidatos**, **Empresas**, **Mensagens** e **Gestores** fora do nav (rotas `/mensagens` e `/gestores` seguem no SPA). `/` e `/empresas` → `/funil`. **Rollback:** recolocar itens no `LINKS`.
-- Agentes (`/agentes`): vendedor operacional = host + device + LinkedIn; **Editar** (PATCH host/notas/LI) / Acordar / Remover (sem Sync Docker / Ping / Dormir / Backup no UI); gestores cadastram **ou** worker `enroll` cria linha magra — tag **falta LinkedIn** até editar. API: [`../api/README.md`](../api/README.md#agentes-agentes).
+- Agentes (`/agentes`): vendedor operacional = host + device + LinkedIn; lista **por host** com slots (`GET /agente/slots`: `ativos/maxAtivos` / livres); status “no slot” / “fila de alternância” / “parado”; **Editar** / Acordar / Remover; enroll magro → tag **falta LinkedIn**. API: [`../api/README.md`](../api/README.md#agentes-agentes). Capacidade: `AVD_MAX_ATIVOS_POR_SERVIDOR` na API (Mac com 1 AVD: `=1`).
+**Antes → depois (host + slots):** seções Ativos/Dormindo flat → seções por `hostKey` + capacidade de slot. **Rollback:** remova fetch `SLOTS_URL` / `hostSections`; volte `renderTable(ativos|dormindo|outros)`.
 **Antes → depois (sem Sync Docker):** botão Sync Docker (`?sync=true` / docker ps → DB) → só Atualizar (lista do DB). **Rollback:** botão + `load({ sync: true })` + estado `syncing`.
 **Antes → depois (enroll UI):** só cadastro manual → badge “falta LinkedIn” pós-enroll. **Rollback:** remova `needsLinkedin` / `tag-warn`.
 **Antes → depois (editar agente):** só criar + Acordar/Remover → botão **Editar** (host + LI via `PATCH`; sem SSH/senha LI/status LI/localhost/IP na UI — host novo assume `localhost`). **Rollback:** remova `editingId` / `openEdit`.

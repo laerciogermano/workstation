@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { hasPermission } from './auth.js';
 
 const AGENTES_URL = import.meta.env.VITE_AGENTES_URL ?? '/agentes';
+const SLOTS_URL = import.meta.env.VITE_AGENTE_SLOTS_URL ?? '/agente/slots';
 
 const EMPTY_FORM = {
   nome: '',
@@ -26,11 +27,11 @@ function statusLabel(s) {
   return s || '—';
 }
 
-function errMsg(json, res) {
-  const m = json?.message;
-  if (Array.isArray(m)) return m.join(', ');
-  if (typeof m === 'string') return m;
-  return `${res.status} ${res.statusText}`;
+/** Alinha com api `hostKey()` — localhost ou IP. */
+function agentHostKey(a) {
+  if (!a) return '—';
+  if (a.localhost) return 'localhost';
+  return String(a.ipPrivado || a.ipPublico || a.id || '').trim() || '—';
 }
 
 function hostLabel(a) {
@@ -38,6 +39,22 @@ function hostLabel(a) {
   const name = a.hostNome || a.nome || '—';
   if (a.localhost) return `${name} · localhost`;
   return `${name} · ${a.ipPublico || a.ipPrivado || '—'}`;
+}
+
+function slotContextLabel(a, pendingJobs) {
+  if (a?.status === 'ativo') return 'no slot';
+  if (a?.status === 'dormindo' && pendingJobs > 0) {
+    return 'fila de alternância';
+  }
+  if (a?.status === 'dormindo') return 'parado';
+  return null;
+}
+
+function errMsg(json, res) {
+  const m = json?.message;
+  if (Array.isArray(m)) return m.join(', ');
+  if (typeof m === 'string') return m;
+  return `${res.status} ${res.statusText}`;
 }
 
 function liLabel(a) {
@@ -56,6 +73,7 @@ export default function Agentes() {
   const [dormindo, setDormindo] = useState([]);
   const [outros, setOutros] = useState([]);
   const [meta, setMeta] = useState({ total: 0, ativos: 0, dormindo: 0 });
+  const [slotsMeta, setSlotsMeta] = useState({ maxAtivos: 4, hosts: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [q, setQ] = useState('');
@@ -78,15 +96,89 @@ export default function Agentes() {
     [ativos, dormindo, outros],
   );
 
+  /** agentId → pendingJobs (de /agente/slots). */
+  const pendingByAgentId = useMemo(() => {
+    const map = new Map();
+    for (const h of slotsMeta.hosts || []) {
+      for (const list of [
+        h.agentesAtivos,
+        h.candidatosWake,
+        h.candidatosSleep,
+      ]) {
+        for (const a of list || []) {
+          const id = a.id || a.agentId;
+          if (id) map.set(id, Number(a.pendingJobs) || 0);
+        }
+      }
+    }
+    return map;
+  }, [slotsMeta]);
+
+  const hostSections = useMemo(() => {
+    const byKey = new Map();
+    for (const a of allRows) {
+      const key = agentHostKey(a);
+      if (!byKey.has(key)) {
+        byKey.set(key, {
+          hostKey: key,
+          hostNome: a.hostNome || key,
+          agents: [],
+        });
+      }
+      const g = byKey.get(key);
+      g.agents.push(a);
+      if (a.hostNome) g.hostNome = a.hostNome;
+    }
+    const slotByKey = new Map(
+      (slotsMeta.hosts || []).map((h) => [h.hostKey, h]),
+    );
+    const maxAtivos = Number(slotsMeta.maxAtivos) || 4;
+    const sections = [...byKey.values()].map((g) => {
+      const slot = slotByKey.get(g.hostKey);
+      const ativosN =
+        slot?.ativos ?? g.agents.filter((a) => a.status === 'ativo').length;
+      const dormindoN =
+        slot?.dormindo ??
+        g.agents.filter((a) => a.status === 'dormindo').length;
+      return {
+        hostKey: g.hostKey,
+        hostNome: slot?.hostNome || g.hostNome,
+        maxAtivos,
+        ativos: ativosN,
+        dormindo: dormindoN,
+        livres: slot?.livres ?? Math.max(0, maxAtivos - ativosN),
+        agents: g.agents.slice().sort((a, b) => {
+          const rank = (s) =>
+            s === 'ativo' ? 0 : s === 'dormindo' ? 1 : 2;
+          return (
+            rank(a.status) - rank(b.status) ||
+            String(a.nome || '').localeCompare(String(b.nome || ''), 'pt-BR')
+          );
+        }),
+      };
+    });
+    sections.sort((a, b) =>
+      a.hostKey === 'localhost'
+        ? -1
+        : b.hostKey === 'localhost'
+          ? 1
+          : a.hostNome.localeCompare(b.hostNome, 'pt-BR'),
+    );
+    return sections;
+  }, [allRows, slotsMeta]);
+
   const load = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
       const params = new URLSearchParams({ grouped: 'true' });
       if (debouncedQ) params.set('q', debouncedQ);
-      const res = await fetch(`${AGENTES_URL}?${params}`);
-      if (!res.ok) throw new Error(`agentes HTTP ${res.status}`);
-      const json = await res.json();
+      const [resAg, resSlots] = await Promise.all([
+        fetch(`${AGENTES_URL}?${params}`),
+        fetch(SLOTS_URL),
+      ]);
+      if (!resAg.ok) throw new Error(`agentes HTTP ${resAg.status}`);
+      const json = await resAg.json();
       setAtivos(Array.isArray(json.ativos) ? json.ativos : []);
       setDormindo(Array.isArray(json.dormindo) ? json.dormindo : []);
       setOutros(Array.isArray(json.outros) ? json.outros : []);
@@ -95,6 +187,15 @@ export default function Agentes() {
         ativos: json.meta?.ativos ?? 0,
         dormindo: json.meta?.dormindo ?? 0,
       });
+      if (resSlots.ok) {
+        const slotsJson = await resSlots.json();
+        setSlotsMeta({
+          maxAtivos: Number(slotsJson.maxAtivos) || 4,
+          hosts: Array.isArray(slotsJson.hosts) ? slotsJson.hosts : [],
+        });
+      } else {
+        setSlotsMeta({ maxAtivos: 4, hosts: [] });
+      }
     } catch (e) {
       setError(e.message ?? 'Falha ao carregar');
     } finally {
@@ -281,20 +382,25 @@ export default function Agentes() {
     }
   }
 
-  function renderTable(rows, title) {
+  function renderHostSection(host) {
+    const rows = host.agents;
     if (!rows.length) return null;
     return (
-      <section className="avd-section">
-        <h2>
-          {title}{' '}
-          <span className="muted">({rows.length})</span>
+      <section key={host.hostKey} className="avd-section">
+        <h2 className="avd-section-title">
+          {host.hostNome}{' '}
+          <span className="muted">
+            · {host.hostKey} · slots {host.ativos}/{host.maxAtivos}
+            {host.livres ? ` · ${host.livres} livre` : ''}
+            {` · ${rows.length} agente${rows.length === 1 ? '' : 's'}`}
+            {` · ${host.dormindo} dormindo`}
+          </span>
         </h2>
         <div className="emp-table-wrap">
           <table className="emp-table">
             <thead>
               <tr>
                 <th>Agente</th>
-                <th>Host</th>
                 <th>LinkedIn</th>
                 <th>ADB</th>
                 <th>Status</th>
@@ -302,90 +408,110 @@ export default function Agentes() {
               </tr>
             </thead>
             <tbody>
-              {rows.map((a) => (
-                <tr key={a.id}>
-                  <td>
-                    <div className="emp-person-text">
-                      <span className="emp-person-name">{a.nome}</span>
-                      <span className="muted" title={a.id}>
-                        {a.id}
-                      </span>
-                      {a.containerName ? (
-                        <span className="muted">{a.containerName}</span>
-                      ) : null}
-                    </div>
-                  </td>
-                  <td className="muted">{hostLabel(a)}</td>
-                  <td className="muted">
-                    {needsLinkedin(a) ? (
-                      <span
-                        className="tag tag-warn"
-                        title="Complete usuário no editar"
-                      >
-                        falta LinkedIn
-                      </span>
-                    ) : (
+              {rows.map((a) => {
+                const pending = pendingByAgentId.get(a.id) || 0;
+                const ctx = slotContextLabel(a, pending);
+                return (
+                  <tr key={a.id}>
+                    <td>
                       <div className="emp-person-text">
-                        <span>{liLabel(a)}</span>
-                        {a.linkedinProfileUrl &&
-                        !/\/in\/me\/?$/i.test(a.linkedinProfileUrl) ? (
-                          <a
-                            className="linkedin-link"
-                            href={a.linkedinProfileUrl}
-                            target="_blank"
-                            rel="noreferrer"
-                          >
-                            {a.linkedinProfileUrl.replace(
-                              /^https?:\/\/(www\.)?linkedin\.com/i,
-                              '',
-                            )}
-                          </a>
+                        <span className="emp-person-name">{a.nome}</span>
+                        <span className="muted" title={a.id}>
+                          {a.id}
+                        </span>
+                        {a.containerName ? (
+                          <span className="muted">{a.containerName}</span>
                         ) : null}
                       </div>
-                    )}
-                    {!needsLinkedin(a) &&
-                    a.linkedinStatus &&
-                    a.linkedinStatus !== 'ativa' ? (
-                      <div className="tag">{a.linkedinStatus}</div>
-                    ) : null}
-                  </td>
-                  <td className="muted">{a.serial || `:${a.adbPort}`}</td>
-                  <td>
-                    <span className="tag">{statusLabel(a.status)}</span>
-                  </td>
-                  <td>
-                    {canWrite && (
-                      <div className="usr-actions">
-                        <button
-                          type="button"
-                          className="btn-secondary"
-                          onClick={() => openEdit(a)}
+                    </td>
+                    <td className="muted">
+                      {needsLinkedin(a) ? (
+                        <span
+                          className="tag tag-warn"
+                          title="Complete usuário no editar"
                         >
-                          Editar
-                        </button>
-                        {a.status !== 'ativo' && (
+                          falta LinkedIn
+                        </span>
+                      ) : (
+                        <div className="emp-person-text">
+                          <span>{liLabel(a)}</span>
+                          {a.linkedinProfileUrl &&
+                          !/\/in\/me\/?$/i.test(a.linkedinProfileUrl) ? (
+                            <a
+                              className="linkedin-link"
+                              href={a.linkedinProfileUrl}
+                              target="_blank"
+                              rel="noreferrer"
+                            >
+                              {a.linkedinProfileUrl.replace(
+                                /^https?:\/\/(www\.)?linkedin\.com/i,
+                                '',
+                              )}
+                            </a>
+                          ) : null}
+                        </div>
+                      )}
+                      {!needsLinkedin(a) &&
+                      a.linkedinStatus &&
+                      a.linkedinStatus !== 'ativa' ? (
+                        <div className="tag">{a.linkedinStatus}</div>
+                      ) : null}
+                    </td>
+                    <td className="muted">{a.serial || `:${a.adbPort}`}</td>
+                    <td>
+                      <span className="tag">{statusLabel(a.status)}</span>
+                      {ctx ? (
+                        <span
+                          className={`tag ${
+                            a.status === 'ativo'
+                              ? 'usr-status-on'
+                              : pending > 0
+                                ? 'tag-warn'
+                                : ''
+                          }`}
+                          title={
+                            pending > 0 ? `${pending} job(s) pending` : undefined
+                          }
+                        >
+                          {ctx}
+                          {pending > 0 ? ` · ${pending} jobs` : ''}
+                        </span>
+                      ) : null}
+                    </td>
+                    <td>
+                      {canWrite && (
+                        <div className="usr-actions">
+                          <button
+                            type="button"
+                            className="btn-secondary"
+                            onClick={() => openEdit(a)}
+                          >
+                            Editar
+                          </button>
+                          {a.status !== 'ativo' && (
+                            <button
+                              type="button"
+                              className="btn-secondary"
+                              disabled={busyId === a.id}
+                              onClick={() => runAction(a, 'wake')}
+                            >
+                              Acordar
+                            </button>
+                          )}
                           <button
                             type="button"
                             className="btn-secondary"
                             disabled={busyId === a.id}
-                            onClick={() => runAction(a, 'wake')}
+                            onClick={() => runAction(a, 'remove')}
                           >
-                            Acordar
+                            Remover
                           </button>
-                        )}
-                        <button
-                          type="button"
-                          className="btn-secondary"
-                          disabled={busyId === a.id}
-                          onClick={() => runAction(a, 'remove')}
-                        >
-                          Remover
-                        </button>
-                      </div>
-                    )}
-                  </td>
-                </tr>
-              ))}
+                        </div>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
@@ -399,9 +525,15 @@ export default function Agentes() {
         <div>
           <h1>Agentes</h1>
           <p className="subtitle">
-            Vendedor = host + device + LinkedIn
+            Vendedor = host + device + LinkedIn · slots por máquina
             {meta.total
-              ? ` · ${meta.total} (${meta.ativos} ativos / ${meta.dormindo} dormindo)`
+              ? ` · ${hostSections.length} host${
+                  hostSections.length === 1 ? '' : 's'
+                } · ${meta.total} agente${meta.total === 1 ? '' : 's'} (${
+                  meta.ativos
+                } no slot / ${meta.dormindo} dormindo) · máx. ${
+                  slotsMeta.maxAtivos
+                } ativo${slotsMeta.maxAtivos === 1 ? '' : 's'}/host`
               : ''}
           </p>
         </div>
@@ -439,9 +571,7 @@ export default function Agentes() {
         <p className="empty">Nenhum agente. Gestores podem cadastrar aqui.</p>
       )}
 
-      {renderTable(ativos, 'Ativos')}
-      {renderTable(dormindo, 'Dormindo')}
-      {renderTable(outros, 'Outros')}
+      {!loading && hostSections.map((h) => renderHostSection(h))}
 
       {formOpen && (
         <div

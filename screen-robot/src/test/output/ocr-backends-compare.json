@@ -4,7 +4,7 @@
     "tesseract": {
       "ok": true,
       "error": null,
-      "ms": 896,
+      "ms": 3645,
       "hits": 84,
       "connectHits": [],
       "connectExact": [],
@@ -592,7 +592,7 @@
     "macos-vision": {
       "ok": true,
       "error": null,
-      "ms": 325,
+      "ms": 34448,
       "hits": 32,
       "connectHits": [
         {
@@ -884,7 +884,7 @@
     "rapidocr": {
       "ok": true,
       "error": null,
-      "ms": 2056,
+      "ms": 1944,
       "hits": 33,
       "connectHits": [
         {
@@ -1198,7 +1198,7 @@
     "paddleocr": {
       "ok": true,
       "error": null,
-      "ms": 10641,
+      "ms": 10530,
       "hits": 33,
       "connectHits": [
         {
@@ -1512,7 +1512,7 @@
     "easyocr": {
       "ok": true,
       "error": null,
-      "ms": 5759,
+      "ms": 6792,
       "hits": 38,
       "connectHits": [
         {
@@ -1856,51 +1856,45 @@
     "all": {
       "ok": true,
       "error": null,
-      "ms": 17671,
-      "hits": 110,
+      "ms": 4012,
+      "hits": 88,
       "connectHits": [
         {
           "text": "Connect",
-          "x": 455,
+          "x": 458,
           "y": 344
         },
         {
           "text": "Connect",
-          "x": 455,
+          "x": 457,
           "y": 589
         },
         {
           "text": "Connect",
-          "x": 455,
+          "x": 459,
           "y": 784
         }
       ],
       "connectExact": [
         {
           "text": "Connect",
-          "x": 455,
+          "x": 458,
           "y": 344
         },
         {
           "text": "Connect",
-          "x": 455,
+          "x": 457,
           "y": 589
         },
         {
           "text": "Connect",
-          "x": 455,
+          "x": 459,
           "y": 784
         }
       ],
       "sample": [
         {
           "type": "text",
-          "text": "à",
-          "x": 133,
-          "y": 22
-        },
-        {
-          "type": "text",
           "text": "&",
           "x": 135,
           "y": 23
@@ -1914,7 +1908,7 @@
         {
           "type": "text",
           "text": "3:30",
-          "x": 96,
+          "x": 89,
           "y": 25
         },
         {
@@ -1926,32 +1920,8 @@
         {
           "type": "text",
           "text": "comprador",
-          "x": 143,
+          "x": 144,
           "y": 82
-        },
-        {
-          "type": "text",
-          "text": "Ist",
-          "x": 244,
-          "y": 152
-        },
-        {
-          "type": "text",
-          "text": "2nd",
-          "x": 318,
-          "y": 152
-        },
-        {
-          "type": "text",
-          "text": "3rd+",
-          "x": 399,
-          "y": 152
-        },
-        {
-          "type": "text",
-          "text": "Location",
-          "x": 499,
-          "y": 152
         },
         {
           "type": "text",
@@ -1962,81 +1932,7 @@
         {
           "type": "text",
           "text": "1st",
-          "x": 243,
-          "y": 153
-        }
-      ],
-      "all": [
-        {
-          "type": "text",
-          "text": "à",
-          "x": 133,
-          "y": 22
-        },
-        {
-          "type": "text",
-          "text": "&",
-          "x": 135,
-          "y": 23
-        },
-        {
-          "type": "text",
-          "text": "中",
-          "x": 135,
-          "y": 24
-        },
-        {
-          "type": "text",
-          "text": "3:30",
-          "x": 96,
-          "y": 25
-        },
-        {
-          "type": "text",
-          "text": "(",
-          "x": 71,
-          "y": 81
-        },
-        {
-          "type": "text",
-          "text": "comprador",
-          "x": 143,
-          "y": 82
-        },
-        {
-          "type": "text",
-          "text": "Ist",
           "x": 244,
-          "y": 152
-        },
-        {
-          "type": "text",
-          "text": "2nd",
-          "x": 318,
-          "y": 152
-        },
-        {
-          "type": "text",
-          "text": "3rd+",
-          "x": 399,
-          "y": 152
-        },
-        {
-          "type": "text",
-          "text": "Location",
-          "x": 499,
-          "y": 152
-        },
-        {
-          "type": "text",
-          "text": "=",
-          "x": 36,
-          "y": 153
-        },
-        {
-          "type": "text",
-          "text": "1st",
-          "x": 243,
           "y": 153
         },
         {
@@ -2047,39 +1943,107 @@
         },
         {
           "type": "text",
+          "text": "2nd",
+          "x": 318,
+          "y": 153
+        },
+        {
+          "type": "text",
           "text": ")(",
           "x": 358,
           "y": 153
         },
         {
           "type": "text",
-          "text": "Locatior",
-          "x": 500,
+          "text": "3rd+",
+          "x": 399,
           "y": 153
         },
         {
           "type": "text",
+          "text": "Locatior",
+          "x": 501,
+          "y": 153
+        }
+      ],
+      "all": [
+        {
+          "type": "text",
+          "text": "&",
+          "x": 135,
+          "y": 23
+        },
+        {
+          "type": "text",
+          "text": "中",
+          "x": 135,
+          "y": 24
+        },
+        {
+          "type": "text",
+          "text": "3:30",
+          "x": 89,
+          "y": 25
+        },
+        {
+          "type": "text",
+          "text": "(",
+          "x": 71,
+          "y": 81
+        },
+        {
+          "type": "text",
+          "text": "comprador",
+          "x": 144,
+          "y": 82
+        },
+        {
+          "type": "text",
           "text": "=",
-          "x": 38,
-          "y": 154
+          "x": 36,
+          "y": 153
+        },
+        {
+          "type": "text",
+          "text": "1st",
+          "x": 244,
+          "y": 153
+        },
+        {
+          "type": "text",
+          "text": ")(",
+          "x": 283,
+          "y": 153
+        },
+        {
+          "type": "text",
+          "text": "2nd",
+          "x": 318,
+          "y": 153
+        },
+        {
+          "type": "text",
+          "text": ")(",
+          "x": 358,
+          "y": 153
+        },
+        {
+          "type": "text",
+          "text": "3rd+",
+          "x": 399,
+          "y": 153
+        },
+        {
+          "type": "text",
+          "text": "Locatior",
+          "x": 501,
+          "y": 153
         },
         {
           "type": "text",
           "text": "People",
-          "x": 119,
+          "x": 117,
           "y": 154
-        },
-        {
-          "type": "text",
-          "text": "GeiaiS, DiaZII",
-          "x": 166,
-          "y": 191
-        },
-        {
-          "type": "text",
-          "text": "UcIa19,",
-          "x": 141,
-          "y": 193
         },
         {
           "type": "text",
@@ -2091,18 +2055,6 @@
           "type": "text",
           "text": "Veiais,",
           "x": 139,
-          "y": 194
-        },
-        {
-          "type": "text",
-          "text": "velaio, viacil",
-          "x": 168,
-          "y": 194
-        },
-        {
-          "type": "text",
-          "text": "Dlazil",
-          "x": 203,
           "y": 194
         },
         {
@@ -2131,12 +2083,6 @@
         },
         {
           "type": "text",
-          "text": "Past: Comprador Técnico at Neuman & Esser",
-          "x": 287,
-          "y": 224
-        },
-        {
-          "type": "text",
           "text": "Past:CompradorTecnicoat Neuman&Esser",
           "x": 296,
           "y": 224
@@ -2155,12 +2101,6 @@
         },
         {
           "type": "text",
-          "text": "1 mutual connection",
-          "x": 242,
-          "y": 264
-        },
-        {
-          "type": "text",
           "text": "1",
           "x": 154,
           "y": 265
@@ -2173,9 +2113,9 @@
         },
         {
           "type": "text",
-          "text": "Denise dos Anjos • 2nd",
-          "x": 217,
-          "y": 334
+          "text": "connection",
+          "x": 268,
+          "y": 265
         },
         {
           "type": "text",
@@ -2186,7 +2126,7 @@
         {
           "type": "text",
           "text": "2nd",
-          "x": 328,
+          "x": 327,
           "y": 334
         },
         {
@@ -2204,7 +2144,7 @@
         {
           "type": "text",
           "text": "Connect",
-          "x": 455,
+          "x": 458,
           "y": 344
         },
         {
@@ -2221,15 +2161,15 @@
         },
         {
           "type": "text",
-          "text": "Senior Procurement Spec...",
-          "x": 229,
+          "text": "Spec...",
+          "x": 327,
           "y": 361
         },
         {
           "type": "text",
-          "text": "Spec...",
-          "x": 327,
-          "y": 361
+          "text": "Campinas,Sao Paulo,",
+          "x": 218,
+          "y": 384
         },
         {
           "type": "text",
@@ -2245,26 +2185,14 @@
         },
         {
           "type": "text",
-          "text": "Campinas,Sao Paulo,",
-          "x": 212,
-          "y": 385
-        },
-        {
-          "type": "text",
           "text": "Brazil",
-          "x": 133,
+          "x": 134,
           "y": 411
         },
         {
           "type": "text",
           "text": "Past:",
           "x": 126,
-          "y": 445
-        },
-        {
-          "type": "text",
-          "text": "Past: Comprador sênior at Eldor Do Brasil",
-          "x": 270,
           "y": 445
         },
         {
@@ -2293,12 +2221,6 @@
         },
         {
           "type": "text",
-          "text": "Past: Comprador sênior at Eldor Do Brasiil",
-          "x": 269,
-          "y": 448
-        },
-        {
-          "type": "text",
           "text": "Automotivos.",
           "x": 276,
           "y": 468
@@ -2317,26 +2239,8 @@
         },
         {
           "type": "text",
-          "text": "Componentes Automotivos...",
-          "x": 222,
-          "y": 470
-        },
-        {
-          "type": "text",
-          "text": "Sạ0g",
-          "x": 128,
-          "y": 499
-        },
-        {
-          "type": "text",
           "text": "1",
           "x": 154,
-          "y": 510
-        },
-        {
-          "type": "text",
-          "text": "1 mutual connection",
-          "x": 243,
           "y": 510
         },
         {
@@ -2348,20 +2252,20 @@
         {
           "type": "text",
           "text": "1mutual connection",
-          "x": 221,
+          "x": 213,
           "y": 511
+        },
+        {
+          "type": "text",
+          "text": "connection",
+          "x": 269,
+          "y": 512
         },
         {
           "type": "text",
           "text": "@",
           "x": 281,
           "y": 578
-        },
-        {
-          "type": "text",
-          "text": "Gustavo Nucci © • 2nd",
-          "x": 213,
-          "y": 579
         },
         {
           "type": "text",
@@ -2378,8 +2282,8 @@
         {
           "type": "text",
           "text": "2nd",
-          "x": 329,
-          "y": 580
+          "x": 328,
+          "y": 579
         },
         {
           "type": "text",
@@ -2390,20 +2294,20 @@
         {
           "type": "text",
           "text": "Connect",
-          "x": 455,
+          "x": 457,
           "y": 589
+        },
+        {
+          "type": "text",
+          "text": "Procuremen...",
+          "x": 292,
+          "y": 604
         },
         {
           "type": "text",
           "text": "Purchasing",
           "x": 161,
-          "y": 605
-        },
-        {
-          "type": "text",
-          "text": "Procuremen _",
-          "x": 291,
-          "y": 605
+          "y": 606
         },
         {
           "type": "text",
@@ -2414,12 +2318,6 @@
         {
           "type": "text",
           "text": "PurchasingIProcuremen...",
-          "x": 231,
-          "y": 606
-        },
-        {
-          "type": "text",
-          "text": "Purchasing | Procuremen...",
           "x": 231,
           "y": 606
         },
@@ -2440,12 +2338,6 @@
           "text": "AsGa",
           "x": 289,
           "y": 663
-        },
-        {
-          "type": "text",
-          "text": "Past: Comprador at AsGa S/A",
-          "x": 225,
-          "y": 664
         },
         {
           "type": "text",
@@ -2473,21 +2365,15 @@
         },
         {
           "type": "text",
-          "text": "3 mutual connections",
-          "x": 274,
-          "y": 704
-        },
-        {
-          "type": "text",
           "text": "3mutualconnections",
           "x": 244,
           "y": 705
         },
         {
           "type": "text",
-          "text": "Weslley Amorim • 2nd",
-          "x": 213,
-          "y": 774
+          "text": "connections",
+          "x": 302,
+          "y": 705
         },
         {
           "type": "text",
@@ -2504,7 +2390,7 @@
         {
           "type": "text",
           "text": "2nd",
-          "x": 317,
+          "x": 316,
           "y": 774
         },
         {
@@ -2516,13 +2402,13 @@
         {
           "type": "text",
           "text": "Connect",
-          "x": 455,
+          "x": 459,
           "y": 784
         },
         {
           "type": "text",
           "text": "comprador",
-          "x": 159,
+          "x": 160,
           "y": 801
         },
         {
@@ -2540,19 +2426,19 @@
         {
           "type": "text",
           "text": "OWORK",
-          "x": 64,
-          "y": 824
+          "x": 60,
+          "y": 825
         },
         {
           "type": "text",
           "text": "Belo Horizonte,Minas",
-          "x": 208,
+          "x": 206,
           "y": 825
         },
         {
           "type": "text",
           "text": "Gerais,Brazil",
-          "x": 168,
+          "x": 170,
           "y": 851
         },
         {
@@ -2572,12 +2458,6 @@
           "text": "Baleia",
           "x": 411,
           "y": 885
-        },
-        {
-          "type": "text",
-          "text": "Current: Comprador at Hospital da Baleia",
-          "x": 271,
-          "y": 886
         },
         {
           "type": "text",
@@ -2605,20 +2485,8 @@
         },
         {
           "type": "text",
-          "text": "1mutual connection",
-          "x": 235,
-          "y": 927
-        },
-        {
-          "type": "text",
           "text": "nutualconriection",
           "x": 240,
-          "y": 927
-        },
-        {
-          "type": "text",
-          "text": "nutual connection",
-          "x": 241,
           "y": 927
         },
         {

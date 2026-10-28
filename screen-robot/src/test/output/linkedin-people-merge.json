@@ -4,7 +4,7 @@
     {
       "engine": "rapidocr",
       "ok": true,
-      "ms": 22747,
+      "ms": 5661,
       "hits": [
         {
           "type": "text",
@@ -210,7 +210,7 @@
     {
       "engine": "macos-vision",
       "ok": true,
-      "ms": 21443,
+      "ms": 27003,
       "hits": [
         {
           "type": "text",
@@ -410,7 +410,7 @@
     {
       "engine": "paddleocr",
       "ok": true,
-      "ms": 14278,
+      "ms": 19153,
       "hits": [
         {
           "type": "text",
@@ -616,7 +616,7 @@
     {
       "engine": "easyocr",
       "ok": true,
-      "ms": 4517,
+      "ms": 11392,
       "hits": [
         {
           "type": "text",
@@ -852,7 +852,7 @@
     {
       "engine": "tesseract",
       "ok": true,
-      "ms": 840,
+      "ms": 3641,
       "hits": [
         {
           "type": "text",

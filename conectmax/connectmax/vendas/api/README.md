@@ -42,6 +42,18 @@ npm run start:dev
 
 Default: `http://localhost:3000`
 
+### Local → base de produção
+
+No `.env` da API (não versionado): `DB_HOST=144.126.154.90` + user/senha/db de produção (`credenciais.md` / VPS). **`DB_SYNC=false`** (nunca synchronize contra prod).
+
+| | Local (Docker/Homebrew) | Produção (VPS 144) |
+|--|--|--|
+| `DB_HOST` | `localhost` | `144.126.154.90` |
+| `DB_SYNC` | `true` ok | **`false`** |
+
+**Antes → depois:** local podia usar Postgres da máquina → agora o `.env` local aponta ao Postgres da VPS 144.  
+**Rollback:** `DB_HOST=localhost` (ou `127.0.0.1`), senha do Postgres local, `DB_SYNC=true`; reinicie a API.
+
 CORS liberado (`enableCors({ origin: true })`) para o front em [`../web/README.md`](../web/README.md).  
 **Antes → depois:** sem CORS → browser em outra origem consegue `GET /profiles`.  
 **Rollback:** remover `app.enableCors(...)` em `src/main.ts`.

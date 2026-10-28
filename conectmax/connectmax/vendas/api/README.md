@@ -110,7 +110,9 @@ Cadastro B2B a partir do funil Conect. Seed: [`../../docs/planilhas-funil/empres
 |--------|--------|
 | `GET /agentes` | Lista (`grouped`, `sync`, `q`, `hostKey`, `status`) |
 | `POST /agentes` | Cria (host inline ou `copyHostFromAgenteId`; LI opcional; `provisionDevice=false` só cadastro) |
-| `PATCH /agentes/:id` | `nome` (agentId; atualiza `gestor_agentes`) / host / notas / LinkedIn |
+| `PATCH /agentes/:id` | `nome` (agentId; reatribui `agent_id` em conexões/jobs/mensagens/runtime/`gestor_agentes`) / host / notas / LinkedIn |
+
+**Antes → depois (renomear agente):** só mudava `agentes.nome` (+ `gestor_agentes`) → funil/dashboard ficavam vazios no nome novo. Agora o PATCH reescreve `agent_id` nas tabelas de fila. **Rollback:** remova `reassignAgentIdRefs`.
 | `POST /agentes/sync` | docker ps nos hosts já cadastrados |
 | `POST /agentes/:id/sleep\|wake\|ping\|backup` | ops device |
 | `DELETE /agentes/:id` | remove container + linha |

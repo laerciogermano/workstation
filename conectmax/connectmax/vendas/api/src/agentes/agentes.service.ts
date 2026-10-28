@@ -525,7 +525,45 @@ export class AgentesService implements OnModuleInit {
     return Boolean(row.apiKeyHash);
   }
 
-  /** Atualiza host / notas / LinkedIn (não mexe no container). */
+  /**
+   * `nome` = agentId em conexões/jobs/mensagens/runtime/gestores.
+   * Renomear sem isso esvazia o funil (filtra por agentId).
+   */
+  private async reassignAgentIdRefs(
+    oldNome: string,
+    newNome: string,
+  ): Promise<void> {
+    const ds = this.agentes.manager;
+    const tables = [
+      'client_connection_linkedin',
+      'client_linkedin_message',
+      'agent_jobs',
+      'gestor_agentes',
+    ] as const;
+    for (const table of tables) {
+      await ds.query(
+        `UPDATE ${table} SET agent_id = $1 WHERE agent_id = $2`,
+        [newNome, oldNome],
+      );
+    }
+    // PK em agent_runtime: se já existe o novo, apaga o antigo; senão renomeia.
+    const existing = await ds.query(
+      `SELECT 1 FROM agent_runtime WHERE agent_id = $1 LIMIT 1`,
+      [newNome],
+    );
+    if (Array.isArray(existing) && existing.length) {
+      await ds.query(`DELETE FROM agent_runtime WHERE agent_id = $1`, [
+        oldNome,
+      ]);
+    } else {
+      await ds.query(
+        `UPDATE agent_runtime SET agent_id = $1 WHERE agent_id = $2`,
+        [newNome, oldNome],
+      );
+    }
+  }
+
+  /** Atualiza nome / host / notas / LinkedIn (não mexe no container). */
   async update(id: string, dto: UpdateAgenteDto): Promise<Agente> {
     const row = await this.findOne(id);
     if (dto.nome !== undefined) {
@@ -542,10 +580,7 @@ export class AgentesService implements OnModuleInit {
         }
         const oldNome = row.nome;
         row.nome = nome;
-        await this.gestorAgentes.update(
-          { agentId: oldNome },
-          { agentId: nome },
-        );
+        await this.reassignAgentIdRefs(oldNome, nome);
       }
     }
     if (dto.hostNome !== undefined) row.hostNome = dto.hostNome.trim();

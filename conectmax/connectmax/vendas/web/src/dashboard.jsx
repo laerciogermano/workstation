@@ -78,46 +78,32 @@ const HEARTBEAT_ONLINE_MS = 2 * 60 * 1000;
 
 /**
  * Premissas de potencial (produtividade real, não capacidade teórica diária):
- * 400 conexões/agente/mês → R$ 1.000 MRR; 1.200 conexões → 1 cliente (~R$ 3.000 MRR).
+ * 400 conexões/agente/mês → R$ 1.000 MRR.
  */
 const PROJ = {
   conexoesPorAgenteMes: 400,
   mrrPorBloco: 1000,
   conexoesPorBloco: 400,
-  conexoesPorCliente: 1200,
 };
-const CUSTO_AGENTE_KEY = 'cx-proj-custo-agente';
 
 const brl = new Intl.NumberFormat('pt-BR', {
   style: 'currency',
   currency: 'BRL',
   maximumFractionDigits: 0,
 });
-const num = new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 1 });
 
 function money(v) {
   if (!Number.isFinite(v)) return '—';
   return brl.format(Math.round(v));
 }
 
-function projectFromAgents(agentCount, custoPorAgente) {
+function projectFromAgents(agentCount) {
   const n = Math.max(0, Number(agentCount) || 0);
-  const custo = Math.max(0, Number(custoPorAgente) || 0);
   const conexoesMes = n * PROJ.conexoesPorAgenteMes;
   const mrrBruto = (conexoesMes / PROJ.conexoesPorBloco) * PROJ.mrrPorBloco;
-  const clientes = conexoesMes / PROJ.conexoesPorCliente;
-  const custoMes = n * custo;
-  const lucroMes = mrrBruto - custoMes;
   return {
-    agentes: n,
-    conexoesMes,
-    clientes,
     mrrBruto,
     mrrAnual: mrrBruto * 12,
-    custoMes,
-    lucroMes,
-    lucroAnual: lucroMes * 12,
-    margem: mrrBruto > 0 ? lucroMes / mrrBruto : 0,
   };
 }
 
@@ -213,11 +199,6 @@ export default function Dashboard({
   const [insights, setInsights] = useState(EMPTY_INSIGHTS);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [custoAgente, setCustoAgente] = useState(() => {
-    const raw = localStorage.getItem(CUSTO_AGENTE_KEY);
-    const n = raw == null ? 0 : Number(raw);
-    return Number.isFinite(n) && n >= 0 ? n : 0;
-  });
 
   useEffect(() => {
     let cancelled = false;
@@ -305,21 +286,10 @@ export default function Dashboard({
     [insights.byAgent],
   );
 
-  const agentesAtivos = useMemo(
-    () => insights.byAgent.filter((a) => a.status === 'ativo').length,
-    [insights.byAgent],
-  );
-
   const projecao = useMemo(
-    () => projectFromAgents(insights.byAgent.length, custoAgente),
-    [insights.byAgent.length, custoAgente],
+    () => projectFromAgents(insights.byAgent.length),
+    [insights.byAgent.length],
   );
-
-  function onCustoAgenteChange(value) {
-    const n = Math.max(0, Number(value) || 0);
-    setCustoAgente(n);
-    localStorage.setItem(CUSTO_AGENTE_KEY, String(n));
-  }
 
   const axisProps = {
     stroke: chartTheme.tick,
@@ -385,99 +355,6 @@ export default function Dashboard({
           </section>
         );
       })}
-
-      <section className="kpi-group proj-group">
-        <div className="kpi-group-head">
-          <h2 className="kpi-group-title">Projeção financeira</h2>
-          <p className="kpi-group-note">
-            {PROJ.conexoesPorAgenteMes} conexões/agente/mês ·{' '}
-            {money(PROJ.mrrPorBloco)} MRR a cada {PROJ.conexoesPorBloco}{' '}
-            conexões · 1 cliente / {PROJ.conexoesPorCliente} conexões
-          </p>
-        </div>
-        <label className="proj-custo">
-          <span className="kpi-label">Custo mensal / agente (R$)</span>
-          <input
-            type="number"
-            min={0}
-            step={100}
-            inputMode="numeric"
-            value={custoAgente}
-            disabled={loading}
-            onChange={(e) => onCustoAgenteChange(e.target.value)}
-            aria-label="Custo mensal por agente em reais"
-          />
-        </label>
-        <div className="kpi-grid">
-          <article className="kpi">
-            <p className="kpi-label">Agentes</p>
-            <p className="kpi-value">
-              {loading ? '…' : projecao.agentes}
-            </p>
-            {!loading && (
-              <p className="kpi-hint">
-                {agentesAtivos} ativo
-                {agentesAtivos === 1 ? '' : 's'} · base cadastrada
-              </p>
-            )}
-          </article>
-          <article className="kpi">
-            <p className="kpi-label">Conexões / mês</p>
-            <p className="kpi-value">
-              {loading ? '…' : num.format(projecao.conexoesMes)}
-            </p>
-            <p className="kpi-hint">
-              {PROJ.conexoesPorAgenteMes} × agentes
-            </p>
-          </article>
-          <article className="kpi">
-            <p className="kpi-label">Clientes estimados</p>
-            <p className="kpi-value">
-              {loading ? '…' : num.format(projecao.clientes)}
-            </p>
-            <p className="kpi-hint">
-              a cada {PROJ.conexoesPorCliente} conexões
-            </p>
-          </article>
-          <article className="kpi">
-            <p className="kpi-label">Faturamento bruto (MRR)</p>
-            <p className="kpi-value">
-              {loading ? '…' : money(projecao.mrrBruto)}
-            </p>
-            <p className="kpi-hint">
-              anual {loading ? '…' : money(projecao.mrrAnual)}
-            </p>
-          </article>
-          <article className="kpi">
-            <p className="kpi-label">Custo operacional</p>
-            <p className="kpi-value">
-              {loading ? '…' : money(projecao.custoMes)}
-            </p>
-            <p className="kpi-hint">
-              {money(custoAgente)} × agentes
-            </p>
-          </article>
-          <article className="kpi">
-            <p className="kpi-label">Lucro estimado</p>
-            <p
-              className={`kpi-value${
-                !loading && projecao.lucroMes < 0 ? ' kpi-value-neg' : ''
-              }`}
-            >
-              {loading ? '…' : money(projecao.lucroMes)}
-            </p>
-            {!loading && (
-              <p className="kpi-hint">
-                margem{' '}
-                {(projecao.margem * 100).toLocaleString('pt-BR', {
-                  maximumFractionDigits: 0,
-                })}
-                % · anual {money(projecao.lucroAnual)}
-              </p>
-            )}
-          </article>
-        </div>
-      </section>
 
       <section className="kpi-group">
         <div className="kpi-group-head">
@@ -909,6 +786,28 @@ export default function Dashboard({
           rows={insights.recent}
         />
       </div>
+
+      <section className="kpi-group proj-group">
+        <div className="kpi-group-head">
+          <h2 className="kpi-group-title">Projeção financeira</h2>
+          <p className="kpi-group-note">
+            {PROJ.conexoesPorAgenteMes} conexões/agente/mês ·{' '}
+            {money(PROJ.mrrPorBloco)} MRR a cada {PROJ.conexoesPorBloco}{' '}
+            conexões
+          </p>
+        </div>
+        <div className="kpi-grid">
+          <article className="kpi">
+            <p className="kpi-label">Faturamento bruto (MRR)</p>
+            <p className="kpi-value">
+              {loading ? '…' : money(projecao.mrrBruto)}
+            </p>
+            <p className="kpi-hint">
+              anual {loading ? '…' : money(projecao.mrrAnual)}
+            </p>
+          </article>
+        </div>
+      </section>
     </div>
   );
 }

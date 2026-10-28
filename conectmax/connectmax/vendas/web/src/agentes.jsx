@@ -70,6 +70,7 @@ export default function Agentes() {
   const [busyId, setBusyId] = useState(null);
   const [note, setNote] = useState(null);
   const [formOpen, setFormOpen] = useState(false);
+  const [editingId, setEditingId] = useState(null);
   const [form, setForm] = useState(EMPTY_FORM);
   const [formNote, setFormNote] = useState(null);
   const [saving, setSaving] = useState(false);
@@ -120,6 +121,7 @@ export default function Agentes() {
   }, [load]);
 
   function openCreate() {
+    setEditingId(null);
     setForm({
       ...EMPTY_FORM,
       copyHostFromAgenteId: allRows[0]?.id ?? '',
@@ -128,8 +130,32 @@ export default function Agentes() {
     setFormOpen(true);
   }
 
+  function openEdit(row) {
+    setEditingId(row.id);
+    setForm({
+      ...EMPTY_FORM,
+      nome: row.nome || '',
+      hostNome: row.hostNome || '',
+      ipPublico: row.ipPublico || '',
+      localhost: Boolean(row.localhost),
+      sshUser: row.sshUser || 'root',
+      sshPort: String(row.sshPort ?? 22),
+      sshPassword: '',
+      notas: row.notas || '',
+      linkedinNome: row.linkedinNome || '',
+      linkedinUsuario: row.linkedinUsuario || '',
+      linkedinSenha: '',
+      linkedinProfileUrl: row.linkedinProfileUrl || '',
+      linkedinHeadline: row.linkedinHeadline || '',
+      linkedinStatus: row.linkedinStatus || 'ativa',
+    });
+    setFormNote(null);
+    setFormOpen(true);
+  }
+
   function closeForm() {
     setFormOpen(false);
+    setEditingId(null);
     setForm(EMPTY_FORM);
     setFormNote(null);
   }
@@ -138,61 +164,103 @@ export default function Agentes() {
     setForm((prev) => ({ ...prev, [key]: value }));
   }
 
-  async function submitCreate(e) {
+  async function submitForm(e) {
     e.preventDefault();
     if (saving || !canWrite) return;
-    const nome = form.nome.trim();
-    if (!nome) {
-      setFormNote('Nome é obrigatório.');
-      return;
-    }
-    const payload = {
-      nome,
-      start: Boolean(form.start),
-      provisionDevice: Boolean(form.provisionDevice),
-      notas: form.notas.trim() || null,
-      linkedinStatus: form.linkedinStatus || 'ativa',
-    };
-    if (form.copyHostFromAgenteId) {
-      payload.copyHostFromAgenteId = form.copyHostFromAgenteId;
-    } else {
-      if (!form.hostNome.trim()) {
-        setFormNote('Host: informe hostNome ou copie de outro agente.');
-        return;
-      }
-      payload.hostNome = form.hostNome.trim();
-      payload.localhost = Boolean(form.localhost);
-      if (!payload.localhost) {
-        if (!form.ipPublico.trim()) {
-          setFormNote('ipPublico obrigatório (ou marque localhost).');
-          return;
-        }
-        payload.ipPublico = form.ipPublico.trim();
-      }
-      payload.sshUser = form.sshUser.trim() || 'root';
-      const port = Number(form.sshPort);
-      if (Number.isFinite(port)) payload.sshPort = port;
-      if (form.sshPassword) payload.sshPassword = form.sshPassword;
-    }
-    if (form.fromBackup.trim()) payload.fromBackup = form.fromBackup.trim();
-    const adb = Number(form.adbPort);
-    if (Number.isFinite(adb) && adb >= 1 && adb <= 65535) {
-      payload.adbPort = adb;
-    }
-    if (form.linkedinNome.trim()) payload.linkedinNome = form.linkedinNome.trim();
-    if (form.linkedinUsuario.trim()) {
-      payload.linkedinUsuario = form.linkedinUsuario.trim();
-    }
-    if (form.linkedinSenha) payload.linkedinSenha = form.linkedinSenha;
-    if (form.linkedinProfileUrl.trim()) {
-      payload.linkedinProfileUrl = form.linkedinProfileUrl.trim();
-    }
-    if (form.linkedinHeadline.trim()) {
-      payload.linkedinHeadline = form.linkedinHeadline.trim();
-    }
     setSaving(true);
     setFormNote(null);
     try {
+      if (editingId) {
+        const payload = {
+          hostNome: form.hostNome.trim() || undefined,
+          localhost: Boolean(form.localhost),
+          notas: form.notas.trim() || null,
+          linkedinNome: form.linkedinNome.trim() || null,
+          linkedinUsuario: form.linkedinUsuario.trim() || null,
+          linkedinProfileUrl: form.linkedinProfileUrl.trim() || null,
+          linkedinHeadline: form.linkedinHeadline.trim() || null,
+          linkedinStatus: form.linkedinStatus || 'ativa',
+        };
+        if (!payload.localhost) {
+          if (!form.ipPublico.trim()) {
+            setFormNote('ipPublico obrigatório (ou marque localhost).');
+            setSaving(false);
+            return;
+          }
+          payload.ipPublico = form.ipPublico.trim();
+        }
+        payload.sshUser = form.sshUser.trim() || 'root';
+        const port = Number(form.sshPort);
+        if (Number.isFinite(port)) payload.sshPort = port;
+        if (form.sshPassword) payload.sshPassword = form.sshPassword;
+        if (form.linkedinSenha) payload.linkedinSenha = form.linkedinSenha;
+        const res = await fetch(`${AGENTES_URL}/${editingId}`, {
+          method: 'PATCH',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        const json = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(errMsg(json, res));
+        closeForm();
+        setNote(`Agente “${form.nome || editingId}” atualizado.`);
+        await load({ sync: false });
+        return;
+      }
+
+      const nome = form.nome.trim();
+      if (!nome) {
+        setFormNote('Nome é obrigatório.');
+        setSaving(false);
+        return;
+      }
+      const payload = {
+        nome,
+        start: Boolean(form.start),
+        provisionDevice: Boolean(form.provisionDevice),
+        notas: form.notas.trim() || null,
+        linkedinStatus: form.linkedinStatus || 'ativa',
+      };
+      if (form.copyHostFromAgenteId) {
+        payload.copyHostFromAgenteId = form.copyHostFromAgenteId;
+      } else {
+        if (!form.hostNome.trim()) {
+          setFormNote('Host: informe hostNome ou copie de outro agente.');
+          setSaving(false);
+          return;
+        }
+        payload.hostNome = form.hostNome.trim();
+        payload.localhost = Boolean(form.localhost);
+        if (!payload.localhost) {
+          if (!form.ipPublico.trim()) {
+            setFormNote('ipPublico obrigatório (ou marque localhost).');
+            setSaving(false);
+            return;
+          }
+          payload.ipPublico = form.ipPublico.trim();
+        }
+        payload.sshUser = form.sshUser.trim() || 'root';
+        const port = Number(form.sshPort);
+        if (Number.isFinite(port)) payload.sshPort = port;
+        if (form.sshPassword) payload.sshPassword = form.sshPassword;
+      }
+      if (form.fromBackup.trim()) payload.fromBackup = form.fromBackup.trim();
+      const adb = Number(form.adbPort);
+      if (Number.isFinite(adb) && adb >= 1 && adb <= 65535) {
+        payload.adbPort = adb;
+      }
+      if (form.linkedinNome.trim()) {
+        payload.linkedinNome = form.linkedinNome.trim();
+      }
+      if (form.linkedinUsuario.trim()) {
+        payload.linkedinUsuario = form.linkedinUsuario.trim();
+      }
+      if (form.linkedinSenha) payload.linkedinSenha = form.linkedinSenha;
+      if (form.linkedinProfileUrl.trim()) {
+        payload.linkedinProfileUrl = form.linkedinProfileUrl.trim();
+      }
+      if (form.linkedinHeadline.trim()) {
+        payload.linkedinHeadline = form.linkedinHeadline.trim();
+      }
       const res = await fetch(AGENTES_URL, {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
@@ -301,6 +369,13 @@ export default function Agentes() {
                   <td>
                     {canWrite && (
                       <div className="usr-actions">
+                        <button
+                          type="button"
+                          className="btn-secondary"
+                          onClick={() => openEdit(a)}
+                        >
+                          Editar
+                        </button>
                         {a.status !== 'ativo' && (
                           <button
                             type="button"
@@ -404,7 +479,9 @@ export default function Agentes() {
             aria-labelledby="agt-modal-title"
           >
             <header className="srv-modal-header">
-              <h2 id="agt-modal-title">Novo agente</h2>
+              <h2 id="agt-modal-title">
+                {editingId ? `Editar ${form.nome || 'agente'}` : 'Novo agente'}
+              </h2>
               <button
                 type="button"
                 className="btn-secondary"
@@ -413,33 +490,37 @@ export default function Agentes() {
                 Fechar
               </button>
             </header>
-            <form className="srv-form" onSubmit={submitCreate}>
-              <label>
-                Nome (agentId) *
-                <input
-                  required
-                  value={form.nome}
-                  onChange={(e) => setField('nome', e.target.value)}
-                  placeholder="agent-d"
-                />
-              </label>
-              <label className="srv-form-span">
-                Copiar host de
-                <select
-                  value={form.copyHostFromAgenteId}
-                  onChange={(e) =>
-                    setField('copyHostFromAgenteId', e.target.value)
-                  }
-                >
-                  <option value="">— novo host —</option>
-                  {allRows.map((a) => (
-                    <option key={a.id} value={a.id}>
-                      {a.nome} · {hostLabel(a)}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              {!form.copyHostFromAgenteId && (
+            <form className="srv-form" onSubmit={submitForm}>
+              {!editingId && (
+                <label>
+                  Nome (agentId) *
+                  <input
+                    required
+                    value={form.nome}
+                    onChange={(e) => setField('nome', e.target.value)}
+                    placeholder="agent-d"
+                  />
+                </label>
+              )}
+              {!editingId && (
+                <label className="srv-form-span">
+                  Copiar host de
+                  <select
+                    value={form.copyHostFromAgenteId}
+                    onChange={(e) =>
+                      setField('copyHostFromAgenteId', e.target.value)
+                    }
+                  >
+                    <option value="">— novo host —</option>
+                    {allRows.map((a) => (
+                      <option key={a.id} value={a.id}>
+                        {a.nome} · {hostLabel(a)}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              )}
+              {(editingId || !form.copyHostFromAgenteId) && (
                 <>
                   <label>
                     Nome do host *
@@ -485,43 +566,51 @@ export default function Agentes() {
                       type="password"
                       value={form.sshPassword}
                       onChange={(e) => setField('sshPassword', e.target.value)}
+                      placeholder={
+                        editingId ? 'deixe em branco para manter' : ''
+                      }
+                      autoComplete="new-password"
                     />
                   </label>
                 </>
               )}
-              <label>
-                Porta ADB (opcional)
-                <input
-                  value={form.adbPort}
-                  onChange={(e) => setField('adbPort', e.target.value)}
-                />
-              </label>
-              <label className="srv-form-span">
-                From backup (path no host)
-                <input
-                  value={form.fromBackup}
-                  onChange={(e) => setField('fromBackup', e.target.value)}
-                />
-              </label>
-              <label className="srv-check srv-form-span">
-                <input
-                  type="checkbox"
-                  checked={form.provisionDevice}
-                  onChange={(e) =>
-                    setField('provisionDevice', e.target.checked)
-                  }
-                />
-                Provisionar container Docker
-              </label>
-              <label className="srv-check srv-form-span">
-                <input
-                  type="checkbox"
-                  checked={form.start}
-                  disabled={!form.provisionDevice}
-                  onChange={(e) => setField('start', e.target.checked)}
-                />
-                Subir container após criar
-              </label>
+              {!editingId && (
+                <>
+                  <label>
+                    Porta ADB (opcional)
+                    <input
+                      value={form.adbPort}
+                      onChange={(e) => setField('adbPort', e.target.value)}
+                    />
+                  </label>
+                  <label className="srv-form-span">
+                    From backup (path no host)
+                    <input
+                      value={form.fromBackup}
+                      onChange={(e) => setField('fromBackup', e.target.value)}
+                    />
+                  </label>
+                  <label className="srv-check srv-form-span">
+                    <input
+                      type="checkbox"
+                      checked={form.provisionDevice}
+                      onChange={(e) =>
+                        setField('provisionDevice', e.target.checked)
+                      }
+                    />
+                    Provisionar container Docker
+                  </label>
+                  <label className="srv-check srv-form-span">
+                    <input
+                      type="checkbox"
+                      checked={form.start}
+                      disabled={!form.provisionDevice}
+                      onChange={(e) => setField('start', e.target.checked)}
+                    />
+                    Subir container após criar
+                  </label>
+                </>
+              )}
               <p className="muted srv-form-span">LinkedIn</p>
               <label>
                 Nome perfil
@@ -545,6 +634,7 @@ export default function Agentes() {
                   value={form.linkedinSenha}
                   onChange={(e) => setField('linkedinSenha', e.target.value)}
                   autoComplete="new-password"
+                  placeholder={editingId ? 'deixe em branco para manter' : ''}
                 />
               </label>
               <label>
@@ -594,7 +684,11 @@ export default function Agentes() {
                   Cancelar
                 </button>
                 <button type="submit" className="btn-primary" disabled={saving}>
-                  {saving ? 'Criando…' : 'Criar'}
+                  {saving
+                    ? 'Salvando…'
+                    : editingId
+                      ? 'Salvar'
+                      : 'Criar'}
                 </button>
               </div>
             </form>

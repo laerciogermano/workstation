@@ -787,7 +787,7 @@ export default function Dashboard({
           rows={insights.byCompany}
         />
         <DataTable
-          title="Perfis recentes"
+          title="Candidatos recentes"
           columns={[
             {
               key: 'name',

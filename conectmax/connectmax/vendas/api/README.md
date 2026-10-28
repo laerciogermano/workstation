@@ -655,6 +655,7 @@ curl http://localhost:3000/dashboard
 ```
 
 **Antes → depois (recent avatar):** `recent[]` sem foto → inclui `photoBase64` de `cliente_linkedin` (web: avatar em Perfis recentes). **Rollback:** remova o select/`photoBase64` no map e o `RecentAvatar` no `dashboard.jsx`.
+**Antes → depois (recent = candidatos):** `recent[]` era top 20 de **qualquer** perfil ativo (`extractedAt`) → misturava pending/connected e a 1ª de Candidatos (ex. Carolina) sumia do painel → agora só `status=0` (sem convite), mesma ordem do funil (`extractedAt DESC`). **Rollback:** tire o `EXISTS … status = 0` no `DashboardService`.
 **Antes → depois:** front agregava `GET /profiles` + `GET /profile-details` → `GET /dashboard` já montado.
 **Antes → depois (foco):** `coverage` / foto / OCR / experience / outreach / `missingDetail` / `byRound` → % conectados/pendentes, conexões por dia (`connected_at`/`invited_at`), cargos (`byTitle`), cidades, empresas, tabelas.
 **Antes → depois (invite_status):** valores OCR tipo `Connect` apareciam no dashboard → só 3 buckets (`connect`/`pending`/`connected` = não enviado/pendente/conectado); gravação passa por `normalizeInviteStatus` (`clientes/invite-status.ts`).

@@ -225,7 +225,16 @@ export class DashboardService {
         .groupBy('label')
         .orderBy('label', 'ASC')
         .getRawMany<{ label: string | null; count: string }>(),
+      // Mesma fila/ordem da coluna Candidatos (status=0 + extractedAt DESC).
+      // Sem o filtro, "Perfis recentes" misturava pending/connected e a 1ª do funil sumia do top 20.
       this.active()
+        .andWhere(
+          `EXISTS (
+            SELECT 1 FROM client_connection_linkedin cc
+            WHERE cc.cliente_linkedin_id = li.id AND cc.status = :st0
+          )`,
+          { st0: ClientConnectionLinkedinStatus.NOT_SENT },
+        )
         .select([
           'li.id AS id',
           'cl.nome AS name',

@@ -64,7 +64,6 @@ export default function Agentes() {
   const [q, setQ] = useState('');
   const [debouncedQ, setDebouncedQ] = useState('');
   const [busyId, setBusyId] = useState(null);
-  const [pingById, setPingById] = useState({});
   const [note, setNote] = useState(null);
   const [formOpen, setFormOpen] = useState(false);
   const [form, setForm] = useState(EMPTY_FORM);
@@ -232,35 +231,13 @@ export default function Agentes() {
         await load({ sync: false });
         return;
       }
-      if (action === 'ping') {
-        const res = await fetch(`${AGENTES_URL}/${row.id}/ping`, {
-          method: 'POST',
-        });
-        const json = await res.json().catch(() => ({}));
-        if (!res.ok) throw new Error(errMsg(json, res));
-        setPingById((prev) => ({ ...prev, [row.id]: json }));
-        setNote(
-          json.ok
-            ? `Ping OK ${row.nome} (${json.ms}ms)`
-            : `Ping falhou ${row.nome}: ${json.adb}`,
-        );
-        return;
-      }
-      const path =
-        action === 'sleep'
-          ? 'sleep'
-          : action === 'wake'
-            ? 'wake'
-            : action === 'backup'
-              ? 'backup'
-              : null;
-      if (!path) return;
-      const res = await fetch(`${AGENTES_URL}/${row.id}/${path}`, {
+      if (action !== 'wake') return;
+      const res = await fetch(`${AGENTES_URL}/${row.id}/wake`, {
         method: 'POST',
       });
       const json = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(errMsg(json, res));
-      setNote(`${action} · ${row.nome}`);
+      setNote(`Acordar · ${row.nome}`);
       await load({ sync: false });
     } catch (err) {
       setError(String(err?.message || err));
@@ -290,87 +267,51 @@ export default function Agentes() {
               </tr>
             </thead>
             <tbody>
-              {rows.map((a) => {
-                const ping = pingById[a.id];
-                return (
-                  <tr key={a.id}>
-                    <td>
-                      <div className="emp-person-text">
-                        <span className="emp-person-name">{a.nome}</span>
-                        <span className="muted">{a.containerName}</span>
+              {rows.map((a) => (
+                <tr key={a.id}>
+                  <td>
+                    <div className="emp-person-text">
+                      <span className="emp-person-name">{a.nome}</span>
+                      <span className="muted">{a.containerName}</span>
+                    </div>
+                  </td>
+                  <td className="muted">{hostLabel(a)}</td>
+                  <td className="muted">
+                    {liLabel(a)}
+                    {a.linkedinStatus && a.linkedinStatus !== 'ativa' ? (
+                      <div className="tag">{a.linkedinStatus}</div>
+                    ) : null}
+                  </td>
+                  <td className="muted">{a.serial || `:${a.adbPort}`}</td>
+                  <td>
+                    <span className="tag">{statusLabel(a.status)}</span>
+                  </td>
+                  <td>
+                    {canWrite && (
+                      <div className="usr-actions">
+                        {a.status !== 'ativo' && (
+                          <button
+                            type="button"
+                            className="btn-secondary"
+                            disabled={busyId === a.id}
+                            onClick={() => runAction(a, 'wake')}
+                          >
+                            Acordar
+                          </button>
+                        )}
+                        <button
+                          type="button"
+                          className="btn-secondary"
+                          disabled={busyId === a.id}
+                          onClick={() => runAction(a, 'remove')}
+                        >
+                          Remover
+                        </button>
                       </div>
-                    </td>
-                    <td className="muted">{hostLabel(a)}</td>
-                    <td className="muted">
-                      {liLabel(a)}
-                      {a.linkedinStatus && a.linkedinStatus !== 'ativa' ? (
-                        <div className="tag">{a.linkedinStatus}</div>
-                      ) : null}
-                    </td>
-                    <td className="muted">
-                      {a.serial || `:${a.adbPort}`}
-                      {ping ? (
-                        <div className={ping.ok ? 'usr-status-on' : 'error'}>
-                          ping {ping.adb}
-                          {ping.ms != null ? ` · ${ping.ms}ms` : ''}
-                        </div>
-                      ) : null}
-                    </td>
-                    <td>
-                      <span className="tag">{statusLabel(a.status)}</span>
-                    </td>
-                    <td>
-                      {canWrite && (
-                        <div className="usr-actions">
-                          <button
-                            type="button"
-                            className="btn-secondary"
-                            disabled={busyId === a.id}
-                            onClick={() => runAction(a, 'ping')}
-                          >
-                            Ping
-                          </button>
-                          {a.status === 'ativo' ? (
-                            <button
-                              type="button"
-                              className="btn-secondary"
-                              disabled={busyId === a.id}
-                              onClick={() => runAction(a, 'sleep')}
-                            >
-                              Dormir
-                            </button>
-                          ) : (
-                            <button
-                              type="button"
-                              className="btn-secondary"
-                              disabled={busyId === a.id}
-                              onClick={() => runAction(a, 'wake')}
-                            >
-                              Acordar
-                            </button>
-                          )}
-                          <button
-                            type="button"
-                            className="btn-secondary"
-                            disabled={busyId === a.id}
-                            onClick={() => runAction(a, 'backup')}
-                          >
-                            Backup
-                          </button>
-                          <button
-                            type="button"
-                            className="btn-secondary"
-                            disabled={busyId === a.id}
-                            onClick={() => runAction(a, 'remove')}
-                          >
-                            Remover
-                          </button>
-                        </div>
-                      )}
-                    </td>
-                  </tr>
-                );
-              })}
+                    )}
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>

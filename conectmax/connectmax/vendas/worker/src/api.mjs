@@ -46,6 +46,12 @@ export function createApiClient({ apiUrl, apiKey }) {
         method: 'POST',
         body: JSON.stringify(payload || {}),
       }),
+    /** Auto-cadastro magro (cria agentes se faltar). Bootstrap: AGENT_API_KEY global. */
+    enroll: (agentId, payload) =>
+      json(`/agente/${encodeURIComponent(agentId)}/enroll`, {
+        method: 'POST',
+        body: JSON.stringify(payload || {}),
+      }),
     slots: (hostKey) => {
       const q = hostKey
         ? `?hostKey=${encodeURIComponent(hostKey)}`

@@ -11,14 +11,19 @@
 
 ### Single — 1 agente / 1 AVD
 
+No start chama `POST /agente/:id/enroll` (cria cadastro magro se faltar; bootstrap com **key global**). LinkedIn completa no painel.
+
 ```bash
 cd vendas/worker
 API_URL=http://localhost:3000 \
 AGENT_ID=agent-d \
-AGENT_API_KEY=cmx_… \
+AGENT_API_KEY=$AGENT_API_KEY_GLOBAL \
 SERIAL=127.0.0.1:5560 \
+HOST_KIND=localhost \
 npm start
 ```
+
+**Antes → depois (cadastro):** criar no painel antes do worker → worker enroll sozinho; painel só edita LI/notas. **Rollback:** remova `enroll()` em `loop.mjs`.
 
 ### Host — N slots, troca on-empty
 

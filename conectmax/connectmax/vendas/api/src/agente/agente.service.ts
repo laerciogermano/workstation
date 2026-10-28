@@ -7,7 +7,13 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
+import { generateApiKey, hashApiKey } from '../auth/api-key-hash';
 import { Agente } from '../agentes/agente.entity';
+import {
+  containerNameForAgente,
+  portForAgenteName,
+  serialForAgente,
+} from '../agentes/agente-names';
 import { hostKey } from '../agentes/ssh-host';
 import { ClienteLinkedin } from '../clientes/cliente-linkedin.entity';
 import { ClientConnectionLinkedin } from '../client-connections-linkedin/client-connection-linkedin.entity';
@@ -21,6 +27,26 @@ import {
   type AgentJobType,
 } from './agent-job-types';
 import { AgentRuntime } from './agent-runtime.entity';
+import { EnrollDto } from './enroll.dto';
+
+const DEFAULT_AVD_IMAGE =
+  'us-docker.pkg.dev/android-emulator-268719/images/30-google-x64-no-metrics:30.1.2';
+
+export type EnrollResult = {
+  id: string;
+  agentId: string;
+  created: boolean;
+  needsLinkedin: boolean;
+  hasApiKey: boolean;
+  apiKey?: string;
+  status: string;
+  serial: string;
+  containerName: string;
+  adbPort: number;
+  hostKind: string;
+  online: boolean;
+  lastHeartbeatAt: Date | null;
+};
 
 export type ClaimResult =
   | { job: null; reason: string; runtime: AgentRuntime }
@@ -657,6 +683,150 @@ export class AgenteService {
     row.status = status;
     row.lastError = null;
     return this.agentesCadastro.save(row);
+  }
+
+  /**
+   * Auto-cadastro magro do worker: cria `agentes` se não existir; senão
+   * atualiza só device/hostKind/status. Nunca apaga LinkedIn/notas.
+   * Bootstrap de create: use `AGENT_API_KEY` global (chave scoped só após existir).
+   */
+  async enroll(agentIdRaw: string, dto: EnrollDto = {}): Promise<EnrollResult> {
+    const agentId = String(agentIdRaw || '').trim();
+    if (!agentId) throw new BadRequestException('agentId obrigatório');
+
+    let row = await this.agentesCadastro.findOneBy({ nome: agentId });
+    const created = !row;
+
+    const adbPort =
+      dto.adbPort ??
+      row?.adbPort ??
+      portForAgenteName(agentId);
+    const serial =
+      String(dto.serial || '').trim() ||
+      row?.serial ||
+      serialForAgente(agentId, adbPort);
+    const containerName =
+      String(dto.containerName || '').trim() ||
+      row?.containerName ||
+      containerNameForAgente(agentId);
+    const image =
+      String(dto.image || '').trim() ||
+      row?.image ||
+      this.config.get<string>('AVD_IMAGE')?.trim() ||
+      DEFAULT_AVD_IMAGE;
+
+    const hostKind =
+      dto.hostKind ||
+      row?.hostKind ||
+      (dto.localhost === false ? 'server' : 'localhost');
+    const localhost =
+      dto.localhost !== undefined
+        ? Boolean(dto.localhost)
+        : row?.localhost ?? hostKind === 'localhost';
+    const hostNome =
+      String(dto.hostNome || '').trim() ||
+      row?.hostNome ||
+      String(dto.hostname || '').trim() ||
+      (localhost ? 'localhost' : agentId);
+    const hostname =
+      String(dto.hostname || '').trim() || row?.hostname || null;
+    const status = dto.status || row?.status || 'dormindo';
+
+    if (!row) {
+      row = this.agentesCadastro.create({
+        nome: agentId,
+        hostNome,
+        provedor: null,
+        produto: null,
+        hostname,
+        ipPublico: localhost ? '127.0.0.1' : null,
+        ipPrivado: null,
+        localhost,
+        hostKind,
+        sshUser: 'root',
+        sshPort: 22,
+        sshPassword: null,
+        ramGb: null,
+        nestedKvm: false,
+        hostStatus: 'active',
+        containerName,
+        image,
+        adbPort,
+        serial,
+        status,
+        lastBackupPath: null,
+        notas: null,
+        lastError: null,
+        linkedinNome: null,
+        linkedinUsuario: null,
+        linkedinSenha: null,
+        linkedinProfileUrl: null,
+        linkedinHeadline: null,
+        linkedinPhotoBase64: null,
+        linkedinStatus: 'ativa',
+        linkedinInfracoes: [],
+      });
+      row = await this.agentesCadastro.save(row);
+      this.logger.log(`enroll created agentId=${agentId} id=${row.id}`);
+    } else {
+      row.serial = serial;
+      row.containerName = containerName;
+      row.adbPort = adbPort;
+      row.image = image;
+      row.hostKind = hostKind;
+      row.localhost = localhost;
+      row.hostNome = hostNome;
+      if (hostname !== undefined) row.hostname = hostname;
+      if (localhost) row.ipPublico = row.ipPublico || '127.0.0.1';
+      if (dto.status) {
+        row.status = dto.status;
+        row.lastError = null;
+      }
+      row = await this.agentesCadastro.save(row);
+    }
+
+    const withHash = await this.agentesCadastro
+      .createQueryBuilder('a')
+      .addSelect('a.apiKeyHash')
+      .where('a.id = :id', { id: row.id })
+      .getOne();
+    const hadKey = Boolean(withHash?.apiKeyHash);
+    const wantKey = created
+      ? dto.issueApiKey !== false
+      : dto.issueApiKey === true;
+    let apiKey: string | undefined;
+    if (wantKey) {
+      apiKey = generateApiKey();
+      await this.agentesCadastro
+        .createQueryBuilder()
+        .update(Agente)
+        .set({ apiKeyHash: hashApiKey(apiKey) })
+        .where('id = :id', { id: row.id })
+        .execute();
+    }
+
+    const runtime = await this.heartbeat(agentId, {
+      hostInstanceId: dto.hostInstanceId,
+      workerVersion: dto.workerVersion,
+    });
+
+    const needsLinkedin = !String(row.linkedinUsuario || '').trim();
+
+    return {
+      id: row.id,
+      agentId: row.nome,
+      created,
+      needsLinkedin,
+      hasApiKey: Boolean(apiKey) || hadKey,
+      ...(apiKey ? { apiKey } : {}),
+      status: row.status,
+      serial: row.serial,
+      containerName: row.containerName,
+      adbPort: row.adbPort,
+      hostKind: row.hostKind,
+      online: runtime.online,
+      lastHeartbeatAt: runtime.lastHeartbeatAt,
+    };
   }
 
   /** Cria/atualiza filas a partir do estado atual do CRM. */

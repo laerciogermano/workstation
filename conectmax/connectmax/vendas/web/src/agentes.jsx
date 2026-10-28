@@ -52,6 +52,10 @@ function liLabel(a) {
   return a.linkedinUsuario ? `${name} <${a.linkedinUsuario}>` : name;
 }
 
+function needsLinkedin(a) {
+  return !String(a?.linkedinUsuario || '').trim();
+}
+
 export default function Agentes() {
   const canWrite = hasPermission('agentes:write');
   const [ativos, setAtivos] = useState([]);
@@ -276,12 +280,20 @@ export default function Agentes() {
                     </div>
                   </td>
                   <td className="muted">{hostLabel(a)}</td>
-                  <td className="muted">
-                    {liLabel(a)}
-                    {a.linkedinStatus && a.linkedinStatus !== 'ativa' ? (
-                      <div className="tag">{a.linkedinStatus}</div>
-                    ) : null}
-                  </td>
+                    <td className="muted">
+                      {needsLinkedin(a) ? (
+                        <span className="tag tag-warn" title="Complete usuário/senha no editar">
+                          falta LinkedIn
+                        </span>
+                      ) : (
+                        liLabel(a)
+                      )}
+                      {!needsLinkedin(a) &&
+                      a.linkedinStatus &&
+                      a.linkedinStatus !== 'ativa' ? (
+                        <div className="tag">{a.linkedinStatus}</div>
+                      ) : null}
+                    </td>
                   <td className="muted">{a.serial || `:${a.adbPort}`}</td>
                   <td>
                     <span className="tag">{statusLabel(a.status)}</span>

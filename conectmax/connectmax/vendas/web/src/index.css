@@ -529,6 +529,11 @@ h3 {
   color: var(--muted);
 }
 
+.tag-warn {
+  color: #9a6700;
+  background: color-mix(in srgb, #d97706 18%, transparent);
+}
+
 .meta {
   margin: 0;
   font-size: 0.88rem;

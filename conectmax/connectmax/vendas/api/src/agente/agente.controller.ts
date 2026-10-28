@@ -12,6 +12,7 @@ import { Resource } from '../auth/resource.decorator';
 import { assertAgentScope } from './agent-scope';
 import { CompleteJobDto, FailJobDto } from './complete-job.dto';
 import { DeviceStatusDto } from './device-status.dto';
+import { EnrollDto } from './enroll.dto';
 import { HeartbeatDto } from './heartbeat.dto';
 import { AgenteService } from './agente.service';
 
@@ -39,6 +40,20 @@ export class AgenteController {
   ) {
     assertAgentScope(req.user, agentId);
     return this.agente.claimNext(agentId);
+  }
+
+  /**
+   * Auto-cadastro magro do worker (cria `agentes` se faltar; atualiza device).
+   * Create: use `AGENT_API_KEY` global. LinkedIn/notas só no painel.
+   */
+  @Post(':agentId/enroll')
+  enroll(
+    @Param('agentId') agentId: string,
+    @Body() dto: EnrollDto,
+    @Req() req: { user?: AuthPrincipal },
+  ) {
+    assertAgentScope(req.user, agentId);
+    return this.agente.enroll(agentId, dto ?? {});
   }
 
   /** Presença do worker (online se lastHeartbeat < AGENT_HEARTBEAT_STALE_MS). */

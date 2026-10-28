@@ -36,8 +36,51 @@ const WORKER_VERSION = process.env.WORKER_VERSION || '0.1.0';
 const HOST_INSTANCE_ID =
   process.env.HOST_INSTANCE_ID || `${hostname()}:${process.pid}`;
 const SERIAL = process.env.SERIAL || process.env.ADB_SERIAL || '';
+const CONTAINER =
+  process.env.CONTAINER_NAME ||
+  process.env.AVD_CONTAINER ||
+  '';
+const ADB_PORT = process.env.ADB_PORT ? Number(process.env.ADB_PORT) : undefined;
+const HOST_KIND = (process.env.HOST_KIND || 'localhost').toLowerCase();
+const HOST_NOME = process.env.HOST_NOME || process.env.HOST_KEY || '';
 
 const api = createApiClient({ apiUrl: API_URL, apiKey: API_KEY });
+
+async function enroll() {
+  try {
+    const body = {
+      hostInstanceId: HOST_INSTANCE_ID,
+      workerVersion: WORKER_VERSION,
+      hostKind: ['server', 'gestor', 'localhost'].includes(HOST_KIND)
+        ? HOST_KIND
+        : 'localhost',
+      localhost: HOST_KIND === 'localhost',
+      status: 'ativo',
+    };
+    if (SERIAL) body.serial = SERIAL;
+    if (CONTAINER) body.containerName = CONTAINER;
+    if (Number.isFinite(ADB_PORT) && ADB_PORT > 0) body.adbPort = ADB_PORT;
+    if (HOST_NOME) body.hostNome = HOST_NOME;
+    const res = await api.enroll(AGENT_ID, body);
+    console.log(
+      `[${AGENT_ID}] enroll created=${res.created ? 1 : 0} needsLinkedin=${res.needsLinkedin ? 1 : 0} online=${res.online ? 1 : 0}`,
+    );
+    if (res.apiKey) {
+      console.warn(
+        `[${AGENT_ID}] API key scoped (salve uma vez; depois use como AGENT_API_KEY):\n${res.apiKey}`,
+      );
+    }
+    if (res.needsLinkedin) {
+      console.warn(
+        `[${AGENT_ID}] falta LinkedIn — complete no painel /agentes`,
+      );
+    }
+    return res;
+  } catch (e) {
+    console.error(`[${AGENT_ID}] enroll:`, e.message || e);
+    return null;
+  }
+}
 
 async function heartbeat() {
   try {
@@ -59,7 +102,7 @@ async function main() {
   console.log(
     `agent-worker API=${API_URL} AGENT=${AGENT_ID} DRY=${DRY ? 1 : 0} SERIAL=${SERIAL || '(env)'}`,
   );
-  await heartbeat();
+  await enroll();
   const hb = setInterval(heartbeat, HEARTBEAT_MS);
 
   try {

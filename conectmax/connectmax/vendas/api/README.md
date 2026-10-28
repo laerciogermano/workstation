@@ -168,6 +168,7 @@ Claim: `FOR UPDATE SKIP LOCKED`. Tabelas: `agent_jobs`, `agent_runtime`. Slots: 
 | Método | Papel |
 |--------|--------|
 | `POST /agente/:agentId/claim` | Materializa filas + pega 1 job |
+| `POST /agente/:agentId/enroll` | Auto-cadastro magro do worker (cria `agentes` se faltar; atualiza device; heartbeat). Create: `AGENT_API_KEY` global. Opcional `issueApiKey` (default true no create) |
 | `POST /agente/:agentId/heartbeat` | Presença do worker (`hostInstanceId`, `workerVersion`) → `online` |
 | `GET /agente/:agentId/peek` | Contagens pending + próximo + `online` |
 | `GET /agente/:agentId/jobs` | Histórico (`status`, `limit`) |
@@ -181,18 +182,23 @@ Claim: `FOR UPDATE SKIP LOCKED`. Tabelas: `agent_jobs`, `agent_runtime`. Slots: 
 ```bash
 # chave por agente (recomendado) ou X-Api-Key global AGENT_API_KEY
 curl -X POST http://localhost:3000/agentes/<uuid>/api-key -H "Authorization: Bearer $TOKEN"
+# enroll: cria cadastro magro se faltar (global key no 1º create)
+curl -X POST http://localhost:3000/agente/agent-d/enroll \
+  -H "X-Api-Key: $AGENT_API_KEY" -H 'Content-Type: application/json' \
+  -d '{"serial":"127.0.0.1:5560","hostKind":"localhost","status":"ativo","hostInstanceId":"dev-1","workerVersion":"0.1.0"}'
 curl -X POST http://localhost:3000/agente/agent-d/heartbeat \
   -H "X-Api-Key: $AGENT_API_KEY" -H 'Content-Type: application/json' \
   -d '{"hostInstanceId":"dev-1","workerVersion":"0.1.0"}'
 curl -X POST http://localhost:3000/agente/agent-d/claim -H "X-Api-Key: $AGENT_API_KEY"
 
-# worker (F2): extrair_leads real; outros ALLOW_STUB=1
+# worker (F2): extrair_leads real; outros ALLOW_STUB=1 — enroll no start
 cd ../worker && DRY=1 ONCE=1 AGENT_ID=agent-d AGENT_API_KEY=… npm start
 ```
 
-Auth worker: JWT, `AGENT_API_KEY` global **ou** chave emitida em `POST /agentes/:id/api-key` (escopo só daquele `agentId`). Campos: `agentes.api_key_hash`, `agentes.host_kind`, `agent_runtime.last_heartbeat_at` (+ instance/version). Offline se heartbeat &gt; `AGENT_HEARTBEAT_STALE_MS` (default 120s).
+Auth worker: JWT, `AGENT_API_KEY` global **ou** chave emitida em `POST /agentes/:id/api-key` / enroll (escopo só daquele `agentId`). Campos: `agentes.api_key_hash`, `agentes.host_kind`, `agent_runtime.last_heartbeat_at` (+ instance/version). Offline se heartbeat &gt; `AGENT_HEARTBEAT_STALE_MS` (default 120s).
 
 **Antes → depois:** loop dry → [`../worker/README.md`](../worker/README.md) pull + heartbeat + key por agente.  
+**Antes → depois (enroll):** cadastro só via `POST /agentes` → worker `POST /agente/:id/enroll` cria linha magra + heartbeat; painel completa LinkedIn (`needsLinkedin`). Create exige key global; update aceita key do próprio agente. **Rollback:** remova rota/método `enroll` e a chamada no `worker/src/loop.mjs`.  
 **Rollback:** ignore colunas novas; use só `AGENT_API_KEY` global; `DROP` colunas `api_key_hash` / heartbeat se quiser.
 
 **Antes → depois (AC-04 leads):** Candidatos globais (sem 1\|2) → **livres (ninguém 0\|1\|2) + reservados `status=0` do agente** (worker/`countLeads`). Rollback: `NOT EXISTS … status IN (1,2)` global.

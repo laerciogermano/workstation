@@ -959,6 +959,31 @@ code {
   letter-spacing: 0.02em;
 }
 
+.dash-person {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-width: 0;
+}
+
+.dash-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: var(--surface);
+}
+
+.dash-avatar-fallback {
+  display: grid;
+  place-items: center;
+  font-size: 0.62rem;
+  font-weight: 650;
+  color: var(--accent-soft);
+  background: var(--tag-bg);
+}
+
 .dash-table td {
   max-width: 14rem;
   overflow: hidden;

@@ -31,6 +31,7 @@ type RecentRow = {
   company: string | null;
   inviteStatus: string | null;
   connectionDegree: string | null;
+  photoBase64: string | null;
   when: Date | null;
 };
 
@@ -233,6 +234,7 @@ export class DashboardService {
           'COALESCE(li.company, cl.empresa) AS company',
           'li.inviteStatus AS "inviteStatus"',
           'li.connectionDegree AS "connectionDegree"',
+          'li.photoBase64 AS "photoBase64"',
           'COALESCE(li.extractedAt, li.createdAt) AS "when"',
         ])
         .orderBy('li.extractedAt', 'DESC', 'NULLS LAST')
@@ -246,6 +248,7 @@ export class DashboardService {
           company: string | null;
           inviteStatus: string | null;
           connectionDegree: string | null;
+          photoBase64: string | null;
           when: Date | null;
         }>(),
       this.activeConnections()
@@ -367,6 +370,7 @@ export class DashboardService {
         company: r.company,
         inviteStatus: r.inviteStatus,
         connectionDegree: r.connectionDegree,
+        photoBase64: r.photoBase64 ?? null,
         when: r.when,
       })),
     };

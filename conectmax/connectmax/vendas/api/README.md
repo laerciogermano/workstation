@@ -646,7 +646,7 @@ Insights de operação (KPIs + séries Recharts + tabelas) sobre `cliente_linked
     "lastHeartbeatAt": "2026-10-28T12:00:00.000Z",
     "runtimeStatus": "idle"
   }],
-  "recent": [{ "id": "…", "name": "…", "title": "…", "inviteStatus": "connect", "when": "…" }]
+  "recent": [{ "id": "…", "name": "…", "title": "…", "inviteStatus": "connect", "photoBase64": "…", "when": "…" }]
 }
 ```
 
@@ -654,6 +654,7 @@ Insights de operação (KPIs + séries Recharts + tabelas) sobre `cliente_linked
 curl http://localhost:3000/dashboard
 ```
 
+**Antes → depois (recent avatar):** `recent[]` sem foto → inclui `photoBase64` de `cliente_linkedin` (web: avatar em Perfis recentes). **Rollback:** remova o select/`photoBase64` no map e o `RecentAvatar` no `dashboard.jsx`.
 **Antes → depois:** front agregava `GET /profiles` + `GET /profile-details` → `GET /dashboard` já montado.
 **Antes → depois (foco):** `coverage` / foto / OCR / experience / outreach / `missingDetail` / `byRound` → % conectados/pendentes, conexões por dia (`connected_at`/`invited_at`), cargos (`byTitle`), cidades, empresas, tabelas.
 **Antes → depois (invite_status):** valores OCR tipo `Connect` apareciam no dashboard → só 3 buckets (`connect`/`pending`/`connected` = não enviado/pendente/conectado); gravação passa por `normalizeInviteStatus` (`clientes/invite-status.ts`).

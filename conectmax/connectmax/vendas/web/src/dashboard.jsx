@@ -58,6 +58,33 @@ function inviteLabel(status) {
   return INVITE_LABEL[key] ?? 'não enviado';
 }
 
+function photoSrc(base64) {
+  if (!base64) return null;
+  if (base64.startsWith('data:')) return base64;
+  return `data:image/png;base64,${base64}`;
+}
+
+function initials(name) {
+  return (name ?? '?')
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0]?.toUpperCase() ?? '')
+    .join('');
+}
+
+function RecentAvatar({ name, photoBase64 }) {
+  const src = photoSrc(photoBase64);
+  if (src) {
+    return <img className="dash-avatar" src={src} alt="" loading="lazy" />;
+  }
+  return (
+    <div className="dash-avatar dash-avatar-fallback" aria-hidden>
+      {initials(name)}
+    </div>
+  );
+}
+
 const EMPTY_INSIGHTS = {
   kpis: [],
   byInviteStatus: [],
@@ -78,12 +105,13 @@ const HEARTBEAT_ONLINE_MS = 2 * 60 * 1000;
 
 /**
  * Premissas de potencial (produtividade real, não capacidade teórica diária):
- * 400 conexões/agente/mês → R$ 1.000 MRR.
+ * 400 conexões/agente/mês → R$ 1.000 MRR; 1.200 conexões → 1 cliente.
  */
 const PROJ = {
   conexoesPorAgenteMes: 400,
   mrrPorBloco: 1000,
   conexoesPorBloco: 400,
+  conexoesPorCliente: 1200,
 };
 
 const brl = new Intl.NumberFormat('pt-BR', {
@@ -91,6 +119,7 @@ const brl = new Intl.NumberFormat('pt-BR', {
   currency: 'BRL',
   maximumFractionDigits: 0,
 });
+const num = new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 1 });
 
 function money(v) {
   if (!Number.isFinite(v)) return '—';
@@ -102,6 +131,9 @@ function projectFromAgents(agentCount) {
   const conexoesMes = n * PROJ.conexoesPorAgenteMes;
   const mrrBruto = (conexoesMes / PROJ.conexoesPorBloco) * PROJ.mrrPorBloco;
   return {
+    agentes: n,
+    conexoesMes,
+    clientes: conexoesMes / PROJ.conexoesPorCliente,
     mrrBruto,
     mrrAnual: mrrBruto * 12,
   };
@@ -283,6 +315,11 @@ export default function Dashboard({
         pending: a.pending,
         connected: a.connected,
       })),
+    [insights.byAgent],
+  );
+
+  const agentesAtivos = useMemo(
+    () => insights.byAgent.filter((a) => a.status === 'ativo').length,
     [insights.byAgent],
   );
 
@@ -755,18 +792,25 @@ export default function Dashboard({
             {
               key: 'name',
               label: 'Nome',
-              render: (row) =>
-                row.id ? (
-                  <button
-                    type="button"
-                    className="linkish"
-                    onClick={() => onOpenProfile?.(row)}
-                  >
-                    {row.name ?? '—'}
-                  </button>
-                ) : (
-                  row.name ?? '—'
-                ),
+              render: (row) => (
+                <span className="dash-person">
+                  <RecentAvatar
+                    name={row.name}
+                    photoBase64={row.photoBase64}
+                  />
+                  {row.id ? (
+                    <button
+                      type="button"
+                      className="linkish"
+                      onClick={() => onOpenProfile?.(row)}
+                    >
+                      {row.name ?? '—'}
+                    </button>
+                  ) : (
+                    <span>{row.name ?? '—'}</span>
+                  )}
+                </span>
+              ),
             },
             { key: 'title', label: 'Cargo' },
             { key: 'company', label: 'Empresa' },
@@ -793,10 +837,40 @@ export default function Dashboard({
           <p className="kpi-group-note">
             {PROJ.conexoesPorAgenteMes} conexões/agente/mês ·{' '}
             {money(PROJ.mrrPorBloco)} MRR a cada {PROJ.conexoesPorBloco}{' '}
-            conexões
+            conexões · 1 cliente / {PROJ.conexoesPorCliente} conexões
           </p>
         </div>
         <div className="kpi-grid">
+          <article className="kpi">
+            <p className="kpi-label">Agentes</p>
+            <p className="kpi-value">
+              {loading ? '…' : projecao.agentes}
+            </p>
+            {!loading && (
+              <p className="kpi-hint">
+                {agentesAtivos} ativo
+                {agentesAtivos === 1 ? '' : 's'} · base cadastrada
+              </p>
+            )}
+          </article>
+          <article className="kpi">
+            <p className="kpi-label">Conexões / mês</p>
+            <p className="kpi-value">
+              {loading ? '…' : num.format(projecao.conexoesMes)}
+            </p>
+            <p className="kpi-hint">
+              {PROJ.conexoesPorAgenteMes} × agentes
+            </p>
+          </article>
+          <article className="kpi">
+            <p className="kpi-label">Clientes estimados</p>
+            <p className="kpi-value">
+              {loading ? '…' : num.format(projecao.clientes)}
+            </p>
+            <p className="kpi-hint">
+              a cada {PROJ.conexoesPorCliente} conexões
+            </p>
+          </article>
           <article className="kpi">
             <p className="kpi-label">Faturamento bruto (MRR)</p>
             <p className="kpi-value">

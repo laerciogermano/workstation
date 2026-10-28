@@ -3,6 +3,7 @@ import {
   Injectable,
   Logger,
   NotFoundException,
+  OnModuleInit,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -28,6 +29,8 @@ import {
 } from './agent-job-types';
 import { AgentRuntime } from './agent-runtime.entity';
 import { EnrollDto } from './enroll.dto';
+import { HostConfig } from './host-config.entity';
+import { UpdateHostConfigDto } from './update-host-config.dto';
 
 const DEFAULT_AVD_IMAGE =
   'us-docker.pkg.dev/android-emulator-268719/images/30-google-x64-no-metrics:30.1.2';
@@ -67,7 +70,7 @@ export type SlotAgentView = {
 };
 
 @Injectable()
-export class AgenteService {
+export class AgenteService implements OnModuleInit {
   private readonly logger = new Logger(AgenteService.name);
 
   constructor(
@@ -75,6 +78,8 @@ export class AgenteService {
     private readonly jobs: Repository<AgentJob>,
     @InjectRepository(AgentRuntime)
     private readonly runtimes: Repository<AgentRuntime>,
+    @InjectRepository(HostConfig)
+    private readonly hostConfigs: Repository<HostConfig>,
     @InjectRepository(ClientConnectionLinkedin)
     private readonly connections: Repository<ClientConnectionLinkedin>,
     @InjectRepository(ClientLinkedinMessage)
@@ -86,6 +91,26 @@ export class AgenteService {
     private readonly dataSource: DataSource,
     private readonly config: ConfigService,
   ) {}
+
+  async onModuleInit(): Promise<void> {
+    await this.ensureHostConfigTable();
+  }
+
+  private async ensureHostConfigTable(): Promise<void> {
+    try {
+      await this.dataSource.query(`
+        CREATE TABLE IF NOT EXISTS host_config (
+          host_key varchar(120) PRIMARY KEY,
+          max_ativos int NOT NULL DEFAULT 1,
+          created_at timestamptz NOT NULL DEFAULT NOW(),
+          updated_at timestamptz NOT NULL DEFAULT NOW()
+        )
+      `);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      this.logger.warn(`ensureHostConfigTable: ${msg}`);
+    }
+  }
 
   /**
    * agentId canônico = `agentes.id` (uuid). Path ainda aceita `nome` legado.
@@ -316,9 +341,35 @@ export class AgenteService {
     };
   }
 
+  /** Default global (env); host pode sobrescrever em `host_config`. */
   private maxSlotsPerServer(): number {
     const n = Number(this.config.get('AVD_MAX_ATIVOS_POR_SERVIDOR', '4'));
     return Number.isFinite(n) && n >= 1 ? Math.floor(n) : 4;
+  }
+
+  private async maxSlotsForHost(hostKeyValue: string): Promise<number> {
+    const row = await this.hostConfigs.findOneBy({ hostKey: hostKeyValue });
+    if (row?.maxAtivos != null && row.maxAtivos >= 1) {
+      return Math.min(64, Math.floor(row.maxAtivos));
+    }
+    return this.maxSlotsPerServer();
+  }
+
+  async updateHostMaxAtivos(
+    hostKeyRaw: string,
+    dto: UpdateHostConfigDto,
+  ): Promise<{ hostKey: string; maxAtivos: number }> {
+    const key = String(hostKeyRaw || '').trim();
+    if (!key) throw new BadRequestException('hostKey obrigatório');
+    const maxAtivos = Math.min(64, Math.max(1, Math.floor(Number(dto.maxAtivos))));
+    let row = await this.hostConfigs.findOneBy({ hostKey: key });
+    if (!row) {
+      row = this.hostConfigs.create({ hostKey: key, maxAtivos });
+    } else {
+      row.maxAtivos = maxAtivos;
+    }
+    await this.hostConfigs.save(row);
+    return { hostKey: key, maxAtivos: row.maxAtivos };
   }
 
   private claimTimeoutMs(): number {
@@ -611,6 +662,7 @@ export class AgenteService {
     hosts: {
       hostKey: string;
       hostNome: string;
+      maxAtivos: number;
       ativos: number;
       dormindo: number;
       livres: number;
@@ -619,7 +671,7 @@ export class AgenteService {
       candidatosSleep: SlotAgentView[];
     }[];
   }> {
-    const maxAtivos = this.maxSlotsPerServer();
+    const defaultMax = this.maxSlotsPerServer();
     const rows = await this.agentesCadastro.find({ order: { nome: 'ASC' } });
     const byHost = new Map<string, Agente[]>();
     for (const a of rows) {
@@ -632,6 +684,7 @@ export class AgenteService {
 
     const hosts = [];
     for (const [key, agentes] of byHost) {
+      const maxAtivos = await this.maxSlotsForHost(key);
       for (const a of agentes) {
         try {
           await this.materializeJobs(a.id);
@@ -662,6 +715,7 @@ export class AgenteService {
       hosts.push({
         hostKey: key,
         hostNome: agentes[0]?.hostNome || key,
+        maxAtivos,
         ativos: agentesAtivos.length,
         dormindo: dormindo.length,
         livres: Math.max(0, maxAtivos - agentesAtivos.length),
@@ -671,7 +725,7 @@ export class AgenteService {
       });
     }
 
-    return { maxAtivos, hosts };
+    return { maxAtivos: defaultMax, hosts };
   }
 
   private toSlotAgent(a: Agente, pendingJobs: number): SlotAgentView {
@@ -769,7 +823,8 @@ export class AgenteService {
         sshUser: 'root',
         sshPort: 22,
         sshPassword: null,
-        ramGb: null,
+        ramGb: dto.ramGb ?? null,
+        diskGb: dto.diskGb ?? null,
         nestedKvm: false,
         hostStatus: 'active',
         containerName,
@@ -800,6 +855,8 @@ export class AgenteService {
       row.localhost = localhost;
       row.hostNome = hostNome;
       if (hostname !== undefined) row.hostname = hostname;
+      if (dto.ramGb != null) row.ramGb = dto.ramGb;
+      if (dto.diskGb != null) row.diskGb = dto.diskGb;
       if (localhost) row.ipPublico = row.ipPublico || '127.0.0.1';
       if (dto.status) {
         row.status = dto.status;

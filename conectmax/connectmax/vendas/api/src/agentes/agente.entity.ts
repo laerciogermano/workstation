@@ -91,6 +91,10 @@ export class Agente {
   @Column({ name: 'ram_gb', type: 'int', nullable: true })
   ramGb!: number | null;
 
+  /** Disco livre/total aproximado da máquina (GB), informado no cadastro. */
+  @Column({ name: 'disk_gb', type: 'int', nullable: true })
+  diskGb!: number | null;
+
   @Column({ name: 'nested_kvm', type: 'boolean', default: false })
   nestedKvm!: boolean;
 

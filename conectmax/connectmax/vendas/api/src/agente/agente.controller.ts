@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Param,
+  Patch,
   Post,
   Query,
   Req,
@@ -15,6 +16,7 @@ import { DeviceStatusDto } from './device-status.dto';
 import { EnrollDto } from './enroll.dto';
 import { HeartbeatDto } from './heartbeat.dto';
 import { AgenteService } from './agente.service';
+import { UpdateHostConfigDto } from './update-host-config.dto';
 
 @Controller('agente')
 @Resource('agente')
@@ -22,12 +24,21 @@ export class AgenteController {
   constructor(private readonly agente: AgenteService) {}
 
   /**
-   * Capacidade por host (default máx. 4 ativos) + candidatos a wake.
+   * Capacidade por host (default env / `host_config`) + candidatos a wake.
    * Declarado antes de `:agentId` para não capturar "slots" como id.
    */
   @Get('slots')
   slots(@Query('hostKey') hostKey?: string) {
     return this.agente.slots(hostKey);
+  }
+
+  /** Define máx. AVDs ativos no host (painel /agentes). */
+  @Patch('hosts/:hostKey')
+  updateHost(
+    @Param('hostKey') hostKey: string,
+    @Body() dto: UpdateHostConfigDto,
+  ) {
+    return this.agente.updateHostMaxAtivos(hostKey, dto);
   }
 
   /**

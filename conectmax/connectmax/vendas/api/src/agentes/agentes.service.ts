@@ -91,6 +91,7 @@ export class AgentesService implements OnModuleInit {
     const stmts = [
       `ALTER TABLE agentes ADD COLUMN IF NOT EXISTS host_kind varchar(32) NOT NULL DEFAULT 'server'`,
       `ALTER TABLE agentes ADD COLUMN IF NOT EXISTS api_key_hash varchar(128)`,
+      `ALTER TABLE agentes ADD COLUMN IF NOT EXISTS disk_gb int`,
       `UPDATE agentes SET host_kind = 'localhost' WHERE localhost = true AND (host_kind IS NULL OR host_kind = 'server')`,
     ];
     for (const sql of stmts) {
@@ -356,6 +357,7 @@ export class AgentesService implements OnModuleInit {
     sshPort: number;
     sshPassword: string | null;
     ramGb: number | null;
+    diskGb: number | null;
     nestedKvm: boolean;
     hostStatus: string;
   }> {
@@ -373,7 +375,8 @@ export class AgentesService implements OnModuleInit {
         sshUser: src.sshUser,
         sshPort: src.sshPort,
         sshPassword: src.sshPassword,
-        ramGb: src.ramGb,
+        ramGb: dto.ramGb ?? src.ramGb,
+        diskGb: dto.diskGb ?? src.diskGb,
         nestedKvm: src.nestedKvm,
         hostStatus: src.hostStatus,
       };
@@ -407,6 +410,7 @@ export class AgentesService implements OnModuleInit {
       sshPort: dto.sshPort ?? 22,
       sshPassword: dto.sshPassword ?? null,
       ramGb: dto.ramGb ?? null,
+      diskGb: dto.diskGb ?? null,
       nestedKvm: Boolean(dto.nestedKvm),
       hostStatus: dto.hostStatus?.trim() || 'active',
     };
@@ -568,6 +572,7 @@ export class AgentesService implements OnModuleInit {
       row.sshPassword = dto.sshPassword || null;
     }
     if (dto.ramGb !== undefined) row.ramGb = dto.ramGb ?? null;
+    if (dto.diskGb !== undefined) row.diskGb = dto.diskGb ?? null;
     if (dto.nestedKvm !== undefined) row.nestedKvm = Boolean(dto.nestedKvm);
     if (dto.hostStatus !== undefined) {
       row.hostStatus = dto.hostStatus.trim() || 'active';
@@ -1087,6 +1092,7 @@ done`,
               sshPort: template.sshPort,
               sshPassword: template.sshPassword,
               ramGb: template.ramGb,
+              diskGb: template.diskGb,
               nestedKvm: template.nestedKvm,
               hostStatus: template.hostStatus,
               containerName,

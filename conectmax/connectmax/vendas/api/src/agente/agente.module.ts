@@ -8,12 +8,14 @@ import { AgentJob } from './agent-job.entity';
 import { AgentRuntime } from './agent-runtime.entity';
 import { AgenteController } from './agente.controller';
 import { AgenteService } from './agente.service';
+import { HostConfig } from './host-config.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       AgentJob,
       AgentRuntime,
+      HostConfig,
       ClientConnectionLinkedin,
       ClientLinkedinMessage,
       ClienteLinkedin,

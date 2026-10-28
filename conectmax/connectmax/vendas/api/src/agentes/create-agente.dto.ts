@@ -94,6 +94,12 @@ export class CreateAgenteDto {
   ramGb?: number | null;
 
   @IsOptional()
+  @IsInt()
+  @Min(1)
+  @Max(102400)
+  diskGb?: number | null;
+
+  @IsOptional()
   @IsBoolean()
   nestedKvm?: boolean;
 
@@ -240,6 +246,12 @@ export class UpdateAgenteDto {
   @Min(1)
   @Max(1024)
   ramGb?: number | null;
+
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  @Max(102400)
+  diskGb?: number | null;
 
   @IsOptional()
   @IsBoolean()

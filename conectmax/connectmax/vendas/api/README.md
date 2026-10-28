@@ -165,7 +165,7 @@ Cada AVD/conta (`agentId` = `provision.name`, ex. `agent-d`) puxa o próximo tra
 
 **Antes → depois (`verificar_conexoes`):** pending→conectado só via robot manual (`POST :3099/connections` / `npm run linkedin-extract-connections`) → mesmo script, agendado no claim (`AGENT_CONNECTIONS_INTERVAL_MS`, default 30 min) quando há `status=1`. Falha também grava `last_connections_at` (backoff). **Rollback:** remova o tipo do worker/`AGENT_JOB_TYPES`; ignore `last_connections_at`; volte a chamar o script/API robot à mão.
 
-Claim: `FOR UPDATE SKIP LOCKED`. Tabelas: `agent_jobs`, `agent_runtime`. Slots: máx. `AVD_MAX_ATIVOS_POR_SERVIDOR` (default **4**) ativos por host.
+Claim: `FOR UPDATE SKIP LOCKED`. Tabelas: `agent_jobs`, `agent_runtime`, `host_config`. Slots: por host em `host_config.max_ativos` (painel `PATCH /agente/hosts/:hostKey`); fallback env `AVD_MAX_ATIVOS_POR_SERVIDOR` (default **4**). Cadastro/enroll: `ramGb` / `diskGb` na linha do agente.
 
 | Método | Papel |
 |--------|--------|
@@ -177,7 +177,8 @@ Claim: `FOR UPDATE SKIP LOCKED`. Tabelas: `agent_jobs`, `agent_runtime`. Slots: 
 | `GET /agente/:agentId/runtime` | idle/busy, lastInboxAt, `online` |
 | `POST /agente/:agentId/jobs/:jobId/complete` | Marca done (+ `lastInboxAt` / `lastConnectionsAt` conforme o tipo) |
 | `POST /agente/:agentId/jobs/:jobId/fail` | Marca failed `{ "error": "…" }` |
-| `GET /agente/slots` | Por host: ativos/dormindo, `candidatosWake`/`candidatosSleep`, serial/container (supervisor) |
+| `GET /agente/slots` | Por host: `maxAtivos`, ativos/dormindo, `candidatosWake`/`candidatosSleep` (supervisor) |
+| `PATCH /agente/hosts/:hostKey` | Define `maxAtivos` (1–64) em `host_config` |
 | `POST /agente/:agentId/device-status` | Sync status `ativo`\|`dormindo` após docker local (sem SSH) |
 | `POST /agentes/:id/api-key` | Emite `X-Api-Key` do worker (plain uma vez; hash no banco) |
 

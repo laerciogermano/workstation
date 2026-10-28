@@ -11,9 +11,21 @@
  *
  *   DRY=1 · ONCE=1 · ALLOW_STUB=1 · SKIP_DOCKER=1 · IDLE_BEFORE_SLEEP=2
  */
-import { hostname } from 'node:os';
+import { hostname, totalmem } from 'node:os';
 import { createApiClient } from './api.mjs';
 import { runAgentCycle } from './agent-cycle.mjs';
+
+function hostRamGb() {
+  const fromEnv = Number(process.env.HOST_RAM_GB);
+  if (Number.isFinite(fromEnv) && fromEnv >= 1) return Math.floor(fromEnv);
+  return Math.max(1, Math.round(totalmem() / 1024 ** 3));
+}
+
+function hostDiskGb() {
+  const fromEnv = Number(process.env.HOST_DISK_GB);
+  if (Number.isFinite(fromEnv) && fromEnv >= 1) return Math.floor(fromEnv);
+  return undefined;
+}
 
 const MODE = (process.env.MODE || 'single').toLowerCase();
 
@@ -64,6 +76,9 @@ async function enroll() {
     if (CONTAINER) body.containerName = CONTAINER;
     if (Number.isFinite(ADB_PORT) && ADB_PORT > 0) body.adbPort = ADB_PORT;
     if (HOST_NOME) body.hostNome = HOST_NOME;
+    body.ramGb = hostRamGb();
+    const diskGb = hostDiskGb();
+    if (diskGb) body.diskGb = diskGb;
     const res = await api.enroll(AGENT_ID_ENV, body);
     if (res?.agentId) AGENT_ID = res.agentId;
     console.log(

@@ -18,6 +18,7 @@ import { ProfilesModule } from './profiles/profiles.module';
 import { AgentJob } from './agente/agent-job.entity';
 import { AgentRuntime } from './agente/agent-runtime.entity';
 import { AgenteModule } from './agente/agente.module';
+import { HostConfig } from './agente/host-config.entity';
 import { Agente } from './agentes/agente.entity';
 import { AgentesModule } from './agentes/agentes.module';
 import { AuthModule } from './auth/auth.module';
@@ -47,6 +48,7 @@ import { GestoresModule } from './gestores/gestores.module';
           GestorAgente,
           AgentJob,
           AgentRuntime,
+          HostConfig,
           User,
         ],
         synchronize: config.get<string>('DB_SYNC', 'true') === 'true',

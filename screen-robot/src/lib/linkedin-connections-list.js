@@ -1,6 +1,7 @@
 /**
- * Parse OCR da tela Manage → Connections (lista "Connected on …").
+ * Parse dump/OCR da tela Manage → Connections (lista "Connected on …").
  * Cards ordenados do topo = conexões mais recentes.
+ * No fluxo extract-connections a fonte é só dump (uiautomator).
  */
 
 const HEADER_RE =

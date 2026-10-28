@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Extrai as N conexões mais recentes do LinkedIn (AVD).
+ * Extrai as N conexões mais recentes do LinkedIn (AVD) via dump/uiautomator.
  *
  * Uso (cwd: screen-robot/src):
  *   npm run linkedin-extract-connections -- --n 20

@@ -390,10 +390,11 @@ curl -s -X POST http://127.0.0.1:3099/connections -H 'content-type: application/
 # ou: GET http://127.0.0.1:3099/connections?n=20
 ```
 
-Fluxo: Network → Manage my network → Connections → scroll/OCR até `n`.  
+Fluxo: Network → Manage my network → Connections → scroll via **dump (uiautomator)** até `n` (sem OCR).  
 Em sucesso → `POST …/client-connections-linkedin/mark-accepted` com os nomes; cruza com convites `status: 1` do agente e promove a `2` (conectado). Default API `:3000`. API robot → 502 se o POST falhar.  
 Lib: [`lib/linkedin-extract-connections.js`](lib/linkedin-extract-connections.js) · parser [`lib/linkedin-connections-list.js`](lib/linkedin-connections-list.js).
 
+**Antes → depois (sense):** navegação/lista com OCR (`engine` rapidocr) → **só `sense=dump`**. Rollback: passar `sense: "ocr"` / `engine` OCR de volta em `tapQueries`/`extractBySense`.  
 **Antes → depois:** só JSON da lista → também marca aceitos na vendas/api.  
 **Rollback:** `notifyApi: false` / ignore `mark-accepted`; remova os scripts `linkedin-extract-connections*`.
 

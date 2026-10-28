@@ -1,6 +1,6 @@
 /**
  * Extrai as N conexões mais recentes:
- * LinkedIn → Network → Manage my network → Connections → scroll (uidump/OCR).
+ * LinkedIn → Network → Manage my network → Connections → scroll (só dump/uiautomator).
  */
 import { mkdirSync } from "node:fs";
 import { join } from "node:path";
@@ -17,7 +17,8 @@ import {
 } from "./linkedin-connections-list.js";
 import { key, launch, scroll, screenshot, stop, tapElement } from "./operate.js";
 
-const OCR = process.env.SCREEN_ROBOT_OCR || "rapidocr";
+/** Sempre dump — não usa OCR neste fluxo. */
+const SENSE = "dump";
 const WAIT_MS = Number(process.env.LINKEDIN_CONN_WAIT_MS || 3_000);
 const SCROLL_MS = Number(process.env.LINKEDIN_CONN_SCROLL_MS || 1_200);
 const SCROLL_DIST = Number(process.env.LINKEDIN_CONN_SCROLL_DIST || 280);
@@ -30,7 +31,7 @@ async function tapQueries(serial, queries, label, opts = {}) {
   const minScore = opts.minScore ?? 0.75;
   for (let i = 1; i <= attempts; i++) {
     for (const q of list) {
-      const hit = await findByText(serial, q, { engine: OCR, minScore });
+      const hit = await findByText(serial, q, { sense: SENSE, minScore });
       if (hit?.x != null && hit?.y != null) {
         // Network da tab bar: y alto; evita "Network" em Settings etc.
         if (opts.minY != null && hit.y < opts.minY) continue;
@@ -83,7 +84,7 @@ export async function extractRecentConnections(opts) {
 
   // Garante tab bar (Home/Network) — se ainda em Connections, BACK até achar
   for (let back = 0; back < 4; back++) {
-    const els = await extractBySense({ serial, engine: OCR });
+    const els = await extractBySense({ serial, sense: SENSE });
     const hasTab = (els || []).some(
       (e) =>
         /^network$/i.test(String(e?.text || "").trim()) &&
@@ -127,7 +128,7 @@ export async function extractRecentConnections(opts) {
 
   while (list.length < n && round < MAX_ROUNDS) {
     round++;
-    const els = await extractBySense({ serial, engine: OCR });
+    const els = await extractBySense({ serial, sense: SENSE });
     const batch = connectionsFromExtract(els || []);
     const before = list.length;
     list = mergeConnections(list, batch);
@@ -186,5 +187,6 @@ export async function extractRecentConnections(opts) {
     steps,
     truncated: connections.length < n,
     db,
+    sense: SENSE,
   };
 }

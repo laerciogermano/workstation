@@ -9,9 +9,6 @@ const EMPTY_FORM = {
   hostNome: '',
   ipPublico: '',
   localhost: false,
-  sshUser: 'root',
-  sshPort: '22',
-  sshPassword: '',
   fromBackup: '',
   adbPort: '',
   start: true,
@@ -19,7 +16,6 @@ const EMPTY_FORM = {
   notas: '',
   linkedinNome: '',
   linkedinUsuario: '',
-  linkedinSenha: '',
   linkedinProfileUrl: '',
   linkedinHeadline: '',
   linkedinStatus: 'ativa',
@@ -69,8 +65,6 @@ export default function Agentes() {
   const [debouncedQ, setDebouncedQ] = useState('');
   const [busyId, setBusyId] = useState(null);
   const [note, setNote] = useState(null);
-  const [revealSshId, setRevealSshId] = useState(null);
-  const [revealLiId, setRevealLiId] = useState(null);
   const [formOpen, setFormOpen] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [form, setForm] = useState(EMPTY_FORM);
@@ -140,13 +134,9 @@ export default function Agentes() {
       hostNome: row.hostNome || '',
       ipPublico: row.ipPublico || '',
       localhost: Boolean(row.localhost),
-      sshUser: row.sshUser || 'root',
-      sshPort: String(row.sshPort ?? 22),
-      sshPassword: row.sshPassword || '',
       notas: row.notas || '',
       linkedinNome: row.linkedinNome || '',
       linkedinUsuario: row.linkedinUsuario || '',
-      linkedinSenha: row.linkedinSenha || '',
       linkedinProfileUrl: row.linkedinProfileUrl || '',
       linkedinHeadline: row.linkedinHeadline || '',
       linkedinStatus: row.linkedinStatus || 'ativa',
@@ -191,11 +181,6 @@ export default function Agentes() {
           }
           payload.ipPublico = form.ipPublico.trim();
         }
-        payload.sshUser = form.sshUser.trim() || 'root';
-        const port = Number(form.sshPort);
-        if (Number.isFinite(port)) payload.sshPort = port;
-        payload.sshPassword = form.sshPassword || null;
-        payload.linkedinSenha = form.linkedinSenha || null;
         const res = await fetch(`${AGENTES_URL}/${editingId}`, {
           method: 'PATCH',
           headers: { 'content-type': 'application/json' },
@@ -240,10 +225,6 @@ export default function Agentes() {
           }
           payload.ipPublico = form.ipPublico.trim();
         }
-        payload.sshUser = form.sshUser.trim() || 'root';
-        const port = Number(form.sshPort);
-        if (Number.isFinite(port)) payload.sshPort = port;
-        if (form.sshPassword) payload.sshPassword = form.sshPassword;
       }
       if (form.fromBackup.trim()) payload.fromBackup = form.fromBackup.trim();
       const adb = Number(form.adbPort);
@@ -256,7 +237,6 @@ export default function Agentes() {
       if (form.linkedinUsuario.trim()) {
         payload.linkedinUsuario = form.linkedinUsuario.trim();
       }
-      if (form.linkedinSenha) payload.linkedinSenha = form.linkedinSenha;
       if (form.linkedinProfileUrl.trim()) {
         payload.linkedinProfileUrl = form.linkedinProfileUrl.trim();
       }
@@ -334,7 +314,6 @@ export default function Agentes() {
               <tr>
                 <th>Agente</th>
                 <th>Host</th>
-                <th>SSH</th>
                 <th>LinkedIn</th>
                 <th>ADB</th>
                 <th>Status</th>
@@ -351,70 +330,30 @@ export default function Agentes() {
                     </div>
                   </td>
                   <td className="muted">{hostLabel(a)}</td>
-                  <td>
-                    <div className="srv-ssh">
-                      {a.localhost ? (
-                        <span className="tag usr-status-on">local</span>
-                      ) : null}
-                      <code>
-                        {a.sshUser || 'root'}
-                        {!a.localhost
-                          ? `@${a.ipPublico || a.ipPrivado || '—'}`
-                          : ''}
-                        {a.sshPort != null ? `:${a.sshPort}` : ''}
-                      </code>
-                      {a.sshPassword ? (
-                        <button
-                          type="button"
-                          className="btn-link"
-                          onClick={() =>
-                            setRevealSshId((id) =>
-                              id === a.id ? null : a.id,
-                            )
-                          }
-                        >
-                          {revealSshId === a.id
-                            ? 'Ocultar senha'
-                            : 'Ver senha'}
-                        </button>
-                      ) : (
-                        <span className="muted">sem senha</span>
-                      )}
-                      {revealSshId === a.id && a.sshPassword ? (
-                        <code className="srv-pass">{a.sshPassword}</code>
-                      ) : null}
-                    </div>
-                  </td>
                   <td className="muted">
                     {needsLinkedin(a) ? (
                       <span
                         className="tag tag-warn"
-                        title="Complete usuário/senha no editar"
+                        title="Complete usuário no editar"
                       >
                         falta LinkedIn
                       </span>
                     ) : (
-                      <div className="srv-ssh">
+                      <div className="emp-person-text">
                         <span>{liLabel(a)}</span>
-                        {a.linkedinSenha ? (
-                          <button
-                            type="button"
-                            className="btn-link"
-                            onClick={() =>
-                              setRevealLiId((id) =>
-                                id === a.id ? null : a.id,
-                              )
-                            }
+                        {a.linkedinProfileUrl &&
+                        !/\/in\/me\/?$/i.test(a.linkedinProfileUrl) ? (
+                          <a
+                            className="linkedin-link"
+                            href={a.linkedinProfileUrl}
+                            target="_blank"
+                            rel="noreferrer"
                           >
-                            {revealLiId === a.id
-                              ? 'Ocultar senha LI'
-                              : 'Ver senha LI'}
-                          </button>
-                        ) : (
-                          <span className="muted">sem senha LI</span>
-                        )}
-                        {revealLiId === a.id && a.linkedinSenha ? (
-                          <code className="srv-pass">{a.linkedinSenha}</code>
+                            {a.linkedinProfileUrl.replace(
+                              /^https?:\/\/(www\.)?linkedin\.com/i,
+                              '',
+                            )}
+                          </a>
                         ) : null}
                       </div>
                     )}
@@ -608,29 +547,6 @@ export default function Agentes() {
                       />
                     </label>
                   )}
-                  <label>
-                    SSH user
-                    <input
-                      value={form.sshUser}
-                      onChange={(e) => setField('sshUser', e.target.value)}
-                    />
-                  </label>
-                  <label>
-                    SSH port
-                    <input
-                      value={form.sshPort}
-                      onChange={(e) => setField('sshPort', e.target.value)}
-                    />
-                  </label>
-                  <label>
-                    SSH password
-                    <input
-                      type="password"
-                      value={form.sshPassword}
-                      onChange={(e) => setField('sshPassword', e.target.value)}
-                      autoComplete="new-password"
-                    />
-                  </label>
                 </>
               )}
               {!editingId && (
@@ -687,21 +603,13 @@ export default function Agentes() {
                 />
               </label>
               <label>
-                Senha LI
-                <input
-                  type="password"
-                  value={form.linkedinSenha}
-                  onChange={(e) => setField('linkedinSenha', e.target.value)}
-                  autoComplete="new-password"
-                />
-              </label>
-              <label>
                 Profile URL
                 <input
                   value={form.linkedinProfileUrl}
                   onChange={(e) =>
                     setField('linkedinProfileUrl', e.target.value)
                   }
+                  placeholder="https://www.linkedin.com/in/slug/"
                 />
               </label>
               <label>

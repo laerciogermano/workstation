@@ -11,6 +11,7 @@
  *
  *   DRY=1 · ONCE=1 · ALLOW_STUB=1 · SKIP_DOCKER=1 · IDLE_BEFORE_SLEEP=2
  */
+import { execFileSync } from 'node:child_process';
 import { hostname, totalmem } from 'node:os';
 import { createApiClient } from './api.mjs';
 import { runAgentCycle } from './agent-cycle.mjs';
@@ -21,10 +22,24 @@ function hostRamGb() {
   return Math.max(1, Math.round(totalmem() / 1024 ** 3));
 }
 
+/** Disco total do volume raiz (GB). Override: HOST_DISK_GB. */
 function hostDiskGb() {
   const fromEnv = Number(process.env.HOST_DISK_GB);
   if (Number.isFinite(fromEnv) && fromEnv >= 1) return Math.floor(fromEnv);
-  return undefined;
+  try {
+    const out = execFileSync('df', ['-k', '/'], {
+      encoding: 'utf8',
+      timeout: 5_000,
+    });
+    const line = out.trim().split('\n')[1];
+    if (!line) return undefined;
+    const parts = line.split(/\s+/);
+    const kb = Number(parts[1]);
+    if (!Number.isFinite(kb) || kb < 1) return undefined;
+    return Math.max(1, Math.round(kb / 1024 / 1024));
+  } catch {
+    return undefined;
+  }
 }
 
 const MODE = (process.env.MODE || 'single').toLowerCase();

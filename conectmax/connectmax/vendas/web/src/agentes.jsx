@@ -7,8 +7,6 @@ const SLOTS_URL = import.meta.env.VITE_AGENTE_SLOTS_URL ?? '/agente/slots';
 const EMPTY_FORM = {
   nome: '',
   hostNome: '',
-  ramGb: '',
-  diskGb: '',
   notas: '',
   linkedinNome: '',
   linkedinUsuario: '',
@@ -212,8 +210,6 @@ export default function Agentes() {
       ...EMPTY_FORM,
       nome: row.nome || '',
       hostNome: row.hostNome || '',
-      ramGb: row.ramGb != null ? String(row.ramGb) : '',
-      diskGb: row.diskGb != null ? String(row.diskGb) : '',
       notas: row.notas || '',
       linkedinNome: row.linkedinNome || '',
       linkedinUsuario: row.linkedinUsuario || '',
@@ -294,12 +290,6 @@ export default function Agentes() {
         linkedinProfileUrl: form.linkedinProfileUrl.trim() || null,
         linkedinHeadline: form.linkedinHeadline.trim() || null,
       };
-      const ram = Number(form.ramGb);
-      if (Number.isFinite(ram) && ram >= 1) payload.ramGb = Math.floor(ram);
-      else if (form.ramGb.trim() === '') payload.ramGb = null;
-      const disk = Number(form.diskGb);
-      if (Number.isFinite(disk) && disk >= 1) payload.diskGb = Math.floor(disk);
-      else if (form.diskGb.trim() === '') payload.diskGb = null;
       const res = await fetch(`${AGENTES_URL}/${editingId}`, {
         method: 'PATCH',
         headers: { 'content-type': 'application/json' },
@@ -364,58 +354,73 @@ export default function Agentes() {
       slotDraft[host.hostKey] != null
         ? slotDraft[host.hostKey]
         : String(host.maxAtivos);
+    const specs =
+      [
+        host.ramGb != null ? `RAM ${host.ramGb} GB` : null,
+        host.diskGb != null ? `Disco ${host.diskGb} GB` : null,
+      ]
+        .filter(Boolean)
+        .join(' · ') || 'RAM/disco via worker (ainda não reportado)';
     return (
-      <section key={host.hostKey} className="avd-section">
-        <div className="avd-section-title" style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', alignItems: 'center' }}>
-          <h2 style={{ margin: 0 }}>
-            {host.hostNome}{' '}
-            <span className="muted">
-              · {host.hostKey}
-              {host.ramGb != null ? ` · RAM ${host.ramGb} GB` : ''}
-              {host.diskGb != null ? ` · disco ${host.diskGb} GB` : ''}
-              {` · slots ${host.ativos}/${host.maxAtivos}`}
-              {host.livres ? ` · ${host.livres} livre` : ''}
-              {` · ${rows.length} agente${rows.length === 1 ? '' : 's'}`}
-              {` · ${host.dormindo} dormindo`}
-            </span>
+      <div key={host.hostKey} className="host-block">
+        <section className="host-panel avd-section">
+          <h2 className="avd-section-title">Host</h2>
+          <div className="host-panel-body">
+            <div className="emp-person-text">
+              <span className="emp-person-name">{host.hostNome}</span>
+              <span className="muted">{host.hostKey}</span>
+              <span className="muted" title="Reportado pelo worker no enroll">
+                {specs}
+              </span>
+              <span className="muted">
+                slots {host.ativos}/{host.maxAtivos}
+                {host.livres ? ` · ${host.livres} livre` : ''}
+                {` · ${rows.length} agente${rows.length === 1 ? '' : 's'}`}
+                {` · ${host.dormindo} dormindo`}
+              </span>
+            </div>
+            {canWrite && (
+              <label className="filter host-slots-edit">
+                Máx. slots
+                <input
+                  type="number"
+                  min={1}
+                  max={64}
+                  value={draftMax}
+                  disabled={slotBusyKey === host.hostKey}
+                  onChange={(e) =>
+                    setSlotDraft((prev) => ({
+                      ...prev,
+                      [host.hostKey]: e.target.value,
+                    }))
+                  }
+                />
+                <button
+                  type="button"
+                  className="btn-secondary"
+                  disabled={
+                    slotBusyKey === host.hostKey ||
+                    String(draftMax) === String(host.maxAtivos)
+                  }
+                  onClick={() => saveHostSlots(host.hostKey, draftMax)}
+                >
+                  Salvar
+                </button>
+              </label>
+            )}
+          </div>
+        </section>
+
+        <section className="agents-panel avd-section">
+          <h2 className="avd-section-title">
+            Agentes{' '}
+            <span className="muted">({rows.length})</span>
           </h2>
-          {canWrite && (
-            <label className="filter" style={{ margin: 0 }}>
-              Máx. slots
-              <input
-                type="number"
-                min={1}
-                max={64}
-                style={{ width: '4.5rem' }}
-                value={draftMax}
-                disabled={slotBusyKey === host.hostKey}
-                onChange={(e) =>
-                  setSlotDraft((prev) => ({
-                    ...prev,
-                    [host.hostKey]: e.target.value,
-                  }))
-                }
-              />
-              <button
-                type="button"
-                className="btn-secondary"
-                disabled={
-                  slotBusyKey === host.hostKey ||
-                  String(draftMax) === String(host.maxAtivos)
-                }
-                onClick={() => saveHostSlots(host.hostKey, draftMax)}
-              >
-                Salvar
-              </button>
-            </label>
-          )}
-        </div>
-        <div className="emp-table-wrap">
+          <div className="emp-table-wrap">
           <table className="emp-table">
             <thead>
               <tr>
                 <th>Agente</th>
-                <th>Máquina</th>
                 <th>LinkedIn</th>
                 <th>ADB</th>
                 <th>Status</th>
@@ -438,14 +443,6 @@ export default function Agentes() {
                           <span className="muted">{a.containerName}</span>
                         ) : null}
                       </div>
-                    </td>
-                    <td className="muted">
-                      {[
-                        a.ramGb != null ? `RAM ${a.ramGb} GB` : null,
-                        a.diskGb != null ? `disco ${a.diskGb} GB` : null,
-                      ]
-                        .filter(Boolean)
-                        .join(' · ') || '—'}
                     </td>
                     <td className="muted">
                       {needsLinkedin(a) ? (
@@ -538,7 +535,8 @@ export default function Agentes() {
             </tbody>
           </table>
         </div>
-      </section>
+        </section>
+      </div>
     );
   }
 
@@ -548,7 +546,7 @@ export default function Agentes() {
         <div>
           <h1>Agentes</h1>
           <p className="subtitle">
-            Vendedor = host + device + LinkedIn · slots por máquina
+            Hosts (slots/máq.) e agentes · RAM/disco só do worker
             {meta.total
               ? ` · ${hostSections.length} host${
                   hostSections.length === 1 ? '' : 's'
@@ -637,28 +635,9 @@ export default function Agentes() {
                   onChange={(e) => setField('hostNome', e.target.value)}
                 />
               </label>
-              <label>
-                RAM (GB)
-                <input
-                  type="number"
-                  min={1}
-                  max={1024}
-                  value={form.ramGb}
-                  onChange={(e) => setField('ramGb', e.target.value)}
-                  placeholder="ex. 16"
-                />
-              </label>
-              <label>
-                Disco (GB)
-                <input
-                  type="number"
-                  min={1}
-                  max={102400}
-                  value={form.diskGb}
-                  onChange={(e) => setField('diskGb', e.target.value)}
-                  placeholder="ex. 512"
-                />
-              </label>
+              <p className="muted srv-form-span">
+                RAM e disco vêm do worker no enroll (não editáveis aqui).
+              </p>
               <p className="muted srv-form-span">LinkedIn</p>
               <label>
                 Nome perfil

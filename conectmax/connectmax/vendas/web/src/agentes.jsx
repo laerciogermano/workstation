@@ -57,7 +57,6 @@ export default function Agentes() {
   const [outros, setOutros] = useState([]);
   const [meta, setMeta] = useState({ total: 0, ativos: 0, dormindo: 0 });
   const [loading, setLoading] = useState(true);
-  const [syncing, setSyncing] = useState(false);
   const [error, setError] = useState(null);
   const [q, setQ] = useState('');
   const [debouncedQ, setDebouncedQ] = useState('');
@@ -79,39 +78,32 @@ export default function Agentes() {
     [ativos, dormindo, outros],
   );
 
-  const load = useCallback(
-    async (opts = {}) => {
-      const doSync = Boolean(opts.sync);
-      if (doSync) setSyncing(true);
-      else setLoading(true);
-      setError(null);
-      try {
-        const params = new URLSearchParams({ grouped: 'true' });
-        if (doSync) params.set('sync', 'true');
-        if (debouncedQ) params.set('q', debouncedQ);
-        const res = await fetch(`${AGENTES_URL}?${params}`);
-        if (!res.ok) throw new Error(`agentes HTTP ${res.status}`);
-        const json = await res.json();
-        setAtivos(Array.isArray(json.ativos) ? json.ativos : []);
-        setDormindo(Array.isArray(json.dormindo) ? json.dormindo : []);
-        setOutros(Array.isArray(json.outros) ? json.outros : []);
-        setMeta({
-          total: json.meta?.total ?? 0,
-          ativos: json.meta?.ativos ?? 0,
-          dormindo: json.meta?.dormindo ?? 0,
-        });
-      } catch (e) {
-        setError(e.message ?? 'Falha ao carregar');
-      } finally {
-        setLoading(false);
-        setSyncing(false);
-      }
-    },
-    [debouncedQ],
-  );
+  const load = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const params = new URLSearchParams({ grouped: 'true' });
+      if (debouncedQ) params.set('q', debouncedQ);
+      const res = await fetch(`${AGENTES_URL}?${params}`);
+      if (!res.ok) throw new Error(`agentes HTTP ${res.status}`);
+      const json = await res.json();
+      setAtivos(Array.isArray(json.ativos) ? json.ativos : []);
+      setDormindo(Array.isArray(json.dormindo) ? json.dormindo : []);
+      setOutros(Array.isArray(json.outros) ? json.outros : []);
+      setMeta({
+        total: json.meta?.total ?? 0,
+        ativos: json.meta?.ativos ?? 0,
+        dormindo: json.meta?.dormindo ?? 0,
+      });
+    } catch (e) {
+      setError(e.message ?? 'Falha ao carregar');
+    } finally {
+      setLoading(false);
+    }
+  }, [debouncedQ]);
 
   useEffect(() => {
-    load({ sync: false });
+    load();
   }, [load]);
 
   function openCreate() {
@@ -187,7 +179,7 @@ export default function Agentes() {
         if (!res.ok) throw new Error(errMsg(json, res));
         closeForm();
         setNote(`Agente “${form.nome || editingId}” atualizado.`);
-        await load({ sync: false });
+        await load();
         return;
       }
 
@@ -241,7 +233,7 @@ export default function Agentes() {
       if (!res.ok) throw new Error(errMsg(json, res));
       closeForm();
       setNote(`Agente “${nome}” criado.`);
-      await load({ sync: false });
+      await load();
     } catch (err) {
       setFormNote(String(err?.message || err));
     } finally {
@@ -271,7 +263,7 @@ export default function Agentes() {
         const json = await res.json().catch(() => ({}));
         if (!res.ok) throw new Error(errMsg(json, res));
         setNote(`Removido ${row.nome}.`);
-        await load({ sync: false });
+        await load();
         return;
       }
       if (action !== 'wake') return;
@@ -281,7 +273,7 @@ export default function Agentes() {
       const json = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(errMsg(json, res));
       setNote(`Acordar · ${row.nome}`);
-      await load({ sync: false });
+      await load();
     } catch (err) {
       setError(String(err?.message || err));
     } finally {
@@ -417,16 +409,8 @@ export default function Agentes() {
           <button
             type="button"
             className="btn-secondary"
-            disabled={loading || syncing}
-            onClick={() => load({ sync: true })}
-          >
-            {syncing ? 'Sincronizando…' : 'Sync Docker'}
-          </button>
-          <button
-            type="button"
-            className="btn-secondary"
             disabled={loading}
-            onClick={() => load({ sync: false })}
+            onClick={() => load()}
           >
             Atualizar
           </button>

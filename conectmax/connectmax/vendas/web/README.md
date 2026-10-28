@@ -80,7 +80,8 @@ npm run dev
 ## Uso
 
 - Menu transversal (`src/app-nav.jsx`): sidebar (**Funil** · **Agentes** · **Dashboards** · **Usuários**) + tema no rodapé. **Antes → depois:** **Candidatos**, **Empresas**, **Mensagens** e **Gestores** fora do nav (rotas `/mensagens` e `/gestores` seguem no SPA). `/` e `/empresas` → `/funil`. **Rollback:** recolocar itens no `LINKS`.
-- Agentes (`/agentes`): vendedor operacional = host + device + LinkedIn; Sync Docker; **Editar** (PATCH host/notas/LI) / Acordar / Remover (sem Ping / Dormir / Backup no UI); gestores cadastram **ou** worker `enroll` cria linha magra — tag **falta LinkedIn** até editar. API: [`../api/README.md`](../api/README.md#agentes-agentes).
+- Agentes (`/agentes`): vendedor operacional = host + device + LinkedIn; **Editar** (PATCH host/notas/LI) / Acordar / Remover (sem Sync Docker / Ping / Dormir / Backup no UI); gestores cadastram **ou** worker `enroll` cria linha magra — tag **falta LinkedIn** até editar. API: [`../api/README.md`](../api/README.md#agentes-agentes).
+**Antes → depois (sem Sync Docker):** botão Sync Docker (`?sync=true` / docker ps → DB) → só Atualizar (lista do DB). **Rollback:** botão + `load({ sync: true })` + estado `syncing`.
 **Antes → depois (enroll UI):** só cadastro manual → badge “falta LinkedIn” pós-enroll. **Rollback:** remova `needsLinkedin` / `tag-warn`.
 **Antes → depois (editar agente):** só criar + Acordar/Remover → botão **Editar** (host + LI via `PATCH`; sem SSH/senha LI/status LI/localhost/IP na UI — host novo assume `localhost`). **Rollback:** remova `editingId` / `openEdit`.
 **Antes → depois (nome + id):** host fallback `local` → `hostNome || nome`; tabela/modal: **Id** (uuid, só leitura) ≠ **Nome** (rótulo editável). Funil `?agent=` = uuid; select mostra nome. **Rollback:** funil/opts por `a.nome`; tire campo Id do modal.

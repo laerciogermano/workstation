@@ -102,6 +102,17 @@ export class DashboardService {
       .where('li.deletedAt IS NULL');
   }
 
+  /**
+   * Funil só com perfil vivo — soft-delete do candidato sem descartar status=0
+   * deixava órfãos e KPI "Sem convite" > coluna Candidatos.
+   */
+  private activeConnections(): SelectQueryBuilder<ClientConnectionLinkedin> {
+    return this.connections
+      .createQueryBuilder('c')
+      .innerJoin('c.clienteLinkedin', 'li')
+      .where('li.deletedAt IS NULL');
+  }
+
   async insights(): Promise<DashboardInsights> {
     const [
       profilesTotal,
@@ -122,22 +133,27 @@ export class DashboardService {
       runtimeRows,
     ] = await Promise.all([
       this.linkedin.count({ where: { deletedAt: IsNull() } }),
-      // Funil = client_connection_linkedin (mesmo critério do board /profiles?agentId=).
+      // Funil = client_connection_linkedin + perfil ativo (igual board Candidatos).
       // Não usar li.inviteStatus — fica desatualizado após claim/convite do agente.
-      this.connections.count({
-        where: { status: ClientConnectionLinkedinStatus.CONNECTED },
-      }),
-      this.connections.count({
-        where: { status: ClientConnectionLinkedinStatus.PENDING },
-      }),
-      this.connections.count({
-        where: { status: ClientConnectionLinkedinStatus.NOT_SENT },
-      }),
-      this.connections
-        .createQueryBuilder('c')
+      this.activeConnections()
+        .andWhere('c.status = :st', {
+          st: ClientConnectionLinkedinStatus.CONNECTED,
+        })
+        .getCount(),
+      this.activeConnections()
+        .andWhere('c.status = :st', {
+          st: ClientConnectionLinkedinStatus.PENDING,
+        })
+        .getCount(),
+      this.activeConnections()
+        .andWhere('c.status = :st', {
+          st: ClientConnectionLinkedinStatus.NOT_SENT,
+        })
+        .getCount(),
+      this.activeConnections()
         .select('c.status', 'label')
         .addSelect('COUNT(*)', 'count')
-        .where('c.status IN (:...sts)', {
+        .andWhere('c.status IN (:...sts)', {
           sts: [
             ClientConnectionLinkedinStatus.NOT_SENT,
             ClientConnectionLinkedinStatus.PENDING,
@@ -185,28 +201,26 @@ export class DashboardService {
         .groupBy('label')
         .orderBy('label', 'ASC')
         .getRawMany<{ label: string | null; count: string }>(),
-      this.connections
-        .createQueryBuilder('c')
+      this.activeConnections()
         .select(
           `TO_CHAR(c.connectedAt AT TIME ZONE 'UTC', 'YYYY-MM-DD')`,
           'label',
         )
         .addSelect('COUNT(*)', 'count')
-        .where('c.connectedAt IS NOT NULL')
+        .andWhere('c.connectedAt IS NOT NULL')
         .andWhere('c.status = :st', {
           st: ClientConnectionLinkedinStatus.CONNECTED,
         })
         .groupBy('label')
         .orderBy('label', 'ASC')
         .getRawMany<{ label: string | null; count: string }>(),
-      this.connections
-        .createQueryBuilder('c')
+      this.activeConnections()
         .select(
           `TO_CHAR(c.invitedAt AT TIME ZONE 'UTC', 'YYYY-MM-DD')`,
           'label',
         )
         .addSelect('COUNT(*)', 'count')
-        .where('c.invitedAt IS NOT NULL')
+        .andWhere('c.invitedAt IS NOT NULL')
         .groupBy('label')
         .orderBy('label', 'ASC')
         .getRawMany<{ label: string | null; count: string }>(),
@@ -234,12 +248,11 @@ export class DashboardService {
           connectionDegree: string | null;
           when: Date | null;
         }>(),
-      this.connections
-        .createQueryBuilder('c')
+      this.activeConnections()
         .select('c.agentId', 'agentId')
         .addSelect('c.status', 'status')
         .addSelect('COUNT(*)', 'count')
-        .where('c.status IN (:...sts)', {
+        .andWhere('c.status IN (:...sts)', {
           sts: [
             ClientConnectionLinkedinStatus.NOT_SENT,
             ClientConnectionLinkedinStatus.PENDING,

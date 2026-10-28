@@ -251,7 +251,7 @@ Lê / upsert da filha LinkedIn. No PUT, `null` no body **não** apaga valor já 
 
 ### Conexões LinkedIn (`client_connection_linkedin`)
 
-**Regra:** conexão **obriga** `cliente_linkedin` + `cliente` vivos. Soft-delete de candidato (`deleted_at`) **não** se aplica a quem já está pendente (1) ou conectado (2); match que soft-deleta duplicatas também os ignora. `GET` de conexões revive soft-deletes indevidos; `DELETE /profiles/:id` → `409` se houver conexão 1|2.
+**Regra:** conexão **obriga** `cliente_linkedin` + `cliente` vivos. Soft-delete de candidato (`deleted_at`) **não** se aplica a quem já está pendente (1) ou conectado (2); match que soft-deleta duplicatas também os ignora. `GET` de conexões revive soft-deletes indevidos; `DELETE /profiles/:id` → `409` se houver conexão 1|2. Remover candidato também marca `status=0` como **descartado (3)** (`discard_reason=candidato removido`) — evita órfão que inflava KPI “Sem convite” vs coluna Candidatos.
 
 **Antes → depois:** match soft-deletava o próprio perfil da conexão (ex.: leomarques 404 com conexão ativa) → exclusão só de candidatos sem conexão; Remover bloqueado; listagens usam `INNER JOIN` em cliente. **Rollback:** volte soft-delete sem filtro `NOT EXISTS` / `leftJoin` e remova `reviveConnectedSoftDeleted`.
 
@@ -419,7 +419,7 @@ curl -X DELETE http://localhost:3000/profiles
 
 ### `DELETE /profiles/:id`
 
-Soft-delete de **um** candidato ativo (`deleted_at = now()`). 404 se já estava soft-deleted ou inexistente. Same revive: reextrair / `ensure`.
+Soft-delete de **um** candidato ativo (`deleted_at = now()`) + descarta conexões `status=0` desse perfil (e órfãos `0` de outros soft-deletes). 404 se já estava soft-deleted ou inexistente. Same revive: reextrair / `ensure` (perfil); conexão fica em `3` até novo claim.
 
 ```bash
 curl -X DELETE http://localhost:3000/profiles/<uuid>
@@ -427,7 +427,8 @@ curl -X DELETE http://localhost:3000/profiles/<uuid>
 ```
 
 **Antes → depois:** só massa (`DELETE /profiles`) ou apagar linha → também dá para remover um perfil na UI/API.
-**Rollback:** `UPDATE linkedin_profiles SET deleted_at = NULL WHERE id = '<uuid>';` e remova `@Delete(':id')` / `softDeleteOne`.
+**Antes → depois (órfão funil):** soft-delete só setava `deleted_at` e deixava `client_connection_linkedin.status=0` → dashboard “Sem convite” > lista Candidatos → agora descarta `0→3` e o dashboard só conta conexões com `cliente_linkedin.deleted_at IS NULL`.
+**Rollback:** `UPDATE linkedin_profiles SET deleted_at = NULL WHERE id = '<uuid>';` e remova `@Delete(':id')` / `softDeleteOne`. Órfãos: `UPDATE client_connection_linkedin SET status=0, discard_reason=NULL WHERE discard_reason='candidato removido';` + remova join `deletedAt` em `DashboardService.activeConnections`.
 
 ```json
 {
@@ -655,6 +656,7 @@ curl http://localhost:3000/dashboard
 **Antes → depois (KPIs hoje):** havia grupo `hoje` (Extraídos / Convites enviados / Aceites do dia) → removido; só `funil`. Volume diário continua em `byDayExtract` / `byDayInvited` / `byDayConnected`. **Rollback:** reinsira os 3 KPIs `group: 'hoje'` + counts `connectedToday`/`invitedToday`/`extractedToday` no `DashboardService` e a seção “Hoje” em `dashboard.jsx`.
 **Antes → depois (por agentes):** dashboard só global → `byAgent[]` (funil 0|1|2 + `lastHeartbeatAt`/`runtimeStatus` de `agent_runtime` + cadastro `agentes`). Web: cards + barra empilhada + tabela. **Rollback:** remova `byAgent` do service/módulo e a seção “Por agentes” no web.
 **Antes → depois (fonte do funil):** KPIs Sem convite / Aguardando / Conectados + `byInviteStatus` liam `cliente_linkedin.invite_status` (OCR, podia ficar em `connect` após convite) → contam `client_connection_linkedin.status` 0|1|2 (igual coluna Candidatos / Convidados / Conectados do funil). **Rollback:** volte os `getCount`/`groupBy` em `li.inviteStatus` no `DashboardService`.
+**Antes → depois (funil sem soft-deleted):** counts de conexão não filtravam `cliente_linkedin.deleted_at` → órfão `status=0` após Remover → agora `activeConnections()` exige perfil ativo. **Rollback:** `connections.count({ where: { status } })` sem join.
 **Rollback:** restaure o `DashboardService` anterior (com `coverage`/`withPhoto`/`withOcr`); no web, volte os painéis Radar/cobertura; remova `normalizeInviteStatus` nos upserts. Para KPIs: volte `value` em `%` e o card “Conexões aceitas”; no web, um único `.kpi-grid` sem `group`.
 
 ```bash

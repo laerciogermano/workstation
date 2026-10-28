@@ -7,6 +7,8 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository, SelectQueryBuilder } from 'typeorm';
+import { ClientConnectionLinkedin } from '../client-connections-linkedin/client-connection-linkedin.entity';
+import { ClientConnectionLinkedinStatus } from '../client-connections-linkedin/client-connection-linkedin-status';
 import { matchScore, nameTokens } from '../profiles/profile-match';
 import {
   ProfileDetailItem,
@@ -267,6 +269,8 @@ export class ClientesService {
       )
       .execute();
     const deleted = result.affected ?? 0;
+    // Órfãos status=0 em perfil soft-deleted inflavam KPI "Sem convite".
+    await this.discardNotSentForSoftDeleted();
     this.logger.log(`softDeleteAllActive deleted=${deleted}`);
     return { deleted, at: at.toISOString() };
   }
@@ -283,6 +287,9 @@ export class ClientesService {
     }
     const at = new Date();
     await this.linkedin.update({ id }, { deletedAt: at });
+    await this.discardNotSentConnections([id]);
+    // Também limpa órfãos antigos (removidos antes desta correção).
+    await this.discardNotSentForSoftDeleted();
     return { id, deleted: true, at: at.toISOString() };
   }
 
@@ -312,7 +319,7 @@ export class ClientesService {
       .take(40)
       .getMany();
     const at = new Date();
-    let n = 0;
+    const removed: string[] = [];
     for (const li of rows) {
       const m = matchScore(
         {
@@ -326,9 +333,13 @@ export class ClientesService {
       );
       if (!m.shouldMerge) continue;
       await this.linkedin.update({ id: li.id }, { deletedAt: at });
-      n += 1;
+      removed.push(li.id);
     }
-    return n;
+    if (removed.length) {
+      await this.discardNotSentConnections(removed);
+      await this.discardNotSentForSoftDeleted();
+    }
+    return removed.length;
   }
 
   /** Pendente (1) ou conectado (2) → não soft-delete / perfil deve permanecer. */
@@ -342,6 +353,56 @@ export class ClientesService {
       .limit(1)
       .getRawOne();
     return Boolean(row);
+  }
+
+  /**
+   * Soft-delete do card não pode deixar `status=0` vivo — dashboard/funil
+   * contam conexões; lista Candidatos só vê `deleted_at IS NULL`.
+   */
+  private async discardNotSentConnections(
+    clienteLinkedinIds: string[],
+    reason = 'candidato removido',
+  ): Promise<void> {
+    const ids = [
+      ...new Set(
+        clienteLinkedinIds.map((id) => String(id || '').trim()).filter(Boolean),
+      ),
+    ];
+    if (!ids.length) return;
+    await this.linkedin.manager
+      .createQueryBuilder()
+      .update(ClientConnectionLinkedin)
+      .set({
+        status: ClientConnectionLinkedinStatus.DISCARDED,
+        discardReason: reason,
+      })
+      .where('cliente_linkedin_id IN (:...ids)', { ids })
+      .andWhere('status = :st', {
+        st: ClientConnectionLinkedinStatus.NOT_SENT,
+      })
+      .execute();
+  }
+
+  /** Limpa órfãos status=0 cujo perfil já está soft-deleted. */
+  private async discardNotSentForSoftDeleted(
+    reason = 'candidato removido',
+  ): Promise<void> {
+    await this.linkedin.manager
+      .createQueryBuilder()
+      .update(ClientConnectionLinkedin)
+      .set({
+        status: ClientConnectionLinkedinStatus.DISCARDED,
+        discardReason: reason,
+      })
+      .where('status = :st', {
+        st: ClientConnectionLinkedinStatus.NOT_SENT,
+      })
+      .andWhere(
+        `cliente_linkedin_id IN (
+          SELECT id FROM cliente_linkedin WHERE deleted_at IS NOT NULL
+        )`,
+      )
+      .execute();
   }
 
   async ensureForLinkedInUrl(rawUrl: string): Promise<{

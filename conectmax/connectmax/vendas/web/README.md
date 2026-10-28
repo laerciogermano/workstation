@@ -22,7 +22,7 @@ SPA React (Vite) que lista cards paginados de `GET /profiles`, abre `/profiles/:
 | Mensagens só via curl/API | Rota SPA **`/mensagens`**: lista conexões (`/linkedin-base/connections`), ao clicar carrega o fio (`/linkedin-base/messages`) e envia via robot `POST :3099/message` |
 | Funil LinkedIn só no todo | Rota SPA **`/funil`**: board Candidatos → Convidados → Conectados → Abordados → Respondidos; cada coluna lista cards da API correspondente |
 | Empresas só nas planilhas/portal | Rota SPA `/empresas` existiu; **removida do nav** (API `/empresas` permanece) |
-| Servidores / AVDs / Contas LI separados | Só **`/agentes`**: host + ADB + LinkedIn na mesma linha; gestores com `agentes:write` cadastram |
+| Servidores / AVDs / Contas LI separados | Só **`/agentes`**: host + ADB + LinkedIn na mesma linha; edição na UI; criação só via enroll/API |
 | Nav por página + filtro “Buscar nome, cargo, cidade” | Menu transversal `AppNav` (Funil · Mensagens · Empresas · Agentes · Gestores · Dashboards); home `/` redireciona ao funil |
 | Nav só texto / SVG manual | Ícones **Phosphor** (`@phosphor-icons/react`, peso `thin`) no `AppNav` + `ExtractIcon` |
 | `AppNav` horizontal no topo de cada página | Sidebar vertical à esquerda (`app-shell` + `.app-nav` sticky); páginas só no `.app-main` |
@@ -80,12 +80,13 @@ npm run dev
 ## Uso
 
 - Menu transversal (`src/app-nav.jsx`): sidebar (**Funil** · **Agentes** · **Dashboards** · **Usuários**) + tema no rodapé. **Antes → depois:** **Candidatos**, **Empresas**, **Mensagens** e **Gestores** fora do nav (rotas `/mensagens` e `/gestores` seguem no SPA). `/` e `/empresas` → `/funil`. **Rollback:** recolocar itens no `LINKS`.
-- Agentes (`/agentes`): lista **por host** + slots editáveis (`PATCH /agente/hosts/:hostKey` → tabela `host_config`; fallback env `AVD_MAX_ATIVOS_POR_SERVIDOR`); cadastro/edição envia **RAM/disco GB** (`ramGb`/`diskGb`, coluna na tabela); worker enroll também manda `ramGb` (+ `HOST_DISK_GB` opcional). Status “no slot” / “fila de alternância” / “parado”. API: [`../api/README.md`](../api/README.md#agentes-agentes).
+- Agentes (`/agentes`): lista **por host** + slots editáveis (`PATCH /agente/hosts/:hostKey` → tabela `host_config`; fallback env `AVD_MAX_ATIVOS_POR_SERVIDOR`); edição envia **RAM/disco GB** (`ramGb`/`diskGb`); sem botão **Novo agente** (criação via enroll/API `POST /agentes`). Worker enroll manda `ramGb` (+ `HOST_DISK_GB` opcional). Status “no slot” / “fila de alternância” / “parado”. API: [`../api/README.md`](../api/README.md#agentes-agentes).
 **Antes → depois (host + slots):** seções flat → por `hostKey` + máx. slots editável no painel. **Rollback:** remova `host_config` / `PATCH hosts` / UI de slots.
 **Antes → depois (RAM/disco):** só notas/host → campos `ramGb`/`diskGb` no formulário e coluna Máquina. **Rollback:** remova campos + coluna `disk_gb`.
 **Antes → depois (sem Sync Docker):** botão Sync Docker (`?sync=true` / docker ps → DB) → só Atualizar (lista do DB). **Rollback:** botão + `load({ sync: true })` + estado `syncing`.
 **Antes → depois (enroll UI):** só cadastro manual → badge “falta LinkedIn” pós-enroll. **Rollback:** remova `needsLinkedin` / `tag-warn`.
 **Antes → depois (editar agente):** só criar + Acordar/Remover → botão **Editar** (host + LI via `PATCH`; sem SSH/senha LI/status LI/localhost/IP na UI — host novo assume `localhost`). **Rollback:** remova `editingId` / `openEdit`.
+**Antes → depois (sem Novo agente):** botão + modal de criação → só edição / enroll. **Rollback:** restaure `openCreate` + botão no header.
 **Antes → depois (nome + id):** host fallback `local` → `hostNome || nome`; tabela/modal: **Id** (uuid, só leitura) ≠ **Nome** (rótulo editável). Funil `?agent=` = uuid; select mostra nome. **Rollback:** funil/opts por `a.nome`; tire campo Id do modal.
 - Perfil (`/profiles/:id`): abre a partir do funil; **Voltar** → `history.back()` (fallback `/funil`); **Extrair informações** → `GET /extract/by-url/start?url=`; **Remover** → `DELETE /profiles/:id` (volta ao funil). Conectado → **Enviar mensagem** (`/mensagens?profileId=`); não conectado → **Conectar** (`POST /linkedin-robot/connect`).
 - Sem detalhe / sem URL → omite o link

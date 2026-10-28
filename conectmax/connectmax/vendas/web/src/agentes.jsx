@@ -31,13 +31,6 @@ function agentHostKey(a) {
   return String(a.ipPrivado || a.ipPublico || a.id || '').trim() || '—';
 }
 
-function hostLabel(a) {
-  if (!a) return '—';
-  const name = a.hostNome || a.nome || '—';
-  if (a.localhost) return `${name} · localhost`;
-  return `${name} · ${a.ipPublico || a.ipPrivado || '—'}`;
-}
-
 function slotContextLabel(a, pendingJobs) {
   if (a?.status === 'ativo') return 'no slot';
   if (a?.status === 'dormindo' && pendingJobs > 0) {
@@ -593,7 +586,7 @@ export default function Agentes() {
       {error && <p className="error">Erro: {error}</p>}
       {loading && <p className="muted">Carregando agentes…</p>}
       {!loading && !meta.total && (
-        <p className="empty">Nenhum agente. Gestores podem cadastrar aqui.</p>
+        <p className="empty">Nenhum agente. Novos entram via enroll do worker.</p>
       )}
 
       {!loading && hostSections.map((h) => renderHostSection(h))}
@@ -613,9 +606,7 @@ export default function Agentes() {
             aria-labelledby="agt-modal-title"
           >
             <header className="srv-modal-header">
-              <h2 id="agt-modal-title">
-                {editingId ? `Editar ${form.nome || 'agente'}` : 'Novo agente'}
-              </h2>
+              <h2 id="agt-modal-title">Editar {form.nome || 'agente'}</h2>
               <button
                 type="button"
                 className="btn-secondary"
@@ -625,12 +616,10 @@ export default function Agentes() {
               </button>
             </header>
             <form className="srv-form" onSubmit={submitForm}>
-              {editingId && (
-                <label className="srv-form-span">
-                  Id
-                  <input value={editingId} disabled readOnly />
-                </label>
-              )}
+              <label className="srv-form-span">
+                Id
+                <input value={editingId || ''} disabled readOnly />
+              </label>
               <label>
                 Nome *
                 <input
@@ -640,34 +629,14 @@ export default function Agentes() {
                   placeholder="agent-d"
                 />
               </label>
-              {!editingId && (
-                <label className="srv-form-span">
-                  Copiar host de
-                  <select
-                    value={form.copyHostFromAgenteId}
-                    onChange={(e) =>
-                      setField('copyHostFromAgenteId', e.target.value)
-                    }
-                  >
-                    <option value="">— novo host —</option>
-                    {allRows.map((a) => (
-                      <option key={a.id} value={a.id}>
-                        {a.nome} · {a.id.slice(0, 8)} · {hostLabel(a)}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-              )}
-              {(editingId || !form.copyHostFromAgenteId) && (
-                <label>
-                  Nome do host *
-                  <input
-                    required={Boolean(editingId) || !form.copyHostFromAgenteId}
-                    value={form.hostNome}
-                    onChange={(e) => setField('hostNome', e.target.value)}
-                  />
-                </label>
-              )}
+              <label>
+                Nome do host *
+                <input
+                  required
+                  value={form.hostNome}
+                  onChange={(e) => setField('hostNome', e.target.value)}
+                />
+              </label>
               <label>
                 RAM (GB)
                 <input
@@ -690,43 +659,6 @@ export default function Agentes() {
                   placeholder="ex. 512"
                 />
               </label>
-              {!editingId && (
-                <>
-                  <label>
-                    Porta ADB (opcional)
-                    <input
-                      value={form.adbPort}
-                      onChange={(e) => setField('adbPort', e.target.value)}
-                    />
-                  </label>
-                  <label className="srv-form-span">
-                    From backup (path no host)
-                    <input
-                      value={form.fromBackup}
-                      onChange={(e) => setField('fromBackup', e.target.value)}
-                    />
-                  </label>
-                  <label className="srv-check srv-form-span">
-                    <input
-                      type="checkbox"
-                      checked={form.provisionDevice}
-                      onChange={(e) =>
-                        setField('provisionDevice', e.target.checked)
-                      }
-                    />
-                    Provisionar container Docker
-                  </label>
-                  <label className="srv-check srv-form-span">
-                    <input
-                      type="checkbox"
-                      checked={form.start}
-                      disabled={!form.provisionDevice}
-                      onChange={(e) => setField('start', e.target.checked)}
-                    />
-                    Subir container após criar
-                  </label>
-                </>
-              )}
               <p className="muted srv-form-span">LinkedIn</p>
               <label>
                 Nome perfil
@@ -779,11 +711,7 @@ export default function Agentes() {
                   Cancelar
                 </button>
                 <button type="submit" className="btn-primary" disabled={saving}>
-                  {saving
-                    ? 'Salvando…'
-                    : editingId
-                      ? 'Salvar'
-                      : 'Criar'}
+                  {saving ? 'Salvando…' : 'Salvar'}
                 </button>
               </div>
             </form>

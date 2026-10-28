@@ -360,58 +360,82 @@ export default function Agentes() {
         host.diskGb != null ? `Disco ${host.diskGb} GB` : null,
       ]
         .filter(Boolean)
-        .join(' · ') || 'RAM/disco via worker (ainda não reportado)';
+        .join(' · ') || '—';
     return (
       <div key={host.hostKey} className="host-block">
-        <section className="host-panel avd-section">
+        <section className="avd-section">
           <h2 className="avd-section-title">Host</h2>
-          <div className="host-panel-body">
-            <div className="emp-person-text">
-              <span className="emp-person-name">{host.hostNome}</span>
-              <span className="muted">{host.hostKey}</span>
-              <span className="muted" title="Reportado pelo worker no enroll">
-                {specs}
-              </span>
-              <span className="muted">
-                slots {host.ativos}/{host.maxAtivos}
-                {host.livres ? ` · ${host.livres} livre` : ''}
-                {` · ${rows.length} agente${rows.length === 1 ? '' : 's'}`}
-                {` · ${host.dormindo} dormindo`}
-              </span>
-            </div>
-            {canWrite && (
-              <label className="filter host-slots-edit">
-                Máx. slots
-                <input
-                  type="number"
-                  min={1}
-                  max={64}
-                  value={draftMax}
-                  disabled={slotBusyKey === host.hostKey}
-                  onChange={(e) =>
-                    setSlotDraft((prev) => ({
-                      ...prev,
-                      [host.hostKey]: e.target.value,
-                    }))
-                  }
-                />
-                <button
-                  type="button"
-                  className="btn-secondary"
-                  disabled={
-                    slotBusyKey === host.hostKey ||
-                    String(draftMax) === String(host.maxAtivos)
-                  }
-                  onClick={() => saveHostSlots(host.hostKey, draftMax)}
-                >
-                  Salvar
-                </button>
-              </label>
-            )}
+          <div className="emp-table-wrap">
+            <table className="emp-table">
+              <thead>
+                <tr>
+                  <th>Máquina</th>
+                  <th>Recursos</th>
+                  <th>Slots</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <div className="emp-person-text">
+                      <span className="emp-person-name">{host.hostNome}</span>
+                      <span className="muted">{host.hostKey}</span>
+                    </div>
+                  </td>
+                  <td className="muted" title="Reportado pelo worker no enroll">
+                    {specs}
+                  </td>
+                  <td>
+                    <span className="tag">
+                      {host.ativos}/{host.maxAtivos}
+                    </span>
+                    <span className="muted">
+                      {host.livres ? ` · ${host.livres} livre` : ''}
+                      {` · ${rows.length} agente${rows.length === 1 ? '' : 's'}`}
+                      {` · ${host.dormindo} dormindo`}
+                    </span>
+                  </td>
+                  <td>
+                    {canWrite ? (
+                      <div className="usr-actions host-slots-edit">
+                        <input
+                          type="number"
+                          min={1}
+                          max={64}
+                          aria-label="Máx. slots"
+                          value={draftMax}
+                          disabled={slotBusyKey === host.hostKey}
+                          onChange={(e) =>
+                            setSlotDraft((prev) => ({
+                              ...prev,
+                              [host.hostKey]: e.target.value,
+                            }))
+                          }
+                        />
+                        <button
+                          type="button"
+                          className="btn-secondary"
+                          disabled={
+                            slotBusyKey === host.hostKey ||
+                            String(draftMax) === String(host.maxAtivos)
+                          }
+                          onClick={() => saveHostSlots(host.hostKey, draftMax)}
+                        >
+                          Salvar slots
+                        </button>
+                      </div>
+                    ) : (
+                      <span className="muted">—</span>
+                    )}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </section>
 
-        <section className="agents-panel avd-section">
+        <section className="avd-section">
           <h2 className="avd-section-title">
             Agentes{' '}
             <span className="muted">({rows.length})</span>

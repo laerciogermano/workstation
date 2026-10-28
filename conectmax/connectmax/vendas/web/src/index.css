@@ -2349,37 +2349,20 @@ code {
 
 .host-block {
   margin-top: 1.75rem;
-  padding-top: 0.25rem;
-  border-top: 1px solid var(--border, rgba(127, 127, 127, 0.25));
 }
 
 .host-block:first-of-type {
-  border-top: none;
   margin-top: 1rem;
-}
-
-.host-panel-body {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  align-items: flex-start;
-  justify-content: space-between;
-}
-
-.host-slots-edit {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.4rem;
-  margin: 0;
 }
 
 .host-slots-edit input[type='number'] {
   width: 4.5rem;
-}
-
-.agents-panel {
-  margin-top: 1rem;
+  padding: 0.35rem 0.45rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--inset);
+  color: var(--text);
+  font: inherit;
 }
 
 .avd-empty {

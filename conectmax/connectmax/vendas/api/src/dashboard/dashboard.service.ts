@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository, SelectQueryBuilder } from 'typeorm';
+import { AgentRuntime } from '../agente/agent-runtime.entity';
+import { Agente } from '../agentes/agente.entity';
 import { ClientConnectionLinkedin } from '../client-connections-linkedin/client-connection-linkedin.entity';
 import {
   CLIENT_CONNECTION_LINKEDIN_STATUS_LABEL,
@@ -18,7 +20,7 @@ type Kpi = {
   label: string;
   value: string | number;
   hint?: string;
-  group?: 'funil' | 'hoje';
+  group?: 'funil';
 };
 
 type RecentRow = {
@@ -32,6 +34,20 @@ type RecentRow = {
   when: Date | null;
 };
 
+/** Funil + presença por agente (`client_connection_linkedin.agent_id`). */
+export type AgentInsight = {
+  agentId: string;
+  name: string;
+  status: string | null;
+  linkedinStatus: string | null;
+  notSent: number;
+  pending: number;
+  connected: number;
+  total: number;
+  lastHeartbeatAt: Date | null;
+  runtimeStatus: string | null;
+};
+
 export type DashboardInsights = {
   kpis: Kpi[];
   byInviteStatus: CountRow[];
@@ -43,6 +59,7 @@ export type DashboardInsights = {
   byDayExtract: CountRow[];
   byDayConnected: CountRow[];
   byDayInvited: CountRow[];
+  byAgent: AgentInsight[];
   recent: RecentRow[];
 };
 
@@ -72,6 +89,10 @@ export class DashboardService {
     private readonly linkedin: Repository<ClienteLinkedin>,
     @InjectRepository(ClientConnectionLinkedin)
     private readonly connections: Repository<ClientConnectionLinkedin>,
+    @InjectRepository(Agente)
+    private readonly agentes: Repository<Agente>,
+    @InjectRepository(AgentRuntime)
+    private readonly runtimes: Repository<AgentRuntime>,
   ) {}
 
   private active(): SelectQueryBuilder<ClienteLinkedin> {
@@ -96,9 +117,9 @@ export class DashboardService {
       byDayConnectedRaw,
       byDayInvitedRaw,
       recentRaw,
-      connectedToday,
-      invitedToday,
-      extractedToday,
+      byAgentStatusRaw,
+      agentesRows,
+      runtimeRows,
     ] = await Promise.all([
       this.linkedin.count({ where: { deletedAt: IsNull() } }),
       // Funil = client_connection_linkedin (mesmo critério do board /profiles?agentId=).
@@ -215,20 +236,36 @@ export class DashboardService {
         }>(),
       this.connections
         .createQueryBuilder('c')
-        .where('c.status = :st', {
-          st: ClientConnectionLinkedinStatus.CONNECTED,
+        .select('c.agentId', 'agentId')
+        .addSelect('c.status', 'status')
+        .addSelect('COUNT(*)', 'count')
+        .where('c.status IN (:...sts)', {
+          sts: [
+            ClientConnectionLinkedinStatus.NOT_SENT,
+            ClientConnectionLinkedinStatus.PENDING,
+            ClientConnectionLinkedinStatus.CONNECTED,
+          ],
         })
-        .andWhere(`c.connectedAt >= date_trunc('day', NOW() AT TIME ZONE 'UTC')`)
-        .getCount(),
-      this.connections
-        .createQueryBuilder('c')
-        .where(`c.invitedAt >= date_trunc('day', NOW() AT TIME ZONE 'UTC')`)
-        .getCount(),
-      this.active()
-        .andWhere(
-          `COALESCE(li.extractedAt, li.createdAt) >= date_trunc('day', NOW() AT TIME ZONE 'UTC')`,
-        )
-        .getCount(),
+        .groupBy('c.agentId')
+        .addGroupBy('c.status')
+        .getRawMany<{ agentId: string; status: string | number; count: string }>(),
+      this.agentes.find({
+        select: {
+          id: true,
+          nome: true,
+          linkedinNome: true,
+          status: true,
+          linkedinStatus: true,
+        },
+        order: { nome: 'ASC' },
+      }),
+      this.runtimes.find({
+        select: {
+          agentId: true,
+          status: true,
+          lastHeartbeatAt: true,
+        },
+      }),
     ]);
 
     const connTotal = connConnected + connPending + connNotSent;
@@ -256,6 +293,12 @@ export class DashboardService {
       count: inviteBuckets[key],
       pct: pct(inviteBuckets[key], profilesTotal),
     }));
+
+    const byAgent = this.buildByAgent(
+      agentesRows,
+      runtimeRows,
+      byAgentStatusRaw,
+    );
 
     return {
       kpis: [
@@ -292,24 +335,6 @@ export class DashboardService {
               ? `${pct(connConnected, profilesTotal)}% · aceitaram o convite`
               : 'aceitaram o convite',
         },
-        {
-          group: 'hoje',
-          label: 'Extraídos',
-          value: extractedToday,
-          hint: 'perfis coletados hoje',
-        },
-        {
-          group: 'hoje',
-          label: 'Convites enviados',
-          value: invitedToday,
-          hint: 'pelo agente hoje',
-        },
-        {
-          group: 'hoje',
-          label: 'Aceites',
-          value: connectedToday,
-          hint: 'conexões aceitas hoje',
-        },
       ],
       byInviteStatus: inviteLabeled,
       byConnStatus,
@@ -320,6 +345,7 @@ export class DashboardService {
       byDayExtract: mapCountRows(byDayExtractRaw, '—').slice(-30),
       byDayConnected: mapCountRows(byDayConnectedRaw, '—').slice(-30),
       byDayInvited: mapCountRows(byDayInvitedRaw, '—').slice(-30),
+      byAgent,
       recent: recentRaw.map((r) => ({
         id: r.id,
         name: r.name,
@@ -331,5 +357,83 @@ export class DashboardService {
         when: r.when,
       })),
     };
+  }
+
+  private buildByAgent(
+    agentesRows: Pick<
+      Agente,
+      'nome' | 'linkedinNome' | 'status' | 'linkedinStatus'
+    >[],
+    runtimeRows: Pick<AgentRuntime, 'agentId' | 'status' | 'lastHeartbeatAt'>[],
+    byAgentStatusRaw: { agentId: string; status: string | number; count: string }[],
+  ): AgentInsight[] {
+    const counts = new Map<
+      string,
+      { notSent: number; pending: number; connected: number }
+    >();
+    for (const row of byAgentStatusRaw) {
+      const id = String(row.agentId || '').trim();
+      if (!id) continue;
+      const cur = counts.get(id) ?? { notSent: 0, pending: 0, connected: 0 };
+      const n = Number(row.count) || 0;
+      const st = Number(row.status);
+      if (st === ClientConnectionLinkedinStatus.NOT_SENT) cur.notSent = n;
+      else if (st === ClientConnectionLinkedinStatus.PENDING) cur.pending = n;
+      else if (st === ClientConnectionLinkedinStatus.CONNECTED) cur.connected = n;
+      counts.set(id, cur);
+    }
+
+    const runtimeById = new Map(
+      runtimeRows.map((r) => [r.agentId, r] as const),
+    );
+    const seen = new Set<string>();
+    const out: AgentInsight[] = [];
+
+    for (const a of agentesRows) {
+      const agentId = a.nome;
+      seen.add(agentId);
+      const c = counts.get(agentId) ?? {
+        notSent: 0,
+        pending: 0,
+        connected: 0,
+      };
+      const rt = runtimeById.get(agentId);
+      out.push({
+        agentId,
+        name: (a.linkedinNome && a.linkedinNome.trim()) || agentId,
+        status: a.status ?? null,
+        linkedinStatus: a.linkedinStatus ?? null,
+        notSent: c.notSent,
+        pending: c.pending,
+        connected: c.connected,
+        total: c.notSent + c.pending + c.connected,
+        lastHeartbeatAt: rt?.lastHeartbeatAt ?? null,
+        runtimeStatus: rt?.status ?? null,
+      });
+    }
+
+    for (const [agentId, c] of counts) {
+      if (seen.has(agentId)) continue;
+      const rt = runtimeById.get(agentId);
+      out.push({
+        agentId,
+        name: agentId,
+        status: null,
+        linkedinStatus: null,
+        notSent: c.notSent,
+        pending: c.pending,
+        connected: c.connected,
+        total: c.notSent + c.pending + c.connected,
+        lastHeartbeatAt: rt?.lastHeartbeatAt ?? null,
+        runtimeStatus: rt?.status ?? null,
+      });
+    }
+
+    return out.sort(
+      (a, b) =>
+        b.total - a.total ||
+        b.connected - a.connected ||
+        a.agentId.localeCompare(b.agentId),
+    );
   }
 }

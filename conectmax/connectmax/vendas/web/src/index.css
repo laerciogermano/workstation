@@ -786,6 +786,76 @@ code {
   color: var(--muted);
 }
 
+.agent-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 0.25rem;
+}
+
+.agent-kpi {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 0.85rem 0.95rem;
+}
+
+.agent-kpi-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.65rem;
+}
+
+.agent-kpi-name {
+  margin: 0;
+  font-family: var(--cx-font-head);
+  font-size: 0.92rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+
+.agent-kpi-id {
+  margin: 0.15rem 0 0;
+  font-size: 0.72rem;
+}
+
+.agent-kpi-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.35rem;
+}
+
+.agent-kpi-stats .kpi-value {
+  font-size: 1.15rem;
+}
+
+.agent-presence {
+  flex-shrink: 0;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+}
+
+.agent-presence-online {
+  color: #0f6b45;
+  background: color-mix(in srgb, #1f9d6b 18%, transparent);
+}
+
+.agent-presence-stale {
+  color: #9a6700;
+  background: color-mix(in srgb, #d97706 18%, transparent);
+}
+
+.agent-presence-offline {
+  color: var(--muted);
+  background: color-mix(in srgb, var(--muted) 14%, transparent);
+}
+
 .dash-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));

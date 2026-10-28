@@ -616,10 +616,7 @@ Insights de operação (KPIs + séries Recharts + tabelas) sobre `cliente_linked
     { "group": "funil", "label": "Perfis na base", "value": 49, "hint": "total ativos" },
     { "group": "funil", "label": "Sem convite", "value": 41, "hint": "84% · ainda não convidados" },
     { "group": "funil", "label": "Aguardando aceite", "value": 6, "hint": "12% · convite enviado" },
-    { "group": "funil", "label": "Conectados", "value": 2, "hint": "4% · aceitaram o convite" },
-    { "group": "hoje", "label": "Extraídos", "value": 8, "hint": "perfis coletados hoje" },
-    { "group": "hoje", "label": "Convites enviados", "value": 3, "hint": "pelo agente hoje" },
-    { "group": "hoje", "label": "Aceites", "value": 1, "hint": "conexões aceitas hoje" }
+    { "group": "funil", "label": "Conectados", "value": 2, "hint": "4% · aceitaram o convite" }
   ],
   "byInviteStatus": [{ "label": "conectado", "count": 2, "pct": 4 }],
   "byConnStatus": [{ "label": "pendente", "count": 6, "pct": 50 }],
@@ -630,6 +627,18 @@ Insights de operação (KPIs + séries Recharts + tabelas) sobre `cliente_linked
   "byDayExtract": [{ "label": "2026-10-23", "count": 8 }],
   "byDayConnected": [{ "label": "2026-10-23", "count": 1 }],
   "byDayInvited": [{ "label": "2026-10-23", "count": 3 }],
+  "byAgent": [{
+    "agentId": "avd-01",
+    "name": "Maria",
+    "status": "ativo",
+    "linkedinStatus": "ativa",
+    "notSent": 10,
+    "pending": 3,
+    "connected": 2,
+    "total": 15,
+    "lastHeartbeatAt": "2026-10-28T12:00:00.000Z",
+    "runtimeStatus": "idle"
+  }],
   "recent": [{ "id": "…", "name": "…", "title": "…", "inviteStatus": "connect", "when": "…" }]
 }
 ```
@@ -642,7 +651,9 @@ curl http://localhost:3000/dashboard
 **Antes → depois (foco):** `coverage` / foto / OCR / experience / outreach / `missingDetail` / `byRound` → % conectados/pendentes, conexões por dia (`connected_at`/`invited_at`), cargos (`byTitle`), cidades, empresas, tabelas.
 **Antes → depois (invite_status):** valores OCR tipo `Connect` apareciam no dashboard → só 3 buckets (`connect`/`pending`/`connected` = não enviado/pendente/conectado); gravação passa por `normalizeInviteStatus` (`clientes/invite-status.ts`).
 **Antes → depois (soft-delete):** só ativos (`deleted_at IS NULL`).
-**Antes → depois (KPIs):** cards misturavam `%` e “Conexões aceitas” (tabela do agente) com “Conectados” (invite do perfil) → dois grupos (`funil` / `hoje`), valor = **número absoluto**, `%` só no `hint`. Web: seções “Funil de convites” e “Hoje”.
+**Antes → depois (KPIs):** cards misturavam `%` e “Conexões aceitas” (tabela do agente) com “Conectados” (invite do perfil) → grupo `funil` com valor = **número absoluto**, `%` só no `hint`. Web: seção “Funil de convites”.
+**Antes → depois (KPIs hoje):** havia grupo `hoje` (Extraídos / Convites enviados / Aceites do dia) → removido; só `funil`. Volume diário continua em `byDayExtract` / `byDayInvited` / `byDayConnected`. **Rollback:** reinsira os 3 KPIs `group: 'hoje'` + counts `connectedToday`/`invitedToday`/`extractedToday` no `DashboardService` e a seção “Hoje” em `dashboard.jsx`.
+**Antes → depois (por agentes):** dashboard só global → `byAgent[]` (funil 0|1|2 + `lastHeartbeatAt`/`runtimeStatus` de `agent_runtime` + cadastro `agentes`). Web: cards + barra empilhada + tabela. **Rollback:** remova `byAgent` do service/módulo e a seção “Por agentes” no web.
 **Antes → depois (fonte do funil):** KPIs Sem convite / Aguardando / Conectados + `byInviteStatus` liam `cliente_linkedin.invite_status` (OCR, podia ficar em `connect` após convite) → contam `client_connection_linkedin.status` 0|1|2 (igual coluna Candidatos / Convidados / Conectados do funil). **Rollback:** volte os `getCount`/`groupBy` em `li.inviteStatus` no `DashboardService`.
 **Rollback:** restaure o `DashboardService` anterior (com `coverage`/`withPhoto`/`withOcr`); no web, volte os painéis Radar/cobertura; remova `normalizeInviteStatus` nos upserts. Para KPIs: volte `value` em `%` e o card “Conexões aceitas”; no web, um único `.kpi-grid` sem `group`.
 

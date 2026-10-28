@@ -69,8 +69,21 @@ const EMPTY_INSIGHTS = {
   byDayExtract: [],
   byDayConnected: [],
   byDayInvited: [],
+  byAgent: [],
   recent: [],
 };
+
+/** Heartbeat recente = online (2 min). */
+const HEARTBEAT_ONLINE_MS = 2 * 60 * 1000;
+
+function agentPresence(row) {
+  const at = row?.lastHeartbeatAt ? new Date(row.lastHeartbeatAt).getTime() : NaN;
+  if (!Number.isFinite(at)) return { key: 'offline', label: 'sem ping' };
+  if (Date.now() - at <= HEARTBEAT_ONLINE_MS) {
+    return { key: 'online', label: 'online' };
+  }
+  return { key: 'stale', label: 'ping antigo' };
+}
 
 function mergeDaily(extract, connected, invited) {
   const map = new Map();
@@ -191,6 +204,7 @@ export default function Dashboard({
           byDayInvited: Array.isArray(json.byDayInvited)
             ? json.byDayInvited
             : [],
+          byAgent: Array.isArray(json.byAgent) ? json.byAgent : [],
           recent: Array.isArray(json.recent) ? json.recent : [],
         });
         setError(null);
@@ -226,6 +240,21 @@ export default function Dashboard({
     ],
   );
 
+  const agentChart = useMemo(
+    () =>
+      insights.byAgent.map((a) => ({
+        label:
+          String(a.name || a.agentId).length > 14
+            ? `${String(a.name || a.agentId).slice(0, 14)}…`
+            : a.name || a.agentId,
+        fullName: a.name || a.agentId,
+        notSent: a.notSent,
+        pending: a.pending,
+        connected: a.connected,
+      })),
+    [insights.byAgent],
+  );
+
   const axisProps = {
     stroke: chartTheme.tick,
     tick: { fill: chartTheme.tick, fontSize: 11 },
@@ -240,7 +269,7 @@ export default function Dashboard({
           <p className="subtitle">
             {loading
               ? 'Carregando insights…'
-              : 'Conexões · extratos · cidades · cargos · empresas'}
+              : 'Conexões · agentes · extratos · cidades · cargos · empresas'}
           </p>
         </div>
       </header>
@@ -263,16 +292,6 @@ export default function Dashboard({
               { label: 'Sem convite', value: '…' },
               { label: 'Aguardando aceite', value: '…' },
               { label: 'Conectados', value: '…' },
-            ],
-          },
-          {
-            key: 'hoje',
-            title: 'Hoje',
-            note: 'Movimento do dia',
-            fallback: [
-              { label: 'Extraídos', value: '…' },
-              { label: 'Convites enviados', value: '…' },
-              { label: 'Aceites', value: '…' },
             ],
           },
         ]
@@ -301,7 +320,119 @@ export default function Dashboard({
         );
       })}
 
+      <section className="kpi-group">
+        <div className="kpi-group-head">
+          <h2 className="kpi-group-title">Por agentes</h2>
+          <p className="kpi-group-note">
+            Funil por agentId · ping do worker
+          </p>
+        </div>
+        {!loading && !insights.byAgent.length ? (
+          <p className="muted">Nenhum agente cadastrado</p>
+        ) : (
+          <div className="agent-kpi-grid">
+            {(loading && !insights.byAgent.length
+              ? [{ agentId: '…', name: '…', notSent: '…', pending: '…', connected: '…' }]
+              : insights.byAgent
+            ).map((a) => {
+              const presence = loading ? null : agentPresence(a);
+              return (
+                <article key={a.agentId} className="agent-kpi">
+                  <div className="agent-kpi-top">
+                    <div>
+                      <p className="agent-kpi-name">{a.name}</p>
+                      {a.agentId !== a.name && (
+                        <p className="agent-kpi-id muted">{a.agentId}</p>
+                      )}
+                    </div>
+                    {presence && (
+                      <span
+                        className={`agent-presence agent-presence-${presence.key}`}
+                        title={
+                          a.lastHeartbeatAt
+                            ? `Último ping: ${formatWhen(a.lastHeartbeatAt)}`
+                            : 'Sem heartbeat'
+                        }
+                      >
+                        {presence.label}
+                      </span>
+                    )}
+                  </div>
+                  <div className="agent-kpi-stats">
+                    <div>
+                      <p className="kpi-label">Fila</p>
+                      <p className="kpi-value">{loading ? '…' : a.notSent}</p>
+                    </div>
+                    <div>
+                      <p className="kpi-label">Pendentes</p>
+                      <p className="kpi-value">{loading ? '…' : a.pending}</p>
+                    </div>
+                    <div>
+                      <p className="kpi-label">Conectados</p>
+                      <p className="kpi-value">{loading ? '…' : a.connected}</p>
+                    </div>
+                  </div>
+                  {!loading && (
+                    <p className="kpi-hint">
+                      {[
+                        a.status ? `AVD ${a.status}` : null,
+                        a.linkedinStatus ? `LI ${a.linkedinStatus}` : null,
+                        a.runtimeStatus ? `worker ${a.runtimeStatus}` : null,
+                      ]
+                        .filter(Boolean)
+                        .join(' · ') || 'sem cadastro/runtime'}
+                    </p>
+                  )}
+                </article>
+              );
+            })}
+          </div>
+        )}
+      </section>
+
       <div className="dash-grid dash-grid-charts">
+        <ChartPanel
+          title="Funil por agente"
+          wide
+          note="Candidatos · pendentes · conectados"
+          empty={!agentChart.length}
+          emptyLabel="Sem agentes"
+        >
+          <ResponsiveContainer width="100%" height={Math.max(220, agentChart.length * 36)}>
+            <BarChart
+              data={agentChart}
+              layout="vertical"
+              margin={{ top: 4, right: 12, left: 8, bottom: 0 }}
+            >
+              <CartesianGrid stroke={chartTheme.grid} strokeDasharray="3 3" />
+              <XAxis type="number" {...axisProps} allowDecimals={false} />
+              <YAxis type="category" dataKey="label" width={100} {...axisProps} />
+              <Tooltip content={<ChartTooltip />} />
+              <Legend />
+              <Bar
+                dataKey="notSent"
+                name="Fila"
+                stackId="funil"
+                fill="#A9B4C8"
+                radius={[0, 0, 0, 0]}
+              />
+              <Bar
+                dataKey="pending"
+                name="Pendentes"
+                stackId="funil"
+                fill="#D97706"
+              />
+              <Bar
+                dataKey="connected"
+                name="Conectados"
+                stackId="funil"
+                fill="#1F9D6B"
+                radius={[0, 6, 6, 0]}
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        </ChartPanel>
+
         <ChartPanel
           title="Atividade por dia (30d)"
           wide
@@ -509,6 +640,58 @@ export default function Dashboard({
       </div>
 
       <div className="dash-tables">
+        <DataTable
+          title="Agentes"
+          emptyLabel="Nenhum agente"
+          columns={[
+            {
+              key: 'name',
+              label: 'Agente',
+              render: (row) => (
+                <span>
+                  {row.name}
+                  {row.agentId !== row.name ? (
+                    <span className="muted"> · {row.agentId}</span>
+                  ) : null}
+                </span>
+              ),
+            },
+            {
+              key: 'presence',
+              label: 'Ping',
+              render: (row) => {
+                const p = agentPresence(row);
+                return (
+                  <span
+                    className={`agent-presence agent-presence-${p.key}`}
+                    title={
+                      row.lastHeartbeatAt
+                        ? formatWhen(row.lastHeartbeatAt)
+                        : 'Sem heartbeat'
+                    }
+                  >
+                    {p.label}
+                  </span>
+                );
+              },
+            },
+            { key: 'notSent', label: 'Fila' },
+            { key: 'pending', label: 'Pendentes' },
+            { key: 'connected', label: 'Conectados' },
+            { key: 'total', label: 'Total' },
+            {
+              key: 'status',
+              label: 'AVD',
+              render: (row) => row.status ?? '—',
+            },
+            {
+              key: 'linkedinStatus',
+              label: 'LinkedIn',
+              render: (row) => row.linkedinStatus ?? '—',
+            },
+          ]}
+          rows={insights.byAgent}
+        />
         <CountTable
           title="Status do perfil (invite)"
           labelHeader="Status"

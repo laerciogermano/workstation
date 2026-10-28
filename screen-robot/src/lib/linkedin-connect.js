@@ -3,7 +3,7 @@
  *
  * Fluxo (prints: screenshots/jornada-conectar-por-url/):
  * 1. am start VIEW linkedin.com/in/…
- * 2. Se OCR = "This page doesn't exist" → erro (perfil inexistente)
+ * 2. Se OCR = "This page doesn't exist" → status=3 descartado + motivo na API
  * 3. Connect no header → tap; senão só Follow → ⋮ → Connect no sheet
  * 4. Skip no dialog "Add a note"
  * 5. Sucesso **somente** se OCR mostrar Pending após Skip
@@ -65,7 +65,12 @@ export const CONNECTION_STATUS = Object.freeze({
   NOT_SENT: 0,
   PENDING: 1,
   CONNECTED: 2,
+  DISCARDED: 3,
 });
+
+/** Motivo padrão quando LinkedIn mostra 404 de perfil. */
+export const DISCARD_REASON_PAGE_DOES_NOT_EXIST =
+  "This page doesn't exist / Please check your URL";
 
 /**
  * Lê status da conexão agente↔perfil na vendas/api.
@@ -329,6 +334,7 @@ export async function notifyInviteSent({
   agentId = resolveAgentId(),
   status = CONNECTION_STATUS.PENDING,
   peerName = null,
+  discardReason = null,
   baseUrl = invitesApiBase(),
 } = {}) {
   installConnectmaxApiAuth();
@@ -349,6 +355,10 @@ export async function notifyInviteSent({
   }
   if (status === CONNECTION_STATUS.CONNECTED) {
     body.connectedAt = new Date().toISOString();
+  }
+  if (status === CONNECTION_STATUS.DISCARDED) {
+    const reason = String(discardReason || "").trim();
+    body.discardReason = reason || DISCARD_REASON_PAGE_DOES_NOT_EXIST;
   }
   const headers = { "content-type": "application/json" };
   const apiKey = String(process.env.AGENT_API_KEY || "").trim();
@@ -542,13 +552,52 @@ export async function connectByLinkedInUrl(opts) {
     if (hasPageDoesNotExist(texts)) {
       steps.push("page_does_not_exist");
       await shot(serial, opts.outDir, "99-page-does-not-exist.png");
+      key({ serial, code: "KEYCODE_BACK" });
+
+      /** @type {{ notified: boolean, reason?: string, error?: string, data?: unknown }} */
+      let notify = { notified: false, reason: "notify desligado" };
+      if (notifyApi && !dryRun) {
+        try {
+          notify = await notifyInviteSent({
+            profileUrl: url,
+            steps,
+            agentId,
+            status: CONNECTION_STATUS.DISCARDED,
+            discardReason: DISCARD_REASON_PAGE_DOES_NOT_EXIST,
+          });
+          steps.push(
+            notify.notified
+              ? "api:discard:ok"
+              : `api:discard:skip:${notify.reason}`,
+          );
+        } catch (e) {
+          notify = {
+            notified: false,
+            error: String(e?.message || e),
+          };
+          steps.push(`api:discard:fail:${notify.error}`);
+        }
+      }
+      if (notifyApi && !dryRun && !notify.notified) {
+        return {
+          ok: false,
+          status: "not_found",
+          url,
+          steps,
+          notify,
+          discardReason: DISCARD_REASON_PAGE_DOES_NOT_EXIST,
+          error: `perfil inexistente mas falhou descarte na API: ${notify.error || notify.reason || "n/a"}`,
+        };
+      }
+
+      // Job completa: card vai para Descartados com motivo.
       return {
-        ok: false,
-        status: "not_found",
+        ok: true,
+        status: "discarded",
         url,
         steps,
-        error:
-          "perfil inexistente (This page doesn't exist / Please check your URL)",
+        notify,
+        discardReason: DISCARD_REASON_PAGE_DOES_NOT_EXIST,
       };
     }
 

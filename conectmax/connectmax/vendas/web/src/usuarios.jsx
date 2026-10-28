@@ -202,6 +202,32 @@ export default function Usuarios() {
     }
   }
 
+  async function removeUser(row) {
+    if (!canWrite || !row?.id) return;
+    const isMe = me?.id && row.id === me.id;
+    if (isMe) {
+      setError('Não é possível remover a própria conta.');
+      return;
+    }
+    if (
+      !window.confirm(
+        `Remover permanentemente “${row.nome}” (${row.email})? Esta ação não pode ser desfeita.`,
+      )
+    ) {
+      return;
+    }
+    setError(null);
+    try {
+      const res = await fetch(`${USERS_URL}/${row.id}`, { method: 'DELETE' });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(errMessage(json, res));
+      if (editingId === row.id) closeForm();
+      await load();
+    } catch (err) {
+      setError(String(err?.message || err));
+    }
+  }
+
   return (
     <div className="page page-usuarios">
       <header className="page-header">
@@ -316,6 +342,19 @@ export default function Usuarios() {
                             }
                           >
                             {u.active ? 'Desativar' : 'Ativar'}
+                          </button>
+                          <button
+                            type="button"
+                            className="btn-secondary"
+                            onClick={() => removeUser(u)}
+                            disabled={isMe}
+                            title={
+                              isMe
+                                ? 'Não remova a própria conta'
+                                : 'Excluir usuário permanentemente'
+                            }
+                          >
+                            Remover
                           </button>
                         </div>
                       )}

@@ -1,4 +1,14 @@
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Req,
+} from '@nestjs/common';
+import { AuthPrincipal } from './auth-user';
 import { AuthService } from './auth.service';
 import { CreateUserDto, UpdateUserDto } from './create-user.dto';
 import { RequirePermissions } from './permissions.decorator';
@@ -22,5 +32,13 @@ export class UsersController {
   @Patch(':id')
   update(@Param('id') id: string, @Body() dto: UpdateUserDto) {
     return this.auth.updateUser(id, dto);
+  }
+
+  @Delete(':id')
+  remove(
+    @Param('id') id: string,
+    @Req() req: { user?: AuthPrincipal },
+  ) {
+    return this.auth.deleteUser(id, req.user?.sub);
   }
 }

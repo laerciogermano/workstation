@@ -747,7 +747,9 @@ Todas as rotas exigem `Authorization: Bearer <jwt>` **ou** `X-Api-Key` (global `
 |--------|--------|
 | `POST /auth/login` | `{ email, password }` → `{ accessToken, user }` (**público**) |
 | `GET /auth/me` | usuário atual + permissions |
-| `GET/POST/PATCH /users` | CRUD usuários (só admin); UI: SPA `/usuarios` |
+| `GET/POST/PATCH/DELETE /users` | CRUD usuários (só admin); UI: SPA `/usuarios` |
+
+**Antes → depois (remover usuário):** só desativar via PATCH → `DELETE /users/:id` (hard-delete; bloqueia a própria conta; `gestor_agentes` cascateia). **Rollback:** remova o endpoint + botão Remover em `usuarios.jsx`.
 
 Usuário tem **`roles` jsonb** (várias ao mesmo tempo). Seed: admin com `roles: ["admin"]`. Coluna antiga `role` → migrar: `ALTER TABLE users ADD COLUMN roles jsonb DEFAULT '["viewer"]'; UPDATE users SET roles = jsonb_build_array(role); ALTER TABLE users DROP COLUMN role;`
 

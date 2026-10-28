@@ -2,6 +2,7 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
+  NotFoundException,
   OnModuleInit,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -213,5 +214,16 @@ export class AuthService implements OnModuleInit {
     }
 
     return this.toPublic(user);
+  }
+
+  /** Hard-delete. Não remove a própria conta. `gestor_agentes` cascateia. */
+  async deleteUser(id: string, actorId?: string) {
+    if (actorId && id === actorId) {
+      throw new BadRequestException('Não é possível remover a própria conta');
+    }
+    const user = await this.users.findOne({ where: { id } });
+    if (!user) throw new NotFoundException('Usuário não encontrado');
+    await this.users.remove(user);
+    return { ok: true as const, id };
   }
 }

@@ -29,7 +29,7 @@ SPA React (Vite) que lista cards paginados de `GET /profiles`, abre `/profiles/:
 | Logo no `BrandBar` de cada página | Logo `conect` no topo do menu esquerdo (`BrandLogo` em `AppNav`); `BrandBar` só eyebrow |
 | Hero Dia/Noite no `BrandBar` | `ThemeToggle` no rodapé do menu esquerdo (`margin-top: auto`) |
 | API aberta sem login | SPA `/login` + JWT no `fetch`; nav filtra por permission; botão Sair |
-| Usuários só via curl `/users` | Rota SPA **`/usuarios`**: listar, criar, editar role/senha, ativar/desativar (admin) |
+| Usuários só via curl `/users` | Rota SPA **`/usuarios`**: listar, criar, editar, ativar/desativar, **remover** (admin) |
 | Vendedor como entidade CRM | Removido: **vendedor = agente** (host+device+LI em `/agentes`) |
 | Gestor / multi-role / infra | Users `roles[]`; SPA **`/gestores`**; **`/agentes`** = host+device+LI |
 

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { BrandBar } from './brand.jsx';
 
 const AGENTES_URL = import.meta.env.VITE_AGENTES_URL ?? '/agentes';
 const AGENTE_API_URL = import.meta.env.VITE_AGENTE_URL ?? '/agente';
@@ -76,6 +77,16 @@ function errMsg(json, res) {
   return `${res.status} ${res.statusText}`;
 }
 
+function parseAgentesPayload(json) {
+  if (Array.isArray(json?.data)) return json.data;
+  if (Array.isArray(json)) return json;
+  return [
+    ...(Array.isArray(json?.ativos) ? json.ativos : []),
+    ...(Array.isArray(json?.dormindo) ? json.dormindo : []),
+    ...(Array.isArray(json?.outros) ? json.outros : []),
+  ];
+}
+
 function agentFromUrl() {
   return new URLSearchParams(window.location.search).get('agent') || '';
 }
@@ -137,14 +148,7 @@ export default function Atividades() {
       const res = await fetch(AGENTES_URL);
       if (!res.ok) throw new Error(`agentes HTTP ${res.status}`);
       const json = await res.json();
-      const rows = Array.isArray(json)
-        ? json
-        : [
-            ...(Array.isArray(json.ativos) ? json.ativos : []),
-            ...(Array.isArray(json.dormindo) ? json.dormindo : []),
-            ...(Array.isArray(json.outros) ? json.outros : []),
-          ];
-      setAgentes(rows);
+      setAgentes(parseAgentesPayload(json));
     } catch (e) {
       setAgentes([]);
       setError(e.message ?? 'Falha ao carregar agentes');
@@ -215,15 +219,44 @@ export default function Atividades() {
 
   return (
     <div className="page page-atividades">
-      <header className="page-header">
+      <BrandBar eyebrow="Jobs dos agentes" />
+      <header className="header">
         <div>
           <h1>Atividades</h1>
           <p className="subtitle">
-            Timeline de jobs por agente
-            {selected ? ` · ${selected.nome}` : ''}
+            Timeline de jobs
+            {selected ? (
+              <>
+                {' '}
+                — <strong>{selected.nome}</strong>
+                <span className="muted"> · {selected.id}</span>
+              </>
+            ) : (
+              ' por agente'
+            )}
           </p>
         </div>
         <div className="header-actions">
+          <label className="filter funil-agent-filter">
+            Agente
+            <select
+              value={agentId}
+              disabled={loadingAgents || !agentOpts.length}
+              onChange={(e) => selectAgent(e.target.value)}
+              aria-label="Filtrar atividades por agente"
+            >
+              {!agentOpts.length && (
+                <option value="">
+                  {loadingAgents ? 'Carregando…' : 'Nenhum agente'}
+                </option>
+              )}
+              {agentOpts.map((a) => (
+                <option key={a.id} value={a.id}>
+                  {a.nome || a.id}
+                </option>
+              ))}
+            </select>
+          </label>
           <button
             type="button"
             className="btn-secondary"
@@ -235,29 +268,7 @@ export default function Atividades() {
         </div>
       </header>
 
-      <div className="emp-toolbar agt-atividades-toolbar">
-        <label className="agt-agent-select">
-          Agente
-          <select
-            value={agentId}
-            disabled={loadingAgents || !agentOpts.length}
-            onChange={(e) => selectAgent(e.target.value)}
-          >
-            {!agentOpts.length ? (
-              <option value="">Nenhum agente</option>
-            ) : (
-              agentOpts.map((a) => (
-                <option key={a.id} value={a.id}>
-                  {a.nome || a.id}
-                  {a.status ? ` (${a.status})` : ''}
-                </option>
-              ))
-            )}
-          </select>
-        </label>
-      </div>
-
-      <div className="agt-timeline-filters">
+      <div className="agt-timeline-filters" role="toolbar" aria-label="Status">
         {STATUS_FILTERS.map((f) => (
           <button
             key={f.value || 'all'}
@@ -275,7 +286,7 @@ export default function Atividades() {
 
       {error && <p className="error">Erro: {error}</p>}
       {loadingAgents && <p className="muted">Carregando agentes…</p>}
-      {!loadingAgents && !agentOpts.length && (
+      {!loadingAgents && !agentOpts.length && !error && (
         <p className="empty">Nenhum agente cadastrado.</p>
       )}
       {agentId && loadingJobs && (

@@ -423,8 +423,8 @@ Lib [`lib/linkedin-connect.js`](lib/linkedin-connect.js):
 2. OCR 404 **"This page doesn't exist"** → `ok: false`, `status: not_found` (print `99-page-does-not-exist.png`)
 3. Connect no header **ou** Follow → ⋮ → Connect no sheet
 4. Skip no dialog (nunca Add a note)
-5. **Sucesso só com Pending no OCR após Skip** — sem Pending → `ok: false`
-6. Sucesso (ou já Pending) → sempre `POST …/client-connections-linkedin` `{ profileUrl, agentId, status: 1 }` (default API `:3000`; `agentId` = `AGENT_ID` ou `provision.name`). API robot → 502 se não gravar.
+5. **Sucesso com Pending ou "Invitation sent" no OCR após Skip** — nenhum dos dois → `ok: false`
+6. Sucesso (já Pending / Invitation sent, ou após Skip) → sempre `POST …/client-connections-linkedin` `{ profileUrl, agentId, status: 1 }` (default API `:3000`; `agentId` = `AGENT_ID` ou `provision.name`). API robot → 502 se não gravar.
 
 **Antes → depois:** POST opcional → obrigatório (status 1); listagem de Connections marca status 2 via `mark-accepted`; 404 LinkedIn agora falha com `not_found` em vez de timeout.  
 **Rollback:** `notifyApi: false` / ignore o POST; `DROP TABLE client_connection_linkedin` se necessário; remover `hasPageDoesNotExist`.
@@ -432,6 +432,8 @@ Lib [`lib/linkedin-connect.js`](lib/linkedin-connect.js):
 **Antes → depois (Connect CTA):** só text `Connect` → também content-desc **`Invite … to connect`** (`findExactConnect`). Sem isso o fluxo abria o perfil e só fazia `wait:round*`. Rollback: regex só `/^connect$/i`.
 
 **Antes → depois (Pending):** só `^Pending$` → também **`Pending, click to withdraw…`**. Sem isso Connect+Skip ok falhava com “Pending não apareceu”. Rollback: `/^pending$/i`.
+
+**Antes → depois (Invitation sent):** sucesso só com Pending → também toast/OCR **`Invitation sent`** (já no perfil **ou** após Skip). Mesmo upsert `status=1`. Rollback: tire `/\binvitation\s+sent\b/i` de `hasPending`.
 
 **Antes → depois (já Pending):** podia falhar/ignorar API → **só upsert status=1** (sem tap Connect); exige POST ok (`X-Api-Key` via `installConnectmaxApiAuth`). Rollback: retorno `ok` sem exigir notify.
 

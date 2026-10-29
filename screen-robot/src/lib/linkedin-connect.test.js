@@ -84,6 +84,11 @@ describe("linkedin-connect helpers", () => {
       ]),
       true,
     );
+    assert.equal(hasPending([{ text: "Invitation sent" }]), true);
+    assert.equal(
+      hasPending([{ text: "Invitation sent to Ana Silva" }]),
+      true,
+    );
     assert.equal(hasPending([{ text: "Connect" }]), false);
     assert.deepEqual(findSkip([{ text: "Skip", x: 269, y: 816 }]), {
       text: "Skip",

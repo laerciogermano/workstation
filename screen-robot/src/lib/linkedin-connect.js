@@ -6,7 +6,7 @@
  * 2. Se OCR = "This page doesn't exist" → status=3 descartado + motivo na API
  * 3. Connect no header → tap; senão só Follow → ⋮ → Connect no sheet
  * 4. Skip no dialog "Add a note"
- * 5. Sucesso **somente** se OCR mostrar Pending após Skip
+ * 5. Sucesso se OCR mostrar Pending **ou** "Invitation sent" após Skip
  * 6. Em sucesso → POST na API (convite feito)
  */
 import { mkdirSync } from "node:fs";
@@ -205,8 +205,12 @@ export function hasPending(els) {
     const t = String(
       el?.text || el?.contentDesc || el?.contentDescription || "",
     ).trim();
-    // text "Pending" ou content-desc "Pending, click to withdraw invitation…"
-    return /^pending\b/i.test(t) || /\bpending\b.+\bwithdraw\b/i.test(t);
+    // text "Pending" | content-desc "Pending, click to withdraw…" | toast "Invitation sent"
+    return (
+      /^pending\b/i.test(t) ||
+      /\bpending\b.+\bwithdraw\b/i.test(t) ||
+      /\binvitation\s+sent\b/i.test(t)
+    );
   });
 }
 
@@ -498,7 +502,7 @@ export async function notifyLinkedInMessages(opts = {}) {
   return { notified: true, url, data };
 }
 
-/** Após Skip: poll até Pending ou esgota tentativas. */
+/** Após Skip: poll até Pending / Invitation sent ou esgota tentativas. */
 async function waitForPending(serial, { outDir, steps }) {
   for (let i = 0; i < PENDING_TRIES; i++) {
     const els = await extractBySense({
@@ -604,10 +608,12 @@ export async function connectByLinkedInUrl(opts) {
       };
     }
 
-    // Já Pending na UI → não toca Connect; só upsert status=1 no banco.
+    // Já Pending / Invitation sent na UI → não toca Connect; só upsert status=1 no banco.
     if (hasPending(texts) && !skipped) {
       steps.push("already_pending");
-      console.log("   já Pending na UI — só atualiza client_connections_linkedin");
+      console.log(
+        "   já Pending/Invitation sent na UI — só atualiza client_connections_linkedin",
+      );
       await shot(serial, opts.outDir, "99-already-pending.png");
       key({ serial, code: "KEYCODE_BACK" });
 
@@ -641,7 +647,7 @@ export async function connectByLinkedInUrl(opts) {
           url,
           steps,
           notify,
-          error: `já Pending mas falhou upsert API: ${notify.error || notify.reason || "n/a"}`,
+          error: `já Pending/Invitation sent mas falhou upsert API: ${notify.error || notify.reason || "n/a"}`,
         };
       }
 
@@ -674,7 +680,8 @@ export async function connectByLinkedInUrl(opts) {
           status: "failed",
           url,
           steps,
-          error: "Skip ok mas Pending não apareceu — convite não confirmado",
+          error:
+            "Skip ok mas Pending/Invitation sent não apareceu — convite não confirmado",
         };
       }
 
@@ -756,7 +763,7 @@ export async function connectByLinkedInUrl(opts) {
     url,
     steps,
     error: skipped
-      ? "Skip ok mas Pending não apareceu — convite não confirmado"
-      : "não concluiu Connect+Skip+Pending",
+      ? "Skip ok mas Pending/Invitation sent não apareceu — convite não confirmado"
+      : "não concluiu Connect+Skip+Pending/Invitation sent",
   };
 }

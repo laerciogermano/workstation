@@ -6,15 +6,20 @@
 import { mkdirSync } from "node:fs";
 import { join } from "node:path";
 
-import { sleep } from "./adb.js";
+import { adb, adbOk, sleep } from "./adb.js";
 import { dumpUiXml, waitForText } from "./extract.js";
 import { pasteCleanMessage } from "./linkedin-message.js";
 import {
+  key,
   launch,
   screenshot,
   stopAllApps,
   tapElement,
+  typeViaAdb,
 } from "./operate.js";
+
+const LATIN_IME =
+  "com.google.android.inputmethod.latin/com.android.inputmethod.latin.LatinIME";
 
 const WAIT_MS = Number(process.env.LINKEDIN_SIGNUP_WAIT_MS || 4_000);
 const JOIN_TIMEOUT_MS = Number(
@@ -102,6 +107,7 @@ async function dismissKeyboard(serial) {
     const title =
       findNodeByText(xml, "Add your name") ||
       findNodeByText(xml, "Create account") ||
+      findNodeByText(xml, "Add your email or phone") ||
       findNodeByText(xml, "Add your email") ||
       findNodeByText(xml, "Add a password") ||
       findNodeByText(xml, "Add your location");
@@ -183,6 +189,37 @@ function normFieldText(s) {
     .replace(/\s+/g, " ")
     .trim()
     .toLowerCase();
+}
+
+/**
+ * Email/senha: dump LI não expõe o valor (fica só o hint) e ADBKeyboard
+ * muitas vezes não injeta nesses campos — LatinIME + input text; `@` via KEYCODE_AT.
+ * @param {string} serial
+ * @param {string} resourceIdSuffix
+ * @param {string} value
+ * @param {string} label
+ */
+async function fillFieldViaAdb(serial, resourceIdSuffix, value, label) {
+  const want = String(value);
+  await dismissKeyboard(serial);
+  adbOk(serial, ["shell", "ime", "set", LATIN_IME]);
+  const field = await waitForResource(serial, resourceIdSuffix, label);
+  tapElement({ serial, x: field.x, y: field.y });
+  await sleep(700);
+  adb(serial, [
+    "shell",
+    "sh",
+    "-c",
+    "input keyevent KEYCODE_MOVE_END; i=0; while [ $i -lt 96 ]; do input keyevent KEYCODE_DEL; i=$((i+1)); done",
+  ]);
+  await sleep(200);
+  const parts = want.split("@");
+  for (let i = 0; i < parts.length; i++) {
+    if (parts[i]) typeViaAdb(serial, parts[i]);
+    if (i < parts.length - 1) key({ serial, code: "KEYCODE_AT" });
+  }
+  await sleep(500);
+  await dismissKeyboard(serial);
 }
 
 /**
@@ -373,18 +410,16 @@ export async function linkedinSignupJoinNow(opts) {
 
   await waitForResource(serial, RID_EMAIL, "email");
   await shot(serial, opts.outDir, "09-antes-email.png");
-  await fillFieldExact(serial, RID_EMAIL, email, "email");
+  await fillFieldViaAdb(serial, RID_EMAIL, email, "email");
   steps.push(`email:${email}`);
   await sleep(400);
   await shot(serial, opts.outDir, "10-apos-email.png");
 
   await tapContinue(serial, steps, opts.outDir, "11");
-
+  // dump do email não traz o valor — sucesso = chegou na senha
   await waitForResource(serial, RID_PASSWORD, "password");
   await shot(serial, opts.outDir, "12-antes-password.png");
-  await fillFieldExact(serial, RID_PASSWORD, password, "password", {
-    skipVerify: true,
-  });
+  await fillFieldViaAdb(serial, RID_PASSWORD, password, "password");
   steps.push("password:set");
   await sleep(400);
   await shot(serial, opts.outDir, "13-apos-password.png");

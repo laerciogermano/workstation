@@ -99,7 +99,7 @@ const elements = await extract({ serial });
 | BDD e2e US/EP (runtime real) | `npm run test:e2e` |
 | **SC-30 LinkedIn** (fixture, sem device) | ver abaixo |
 | Piloto LinkedIn ao vivo | `npm run linkedin-login` |
-| LinkedIn signup (…→password→location→job title) | `npm run linkedin-signup -- --device 127.0.0.1:5658 --firstname Ana --lastname Silva --email user@mail.com --password 'senha' --job-title 'Especialista em suprimentos e itens corporativos'` · ADBKeyboard (`restoreIme:false`); dismiss = tap no título (**nunca** KEYCODE_BACK — saía do Join); re-dump/tap por resource-id; valor `Label*, , v`; assert nomes · prints em `screenshots/linkedin-signup/<stamp>/` · **Antes → depois:** LatinIME+BACK → First=Lima / volta pra "Join now"; agora keep ADB IME + tap título. Rollback: `restoreIme` default + `key BACK` |
+| LinkedIn signup (…→password→location→job title) | `npm run linkedin-signup -- --device … --firstname … --lastname … --email … --password … --job-title …` · nomes: ADBKeyboard + assert dump; **email/senha: LatinIME + `input text` / `KEYCODE_AT`** (dump do email não expõe valor; ADBKeyboard costuma falhar aí); dismiss = tap título (sem BACK) · prints em `screenshots/linkedin-signup/<stamp>/` · **Antes → depois:** verify email no dump → falso negativo; agora `fillFieldViaAdb` + avanço até password. Rollback: `fillFieldExact` no email |
 | LinkedIn Search comprador → See all | `npm run login-extract-profiles` |
 | LinkedIn conectar por URL (Connect→Skip→Pending) | `npm run linkedin-connect` · API `npm run linkedin-connect-api` |
 | LinkedIn boolean por perfil + abrir | `npm run login-visit-profiles` |

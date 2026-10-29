@@ -293,12 +293,16 @@ export function connectionStatusFromInviteStatus(inviteStatus) {
     .trim();
   if (s === "pending") return CONNECTION_STATUS.PENDING;
   if (s === "connected") return CONNECTION_STATUS.CONNECTED;
+  // Connect / convidar → reserva candidato (status=0) para o agente do extract.
+  if (s === "connect") return CONNECTION_STATUS.NOT_SENT;
   return null;
 }
 
 /**
- * Após extrair perfil: se Pending/Connected no cartão → upsert conexão;
- * se Connect (não conectado) → não toca conexão.
+ * Após extrair perfil → upsert conexão:
+ * - Connect → status=0 (candidato / não enviado) — exige AGENT_ID real
+ * - Pending → 1; Connected → 2
+ * Sem inviteStatus conhecido → não toca conexão.
  * POST {base}/client-connections-linkedin
  */
 export async function syncConnectionFromInviteStatus({
@@ -313,7 +317,21 @@ export async function syncConnectionFromInviteStatus({
   if (status == null) {
     return {
       notified: false,
-      reason: "inviteStatus sem conexão (connect/ausente)",
+      reason: "inviteStatus sem conexão (ausente)",
+      inviteStatus: inviteStatus ?? null,
+    };
+  }
+  const resolvedAgent =
+    String(agentId || resolveAgentId() || "")
+      .trim() || "default";
+  // Pool livre sem dono: sem AGENT_ID o funil por agente não mostraria o card.
+  if (
+    status === CONNECTION_STATUS.NOT_SENT &&
+    (!resolvedAgent || resolvedAgent === "default")
+  ) {
+    return {
+      notified: false,
+      reason: "connect sem AGENT_ID — só perfil (pool livre)",
       inviteStatus: inviteStatus ?? null,
     };
   }
@@ -321,7 +339,7 @@ export async function syncConnectionFromInviteStatus({
     profileUrl,
     peerName,
     steps,
-    agentId,
+    agentId: resolvedAgent,
     status,
     baseUrl,
   });

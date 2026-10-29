@@ -37,11 +37,15 @@ export async function run(job, ctx) {
   if (query) args.push('--query', query);
   if (serial) args.push('--device', serial);
 
+  const agentId = String(ctx.agentId || process.env.AGENT_ID || '').trim();
+
   const code = await spawnNpm(cwd, args, {
     ...process.env,
     PROFILES_API_URL: apiUrl,
     ...(serial ? { ADB_SERIAL: serial, SERIAL: serial, ANDROID_SERIAL: serial } : {}),
     ...(ctx.apiKey ? { AGENT_API_KEY: ctx.apiKey } : {}),
+    // Reserva status=0 no extract (Candidatos do funil por agente).
+    ...(agentId ? { AGENT_ID: agentId } : {}),
   });
 
   if (code !== 0) {

@@ -165,7 +165,7 @@ Script [`scripts/login-extract-profile-detail.js`](scripts/login-extract-profile
 
 **Antes → depois (by-url / cartão):** sempre Share/Copy URL + nome frágil → com URL conhecida skip Share; parser preenche headline/empresa/`inviteStatus`. Rollback: forçar `captureProfileUrl`; parser antigo sem `inviteStatus`.
 
-**Antes → depois (conexão no extract):** só `POST /profile-details` → após o cartão, se `inviteStatus` = `pending`|`connected`, upsert `POST /client-connections-linkedin` (status 1|2); se `connect`/ausente, **não** cria conexão (só perfil). Mesmo fluxo em busca (`login-extract-profiles`) e URL (`login-extract-profile-detail`). Rollback: remover `syncConnectionFromInviteStatus` dos scripts.
+**Antes → depois (conexão no extract):** só `POST /profile-details` → após o cartão, `syncConnectionFromInviteStatus`: `connect` → status **0** (candidato) se `AGENT_ID` real; `pending`|`connected` → 1|2; sem `AGENT_ID` + Connect → só perfil (pool livre). Worker `extrair_leads` passa `AGENT_ID`. Rollback: `connectionStatusFromInviteStatus("connect")` → `null` e remova `AGENT_ID` do handler.
 
 **Antes → depois (URL share sheet):** só clipboard após Copy (`dumpsys` vazio no AVD) → **URL no dump da sheet** (`urlFromShareSheetEls`); clipboard só fallback; `shareSheetOpen` inclui `Copy`/`Quick Share`. Slug com acento (`vitória-…`) — regex `[A-Za-z0-9]` cortava → `[^\s/?#]+`. Rollback: remover leitura do dump e voltar ao loop Copy-only / charset ASCII.
 

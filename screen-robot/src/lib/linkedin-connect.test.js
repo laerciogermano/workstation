@@ -24,18 +24,29 @@ describe("linkedin-connect helpers", () => {
       connectionStatusFromInviteStatus("connected"),
       CONNECTION_STATUS.CONNECTED,
     );
-    assert.equal(connectionStatusFromInviteStatus("connect"), null);
+    assert.equal(
+      connectionStatusFromInviteStatus("connect"),
+      CONNECTION_STATUS.NOT_SENT,
+    );
     assert.equal(connectionStatusFromInviteStatus(null), null);
   });
 
-  it("syncConnectionFromInviteStatus skip quando Connect", async () => {
-    const out = await syncConnectionFromInviteStatus({
-      profileUrl: "https://www.linkedin.com/in/ana",
-      inviteStatus: "connect",
-      baseUrl: "http://127.0.0.1:9",
-    });
-    assert.equal(out.notified, false);
-    assert.match(String(out.reason), /sem conexão/i);
+  it("syncConnectionFromInviteStatus skip Connect sem AGENT_ID", async () => {
+    const prev = process.env.AGENT_ID;
+    delete process.env.AGENT_ID;
+    try {
+      const out = await syncConnectionFromInviteStatus({
+        profileUrl: "https://www.linkedin.com/in/ana",
+        inviteStatus: "connect",
+        agentId: "default",
+        baseUrl: "http://127.0.0.1:9",
+      });
+      assert.equal(out.notified, false);
+      assert.match(String(out.reason), /AGENT_ID|pool livre/i);
+    } finally {
+      if (prev != null) process.env.AGENT_ID = prev;
+      else delete process.env.AGENT_ID;
+    }
   });
 
   it("normalizeLinkedInProfileUrl", () => {

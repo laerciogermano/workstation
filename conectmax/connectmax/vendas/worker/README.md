@@ -65,7 +65,9 @@ Use **chave global** no supervisor.
 
 | `type` | Status |
 |--------|--------|
-| `extrair_leads` | `login-extract-profiles --device $SERIAL` — `query` do job (`agentes.search_query`) ou env `EXTRACT_QUERY` |
+| `extrair_leads` | `login-extract-profiles --device $SERIAL` — `query` do job (`agentes.search_query`) ou env `EXTRACT_QUERY`; passa `AGENT_ID` p/ reservar candidatos (`status=0`) |
+
+**Antes → depois (extract → Candidatos):** extract sem `AGENT_ID` → só perfil no pool livre (funil por agente não mostrava Elaine etc.) → handler injeta `AGENT_ID` e script faz `POST` conexão `status=0` em Connect. **Rollback:** remova `AGENT_ID` do env em `extrair_leads.mjs`; `connectionStatusFromInviteStatus("connect")` → `null`.
 
 **Antes → depois (multi-AVD):** extract/unread usavam só `device.config` (`ConnectMax_Cam`→`emulator-5554`) mesmo com `SERIAL` do worker → passam `--device` / serial explícito; `start-runtime` prioriza serial alcançável sobre lookup por `provision.name`. **Rollback:** remova `--device` do handler; reverta o prefer-serial em `screen-robot/src/lib/start-runtime.js`.
 | `conectar` | `linkedin-connect` (URL do payload; teto diário na API) |

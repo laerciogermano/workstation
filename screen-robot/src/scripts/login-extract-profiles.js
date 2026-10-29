@@ -6,7 +6,7 @@
  * --sense) 1ª tela + URL → só então salva/POST (lista nunca grava sozinha; sem
  * profileUrl → skip save); se URL já na base → skip save (ainda sync conexão se
  * Pending/Connected no cartão); BACK → próximo até `-n`.
- * Cartão: Connect → só perfil; Pending/Connected → upsert client-connections-linkedin.
+ * Cartão: Connect + AGENT_ID → status=0 (candidato); Pending/Connected → 1|2.
  *
  * Uso (cwd: screen-robot/src):
  *   npm run login-extract-profiles

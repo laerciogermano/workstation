@@ -211,15 +211,18 @@ npm run login-extract-profiles -- -n 10 --query "tech recruiter"
 
 **Antes → depois (query):** termo fixo `comprador` → `--query` / API `?q=`. **Rollback:** omita o flag (volta ao default).
 
-Script [`scripts/login-extract-profiles.js`](scripts/login-extract-profiles.js) — **sem IA**, **sem People**. Após See all: **abre cada card**, 1ª tela + lista via **`--sense dump|ocr`** (default dump; sem misturar) + URL (`⋯` → Share via → **URL no dump da sheet**, clipboard fallback; [`lib/linkedin-capture-profile-url.js`](lib/linkedin-capture-profile-url.js)), `KEYCODE_BACK`, próximo — até `-n` ou fim do scroll. Cliques via `findByText` no mesmo sense / coords do nome no card:
+Script [`scripts/login-extract-profiles.js`](scripts/login-extract-profiles.js) — **sem IA**. Após See all → **chip People** (y≤220) → **abre cada card**, 1ª tela + lista via **`--sense dump|ocr`** (default dump; sem misturar) + URL (`⋯` → Share via → **URL no dump da sheet**, clipboard fallback; [`lib/linkedin-capture-profile-url.js`](lib/linkedin-capture-profile-url.js)), `KEYCODE_BACK`, próximo — até `-n` ou fim do scroll. Cliques via `findByText` no mesmo sense / coords do nome no card:
 
 | Alvo | query OCR |
 |------|-----------|
 | Search | `Search` |
 | See/Show all | `See all results` / `Show all results` (fallback `See all` / `Show all`) |
+| People | `People` (só chip no topo, y≤220) |
 
-1. `stop` apps + `launch` → `waitForText("Search")` → tap → colar `comprador` (`pasteCleanMessage` / ADBKeyboard) → `waitForText(See/Show all)` (8s com teclado; se timeout → `KEYCODE_BACK` + wait 30s) → tap
+1. `stop` apps + `launch` → `waitForText("Search")` → tap → colar `comprador` (`pasteCleanMessage` / ADBKeyboard) → `waitForText(See/Show all)` (8s com teclado; se timeout → `KEYCODE_BACK` + wait 30s) → tap → **People** (chip topo) → tap
 2. Loop: `extractBySense` lista → **1º card novo** (menor `y`) → `GET /client-connections-linkedin/match` (score nome/cargo/cidade/empresa; **não** usa Connect/Pending da UI) → se matched, **skip** → senão **tap no perfil** → dump|ocr + URL → `GET /profile-details/by-url` → se URL já 1:1 na base, **skip save** → senão `onProfile`/POST → BACK → re-extract. Lista só descobre; **sem `profileUrl` (não abriu/Share) não salva**. Sem novos → scroll. Para em `-n` ou fim do scroll (`EXTRACT_SCROLL_STABLE`, default **4**). Exige `PROFILES_API_URL` para skip; sem API, abre todos.
+
+**Antes → depois (People no extract):** See all ia direto ao loop de cards (podia ficar em Posts/Jobs) → `tapPeopleChip` após See all (y≤220, 6 tentativas). **Rollback:** remova a chamada a `tapPeopleChip` em `login-extract-profiles.js`.
 
 **Antes → depois (foto repetida):** `sense=dump` + `existsSync(*-page.png)` reusava PNG do perfil anterior quando skip save mantinha o mesmo `filePrefix` → sempre `captureFrame` antes do crop. Rollback: `if (!existsSync(cardPng)) captureFrame`.
 

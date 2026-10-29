@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 /**
  * LinkedIn: stop apps → launch → waitForText(Search) → tap → colar termo (`--query`,
- * default "comprador") → See all → por card: se já há conexão (score nome/cargo/
- * cidade/empresa) → skip; senão tap → dump|ocr (SCREEN_ROBOT_SENSE / --sense)
- * 1ª tela + URL → só então salva/POST (lista nunca grava sozinha; sem profileUrl →
- * skip save); se URL já na base → skip save (ainda sync conexão se Pending/Connected
- * no cartão); BACK → próximo até `-n`.
+ * default "comprador") → See all → chip People (topo) → por card: se já há conexão
+ * (score nome/cargo/cidade/empresa) → skip; senão tap → dump|ocr (SCREEN_ROBOT_SENSE /
+ * --sense) 1ª tela + URL → só então salva/POST (lista nunca grava sozinha; sem
+ * profileUrl → skip save); se URL já na base → skip save (ainda sync conexão se
+ * Pending/Connected no cartão); BACK → próximo até `-n`.
  * Cartão: Connect → só perfil; Pending/Connected → upsert client-connections-linkedin.
  *
  * Uso (cwd: screen-robot/src):
@@ -103,6 +103,10 @@ const SEE_ALL_QUERIES = [
   "See all",
   "Show all",
 ];
+/** Chip/tab People no topo (após See all) — não "X people" no meio da lista. */
+const PEOPLE_QUERIES = ["People"];
+const PEOPLE_CHIP_MAX_Y = 220;
+const WAIT_AFTER_PEOPLE_MS = 2_000;
 
 function loadConfig(path) {
   const abs = resolve(path);
@@ -144,6 +148,31 @@ async function tapByText(serial, queries, label, opts = {}) {
     await sleep(1_000);
   }
   throw new Error(`${label}: não encontrado — ${list.join(" | ")}`);
+}
+
+/**
+ * Chip/tab People no topo da lista (após See/Show all) — não "X people" no meio.
+ */
+async function tapPeopleChip(serial) {
+  console.log("7) People…");
+  for (let attempt = 1; attempt <= 6; attempt++) {
+    const found = await findFirstByText(serial, PEOPLE_QUERIES, {
+      minScore: 0.78,
+    });
+    if (found && found.hit.y <= PEOPLE_CHIP_MAX_Y) {
+      console.log(
+        `   → People "${found.hit.text}" x=${found.hit.x} y=${found.hit.y}`,
+      );
+      tapElement({ serial, x: found.hit.x, y: found.hit.y });
+      await sleep(WAIT_AFTER_PEOPLE_MS);
+      return;
+    }
+    console.log(
+      `   People não no topo (${attempt}/6)${found ? ` y=${found.hit.y}` : ""}`,
+    );
+    await sleep(1_000);
+  }
+  throw new Error("People: chip não encontrado no topo");
 }
 
 function stopAllApps(serial, apps) {
@@ -1010,8 +1039,10 @@ async function main() {
   tapElement({ serial, x: seeAllHit.x, y: seeAllHit.y });
   await sleep(2_000);
 
+  await tapPeopleChip(serial);
+
   console.log(
-    `7) Lista → abrir cada perfil (OCR + URL) → BACK até ${maxProfiles}…`,
+    `8) Lista People → abrir cada perfil (OCR + URL) → BACK até ${maxProfiles}…`,
   );
   const saved = await extractProfilesLoop(serial, outDir, {
     onProfile: defaultOnProfile,

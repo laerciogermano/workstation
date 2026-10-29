@@ -98,6 +98,7 @@ export class AgenteService implements OnModuleInit {
 
   async onModuleInit(): Promise<void> {
     await this.ensureHostConfigTable();
+    await this.ensureRuntimeSchemaColumns();
   }
 
   private async ensureHostConfigTable(): Promise<void> {
@@ -113,6 +114,18 @@ export class AgenteService implements OnModuleInit {
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
       this.logger.warn(`ensureHostConfigTable: ${msg}`);
+    }
+  }
+
+  /** Colunas novas em `agent_runtime` com DB_SYNC=false. Idempotente. */
+  private async ensureRuntimeSchemaColumns(): Promise<void> {
+    try {
+      await this.dataSource.query(
+        `ALTER TABLE agent_runtime ADD COLUMN IF NOT EXISTS last_prospeccao_at timestamptz`,
+      );
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      this.logger.warn(`ensureRuntimeSchemaColumns: ${msg}`);
     }
   }
 
@@ -171,6 +184,20 @@ export class AgenteService implements OnModuleInit {
       this.config.get('AGENT_CONNECT_BATCH_INTERVAL_MS', '7200000'),
     );
     return Number.isFinite(n) && n >= 60_000 ? n : 7_200_000;
+  }
+
+  /** Máx. mensagens de prospecção por agente / dia civil (default 15). */
+  private prospeccaoDailyLimit(): number {
+    const n = Number(this.config.get('AGENT_PROSPECCAO_DAILY_LIMIT', '15'));
+    return Number.isFinite(n) && n >= 0 ? Math.floor(n) : 15;
+  }
+
+  /** Intervalo mínimo entre envios de prospecção (default 30 min). */
+  private prospeccaoIntervalMs(): number {
+    const n = Number(
+      this.config.get('AGENT_PROSPECCAO_INTERVAL_MS', '1800000'),
+    );
+    return Number.isFinite(n) && n >= 60_000 ? n : 1_800_000;
   }
 
   /**
@@ -334,6 +361,61 @@ export class AgenteService implements OnModuleInit {
     return Number.isNaN(d.getTime()) ? null : d;
   }
 
+  /** Jobs `enviar_prospeccao` concluídos hoje (conta no limite diário). */
+  private async countProspeccaoDoneToday(agentId: string): Promise<number> {
+    return this.jobs
+      .createQueryBuilder('j')
+      .where('j.agentId = :agentId', { agentId })
+      .andWhere('j.type = :type', { type: 'enviar_prospeccao' })
+      .andWhere('j.status = :st', { st: 'done' })
+      .andWhere('j.completedAt IS NOT NULL')
+      .andWhere('j.completedAt >= :day', { day: this.startOfLocalDay() })
+      .getCount();
+  }
+
+  /**
+   * 1 slot se ainda há cota do dia e passou o intervalo desde o último envio;
+   * senão 0 (cooldown / daily / sem elegível fica no enqueue).
+   */
+  private async prospeccaoSlotsNow(
+    agentId: string,
+    runtime: AgentRuntime,
+    sentToday: number,
+  ): Promise<{
+    slots: number;
+    intervalMs: number;
+    dailyLimit: number;
+    reason: string | null;
+  }> {
+    const dailyLimit = this.prospeccaoDailyLimit();
+    const intervalMs = this.prospeccaoIntervalMs();
+    const remainingDaily = Math.max(0, dailyLimit - sentToday);
+
+    if (remainingDaily <= 0) {
+      return {
+        slots: 0,
+        intervalMs,
+        dailyLimit,
+        reason: `prospecção daily limit ${sentToday}/${dailyLimit}`,
+      };
+    }
+
+    const lastAt = runtime.lastProspeccaoAt;
+    if (lastAt) {
+      const elapsed = Date.now() - lastAt.getTime();
+      if (elapsed < intervalMs) {
+        return {
+          slots: 0,
+          intervalMs,
+          dailyLimit,
+          reason: `prospecção cooldown ${sentToday}/${dailyLimit} (falta ${Math.ceil((intervalMs - elapsed) / 60_000)}min)`,
+        };
+      }
+    }
+
+    return { slots: 1, intervalMs, dailyLimit, reason: null };
+  }
+
   /**
    * Quantos connects ainda podem começar agora: resto do lote atual,
    * ou lote novo se passou o intervalo após múltiplo de batchSize.
@@ -449,6 +531,7 @@ export class AgenteService implements OnModuleInit {
           currentJobId: null,
           lastInboxAt: null,
           lastConnectionsAt: null,
+          lastProspeccaoAt: null,
           lastClaimAt: null,
           lastHeartbeatAt: null,
           hostInstanceId: null,
@@ -542,6 +625,9 @@ export class AgenteService implements OnModuleInit {
     if (job.type === 'verificar_conexoes') {
       runtime.lastConnectionsAt = new Date();
     }
+    if (job.type === 'enviar_prospeccao') {
+      runtime.lastProspeccaoAt = new Date();
+    }
     if (runtime.currentJobId === job.id) {
       runtime.currentJobId = null;
       runtime.status = 'idle';
@@ -569,6 +655,9 @@ export class AgenteService implements OnModuleInit {
     if (job.type === 'verificar_conexoes') {
       runtime.lastConnectionsAt = new Date();
     }
+    if (job.type === 'enviar_prospeccao') {
+      runtime.lastProspeccaoAt = new Date();
+    }
     if (runtime.currentJobId === job.id) {
       runtime.currentJobId = null;
       runtime.status = 'idle';
@@ -591,6 +680,10 @@ export class AgenteService implements OnModuleInit {
       connectsToday: number;
       connectSlots: number;
       connectBatchIntervalMs: number;
+      prospeccaoToday: number;
+      prospeccaoSlots: number;
+      prospeccaoIntervalMs: number;
+      prospeccaoDailyLimit: number;
       leadThreshold: number;
       leadsNaFila: number;
       allowedTypes?: ReadonlySet<AgentJobType>;
@@ -747,21 +840,75 @@ export class AgenteService implements OnModuleInit {
     }
 
     const prospeccaoQueued = (pendingByType.get('enviar_prospeccao') || 0) > 0;
-    const prospeccao = allowed.has('enviar_prospeccao')
-      ? {
-          type: 'enviar_prospeccao' as AgentJobType,
-          state: (prospeccaoQueued ? 'queued' : 'blocked') as
-            | 'queued'
-            | 'blocked',
-          dueAt: prospeccaoQueued ? new Date(now).toISOString() : null,
-          dueInMs: prospeccaoQueued ? 0 : null,
-          lastAt: null,
-          intervalMs: null,
-          reason: prospeccaoQueued
-            ? 'job na fila'
-            : 'só quando há conectado sem mensagem enviada',
-        }
-      : null;
+    let prospeccao: {
+      type: AgentJobType;
+      state: 'due' | 'queued' | 'waiting' | 'blocked';
+      dueAt: string | null;
+      dueInMs: number | null;
+      lastAt: string | null;
+      intervalMs: number | null;
+      reason: string | null;
+    } | null = null;
+    if (allowed.has('enviar_prospeccao')) {
+      const lastAt = runtime.lastProspeccaoAt;
+      const intervalMs = opts.prospeccaoIntervalMs;
+      if (prospeccaoQueued) {
+        prospeccao = {
+          type: 'enviar_prospeccao',
+          state: 'queued',
+          dueAt: new Date(now).toISOString(),
+          dueInMs: 0,
+          lastAt: iso(lastAt),
+          intervalMs,
+          reason: 'job na fila',
+        };
+      } else if (opts.prospeccaoToday >= opts.prospeccaoDailyLimit) {
+        prospeccao = {
+          type: 'enviar_prospeccao',
+          state: 'blocked',
+          dueAt: null,
+          dueInMs: null,
+          lastAt: iso(lastAt),
+          intervalMs,
+          reason: `limite diário ${opts.prospeccaoToday}/${opts.prospeccaoDailyLimit}`,
+        };
+      } else if (opts.prospeccaoSlots <= 0 && lastAt) {
+        const elapsed = now - lastAt.getTime();
+        const dueInMs = Math.max(0, intervalMs - elapsed);
+        prospeccao = {
+          type: 'enviar_prospeccao',
+          state: dueInMs <= 0 ? 'due' : 'waiting',
+          dueAt: new Date(lastAt.getTime() + intervalMs).toISOString(),
+          dueInMs,
+          lastAt: iso(lastAt),
+          intervalMs,
+          reason:
+            dueInMs <= 0
+              ? 'intervalo vencido'
+              : `a cada ${Math.round(intervalMs / 60_000)} min (${opts.prospeccaoToday}/${opts.prospeccaoDailyLimit})`,
+        };
+      } else if (opts.prospeccaoSlots > 0) {
+        prospeccao = {
+          type: 'enviar_prospeccao',
+          state: 'due',
+          dueAt: new Date(now).toISOString(),
+          dueInMs: 0,
+          lastAt: iso(lastAt),
+          intervalMs,
+          reason: `pronto (${opts.prospeccaoToday}/${opts.prospeccaoDailyLimit})`,
+        };
+      } else {
+        prospeccao = {
+          type: 'enviar_prospeccao',
+          state: 'blocked',
+          dueAt: null,
+          dueInMs: null,
+          lastAt: iso(lastAt),
+          intervalMs,
+          reason: 'só quando há conectado sem mensagem enviada',
+        };
+      }
+    }
 
     const leadsQueued = (pendingByType.get('extrair_leads') || 0) > 0;
     const leads = allowed.has('extrair_leads')
@@ -836,6 +983,10 @@ export class AgenteService implements OnModuleInit {
       connectBatchIntervalMs: number;
       connectsToday: number;
       connectSlotsNow: number;
+      prospeccaoDailyLimit: number;
+      prospeccaoIntervalMs: number;
+      prospeccaoToday: number;
+      prospeccaoSlotsNow: number;
       heartbeatStaleMs: number;
     };
   }> {
@@ -929,6 +1080,12 @@ export class AgenteService implements OnModuleInit {
     const leadsNaFila = await this.countLeadsCandidatos(agentId);
     const connectsToday = await this.countInvitedToday(agentId);
     const batchNow = await this.connectSlotsNow(agentId, connectsToday);
+    const prospeccaoToday = await this.countProspeccaoDoneToday(agentId);
+    const prospeccaoNow = await this.prospeccaoSlotsNow(
+      agentId,
+      runtime,
+      prospeccaoToday,
+    );
     const pendingInvites = await this.connections.count({
       where: {
         agentId,
@@ -942,6 +1099,10 @@ export class AgenteService implements OnModuleInit {
       connectsToday,
       connectSlots: batchNow.slots,
       connectBatchIntervalMs: batchNow.batchIntervalMs,
+      prospeccaoToday,
+      prospeccaoSlots: prospeccaoNow.slots,
+      prospeccaoIntervalMs: prospeccaoNow.intervalMs,
+      prospeccaoDailyLimit: prospeccaoNow.dailyLimit,
       leadThreshold: this.leadThreshold(),
       leadsNaFila,
       allowedTypes,
@@ -965,6 +1126,10 @@ export class AgenteService implements OnModuleInit {
         connectBatchIntervalMs: batchNow.batchIntervalMs,
         connectsToday,
         connectSlotsNow: batchNow.slots,
+        prospeccaoDailyLimit: prospeccaoNow.dailyLimit,
+        prospeccaoIntervalMs: prospeccaoNow.intervalMs,
+        prospeccaoToday,
+        prospeccaoSlotsNow: prospeccaoNow.slots,
         heartbeatStaleMs: this.heartbeatStaleMs(),
       },
     };
@@ -1388,8 +1553,49 @@ export class AgenteService implements OnModuleInit {
    * AC-02: conectado (status=2) sem nenhuma mensagem `sent` do agente.
    * Mensagem = template do agente (`mensagem_prospeccao`) com placeholders
    * (`{{primeiro_nome}}`, `{{empresa}}`, … — ver `prospeccao-template.ts`).
+   * 1 job por vez; máx. AGENT_PROSPECCAO_DAILY_LIMIT/dia com pausa
+   * AGENT_PROSPECCAO_INTERVAL_MS entre envios.
    */
   private async enqueueProspeccao(agentId: string): Promise<void> {
+    const runtime = await this.ensureRuntime(agentId);
+    const sentToday = await this.countProspeccaoDoneToday(agentId);
+    const slot = await this.prospeccaoSlotsNow(agentId, runtime, sentToday);
+
+    const claimedOpen = await this.jobs.count({
+      where: { agentId, type: 'enviar_prospeccao', status: 'claimed' },
+    });
+    const pendingRows = await this.jobs.find({
+      where: { agentId, type: 'enviar_prospeccao', status: 'pending' },
+      order: { createdAt: 'ASC' },
+    });
+
+    const cancelPending = async (reason: string, keepFirst = false) => {
+      const toCancel = keepFirst ? pendingRows.slice(1) : pendingRows;
+      for (const j of toCancel) {
+        j.status = 'cancelled';
+        j.lastError = reason;
+        j.completedAt = new Date();
+        j.dedupeKey = null;
+      }
+      if (toCancel.length) await this.jobs.save(toCancel);
+    };
+
+    if (slot.slots <= 0) {
+      await cancelPending(slot.reason || 'prospecção blocked');
+      return;
+    }
+
+    if (claimedOpen > 0) {
+      await cancelPending('já há enviar_prospeccao claimed');
+      return;
+    }
+
+    if (pendingRows.length > 0) {
+      // 1 por vez: mantém o mais antigo, cancela o restante (legado em lote).
+      await cancelPending('só 1 enviar_prospeccao por vez', true);
+      return;
+    }
+
     const agente = await this.agentesCadastro.findOneBy({ id: agentId });
     const template =
       String(agente?.mensagemProspeccao || '').trim() ||
@@ -1404,7 +1610,7 @@ export class AgenteService implements OnModuleInit {
         st: ClientConnectionLinkedinStatus.CONNECTED,
       })
       .orderBy('c.createdAt', 'ASC')
-      .take(30)
+      .take(40)
       .getMany();
 
     for (const c of rows) {
@@ -1449,6 +1655,7 @@ export class AgenteService implements OnModuleInit {
           hint: 'Enviar mensagem de prospecção; persistir sent',
         },
       });
+      return; // 1 job por materialize
     }
   }
 

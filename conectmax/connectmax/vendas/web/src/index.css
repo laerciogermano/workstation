@@ -2374,11 +2374,24 @@ code {
   gap: 0.25rem;
 }
 
+.agt-var-group {
+  margin: 0 0 0.75rem;
+}
+
+.agt-var-group-label {
+  margin: 0 0 0.35rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--muted, #6b7280);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
 .agt-var-chips {
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
-  margin: 0 0 0.75rem;
+  margin: 0;
 }
 
 .agt-var-chip {

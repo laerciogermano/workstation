@@ -23,7 +23,7 @@ SPA React (Vite) que lista cards paginados de `GET /profiles`, abre `/profiles/:
 | Funil LinkedIn só no todo | Rota SPA **`/funil`**: board Candidatos → Convidados → Conectados → Abordados → Respondidos; cada coluna lista cards da API correspondente |
 | Empresas só nas planilhas/portal | Rota SPA `/empresas` existiu; **removida do nav** (API `/empresas` permanece) |
 | Servidores / AVDs / Contas LI separados | Só **`/agentes`**: host + ADB + LinkedIn na mesma linha; edição na UI; criação só via enroll/API |
-| Procedimentos só via env (`AGENT_MATERIALIZE_TYPES` / flags) | Em **`/agentes` → Editar**: checkboxes por tipo; **firstName/lastName**; seções **texto do search** (`searchQuery`) e **mensagem de prospecção** (`mensagemProspeccao` com `{{primeiro_nome}}`/`{{firstname}}`/`{{lastname}}`/`{{nome_agente}}`); LinkedIn no form só **Profile URL** |
+| Procedimentos só via env (`AGENT_MATERIALIZE_TYPES` / flags) | Em **`/agentes` → Editar**: checkboxes por tipo; **firstName/lastName**; seções **texto do search** (`searchQuery`) e **mensagem de prospecção** (vars em grupos **Cliente/lead** vs **Agente**); LinkedIn no form só **Profile URL** |
 | Nav por página + filtro “Buscar nome, cargo, cidade” | Menu transversal `AppNav` (Funil · Mensagens · Empresas · Agentes · Gestores · Dashboards); home `/` redireciona ao funil |
 | Nav só texto / SVG manual | Ícones **Phosphor** (`@phosphor-icons/react`, peso `thin`) no `AppNav` + `ExtractIcon` |
 | `AppNav` horizontal no topo de cada página | Sidebar vertical à esquerda (`app-shell` + `.app-nav` sticky); páginas só no `.app-main` |

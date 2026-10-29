@@ -41,55 +41,67 @@ const DEFAULT_PROCEDIMENTOS = [
 
 const DEFAULT_MENSAGEM_PROSPECCAO = 'Oi {{primeiro_nome}}, tudo bem?';
 
-/** Variáveis disponíveis no template de prospecção (clique insere no texto). */
-const PROSPECCAO_VARS = [
+/** Variáveis do template de prospecção, agrupadas por origem. */
+const PROSPECCAO_VAR_GROUPS = [
   {
-    token: '{{primeiro_nome}}',
-    hint: '1ª palavra do nome (ex.: Maria)',
+    id: 'cliente',
+    label: 'Cliente / lead',
+    vars: [
+      {
+        token: '{{primeiro_nome}}',
+        hint: '1ª palavra do nome (ex.: Maria)',
+      },
+      {
+        token: '{{nome}}',
+        hint: 'Nome completo',
+      },
+      {
+        token: '{{empresa}}',
+        hint: 'Empresa atual',
+      },
+      {
+        token: '{{cargo}}',
+        hint: 'Cargo',
+      },
+      {
+        token: '{{headline}}',
+        hint: 'Headline do LinkedIn',
+      },
+      {
+        token: '{{cidade}}',
+        hint: 'Cidade / local',
+      },
+      {
+        token: '{{email}}',
+        hint: 'E-mail do CRM',
+      },
+      {
+        token: '{{telefone}}',
+        hint: 'Telefone do CRM',
+      },
+      {
+        token: '{{profile_url}}',
+        hint: 'URL do perfil LinkedIn',
+      },
+    ],
   },
   {
-    token: '{{nome}}',
-    hint: 'Nome completo',
-  },
-  {
-    token: '{{firstname}}',
-    hint: 'First name do agente (config)',
-  },
-  {
-    token: '{{lastname}}',
-    hint: 'Last name do agente (config)',
-  },
-  {
-    token: '{{nome_agente}}',
-    hint: 'First + last (ou rótulo do agente)',
-  },
-  {
-    token: '{{empresa}}',
-    hint: 'Empresa atual',
-  },
-  {
-    token: '{{cargo}}',
-    hint: 'Cargo',
-  },
-  {
-    token: '{{headline}}',
-    hint: 'Headline do LinkedIn',
-  },
-  {
-    token: '{{cidade}}',
-    hint: 'Cidade / local',
-  },
-  {
-    token: '{{email}}',
-    hint: 'E-mail do CRM',
-  },
-  {
-    token: '{{telefone}}',
-    hint: 'Telefone do CRM',
-  },
-  {
-    token: '{{profile_url}}',
-    hint: 'URL do perfil LinkedIn',
+    id: 'agente',
+    label: 'Agente',
+    vars: [
+      {
+        token: '{{firstname}}',
+        hint: 'First name (config do agente)',
+      },
+      {
+        token: '{{lastname}}',
+        hint: 'Last name (config do agente)',
+      },
+      {
+        token: '{{nome_agente}}',
+        hint: 'First + last (ou rótulo)',
+      },
+    ],
   },
 ];
 
@@ -864,20 +876,30 @@ export default function Agentes() {
                   <p className="muted agt-proc-hint">
                     Clique para inserir no texto:
                   </p>
-                  <div className="agt-var-chips" role="group" aria-label="Variáveis">
-                    {PROSPECCAO_VARS.map((v) => (
-                      <button
-                        key={v.token}
-                        type="button"
-                        className="agt-var-chip"
-                        title={v.hint}
-                        onClick={() => insertProspeccaoVar(v.token)}
-                      >
-                        <code>{v.token}</code>
-                        <span className="muted">{v.hint}</span>
-                      </button>
-                    ))}
-                  </div>
+                  {PROSPECCAO_VAR_GROUPS.map((g) => (
+                    <div
+                      key={g.id}
+                      className="agt-var-group"
+                      role="group"
+                      aria-label={g.label}
+                    >
+                      <p className="agt-var-group-label">{g.label}</p>
+                      <div className="agt-var-chips">
+                        {g.vars.map((v) => (
+                          <button
+                            key={v.token}
+                            type="button"
+                            className="agt-var-chip"
+                            title={v.hint}
+                            onClick={() => insertProspeccaoVar(v.token)}
+                          >
+                            <code>{v.token}</code>
+                            <span className="muted">{v.hint}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
                   <label className="srv-form-span">
                     Texto
                     <textarea

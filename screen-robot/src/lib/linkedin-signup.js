@@ -281,8 +281,25 @@ function findNodeByText(xml, text) {
   return null;
 }
 
+/** @param {string} xml @param {RegExp} descRe */
+function findNodeByContentDesc(xml, descRe) {
+  for (const n of String(xml || "").match(/<node\b[^>]*>/g) || []) {
+    const m = n.match(/\bcontent-desc="([^"]*)"/);
+    if (!m || !descRe.test(m[1])) continue;
+    const b = n.match(/bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"/);
+    if (!b) continue;
+    return {
+      x: Math.floor((Number(b[1]) + Number(b[3])) / 2),
+      y: Math.floor((Number(b[2]) + Number(b[4])) / 2),
+      desc: m[1],
+    };
+  }
+  return null;
+}
+
 /**
- * Job title: abre sheet → digita palavra a palavra (`input text` trunca frases longas).
+ * Job title (Compose): clica o **input abaixo** do label "Job title*"
+ * (content-desc "Job title, open screen…"), não o label.
  * @param {string} serial
  * @param {string} jobTitle
  * @param {string[]} steps
@@ -292,19 +309,31 @@ async function fillJobTitle(serial, jobTitle, steps, outDir) {
   const title = String(jobTitle || "").trim();
   if (!title) throw new Error("fillJobTitle: falta jobTitle");
 
-  await waitForText(serial, ["Job title*", "Job title", "most recent experience"], {
-    timeoutMs: NAME_TIMEOUT_MS,
-    intervalMs: 1_000,
-    sense: "dump",
-  });
+  await waitForText(
+    serial,
+    ["Job title*", "Job title", "most recent experience"],
+    {
+      timeoutMs: NAME_TIMEOUT_MS,
+      intervalMs: 1_000,
+      sense: "dump",
+    },
+  );
   await shot(serial, outDir, "16-antes-job-title.png");
 
   const xml0 = dumpUiXml(serial);
-  const label =
-    findNodeByText(xml0, "Job title*") || findNodeByText(xml0, "Job title");
-  if (label) tapElement({ serial, x: label.x, y: label.y + 80 });
-  else tapElement({ serial, x: 540, y: 1000 });
+  // input abaixo do label — não tap no TextView "Job title*"
+  const input =
+    findNodeByContentDesc(xml0, /^Job title,\s*open screen/i) ||
+    findNodeByContentDesc(xml0, /Job title.*open screen/i);
+  if (!input) {
+    throw new Error(
+      'linkedin-signup: input abaixo de Job title não encontrado (content-desc "Job title, open screen…")',
+    );
+  }
+  tapElement({ serial, x: input.x, y: input.y });
+  steps.push("tap-job-title-input");
   await sleep(2_000);
+  await shot(serial, outDir, "16b-apos-tap-job-title-input.png");
 
   let edit = null;
   const t0 = Date.now();
@@ -321,14 +350,34 @@ async function fillJobTitle(serial, jobTitle, steps, outDir) {
     forceClear: true,
     restoreIme: false,
   });
-  await sleep(600);
+  await sleep(800);
   await shot(serial, outDir, "17-apos-job-title-typed.png");
 
-  const done = findNodeByText(dumpUiXml(serial), "Done");
-  if (!done) throw new Error("linkedin-signup: Done no sheet Job title");
-  tapElement({ serial, x: done.x, y: done.y });
+  // lista de sugestões: toca a 1ª que contenha um token do cargo
+  {
+    const xmlSug = dumpUiXml(serial);
+    const token = title.split(/\s+/).find((w) => w.length > 3) || title;
+    const sug =
+      findNodeByContentDesc(
+        xmlSug,
+        new RegExp(token.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i"),
+      ) || findNodeByText(xmlSug, title);
+    if (sug) {
+      tapElement({ serial, x: sug.x, y: sug.y });
+      steps.push("tap-job-title-suggestion");
+      await sleep(1_000);
+    }
+  }
+
+  const done =
+    findNodeByText(dumpUiXml(serial), "Done") ||
+    findNodeByContentDesc(dumpUiXml(serial), /^Done$/i);
+  if (done) {
+    tapElement({ serial, x: done.x, y: done.y });
+    steps.push("tap-done-job-title");
+    await sleep(WAIT_MS);
+  }
   steps.push(`job-title:${title}`);
-  await sleep(WAIT_MS);
   await shot(serial, outDir, "18-apos-job-title-done.png");
 }
 

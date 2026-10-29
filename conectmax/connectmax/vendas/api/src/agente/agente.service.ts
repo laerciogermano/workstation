@@ -1386,7 +1386,8 @@ export class AgenteService implements OnModuleInit {
 
   /**
    * AC-02: conectado (status=2) sem nenhuma mensagem `sent` do agente.
-   * Mensagem = template do agente (`mensagem_prospeccao`) com `{{primeiro_nome}}` / `{{nome}}`.
+   * Mensagem = template do agente (`mensagem_prospeccao`) com placeholders
+   * (`{{primeiro_nome}}`, `{{empresa}}`, … — ver `prospeccao-template.ts`).
    */
   private async enqueueProspeccao(agentId: string): Promise<void> {
     const agente = await this.agentesCadastro.findOneBy({ id: agentId });
@@ -1416,9 +1417,20 @@ export class AgenteService implements OnModuleInit {
       });
       if (sent > 0) continue;
 
-      const profileUrl = c.clienteLinkedin?.profileUrl ?? null;
-      const name = c.clienteLinkedin?.cliente?.nome ?? null;
-      const message = renderProspeccaoTemplate(template, { nome: name });
+      const li = c.clienteLinkedin;
+      const cli = li?.cliente;
+      const profileUrl = li?.profileUrl ?? null;
+      const name = cli?.nome ?? null;
+      const message = renderProspeccaoTemplate(template, {
+        nome: name,
+        empresa: cli?.empresa || li?.company || null,
+        cargo: cli?.cargo || null,
+        headline: li?.headline || null,
+        cidade: cli?.cidade || li?.location || null,
+        email: cli?.email || null,
+        telefone: cli?.telefone || null,
+        profileUrl,
+      });
       await this.insertJob({
         agentId,
         type: 'enviar_prospeccao',

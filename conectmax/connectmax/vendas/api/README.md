@@ -234,7 +234,7 @@ Auth worker: JWT, `AGENT_API_KEY` global **ou** chave emitida em `POST /agentes/
 
 **Antes → depois (procedimentos por agente):** só flags/env globais → coluna `agentes.procedimentos` (jsonb, nullable) + `PATCH /agentes/:id` `{ "procedimentos": ["extrair_leads","conectar",…] }` e UI em `/agentes` → Editar. `null` = herda flags/env (`AGENT_MATERIALIZE_TYPES` / flags); array (mesmo `[]`) = allowlist do agente e **vence** `AGENT_MATERIALIZE_TYPES`. Materialize/claim/peek usam isso. **Rollback:** `UPDATE agentes SET procedimentos = NULL;` (ou `DROP COLUMN procedimentos`); ignore o campo no PATCH/UI; volte a intersectar com `AGENT_MATERIALIZE_TYPES`.
 
-**Antes → depois (mensagem + search por agente):** prospecção/search só via env/robô → `agentes.mensagem_prospeccao` (template `{{primeiro_nome}}`/`{{nome}}` ou `$…$`) e `agentes.search_query`; UI em Editar quando o procedimento está marcado; jobs `enviar_prospeccao` / `extrair_leads` levam `message` / `query` no payload. **Rollback:** `UPDATE … SET mensagem_prospeccao=NULL, search_query=NULL;` (ou `DROP COLUMN`); ignore campos no PATCH; worker volta a `EXTRACT_QUERY`.
+**Antes → depois (mensagem + search por agente):** prospecção/search só via env/robô → `agentes.mensagem_prospeccao` (template `{{primeiro_nome}}`/`{{nome}}`/`{{empresa}}`/`{{cargo}}`/`{{headline}}`/`{{cidade}}`/`{{email}}`/`{{telefone}}`/`{{profile_url}}` ou `$…$`) e `agentes.search_query`; UI em Editar quando o procedimento está marcado; jobs `enviar_prospeccao` / `extrair_leads` levam `message` / `query` no payload. **Rollback:** `UPDATE … SET mensagem_prospeccao=NULL, search_query=NULL;` (ou `DROP COLUMN`); ignore campos no PATCH; worker volta a `EXTRACT_QUERY`.
 
 #### `GET /clientes`
 

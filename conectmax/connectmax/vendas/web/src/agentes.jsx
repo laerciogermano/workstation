@@ -45,13 +45,39 @@ const DEFAULT_MENSAGEM_PROSPECCAO = 'Oi {{primeiro_nome}}, tudo bem?';
 const PROSPECCAO_VARS = [
   {
     token: '{{primeiro_nome}}',
-    label: 'primeiro_nome',
     hint: '1ª palavra do nome (ex.: Maria)',
   },
   {
     token: '{{nome}}',
-    label: 'nome',
-    hint: 'Nome completo do LinkedIn',
+    hint: 'Nome completo',
+  },
+  {
+    token: '{{empresa}}',
+    hint: 'Empresa atual',
+  },
+  {
+    token: '{{cargo}}',
+    hint: 'Cargo',
+  },
+  {
+    token: '{{headline}}',
+    hint: 'Headline do LinkedIn',
+  },
+  {
+    token: '{{cidade}}',
+    hint: 'Cidade / local',
+  },
+  {
+    token: '{{email}}',
+    hint: 'E-mail do CRM',
+  },
+  {
+    token: '{{telefone}}',
+    hint: 'Telefone do CRM',
+  },
+  {
+    token: '{{profile_url}}',
+    hint: 'URL do perfil LinkedIn',
   },
 ];
 

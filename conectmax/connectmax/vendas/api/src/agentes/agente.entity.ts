@@ -180,6 +180,20 @@ export class Agente {
   })
   procedimentos!: string[] | null;
 
+  /**
+   * Template da mensagem de prospecção (`enviar_prospeccao`).
+   * Placeholders: `{{primeiro_nome}}` / `{{nome}}` (também `$primeiro_nome$` / `$nome$`).
+   */
+  @Column({ name: 'mensagem_prospeccao', type: 'text', nullable: true })
+  mensagemProspeccao!: string | null;
+
+  /**
+   * Texto de busca LinkedIn para `extrair_leads` (payload `query` do job).
+   * Vazio → worker usa `EXTRACT_QUERY` / default do robô.
+   */
+  @Column({ name: 'search_query', type: 'varchar', length: 500, nullable: true })
+  searchQuery!: string | null;
+
   @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
   createdAt!: Date;
 

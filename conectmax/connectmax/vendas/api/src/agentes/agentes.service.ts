@@ -93,6 +93,8 @@ export class AgentesService implements OnModuleInit {
       `ALTER TABLE agentes ADD COLUMN IF NOT EXISTS api_key_hash varchar(128)`,
       `ALTER TABLE agentes ADD COLUMN IF NOT EXISTS disk_gb int`,
       `ALTER TABLE agentes ADD COLUMN IF NOT EXISTS procedimentos jsonb`,
+      `ALTER TABLE agentes ADD COLUMN IF NOT EXISTS mensagem_prospeccao text`,
+      `ALTER TABLE agentes ADD COLUMN IF NOT EXISTS search_query varchar(500)`,
       `UPDATE agentes SET host_kind = 'localhost' WHERE localhost = true AND (host_kind IS NULL OR host_kind = 'server')`,
     ];
     for (const sql of stmts) {
@@ -585,6 +587,14 @@ export class AgentesService implements OnModuleInit {
     if (dto.notas !== undefined) row.notas = dto.notas ?? null;
     if (dto.procedimentos !== undefined) {
       row.procedimentos = this.normalizeProcedimentos(dto.procedimentos);
+    }
+    if (dto.mensagemProspeccao !== undefined) {
+      const t = String(dto.mensagemProspeccao ?? '').trim();
+      row.mensagemProspeccao = t || null;
+    }
+    if (dto.searchQuery !== undefined) {
+      const q = String(dto.searchQuery ?? '').trim();
+      row.searchQuery = q || null;
     }
 
     const li = this.linkedinFieldsFromDto(dto);

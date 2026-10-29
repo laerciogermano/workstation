@@ -30,6 +30,10 @@ import {
 import { AgentRuntime } from './agent-runtime.entity';
 import { EnrollDto } from './enroll.dto';
 import { HostConfig } from './host-config.entity';
+import {
+  DEFAULT_MENSAGEM_PROSPECCAO,
+  renderProspeccaoTemplate,
+} from './prospeccao-template';
 import { UpdateHostConfigDto } from './update-host-config.dto';
 
 const DEFAULT_AVD_IMAGE =
@@ -1382,11 +1386,18 @@ export class AgenteService implements OnModuleInit {
 
   /**
    * AC-02: conectado (status=2) sem nenhuma mensagem `sent` do agente.
+   * Mensagem = template do agente (`mensagem_prospeccao`) com `{{primeiro_nome}}` / `{{nome}}`.
    */
   private async enqueueProspeccao(agentId: string): Promise<void> {
+    const agente = await this.agentesCadastro.findOneBy({ id: agentId });
+    const template =
+      String(agente?.mensagemProspeccao || '').trim() ||
+      DEFAULT_MENSAGEM_PROSPECCAO;
+
     const rows = await this.connections
       .createQueryBuilder('c')
       .innerJoinAndSelect('c.clienteLinkedin', 'cl')
+      .leftJoinAndSelect('cl.cliente', 'cli')
       .where('c.agentId = :agentId', { agentId })
       .andWhere('c.status = :st', {
         st: ClientConnectionLinkedinStatus.CONNECTED,
@@ -1406,6 +1417,8 @@ export class AgenteService implements OnModuleInit {
       if (sent > 0) continue;
 
       const profileUrl = c.clienteLinkedin?.profileUrl ?? null;
+      const name = c.clienteLinkedin?.cliente?.nome ?? null;
+      const message = renderProspeccaoTemplate(template, { nome: name });
       await this.insertJob({
         agentId,
         type: 'enviar_prospeccao',
@@ -1415,6 +1428,9 @@ export class AgenteService implements OnModuleInit {
           connectionId: c.id,
           clienteLinkedinId: c.clienteLinkedinId,
           profileUrl,
+          name,
+          message,
+          template,
           hint: 'Enviar mensagem de prospecção; persistir sent',
         },
       });
@@ -1630,6 +1646,9 @@ export class AgenteService implements OnModuleInit {
     });
     if (open) return;
 
+    const agente = await this.agentesCadastro.findOneBy({ id: agentId });
+    const query = String(agente?.searchQuery || '').trim() || null;
+
     await this.insertJob({
       agentId,
       type: 'extrair_leads',
@@ -1638,6 +1657,7 @@ export class AgenteService implements OnModuleInit {
         ac: 'AC-04',
         leadsNaFila,
         leadThreshold: threshold,
+        query,
         hint: 'Rodar extract/search; upsert candidatos (leads globais)',
       },
     });

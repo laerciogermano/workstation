@@ -158,6 +158,18 @@ export class CreateAgenteDto {
   @IsIn(AGENT_PROCEDIMENTOS, { each: true })
   procedimentos?: (typeof AGENT_PROCEDIMENTOS)[number][] | null;
 
+  /** Template da mensagem de prospecção (`{{primeiro_nome}}`, `{{nome}}`). */
+  @IsOptional()
+  @IsString()
+  @MaxLength(4000)
+  mensagemProspeccao?: string | null;
+
+  /** Texto de search LinkedIn para buscar candidatos. */
+  @IsOptional()
+  @IsString()
+  @MaxLength(500)
+  searchQuery?: string | null;
+
   // —— LinkedIn ——
 
   @IsOptional()
@@ -289,6 +301,18 @@ export class UpdateAgenteDto {
   @ArrayUnique()
   @IsIn(AGENT_PROCEDIMENTOS, { each: true })
   procedimentos?: (typeof AGENT_PROCEDIMENTOS)[number][] | null;
+
+  /** Template da mensagem de prospecção (`{{primeiro_nome}}`, `{{nome}}`). */
+  @IsOptional()
+  @IsString()
+  @MaxLength(4000)
+  mensagemProspeccao?: string | null;
+
+  /** Texto de search LinkedIn para buscar candidatos. */
+  @IsOptional()
+  @IsString()
+  @MaxLength(500)
+  searchQuery?: string | null;
 
   @IsOptional()
   @IsString()

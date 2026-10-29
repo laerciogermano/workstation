@@ -65,7 +65,7 @@ Use **chave global** no supervisor.
 
 | `type` | Status |
 |--------|--------|
-| `extrair_leads` | `login-extract-profiles` |
+| `extrair_leads` | `login-extract-profiles` — `query` do job (`agentes.search_query`) ou env `EXTRACT_QUERY` |
 | `conectar` | `linkedin-connect` (URL do payload; teto diário na API) |
 | `verificar_conexoes` | `linkedin-extract-connections --n 20` (lote) → `mark-accepted`; intervalo API `AGENT_CONNECTIONS_INTERVAL_MS` (default **4 h**) |
 | demais AC | Stub (`ALLOW_STUB=1`) até F3 |

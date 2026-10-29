@@ -39,15 +39,16 @@ const DEFAULT_PROCEDIMENTOS = [
   'extrair_leads',
 ];
 
+const DEFAULT_MENSAGEM_PROSPECCAO = 'Oi {{primeiro_nome}}, tudo bem?';
+
 const EMPTY_FORM = {
   nome: '',
   hostNome: '',
   notas: '',
-  linkedinNome: '',
-  linkedinUsuario: '',
   linkedinProfileUrl: '',
-  linkedinHeadline: '',
   procedimentos: [...DEFAULT_PROCEDIMENTOS],
+  mensagemProspeccao: DEFAULT_MENSAGEM_PROSPECCAO,
+  searchQuery: '',
 };
 
 const JOB_TYPE_LABEL = Object.fromEntries(
@@ -89,14 +90,13 @@ function errMsg(json, res) {
   return `${res.status} ${res.statusText}`;
 }
 
-function liLabel(a) {
-  if (!a?.linkedinUsuario && !a?.linkedinNome) return '—';
-  const name = a.linkedinNome || 'LI';
-  return a.linkedinUsuario ? `${name} <${a.linkedinUsuario}>` : name;
+function needsLinkedin(a) {
+  const url = String(a?.linkedinProfileUrl || '').trim();
+  return !url || /\/in\/me\/?$/i.test(url);
 }
 
-function needsLinkedin(a) {
-  return !String(a?.linkedinUsuario || '').trim();
+function profileUrlLabel(url) {
+  return String(url || '').replace(/^https?:\/\/(www\.)?linkedin\.com/i, '');
 }
 
 export default function Agentes() {
@@ -260,11 +260,11 @@ export default function Agentes() {
       nome: row.nome || '',
       hostNome: row.hostNome || '',
       notas: row.notas || '',
-      linkedinNome: row.linkedinNome || '',
-      linkedinUsuario: row.linkedinUsuario || '',
       linkedinProfileUrl: row.linkedinProfileUrl || '',
-      linkedinHeadline: row.linkedinHeadline || '',
       procedimentos: procs,
+      mensagemProspeccao:
+        row.mensagemProspeccao || DEFAULT_MENSAGEM_PROSPECCAO,
+      searchQuery: row.searchQuery || '',
     });
     setFormNote(null);
     setFormOpen(true);
@@ -349,13 +349,12 @@ export default function Agentes() {
         nome,
         hostNome: form.hostNome.trim(),
         notas: form.notas.trim() || null,
-        linkedinNome: form.linkedinNome.trim() || null,
-        linkedinUsuario: form.linkedinUsuario.trim() || null,
         linkedinProfileUrl: form.linkedinProfileUrl.trim() || null,
-        linkedinHeadline: form.linkedinHeadline.trim() || null,
         procedimentos: Array.isArray(form.procedimentos)
           ? form.procedimentos
           : [],
+        mensagemProspeccao: form.mensagemProspeccao.trim() || null,
+        searchQuery: form.searchQuery.trim() || null,
       };
       const res = await fetch(`${AGENTES_URL}/${editingId}`, {
         method: 'PATCH',
@@ -540,34 +539,20 @@ export default function Agentes() {
                       {needsLinkedin(a) ? (
                         <span
                           className="tag tag-warn"
-                          title="Complete usuário no editar"
+                          title="Informe o Profile URL no editar"
                         >
-                          falta LinkedIn
+                          falta Profile URL
                         </span>
                       ) : (
-                        <div className="emp-person-text">
-                          <span>{liLabel(a)}</span>
-                          {a.linkedinProfileUrl &&
-                          !/\/in\/me\/?$/i.test(a.linkedinProfileUrl) ? (
-                            <a
-                              className="linkedin-link"
-                              href={a.linkedinProfileUrl}
-                              target="_blank"
-                              rel="noreferrer"
-                            >
-                              {a.linkedinProfileUrl.replace(
-                                /^https?:\/\/(www\.)?linkedin\.com/i,
-                                '',
-                              )}
-                            </a>
-                          ) : null}
-                        </div>
+                        <a
+                          className="linkedin-link"
+                          href={a.linkedinProfileUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          {profileUrlLabel(a.linkedinProfileUrl)}
+                        </a>
                       )}
-                      {!needsLinkedin(a) &&
-                      a.linkedinStatus &&
-                      a.linkedinStatus !== 'ativa' ? (
-                        <div className="tag">{a.linkedinStatus}</div>
-                      ) : null}
                     </td>
                     <td>
                       {Array.isArray(a.procedimentos) ? (
@@ -775,23 +760,51 @@ export default function Agentes() {
                   ))}
                 </div>
               </fieldset>
+              {(form.procedimentos || []).includes('extrair_leads') ? (
+                <fieldset className="agt-proc-fieldset srv-form-span">
+                  <legend>Buscar candidatos — texto do search</legend>
+                  <p className="muted agt-proc-hint">
+                    Query usada no LinkedIn Search ao extrair leads. Vazio =
+                    default do worker (`EXTRACT_QUERY`).
+                  </p>
+                  <label className="srv-form-span">
+                    Search
+                    <input
+                      value={form.searchQuery}
+                      onChange={(e) => setField('searchQuery', e.target.value)}
+                      placeholder="comprador OR purchaser"
+                    />
+                  </label>
+                </fieldset>
+              ) : null}
+              {(form.procedimentos || []).includes('enviar_prospeccao') ? (
+                <fieldset className="agt-proc-fieldset srv-form-span">
+                  <legend>Mensagem de prospecção</legend>
+                  <p className="muted agt-proc-hint">
+                    Variáveis:{' '}
+                    <code>{'{{primeiro_nome}}'}</code>,{' '}
+                    <code>{'{{nome}}'}</code> (ou{' '}
+                    <code>$primeiro_nome$</code> / <code>$nome$</code>).
+                  </p>
+                  <label className="srv-form-span">
+                    Texto
+                    <textarea
+                      rows={4}
+                      value={form.mensagemProspeccao}
+                      onChange={(e) =>
+                        setField('mensagemProspeccao', e.target.value)
+                      }
+                      placeholder={DEFAULT_MENSAGEM_PROSPECCAO}
+                    />
+                  </label>
+                  <p className="muted agt-proc-hint">
+                    Ex.: “Oi {'{{primeiro_nome}}'}, tudo bem?” → “Oi Maria, tudo
+                    bem?”
+                  </p>
+                </fieldset>
+              ) : null}
               <p className="muted srv-form-span">LinkedIn</p>
-              <label>
-                Nome perfil
-                <input
-                  value={form.linkedinNome}
-                  onChange={(e) => setField('linkedinNome', e.target.value)}
-                />
-              </label>
-              <label>
-                E-mail / login
-                <input
-                  value={form.linkedinUsuario}
-                  onChange={(e) => setField('linkedinUsuario', e.target.value)}
-                  autoComplete="off"
-                />
-              </label>
-              <label>
+              <label className="srv-form-span">
                 Profile URL
                 <input
                   value={form.linkedinProfileUrl}
@@ -799,13 +812,6 @@ export default function Agentes() {
                     setField('linkedinProfileUrl', e.target.value)
                   }
                   placeholder="https://www.linkedin.com/in/slug/"
-                />
-              </label>
-              <label>
-                Headline
-                <input
-                  value={form.linkedinHeadline}
-                  onChange={(e) => setField('linkedinHeadline', e.target.value)}
                 />
               </label>
               <label className="srv-form-span">

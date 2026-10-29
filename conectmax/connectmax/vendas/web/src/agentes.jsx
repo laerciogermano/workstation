@@ -937,7 +937,7 @@ export default function Agentes() {
                   <label className="srv-form-span">
                     Texto
                     <textarea
-                      rows={4}
+                      rows={10}
                       value={form.mensagemProspeccao}
                       onChange={(e) =>
                         setField('mensagemProspeccao', e.target.value)

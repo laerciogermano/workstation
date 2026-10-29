@@ -21,15 +21,6 @@ const JOB_STATUS_LABEL = {
   cancelled: 'Cancelado',
 };
 
-const STATUS_FILTERS = [
-  { value: '', label: 'Todos' },
-  { value: 'pending', label: 'Pendentes' },
-  { value: 'claimed', label: 'Em execução' },
-  { value: 'done', label: 'Concluídos' },
-  { value: 'failed', label: 'Falhas' },
-  { value: 'cancelled', label: 'Cancelados' },
-];
-
 function jobTypeLabel(t) {
   return JOB_TYPE_LABEL[t] || t || '—';
 }
@@ -193,7 +184,6 @@ export default function Atividades() {
   );
   const [jobs, setJobs] = useState([]);
   const [peek, setPeek] = useState(null);
-  const [statusFilter, setStatusFilter] = useState('');
   const [loadingAgents, setLoadingAgents] = useState(true);
   const [loadingJobs, setLoadingJobs] = useState(false);
   const [error, setError] = useState(null);
@@ -229,7 +219,7 @@ export default function Atividades() {
     }
   }, []);
 
-  const loadJobs = useCallback(async (id, status = '') => {
+  const loadJobs = useCallback(async (id) => {
     if (!id) {
       setJobs([]);
       return;
@@ -238,7 +228,6 @@ export default function Atividades() {
     setError(null);
     try {
       const params = new URLSearchParams({ limit: '50' });
-      if (status) params.set('status', status);
       const res = await fetch(
         `${AGENTE_API_URL}/${encodeURIComponent(id)}/jobs?${params}`,
       );
@@ -279,9 +268,9 @@ export default function Atividades() {
 
   const refresh = useCallback(() => {
     if (!agentId) return;
-    loadJobs(agentId, statusFilter);
+    loadJobs(agentId);
     loadPeek(agentId);
-  }, [agentId, statusFilter, loadJobs, loadPeek]);
+  }, [agentId, loadJobs, loadPeek]);
 
   useEffect(() => {
     loadAgents();
@@ -309,11 +298,11 @@ export default function Atividades() {
       setPeek(null);
       return;
     }
-    loadJobs(agentId, statusFilter);
+    loadJobs(agentId);
     loadPeek(agentId);
     const t = window.setInterval(() => loadPeek(agentId), 8_000);
     return () => window.clearInterval(t);
-  }, [agentId, statusFilter, loadJobs, loadPeek]);
+  }, [agentId, loadJobs, loadPeek]);
 
   function selectAgent(id) {
     setAgentId(id);
@@ -488,22 +477,6 @@ export default function Atividades() {
         </section>
       )}
 
-      <div className="agt-timeline-filters" role="toolbar" aria-label="Status">
-        {STATUS_FILTERS.map((f) => (
-          <button
-            key={f.value || 'all'}
-            type="button"
-            className={`btn-secondary${
-              statusFilter === f.value ? ' agt-filter-on' : ''
-            }`}
-            disabled={loadingJobs || !agentId}
-            onClick={() => setStatusFilter(f.value)}
-          >
-            {f.label}
-          </button>
-        ))}
-      </div>
-
       {error && <p className="error">Erro: {error}</p>}
       {loadingAgents && <p className="muted">Carregando agentes…</p>}
       {!loadingAgents && !agentOpts.length && !error && (
@@ -513,7 +486,7 @@ export default function Atividades() {
         <p className="muted">Carregando atividade…</p>
       )}
       {agentId && !loadingJobs && !jobs.length && !error && (
-        <p className="empty">Nenhum job neste filtro.</p>
+        <p className="empty">Nenhum job ainda.</p>
       )}
 
       {agentId && !loadingJobs && jobs.length > 0 && (

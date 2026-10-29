@@ -1,0 +1,33 @@
+---
+description: Sempre reiniciar a API vendas após alterar código ou .env
+alwaysApply: true
+---
+
+# Reiniciar API após alteração
+
+Sempre que alterar a API de `conectmax/connectmax/vendas/api` (código TypeScript, módulos, `.env`, migrations/schema), **reinicie o processo da API** no mesmo turno — não espere o usuário pedir.
+
+## Critérios
+
+- Cobre mudanças em `vendas/api/**` e no `.env` da API
+- Pare o `npm run start:dev` / processo na porta **3000** e suba de novo
+- Confirme que a API respondeu (ex.: log Nest “successfully started” ou `curl` em `/` / health)
+- Se só mudou `vendas/web/**` (Vite), não precisa reiniciar a API
+
+## Como
+
+```bash
+# matar o que estiver em :3000 e subir de novo
+lsof -tiTCP:3000 -sTCP:LISTEN | xargs kill 2>/dev/null || true
+cd conectmax/connectmax/vendas/api && npm run start:dev
+```
+
+Preferir reusar o terminal/sessão já usada para a API quando existir.
+
+## Exemplos
+
+```text
+✅ Alterou agente.service.ts → commit/push + reinicia API
+✅ Comentou AGENT_MATERIALIZE_TYPES no .env → reinicia API
+❌ Mudou API e só avisou “reinicie a API”
+```

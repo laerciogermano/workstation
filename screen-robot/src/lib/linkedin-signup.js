@@ -431,12 +431,24 @@ export async function linkedinSignupJoinNow(opts) {
 
   await tapContinue(serial, steps, opts.outDir, "14");
 
-  // Location: usa sugestão pré-preenchida (ex. Curitiba) e Continue (TextView).
-  await waitForText(serial, ["add your location", "Location*", "Location"], {
-    timeoutMs: NAME_TIMEOUT_MS,
-    intervalMs: 1_200,
-    sense: "dump",
-  });
+  // reCAPTCHA (WebView) pode aparecer aqui — dump não vê; OCR + espera longa.
+  const CAPTCHA_WAIT_MS = Number(
+    process.env.LINKEDIN_SIGNUP_CAPTCHA_WAIT_MS || 300_000,
+  );
+  await shot(serial, opts.outDir, "14b-apos-password-continue.png");
+  console.error(
+    "linkedin-signup: aguardando location (se houver reCAPTCHA, resolva no device)",
+  );
+  await waitForText(
+    serial,
+    ["add your location", "Location*", "Location", "Where do you live"],
+    {
+      timeoutMs: Math.max(NAME_TIMEOUT_MS, CAPTCHA_WAIT_MS),
+      intervalMs: 2_000,
+      sense: "ocr",
+    },
+  );
+  steps.push("location-ready");
   await shot(serial, opts.outDir, "15-antes-location.png");
   {
     const locDone =

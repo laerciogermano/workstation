@@ -2425,6 +2425,36 @@ code {
   margin-bottom: 1rem;
 }
 
+.agt-next {
+  margin: 0 0 1.15rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--surface) 88%, var(--accent, #3b82f6) 6%);
+  max-width: 42rem;
+}
+
+.agt-next-label {
+  font-family: var(--cx-font-head);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+  margin-bottom: 0.45rem;
+}
+
+.agt-next-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.agt-next-empty {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
 .page-atividades .agt-timeline-filters {
   margin: 0 0 1.25rem;
 }

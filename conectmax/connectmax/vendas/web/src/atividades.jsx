@@ -121,6 +121,7 @@ export default function Atividades() {
     () => agentFromUrl() || agentFromStorage(),
   );
   const [jobs, setJobs] = useState([]);
+  const [peek, setPeek] = useState(null);
   const [statusFilter, setStatusFilter] = useState('');
   const [loadingAgents, setLoadingAgents] = useState(true);
   const [loadingJobs, setLoadingJobs] = useState(false);
@@ -185,6 +186,32 @@ export default function Atividades() {
     }
   }, []);
 
+  const loadPeek = useCallback(async (id) => {
+    if (!id) {
+      setPeek(null);
+      return;
+    }
+    try {
+      const res = await fetch(
+        `${AGENTE_API_URL}/${encodeURIComponent(id)}/peek`,
+      );
+      const json = await res.json().catch(() => null);
+      if (!res.ok) {
+        setPeek(null);
+        return;
+      }
+      setPeek(json && typeof json === 'object' ? json : null);
+    } catch {
+      setPeek(null);
+    }
+  }, []);
+
+  const refresh = useCallback(() => {
+    if (!agentId) return;
+    loadJobs(agentId, statusFilter);
+    loadPeek(agentId);
+  }, [agentId, statusFilter, loadJobs, loadPeek]);
+
   useEffect(() => {
     loadAgents();
   }, [loadAgents]);
@@ -207,15 +234,27 @@ export default function Atividades() {
   }, [loadingAgents, agentOpts, agentId]);
 
   useEffect(() => {
-    if (!agentId) return;
+    if (!agentId) {
+      setPeek(null);
+      return;
+    }
     loadJobs(agentId, statusFilter);
-  }, [agentId, statusFilter, loadJobs]);
+    loadPeek(agentId);
+    const t = window.setInterval(() => loadPeek(agentId), 8_000);
+    return () => window.clearInterval(t);
+  }, [agentId, statusFilter, loadJobs, loadPeek]);
 
   function selectAgent(id) {
     setAgentId(id);
     persistAgent(id);
     syncAgentUrl(id);
   }
+
+  const nextJob = peek?.next || null;
+  const pendingTotal = Array.isArray(peek?.pending)
+    ? peek.pending.reduce((n, p) => n + (Number(p.count) || 0), 0)
+    : 0;
+  const nextSummary = nextJob ? jobPayloadSummary(nextJob.payload) : null;
 
   return (
     <div className="page page-atividades">
@@ -261,12 +300,58 @@ export default function Atividades() {
             type="button"
             className="btn-secondary"
             disabled={loadingAgents || loadingJobs || !agentId}
-            onClick={() => loadJobs(agentId, statusFilter)}
+            onClick={refresh}
           >
             Atualizar
           </button>
         </div>
       </header>
+
+      {agentId && (
+        <section className="agt-next" aria-label="Próxima atividade">
+          <div className="agt-next-label">Próxima prevista</div>
+          {nextJob ? (
+            <div className="agt-next-body">
+              <div className="agt-timeline-head">
+                <span className="agt-timeline-type">
+                  {jobTypeLabel(nextJob.type)}
+                </span>
+                <span className={`tag ${jobStatusClass(nextJob.status)}`}>
+                  {jobStatusLabel(nextJob.status)}
+                </span>
+                {peek?.online != null ? (
+                  <span
+                    className={`tag ${
+                      peek.online ? 'agt-job-done' : 'agt-job-pending'
+                    }`}
+                  >
+                    {peek.online ? 'online' : 'offline'}
+                  </span>
+                ) : null}
+                {pendingTotal > 0 ? (
+                  <span className="muted">
+                    {pendingTotal} pending na fila
+                  </span>
+                ) : null}
+              </div>
+              {nextSummary ? (
+                <p className="agt-timeline-summary muted">{nextSummary}</p>
+              ) : null}
+              <p className="agt-timeline-meta muted">
+                prioridade {nextJob.priority ?? '—'}
+                {nextJob.createdAt
+                  ? ` · criado ${formatWhen(nextJob.createdAt) || '—'}`
+                  : ''}
+              </p>
+            </div>
+          ) : (
+            <p className="muted agt-next-empty">
+              Nenhuma atividade pendente na fila
+              {peek?.online === false ? ' · agente offline' : ''}.
+            </p>
+          )}
+        </section>
+      )}
 
       <div className="agt-timeline-filters" role="toolbar" aria-label="Status">
         {STATUS_FILTERS.map((f) => (

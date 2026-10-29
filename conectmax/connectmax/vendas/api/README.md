@@ -157,7 +157,9 @@ Cada AVD/conta (`agentId` = `provision.name`, ex. `agent-d`) puxa o próximo tra
 
 | Pri | type | Quando materializa |
 |-----|------|--------------------|
-| 1 | `ler_mensagens` | Inbox due (`AGENT_INBOX_INTERVAL_MS`, default 15 min) |
+| 1 | `ler_mensagens` | Inbox due (`AGENT_INBOX_INTERVAL_MS`, default 15 min). **Off por default** (`AGENT_LER_MENSAGENS_ENABLED=0`) |
+
+**Antes → depois (ler_mensagens off):** AC-01 sempre no materialize → desligado por default (`AGENT_LER_MENSAGENS_ENABLED=0`; cancela pending). Religa: `=1` ou inclua em `AGENT_MATERIALIZE_TYPES`. **Rollback:** default `'1'` / remova a flag.
 | 2 | `verificar_conexoes` | Há pending (`status=1`) e due (`AGENT_CONNECTIONS_INTERVAL_MS`, default 30 min) → listar **20** recentes (`AGENT_CONNECTIONS_CHECK_N`) via perfil → tap `N connections` + `mark-accepted` |
 | 3 | `enviar_prospeccao` | Conexão status `2` sem mensagem `sent` |
 | 4 | `conectar` | Lead do agente (`status=0`) ou livre (ninguém 0\|1\|2) → reserva `0` + job; máx. `AGENT_CONNECT_DAILY_LIMIT` (default **15**)/dia em lotes de `AGENT_CONNECT_BATCH_SIZE` (default **5**) com pausa `AGENT_CONNECT_BATCH_INTERVAL_MS` (default **2 h**) entre lotes |

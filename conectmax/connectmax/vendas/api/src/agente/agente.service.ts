@@ -172,7 +172,9 @@ export class AgenteService implements OnModuleInit {
   /**
    * Subconjunto de tipos a materializar/claimar.
    * Env `AGENT_MATERIALIZE_TYPES=verificar_conexoes,conectar` (vazio = todos).
-   * `AGENT_ENVIAR_PROSPECCAO_ENABLED=0` ainda desliga só AC-02 quando a lista está vazia.
+   * Flags soltas (quando a lista está vazia):
+   * - `AGENT_ENVIAR_PROSPECCAO_ENABLED=0` desliga AC-02
+   * - `AGENT_LER_MENSAGENS_ENABLED=0` desliga AC-01 (default **0** por enquanto)
    */
   private materializeTypeSet(): Set<AgentJobType> | null {
     const raw = String(this.config.get('AGENT_MATERIALIZE_TYPES', '') || '')
@@ -188,16 +190,21 @@ export class AgenteService implements OnModuleInit {
     return set.size ? set : null;
   }
 
+  private envFlagEnabled(key: string, defaultValue: string): boolean {
+    const raw = String(this.config.get(key, defaultValue))
+      .trim()
+      .toLowerCase();
+    return !['0', 'false', 'off', 'no'].includes(raw);
+  }
+
   private jobTypeEnabled(type: AgentJobType): boolean {
     const set = this.materializeTypeSet();
     if (set) return set.has(type);
     if (type === 'enviar_prospeccao') {
-      const raw = String(
-        this.config.get('AGENT_ENVIAR_PROSPECCAO_ENABLED', '1'),
-      )
-        .trim()
-        .toLowerCase();
-      return !['0', 'false', 'off', 'no'].includes(raw);
+      return this.envFlagEnabled('AGENT_ENVIAR_PROSPECCAO_ENABLED', '1');
+    }
+    if (type === 'ler_mensagens') {
+      return this.envFlagEnabled('AGENT_LER_MENSAGENS_ENABLED', '0');
     }
     return true;
   }
@@ -610,11 +617,13 @@ export class AgenteService implements OnModuleInit {
       };
     };
 
-    const inbox = await intervalItem(
-      'ler_mensagens',
-      runtime.lastInboxAt,
-      this.inboxIntervalMs(),
-    );
+    const inbox = this.jobTypeEnabled('ler_mensagens')
+      ? await intervalItem(
+          'ler_mensagens',
+          runtime.lastInboxAt,
+          this.inboxIntervalMs(),
+        )
+      : null;
 
     const connections = await intervalItem(
       'verificar_conexoes',
@@ -725,15 +734,19 @@ export class AgenteService implements OnModuleInit {
           : `fila ok (${opts.leadsNaFila}/${opts.leadThreshold})`,
     };
 
-    return [inbox, connections, prospeccao, conectar, leads].sort((a, b) => {
-      const rank = (s: string) =>
-        s === 'queued' || s === 'due' ? 0 : s === 'waiting' ? 1 : 2;
-      const ra = rank(a.state);
-      const rb = rank(b.state);
-      if (ra !== rb) return ra - rb;
-      return (a.dueInMs ?? Number.POSITIVE_INFINITY) -
-        (b.dueInMs ?? Number.POSITIVE_INFINITY);
-    });
+    return [inbox, connections, prospeccao, conectar, leads]
+      .filter((x): x is NonNullable<typeof connections> => Boolean(x))
+      .sort((a, b) => {
+        const rank = (s: string) =>
+          s === 'queued' || s === 'due' ? 0 : s === 'waiting' ? 1 : 2;
+        const ra = rank(a.state);
+        const rb = rank(b.state);
+        if (ra !== rb) return ra - rb;
+        return (
+          (a.dueInMs ?? Number.POSITIVE_INFINITY) -
+          (b.dueInMs ?? Number.POSITIVE_INFINITY)
+        );
+      });
   }
 
   async peek(agentIdRaw: string): Promise<{

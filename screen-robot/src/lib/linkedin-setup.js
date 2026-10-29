@@ -238,36 +238,87 @@ export async function linkedinSetupJobTitle(opts) {
       "Company / Employer",
       "I’m a student",
       "I'm a student",
+      "search suggestion",
     ],
     { timeoutMs: STEP_TIMEOUT_MS, intervalMs: 1_200, sense: "dump" },
   );
   await shot(serial, opts.outDir, "00-antes-experience.png");
   steps.push("experience-screen");
 
-  const hasJobValue = findNodeByText(dumpUiXml(serial), jobTitle);
-  if (!hasJobValue) {
+  // Sheet Company já aberta (retomada)?
+  let xmlNow = dumpUiXml(serial);
+  const companySheetOpen =
+    !!findFirstEditText(xmlNow) &&
+    (/Company \/ Employer/i.test(xmlNow) ||
+      /content-desc="Company \/ Employer"/i.test(xmlNow)) &&
+    !findNodeByContentDesc(xmlNow, /^Job title,\s*open screen/i);
+
+  if (companySheetOpen) {
+    steps.push("resume-company-sheet");
+    const edit = findFirstEditText(xmlNow);
+    tapElement({ serial, x: edit.x, y: edit.y });
+    await sleep(400);
+    adbOk(serial, ["shell", "ime", "set", LATIN_IME]);
+    await sleep(300);
+    adb(serial, [
+      "shell",
+      "sh",
+      "-c",
+      "input keyevent KEYCODE_MOVE_END; i=0; while [ $i -lt 96 ]; do input keyevent KEYCODE_DEL; i=$((i+1)); done",
+    ]);
+    typeViaAdb(serial, company);
+    await sleep(2_000);
+    await shot(serial, opts.outDir, "company-02-apos-typed.png");
+    steps.push(`typed-company:${company}`);
+    let sug = null;
+    const tSug = Date.now();
+    while (Date.now() - tSug < 12_000) {
+      sug = findFirstSuggestionBelow(dumpUiXml(serial), edit.y2);
+      if (sug) break;
+      await sleep(800);
+    }
+    if (!sug) {
+      throw new Error(
+        `linkedin-setup: lista de company vazia após digitar "${company}"`,
+      );
+    }
+    tapElement({ serial, x: sug.x, y: sug.y });
+    steps.push(`pick-first-company:${sug.text}`);
+    await sleep(1_200);
+    const done =
+      findNodeByText(dumpUiXml(serial), "Done") ||
+      findNodeByContentDesc(dumpUiXml(serial), /^Done$/i);
+    if (done) {
+      tapElement({ serial, x: done.x, y: done.y });
+      steps.push("tap-done-company");
+      await sleep(WAIT_MS);
+    }
+  } else {
+    const hasJobValue = findNodeByText(xmlNow, jobTitle);
+    if (!hasJobValue) {
+      await fillOpenScreenField({
+        serial,
+        openDescRe: /^Job title,\s*open screen/i,
+        value: jobTitle,
+        pickFirst: true,
+        tag: "job-title",
+        steps,
+        outDir: opts.outDir,
+      });
+    } else {
+      steps.push(`job-title-already:${jobTitle}`);
+    }
+
     await fillOpenScreenField({
       serial,
-      openDescRe: /^Job title,\s*open screen/i,
-      value: jobTitle,
+      openDescRe: /^Company \/ Employer,\s*open screen/i,
+      value: company,
       pickFirst: true,
-      tag: "job-title",
+      tag: "company",
       steps,
       outDir: opts.outDir,
     });
-  } else {
-    steps.push(`job-title-already:${jobTitle}`);
   }
-
-  await fillOpenScreenField({
-    serial,
-    openDescRe: /^Company \/ Employer,\s*open screen/i,
-    value: company,
-    pickFirst: true,
-    tag: "company",
-    steps,
-    outDir: opts.outDir,
-  });
 
   await dismissSoftKeyboard(serial);
   const cont =

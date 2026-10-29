@@ -15,6 +15,7 @@ Credenciais das caixas: [`credenciais.md`](../../../../credenciais.md) (§ Caixa
 | Alex Romão | | `5562` | |
 | Fernando Breda | | `5564` | |
 | Roberta Machado | | `5566` | |
+| Ana Letícia (`teste@`) | `Ana_Leticia` | `5568` → `emulator-5568` | LinkedIn+ADBKeyboard ok; conta já existente (login `teste@clozzy.com.br`) |
 
 Convenção: `Nome_Sobrenome` = `First_Last` sem acento; porta = `5554 + 2×índice` (console; ADB usa `porta+1` no protocolo do emulator).
 

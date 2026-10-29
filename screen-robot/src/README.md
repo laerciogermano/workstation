@@ -99,7 +99,7 @@ const elements = await extract({ serial });
 | BDD e2e US/EP (runtime real) | `npm run test:e2e` |
 | **SC-30 LinkedIn** (fixture, sem device) | ver abaixo |
 | Piloto LinkedIn ao vivo | `npm run linkedin-login` |
-| LinkedIn signup / setup (experience) | `--job-title` + **`--company`** (default `conectmax`) · signup/setup: input abaixo de Job title e de Company → digita → 1º da lista (company) → Continue · ex.: `npm run linkedin-setup -- --device emulator-5556 --job-title '…' --company conectmax` |
+| LinkedIn signup / setup (experience) | `--job-title` + **`--company`** (default **`ConectMax`**) · input abaixo de Job title/Company → digita → 1º da lista → Continue · ex.: `npm run linkedin-setup -- --device emulator-5556 --job-title '…' --company ConectMax` |
 | LinkedIn Search comprador → See all | `npm run login-extract-profiles` |
 | LinkedIn conectar por URL (Connect→Skip→Pending) | `npm run linkedin-connect` · API `npm run linkedin-connect-api` |
 | LinkedIn boolean por perfil + abrir | `npm run login-visit-profiles` |

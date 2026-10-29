@@ -7,7 +7,7 @@
  * Uso (cwd: screen-robot/src):
  *   npm run linkedin-setup -- --device emulator-5556 \
  *     --job-title 'Especialista em suprimentos e itens corporativos' \
- *     --company conectmax
+ *     --company ConectMax
  */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
@@ -28,7 +28,7 @@ function loadConfig(path) {
 function parseArgs(argv) {
   let device = null;
   let jobTitle = null;
-  let company = "conectmax";
+  let company = "ConectMax";
   let configPath = resolve(ROOT, "device.config.json");
   let noShot = false;
   for (let i = 0; i < argv.length; i++) {
@@ -42,7 +42,7 @@ function parseArgs(argv) {
     else if (a === "--no-shot") noShot = true;
     else if (a === "--help" || a === "-h") {
       console.log(
-        `Uso: npm run linkedin-setup -- --device emulator-5556 --job-title 'Cargo' [--company conectmax]`,
+        `Uso: npm run linkedin-setup -- --device emulator-5556 --job-title 'Cargo' [--company ConectMax]`,
       );
       process.exit(0);
     }

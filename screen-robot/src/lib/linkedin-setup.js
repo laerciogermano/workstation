@@ -82,7 +82,7 @@ function findFirstEditText(xml) {
 }
 
 /**
- * 1º item clicável da lista abaixo do EditText (sugestões do sheet).
+ * 1º item da lista abaixo do EditText (Compose: texto pode não ser clickable).
  * @param {string} xml
  * @param {number} belowY
  */
@@ -90,24 +90,32 @@ function findFirstSuggestionBelow(xml, belowY) {
   /** @type {{ x: number, y: number, text: string, y1: number }[]} */
   const hits = [];
   for (const n of String(xml || "").match(/<node\b[^>]*>/g) || []) {
-    if (!/clickable="true"/.test(n)) continue;
     const text = (n.match(/\btext="([^"]*)"/) || [])[1] || "";
     const desc = (n.match(/\bcontent-desc="([^"]*)"/) || [])[1] || "";
     const label = (text || desc).trim();
-    if (!label) continue;
-    if (/^(done|back|job title|company)/i.test(label)) continue;
+    if (!label || label.length < 2) continue;
+    if (
+      /^(done|back|job title|company\s*\/\s*employer|create company|add a new)/i.test(
+        label,
+      )
+    ) {
+      continue;
+    }
     const b = n.match(/bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"/);
     if (!b) continue;
     const y1 = Number(b[2]);
-    if (y1 < belowY + 20) continue;
+    const y2 = Number(b[4]);
+    if (y1 < belowY + 16) continue;
+    // ignora linhas minúsculas (ícones) e o próprio campo
+    if (y2 - y1 < 24) continue;
     hits.push({
       x: Math.floor((Number(b[1]) + Number(b[3])) / 2),
-      y: Math.floor((y1 + Number(b[4])) / 2),
+      y: Math.floor((y1 + y2) / 2),
       y1,
       text: label,
     });
   }
-  hits.sort((a, b) => a.y1 - b.y1);
+  hits.sort((a, b) => a.y1 - b.y1 || b.text.length - a.text.length);
   return hits[0] || null;
 }
 
@@ -169,12 +177,18 @@ async function fillOpenScreenField(opts) {
     "input keyevent KEYCODE_MOVE_END; i=0; while [ $i -lt 96 ]; do input keyevent KEYCODE_DEL; i=$((i+1)); done",
   ]);
   typeViaAdb(serial, want);
-  await sleep(1_200);
+  await sleep(2_000);
   await shot(serial, outDir, `${tag}-02-apos-typed.png`);
   steps.push(`typed-${tag}:${want}`);
 
   if (pickFirst) {
-    const sug = findFirstSuggestionBelow(dumpUiXml(serial), edit.y2);
+    let sug = null;
+    const tSug = Date.now();
+    while (Date.now() - tSug < 12_000) {
+      sug = findFirstSuggestionBelow(dumpUiXml(serial), edit.y2);
+      if (sug) break;
+      await sleep(800);
+    }
     if (!sug) {
       throw new Error(
         `linkedin-setup: lista de ${tag} vazia após digitar "${want}"`,
@@ -210,7 +224,7 @@ export async function linkedinSetupJobTitle(opts) {
   if (!serial) throw new Error("linkedinSetupJobTitle: falta serial");
   const jobTitle = String(opts.jobTitle || "").trim();
   if (!jobTitle) throw new Error("linkedinSetupJobTitle: falta jobTitle");
-  const company = String(opts.company || "conectmax").trim();
+  const company = String(opts.company || "ConectMax").trim();
 
   const steps = [];
   if (opts.outDir) mkdirSync(opts.outDir, { recursive: true });

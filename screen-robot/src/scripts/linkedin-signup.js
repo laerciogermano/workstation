@@ -8,7 +8,7 @@
  *     --email metafisicoprogramador@gmail.com \
  *     --password 'senha@linkedin@123' \
  *     --job-title 'Especialista em suprimentos e itens corporativos' \
- *     --company conectmax
+ *     --company ConectMax
  */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
@@ -33,7 +33,7 @@ function parseArgs(argv) {
   let email = null;
   let password = null;
   let jobTitle = null;
-  let company = "conectmax";
+  let company = "ConectMax";
   let configPath = resolve(ROOT, "device.config.json");
   let noShot = false;
   for (let i = 0; i < argv.length; i++) {
@@ -53,7 +53,7 @@ function parseArgs(argv) {
     else if (a === "--no-shot") noShot = true;
     else if (a === "--help" || a === "-h") {
       console.log(
-        `Uso: npm run linkedin-signup -- --device … --firstname … --lastname … --email … --password … --job-title 'Cargo' [--company conectmax]`,
+        `Uso: npm run linkedin-signup -- --device … --firstname … --lastname … --email … --password … --job-title 'Cargo' [--company ConectMax]`,
       );
       process.exit(0);
     }
@@ -88,7 +88,7 @@ async function main() {
       "passe --firstname, --lastname, --email, --password e --job-title",
     );
   }
-  if (!company) throw new Error("passe --company (ou use o default conectmax)");
+  if (!company) throw new Error("passe --company (ou use o default ConectMax)");
 
   const cfg = loadConfig(configPath);
   if (device) {

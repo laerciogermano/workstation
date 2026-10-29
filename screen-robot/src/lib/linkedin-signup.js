@@ -411,7 +411,7 @@ export async function linkedinSignupJoinNow(opts) {
   const email = String(opts.email || "").trim();
   const password = String(opts.password || "");
   const jobTitle = String(opts.jobTitle || "").trim();
-  const company = String(opts.company || "conectmax").trim();
+  const company = String(opts.company || "ConectMax").trim();
   if (!firstName) throw new Error("linkedinSignupJoinNow: falta firstName");
   if (!lastName) throw new Error("linkedinSignupJoinNow: falta lastName");
   if (!email) throw new Error("linkedinSignupJoinNow: falta email");
@@ -520,8 +520,7 @@ export async function linkedinSignupJoinNow(opts) {
     await shot(serial, opts.outDir, "15-apos-location.png");
   }
 
-  // Job title + Company (conectmax) + Continue — lib de setup (Compose)
-  const company = String(opts.company || "conectmax").trim();
+  // Job title + Company (ConectMax) + Continue — lib de setup (Compose)
   const setup = await linkedinSetupJobTitle({
     serial,
     jobTitle,

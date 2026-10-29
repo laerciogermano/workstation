@@ -18,6 +18,7 @@ import {
   typeViaAdb,
 } from "./operate.js";
 
+const ADB_IME = "com.android.adbkeyboard/.AdbIME";
 const LATIN_IME =
   "com.google.android.inputmethod.latin/com.android.inputmethod.latin.LatinIME";
 
@@ -97,48 +98,27 @@ async function waitForContinue(serial) {
   return waitForResource(serial, RID_CONTINUE, "Continue");
 }
 
-/** @param {string} serial */
-function currentImeId(serial) {
-  return String(
-    adb(serial, ["shell", "settings", "get", "secure", "default_input_method"])
-      .stdout || "",
-  ).trim();
-}
-
-/** @param {string} serial */
-function isImeShown(serial) {
-  const out = String(
-    adb(serial, ["shell", "dumpsys", "input_method"]).stdout || "",
-  );
-  return /mInputShown=true/.test(out) || /mIsInputViewShown=true/.test(out);
-}
-
 /**
- * Fecha teclado soft. LatinIME: BACK só se IME visível.
- * ADBKeyboard: nunca BACK (sai do Join) — só tap no título.
+ * Esconde teclado soft sem KEYCODE_BACK (BACK sai do Join).
+ * Troca para ADBKeyboard (sem UI) + tap no título/logo.
  * @param {string} serial
  */
 async function dismissKeyboard(serial) {
   try {
-    const ime = currentImeId(serial);
-    if (/adbkeyboard/i.test(ime)) {
-      const xml = dumpUiXml(serial);
-      const title =
-        findNodeByText(xml, "Add your name") ||
-        findNodeByText(xml, "Create account") ||
-        findNodeByText(xml, "Add your email or phone") ||
-        findNodeByText(xml, "Add your email") ||
-        findNodeByText(xml, "Add a password") ||
-        findNodeByText(xml, "Add your location");
-      if (title) tapElement({ serial, x: title.x, y: title.y });
-      else tapElement({ serial, x: 270, y: 120 });
-      await sleep(400);
-      return;
-    }
-    if (isImeShown(serial)) {
-      key({ serial, code: "KEYCODE_BACK" });
-      await sleep(700);
-    }
+    adb(serial, ["shell", "ime", "enable", ADB_IME]);
+    adb(serial, ["shell", "ime", "set", ADB_IME]);
+    await sleep(400);
+    const xml = dumpUiXml(serial);
+    const title =
+      findNodeByText(xml, "Add your name") ||
+      findNodeByText(xml, "Create account") ||
+      findNodeByText(xml, "Add your email or phone") ||
+      findNodeByText(xml, "Add your email") ||
+      findNodeByText(xml, "Add a password") ||
+      findNodeByText(xml, "Add your location");
+    if (title) tapElement({ serial, x: title.x, y: title.y });
+    else tapElement({ serial, x: 90, y: 96 });
+    await sleep(400);
   } catch {
     /* ignore */
   }
@@ -147,11 +127,6 @@ async function dismissKeyboard(serial) {
 /** @param {string} serial @param {string[]} steps @param {string|null|undefined} outDir @param {string} shotName */
 async function tapContinue(serial, steps, outDir, shotName) {
   await dismissKeyboard(serial);
-  // 2ª tentativa se LatinIME ainda cobrir o botão (tap virava tecla, ex. .bry)
-  if (isImeShown(serial)) {
-    key({ serial, code: "KEYCODE_BACK" });
-    await sleep(700);
-  }
   await shot(serial, outDir, `${shotName}-antes-continue.png`);
   const cont = await waitForContinue(serial);
   tapElement({ serial, x: cont.x, y: cont.y });

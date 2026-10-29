@@ -6,7 +6,7 @@
 import { mkdirSync } from "node:fs";
 import { join } from "node:path";
 
-import { sleep } from "./adb.js";
+import { adb, sleep } from "./adb.js";
 import { dumpUiXml, waitForText } from "./extract.js";
 import { pasteCleanMessage } from "./linkedin-message.js";
 import {
@@ -46,6 +46,17 @@ async function shot(serial, outDir, name) {
  * @param {string} resourceIdSuffix
  * @returns {{ x: number, y: number, text: string }|null}
  */
+/**
+ * LinkedIn EditText no dump: `First name*, , Jacqueline` (label, erro, valor).
+ * @param {string} text
+ */
+export function parseJoinEditValue(text) {
+  const raw = String(text || "");
+  const m = raw.match(/^[^,]*,\s*[^,]*,\s*(.*)$/);
+  if (m) return m[1].replace(/\s+/g, " ").trim();
+  return raw.replace(/\s+/g, " ").trim();
+}
+
 export function findEditByResourceId(xml, resourceIdSuffix) {
   const needle = `resource-id="com.linkedin.android:id/${resourceIdSuffix}"`;
   for (const n of String(xml || "").match(/<node\b[^>]*>/g) || []) {
@@ -53,10 +64,13 @@ export function findEditByResourceId(xml, resourceIdSuffix) {
     const b = n.match(/bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"/);
     if (!b) continue;
     const text = (n.match(/\btext="([^"]*)"/) || [])[1] || "";
+    const focused = /\bfocused="true"/.test(n);
     return {
       x: Math.floor((Number(b[1]) + Number(b[3])) / 2),
       y: Math.floor((Number(b[2]) + Number(b[4])) / 2),
       text,
+      value: parseJoinEditValue(text),
+      focused,
     };
   }
   return null;
@@ -80,8 +94,20 @@ async function waitForContinue(serial) {
 }
 
 /** @param {string} serial */
+function isImeShown(serial) {
+  const out = String(
+    adb(serial, ["shell", "dumpsys", "input_method"]).stdout || "",
+  );
+  return /mInputShown=true/.test(out) || /mIsInputViewShown=true/.test(out);
+}
+
+/**
+ * Esconde o teclado só se estiver visível — BACK sem IME volta na jornada.
+ * @param {string} serial
+ */
 async function dismissKeyboard(serial) {
   try {
+    if (!isImeShown(serial)) return;
     key({ serial, code: "KEYCODE_BACK" });
     await sleep(600);
   } catch {
@@ -119,17 +145,35 @@ async function waitForNameFields(serial) {
 }
 
 /**
- * Tap + ADBKeyboard (B64). `adb input text` + LatinIME vira autocorrect
- * (ex. Jacqueline'sLima no First name; Last name vazio).
+ * Fecha teclado → re-dump do resource-id → tap → ADBKeyboard.
+ * Sem dismiss, teclado cobre Last name e o paste cai no First (clear+Lima).
  * @param {string} serial
- * @param {{ x: number, y: number }} field
+ * @param {string} resourceIdSuffix
  * @param {string} value
+ * @param {string} label
+ * @param {{ skipVerify?: boolean }} [opts]
  */
-async function fillFieldExact(serial, field, value) {
-  tapElement({ serial, x: field.x, y: field.y });
-  await sleep(400);
-  await pasteCleanMessage(serial, String(value), { forceClear: true });
-  await sleep(500);
+async function fillFieldExact(serial, resourceIdSuffix, value, label, opts = {}) {
+  const want = String(value);
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    await dismissKeyboard(serial);
+    const field = await waitForResource(serial, resourceIdSuffix, label);
+    tapElement({ serial, x: field.x, y: field.y });
+    await sleep(700);
+    await pasteCleanMessage(serial, want, { forceClear: true });
+    await sleep(500);
+    await dismissKeyboard(serial);
+    if (opts.skipVerify) return field;
+    const got = findEditByResourceId(dumpUiXml(serial), resourceIdSuffix);
+    if (got && normFieldText(got.value) === normFieldText(want)) return got;
+    console.error(
+      `aviso: fill ${label} tentativa ${attempt}: dump="${got?.text || ""}"`,
+    );
+  }
+  const final = findEditByResourceId(dumpUiXml(serial), resourceIdSuffix);
+  throw new Error(
+    `linkedin-signup: falha ao preencher ${label} (dump="${final?.text || ""}"; esperado "${want}")`,
+  );
 }
 
 function normFieldText(s) {
@@ -140,8 +184,7 @@ function normFieldText(s) {
 }
 
 /**
- * Confirma First/Last no dump antes do Continue (falha cedo se o teclado
- * misturou nomes).
+ * Confirma First/Last no dump antes do Continue (valor parseado do text LI).
  * @param {string} serial
  * @param {string} firstName
  * @param {string} lastName
@@ -149,8 +192,8 @@ function normFieldText(s) {
 async function assertNameFields(serial, firstName, lastName) {
   await dismissKeyboard(serial);
   const { first, last } = await waitForNameFields(serial);
-  const gotFirst = normFieldText(first.text);
-  const gotLast = normFieldText(last.text);
+  const gotFirst = normFieldText(first.value);
+  const gotLast = normFieldText(last.value);
   const wantFirst = normFieldText(firstName);
   const wantLast = normFieldText(lastName);
   if (gotFirst !== wantFirst || gotLast !== wantLast) {
@@ -307,17 +350,16 @@ export async function linkedinSignupJoinNow(opts) {
   await shot(serial, opts.outDir, "04-apos-join-now.png");
   steps.push("tap-join-now");
 
-  const fields = await waitForNameFields(serial);
+  await waitForNameFields(serial);
   await shot(serial, opts.outDir, "05-antes-names.png");
 
-  await fillFieldExact(serial, fields.first, firstName);
+  await fillFieldExact(serial, RID_FIRST, firstName, "first-name");
   steps.push(`first-name:${firstName}`);
   await shot(serial, opts.outDir, "06-apos-first-name.png");
 
-  const afterFirst = await waitForNameFields(serial);
-  await fillFieldExact(serial, afterFirst.last, lastName);
+  await fillFieldExact(serial, RID_LAST, lastName, "last-name");
   steps.push(`last-name:${lastName}`);
-  await sleep(800);
+  await sleep(400);
   await shot(serial, opts.outDir, "07-apos-last-name.png");
 
   await assertNameFields(serial, firstName, lastName);
@@ -325,20 +367,22 @@ export async function linkedinSignupJoinNow(opts) {
 
   await tapContinue(serial, steps, opts.outDir, "08");
 
-  const emailField = await waitForResource(serial, RID_EMAIL, "email");
+  await waitForResource(serial, RID_EMAIL, "email");
   await shot(serial, opts.outDir, "09-antes-email.png");
-  await fillFieldExact(serial, emailField, email);
+  await fillFieldExact(serial, RID_EMAIL, email, "email");
   steps.push(`email:${email}`);
-  await sleep(800);
+  await sleep(400);
   await shot(serial, opts.outDir, "10-apos-email.png");
 
   await tapContinue(serial, steps, opts.outDir, "11");
 
-  const passwordField = await waitForResource(serial, RID_PASSWORD, "password");
+  await waitForResource(serial, RID_PASSWORD, "password");
   await shot(serial, opts.outDir, "12-antes-password.png");
-  await fillFieldExact(serial, passwordField, password);
+  await fillFieldExact(serial, RID_PASSWORD, password, "password", {
+    skipVerify: true,
+  });
   steps.push("password:set");
-  await sleep(800);
+  await sleep(400);
   await shot(serial, opts.outDir, "13-apos-password.png");
 
   await tapContinue(serial, steps, opts.outDir, "14");

@@ -8,12 +8,14 @@
  *     --email metafisicoprogramador@gmail.com \
  *     --password 'senha@linkedin@123' \
  *     --job-title 'Especialista em suprimentos e itens corporativos' \
- *     --company ConectMax
+ *     --company ConectMax \
+ *     --avatar assets/avatars/conectmax-black.jpg
  */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { DEFAULT_AVATAR_PATH } from "../lib/linkedin-setup.js";
 import { linkedinSignupJoinNow } from "../lib/linkedin-signup.js";
 import { provisionEmulator } from "../lib/provision.js";
 
@@ -34,6 +36,7 @@ function parseArgs(argv) {
   let password = null;
   let jobTitle = null;
   let company = "ConectMax";
+  let avatar = null;
   let configPath = resolve(ROOT, "device.config.json");
   let noShot = false;
   for (let i = 0; i < argv.length; i++) {
@@ -49,11 +52,18 @@ function parseArgs(argv) {
     else if (a === "--job-title" || a === "--jobtitle")
       jobTitle = String(argv[++i] || "").trim();
     else if (a === "--company") company = String(argv[++i] || "").trim();
-    else if (a === "--config") configPath = resolve(argv[++i]);
+    else if (a === "--avatar") {
+      const next = argv[i + 1];
+      if (next && !String(next).startsWith("--")) {
+        avatar = resolve(ROOT, String(argv[++i] || "").trim());
+      } else {
+        avatar = DEFAULT_AVATAR_PATH;
+      }
+    } else if (a === "--config") configPath = resolve(argv[++i]);
     else if (a === "--no-shot") noShot = true;
     else if (a === "--help" || a === "-h") {
       console.log(
-        `Uso: npm run linkedin-signup -- --device … --firstname … --lastname … --email … --password … --job-title 'Cargo' [--company ConectMax]`,
+        `Uso: npm run linkedin-signup -- --device … --firstname … --lastname … --email … --password … --job-title 'Cargo' [--company ConectMax] [--avatar [path]]`,
       );
       process.exit(0);
     }
@@ -66,6 +76,7 @@ function parseArgs(argv) {
     password,
     jobTitle,
     company,
+    avatar,
     configPath,
     noShot,
   };
@@ -80,6 +91,7 @@ async function main() {
     password,
     jobTitle,
     company,
+    avatar,
     configPath,
     noShot,
   } = parseArgs(process.argv.slice(2));
@@ -89,6 +101,9 @@ async function main() {
     );
   }
   if (!company) throw new Error("passe --company (ou use o default ConectMax)");
+  if (avatar && !existsSync(avatar)) {
+    throw new Error(`--avatar não encontrado: ${avatar}`);
+  }
 
   const cfg = loadConfig(configPath);
   if (device) {
@@ -105,7 +120,7 @@ async function main() {
   if (outDir) mkdirSync(outDir, { recursive: true });
 
   console.error(
-    `serial=${serial} firstName=${firstName} lastName=${lastName} email=${email} password=*** jobTitle=${jobTitle} company=${company}`,
+    `serial=${serial} firstName=${firstName} lastName=${lastName} email=${email} password=*** jobTitle=${jobTitle} company=${company} avatar=${avatar || "-"}`,
   );
   const result = await linkedinSignupJoinNow({
     serial,
@@ -115,6 +130,7 @@ async function main() {
     password,
     jobTitle,
     company,
+    avatarPath: avatar,
     linkedinPackage: linkedinPkg,
     outDir,
   });

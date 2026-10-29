@@ -9,7 +9,10 @@ import { join } from "node:path";
 import { adb, adbOk, sleep } from "./adb.js";
 import { dumpUiXml, waitForText } from "./extract.js";
 import { pasteCleanMessage } from "./linkedin-message.js";
-import { linkedinSetupJobTitle } from "./linkedin-setup.js";
+import {
+  linkedinSetupAvatar,
+  linkedinSetupJobTitle,
+} from "./linkedin-setup.js";
 import {
   key,
   launch,
@@ -398,10 +401,11 @@ async function fillJobTitle(serial, jobTitle, steps, outDir) {
  *   password: string,
  *   jobTitle?: string,
  *   company?: string,
+ *   avatarPath?: string|null,
  *   linkedinPackage?: string,
  *   outDir?: string|null,
  * }} opts
- * @returns {Promise<{ steps: string[], serial: string, outDir: string|null, company?: string }>}
+ * @returns {Promise<{ steps: string[], serial: string, outDir: string|null, company?: string, avatarPath?: string|null }>}
  */
 export async function linkedinSignupJoinNow(opts) {
   const serial = opts.serial;
@@ -412,6 +416,9 @@ export async function linkedinSignupJoinNow(opts) {
   const password = String(opts.password || "");
   const jobTitle = String(opts.jobTitle || "").trim();
   const company = String(opts.company || "ConectMax").trim();
+  const avatarPath = opts.avatarPath
+    ? String(opts.avatarPath).trim()
+    : null;
   if (!firstName) throw new Error("linkedinSignupJoinNow: falta firstName");
   if (!lastName) throw new Error("linkedinSignupJoinNow: falta lastName");
   if (!email) throw new Error("linkedinSignupJoinNow: falta email");
@@ -529,5 +536,27 @@ export async function linkedinSignupJoinNow(opts) {
   });
   steps.push(...setup.steps);
 
-  return { steps, serial, outDir: opts.outDir || null, company };
+  // Avatar opcional (--avatar): espera tela Add photo (email/idade/skips no meio).
+  if (avatarPath) {
+    console.error(
+      "linkedin-signup: aguardando Add photo para --avatar (conclua código/idade/skips no device)",
+    );
+    const av = await linkedinSetupAvatar({
+      serial,
+      avatarPath,
+      outDir: opts.outDir,
+      timeoutMs: Number(
+        process.env.LINKEDIN_SIGNUP_AVATAR_WAIT_MS || 600_000,
+      ),
+    });
+    steps.push(...av.steps);
+  }
+
+  return {
+    steps,
+    serial,
+    outDir: opts.outDir || null,
+    company,
+    avatarPath,
+  };
 }

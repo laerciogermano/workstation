@@ -5,13 +5,27 @@
  * 1. Job title* → input abaixo → digita --job-title → Done
  * 2. Company / Employer* → input abaixo → digita company → 1º da lista → Done
  * 3. Continue
+ *
+ * Avatar (tela Add photo):
+ * --avatar path → push Download → Upload from photos → long-press → SELECT → Done → Continue
+ *
+ * Asset default: assets/avatars/conectmax-black.jpg (logo sem "Belo Horizonte").
+ * Rollback: omitir --avatar.
  */
-import { mkdirSync } from "node:fs";
-import { join } from "node:path";
+import { existsSync, mkdirSync } from "node:fs";
+import { basename, dirname, join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 
 import { adb, adbOk, sleep } from "./adb.js";
 import { dumpUiXml, waitForText } from "./extract.js";
 import { screenshot, tapElement, typeViaAdb } from "./operate.js";
+
+/** Relativo a screen-robot/src — logo ConectMax preta (sem BH). */
+export const DEFAULT_AVATAR_REL = "assets/avatars/conectmax-black.jpg";
+
+const __libDir = dirname(fileURLToPath(import.meta.url));
+/** Absoluto do avatar padrão (assets/avatars/conectmax-black.jpg). */
+export const DEFAULT_AVATAR_PATH = resolve(__libDir, "..", DEFAULT_AVATAR_REL);
 
 const ADB_IME = "com.android.adbkeyboard/.AdbIME";
 const LATIN_IME =
@@ -19,6 +33,9 @@ const LATIN_IME =
 const WAIT_MS = Number(process.env.LINKEDIN_SETUP_WAIT_MS || 4_000);
 const STEP_TIMEOUT_MS = Number(
   process.env.LINKEDIN_SETUP_TIMEOUT_MS || 30_000,
+);
+const AVATAR_TIMEOUT_MS = Number(
+  process.env.LINKEDIN_SETUP_AVATAR_TIMEOUT_MS || 60_000,
 );
 
 async function shot(serial, outDir, name) {
@@ -127,6 +144,212 @@ async function dismissSoftKeyboard(serial) {
   } catch {
     /* ignore */
   }
+}
+
+/** @param {string} xml @param {RegExp|string} needle */
+function findNodeByContentDescContains(xml, needle) {
+  const re =
+    needle instanceof RegExp
+      ? needle
+      : new RegExp(String(needle).replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i");
+  for (const n of String(xml || "").match(/<node\b[^>]*>/g) || []) {
+    const m = n.match(/\bcontent-desc="([^"]*)"/);
+    if (!m || !re.test(m[1])) continue;
+    if (/^Preview the file/i.test(m[1])) continue;
+    const b = n.match(/bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"/);
+    if (!b) continue;
+    const x1 = Number(b[1]);
+    const y1 = Number(b[2]);
+    const x2 = Number(b[3]);
+    const y2 = Number(b[4]);
+    if (x2 <= x1 || y2 <= y1) continue;
+    return {
+      x: Math.floor((x1 + x2) / 2),
+      y: Math.floor((y1 + y2) / 2),
+      /** canto inferior-esquerdo — evita ícone Preview */
+      longX: x1 + 20,
+      longY: Math.max(y1 + 20, y2 - 20),
+      desc: m[1],
+    };
+  }
+  return null;
+}
+
+/**
+ * Long-press via swipe parado (DocumentsUI: item_root não é clickable).
+ * @param {string} serial
+ * @param {number} x
+ * @param {number} y
+ * @param {number} [ms]
+ */
+function longPress(serial, x, y, ms = 1000) {
+  adb(serial, [
+    "shell",
+    "input",
+    "swipe",
+    String(x),
+    String(y),
+    String(x),
+    String(y),
+    String(ms),
+  ]);
+}
+
+/**
+ * Push avatar → DocumentsUI Downloads → SELECT → crop Done → Continue.
+ * @param {{
+ *   serial: string,
+ *   avatarPath?: string|null,
+ *   outDir?: string|null,
+ *   timeoutMs?: number,
+ * }} opts
+ */
+export async function linkedinSetupAvatar(opts) {
+  const serial = opts.serial;
+  if (!serial) throw new Error("linkedinSetupAvatar: falta serial");
+  const avatarPath = resolve(
+    String(opts.avatarPath || DEFAULT_AVATAR_PATH).trim(),
+  );
+  if (!existsSync(avatarPath)) {
+    throw new Error(`linkedinSetupAvatar: arquivo não encontrado: ${avatarPath}`);
+  }
+  const fileName = basename(avatarPath);
+  const remote = `/sdcard/Download/${fileName}`;
+  const waitPhotoMs = Number(opts.timeoutMs || AVATAR_TIMEOUT_MS);
+  const steps = [];
+  if (opts.outDir) mkdirSync(opts.outDir, { recursive: true });
+
+  adb(serial, ["shell", "mkdir", "-p", "/sdcard/Download"]);
+  adb(serial, ["push", avatarPath, remote]);
+  adbOk(serial, [
+    "shell",
+    "am",
+    "broadcast",
+    "-a",
+    "android.intent.action.MEDIA_SCANNER_SCAN_FILE",
+    "-d",
+    `file://${remote}`,
+  ]);
+  steps.push(`push-avatar:${fileName}`);
+  await sleep(800);
+
+  await waitForText(
+    serial,
+    [
+      "Adding a photo",
+      "Add photo",
+      "Upload from photos",
+      "Profile picture",
+      "Take a photo",
+    ],
+    { timeoutMs: waitPhotoMs, intervalMs: 1_200, sense: "dump" },
+  );
+  await shot(serial, opts.outDir, "avatar-00-tela.png");
+
+  let xml = dumpUiXml(serial);
+  if (!findNodeByText(xml, "Upload from photos")) {
+    const card = findNodeByContentDesc(xml, /^Profile picture$/i);
+    if (card) {
+      tapElement({ serial, x: card.x, y: card.y });
+    } else {
+      // card clicável típico ~[68,383][472,703] em 540×888
+      tapElement({ serial, x: 270, y: 543 });
+    }
+    await sleep(1_200);
+    steps.push("tap-photo-card");
+  }
+
+  const upload =
+    findNodeByText(dumpUiXml(serial), "Upload from photos") ||
+    findNodeByContentDesc(dumpUiXml(serial), /Upload from photos/i);
+  if (!upload) throw new Error("linkedinSetupAvatar: Upload from photos");
+  tapElement({ serial, x: upload.x, y: upload.y });
+  steps.push("tap-upload-from-photos");
+  await sleep(2_000);
+  await shot(serial, opts.outDir, "avatar-01-picker.png");
+
+  const roots =
+    findNodeByContentDesc(dumpUiXml(serial), /^Show roots$/i) ||
+    findNodeByText(dumpUiXml(serial), "Show roots");
+  if (roots) {
+    tapElement({ serial, x: roots.x, y: roots.y });
+    await sleep(900);
+  }
+  const downloads =
+    findNodeByText(dumpUiXml(serial), "Downloads") ||
+    findNodeByContentDesc(dumpUiXml(serial), /^Downloads$/i);
+  if (!downloads) throw new Error("linkedinSetupAvatar: Downloads no picker");
+  tapElement({ serial, x: downloads.x, y: downloads.y });
+  steps.push("open-downloads");
+  await sleep(1_500);
+  await shot(serial, opts.outDir, "avatar-02-downloads.png");
+
+  let file = null;
+  const t0 = Date.now();
+  while (Date.now() - t0 < 20_000) {
+    file = findNodeByContentDescContains(dumpUiXml(serial), fileName);
+    if (file) break;
+    await sleep(800);
+  }
+  if (!file) {
+    throw new Error(
+      `linkedinSetupAvatar: ${fileName} não apareceu em Downloads`,
+    );
+  }
+  longPress(serial, file.longX, file.longY, 1100);
+  steps.push(`long-press:${fileName}`);
+  await sleep(900);
+
+  let select =
+    findNodeByText(dumpUiXml(serial), "SELECT") ||
+    findNodeByText(dumpUiXml(serial), "Select");
+  const tSel = Date.now();
+  while (!select && Date.now() - tSel < 8_000) {
+    await sleep(500);
+    select =
+      findNodeByText(dumpUiXml(serial), "SELECT") ||
+      findNodeByText(dumpUiXml(serial), "Select");
+  }
+  if (!select) throw new Error("linkedinSetupAvatar: SELECT após long-press");
+  tapElement({ serial, x: select.x, y: select.y });
+  steps.push("tap-select");
+  await sleep(2_500);
+  await shot(serial, opts.outDir, "avatar-03-crop.png");
+
+  const done =
+    findNodeByText(dumpUiXml(serial), "Done") ||
+    findNodeByContentDesc(dumpUiXml(serial), /^Done$/i);
+  if (!done) throw new Error("linkedinSetupAvatar: Done no crop");
+  tapElement({ serial, x: done.x, y: done.y });
+  steps.push("tap-done-crop");
+  await sleep(WAIT_MS + 2_000);
+  await shot(serial, opts.outDir, "avatar-04-apos-done.png");
+
+  // espera Saving / Uploading sumir e Continue da tela de foto
+  const tUp = Date.now();
+  while (Date.now() - tUp < 45_000) {
+    const x = dumpUiXml(serial);
+    if (
+      /Adding a photo|Profile picture/i.test(x) &&
+      findNodeByText(x, "Continue") &&
+      !/Uploading Media|\bSaving\b/i.test(x)
+    ) {
+      break;
+    }
+    await sleep(1_000);
+  }
+
+  const cont =
+    findNodeByText(dumpUiXml(serial), "Continue") ||
+    findNodeByContentDesc(dumpUiXml(serial), /^Continue$/i);
+  if (cont) {
+    tapElement({ serial, x: cont.x, y: cont.y });
+    steps.push("tap-continue-photo");
+    await sleep(WAIT_MS + 1_000);
+    await shot(serial, opts.outDir, "avatar-99-apos-continue.png");
+  }
+
+  return { steps, serial, avatarPath, outDir: opts.outDir || null };
 }
 
 /**

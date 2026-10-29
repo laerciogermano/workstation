@@ -92,6 +92,7 @@ export class AgentesService implements OnModuleInit {
       `ALTER TABLE agentes ADD COLUMN IF NOT EXISTS host_kind varchar(32) NOT NULL DEFAULT 'server'`,
       `ALTER TABLE agentes ADD COLUMN IF NOT EXISTS api_key_hash varchar(128)`,
       `ALTER TABLE agentes ADD COLUMN IF NOT EXISTS disk_gb int`,
+      `ALTER TABLE agentes ADD COLUMN IF NOT EXISTS procedimentos jsonb`,
       `UPDATE agentes SET host_kind = 'localhost' WHERE localhost = true AND (host_kind IS NULL OR host_kind = 'server')`,
     ];
     for (const sql of stmts) {
@@ -465,6 +466,10 @@ export class AgentesService implements OnModuleInit {
         linkedinPhotoBase64: li.linkedinPhotoBase64 ?? null,
         linkedinStatus: li.linkedinStatus ?? 'ativa',
         linkedinInfracoes: [],
+        procedimentos:
+          dto.procedimentos !== undefined
+            ? this.normalizeProcedimentos(dto.procedimentos)
+            : null,
       }),
     );
 
@@ -578,6 +583,9 @@ export class AgentesService implements OnModuleInit {
       row.hostStatus = dto.hostStatus.trim() || 'active';
     }
     if (dto.notas !== undefined) row.notas = dto.notas ?? null;
+    if (dto.procedimentos !== undefined) {
+      row.procedimentos = this.normalizeProcedimentos(dto.procedimentos);
+    }
 
     const li = this.linkedinFieldsFromDto(dto);
     if (li.linkedinUsuario !== undefined) {
@@ -586,6 +594,30 @@ export class AgentesService implements OnModuleInit {
     Object.assign(row, li);
 
     return this.agentes.save(row);
+  }
+
+  /** Allowlist de job types; `null` no DTO → herda global; array vazio → nenhum. */
+  private normalizeProcedimentos(
+    raw: string[] | null | undefined,
+  ): string[] | null {
+    if (raw == null) return null;
+    if (!Array.isArray(raw)) return null;
+    const allowed = new Set([
+      'ler_mensagens',
+      'verificar_conexoes',
+      'enviar_prospeccao',
+      'conectar',
+      'extrair_leads',
+    ]);
+    const out: string[] = [];
+    const seen = new Set<string>();
+    for (const item of raw) {
+      const t = String(item || '').trim();
+      if (!allowed.has(t) || seen.has(t)) continue;
+      seen.add(t);
+      out.push(t);
+    }
+    return out;
   }
 
   async remove(id: string): Promise<{ ok: true; id: string }> {

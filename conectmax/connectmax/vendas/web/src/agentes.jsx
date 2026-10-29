@@ -9,6 +9,41 @@ const AGENTE_API_URL =
     ? SLOTS_URL.slice(0, -'/slots'.length)
     : '/agente');
 
+const AGENT_PROCEDIMENTOS = [
+  {
+    id: 'ler_mensagens',
+    label: 'Ler mensagens',
+    hint: 'Checa inbox não lida e salva no CRM',
+  },
+  {
+    id: 'verificar_conexoes',
+    label: 'Ver últimas conexões',
+    hint: 'Lista convites aceitos / pending→conectado',
+  },
+  {
+    id: 'enviar_prospeccao',
+    label: 'Enviar prospecção',
+    hint: 'Mensagem para conexões ainda sem abordagem',
+  },
+  {
+    id: 'conectar',
+    label: 'Conectar',
+    hint: 'Envia convite a candidatos da fila',
+  },
+  {
+    id: 'extrair_leads',
+    label: 'Buscar candidatos',
+    hint: 'Extrai leads (search) quando a fila está baixa',
+  },
+];
+
+/** Default na UI quando o agente ainda herda o global (`procedimentos: null`). */
+const DEFAULT_PROCEDIMENTOS = [
+  'verificar_conexoes',
+  'conectar',
+  'extrair_leads',
+];
+
 const EMPTY_FORM = {
   nome: '',
   hostNome: '',
@@ -17,15 +52,12 @@ const EMPTY_FORM = {
   linkedinUsuario: '',
   linkedinProfileUrl: '',
   linkedinHeadline: '',
+  procedimentos: [...DEFAULT_PROCEDIMENTOS],
 };
 
-const JOB_TYPE_LABEL = {
-  ler_mensagens: 'Ler mensagens',
-  verificar_conexoes: 'Verificar conexões',
-  enviar_prospeccao: 'Enviar prospecção',
-  conectar: 'Conectar',
-  extrair_leads: 'Extrair leads',
-};
+const JOB_TYPE_LABEL = Object.fromEntries(
+  AGENT_PROCEDIMENTOS.map((p) => [p.id, p.label]),
+);
 
 const JOB_STATUS_LABEL = {
   pending: 'Pendente',
@@ -274,6 +306,11 @@ export default function Agentes() {
   }, [load]);
 
   function openEdit(row) {
+    const procs = Array.isArray(row.procedimentos)
+      ? row.procedimentos.filter((t) =>
+          AGENT_PROCEDIMENTOS.some((p) => p.id === t),
+        )
+      : [...DEFAULT_PROCEDIMENTOS];
     setEditingId(row.id);
     setForm({
       ...EMPTY_FORM,
@@ -284,9 +321,24 @@ export default function Agentes() {
       linkedinUsuario: row.linkedinUsuario || '',
       linkedinProfileUrl: row.linkedinProfileUrl || '',
       linkedinHeadline: row.linkedinHeadline || '',
+      procedimentos: procs,
     });
     setFormNote(null);
     setFormOpen(true);
+  }
+
+  function toggleProcedimento(id) {
+    setForm((prev) => {
+      const set = new Set(prev.procedimentos || []);
+      if (set.has(id)) set.delete(id);
+      else set.add(id);
+      return {
+        ...prev,
+        procedimentos: AGENT_PROCEDIMENTOS.map((p) => p.id).filter((t) =>
+          set.has(t),
+        ),
+      };
+    });
   }
 
   const loadTimeline = useCallback(async (agent, status = '') => {
@@ -404,6 +456,9 @@ export default function Agentes() {
         linkedinUsuario: form.linkedinUsuario.trim() || null,
         linkedinProfileUrl: form.linkedinProfileUrl.trim() || null,
         linkedinHeadline: form.linkedinHeadline.trim() || null,
+        procedimentos: Array.isArray(form.procedimentos)
+          ? form.procedimentos
+          : [],
       };
       const res = await fetch(`${AGENTES_URL}/${editingId}`, {
         method: 'PATCH',
@@ -561,6 +616,7 @@ export default function Agentes() {
               <tr>
                 <th>Agente</th>
                 <th>LinkedIn</th>
+                <th>Procedimentos</th>
                 <th>ADB</th>
                 <th>Status</th>
                 <th>Ações</th>
@@ -615,6 +671,25 @@ export default function Agentes() {
                       a.linkedinStatus !== 'ativa' ? (
                         <div className="tag">{a.linkedinStatus}</div>
                       ) : null}
+                    </td>
+                    <td>
+                      {Array.isArray(a.procedimentos) ? (
+                        a.procedimentos.length ? (
+                          <div className="agt-proc-tags">
+                            {a.procedimentos.map((t) => (
+                              <span key={t} className="tag" title={t}>
+                                {jobTypeLabel(t)}
+                              </span>
+                            ))}
+                          </div>
+                        ) : (
+                          <span className="muted">nenhum</span>
+                        )
+                      ) : (
+                        <span className="muted" title="Herda flags/env globais">
+                          padrão global
+                        </span>
+                      )}
                     </td>
                     <td className="muted">{a.serial || `:${a.adbPort}`}</td>
                     <td>
@@ -963,6 +1038,28 @@ export default function Agentes() {
                   onChange={(e) => setField('notas', e.target.value)}
                 />
               </label>
+              <fieldset className="agt-proc-fieldset srv-form-span">
+                <legend>Procedimentos</legend>
+                <p className="muted agt-proc-hint">
+                  Quais ciclos este agente pode executar (buscar candidatos,
+                  ver conexões, conectar, etc.).
+                </p>
+                <div className="agt-proc-list">
+                  {AGENT_PROCEDIMENTOS.map((p) => (
+                    <label key={p.id} className="srv-check agt-proc-item">
+                      <input
+                        type="checkbox"
+                        checked={(form.procedimentos || []).includes(p.id)}
+                        onChange={() => toggleProcedimento(p.id)}
+                      />
+                      <span>
+                        <span className="agt-proc-label">{p.label}</span>
+                        <span className="muted agt-proc-desc">{p.hint}</span>
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              </fieldset>
               {formNote && <p className="error srv-form-span">{formNote}</p>}
               <div className="srv-form-actions srv-form-span">
                 <button

@@ -1,4 +1,6 @@
 import {
+  ArrayUnique,
+  IsArray,
   IsBoolean,
   IsIn,
   IsInt,
@@ -13,6 +15,14 @@ import {
 } from 'class-validator';
 
 const LI_STATUS = ['ativa', 'restrita', 'banida', 'inativa'] as const;
+
+const AGENT_PROCEDIMENTOS = [
+  'ler_mensagens',
+  'verificar_conexoes',
+  'enviar_prospeccao',
+  'conectar',
+  'extrair_leads',
+] as const;
 
 export class CreateAgenteDto {
   @IsString()
@@ -141,6 +151,13 @@ export class CreateAgenteDto {
   @IsString()
   notas?: string | null;
 
+  /** Allowlist de procedimentos; omitir/`null` = herda flags globais. */
+  @IsOptional()
+  @IsArray()
+  @ArrayUnique()
+  @IsIn(AGENT_PROCEDIMENTOS, { each: true })
+  procedimentos?: (typeof AGENT_PROCEDIMENTOS)[number][] | null;
+
   // —— LinkedIn ——
 
   @IsOptional()
@@ -265,6 +282,13 @@ export class UpdateAgenteDto {
   @IsOptional()
   @IsString()
   notas?: string | null;
+
+  /** Allowlist de procedimentos; `null` = herda flags globais; `[]` = nenhum. */
+  @IsOptional()
+  @IsArray()
+  @ArrayUnique()
+  @IsIn(AGENT_PROCEDIMENTOS, { each: true })
+  procedimentos?: (typeof AGENT_PROCEDIMENTOS)[number][] | null;
 
   @IsOptional()
   @IsString()

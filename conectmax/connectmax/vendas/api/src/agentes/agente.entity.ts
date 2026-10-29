@@ -167,6 +167,19 @@ export class Agente {
   })
   linkedinInfracoes!: AgenteLinkedinInfracao[];
 
+  /**
+   * Procedimentos (tipos de job) que este agente pode executar.
+   * `null` = herda flags/env globais (`AGENT_MATERIALIZE_TYPES` / flags).
+   * Array (mesmo vazio) = allowlist do agente (ainda intersecta `AGENT_MATERIALIZE_TYPES` se setado).
+   */
+  @Column({
+    name: 'procedimentos',
+    type: 'jsonb',
+    nullable: true,
+    default: null,
+  })
+  procedimentos!: string[] | null;
+
   @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
   createdAt!: Date;
 

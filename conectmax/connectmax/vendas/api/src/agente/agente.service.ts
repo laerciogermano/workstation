@@ -209,15 +209,58 @@ export class AgenteService implements OnModuleInit {
     return true;
   }
 
-  /** Cancela pending de tipos fora do allowlist / flag. */
+  /** Allowlist do agente (`agentes.procedimentos`); `null` = herda flags globais. */
+  private normalizeAgentProcedimentos(
+    raw: unknown,
+  ): AgentJobType[] | null {
+    if (raw == null) return null;
+    if (!Array.isArray(raw)) return null;
+    const out: AgentJobType[] = [];
+    const seen = new Set<string>();
+    for (const item of raw) {
+      const t = String(item || '').trim();
+      if (!(AGENT_JOB_TYPES as readonly string[]).includes(t) || seen.has(t)) {
+        continue;
+      }
+      seen.add(t);
+      out.push(t as AgentJobType);
+    }
+    return out;
+  }
+
+  /**
+   * Tipos permitidos para o agente.
+   * - `procedimentos == null` → flags/env globais (`jobTypeEnabled`)
+   * - array → allowlist do agente; `AGENT_MATERIALIZE_TYPES` (se setado) ainda restringe
+   */
+  private async allowedTypesForAgent(
+    agentId: string,
+  ): Promise<AgentJobType[]> {
+    const row = await this.agentesCadastro.findOneBy({ id: agentId });
+    const procs = this.normalizeAgentProcedimentos(row?.procedimentos);
+    const materialize = this.materializeTypeSet();
+    let types: AgentJobType[];
+    if (procs != null) {
+      types = AGENT_JOB_TYPES.filter((t) => procs.includes(t));
+    } else {
+      types = AGENT_JOB_TYPES.filter((t) => this.jobTypeEnabled(t));
+    }
+    if (materialize) {
+      types = types.filter((t) => materialize.has(t));
+    }
+    return types;
+  }
+
+  /** Cancela pending de tipos fora do allowlist / flag / procedimentos do agente. */
   private async cancelDisabledPending(agentId: string): Promise<void> {
+    const allowed = new Set(await this.allowedTypesForAgent(agentId));
     for (const type of AGENT_JOB_TYPES) {
-      if (this.jobTypeEnabled(type)) continue;
+      if (allowed.has(type)) continue;
       await this.jobs.update(
         { agentId, type, status: 'pending' },
         {
           status: 'cancelled',
-          lastError: `tipo desligado (AGENT_MATERIALIZE_TYPES / flag)`,
+          lastError: `tipo desligado (procedimentos do agente / AGENT_MATERIALIZE_TYPES / flag)`,
           completedAt: new Date(),
           dedupeKey: null,
         },
@@ -553,6 +596,7 @@ export class AgenteService implements OnModuleInit {
       connectBatchIntervalMs: number;
       leadThreshold: number;
       leadsNaFila: number;
+      allowedTypes?: ReadonlySet<AgentJobType>;
     },
   ): Promise<
     {
@@ -565,6 +609,9 @@ export class AgenteService implements OnModuleInit {
       reason: string | null;
     }[]
   > {
+    const allowed =
+      opts.allowedTypes ??
+      new Set(await this.allowedTypesForAgent(agentId));
     const now = Date.now();
     const iso = (d: Date | null | undefined) =>
       d ? new Date(d).toISOString() : null;
@@ -621,7 +668,7 @@ export class AgenteService implements OnModuleInit {
       };
     };
 
-    const inbox = this.jobTypeEnabled('ler_mensagens')
+    const inbox = allowed.has('ler_mensagens')
       ? await intervalItem(
           'ler_mensagens',
           runtime.lastInboxAt,
@@ -629,14 +676,16 @@ export class AgenteService implements OnModuleInit {
         )
       : null;
 
-    const connections = await intervalItem(
-      'verificar_conexoes',
-      runtime.lastConnectionsAt,
-      this.connectionsIntervalMs(),
-      opts.pendingInvites <= 0
-        ? { reason: 'sem convites pendentes (status=1)' }
-        : null,
-    );
+    const connections = allowed.has('verificar_conexoes')
+      ? await intervalItem(
+          'verificar_conexoes',
+          runtime.lastConnectionsAt,
+          this.connectionsIntervalMs(),
+          opts.pendingInvites <= 0
+            ? { reason: 'sem convites pendentes (status=1)' }
+            : null,
+        )
+      : null;
 
     let conectar: {
       type: AgentJobType;
@@ -646,62 +695,62 @@ export class AgenteService implements OnModuleInit {
       lastAt: string | null;
       intervalMs: number | null;
       reason: string | null;
-    };
-    const connectQueued = (pendingByType.get('conectar') || 0) > 0;
-    const lastInvite = await this.lastInvitedAtToday(agentId);
-    if (connectQueued) {
-      conectar = {
-        type: 'conectar',
-        state: 'queued',
-        dueAt: new Date(now).toISOString(),
-        dueInMs: 0,
-        lastAt: iso(lastInvite),
-        intervalMs: opts.connectBatchIntervalMs,
-        reason: 'job na fila',
-      };
-    } else if (opts.connectSlots > 0) {
-      conectar = {
-        type: 'conectar',
-        state: 'due',
-        dueAt: new Date(now).toISOString(),
-        dueInMs: 0,
-        lastAt: iso(lastInvite),
-        intervalMs: opts.connectBatchIntervalMs,
-        reason: `${opts.connectSlots} slot(s) de connect disponíveis`,
-      };
-    } else if (
-      opts.connectsToday >= this.connectDailyLimit()
-    ) {
-      conectar = {
-        type: 'conectar',
-        state: 'blocked',
-        dueAt: null,
-        dueInMs: null,
-        lastAt: iso(lastInvite),
-        intervalMs: opts.connectBatchIntervalMs,
-        reason: `limite diário ${opts.connectsToday}/${this.connectDailyLimit()}`,
-      };
-    } else {
-      const elapsed = lastInvite
-        ? now - lastInvite.getTime()
-        : opts.connectBatchIntervalMs;
-      const dueInMs = Math.max(0, opts.connectBatchIntervalMs - elapsed);
-      conectar = {
-        type: 'conectar',
-        state: dueInMs <= 0 ? 'due' : 'waiting',
-        dueAt: new Date(now + dueInMs).toISOString(),
-        dueInMs,
-        lastAt: iso(lastInvite),
-        intervalMs: opts.connectBatchIntervalMs,
-        reason:
-          dueInMs <= 0
-            ? 'cooldown do lote encerrado'
-            : `cooldown entre lotes (${Math.round(opts.connectBatchIntervalMs / 60_000)} min)`,
-      };
+    } | null = null;
+    if (allowed.has('conectar')) {
+      const connectQueued = (pendingByType.get('conectar') || 0) > 0;
+      const lastInvite = await this.lastInvitedAtToday(agentId);
+      if (connectQueued) {
+        conectar = {
+          type: 'conectar',
+          state: 'queued',
+          dueAt: new Date(now).toISOString(),
+          dueInMs: 0,
+          lastAt: iso(lastInvite),
+          intervalMs: opts.connectBatchIntervalMs,
+          reason: 'job na fila',
+        };
+      } else if (opts.connectSlots > 0) {
+        conectar = {
+          type: 'conectar',
+          state: 'due',
+          dueAt: new Date(now).toISOString(),
+          dueInMs: 0,
+          lastAt: iso(lastInvite),
+          intervalMs: opts.connectBatchIntervalMs,
+          reason: `${opts.connectSlots} slot(s) de connect disponíveis`,
+        };
+      } else if (opts.connectsToday >= this.connectDailyLimit()) {
+        conectar = {
+          type: 'conectar',
+          state: 'blocked',
+          dueAt: null,
+          dueInMs: null,
+          lastAt: iso(lastInvite),
+          intervalMs: opts.connectBatchIntervalMs,
+          reason: `limite diário ${opts.connectsToday}/${this.connectDailyLimit()}`,
+        };
+      } else {
+        const elapsed = lastInvite
+          ? now - lastInvite.getTime()
+          : opts.connectBatchIntervalMs;
+        const dueInMs = Math.max(0, opts.connectBatchIntervalMs - elapsed);
+        conectar = {
+          type: 'conectar',
+          state: dueInMs <= 0 ? 'due' : 'waiting',
+          dueAt: new Date(now + dueInMs).toISOString(),
+          dueInMs,
+          lastAt: iso(lastInvite),
+          intervalMs: opts.connectBatchIntervalMs,
+          reason:
+            dueInMs <= 0
+              ? 'cooldown do lote encerrado'
+              : `cooldown entre lotes (${Math.round(opts.connectBatchIntervalMs / 60_000)} min)`,
+        };
+      }
     }
 
     const prospeccaoQueued = (pendingByType.get('enviar_prospeccao') || 0) > 0;
-    const prospeccao = this.jobTypeEnabled('enviar_prospeccao')
+    const prospeccao = allowed.has('enviar_prospeccao')
       ? {
           type: 'enviar_prospeccao' as AgentJobType,
           state: (prospeccaoQueued ? 'queued' : 'blocked') as
@@ -718,27 +767,29 @@ export class AgenteService implements OnModuleInit {
       : null;
 
     const leadsQueued = (pendingByType.get('extrair_leads') || 0) > 0;
-    const leads = {
-      type: 'extrair_leads' as AgentJobType,
-      state: (leadsQueued
-        ? 'queued'
-        : opts.leadsNaFila < opts.leadThreshold
-          ? 'due'
-          : 'blocked') as 'queued' | 'due' | 'blocked',
-      dueAt:
-        leadsQueued || opts.leadsNaFila < opts.leadThreshold
-          ? new Date(now).toISOString()
-          : null,
-      dueInMs:
-        leadsQueued || opts.leadsNaFila < opts.leadThreshold ? 0 : null,
-      lastAt: null,
-      intervalMs: null,
-      reason: leadsQueued
-        ? 'job na fila'
-        : opts.leadsNaFila < opts.leadThreshold
-          ? `fila baixa (${opts.leadsNaFila}/${opts.leadThreshold})`
-          : `fila ok (${opts.leadsNaFila}/${opts.leadThreshold})`,
-    };
+    const leads = allowed.has('extrair_leads')
+      ? {
+          type: 'extrair_leads' as AgentJobType,
+          state: (leadsQueued
+            ? 'queued'
+            : opts.leadsNaFila < opts.leadThreshold
+              ? 'due'
+              : 'blocked') as 'queued' | 'due' | 'blocked',
+          dueAt:
+            leadsQueued || opts.leadsNaFila < opts.leadThreshold
+              ? new Date(now).toISOString()
+              : null,
+          dueInMs:
+            leadsQueued || opts.leadsNaFila < opts.leadThreshold ? 0 : null,
+          lastAt: null,
+          intervalMs: null,
+          reason: leadsQueued
+            ? 'job na fila'
+            : opts.leadsNaFila < opts.leadThreshold
+              ? `fila baixa (${opts.leadsNaFila}/${opts.leadThreshold})`
+              : `fila ok (${opts.leadsNaFila}/${opts.leadThreshold})`,
+        }
+      : null;
 
     return [inbox, connections, prospeccao, conectar, leads]
       .filter((x): x is NonNullable<typeof connections> => Boolean(x))
@@ -867,6 +918,7 @@ export class AgenteService implements OnModuleInit {
       },
     });
 
+    const allowedTypes = new Set(await this.allowedTypesForAgent(agentId));
     const schedule = await this.buildSchedule(agentId, runtime, pendingByType, {
       pendingInvites,
       connectsToday,
@@ -874,6 +926,7 @@ export class AgenteService implements OnModuleInit {
       connectBatchIntervalMs: batchNow.batchIntervalMs,
       leadThreshold: this.leadThreshold(),
       leadsNaFila,
+      allowedTypes,
     });
 
     return {
@@ -1184,19 +1237,20 @@ export class AgenteService implements OnModuleInit {
   /** Cria/atualiza filas a partir do estado atual do CRM. */
   private async materializeJobs(agentId: string): Promise<void> {
     await this.cancelDisabledPending(agentId);
-    if (this.jobTypeEnabled('ler_mensagens')) {
+    const allowed = new Set(await this.allowedTypesForAgent(agentId));
+    if (allowed.has('ler_mensagens')) {
       await this.enqueueInboxIfDue(agentId);
     }
-    if (this.jobTypeEnabled('verificar_conexoes')) {
+    if (allowed.has('verificar_conexoes')) {
       await this.enqueueConnectionsIfDue(agentId);
     }
-    if (this.jobTypeEnabled('enviar_prospeccao')) {
+    if (allowed.has('enviar_prospeccao')) {
       await this.enqueueProspeccao(agentId);
     }
-    if (this.jobTypeEnabled('conectar')) {
+    if (allowed.has('conectar')) {
       await this.enqueueConectar(agentId);
     }
-    if (this.jobTypeEnabled('extrair_leads')) {
+    if (allowed.has('extrair_leads')) {
       await this.enqueueExtrairIfLow(agentId);
     }
   }
@@ -1594,10 +1648,7 @@ export class AgenteService implements OnModuleInit {
   }
 
   private async claimPendingRow(agentId: string): Promise<AgentJob | null> {
-    const allowed = this.materializeTypeSet();
-    const types = allowed
-      ? [...allowed]
-      : AGENT_JOB_TYPES.filter((t) => this.jobTypeEnabled(t));
+    const types = await this.allowedTypesForAgent(agentId);
     if (!types.length) return null;
 
     return this.dataSource.transaction(async (manager) => {

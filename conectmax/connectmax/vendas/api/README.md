@@ -228,6 +228,8 @@ Auth worker: JWT, `AGENT_API_KEY` global **ou** chave emitida em `POST /agentes/
 
 **Antes → depois (subset de jobs):** todos os tipos → `AGENT_MATERIALIZE_TYPES` (csv; vazio = todos). Ex. teste connect: `verificar_conexoes,conectar` — cancela pending dos demais e claim só desses. Flags soltas (lista vazia): `AGENT_LER_MENSAGENS_ENABLED` / `AGENT_ENVIAR_PROSPECCAO_ENABLED` (ambas default **0**). Rollback: unset `AGENT_MATERIALIZE_TYPES`; defaults `'1'`.
 
+**Antes → depois (procedimentos por agente):** só flags/env globais → coluna `agentes.procedimentos` (jsonb, nullable) + `PATCH /agentes/:id` `{ "procedimentos": ["extrair_leads","conectar",…] }` e UI em `/agentes` → Editar. `null` = herda flags globais; array (mesmo `[]`) = allowlist do agente; `AGENT_MATERIALIZE_TYPES` (se setado) ainda restringe. Materialize/claim/peek usam a interseção. **Rollback:** `UPDATE agentes SET procedimentos = NULL;` (ou `DROP COLUMN procedimentos`); ignore o campo no PATCH/UI.
+
 #### `GET /clientes`
 
 Lista paginada (com `linkedin` se existir). Query: `page`, `limit` (máx. 100), `q`.

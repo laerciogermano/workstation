@@ -166,6 +166,8 @@ Cada AVD/conta (`agentId` = `provision.name`, ex. `agent-d`) puxa o próximo tra
 **Antes → depois (enviar_prospeccao off):** AC-02 ligado por default → desligado por default (`AGENT_ENVIAR_PROSPECCAO_ENABLED=0`; cancela pending; some do `schedule`). Religa: `=1` ou inclua em `AGENT_MATERIALIZE_TYPES`. **Rollback:** default `'1'`.
 
 **Antes → depois (cadência prospecção):** enfileirava até 30 jobs sem intervalo/limite → **1** por vez, **15/dia**, cooldown **30 min** (`AGENT_PROSPECCAO_DAILY_LIMIT` / `AGENT_PROSPECCAO_INTERVAL_MS`; `agent_runtime.last_prospeccao_at` no complete/fail; peek: `prospeccaoToday`, `prospeccaoSlotsNow`, …). **Rollback:** unset envs; remova coluna/`lastProspeccaoAt`; volte o `take(30)` em `enqueueProspeccao`.
+
+**Conferir mensagem (variáveis):** no enqueue, `payload.message` já vem **renderizado** (`{{primeiro_nome}}`/`{{firstname}}`/…); `payload.template` = bruto. Inspecionar: `GET /agente/:id/jobs?status=pending` (ou job done). Teste unitário das vars: `npm test -- --testPathPatterns=prospeccao-template.spec`. **Rollback:** ignore o campo / apague o spec.
 | 4 | `conectar` | Lead do agente (`status=0`) ou livre (ninguém 0\|1\|2) → reserva `0` + job; máx. `AGENT_CONNECT_DAILY_LIMIT` (default **15**)/dia em lotes de `AGENT_CONNECT_BATCH_SIZE` (default **5**) com pausa `AGENT_CONNECT_BATCH_INTERVAL_MS` (default **2 h**) entre lotes |
 | 5 | `extrair_leads` | Leads do agente (livres + `status=0` dele) &lt; `AGENT_LEAD_THRESHOLD` (default 20) |
 

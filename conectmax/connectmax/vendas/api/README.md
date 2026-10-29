@@ -173,7 +173,7 @@ Cada AVD/conta (`agentId` = `provision.name`, ex. `agent-d`) puxa o próximo tra
 **Antes → depois (janela horária prospecção):** sem restrição de horário → só envia na janela do agente `prospeccao_hora_inicio`/`prospeccao_hora_fim` (HH:MM, TZ do processo; default **08:00–18:00**, fim exclusivo); UI em `/agentes` → Editar → Enviar prospecção; fora da janela cancela pending e agenda `waiting` até a próxima abertura. **Rollback:** `UPDATE agentes SET prospeccao_hora_inicio=NULL, prospeccao_hora_fim=NULL;` (ou `DROP COLUMN`); ignore campos no PATCH/UI; remova o check em `prospeccaoSlotsNow`.
 
 **Conferir mensagem (variáveis):** no enqueue, `payload.message` já vem **renderizado** (`{{primeiro_nome}}`/`{{firstname}}`/…); `payload.template` = bruto. Inspecionar: `GET /agente/:id/jobs?status=pending` (ou job done). Teste unitário das vars: `npm test -- --testPathPatterns=prospeccao-template.spec`. **Rollback:** ignore o campo / apague o spec.
-| 4 | `conectar` | Lead do agente (`status=0`) ou livre (ninguém 0\|1\|2) → reserva `0` + job; máx. `AGENT_CONNECT_DAILY_LIMIT` (default **15**)/dia em lotes de `AGENT_CONNECT_BATCH_SIZE` (default **5**) com pausa `AGENT_CONNECT_BATCH_INTERVAL_MS` (default **2 h**) entre lotes |
+| 4 | `conectar` | Lead do agente (`status=0`) ou livre (ninguém 0\|1\|2) → reserva `0` + job; máx. `AGENT_CONNECT_DAILY_LIMIT` (default **15**)/dia; `.env` local: lote **1** + pausa **5 min** (`AGENT_CONNECT_BATCH_SIZE=1`, `AGENT_CONNECT_BATCH_INTERVAL_MS=300000`); default código ainda **5**/lote + **2 h** |
 | 5 | `extrair_leads` | Leads do agente (livres + `status=0` dele) &lt; `AGENT_LEAD_THRESHOLD` (default 20) |
 
 **Antes → depois (`verificar_conexoes`):** pending→conectado só via robot manual (`POST :3099/connections` / `npm run linkedin-extract-connections`) → mesmo script, agendado no claim (`AGENT_CONNECTIONS_INTERVAL_MS`, default **4 h**; antes 30 min) quando há `status=1`. Falha também grava `last_connections_at` (backoff). **Rollback:** `AGENT_CONNECTIONS_INTERVAL_MS=1800000` ou remova o tipo do worker/`AGENT_JOB_TYPES`.
@@ -238,6 +238,8 @@ Auth worker: JWT, `AGENT_API_KEY` global **ou** chave emitida em `POST /agentes/
 **Antes → depois (fila Candidatos):** 1º de `GET /profiles` global → **1º lead do agente** (já `0`) ou próximo livre claimado; `GET /profiles?agentId=` no funil. Rollback: `listCandidatosLivres` sem filtro 0.
 
 **Antes → depois (lotes connect):** limite diário contínuo (default 10) → **15/dia**, **5** por lote, pausa **2 h** após cada múltiplo de 5 (`invitedAt` do último do lote). Peek: `connectBatchSize`, `connectBatchIntervalMs`, `connectSlotsNow`. Rollback: `AGENT_CONNECT_DAILY_LIMIT=10`, `BATCH_SIZE=15` (ou omitir batch = defaults antigos via env `BATCH_SIZE=999` + intervalo baixo); ou reverter `connectSlotsNow`/`enqueueConectar`.
+
+**Antes → depois (cadência connect local):** `.env` tinha lote **5** + intervalo teste **60 s** → **1** convite por vez com mín. **5 min** entre um e outro (`BATCH_SIZE=1`, `BATCH_INTERVAL_MS=300000`). **Rollback:** `AGENT_CONNECT_BATCH_SIZE=5` + `AGENT_CONNECT_BATCH_INTERVAL_MS=7200000` (ou `60000` teste) e reinicie a API.
 
 **Antes → depois (subset de jobs):** todos os tipos → `AGENT_MATERIALIZE_TYPES` (csv; vazio = todos). Ex. teste connect: `verificar_conexoes,conectar` — cancela pending dos demais e claim só desses. Flags soltas (lista vazia): `AGENT_LER_MENSAGENS_ENABLED` / `AGENT_ENVIAR_PROSPECCAO_ENABLED` (ambas default **0**). Rollback: unset `AGENT_MATERIALIZE_TYPES`; defaults `'1'`.
 

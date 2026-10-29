@@ -68,9 +68,12 @@ Use **chave global** no supervisor.
 | `extrair_leads` | `login-extract-profiles` — `query` do job (`agentes.search_query`) ou env `EXTRACT_QUERY` |
 | `conectar` | `linkedin-connect` (URL do payload; teto diário na API) |
 | `verificar_conexoes` | `linkedin-extract-connections --n 20` (lote) → `mark-accepted`; intervalo API `AGENT_CONNECTIONS_INTERVAL_MS` (default **4 h**) |
-| demais AC | Stub (`ALLOW_STUB=1`) até F3 |
+| `enviar_prospeccao` | `linkedin-message` (`payload.profileUrl` + `payload.message`; persiste `sent` na API) |
+| `ler_mensagens` | Stub (`ALLOW_STUB=1`) até F3 |
 
 **Antes → depois (conectar):** stub → spawn `npm run linkedin-connect -- --url … --no-shot`. Página inexistente → job OK + conexão `status=3`/`discardReason` (funil Descartados). Rollback: `conectar: makeStub('conectar')` em `handlers/index.mjs`.
+
+**Antes → depois (enviar_prospeccao):** stub (`ALLOW_STUB=1` → done fake) → spawn `npm run linkedin-message -- --url … --text … --no-shot`. **Rollback:** `enviar_prospeccao: makeStub('enviar_prospeccao')` em `handlers/index.mjs`.
 
 ## Contrato host
 

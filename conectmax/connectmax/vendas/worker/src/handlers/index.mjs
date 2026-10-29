@@ -1,4 +1,5 @@
 import { run as conectar } from './conectar.mjs';
+import { run as enviarProspeccao } from './enviar_prospeccao.mjs';
 import { run as extrairLeads } from './extrair_leads.mjs';
 import { run as verificarConexoes } from './verificar_conexoes.mjs';
 import { makeStub } from './stub.mjs';
@@ -8,7 +9,7 @@ const handlers = {
   conectar,
   verificar_conexoes: verificarConexoes,
   ler_mensagens: makeStub('ler_mensagens'),
-  enviar_prospeccao: makeStub('enviar_prospeccao'),
+  enviar_prospeccao: enviarProspeccao,
 };
 
 export function getHandler(type) {

@@ -2416,6 +2416,105 @@ code {
   background: color-mix(in srgb, var(--bad, #b42318) 12%, transparent);
 }
 
+/* —— Agentes: timeline de jobs —— */
+.agt-timeline-modal {
+  width: min(720px, 100%);
+}
+
+.agt-timeline-sub {
+  margin: 0.2rem 0 0;
+  font-size: 0.78rem;
+  word-break: break-all;
+}
+
+.agt-timeline-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+}
+
+.agt-filter-on {
+  border-color: color-mix(in srgb, var(--accent, #3b82f6) 55%, var(--border));
+  background: color-mix(in srgb, var(--accent, #3b82f6) 14%, transparent);
+}
+
+.agt-timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0.25rem 0.85rem;
+  border-left: 2px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 0.95rem;
+}
+
+.agt-timeline-item {
+  position: relative;
+  padding-left: 0.85rem;
+}
+
+.agt-timeline-dot {
+  position: absolute;
+  left: -1.05rem;
+  top: 0.35rem;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 2px solid color-mix(in srgb, var(--accent, #3b82f6) 70%, var(--border));
+}
+
+.agt-timeline-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.55rem;
+}
+
+.agt-timeline-type {
+  font-weight: 650;
+}
+
+.agt-timeline-summary,
+.agt-timeline-meta,
+.agt-timeline-err {
+  margin: 0.3rem 0 0;
+  font-size: 0.8rem;
+  word-break: break-word;
+}
+
+.agt-timeline-err {
+  color: var(--bad, #b42318);
+}
+
+.agt-job-done {
+  color: var(--good, #1f7a3f);
+  border-color: color-mix(in srgb, var(--good, #1f7a3f) 40%, var(--border));
+  background: color-mix(in srgb, var(--good, #1f7a3f) 12%, transparent);
+}
+
+.agt-job-failed {
+  color: var(--bad, #b42318);
+  border-color: color-mix(in srgb, var(--bad, #b42318) 40%, var(--border));
+  background: color-mix(in srgb, var(--bad, #b42318) 12%, transparent);
+}
+
+.agt-job-claimed {
+  color: var(--warn, #a86b00);
+  border-color: color-mix(in srgb, var(--warn, #a86b00) 40%, var(--border));
+  background: color-mix(in srgb, var(--warn, #a86b00) 12%, transparent);
+}
+
+.agt-job-pending {
+  color: var(--text-muted);
+}
+
+.agt-job-cancelled {
+  color: var(--text-muted);
+  opacity: 0.85;
+}
+
 /* —— Contas LinkedIn —— */
 .cl-avatar {
   object-fit: cover;

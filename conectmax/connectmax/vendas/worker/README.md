@@ -67,7 +67,7 @@ Use **chave global** no supervisor.
 |--------|--------|
 | `extrair_leads` | `login-extract-profiles` |
 | `conectar` | `linkedin-connect` (URL do payload; teto diário na API) |
-| `verificar_conexoes` | `linkedin-extract-connections --n 20` (lote) → `mark-accepted`; intervalo API `AGENT_CONNECTIONS_INTERVAL_MS` (default 30 min) |
+| `verificar_conexoes` | `linkedin-extract-connections --n 20` (lote) → `mark-accepted`; intervalo API `AGENT_CONNECTIONS_INTERVAL_MS` (default **4 h**) |
 | demais AC | Stub (`ALLOW_STUB=1`) até F3 |
 
 **Antes → depois (conectar):** stub → spawn `npm run linkedin-connect -- --url … --no-shot`. Página inexistente → job OK + conexão `status=3`/`discardReason` (funil Descartados). Rollback: `conectar: makeStub('conectar')` em `handlers/index.mjs`.

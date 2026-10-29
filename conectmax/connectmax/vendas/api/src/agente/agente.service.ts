@@ -136,12 +136,12 @@ export class AgenteService implements OnModuleInit {
     return Number.isFinite(n) && n >= 60_000 ? n : 900_000;
   }
 
-  /** Intervalo para listar N conexões recentes e promover pending→conectado. */
+  /** Intervalo para listar N conexões recentes e promover pending→conectado (default 4h). */
   private connectionsIntervalMs(): number {
     const n = Number(
-      this.config.get('AGENT_CONNECTIONS_INTERVAL_MS', '1800000'),
+      this.config.get('AGENT_CONNECTIONS_INTERVAL_MS', '14400000'),
     );
-    return Number.isFinite(n) && n >= 60_000 ? n : 1_800_000;
+    return Number.isFinite(n) && n >= 60_000 ? n : 14_400_000;
   }
 
   private leadThreshold(): number {

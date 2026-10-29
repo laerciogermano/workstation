@@ -160,14 +160,14 @@ Cada AVD/conta (`agentId` = `provision.name`, ex. `agent-d`) puxa o próximo tra
 | 1 | `ler_mensagens` | Inbox due (`AGENT_INBOX_INTERVAL_MS`, default 15 min). **Off por default** (`AGENT_LER_MENSAGENS_ENABLED=0`) |
 
 **Antes → depois (ler_mensagens off):** AC-01 sempre no materialize → desligado por default (`AGENT_LER_MENSAGENS_ENABLED=0`; cancela pending). Religa: `=1` ou inclua em `AGENT_MATERIALIZE_TYPES`. **Rollback:** default `'1'` / remova a flag.
-| 2 | `verificar_conexoes` | Há pending (`status=1`) e due (`AGENT_CONNECTIONS_INTERVAL_MS`, default 30 min) → listar **20** recentes (`AGENT_CONNECTIONS_CHECK_N`) via perfil → tap `N connections` + `mark-accepted` |
+| 2 | `verificar_conexoes` | Há pending (`status=1`) e due (`AGENT_CONNECTIONS_INTERVAL_MS`, default **4 h**) → listar **20** recentes (`AGENT_CONNECTIONS_CHECK_N`) via perfil → tap `N connections` + `mark-accepted` |
 | 3 | `enviar_prospeccao` | Conexão status `2` sem mensagem `sent`. **Off por default** (`AGENT_ENVIAR_PROSPECCAO_ENABLED=0`) |
 
 **Antes → depois (enviar_prospeccao off):** AC-02 ligado por default → desligado por default (`AGENT_ENVIAR_PROSPECCAO_ENABLED=0`; cancela pending; some do `schedule`). Religa: `=1` ou inclua em `AGENT_MATERIALIZE_TYPES`. **Rollback:** default `'1'`.
 | 4 | `conectar` | Lead do agente (`status=0`) ou livre (ninguém 0\|1\|2) → reserva `0` + job; máx. `AGENT_CONNECT_DAILY_LIMIT` (default **15**)/dia em lotes de `AGENT_CONNECT_BATCH_SIZE` (default **5**) com pausa `AGENT_CONNECT_BATCH_INTERVAL_MS` (default **2 h**) entre lotes |
 | 5 | `extrair_leads` | Leads do agente (livres + `status=0` dele) &lt; `AGENT_LEAD_THRESHOLD` (default 20) |
 
-**Antes → depois (`verificar_conexoes`):** pending→conectado só via robot manual (`POST :3099/connections` / `npm run linkedin-extract-connections`) → mesmo script, agendado no claim (`AGENT_CONNECTIONS_INTERVAL_MS`, default 30 min) quando há `status=1`. Falha também grava `last_connections_at` (backoff). **Rollback:** remova o tipo do worker/`AGENT_JOB_TYPES`; ignore `last_connections_at`; volte a chamar o script/API robot à mão.
+**Antes → depois (`verificar_conexoes`):** pending→conectado só via robot manual (`POST :3099/connections` / `npm run linkedin-extract-connections`) → mesmo script, agendado no claim (`AGENT_CONNECTIONS_INTERVAL_MS`, default **4 h**; antes 30 min) quando há `status=1`. Falha também grava `last_connections_at` (backoff). **Rollback:** `AGENT_CONNECTIONS_INTERVAL_MS=1800000` ou remova o tipo do worker/`AGENT_JOB_TYPES`.
 
 Claim: `FOR UPDATE SKIP LOCKED`. Tabelas: `agent_jobs`, `agent_runtime`, `host_config`. Slots: por host em `host_config.max_ativos` (painel `PATCH /agente/hosts/:hostKey`); fallback env `AVD_MAX_ATIVOS_POR_SERVIDOR` (default **4**). Cadastro/enroll: `ramGb` / `diskGb` na linha do agente.
 
@@ -178,7 +178,9 @@ Claim: `FOR UPDATE SKIP LOCKED`. Tabelas: `agent_jobs`, `agent_runtime`, `host_c
 | `POST /agente/:agentId/heartbeat` | Presença do worker (`hostInstanceId`, `workerVersion`) → `online` |
 | `GET /agente/:agentId/peek` | Contagens pending + próximo + `schedule[]` (due/queued/waiting/blocked + `dueInMs`) + `online` |
 
-**Antes → depois (peek schedule):** só `next`/pending → `schedule` com previsão (ex. `verificar_conexoes` em 30 min via `AGENT_CONNECTIONS_INTERVAL_MS` + `lastConnectionsAt`); `thresholds.connectionsIntervalMs`. **Rollback:** ignore `schedule` / campo novo no threshold.
+**Antes → depois (peek schedule):** só `next`/pending → `schedule` com previsão (ex. `verificar_conexoes` em 4 h via `AGENT_CONNECTIONS_INTERVAL_MS` + `lastConnectionsAt`); `thresholds.connectionsIntervalMs`. **Rollback:** ignore `schedule` / campo novo no threshold.
+
+**Antes → depois (intervalo conexões 4 h):** default `AGENT_CONNECTIONS_INTERVAL_MS` 30 min (`1800000`) → **4 h** (`14400000`). **Rollback:** `AGENT_CONNECTIONS_INTERVAL_MS=1800000`.
 
 **Antes → depois (histórico de jobs cíclicos):** `insertJob` **apagava** done/failed com a mesma `dedupe_key` (ex. `verificar_conexoes:<id>:due`) → só restava a última execução. Agora: `dedupe_key = null` no complete/fail/cancel e no reuso da chave (sem `DELETE`). **Rollback:** volte o `delete()` em `insertJob` e não zere `dedupeKey` no complete.
 | `GET /agente/:agentId/jobs` | Histórico (`status`, `limit`) |

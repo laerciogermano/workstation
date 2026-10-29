@@ -11,21 +11,70 @@
  *
  * Asset default: assets/avatars/conectmax-black.jpg (logo sem "Belo Horizonte").
  * Rollback: omitir --avatar.
+ *
+ * Banner (capa): deep link https://www.linkedin.com/in/me/ → Add/Edit background
+ * → Upload single photo → Downloads → SELECT → Done → Save.
+ * Asset: assets/banners/conectmax-banner.jpg. Rollback: omitir --banner.
+ *
+ * About: /me → Add section → About (ou Add a summary) → paste → Save.
+ * Texto default em DEFAULT_ABOUT / assets/profile-defaults.json.
  */
-import { existsSync, mkdirSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync } from "node:fs";
 import { basename, dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { adb, adbOk, sleep } from "./adb.js";
 import { dumpUiXml, waitForText } from "./extract.js";
-import { screenshot, tapElement, typeViaAdb } from "./operate.js";
+import { openProfileByUrl } from "./linkedin-connect.js";
+import { pasteCleanMessage } from "./linkedin-message.js";
+import { launch, screenshot, tapElement, typeViaAdb } from "./operate.js";
 
 /** Relativo a screen-robot/src — logo ConectMax preta (sem BH). */
 export const DEFAULT_AVATAR_REL = "assets/avatars/conectmax-black.jpg";
+/** Relativo a screen-robot/src — capa ConectMax (economiza+). */
+export const DEFAULT_BANNER_REL = "assets/banners/conectmax-banner.jpg";
+export const DEFAULT_ME_URL = "https://www.linkedin.com/in/me/";
+export const DEFAULT_ABOUT =
+  "A ConectMax chegou para facilitar o processo de compras da sua empresa, temos uma imensa variedade de produtos desde materiais básicos para o dia a dia até os itens mais atuais da tecnologia!";
+export const DEFAULT_JOB_TITLE =
+  "Especialista em suprimentos e itens corporativos";
 
 const __libDir = dirname(fileURLToPath(import.meta.url));
+const SRC_ROOT = resolve(__libDir, "..");
 /** Absoluto do avatar padrão (assets/avatars/conectmax-black.jpg). */
-export const DEFAULT_AVATAR_PATH = resolve(__libDir, "..", DEFAULT_AVATAR_REL);
+export const DEFAULT_AVATAR_PATH = resolve(SRC_ROOT, DEFAULT_AVATAR_REL);
+/** Absoluto do banner padrão. */
+export const DEFAULT_BANNER_PATH = resolve(SRC_ROOT, DEFAULT_BANNER_REL);
+export const PROFILE_DEFAULTS_PATH = resolve(
+  SRC_ROOT,
+  "assets/profile-defaults.json",
+);
+
+/** @returns {{ company: string, jobTitle: string, avatar: string, banner: string, about: string, profileUrl: string }} */
+export function loadProfileDefaults() {
+  const base = {
+    company: "ConectMax",
+    jobTitle: DEFAULT_JOB_TITLE,
+    avatar: DEFAULT_AVATAR_PATH,
+    banner: DEFAULT_BANNER_PATH,
+    about: DEFAULT_ABOUT,
+    profileUrl: DEFAULT_ME_URL,
+  };
+  try {
+    if (!existsSync(PROFILE_DEFAULTS_PATH)) return base;
+    const j = JSON.parse(readFileSync(PROFILE_DEFAULTS_PATH, "utf8"));
+    return {
+      company: String(j.company || base.company).trim() || base.company,
+      jobTitle: String(j.jobTitle || base.jobTitle).trim() || base.jobTitle,
+      avatar: resolve(SRC_ROOT, String(j.avatar || DEFAULT_AVATAR_REL)),
+      banner: resolve(SRC_ROOT, String(j.banner || DEFAULT_BANNER_REL)),
+      about: String(j.about || base.about).trim() || base.about,
+      profileUrl: String(j.profileUrl || base.profileUrl).trim() || base.profileUrl,
+    };
+  } catch {
+    return base;
+  }
+}
 
 const ADB_IME = "com.android.adbkeyboard/.AdbIME";
 const LATIN_IME =
@@ -196,6 +245,94 @@ function longPress(serial, x, y, ms = 1000) {
 }
 
 /**
+ * Push arquivo para /sdcard/Download e dispara media scan.
+ * @param {string} serial
+ * @param {string} localPath
+ * @returns {string} fileName
+ */
+function pushToDownloads(serial, localPath) {
+  const fileName = basename(localPath);
+  const remote = `/sdcard/Download/${fileName}`;
+  adb(serial, ["shell", "mkdir", "-p", "/sdcard/Download"]);
+  adb(serial, ["push", localPath, remote]);
+  adbOk(serial, [
+    "shell",
+    "am",
+    "broadcast",
+    "-a",
+    "android.intent.action.MEDIA_SCANNER_SCAN_FILE",
+    "-d",
+    `file://${remote}`,
+  ]);
+  return fileName;
+}
+
+/**
+ * No DocumentsUI: Show roots → Downloads → long-press arquivo → SELECT.
+ * @param {string} serial
+ * @param {string} fileName
+ * @param {string[]} steps
+ * @param {string|null|undefined} outDir
+ * @param {string} shotPrefix
+ */
+async function selectFromDownloadsPicker(serial, fileName, steps, outDir, shotPrefix) {
+  await sleep(1_500);
+  await shot(serial, outDir, `${shotPrefix}-picker.png`);
+
+  const roots =
+    findNodeByContentDesc(dumpUiXml(serial), /^Show roots$/i) ||
+    findNodeByText(dumpUiXml(serial), "Show roots");
+  if (roots) {
+    tapElement({ serial, x: roots.x, y: roots.y });
+    await sleep(900);
+  }
+  // Já em Downloads? senão abre
+  let xml = dumpUiXml(serial);
+  if (!/IMAGES IN DOWNLOADS|content-desc="[^"]*Download/i.test(xml)) {
+    const downloads =
+      findNodeByText(xml, "Downloads") ||
+      findNodeByContentDesc(xml, /^Downloads$/i);
+    if (!downloads) throw new Error("selectFromDownloadsPicker: Downloads");
+    tapElement({ serial, x: downloads.x, y: downloads.y });
+    steps.push("open-downloads");
+    await sleep(1_500);
+  }
+  await shot(serial, outDir, `${shotPrefix}-downloads.png`);
+
+  let file = null;
+  const t0 = Date.now();
+  while (Date.now() - t0 < 20_000) {
+    file = findNodeByContentDescContains(dumpUiXml(serial), fileName);
+    if (file) break;
+    await sleep(800);
+  }
+  if (!file) {
+    throw new Error(
+      `selectFromDownloadsPicker: ${fileName} não apareceu em Downloads`,
+    );
+  }
+  longPress(serial, file.longX, file.longY, 1100);
+  steps.push(`long-press:${fileName}`);
+  await sleep(900);
+
+  let select =
+    findNodeByText(dumpUiXml(serial), "SELECT") ||
+    findNodeByText(dumpUiXml(serial), "Select");
+  const tSel = Date.now();
+  while (!select && Date.now() - tSel < 8_000) {
+    await sleep(500);
+    select =
+      findNodeByText(dumpUiXml(serial), "SELECT") ||
+      findNodeByText(dumpUiXml(serial), "Select");
+  }
+  if (!select) throw new Error("selectFromDownloadsPicker: SELECT");
+  tapElement({ serial, x: select.x, y: select.y });
+  steps.push("tap-select");
+  await sleep(2_500);
+  await shot(serial, outDir, `${shotPrefix}-crop.png`);
+}
+
+/**
  * Push avatar → DocumentsUI Downloads → SELECT → crop Done → Continue.
  * @param {{
  *   serial: string,
@@ -213,23 +350,11 @@ export async function linkedinSetupAvatar(opts) {
   if (!existsSync(avatarPath)) {
     throw new Error(`linkedinSetupAvatar: arquivo não encontrado: ${avatarPath}`);
   }
-  const fileName = basename(avatarPath);
-  const remote = `/sdcard/Download/${fileName}`;
   const waitPhotoMs = Number(opts.timeoutMs || AVATAR_TIMEOUT_MS);
   const steps = [];
   if (opts.outDir) mkdirSync(opts.outDir, { recursive: true });
 
-  adb(serial, ["shell", "mkdir", "-p", "/sdcard/Download"]);
-  adb(serial, ["push", avatarPath, remote]);
-  adbOk(serial, [
-    "shell",
-    "am",
-    "broadcast",
-    "-a",
-    "android.intent.action.MEDIA_SCANNER_SCAN_FILE",
-    "-d",
-    `file://${remote}`,
-  ]);
+  const fileName = pushToDownloads(serial, avatarPath);
   steps.push(`push-avatar:${fileName}`);
   await sleep(800);
 
@@ -265,56 +390,13 @@ export async function linkedinSetupAvatar(opts) {
   if (!upload) throw new Error("linkedinSetupAvatar: Upload from photos");
   tapElement({ serial, x: upload.x, y: upload.y });
   steps.push("tap-upload-from-photos");
-  await sleep(2_000);
-  await shot(serial, opts.outDir, "avatar-01-picker.png");
-
-  const roots =
-    findNodeByContentDesc(dumpUiXml(serial), /^Show roots$/i) ||
-    findNodeByText(dumpUiXml(serial), "Show roots");
-  if (roots) {
-    tapElement({ serial, x: roots.x, y: roots.y });
-    await sleep(900);
-  }
-  const downloads =
-    findNodeByText(dumpUiXml(serial), "Downloads") ||
-    findNodeByContentDesc(dumpUiXml(serial), /^Downloads$/i);
-  if (!downloads) throw new Error("linkedinSetupAvatar: Downloads no picker");
-  tapElement({ serial, x: downloads.x, y: downloads.y });
-  steps.push("open-downloads");
-  await sleep(1_500);
-  await shot(serial, opts.outDir, "avatar-02-downloads.png");
-
-  let file = null;
-  const t0 = Date.now();
-  while (Date.now() - t0 < 20_000) {
-    file = findNodeByContentDescContains(dumpUiXml(serial), fileName);
-    if (file) break;
-    await sleep(800);
-  }
-  if (!file) {
-    throw new Error(
-      `linkedinSetupAvatar: ${fileName} não apareceu em Downloads`,
-    );
-  }
-  longPress(serial, file.longX, file.longY, 1100);
-  steps.push(`long-press:${fileName}`);
-  await sleep(900);
-
-  let select =
-    findNodeByText(dumpUiXml(serial), "SELECT") ||
-    findNodeByText(dumpUiXml(serial), "Select");
-  const tSel = Date.now();
-  while (!select && Date.now() - tSel < 8_000) {
-    await sleep(500);
-    select =
-      findNodeByText(dumpUiXml(serial), "SELECT") ||
-      findNodeByText(dumpUiXml(serial), "Select");
-  }
-  if (!select) throw new Error("linkedinSetupAvatar: SELECT após long-press");
-  tapElement({ serial, x: select.x, y: select.y });
-  steps.push("tap-select");
-  await sleep(2_500);
-  await shot(serial, opts.outDir, "avatar-03-crop.png");
+  await selectFromDownloadsPicker(
+    serial,
+    fileName,
+    steps,
+    opts.outDir,
+    "avatar",
+  );
 
   const done =
     findNodeByText(dumpUiXml(serial), "Done") ||
@@ -350,6 +432,250 @@ export async function linkedinSetupAvatar(opts) {
   }
 
   return { steps, serial, avatarPath, outDir: opts.outDir || null };
+}
+
+/**
+ * Capa/banner no perfil: deep link /me → Add/Edit background → upload.
+ * @param {{
+ *   serial: string,
+ *   bannerPath?: string|null,
+ *   profileUrl?: string,
+ *   linkedinPackage?: string,
+ *   outDir?: string|null,
+ * }} opts
+ */
+export async function linkedinSetupBanner(opts) {
+  const serial = opts.serial;
+  if (!serial) throw new Error("linkedinSetupBanner: falta serial");
+  const bannerPath = resolve(
+    String(opts.bannerPath || DEFAULT_BANNER_PATH).trim(),
+  );
+  if (!existsSync(bannerPath)) {
+    throw new Error(`linkedinSetupBanner: arquivo não encontrado: ${bannerPath}`);
+  }
+  const pkg = opts.linkedinPackage || "com.linkedin.android";
+  const profileUrl = String(opts.profileUrl || DEFAULT_ME_URL).trim();
+  const steps = [];
+  if (opts.outDir) mkdirSync(opts.outDir, { recursive: true });
+
+  const fileName = pushToDownloads(serial, bannerPath);
+  steps.push(`push-banner:${fileName}`);
+
+  await launch({ serial, package: pkg });
+  await sleep(800);
+  openProfileByUrl(serial, pkg, profileUrl);
+  await sleep(WAIT_MS + 3_000);
+  steps.push(`deeplink:${profileUrl}`);
+  await shot(serial, opts.outDir, "banner-00-me.png");
+
+  await waitForText(
+    serial,
+    ["Cover photo", "Add background image", "Edit background image"],
+    { timeoutMs: STEP_TIMEOUT_MS, intervalMs: 1_200, sense: "dump" },
+  );
+
+  const editBg =
+    findNodeByContentDesc(dumpUiXml(serial), /^Add background image$/i) ||
+    findNodeByContentDesc(dumpUiXml(serial), /^Edit background image$/i);
+  if (editBg) {
+    tapElement({ serial, x: editBg.x, y: editBg.y });
+  } else {
+    const cover = findNodeByContentDesc(dumpUiXml(serial), /^Cover photo$/i);
+    if (!cover) throw new Error("linkedinSetupBanner: Cover photo / Add background");
+    tapElement({ serial, x: cover.x, y: cover.y });
+  }
+  steps.push("tap-background");
+  await sleep(1_500);
+  await shot(serial, opts.outDir, "banner-01-sheet.png");
+
+  // Sheet "Cover Image" → Add cover image (primeira vez / troca)
+  let xml = dumpUiXml(serial);
+  const addCover =
+    findNodeByContentDesc(xml, /^Add cover image$/i) ||
+    findNodeByText(xml, "Add cover image");
+  if (addCover) {
+    tapElement({ serial, x: addCover.x, y: addCover.y });
+    steps.push("tap-add-cover-image");
+    await sleep(1_800);
+    await shot(serial, opts.outDir, "banner-02-editor.png");
+  }
+
+  xml = dumpUiXml(serial);
+  const uploadSingle =
+    findNodeByText(xml, "Upload single photo") ||
+    findNodeByContentDesc(xml, /Upload single photo/i);
+  if (!uploadSingle) {
+    // fallback: Choose an image
+    const choose =
+      findNodeByText(xml, "Choose an image") ||
+      findNodeByContentDesc(xml, /^Choose an image$/i);
+    if (!choose) throw new Error("linkedinSetupBanner: Upload single photo");
+    tapElement({ serial, x: choose.x, y: choose.y });
+    steps.push("tap-choose-image");
+  } else {
+    tapElement({ serial, x: uploadSingle.x, y: uploadSingle.y });
+    steps.push("tap-upload-single-photo");
+  }
+
+  await selectFromDownloadsPicker(
+    serial,
+    fileName,
+    steps,
+    opts.outDir,
+    "banner",
+  );
+
+  const done =
+    findNodeByText(dumpUiXml(serial), "Done") ||
+    findNodeByContentDesc(dumpUiXml(serial), /^Done$/i);
+  if (!done) throw new Error("linkedinSetupBanner: Done no crop");
+  tapElement({ serial, x: done.x, y: done.y });
+  steps.push("tap-done-crop");
+  await sleep(WAIT_MS + 2_000);
+  await shot(serial, opts.outDir, "banner-03-apos-done.png");
+
+  // Saving / Uploading → Save opcional → perfil com Edit background
+  const tUp = Date.now();
+  while (Date.now() - tUp < 60_000) {
+    const x = dumpUiXml(serial);
+    if (/Uploading Media|\bSaving\b/i.test(x)) {
+      await sleep(1_000);
+      continue;
+    }
+    const save = findNodeByText(x, "Save");
+    if (save && /Add a cover image|Upload single photo/i.test(x)) {
+      tapElement({ serial, x: save.x, y: save.y });
+      steps.push("tap-save");
+      await sleep(3_000);
+      continue;
+    }
+    if (
+      findNodeByContentDesc(x, /^Edit background image$/i) ||
+      findNodeByContentDesc(x, /^Cover photo$/i)
+    ) {
+      break;
+    }
+    await sleep(1_000);
+  }
+  await shot(serial, opts.outDir, "banner-99-perfil.png");
+  steps.push("banner-done");
+
+  return { steps, serial, bannerPath, profileUrl, outDir: opts.outDir || null };
+}
+
+/**
+ * About/summary no perfil: /me → Add section → About (ou Add a summary) → paste → Save.
+ * @param {{
+ *   serial: string,
+ *   about?: string,
+ *   profileUrl?: string,
+ *   linkedinPackage?: string,
+ *   outDir?: string|null,
+ * }} opts
+ */
+export async function linkedinSetupAbout(opts) {
+  const serial = opts.serial;
+  if (!serial) throw new Error("linkedinSetupAbout: falta serial");
+  const about = String(opts.about || DEFAULT_ABOUT).trim();
+  if (!about) throw new Error("linkedinSetupAbout: falta about");
+  const pkg = opts.linkedinPackage || "com.linkedin.android";
+  const profileUrl = String(opts.profileUrl || DEFAULT_ME_URL).trim();
+  const steps = [];
+  if (opts.outDir) mkdirSync(opts.outDir, { recursive: true });
+
+  await launch({ serial, package: pkg });
+  await sleep(800);
+  openProfileByUrl(serial, pkg, profileUrl);
+  await sleep(WAIT_MS + 3_000);
+  steps.push(`deeplink:${profileUrl}`);
+  await shot(serial, opts.outDir, "about-00-me.png");
+
+  await waitForText(
+    serial,
+    ["Add section", "Add a summary", "About", "Edit intro"],
+    { timeoutMs: STEP_TIMEOUT_MS, intervalMs: 1_200, sense: "dump" },
+  );
+
+  let xml = dumpUiXml(serial);
+  // Preferência: Add a summary (atalho) → senão Add section → About
+  const addSummary =
+    findNodeByText(xml, "Add a summary") ||
+    findNodeByContentDesc(xml, /Add a summary/i);
+  if (addSummary) {
+    // botão + à direita costuma ser o clickable (x alto)
+    tapElement({
+      serial,
+      x: Math.min(520, addSummary.x + 80),
+      y: addSummary.y,
+    });
+    steps.push("tap-add-summary");
+    await sleep(1_800);
+  } else {
+    const addSection = findNodeByText(xml, "Add section");
+    if (!addSection) throw new Error("linkedinSetupAbout: Add section / summary");
+    tapElement({ serial, x: addSection.x, y: addSection.y });
+    steps.push("tap-add-section");
+    await sleep(1_500);
+    xml = dumpUiXml(serial);
+    // scroll sheet se preciso
+    let aboutItem = findNodeByText(xml, "About");
+    if (!aboutItem) {
+      adb(serial, ["shell", "input", "swipe", "270", "500", "270", "750", "300"]);
+      await sleep(700);
+      aboutItem = findNodeByText(dumpUiXml(serial), "About");
+    }
+    if (!aboutItem) throw new Error("linkedinSetupAbout: About no menu");
+    tapElement({ serial, x: aboutItem.x, y: aboutItem.y });
+    steps.push("tap-about-menu");
+    await sleep(1_800);
+  }
+  await shot(serial, opts.outDir, "about-01-editor.png");
+
+  await waitForText(serial, ["Edit about", "Save"], {
+    timeoutMs: STEP_TIMEOUT_MS,
+    intervalMs: 1_000,
+    sense: "dump",
+  });
+
+  xml = dumpUiXml(serial);
+  const edit = findFirstEditText(xml);
+  if (!edit) throw new Error("linkedinSetupAbout: EditText");
+  tapElement({ serial, x: edit.x, y: edit.y });
+  await sleep(400);
+  // campo vazio na 1ª vez — skipClear evita loop DEL lento
+  await pasteCleanMessage(serial, about, {
+    skipClear: true,
+    restoreIme: false,
+  });
+  steps.push(`about-pasted:${about.length}`);
+  await sleep(800);
+  await shot(serial, opts.outDir, "about-02-typed.png");
+
+  // dismiss teclado: tap no título
+  const title =
+    findNodeByText(dumpUiXml(serial), "Edit about") ||
+    findNodeByContentDesc(dumpUiXml(serial), /^Edit about$/i);
+  if (title) {
+    tapElement({ serial, x: title.x, y: title.y });
+    await sleep(500);
+  }
+
+  const save =
+    findNodeByText(dumpUiXml(serial), "Save") ||
+    findNodeByContentDesc(dumpUiXml(serial), /^Save$/i);
+  if (!save) throw new Error("linkedinSetupAbout: Save");
+  tapElement({ serial, x: 270, y: save.y });
+  steps.push("tap-save-about");
+  await sleep(WAIT_MS + 2_000);
+  // Premium upsell eventual
+  if (/Try Premium|Refine your profile/i.test(dumpUiXml(serial))) {
+    adbOk(serial, ["shell", "input", "keyevent", "4"]);
+    await sleep(800);
+  }
+  await shot(serial, opts.outDir, "about-99-apos-save.png");
+  steps.push("about-done");
+
+  return { steps, serial, about, profileUrl, outDir: opts.outDir || null };
 }
 
 /**

@@ -99,7 +99,7 @@ const elements = await extract({ serial });
 | BDD e2e US/EP (runtime real) | `npm run test:e2e` |
 | **SC-30 LinkedIn** (fixture, sem device) | ver abaixo |
 | Piloto LinkedIn ao vivo | `npm run linkedin-login` |
-| LinkedIn signup (…→password→location→job title) | `npm run linkedin-signup -- --device 127.0.0.1:5658 --firstname Ana --lastname Silva --email user@mail.com --password 'senha' --job-title 'Especialista em suprimentos e itens corporativos'` · email/senha via ADBKeyboard; job title palavra a palavra (frase longa trunca no `input text`) · prints em `screenshots/linkedin-signup/<stamp>/` · rollback: omitir `--job-title` |
+| LinkedIn signup (…→password→location→job title) | `npm run linkedin-signup -- --device 127.0.0.1:5658 --firstname Ana --lastname Silva --email user@mail.com --password 'senha' --job-title 'Especialista em suprimentos e itens corporativos'` · **nomes + email/senha + job title** via ADBKeyboard (`pasteCleanMessage`); assert First/Last no dump antes do Continue · prints em `screenshots/linkedin-signup/<stamp>/` · **Antes → depois:** nomes/job com `adb input text` + LatinIME → `Jacqueline'sLima` / Last vazio / timeout email; agora B64 + `assertNameFields`. Rollback: `fillField`+`type` palavra a palavra e sem assert |
 | LinkedIn Search comprador → See all | `npm run login-extract-profiles` |
 | LinkedIn conectar por URL (Connect→Skip→Pending) | `npm run linkedin-connect` · API `npm run linkedin-connect-api` |
 | LinkedIn boolean por perfil + abrir | `npm run login-visit-profiles` |

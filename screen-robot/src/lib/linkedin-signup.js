@@ -1,7 +1,7 @@
 /**
  * Criar conta LinkedIn (jornada signup) — passos incrementais com print.
  *
- * Fluxo: stop → Join now → nomes → email → password → location → job title.
+ * Fluxo: stop → Join now → nomes (ADBKeyboard + assert) → email → password → location → job title.
  */
 import { mkdirSync } from "node:fs";
 import { join } from "node:path";
@@ -15,7 +15,6 @@ import {
   screenshot,
   stopAllApps,
   tapElement,
-  type,
 } from "./operate.js";
 
 const WAIT_MS = Number(process.env.LINKEDIN_SIGNUP_WAIT_MS || 4_000);
@@ -120,20 +119,8 @@ async function waitForNameFields(serial) {
 }
 
 /**
- * Tap no campo + injeta texto (`adb input text` — ok p/ nomes sem @).
- * @param {string} serial
- * @param {{ x: number, y: number }} field
- * @param {string} value
- */
-async function fillField(serial, field, value) {
-  tapElement({ serial, x: field.x, y: field.y });
-  await sleep(400);
-  await type({ serial, text: String(value) });
-  await sleep(500);
-}
-
-/**
- * Email/@ via ADBKeyboard — `input text` deixa `%40` literal no EditText.
+ * Tap + ADBKeyboard (B64). `adb input text` + LatinIME vira autocorrect
+ * (ex. Jacqueline'sLima no First name; Last name vazio).
  * @param {string} serial
  * @param {{ x: number, y: number }} field
  * @param {string} value
@@ -143,6 +130,35 @@ async function fillFieldExact(serial, field, value) {
   await sleep(400);
   await pasteCleanMessage(serial, String(value), { forceClear: true });
   await sleep(500);
+}
+
+function normFieldText(s) {
+  return String(s || "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLowerCase();
+}
+
+/**
+ * Confirma First/Last no dump antes do Continue (falha cedo se o teclado
+ * misturou nomes).
+ * @param {string} serial
+ * @param {string} firstName
+ * @param {string} lastName
+ */
+async function assertNameFields(serial, firstName, lastName) {
+  await dismissKeyboard(serial);
+  const { first, last } = await waitForNameFields(serial);
+  const gotFirst = normFieldText(first.text);
+  const gotLast = normFieldText(last.text);
+  const wantFirst = normFieldText(firstName);
+  const wantLast = normFieldText(lastName);
+  if (gotFirst !== wantFirst || gotLast !== wantLast) {
+    throw new Error(
+      `linkedin-signup: nomes no dump ≠ args (first="${first.text}" last="${last.text}"; esperado "${firstName}" / "${lastName}")`,
+    );
+  }
+  return { first, last };
 }
 
 /**
@@ -214,12 +230,8 @@ async function fillJobTitle(serial, jobTitle, steps, outDir) {
 
   tapElement({ serial, x: edit.x, y: edit.y });
   await sleep(400);
-  const words = title.split(/\s+/).filter(Boolean);
-  for (let i = 0; i < words.length; i++) {
-    const chunk = words[i] + (i < words.length - 1 ? " " : "");
-    await type({ serial, text: chunk });
-    await sleep(280);
-  }
+  // frase inteira via ADBKeyboard — `input text` truncava / LatinIME alterava
+  await pasteCleanMessage(serial, title, { forceClear: true });
   await sleep(600);
   await shot(serial, outDir, "17-apos-job-title-typed.png");
 
@@ -298,15 +310,18 @@ export async function linkedinSignupJoinNow(opts) {
   const fields = await waitForNameFields(serial);
   await shot(serial, opts.outDir, "05-antes-names.png");
 
-  await fillField(serial, fields.first, firstName);
+  await fillFieldExact(serial, fields.first, firstName);
   steps.push(`first-name:${firstName}`);
   await shot(serial, opts.outDir, "06-apos-first-name.png");
 
   const afterFirst = await waitForNameFields(serial);
-  await fillField(serial, afterFirst.last, lastName);
+  await fillFieldExact(serial, afterFirst.last, lastName);
   steps.push(`last-name:${lastName}`);
   await sleep(800);
   await shot(serial, opts.outDir, "07-apos-last-name.png");
+
+  await assertNameFields(serial, firstName, lastName);
+  steps.push("names-verified");
 
   await tapContinue(serial, steps, opts.outDir, "08");
 

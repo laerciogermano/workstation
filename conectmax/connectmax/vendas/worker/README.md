@@ -69,11 +69,13 @@ Use **chave global** no supervisor.
 | `conectar` | `linkedin-connect` (URL do payload; teto diário na API) |
 | `verificar_conexoes` | `linkedin-extract-connections --n 20` (lote) → `mark-accepted`; intervalo API `AGENT_CONNECTIONS_INTERVAL_MS` (default **4 h**) |
 | `enviar_prospeccao` | `linkedin-message` (`payload.profileUrl` + `payload.message`; persiste `sent` na API) |
-| `ler_mensagens` | Stub (`ALLOW_STUB=1`) até F3 |
+| `ler_mensagens` | `linkedin-unread-messages` (Messaging → Unread; `INBOX_MAX_RESULTS` / payload `maxResults`, default 20) |
 
 **Antes → depois (conectar):** stub → spawn `npm run linkedin-connect -- --url … --no-shot`. Página inexistente → job OK + conexão `status=3`/`discardReason` (funil Descartados). Rollback: `conectar: makeStub('conectar')` em `handlers/index.mjs`.
 
 **Antes → depois (enviar_prospeccao):** stub (`ALLOW_STUB=1` → done fake) → spawn `npm run linkedin-message -- --url … --text … --no-shot`. **Rollback:** `enviar_prospeccao: makeStub('enviar_prospeccao')` em `handlers/index.mjs`.
+
+**Antes → depois (ler_mensagens):** stub (`ALLOW_STUB=1` → done em ~2s sem AVD) → spawn `npm run linkedin-unread-messages -- --max-results … --no-shot`. Lista unread no AVD; ainda **não** abre cada chat nem persiste `client_linkedin_message` (próximo passo). **Rollback:** `ler_mensagens: makeStub('ler_mensagens')` + `import { makeStub }` em `handlers/index.mjs`.
 
 ## Contrato host
 

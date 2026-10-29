@@ -469,7 +469,7 @@ Deploy gestor = mesmo artefato do servidor (systemd / pm2 / Docker sidecar). Sem
 | **F0** | Doc + alinhar time (este plano) | Aceite do contrato único | **Feito** |
 | **F1** | Auth `x-api-key` + heartbeat no runtime | Worker dry autentica; UI mostra online/offline | **Feito** (API + worker) |
 | **F2** | Worker real: 1 handler (ex. `extrair_leads`) | claim→script→complete em localhost | **Feito** (`vendas/worker`) |
-| **F3** | Demais handlers AC-01…03 | Funil completo via pull | Pendente (`ALLOW_STUB=1`) |
+| **F3** | Demais handlers AC-01…03 | Funil completo via pull | Parcial: `ler_mensagens` → `linkedin-unread-messages` (lista Unread; persistência fio ainda pendente) |
 | **F4** | Multi-agente no host + `slots` wake local | ≤ N AVDs ativos; servidor e gestor iguais | **Feito** (`MODE=host`; rotate **on-empty** pós-claim) |
 | **F5** | Cadastro: `host_kind`, IP/SSH opcionais | Gestor cadastra agente sem IP público | **Parcial** (`host_kind` + IP opcional gestor) |
 | **F6** | Desacoplar SSH do caminho crítico | Jobs nunca passam por SSH; SSH só ops server | Pendente |

@@ -310,22 +310,11 @@ export default function Atividades() {
     syncAgentUrl(id);
   }
 
-  const nextJob = peek?.next || null;
   const nextConnect = peek?.nextConnect || null;
   const schedule = Array.isArray(peek?.schedule) ? peek.schedule : [];
   const pendingTotal = Array.isArray(peek?.pending)
     ? peek.pending.reduce((n, p) => n + (Number(p.count) || 0), 0)
     : 0;
-  const nextSummary = nextJob ? jobPayloadSummary(nextJob.payload) : null;
-  const nextSoon =
-    schedule.find((s) => s.state === 'queued' || s.state === 'due') ||
-    schedule.find((s) => s.state === 'waiting') ||
-    null;
-  const showConnectPerson =
-    nextConnect &&
-    ((nextSoon && nextSoon.type === 'conectar') ||
-      (!nextSoon && nextJob?.type === 'conectar') ||
-      nextConnect.jobStatus === 'claimed');
 
   return (
     <div className="page page-atividades">
@@ -379,9 +368,9 @@ export default function Atividades() {
       </header>
 
       {agentId && (
-        <section className="agt-next" aria-label="Próxima atividade">
+        <section className="agt-next" aria-label="Agenda do agente">
           <div className="agt-next-head">
-            <div className="agt-next-label">Próxima prevista</div>
+            <div className="agt-next-label">Agenda</div>
             <div className="agt-next-meta muted">
               {peek?.online != null
                 ? peek.online
@@ -392,65 +381,7 @@ export default function Atividades() {
             </div>
           </div>
 
-          {nextSoon ? (
-            <div className="agt-next-body agt-next-highlight">
-              <div className="agt-timeline-head">
-                <span className="agt-timeline-type">
-                  {jobTypeLabel(nextSoon.type)}
-                </span>
-                <span className={`tag ${scheduleStateClass(nextSoon.state)}`}>
-                  {scheduleStateLabel(nextSoon.state)}
-                </span>
-                {formatDueIn(nextSoon.dueInMs) ? (
-                  <strong className="agt-next-when">
-                    {formatDueIn(nextSoon.dueInMs)}
-                  </strong>
-                ) : null}
-              </div>
-              {showConnectPerson && nextSoon.type === 'conectar' ? (
-                <ConnectPerson
-                  name={nextConnect.name}
-                  photoBase64={nextConnect.photoBase64}
-                  profileUrl={nextConnect.profileUrl}
-                />
-              ) : null}
-              {nextSoon.reason ? (
-                <p className="agt-timeline-summary muted">{nextSoon.reason}</p>
-              ) : null}
-              {nextSoon.dueAt && nextSoon.dueInMs > 0 ? (
-                <p className="agt-timeline-meta muted">
-                  previsto {formatWhen(nextSoon.dueAt)}
-                </p>
-              ) : null}
-            </div>
-          ) : nextJob ? (
-            <div className="agt-next-body agt-next-highlight">
-              <div className="agt-timeline-head">
-                <span className="agt-timeline-type">
-                  {jobTypeLabel(nextJob.type)}
-                </span>
-                <span className={`tag ${jobStatusClass(nextJob.status)}`}>
-                  {jobStatusLabel(nextJob.status)}
-                </span>
-                <strong className="agt-next-when">agora</strong>
-              </div>
-              {showConnectPerson && nextJob.type === 'conectar' ? (
-                <ConnectPerson
-                  name={nextConnect.name}
-                  photoBase64={nextConnect.photoBase64}
-                  profileUrl={nextConnect.profileUrl}
-                />
-              ) : nextSummary ? (
-                <p className="agt-timeline-summary muted">{nextSummary}</p>
-              ) : null}
-            </div>
-          ) : (
-            <p className="muted agt-next-empty">
-              Nenhuma atividade prevista no momento.
-            </p>
-          )}
-
-          {schedule.length > 0 && (
+          {schedule.length > 0 ? (
             <ul className="agt-schedule">
               {schedule.map((item) => (
                 <li key={item.type} className="agt-schedule-item">
@@ -467,12 +398,23 @@ export default function Atividades() {
                       ? item.reason || '—'
                       : formatDueIn(item.dueInMs) || item.reason || '—'}
                   </div>
+                  {item.type === 'conectar' && nextConnect ? (
+                    <ConnectPerson
+                      name={nextConnect.name}
+                      photoBase64={nextConnect.photoBase64}
+                      profileUrl={nextConnect.profileUrl}
+                    />
+                  ) : null}
                   {item.state !== 'blocked' && item.reason ? (
                     <p className="agt-timeline-meta muted">{item.reason}</p>
                   ) : null}
                 </li>
               ))}
             </ul>
+          ) : (
+            <p className="muted agt-next-empty">
+              Nenhuma atividade na agenda deste agente.
+            </p>
           )}
         </section>
       )}

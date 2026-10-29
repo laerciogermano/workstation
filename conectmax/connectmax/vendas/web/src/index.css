@@ -2374,6 +2374,39 @@ code {
   gap: 0.25rem;
 }
 
+.agt-var-chips {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin: 0 0 0.75rem;
+}
+
+.agt-var-chip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.45rem 0.75rem;
+  text-align: left;
+  font: inherit;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.45rem 0.65rem;
+  cursor: pointer;
+}
+
+.agt-var-chip:hover,
+.agt-var-chip:focus-visible {
+  border-color: color-mix(in srgb, var(--accent, #3b82f6) 45%, var(--border));
+  outline: none;
+}
+
+.agt-var-chip code {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
 .srv-pass-row {
   display: flex;
   gap: 0.5rem;

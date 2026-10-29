@@ -41,6 +41,20 @@ const DEFAULT_PROCEDIMENTOS = [
 
 const DEFAULT_MENSAGEM_PROSPECCAO = 'Oi {{primeiro_nome}}, tudo bem?';
 
+/** Variáveis disponíveis no template de prospecção (clique insere no texto). */
+const PROSPECCAO_VARS = [
+  {
+    token: '{{primeiro_nome}}',
+    label: 'primeiro_nome',
+    hint: '1ª palavra do nome (ex.: Maria)',
+  },
+  {
+    token: '{{nome}}',
+    label: 'nome',
+    hint: 'Nome completo do LinkedIn',
+  },
+];
+
 const EMPTY_FORM = {
   nome: '',
   hostNome: '',
@@ -326,6 +340,13 @@ export default function Agentes() {
 
   function setField(key, value) {
     setForm((prev) => ({ ...prev, [key]: value }));
+  }
+
+  function insertProspeccaoVar(token) {
+    setForm((prev) => ({
+      ...prev,
+      mensagemProspeccao: `${prev.mensagemProspeccao || ''}${token}`,
+    }));
   }
 
   async function submitForm(e) {
@@ -781,11 +802,22 @@ export default function Agentes() {
                 <fieldset className="agt-proc-fieldset srv-form-span">
                   <legend>Mensagem de prospecção</legend>
                   <p className="muted agt-proc-hint">
-                    Variáveis:{' '}
-                    <code>{'{{primeiro_nome}}'}</code>,{' '}
-                    <code>{'{{nome}}'}</code> (ou{' '}
-                    <code>$primeiro_nome$</code> / <code>$nome$</code>).
+                    Clique para inserir no texto:
                   </p>
+                  <div className="agt-var-chips" role="group" aria-label="Variáveis">
+                    {PROSPECCAO_VARS.map((v) => (
+                      <button
+                        key={v.token}
+                        type="button"
+                        className="agt-var-chip"
+                        title={v.hint}
+                        onClick={() => insertProspeccaoVar(v.token)}
+                      >
+                        <code>{v.token}</code>
+                        <span className="muted">{v.hint}</span>
+                      </button>
+                    ))}
+                  </div>
                   <label className="srv-form-span">
                     Texto
                     <textarea

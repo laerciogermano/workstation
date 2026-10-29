@@ -99,7 +99,7 @@ const elements = await extract({ serial });
 | BDD e2e US/EP (runtime real) | `npm run test:e2e` |
 | **SC-30 LinkedIn** (fixture, sem device) | ver abaixo |
 | Piloto LinkedIn ao vivo | `npm run linkedin-login` |
-| LinkedIn signup (…→password→location→job title) | `npm run linkedin-signup -- --device … --firstname … --lastname … --email … --password … --job-title …` · pós-captcha: location → **Job title Compose** clica o **input abaixo** do label (`content-desc` `Job title, open screen…`), não o TextView · sheet → ADBKeyboard → sugestão → Done · `LINKEDIN_SIGNUP_CAPTCHA_WAIT_MS` (default 300s) · prints em `screenshots/linkedin-signup/<stamp>/` · **Antes → depois:** tap `label.y+80` / sem EditText; agora content-desc do input. Rollback: tap label+80 |
+| LinkedIn signup / setup (experience) | signup: … → captcha → location → **Job title** (input abaixo) + **Company** (input abaixo, default `conectmax`, 1º da lista) → Continue · setup só: `npm run linkedin-setup -- --device emulator-5556 --job-title '…' [--company conectmax]` · LatinIME no sheet Compose · prints em `screenshots/linkedin-setup/` / `linkedin-signup/` |
 | LinkedIn Search comprador → See all | `npm run login-extract-profiles` |
 | LinkedIn conectar por URL (Connect→Skip→Pending) | `npm run linkedin-connect` · API `npm run linkedin-connect-api` |
 | LinkedIn boolean por perfil + abrir | `npm run login-visit-profiles` |

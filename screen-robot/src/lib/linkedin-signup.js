@@ -9,6 +9,7 @@ import { join } from "node:path";
 import { adb, adbOk, sleep } from "./adb.js";
 import { dumpUiXml, waitForText } from "./extract.js";
 import { pasteCleanMessage } from "./linkedin-message.js";
+import { linkedinSetupJobTitle } from "./linkedin-setup.js";
 import {
   key,
   launch,
@@ -345,13 +346,20 @@ async function fillJobTitle(serial, jobTitle, steps, outDir) {
   if (!edit) throw new Error("linkedin-signup: sheet Job title sem EditText");
 
   tapElement({ serial, x: edit.x, y: edit.y });
+  await sleep(500);
+  // Compose EditText: ADBKeyboard não injeta — LatinIME + input text
+  adbOk(serial, ["shell", "ime", "set", LATIN_IME]);
   await sleep(400);
-  await pasteCleanMessage(serial, title, {
-    forceClear: true,
-    restoreIme: false,
-  });
-  await sleep(800);
+  adb(serial, [
+    "shell",
+    "sh",
+    "-c",
+    "input keyevent KEYCODE_MOVE_END; i=0; while [ $i -lt 96 ]; do input keyevent KEYCODE_DEL; i=$((i+1)); done",
+  ]);
+  typeViaAdb(serial, title);
+  await sleep(1_000);
   await shot(serial, outDir, "17-apos-job-title-typed.png");
+  steps.push(`typed-job-title:${title}`);
 
   // lista de sugestões: toca a 1ª que contenha um token do cargo
   {
@@ -509,7 +517,15 @@ export async function linkedinSignupJoinNow(opts) {
     await shot(serial, opts.outDir, "15-apos-location.png");
   }
 
-  await fillJobTitle(serial, jobTitle, steps, opts.outDir);
+  // Job title + Company (conectmax) + Continue — lib de setup (Compose)
+  const company = String(opts.company || "conectmax").trim();
+  const setup = await linkedinSetupJobTitle({
+    serial,
+    jobTitle,
+    company,
+    outDir: opts.outDir,
+  });
+  steps.push(...setup.steps);
 
-  return { steps, serial, outDir: opts.outDir || null };
+  return { steps, serial, outDir: opts.outDir || null, company };
 }

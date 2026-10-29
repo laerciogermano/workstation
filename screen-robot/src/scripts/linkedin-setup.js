@@ -6,7 +6,8 @@
  *
  * Uso (cwd: screen-robot/src):
  *   npm run linkedin-setup -- --device emulator-5556 \
- *     --job-title 'Especialista em suprimentos e itens corporativos'
+ *     --job-title 'Especialista em suprimentos e itens corporativos' \
+ *     --company conectmax
  */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
@@ -27,6 +28,7 @@ function loadConfig(path) {
 function parseArgs(argv) {
   let device = null;
   let jobTitle = null;
+  let company = "conectmax";
   let configPath = resolve(ROOT, "device.config.json");
   let noShot = false;
   for (let i = 0; i < argv.length; i++) {
@@ -35,20 +37,21 @@ function parseArgs(argv) {
       device = String(argv[++i] || "").trim();
     else if (a === "--job-title" || a === "--jobtitle")
       jobTitle = String(argv[++i] || "").trim();
+    else if (a === "--company") company = String(argv[++i] || "").trim();
     else if (a === "--config") configPath = resolve(argv[++i]);
     else if (a === "--no-shot") noShot = true;
     else if (a === "--help" || a === "-h") {
       console.log(
-        `Uso: npm run linkedin-setup -- --device emulator-5556 --job-title 'Cargo'`,
+        `Uso: npm run linkedin-setup -- --device emulator-5556 --job-title 'Cargo' [--company conectmax]`,
       );
       process.exit(0);
     }
   }
-  return { device, jobTitle, configPath, noShot };
+  return { device, jobTitle, company, configPath, noShot };
 }
 
 async function main() {
-  const { device, jobTitle, configPath, noShot } = parseArgs(
+  const { device, jobTitle, company, configPath, noShot } = parseArgs(
     process.argv.slice(2),
   );
   if (!jobTitle) throw new Error("passe --job-title");
@@ -66,8 +69,13 @@ async function main() {
     : resolve(ROOT, "screenshots", "linkedin-setup", stamp);
   if (outDir) mkdirSync(outDir, { recursive: true });
 
-  console.error(`serial=${serial} jobTitle=${jobTitle}`);
-  const result = await linkedinSetupJobTitle({ serial, jobTitle, outDir });
+  console.error(`serial=${serial} jobTitle=${jobTitle} company=${company}`);
+  const result = await linkedinSetupJobTitle({
+    serial,
+    jobTitle,
+    company,
+    outDir,
+  });
   if (outDir) {
     writeFileSync(
       join(outDir, "result.json"),

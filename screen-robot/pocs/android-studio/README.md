@@ -115,11 +115,16 @@ Neste POC (AVD), use um **device definition / skin** de aparelho de mercado no `
 | `EMU_MEMORY` | `384` | RAM guest (MB) — aumente se o host tiver folga |
 | `EMU_CORES` | `1` | CPUs guest |
 
+## AVDs por conta LinkedIn (Clozzy)
+
+Para criar outro AVD (ex. Gabriel, Alex…) **sem derrubar os que já estão rodando**, com Play image + LinkedIn: [`avds-contas-linkedin.md`](avds-contas-linkedin.md).
+
 ## Layout
 
 ```text
 screen-robot/pocs/android-studio/
 ├── README.md
+├── avds-contas-linkedin.md   # SOP 1 conta → 1 AVD + LinkedIn
 ├── .gitignore
 ├── apks/                 # local only (gitignored) — Instagram XAPK
 ├── media/

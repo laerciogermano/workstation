@@ -2,6 +2,7 @@ import {
   ChartBar,
   DownloadSimple,
   Funnel,
+  Pulse,
   Robot,
   SignOut,
   UserGear,
@@ -28,6 +29,13 @@ const LINKS = [
     href: '/agentes',
     label: 'Agentes',
     Icon: Robot,
+    permission: 'agentes:read',
+  },
+  {
+    id: 'atividades',
+    href: '/atividades',
+    label: 'Atividades',
+    Icon: Pulse,
     permission: 'agentes:read',
   },
   {

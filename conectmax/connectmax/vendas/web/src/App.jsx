@@ -20,6 +20,7 @@ const Executivo = lazy(() => import('./executivo.jsx'));
 const Mensagens = lazy(() => import('./mensagens.jsx'));
 const Funil = lazy(() => import('./funil.jsx'));
 const Agentes = lazy(() => import('./agentes.jsx'));
+const Atividades = lazy(() => import('./atividades.jsx'));
 const Usuarios = lazy(() => import('./usuarios.jsx'));
 const Gestores = lazy(() => import('./gestores.jsx'));
 
@@ -72,6 +73,9 @@ function routeFromPath(pathname = window.location.pathname) {
   }
   if (pathname === '/agentes' || pathname === '/agentes/') {
     return { name: 'agentes', profileId: null };
+  }
+  if (pathname === '/atividades' || pathname === '/atividades/') {
+    return { name: 'atividades', profileId: null };
   }
   if (pathname === '/usuarios' || pathname === '/usuarios/') {
     return { name: 'usuarios', profileId: null };
@@ -641,6 +645,20 @@ export default function App() {
         }
       >
         <Agentes />
+      </Suspense>,
+    );
+  }
+
+  if (route.name === 'atividades') {
+    return shell(
+      <Suspense
+        fallback={
+          <div className="page page-atividades">
+            <p className="muted">Carregando atividades…</p>
+          </div>
+        }
+      >
+        <Atividades />
       </Suspense>,
     );
   }

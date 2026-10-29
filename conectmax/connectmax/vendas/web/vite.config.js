@@ -70,6 +70,12 @@ export default defineConfig({
           if (req.headers.accept?.includes('text/html')) return '/index.html';
         },
       },
+      '/atividades': {
+        target: 'http://localhost:3000',
+        bypass(req) {
+          if (req.headers.accept?.includes('text/html')) return '/index.html';
+        },
+      },
       '/usuarios': {
         target: 'http://localhost:3000',
         bypass(req) {

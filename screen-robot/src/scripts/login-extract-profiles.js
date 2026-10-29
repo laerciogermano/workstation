@@ -922,10 +922,15 @@ async function main() {
   const { sense, argv } = takeSenseArg(process.argv.slice(2));
   let configPath = resolve(ROOT, "device.config.json");
   let maxProfiles = MAX_PROFILES;
+  /** Override ADB (worker multi-AVD); senão device.config. */
+  let device = null;
   /** Termo colado no Search LinkedIn (UI / API `q`). Default histórico. */
   let searchTerm = "comprador";
   for (let i = 0; i < argv.length; i++) {
     if (argv[i] === "--config") configPath = resolve(argv[++i]);
+    if (argv[i] === "--device" || argv[i] === "-s") {
+      device = String(argv[++i] ?? "").trim() || null;
+    }
     if (argv[i] === "--max-profiles" || argv[i] === "--limit" || argv[i] === "-n") {
       const n = Number(argv[++i]);
       if (Number.isFinite(n) && n >= 1) {
@@ -940,6 +945,10 @@ async function main() {
 
   console.log(`sense: ${sense} (SCREEN_ROBOT_SENSE / --sense ocr|dump)`);
   const cfg = loadConfig(configPath);
+  if (device) {
+    cfg.device = device;
+    cfg.provision = { ...(cfg.provision || {}), serial: device };
+  }
   const linkedinPkg = cfg.apps?.linkedin?.package;
   if (!linkedinPkg) throw new Error('App "linkedin" ausente em device.config.json');
 

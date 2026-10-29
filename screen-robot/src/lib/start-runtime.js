@@ -159,6 +159,8 @@ export async function startRuntime(resolved, deps = {}) {
   }
 
   if (resolved.kind === "avd" && resolved.name) {
+    // Serial explícito (worker / --device) ganha do lookup por name — multi-AVD.
+    if (serial && (await isReachable(serial))) return { serial };
     const already = lookupAvd(resolved.name);
     if (already) return { serial: already };
   } else if (resolved.kind === "redroid" && resolved.name) {

@@ -65,7 +65,9 @@ Use **chave global** no supervisor.
 
 | `type` | Status |
 |--------|--------|
-| `extrair_leads` | `login-extract-profiles` — `query` do job (`agentes.search_query`) ou env `EXTRACT_QUERY` |
+| `extrair_leads` | `login-extract-profiles --device $SERIAL` — `query` do job (`agentes.search_query`) ou env `EXTRACT_QUERY` |
+
+**Antes → depois (multi-AVD):** extract/unread usavam só `device.config` (`ConnectMax_Cam`→`emulator-5554`) mesmo com `SERIAL` do worker → passam `--device` / serial explícito; `start-runtime` prioriza serial alcançável sobre lookup por `provision.name`. **Rollback:** remova `--device` do handler; reverta o prefer-serial em `screen-robot/src/lib/start-runtime.js`.
 | `conectar` | `linkedin-connect` (URL do payload; teto diário na API) |
 | `verificar_conexoes` | `linkedin-extract-connections --n 20` (lote) → `mark-accepted`; intervalo API `AGENT_CONNECTIONS_INTERVAL_MS` (default **4 h**) |
 | `enviar_prospeccao` | `linkedin-message` (`payload.profileUrl` + `payload.message`; persiste `sent` na API) |

@@ -35,11 +35,12 @@ export async function run(job, ctx) {
 
   const args = ['run', 'login-extract-profiles', '--', '--max-profiles', maxProfiles];
   if (query) args.push('--query', query);
+  if (serial) args.push('--device', serial);
 
   const code = await spawnNpm(cwd, args, {
     ...process.env,
     PROFILES_API_URL: apiUrl,
-    ...(serial ? { ADB_SERIAL: serial, SERIAL: serial } : {}),
+    ...(serial ? { ADB_SERIAL: serial, SERIAL: serial, ANDROID_SERIAL: serial } : {}),
     ...(ctx.apiKey ? { AGENT_API_KEY: ctx.apiKey } : {}),
   });
 

@@ -11,14 +11,14 @@ const AGENT_PROCEDIMENTOS = [
     hint: 'Extrai leads (search) quando a fila está baixa',
   },
   {
-    id: 'verificar_conexoes',
-    label: 'Ver últimas conexões',
-    hint: 'Lista convites aceitos / pending→conectado',
-  },
-  {
     id: 'conectar',
     label: 'Conectar',
     hint: 'Envia convite a candidatos da fila',
+  },
+  {
+    id: 'verificar_conexoes',
+    label: 'Ver últimas conexões',
+    hint: 'Lista convites aceitos / pending→conectado',
   },
   {
     id: 'ler_mensagens',

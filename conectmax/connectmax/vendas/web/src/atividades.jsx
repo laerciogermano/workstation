@@ -13,6 +13,15 @@ const JOB_TYPE_LABEL = {
   extrair_leads: 'Buscar candidatos',
 };
 
+/** Ordem fixa da agenda na UI. */
+const SCHEDULE_ORDER = [
+  'extrair_leads',
+  'conectar',
+  'verificar_conexoes',
+  'ler_mensagens',
+  'enviar_prospeccao',
+];
+
 const JOB_STATUS_LABEL = {
   pending: 'Pendente',
   claimed: 'Em execução',
@@ -311,7 +320,14 @@ export default function Atividades() {
   }
 
   const nextConnect = peek?.nextConnect || null;
-  const schedule = Array.isArray(peek?.schedule) ? peek.schedule : [];
+  const schedule = useMemo(() => {
+    const raw = Array.isArray(peek?.schedule) ? peek.schedule : [];
+    return raw.slice().sort((a, b) => {
+      const ia = SCHEDULE_ORDER.indexOf(a.type);
+      const ib = SCHEDULE_ORDER.indexOf(b.type);
+      return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib);
+    });
+  }, [peek]);
   const pendingTotal = Array.isArray(peek?.pending)
     ? peek.pending.reduce((n, p) => n + (Number(p.count) || 0), 0)
     : 0;

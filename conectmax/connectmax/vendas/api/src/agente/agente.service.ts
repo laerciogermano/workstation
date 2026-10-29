@@ -784,19 +784,17 @@ export class AgenteService implements OnModuleInit {
         }
       : null;
 
+    /** Ordem de exibição: buscar candidatos → conectar → ver conexões → … */
+    const typeOrder: Record<AgentJobType, number> = {
+      extrair_leads: 0,
+      conectar: 1,
+      verificar_conexoes: 2,
+      ler_mensagens: 3,
+      enviar_prospeccao: 4,
+    };
     return [inbox, connections, prospeccao, conectar, leads]
       .filter((x): x is NonNullable<typeof connections> => Boolean(x))
-      .sort((a, b) => {
-        const rank = (s: string) =>
-          s === 'queued' || s === 'due' ? 0 : s === 'waiting' ? 1 : 2;
-        const ra = rank(a.state);
-        const rb = rank(b.state);
-        if (ra !== rb) return ra - rb;
-        return (
-          (a.dueInMs ?? Number.POSITIVE_INFINITY) -
-          (b.dueInMs ?? Number.POSITIVE_INFINITY)
-        );
-      });
+      .sort((a, b) => (typeOrder[a.type] ?? 99) - (typeOrder[b.type] ?? 99));
   }
 
   async peek(agentIdRaw: string): Promise<{

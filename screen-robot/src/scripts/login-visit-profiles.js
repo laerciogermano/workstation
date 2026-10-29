@@ -40,7 +40,12 @@ const SEE_ALL_QUERIES = [
   "See all",
   "Show all",
 ];
-const PEOPLE_QUERIES = ["People"];
+const PEOPLE_QUERIES = [
+  "Filter by People",
+  "People",
+  "Filter by Pessoas",
+  "Pessoas",
+];
 
 function loadConfig(path) {
   const abs = resolve(path);

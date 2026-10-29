@@ -37,6 +37,7 @@ installConnectmaxApiAuth();
 import { captureFrame } from "../lib/frame.js";
 import {
   captureProfileUrl,
+  isPeopleResultsScreen,
   leaveProfile,
 } from "../lib/linkedin-capture-profile-url.js";
 import { syncConnectionFromInviteStatus } from "../lib/linkedin-connect.js";
@@ -103,9 +104,14 @@ const SEE_ALL_QUERIES = [
   "See all",
   "Show all",
 ];
-/** Chip/tab People no topo (após See all) — não "X people" no meio da lista. */
-const PEOPLE_QUERIES = ["People"];
-const PEOPLE_CHIP_MAX_Y = 220;
+/** Chip/tab People no topo (após See all) — a11y usa "Filter by People", não só "People". */
+const PEOPLE_QUERIES = [
+  "Filter by People",
+  "People",
+  "Filter by Pessoas",
+  "Pessoas",
+];
+const PEOPLE_CHIP_MAX_Y = 240;
 const WAIT_AFTER_PEOPLE_MS = 2_000;
 
 function loadConfig(path) {
@@ -151,13 +157,15 @@ async function tapByText(serial, queries, label, opts = {}) {
 }
 
 /**
- * Chip/tab People no topo da lista (após See/Show all) — não "X people" no meio.
+ * Chip/tab People no topo (após See/Show all).
+ * Prefere "Filter by People" (dump LinkedIn); se a lista já tem cards Connect, segue.
  */
 async function tapPeopleChip(serial) {
   console.log("7) People…");
-  for (let attempt = 1; attempt <= 6; attempt++) {
+  for (let attempt = 1; attempt <= 8; attempt++) {
+    // Queries longas primeiro + minScore alto — "People" sozinho scoreia 0.37 em "Filter by People".
     const found = await findFirstByText(serial, PEOPLE_QUERIES, {
-      minScore: 0.78,
+      minScore: 0.72,
     });
     if (found && found.hit.y <= PEOPLE_CHIP_MAX_Y) {
       console.log(
@@ -167,8 +175,17 @@ async function tapPeopleChip(serial) {
       await sleep(WAIT_AFTER_PEOPLE_MS);
       return;
     }
+    try {
+      const els = await extractBySense({ serial, engine: OCR_ENGINE });
+      if (isPeopleResultsScreen(els)) {
+        console.log("   → já na lista People — segue sem chip");
+        return;
+      }
+    } catch {
+      /* dump/ocr falhou — tenta de novo */
+    }
     console.log(
-      `   People não no topo (${attempt}/6)${found ? ` y=${found.hit.y}` : ""}`,
+      `   People não no topo (${attempt}/8)${found ? ` y=${found.hit.y} text=${found.hit.text}` : ""}`,
     );
     await sleep(1_000);
   }

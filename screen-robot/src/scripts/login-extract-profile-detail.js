@@ -30,7 +30,10 @@ import {
 installConnectmaxApiAuth();
 import { captureFrame } from "../lib/frame.js";
 import { booleanQueryForProfile } from "../lib/linkedin-boolean-query.js";
-import { captureProfileUrl } from "../lib/linkedin-capture-profile-url.js";
+import {
+  captureProfileUrl,
+  isPeopleResultsScreen,
+} from "../lib/linkedin-capture-profile-url.js";
 import {
   normalizeLinkedInProfileUrl,
   syncConnectionFromInviteStatus,
@@ -71,7 +74,13 @@ const SHOW_ALL_QUERIES = [
 ];
 /** Show all fica acima do teclado — "Clear all" (Recent y≈80) não pode casar. */
 const SHOW_ALL_MIN_Y = 620;
-const PEOPLE_QUERIES = ["People"];
+const PEOPLE_QUERIES = [
+  "Filter by People",
+  "People",
+  "Filter by Pessoas",
+  "Pessoas",
+];
+const PEOPLE_CHIP_MAX_Y = 240;
 const WAIT_AFTER_PEOPLE_MS = 2_000;
 /** Resultados do dropdown de busca começam abaixo da barra. */
 const LIST_MIN_Y = 130;
@@ -416,15 +425,15 @@ function isOffSearchResults(els) {
 }
 
 /**
- * Chip/tab People no topo da lista (após Show all) — não "X people" no meio.
+ * Chip/tab People no topo (após Show all) — dump usa "Filter by People".
  */
 async function tapPeopleChip(serial) {
   console.log("   People…");
-  for (let attempt = 1; attempt <= 6; attempt++) {
+  for (let attempt = 1; attempt <= 8; attempt++) {
     const hit = await findFirstByText(serial, PEOPLE_QUERIES, {
-      minScore: 0.78,
+      minScore: 0.72,
     });
-    if (hit && hit.hit.y <= 220) {
+    if (hit && hit.hit.y <= PEOPLE_CHIP_MAX_Y) {
       console.log(
         `   → People "${hit.hit.text}" x=${hit.hit.x} y=${hit.hit.y}`,
       );
@@ -432,8 +441,17 @@ async function tapPeopleChip(serial) {
       await sleep(WAIT_AFTER_PEOPLE_MS);
       return;
     }
+    try {
+      const els = await extractBySense({ serial, engine: OCR_ENGINE });
+      if (isPeopleResultsScreen(els)) {
+        console.log("   → já na lista People — segue sem chip");
+        return;
+      }
+    } catch {
+      /* ignore */
+    }
     console.log(
-      `   People não no topo (${attempt}/6)${hit ? ` y=${hit.hit.y}` : ""}`,
+      `   People não no topo (${attempt}/8)${hit ? ` y=${hit.hit.y} text=${hit.hit.text}` : ""}`,
     );
     await sleep(1_000);
   }

@@ -217,12 +217,14 @@ Script [`scripts/login-extract-profiles.js`](scripts/login-extract-profiles.js) 
 |------|-----------|
 | Search | `Search` |
 | See/Show all | `See all results` / `Show all results` (fallback `See all` / `Show all`) |
-| People | `People` (só chip no topo, y≤220) |
+| People | `Filter by People` / `People` (chip topo, y≤240) |
 
 1. `stop` apps + `launch` → `waitForText("Search")` → tap → colar `comprador` (`pasteCleanMessage` / ADBKeyboard) → `waitForText(See/Show all)` (8s com teclado; se timeout → `KEYCODE_BACK` + wait 30s) → tap → **People** (chip topo) → tap
 2. Loop: `extractBySense` lista → **1º card novo** (menor `y`) → `GET /client-connections-linkedin/match` (score nome/cargo/cidade/empresa; **não** usa Connect/Pending da UI) → se matched, **skip** → senão **tap no perfil** → dump|ocr + URL → `GET /profile-details/by-url` → se URL já 1:1 na base, **skip save** → senão `onProfile`/POST → BACK → re-extract. Lista só descobre; **sem `profileUrl` (não abriu/Share) não salva**. Sem novos → scroll. Para em `-n` ou fim do scroll (`EXTRACT_SCROLL_STABLE`, default **4**). Exige `PROFILES_API_URL` para skip; sem API, abre todos.
 
-**Antes → depois (People no extract):** See all ia direto ao loop de cards (podia ficar em Posts/Jobs) → `tapPeopleChip` após See all (y≤220, 6 tentativas). **Rollback:** remova a chamada a `tapPeopleChip` em `login-extract-profiles.js`.
+**Antes → depois (People no extract):** See all ia direto ao loop de cards (podia ficar em Posts/Jobs) → `tapPeopleChip` após See all. **Rollback:** remova a chamada a `tapPeopleChip` em `login-extract-profiles.js`.
+
+**Antes → depois (Filter by People):** query só `People` (score 0.37 vs `Filter by People` no dump → falha) → queries `Filter by People`/`People`/`Pessoas` + se já há lista Connect, segue sem chip. **Rollback:** `PEOPLE_QUERIES = ["People"]` e throw se não achar.
 
 **Antes → depois (foto repetida):** `sense=dump` + `existsSync(*-page.png)` reusava PNG do perfil anterior quando skip save mantinha o mesmo `filePrefix` → sempre `captureFrame` antes do crop. Rollback: `if (!existsSync(cardPng)) captureFrame`.
 

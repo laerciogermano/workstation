@@ -4,6 +4,8 @@ SPA React (Vite) que lista cards paginados de `GET /profiles`, abre `/profiles/:
 
 **API:** [`../api/README.md`](../api/README.md) · **Visão:** [`../README.md`](../README.md)
 
+**Antes → depois (refresh `/agentes` → 401):** proxy `/agente` (prefixo) engolia `/agentes` e o F5 ia pra API sem JWT. Agora: regra `/agentes` (bypass HTML) **antes** de `^/agente(?:/|$)`. **Rollback:** volte `'/agente': 'http://localhost:3000'` e a entrada `/agentes` no fim do `proxy`.
+
 ---
 
 ## Antes → depois

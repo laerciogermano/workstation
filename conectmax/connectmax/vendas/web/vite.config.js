@@ -14,7 +14,18 @@ export default defineConfig({
           if (req.headers.accept?.includes('text/html')) return '/index.html';
         },
       },
-      '/agente': 'http://localhost:3000',
+      // `/agentes` (SPA+API) ANTES de `/agente` — senão o prefixo `/agente`
+      // engole `/agentes` e o refresh devolve 401 JSON da API.
+      '/agentes': {
+        target: 'http://localhost:3000',
+        bypass(req) {
+          if (req.headers.accept?.includes('text/html')) return '/index.html';
+        },
+      },
+      // só `/agente` e `/agente/...` (claim/peek/slots) — não `/agentes`
+      '^/agente(?:/|$)': {
+        target: 'http://localhost:3000',
+      },
       '/profiles': {
         target: 'http://localhost:3000',
         // SPA só em /profiles/:uuid (refresh do detalhe). Lista ?page= → API.
@@ -59,12 +70,6 @@ export default defineConfig({
         },
       },
       '/empresas': {
-        target: 'http://localhost:3000',
-        bypass(req) {
-          if (req.headers.accept?.includes('text/html')) return '/index.html';
-        },
-      },
-      '/agentes': {
         target: 'http://localhost:3000',
         bypass(req) {
           if (req.headers.accept?.includes('text/html')) return '/index.html';

@@ -397,10 +397,11 @@ async function fillJobTitle(serial, jobTitle, steps, outDir) {
  *   email: string,
  *   password: string,
  *   jobTitle?: string,
+ *   company?: string,
  *   linkedinPackage?: string,
  *   outDir?: string|null,
  * }} opts
- * @returns {Promise<{ steps: string[], serial: string, outDir: string|null }>}
+ * @returns {Promise<{ steps: string[], serial: string, outDir: string|null, company?: string }>}
  */
 export async function linkedinSignupJoinNow(opts) {
   const serial = opts.serial;
@@ -410,11 +411,13 @@ export async function linkedinSignupJoinNow(opts) {
   const email = String(opts.email || "").trim();
   const password = String(opts.password || "");
   const jobTitle = String(opts.jobTitle || "").trim();
+  const company = String(opts.company || "conectmax").trim();
   if (!firstName) throw new Error("linkedinSignupJoinNow: falta firstName");
   if (!lastName) throw new Error("linkedinSignupJoinNow: falta lastName");
   if (!email) throw new Error("linkedinSignupJoinNow: falta email");
   if (!password) throw new Error("linkedinSignupJoinNow: falta password");
   if (!jobTitle) throw new Error("linkedinSignupJoinNow: falta jobTitle");
+  if (!company) throw new Error("linkedinSignupJoinNow: falta company");
 
   const pkg = opts.linkedinPackage || "com.linkedin.android";
   const steps = [];

@@ -30,6 +30,18 @@ export class CreateAgenteDto {
   @MaxLength(120)
   nome!: string;
 
+  /** Nome de apresentação (`{{firstname}}` na prospecção). */
+  @IsOptional()
+  @IsString()
+  @MaxLength(120)
+  firstName?: string | null;
+
+  /** Sobrenome de apresentação (`{{lastname}}`). */
+  @IsOptional()
+  @IsString()
+  @MaxLength(120)
+  lastName?: string | null;
+
   /** Copia SSH/host de outro agente. */
   @IsOptional()
   @IsUUID()
@@ -213,6 +225,18 @@ export class UpdateAgenteDto {
   @MinLength(1)
   @MaxLength(120)
   nome?: string;
+
+  /** Nome de apresentação (`{{firstname}}` na prospecção). */
+  @IsOptional()
+  @IsString()
+  @MaxLength(120)
+  firstName?: string | null;
+
+  /** Sobrenome de apresentação (`{{lastname}}`). */
+  @IsOptional()
+  @IsString()
+  @MaxLength(120)
+  lastName?: string | null;
 
   @IsOptional()
   @IsString()

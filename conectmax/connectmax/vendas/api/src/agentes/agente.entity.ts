@@ -38,6 +38,14 @@ export class Agente {
   @Column({ type: 'varchar', length: 120 })
   nome!: string;
 
+  /** Nome de apresentação na prospecção (`{{firstname}}`). */
+  @Column({ name: 'first_name', type: 'varchar', length: 120, nullable: true })
+  firstName!: string | null;
+
+  /** Sobrenome de apresentação (`{{lastname}}`). */
+  @Column({ name: 'last_name', type: 'varchar', length: 120, nullable: true })
+  lastName!: string | null;
+
   // —— Host ——
 
   @Column({ name: 'host_nome', type: 'varchar', length: 200 })
@@ -182,7 +190,7 @@ export class Agente {
 
   /**
    * Template da mensagem de prospecção (`enviar_prospeccao`).
-   * Placeholders: `{{primeiro_nome}}` / `{{nome}}` (também `$primeiro_nome$` / `$nome$`).
+   * Placeholders: `{{primeiro_nome}}` / `{{firstname}}` / `{{lastname}}` / `{{nome_agente}}` (também `$…$`).
    */
   @Column({ name: 'mensagem_prospeccao', type: 'text', nullable: true })
   mensagemProspeccao!: string | null;

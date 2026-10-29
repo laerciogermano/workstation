@@ -1423,6 +1423,9 @@ export class AgenteService implements OnModuleInit {
       const name = cli?.nome ?? null;
       const message = renderProspeccaoTemplate(template, {
         nome: name,
+        firstName: agente?.firstName || null,
+        lastName: agente?.lastName || null,
+        nomeAgente: agente?.nome || null,
         empresa: cli?.empresa || li?.company || null,
         cargo: cli?.cargo || null,
         headline: li?.headline || null,

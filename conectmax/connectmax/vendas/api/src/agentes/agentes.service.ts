@@ -95,6 +95,8 @@ export class AgentesService implements OnModuleInit {
       `ALTER TABLE agentes ADD COLUMN IF NOT EXISTS procedimentos jsonb`,
       `ALTER TABLE agentes ADD COLUMN IF NOT EXISTS mensagem_prospeccao text`,
       `ALTER TABLE agentes ADD COLUMN IF NOT EXISTS search_query varchar(500)`,
+      `ALTER TABLE agentes ADD COLUMN IF NOT EXISTS first_name varchar(120)`,
+      `ALTER TABLE agentes ADD COLUMN IF NOT EXISTS last_name varchar(120)`,
       `UPDATE agentes SET host_kind = 'localhost' WHERE localhost = true AND (host_kind IS NULL OR host_kind = 'server')`,
     ];
     for (const sql of stmts) {
@@ -587,6 +589,12 @@ export class AgentesService implements OnModuleInit {
     if (dto.notas !== undefined) row.notas = dto.notas ?? null;
     if (dto.procedimentos !== undefined) {
       row.procedimentos = this.normalizeProcedimentos(dto.procedimentos);
+    }
+    if (dto.firstName !== undefined) {
+      row.firstName = String(dto.firstName ?? '').trim() || null;
+    }
+    if (dto.lastName !== undefined) {
+      row.lastName = String(dto.lastName ?? '').trim() || null;
     }
     if (dto.mensagemProspeccao !== undefined) {
       const t = String(dto.mensagemProspeccao ?? '').trim();

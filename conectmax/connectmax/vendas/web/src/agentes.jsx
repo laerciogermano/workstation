@@ -52,6 +52,18 @@ const PROSPECCAO_VARS = [
     hint: 'Nome completo',
   },
   {
+    token: '{{firstname}}',
+    hint: 'First name do agente (config)',
+  },
+  {
+    token: '{{lastname}}',
+    hint: 'Last name do agente (config)',
+  },
+  {
+    token: '{{nome_agente}}',
+    hint: 'First + last (ou rótulo do agente)',
+  },
+  {
     token: '{{empresa}}',
     hint: 'Empresa atual',
   },
@@ -83,6 +95,8 @@ const PROSPECCAO_VARS = [
 
 const EMPTY_FORM = {
   nome: '',
+  firstName: '',
+  lastName: '',
   hostNome: '',
   notas: '',
   linkedinProfileUrl: '',
@@ -298,6 +312,8 @@ export default function Agentes() {
     setForm({
       ...EMPTY_FORM,
       nome: row.nome || '',
+      firstName: row.firstName || '',
+      lastName: row.lastName || '',
       hostNome: row.hostNome || '',
       notas: row.notas || '',
       linkedinProfileUrl: row.linkedinProfileUrl || '',
@@ -394,6 +410,8 @@ export default function Agentes() {
       }
       const payload = {
         nome,
+        firstName: form.firstName.trim() || null,
+        lastName: form.lastName.trim() || null,
         hostNome: form.hostNome.trim(),
         notas: form.notas.trim() || null,
         linkedinProfileUrl: form.linkedinProfileUrl.trim() || null,
@@ -772,6 +790,22 @@ export default function Agentes() {
                   value={form.nome}
                   onChange={(e) => setField('nome', e.target.value)}
                   placeholder="agent-d"
+                />
+              </label>
+              <label>
+                First name
+                <input
+                  value={form.firstName}
+                  onChange={(e) => setField('firstName', e.target.value)}
+                  placeholder="Matheus"
+                />
+              </label>
+              <label>
+                Last name
+                <input
+                  value={form.lastName}
+                  onChange={(e) => setField('lastName', e.target.value)}
+                  placeholder="Silva"
                 />
               </label>
               <label>

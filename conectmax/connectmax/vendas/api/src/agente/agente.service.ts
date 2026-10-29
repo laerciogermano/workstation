@@ -526,12 +526,232 @@ export class AgenteService implements OnModuleInit {
     return job;
   }
 
+  /**
+   * Previsão de quando cada ciclo pode voltar (inbox / conexões / connect lote).
+   * `due` = já pode materializar; `queued` = job pending/claimed; `waiting` = cooldown;
+   * `blocked` = pré-condição (ex. sem convites pending).
+   */
+  private async buildSchedule(
+    agentId: string,
+    runtime: AgentRuntime,
+    pendingByType: Map<AgentJobType, number>,
+    opts: {
+      pendingInvites: number;
+      connectsToday: number;
+      connectSlots: number;
+      connectBatchIntervalMs: number;
+      leadThreshold: number;
+      leadsNaFila: number;
+    },
+  ): Promise<
+    {
+      type: AgentJobType;
+      state: 'due' | 'queued' | 'waiting' | 'blocked';
+      dueAt: string | null;
+      dueInMs: number | null;
+      lastAt: string | null;
+      intervalMs: number | null;
+      reason: string | null;
+    }[]
+  > {
+    const now = Date.now();
+    const iso = (d: Date | null | undefined) =>
+      d ? new Date(d).toISOString() : null;
+
+    const intervalItem = async (
+      type: AgentJobType,
+      lastAt: Date | null,
+      intervalMs: number,
+      blocked?: { reason: string } | null,
+    ) => {
+      const open =
+        (pendingByType.get(type) || 0) > 0 ||
+        !!(await this.jobs.findOne({
+          where: [
+            { agentId, type, status: 'pending' },
+            { agentId, type, status: 'claimed' },
+          ],
+        }));
+      if (open) {
+        return {
+          type,
+          state: 'queued' as const,
+          dueAt: new Date(now).toISOString(),
+          dueInMs: 0,
+          lastAt: iso(lastAt),
+          intervalMs,
+          reason: 'job na fila',
+        };
+      }
+      if (blocked) {
+        return {
+          type,
+          state: 'blocked' as const,
+          dueAt: null,
+          dueInMs: null,
+          lastAt: iso(lastAt),
+          intervalMs,
+          reason: blocked.reason,
+        };
+      }
+      const base = lastAt ? lastAt.getTime() + intervalMs : now;
+      const dueInMs = Math.max(0, base - now);
+      return {
+        type,
+        state: (dueInMs <= 0 ? 'due' : 'waiting') as 'due' | 'waiting',
+        dueAt: new Date(now + dueInMs).toISOString(),
+        dueInMs,
+        lastAt: iso(lastAt),
+        intervalMs,
+        reason:
+          dueInMs <= 0
+            ? 'intervalo vencido'
+            : `a cada ${Math.round(intervalMs / 60_000)} min`,
+      };
+    };
+
+    const inbox = await intervalItem(
+      'ler_mensagens',
+      runtime.lastInboxAt,
+      this.inboxIntervalMs(),
+    );
+
+    const connections = await intervalItem(
+      'verificar_conexoes',
+      runtime.lastConnectionsAt,
+      this.connectionsIntervalMs(),
+      opts.pendingInvites <= 0
+        ? { reason: 'sem convites pendentes (status=1)' }
+        : null,
+    );
+
+    let conectar: {
+      type: AgentJobType;
+      state: 'due' | 'queued' | 'waiting' | 'blocked';
+      dueAt: string | null;
+      dueInMs: number | null;
+      lastAt: string | null;
+      intervalMs: number | null;
+      reason: string | null;
+    };
+    const connectQueued = (pendingByType.get('conectar') || 0) > 0;
+    const lastInvite = await this.lastInvitedAtToday(agentId);
+    if (connectQueued) {
+      conectar = {
+        type: 'conectar',
+        state: 'queued',
+        dueAt: new Date(now).toISOString(),
+        dueInMs: 0,
+        lastAt: iso(lastInvite),
+        intervalMs: opts.connectBatchIntervalMs,
+        reason: 'job na fila',
+      };
+    } else if (opts.connectSlots > 0) {
+      conectar = {
+        type: 'conectar',
+        state: 'due',
+        dueAt: new Date(now).toISOString(),
+        dueInMs: 0,
+        lastAt: iso(lastInvite),
+        intervalMs: opts.connectBatchIntervalMs,
+        reason: `${opts.connectSlots} slot(s) de connect disponíveis`,
+      };
+    } else if (
+      opts.connectsToday >= this.connectDailyLimit()
+    ) {
+      conectar = {
+        type: 'conectar',
+        state: 'blocked',
+        dueAt: null,
+        dueInMs: null,
+        lastAt: iso(lastInvite),
+        intervalMs: opts.connectBatchIntervalMs,
+        reason: `limite diário ${opts.connectsToday}/${this.connectDailyLimit()}`,
+      };
+    } else {
+      const elapsed = lastInvite
+        ? now - lastInvite.getTime()
+        : opts.connectBatchIntervalMs;
+      const dueInMs = Math.max(0, opts.connectBatchIntervalMs - elapsed);
+      conectar = {
+        type: 'conectar',
+        state: dueInMs <= 0 ? 'due' : 'waiting',
+        dueAt: new Date(now + dueInMs).toISOString(),
+        dueInMs,
+        lastAt: iso(lastInvite),
+        intervalMs: opts.connectBatchIntervalMs,
+        reason:
+          dueInMs <= 0
+            ? 'cooldown do lote encerrado'
+            : `cooldown entre lotes (${Math.round(opts.connectBatchIntervalMs / 60_000)} min)`,
+      };
+    }
+
+    const prospeccaoQueued = (pendingByType.get('enviar_prospeccao') || 0) > 0;
+    const prospeccao = {
+      type: 'enviar_prospeccao' as AgentJobType,
+      state: (prospeccaoQueued ? 'queued' : 'blocked') as
+        | 'queued'
+        | 'blocked',
+      dueAt: prospeccaoQueued ? new Date(now).toISOString() : null,
+      dueInMs: prospeccaoQueued ? 0 : null,
+      lastAt: null,
+      intervalMs: null,
+      reason: prospeccaoQueued
+        ? 'job na fila'
+        : 'só quando há conectado sem mensagem enviada',
+    };
+
+    const leadsQueued = (pendingByType.get('extrair_leads') || 0) > 0;
+    const leads = {
+      type: 'extrair_leads' as AgentJobType,
+      state: (leadsQueued
+        ? 'queued'
+        : opts.leadsNaFila < opts.leadThreshold
+          ? 'due'
+          : 'blocked') as 'queued' | 'due' | 'blocked',
+      dueAt:
+        leadsQueued || opts.leadsNaFila < opts.leadThreshold
+          ? new Date(now).toISOString()
+          : null,
+      dueInMs:
+        leadsQueued || opts.leadsNaFila < opts.leadThreshold ? 0 : null,
+      lastAt: null,
+      intervalMs: null,
+      reason: leadsQueued
+        ? 'job na fila'
+        : opts.leadsNaFila < opts.leadThreshold
+          ? `fila baixa (${opts.leadsNaFila}/${opts.leadThreshold})`
+          : `fila ok (${opts.leadsNaFila}/${opts.leadThreshold})`,
+    };
+
+    return [inbox, connections, prospeccao, conectar, leads].sort((a, b) => {
+      const rank = (s: string) =>
+        s === 'queued' || s === 'due' ? 0 : s === 'waiting' ? 1 : 2;
+      const ra = rank(a.state);
+      const rb = rank(b.state);
+      if (ra !== rb) return ra - rb;
+      return (a.dueInMs ?? Number.POSITIVE_INFINITY) -
+        (b.dueInMs ?? Number.POSITIVE_INFINITY);
+    });
+  }
+
   async peek(agentIdRaw: string): Promise<{
     agentId: string;
     runtime: AgentRuntime;
     online: boolean;
     pending: { type: AgentJobType; count: number }[];
     next: AgentJob | null;
+    /** Agenda prevista (intervalos / cooldown / bloqueios). */
+    schedule: {
+      type: AgentJobType;
+      state: 'due' | 'queued' | 'waiting' | 'blocked';
+      dueAt: string | null;
+      dueInMs: number | null;
+      lastAt: string | null;
+      intervalMs: number | null;
+      reason: string | null;
+    }[];
     /** Próximo (ou atual) conectar = 1º card de Candidatos. */
     nextConnect: {
       profileId: string | null;
@@ -542,6 +762,7 @@ export class AgenteService implements OnModuleInit {
     } | null;
     thresholds: {
       inboxIntervalMs: number;
+      connectionsIntervalMs: number;
       leadThreshold: number;
       leadsNaFila: number;
       connectDailyLimit: number;
@@ -564,6 +785,20 @@ export class AgenteService implements OnModuleInit {
       .andWhere('j.status = :st', { st: 'pending' })
       .groupBy('j.type')
       .getRawMany<{ type: AgentJobType; count: string }>();
+
+    const openCounts = await this.jobs
+      .createQueryBuilder('j')
+      .select('j.type', 'type')
+      .addSelect('COUNT(*)', 'count')
+      .where('j.agentId = :agentId', { agentId })
+      .andWhere('j.status IN (:...sts)', { sts: ['pending', 'claimed'] })
+      .groupBy('j.type')
+      .getRawMany<{ type: AgentJobType; count: string }>();
+
+    const pendingByType = new Map<AgentJobType, number>();
+    for (const c of openCounts) {
+      pendingByType.set(c.type, Number(c.count) || 0);
+    }
 
     const pending = (
       [
@@ -606,6 +841,21 @@ export class AgenteService implements OnModuleInit {
     const leadsNaFila = await this.countLeadsCandidatos(agentId);
     const connectsToday = await this.countInvitedToday(agentId);
     const batchNow = await this.connectSlotsNow(agentId, connectsToday);
+    const pendingInvites = await this.connections.count({
+      where: {
+        agentId,
+        status: ClientConnectionLinkedinStatus.PENDING,
+      },
+    });
+
+    const schedule = await this.buildSchedule(agentId, runtime, pendingByType, {
+      pendingInvites,
+      connectsToday,
+      connectSlots: batchNow.slots,
+      connectBatchIntervalMs: batchNow.batchIntervalMs,
+      leadThreshold: this.leadThreshold(),
+      leadsNaFila,
+    });
 
     return {
       agentId,
@@ -613,9 +863,11 @@ export class AgenteService implements OnModuleInit {
       online: this.isOnline(runtime),
       pending,
       next,
+      schedule,
       nextConnect,
       thresholds: {
         inboxIntervalMs: this.inboxIntervalMs(),
+        connectionsIntervalMs: this.connectionsIntervalMs(),
         leadThreshold: this.leadThreshold(),
         leadsNaFila,
         connectDailyLimit: this.connectDailyLimit(),

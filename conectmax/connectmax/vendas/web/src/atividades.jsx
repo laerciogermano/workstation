@@ -70,6 +70,32 @@ function jobPayloadSummary(payload) {
   return null;
 }
 
+function formatDueIn(ms) {
+  if (ms == null || !Number.isFinite(ms)) return null;
+  if (ms <= 0) return 'agora';
+  const totalMin = Math.ceil(ms / 60_000);
+  if (totalMin < 60) return `em ${totalMin} min`;
+  const h = Math.floor(totalMin / 60);
+  const m = totalMin % 60;
+  if (m === 0) return `em ${h} h`;
+  return `em ${h} h ${m} min`;
+}
+
+function scheduleStateLabel(state) {
+  if (state === 'queued') return 'Na fila';
+  if (state === 'due') return 'Pode rodar';
+  if (state === 'waiting') return 'Agendada';
+  if (state === 'blocked') return 'Bloqueada';
+  return state || '—';
+}
+
+function scheduleStateClass(state) {
+  if (state === 'queued' || state === 'due') return 'agt-job-claimed';
+  if (state === 'waiting') return 'agt-job-pending';
+  if (state === 'blocked') return 'agt-job-cancelled';
+  return '';
+}
+
 function errMsg(json, res) {
   const m = json?.message;
   if (Array.isArray(m)) return m.join(', ');
@@ -251,10 +277,15 @@ export default function Atividades() {
   }
 
   const nextJob = peek?.next || null;
+  const schedule = Array.isArray(peek?.schedule) ? peek.schedule : [];
   const pendingTotal = Array.isArray(peek?.pending)
     ? peek.pending.reduce((n, p) => n + (Number(p.count) || 0), 0)
     : 0;
   const nextSummary = nextJob ? jobPayloadSummary(nextJob.payload) : null;
+  const nextSoon =
+    schedule.find((s) => s.state === 'queued' || s.state === 'due') ||
+    schedule.find((s) => s.state === 'waiting') ||
+    null;
 
   return (
     <div className="page page-atividades">
@@ -309,9 +340,44 @@ export default function Atividades() {
 
       {agentId && (
         <section className="agt-next" aria-label="Próxima atividade">
-          <div className="agt-next-label">Próxima prevista</div>
-          {nextJob ? (
-            <div className="agt-next-body">
+          <div className="agt-next-head">
+            <div className="agt-next-label">Próxima prevista</div>
+            <div className="agt-next-meta muted">
+              {peek?.online != null
+                ? peek.online
+                  ? 'agente online'
+                  : 'agente offline'
+                : null}
+              {pendingTotal > 0 ? ` · ${pendingTotal} na fila` : ''}
+            </div>
+          </div>
+
+          {nextSoon ? (
+            <div className="agt-next-body agt-next-highlight">
+              <div className="agt-timeline-head">
+                <span className="agt-timeline-type">
+                  {jobTypeLabel(nextSoon.type)}
+                </span>
+                <span className={`tag ${scheduleStateClass(nextSoon.state)}`}>
+                  {scheduleStateLabel(nextSoon.state)}
+                </span>
+                {formatDueIn(nextSoon.dueInMs) ? (
+                  <strong className="agt-next-when">
+                    {formatDueIn(nextSoon.dueInMs)}
+                  </strong>
+                ) : null}
+              </div>
+              {nextSoon.reason ? (
+                <p className="agt-timeline-summary muted">{nextSoon.reason}</p>
+              ) : null}
+              {nextSoon.dueAt && nextSoon.dueInMs > 0 ? (
+                <p className="agt-timeline-meta muted">
+                  previsto {formatWhen(nextSoon.dueAt)}
+                </p>
+              ) : null}
+            </div>
+          ) : nextJob ? (
+            <div className="agt-next-body agt-next-highlight">
               <div className="agt-timeline-head">
                 <span className="agt-timeline-type">
                   {jobTypeLabel(nextJob.type)}
@@ -319,36 +385,41 @@ export default function Atividades() {
                 <span className={`tag ${jobStatusClass(nextJob.status)}`}>
                   {jobStatusLabel(nextJob.status)}
                 </span>
-                {peek?.online != null ? (
-                  <span
-                    className={`tag ${
-                      peek.online ? 'agt-job-done' : 'agt-job-pending'
-                    }`}
-                  >
-                    {peek.online ? 'online' : 'offline'}
-                  </span>
-                ) : null}
-                {pendingTotal > 0 ? (
-                  <span className="muted">
-                    {pendingTotal} pending na fila
-                  </span>
-                ) : null}
+                <strong className="agt-next-when">agora</strong>
               </div>
               {nextSummary ? (
                 <p className="agt-timeline-summary muted">{nextSummary}</p>
               ) : null}
-              <p className="agt-timeline-meta muted">
-                prioridade {nextJob.priority ?? '—'}
-                {nextJob.createdAt
-                  ? ` · criado ${formatWhen(nextJob.createdAt) || '—'}`
-                  : ''}
-              </p>
             </div>
           ) : (
             <p className="muted agt-next-empty">
-              Nenhuma atividade pendente na fila
-              {peek?.online === false ? ' · agente offline' : ''}.
+              Nenhuma atividade prevista no momento.
             </p>
+          )}
+
+          {schedule.length > 0 && (
+            <ul className="agt-schedule">
+              {schedule.map((item) => (
+                <li key={item.type} className="agt-schedule-item">
+                  <div className="agt-schedule-main">
+                    <span className="agt-schedule-type">
+                      {jobTypeLabel(item.type)}
+                    </span>
+                    <span className={`tag ${scheduleStateClass(item.state)}`}>
+                      {scheduleStateLabel(item.state)}
+                    </span>
+                  </div>
+                  <div className="agt-schedule-when">
+                    {item.state === 'blocked'
+                      ? item.reason || '—'
+                      : formatDueIn(item.dueInMs) || item.reason || '—'}
+                  </div>
+                  {item.state !== 'blocked' && item.reason ? (
+                    <p className="agt-timeline-meta muted">{item.reason}</p>
+                  ) : null}
+                </li>
+              ))}
+            </ul>
           )}
         </section>
       )}

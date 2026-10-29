@@ -172,7 +172,9 @@ Claim: `FOR UPDATE SKIP LOCKED`. Tabelas: `agent_jobs`, `agent_runtime`, `host_c
 | `POST /agente/:agentId/claim` | Materializa filas + pega 1 job |
 | `POST /agente/:agentId/enroll` | Auto-cadastro magro do worker (cria `agentes` se faltar; atualiza device; heartbeat). Create: `AGENT_API_KEY` global. Opcional `issueApiKey` (default true no create) |
 | `POST /agente/:agentId/heartbeat` | Presença do worker (`hostInstanceId`, `workerVersion`) → `online` |
-| `GET /agente/:agentId/peek` | Contagens pending + próximo + `online` |
+| `GET /agente/:agentId/peek` | Contagens pending + próximo + `schedule[]` (due/queued/waiting/blocked + `dueInMs`) + `online` |
+
+**Antes → depois (peek schedule):** só `next`/pending → `schedule` com previsão (ex. `verificar_conexoes` em 30 min via `AGENT_CONNECTIONS_INTERVAL_MS` + `lastConnectionsAt`); `thresholds.connectionsIntervalMs`. **Rollback:** ignore `schedule` / campo novo no threshold.
 | `GET /agente/:agentId/jobs` | Histórico (`status`, `limit`) |
 | `GET /agente/:agentId/runtime` | idle/busy, lastInboxAt, `online` |
 | `POST /agente/:agentId/jobs/:jobId/complete` | Marca done (+ `lastInboxAt` / `lastConnectionsAt` conforme o tipo) |

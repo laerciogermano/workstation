@@ -7,10 +7,10 @@ const AGENT_KEY = 'cx-atividades-agent';
 
 const JOB_TYPE_LABEL = {
   ler_mensagens: 'Ler mensagens',
-  verificar_conexoes: 'Verificar conexões',
+  verificar_conexoes: 'Ver últimas conexões',
   enviar_prospeccao: 'Enviar prospecção',
   conectar: 'Conectar',
-  extrair_leads: 'Extrair leads',
+  extrair_leads: 'Buscar candidatos',
 };
 
 const JOB_STATUS_LABEL = {

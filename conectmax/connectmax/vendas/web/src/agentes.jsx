@@ -6,9 +6,9 @@ const SLOTS_URL = import.meta.env.VITE_AGENTE_SLOTS_URL ?? '/agente/slots';
 
 const AGENT_PROCEDIMENTOS = [
   {
-    id: 'ler_mensagens',
-    label: 'Ler mensagens',
-    hint: 'Checa inbox não lida e salva no CRM',
+    id: 'extrair_leads',
+    label: 'Buscar candidatos',
+    hint: 'Extrai leads (search) quando a fila está baixa',
   },
   {
     id: 'verificar_conexoes',
@@ -16,19 +16,19 @@ const AGENT_PROCEDIMENTOS = [
     hint: 'Lista convites aceitos / pending→conectado',
   },
   {
-    id: 'enviar_prospeccao',
-    label: 'Enviar prospecção',
-    hint: 'Mensagem para conexões ainda sem abordagem',
-  },
-  {
     id: 'conectar',
     label: 'Conectar',
     hint: 'Envia convite a candidatos da fila',
   },
   {
-    id: 'extrair_leads',
-    label: 'Buscar candidatos',
-    hint: 'Extrai leads (search) quando a fila está baixa',
+    id: 'ler_mensagens',
+    label: 'Ler mensagens',
+    hint: 'Checa inbox não lida e salva no CRM',
+  },
+  {
+    id: 'enviar_prospeccao',
+    label: 'Enviar prospecção',
+    hint: 'Mensagem para conexões ainda sem abordagem',
   },
 ];
 
@@ -753,6 +753,28 @@ export default function Agentes() {
               <p className="muted srv-form-span">
                 RAM e disco vêm do worker no enroll (não editáveis aqui).
               </p>
+              <fieldset className="agt-proc-fieldset srv-form-span">
+                <legend>Procedimentos</legend>
+                <p className="muted agt-proc-hint">
+                  Marque o que este agente pode fazer — ex. Buscar candidatos,
+                  Ver últimas conexões, Conectar.
+                </p>
+                <div className="agt-proc-list">
+                  {AGENT_PROCEDIMENTOS.map((p) => (
+                    <label key={p.id} className="srv-check agt-proc-item">
+                      <input
+                        type="checkbox"
+                        checked={(form.procedimentos || []).includes(p.id)}
+                        onChange={() => toggleProcedimento(p.id)}
+                      />
+                      <span>
+                        <span className="agt-proc-label">{p.label}</span>
+                        <span className="muted agt-proc-desc">{p.hint}</span>
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              </fieldset>
               <p className="muted srv-form-span">LinkedIn</p>
               <label>
                 Nome perfil
@@ -794,28 +816,6 @@ export default function Agentes() {
                   onChange={(e) => setField('notas', e.target.value)}
                 />
               </label>
-              <fieldset className="agt-proc-fieldset srv-form-span">
-                <legend>Procedimentos</legend>
-                <p className="muted agt-proc-hint">
-                  Quais ciclos este agente pode executar (buscar candidatos,
-                  ver conexões, conectar, etc.).
-                </p>
-                <div className="agt-proc-list">
-                  {AGENT_PROCEDIMENTOS.map((p) => (
-                    <label key={p.id} className="srv-check agt-proc-item">
-                      <input
-                        type="checkbox"
-                        checked={(form.procedimentos || []).includes(p.id)}
-                        onChange={() => toggleProcedimento(p.id)}
-                      />
-                      <span>
-                        <span className="agt-proc-label">{p.label}</span>
-                        <span className="muted agt-proc-desc">{p.hint}</span>
-                      </span>
-                    </label>
-                  ))}
-                </div>
-              </fieldset>
               {formNote && <p className="error srv-form-span">{formNote}</p>}
               <div className="srv-form-actions srv-form-span">
                 <button

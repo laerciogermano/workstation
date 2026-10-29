@@ -173,7 +173,7 @@ export class AgenteService implements OnModuleInit {
    * Subconjunto de tipos a materializar/claimar.
    * Env `AGENT_MATERIALIZE_TYPES=verificar_conexoes,conectar` (vazio = todos).
    * Flags soltas (quando a lista está vazia):
-   * - `AGENT_ENVIAR_PROSPECCAO_ENABLED=0` desliga AC-02
+   * - `AGENT_ENVIAR_PROSPECCAO_ENABLED=0` desliga AC-02 (default **0** por enquanto)
    * - `AGENT_LER_MENSAGENS_ENABLED=0` desliga AC-01 (default **0** por enquanto)
    */
   private materializeTypeSet(): Set<AgentJobType> | null {
@@ -201,7 +201,7 @@ export class AgenteService implements OnModuleInit {
     const set = this.materializeTypeSet();
     if (set) return set.has(type);
     if (type === 'enviar_prospeccao') {
-      return this.envFlagEnabled('AGENT_ENVIAR_PROSPECCAO_ENABLED', '1');
+      return this.envFlagEnabled('AGENT_ENVIAR_PROSPECCAO_ENABLED', '0');
     }
     if (type === 'ler_mensagens') {
       return this.envFlagEnabled('AGENT_LER_MENSAGENS_ENABLED', '0');
@@ -697,19 +697,21 @@ export class AgenteService implements OnModuleInit {
     }
 
     const prospeccaoQueued = (pendingByType.get('enviar_prospeccao') || 0) > 0;
-    const prospeccao = {
-      type: 'enviar_prospeccao' as AgentJobType,
-      state: (prospeccaoQueued ? 'queued' : 'blocked') as
-        | 'queued'
-        | 'blocked',
-      dueAt: prospeccaoQueued ? new Date(now).toISOString() : null,
-      dueInMs: prospeccaoQueued ? 0 : null,
-      lastAt: null,
-      intervalMs: null,
-      reason: prospeccaoQueued
-        ? 'job na fila'
-        : 'só quando há conectado sem mensagem enviada',
-    };
+    const prospeccao = this.jobTypeEnabled('enviar_prospeccao')
+      ? {
+          type: 'enviar_prospeccao' as AgentJobType,
+          state: (prospeccaoQueued ? 'queued' : 'blocked') as
+            | 'queued'
+            | 'blocked',
+          dueAt: prospeccaoQueued ? new Date(now).toISOString() : null,
+          dueInMs: prospeccaoQueued ? 0 : null,
+          lastAt: null,
+          intervalMs: null,
+          reason: prospeccaoQueued
+            ? 'job na fila'
+            : 'só quando há conectado sem mensagem enviada',
+        }
+      : null;
 
     const leadsQueued = (pendingByType.get('extrair_leads') || 0) > 0;
     const leads = {

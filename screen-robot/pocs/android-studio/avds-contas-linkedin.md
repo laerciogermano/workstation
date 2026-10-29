@@ -10,8 +10,8 @@ Credenciais das caixas: [`credenciais.md`](../../../../credenciais.md) (§ Caixa
 |-------|------------------|------------------------|-------|
 | (lab ConnectMax) | `ConnectMax_Cam` | `5554` → `emulator-5554` | baseline / fonte de APKs |
 | Jacqueline Lima | `Jacqueline_Lima` | `5556` → `emulator-5556` | |
-| Pamela Gomes | `Pamela_Gomes` | `5558` → `emulator-5558` | |
-| Gabriel Manfred | *(próximo)* | `5560` | |
+| Pamela Gomes | `Pamela_Gomes` | `5558` → `emulator-5558` | LinkedIn **restricted** (2026-10-29) |
+| Gabriel Manfred | `Gabriel_Manfred` | `5560` → `emulator-5560` | LinkedIn+ADBKeyboard ok; signup parado em SMS (`Just a quick security check`) — falta nº |
 | Alex Romão | | `5562` | |
 | Fernando Breda | | `5564` | |
 | Roberta Machado | | `5566` | |

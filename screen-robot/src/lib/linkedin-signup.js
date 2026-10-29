@@ -6,11 +6,10 @@
 import { mkdirSync } from "node:fs";
 import { join } from "node:path";
 
-import { adb, sleep } from "./adb.js";
+import { sleep } from "./adb.js";
 import { dumpUiXml, waitForText } from "./extract.js";
 import { pasteCleanMessage } from "./linkedin-message.js";
 import {
-  key,
   launch,
   screenshot,
   stopAllApps,
@@ -93,23 +92,22 @@ async function waitForContinue(serial) {
   return waitForResource(serial, RID_CONTINUE, "Continue");
 }
 
-/** @param {string} serial */
-function isImeShown(serial) {
-  const out = String(
-    adb(serial, ["shell", "dumpsys", "input_method"]).stdout || "",
-  );
-  return /mInputShown=true/.test(out) || /mIsInputViewShown=true/.test(out);
-}
-
 /**
- * Esconde o teclado só se estiver visível — BACK sem IME volta na jornada.
+ * Tira o foco do EditText sem KEYCODE_BACK (BACK sai do Join now).
  * @param {string} serial
  */
 async function dismissKeyboard(serial) {
   try {
-    if (!isImeShown(serial)) return;
-    key({ serial, code: "KEYCODE_BACK" });
-    await sleep(600);
+    const xml = dumpUiXml(serial);
+    const title =
+      findNodeByText(xml, "Add your name") ||
+      findNodeByText(xml, "Create account") ||
+      findNodeByText(xml, "Add your email") ||
+      findNodeByText(xml, "Add a password") ||
+      findNodeByText(xml, "Add your location");
+    if (title) tapElement({ serial, x: title.x, y: title.y });
+    else tapElement({ serial, x: 270, y: 120 });
+    await sleep(400);
   } catch {
     /* ignore */
   }
@@ -160,7 +158,11 @@ async function fillFieldExact(serial, resourceIdSuffix, value, label, opts = {})
     const field = await waitForResource(serial, resourceIdSuffix, label);
     tapElement({ serial, x: field.x, y: field.y });
     await sleep(700);
-    await pasteCleanMessage(serial, want, { forceClear: true });
+    // restoreIme:false — LatinIME cobria Last name; BACK pra fechar saía do form
+    await pasteCleanMessage(serial, want, {
+      forceClear: true,
+      restoreIme: false,
+    });
     await sleep(500);
     await dismissKeyboard(serial);
     if (opts.skipVerify) return field;
@@ -273,8 +275,10 @@ async function fillJobTitle(serial, jobTitle, steps, outDir) {
 
   tapElement({ serial, x: edit.x, y: edit.y });
   await sleep(400);
-  // frase inteira via ADBKeyboard — `input text` truncava / LatinIME alterava
-  await pasteCleanMessage(serial, title, { forceClear: true });
+  await pasteCleanMessage(serial, title, {
+    forceClear: true,
+    restoreIme: false,
+  });
   await sleep(600);
   await shot(serial, outDir, "17-apos-job-title-typed.png");
 

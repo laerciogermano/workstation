@@ -120,7 +120,8 @@ export async function pasteCleanMessage(serial, text, opts = {}) {
     }
     await sleep(400);
   } finally {
-    restoreIme(serial, prevIme);
+    // signup: manter ADBKeyboard evita LatinIME cobrir o próximo campo
+    if (opts.restoreIme !== false) restoreIme(serial, prevIme);
   }
 }
 

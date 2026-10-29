@@ -1,16 +1,18 @@
 /**
  * Template de mensagem de prospecção.
  * Placeholders: `{{chave}}` ou `$chave$` (case-insensitive).
+ *
+ * Nomes: cliente = `primeiro_nome` + `sobrenome`; agente = `firstname` + `lastname`.
+ * (`nome` / `nome_agente` ainda resolvem por compat, mas não entram na UI.)
  */
 export const DEFAULT_MENSAGEM_PROSPECCAO =
   'Oi {{primeiro_nome}}, tudo bem?';
 
 export const PROSPECCAO_VAR_KEYS = [
   'primeiro_nome',
-  'nome',
+  'sobrenome',
   'firstname',
   'lastname',
-  'nome_agente',
   'empresa',
   'cargo',
   'headline',
@@ -20,6 +22,9 @@ export const PROSPECCAO_VAR_KEYS = [
   'profile_url',
 ] as const;
 
+/** Chaves legadas ainda substituídas se aparecerem em templates antigos. */
+const PROSPECCAO_LEGACY_KEYS = ['nome', 'nome_agente'] as const;
+
 export type ProspeccaoVarKey = (typeof PROSPECCAO_VAR_KEYS)[number];
 
 export type ProspeccaoTemplateVars = {
@@ -28,7 +33,7 @@ export type ProspeccaoTemplateVars = {
   firstName?: string | null;
   /** Last name do agente (`agentes.last_name`). */
   lastName?: string | null;
-  /** Fallback de nome completo do agente (`agentes.nome`) se first+last vazios. */
+  /** Fallback se first/last do agente vazios (`agentes.nome`). */
   nomeAgente?: string | null;
   empresa?: string | null;
   cargo?: string | null;
@@ -45,9 +50,18 @@ export function primeiroNomeFrom(nome: string | null | undefined): string {
   return full.split(/\s+/)[0] || '';
 }
 
+export function sobrenomeFrom(nome: string | null | undefined): string {
+  const parts = String(nome || '')
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
+  if (parts.length < 2) return '';
+  return parts.slice(1).join(' ');
+}
+
 export function buildProspeccaoVars(
   vars: ProspeccaoTemplateVars,
-): Record<ProspeccaoVarKey, string> {
+): Record<ProspeccaoVarKey | (typeof PROSPECCAO_LEGACY_KEYS)[number], string> {
   const nome = String(vars.nome || '').trim();
   const firstName = String(vars.firstName || '').trim();
   const lastName = String(vars.lastName || '').trim();
@@ -56,9 +70,10 @@ export function buildProspeccaoVars(
     [firstName, lastName].filter(Boolean).join(' ') || nomeAgenteFallback;
   return {
     primeiro_nome: primeiroNomeFrom(nome),
-    nome,
+    sobrenome: sobrenomeFrom(nome),
     firstname: firstName || primeiroNomeFrom(nomeAgenteFallback),
-    lastname: lastName,
+    lastname: lastName || sobrenomeFrom(nomeAgenteFallback),
+    nome,
     nome_agente: nomeAgente,
     empresa: String(vars.empresa || '').trim(),
     cargo: String(vars.cargo || '').trim(),
@@ -78,7 +93,8 @@ export function renderProspeccaoTemplate(
   const raw = String(template || '').trim() || DEFAULT_MENSAGEM_PROSPECCAO;
   const map = buildProspeccaoVars(vars);
   let out = raw;
-  for (const key of PROSPECCAO_VAR_KEYS) {
+  const keys = [...PROSPECCAO_VAR_KEYS, ...PROSPECCAO_LEGACY_KEYS];
+  for (const key of keys) {
     const value = map[key];
     const reBrace = new RegExp(`\\{\\{\\s*${key}\\s*\\}\\}`, 'gi');
     const reDollar = new RegExp(`\\$${key}\\$`, 'gi');

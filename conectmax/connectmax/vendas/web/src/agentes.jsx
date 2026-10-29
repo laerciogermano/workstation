@@ -49,11 +49,11 @@ const PROSPECCAO_VAR_GROUPS = [
     vars: [
       {
         token: '{{primeiro_nome}}',
-        hint: '1ª palavra do nome (ex.: Maria)',
+        hint: 'First name do lead (ex.: Maria)',
       },
       {
-        token: '{{nome}}',
-        hint: 'Nome completo',
+        token: '{{sobrenome}}',
+        hint: 'Last name do lead',
       },
       {
         token: '{{empresa}}',
@@ -96,10 +96,6 @@ const PROSPECCAO_VAR_GROUPS = [
       {
         token: '{{lastname}}',
         hint: 'Last name (config do agente)',
-      },
-      {
-        token: '{{nome_agente}}',
-        hint: 'First + last (ou rótulo)',
       },
     ],
   },

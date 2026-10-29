@@ -170,7 +170,7 @@ export class CreateAgenteDto {
   @IsIn(AGENT_PROCEDIMENTOS, { each: true })
   procedimentos?: (typeof AGENT_PROCEDIMENTOS)[number][] | null;
 
-  /** Template da mensagem de prospecção (`{{primeiro_nome}}`, `{{nome}}`). */
+  /** Template da mensagem de prospecção (`{{primeiro_nome}}`, `{{firstname}}`, …). */
   @IsOptional()
   @IsString()
   @MaxLength(4000)
@@ -326,7 +326,7 @@ export class UpdateAgenteDto {
   @IsIn(AGENT_PROCEDIMENTOS, { each: true })
   procedimentos?: (typeof AGENT_PROCEDIMENTOS)[number][] | null;
 
-  /** Template da mensagem de prospecção (`{{primeiro_nome}}`, `{{nome}}`). */
+  /** Template da mensagem de prospecção (`{{primeiro_nome}}`, `{{firstname}}`, …). */
   @IsOptional()
   @IsString()
   @MaxLength(4000)

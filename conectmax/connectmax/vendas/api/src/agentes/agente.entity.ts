@@ -190,7 +190,7 @@ export class Agente {
 
   /**
    * Template da mensagem de prospecção (`enviar_prospeccao`).
-   * Placeholders: `{{primeiro_nome}}` / `{{firstname}}` / `{{lastname}}` / `{{nome_agente}}` (também `$…$`).
+   * Placeholders: cliente `{{primeiro_nome}}`/`{{sobrenome}}`; agente `{{firstname}}`/`{{lastname}}` (também `$…$`).
    */
   @Column({ name: 'mensagem_prospeccao', type: 'text', nullable: true })
   mensagemProspeccao!: string | null;

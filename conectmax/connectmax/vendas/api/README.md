@@ -179,6 +179,8 @@ Claim: `FOR UPDATE SKIP LOCKED`. Tabelas: `agent_jobs`, `agent_runtime`, `host_c
 | `GET /agente/:agentId/peek` | Contagens pending + próximo + `schedule[]` (due/queued/waiting/blocked + `dueInMs`) + `online` |
 
 **Antes → depois (peek schedule):** só `next`/pending → `schedule` com previsão (ex. `verificar_conexoes` em 30 min via `AGENT_CONNECTIONS_INTERVAL_MS` + `lastConnectionsAt`); `thresholds.connectionsIntervalMs`. **Rollback:** ignore `schedule` / campo novo no threshold.
+
+**Antes → depois (histórico de jobs cíclicos):** `insertJob` **apagava** done/failed com a mesma `dedupe_key` (ex. `verificar_conexoes:<id>:due`) → só restava a última execução. Agora: `dedupe_key = null` no complete/fail/cancel e no reuso da chave (sem `DELETE`). **Rollback:** volte o `delete()` em `insertJob` e não zere `dedupeKey` no complete.
 | `GET /agente/:agentId/jobs` | Histórico (`status`, `limit`) |
 | `GET /agente/:agentId/runtime` | idle/busy, lastInboxAt, `online` |
 | `POST /agente/:agentId/jobs/:jobId/complete` | Marca done (+ `lastInboxAt` / `lastConnectionsAt` conforme o tipo) |

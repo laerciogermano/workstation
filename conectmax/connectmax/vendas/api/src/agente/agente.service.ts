@@ -219,6 +219,7 @@ export class AgenteService implements OnModuleInit {
           status: 'cancelled',
           lastError: `tipo desligado (AGENT_MATERIALIZE_TYPES / flag)`,
           completedAt: new Date(),
+          dedupeKey: null,
         },
       );
     }
@@ -487,6 +488,8 @@ export class AgenteService implements OnModuleInit {
     job.status = 'done';
     job.completedAt = new Date();
     job.lastError = null;
+    // libera unique parcial — mantém o histórico (não apaga o done no próximo ciclo)
+    job.dedupeKey = null;
     if (opts?.result) {
       job.payload = { ...(job.payload || {}), result: opts.result };
     }
@@ -517,6 +520,7 @@ export class AgenteService implements OnModuleInit {
     job.status = 'failed';
     job.completedAt = new Date();
     job.lastError = String(error || 'erro').slice(0, 2000);
+    job.dedupeKey = null;
     await this.jobs.save(job);
 
     const runtime = await this.ensureRuntime(agentId);
@@ -1515,6 +1519,7 @@ export class AgenteService implements OnModuleInit {
           status: 'cancelled',
           lastError: `leads (candidatos)=${leadsNaFila} >= threshold=${threshold}`,
           completedAt: new Date(),
+          dedupeKey: null,
         },
       );
       return;
@@ -1555,12 +1560,15 @@ export class AgenteService implements OnModuleInit {
     });
     if (existing) return;
 
-    // limpa done/failed antigo com mesma chave p/ reusar unique parcial
+    // Unique parcial (dedupe_key NOT NULL): libera chave em terminais sem apagar histórico.
     await this.jobs
       .createQueryBuilder()
-      .delete()
+      .update(AgentJob)
+      .set({ dedupeKey: null })
       .where('dedupe_key = :k', { k: opts.dedupeKey })
-      .andWhere('status IN (:...st)', { st: ['done', 'failed', 'cancelled'] })
+      .andWhere('status IN (:...st)', {
+        st: ['done', 'failed', 'cancelled'],
+      })
       .execute();
 
     try {

@@ -63,11 +63,56 @@ function formatWhen(iso) {
 
 function jobPayloadSummary(payload) {
   if (!payload || typeof payload !== 'object') return null;
+  if (payload.name) return String(payload.name);
   if (payload.profileUrl) return String(payload.profileUrl);
   if (payload.query) return `query: ${payload.query}`;
   if (payload.connectionId) return `conn ${payload.connectionId}`;
   if (payload.clienteLinkedinId) return `cli ${payload.clienteLinkedinId}`;
   return null;
+}
+
+function photoSrc(base64) {
+  if (!base64) return null;
+  if (String(base64).startsWith('data:')) return base64;
+  return `data:image/png;base64,${base64}`;
+}
+
+function initials(name) {
+  return (name ?? '?')
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0]?.toUpperCase() ?? '')
+    .join('');
+}
+
+function ConnectPerson({ name, photoBase64, profileUrl }) {
+  const src = photoSrc(photoBase64);
+  const label = name || 'Sem nome';
+  return (
+    <div className="agt-connect-person">
+      {src ? (
+        <img className="agt-connect-avatar" src={src} alt="" loading="lazy" />
+      ) : (
+        <div className="agt-connect-avatar agt-connect-avatar-fallback" aria-hidden>
+          {initials(label)}
+        </div>
+      )}
+      <div className="agt-connect-person-text">
+        <span className="agt-connect-name">{label}</span>
+        {profileUrl ? (
+          <a
+            className="linkedin-link"
+            href={profileUrl}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {String(profileUrl).replace(/^https?:\/\/(www\.)?linkedin\.com/i, '')}
+          </a>
+        ) : null}
+      </div>
+    </div>
+  );
 }
 
 function formatDueIn(ms) {
@@ -277,6 +322,7 @@ export default function Atividades() {
   }
 
   const nextJob = peek?.next || null;
+  const nextConnect = peek?.nextConnect || null;
   const schedule = Array.isArray(peek?.schedule) ? peek.schedule : [];
   const pendingTotal = Array.isArray(peek?.pending)
     ? peek.pending.reduce((n, p) => n + (Number(p.count) || 0), 0)
@@ -286,6 +332,11 @@ export default function Atividades() {
     schedule.find((s) => s.state === 'queued' || s.state === 'due') ||
     schedule.find((s) => s.state === 'waiting') ||
     null;
+  const showConnectPerson =
+    nextConnect &&
+    ((nextSoon && nextSoon.type === 'conectar') ||
+      (!nextSoon && nextJob?.type === 'conectar') ||
+      nextConnect.jobStatus === 'claimed');
 
   return (
     <div className="page page-atividades">
@@ -367,6 +418,13 @@ export default function Atividades() {
                   </strong>
                 ) : null}
               </div>
+              {showConnectPerson && nextSoon.type === 'conectar' ? (
+                <ConnectPerson
+                  name={nextConnect.name}
+                  photoBase64={nextConnect.photoBase64}
+                  profileUrl={nextConnect.profileUrl}
+                />
+              ) : null}
               {nextSoon.reason ? (
                 <p className="agt-timeline-summary muted">{nextSoon.reason}</p>
               ) : null}
@@ -387,7 +445,13 @@ export default function Atividades() {
                 </span>
                 <strong className="agt-next-when">agora</strong>
               </div>
-              {nextSummary ? (
+              {showConnectPerson && nextJob.type === 'conectar' ? (
+                <ConnectPerson
+                  name={nextConnect.name}
+                  photoBase64={nextConnect.photoBase64}
+                  profileUrl={nextConnect.profileUrl}
+                />
+              ) : nextSummary ? (
                 <p className="agt-timeline-summary muted">{nextSummary}</p>
               ) : null}
             </div>
@@ -460,6 +524,10 @@ export default function Atividades() {
               formatWhen(job.claimedAt) ||
               formatWhen(job.createdAt);
             const summary = jobPayloadSummary(job.payload);
+            const isConnect = job.type === 'conectar';
+            const personName = job.payload?.name || null;
+            const personPhoto = job.payload?.photoBase64 || null;
+            const personUrl = job.payload?.profileUrl || null;
             return (
               <li key={job.id} className="agt-timeline-item">
                 <div className="agt-timeline-dot" aria-hidden />
@@ -482,7 +550,13 @@ export default function Atividades() {
                       </time>
                     ) : null}
                   </div>
-                  {summary ? (
+                  {isConnect && (personName || personPhoto || personUrl) ? (
+                    <ConnectPerson
+                      name={personName}
+                      photoBase64={personPhoto}
+                      profileUrl={personUrl}
+                    />
+                  ) : summary ? (
                     <p className="agt-timeline-summary muted">{summary}</p>
                   ) : null}
                   {job.lastError ? (

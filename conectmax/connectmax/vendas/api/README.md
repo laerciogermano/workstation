@@ -180,6 +180,8 @@ Claim: `FOR UPDATE SKIP LOCKED`. Tabelas: `agent_jobs`, `agent_runtime`, `host_c
 
 **Antes → depois (peek schedule):** só `next`/pending → `schedule` com previsão (ex. `verificar_conexoes` em 4 h via `AGENT_CONNECTIONS_INTERVAL_MS` + `lastConnectionsAt`); `thresholds.connectionsIntervalMs`. **Rollback:** ignore `schedule` / campo novo no threshold.
 
+**Antes → depois (foto no nextConnect):** `peek.nextConnect` só id/url/nome → + `photoBase64` (payload do job `conectar` ou lookup em `cliente_linkedin`); `listJobs` completa foto em jobs antigos. **Rollback:** ignore o campo; remova `photoBase64` do payload em `enqueueConectar`.
+
 **Antes → depois (intervalo conexões 4 h):** default `AGENT_CONNECTIONS_INTERVAL_MS` 30 min (`1800000`) → **4 h** (`14400000`). **Rollback:** `AGENT_CONNECTIONS_INTERVAL_MS=1800000`.
 
 **Antes → depois (histórico de jobs cíclicos):** `insertJob` **apagava** done/failed com a mesma `dedupe_key` (ex. `verificar_conexoes:<id>:due`) → só restava a última execução. Agora: `dedupe_key = null` no complete/fail/cancel e no reuso da chave (sem `DELETE`). **Rollback:** volte o `delete()` em `insertJob` e não zere `dedupeKey` no complete.

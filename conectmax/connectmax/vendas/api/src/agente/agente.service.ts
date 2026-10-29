@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, In, Repository } from 'typeorm';
 import { generateApiKey, hashApiKey } from '../auth/api-key-hash';
 import { Agente } from '../agentes/agente.entity';
 import {
@@ -827,6 +827,7 @@ export class AgenteService implements OnModuleInit {
       profileId: string | null;
       profileUrl: string | null;
       name: string | null;
+      photoBase64: string | null;
       jobStatus: 'pending' | 'claimed';
       jobId: string;
     } | null;
@@ -898,15 +899,37 @@ export class AgenteService implements OnModuleInit {
         order: { createdAt: 'ASC' },
       }));
 
-    const nextConnect = connectJob
-      ? {
-          profileId: String(connectJob.payload?.clienteLinkedinId || '') || null,
-          profileUrl: String(connectJob.payload?.profileUrl || '') || null,
-          name: String(connectJob.payload?.name || '') || null,
-          jobStatus: connectJob.status as 'pending' | 'claimed',
-          jobId: connectJob.id,
-        }
-      : null;
+    let nextConnect: {
+      profileId: string | null;
+      profileUrl: string | null;
+      name: string | null;
+      photoBase64: string | null;
+      jobStatus: 'pending' | 'claimed';
+      jobId: string;
+    } | null = null;
+    if (connectJob) {
+      const profileId =
+        String(connectJob.payload?.clienteLinkedinId || '') || null;
+      let photoBase64 =
+        typeof connectJob.payload?.photoBase64 === 'string'
+          ? connectJob.payload.photoBase64 || null
+          : null;
+      if (!photoBase64 && profileId) {
+        const li = await this.clienteLinkedin.findOne({
+          where: { id: profileId },
+          select: ['id', 'photoBase64'],
+        });
+        photoBase64 = li?.photoBase64 || null;
+      }
+      nextConnect = {
+        profileId,
+        profileUrl: String(connectJob.payload?.profileUrl || '') || null,
+        name: String(connectJob.payload?.name || '') || null,
+        photoBase64,
+        jobStatus: connectJob.status as 'pending' | 'claimed',
+        jobId: connectJob.id,
+      };
+    }
 
     const leadsNaFila = await this.countLeadsCandidatos(agentId);
     const connectsToday = await this.countInvitedToday(agentId);
@@ -974,7 +997,35 @@ export class AgenteService implements OnModuleInit {
     if (opts?.status) {
       qb.andWhere('j.status = :st', { st: opts.status });
     }
-    return qb.getMany();
+    const rows = await qb.getMany();
+    const missingPhotoIds = [
+      ...new Set(
+        rows
+          .filter(
+            (j) =>
+              j.type === 'conectar' &&
+              !j.payload?.photoBase64 &&
+              j.payload?.clienteLinkedinId,
+          )
+          .map((j) => String(j.payload?.clienteLinkedinId)),
+      ),
+    ];
+    if (!missingPhotoIds.length) return rows;
+    const lis = await this.clienteLinkedin.find({
+      where: { id: In(missingPhotoIds) },
+      select: ['id', 'photoBase64'],
+    });
+    const byId = new Map(
+      lis.map((li) => [li.id, li.photoBase64 || null] as const),
+    );
+    for (const job of rows) {
+      if (job.type !== 'conectar' || job.payload?.photoBase64) continue;
+      const liId = String(job.payload?.clienteLinkedinId || '');
+      const photo = liId ? byId.get(liId) : null;
+      if (!photo) continue;
+      job.payload = { ...(job.payload || {}), photoBase64: photo };
+    }
+    return rows;
   }
 
   /**
@@ -1476,6 +1527,7 @@ export class AgenteService implements OnModuleInit {
         clienteLinkedinId: nextLi.id,
         profileUrl: nextLi.profileUrl,
         name: nextLi.cliente?.nome ?? null,
+        photoBase64: nextLi.photoBase64 ?? null,
         queuePos,
         hint: 'lead do agente (reservado status=0) ou livre → claim',
         connectsToday: invitedToday,

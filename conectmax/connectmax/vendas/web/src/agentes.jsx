@@ -3,11 +3,6 @@ import { hasPermission } from './auth.js';
 
 const AGENTES_URL = import.meta.env.VITE_AGENTES_URL ?? '/agentes';
 const SLOTS_URL = import.meta.env.VITE_AGENTE_SLOTS_URL ?? '/agente/slots';
-const AGENTE_API_URL =
-  import.meta.env.VITE_AGENTE_URL ??
-  (SLOTS_URL.endsWith('/slots')
-    ? SLOTS_URL.slice(0, -'/slots'.length)
-    : '/agente');
 
 const AGENT_PROCEDIMENTOS = [
   {
@@ -59,14 +54,6 @@ const JOB_TYPE_LABEL = Object.fromEntries(
   AGENT_PROCEDIMENTOS.map((p) => [p.id, p.label]),
 );
 
-const JOB_STATUS_LABEL = {
-  pending: 'Pendente',
-  claimed: 'Em execução',
-  done: 'Concluído',
-  failed: 'Falhou',
-  cancelled: 'Cancelado',
-};
-
 function statusLabel(s) {
   if (s === 'ativo') return 'Ativo';
   if (s === 'dormindo') return 'Dormindo';
@@ -77,45 +64,6 @@ function statusLabel(s) {
 
 function jobTypeLabel(t) {
   return JOB_TYPE_LABEL[t] || t || '—';
-}
-
-function jobStatusLabel(s) {
-  return JOB_STATUS_LABEL[s] || s || '—';
-}
-
-function jobStatusClass(s) {
-  if (s === 'done') return 'agt-job-done';
-  if (s === 'failed') return 'agt-job-failed';
-  if (s === 'claimed') return 'agt-job-claimed';
-  if (s === 'pending') return 'agt-job-pending';
-  if (s === 'cancelled') return 'agt-job-cancelled';
-  return '';
-}
-
-function formatWhen(iso) {
-  if (!iso) return null;
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return null;
-  return d.toLocaleString('pt-BR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-  });
-}
-
-function jobPayloadSummary(payload) {
-  if (!payload || typeof payload !== 'object') return null;
-  const bits = [];
-  if (payload.profileUrl) bits.push(String(payload.profileUrl));
-  else if (payload.query) bits.push(`query: ${payload.query}`);
-  else if (payload.connectionId) bits.push(`conn ${payload.connectionId}`);
-  else if (payload.clienteLinkedinId) {
-    bits.push(`cli ${payload.clienteLinkedinId}`);
-  }
-  return bits.length ? bits.join(' · ') : null;
 }
 
 /** Alinha com api `hostKey()` — localhost ou IP. */
@@ -171,11 +119,6 @@ export default function Agentes() {
   const [saving, setSaving] = useState(false);
   const [slotDraft, setSlotDraft] = useState({});
   const [slotBusyKey, setSlotBusyKey] = useState(null);
-  const [timelineAgent, setTimelineAgent] = useState(null);
-  const [timelineJobs, setTimelineJobs] = useState([]);
-  const [timelineLoading, setTimelineLoading] = useState(false);
-  const [timelineError, setTimelineError] = useState(null);
-  const [timelineFilter, setTimelineFilter] = useState('');
 
   useEffect(() => {
     const t = window.setTimeout(() => setDebouncedQ(q.trim()), 280);
@@ -339,52 +282,6 @@ export default function Agentes() {
         ),
       };
     });
-  }
-
-  const loadTimeline = useCallback(async (agent, status = '') => {
-    if (!agent?.id) return;
-    setTimelineLoading(true);
-    setTimelineError(null);
-    try {
-      const params = new URLSearchParams({ limit: '50' });
-      if (status) params.set('status', status);
-      const res = await fetch(
-        `${AGENTE_API_URL}/${encodeURIComponent(agent.id)}/jobs?${params}`,
-      );
-      const json = await res.json().catch(() => null);
-      if (!res.ok) {
-        throw new Error(
-          errMsg(json && typeof json === 'object' ? json : {}, res),
-        );
-      }
-      setTimelineJobs(Array.isArray(json) ? json : []);
-    } catch (e) {
-      setTimelineJobs([]);
-      setTimelineError(e.message ?? 'Falha ao carregar atividade');
-    } finally {
-      setTimelineLoading(false);
-    }
-  }, []);
-
-  function openTimeline(row) {
-    setTimelineAgent(row);
-    setTimelineFilter('');
-    setTimelineJobs([]);
-    setTimelineError(null);
-    loadTimeline(row, '');
-  }
-
-  function closeTimeline() {
-    setTimelineAgent(null);
-    setTimelineJobs([]);
-    setTimelineError(null);
-    setTimelineFilter('');
-    setTimelineLoading(false);
-  }
-
-  function changeTimelineFilter(status) {
-    setTimelineFilter(status);
-    if (timelineAgent) loadTimeline(timelineAgent, status);
   }
 
   async function saveHostSlots(hostKey, maxAtivosRaw) {
@@ -714,14 +611,7 @@ export default function Agentes() {
                     </td>
                     <td>
                       <div className="usr-actions">
-                        <button
-                          type="button"
-                          className="btn-secondary"
-                          onClick={() => openTimeline(a)}
-                        >
-                          Atividade
-                        </button>
-                        {canWrite && (
+                        {canWrite ? (
                           <>
                             <button
                               type="button"
@@ -749,6 +639,8 @@ export default function Agentes() {
                               Remover
                             </button>
                           </>
+                        ) : (
+                          <span className="muted">—</span>
                         )}
                       </div>
                     </td>
@@ -811,142 +703,6 @@ export default function Agentes() {
       )}
 
       {!loading && hostSections.map((h) => renderHostSection(h))}
-
-      {timelineAgent && (
-        <div
-          className="srv-modal-backdrop"
-          role="presentation"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) closeTimeline();
-          }}
-        >
-          <div
-            className="srv-modal agt-timeline-modal"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="agt-timeline-title"
-          >
-            <header className="srv-modal-header">
-              <div>
-                <h2 id="agt-timeline-title">
-                  Atividade · {timelineAgent.nome || timelineAgent.id}
-                </h2>
-                <p className="muted agt-timeline-sub">
-                  Histórico de jobs · {timelineAgent.id}
-                </p>
-              </div>
-              <div className="usr-actions">
-                <button
-                  type="button"
-                  className="btn-secondary"
-                  disabled={timelineLoading}
-                  onClick={() =>
-                    loadTimeline(timelineAgent, timelineFilter)
-                  }
-                >
-                  Atualizar
-                </button>
-                <button
-                  type="button"
-                  className="btn-secondary"
-                  onClick={closeTimeline}
-                >
-                  Fechar
-                </button>
-              </div>
-            </header>
-
-            <div className="agt-timeline-filters">
-              {[
-                { value: '', label: 'Todos' },
-                { value: 'pending', label: 'Pendentes' },
-                { value: 'claimed', label: 'Em execução' },
-                { value: 'done', label: 'Concluídos' },
-                { value: 'failed', label: 'Falhas' },
-                { value: 'cancelled', label: 'Cancelados' },
-              ].map((f) => (
-                <button
-                  key={f.value || 'all'}
-                  type="button"
-                  className={`btn-secondary${
-                    timelineFilter === f.value ? ' agt-filter-on' : ''
-                  }`}
-                  disabled={timelineLoading}
-                  onClick={() => changeTimelineFilter(f.value)}
-                >
-                  {f.label}
-                </button>
-              ))}
-            </div>
-
-            {timelineError && <p className="error">Erro: {timelineError}</p>}
-            {timelineLoading && (
-              <p className="muted">Carregando atividade…</p>
-            )}
-            {!timelineLoading && !timelineJobs.length && !timelineError && (
-              <p className="empty">Nenhum job neste filtro.</p>
-            )}
-
-            {!timelineLoading && timelineJobs.length > 0 && (
-              <ol className="agt-timeline">
-                {timelineJobs.map((job) => {
-                  const when =
-                    formatWhen(job.completedAt) ||
-                    formatWhen(job.claimedAt) ||
-                    formatWhen(job.createdAt);
-                  const summary = jobPayloadSummary(job.payload);
-                  return (
-                    <li key={job.id} className="agt-timeline-item">
-                      <div className="agt-timeline-dot" aria-hidden />
-                      <div className="agt-timeline-body">
-                        <div className="agt-timeline-head">
-                          <span className="agt-timeline-type">
-                            {jobTypeLabel(job.type)}
-                          </span>
-                          <span
-                            className={`tag ${jobStatusClass(job.status)}`}
-                          >
-                            {jobStatusLabel(job.status)}
-                          </span>
-                          {when ? (
-                            <time
-                              className="muted"
-                              dateTime={
-                                job.completedAt ||
-                                job.claimedAt ||
-                                job.createdAt
-                              }
-                            >
-                              {when}
-                            </time>
-                          ) : null}
-                        </div>
-                        {summary ? (
-                          <p className="agt-timeline-summary muted">
-                            {summary}
-                          </p>
-                        ) : null}
-                        {job.lastError ? (
-                          <p className="agt-timeline-err">{job.lastError}</p>
-                        ) : null}
-                        <p className="agt-timeline-meta muted">
-                          criado {formatWhen(job.createdAt) || '—'}
-                          {job.claimedAt
-                            ? ` · claim ${formatWhen(job.claimedAt)}`
-                            : ''}
-                          {job.completedAt
-                            ? ` · fim ${formatWhen(job.completedAt)}`
-                            : ''}
-                        </p>
-                      </div>
-                    </li>
-                  );
-                })}
-              </ol>
-            )}
-          </div>
-        </div>
-      )}
 
       {formOpen && (
         <div

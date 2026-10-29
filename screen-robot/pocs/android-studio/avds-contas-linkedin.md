@@ -99,7 +99,8 @@ npm run linkedin-signup -- --device emulator-5558 \
   --firstname Pamela --lastname Gomes \
   --email pamela.gomes@clozzy.com.br \
   --password '<ver credenciais.md>' \
-  --job-title 'Especialista em suprimentos e itens corporativos'
+  --job-title 'Especialista em suprimentos e itens corporativos' \
+  --company ConectMax
 ```
 
 ## Regras para a IA / operador

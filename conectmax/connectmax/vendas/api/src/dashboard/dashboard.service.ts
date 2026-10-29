@@ -1,6 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository, SelectQueryBuilder } from 'typeorm';
+import { AgentJob } from '../agente/agent-job.entity';
+import {
+  AGENT_JOB_TYPES,
+  type AgentJobType,
+} from '../agente/agent-job-types';
 import { AgentRuntime } from '../agente/agent-runtime.entity';
 import { Agente } from '../agentes/agente.entity';
 import { ClientConnectionLinkedin } from '../client-connections-linkedin/client-connection-linkedin.entity';
@@ -13,6 +18,8 @@ import {
   INVITE_STATUS_LABEL,
   InviteStatus,
 } from '../clientes/invite-status';
+import { ClientLinkedinMessage } from '../client-linkedin-messages/client-linkedin-message.entity';
+import { ClientLinkedinMessageDirection } from '../client-linkedin-messages/client-linkedin-message-direction';
 
 type CountRow = { label: string; count: number; pct?: number };
 
@@ -20,7 +27,7 @@ type Kpi = {
   label: string;
   value: string | number;
   hint?: string;
-  group?: 'funil';
+  group?: 'funil' | 'procedimentos';
 };
 
 type RecentRow = {
@@ -44,14 +51,28 @@ export type AgentInsight = {
   notSent: number;
   pending: number;
   connected: number;
+  abordados: number;
+  respondidos: number;
+  discarded: number;
   total: number;
   lastHeartbeatAt: Date | null;
   runtimeStatus: string | null;
 };
 
+export type ProcedureInsight = {
+  type: AgentJobType;
+  label: string;
+  done: number;
+  pending: number;
+  claimed: number;
+  failed: number;
+  total: number;
+};
+
 export type DashboardInsights = {
   kpis: Kpi[];
   byInviteStatus: CountRow[];
+  byFunil: CountRow[];
   byConnStatus: CountRow[];
   byDegree: CountRow[];
   byCity: CountRow[];
@@ -60,8 +81,19 @@ export type DashboardInsights = {
   byDayExtract: CountRow[];
   byDayConnected: CountRow[];
   byDayInvited: CountRow[];
+  byDayAbordados: CountRow[];
+  byDayRespondidos: CountRow[];
+  byProcedure: ProcedureInsight[];
   byAgent: AgentInsight[];
   recent: RecentRow[];
+};
+
+const PROCEDURE_LABEL: Record<AgentJobType, string> = {
+  extrair_leads: 'Buscar candidatos',
+  conectar: 'Conectar',
+  verificar_conexoes: 'Ver conexões',
+  enviar_prospeccao: 'Enviar prospecção',
+  ler_mensagens: 'Ler mensagens',
 };
 
 function pct(n: number, den: number): number {
@@ -90,6 +122,10 @@ export class DashboardService {
     private readonly linkedin: Repository<ClienteLinkedin>,
     @InjectRepository(ClientConnectionLinkedin)
     private readonly connections: Repository<ClientConnectionLinkedin>,
+    @InjectRepository(ClientLinkedinMessage)
+    private readonly messages: Repository<ClientLinkedinMessage>,
+    @InjectRepository(AgentJob)
+    private readonly jobs: Repository<AgentJob>,
     @InjectRepository(Agente)
     private readonly agentes: Repository<Agente>,
     @InjectRepository(AgentRuntime)
@@ -114,12 +150,61 @@ export class DashboardService {
       .where('li.deletedAt IS NULL');
   }
 
+  /** Mensagens com perfil ativo (igual colunas Abordados/Respondidos do board). */
+  private activeMessages(): SelectQueryBuilder<ClientLinkedinMessage> {
+    return this.messages
+      .createQueryBuilder('m')
+      .innerJoin('m.clienteLinkedin', 'li')
+      .where('li.deletedAt IS NULL');
+  }
+
+  /** Pessoas distintas com ≥1 mensagem na direção (board = 1 card/pessoa). */
+  private async countDistinctPeople(
+    direction: ClientLinkedinMessageDirection,
+  ): Promise<number> {
+    const row = await this.activeMessages()
+      .select('COUNT(DISTINCT m.clienteLinkedinId)', 'count')
+      .andWhere('m.direction = :dir', { dir: direction })
+      .getRawOne<{ count: string }>();
+    return Number(row?.count) || 0;
+  }
+
+  private async peopleByAgent(
+    direction: ClientLinkedinMessageDirection,
+  ): Promise<{ agentId: string; count: string }[]> {
+    return this.activeMessages()
+      .select('m.agentId', 'agentId')
+      .addSelect('COUNT(DISTINCT m.clienteLinkedinId)', 'count')
+      .andWhere('m.direction = :dir', { dir: direction })
+      .groupBy('m.agentId')
+      .getRawMany<{ agentId: string; count: string }>();
+  }
+
+  private async peopleByDay(
+    direction: ClientLinkedinMessageDirection,
+  ): Promise<{ label: string | null; count: string }[]> {
+    return this.activeMessages()
+      .select(
+        `TO_CHAR(COALESCE(m.occurredAt, m.createdAt) AT TIME ZONE 'UTC', 'YYYY-MM-DD')`,
+        'label',
+      )
+      .addSelect('COUNT(DISTINCT m.clienteLinkedinId)', 'count')
+      .andWhere('m.direction = :dir', { dir: direction })
+      .andWhere('COALESCE(m.occurredAt, m.createdAt) IS NOT NULL')
+      .groupBy('label')
+      .orderBy('label', 'ASC')
+      .getRawMany<{ label: string | null; count: string }>();
+  }
+
   async insights(): Promise<DashboardInsights> {
     const [
       profilesTotal,
       connConnected,
       connPending,
       connNotSent,
+      connDiscarded,
+      abordados,
+      respondidos,
       byConnStatusRaw,
       byDegreeRaw,
       byCityRaw,
@@ -128,8 +213,13 @@ export class DashboardService {
       byDayExtractRaw,
       byDayConnectedRaw,
       byDayInvitedRaw,
+      byDayAbordadosRaw,
+      byDayRespondidosRaw,
       recentRaw,
       byAgentStatusRaw,
+      byAgentAbordadosRaw,
+      byAgentRespondidosRaw,
+      byJobTypeRaw,
       agentesRows,
       runtimeRows,
     ] = await Promise.all([
@@ -152,6 +242,13 @@ export class DashboardService {
         })
         .getCount(),
       this.activeConnections()
+        .andWhere('c.status = :st', {
+          st: ClientConnectionLinkedinStatus.DISCARDED,
+        })
+        .getCount(),
+      this.countDistinctPeople(ClientLinkedinMessageDirection.SENT),
+      this.countDistinctPeople(ClientLinkedinMessageDirection.RECEIVED),
+      this.activeConnections()
         .select('c.status', 'label')
         .addSelect('COUNT(*)', 'count')
         .andWhere('c.status IN (:...sts)', {
@@ -159,6 +256,7 @@ export class DashboardService {
             ClientConnectionLinkedinStatus.NOT_SENT,
             ClientConnectionLinkedinStatus.PENDING,
             ClientConnectionLinkedinStatus.CONNECTED,
+            ClientConnectionLinkedinStatus.DISCARDED,
           ],
         })
         .groupBy('c.status')
@@ -225,6 +323,8 @@ export class DashboardService {
         .groupBy('label')
         .orderBy('label', 'ASC')
         .getRawMany<{ label: string | null; count: string }>(),
+      this.peopleByDay(ClientLinkedinMessageDirection.SENT),
+      this.peopleByDay(ClientLinkedinMessageDirection.RECEIVED),
       // Mesma fila/ordem da coluna Candidatos (status=0 + extractedAt DESC).
       // Sem o filtro, "Perfis recentes" misturava pending/connected e a 1ª do funil sumia do top 20.
       this.active()
@@ -269,11 +369,26 @@ export class DashboardService {
             ClientConnectionLinkedinStatus.NOT_SENT,
             ClientConnectionLinkedinStatus.PENDING,
             ClientConnectionLinkedinStatus.CONNECTED,
+            ClientConnectionLinkedinStatus.DISCARDED,
           ],
         })
         .groupBy('c.agentId')
         .addGroupBy('c.status')
         .getRawMany<{ agentId: string; status: string | number; count: string }>(),
+      this.peopleByAgent(ClientLinkedinMessageDirection.SENT),
+      this.peopleByAgent(ClientLinkedinMessageDirection.RECEIVED),
+      this.jobs
+        .createQueryBuilder('j')
+        .select('j.type', 'type')
+        .addSelect('j.status', 'status')
+        .addSelect('COUNT(*)', 'count')
+        .andWhere('j.type IN (:...types)', { types: [...AGENT_JOB_TYPES] })
+        .andWhere('j.status IN (:...sts)', {
+          sts: ['pending', 'claimed', 'done', 'failed'],
+        })
+        .groupBy('j.type')
+        .addGroupBy('j.status')
+        .getRawMany<{ type: AgentJobType; status: string; count: string }>(),
       this.agentes.find({
         select: {
           id: true,
@@ -293,7 +408,8 @@ export class DashboardService {
       }),
     ]);
 
-    const connTotal = connConnected + connPending + connNotSent;
+    const connTotal =
+      connConnected + connPending + connNotSent + connDiscarded;
 
     const byConnStatus = byConnStatusRaw.map((r) => {
       const code = Number(r.label);
@@ -305,7 +421,7 @@ export class DashboardService {
       return { label, count, pct: pct(count, connTotal) };
     });
 
-    /** Mesmos buckets do funil (status 0|1|2), labels de invite para o gráfico. */
+    /** Buckets exclusivos do convite (status 0|1|2) — pie legado. */
     const inviteBuckets: Record<InviteStatus, number> = {
       connect: connNotSent,
       pending: connPending,
@@ -319,10 +435,48 @@ export class DashboardService {
       pct: pct(inviteBuckets[key], profilesTotal),
     }));
 
+    /** Colunas do board (procedimentos) — cards/barra (não exclusivos entre si). */
+    const byFunil: CountRow[] = [
+      {
+        label: 'Candidatos',
+        count: connNotSent,
+        pct: pct(connNotSent, profilesTotal),
+      },
+      {
+        label: 'Convidados',
+        count: connPending,
+        pct: pct(connPending, profilesTotal),
+      },
+      {
+        label: 'Conectados',
+        count: connConnected,
+        pct: pct(connConnected, profilesTotal),
+      },
+      {
+        label: 'Abordados',
+        count: abordados,
+        pct: pct(abordados, profilesTotal),
+      },
+      {
+        label: 'Respondidos',
+        count: respondidos,
+        pct: pct(respondidos, profilesTotal),
+      },
+      {
+        label: 'Descartados',
+        count: connDiscarded,
+        pct: pct(connDiscarded, profilesTotal),
+      },
+    ];
+
+    const byProcedure = this.buildByProcedure(byJobTypeRaw);
+
     const byAgent = this.buildByAgent(
       agentesRows,
       runtimeRows,
       byAgentStatusRaw,
+      byAgentAbordadosRaw,
+      byAgentRespondidosRaw,
     );
 
     return {
@@ -335,21 +489,21 @@ export class DashboardService {
         },
         {
           group: 'funil',
-          label: 'Sem convite',
+          label: 'Candidatos',
           value: connNotSent,
           hint:
             profilesTotal > 0
-              ? `${pct(connNotSent, profilesTotal)}% · fila status=0 (candidatos)`
-              : 'fila status=0 (candidatos)',
+              ? `${pct(connNotSent, profilesTotal)}% · extrair_leads / fila status=0`
+              : 'extrair_leads / fila status=0',
         },
         {
           group: 'funil',
-          label: 'Aguardando aceite',
+          label: 'Convidados',
           value: connPending,
           hint:
             profilesTotal > 0
-              ? `${pct(connPending, profilesTotal)}% · convite enviado`
-              : 'convite enviado',
+              ? `${pct(connPending, profilesTotal)}% · conectar`
+              : 'conectar',
         },
         {
           group: 'funil',
@@ -357,11 +511,45 @@ export class DashboardService {
           value: connConnected,
           hint:
             profilesTotal > 0
-              ? `${pct(connConnected, profilesTotal)}% · aceitaram o convite`
-              : 'aceitaram o convite',
+              ? `${pct(connConnected, profilesTotal)}% · verificar_conexoes`
+              : 'verificar_conexoes',
         },
+        {
+          group: 'funil',
+          label: 'Abordados',
+          value: abordados,
+          hint:
+            profilesTotal > 0
+              ? `${pct(abordados, profilesTotal)}% · enviar_prospeccao`
+              : 'enviar_prospeccao',
+        },
+        {
+          group: 'funil',
+          label: 'Respondidos',
+          value: respondidos,
+          hint:
+            profilesTotal > 0
+              ? `${pct(respondidos, profilesTotal)}% · ler_mensagens`
+              : 'ler_mensagens',
+        },
+        {
+          group: 'funil',
+          label: 'Descartados',
+          value: connDiscarded,
+          hint:
+            profilesTotal > 0
+              ? `${pct(connDiscarded, profilesTotal)}% · status=3`
+              : 'status=3',
+        },
+        ...byProcedure.map((p) => ({
+          group: 'procedimentos' as const,
+          label: p.label,
+          value: p.done,
+          hint: `done · fila ${p.pending + p.claimed} · falha ${p.failed}`,
+        })),
       ],
       byInviteStatus: inviteLabeled,
+      byFunil,
       byConnStatus,
       byDegree: mapCountRows(byDegreeRaw, '(sem grau)', profilesTotal),
       byCity: mapCountRows(byCityRaw, '(sem cidade)'),
@@ -370,6 +558,9 @@ export class DashboardService {
       byDayExtract: mapCountRows(byDayExtractRaw, '—').slice(-30),
       byDayConnected: mapCountRows(byDayConnectedRaw, '—').slice(-30),
       byDayInvited: mapCountRows(byDayInvitedRaw, '—').slice(-30),
+      byDayAbordados: mapCountRows(byDayAbordadosRaw, '—').slice(-30),
+      byDayRespondidos: mapCountRows(byDayRespondidosRaw, '—').slice(-30),
+      byProcedure,
       byAgent,
       recent: recentRaw.map((r) => ({
         id: r.id,
@@ -385,28 +576,98 @@ export class DashboardService {
     };
   }
 
+  private buildByProcedure(
+    raw: { type: AgentJobType; status: string; count: string }[],
+  ): ProcedureInsight[] {
+    const map = new Map<
+      AgentJobType,
+      { done: number; pending: number; claimed: number; failed: number }
+    >();
+    for (const t of AGENT_JOB_TYPES) {
+      map.set(t, { done: 0, pending: 0, claimed: 0, failed: 0 });
+    }
+    for (const row of raw) {
+      const cur = map.get(row.type);
+      if (!cur) continue;
+      const n = Number(row.count) || 0;
+      if (row.status === 'done') cur.done = n;
+      else if (row.status === 'pending') cur.pending = n;
+      else if (row.status === 'claimed') cur.claimed = n;
+      else if (row.status === 'failed') cur.failed = n;
+    }
+    return AGENT_JOB_TYPES.map((type) => {
+      const c = map.get(type)!;
+      return {
+        type,
+        label: PROCEDURE_LABEL[type],
+        done: c.done,
+        pending: c.pending,
+        claimed: c.claimed,
+        failed: c.failed,
+        total: c.done + c.pending + c.claimed + c.failed,
+      };
+    });
+  }
+
   private buildByAgent(
     agentesRows: Pick<
       Agente,
       'id' | 'nome' | 'linkedinNome' | 'status' | 'linkedinStatus'
     >[],
     runtimeRows: Pick<AgentRuntime, 'agentId' | 'status' | 'lastHeartbeatAt'>[],
-    byAgentStatusRaw: { agentId: string; status: string | number; count: string }[],
+    byAgentStatusRaw: {
+      agentId: string;
+      status: string | number;
+      count: string;
+    }[],
+    byAgentAbordadosRaw: { agentId: string; count: string }[],
+    byAgentRespondidosRaw: { agentId: string; count: string }[],
   ): AgentInsight[] {
     const counts = new Map<
       string,
-      { notSent: number; pending: number; connected: number }
+      {
+        notSent: number;
+        pending: number;
+        connected: number;
+        discarded: number;
+        abordados: number;
+        respondidos: number;
+      }
     >();
+    const bump = (id: string) => {
+      const key = String(id || '').trim();
+      if (!key) return null;
+      const cur = counts.get(key) ?? {
+        notSent: 0,
+        pending: 0,
+        connected: 0,
+        discarded: 0,
+        abordados: 0,
+        respondidos: 0,
+      };
+      counts.set(key, cur);
+      return cur;
+    };
+
     for (const row of byAgentStatusRaw) {
-      const id = String(row.agentId || '').trim();
-      if (!id) continue;
-      const cur = counts.get(id) ?? { notSent: 0, pending: 0, connected: 0 };
+      const cur = bump(row.agentId);
+      if (!cur) continue;
       const n = Number(row.count) || 0;
       const st = Number(row.status);
       if (st === ClientConnectionLinkedinStatus.NOT_SENT) cur.notSent = n;
       else if (st === ClientConnectionLinkedinStatus.PENDING) cur.pending = n;
-      else if (st === ClientConnectionLinkedinStatus.CONNECTED) cur.connected = n;
-      counts.set(id, cur);
+      else if (st === ClientConnectionLinkedinStatus.CONNECTED)
+        cur.connected = n;
+      else if (st === ClientConnectionLinkedinStatus.DISCARDED)
+        cur.discarded = n;
+    }
+    for (const row of byAgentAbordadosRaw) {
+      const cur = bump(row.agentId);
+      if (cur) cur.abordados = Number(row.count) || 0;
+    }
+    for (const row of byAgentRespondidosRaw) {
+      const cur = bump(row.agentId);
+      if (cur) cur.respondidos = Number(row.count) || 0;
     }
 
     const runtimeById = new Map(
@@ -415,48 +676,51 @@ export class DashboardService {
     const seen = new Set<string>();
     const out: AgentInsight[] = [];
 
-    for (const a of agentesRows) {
-      const agentId = a.id;
-      seen.add(agentId);
+    const pushRow = (
+      agentId: string,
+      name: string,
+      status: string | null,
+      linkedinStatus: string | null,
+    ) => {
       const c = counts.get(agentId) ?? {
         notSent: 0,
         pending: 0,
         connected: 0,
+        discarded: 0,
+        abordados: 0,
+        respondidos: 0,
       };
       const rt = runtimeById.get(agentId);
+      out.push({
+        agentId,
+        name,
+        status,
+        linkedinStatus,
+        notSent: c.notSent,
+        pending: c.pending,
+        connected: c.connected,
+        abordados: c.abordados,
+        respondidos: c.respondidos,
+        discarded: c.discarded,
+        total: c.notSent + c.pending + c.connected,
+        lastHeartbeatAt: rt?.lastHeartbeatAt ?? null,
+        runtimeStatus: rt?.status ?? null,
+      });
+    };
+
+    for (const a of agentesRows) {
+      const agentId = a.id;
+      seen.add(agentId);
       const label =
         (a.linkedinNome && a.linkedinNome.trim()) ||
         (a.nome && a.nome.trim()) ||
         agentId;
-      out.push({
-        agentId,
-        name: label,
-        status: a.status ?? null,
-        linkedinStatus: a.linkedinStatus ?? null,
-        notSent: c.notSent,
-        pending: c.pending,
-        connected: c.connected,
-        total: c.notSent + c.pending + c.connected,
-        lastHeartbeatAt: rt?.lastHeartbeatAt ?? null,
-        runtimeStatus: rt?.status ?? null,
-      });
+      pushRow(agentId, label, a.status ?? null, a.linkedinStatus ?? null);
     }
 
-    for (const [agentId, c] of counts) {
+    for (const agentId of counts.keys()) {
       if (seen.has(agentId)) continue;
-      const rt = runtimeById.get(agentId);
-      out.push({
-        agentId,
-        name: agentId,
-        status: null,
-        linkedinStatus: null,
-        notSent: c.notSent,
-        pending: c.pending,
-        connected: c.connected,
-        total: c.notSent + c.pending + c.connected,
-        lastHeartbeatAt: rt?.lastHeartbeatAt ?? null,
-        runtimeStatus: rt?.status ?? null,
-      });
+      pushRow(agentId, agentId, null, null);
     }
 
     return out.sort(

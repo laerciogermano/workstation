@@ -644,17 +644,22 @@ Um detalhe pelo `profile_id`.
 
 ### `GET /dashboard`
 
-Insights de operação (KPIs + séries Recharts + tabelas) sobre `cliente_linkedin` + `client_connection_linkedin`. Sem blobs/OCR/foto/cobertura.
+Insights de operação (KPIs + séries Recharts + tabelas) sobre `cliente_linkedin` + `client_connection_linkedin` + `client_linkedin_message` + `agent_jobs`. Sem blobs/OCR/foto/cobertura.
 
 ```json
 {
   "kpis": [
     { "group": "funil", "label": "Perfis na base", "value": 49, "hint": "total ativos" },
-    { "group": "funil", "label": "Sem convite", "value": 41, "hint": "84% · ainda não convidados" },
-    { "group": "funil", "label": "Aguardando aceite", "value": 6, "hint": "12% · convite enviado" },
-    { "group": "funil", "label": "Conectados", "value": 2, "hint": "4% · aceitaram o convite" }
+    { "group": "funil", "label": "Candidatos", "value": 41, "hint": "84% · extrair_leads / fila status=0" },
+    { "group": "funil", "label": "Convidados", "value": 6, "hint": "12% · conectar" },
+    { "group": "funil", "label": "Conectados", "value": 2, "hint": "4% · verificar_conexoes" },
+    { "group": "funil", "label": "Abordados", "value": 1, "hint": "2% · enviar_prospeccao" },
+    { "group": "funil", "label": "Respondidos", "value": 0, "hint": "0% · ler_mensagens" },
+    { "group": "funil", "label": "Descartados", "value": 0, "hint": "0% · status=3" },
+    { "group": "procedimentos", "label": "Buscar candidatos", "value": 12, "hint": "done · fila 1 · falha 0" }
   ],
   "byInviteStatus": [{ "label": "conectado", "count": 2, "pct": 4 }],
+  "byFunil": [{ "label": "Candidatos", "count": 41, "pct": 84 }],
   "byConnStatus": [{ "label": "pendente", "count": 6, "pct": 50 }],
   "byDegree": [{ "label": "2nd", "count": 10, "pct": 20 }],
   "byCity": [{ "label": "Campinas…", "count": 3 }],
@@ -663,6 +668,17 @@ Insights de operação (KPIs + séries Recharts + tabelas) sobre `cliente_linked
   "byDayExtract": [{ "label": "2026-10-23", "count": 8 }],
   "byDayConnected": [{ "label": "2026-10-23", "count": 1 }],
   "byDayInvited": [{ "label": "2026-10-23", "count": 3 }],
+  "byDayAbordados": [{ "label": "2026-10-23", "count": 1 }],
+  "byDayRespondidos": [{ "label": "2026-10-23", "count": 0 }],
+  "byProcedure": [{
+    "type": "conectar",
+    "label": "Conectar",
+    "done": 10,
+    "pending": 2,
+    "claimed": 0,
+    "failed": 1,
+    "total": 13
+  }],
   "byAgent": [{
     "agentId": "avd-01",
     "name": "Maria",
@@ -671,6 +687,9 @@ Insights de operação (KPIs + séries Recharts + tabelas) sobre `cliente_linked
     "notSent": 10,
     "pending": 3,
     "connected": 2,
+    "abordados": 1,
+    "respondidos": 0,
+    "discarded": 0,
     "total": 15,
     "lastHeartbeatAt": "2026-10-28T12:00:00.000Z",
     "runtimeStatus": "idle"
@@ -683,6 +702,7 @@ Insights de operação (KPIs + séries Recharts + tabelas) sobre `cliente_linked
 curl http://localhost:3000/dashboard
 ```
 
+**Antes → depois (funil completo + procedimentos):** KPIs/cards só Sem convite/Aguardando/Conectados → board inteiro (Candidatos/Convidados/Conectados/Abordados/Respondidos/Descartados) + grupo `procedimentos` (`byProcedure` = `agent_jobs` por tipo); `byFunil`, `byDayAbordados`/`byDayRespondidos`, `byAgent.abordados|respondidos|discarded`. Web: cards/gráficos/tabelas. **Rollback:** remova campos novos do `DashboardService`/`dashboard.jsx` e o `TypeOrmModule` de `ClientLinkedinMessage`/`AgentJob` no `DashboardModule`.
 **Antes → depois (recent avatar):** `recent[]` sem foto → inclui `photoBase64` de `cliente_linkedin` (web: avatar em Perfis recentes). **Rollback:** remova o select/`photoBase64` no map e o `RecentAvatar` no `dashboard.jsx`.
 **Antes → depois (recent = candidatos):** `recent[]` era top 20 de **qualquer** perfil ativo (`extractedAt`) → misturava pending/connected e a 1ª de Candidatos (ex. Carolina) sumia do painel → agora só `status=0` (sem convite), mesma ordem do funil (`extractedAt DESC`). **Rollback:** tire o `EXISTS … status = 0` no `DashboardService`.
 **Antes → depois:** front agregava `GET /profiles` + `GET /profile-details` → `GET /dashboard` já montado.

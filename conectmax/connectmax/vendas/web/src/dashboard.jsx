@@ -88,6 +88,7 @@ function RecentAvatar({ name, photoBase64 }) {
 const EMPTY_INSIGHTS = {
   kpis: [],
   byInviteStatus: [],
+  byFunil: [],
   byConnStatus: [],
   byDegree: [],
   byCity: [],
@@ -96,6 +97,9 @@ const EMPTY_INSIGHTS = {
   byDayExtract: [],
   byDayConnected: [],
   byDayInvited: [],
+  byDayAbordados: [],
+  byDayRespondidos: [],
+  byProcedure: [],
   byAgent: [],
   recent: [],
 };
@@ -148,7 +152,7 @@ function agentPresence(row) {
   return { key: 'stale', label: 'ping antigo' };
 }
 
-function mergeDaily(extract, connected, invited) {
+function mergeDaily(extract, connected, invited, abordados, respondidos) {
   const map = new Map();
   const bump = (rows, key) => {
     for (const r of rows) {
@@ -158,6 +162,8 @@ function mergeDaily(extract, connected, invited) {
         extracts: 0,
         connected: 0,
         invited: 0,
+        abordados: 0,
+        respondidos: 0,
       };
       cur[key] = r.count;
       map.set(r.label, cur);
@@ -166,6 +172,8 @@ function mergeDaily(extract, connected, invited) {
   bump(extract, 'extracts');
   bump(connected, 'connected');
   bump(invited, 'invited');
+  bump(abordados, 'abordados');
+  bump(respondidos, 'respondidos');
   return [...map.values()].sort((a, b) => a.day.localeCompare(b.day));
 }
 
@@ -251,6 +259,7 @@ export default function Dashboard({
           byInviteStatus: Array.isArray(json.byInviteStatus)
             ? json.byInviteStatus
             : [],
+          byFunil: Array.isArray(json.byFunil) ? json.byFunil : [],
           byConnStatus: Array.isArray(json.byConnStatus)
             ? json.byConnStatus
             : [],
@@ -267,6 +276,13 @@ export default function Dashboard({
           byDayInvited: Array.isArray(json.byDayInvited)
             ? json.byDayInvited
             : [],
+          byDayAbordados: Array.isArray(json.byDayAbordados)
+            ? json.byDayAbordados
+            : [],
+          byDayRespondidos: Array.isArray(json.byDayRespondidos)
+            ? json.byDayRespondidos
+            : [],
+          byProcedure: Array.isArray(json.byProcedure) ? json.byProcedure : [],
           byAgent: Array.isArray(json.byAgent) ? json.byAgent : [],
           recent: Array.isArray(json.recent) ? json.recent : [],
         });
@@ -295,11 +311,15 @@ export default function Dashboard({
         insights.byDayExtract,
         insights.byDayConnected,
         insights.byDayInvited,
+        insights.byDayAbordados,
+        insights.byDayRespondidos,
       ),
     [
       insights.byDayExtract,
       insights.byDayConnected,
       insights.byDayInvited,
+      insights.byDayAbordados,
+      insights.byDayRespondidos,
     ],
   );
 
@@ -314,8 +334,22 @@ export default function Dashboard({
         notSent: a.notSent,
         pending: a.pending,
         connected: a.connected,
+        abordados: a.abordados ?? 0,
+        respondidos: a.respondidos ?? 0,
       })),
     [insights.byAgent],
+  );
+
+  const procedureChart = useMemo(
+    () =>
+      insights.byProcedure.map((p) => ({
+        label: p.label,
+        type: p.type,
+        done: p.done,
+        pending: p.pending + p.claimed,
+        failed: p.failed,
+      })),
+    [insights.byProcedure],
   );
 
   const agentesAtivos = useMemo(
@@ -342,7 +376,7 @@ export default function Dashboard({
           <p className="subtitle">
             {loading
               ? 'Carregando insights…'
-              : 'Conexões · agentes · extratos · cidades · cargos · empresas'}
+              : 'Funil completo · procedimentos · agentes · volume diário'}
           </p>
         </div>
       </header>
@@ -358,13 +392,28 @@ export default function Dashboard({
         [
           {
             key: 'funil',
-            title: 'Funil de convites',
-            note: 'Status do perfil na base',
+            title: 'Funil (procedimentos)',
+            note: 'Candidatos → Convidados → Conectados → Abordados → Respondidos',
             fallback: [
               { label: 'Perfis na base', value: '…' },
-              { label: 'Sem convite', value: '…' },
-              { label: 'Aguardando aceite', value: '…' },
+              { label: 'Candidatos', value: '…' },
+              { label: 'Convidados', value: '…' },
               { label: 'Conectados', value: '…' },
+              { label: 'Abordados', value: '…' },
+              { label: 'Respondidos', value: '…' },
+              { label: 'Descartados', value: '…' },
+            ],
+          },
+          {
+            key: 'procedimentos',
+            title: 'Jobs por procedimento',
+            note: 'agent_jobs concluídos (done) · fila = pending+claimed',
+            fallback: [
+              { label: 'Buscar candidatos', value: '…' },
+              { label: 'Conectar', value: '…' },
+              { label: 'Ver conexões', value: '…' },
+              { label: 'Enviar prospecção', value: '…' },
+              { label: 'Ler mensagens', value: '…' },
             ],
           },
         ]
@@ -380,7 +429,7 @@ export default function Dashboard({
             </div>
             <div className="kpi-grid">
               {rows.map((kpi) => (
-                <article key={kpi.label} className="kpi">
+                <article key={`${group.key}-${kpi.label}`} className="kpi">
                   <p className="kpi-label">{kpi.label}</p>
                   <p className="kpi-value">{loading ? '…' : kpi.value}</p>
                   {kpi.hint && !loading && (
@@ -397,7 +446,7 @@ export default function Dashboard({
         <div className="kpi-group-head">
           <h2 className="kpi-group-title">Por agentes</h2>
           <p className="kpi-group-note">
-            Funil por agentId · ping do worker
+            Funil completo por agentId · ping do worker
           </p>
         </div>
         {!loading && !insights.byAgent.length ? (
@@ -405,7 +454,15 @@ export default function Dashboard({
         ) : (
           <div className="agent-kpi-grid">
             {(loading && !insights.byAgent.length
-              ? [{ agentId: '…', name: '…', notSent: '…', pending: '…', connected: '…' }]
+              ? [{
+                  agentId: '…',
+                  name: '…',
+                  notSent: '…',
+                  pending: '…',
+                  connected: '…',
+                  abordados: '…',
+                  respondidos: '…',
+                }]
               : insights.byAgent
             ).map((a) => {
               const presence = loading ? null : agentPresence(a);
@@ -431,18 +488,30 @@ export default function Dashboard({
                       </span>
                     )}
                   </div>
-                  <div className="agent-kpi-stats">
+                  <div className="agent-kpi-stats agent-kpi-stats-funil">
                     <div>
-                      <p className="kpi-label">Fila</p>
+                      <p className="kpi-label">Candidatos</p>
                       <p className="kpi-value">{loading ? '…' : a.notSent}</p>
                     </div>
                     <div>
-                      <p className="kpi-label">Pendentes</p>
+                      <p className="kpi-label">Convidados</p>
                       <p className="kpi-value">{loading ? '…' : a.pending}</p>
                     </div>
                     <div>
                       <p className="kpi-label">Conectados</p>
                       <p className="kpi-value">{loading ? '…' : a.connected}</p>
+                    </div>
+                    <div>
+                      <p className="kpi-label">Abordados</p>
+                      <p className="kpi-value">
+                        {loading ? '…' : a.abordados ?? 0}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="kpi-label">Respondidos</p>
+                      <p className="kpi-value">
+                        {loading ? '…' : a.respondidos ?? 0}
+                      </p>
                     </div>
                   </div>
                   {!loading && (
@@ -451,6 +520,7 @@ export default function Dashboard({
                         a.status ? `AVD ${a.status}` : null,
                         a.linkedinStatus ? `LI ${a.linkedinStatus}` : null,
                         a.runtimeStatus ? `worker ${a.runtimeStatus}` : null,
+                        a.discarded ? `${a.discarded} descart.` : null,
                       ]
                         .filter(Boolean)
                         .join(' · ') || 'sem cadastro/runtime'}
@@ -467,11 +537,11 @@ export default function Dashboard({
         <ChartPanel
           title="Funil por agente"
           wide
-          note="Candidatos · pendentes · conectados"
+          note="Candidatos · convidados · conectados · abordados · respondidos"
           empty={!agentChart.length}
           emptyLabel="Sem agentes"
         >
-          <ResponsiveContainer width="100%" height={Math.max(220, agentChart.length * 36)}>
+          <ResponsiveContainer width="100%" height={Math.max(260, agentChart.length * 48)}>
             <BarChart
               data={agentChart}
               layout="vertical"
@@ -484,14 +554,13 @@ export default function Dashboard({
               <Legend />
               <Bar
                 dataKey="notSent"
-                name="Fila"
+                name="Candidatos"
                 stackId="funil"
                 fill="#A9B4C8"
-                radius={[0, 0, 0, 0]}
               />
               <Bar
                 dataKey="pending"
-                name="Pendentes"
+                name="Convidados"
                 stackId="funil"
                 fill="#D97706"
               />
@@ -500,7 +569,56 @@ export default function Dashboard({
                 name="Conectados"
                 stackId="funil"
                 fill="#1F9D6B"
+              />
+              <Bar
+                dataKey="abordados"
+                name="Abordados"
+                stackId="funil"
+                fill="#2563EB"
+              />
+              <Bar
+                dataKey="respondidos"
+                name="Respondidos"
+                stackId="funil"
+                fill="#6D28D9"
                 radius={[0, 6, 6, 0]}
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        </ChartPanel>
+
+        <ChartPanel
+          title="Procedimentos (jobs)"
+          wide
+          note="done · fila (pending+claimed) · failed"
+          empty={!procedureChart.length}
+          emptyLabel="Sem jobs"
+        >
+          <ResponsiveContainer width="100%" height={280}>
+            <BarChart
+              data={procedureChart}
+              margin={{ top: 8, right: 12, left: 0, bottom: 0 }}
+            >
+              <CartesianGrid stroke={chartTheme.grid} strokeDasharray="3 3" />
+              <XAxis
+                dataKey="label"
+                {...axisProps}
+                interval={0}
+                tickFormatter={(v) =>
+                  String(v).length > 12 ? `${String(v).slice(0, 12)}…` : v
+                }
+              />
+              <YAxis {...axisProps} allowDecimals={false} width={36} />
+              <Tooltip content={<ChartTooltip />} />
+              <Legend />
+              <Bar dataKey="done" name="Concluídos" fill="#1F9D6B" stackId="jobs" />
+              <Bar dataKey="pending" name="Fila" fill="#D97706" stackId="jobs" />
+              <Bar
+                dataKey="failed"
+                name="Falhas"
+                fill="#D93A40"
+                stackId="jobs"
+                radius={[6, 6, 0, 0]}
               />
             </BarChart>
           </ResponsiveContainer>
@@ -509,7 +627,7 @@ export default function Dashboard({
         <ChartPanel
           title="Atividade por dia (30d)"
           wide
-          note="Extrações, convites e aceites"
+          note="Extrações · convites · aceites · abordados · respondidos"
           empty={!timeline.length}
           emptyLabel="Sem atividade com data"
         >
@@ -547,7 +665,47 @@ export default function Dashboard({
                 strokeWidth={2}
                 dot={{ r: 3 }}
               />
+              <Line
+                type="monotone"
+                dataKey="abordados"
+                name="Abordados"
+                stroke="#2563EB"
+                strokeWidth={2}
+                dot={{ r: 3 }}
+              />
+              <Line
+                type="monotone"
+                dataKey="respondidos"
+                name="Respondidos"
+                stroke="#6D28D9"
+                strokeWidth={2}
+                dot={{ r: 3 }}
+              />
             </LineChart>
+          </ResponsiveContainer>
+        </ChartPanel>
+
+        <ChartPanel
+          title="Funil completo"
+          empty={!insights.byFunil.length}
+          emptyLabel="Sem dados do funil"
+        >
+          <ResponsiveContainer width="100%" height={280}>
+            <BarChart
+              data={insights.byFunil}
+              layout="vertical"
+              margin={{ top: 4, right: 12, left: 8, bottom: 0 }}
+            >
+              <CartesianGrid stroke={chartTheme.grid} strokeDasharray="3 3" />
+              <XAxis type="number" {...axisProps} allowDecimals={false} />
+              <YAxis type="category" dataKey="label" width={96} {...axisProps} />
+              <Tooltip content={<ChartTooltip />} />
+              <Bar dataKey="count" name="Qtd" radius={[0, 6, 6, 0]}>
+                {insights.byFunil.map((_, i) => (
+                  <Cell key={i} fill={PALETTE[i % PALETTE.length]} />
+                ))}
+              </Bar>
+            </BarChart>
           </ResponsiveContainer>
         </ChartPanel>
 
@@ -748,9 +906,24 @@ export default function Dashboard({
                 );
               },
             },
-            { key: 'notSent', label: 'Fila' },
-            { key: 'pending', label: 'Pendentes' },
+            { key: 'notSent', label: 'Candidatos' },
+            { key: 'pending', label: 'Convidados' },
             { key: 'connected', label: 'Conectados' },
+            {
+              key: 'abordados',
+              label: 'Abordados',
+              render: (row) => row.abordados ?? 0,
+            },
+            {
+              key: 'respondidos',
+              label: 'Respondidos',
+              render: (row) => row.respondidos ?? 0,
+            },
+            {
+              key: 'discarded',
+              label: 'Descart.',
+              render: (row) => row.discarded ?? 0,
+            },
             { key: 'total', label: 'Total' },
             {
               key: 'status',
@@ -764,6 +937,27 @@ export default function Dashboard({
             },
           ]}
           rows={insights.byAgent}
+        />
+        <DataTable
+          title="Procedimentos (jobs)"
+          emptyLabel="Sem jobs"
+          columns={[
+            { key: 'label', label: 'Procedimento' },
+            { key: 'done', label: 'Done' },
+            {
+              key: 'fila',
+              label: 'Fila',
+              render: (row) => (row.pending ?? 0) + (row.claimed ?? 0),
+            },
+            { key: 'failed', label: 'Falhas' },
+            { key: 'total', label: 'Total' },
+          ]}
+          rows={insights.byProcedure}
+        />
+        <CountTable
+          title="Funil completo"
+          labelHeader="Etapa"
+          rows={insights.byFunil}
         />
         <CountTable
           title="Status do perfil (invite)"

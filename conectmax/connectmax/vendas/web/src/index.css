@@ -2361,6 +2361,24 @@ code {
   color: var(--text);
 }
 
+.agt-proc-hours {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem 1.25rem;
+  margin: 0.35rem 0 0.85rem;
+}
+
+.agt-proc-hours label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.85rem;
+}
+
+.agt-proc-hours input[type='time'] {
+  min-width: 8rem;
+}
+
 .agt-proc-desc {
   display: block;
   font-size: 0.78rem;

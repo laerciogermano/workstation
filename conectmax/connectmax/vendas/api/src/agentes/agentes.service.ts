@@ -94,6 +94,8 @@ export class AgentesService implements OnModuleInit {
       `ALTER TABLE agentes ADD COLUMN IF NOT EXISTS disk_gb int`,
       `ALTER TABLE agentes ADD COLUMN IF NOT EXISTS procedimentos jsonb`,
       `ALTER TABLE agentes ADD COLUMN IF NOT EXISTS mensagem_prospeccao text`,
+      `ALTER TABLE agentes ADD COLUMN IF NOT EXISTS prospeccao_hora_inicio varchar(5)`,
+      `ALTER TABLE agentes ADD COLUMN IF NOT EXISTS prospeccao_hora_fim varchar(5)`,
       `ALTER TABLE agentes ADD COLUMN IF NOT EXISTS search_query varchar(500)`,
       `ALTER TABLE agentes ADD COLUMN IF NOT EXISTS first_name varchar(120)`,
       `ALTER TABLE agentes ADD COLUMN IF NOT EXISTS last_name varchar(120)`,
@@ -600,6 +602,12 @@ export class AgentesService implements OnModuleInit {
       const t = String(dto.mensagemProspeccao ?? '').trim();
       row.mensagemProspeccao = t || null;
     }
+    if (dto.prospeccaoHoraInicio !== undefined) {
+      row.prospeccaoHoraInicio = this.normalizeHm(dto.prospeccaoHoraInicio);
+    }
+    if (dto.prospeccaoHoraFim !== undefined) {
+      row.prospeccaoHoraFim = this.normalizeHm(dto.prospeccaoHoraFim);
+    }
     if (dto.searchQuery !== undefined) {
       const q = String(dto.searchQuery ?? '').trim();
       row.searchQuery = q || null;
@@ -612,6 +620,17 @@ export class AgentesService implements OnModuleInit {
     Object.assign(row, li);
 
     return this.agentes.save(row);
+  }
+
+  /** HH:MM ou null (vazio → herda default 08:00/18:00 na fila). */
+  private normalizeHm(raw: string | null | undefined): string | null {
+    const t = String(raw ?? '').trim();
+    if (!t) return null;
+    const m = /^([01]?\d|2[0-3]):([0-5]\d)$/.exec(t);
+    if (!m) {
+      throw new BadRequestException(`horário inválido: ${t} (use HH:MM)`);
+    }
+    return `${m[1].padStart(2, '0')}:${m[2]}`;
   }
 
   /** Allowlist de job types; `null` no DTO → herda global; array vazio → nenhum. */

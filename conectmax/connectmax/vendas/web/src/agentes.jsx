@@ -101,6 +101,9 @@ const PROSPECCAO_VAR_GROUPS = [
   },
 ];
 
+const DEFAULT_PROSPECCAO_HORA_INICIO = '08:00';
+const DEFAULT_PROSPECCAO_HORA_FIM = '18:00';
+
 const EMPTY_FORM = {
   nome: '',
   firstName: '',
@@ -110,6 +113,8 @@ const EMPTY_FORM = {
   linkedinProfileUrl: '',
   procedimentos: [...DEFAULT_PROCEDIMENTOS],
   mensagemProspeccao: DEFAULT_MENSAGEM_PROSPECCAO,
+  prospeccaoHoraInicio: DEFAULT_PROSPECCAO_HORA_INICIO,
+  prospeccaoHoraFim: DEFAULT_PROSPECCAO_HORA_FIM,
   searchQuery: '',
 };
 
@@ -328,6 +333,9 @@ export default function Agentes() {
       procedimentos: procs,
       mensagemProspeccao:
         row.mensagemProspeccao || DEFAULT_MENSAGEM_PROSPECCAO,
+      prospeccaoHoraInicio:
+        row.prospeccaoHoraInicio || DEFAULT_PROSPECCAO_HORA_INICIO,
+      prospeccaoHoraFim: row.prospeccaoHoraFim || DEFAULT_PROSPECCAO_HORA_FIM,
       searchQuery: row.searchQuery || '',
     });
     setFormNote(null);
@@ -427,6 +435,8 @@ export default function Agentes() {
           ? form.procedimentos
           : [],
         mensagemProspeccao: form.mensagemProspeccao.trim() || null,
+        prospeccaoHoraInicio: form.prospeccaoHoraInicio.trim() || null,
+        prospeccaoHoraFim: form.prospeccaoHoraFim.trim() || null,
         searchQuery: form.searchQuery.trim() || null,
       };
       const res = await fetch(`${AGENTES_URL}/${editingId}`, {
@@ -868,7 +878,35 @@ export default function Agentes() {
               ) : null}
               {(form.procedimentos || []).includes('enviar_prospeccao') ? (
                 <fieldset className="agt-proc-fieldset srv-form-span">
-                  <legend>Mensagem de prospecção</legend>
+                  <legend>Enviar prospecção</legend>
+                  <p className="muted agt-proc-hint">
+                    Horário permitido (fuso do servidor). Fora da janela o envio
+                    fica em espera. Fim é exclusivo (18:00 = até 17:59).
+                  </p>
+                  <div className="agt-proc-hours">
+                    <label>
+                      De
+                      <input
+                        type="time"
+                        value={form.prospeccaoHoraInicio}
+                        onChange={(e) =>
+                          setField('prospeccaoHoraInicio', e.target.value)
+                        }
+                        required
+                      />
+                    </label>
+                    <label>
+                      Até
+                      <input
+                        type="time"
+                        value={form.prospeccaoHoraFim}
+                        onChange={(e) =>
+                          setField('prospeccaoHoraFim', e.target.value)
+                        }
+                        required
+                      />
+                    </label>
+                  </div>
                   <p className="muted agt-proc-hint">
                     Clique para inserir no texto:
                   </p>

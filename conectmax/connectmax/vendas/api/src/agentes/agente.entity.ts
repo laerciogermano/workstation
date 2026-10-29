@@ -196,6 +196,30 @@ export class Agente {
   mensagemProspeccao!: string | null;
 
   /**
+   * Início da janela de envio de prospecção (HH:MM, TZ do processo).
+   * `null` → default `08:00`. Inclusivo.
+   */
+  @Column({
+    name: 'prospeccao_hora_inicio',
+    type: 'varchar',
+    length: 5,
+    nullable: true,
+  })
+  prospeccaoHoraInicio!: string | null;
+
+  /**
+   * Fim da janela de envio de prospecção (HH:MM). `null` → default `18:00`.
+   * Exclusivo (ex.: 18:00 = até 17:59).
+   */
+  @Column({
+    name: 'prospeccao_hora_fim',
+    type: 'varchar',
+    length: 5,
+    nullable: true,
+  })
+  prospeccaoHoraFim!: string | null;
+
+  /**
    * Texto de busca LinkedIn para `extrair_leads` (payload `query` do job).
    * Vazio → worker usa `EXTRACT_QUERY` / default do robô.
    */

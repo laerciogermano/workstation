@@ -7,12 +7,16 @@ import {
   IsOptional,
   IsString,
   IsUUID,
+  Matches,
   Max,
   MaxLength,
   Min,
   MinLength,
   ValidateIf,
 } from 'class-validator';
+
+/** HH:MM 00:00–23:59 */
+const HM_TIME = /^([01]\d|2[0-3]):[0-5]\d$/;
 
 const LI_STATUS = ['ativa', 'restrita', 'banida', 'inativa'] as const;
 
@@ -176,6 +180,20 @@ export class CreateAgenteDto {
   @MaxLength(4000)
   mensagemProspeccao?: string | null;
 
+  /** Início da janela de envio (HH:MM); null/omit → default 08:00. */
+  @IsOptional()
+  @ValidateIf((_, v) => v != null && String(v).trim() !== '')
+  @IsString()
+  @Matches(HM_TIME, { message: 'prospeccaoHoraInicio deve ser HH:MM' })
+  prospeccaoHoraInicio?: string | null;
+
+  /** Fim da janela (HH:MM, exclusivo); null/omit → default 18:00. */
+  @IsOptional()
+  @ValidateIf((_, v) => v != null && String(v).trim() !== '')
+  @IsString()
+  @Matches(HM_TIME, { message: 'prospeccaoHoraFim deve ser HH:MM' })
+  prospeccaoHoraFim?: string | null;
+
   /** Texto de search LinkedIn para buscar candidatos. */
   @IsOptional()
   @IsString()
@@ -331,6 +349,20 @@ export class UpdateAgenteDto {
   @IsString()
   @MaxLength(4000)
   mensagemProspeccao?: string | null;
+
+  /** Início da janela de envio (HH:MM); null → default 08:00. */
+  @IsOptional()
+  @ValidateIf((_, v) => v != null && String(v).trim() !== '')
+  @IsString()
+  @Matches(HM_TIME, { message: 'prospeccaoHoraInicio deve ser HH:MM' })
+  prospeccaoHoraInicio?: string | null;
+
+  /** Fim da janela (HH:MM, exclusivo); null → default 18:00. */
+  @IsOptional()
+  @ValidateIf((_, v) => v != null && String(v).trim() !== '')
+  @IsString()
+  @Matches(HM_TIME, { message: 'prospeccaoHoraFim deve ser HH:MM' })
+  prospeccaoHoraFim?: string | null;
 
   /** Texto de search LinkedIn para buscar candidatos. */
   @IsOptional()

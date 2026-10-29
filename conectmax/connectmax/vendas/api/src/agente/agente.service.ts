@@ -373,9 +373,64 @@ export class AgenteService implements OnModuleInit {
       .getCount();
   }
 
+  private parseHmToMinutes(
+    raw: string | null | undefined,
+    fallbackMin: number,
+  ): number {
+    const s = String(raw || '').trim();
+    const m = /^([01]?\d|2[0-3]):([0-5]\d)$/.exec(s);
+    if (!m) return fallbackMin;
+    return Number(m[1]) * 60 + Number(m[2]);
+  }
+
+  private formatMinutesAsHm(mins: number): string {
+    const day = 24 * 60;
+    const clamped = ((mins % day) + day) % day;
+    const h = Math.floor(clamped / 60);
+    const m = clamped % 60;
+    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+  }
+
+  /** Janela do agente (default 08:00–18:00, fim exclusivo). TZ do processo. */
+  private resolveProspeccaoWindow(agente: {
+    prospeccaoHoraInicio?: string | null;
+    prospeccaoHoraFim?: string | null;
+  } | null): {
+    startMin: number;
+    endMin: number;
+    startLabel: string;
+    endLabel: string;
+  } {
+    const startMin = this.parseHmToMinutes(agente?.prospeccaoHoraInicio, 8 * 60);
+    let endMin = this.parseHmToMinutes(agente?.prospeccaoHoraFim, 18 * 60);
+    if (endMin <= startMin) {
+      endMin = Math.min(24 * 60, startMin + 60);
+    }
+    return {
+      startMin,
+      endMin,
+      startLabel: this.formatMinutesAsHm(startMin),
+      endLabel: this.formatMinutesAsHm(endMin),
+    };
+  }
+
+  private nextProspeccaoWindowOpen(
+    startMin: number,
+    from: Date = new Date(),
+  ): Date {
+    const next = new Date(from);
+    next.setSeconds(0, 0);
+    next.setMilliseconds(0);
+    next.setHours(Math.floor(startMin / 60), startMin % 60, 0, 0);
+    if (next.getTime() <= from.getTime()) {
+      next.setDate(next.getDate() + 1);
+    }
+    return next;
+  }
+
   /**
-   * 1 slot se ainda há cota do dia e passou o intervalo desde o último envio;
-   * senão 0 (cooldown / daily / sem elegível fica no enqueue).
+   * 1 slot se dentro da janela, ainda há cota do dia e passou o intervalo;
+   * senão 0 (fora do horário / cooldown / daily).
    */
   private async prospeccaoSlotsNow(
     agentId: string,
@@ -386,10 +441,32 @@ export class AgenteService implements OnModuleInit {
     intervalMs: number;
     dailyLimit: number;
     reason: string | null;
+    windowStart: string;
+    windowEnd: string;
+    nextDueAt: Date | null;
+    outsideWindow: boolean;
   }> {
     const dailyLimit = this.prospeccaoDailyLimit();
     const intervalMs = this.prospeccaoIntervalMs();
+    const agente = await this.agentesCadastro.findOneBy({ id: agentId });
+    const win = this.resolveProspeccaoWindow(agente);
+    const now = new Date();
+    const nowMin = now.getHours() * 60 + now.getMinutes();
     const remainingDaily = Math.max(0, dailyLimit - sentToday);
+
+    if (nowMin < win.startMin || nowMin >= win.endMin) {
+      const nextDueAt = this.nextProspeccaoWindowOpen(win.startMin, now);
+      return {
+        slots: 0,
+        intervalMs,
+        dailyLimit,
+        reason: `fora da janela ${win.startLabel}–${win.endLabel}`,
+        windowStart: win.startLabel,
+        windowEnd: win.endLabel,
+        nextDueAt,
+        outsideWindow: true,
+      };
+    }
 
     if (remainingDaily <= 0) {
       return {
@@ -397,6 +474,10 @@ export class AgenteService implements OnModuleInit {
         intervalMs,
         dailyLimit,
         reason: `prospecção daily limit ${sentToday}/${dailyLimit}`,
+        windowStart: win.startLabel,
+        windowEnd: win.endLabel,
+        nextDueAt: null,
+        outsideWindow: false,
       };
     }
 
@@ -409,11 +490,24 @@ export class AgenteService implements OnModuleInit {
           intervalMs,
           dailyLimit,
           reason: `prospecção cooldown ${sentToday}/${dailyLimit} (falta ${Math.ceil((intervalMs - elapsed) / 60_000)}min)`,
+          windowStart: win.startLabel,
+          windowEnd: win.endLabel,
+          nextDueAt: new Date(lastAt.getTime() + intervalMs),
+          outsideWindow: false,
         };
       }
     }
 
-    return { slots: 1, intervalMs, dailyLimit, reason: null };
+    return {
+      slots: 1,
+      intervalMs,
+      dailyLimit,
+      reason: null,
+      windowStart: win.startLabel,
+      windowEnd: win.endLabel,
+      nextDueAt: null,
+      outsideWindow: false,
+    };
   }
 
   /**
@@ -684,6 +778,10 @@ export class AgenteService implements OnModuleInit {
       prospeccaoSlots: number;
       prospeccaoIntervalMs: number;
       prospeccaoDailyLimit: number;
+      prospeccaoWindowStart: string;
+      prospeccaoWindowEnd: string;
+      prospeccaoOutsideWindow: boolean;
+      prospeccaoNextDueAt: Date | null;
       leadThreshold: number;
       leadsNaFila: number;
       allowedTypes?: ReadonlySet<AgentJobType>;
@@ -862,6 +960,18 @@ export class AgenteService implements OnModuleInit {
           intervalMs,
           reason: 'job na fila',
         };
+      } else if (opts.prospeccaoOutsideWindow) {
+        const dueAt = opts.prospeccaoNextDueAt;
+        const dueInMs = dueAt ? Math.max(0, dueAt.getTime() - now) : null;
+        prospeccao = {
+          type: 'enviar_prospeccao',
+          state: 'waiting',
+          dueAt: dueAt ? dueAt.toISOString() : null,
+          dueInMs,
+          lastAt: iso(lastAt),
+          intervalMs,
+          reason: `fora da janela ${opts.prospeccaoWindowStart}–${opts.prospeccaoWindowEnd}`,
+        };
       } else if (opts.prospeccaoToday >= opts.prospeccaoDailyLimit) {
         prospeccao = {
           type: 'enviar_prospeccao',
@@ -895,7 +1005,7 @@ export class AgenteService implements OnModuleInit {
           dueInMs: 0,
           lastAt: iso(lastAt),
           intervalMs,
-          reason: `pronto (${opts.prospeccaoToday}/${opts.prospeccaoDailyLimit})`,
+          reason: `pronto ${opts.prospeccaoWindowStart}–${opts.prospeccaoWindowEnd} (${opts.prospeccaoToday}/${opts.prospeccaoDailyLimit})`,
         };
       } else {
         prospeccao = {
@@ -987,6 +1097,8 @@ export class AgenteService implements OnModuleInit {
       prospeccaoIntervalMs: number;
       prospeccaoToday: number;
       prospeccaoSlotsNow: number;
+      prospeccaoWindowStart: string;
+      prospeccaoWindowEnd: string;
       heartbeatStaleMs: number;
     };
   }> {
@@ -1103,6 +1215,10 @@ export class AgenteService implements OnModuleInit {
       prospeccaoSlots: prospeccaoNow.slots,
       prospeccaoIntervalMs: prospeccaoNow.intervalMs,
       prospeccaoDailyLimit: prospeccaoNow.dailyLimit,
+      prospeccaoWindowStart: prospeccaoNow.windowStart,
+      prospeccaoWindowEnd: prospeccaoNow.windowEnd,
+      prospeccaoOutsideWindow: prospeccaoNow.outsideWindow,
+      prospeccaoNextDueAt: prospeccaoNow.nextDueAt,
       leadThreshold: this.leadThreshold(),
       leadsNaFila,
       allowedTypes,
@@ -1130,6 +1246,8 @@ export class AgenteService implements OnModuleInit {
         prospeccaoIntervalMs: prospeccaoNow.intervalMs,
         prospeccaoToday,
         prospeccaoSlotsNow: prospeccaoNow.slots,
+        prospeccaoWindowStart: prospeccaoNow.windowStart,
+        prospeccaoWindowEnd: prospeccaoNow.windowEnd,
         heartbeatStaleMs: this.heartbeatStaleMs(),
       },
     };

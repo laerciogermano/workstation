@@ -230,25 +230,18 @@ export class AgenteService implements OnModuleInit {
 
   /**
    * Tipos permitidos para o agente.
-   * - `procedimentos == null` → flags/env globais (`jobTypeEnabled`)
-   * - array → allowlist do agente; `AGENT_MATERIALIZE_TYPES` (se setado) ainda restringe
+   * - array em `procedimentos` → allowlist do agente (vence `AGENT_MATERIALIZE_TYPES`)
+   * - `procedimentos == null` → flags/env globais (`jobTypeEnabled` / `AGENT_MATERIALIZE_TYPES`)
    */
   private async allowedTypesForAgent(
     agentId: string,
   ): Promise<AgentJobType[]> {
     const row = await this.agentesCadastro.findOneBy({ id: agentId });
     const procs = this.normalizeAgentProcedimentos(row?.procedimentos);
-    const materialize = this.materializeTypeSet();
-    let types: AgentJobType[];
     if (procs != null) {
-      types = AGENT_JOB_TYPES.filter((t) => procs.includes(t));
-    } else {
-      types = AGENT_JOB_TYPES.filter((t) => this.jobTypeEnabled(t));
+      return AGENT_JOB_TYPES.filter((t) => procs.includes(t));
     }
-    if (materialize) {
-      types = types.filter((t) => materialize.has(t));
-    }
-    return types;
+    return AGENT_JOB_TYPES.filter((t) => this.jobTypeEnabled(t));
   }
 
   /** Cancela pending de tipos fora do allowlist / flag / procedimentos do agente. */

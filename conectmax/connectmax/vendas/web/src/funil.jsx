@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { BrandBar } from './brand.jsx';
 import { ConnectionStatusBadge } from './connection-status.jsx';
 
@@ -438,10 +438,21 @@ export default function Funil({
   const [openingCardId, setOpeningCardId] = useState(null);
   const [openError, setOpenError] = useState(null);
   const [nextConnect, setNextConnect] = useState(null);
+  /** Evita race: resposta do agente anterior pintar no select novo. */
+  const agentIdRef = useRef(agentId);
+  agentIdRef.current = agentId;
 
   const setCol = useCallback((id, patch) => {
     setCols((prev) => ({ ...prev, [id]: { ...prev[id], ...patch } }));
   }, []);
+
+  const setColIfAgent = useCallback(
+    (forAgent, id, patch) => {
+      if (agentIdRef.current !== forAgent) return;
+      setCol(id, patch);
+    },
+    [setCol],
+  );
 
   const agentOpts = useMemo(() => {
     const rows = agentes
@@ -499,15 +510,17 @@ export default function Funil({
   }
 
   const loadRespondidos = useCallback(async () => {
-    if (!agentId) return;
-    setCol('respondidos', { loading: true, error: null });
+    const forAgent = agentId;
+    if (!forAgent) return;
+    setColIfAgent(forAgent, 'respondidos', { loading: true, error: null });
     try {
       const { data } = await fetchAllPages(MESSAGES_URL, {
         direction: 'received',
-        agentId,
+        agentId: forAgent,
       });
+      if (agentIdRef.current !== forAgent) return;
       const cards = cardsFromMessages(data);
-      setCol('respondidos', {
+      setColIfAgent(forAgent, 'respondidos', {
         cards,
         total: cards.length,
         loading: false,
@@ -515,7 +528,7 @@ export default function Funil({
         page: 1,
       });
     } catch (e) {
-      setCol('respondidos', {
+      setColIfAgent(forAgent, 'respondidos', {
         cards: [],
         total: 0,
         loading: false,
@@ -523,18 +536,20 @@ export default function Funil({
         hasMore: false,
       });
     }
-  }, [setCol, agentId]);
+  }, [setColIfAgent, agentId]);
 
   const loadAbordados = useCallback(async () => {
-    if (!agentId) return;
-    setCol('abordados', { loading: true, error: null });
+    const forAgent = agentId;
+    if (!forAgent) return;
+    setColIfAgent(forAgent, 'abordados', { loading: true, error: null });
     try {
       const { data } = await fetchAllPages(MESSAGES_URL, {
         direction: 'sent',
-        agentId,
+        agentId: forAgent,
       });
+      if (agentIdRef.current !== forAgent) return;
       const cards = cardsFromMessages(data);
-      setCol('abordados', {
+      setColIfAgent(forAgent, 'abordados', {
         cards,
         total: cards.length,
         loading: false,
@@ -542,7 +557,7 @@ export default function Funil({
         page: 1,
       });
     } catch (e) {
-      setCol('abordados', {
+      setColIfAgent(forAgent, 'abordados', {
         cards: [],
         total: 0,
         loading: false,
@@ -550,17 +565,19 @@ export default function Funil({
         hasMore: false,
       });
     }
-  }, [setCol, agentId]);
+  }, [setColIfAgent, agentId]);
 
   const loadConectados = useCallback(async () => {
-    if (!agentId) return;
-    setCol('conectados', { loading: true, error: null });
+    const forAgent = agentId;
+    if (!forAgent) return;
+    setColIfAgent(forAgent, 'conectados', { loading: true, error: null });
     try {
       const { data, total } = await fetchAllPages(CONNECTIONS_URL, {
         status: '2',
-        agentId,
+        agentId: forAgent,
       });
-      setCol('conectados', {
+      if (agentIdRef.current !== forAgent) return;
+      setColIfAgent(forAgent, 'conectados', {
         cards: cardsFromConnections(data),
         total,
         loading: false,
@@ -568,7 +585,7 @@ export default function Funil({
         page: 1,
       });
     } catch (e) {
-      setCol('conectados', {
+      setColIfAgent(forAgent, 'conectados', {
         cards: [],
         total: 0,
         loading: false,
@@ -576,17 +593,19 @@ export default function Funil({
         hasMore: false,
       });
     }
-  }, [setCol, agentId]);
+  }, [setColIfAgent, agentId]);
 
   const loadConvidados = useCallback(async () => {
-    if (!agentId) return;
-    setCol('convidados', { loading: true, error: null });
+    const forAgent = agentId;
+    if (!forAgent) return;
+    setColIfAgent(forAgent, 'convidados', { loading: true, error: null });
     try {
       const { data, total } = await fetchAllPages(CONNECTIONS_URL, {
         status: '1',
-        agentId,
+        agentId: forAgent,
       });
-      setCol('convidados', {
+      if (agentIdRef.current !== forAgent) return;
+      setColIfAgent(forAgent, 'convidados', {
         cards: cardsFromConnections(data),
         total,
         loading: false,
@@ -594,7 +613,7 @@ export default function Funil({
         page: 1,
       });
     } catch (e) {
-      setCol('convidados', {
+      setColIfAgent(forAgent, 'convidados', {
         cards: [],
         total: 0,
         loading: false,
@@ -602,17 +621,19 @@ export default function Funil({
         hasMore: false,
       });
     }
-  }, [setCol, agentId]);
+  }, [setColIfAgent, agentId]);
 
   const loadDescartados = useCallback(async () => {
-    if (!agentId) return;
-    setCol('descartados', { loading: true, error: null });
+    const forAgent = agentId;
+    if (!forAgent) return;
+    setColIfAgent(forAgent, 'descartados', { loading: true, error: null });
     try {
       const { data, total } = await fetchAllPages(CONNECTIONS_URL, {
         status: '3',
-        agentId,
+        agentId: forAgent,
       });
-      setCol('descartados', {
+      if (agentIdRef.current !== forAgent) return;
+      setColIfAgent(forAgent, 'descartados', {
         cards: cardsFromConnections(data),
         total,
         loading: false,
@@ -620,7 +641,7 @@ export default function Funil({
         page: 1,
       });
     } catch (e) {
-      setCol('descartados', {
+      setColIfAgent(forAgent, 'descartados', {
         cards: [],
         total: 0,
         loading: false,
@@ -628,23 +649,26 @@ export default function Funil({
         hasMore: false,
       });
     }
-  }, [setCol, agentId]);
+  }, [setColIfAgent, agentId]);
 
   const loadCandidatos = useCallback(
     async (page = 1, append = false) => {
-      if (!agentId) return;
-      setCol('candidatos', { loading: true, error: null });
+      const forAgent = agentId;
+      if (!forAgent) return;
+      setColIfAgent(forAgent, 'candidatos', { loading: true, error: null });
       try {
         const q = new URLSearchParams({
           page: String(page),
           limit: String(PAGE_SIZE),
-          agentId,
+          agentId: forAgent,
         });
         const json = await fetchJson(`${PROFILES_URL}?${q}`);
+        if (agentIdRef.current !== forAgent) return;
         const chunk = cardsFromProfiles(json?.data ?? []);
         const total = json?.meta?.total ?? chunk.length;
         const pages = json?.meta?.pages ?? 1;
         setCols((prev) => {
+          if (agentIdRef.current !== forAgent) return prev;
           const prevCards = append ? prev.candidatos.cards : [];
           const cards = append ? [...prevCards, ...chunk] : chunk;
           return {
@@ -660,6 +684,7 @@ export default function Funil({
           };
         });
       } catch (e) {
+        if (agentIdRef.current !== forAgent) return;
         setCols((prev) => ({
           ...prev,
           candidatos: {
@@ -672,7 +697,7 @@ export default function Funil({
         }));
       }
     },
-    [setCol, agentId],
+    [setColIfAgent, agentId],
   );
 
   const reloadAll = useCallback(() => {
@@ -701,7 +726,8 @@ export default function Funil({
 
   /** Destaca o 1º da fila de conectar (mesmo agente do worker). */
   useEffect(() => {
-    if (!agentId) {
+    const forAgent = agentId;
+    if (!forAgent) {
       setNextConnect(null);
       return undefined;
     }
@@ -709,11 +735,13 @@ export default function Funil({
     async function loadNext() {
       try {
         const json = await fetchJson(
-          `/agente/${encodeURIComponent(agentId)}/peek`,
+          `/agente/${encodeURIComponent(forAgent)}/peek`,
         );
-        if (!cancelled) setNextConnect(json?.nextConnect ?? null);
+        if (!cancelled && agentIdRef.current === forAgent) {
+          setNextConnect(json?.nextConnect ?? null);
+        }
       } catch {
-        if (!cancelled) setNextConnect(null);
+        if (!cancelled && agentIdRef.current === forAgent) setNextConnect(null);
       }
     }
     loadNext();

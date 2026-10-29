@@ -126,7 +126,8 @@ npm run dev
   | Respondidos | `GET /linkedin-base/messages?direction=received&agentId=` | 1 por peer |
   | Descartados | `GET /linkedin-base/connections?status=3&agentId=` | descartes do agente |
 
-**Antes → depois (funil por agente):** board misturava todos os agentes (`VITE_FUNIL_AGENT_ID` só em Candidatos) → select + `agentId` em todas as colunas. **Rollback:** tire o select e as query `agentId`; volte `FUNIL_AGENT_ID` só em candidatos.  
+**Antes → depois (funil por agente):** board misturava todos os agentes (`VITE_FUNIL_AGENT_ID` só em Candidatos) → select + `agentId` em todas as colunas. **Rollback:** tire o select e as query `agentId`; volte `FUNIL_AGENT_ID` só em candidatos.
+**Antes → depois (race ao trocar agente):** fetch lento do agente A completava depois do select B e pintava Convidados/Conectados errados → `agentIdRef` + `setColIfAgent` ignoram resposta stale. **Rollback:** remova o ref/`setColIfAgent` e volte `setCol` direto nos loaders.  
 **Antes → depois (sem tela Candidatos):** grid `/` + Extrair em massa → removidos; leads só na coluna Candidatos do funil. Extract em massa via API/`curl`. **Rollback:** restaure o item nav + home em `App.jsx`.  
 **Antes → depois (funil):** etapas só no todo Screen Robot → board em `/funil` lendo as APIs acima.  
 **Antes → depois (sem Perfil Extraído):** coluna `GET /profile-details?hasUrl=1` no board → removida (Candidatos já cobre extract).  

@@ -192,12 +192,37 @@ export class AgenteService implements OnModuleInit {
     return Number.isFinite(n) && n >= 0 ? Math.floor(n) : 15;
   }
 
-  /** Intervalo mínimo entre envios de prospecção (default 30 min). */
+  /** Intervalo mínimo entre envios de prospecção com sucesso (default 30 min). */
   private prospeccaoIntervalMs(): number {
     const n = Number(
       this.config.get('AGENT_PROSPECCAO_INTERVAL_MS', '1800000'),
     );
     return Number.isFinite(n) && n >= 60_000 ? n : 1_800_000;
+  }
+
+  /** Cooldown após falha de `enviar_prospeccao` antes de tentar de novo (default 5 min). */
+  private prospeccaoRetryIntervalMs(): number {
+    const n = Number(
+      this.config.get('AGENT_PROSPECCAO_RETRY_INTERVAL_MS', '300000'),
+    );
+    return Number.isFinite(n) && n >= 60_000 ? n : 300_000;
+  }
+
+  /** Último job terminal de prospecção (done/failed) — define cooldown sucesso vs retry. */
+  private async lastProspeccaoTerminal(
+    agentId: string,
+  ): Promise<{ status: 'done' | 'failed'; at: Date } | null> {
+    const row = await this.jobs.findOne({
+      where: {
+        agentId,
+        type: 'enviar_prospeccao',
+        status: In(['done', 'failed']),
+      },
+      order: { completedAt: 'DESC' },
+    });
+    if (!row?.completedAt) return null;
+    if (row.status !== 'done' && row.status !== 'failed') return null;
+    return { status: row.status, at: row.completedAt };
   }
 
   /**
@@ -447,12 +472,17 @@ export class AgenteService implements OnModuleInit {
     outsideWindow: boolean;
   }> {
     const dailyLimit = this.prospeccaoDailyLimit();
-    const intervalMs = this.prospeccaoIntervalMs();
+    const successIntervalMs = this.prospeccaoIntervalMs();
+    const retryIntervalMs = this.prospeccaoRetryIntervalMs();
     const agente = await this.agentesCadastro.findOneBy({ id: agentId });
     const win = this.resolveProspeccaoWindow(agente);
     const now = new Date();
     const nowMin = now.getHours() * 60 + now.getMinutes();
     const remainingDaily = Math.max(0, dailyLimit - sentToday);
+    const lastTerminal = await this.lastProspeccaoTerminal(agentId);
+    const afterFail = lastTerminal?.status === 'failed';
+    const intervalMs = afterFail ? retryIntervalMs : successIntervalMs;
+    const lastAt = lastTerminal?.at ?? runtime.lastProspeccaoAt;
 
     if (nowMin < win.startMin || nowMin >= win.endMin) {
       const nextDueAt = this.nextProspeccaoWindowOpen(win.startMin, now);
@@ -481,15 +511,15 @@ export class AgenteService implements OnModuleInit {
       };
     }
 
-    const lastAt = runtime.lastProspeccaoAt;
     if (lastAt) {
       const elapsed = Date.now() - lastAt.getTime();
       if (elapsed < intervalMs) {
+        const kind = afterFail ? 'retry após falha' : 'cooldown';
         return {
           slots: 0,
           intervalMs,
           dailyLimit,
-          reason: `prospecção cooldown ${sentToday}/${dailyLimit} (falta ${Math.ceil((intervalMs - elapsed) / 60_000)}min)`,
+          reason: `prospecção ${kind} ${sentToday}/${dailyLimit} (falta ${Math.ceil((intervalMs - elapsed) / 60_000)}min)`,
           windowStart: win.startLabel,
           windowEnd: win.endLabel,
           nextDueAt: new Date(lastAt.getTime() + intervalMs),

@@ -165,7 +165,7 @@ Cada AVD/conta (`agentId` = `provision.name`, ex. `agent-d`) puxa o próximo tra
 
 **Antes → depois (enviar_prospeccao on):** flag default **0** → **1** (`.env` + código). Desliga: `AGENT_ENVIAR_PROSPECCAO_ENABLED=0` ou tire de `procedimentos`. **Rollback:** default/`env` `'0'`.
 
-**Antes → depois (cadência prospecção):** enfileirava até 30 jobs sem intervalo/limite → **1** por vez, **15/dia**, cooldown **30 min** (`AGENT_PROSPECCAO_DAILY_LIMIT` / `AGENT_PROSPECCAO_INTERVAL_MS`; `agent_runtime.last_prospeccao_at` no complete/fail; peek: `prospeccaoToday`, `prospeccaoSlotsNow`, …). **Rollback:** unset envs; remova coluna/`lastProspeccaoAt`; volte o `take(30)` em `enqueueProspeccao`.
+**Antes → depois (cadência prospecção):** enfileirava até 30 jobs sem intervalo/limite → **1** por vez, **15/dia**, cooldown **30 min** após sucesso (`AGENT_PROSPECCAO_INTERVAL_MS`) e **5 min** após falha (`AGENT_PROSPECCAO_RETRY_INTERVAL_MS`; `last_prospeccao_at` no complete/fail; peek: `prospeccaoToday`, `prospeccaoSlotsNow`, …). **Rollback:** unset envs; remova coluna/`lastProspeccaoAt`; volte o `take(30)` em `enqueueProspeccao`.
 
 **Antes → depois (janela horária prospecção):** sem restrição de horário → só envia na janela do agente `prospeccao_hora_inicio`/`prospeccao_hora_fim` (HH:MM, TZ do processo; default **08:00–18:00**, fim exclusivo); UI em `/agentes` → Editar → Enviar prospecção; fora da janela cancela pending e agenda `waiting` até a próxima abertura. **Rollback:** `UPDATE agentes SET prospeccao_hora_inicio=NULL, prospeccao_hora_fim=NULL;` (ou `DROP COLUMN`); ignore campos no PATCH/UI; remova o check em `prospeccaoSlotsNow`.
 

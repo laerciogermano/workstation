@@ -84,6 +84,27 @@ export function cleanName(raw) {
   return maybeTitleCaseAllCaps(out).join(" ");
 }
 
+/**
+ * Limite comercial de people browsing: LinkedIn troca o nome real por
+ * "LinkedIn Member" (OCR pode partir em 2 textos). Extrair deixa de ser possível.
+ * @param {{ text?: string }[]|null|undefined} elements
+ */
+export function hasLinkedInMemberLimit(elements) {
+  const texts = (elements || [])
+    .map((e) => String(e?.text || "").replace(/\s+/g, " ").trim())
+    .filter(Boolean);
+  for (let i = 0; i < texts.length; i++) {
+    const t = texts[i];
+    if (/linkedin\s*member/i.test(t)) return true;
+    if (/membro\s+do\s+linkedin/i.test(t)) return true;
+    // OCR partido: "LinkedIn" + "Member" (ou typo Linkedln)
+    const a = t.replace(/\s+/g, "");
+    const b = String(texts[i + 1] || "").replace(/\s+/g, "");
+    if (/^linked(?:in|ln)$/i.test(a) && /^member$/i.test(b)) return true;
+  }
+  return false;
+}
+
 export function isValidProfileName(name) {
   const n = cleanName(name);
   if (n.length < 5 || n.length > 70) return false;

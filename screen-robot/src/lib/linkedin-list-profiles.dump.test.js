@@ -5,11 +5,30 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
   cleanName,
+  hasLinkedInMemberLimit,
   isValidProfileName,
   profilesFromExtract,
 } from "./linkedin-list-profiles.js";
 
 describe("linkedin-list-profiles dump", () => {
+  it("hasLinkedInMemberLimit detecta frase e OCR partido", () => {
+    assert.equal(
+      hasLinkedInMemberLimit([{ text: "LinkedIn Member", x: 200, y: 300 }]),
+      true,
+    );
+    assert.equal(
+      hasLinkedInMemberLimit([
+        { text: "LinkedIn", x: 200, y: 300 },
+        { text: "Member", x: 280, y: 300 },
+      ]),
+      true,
+    );
+    assert.equal(
+      hasLinkedInMemberLimit([{ text: "Samuel Lopes", x: 200, y: 300 }]),
+      false,
+    );
+  });
+
   it("cleanName remove Verified e tipografa ALL CAPS", () => {
     assert.equal(cleanName("Quelvy Timoteo Verified • 2nd"), "Quelvy Timoteo");
     assert.equal(

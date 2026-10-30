@@ -220,7 +220,9 @@ Script [`scripts/login-extract-profiles.js`](scripts/login-extract-profiles.js) 
 | People | `Filter by People` / `People` (chip topo, y≤240) |
 
 1. `stop` apps + `launch` → `waitForText("Search")` → tap → colar `comprador` (`pasteCleanMessage` / ADBKeyboard) → `waitForText(See/Show all)` (8s com teclado; se timeout → `KEYCODE_BACK` + wait 30s) → tap → **People** (chip topo) → tap
-2. Loop: `extractBySense` lista → **1º card novo** (menor `y`) → `GET /client-connections-linkedin/match` (score nome/cargo/cidade/empresa; **não** usa Connect/Pending da UI) → se matched, **skip** → senão **tap no perfil** → dump|ocr + URL → `GET /profile-details/by-url` → se URL já 1:1 na base, **skip save** → senão `onProfile`/POST → BACK → re-extract. Lista só descobre; **sem `profileUrl` (não abriu/Share) não salva**. Sem novos → scroll. Para em `-n` ou fim do scroll (`EXTRACT_SCROLL_STABLE`, default **4**). Exige `PROFILES_API_URL` para skip; sem API, abre todos.
+2. Loop: `extractBySense` lista → **1º card novo** (menor `y`) → `GET /client-connections-linkedin/match` (score nome/cargo/cidade/empresa; **não** usa Connect/Pending da UI) → se matched, **skip** → senão **tap no perfil** → dump|ocr + URL → `GET /profile-details/by-url` → se URL já 1:1 na base, **skip save** → senão `onProfile`/POST → BACK → re-extract. Lista só descobre; **sem `profileUrl` (não abriu/Share) não salva**. Sem novos → scroll. Para em `-n`, fim do scroll (`EXTRACT_SCROLL_STABLE`, default **4**) ou **LinkedIn Member** (limite comercial). Exige `PROFILES_API_URL` para skip; sem API, abre todos.
+
+**Antes → depois (LinkedIn Member):** lista com quota esgotada mostrava *LinkedIn Member* e o loop seguia scroll/abrir → `hasLinkedInMemberLimit` encerra a execução na hora (exit 0 com o que já salvou). **Rollback:** remova o `break` após `hasLinkedInMemberLimit` em `login-extract-profiles.js`.
 
 **Antes → depois (People no extract):** See all ia direto ao loop de cards (podia ficar em Posts/Jobs) → `tapPeopleChip` após See all. **Rollback:** remova a chamada a `tapPeopleChip` em `login-extract-profiles.js`.
 

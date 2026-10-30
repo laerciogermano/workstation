@@ -43,6 +43,7 @@ import {
 import { syncConnectionFromInviteStatus } from "../lib/linkedin-connect.js";
 import {
   PEOPLE_CARD_ACTIONS,
+  hasLinkedInMemberLimit,
   profilesFromExtract,
 } from "../lib/linkedin-list-profiles.js";
 import { parseProfileHeaderFromUiXml } from "../lib/linkedin-profile-from-uidump.js";
@@ -737,6 +738,13 @@ async function extractProfilesLoop(serial, outDir, opts = {}) {
       JSON.stringify(els, null, 2),
       "utf8",
     );
+    // Quota comercial: nomes viram "LinkedIn Member" — não dá mais para extrair.
+    if (hasLinkedInMemberLimit(els)) {
+      console.log(
+        "   fim: LinkedIn Member na lista (limite de busca/visualização) — encerrando",
+      );
+      break;
+    }
     const fresh = parsed
       .filter((p) => !seen.has(p.key))
       .sort((a, b) => (a.y ?? 0) - (b.y ?? 0));

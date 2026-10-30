@@ -290,6 +290,61 @@ function activityTimeline(
   return mergeDaily(...scoped);
 }
 
+function dayFunilStackTotal(row) {
+  return (
+    (Number(row.extracts) || 0) +
+    (Number(row.invited) || 0) +
+    (Number(row.connected) || 0) +
+    (Number(row.abordados) || 0) +
+    (Number(row.respondidos) || 0)
+  );
+}
+
+/** Funil empilhado por dia × agente (Todos + um painel por agente). */
+function dayFunilByAgent(insights, agents) {
+  const series = [
+    insights.byDayExtract || [],
+    insights.byDayConnected || [],
+    insights.byDayInvited || [],
+    insights.byDayAbordados || [],
+    insights.byDayRespondidos || [],
+  ];
+  const hasAgentDim = series.some((rows) => rows.some((r) => r?.agentId));
+  const panels = [];
+
+  const allRows = mergeDaily(...series);
+  if (allRows.length) {
+    panels.push({
+      id: '_all',
+      name: 'Todos',
+      rows: allRows,
+      total: allRows.reduce((s, r) => s + dayFunilStackTotal(r), 0),
+    });
+  }
+
+  if (hasAgentDim) {
+    for (const a of agents) {
+      const scoped = series.map((rows) =>
+        rows.filter((r) => r.agentId === a.id),
+      );
+      const rows = mergeDaily(...scoped);
+      if (!rows.length) continue;
+      panels.push({
+        id: a.id,
+        name: a.name,
+        rows,
+        total: rows.reduce((s, r) => s + dayFunilStackTotal(r), 0),
+      });
+    }
+  }
+
+  const max = Math.max(
+    1,
+    ...panels.flatMap((p) => p.rows.map(dayFunilStackTotal)),
+  );
+  return { panels, max };
+}
+
 function DataTable({ title, columns, rows, emptyLabel = 'Sem linhas' }) {
   return (
     <section className="dash-panel dash-panel-wide">
@@ -503,22 +558,16 @@ export default function Dashboard({
     [insights.byAgent],
   );
 
-  /** Funil empilhado por dia (30d) — mesmas etapas do Funil por agente. */
+  /** Funil empilhado por dia (30d) — um painel por agente (+ Todos). */
   const dayFunilChart = useMemo(
-    () =>
-      mergeDaily(
-        insights.byDayExtract,
-        insights.byDayConnected,
-        insights.byDayInvited,
-        insights.byDayAbordados,
-        insights.byDayRespondidos,
-      ),
+    () => dayFunilByAgent(insights, activityAgents),
     [
       insights.byDayExtract,
       insights.byDayConnected,
       insights.byDayInvited,
       insights.byDayAbordados,
       insights.byDayRespondidos,
+      activityAgents,
     ],
   );
 
@@ -811,53 +860,77 @@ export default function Dashboard({
         <ChartPanel
           title="Funil por dia (30d)"
           wide
-          note="Extrações · convites · conectados · abordados · respondidos"
-          empty={!dayFunilChart.length}
+          note="Todos + cada agente · mesma escala · candidatos · convites · conectados · abordados · respondidos"
+          empty={!dayFunilChart.panels.length}
           emptyLabel="Sem atividade com data"
         >
-          <ResponsiveContainer width="100%" height={280}>
-            <BarChart
-              data={dayFunilChart}
-              margin={{ top: 8, right: 12, left: 0, bottom: 0 }}
-            >
-              <CartesianGrid stroke={chartTheme.grid} strokeDasharray="3 3" />
-              <XAxis dataKey="label" {...axisProps} />
-              <YAxis {...axisProps} allowDecimals={false} width={36} />
-              <Tooltip content={<ChartTooltip />} />
-              <Legend />
-              <Bar
-                dataKey="extracts"
-                name="Candidatos"
-                stackId="funil"
-                fill="#A9B4C8"
-              />
-              <Bar
-                dataKey="invited"
-                name="Convidados"
-                stackId="funil"
-                fill="#D97706"
-              />
-              <Bar
-                dataKey="connected"
-                name="Conectados"
-                stackId="funil"
-                fill="#1F9D6B"
-              />
-              <Bar
-                dataKey="abordados"
-                name="Abordados"
-                stackId="funil"
-                fill="#2563EB"
-              />
-              <Bar
-                dataKey="respondidos"
-                name="Respondidos"
-                stackId="funil"
-                fill="#6D28D9"
-                radius={[6, 6, 0, 0]}
-              />
-            </BarChart>
-          </ResponsiveContainer>
+          <div className="multiples multiples-compare">
+            {dayFunilChart.panels.map((panel) => (
+              <figure key={panel.id} className="multiple">
+                <figcaption>
+                  <span>{panel.name}</span>
+                  <strong>{panel.total}</strong>
+                </figcaption>
+                <ResponsiveContainer width="100%" height={180}>
+                  <BarChart
+                    data={panel.rows}
+                    margin={{ top: 4, right: 4, left: 0, bottom: 0 }}
+                  >
+                    <CartesianGrid
+                      stroke={chartTheme.grid}
+                      strokeDasharray="3 3"
+                      vertical={false}
+                    />
+                    <XAxis dataKey="label" {...axisProps} interval={4} fontSize={10} />
+                    <YAxis
+                      {...axisProps}
+                      allowDecimals={false}
+                      width={28}
+                      domain={[0, dayFunilChart.max]}
+                      tickCount={4}
+                    />
+                    <Tooltip content={<ChartTooltip />} />
+                    <Bar
+                      dataKey="extracts"
+                      name="Candidatos"
+                      stackId="funil"
+                      fill="#A9B4C8"
+                      isAnimationActive={false}
+                    />
+                    <Bar
+                      dataKey="invited"
+                      name="Convidados"
+                      stackId="funil"
+                      fill="#D97706"
+                      isAnimationActive={false}
+                    />
+                    <Bar
+                      dataKey="connected"
+                      name="Conectados"
+                      stackId="funil"
+                      fill="#1F9D6B"
+                      isAnimationActive={false}
+                    />
+                    <Bar
+                      dataKey="abordados"
+                      name="Abordados"
+                      stackId="funil"
+                      fill="#2563EB"
+                      isAnimationActive={false}
+                    />
+                    <Bar
+                      dataKey="respondidos"
+                      name="Respondidos"
+                      stackId="funil"
+                      fill="#6D28D9"
+                      radius={[4, 4, 0, 0]}
+                      isAnimationActive={false}
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              </figure>
+            ))}
+          </div>
         </ChartPanel>
 
         <ChartPanel

@@ -5,7 +5,10 @@
 **Antes:** rodízio só após N turnos idle. **Depois:** ao esvaziar a fila do agente, **troca o slot na hora**; se ainda há pending, drena com claim seguido.  
 **Rollback:** pare o worker; `MODE=single`; status pode ficar `ativo` — sleep manual / `device-status`.
 
-**Produção `144.126.154.90`:** código em `/opt/connectmax/vendas/worker`, unit `connectmax-worker` (disabled até AVD com KVM). `agent-d` aponta para esse host; VDS `185` removido do cadastro.
+**Produção:** API em `http://144.126.154.90` — workers **só no Mac** (AVD local). Unit `connectmax-worker` na VPS permanece disabled (sem KVM). Scripts: [`scripts/start-worker-*.sh`](scripts/) (`API_URL` Contabo).
+
+**Antes → depois:** `API_URL=http://localhost:3000` (API local) → `API_URL=http://144.126.154.90`.  
+**Rollback:** scripts/env de volta a `localhost:3000` e subir API local.
 
 ## Modos
 
@@ -15,7 +18,11 @@ No start chama `POST /agente/:id/enroll` (cria cadastro magro se faltar; bootstr
 
 ```bash
 cd vendas/worker
-API_URL=http://localhost:3000 \
+# prod Contabo (padrão dos scripts/):
+./scripts/start-worker-alex.sh   # etc.
+
+# ou manual / API local:
+API_URL=http://144.126.154.90 \
 AGENT_ID=<agentes.id uuid> \
 AGENT_API_KEY=$AGENT_API_KEY_GLOBAL \
 SERIAL=127.0.0.1:5560 \

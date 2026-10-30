@@ -867,23 +867,38 @@ curl -s -X POST http://localhost:3000/agente/agent-d/claim -H "X-Api-Key: $AGENT
 
 ### Produção Contabo
 
-Stack API + web + Postgres no mesmo host `144.126.154.90` (sem Tailscale entre VMs).
+Stack **API + web + Postgres** no host `144.126.154.90`. **Workers AVD só no Mac** (`API_URL=http://144.126.154.90`); unit `connectmax-worker` na VPS fica **disabled**.
 
 | Peça | Onde |
 |------|------|
 | Postgres | Docker Compose `/opt/postgres/` |
-| API | systemd `connectmax-api` → `/opt/connectmax/vendas/api` (`DB_HOST=127.0.0.1`) |
-| Web | nginx → `/opt/connectmax/vendas/web/dist` + proxy `/profiles` etc. → `:3000` |
+| API | systemd `connectmax-api` → `/opt/connectmax/vendas/api` (`DB_HOST=127.0.0.1`, `DB_SYNC=false`) |
+| Web | nginx → `/opt/connectmax/vendas/web/dist` + proxy → `:3000` |
 | URL | `http://144.126.154.90/` |
-| Worker | `/opt/connectmax/vendas/worker` · unit `connectmax-worker` (agent-d) |
-| Host AVD | **precisa nested KVM** (`/dev/kvm`). VPS `144` (`vmi3645318`) **não tem** — `kvm-ok` falha. VDS antigo `185.250.37.82` (`vmi3645369`) era o host AVD; offline. |
+| Workers | Mac local — scripts [`../worker/scripts/`](../worker/scripts/) (`API_URL` Contabo) |
+| Worker VPS | unit `connectmax-worker` **disabled** (VPS sem `/dev/kvm`) |
 | nginx conf | canônico: [`../web/deploy/nginx-connectmax.conf`](../web/deploy/nginx-connectmax.conf) → `/etc/nginx/sites-available/connectmax` |
 
-**Antes → depois (AVD):** agentes `agent-b/c/d/e` no VDS `185` → cadastro `agent-d` migrado para `144`; `agent-b/c/e/d-clone` removidos. Worker instalado em `144`, **desabilitado** até haver host com KVM + LinkedIn.  
-**Rollback:** ligar VDS `185`, PATCH `agent-d` de volta (`ipPublico=185.250.37.82`, `ipPrivado` Tailscale, `nestedKvm=true`, SSH da VDS); `systemctl enable --now connectmax-worker` só com AVD no ar.
+**Antes → depois (runtime):** API/web/Vite locais (`:3000`/`:5173`) + workers → `localhost:3000` → API/web só na Contabo; workers Mac com `API_URL=http://144.126.154.90`.  
+**Rollback:** `npm run start:dev` na API local + `npm run dev` no web; workers com `API_URL=http://localhost:3000` (e `PROFILES_API_URL`/`MESSAGES_API_URL`/`INVITES_API_URL` iguais).
 
-Rotas SPA+API (`/avds`, `/servidores`, `/empresas`, `/dashboard`, `/profiles/:uuid`): **fetch JSON → Nest**; só `Accept: text/html` (refresh do browser) serve `index.html`. **Não** use `location = /avds { try_files … }` — isso devolve HTML no `GET /avds` e o front quebra com `Unexpected token '<'`.  
-**Antes → depois:** exact `try_files` nas rotas compartilhadas → proxy + `if ($http_accept ~* text/html)`. **Rollback:** restaurar o conf anterior na VPS ou o commit anterior do arquivo canônico; `nginx -t && systemctl reload nginx`.
+**Deploy (rsync + build na VPS):**
+
+```bash
+export SSHPASS='…'   # root@144 — credenciais.md
+rsync -az --delete --exclude node_modules --exclude dist --exclude .env --exclude logs \
+  vendas/api/ root@144.126.154.90:/opt/connectmax/vendas/api/
+rsync -az --delete --exclude node_modules --exclude dist --exclude .env \
+  vendas/web/ root@144.126.154.90:/opt/connectmax/vendas/web/
+scp vendas/web/deploy/nginx-connectmax.conf root@144.126.154.90:/etc/nginx/sites-available/connectmax
+ssh root@144.126.154.90 'cd /opt/connectmax/vendas/api && npm install && npm run build && \
+  cd ../web && npm install && npm run build && nginx -t && systemctl reload nginx && \
+  systemctl restart connectmax-api'
+```
+
+Schema novo sem `DB_SYNC`: `ALTER` manual (ex. `agent_runtime.last_extract_at`) ou um boot com `DB_SYNC=true` e volta a `false`.
+
+Rotas SPA+API (`/avds`, `/servidores`, `/empresas`, `/dashboard`, `/profiles/:uuid`): **fetch JSON → Nest**; só `Accept: text/html` serve `index.html`. **Não** use `location = /avds { try_files … }`.
 
 ```bash
 # .env na VPS 144 (não versionado)
@@ -892,9 +907,9 @@ DB_PORT=5432
 DB_USER=connectmax
 DB_PASSWORD=<ver /opt/postgres/.env>
 DB_NAME=connectmax
-DB_SYNC=true
+DB_SYNC=false
+AVD_MAX_ATIVOS_POR_SERVIDOR=1
+AGENT_API_KEY=<mesma dos workers Mac>
 ```
 
-**Antes → depois:** API em `185` + `DB_HOST=144` (dependia de Tailscale) → API+front em `144` com Postgres local.  
-**Rollback:** subir de novo em `185` com Tailscale/`ipPrivado` ou VPN entre VMs; `DB_HOST=144.126.154.90`.  
-**VPS DB:** `cd /opt/postgres && docker compose down` / `up -d`. Credenciais em `/opt/postgres/.env`.
+**VPS DB:** `cd /opt/postgres && docker compose down` / `up -d`. Credenciais em `/opt/postgres/.env` / [`credenciais.md`](../../../../credenciais.md).

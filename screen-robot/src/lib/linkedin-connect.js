@@ -8,6 +8,7 @@
  * 4. Skip no dialog "Add a note"
  * 5. Sucesso se OCR mostrar Pending **ou** "Invitation sent" após Skip
  * 6. Em sucesso → POST na API (convite feito)
+ * 7. Ao finalizar (ok/erro) → `am force-stop` no package LinkedIn (`closeApp: false` para pular)
  */
 import { mkdirSync } from "node:fs";
 import { join } from "node:path";
@@ -15,7 +16,7 @@ import { join } from "node:path";
 import { adb, sleep } from "./adb.js";
 import { installConnectmaxApiAuth } from "./connectmax-api-auth.js";
 import { extractBySense } from "./extract.js";
-import { key, screenshot, tapElement } from "./operate.js";
+import { key, screenshot, stop, tapElement } from "./operate.js";
 
 const OCR = process.env.SCREEN_ROBOT_OCR || "rapidocr";
 const WAIT_AFTER_VIEW_MS = Number(process.env.LINKEDIN_CONNECT_WAIT_VIEW_MS || 8_000);
@@ -551,6 +552,7 @@ async function waitForPending(serial, { outDir, steps }) {
  *   dryRun?: boolean,
  *   notifyApi?: boolean,
  *   agentId?: string,
+ *   closeApp?: boolean,
  * }} opts
  */
 export async function connectByLinkedInUrl(opts) {
@@ -559,7 +561,44 @@ export async function connectByLinkedInUrl(opts) {
   const dryRun = Boolean(opts.dryRun);
   const notifyApi = opts.notifyApi !== false;
   const agentId = opts.agentId || resolveAgentId();
+  const closeApp = opts.closeApp !== false;
   const steps = [];
+  try {
+    return await connectByLinkedInUrlBody({
+      ...opts,
+      serial,
+      pkg,
+      dryRun,
+      notifyApi,
+      agentId,
+      steps,
+    });
+  } finally {
+    if (closeApp) {
+      try {
+        stop({ serial, package: pkg });
+        steps.push(`force-stop:${pkg}`);
+      } catch {
+        /* ignore */
+      }
+    }
+  }
+}
+
+/**
+ * @param {{
+ *   serial: string,
+ *   pkg: string,
+ *   url: string,
+ *   outDir?: string|null,
+ *   dryRun: boolean,
+ *   notifyApi: boolean,
+ *   agentId: string,
+ *   steps: string[],
+ * }} opts
+ */
+async function connectByLinkedInUrlBody(opts) {
+  const { serial, pkg, dryRun, notifyApi, agentId, steps } = opts;
   const url = openProfileByUrl(serial, pkg, opts.url);
   steps.push(`view:${url}`);
   await sleep(WAIT_AFTER_VIEW_MS);

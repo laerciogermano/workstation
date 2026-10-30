@@ -15,10 +15,14 @@ Aceitos: listagem `/connections` → `POST …/mark-accepted` (nome OCR ↔ pend
 5. Dialog note → tap **Skip** (nunca Add a note)
 6. Confirma **Pending** no OCR — sem Pending = falha
 7. Sucesso → notifica API (`/client-connections-linkedin`, `agentId` + `status: 1`)
-8. Depois: `POST /connections` no robot → `mark-accepted` promove quem aparece na lista a `status: 2`
+8. Ao finalizar (ok/erro) → `am force-stop` no package LinkedIn (`closeApp: false` para pular)
+9. Depois: `POST /connections` no robot → `mark-accepted` promove quem aparece na lista a `status: 2`
 
 **Antes → depois:** 404 do LinkedIn seguia tentando Connect até timeout → agora falha imediata com `not_found`.  
 **Rollback:** remova o POST `status: 3` em `hasPageDoesNotExist`; volte a `ok: false` / `status: not_found` sem descarte na API.
+
+**Antes → depois (fechar app):** LinkedIn ficava aberto após o job → `stop()` no `finally` de `connectByLinkedInUrl`.  
+**Rollback:** `closeApp: false` ou remova o `finally`/`stop`.
 
 ## Uso
 

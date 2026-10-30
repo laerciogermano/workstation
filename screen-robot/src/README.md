@@ -435,9 +435,12 @@ Lib [`lib/linkedin-connect.js`](lib/linkedin-connect.js):
 4. Skip no dialog (nunca Add a note)
 5. **Sucesso com Pending ou "Invitation sent" no OCR após Skip** — nenhum dos dois → `ok: false`
 6. Sucesso (já Pending / Invitation sent, ou após Skip) → sempre `POST …/client-connections-linkedin` `{ profileUrl, agentId, status: 1 }` (default API `:3000`; `agentId` = `AGENT_ID` ou `provision.name`). API robot → 502 se não gravar.
+7. Ao finalizar (ok/erro) → `am force-stop` LinkedIn (`closeApp: false` para pular).
 
 **Antes → depois:** POST opcional → obrigatório (status 1); listagem de Connections marca status 2 via `mark-accepted`; 404 LinkedIn agora falha com `not_found` em vez de timeout.  
 **Rollback:** `notifyApi: false` / ignore o POST; `DROP TABLE client_connection_linkedin` se necessário; remover `hasPageDoesNotExist`.
+
+**Antes → depois (fechar app):** LinkedIn ficava aberto → `stop()` no `finally` de `connectByLinkedInUrl`. Rollback: `closeApp: false` ou remova o `finally`.
 
 **Antes → depois (Connect CTA):** só text `Connect` → também content-desc **`Invite … to connect`** (`findExactConnect`). Sem isso o fluxo abria o perfil e só fazia `wait:round*`. Rollback: regex só `/^connect$/i`.
 

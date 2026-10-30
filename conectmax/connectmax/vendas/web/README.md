@@ -167,7 +167,7 @@ npm run dev
 
 **Antes → depois (atividade 30d):** `ComposedChart` (barras Extrações/Convites + linha Conectados) → `LineChart` com três linhas (Extrações, Convites, Conectados). **Rollback:** restaurar `ComposedChart` + `Bar` para extracts/invited e `Line` só em connected.
 **Antes → depois (atividade 30d por agente):** um painel agregado → N painéis por agente → **um** painel com filtro Agente (`Todos` soma `byDay*`; um id filtra). `localStorage` `cx-dash-atividade-agent`. **Rollback:** remova o select/`activityTimeline` e volte ao painel único sem filtro (ou N painéis).
-**Antes → depois (comparação agentes 30d):** select de métrica / grade 5 procedimentos → **um** `LineChart` (Todos + cada agente; Y = soma Buscar+Conectar+Ver conexões+Prospecção+Ler). **Rollback:** volte `compareAllProcedures` / select de métrica.
+**Antes → depois (comparação agentes 30d):** soma por agente → **um** `LineChart` com série `Todos|agente × procedimento` (5 procs × N agentes; cor=agente, traço=proc). **Rollback:** volte soma agregada ou grade `compareAllProcedures`.
 
 **Antes → depois (lista):** botões Anterior/Próxima → infinite scroll acumulando páginas.  
 **Antes → depois (dashboard):** agregação client-side → `GET /dashboard`.  

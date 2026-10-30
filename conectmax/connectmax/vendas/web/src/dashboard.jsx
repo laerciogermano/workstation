@@ -154,50 +154,81 @@ function agentPresence(row) {
 
 const ACTIVITY_AGENT_KEY = 'cx-dash-atividade-agent';
 
-/** Soma dos 5 procedimentos do funil por dia × agente (+ `_all` Todos). */
+/** Procedimentos do funil na comparação (todos × todos os agentes). */
+const COMPARE_PROCEDURES = [
+  { id: 'extracts', label: 'Buscar candidatos', field: 'byDayExtract' },
+  { id: 'invited', label: 'Conectar', field: 'byDayInvited' },
+  { id: 'connected', label: 'Ver conexões', field: 'byDayConnected' },
+  { id: 'abordados', label: 'Enviar prospecção', field: 'byDayAbordados' },
+  { id: 'respondidos', label: 'Ler mensagens', field: 'byDayRespondidos' },
+];
+
+const COMPARE_PROC_DASH = {
+  extracts: undefined,
+  invited: '6 3',
+  connected: '2 2',
+  abordados: '8 3 2 3',
+  respondidos: '1 3',
+};
+
+function compareSeriesKey(agentKey, procId) {
+  return `${agentKey}__${procId}`;
+}
+
+/**
+ * Um gráfico: linha por (Todos|agente) × procedimento.
+ * Cor = agente; traço = procedimento.
+ */
 function compareDailyByAgent(insights, agents) {
-  const metricRows = [
-    ...(insights.byDayExtract || []),
-    ...(insights.byDayInvited || []),
-    ...(insights.byDayConnected || []),
-    ...(insights.byDayAbordados || []),
-    ...(insights.byDayRespondidos || []),
+  const seriesList = [
+    ...COMPARE_PROCEDURES.map((p) => ({
+      key: compareSeriesKey('_all', p.id),
+      name: `Todos · ${p.label}`,
+      agentKey: '_all',
+      procId: p.id,
+    })),
+    ...agents.flatMap((a) =>
+      COMPARE_PROCEDURES.map((p) => ({
+        key: compareSeriesKey(a.id, p.id),
+        name: `${a.name} · ${p.label}`,
+        agentKey: a.id,
+        procId: p.id,
+      })),
+    ),
   ];
-  const hasAgentDim = metricRows.some((r) => r?.agentId);
+
   const map = new Map();
-  for (const r of metricRows) {
-    const day = r.label;
-    if (!day) continue;
-    const n = Number(r.count) || 0;
-    const cur = map.get(day) ?? {
-      day,
-      label: formatDay(day),
-      _all: 0,
-    };
-    if (hasAgentDim && r.agentId) {
-      cur[r.agentId] = (cur[r.agentId] || 0) + n;
-    }
-    cur._all += n;
-    map.set(day, cur);
-  }
-  const rows = [...map.values()].sort((a, b) => a.day.localeCompare(b.day));
-  if (hasAgentDim && agents.length) {
-    for (const row of rows) {
-      for (const a of agents) {
-        if (row[a.id] == null) row[a.id] = 0;
+  let hasAgentDim = false;
+  for (const proc of COMPARE_PROCEDURES) {
+    const rows = insights[proc.field] || [];
+    for (const r of rows) {
+      const day = r.label;
+      if (!day) continue;
+      const n = Number(r.count) || 0;
+      const cur = map.get(day) ?? { day, label: formatDay(day) };
+      const allKey = compareSeriesKey('_all', proc.id);
+      cur[allKey] = (cur[allKey] || 0) + n;
+      if (r.agentId) {
+        hasAgentDim = true;
+        const aKey = compareSeriesKey(r.agentId, proc.id);
+        cur[aKey] = (cur[aKey] || 0) + n;
       }
+      map.set(day, cur);
     }
   }
-  if (!hasAgentDim) {
-    return { rows, lines: [{ key: '_all', name: 'Todos' }] };
+
+  const dayRows = [...map.values()].sort((a, b) => a.day.localeCompare(b.day));
+  for (const row of dayRows) {
+    for (const s of seriesList) {
+      if (row[s.key] == null) row[s.key] = 0;
+    }
   }
-  return {
-    rows,
-    lines: [
-      { key: '_all', name: 'Todos' },
-      ...agents.map((a) => ({ key: a.id, name: a.name })),
-    ],
-  };
+
+  if (!hasAgentDim) {
+    const onlyAll = seriesList.filter((s) => s.agentKey === '_all');
+    return { rows: dayRows, lines: onlyAll };
+  }
+  return { rows: dayRows, lines: seriesList };
 }
 
 function mergeDaily(extract, connected, invited, abordados, respondidos) {
@@ -677,12 +708,15 @@ export default function Dashboard({
         <ChartPanel
           title="Comparação por agente (30d)"
           wide
-          note="Todos + cada agente · soma dos 5 procedimentos do funil"
+          note="Cada linha = agente × procedimento (Todos incluso) · cor = agente · traço = procedimento"
           empty={!compareChart.rows.length}
           emptyLabel="Sem atividade com data"
         >
           <figure className="multiple multiple-activity">
-            <ResponsiveContainer width="100%" height={300}>
+            <ResponsiveContainer
+              width="100%"
+              height={Math.max(320, 220 + compareChart.lines.length * 4)}
+            >
               <LineChart
                 data={compareChart.rows}
                 margin={{ top: 8, right: 12, left: 0, bottom: 0 }}
@@ -691,12 +725,15 @@ export default function Dashboard({
                 <XAxis dataKey="label" {...axisProps} />
                 <YAxis {...axisProps} allowDecimals={false} width={36} />
                 <Tooltip content={<ChartTooltip />} />
-                <Legend />
-                {compareChart.lines.map((line, i) => {
-                  const isAll = line.key === '_all';
+                <Legend wrapperStyle={{ fontSize: 11 }} />
+                {compareChart.lines.map((line) => {
+                  const isAll = line.agentKey === '_all';
+                  const agentIdx = isAll
+                    ? -1
+                    : activityAgents.findIndex((a) => a.id === line.agentKey);
                   const color = isAll
                     ? chartTheme.text
-                    : PALETTE[(i - 1) % PALETTE.length];
+                    : PALETTE[Math.max(0, agentIdx) % PALETTE.length];
                   return (
                     <Line
                       key={line.key}
@@ -704,9 +741,11 @@ export default function Dashboard({
                       dataKey={line.key}
                       name={line.name}
                       stroke={color}
-                      strokeWidth={isAll ? 2.5 : 2}
-                      strokeDasharray={isAll ? '6 4' : undefined}
-                      dot={{ r: isAll ? 2 : 3 }}
+                      strokeWidth={isAll ? 2.25 : 1.75}
+                      strokeDasharray={
+                        COMPARE_PROC_DASH[line.procId] ?? undefined
+                      }
+                      dot={false}
                       connectNulls
                     />
                   );

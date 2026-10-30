@@ -233,6 +233,30 @@ export function stop(cfg, deps = {}) {
 }
 
 /**
+ * Force-stop do LinkedIn (ou package informado). Ignora erro.
+ * @param {{
+ *   serial: string,
+ *   package?: string,
+ *   linkedinPackage?: string,
+ *   steps?: string[],
+ * }} opts
+ * @returns {boolean}
+ */
+export function closeLinkedInApp(opts = {}) {
+  const serial = opts.serial;
+  const pkg =
+    opts.linkedinPackage || opts.package || "com.linkedin.android";
+  if (!serial || !pkg) return false;
+  try {
+    stop({ serial, package: pkg });
+    if (Array.isArray(opts.steps)) opts.steps.push(`force-stop:${pkg}`);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
  * Force-stop de todos os pacotes de terceiros (`pm list packages -3`) + HOME.
  * Usar antes de abrir LinkedIn para tela limpa.
  * @param {{ serial: string, extraPackages?: string[] }} cfg

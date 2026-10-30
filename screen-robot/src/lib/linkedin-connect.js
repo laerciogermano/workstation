@@ -16,7 +16,7 @@ import { join } from "node:path";
 import { adb, sleep } from "./adb.js";
 import { installConnectmaxApiAuth } from "./connectmax-api-auth.js";
 import { extractBySense } from "./extract.js";
-import { key, screenshot, stop, tapElement } from "./operate.js";
+import { closeLinkedInApp, key, screenshot, tapElement } from "./operate.js";
 
 const OCR = process.env.SCREEN_ROBOT_OCR || "rapidocr";
 const WAIT_AFTER_VIEW_MS = Number(process.env.LINKEDIN_CONNECT_WAIT_VIEW_MS || 8_000);
@@ -574,14 +574,7 @@ export async function connectByLinkedInUrl(opts) {
       steps,
     });
   } finally {
-    if (closeApp) {
-      try {
-        stop({ serial, package: pkg });
-        steps.push(`force-stop:${pkg}`);
-      } catch {
-        /* ignore */
-      }
-    }
+    if (closeApp) closeLinkedInApp({ serial, package: pkg, steps });
   }
 }
 

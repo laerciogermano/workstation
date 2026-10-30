@@ -26,6 +26,9 @@
  * → **Only visible to me** + desliga export de e-mail. WebView: poll até opções
  * no dump (`LINKEDIN_SETUP_PRIVACY_TIMEOUT_MS`, default 45s).
  * Rollback: omitir `--privacy` / `--defaults` sem privacy / `--privacy-only`.
+ *
+ * Fechar app: o script `linkedin-setup` faz `force-stop` no `finally` (não fecha
+ * entre passos avatar/banner/about).
  */
 import { existsSync, mkdirSync, readFileSync } from "node:fs";
 import { basename, dirname, join, resolve } from "node:path";

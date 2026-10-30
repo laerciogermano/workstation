@@ -19,7 +19,13 @@ import {
   connectionsFromExtract,
   mergeConnections,
 } from "./linkedin-connections-list.js";
-import { launch, scroll, screenshot, tapElement } from "./operate.js";
+import {
+  closeLinkedInApp,
+  launch,
+  scroll,
+  screenshot,
+  tapElement,
+} from "./operate.js";
 
 const SENSE = "dump";
 const DEFAULT_PROFILE_URL = "https://www.linkedin.com/in/me/";
@@ -66,11 +72,40 @@ async function shot(serial, outDir, name) {
  *   notifyApi?: boolean,
  *   agentId?: string,
  *   profileUrl?: string|null,
+ *   closeApp?: boolean,
  * }} opts
  */
 export async function extractRecentConnections(opts) {
   const serial = opts.serial;
   const pkg = opts.linkedinPackage || "com.linkedin.android";
+  const closeApp = opts.closeApp !== false;
+  const steps = [];
+  try {
+    return await extractRecentConnectionsBody({
+      ...opts,
+      serial,
+      pkg,
+      steps,
+    });
+  } finally {
+    if (closeApp) closeLinkedInApp({ serial, package: pkg, steps });
+  }
+}
+
+/**
+ * @param {{
+ *   serial: string,
+ *   pkg: string,
+ *   n?: number,
+ *   outDir?: string|null,
+ *   notifyApi?: boolean,
+ *   agentId?: string,
+ *   profileUrl?: string|null,
+ *   steps: string[],
+ * }} opts
+ */
+async function extractRecentConnectionsBody(opts) {
+  const { serial, pkg, steps } = opts;
   const n = Math.max(1, Math.floor(Number(opts.n) || 1));
   const notifyApi = opts.notifyApi !== false;
   const agentId = opts.agentId || resolveAgentId();
@@ -81,7 +116,6 @@ export async function extractRecentConnections(opts) {
         process.env.AGENT_LINKEDIN_PROFILE_URL ||
         DEFAULT_PROFILE_URL,
     ) || DEFAULT_PROFILE_URL;
-  const steps = [];
 
   if (opts.outDir) mkdirSync(opts.outDir, { recursive: true });
 

@@ -107,6 +107,10 @@ npm run launch -- com.linkedin.android
 
 Alias em `device.config.json` → `apps.<nome>.package` (`linkedin`, `instagram`, `tinder`, `gmail`).
 
+### `closeLinkedInApp` / `stop`
+
+Procedimentos LinkedIn chamam `closeLinkedInApp({ serial, package })` no `finally` (`am force-stop`). CLI: `npm run key` não fecha app — use o procedimento ou `stop({ serial, package })`.
+
 ---
 
 ### `key`

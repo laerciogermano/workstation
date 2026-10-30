@@ -13,7 +13,7 @@ import { fileURLToPath } from "node:url";
 
 import { sleep } from "../lib/adb.js";
 import { extractBySense, findByText } from "../lib/extract.js";
-import { screenshot, tapElement, type } from "../lib/operate.js";
+import { closeLinkedInApp, screenshot, tapElement, type } from "../lib/operate.js";
 import { provisionEmulator } from "../lib/provision.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -67,12 +67,16 @@ async function main() {
   }
 
   const cfg = loadConfig(configPath);
+  const linkedinPkg = cfg.apps?.linkedin?.package || "com.linkedin.android";
+  /** @type {string|undefined} */
+  let serial;
   const outDir = resolve(ROOT, "screenshots");
+  try {
   console.log("0) Limpar screenshots…");
   clearScreenshots(outDir);
 
   console.log("1) Provisionar…");
-  const { serial } = await provisionEmulator(cfg);
+  ({ serial } = await provisionEmulator(cfg));
   console.log(`   OK ${serial}`);
 
   let step = 2;
@@ -128,6 +132,9 @@ async function main() {
     }
   } catch (e) {
     console.error("Erro na busca comprador:", e.message || e);
+  }
+  } finally {
+    if (serial) closeLinkedInApp({ serial, package: linkedinPkg });
   }
 }
 

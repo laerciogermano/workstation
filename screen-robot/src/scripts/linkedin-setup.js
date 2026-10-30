@@ -33,6 +33,7 @@ import {
   linkedinSetupJobTitle,
   linkedinSetupPrivacyEmail,
 } from "../lib/linkedin-setup.js";
+import { closeLinkedInApp } from "../lib/operate.js";
 import { provisionEmulator } from "../lib/provision.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -187,6 +188,7 @@ async function main() {
     steps: [],
   };
 
+  try {
   if (args.mode === "avatar-only") {
     const av = await linkedinSetupAvatar({
       serial,
@@ -285,6 +287,13 @@ async function main() {
       };
       result.steps.push(...pr.steps);
     }
+  }
+  } finally {
+    closeLinkedInApp({
+      serial,
+      package: linkedinPkg,
+      steps: /** @type {string[]} */ (result.steps),
+    });
   }
 
   if (outDir) {

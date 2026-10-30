@@ -58,7 +58,14 @@ import {
 } from "../lib/linkedin-profile-photo-crop.js";
 import { searchQueryFromCard } from "../lib/linkedin-search-query.js";
 import { pasteCleanMessage } from "../lib/linkedin-message.js";
-import { key, launch, scroll, stop, tapElement } from "../lib/operate.js";
+import {
+  closeLinkedInApp,
+  key,
+  launch,
+  scroll,
+  stop,
+  tapElement,
+} from "../lib/operate.js";
 import { provisionEmulator } from "../lib/provision.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -973,6 +980,11 @@ async function extractProfilesLoop(serial, outDir, opts = {}) {
 }
 
 async function main() {
+  /** @type {string|undefined} */
+  let serial;
+  /** @type {string|undefined} */
+  let linkedinPkg;
+  try {
   const { sense, argv } = takeSenseArg(process.argv.slice(2));
   let configPath = resolve(ROOT, "device.config.json");
   let maxProfiles = MAX_PROFILES;
@@ -1003,7 +1015,7 @@ async function main() {
     cfg.device = device;
     cfg.provision = { ...(cfg.provision || {}), serial: device };
   }
-  const linkedinPkg = cfg.apps?.linkedin?.package;
+  linkedinPkg = cfg.apps?.linkedin?.package;
   if (!linkedinPkg) throw new Error('App "linkedin" ausente em device.config.json');
 
   const stamp = new Date().toISOString().replace(/[:.]/g, "-");
@@ -1012,7 +1024,7 @@ async function main() {
   console.log(`saida: ${outDir}`);
 
   console.log("1) Provisionar…");
-  const { serial } = await provisionEmulator(cfg);
+  ({ serial } = await provisionEmulator(cfg));
   console.log(`   OK ${serial}`);
 
   console.log("2) Remover apps em execução…");
@@ -1078,7 +1090,12 @@ async function main() {
   writeProfilesJson(outDir, saved.map(profileRowForJson));
   console.log(`OK — ${saved.length} perfis`);
   console.log(`profiles.json: ${join(outDir, "profiles.json")}`);
-  process.exit(0);
+  } finally {
+    if (serial && linkedinPkg) {
+      closeLinkedInApp({ serial, package: linkedinPkg });
+      console.log(`   force-stop ${linkedinPkg}`);
+    }
+  }
 }
 
 main().catch((e) => {

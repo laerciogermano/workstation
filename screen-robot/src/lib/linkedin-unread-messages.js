@@ -4,6 +4,7 @@
  * Fluxo: stopAllApps → launch → Messaging → Unread → parse dump (até maxResults).
  * Cada item: name, message, unreadCount, time.
  * Com `sync: true`: resolve URL na API e abre cada chat → `client_linkedin_message`.
+ * Ao finalizar → force-stop LinkedIn (`closeApp: false` para pular).
  */
 import { mkdirSync } from "node:fs";
 import { join } from "node:path";
@@ -16,6 +17,7 @@ import {
 } from "./linkedin-connect.js";
 import { listProfileMessages } from "./linkedin-profile-messages.js";
 import {
+  closeLinkedInApp,
   launch,
   screenshot,
   scroll,
@@ -185,8 +187,29 @@ async function shot(serial, outDir, name) {
 export async function listUnreadMessages(opts) {
   const serial = opts.serial;
   const pkg = opts.linkedinPackage || "com.linkedin.android";
-  const maxResults = Math.max(1, Math.floor(Number(opts.maxResults) || 1));
+  const closeApp = opts.closeApp !== false;
   const steps = [];
+  try {
+    return await listUnreadMessagesBody({ ...opts, serial, pkg, steps });
+  } finally {
+    if (closeApp) closeLinkedInApp({ serial, package: pkg, steps });
+  }
+}
+
+/**
+ * @param {{
+ *   serial: string,
+ *   pkg: string,
+ *   maxResults?: number,
+ *   outDir?: string|null,
+ *   sync?: boolean,
+ *   apps?: object,
+ *   steps: string[],
+ * }} opts
+ */
+async function listUnreadMessagesBody(opts) {
+  const { serial, pkg, steps } = opts;
+  const maxResults = Math.max(1, Math.floor(Number(opts.maxResults) || 1));
 
   if (opts.outDir) mkdirSync(opts.outDir, { recursive: true });
 
@@ -308,6 +331,7 @@ export async function listUnreadMessages(opts) {
           maxResults: CHAT_MAX,
           outDir: null,
           apps: opts.apps,
+          closeApp: false,
         });
         steps.push(
           `sync:done:${row.name}:msgs=${chat.count ?? 0}:db=${

@@ -103,6 +103,8 @@ const elements = await extract({ serial });
 | LinkedIn Search comprador → See all | `npm run login-extract-profiles` |
 | LinkedIn conectar por URL (Connect→Skip→Pending) | `npm run linkedin-connect` · API `npm run linkedin-connect-api` |
 | LinkedIn boolean por perfil + abrir | `npm run login-visit-profiles` |
+
+**Fechar LinkedIn ao fim:** todo procedimento LinkedIn (connect / message / connections / unread / profile-messages / signup / setup / login-extract* / visit / login) faz `am force-stop` no `finally` via [`closeLinkedInApp`](lib/operate.js). Opt-out lib: `closeApp: false` (ex.: sync unread → chat em lote). Rollback: remova o `finally` / passe `closeApp: false`.
 | Parse cards lista (fixtures OCR) | `node --test lib/linkedin-list-profiles.fixture.test.js` |
 | Parse cards × engines (vision/rapid/tess) | `node --test --test-timeout=180000 lib/linkedin-list-profiles.engines.fixture.test.js` |
 | Exemplo mínimo (provision + scrcpy) | `npm run sample` |

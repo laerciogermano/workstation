@@ -91,6 +91,8 @@ Use **chave global** no supervisor.
 
 **Antes → depois (ler_mensagens):** só listava Unread (job done sem gravar) → `--sync` resolve URL (`GET /clientes?q=nome`) e chama `listProfileMessages` (persiste sent/received). Pula Sponsored. Exige `PROFILES_API_URL`/`API_URL` + `AGENT_API_KEY`. **Rollback:** remova `--sync` em `handlers/ler_mensagens.mjs` (volta a só listar).
 
+**Antes → depois (fechar app):** jobs deixavam LinkedIn aberto → libs/scripts fazem `closeLinkedInApp` / `force-stop` no `finally` (unread passa `closeApp: false` nos chats do sync). **Rollback:** `closeApp: false` ou remova o `finally` no screen-robot.
+
 ## Contrato host
 
 1. `GET /agente/slots?hostKey=`  

@@ -51,7 +51,14 @@ import {
   sanitizeSearchText,
   typeQueryFromProfile as buildTypeQuery,
 } from "../lib/linkedin-search-query.js";
-import { key, launch, stop, tapElement, type } from "../lib/operate.js";
+import {
+  closeLinkedInApp,
+  key,
+  launch,
+  stop,
+  tapElement,
+  type,
+} from "../lib/operate.js";
 import { provisionEmulator } from "../lib/provision.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -727,6 +734,11 @@ async function fetchStoredProfileUrl(profileId) {
 }
 
 async function main() {
+  /** @type {string|undefined} */
+  let serial;
+  /** @type {string|undefined} */
+  let linkedinPkg;
+  try {
   const { configPath, profileId, fromProfile, profileUrlArg, sense } = parseArgs(
     process.argv.slice(2),
   );
@@ -736,7 +748,7 @@ async function main() {
   }
 
   const cfg = loadConfig(configPath);
-  const linkedinPkg = cfg.apps?.linkedin?.package;
+  linkedinPkg = cfg.apps?.linkedin?.package;
   if (!linkedinPkg) throw new Error('App "linkedin" ausente em device.config.json');
 
   console.log(`1) Buscar perfil ${profileId} na API…`);
@@ -761,7 +773,7 @@ async function main() {
   console.log(`saida: ${outDir}`);
 
   console.log("2) Provisionar…");
-  const { serial } = await provisionEmulator(cfg);
+  ({ serial } = await provisionEmulator(cfg));
   console.log(`   OK ${serial}`);
 
   let openedName = name;
@@ -967,7 +979,12 @@ async function main() {
   }
 
   console.log("OK — cartão persistido — encerrando processo");
-  process.exit(0);
+  } finally {
+    if (serial && linkedinPkg) {
+      closeLinkedInApp({ serial, package: linkedinPkg });
+      console.log(`   force-stop ${linkedinPkg}`);
+    }
+  }
 }
 
 main().catch((e) => {

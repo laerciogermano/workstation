@@ -2,6 +2,7 @@
  * Criar conta LinkedIn (jornada signup) — passos incrementais com print.
  *
  * Fluxo: stop → Join now → nomes (ADBKeyboard + assert) → email → password → location → job title.
+ * Ao finalizar → force-stop LinkedIn (`closeApp: false` para pular).
  */
 import { mkdirSync } from "node:fs";
 import { join } from "node:path";
@@ -14,6 +15,7 @@ import {
   linkedinSetupJobTitle,
 } from "./linkedin-setup.js";
 import {
+  closeLinkedInApp,
   key,
   launch,
   screenshot,
@@ -404,12 +406,28 @@ async function fillJobTitle(serial, jobTitle, steps, outDir) {
  *   avatarPath?: string|null,
  *   linkedinPackage?: string,
  *   outDir?: string|null,
+ *   closeApp?: boolean,
  * }} opts
  * @returns {Promise<{ steps: string[], serial: string, outDir: string|null, company?: string, avatarPath?: string|null }>}
  */
 export async function linkedinSignupJoinNow(opts) {
   const serial = opts.serial;
   if (!serial) throw new Error("linkedinSignupJoinNow: falta serial");
+  const pkg = opts.linkedinPackage || "com.linkedin.android";
+  const closeApp = opts.closeApp !== false;
+  const steps = [];
+  try {
+    return await linkedinSignupJoinNowBody({ ...opts, serial, pkg, steps });
+  } finally {
+    if (closeApp) closeLinkedInApp({ serial, package: pkg, steps });
+  }
+}
+
+/**
+ * @param {object} opts
+ */
+async function linkedinSignupJoinNowBody(opts) {
+  const { serial, pkg, steps } = opts;
   const firstName = String(opts.firstName || "").trim();
   const lastName = String(opts.lastName || "").trim();
   const email = String(opts.email || "").trim();
@@ -425,9 +443,6 @@ export async function linkedinSignupJoinNow(opts) {
   if (!password) throw new Error("linkedinSignupJoinNow: falta password");
   if (!jobTitle) throw new Error("linkedinSignupJoinNow: falta jobTitle");
   if (!company) throw new Error("linkedinSignupJoinNow: falta company");
-
-  const pkg = opts.linkedinPackage || "com.linkedin.android";
-  const steps = [];
 
   if (opts.outDir) mkdirSync(opts.outDir, { recursive: true });
 

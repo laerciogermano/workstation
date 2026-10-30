@@ -7,6 +7,7 @@
  * 3. Write a message…
  * 4. Injeta texto **exato** via ADBKeyboard (B64 + TEXT quoted) — sem clipboard Mac↔AVD
  * 5. Send
+ * 6. Ao finalizar → `am force-stop` LinkedIn (`closeApp: false` para pular)
  */
 import { mkdirSync } from "node:fs";
 import { join } from "node:path";
@@ -21,7 +22,13 @@ import {
   openProfileByUrl,
   resolveAgentId,
 } from "./linkedin-connect.js";
-import { key, screenshot, stopAllApps, tapElement } from "./operate.js";
+import {
+  closeLinkedInApp,
+  key,
+  screenshot,
+  stopAllApps,
+  tapElement,
+} from "./operate.js";
 
 const OCR = process.env.SCREEN_ROBOT_OCR || "rapidocr";
 const WAIT_VIEW_MS = Number(process.env.LINKEDIN_MSG_WAIT_VIEW_MS || 8_000);
@@ -326,11 +333,35 @@ async function shot(serial, outDir, name) {
  *   outDir?: string|null,
  *   dryRun?: boolean,
  *   apps?: Record<string, { package?: string }>,
+ *   closeApp?: boolean,
  * }} opts
  */
 export async function sendLinkedInMessage(opts) {
   const serial = opts.serial;
   const pkg = opts.linkedinPackage || "com.linkedin.android";
+  const closeApp = opts.closeApp !== false;
+  const steps = [];
+  try {
+    return await sendLinkedInMessageBody({ ...opts, serial, pkg, steps });
+  } finally {
+    if (closeApp) closeLinkedInApp({ serial, package: pkg, steps });
+  }
+}
+
+/**
+ * @param {{
+ *   serial: string,
+ *   pkg: string,
+ *   url: string,
+ *   text: string,
+ *   outDir?: string|null,
+ *   dryRun?: boolean,
+ *   apps?: Record<string, { package?: string }>,
+ *   steps: string[],
+ * }} opts
+ */
+async function sendLinkedInMessageBody(opts) {
+  const { serial, pkg, steps } = opts;
   const dryRun = Boolean(opts.dryRun);
   const message = String(opts.text || "").trim();
   if (!message) throw new Error("texto da mensagem vazio");
@@ -343,7 +374,6 @@ export async function sendLinkedInMessage(opts) {
     agentId: resolveAgentId(),
   });
 
-  const steps = [];
   if (opts.outDir) mkdirSync(opts.outDir, { recursive: true });
 
   // 1) Fecha todos os apps de terceiros → HOME → 2) abre LinkedIn pela URL

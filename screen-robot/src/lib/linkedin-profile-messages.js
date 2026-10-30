@@ -3,6 +3,7 @@
  *
  * Fluxo: stopAllApps → VIEW url → Message → (scroll up se precisar) → dump.
  * Cada item: sender, message, time, from ("me"|"peer").
+ * Ao finalizar → force-stop LinkedIn (`closeApp: false` p/ caller em lote).
  */
 import { mkdirSync } from "node:fs";
 import { join } from "node:path";
@@ -21,6 +22,7 @@ import {
   findSendMessageInSheet,
 } from "./linkedin-message.js";
 import {
+  closeLinkedInApp,
   key,
   screenshot,
   scroll,
@@ -362,13 +364,35 @@ async function openComposer(serial, steps, outDir) {
  *   maxResults: number,
  *   outDir?: string|null,
  *   apps?: Record<string, { package?: string }>,
+ *   closeApp?: boolean,
  * }} opts
  */
 export async function listProfileMessages(opts) {
   const serial = opts.serial;
   const pkg = opts.linkedinPackage || "com.linkedin.android";
-  const maxResults = Math.max(1, Math.floor(Number(opts.maxResults) || 1));
+  const closeApp = opts.closeApp !== false;
   const steps = [];
+  try {
+    return await listProfileMessagesBody({ ...opts, serial, pkg, steps });
+  } finally {
+    if (closeApp) closeLinkedInApp({ serial, package: pkg, steps });
+  }
+}
+
+/**
+ * @param {{
+ *   serial: string,
+ *   pkg: string,
+ *   url: string,
+ *   maxResults: number,
+ *   outDir?: string|null,
+ *   apps?: Record<string, { package?: string }>,
+ *   steps: string[],
+ * }} opts
+ */
+async function listProfileMessagesBody(opts) {
+  const { serial, pkg, steps } = opts;
+  const maxResults = Math.max(1, Math.floor(Number(opts.maxResults) || 1));
 
   if (!normalizeLinkedInProfileUrl(opts.url)) {
     throw new Error(`URL inválida: ${opts.url}`);

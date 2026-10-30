@@ -154,17 +154,15 @@ function agentPresence(row) {
 
 const ACTIVITY_AGENT_KEY = 'cx-dash-atividade-agent';
 
-/** Procedimentos do funil (volume diário) — um mini-gráfico cada na comparação. */
-const COMPARE_PROCEDURES = [
-  { id: 'extracts', label: 'Buscar candidatos', field: 'byDayExtract' },
-  { id: 'invited', label: 'Conectar', field: 'byDayInvited' },
-  { id: 'connected', label: 'Ver conexões', field: 'byDayConnected' },
-  { id: 'abordados', label: 'Enviar prospecção', field: 'byDayAbordados' },
-  { id: 'respondidos', label: 'Ler mensagens', field: 'byDayRespondidos' },
-];
-
-/** Comparação diária: uma coluna por agente + `_all` (Todos). */
-function compareDailyByAgent(metricRows, agents) {
+/** Soma dos 5 procedimentos do funil por dia × agente (+ `_all` Todos). */
+function compareDailyByAgent(insights, agents) {
+  const metricRows = [
+    ...(insights.byDayExtract || []),
+    ...(insights.byDayInvited || []),
+    ...(insights.byDayConnected || []),
+    ...(insights.byDayAbordados || []),
+    ...(insights.byDayRespondidos || []),
+  ];
   const hasAgentDim = metricRows.some((r) => r?.agentId);
   const map = new Map();
   for (const r of metricRows) {
@@ -183,7 +181,6 @@ function compareDailyByAgent(metricRows, agents) {
     map.set(day, cur);
   }
   const rows = [...map.values()].sort((a, b) => a.day.localeCompare(b.day));
-  // Zera agentes sem movimento no dia (legenda completa).
   if (hasAgentDim && agents.length) {
     for (const row of rows) {
       for (const a of agents) {
@@ -194,22 +191,13 @@ function compareDailyByAgent(metricRows, agents) {
   if (!hasAgentDim) {
     return { rows, lines: [{ key: '_all', name: 'Todos' }] };
   }
-  const lines = [
-    { key: '_all', name: 'Todos' },
-    ...agents.map((a) => ({ key: a.id, name: a.name })),
-  ];
-  return { rows, lines };
-}
-
-/** Todos os procedimentos × todos os agentes (+ Todos). */
-function compareAllProcedures(insights, agents) {
-  return COMPARE_PROCEDURES.map((proc) => {
-    const metricRows = Array.isArray(insights[proc.field])
-      ? insights[proc.field]
-      : [];
-    const chart = compareDailyByAgent(metricRows, agents);
-    return { ...proc, ...chart };
-  });
+  return {
+    rows,
+    lines: [
+      { key: '_all', name: 'Todos' },
+      ...agents.map((a) => ({ key: a.id, name: a.name })),
+    ],
+  };
 }
 
 function mergeDaily(extract, connected, invited, abordados, respondidos) {
@@ -455,8 +443,8 @@ export default function Dashboard({
     else localStorage.removeItem(ACTIVITY_AGENT_KEY);
   }
 
-  const comparePanels = useMemo(
-    () => compareAllProcedures(insights, activityAgents),
+  const compareChart = useMemo(
+    () => compareDailyByAgent(insights, activityAgents),
     [
       insights.byDayExtract,
       insights.byDayConnected,
@@ -466,8 +454,6 @@ export default function Dashboard({
       activityAgents,
     ],
   );
-
-  const compareHasData = comparePanels.some((p) => p.rows.length);
 
   const agentChart = useMemo(
     () =>
@@ -672,57 +658,43 @@ export default function Dashboard({
         <ChartPanel
           title="Comparação por agente (30d)"
           wide
-          note="Todos os agentes + Todos · um gráfico por procedimento do funil"
-          empty={!compareHasData}
+          note="Todos + cada agente · soma dos 5 procedimentos do funil"
+          empty={!compareChart.rows.length}
           emptyLabel="Sem atividade com data"
         >
-          <div className="multiples multiples-compare">
-            {comparePanels.map((panel) => (
-              <figure key={panel.id} className="multiple">
-                <figcaption>
-                  <span>{panel.label}</span>
-                </figcaption>
-                {!panel.rows.length ? (
-                  <p className="muted">Sem dados</p>
-                ) : (
-                  <ResponsiveContainer width="100%" height={200}>
-                    <LineChart
-                      data={panel.rows}
-                      margin={{ top: 4, right: 8, left: 0, bottom: 0 }}
-                    >
-                      <CartesianGrid
-                        stroke={chartTheme.grid}
-                        strokeDasharray="3 3"
-                      />
-                      <XAxis dataKey="label" {...axisProps} hide={false} />
-                      <YAxis {...axisProps} allowDecimals={false} width={28} />
-                      <Tooltip content={<ChartTooltip />} />
-                      <Legend wrapperStyle={{ fontSize: 11 }} />
-                      {panel.lines.map((line, i) => {
-                        const isAll = line.key === '_all';
-                        const color = isAll
-                          ? chartTheme.text
-                          : PALETTE[(i - 1) % PALETTE.length];
-                        return (
-                          <Line
-                            key={line.key}
-                            type="monotone"
-                            dataKey={line.key}
-                            name={line.name}
-                            stroke={color}
-                            strokeWidth={isAll ? 2.5 : 1.75}
-                            strokeDasharray={isAll ? '6 4' : undefined}
-                            dot={false}
-                            connectNulls
-                          />
-                        );
-                      })}
-                    </LineChart>
-                  </ResponsiveContainer>
-                )}
-              </figure>
-            ))}
-          </div>
+          <figure className="multiple multiple-activity">
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart
+                data={compareChart.rows}
+                margin={{ top: 8, right: 12, left: 0, bottom: 0 }}
+              >
+                <CartesianGrid stroke={chartTheme.grid} strokeDasharray="3 3" />
+                <XAxis dataKey="label" {...axisProps} />
+                <YAxis {...axisProps} allowDecimals={false} width={36} />
+                <Tooltip content={<ChartTooltip />} />
+                <Legend />
+                {compareChart.lines.map((line, i) => {
+                  const isAll = line.key === '_all';
+                  const color = isAll
+                    ? chartTheme.text
+                    : PALETTE[(i - 1) % PALETTE.length];
+                  return (
+                    <Line
+                      key={line.key}
+                      type="monotone"
+                      dataKey={line.key}
+                      name={line.name}
+                      stroke={color}
+                      strokeWidth={isAll ? 2.5 : 2}
+                      strokeDasharray={isAll ? '6 4' : undefined}
+                      dot={{ r: isAll ? 2 : 3 }}
+                      connectNulls
+                    />
+                  );
+                })}
+              </LineChart>
+            </ResponsiveContainer>
+          </figure>
         </ChartPanel>
 
         <ChartPanel

@@ -59,7 +59,16 @@ npm install
 npm run dev
 ```
 
-Abre `http://localhost:5173`. Em dev, Vite faz proxy de `/profiles`, `/dashboard`, `/profile-details`, `/extract`, `/linkedin-base`, `/empresas` (API), `/agentes`, `/gestores`, `/users` → `http://localhost:3000` (HTML em `/mensagens`, `/funil`, `/agentes`, `/atividades`, `/usuarios`, `/executivo` e `/dashboard` cai no SPA; `/empresas` HTML → `/funil`). Em `/profiles`, SPA só no detalhe `/profiles/:uuid`; `GET /profiles?page=` (navegação no browser) vai para a API.
+**Só front → API remota (Contabo):** sem API local; proxy aponta para a VPS.
+
+```bash
+cd ../web
+API_PROXY=http://144.126.154.90 npm run dev
+```
+
+**Antes → depois:** proxy fixo `localhost:3000` → `API_PROXY` (default local). **Rollback:** omita `API_PROXY` (volta `:3000`) ou `API_PROXY=http://localhost:3000`.
+
+Abre `http://localhost:5173`. Em dev, Vite faz proxy de `/profiles`, `/dashboard`, `/profile-details`, `/extract`, `/linkedin-base`, `/empresas` (API), `/agentes`, `/gestores`, `/users` → `API_PROXY` ou `http://localhost:3000` (HTML em `/mensagens`, `/funil`, `/agentes`, `/atividades`, `/usuarios`, `/executivo` e `/dashboard` cai no SPA; `/empresas` HTML → `/funil`). Em `/profiles`, SPA só no detalhe `/profiles/:uuid`; `GET /profiles?page=` (navegação no browser) vai para a API.
 
 **Antes → depois (sem tela Empresas):** nav + `empresas.jsx` → removidos; bookmark `/empresas` redireciona ao funil. API `GET /empresas` intacta. **Rollback:** restaure `empresas.jsx` + item nav + rota em `App.jsx`.
 

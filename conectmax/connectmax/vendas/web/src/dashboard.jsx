@@ -213,59 +213,114 @@ function activityTimeline(
   return mergeDaily(...scoped);
 }
 
-function dayFunilStackTotal(row) {
-  return (
-    (Number(row.extracts) || 0) +
-    (Number(row.invited) || 0) +
-    (Number(row.connected) || 0) +
-    (Number(row.abordados) || 0) +
-    (Number(row.respondidos) || 0)
-  );
+const DAY_FUNIL_STAGES = [
+  { key: 'extracts', name: 'Candidatos', fill: '#A9B4C8' },
+  { key: 'invited', name: 'Convidados', fill: '#D97706' },
+  { key: 'connected', name: 'Conectados', fill: '#1F9D6B' },
+  { key: 'abordados', name: 'Abordados', fill: '#2563EB' },
+  { key: 'respondidos', name: 'Respondidos', fill: '#6D28D9' },
+];
+
+function dayFunilStageKey(agentId, stage) {
+  return `${agentId}__${stage}`;
 }
 
-/** Funil empilhado por dia × agente (Todos + um painel por agente). */
-function dayFunilByAgent(insights, agents) {
+/** Um gráfico: por dia, uma barra empilhada (procedimentos) por agente. */
+function dayFunilGrouped(insights, agents) {
   const series = [
-    insights.byDayExtract || [],
-    insights.byDayConnected || [],
-    insights.byDayInvited || [],
-    insights.byDayAbordados || [],
-    insights.byDayRespondidos || [],
+    [insights.byDayExtract || [], 'extracts'],
+    [insights.byDayConnected || [], 'connected'],
+    [insights.byDayInvited || [], 'invited'],
+    [insights.byDayAbordados || [], 'abordados'],
+    [insights.byDayRespondidos || [], 'respondidos'],
   ];
-  const hasAgentDim = series.some((rows) => rows.some((r) => r?.agentId));
-  const panels = [];
+  const hasAgentDim = series.some(([rows]) => rows.some((r) => r?.agentId));
 
-  const allRows = mergeDaily(...series);
-  if (allRows.length) {
-    panels.push({
-      id: '_all',
-      name: 'Todos',
-      rows: allRows,
-      total: allRows.reduce((s, r) => s + dayFunilStackTotal(r), 0),
-    });
+  if (!hasAgentDim) {
+    return {
+      rows: mergeDaily(...series.map(([rows]) => rows)),
+      agents: [],
+      stages: DAY_FUNIL_STAGES,
+      grouped: false,
+    };
   }
 
-  if (hasAgentDim) {
-    for (const a of agents) {
-      const scoped = series.map((rows) =>
-        rows.filter((r) => r.agentId === a.id),
-      );
-      const rows = mergeDaily(...scoped);
-      if (!rows.length) continue;
-      panels.push({
-        id: a.id,
-        name: a.name,
-        rows,
-        total: rows.reduce((s, r) => s + dayFunilStackTotal(r), 0),
-      });
+  const map = new Map();
+  for (const [rows, stage] of series) {
+    for (const r of rows) {
+      if (!r?.agentId || !r?.label) continue;
+      const cur = map.get(r.label) ?? {
+        day: r.label,
+        label: formatDay(r.label),
+      };
+      const k = dayFunilStageKey(r.agentId, stage);
+      cur[k] = (Number(cur[k]) || 0) + (Number(r.count) || 0);
+      map.set(r.label, cur);
     }
   }
 
-  const max = Math.max(
-    1,
-    ...panels.flatMap((p) => p.rows.map(dayFunilStackTotal)),
+  const rows = [...map.values()].sort((a, b) => a.day.localeCompare(b.day));
+  const used = agents.filter((a) =>
+    rows.some((row) =>
+      DAY_FUNIL_STAGES.some(
+        (s) => (Number(row[dayFunilStageKey(a.id, s.key)]) || 0) > 0,
+      ),
+    ),
   );
-  return { panels, max };
+
+  return { rows, agents: used, stages: DAY_FUNIL_STAGES, grouped: true };
+}
+
+function DayFunilTooltip({ active, payload, label, agents }) {
+  if (!active || !payload?.length) return null;
+  const nameById = new Map(agents.map((a) => [a.id, a.name]));
+  const byAgent = new Map();
+  for (const p of payload) {
+    const v = Number(p.value) || 0;
+    if (!v) continue;
+    const raw = String(p.dataKey ?? '');
+    const sep = raw.indexOf('__');
+    if (sep < 0) {
+      byAgent.set('_', [
+        ...(byAgent.get('_') || []),
+        { name: p.name, value: v, color: p.color },
+      ]);
+      continue;
+    }
+    const agentId = raw.slice(0, sep);
+    const stage = DAY_FUNIL_STAGES.find((s) => s.key === raw.slice(sep + 2));
+    byAgent.set(agentId, [
+      ...(byAgent.get(agentId) || []),
+      { name: stage?.name ?? p.name, value: v, color: p.color },
+    ]);
+  }
+  const groups = [...byAgent.entries()];
+  if (!groups.length) return null;
+  return (
+    <div className="chart-tooltip">
+      {label != null && label !== '' && (
+        <div className="chart-tooltip-label">{label}</div>
+      )}
+      {groups.map(([agentId, items], i) => (
+        <div key={agentId} style={{ marginTop: i ? 6 : 0 }}>
+          {agentId !== '_' && (
+            <div className="chart-tooltip-label" style={{ opacity: 0.85 }}>
+              {nameById.get(agentId) || agentId}
+            </div>
+          )}
+          {items.map((it) => (
+            <div key={`${agentId}-${it.name}`} className="chart-tooltip-row">
+              <span>
+                <i className="swatch" style={{ background: it.color }} />
+                {it.name}
+              </span>
+              <strong>{it.value}</strong>
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
+  );
 }
 
 function DataTable({ title, columns, rows, emptyLabel = 'Sem linhas' }) {
@@ -469,9 +524,9 @@ export default function Dashboard({
     [insights.byAgent],
   );
 
-  /** Funil empilhado por dia (30d) — um painel por agente (+ Todos). */
+  /** Funil por dia (30d): uma barra empilhada por agente em cada dia. */
   const dayFunilChart = useMemo(
-    () => dayFunilByAgent(insights, activityAgents),
+    () => dayFunilGrouped(insights, activityAgents),
     [
       insights.byDayExtract,
       insights.byDayConnected,
@@ -709,77 +764,66 @@ export default function Dashboard({
         <ChartPanel
           title="Funil por dia (30d)"
           wide
-          note="Todos + cada agente · mesma escala · candidatos · convites · conectados · abordados · respondidos"
-          empty={!dayFunilChart.panels.length}
+          note="Por dia: uma barra empilhada por agente · candidatos · convites · conectados · abordados · respondidos"
+          empty={!dayFunilChart.rows.length}
           emptyLabel="Sem atividade com data"
         >
-          <div className="multiples multiples-compare">
-            {dayFunilChart.panels.map((panel) => (
-              <figure key={panel.id} className="multiple">
-                <figcaption>
-                  <span>{panel.name}</span>
-                  <strong>{panel.total}</strong>
-                </figcaption>
-                <ResponsiveContainer width="100%" height={180}>
-                  <BarChart
-                    data={panel.rows}
-                    margin={{ top: 4, right: 4, left: 0, bottom: 0 }}
-                  >
-                    <CartesianGrid
-                      stroke={chartTheme.grid}
-                      strokeDasharray="3 3"
-                      vertical={false}
-                    />
-                    <XAxis dataKey="label" {...axisProps} interval={4} fontSize={10} />
-                    <YAxis
-                      {...axisProps}
-                      allowDecimals={false}
-                      width={28}
-                      domain={[0, dayFunilChart.max]}
-                      tickCount={4}
-                    />
-                    <Tooltip content={<ChartTooltip />} />
+          <ResponsiveContainer width="100%" height={320}>
+            <BarChart
+              data={dayFunilChart.rows}
+              margin={{ top: 8, right: 8, left: 0, bottom: 0 }}
+              barCategoryGap="18%"
+              barGap={2}
+            >
+              <CartesianGrid
+                stroke={chartTheme.grid}
+                strokeDasharray="3 3"
+                vertical={false}
+              />
+              <XAxis dataKey="label" {...axisProps} interval={4} fontSize={10} />
+              <YAxis {...axisProps} allowDecimals={false} width={32} />
+              <Tooltip
+                content={
+                  <DayFunilTooltip agents={dayFunilChart.agents} />
+                }
+              />
+              <Legend />
+              {dayFunilChart.grouped
+                ? dayFunilChart.agents.flatMap((a, ai) =>
+                    dayFunilChart.stages.map((s, si) => (
+                      <Bar
+                        key={`${a.id}-${s.key}`}
+                        dataKey={dayFunilStageKey(a.id, s.key)}
+                        name={s.name}
+                        stackId={a.id}
+                        fill={s.fill}
+                        legendType={ai === 0 ? 'rect' : 'none'}
+                        radius={
+                          si === dayFunilChart.stages.length - 1
+                            ? [4, 4, 0, 0]
+                            : [0, 0, 0, 0]
+                        }
+                        isAnimationActive={false}
+                      />
+                    )),
+                  )
+                : dayFunilChart.stages.map((s, si) => (
                     <Bar
-                      dataKey="extracts"
-                      name="Candidatos"
+                      key={s.key}
+                      dataKey={s.key}
+                      name={s.name}
                       stackId="funil"
-                      fill="#A9B4C8"
+                      fill={s.fill}
+                      radius={
+                        si === dayFunilChart.stages.length - 1
+                          ? [4, 4, 0, 0]
+                          : [0, 0, 0, 0]
+                      }
                       isAnimationActive={false}
                     />
-                    <Bar
-                      dataKey="invited"
-                      name="Convidados"
-                      stackId="funil"
-                      fill="#D97706"
-                      isAnimationActive={false}
-                    />
-                    <Bar
-                      dataKey="connected"
-                      name="Conectados"
-                      stackId="funil"
-                      fill="#1F9D6B"
-                      isAnimationActive={false}
-                    />
-                    <Bar
-                      dataKey="abordados"
-                      name="Abordados"
-                      stackId="funil"
-                      fill="#2563EB"
-                      isAnimationActive={false}
-                    />
-                    <Bar
-                      dataKey="respondidos"
-                      name="Respondidos"
-                      stackId="funil"
-                      fill="#6D28D9"
-                      radius={[4, 4, 0, 0]}
-                      isAnimationActive={false}
-                    />
-                  </BarChart>
-                </ResponsiveContainer>
-              </figure>
-            ))}
-          </div>
+                  ))}
+            </BarChart>
+          </ResponsiveContainer>
         </ChartPanel>
 
         <ChartPanel

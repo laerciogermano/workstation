@@ -116,7 +116,7 @@ npm run dev
 
 **Antes → depois (comparação por agente):** painel `LineChart` “Comparação por agente (30d)” (série por agente×procedimento) → removido. **Rollback:** restaure `COMPARE_*` / `compareDailyByAgent` / `compareChart` e o `ChartPanel` em `dashboard.jsx`.
 
-**Antes → depois (funil por dia):** só linha “Atividade por dia” + funil empilhado por agente → também **Funil por dia (30d)** (grade: Todos + um `BarChart` empilhado por agente, mesma escala/`byDay*`). **Rollback:** remova o `ChartPanel` “Funil por dia”, `dayFunilByAgent` e o `dayFunilChart` em `dashboard.jsx`.
+**Antes → depois (funil por dia):** só linha “Atividade por dia” + funil empilhado por agente → também **Funil por dia (30d)** (grade: Todos + um `BarChart` empilhado por agente). **Depois:** um único `BarChart` — por dia, uma barra empilhada (procedimentos) por agente (`dayFunilGrouped` / `byDay*`). **Rollback:** volte a grade `dayFunilByAgent` + `multiples-compare`, ou remova o `ChartPanel`.
 
 **Antes → depois (ordem dashboard):** atividade no topo absoluto → cards no topo, atividade como 1º chart. **Rollback:** reordenar os blocos em `dashboard.jsx`.
 **Antes → depois (todos procedimentos):** só Sem convite/Aguardando/Conectados nos cards/gráficos → funil board inteiro + jobs por tipo. **Rollback:** remova `byFunil`/`byProcedure`/`byDayAbordados`/`byDayRespondidos` e campos extras em `byAgent` no web/API.

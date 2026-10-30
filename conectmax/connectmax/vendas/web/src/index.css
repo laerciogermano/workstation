@@ -725,6 +725,17 @@ code {
   max-width: 1100px;
 }
 
+/* Cards do dashboard: fundo branco (--inset) no padrão Atividade 30d */
+.page-dashboard .dash-panel,
+.page-dashboard .kpi {
+  background: var(--inset);
+  border: 1px solid var(--border);
+}
+
+.page-dashboard .dash-table th {
+  background: var(--inset);
+}
+
 .kpi-group {
   margin-bottom: 1.1rem;
 }
@@ -1200,10 +1211,6 @@ code {
 
 .multiples-compare {
   grid-template-columns: repeat(auto-fill, minmax(min(340px, 100%), 1fr));
-}
-
-.multiple-activity {
-  padding: 0.75rem 0.85rem 0.5rem;
 }
 
 .multiple {

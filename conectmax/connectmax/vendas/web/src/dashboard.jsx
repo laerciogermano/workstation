@@ -642,60 +642,58 @@ export default function Dashboard({
             </label>
           }
         >
-          <figure className="multiple multiple-activity">
-            <ResponsiveContainer width="100%" height={280}>
-              <LineChart
-                data={timeline}
-                margin={{ top: 8, right: 12, left: 0, bottom: 0 }}
-              >
-                <CartesianGrid stroke={chartTheme.grid} strokeDasharray="3 3" />
-                <XAxis dataKey="label" {...axisProps} />
-                <YAxis {...axisProps} allowDecimals={false} width={36} />
-                <Tooltip content={<ChartTooltip />} />
-                <Legend />
-                <Line
-                  type="monotone"
-                  dataKey="extracts"
-                  name="Extrações"
-                  stroke={chartTheme.accent}
-                  strokeWidth={2}
-                  dot={{ r: 3 }}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="invited"
-                  name="Convites"
-                  stroke="#D97706"
-                  strokeWidth={2}
-                  dot={{ r: 3 }}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="connected"
-                  name="Conectados"
-                  stroke="#1F9D6B"
-                  strokeWidth={2}
-                  dot={{ r: 3 }}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="abordados"
-                  name="Abordados"
-                  stroke="#2563EB"
-                  strokeWidth={2}
-                  dot={{ r: 3 }}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="respondidos"
-                  name="Respondidos"
-                  stroke="#6D28D9"
-                  strokeWidth={2}
-                  dot={{ r: 3 }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </figure>
+          <ResponsiveContainer width="100%" height={280}>
+            <LineChart
+              data={timeline}
+              margin={{ top: 8, right: 12, left: 0, bottom: 0 }}
+            >
+              <CartesianGrid stroke={chartTheme.grid} strokeDasharray="3 3" />
+              <XAxis dataKey="label" {...axisProps} />
+              <YAxis {...axisProps} allowDecimals={false} width={36} />
+              <Tooltip content={<ChartTooltip />} />
+              <Legend />
+              <Line
+                type="monotone"
+                dataKey="extracts"
+                name="Extrações"
+                stroke={chartTheme.accent}
+                strokeWidth={2}
+                dot={{ r: 3 }}
+              />
+              <Line
+                type="monotone"
+                dataKey="invited"
+                name="Convites"
+                stroke="#D97706"
+                strokeWidth={2}
+                dot={{ r: 3 }}
+              />
+              <Line
+                type="monotone"
+                dataKey="connected"
+                name="Conectados"
+                stroke="#1F9D6B"
+                strokeWidth={2}
+                dot={{ r: 3 }}
+              />
+              <Line
+                type="monotone"
+                dataKey="abordados"
+                name="Abordados"
+                stroke="#2563EB"
+                strokeWidth={2}
+                dot={{ r: 3 }}
+              />
+              <Line
+                type="monotone"
+                dataKey="respondidos"
+                name="Respondidos"
+                stroke="#6D28D9"
+                strokeWidth={2}
+                dot={{ r: 3 }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
         </ChartPanel>
 
         <ChartPanel

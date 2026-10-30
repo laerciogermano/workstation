@@ -46,9 +46,7 @@ export function ChartPanel({
         {actions}
       </div>
       {empty ? (
-        <div className="chart-box chart-box-empty">
-          <p className="muted">{emptyLabel ?? 'Sem dados'}</p>
-        </div>
+        <p className="muted">{emptyLabel ?? 'Sem dados'}</p>
       ) : (
         <div className="chart-box">{children}</div>
       )}

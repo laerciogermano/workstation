@@ -3,11 +3,12 @@ import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 /**
- * AC-01: Messaging → Unread no AVD (lista conversas não lidas).
+ * AC-01: Messaging → Unread no AVD; com --sync abre cada chat e persiste
+ * em client_linkedin_message (resolve URL via GET /clientes?q=nome).
  * Reusa: npm run linkedin-unread-messages → lib/linkedin-unread-messages.js
- * Equivalente a POST http://127.0.0.1:3099/unread-messages
  *
- * Env: EXTRACT_CWD / CONNECT_CWD, SERIAL, INBOX_MAX_RESULTS (default 20)
+ * Env: EXTRACT_CWD / CONNECT_CWD, SERIAL, INBOX_MAX_RESULTS (default 20),
+ *      PROFILES_API_URL / API_URL, MESSAGES_API_URL, AGENT_API_KEY, AGENT_ID
  * Job payload: maxResults? / n?
  */
 export async function run(job, ctx) {
@@ -28,22 +29,33 @@ export async function run(job, ctx) {
       process.env.INBOX_MAX_RESULTS ||
       20,
   );
+  const apiUrl = (
+    process.env.PROFILES_API_URL ||
+    ctx.apiUrl ||
+    process.env.API_URL ||
+    ''
+  ).replace(/\/$/, '');
+  if (!apiUrl) throw new Error('PROFILES_API_URL ou API_URL obrigatório');
 
+  const agentId = String(ctx.agentId || process.env.AGENT_ID || '').trim();
   const args = [
     'run',
     'linkedin-unread-messages',
     '--',
     '--max-results',
     maxResults,
+    '--sync',
     '--no-shot',
   ];
   if (serial) args.push('--device', serial);
 
   const code = await spawnNpm(cwd, args, {
     ...process.env,
+    PROFILES_API_URL: apiUrl,
+    MESSAGES_API_URL: process.env.MESSAGES_API_URL || apiUrl,
     ...(serial ? { ADB_SERIAL: serial, SERIAL: serial } : {}),
     ...(ctx.apiKey ? { AGENT_API_KEY: ctx.apiKey } : {}),
-    ...(ctx.agentId ? { AGENT_ID: String(ctx.agentId) } : {}),
+    ...(agentId ? { AGENT_ID: agentId } : {}),
   });
 
   if (code !== 0) {
@@ -55,6 +67,7 @@ export async function run(job, ctx) {
     ok: true,
     type: 'ler_mensagens',
     stub: false,
+    sync: true,
     maxResults: Number(maxResults),
     serial: serial || null,
   };

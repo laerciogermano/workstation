@@ -9,8 +9,11 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { installConnectmaxApiAuth } from "../lib/connectmax-api-auth.js";
 import { listUnreadMessages } from "../lib/linkedin-unread-messages.js";
 import { provisionEmulator } from "../lib/provision.js";
+
+installConnectmaxApiAuth();
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, "..");
@@ -26,6 +29,7 @@ function parseArgs(argv) {
   let device = null;
   let configPath = resolve(ROOT, "device.config.json");
   let noShot = false;
+  let sync = false;
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === "--max-results" || a === "-m") maxResults = Number(argv[++i]);
@@ -33,9 +37,10 @@ function parseArgs(argv) {
       device = String(argv[++i] || "").trim();
     else if (a === "--config") configPath = resolve(argv[++i]);
     else if (a === "--no-shot") noShot = true;
+    else if (a === "--sync") sync = true;
     else if (a === "--help" || a === "-h") {
       console.log(
-        `Uso: npm run linkedin-unread-messages -- --max-results 20`,
+        `Uso: npm run linkedin-unread-messages -- --max-results 20 [--sync]`,
       );
       process.exit(0);
     }
@@ -43,11 +48,11 @@ function parseArgs(argv) {
   if (!Number.isFinite(maxResults) || maxResults < 1) {
     throw new Error("--max-results deve ser >= 1");
   }
-  return { maxResults, device, configPath, noShot };
+  return { maxResults, device, configPath, noShot, sync };
 }
 
 async function main() {
-  const { maxResults, device, configPath, noShot } = parseArgs(
+  const { maxResults, device, configPath, noShot, sync } = parseArgs(
     process.argv.slice(2),
   );
   const cfg = loadConfig(configPath);
@@ -64,12 +69,14 @@ async function main() {
     : resolve(ROOT, "screenshots", "linkedin-unread-messages", stamp);
   if (outDir) mkdirSync(outDir, { recursive: true });
 
-  console.error(`serial=${serial} maxResults=${maxResults}`);
+  console.error(`serial=${serial} maxResults=${maxResults} sync=${sync}`);
   const result = await listUnreadMessages({
     serial,
     linkedinPackage: linkedinPkg,
     maxResults,
     outDir,
+    sync,
+    apps: cfg.apps,
   });
   if (outDir) {
     writeFileSync(

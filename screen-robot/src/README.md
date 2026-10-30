@@ -339,13 +339,15 @@ Lib: [`lib/linkedin-message.js`](lib/linkedin-message.js).
 
 ---
 
-## linkedin-unread-messages (Messaging → Unread → lista)
+## linkedin-unread-messages (Messaging → Unread → lista [→ sync])
 
 ```bash
 cd screen-robot/src
 npm run linkedin-unread-messages -- --max-results 20
+# Worker AC-01: também abre cada chat e persiste
+AGENT_API_KEY=… PROFILES_API_URL=http://… npm run linkedin-unread-messages -- --max-results 20 --sync --no-shot
 
-# API
+# API (só lista; sem --sync)
 curl -s -X POST http://127.0.0.1:3099/unread-messages \
   -H 'content-type: application/json' \
   -d '{"maxResults":20}'
@@ -354,9 +356,10 @@ curl -s -X POST http://127.0.0.1:3099/unread-messages \
 
 Fluxo: **stopAllApps** → launch LinkedIn → ícone **Messaging** (`home_messaging`) → chip **Unread** → parse dump até `maxResults`.  
 Cada item: `name`, `message`, `unreadCount`, `time` (dia/hora do preview).  
+Com `--sync`: resolve URL (`GET /clientes?q=nome`) → `listProfileMessages` → `client_linkedin_message` (pula Sponsored).  
 Lib: [`lib/linkedin-unread-messages.js`](lib/linkedin-unread-messages.js).
 
-**Antes → depois:** não existia listagem unread. **Rollback:** remover script/lib/endpoint.
+**Antes → depois (sync):** só listava → `--sync` grava o fio. `notifyLinkedInMessages` agora manda `X-Api-Key`. **Rollback:** sem `--sync`; remova header em `notifyLinkedInMessages`.
 
 ---
 

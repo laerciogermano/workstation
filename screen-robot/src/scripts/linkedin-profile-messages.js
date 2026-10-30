@@ -11,9 +11,12 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { installConnectmaxApiAuth } from "../lib/connectmax-api-auth.js";
 import { normalizeLinkedInProfileUrl } from "../lib/linkedin-connect.js";
 import { listProfileMessages } from "../lib/linkedin-profile-messages.js";
 import { provisionEmulator } from "../lib/provision.js";
+
+installConnectmaxApiAuth();
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, "..");

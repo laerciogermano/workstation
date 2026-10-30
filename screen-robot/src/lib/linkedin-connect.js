@@ -493,11 +493,14 @@ export async function notifyLinkedInMessages(opts = {}) {
     body.time = opts.time ?? null;
     if (opts.occurredAt) body.occurredAt = opts.occurredAt;
   }
+  const headers = { "content-type": "application/json" };
+  const apiKey = String(process.env.AGENT_API_KEY || "").trim();
+  if (apiKey) headers["x-api-key"] = apiKey;
   let res;
   try {
     res = await fetch(url, {
       method: "POST",
-      headers: { "content-type": "application/json" },
+      headers,
       body: JSON.stringify(body),
     });
   } catch (e) {

@@ -4,12 +4,23 @@ import { describe, it } from "node:test";
 import {
   findMessagingIconInXml,
   findUnreadChipInXml,
+  isSponsoredUnread,
   mergeUnreadByName,
   parseUnreadConversationDesc,
   unreadConversationsFromUiXml,
 } from "./linkedin-unread-messages.js";
 
 describe("linkedin-unread-messages", () => {
+  it("isSponsoredUnread", () => {
+    assert.equal(
+      isSponsoredUnread({
+        message: "Sponsored • Transforme a Gestão…",
+      }),
+      true,
+    );
+    assert.equal(isSponsoredUnread({ message: "Bom dia" }), false);
+  });
+
   it("parseUnreadConversationDesc", () => {
     assert.deepEqual(
       parseUnreadConversationDesc(

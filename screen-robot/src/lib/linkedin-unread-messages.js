@@ -3,12 +3,18 @@
  *
  * Fluxo: stopAllApps → launch → Messaging → Unread → parse dump (até maxResults).
  * Cada item: name, message, unreadCount, time.
+ * Com `sync: true`: resolve URL na API e abre cada chat → `client_linkedin_message`.
  */
 import { mkdirSync } from "node:fs";
 import { join } from "node:path";
 
 import { sleep } from "./adb.js";
 import { dumpUiXml } from "./extract.js";
+import {
+  messagesApiBase,
+  normalizeLinkedInProfileUrl,
+} from "./linkedin-connect.js";
+import { listProfileMessages } from "./linkedin-profile-messages.js";
 import {
   launch,
   screenshot,
@@ -22,6 +28,50 @@ const SCROLL_MS = Number(process.env.LINKEDIN_UNREAD_SCROLL_MS || 1_200);
 const SCROLL_DIST = Number(process.env.LINKEDIN_UNREAD_SCROLL_DIST || 320);
 const STABLE_NEEDED = Number(process.env.LINKEDIN_UNREAD_STABLE || 3);
 const MAX_ROUNDS = Number(process.env.LINKEDIN_UNREAD_MAX_ROUNDS || 40);
+const CHAT_MAX = Number(process.env.LINKEDIN_UNREAD_CHAT_MAX_RESULTS || 20);
+
+/** Sponsored / ads na lista Unread — não abrir. */
+export function isSponsoredUnread(row) {
+  const msg = String(row?.message || "");
+  return /^sponsored\b/i.test(msg.trim());
+}
+
+/**
+ * Resolve profileUrl via GET /clientes?q=nome (match exato case-insensitive).
+ * @param {string} name
+ * @returns {Promise<string|null>}
+ */
+export async function resolveProfileUrlByPeerName(name) {
+  const peer = String(name || "").replace(/\s+/g, " ").trim();
+  if (!peer) return null;
+  const base = messagesApiBase();
+  if (!base) return null;
+  const url = `${base}/clientes?q=${encodeURIComponent(peer)}&limit=20`;
+  const headers = {};
+  const apiKey = String(process.env.AGENT_API_KEY || "").trim();
+  if (apiKey) headers["x-api-key"] = apiKey;
+  let res;
+  try {
+    res = await fetch(url, { headers });
+  } catch {
+    return null;
+  }
+  if (!res.ok) return null;
+  let data;
+  try {
+    data = await res.json();
+  } catch {
+    return null;
+  }
+  const rows = Array.isArray(data) ? data : data?.data || [];
+  const want = peer.toLowerCase();
+  const exact = rows.find(
+    (r) => String(r?.nome || "").replace(/\s+/g, " ").trim().toLowerCase() === want,
+  );
+  const hit = exact || rows[0];
+  const raw = hit?.linkedin?.profileUrl || hit?.profileUrl || null;
+  return normalizeLinkedInProfileUrl(raw);
+}
 
 /**
  * content-desc: "Button, Name, Message, Time, N unread message(s)"
@@ -128,6 +178,8 @@ async function shot(serial, outDir, name) {
  *   linkedinPackage?: string,
  *   maxResults: number,
  *   outDir?: string|null,
+ *   sync?: boolean,
+ *   apps?: object,
  * }} opts
  */
 export async function listUnreadMessages(opts) {
@@ -232,6 +284,52 @@ export async function listUnreadMessages(opts) {
     time: row.time,
   }));
 
+  /** @type {Array<object>} */
+  const synced = [];
+  if (opts.sync) {
+    for (const row of conversations) {
+      if (isSponsoredUnread(row)) {
+        steps.push(`sync:skip-sponsored:${row.name}`);
+        synced.push({ name: row.name, skipped: "sponsored" });
+        continue;
+      }
+      const profileUrl = await resolveProfileUrlByPeerName(row.name);
+      if (!profileUrl) {
+        steps.push(`sync:no-url:${row.name}`);
+        synced.push({ name: row.name, skipped: "no-url" });
+        continue;
+      }
+      steps.push(`sync:open:${row.name}`);
+      try {
+        const chat = await listProfileMessages({
+          serial,
+          linkedinPackage: pkg,
+          url: profileUrl,
+          maxResults: CHAT_MAX,
+          outDir: null,
+          apps: opts.apps,
+        });
+        steps.push(
+          `sync:done:${row.name}:msgs=${chat.count ?? 0}:db=${
+            chat.db?.notified ? "ok" : chat.db?.reason || "no"
+          }`,
+        );
+        synced.push({
+          name: row.name,
+          profileUrl,
+          ok: Boolean(chat.ok),
+          count: chat.count ?? 0,
+          db: chat.db || null,
+          error: chat.error || null,
+        });
+      } catch (e) {
+        const err = String(e?.message || e).slice(0, 160);
+        steps.push(`sync:error:${row.name}:${err}`);
+        synced.push({ name: row.name, profileUrl, ok: false, error: err });
+      }
+    }
+  }
+
   return {
     ok: true,
     status: "ok",
@@ -239,5 +337,6 @@ export async function listUnreadMessages(opts) {
     count: conversations.length,
     conversations,
     steps,
+    ...(opts.sync ? { synced } : {}),
   };
 }

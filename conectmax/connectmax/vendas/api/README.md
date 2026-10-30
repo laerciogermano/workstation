@@ -906,7 +906,7 @@ ssh root@144.126.154.90 'cd /opt/connectmax/vendas/api && npm install && npm run
 
 Schema novo sem `DB_SYNC`: `ALTER` manual (ex. `agent_runtime.last_extract_at`) ou um boot com `DB_SYNC=true` e volta a `false`.
 
-Rotas SPA+API (`/avds`, `/servidores`, `/empresas`, `/dashboard`, `/profiles/:uuid`): **fetch JSON → Nest**; só `Accept: text/html` serve `index.html`. **Não** use `location = /avds { try_files … }`.
+Rotas SPA+API (`/empresas`, `/dashboard`, `/profiles/:uuid`, …): **fetch JSON → Nest**; SPA via map `$cx_serve_spa` (Sec-Fetch navigate/document; sem Sec-Fetch + Accept `^text/html`; Accept com `application/json` → API). **Não** use `location = /avds { try_files … }` nem `if Accept ⊃ text/html` (preview/IDE devolve HTML no fetch).
 
 ```bash
 # .env na VPS 144 (não versionado)

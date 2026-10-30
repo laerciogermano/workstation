@@ -571,8 +571,7 @@ export default function Dashboard({
 
       {error && (
         <p className="error">
-          Erro: {error}. Confirme a API em{' '}
-          <code>http://localhost:3000/dashboard</code>.
+          Erro: {error}. Confirme a API em <code>{DASHBOARD_URL}</code>.
         </p>
       )}
 

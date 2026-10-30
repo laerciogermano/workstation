@@ -162,8 +162,16 @@ export class AgenteService implements OnModuleInit {
   }
 
   private leadThreshold(): number {
-    const n = Number(this.config.get('AGENT_LEAD_THRESHOLD', '20'));
-    return Number.isFinite(n) && n >= 0 ? Math.floor(n) : 20;
+    const n = Number(this.config.get('AGENT_LEAD_THRESHOLD', '10'));
+    return Number.isFinite(n) && n >= 0 ? Math.floor(n) : 10;
+  }
+
+  /** Mínimo entre um `extrair_leads` e o próximo (default 4 h). */
+  private extractIntervalMs(): number {
+    const n = Number(
+      this.config.get('AGENT_EXTRACT_INTERVAL_MS', '14400000'),
+    );
+    return Number.isFinite(n) && n >= 60_000 ? n : 14_400_000;
   }
 
   /** Máx. convites Connect por agente / dia civil (TZ do processo). */
@@ -655,6 +663,7 @@ export class AgenteService implements OnModuleInit {
           currentJobId: null,
           lastInboxAt: null,
           lastConnectionsAt: null,
+          lastExtractAt: null,
           lastProspeccaoAt: null,
           lastClaimAt: null,
           lastHeartbeatAt: null,
@@ -749,6 +758,9 @@ export class AgenteService implements OnModuleInit {
     if (job.type === 'verificar_conexoes') {
       runtime.lastConnectionsAt = new Date();
     }
+    if (job.type === 'extrair_leads') {
+      runtime.lastExtractAt = new Date();
+    }
     if (job.type === 'enviar_prospeccao') {
       runtime.lastProspeccaoAt = new Date();
     }
@@ -778,6 +790,9 @@ export class AgenteService implements OnModuleInit {
     // Mantém o intervalo mesmo em falha (evita reenfileirar a cada claim).
     if (job.type === 'verificar_conexoes') {
       runtime.lastConnectionsAt = new Date();
+    }
+    if (job.type === 'extrair_leads') {
+      runtime.lastExtractAt = new Date();
     }
     if (job.type === 'enviar_prospeccao') {
       runtime.lastProspeccaoAt = new Date();
@@ -814,6 +829,7 @@ export class AgenteService implements OnModuleInit {
       prospeccaoNextDueAt: Date | null;
       leadThreshold: number;
       leadsNaFila: number;
+      extractIntervalMs: number;
       allowedTypes?: ReadonlySet<AgentJobType>;
     },
   ): Promise<
@@ -1050,30 +1066,66 @@ export class AgenteService implements OnModuleInit {
       }
     }
 
-    const leadsQueued = (pendingByType.get('extrair_leads') || 0) > 0;
-    const leads = allowed.has('extrair_leads')
-      ? {
-          type: 'extrair_leads' as AgentJobType,
-          state: (leadsQueued
-            ? 'queued'
-            : opts.leadsNaFila < opts.leadThreshold
-              ? 'due'
-              : 'blocked') as 'queued' | 'due' | 'blocked',
-          dueAt:
-            leadsQueued || opts.leadsNaFila < opts.leadThreshold
-              ? new Date(now).toISOString()
-              : null,
-          dueInMs:
-            leadsQueued || opts.leadsNaFila < opts.leadThreshold ? 0 : null,
-          lastAt: null,
-          intervalMs: null,
-          reason: leadsQueued
-            ? 'job na fila'
-            : opts.leadsNaFila < opts.leadThreshold
+    let leads: {
+      type: AgentJobType;
+      state: 'due' | 'queued' | 'waiting' | 'blocked';
+      dueAt: string | null;
+      dueInMs: number | null;
+      lastAt: string | null;
+      intervalMs: number | null;
+      reason: string | null;
+    } | null = null;
+    if (allowed.has('extrair_leads')) {
+      const leadsQueued = (pendingByType.get('extrair_leads') || 0) > 0;
+      const lastAt = runtime.lastExtractAt;
+      const intervalMs = opts.extractIntervalMs;
+      if (leadsQueued) {
+        leads = {
+          type: 'extrair_leads',
+          state: 'queued',
+          dueAt: new Date(now).toISOString(),
+          dueInMs: 0,
+          lastAt: iso(lastAt),
+          intervalMs,
+          reason: 'job na fila',
+        };
+      } else if (opts.leadsNaFila >= opts.leadThreshold) {
+        leads = {
+          type: 'extrair_leads',
+          state: 'blocked',
+          dueAt: null,
+          dueInMs: null,
+          lastAt: iso(lastAt),
+          intervalMs,
+          reason: `fila ok (${opts.leadsNaFila}/${opts.leadThreshold})`,
+        };
+      } else if (lastAt) {
+        const elapsed = now - lastAt.getTime();
+        const dueInMs = Math.max(0, intervalMs - elapsed);
+        leads = {
+          type: 'extrair_leads',
+          state: dueInMs <= 0 ? 'due' : 'waiting',
+          dueAt: new Date(lastAt.getTime() + intervalMs).toISOString(),
+          dueInMs,
+          lastAt: iso(lastAt),
+          intervalMs,
+          reason:
+            dueInMs <= 0
               ? `fila baixa (${opts.leadsNaFila}/${opts.leadThreshold})`
-              : `fila ok (${opts.leadsNaFila}/${opts.leadThreshold})`,
-        }
-      : null;
+              : `a cada ${Math.round(intervalMs / 60_000)} min (${opts.leadsNaFila}/${opts.leadThreshold})`,
+        };
+      } else {
+        leads = {
+          type: 'extrair_leads',
+          state: 'due',
+          dueAt: new Date(now).toISOString(),
+          dueInMs: 0,
+          lastAt: null,
+          intervalMs,
+          reason: `fila baixa (${opts.leadsNaFila}/${opts.leadThreshold})`,
+        };
+      }
+    }
 
     /** Ordem de exibição: buscar candidatos → conectar → ver conexões → … */
     const typeOrder: Record<AgentJobType, number> = {
@@ -1113,9 +1165,10 @@ export class AgenteService implements OnModuleInit {
       jobStatus: 'pending' | 'claimed';
       jobId: string;
     } | null;
-    thresholds: {
+      thresholds: {
       inboxIntervalMs: number;
       connectionsIntervalMs: number;
+      extractIntervalMs: number;
       leadThreshold: number;
       leadsNaFila: number;
       connectDailyLimit: number;
@@ -1251,6 +1304,7 @@ export class AgenteService implements OnModuleInit {
       prospeccaoNextDueAt: prospeccaoNow.nextDueAt,
       leadThreshold: this.leadThreshold(),
       leadsNaFila,
+      extractIntervalMs: this.extractIntervalMs(),
       allowedTypes,
     });
 
@@ -1265,6 +1319,7 @@ export class AgenteService implements OnModuleInit {
       thresholds: {
         inboxIntervalMs: this.inboxIntervalMs(),
         connectionsIntervalMs: this.connectionsIntervalMs(),
+        extractIntervalMs: this.extractIntervalMs(),
         leadThreshold: this.leadThreshold(),
         leadsNaFila,
         connectDailyLimit: this.connectDailyLimit(),
@@ -1990,7 +2045,10 @@ export class AgenteService implements OnModuleInit {
     }
   }
 
-  /** AC-04: estoque de leads (livres + reservados deste agente) abaixo do threshold. */
+  /**
+   * AC-04: estoque de leads (livres + reservados deste agente) abaixo do threshold
+   * e intervalo mínimo AGENT_EXTRACT_INTERVAL_MS desde o último extract.
+   */
   private async enqueueExtrairIfLow(agentId: string): Promise<void> {
     const leadsNaFila = await this.countLeadsCandidatos(agentId);
     const threshold = this.leadThreshold();
@@ -2001,6 +2059,24 @@ export class AgenteService implements OnModuleInit {
         {
           status: 'cancelled',
           lastError: `leads (candidatos)=${leadsNaFila} >= threshold=${threshold}`,
+          completedAt: new Date(),
+          dedupeKey: null,
+        },
+      );
+      return;
+    }
+
+    const runtime = await this.ensureRuntime(agentId);
+    const intervalMs = this.extractIntervalMs();
+    const due =
+      !runtime.lastExtractAt ||
+      Date.now() - runtime.lastExtractAt.getTime() >= intervalMs;
+    if (!due) {
+      await this.jobs.update(
+        { agentId, type: 'extrair_leads', status: 'pending' },
+        {
+          status: 'cancelled',
+          lastError: `extract cooldown < ${Math.round(intervalMs / 60_000)} min (lastExtractAt)`,
           completedAt: new Date(),
           dedupeKey: null,
         },
@@ -2027,6 +2103,7 @@ export class AgenteService implements OnModuleInit {
         ac: 'AC-04',
         leadsNaFila,
         leadThreshold: threshold,
+        extractIntervalMs: intervalMs,
         query,
         hint: 'Rodar extract/search; upsert candidatos (leads globais)',
       },

@@ -29,6 +29,10 @@ export class AgentRuntime {
   @Column({ name: 'last_connections_at', type: 'timestamptz', nullable: true })
   lastConnectionsAt!: Date | null;
 
+  /** Última vez que completou/falhou `extrair_leads` (cooldown entre buscas). */
+  @Column({ name: 'last_extract_at', type: 'timestamptz', nullable: true })
+  lastExtractAt!: Date | null;
+
   /** Última vez que completou/falhou `enviar_prospeccao` (cooldown entre envios). */
   @Column({ name: 'last_prospeccao_at', type: 'timestamptz', nullable: true })
   lastProspeccaoAt!: Date | null;

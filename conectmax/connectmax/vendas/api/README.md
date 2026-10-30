@@ -158,9 +158,11 @@ Cada AVD/conta (`agentId` = `provision.name`, ex. `agent-d`) puxa o próximo tra
 
 | Pri | type | Quando materializa |
 |-----|------|--------------------|
-| 1 | `ler_mensagens` | Inbox due (`AGENT_INBOX_INTERVAL_MS`, default 15 min). **Off por default** (`AGENT_LER_MENSAGENS_ENABLED=0`) |
+| 1 | `ler_mensagens` | Inbox due (`AGENT_INBOX_INTERVAL_MS`, default **4 h**). **Off por default** (`AGENT_LER_MENSAGENS_ENABLED=0`) |
 
 **Antes → depois (ler_mensagens off):** AC-01 sempre no materialize → desligado por default (`AGENT_LER_MENSAGENS_ENABLED=0`; cancela pending). Religa: `=1` ou inclua em `AGENT_MATERIALIZE_TYPES`. **Rollback:** default `'1'` / remova a flag.
+
+**Antes → depois (intervalo inbox 4 h):** default `AGENT_INBOX_INTERVAL_MS` **15 min** (`900000`) → **4 h** (`14400000`), alinhado a `verificar_conexoes`. **Rollback:** `AGENT_INBOX_INTERVAL_MS=900000`.
 | 2 | `verificar_conexoes` | Há pending (`status=1`) e due (`AGENT_CONNECTIONS_INTERVAL_MS`, default **4 h**) → listar **20** recentes (`AGENT_CONNECTIONS_CHECK_N`) via perfil → tap `N connections` + `mark-accepted` |
 | 3 | `enviar_prospeccao` | Conexão status `2` sem mensagem `sent`; **1** job por vez; máx. `AGENT_PROSPECCAO_DAILY_LIMIT` (default **15**)/dia com pausa `AGENT_PROSPECCAO_INTERVAL_MS` (default **30 min**) entre envios (`lastProspeccaoAt`). **On por default** (`AGENT_ENVIAR_PROSPECCAO_ENABLED=1`; allowlist do agente em `procedimentos` também liga) |
 

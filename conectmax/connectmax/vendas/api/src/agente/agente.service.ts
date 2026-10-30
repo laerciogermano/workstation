@@ -149,7 +149,7 @@ export class AgenteService implements OnModuleInit {
   }
 
   private inboxIntervalMs(): number {
-    const n = Number(this.config.get('AGENT_INBOX_INTERVAL_MS', '900000'));
+    const n = Number(this.config.get('AGENT_INBOX_INTERVAL_MS', '14400000'));
     return Number.isFinite(n) && n >= 60_000 ? n : 900_000;
   }
 

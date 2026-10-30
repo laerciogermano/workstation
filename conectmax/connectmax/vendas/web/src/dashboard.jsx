@@ -399,7 +399,15 @@ export default function Dashboard({
         setError(null);
       }
       try {
-        const res = await fetch(DASHBOARD_URL);
+        const res = await fetch(DASHBOARD_URL, {
+          headers: { Accept: 'application/json' },
+        });
+        const ct = res.headers.get('content-type') || '';
+        if (!ct.includes('application/json')) {
+          throw new Error(
+            `dashboard respondeu ${ct || 'sem content-type'} (HTTP ${res.status}) — proxy/API`,
+          );
+        }
         if (!res.ok) throw new Error(`dashboard HTTP ${res.status}`);
         const json = await res.json();
         if (cancelled) return;

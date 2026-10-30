@@ -76,6 +76,8 @@ Abre `http://localhost:5173`. Em dev, Vite faz proxy de `/profiles`, `/dashboard
 
 **Antes → depois (`/profiles` proxy):** qualquer `Accept: text/html` em `/profiles` → SPA; agora lista com query → API. **Rollback:** bypass antigo (`if accept text/html → index.html`) em `vite.config.js`.
 
+**Antes → depois (proxy SPA `/dashboard` → `<!doctype`):** `spaHtmlBypass` só olhava `Accept ⊃ text/html` e alguns clients (preview/IDE) mandavam isso no **fetch**, devolvendo o HTML do SPA (erro JSON). Agora: `application/json` / `Sec-Fetch-Mode|Dest` de XHR passam à API; navegação `document`/`navigate` → SPA; `dashboard.jsx` pede `Accept: application/json` e valida content-type. **Rollback:** `if (req.headers.accept?.includes('text/html')) return '/index.html'` + `fetch(DASHBOARD_URL)` sem headers.
+
 **Prod nginx:** [`deploy/nginx-connectmax.conf`](deploy/nginx-connectmax.conf) — rotas compartilhadas proxyam a API; SPA só com `Accept: text/html`. Detalhe/rollback: [`../api/README.md`](../api/README.md#produção-contabo).
 
 URL direta (sem proxy):

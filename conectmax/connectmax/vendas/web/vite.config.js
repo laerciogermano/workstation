@@ -8,8 +8,20 @@ function apiProxy(extra = {}) {
   return { target: API, changeOrigin: true, ...extra };
 }
 
+/**
+ * Refresh da rota SPA → index.html; fetch/XHR → API.
+ * Não use só `Accept` ⊃ text/html: alguns clients (preview/IDE) mandam isso
+ * em fetch e o proxy devolvia o HTML do SPA (`<!doctype` → JSON parse error).
+ */
 function spaHtmlBypass(req) {
-  if (req.headers.accept?.includes('text/html')) return '/index.html';
+  const accept = req.headers.accept || '';
+  if (accept.includes('application/json')) return;
+  const mode = req.headers['sec-fetch-mode'];
+  const dest = req.headers['sec-fetch-dest'];
+  if (mode === 'cors' || mode === 'same-origin' || mode === 'no-cors') return;
+  if (dest === 'empty') return;
+  if (dest === 'document' || mode === 'navigate') return '/index.html';
+  if (accept.includes('text/html')) return '/index.html';
 }
 
 export default defineConfig({

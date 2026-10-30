@@ -207,7 +207,7 @@ classDiagram
 | `ler_mensagens` | 1 | Intervalo `AGENT_INBOX_INTERVAL_MS` |
 | `verificar_conexoes` | 2 | Pending + intervalo `AGENT_CONNECTIONS_INTERVAL_MS` → extract recent + mark-accepted |
 | `enviar_prospeccao` | 3 | Conexão status=2 sem `sent` |
-| `conectar` | 4 | Candidatos→status=0; ≤ `AGENT_CONNECT_DAILY_LIMIT` (15)/dia em lotes de 5 c/ pausa 2 h |
+| `conectar` | 4 | Candidatos→status=0; ≤ `AGENT_CONNECT_DAILY_LIMIT` (15)/dia; lote + pausa `AGENT_CONNECT_BATCH_*` (local: 1/1 h) |
 | `extrair_leads` | 5 | Candidatos (leads) &lt; `AGENT_LEAD_THRESHOLD` |
 
 ---
@@ -486,7 +486,7 @@ Deploy gestor = mesmo artefato do servidor (systemd / pm2 / Docker sidecar). Sem
 | `AGENT_LEAD_THRESHOLD` | `20` | AC-04 |
 | `AGENT_CONNECT_DAILY_LIMIT` | `15` | AC-03 máx. convites/dia por agente |
 | `AGENT_CONNECT_BATCH_SIZE` | `5` | AC-03 tamanho do lote antes da pausa |
-| `AGENT_CONNECT_BATCH_INTERVAL_MS` | `7200000` (2 h) | AC-03 pausa entre lotes |
+| `AGENT_CONNECT_BATCH_INTERVAL_MS` | `3600000` (1 h) | AC-03 pausa entre lotes |
 | `AVD_MAX_ATIVOS_POR_SERVIDOR` | `4` | slots |
 | `AGENT_CLAIM_TIMEOUT_MS` | `600000` (10 min) | reopen |
 | `AGENT_HEARTBEAT_STALE_MS` | *(novo)* `120000` | offline se sem heartbeat |

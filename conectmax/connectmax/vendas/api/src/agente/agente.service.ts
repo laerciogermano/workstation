@@ -181,7 +181,7 @@ export class AgenteService implements OnModuleInit {
   /** Pausa entre lotes de connect (default 2h). */
   private connectBatchIntervalMs(): number {
     const n = Number(
-      this.config.get('AGENT_CONNECT_BATCH_INTERVAL_MS', '7200000'),
+      this.config.get('AGENT_CONNECT_BATCH_INTERVAL_MS', '3600000'),
     );
     return Number.isFinite(n) && n >= 60_000 ? n : 7_200_000;
   }

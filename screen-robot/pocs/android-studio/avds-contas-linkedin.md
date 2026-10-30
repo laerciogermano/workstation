@@ -13,7 +13,7 @@ Credenciais das caixas: [`credenciais.md`](../../../../credenciais.md) (§ Caixa
 | Pamela Gomes | `Pamela_Gomes` | `5558` → `emulator-5558` | LinkedIn **restricted** (2026-10-29) |
 | Gabriel Manfred | `Gabriel_Manfred` | `5560` → `emulator-5560` | LinkedIn+ADBKeyboard ok; signup parado em SMS (`Just a quick security check`) — falta nº |
 | Alex Romão | `Alex_Romao` | `5562` → `emulator-5562` | Conta LI ok; identidade mascarada **Pixel 4 / flame** (`mask-identity.sh`) — 2026-10-30 |
-| Fernando Breda | | `5564` | |
+| Fernando Breda | `Fernando_Breda` | `5564` → `emulator-5564` | Conta LI ok; identidade **Pixel 4 / flame**; worker `start-worker-fernando.sh` (`76b09621-…`) — 2026-10-30 |
 | Roberta Machado | | `5566` | |
 | Ana Letícia (`teste@`) | `Ana_Leticia` | `5568` → `emulator-5568` | LinkedIn+ADBKeyboard ok; conta já existente (login `teste@clozzy.com.br`) |
 

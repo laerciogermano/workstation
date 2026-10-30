@@ -7,10 +7,15 @@
  *
  * Uso (cwd: screen-robot/src):
  *   npm run linkedin-setup -- --device emulator-5556 --defaults
+ *   npm run linkedin-setup-post -- --device emulator-5564
  *   npm run linkedin-setup -- --device emulator-5556 --banner-only
  *   npm run linkedin-setup -- --device emulator-5556 --about-only
  *   npm run linkedin-setup -- --device emulator-5556 --avatar-only
+ *   npm run linkedin-setup -- --device emulator-5556 --privacy-only
  *   npm run linkedin-setup -- --device emulator-5556 --job-title '…' --company ConectMax
+ *
+ * `--defaults` / `linkedin-setup-post`: avatar + banner + about + privacy e-mail
+ * (Only visible to me). Não reabre onboarding de job.
  */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
@@ -26,6 +31,7 @@ import {
   linkedinSetupAvatar,
   linkedinSetupBanner,
   linkedinSetupJobTitle,
+  linkedinSetupPrivacyEmail,
 } from "../lib/linkedin-setup.js";
 import { provisionEmulator } from "../lib/provision.js";
 
@@ -54,7 +60,8 @@ function parseArgs(argv) {
   let avatar = null;
   let banner = null;
   let about = null;
-  let mode = "mixed"; // mixed | avatar-only | banner-only | about-only
+  let privacy = false;
+  let mode = "mixed"; // mixed | avatar-only | banner-only | about-only | privacy-only
   let useDefaults = false;
   let configPath = resolve(ROOT, "device.config.json");
   let noShot = false;
@@ -67,8 +74,9 @@ function parseArgs(argv) {
       jobTitle = String(argv[++i] || "").trim();
     else if (a === "--company") company = String(argv[++i] || "").trim();
     else if (a === "--defaults") {
-      // Perfil pronto via /me: avatar + banner + about (não reabre onboarding de job).
+      // Pós-cadastro via /me: avatar + banner + about + privacy e-mail.
       useDefaults = true;
+      privacy = true;
       company = company || d.company;
       jobTitle = jobTitle || d.jobTitle || DEFAULT_JOB_TITLE;
       avatar = avatar ?? d.avatar ?? DEFAULT_AVATAR_PATH;
@@ -95,11 +103,19 @@ function parseArgs(argv) {
     } else if (a === "--about-only") {
       mode = "about-only";
       about = about ?? d.about ?? DEFAULT_ABOUT;
+    } else if (a === "--privacy" || a === "--privacy-email") {
+      privacy = true;
+    } else if (a === "--privacy-only") {
+      mode = "privacy-only";
+      privacy = true;
+    } else if (a === "--no-privacy") {
+      privacy = false;
     } else if (a === "--config") configPath = resolve(argv[++i]);
     else if (a === "--no-shot") noShot = true;
     else if (a === "--help" || a === "-h") {
       console.log(
-        `Uso: npm run linkedin-setup -- --device emulator-5556 [--defaults] [--job-title …] [--company ConectMax] [--avatar [path]] [--banner [path]] [--about [texto]] [--avatar-only|--banner-only|--about-only]`,
+        `Uso: npm run linkedin-setup -- --device emulator-5556 [--defaults|--privacy-only] [--job-title …] [--company ConectMax] [--avatar [path]] [--banner [path]] [--about [texto]] [--privacy] [--avatar-only|--banner-only|--about-only]
+Pós-cadastro: npm run linkedin-setup-post -- --device emulator-5564`,
       );
       process.exit(0);
     }
@@ -111,6 +127,7 @@ function parseArgs(argv) {
     avatar,
     banner,
     about,
+    privacy,
     mode,
     useDefaults,
     configPath,
@@ -127,9 +144,12 @@ async function main() {
     !args.useDefaults &&
     !args.banner &&
     !args.about &&
-    !args.avatar
+    !args.avatar &&
+    !args.privacy
   ) {
-    throw new Error("passe --job-title, --defaults, --avatar/--banner/--about ou *-only");
+    throw new Error(
+      "passe --job-title, --defaults, --avatar/--banner/--about/--privacy ou *-only",
+    );
   }
   for (const [label, path] of [
     ["--avatar", args.avatar],
@@ -155,7 +175,7 @@ async function main() {
   if (outDir) mkdirSync(outDir, { recursive: true });
 
   console.error(
-    `serial=${serial} mode=${args.mode} jobTitle=${args.jobTitle || "-"} company=${args.company} avatar=${args.avatar || "-"} banner=${args.banner || "-"} about=${args.about ? "yes" : "-"}`,
+    `serial=${serial} mode=${args.mode} jobTitle=${args.jobTitle || "-"} company=${args.company} avatar=${args.avatar || "-"} banner=${args.banner || "-"} about=${args.about ? "yes" : "-"} privacy=${args.privacy ? "yes" : "-"}`,
   );
 
   /** @type {Record<string, unknown>} */
@@ -197,8 +217,19 @@ async function main() {
     });
     result.about = ab.about;
     result.steps.push(...ab.steps);
+  } else if (args.mode === "privacy-only") {
+    const pr = await linkedinSetupPrivacyEmail({
+      serial,
+      linkedinPackage: linkedinPkg,
+      outDir,
+    });
+    result.privacy = {
+      emailVisibility: pr.emailVisibility,
+      exportEmails: pr.exportEmails,
+    };
+    result.steps.push(...pr.steps);
   } else {
-    // --defaults: avatar+banner+about via /me (não reabre onboarding de job)
+    // --defaults: avatar+banner+about+privacy via /me (não reabre onboarding de job)
     const runJob = Boolean(args.jobTitle) && !args.useDefaults;
     if (runJob) {
       const setup = await linkedinSetupJobTitle({
@@ -241,6 +272,18 @@ async function main() {
       });
       result.about = ab.about;
       result.steps.push(...ab.steps);
+    }
+    if (args.privacy) {
+      const pr = await linkedinSetupPrivacyEmail({
+        serial,
+        linkedinPackage: linkedinPkg,
+        outDir,
+      });
+      result.privacy = {
+        emailVisibility: pr.emailVisibility,
+        exportEmails: pr.exportEmails,
+      };
+      result.steps.push(...pr.steps);
     }
   }
 

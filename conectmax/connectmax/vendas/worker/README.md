@@ -19,7 +19,8 @@ No start chama `POST /agente/:id/enroll` (cria cadastro magro se faltar; bootstr
 ```bash
 cd vendas/worker
 # prod Contabo (padrão dos scripts/):
-./scripts/start-worker-alex.sh   # etc.
+./scripts/start-worker-alex.sh
+./scripts/start-worker-fernando.sh   # AVD Fernando_Breda → emulator-5564
 
 # ou manual / API local:
 API_URL=http://144.126.154.90 \

@@ -21,6 +21,11 @@
  *
  * About: /me → Add section → About (ou Add a summary) → paste → Save.
  * Texto default em DEFAULT_ABOUT / assets/profile-defaults.json.
+ *
+ * Privacy (e-mail): Menu → Settings & Privacy → Visibility → Email visibility
+ * → **Only visible to me** + desliga export de e-mail. WebView: poll até opções
+ * no dump (`LINKEDIN_SETUP_PRIVACY_TIMEOUT_MS`, default 45s).
+ * Rollback: omitir `--privacy` / `--defaults` sem privacy / `--privacy-only`.
  */
 import { existsSync, mkdirSync, readFileSync } from "node:fs";
 import { basename, dirname, join, resolve } from "node:path";
@@ -90,6 +95,9 @@ const STEP_TIMEOUT_MS = Number(
 const AVATAR_TIMEOUT_MS = Number(
   process.env.LINKEDIN_SETUP_AVATAR_TIMEOUT_MS || 60_000,
 );
+const PRIVACY_TIMEOUT_MS = Number(
+  process.env.LINKEDIN_SETUP_PRIVACY_TIMEOUT_MS || 45_000,
+);
 
 async function shot(serial, outDir, name) {
   if (!outDir) return;
@@ -127,7 +135,9 @@ function findNodeByTextI(xml, text) {
         );
   for (const n of String(xml || "").match(/<node\b[^>]*>/g) || []) {
     const m = n.match(/\btext="([^"]*)"/);
-    if (!m || !re.test(m[1])) continue;
+    if (!m) continue;
+    const label = m[1].replace(/&amp;/g, "&");
+    if (!re.test(label) && !re.test(m[1])) continue;
     const b = n.match(/bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"/);
     if (!b) continue;
     return {
@@ -827,6 +837,195 @@ export async function linkedinSetupAbout(opts) {
   steps.push("about-done");
 
   return { steps, serial, about, profileUrl, outDir: opts.outDir || null };
+}
+
+/**
+ * Radio/Check no dump com `checked="…"`.
+ * @param {string} xml
+ * @param {RegExp|string} textRe
+ */
+function findCheckableByText(xml, textRe) {
+  const re =
+    textRe instanceof RegExp
+      ? textRe
+      : new RegExp(
+          `^${String(textRe).replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`,
+          "i",
+        );
+  for (const n of String(xml || "").match(/<node\b[^>]*>/g) || []) {
+    const m = n.match(/\btext="([^"]*)"/);
+    if (!m || !re.test(m[1].replace(/&amp;/g, "&"))) continue;
+    const b = n.match(/bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"/);
+    if (!b) continue;
+    const checked = /\bchecked="true"/.test(n);
+    return {
+      x: Math.floor((Number(b[1]) + Number(b[3])) / 2),
+      y: Math.floor((Number(b[2]) + Number(b[4])) / 2),
+      text: m[1],
+      checked,
+      clickable: /\bclickable="true"/.test(n),
+    };
+  }
+  return null;
+}
+
+/**
+ * Esconde e-mail do perfil: Settings → Visibility → Email visibility
+ * → Only visible to me (+ export off).
+ * @param {{
+ *   serial: string,
+ *   linkedinPackage?: string,
+ *   outDir?: string|null,
+ *   timeoutMs?: number,
+ * }} opts
+ */
+export async function linkedinSetupPrivacyEmail(opts) {
+  const serial = opts.serial;
+  if (!serial) throw new Error("linkedinSetupPrivacyEmail: falta serial");
+  const pkg = opts.linkedinPackage || "com.linkedin.android";
+  const waitMs = Number(opts.timeoutMs || PRIVACY_TIMEOUT_MS);
+  const steps = [];
+  if (opts.outDir) mkdirSync(opts.outDir, { recursive: true });
+
+  await launch({ serial, package: pkg });
+  await sleep(1_200);
+  steps.push("launch");
+
+  // Feed / home: Menu → Settings & Privacy
+  let menu =
+    findNodeByContentDesc(
+      dumpUiXml(serial),
+      /Menu button: Access my profile/i,
+    ) ||
+    findNodeByContentDesc(dumpUiXml(serial), /^My Profile and Communities$/i);
+  if (!menu) {
+    // tenta HOME se estiver em outra tela
+    adbOk(serial, ["shell", "input", "keyevent", "3"]);
+    await sleep(400);
+    await launch({ serial, package: pkg });
+    await sleep(1_500);
+    menu =
+      findNodeByContentDesc(
+        dumpUiXml(serial),
+        /Menu button: Access my profile/i,
+      ) ||
+      findNodeByContentDesc(
+        dumpUiXml(serial),
+        /^My Profile and Communities$/i,
+      );
+  }
+  if (!menu) throw new Error("linkedinSetupPrivacyEmail: Menu (profile)");
+  tapElement({ serial, x: menu.x, y: menu.y });
+  steps.push("tap-menu");
+  await sleep(1_800);
+  await shot(serial, opts.outDir, "privacy-00-menu.png");
+
+  await waitForText(serial, ["Settings & Privacy", "Settings &amp; Privacy"], {
+    timeoutMs: STEP_TIMEOUT_MS,
+    intervalMs: 800,
+    sense: "dump",
+  });
+  const settings =
+    findNodeByTextI(dumpUiXml(serial), /Settings\s*&\s*Privacy/i) ||
+    findNodeByContentDesc(dumpUiXml(serial), /Settings.*Privacy/i);
+  if (!settings) throw new Error("linkedinSetupPrivacyEmail: Settings & Privacy");
+  tapElement({ serial, x: settings.x, y: settings.y });
+  steps.push("tap-settings-privacy");
+  await sleep(2_000);
+  await shot(serial, opts.outDir, "privacy-01-settings.png");
+
+  await waitForText(serial, ["Visibility", "Account preferences"], {
+    timeoutMs: STEP_TIMEOUT_MS,
+    intervalMs: 800,
+    sense: "dump",
+  });
+  const visibility = findNodeByText(dumpUiXml(serial), "Visibility");
+  if (!visibility) throw new Error("linkedinSetupPrivacyEmail: Visibility");
+  tapElement({ serial, x: visibility.x, y: visibility.y });
+  steps.push("tap-visibility");
+  await sleep(2_000);
+  await shot(serial, opts.outDir, "privacy-02-visibility.png");
+
+  await waitForText(serial, ["Email visibility"], {
+    timeoutMs: STEP_TIMEOUT_MS,
+    intervalMs: 800,
+    sense: "dump",
+  });
+  const emailVis = findNodeByText(dumpUiXml(serial), "Email visibility");
+  if (!emailVis) throw new Error("linkedinSetupPrivacyEmail: Email visibility");
+  tapElement({ serial, x: emailVis.x, y: emailVis.y });
+  steps.push("tap-email-visibility");
+  await sleep(1_500);
+  await shot(serial, opts.outDir, "privacy-03-email-loading.png");
+
+  // WebView demora: poll até "Only visible to me"
+  const t0 = Date.now();
+  let onlyMe = null;
+  while (Date.now() - t0 < waitMs) {
+    const xml = dumpUiXml(serial);
+    onlyMe = findCheckableByText(xml, /^Only visible to me$/i);
+    if (onlyMe) break;
+    await sleep(1_200);
+  }
+  if (!onlyMe) {
+    await shot(serial, opts.outDir, "privacy-03-email-timeout.png");
+    throw new Error(
+      `linkedinSetupPrivacyEmail: WebView Email visibility não carregou em ${waitMs}ms`,
+    );
+  }
+  await shot(serial, opts.outDir, "privacy-03-email-options.png");
+  steps.push("email-visibility-loaded");
+
+  if (!onlyMe.checked) {
+    tapElement({ serial, x: onlyMe.x, y: onlyMe.y });
+    steps.push("tap-only-visible-to-me");
+    await sleep(1_200);
+  } else {
+    steps.push("only-visible-already");
+  }
+
+  // desliga export se estiver on
+  let exportCb = findCheckableByText(
+    dumpUiXml(serial),
+    /Allow connection to export emails/i,
+  );
+  if (exportCb?.checked) {
+    tapElement({ serial, x: exportCb.x, y: exportCb.y });
+    steps.push("tap-export-off");
+    await sleep(800);
+  } else if (exportCb) {
+    steps.push("export-already-off");
+  }
+
+  // assert
+  const xmlFinal = dumpUiXml(serial);
+  onlyMe = findCheckableByText(xmlFinal, /^Only visible to me$/i);
+  exportCb = findCheckableByText(
+    xmlFinal,
+    /Allow connection to export emails/i,
+  );
+  if (!onlyMe?.checked) {
+    await shot(serial, opts.outDir, "privacy-99-assert-fail.png");
+    throw new Error(
+      "linkedinSetupPrivacyEmail: Only visible to me não ficou checked",
+    );
+  }
+  if (exportCb?.checked) {
+    await shot(serial, opts.outDir, "privacy-99-export-still-on.png");
+    throw new Error(
+      "linkedinSetupPrivacyEmail: export de e-mail ainda checked",
+    );
+  }
+  await shot(serial, opts.outDir, "privacy-99-done.png");
+  steps.push("privacy-email-done");
+
+  return {
+    steps,
+    serial,
+    emailVisibility: "only-me",
+    exportEmails: false,
+    outDir: opts.outDir || null,
+  };
 }
 
 /**

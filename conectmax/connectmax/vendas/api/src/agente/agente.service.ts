@@ -39,6 +39,17 @@ import { UpdateHostConfigDto } from './update-host-config.dto';
 const DEFAULT_AVD_IMAGE =
   'us-docker.pkg.dev/android-emulator-268719/images/30-google-x64-no-metrics:30.1.2';
 
+/** Intervalo da agenda: “a cada N h” (≥60 min) ou “a cada N min”. */
+function formatIntervalEach(intervalMs: number): string {
+  const min = Math.round(intervalMs / 60_000);
+  if (min >= 60) {
+    const h = Math.round((min / 60) * 10) / 10;
+    const label = Number.isInteger(h) ? String(h) : h.toFixed(1).replace('.', ',');
+    return `a cada ${label} h`;
+  }
+  return `a cada ${min} min`;
+}
+
 export type EnrollResult = {
   id: string;
   /** Sempre `agentes.id` (uuid). */
@@ -1011,7 +1022,7 @@ export class AgenteService implements OnModuleInit {
         reason:
           dueInMs <= 0
             ? 'intervalo vencido'
-            : `a cada ${Math.round(intervalMs / 60_000)} min`,
+            : formatIntervalEach(intervalMs),
       };
     };
 
@@ -1154,7 +1165,7 @@ export class AgenteService implements OnModuleInit {
           reason:
             dueInMs <= 0
               ? 'intervalo vencido'
-              : `a cada ${Math.round(intervalMs / 60_000)} min (${opts.prospeccaoToday}/${opts.prospeccaoDailyLimit})`,
+              : `${formatIntervalEach(intervalMs)} (${opts.prospeccaoToday}/${opts.prospeccaoDailyLimit})`,
         };
       } else if (opts.prospeccaoSlots > 0) {
         prospeccao = {
@@ -1229,7 +1240,7 @@ export class AgenteService implements OnModuleInit {
           reason:
             dueInMs <= 0
               ? `faltam ${remaining} hoje (${opts.extractedToday}/${opts.extractDailyLimit})`
-              : `a cada ${Math.round(intervalMs / 60_000)} min (${opts.extractedToday}/${opts.extractDailyLimit})`,
+              : `${formatIntervalEach(intervalMs)} (${opts.extractedToday}/${opts.extractDailyLimit})`,
         };
       } else {
         leads = {

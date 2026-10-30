@@ -328,7 +328,9 @@ function DataTable({ title, columns, rows, emptyLabel = 'Sem linhas' }) {
     <section className="dash-panel dash-panel-wide">
       <h2>{title}</h2>
       {!rows.length ? (
-        <p className="muted">{emptyLabel}</p>
+        <div className="dash-inset">
+          <p className="muted">{emptyLabel}</p>
+        </div>
       ) : (
         <div className="table-wrap">
           <table className="dash-table">

@@ -725,17 +725,6 @@ code {
   max-width: 1100px;
 }
 
-/* Cards do dashboard: fundo branco (--inset) no padrão Atividade 30d */
-.page-dashboard .dash-panel,
-.page-dashboard .kpi {
-  background: var(--inset);
-  border: 1px solid var(--border);
-}
-
-.page-dashboard .dash-table th {
-  background: var(--inset);
-}
-
 .kpi-group {
   margin-bottom: 1.1rem;
 }
@@ -862,6 +851,25 @@ code {
 .chart-box {
   width: 100%;
   min-height: 220px;
+  padding: 0.75rem 0.85rem 0.5rem;
+  border-radius: var(--radius);
+  background: var(--inset);
+}
+
+.chart-box-empty {
+  min-height: 0;
+  padding: 0.75rem 0.85rem;
+}
+
+.dash-panel > .table-wrap,
+.dash-panel > .dash-inset {
+  padding: 0.75rem 0.85rem;
+  border-radius: var(--radius);
+  background: var(--inset);
+}
+
+.dash-panel > .table-wrap .dash-table th {
+  background: var(--inset);
 }
 
 .chart-tooltip {

@@ -96,6 +96,15 @@ const PROCEDURE_LABEL: Record<AgentJobType, string> = {
   ler_mensagens: 'Ler mensagens',
 };
 
+/** Ordem do funil (≠ prioridade do worker em AGENT_JOB_TYPES). */
+const PROCEDURE_FUNNEL_ORDER: AgentJobType[] = [
+  'extrair_leads',
+  'conectar',
+  'verificar_conexoes',
+  'enviar_prospeccao',
+  'ler_mensagens',
+];
+
 function pct(n: number, den: number): number {
   return den ? Math.round((100 * n) / den) : 0;
 }
@@ -595,7 +604,7 @@ export class DashboardService {
       else if (row.status === 'claimed') cur.claimed = n;
       else if (row.status === 'failed') cur.failed = n;
     }
-    return AGENT_JOB_TYPES.map((type) => {
+    return PROCEDURE_FUNNEL_ORDER.map((type) => {
       const c = map.get(type)!;
       return {
         type,

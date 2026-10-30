@@ -161,8 +161,9 @@ export class AgenteService implements OnModuleInit {
     return Number.isFinite(n) && n >= 60_000 ? n : 14_400_000;
   }
 
-  private leadThreshold(): number {
-    const n = Number(this.config.get('AGENT_LEAD_THRESHOLD', '10'));
+  /** Máx. candidatos extraídos (reservados) por agente / dia civil (default 10). */
+  private extractDailyLimit(): number {
+    const n = Number(this.config.get('AGENT_EXTRACT_DAILY_LIMIT', '10'));
     return Number.isFinite(n) && n >= 0 ? Math.floor(n) : 10;
   }
 
@@ -355,6 +356,29 @@ export class AgenteService implements OnModuleInit {
         )`,
         { agentId },
       )
+      .getCount();
+  }
+
+  /**
+   * Candidatos extraídos hoje p/ o agente: dono ativo (0|1|2) + `extractedAt` no dia
+   * (evita contar claim de lead livre antigo via `conectar`).
+   */
+  private async countExtractedToday(agentId: string): Promise<number> {
+    const day = this.startOfLocalDay();
+    return this.connections
+      .createQueryBuilder('c')
+      .innerJoin('c.clienteLinkedin', 'li')
+      .where('c.agentId = :agentId', { agentId })
+      .andWhere('c.status IN (:...st)', {
+        st: [
+          ClientConnectionLinkedinStatus.NOT_SENT,
+          ClientConnectionLinkedinStatus.PENDING,
+          ClientConnectionLinkedinStatus.CONNECTED,
+        ],
+      })
+      .andWhere('li.deletedAt IS NULL')
+      .andWhere('li.extractedAt IS NOT NULL')
+      .andWhere('li.extractedAt >= :day', { day })
       .getCount();
   }
 
@@ -827,8 +851,8 @@ export class AgenteService implements OnModuleInit {
       prospeccaoWindowEnd: string;
       prospeccaoOutsideWindow: boolean;
       prospeccaoNextDueAt: Date | null;
-      leadThreshold: number;
-      leadsNaFila: number;
+      extractDailyLimit: number;
+      extractedToday: number;
       extractIntervalMs: number;
       allowedTypes?: ReadonlySet<AgentJobType>;
     },
@@ -1079,6 +1103,10 @@ export class AgenteService implements OnModuleInit {
       const leadsQueued = (pendingByType.get('extrair_leads') || 0) > 0;
       const lastAt = runtime.lastExtractAt;
       const intervalMs = opts.extractIntervalMs;
+      const remaining = Math.max(
+        0,
+        opts.extractDailyLimit - opts.extractedToday,
+      );
       if (leadsQueued) {
         leads = {
           type: 'extrair_leads',
@@ -1089,7 +1117,7 @@ export class AgenteService implements OnModuleInit {
           intervalMs,
           reason: 'job na fila',
         };
-      } else if (opts.leadsNaFila >= opts.leadThreshold) {
+      } else if (remaining <= 0) {
         leads = {
           type: 'extrair_leads',
           state: 'blocked',
@@ -1097,7 +1125,7 @@ export class AgenteService implements OnModuleInit {
           dueInMs: null,
           lastAt: iso(lastAt),
           intervalMs,
-          reason: `fila ok (${opts.leadsNaFila}/${opts.leadThreshold})`,
+          reason: `limite diário ${opts.extractedToday}/${opts.extractDailyLimit}`,
         };
       } else if (lastAt) {
         const elapsed = now - lastAt.getTime();
@@ -1111,8 +1139,8 @@ export class AgenteService implements OnModuleInit {
           intervalMs,
           reason:
             dueInMs <= 0
-              ? `fila baixa (${opts.leadsNaFila}/${opts.leadThreshold})`
-              : `a cada ${Math.round(intervalMs / 60_000)} min (${opts.leadsNaFila}/${opts.leadThreshold})`,
+              ? `faltam ${remaining} hoje (${opts.extractedToday}/${opts.extractDailyLimit})`
+              : `a cada ${Math.round(intervalMs / 60_000)} min (${opts.extractedToday}/${opts.extractDailyLimit})`,
         };
       } else {
         leads = {
@@ -1122,7 +1150,7 @@ export class AgenteService implements OnModuleInit {
           dueInMs: 0,
           lastAt: null,
           intervalMs,
-          reason: `fila baixa (${opts.leadsNaFila}/${opts.leadThreshold})`,
+          reason: `faltam ${remaining} hoje (${opts.extractedToday}/${opts.extractDailyLimit})`,
         };
       }
     }
@@ -1169,7 +1197,8 @@ export class AgenteService implements OnModuleInit {
       inboxIntervalMs: number;
       connectionsIntervalMs: number;
       extractIntervalMs: number;
-      leadThreshold: number;
+      extractDailyLimit: number;
+      extractedToday: number;
       leadsNaFila: number;
       connectDailyLimit: number;
       connectBatchSize: number;
@@ -1273,6 +1302,7 @@ export class AgenteService implements OnModuleInit {
     }
 
     const leadsNaFila = await this.countLeadsCandidatos(agentId);
+    const extractedToday = await this.countExtractedToday(agentId);
     const connectsToday = await this.countInvitedToday(agentId);
     const batchNow = await this.connectSlotsNow(agentId, connectsToday);
     const prospeccaoToday = await this.countProspeccaoDoneToday(agentId);
@@ -1302,8 +1332,8 @@ export class AgenteService implements OnModuleInit {
       prospeccaoWindowEnd: prospeccaoNow.windowEnd,
       prospeccaoOutsideWindow: prospeccaoNow.outsideWindow,
       prospeccaoNextDueAt: prospeccaoNow.nextDueAt,
-      leadThreshold: this.leadThreshold(),
-      leadsNaFila,
+      extractDailyLimit: this.extractDailyLimit(),
+      extractedToday,
       extractIntervalMs: this.extractIntervalMs(),
       allowedTypes,
     });
@@ -1320,7 +1350,8 @@ export class AgenteService implements OnModuleInit {
         inboxIntervalMs: this.inboxIntervalMs(),
         connectionsIntervalMs: this.connectionsIntervalMs(),
         extractIntervalMs: this.extractIntervalMs(),
-        leadThreshold: this.leadThreshold(),
+        extractDailyLimit: this.extractDailyLimit(),
+        extractedToday,
         leadsNaFila,
         connectDailyLimit: this.connectDailyLimit(),
         connectBatchSize: batchNow.batchSize,
@@ -1665,7 +1696,7 @@ export class AgenteService implements OnModuleInit {
       await this.enqueueConectar(agentId);
     }
     if (allowed.has('extrair_leads')) {
-      await this.enqueueExtrairIfLow(agentId);
+      await this.enqueueExtrairDaily(agentId);
     }
   }
 
@@ -2046,19 +2077,19 @@ export class AgenteService implements OnModuleInit {
   }
 
   /**
-   * AC-04: estoque de leads (livres + reservados deste agente) abaixo do threshold
-   * e intervalo mínimo AGENT_EXTRACT_INTERVAL_MS desde o último extract.
+   * AC-04: cada agente extrai até AGENT_EXTRACT_DAILY_LIMIT candidatos/dia
+   * (default 10), com intervalo mínimo AGENT_EXTRACT_INTERVAL_MS entre runs.
    */
-  private async enqueueExtrairIfLow(agentId: string): Promise<void> {
-    const leadsNaFila = await this.countLeadsCandidatos(agentId);
-    const threshold = this.leadThreshold();
-    if (leadsNaFila >= threshold) {
-      // Cancela pending; claimed segue até complete/fail/timeout.
+  private async enqueueExtrairDaily(agentId: string): Promise<void> {
+    const dailyLimit = this.extractDailyLimit();
+    const extractedToday = await this.countExtractedToday(agentId);
+    const remaining = Math.max(0, dailyLimit - extractedToday);
+    if (remaining <= 0) {
       await this.jobs.update(
         { agentId, type: 'extrair_leads', status: 'pending' },
         {
           status: 'cancelled',
-          lastError: `leads (candidatos)=${leadsNaFila} >= threshold=${threshold}`,
+          lastError: `limite diário extract ${extractedToday}/${dailyLimit}`,
           completedAt: new Date(),
           dedupeKey: null,
         },
@@ -2094,18 +2125,21 @@ export class AgenteService implements OnModuleInit {
 
     const agente = await this.agentesCadastro.findOneBy({ id: agentId });
     const query = String(agente?.searchQuery || '').trim() || null;
+    const leadsNaFila = await this.countLeadsCandidatos(agentId);
 
     await this.insertJob({
       agentId,
       type: 'extrair_leads',
-      dedupeKey: `extrair_leads:${agentId}:low`,
+      dedupeKey: `extrair_leads:${agentId}:daily`,
       payload: {
         ac: 'AC-04',
-        leadsNaFila,
-        leadThreshold: threshold,
+        extractedToday,
+        extractDailyLimit: dailyLimit,
+        maxProfiles: remaining,
         extractIntervalMs: intervalMs,
+        leadsNaFila,
         query,
-        hint: 'Rodar extract/search; upsert candidatos (leads globais)',
+        hint: 'Rodar extract/search; upsert candidatos até o limite diário',
       },
     });
   }

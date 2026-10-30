@@ -208,7 +208,7 @@ classDiagram
 | `verificar_conexoes` | 2 | Pending + intervalo `AGENT_CONNECTIONS_INTERVAL_MS` → extract recent + mark-accepted |
 | `enviar_prospeccao` | 3 | Conexão status=2 sem `sent` |
 | `conectar` | 4 | Candidatos→status=0; ≤ `AGENT_CONNECT_DAILY_LIMIT` (15)/dia; lote + pausa `AGENT_CONNECT_BATCH_*` (local: 1/1 h) |
-| `extrair_leads` | 5 | Candidatos (leads) &lt; `AGENT_LEAD_THRESHOLD` |
+| `extrair_leads` | 5 | Até `AGENT_EXTRACT_DAILY_LIMIT` candidatos/dia (default 10) |
 
 ---
 
@@ -483,7 +483,7 @@ Deploy gestor = mesmo artefato do servidor (systemd / pm2 / Docker sidecar). Sem
 | Env | Default | Papel |
 |-----|---------|-------|
 | `AGENT_INBOX_INTERVAL_MS` | `14400000` (4 h) | AC-01 |
-| `AGENT_LEAD_THRESHOLD` | `20` | AC-04 |
+| `AGENT_EXTRACT_DAILY_LIMIT` | `10` | AC-04 (substitui `AGENT_LEAD_THRESHOLD`) |
 | `AGENT_CONNECT_DAILY_LIMIT` | `15` | AC-03 máx. convites/dia por agente |
 | `AGENT_CONNECT_BATCH_SIZE` | `5` | AC-03 tamanho do lote antes da pausa |
 | `AGENT_CONNECT_BATCH_INTERVAL_MS` | `3600000` (1 h) | AC-03 pausa entre lotes |

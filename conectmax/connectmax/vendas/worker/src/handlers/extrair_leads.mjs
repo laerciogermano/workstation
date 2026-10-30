@@ -24,9 +24,10 @@ export async function run(job, ctx) {
   ).replace(/\/$/, '');
   if (!apiUrl) throw new Error('PROFILES_API_URL ou API_URL obrigatório');
 
+  // Payload da API = slots restantes do limite diário; env só se o job não trouxer.
   const maxProfiles = String(
-    process.env.EXTRACT_MAX_PROFILES ||
-      job?.payload?.maxProfiles ||
+    job?.payload?.maxProfiles ||
+      process.env.EXTRACT_MAX_PROFILES ||
       10,
   );
   const query = String(

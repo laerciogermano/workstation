@@ -65,16 +65,18 @@ Use **chave global** no supervisor.
 | `MAX_JOBS_PER_SLOT` | Teto de claims seguidos no mesmo AVD por ocupação (default 20) |
 | `SKIP_DOCKER=1` | Só `device-status` |
 | `SLEEP_MS` | Pausa entre turnos quando slots ociosos (default 15s) |
-| `EXTRACT_MAX_PROFILES` | Máx. leads por extract (default **10**) |
+| `EXTRACT_MAX_PROFILES` | Fallback se o job não trouxer `maxProfiles` (API manda slots do limite diário; default **10**) |
 | `DRY` / `ONCE` / `ALLOW_STUB` | Smoke / stubs |
 
 ## Handlers
 
 | `type` | Status |
 |--------|--------|
-| `extrair_leads` | `login-extract-profiles --device $SERIAL` — `query` do job (`agentes.search_query`) ou env `EXTRACT_QUERY`; passa `AGENT_ID` p/ reservar candidatos (`status=0`) |
+| `extrair_leads` | `login-extract-profiles --device $SERIAL` — `query` + `maxProfiles` do job (limite diário API); `EXTRACT_QUERY` / `EXTRACT_MAX_PROFILES` só fallback; passa `AGENT_ID` p/ reservar candidatos (`status=0`) |
 
 **Antes → depois (extract → Candidatos):** extract sem `AGENT_ID` → só perfil no pool livre (funil por agente não mostrava Elaine etc.) → handler injeta `AGENT_ID` e script faz `POST` conexão `status=0` em Connect. **Rollback:** remova `AGENT_ID` do env em `extrair_leads.mjs`; `connectionStatusFromInviteStatus("connect")` → `null`.
+
+**Antes → depois (`maxProfiles` diário):** env `EXTRACT_MAX_PROFILES` vencia o payload → job `maxProfiles` (slots restantes do `AGENT_EXTRACT_DAILY_LIMIT`) tem prioridade. **Rollback:** `EXTRACT_MAX_PROFILES \|\| payload.maxProfiles` em `extrair_leads.mjs`.
 
 **Antes → depois (multi-AVD):** extract/unread usavam só `device.config` (`ConnectMax_Cam`→`emulator-5554`) mesmo com `SERIAL` do worker → passam `--device` / serial explícito; `start-runtime` prioriza serial alcançável sobre lookup por `provision.name`. **Rollback:** remova `--device` do handler; reverta o prefer-serial em `screen-robot/src/lib/start-runtime.js`.
 | `conectar` | `linkedin-connect` (URL do payload; teto diário na API) |

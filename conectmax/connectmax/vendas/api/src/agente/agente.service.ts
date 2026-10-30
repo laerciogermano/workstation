@@ -424,7 +424,7 @@ export class AgenteService implements OnModuleInit {
     return Number.isNaN(d.getTime()) ? null : d;
   }
 
-  /** Jobs `enviar_prospeccao` concluídos hoje (conta no limite diário). */
+  /** Jobs `enviar_prospeccao` concluídos hoje (conta no limite diário, dia civil SP). */
   private async countProspeccaoDoneToday(agentId: string): Promise<number> {
     return this.jobs
       .createQueryBuilder('j')
@@ -432,8 +432,79 @@ export class AgenteService implements OnModuleInit {
       .andWhere('j.type = :type', { type: 'enviar_prospeccao' })
       .andWhere('j.status = :st', { st: 'done' })
       .andWhere('j.completedAt IS NOT NULL')
-      .andWhere('j.completedAt >= :day', { day: this.startOfLocalDay() })
+      .andWhere('j.completedAt >= :day', { day: this.startOfSaoPauloDay() })
       .getCount();
+  }
+
+  /** Fuso fixo da janela/cota diária de prospecção (independente da TZ do processo). */
+  private static readonly PROSPECCAO_TZ = 'America/Sao_Paulo';
+
+  private saoPauloParts(date: Date): {
+    year: number;
+    month: number;
+    day: number;
+    hour: number;
+    minute: number;
+    second: number;
+  } {
+    const fmt = new Intl.DateTimeFormat('en-US', {
+      timeZone: AgenteService.PROSPECCAO_TZ,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hourCycle: 'h23',
+    });
+    const bag: Record<string, string> = {};
+    for (const p of fmt.formatToParts(date)) {
+      if (p.type !== 'literal') bag[p.type] = p.value;
+    }
+    return {
+      year: Number(bag.year),
+      month: Number(bag.month),
+      day: Number(bag.day),
+      hour: Number(bag.hour),
+      minute: Number(bag.minute),
+      second: Number(bag.second),
+    };
+  }
+
+  /** Instant UTC do relógio de parede em America/Sao_Paulo. */
+  private saoPauloWallToUtc(
+    year: number,
+    month: number,
+    day: number,
+    hour: number,
+    minute: number,
+    second = 0,
+  ): Date {
+    let utc = Date.UTC(year, month - 1, day, hour + 3, minute, second);
+    for (let i = 0; i < 4; i++) {
+      const got = this.saoPauloParts(new Date(utc));
+      const want = Date.UTC(year, month - 1, day, hour, minute, second);
+      const actual = Date.UTC(
+        got.year,
+        got.month - 1,
+        got.day,
+        got.hour,
+        got.minute,
+        got.second,
+      );
+      utc += want - actual;
+    }
+    return new Date(utc);
+  }
+
+  private startOfSaoPauloDay(from: Date = new Date()): Date {
+    const p = this.saoPauloParts(from);
+    return this.saoPauloWallToUtc(p.year, p.month, p.day, 0, 0, 0);
+  }
+
+  private minutesInSaoPaulo(date: Date = new Date()): number {
+    const p = this.saoPauloParts(date);
+    return p.hour * 60 + p.minute;
   }
 
   private parseHmToMinutes(
@@ -454,7 +525,7 @@ export class AgenteService implements OnModuleInit {
     return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
   }
 
-  /** Janela do agente (default 08:00–18:00, fim exclusivo). TZ do processo. */
+  /** Janela do agente (default 08:00–18:00, fim exclusivo). America/Sao_Paulo. */
   private resolveProspeccaoWindow(agente: {
     prospeccaoHoraInicio?: string | null;
     prospeccaoHoraFim?: string | null;
@@ -481,14 +552,26 @@ export class AgenteService implements OnModuleInit {
     startMin: number,
     from: Date = new Date(),
   ): Date {
-    const next = new Date(from);
-    next.setSeconds(0, 0);
-    next.setMilliseconds(0);
-    next.setHours(Math.floor(startMin / 60), startMin % 60, 0, 0);
-    if (next.getTime() <= from.getTime()) {
-      next.setDate(next.getDate() + 1);
+    const p = this.saoPauloParts(from);
+    const nowMin = p.hour * 60 + p.minute;
+    let { year, month, day } = p;
+    if (nowMin >= startMin) {
+      const noon = this.saoPauloWallToUtc(year, month, day, 12, 0, 0);
+      const next = this.saoPauloParts(
+        new Date(noon.getTime() + 24 * 60 * 60 * 1000),
+      );
+      year = next.year;
+      month = next.month;
+      day = next.day;
     }
-    return next;
+    return this.saoPauloWallToUtc(
+      year,
+      month,
+      day,
+      Math.floor(startMin / 60),
+      startMin % 60,
+      0,
+    );
   }
 
   /**
@@ -515,7 +598,7 @@ export class AgenteService implements OnModuleInit {
     const agente = await this.agentesCadastro.findOneBy({ id: agentId });
     const win = this.resolveProspeccaoWindow(agente);
     const now = new Date();
-    const nowMin = now.getHours() * 60 + now.getMinutes();
+    const nowMin = this.minutesInSaoPaulo(now);
     const remainingDaily = Math.max(0, dailyLimit - sentToday);
     const lastTerminal = await this.lastProspeccaoTerminal(agentId);
     const afterFail = lastTerminal?.status === 'failed';

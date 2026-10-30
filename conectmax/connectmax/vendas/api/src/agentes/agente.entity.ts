@@ -196,7 +196,7 @@ export class Agente {
   mensagemProspeccao!: string | null;
 
   /**
-   * Início da janela de envio de prospecção (HH:MM, TZ do processo).
+   * Início da janela de envio de prospecção (HH:MM, America/Sao_Paulo).
    * `null` → default `08:00`. Inclusivo.
    */
   @Column({
@@ -208,8 +208,8 @@ export class Agente {
   prospeccaoHoraInicio!: string | null;
 
   /**
-   * Fim da janela de envio de prospecção (HH:MM). `null` → default `18:00`.
-   * Exclusivo (ex.: 18:00 = até 17:59).
+   * Fim da janela de envio de prospecção (HH:MM, America/Sao_Paulo).
+   * `null` → default `18:00`. Exclusivo (ex.: 18:00 = até 17:59).
    */
   @Column({
     name: 'prospeccao_hora_fim',

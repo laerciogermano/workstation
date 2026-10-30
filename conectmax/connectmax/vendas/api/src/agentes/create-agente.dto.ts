@@ -180,14 +180,14 @@ export class CreateAgenteDto {
   @MaxLength(4000)
   mensagemProspeccao?: string | null;
 
-  /** Início da janela de envio (HH:MM); null/omit → default 08:00. */
+  /** Início da janela (HH:MM, America/Sao_Paulo); null/omit → default 08:00. */
   @IsOptional()
   @ValidateIf((_, v) => v != null && String(v).trim() !== '')
   @IsString()
   @Matches(HM_TIME, { message: 'prospeccaoHoraInicio deve ser HH:MM' })
   prospeccaoHoraInicio?: string | null;
 
-  /** Fim da janela (HH:MM, exclusivo); null/omit → default 18:00. */
+  /** Fim da janela (HH:MM America/Sao_Paulo, exclusivo); null/omit → default 18:00. */
   @IsOptional()
   @ValidateIf((_, v) => v != null && String(v).trim() !== '')
   @IsString()
@@ -350,14 +350,14 @@ export class UpdateAgenteDto {
   @MaxLength(4000)
   mensagemProspeccao?: string | null;
 
-  /** Início da janela de envio (HH:MM); null → default 08:00. */
+  /** Início da janela (HH:MM, America/Sao_Paulo); null → default 08:00. */
   @IsOptional()
   @ValidateIf((_, v) => v != null && String(v).trim() !== '')
   @IsString()
   @Matches(HM_TIME, { message: 'prospeccaoHoraInicio deve ser HH:MM' })
   prospeccaoHoraInicio?: string | null;
 
-  /** Fim da janela (HH:MM, exclusivo); null → default 18:00. */
+  /** Fim da janela (HH:MM America/Sao_Paulo, exclusivo); null → default 18:00. */
   @IsOptional()
   @ValidateIf((_, v) => v != null && String(v).trim() !== '')
   @IsString()

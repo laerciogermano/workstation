@@ -880,7 +880,7 @@ export default function Agentes() {
                 <fieldset className="agt-proc-fieldset srv-form-span">
                   <legend>Enviar prospecção</legend>
                   <p className="muted agt-proc-hint">
-                    Horário permitido (fuso do servidor). Fora da janela o envio
+                    Horário permitido (America/Sao_Paulo). Fora da janela o envio
                     fica em espera. Fim é exclusivo (18:00 = até 17:59).
                   </p>
                   <div className="agt-proc-hours">

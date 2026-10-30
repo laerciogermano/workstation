@@ -186,16 +186,33 @@ function timelinesByAgent(
   abordados,
   respondidos,
 ) {
+  const series = [extract, connected, invited, abordados, respondidos];
+  const hasAgentDim = series.some((rows) =>
+    rows.some((r) => r?.agentId),
+  );
+  // API antiga (sem agentId): um painel agregado — evita tela vazia.
+  if (!hasAgentDim) {
+    const timeline = mergeDaily(
+      extract,
+      connected,
+      invited,
+      abordados,
+      respondidos,
+    );
+    return timeline.length
+      ? [{ agentId: '_all', name: 'Todos', timeline }]
+      : [];
+  }
+
   const nameById = new Map(
     byAgent.map((a) => [a.agentId, a.name || a.agentId]),
   );
   const ids = new Set();
-  for (const rows of [extract, connected, invited, abordados, respondidos]) {
+  for (const rows of series) {
     for (const r of rows) {
       if (r.agentId) ids.add(r.agentId);
     }
   }
-  for (const a of byAgent) ids.add(a.agentId);
 
   const filter = (rows, agentId) =>
     rows.filter((r) => r.agentId === agentId);

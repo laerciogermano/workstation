@@ -162,7 +162,7 @@ npm run dev
 **Antes → depois (extrações diárias):** só área/linha “Extrações no tempo” → + painel `BarChart` “Extrações por dia (barras · 30d)” com `byDay.profiles`. Remover o primeiro `ChartPanel` de barras em `dashboard.jsx` para voltar.
 
 **Antes → depois (atividade 30d):** `ComposedChart` (barras Extrações/Convites + linha Conectados) → `LineChart` com três linhas (Extrações, Convites, Conectados). **Rollback:** restaurar `ComposedChart` + `Bar` para extracts/invited e `Line` só em connected.
-**Antes → depois (atividade 30d por agente):** um painel agregado global (`mergeDaily` sem `agentId`) → um painel por agente com atividade (`timelinesByAgent` + `byDay*.agentId`). **Rollback:** volte `mergeDaily` único e um `ChartPanel` “Atividade por dia (30d)”.
+**Antes → depois (atividade 30d por agente):** um painel agregado global (`mergeDaily` sem `agentId`) → um painel por agente com atividade (`timelinesByAgent` + `byDay*.agentId`). Se a API ainda não manda `agentId` (proxy Contabo antigo), cai no painel **Todos**. **Rollback:** volte `mergeDaily` único e um `ChartPanel` “Atividade por dia (30d)”.
 
 **Antes → depois (lista):** botões Anterior/Próxima → infinite scroll acumulando páginas.  
 **Antes → depois (dashboard):** agregação client-side → `GET /dashboard`.  

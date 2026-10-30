@@ -657,7 +657,7 @@ Um detalhe pelo `profile_id`.
 **Antes → depois:** só cards da lista (`linkedin_profiles`) → também detalhe da página aberta.  
 **Rollback:** remova `ProfileDetailsModule` / entity; script só JSON local se não POST.
 
-### `GET /dashboard`
+### `GET /dashboard/insights` (alias `GET /dashboard`)
 
 Insights de operação (KPIs + séries Recharts + tabelas) sobre `cliente_linkedin` + `client_connection_linkedin` + `client_linkedin_message` + `agent_jobs`. Sem blobs/OCR/foto/cobertura.
 
@@ -714,7 +714,7 @@ Insights de operação (KPIs + séries Recharts + tabelas) sobre `cliente_linked
 ```
 
 ```bash
-curl http://localhost:3000/dashboard
+curl http://localhost:3000/dashboard/insights
 ```
 
 **Antes → depois (byDay por agente):** `byDayExtract|Invited|Connected|Abordados|Respondidos` eram `{ label, count }` globais (últimos 30 labels) → cada ponto traz `agentId` + filtro UTC últimos 30 dias; extract conta perfil distinto via `client_connection_linkedin.agent_id`. Web: um `LineChart` “Atividade por dia (30d) · {nome}” por agente. **Rollback:** volte queries sem `GROUP BY agentId` / `mapCountRows().slice(-30)` e um único painel agregado no `dashboard.jsx`.
@@ -722,7 +722,7 @@ curl http://localhost:3000/dashboard
 **Antes → depois (ordem procedimentos):** `byProcedure` / KPIs “Jobs por procedimento” vinham na prioridade do worker (`AGENT_JOB_TYPES`: ler_mensagens→…→extrair_leads) → ordem do **funil** (`PROCEDURE_FUNNEL_ORDER`: Buscar candidatos → Conectar → Ver conexões → Enviar prospecção → Ler mensagens). Prioridade de claim do worker **não** muda. **Rollback:** volte o `.map` de `buildByProcedure` para `AGENT_JOB_TYPES`.
 **Antes → depois (recent avatar):** `recent[]` sem foto → inclui `photoBase64` de `cliente_linkedin` (web: avatar em Perfis recentes). **Rollback:** remova o select/`photoBase64` no map e o `RecentAvatar` no `dashboard.jsx`.
 **Antes → depois (recent = candidatos):** `recent[]` era top 20 de **qualquer** perfil ativo (`extractedAt`) → misturava pending/connected e a 1ª de Candidatos (ex. Carolina) sumia do painel → agora só `status=0` (sem convite), mesma ordem do funil (`extractedAt DESC`). **Rollback:** tire o `EXISTS … status = 0` no `DashboardService`.
-**Antes → depois:** front agregava `GET /profiles` + `GET /profile-details` → `GET /dashboard` já montado.
+**Antes → depois:** front agregava `GET /profiles` + `GET /profile-details` → `GET /dashboard` já montado. **Depois (path):** `GET /dashboard` colidia com SPA → `GET /dashboard/insights` (alias `/dashboard` mantido).
 **Antes → depois (foco):** `coverage` / foto / OCR / experience / outreach / `missingDetail` / `byRound` → % conectados/pendentes, conexões por dia (`connected_at`/`invited_at`), cargos (`byTitle`), cidades, empresas, tabelas.
 **Antes → depois (invite_status):** valores OCR tipo `Connect` apareciam no dashboard → só 3 buckets (`connect`/`pending`/`connected` = não enviado/pendente/conectado); gravação passa por `normalizeInviteStatus` (`clientes/invite-status.ts`).
 **Antes → depois (soft-delete):** só ativos (`deleted_at IS NULL`).
@@ -906,7 +906,7 @@ ssh root@144.126.154.90 'cd /opt/connectmax/vendas/api && npm install && npm run
 
 Schema novo sem `DB_SYNC`: `ALTER` manual (ex. `agent_runtime.last_extract_at`) ou um boot com `DB_SYNC=true` e volta a `false`.
 
-Rotas SPA+API (`/empresas`, `/dashboard`, `/profiles/:uuid`, …): **fetch JSON → Nest**; SPA via map `$cx_serve_spa` (Sec-Fetch navigate/document; sem Sec-Fetch + Accept `^text/html`; Accept com `application/json` → API). **Não** use `location = /avds { try_files … }` nem `if Accept ⊃ text/html` (preview/IDE devolve HTML no fetch).
+SPA `/dashboard` (exact) → `index.html`; JSON → `GET /dashboard/insights`. Outras rotas compartilhadas usam `$cx_serve_spa`. **Não** use `location = /avds { try_files … }` nem compartilhe path SPA+API sem path dedicado.
 
 ```bash
 # .env na VPS 144 (não versionado)

@@ -47,10 +47,8 @@ export default defineConfig({
           }
         },
       }),
-      '/dashboard': apiProxy({
-        // refresh em /dashboard → SPA; fetch JSON → API
-        bypass: spaHtmlBypass,
-      }),
+      // JSON em /dashboard/insights (SPA fica em /dashboard via history fallback)
+      '/dashboard/insights': apiProxy(),
       '/profile-details': apiProxy(),
       '/extract': apiProxy(),
       '/linkedin-base': apiProxy(),

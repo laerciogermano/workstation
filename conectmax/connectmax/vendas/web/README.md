@@ -1,6 +1,6 @@
 # vendas/web — lista de profiles
 
-SPA React (Vite) que lista cards paginados de `GET /profiles`, abre `/profiles/:id` (card + `GET /profile-details/:profileId`) e consome insights prontos de `GET /dashboard`.
+SPA React (Vite) que lista cards paginados de `GET /profiles`, abre `/profiles/:id` (card + `GET /profile-details/:profileId`) e consome insights de `GET /dashboard/insights` (SPA em `/dashboard`).
 
 **API:** [`../api/README.md`](../api/README.md) · **Visão:** [`../README.md`](../README.md)
 
@@ -16,7 +16,7 @@ SPA React (Vite) que lista cards paginados de `GET /profiles`, abre `/profiles/:
 | Detalhe só em state React | URL `/profiles/:id` (History API); refresh serve SPA via bypass do proxy |
 | Detalhe com capa/avatar/card/OCR | Detalhe com **Avatar** + campos (sem card/OCR na UI) |
 | Card/perfil só com valores soltos | Cada campo com rótulo (Nome, Cargo, Nível, Conexão, Cidade/Local, Atual/Empresa, Em comum, Extraído, LinkedIn); seções About→Sobre, Experience→Experiência, Education→Formação, Skills→Competências |
-| Sem visão agregada | Rota SPA `/dashboard` + `GET /dashboard` na API (KPIs/barras/tabelas) |
+| Sem visão agregada | Rota SPA `/dashboard` + `GET /dashboard/insights` (KPIs/barras/tabelas) |
 | Lista carrega todos os perfis | Infinite scroll (`page`/`limit=100`/`q`) acumulando no front |
 | UI genérica (Segoe / tons soltos) | Tokens e tipografia da identidade v1: **Hero Noite** (default) e **Hero Dia** (`data-theme` + toggle; `localStorage` `cx-theme`) |
 | Barras CSS no dashboard | **Recharts**: barras diárias de extração (30d), area/line, radar, pie/donut, barras empilhadas e horizontais |
@@ -76,16 +76,16 @@ Abre `http://localhost:5173`. Em dev, Vite faz proxy de `/profiles`, `/dashboard
 
 **Antes → depois (`/profiles` proxy):** qualquer `Accept: text/html` em `/profiles` → SPA; agora lista com query → API. **Rollback:** bypass antigo (`if accept text/html → index.html`) em `vite.config.js`.
 
-**Antes → depois (proxy SPA `/dashboard` → `<!doctype`):** `spaHtmlBypass` só olhava `Accept ⊃ text/html` e alguns clients (preview/IDE) mandavam isso no **fetch**, devolvendo o HTML do SPA (erro JSON). Agora: `application/json` / `Sec-Fetch-Mode|Dest` de XHR passam à API; navegação `document`/`navigate` → SPA; `dashboard.jsx` pede `Accept: application/json` e valida content-type. **Rollback:** `if (req.headers.accept?.includes('text/html')) return '/index.html'` + `fetch(DASHBOARD_URL)` sem headers.
+**Antes → depois (proxy SPA `/dashboard` → `<!doctype`):** mesmo path SPA+API + `Accept text/html` no fetch → HTML. Depois: API em **`GET /dashboard/insights`**; SPA exact `/dashboard`; Vite proxy só `/dashboard/insights`. **Rollback:** `GET /dashboard` + proxy/bypass antigo + `DASHBOARD_URL='/dashboard'`.
 
-**Prod nginx:** [`deploy/nginx-connectmax.conf`](deploy/nginx-connectmax.conf) — rotas compartilhadas proxyam a API; SPA via `$cx_serve_spa` (Sec-Fetch navigate/document; sem Sec-Fetch + `Accept` começa com `text/html`; `application/json` → API). **Antes → depois (`<!doctype` no fetch):** `if Accept ⊃ text/html` → map Sec-Fetch + Accept JSON. Detalhe/rollback: [`../api/README.md`](../api/README.md#produção-contabo).
+**Prod nginx:** [`deploy/nginx-connectmax.conf`](deploy/nginx-connectmax.conf) — `/dashboard` → SPA; `/dashboard/insights` → Nest. Detalhe/rollback: [`../api/README.md`](../api/README.md#produção-contabo).
 
 URL direta (sem proxy):
 
 ```bash
 VITE_PROFILES_URL=http://localhost:3000/profiles \
 VITE_PROFILE_DETAILS_URL=http://localhost:3000/profile-details \
-VITE_DASHBOARD_URL=http://localhost:3000/dashboard \
+VITE_DASHBOARD_URL=http://localhost:3000/dashboard/insights \
 npm run dev
 ```
 
@@ -112,7 +112,7 @@ npm run dev
 - Perfil (`/profiles/:id`): abre a partir do funil; **Voltar** → `history.back()` (fallback `/funil`); **Extrair informações** → `GET /extract/by-url/start?url=`; **Remover** → `DELETE /profiles/:id` (volta ao funil). Conectado → **Enviar mensagem** (`/mensagens?profileId=`); não conectado → **Conectar** (`POST /linkedin-robot/connect`).
 - Sem detalhe / sem URL → omite o link
 - Executivo (SPA `/executivo`): filtros Ano / Mês / Vendedor; KPIs com Δ vs mesmo período do ano anterior; funil em quantidade e valor; ranking e evolução do faturamento por vendedor; “Vendedor por mês” (um gráfico de barras por vendedor, mesma escala, métrica selecionável: faturamento, valor em pedidos, pedidos, orçamentos); conversão mensal; sazonalidade ano × ano; desempenho por vendedor (taxa de aprovação, ticket médio, dias orç → pedido); maiores clientes; notas de qualidade dos dados. Não depende da API.
-- Dashboard (SPA `/dashboard`): `GET /dashboard` — no topo os **cards** do funil completo; em seguida gráficos, com **Atividade por dia (30d)** (`LineChart` + filtro Agente, `cx-dash-atividade-agent`); demais (**funil por dia** barras empilhadas 30d com as mesmas etapas, procedimentos, barra `byFunil`, pie invite, grau, top cargos/cidades/empresas), tabelas (incl. Agentes) e, no final, **Projeção financeira** (400 conexões/agente/mês → R$ 1.000 MRR; 1.200 → 1 cliente); **sem** cards “Hoje” / “Por agentes” / “Jobs por procedimento” / chart “Funil por agente”; poll **5s**.
+- Dashboard (SPA `/dashboard`): `GET /dashboard/insights` — no topo os **cards** do funil completo; em seguida gráficos, com **Atividade por dia (30d)** (`LineChart` + filtro Agente, `cx-dash-atividade-agent`); demais (**funil por dia** barras empilhadas 30d com as mesmas etapas, procedimentos, barra `byFunil`, pie invite, grau, top cargos/cidades/empresas), tabelas (incl. Agentes) e, no final, **Projeção financeira** (400 conexões/agente/mês → R$ 1.000 MRR; 1.200 → 1 cliente); **sem** cards “Hoje” / “Por agentes” / “Jobs por procedimento” / chart “Funil por agente”; poll **5s**.
 
 **Antes → depois (sem Funil por agente):** chart barra horizontal empilhada `agentChart` / `byAgent` → removido (`byAgent` segue na tabela Agentes + projeção). **Rollback:** restaure `agentChart` + `ChartPanel` “Funil por agente” em `dashboard.jsx`.
 

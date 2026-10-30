@@ -17,7 +17,9 @@ import {
 import { BrandBar } from './brand.jsx';
 import { ChartPanel, ChartTooltip, useChartTheme } from './chart-kit.jsx';
 
-const DASHBOARD_URL = import.meta.env.VITE_DASHBOARD_URL ?? '/dashboard';
+/** API JSON — path ≠ rota SPA `/dashboard` (evita HTML do index no fetch). */
+const DASHBOARD_URL =
+  import.meta.env.VITE_DASHBOARD_URL ?? '/dashboard/insights';
 
 const PALETTE = [
   '#2563EB',

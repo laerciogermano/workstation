@@ -468,50 +468,61 @@ export default function Dashboard({
               const presence = loading ? null : agentPresence(a);
               return (
                 <article key={a.agentId} className="agent-kpi">
-                  <div className="agent-kpi-top">
-                    <div>
-                      <p className="agent-kpi-name">{a.name}</p>
-                      {a.agentId !== a.name && (
-                        <p className="agent-kpi-id muted">{a.agentId}</p>
+                  <div className="agent-kpi-main">
+                    <div className="agent-kpi-top">
+                      <div>
+                        <p className="agent-kpi-name">{a.name}</p>
+                        {a.agentId !== a.name && (
+                          <p
+                            className="agent-kpi-id muted"
+                            title={a.agentId}
+                          >
+                            {a.agentId}
+                          </p>
+                        )}
+                      </div>
+                      {presence && (
+                        <span
+                          className={`agent-presence agent-presence-${presence.key}`}
+                          title={
+                            a.lastHeartbeatAt
+                              ? `Último ping: ${formatWhen(a.lastHeartbeatAt)}`
+                              : 'Sem heartbeat'
+                          }
+                        >
+                          {presence.label}
+                        </span>
                       )}
                     </div>
-                    {presence && (
-                      <span
-                        className={`agent-presence agent-presence-${presence.key}`}
-                        title={
-                          a.lastHeartbeatAt
-                            ? `Último ping: ${formatWhen(a.lastHeartbeatAt)}`
-                            : 'Sem heartbeat'
-                        }
-                      >
-                        {presence.label}
-                      </span>
-                    )}
-                  </div>
-                  <div className="agent-kpi-stats agent-kpi-stats-funil">
-                    <div>
-                      <p className="kpi-label">Candidatos</p>
-                      <p className="kpi-value">{loading ? '…' : a.notSent}</p>
-                    </div>
-                    <div>
-                      <p className="kpi-label">Convidados</p>
-                      <p className="kpi-value">{loading ? '…' : a.pending}</p>
-                    </div>
-                    <div>
-                      <p className="kpi-label">Conectados</p>
-                      <p className="kpi-value">{loading ? '…' : a.connected}</p>
-                    </div>
-                    <div>
-                      <p className="kpi-label">Abordados</p>
-                      <p className="kpi-value">
-                        {loading ? '…' : a.abordados ?? 0}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="kpi-label">Respondidos</p>
-                      <p className="kpi-value">
-                        {loading ? '…' : a.respondidos ?? 0}
-                      </p>
+                    <div className="agent-kpi-stats agent-kpi-stats-funil">
+                      {[
+                        { label: 'Cand.', title: 'Candidatos', value: a.notSent },
+                        { label: 'Conv.', title: 'Convidados', value: a.pending },
+                        {
+                          label: 'Conex.',
+                          title: 'Conectados',
+                          value: a.connected,
+                        },
+                        {
+                          label: 'Abord.',
+                          title: 'Abordados',
+                          value: a.abordados ?? 0,
+                        },
+                        {
+                          label: 'Resp.',
+                          title: 'Respondidos',
+                          value: a.respondidos ?? 0,
+                        },
+                      ].map((s) => (
+                        <div key={s.title}>
+                          <p className="kpi-label" title={s.title}>
+                            {s.label}
+                          </p>
+                          <p className="kpi-value">
+                            {loading ? '…' : s.value}
+                          </p>
+                        </div>
+                      ))}
                     </div>
                   </div>
                   {!loading && (

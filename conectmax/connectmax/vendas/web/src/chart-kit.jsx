@@ -32,13 +32,19 @@ export function ChartPanel({
   empty = false,
   emptyLabel,
   note,
+  actions,
 }) {
   return (
     <section
       className={`dash-panel${wide ? ' dash-panel-wide' : ''}${half ? ' dash-panel-half' : ''}`}
     >
-      <h2>{title}</h2>
-      {note && <p className="panel-note">{note}</p>}
+      <div className="panel-head">
+        <div>
+          <h2>{title}</h2>
+          {note && <p className="panel-note">{note}</p>}
+        </div>
+        {actions}
+      </div>
       {empty ? (
         <p className="muted">{emptyLabel ?? 'Sem dados'}</p>
       ) : (

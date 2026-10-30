@@ -942,6 +942,10 @@ code {
   font-weight: 800;
 }
 
+.dash-panel .panel-head h2 {
+  margin: 0 0 0.35rem;
+}
+
 .dash-panel-wide {
   grid-column: 1 / -1;
 }

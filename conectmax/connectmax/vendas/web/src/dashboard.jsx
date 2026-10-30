@@ -152,6 +152,8 @@ function agentPresence(row) {
   return { key: 'stale', label: 'ping antigo' };
 }
 
+const ACTIVITY_AGENT_KEY = 'cx-dash-atividade-agent';
+
 function mergeDaily(extract, connected, invited, abordados, respondidos) {
   const map = new Map();
   const bump = (rows, key) => {
@@ -165,7 +167,7 @@ function mergeDaily(extract, connected, invited, abordados, respondidos) {
         abordados: 0,
         respondidos: 0,
       };
-      cur[key] = r.count;
+      cur[key] += Number(r.count) || 0;
       map.set(r.label, cur);
     }
   };
@@ -177,9 +179,25 @@ function mergeDaily(extract, connected, invited, abordados, respondidos) {
   return [...map.values()].sort((a, b) => a.day.localeCompare(b.day));
 }
 
-/** Uma timeline por agente a partir das séries `byDay*` com `agentId`. */
-function timelinesByAgent(
-  byAgent,
+/** Opções do filtro: agentes com nome (cadastro) + ids que só aparecem em byDay*. */
+function activityAgentOptions(byAgent, ...series) {
+  const nameById = new Map(
+    byAgent.map((a) => [a.agentId, a.name || a.agentId]),
+  );
+  const ids = new Set(nameById.keys());
+  for (const rows of series) {
+    for (const r of rows) {
+      if (r?.agentId) ids.add(r.agentId);
+    }
+  }
+  return [...ids]
+    .map((id) => ({ id, name: nameById.get(id) || id }))
+    .sort((a, b) => String(a.name).localeCompare(String(b.name), 'pt-BR'));
+}
+
+/** Timeline 30d: todos (soma) ou um agente. API sem agentId = agregado. */
+function activityTimeline(
+  agentFilter,
   extract,
   connected,
   invited,
@@ -187,53 +205,12 @@ function timelinesByAgent(
   respondidos,
 ) {
   const series = [extract, connected, invited, abordados, respondidos];
-  const hasAgentDim = series.some((rows) =>
-    rows.some((r) => r?.agentId),
-  );
-  // API antiga (sem agentId): um painel agregado — evita tela vazia.
-  if (!hasAgentDim) {
-    const timeline = mergeDaily(
-      extract,
-      connected,
-      invited,
-      abordados,
-      respondidos,
-    );
-    return timeline.length
-      ? [{ agentId: '_all', name: 'Todos', timeline }]
-      : [];
-  }
-
-  const nameById = new Map(
-    byAgent.map((a) => [a.agentId, a.name || a.agentId]),
-  );
-  const ids = new Set();
-  for (const rows of series) {
-    for (const r of rows) {
-      if (r.agentId) ids.add(r.agentId);
-    }
-  }
-
-  const filter = (rows, agentId) =>
-    rows.filter((r) => r.agentId === agentId);
-
-  return [...ids]
-    .map((agentId) => {
-      const timeline = mergeDaily(
-        filter(extract, agentId),
-        filter(connected, agentId),
-        filter(invited, agentId),
-        filter(abordados, agentId),
-        filter(respondidos, agentId),
-      );
-      return {
-        agentId,
-        name: nameById.get(agentId) || agentId,
-        timeline,
-      };
-    })
-    .filter((t) => t.timeline.length)
-    .sort((a, b) => String(a.name).localeCompare(String(b.name), 'pt-BR'));
+  const hasAgentDim = series.some((rows) => rows.some((r) => r?.agentId));
+  const scoped =
+    hasAgentDim && agentFilter
+      ? series.map((rows) => rows.filter((r) => r.agentId === agentFilter))
+      : series;
+  return mergeDaily(...scoped);
 }
 
 function DataTable({ title, columns, rows, emptyLabel = 'Sem linhas' }) {
@@ -298,6 +275,9 @@ export default function Dashboard({
   const [insights, setInsights] = useState(EMPTY_INSIGHTS);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [activityAgent, setActivityAgent] = useState(
+    () => localStorage.getItem(ACTIVITY_AGENT_KEY) || '',
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -364,9 +344,9 @@ export default function Dashboard({
     };
   }, []);
 
-  const agentTimelines = useMemo(
+  const activityAgents = useMemo(
     () =>
-      timelinesByAgent(
+      activityAgentOptions(
         insights.byAgent,
         insights.byDayExtract,
         insights.byDayConnected,
@@ -383,6 +363,39 @@ export default function Dashboard({
       insights.byDayRespondidos,
     ],
   );
+
+  useEffect(() => {
+    if (!activityAgent) return;
+    if (activityAgents.some((a) => a.id === activityAgent)) return;
+    setActivityAgent('');
+    localStorage.removeItem(ACTIVITY_AGENT_KEY);
+  }, [activityAgents, activityAgent]);
+
+  const timeline = useMemo(
+    () =>
+      activityTimeline(
+        activityAgent,
+        insights.byDayExtract,
+        insights.byDayConnected,
+        insights.byDayInvited,
+        insights.byDayAbordados,
+        insights.byDayRespondidos,
+      ),
+    [
+      activityAgent,
+      insights.byDayExtract,
+      insights.byDayConnected,
+      insights.byDayInvited,
+      insights.byDayAbordados,
+      insights.byDayRespondidos,
+    ],
+  );
+
+  function selectActivityAgent(id) {
+    setActivityAgent(id);
+    if (id) localStorage.setItem(ACTIVITY_AGENT_KEY, id);
+    else localStorage.removeItem(ACTIVITY_AGENT_KEY);
+  }
 
   const agentChart = useMemo(
     () =>
@@ -606,79 +619,83 @@ export default function Dashboard({
       </section>
 
       <div className="dash-grid dash-grid-charts">
-        {!agentTimelines.length ? (
-          <ChartPanel
-            title="Atividade por dia (30d)"
-            wide
-            note="Por agente · extrações · convites · aceites · abordados · respondidos"
-            empty
-            emptyLabel="Sem atividade com data"
-          />
-        ) : (
-          agentTimelines.map((t) => (
-            <ChartPanel
-              key={t.agentId}
-              title={`Atividade por dia (30d) · ${t.name}`}
-              wide
-              note="Extrações · convites · aceites · abordados · respondidos"
-              empty={!t.timeline.length}
-              emptyLabel="Sem atividade com data"
+        <ChartPanel
+          title="Atividade por dia (30d)"
+          wide
+          note="Extrações · convites · aceites · abordados · respondidos"
+          empty={!timeline.length}
+          emptyLabel="Sem atividade com data"
+          actions={
+            <label className="funil-agent-filter">
+              Agente
+              <select
+                value={activityAgent}
+                disabled={!activityAgents.length}
+                onChange={(e) => selectActivityAgent(e.target.value)}
+              >
+                <option value="">Todos</option>
+                {activityAgents.map((a) => (
+                  <option key={a.id} value={a.id}>
+                    {a.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+          }
+        >
+          <ResponsiveContainer width="100%" height={280}>
+            <LineChart
+              data={timeline}
+              margin={{ top: 8, right: 12, left: 0, bottom: 0 }}
             >
-              <ResponsiveContainer width="100%" height={280}>
-                <LineChart
-                  data={t.timeline}
-                  margin={{ top: 8, right: 12, left: 0, bottom: 0 }}
-                >
-                  <CartesianGrid stroke={chartTheme.grid} strokeDasharray="3 3" />
-                  <XAxis dataKey="label" {...axisProps} />
-                  <YAxis {...axisProps} allowDecimals={false} width={36} />
-                  <Tooltip content={<ChartTooltip />} />
-                  <Legend />
-                  <Line
-                    type="monotone"
-                    dataKey="extracts"
-                    name="Extrações"
-                    stroke={chartTheme.accent}
-                    strokeWidth={2}
-                    dot={{ r: 3 }}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="invited"
-                    name="Convites"
-                    stroke="#D97706"
-                    strokeWidth={2}
-                    dot={{ r: 3 }}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="connected"
-                    name="Conectados"
-                    stroke="#1F9D6B"
-                    strokeWidth={2}
-                    dot={{ r: 3 }}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="abordados"
-                    name="Abordados"
-                    stroke="#2563EB"
-                    strokeWidth={2}
-                    dot={{ r: 3 }}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="respondidos"
-                    name="Respondidos"
-                    stroke="#6D28D9"
-                    strokeWidth={2}
-                    dot={{ r: 3 }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </ChartPanel>
-          ))
-        )}
+              <CartesianGrid stroke={chartTheme.grid} strokeDasharray="3 3" />
+              <XAxis dataKey="label" {...axisProps} />
+              <YAxis {...axisProps} allowDecimals={false} width={36} />
+              <Tooltip content={<ChartTooltip />} />
+              <Legend />
+              <Line
+                type="monotone"
+                dataKey="extracts"
+                name="Extrações"
+                stroke={chartTheme.accent}
+                strokeWidth={2}
+                dot={{ r: 3 }}
+              />
+              <Line
+                type="monotone"
+                dataKey="invited"
+                name="Convites"
+                stroke="#D97706"
+                strokeWidth={2}
+                dot={{ r: 3 }}
+              />
+              <Line
+                type="monotone"
+                dataKey="connected"
+                name="Conectados"
+                stroke="#1F9D6B"
+                strokeWidth={2}
+                dot={{ r: 3 }}
+              />
+              <Line
+                type="monotone"
+                dataKey="abordados"
+                name="Abordados"
+                stroke="#2563EB"
+                strokeWidth={2}
+                dot={{ r: 3 }}
+              />
+              <Line
+                type="monotone"
+                dataKey="respondidos"
+                name="Respondidos"
+                stroke="#6D28D9"
+                strokeWidth={2}
+                dot={{ r: 3 }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </ChartPanel>
 
         <ChartPanel
           title="Funil por agente"

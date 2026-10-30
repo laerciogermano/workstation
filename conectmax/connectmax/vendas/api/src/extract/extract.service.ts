@@ -95,7 +95,7 @@ export class ExtractService implements OnModuleDestroy {
     const maxProfiles =
       Number.isFinite(raw) && raw >= 1
         ? Math.min(500, Math.floor(raw))
-        : 10;
+        : 5;
     const query = String(opts?.query ?? '')
       .trim()
       .slice(0, 200);

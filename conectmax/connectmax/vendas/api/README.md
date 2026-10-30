@@ -731,7 +731,9 @@ PROFILES_API_URL=http://localhost:3000 npm run login-extract-profile-detail -- -
 
 ### `GET /extract/start`
 
-Dispara `npm run login-extract-profiles -- --max-profiles N [--query termo]` em `EXTRACT_CWD` (fire-and-forget). Query `limit`/`n`/`maxProfiles` (default **10**, máx. 500); `q`/`query`/`search` = termo do Search LinkedIn (omitido → script usa `comprador`). Resposta `{ running, kind, pid, startedAt }`. Já rodando → `409`.
+Dispara `npm run login-extract-profiles -- --max-profiles N [--query termo]` em `EXTRACT_CWD` (fire-and-forget). Query `limit`/`n`/`maxProfiles` (default **5**, máx. 500); `q`/`query`/`search` = termo do Search LinkedIn (omitido → script usa `comprador`). Resposta `{ running, kind, pid, startedAt }`. Já rodando → `409`.
+
+**Antes → depois:** default sem `limit`/`n` era **10** → **5**. Override: `?limit=10` (ou `n`/`maxProfiles`). Rollback: voltar default `10` em `extract.service.ts`.
 
 ```bash
 curl 'http://localhost:3000/extract/start?limit=50'

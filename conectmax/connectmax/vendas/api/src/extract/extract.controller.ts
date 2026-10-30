@@ -8,7 +8,7 @@ export class ExtractController {
 
   /**
    * Dispara login-extract-profiles (fire-and-forget).
-   * Query: `limit` / `n` / `maxProfiles` (default 10, máx. 500);
+   * Query: `limit` / `n` / `maxProfiles` (default 5, máx. 500);
    * `q` / `query` / `search` = termo colado no Search do LinkedIn (default comprador).
    */
   @Get('start')

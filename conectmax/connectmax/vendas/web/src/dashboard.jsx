@@ -546,18 +546,6 @@ export default function Dashboard({
               { label: 'Descartados', value: '…' },
             ],
           },
-          {
-            key: 'procedimentos',
-            title: 'Jobs por procedimento',
-            note: 'agent_jobs concluídos (done) · fila = pending+claimed',
-            fallback: [
-              { label: 'Buscar candidatos', value: '…' },
-              { label: 'Conectar', value: '…' },
-              { label: 'Ver conexões', value: '…' },
-              { label: 'Enviar prospecção', value: '…' },
-              { label: 'Ler mensagens', value: '…' },
-            ],
-          },
         ]
       ).map((group) => {
         const rows = insights.kpis.length

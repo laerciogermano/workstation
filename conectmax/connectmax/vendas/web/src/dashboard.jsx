@@ -153,6 +153,61 @@ function agentPresence(row) {
 }
 
 const ACTIVITY_AGENT_KEY = 'cx-dash-atividade-agent';
+const COMPARE_METRIC_KEY = 'cx-dash-compare-metric';
+
+const COMPARE_METRICS = [
+  { id: 'extracts', label: 'Extrações' },
+  { id: 'invited', label: 'Convites' },
+  { id: 'connected', label: 'Conectados' },
+  { id: 'abordados', label: 'Abordados' },
+  { id: 'respondidos', label: 'Respondidos' },
+];
+
+function seriesForCompareMetric(insights, metricId) {
+  switch (metricId) {
+    case 'invited':
+      return insights.byDayInvited;
+    case 'connected':
+      return insights.byDayConnected;
+    case 'abordados':
+      return insights.byDayAbordados;
+    case 'respondidos':
+      return insights.byDayRespondidos;
+    case 'extracts':
+    default:
+      return insights.byDayExtract;
+  }
+}
+
+/** Comparação diária: uma coluna por agente + `_all` (Todos). */
+function compareDailyByAgent(metricRows, agents) {
+  const hasAgentDim = metricRows.some((r) => r?.agentId);
+  const map = new Map();
+  for (const r of metricRows) {
+    const day = r.label;
+    if (!day) continue;
+    const n = Number(r.count) || 0;
+    const cur = map.get(day) ?? {
+      day,
+      label: formatDay(day),
+      _all: 0,
+    };
+    if (hasAgentDim && r.agentId) {
+      cur[r.agentId] = (cur[r.agentId] || 0) + n;
+    }
+    cur._all += n;
+    map.set(day, cur);
+  }
+  const rows = [...map.values()].sort((a, b) => a.day.localeCompare(b.day));
+  if (!hasAgentDim) {
+    return { rows, lines: [{ key: '_all', name: 'Todos' }] };
+  }
+  const lines = [
+    { key: '_all', name: 'Todos' },
+    ...agents.map((a) => ({ key: a.id, name: a.name })),
+  ];
+  return { rows, lines };
+}
 
 function mergeDaily(extract, connected, invited, abordados, respondidos) {
   const map = new Map();
@@ -278,6 +333,10 @@ export default function Dashboard({
   const [activityAgent, setActivityAgent] = useState(
     () => localStorage.getItem(ACTIVITY_AGENT_KEY) || '',
   );
+  const [compareMetric, setCompareMetric] = useState(() => {
+    const stored = localStorage.getItem(COMPARE_METRIC_KEY) || 'connected';
+    return COMPARE_METRICS.some((m) => m.id === stored) ? stored : 'connected';
+  });
 
   useEffect(() => {
     let cancelled = false;
@@ -396,6 +455,24 @@ export default function Dashboard({
     if (id) localStorage.setItem(ACTIVITY_AGENT_KEY, id);
     else localStorage.removeItem(ACTIVITY_AGENT_KEY);
   }
+
+  function selectCompareMetric(id) {
+    setCompareMetric(id);
+    localStorage.setItem(COMPARE_METRIC_KEY, id);
+  }
+
+  const compareChart = useMemo(() => {
+    const rows = seriesForCompareMetric(insights, compareMetric);
+    return compareDailyByAgent(rows, activityAgents);
+  }, [
+    insights.byDayExtract,
+    insights.byDayConnected,
+    insights.byDayInvited,
+    insights.byDayAbordados,
+    insights.byDayRespondidos,
+    compareMetric,
+    activityAgents,
+  ]);
 
   const agentChart = useMemo(
     () =>
@@ -693,6 +770,61 @@ export default function Dashboard({
                 strokeWidth={2}
                 dot={{ r: 3 }}
               />
+            </LineChart>
+          </ResponsiveContainer>
+        </ChartPanel>
+
+        <ChartPanel
+          title="Comparação por agente (30d)"
+          wide
+          note="Uma linha por agente + Todos · escolha a métrica"
+          empty={!compareChart.rows.length}
+          emptyLabel="Sem atividade com data"
+          actions={
+            <label className="funil-agent-filter">
+              Métrica
+              <select
+                value={compareMetric}
+                onChange={(e) => selectCompareMetric(e.target.value)}
+              >
+                {COMPARE_METRICS.map((m) => (
+                  <option key={m.id} value={m.id}>
+                    {m.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+          }
+        >
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart
+              data={compareChart.rows}
+              margin={{ top: 8, right: 12, left: 0, bottom: 0 }}
+            >
+              <CartesianGrid stroke={chartTheme.grid} strokeDasharray="3 3" />
+              <XAxis dataKey="label" {...axisProps} />
+              <YAxis {...axisProps} allowDecimals={false} width={36} />
+              <Tooltip content={<ChartTooltip />} />
+              <Legend />
+              {compareChart.lines.map((line, i) => {
+                const isAll = line.key === '_all';
+                const color = isAll
+                  ? chartTheme.text
+                  : PALETTE[(i - 1) % PALETTE.length];
+                return (
+                  <Line
+                    key={line.key}
+                    type="monotone"
+                    dataKey={line.key}
+                    name={line.name}
+                    stroke={color}
+                    strokeWidth={isAll ? 2.5 : 2}
+                    strokeDasharray={isAll ? '6 4' : undefined}
+                    dot={{ r: isAll ? 2 : 3 }}
+                    connectNulls
+                  />
+                );
+              })}
             </LineChart>
           </ResponsiveContainer>
         </ChartPanel>

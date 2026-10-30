@@ -177,6 +177,48 @@ function mergeDaily(extract, connected, invited, abordados, respondidos) {
   return [...map.values()].sort((a, b) => a.day.localeCompare(b.day));
 }
 
+/** Uma timeline por agente a partir das séries `byDay*` com `agentId`. */
+function timelinesByAgent(
+  byAgent,
+  extract,
+  connected,
+  invited,
+  abordados,
+  respondidos,
+) {
+  const nameById = new Map(
+    byAgent.map((a) => [a.agentId, a.name || a.agentId]),
+  );
+  const ids = new Set();
+  for (const rows of [extract, connected, invited, abordados, respondidos]) {
+    for (const r of rows) {
+      if (r.agentId) ids.add(r.agentId);
+    }
+  }
+  for (const a of byAgent) ids.add(a.agentId);
+
+  const filter = (rows, agentId) =>
+    rows.filter((r) => r.agentId === agentId);
+
+  return [...ids]
+    .map((agentId) => {
+      const timeline = mergeDaily(
+        filter(extract, agentId),
+        filter(connected, agentId),
+        filter(invited, agentId),
+        filter(abordados, agentId),
+        filter(respondidos, agentId),
+      );
+      return {
+        agentId,
+        name: nameById.get(agentId) || agentId,
+        timeline,
+      };
+    })
+    .filter((t) => t.timeline.length)
+    .sort((a, b) => String(a.name).localeCompare(String(b.name), 'pt-BR'));
+}
+
 function DataTable({ title, columns, rows, emptyLabel = 'Sem linhas' }) {
   return (
     <section className="dash-panel dash-panel-wide">
@@ -305,9 +347,10 @@ export default function Dashboard({
     };
   }, []);
 
-  const timeline = useMemo(
+  const agentTimelines = useMemo(
     () =>
-      mergeDaily(
+      timelinesByAgent(
+        insights.byAgent,
         insights.byDayExtract,
         insights.byDayConnected,
         insights.byDayInvited,
@@ -315,6 +358,7 @@ export default function Dashboard({
         insights.byDayRespondidos,
       ),
     [
+      insights.byAgent,
       insights.byDayExtract,
       insights.byDayConnected,
       insights.byDayInvited,
@@ -545,66 +589,79 @@ export default function Dashboard({
       </section>
 
       <div className="dash-grid dash-grid-charts">
-        <ChartPanel
-          title="Atividade por dia (30d)"
-          wide
-          note="Extrações · convites · aceites · abordados · respondidos"
-          empty={!timeline.length}
-          emptyLabel="Sem atividade com data"
-        >
-          <ResponsiveContainer width="100%" height={280}>
-            <LineChart
-              data={timeline}
-              margin={{ top: 8, right: 12, left: 0, bottom: 0 }}
+        {!agentTimelines.length ? (
+          <ChartPanel
+            title="Atividade por dia (30d)"
+            wide
+            note="Por agente · extrações · convites · aceites · abordados · respondidos"
+            empty
+            emptyLabel="Sem atividade com data"
+          />
+        ) : (
+          agentTimelines.map((t) => (
+            <ChartPanel
+              key={t.agentId}
+              title={`Atividade por dia (30d) · ${t.name}`}
+              wide
+              note="Extrações · convites · aceites · abordados · respondidos"
+              empty={!t.timeline.length}
+              emptyLabel="Sem atividade com data"
             >
-              <CartesianGrid stroke={chartTheme.grid} strokeDasharray="3 3" />
-              <XAxis dataKey="label" {...axisProps} />
-              <YAxis {...axisProps} allowDecimals={false} width={36} />
-              <Tooltip content={<ChartTooltip />} />
-              <Legend />
-              <Line
-                type="monotone"
-                dataKey="extracts"
-                name="Extrações"
-                stroke={chartTheme.accent}
-                strokeWidth={2}
-                dot={{ r: 3 }}
-              />
-              <Line
-                type="monotone"
-                dataKey="invited"
-                name="Convites"
-                stroke="#D97706"
-                strokeWidth={2}
-                dot={{ r: 3 }}
-              />
-              <Line
-                type="monotone"
-                dataKey="connected"
-                name="Conectados"
-                stroke="#1F9D6B"
-                strokeWidth={2}
-                dot={{ r: 3 }}
-              />
-              <Line
-                type="monotone"
-                dataKey="abordados"
-                name="Abordados"
-                stroke="#2563EB"
-                strokeWidth={2}
-                dot={{ r: 3 }}
-              />
-              <Line
-                type="monotone"
-                dataKey="respondidos"
-                name="Respondidos"
-                stroke="#6D28D9"
-                strokeWidth={2}
-                dot={{ r: 3 }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </ChartPanel>
+              <ResponsiveContainer width="100%" height={280}>
+                <LineChart
+                  data={t.timeline}
+                  margin={{ top: 8, right: 12, left: 0, bottom: 0 }}
+                >
+                  <CartesianGrid stroke={chartTheme.grid} strokeDasharray="3 3" />
+                  <XAxis dataKey="label" {...axisProps} />
+                  <YAxis {...axisProps} allowDecimals={false} width={36} />
+                  <Tooltip content={<ChartTooltip />} />
+                  <Legend />
+                  <Line
+                    type="monotone"
+                    dataKey="extracts"
+                    name="Extrações"
+                    stroke={chartTheme.accent}
+                    strokeWidth={2}
+                    dot={{ r: 3 }}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="invited"
+                    name="Convites"
+                    stroke="#D97706"
+                    strokeWidth={2}
+                    dot={{ r: 3 }}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="connected"
+                    name="Conectados"
+                    stroke="#1F9D6B"
+                    strokeWidth={2}
+                    dot={{ r: 3 }}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="abordados"
+                    name="Abordados"
+                    stroke="#2563EB"
+                    strokeWidth={2}
+                    dot={{ r: 3 }}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="respondidos"
+                    name="Respondidos"
+                    stroke="#6D28D9"
+                    strokeWidth={2}
+                    dot={{ r: 3 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </ChartPanel>
+          ))
+        )}
 
         <ChartPanel
           title="Funil por agente"

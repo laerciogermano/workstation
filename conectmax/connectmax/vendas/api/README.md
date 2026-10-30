@@ -678,11 +678,11 @@ Insights de operação (KPIs + séries Recharts + tabelas) sobre `cliente_linked
   "byCity": [{ "label": "Campinas…", "count": 3 }],
   "byTitle": [{ "label": "Comprador", "count": 5 }],
   "byCompany": [{ "label": "Oba…", "count": 2 }],
-  "byDayExtract": [{ "label": "2026-10-23", "count": 8 }],
-  "byDayConnected": [{ "label": "2026-10-23", "count": 1 }],
-  "byDayInvited": [{ "label": "2026-10-23", "count": 3 }],
-  "byDayAbordados": [{ "label": "2026-10-23", "count": 1 }],
-  "byDayRespondidos": [{ "label": "2026-10-23", "count": 0 }],
+  "byDayExtract": [{ "label": "2026-10-23", "agentId": "uuid…", "count": 8 }],
+  "byDayConnected": [{ "label": "2026-10-23", "agentId": "uuid…", "count": 1 }],
+  "byDayInvited": [{ "label": "2026-10-23", "agentId": "uuid…", "count": 3 }],
+  "byDayAbordados": [{ "label": "2026-10-23", "agentId": "uuid…", "count": 1 }],
+  "byDayRespondidos": [{ "label": "2026-10-23", "agentId": "uuid…", "count": 0 }],
   "byProcedure": [{
     "type": "conectar",
     "label": "Conectar",
@@ -715,6 +715,7 @@ Insights de operação (KPIs + séries Recharts + tabelas) sobre `cliente_linked
 curl http://localhost:3000/dashboard
 ```
 
+**Antes → depois (byDay por agente):** `byDayExtract|Invited|Connected|Abordados|Respondidos` eram `{ label, count }` globais (últimos 30 labels) → cada ponto traz `agentId` + filtro UTC últimos 30 dias; extract conta perfil distinto via `client_connection_linkedin.agent_id`. Web: um `LineChart` “Atividade por dia (30d) · {nome}” por agente. **Rollback:** volte queries sem `GROUP BY agentId` / `mapCountRows().slice(-30)` e um único painel agregado no `dashboard.jsx`.
 **Antes → depois (funil completo + procedimentos):** KPIs/cards só Sem convite/Aguardando/Conectados → board inteiro (Candidatos/Convidados/Conectados/Abordados/Respondidos/Descartados) + grupo `procedimentos` (`byProcedure` = `agent_jobs` por tipo); `byFunil`, `byDayAbordados`/`byDayRespondidos`, `byAgent.abordados|respondidos|discarded`. Web: cards/gráficos/tabelas. **Rollback:** remova campos novos do `DashboardService`/`dashboard.jsx` e o `TypeOrmModule` de `ClientLinkedinMessage`/`AgentJob` no `DashboardModule`.
 **Antes → depois (ordem procedimentos):** `byProcedure` / KPIs “Jobs por procedimento” vinham na prioridade do worker (`AGENT_JOB_TYPES`: ler_mensagens→…→extrair_leads) → ordem do **funil** (`PROCEDURE_FUNNEL_ORDER`: Buscar candidatos → Conectar → Ver conexões → Enviar prospecção → Ler mensagens). Prioridade de claim do worker **não** muda. **Rollback:** volte o `.map` de `buildByProcedure` para `AGENT_JOB_TYPES`.
 **Antes → depois (recent avatar):** `recent[]` sem foto → inclui `photoBase64` de `cliente_linkedin` (web: avatar em Perfis recentes). **Rollback:** remova o select/`photoBase64` no map e o `RecentAvatar` no `dashboard.jsx`.

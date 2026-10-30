@@ -23,6 +23,9 @@ import { ClientLinkedinMessageDirection } from '../client-linkedin-messages/clie
 
 type CountRow = { label: string; count: number; pct?: number };
 
+/** Série diária atribuída a um agente (`agentId` = `agentes.id` / connection.agent_id). */
+type AgentDayCount = { label: string; agentId: string; count: number };
+
 type Kpi = {
   label: string;
   value: string | number;
@@ -78,11 +81,11 @@ export type DashboardInsights = {
   byCity: CountRow[];
   byTitle: CountRow[];
   byCompany: CountRow[];
-  byDayExtract: CountRow[];
-  byDayConnected: CountRow[];
-  byDayInvited: CountRow[];
-  byDayAbordados: CountRow[];
-  byDayRespondidos: CountRow[];
+  byDayExtract: AgentDayCount[];
+  byDayConnected: AgentDayCount[];
+  byDayInvited: AgentDayCount[];
+  byDayAbordados: AgentDayCount[];
+  byDayRespondidos: AgentDayCount[];
   byProcedure: ProcedureInsight[];
   byAgent: AgentInsight[];
   recent: RecentRow[];
@@ -122,6 +125,31 @@ function mapCountRows(
       ...(total !== undefined ? { pct: pct(count, total) } : {}),
     };
   });
+}
+
+/** YYYY-MM-DD UTC de N dias atrás (inclusive com hoje ≈ N+1 buckets se filtrar ≥). */
+function dayCutoffUtc(days: number): string {
+  const d = new Date();
+  d.setUTCHours(0, 0, 0, 0);
+  d.setUTCDate(d.getUTCDate() - (days - 1));
+  return d.toISOString().slice(0, 10);
+}
+
+function mapAgentDayRows(
+  rows: {
+    label: string | null;
+    agentId: string | null;
+    count: string | number;
+  }[],
+  sinceDay: string,
+): AgentDayCount[] {
+  return rows
+    .map((r) => ({
+      label: (r.label && String(r.label).trim()) || '',
+      agentId: (r.agentId && String(r.agentId).trim()) || '',
+      count: Number(r.count) || 0,
+    }))
+    .filter((r) => r.label && r.agentId && r.label >= sinceDay);
 }
 
 @Injectable()
@@ -191,18 +219,20 @@ export class DashboardService {
 
   private async peopleByDay(
     direction: ClientLinkedinMessageDirection,
-  ): Promise<{ label: string | null; count: string }[]> {
+  ): Promise<{ label: string | null; agentId: string | null; count: string }[]> {
     return this.activeMessages()
       .select(
         `TO_CHAR(COALESCE(m.occurredAt, m.createdAt) AT TIME ZONE 'UTC', 'YYYY-MM-DD')`,
         'label',
       )
+      .addSelect('m.agentId', 'agentId')
       .addSelect('COUNT(DISTINCT m.clienteLinkedinId)', 'count')
       .andWhere('m.direction = :dir', { dir: direction })
       .andWhere('COALESCE(m.occurredAt, m.createdAt) IS NOT NULL')
       .groupBy('label')
+      .addGroupBy('m.agentId')
       .orderBy('label', 'ASC')
-      .getRawMany<{ label: string | null; count: string }>();
+      .getRawMany<{ label: string | null; agentId: string | null; count: string }>();
   }
 
   async insights(): Promise<DashboardInsights> {
@@ -299,39 +329,58 @@ export class DashboardService {
         .orderBy('count', 'DESC')
         .limit(12)
         .getRawMany<{ label: string | null; count: string }>(),
-      this.active()
+      // Extração por agente = perfil com connection desse agente (dono do lead).
+      this.activeConnections()
         .select(
           `TO_CHAR(COALESCE(li.extractedAt, li.createdAt) AT TIME ZONE 'UTC', 'YYYY-MM-DD')`,
           'label',
         )
-        .addSelect('COUNT(*)', 'count')
+        .addSelect('c.agentId', 'agentId')
+        .addSelect('COUNT(DISTINCT li.id)', 'count')
         .andWhere('COALESCE(li.extractedAt, li.createdAt) IS NOT NULL')
         .groupBy('label')
+        .addGroupBy('c.agentId')
         .orderBy('label', 'ASC')
-        .getRawMany<{ label: string | null; count: string }>(),
+        .getRawMany<{
+          label: string | null;
+          agentId: string | null;
+          count: string;
+        }>(),
       this.activeConnections()
         .select(
           `TO_CHAR(c.connectedAt AT TIME ZONE 'UTC', 'YYYY-MM-DD')`,
           'label',
         )
+        .addSelect('c.agentId', 'agentId')
         .addSelect('COUNT(*)', 'count')
         .andWhere('c.connectedAt IS NOT NULL')
         .andWhere('c.status = :st', {
           st: ClientConnectionLinkedinStatus.CONNECTED,
         })
         .groupBy('label')
+        .addGroupBy('c.agentId')
         .orderBy('label', 'ASC')
-        .getRawMany<{ label: string | null; count: string }>(),
+        .getRawMany<{
+          label: string | null;
+          agentId: string | null;
+          count: string;
+        }>(),
       this.activeConnections()
         .select(
           `TO_CHAR(c.invitedAt AT TIME ZONE 'UTC', 'YYYY-MM-DD')`,
           'label',
         )
+        .addSelect('c.agentId', 'agentId')
         .addSelect('COUNT(*)', 'count')
         .andWhere('c.invitedAt IS NOT NULL')
         .groupBy('label')
+        .addGroupBy('c.agentId')
         .orderBy('label', 'ASC')
-        .getRawMany<{ label: string | null; count: string }>(),
+        .getRawMany<{
+          label: string | null;
+          agentId: string | null;
+          count: string;
+        }>(),
       this.peopleByDay(ClientLinkedinMessageDirection.SENT),
       this.peopleByDay(ClientLinkedinMessageDirection.RECEIVED),
       // Mesma fila/ordem da coluna Candidatos (status=0 + extractedAt DESC).
@@ -564,11 +613,11 @@ export class DashboardService {
       byCity: mapCountRows(byCityRaw, '(sem cidade)'),
       byTitle: mapCountRows(byTitleRaw, '(sem cargo)'),
       byCompany: mapCountRows(byCompanyRaw, '(sem empresa)'),
-      byDayExtract: mapCountRows(byDayExtractRaw, '—').slice(-30),
-      byDayConnected: mapCountRows(byDayConnectedRaw, '—').slice(-30),
-      byDayInvited: mapCountRows(byDayInvitedRaw, '—').slice(-30),
-      byDayAbordados: mapCountRows(byDayAbordadosRaw, '—').slice(-30),
-      byDayRespondidos: mapCountRows(byDayRespondidosRaw, '—').slice(-30),
+      byDayExtract: mapAgentDayRows(byDayExtractRaw, dayCutoffUtc(30)),
+      byDayConnected: mapAgentDayRows(byDayConnectedRaw, dayCutoffUtc(30)),
+      byDayInvited: mapAgentDayRows(byDayInvitedRaw, dayCutoffUtc(30)),
+      byDayAbordados: mapAgentDayRows(byDayAbordadosRaw, dayCutoffUtc(30)),
+      byDayRespondidos: mapAgentDayRows(byDayRespondidosRaw, dayCutoffUtc(30)),
       byProcedure,
       byAgent,
       recent: recentRaw.map((r) => ({

@@ -103,7 +103,26 @@ Vídeo padrão: `media/sample.mp4`. Pode passar outro:
 
 Requisito: [`../README.md`](../README.md#mascarar-identidade-do-aparelho) · US-22 / SC-28.
 
-Neste POC (AVD), use um **device definition / skin** de aparelho de mercado no `avdmanager`/`setup-avd.sh` (não um perfil genérico “emulator” óbvio) e revise `ro.product.*` no `config.ini` / build props do AVD quando necessário.
+Play Store AVD é build `user` (sem `adb root`): `-prop` / `-append-userspace-opt` **não** bastam — o `build.prop` da imagem sobrescreve no boot.
+
+Caminho que funciona: cópia da system image + patch de `ro.product.*` → perfil **Pixel 4 (`flame`)**.
+
+```bash
+# AVD parado (só esse nome — não mate outros)
+AVD_NAME=Alex_Romao ./scripts/mask-identity.sh
+# subir de novo (sem wipe) e validar:
+adb -s emulator-5562 shell getprop ro.product.model   # Pixel 4
+adb devices -l   # product:flame model:Pixel_4
+```
+
+- Imagem mascarada: `$ANDROID_HOME/system-images/android-30/google_apis_playstore_pixel4/arm64-v8a/`
+- O `config.ini` do AVD passa a apontar `image.sysdir.1` para essa cópia; a imagem original (`google_apis_playstore`) fica intacta para os outros AVDs
+- Skin `-d pixel_4` no `setup-avd.sh` continua recomendado (já é o padrão)
+
+**Rollback:** em `~/.android/avd/<AVD>.avd/config.ini`, restaurar  
+`image.sysdir.1=system-images/android-30/google_apis_playstore/arm64-v8a/`
+
+**Limite:** mascara nome/modelo/fingerprint óbvios de emulador; não bypassa Play Integrity / attestation.
 
 ## Variáveis
 
@@ -131,6 +150,7 @@ screen-robot/pocs/android-studio/
 │   └── sample.mp4
 └── scripts/
     ├── setup-avd.sh
+    ├── mask-identity.sh  # US-22: Pixel 4 / flame (cópia playstore_pixel4)
     ├── start.sh
     ├── stop.sh
     ├── wait-boot.sh

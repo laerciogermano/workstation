@@ -24,5 +24,7 @@ Código do robô: [`../src/`](../src/README.md).
 
 Implementação:
 
-- AVD / Android Studio: [`android-studio/README.md`](android-studio/README.md#aplicar-mascaramento-neste-vendor)
+- AVD / Android Studio: [`android-studio/README.md`](android-studio/README.md#aplicar-mascaramento-neste-vendor) · script [`android-studio/scripts/mask-identity.sh`](android-studio/scripts/mask-identity.sh) (cópia `playstore_pixel4` + patch; Play `user` não aceita `adb root`)
 - docker-avd (Linux): props via imagem Google; ver [`docker-avd/README.md`](docker-avd/README.md)
+
+**Antes → depois (AVD Play):** `ro.product.model=sdk_gphone_arm64` → `Pixel 4`; `adb devices` `product:sdk_gphone_arm64` → `product:flame`. Rollback = restaurar `image.sysdir.1` para `google_apis_playstore` (ver README do vendor).

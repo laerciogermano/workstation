@@ -472,6 +472,25 @@ export default function Dashboard({
     [insights.byAgent],
   );
 
+  /** Funil empilhado por dia (30d) — mesmas etapas do Funil por agente. */
+  const dayFunilChart = useMemo(
+    () =>
+      mergeDaily(
+        insights.byDayExtract,
+        insights.byDayConnected,
+        insights.byDayInvited,
+        insights.byDayAbordados,
+        insights.byDayRespondidos,
+      ),
+    [
+      insights.byDayExtract,
+      insights.byDayConnected,
+      insights.byDayInvited,
+      insights.byDayAbordados,
+      insights.byDayRespondidos,
+    ],
+  );
+
   const procedureChart = useMemo(
     () =>
       insights.byProcedure.map((p) => ({
@@ -745,6 +764,58 @@ export default function Dashboard({
                 stackId="funil"
                 fill="#6D28D9"
                 radius={[0, 6, 6, 0]}
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        </ChartPanel>
+
+        <ChartPanel
+          title="Funil por dia (30d)"
+          wide
+          note="Extrações · convites · conectados · abordados · respondidos"
+          empty={!dayFunilChart.length}
+          emptyLabel="Sem atividade com data"
+        >
+          <ResponsiveContainer width="100%" height={280}>
+            <BarChart
+              data={dayFunilChart}
+              margin={{ top: 8, right: 12, left: 0, bottom: 0 }}
+            >
+              <CartesianGrid stroke={chartTheme.grid} strokeDasharray="3 3" />
+              <XAxis dataKey="label" {...axisProps} />
+              <YAxis {...axisProps} allowDecimals={false} width={36} />
+              <Tooltip content={<ChartTooltip />} />
+              <Legend />
+              <Bar
+                dataKey="extracts"
+                name="Candidatos"
+                stackId="funil"
+                fill="#A9B4C8"
+              />
+              <Bar
+                dataKey="invited"
+                name="Convidados"
+                stackId="funil"
+                fill="#D97706"
+              />
+              <Bar
+                dataKey="connected"
+                name="Conectados"
+                stackId="funil"
+                fill="#1F9D6B"
+              />
+              <Bar
+                dataKey="abordados"
+                name="Abordados"
+                stackId="funil"
+                fill="#2563EB"
+              />
+              <Bar
+                dataKey="respondidos"
+                name="Respondidos"
+                stackId="funil"
+                fill="#6D28D9"
+                radius={[6, 6, 0, 0]}
               />
             </BarChart>
           </ResponsiveContainer>

@@ -2187,21 +2187,101 @@ export class AgenteService implements OnModuleInit {
     });
   }
 
+  /**
+   * Claimed sem complete/fail além de AGENT_CLAIM_TIMEOUT_MS.
+   * Demais tipos → reabre `pending`.
+   * `conectar` → **fail + descarta** o lead (status=3): reabrir só reenfileirava
+   * o mesmo 404 / tela travada (worker morto) em loop; OCR já descarta se o
+   * script terminar — aqui cobre o caso em que o claim morre no meio.
+   */
   private async releaseStaleClaims(agentId: string): Promise<void> {
-    const timeoutSec = Math.floor(this.claimTimeoutMs() / 1000);
-    await this.dataSource.query(
-      `
-      UPDATE agent_jobs
-      SET status = 'pending',
-          claimed_at = NULL,
-          last_error = 'claim timeout — reaberto',
-          updated_at = NOW()
-      WHERE agent_id = $1
-        AND status = 'claimed'
-        AND claimed_at < NOW() - ($2::text || ' seconds')::interval
-      `,
-      [agentId, String(timeoutSec)],
+    const timeoutMs = this.claimTimeoutMs();
+    const cutoff = new Date(Date.now() - timeoutMs);
+    const stale = await this.jobs.find({
+      where: { agentId, status: 'claimed' },
+    });
+    for (const job of stale) {
+      if (!job.claimedAt || job.claimedAt >= cutoff) continue;
+
+      if (job.type === 'conectar') {
+        const payload = {
+          ...(job.payload && typeof job.payload === 'object'
+            ? job.payload
+            : {}),
+        } as Record<string, unknown>;
+        const discarded = await this.discardConectarAfterClaimTimeout(
+          agentId,
+          payload,
+        );
+        job.status = 'failed';
+        job.completedAt = new Date();
+        job.claimedAt = null;
+        job.dedupeKey = null;
+        job.payload = payload;
+        job.lastError = discarded
+          ? 'claim timeout — lead descartado (worker morto / tela travada)'
+          : 'claim timeout — conectar falhou (sem lead status=0 para descartar)';
+        await this.jobs.save(job);
+        this.logger.warn(
+          `releaseStale conectar fail+discard agent=${agentId} job=${job.id} discarded=${discarded}`,
+        );
+        const runtime = await this.ensureRuntime(agentId);
+        if (runtime.currentJobId === job.id) {
+          runtime.currentJobId = null;
+          runtime.status = 'idle';
+          runtime.lastError = job.lastError;
+          await this.runtimes.save(runtime);
+        }
+        continue;
+      }
+
+      job.status = 'pending';
+      job.claimedAt = null;
+      job.lastError = 'claim timeout — reaberto';
+      await this.jobs.save(job);
+    }
+  }
+
+  /** Soft-descarta lead `status=0` do payload de um `conectar` após claim timeout. */
+  private async discardConectarAfterClaimTimeout(
+    agentId: string,
+    payload: Record<string, unknown>,
+  ): Promise<boolean> {
+    const connectionId = String(payload.connectionId || '').trim();
+    const clienteLinkedinId = String(payload.clienteLinkedinId || '').trim();
+    const reason =
+      "conectar: claim timeout (worker morto / This page doesn't exist)";
+
+    let conn: ClientConnectionLinkedin | null = null;
+    if (connectionId) {
+      conn = await this.connections.findOneBy({ id: connectionId, agentId });
+    }
+    if (!conn && clienteLinkedinId) {
+      conn = await this.connections.findOneBy({
+        clienteLinkedinId,
+        agentId,
+      });
+    }
+    if (!conn) return false;
+
+    // Só fila de convite (0) ou já 3 — não toca pending/conectado.
+    if (
+      conn.status !== ClientConnectionLinkedinStatus.NOT_SENT &&
+      conn.status !== ClientConnectionLinkedinStatus.DISCARDED
+    ) {
+      return false;
+    }
+
+    conn.status = ClientConnectionLinkedinStatus.DISCARDED;
+    conn.discardReason = reason.slice(0, 500);
+    await this.connections.save(conn);
+    await this.clienteLinkedin.update(
+      { id: conn.clienteLinkedinId },
+      { deletedAt: new Date() },
     );
+    payload.discardReason = reason;
+    payload.discardedBy = 'claim_timeout';
+    return true;
   }
 
   private async findOwnedJob(

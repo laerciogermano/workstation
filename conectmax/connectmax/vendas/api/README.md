@@ -323,6 +323,8 @@ Upsert. Resolve `cliente_linkedin` por `clienteLinkedinId` **ou** `profileUrl`. 
 
 **Antes → depois (descartados):** só 0/1/2 → `3` + coluna `discard_reason`; OCR 404 falhava o job → completa e move o card. **Rollback:** ignore `status=3` / coluna; volte `hasPageDoesNotExist` a `ok: false` sem POST.
 
+**Antes → depois (claim timeout em `conectar`):** timeout só reabria `pending` e o mesmo lead 404/tela travada voltava em loop (worker morto no meio do `linkedin-connect`) → `releaseStaleClaims` **falha o job + `status=3`/`discardReason`** no lead `status=0` (não mexe em 1|2). Demais tipos seguem reabrindo. **Rollback:** volte o `UPDATE … status=pending` único em `releaseStaleClaims`. Timeout: `AGENT_CLAIM_TIMEOUT_MS` (Contabo 10 min / default 30 min).
+
 ```json
 {
   "profileUrl": "https://www.linkedin.com/in/…",

@@ -167,6 +167,12 @@ export class AgenteService implements OnModuleInit {
     return Number.isFinite(n) && n >= 0 ? Math.floor(n) : 10;
   }
 
+  /** Máx. perfis por run do script `login-extract-profiles` (default 5). */
+  private extractMaxProfilesPerRun(): number {
+    const n = Number(this.config.get('EXTRACT_MAX_PROFILES', '5'));
+    return Number.isFinite(n) && n >= 1 ? Math.min(500, Math.floor(n)) : 5;
+  }
+
   /** Mínimo entre um `extrair_leads` e o próximo (default 4 h). */
   private extractIntervalMs(): number {
     const n = Number(
@@ -2079,6 +2085,7 @@ export class AgenteService implements OnModuleInit {
   /**
    * AC-04: cada agente extrai até AGENT_EXTRACT_DAILY_LIMIT candidatos/dia
    * (default 10), com intervalo mínimo AGENT_EXTRACT_INTERVAL_MS entre runs.
+   * Cada job pede no máx. EXTRACT_MAX_PROFILES (default 5) por execução do script.
    */
   private async enqueueExtrairDaily(agentId: string): Promise<void> {
     const dailyLimit = this.extractDailyLimit();
@@ -2126,6 +2133,7 @@ export class AgenteService implements OnModuleInit {
     const agente = await this.agentesCadastro.findOneBy({ id: agentId });
     const query = String(agente?.searchQuery || '').trim() || null;
     const leadsNaFila = await this.countLeadsCandidatos(agentId);
+    const perRun = this.extractMaxProfilesPerRun();
 
     await this.insertJob({
       agentId,
@@ -2135,11 +2143,11 @@ export class AgenteService implements OnModuleInit {
         ac: 'AC-04',
         extractedToday,
         extractDailyLimit: dailyLimit,
-        maxProfiles: remaining,
+        maxProfiles: Math.min(perRun, remaining),
         extractIntervalMs: intervalMs,
         leadsNaFila,
         query,
-        hint: 'Rodar extract/search; upsert candidatos até o limite diário',
+        hint: 'Rodar extract/search; até EXTRACT_MAX_PROFILES por run (teto diário)',
       },
     });
   }

@@ -12,7 +12,7 @@ Credenciais das caixas: [`credenciais.md`](../../../../credenciais.md) (§ Caixa
 | Jacqueline Lima | `Jacqueline_Lima` | `5556` → `emulator-5556` | |
 | Pamela Gomes | `Pamela_Gomes` | `5558` → `emulator-5558` | LinkedIn **restricted** (2026-10-29) |
 | Gabriel Manfred | `Gabriel_Manfred` | `5560` → `emulator-5560` | LinkedIn+ADBKeyboard ok; signup parado em SMS (`Just a quick security check`) — falta nº |
-| Alex Romão | `Alex_Romao` | `5562` → `emulator-5562` | Conta LI criada (`alex.romao@clozzy.com.br`); job+company ok; feed ativo (2026-10-30) |
+| Alex Romão | `Alex_Romao` | `5562` → `emulator-5562` | Conta LI criada (`alex.romao@clozzy.com.br`); job+company ok; feed ativo; avatar pendente (`--avatar-only` timeout no Add photo, 2026-10-30) |
 | Fernando Breda | | `5564` | |
 | Roberta Machado | | `5566` | |
 | Ana Letícia (`teste@`) | `Ana_Leticia` | `5568` → `emulator-5568` | LinkedIn+ADBKeyboard ok; conta já existente (login `teste@clozzy.com.br`) |

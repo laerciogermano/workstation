@@ -6,8 +6,11 @@
  * 2. Company / Employer* → input abaixo → digita company → 1º da lista → Done
  * 3. Continue
  *
- * Avatar (tela Add photo):
- * --avatar path → push Download → Upload from photos → long-press → SELECT → Done → Continue
+ * Avatar:
+ * - Onboarding: tela Add photo → Upload from photos → Downloads → SELECT → Done → Continue
+ * - Pós-signup: /me → Add photo → Add profile photo → Upload from Photos → Downloads → crop
+ * DocumentsUI (API 30+): seleção do arquivo via a11y (`uiautomator2` se instalado);
+ * fallback long-press+SELECT / tap. Pré-req opcional: `pip3 install uiautomator2`.
  *
  * Asset default: assets/avatars/conectmax-black.jpg (logo sem "Belo Horizonte").
  * Rollback: omitir --avatar.
@@ -22,6 +25,7 @@
 import { existsSync, mkdirSync, readFileSync } from "node:fs";
 import { basename, dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { spawnSync } from "node:child_process";
 
 import { adb, adbOk, sleep } from "./adb.js";
 import { dumpUiXml, waitForText } from "./extract.js";
@@ -112,7 +116,29 @@ function findNodeByText(xml, text) {
   return null;
 }
 
-/** @param {string} xml @param {RegExp|string} desc */
+/** Case-insensitive text match. */
+function findNodeByTextI(xml, text) {
+  const re =
+    text instanceof RegExp
+      ? text
+      : new RegExp(
+          `^${String(text).replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`,
+          "i",
+        );
+  for (const n of String(xml || "").match(/<node\b[^>]*>/g) || []) {
+    const m = n.match(/\btext="([^"]*)"/);
+    if (!m || !re.test(m[1])) continue;
+    const b = n.match(/bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"/);
+    if (!b) continue;
+    return {
+      x: Math.floor((Number(b[1]) + Number(b[3])) / 2),
+      y: Math.floor((Number(b[2]) + Number(b[4])) / 2),
+      text: m[1],
+    };
+  }
+  return null;
+}
+
 function findNodeByContentDesc(xml, desc) {
   for (const n of String(xml || "").match(/<node\b[^>]*>/g) || []) {
     const m = n.match(/\bcontent-desc="([^"]*)"/);
@@ -245,6 +271,34 @@ function longPress(serial, x, y, ms = 1000) {
 }
 
 /**
+ * Click a11y em texto (DocumentsUI): usa uiautomator2 se instalado.
+ * @param {string} serial
+ * @param {string} text
+ * @returns {boolean}
+ */
+function a11yClickText(serial, text) {
+  const py = `
+import sys
+try:
+  import uiautomator2 as u2
+except ImportError:
+  sys.exit(2)
+d = u2.connect(${JSON.stringify(serial)})
+ok = d(text=${JSON.stringify(text)}).click_exists(timeout=5)
+sys.exit(0 if ok else 1)
+`;
+  try {
+    const r = spawnSync("python3", ["-c", py], {
+      encoding: "utf8",
+      timeout: 30_000,
+    });
+    return r.status === 0;
+  } catch {
+    return false;
+  }
+}
+
+/**
  * Push arquivo para /sdcard/Download e dispara media scan.
  * @param {string} serial
  * @param {string} localPath
@@ -311,32 +365,51 @@ async function selectFromDownloadsPicker(serial, fileName, steps, outDir, shotPr
       `selectFromDownloadsPicker: ${fileName} não apareceu em Downloads`,
     );
   }
-  longPress(serial, file.longX, file.longY, 1100);
-  steps.push(`long-press:${fileName}`);
-  await sleep(900);
 
-  let select =
-    findNodeByText(dumpUiXml(serial), "SELECT") ||
-    findNodeByText(dumpUiXml(serial), "Select");
-  const tSel = Date.now();
-  while (!select && Date.now() - tSel < 8_000) {
-    await sleep(500);
-    select =
+  // DocumentsUI (API 30+): item frequentemente NÃO é clickable no dump —
+  // `input tap`/long-press falham; ACTION_CLICK via uiautomator2 funciona.
+  // Ordem: a11y-click → long-press+SELECT → tap coords.
+  let picked = false;
+  if (a11yClickText(serial, fileName)) {
+    steps.push(`a11y-click:${fileName}`);
+    picked = true;
+  } else {
+    longPress(serial, file.longX, file.longY, 1100);
+    steps.push(`long-press:${fileName}`);
+    await sleep(900);
+    let select =
       findNodeByText(dumpUiXml(serial), "SELECT") ||
       findNodeByText(dumpUiXml(serial), "Select");
+    const tSel = Date.now();
+    while (!select && Date.now() - tSel < 8_000) {
+      await sleep(500);
+      select =
+        findNodeByText(dumpUiXml(serial), "SELECT") ||
+        findNodeByText(dumpUiXml(serial), "Select");
+    }
+    if (select) {
+      tapElement({ serial, x: select.x, y: select.y });
+      steps.push("tap-select");
+      picked = true;
+    } else {
+      tapElement({ serial, x: file.x, y: file.y });
+      steps.push(`tap-file:${fileName}`);
+      picked = true;
+    }
   }
-  if (!select) throw new Error("selectFromDownloadsPicker: SELECT");
-  tapElement({ serial, x: select.x, y: select.y });
-  steps.push("tap-select");
+  if (!picked) throw new Error("selectFromDownloadsPicker: SELECT");
   await sleep(2_500);
   await shot(serial, outDir, `${shotPrefix}-crop.png`);
 }
 
 /**
- * Push avatar → DocumentsUI Downloads → SELECT → crop Done → Continue.
+ * Push avatar → (opcional /me → Add photo) → Upload from photos → SELECT → Done.
  * @param {{
  *   serial: string,
  *   avatarPath?: string|null,
+ *   profileUrl?: string,
+ *   linkedinPackage?: string,
+ *   viaProfile?: boolean,
  *   outDir?: string|null,
  *   timeoutMs?: number,
  * }} opts
@@ -351,6 +424,9 @@ export async function linkedinSetupAvatar(opts) {
     throw new Error(`linkedinSetupAvatar: arquivo não encontrado: ${avatarPath}`);
   }
   const waitPhotoMs = Number(opts.timeoutMs || AVATAR_TIMEOUT_MS);
+  const pkg = opts.linkedinPackage || "com.linkedin.android";
+  const profileUrl = String(opts.profileUrl || DEFAULT_ME_URL).trim();
+  const viaProfile = opts.viaProfile !== false;
   const steps = [];
   if (opts.outDir) mkdirSync(opts.outDir, { recursive: true });
 
@@ -358,21 +434,82 @@ export async function linkedinSetupAvatar(opts) {
   steps.push(`push-avatar:${fileName}`);
   await sleep(800);
 
+  let xml0 = dumpUiXml(serial);
+  const alreadyOnPhoto =
+    /Upload from photos|Adding a photo|Take a photo/i.test(xml0) ||
+    (findNodeByContentDesc(xml0, /^Profile picture$/i) &&
+      /Add photo|Adding a photo/i.test(xml0));
+
+  if (!alreadyOnPhoto && viaProfile) {
+    await launch({ serial, package: pkg });
+    await sleep(800);
+    openProfileByUrl(serial, pkg, profileUrl);
+    await sleep(WAIT_MS + 3_000);
+    steps.push(`deeplink:${profileUrl}`);
+    await shot(serial, opts.outDir, "avatar-00-me.png");
+
+    await waitForText(serial, ["Add photo", "Edit photo", "Profile picture"], {
+      timeoutMs: STEP_TIMEOUT_MS,
+      intervalMs: 1_200,
+      sense: "dump",
+    });
+    const addPhoto =
+      findNodeByContentDesc(dumpUiXml(serial), /^Add photo$/i) ||
+      findNodeByContentDesc(dumpUiXml(serial), /^Edit photo$/i) ||
+      findNodeByText(dumpUiXml(serial), "Add photo");
+    if (!addPhoto) throw new Error("linkedinSetupAvatar: Add photo no /me");
+    tapElement({ serial, x: addPhoto.x, y: addPhoto.y });
+    steps.push("tap-add-photo-me");
+    await sleep(1_800);
+
+    // Sheet intermediário: Add profile photo | Add frame
+    let sheet = dumpUiXml(serial);
+    const addProfilePhoto =
+      findNodeByTextI(sheet, /^Add profile photo$/i) ||
+      findNodeByContentDesc(sheet, /^Add profile photo$/i);
+    if (addProfilePhoto) {
+      tapElement({ serial, x: addProfilePhoto.x, y: addProfilePhoto.y });
+      steps.push("tap-add-profile-photo");
+      await sleep(1_500);
+    }
+  }
+
   await waitForText(
     serial,
     [
       "Adding a photo",
       "Add photo",
       "Upload from photos",
+      "Upload from Photos",
       "Profile picture",
       "Take a photo",
+      "Choose a photo",
+      "Add profile photo",
     ],
     { timeoutMs: waitPhotoMs, intervalMs: 1_200, sense: "dump" },
   );
   await shot(serial, opts.outDir, "avatar-00-tela.png");
 
   let xml = dumpUiXml(serial);
-  if (!findNodeByText(xml, "Upload from photos")) {
+  // Se ainda no sheet Add profile photo | Add frame
+  const addProfilePhoto2 =
+    findNodeByTextI(xml, /^Add profile photo$/i) ||
+    findNodeByContentDesc(xml, /^Add profile photo$/i);
+  if (
+    addProfilePhoto2 &&
+    !findNodeByTextI(xml, /upload from photos/i) &&
+    !findNodeByTextI(xml, /take a photo/i)
+  ) {
+    tapElement({ serial, x: addProfilePhoto2.x, y: addProfilePhoto2.y });
+    steps.push("tap-add-profile-photo");
+    await sleep(1_500);
+    xml = dumpUiXml(serial);
+  }
+
+  if (
+    !findNodeByTextI(xml, /upload from photos/i) &&
+    !findNodeByTextI(xml, /^Choose a photo$/i)
+  ) {
     const card = findNodeByContentDesc(xml, /^Profile picture$/i);
     if (card) {
       tapElement({ serial, x: card.x, y: card.y });
@@ -385,8 +522,10 @@ export async function linkedinSetupAvatar(opts) {
   }
 
   const upload =
-    findNodeByText(dumpUiXml(serial), "Upload from photos") ||
-    findNodeByContentDesc(dumpUiXml(serial), /Upload from photos/i);
+    findNodeByTextI(dumpUiXml(serial), /upload from photos/i) ||
+    findNodeByContentDesc(dumpUiXml(serial), /Upload from photos/i) ||
+    findNodeByTextI(dumpUiXml(serial), /^Choose a photo$/i) ||
+    findNodeByContentDesc(dumpUiXml(serial), /Choose a photo/i);
   if (!upload) throw new Error("linkedinSetupAvatar: Upload from photos");
   tapElement({ serial, x: upload.x, y: upload.y });
   steps.push("tap-upload-from-photos");
@@ -400,21 +539,33 @@ export async function linkedinSetupAvatar(opts) {
 
   const done =
     findNodeByText(dumpUiXml(serial), "Done") ||
-    findNodeByContentDesc(dumpUiXml(serial), /^Done$/i);
+    findNodeByContentDesc(dumpUiXml(serial), /^Done$/i) ||
+    findNodeByText(dumpUiXml(serial), "Save") ||
+    findNodeByContentDesc(dumpUiXml(serial), /^Save$/i);
   if (!done) throw new Error("linkedinSetupAvatar: Done no crop");
   tapElement({ serial, x: done.x, y: done.y });
   steps.push("tap-done-crop");
   await sleep(WAIT_MS + 2_000);
   await shot(serial, opts.outDir, "avatar-04-apos-done.png");
 
-  // espera Saving / Uploading sumir e Continue da tela de foto
+  // espera Saving / Uploading sumir; Continue (onboarding) ou volta ao /me
   const tUp = Date.now();
   while (Date.now() - tUp < 45_000) {
     const x = dumpUiXml(serial);
+    if (/Uploading Media|\bSaving\b/i.test(x)) {
+      await sleep(1_000);
+      continue;
+    }
     if (
       /Adding a photo|Profile picture/i.test(x) &&
-      findNodeByText(x, "Continue") &&
-      !/Uploading Media|\bSaving\b/i.test(x)
+      findNodeByText(x, "Continue")
+    ) {
+      break;
+    }
+    if (
+      findNodeByContentDesc(x, /^Add photo$/i) ||
+      findNodeByContentDesc(x, /^Edit photo$/i) ||
+      findNodeByContentDesc(x, /^Cover photo$/i)
     ) {
       break;
     }
@@ -431,7 +582,7 @@ export async function linkedinSetupAvatar(opts) {
     await shot(serial, opts.outDir, "avatar-99-apos-continue.png");
   }
 
-  return { steps, serial, avatarPath, outDir: opts.outDir || null };
+  return { steps, serial, avatarPath, profileUrl, outDir: opts.outDir || null };
 }
 
 /**

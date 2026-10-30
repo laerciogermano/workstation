@@ -10,13 +10,14 @@ Canônico: [`profile-defaults.json`](profile-defaults.json) — company, jobTitl
 
 ```bash
 cd screen-robot/src
-# após conta criada / logada: capa + about via /me
+# após conta criada / logada: avatar + capa + about via /me
 npm run linkedin-setup -- --device emulator-5556 --defaults
 # pedaços:
 npm run linkedin-setup -- --device emulator-5556 --banner-only
 npm run linkedin-setup -- --device emulator-5556 --about-only
-# onboarding (tela Add photo):
-npm run linkedin-setup -- --device emulator-5556 --avatar-only
+npm run linkedin-setup -- --device emulator-5556 --avatar-only   # /me → Add photo (também serve pós-signup)
 ```
 
-**Antes → depois:** paths/textos manuais por conta → `--defaults` lê este JSON (banner+about). Rollback: editar o JSON ou flags `*-only`.
+**Antes → depois:** `--defaults` só banner+about → também avatar via `/me` (Add photo → Add profile photo). Picker DocumentsUI: a11y-click com `uiautomator2` (`pip3 install --user uiautomator2`) se `input tap` falhar. Rollback: omitir `--avatar` / editar o JSON / flags `*-only`.
+
+E-mail no perfil: Settings → Visibility → Email visibility → **Only visible to me** (+ export desligado).

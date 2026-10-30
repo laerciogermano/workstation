@@ -67,10 +67,11 @@ function parseArgs(argv) {
       jobTitle = String(argv[++i] || "").trim();
     else if (a === "--company") company = String(argv[++i] || "").trim();
     else if (a === "--defaults") {
-      // Perfil pronto via /me: banner + about (avatar fica p/ onboarding --avatar-only).
+      // Perfil pronto via /me: avatar + banner + about (não reabre onboarding de job).
       useDefaults = true;
       company = company || d.company;
       jobTitle = jobTitle || d.jobTitle || DEFAULT_JOB_TITLE;
+      avatar = avatar ?? d.avatar ?? DEFAULT_AVATAR_PATH;
       banner = banner ?? d.banner ?? DEFAULT_BANNER_PATH;
       about = about ?? d.about ?? DEFAULT_ABOUT;
     } else if (a === "--avatar") {
@@ -170,6 +171,8 @@ async function main() {
     const av = await linkedinSetupAvatar({
       serial,
       avatarPath: args.avatar,
+      profileUrl: args.profileUrl,
+      linkedinPackage: linkedinPkg,
       outDir,
     });
     result.avatarPath = av.avatarPath;
@@ -195,9 +198,8 @@ async function main() {
     result.about = ab.about;
     result.steps.push(...ab.steps);
   } else {
-    // --defaults: só banner+about em /me (não reabre onboarding de job/avatar)
+    // --defaults: avatar+banner+about via /me (não reabre onboarding de job)
     const runJob = Boolean(args.jobTitle) && !args.useDefaults;
-    const runAvatar = Boolean(args.avatar) && !args.useDefaults;
     if (runJob) {
       const setup = await linkedinSetupJobTitle({
         serial,
@@ -207,10 +209,12 @@ async function main() {
       });
       result.steps.push(...setup.steps);
     }
-    if (runAvatar) {
+    if (args.avatar) {
       const av = await linkedinSetupAvatar({
         serial,
         avatarPath: args.avatar,
+        profileUrl: args.profileUrl,
+        linkedinPackage: linkedinPkg,
         outDir,
       });
       result.avatarPath = av.avatarPath;

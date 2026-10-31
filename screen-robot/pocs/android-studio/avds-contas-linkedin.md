@@ -7,7 +7,7 @@ Credenciais das caixas: [`credenciais.md`](../../../../credenciais.md) (§ Caixa
 CSV (data, nome, e-mail, status, obs): [`contas-linkedin-clozzy.csv`](contas-linkedin-clozzy.csv).  
 **Antes → depois:** CSV 4 cols (`status`) → 5 cols (`status` + `obs`); reverter = dropar coluna `obs` e restaurar status antigos (Ana/Jacqueline/Alex/Fernando=`ativa`, Gabriel=`signup_incompleto`).
 
-**Antes → depois (Roberta):** inventário sem AVD / CSV sem data → AVD `Roberta_Machado` (`emulator-5566`), LI+ADBKeyboard, `conectmax-black.jpg` + `conectmax-banner.jpg` em `/sdcard/Download`. Rollback: `avdmanager delete avd -n Roberta_Machado` + remover `~/.android/avd/Roberta_Machado.*`; CSV status `nao_criada` (signup ainda pendente).
+**Antes → depois (Roberta):** inventário sem AVD / CSV `nao_criada` → AVD `Roberta_Machado` (`emulator-5566`), máscara **Pixel 4** (`hw.device.name=pixel_4`), LI+about+email only-me; CSV `experiencia_longevidade` (conta só p/ medir tempo até restrição). Rollback: `avdmanager delete avd -n Roberta_Machado` + remover `~/.android/avd/Roberta_Machado.*`; CSV status/obs anteriores.
 
 ## Inventário atual
 
@@ -19,7 +19,7 @@ CSV (data, nome, e-mail, status, obs): [`contas-linkedin-clozzy.csv`](contas-lin
 | Gabriel Manfred | `Gabriel_Manfred` | `5560` → `emulator-5560` | signup incompleto — **pediu nº** (SMS) |
 | Alex Romão | `Alex_Romao` | `5562` → `emulator-5562` | **restrita**; identidade Pixel 4 / flame |
 | Fernando Breda | `Fernando_Breda` | `5564` → `emulator-5564` | **restrita**; Pixel 4 / flame; worker `start-worker-fernando.sh` |
-| Roberta Machado | `Roberta_Machado` | `5566` → `emulator-5566` | AVD pronto; LI+ADBKeyboard; avatar/banner em Download; conta LI **nao_criada** |
+| Roberta Machado | `Roberta_Machado` | `5566` → `emulator-5566` | **experiencia_longevidade**; máscara Pixel 4 (`pixel_4`); about+email only-me; medir tempo até restrição |
 | Ana Letícia (`teste@`) | `Ana_Leticia` | `5568` → `emulator-5568` | **restrita** (pediu nº); login `teste@clozzy.com.br` |
 
 Convenção: `Nome_Sobrenome` = `First_Last` sem acento; porta = `5554 + 2×índice` (console; ADB usa `porta+1` no protocolo do emulator).

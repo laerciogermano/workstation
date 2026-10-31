@@ -28,5 +28,6 @@ flowchart TD
 
 | Pasta / Card ID | Card |
 |-----------------|------|
+| [`6ae6509b737fd1dd9ba517e7/`](6ae6509b737fd1dd9ba517e7/README.md) | [v0.1 — Autenticação e onboarding (criar + publicar)](https://trello.com/c/qRWb8Gxn) |
 | [`6adfa306d2ba6a3e29c5f07d/`](6adfa306d2ba6a3e29c5f07d/README.md) | [Criar identidade visual RoleGo (manual HTML → PDF)](https://trello.com/c/gU37I2lg) |
 | [`6adfae475a40a1ad4f46ac66/`](6adfae475a40a1ad4f46ac66/README.md) | [Criar logo RoleGo](https://trello.com/c/S7jWwUbC) |

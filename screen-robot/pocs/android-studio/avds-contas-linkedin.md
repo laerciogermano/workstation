@@ -4,10 +4,10 @@ SOP para criar um AVD local (Mac) **1:1 com uma caixa `@clozzy.com.br`**, com im
 
 Credenciais das caixas: [`credenciais.md`](../../../../credenciais.md) (§ Caixas `@clozzy.com.br`).
 
-CSV (data, nome, e-mail, status, senha_li, obs): [`contas-linkedin-clozzy.csv`](contas-linkedin-clozzy.csv).  
-**Antes → depois:** 5 cols → 6 cols (`senha_li` entre `status` e `obs`); reverter = dropar `senha_li`.
+CSV (data, nome, e-mail, status, senha_li, objetivo, obs): [`contas-linkedin-clozzy.csv`](contas-linkedin-clozzy.csv).  
+**Antes → depois:** 6 cols → 7 cols (`objetivo` entre `senha_li` e `obs`); reverter = dropar `objetivo`.
 
-**Antes → depois (Roberta):** CSV `experiencia_longevidade` sem senha → `senha_li=in@12345678` (LI). Rollback: limpar `senha_li` da linha Roberta.
+**Antes → depois (Roberta):** sem `objetivo` → objetivo de longevidade (criar/configurar no AVD e parar; medir se a conta se sustenta). Rollback: limpar `objetivo` da linha Roberta.
 
 **Antes → depois (Camila):** sem AVD → AVD `Camila_Ferreira` (`emulator-5570`), máscara Pixel 4 (`pixel_4`), LI+ADBKeyboard, avatar/banner em Download; CSV `nao_criada`. Rollback: `avdmanager delete avd -n Camila_Ferreira` + remover `~/.android/avd/Camila_Ferreira.*`; CSV obs anterior.
 

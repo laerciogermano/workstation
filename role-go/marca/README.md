@@ -2,38 +2,31 @@
 
 ## Identidade visual v1
 
-Manual **essencial** (6 páginas A4 paisagem): capa, logo, versões, cores, tipografia e aplicações básicas. Tokens alinhados à [colagem de marca](../input/referencia-marca-rolego-colagem-2026-10-31.jpeg).
+Manual completo, 16 páginas em A4 paisagem, no estilo dos banners de [`../epics.pdf`](../epics.pdf) (fundo preto com estrelas e ondas neon, chip numerado, títulos gigantes com barra em gradiente, celulares com contorno neon, CTA ciano → violeta): capa-banner, essência, tom de voz, logo e símbolo, versões e usos incorretos, paleta, código de cores e contraste, tipografia (Poppins + Inter), elementos gráficos, componentes, app (splash/swipe/match), template de banner de épico 16:9, ingresso/Wallet/push, redes sociais, impressos de guerrilha e contracapa.
 
 | Arquivo | Uso |
 |---------|-----|
-| [`identidade-visual-rolego-v1.html`](identidade-visual-rolego-v1.html) | Manual (browser / print PDF) |
+| [`identidade-visual-rolego-v1.html`](identidade-visual-rolego-v1.html) | Manual (abrir no browser / imprimir PDF) |
 | [`identidade-visual-rolego-v1.pdf`](identidade-visual-rolego-v1.pdf) | PDF gerado do HTML |
 | [`identidade-visual-rolego-v1.zip`](identidade-visual-rolego-v1.zip) | Pacote HTML + PDF |
 
-Tokens: [`../identidade-visual.md`](../identidade-visual.md) · card Trello (done): https://trello.com/c/gU37I2lg · card logo: https://trello.com/c/S7jWwUbC
+Tokens e regras: [`../identidade-visual.md`](../identidade-visual.md) · molde: [`../input/referencia-marca/README.md`](../input/referencia-marca/README.md) · card manual: https://trello.com/c/gU37I2lg · card logo: https://trello.com/c/S7jWwUbC
 
-**Antes → depois (2026-10-31):** manual longo (16 págs., gradiente ciano/violeta, pin no “o”, Poppins no wordmark) → manual enxuto com lima→magenta, pin no “e”, Bodoni no logo. Rollback: restaurar commit anterior + reanexar PDF antigo no card.
+**Antes → depois (2026-10-31 rollback local):** HTML/PDF/ZIP da colagem lima→magenta (`baa381c`) → versão índice 7 / commit `6629391` (manual longo 16 págs., ciano/violeta, pin no “o”). Voltar à colagem: `git checkout baa381c -- role-go/marca role-go/identidade-visual.md`.
 
-O wordmark é montado por script (`buildLogos`): Bodoni + gradiente + pin SVG acima do “e”.
+O wordmark e as telas do app são montados por script no fim do HTML (`buildLogos`, `SCREENS`). Texto em gradiente vira SVG no carregamento: `background-clip:text` gera uma caixa fina em volta das letras no PDF do Chrome.
 
 ## Gerar PDF de novo
 
 ```bash
 "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" \
-  --headless=new --disable-gpu --no-pdf-header-footer --virtual-time-budget=12000 \
+  --headless=new --disable-gpu --no-pdf-header-footer --virtual-time-budget=10000 \
   --print-to-pdf=role-go/marca/identidade-visual-rolego-v1.pdf \
   "file://$(pwd)/role-go/marca/identidade-visual-rolego-v1.html"
-```
-
-Depois:
-
-```bash
-cd role-go/marca && zip -j identidade-visual-rolego-v1.zip \
-  identidade-visual-rolego-v1.html identidade-visual-rolego-v1.pdf
 ```
 
 ## Rollback
 
 ```bash
-git checkout HEAD~1 -- role-go/marca role-go/identidade-visual.md
+rm -rf role-go/marca
 ```

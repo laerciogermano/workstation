@@ -1,0 +1,18 @@
+
+> connectmax-agent-worker@0.1.0 start
+> node src/loop.mjs
+
+agent-worker API=http://127.0.0.1:3000 AGENT=ddc7f46c-2361-4ed2-aa4d-a32319f97721 DRY=0 SERIAL=emulator-5554
+[ddc7f46c-2361-4ed2-aa4d-a32319f97721] enroll created=0 needsLinkedin=1 online=1
+[ddc7f46c-2361-4ed2-aa4d-a32319f97721] falta LinkedIn — complete no painel /agentes
+agent-worker agentId canônico=ddc7f46c-2361-4ed2-aa4d-a32319f97721
+[ddc7f46c-2361-4ed2-aa4d-a32319f97721] idle: sem trabalho na fila (prioridades vazias)
+
+> connectmax-agent-worker@0.1.0 start
+> node src/loop.mjs
+
+agent-worker API=http://127.0.0.1:3000 AGENT=ddc7f46c-2361-4ed2-aa4d-a32319f97721 DRY=0 SERIAL=emulator-5554
+[ddc7f46c-2361-4ed2-aa4d-a32319f97721] enroll created=0 needsLinkedin=1 online=1
+[ddc7f46c-2361-4ed2-aa4d-a32319f97721] falta LinkedIn — complete no painel /agentes
+agent-worker agentId canônico=ddc7f46c-2361-4ed2-aa4d-a32319f97721
+[ddc7f46c-2361-4ed2-aa4d-a32319f97721] idle: sem trabalho na fila (prioridades vazias)

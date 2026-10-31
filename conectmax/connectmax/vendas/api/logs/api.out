@@ -1,0 +1,252 @@
+
+> connectmax-vendas-api@0.1.0 start:dev
+> nest start --watch
+
+[2J[3J[H[[90m6:45:56 PM[0m] Starting compilation in watch mode...
+
+[[90m6:45:58 PM[0m] Found 0 errors. Watching for file changes.
+
+[Nest] 11942  - 10/29/2026, 6:45:59 PM     LOG [NestFactory] Starting Nest application...
+[Nest] 11942  - 10/29/2026, 6:45:59 PM     LOG [InstanceLoader] AppModule dependencies initialized +10ms
+[Nest] 11942  - 10/29/2026, 6:45:59 PM     LOG [InstanceLoader] TypeOrmModule dependencies initialized +0ms
+[Nest] 11942  - 10/29/2026, 6:45:59 PM     LOG [InstanceLoader] PassportModule dependencies initialized +0ms
+[Nest] 11942  - 10/29/2026, 6:45:59 PM     LOG [InstanceLoader] ConfigHostModule dependencies initialized +0ms
+[Nest] 11942  - 10/29/2026, 6:45:59 PM     LOG [InstanceLoader] ConfigModule dependencies initialized +0ms
+[Nest] 11942  - 10/29/2026, 6:45:59 PM     LOG [InstanceLoader] ConfigModule dependencies initialized +0ms
+[Nest] 11942  - 10/29/2026, 6:45:59 PM     LOG [InstanceLoader] JwtModule dependencies initialized +18ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [InstanceLoader] TypeOrmCoreModule dependencies initialized +1311ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [InstanceLoader] TypeOrmModule dependencies initialized +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [InstanceLoader] TypeOrmModule dependencies initialized +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [InstanceLoader] TypeOrmModule dependencies initialized +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [InstanceLoader] TypeOrmModule dependencies initialized +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [InstanceLoader] TypeOrmModule dependencies initialized +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [InstanceLoader] TypeOrmModule dependencies initialized +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [InstanceLoader] TypeOrmModule dependencies initialized +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [InstanceLoader] TypeOrmModule dependencies initialized +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [InstanceLoader] TypeOrmModule dependencies initialized +1ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [InstanceLoader] LinkedinBaseModule dependencies initialized +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [InstanceLoader] ClientesModule dependencies initialized +1ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [InstanceLoader] EmpresasModule dependencies initialized +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [InstanceLoader] AgentesModule dependencies initialized +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [InstanceLoader] GestoresModule dependencies initialized +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [InstanceLoader] AgenteModule dependencies initialized +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [InstanceLoader] ClientConnectionsLinkedinModule dependencies initialized +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [InstanceLoader] ClientLinkedinMessagesModule dependencies initialized +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [InstanceLoader] DashboardModule dependencies initialized +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [InstanceLoader] ProfilesModule dependencies initialized +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [InstanceLoader] ProfileDetailsModule dependencies initialized +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [InstanceLoader] AuthModule dependencies initialized +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [InstanceLoader] ExtractModule dependencies initialized +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RoutesResolver] AuthController {/auth}: +2ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/auth/login, POST} route +3ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/auth/me, GET} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RoutesResolver] UsersController {/users}: +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/users, GET} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/users, POST} route +1ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/users/:id, PATCH} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/users/:id, DELETE} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RoutesResolver] ProfilesController {/profiles}: +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/profiles, GET} route +1ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/profiles, DELETE} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/profiles/ensure, GET} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/profiles/:id, GET} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/profiles/:id, DELETE} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/profiles, POST} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/profiles/batch, POST} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RoutesResolver] ClientesController {/clientes}: +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/clientes, GET} route +1ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/clientes/:id, GET} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/clientes, POST} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/clientes/:id, PATCH} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/clientes/:id/linkedin, GET} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/clientes/:id/linkedin, PUT} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RoutesResolver] ProfileDetailsController {/profile-details}: +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/profile-details, GET} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/profile-details/by-url, GET} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/profile-details/:profileId, GET} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/profile-details, POST} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RoutesResolver] EmpresasController {/empresas}: +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/empresas, GET} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/empresas/import, POST} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/empresas, POST} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/empresas/:id, GET} route +1ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/empresas/:id, PATCH} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RoutesResolver] AgentesController {/agentes}: +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/agentes, GET} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/agentes/sync, POST} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/agentes, POST} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/agentes/:id, GET} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/agentes/:id, PATCH} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/agentes/:id/api-key, POST} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/agentes/:id, DELETE} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/agentes/:id/sleep, POST} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/agentes/:id/wake, POST} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/agentes/:id/ping, POST} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/agentes/:id/backup, POST} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/agentes/:id/backups, GET} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/agentes/:id/backup, GET} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RoutesResolver] GestoresController {/gestores}: +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/gestores, GET} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/gestores/agentes, GET} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/gestores/:id, GET} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/gestores/:id/agentes, PUT} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RoutesResolver] AgenteController {/agente}: +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/agente/slots, GET} route +1ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/agente/hosts/:hostKey, PATCH} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/agente/:agentId/claim, POST} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/agente/:agentId/enroll, POST} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/agente/:agentId/heartbeat, POST} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/agente/:agentId/device-status, POST} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/agente/:agentId/peek, GET} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/agente/:agentId/jobs, GET} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/agente/:agentId/runtime, GET} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/agente/:agentId/jobs/:jobId/complete, POST} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/agente/:agentId/jobs/:jobId/fail, POST} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RoutesResolver] ClientConnectionsLinkedinController {/client-connections-linkedin}: +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/client-connections-linkedin, GET} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/client-connections-linkedin/match, GET} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/client-connections-linkedin, POST} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/client-connections-linkedin/mark-accepted, POST} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RoutesResolver] ClientLinkedinMessagesController {/client-linkedin-messages}: +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/client-linkedin-messages, GET} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/client-linkedin-messages, POST} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RoutesResolver] LinkedinBaseController {/linkedin-base}: +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/linkedin-base, GET} route +1ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/linkedin-base/connections, GET} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/linkedin-base/messages, GET} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RoutesResolver] DashboardController {/dashboard}: +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/dashboard, GET} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RoutesResolver] ExtractController {/extract}: +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/extract/start, GET} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/extract/fails, POST} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/extract/detail/start, GET} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/extract/by-url/start, GET} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:00 PM     LOG [RouterExplorer] Mapped {/extract/status, GET} route +0ms
+[Nest] 11942  - 10/29/2026, 6:46:04 PM     LOG [AgentesService] migrate: avds+servidores → agentes (0 upserts)
+[Nest] 11942  - 10/29/2026, 6:46:04 PM     LOG [AgentesService] migrate: contas_linkedin → agentes.linkedin_*
+[Nest] 11942  - 10/29/2026, 6:46:05 PM     LOG [NestApplication] Nest application successfully started +742ms
+profiles api listening on :3000 (json limit 15mb)
+
+> connectmax-vendas-api@0.1.0 start:dev
+> nest start --watch
+
+[2J[3J[H[[90m6:46:42 PM[0m] Starting compilation in watch mode...
+
+[[90m6:46:45 PM[0m] Found 0 errors. Watching for file changes.
+
+[Nest] 13521  - 10/29/2026, 6:46:46 PM     LOG [NestFactory] Starting Nest application...
+[Nest] 13521  - 10/29/2026, 6:46:46 PM     LOG [InstanceLoader] AppModule dependencies initialized +16ms
+[Nest] 13521  - 10/29/2026, 6:46:46 PM     LOG [InstanceLoader] TypeOrmModule dependencies initialized +0ms
+[Nest] 13521  - 10/29/2026, 6:46:46 PM     LOG [InstanceLoader] PassportModule dependencies initialized +0ms
+[Nest] 13521  - 10/29/2026, 6:46:46 PM     LOG [InstanceLoader] ConfigHostModule dependencies initialized +0ms
+[Nest] 13521  - 10/29/2026, 6:46:46 PM     LOG [InstanceLoader] ConfigModule dependencies initialized +1ms
+[Nest] 13521  - 10/29/2026, 6:46:46 PM     LOG [InstanceLoader] ConfigModule dependencies initialized +0ms
+[Nest] 13521  - 10/29/2026, 6:46:46 PM     LOG [InstanceLoader] JwtModule dependencies initialized +21ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [InstanceLoader] TypeOrmCoreModule dependencies initialized +1336ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [InstanceLoader] TypeOrmModule dependencies initialized +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [InstanceLoader] TypeOrmModule dependencies initialized +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [InstanceLoader] TypeOrmModule dependencies initialized +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [InstanceLoader] TypeOrmModule dependencies initialized +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [InstanceLoader] TypeOrmModule dependencies initialized +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [InstanceLoader] TypeOrmModule dependencies initialized +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [InstanceLoader] TypeOrmModule dependencies initialized +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [InstanceLoader] TypeOrmModule dependencies initialized +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [InstanceLoader] TypeOrmModule dependencies initialized +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [InstanceLoader] LinkedinBaseModule dependencies initialized +1ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [InstanceLoader] ClientesModule dependencies initialized +1ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [InstanceLoader] EmpresasModule dependencies initialized +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [InstanceLoader] AgentesModule dependencies initialized +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [InstanceLoader] GestoresModule dependencies initialized +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [InstanceLoader] AgenteModule dependencies initialized +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [InstanceLoader] ClientConnectionsLinkedinModule dependencies initialized +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [InstanceLoader] ClientLinkedinMessagesModule dependencies initialized +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [InstanceLoader] DashboardModule dependencies initialized +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [InstanceLoader] ProfilesModule dependencies initialized +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [InstanceLoader] ProfileDetailsModule dependencies initialized +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [InstanceLoader] AuthModule dependencies initialized +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [InstanceLoader] ExtractModule dependencies initialized +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RoutesResolver] AuthController {/auth}: +4ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/auth/login, POST} route +2ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/auth/me, GET} route +1ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RoutesResolver] UsersController {/users}: +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/users, GET} route +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/users, POST} route +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/users/:id, PATCH} route +1ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/users/:id, DELETE} route +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RoutesResolver] ProfilesController {/profiles}: +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/profiles, GET} route +1ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/profiles, DELETE} route +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/profiles/ensure, GET} route +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/profiles/:id, GET} route +1ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/profiles/:id, DELETE} route +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/profiles, POST} route +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/profiles/batch, POST} route +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RoutesResolver] ClientesController {/clientes}: +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/clientes, GET} route +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/clientes/:id, GET} route +1ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/clientes, POST} route +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/clientes/:id, PATCH} route +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/clientes/:id/linkedin, GET} route +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/clientes/:id/linkedin, PUT} route +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RoutesResolver] ProfileDetailsController {/profile-details}: +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/profile-details, GET} route +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/profile-details/by-url, GET} route +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/profile-details/:profileId, GET} route +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/profile-details, POST} route +1ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RoutesResolver] EmpresasController {/empresas}: +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/empresas, GET} route +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/empresas/import, POST} route +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/empresas, POST} route +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/empresas/:id, GET} route +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/empresas/:id, PATCH} route +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RoutesResolver] AgentesController {/agentes}: +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/agentes, GET} route +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/agentes/sync, POST} route +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/agentes, POST} route +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/agentes/:id, GET} route +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/agentes/:id, PATCH} route +1ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/agentes/:id/api-key, POST} route +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/agentes/:id, DELETE} route +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/agentes/:id/sleep, POST} route +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/agentes/:id/wake, POST} route +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/agentes/:id/ping, POST} route +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/agentes/:id/backup, POST} route +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/agentes/:id/backups, GET} route +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/agentes/:id/backup, GET} route +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RoutesResolver] GestoresController {/gestores}: +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/gestores, GET} route +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/gestores/agentes, GET} route +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/gestores/:id, GET} route +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/gestores/:id/agentes, PUT} route +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RoutesResolver] AgenteController {/agente}: +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/agente/slots, GET} route +1ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/agente/hosts/:hostKey, PATCH} route +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/agente/:agentId/claim, POST} route +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/agente/:agentId/enroll, POST} route +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/agente/:agentId/heartbeat, POST} route +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/agente/:agentId/device-status, POST} route +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/agente/:agentId/peek, GET} route +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/agente/:agentId/jobs, GET} route +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/agente/:agentId/runtime, GET} route +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/agente/:agentId/jobs/:jobId/complete, POST} route +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/agente/:agentId/jobs/:jobId/fail, POST} route +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RoutesResolver] ClientConnectionsLinkedinController {/client-connections-linkedin}: +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/client-connections-linkedin, GET} route +1ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/client-connections-linkedin/match, GET} route +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/client-connections-linkedin, POST} route +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/client-connections-linkedin/mark-accepted, POST} route +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RoutesResolver] ClientLinkedinMessagesController {/client-linkedin-messages}: +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/client-linkedin-messages, GET} route +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/client-linkedin-messages, POST} route +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RoutesResolver] LinkedinBaseController {/linkedin-base}: +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/linkedin-base, GET} route +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/linkedin-base/connections, GET} route +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/linkedin-base/messages, GET} route +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RoutesResolver] DashboardController {/dashboard}: +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/dashboard, GET} route +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RoutesResolver] ExtractController {/extract}: +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/extract/start, GET} route +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/extract/fails, POST} route +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/extract/detail/start, GET} route +1ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/extract/by-url/start, GET} route +0ms
+[Nest] 13521  - 10/29/2026, 6:46:47 PM     LOG [RouterExplorer] Mapped {/extract/status, GET} route +0ms

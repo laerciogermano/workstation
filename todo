@@ -35,10 +35,12 @@
 
 
 # connect
-    - liberar espaco na maquina
-    - configurar contas 32
-    - ~~remova a tela de candidatos~~
-    - ~~separar funil por agentes~~
+    - alternar agentes em um slot
+    - Projeção financeira com apena os agentes ping ativo ultimo dia
+    - colocar para ter dashboards de pings dos agentes
+    - fazer grafico linha por agente
+    - ajustar cores e disposicao fcards dashboards
+        - done: cards Por agentes em faixa (nome|funil 5 cols) + labels curtos
 
 # Estudos
     - Estudar orca orquestrador de IA
@@ -168,6 +170,8 @@
     - criar um motor de input e output identicos mesmo estado objeto
 
 # Eternos Mutáveis
+    - Referncias de modelo de escrita
+    - Referncias externas bsucar na net para cada capitulo
     - Reunir todos os áudios e transcricoes do iphone que nao estao aqui
     - baixar os posts dos threads
     - Definir roadmap

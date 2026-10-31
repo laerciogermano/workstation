@@ -1,0 +1,1685 @@
+
+> connectmax-agent-worker@0.1.0 start
+> node src/loop.mjs
+
+agent-worker API=http://144.126.154.90 AGENT=76b09621-1d12-45a7-b3c9-ce1daf81e724 DRY=0 SERIAL=emulator-5564
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] enroll created=0 needsLinkedin=0 online=1
+agent-worker agentId canônico=76b09621-1d12-45a7-b3c9-ce1daf81e724
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] claimed ler_mensagens p=1 id=55617de0-f164-48c1-8dcc-6bcbf95f05cf
+
+> screen-robot@1.0.0 linkedin-unread-messages
+> node scripts/linkedin-unread-messages.js --max-results 20 --sync --no-shot --device emulator-5564
+
+serial=emulator-5564 maxResults=20 sync=true
+{"ok":true,"status":"ok","maxResults":20,"count":0,"conversations":[],"steps":["stop-all:2","launch","messaging@495,78","unread@374,165","page:0:found=0:total=0","page:1:found=0:total=0","page:2:found=0:total=0"],"synced":[]}
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] completed ler_mensagens
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] claimed extrair_leads p=5 id=5f6da840-4f2f-4d46-999c-86269f7a62d0
+
+> screen-robot@1.0.0 login-extract-profiles
+> node scripts/login-extract-profiles.js --max-profiles 10 --query comprador campinas --device emulator-5564
+
+sense: dump (SCREEN_ROBOT_SENSE / --sense ocr|dump)
+saida: /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-11-20-307Z
+1) Provisionar…
+   OK emulator-5564
+2) Remover apps em execução…
+   force-stop com.instagram.android
+   force-stop com.linkedin.android
+   force-stop com.tinder
+   force-stop com.huawei.hwid
+   force-stop com.google.android.gm
+3) Iniciar LinkedIn…
+4) Esperar Search e clicar…
+   → search "Search" x=124 y=81 (score=1.00)
+5) Colar "comprador campinas" (ADBKeyboard)…
+6) Esperar See/Show all e clicar…
+   não achou com teclado — KEYCODE_BACK…
+Erro: waitForText: timeout 30000ms — See all results | Show all results | See all | Show all
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] fail extrair_leads: login-extract-profiles exit=1
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] claimed extrair_leads p=5 id=d670c1f1-d63f-4a54-93b9-d9099f4a55ef
+
+> screen-robot@1.0.0 login-extract-profiles
+> node scripts/login-extract-profiles.js --max-profiles 10 --query comprador campinas --device emulator-5564
+
+sense: dump (SCREEN_ROBOT_SENSE / --sense ocr|dump)
+saida: /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z
+1) Provisionar…
+   OK emulator-5564
+2) Remover apps em execução…
+   force-stop com.instagram.android
+   force-stop com.linkedin.android
+   force-stop com.tinder
+   force-stop com.huawei.hwid
+   force-stop com.google.android.gm
+3) Iniciar LinkedIn…
+4) Esperar Search e clicar…
+   → search "Search" x=288 y=78 (score=1.00)
+5) Colar "comprador campinas" (ADBKeyboard)…
+6) Esperar See/Show all e clicar…
+   (com teclado aberto)
+   → seeAll "Show all results" x=271 y=476 (query="Show all results" score=1.00)
+7) People…
+   → People "Filter by People" x=247 y=153
+8) Lista People → abrir cada perfil (OCR + URL) → BACK até 10…
+1) extract lista… (0/10)
+   → /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/round-001.png (dump)
+   novos na tela: 4
+   nomes: Jucimeire Rios | Ronie Lella | Maycon Souza | David Tiziano
+   skip (já na base src=connection score=0.883 nameSim=1.000): Jucimeire Rios ≈ Jucimeire Rios agent=ddc7f46c-2361-4ed2-aa4d-a32319f97721 profileId=3d601ce8-e528-4b76-83a9-d5626902d0df
+   → fails=4 lastViewportFails=1
+   crop lista Ronie Lella: photo=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/profile-001-list-photo.png card=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/profile-001-list-card.png
+   → abrir "Ronie Lella" x=282 y=363
+   page (dump): name=Ronie Lella headline=Comprador | Purchaser company=- loc=Valinhos, São Paulo, Brazil status=connect
+   crop page (dump): photo=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/photo.png {"left":24,"top":180,"width":156,"height":156} cover=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/cover.png {"left":0,"top":117,"width":540,"height":135}
+   ⋯ → Share via → URL (dump sheet; clipboard fallback)…
+   → ⋯ x=492 y=577 (âncora "Message")
+   → Share via "Share via…" x=294 y=418
+   URL (share sheet dump): https://www.linkedin.com/in/ronie-lella
+   sheet ainda aberta — KEYCODE_BACK
+   URL: https://www.linkedin.com/in/ronie-lella
+   page (hint url): name=Ronie Lella headline=Comprador | Purchaser company=-
+   leaveProfile: KEYCODE_BACK (1/2)
+   leaveProfile: lista People ok
+   → /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/profiles.json (1)
+   → POST http://144.126.154.90/profiles id=3b494359-10ea-4f60-813e-2c40f0d0bbb3
+   → POST http://144.126.154.90/profile-details
+   → POST client-connections-linkedin status=0 (connect)
+
+========== quantidade: 1 ==========
+{
+  "name": "Ronie Lella",
+  "title": "Comprador | Purchaser",
+  "searchQuery": "Comprador",
+  "level": null,
+  "connection": "Connect",
+  "city": "Valinhos, São Paulo, Brazil",
+  "mutualConnections": null,
+  "current": "Comprador at OCS Instalações Industriais Valinhos",
+  "past": null,
+  "profileUrl": "https://www.linkedin.com/in/ronie-lella",
+  "headline": "Comprador | Purchaser",
+  "company": null,
+  "connections": null,
+  "inviteStatus": "connect",
+  "canConnect": true,
+  "canMessage": true,
+  "photoBase64": "[base64 20360 chars]",
+  "cardBase64": "[base64 269572 chars]",
+  "coverBase64": "[base64 193804 chars]",
+  "rawOcr": {
+    "elements": 8
+  }
+}
+==============================================
+
+2) extract lista… (1/10)
+   → /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/round-002.png (dump)
+   novos na tela: 2
+   nomes: Maycon Souza | David Tiziano
+   skip (já na base src=connection score=0.844 nameSim=1.000): Maycon Souza ≈ Maycon Souza agent=ddc7f46c-2361-4ed2-aa4d-a32319f97721 profileId=1febf2ed-f912-43ae-8211-8610be9ffde9
+   → fails=5 lastViewportFails=1
+   crop lista David Tiziano: photo=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/profile-002-list-photo.png card=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/profile-002-list-card.png
+   → abrir "David Tiziano" x=282 y=680
+   page (dump): name=David Tiziano headline=Comprador - Suprimentos Marketing company=EMS · Anhanguera Educacional loc=Campinas, São Paulo, Brazil status=connect
+   crop page (dump): photo=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/photo.png {"left":24,"top":180,"width":156,"height":156} cover=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/cover.png {"left":0,"top":117,"width":540,"height":135}
+   ⋯ → Share via → URL (dump sheet; clipboard fallback)…
+   → ⋯ x=492 y=574 (âncora "Message")
+   → Share via "Share via…" x=294 y=418
+   URL (share sheet dump): https://www.linkedin.com/in/davidtiziano
+   sheet ainda aberta — KEYCODE_BACK
+   URL: https://www.linkedin.com/in/davidtiziano
+   page (hint url): name=David Tiziano headline=Comprador - Suprimentos Marketing company=EMS · Anhanguera Educacional
+   leaveProfile: KEYCODE_BACK (1/2)
+   leaveProfile: lista People ok
+   → /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/profiles.json (2)
+   → POST http://144.126.154.90/profiles id=c74cb7b7-f383-417c-ba92-e4a3dd2bd24b
+   → POST http://144.126.154.90/profile-details
+   → POST client-connections-linkedin status=0 (connect)
+
+========== quantidade: 2 ==========
+{
+  "name": "David Tiziano",
+  "title": "Comprador - Suprimentos Marketing",
+  "searchQuery": "Comprador",
+  "level": null,
+  "connection": "Connect",
+  "city": "Campinas, São Paulo, Brazil",
+  "mutualConnections": null,
+  "current": "Comprador Sr at EMS",
+  "past": null,
+  "profileUrl": "https://www.linkedin.com/in/davidtiziano",
+  "headline": "Comprador - Suprimentos Marketing",
+  "company": "EMS · Anhanguera Educacional",
+  "connections": "500+ connections",
+  "inviteStatus": "connect",
+  "canConnect": true,
+  "canMessage": true,
+  "photoBase64": "[base64 62400 chars]",
+  "cardBase64": "[base64 167924 chars]",
+  "coverBase64": "[base64 72320 chars]",
+  "rawOcr": {
+    "elements": 12
+  }
+}
+==============================================
+
+3) extract lista… (2/10)
+   → /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/round-003.png (dump)
+   novos na tela: 0
+4) extract lista… (2/10)
+   → /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/round-004.png (dump)
+   novos na tela: 1
+   nomes: Marina Buzo
+   crop lista Marina Buzo: photo=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/profile-003-list-photo.png card=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/profile-003-list-card.png
+   → abrir "Marina Buzo" x=282 y=753
+   page (dump): name=Marina Buzo headline=Compradora company=Comgás loc=Campinas, São Paulo, Brazil status=connect
+   crop page (dump): photo=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/photo.png {"left":24,"top":180,"width":156,"height":156} cover=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/cover.png {"left":0,"top":117,"width":540,"height":135}
+   ⋯ → Share via → URL (dump sheet; clipboard fallback)…
+   → ⋯ x=492 y=601 (âncora "Message")
+   → Share via "Share via…" x=294 y=418
+   URL (share sheet dump): https://www.linkedin.com/in/marina-buzo-22295789
+   sheet ainda aberta — KEYCODE_BACK
+   URL: https://www.linkedin.com/in/marina-buzo-22295789
+   page (hint url): name=Marina Buzo headline=Compradora company=Comgás
+   leaveProfile: KEYCODE_BACK (1/2)
+   leaveProfile: caiu na busca (Show all/Recent) — recupera Show all
+   ⚠ leaveProfile: lista People não confirmada após BACK
+   → /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/profiles.json (3)
+   → POST http://144.126.154.90/profiles id=7666e30f-d4b2-4e3d-8f98-5be4a8e2bb43
+   → POST http://144.126.154.90/profile-details
+   → POST client-connections-linkedin status=0 (connect)
+
+========== quantidade: 3 ==========
+{
+  "name": "Marina Buzo",
+  "title": "Compradora",
+  "searchQuery": "Compradora",
+  "level": null,
+  "connection": "Connect",
+  "city": "Campinas, São Paulo, Brazil",
+  "mutualConnections": null,
+  "current": "Comprador at Comgás",
+  "past": null,
+  "profileUrl": "https://www.linkedin.com/in/marina-buzo-22295789",
+  "headline": "Compradora",
+  "company": "Comgás",
+  "connections": "500+ connections",
+  "inviteStatus": "connect",
+  "canConnect": true,
+  "canMessage": true,
+  "photoBase64": "[base64 65536 chars]",
+  "cardBase64": "[base64 140916 chars]",
+  "coverBase64": "[base64 36892 chars]",
+  "rawOcr": {
+    "elements": 10
+  }
+}
+==============================================
+
+5) extract lista… (3/10)
+   → /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/round-005.png (dump)
+   novos na tela: 0
+6) extract lista… (3/10)
+   → /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/round-006.png (dump)
+   novos na tela: 3
+   nomes: Laercio Carniello | Douglas Lima | Vanderlei Barbosa
+   skip (fora do padrão People action=Follow): Laercio Carniello
+   crop lista Douglas Lima: photo=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/profile-004-list-photo.png card=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/profile-004-list-card.png
+   → abrir "Douglas Lima" x=282 y=680
+   page (dump): name=Douglas Lima headline=Comprador company=- loc=Greater Campinas status=connect
+   crop page (dump): photo=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/photo.png {"left":24,"top":180,"width":156,"height":156} cover=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/cover.png {"left":0,"top":117,"width":540,"height":135}
+   ⋯ → Share via → URL (dump sheet; clipboard fallback)…
+   → ⋯ x=492 y=628 (âncora "Message")
+   → Share via "Share via…" x=294 y=418
+   URL (share sheet dump): https://www.linkedin.com/in/douglas-lima-44a71b5a
+   sheet ainda aberta — KEYCODE_BACK
+   URL: https://www.linkedin.com/in/douglas-lima-44a71b5a
+   page (hint url): name=Douglas Lima headline=Comprador company=-
+   leaveProfile: KEYCODE_BACK (1/2)
+   leaveProfile: caiu na busca (Show all/Recent) — recupera Show all
+   ⚠ leaveProfile: lista People não confirmada após BACK
+   → /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/profiles.json (4)
+   → POST http://144.126.154.90/profiles id=0afc179c-7801-4364-bdfe-e9f60595e32f
+   → POST http://144.126.154.90/profile-details
+   → POST client-connections-linkedin status=0 (connect)
+
+========== quantidade: 4 ==========
+{
+  "name": "Douglas Lima",
+  "title": "Comprador",
+  "searchQuery": "Comprador",
+  "level": null,
+  "connection": "Connect",
+  "city": "Greater Campinas",
+  "mutualConnections": null,
+  "current": "Comprador at ABL - Antibióticos do Brasil Ltda.",
+  "past": null,
+  "profileUrl": "https://www.linkedin.com/in/douglas-lima-44a71b5a",
+  "headline": "Comprador",
+  "company": null,
+  "connections": "500+ connections",
+  "inviteStatus": "connect",
+  "canConnect": true,
+  "canMessage": true,
+  "photoBase64": "[base64 59852 chars]",
+  "cardBase64": "[base64 131592 chars]",
+  "coverBase64": "[base64 33392 chars]",
+  "rawOcr": {
+    "elements": 10
+  }
+}
+==============================================
+
+7) extract lista… (4/10)
+   → /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/round-007.png (dump)
+   novos na tela: 1
+   nomes: Vanderlei Barbosa
+   crop lista Vanderlei Barbosa: photo=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/profile-005-list-photo.png card=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/profile-005-list-card.png
+   → abrir "Vanderlei Barbosa" x=282 y=852
+   page (dump): name=Vanderlei Barbosa headline=Comprador company=Centro Hospitalar Valinhos e Vinhedo Serviços Médicos LTDA loc=Campinas, São Paulo, Brazil status=connect
+   crop page (dump): photo=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/photo.png {"left":24,"top":180,"width":156,"height":156} cover=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/cover.png {"left":0,"top":117,"width":540,"height":135}
+   ⋯ → Share via → URL (dump sheet; clipboard fallback)…
+   → ⋯ x=492 y=628 (âncora "Message")
+   → Share via "Share via…" x=294 y=418
+   URL (share sheet dump): https://www.linkedin.com/in/vanderlei-barbosa-a3917b15a
+   sheet ainda aberta — KEYCODE_BACK
+   URL: https://www.linkedin.com/in/vanderlei-barbosa-a3917b15a
+   page (hint url): name=Vanderlei Barbosa headline=Comprador company=Centro Hospitalar Valinhos e Vinhedo Serviços Médicos LTDA
+   leaveProfile: KEYCODE_BACK (1/2)
+   leaveProfile: caiu na busca (Show all/Recent) — recupera Show all
+   ⚠ leaveProfile: lista People não confirmada após BACK
+   → /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/profiles.json (5)
+   → POST http://144.126.154.90/profiles id=cb36b146-a7dc-47f6-870b-73770bc4c683
+   → POST http://144.126.154.90/profile-details
+   → POST client-connections-linkedin status=0 (connect)
+
+========== quantidade: 5 ==========
+{
+  "name": "Vanderlei Barbosa",
+  "title": "Comprador",
+  "searchQuery": "Comprador",
+  "level": null,
+  "connection": "Connect",
+  "city": "Campinas, São Paulo, Brazil",
+  "mutualConnections": null,
+  "current": "Centro Hospitalar Valinhos e Vinhedo Serviços Médicos LTDA",
+  "past": null,
+  "profileUrl": "https://www.linkedin.com/in/vanderlei-barbosa-a3917b15a",
+  "headline": "Comprador",
+  "company": "Centro Hospitalar Valinhos e Vinhedo Serviços Médicos LTDA",
+  "connections": "500+ connections",
+  "inviteStatus": "connect",
+  "canConnect": true,
+  "canMessage": true,
+  "photoBase64": "[base64 62100 chars]",
+  "cardBase64": "[base64 141644 chars]",
+  "coverBase64": "[base64 34968 chars]",
+  "rawOcr": {
+    "elements": 14
+  }
+}
+==============================================
+
+8) extract lista… (5/10)
+   → /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/round-008.png (dump)
+   novos na tela: 0
+9) extract lista… (5/10)
+   → /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/round-009.png (dump)
+   novos na tela: 2
+   nomes: André Sussumu Konishi | Elaine Xavier Bueno
+   crop lista André Sussumu Konishi: photo=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/profile-006-list-photo.png card=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/profile-006-list-card.png
+   → abrir "André Sussumu Konishi" x=282 y=625
+   page (dump): name=André Sussumu Konishi headline=Pós Graduação | Universidade Estadual de Campinas company=Universidade Estadual de Campinas loc=Campinas, São Paulo, Brazil status=connect
+   crop page (dump): photo=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/photo.png {"left":24,"top":180,"width":156,"height":156} cover=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/cover.png {"left":0,"top":117,"width":540,"height":135}
+   ⋯ → Share via → URL (dump sheet; clipboard fallback)…
+   → ⋯ x=492 y=631 (âncora "Message")
+   → Share via "Share via…" x=294 y=418
+   URL (share sheet dump): https://www.linkedin.com/in/andré-sussumu-konishi-33b310b8
+   sheet ainda aberta — KEYCODE_BACK
+   URL: https://www.linkedin.com/in/andré-sussumu-konishi-33b310b8
+   page (hint url): name=André Sussumu Konishi headline=Pós Graduação | Universidade Estadual de Campinas company=Universidade Estadual de Campinas
+   leaveProfile: KEYCODE_BACK (1/2)
+   leaveProfile: lista People ok
+   → /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/profiles.json (6)
+   → POST http://144.126.154.90/profiles id=67477233-6e6e-46f1-97f2-ea9944a1a2a8
+   → POST http://144.126.154.90/profile-details
+   → POST client-connections-linkedin status=0 (connect)
+
+========== quantidade: 6 ==========
+{
+  "name": "André Sussumu Konishi",
+  "title": "Pós Graduação | Universidade Estadual de Campinas",
+  "searchQuery": "Pos",
+  "level": null,
+  "connection": "Connect",
+  "city": "Campinas, São Paulo, Brazil",
+  "mutualConnections": null,
+  "current": "Comprador at Universidade Estadual de Campinas",
+  "past": null,
+  "profileUrl": "https://www.linkedin.com/in/andré-sussumu-konishi-33b310b8",
+  "headline": "Pós Graduação | Universidade Estadual de Campinas",
+  "company": "Universidade Estadual de Campinas",
+  "connections": "277 connections",
+  "inviteStatus": "connect",
+  "canConnect": true,
+  "canMessage": true,
+  "photoBase64": "[base64 40708 chars]",
+  "cardBase64": "[base64 113024 chars]",
+  "coverBase64": "[base64 25992 chars]",
+  "rawOcr": {
+    "elements": 13
+  }
+}
+==============================================
+
+10) extract lista… (6/10)
+   → /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/round-010.png (dump)
+   novos na tela: 1
+   nomes: Elaine Xavier Bueno
+   crop lista Elaine Xavier Bueno: photo=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/profile-007-list-photo.png card=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/profile-007-list-card.png
+   → abrir "Elaine Xavier Bueno" x=282 y=824
+   page (dump): name=Elaine Xavier Bueno headline=Procurement | Strategic Sourcing | Buyer company=Anhanguera Educacional loc=Campinas, São Paulo, Brazil status=connect
+   crop page (dump): photo=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/photo.png {"left":24,"top":180,"width":156,"height":156} cover=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/cover.png {"left":0,"top":117,"width":540,"height":135}
+   ⋯ → Share via → URL (dump sheet; clipboard fallback)…
+   → ⋯ x=492 y=574 (âncora "Message")
+   → Share via "Share via…" x=294 y=418
+   URL (share sheet dump): https://www.linkedin.com/in/elaine-xavier-bueno-1ba37432
+   sheet ainda aberta — KEYCODE_BACK
+   URL: https://www.linkedin.com/in/elaine-xavier-bueno-1ba37432
+   page (hint url): name=Elaine Xavier Bueno headline=Procurement | Strategic Sourcing | Buyer company=Anhanguera Educacional
+   leaveProfile: KEYCODE_BACK (1/2)
+   leaveProfile: lista People ok
+   → /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/profiles.json (7)
+   → POST http://144.126.154.90/profiles id=1ded37bf-afa9-4efe-87c6-4ea7661edc50
+   → POST http://144.126.154.90/profile-details
+   → POST client-connections-linkedin status=0 (connect)
+
+========== quantidade: 7 ==========
+{
+  "name": "Elaine Xavier Bueno",
+  "title": "Compradora",
+  "searchQuery": "Compradora",
+  "level": null,
+  "connection": "Connect",
+  "city": "Campinas, São Paulo, Brazil",
+  "mutualConnections": null,
+  "current": "Anhanguera Educacional",
+  "past": null,
+  "profileUrl": "https://www.linkedin.com/in/elaine-xavier-bueno-1ba37432",
+  "headline": "Procurement | Strategic Sourcing | Buyer",
+  "company": "Anhanguera Educacional",
+  "connections": "500+ connections",
+  "inviteStatus": "connect",
+  "canConnect": true,
+  "canMessage": true,
+  "photoBase64": "[base64 59064 chars]",
+  "cardBase64": "[base64 314664 chars]",
+  "coverBase64": "[base64 217544 chars]",
+  "rawOcr": {
+    "elements": 10
+  }
+}
+==============================================
+
+11) extract lista… (7/10)
+   → /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/round-011.png (dump)
+   novos na tela: 0
+12) extract lista… (7/10)
+   → /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/round-012.png (dump)
+   novos na tela: 2
+   nomes: Fabrício Calconi | Maiko Alves
+   crop lista Fabrício Calconi: photo=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/profile-008-list-photo.png card=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/profile-008-list-card.png
+   → abrir "Fabrício Calconi" x=282 y=597
+   page (dump): name=Fabrício Calconi headline=Comprador | Gestão | company=Antonelli Supermercados Oficial loc=Campinas, São Paulo, Brazil status=connect
+   crop page (dump): photo=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/photo.png {"left":24,"top":180,"width":156,"height":156} cover=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/cover.png {"left":0,"top":117,"width":540,"height":135}
+   ⋯ → Share via → URL (dump sheet; clipboard fallback)…
+   → ⋯ x=492 y=577 (âncora "Message")
+   → Share via "Share via…" x=294 y=418
+   URL (share sheet dump): https://www.linkedin.com/in/fabrício-calconi-06585420
+   sheet ainda aberta — KEYCODE_BACK
+   URL: https://www.linkedin.com/in/fabrício-calconi-06585420
+   page (hint url): name=Fabrício Calconi headline=Comprador | Gestão | company=Antonelli Supermercados Oficial
+   leaveProfile: KEYCODE_BACK (1/2)
+   leaveProfile: lista People ok
+   → /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/profiles.json (8)
+   → POST http://144.126.154.90/profiles id=de939114-b92a-4415-8016-f6ca07a07381
+   → POST http://144.126.154.90/profile-details
+   → POST client-connections-linkedin status=0 (connect)
+
+========== quantidade: 8 ==========
+{
+  "name": "Fabrício Calconi",
+  "title": "Comprador | Gestão |",
+  "searchQuery": "Comprador",
+  "level": null,
+  "connection": "Connect",
+  "city": "Campinas, São Paulo, Brazil",
+  "mutualConnections": null,
+  "current": "Comprador de Commodities e Seca Salgada at Antonelli...",
+  "past": null,
+  "profileUrl": "https://www.linkedin.com/in/fabrício-calconi-06585420",
+  "headline": "Comprador | Gestão |",
+  "company": "Antonelli Supermercados Oficial",
+  "connections": null,
+  "inviteStatus": "connect",
+  "canConnect": true,
+  "canMessage": true,
+  "photoBase64": "[base64 60948 chars]",
+  "cardBase64": "[base64 136208 chars]",
+  "coverBase64": "[base64 30692 chars]",
+  "rawOcr": {
+    "elements": 8
+  }
+}
+==============================================
+
+13) extract lista… (8/10)
+   → /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/round-013.png (dump)
+   novos na tela: 1
+   nomes: Maiko Alves
+   crop lista Maiko Alves: photo=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/profile-009-list-photo.png card=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/profile-009-list-card.png
+   → abrir "Maiko Alves" x=282 y=767
+   page (dump): name=Maiko Alves headline=Comprador na Unimed Campinas company=Unimed Campinas · Universidade Paulista loc=Campinas, São Paulo, Brazil status=connect
+   crop page (dump): photo=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/photo.png {"left":24,"top":180,"width":156,"height":156} cover=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/cover.png {"left":0,"top":117,"width":540,"height":135}
+   ⋯ → Share via → URL (dump sheet; clipboard fallback)…
+   → ⋯ x=492 y=574 (âncora "Message")
+   → Share via "Share via…" x=294 y=418
+   URL (share sheet dump): https://www.linkedin.com/in/maiko-alves-70753633
+   sheet ainda aberta — KEYCODE_BACK
+   URL: https://www.linkedin.com/in/maiko-alves-70753633
+   page (hint url): name=Maiko Alves headline=Comprador na Unimed Campinas company=Unimed Campinas · Universidade Paulista
+   leaveProfile: KEYCODE_BACK (1/2)
+   leaveProfile: lista People ok
+   → /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/profiles.json (9)
+   → POST http://144.126.154.90/profiles id=f27337b8-7197-4292-a264-294718b34f71
+   → POST http://144.126.154.90/profile-details
+   → POST client-connections-linkedin status=0 (connect)
+
+========== quantidade: 9 ==========
+{
+  "name": "Maiko Alves",
+  "title": "Comprador na Unimed Campinas",
+  "searchQuery": "Comprador",
+  "level": null,
+  "connection": "Connect",
+  "city": "Campinas, São Paulo, Brazil",
+  "mutualConnections": null,
+  "current": "Comprador at Unimed Campinas",
+  "past": null,
+  "profileUrl": "https://www.linkedin.com/in/maiko-alves-70753633",
+  "headline": "Comprador na Unimed Campinas",
+  "company": "Unimed Campinas · Universidade Paulista",
+  "connections": "500+ connections",
+  "inviteStatus": "connect",
+  "canConnect": true,
+  "canMessage": true,
+  "photoBase64": "[base64 53332 chars]",
+  "cardBase64": "[base64 128788 chars]",
+  "coverBase64": "[base64 27620 chars]",
+  "rawOcr": {
+    "elements": 10
+  }
+}
+==============================================
+
+14) extract lista… (9/10)
+   → /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/round-014.png (dump)
+   novos na tela: 0
+15) extract lista… (9/10)
+   → /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/round-015.png (dump)
+   novos na tela: 1
+   nomes: Valter Camargo
+   crop lista Valter Camargo: photo=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/profile-010-list-photo.png card=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/profile-010-list-card.png
+   → abrir "Valter Camargo" x=282 y=877
+   page (dump): name=Valter Camargo headline=Comprador sênior indiretos - contratos company=ABG Corp loc=Vinhedo, São Paulo, Brazil status=connect
+   crop page (dump): photo=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/photo.png {"left":24,"top":180,"width":156,"height":156} cover=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/cover.png {"left":0,"top":117,"width":540,"height":135}
+   ⋯ → Share via → URL (dump sheet; clipboard fallback)…
+   → ⋯ x=492 y=574 (âncora "Message")
+   → Share via "Share via…" x=294 y=418
+   URL (share sheet dump): https://www.linkedin.com/in/valter-camargo-29bbaa28
+   sheet ainda aberta — KEYCODE_BACK
+   URL: https://www.linkedin.com/in/valter-camargo-29bbaa28
+   page (hint url): name=Valter Camargo headline=Comprador sênior indiretos - contratos company=ABG Corp
+   leaveProfile: KEYCODE_BACK (1/2)
+   leaveProfile: lista People ok
+   → /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/profiles.json (10)
+   → POST http://144.126.154.90/profiles id=76b73696-e1ee-4043-b6f4-a6ba1f2520c2
+   → POST http://144.126.154.90/profile-details
+   → POST client-connections-linkedin status=0 (connect)
+
+========== quantidade: 10 ==========
+{
+  "name": "Valter Camargo",
+  "title": "Comprador sênior indiretos - contratos",
+  "searchQuery": "Comprador",
+  "level": null,
+  "connection": "Connect",
+  "city": "Vinhedo, São Paulo, Brazil",
+  "mutualConnections": null,
+  "current": "ABG Corp",
+  "past": null,
+  "profileUrl": "https://www.linkedin.com/in/valter-camargo-29bbaa28",
+  "headline": "Comprador sênior indiretos - contratos",
+  "company": "ABG Corp",
+  "connections": "500+ connections",
+  "inviteStatus": "connect",
+  "canConnect": true,
+  "canMessage": true,
+  "photoBase64": "[base64 63776 chars]",
+  "cardBase64": "[base64 139888 chars]",
+  "coverBase64": "[base64 37944 chars]",
+  "rawOcr": {
+    "elements": 10
+  }
+}
+==============================================
+
+OK — 10 perfis
+profiles.json: /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T19-16-04-060Z/profiles.json
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] completed extrair_leads
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] heartbeat: /agente/76b09621-1d12-45a7-b3c9-ce1daf81e724/heartbeat → 502 {}
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] erro: fetch failed
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] heartbeat: fetch failed
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] idle: sem trabalho na fila (prioridades vazias)
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] claimed extrair_leads p=5 id=7e2280db-8ea4-4f8c-9cfd-2ef0e3774e4b
+
+> screen-robot@1.0.0 login-extract-profiles
+> node scripts/login-extract-profiles.js --max-profiles 10 --query comprador campinas --device emulator-5564
+
+sense: dump (SCREEN_ROBOT_SENSE / --sense ocr|dump)
+saida: /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z
+1) Provisionar…
+   OK emulator-5564
+2) Remover apps em execução…
+   force-stop com.instagram.android
+   force-stop com.linkedin.android
+   force-stop com.tinder
+   force-stop com.huawei.hwid
+   force-stop com.google.android.gm
+3) Iniciar LinkedIn…
+4) Esperar Search e clicar…
+   → search "Search" x=288 y=78 (score=1.00)
+5) Colar "comprador campinas" (ADBKeyboard)…
+6) Esperar See/Show all e clicar…
+   (com teclado aberto)
+   → seeAll "Show all results" x=271 y=476 (query="Show all results" score=1.00)
+7) People…
+   People não no topo (1/8)
+   → People "Filter by People" x=247 y=153
+8) Lista People → abrir cada perfil (OCR + URL) → BACK até 10…
+1) extract lista… (0/10)
+   → /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/round-001.png (dump)
+   novos na tela: 3
+   nomes: Jucimeire Rios | Ronie Lella | Maycon Souza
+   skip (já na base src=connection score=0.883 nameSim=1.000): Jucimeire Rios ≈ Jucimeire Rios agent=ddc7f46c-2361-4ed2-aa4d-a32319f97721 profileId=3d601ce8-e528-4b76-83a9-d5626902d0df
+   skip (já na base src=connection score=1.000 nameSim=1.000): Ronie Lella ≈ Ronie Lella agent=76b09621-1d12-45a7-b3c9-ce1daf81e724 profileId=3b494359-10ea-4f60-813e-2c40f0d0bbb3
+   skip (já na base src=connection score=0.900 nameSim=1.000): Maycon Souza ≈ Maycon Souza agent=ddc7f46c-2361-4ed2-aa4d-a32319f97721 profileId=1febf2ed-f912-43ae-8211-8610be9ffde9
+   → fails=3 lastViewportFails=3
+   nenhum elegível nesta tela — scroll…
+2) extract lista… (0/10)
+   → /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/round-002.png (dump)
+   novos na tela: 1
+   nomes: David Tiziano
+   skip (já na base src=connection score=0.829 nameSim=1.000): David Tiziano ≈ David Tiziano agent=76b09621-1d12-45a7-b3c9-ce1daf81e724 profileId=c74cb7b7-f383-417c-ba92-e4a3dd2bd24b
+   → fails=4 lastViewportFails=1
+   nenhum elegível nesta tela — scroll…
+3) extract lista… (0/10)
+   → /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/round-003.png (dump)
+   novos na tela: 0
+4) extract lista… (0/10)
+   → /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/round-004.png (dump)
+   novos na tela: 2
+   nomes: Marina Buzo | Laercio Carniello
+   skip (já na base src=connection score=0.863 nameSim=1.000): Marina Buzo ≈ Marina Buzo agent=76b09621-1d12-45a7-b3c9-ce1daf81e724 profileId=7666e30f-d4b2-4e3d-8f98-5be4a8e2bb43
+   skip (fora do padrão People action=Follow): Laercio Carniello
+   → fails=5 lastViewportFails=1
+   nenhum elegível nesta tela — scroll…
+5) extract lista… (0/10)
+   → /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/round-005.png (dump)
+   novos na tela: 2
+   nomes: Douglas Lima | Vanderlei Barbosa
+   skip (já na base src=connection score=1.000 nameSim=1.000): Douglas Lima ≈ Douglas Lima agent=76b09621-1d12-45a7-b3c9-ce1daf81e724 profileId=0afc179c-7801-4364-bdfe-e9f60595e32f
+   skip (já na base src=connection score=0.750 nameSim=1.000): Vanderlei Barbosa ≈ Vanderlei Barbosa agent=76b09621-1d12-45a7-b3c9-ce1daf81e724 profileId=cb36b146-a7dc-47f6-870b-73770bc4c683
+   → fails=7 lastViewportFails=2
+   nenhum elegível nesta tela — scroll…
+6) extract lista… (0/10)
+   → /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/round-006.png (dump)
+   novos na tela: 1
+   nomes: André Sussumu Konishi
+   skip (já na base src=connection score=0.784 nameSim=1.000): André Sussumu Konishi ≈ André Sussumu Konishi agent=76b09621-1d12-45a7-b3c9-ce1daf81e724 profileId=67477233-6e6e-46f1-97f2-ea9944a1a2a8
+   → fails=8 lastViewportFails=1
+   nenhum elegível nesta tela — scroll…
+7) extract lista… (0/10)
+   → /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/round-007.png (dump)
+   novos na tela: 1
+   nomes: Elaine Xavier Bueno
+   skip (já na base src=connection score=0.772 nameSim=1.000): Elaine Xavier Bueno ≈ Elaine Xavier Bueno agent=76b09621-1d12-45a7-b3c9-ce1daf81e724 profileId=1ded37bf-afa9-4efe-87c6-4ea7661edc50
+   → fails=9 lastViewportFails=1
+   nenhum elegível nesta tela — scroll…
+8) extract lista… (0/10)
+   → /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/round-008.png (dump)
+   novos na tela: 1
+   nomes: Fabrício Calconi
+   skip (já na base src=connection score=0.836 nameSim=1.000): Fabrício Calconi ≈ Fabrício Calconi agent=76b09621-1d12-45a7-b3c9-ce1daf81e724 profileId=de939114-b92a-4415-8016-f6ca07a07381
+   → fails=10 lastViewportFails=1
+   nenhum elegível nesta tela — scroll…
+9) extract lista… (0/10)
+   → /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/round-009.png (dump)
+   novos na tela: 1
+   nomes: Maiko Alves
+   skip (já na base src=connection score=0.749 nameSim=1.000): Maiko Alves ≈ Maiko Alves agent=76b09621-1d12-45a7-b3c9-ce1daf81e724 profileId=f27337b8-7197-4292-a264-294718b34f71
+   → fails=11 lastViewportFails=1
+   nenhum elegível nesta tela — scroll…
+10) extract lista… (0/10)
+   → /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/round-010.png (dump)
+   novos na tela: 0
+11) extract lista… (0/10)
+   → /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/round-011.png (dump)
+   novos na tela: 1
+   nomes: Valter Camargo
+   skip (já na base src=connection score=0.840 nameSim=1.000): Valter Camargo ≈ Valter Camargo agent=76b09621-1d12-45a7-b3c9-ce1daf81e724 profileId=76b73696-e1ee-4043-b6f4-a6ba1f2520c2
+   → fails=12 lastViewportFails=1
+   nenhum elegível nesta tela — scroll…
+12) extract lista… (0/10)
+   → /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/round-012.png (dump)
+   novos na tela: 1
+   nomes: Guilherme Garcia Joaquim
+   skip (já na base src=connection score=0.750 nameSim=1.000): Guilherme Garcia Joaquim ≈ Guilherme Garcia Joaquim agent=88000125-059f-499b-8ec2-ca9e5a6b5406 profileId=2c9a74c1-3f06-4972-85b5-3d15ca9a9ec9
+   → fails=13 lastViewportFails=1
+   nenhum elegível nesta tela — scroll…
+13) extract lista… (0/10)
+   → /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/round-013.png (dump)
+   novos na tela: 1
+   nomes: Valéria Licori Santana
+   skip (fora do padrão People action=Follow): Valéria Licori Santana
+   nenhum elegível nesta tela — scroll…
+14) extract lista… (0/10)
+   → /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/round-014.png (dump)
+   novos na tela: 1
+   nomes: Eduardo Marcurio
+   crop lista Eduardo Marcurio: photo=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/profile-001-list-photo.png card=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/profile-001-list-card.png
+   → abrir "Eduardo Marcurio" x=282 y=804
+   page (dump): name=Eduardo Marcurio headline=Ele Comprador Sênior | Indústria Farmacêutica | Strategic Sourcing & Procurement | Engenheiro de Produção | SAP Ariba & Power BI company=EMS loc=Campinas, São Paulo, Brazil status=connect
+   crop page (dump): photo=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/photo.png {"left":24,"top":180,"width":156,"height":156} cover=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/cover.png {"left":0,"top":117,"width":540,"height":135}
+   ⋯ → Share via → URL (dump sheet; clipboard fallback)…
+   → ⋯ x=492 y=664 (âncora "Message")
+   → Share via "Share via…" x=294 y=418
+   URL (share sheet dump): https://www.linkedin.com/in/eduardo-marcurio
+   sheet ainda aberta — KEYCODE_BACK
+   URL: https://www.linkedin.com/in/eduardo-marcurio
+   page (hint url): name=Eduardo Marcurio headline=Ele Comprador Sênior | Indústria Farmacêutica | Strategic Sourcing & Procurement | Engenheiro de Produção | SAP Ariba & Power BI company=EMS
+   leaveProfile: KEYCODE_BACK (1/2)
+   leaveProfile: lista People ok
+   → /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/profiles.json (1)
+   → POST http://144.126.154.90/profiles id=856fa47b-2dfa-47dd-bf26-8264fe7bee34
+   → POST http://144.126.154.90/profile-details
+   → POST client-connections-linkedin status=0 (connect)
+
+========== quantidade: 1 ==========
+{
+  "name": "Eduardo Marcurio",
+  "title": "Comprador Sênior | Indústria Farmacêutica | Strategic Sourcing & Procurement | Engenheiro de Produção | SAP Ariba & Power BI",
+  "searchQuery": "Comprador",
+  "level": null,
+  "connection": "Connect",
+  "city": "Campinas, São Paulo, Brazil",
+  "mutualConnections": null,
+  "current": "EMS",
+  "past": null,
+  "profileUrl": "https://www.linkedin.com/in/eduardo-marcurio",
+  "headline": "Ele Comprador Sênior | Indústria Farmacêutica | Strategic Sourcing & Procurement | Engenheiro de Produção | SAP Ariba & Power BI",
+  "company": "EMS",
+  "connections": "500+ connections",
+  "inviteStatus": "connect",
+  "canConnect": true,
+  "canMessage": true,
+  "photoBase64": "[base64 80228 chars]",
+  "cardBase64": "[base64 261280 chars]",
+  "coverBase64": "[base64 141300 chars]",
+  "rawOcr": {
+    "elements": 11
+  }
+}
+==============================================
+
+15) extract lista… (1/10)
+   → /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/round-015.png (dump)
+   novos na tela: 0
+16) extract lista… (1/10)
+   → /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/round-016.png (dump)
+   novos na tela: 2
+   nomes: Jack Costa | Mariana Bresil Oliveira
+   crop lista Jack Costa: photo=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/profile-002-list-photo.png card=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/profile-002-list-card.png
+   → abrir "Jack Costa" x=282 y=589
+   page (dump): name=Jack Costa headline=Compras | Buyer | Analista de Compras | Suprimentos | Comprador | Prestador de Serviços company=Autônomo · UNIP loc=Indaiatuba, São Paulo, Brazil status=connect
+   crop page (dump): photo=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/photo.png {"left":24,"top":180,"width":156,"height":156} cover=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/cover.png {"left":0,"top":117,"width":540,"height":135}
+   ⋯ → Share via → URL (dump sheet; clipboard fallback)…
+   → ⋯ x=492 y=610 (âncora "Message")
+   → Share via "Share via…" x=294 y=418
+   URL (share sheet dump): https://www.linkedin.com/in/jackcosta
+   sheet ainda aberta — KEYCODE_BACK
+   URL: https://www.linkedin.com/in/jackcosta
+   page (hint url): name=Jack Costa headline=Compras | Buyer | Analista de Compras | Suprimentos | Comprador | Prestador de Serviços company=Autônomo · UNIP
+   leaveProfile: KEYCODE_BACK (1/2)
+   leaveProfile: lista People ok
+   → /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/profiles.json (2)
+   → POST http://144.126.154.90/profiles id=251c0945-40ed-42b0-bd67-81f400c05bcb
+   → POST http://144.126.154.90/profile-details
+   → POST client-connections-linkedin status=0 (connect)
+
+========== quantidade: 2 ==========
+{
+  "name": "Jack Costa",
+  "title": "Compras | Buyer | Analista de Compras | Suprimentos | Comprador | Prestador de Serviços",
+  "searchQuery": "Compras",
+  "level": null,
+  "connection": "Connect",
+  "city": "Indaiatuba, São Paulo, Brazil",
+  "mutualConnections": null,
+  "current": "Comprador at Autônomo",
+  "past": null,
+  "profileUrl": "https://www.linkedin.com/in/jackcosta",
+  "headline": "Compras | Buyer | Analista de Compras | Suprimentos | Comprador | Prestador de Serviços",
+  "company": "Autônomo · UNIP",
+  "connections": null,
+  "inviteStatus": "connect",
+  "canConnect": true,
+  "canMessage": true,
+  "photoBase64": "[base64 73724 chars]",
+  "cardBase64": "[base64 227236 chars]",
+  "coverBase64": "[base64 117676 chars]",
+  "rawOcr": {
+    "elements": 8
+  }
+}
+==============================================
+
+17) extract lista… (2/10)
+   → /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/round-017.png (dump)
+   novos na tela: 1
+   nomes: Mariana Bresil Oliveira
+   crop lista Mariana Bresil Oliveira: photo=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/profile-003-list-photo.png card=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/profile-003-list-card.png
+   → abrir "Mariana Bresil Oliveira" x=282 y=763
+   page (dump): name=Mariana Bresil Oliveira headline=Procurement Specialist company=Syngenta loc=Greater Campinas status=connect
+   crop page (dump): photo=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/photo.png {"left":24,"top":180,"width":156,"height":156} cover=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/cover.png {"left":0,"top":117,"width":540,"height":135}
+   ⋯ → Share via → URL (dump sheet; clipboard fallback)…
+   → ⋯ x=492 y=574 (âncora "Message")
+   → Share via "Share via…" x=294 y=418
+   URL (share sheet dump): https://www.linkedin.com/in/marianabresiloliveira
+   sheet ainda aberta — KEYCODE_BACK
+   URL: https://www.linkedin.com/in/marianabresiloliveira
+   page (hint url): name=Mariana Bresil Oliveira headline=Procurement Specialist company=Syngenta
+   leaveProfile: KEYCODE_BACK (1/2)
+   leaveProfile: lista People ok
+   → /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/profiles.json (3)
+   → POST http://144.126.154.90/profiles id=fee1b455-2084-4a43-8e1b-2148d4c8a1ec
+   → POST http://144.126.154.90/profile-details
+   → POST client-connections-linkedin status=0 (connect)
+
+========== quantidade: 3 ==========
+{
+  "name": "Mariana Bresil Oliveira",
+  "title": "Comprador Sênior",
+  "searchQuery": "Comprador",
+  "level": null,
+  "connection": "Connect",
+  "city": "Greater Campinas",
+  "mutualConnections": null,
+  "current": "Syngenta",
+  "past": null,
+  "profileUrl": "https://www.linkedin.com/in/marianabresiloliveira",
+  "headline": "Procurement Specialist",
+  "company": "Syngenta",
+  "connections": "500+ connections",
+  "inviteStatus": "connect",
+  "canConnect": true,
+  "canMessage": true,
+  "photoBase64": "[base64 72104 chars]",
+  "cardBase64": "[base64 184528 chars]",
+  "coverBase64": "[base64 82688 chars]",
+  "rawOcr": {
+    "elements": 10
+  }
+}
+==============================================
+
+18) extract lista… (3/10)
+   → /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/round-018.png (dump)
+   novos na tela: 0
+19) extract lista… (3/10)
+   → /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/round-019.png (dump)
+   novos na tela: 2
+   nomes: Lívia Bulha de Carvalho Baldo | Julliana Quintiliano
+   skip (fora do padrão People action=Follow): Lívia Bulha de Carvalho Baldo
+   crop lista Julliana Quintiliano: photo=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/profile-004-list-photo.png card=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/profile-004-list-card.png
+   → abrir "Julliana Quintiliano" x=282 y=785
+   page (dump): name=Julliana Quintiliano headline=Compradora na PUC-Campinas company=PUC-Campinas · Unità Faculdade loc=Campinas, São Paulo, Brazil status=connect
+   crop page (dump): photo=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/photo.png {"left":24,"top":180,"width":156,"height":156} cover=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/cover.png {"left":0,"top":117,"width":540,"height":135}
+   ⋯ → Share via → URL (dump sheet; clipboard fallback)…
+   → ⋯ x=492 y=574 (âncora "Message")
+   → Share via "Share via…" x=294 y=418
+   URL (share sheet dump): https://www.linkedin.com/in/julliana-quintiliano-0588a351
+   sheet ainda aberta — KEYCODE_BACK
+   URL: https://www.linkedin.com/in/julliana-quintiliano-0588a351
+   page (hint url): name=Julliana Quintiliano headline=Compradora na PUC-Campinas company=PUC-Campinas · Unità Faculdade
+   leaveProfile: KEYCODE_BACK (1/2)
+   leaveProfile: lista People ok
+   → /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/profiles.json (4)
+   → POST http://144.126.154.90/profiles id=6c5c232e-1550-4dd8-9050-fcf6d35c50cd
+   → POST http://144.126.154.90/profile-details
+   → POST client-connections-linkedin status=0 (connect)
+
+========== quantidade: 4 ==========
+{
+  "name": "Julliana Quintiliano",
+  "title": "Compradora na PUC-Campinas",
+  "searchQuery": "Compradora",
+  "level": null,
+  "connection": "Connect",
+  "city": "Campinas, São Paulo, Brazil",
+  "mutualConnections": null,
+  "current": "Compradora at PUC-Campinas",
+  "past": null,
+  "profileUrl": "https://www.linkedin.com/in/julliana-quintiliano-0588a351",
+  "headline": "Compradora na PUC-Campinas",
+  "company": "PUC-Campinas · Unità Faculdade",
+  "connections": "8 connections",
+  "inviteStatus": "connect",
+  "canConnect": true,
+  "canMessage": true,
+  "photoBase64": "[base64 68168 chars]",
+  "cardBase64": "[base64 134780 chars]",
+  "coverBase64": "[base64 37888 chars]",
+  "rawOcr": {
+    "elements": 14
+  }
+}
+==============================================
+
+20) extract lista… (4/10)
+   → /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/round-020.png (dump)
+   novos na tela: 0
+21) extract lista… (4/10)
+   → /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/round-021.png (dump)
+   novos na tela: 2
+   nomes: Carmen Silvia Aguiar | Renato Gomes
+   crop lista Carmen Silvia Aguiar: photo=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/profile-005-list-photo.png card=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/profile-005-list-card.png
+   → abrir "Carmen Silvia Aguiar" x=282 y=559
+   page (dump): name=CARMEN SILVIA AGUIAR headline=Comprador Pleno company=Universidade Paulista loc=Campinas, São Paulo, Brazil status=connect
+   crop page (dump): photo=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/photo.png {"left":24,"top":180,"width":156,"height":156} cover=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/cover.png {"left":0,"top":117,"width":540,"height":135}
+   ⋯ → Share via → URL (dump sheet; clipboard fallback)…
+   → ⋯ x=492 y=574 (âncora "Message")
+   → Share via "Share via…" x=294 y=418
+   URL (share sheet dump): https://www.linkedin.com/in/carmensaguiar
+   sheet ainda aberta — KEYCODE_BACK
+   URL: https://www.linkedin.com/in/carmensaguiar
+   page (hint url): name=CARMEN SILVIA AGUIAR headline=Comprador Pleno company=Universidade Paulista
+   leaveProfile: KEYCODE_BACK (1/2)
+   leaveProfile: lista People ok
+   → /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/profiles.json (5)
+   → POST http://144.126.154.90/profiles id=9773417b-ab40-49c3-af2c-394768831fd3
+   → POST http://144.126.154.90/profile-details
+   → POST client-connections-linkedin status=0 (connect)
+
+========== quantidade: 5 ==========
+{
+  "name": "CARMEN SILVIA AGUIAR",
+  "title": "Comprador Pleno",
+  "searchQuery": "Comprador",
+  "level": null,
+  "connection": "Connect",
+  "city": "Campinas, São Paulo, Brazil",
+  "mutualConnections": null,
+  "current": "Universidade Paulista",
+  "past": "COMPRADOR JUNIOR at Mabe Campinas Eletrodomesticos Ltda",
+  "profileUrl": "https://www.linkedin.com/in/carmensaguiar",
+  "headline": "Comprador Pleno",
+  "company": "Universidade Paulista",
+  "connections": "500+ connections",
+  "inviteStatus": "connect",
+  "canConnect": true,
+  "canMessage": true,
+  "photoBase64": "[base64 71040 chars]",
+  "cardBase64": "[base64 147580 chars]",
+  "coverBase64": "[base64 38244 chars]",
+  "rawOcr": {
+    "elements": 10
+  }
+}
+==============================================
+
+22) extract lista… (5/10)
+   → /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/round-022.png (dump)
+   novos na tela: 1
+   nomes: Renato Gomes
+   crop lista Renato Gomes: photo=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/profile-006-list-photo.png card=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/profile-006-list-card.png
+   → abrir "Renato Gomes" x=282 y=729
+   page (dump): name=Renato Gomes headline=Comprador Estratégico | Strategic Sourcing | Procurement | Gestão de Categorias | TCO | Cost Reduction | Spend Analysis | Supplier Relationship Management | Power bi company=Multieixo Implementos Rodoviarios Ltda loc=Hortolândia, São Paulo, Brazil status=connect
+   crop page (dump): photo=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/photo.png {"left":24,"top":180,"width":156,"height":156} cover=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/cover.png {"left":0,"top":117,"width":540,"height":135}
+   ⋯ → Share via → URL (dump sheet; clipboard fallback)…
+   → ⋯ x=492 y=691 (âncora "Message")
+   → Share via "Share via…" x=294 y=418
+   URL (share sheet dump): https://www.linkedin.com/in/renatogomes-sva
+   sheet ainda aberta — KEYCODE_BACK
+   URL: https://www.linkedin.com/in/renatogomes-sva
+   page (hint url): name=Renato Gomes headline=Comprador Estratégico | Strategic Sourcing | Procurement | Gestão de Categorias | TCO | Cost Reduction | Spend Analysis | Supplier Relationship Management | Power bi company=Multieixo Implementos Rodoviarios Ltda
+   leaveProfile: KEYCODE_BACK (1/2)
+   leaveProfile: lista People ok
+   → /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/profiles.json (6)
+   → POST http://144.126.154.90/profiles id=222619de-4f38-4b28-9d92-056ff8c5127c
+   → POST http://144.126.154.90/profile-details
+   → POST client-connections-linkedin status=0 (connect)
+
+========== quantidade: 6 ==========
+{
+  "name": "Renato Gomes",
+  "title": "Comprador Estratégico | Strategic Sourcing | Procurement | Gestão de Categorias | TCO | Cost Reduction | Spend Analysis | Supplier Relationship Management | Power bi",
+  "searchQuery": "Comprador",
+  "level": null,
+  "connection": "Connect",
+  "city": "Hortolândia, São Paulo, Brazil",
+  "mutualConnections": null,
+  "current": "Comprador at Multieixo Implementos Rodoviarios Ltda",
+  "past": null,
+  "profileUrl": "https://www.linkedin.com/in/renatogomes-sva",
+  "headline": "Comprador Estratégico | Strategic Sourcing | Procurement | Gestão de Categorias | TCO | Cost Reduction | Spend Analysis | Supplier Relationship Management | Power bi",
+  "company": "Multieixo Implementos Rodoviarios Ltda",
+  "connections": "500+ connections",
+  "inviteStatus": "connect",
+  "canConnect": true,
+  "canMessage": true,
+  "photoBase64": "[base64 62144 chars]",
+  "cardBase64": "[base64 157804 chars]",
+  "coverBase64": "[base64 42224 chars]",
+  "rawOcr": {
+    "elements": 10
+  }
+}
+==============================================
+
+23) extract lista… (6/10)
+   → /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/round-023.png (dump)
+   novos na tela: 0
+24) extract lista… (6/10)
+   → /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/round-024.png (dump)
+   novos na tela: 2
+   nomes: Raphael de Oliveira Cardillo | Amanda Carolina Oliveira
+   skip (fora do padrão People action=Follow): Raphael de Oliveira Cardillo
+   crop lista Amanda Carolina Oliveira: photo=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/profile-007-list-photo.png card=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/profile-007-list-card.png
+   → abrir "Amanda Carolina Oliveira" x=282 y=773
+   page (dump): name=Amanda Carolina Oliveira headline=Compradora | Compras Estratégicas | Negociação com Fornecedores | Gestão de Categorias | Strategic Sourcing | Rentabilidade e Performance Comercial company=Cigana Beleza loc=Campinas, São Paulo, Brazil status=connect
+   crop page (dump): photo=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/photo.png {"left":24,"top":180,"width":156,"height":156} cover=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/cover.png {"left":0,"top":117,"width":540,"height":135}
+   ⋯ → Share via → URL (dump sheet; clipboard fallback)…
+   → ⋯ x=492 y=691 (âncora "Message")
+   → Share via "Share via…" x=294 y=418
+   URL (share sheet dump): https://www.linkedin.com/in/amanda-carolina-oliveira-842156145
+   sheet ainda aberta — KEYCODE_BACK
+   URL: https://www.linkedin.com/in/amanda-carolina-oliveira-842156145
+   page (hint url): name=Amanda Carolina Oliveira headline=Compradora | Compras Estratégicas | Negociação com Fornecedores | Gestão de Categorias | Strategic Sourcing | Rentabilidade e Performance Comercial company=Cigana Beleza
+   leaveProfile: KEYCODE_BACK (1/2)
+   leaveProfile: lista People ok
+   → /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/profiles.json (7)
+   → POST http://144.126.154.90/profiles id=4b99536d-8ae9-4281-b5e7-6aebb264c498
+   → POST http://144.126.154.90/profile-details
+   → POST client-connections-linkedin status=0 (connect)
+
+========== quantidade: 7 ==========
+{
+  "name": "Amanda Carolina Oliveira",
+  "title": "Compradora | Compras Estratégicas | Negociação com Fornecedores | Gestão de Categorias | Strategic Sourcing | Rentabilidade e Performance Comercial",
+  "searchQuery": "Compradora",
+  "level": null,
+  "connection": "Connect",
+  "city": "Campinas, São Paulo, Brazil",
+  "mutualConnections": null,
+  "current": "Cigana Beleza",
+  "past": null,
+  "profileUrl": "https://www.linkedin.com/in/amanda-carolina-oliveira-842156145",
+  "headline": "Compradora | Compras Estratégicas | Negociação com Fornecedores | Gestão de Categorias | Strategic Sourcing | Rentabilidade e Performance Comercial",
+  "company": "Cigana Beleza",
+  "connections": "343 connections",
+  "inviteStatus": "connect",
+  "canConnect": true,
+  "canMessage": true,
+  "photoBase64": "[base64 76196 chars]",
+  "cardBase64": "[base64 319972 chars]",
+  "coverBase64": "[base64 205760 chars]",
+  "rawOcr": {
+    "elements": 13
+  }
+}
+==============================================
+
+25) extract lista… (7/10)
+   → /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/round-025.png (dump)
+   novos na tela: 0
+26) extract lista… (7/10)
+   → /Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/round-026.png (dump)
+   novos na tela: 2
+   nomes: Eduardo Bragagnolo | Davi Vieira Silva
+   crop lista Eduardo Bragagnolo: photo=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/profile-008-list-photo.png card=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/profile-008-list-card.png
+   → abrir "Eduardo Bragagnolo" x=282 y=575
+   page (dump): name=Eduardo Bragagnolo headline=Comprador Pleno na Hotel Premium Campinas company=Hotel Premium Campinas loc=Campinas, São Paulo, Brazil status=connect
+   crop page (dump): photo=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/photo.png {"left":24,"top":180,"width":156,"height":156} cover=/Users/laerciogermano/Documents/works/screen-robot/src/screenshots/login-extract-profiles/2026-10-30T23-28-59-452Z/cover.png {"left":0,"top":117,"width":540,"height":135}
+   ⋯ → Share via → URL (dump sheet; clipboard fallback)…
+   → ⋯ x=492 y=580 (âncora "Message")
+   → Share via "Share via…" x=294 y=418
+   URL (share sheet dump): https://www.linkedin.com/in/eduardo-bragagnolo-5420ab384
+   sheet ainda aberta — KEYCODE_BACK
+   URL: https://www.linkedin.com/in/eduardo-bragagnolo-5420ab384
+   page (hint url): name=Eduardo Bragagnolo headline=Comprador Pleno na Hotel Premium Campinas company=Hotel Premium Campinas
+   leaveProfile: KEYCODE_BACK (1/2)
+   ⚠ abrir/extrair falhou (não salva lista): adb: device offline
+   leaveProfile: KEYCODE_BACK (1/2)
+   skip save (sem profileUrl — não confirma perfil aberto): Eduardo Bragagnolo
+27) extract lista… (7/10)
+   extract falhou (1/3): EXTRACT_FRAME_FAILED: error: device 'emulator-5564' not found; fallback: adb: device 'emulator-5564' not found
+   extract falhou (2/3): EXTRACT_FRAME_FAILED: error: device 'emulator-5564' not found; fallback: adb: device 'emulator-5564' not found
+   extract falhou (3/3): EXTRACT_FRAME_FAILED: error: device 'emulator-5564' not found; fallback: adb: device 'emulator-5564' not found
+Erro: EXTRACT_FRAME_FAILED: error: device 'emulator-5564' not found; fallback: adb: device 'emulator-5564' not found
+[76b09621-1d12-45a7-b3c9-ce1daf81e724] fail extrair_leads: login-extract-profiles exit=1

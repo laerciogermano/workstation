@@ -10,7 +10,7 @@ Manual completo, 16 páginas em A4 paisagem, no estilo dos banners de [`../epics
 | [`identidade-visual-rolego-v1.pdf`](identidade-visual-rolego-v1.pdf) | PDF gerado do HTML |
 | [`identidade-visual-rolego-v1.zip`](identidade-visual-rolego-v1.zip) | Pacote HTML + PDF |
 
-Tokens e regras: [`../identidade-visual.md`](../identidade-visual.md) · molde: [`../input/referencia-marca/README.md`](../input/referencia-marca/README.md) · card manual: https://trello.com/c/gU37I2lg · card logo: https://trello.com/c/S7jWwUbC
+Tokens e regras: [`../identidade-visual.md`](../identidade-visual.md) · molde: [`../input/referencia-marca/README.md`](../input/referencia-marca/README.md) · card manual: https://trello.com/c/gU37I2lg · card logo: https://trello.com/c/S7jWwUbC · card benchmarking: https://trello.com/c/pXPmdI7g
 
 **Antes → depois (2026-10-31 rollback local):** HTML/PDF/ZIP da colagem lima→magenta (`baa381c`) → versão índice 7 / commit `6629391` (manual longo 16 págs., ciano/violeta, pin no “o”). Voltar à colagem: `git checkout baa381c -- role-go/marca role-go/identidade-visual.md`.
 

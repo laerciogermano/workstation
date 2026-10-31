@@ -3,7 +3,9 @@ const CDP = 'http://127.0.0.1:9222';
 const SITE = 'https://bot.sannysoft.com/';
 
 const targets = await (await fetch(`${CDP}/json/list`)).json();
-const page = targets.find((t) => t.type === 'page');
+const page =
+  targets.find((t) => t.type === 'page' && String(t.url || '').includes('sannysoft')) ||
+  targets.find((t) => t.type === 'page');
 if (!page) throw new Error('Chrome CDP não está na porta 9222');
 
 const ws = new WebSocket(page.webSocketDebuggerUrl);
@@ -40,16 +42,57 @@ const { result } = await send('Runtime.evaluate', {
 
 for (const line of result.value) console.log(line);
 
-const click = await send('Runtime.evaluate', {
+// a.click() via evaluate muitas vezes não navega; usa coordenadas reais + fallback navigate
+const link = await send('Runtime.evaluate', {
   returnByValue: true,
   expression: `(() => {
     const a = [...document.querySelectorAll('a')].find((x) =>
       /fingerprint\\s*scanner/i.test(x.innerText || ''),
     );
-    if (!a) return { ok: false, reason: 'link não encontrado' };
-    a.click();
-    return { ok: true, href: a.href, text: a.innerText.trim() };
+    if (!a) return null;
+    a.scrollIntoView({ block: 'center' });
+    const r = a.getBoundingClientRect();
+    return {
+      href: a.href,
+      text: a.innerText.trim(),
+      x: r.x + r.width / 2,
+      y: r.y + r.height / 2,
+    };
   })()`,
 });
-console.log('click Fingerprint Scanner =>', click.result.value);
+if (!link.result.value) throw new Error('link Fingerprint Scanner não encontrado');
+const { href, text, x, y } = link.result.value;
+console.log('Fingerprint Scanner =>', text, href);
+
+await send('Input.dispatchMouseEvent', {
+  type: 'mousePressed',
+  x,
+  y,
+  button: 'left',
+  clickCount: 1,
+});
+await send('Input.dispatchMouseEvent', {
+  type: 'mouseReleased',
+  x,
+  y,
+  button: 'left',
+  clickCount: 1,
+});
+await new Promise((r) => setTimeout(r, 1500));
+
+let where = await send('Runtime.evaluate', {
+  returnByValue: true,
+  expression: 'location.href',
+});
+// se o clique abriu outra aba / não mudou, força navegação nesta aba
+if (!String(where.result.value || '').includes('fpscanner')) {
+  console.log('clique não navegou — Page.navigate fallback');
+  await send('Page.navigate', { url: href });
+  await new Promise((r) => setTimeout(r, 2000));
+  where = await send('Runtime.evaluate', {
+    returnByValue: true,
+    expression: 'location.href',
+  });
+}
+console.log('URL atual =>', where.result.value);
 ws.close();

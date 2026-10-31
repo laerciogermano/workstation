@@ -1,0 +1,27 @@
+---
+description: Sempre cumprir o essencial do prompt — executar até o pedido estar atendido
+alwaysApply: true
+---
+
+# Cumprir o essencial do pedido
+
+Antes de responder ou parar, garanta que o **pedido do prompt está atendido de fato** — não só descrito.
+
+## Critérios
+
+1. Extraia o que o usuário pediu de forma objetiva (entregável, ação, verificação)
+2. Faça **tudo o essencial** para isso: criar/editar, rodar, checar resultado, corrigir se falhar
+3. Sucinto na fala; completo na execução — `respostas-sucintas` ≠ deixar o pedido pela metade
+4. Se pediu “execute/rode/abra/crie”, **execute** no turno; não entregue só o comando
+5. Se pediu resultado (“imprima / mostre / diga o que deu”), **traga o resultado** na resposta
+6. Não invente escopo extra; não omita o núcleo do pedido
+
+## Exemplos
+
+```text
+✅ Pediu script + rodar → cria, executa, cola a saída relevante
+✅ Pediu “mande o comando” → manda o comando (e só isso)
+❌ Pediu executar → só explica como faria
+❌ Pediu todos os pontos do teste → diz “rodei” sem listar os pontos
+❌ Completa 80% e pergunta se pode continuar o óbvio restante
+```

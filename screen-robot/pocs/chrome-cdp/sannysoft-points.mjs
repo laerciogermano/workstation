@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+import { execFileSync } from 'node:child_process';
+
 const CDP = 'http://127.0.0.1:9222';
 const SITE = 'https://bot.sannysoft.com/';
 
@@ -28,9 +30,34 @@ const send = (method, params = {}) =>
     ws.send(JSON.stringify({ id: i, method, params }));
   });
 
+const readSignals = async (label) => {
+  const { result } = await send('Runtime.evaluate', {
+    returnByValue: true,
+    expression: `({
+      label: ${JSON.stringify(label)},
+      visibilityState: document.visibilityState,
+      hidden: document.hidden,
+      hasFocus: document.hasFocus(),
+      activeElement: document.activeElement && document.activeElement.tagName,
+      userActivation: !!(navigator.userActivation && navigator.userActivation.isActive),
+      lastClickTrusted: window.__lastClickTrusted ?? null,
+    })`,
+  });
+  console.log('signals =>', result.value);
+  return result.value;
+};
+
 await send('Page.enable');
 await send('Page.navigate', { url: SITE });
 await new Promise((r) => setTimeout(r, 4000));
+
+// captura isTrusted do próximo click na página
+await send('Runtime.evaluate', {
+  expression: `window.__lastClickTrusted = null;
+    document.addEventListener('click', (e) => {
+      window.__lastClickTrusted = e.isTrusted;
+    }, true);`,
+});
 
 const { result } = await send('Runtime.evaluate', {
   returnByValue: true,
@@ -60,6 +87,16 @@ const link = await send('Runtime.evaluate', {
 const info = link.result.value;
 if (!info) throw new Error('link Fingerprint Scanner não encontrado');
 
+// manda o Chrome para trás (Cursor na frente) p/ simular background
+try {
+  execFileSync('osascript', ['-e', 'tell application "Cursor" to activate']);
+} catch {
+  execFileSync('osascript', ['-e', 'tell application "Terminal" to activate']);
+}
+await new Promise((r) => setTimeout(r, 800));
+
+await readSignals('antes do click (Chrome em background?)');
+
 await send('Input.dispatchMouseEvent', {
   type: 'mousePressed',
   x: info.x,
@@ -75,4 +112,7 @@ await send('Input.dispatchMouseEvent', {
   clickCount: 1,
 });
 console.log('cdp click =>', { x: info.x, y: info.y, href: info.href });
+
+await new Promise((r) => setTimeout(r, 500));
+await readSignals('depois do click');
 ws.close();

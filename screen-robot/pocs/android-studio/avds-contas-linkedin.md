@@ -9,7 +9,7 @@ CSV (data, nome, e-mail, status, senha_li, objetivo, obs): [`contas-linkedin-clo
 
 **Antes → depois (Roberta):** sem `objetivo` → objetivo de longevidade (criar/configurar no AVD e parar; medir se a conta se sustenta). Rollback: limpar `objetivo` da linha Roberta.
 
-**Antes → depois (Camila):** sem AVD → AVD `Camila_Ferreira` (`emulator-5570`), máscara Pixel 4 (`pixel_4`), LI+ADBKeyboard, avatar/banner em Download; CSV `nao_criada`. Rollback: `avdmanager delete avd -n Camila_Ferreira` + remover `~/.android/avd/Camila_Ferreira.*`; CSV obs anterior.
+**Antes → depois (Camila):** sem `objetivo` → criar conta no AVD e operar desligando o LinkedIn ao fim de cada operação; AVD `Camila_Ferreira` (`emulator-5570`). Rollback: limpar `objetivo`; `avdmanager delete avd -n Camila_Ferreira` + remover `~/.android/avd/Camila_Ferreira.*`.
 
 ## Inventário atual
 

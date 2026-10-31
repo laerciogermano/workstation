@@ -10,7 +10,25 @@
 - Linguagem contraditória e mal compreendida; visão deturpada da realidade
 - Insatisfação gera as perguntas: do que é a realidade? Deus existe? há além desta? o que após a morte? eternidade? céu/inferno? o que sou? para onde vou? sentido da vida? o que é vida?
 
-# 2. Busca pela iluminação
+# 2. O Inferno
+
+- Sem metafísica, o homem roda nos particulares em círculo; não entende símbolos, verbos, conceitos básicos
+- Sem manual da vida: crença deturpada → comportamento deturpado
+- Excesso de informação sem base lógica; excesso de opções e crenças; não enxerga realidade abrangente nem identidade
+- Baile de máscaras: fingem saber; confunde mentes; fala-se do que não se entende
+- Autômato: comportamento definido pelo estado interno/externo
+- Inferno cíclico: conto da mosca; memória que faz esquecer e voltar ao ponto; atores em histórias que se repetem; desejo de ter × tédio de possuir (pêndulo); lembrar é poder
+- Analfabetismo espiritual: mazelas da ignorância — individuais (vida sem sentido), familiares, sociais
+- O homem faz mal ao próximo sem saber que faz mal a si
+- Software espelha a mesma deturpação: modelamos código como enxergamos o mundo
+  - Manutenção ~80% do esforço; mais programadores não resolvem; criar simples é fácil, manter é difícil
+  - Conceitos mal dominados: polimorfismo/isomorfismo, sólido×abstrato, encapsulamento, acoplamento/coesão, imperativo×declarativo, GOF, SOLID
+  - Redundância de formas (paradigmas, linguagens, frameworks, domínios, vícios); curva de aprendizagem alta
+  - Escrita linear obscurece o panorama; OOP aristotélica: estruturas estáticas, sem enxergar ordem/fluxo
+  - Pouco intuitivo vs. outras engenharias; falta blocos/encaixes claros; software é feito de símbolos
+- O problema persiste em espiritualidade, filosofia, linguagem e software
+
+# 3. A Busca
 
 - Filosofia responde ao que a experiência sensorial não resolve; religião e ciência também tentam — sem consenso
 - Mesmas perguntas, respostas distintas por tradição
@@ -36,25 +54,7 @@
 - Metafísica permanece em aberto (realismo × idealismo); falta de vias lógicas; ciência ocupa o lugar e foca nos particulares
 - Ciência (visão aristotélica): prova o que não é nos particulares; matemática prova o que é para todos os casos; metafísica estuda o geral pelo intelecto (sem experiência material)
 
-# 3. O inferno (consequências)
-
-- Sem metafísica, o homem roda nos particulares em círculo; não entende símbolos, verbos, conceitos básicos
-- Sem manual da vida: crença deturpada → comportamento deturpado
-- Excesso de informação sem base lógica; excesso de opções e crenças; não enxerga realidade abrangente nem identidade
-- Baile de máscaras: fingem saber; confunde mentes; fala-se do que não se entende
-- Autômato: comportamento definido pelo estado interno/externo
-- Inferno cíclico: conto da mosca; memória que faz esquecer e voltar ao ponto; atores em histórias que se repetem; desejo de ter × tédio de possuir (pêndulo); lembrar é poder
-- Analfabetismo espiritual: mazelas da ignorância — individuais (vida sem sentido), familiares, sociais
-- O homem faz mal ao próximo sem saber que faz mal a si
-- Software espelha a mesma deturpação: modelamos código como enxergamos o mundo
-  - Manutenção ~80% do esforço; mais programadores não resolvem; criar simples é fácil, manter é difícil
-  - Conceitos mal dominados: polimorfismo/isomorfismo, sólido×abstrato, encapsulamento, acoplamento/coesão, imperativo×declarativo, GOF, SOLID
-  - Redundância de formas (paradigmas, linguagens, frameworks, domínios, vícios); curva de aprendizagem alta
-  - Escrita linear obscurece o panorama; OOP aristotélica: estruturas estáticas, sem enxergar ordem/fluxo
-  - Pouco intuitivo vs. outras engenharias; falta blocos/encaixes claros; software é feito de símbolos
-- O problema persiste em espiritualidade, filosofia, linguagem e software
-
-# 4. O conhecimento que liberta (insight)
+# 4. O Insight
 
 - A chave da metafísica estava no software: estudo dos abstratos, essencialismo, arquitetura limpa, estrutura do código
 - Problema comum: falta de domínio da linguagem → falta de compreensão da realidade
@@ -63,7 +63,7 @@
 - Mesma cadeia em existencialismo, filosofia e software: problema → motivo (não compreende realidade/identidade/linguagem) → solução (resolver linguagem → metafísica → gnose)
 - Resolvendo a linguagem, resolve-se software, filosofia e existência
 
-# 5. O erro
+# 5. O Erro
 
 - Aristóteles: teoria da substância (forma + matéria) acopla verbo ao objeto
 - Correção: objetos não possuem verbos; verbos possuem objetos — desacoplar movimento e estado
@@ -74,7 +74,7 @@
 - Paradoxo de Teseu, individualização na infância, ego, foco nos entes: ator carrega carmas dos personagens; decisões pelo estado → mesmos erros → sofrimento contínuo
 - Não se pode “carnificar” o espírito; matéria e movimento são substâncias distintas
 
-# 6. A gnose (conhecimento secreto / acesso)
+# 6. A Gnose
 
 - Realidade é dual; trindade como cortina de fumaça da dualidade
 - Linguagem = mudança de estado; descreve e simula a realidade; limite da consciência
@@ -94,24 +94,16 @@
 - Imperativo: controle do fluxo, sujeito, movimento induzido × Declarativo: sem controle do fluxo, inversão de controle / protocolo
 - Fluxo / ordem / Logos: relação entre verbos; verbo fractal (verbo de verbos); metafísica = estudo do plano das mudanças
 - Universo como autômato: dado um estado, um movimento; regras imutáveis
-
-# 7. Perfeição
-
-- Resolução atravessa linguagem, software, filosofia, espiritualidade, existencialismo
 - Histórias (verbos) = padrões eternos; objetos = elementos mutáveis; reutilização com mesmos padrões (música/filme)
 - História = menor unidade fundamental da realidade; o que aconteceu voltará; o que nunca ocorreu não ocorrerá; tudo é estado e mudança
+
+# 7. A Superação Adâmica
+
+- Resolução atravessa linguagem, software, filosofia, espiritualidade, existencialismo
 - Software: mesmas regras independentes de hardware, SO, linguagem, paradigma ou projeto; roteiro imutável, elementos mudam; bom programador conhece do que o software é feito e a filosofia que o sustenta
-- Risco: fascínio pelo perfeito → sentimento de superioridade, julgamento ao próximo, nova queda
-
-# 8. A imperfeição
-
-- Somos todos os mesmos; ao condenar o próximo, condenamo-nos
-- Mundo do acoplamento; natureza imperfeita do homem (carroça alada / caverna de Platão; crucificação)
-- Conhecer o imperfeito; reduzir danos; honrar quem é puro ou próximo disso
-- Sentimento compartilhado
-
-# 9. Superação adâmica (equilíbrio)
-
+- Risco da “perfeição”: fascínio → superioridade, julgamento ao próximo, nova queda
+- Somos todos os mesmos e imperfeitos; ao condenar o próximo, condenamo-nos; sentimento compartilhado
+- Mundo do acoplamento; natureza imperfeita (carroça alada / caverna de Platão; crucificação); reduzir danos; honrar quem é puro ou próximo disso
 - Domínio da metafísica e dos princípios para controlar a “máquina” e viver bem; moderação; nem só físico nem só “espiritual” abstrato
 - Transcendência da matéria; compreender eternos mutáveis; romper ciclo desejo/tédio; morte do ego; libertação do ciclo
 - Responde morte, céu, inferno, eternidade; ajusta lentes de linguagem, filosofia e software
@@ -120,7 +112,7 @@
 - Atores em papéis já escritos → assumir papel de autor (arquétipos); senhor do destino
 - Prática: 20 minutos/dia; pense como se já fosse e serás; em tudo que focar, cresce; todo acoplamento/excesso será punido; lida-se com situações, não com “pessoas” isoladas
 - Consciência una: todos somos os mesmos; Deus como exemplo; gozar a eternidade; conciliação dos eternos mutáveis
-- Superação: libertação do espírito da carne pela gnose; compreender estados/histórias que se repetem; autor × ator; eternidade no presente; arquétipos como abstratos com características
+- Libertação do espírito da carne pela gnose; compreender estados/histórias que se repetem; autor × ator; eternidade no presente; arquétipos como abstratos com características
 - Proposta: continuidade a Russell/Whitehead; linguagem unificada possível; ponto de partida para discussão perdida
 - Cadeia final: resolver linguagem → software → filosofia → questões existenciais/espirituais (cosmovisão)
 

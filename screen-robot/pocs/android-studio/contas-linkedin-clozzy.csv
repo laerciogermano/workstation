@@ -1,8 +1,8 @@
-data_criacao,nome,email,status
-2026-10-26,Ana Letícia,teste@clozzy.com.br,ativa
-2026-10-29,Jacqueline Lima,jacqueline.lima@clozzy.com.br,ativa
-2026-10-29,Pamela Gomes,pamela.gomes@clozzy.com.br,restrita
-,Gabriel Manfred,gabriel.manfred@clozzy.com.br,signup_incompleto
-2026-10-30,Alex Romão,alex.romao@clozzy.com.br,ativa
-2026-10-30,Fernando Breda,fernando.breda@clozzy.com.br,ativa
-,Roberta Machado,roberta.machado@clozzy.com.br,nao_criada
+data_criacao,nome,email,status,obs
+2026-10-26,Ana Letícia,teste@clozzy.com.br,restrita,pediu numero; foi restrita
+2026-10-29,Jacqueline Lima,jacqueline.lima@clozzy.com.br,restrita,pediu numero; foi restrita
+2026-10-29,Pamela Gomes,pamela.gomes@clozzy.com.br,restrita,restrita
+,Gabriel Manfred,gabriel.manfred@clozzy.com.br,signup_incompleto,pediu numero
+2026-10-30,Alex Romão,alex.romao@clozzy.com.br,restrita,restrita
+2026-10-30,Fernando Breda,fernando.breda@clozzy.com.br,restrita,restrita
+,Roberta Machado,roberta.machado@clozzy.com.br,nao_criada,

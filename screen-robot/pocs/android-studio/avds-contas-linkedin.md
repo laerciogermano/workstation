@@ -4,21 +4,21 @@ SOP para criar um AVD local (Mac) **1:1 com uma caixa `@clozzy.com.br`**, com im
 
 Credenciais das caixas: [`credenciais.md`](../../../../credenciais.md) (§ Caixas `@clozzy.com.br`).
 
-CSV (data de criação LI ≈ e-mail do PIN, nome, e-mail, status): [`contas-linkedin-clozzy.csv`](contas-linkedin-clozzy.csv).  
-**Antes → depois:** só tabela AVD abaixo → CSV consolidado; reverter = apagar o CSV e este link.
+CSV (data, nome, e-mail, status, obs): [`contas-linkedin-clozzy.csv`](contas-linkedin-clozzy.csv).  
+**Antes → depois:** CSV 4 cols (`status`) → 5 cols (`status` + `obs`); reverter = dropar coluna `obs` e restaurar status antigos (Ana/Jacqueline/Alex/Fernando=`ativa`, Gabriel=`signup_incompleto`).
 
 ## Inventário atual
 
 | Conta | AVD (`AVD_NAME`) | Porta console (serial) | Notas |
 |-------|------------------|------------------------|-------|
 | (lab ConnectMax) | `ConnectMax_Cam` | `5554` → `emulator-5554` | baseline / fonte de APKs |
-| Jacqueline Lima | `Jacqueline_Lima` | `5556` → `emulator-5556` | |
-| Pamela Gomes | `Pamela_Gomes` | `5558` → `emulator-5558` | LinkedIn **restricted** (2026-10-29) |
-| Gabriel Manfred | `Gabriel_Manfred` | `5560` → `emulator-5560` | LinkedIn+ADBKeyboard ok; signup parado em SMS (`Just a quick security check`) — falta nº |
-| Alex Romão | `Alex_Romao` | `5562` → `emulator-5562` | Conta LI ok; identidade mascarada **Pixel 4 / flame** (`mask-identity.sh`) — 2026-10-30 |
-| Fernando Breda | `Fernando_Breda` | `5564` → `emulator-5564` | Conta LI ok; identidade **Pixel 4 / flame**; worker `start-worker-fernando.sh` (`76b09621-…`) — 2026-10-30 |
-| Roberta Machado | | `5566` | |
-| Ana Letícia (`teste@`) | `Ana_Leticia` | `5568` → `emulator-5568` | LinkedIn+ADBKeyboard ok; conta já existente (login `teste@clozzy.com.br`) |
+| Jacqueline Lima | `Jacqueline_Lima` | `5556` → `emulator-5556` | **restrita** (pediu nº) |
+| Pamela Gomes | `Pamela_Gomes` | `5558` → `emulator-5558` | **restrita** |
+| Gabriel Manfred | `Gabriel_Manfred` | `5560` → `emulator-5560` | signup incompleto — **pediu nº** (SMS) |
+| Alex Romão | `Alex_Romao` | `5562` → `emulator-5562` | **restrita**; identidade Pixel 4 / flame |
+| Fernando Breda | `Fernando_Breda` | `5564` → `emulator-5564` | **restrita**; Pixel 4 / flame; worker `start-worker-fernando.sh` |
+| Roberta Machado | | `5566` | nao_criada |
+| Ana Letícia (`teste@`) | `Ana_Leticia` | `5568` → `emulator-5568` | **restrita** (pediu nº); login `teste@clozzy.com.br` |
 
 Convenção: `Nome_Sobrenome` = `First_Last` sem acento; porta = `5554 + 2×índice` (console; ADB usa `porta+1` no protocolo do emulator).
 

@@ -2,7 +2,8 @@
 
 **Por quê:** referência visual das pinturas/artes mapeadas à tese (era adâmica, caverna, dualidade, gnose, eterno-mutável, unidade).  
 **Fonte:** Wikimedia Commons (domínio público / licenças livres), via `Special:Redirect/file` ou FilePath.  
-**Visão:** [`../../README.md`](../../README.md) · lista textual: conversa / moodboard por capítulo.
+**Visão:** [`../../README.md`](../../README.md).  
+**Galeria com imagem + link à tese:** [`galeria.md`](galeria.md).
 
 ## Baixadas
 

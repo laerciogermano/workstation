@@ -325,18 +325,28 @@ Ver: [NGA — The Human Condition](https://www.nga.gov/collection/art-object-pag
 
 ## Síntese — banner Cap. 1 (Era Adâmica)
 
-### 31. Banner gerado — Era Adâmica
+### 31. Banner gerado — Era Adâmica (asset atual)
 
-**Autor:** gerado (Cursor) a partir de bullets de [`../../f`](../../f) §1 + refs desta galeria · **Ano:** 2026
+**Autor:** gerado (Cursor) · estilo afresco/óleo Alto Renascimento (Michelangelo / Masaccio / Rafael) · **Ano:** 2026
 
 ![Banner Era Adâmica](27-banner-cap-1-era-adamica-gerado.jpg)
 
-**Link:** compõe caverna/sentidos (esq.), encarnação Adão + centelha e vão do véu (centro), prisão na matéria/cidade (dir.), geometria incompleta no céu (metafísica só pelo intelecto). Asset canônico: [`../../assets/banner-cap-1-era-adamica.jpg`](../../assets/banner-cap-1-era-adamica.jpg).
+**Link:** caverna/sentidos; mão divina × Adão + centelha + vão; cidade clássica; geometria no céu. Prompt: [`../../prompts/015-2026-10-31-banner-cap1-pintura-renascentista.md`](../../prompts/015-2026-10-31-banner-cap1-pintura-renascentista.md). Asset: [`../../assets/banner-cap-1-era-adamica.jpg`](../../assets/banner-cap-1-era-adamica.jpg).
+
+---
+
+### 32. Banner Cap. 1 — cópia renascimento
+
+**Autor:** idem 31 · **Ano:** 2026
+
+![Banner renascimento](28-banner-cap-1-renascimento.jpg)
+
+**Link:** mesma geração; arquivo nomeado para rastrear a rodada do prompt 015.
 
 ---
 
 ## Fio único
 
-Queda (1–3) → dualidade e Verbo (4–7) → unidade (8–13) → crítica da substância (14–15) → ciclo (16–20) → gnose e elevação (21–27) → mutável / máscara / linguagem sob © (28–30) → síntese banner cap. 1 (31).
+Queda (1–3) → dualidade e Verbo (4–7) → unidade (8–13) → crítica da substância (14–15) → ciclo (16–20) → gnose e elevação (21–27) → mutável / máscara / linguagem sob © (28–30) → banners cap. 1 (31–32).
 
 **Reverter:** apagar este arquivo; as imagens em [`README.md`](README.md) permanecem.

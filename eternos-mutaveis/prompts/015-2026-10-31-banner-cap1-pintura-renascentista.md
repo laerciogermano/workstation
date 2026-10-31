@@ -80,7 +80,8 @@ Aspect ratio: **16:9**.
 
 ## O que foi feito
 
-- Criado este prompt 015 (pronto para regenerar o banner)
+- Criado este prompt 015
 - Linha na [`timeline.md`](timeline.md)
+- Gerada a imagem com o prompt EN + refs Michelangelo/Masaccio/Rafael/Leonardo → [`../assets/banner-cap-1-era-adamica.jpg`](../assets/banner-cap-1-era-adamica.jpg) · cópias [`../inputs/imagens/27-banner-cap-1-era-adamica-gerado.jpg`](../inputs/imagens/27-banner-cap-1-era-adamica-gerado.jpg) e [`../inputs/imagens/28-banner-cap-1-renascimento.jpg`](../inputs/imagens/28-banner-cap-1-renascimento.jpg)
 
-**Reverter:** apagar este arquivo e a linha 015 da timeline.
+**Reverter:** restaurar o JPG anterior do asset pelo git; apagar este arquivo e a linha 015 da timeline se quiser desfazer o prompt.

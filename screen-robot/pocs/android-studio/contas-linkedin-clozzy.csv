@@ -1,8 +1,8 @@
-data_criacao,nome,email,status,obs
-2026-10-26,Ana Letícia,teste@clozzy.com.br,restrita,pediu numero; foi restrita
-2026-10-29,Jacqueline Lima,jacqueline.lima@clozzy.com.br,restrita,pediu numero; foi restrita
-2026-10-29,Pamela Gomes,pamela.gomes@clozzy.com.br,restrita,restrita
-,Gabriel Manfred,gabriel.manfred@clozzy.com.br,signup_incompleto,pediu numero
-2026-10-30,Alex Romão,alex.romao@clozzy.com.br,restrita,restrita
-2026-10-30,Fernando Breda,fernando.breda@clozzy.com.br,restrita,restrita
-2026-10-31,Roberta Machado,roberta.machado@clozzy.com.br,experiencia_longevidade,AVD Roberta_Machado :5566 (máscara hw.device.name=pixel_4 / Pixel 4); about+email only-me; conta só p/ medir quanto tempo permanece até restrição
+data_criacao,nome,email,status,senha_li,obs
+2026-10-26,Ana Letícia,teste@clozzy.com.br,restrita,,pediu numero; foi restrita
+2026-10-29,Jacqueline Lima,jacqueline.lima@clozzy.com.br,restrita,,pediu numero; foi restrita
+2026-10-29,Pamela Gomes,pamela.gomes@clozzy.com.br,restrita,,restrita
+,Gabriel Manfred,gabriel.manfred@clozzy.com.br,signup_incompleto,,pediu numero
+2026-10-30,Alex Romão,alex.romao@clozzy.com.br,restrita,,restrita
+2026-10-30,Fernando Breda,fernando.breda@clozzy.com.br,restrita,,restrita
+2026-10-31,Roberta Machado,roberta.machado@clozzy.com.br,experiencia_longevidade,in@12345678,AVD Roberta_Machado :5566 (máscara hw.device.name=pixel_4 / Pixel 4); about+email only-me; conta só p/ medir quanto tempo permanece até restrição

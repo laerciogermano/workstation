@@ -4,10 +4,10 @@ SOP para criar um AVD local (Mac) **1:1 com uma caixa `@clozzy.com.br`**, com im
 
 Credenciais das caixas: [`credenciais.md`](../../../../credenciais.md) (§ Caixas `@clozzy.com.br`).
 
-CSV (data, nome, e-mail, status, obs): [`contas-linkedin-clozzy.csv`](contas-linkedin-clozzy.csv).  
-**Antes → depois:** CSV 4 cols (`status`) → 5 cols (`status` + `obs`); reverter = dropar coluna `obs` e restaurar status antigos (Ana/Jacqueline/Alex/Fernando=`ativa`, Gabriel=`signup_incompleto`).
+CSV (data, nome, e-mail, status, senha_li, obs): [`contas-linkedin-clozzy.csv`](contas-linkedin-clozzy.csv).  
+**Antes → depois:** 5 cols → 6 cols (`senha_li` entre `status` e `obs`); reverter = dropar `senha_li`.
 
-**Antes → depois (Roberta):** inventário sem AVD / CSV `nao_criada` → AVD `Roberta_Machado` (`emulator-5566`), máscara **Pixel 4** (`hw.device.name=pixel_4`), LI+about+email only-me; CSV `experiencia_longevidade` (conta só p/ medir tempo até restrição). Rollback: `avdmanager delete avd -n Roberta_Machado` + remover `~/.android/avd/Roberta_Machado.*`; CSV status/obs anteriores.
+**Antes → depois (Roberta):** CSV `experiencia_longevidade` sem senha → `senha_li=in@12345678` (LI). Rollback: limpar `senha_li` da linha Roberta.
 
 ## Inventário atual
 

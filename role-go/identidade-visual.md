@@ -1,101 +1,78 @@
 # RoleGo — Identidade Visual
 
-Extraído dos mockups em [`input/rolego_mvp_completo_dark.pdf`](input/rolego_mvp_completo_dark.pdf) (telas do app) e [`input/rolego_slides_publico.pdf`](input/rolego_slides_publico.pdf) (slides públicos do produto). Serve de referência rápida de cor, tipografia e padrões de UI para telas, protótipo e componentes.
+Fonte de verdade de **logo, cores e tipografia**. Manual HTML/PDF: [`marca/README.md`](marca/README.md) · [card Trello (done)](https://trello.com/c/gU37I2lg) · [card logo](https://trello.com/c/S7jWwUbC).
 
-**Estrutura de card/manual (insumo):** modelo ConectTech v1 em [`input/referencia-marca/README.md`](input/referencia-marca/README.md) — layout A4 e seções; cores/logo RoleGo ficam neste documento.
+**Referência visual (colagem):** [`input/referencia-marca-rolego-colagem-2026-10-31.jpeg`](input/referencia-marca-rolego-colagem-2026-10-31.jpeg) (também em `input/WhatsApp Image 2026-10-31 at 17.08.29.jpeg`).
 
-**Manual HTML/PDF v1:** [`marca/README.md`](marca/README.md) · [card Trello](https://trello.com/c/gU37I2lg) · [card logo](https://trello.com/c/S7jWwUbC)
+**Antes → depois (2026-10-31):** wordmark Poppins com “Role” branco + “Go” ciano→violeta→magenta e pin no “o” → wordmark **Bodoni Moda** inteiro em **lima→coral→magenta**, pin **acima do “e”**. Rollback: commit anterior a esta atualização / PDF antigo anexado no card.
 
 ---
 
 ## 1. Conceito
 
-Tema **dark** (fundo quase preto/azul-marinho), com **acentos neon** em gradiente roxo→azul (marca) e cores neon de apoio (ciano, magenta, verde, amarelo) para diferenciar categorias de feature — visual de app de vida noturna: contraste alto, brilho (glow), bordas finas coloridas.
+Tema **dark** (fundo quase preto), acentos **neon lima + magenta** em gradiente com coral no meio — visual de app de vida noturna / descoberta de eventos. Slogan: **Viva o Rolê**.
 
 ---
 
-## 2. Paleta de cores
+## 2. Logo
 
-### Fundo e superfícies
+- Wordmark **RoleGo** (camelCase) em **Bodoni Moda** ExtraBold Itálico.
+- Preenchimento: gradiente horizontal `#CCFF00 → #E5D430 → #FF9D4D → #EB39BD → #E800F8` (wordmark **inteiro**, sem split Role/Go).
+- **Pin de localização** acima da letra **“e”**, no mesmo gradiente (miolo furado no fundo).
+- Slogan **Viva o Rolê**: Poppins 700 itálico, uppercase, tracking amplo, branco.
+- Ícone do app: **“R”** Bodoni sobre o gradiente de marca.
 
-| Uso | Hex (amostra) | Observação |
-|-----|----------------|------------|
-| Fundo principal (telas do app) | `#050716` – `#0A0F22` | Quase preto, com leve tom azulado |
-| Fundo principal (slides) | `#09091A` | Mesma família, tela cheia |
-| Superfície / card | `#000000` (card), `#0F0F13`, `#1A1A20` | Cards em preto sólido com fio neutro `#1E1E25`; dentro do app, telas e cards em preto `#000` com contorno neon |
-| Texto principal | `#FFFFFF` | Títulos e labels |
-| Texto secundário | cinza claro (~`#9CA3AF`) | Subtítulos, descrições, placeholders |
+### Não fazer
 
-### Gradiente de marca (logo e CTA primário)
-
-| Uso | Hex (amostra) | Observação |
-|-----|----------------|------------|
-| Roxo/violeta (início do gradiente) | `#8749FF`, `#9E19E9`, `#6539CB` | Lado “Role” do logo; base dos botões primários |
-| Azul (fim do gradiente) | `#452EFF`, `#3333FF`, `#3B82F6` | Lado “Go” do logo; base dos botões primários |
-
-O logo **“RoleGo”** e os **botões de ação primária** (“Começar”, “Criar Conta”, “Entrar”, “Permitir sempre”) usam esse gradiente diagonal roxo → azul, em negrito, cantos bem arredondados.
-
-### Cores neon de apoio (por categoria)
-
-| Cor | Hex (amostra) | Uso |
-|-----|----------------|-----|
-| **Ciano / turquesa** | `#00FFFF`, `#06B9BE`, `#03D0D3` | Links, destaque de texto (“segundos”), alertas inteligentes, ícones de localização/app, bordas de botões sociais (Google/Apple) |
-| **Magenta / rosa** | `#FF004C`, `#FF00D1`, `#EC4899` | Barra de destaque de títulos de seção, ícones de chat/social, Instagram, rankings, ênfases fortes |
-| **Verde neon** | `#00FF00` | Modo de Segurança (escudo “SEGURANÇA ATIVA”, localização em tempo real) |
-| **Amarelo / dourado** | `#FFCC00` | Gamificação, selo VIP, coroa, transporte seguro |
-
-Cada categoria de feature usa uma cor neon fixa como “assinatura” (barra lateral do card + ícone), o que funciona como código de cores por tema (segurança = verde, alertas = ciano, gamificação = amarelo, social = magenta).
+Esticar, rotacionar, trocar gradiente/fonte, caixa alta (`ROLEGO`), remover o pin, color sobre lima sólido, split “Role” branco / “Go” neon (legado).
 
 ---
 
-## 3. Tipografia
+## 3. Paleta
 
-- Fonte única: **Poppins** (títulos, textos, botões e legendas). Itálico pesado (800/900) nos títulos para dar movimento.
-- **Títulos de seção**: caixa alta, Poppins ExtraBold Itálico, branco, com uma barra vertical colorida (magenta/ciano/verde/amarelo) à esquerda.
-- **Hero/logo**: texto grande, bold, com preenchimento em gradiente (roxo → azul).
-- **Ênfase dentro de parágrafo**: uma palavra-chave em cor neon (ex.: “segundos” em ciano, “descontos em bares parceiros” em ciano-bold) dentro de texto branco/cinza normal.
-- **Corpo de texto**: branco ou cinza claro, peso regular, tamanho menor.
-- **Labels/legendas** (tabs, badges, categorias): caixa alta, peso semibold, tamanho pequeno.
+| Papel | Hex | Uso |
+|-------|-----|-----|
+| Fundo | `#050508` | telas / manual |
+| Slide | `#0A0612` | banners |
+| Surface | `#121018` / `#1C1824` | cards |
+| Texto | `#FFFFFF` / `#A8A0B4` | principal / secundário |
+| Lima | `#CCFF00` (`#B6E418` deep) | início do gradiente, ênfase, CTA |
+| Amarelo de passagem | `#E5D430` | meio-início do gradiente |
+| Coral | `#FF9D4D` | meio do gradiente (não usar sólido sozinho na UI) |
+| Fúcsia | `#EB39BD` | meio-fim do gradiente |
+| Magenta | `#E800F8` (`#C811CB` deep) | fim do gradiente, glow, match |
 
----
-
-## 4. Padrões de UI
-
-- **Botão primário**: fundo em gradiente ciano → violeta (`#00E5E5 → #8749FF`, como nos banners de `epics.pdf`), texto branco bold, cantos totalmente arredondados (pill). O gradiente roxo → azul fica para logo, ícone do app e chip ativo.
-- **Botão secundário / login social** (Google, Apple): fundo escuro (transparente/surface), borda fina neon (ciano ou magenta), texto branco.
-- **Chips / filtros** (tipo de evento, cidade): formato pill; estado **ativo** = fundo roxo sólido; estado **inativo** = apenas borda cinza fina, fundo transparente.
-- **Cards de feature** (ex.: telas de segurança, gamificação): fundo surface escuro, barra de acento colorida na borda esquerda, ícone na cor do acento.
-- **Cards de destaque** (“VIP Member”, “Segurança Ativa”, “O RoleGo resolve isso”): fundo com leve gradiente/glow, borda neon fina, conteúdo centralizado.
-- **Frames de tela (mockup)**: contorno fino em gradiente neon (rosa/roxo/ciano) simulando borda de smartphone.
-- **Ícones**: estilo flat/outline, sempre na cor neon da categoria (localização = ciano/verde, emergência = magenta, transporte = amarelo).
-- **Divisores**: linha fina, geralmente com leve gradiente ou cor neon sutil, separando header de conteúdo.
+**Gradiente de marca / CTA:** `#CCFF00 → #E5D430 → #FF9D4D → #EB39BD → #E800F8` (CTA pode simplificar para `#CCFF00 → #FF9D4D → #E800F8`). Botão primário: texto **preto** sobre o gradiente.
 
 ---
 
-## 5. Logo
+## 4. Tipografia
 
-- Wordmark **“RoleGo”** em Poppins ExtraBold Itálico.
-- “**Role**” em branco; “**Go**” em gradiente ciano → violeta → magenta (`#00E5E5 → #8749FF → #FF1F7A`). O “o” vira um pin de localização: a letra da própria Poppins com uma ponta embaixo, e o ping ciano do ícone no miolo.
-- Ícone do app: “R” branco sobre o gradiente roxo → azul, com o ping ciano.
-- Usado sozinho (splash) ou acompanhado do slogan: **“Viva o Rolê”**
-- Linha de apoio (proposta de valor): *“Chega de sofrer para decidir onde sair.”*
-- Domínio oficial: **rolego.com.br** · Instagram: **@rolego**
+| Uso | Família | Peso |
+|-----|---------|------|
+| Logo / “R” do ícone | **Bodoni Moda** | 900 italic |
+| Headlines de banner | **Poppins** | 800 italic |
+| Botões, labels | **Poppins** | 700 |
+| Chips / tabs | **Poppins** | 600 |
+| Corpo | **Poppins** | 400 |
+
+Ênfase em frase: uma palavra em lima ou magenta (ex.: “curta”, “swipe”).
 
 ---
 
-## 6. Aplicação rápida (resumo para dev/design)
+## 5. Padrões mínimos de UI
 
-```
-Fundo:              #04050B (telas/banners)  /  #09091A (slides)
-Card:               #000000 (borda #1E1E25) · campos #0F0F13
-Gradiente primário: #8749FF → #452EFF (roxo → azul) — logo/ícone
-Gradiente de ação:  #00E5E5 → #8749FF (ciano → violeta) — botões
-Acento ciano:       #00E5E5 (aprox.)
-Acento magenta:     #FF1F7A (aprox.)
-Acento verde:       #00FF00
-Acento amarelo:     #FFCC00
-Texto principal:    #FFFFFF
-Texto secundário:   #9CA3AF
-```
+- **Botão primário:** pill com gradiente lima→magenta, texto preto bold.
+- **Botão secundário:** fundo dark + borda em gradiente.
+- **Chips de categoria:** pill outline nas cores lima / magenta / coral.
+- **Cards:** surface escura, fio `#2A2434`; glow neon pontual.
 
-> Os valores exatos de hex podem variar levemente por ferramenta/exportação (mockup vs. slide); use as faixas acima como referência de tokens de cor a serem fixados no design system.
+---
+
+## 6. Entrega
+
+| Arquivo | Uso |
+|---------|-----|
+| [`marca/identidade-visual-rolego-v1.html`](marca/identidade-visual-rolego-v1.html) | Manual (6 págs. A4 paisagem) |
+| [`marca/identidade-visual-rolego-v1.pdf`](marca/identidade-visual-rolego-v1.pdf) | PDF |
+| [`marca/identidade-visual-rolego-v1.zip`](marca/identidade-visual-rolego-v1.zip) | HTML + PDF |

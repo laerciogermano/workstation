@@ -2,7 +2,7 @@
 
 - **Card ID:** `6adfa306d2ba6a3e29c5f07d`
 - **URL:** https://trello.com/c/gU37I2lg
-- **Board:** [RoleGo](https://trello.com/b/Qe6mVdfL/rolego) · lista `todo`
+- **Board:** [RoleGo](https://trello.com/b/Qe6mVdfL/rolego) · lista `done`
 
 ## Insumos
 
@@ -32,11 +32,11 @@ Espelha a descrição do card Trello.
 
 ## Entrega
 
-Manual completo (16 páginas, estilo dos banners do `epics.pdf`) em [`../../marca/README.md`](../../marca/README.md):
+Manual essencial (6 páginas: logo, cores, tipografia) em [`../../marca/README.md`](../../marca/README.md), tokens da [colagem](../../input/referencia-marca-rolego-colagem-2026-10-31.jpeg):
 
 - `identidade-visual-rolego-v1.html`
 - `identidade-visual-rolego-v1.pdf`
-- `identidade-visual-rolego-v1.zip` (anexados no card)
+- `identidade-visual-rolego-v1.zip` (anexados no card done)
 
 ## Rollback
 

@@ -38,6 +38,15 @@
 | `25-mandala-amitayus.jpg` | Mandala Amitayus (LACMA) | Ordem simbólica / alfabeto |
 | `27-banner-cap-1-era-adamica-gerado.jpg` | Banner gerado — Era Adâmica | Espelho do asset canônico [`../../assets/banner-cap-1-era-adamica.jpg`](../../assets/banner-cap-1-era-adamica.jpg) |
 | `28-banner-cap-1-renascimento.jpg` | Banner Cap. 1 estilo renascentista | Gerado com prompt [`../../prompts/015-2026-10-31-banner-cap1-pintura-renascentista.md`](../../prompts/015-2026-10-31-banner-cap1-pintura-renascentista.md) |
+| `29-bruegel-torre-de-babel.jpg` | Bruegel — Torre de Babel | Cap. 1: linguagem / Babel |
+| `30-holbein-embaixadores.jpg` | Holbein — Os Embaixadores | Cap. 1: visão deturpada |
+| `31-durer-melancolia-i.jpg` | Dürer — Melancolia I | Cap. 1: insatisfação / só o sólido |
+| `32-friedrich-caminhante-mar-nevoa.jpg` | Friedrich — Caminhante | Cap. 1: fecho / busca |
+| `33-leonardo-virgem-das-rochas.jpg` | Leonardo — Virgem das Rochas | Cap. 1: caverna + luz |
+| `34-rafael-transfiguracao.jpg` | Rafael — Transfiguração | Cap. 1: matéria × ordem |
+| `35-blake-elohim-creating-adam.jpg` | Blake — Elohim Creating Adam | Cap. 1: encarnação |
+| `36-goya-sono-da-razao.jpg` | Goya — Sono da razão | Cap. 1: ignorância inconsciente |
+| `37-caravaggio-vocacao-sao-mateus.jpg` | Caravaggio — Vocação de S. Mateus | Cap. 1: luz na caverna |
 
 ## Não baixadas (direitos autorais)
 

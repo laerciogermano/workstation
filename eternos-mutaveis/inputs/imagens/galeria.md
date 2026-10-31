@@ -289,11 +289,105 @@
 
 ---
 
+## Reforços Era Adâmica (novas refs)
+
+Obras baixadas para enriquecer o cap. 1 ([`../../novo-capitulo-1-claude.md`](../../novo-capitulo-1-claude.md)): linguagem, visão deturpada, insatisfação, caverna/luz, fecho da busca.
+
+### 28. A Torre de Babel
+
+**Autor:** Pieter Bruegel, o Velho · **Ano:** c. 1563
+
+![Torre de Babel](29-bruegel-torre-de-babel.jpg)
+
+**Link:** confusão das línguas = **linguagem contraditória** e mapa herdado sem base lógica. Babel é o emblema do analfabetismo que se perpetua pela fala torta.
+
+---
+
+### 29. Os Embaixadores
+
+**Autor:** Hans Holbein, o Jovem · **Ano:** 1533
+
+![Os Embaixadores](30-holbein-embaixadores.jpg)
+
+**Link:** a caveira anamórfica no chão — o óbvio (luxo, ciência, mapa) esconde o essencial. **Visão deturpada**: só quem muda o ângulo (o intelecto) lê o que os sentidos deixam passar.
+
+---
+
+### 30. Melancolia I
+
+**Autor:** Albrecht Dürer · **Ano:** 1514
+
+![Melancolia I](31-durer-melancolia-i.jpg)
+
+**Link:** intelecto cercado de instrumentos de medida, incapaz de fechar o sentido. **Insatisfação** do homem adâmico: sabe medir o sólido e não alcança o que regeria o todo.
+
+---
+
+### 31. Caminhante sobre o mar de névoa
+
+**Autor:** Caspar David Friedrich · **Ano:** c. 1818
+
+![Caminhante](32-friedrich-caminhante-mar-nevoa.jpg)
+
+**Link:** figura de pé diante do desconhecido — fecho do cap. 1 (“há uma figura de pé… se levantou”). A busca começa quando o homem **vira a cabeça** na caverna.
+
+---
+
+### 32. Virgem das Rochas
+
+**Autor:** Leonardo da Vinci · **Ano:** c. 1491–1508 (versão National Gallery)
+
+![Virgem das Rochas](33-leonardo-virgem-das-rochas.jpg)
+
+**Link:** caverna + luz além da entrada. Eco de Platão/Saenredam: o sagrado está na abertura, não nas sombras do fundo.
+
+---
+
+### 33. Transfiguração
+
+**Autor:** Rafael Sanzio · **Ano:** 1516–1520
+
+![Transfiguração](34-rafael-transfiguracao.jpg)
+
+**Link:** painel partido — baixo: matéria, tumulto, cegueira; alto: ordem luminosa. Espelho da era adâmica: o mesmo mundo, duas leituras.
+
+---
+
+### 34. Elohim Creating Adam
+
+**Autor:** William Blake · **Ano:** 1795
+
+![Elohim Creating Adam](35-blake-elohim-creating-adam.jpg)
+
+**Link:** acoplamento espírito–carne no ato; a serpente já enrola Adão. Encarnação = início da **ignorância** / mortalidade, não só do fôlego.
+
+---
+
+### 35. O sono da razão produz monstros
+
+**Autor:** Francisco de Goya · **Ano:** 1797–1799 (*Caprichos* nº 43)
+
+![Sono da razão](36-goya-sono-da-razao.jpg)
+
+**Link:** ignorância **inconsciente** que se perpetua — quando a razão adormece (ou só mede o sólido), o mapa herdado gera delírio.
+
+---
+
+### 36. Vocação de São Mateus
+
+**Autor:** Caravaggio · **Ano:** 1599–1600
+
+![Vocação de São Mateus](37-caravaggio-vocacao-sao-mateus.jpg)
+
+**Link:** luz que corta a sala escura; o gesto da mão ecoa a Criação de Adão. Poucos viram; a maioria permanece no jogo das moedas (sombras da caverna).
+
+---
+
 ## Não arquivadas (copyright) — só consulta oficial
 
 Arquivos **não** entram nesta pasta (nem no git): vida do autor + 70 anos. Ver no museu/herdeiros; o vínculo à tese fica abaixo.
 
-### 28. A Persistência da Memória
+### 37. A Persistência da Memória
 
 **Autor:** Salvador Dalí · **Ano:** 1931
 
@@ -303,7 +397,7 @@ Ver: [MoMA — The Persistence of Memory](https://www.moma.org/collection/works/
 
 ---
 
-### 29. O Filho do Homem
+### 38. O Filho do Homem
 
 **Autor:** René Magritte · **Ano:** 1964
 
@@ -313,7 +407,7 @@ Ver: [magritte.be](https://www.magritte.be/) (© ADAGP / herdeiros)
 
 ---
 
-### 30. A Condição Humana
+### 39. A Condição Humana
 
 **Autor:** René Magritte · **Ano:** 1933 (variante 1935)
 
@@ -325,7 +419,7 @@ Ver: [NGA — The Human Condition](https://www.nga.gov/collection/art-object-pag
 
 ## Síntese — banner Cap. 1 (Era Adâmica)
 
-### 31. Banner gerado — Era Adâmica (asset atual)
+### 40. Banner gerado — Era Adâmica (asset atual)
 
 **Autor:** gerado (Cursor) · estilo afresco/óleo Alto Renascimento (Michelangelo / Masaccio / Rafael) · **Ano:** 2026
 
@@ -335,9 +429,9 @@ Ver: [NGA — The Human Condition](https://www.nga.gov/collection/art-object-pag
 
 ---
 
-### 32. Banner Cap. 1 — cópia renascimento
+### 41. Banner Cap. 1 — cópia renascimento
 
-**Autor:** idem 31 · **Ano:** 2026
+**Autor:** idem 40 · **Ano:** 2026
 
 ![Banner renascimento](28-banner-cap-1-renascimento.jpg)
 
@@ -347,6 +441,6 @@ Ver: [NGA — The Human Condition](https://www.nga.gov/collection/art-object-pag
 
 ## Fio único
 
-Queda (1–3) → dualidade e Verbo (4–7) → unidade (8–13) → crítica da substância (14–15) → ciclo (16–20) → gnose e elevação (21–27) → mutável / máscara / linguagem sob © (28–30) → banners cap. 1 (31–32).
+Queda (1–3) → dualidade e Verbo (4–7) → unidade (8–13) → crítica da substância (14–15) → ciclo (16–20) → gnose e elevação (21–27) → reforços Era Adâmica (28–36) → © consulta (37–39) → banners (40–41).
 
 **Reverter:** apagar este arquivo; as imagens em [`README.md`](README.md) permanecem.

@@ -2,18 +2,15 @@
 
 Controla um Chrome já rodando com `--remote-debugging-port=9222` (mesmo perfil/cookies).
 
-## Subir o Chrome (ex.: Marcelino)
+## Subir o Chrome (perfis isolados)
 
 ```bash
-"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" \
-  --user-data-dir="$HOME/chrome-profiles/marcelino-jidarir-facebook" \
-  --remote-debugging-address=127.0.0.1 \
-  --remote-debugging-port=9222 \
-  --remote-allow-origins='*' \
-  --no-first-run \
-  --no-default-browser-check \
-  https://bot.sannysoft.com/
+./start-marcelino-jidarir-facebook.sh          # CDP :9222
+./start-laercio-germano.sh                     # CDP :9223
+# opcional URL: ./start-laercio-germano.sh https://bot.sannysoft.com/
 ```
+
+Registro: [`../android-studio/contas-facebook-chrome.csv`](../android-studio/contas-facebook-chrome.csv)
 
 ## Script
 

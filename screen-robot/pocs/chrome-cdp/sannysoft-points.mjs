@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+import { execFileSync } from 'node:child_process';
+
 const CDP = 'http://127.0.0.1:9222';
 const SITE = 'https://bot.sannysoft.com/';
 
@@ -42,7 +44,6 @@ const { result } = await send('Runtime.evaluate', {
 
 for (const line of result.value) console.log(line);
 
-// a.click() via evaluate muitas vezes não navega; usa coordenadas reais + fallback navigate
 const link = await send('Runtime.evaluate', {
   returnByValue: true,
   expression: `(() => {
@@ -52,47 +53,55 @@ const link = await send('Runtime.evaluate', {
     if (!a) return null;
     a.scrollIntoView({ block: 'center' });
     const r = a.getBoundingClientRect();
+    const chromeUI = window.outerHeight - window.innerHeight;
     return {
       href: a.href,
       text: a.innerText.trim(),
-      x: r.x + r.width / 2,
-      y: r.y + r.height / 2,
+      screenX: Math.round(window.screenX + r.x + r.width / 2),
+      screenY: Math.round(window.screenY + chromeUI + r.y + r.height / 2),
+      dpr: window.devicePixelRatio,
+      win: { screenX: window.screenX, screenY: window.screenY, outerHeight: window.outerHeight, innerHeight: window.innerHeight },
+      rect: { x: r.x, y: r.y, w: r.width, h: r.height },
     };
   })()`,
 });
 if (!link.result.value) throw new Error('link Fingerprint Scanner não encontrado');
-const { href, text, x, y } = link.result.value;
-console.log('Fingerprint Scanner =>', text, href);
+const info = link.result.value;
+console.log('coords SO =>', { x: info.screenX, y: info.screenY, href: info.href });
 
-await send('Input.dispatchMouseEvent', {
-  type: 'mousePressed',
-  x,
-  y,
-  button: 'left',
-  clickCount: 1,
-});
-await send('Input.dispatchMouseEvent', {
-  type: 'mouseReleased',
-  x,
-  y,
-  button: 'left',
-  clickCount: 1,
-});
+// traz o Chrome à frente e clica via SO (cliclick)
+execFileSync('osascript', [
+  '-e',
+  'tell application "Google Chrome" to activate',
+]);
+await new Promise((r) => setTimeout(r, 400));
+execFileSync('cliclick', [`c:${info.screenX},${info.screenY}`]);
+console.log('cliclick =>', `c:${info.screenX},${info.screenY}`);
 await new Promise((r) => setTimeout(r, 1500));
 
 let where = await send('Runtime.evaluate', {
   returnByValue: true,
   expression: 'location.href',
 });
-// se o clique abriu outra aba / não mudou, força navegação nesta aba
 if (!String(where.result.value || '').includes('fpscanner')) {
-  console.log('clique não navegou — Page.navigate fallback');
-  await send('Page.navigate', { url: href });
-  await new Promise((r) => setTimeout(r, 2000));
-  where = await send('Runtime.evaluate', {
-    returnByValue: true,
-    expression: 'location.href',
-  });
+  // pode ter aberto outra aba — lista targets
+  const pages = await (await fetch(`${CDP}/json/list`)).json();
+  const fp = pages.find(
+    (t) => t.type === 'page' && String(t.url || '').includes('fpscanner'),
+  );
+  if (fp) {
+    console.log('abriu em outra aba =>', fp.url);
+  } else {
+    console.log('clique SO sem efeito — Page.navigate fallback');
+    await send('Page.navigate', { url: info.href });
+    await new Promise((r) => setTimeout(r, 2000));
+    where = await send('Runtime.evaluate', {
+      returnByValue: true,
+      expression: 'location.href',
+    });
+    console.log('URL atual =>', where.result.value);
+  }
+} else {
+  console.log('URL atual =>', where.result.value);
 }
-console.log('URL atual =>', where.result.value);
 ws.close();

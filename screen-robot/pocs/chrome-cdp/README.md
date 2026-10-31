@@ -25,9 +25,12 @@ node control-chrome.mjs                          # versão com meta/resumo
 node control-chrome.mjs --url https://example.com
 ```
 
-Sem dependências (Node 22+ com `fetch`/`WebSocket` nativos).
+Deps: Node 22+ (`fetch`/`WebSocket`). Clique SO: `brew install cliclick` + permissão Acessibilidade ao Terminal/Cursor.
+
+Fluxo do clique: CDP calcula `screenX/Y` do link → `osascript` ativa Chrome → `cliclick c:x,y`. Se falhar, fallback `Page.navigate`.
 
 ## Caminho inverso
 
 - Parar: fechar a janela do Chrome desse `user-data-dir` ou `pkill -f marcelino-jidarir-facebook`
 - Sem CDP: suba o Chrome **sem** `--remote-debugging-port`
+- Sem clique SO: remover o bloco `cliclick` / voltar só ao `Page.navigate`

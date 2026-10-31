@@ -32,6 +32,8 @@ O usuário cria conta, configura preferências de descoberta e mantém um perfil
 
 Protótipo React das telas: [`web/README.md`](web/README.md) (`npm run dev` em `web/`).
 
+App v0.1 (React + NestJS, com API e banco): [`app/README.md`](app/README.md).
+
 ### Conta e autenticação
 - Criar conta com e-mail, senha e confirmar senha (sem celular no cadastro)
 - Entrar com conta Google

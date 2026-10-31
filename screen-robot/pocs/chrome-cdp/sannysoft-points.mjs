@@ -39,4 +39,17 @@ const { result } = await send('Runtime.evaluate', {
 });
 
 for (const line of result.value) console.log(line);
+
+const click = await send('Runtime.evaluate', {
+  returnByValue: true,
+  expression: `(() => {
+    const a = [...document.querySelectorAll('a')].find((x) =>
+      /fingerprint\\s*scanner/i.test(x.innerText || ''),
+    );
+    if (!a) return { ok: false, reason: 'link não encontrado' };
+    a.click();
+    return { ok: true, href: a.href, text: a.innerText.trim() };
+  })()`,
+});
+console.log('click Fingerprint Scanner =>', click.result.value);
 ws.close();

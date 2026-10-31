@@ -41,7 +41,6 @@ const { result } = await send('Runtime.evaluate', {
     return c.length >= 2 ? c[0] + ' => ' + c.slice(1).join(' | ') : null;
   }).filter(Boolean))`,
 });
-
 for (const line of result.value) console.log(line);
 
 const link = await send('Runtime.evaluate', {
@@ -55,53 +54,16 @@ const link = await send('Runtime.evaluate', {
     const r = a.getBoundingClientRect();
     const chromeUI = window.outerHeight - window.innerHeight;
     return {
-      href: a.href,
-      text: a.innerText.trim(),
-      screenX: Math.round(window.screenX + r.x + r.width / 2),
-      screenY: Math.round(window.screenY + chromeUI + r.y + r.height / 2),
-      dpr: window.devicePixelRatio,
-      win: { screenX: window.screenX, screenY: window.screenY, outerHeight: window.outerHeight, innerHeight: window.innerHeight },
-      rect: { x: r.x, y: r.y, w: r.width, h: r.height },
+      x: Math.round(window.screenX + r.x + r.width / 2),
+      y: Math.round(window.screenY + chromeUI + r.y + r.height / 2),
     };
   })()`,
 });
-if (!link.result.value) throw new Error('link Fingerprint Scanner não encontrado');
-const info = link.result.value;
-console.log('coords SO =>', { x: info.screenX, y: info.screenY, href: info.href });
+const { x, y } = link.result.value || {};
+if (x == null) throw new Error('link Fingerprint Scanner não encontrado');
 
-// traz o Chrome à frente e clica via SO (cliclick)
-execFileSync('osascript', [
-  '-e',
-  'tell application "Google Chrome" to activate',
-]);
+execFileSync('osascript', ['-e', 'tell application "Google Chrome" to activate']);
 await new Promise((r) => setTimeout(r, 400));
-execFileSync('cliclick', [`c:${info.screenX},${info.screenY}`]);
-console.log('cliclick =>', `c:${info.screenX},${info.screenY}`);
-await new Promise((r) => setTimeout(r, 1500));
-
-let where = await send('Runtime.evaluate', {
-  returnByValue: true,
-  expression: 'location.href',
-});
-if (!String(where.result.value || '').includes('fpscanner')) {
-  // pode ter aberto outra aba — lista targets
-  const pages = await (await fetch(`${CDP}/json/list`)).json();
-  const fp = pages.find(
-    (t) => t.type === 'page' && String(t.url || '').includes('fpscanner'),
-  );
-  if (fp) {
-    console.log('abriu em outra aba =>', fp.url);
-  } else {
-    console.log('clique SO sem efeito — Page.navigate fallback');
-    await send('Page.navigate', { url: info.href });
-    await new Promise((r) => setTimeout(r, 2000));
-    where = await send('Runtime.evaluate', {
-      returnByValue: true,
-      expression: 'location.href',
-    });
-    console.log('URL atual =>', where.result.value);
-  }
-} else {
-  console.log('URL atual =>', where.result.value);
-}
+execFileSync('cliclick', [`c:${x},${y}`]);
+console.log('cliclick =>', `c:${x},${y}`);
 ws.close();

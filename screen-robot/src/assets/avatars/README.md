@@ -6,4 +6,6 @@
 
 **Antes → depois:** foto Marcelo (LinkedIn) com BH → retângulo preto cobrindo a linha BH; só CONECTMAX + tagline.
 
+**Antes → depois (ângulo):** crop torto no perfil → JPG/PNG regenerados do logo oficial (`Logo_Oficial-CONECTMAX_branco.png`) em 640×640 nivelado; reaplicado no LI via CDP `--avatar-only`. Rollback: `git checkout HEAD~1 -- src/assets/avatars/conectmax-black.*` ou `conectmax-black.prev.*`.
+
 Rollback: trocar `--avatar` por outro path ou restaurar o JPG a partir do histórico git.

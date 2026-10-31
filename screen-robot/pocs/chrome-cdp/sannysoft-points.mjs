@@ -1,6 +1,4 @@
 #!/usr/bin/env node
-import { execFileSync } from 'node:child_process';
-
 const CDP = 'http://127.0.0.1:9222';
 const SITE = 'https://bot.sannysoft.com/';
 
@@ -52,18 +50,29 @@ const link = await send('Runtime.evaluate', {
     if (!a) return null;
     a.scrollIntoView({ block: 'center' });
     const r = a.getBoundingClientRect();
-    const chromeUI = window.outerHeight - window.innerHeight;
     return {
-      x: Math.round(window.screenX + r.x + r.width / 2),
-      y: Math.round(window.screenY + chromeUI + r.y + r.height / 2),
+      href: a.href,
+      x: r.x + r.width / 2,
+      y: r.y + r.height / 2,
     };
   })()`,
 });
-const { x, y } = link.result.value || {};
-if (x == null) throw new Error('link Fingerprint Scanner não encontrado');
+const info = link.result.value;
+if (!info) throw new Error('link Fingerprint Scanner não encontrado');
 
-execFileSync('osascript', ['-e', 'tell application "Google Chrome" to activate']);
-await new Promise((r) => setTimeout(r, 400));
-execFileSync('cliclick', [`c:${x},${y}`]);
-console.log('cliclick =>', `c:${x},${y}`);
+await send('Input.dispatchMouseEvent', {
+  type: 'mousePressed',
+  x: info.x,
+  y: info.y,
+  button: 'left',
+  clickCount: 1,
+});
+await send('Input.dispatchMouseEvent', {
+  type: 'mouseReleased',
+  x: info.x,
+  y: info.y,
+  button: 'left',
+  clickCount: 1,
+});
+console.log('cdp click =>', { x: info.x, y: info.y, href: info.href });
 ws.close();

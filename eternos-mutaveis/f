@@ -1,0 +1,131 @@
+# 1. Era Adâmica
+
+- O homem encarna: espírito acoplado à matéria; “Criação de Adão” simboliza o início da ignorância espiritual
+- Nasce acostumado e preso ao mundo material/físico — sentidos (visão, audição, olfato…); o palpável parece tudo o que existe
+- Individualiza-se, objetifica a si e ao mundo como identidade/personalidade (corpo com características e comportamentos)
+- Inconsciente da realidade eterna e da origem espiritual; enxerga só um cisco e toma pelo todo (caverna / sombras)
+- Estruturas metafísicas só se percebem pelo intelecto, não pelos sentidos
+- Não compreende origem das decisões, sentido da existência, estrutura fundamental da realidade nem metafísica
+- Ignorância se perpetua; crenças herdadas (sem base lógica nas crianças) moldam o comportamento
+- Linguagem contraditória e mal compreendida; visão deturpada da realidade
+- Insatisfação gera as perguntas: do que é a realidade? Deus existe? há além desta? o que após a morte? eternidade? céu/inferno? o que sou? para onde vou? sentido da vida? o que é vida?
+
+# 2. Busca pela iluminação
+
+- Filosofia responde ao que a experiência sensorial não resolve; religião e ciência também tentam — sem consenso
+- Mesmas perguntas, respostas distintas por tradição
+  - Persas (Zoroastro): dualidade, tensão, imortalidade da alma
+  - Taoísmo: Ying/Yang, dharma
+  - Budismo: roda do Samsara
+  - Hinduísmo: Bhagavad Gita
+  - Egito / hermetismo: o Todo, Corpus Hermeticum, Caibalion (mente, correspondência, polaridade, causa-efeito, fluxo/refluxo, gênero), Hermes Trismegisto
+  - Judaísmo: Salomão, Moisés (“Sou o que sou”), José (símbolos), Verbo/Logos (João 1:1)
+  - Gregos: mito → logos (mito como arquétipo); Pitágoras / formas eternas; Parmênides (nada muda) × Heráclito (tudo muda exceto a mudança; Logos; quem dorme × quem acorda); Sócrates (razão como virtude); Platão (ideias × sentidos; Demiurgo / Timeu); Aristóteles (hilemorfismo, substância, causa primeira / metafísica)
+  - Cristianismo: “assim na Terra como no céu”; Tomás de Aquino; Logos
+  - Gnósticos: libertação do espírito da carne pelo intelecto; Apócrifo de João (Aion, Sophia); demiurgo maligno
+  - Idade Média / Renascimento / Iluminismo: perda e retomada de conhecimento; símbolos; busca da verdade pela razão
+  - Ordens: Maçonaria, Rosa-Cruz
+  - Crítica à metafísica: Kant, Nietzsche; ciência
+  - Jung: arquétipos, inconsciente coletivo, estruturas simbólicas repetidas
+  - Saussure: signo (significante × significado), valor por oposição (“só é porque não é”)
+  - Espiritismo
+- Problemas filosóficos decorrem da ineficiência da linguagem (Whitehead, Russell, Wittgenstein)
+  - Linguagem comum: polimorfismo (mesmo nome, sentidos distintos) e redundância (nomes distintos, mesmo sentido)
+  - Busca de linguagem única / formal: Tractatus (“do que não se pode falar, deve-se calar”; linguagem como limite); depois jogos de linguagem — Wittgenstein V2: não há linguagem formal única que resuma o mundo
+- Dialética: tensão entre opostos; estruturas comuns entre tradições
+- Metafísica permanece em aberto (realismo × idealismo); falta de vias lógicas; ciência ocupa o lugar e foca nos particulares
+- Ciência (visão aristotélica): prova o que não é nos particulares; matemática prova o que é para todos os casos; metafísica estuda o geral pelo intelecto (sem experiência material)
+
+# 3. O inferno (consequências)
+
+- Sem metafísica, o homem roda nos particulares em círculo; não entende símbolos, verbos, conceitos básicos
+- Sem manual da vida: crença deturpada → comportamento deturpado
+- Excesso de informação sem base lógica; excesso de opções e crenças; não enxerga realidade abrangente nem identidade
+- Baile de máscaras: fingem saber; confunde mentes; fala-se do que não se entende
+- Autômato: comportamento definido pelo estado interno/externo
+- Inferno cíclico: conto da mosca; memória que faz esquecer e voltar ao ponto; atores em histórias que se repetem; desejo de ter × tédio de possuir (pêndulo); lembrar é poder
+- Analfabetismo espiritual: mazelas da ignorância — individuais (vida sem sentido), familiares, sociais
+- O homem faz mal ao próximo sem saber que faz mal a si
+- Software espelha a mesma deturpação: modelamos código como enxergamos o mundo
+  - Manutenção ~80% do esforço; mais programadores não resolvem; criar simples é fácil, manter é difícil
+  - Conceitos mal dominados: polimorfismo/isomorfismo, sólido×abstrato, encapsulamento, acoplamento/coesão, imperativo×declarativo, GOF, SOLID
+  - Redundância de formas (paradigmas, linguagens, frameworks, domínios, vícios); curva de aprendizagem alta
+  - Escrita linear obscurece o panorama; OOP aristotélica: estruturas estáticas, sem enxergar ordem/fluxo
+  - Pouco intuitivo vs. outras engenharias; falta blocos/encaixes claros; software é feito de símbolos
+- O problema persiste em espiritualidade, filosofia, linguagem e software
+
+# 4. O conhecimento que liberta (insight)
+
+- A chave da metafísica estava no software: estudo dos abstratos, essencialismo, arquitetura limpa, estrutura do código
+- Problema comum: falta de domínio da linguagem → falta de compreensão da realidade
+- Dominar a linguagem → dominar software, filosofia e realidade
+- Há mais filosofia em programação do que se imagina (forma×matéria, classe×instância; formas eternas dos filósofos)
+- Mesma cadeia em existencialismo, filosofia e software: problema → motivo (não compreende realidade/identidade/linguagem) → solução (resolver linguagem → metafísica → gnose)
+- Resolvendo a linguagem, resolve-se software, filosofia e existência
+
+# 5. O erro
+
+- Aristóteles: teoria da substância (forma + matéria) acopla verbo ao objeto
+- Correção: objetos não possuem verbos; verbos possuem objetos — desacoplar movimento e estado
+- Impacto na OOP: seres com características e mudanças; estados e comportamentos; espírito acorrentado à carne; movimento acorrentado ao estado; classe×instância, forma×conteúdo
+- Foco nos estados; ignorância do verbo
+- Polimorfismo do símbolo misturando verbo e estado; linguagem deturpa comportamento
+- Ilusão da identidade: paradoxo do barbeiro (Russell) — ao separar verbo e objeto, João não é “barbeiro e cliente” ao mesmo tempo; o papel é do comportamento, não do indivíduo acoplado
+- Paradoxo de Teseu, individualização na infância, ego, foco nos entes: ator carrega carmas dos personagens; decisões pelo estado → mesmos erros → sofrimento contínuo
+- Não se pode “carnificar” o espírito; matéria e movimento são substâncias distintas
+
+# 6. A gnose (conhecimento secreto / acesso)
+
+- Realidade é dual; trindade como cortina de fumaça da dualidade
+- Linguagem = mudança de estado; descreve e simula a realidade; limite da consciência
+- Existe plano invisível aos sentidos (espiritual/metafísico): agente processador; só pelo intelecto; ordena o que é, foi e será
+- Retorno a Platão: separar verbo e objeto; transcendência pelo desacoplamento
+- Dualidade / história da criação: para ser, o não-ser; contraste (tela preta + ponto branco); sem diferença, nada se percebe; unanimidade absoluta é invisível
+- Qualidades no mínimo binárias; significado referencial; o ser não se define a si — o não-ser o define por contraste
+- Pares: significante×significado, qualidade×critério, luz×sombra, estado×movimento, ato×potência, devir×ser, mutável×eterno, objeto×verbo, matéria×forma, físico×metafísico, polimórfico×isomórfico, saída×entrada, macho×fêmea, sólido×abstrato, acoplamento×coesão, dedução×indução, imperativo×declarativo, particular×geral, privado×público, caos×ordem, efeito×causa, imperfeito×perfeito
+- Todo elemento/qualidade/critério pertence a uma história/movimento; um elemento só contém uma qualidade por critério
+- Movimento e estado: tudo muda, exceto a mudança; estado se mede/vê; movimento é invisível, eterno, transforma; objeto é transformado; verbo transforma; lado oculto = plano das mudanças
+- Ser (não se cria/destrói, imutável) × estar (cria-se/destrói, mutável); eternos × temporais
+- Sólido × abstrato: abstratos = espaços dos verbos (moldes isomórficos); sólido = componente que preenche; princípio de gênero (macho sólido / fêmea abstrato)
+- Ontologia: estudo do ser; da dualidade nasce o símbolo; elemento = menor unidade numa história (pode ser sólido/abstrato, estado/verbo)
+- Forma × matéria: formas eternas (não criadas/destruídas), criadas pelos verbos/histórias; arquétipos no inconsciente coletivo (Jung)
+- Identidade: navio de Teseu — identidade no espaço/história, não no componente
+- Dedução (geral→particular: quais elementos preenchem a história) × indução (particular→geral: quais histórias o elemento preenche)
+- Imperativo: controle do fluxo, sujeito, movimento induzido × Declarativo: sem controle do fluxo, inversão de controle / protocolo
+- Fluxo / ordem / Logos: relação entre verbos; verbo fractal (verbo de verbos); metafísica = estudo do plano das mudanças
+- Universo como autômato: dado um estado, um movimento; regras imutáveis
+
+# 7. Perfeição
+
+- Resolução atravessa linguagem, software, filosofia, espiritualidade, existencialismo
+- Histórias (verbos) = padrões eternos; objetos = elementos mutáveis; reutilização com mesmos padrões (música/filme)
+- História = menor unidade fundamental da realidade; o que aconteceu voltará; o que nunca ocorreu não ocorrerá; tudo é estado e mudança
+- Software: mesmas regras independentes de hardware, SO, linguagem, paradigma ou projeto; roteiro imutável, elementos mudam; bom programador conhece do que o software é feito e a filosofia que o sustenta
+- Risco: fascínio pelo perfeito → sentimento de superioridade, julgamento ao próximo, nova queda
+
+# 8. A imperfeição
+
+- Somos todos os mesmos; ao condenar o próximo, condenamo-nos
+- Mundo do acoplamento; natureza imperfeita do homem (carroça alada / caverna de Platão; crucificação)
+- Conhecer o imperfeito; reduzir danos; honrar quem é puro ou próximo disso
+- Sentimento compartilhado
+
+# 9. Superação adâmica (equilíbrio)
+
+- Domínio da metafísica e dos princípios para controlar a “máquina” e viver bem; moderação; nem só físico nem só “espiritual” abstrato
+- Transcendência da matéria; compreender eternos mutáveis; romper ciclo desejo/tédio; morte do ego; libertação do ciclo
+- Responde morte, céu, inferno, eternidade; ajusta lentes de linguagem, filosofia e software
+- Observar histórias na natureza; aprender por reprodução; usar o verbo a favor próprio e alheio
+- Estado define o movimento: configurar ambiente; partir de onde parou; controle da mente; escolher o que pensar; plano; esfera polida; saber por que se deseja; atitudes independentes das emoções
+- Atores em papéis já escritos → assumir papel de autor (arquétipos); senhor do destino
+- Prática: 20 minutos/dia; pense como se já fosse e serás; em tudo que focar, cresce; todo acoplamento/excesso será punido; lida-se com situações, não com “pessoas” isoladas
+- Consciência una: todos somos os mesmos; Deus como exemplo; gozar a eternidade; conciliação dos eternos mutáveis
+- Superação: libertação do espírito da carne pela gnose; compreender estados/histórias que se repetem; autor × ator; eternidade no presente; arquétipos como abstratos com características
+- Proposta: continuidade a Russell/Whitehead; linguagem unificada possível; ponto de partida para discussão perdida
+- Cadeia final: resolver linguagem → software → filosofia → questões existenciais/espirituais (cosmovisão)
+
+# Referências
+
+- Uma Visão Filosófica Metafísica Ontológica de um Programador | Medium — Laércio Germano
+- Tratado Filosófico Metafísico Ontológico | Medium — Laércio Germano
+- https://github.com/laerciogermano/flow-oriented-programming

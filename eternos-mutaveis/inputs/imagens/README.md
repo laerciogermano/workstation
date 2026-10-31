@@ -36,6 +36,7 @@
 | `22-bhavacakra-roda-da-vida.jpg` | Bhavacakra — Roda da vida | Samsara / inferno cíclico |
 | `23-arvore-da-vida-cabala.png` | Árvore da Vida (cabala) | Cadeia Uno → matéria / Logos |
 | `25-mandala-amitayus.jpg` | Mandala Amitayus (LACMA) | Ordem simbólica / alfabeto |
+| `27-banner-cap-1-era-adamica-gerado.jpg` | Banner gerado — Era Adâmica | Síntese visual dos bullets de [`../../f`](../../f) §1 + refs desta pasta; asset canônico: [`../../assets/banner-cap-1-era-adamica.jpg`](../../assets/banner-cap-1-era-adamica.jpg) |
 
 ## Não baixadas (direitos autorais)
 

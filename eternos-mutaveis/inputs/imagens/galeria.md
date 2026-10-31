@@ -323,8 +323,20 @@ Ver: [NGA — The Human Condition](https://www.nga.gov/collection/art-object-pag
 
 ---
 
+## Síntese — banner Cap. 1 (Era Adâmica)
+
+### 31. Banner gerado — Era Adâmica
+
+**Autor:** gerado (Cursor) a partir de bullets de [`../../f`](../../f) §1 + refs desta galeria · **Ano:** 2026
+
+![Banner Era Adâmica](27-banner-cap-1-era-adamica-gerado.jpg)
+
+**Link:** compõe caverna/sentidos (esq.), encarnação Adão + centelha e vão do véu (centro), prisão na matéria/cidade (dir.), geometria incompleta no céu (metafísica só pelo intelecto). Asset canônico: [`../../assets/banner-cap-1-era-adamica.jpg`](../../assets/banner-cap-1-era-adamica.jpg).
+
+---
+
 ## Fio único
 
-Queda (1–3) → dualidade e Verbo (4–7) → unidade (8–13) → crítica da substância (14–15) → ciclo (16–20) → gnose e elevação (21–27) → mutável / máscara / linguagem sob © (28–30).
+Queda (1–3) → dualidade e Verbo (4–7) → unidade (8–13) → crítica da substância (14–15) → ciclo (16–20) → gnose e elevação (21–27) → mutável / máscara / linguagem sob © (28–30) → síntese banner cap. 1 (31).
 
 **Reverter:** apagar este arquivo; as imagens em [`README.md`](README.md) permanecem.

@@ -9,7 +9,7 @@ Imagens da obra.
 | Arquivo | Uso | Conteúdo |
 |---------|-----|----------|
 | `banner-cap-0-abertura.jpg` | Cap. 0 em [`artigo.md`](../artigo.md) | Figura solitária olhando perguntas douradas eternas; à direita, elas viram malha/cubo wireframe (programação como chave) |
-| `banner-cap-1-era-adamica.jpg` | Cap. 1 em [`artigo.md`](../artigo.md) | Figura de terra ajoelhada com uma centelha dourada nas mãos; cosmos e geometria sagrada ao fundo, vistos só em parte (espírito encarnado, ignorância estrutural) |
+| `banner-cap-1-era-adamica.jpg` | Cap. 1 em [`artigo.md`](../artigo.md) | Esquerda: caverna / sombras (sentidos). Centro: mão divina × Adão de barro + centelha (encarnação / véu). Direita: cidade-tela (véu material). Céu: geometria incompleta + ouroboros (metafísica só pelo intelecto). Paleta índigo/dourado/ciano; sem texto. Refs: Michelangelo Adão, Saenredam caverna, Masaccio expulsão, Fludd/Vitrúvio. Cópia em [`../inputs/imagens/27-banner-cap-1-era-adamica-gerado.jpg`](../inputs/imagens/27-banner-cap-1-era-adamica-gerado.jpg) |
 | `banner-cap-2-busca-por-respostas.jpg` | Cap. 2 em [`artigo.md`](../artigo.md) | Trilha dourada de símbolos (chama persa, yin-yang, roda, olho egípcio, caduceu, coluna grega, ouroboros, esquadro e compasso, livro) seguida por um buscador com lanterna |
 | `banner-cap-3-inferno-ciclico.jpg` | Cap. 3 em [`artigo.md`](../artigo.md) | Anel de figuras idênticas repetindo o mesmo caminho; no centro, dois polos em tensão (desejo × tédio); brilho de brasa no horizonte |
 | `banner-cap-4-conhecimento-que-liberta.jpg` | Cap. 4 em [`artigo.md`](../artigo.md) | Portal de pedra aberto para a luz; corrente se desfazendo em faíscas douradas (gnose liberta); céu com geometria |

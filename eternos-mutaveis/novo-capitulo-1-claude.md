@@ -13,7 +13,7 @@ Olhe para o centro da imagem que abre este capítulo.
 
 Há um homem ajoelhado sobre a rocha, nu, a pele da mesma cor da terra em que se apoia. Do céu, envolto num manto vermelho e cercado de anjos, Deus avança e estende o braço. Do dedo divino nasce uma centelha, e o homem a recebe entre as mãos em concha, com cuidado, quase com reverência. É o instante exato do encontro. Por um momento, ele ainda olha para quem lhe deu a luz.
 
-Mas olhe ao redor dele. À esquerda, dentro de uma caverna, outros homens estão sentados no escuro. Uns olham para o chão, outros para o vazio, outros para dentro de si. Atrás deles, numa abertura da rocha, há anjos voando numa luz dourada — e nenhum deles se vira para ver. À direita, um jovem já se levantou. Ele caminha de costas para a cena, rumo a uma cidade de pedra, torres e muralhas. E no alto, quase apagados no céu rachado do afresco, há círculos e linhas que ninguém na cena está olhando: uma geometria que parece sustentar o céu, mas que ficou incompleta — como um desenho que ainda espera ser lido.
+Ao redor dele, porém, a cena é outra. À esquerda, dentro de uma caverna, outros homens estão sentados no escuro. Uns olham para o chão, outros para o vazio, outros para dentro de si. Atrás deles, numa abertura da rocha, há anjos voando numa luz dourada — e nenhum deles se vira para ver. À direita, um jovem já se levantou. Ele caminha de costas para a cena, rumo a uma cidade de pedra, torres e muralhas. E no alto, quase apagados no céu rachado do afresco, há círculos e linhas que ninguém na cena está olhando: uma geometria que parece sustentar o céu, mas que ficou incompleta — como um desenho que ainda espera ser lido.
 
 Este capítulo é sobre esse homem. Ele não é personagem de um mito antigo. Ele é você, eu, quase todos que conhecemos. Ele tem nome, documento, profissão, preferências e opiniões. Acorda, trabalha, deseja, se cansa, dorme. E carrega nas mãos uma luz que, em pouco tempo, não saberá mais de onde veio.
 
@@ -43,7 +43,9 @@ Leia essa cena como metáfora, não como crônica.
 
 A *Criação de Adão* simboliza a **encarnação**. Encarnar é exatamente o que a palavra diz: entrar na carne. É o **acoplamento do espírito à matéria** — algo que não é físico passa a habitar algo que é. Um sopro entra no barro. Uma centelha cai numa palma de terra.
 
-Mas a mesma imagem simboliza outra coisa, menos celebrada: o **início da ignorância espiritual**. No instante em que o espírito se acopla à matéria, ele se esquece da origem. O vão entre os dedos é o véu. Do lado de lá está a fonte; do lado de cá, um corpo que acaba de abrir os olhos e não se lembra de nada.
+Mas a mesma imagem simboliza outra coisa, menos celebrada: o **início da ignorância espiritual**. Aqui está a primeira premissa deste livro, e convém apresentá-la como premissa, não como fato já demonstrado: no instante em que o espírito se acopla à matéria, ele se esquece da origem.
+
+Por que a matéria produziria esquecimento? A resposta que proponho — e que os capítulos seguintes terão de sustentar — é que, ao encarnar, o espírito passa a conhecer pelas portas do corpo. O que não entra por essas portas não é registrado, e a origem não entra por nenhuma delas. A lembrança não é apagada; o novo instrumento de conhecer é que não tem como alcançá-la. O vão entre os dedos é o véu. Do lado de lá está a fonte; do lado de cá, um corpo que acaba de abrir os olhos e não se lembra de nada.
 
 Toda a nossa história começa nesse vão. E muitos passam a vida inteira sem perceber que ele existe.
 
@@ -95,7 +97,11 @@ Preso ao que os sentidos mostram, o homem faz um movimento que parece natural e 
 
 Depois de se separar, ele **objetifica a si e a tudo**. Torna-se uma identidade, uma personalidade: **um corpo dotado de características e comportamentos**. "Sou alto. Sou tímido. Sou brasileiro. Sou assim e sempre fui assim." E faz o mesmo com tudo o que encontra. A árvore vira um objeto com tronco, galhos e folhas. O vizinho vira um objeto com nome, defeitos e manias. O mundo inteiro vira um inventário de coisas encerradas em si mesmas, cada uma com seus atributos, cada uma separada das demais.
 
-Esse recorte parece uma descrição da realidade. Não é. É **um modo de ler** a realidade — tão antigo e tão repetido que esquecemos que é uma leitura. E, como veremos ao longo deste livro, é um modo de ler que custa caro: custa na forma como nos relacionamos, na forma como sofremos e até na forma como construímos as máquinas que hoje organizam a vida.
+Esse recorte parece uma descrição da realidade. Não é. É **um modo de ler** a realidade — tão antigo e tão repetido que esquecemos que é uma leitura.
+
+O problema não está em distinguir. Distinguir é necessário: sem reconhecer que a árvore não é o vizinho, não se pensa coisa alguma. O problema está em tomar cada coisa como se existisse sozinha, encerrada nos próprios atributos, esquecendo as relações, os processos e as trocas que a fazem ser o que é. A árvore não é só tronco, galhos e folhas. É também a chuva que a alimenta, a luz que ela converte, a semente que foi e a lenha que será. Reconhecer um indivíduo é legítimo; isolá-lo do resto é que é a leitura adâmica.
+
+E, como veremos ao longo deste livro, é um modo de ler que custa caro: custa na forma como nos relacionamos, na forma como sofremos e até na forma como construímos as máquinas que hoje organizam a vida.
 
 No banner deste capítulo, é o jovem do lado direito. Ele recebeu a mesma luz que o homem ajoelhado, mas já não olha para ela. Deu as costas à mão que o criou e caminha, decidido, em direção à cidade — onde terá um nome, uma casa, uma função e uma imagem de si.
 
@@ -117,9 +123,9 @@ Se alguém lhes dissesse que há um fogo atrás deles, e um mundo inteiro lá fo
 
 Na gravura de Saenredam, a caverna está cheia. À direita, uma multidão se aperta, aponta, gesticula, discute, entretida com as sombras das figuras que desfilam sobre um muro. Ninguém parece infeliz. É isso que torna a prisão tão eficiente: ela é confortável. As sombras são interessantes. À esquerda, um pequeno grupo se afastou da multidão e conversa perto de uma abertura na rocha, por onde entra a luz de fora. São poucos.
 
-No alto da gravura, o artista gravou em latim um versículo do Evangelho de João: *Lux venit in mundum et dilexerunt homines magis tenebras quam lucem* — "A luz veio ao mundo, e os homens amaram mais as trevas do que a luz" (João 3:19). Não porque a luz lhes fosse negada, mas porque as sombras eram familiares.
+No alto da gravura, o artista gravou em latim um versículo do Evangelho de João: *Lux venit in mundum et dilexerunt homines magis tenebras quam lucem* — "A luz veio ao mundo, e os homens amaram mais as trevas do que a luz" (João 3:19). A luz não lhes foi negada; as sombras é que eram familiares.
 
-Somos esses homens. As sombras são o mundo material; o que as projeta está atrás de nós.
+Platão usava essa imagem para falar da distância entre a opinião e o conhecimento, entre as coisas sensíveis e as Formas que elas apenas imitam. A leitura que faço aqui parte da dele, mas não pretende ser a dele: é uma apropriação. Somos esses homens. As sombras são o mundo material; o que as projeta está atrás de nós.
 
 O homem adâmico é **inconsciente da realidade eterna e da sua origem espiritual**. Ele enxerga apenas a matéria. Enxerga **um cisco** da realidade e toma esse cisco pelo todo. Não porque seja tolo, mas porque nunca virou a cabeça.
 
@@ -129,7 +135,7 @@ O homem adâmico é **inconsciente da realidade eterna e da sua origem espiritua
 
 Leonardo pintou outra caverna. Na *Virgem das Rochas*, Maria, um anjo e duas crianças estão reunidos dentro de uma gruta escura, entre pedras e plantas úmidas. Mas a gruta não é fechada: ela se abre em fendas por onde se vê, ao longe, uma paisagem azul de água e montanhas. O sagrado não está no fundo da rocha. Está no ponto exato em que a escuridão se abre para a luz.
 
-A caverna, portanto, não é só prisão. É também o lugar onde a luz pode ser percebida pela primeira vez. Ela tem saídas. Só não as vê quem nunca vira a cabeça.
+A caverna, portanto, não é só prisão. É também o lugar onde a luz pode ser percebida pela primeira vez. Ela tem saídas. Só não as vê quem continua de frente para a parede.
 
 ![Vocação de São Mateus, Caravaggio, 1599–1600](inputs/imagens/37-caravaggio-vocacao-sao-mateus.jpg)
 
@@ -139,7 +145,7 @@ Caravaggio levou a caverna para dentro de uma sala comum. Cinco homens estão se
 
 Repare nas reações. Um dos homens à mesa ergue o rosto e leva a mão ao peito, como quem pergunta: *eu?* Outros olham, desconfiados. Mas os dois da ponta esquerda nem levantam a cabeça. Continuam curvados sobre o dinheiro, contando. A luz passou a um palmo deles.
 
-Assim é com quase todos nós. A luz não falta; ela entra o tempo todo pela janela. Falta erguer os olhos da mesa.
+Assim é com quase todos nós. A luz não falta; ela entra pela janela. Falta erguer os olhos da mesa.
 
 ---
 
@@ -149,7 +155,7 @@ Assim é com quase todos nós. A luz não falta; ela entra o tempo todo pela jan
 
 *William Blake, Newton, 1795.*
 
-Seria confortável pensar que a caverna ficou no passado — que a ciência, a técnica e a informação nos libertaram dela. Olhe de novo para o lado direito do banner, para a cidade aonde o jovem se dirige: torres, muralhas, casas empilhadas, a obra das mãos humanas. A caverna não desapareceu. Ela ganhou torres.
+Seria confortável pensar que a caverna ficou no passado — que a ciência, a técnica e a informação nos libertaram dela. No lado direito do banner está a cidade aonde o jovem se dirige: torres, muralhas, casas empilhadas, a obra das mãos humanas. A caverna não desapareceu. Ela ganhou torres.
 
 William Blake pintou Isaac Newton nu, sentado numa rocha no fundo do mar, curvado sobre um papel, medindo uma figura com um compasso. O corpo é magnífico, a concentração é total. E ele está de costas para tudo o que é vivo ao seu redor. Blake não desprezava a razão; desprezava a razão que só sabe medir o que é sólido e esquece todo o resto.
 
@@ -163,17 +169,17 @@ A cidade de luz fria não é o oposto da caverna. É a caverna com eletricidade.
 
 ## O que os olhos não alcançam
 
-Volte, agora, para o céu do banner. No alto, à direita, quase confundida com as nuvens e as rachaduras do afresco, há uma geometria: círculos, linhas, proporções. Ela está lá o tempo inteiro. Nenhuma figura da cena olha para ela.
+No alto do banner, à direita, quase confundida com as nuvens e as rachaduras do afresco, há uma geometria: círculos, linhas, proporções. Nenhuma figura da cena olha para ela.
 
-Há estruturas igualmente presentes na realidade, mas **invisíveis aos olhos**. As religiões as chamam de espirituais. Os filósofos as chamam de metafísicas. Elas ordenam tudo o que é, foi e será. A experiência material é produto delas, não o contrário. O que se vê não é o que rege.
+Ela é a imagem da tese que este livro vai propor: há estruturas presentes na realidade, mas **invisíveis aos olhos**. As religiões as chamam de espirituais; os filósofos, de metafísicas. A proposta é que elas ordenam tudo o que é, foi e será, e que a experiência material é produto delas, não o contrário. Isso ainda não está demonstrado aqui; é o que os capítulos seguintes terão de conquistar. Por ora, o passo é mais modesto, e mais firme: mostrar que aquilo que os sentidos alcançam não esgota aquilo que se pode conhecer.
 
-Isso pode parecer místico. Não é. Pense em algo simples.
+Esse passo não exige fé nenhuma. Pense em algo simples.
 
 Você nunca viu o número três. Viu três maçãs, três pedras, três dedos. Mas o *três* — aquilo que as três maçãs e as três pedras têm em comum — nenhum olho jamais viu. E, no entanto, você tem absoluta certeza de que ele existe, de que é sempre o mesmo, de que três mais três será seis hoje, amanhã e daqui a mil anos, em qualquer lugar do universo. As maçãs apodrecem; o três permanece.
 
 Pense no movimento. Você vê a bola aqui e, depois, a bola ali. Vê posições, vê estados. Mas o movimento em si — aquilo que levou a bola de um ponto a outro — não tem cor, não tem peso, não tem forma. Você o deduz. Você o *compreende*.
 
-Essas são pequenas amostras de um mundo inteiro que não se vê, mas se lê. **As estruturas metafísicas só se percebem pelo intelecto, não pelos sentidos.** É por isso que o homem preso aos sentidos não as encontra: procura com os olhos o que só a razão alcança. É como tentar ouvir uma cor.
+O três e o movimento não provam, sozinhos, que exista um espírito ou uma eternidade. Provam algo anterior e indispensável: que há coisas que conhecemos com toda a segurança sem jamais tê-las visto. Não se veem; se leem. E, se existem estruturas metafísicas, elas são desse tipo: **só se percebem pelo intelecto, não pelos sentidos.** É por isso que o homem preso aos sentidos não as encontra: procura com os olhos o que só a razão alcança. É como tentar ouvir uma cor.
 
 ![Os Embaixadores, Hans Holbein, o Jovem, 1533](inputs/imagens/30-holbein-embaixadores.jpg)
 
@@ -181,11 +187,11 @@ Essas são pequenas amostras de um mundo inteiro que não se vê, mas se lê. **
 
 Hans Holbein pintou essa dificuldade num único quadro. Dois homens jovens, ricos e cultos posam ao lado de uma estante. Entre eles está tudo o que o seu tempo sabia: um globo celeste, um globo terrestre, relógios de sol, instrumentos de astronomia, um livro de aritmética, um alaúde, um hinário. É o retrato do conhecimento humano no seu auge.
 
-E no chão, bem na frente deles, há uma mancha estranha, alongada, que não parece nada. Quem olha o quadro de frente vê apenas uma forma torta. Mas quem se coloca de lado, quase encostado na parede, vê a mancha se transformar: é uma **caveira**. Ela esteve ali o tempo todo, no centro da cena, e só aparece para quem muda o ângulo de visão. No canto superior esquerdo, quase escondido atrás da cortina verde, há ainda um pequeno crucifixo. Também passa despercebido.
+E no chão, bem na frente deles, há uma mancha estranha, alongada, que não parece nada. Quem olha o quadro de frente vê apenas uma forma torta. Mas quem se coloca de lado, quase encostado na parede, vê a mancha se transformar: é uma **caveira**. Ela ocupa o centro da cena e só aparece para quem muda o ângulo de visão. No canto superior esquerdo, quase escondido atrás da cortina verde, há ainda um pequeno crucifixo. Também passa despercebido.
 
-O quadro inteiro é uma lição sobre o mundo adâmico: o que está em primeiro plano — o luxo, os instrumentos, a ciência — esconde o que é essencial, a morte e o sagrado. Não porque o essencial esteja ausente, mas porque está pintado num ângulo que os olhos acostumados não alcançam. Para vê-lo, é preciso se deslocar. Na vida, esse deslocamento é feito pelo intelecto.
+O quadro inteiro é uma lição sobre o mundo adâmico: o que está em primeiro plano — o luxo, os instrumentos, a ciência — esconde o que é essencial, a morte e o sagrado. O essencial não está ausente; está pintado num ângulo que os olhos acostumados não alcançam. Para vê-lo, é preciso se deslocar. Na vida, esse deslocamento é feito pelo intelecto.
 
-A palavra *metafísica* vem do grego: *meta*, além; *physis*, natureza física. É o estudo do que está além do físico. Mas "além" não significa "longe". Esse plano não está em outro lugar, escondido atrás das nuvens. Ele divide espaço com a matéria. Está aqui, agora, nesta página, na mão que a segura. Só não é visível.
+A palavra *metafísica* vem do grego: *meta*, além; *physis*, natureza física. É o estudo do que está além do físico. Mas "além" não significa "longe". O plano que este livro investiga não está em outro lugar, escondido atrás das nuvens. Ele divide espaço com a matéria. Está aqui, agora, nesta página, na mão que a segura. Só não é visível.
 
 A geometria do banner está incompleta não porque falte algo no céu, mas porque falta algo em quem olha: as letras para lê-la.
 
@@ -193,7 +199,7 @@ A geometria do banner está incompleta não porque falte algo no céu, mas porqu
 
 ## Quatro ignorâncias
 
-Sem acesso a esse plano, o homem vive uma série de ignorâncias encadeadas. Não são falhas de caráter; são consequências de ler só metade do mundo.
+Sem acesso a esse plano, o homem vive uma série de ignorâncias encadeadas. Não são falhas de caráter; são consequências de ler só metade do mundo. Três delas ele sente na própria vida. A quarta ele nem percebe — e é ela que sustenta as outras três.
 
 **Ele não compreende a origem das próprias decisões.** Escolhe, reage, deseja, se irrita, se apaixona — e acredita que é ele quem decide. Raramente pergunta de onde vem aquilo que o move. Por que desejo o que desejo? Por que reajo sempre da mesma forma ao mesmo tipo de situação? Sem essa pergunta, a liberdade é apenas uma sensação.
 
@@ -201,7 +207,7 @@ Sem acesso a esse plano, o homem vive uma série de ignorâncias encadeadas. Nã
 
 **Ele não compreende a estrutura fundamental da realidade.** Conhece os objetos, mas não aquilo de que o real é feito. Sabe o nome de mil coisas e não sabe o que é uma coisa.
 
-**Ele não conhece a metafísica.** E é essa a ignorância que sustenta as outras três, porque a metafísica é justamente o estudo que daria acesso ao resto.
+E, por baixo das três, **ele não conhece a metafísica.** Esta não está no mesmo nível das outras: é o fundamento delas. As três primeiras são perguntas que a vida lhe faz; a quarta é a ausência do estudo que permitiria respondê-las. Enquanto ela permanecer, as outras não têm por onde ser enfrentadas.
 
 Aqui é preciso cuidado com uma conclusão apressada, muito comum em nossa época. Diante da dificuldade de explicar Deus, o espírito ou a eternidade, muitos concluem que essas coisas não existem. Mas **a incapacidade de explicar Deus não prova a inexistência de Deus.** Prova apenas que ainda não aprendemos a ler.
 
@@ -241,11 +247,13 @@ René Magritte pintou, em 1933, um quadro chamado *A Condição Humana*. Diante 
 
 Esse quadro descreve com precisão o nosso último problema. Para pensar o mundo, o homem dispõe de uma única ferramenta: a **linguagem**. Ela é a tela diante da janela. Tudo o que pensamos sobre a realidade, pensamos através dela. E, de tanto usá-la, confundimos a tela com a paisagem.
 
-O problema é que **a linguagem que usamos é contraditória e mal compreendida**.
+O problema não é que a linguagem seja defeituosa. É que **a usamos sem compreender como ela funciona**.
 
-A mesma palavra significa coisas diferentes conforme quem fala. "Manga" é fruta e é parte da camisa. "Amor" é o que sente a mãe pelo filho, o que sente um adolescente por uma fotografia e o que alguém sente por uma marca de café. E, ao contrário, palavras diferentes dizem a mesma coisa sem que se perceba: o que um chama de *alma*, outro chama de *mente*, outro de *consciência*, outro de *espírito* — e cada um jura que está falando de algo distinto.
+A mesma palavra significa coisas diferentes conforme quem fala. "Manga" é fruta e é parte da camisa — e isso não confunde ninguém, porque a feira e a alfaiataria resolvem a dúvida. Com as palavras que mais importam, porém, o contexto já não basta. "Amor" é o que sente a mãe pelo filho, o que sente um adolescente por uma fotografia e o que alguém sente por uma marca de café. E, ao contrário, palavras diferentes rondam a mesma região sem que se perceba: o que um chama de *alma*, outro chama de *mente*, outro de *consciência*, outro de *espírito* — e ninguém sabe dizer se fala de uma coisa só, de quatro coisas distintas ou de quatro coisas que se tocam.
 
-Fala-se de Deus, de eternidade, de céu e de inferno, e cada ouvinte ouve outra coisa. Discute-se por séculos sem se entender, não por falta de inteligência, mas porque a ferramenta do entendimento está torta.
+A raiz da confusão não está nas palavras. Está em três camadas que se misturam sem que se note: o **nome**, o **conceito** que o nome carrega e **aquilo que o conceito pretende representar**. Quando não há uma definição compartilhada do conceito, cada um preenche o nome com o que tem. E, quando se confunde o nome com a coisa, discute-se a palavra acreditando discutir a realidade.
+
+Fala-se de Deus, de eternidade, de céu e de inferno, e cada ouvinte ouve outra coisa. Discute-se por séculos sem se entender — e quase sempre o que falta não é inteligência, mas um acordo sobre aquilo que cada palavra pretende alcançar.
 
 ![A Torre de Babel, Pieter Bruegel, o Velho, c. 1563](inputs/imagens/29-bruegel-torre-de-babel.jpg)
 
@@ -253,11 +261,11 @@ Fala-se de Deus, de eternidade, de céu e de inferno, e cada ouvinte ouve outra 
 
 O Gênesis conta essa história. Os homens decidiram construir uma torre que chegasse ao céu, e Deus confundiu a sua língua, "para que não entenda um a língua do outro". A obra parou. Os homens se espalharam.
 
-Bruegel pintou a torre no meio da construção. Ela é gigantesca e cheia de vida: andaimes, guindastes, operários, navios descarregando pedra no porto. No canto, o rei inspeciona a obra enquanto os pedreiros se ajoelham. Mas olhe com atenção. A torre foi erguida sobre uma rocha que nunca foi removida, e a pedra bruta ainda aparece no meio das paredes. Os andares não estão nivelados: inclinam-se, cada um sobre o anterior, como se cada equipe tivesse construído do seu jeito. Enquanto o topo sobe, a base já desmorona. Um lado está terminado e branco; o outro, em tijolo vermelho, ainda é esqueleto.
+Bruegel pintou a torre no meio da construção. Ela é gigantesca e cheia de vida: andaimes, guindastes, operários, navios descarregando pedra no porto. No canto, o rei inspeciona a obra enquanto os pedreiros se ajoelham. De perto, porém, a obra não se sustenta. A torre foi erguida sobre uma rocha que nunca foi removida, e a pedra bruta ainda aparece no meio das paredes. Os andares não estão nivelados: inclinam-se, cada um sobre o anterior, como se cada equipe tivesse construído do seu jeito. Enquanto o topo sobe, a base já desmorona. Um lado está terminado e branco; o outro, em tijolo vermelho, ainda é esqueleto.
 
 Babel não é um castigo antigo. É a descrição de um estado. É o que acontece quando muitos tentam alcançar o céu sem uma linguagem comum: cada um empilha sua parte, ninguém confere o prumo, e a obra nunca termina. Religiões, filosofias e ciências levantaram, cada uma, um andar dessa torre. Todas queriam chegar ao mesmo lugar. Nenhuma fala a língua da outra.
 
-Uma lente torta entrega uma imagem torta. Se é pela linguagem que pensamos o mundo, uma linguagem deturpada nos entrega uma **visão deturpada da realidade**. E uma visão deturpada da realidade produz, inevitavelmente, um comportamento deturpado.
+Uma lente torta entrega uma imagem torta. Se é pela linguagem que pensamos o mundo, uma linguagem cujos conceitos ninguém definiu — e que confundimos com as próprias coisas — nos entrega uma **visão deturpada da realidade**. E uma visão deturpada da realidade produz, inevitavelmente, um comportamento deturpado.
 
 Essa é, talvez, a raiz mais profunda da era adâmica — e é também, como veremos mais adiante, por onde começa a saída.
 
@@ -289,9 +297,9 @@ Quatro séculos depois, Munch pintou essa insatisfação como um grito. Uma figu
 
 E há a outra face da mesma insatisfação. Van Gogh pintou uma pequena vila adormecida: casas, uma igreja, janelas acesas. Sobre ela, um céu que não está parado. Estrelas que giram, espirais de vento e luz, um cosmos que parece respirar. A vila dorme. O céu está acordado.
 
-É a mesma imagem do nosso banner: lá embaixo, a vida ordinária; lá em cima, uma ordem viva que quase ninguém vê. Às vezes, numa noite qualquer, o homem levanta os olhos e sente que há algo ali. Não sabe o quê. Mas sente.
+O banner repete essa imagem: lá embaixo, a vida ordinária; lá em cima, uma ordem viva que quase ninguém vê. Às vezes, numa noite qualquer, o homem levanta os olhos e sente que há algo ali. Não sabe o quê. Mas sente.
 
-Essa insatisfação — seja grito, seja espanto — é o primeiro sinal de que **o cisco não é o todo**. E dela nascem as perguntas:
+Essa insatisfação — seja grito, seja espanto — não prova nada sobre o que há além. É um motivo, não uma demonstração: diz apenas que as explicações recebidas não bastaram a quem a sente. Mas é o primeiro sinal de que **o cisco talvez não seja o todo**, e a melhor razão para ir verificar. Dela nascem as perguntas:
 
 - Do que é constituída a realidade?
 - Deus existe?
@@ -326,7 +334,7 @@ A última grande obra de Rafael é um quadro partido ao meio. Na parte de cima, 
 
 Mas alguns, no meio da confusão, apontam para cima.
 
-É o mesmo mundo em duas leituras. Embaixo, a matéria em desordem, a dor sem explicação, o barulho de muitas vozes. Em cima, a ordem luminosa que estava lá o tempo todo. Entre as duas não há muro. Há apenas a direção do olhar. A insatisfação, quando é levada a sério, é exatamente isto: a mão de alguém que, no meio do tumulto, aponta para o alto.
+É o mesmo mundo em duas leituras. Embaixo, a matéria em desordem, a dor sem explicação, o barulho de muitas vozes. Em cima, a ordem luminosa que quase ninguém, embaixo, vê. Entre as duas não há muro. Há apenas a direção do olhar. A insatisfação, quando é levada a sério, é exatamente isto: a mão de alguém que, no meio do tumulto, aponta para o alto.
 
 ![Caminhante sobre o mar de névoa, Caspar David Friedrich, c. 1818](inputs/imagens/32-friedrich-caminhante-mar-nevoa.jpg)
 

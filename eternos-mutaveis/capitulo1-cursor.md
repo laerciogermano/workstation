@@ -91,4 +91,4 @@ A saída é a **alfabetização metafísica**: ensinar os padrões e os símbolo
 
 ---
 
-*Fontes deste rascunho:* bullets da seção Era Adâmica em [`f`](f); estrutura e distinções em [`roadmap.md`](roadmap.md) §1 e [`bullets.md`](bullets.md) §1; prosa de referência em [`artigo.md`](artigo.md) / [`artigos/01-eternos-mutaveis.md`](artigos/01-eternos-mutaveis.md); definição de era adâmica e autômato em [`inputs/Livro_ O Código.txt`](inputs/Livro_%20O%20Código.txt). Para reverter: apagar este arquivo.
+*Fontes deste rascunho:* bullets da seção Era Adâmica em [`f`](f); estrutura e distinções em [`roadmap.md`](roadmap.md) §1 e [`bullets.md`](bullets.md) §1; prosa de referência em [`artigo.md`](artigo.md) / [`artigos/01-eternos-mutaveis.md`](artigos/01-eternos-mutaveis.md); definição de era adâmica e autômato em [`inputs/Livro_ O Código.txt`](inputs/Livro_%20O%20Código.txt). Para reverter: apagar este `.md`.

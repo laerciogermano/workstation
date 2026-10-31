@@ -19,5 +19,5 @@ Prosa corrida do capítulo 1 (Era adâmica — o problema) cobrindo todos os bul
 
 ## O que foi feito
 
-- Criado [`../capitulo1-cursor`](../capitulo1-cursor): prosa do cap. 1 com banner, seções (encarnação → sentidos → individualização → intelecto/metafísica → crença/linguagem → perguntas → analfabetismo espiritual) e nota de fontes/reversão.
+- Criado [`../capitulo1-cursor.md`](../capitulo1-cursor.md): prosa do cap. 1 com banner, seções (encarnação → sentidos → individualização → intelecto/metafísica → crença/linguagem → perguntas → analfabetismo espiritual) e nota de fontes/reversão.
 - Linha 012 na [`timeline.md`](timeline.md); menção no [`../README.md`](../README.md).

@@ -89,19 +89,76 @@ async function main() {
 
   console.log('Navigating →', targetUrl);
   await session.send('Page.navigate', { url: targetUrl });
-  await new Promise((r) => setTimeout(r, 2500));
+  // sannysoft precisa de tempo p/ fingerprint tests
+  await new Promise((r) => setTimeout(r, 4000));
 
   const evalRes = await session.send('Runtime.evaluate', {
     returnByValue: true,
-    expression: `({
-      title: document.title,
-      href: location.href,
-      webdriver: navigator.webdriver,
-      ua: navigator.userAgent
-    })`,
+    expression: `(() => {
+      const rows = [];
+      document.querySelectorAll('table tr').forEach((tr) => {
+        const cells = [...tr.querySelectorAll('th,td')].map((c) =>
+          c.innerText.replace(/\\s+/g, ' ').trim(),
+        );
+        if (cells.length < 2) return;
+        const name = cells[0];
+        const result = cells.slice(1).join(' | ').slice(0, 300);
+        const el = tr.querySelector('td:last-child') || tr;
+        const cls = (tr.className + ' ' + el.className).toLowerCase();
+        let status = 'info';
+        if (cls.includes('failed') || /\\bfail/i.test(result)) status = 'FAIL';
+        else if (cls.includes('passed') || /\\b(passed|\\bok\\b)/i.test(result)) status = 'ok';
+        else {
+          const color = getComputedStyle(el).color || '';
+          const m = color.match(/rgb\\(\\s*(\\d+)\\s*,\\s*(\\d+)\\s*,\\s*(\\d+)/);
+          if (m && Number(m[1]) > 160 && Number(m[2]) < 90) status = 'FAIL';
+          else if (m && Number(m[2]) > 120 && Number(m[1]) < 100) status = 'ok';
+        }
+        if (/no webgl|not supported/i.test(result)) status = 'FAIL';
+        rows.push({ name, result, status });
+      });
+      return {
+        title: document.title,
+        href: location.href,
+        webdriver: navigator.webdriver,
+        ua: navigator.userAgent,
+        failedDom: document.querySelectorAll('.failed').length,
+        passedDom: document.querySelectorAll('.passed').length,
+        rows,
+      };
+    })()`,
   });
 
-  console.log('Resultado:', evalRes.result.value);
+  const data = evalRes.result.value;
+  console.log('--- meta ---');
+  console.log('title:', data.title);
+  console.log('href:', data.href);
+  console.log('webdriver:', data.webdriver);
+  console.log('ua:', data.ua);
+  console.log('--- pontos (' + data.rows.length + ') ---');
+  for (const row of data.rows) {
+    const tag = row.status === 'FAIL' ? '[FAIL]' : '[ok]  ';
+    console.log(`${tag} ${row.name} => ${row.result}`);
+  }
+  const fails = data.rows.filter((r) => r.status === 'FAIL');
+  const oks = data.rows.filter((r) => r.status === 'ok');
+  console.log('--- resumo ---');
+  console.log(
+    'total:',
+    data.rows.length,
+    '| ok:',
+    oks.length,
+    '| fail:',
+    fails.length,
+    '| .passed DOM:',
+    data.passedDom,
+    '| .failed DOM:',
+    data.failedDom,
+  );
+  if (fails.length) {
+    console.log('falhas:');
+    for (const f of fails) console.log(' -', f.name, '=>', f.result);
+  }
   session.close();
 }
 

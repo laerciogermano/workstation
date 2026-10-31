@@ -4,6 +4,9 @@ SOP para criar um AVD local (Mac) **1:1 com uma caixa `@clozzy.com.br`**, com im
 
 Credenciais das caixas: [`credenciais.md`](../../../../credenciais.md) (§ Caixas `@clozzy.com.br`).
 
+CSV (data de criação LI ≈ e-mail do PIN, nome, e-mail, status): [`contas-linkedin-clozzy.csv`](contas-linkedin-clozzy.csv).  
+**Antes → depois:** só tabela AVD abaixo → CSV consolidado; reverter = apagar o CSV e este link.
+
 ## Inventário atual
 
 | Conta | AVD (`AVD_NAME`) | Porta console (serial) | Notas |

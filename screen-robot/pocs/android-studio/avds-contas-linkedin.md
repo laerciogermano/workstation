@@ -9,7 +9,7 @@ CSV (data, nome, e-mail, status, senha_li, obs): [`contas-linkedin-clozzy.csv`](
 
 **Antes → depois (Roberta):** CSV `experiencia_longevidade` sem senha → `senha_li=in@12345678` (LI). Rollback: limpar `senha_li` da linha Roberta.
 
-**Antes → depois (Camila):** CSV sem linha → `Camila Ferreira` / `camila.ferreira@clozzy.com.br` status `nao_criada` (mailbox Mailcow ok; LI pendente). Rollback: apagar linha no CSV + `DELETE` mailbox no Mailcow.
+**Antes → depois (Camila):** sem AVD → AVD `Camila_Ferreira` (`emulator-5570`), máscara Pixel 4 (`pixel_4`), LI+ADBKeyboard, avatar/banner em Download; CSV `nao_criada`. Rollback: `avdmanager delete avd -n Camila_Ferreira` + remover `~/.android/avd/Camila_Ferreira.*`; CSV obs anterior.
 
 ## Inventário atual
 
@@ -23,6 +23,7 @@ CSV (data, nome, e-mail, status, senha_li, obs): [`contas-linkedin-clozzy.csv`](
 | Fernando Breda | `Fernando_Breda` | `5564` → `emulator-5564` | **restrita**; Pixel 4 / flame; worker `start-worker-fernando.sh` |
 | Roberta Machado | `Roberta_Machado` | `5566` → `emulator-5566` | **experiencia_longevidade**; máscara Pixel 4 (`pixel_4`); about+email only-me; medir tempo até restrição |
 | Ana Letícia (`teste@`) | `Ana_Leticia` | `5568` → `emulator-5568` | **restrita** (pediu nº); login `teste@clozzy.com.br` |
+| Camila Ferreira | `Camila_Ferreira` | `5570` → `emulator-5570` | AVD pronto; máscara Pixel 4; LI+ADBKeyboard; avatar/banner em Download; conta LI **nao_criada** |
 
 Convenção: `Nome_Sobrenome` = `First_Last` sem acento; porta = `5554 + 2×índice` (console; ADB usa `porta+1` no protocolo do emulator).
 

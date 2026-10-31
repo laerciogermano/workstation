@@ -9,6 +9,8 @@ CSV (data, nome, e-mail, status, senha_li, obs): [`contas-linkedin-clozzy.csv`](
 
 **Antes → depois (Roberta):** CSV `experiencia_longevidade` sem senha → `senha_li=in@12345678` (LI). Rollback: limpar `senha_li` da linha Roberta.
 
+**Antes → depois (Camila):** CSV sem linha → `Camila Ferreira` / `camila.ferreira@clozzy.com.br` status `nao_criada` (mailbox Mailcow ok; LI pendente). Rollback: apagar linha no CSV + `DELETE` mailbox no Mailcow.
+
 ## Inventário atual
 
 | Conta | AVD (`AVD_NAME`) | Porta console (serial) | Notas |

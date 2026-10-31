@@ -18,7 +18,10 @@ Controla um Chrome já rodando com `--remote-debugging-port=9222` (mesmo perfil/
 ## Script
 
 ```bash
-node control-chrome.mjs                          # abre https://bot.sannysoft.com/
+# mínimo: conecta, abre sannysoft, imprime pontos
+node sannysoft-points.mjs
+
+node control-chrome.mjs                          # versão com meta/resumo
 node control-chrome.mjs --url https://example.com
 ```
 

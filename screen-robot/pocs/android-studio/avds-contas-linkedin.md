@@ -9,7 +9,7 @@ CSV (data, nome, e-mail, status, senha_li, objetivo, obs): [`contas-linkedin-clo
 
 **Antes → depois (Roberta):** sem `objetivo` → objetivo de longevidade (criar/configurar no AVD e parar; medir se a conta se sustenta). Rollback: limpar `objetivo` da linha Roberta.
 
-**Antes → depois (Camila):** AVD anterior apagado → recriado do zero (`Camila_Ferreira` / `emulator-5570`, wipe, LI+ADBKeyboard+assets); objetivo = operar desligando o LinkedIn ao fim de cada operação. Rollback: `avdmanager delete avd -n Camila_Ferreira` + remover `~/.android/avd/Camila_Ferreira.*`.
+**Antes → depois (Camila):** signup `nao_criada`/AVD → conta LI **criada_chrome_web** (browser Chrome desktop); AVD `Camila_Ferreira` (`emulator-5570`) só para operações (fechar LI ao fim de cada job). Rollback: status/obs anteriores; `avdmanager delete avd -n Camila_Ferreira` + remover `~/.android/avd/Camila_Ferreira.*`.
 
 ## Inventário atual
 
@@ -23,7 +23,7 @@ CSV (data, nome, e-mail, status, senha_li, objetivo, obs): [`contas-linkedin-clo
 | Fernando Breda | `Fernando_Breda` | `5564` → `emulator-5564` | **restrita**; Pixel 4 / flame; worker `start-worker-fernando.sh` |
 | Roberta Machado | `Roberta_Machado` | `5566` → `emulator-5566` | **experiencia_longevidade**; máscara Pixel 4 (`pixel_4`); about+email only-me; medir tempo até restrição |
 | Ana Letícia (`teste@`) | `Ana_Leticia` | `5568` → `emulator-5568` | **restrita** (pediu nº); login `teste@clozzy.com.br` |
-| Camila Ferreira | `Camila_Ferreira` | `5570` → `emulator-5570` | AVD pronto; máscara Pixel 4; LI+ADBKeyboard; avatar/banner em Download; conta LI **nao_criada** |
+| Camila Ferreira | `Camila_Ferreira` | `5570` → `emulator-5570` | conta LI **criada_chrome_web**; AVD p/ operações (Pixel 4); fechar LI ao fim de cada job |
 
 Convenção: `Nome_Sobrenome` = `First_Last` sem acento; porta = `5554 + 2×índice` (console; ADB usa `porta+1` no protocolo do emulator).
 

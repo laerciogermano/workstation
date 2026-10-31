@@ -9,4 +9,5 @@ Cada documento-fonte `.txt`/`.yaml` tem um resumo em tópicos no arquivo `<nome>
 | Pasta / tipo | Conteúdo |
 |--------------|----------|
 | [`audios-e-transcricoes/`](audios-e-transcricoes/README.md) | Gravações `.m4a` e transcrições |
+| [`imagens/`](imagens/README.md) | Pinturas/artes afins (Wikimedia); catálogo e exclusões por copyright |
 | Raiz desta pasta | Documentos e notas (briefing, tratados, livros, yaml de abertura) |

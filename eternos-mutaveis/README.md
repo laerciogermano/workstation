@@ -28,6 +28,7 @@ Em [`bullets.md`](bullets.md): uma seção **`# Bullets`** — capítulos com **
 **Regenerar PDF:** converter `bullets.md` → HTML (markdown) e imprimir com Chrome headless (`--print-to-pdf=bullets.pdf`). Antes → depois: só existia o `.md`; o `.pdf` é derivado. Remover `bullets.pdf` reverte ao fluxo só-markdown.  
 Primeiro artigo completo: [`artigos/01-eternos-mutaveis.md`](artigos/01-eternos-mutaveis.md).  
 Rascunho Cursor do cap. 1 (Era adâmica): [`capitulo1-cursor.md`](capitulo1-cursor.md) — prosa a partir dos bullets de [`f`](f); apagar o arquivo reverte.  
+Novo rascunho Cursor do cap. 1 (com imagens/obras): [`novo-capitulo-1-cursor.md`](novo-capitulo-1-cursor.md) — `f` §1 + galeria; apagar o arquivo reverte.  
 Timeline de prompts: [`prompts/`](prompts/README.md).  
 Regras para a IA: [`config/config-ia.md`](config/config-ia.md).
 

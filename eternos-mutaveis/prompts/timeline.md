@@ -20,3 +20,4 @@ Como registrar: [`README.md`](README.md).
 | 012 | 2026-10-31 | Capítulo 1 Cursor | [012-2026-10-31-capitulo1-cursor.md](012-2026-10-31-capitulo1-cursor.md) | Prosa do cap. 1 em `capitulo1-cursor.md` a partir dos bullets Era Adâmica de `f` + contexto. |
 | 013 | 2026-10-31 | Capítulo 1 em .md | [013-2026-10-31-capitulo1-cursor-md.md](013-2026-10-31-capitulo1-cursor-md.md) | Renomeia `capitulo1-cursor` → `capitulo1-cursor.md` e atualiza links. |
 | 013 | 2026-10-31 | Capítulo 1 em prosa | [013-2026-10-31-capitulo1-claude.md](013-2026-10-31-capitulo1-claude.md) | Escrever `capitulo1-claude.md` com todo o assunto da Era Adâmica a partir dos bullets de `f` e do contexto da obra. |
+| 014 | 2026-10-31 | Novo capítulo 1 Cursor | [014-2026-10-31-novo-capitulo-1-cursor.md](014-2026-10-31-novo-capitulo-1-cursor.md) | Prosa do cap. 1 em `novo-capitulo-1-cursor.md` a partir de `f` §1 + imagens/obras da galeria + contexto. |

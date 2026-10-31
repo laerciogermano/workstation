@@ -26,6 +26,7 @@ Em [`bullets.md`](bullets.md): uma seção **`# Bullets`** — capítulos com **
 **Cap. 7:** resolução/superação → software eterno → ator→autor → perfeição/imperfeição → conduta → prática/Flow → fecho.
 
 **Regenerar PDF:** converter `bullets.md` → HTML (markdown) e imprimir com Chrome headless (`--print-to-pdf=bullets.pdf`). Antes → depois: só existia o `.md`; o `.pdf` é derivado. Remover `bullets.pdf` reverte ao fluxo só-markdown.  
+**Cap. 1 Claude PDF:** [`novo-capitulo-1-claude.pdf`](novo-capitulo-1-claude.pdf) ← [`novo-capitulo-1-claude.md`](novo-capitulo-1-claude.md) (+ HTML intermediário `novo-capitulo-1-claude.html`). Regenerar: MD→HTML (paths `file://` das imagens) → Chrome `--print-to-pdf=novo-capitulo-1-claude.pdf`. Apagar `.pdf`/`.html` reverte ao só-markdown.  
 Primeiro artigo completo: [`artigos/01-eternos-mutaveis.md`](artigos/01-eternos-mutaveis.md).  
 Rascunho Cursor do cap. 1 (Era adâmica): [`capitulo1-cursor.md`](capitulo1-cursor.md) — prosa a partir dos bullets de [`f`](f); apagar o arquivo reverte.  
 Novo rascunho Cursor do cap. 1 (com imagens/obras): [`novo-capitulo-1-cursor.md`](novo-capitulo-1-cursor.md) — `f` §1 + galeria; apagar o arquivo reverte.  

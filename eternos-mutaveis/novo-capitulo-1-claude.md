@@ -1,6 +1,6 @@
 # 1. Era Adâmica
 
-![Banner do capítulo 1: à esquerda, homens numa caverna diante de sombras; ao centro, a mão divina entrega uma centelha a um homem de barro ajoelhado; à direita, uma cidade de torres azuladas; no céu, uma geometria incompleta e um anel de luz](assets/banner-cap-1-era-adamica.jpg)
+![Banner do capítulo 1, em estilo de afresco renascentista: à esquerda, homens sentados numa caverna, com uma abertura onde aparecem anjos; ao centro, um homem ajoelhado recebe entre as mãos uma centelha do dedo de Deus; à direita, um jovem caminha em direção a uma cidade de pedra; no céu, círculos geométricos quase apagados](assets/banner-cap-1-era-adamica.jpg)
 
 > "E formou o Senhor Deus o homem do pó da terra, e soprou em suas narinas o fôlego da vida; e o homem foi feito alma vivente."
 > — Gênesis 2:7
@@ -11,11 +11,11 @@
 
 Olhe para o centro da imagem que abre este capítulo.
 
-Há um homem ajoelhado. Ele parece feito da mesma terra em que se apoia: barro, pó, chão. Uma mão imensa desce do céu e deixa cair em sua palma uma pequena centelha de luz. O homem a recebe com cuidado, quase com reverência. Mas repare para onde ele olha. Não olha para a mão. Não olha para o céu estrelado. Olha para a própria palma.
+Há um homem ajoelhado sobre a rocha, nu, a pele da mesma cor da terra em que se apoia. Do céu, envolto num manto vermelho e cercado de anjos, Deus avança e estende o braço. Do dedo divino nasce uma centelha, e o homem a recebe entre as mãos em concha, com cuidado, quase com reverência. É o instante exato do encontro. Por um momento, ele ainda olha para quem lhe deu a luz.
 
-À esquerda, dentro de uma caverna, outros homens estão sentados de costas para o mundo, contemplando figuras projetadas na rocha. À direita, ergue-se uma cidade de torres frias e luminosas, uma floresta de vidro e sinal. E acima de tudo, quase apagada, flutua uma geometria que ninguém na cena está olhando: linhas, círculos e proporções que parecem sustentar o céu, mas que ficaram incompletas — como um desenho que ainda espera ser lido.
+Mas olhe ao redor dele. À esquerda, dentro de uma caverna, outros homens estão sentados no escuro. Uns olham para o chão, outros para o vazio, outros para dentro de si. Atrás deles, numa abertura da rocha, há anjos voando numa luz dourada — e nenhum deles se vira para ver. À direita, um jovem já se levantou. Ele caminha de costas para a cena, rumo a uma cidade de pedra, torres e muralhas. E no alto, quase apagados no céu rachado do afresco, há círculos e linhas que ninguém na cena está olhando: uma geometria que parece sustentar o céu, mas que ficou incompleta — como um desenho que ainda espera ser lido.
 
-Este capítulo é sobre esse homem. Ele não é personagem de um mito antigo. Ele é você, eu, quase todos que conhecemos. Ele tem nome, documento, profissão, preferências e opiniões. Acorda, trabalha, deseja, se cansa, dorme. E carrega na mão uma luz que não sabe de onde veio.
+Este capítulo é sobre esse homem. Ele não é personagem de um mito antigo. Ele é você, eu, quase todos que conhecemos. Ele tem nome, documento, profissão, preferências e opiniões. Acorda, trabalha, deseja, se cansa, dorme. E carrega nas mãos uma luz que, em pouco tempo, não saberá mais de onde veio.
 
 ---
 
@@ -46,6 +46,14 @@ A *Criação de Adão* simboliza a **encarnação**. Encarnar é exatamente o qu
 Mas a mesma imagem simboliza outra coisa, menos celebrada: o **início da ignorância espiritual**. No instante em que o espírito se acopla à matéria, ele se esquece da origem. O vão entre os dedos é o véu. Do lado de lá está a fonte; do lado de cá, um corpo que acaba de abrir os olhos e não se lembra de nada.
 
 Toda a nossa história começa nesse vão. E muitos passam a vida inteira sem perceber que ele existe.
+
+![Elohim Creating Adam, William Blake, 1795](inputs/imagens/35-blake-elohim-creating-adam.jpg)
+
+*William Blake, Elohim Creating Adam, 1795.*
+
+Três séculos depois de Michelangelo, William Blake pintou a mesma cena sem nenhuma doçura. Um Deus de asas imensas paira rente ao chão e pressiona a cabeça de Adão contra a terra. Adão está estendido, o rosto contraído, como quem acorda de um sonho para um peso. E em volta da sua perna já está enrolada uma serpente.
+
+Blake viu o que a pintura da Sistina deixa implícito: a encarnação não é só um presente. É também um **aperto**. No mesmo gesto em que o espírito recebe um corpo, ele fica preso a esse corpo — ao seu peso, à sua fome, ao seu fim. A serpente não chega depois, no jardim. Ela já está lá no primeiro instante, enrolada na carne. O fôlego da vida e o início do esquecimento são o mesmo acontecimento.
 
 ---
 
@@ -89,6 +97,8 @@ Depois de se separar, ele **objetifica a si e a tudo**. Torna-se uma identidade,
 
 Esse recorte parece uma descrição da realidade. Não é. É **um modo de ler** a realidade — tão antigo e tão repetido que esquecemos que é uma leitura. E, como veremos ao longo deste livro, é um modo de ler que custa caro: custa na forma como nos relacionamos, na forma como sofremos e até na forma como construímos as máquinas que hoje organizam a vida.
 
+No banner deste capítulo, é o jovem do lado direito. Ele recebeu a mesma luz que o homem ajoelhado, mas já não olha para ela. Deu as costas à mão que o criou e caminha, decidido, em direção à cidade — onde terá um nome, uma casa, uma função e uma imagem de si.
+
 Masaccio pintou a expulsão como vergonha. Mas talvez a palavra mais exata seja outra: **esquecimento**. Ninguém nos tirou do jardim. Nós deixamos de enxergá-lo.
 
 ---
@@ -113,6 +123,24 @@ Somos esses homens. As sombras são o mundo material; o que as projeta está atr
 
 O homem adâmico é **inconsciente da realidade eterna e da sua origem espiritual**. Ele enxerga apenas a matéria. Enxerga **um cisco** da realidade e toma esse cisco pelo todo. Não porque seja tolo, mas porque nunca virou a cabeça.
 
+![Virgem das Rochas, Leonardo da Vinci, c. 1491–1508](inputs/imagens/33-leonardo-virgem-das-rochas.jpg)
+
+*Leonardo da Vinci, Virgem das Rochas, c. 1491–1508. National Gallery, Londres.*
+
+Leonardo pintou outra caverna. Na *Virgem das Rochas*, Maria, um anjo e duas crianças estão reunidos dentro de uma gruta escura, entre pedras e plantas úmidas. Mas a gruta não é fechada: ela se abre em fendas por onde se vê, ao longe, uma paisagem azul de água e montanhas. O sagrado não está no fundo da rocha. Está no ponto exato em que a escuridão se abre para a luz.
+
+A caverna, portanto, não é só prisão. É também o lugar onde a luz pode ser percebida pela primeira vez. Ela tem saídas. Só não as vê quem nunca vira a cabeça.
+
+![Vocação de São Mateus, Caravaggio, 1599–1600](inputs/imagens/37-caravaggio-vocacao-sao-mateus.jpg)
+
+*Caravaggio, Vocação de São Mateus, 1599–1600. Igreja de San Luigi dei Francesi, Roma.*
+
+Caravaggio levou a caverna para dentro de uma sala comum. Cinco homens estão sentados a uma mesa, num cômodo escuro, contando moedas. Pela direita entram duas figuras quase engolidas pela sombra. Uma delas é Cristo, e ele aponta. Sua mão é quase uma cópia da mão de Adão na Capela Sistina. Junto com ele, entra um feixe de luz que corta a parede na diagonal.
+
+Repare nas reações. Um dos homens à mesa ergue o rosto e leva a mão ao peito, como quem pergunta: *eu?* Outros olham, desconfiados. Mas os dois da ponta esquerda nem levantam a cabeça. Continuam curvados sobre o dinheiro, contando. A luz passou a um palmo deles.
+
+Assim é com quase todos nós. A luz não falta; ela entra o tempo todo pela janela. Falta erguer os olhos da mesa.
+
 ---
 
 ## A cidade de luz fria
@@ -121,7 +149,7 @@ O homem adâmico é **inconsciente da realidade eterna e da sua origem espiritua
 
 *William Blake, Newton, 1795.*
 
-Seria confortável pensar que a caverna ficou no passado — que a ciência, a técnica e a informação nos libertaram dela. Olhe de novo para o lado direito do banner. A caverna não desapareceu. Ela ganhou torres.
+Seria confortável pensar que a caverna ficou no passado — que a ciência, a técnica e a informação nos libertaram dela. Olhe de novo para o lado direito do banner, para a cidade aonde o jovem se dirige: torres, muralhas, casas empilhadas, a obra das mãos humanas. A caverna não desapareceu. Ela ganhou torres.
 
 William Blake pintou Isaac Newton nu, sentado numa rocha no fundo do mar, curvado sobre um papel, medindo uma figura com um compasso. O corpo é magnífico, a concentração é total. E ele está de costas para tudo o que é vivo ao seu redor. Blake não desprezava a razão; desprezava a razão que só sabe medir o que é sólido e esquece todo o resto.
 
@@ -135,7 +163,7 @@ A cidade de luz fria não é o oposto da caverna. É a caverna com eletricidade.
 
 ## O que os olhos não alcançam
 
-Volte, agora, para o céu do banner. Acima do homem ajoelhado, quase invisível, há uma geometria: círculos, linhas, proporções. Ela está lá o tempo inteiro. Nenhuma figura da cena olha para ela.
+Volte, agora, para o céu do banner. No alto, à direita, quase confundida com as nuvens e as rachaduras do afresco, há uma geometria: círculos, linhas, proporções. Ela está lá o tempo inteiro. Nenhuma figura da cena olha para ela.
 
 Há estruturas igualmente presentes na realidade, mas **invisíveis aos olhos**. As religiões as chamam de espirituais. Os filósofos as chamam de metafísicas. Elas ordenam tudo o que é, foi e será. A experiência material é produto delas, não o contrário. O que se vê não é o que rege.
 
@@ -146,6 +174,16 @@ Você nunca viu o número três. Viu três maçãs, três pedras, três dedos. M
 Pense no movimento. Você vê a bola aqui e, depois, a bola ali. Vê posições, vê estados. Mas o movimento em si — aquilo que levou a bola de um ponto a outro — não tem cor, não tem peso, não tem forma. Você o deduz. Você o *compreende*.
 
 Essas são pequenas amostras de um mundo inteiro que não se vê, mas se lê. **As estruturas metafísicas só se percebem pelo intelecto, não pelos sentidos.** É por isso que o homem preso aos sentidos não as encontra: procura com os olhos o que só a razão alcança. É como tentar ouvir uma cor.
+
+![Os Embaixadores, Hans Holbein, o Jovem, 1533](inputs/imagens/30-holbein-embaixadores.jpg)
+
+*Hans Holbein, o Jovem, Os Embaixadores, 1533. National Gallery, Londres.*
+
+Hans Holbein pintou essa dificuldade num único quadro. Dois homens jovens, ricos e cultos posam ao lado de uma estante. Entre eles está tudo o que o seu tempo sabia: um globo celeste, um globo terrestre, relógios de sol, instrumentos de astronomia, um livro de aritmética, um alaúde, um hinário. É o retrato do conhecimento humano no seu auge.
+
+E no chão, bem na frente deles, há uma mancha estranha, alongada, que não parece nada. Quem olha o quadro de frente vê apenas uma forma torta. Mas quem se coloca de lado, quase encostado na parede, vê a mancha se transformar: é uma **caveira**. Ela esteve ali o tempo todo, no centro da cena, e só aparece para quem muda o ângulo de visão. No canto superior esquerdo, quase escondido atrás da cortina verde, há ainda um pequeno crucifixo. Também passa despercebido.
+
+O quadro inteiro é uma lição sobre o mundo adâmico: o que está em primeiro plano — o luxo, os instrumentos, a ciência — esconde o que é essencial, a morte e o sagrado. Não porque o essencial esteja ausente, mas porque está pintado num ângulo que os olhos acostumados não alcançam. Para vê-lo, é preciso se deslocar. Na vida, esse deslocamento é feito pelo intelecto.
 
 A palavra *metafísica* vem do grego: *meta*, além; *physis*, natureza física. É o estudo do que está além do físico. Mas "além" não significa "longe". Esse plano não está em outro lugar, escondido atrás das nuvens. Ele divide espaço com a matéria. Está aqui, agora, nesta página, na mão que a segura. Só não é visível.
 
@@ -170,6 +208,14 @@ Aqui é preciso cuidado com uma conclusão apressada, muito comum em nossa époc
 ---
 
 ## O mapa herdado
+
+![O sono da razão produz monstros, Francisco de Goya, 1797–1799](inputs/imagens/36-goya-sono-da-razao.jpg)
+
+*Francisco de Goya, O sono da razão produz monstros, Caprichos nº 43, 1797–1799.*
+
+Goya gravou um homem dormindo debruçado sobre a mesa de trabalho, a cabeça escondida entre os braços. Atrás dele, saindo da escuridão, surgem corujas, morcegos e um felino de olhos abertos que o observa. Na lateral da mesa está escrito: *El sueño de la razón produce monstruos* — o sono da razão produz monstros.
+
+O homem da gravura não sabe que está cercado. Está dormindo. Os monstros não precisam atacá-lo: basta que ele continue sem acordar.
 
 A ignorância da realidade fundamental tem uma característica que a torna difícil de curar: ela é **inconsciente**. Ninguém sabe que não sabe. E aquilo que não se percebe não se corrige. **Se perpetua.**
 
@@ -201,6 +247,16 @@ A mesma palavra significa coisas diferentes conforme quem fala. "Manga" é fruta
 
 Fala-se de Deus, de eternidade, de céu e de inferno, e cada ouvinte ouve outra coisa. Discute-se por séculos sem se entender, não por falta de inteligência, mas porque a ferramenta do entendimento está torta.
 
+![A Torre de Babel, Pieter Bruegel, o Velho, c. 1563](inputs/imagens/29-bruegel-torre-de-babel.jpg)
+
+*Pieter Bruegel, o Velho, A Torre de Babel, c. 1563. Kunsthistorisches Museum, Viena.*
+
+O Gênesis conta essa história. Os homens decidiram construir uma torre que chegasse ao céu, e Deus confundiu a sua língua, "para que não entenda um a língua do outro". A obra parou. Os homens se espalharam.
+
+Bruegel pintou a torre no meio da construção. Ela é gigantesca e cheia de vida: andaimes, guindastes, operários, navios descarregando pedra no porto. No canto, o rei inspeciona a obra enquanto os pedreiros se ajoelham. Mas olhe com atenção. A torre foi erguida sobre uma rocha que nunca foi removida, e a pedra bruta ainda aparece no meio das paredes. Os andares não estão nivelados: inclinam-se, cada um sobre o anterior, como se cada equipe tivesse construído do seu jeito. Enquanto o topo sobe, a base já desmorona. Um lado está terminado e branco; o outro, em tijolo vermelho, ainda é esqueleto.
+
+Babel não é um castigo antigo. É a descrição de um estado. É o que acontece quando muitos tentam alcançar o céu sem uma linguagem comum: cada um empilha sua parte, ninguém confere o prumo, e a obra nunca termina. Religiões, filosofias e ciências levantaram, cada uma, um andar dessa torre. Todas queriam chegar ao mesmo lugar. Nenhuma fala a língua da outra.
+
 Uma lente torta entrega uma imagem torta. Se é pela linguagem que pensamos o mundo, uma linguagem deturpada nos entrega uma **visão deturpada da realidade**. E uma visão deturpada da realidade produz, inevitavelmente, um comportamento deturpado.
 
 Essa é, talvez, a raiz mais profunda da era adâmica — e é também, como veremos mais adiante, por onde começa a saída.
@@ -209,15 +265,23 @@ Essa é, talvez, a raiz mais profunda da era adâmica — e é também, como ver
 
 ## O grito e a noite
 
-![O Grito, Edvard Munch, 1893](inputs/imagens/12-munch-o-grito.jpg)
-
-*Edvard Munch, O Grito, 1893.*
-
 Mas o homem adâmico não está em paz.
 
 Por mais confortável que seja a caverna, por mais luminosa que seja a cidade, algo não fecha. Há uma **insatisfação** de fundo, difícil de nomear. Ela aparece no silêncio, na perda, na doença, diante da morte de alguém querido, no meio de uma conquista que não trouxe o que prometia.
 
-Munch pintou essa insatisfação como um grito. Uma figura sem traços, quase sem corpo, segura o rosto sobre uma ponte enquanto o céu inteiro parece ondular em vermelho. Ao fundo, duas pessoas seguem caminhando, alheias. O grito não é de ninguém em particular. É de qualquer um que, num instante, percebeu que a vida que leva não explica a vida que tem.
+![Melancolia I, Albrecht Dürer, 1514](inputs/imagens/31-durer-melancolia-i.jpg)
+
+*Albrecht Dürer, Melancolia I, 1514. Gravura em metal.*
+
+Albrecht Dürer gravou essa insatisfação no rosto de um ser alado sentado à porta de uma construção. Ele apoia a cabeça na mão. Na outra, segura um compasso que não usa. Em volta dele está espalhado tudo o que serve para medir e construir: uma esfera, um poliedro de pedra, uma balança, uma ampulheta, um sino, um quadrado mágico de números, régua, serrote, pregos. Um cão magro dorme enrolado no chão. Uma escada se apoia na parede e sobe para fora da imagem, para um lugar que não vemos.
+
+Ele tem todos os instrumentos. Sabe medir tudo o que é sólido. E, ainda assim, está parado, com o olhar perdido, porque nenhum desses instrumentos lhe diz *para quê*. É o retrato do homem adâmico mais inteligente: aquele que domina a matéria e, justamente por isso, percebe que ela não basta. A escada está ali. Ele ainda não subiu.
+
+![O Grito, Edvard Munch, 1893](inputs/imagens/12-munch-o-grito.jpg)
+
+*Edvard Munch, O Grito, 1893.*
+
+Quatro séculos depois, Munch pintou essa insatisfação como um grito. Uma figura sem traços, quase sem corpo, segura o rosto sobre uma ponte enquanto o céu inteiro parece ondular em vermelho. Ao fundo, duas pessoas seguem caminhando, alheias. O grito não é de ninguém em particular. É de qualquer um que, num instante, percebeu que a vida que leva não explica a vida que tem.
 
 ![A Noite Estrelada, Vincent van Gogh, 1889](inputs/imagens/11-vangogh-noite-estrelada.jpg)
 
@@ -248,11 +312,29 @@ São as mesmas perguntas desde que o homem aprendeu a falar. Foram feitas nas ca
 
 Volte uma última vez ao banner.
 
-O homem continua ajoelhado, olhando para a própria palma. A caverna continua à esquerda; a cidade, à direita; a geometria, no céu. Nada mudou na cena. E, no entanto, ela guarda dois detalhes que talvez você não tenha notado no início.
+O homem continua ajoelhado. A caverna continua à esquerda; a cidade, à direita; a geometria, no céu. Nada mudou na cena. E, no entanto, ela guarda dois detalhes que talvez você não tenha notado no início.
 
-O primeiro: a centelha não se apagou. A luz que caiu na mão de barro continua acesa. O véu cobre a origem, mas não a extingue. Aquilo que encarnou continua presente em cada um de nós — e o mesmo intelecto que o homem adâmico usa apenas para lidar com a matéria está disponível, inteiro, para ler o que está além dela.
+O primeiro: a centelha não se apagou. A luz que caiu nas mãos de terra continua acesa. O véu cobre a origem, mas não a extingue. Aquilo que encarnou continua presente em cada um de nós — e o mesmo intelecto que o homem adâmico usa apenas para lidar com a matéria está disponível, inteiro, para ler o que está além dela.
 
-O segundo: no canto direito da imagem, longe da caverna e de costas para a cidade, há uma figura de pé, envolta num manto. Ela está caminhando. Não sabemos para onde. Sabemos apenas que se levantou.
+O segundo: a caverna tem uma abertura. Atrás dos homens sentados no escuro, a rocha se rompe, e por ali entra uma luz dourada onde há anjos em movimento. Nenhum deles a vê ainda. Mas ela está ali, a um giro de cabeça.
+
+![Transfiguração, Rafael Sanzio, 1516–1520](inputs/imagens/34-rafael-transfiguracao.jpg)
+
+*Rafael Sanzio, Transfiguração, 1516–1520. Pinacoteca Vaticana.*
+
+A última grande obra de Rafael é um quadro partido ao meio. Na parte de cima, Cristo se eleva numa nuvem de luz, entre Moisés e Elias. Na parte de baixo, na sombra, há um tumulto: um menino possuído se contorce, a família implora, os discípulos discutem, gesticulam, folheiam um livro, apontam em todas as direções. Ninguém consegue curar o menino. Embaixo, ninguém sabe o que fazer.
+
+Mas alguns, no meio da confusão, apontam para cima.
+
+É o mesmo mundo em duas leituras. Embaixo, a matéria em desordem, a dor sem explicação, o barulho de muitas vozes. Em cima, a ordem luminosa que estava lá o tempo todo. Entre as duas não há muro. Há apenas a direção do olhar. A insatisfação, quando é levada a sério, é exatamente isto: a mão de alguém que, no meio do tumulto, aponta para o alto.
+
+![Caminhante sobre o mar de névoa, Caspar David Friedrich, c. 1818](inputs/imagens/32-friedrich-caminhante-mar-nevoa.jpg)
+
+*Caspar David Friedrich, Caminhante sobre o mar de névoa, c. 1818. Kunsthalle, Hamburgo.*
+
+E há quem se levante. Caspar David Friedrich pintou um homem de costas, no alto de um rochedo, apoiado numa bengala. À sua frente estende-se um mar de névoa, de onde emergem picos de montanhas. Ele não vê o fundo do vale nem o horizonte final. Não sabe tudo o que há ali. Mas saiu da caverna, subiu acima da cidade e está de pé, diante do desconhecido, olhando.
+
+Não sabemos para onde ele vai. Sabemos apenas que se levantou.
 
 **A era adâmica é o problema; não é uma sentença.**
 

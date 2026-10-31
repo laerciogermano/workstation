@@ -39,13 +39,13 @@
 
 ## Não baixadas (direitos autorais)
 
-Ainda sob copyright na maioria das jurisdições — **não** arquivadas aqui. Consultar museus oficiais:
+Ainda sob copyright — **não** arquivadas (nem sob pedido): distribuir cópia no repo seria infração. Consulta e vínculo à tese em [`galeria.md`](galeria.md).
 
-| Obra | Motivo | Referência |
-|------|--------|------------|
-| Dalí — *A Persistência da Memória* | © até ~2059 (morte 1989) | [MoMA](https://www.moma.org/collection/works/79018) |
-| Magritte — *O Filho do Homem* | © até ~2038 (morte 1967) | coleções / herdeiros Magritte |
-| Magritte — *A Condição Humana* | idem | coleções / herdeiros Magritte |
+| Obra | © (aprox.) | Consulta |
+|------|------------|----------|
+| Dalí — *A Persistência da Memória* | até ~2059 | [MoMA](https://www.moma.org/collection/works/79018) |
+| Magritte — *O Filho do Homem* | até ~2038 | [magritte.be](https://www.magritte.be/) / ADAGP |
+| Magritte — *A Condição Humana* | até ~2038 | [NGA](https://www.nga.gov/collection/art-object-page.71269.html) |
 
 ## Reverter
 

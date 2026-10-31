@@ -234,13 +234,27 @@
 
 ---
 
-## Não arquivadas (copyright) — mesmo assim no mapa
+## Não arquivadas (copyright) — só consulta oficial
 
-| Obra | Link com Eternos Mutáveis |
-|------|---------------------------|
-| Dalí — *Persistência da Memória* | Tempo e identidade que **escorrem**: o mutável desmonta a essência fixa. |
-| Magritte — *Filho do Homem* | **Máscara**: o eu cobre o real (baile de máscaras / cap. 3 e 7). |
-| Magritte — *Condição Humana* | Representação ≠ coisa — problema da **linguagem** e da visão deturpada. |
+Arquivos **não** entram nesta pasta (nem no git): vida do autor + 70 anos. Ver no museu/herdeiros; o vínculo à tese fica abaixo.
+
+### Dalí — *A Persistência da Memória* (1931)
+
+Ver: [MoMA — The Persistence of Memory](https://www.moma.org/collection/works/79018)
+
+**Link:** relógios que escorrem = tempo e identidade sem essência fixa. Visual do **mutável** desmentindo a substância rígida (caps. 5–6).
+
+### Magritte — *O Filho do Homem* (1964)
+
+Ver: coleções / [página de referência Magritte Foundation / museus](https://www.magritte.be/) (obra sob © ADAGP / herdeiros)
+
+**Link:** maçã na face = **máscara** do eu. Eco do baile de máscaras (cap. 3) e das máscaras abandonadas na superação adâmica (cap. 7).
+
+### Magritte — *A Condição Humana* (1933/1935)
+
+Ver: [NGA — The Human Condition](https://www.nga.gov/collection/art-object-page.71269.html) (e variantes em outras coleções; © herdeiros)
+
+**Link:** tela dentro da paisagem = representação confundida com a coisa. Problema da **linguagem** e da visão deturpada (caps. 1–2 e 5).
 
 ---
 

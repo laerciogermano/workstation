@@ -10,7 +10,7 @@ Timeline de prompts: [`prompts/`](prompts/README.md).
 Regras para a IA: [`config/config-ia.md`](config/config-ia.md).  
 App (scan QR + cadastro Postgres Contabo / schema `enotas`): [`app/`](app/README.md).  
 Deploy Contabo (`/enotas/`): [`deploy/`](deploy/README.md).  
-Marca **notinhas.org**: [`marca/README.md`](marca/README.md) · manual [`marca/identidade-visual-notinhas-v1.html`](marca/identidade-visual-notinhas-v1.html) · tokens [`identidade-visual.md`](identidade-visual.md) · [card](https://trello.com/c/qUI3Rb9a).  
+Marca **notinhas.org**: [`marca/README.md`](marca/README.md) · identidade [`marca/identidade-visual-notinhas-v1.html`](marca/identidade-visual-notinhas-v1.html) · DS [`marca/design-system-notinhas-v1.html`](marca/design-system-notinhas-v1.html) · tokens [`identidade-visual.md`](identidade-visual.md) · [`design-system.md`](design-system.md) · [identidade](https://trello.com/c/qUI3Rb9a) · [DS](https://trello.com/c/qdH95gZX).  
 Refs identidade: [`marca/referencias-identidade/README.md`](marca/referencias-identidade/README.md).  
 Benchmarking soluções similares: [`marca/benchmarking-solucoes/README.md`](marca/benchmarking-solucoes/README.md) · [card](https://trello.com/c/1fMjqGdR).  
 Comparar preços NFC-e vs iFood/99Food/outros: [`marca/comparacao-precos-apps/`](marca/comparacao-precos-apps/README.md) · [card](https://trello.com/c/fapxKp3l).  

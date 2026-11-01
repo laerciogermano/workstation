@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>notinhas.org | Design system v1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --nt-blue:#0069B4;
+  --nt-blue-deep:#014380;
+  --nt-blue-soft:#E3F2FB;
+  --nt-green:#00984B;
+  --nt-green-deep:#007A3D;
+  --nt-green-soft:#E6F6EE;
+  --nt-ink:#0B1F33;
+  --nt-muted:#5A6B7D;
+  --nt-line:#D5DEE8;
+  --nt-bg:#F5F7FA;
+  --nt-white:#FFFFFF;
+  --nt-err:#C62828;
+  --nt-err-soft:#FDECEC;
+  --nt-warn:#D97706;
+  --nt-warn-soft:#FEF3C7;
+  --nt-grad:linear-gradient(135deg,#014380 0%,#0069B4 48%,#00984B 100%);
+  --nt-radius:14px;
+  --nt-radius-sm:8px;
+  --nt-pill:999px;
+  --nt-shadow:0 1px 2px rgba(11,31,51,.06),0 8px 24px rgba(11,31,51,.06);
+  --nt-font:"Plus Jakarta Sans",system-ui,"Segoe UI",sans-serif;
+  --nt-mono:ui-monospace,SFMono-Regular,Menlo,monospace;
+  --nt-space-1:4px;--nt-space-2:8px;--nt-space-3:12px;--nt-space-4:16px;--nt-space-5:24px;--nt-space-6:32px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#C5CDD8;color:var(--nt-ink);font-family:var(--nt-font);font-size:13px;line-height:1.55;
+  -webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{padding:24px 0}
+@page{size:297mm 210mm;margin:0}
+.page{width:297mm;height:210mm;margin:0 auto 24px;padding:14mm 16mm 11mm;position:relative;overflow:hidden;
+  background:var(--nt-white);box-shadow:0 8px 30px rgba(11,31,51,.16);display:flex;flex-direction:column}
+.page.mist{background:var(--nt-bg)}
+.page.cover{background:var(--nt-grad);color:#fff;padding:0}
+@media print{
+  html,body{background:none;padding:0}
+  .page{margin:0;box-shadow:none;break-after:page}
+  .no-print{display:none!important}
+}
+.help{max-width:297mm;margin:0 auto 14px;font-size:12px;color:#3A4254;padding:0 4px}
+.eyebrow{font-size:12px;font-weight:700;color:var(--nt-blue);display:flex;align-items:center;gap:10px}
+.eyebrow b{display:inline-flex;align-items:center;justify-content:center;min-width:28px;height:22px;padding:0 8px;
+  border-radius:8px;background:var(--nt-blue);color:#fff;font-size:12px}
+.cover .eyebrow{color:rgba(255,255,255,.85)}
+.cover .eyebrow b{background:rgba(255,255,255,.2);color:#fff}
+h2{font-size:28px;font-weight:800;letter-spacing:-.02em;line-height:1.12;margin:6px 0 12px}
+h3{font-size:15px;font-weight:800;margin-bottom:6px}
+.lead{font-size:14px;color:var(--nt-muted);max-width:640px;margin-bottom:12px}
+.foot{margin-top:auto;padding-top:9px;border-top:1px solid var(--nt-line);display:flex;justify-content:space-between;align-items:center;
+  font-size:10px;color:var(--nt-muted)}
+.cover .foot{border-color:rgba(255,255,255,.25);color:rgba(255,255,255,.75)}
+.label{font-size:11px;font-weight:700;color:var(--nt-muted);margin-bottom:8px;letter-spacing:.02em;text-transform:uppercase}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:1fr 1fr}
+.g3{grid-template-columns:repeat(3,1fr)}
+.panel{border-radius:var(--nt-radius);padding:14px;background:var(--nt-bg);border:1px solid var(--nt-line)}
+.mist .panel{background:var(--nt-white)}
+.wm{font-weight:800;letter-spacing:-.03em;line-height:1;white-space:nowrap}
+.wm .n{color:var(--nt-blue-deep)}.wm .o{color:var(--nt-green)}
+.wm.white .n,.wm.white .o{color:#fff}
+.token{font-family:var(--nt-mono);font-size:10px;background:#EEF2F7;padding:2px 6px;border-radius:4px;color:var(--nt-ink)}
+.swatch{display:flex;align-items:center;gap:10px;padding:8px;background:#fff;border-radius:var(--nt-radius-sm);border:1px solid var(--nt-line)}
+.swatch i{width:36px;height:36px;border-radius:8px;flex:none;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}
+.swatch b{display:block;font-size:12px}
+.swatch code{font-family:var(--nt-mono);font-size:10px;color:var(--nt-muted)}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:40px;padding:0 18px;border-radius:var(--nt-pill);
+  font-weight:700;font-size:13px;border:1.5px solid transparent;white-space:nowrap}
+.btn-sm{height:32px;padding:0 14px;font-size:12px}
+.btn-lg{height:48px;padding:0 24px;font-size:14px}
+.btn-pri{background:var(--nt-blue);color:#fff;box-shadow:0 0 0 5px rgba(0,105,180,.16)}
+.btn-ok{background:var(--nt-green);color:#fff}
+.btn-sec{background:#fff;border-color:var(--nt-blue);color:var(--nt-blue)}
+.btn-ghost{background:transparent;color:var(--nt-blue);padding:0 8px}
+.btn-danger{background:var(--nt-err);color:#fff}
+.btn.is-disabled{opacity:.45}
+.btn-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+
+.chip{display:inline-flex;align-items:center;height:26px;padding:0 12px;border-radius:var(--nt-pill);font-size:11px;font-weight:700}
+.chip-blue{background:var(--nt-blue-soft);color:var(--nt-blue-deep)}
+.chip-ok{background:var(--nt-green-soft);color:var(--nt-green-deep)}
+.chip-warn{background:var(--nt-warn-soft);color:var(--nt-warn)}
+.chip-err{background:var(--nt-err-soft);color:var(--nt-err)}
+.chip-mute{background:#EEF2F7;color:var(--nt-muted)}
+
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:12px;font-weight:600;color:var(--nt-muted)}
+.input,.select,.textarea{
+  height:40px;padding:0 12px;border:1.5px solid var(--nt-line);border-radius:var(--nt-radius-sm);
+  font:inherit;background:#fff;color:var(--nt-ink);outline:none}
+.textarea{height:auto;min-height:72px;padding:10px 12px;resize:none}
+.input:focus,.select:focus,.textarea:focus{border-color:var(--nt-blue);box-shadow:0 0 0 3px rgba(0,105,180,.14)}
+.input.is-error{border-color:var(--nt-err)}
+.hint{font-size:11px;color:var(--nt-muted)}
+.hint.err{color:var(--nt-err)}
+.search{display:flex;align-items:center;gap:8px;height:44px;padding:0 14px;border:1.5px solid var(--nt-line);border-radius:12px;background:#fff}
+.search:focus-within{border-color:var(--nt-blue);box-shadow:0 0 0 3px rgba(0,105,180,.14)}
+.search input{border:0;outline:0;flex:1;font:inherit;background:transparent}
+.search .ico{color:var(--nt-muted);font-size:14px}
+
+.price-card{background:#fff;border:1px solid var(--nt-line);border-radius:12px;padding:12px 14px;box-shadow:var(--nt-shadow)}
+.price-card .title{font-size:13px;font-weight:700}
+.price-card .row{display:flex;justify-content:space-between;align-items:baseline;margin-top:6px;gap:8px}
+.price-card .price{font-size:20px;font-weight:800;color:var(--nt-green);font-variant-numeric:tabular-nums}
+.price-card .price.alt{color:var(--nt-ink);font-size:15px;font-weight:700}
+.price-card .meta{font-size:11px;color:var(--nt-muted);margin-top:4px}
+.list-item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;background:#fff;border:1px solid var(--nt-line);border-radius:10px}
+.list-item .p{font-weight:700;font-variant-numeric:tabular-nums}
+.list-item .m{font-size:11px;color:var(--nt-muted)}
+
+.nav-demo{display:flex;align-items:center;gap:14px;padding:10px 14px;border:1px solid var(--nt-line);border-radius:var(--nt-radius);background:#fff}
+.nav-demo a{color:var(--nt-muted);text-decoration:none;font-size:12px;font-weight:600}
+.nav-demo a.on{color:var(--nt-blue)}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--nt-line)}
+.tab{padding:8px 12px;font-size:12px;font-weight:700;color:var(--nt-muted);border-bottom:2px solid transparent;margin-bottom:-1px}
+.tab.on{color:var(--nt-blue-deep);border-bottom-color:var(--nt-blue)}
+.table-wrap{border:1px solid var(--nt-line);border-radius:var(--nt-radius);overflow:hidden;background:#fff}
+table.ds{width:100%;border-collapse:collapse;font-size:12px}
+table.ds th{text-align:left;padding:10px 12px;background:var(--nt-bg);color:var(--nt-muted);font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.03em;border-bottom:1px solid var(--nt-line)}
+table.ds td{padding:10px 12px;border-bottom:1px solid var(--nt-line);vertical-align:middle}
+table.ds tr:last-child td{border-bottom:0}
+table.ds .mono{font-family:var(--nt-mono);font-size:11px}
+
+.state{border:1px dashed var(--nt-line);border-radius:var(--nt-radius);padding:20px;text-align:center;background:#fff}
+.state .ico{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;margin:0 auto 10px;font-size:18px}
+.state h4{font-size:14px;font-weight:800;margin-bottom:4px}
+.state p{font-size:12px;color:var(--nt-muted);max-width:260px;margin:0 auto}
+.scan{border-radius:var(--nt-radius);background:var(--nt-ink);color:#fff;padding:16px;min-height:140px;display:flex;flex-direction:column;justify-content:flex-end;position:relative;overflow:hidden}
+.scan::before{content:"";position:absolute;inset:18px;border:2px solid rgba(184,245,208,.85);border-radius:12px;box-shadow:0 0 0 999px rgba(11,31,51,.35)}
+.scan .bar{position:relative;z-index:1;font-size:11px;opacity:.9}
+
+.phone{width:200px;height:410px;border-radius:32px;padding:10px;background:var(--nt-ink);flex:none;box-shadow:0 12px 30px rgba(11,31,51,.25)}
+.phone .scr{width:100%;height:100%;border-radius:24px;background:var(--nt-bg);overflow:hidden;display:flex;flex-direction:column;padding:14px 12px 10px}
+.phone .st{display:flex;justify-content:space-between;font-size:9px;font-weight:700;margin-bottom:10px}
+.sym{--s:40px;width:var(--s);height:var(--s);border-radius:calc(var(--s)*.22);background:var(--nt-grad);display:grid;place-items:center}
+.sym svg{width:62%;height:62%}
+ul.dots{list-style:none;display:grid;gap:6px}
+ul.dots li{position:relative;padding-left:16px;font-size:12px;color:var(--nt-muted)}
+ul.dots li::before{content:"";position:absolute;left:0;top:.55em;width:6px;height:6px;border-radius:50%;background:var(--nt-blue)}
+</style>
+</head>
+<body>
+<p class="help no-print">Design system notinhas.org v1 · A4 paisagem · tokens da identidade · PDF: Imprimir → Salvar como PDF, margens Nenhuma, gráficos de fundo.</p>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="nt-mark" viewBox="0 0 64 64" fill="none">
+    <rect x="14" y="10" width="36" height="44" rx="6" stroke="#fff" stroke-width="3"/>
+    <path d="M22 22h20M22 30h16M22 38h12" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+    <rect x="36" y="40" width="12" height="12" rx="2" stroke="#fff" stroke-width="2.5"/>
+    <path d="M20 48h10l-2.5 4H17l3-4z" fill="#7CFFB2" stroke="none"/>
+  </symbol>
+</svg>
+
+<!-- 01 CAPA -->
+<section class="page cover">
+  <div style="position:absolute;inset:0;background:
+    radial-gradient(ellipse 50% 60% at 85% 20%,rgba(255,255,255,.18),transparent 60%),
+    radial-gradient(ellipse 40% 50% at 10% 90%,rgba(0,152,75,.35),transparent 55%)"></div>
+  <div style="position:relative;z-index:1;padding:16mm 18mm;height:100%;display:flex;flex-direction:column;justify-content:center">
+    <div class="eyebrow"><b>v1</b> Design system · 2026</div>
+    <div style="margin-top:18px" class="wm white" style="font-size:56px"><span class="n" style="color:#fff;font-size:56px;font-weight:800;letter-spacing:-.03em">notinhas</span><span class="o" style="color:#B8F5D0;font-size:56px;font-weight:800;letter-spacing:-.03em">.org</span></div>
+    <p style="margin-top:16px;font-size:18px;font-weight:600;max-width:480px">Tokens e componentes para scan, busca e lista de preços.</p>
+    <p style="margin-top:12px;font-size:13px;opacity:.85;max-width:520px">Parte da identidade visual v1 (azul + verde). Só o necessário para as telas atuais — sem biblioteca monstro.</p>
+    <div class="foot" style="margin-top:auto"><span>Manual de componentes · HTML print-ready</span><span>Base: identidade qUI3Rb9a</span><span>01</span></div>
+  </div>
+</section>
+
+<!-- 02 TOKENS -->
+<section class="page">
+  <div class="eyebrow"><b>01</b> Fundação</div>
+  <h2>Tokens = identidade</h2>
+  <p class="lead">Não inventar paleta paralela. Espaço 4/8, radius 8–14, tipografia Plus Jakarta Sans, superfície clara.</p>
+  <div class="grid g2" style="flex:1;min-height:0">
+    <div>
+      <div class="label">Cores</div>
+      <div class="grid" style="gap:8px">
+        <div class="swatch"><i style="background:#0069B4"></i><div><b>Azul primário</b><code>--nt-blue #0069B4</code></div></div>
+        <div class="swatch"><i style="background:#014380"></i><div><b>Azul profundo</b><code>--nt-blue-deep #014380</code></div></div>
+        <div class="swatch"><i style="background:#00984B"></i><div><b>Verde / menor preço</b><code>--nt-green #00984B</code></div></div>
+        <div class="swatch"><i style="background:#F5F7FA;border:1px solid #D5DEE8"></i><div><b>Fundo app</b><code>--nt-bg #F5F7FA</code></div></div>
+        <div class="swatch"><i style="background:#C62828"></i><div><b>Erro</b><code>--nt-err #C62828</code></div></div>
+      </div>
+    </div>
+    <div>
+      <div class="label">Espaço · raio · elevação · tipo</div>
+      <div class="panel" style="margin-bottom:10px">
+        <div style="display:flex;gap:6px;align-items:flex-end;height:48px;margin-bottom:8px">
+          <div style="width:4px;height:4px;background:var(--nt-blue)"></div>
+          <div style="width:8px;height:8px;background:var(--nt-blue)"></div>
+          <div style="width:12px;height:12px;background:var(--nt-blue)"></div>
+          <div style="width:16px;height:16px;background:var(--nt-blue)"></div>
+          <div style="width:24px;height:24px;background:var(--nt-blue)"></div>
+          <div style="width:32px;height:32px;background:var(--nt-blue)"></div>
+        </div>
+        <p style="font-size:12px;color:var(--nt-muted)">4 · 8 · 12 · 16 · 24 · 32 px</p>
+      </div>
+      <div class="panel" style="margin-bottom:10px">
+        <p style="font-size:12px;margin-bottom:8px"><span class="token">radius-sm 8</span> <span class="token">radius 14</span> <span class="token">pill</span></p>
+        <p style="font-size:12px;color:var(--nt-muted)">Sombra card: <span class="token">--nt-shadow</span> · controles 40 px (32 / 48)</p>
+      </div>
+      <div class="panel">
+        <p style="font-size:12px;color:var(--nt-muted)">UI: Plus Jakarta Sans 400–800 · preços: tabular / mono · wordmark: ExtraBold</p>
+        <p style="font-size:12px;color:var(--nt-muted);margin-top:6px">Ícone: símbolo recibo+QR da identidade (app / favicon)</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span class="wm" style="font-size:13px"><span class="n">notinhas</span><span class="o">.org</span></span><span>Design system v1 · Tokens</span><span>02</span></div>
+</section>
+
+<!-- 03 BUTTONS -->
+<section class="page">
+  <div class="eyebrow"><b>02</b> Componentes</div>
+  <h2>Botões e chips</h2>
+  <div class="grid g2" style="flex:1;align-content:start">
+    <div class="panel">
+      <div class="label">Buttons</div>
+      <div class="btn-row" style="margin-bottom:12px">
+        <span class="btn btn-pri">Buscar menor preço</span>
+        <span class="btn btn-sec">Colar URL do QR</span>
+        <span class="btn btn-ok">R$ 4,29 · menor</span>
+      </div>
+      <div class="btn-row">
+        <span class="btn btn-pri btn-sm">Small</span>
+        <span class="btn btn-pri">Default</span>
+        <span class="btn btn-pri btn-lg">Large</span>
+        <span class="btn btn-ghost">Ghost</span>
+        <span class="btn btn-danger">Excluir</span>
+        <span class="btn btn-pri is-disabled">Disabled</span>
+      </div>
+      <p class="hint" style="margin-top:12px">Primário = azul. Verde só para destacar menor preço / sucesso. Um primary por viewport.</p>
+    </div>
+    <div class="panel">
+      <div class="label">Chips / status</div>
+      <div class="btn-row" style="margin-bottom:14px">
+        <span class="chip chip-ok">menor</span>
+        <span class="chip chip-blue">hoje</span>
+        <span class="chip chip-warn">sem EAN</span>
+        <span class="chip chip-err">URL inválida</span>
+        <span class="chip chip-mute">duplicada</span>
+      </div>
+      <div class="label">Regra</div>
+      <ul class="dots">
+        <li>Chip <b>menor</b> sempre verde junto do preço mínimo</li>
+        <li>Loja + data em toda ocorrência de preço</li>
+        <li>Não usar “e-notas” como marca na UI</li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot"><span class="wm" style="font-size:13px"><span class="n">notinhas</span><span class="o">.org</span></span><span>Design system v1 · Botões</span><span>03</span></div>
+</section>
+
+<!-- 04 FORMS -->
+<section class="page">
+  <div class="eyebrow"><b>03</b> Componentes</div>
+  <h2>Busca e formulário</h2>
+  <div class="grid" style="gap:16px;flex:1;align-content:start">
+    <div>
+      <div class="label">Search (EAN / nome)</div>
+      <div class="search" style="max-width:480px"><span class="ico">⌕</span><input value="Leite integral 1L" readonly></div>
+    </div>
+    <div class="grid g3">
+      <div class="field">
+        <label>URL do QR</label>
+        <input class="input" value="https://www.fazenda.pr.gov.br/nfce/qrcode?p=…">
+        <span class="hint">Entrada canônica de contribuição</span>
+      </div>
+      <div class="field">
+        <label>EAN / GTIN</label>
+        <input class="input is-error" value="789">
+        <span class="hint err">Informe um EAN válido (8–14 dígitos)</span>
+      </div>
+      <div class="field">
+        <label>Filtro loja</label>
+        <select class="select"><option>Todas</option><option>Perto de mim</option></select>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="label">Mapeamento app atual</div>
+      <p style="font-size:12px;color:var(--nt-muted)"><span class="token">.search input</span> · <span class="token">.form-ean input</span> · <span class="token">.manual-row</span> → migrar para tokens <span class="token">--nt-*</span> (hoje dark em <code>app/public/styles.css</code>).</p>
+    </div>
+  </div>
+  <div class="foot"><span class="wm" style="font-size:13px"><span class="n">notinhas</span><span class="o">.org</span></span><span>Design system v1 · Inputs</span><span>04</span></div>
+</section>
+
+<!-- 05 PRICE / LIST -->
+<section class="page mist">
+  <div class="eyebrow"><b>04</b> Componentes</div>
+  <h2>Card de preço e lista</h2>
+  <div class="grid" style="grid-template-columns:1.1fr 1fr;flex:1;gap:18px;align-content:start">
+    <div>
+      <div class="label">Price card (destaque menor)</div>
+      <div class="price-card" style="margin-bottom:10px">
+        <div class="title">Leite integral 1L</div>
+        <div class="row">
+          <span class="price">R$ 4,29</span>
+          <span class="chip chip-ok">menor</span>
+        </div>
+        <div class="meta">Mercado X · ontem · 1,2 km</div>
+      </div>
+      <div class="label">Ocorrências</div>
+      <div class="grid" style="gap:8px">
+        <div class="list-item">
+          <div><div class="p">R$ 4,89</div><div class="m">Mercado Y · hoje</div></div>
+          <span class="chip chip-blue">hoje</span>
+        </div>
+        <div class="list-item">
+          <div><div class="p">R$ 5,10</div><div class="m">Mercado Z · 28/10</div></div>
+          <span class="chip chip-mute">7d</span>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="label">Princípios</div>
+      <div class="panel" style="margin-bottom:10px">
+        <ul class="dots">
+          <li>Menor preço: verde + chip <b>menor</b></li>
+          <li>Demais preços: tinta; meta loja · data · distância opcional</li>
+          <li>Card com sombra só no destaque; lista flat</li>
+          <li>Preços com tabular nums</li>
+        </ul>
+      </div>
+      <div class="label">App classes</div>
+      <div class="panel">
+        <p style="font-size:12px;color:var(--nt-muted)">Alvo: busca consumer. Listagem admin atual (<span class="token">table</span> / <span class="token">.row-link</span>) usa o mesmo token de tabela (página seguinte).</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span class="wm" style="font-size:13px"><span class="n">notinhas</span><span class="o">.org</span></span><span>Design system v1 · Preço</span><span>05</span></div>
+</section>
+
+<!-- 06 NAV / TABLE -->
+<section class="page">
+  <div class="eyebrow"><b>05</b> Componentes</div>
+  <h2>Nav, tabs e tabela</h2>
+  <div class="nav-demo" style="margin-bottom:12px">
+    <span class="wm" style="font-size:16px;margin-right:auto"><span class="n">notinhas</span><span class="o">.org</span></span>
+    <a class="on" href="#">Buscar</a><a href="#">QR</a><a href="#">Perto</a><a href="#">Conta</a>
+    <span class="btn btn-pri btn-sm">Escanear</span>
+  </div>
+  <div class="tabs" style="margin-bottom:12px">
+    <span class="tab on">Empresas</span>
+    <span class="tab">Notas</span>
+    <span class="tab">Itens</span>
+  </div>
+  <div class="table-wrap" style="flex:1;min-height:0">
+    <table class="ds">
+      <thead>
+        <tr><th>Produto</th><th>EAN</th><th>Menor</th><th>Loja</th><th>Data</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Leite integral 1L</td><td class="mono">7891000100103</td><td><b style="color:var(--nt-green)">R$ 4,29</b></td><td>Mercado X</td><td>31/10</td></tr>
+        <tr><td>Arroz 5kg</td><td class="mono">7896004000123</td><td><b style="color:var(--nt-green)">R$ 22,90</b></td><td>Mercado Y</td><td>01/11</td></tr>
+        <tr><td>Café 500g</td><td class="mono">7894900011517</td><td><b style="color:var(--nt-green)">R$ 18,49</b></td><td>Mercado X</td><td>30/10</td></tr>
+        <tr><td>Item sem EAN</td><td><span class="chip chip-warn">sem EAN</span></td><td><b style="color:var(--nt-green)">R$ 3,20</b></td><td>Mercado Z</td><td>29/10</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="foot"><span class="wm" style="font-size:13px"><span class="n">notinhas</span><span class="o">.org</span></span><span>Design system v1 · Nav/tabela</span><span>06</span></div>
+</section>
+
+<!-- 07 STATES / SCAN -->
+<section class="page mist">
+  <div class="eyebrow"><b>06</b> Componentes</div>
+  <h2>Estados e feedback de scan</h2>
+  <div class="grid g3" style="flex:1;align-content:start">
+    <div class="state">
+      <div class="ico" style="background:var(--nt-blue-soft);color:var(--nt-blue)">∅</div>
+      <h4>Vazio</h4>
+      <p>Nenhuma ocorrência ainda. Escaneie um QR ou busque outro EAN.</p>
+      <div style="margin-top:12px"><span class="btn btn-pri btn-sm">Escanear QR</span></div>
+    </div>
+    <div class="state">
+      <div class="ico" style="background:var(--nt-err-soft);color:var(--nt-err)">!</div>
+      <h4>Erro</h4>
+      <p>URL inválida ou consulta indisponível. Cole de novo o link do cupom.</p>
+      <div style="margin-top:12px"><span class="btn btn-sec btn-sm">Tentar de novo</span></div>
+    </div>
+    <div class="state">
+      <div class="ico" style="background:var(--nt-green-soft);color:var(--nt-green)">…</div>
+      <h4>Loading</h4>
+      <p>Lendo a nota… extraindo itens e gravando no índice.</p>
+    </div>
+    <div class="scan" style="grid-column:1 / -1">
+      <div class="bar">Aponte para o QR do cupom · status: <span style="color:#B8F5D0">pronto</span></div>
+    </div>
+  </div>
+  <div class="foot"><span class="wm" style="font-size:13px"><span class="n">notinhas</span><span class="o">.org</span></span><span>Design system v1 · Estados</span><span>07</span></div>
+</section>
+
+<!-- 08 APP MAP + CHECKLIST -->
+<section class="page">
+  <div class="eyebrow"><b>07</b> Aplicação</div>
+  <h2>Mobile + checklist</h2>
+  <div class="grid" style="grid-template-columns:auto 1fr 1fr;gap:18px;flex:1;min-height:0;align-items:start">
+    <div class="phone">
+      <div class="scr">
+        <div class="st"><span>9:41</span><span>●●●</span></div>
+        <div class="wm" style="font-size:16px;margin-bottom:10px"><span class="n">notinhas</span><span class="o">.org</span></div>
+        <div class="search" style="height:36px;margin-bottom:10px;font-size:11px"><span class="ico">⌕</span><input placeholder="Buscar EAN ou nome…" readonly></div>
+        <div class="price-card" style="padding:10px;box-shadow:none;margin-bottom:8px">
+          <div class="title" style="font-size:11px">Leite integral 1L</div>
+          <div class="row"><span class="price" style="font-size:16px">R$ 4,29</span><span class="chip chip-ok">menor</span></div>
+          <div class="meta">Mercado X · ontem</div>
+        </div>
+        <div class="list-item" style="padding:8px;font-size:11px"><div><div class="p">R$ 4,89</div><div class="m">Mercado Y</div></div></div>
+        <div style="margin-top:auto;display:flex;justify-content:space-around;padding-top:10px;border-top:1px solid var(--nt-line);font-size:9px;font-weight:700;color:var(--nt-muted)">
+          <span style="color:var(--nt-blue)">Buscar</span><span>QR</span><span>Perto</span><span>Conta</span>
+        </div>
+      </div>
+    </div>
+    <div class="panel">
+      <h3>Do</h3>
+      <ul class="dots" style="margin-top:8px">
+        <li>Tokens <span class="token">--nt-*</span> iguais à identidade</li>
+        <li>Fundo <code>#F5F7FA</code>, cards brancos</li>
+        <li>Menor preço verde + chip</li>
+        <li>Wordmark <b>notinhas.org</b></li>
+        <li>Controles 40 px; radius 8–14</li>
+        <li>Mapear em <code>app/public/styles.css</code></li>
+      </ul>
+    </div>
+    <div class="panel">
+      <h3>Don’t</h3>
+      <ul class="dots" style="margin-top:8px">
+        <li>Dark UI genérica no consumer</li>
+        <li>Azul Tailwind (#2563EB) no lugar de #0069B4</li>
+        <li>Marca “e-notas” na UI pública</li>
+        <li>Preço sem loja/data</li>
+        <li>Roxo / glow / cream “AI default”</li>
+        <li>DS sem a identidade fechada</li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot"><span class="wm" style="font-size:13px"><span class="n">notinhas</span><span class="o">.org</span></span><span>Design system v1 · Checklist</span><span>08</span></div>
+</section>
+
+<!-- 09 CONTRACAPA -->
+<section class="page cover">
+  <div style="position:relative;z-index:1;padding:16mm 18mm;height:100%;display:flex;flex-direction:column;justify-content:center">
+    <div class="sym" style="--s:56px;margin-bottom:16px"><svg viewBox="0 0 64 64"><use href="#nt-mark"/></svg></div>
+    <div style="font-size:42px;font-weight:800;letter-spacing:-.03em"><span style="color:#fff">notinhas</span><span style="color:#B8F5D0">.org</span></div>
+    <p style="margin-top:14px;font-size:16px;font-weight:600;max-width:420px">Design system v1 — tokens + componentes essenciais.</p>
+    <div style="margin-top:24px;font-size:13px;opacity:.85;line-height:1.7">
+      Tokens: <code style="color:#fff">e-notas/design-system.md</code><br>
+      Manual: <code style="color:#fff">e-notas/marca/design-system-notinhas-v1.html</code><br>
+      Identidade: trello.com/c/qUI3Rb9a<br>
+      Card DS: trello.com/c/qdH95gZX
+    </div>
+    <div class="foot" style="margin-top:auto"><span>notinhas.org · design system v1</span><span>09</span></div>
+  </div>
+</section>
+
+</body>
+</html>

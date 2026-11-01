@@ -129,6 +129,13 @@ Curadoria: [`../marca/benchmarking-solucoes/README.md`](../marca/benchmarking-so
 - Manual: [`../marca/identidade-visual-notinhas-v1.html`](../marca/identidade-visual-notinhas-v1.html) · tokens [`../identidade-visual.md`](../identidade-visual.md).
 - Card: [Criar identidade visual](https://trello.com/c/qUI3Rb9a).
 
+## REQ-016 — Design system notinhas.org (2026-11-01)
+
+- Tokens de UI herdam `--nt-*` da identidade; espaço 4–32, radius 8/14, controles 40 px.
+- Componentes v1: botão, chip, busca/input, card de preço, lista, nav/tabs, tabela, empty/error/loading, scan.
+- Menor preço sempre verde + chip; loja + data em toda ocorrência; wordmark **notinhas.org** na UI.
+- Manual: [`../marca/design-system-notinhas-v1.html`](../marca/design-system-notinhas-v1.html) · mapa [`../design-system.md`](../design-system.md).
+- Card: [Criar design system](https://trello.com/c/qdH95gZX). Aplicação CSS no app fica fora deste REQ (só documentação + mapeamento).
 
 ---
 

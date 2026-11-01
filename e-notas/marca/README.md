@@ -6,16 +6,18 @@ Manual essencial (9 páginas A4 paisagem): capa, essência/tom, logo, versões, 
 
 | Arquivo | Uso |
 |---------|-----|
-| [`identidade-visual-notinhas-v1.html`](identidade-visual-notinhas-v1.html) | Manual print-ready (PDF depois) |
-| [`../identidade-visual.md`](../identidade-visual.md) | Tokens e regras |
+| [`identidade-visual-notinhas-v1.html`](identidade-visual-notinhas-v1.html) | Manual identidade print-ready (PDF depois) |
+| [`../identidade-visual.md`](../identidade-visual.md) | Tokens e regras de marca |
+| [`design-system-notinhas-v1.html`](design-system-notinhas-v1.html) | Design system v1 (tokens + componentes) |
+| [`../design-system.md`](../design-system.md) | Tokens/componentes + mapa `app/` |
 | [`referencias-identidade/README.md`](referencias-identidade/README.md) | Insumos Nota Paraná / Menor Preço |
 | [`benchmarking-solucoes/README.md`](benchmarking-solucoes/README.md) | Concorrência |
 
-**Card:** [Criar identidade visual](https://trello.com/c/qUI3Rb9a) · task [`../tasks/6ae739e2ef0f49af2019c4f5/`](../tasks/6ae739e2ef0f49af2019c4f5/README.md)
+**Cards:** [Criar identidade visual](https://trello.com/c/qUI3Rb9a) · [Criar design system](https://trello.com/c/qdH95gZX) · tasks [`../tasks/6ae739e2ef0f49af2019c4f5/`](../tasks/6ae739e2ef0f49af2019c4f5/README.md) · [`../tasks/6ae739e3d95154fb9a7b51a6/`](../tasks/6ae739e3d95154fb9a7b51a6/README.md)
 
-**Apresentação (produto + benchmarking + DS):** [card](https://trello.com/c/hfGuzfMs) · task [`../tasks/6ae742a63b9ee278c2a0cc7e/`](../tasks/6ae742a63b9ee278c2a0cc7e/README.md) — identidade v1 anexada; documento unificado pendente.
+**Apresentação (produto + benchmarking + DS):** [card](https://trello.com/c/hfGuzfMs) · task [`../tasks/6ae742a63b9ee278c2a0cc7e/`](../tasks/6ae742a63b9ee278c2a0cc7e/README.md).
 
-**Antes → depois:** sem manual → HTML v1 (azul `#0069B4` + verde `#00984B`, wordmark `notinhas.org`). PDF e design system ficam para cards seguintes.
+**Antes → depois:** sem manual → identidade HTML v1 → DS HTML v1 (mesmos tokens `--nt-*`). PDF de marca e aplicação CSS no app ficam para passos seguintes.
 
 ### Gerar PDF (quando o escopo pedir)
 
@@ -29,6 +31,10 @@ Manual essencial (9 páginas A4 paisagem): capa, essência/tom, logo, versões, 
 ### Rollback
 
 ```bash
-rm -f e-notas/marca/identidade-visual-notinhas-v1.html e-notas/marca/README.md e-notas/identidade-visual.md
-rm -rf e-notas/tasks/6ae739e2ef0f49af2019c4f5
+rm -f e-notas/marca/identidade-visual-notinhas-v1.html \
+      e-notas/marca/design-system-notinhas-v1.html \
+      e-notas/marca/README.md \
+      e-notas/identidade-visual.md \
+      e-notas/design-system.md
+rm -rf e-notas/tasks/6ae739e2ef0f49af2019c4f5 e-notas/tasks/6ae739e3d95154fb9a7b51a6
 ```

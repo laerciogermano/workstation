@@ -13,6 +13,7 @@ Timeline de prompts: [`../prompts/timeline.md`](../prompts/timeline.md).
 | PRD (notinhas.org) | [`prd.md`](prd.md) | Capacidades-alvo pós-benchmarking (comparação, histórico, cesta, vitrine, geo, API) | Ativo |
 | Requisitos / regras | [`requisitos.md`](requisitos.md) | Regras canônicas pedidas (REQ-NNN); atualizar a cada requisito novo | Ativo |
 | Identidade visual | [`../marca/identidade-visual-notinhas-v1.html`](../marca/identidade-visual-notinhas-v1.html) | Manual marca notinhas.org (REQ-015) | Ativo |
+| Design system | [`../marca/design-system-notinhas-v1.html`](../marca/design-system-notinhas-v1.html) | Tokens + componentes UI (REQ-016) | Ativo |
 | Funcionalidades | `functionalities.md` | Capacidades de cada seção e página em bullets | A produzir |
 | Histórias de usuário | `user-stories.md` | O *quê* desejado pelo usuário (Como… quero… para…) | A produzir |
 | Cenários BDD | `bdd.md` | Critérios de aceite por história (Dado / Quando / Então) | A produzir |

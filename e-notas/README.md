@@ -14,7 +14,7 @@ Marca **notinhas.org**: [`marca/README.md`](marca/README.md) · identidade [`mar
 Refs identidade: [`marca/referencias-identidade/README.md`](marca/referencias-identidade/README.md).  
 Benchmarking soluções similares: [`marca/benchmarking-solucoes/README.md`](marca/benchmarking-solucoes/README.md) · [card](https://trello.com/c/1fMjqGdR).  
 Comparar preços NFC-e vs iFood/99Food/outros: [`marca/comparacao-precos-apps/`](marca/comparacao-precos-apps/README.md) · [card](https://trello.com/c/fapxKp3l).  
-Documento de apresentação (produto + benchmarking + DS): [card](https://trello.com/c/hfGuzfMs) · [`tasks/6ae742a63b9ee278c2a0cc7e/`](tasks/6ae742a63b9ee278c2a0cc7e/README.md).  
+Documento de apresentação (produto + benchmarking + DS): [`marca/apresentacao-notinhas-v1.html`](marca/apresentacao-notinhas-v1.html) · [card](https://trello.com/c/hfGuzfMs) · [`tasks/6ae742a63b9ee278c2a0cc7e/`](tasks/6ae742a63b9ee278c2a0cc7e/README.md).  
 PRD notinhas.org: [`docs/prd.md`](docs/prd.md).
 
 ---

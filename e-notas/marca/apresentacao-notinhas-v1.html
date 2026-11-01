@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>notinhas.org | Apresentação v1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --nt-blue:#0069B4;--nt-blue-deep:#014380;--nt-blue-soft:#E3F2FB;
+  --nt-green:#00984B;--nt-green-deep:#007A3D;--nt-green-soft:#E6F6EE;
+  --nt-ink:#0B1F33;--nt-muted:#5A6B7D;--nt-line:#D5DEE8;--nt-bg:#F5F7FA;--nt-white:#FFFFFF;
+  --nt-err:#C62828;--nt-warn:#D97706;--nt-mid:#B8860B;
+  --nt-grad:linear-gradient(135deg,#014380 0%,#0069B4 48%,#00984B 100%);
+  --nt-radius:14px;--nt-pill:999px;
+  --nt-font:"Plus Jakarta Sans",system-ui,"Segoe UI",sans-serif;
+  --nt-mono:ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#C5CDD8;color:var(--nt-ink);font-family:var(--nt-font);font-size:13px;line-height:1.5;
+  -webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{padding:24px 0}
+@page{size:297mm 210mm;margin:0}
+.page{width:297mm;height:210mm;margin:0 auto 24px;padding:14mm 16mm 11mm;position:relative;overflow:hidden;
+  background:var(--nt-white);box-shadow:0 8px 30px rgba(11,31,51,.16);display:flex;flex-direction:column}
+.page.mist{background:var(--nt-bg)}
+.page.cover{background:var(--nt-grad);color:#fff;padding:0}
+@media print{
+  html,body{background:none;padding:0}
+  .page{margin:0;box-shadow:none;break-after:page}
+  .no-print{display:none!important}
+}
+.help{max-width:297mm;margin:0 auto 14px;font-size:12px;color:#3A4254;padding:0 4px}
+.eyebrow{font-size:12px;font-weight:700;color:var(--nt-blue);display:flex;align-items:center;gap:10px}
+.eyebrow b{display:inline-flex;align-items:center;justify-content:center;min-width:28px;height:22px;padding:0 8px;
+  border-radius:8px;background:var(--nt-blue);color:#fff;font-size:12px}
+.cover .eyebrow{color:rgba(255,255,255,.85)}
+.cover .eyebrow b{background:rgba(255,255,255,.2);color:#fff}
+h2{font-size:28px;font-weight:800;letter-spacing:-.02em;line-height:1.12;margin:6px 0 12px}
+h3{font-size:14px;font-weight:800;margin-bottom:4px}
+.lead{font-size:14px;color:var(--nt-muted);max-width:640px;margin-bottom:12px}
+.foot{margin-top:auto;padding-top:9px;border-top:1px solid var(--nt-line);display:flex;justify-content:space-between;align-items:center;
+  font-size:10px;color:var(--nt-muted)}
+.cover .foot{border-color:rgba(255,255,255,.25);color:rgba(255,255,255,.75)}
+.label{font-size:11px;font-weight:700;color:var(--nt-muted);margin-bottom:6px;letter-spacing:.02em;text-transform:uppercase}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:1fr 1fr}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g4{grid-template-columns:repeat(4,1fr)}
+.card{border-radius:var(--nt-radius);padding:14px;background:var(--nt-bg);border:1px solid var(--nt-line)}
+.mist .card{background:var(--nt-white)}
+.card.acc{border-left:4px solid var(--acc,var(--nt-blue))}
+.wm{font-weight:800;letter-spacing:-.03em;line-height:1;white-space:nowrap}
+.wm .n{color:var(--nt-blue-deep)}.wm .o{color:var(--nt-green)}
+.wm.white .n,.wm.white .o{color:#fff}
+.chip{display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:var(--nt-pill);font-size:11px;font-weight:700;
+  background:var(--nt-blue-soft);color:var(--nt-blue-deep)}
+.chip.ok{background:var(--nt-green-soft);color:var(--nt-green-deep)}
+.chip.warn{background:#FEF3C7;color:var(--nt-warn)}
+.chip.mute{background:#EEF2F7;color:var(--nt-muted)}
+.y{color:var(--nt-green-deep);font-weight:700}
+.p{color:var(--nt-mid);font-weight:700}
+.n{color:var(--nt-err);font-weight:700}
+table.m{width:100%;border-collapse:collapse;font-size:11px}
+table.m th,table.m td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--nt-line);vertical-align:top}
+table.m th{color:var(--nt-muted);font-size:10px;text-transform:uppercase;letter-spacing:.03em;font-weight:700}
+table.m tr:last-child td{border-bottom:0}
+ul.dots{list-style:none;display:grid;gap:5px}
+ul.dots li{position:relative;padding-left:14px;font-size:12.5px;color:var(--nt-muted)}
+ul.dots li::before{content:"";position:absolute;left:0;top:.55em;width:6px;height:6px;border-radius:50%;background:var(--acc,var(--nt-blue))}
+.sw{display:flex;align-items:center;gap:8px}
+.sw i{width:28px;height:28px;border-radius:7px;flex:none;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}
+.sw code{font-family:var(--nt-mono);font-size:10px;color:var(--nt-muted)}
+.sym{--s:56px;width:var(--s);height:var(--s);border-radius:calc(var(--s)*.22);background:var(--nt-grad);
+  display:grid;place-items:center;flex:none}
+.sym svg{width:62%;height:62%}
+.num{width:28px;height:28px;border-radius:8px;background:var(--nt-blue);color:#fff;display:grid;place-items:center;font-weight:800;font-size:13px;flex:none}
+.agenda-item{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border-radius:12px;background:#fff;border:1px solid var(--nt-line)}
+.agenda-item b{display:block;font-size:14px;margin-bottom:2px}
+.agenda-item span{font-size:12px;color:var(--nt-muted)}
+.prio{display:flex;align-items:center;gap:10px;padding:8px 10px;background:#fff;border:1px solid var(--nt-line);border-radius:10px}
+.prio .rk{font-weight:800;color:var(--nt-blue);width:18px}
+.btn{display:inline-flex;align-items:center;height:36px;padding:0 16px;border-radius:var(--nt-pill);font-weight:700;font-size:12px}
+.btn.pri{background:var(--nt-blue);color:#fff}
+.btn.ok{background:var(--nt-green);color:#fff}
+.btn.sec{border:1.5px solid var(--nt-blue);color:var(--nt-blue);background:#fff}
+</style>
+</head>
+<body>
+<p class="help no-print">Apresentação notinhas.org v1 · A4 paisagem · produto + benchmarking + design system · PDF: Imprimir → Salvar como PDF, margens Nenhuma, gráficos de fundo.</p>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="nt-mark" viewBox="0 0 64 64" fill="none">
+    <rect x="14" y="10" width="36" height="44" rx="6" stroke="#fff" stroke-width="3"/>
+    <path d="M22 22h20M22 30h16M22 38h12" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+    <rect x="36" y="40" width="12" height="12" rx="2" stroke="#fff" stroke-width="2.5"/>
+    <path d="M20 48h10l-2.5 4H17l3-4z" fill="#7CFFB2" stroke="none"/>
+  </symbol>
+</svg>
+
+<!-- 01 CAPA -->
+<section class="page cover">
+  <div style="position:absolute;inset:0;background:
+    radial-gradient(ellipse 50% 60% at 85% 20%,rgba(255,255,255,.18),transparent 60%),
+    radial-gradient(ellipse 40% 50% at 10% 90%,rgba(0,0,0,.12),transparent 55%)"></div>
+  <div style="position:relative;z-index:1;padding:16mm 18mm;height:100%;display:flex;flex-direction:column">
+    <div class="eyebrow"><b>v1</b> Documento de apresentação · 2026</div>
+    <div style="margin:auto 0;max-width:560px">
+      <div class="wm" style="font-size:60px"><span class="n" style="color:#fff">notinhas</span><span class="o" style="color:#B8F5D0">.org</span></div>
+      <p style="margin-top:16px;font-size:20px;font-weight:600;line-height:1.35;max-width:480px">A NFC-e vira índice de preço.<br>Produto, mercado e marca numa só leitura.</p>
+      <div style="display:flex;gap:8px;margin-top:20px;flex-wrap:wrap">
+        <span class="chip" style="background:rgba(255,255,255,.18);color:#fff">1 · Produto</span>
+        <span class="chip" style="background:rgba(255,255,255,.18);color:#fff">2 · Benchmarking</span>
+        <span class="chip" style="background:rgba(255,255,255,.18);color:#fff">3 · Design system</span>
+      </div>
+    </div>
+    <div class="foot"><span>Repo e-notas · marca notinhas.org</span><span>Card hfGuzfMs</span><span>01</span></div>
+  </div>
+</section>
+
+<!-- 02 AGENDA -->
+<section class="page mist">
+  <div class="eyebrow"><b>00</b> Roteiro</div>
+  <h2>Três blocos</h2>
+  <p class="lead">Stakeholder vê o quê é o produto, onde está o mercado e como a marca/UI se materializa.</p>
+  <div class="grid" style="gap:10px;flex:1;align-content:start">
+    <div class="agenda-item"><div class="num">1</div><div><b>O que é o e-notas / notinhas.org</b><span>Problema, proposta, personas, capacidades e prioridade</span></div></div>
+    <div class="agenda-item"><div class="num">2</div><div><b>Benchmarking</b><span>Matriz vs 6 requisitos do PRD · gaps e diferenciais</span></div></div>
+    <div class="agenda-item"><div class="num">3</div><div><b>Design system</b><span>Identidade (azul+verde) + tokens e componentes de UI</span></div></div>
+  </div>
+  <div class="foot"><span class="wm" style="font-size:13px"><span class="n">notinhas</span><span class="o">.org</span></span><span>Apresentação v1 · Agenda</span><span>02</span></div>
+</section>
+
+<!-- 03 PRODUTO -->
+<section class="page">
+  <div class="eyebrow"><b>01</b> Produto</div>
+  <h2>O que é o notinhas.org</h2>
+  <div class="grid" style="grid-template-columns:1.15fr 1fr;gap:16px;flex:1;min-height:0">
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="card" style="background:var(--nt-blue-deep);color:#fff;border:0">
+        <div class="label" style="color:#9ED0F5">Proposta</div>
+        <p style="font-size:16px;font-weight:700;line-height:1.35;margin-top:4px">QR/URL da NFC-e → índice EAN → preço → estabelecimento → data.</p>
+        <p style="font-size:13px;opacity:.9;margin-top:10px">Marca pública <b>notinhas.org</b> · código/repo <b>e-notas</b>.</p>
+      </div>
+      <div class="card acc" style="--acc:var(--nt-err)">
+        <h3>Problema</h3>
+        <p style="font-size:12.5px;color:var(--nt-muted)">Preço de mercado é opaco. A nota já traz EAN, preço, loja e data — e o dado some depois da compra. Falta índice consumer com comparação, geo, vitrine e API.</p>
+      </div>
+      <div class="card acc" style="--acc:var(--nt-green)">
+        <h3>Slogan</h3>
+        <p style="font-size:15px;font-weight:800">Menor preço a partir da nota.</p>
+        <p style="font-size:12px;color:var(--nt-muted);margin-top:4px">Escaneia o QR. Achamos o barato perto de você.</p>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div class="label">Personas</div>
+      <div class="card"><h3>Contribuinte</h3><p style="font-size:12px;color:var(--nt-muted)">Escaneia/cola o QR e alimenta o índice.</p></div>
+      <div class="card"><h3>Comprador</h3><p style="font-size:12px;color:var(--nt-muted)">Compara lojas, monta cesta, vê vitrine, acha onde comprar perto.</p></div>
+      <div class="card"><h3>Empresa / parceiro</h3><p style="font-size:12px;color:var(--nt-muted)">Consome ou alimenta o índice via API B2B.</p></div>
+      <div class="card" style="background:var(--nt-green-soft);border-color:rgba(0,152,75,.25)">
+        <h3 style="color:var(--nt-green-deep)">Fluxo mínimo</h3>
+        <p style="font-size:12px;color:var(--nt-green-deep);font-weight:600">QR → parse NFC-e → EAN/preço/loja → busca → menor preço</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span class="wm" style="font-size:13px"><span class="n">notinhas</span><span class="o">.org</span></span><span>Apresentação v1 · Produto</span><span>03</span></div>
+</section>
+
+<!-- 04 CAPACIDADES -->
+<section class="page mist">
+  <div class="eyebrow"><b>01</b> Produto</div>
+  <h2>Capacidades e prioridade</h2>
+  <div class="grid" style="grid-template-columns:1.3fr 1fr;gap:16px;flex:1;min-height:0">
+    <div>
+      <div class="label">Must / should / future</div>
+      <div class="grid g2" style="gap:8px">
+        <div class="card acc" style="--acc:var(--nt-blue)"><h3>Comparação <span class="chip">must</span></h3><p style="font-size:11.5px;color:var(--nt-muted)">EAN entre lojas · menor preço + loja + data</p></div>
+        <div class="card acc" style="--acc:var(--nt-blue)"><h3>Histórico <span class="chip">must</span></h3><p style="font-size:11.5px;color:var(--nt-muted)">Série temporal por produto / loja</p></div>
+        <div class="card acc" style="--acc:var(--nt-blue)"><h3>Busca geo <span class="chip">must</span></h3><p style="font-size:11.5px;color:var(--nt-muted)">Item → lojas perto (GPS ou centro/bairro)</p></div>
+        <div class="card acc" style="--acc:var(--nt-green)"><h3>Vitrine loja <span class="chip ok">should</span></h3><p style="font-size:11.5px;color:var(--nt-muted)">Catálogo read-only do estabelecimento</p></div>
+        <div class="card acc" style="--acc:var(--nt-green)"><h3>Montagem apartada <span class="chip ok">should</span></h3><p style="font-size:11.5px;color:var(--nt-muted)">Cesta + split 2+ lojas</p></div>
+        <div class="card acc" style="--acc:var(--nt-green)"><h3>API empresas <span class="chip ok">should</span></h3><p style="font-size:11.5px;color:var(--nt-muted)">Consulta B2B · vínculo EAN</p></div>
+      </div>
+      <div class="card" style="margin-top:10px;border-style:dashed"><h3>Delivery <span class="chip warn">future</span></h3><p style="font-size:11.5px;color:var(--nt-muted)">Pedido + entrega após vitrine estável e parceria. Fora da v1.</p></div>
+    </div>
+    <div>
+      <div class="label">Ordem sugerida</div>
+      <div class="grid" style="gap:6px">
+        <div class="prio"><span class="rk">1</span> Comparação EAN + menor preço</div>
+        <div class="prio"><span class="rk">2</span> Busca geo (perto / centro)</div>
+        <div class="prio"><span class="rk">3</span> Histórico por produto/loja</div>
+        <div class="prio"><span class="rk">4</span> Vitrine da loja</div>
+        <div class="prio"><span class="rk">5</span> Montagem apartada</div>
+        <div class="prio"><span class="rk">6</span> API empresas</div>
+        <div class="prio"><span class="rk">7</span> Delivery (futuro)</div>
+      </div>
+      <div class="card" style="margin-top:10px">
+        <div class="label">Fora da v1</div>
+        <ul class="dots">
+          <li>Checkout / pagamento / delivery</li>
+          <li>Emissão de NF-e</li>
+          <li>Substituir Nota Paraná SEFAZ</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span class="wm" style="font-size:13px"><span class="n">notinhas</span><span class="o">.org</span></span><span>Apresentação v1 · Capacidades</span><span>04</span></div>
+</section>
+
+<!-- 05 BENCHMARKING MATRIZ -->
+<section class="page">
+  <div class="eyebrow"><b>02</b> Benchmarking</div>
+  <h2>Matriz vs 6 requisitos</h2>
+  <p class="lead" style="margin-bottom:8px">Fontes públicas · 2026-11-01 · legenda: <span class="y">Sim</span> · <span class="p">Parcial</span> · <span class="n">Não</span></p>
+  <div style="flex:1;overflow:hidden">
+    <table class="m">
+      <thead>
+        <tr>
+          <th>Solução</th>
+          <th>Comparação</th>
+          <th>Histórico</th>
+          <th>Apartada</th>
+          <th>Vitrine</th>
+          <th>Geo</th>
+          <th>API</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Busca Preço</td><td><span class="y">Sim</span></td><td><span class="y">Sim</span></td><td><span class="p">Parcial</span></td><td><span class="p">Parcial</span></td><td><span class="p">Parcial</span></td><td><span class="n">Não</span></td></tr>
+        <tr><td>Nota Preço</td><td><span class="y">Sim</span></td><td><span class="y">Sim</span></td><td><span class="y">Sim</span></td><td><span class="n">Não</span></td><td><span class="p">Parcial</span></td><td><span class="n">Não</span></td></tr>
+        <tr><td>Mercado Certo</td><td><span class="y">Sim</span></td><td><span class="p">Parcial</span></td><td><span class="y">Sim</span></td><td><span class="n">Não</span></td><td><span class="y">Sim</span></td><td><span class="n">Não</span></td></tr>
+        <tr><td>GoMarket</td><td><span class="y">Sim</span></td><td><span class="y">Sim</span></td><td><span class="n">Não</span></td><td><span class="y">Sim</span></td><td><span class="y">Sim</span></td><td><span class="n">Não</span></td></tr>
+        <tr><td>Qual o Preço</td><td><span class="y">Sim</span></td><td><span class="p">Parcial</span></td><td><span class="p">Parcial</span></td><td><span class="y">Sim</span></td><td><span class="y">Sim</span></td><td><span class="n">Não</span></td></tr>
+        <tr><td>Nota Paraná / MP Brasil</td><td><span class="y">Sim</span></td><td><span class="p">Parcial</span></td><td><span class="n">Não</span></td><td><span class="n">Não</span></td><td><span class="y">Sim</span></td><td><span class="p">Parcial</span></td></tr>
+        <tr><td>Quantto / Economiza AL</td><td><span class="y">Sim</span></td><td><span class="y">/</span> <span class="p">Parc.</span></td><td><span class="n">N/A</span></td><td><span class="n">N/A</span></td><td><span class="p">/</span> <span class="y">Sim</span></td><td><span class="y">Sim</span></td></tr>
+        <tr style="background:var(--nt-blue-soft)"><td><b>notinhas.org (alvo)</b></td><td><span class="y">Alvo</span></td><td><span class="y">Alvo</span></td><td><span class="y">Alvo</span></td><td><span class="y">Alvo</span></td><td><span class="y">Alvo</span></td><td><span class="y">Alvo</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="foot"><span class="wm" style="font-size:13px"><span class="n">notinhas</span><span class="o">.org</span></span><span>Apresentação v1 · Benchmarking</span><span>05</span></div>
+</section>
+
+<!-- 06 GAPS -->
+<section class="page mist">
+  <div class="eyebrow"><b>02</b> Benchmarking</div>
+  <h2>Gaps e posicionamento</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr;gap:14px;flex:1;min-height:0">
+    <div class="card">
+      <div class="label">Quem já faz bem</div>
+      <table class="m">
+        <tr><td>Comparação</td><td>Todos + Nota Paraná</td></tr>
+        <tr><td>Histórico</td><td>Busca Preço, Nota Preço</td></tr>
+        <tr><td>Montagem apartada</td><td>Nota Preço, Mercado Certo</td></tr>
+        <tr><td>Vitrine loja</td><td>GoMarket, Qual o Preço</td></tr>
+        <tr><td>Busca geo</td><td>Nota Paraná, Qual o Preço…</td></tr>
+        <tr><td>API empresas</td><td>Quantto, Economiza AL</td></tr>
+      </table>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div class="card" style="background:var(--nt-blue-deep);color:#fff;border:0;flex:1">
+        <div class="label" style="color:#9ED0F5">Diferenciais notinhas</div>
+        <ul class="dots" style="--acc:#7CFFB2;margin-top:8px">
+          <li style="color:rgba(255,255,255,.92)">Vitrine e-commerce da loja (read-only)</li>
+          <li style="color:rgba(255,255,255,.92)">Montagem apartada (split 2+ lojas)</li>
+          <li style="color:rgba(255,255,255,.92)">API B2B no eixo consumer NFC-e</li>
+          <li style="color:rgba(255,255,255,.92)">Âncora “centro/bairro” além do GPS</li>
+        </ul>
+      </div>
+      <div class="card acc" style="--acc:var(--nt-green)">
+        <h3>Regra de ouro</h3>
+        <p style="font-size:12.5px;color:var(--nt-muted)">Não competir com SEFAZ em “ter o dado”. Competir em <b>UX de compra física</b> + <b>B2B</b>.</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span class="wm" style="font-size:13px"><span class="n">notinhas</span><span class="o">.org</span></span><span>Apresentação v1 · Gaps</span><span>06</span></div>
+</section>
+
+<!-- 07 DESIGN SYSTEM / IDENTIDADE -->
+<section class="page">
+  <div class="eyebrow"><b>03</b> Design system</div>
+  <h2>Identidade e tokens</h2>
+  <div class="grid" style="grid-template-columns:1.1fr 1fr;gap:16px;flex:1;min-height:0">
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="card" style="display:flex;gap:14px;align-items:center">
+        <div class="sym"><svg viewBox="0 0 64 64"><use href="#nt-mark"/></svg></div>
+        <div>
+          <div class="wm" style="font-size:32px"><span class="n">notinhas</span><span class="o">.org</span></div>
+          <p style="font-size:12px;color:var(--nt-muted);margin-top:6px">Wordmark = domínio · nunca “e-notas” na UI</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="label">Paleta (Nota Paraná / Menor Preço)</div>
+        <div class="grid g2" style="gap:8px">
+          <div class="sw"><i style="background:#0069B4"></i><div><b>Azul</b><br><code>--nt-blue #0069B4</code></div></div>
+          <div class="sw"><i style="background:#014380"></i><div><b>Azul profundo</b><br><code>#014380</code></div></div>
+          <div class="sw"><i style="background:#00984B"></i><div><b>Verde / menor</b><br><code>--nt-green #00984B</code></div></div>
+          <div class="sw"><i style="background:#F5F7FA;border:1px solid #D5DEE8"></i><div><b>Fundo</b><br><code>--nt-bg #F5F7FA</code></div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="label">Tipo</div>
+        <p style="font-size:13px"><b>Plus Jakarta Sans</b> 400–800 · preços tabular · light UI</p>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div class="label">Componentes v1</div>
+      <div class="card">
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px">
+          <span class="btn pri">Buscar menor preço</span>
+          <span class="btn sec">Colar URL do QR</span>
+          <span class="btn ok">R$ 4,29 · menor</span>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px">
+          <span class="chip ok">menor</span>
+          <span class="chip">hoje</span>
+          <span class="chip warn">sem EAN</span>
+          <span class="chip mute">duplicada</span>
+        </div>
+        <ul class="dots">
+          <li>Search EAN/nome · inputs 40 px · focus azul</li>
+          <li>Price card: preço verde + loja + data</li>
+          <li>Scan: viewport escuro + frame verde</li>
+          <li>App atual (dark) → migrar para tokens light</li>
+        </ul>
+      </div>
+      <div class="card" style="background:var(--nt-green-soft);border-color:rgba(0,152,75,.3)">
+        <h3 style="color:var(--nt-green-deep)">Tom</h3>
+        <p style="font-size:12px;color:var(--nt-green-deep)">Direto, útil, sem hype. Destacar <b>menor preço</b>, <b>loja</b> e <b>data</b>.</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span class="wm" style="font-size:13px"><span class="n">notinhas</span><span class="o">.org</span></span><span>Apresentação v1 · Design system</span><span>07</span></div>
+</section>
+
+<!-- 08 FECHO -->
+<section class="page cover">
+  <div style="position:absolute;inset:0;background:
+    radial-gradient(ellipse 50% 60% at 15% 30%,rgba(255,255,255,.14),transparent 55%),
+    radial-gradient(ellipse 40% 50% at 90% 80%,rgba(0,0,0,.12),transparent 55%)"></div>
+  <div style="position:relative;z-index:1;padding:16mm 18mm;height:100%;display:flex;flex-direction:column">
+    <div class="eyebrow"><b>v1</b> Próximos passos</div>
+    <div style="margin:auto 0;max-width:560px">
+      <div class="wm" style="font-size:48px"><span class="n" style="color:#fff">notinhas</span><span class="o" style="color:#B8F5D0">.org</span></div>
+      <p style="margin-top:14px;font-size:18px;font-weight:600;max-width:460px">Paridade em comparação/geo · diferencial em vitrine, split e API.</p>
+      <div class="grid g3" style="margin-top:22px;gap:10px">
+        <div style="background:rgba(255,255,255,.12);border-radius:12px;padding:12px">
+          <div style="font-size:11px;opacity:.8;font-weight:700;margin-bottom:4px">PRODUTO</div>
+          <div style="font-size:13px;font-weight:700">PRD + REQ-014</div>
+        </div>
+        <div style="background:rgba(255,255,255,.12);border-radius:12px;padding:12px">
+          <div style="font-size:11px;opacity:.8;font-weight:700;margin-bottom:4px">MERCADO</div>
+          <div style="font-size:13px;font-weight:700">Curadoria HTML</div>
+        </div>
+        <div style="background:rgba(255,255,255,.12);border-radius:12px;padding:12px">
+          <div style="font-size:11px;opacity:.8;font-weight:700;margin-bottom:4px">MARCA</div>
+          <div style="font-size:13px;font-weight:700">ID + DS v1</div>
+        </div>
+      </div>
+      <p style="margin-top:18px;font-size:12px;opacity:.85">Insumos: docs/prd.md · marca/benchmarking-solucoes · identidade + design-system HTML</p>
+    </div>
+    <div class="foot"><span>Menor preço a partir da nota.</span><span>Apresentação v1 · 2026-11-01</span><span>08</span></div>
+  </div>
+</section>
+
+</body>
+</html>

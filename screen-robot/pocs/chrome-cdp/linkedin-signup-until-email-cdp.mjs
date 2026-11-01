@@ -224,20 +224,29 @@ async function main() {
     return true;
   };
 
-  /** Modal visivel de Verificação de segurança (apos Continuar do nome). Nao usa footer/iframes ocultos. */
+  /**
+   * Modal real de verificação (depois do Continuar do nome).
+   * Ignora placeholder title="Verificação de segurança" com src about:blank no form de nome.
+   */
   const hasSecurityChallenge = async () =>
     evalv(`(() => {
-      const visible = (el) => {
-        if (!el || !el.getClientRects().length) return false;
-        const b = el.getBoundingClientRect();
-        return b.width > 80 && b.height > 80;
-      };
       return [...document.querySelectorAll('iframe')].some((f) => {
-        if (!visible(f)) return false;
-        return (
-          /verifica[cç][aã]o de seguran[cç]a|security verification/i.test(f.title || '') ||
-          /checkpoint\\/challengeIframe/i.test(f.src || '')
-        );
+        const src = f.src || '';
+        const b = f.getBoundingClientRect();
+        if (b.width < 100 || b.height < 120) return false;
+        if (!f.getClientRects().length) return false;
+        if (/checkpoint\\/challengeIframe/i.test(src)) return true;
+        if (/protechts\\.net|arkoselabs|funcaptcha/i.test(src) && b.height > 200) return true;
+        // title so conta se src real (nao about:blank) e modal alto
+        if (
+          /verifica[cç][aã]o de seguran[cç]a|security verification/i.test(f.title || '') &&
+          src &&
+          !/^about:blank$/i.test(src) &&
+          b.height > 200
+        ) {
+          return true;
+        }
+        return false;
       });
     })()`);
 
@@ -368,6 +377,10 @@ async function main() {
   // fluxo: nome+sobrenome → Continuar → (aí) verificação de segurança se aparecer
   for (let nameTry = 0; nameTry < 3; nameTry++) {
     st = await snap();
+    if (await hasSecurityChallenge()) {
+      console.log('modal segurança ja aberto (pos-Continuar)');
+      break;
+    }
     if (
       !(
         st.inputs.some((i) => i.id === 'first-name') ||
@@ -377,22 +390,22 @@ async function main() {
     ) {
       break;
     }
-    if (await hasSecurityChallenge()) {
-      // modal ja aberto de tentativa anterior — nao re-clicar Continuar
-      break;
-    }
     await fill('#first-name', FIRST);
     await fill('#last-name', LAST);
     const vals = await evalv(
       `({f:document.querySelector('#first-name')?.value||'',l:document.querySelector('#last-name')?.value||''})`,
     );
     console.log('name values', vals);
+    if (!vals.f || !vals.l) {
+      console.log('nome incompleto, retenta');
+      continue;
+    }
     await clickRe('continuar|continue');
-    await sleep(4500);
+    await sleep(5000);
     // so depois do Continuar do nome
     if (await hasSecurityChallenge()) break;
   }
-  await waitSecurityChallenge();
+  if (await hasSecurityChallenge()) await waitSecurityChallenge();
 
   let emailConfirmed = false;
 

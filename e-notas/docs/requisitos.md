@@ -79,7 +79,11 @@ App: [`../app/README.md`](../app/README.md).
 
 ## REQ-009 — Publicação Contabo (2026-11-01)
 
-- Front + API do e-notas publicados na Contabo em **`http://144.126.154.90/enotas/`** (nginx `/enotas/` → Node `127.0.0.1:4173`, unit `enotas`).
+- Front + API do e-notas na Contabo **sem substituir** o conect tec:
+  - conect tec: `http://144.126.154.90/`
+  - e-notas: `http://144.126.154.90/enotas/` e `http://144.126.154.90:4173/`
+- nginx: path `/enotas/` no site connectmax + server `:4173`; Node em `127.0.0.1:4174` (unit `enotas`).
+- Alias `/e-notas/` → `/enotas/` (path inexistente não pode cair no SPA do conect tec).
 - Lab local continua HTTPS autoassinado (`USE_HTTP` desligado).
 
 ---

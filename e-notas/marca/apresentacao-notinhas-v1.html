@@ -145,11 +145,12 @@ ul.dots li::before{content:"";position:absolute;left:0;top:.55em;width:6px;heigh
     <div class="card acc" style="--acc:var(--nt-blue)"><h3>Comparar preço</h3><p style="font-size:12px;color:var(--nt-muted)">Mesmo produto entre estabelecimentos — loja + data.</p></div>
     <div class="card acc" style="--acc:var(--nt-blue)"><h3>Simular economia</h3><p style="font-size:12px;color:var(--nt-muted)">Quanto se paga a menos com a escolha / split.</p></div>
     <div class="card acc" style="--acc:var(--nt-blue)"><h3>Pesquisar item perto</h3><p style="font-size:12px;color:var(--nt-muted)">GPS, centro ou bairro — onde comprar fisicamente.</p></div>
-    <div class="card acc" style="--acc:var(--nt-blue)"><h3>Vitrine de lojas</h3><p style="font-size:12px;color:var(--nt-muted)">Catálogo do estabelecimento — itens observados, read-only.</p></div>
+    <div class="card acc" style="--acc:var(--nt-blue)"><h3>Lojas mais baratas / caras</h3><p style="font-size:12px;color:var(--nt-muted)">Ranking de estabelecimentos perto — quem menos ou mais cobra.</p></div>
+    <div class="card acc" style="--acc:var(--nt-blue)"><h3>Vitrine de lojas</h3><p style="font-size:12px;color:var(--nt-muted)">Expõe ao público o sortimento da loja — inclusive o que não está na internet.</p></div>
     <div class="card acc" style="--acc:var(--nt-green)"><h3>Sem margem de apps</h3><p style="font-size:12px;color:var(--nt-muted)">Preço NFC-e / balcão — não iFood, 99 ou marketplace.</p></div>
-    <div class="card acc" style="--acc:var(--nt-green)"><h3>Movimentar comércio local</h3><p style="font-size:12px;color:var(--nt-muted)">Descoberta e deslocamento até a loja física.</p></div>
+    <div class="card acc" style="--acc:var(--nt-green)"><h3>Visibilidade do comércio local</h3><p style="font-size:12px;color:var(--nt-muted)">Itens só no balcão ganham vitrine pública; descoberta → loja física.</p></div>
     <div class="card acc" style="--acc:var(--nt-green)"><h3>Separar compras</h3><p style="font-size:12px;color:var(--nt-muted)">Split entre lojas para menor custo total.</p></div>
-    <div class="card acc" style="--acc:var(--nt-warn)"><h3>Delivery de produtos <span class="chip warn">futuro</span></h3><p style="font-size:12px;color:var(--nt-muted)">Pedido + entrega a partir da vitrine/cesta — fora da v1.</p></div>
+    <div class="card acc" style="--acc:var(--nt-warn)"><h3>Delivery / Full <span class="chip warn">futuro</span></h3><p style="font-size:12px;color:var(--nt-muted)">Loja como depósito de vendas (estilo Full) — pedido + entrega. Fora da v1.</p></div>
   </div>
   <div class="foot"><span class="wm" style="font-size:13px"><span class="n">notinhas</span><span class="o">.org</span></span><span>Apresentação v1 · O quê</span><span>03</span></div>
 </section>
@@ -177,7 +178,7 @@ ul.dots li::before{content:"";position:absolute;left:0;top:.55em;width:6px;heigh
     <div style="display:flex;flex-direction:column;gap:10px">
       <div class="label">Personas</div>
       <div class="card"><h3>Contribuinte</h3><p style="font-size:12px;color:var(--nt-muted)">Cola o QR da nota e, se faltar, escaneia o EAN (vínculo cooperativo).</p></div>
-      <div class="card"><h3>Comprador</h3><p style="font-size:12px;color:var(--nt-muted)">Compara, simula economia, acha perto, separa cesta; no futuro pede delivery.</p></div>
+      <div class="card"><h3>Comprador</h3><p style="font-size:12px;color:var(--nt-muted)">Compara, acha perto, vê lojas mais baratas/caras, separa cesta; no futuro pede delivery.</p></div>
       <div class="card"><h3>Empresa / parceiro</h3><p style="font-size:12px;color:var(--nt-muted)">Consome ou alimenta o índice via API B2B.</p></div>
       <div class="card acc" style="--acc:var(--nt-green)">
         <h3>Slogan</h3>
@@ -199,22 +200,24 @@ ul.dots li::before{content:"";position:absolute;left:0;top:.55em;width:6px;heigh
         <div class="card acc" style="--acc:var(--nt-blue)"><h3>Comparação <span class="chip">must</span></h3><p style="font-size:11.5px;color:var(--nt-muted)">EAN entre lojas · menor preço + loja + data</p></div>
         <div class="card acc" style="--acc:var(--nt-blue)"><h3>Histórico <span class="chip">must</span></h3><p style="font-size:11.5px;color:var(--nt-muted)">Série temporal por produto / loja</p></div>
         <div class="card acc" style="--acc:var(--nt-blue)"><h3>Busca geo <span class="chip">must</span></h3><p style="font-size:11.5px;color:var(--nt-muted)">Item → lojas perto (GPS ou centro/bairro)</p></div>
-        <div class="card acc" style="--acc:var(--nt-green)"><h3>Vitrine loja <span class="chip ok">should</span></h3><p style="font-size:11.5px;color:var(--nt-muted)">Catálogo read-only do estabelecimento</p></div>
+        <div class="card acc" style="--acc:var(--nt-blue)"><h3>Ranking lojas <span class="chip">must</span></h3><p style="font-size:11.5px;color:var(--nt-muted)">Perto: quem menos / mais cobra (agregado)</p></div>
+        <div class="card acc" style="--acc:var(--nt-green)"><h3>Vitrine loja <span class="chip ok">should</span></h3><p style="font-size:11.5px;color:var(--nt-muted)">Catálogo público — itens locais fora da web</p></div>
         <div class="card acc" style="--acc:var(--nt-green)"><h3>Montagem apartada <span class="chip ok">should</span></h3><p style="font-size:11.5px;color:var(--nt-muted)">Cesta + split 2+ lojas · simula economia</p></div>
         <div class="card acc" style="--acc:var(--nt-green)"><h3>API empresas <span class="chip ok">should</span></h3><p style="font-size:11.5px;color:var(--nt-muted)">Consulta B2B · vínculo EAN</p></div>
       </div>
-      <div class="card" style="margin-top:10px;border-style:dashed"><h3>Delivery <span class="chip warn">future</span></h3><p style="font-size:11.5px;color:var(--nt-muted)">Pedido + entrega após vitrine estável e parceria. Fora da v1.</p></div>
+      <div class="card" style="margin-top:10px;border-style:dashed"><h3>Delivery / Full <span class="chip warn">future</span></h3><p style="font-size:11.5px;color:var(--nt-muted)">Loja vira depósito de vendas (fulfillment estilo Mercado Livre Full). Fora da v1.</p></div>
     </div>
     <div>
       <div class="label">Ordem sugerida</div>
       <div class="grid" style="gap:6px">
         <div class="prio"><span class="rk">1</span> Comparação EAN + menor preço</div>
         <div class="prio"><span class="rk">2</span> Busca geo (perto / centro)</div>
-        <div class="prio"><span class="rk">3</span> Histórico por produto/loja</div>
-        <div class="prio"><span class="rk">4</span> Vitrine da loja</div>
-        <div class="prio"><span class="rk">5</span> Montagem apartada / simular economia</div>
-        <div class="prio"><span class="rk">6</span> API empresas</div>
-        <div class="prio"><span class="rk">7</span> Delivery (futuro)</div>
+        <div class="prio"><span class="rk">3</span> Ranking lojas (baratas / caras)</div>
+        <div class="prio"><span class="rk">4</span> Histórico por produto/loja</div>
+        <div class="prio"><span class="rk">5</span> Vitrine da loja</div>
+        <div class="prio"><span class="rk">6</span> Montagem apartada / simular economia</div>
+        <div class="prio"><span class="rk">7</span> API empresas</div>
+        <div class="prio"><span class="rk">8</span> Delivery / Full — loja-depósito (futuro)</div>
       </div>
       <div class="card" style="margin-top:10px">
         <div class="label">Fora da v1</div>
@@ -277,9 +280,10 @@ ul.dots li::before{content:"";position:absolute;left:0;top:.55em;width:6px;heigh
       <div class="card" style="background:var(--nt-blue-deep);color:#fff;border:0">
         <div class="label" style="color:#9ED0F5">Onde a proposta se diferencia</div>
         <ul class="dots" style="--acc:#7CFFB2;margin-top:8px">
-          <li style="color:rgba(255,255,255,.92)">Pacote: comparar + simular economia + perto + split + vitrine (+ delivery futuro)</li>
+          <li style="color:rgba(255,255,255,.92)">Pacote: comparar + simular economia + perto + ranking lojas + split + vitrine (+ delivery futuro)</li>
           <li style="color:rgba(255,255,255,.92)">Preço de balcão/NFC-e — explicitamente sem margem iFood/99</li>
-          <li style="color:rgba(255,255,255,.92)">Movimentação do comércio local (descoberta → loja física)</li>
+          <li style="color:rgba(255,255,255,.92)">Visibilidade do comércio local: itens que não estão na internet ganham vitrine pública</li>
+          <li style="color:rgba(255,255,255,.92)">Futuro: loja como depósito de vendas (Full / fulfillment)</li>
           <li style="color:rgba(255,255,255,.92)">API B2B no mesmo eixo consumer cooperativo</li>
         </ul>
       </div>

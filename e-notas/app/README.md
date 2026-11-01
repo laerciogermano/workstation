@@ -1,6 +1,6 @@
 # e-notas — app (scan QR)
 
-Front de uma tela: escaneia o QR da nota, imprime a URL no console do browser e envia `POST /api/nota`. O backend só imprime a URL no terminal.
+Front: escaneia o QR da nota e envia a URL. Backend consulta a DANFE na **Fazenda PR** (`fazenda.pr.gov.br/nfce/qrcode`), extrai todos os itens e imprime no terminal.
 
 Serve **HTTPS** (certificado autoassinado em `certs/`, gerado na 1ª subida se faltar).
 
@@ -12,22 +12,29 @@ npm install
 npm start
 ```
 
-Sobe em `0.0.0.0:4173`. No log aparece `https://<ip-lan>:4173`.
+Sobe em `0.0.0.0:4173`. No log: `https://<ip-lan>:4173`.
 
 Variável opcional: `PORT=4173`.
 
 ## Câmera na rede
 
-1. Abra `https://<ip-lan>:4173` no celular (mesma rede)
-2. Aceite o aviso de certificado (avançar / confiar)
+1. Abra `https://<ip-lan>:4173` no celular
+2. Aceite o certificado autoassinado
 3. Permita a câmera
 
-Se o IP da máquina mudar e a câmera falhar por SAN, apague `certs/` e suba de novo (regenera com os IPs atuais).
+Se o IP mudar: apague `certs/` e suba de novo.
 
 ## API
 
-`POST /api/nota` body `{ "url": "https://..." }` → log `[nota] <url>` e `{ ok: true }`.
+`POST /api/nota` body `{ "url": "http://www.fazenda.pr.gov.br/nfce/qrcode?p=..." }`
+
+- Busca o HTML da consulta pública
+- Extrai `estabelecimento` + `itens[]` (`nome`, `codigo`, `quantidade`, `unidade`, `valorUnitario`, `valorTotal`)
+- Loga cada item no terminal
+- Responde `{ ok, url, estabelecimento, itens }`
+
+Só aceita host `fazenda.pr.gov.br` e path `/nfce/qrcode`.
 
 ## Reverter
 
-Parar o processo na porta `4173`. Remover `certs/` para forçar novo certificado. Código HTTPS: voltar o commit anterior de `server.js` / este README.
+Parar porta `4173`. Remover `fazenda-pr.js` e voltar `POST /api/nota` só imprimindo a URL (commit anterior). Apagar `certs/` se quiser regenerar HTTPS.

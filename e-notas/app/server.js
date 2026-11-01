@@ -5,6 +5,11 @@ import os from 'os';
 import path from 'path';
 import { execFileSync } from 'child_process';
 import { fileURLToPath } from 'url';
+import {
+  assertFazendaPrNfceUrl,
+  fetchDanfe,
+  parseDanfeHtml,
+} from './fazenda-pr.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PORT = Number(process.env.PORT) || 4173;
@@ -72,13 +77,33 @@ const app = express();
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.post('/api/nota', (req, res) => {
+app.post('/api/nota', async (req, res) => {
   const url = typeof req.body?.url === 'string' ? req.body.url.trim() : '';
   if (!url) {
     return res.status(400).json({ ok: false, error: 'url obrigatória' });
   }
-  console.log('[nota]', url);
-  return res.json({ ok: true });
+
+  try {
+    const nfceUrl = assertFazendaPrNfceUrl(url);
+    console.log('[nota]', nfceUrl);
+
+    const html = await fetchDanfe(nfceUrl);
+    const { estabelecimento, itens } = parseDanfeHtml(html);
+
+    console.log('[estabelecimento]', estabelecimento);
+    console.log('[itens]', itens.length);
+    for (const item of itens) {
+      console.log(
+        `  - ${item.codigo || '-'} | ${item.nome} | qtd ${item.quantidade} ${item.unidade} | unit ${item.valorUnitario} | total ${item.valorTotal}`,
+      );
+    }
+
+    return res.json({ ok: true, url: nfceUrl, estabelecimento, itens });
+  } catch (err) {
+    const status = err.status || 500;
+    console.error('[nota:erro]', err.message);
+    return res.status(status).json({ ok: false, error: err.message });
+  }
 });
 
 ensureCerts();

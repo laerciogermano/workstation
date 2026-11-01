@@ -13,10 +13,12 @@ async function sendUrl(url) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ url }),
   });
+  const data = await res.json().catch(() => ({}));
   if (!res.ok) {
-    const data = await res.json().catch(() => ({}));
     throw new Error(data.error || `HTTP ${res.status}`);
   }
+  console.log('[itens]', data.itens);
+  return data;
 }
 
 async function onScanSuccess(decodedText) {
@@ -25,17 +27,21 @@ async function onScanSuccess(decodedText) {
   if (!url) return;
 
   busy = true;
-  setStatus(`Enviado: ${url}`, 'ok');
+  setStatus('Extraindo itens…');
 
   try {
-    await sendUrl(url);
+    const data = await sendUrl(url);
+    setStatus(
+      `${data.estabelecimento || 'Nota'} — ${data.itens?.length ?? 0} itens`,
+      'ok',
+    );
   } catch (err) {
     console.error(err);
-    setStatus(`Falha ao enviar: ${err.message}`, 'err');
+    setStatus(`Falha: ${err.message}`, 'err');
   } finally {
     setTimeout(() => {
       busy = false;
-    }, 1500);
+    }, 2000);
   }
 }
 

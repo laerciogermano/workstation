@@ -11,6 +11,7 @@ Controla um Chrome já rodando com `--remote-debugging-port=9222` (mesmo perfil/
 ./start-lucas-mendes.sh                        # CDP :9225 (Lucas Mendes / LI)
 ./start-sofia-ribeiro.sh                       # CDP :9226 (Sofia Ribeiro / LI)
 ./start-pedro-almeida.sh                       # CDP :9227 (Pedro Almeida / LI)
+./start-juliana-martins.sh                     # CDP :9228 (Juliana Martins / LI)
 # opcional URL: ./start-lucas-mendes.sh https://www.linkedin.com/
 ```
 
@@ -27,6 +28,7 @@ Registro: [`../android-studio/contas-facebook-chrome.csv`](../android-studio/con
 ./signup-lucas-mendes.sh   # PIN via Mailcow; Pular carreira
 ./signup-sofia-ribeiro.sh  # idem :9226
 ./signup-pedro-almeida-until-email.sh  # so ate PIN; probe /feed sem onboarding
+./signup-juliana-martins-until-email.sh  # idem :9228
 ```
 
 Entradas CLI (completo): `--email` `--password` `--first|--nome` `--last|--sobrenome` `--location` `--job|--cargo` `--company|--empresa` (`--code` opcional — senao poll Mailcow). Until-email: so email/senha/nome. **Regra:** se aparecer **Pular**, clica. Cliques so CDP. Rollback: apagar mailbox/perfil; CSV `nao_criada`.

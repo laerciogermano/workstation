@@ -105,6 +105,7 @@ App: [`../app/README.md`](../app/README.md).
 
 - Na aba **Empresas**, exibir um **mapa com pins** de cada empresa (Leaflet + tiles OpenStreetMap).
 - Coordenadas (`lat`/`lng`) gravadas em `enotas.empresas`, preenchidas por geocoding Nominatim a partir do `endereco` (cache; `POST /api/empresas/geocode` dispara pendentes).
+- Antes de consultar o Nominatim, normalizar o endereço: remover segmentos vazios e complemento-lixo da DANFE (ex. `, 0,`), senão o pin falha (ex. Stilo Central Atacadista).
 
 ## REQ-014 — Capacidades-alvo pós-benchmarking (2026-11-01)
 

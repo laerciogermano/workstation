@@ -4,10 +4,13 @@ function sleep(ms) {
   return new Promise((r) => setTimeout(r, ms));
 }
 
+/** Limpa lixo típico da DANFE (vírgulas vazias, complemento `0`). */
 export function normalizeEndereco(endereco) {
   return String(endereco || '')
-    .replace(/\s*,\s*,+/g, ',')
-    .replace(/^,\s*|,\s*$/g, '')
+    .split(',')
+    .map((p) => p.trim())
+    .filter((p) => p && !/^(0+|-+|\.+)$/.test(p))
+    .join(', ')
     .replace(/\s+/g, ' ')
     .trim();
 }

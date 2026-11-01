@@ -58,6 +58,12 @@ App: [`../app/README.md`](../app/README.md).
 - **Sempre que um requisito ou regra nova for descrita**, ela deve ser **adicionada neste arquivo** no mesmo trabalho.
 - A obrigação fica escrita em `config/config-ia.md` e em `.cursor/rules/e-notas-requisitos.mdc`.
 
+## REQ-008 — Página de listagem (2026-11-01)
+
+- Existe uma página web (`/lista.html`) que lista **todas as empresas**, **todas as notas** e **todos os itens** cadastrados.
+- APIs de leitura: `GET /api/empresas`, `GET /api/notas`, `GET /api/itens`.
+- Navegação entre a tela de scan (`/`) e a listagem.
+
 ---
 
 ## Próximos passos

@@ -374,23 +374,33 @@ function catalogoLoja(empresaId) {
   );
   const byKey = new Map();
   for (const r of rows) {
-    const key = r.codigo_barras
-      ? `ean:${r.codigo_barras}`
-      : `cod:${String(r.codigo || '').trim()}`;
+    const key = produtoKey(r);
+    if (key === 'cod:' || key === 'nome:') continue;
+    const preco = parseValor(r.valor_unitario);
+    if (!Number.isFinite(preco) || preco <= 0) continue;
     const sk = emissaoSortKey(r.nota_emissao);
     const prev = byKey.get(key);
     if (!prev) {
-      byKey.set(key, { ...r, _sk: sk, obs: 1 });
+      byKey.set(key, { ...r, _key: key, _preco: preco, _sk: sk, obs: 1 });
       continue;
     }
     prev.obs += 1;
     if (sk >= prev._sk) {
-      byKey.set(key, { ...r, _sk: sk, obs: prev.obs });
+      byKey.set(key, {
+        ...r,
+        _key: key,
+        _preco: preco,
+        _sk: sk,
+        obs: prev.obs,
+      });
     }
   }
-  return [...byKey.values()].sort((a, b) =>
-    String(a.nome || '').localeCompare(String(b.nome || ''), 'pt-BR'),
-  );
+  return [...byKey.values()].sort((a, b) => {
+    const fa = a.foto_url ? 0 : 1;
+    const fb = b.foto_url ? 0 : 1;
+    if (fa !== fb) return fa - fb;
+    return String(a.nome || '').localeCompare(String(b.nome || ''), 'pt-BR');
+  });
 }
 
 function lojaHaystack(r) {
@@ -641,24 +651,43 @@ function renderVitrineDetalhe(empresaId) {
     <p class="loja-meta">${esc(loja.endereco || '')}</p>
     <p class="loja-meta mono">${esc(loja.cnpj || '')}</p>
     <div class="loja-stats">
-      <span class="chip">${catalogo.length} item${catalogo.length === 1 ? '' : 's'}</span>
+      <span class="chip">${catalogo.length} produto${catalogo.length === 1 ? '' : 's'}</span>
     </div>`;
 
+  const countVitrine = document.getElementById('count-vitrine-itens');
+  if (countVitrine) countVitrine.textContent = `(${rows.length})`;
+
+  const menores = new Map(
+    catalogoProdutos().map((r) => [r._key, r._preco]),
+  );
+
+  if (!vitrineItensEl) return;
   vitrineItensEl.innerHTML = rows.length
     ? rows
-        .map(
-          (r) =>
-            `<tr>
-              ${fotoThumb(r.foto_url, r.nome)}
-              <td>${esc(r.nome || '—')}</td>
-              <td class="mono">${esc(r.codigo_barras || '—')}</td>
-              <td>${esc(r.codigo || '—')}</td>
-              <td class="price-cell">${esc(formatPreco(r.valor_unitario))}</td>
-              <td>${esc(formatDataNota(r.nota_emissao) || '—')}</td>
-            </tr>`,
-        )
+        .map((r) => {
+          const foto = String(r.foto_url || '').trim();
+          const img = foto
+            ? `<img class="produto-img" src="${esc(foto)}" alt="" loading="lazy" width="160" height="160" />`
+            : `<span class="produto-img produto-img-empty" aria-hidden="true"></span>`;
+          const data = formatDataNota(r.nota_emissao) || '';
+          const isMenor =
+            Number.isFinite(r._preco) && menores.get(r._key) === r._preco;
+          return `<button type="button" class="produto-card" data-open-produto="${esc(
+            r._key,
+          )}">
+            <div class="produto-media">${img}</div>
+            <div class="produto-body">
+              <h3 class="produto-nome">${esc(r.nome || 'Produto')}</h3>
+              <p class="produto-preco">
+                <span class="price-cell">${esc(formatPreco(r.valor_unitario))}</span>
+                ${isMenor ? '<span class="chip ok">menor</span>' : ''}
+              </p>
+              <p class="produto-meta">${data ? esc(data) : ''}</p>
+            </div>
+          </button>`;
+        })
         .join('')
-    : `<tr><td colspan="6">${catalogo.length ? 'Nada encontrado.' : 'Sem itens.'}</td></tr>`;
+    : `<p class="hint">${catalogo.length ? 'Nenhum produto nesta busca.' : 'Sem produtos nesta loja.'}</p>`;
 }
 
 function openVitrineLoja(empresaId) {
@@ -988,6 +1017,11 @@ vitrineGridEl?.addEventListener('click', (ev) => {
   openVitrineLoja(btn.dataset.openLoja);
 });
 produtosGridEl?.addEventListener('click', (ev) => {
+  const btn = ev.target.closest('[data-open-produto]');
+  if (!btn) return;
+  openProduto(btn.dataset.openProduto);
+});
+vitrineItensEl?.addEventListener('click', (ev) => {
   const btn = ev.target.closest('[data-open-produto]');
   if (!btn) return;
   openProduto(btn.dataset.openProduto);

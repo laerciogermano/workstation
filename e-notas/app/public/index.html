@@ -107,24 +107,14 @@
           <button type="button" class="back-link" id="vitrine-voltar">← Estabelecimentos</button>
           <article class="loja-card loja-card-head" id="vitrine-loja-info"></article>
           <label class="search" style="margin-top: 1rem">
-            <span class="sr-only">Buscar itens</span>
-            <input id="busca-vitrine-itens" type="search" placeholder="Buscar item…" autocomplete="off" />
+            <span class="sr-only">Buscar produtos</span>
+            <input id="busca-vitrine-itens" type="search" placeholder="Buscar produto…" autocomplete="off" />
           </label>
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th></th>
-                  <th>Produto</th>
-                  <th>EAN</th>
-                  <th>Cód.</th>
-                  <th>Preço</th>
-                  <th>Data</th>
-                </tr>
-              </thead>
-              <tbody id="vitrine-itens"></tbody>
-            </table>
-          </div>
+          <header class="home-section-head">
+            <h2 class="home-section-title">Produtos</h2>
+            <span id="count-vitrine-itens" class="count"></span>
+          </header>
+          <div id="vitrine-itens" class="produto-grid" aria-live="polite"></div>
         </div>
       </section>
 

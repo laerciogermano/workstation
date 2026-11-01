@@ -83,18 +83,18 @@
       <p id="status" class="status" aria-live="polite" hidden></p>
 
       <div class="tabs" role="tablist" aria-label="Seções">
-        <button type="button" class="tab" role="tab" id="tab-empresas" data-tab="empresas" aria-controls="panel-empresas" aria-selected="true">
-          Estabelecimentos <span id="count-empresas" class="count"></span>
-        </button>
-        <button type="button" class="tab" role="tab" id="tab-produtos" data-tab="produtos" aria-controls="panel-produtos" aria-selected="false">
+        <button type="button" class="tab" role="tab" id="tab-produtos" data-tab="produtos" aria-controls="panel-produtos" aria-selected="true">
           Produtos <span id="count-produtos" class="count"></span>
+        </button>
+        <button type="button" class="tab" role="tab" id="tab-empresas" data-tab="empresas" aria-controls="panel-empresas" aria-selected="false">
+          Estabelecimentos <span id="count-empresas" class="count"></span>
         </button>
         <button type="button" class="tab" role="tab" id="tab-notas" data-tab="notas" aria-controls="panel-notas" aria-selected="false">
           Notas <span id="count-notas" class="count"></span>
         </button>
       </div>
 
-      <section class="block tab-panel" id="panel-empresas" role="tabpanel" aria-labelledby="tab-empresas">
+      <section class="block tab-panel" id="panel-empresas" role="tabpanel" aria-labelledby="tab-empresas" hidden>
         <div id="empresas-mapa" class="empresas-mapa" aria-label="Mapa"></div>
         <p id="empresas-mapa-status" class="status" aria-live="polite" hidden></p>
 
@@ -131,12 +131,16 @@
         </div>
       </section>
 
-      <section class="block tab-panel" id="panel-produtos" role="tabpanel" aria-labelledby="tab-produtos" hidden>
+      <section class="block tab-panel" id="panel-produtos" role="tabpanel" aria-labelledby="tab-produtos">
         <div id="produtos-lista">
           <label class="search search-home">
             <span class="sr-only">Buscar produtos</span>
             <input id="busca-produtos" type="search" placeholder="Buscar produto…" autocomplete="off" />
           </label>
+          <header class="home-section-head">
+            <h2 class="home-section-title">Menores preços</h2>
+            <span id="count-produtos-lista" class="count"></span>
+          </header>
           <div id="produtos-grid" class="produto-grid" aria-live="polite"></div>
         </div>
 

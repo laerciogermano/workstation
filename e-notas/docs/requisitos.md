@@ -146,14 +146,14 @@ Curadoria: [`../marca/benchmarking-solucoes/README.md`](../marca/benchmarking-so
 
 ## REQ-017 — FAB adicionar nota (2026-11-01)
 
-- Home = listagem (`/`), abas **Estabelecimentos** / **Produtos** / **Notas** (aba **Itens** removida). *Revisto por REQ-025 (aba Notas) e aba Produtos.*
+- Home = listagem (`/`), abas **Produtos** (inicial) / **Estabelecimentos** / **Notas** (aba **Itens** removida). *Revisto por REQ-025 (aba Notas) e aba Produtos.*
 - Botão fixo inferior direito (**FAB**) “Nota” abre `scan.html` (QR).
 - `/lista.html` redireciona para `/`. Após scan ok, volta à home.
 
 ## REQ-018 — Vitrine das lojas (2026-11-01)
 
 - Aba **Estabelecimentos**: mapa + cards de mercado; clique abre detalhe + catálogo (preço mais recente por EAN/código).
-- Aba **Produtos** (separada): grade com foto + menor preço + loja/data; clique → detalhe do produto (REQ-028).
+- Aba **Produtos** (separada, inicial): título **Menores preços**; grade com foto + preço + chip menor + loja/data; clique → detalhe do produto (REQ-028).
 - URL loja: `?loja=<id>` / `#loja-<id>`. UI enxuta (sem textos explicativos redundantes).
 - Ao **entrar** no estabelecimento (card, timeline do produto, popup ou deep-link), o mapa **foca no pin** daquela loja (zoom + popup). Ao voltar à lista, restaura o enquadramento de todos os pins.
 - Antes: produtos na mesma aba que mercados; aba Itens na home. Depois: Produtos em aba própria; Itens removida (itens da nota ficam no detalhe de Notas).

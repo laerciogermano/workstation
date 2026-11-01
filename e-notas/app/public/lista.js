@@ -106,7 +106,7 @@ async function fetchJson(path, opts) {
 }
 
 function setTab(name, { updateHash = true } = {}) {
-  if (!panels[name]) name = 'empresas';
+  if (!panels[name]) name = 'produtos';
   for (const tab of tabs) {
     const on = tab.dataset.tab === name;
     tab.setAttribute('aria-selected', on ? 'true' : 'false');
@@ -433,6 +433,8 @@ function renderProdutosTab() {
   if (countProdutosEl) {
     countProdutosEl.textContent = `(${rows.length})`;
   }
+  const countLista = document.getElementById('count-produtos-lista');
+  if (countLista) countLista.textContent = `(${rows.length})`;
   if (!produtosGridEl) return;
   produtosGridEl.innerHTML = rows.length
     ? rows
@@ -1221,7 +1223,7 @@ function readRoute() {
   if (hash === 'itens' || hash === 'codigos-barras') return 'produtos';
   if (hash === 'vitrine') return 'empresas';
   if (panels[hash]) return hash;
-  return 'empresas';
+  return 'produtos';
 }
 
 async function load() {

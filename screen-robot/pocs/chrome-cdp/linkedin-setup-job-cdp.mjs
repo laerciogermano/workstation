@@ -360,28 +360,8 @@ async function main() {
     return;
   }
 
-  async function openPositionForm() {
+  async function clickAddCargo() {
     let hit = await clickAnchorHref('/edit/forms/position');
-    if (hit) {
-      console.log('spa-click', hit.text || hit.href);
-      return true;
-    }
-    // "Adicionar experiência" / + na secao Experiencia
-    if (await clickTextPreferLower('adicionar experi[eê]ncia|add (an )?experience|^\\+$')) {
-      await sleep(1500);
-      hit = await clickAnchorHref('/edit/forms/position');
-      if (hit) {
-        console.log('spa-click', hit.text || hit.href);
-        return true;
-      }
-      const form = await waitPositionForm(8);
-      if (form?.hasJob || form?.hasCo) return true;
-    }
-    if (!(await clickTextPreferLower('^adicionar se[cç][aã]o$|^add (profile )?section$'))) {
-      return false;
-    }
-    await sleep(1800);
-    hit = await clickAnchorHref('/edit/forms/position');
     if (hit) {
       console.log('spa-click', hit.text || hit.href);
       return true;
@@ -390,9 +370,11 @@ async function main() {
       const el = [...document.querySelectorAll('a,button,[role=menuitem]')].find((e) => {
         if (!e.getClientRects().length) return false;
         const t = (e.innerText || e.getAttribute('aria-label') || '').replace(/\\s+/g, ' ').trim();
-        return /adicionar experi|add experience|experi[eê]ncia/i.test(t);
+        return /^(adicionar cargo|add position|add experience|adicionar experi[eê]ncia)$/i.test(t) ||
+          /adicionar cargo|add (a )?position/i.test(t);
       });
       if (!el) return null;
+      el.scrollIntoView({ block: 'center' });
       el.click();
       return {
         text: (el.innerText || '').replace(/\\s+/g, ' ').trim().slice(0, 80),
@@ -402,6 +384,25 @@ async function main() {
     if (hit) {
       console.log('spa-click', hit.text || hit.href);
       return true;
+    }
+    return false;
+  }
+
+  async function openPositionForm() {
+    if (await clickAddCargo()) return true;
+    // "Adicionar experiência" / + na secao Experiencia
+    if (await clickTextPreferLower('adicionar experi[eê]ncia|add (an )?experience|^\\+$')) {
+      await sleep(1500);
+      if (await clickAddCargo()) return true;
+      const form = await waitPositionForm(8);
+      if (form?.hydrated) return true;
+    }
+    for (let attempt = 0; attempt < 3; attempt++) {
+      if (!(await clickTextPreferLower('^adicionar se[cç][aã]o$|^add (profile )?section$'))) {
+        break;
+      }
+      await sleep(2200 + attempt * 500);
+      if (await clickAddCargo()) return true;
     }
     return false;
   }

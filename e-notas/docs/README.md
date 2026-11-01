@@ -10,6 +10,7 @@ Timeline de prompts: [`../prompts/timeline.md`](../prompts/timeline.md).
 
 | Artefato | Arquivo | Papel no fluxo | Status |
 |----------|---------|----------------|--------|
+| PRD (notinhas.org) | [`prd.md`](prd.md) | Capacidades-alvo pós-benchmarking (comparação, histórico, cesta, vitrine, geo, API) | Ativo |
 | Requisitos / regras | [`requisitos.md`](requisitos.md) | Regras canônicas pedidas (REQ-NNN); atualizar a cada requisito novo | Ativo |
 | Funcionalidades | `functionalities.md` | Capacidades de cada seção e página em bullets | A produzir |
 | Histórias de usuário | `user-stories.md` | O *quê* desejado pelo usuário (Como… quero… para…) | A produzir |

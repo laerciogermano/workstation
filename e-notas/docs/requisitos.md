@@ -106,6 +106,19 @@ App: [`../app/README.md`](../app/README.md).
 - Na aba **Empresas**, exibir um **mapa com pins** de cada empresa (Leaflet + tiles OpenStreetMap).
 - Coordenadas (`lat`/`lng`) gravadas em `enotas.empresas`, preenchidas por geocoding Nominatim a partir do `endereco` (cache; `POST /api/empresas/geocode` dispara pendentes).
 
+## REQ-014 — Capacidades-alvo pós-benchmarking (2026-11-01)
+
+Insumos do card [Benchmarking soluções similares](https://trello.com/c/1fMjqGdR) e do [PRD](prd.md) — capacidades a considerar no notinhas.org / e-notas (ainda sem implementação obrigatória neste REQ):
+
+- **Comparação de preços** — mesmo produto (EAN) entre estabelecimentos; menor preço com loja e data.
+- **Histórico de preços** — evolução do preço por produto e por mercado ao longo do tempo.
+- **Montagem apartada** — cesta/lista cotada por mercado e sugestão de divisão entre 2+ estabelecimentos para reduzir o custo total.
+- **Tela da loja (vitrine e-commerce)** — página do estabelecimento com itens observados (catálogo read-only, sem checkout).
+- **Busca geo / onde comprar perto** — pesquisar um item e ver lojas físicas próximas (GPS ou região, ex. centro), com distância, preço e data.
+- **Integrações via API para empresas** — API B2B para estabelecimentos/parceiros consultarem ou alimentarem o índice.
+
+Curadoria: [`../marca/benchmarking-solucoes/README.md`](../marca/benchmarking-solucoes/README.md).
+
 ---
 
 ## Próximos passos

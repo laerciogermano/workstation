@@ -1,28 +1,30 @@
 # Benchmarking — soluções similares (notinhas.org)
 
-Curadoria de apps/portais que usam **NFC-e / QR** (ou base SEFAZ) para **comparar preços**.
+Matriz vs **6 requisitos** do PRD: comparação, histórico, montagem apartada, vitrine da loja, busca geo, API empresas.
 
 - **Card Trello:** https://trello.com/c/1fMjqGdR
+- **PRD:** [`../../docs/prd.md`](../../docs/prd.md)
 - **Entrada:** [`00-curadoria.html`](00-curadoria.html) / [`00-curadoria.pdf`](00-curadoria.pdf)
-- **Produto:** [`../../README.md`](../../README.md) · refs identidade: [`../referencias-identidade/README.md`](../referencias-identidade/README.md)
+- **REQ:** [`../../docs/requisitos.md`](../../docs/requisitos.md) → REQ-014
 
-## Soluções mapeadas
+## Matriz (resumo)
 
-| # | Solução | URL |
-|---|---------|-----|
-| 1 | Busca Preço | https://buscapreco.net/ |
-| 2 | Nota Preço | https://notapreco.com.br/ |
-| 3 | Mercado Certo | https://mercadocerto.app.br/ |
-| 4 | GoMarket | https://gomarket.app.br/ |
-| 5 | PoupApp | https://poupapp.app.br/ |
-| 6 | Menor Preço · Nota Paraná | https://menorpreco.notaparana.pr.gov.br/ |
-| 7 | Menor Preço Brasil (Procergs) | https://play.google.com/store/apps/details?id=br.gov.rs.procergs.mpbr |
+| Solução | Comp. | Hist. | Apartada | Vitrine | Geo/perto | API emp. |
+|---------|-------|-------|----------|---------|-----------|----------|
+| Busca Preço | Sim | Sim | Parcial | Parcial | Parcial | Não |
+| Nota Preço | Sim | Sim | **Sim** | Não | Parcial | Não |
+| Mercado Certo | Sim | Parcial | **Sim** | Não | **Sim** | Não |
+| GoMarket | Sim | Sim | Não | **Sim** | **Sim** | Não |
+| Qual o Preço | Sim | Parcial | Parcial | **Sim** | **Sim** | Não |
+| PoupApp | Sim | Parcial | Não | Não | Parcial | Não |
+| Nota Paraná | Sim | Parcial | Não | Não | **Sim** | Parcial |
+| MP Brasil | Sim | Parcial | Não | Não | **Sim** | Não |
+| Economiza AL | Sim | Parcial | Via 3º | Não | **Sim** | **API** |
+| Quantto | Sim | Sim | N/A | N/A | Regional | **B2B** |
 
-## Antes → depois / rollback
+## Rollback
 
 ```bash
-# só pasta local
 rm -rf e-notas/marca/benchmarking-solucoes
-# card
 trello card:archive --id 6ae73d449d331353fd754807
 ```

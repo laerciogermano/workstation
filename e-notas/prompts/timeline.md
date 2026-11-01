@@ -13,3 +13,4 @@ Como registrar: [`README.md`](README.md).
 | 005 | 2026-11-01 | Cadastrar empresa/nota/itens | [005-2026-11-01-cadastrar-empresa-nota-itens.md](005-2026-11-01-cadastrar-empresa-nota-itens.md) | Empresa se nova; nota; itens; histórico (nova tupla por nota). |
 | 006 | 2026-11-01 | Postgres Contabo | [006-2026-11-01-postgres-contabo.md](006-2026-11-01-postgres-contabo.md) | Persistência no Postgres Contabo (schema enotas). |
 | 007 | 2026-11-01 | Documento de requisitos | [007-2026-11-01-documento-requisitos.md](007-2026-11-01-documento-requisitos.md) | Doc canônico de requisitos; regra de sempre atualizar ao descrever requisito novo. |
+| 008 | 2026-11-01 | Item único por nota | [008-2026-11-01-item-unico-por-nota.md](008-2026-11-01-item-unico-por-nota.md) | Unicidade (nota_id, codigo); sem duplicar item na mesma nota. |

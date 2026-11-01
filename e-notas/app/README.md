@@ -45,7 +45,7 @@ Credenciais não vão no git (`.env` ignorado).
 2. Extrai empresa / nota / itens  
 3. `enotas.empresas`: insert se CNPJ novo  
 4. `enotas.notas`: insert por `chave_acesso` (se já existir, não duplica)  
-5. `enotas.itens`: **novas linhas** por produto da nota (histórico)
+5. `enotas.itens`: **uma linha por `(nota, codigo)`**; notas diferentes do mesmo código = histórico
 
 Resposta: `{ ok, created, empresaCriada, url, empresa, nota, itens }`.
 

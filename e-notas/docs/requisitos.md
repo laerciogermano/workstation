@@ -44,7 +44,15 @@ App: [`../app/README.md`](../app/README.md).
   1. **Cadastrar a empresa** se ainda não existir (dados do site; chave natural = CNPJ).
   2. **Cadastrar a nota** (chave de acesso; não duplicar a mesma nota).
   3. **Cadastrar cada item** da nota.
-- Cada **nova nota** gera **novas tuplas de item** (histórico de preço; não sobrescrever ocorrência anterior do mesmo código).
+- Cada **nova nota** gera **novas tuplas de item** (histórico de preço entre notas distintas).
+- *Complementado por REQ-009:* dentro da mesma nota o item não duplica.
+
+## REQ-009 — Item único por nota (2026-11-01)
+
+- Itens **não podem ser duplicados** na mesma nota.
+- Chave natural do item: **`(nota_id, codigo)`** — só pode haver **um registro de item por código em cada nota**.
+- Constraint UNIQUE no Postgres; insert com `ON CONFLICT DO NOTHING`; dedupe na ingestão.
+- O mesmo código em **notas diferentes** continua permitido (histórico).
 
 ## REQ-006 — Persistência Postgres Contabo (2026-11-01)
 

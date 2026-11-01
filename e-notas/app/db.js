@@ -56,18 +56,45 @@ export async function initDb() {
       id SERIAL PRIMARY KEY,
       nota_id INTEGER NOT NULL REFERENCES ${t('notas')}(id),
       empresa_id INTEGER NOT NULL REFERENCES ${t('empresas')}(id),
-      codigo TEXT,
+      codigo TEXT NOT NULL,
       nome TEXT,
       quantidade TEXT,
       unidade TEXT,
       valor_unitario TEXT,
       valor_total TEXT,
-      created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+      created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+      UNIQUE (nota_id, codigo)
     );
 
     CREATE INDEX IF NOT EXISTS itens_codigo_idx ON ${t('itens')}(codigo);
     CREATE INDEX IF NOT EXISTS itens_nota_idx ON ${t('itens')}(nota_id);
   `);
+
+  // Migração: unicidade (nota_id, codigo) — remove duplicatas e aplica UNIQUE se faltar
+  await p.query(`
+    UPDATE ${t('itens')}
+    SET codigo = COALESCE(NULLIF(TRIM(codigo), ''), '__sem_codigo__:' || id::text)
+    WHERE codigo IS NULL OR TRIM(codigo) = '';
+  `);
+  await p.query(`
+    DELETE FROM ${t('itens')} a
+    USING ${t('itens')} b
+    WHERE a.nota_id = b.nota_id
+      AND a.codigo = b.codigo
+      AND a.id > b.id;
+  `);
+  await p.query(`
+    DO $$
+    BEGIN
+      ALTER TABLE ${t('itens')} ALTER COLUMN codigo SET NOT NULL;
+    EXCEPTION WHEN others THEN NULL;
+    END $$;
+  `);
+  await p.query(`
+    CREATE UNIQUE INDEX IF NOT EXISTS itens_nota_codigo_uidx
+    ON ${t('itens')} (nota_id, codigo);
+  `);
+
   return p;
 }
 
@@ -127,17 +154,38 @@ export async function insertNota(row, client = getPool()) {
   return r.rows[0];
 }
 
+function codigoItem(item) {
+  const c = String(item?.codigo ?? '').trim();
+  if (c) return c;
+  const nome = String(item?.nome ?? '').trim();
+  return nome ? `__nome__:${nome}` : null;
+}
+
+/** Deduplica por código dentro da mesma nota (mantém o primeiro). */
+export function dedupeItensPorCodigo(itens) {
+  const seen = new Set();
+  const out = [];
+  for (const item of itens || []) {
+    const codigo = codigoItem(item);
+    if (!codigo || seen.has(codigo)) continue;
+    seen.add(codigo);
+    out.push({ ...item, codigo });
+  }
+  return out;
+}
+
 export async function insertItem(row, client = getPool()) {
   const r = await client.query(
     `INSERT INTO ${t('itens')} (
       nota_id, empresa_id, codigo, nome, quantidade, unidade,
       valor_unitario, valor_total
     ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
+    ON CONFLICT (nota_id, codigo) DO NOTHING
     RETURNING *`,
     [
       row.notaId,
       row.empresaId,
-      row.codigo ?? null,
+      row.codigo,
       row.nome ?? null,
       row.quantidade ?? null,
       row.unidade ?? null,
@@ -145,7 +193,7 @@ export async function insertItem(row, client = getPool()) {
       row.valorTotal ?? null,
     ],
   );
-  return r.rows[0];
+  return r.rows[0] || null;
 }
 
 export async function listItensByNota(notaId, client = getPool()) {
@@ -184,7 +232,7 @@ export async function listItens(client = getPool()) {
   return r.rows;
 }
 
-/** Cadastra empresa (se faltar), nota e uma linha de item por produto (histórico). */
+/** Cadastra empresa (se faltar), nota e no máx. um item por código na nota (histórico entre notas). */
 export async function cadastrarNotaCompleta({ url, empresa, nota, itens }) {
   if (!empresa?.cnpj) {
     throw Object.assign(new Error('CNPJ da empresa não encontrado na DANFE'), {
@@ -250,22 +298,21 @@ export async function cadastrarNotaCompleta({ url, empresa, nota, itens }) {
     );
 
     const itensRows = [];
-    for (const item of itens) {
-      itensRows.push(
-        await insertItem(
-          {
-            notaId: notaRow.id,
-            empresaId: emp.id,
-            codigo: item.codigo,
-            nome: item.nome,
-            quantidade: item.quantidade,
-            unidade: item.unidade,
-            valorUnitario: item.valorUnitario,
-            valorTotal: item.valorTotal,
-          },
-          client,
-        ),
+    for (const item of dedupeItensPorCodigo(itens)) {
+      const row = await insertItem(
+        {
+          notaId: notaRow.id,
+          empresaId: emp.id,
+          codigo: item.codigo,
+          nome: item.nome,
+          quantidade: item.quantidade,
+          unidade: item.unidade,
+          valorUnitario: item.valorUnitario,
+          valorTotal: item.valorTotal,
+        },
+        client,
       );
+      if (row) itensRows.push(row);
     }
 
     await client.query('COMMIT');

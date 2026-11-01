@@ -242,11 +242,11 @@ Curadoria: [`../marca/benchmarking-solucoes/README.md`](../marca/benchmarking-so
 
 ## REQ-028 — Detalhe do produto + timeline de preços (2026-11-01)
 
-- Clique no card de produto (home) abre **detalhe**: foto, nome, infos (EAN, cód., qtd. de preços/mercados) e **menor preço** destacado.
+- Clique no card (aba **Produtos**) abre **detalhe**: foto, nome, infos (EAN, cód., qtd. de preços/mercados) e **menor preço** destacado.
 - Abaixo: **timeline** com todas as observações de preço daquele produto (EAN ou nome), da mais recente à mais antiga — data, preço, mercado, nota.
 - Menor preço marcado em verde (chip + ponto da timeline).
 - Clique em um item da timeline abre o estabelecimento daquela observação.
-- URL: `?produto=<key>` / `#produto-<key>` (`ean:…` ou `nome:…`). Voltar → feed Estabelecimentos.
+- URL: `?produto=<key>` / `#produto-<key>` (`ean:…` ou `nome:…`). Voltar → lista da aba Produtos.
 - Antes: clique no produto ia para a loja do menor preço. Depois: detalhe + histórico.
 - Rollback: restaurar `data-open-loja` nos cards e remover `#produto-detalhe` / handlers.
 

@@ -20,12 +20,12 @@ Registro: [`../android-studio/contas-facebook-chrome.csv`](../android-studio/con
 ```bash
 ./signup-marina-costa.sh \
   --location "São Paulo, Brasil" \
-  --job "Analista" \
-  --company "Google"
+  --job "Especialista em suprimentos e itens corporativos" \
+  --company "ConectMax"
 # aliases: --cargo / --empresa ; PIN: --code 123456
 ```
 
-Obrigatórios: `--location`, `--job|--cargo`, `--company|--empresa` (typeahead + clique CDP). Cliques só via `Input.dispatchMouseEvent`. Defaults de conta: `marina.costa@clozzy.com.br` / `in@12345678` / Marina Costa. **Antes → depois:** cargo/empresa hardcoded → args CLI. Rollback: apagar conta LI; CSV `nao_criada`.
+Obrigatórios: `--location`, `--job|--cargo`, `--company|--empresa` (typeahead + clique CDP). Cargo/empresa = mesmos dos outros vendedores ([`profile-defaults.json`](../../src/assets/profile-defaults.json)). Cliques só via `Input.dispatchMouseEvent`. Conta default: `marina.costa@clozzy.com.br` / `in@12345678` / Marina Costa. Rollback: apagar conta LI; CSV `nao_criada`.
 
 ## Script
 

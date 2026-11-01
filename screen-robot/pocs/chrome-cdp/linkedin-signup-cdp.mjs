@@ -4,10 +4,11 @@
  *
  *   ./signup-marina-costa.sh \
  *     --location "São Paulo, Brasil" \
- *     --job "Analista" \
- *     --company "Google"
+ *     --job "Especialista em suprimentos e itens corporativos" \
+ *     --company "ConectMax"
  *
  * Obrigatórios: --location --job|--cargo --company|--empresa
+ * (cargo/empresa padrão dos vendedores = profile-defaults.json)
  * Opcional: --code 123456 (PIN e-mail)
  * Cliques: só Input.dispatchMouseEvent (CDP). Digitação: Input.insertText.
  */
@@ -70,7 +71,7 @@ function session(wsUrl) {
 async function main() {
   if (!LOCATION || !JOB || !COMPANY) {
     console.error(
-      'uso: node linkedin-signup-cdp.mjs --location "São Paulo, Brasil" --job "Analista" --company "Google"',
+      'uso: node linkedin-signup-cdp.mjs --location "São Paulo, Brasil" --job "Especialista em suprimentos e itens corporativos" --company "ConectMax"',
     );
     process.exit(1);
   }

@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Chrome Marina (:9224) + cadastro LI via CDP.
-# Uso: ./signup-marina-costa.sh --location "São Paulo, Brasil" --job "Analista" --company "Google"
+# Uso: ./signup-marina-costa.sh --location "São Paulo, Brasil" \
+#   --job "Especialista em suprimentos e itens corporativos" --company "ConectMax"
 set -euo pipefail
 DIR="$(cd "$(dirname "$0")" && pwd)"
 CDP_URL="${CDP_URL:-http://127.0.0.1:9224}"

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
- * Confirma e-mail LinkedIn via CDP (PIN Mailcow).
- * Abre/traz LinkedIn, localiza tela de confirmacao, busca PIN e confirma.
+ * Confirma e-mail LinkedIn via CDP.
+ * Abre LI; usa link de confirmacao do Mailcow e/ou PIN (6 digitos).
  *
  * Entradas CLI:
  *   --email EMAIL          (obrigatorio — mailbox Mailcow)
@@ -51,10 +51,10 @@ function mailSshPass() {
   return m ? m[1] : '';
 }
 
-function fetchPin(email) {
+function mailFetchText(email) {
   const pass = mailSshPass();
-  if (!pass) return null;
-  const remote = `docker exec mailcowdockerized-dovecot-mailcow-1 doveadm fetch -u ${email} "hdr.date hdr.subject" MAILBOX INBOX 2>/dev/null | grep -E 'hdr\\.(date|subject)' | paste - - | tail -5`;
+  if (!pass) return '';
+  const remote = `docker exec mailcowdockerized-dovecot-mailcow-1 doveadm fetch -u ${email} "hdr.subject text" MAILBOX INBOX 2>/dev/null | tail -c 200000`;
   const r = spawnSync(
     'sshpass',
     [
@@ -71,15 +71,44 @@ function fetchPin(email) {
       process.env.MAIL_SSH_HOST || 'root@144.126.154.90',
       remote,
     ],
-    { env: { ...process.env, SSHPASS: pass }, encoding: 'utf8', timeout: 45_000 },
+    { env: { ...process.env, SSHPASS: pass }, encoding: 'utf8', timeout: 60_000 },
   );
-  const out = (r.stdout || '') + (r.stderr || '');
-  const codes = [...out.matchAll(/PIN_=C3=A9_(\d{6})/g)].map((m) => m[1]);
-  if (!codes.length) {
-    const alt = [...out.matchAll(/PIN[^\d]{0,20}(\d{6})/gi)].map((m) => m[1]);
-    return alt.length ? alt[alt.length - 1] : null;
+  return (r.stdout || '') + (r.stderr || '');
+}
+
+/** Decodifica QP soft-breaks do corpo do e-mail LinkedIn. */
+function decodeMailBody(raw) {
+  const soft = String(raw).replace(/=\r?\n/g, '');
+  try {
+    return soft
+      .replace(/=([0-9A-Fa-f]{2})/g, (_, h) => String.fromCharCode(parseInt(h, 16)))
+      .replace(/&amp;/g, '&');
+  } catch {
+    return soft;
   }
-  return codes[codes.length - 1];
+}
+
+function fetchPin(email) {
+  const out = mailFetchText(email);
+  const decoded = decodeMailBody(out);
+  // assunto encoded pode partir o PIN (ex.: _1 + 08399)
+  const joined = out.replace(/\s+/g, '');
+  const split = joined.match(/PIN_=C3=A9_(\d)(?:=?\?=)?(?:=?\?UTF-8\?Q\?)?(\d{5})/i);
+  if (split) return split[1] + split[2];
+  const codes = [...decoded.matchAll(/PIN[^\d]{0,30}(\d{6})/gi)].map((m) => m[1]);
+  if (codes.length) return codes[codes.length - 1];
+  const lone = [...decoded.matchAll(/(?:^|\n)\s*(\d{6})\s*(?:\n|$)/g)].map((m) => m[1]);
+  return lone.length ? lone[lone.length - 1] : null;
+}
+
+function fetchConfirmLink(email) {
+  const decoded = decodeMailBody(mailFetchText(email));
+  const urls = [
+    ...decoded.matchAll(
+      /https:\/\/www\.linkedin\.com\/(?:comm\/)?psettings\/email\/confirm\?[^\s"'<>]+/gi,
+    ),
+  ].map((m) => m[0].replace(/&amp;/g, '&').replace(/[).,;>]+$/, ''));
+  return urls.length ? urls[urls.length - 1] : null;
 }
 
 async function json(path) {
@@ -270,6 +299,15 @@ async function main() {
           /c[oó]digo|code|pin/i.test(inp.aria + inp.ph),
       ));
 
+  const needsEmailConfirm = (st) =>
+    /confirmar seu e-mail|confirm your email|novo link de confirma|confirmação|confirmation link/i.test(
+      st.body,
+    );
+
+  const emailAlreadyOk = (st) =>
+    /e-mail confirmado|email confirmed|primary.*verified|verificado/i.test(st.body) &&
+    !needsEmailConfirm(st);
+
   const findPinInput = (st) =>
     st.inputs.find(
       (inp) =>
@@ -278,10 +316,95 @@ async function main() {
         /c[oó]digo|code|pin/i.test(inp.aria + inp.ph),
     );
 
+  async function confirmViaLink() {
+    let link = fetchConfirmLink(EMAIL);
+    if (!link) {
+      console.log('link: nenhum no Mailcow — pedindo novo link na UI');
+      const st0 = await snap();
+      const ask = st0.btns.find((b) =>
+        /solicite um novo link|novo link de confirma|resend|reenviar/i.test(b.text),
+      );
+      if (ask) {
+        console.log('click', ask.text);
+        await clickXY(ask.x, ask.y);
+        await sleep(8000);
+      }
+      for (let p = 0; p < 12; p++) {
+        link = fetchConfirmLink(EMAIL);
+        if (link) break;
+        console.log('poll link', p + 1);
+        await sleep(5000);
+      }
+    }
+    if (!link) return false;
+    console.log('confirm link', link.slice(0, 120));
+    await s.send('Page.navigate', { url: link });
+    await sleep(5000);
+    for (let n = 0; n < 4; n++) {
+      if (await clickSkipIfAny()) continue;
+      break;
+    }
+    return true;
+  }
+
+  async function confirmViaPin() {
+    if (!CODE) {
+      console.log('PIN: poll Mailcow…');
+      for (let p = 0; p < 18; p++) {
+        CODE = fetchPin(EMAIL);
+        if (CODE) break;
+        console.log('poll', p + 1, 'sem PIN');
+        try {
+          await clickRe('reenviar|resend|novo link');
+        } catch {
+          /* ignore */
+        }
+        await sleep(8000);
+      }
+    }
+    if (!CODE) throw new Error('PIN nao chegou no Mailcow');
+    console.log('code', CODE);
+    let stLocal = await snap();
+    if (!isPinScreen(stLocal)) return false;
+    const pin = findPinInput(stLocal);
+    if (!pin) throw new Error('campo PIN ausente');
+    await clickXY(pin.x, pin.y);
+    await s.send('Input.dispatchMouseEvent', {
+      type: 'mousePressed',
+      x: pin.x,
+      y: pin.y,
+      button: 'left',
+      clickCount: 3,
+    });
+    await s.send('Input.dispatchMouseEvent', {
+      type: 'mouseReleased',
+      x: pin.x,
+      y: pin.y,
+      button: 'left',
+      clickCount: 3,
+    });
+    await s.send('Input.dispatchKeyEvent', {
+      type: 'keyDown',
+      key: 'Backspace',
+      code: 'Backspace',
+      windowsVirtualKeyCode: 8,
+    });
+    await s.send('Input.dispatchKeyEvent', {
+      type: 'keyUp',
+      key: 'Backspace',
+      code: 'Backspace',
+      windowsVirtualKeyCode: 8,
+    });
+    await s.send('Input.insertText', { text: CODE });
+    await clickRe('continuar|continue|confirmar|verify|enviar|submit');
+    await sleep(3500);
+    return true;
+  }
+
   // abre LinkedIn
   let st = await snap();
   console.log('now', st.href);
-  if (!/linkedin\.com/i.test(st.href)) {
+  if (!/linkedin\.com/i.test(st.href) || /chrome-error/i.test(st.href)) {
     await s.send('Page.navigate', { url: 'https://www.linkedin.com/feed/' });
     await sleep(4000);
     st = await snap();
@@ -302,127 +425,48 @@ async function main() {
     }
   }
 
-  // tenta achar/abrir UI de confirmacao
-  for (let i = 0; i < 12; i++) {
-    st = await snap();
-    console.log('seek', i, st.href.slice(0, 100), '|', st.body.slice(0, 100));
-
-    if (await clickSkipIfAny()) continue;
-
-    if (isPinScreen(st)) break;
-
-    // banner / CTA confirmar e-mail
-    const confirmCta = st.btns.find((b) =>
-      /confirmar e-mail|confirm email|verificar e-mail|verify email|enviar c[oó]digo|enviar codigo|reenviar/i.test(
-        b.text,
-      ),
-    );
-    if (confirmCta) {
-      console.log('click', confirmCta.text);
-      await clickXY(confirmCta.x, confirmCta.y);
-      await sleep(3000);
-      continue;
-    }
-
-    // atalho settings e-mail
-    if (i === 3) {
-      console.log('nav settings/email');
-      await s.send('Page.navigate', {
-        url: 'https://www.linkedin.com/mypreferences/d/manage-email-addresses',
-      });
-      await sleep(4000);
-      continue;
-    }
-    if (i === 6) {
-      console.log('nav feed (buscar banner)');
-      await s.send('Page.navigate', { url: 'https://www.linkedin.com/feed/' });
-      await sleep(4000);
-      continue;
-    }
-    if (i === 9) {
-      console.log('nav checkpoint handle-confirmation (se existir sessao)');
-      await s.send('Page.navigate', {
-        url: 'https://www.linkedin.com/checkpoint/challenge/AgF',
-      });
-      await sleep(3000);
-      continue;
-    }
-
-    await sleep(1500);
-  }
-
+  // preferencias de e-mail (banner "confirmar seu e-mail")
+  console.log('nav settings/email');
+  await s.send('Page.navigate', {
+    url: 'https://www.linkedin.com/mypreferences/d/manage-email-addresses',
+  });
+  await sleep(4000);
   st = await snap();
-  if (!isPinScreen(st)) {
-    console.error('FALHOU: tela de confirmacao de e-mail / PIN nao encontrada');
-    console.log('FINAL', st.href, '|', st.body.slice(0, 220));
-    process.exitCode = 2;
+  console.log('settings', st.href.slice(0, 90), '|', st.body.slice(0, 140));
+
+  if (emailAlreadyOk(st) && !needsEmailConfirm(st)) {
+    console.log('OK e-mail ja confirmado');
     s.close();
     return;
   }
 
-  if (!CODE) {
-    console.log('PIN: poll Mailcow…');
-    for (let p = 0; p < 18; p++) {
-      CODE = fetchPin(EMAIL);
-      if (CODE) break;
-      console.log('poll', p + 1, 'sem PIN');
-      try {
-        await clickRe('reenviar|resend');
-      } catch {
-        /* ignore */
-      }
-      await sleep(8000);
-    }
+  let ok = false;
+  if (isPinScreen(st)) {
+    ok = await confirmViaPin();
+  } else {
+    // settings: link no e-mail (sem campo PIN na pagina)
+    ok = await confirmViaLink();
+    st = await snap();
+    if (isPinScreen(st)) ok = (await confirmViaPin()) || ok;
   }
-  if (!CODE) throw new Error('PIN nao chegou no Mailcow');
-  console.log('code', CODE);
-
-  st = await snap();
-  const pin = findPinInput(st);
-  if (!pin) throw new Error('campo PIN ausente');
-  await clickXY(pin.x, pin.y);
-  await s.send('Input.dispatchMouseEvent', {
-    type: 'mousePressed',
-    x: pin.x,
-    y: pin.y,
-    button: 'left',
-    clickCount: 3,
-  });
-  await s.send('Input.dispatchMouseEvent', {
-    type: 'mouseReleased',
-    x: pin.x,
-    y: pin.y,
-    button: 'left',
-    clickCount: 3,
-  });
-  await s.send('Input.dispatchKeyEvent', {
-    type: 'keyDown',
-    key: 'Backspace',
-    code: 'Backspace',
-    windowsVirtualKeyCode: 8,
-  });
-  await s.send('Input.dispatchKeyEvent', {
-    type: 'keyUp',
-    key: 'Backspace',
-    code: 'Backspace',
-    windowsVirtualKeyCode: 8,
-  });
-  await s.send('Input.insertText', { text: CODE });
-  await clickRe('continuar|continue|confirmar|verify|enviar|submit');
-  await sleep(3500);
 
   for (let n = 0; n < 4; n++) {
     if (await clickSkipIfAny()) continue;
     break;
   }
 
+  // verifica em settings
+  await s.send('Page.navigate', {
+    url: 'https://www.linkedin.com/mypreferences/d/manage-email-addresses',
+  });
+  await sleep(4000);
   st = await snap();
-  console.log('FINAL', st.href, '|', st.body.slice(0, 220));
-  if (isPinScreen(st)) {
-    console.error('FALHOU: ainda na tela de PIN');
+  console.log('FINAL', st.href, '|', st.body.slice(0, 240));
+  if (needsEmailConfirm(st) || isPinScreen(st) || !ok) {
+    console.error('FALHOU: e-mail ainda nao confirmado');
     process.exitCode = 2;
   } else {
-    console.log('OK e-mail confirmado (ou saiu da tela de PIN)');
+    console.log('OK e-mail confirmado');
   }
   s.close();
 }

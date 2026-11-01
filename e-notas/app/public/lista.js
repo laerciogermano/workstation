@@ -9,6 +9,8 @@ const buscaNotaItensEl = document.getElementById('busca-nota-itens');
 const filtroNotaEl = document.getElementById('filtro-nota');
 const modalEanEl = document.getElementById('modal-ean');
 const modalEanMetaEl = document.getElementById('modal-ean-meta');
+const modalFotoEl = document.getElementById('modal-foto');
+const modalFotoImgEl = document.getElementById('modal-foto-img');
 const formEanEl = document.getElementById('form-ean');
 const eanEmpresaEl = document.getElementById('ean-empresa');
 const eanUnidadeEl = document.getElementById('ean-unidade');
@@ -448,10 +450,13 @@ function renderProdutosTab() {
               ?.nome ||
             'Mercado';
           const data = formatDataNota(r.nota_emissao) || '';
+          const mediaAttrs = foto
+            ? ` class="produto-media" data-open-foto="${esc(foto)}"`
+            : ` class="produto-media"`;
           return `<button type="button" class="produto-card" data-open-produto="${esc(
             r._key,
           )}">
-            <div class="produto-media">${img}</div>
+            <div${mediaAttrs}>${img}</div>
             <div class="produto-body">
               <h3 class="produto-nome">${esc(r.nome || 'Produto')}</h3>
               <p class="produto-preco">
@@ -506,6 +511,9 @@ function renderProdutoDetalhe(key) {
   const img = foto
     ? `<img class="produto-img" src="${esc(foto)}" alt="" width="160" height="160" />`
     : `<span class="produto-img produto-img-empty" aria-hidden="true"></span>`;
+  const heroMediaAttrs = foto
+    ? ` class="produto-hero-media" data-open-foto="${esc(foto)}" role="button" tabindex="0" aria-label="Ampliar foto"`
+    : ` class="produto-hero-media"`;
   const ean = String(head.codigo_barras || '').trim();
   const codigos = [
     ...new Set(
@@ -533,7 +541,7 @@ function renderProdutoDetalhe(key) {
 
   if (produtoInfoEl) {
     produtoInfoEl.innerHTML = `
-    <div class="produto-hero-media">${img}</div>
+    <div${heroMediaAttrs}>${img}</div>
     <div class="produto-hero-body">
       <h3 class="produto-hero-nome">${esc(head.nome || 'Produto')}</h3>
       <p class="produto-hero-meta">${metaParts.join('<br>')}</p>
@@ -672,10 +680,13 @@ function renderVitrineDetalhe(empresaId) {
           const data = formatDataNota(r.nota_emissao) || '';
           const isMenor =
             Number.isFinite(r._preco) && menores.get(r._key) === r._preco;
+          const mediaAttrs = foto
+            ? ` class="produto-media" data-open-foto="${esc(foto)}"`
+            : ` class="produto-media"`;
           return `<button type="button" class="produto-card" data-open-produto="${esc(
             r._key,
           )}">
-            <div class="produto-media">${img}</div>
+            <div${mediaAttrs}>${img}</div>
             <div class="produto-body">
               <h3 class="produto-nome">${esc(r.nome || 'Produto')}</h3>
               <p class="produto-preco">
@@ -1016,15 +1027,57 @@ vitrineGridEl?.addEventListener('click', (ev) => {
   if (!btn) return;
   openVitrineLoja(btn.dataset.openLoja);
 });
+function openFotoViewer(src) {
+  const url = String(src || '').trim();
+  if (!url || !modalFotoEl || !modalFotoImgEl) return;
+  modalFotoImgEl.src = url;
+  modalFotoImgEl.alt = 'Foto do produto';
+  modalFotoEl.hidden = false;
+  document.body.classList.add('modal-open');
+}
+
+function closeFotoViewer() {
+  if (!modalFotoEl) return;
+  modalFotoEl.hidden = true;
+  if (modalFotoImgEl) {
+    modalFotoImgEl.removeAttribute('src');
+    modalFotoImgEl.alt = '';
+  }
+  if (modalEanEl?.hidden !== false) {
+    document.body.classList.remove('modal-open');
+  }
+}
+
+function handleOpenFotoClick(ev) {
+  const fotoEl = ev.target.closest('[data-open-foto]');
+  if (!fotoEl) return false;
+  ev.preventDefault();
+  ev.stopPropagation();
+  openFotoViewer(fotoEl.dataset.openFoto);
+  return true;
+}
+
 produtosGridEl?.addEventListener('click', (ev) => {
+  if (handleOpenFotoClick(ev)) return;
   const btn = ev.target.closest('[data-open-produto]');
   if (!btn) return;
   openProduto(btn.dataset.openProduto);
 });
 vitrineItensEl?.addEventListener('click', (ev) => {
+  if (handleOpenFotoClick(ev)) return;
   const btn = ev.target.closest('[data-open-produto]');
   if (!btn) return;
   openProduto(btn.dataset.openProduto);
+});
+produtoInfoEl?.addEventListener('click', (ev) => {
+  handleOpenFotoClick(ev);
+});
+produtoInfoEl?.addEventListener('keydown', (ev) => {
+  if (ev.key !== 'Enter' && ev.key !== ' ') return;
+  const fotoEl = ev.target.closest('[data-open-foto]');
+  if (!fotoEl) return;
+  ev.preventDefault();
+  openFotoViewer(fotoEl.dataset.openFoto);
 });
 produtoTimelineEl?.addEventListener('click', (ev) => {
   const btn = ev.target.closest('[data-open-loja]');
@@ -1085,8 +1138,17 @@ modalEanEl.addEventListener('click', (ev) => {
   if (ev.target.closest('[data-close-ean]')) closeCadastroEan();
 });
 
+modalFotoEl?.addEventListener('click', (ev) => {
+  if (ev.target.closest('[data-close-foto]')) closeFotoViewer();
+});
+
 document.addEventListener('keydown', (ev) => {
-  if (ev.key === 'Escape' && !modalEanEl.hidden) closeCadastroEan();
+  if (ev.key !== 'Escape') return;
+  if (modalFotoEl && !modalFotoEl.hidden) {
+    closeFotoViewer();
+    return;
+  }
+  if (modalEanEl && !modalEanEl.hidden) closeCadastroEan();
 });
 
 async function reloadCodigosBarras() {

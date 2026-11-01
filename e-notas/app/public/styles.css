@@ -240,6 +240,10 @@ h2 {
   border-bottom: 1px solid var(--nt-line);
 }
 
+.produto-media[data-open-foto] {
+  cursor: zoom-in;
+}
+
 .produto-img {
   display: block;
   width: 100%;
@@ -459,6 +463,57 @@ body.modal-open {
 
 .modal-meta {
   margin-bottom: 0.75rem;
+}
+
+.modal-foto {
+  z-index: 50;
+  padding: 0.75rem;
+}
+
+.modal-foto-frame {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: min(100%, 720px);
+  max-height: calc(100vh - 1.5rem);
+  max-height: calc(100dvh - 1.5rem);
+}
+
+.modal-foto-img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: calc(100vh - 1.5rem);
+  max-height: calc(100dvh - 1.5rem);
+  object-fit: contain;
+  border-radius: var(--nt-radius);
+  background: var(--nt-white);
+  box-shadow: var(--nt-shadow);
+}
+
+.modal-foto-close {
+  position: absolute;
+  top: 0.35rem;
+  right: 0.35rem;
+  z-index: 2;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 999px;
+  background: rgba(11, 31, 51, 0.72);
+  color: var(--nt-white);
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.modal-foto-close:hover {
+  color: var(--nt-white);
+  background: rgba(11, 31, 51, 0.9);
+}
+
+.produto-hero-media[data-open-foto] {
+  cursor: zoom-in;
 }
 
 .ean-reader {

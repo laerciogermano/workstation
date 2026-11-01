@@ -2,7 +2,17 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#F5F7FA" />
+    <meta name="color-scheme" content="light" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="notinhas" />
+    <meta name="format-detection" content="telephone=no" />
     <title>notinhas.org</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -29,13 +39,11 @@
       <a class="brand" href="./" aria-label="notinhas.org">
         <span class="n">notinhas</span><span class="o">.org</span>
       </a>
-      <h1>Cadastros</h1>
-      <p class="hint">Mapa e vitrine das lojas; itens a partir das notas fiscais.</p>
-      <p id="status" class="status" aria-live="polite">Carregando…</p>
+      <p id="status" class="status" aria-live="polite" hidden></p>
 
-      <div class="tabs" role="tablist" aria-label="Cadastros">
+      <div class="tabs" role="tablist" aria-label="Seções">
         <button type="button" class="tab" role="tab" id="tab-empresas" data-tab="empresas" aria-controls="panel-empresas" aria-selected="true">
-          Empresas <span id="count-empresas" class="count"></span>
+          Lojas <span id="count-empresas" class="count"></span>
         </button>
         <button type="button" class="tab" role="tab" id="tab-itens" data-tab="itens" aria-controls="panel-itens" aria-selected="false">
           Itens <span id="count-itens" class="count"></span>
@@ -43,34 +51,23 @@
       </div>
 
       <section class="block tab-panel" id="panel-empresas" role="tabpanel" aria-labelledby="tab-empresas">
-        <div id="empresas-mapa" class="empresas-mapa" aria-label="Mapa das empresas"></div>
-        <p id="empresas-mapa-status" class="status" aria-live="polite"></p>
+        <div id="empresas-mapa" class="empresas-mapa" aria-label="Mapa"></div>
+        <p id="empresas-mapa-status" class="status" aria-live="polite" hidden></p>
 
         <div id="vitrine-lista">
-          <p class="hint">Clique numa loja para ver dados e o catálogo de preços observados nas notas.</p>
           <label class="search">
-            <span class="sr-only">Pesquisar lojas</span>
-            <input
-              id="busca-vitrine"
-              type="search"
-              placeholder="Pesquisar loja por nome, CNPJ ou endereço…"
-              autocomplete="off"
-            />
+            <span class="sr-only">Buscar lojas</span>
+            <input id="busca-vitrine" type="search" placeholder="Buscar loja…" autocomplete="off" />
           </label>
           <div id="vitrine-grid" class="vitrine-grid" aria-live="polite"></div>
         </div>
 
         <div id="vitrine-detalhe" hidden>
-          <button type="button" class="back-link" id="vitrine-voltar">← Todas as lojas</button>
+          <button type="button" class="back-link" id="vitrine-voltar">← Lojas</button>
           <article class="loja-card loja-card-head" id="vitrine-loja-info"></article>
           <label class="search" style="margin-top: 1rem">
-            <span class="sr-only">Pesquisar itens da loja</span>
-            <input
-              id="busca-vitrine-itens"
-              type="search"
-              placeholder="Pesquisar item nesta loja…"
-              autocomplete="off"
-            />
+            <span class="sr-only">Buscar itens</span>
+            <input id="busca-vitrine-itens" type="search" placeholder="Buscar item…" autocomplete="off" />
           </label>
           <div class="table-wrap">
             <table>
@@ -78,10 +75,9 @@
                 <tr>
                   <th>Produto</th>
                   <th>EAN</th>
-                  <th>Código loja</th>
+                  <th>Cód.</th>
                   <th>Preço</th>
                   <th>Data</th>
-                  <th>Obs.</th>
                 </tr>
               </thead>
               <tbody id="vitrine-itens"></tbody>
@@ -96,35 +92,25 @@
             Lista
           </button>
           <button type="button" class="subtab" id="subtab-itens-ean" data-sub="ean" aria-selected="false">
-            Códigos de barras <span id="count-ean" class="count"></span>
+            EAN <span id="count-ean" class="count"></span>
           </button>
         </div>
 
         <div id="itens-view-lista">
           <p id="filtro-nota" class="filter-banner" hidden></p>
           <label class="search">
-            <span class="sr-only">Pesquisar itens</span>
-            <input
-              id="busca-itens"
-              type="search"
-              placeholder="Pesquisar por código, nome, empresa…"
-              autocomplete="off"
-            />
+            <span class="sr-only">Buscar itens</span>
+            <input id="busca-itens" type="search" placeholder="Buscar…" autocomplete="off" />
           </label>
           <div class="table-wrap">
             <table>
               <thead>
                 <tr>
-                  <th>ID</th>
-                  <th>Data da nota</th>
-                  <th>Empresa</th>
-                  <th>Nota</th>
-                  <th>Código unidade</th>
+                  <th>Data</th>
+                  <th>Loja</th>
                   <th>EAN</th>
                   <th>Nome</th>
-                  <th>Qtd</th>
-                  <th>Unit.</th>
-                  <th>Total</th>
+                  <th>Preço</th>
                   <th></th>
                 </tr>
               </thead>
@@ -134,27 +120,17 @@
         </div>
 
         <div id="itens-view-ean" hidden>
-          <p class="hint">
-            Mapeia o código interno da loja (unidade na nota) ao código de barras (EAN),
-            para identificar o mesmo produto entre empresas.
-          </p>
           <label class="search">
-            <span class="sr-only">Pesquisar códigos de barras</span>
-            <input
-              id="busca-ean"
-              type="search"
-              placeholder="Pesquisar por empresa, unidade, EAN…"
-              autocomplete="off"
-            />
+            <span class="sr-only">Buscar EAN</span>
+            <input id="busca-ean" type="search" placeholder="Buscar EAN…" autocomplete="off" />
           </label>
           <div class="table-wrap">
             <table>
               <thead>
                 <tr>
-                  <th>ID</th>
-                  <th>Empresa</th>
-                  <th>Código unidade</th>
-                  <th>Código de barras</th>
+                  <th>Loja</th>
+                  <th>Cód. loja</th>
+                  <th>EAN</th>
                 </tr>
               </thead>
               <tbody id="codigos-barras"></tbody>
@@ -164,24 +140,16 @@
       </section>
     </main>
 
-    <a class="fab" href="scan.html" title="Adicionar nota" aria-label="Adicionar nota">
+    <a class="fab fab-icon" href="scan.html" title="Adicionar nota" aria-label="Adicionar nota">
       <span class="fab-plus" aria-hidden="true">+</span>
-      <span class="fab-label">Nota</span>
     </a>
 
     <div id="modal-ean" class="modal" hidden>
       <div class="modal-backdrop" data-close-ean></div>
-      <div
-        class="modal-card"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="modal-ean-title"
-      >
+      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-ean-title">
         <header class="modal-head">
-          <h2 id="modal-ean-title">Cadastrar código de barras</h2>
-          <button type="button" class="modal-close" data-close-ean aria-label="Fechar">
-            ×
-          </button>
+          <h2 id="modal-ean-title">EAN</h2>
+          <button type="button" class="modal-close" data-close-ean aria-label="Fechar">×</button>
         </header>
         <p id="modal-ean-meta" class="hint modal-meta"></p>
         <div id="ean-reader" class="ean-reader"></div>
@@ -190,7 +158,7 @@
           <input type="hidden" id="ean-empresa" />
           <input type="hidden" id="ean-unidade" />
           <label>
-            Código de barras (EAN)
+            Código de barras
             <span class="manual-row">
               <input
                 id="ean-barras"
@@ -198,9 +166,9 @@
                 required
                 autocomplete="off"
                 inputmode="numeric"
-                placeholder="ex.: 7891234567890"
+                placeholder="789…"
               />
-              <button type="submit" class="btn">Adicionar</button>
+              <button type="submit" class="btn">Salvar</button>
             </span>
           </label>
           <p id="ean-form-status" class="status" aria-live="polite"></p>

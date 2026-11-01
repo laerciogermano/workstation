@@ -146,9 +146,13 @@ Curadoria: [`../marca/benchmarking-solucoes/README.md`](../marca/benchmarking-so
 
 ## REQ-018 — Vitrine das lojas (2026-11-01)
 
-- Em **Empresas**: mapa em cima + cards de loja embaixo (mesmo modelo de vitrine); clique abre detalhe (CNPJ, endereço) + catálogo.
-- Catálogo: 1 linha por EAN (ou código da loja), preço unitário da observação mais recente, data e contagem de observações.
-- Entrada também pelo popup do mapa (“Ver vitrine”). URL: `?loja=<id>` / `#loja-<id>`.
+- Em **Lojas**: mapa + cards; clique abre detalhe + catálogo (preço mais recente por EAN/código).
+- Entrada também pelo mapa. URL: `?loja=<id>` / `#loja-<id>`. UI enxuta (sem textos explicativos redundantes).
+
+## REQ-019 — Viewport app-like (sem PWA) (2026-11-01)
+
+- Meta viewport: `maximum-scale=1, user-scalable=no, viewport-fit=cover` (sem pinch-zoom).
+- Sensação de app: `theme-color`, `apple-mobile-web-app-*`, `overscroll-behavior: none`, `touch-action: manipulation`, safe-area — **sem** manifest/service worker (não é PWA instalável).
 
 ---
 

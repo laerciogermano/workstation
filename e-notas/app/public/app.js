@@ -34,13 +34,13 @@ async function onScanSuccess(decodedText) {
     const nome = data.empresa?.nome || 'Nota';
     const n = data.itens?.length ?? 0;
     const tag = data.created ? 'cadastrada' : 'já existia';
-    setStatus(`${nome} — ${n} itens (${tag}). Voltando…`, 'ok');
+    setStatus(`${nome} · ${n} itens · ${tag}`, 'ok');
     setTimeout(() => {
       location.href = './';
-    }, 1200);
+    }, 900);
   } catch (err) {
     console.error(err);
-    setStatus(`Falha: ${err.message}`, 'err');
+    setStatus(err.message || 'Falha', 'err');
   } finally {
     setTimeout(() => {
       busy = false;
@@ -58,8 +58,5 @@ scanner
   )
   .catch((err) => {
     console.error(err);
-    setStatus(
-      'Não foi possível abrir a câmera. Use HTTPS ou permita o acesso.',
-      'err',
-    );
+    setStatus('Câmera indisponível. Use HTTPS.', 'err');
   });

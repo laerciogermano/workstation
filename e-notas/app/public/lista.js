@@ -43,7 +43,9 @@ let empresasMarkers = null;
 let geocodePoll = null;
 
 function setStatus(text, kind) {
-  statusEl.textContent = text;
+  const msg = String(text || '').trim();
+  statusEl.hidden = !msg;
+  statusEl.textContent = msg;
   statusEl.className = 'status' + (kind ? ` ${kind}` : '');
 }
 
@@ -141,11 +143,17 @@ function ensureEmpresasMap() {
   return empresasMap;
 }
 
-function renderEmpresasMap(rows) {
+function setMapStatus(text, kind) {
   const statusElMap = document.getElementById('empresas-mapa-status');
+  const msg = String(text || '').trim();
+  statusElMap.hidden = !msg;
+  statusElMap.textContent = msg;
+  statusElMap.className = 'status' + (kind ? ` ${kind}` : '');
+}
+
+function renderEmpresasMap(rows) {
   if (typeof L === 'undefined') {
-    statusElMap.textContent = 'Mapa indisponível (Leaflet não carregou).';
-    statusElMap.className = 'status err';
+    setMapStatus('Mapa indisponível.', 'err');
     return;
   }
   ensureEmpresasMap();
@@ -159,7 +167,7 @@ function renderEmpresasMap(rows) {
     const lng = Number(r.lng);
     const marker = L.marker([lat, lng]);
     marker.bindPopup(
-      `<strong>${esc(r.nome || r.cnpj || `#${r.id}`)}</strong><br>${esc(r.endereco || '')}<br><span class="mono">${esc(r.cnpj || '')}</span><br><button type="button" class="linkish" data-open-loja="${esc(r.id)}">Ver vitrine</button>`,
+      `<strong>${esc(r.nome || r.cnpj || `#${r.id}`)}</strong><br>${esc(r.endereco || '')}<br><button type="button" class="linkish" data-open-loja="${esc(r.id)}">Abrir</button>`,
     );
     marker.on('popupopen', () => {
       const btn = document.querySelector(`[data-open-loja="${String(r.id)}"]`);
@@ -182,20 +190,15 @@ function renderEmpresasMap(rows) {
   }
   const missing = rows.length - withCoords.length;
   if (!rows.length) {
-    statusElMap.textContent = 'Nenhuma empresa para mapear.';
-    statusElMap.className = 'status';
+    setMapStatus('');
   } else if (withCoords.length === 0) {
-    statusElMap.textContent =
-      'Geocodificando endereços… os pins aparecem em seguida.';
-    statusElMap.className = 'status';
+    setMapStatus('Localizando lojas…');
     startGeocodePoll();
   } else if (missing > 0) {
-    statusElMap.textContent = `${withCoords.length} pin(s) · ${missing} sem coordenada (geocodificando…).`;
-    statusElMap.className = 'status';
+    setMapStatus('');
     startGeocodePoll();
   } else {
-    statusElMap.textContent = `${withCoords.length} empresa(s) no mapa.`;
-    statusElMap.className = 'status ok';
+    setMapStatus('');
     stopGeocodePoll();
   }
 }
@@ -257,11 +260,6 @@ function formatPreco(v) {
   return `R$ ${raw}`;
 }
 
-function contagemItensLoja(empresaId) {
-  return allItens.filter((i) => Number(i.empresa_id) === Number(empresaId))
-    .length;
-}
-
 function catalogoLoja(empresaId) {
   const rows = allItens.filter(
     (i) => Number(i.empresa_id) === Number(empresaId),
@@ -311,18 +309,17 @@ function renderVitrineLista() {
   vitrineGridEl.innerHTML = rows.length
     ? rows
         .map((r) => {
-          const n = contagemItensLoja(r.id);
+          const n = catalogoLoja(r.id).length;
           return `<button type="button" class="loja-card" data-open-loja="${esc(r.id)}">
             <h3 class="loja-nome">${esc(r.nome || r.cnpj || `Loja #${r.id}`)}</h3>
-            <p class="loja-meta">${esc(r.endereco || 'Endereço não informado')}</p>
-            <p class="loja-meta mono">${esc(r.cnpj || '')}</p>
+            <p class="loja-meta">${esc(r.endereco || '')}</p>
             <div class="loja-stats">
-              <span class="chip">${n} observação${n === 1 ? '' : 'ões'}</span>
+              <span class="chip">${n} item${n === 1 ? '' : 's'}</span>
             </div>
           </button>`;
         })
         .join('')
-    : `<p class="hint">${allEmpresas.length ? 'Nenhuma loja na pesquisa.' : 'Nenhuma loja cadastrada ainda.'}</p>`;
+    : `<p class="hint">${allEmpresas.length ? 'Nada encontrado.' : 'Sem lojas.'}</p>`;
 }
 
 function renderVitrineDetalhe(empresaId) {
@@ -350,11 +347,10 @@ function renderVitrineDetalhe(empresaId) {
 
   vitrineLojaInfoEl.innerHTML = `
     <h3 class="loja-nome">${esc(loja.nome || loja.cnpj || `Loja #${loja.id}`)}</h3>
-    <p class="loja-meta">${esc(loja.endereco || 'Endereço não informado')}</p>
-    <p class="loja-meta"><span class="mono">${esc(loja.cnpj || '')}</span></p>
+    <p class="loja-meta">${esc(loja.endereco || '')}</p>
+    <p class="loja-meta mono">${esc(loja.cnpj || '')}</p>
     <div class="loja-stats">
-      <span class="chip">${catalogo.length} produto${catalogo.length === 1 ? '' : 's'}</span>
-      <span class="chip ok">${contagemItensLoja(loja.id)} linhas de nota</span>
+      <span class="chip">${catalogo.length} item${catalogo.length === 1 ? '' : 's'}</span>
     </div>`;
 
   vitrineItensEl.innerHTML = rows.length
@@ -367,11 +363,10 @@ function renderVitrineDetalhe(empresaId) {
               <td>${esc(r.codigo || '—')}</td>
               <td class="price-cell">${esc(formatPreco(r.valor_unitario))}</td>
               <td>${esc(formatDataNota(r.nota_emissao) || '—')}</td>
-              <td>${esc(r.obs || 1)}</td>
             </tr>`,
         )
         .join('')
-    : `<tr><td colspan="6">${catalogo.length ? 'Nenhum item na pesquisa' : 'Nenhum item observado nesta loja'}</td></tr>`;
+    : `<tr><td colspan="5">${catalogo.length ? 'Nada encontrado.' : 'Sem itens.'}</td></tr>`;
 }
 
 function openVitrineLoja(empresaId) {
@@ -439,7 +434,7 @@ function updateFiltroBanner() {
     return;
   }
   filtroNotaEl.hidden = false;
-  filtroNotaEl.innerHTML = `Itens da <strong>${esc(filtroNotaLabel || `nota #${filtroNotaId}`)}</strong> · <button type="button" id="limpar-filtro-nota" class="linkish">mostrar todos</button>`;
+  filtroNotaEl.innerHTML = `<strong>${esc(filtroNotaLabel || `nota #${filtroNotaId}`)}</strong> · <button type="button" id="limpar-filtro-nota" class="linkish">limpar</button>`;
   document.getElementById('limpar-filtro-nota')?.addEventListener('click', () => {
     clearFiltroNota();
   });
@@ -480,10 +475,10 @@ function applyItensFilter() {
     ? rows
         .map(
           (r) =>
-            `<tr>${cell(r.id)}${cell(formatDataNota(r.nota_emissao))}${cell(r.empresa_nome)}${cell(r.nota_numero || r.nota_id)}${cell(r.codigo)}${cell(r.codigo_barras || '', 'mono')}${cell(r.nome)}${cell(r.quantidade ? `${r.quantidade} ${r.unidade || ''}`.trim() : '')}${cell(r.valor_unitario)}${cell(r.valor_total)}<td><button type="button" class="btn-link" data-vincular-ean data-empresa-id="${esc(r.empresa_id)}" data-empresa-nome="${esc(r.empresa_nome || '')}" data-codigo="${esc(r.codigo)}" data-nome="${esc(r.nome || '')}" data-ean="${esc(r.codigo_barras || '')}">${r.codigo_barras ? 'Editar EAN' : 'Cadastrar EAN'}</button></td></tr>`,
+            `<tr>${cell(formatDataNota(r.nota_emissao))}${cell(r.empresa_nome)}${cell(r.codigo_barras || '', 'mono')}${cell(r.nome)}<td class="price-cell">${esc(formatPreco(r.valor_unitario))}</td><td><button type="button" class="btn-link" data-vincular-ean data-empresa-id="${esc(r.empresa_id)}" data-empresa-nome="${esc(r.empresa_nome || '')}" data-codigo="${esc(r.codigo)}" data-nome="${esc(r.nome || '')}" data-ean="${esc(r.codigo_barras || '')}">${r.codigo_barras ? 'EAN' : '+ EAN'}</button></td></tr>`,
         )
         .join('')
-    : `<tr><td colspan="11">${allItens.length ? 'Nenhum item na pesquisa' : 'Nenhum item'}</td></tr>`;
+    : `<tr><td colspan="6">${allItens.length ? 'Nada encontrado.' : 'Sem itens.'}</td></tr>`;
 }
 
 function eanHaystack(r) {
@@ -508,10 +503,10 @@ function applyEanFilter() {
     ? rows
         .map(
           (r) =>
-            `<tr>${cell(r.id)}${cell(r.empresa_nome || r.empresa_cnpj)}${cell(r.codigo_unidade)}${cell(r.codigo_barras, 'mono')}</tr>`,
+            `<tr>${cell(r.empresa_nome || r.empresa_cnpj)}${cell(r.codigo_unidade)}${cell(r.codigo_barras, 'mono')}</tr>`,
         )
         .join('')
-    : `<tr><td colspan="4">${allCodigosBarras.length ? 'Nenhum na pesquisa' : 'Nenhum código de barras'}</td></tr>`;
+    : `<tr><td colspan="3">${allCodigosBarras.length ? 'Nada encontrado.' : 'Sem EANs.'}</td></tr>`;
 }
 
 async function stopEanScanner() {
@@ -776,13 +771,10 @@ async function load() {
     if (tab === 'notas') next = 'itens';
     if (tab === 'vitrine') next = 'empresas';
     setTab(next, { updateHash: true });
-    setStatus(
-      `${allEmpresas.length} empresas · ${notas.notas?.length ?? 0} notas · ${allItens.length} itens · ${allCodigosBarras.length} EANs`,
-      'ok',
-    );
+    setStatus('');
   } catch (err) {
     console.error(err);
-    setStatus(`Falha: ${err.message}`, 'err');
+    setStatus(err.message || 'Falha ao carregar', 'err');
   }
 }
 

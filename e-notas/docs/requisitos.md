@@ -205,8 +205,9 @@ Curadoria: [`../marca/benchmarking-solucoes/README.md`](../marca/benchmarking-so
 
 - Header do app (`index.html`, `scan.html`) no mesmo estilo do hero da apresentação (gradiente azul→verde, wordmark branco + `.shop` menta).
 - Clique na logo (`notinhas.shop`) abre `/apresentacao.html`.
-- Botão **Apresentação** no banner (`.app-header-cta`) também abre `/apresentacao.html`.
-- Antes: wordmark azul/verde no topo do `main`. Depois: `<header class="app-header">` full-bleed + CTA + link para apresentação.
+- Botão **Quem somos** no banner (`.app-header-cta`) abre `/apresentacao.html`.
+- Rodapé: link **Quem somos** + e-mail `contato@notinhas.shop` (`mailto:`).
+- Antes: wordmark azul/verde no topo do `main`. Depois: `<header class="app-header">` full-bleed + CTA + rodapé com contato.
 - Rollback: restaurar brand dentro do `main` apontando para `./`.
 
 ## REQ-026 — Loja = centro de distribuição (2026-11-01)

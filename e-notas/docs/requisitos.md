@@ -201,12 +201,10 @@ Curadoria: [`../marca/benchmarking-solucoes/README.md`](../marca/benchmarking-so
 - Antes: só HTML print em `marca/`. Depois: também `app/public/apresentacao.html` + CSS em `styles.css`.
 - Rollback: remover `apresentacao.html`, link do rodapé e blocos CSS; no remoto apagar o arquivo em `/opt/e-notas/public/`.
 
-## REQ-028 — Visual futurista / canvas escuro (2026-11-01)
+## REQ-028 — Visual futurista / canvas escuro (2026-11-01) — *revogado*
 
-- App consumer em tema escuro profundo (navy `#0b121a`) com mesh azul/verde, tabs pill com gradiente, cards/tabelas em superfície `#162232`.
-- Mantém azul CTA + verde semântico (menor preço); wordmark no header permanece branco + `.shop` menta.
-- Antes: mist light `#F5F7FA` (DESIGN.md v2 light). Depois: dark futurista no `styles.css` do app.
-- Rollback: restaurar tokens light do commit anterior em `app/public/styles.css` + `color-scheme: light`.
+- Tentativa de tema escuro futurista rejeitada; **voltar ao light** (tokens `#F5F7FA` / azul `#0069B4` / verde `#00984B`).
+- Estado atual: `styles.css` = visual light anterior ao dark (commit pré-`cb9b0d4`).
 
 ## REQ-027 — Header gradiente + logo → apresentação (2026-11-01)
 

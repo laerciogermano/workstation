@@ -54,8 +54,11 @@ CDP_URL=http://127.0.0.1:9223 node setup-avatar-banner.mjs
 CDP_URL=http://127.0.0.1:9223 node setup-avatar-banner.mjs --avatar-only
 CDP_URL=http://127.0.0.1:9223 node setup-avatar-banner.mjs --banner-only
 
-# so foto de perfil (caminho passado):
+# so foto de perfil / banner / about (caminho ou texto passado):
 CDP_URL=http://127.0.0.1:9228 node linkedin-update-avatar-cdp.mjs --photo /caminho/foto.jpg
+CDP_URL=http://127.0.0.1:9228 node linkedin-update-banner-cdp.mjs --photo /caminho/banner.jpg
+CDP_URL=http://127.0.0.1:9228 node linkedin-setup-about-cdp.mjs --about "Texto..."
+# about sem --about usa src/assets/profile-defaults.json
 ```
 
 Deps: Node 22+ (`fetch`/`WebSocket`). Clique via CDP (`Input.dispatchMouseEvent`) — janela pode ficar atrás.
@@ -63,6 +66,8 @@ Deps: Node 22+ (`fetch`/`WebSocket`). Clique via CDP (`Input.dispatchMouseEvent`
 **Antes → depois (setup mídia LI):** só control/sannysoft → `setup-avatar-banner.mjs` sobe `conectmax-black.jpg` e `conectmax-banner.jpg` na conta da aba CDP. Rollback: `--avatar-only` / `--banner-only` / editar mídia no LinkedIn.
 
 **Antes → depois (update-avatar):** assets fixos ConectMax → `linkedin-update-avatar-cdp.mjs --photo PATH` na aba CDP logada. Rollback: trocar foto no LI ou reexecutar com outra imagem.
+
+**Antes → depois (update-banner / about):** banner só no setup conjunto → `linkedin-update-banner-cdp.mjs --photo PATH`; about AVD/`linkedin-setup` → `linkedin-setup-about-cdp.mjs` (web CDP). Rollback: editar capa/Sobre no LI.
 
 ## Caminho inverso
 

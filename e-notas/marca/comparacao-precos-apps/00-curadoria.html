@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>notinhas.org — Preço físico vs iFood / 99Food / outros</title>
+<style>
+  :root{--bg:#0B1220;--card:#121A2B;--line:#243149;--text:#F2F5FA;--muted:#8B97AD;--accent:#2DD4A8;--warn:#F5B942;--bad:#F07178}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"IBM Plex Sans",system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.55;padding:40px 24px}
+  .wrap{max-width:920px;margin:0 auto}
+  h1{font-size:26px;letter-spacing:-.02em;margin-bottom:8px}
+  .lead{color:var(--muted);margin-bottom:16px;max-width:720px}
+  .meta{font-size:12px;color:var(--muted);margin-bottom:28px}
+  h2{font-size:17px;margin:28px 0 10px;color:var(--accent)}
+  p,li{font-size:14px;color:#D5DCEC}
+  ul{padding-left:1.2em;margin:8px 0 12px}
+  table{width:100%;border-collapse:collapse;font-size:13px;margin:12px 0 20px}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:#182236;color:var(--muted);font-weight:600}
+  .num{color:var(--warn);font-weight:600;white-space:nowrap}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:12px 0}
+  a{color:var(--accent)}
+  .src{font-size:12px;color:var(--muted)}
+  footer{margin-top:36px;font-size:12px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Preço físico (NFC-e) vs apps de delivery</h1>
+  <p class="lead">Curadoria só com <strong>artigos e documentos públicos</strong> — sem scraping de iFood, 99Food ou marketplaces. Objetivo: calibrar o gap típico e o posicionamento do notinhas.org como índice de preço de balcão.</p>
+  <p class="meta">Card Trello · 2026-11-01 · região de referência do índice local: São José dos Pinhais / PR (NFC-e) · literatura nacional</p>
+
+  <h2>1. Resumo executivo</h2>
+  <div class="card">
+    <ul>
+      <li><strong>Restaurante:</strong> Abrasel mediu <span class="num">+17,5%</span> no iFood vs salão (2022; sem frete). Estimativas posteriores da entidade falam em <span class="num">+20–30%</span>.</li>
+      <li><strong>Mercado / mercearia:</strong> em BH (jul/2026), digital ficou <span class="num">+7,8%</span> (mediana) vs físico; apps tipo Rappi/Amazon Now <span class="num">+21,9%</span>.</li>
+      <li><strong>Multi-canal FMCG:</strong> vendor BXTData aponta iFood ~<span class="num">+12%</span> vs “mercado” e até <span class="num">35%</span> entre plataformas (jan–mai/2026) — tratar com cautela (fonte comercial).</li>
+      <li><strong>99Food:</strong> na promoção de comissão 0, regra pública pede preço app = balcão; o consumidor ainda pode pagar taxa de serviço até ~<span class="num">5,6%</span> (InfoMoney). Fora da promoção, guias de precificação empurram preço de app para cima.</li>
+      <li><strong>notinhas:</strong> NFC-e captura o lado físico. Misturar com app sem rótulo de fonte distorce o índice.</li>
+    </ul>
+  </div>
+
+  <h2>2. Matriz de achados</h2>
+  <table>
+    <thead>
+      <tr><th>Fonte</th><th>O que mediu</th><th>Gap / fato</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Abrasel (2022)<br><span class="src">abrasel.com.br</span></td>
+        <td>1.600 restaurantes; prato iFood vs salão</td>
+        <td class="num">+17,5% (c/ taxa serviço 10%; s/ frete)</td>
+      </tr>
+      <tr>
+        <td>Mercado Mineiro + comOferta (BH, 2026)<br><span class="src">Itatiaia / O Tempo</span></td>
+        <td>77 SKUs físico × digital</td>
+        <td class="num">+7,8% mediana online; Rappi/Amazon Now +21,9%</td>
+      </tr>
+      <tr>
+        <td>BXTData (2026)<br><span class="src">insight comercial</span></td>
+        <td>120k+ SKUs; iFood × Magalu × Carrefour…</td>
+        <td class="num">iFood ~+12% vs mercado; até 35% entre canais</td>
+      </tr>
+      <tr>
+        <td>Revista E&amp;S<br><span class="src">estudo rede SP</span></td>
+        <td>Markup da rede no canal iFood</td>
+        <td class="num">+8% taxa interna no preço digital</td>
+      </tr>
+      <tr>
+        <td>InfoMoney (2026)</td>
+        <td>Checkout 99Food “frete grátis”</td>
+        <td class="num">taxa de serviço até ~5,6%</td>
+      </tr>
+      <tr>
+        <td>Folha / narrativa 99 (2025)</td>
+        <td>Custo do restaurante em pedido R$100</td>
+        <td class="num">~26% (modelo “mercado”) vs ~7,7% (99 c/ comissão 0)</td>
+      </tr>
+      <tr>
+        <td>UOL TAB (2025)</td>
+        <td>Guerra iFood × 99 × Rappi × Keeta</td>
+        <td>Cupons podem inverter ticket pontual; Abrasel cita +20–30% estrutural</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>3. Mecânica do gap (por que sobe)</h2>
+  <ul>
+    <li>Comissão / mensalidade da plataforma → repasse no cardápio digital.</li>
+    <li>Taxa de pagamento / adquirência quando o cliente paga no app.</li>
+    <li>Logística (frete ou “taxa de serviço” mascarando custo de entrega).</li>
+    <li>Embalagem e operação de dark kitchen / picking de mercado.</li>
+    <li>Promoções e cupons distorcem o preço de vitrine (Procon-JP: suspeita de maquiagem em clube de descontos, 2026).</li>
+  </ul>
+
+  <h2>4. O que isso muda no notinhas.org</h2>
+  <div class="card">
+    <ul>
+      <li>Manter o índice como <strong>observação NFC-e (físico)</strong> — oceano diferente do preço de marketplace.</li>
+      <li>Se no futuro houver “gap vs apps”, só com fonte explícita e sem misturar na mesma série histórica.</li>
+      <li>Delivery (§4.7 PRD) precisa de preço <em>oficial do canal</em> + acordo com loja — NFC-e sozinha não basta.</li>
+      <li>Valor de produto: transparência do preço de balcão onde apps são opacos / com taxas variáveis.</li>
+    </ul>
+  </div>
+
+  <h2>5. Limitações desta entrega</h2>
+  <ul>
+    <li>Sem amostra SKU a SKU do índice local contra iFood/99 (pedido: só literatura).</li>
+    <li>Fontes heterogêneas (associação de classe, jornalismo, vendor de dados, estudo acadêmico-aplicado).</li>
+    <li>Números de 2022 (Abrasel) podem ter mudado com a guerra de preços 2025–2026 — cupons comprimem o gap pontual.</li>
+  </ul>
+
+  <h2>6. Fontes (links)</h2>
+  <ul>
+    <li><a href="https://abrasel.com.br/noticias/noticias/comida-no-ifood-fica-17-5-mais-cara-do-que-no-restaurante-diz-abrasel/">Abrasel — +17,5% iFood vs restaurante</a></li>
+    <li><a href="https://www.itatiaia.com.br/economia/supermercados-fisicos-em-bh-seguem-mais-em-conta-que-o-ambiente-virtual-revela-pesquisa/">Itatiaia — físico vs digital BH</a></li>
+    <li><a href="https://www.otempo.com.br/economia/2026/7/27/fazer-compras-de-supermercado-online-vale-a-pena-pesquisa-compara-a-valores-em-lojas-fisicas-em-bh">O Tempo — mesma pesquisa BH</a></li>
+    <li><a href="https://www.bxtdata.com/pt/insights/8496/iFood%20Magazine%20Luiza%20Carrefour%20Pre%C3%A7os%20Desconexos%20Geram%20Perda%20de%2018por%20cento%20em%20Margem%20de%20FMCG">BXTData — multi-canal FMCG</a></li>
+    <li><a href="https://revistaes.com.br/resumo-executivo/precificacao-competitiva-no-varejo-alimentar-com-coleta-automatizada-de-dados-da-concorrencia">Revista E&amp;S — markup 8% no iFood</a></li>
+    <li><a href="https://www.infomoney.com.br/business/com-entrega-gratis-99-food-cobra-taxa-variavel-destinada-a-parceiros-de-entrega/">InfoMoney — taxa serviço 99Food</a></li>
+    <li><a href="https://99app.com/ajuda/99food/quais-taxas-a-plataforma-cobra/">99 — taxas / preço = balcão na promo</a></li>
+    <li><a href="https://www1.folha.uol.com.br/mercado/2025/04/retorno-da-99food-ao-brasil-alimenta-guerra-de-preco-no-mercado-de-delivery-de-comida.shtml">Folha — retorno 99Food / custos</a></li>
+    <li><a href="https://tab.uol.com.br/noticias/redacao/2025/09/06/a-guerra-de-ifood-rappi-99food-e-keeta-pelo-mercado-de-delivery-no-brasil.htm">UOL TAB — guerra dos apps</a></li>
+  </ul>
+
+  <footer>notinhas.org / e-notas · artefato do card fapxKp3l · ver também achados.csv</footer>
+</div>
+</body>
+</html>

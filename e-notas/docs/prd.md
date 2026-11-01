@@ -71,6 +71,7 @@ Transformar o QR/URL da NFC-e em índice EAN → preço → estabelecimento → 
 - Escopo futuro típico: carrinho → checkout → pagamento → logística (própria, parceira ou da loja) → status do pedido.
 - Pré-requisitos: vitrine estável, API empresas, acordo com estabelecimentos (estoque/preço oficial — não só observação de NFC-e).
 - **Fora da v1:** delivery não bloqueia comparação, geo, histórico nem montagem apartada.
+- **Gap vs apps (literatura):** preço em iFood/99/marketplaces costuma ficar acima do balcão (ordens típicas ~+8% a +22% em mercado; ~+17% a +30% em restaurante — ver [`../marca/comparacao-precos-apps/`](../marca/comparacao-precos-apps/README.md)). O índice NFC-e permanece fonte de **preço físico**; não misturar séries sem rótulo de canal.
 
 ## 5. Fora de escopo (PRD v1)
 

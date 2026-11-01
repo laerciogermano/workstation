@@ -15,3 +15,5 @@ Como registrar: [`README.md`](README.md).
 | 007 | 2026-11-01 | Documento de requisitos | [007-2026-11-01-documento-requisitos.md](007-2026-11-01-documento-requisitos.md) | Doc canônico de requisitos; regra de sempre atualizar ao descrever requisito novo. |
 | 008 | 2026-11-01 | Item único por nota | [008-2026-11-01-item-unico-por-nota.md](008-2026-11-01-item-unico-por-nota.md) | Unicidade (nota_id, codigo); sem duplicar item na mesma nota. |
 | 009 | 2026-11-01 | Card preços NFC-e vs iFood/99 | [009-2026-11-01-card-comparar-precos-ifood-99.md](009-2026-11-01-card-comparar-precos-ifood-99.md) | Card Trello Backlog: comparar preço real (NFC-e) com iFood, 99Food e outros. |
+| 010 | 2026-11-01 | Executar card preços apps | [010-2026-11-01-executar-card-precos-apps.md](010-2026-11-01-executar-card-precos-apps.md) | Executar comparação NFC-e vs iFood/99/outros. |
+| 011 | 2026-11-01 | Só artigos (sem sites apps) | [011-2026-11-01-so-artigos-precos-apps.md](011-2026-11-01-so-artigos-precos-apps.md) | Restringe execução à literatura pública; entrega em marca/comparacao-precos-apps. |

@@ -55,8 +55,72 @@ h2 {
   font-weight: 500;
 }
 
+.tabs {
+  display: flex;
+  gap: 0.35rem;
+  margin: 1rem 0 0;
+  border-bottom: 1px solid #243040;
+}
+
+.tab {
+  appearance: none;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  padding: 0.55rem 0.85rem;
+  background: transparent;
+  color: #9aa8b8;
+  font: inherit;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.tab:hover {
+  color: #e8eef5;
+}
+
+.tab[aria-selected='true'] {
+  color: #e8eef5;
+  border-bottom-color: #4a90d9;
+}
+
 .block {
   margin: 1.5rem 0 0;
+}
+
+.tab-panel[hidden] {
+  display: none;
+}
+
+.row-link {
+  cursor: pointer;
+}
+
+.row-link:hover,
+.row-link:focus {
+  outline: none;
+  background: #243040;
+}
+
+.filter-banner {
+  margin: 0 0 0.75rem;
+  padding: 0.55rem 0.75rem;
+  border-radius: 8px;
+  background: #1a222c;
+  border: 1px solid #243040;
+  color: #9aa8b8;
+  font-size: 0.9rem;
+}
+
+.linkish {
+  appearance: none;
+  border: 0;
+  padding: 0;
+  background: none;
+  color: #6db3ff;
+  font: inherit;
+  cursor: pointer;
+  text-decoration: underline;
 }
 
 .search {

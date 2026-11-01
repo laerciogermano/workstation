@@ -16,8 +16,19 @@
       <p class="hint">Empresas, notas e itens gravados no Postgres.</p>
       <p id="status" class="status" aria-live="polite">Carregando…</p>
 
-      <section class="block">
-        <h2>Empresas <span id="count-empresas" class="count"></span></h2>
+      <div class="tabs" role="tablist" aria-label="Cadastros">
+        <button type="button" class="tab" role="tab" id="tab-empresas" data-tab="empresas" aria-controls="panel-empresas" aria-selected="true">
+          Empresas <span id="count-empresas" class="count"></span>
+        </button>
+        <button type="button" class="tab" role="tab" id="tab-notas" data-tab="notas" aria-controls="panel-notas" aria-selected="false">
+          Notas <span id="count-notas" class="count"></span>
+        </button>
+        <button type="button" class="tab" role="tab" id="tab-itens" data-tab="itens" aria-controls="panel-itens" aria-selected="false">
+          Itens <span id="count-itens" class="count"></span>
+        </button>
+      </div>
+
+      <section class="block tab-panel" id="panel-empresas" role="tabpanel" aria-labelledby="tab-empresas">
         <div class="table-wrap">
           <table>
             <thead>
@@ -33,8 +44,7 @@
         </div>
       </section>
 
-      <section class="block">
-        <h2>Notas <span id="count-notas" class="count"></span></h2>
+      <section class="block tab-panel" id="panel-notas" role="tabpanel" aria-labelledby="tab-notas" hidden>
         <div class="table-wrap">
           <table>
             <thead>
@@ -55,8 +65,8 @@
         </div>
       </section>
 
-      <section class="block">
-        <h2>Itens <span id="count-itens" class="count"></span></h2>
+      <section class="block tab-panel" id="panel-itens" role="tabpanel" aria-labelledby="tab-itens" hidden>
+        <p id="filtro-nota" class="filter-banner" hidden></p>
         <label class="search">
           <span class="sr-only">Pesquisar itens</span>
           <input

@@ -1,7 +1,16 @@
 const statusEl = document.getElementById('status');
 const buscaItensEl = document.getElementById('busca-itens');
+const filtroNotaEl = document.getElementById('filtro-nota');
+const tabs = [...document.querySelectorAll('.tab')];
+const panels = {
+  empresas: document.getElementById('panel-empresas'),
+  notas: document.getElementById('panel-notas'),
+  itens: document.getElementById('panel-itens'),
+};
 
 let allItens = [];
+let filtroNotaId = null;
+let filtroNotaLabel = '';
 
 function setStatus(text, kind) {
   statusEl.textContent = text;
@@ -28,6 +37,27 @@ async function fetchJson(path) {
   return data;
 }
 
+function setTab(name, { updateHash = true } = {}) {
+  if (!panels[name]) name = 'empresas';
+  for (const tab of tabs) {
+    const on = tab.dataset.tab === name;
+    tab.setAttribute('aria-selected', on ? 'true' : 'false');
+  }
+  for (const [key, panel] of Object.entries(panels)) {
+    panel.hidden = key !== name;
+  }
+  if (updateHash) {
+    const url = new URL(location.href);
+    url.hash = name;
+    if (name === 'itens' && filtroNotaId != null) {
+      url.searchParams.set('nota', String(filtroNotaId));
+    } else {
+      url.searchParams.delete('nota');
+    }
+    history.replaceState(null, '', url);
+  }
+}
+
 function renderEmpresas(rows) {
   document.getElementById('count-empresas').textContent = `(${rows.length})`;
   document.getElementById('empresas').innerHTML = rows.length
@@ -43,7 +73,9 @@ function renderEmpresas(rows) {
 function formatDataNota(emissao) {
   const raw = String(emissao ?? '').trim();
   if (!raw) return '';
-  const m = raw.match(/(\d{2})\/(\d{2})\/(\d{4})(?:\s+(\d{2}):(\d{2})(?::\d{2})?)?/);
+  const m = raw.match(
+    /(\d{2})\/(\d{2})\/(\d{4})(?:\s+(\d{2}):(\d{2})(?::\d{2})?)?/,
+  );
   if (!m) return raw.replace(/\s*-\s*$/, '').trim();
   const data = `${m[1]}/${m[2]}/${m[3]}`;
   return m[4] != null ? `${data} às ${m[4]}:${m[5]}` : data;
@@ -53,10 +85,12 @@ function renderNotas(rows) {
   document.getElementById('count-notas').textContent = `(${rows.length})`;
   document.getElementById('notas').innerHTML = rows.length
     ? rows
-        .map(
-          (r) =>
-            `<tr>${cell(r.id)}${cell(formatDataNota(r.emissao))}${cell(r.empresa_nome || r.empresa_cnpj)}${cell(r.numero)}${cell(r.qtd_itens)}${cell(r.valor_total)}${cell(r.descontos)}${cell(r.outras_despesas)}${cell(r.chave_acesso, 'mono')}</tr>`,
-        )
+        .map((r) => {
+          const label = r.numero
+            ? `nota ${r.numero}`
+            : `nota #${r.id}`;
+          return `<tr class="row-link" data-nota-id="${esc(r.id)}" data-nota-label="${esc(label)}" tabindex="0" title="Ver itens desta nota">${cell(r.id)}${cell(formatDataNota(r.emissao))}${cell(r.empresa_nome || r.empresa_cnpj)}${cell(r.numero)}${cell(r.qtd_itens)}${cell(r.valor_total)}${cell(r.descontos)}${cell(r.outras_despesas)}${cell(r.chave_acesso, 'mono')}</tr>`;
+        })
         .join('')
     : '<tr><td colspan="9">Nenhuma nota</td></tr>';
 }
@@ -78,22 +112,64 @@ function itemHaystack(r) {
     .join(' ');
 }
 
-function filterItens(rows, query) {
-  const q = String(query || '')
+function filterItens(rows) {
+  let out = rows;
+  if (filtroNotaId != null) {
+    out = out.filter((r) => Number(r.nota_id) === Number(filtroNotaId));
+  }
+  const q = String(buscaItensEl.value || '')
     .trim()
     .toLowerCase();
-  if (!q) return rows;
+  if (!q) return out;
   const terms = q.split(/\s+/).filter(Boolean);
-  return rows.filter((r) => {
+  return out.filter((r) => {
     const hay = itemHaystack(r);
     return terms.every((t) => hay.includes(t));
   });
 }
 
-function renderItens(rows, total) {
+function updateFiltroBanner() {
+  if (filtroNotaId == null) {
+    filtroNotaEl.hidden = true;
+    filtroNotaEl.innerHTML = '';
+    return;
+  }
+  filtroNotaEl.hidden = false;
+  filtroNotaEl.innerHTML = `Itens da <strong>${esc(filtroNotaLabel || `nota #${filtroNotaId}`)}</strong> · <button type="button" id="limpar-filtro-nota" class="linkish">mostrar todos</button>`;
+  document.getElementById('limpar-filtro-nota')?.addEventListener('click', () => {
+    clearFiltroNota();
+  });
+}
+
+function clearFiltroNota() {
+  filtroNotaId = null;
+  filtroNotaLabel = '';
+  updateFiltroBanner();
+  applyItensFilter();
+  if (!panels.itens.hidden) setTab('itens');
+}
+
+function openItensDaNota(notaId, label) {
+  filtroNotaId = Number(notaId);
+  filtroNotaLabel = label || `nota #${notaId}`;
+  buscaItensEl.value = '';
+  updateFiltroBanner();
+  applyItensFilter();
+  setTab('itens');
+}
+
+function applyItensFilter() {
+  const scoped =
+    filtroNotaId != null
+      ? allItens.filter((r) => Number(r.nota_id) === Number(filtroNotaId))
+      : allItens;
+  const rows = filterItens(allItens);
   const shown = rows.length;
+  const total = scoped.length;
   const label =
-    total != null && shown !== total ? `(${shown}/${total})` : `(${shown})`;
+    shown !== allItens.length || filtroNotaId != null
+      ? `(${shown}/${filtroNotaId != null ? total : allItens.length})`
+      : `(${shown})`;
   document.getElementById('count-itens').textContent = label;
   document.getElementById('itens').innerHTML = rows.length
     ? rows
@@ -105,13 +181,45 @@ function renderItens(rows, total) {
     : `<tr><td colspan="8">${allItens.length ? 'Nenhum item na pesquisa' : 'Nenhum item'}</td></tr>`;
 }
 
-function applyItensFilter() {
-  renderItens(filterItens(allItens, buscaItensEl.value), allItens.length);
+function renderItens() {
+  applyItensFilter();
 }
 
 buscaItensEl.addEventListener('input', applyItensFilter);
 
+for (const tab of tabs) {
+  tab.addEventListener('click', () => setTab(tab.dataset.tab));
+}
+
+document.getElementById('notas').addEventListener('click', (ev) => {
+  const row = ev.target.closest('tr[data-nota-id]');
+  if (!row) return;
+  openItensDaNota(row.dataset.notaId, row.dataset.notaLabel);
+});
+
+document.getElementById('notas').addEventListener('keydown', (ev) => {
+  if (ev.key !== 'Enter' && ev.key !== ' ') return;
+  const row = ev.target.closest('tr[data-nota-id]');
+  if (!row) return;
+  ev.preventDefault();
+  openItensDaNota(row.dataset.notaId, row.dataset.notaLabel);
+});
+
+function readRoute() {
+  const params = new URLSearchParams(location.search);
+  const nota = params.get('nota');
+  const hash = (location.hash || '').replace(/^#/, '');
+  if (nota) {
+    filtroNotaId = Number(nota);
+    filtroNotaLabel = `nota #${nota}`;
+    return 'itens';
+  }
+  if (panels[hash]) return hash;
+  return 'empresas';
+}
+
 async function load() {
+  const tab = readRoute();
   try {
     const [empresas, notas, itens] = await Promise.all([
       fetchJson('/api/empresas'),
@@ -121,7 +229,17 @@ async function load() {
     allItens = itens.itens || [];
     renderEmpresas(empresas.empresas || []);
     renderNotas(notas.notas || []);
-    applyItensFilter();
+    if (filtroNotaId != null) {
+      const n = (notas.notas || []).find(
+        (x) => Number(x.id) === Number(filtroNotaId),
+      );
+      if (n) {
+        filtroNotaLabel = n.numero ? `nota ${n.numero}` : `nota #${n.id}`;
+      }
+    }
+    updateFiltroBanner();
+    renderItens();
+    setTab(tab, { updateHash: true });
     setStatus(
       `${empresas.empresas?.length ?? 0} empresas · ${notas.notas?.length ?? 0} notas · ${allItens.length} itens`,
       'ok',

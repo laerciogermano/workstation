@@ -69,6 +69,8 @@ App: [`../app/README.md`](../app/README.md).
 ## REQ-008 — Página de listagem (2026-11-01)
 
 - Existe uma página web (`/lista.html`) que lista **todas as empresas**, **todas as notas** e **todos os itens** cadastrados.
+- Na listagem, **Empresas**, **Notas** e **Itens** ficam em **abas** distintas.
+- Ao **clicar numa nota**, abre a aba **Itens** filtrada só com os itens daquela nota (`?nota=` + `#itens`).
 - APIs de leitura: `GET /api/empresas`, `GET /api/notas`, `GET /api/itens`.
 - Navegação entre a tela de scan (`/`) e a listagem.
 - Na listagem de notas, exibir também: **data** (emissão formatada `dd/mm/aaaa às HH:mm`), **qtd. total de itens**, **valor total R$**, **descontos R$** e **outras despesas R$**.

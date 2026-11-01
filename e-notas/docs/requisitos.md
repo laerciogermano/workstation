@@ -161,6 +161,12 @@ Curadoria: [`../marca/benchmarking-solucoes/README.md`](../marca/benchmarking-so
 - Imagem: `public/og-image.png` (WhatsApp / Facebook / similares leem OG, não JS).
 - URL canônica de produção: `https://144.126.154.90/enotas/`.
 
+## REQ-021 — Código do produto na lista de itens (2026-11-01)
+
+- Na aba **Itens → Lista**, exibir a coluna **Cód.** com o código interno do produto na nota (`itens.codigo`), além do EAN quando houver.
+- Antes: colunas Data / Estabelecimento / EAN / Nome / Preço / ação. Depois: inclui **Cód.** entre EAN e Nome.
+- Reverter: remover a coluna no `index.html` / `lista.js` (commit anterior).
+
 ---
 
 ## Próximos passos

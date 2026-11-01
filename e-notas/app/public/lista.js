@@ -475,10 +475,10 @@ function applyItensFilter() {
     ? rows
         .map(
           (r) =>
-            `<tr>${cell(formatDataNota(r.nota_emissao))}${cell(r.empresa_nome)}${cell(r.codigo_barras || '', 'mono')}${cell(r.nome)}<td class="price-cell">${esc(formatPreco(r.valor_unitario))}</td><td><button type="button" class="btn-link" data-vincular-ean data-empresa-id="${esc(r.empresa_id)}" data-empresa-nome="${esc(r.empresa_nome || '')}" data-codigo="${esc(r.codigo)}" data-nome="${esc(r.nome || '')}" data-ean="${esc(r.codigo_barras || '')}">${r.codigo_barras ? 'EAN' : '+ EAN'}</button></td></tr>`,
+            `<tr>${cell(formatDataNota(r.nota_emissao))}${cell(r.empresa_nome)}${cell(r.codigo_barras || '', 'mono')}${cell(r.codigo || '', 'mono')}${cell(r.nome)}<td class="price-cell">${esc(formatPreco(r.valor_unitario))}</td><td><button type="button" class="btn-link" data-vincular-ean data-empresa-id="${esc(r.empresa_id)}" data-empresa-nome="${esc(r.empresa_nome || '')}" data-codigo="${esc(r.codigo)}" data-nome="${esc(r.nome || '')}" data-ean="${esc(r.codigo_barras || '')}">${r.codigo_barras ? 'EAN' : '+ EAN'}</button></td></tr>`,
         )
         .join('')
-    : `<tr><td colspan="6">${allItens.length ? 'Nada encontrado.' : 'Sem itens.'}</td></tr>`;
+    : `<tr><td colspan="7">${allItens.length ? 'Nada encontrado.' : 'Sem itens.'}</td></tr>`;
 }
 
 function eanHaystack(r) {

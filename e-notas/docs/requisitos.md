@@ -210,10 +210,16 @@ Curadoria: [`../marca/benchmarking-solucoes/README.md`](../marca/benchmarking-so
 
 - Header do app (`index.html`, `scan.html`) no mesmo estilo do hero da apresentação (gradiente azul→verde, wordmark branco + `.shop` menta).
 - Clique na logo (`notinhas.shop`) abre `/apresentacao.html`.
-- Botão **Quem somos** no banner (`.app-header-cta`) abre `/apresentacao.html`.
+- Botão **O que somos** no banner (`.app-header-cta`) abre `/apresentacao.html`.
 - Rodapé: link **Quem somos** + e-mail `contato@notinhas.shop` (`mailto:`).
 - Antes: wordmark azul/verde no topo do `main`. Depois: `<header class="app-header">` full-bleed + CTA + rodapé com contato.
 - Rollback: restaurar brand dentro do `main` apontando para `./`.
+
+## REQ-029 — Label do CTA do header: O que somos (2026-11-01)
+
+- Texto do botão `.app-header-cta` em `index.html` e `scan.html`: **O que somos** (antes: Quem somos).
+- Destino inalterado: `/apresentacao.html`.
+- Rollback: voltar o label para **Quem somos**.
 
 ## REQ-026 — Loja = centro de distribuição (2026-11-01)
 

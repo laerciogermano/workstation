@@ -335,7 +335,7 @@ async function main() {
     } catch {
       await fillClean('input[type="password"]', PASSWORD);
     }
-    await clickBtn('aceite e cadastre|agree.*join|join now|cadastre-se');
+    await clickBtn('aceite e cadastre|agree.*join|join now|cadastre-se|avan[cç]ar|continue|next');
     await sleep(3500);
     st = await snap();
     console.log('after join', st.href, '|', st.body.slice(0, 200));

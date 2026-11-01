@@ -122,15 +122,6 @@ function formatDataNota(emissao) {
   return m[4] != null ? `${data} às ${m[4]}:${m[5]}` : data;
 }
 
-/** ISO / Date → DD/MM/YYYY às HH:MM (fuso local). */
-function formatCadastro(ts) {
-  if (ts == null || ts === '') return '';
-  const d = ts instanceof Date ? ts : new Date(ts);
-  if (Number.isNaN(d.getTime())) return String(ts);
-  const pad = (n) => String(n).padStart(2, '0');
-  return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} às ${pad(d.getHours())}:${pad(d.getMinutes())}`;
-}
-
 function renderNotas(rows) {
   document.getElementById('count-notas').textContent = `(${rows.length})`;
   document.getElementById('notas').innerHTML = rows.length
@@ -146,7 +137,7 @@ function renderNotas(rows) {
 function itemHaystack(r) {
   return [
     r.id,
-    formatCadastro(r.created_at),
+    formatDataNota(r.nota_emissao),
     r.empresa_nome,
     r.nota_numero,
     r.nota_id,
@@ -226,7 +217,7 @@ function applyItensFilter() {
     ? rows
         .map(
           (r) =>
-            `<tr>${cell(r.id)}${cell(formatCadastro(r.created_at))}${cell(r.empresa_nome)}${cell(r.nota_numero || r.nota_id)}${cell(r.codigo)}${cell(r.codigo_barras || '', 'mono')}${cell(r.nome)}${cell(r.quantidade ? `${r.quantidade} ${r.unidade || ''}`.trim() : '')}${cell(r.valor_unitario)}${cell(r.valor_total)}<td><button type="button" class="btn-link" data-vincular-ean data-empresa-id="${esc(r.empresa_id)}" data-empresa-nome="${esc(r.empresa_nome || '')}" data-codigo="${esc(r.codigo)}" data-nome="${esc(r.nome || '')}" data-ean="${esc(r.codigo_barras || '')}">${r.codigo_barras ? 'Editar EAN' : 'Cadastrar EAN'}</button></td></tr>`,
+            `<tr>${cell(r.id)}${cell(formatDataNota(r.nota_emissao))}${cell(r.empresa_nome)}${cell(r.nota_numero || r.nota_id)}${cell(r.codigo)}${cell(r.codigo_barras || '', 'mono')}${cell(r.nome)}${cell(r.quantidade ? `${r.quantidade} ${r.unidade || ''}`.trim() : '')}${cell(r.valor_unitario)}${cell(r.valor_total)}<td><button type="button" class="btn-link" data-vincular-ean data-empresa-id="${esc(r.empresa_id)}" data-empresa-nome="${esc(r.empresa_nome || '')}" data-codigo="${esc(r.codigo)}" data-nome="${esc(r.nome || '')}" data-ean="${esc(r.codigo_barras || '')}">${r.codigo_barras ? 'Editar EAN' : 'Cadastrar EAN'}</button></td></tr>`,
         )
         .join('')
     : `<tr><td colspan="11">${allItens.length ? 'Nenhum item na pesquisa' : 'Nenhum item'}</td></tr>`;

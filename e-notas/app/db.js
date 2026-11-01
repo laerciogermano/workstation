@@ -245,7 +245,7 @@ export async function listNotas(client = getPool()) {
 export async function listItens(client = getPool()) {
   const r = await client.query(
     `SELECT i.*, e.nome AS empresa_nome, n.numero AS nota_numero, n.chave_acesso,
-            cb.codigo_barras
+            n.emissao AS nota_emissao, cb.codigo_barras
      FROM ${t('itens')} i
      JOIN ${t('empresas')} e ON e.id = i.empresa_id
      JOIN ${t('notas')} n ON n.id = i.nota_id

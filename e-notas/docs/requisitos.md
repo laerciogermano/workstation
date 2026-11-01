@@ -96,9 +96,10 @@ App: [`../app/README.md`](../app/README.md).
 - Na lista de itens: coluna **EAN** (quando já vinculado) e ação **Cadastrar EAN** / **Editar EAN**.
 - Ao clicar em cadastrar/editar EAN, abre **modal na mesma tela** (sem mudar de aba): câmera para ler o código + input com botão **Adicionar** (manual).
 
-## REQ-012 — Data de cadastro na lista de itens (2026-11-01)
+## REQ-012 — Data da nota na lista de itens (2026-11-01)
 
-- A lista de itens exibe a coluna **Cadastrado** com a data/hora em que o item foi persistido (`itens.created_at`), no formato `DD/MM/YYYY às HH:MM`.
+- A lista de itens exibe a coluna **Data da nota** (emissão da NFC-e: `notas.emissao` → `nota_emissao` na API).
+- Não usar `itens.created_at` (quando a tupla foi inserida) como data visível no front.
 
 ---
 

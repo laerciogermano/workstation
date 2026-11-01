@@ -55,7 +55,7 @@ Resposta: `{ ok, created, empresaCriada, url, empresa, nota, itens }`.
 |--------|------|----------|
 | `GET` | `/api/empresas` | `{ ok, empresas }` |
 | `GET` | `/api/notas` | `{ ok, notas }` (com `empresa_nome` / `empresa_cnpj`; ordem emissão DESC) |
-| `GET` | `/api/itens` | `{ ok, itens }` (com `empresa_nome`, `nota_numero`, `chave_acesso`, `created_at`, `codigo_barras` se mapeado) |
+| `GET` | `/api/itens` | `{ ok, itens }` (com `empresa_nome`, `nota_numero`, `nota_emissao`, `chave_acesso`, `codigo_barras` se mapeado) |
 | `GET` | `/api/codigos-barras` | `{ ok, codigosBarras }` |
 | `POST` | `/api/codigos-barras` | body `{ empresa_id, codigo_unidade, codigo_barras }` → upsert; `{ ok, codigoBarras }` |
 

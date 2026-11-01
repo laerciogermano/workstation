@@ -10,7 +10,8 @@ Timeline de prompts: [`prompts/`](prompts/README.md).
 Regras para a IA: [`config/config-ia.md`](config/config-ia.md).  
 App (scan QR + cadastro Postgres Contabo / schema `enotas`): [`app/`](app/README.md).  
 Deploy Contabo (`/enotas/`): [`deploy/`](deploy/README.md).  
-Marca / refs identidade (card Trello; sugestão **notinhas.org**): [`marca/referencias-identidade/README.md`](marca/referencias-identidade/README.md).
+Marca / refs identidade (card Trello; sugestão **notinhas.org**): [`marca/referencias-identidade/README.md`](marca/referencias-identidade/README.md).  
+Benchmarking soluções similares: [`marca/benchmarking-solucoes/README.md`](marca/benchmarking-solucoes/README.md) · [card](https://trello.com/c/1fMjqGdR).
 
 ---
 

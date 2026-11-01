@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>notinhas.org — Benchmarking soluções similares</title>
+<style>
+  :root{--bg:#0B1220;--card:#121A2B;--line:#243149;--text:#F2F5FA;--muted:#8B97AD;--accent:#2DD4A8;--warn:#F5B942;--gov:#5B8CFF}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"IBM Plex Sans",system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.55;padding:40px 24px}
+  .wrap{max-width:960px;margin:0 auto}
+  h1{font-size:28px;letter-spacing:-.02em;margin-bottom:8px}
+  .lead{color:var(--muted);margin-bottom:20px;max-width:720px}
+  .meta{font-size:12px;color:var(--muted);margin-bottom:28px}
+  h2{font-size:18px;margin:32px 0 12px}
+  h3{font-size:15px;margin:0 0 6px}
+  table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:8px}
+  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.04em}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .tag{display:inline-block;padding:2px 8px;border-radius:999px;background:#1a2438;color:#B4BCCC;font-size:11px;margin:0 4px 4px 0}
+  .tag.colab{background:#123028;color:#6EE7B7}
+  .tag.gov{background:#172844;color:#93B4FF}
+  .tag.hibrido{background:#2a2414;color:#F5D27A}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:12px 0}
+  ul{margin:8px 0 8px 18px;color:#C5CDD9;font-size:14px}
+  li{margin-bottom:6px}
+  .rank{font-weight:700;color:var(--accent);margin-right:6px}
+  .foot{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}
+  code{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:12px;color:#B8C4D8}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Benchmarking — soluções similares</h1>
+  <p class="lead">Panorama de apps e portais que transformam <strong>NFC-e / QR da nota</strong> (ou o fluxo fiscal equivalente) em <strong>comparação de preços</strong> — insumo para posicionar o <strong>notinhas.org</strong> / e-notas.</p>
+  <p class="meta">Card Trello · enotas · 2026-11-01 · produto: QR → EAN → menor preço · foco PR (Fazenda)</p>
+
+  <h2>1. Nosso recorte</h2>
+  <div class="card">
+    <ul>
+      <li><strong>Job:</strong> “quero pagar menos no mercado com preço real (nota), não encarte.”</li>
+      <li><strong>Mecânica canônica:</strong> ingestão da URL/QR da NFC-e → itens com EAN → índice loja/data/preço → busca do menor.</li>
+      <li><strong>Não é:</strong> emissor de NF-e/NFS-e, marketplace, só encarte digital.</li>
+    </ul>
+  </div>
+
+  <h2>2. Mapa competitivo</h2>
+  <table>
+    <thead>
+      <tr><th>Solução</th><th>Tipo</th><th>Fonte do preço</th><th>QR NFC-e</th><th>EAN</th><th>Cesta/lista</th><th>Cobertura (declarada)</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a href="https://buscapreco.net/">Busca Preço</a></td>
+        <td><span class="tag colab">colaborativo</span></td>
+        <td>Notas dos usuários</td>
+        <td>Sim</td>
+        <td>Sim</td>
+        <td>Listas inteligentes</td>
+        <td>MG, SP, RJ</td>
+      </tr>
+      <tr>
+        <td><a href="https://notapreco.com.br/">Nota Preço</a></td>
+        <td><span class="tag hibrido">híbrido</span></td>
+        <td>Sites/encartes + NFC-e usuários</td>
+        <td>Sim</td>
+        <td>Sim</td>
+        <td>Cesta + divisão 2–3 lojas + alertas</td>
+        <td>RM Rio</td>
+      </tr>
+      <tr>
+        <td><a href="https://mercadocerto.app.br/">Mercado Certo</a></td>
+        <td><span class="tag colab">colaborativo</span></td>
+        <td>Só NFC-e (data + fonte)</td>
+        <td>Sim</td>
+        <td>Sim (gôndola)</td>
+        <td>Cesta inteira + split</td>
+        <td>Cidades (ex. Manaus no pitch)</td>
+      </tr>
+      <tr>
+        <td><a href="https://gomarket.app.br/">GoMarket</a></td>
+        <td><span class="tag colab">colaborativo</span></td>
+        <td>Notas + gamificação/moedas</td>
+        <td>Sim</td>
+        <td>Sim</td>
+        <td>Lista + ranking de mercado</td>
+        <td>Cidade do usuário (lançamento)</td>
+      </tr>
+      <tr>
+        <td><a href="https://poupapp.app.br/">PoupApp</a></td>
+        <td><span class="tag colab">colaborativo</span></td>
+        <td>NFC-e + encartes; IPC próprio</td>
+        <td>Sim</td>
+        <td>Busca produto</td>
+        <td>Lista + gastos + IA</td>
+        <td>Brasil (comunidade)</td>
+      </tr>
+      <tr>
+        <td><a href="https://menorpreco.notaparana.pr.gov.br/">Menor Preço · Nota Paraná</a></td>
+        <td><span class="tag gov">oficial PR</span></td>
+        <td>NFC-e autorizadas SEFAZ-PR</td>
+        <td>Não (consulta direta)</td>
+        <td>Sim (se na nota)</td>
+        <td>Lista de interesse (não compra)</td>
+        <td>Paraná · ~60k estabelecimentos</td>
+      </tr>
+      <tr>
+        <td><a href="https://play.google.com/store/apps/details?id=br.gov.rs.procergs.mpbr&amp;hl=pt_BR">Menor Preço Brasil</a> (Procergs/RS)</td>
+        <td><span class="tag gov">oficial multi-UF</span></td>
+        <td>NF-e/NFC-e via SVRS</td>
+        <td>Não (consulta direta)</td>
+        <td>Sim</td>
+        <td>Lista até 10 itens</td>
+        <td>15 estados + DF (ex.: RS, RJ, SC…)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>3. Ficha por solução</h2>
+
+  <div class="card">
+    <h3>Busca Preço — <a href="https://buscapreco.net/">buscapreco.net</a></h3>
+    <p><span class="tag colab">mais próximo do v1 notinhas</span></p>
+    <ul>
+      <li>Fluxo em 3 passos: escanear NFC-e → histórico por item → lista para achar onde está barato.</li>
+      <li>Busca por código de barras mesmo sem ter escaneado a nota daquele produto.</li>
+      <li>Preços = notas dos usuários. Freemium (básico grátis + planos).</li>
+      <li>Gap vs notinhas: ainda sem PR na cobertura declarada; UI nativa iOS/Android.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>Nota Preço — <a href="https://notapreco.com.br/">notapreco.com.br</a></h3>
+    <ul>
+      <li>Foco RJ: redes grandes (Guanabara, Mundial, Carrefour…); cesta com estratégia 1/2/3 lojas.</li>
+      <li>Fonte híbrida (público das redes + NFC-e) → mais cobertura cedo, menos “puro nota”.</li>
+      <li>Alertas, histórico 30 dias, “herói/vilão da semana”. Grátis; receita afiliados (não das redes).</li>
+      <li>Aprender: UX de <em>estratégia de cesta</em> e pós-scan (“quanto você poderia ter economizado”).</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>Mercado Certo — <a href="https://mercadocerto.app.br/">mercadocerto.app.br</a></h3>
+    <ul>
+      <li>Promessa central = <strong>cesta inteira cotada por mercado</strong> (não só item), com distância e data.</li>
+      <li>Regra forte: sem preço = sem preço (subtotal honesto). Mais recente vence por produto×mercado.</li>
+      <li>Ranking/missões de contribuição; CPF descartado na leitura.</li>
+      <li>Aprender: honestidade do dado + gamificação leve para manter a base fresca.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>GoMarket — <a href="https://gomarket.app.br/">gomarket.app.br</a></h3>
+    <ul>
+      <li>“Frescor do preço” (verde/amarelo/vermelho); moedas por NFC-e → acesso colaborativo / cashback.</li>
+      <li>Camadas: padrão (atraso 24h) / colaborativo (moedas) / premium (assinatura).</li>
+      <li>Status landing: lançamento / stores “em breve” — validar maturidade antes de espelhar UI.</li>
+      <li>Aprender: incentivo explícito ao contribuinte (persona que o notinhas também precisa).</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>PoupApp — <a href="https://poupapp.app.br/">poupapp.app.br</a></h3>
+    <ul>
+      <li>Lista + compare mercados + importar QR + controle de gastos; 100% grátis + doações.</li>
+      <li>IPC-PoupApp (mediana ponderada a partir de NFC-e SEFAZ) — camada de macroalém do item.</li>
+      <li>PWA + Play. Aprender: web-first (alinha ao e-notas atual) e narrativa “comunidade”.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>Menor Preço · Nota Paraná — <a href="https://menorpreco.notaparana.pr.gov.br/">portal</a></h3>
+    <ul>
+      <li>Concorrente/substituto <strong>oficial no PR</strong>: preço em tempo real a partir de NFC-e autorizadas (sem crowdfunding).</li>
+      <li>Busca nome/marca/EAN; raio até 20 km; lista de interesse (não é app de compra).</li>
+      <li>Limitação conhecida: EAN só se o emitente preencheu na nota.</li>
+      <li>Para notinhas: benchmark de cobertura e de expectativa do usuário paranaense; diferencial = UX + histórico + contribuição fora do app gov / foco web simples.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>Menor Preço Brasil (Procergs) — gov multi-UF</h3>
+    <ul>
+      <li>Base massiva (dezenas de bilhões de docs no discurso oficial); login gov.br.</li>
+      <li><strong>PR não aparece</strong> na lista típica de UFs do app nacional — no Paraná o canal é o Nota Paraná.</li>
+      <li>Lista curta (até 10 itens). Referência de escala e de busca geo+frescor temporal (1–16 dias).</li>
+    </ul>
+  </div>
+
+  <h2>4. Matriz vs notinhas.org (v1)</h2>
+  <table>
+    <thead>
+      <tr><th>Capacidade</th><th>notinhas v1</th><th>Colaborativos</th><th>Nota Paraná / MP Brasil</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Ingestão QR/URL</td><td>Sim (Fazenda PR)</td><td>Sim (câmera app)</td><td>Não precisa — já têm a base SEFAZ</td></tr>
+      <tr><td>Índice EAN → preço/loja/data</td><td>Sim</td><td>Sim</td><td>Sim</td></tr>
+      <tr><td>Menor preço explícito</td><td>Sim</td><td>Sim (+ cesta)</td><td>Sim</td></tr>
+      <tr><td>Cesta / split de lojas</td><td>Fora v1</td><td>Comum (Nota Preço, Mercado Certo)</td><td>Parcial (listas curtas)</td></tr>
+      <tr><td>Incentivo ao contribuinte</td><td>Mínimo</td><td>Ranking / moedas / cashback</td><td>N/A (dado fiscal automático)</td></tr>
+      <tr><td>Dependência de massa crítica</td><td>Alta</td><td>Alta</td><td>Baixa (estado)</td></tr>
+    </tbody>
+  </table>
+
+  <h2>5. Ranking de referência (prioridade de olhar)</h2>
+  <div class="card">
+    <ul>
+      <li><span class="rank">1.</span> <strong>Busca Preço</strong> — produto mais alinhado ao job do v1 (QR → histórico EAN → compare).</li>
+      <li><span class="rank">2.</span> <strong>Menor Preço Nota Paraná</strong> — realidade do usuário PR; o que já é “grátis do governo”.</li>
+      <li><span class="rank">3.</span> <strong>Mercado Certo</strong> — regras de frescor/honestidade e cotação de cesta.</li>
+      <li><span class="rank">4.</span> <strong>Nota Preço</strong> — UX de estratégia e pós-scan (mesmo sendo híbrido/RJ).</li>
+      <li><span class="rank">5.</span> <strong>GoMarket</strong> — incentivos ao contribuinte (avaliar maturidade).</li>
+      <li><span class="rank">6.</span> <strong>PoupApp</strong> — web/PWA + IPC; bom para narrativa community.</li>
+      <li><span class="rank">7.</span> <strong>Menor Preço Brasil</strong> — escala gov multi-UF (contexto, não clone).</li>
+    </ul>
+  </div>
+
+  <h2>6. Aprendizados para o notinhas.org</h2>
+  <div class="card">
+    <ul>
+      <li><strong>Posicionamento:</strong> no PR, o gov já entrega “menor preço por NFC-e”. Diferencial viável = UX mais rápida (colar URL/QR), histórico próprio, busca clara por EAN, e eventualmente cesta — sem fingir ser a SEFAZ.</li>
+      <li><strong>Cold start:</strong> colaborativos morrem sem contribuinte. Planejar incentivo mínimo (ranking, “sua nota atualizou N preços”) antes de cesta complexa.</li>
+      <li><strong>Honestidade do dado:</strong> sempre mostrar loja + data; “sem preço” &gt; inventar (Mercado Certo).</li>
+      <li><strong>Cesta é estágio 2:</strong> todos os apps maduros convergem para lista → total por mercado; v1 item-a-item está ok se a busca do menor for impecável.</li>
+      <li><strong>Híbrido (encarte + nota)</strong> acelera cobertura (Nota Preço) mas foge do princípio “dado da nota” do e-notas — só se mudar a visão.</li>
+      <li><strong>Web-first</strong> (PoupApp / e-notas) é diferencial vs stores dos concorrentes — manter HTTPS + câmera.</li>
+    </ul>
+  </div>
+
+  <p class="foot">Fontes: landings públicas consultadas em 2026-11-01 (Busca Preço, Nota Preço, Mercado Certo, GoMarket, PoupApp, Nota Paraná, material Procergs/RS). Rollback: remover esta pasta e arquivar o card Trello.</p>
+</div>
+</body>
+</html>

@@ -6,6 +6,7 @@ Curadoria visual para o design system Connect — prints 1440×900 + HTML/PDF.
 - **Entrada:** `00-curadoria.html` / `00-curadoria.pdf`
 - **Como regenerar prints:** Chrome headless `--window-size=1440,900 --screenshot=… URL`
 - **Upload:** API Trello `POST /1/cards/{id}/attachments` (multipart `file`)
+- **DESIGN.md (clássicos shadcn.io):** [`shadcn-design/README.md`](shadcn-design/README.md) — Stripe, Linear, Apple, GitHub, Vercel, Claude, Figma, Framer
 
 ## Fontes principais
 Untitled UI, shadcn/ui, Linear, Vercel Design, Dribbble (SaaS + mobile), Behance (UI DS), Material You, Apple HIG, Raycast, Mobbin.

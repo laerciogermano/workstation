@@ -1,6 +1,6 @@
 # e-notas — app (scan QR)
 
-Front: escaneia o QR e envia a URL; página `/lista.html` lista empresas, notas e itens. Na aba Itens: subaba **Códigos de barras** mapeia `empresa + código da unidade → EAN` (identificador comum; a nota não traz o EAN). Backend consulta a DANFE na **Fazenda PR**, cadastra **empresa** (se nova), **nota** e **uma linha de item por produto da nota** (histórico).
+Front: escaneia o QR e envia a URL; página `/lista.html` lista empresas, notas e itens. Em Itens, **Cadastrar EAN** abre modal (câmera + input manual) sem sair da lista; subaba **Códigos de barras** só consulta o mapeamento. Backend consulta a DANFE na **Fazenda PR**, cadastra **empresa** (se nova), **nota** e **uma linha de item por produto da nota** (histórico).
 
 Persistência: **Postgres Contabo** (`connectmax`), schema `enotas` (via `.env`) — tabelas `empresas`, `notas`, `itens`, `codigos_barras`.
 

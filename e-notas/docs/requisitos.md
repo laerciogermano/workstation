@@ -93,7 +93,8 @@ App: [`../app/README.md`](../app/README.md).
 - Finalidade: o EAN é o identificador comum entre empresas; cada loja usa códigos de unidade diferentes e a nota **não expõe** o código de barras — o vínculo é populado manualmente.
 - Chave natural: **`(empresa_id, codigo_unidade)`** — um EAN por código de unidade em cada empresa; reenvio atualiza o EAN (`UPSERT`).
 - Tabela `enotas.codigos_barras`. APIs: `GET` / `POST` `/api/codigos-barras`.
-- Na lista de itens: coluna **EAN** (quando já vinculado) e ação **Cadastrar EAN** / **Editar EAN** (pré-preenche o formulário).
+- Na lista de itens: coluna **EAN** (quando já vinculado) e ação **Cadastrar EAN** / **Editar EAN**.
+- Ao clicar em cadastrar/editar EAN, abre **modal na mesma tela** (sem mudar de aba): câmera para ler o código + input com botão **Adicionar** (manual).
 
 ---
 

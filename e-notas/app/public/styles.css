@@ -151,15 +151,96 @@ h2 {
   background: #1e2a38;
 }
 
+body.modal-open {
+  overflow: hidden;
+}
+
+.modal[hidden] {
+  display: none;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}
+
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+}
+
+.modal-card {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 420px);
+  max-height: calc(100vh - 2rem);
+  overflow: auto;
+  padding: 1rem;
+  border: 1px solid #243040;
+  border-radius: 12px;
+  background: #0f1419;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+}
+
+.modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin: 0 0 0.35rem;
+}
+
+.modal-head h2 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.modal-close {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: #9aa8b8;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0.1rem 0.35rem;
+}
+
+.modal-close:hover {
+  color: #e8eef5;
+}
+
+.modal-meta {
+  margin-bottom: 0.75rem;
+}
+
+.ean-reader {
+  overflow: hidden;
+  border-radius: 10px;
+  background: #1a222c;
+  min-height: 180px;
+}
+
+.ean-reader video {
+  border-radius: 10px;
+}
+
 .form-ean {
   display: grid;
   gap: 0.65rem;
-  margin: 0 0 1rem;
-  padding: 0.85rem;
-  border: 1px solid #243040;
-  border-radius: 10px;
-  background: #1a222c;
-  max-width: 520px;
+  margin: 0.75rem 0 0;
+}
+
+.form-ean.modal-form {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  max-width: none;
 }
 
 .form-ean label {
@@ -169,21 +250,34 @@ h2 {
   color: #9aa8b8;
 }
 
-.form-ean input,
-.form-ean select {
+.form-ean input {
   width: 100%;
   padding: 0.5rem 0.65rem;
   border: 1px solid #243040;
   border-radius: 8px;
-  background: #0f1419;
+  background: #1a222c;
   color: #e8eef5;
   font: inherit;
 }
 
-.form-ean input:focus,
-.form-ean select:focus {
+.form-ean input:focus {
   outline: 1px solid #4a90d9;
   border-color: #4a90d9;
+}
+
+.manual-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: stretch;
+}
+
+.manual-row input {
+  flex: 1;
+}
+
+.manual-row .btn {
+  flex-shrink: 0;
+  justify-self: auto;
 }
 
 .btn {

@@ -2,12 +2,14 @@ const statusEl = document.getElementById('status');
 const buscaItensEl = document.getElementById('busca-itens');
 const buscaEanEl = document.getElementById('busca-ean');
 const filtroNotaEl = document.getElementById('filtro-nota');
+const modalEanEl = document.getElementById('modal-ean');
+const modalEanMetaEl = document.getElementById('modal-ean-meta');
 const formEanEl = document.getElementById('form-ean');
 const eanEmpresaEl = document.getElementById('ean-empresa');
 const eanUnidadeEl = document.getElementById('ean-unidade');
 const eanBarrasEl = document.getElementById('ean-barras');
 const eanFormStatusEl = document.getElementById('ean-form-status');
-const eanUnidadeListEl = document.getElementById('ean-unidade-sugeridos');
+const eanCamStatusEl = document.getElementById('ean-cam-status');
 const tabs = [...document.querySelectorAll('.tab')];
 const subtabs = [...document.querySelectorAll('.subtab')];
 const panels = {
@@ -26,6 +28,9 @@ let allCodigosBarras = [];
 let filtroNotaId = null;
 let filtroNotaLabel = '';
 let itensSub = 'lista';
+let eanScanner = null;
+let eanScanBusy = false;
+let modalContext = { empresaNome: '', itemNome: '' };
 
 function setStatus(text, kind) {
   statusEl.textContent = text;
@@ -35,6 +40,11 @@ function setStatus(text, kind) {
 function setEanFormStatus(text, kind) {
   eanFormStatusEl.textContent = text;
   eanFormStatusEl.className = 'status' + (kind ? ` ${kind}` : '');
+}
+
+function setEanCamStatus(text, kind) {
+  eanCamStatusEl.textContent = text;
+  eanCamStatusEl.className = 'status' + (kind ? ` ${kind}` : '');
 }
 
 function esc(v) {
@@ -101,36 +111,6 @@ function renderEmpresas(rows) {
     : '<tr><td colspan="4">Nenhuma empresa</td></tr>';
 }
 
-function fillEmpresaSelect(selectedId) {
-  const cur = selectedId != null ? String(selectedId) : eanEmpresaEl.value;
-  eanEmpresaEl.innerHTML = allEmpresas.length
-    ? allEmpresas
-        .map(
-          (e) =>
-            `<option value="${esc(e.id)}">${esc(e.nome || e.cnpj || `#${e.id}`)}</option>`,
-        )
-        .join('')
-    : '<option value="">Nenhuma empresa</option>';
-  if (cur && [...eanEmpresaEl.options].some((o) => o.value === cur)) {
-    eanEmpresaEl.value = cur;
-  }
-  refreshUnidadeSuggestions();
-}
-
-function refreshUnidadeSuggestions() {
-  const empId = Number(eanEmpresaEl.value);
-  const codes = [
-    ...new Set(
-      allItens
-        .filter((i) => Number(i.empresa_id) === empId && i.codigo)
-        .map((i) => String(i.codigo)),
-    ),
-  ].sort();
-  eanUnidadeListEl.innerHTML = codes
-    .map((c) => `<option value="${esc(c)}"></option>`)
-    .join('');
-}
-
 function formatDataNota(emissao) {
   const raw = String(emissao ?? '').trim();
   if (!raw) return '';
@@ -147,9 +127,7 @@ function renderNotas(rows) {
   document.getElementById('notas').innerHTML = rows.length
     ? rows
         .map((r) => {
-          const label = r.numero
-            ? `nota ${r.numero}`
-            : `nota #${r.id}`;
+          const label = r.numero ? `nota ${r.numero}` : `nota #${r.id}`;
           return `<tr class="row-link" data-nota-id="${esc(r.id)}" data-nota-label="${esc(label)}" tabindex="0" title="Ver itens desta nota">${cell(r.id)}${cell(formatDataNota(r.emissao))}${cell(r.empresa_nome || r.empresa_cnpj)}${cell(r.numero)}${cell(r.qtd_itens)}${cell(r.valor_total)}${cell(r.descontos)}${cell(r.outras_despesas)}${cell(r.chave_acesso, 'mono')}</tr>`;
         })
         .join('')
@@ -238,7 +216,7 @@ function applyItensFilter() {
     ? rows
         .map(
           (r) =>
-            `<tr>${cell(r.id)}${cell(r.empresa_nome)}${cell(r.nota_numero || r.nota_id)}${cell(r.codigo)}${cell(r.codigo_barras || '', 'mono')}${cell(r.nome)}${cell(r.quantidade ? `${r.quantidade} ${r.unidade || ''}`.trim() : '')}${cell(r.valor_unitario)}${cell(r.valor_total)}<td><button type="button" class="btn-link" data-vincular-ean data-empresa-id="${esc(r.empresa_id)}" data-codigo="${esc(r.codigo)}" data-ean="${esc(r.codigo_barras || '')}">${r.codigo_barras ? 'Editar EAN' : 'Cadastrar EAN'}</button></td></tr>`,
+            `<tr>${cell(r.id)}${cell(r.empresa_nome)}${cell(r.nota_numero || r.nota_id)}${cell(r.codigo)}${cell(r.codigo_barras || '', 'mono')}${cell(r.nome)}${cell(r.quantidade ? `${r.quantidade} ${r.unidade || ''}`.trim() : '')}${cell(r.valor_unitario)}${cell(r.valor_total)}<td><button type="button" class="btn-link" data-vincular-ean data-empresa-id="${esc(r.empresa_id)}" data-empresa-nome="${esc(r.empresa_nome || '')}" data-codigo="${esc(r.codigo)}" data-nome="${esc(r.nome || '')}" data-ean="${esc(r.codigo_barras || '')}">${r.codigo_barras ? 'Editar EAN' : 'Cadastrar EAN'}</button></td></tr>`,
         )
         .join('')
     : `<tr><td colspan="10">${allItens.length ? 'Nenhum item na pesquisa' : 'Nenhum item'}</td></tr>`;
@@ -272,14 +250,134 @@ function applyEanFilter() {
     : `<tr><td colspan="4">${allCodigosBarras.length ? 'Nenhum na pesquisa' : 'Nenhum código de barras'}</td></tr>`;
 }
 
-function openCadastroEan({ empresaId, codigo, ean }) {
-  setItensSub('ean');
-  setTab('itens');
-  fillEmpresaSelect(empresaId);
+async function stopEanScanner() {
+  if (!eanScanner) return;
+  try {
+    const state = eanScanner.getState?.();
+    if (state === 2 /* SCANNING */) {
+      await eanScanner.stop();
+    }
+  } catch {
+    /* ignore */
+  }
+  try {
+    await eanScanner.clear();
+  } catch {
+    /* ignore */
+  }
+  eanScanner = null;
+  eanScanBusy = false;
+}
+
+async function startEanScanner() {
+  await stopEanScanner();
+  if (typeof Html5Qrcode === 'undefined') {
+    setEanCamStatus('Biblioteca de câmera indisponível.', 'err');
+    return;
+  }
+  setEanCamStatus('Abrindo câmera…');
+  eanScanner = new Html5Qrcode('ean-reader');
+  try {
+    await eanScanner.start(
+      { facingMode: 'environment' },
+      {
+        fps: 10,
+        qrbox: { width: 260, height: 140 },
+        aspectRatio: 1.777,
+      },
+      onBarcodeScanned,
+    );
+    setEanCamStatus('Aponte para o código de barras.');
+  } catch (err) {
+    console.error(err);
+    setEanCamStatus(
+      'Não foi possível abrir a câmera. Use HTTPS ou digite o código.',
+      'err',
+    );
+  }
+}
+
+async function onBarcodeScanned(decodedText) {
+  if (eanScanBusy) return;
+  const code = String(decodedText || '').trim();
+  if (!code) return;
+  eanScanBusy = true;
+  eanBarrasEl.value = code;
+  setEanCamStatus(`Lido: ${code}`, 'ok');
+  try {
+    await saveEan();
+  } finally {
+    setTimeout(() => {
+      eanScanBusy = false;
+    }, 1500);
+  }
+}
+
+async function openCadastroEan({
+  empresaId,
+  empresaNome,
+  codigo,
+  nome,
+  ean,
+}) {
+  modalContext = {
+    empresaNome: empresaNome || '',
+    itemNome: nome || '',
+  };
+  eanEmpresaEl.value = String(empresaId || '');
   eanUnidadeEl.value = codigo || '';
   eanBarrasEl.value = ean || '';
   setEanFormStatus('');
+  document.getElementById('modal-ean-title').textContent = ean
+    ? 'Editar código de barras'
+    : 'Cadastrar código de barras';
+  modalEanMetaEl.textContent = [
+    empresaNome,
+    codigo ? `unidade ${codigo}` : '',
+    nome,
+  ]
+    .filter(Boolean)
+    .join(' · ');
+  modalEanEl.hidden = false;
+  document.body.classList.add('modal-open');
+  await startEanScanner();
   eanBarrasEl.focus();
+}
+
+async function closeCadastroEan() {
+  modalEanEl.hidden = true;
+  document.body.classList.remove('modal-open');
+  setEanCamStatus('');
+  setEanFormStatus('');
+  await stopEanScanner();
+}
+
+async function saveEan() {
+  const empresaId = Number(eanEmpresaEl.value);
+  const codigoUnidade = eanUnidadeEl.value.trim();
+  const codigoBarras = eanBarrasEl.value.trim();
+  if (!empresaId || !codigoUnidade || !codigoBarras) {
+    setEanFormStatus('Informe o código de barras.', 'err');
+    return;
+  }
+  setEanFormStatus('Salvando…');
+  try {
+    await fetchJson('api/codigos-barras', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        empresa_id: empresaId,
+        codigo_unidade: codigoUnidade,
+        codigo_barras: codigoBarras,
+      }),
+    });
+    setEanFormStatus('Salvo.', 'ok');
+    await reloadCodigosBarras();
+    await reloadItens();
+    await closeCadastroEan();
+  } catch (err) {
+    setEanFormStatus(`Falha: ${err.message}`, 'err');
+  }
 }
 
 function renderItens() {
@@ -288,7 +386,6 @@ function renderItens() {
 
 buscaItensEl.addEventListener('input', applyItensFilter);
 buscaEanEl.addEventListener('input', applyEanFilter);
-eanEmpresaEl.addEventListener('change', refreshUnidadeSuggestions);
 
 for (const tab of tabs) {
   tab.addEventListener('click', () => {
@@ -320,31 +417,24 @@ document.getElementById('itens').addEventListener('click', (ev) => {
   if (!btn) return;
   openCadastroEan({
     empresaId: btn.dataset.empresaId,
+    empresaNome: btn.dataset.empresaNome,
     codigo: btn.dataset.codigo,
+    nome: btn.dataset.nome,
     ean: btn.dataset.ean,
   });
 });
 
 formEanEl.addEventListener('submit', async (ev) => {
   ev.preventDefault();
-  setEanFormStatus('Salvando…');
-  try {
-    await fetchJson('api/codigos-barras', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        empresa_id: Number(eanEmpresaEl.value),
-        codigo_unidade: eanUnidadeEl.value.trim(),
-        codigo_barras: eanBarrasEl.value.trim(),
-      }),
-    });
-    setEanFormStatus('Salvo.', 'ok');
-    eanBarrasEl.value = '';
-    await reloadCodigosBarras();
-    await reloadItens();
-  } catch (err) {
-    setEanFormStatus(`Falha: ${err.message}`, 'err');
-  }
+  await saveEan();
+});
+
+modalEanEl.addEventListener('click', (ev) => {
+  if (ev.target.closest('[data-close-ean]')) closeCadastroEan();
+});
+
+document.addEventListener('keydown', (ev) => {
+  if (ev.key === 'Escape' && !modalEanEl.hidden) closeCadastroEan();
 });
 
 async function reloadCodigosBarras() {
@@ -356,7 +446,6 @@ async function reloadCodigosBarras() {
 async function reloadItens() {
   const data = await fetchJson('api/itens');
   allItens = data.itens || [];
-  refreshUnidadeSuggestions();
   applyItensFilter();
 }
 
@@ -392,7 +481,6 @@ async function load() {
     allCodigosBarras = eans.codigosBarras || [];
     renderEmpresas(allEmpresas);
     renderNotas(notas.notas || []);
-    fillEmpresaSelect();
     if (filtroNotaId != null) {
       const n = (notas.notas || []).find(
         (x) => Number(x.id) === Number(filtroNotaId),

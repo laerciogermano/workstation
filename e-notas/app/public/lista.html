@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>e-notas — listagem</title>
     <link rel="stylesheet" href="styles.css" />
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
   </head>
   <body>
     <main class="screen wide">
@@ -112,23 +113,6 @@
             Mapeia o código interno da loja (unidade na nota) ao código de barras (EAN),
             para identificar o mesmo produto entre empresas.
           </p>
-          <form id="form-ean" class="form-ean">
-            <label>
-              Empresa
-              <select id="ean-empresa" required></select>
-            </label>
-            <label>
-              Código da unidade
-              <input id="ean-unidade" type="text" required autocomplete="off" placeholder="código do item na nota" list="ean-unidade-sugeridos" />
-              <datalist id="ean-unidade-sugeridos"></datalist>
-            </label>
-            <label>
-              Código de barras (EAN)
-              <input id="ean-barras" type="text" required autocomplete="off" inputmode="numeric" placeholder="ex.: 7891234567890" />
-            </label>
-            <button type="submit" class="btn">Salvar</button>
-            <p id="ean-form-status" class="status" aria-live="polite"></p>
-          </form>
           <label class="search">
             <span class="sr-only">Pesquisar códigos de barras</span>
             <input
@@ -154,6 +138,46 @@
         </div>
       </section>
     </main>
+
+    <div id="modal-ean" class="modal" hidden>
+      <div class="modal-backdrop" data-close-ean></div>
+      <div
+        class="modal-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-ean-title"
+      >
+        <header class="modal-head">
+          <h2 id="modal-ean-title">Cadastrar código de barras</h2>
+          <button type="button" class="modal-close" data-close-ean aria-label="Fechar">
+            ×
+          </button>
+        </header>
+        <p id="modal-ean-meta" class="hint modal-meta"></p>
+        <div id="ean-reader" class="ean-reader"></div>
+        <p id="ean-cam-status" class="status" aria-live="polite"></p>
+        <form id="form-ean" class="form-ean modal-form">
+          <input type="hidden" id="ean-empresa" />
+          <input type="hidden" id="ean-unidade" />
+          <label>
+            Código de barras (EAN)
+            <span class="manual-row">
+              <input
+                id="ean-barras"
+                type="text"
+                required
+                autocomplete="off"
+                inputmode="numeric"
+                placeholder="ex.: 7891234567890"
+              />
+              <button type="submit" class="btn">Adicionar</button>
+            </span>
+          </label>
+          <p id="ean-form-status" class="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </div>
+
     <script src="lista.js"></script>
   </body>
 </html>

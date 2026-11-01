@@ -109,15 +109,31 @@ function setItensSub(name, { updateHash = true } = {}) {
   if (!panels.itens.hidden && updateHash) setTab('itens');
 }
 
+function empresaPinIcon() {
+  return L.divIcon({
+    className: 'empresa-pin',
+    html: '<span class="empresa-pin-dot"></span>',
+    iconSize: [22, 22],
+    iconAnchor: [11, 11],
+    popupAnchor: [0, -12],
+  });
+}
+
 function ensureEmpresasMap() {
   if (empresasMap || typeof L === 'undefined') return empresasMap;
   empresasMap = L.map('empresas-mapa', {
     scrollWheelZoom: true,
+    zoomControl: true,
   }).setView([-25.534, -49.206], 12);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19,
-    attribution: '&copy; OpenStreetMap',
-  }).addTo(empresasMap);
+  L.tileLayer(
+    'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+    {
+      maxZoom: 19,
+      subdomains: 'abcd',
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+    },
+  ).addTo(empresasMap);
   empresasMarkers = L.layerGroup().addTo(empresasMap);
   return empresasMap;
 }
@@ -135,12 +151,13 @@ function renderEmpresasMap(rows) {
     (r) => r.lat != null && r.lng != null && !Number.isNaN(Number(r.lat)),
   );
   const bounds = [];
+  const pin = empresaPinIcon();
   for (const r of withCoords) {
     const lat = Number(r.lat);
     const lng = Number(r.lng);
-    const marker = L.marker([lat, lng]);
+    const marker = L.marker([lat, lng], { icon: pin });
     marker.bindPopup(
-      `<strong>${esc(r.nome || r.cnpj || `#${r.id}`)}</strong><br>${esc(r.endereco || '')}<br><span class="mono">${esc(r.cnpj || '')}</span>`,
+      `<div class="empresa-popup"><strong>${esc(r.nome || r.cnpj || `#${r.id}`)}</strong><br>${esc(r.endereco || '')}<br><span class="mono">${esc(r.cnpj || '')}</span></div>`,
     );
     empresasMarkers.addLayer(marker);
     bounds.push([lat, lng]);

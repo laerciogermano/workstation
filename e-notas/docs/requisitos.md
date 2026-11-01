@@ -103,7 +103,7 @@ App: [`../app/README.md`](../app/README.md).
 
 ## REQ-013 — Mapa de empresas (2026-11-01)
 
-- Na aba **Empresas**, exibir um **mapa com pins** de cada empresa (Leaflet + OSM).
+- Na aba **Empresas**, exibir um **mapa com pins** de cada empresa (Leaflet + tiles escuros CARTO Dark Matter, pins no azul do tema).
 - Coordenadas (`lat`/`lng`) gravadas em `enotas.empresas`, preenchidas por geocoding Nominatim a partir do `endereco` (cache; `POST /api/empresas/geocode` dispara pendentes).
 
 ---

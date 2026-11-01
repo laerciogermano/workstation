@@ -250,65 +250,60 @@ async function main() {
     .forEach((e) => { try { e.click(); } catch {} }))`);
   await sleep(400);
 
-  // 2a) se ja existe Sobre com lapis
-  let opened = false;
-  const pencil = await evalv(`(() => {
-    const sec = [...document.querySelectorAll('section')].find((e) => {
-      const h = e.querySelector('h2,h3');
-      return h && /^sobre$|^about$/i.test((h.innerText || '').trim());
-    });
-    if (!sec) return null;
-    const btn = [...sec.querySelectorAll('button,a')].find((e) =>
-      /editar|edit/i.test(e.getAttribute('aria-label') || e.innerText || ''),
-    );
-    if (!btn || !btn.getClientRects().length) return null;
-    const b = btn.getBoundingClientRect();
-    return { x: b.x + b.width / 2, y: b.y + b.height / 2, aria: btn.getAttribute('aria-label') || 'Editar' };
-  })()`);
-  if (pencil) {
-    console.log('click', pencil.aria);
-    await clickXY(pencil.x, pencil.y);
-    opened = true;
-  }
-
-  // 2b) Adicionar seção (corpo do perfil) → ancora /edit/forms/summary/new/
-  if (!opened || !(await findAboutEditor())) {
-    if (await clickTextPreferLower('^adicionar se[cç][aã]o$|^add (profile )?section$')) {
-      await sleep(1800);
-      // ancora SPA — DOM click (nao Page.navigate)
-      let hit = await clickAnchorHref('/edit/forms/summary/new');
-      if (!hit) {
-        hit = await evalv(`(() => {
-          const el = [...document.querySelectorAll('a,button,[role=menuitem]')].find((e) => {
-            if (!e.getClientRects().length) return false;
-            const t = (e.innerText || e.getAttribute('aria-label') || '').replace(/\\s+/g, ' ').trim();
-            return /adicionar se[cç][aã]o sobre|add about/i.test(t);
-          });
-          if (!el) return null;
-          el.click();
-          const b = el.getBoundingClientRect();
-          return {
-            text: (el.innerText || '').replace(/\\s+/g, ' ').trim().slice(0, 80),
-            href: el.getAttribute('href') || '',
-            x: b.x + b.width / 2,
-            y: b.y + b.height / 2,
-          };
-        })()`);
-      }
-      if (hit) {
-        console.log('spa-click', hit.text || hit.href);
-        // reforca com mouse trusted se ancora ainda na tela
-        if (hit.x && hit.y) await clickXY(hit.x, hit.y);
-        opened = true;
-      }
+  /**
+   * Abre editor About via ancora SPA.
+   * Help LI: Adicionar seção → Sobre / Editar sobre.
+   * CDP: DOM .click() em a[href*="/edit/forms/summary"] — Page.navigate NAO hidrata.
+   */
+  async function openAboutForm() {
+    // ja existe ancora "Editar sobre" / "Adicionar seção Sobre"
+    let hit = await clickAnchorHref('/edit/forms/summary');
+    if (hit) {
+      console.log('spa-click', hit.text || hit.href);
+      return true;
     }
+    // abre menu Adicionar seção (botao do perfil = y maior)
+    if (!(await clickTextPreferLower('^adicionar se[cç][aã]o$|^add (profile )?section$'))) {
+      return false;
+    }
+    await sleep(1800);
+    hit = await clickAnchorHref('/edit/forms/summary');
+    if (hit) {
+      console.log('spa-click', hit.text || hit.href);
+      return true;
+    }
+    hit = await evalv(`(() => {
+      const el = [...document.querySelectorAll('a,button,[role=menuitem]')].find((e) => {
+        if (!e.getClientRects().length) return false;
+        const t = (e.innerText || e.getAttribute('aria-label') || '').replace(/\\s+/g, ' ').trim();
+        return /adicionar se[cç][aã]o sobre|add about/i.test(t);
+      });
+      if (!el) return null;
+      el.click();
+      return {
+        text: (el.innerText || '').replace(/\\s+/g, ' ').trim().slice(0, 80),
+        href: el.getAttribute('href') || '',
+      };
+    })()`);
+    if (hit) {
+      console.log('spa-click', hit.text || hit.href);
+      return true;
+    }
+    return false;
   }
 
-  const editor = await waitEditor();
+  if (!(await openAboutForm())) {
+    console.error('FALHOU: nao achou ancora /edit/forms/summary');
+    process.exitCode = 2;
+    s.close();
+    return;
+  }
+
+  const editor = await waitEditor(20);
   if (!editor) {
-    console.error('FALHOU: editor Sobre nao hidratou (precisa clique SPA no ancora summary/new)');
+    console.error('FALHOU: editor Sobre nao hidratou apos clique SPA');
     const st = await evalv(
-      `({href:location.href,body:(document.body?.innerText||'').replace(/\\s+/g,' ').slice(0,300)})`,
+      `({href:location.href,dlg:!!document.querySelector('[role=dialog],.artdeco-modal'),body:(document.body?.innerText||'').replace(/\\s+/g,' ').slice(0,300)})`,
     );
     console.log('state', st);
     process.exitCode = 2;

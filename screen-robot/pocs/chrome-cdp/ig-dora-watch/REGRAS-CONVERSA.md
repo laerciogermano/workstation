@@ -87,10 +87,10 @@ Ordem aproximada (mais antiga → mais recente). Inclui trechos anteriores ao sc
 - **eu:** kkk inventando defeito
 - **eu:** amanhã no treino a gente vê se essa história cola
 - **dela:** aquele desespero pré verão
+- **eu:** desespero sem prova não vale
+- **eu:** fotinha e eu te digo se faz sentido
 
 ### Pendente de envio (não mandar de novo se já proposto)
 
-- (proposta atual)
-  1. `desespero sem prova não vale`
-  2. `fotinha e eu te digo se faz sentido`
-- (evitar reusar) kkk / inventando defeito / história cola / arma ilegal / organismo
+- (nenhuma — aguardando resposta dela)
+- (evitar reusar) kkk / inventando defeito / história cola / arma ilegal / organismo / desespero sem prova / fotinha

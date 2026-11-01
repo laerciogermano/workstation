@@ -35,7 +35,7 @@ Credenciais não vão no git (`.env` ignorado).
 | Rota | Função |
 |------|--------|
 | `/` | Scan do QR |
-| `/lista.html` | Listagem de empresas, notas (qtd itens, totais, descontos, outras despesas) e itens |
+| `/lista.html` | Listagem de empresas, notas (qtd itens, totais, descontos, outras despesas) e itens (com pesquisa) |
 
 ## API
 

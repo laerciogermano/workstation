@@ -1,4 +1,7 @@
 const statusEl = document.getElementById('status');
+const buscaItensEl = document.getElementById('busca-itens');
+
+let allItens = [];
 
 function setStatus(text, kind) {
   statusEl.textContent = text;
@@ -49,8 +52,40 @@ function renderNotas(rows) {
     : '<tr><td colspan="9">Nenhuma nota</td></tr>';
 }
 
-function renderItens(rows) {
-  document.getElementById('count-itens').textContent = `(${rows.length})`;
+function itemHaystack(r) {
+  return [
+    r.id,
+    r.empresa_nome,
+    r.nota_numero,
+    r.nota_id,
+    r.codigo,
+    r.nome,
+    r.quantidade,
+    r.unidade,
+    r.valor_unitario,
+    r.valor_total,
+  ]
+    .map((v) => String(v ?? '').toLowerCase())
+    .join(' ');
+}
+
+function filterItens(rows, query) {
+  const q = String(query || '')
+    .trim()
+    .toLowerCase();
+  if (!q) return rows;
+  const terms = q.split(/\s+/).filter(Boolean);
+  return rows.filter((r) => {
+    const hay = itemHaystack(r);
+    return terms.every((t) => hay.includes(t));
+  });
+}
+
+function renderItens(rows, total) {
+  const shown = rows.length;
+  const label =
+    total != null && shown !== total ? `(${shown}/${total})` : `(${shown})`;
+  document.getElementById('count-itens').textContent = label;
   document.getElementById('itens').innerHTML = rows.length
     ? rows
         .map(
@@ -58,8 +93,14 @@ function renderItens(rows) {
             `<tr>${cell(r.id)}${cell(r.empresa_nome)}${cell(r.nota_numero || r.nota_id)}${cell(r.codigo)}${cell(r.nome)}${cell(r.quantidade ? `${r.quantidade} ${r.unidade || ''}`.trim() : '')}${cell(r.valor_unitario)}${cell(r.valor_total)}</tr>`,
         )
         .join('')
-    : '<tr><td colspan="8">Nenhum item</td></tr>';
+    : `<tr><td colspan="8">${allItens.length ? 'Nenhum item na pesquisa' : 'Nenhum item'}</td></tr>`;
 }
+
+function applyItensFilter() {
+  renderItens(filterItens(allItens, buscaItensEl.value), allItens.length);
+}
+
+buscaItensEl.addEventListener('input', applyItensFilter);
 
 async function load() {
   try {
@@ -68,11 +109,12 @@ async function load() {
       fetchJson('/api/notas'),
       fetchJson('/api/itens'),
     ]);
+    allItens = itens.itens || [];
     renderEmpresas(empresas.empresas || []);
     renderNotas(notas.notas || []);
-    renderItens(itens.itens || []);
+    applyItensFilter();
     setStatus(
-      `${empresas.empresas?.length ?? 0} empresas · ${notas.notas?.length ?? 0} notas · ${itens.itens?.length ?? 0} itens`,
+      `${empresas.empresas?.length ?? 0} empresas · ${notas.notas?.length ?? 0} notas · ${allItens.length} itens`,
       'ok',
     );
   } catch (err) {

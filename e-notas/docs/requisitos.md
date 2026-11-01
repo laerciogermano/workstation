@@ -72,6 +72,7 @@ App: [`../app/README.md`](../app/README.md).
 - APIs de leitura: `GET /api/empresas`, `GET /api/notas`, `GET /api/itens`.
 - Navegação entre a tela de scan (`/`) e a listagem.
 - Na listagem de notas, exibir também: **qtd. total de itens**, **valor total R$**, **descontos R$** e **outras despesas R$**.
+- Na listagem de itens, existe um campo **Pesquisar** (filtro no front por código, nome, empresa e demais colunas).
 
 ---
 

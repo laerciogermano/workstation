@@ -22,7 +22,7 @@ Abrir o `.DESIGN.md` no Cursor/Claude e pedir UI no estilo do arquivo (tokens â†
 ## Atualizar
 
 ```bash
-cd connectmax/marca/benchmarking-ui/shadcn-design
+cd core/shadcn-design
 for k in stripe linear apple github vercel claude figma framer; do
   curl -sS -f "https://www.shadcn.io/design/$k/raw" -o "$k.DESIGN.md"
 done
@@ -31,6 +31,6 @@ done
 ## Rollback
 
 ```bash
-rm -rf connectmax/marca/benchmarking-ui/shadcn-design
+rm -rf core/shadcn-design
 ```
 

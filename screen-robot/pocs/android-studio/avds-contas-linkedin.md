@@ -4,8 +4,8 @@ SOP para criar um AVD local (Mac) **1:1 com uma caixa `@clozzy.com.br`**, com im
 
 Credenciais das caixas: [`credenciais.md`](../../../../credenciais.md) (§ Caixas `@clozzy.com.br`).
 
-CSV (data, nome, e-mail, status, senha_li, objetivo, obs): [`contas-linkedin-clozzy.csv`](contas-linkedin-clozzy.csv).  
-**Antes → depois:** 6 cols → 7 cols (`objetivo` entre `senha_li` e `obs`); reverter = dropar `objetivo`.
+CSV: [`contas-linkedin-clozzy.csv`](contas-linkedin-clozzy.csv) — cols `data_criacao,nome,email,senha_li,restrita,origem,objetivo,observacoes` (`restrita`=sim/nao; `origem`=AVD|CDP).  
+**Antes → depois:** `status`+`obs` misturados → cols `restrita` + `origem` + `objetivo` + `observacoes` (status legado fica em `observacoes`). Rollback: restaurar header `data_criacao,nome,email,status,senha_li,objetivo,obs` do commit anterior.
 
 **Antes → depois (Roberta):** sem `objetivo` → objetivo de longevidade (criar/configurar no AVD e parar; medir se a conta se sustenta). Rollback: limpar `objetivo` da linha Roberta.
 

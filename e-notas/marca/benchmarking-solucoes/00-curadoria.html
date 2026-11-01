@@ -38,8 +38,8 @@
 <body>
 <div class="wrap">
   <h1>Benchmarking — soluções similares</h1>
-  <p class="lead">NFC-e → preço, comparado aos <strong>6 requisitos</strong> do PRD notinhas.org: comparação, histórico, montagem apartada, vitrine da loja, busca geo (“onde comprar perto”) e API empresas.</p>
-  <p class="meta">Card · <a href="https://trello.com/c/1fMjqGdR">trello.com/c/1fMjqGdR</a> · PRD · <code>e-notas/docs/prd.md</code> · v3 · 2026-11-01</p>
+  <p class="lead">Proposta: <strong>sistema cooperativo de notinhas</strong> (comparar, simular economia, perto, comércio local, split, delivery futuro — preço sem margem de app). Matriz vs capacidades + <strong>alcance UF/nacional</strong> + gap vs notinhas.</p>
+  <p class="meta">Card · <a href="https://trello.com/c/1fMjqGdR">trello.com/c/1fMjqGdR</a> · PRD · <code>e-notas/docs/prd.md</code> §1 / §9 · v4 · 2026-11-01</p>
 
   <h2>1. Requisitos sob análise</h2>
   <div class="card">
@@ -56,116 +56,141 @@
     <thead>
       <tr>
         <th>Solução</th>
+        <th>Alcance</th>
         <th>Comparação</th>
         <th>Histórico</th>
         <th>Montagem apartada</th>
         <th>Vitrine loja</th>
         <th>Busca geo / perto</th>
         <th>API empresas</th>
+        <th>vs notinhas (gap deles)</th>
       </tr>
     </thead>
     <tbody>
       <tr>
         <td><a href="https://buscapreco.net/">Busca Preço</a></td>
+        <td>MG, SP, RJ</td>
         <td><span class="y">Sim</span></td>
         <td><span class="y">Sim</span></td>
         <td><span class="p">Parcial</span> item a item</td>
-        <td><span class="p">Parcial</span> catálogo colaborativo (produto-cêntrico)</td>
-        <td><span class="p">Parcial</span> região/UF, não âncora “centro”</td>
+        <td><span class="p">Parcial</span> catálogo colaborativo</td>
+        <td><span class="p">Parcial</span> região/UF</td>
         <td><span class="n">Não</span></td>
+        <td>Vitrine · split · API · âncora centro</td>
       </tr>
       <tr>
         <td><a href="https://notapreco.com.br/">Nota Preço</a></td>
+        <td>RM Rio (RJ)</td>
         <td><span class="y">Sim</span></td>
         <td><span class="y">Sim</span> 30d</td>
         <td><span class="y">Sim</span> 1–3 lojas</td>
-        <td><span class="n">Não</span> redes, não vitrine por loja</td>
-        <td><span class="p">Parcial</span> RM Rio / redes</td>
+        <td><span class="n">Não</span> redes</td>
+        <td><span class="p">Parcial</span> RM Rio</td>
         <td><span class="n">Não</span></td>
+        <td>Vitrine · API · fora do RJ</td>
       </tr>
       <tr>
         <td><a href="https://mercadocerto.app.br/">Mercado Certo</a></td>
+        <td>Por cidade (colab.)</td>
         <td><span class="y">Sim</span> cesta</td>
         <td><span class="p">Parcial</span></td>
         <td><span class="y">Sim</span> split</td>
-        <td><span class="n">Não</span> oferta por produto</td>
-        <td><span class="y">Sim</span> distância por oferta</td>
         <td><span class="n">Não</span></td>
+        <td><span class="y">Sim</span> distância</td>
+        <td><span class="n">Não</span></td>
+        <td>Vitrine · API · histórico cheio</td>
       </tr>
       <tr>
         <td><a href="https://gomarket.app.br/">GoMarket</a></td>
+        <td>Por cidade (colab.)</td>
         <td><span class="y">Sim</span></td>
         <td><span class="y">Sim</span></td>
         <td><span class="n">Não</span> 1 mercado</td>
-        <td><span class="y">Sim</span> produtos por mercado</td>
-        <td><span class="y">Sim</span> localizador + perto</td>
+        <td><span class="y">Sim</span> por mercado</td>
+        <td><span class="y">Sim</span> localizador</td>
         <td><span class="n">Não</span></td>
+        <td>Split · API · simular economia</td>
       </tr>
       <tr>
         <td><a href="https://poupapp.app.br/">PoupApp</a></td>
+        <td>Nacional (26 UF+DF)*</td>
         <td><span class="y">Sim</span></td>
         <td><span class="p">Parcial</span></td>
         <td><span class="n">Não</span></td>
         <td><span class="n">Não</span></td>
-        <td><span class="p">Parcial</span> mercados da região</td>
+        <td><span class="p">Parcial</span> região</td>
         <td><span class="n">Não</span></td>
+        <td>Vitrine · split · API</td>
       </tr>
       <tr>
         <td><a href="https://qualopreco.app/">Qual o Preço</a></td>
+        <td>Perto de você (em breve)</td>
         <td><span class="y">Sim</span></td>
         <td><span class="p">Parcial</span></td>
-        <td><span class="p">Parcial</span> lista por mercado + rota</td>
-        <td><span class="y">Sim</span> catálogo por mercado</td>
-        <td><span class="y">Sim</span> preços perto de você</td>
+        <td><span class="p">Parcial</span> lista + rota</td>
+        <td><span class="y">Sim</span> catálogo</td>
+        <td><span class="y">Sim</span> perto</td>
         <td><span class="n">Não</span></td>
+        <td>API · split explícito · delivery</td>
       </tr>
       <tr>
         <td><a href="https://menorpreco.notaparana.pr.gov.br/">Nota Paraná</a></td>
+        <td><strong>PR</strong></td>
         <td><span class="y">Sim</span></td>
         <td><span class="p">Parcial</span> frescor</td>
         <td><span class="n">Não</span></td>
         <td><span class="n">Não</span></td>
-        <td><span class="y">Sim</span> raio / mapa (até 20 km)</td>
-        <td><span class="p">Parcial</span> API web; automação vedada</td>
+        <td><span class="y">Sim</span> raio / mapa</td>
+        <td><span class="p">Parcial</span> API web</td>
+        <td>Vitrine · split · UX compra · B2B</td>
       </tr>
       <tr>
         <td>Menor Preço Brasil</td>
+        <td>~15–16 UFs (adesão)** — <em>não nacional</em></td>
         <td><span class="y">Sim</span></td>
         <td><span class="p">Parcial</span></td>
         <td><span class="n">Não</span></td>
         <td><span class="n">Não</span></td>
         <td><span class="y">Sim</span> raio 1–30 km</td>
         <td><span class="n">Não</span></td>
+        <td>Vitrine · split · API B2B</td>
       </tr>
       <tr>
         <td><a href="https://economizaalagoas.sefaz.al.gov.br/">Economiza AL</a></td>
+        <td><strong>AL</strong></td>
         <td><span class="y">Sim</span></td>
         <td><span class="p">Parcial</span></td>
         <td><span class="p">Via 3º</span></td>
         <td><span class="n">Não</span></td>
-        <td><span class="y">Sim</span> lat/lng + raio na API</td>
-        <td><span class="y">API pública</span> SEFAZ</td>
+        <td><span class="y">Sim</span> lat/lng + raio</td>
+        <td><span class="y">API pública</span></td>
+        <td>Consumer UX · vitrine · split</td>
       </tr>
       <tr>
         <td><a href="https://solucoesintegradas.com.br/quantto/">Quantto</a></td>
+        <td>B2B contratual</td>
         <td><span class="y">Sim</span> B2B</td>
         <td><span class="y">Sim</span></td>
         <td><span class="n">N/A</span></td>
         <td><span class="n">N/A</span></td>
         <td><span class="p">Regional</span></td>
         <td><span class="y">Produto B2B</span></td>
+        <td>Não é consumer NFC-e cooperativo</td>
       </tr>
       <tr>
         <td><strong>notinhas.org</strong> (alvo)</td>
+        <td><strong>Lab PR → expansão***</strong></td>
         <td><span class="y">Alvo</span></td>
         <td><span class="y">Alvo</span></td>
         <td><span class="y">Alvo</span></td>
         <td><span class="y">Alvo</span></td>
-        <td><span class="y">Alvo</span> GPS + região (centro)</td>
+        <td><span class="y">Alvo</span> GPS + centro</td>
         <td><span class="y">Alvo</span></td>
+        <td><strong>Pacote completo + preço sem margem app</strong></td>
       </tr>
     </tbody>
   </table>
+  <p class="meta">*PoupApp declara 26 UF+DF (liquidez por cidade). **MP Brasil: adesão SEFAZ (lista muda; SP tipicamente fora). ***Lab São José dos Pinhais/PR; expansão por liquidez NFC-e. Coluna <strong>vs notinhas</strong> = gap do concorrente em relação à proposta (§1 do PRD).</p>
 
   <h2>3. Leitura por requisito</h2>
 
@@ -232,12 +257,13 @@
   <div class="card">
     <ul>
       <li>Paridade: comparação + histórico + busca geo (já esperada no PR por causa do Nota Paraná).</li>
-      <li>Diferenciais: <strong>vitrine e-commerce da loja</strong>, <strong>montagem apartada</strong>, <strong>API empresas</strong>, âncora “centro/bairro” além do GPS.</li>
-      <li>Não competir com SEFAZ em “ter o dado”; competir em UX de compra física + B2B.</li>
+      <li>Diferenciais do pacote §1: <strong>simular economia / split</strong>, <strong>vitrine</strong>, <strong>comércio local sem margem de app</strong>, <strong>API B2B</strong>, âncora centro/bairro, delivery futuro.</li>
+      <li>Alcance: lab PR primeiro; gov multi-UF (MP Brasil) e PoupApp “nacional” não fecham o pacote — não competir em “ter o dado SEFAZ”.</li>
+      <li>Não competir com SEFAZ em “ter o dado”; competir em UX de compra física + pacote + B2B.</li>
     </ul>
   </div>
 
-  <p class="foot">Fontes públicas 2026-11-01. Legenda: <span class="y">Sim</span> · <span class="p">Parcial</span> · <span class="n">Não</span>. PRD: <code>e-notas/docs/prd.md</code>.</p>
+  <p class="foot">Fontes públicas 2026-11-01. Legenda: <span class="y">Sim</span> · <span class="p">Parcial</span> · <span class="n">Não</span>. PRD: <code>e-notas/docs/prd.md</code> §1 / §9.</p>
 </div>
 </body>
 </html>

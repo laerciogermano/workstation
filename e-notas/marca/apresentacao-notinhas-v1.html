@@ -107,13 +107,15 @@ ul.dots li::before{content:"";position:absolute;left:0;top:.55em;width:6px;heigh
     radial-gradient(ellipse 40% 50% at 10% 90%,rgba(0,0,0,.12),transparent 55%)"></div>
   <div style="position:relative;z-index:1;padding:16mm 18mm;height:100%;display:flex;flex-direction:column">
     <div class="eyebrow"><b>v1</b> Documento de apresentação · 2026</div>
-    <div style="margin:auto 0;max-width:560px">
-      <div class="wm" style="font-size:60px"><span class="n" style="color:#fff">notinhas</span><span class="o" style="color:#B8F5D0">.org</span></div>
-      <p style="margin-top:16px;font-size:20px;font-weight:600;line-height:1.35;max-width:480px">A NFC-e vira índice de preço.<br>Produto, mercado e marca numa só leitura.</p>
+    <div style="margin:auto 0;max-width:640px">
+      <div class="wm" style="font-size:56px"><span class="n" style="color:#fff">notinhas</span><span class="o" style="color:#B8F5D0">.org</span></div>
+      <p style="margin-top:14px;font-size:22px;font-weight:700;line-height:1.3;max-width:520px">Sistema cooperativo de notinhas para comprar melhor no comércio local.</p>
+      <p style="margin-top:10px;font-size:14px;opacity:.9;max-width:480px">Primeiro o quê. Depois o como. Depois o mercado e a marca.</p>
       <div style="display:flex;gap:8px;margin-top:20px;flex-wrap:wrap">
-        <span class="chip" style="background:rgba(255,255,255,.18);color:#fff">1 · Produto</span>
-        <span class="chip" style="background:rgba(255,255,255,.18);color:#fff">2 · Benchmarking</span>
-        <span class="chip" style="background:rgba(255,255,255,.18);color:#fff">3 · Design system</span>
+        <span class="chip" style="background:rgba(255,255,255,.18);color:#fff">1 · O quê</span>
+        <span class="chip" style="background:rgba(255,255,255,.18);color:#fff">2 · Como</span>
+        <span class="chip" style="background:rgba(255,255,255,.18);color:#fff">3 · Mercado</span>
+        <span class="chip" style="background:rgba(255,255,255,.18);color:#fff">4 · Marca</span>
       </div>
     </div>
     <div class="foot"><span>Repo e-notas · marca notinhas.org</span><span>Card hfGuzfMs</span><span>01</span></div>
@@ -123,54 +125,71 @@ ul.dots li::before{content:"";position:absolute;left:0;top:.55em;width:6px;heigh
 <!-- 02 AGENDA -->
 <section class="page mist">
   <div class="eyebrow"><b>00</b> Roteiro</div>
-  <h2>Três blocos</h2>
-  <p class="lead">Stakeholder vê o quê é o produto, onde está o mercado e como a marca/UI se materializa.</p>
+  <h2>O quê → como → mercado → marca</h2>
+  <p class="lead">Não começar pelo mecanismo (NFC-e). Começar pelo job do usuário e só então pelo índice.</p>
   <div class="grid" style="gap:10px;flex:1;align-content:start">
-    <div class="agenda-item"><div class="num">1</div><div><b>O que é o e-notas / notinhas.org</b><span>Problema, proposta, personas, capacidades e prioridade</span></div></div>
-    <div class="agenda-item"><div class="num">2</div><div><b>Benchmarking</b><span>Matriz vs 6 requisitos do PRD · gaps e diferenciais</span></div></div>
-    <div class="agenda-item"><div class="num">3</div><div><b>Design system</b><span>Identidade (azul+verde) + tokens e componentes de UI</span></div></div>
+    <div class="agenda-item"><div class="num">1</div><div><b>O quê</b><span>Sistema cooperativo de notinhas · jobs (comparar, economizar, perto, local, split, delivery)</span></div></div>
+    <div class="agenda-item"><div class="num">2</div><div><b>Como</b><span>NFC-e → índice · personas · capacidades e prioridade</span></div></div>
+    <div class="agenda-item"><div class="num">3</div><div><b>Mercado</b><span>Matriz vs concorrentes · alcance (UF/nacional) · gaps da proposta</span></div></div>
+    <div class="agenda-item"><div class="num">4</div><div><b>Marca</b><span>Identidade (azul+verde) + tokens e componentes de UI</span></div></div>
   </div>
   <div class="foot"><span class="wm" style="font-size:13px"><span class="n">notinhas</span><span class="o">.org</span></span><span>Apresentação v1 · Agenda</span><span>02</span></div>
 </section>
 
-<!-- 03 PRODUTO -->
+<!-- 03 O QUÊ -->
 <section class="page">
-  <div class="eyebrow"><b>01</b> Produto</div>
-  <h2>O que é o notinhas.org</h2>
-  <div class="grid" style="grid-template-columns:1.15fr 1fr;gap:16px;flex:1;min-height:0">
-    <div style="display:flex;flex-direction:column;gap:12px">
+  <div class="eyebrow"><b>01</b> O quê</div>
+  <h2>Sistema cooperativo de notinhas</h2>
+  <p class="lead" style="margin-bottom:10px">Quem contribui deposita a nota; quem consulta usa o índice coletivo. Sem margem de marketplace no preço do balcão.</p>
+  <div class="grid g2" style="gap:10px;flex:1;align-content:start">
+    <div class="card acc" style="--acc:var(--nt-blue)"><h3>Comparar preço</h3><p style="font-size:12px;color:var(--nt-muted)">Mesmo produto entre estabelecimentos — loja + data.</p></div>
+    <div class="card acc" style="--acc:var(--nt-blue)"><h3>Simular economia</h3><p style="font-size:12px;color:var(--nt-muted)">Quanto se paga a menos com a escolha / split.</p></div>
+    <div class="card acc" style="--acc:var(--nt-blue)"><h3>Pesquisar item perto</h3><p style="font-size:12px;color:var(--nt-muted)">GPS, centro ou bairro — onde comprar fisicamente.</p></div>
+    <div class="card acc" style="--acc:var(--nt-green)"><h3>Sem margem de apps</h3><p style="font-size:12px;color:var(--nt-muted)">Preço NFC-e / balcão — não iFood, 99 ou marketplace.</p></div>
+    <div class="card acc" style="--acc:var(--nt-green)"><h3>Movimentar comércio local</h3><p style="font-size:12px;color:var(--nt-muted)">Descoberta e deslocamento até a loja física.</p></div>
+    <div class="card acc" style="--acc:var(--nt-green)"><h3>Separar compras</h3><p style="font-size:12px;color:var(--nt-muted)">Split entre lojas para menor custo total.</p></div>
+    <div class="card acc" style="--acc:var(--nt-warn);grid-column:1/-1"><h3>Delivery de produtos <span class="chip warn">futuro</span></h3><p style="font-size:12px;color:var(--nt-muted)">Pedido + entrega a partir da vitrine/cesta — fora da v1.</p></div>
+  </div>
+  <div class="foot"><span class="wm" style="font-size:13px"><span class="n">notinhas</span><span class="o">.org</span></span><span>Apresentação v1 · O quê</span><span>03</span></div>
+</section>
+
+<!-- 04 COMO -->
+<section class="page mist">
+  <div class="eyebrow"><b>02</b> Como</div>
+  <h2>Da nota ao índice</h2>
+  <div class="grid" style="grid-template-columns:1.15fr 1fr;gap:14px;flex:1;min-height:0">
+    <div style="display:flex;flex-direction:column;gap:10px">
       <div class="card" style="background:var(--nt-blue-deep);color:#fff;border:0">
-        <div class="label" style="color:#9ED0F5">Proposta</div>
+        <div class="label" style="color:#9ED0F5">Mecanismo</div>
         <p style="font-size:16px;font-weight:700;line-height:1.35;margin-top:4px">QR/URL da NFC-e → índice EAN → preço → estabelecimento → data.</p>
-        <p style="font-size:13px;opacity:.9;margin-top:10px">Marca pública <b>notinhas.org</b> · código/repo <b>e-notas</b>.</p>
+        <p style="font-size:12px;opacity:.9;margin-top:10px">Marca <b>notinhas.org</b> · repo <b>e-notas</b>.</p>
       </div>
       <div class="card acc" style="--acc:var(--nt-err)">
-        <h3>Problema</h3>
-        <p style="font-size:12.5px;color:var(--nt-muted)">Preço de mercado é opaco. A nota já traz EAN, preço, loja e data — e o dado some depois da compra. Falta índice consumer com comparação, geo, vitrine e API.</p>
+        <h3>Problema que o como resolve</h3>
+        <p style="font-size:12.5px;color:var(--nt-muted)">A nota já traz EAN, preço, loja e data — e some depois da compra. Apps de delivery encarecem o mesmo item. Falta índice consumer + comércio local.</p>
       </div>
-      <div class="card acc" style="--acc:var(--nt-green)">
-        <h3>Slogan</h3>
-        <p style="font-size:15px;font-weight:800">Menor preço a partir da nota.</p>
-        <p style="font-size:12px;color:var(--nt-muted);margin-top:4px">Escaneia o QR. Achamos o barato perto de você.</p>
+      <div class="card" style="background:var(--nt-green-soft);border-color:rgba(0,152,75,.25)">
+        <h3 style="color:var(--nt-green-deep)">Fluxo mínimo</h3>
+        <p style="font-size:12px;color:var(--nt-green-deep);font-weight:600">QR → parse NFC-e → EAN/preço/loja → busca → menor preço / split / perto</p>
       </div>
     </div>
     <div style="display:flex;flex-direction:column;gap:10px">
       <div class="label">Personas</div>
       <div class="card"><h3>Contribuinte</h3><p style="font-size:12px;color:var(--nt-muted)">Escaneia/cola o QR e alimenta o índice.</p></div>
-      <div class="card"><h3>Comprador</h3><p style="font-size:12px;color:var(--nt-muted)">Compara lojas, monta cesta, vê vitrine, acha onde comprar perto.</p></div>
+      <div class="card"><h3>Comprador</h3><p style="font-size:12px;color:var(--nt-muted)">Compara, simula economia, acha perto, separa cesta; no futuro pede delivery.</p></div>
       <div class="card"><h3>Empresa / parceiro</h3><p style="font-size:12px;color:var(--nt-muted)">Consome ou alimenta o índice via API B2B.</p></div>
-      <div class="card" style="background:var(--nt-green-soft);border-color:rgba(0,152,75,.25)">
-        <h3 style="color:var(--nt-green-deep)">Fluxo mínimo</h3>
-        <p style="font-size:12px;color:var(--nt-green-deep);font-weight:600">QR → parse NFC-e → EAN/preço/loja → busca → menor preço</p>
+      <div class="card acc" style="--acc:var(--nt-green)">
+        <h3>Slogan</h3>
+        <p style="font-size:14px;font-weight:800">Menor preço a partir da nota.</p>
       </div>
     </div>
   </div>
-  <div class="foot"><span class="wm" style="font-size:13px"><span class="n">notinhas</span><span class="o">.org</span></span><span>Apresentação v1 · Produto</span><span>03</span></div>
+  <div class="foot"><span class="wm" style="font-size:13px"><span class="n">notinhas</span><span class="o">.org</span></span><span>Apresentação v1 · Como</span><span>04</span></div>
 </section>
 
-<!-- 04 CAPACIDADES -->
-<section class="page mist">
-  <div class="eyebrow"><b>01</b> Produto</div>
+<!-- 05 CAPACIDADES -->
+<section class="page">
+  <div class="eyebrow"><b>02</b> Como</div>
   <h2>Capacidades e prioridade</h2>
   <div class="grid" style="grid-template-columns:1.3fr 1fr;gap:16px;flex:1;min-height:0">
     <div>
@@ -180,7 +199,7 @@ ul.dots li::before{content:"";position:absolute;left:0;top:.55em;width:6px;heigh
         <div class="card acc" style="--acc:var(--nt-blue)"><h3>Histórico <span class="chip">must</span></h3><p style="font-size:11.5px;color:var(--nt-muted)">Série temporal por produto / loja</p></div>
         <div class="card acc" style="--acc:var(--nt-blue)"><h3>Busca geo <span class="chip">must</span></h3><p style="font-size:11.5px;color:var(--nt-muted)">Item → lojas perto (GPS ou centro/bairro)</p></div>
         <div class="card acc" style="--acc:var(--nt-green)"><h3>Vitrine loja <span class="chip ok">should</span></h3><p style="font-size:11.5px;color:var(--nt-muted)">Catálogo read-only do estabelecimento</p></div>
-        <div class="card acc" style="--acc:var(--nt-green)"><h3>Montagem apartada <span class="chip ok">should</span></h3><p style="font-size:11.5px;color:var(--nt-muted)">Cesta + split 2+ lojas</p></div>
+        <div class="card acc" style="--acc:var(--nt-green)"><h3>Montagem apartada <span class="chip ok">should</span></h3><p style="font-size:11.5px;color:var(--nt-muted)">Cesta + split 2+ lojas · simula economia</p></div>
         <div class="card acc" style="--acc:var(--nt-green)"><h3>API empresas <span class="chip ok">should</span></h3><p style="font-size:11.5px;color:var(--nt-muted)">Consulta B2B · vínculo EAN</p></div>
       </div>
       <div class="card" style="margin-top:10px;border-style:dashed"><h3>Delivery <span class="chip warn">future</span></h3><p style="font-size:11.5px;color:var(--nt-muted)">Pedido + entrega após vitrine estável e parceria. Fora da v1.</p></div>
@@ -192,7 +211,7 @@ ul.dots li::before{content:"";position:absolute;left:0;top:.55em;width:6px;heigh
         <div class="prio"><span class="rk">2</span> Busca geo (perto / centro)</div>
         <div class="prio"><span class="rk">3</span> Histórico por produto/loja</div>
         <div class="prio"><span class="rk">4</span> Vitrine da loja</div>
-        <div class="prio"><span class="rk">5</span> Montagem apartada</div>
+        <div class="prio"><span class="rk">5</span> Montagem apartada / simular economia</div>
         <div class="prio"><span class="rk">6</span> API empresas</div>
         <div class="prio"><span class="rk">7</span> Delivery (futuro)</div>
       </div>
@@ -206,80 +225,88 @@ ul.dots li::before{content:"";position:absolute;left:0;top:.55em;width:6px;heigh
       </div>
     </div>
   </div>
-  <div class="foot"><span class="wm" style="font-size:13px"><span class="n">notinhas</span><span class="o">.org</span></span><span>Apresentação v1 · Capacidades</span><span>04</span></div>
+  <div class="foot"><span class="wm" style="font-size:13px"><span class="n">notinhas</span><span class="o">.org</span></span><span>Apresentação v1 · Capacidades</span><span>05</span></div>
 </section>
 
-<!-- 05 BENCHMARKING MATRIZ -->
-<section class="page">
-  <div class="eyebrow"><b>02</b> Benchmarking</div>
-  <h2>Matriz vs 6 requisitos</h2>
-  <p class="lead" style="margin-bottom:8px">Fontes públicas · 2026-11-01 · legenda: <span class="y">Sim</span> · <span class="p">Parcial</span> · <span class="n">Não</span></p>
+<!-- 06 BENCHMARKING MATRIZ -->
+<section class="page mist">
+  <div class="eyebrow"><b>03</b> Mercado</div>
+  <h2>Matriz · capacidades + alcance</h2>
+  <p class="lead" style="margin-bottom:6px;font-size:12px">Fontes públicas · 2026-11 · legenda: <span class="y">Sim</span> · <span class="p">Parcial</span> · <span class="n">Não</span> · coluna <b>vs notinhas</b> = o que a proposta cobre a mais / o gap deles</p>
   <div style="flex:1;overflow:hidden">
-    <table class="m">
+    <table class="m" style="font-size:10px">
       <thead>
         <tr>
           <th>Solução</th>
-          <th>Comparação</th>
-          <th>Histórico</th>
-          <th>Apartada</th>
+          <th>Alcance</th>
+          <th>Comp</th>
+          <th>Hist</th>
+          <th>Apart</th>
           <th>Vitrine</th>
           <th>Geo</th>
           <th>API</th>
+          <th>vs notinhas (gap deles)</th>
         </tr>
       </thead>
       <tbody>
-        <tr><td>Busca Preço</td><td><span class="y">Sim</span></td><td><span class="y">Sim</span></td><td><span class="p">Parcial</span></td><td><span class="p">Parcial</span></td><td><span class="p">Parcial</span></td><td><span class="n">Não</span></td></tr>
-        <tr><td>Nota Preço</td><td><span class="y">Sim</span></td><td><span class="y">Sim</span></td><td><span class="y">Sim</span></td><td><span class="n">Não</span></td><td><span class="p">Parcial</span></td><td><span class="n">Não</span></td></tr>
-        <tr><td>Mercado Certo</td><td><span class="y">Sim</span></td><td><span class="p">Parcial</span></td><td><span class="y">Sim</span></td><td><span class="n">Não</span></td><td><span class="y">Sim</span></td><td><span class="n">Não</span></td></tr>
-        <tr><td>GoMarket</td><td><span class="y">Sim</span></td><td><span class="y">Sim</span></td><td><span class="n">Não</span></td><td><span class="y">Sim</span></td><td><span class="y">Sim</span></td><td><span class="n">Não</span></td></tr>
-        <tr><td>Qual o Preço</td><td><span class="y">Sim</span></td><td><span class="p">Parcial</span></td><td><span class="p">Parcial</span></td><td><span class="y">Sim</span></td><td><span class="y">Sim</span></td><td><span class="n">Não</span></td></tr>
-        <tr><td>Nota Paraná / MP Brasil</td><td><span class="y">Sim</span></td><td><span class="p">Parcial</span></td><td><span class="n">Não</span></td><td><span class="n">Não</span></td><td><span class="y">Sim</span></td><td><span class="p">Parcial</span></td></tr>
-        <tr><td>Quantto / Economiza AL</td><td><span class="y">Sim</span></td><td><span class="y">/</span> <span class="p">Parc.</span></td><td><span class="n">N/A</span></td><td><span class="n">N/A</span></td><td><span class="p">/</span> <span class="y">Sim</span></td><td><span class="y">Sim</span></td></tr>
-        <tr style="background:var(--nt-blue-soft)"><td><b>notinhas.org (alvo)</b></td><td><span class="y">Alvo</span></td><td><span class="y">Alvo</span></td><td><span class="y">Alvo</span></td><td><span class="y">Alvo</span></td><td><span class="y">Alvo</span></td><td><span class="y">Alvo</span></td></tr>
+        <tr><td>Busca Preço</td><td>MG, SP, RJ</td><td><span class="y">Sim</span></td><td><span class="y">Sim</span></td><td><span class="p">Parc.</span></td><td><span class="p">Parc.</span></td><td><span class="p">Parc.</span></td><td><span class="n">Não</span></td><td>Vitrine loja · split · API · âncora centro</td></tr>
+        <tr><td>Nota Preço</td><td>RM Rio (RJ)</td><td><span class="y">Sim</span></td><td><span class="y">Sim</span></td><td><span class="y">Sim</span></td><td><span class="n">Não</span></td><td><span class="p">Parc.</span></td><td><span class="n">Não</span></td><td>Vitrine · API · fora do RJ</td></tr>
+        <tr><td>Mercado Certo</td><td>Por cidade (colab.)</td><td><span class="y">Sim</span></td><td><span class="p">Parc.</span></td><td><span class="y">Sim</span></td><td><span class="n">Não</span></td><td><span class="y">Sim</span></td><td><span class="n">Não</span></td><td>Vitrine · API · histórico cheio</td></tr>
+        <tr><td>GoMarket</td><td>Por cidade (colab.)</td><td><span class="y">Sim</span></td><td><span class="y">Sim</span></td><td><span class="n">Não</span></td><td><span class="y">Sim</span></td><td><span class="y">Sim</span></td><td><span class="n">Não</span></td><td>Split · API · simular economia</td></tr>
+        <tr><td>Qual o Preço</td><td>Perto de você (em breve)</td><td><span class="y">Sim</span></td><td><span class="p">Parc.</span></td><td><span class="p">Parc.</span></td><td><span class="y">Sim</span></td><td><span class="y">Sim</span></td><td><span class="n">Não</span></td><td>API · split explícito · delivery</td></tr>
+        <tr><td>PoupApp</td><td>Nacional (26 UF+DF)*</td><td><span class="y">Sim</span></td><td><span class="p">Parc.</span></td><td><span class="n">Não</span></td><td><span class="n">Não</span></td><td><span class="p">Parc.</span></td><td><span class="n">Não</span></td><td>Vitrine · split · API</td></tr>
+        <tr><td>Nota Paraná</td><td>PR</td><td><span class="y">Sim</span></td><td><span class="p">Parc.</span></td><td><span class="n">Não</span></td><td><span class="n">Não</span></td><td><span class="y">Sim</span></td><td><span class="p">Parc.</span></td><td>Vitrine · split · UX compra · B2B</td></tr>
+        <tr><td>MP Brasil</td><td>~15–16 UFs (adesão)**</td><td><span class="y">Sim</span></td><td><span class="p">Parc.</span></td><td><span class="n">Não</span></td><td><span class="n">Não</span></td><td><span class="y">Sim</span></td><td><span class="n">Não</span></td><td>Vitrine · split · API B2B · não é 27 UF</td></tr>
+        <tr><td>Economiza AL</td><td>AL</td><td><span class="y">Sim</span></td><td><span class="p">Parc.</span></td><td><span class="p">Via 3º</span></td><td><span class="n">Não</span></td><td><span class="y">Sim</span></td><td><span class="y">Sim</span></td><td>Consumer UX · vitrine · split</td></tr>
+        <tr><td>Quantto</td><td>B2B · contratual</td><td><span class="y">Sim</span></td><td><span class="y">Sim</span></td><td><span class="n">N/A</span></td><td><span class="n">N/A</span></td><td><span class="p">Reg.</span></td><td><span class="y">Sim</span></td><td>Não é consumer NFC-e cooperativo</td></tr>
+        <tr style="background:var(--nt-blue-soft)"><td><b>notinhas.org</b></td><td><b>Lab PR → expansão***</b></td><td><span class="y">Alvo</span></td><td><span class="y">Alvo</span></td><td><span class="y">Alvo</span></td><td><span class="y">Alvo</span></td><td><span class="y">Alvo</span></td><td><span class="y">Alvo</span></td><td><b>Pacote completo + preço sem margem app</b></td></tr>
       </tbody>
     </table>
+    <p style="font-size:9px;color:var(--nt-muted);margin-top:6px">*PoupApp declara índice/monitoramento em todas as UFs (liquidez por cidade). **MP Brasil: adesão SEFAZ (ex. AC AL DF ES PA PE PI RJ RN RS RO RR SC SE TO; lista muda; SP tipicamente fora). ***notinhas: lab São José dos Pinhais/PR; expansão por liquidez de notas.</p>
   </div>
-  <div class="foot"><span class="wm" style="font-size:13px"><span class="n">notinhas</span><span class="o">.org</span></span><span>Apresentação v1 · Benchmarking</span><span>05</span></div>
+  <div class="foot"><span class="wm" style="font-size:13px"><span class="n">notinhas</span><span class="o">.org</span></span><span>Apresentação v1 · Matriz</span><span>06</span></div>
 </section>
 
-<!-- 06 GAPS -->
-<section class="page mist">
-  <div class="eyebrow"><b>02</b> Benchmarking</div>
-  <h2>Gaps e posicionamento</h2>
-  <div class="grid" style="grid-template-columns:1fr 1fr;gap:14px;flex:1;min-height:0">
-    <div class="card">
-      <div class="label">Quem já faz bem</div>
-      <table class="m">
-        <tr><td>Comparação</td><td>Todos + Nota Paraná</td></tr>
-        <tr><td>Histórico</td><td>Busca Preço, Nota Preço</td></tr>
-        <tr><td>Montagem apartada</td><td>Nota Preço, Mercado Certo</td></tr>
-        <tr><td>Vitrine loja</td><td>GoMarket, Qual o Preço</td></tr>
-        <tr><td>Busca geo</td><td>Nota Paraná, Qual o Preço…</td></tr>
-        <tr><td>API empresas</td><td>Quantto, Economiza AL</td></tr>
-      </table>
-    </div>
+<!-- 07 GAPS -->
+<section class="page">
+  <div class="eyebrow"><b>03</b> Mercado</div>
+  <h2>Proposta vs concorrentes</h2>
+  <div class="grid" style="grid-template-columns:1.1fr 1fr;gap:14px;flex:1;min-height:0">
     <div style="display:flex;flex-direction:column;gap:10px">
-      <div class="card" style="background:var(--nt-blue-deep);color:#fff;border:0;flex:1">
-        <div class="label" style="color:#9ED0F5">Diferenciais notinhas</div>
+      <div class="card" style="background:var(--nt-blue-deep);color:#fff;border:0">
+        <div class="label" style="color:#9ED0F5">Onde a proposta se diferencia</div>
         <ul class="dots" style="--acc:#7CFFB2;margin-top:8px">
-          <li style="color:rgba(255,255,255,.92)">Vitrine e-commerce da loja (read-only)</li>
-          <li style="color:rgba(255,255,255,.92)">Montagem apartada (split 2+ lojas)</li>
-          <li style="color:rgba(255,255,255,.92)">API B2B no eixo consumer NFC-e</li>
-          <li style="color:rgba(255,255,255,.92)">Âncora “centro/bairro” além do GPS</li>
+          <li style="color:rgba(255,255,255,.92)">Pacote: comparar + simular economia + perto + split + vitrine (+ delivery futuro)</li>
+          <li style="color:rgba(255,255,255,.92)">Preço de balcão/NFC-e — explicitamente sem margem iFood/99</li>
+          <li style="color:rgba(255,255,255,.92)">Movimentação do comércio local (descoberta → loja física)</li>
+          <li style="color:rgba(255,255,255,.92)">API B2B no mesmo eixo consumer cooperativo</li>
         </ul>
       </div>
       <div class="card acc" style="--acc:var(--nt-green)">
-        <h3>Regra de ouro</h3>
-        <p style="font-size:12.5px;color:var(--nt-muted)">Não competir com SEFAZ em “ter o dado”. Competir em <b>UX de compra física</b> + <b>B2B</b>.</p>
+        <h3>Leitura de alcance</h3>
+        <p style="font-size:12px;color:var(--nt-muted)">Gov (Nota Paraná = <b>PR</b>; MP Brasil = <b>multi-UF, não nacional</b>; Economiza = <b>AL</b>). Consumer apps: <b>MG/SP/RJ</b>, <b>RM Rio</b>, ou liquidez <b>por cidade</b>. PoupApp declara <b>nacional</b> sem vitrine/split/API.</p>
       </div>
     </div>
+    <div class="card">
+      <div class="label">Quem já faz bem (capacidade)</div>
+      <table class="m">
+        <tr><td>Comparação</td><td>Todos + gov</td></tr>
+        <tr><td>Histórico</td><td>Busca Preço, Nota Preço, GoMarket</td></tr>
+        <tr><td>Montagem / economia</td><td>Nota Preço, Mercado Certo</td></tr>
+        <tr><td>Vitrine loja</td><td>GoMarket, Qual o Preço</td></tr>
+        <tr><td>Busca geo</td><td>Nota Paraná, MP Brasil, apps geo</td></tr>
+        <tr><td>API</td><td>Quantto, Economiza AL</td></tr>
+        <tr><td>Alcance amplo</td><td>PoupApp*, MP Brasil (~16 UF)</td></tr>
+      </table>
+      <p style="font-size:11px;color:var(--nt-muted);margin-top:8px">Regra: não competir com SEFAZ em “ter o dado”. Competir em <b>UX de compra física + pacote + B2B</b>.</p>
+    </div>
   </div>
-  <div class="foot"><span class="wm" style="font-size:13px"><span class="n">notinhas</span><span class="o">.org</span></span><span>Apresentação v1 · Gaps</span><span>06</span></div>
+  <div class="foot"><span class="wm" style="font-size:13px"><span class="n">notinhas</span><span class="o">.org</span></span><span>Apresentação v1 · Posicionamento</span><span>07</span></div>
 </section>
 
-<!-- 07 DESIGN SYSTEM / IDENTIDADE -->
-<section class="page">
-  <div class="eyebrow"><b>03</b> Design system</div>
+<!-- 08 DESIGN SYSTEM / IDENTIDADE -->
+<section class="page mist">
+  <div class="eyebrow"><b>04</b> Marca</div>
   <h2>Identidade e tokens</h2>
   <div class="grid" style="grid-template-columns:1.1fr 1fr;gap:16px;flex:1;min-height:0">
     <div style="display:flex;flex-direction:column;gap:12px">
@@ -331,10 +358,10 @@ ul.dots li::before{content:"";position:absolute;left:0;top:.55em;width:6px;heigh
       </div>
     </div>
   </div>
-  <div class="foot"><span class="wm" style="font-size:13px"><span class="n">notinhas</span><span class="o">.org</span></span><span>Apresentação v1 · Design system</span><span>07</span></div>
+  <div class="foot"><span class="wm" style="font-size:13px"><span class="n">notinhas</span><span class="o">.org</span></span><span>Apresentação v1 · Design system</span><span>08</span></div>
 </section>
 
-<!-- 08 FECHO -->
+<!-- 09 FECHO -->
 <section class="page cover">
   <div style="position:absolute;inset:0;background:
     radial-gradient(ellipse 50% 60% at 15% 30%,rgba(255,255,255,.14),transparent 55%),
@@ -343,15 +370,15 @@ ul.dots li::before{content:"";position:absolute;left:0;top:.55em;width:6px;heigh
     <div class="eyebrow"><b>v1</b> Próximos passos</div>
     <div style="margin:auto 0;max-width:560px">
       <div class="wm" style="font-size:48px"><span class="n" style="color:#fff">notinhas</span><span class="o" style="color:#B8F5D0">.org</span></div>
-      <p style="margin-top:14px;font-size:18px;font-weight:600;max-width:460px">Paridade em comparação/geo · diferencial em vitrine, split e API.</p>
+      <p style="margin-top:14px;font-size:18px;font-weight:600;max-width:500px">Cooperativo local: comparar, simular economia, perto, split — sem margem de app. Depois: delivery.</p>
       <div class="grid g3" style="margin-top:22px;gap:10px">
         <div style="background:rgba(255,255,255,.12);border-radius:12px;padding:12px">
-          <div style="font-size:11px;opacity:.8;font-weight:700;margin-bottom:4px">PRODUTO</div>
-          <div style="font-size:13px;font-weight:700">PRD + REQ-014</div>
+          <div style="font-size:11px;opacity:.8;font-weight:700;margin-bottom:4px">O QUÊ / COMO</div>
+          <div style="font-size:13px;font-weight:700">PRD §1–3</div>
         </div>
         <div style="background:rgba(255,255,255,.12);border-radius:12px;padding:12px">
           <div style="font-size:11px;opacity:.8;font-weight:700;margin-bottom:4px">MERCADO</div>
-          <div style="font-size:13px;font-weight:700">Curadoria HTML</div>
+          <div style="font-size:13px;font-weight:700">Matriz + alcance UF</div>
         </div>
         <div style="background:rgba(255,255,255,.12);border-radius:12px;padding:12px">
           <div style="font-size:11px;opacity:.8;font-weight:700;margin-bottom:4px">MARCA</div>
@@ -360,7 +387,7 @@ ul.dots li::before{content:"";position:absolute;left:0;top:.55em;width:6px;heigh
       </div>
       <p style="margin-top:18px;font-size:12px;opacity:.85">Insumos: docs/prd.md · marca/benchmarking-solucoes · identidade + design-system HTML</p>
     </div>
-    <div class="foot"><span>Menor preço a partir da nota.</span><span>Apresentação v1 · 2026-11-01</span><span>08</span></div>
+    <div class="foot"><span>Menor preço a partir da nota.</span><span>Apresentação v1 · 2026-11-01</span><span>09</span></div>
   </div>
 </section>
 

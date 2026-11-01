@@ -21,23 +21,40 @@ HTTP `http://…/enotas/` redireciona para HTTPS. Certificado em `:4173` é auto
 | nginx domínio | [`nginx-notinhas.conf`](nginx-notinhas.conf) → `/etc/nginx/sites-available/notinhas` |
 | Certs `:4173` | `/opt/e-notas/certs/` |
 | DNS | Hostinger: A `@` → `144.126.154.90` (TTL 300); CNAME `www` → `notinhas.shop` |
-| E-mail | Mailcow domínio `notinhas.shop`; caixa `contato@notinhas.shop` (senha em `credenciais.md`) |
+| E-mail | 1 Mailcow (`/opt/mailcow-dockerized`); domínios `clozzy.com.br` + `notinhas.shop`; hostnames `mail.clozzy.com.br` + `mail.notinhas.shop` |
+
+## Mailcow (clozzy + notinhas no mesmo servidor)
+
+Não dá para rodar **dois** stacks Mailcow no mesmo IP (portas 25/465/587/993). Um stack, dois domínios e dois hostnames.
+
+| Item | Valor |
+|------|--------|
+| Path | `/opt/mailcow-dockerized` |
+| `MAILCOW_HOSTNAME` | `mail.clozzy.com.br` |
+| `ADDITIONAL_SAN` | `mail.notinhas.shop` |
+| Domínios | `clozzy.com.br`, `notinhas.shop` |
+| Web | https://mail.clozzy.com.br/ · https://mail.notinhas.shop/ |
+| nginx host | [`nginx-mailcow.conf`](nginx-mailcow.conf) → `/etc/nginx/sites-available/mailcow` |
+| Cert LE | `mail-clozzy-notinhas` (SAN: ambos os `mail.*`); copiado p/ `data/assets/ssl/` + hook renew |
+
+**Antes → depois:** só `mail.clozzy.com.br` → também `mail.notinhas.shop` (nginx + LE + `ADDITIONAL_SAN`) com os dois domínios ativos.
+**Rollback hostname notinhas:** tirar `mail.notinhas.shop` do nginx/`ADDITIONAL_SAN`; apagar cert `mail-clozzy-notinhas` se quiser; DNS A/MX do `mail` notinhas.
 
 ## Domínio `notinhas.shop`
 
 1. DNS no hPanel Hostinger (zona do domínio): A `@` = Contabo `144.126.154.90`
 2. Site nginx: `sites-available/notinhas` (proxy para `:4174`) + `sites-enabled`
 3. **HTTPS (Let's Encrypt / Certbot)** — mesmo padrão do RoleGo (nginx na Contabo já usa `:443` com mailcow/rolego; Caddy/Traefik brigariam pela porta).
-4. **Mail (Mailcow)** — domínio + DKIM no Mailcow da Contabo; DNS Hostinger sob `notinhas.shop`:
+4. **Mail** — domínio + DKIM no Mailcow; DNS Hostinger:
    - A `mail` → `144.126.154.90`
    - MX `@` → `mail.notinhas.shop` (prio 10)
    - TXT `@` → `v=spf1 mx a:mail.notinhas.shop ip4:144.126.154.90 ~all`
    - TXT `dkim._domainkey` → valor DKIM do Mailcow (`GET /api/v1/get/dkim/notinhas.shop`)
    - TXT `_dmarc` → `v=DMARC1; p=none; rua=mailto:contato@notinhas.shop`
-   - Webmail/admin ainda em https://mail.clozzy.com.br/ (mesmo stack); MX/SPF usam `mail.notinhas.shop`
+   - Webmail: https://mail.notinhas.shop/SOGo/
 
-**Antes → depois (mail):** sem e-mail no domínio → Mailcow `notinhas.shop` + `contato@` + MX/SPF/DKIM/DMARC na Hostinger.
-**Rollback mail:** apagar mailbox/domínio no Mailcow admin; remover MX/SPF/DKIM/DMARC na zona Hostinger.
+**Antes → depois (mail domínio):** sem e-mail → domínio `notinhas.shop` + `contato@` + MX/SPF/DKIM/DMARC.
+**Rollback mail domínio:** apagar mailbox/domínio no Mailcow; remover MX/SPF/DKIM/DMARC na Hostinger.
 
 Enquanto o registro `.shop` ainda der **NXDOMAIN** nos resolvers públicos, o ACME falha. Quando `dig +short A notinhas.shop @1.1.1.1` = `144.126.154.90`:
 

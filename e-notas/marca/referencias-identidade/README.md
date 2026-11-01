@@ -14,6 +14,9 @@ Insumos do card [Criar identidade visual](https://trello.com/c/qUI3Rb9a).
 | `10`–`23` | Concorrentes NFC-e/preço (secundário) |
 | `40` | enotas.com.br (SaaS — não confundir com o produto) |
 
+## Estrutura do manual
+Molde de seções/print-ready: RoleGo identidade v1 (`role-go/marca/identidade-visual-rolego-v1.*`) — anexos `ref-estrutura-*` no card. Não copiar marca RoleGo.
+
 Sugestão de nome: **notinhas.org**.
 
 ## Rollback

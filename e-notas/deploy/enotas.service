@@ -1,0 +1,15 @@
+[Unit]
+Description=e-notas (NFC-e scan + listagem)
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/e-notas
+EnvironmentFile=/opt/e-notas/.env
+ExecStart=/usr/bin/node server.js
+Restart=always
+RestartSec=3
+User=root
+
+[Install]
+WantedBy=multi-user.target

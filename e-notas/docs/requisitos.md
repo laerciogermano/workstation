@@ -77,6 +77,11 @@ App: [`../app/README.md`](../app/README.md).
 - Notas ordenadas da **mais nova para a mais antiga** (data de emissão; empate por id).
 - Na listagem de itens, existe um campo **Pesquisar** (filtro no front por código, nome, empresa e demais colunas).
 
+## REQ-009 — Publicação Contabo (2026-11-01)
+
+- Front + API do e-notas publicados na Contabo em **`http://144.126.154.90/enotas/`** (nginx `/enotas/` → Node `127.0.0.1:4173`, unit `enotas`).
+- Lab local continua HTTPS autoassinado (`USE_HTTP` desligado).
+
 ---
 
 ## Próximos passos

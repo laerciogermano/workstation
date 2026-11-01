@@ -8,7 +8,7 @@ function setStatus(text, kind) {
 
 async function sendUrl(url) {
   console.log('[qr]', url);
-  const res = await fetch('/api/nota', {
+  const res = await fetch('api/nota', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ url }),

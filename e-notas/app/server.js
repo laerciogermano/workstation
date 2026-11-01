@@ -160,24 +160,38 @@ app.post('/api/nota', async (req, res) => {
   }
 });
 
-ensureCerts();
-
 await initDb();
 
-const server = https.createServer(
-  {
-    key: fs.readFileSync(KEY_PATH),
-    cert: fs.readFileSync(CERT_PATH),
-  },
-  app,
-);
+const useHttp = /^(1|true|yes)$/i.test(String(process.env.USE_HTTP || ''));
+const host = process.env.HOST || (useHttp ? '127.0.0.1' : '0.0.0.0');
 
-server.listen(PORT, '0.0.0.0', () => {
-  console.log(`e-notas HTTPS em https://0.0.0.0:${PORT}`);
+function onListen() {
+  const scheme = useHttp ? 'http' : 'https';
+  console.log(`e-notas ${scheme.toUpperCase()} em ${scheme}://${host}:${PORT}`);
   console.log(`  db: ${dbInfo()}`);
-  console.log(`  local: https://localhost:${PORT}`);
-  for (const ip of lanIPs()) {
-    console.log(`  rede: https://${ip}:${PORT}`);
+  if (!useHttp) {
+    console.log(`  local: https://localhost:${PORT}`);
+    for (const ip of lanIPs()) {
+      console.log(`  rede: https://${ip}:${PORT}`);
+    }
+    console.log(
+      'Aceite o aviso do certificado autoassinado no browser (necessário p/ câmera).',
+    );
   }
-  console.log('Aceite o aviso do certificado autoassinado no browser (necessário p/ câmera).');
-});
+}
+
+if (useHttp) {
+  const { createServer } = await import('http');
+  createServer(app).listen(PORT, host, onListen);
+} else {
+  ensureCerts();
+  https
+    .createServer(
+      {
+        key: fs.readFileSync(KEY_PATH),
+        cert: fs.readFileSync(CERT_PATH),
+      },
+      app,
+    )
+    .listen(PORT, host, onListen);
+}

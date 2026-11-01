@@ -222,9 +222,9 @@ async function load() {
   const tab = readRoute();
   try {
     const [empresas, notas, itens] = await Promise.all([
-      fetchJson('/api/empresas'),
-      fetchJson('/api/notas'),
-      fetchJson('/api/itens'),
+      fetchJson('api/empresas'),
+      fetchJson('api/notas'),
+      fetchJson('api/itens'),
     ]);
     allItens = itens.itens || [];
     renderEmpresas(empresas.empresas || []);

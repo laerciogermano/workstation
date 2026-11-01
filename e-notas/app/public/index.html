@@ -30,12 +30,15 @@
         <span class="n">notinhas</span><span class="o">.org</span>
       </a>
       <h1>Cadastros</h1>
-      <p class="hint">Empresas e itens gravados a partir das notas fiscais.</p>
+      <p class="hint">Empresas, vitrine das lojas e itens a partir das notas fiscais.</p>
       <p id="status" class="status" aria-live="polite">Carregando…</p>
 
       <div class="tabs" role="tablist" aria-label="Cadastros">
         <button type="button" class="tab" role="tab" id="tab-empresas" data-tab="empresas" aria-controls="panel-empresas" aria-selected="true">
           Empresas <span id="count-empresas" class="count"></span>
+        </button>
+        <button type="button" class="tab" role="tab" id="tab-vitrine" data-tab="vitrine" aria-controls="panel-vitrine" aria-selected="false">
+          Vitrine <span id="count-vitrine" class="count"></span>
         </button>
         <button type="button" class="tab" role="tab" id="tab-itens" data-tab="itens" aria-controls="panel-itens" aria-selected="false">
           Itens <span id="count-itens" class="count"></span>
@@ -57,6 +60,51 @@
             </thead>
             <tbody id="empresas"></tbody>
           </table>
+        </div>
+      </section>
+
+      <section class="block tab-panel" id="panel-vitrine" role="tabpanel" aria-labelledby="tab-vitrine" hidden>
+        <div id="vitrine-lista">
+          <p class="hint">Clique numa loja para ver dados e o catálogo de preços observados nas notas.</p>
+          <label class="search">
+            <span class="sr-only">Pesquisar lojas</span>
+            <input
+              id="busca-vitrine"
+              type="search"
+              placeholder="Pesquisar loja por nome, CNPJ ou endereço…"
+              autocomplete="off"
+            />
+          </label>
+          <div id="vitrine-grid" class="vitrine-grid" aria-live="polite"></div>
+        </div>
+
+        <div id="vitrine-detalhe" hidden>
+          <button type="button" class="back-link" id="vitrine-voltar">← Todas as lojas</button>
+          <article class="loja-card loja-card-head" id="vitrine-loja-info"></article>
+          <label class="search" style="margin-top: 1rem">
+            <span class="sr-only">Pesquisar itens da loja</span>
+            <input
+              id="busca-vitrine-itens"
+              type="search"
+              placeholder="Pesquisar item nesta loja…"
+              autocomplete="off"
+            />
+          </label>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Produto</th>
+                  <th>EAN</th>
+                  <th>Código loja</th>
+                  <th>Preço</th>
+                  <th>Data</th>
+                  <th>Obs.</th>
+                </tr>
+              </thead>
+              <tbody id="vitrine-itens"></tbody>
+            </table>
+          </div>
         </div>
       </section>
 

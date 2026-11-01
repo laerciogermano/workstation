@@ -140,9 +140,15 @@ Curadoria: [`../marca/benchmarking-solucoes/README.md`](../marca/benchmarking-so
 
 ## REQ-017 — FAB adicionar nota (2026-11-01)
 
-- Home = listagem (`/`), abas só **Empresas** e **Itens** (sem aba Notas, sem nav Escanear/Listagem).
+- Home = listagem (`/`), abas **Empresas** / **Vitrine** / **Itens** (sem aba Notas, sem nav Escanear/Listagem).
 - Botão fixo inferior direito (**FAB**) “Nota” abre `scan.html` (QR).
 - `/lista.html` redireciona para `/`. Após scan ok, volta à home.
+
+## REQ-018 — Vitrine das lojas (2026-11-01)
+
+- Aba **Vitrine**: cards das empresas; clique abre detalhe (CNPJ, endereço) + catálogo de produtos observados.
+- Catálogo: 1 linha por EAN (ou código da loja), preço unitário da observação mais recente, data e contagem de observações.
+- Entrada também pela tabela Empresas e pelo popup do mapa (“Ver vitrine”). URL: `?loja=<id>` / `#loja-<id>`.
 
 ---
 

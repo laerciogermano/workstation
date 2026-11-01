@@ -1,6 +1,8 @@
 const statusEl = document.getElementById('status');
 const buscaItensEl = document.getElementById('busca-itens');
 const buscaEanEl = document.getElementById('busca-ean');
+const buscaVitrineEl = document.getElementById('busca-vitrine');
+const buscaVitrineItensEl = document.getElementById('busca-vitrine-itens');
 const filtroNotaEl = document.getElementById('filtro-nota');
 const modalEanEl = document.getElementById('modal-ean');
 const modalEanMetaEl = document.getElementById('modal-ean-meta');
@@ -10,10 +12,16 @@ const eanUnidadeEl = document.getElementById('ean-unidade');
 const eanBarrasEl = document.getElementById('ean-barras');
 const eanFormStatusEl = document.getElementById('ean-form-status');
 const eanCamStatusEl = document.getElementById('ean-cam-status');
+const vitrineListaEl = document.getElementById('vitrine-lista');
+const vitrineDetalheEl = document.getElementById('vitrine-detalhe');
+const vitrineGridEl = document.getElementById('vitrine-grid');
+const vitrineLojaInfoEl = document.getElementById('vitrine-loja-info');
+const vitrineItensEl = document.getElementById('vitrine-itens');
 const tabs = [...document.querySelectorAll('.tab')];
 const subtabs = [...document.querySelectorAll('.subtab')];
 const panels = {
   empresas: document.getElementById('panel-empresas'),
+  vitrine: document.getElementById('panel-vitrine'),
   itens: document.getElementById('panel-itens'),
 };
 const itensViews = {
@@ -27,6 +35,7 @@ let allCodigosBarras = [];
 let filtroNotaId = null;
 let filtroNotaLabel = '';
 let itensSub = 'lista';
+let lojaAbertaId = null;
 let eanScanner = null;
 let eanScanBusy = false;
 let modalContext = { empresaNome: '', itemNome: '' };
@@ -85,13 +94,27 @@ function setTab(name, { updateHash = true } = {}) {
       renderEmpresasMap(allEmpresas);
     });
   }
+  if (name === 'vitrine') {
+    if (lojaAbertaId != null) renderVitrineDetalhe(lojaAbertaId);
+    else renderVitrineLista();
+  }
   if (updateHash) {
     const url = new URL(location.href);
-    url.hash = name === 'itens' && itensSub === 'ean' ? 'codigos-barras' : name;
+    url.hash =
+      name === 'itens' && itensSub === 'ean'
+        ? 'codigos-barras'
+        : name === 'vitrine' && lojaAbertaId != null
+          ? `loja-${lojaAbertaId}`
+          : name;
     if (name === 'itens' && itensSub === 'lista' && filtroNotaId != null) {
       url.searchParams.set('nota', String(filtroNotaId));
     } else {
       url.searchParams.delete('nota');
+    }
+    if (name === 'vitrine' && lojaAbertaId != null) {
+      url.searchParams.set('loja', String(lojaAbertaId));
+    } else {
+      url.searchParams.delete('loja');
     }
     history.replaceState(null, '', url);
   }
@@ -139,8 +162,19 @@ function renderEmpresasMap(rows) {
     const lng = Number(r.lng);
     const marker = L.marker([lat, lng]);
     marker.bindPopup(
-      `<strong>${esc(r.nome || r.cnpj || `#${r.id}`)}</strong><br>${esc(r.endereco || '')}<br><span class="mono">${esc(r.cnpj || '')}</span>`,
+      `<strong>${esc(r.nome || r.cnpj || `#${r.id}`)}</strong><br>${esc(r.endereco || '')}<br><span class="mono">${esc(r.cnpj || '')}</span><br><button type="button" class="linkish" data-open-loja="${esc(r.id)}">Ver vitrine</button>`,
     );
+    marker.on('popupopen', () => {
+      const btn = document.querySelector(`[data-open-loja="${String(r.id)}"]`);
+      btn?.addEventListener(
+        'click',
+        (ev) => {
+          ev.preventDefault();
+          openVitrineLoja(r.id);
+        },
+        { once: true },
+      );
+    });
     empresasMarkers.addLayer(marker);
     bounds.push([lat, lng]);
   }
@@ -204,15 +238,161 @@ function startGeocodePoll() {
 
 function renderEmpresas(rows) {
   document.getElementById('count-empresas').textContent = `(${rows.length})`;
+  document.getElementById('count-vitrine').textContent = `(${rows.length})`;
   document.getElementById('empresas').innerHTML = rows.length
     ? rows
         .map(
           (r) =>
-            `<tr>${cell(r.id)}${cell(r.cnpj)}${cell(r.nome)}${cell(r.endereco)}</tr>`,
+            `<tr class="row-link" data-open-loja="${esc(r.id)}" tabindex="0" title="Abrir vitrine">${cell(r.id)}${cell(r.cnpj)}${cell(r.nome)}${cell(r.endereco)}</tr>`,
         )
         .join('')
     : '<tr><td colspan="4">Nenhuma empresa</td></tr>';
   if (!panels.empresas.hidden) renderEmpresasMap(rows);
+  if (!panels.vitrine?.hidden && lojaAbertaId == null) renderVitrineLista();
+}
+
+function emissaoSortKey(emissao) {
+  const m = String(emissao ?? '').match(
+    /(\d{2})\/(\d{2})\/(\d{4})(?:\s+(\d{2}):(\d{2}))?/,
+  );
+  if (!m) return 0;
+  return Number(`${m[3]}${m[2]}${m[1]}${m[4] || '00'}${m[5] || '00'}`);
+}
+
+function formatPreco(v) {
+  const raw = String(v ?? '').trim();
+  if (!raw) return '—';
+  if (/^R\$/i.test(raw)) return raw;
+  return `R$ ${raw}`;
+}
+
+function contagemItensLoja(empresaId) {
+  return allItens.filter((i) => Number(i.empresa_id) === Number(empresaId))
+    .length;
+}
+
+function catalogoLoja(empresaId) {
+  const rows = allItens.filter(
+    (i) => Number(i.empresa_id) === Number(empresaId),
+  );
+  const byKey = new Map();
+  for (const r of rows) {
+    const key = r.codigo_barras
+      ? `ean:${r.codigo_barras}`
+      : `cod:${String(r.codigo || '').trim()}`;
+    const sk = emissaoSortKey(r.nota_emissao);
+    const prev = byKey.get(key);
+    if (!prev) {
+      byKey.set(key, { ...r, _sk: sk, obs: 1 });
+      continue;
+    }
+    prev.obs += 1;
+    if (sk >= prev._sk) {
+      byKey.set(key, { ...r, _sk: sk, obs: prev.obs });
+    }
+  }
+  return [...byKey.values()].sort((a, b) =>
+    String(a.nome || '').localeCompare(String(b.nome || ''), 'pt-BR'),
+  );
+}
+
+function lojaHaystack(r) {
+  return [r.id, r.nome, r.cnpj, r.endereco]
+    .map((v) => String(v ?? '').toLowerCase())
+    .join(' ');
+}
+
+function renderVitrineLista() {
+  lojaAbertaId = null;
+  vitrineListaEl.hidden = false;
+  vitrineDetalheEl.hidden = true;
+  const q = String(buscaVitrineEl?.value || '')
+    .trim()
+    .toLowerCase();
+  const terms = q ? q.split(/\s+/).filter(Boolean) : [];
+  const rows = terms.length
+    ? allEmpresas.filter((r) => {
+        const hay = lojaHaystack(r);
+        return terms.every((t) => hay.includes(t));
+      })
+    : allEmpresas;
+  document.getElementById('count-vitrine').textContent = `(${allEmpresas.length})`;
+  vitrineGridEl.innerHTML = rows.length
+    ? rows
+        .map((r) => {
+          const n = contagemItensLoja(r.id);
+          return `<button type="button" class="loja-card" data-open-loja="${esc(r.id)}">
+            <h3 class="loja-nome">${esc(r.nome || r.cnpj || `Loja #${r.id}`)}</h3>
+            <p class="loja-meta">${esc(r.endereco || 'Endereço não informado')}</p>
+            <p class="loja-meta mono">${esc(r.cnpj || '')}</p>
+            <div class="loja-stats">
+              <span class="chip">${n} observação${n === 1 ? '' : 'ões'}</span>
+            </div>
+          </button>`;
+        })
+        .join('')
+    : `<p class="hint">${allEmpresas.length ? 'Nenhuma loja na pesquisa.' : 'Nenhuma loja cadastrada ainda.'}</p>`;
+}
+
+function renderVitrineDetalhe(empresaId) {
+  const loja = allEmpresas.find((e) => Number(e.id) === Number(empresaId));
+  if (!loja) {
+    renderVitrineLista();
+    return;
+  }
+  lojaAbertaId = Number(loja.id);
+  vitrineListaEl.hidden = true;
+  vitrineDetalheEl.hidden = false;
+  const catalogo = catalogoLoja(loja.id);
+  const q = String(buscaVitrineItensEl?.value || '')
+    .trim()
+    .toLowerCase();
+  const terms = q ? q.split(/\s+/).filter(Boolean) : [];
+  const rows = terms.length
+    ? catalogo.filter((r) => {
+        const hay = [r.nome, r.codigo, r.codigo_barras, r.valor_unitario]
+          .map((v) => String(v ?? '').toLowerCase())
+          .join(' ');
+        return terms.every((t) => hay.includes(t));
+      })
+    : catalogo;
+
+  vitrineLojaInfoEl.innerHTML = `
+    <h3 class="loja-nome">${esc(loja.nome || loja.cnpj || `Loja #${loja.id}`)}</h3>
+    <p class="loja-meta">${esc(loja.endereco || 'Endereço não informado')}</p>
+    <p class="loja-meta"><span class="mono">${esc(loja.cnpj || '')}</span></p>
+    <div class="loja-stats">
+      <span class="chip">${catalogo.length} produto${catalogo.length === 1 ? '' : 's'}</span>
+      <span class="chip ok">${contagemItensLoja(loja.id)} linhas de nota</span>
+    </div>`;
+
+  vitrineItensEl.innerHTML = rows.length
+    ? rows
+        .map(
+          (r) =>
+            `<tr>
+              <td>${esc(r.nome || '—')}</td>
+              <td class="mono">${esc(r.codigo_barras || '—')}</td>
+              <td>${esc(r.codigo || '—')}</td>
+              <td class="price-cell">${esc(formatPreco(r.valor_unitario))}</td>
+              <td>${esc(formatDataNota(r.nota_emissao) || '—')}</td>
+              <td>${esc(r.obs || 1)}</td>
+            </tr>`,
+        )
+        .join('')
+    : `<tr><td colspan="6">${catalogo.length ? 'Nenhum item na pesquisa' : 'Nenhum item observado nesta loja'}</td></tr>`;
+}
+
+function openVitrineLoja(empresaId) {
+  buscaVitrineItensEl.value = '';
+  renderVitrineDetalhe(empresaId);
+  setTab('vitrine');
+}
+
+function closeVitrineLoja() {
+  buscaVitrineItensEl.value = '';
+  renderVitrineLista();
+  setTab('vitrine');
 }
 
 function formatDataNota(emissao) {
@@ -479,10 +659,41 @@ function renderItens() {
 
 buscaItensEl.addEventListener('input', applyItensFilter);
 buscaEanEl.addEventListener('input', applyEanFilter);
+buscaVitrineEl?.addEventListener('input', () => {
+  lojaAbertaId = null;
+  renderVitrineLista();
+});
+buscaVitrineItensEl?.addEventListener('input', () => {
+  if (lojaAbertaId != null) renderVitrineDetalhe(lojaAbertaId);
+});
+document.getElementById('vitrine-voltar')?.addEventListener('click', () => {
+  closeVitrineLoja();
+});
+vitrineGridEl?.addEventListener('click', (ev) => {
+  const btn = ev.target.closest('[data-open-loja]');
+  if (!btn) return;
+  openVitrineLoja(btn.dataset.openLoja);
+});
+document.getElementById('empresas')?.addEventListener('click', (ev) => {
+  const row = ev.target.closest('tr[data-open-loja]');
+  if (!row) return;
+  openVitrineLoja(row.dataset.openLoja);
+});
+document.getElementById('empresas')?.addEventListener('keydown', (ev) => {
+  if (ev.key !== 'Enter' && ev.key !== ' ') return;
+  const row = ev.target.closest('tr[data-open-loja]');
+  if (!row) return;
+  ev.preventDefault();
+  openVitrineLoja(row.dataset.openLoja);
+});
 
 for (const tab of tabs) {
   tab.addEventListener('click', () => {
     if (tab.dataset.tab === 'itens') setItensSub(itensSub);
+    if (tab.dataset.tab === 'vitrine') {
+      lojaAbertaId = null;
+      renderVitrineLista();
+    }
     setTab(tab.dataset.tab);
   });
 }
@@ -531,12 +742,22 @@ async function reloadItens() {
 function readRoute() {
   const params = new URLSearchParams(location.search);
   const nota = params.get('nota');
+  const loja = params.get('loja');
   const hash = (location.hash || '').replace(/^#/, '');
   if (nota) {
     filtroNotaId = Number(nota);
     filtroNotaLabel = `nota #${nota}`;
     itensSub = 'lista';
     return 'itens';
+  }
+  if (loja) {
+    lojaAbertaId = Number(loja);
+    return 'vitrine';
+  }
+  const lojaHash = hash.match(/^loja-(\d+)$/);
+  if (lojaHash) {
+    lojaAbertaId = Number(lojaHash[1]);
+    return 'vitrine';
   }
   if (hash === 'codigos-barras') {
     itensSub = 'ean';
@@ -571,7 +792,13 @@ async function load() {
     renderItens();
     applyEanFilter();
     setItensSub(itensSub, { updateHash: false });
-    setTab(tab === 'notas' ? 'itens' : tab, { updateHash: true });
+    const next = tab === 'notas' ? 'itens' : tab;
+    if (next === 'vitrine' && lojaAbertaId != null) {
+      renderVitrineDetalhe(lojaAbertaId);
+    } else if (next === 'vitrine') {
+      renderVitrineLista();
+    }
+    setTab(next, { updateHash: true });
     setStatus(
       `${allEmpresas.length} empresas · ${notas.notas?.length ?? 0} notas · ${allItens.length} itens · ${allCodigosBarras.length} EANs`,
       'ok',

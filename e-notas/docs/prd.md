@@ -15,6 +15,7 @@ O **notinhas.org** é um **sistema cooperativo de notinhas** para:
 - **simular economia** (quanto se paga a menos com a escolha / split);
 - **pesquisar item em local próximo** (GPS, centro, bairro);
 - **listar estabelecimentos perto** que **menos cobram** ou **mais cobram** (nível de preço agregado no raio);
+- **destaques de concorrência de preços** — quando uma observação/publicação fica **abaixo** do preço de referência do item, o item entra no feed de destaques;
 - **vitrine de lojas** — catálogo público do estabelecimento (itens observados / e-commerce read-only), inclusive o que **não está anunciado na internet**;
 - **dar visibilidade ao comércio local** — exposição ao público do sortimento de balcão (descoberta → loja física);
 - **comprar produtos sem a margem** típica de apps de e-commerce / delivery (ex.: iFood, 99) — preço do balcão/NFC-e, não do marketplace;
@@ -38,6 +39,7 @@ Ler o QR/URL da NFC-e (preço, estabelecimento, data, cód. interno), vincular E
 - tela do estabelecimento (catálogo público / vitrine — sortimento local, inclusive fora da web);
 - busca de item com **estabelecimentos físicos próximos** (ex.: “no centro”);
 - **ranking de estabelecimentos próximos** (os que menos cobram / mais cobram no raio);
+- **destaques** (itens com preço abaixo do mercado / referência);
 - **gestão de compras pessoais** (o que comprou, quando, gasto mensal, análise financeira);
 - API para empresas;
 - **futuro:** **delivery / Full** — loja como depósito de vendas (pedido + entrega a partir da vitrine/cesta).
@@ -48,7 +50,7 @@ Ler o QR/URL da NFC-e (preço, estabelecimento, data, cód. interno), vincular E
 |---------|-----|
 | **Contribuinte** | Cola o QR da nota e vincula EAN (scan cooperativo) quando a nota só traz cód. interno |
 | **Comprador** | Busca EAN/nome, compara estabelecimentos, monta cesta, vê vitrine, descobre **onde comprar perto**, vê **quais lojas perto cobram menos ou mais**, **acompanha o próprio gasto**; no futuro, pede **delivery** |
-| **Empresa / parceiro** | Ganha **vitrine pública** do sortimento (itens que não estavam na internet); consome/alimenta via API; no futuro, opera a loja como depósito (**Full**) e atende delivery |
+| **Empresa / parceiro** | Ganha **vitrine pública**; aparece no **ranking** (mais/menos cobra) e nos **destaques** se o preço publicado estiver abaixo do mercado; consome/alimenta via API; no futuro, opera a loja como depósito (**Full**) |
 
 ## 5. Capacidades-alvo (must / should)
 
@@ -90,19 +92,27 @@ Ler o QR/URL da NFC-e (preço, estabelecimento, data, cód. interno), vincular E
 - Distinto da §5.5: aqui a pergunta é “**quais mercados perto de mim são mais baratos / caros?**”, não “onde acho este item”.
 - Transparência: mostrar janela de dados e que o score é observação de nota (não tabela oficial da loja).
 
-### 5.7 Integrações via API para empresas — *should* (B2B)
+### 5.7 Destaques / concorrência de preços — *must*
+- Quando uma observação (nota depositada ou publicação da loja) fica **abaixo** do preço de referência do mesmo produto (EAN preferencial) na região/raio, o item **entra nos destaques**.
+- Feed público de concorrência: produto, preço novo, loja, data, Δ% vs referência (ex. mediana / menor anterior / média do raio).
+- Critérios: limiar mínimo de queda (ex. ≥X% ou ≥R$ Y abaixo); frescor; cobertura EAN; anti-spam (dedupe por loja+EAN numa janela).
+- Entrada: home / “perto de mim” / vitrine da loja (selo “destaque”).
+- Incentivo à loja: preço competitivo = **visibilidade**; ao comprador: atalho para as melhores ofertas recentes.
+- Distinto da §5.1 (comparação sob demanda) e da §5.6 (ranking agregado da loja): aqui o gatilho é **preço abaixo → destaque automático**.
+
+### 5.8 Integrações via API para empresas — *should* (B2B)
 - API autenticada: consulta de preços / posição; vínculo EAN ↔ código de unidade; (futuro) catálogo oficial da loja.
 - Separar consumer (público/rate-limit) de B2B (chave, contrato, LGPD).
 
-### 5.8 Sistema de delivery / Full — *future*
+### 5.9 Sistema de delivery / Full — *future*
 - Evolução da vitrine/cesta para **pedido com entrega** (não só “onde comprar fisicamente”).
 - Cada loja física pode tornar-se também um **depósito de vendas** — no jargão do Mercado Livre: **Full** (**Mercado Envios Full** / **fulfillment**): estoque na origem (ou CD parceiro), preparação e envio a partir da venda.
 - Escopo futuro típico: carrinho → checkout → pagamento → logística (própria, parceira ou da loja-depósito) → status do pedido.
 - Pré-requisitos: vitrine estável, API empresas, acordo com estabelecimentos (estoque/preço oficial — não só observação de NFC-e).
-- **Fora da v1:** delivery/Full não bloqueia comparação, geo, histórico, ranking de lojas, vitrine nem montagem apartada.
+- **Fora da v1:** delivery/Full não bloqueia comparação, geo, histórico, ranking, destaques, vitrine nem montagem apartada.
 - **Gap vs apps (literatura):** preço em iFood/99/marketplaces costuma ficar acima do balcão (ordens típicas ~+8% a +22% em mercado; ~+17% a +30% em restaurante — ver [`../marca/comparacao-precos-apps/`](../marca/comparacao-precos-apps/README.md)). O índice NFC-e permanece fonte de **preço físico**; não misturar séries sem rótulo de canal.
 
-### 5.9 Gestão de compras e análise financeira — *should*
+### 5.10 Gestão de compras e análise financeira — *should*
 - A partir das **notas que o usuário depositou** (conta / sessão autenticada), expor o **extrato pessoal** de compras — distinto do índice público de preços.
 - **O que comprou:** lista de itens (nome, EAN se houver, quantidade, valor) agrupáveis por nota ou por produto.
 - **Quando comprou:** data/hora da nota (emissão NFC-e); filtros por período (dia, semana, mês, intervalo).
@@ -118,7 +128,7 @@ Ler o QR/URL da NFC-e (preço, estabelecimento, data, cód. interno), vincular E
 
 ## 6. Fora de escopo (PRD v1)
 
-- Checkout / pagamento / **delivery** (planejado em §5.8 *future*, não nesta versão)
+- Checkout / pagamento / **delivery** (planejado em §5.9 *future*, não nesta versão)
 - Emissão de NF-e/NFS-e
 - Scraping fora da URL do QR (exceto fontes oficiais explícitas no futuro)
 - App nativo obrigatório (web HTTPS primeiro)
@@ -144,12 +154,13 @@ Ler o QR/URL da NFC-e (preço, estabelecimento, data, cód. interno), vincular E
 1. Comparação EAN + menor preço  
 2. Busca geo (item → estabelecimentos perto / no centro)  
 3. **Ranking de lojas perto** (menos cobram / mais cobram)  
-4. Histórico por produto/estabelecimento  
-5. Vitrine do estabelecimento (e-commerce read-only)  
-6. **Gestão de compras + gasto mensal / análise financeira** (extrato das notas do usuário)  
-7. Montagem apartada (cesta + split)  
-8. API empresas (MVP: leitura + vínculo EAN)  
-9. **Delivery / Full** — loja como depósito de vendas (após vitrine + API + parceria)
+4. **Destaques** (preço abaixo do mercado → feed de concorrência)  
+5. Histórico por produto/estabelecimento  
+6. Vitrine do estabelecimento (e-commerce read-only)  
+7. **Gestão de compras + gasto mensal / análise financeira** (extrato das notas do usuário)  
+8. Montagem apartada (cesta + split)  
+9. API empresas (MVP: leitura + vínculo EAN)  
+10. **Delivery / Full** — loja como depósito de vendas (após vitrine + API + parceria)
 
 ## 9. Concorrência (síntese)
 
@@ -173,8 +184,8 @@ Ver matriz em [`../marca/benchmarking-solucoes/00-curadoria.html`](../marca/benc
 
 ### 9.2 Matriz de comparação (todas as capacidades)
 
-| Solução | Comp | Hist | Apart | Vitr | Geo | Rank | Gasto | API | Deliv |
-|---------|------|------|-------|------|-----|------|-------|-----|-------|
+| Solução | Comp | Hist | Apart | Vitr | Geo | Rank | Dest | API | Deliv |
+|---------|------|------|-------|------|-----|------|------|-----|-------|
 | Busca Preço | Sim | Sim | Parc. | Parc. | Parc. | Não | Não | Não | Não |
 | Nota Preço | Sim | Sim | **Sim** | Não | Parc. | Não | Não | Não | Não |
 | Mercado Certo | Sim | Parc. | **Sim** | Não | **Sim** | Parc. | Não | Não | Não |
@@ -187,7 +198,7 @@ Ver matriz em [`../marca/benchmarking-solucoes/00-curadoria.html`](../marca/benc
 | Quantto | Sim | Sim | N/A | N/A | Reg. | N/A | N/A | **Sim** | Não |
 | **notinhas.org** | Alvo | Alvo | Alvo | Alvo | Alvo | Alvo | Alvo | Alvo | **Fut.** |
 
-Comp=comparar · Hist=histórico · Apart=split/economia · Vitr=vitrine + itens fora da web · Geo=item perto · Rank=lojas baratas/caras · Gasto=extrato · API=B2B · Deliv=delivery/Full.
+Comp=comparar · Hist=histórico · Apart=split/economia · Vitr=vitrine + itens fora da web · Geo=item perto · Rank=lojas baratas/caras · Dest=destaques (preço abaixo) · API=B2B · Deliv=delivery/Full. Gasto pessoal = alvo notinhas (fora desta grade).
 
 ### 9.3 Capacidade × gap da proposta
 
@@ -200,6 +211,7 @@ Comp=comparar · Hist=histórico · Apart=split/economia · Vitr=vitrine + itens
 | Visibilidade itens fora da web | Quase ninguém no consumer NFC-e | Sortimento de balcão → público |
 | Busca geo / perto | Nota Paraná, MP Brasil, apps geo | Âncora “centro/bairro” + vitrine |
 | Ranking lojas baratas/caras perto | Gov/apps (parcial, por item) | Lista agregada da loja no raio |
+| Destaques (preço abaixo → feed) | Quase ninguém no NFC-e | Concorrência automática nos destaques |
 | Sem margem de app (iFood/99) | Quase ninguém posiciona assim | Preço balcão/NFC-e explícito |
 | Comércio local | Implícito nos geo | Job explícito + exposição pública |
 | Gestão de compras / gasto | Extratos / finanças | NFC-e depositada → extrato |
@@ -216,6 +228,6 @@ Comp=comparar · Hist=histórico · Apart=split/economia · Vitr=vitrine + itens
 - REQ-014 em `requisitos.md` espelha as capacidades.  
 - Card Trello e pasta de benchmarking: ver READMEs locais.  
 - Apresentação: slides 03 = o quê, 04–05 = como, 06–07 = matriz/alcance.
-- §5.6 ranking lojas perto: remover seção e bullets correlatos em §1–§3, métricas, prioridade e matriz; slide o quê / capacidades.
+- §5.6 ranking / §5.7 destaques: remover seções e correlatos em §1–§3, prioridade, matriz e slides.
 - Visibilidade comércio local / itens fora da web: reverter bullets §1, §5.4 e cards da apresentação.
-- §5.8 Full: reverter nomenclatura “Delivery / Full” e menção a loja-depósito.
+- §5.9 Full: reverter nomenclatura “Delivery / Full” e menção a loja-depósito.

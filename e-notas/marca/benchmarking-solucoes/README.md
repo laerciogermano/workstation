@@ -10,8 +10,8 @@ Matriz vs **todas** as capacidades do PRD + **alcance geográfico** + gap vs pro
 
 ## Matriz (resumo)
 
-| Solução | Alcance | Comp | Hist | Apart | Vitr | Geo | Rank | Gasto | API | Deliv |
-|---------|---------|------|------|-------|------|-----|------|-------|-----|-------|
+| Solução | Alcance | Comp | Hist | Apart | Vitr | Geo | Rank | Dest | API | Deliv |
+|---------|---------|------|------|-------|------|-----|------|------|-----|-------|
 | Busca Preço | MG, SP, RJ | Sim | Sim | Parc. | Parc. | Parc. | Não | Não | Não | Não |
 | Nota Preço | RM Rio (RJ) | Sim | Sim | **Sim** | Não | Parc. | Não | Não | Não | Não |
 | Mercado Certo | Por cidade | Sim | Parc. | **Sim** | Não | **Sim** | Parc. | Não | Não | Não |
@@ -24,7 +24,7 @@ Matriz vs **todas** as capacidades do PRD + **alcance geográfico** + gap vs pro
 | Quantto | B2B contratual | Sim | Sim | N/A | N/A | Reg. | N/A | N/A | **B2B** | Não |
 | **notinhas.org** | Lab **PR** → expansão*** | Alvo | Alvo | Alvo | Alvo | Alvo | Alvo | Alvo | Alvo | **Fut.** |
 
-**Colunas:** Comp=comparar · Hist=histórico · Apart=split/economia · Vitr=vitrine + itens fora da web · Geo=item perto · Rank=lojas baratas/caras · Gasto=extrato/análise · API=B2B · Deliv=delivery/Full (loja-depósito).
+**Colunas:** Comp=comparar · Hist=histórico · Apart=split/economia · Vitr=vitrine + itens fora da web · Geo=item perto · Rank=lojas baratas/caras · Dest=destaques (preço abaixo do mercado) · API=B2B · Deliv=delivery/Full (loja-depósito).
 
 \*PoupApp declara monitoramento em 26 UF+DF; liquidez varia por cidade.  
 \*\*MP Brasil: adesão SEFAZ (lista muda; SP tipicamente fora) — **não é nacional**.  

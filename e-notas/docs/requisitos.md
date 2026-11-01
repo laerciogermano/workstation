@@ -118,9 +118,10 @@ Insumos do card [Benchmarking soluções similares](https://trello.com/c/1fMjqGd
 - **Tela da loja (vitrine e-commerce)** — página do estabelecimento com itens observados (catálogo read-only, sem checkout); **visibilidade pública** do sortimento local, inclusive itens que **não estão na internet**.
 - **Busca geo / onde comprar perto** — pesquisar um item e ver lojas físicas próximas (GPS ou região, ex. centro), com distância, preço e data.
 - **Ranking de estabelecimentos perto** — listar lojas no raio ordenadas pelas que **menos cobram** ou **mais cobram** (nível de preço agregado da loja a partir das notas; distinto da busca por item).
+- **Destaques / concorrência de preços** — observação ou publicação **abaixo** do preço de referência do item → entra no feed de destaques (selo na vitrine / home / perto).
 - **Integrações via API para empresas** — API B2B para estabelecimentos/parceiros consultarem ou alimentarem o índice.
-- **Sistema de delivery / Full (*future*)** — loja como **depósito de vendas** (jargão Mercado Livre: **Full** / fulfillment); pedido + entrega a partir da vitrine/cesta; fora da v1 (ver [PRD](prd.md) §5.8).
-- **Gestão de compras e análise financeira** — extrato das notas do usuário: o que / quando / onde comprou; gasto por mês; rankings e tendência (ver [PRD](prd.md) §5.9).
+- **Sistema de delivery / Full (*future*)** — loja como **depósito de vendas** (jargão Mercado Livre: **Full** / fulfillment); pedido + entrega a partir da vitrine/cesta; fora da v1 (ver [PRD](prd.md) §5.9).
+- **Gestão de compras e análise financeira** — extrato das notas do usuário: o que / quando / onde comprou; gasto por mês; rankings e tendência (ver [PRD](prd.md) §5.10).
 - **Fonte do preço** — observações do índice são NFC-e (balcão). Preços de apps/marketplaces, se exibidos no futuro, devem vir com **rótulo de canal** e não misturar na mesma série histórica sem aviso (insumo: [`../marca/comparacao-precos-apps/`](../marca/comparacao-precos-apps/README.md)).
 
 Curadoria: [`../marca/benchmarking-solucoes/README.md`](../marca/benchmarking-solucoes/README.md).

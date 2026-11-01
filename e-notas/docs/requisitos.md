@@ -155,6 +155,12 @@ Curadoria: [`../marca/benchmarking-solucoes/README.md`](../marca/benchmarking-so
 - Meta viewport: `maximum-scale=1, user-scalable=no, viewport-fit=cover` (sem pinch-zoom).
 - Sensação de app: `theme-color`, `apple-mobile-web-app-*`, `overscroll-behavior: none`, `touch-action: manipulation`, safe-area — **sem** manifest/service worker (não é PWA instalável).
 
+## REQ-020 — Preview ao compartilhar (WhatsApp / OG) (2026-11-01)
+
+- Metas Open Graph + Twitter Card nas páginas (`og:title`, `og:description`, `og:image` absoluto HTTPS, `og:url`, dimensões 1200×630).
+- Imagem: `public/og-image.png` (WhatsApp / Facebook / similares leem OG, não JS).
+- URL canônica de produção: `https://144.126.154.90/enotas/`.
+
 ---
 
 ## Próximos passos

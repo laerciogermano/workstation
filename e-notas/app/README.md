@@ -17,7 +17,7 @@ npm start
 
 `https://<ip-lan>:4173` · `PORT=4173`.
 
-Produção Contabo (convive com conect tec): `http://144.126.154.90/enotas/` ou `:4173` — ver [`../deploy/README.md`](../deploy/README.md).
+Produção Contabo (HTTPS, convive com conect tec): `https://144.126.154.90/enotas/` ou `https://144.126.154.90:4173/` — ver [`../deploy/README.md`](../deploy/README.md).
 
 ## `.env`
 

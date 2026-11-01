@@ -79,11 +79,11 @@ App: [`../app/README.md`](../app/README.md).
 
 ## REQ-010 — Publicação Contabo (2026-11-01)
 
-- Front + API do e-notas na Contabo **sem substituir** o conect tec:
+- Front + API do e-notas na Contabo **em HTTPS**, **sem substituir** o conect tec:
   - conect tec: `http://144.126.154.90/`
-  - e-notas: `http://144.126.154.90/enotas/` e `http://144.126.154.90:4173/`
-- nginx: path `/enotas/` no site connectmax + server `:4173`; Node em `127.0.0.1:4174` (unit `enotas`).
-- Alias `/e-notas/` → `/enotas/` (path inexistente não pode cair no SPA do conect tec).
+  - e-notas: `https://144.126.154.90/enotas/` e `https://144.126.154.90:4173/`
+- HTTP `/enotas/` redireciona para HTTPS. Node `127.0.0.1:4174`; TLS no nginx (`:443` path + `:4173` SSL).
+- Alias `/e-notas/` → `/enotas/`.
 - Lab local continua HTTPS autoassinado (`USE_HTTP` desligado).
 
 ## REQ-011 — Código de barras por empresa / unidade (2026-11-01)

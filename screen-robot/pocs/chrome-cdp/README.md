@@ -7,10 +7,13 @@ Controla um Chrome já rodando com `--remote-debugging-port=9222` (mesmo perfil/
 ```bash
 ./start-marcelino-jidarir-facebook.sh          # CDP :9222
 ./start-laercio-germano.sh                     # CDP :9223
-# opcional URL: ./start-laercio-germano.sh https://bot.sannysoft.com/
+./start-marina-costa.sh                        # CDP :9224 (Marina Costa / LI)
+# opcional URL: ./start-marina-costa.sh https://www.linkedin.com/
 ```
 
 Registro: [`../android-studio/contas-facebook-chrome.csv`](../android-studio/contas-facebook-chrome.csv)
+
+**Antes → depois (Marina):** sem perfil → `~/chrome-profiles/marina-costa` + `start-marina-costa.sh` (:9224). Rollback: fechar Chrome; `rm -rf ~/chrome-profiles/marina-costa`; remover script/linha do CSV.
 
 ## Script
 

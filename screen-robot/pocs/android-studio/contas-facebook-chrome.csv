@@ -1,3 +1,4 @@
 data,nome,plataforma,chrome_user_data_dir,cdp_port,start_script,obs
 2026-10-31,Marcelino Jidarir,facebook,~/chrome-profiles/marcelino-jidarir-facebook,9222,screen-robot/pocs/chrome-cdp/start-marcelino-jidarir-facebook.sh,perfil Chrome isolado (cookies/sessão)
 2026-10-31,Laercio Germano,,~/chrome-profiles/laercio-germano,9223,screen-robot/pocs/chrome-cdp/start-laercio-germano.sh,perfil Chrome isolado (cookies/sessão)
+2026-11-01,Marina Costa,linkedin,~/chrome-profiles/marina-costa,9224,screen-robot/pocs/chrome-cdp/start-marina-costa.sh,perfil Chrome isolado (cookies/sessão); objetivo criar LI via CDP

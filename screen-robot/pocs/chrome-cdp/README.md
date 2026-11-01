@@ -25,7 +25,7 @@ Registro: [`../android-studio/contas-facebook-chrome.csv`](../android-studio/con
   --empresa ConectMax --code 123456
 ```
 
-Entradas CLI do `linkedin-signup-cdp.mjs`: `--email` `--password` `--first|--nome` `--last|--sobrenome` `--location` `--job|--cargo` `--company|--empresa` (`--code` se PIN). Cliques só via `Input.dispatchMouseEvent`. Rollback: apagar conta LI; CSV `nao_criada`.
+Entradas CLI do `linkedin-signup-cdp.mjs`: `--email` `--password` `--first|--nome` `--last|--sobrenome` `--location` `--job|--cargo` `--company|--empresa` (`--code` se PIN). Após o PIN, clica **Pular** nas telas opcionais. Cliques só via `Input.dispatchMouseEvent`. Rollback: apagar conta LI; CSV `nao_criada`.
 
 ## Script
 

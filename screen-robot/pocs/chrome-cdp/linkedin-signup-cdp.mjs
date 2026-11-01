@@ -320,6 +320,24 @@ async function main() {
       console.log('code', CODE);
       await clickRe('continuar|continue|confirmar|verify');
       await sleep(3000);
+      // pós-PIN: Pular telas opcionais do onboarding
+      for (let s = 0; s < 10; s++) {
+        st = await snap();
+        const skip = st.btns.find((b) => /^pular$|^skip$/i.test(b.text));
+        if (!skip) break;
+        console.log('click', skip.text);
+        await clickXY(skip.x, skip.y);
+        await sleep(2000);
+      }
+      continue;
+    }
+
+    // Pular passos opcionais (carreira, foto, pessoas, seguir…)
+    if (st.btns.some((b) => /^pular$|^skip$/i.test(b.text))) {
+      const skip = st.btns.find((b) => /^pular$|^skip$/i.test(b.text));
+      console.log('click', skip.text);
+      await clickXY(skip.x, skip.y);
+      await sleep(2000);
       continue;
     }
 

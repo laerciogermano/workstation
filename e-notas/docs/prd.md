@@ -14,6 +14,7 @@ O **notinhas.org** é um **sistema cooperativo de notinhas** para:
 - **comparar preço** entre estabelecimentos;
 - **simular economia** (quanto se paga a menos com a escolha / split);
 - **pesquisar item em local próximo** (GPS, centro, bairro);
+- **vitrine de lojas** — catálogo do estabelecimento (itens observados / e-commerce read-only);
 - **comprar produtos sem a margem** típica de apps de e-commerce / delivery (ex.: iFood, 99) — preço do balcão/NFC-e, não do marketplace;
 - **movimentar o comércio local** (descoberta e deslocamento até a loja física);
 - **separar compras** entre lojas para **menor custo total**;
@@ -171,7 +172,7 @@ Ver matriz em [`../marca/benchmarking-solucoes/00-curadoria.html`](../marca/benc
 | API empresas | Quantto, Economiza AL | B2B no eixo consumer NFC-e |
 | Delivery | Marketplaces (com margem) | Futuro a partir da vitrine (preço físico) |
 
-**Leitura:** ninguém no consumer junta o pacote da §1 (comparar + simular + perto + local + split + API + delivery futuro) com preço sem margem de marketplace. Gov cobre geo bem, mas sem vitrine/split/UX de compra. Alcance amplo (PoupApp / MP Brasil) ≠ pacote completo.
+**Leitura:** ninguém no consumer junta o pacote da §1 (comparar + simular + perto + vitrine + local + split + API + delivery futuro) com preço sem margem de marketplace. Gov cobre geo bem, mas sem vitrine/split/UX de compra. Alcance amplo (PoupApp / MP Brasil) ≠ pacote completo.
 
 ## 10. Rollback / caminho inverso
 

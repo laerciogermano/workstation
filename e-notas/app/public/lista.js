@@ -40,13 +40,21 @@ function renderEmpresas(rows) {
     : '<tr><td colspan="4">Nenhuma empresa</td></tr>';
 }
 
+function formatDataNota(emissao) {
+  const raw = String(emissao ?? '').trim().replace(/\s*-\s*$/, '');
+  if (!raw) return '';
+  const m = raw.match(/^(\d{2}\/\d{2}\/\d{4})(?:\s+(\d{2}:\d{2}(?::\d{2})?))?/);
+  if (!m) return raw;
+  return m[2] ? `${m[1]} ${m[2].slice(0, 5)}` : m[1];
+}
+
 function renderNotas(rows) {
   document.getElementById('count-notas').textContent = `(${rows.length})`;
   document.getElementById('notas').innerHTML = rows.length
     ? rows
         .map(
           (r) =>
-            `<tr>${cell(r.id)}${cell(r.empresa_nome || r.empresa_cnpj)}${cell(r.numero)}${cell(r.emissao)}${cell(r.qtd_itens)}${cell(r.valor_total)}${cell(r.descontos)}${cell(r.outras_despesas)}${cell(r.chave_acesso, 'mono')}</tr>`,
+            `<tr>${cell(r.id)}${cell(formatDataNota(r.emissao))}${cell(r.empresa_nome || r.empresa_cnpj)}${cell(r.numero)}${cell(r.qtd_itens)}${cell(r.valor_total)}${cell(r.descontos)}${cell(r.outras_despesas)}${cell(r.chave_acesso, 'mono')}</tr>`,
         )
         .join('')
     : '<tr><td colspan="9">Nenhuma nota</td></tr>';

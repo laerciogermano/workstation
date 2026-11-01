@@ -216,7 +216,13 @@ export async function listNotas(client = getPool()) {
     `SELECT n.*, e.nome AS empresa_nome, e.cnpj AS empresa_cnpj
      FROM ${t('notas')} n
      JOIN ${t('empresas')} e ON e.id = n.empresa_id
-     ORDER BY n.id DESC`,
+     ORDER BY
+       CASE
+         WHEN n.emissao ~ '^[0-9]{2}/[0-9]{2}/[0-9]{4}' THEN
+           to_timestamp(substring(n.emissao from 1 for 19), 'DD/MM/YYYY HH24:MI:SS')
+         ELSE NULL
+       END DESC NULLS LAST,
+       n.id DESC`,
   );
   return r.rows;
 }

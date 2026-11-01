@@ -52,7 +52,7 @@ Resposta: `{ ok, created, empresaCriada, url, empresa, nota, itens }`.
 | Método | Rota | Resposta |
 |--------|------|----------|
 | `GET` | `/api/empresas` | `{ ok, empresas }` |
-| `GET` | `/api/notas` | `{ ok, notas }` (com `empresa_nome` / `empresa_cnpj`) |
+| `GET` | `/api/notas` | `{ ok, notas }` (com `empresa_nome` / `empresa_cnpj`; ordem emissão DESC) |
 | `GET` | `/api/itens` | `{ ok, itens }` (com `empresa_nome`, `nota_numero`, `chave_acesso`) |
 
 ## Reverter

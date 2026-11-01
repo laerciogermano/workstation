@@ -3,6 +3,7 @@ const buscaItensEl = document.getElementById('busca-itens');
 const buscaEanEl = document.getElementById('busca-ean');
 const buscaVitrineEl = document.getElementById('busca-vitrine');
 const buscaVitrineItensEl = document.getElementById('busca-vitrine-itens');
+const buscaProdutosEl = document.getElementById('busca-produtos');
 const buscaNotasEl = document.getElementById('busca-notas');
 const buscaNotaItensEl = document.getElementById('busca-nota-itens');
 const filtroNotaEl = document.getElementById('filtro-nota');
@@ -16,6 +17,11 @@ const eanFormStatusEl = document.getElementById('ean-form-status');
 const eanCamStatusEl = document.getElementById('ean-cam-status');
 const vitrineListaEl = document.getElementById('vitrine-lista');
 const vitrineDetalheEl = document.getElementById('vitrine-detalhe');
+const produtosListaEl = document.getElementById('produtos-lista');
+const produtoDetalheEl = document.getElementById('produto-detalhe');
+const produtoInfoEl = document.getElementById('produto-info');
+const produtoTimelineEl = document.getElementById('produto-timeline');
+const countProdutoPrecosEl = document.getElementById('count-produto-precos');
 const vitrineGridEl = document.getElementById('vitrine-grid');
 const produtosGridEl = document.getElementById('produtos-grid');
 const countProdutosEl = document.getElementById('count-produtos');
@@ -30,12 +36,8 @@ const tabs = [...document.querySelectorAll('.tab')];
 const subtabs = [...document.querySelectorAll('.subtab')];
 const panels = {
   empresas: document.getElementById('panel-empresas'),
+  produtos: document.getElementById('panel-produtos'),
   notas: document.getElementById('panel-notas'),
-  itens: document.getElementById('panel-itens'),
-};
-const itensViews = {
-  lista: document.getElementById('itens-view-lista'),
-  ean: document.getElementById('itens-view-ean'),
 };
 
 let allEmpresas = [];
@@ -46,6 +48,7 @@ let filtroNotaId = null;
 let filtroNotaLabel = '';
 let itensSub = 'lista';
 let lojaAbertaId = null;
+let produtoAbertaKey = null;
 let notaAbertaId = null;
 let eanScanner = null;
 let eanScanBusy = false;
@@ -109,7 +112,7 @@ function setTab(name, { updateHash = true } = {}) {
     tab.setAttribute('aria-selected', on ? 'true' : 'false');
   }
   for (const [key, panel] of Object.entries(panels)) {
-    panel.hidden = key !== name;
+    if (panel) panel.hidden = key !== name;
   }
   if (name === 'empresas') {
     if (lojaAbertaId != null) renderVitrineDetalhe(lojaAbertaId);
@@ -120,6 +123,10 @@ function setTab(name, { updateHash = true } = {}) {
       renderEmpresasMap(allEmpresas);
     });
   }
+  if (name === 'produtos') {
+    if (produtoAbertaKey != null) renderProdutoDetalhe(produtoAbertaKey);
+    else renderProdutosTab();
+  }
   if (name === 'notas') {
     if (notaAbertaId != null) renderNotaDetalhe(notaAbertaId);
     else renderNotasLista();
@@ -127,17 +134,15 @@ function setTab(name, { updateHash = true } = {}) {
   if (updateHash) {
     const url = new URL(location.href);
     url.hash =
-      name === 'itens' && itensSub === 'ean'
-        ? 'codigos-barras'
-        : name === 'empresas' && lojaAbertaId != null
-          ? `loja-${lojaAbertaId}`
+      name === 'empresas' && lojaAbertaId != null
+        ? `loja-${lojaAbertaId}`
+        : name === 'produtos' && produtoAbertaKey != null
+          ? `produto-${encodeURIComponent(produtoAbertaKey)}`
           : name === 'notas' && notaAbertaId != null
             ? `nota-${notaAbertaId}`
             : name;
     if (name === 'notas' && notaAbertaId != null) {
       url.searchParams.set('nota', String(notaAbertaId));
-    } else if (name === 'itens' && itensSub === 'lista' && filtroNotaId != null) {
-      url.searchParams.set('nota', String(filtroNotaId));
     } else {
       url.searchParams.delete('nota');
     }
@@ -146,19 +151,13 @@ function setTab(name, { updateHash = true } = {}) {
     } else {
       url.searchParams.delete('loja');
     }
+    if (name === 'produtos' && produtoAbertaKey != null) {
+      url.searchParams.set('produto', produtoAbertaKey);
+    } else {
+      url.searchParams.delete('produto');
+    }
     history.replaceState(null, '', url);
   }
-}
-
-function setItensSub(name, { updateHash = true } = {}) {
-  itensSub = name === 'ean' ? 'ean' : 'lista';
-  for (const tab of subtabs) {
-    const on = tab.dataset.sub === itensSub;
-    tab.setAttribute('aria-selected', on ? 'true' : 'false');
-  }
-  itensViews.lista.hidden = itensSub !== 'lista';
-  itensViews.ean.hidden = itensSub !== 'ean';
-  if (!panels.itens.hidden && updateHash) setTab('itens');
 }
 
 function ensureEmpresasMap() {
@@ -290,13 +289,14 @@ function startGeocodePoll() {
 }
 
 function renderEmpresas(rows) {
-  const tabCount = document.getElementById('count-empresas-tab');
-  if (tabCount) tabCount.textContent = `(${rows.length})`;
-  if (!panels.empresas.hidden) {
+  const countEl = document.getElementById('count-empresas');
+  if (countEl) countEl.textContent = `(${rows.length})`;
+  if (!panels.empresas?.hidden) {
     renderEmpresasMap(rows);
     if (lojaAbertaId != null) renderVitrineDetalhe(lojaAbertaId);
     else renderVitrineLista();
   }
+  if (!panels.produtos?.hidden) renderProdutosTab();
 }
 
 function emissaoSortKey(emissao) {
@@ -369,8 +369,8 @@ function catalogoProdutos() {
   });
 }
 
-function homeSearchTerms() {
-  const q = String(buscaVitrineEl?.value || '')
+function searchTermsFrom(el) {
+  const q = String(el?.value || '')
     .trim()
     .toLowerCase();
   return q ? q.split(/\s+/).filter(Boolean) : [];
@@ -407,8 +407,9 @@ function lojaHaystack(r) {
     .join(' ');
 }
 
-function renderProdutosHome(terms) {
+function renderProdutosTab() {
   const catalogo = catalogoProdutos();
+  const terms = searchTermsFrom(buscaProdutosEl);
   const rows = terms.length
     ? catalogo.filter((r) => {
         const hay = [
@@ -462,24 +463,20 @@ function renderVitrineLista() {
   lojaAbertaId = null;
   vitrineListaEl.hidden = false;
   vitrineDetalheEl.hidden = true;
-  const terms = homeSearchTerms();
-  renderProdutosHome(terms);
+  const terms = searchTermsFrom(buscaVitrineEl);
   const rows = terms.length
     ? allEmpresas.filter((r) => {
         const hay = lojaHaystack(r);
         return terms.every((t) => hay.includes(t));
       })
     : allEmpresas;
-  const countEmpresas = `(${allEmpresas.length})`;
   const countEl = document.getElementById('count-empresas');
-  const countTabEl = document.getElementById('count-empresas-tab');
-  if (countEl) countEl.textContent = `(${rows.length})`;
-  if (countTabEl) countTabEl.textContent = countEmpresas;
+  if (countEl) countEl.textContent = `(${allEmpresas.length})`;
   vitrineGridEl.innerHTML = rows.length
     ? rows
         .map((r) => {
           const n = catalogoLoja(r.id).length;
-          return `<button type="button" class="loja-card loja-card-compact" data-open-loja="${esc(r.id)}">
+          return `<button type="button" class="loja-card" data-open-loja="${esc(r.id)}">
             <h3 class="loja-nome">${esc(r.nome || r.cnpj || `Estabelecimento #${r.id}`)}</h3>
             <p class="loja-meta">${esc(r.endereco || '')}</p>
             <div class="loja-stats">
@@ -488,7 +485,7 @@ function renderVitrineLista() {
           </button>`;
         })
         .join('')
-    : `<p class="hint">${allEmpresas.length ? 'Nenhum mercado nesta busca.' : 'Sem mercados.'}</p>`;
+    : `<p class="hint">${allEmpresas.length ? 'Nada encontrado.' : 'Sem estabelecimentos.'}</p>`;
 }
 
 function renderVitrineDetalhe(empresaId) {
@@ -729,7 +726,7 @@ function filterItens(rows) {
   if (filtroNotaId != null) {
     out = out.filter((r) => Number(r.nota_id) === Number(filtroNotaId));
   }
-  const q = String(buscaItensEl.value || '')
+  const q = String(buscaItensEl?.value || '')
     .trim()
     .toLowerCase();
   if (!q) return out;
@@ -741,6 +738,7 @@ function filterItens(rows) {
 }
 
 function updateFiltroBanner() {
+  if (!filtroNotaEl) return;
   if (filtroNotaId == null) {
     filtroNotaEl.hidden = true;
     filtroNotaEl.innerHTML = '';
@@ -757,8 +755,6 @@ function clearFiltroNota() {
   filtroNotaId = null;
   filtroNotaLabel = '';
   updateFiltroBanner();
-  applyItensFilter();
-  if (!panels.itens.hidden) setTab('itens');
 }
 
 function openItensDaNota(notaId, label) {
@@ -809,6 +805,7 @@ function eanHaystack(r) {
 }
 
 function applyEanFilter() {
+  if (!buscaEanEl) return;
   const q = String(buscaEanEl.value || '')
     .trim()
     .toLowerCase();
@@ -966,11 +963,14 @@ function renderItens() {
   applyItensFilter();
 }
 
-buscaItensEl.addEventListener('input', applyItensFilter);
-buscaEanEl.addEventListener('input', applyEanFilter);
+buscaItensEl?.addEventListener('input', applyItensFilter);
+buscaEanEl?.addEventListener('input', applyEanFilter);
 buscaVitrineEl?.addEventListener('input', () => {
   lojaAbertaId = null;
   renderVitrineLista();
+});
+buscaProdutosEl?.addEventListener('input', () => {
+  renderProdutosTab();
 });
 buscaVitrineItensEl?.addEventListener('input', () => {
   if (lojaAbertaId != null) renderVitrineDetalhe(lojaAbertaId);
@@ -991,10 +991,12 @@ produtosGridEl?.addEventListener('click', (ev) => {
 
 for (const tab of tabs) {
   tab.addEventListener('click', () => {
-    if (tab.dataset.tab === 'itens') setItensSub(itensSub);
     if (tab.dataset.tab === 'empresas') {
       lojaAbertaId = null;
       renderVitrineLista();
+    }
+    if (tab.dataset.tab === 'produtos') {
+      renderProdutosTab();
     }
     if (tab.dataset.tab === 'notas') {
       notaAbertaId = null;
@@ -1002,10 +1004,6 @@ for (const tab of tabs) {
     }
     setTab(tab.dataset.tab);
   });
-}
-
-for (const tab of subtabs) {
-  tab.addEventListener('click', () => setItensSub(tab.dataset.sub));
 }
 
 buscaNotasEl?.addEventListener('input', () => {
@@ -1054,16 +1052,16 @@ document.addEventListener('keydown', (ev) => {
 async function reloadCodigosBarras() {
   const data = await fetchJson('api/codigos-barras');
   allCodigosBarras = data.codigosBarras || [];
-  applyEanFilter();
+  if (!panels.produtos?.hidden) renderProdutosTab();
 }
 
 async function reloadItens() {
   const data = await fetchJson('api/itens');
   allItens = data.itens || [];
-  applyItensFilter();
   if (notaAbertaId != null) renderNotaDetalhe(notaAbertaId);
   if (lojaAbertaId != null) renderVitrineDetalhe(lojaAbertaId);
-  else if (!panels.empresas.hidden) renderVitrineLista();
+  else if (!panels.empresas?.hidden) renderVitrineLista();
+  if (!panels.produtos?.hidden) renderProdutosTab();
 }
 
 function readRoute() {
@@ -1089,10 +1087,7 @@ function readRoute() {
     lojaAbertaId = Number(lojaHash[1]);
     return 'empresas';
   }
-  if (hash === 'codigos-barras') {
-    itensSub = 'ean';
-    return 'itens';
-  }
+  if (hash === 'itens' || hash === 'codigos-barras') return 'produtos';
   if (hash === 'vitrine') return 'empresas';
   if (panels[hash]) return hash;
   return 'empresas';
@@ -1113,6 +1108,7 @@ async function load() {
     allCodigosBarras = eans.codigosBarras || [];
     const notaInicial = notaAbertaId;
     renderEmpresas(allEmpresas);
+    renderProdutosTab();
     if (notaInicial != null) {
       const n = allNotas.find((x) => Number(x.id) === Number(notaInicial));
       if (n) renderNotaDetalhe(n.id);
@@ -1120,12 +1116,8 @@ async function load() {
     } else {
       renderNotasLista();
     }
-    updateFiltroBanner();
-    renderItens();
-    applyEanFilter();
-    setItensSub(itensSub, { updateHash: false });
     let next = tab;
-    if (tab === 'vitrine') next = 'empresas';
+    if (tab === 'vitrine' || tab === 'itens') next = tab === 'itens' ? 'produtos' : 'empresas';
     setTab(next, { updateHash: true });
     setStatus('');
   } catch (err) {

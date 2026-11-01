@@ -153,9 +153,10 @@ Curadoria: [`../marca/benchmarking-solucoes/README.md`](../marca/benchmarking-so
 ## REQ-018 — Vitrine das lojas (2026-11-01)
 
 - Aba **Estabelecimentos** (nome mantido): feed estilo marketplace — **Produtos** (foto + menor preço + loja/data) acima, **Mercados** (cards) abaixo, **Mapa** em seguida.
-- Clique no produto abre o estabelecimento do menor preço; clique no mercado/mapa abre detalhe + catálogo (preço mais recente por EAN/código).
-- URL: `?loja=<id>` / `#loja-<id>`. UI enxuta (sem textos explicativos redundantes).
-- Ao **entrar** no estabelecimento (card, produto, popup ou deep-link), o mapa **foca no pin** daquela loja (zoom + popup). Ao voltar à lista, restaura o enquadramento de todos os pins.
+- Clique no **produto** → detalhe do produto (REQ-028). Clique no mercado/mapa → detalhe + catálogo (preço mais recente por EAN/código).
+- URL loja: `?loja=<id>` / `#loja-<id>`. UI enxuta (sem textos explicativos redundantes).
+- Ao **entrar** no estabelecimento (card, timeline do produto, popup ou deep-link), o mapa **foca no pin** daquela loja (zoom + popup). Ao voltar à lista, restaura o enquadramento de todos os pins.
+- Antes (produto): abria direto a loja do menor preço. Depois: abre o detalhe do produto.
 
 ## REQ-019 — Viewport app-like (sem PWA) (2026-11-01)
 
@@ -238,6 +239,16 @@ Curadoria: [`../marca/benchmarking-solucoes/README.md`](../marca/benchmarking-so
 - Front (Notas detalhe, Itens, EAN, vitrine): coluna com thumbnail do produto.
 - Antes: só EAN textual. Depois: foto vinculada ao código de barras.
 - Rollback: `ALTER TABLE enotas.codigos_barras DROP COLUMN foto_url;` + remover thumbs no front / pasta `ean-fotos/`.
+
+## REQ-028 — Detalhe do produto + timeline de preços (2026-11-01)
+
+- Clique no card de produto (home) abre **detalhe**: foto, nome, infos (EAN, cód., qtd. de preços/mercados) e **menor preço** destacado.
+- Abaixo: **timeline** com todas as observações de preço daquele produto (EAN ou nome), da mais recente à mais antiga — data, preço, mercado, nota.
+- Menor preço marcado em verde (chip + ponto da timeline).
+- Clique em um item da timeline abre o estabelecimento daquela observação.
+- URL: `?produto=<key>` / `#produto-<key>` (`ean:…` ou `nome:…`). Voltar → feed Estabelecimentos.
+- Antes: clique no produto ia para a loja do menor preço. Depois: detalhe + histórico.
+- Rollback: restaurar `data-open-loja` nos cards e remover `#produto-detalhe` / handlers.
 
 ## REQ-025 — Tela Notas → itens + EAN (2026-11-01)
 

@@ -249,18 +249,20 @@ async function main() {
     console.log('menu miss: Adicionar/Alterar imagem de capa');
   }
 
-  // Nova capa: Carregar*; capa existente: Alterar/Editar.
+  // Capa existente: overlay Alterar/Editar → modal; nova: já no modal Carregar*.
+  for (const t of ['Alterar foto', 'Change photo', 'Editar', 'Edit']) {
+    if (await clickText(t)) {
+      await sleep(1500);
+      break;
+    }
+  }
   for (const t of [
     'Carregar foto única',
     'Selecionar imagem',
-    'Alterar foto',
     'Carregar foto',
     'Carregar',
     'Upload photo',
     'Upload single photo',
-    'Change photo',
-    'Editar',
-    'Edit',
   ]) {
     if (await clickText(t)) break;
   }

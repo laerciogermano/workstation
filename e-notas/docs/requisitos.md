@@ -187,6 +187,13 @@ Curadoria: [`../marca/benchmarking-solucoes/README.md`](../marca/benchmarking-so
 - Craft de referência: [`../../core/shadcn-design/README.md`](../../core/shadcn-design/README.md) — regras Stripe/Linear/Vercel; paleta própria azul+verde.
 - Rollback: remover os dois arquivos v2; UI/tokens hex da v1 permanecem.
 
+## REQ-024 — App wordmark notinhas.shop (local + Contabo) (2026-11-01)
+
+- UI do app (`app/public/index.html`, `scan.html`, `lista.html`) e OG (`og-image.png`) usam **notinhas.shop** (não `notinhas.org`).
+- Contabo `/opt/e-notas/public/` espelha esses arquivos (mesmo Node `:4174` / `/enotas/` / site `notinhas`).
+- Antes → depois: título/wordmark/OG `.org` → `.shop`.
+- Rollback: restaurar HTML + `og-image.png` do commit anterior; no remoto, `scp` dos arquivos antigos para `/opt/e-notas/public/`.
+
 ---
 
 ## Próximos passos

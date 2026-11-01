@@ -77,7 +77,7 @@ App: [`../app/README.md`](../app/README.md).
 - Notas ordenadas da **mais nova para a mais antiga** (data de emissão; empate por id).
 - Na listagem de itens, existe um campo **Pesquisar** (filtro no front por código, nome, empresa e demais colunas).
 
-## REQ-009 — Publicação Contabo (2026-11-01)
+## REQ-010 — Publicação Contabo (2026-11-01)
 
 - Front + API do e-notas na Contabo **sem substituir** o conect tec:
   - conect tec: `http://144.126.154.90/`
@@ -85,6 +85,15 @@ App: [`../app/README.md`](../app/README.md).
 - nginx: path `/enotas/` no site connectmax + server `:4173`; Node em `127.0.0.1:4174` (unit `enotas`).
 - Alias `/e-notas/` → `/enotas/` (path inexistente não pode cair no SPA do conect tec).
 - Lab local continua HTTPS autoassinado (`USE_HTTP` desligado).
+
+## REQ-011 — Código de barras por empresa / unidade (2026-11-01)
+
+- Na aba **Itens** existe a opção **Códigos de barras** para cadastrar o mapeamento:
+  - **empresa** + **código da unidade** (código interno do item na nota) + **código de barras (EAN)**.
+- Finalidade: o EAN é o identificador comum entre empresas; cada loja usa códigos de unidade diferentes e a nota **não expõe** o código de barras — o vínculo é populado manualmente.
+- Chave natural: **`(empresa_id, codigo_unidade)`** — um EAN por código de unidade em cada empresa; reenvio atualiza o EAN (`UPSERT`).
+- Tabela `enotas.codigos_barras`. APIs: `GET` / `POST` `/api/codigos-barras`.
+- Na lista de itens: coluna **EAN** (quando já vinculado) e ação **Cadastrar EAN** / **Editar EAN** (pré-preenche o formulário).
 
 ---
 

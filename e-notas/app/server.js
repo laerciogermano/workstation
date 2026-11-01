@@ -15,9 +15,11 @@ import {
   cadastrarNotaCompleta,
   dbInfo,
   initDb,
+  listCodigosBarras,
   listEmpresas,
   listItens,
   listNotas,
+  upsertCodigoBarras,
 } from './db.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -113,6 +115,34 @@ app.get('/api/itens', async (_req, res) => {
   } catch (err) {
     console.error('[itens:erro]', err.message);
     return res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
+app.get('/api/codigos-barras', async (_req, res) => {
+  try {
+    const codigosBarras = await listCodigosBarras();
+    return res.json({ ok: true, codigosBarras });
+  } catch (err) {
+    console.error('[codigos-barras:erro]', err.message);
+    return res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
+app.post('/api/codigos-barras', async (req, res) => {
+  try {
+    const row = await upsertCodigoBarras({
+      empresaId: req.body?.empresa_id,
+      codigoUnidade: req.body?.codigo_unidade,
+      codigoBarras: req.body?.codigo_barras,
+    });
+    console.log(
+      `[codigo-barras] empresa=${row.empresa_id} unidade=${row.codigo_unidade} ean=${row.codigo_barras}`,
+    );
+    return res.json({ ok: true, codigoBarras: row });
+  } catch (err) {
+    const status = err.status || 500;
+    console.error('[codigos-barras:erro]', err.message);
+    return res.status(status).json({ ok: false, error: err.message });
   }
 });
 

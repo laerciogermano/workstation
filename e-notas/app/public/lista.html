@@ -66,32 +66,91 @@
       </section>
 
       <section class="block tab-panel" id="panel-itens" role="tabpanel" aria-labelledby="tab-itens" hidden>
-        <p id="filtro-nota" class="filter-banner" hidden></p>
-        <label class="search">
-          <span class="sr-only">Pesquisar itens</span>
-          <input
-            id="busca-itens"
-            type="search"
-            placeholder="Pesquisar por código, nome, empresa…"
-            autocomplete="off"
-          />
-        </label>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Empresa</th>
-                <th>Nota</th>
-                <th>Código</th>
-                <th>Nome</th>
-                <th>Qtd</th>
-                <th>Unit.</th>
-                <th>Total</th>
-              </tr>
-            </thead>
-            <tbody id="itens"></tbody>
-          </table>
+        <div class="subtabs" role="tablist" aria-label="Itens">
+          <button type="button" class="subtab" id="subtab-itens-lista" data-sub="lista" aria-selected="true">
+            Lista
+          </button>
+          <button type="button" class="subtab" id="subtab-itens-ean" data-sub="ean" aria-selected="false">
+            Códigos de barras <span id="count-ean" class="count"></span>
+          </button>
+        </div>
+
+        <div id="itens-view-lista">
+          <p id="filtro-nota" class="filter-banner" hidden></p>
+          <label class="search">
+            <span class="sr-only">Pesquisar itens</span>
+            <input
+              id="busca-itens"
+              type="search"
+              placeholder="Pesquisar por código, nome, empresa…"
+              autocomplete="off"
+            />
+          </label>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Empresa</th>
+                  <th>Nota</th>
+                  <th>Código unidade</th>
+                  <th>EAN</th>
+                  <th>Nome</th>
+                  <th>Qtd</th>
+                  <th>Unit.</th>
+                  <th>Total</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="itens"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="itens-view-ean" hidden>
+          <p class="hint">
+            Mapeia o código interno da loja (unidade na nota) ao código de barras (EAN),
+            para identificar o mesmo produto entre empresas.
+          </p>
+          <form id="form-ean" class="form-ean">
+            <label>
+              Empresa
+              <select id="ean-empresa" required></select>
+            </label>
+            <label>
+              Código da unidade
+              <input id="ean-unidade" type="text" required autocomplete="off" placeholder="código do item na nota" list="ean-unidade-sugeridos" />
+              <datalist id="ean-unidade-sugeridos"></datalist>
+            </label>
+            <label>
+              Código de barras (EAN)
+              <input id="ean-barras" type="text" required autocomplete="off" inputmode="numeric" placeholder="ex.: 7891234567890" />
+            </label>
+            <button type="submit" class="btn">Salvar</button>
+            <p id="ean-form-status" class="status" aria-live="polite"></p>
+          </form>
+          <label class="search">
+            <span class="sr-only">Pesquisar códigos de barras</span>
+            <input
+              id="busca-ean"
+              type="search"
+              placeholder="Pesquisar por empresa, unidade, EAN…"
+              autocomplete="off"
+            />
+          </label>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Empresa</th>
+                  <th>Código unidade</th>
+                  <th>Código de barras</th>
+                </tr>
+              </thead>
+              <tbody id="codigos-barras"></tbody>
+            </table>
+          </div>
         </div>
       </section>
     </main>

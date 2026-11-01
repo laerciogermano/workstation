@@ -123,6 +123,99 @@ h2 {
   text-decoration: underline;
 }
 
+.subtabs {
+  display: flex;
+  gap: 0.35rem;
+  margin: 0 0 1rem;
+}
+
+.subtab {
+  appearance: none;
+  border: 1px solid #243040;
+  border-radius: 8px;
+  padding: 0.4rem 0.75rem;
+  background: #1a222c;
+  color: #9aa8b8;
+  font: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.subtab:hover {
+  color: #e8eef5;
+}
+
+.subtab[aria-selected='true'] {
+  color: #e8eef5;
+  border-color: #4a90d9;
+  background: #1e2a38;
+}
+
+.form-ean {
+  display: grid;
+  gap: 0.65rem;
+  margin: 0 0 1rem;
+  padding: 0.85rem;
+  border: 1px solid #243040;
+  border-radius: 10px;
+  background: #1a222c;
+  max-width: 520px;
+}
+
+.form-ean label {
+  display: grid;
+  gap: 0.3rem;
+  font-size: 0.85rem;
+  color: #9aa8b8;
+}
+
+.form-ean input,
+.form-ean select {
+  width: 100%;
+  padding: 0.5rem 0.65rem;
+  border: 1px solid #243040;
+  border-radius: 8px;
+  background: #0f1419;
+  color: #e8eef5;
+  font: inherit;
+}
+
+.form-ean input:focus,
+.form-ean select:focus {
+  outline: 1px solid #4a90d9;
+  border-color: #4a90d9;
+}
+
+.btn {
+  appearance: none;
+  border: 0;
+  border-radius: 8px;
+  padding: 0.55rem 0.9rem;
+  background: #4a90d9;
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  justify-self: start;
+}
+
+.btn:hover {
+  background: #3a7bc0;
+}
+
+.btn-link {
+  appearance: none;
+  border: 0;
+  padding: 0;
+  background: none;
+  color: #6db3ff;
+  font: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+  text-decoration: underline;
+  white-space: nowrap;
+}
+
 .search {
   display: block;
   margin: 0 0 0.75rem;

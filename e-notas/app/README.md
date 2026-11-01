@@ -1,8 +1,8 @@
 # e-notas — app (scan QR)
 
-Front: escaneia o QR e envia a URL; página `/lista.html` lista empresas, notas e itens. Backend consulta a DANFE na **Fazenda PR**, cadastra **empresa** (se nova), **nota** e **uma linha de item por produto da nota** (histórico).
+Front: escaneia o QR e envia a URL; página `/lista.html` lista empresas, notas e itens. Na aba Itens: subaba **Códigos de barras** mapeia `empresa + código da unidade → EAN` (identificador comum; a nota não traz o EAN). Backend consulta a DANFE na **Fazenda PR**, cadastra **empresa** (se nova), **nota** e **uma linha de item por produto da nota** (histórico).
 
-Persistência: **Postgres Contabo** (`connectmax`), schema `enotas` (via `.env`).
+Persistência: **Postgres Contabo** (`connectmax`), schema `enotas` (via `.env`) — tabelas `empresas`, `notas`, `itens`, `codigos_barras`.
 
 HTTPS autoassinado em `certs/`.
 
@@ -37,7 +37,7 @@ Credenciais não vão no git (`.env` ignorado).
 | Rota | Função |
 |------|--------|
 | `/` | Scan do QR |
-| `/lista.html` | Listagem em abas: Empresas / Notas / Itens (pesquisa; clique na nota → itens dela) |
+| `/lista.html` | Listagem em abas: Empresas / Notas / Itens (subaba Códigos de barras; clique na nota → itens dela) |
 
 ## API
 
@@ -55,8 +55,10 @@ Resposta: `{ ok, created, empresaCriada, url, empresa, nota, itens }`.
 |--------|------|----------|
 | `GET` | `/api/empresas` | `{ ok, empresas }` |
 | `GET` | `/api/notas` | `{ ok, notas }` (com `empresa_nome` / `empresa_cnpj`; ordem emissão DESC) |
-| `GET` | `/api/itens` | `{ ok, itens }` (com `empresa_nome`, `nota_numero`, `chave_acesso`) |
+| `GET` | `/api/itens` | `{ ok, itens }` (com `empresa_nome`, `nota_numero`, `chave_acesso`, `codigo_barras` se mapeado) |
+| `GET` | `/api/codigos-barras` | `{ ok, codigosBarras }` |
+| `POST` | `/api/codigos-barras` | body `{ empresa_id, codigo_unidade, codigo_barras }` → upsert; `{ ok, codigoBarras }` |
 
 ## Reverter
 
-Parar `:4173`. Remover `/lista.html` + rotas `GET /api/{empresas,notas,itens}` (voltar ao commit anterior). Schema Postgres inalterado. `DROP SCHEMA enotas CASCADE;` só se quiser apagar dados.
+Parar `:4173`. Remover UI/rotas de códigos de barras (voltar ao commit anterior). Schema: `DROP TABLE enotas.codigos_barras;` se quiser apagar só o mapeamento. `DROP SCHEMA enotas CASCADE;` apaga tudo.

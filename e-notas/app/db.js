@@ -68,6 +68,21 @@ export async function initDb() {
 
     CREATE INDEX IF NOT EXISTS itens_codigo_idx ON ${t('itens')}(codigo);
     CREATE INDEX IF NOT EXISTS itens_nota_idx ON ${t('itens')}(nota_id);
+
+    CREATE TABLE IF NOT EXISTS ${t('codigos_barras')} (
+      id SERIAL PRIMARY KEY,
+      empresa_id INTEGER NOT NULL REFERENCES ${t('empresas')}(id),
+      codigo_unidade TEXT NOT NULL,
+      codigo_barras TEXT NOT NULL,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+      UNIQUE (empresa_id, codigo_unidade)
+    );
+
+    CREATE INDEX IF NOT EXISTS codigos_barras_ean_idx
+      ON ${t('codigos_barras')}(codigo_barras);
+    CREATE INDEX IF NOT EXISTS codigos_barras_empresa_idx
+      ON ${t('codigos_barras')}(empresa_id);
   `);
 
   // Migração: unicidade (nota_id, codigo) — remove duplicatas e aplica UNIQUE se faltar
@@ -229,13 +244,64 @@ export async function listNotas(client = getPool()) {
 
 export async function listItens(client = getPool()) {
   const r = await client.query(
-    `SELECT i.*, e.nome AS empresa_nome, n.numero AS nota_numero, n.chave_acesso
+    `SELECT i.*, e.nome AS empresa_nome, n.numero AS nota_numero, n.chave_acesso,
+            cb.codigo_barras
      FROM ${t('itens')} i
      JOIN ${t('empresas')} e ON e.id = i.empresa_id
      JOIN ${t('notas')} n ON n.id = i.nota_id
+     LEFT JOIN ${t('codigos_barras')} cb
+       ON cb.empresa_id = i.empresa_id AND cb.codigo_unidade = i.codigo
      ORDER BY i.id DESC`,
   );
   return r.rows;
+}
+
+export async function listCodigosBarras(client = getPool()) {
+  const r = await client.query(
+    `SELECT cb.*, e.nome AS empresa_nome, e.cnpj AS empresa_cnpj
+     FROM ${t('codigos_barras')} cb
+     JOIN ${t('empresas')} e ON e.id = cb.empresa_id
+     ORDER BY cb.id DESC`,
+  );
+  return r.rows;
+}
+
+/** Upsert: (empresa, código da unidade) → código de barras (EAN). */
+export async function upsertCodigoBarras(
+  { empresaId, codigoUnidade, codigoBarras },
+  client = getPool(),
+) {
+  const empresa = Number(empresaId);
+  const unidade = String(codigoUnidade ?? '').trim();
+  const ean = String(codigoBarras ?? '').trim();
+  if (!Number.isFinite(empresa) || empresa <= 0) {
+    throw Object.assign(new Error('empresa_id inválido'), { status: 400 });
+  }
+  if (!unidade) {
+    throw Object.assign(new Error('codigo_unidade obrigatório'), { status: 400 });
+  }
+  if (!ean) {
+    throw Object.assign(new Error('codigo_barras obrigatório'), { status: 400 });
+  }
+
+  const emp = await client.query(`SELECT id FROM ${t('empresas')} WHERE id = $1`, [
+    empresa,
+  ]);
+  if (!emp.rows[0]) {
+    throw Object.assign(new Error('empresa não encontrada'), { status: 404 });
+  }
+
+  const r = await client.query(
+    `INSERT INTO ${t('codigos_barras')} (empresa_id, codigo_unidade, codigo_barras)
+     VALUES ($1, $2, $3)
+     ON CONFLICT (empresa_id, codigo_unidade)
+     DO UPDATE SET
+       codigo_barras = EXCLUDED.codigo_barras,
+       updated_at = now()
+     RETURNING *`,
+    [empresa, unidade, ean],
+  );
+  return r.rows[0];
 }
 
 /** Cadastra empresa (se faltar), nota e no máx. um item por código na nota (histórico entre notas). */

@@ -2,39 +2,55 @@
 /**
  * Cadastro LinkedIn via CDP — mínimo.
  *
- *   ./signup-marina-costa.sh \
+ * Entradas (CLI):
+ *   --email      --password
+ *   --first|--nome   --last|--sobrenome
+ *   --location
+ *   --job|--cargo
+ *   --company|--empresa
+ *   --code   (PIN, se pedir)
+ *
+ * Ex.:
+ *   node linkedin-signup-cdp.mjs \
+ *     --email marina.costa@clozzy.com.br --password 'in@12345678' \
+ *     --first Marina --last Costa \
  *     --location "São Paulo, Brasil" \
  *     --job "Especialista em suprimentos e itens corporativos" \
- *     --company "ConectMax"
+ *     --company ConectMax
  *
- * Obrigatórios: --location --job|--cargo --company|--empresa
- * (cargo/empresa padrão dos vendedores = profile-defaults.json)
- * Opcional: --code 123456 (PIN e-mail)
- * Cliques: só Input.dispatchMouseEvent (CDP). Digitação: Input.insertText.
+ * Cliques: só Input.dispatchMouseEvent. Digitação: Input.insertText.
  */
 const CDP = process.env.CDP_URL || 'http://127.0.0.1:9224';
-const EMAIL = process.env.LI_EMAIL || 'marina.costa@clozzy.com.br';
-const PASS = process.env.LI_PASSWORD || 'in@12345678';
-const FIRST = process.env.LI_FIRST || 'Marina';
-const LAST = process.env.LI_LAST || 'Costa';
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
+/** Última ocorrência vence (permite defaults no shell + override). */
 function arg(...flags) {
-  for (const flag of flags) {
-    const i = process.argv.indexOf(flag);
-    if (i >= 0 && process.argv[i + 1] && !process.argv[i + 1].startsWith('-')) {
-      return process.argv[i + 1];
+  let found = '';
+  const argv = process.argv;
+  for (let i = 0; i < argv.length; i++) {
+    for (const flag of flags) {
+      if (argv[i] === flag && argv[i + 1] && !String(argv[i + 1]).startsWith('-')) {
+        found = argv[i + 1];
+      } else if (argv[i].startsWith(flag + '=')) {
+        found = argv[i].slice(flag.length + 1);
+      }
     }
-    const eq = process.argv.find((a) => a.startsWith(flag + '='));
-    if (eq) return eq.slice(flag.length + 1);
   }
-  return '';
+  return found;
 }
 
-const LOCATION = arg('--location') || process.env.LI_LOCATION || '';
-const JOB = arg('--job', '--cargo') || process.env.LI_JOB || '';
-const COMPANY = arg('--company', '--empresa') || process.env.LI_COMPANY || '';
-const CODE = arg('--code') || process.env.LI_CODE || '';
+const EMAIL = arg('--email');
+const PASS = arg('--password');
+const FIRST = arg('--first', '--nome');
+const LAST = arg('--last', '--sobrenome');
+const LOCATION = arg('--location');
+const JOB = arg('--job', '--cargo');
+const COMPANY = arg('--company', '--empresa');
+const CODE = arg('--code');
+
+const USO = `uso: node linkedin-signup-cdp.mjs \\
+  --email EMAIL --password SENHA --first NOME --last SOBRENOME \\
+  --location "Cidade, País" --job "Cargo" --company "Empresa"`;
 
 async function json(path) {
   const r = await fetch(`${CDP}${path}`);
@@ -69,18 +85,16 @@ function session(wsUrl) {
 }
 
 async function main() {
-  if (!LOCATION || !JOB || !COMPANY) {
-    console.error(
-      'uso: node linkedin-signup-cdp.mjs --location "São Paulo, Brasil" --job "Especialista em suprimentos e itens corporativos" --company "ConectMax"',
-    );
+  if (!EMAIL || !PASS || !FIRST || !LAST || !LOCATION || !JOB || !COMPANY) {
+    console.error(USO);
     process.exit(1);
   }
   console.log({ CDP, EMAIL, FIRST, LAST, LOCATION, JOB, COMPANY });
 
+  const pages = await json('/json/list');
   const page =
-    (await json('/json/list')).find(
-      (t) => t.type === 'page' && !String(t.url || '').startsWith('chrome://'),
-    ) || (await json('/json/list')).find((t) => t.type === 'page');
+    pages.find((t) => t.type === 'page' && !String(t.url || '').startsWith('chrome://')) ||
+    pages.find((t) => t.type === 'page');
   if (!page?.webSocketDebuggerUrl) throw new Error(`sem página em ${CDP}`);
 
   const s = session(page.webSocketDebuggerUrl);
@@ -99,7 +113,6 @@ async function main() {
     return r.result?.value;
   };
 
-  /** Clique só via CDP. */
   const clickXY = async (x, y) => {
     await s.send('Input.dispatchMouseEvent', {
       type: 'mousePressed',
@@ -125,7 +138,8 @@ async function main() {
         const b = e.getBoundingClientRect();
         return {
           id: e.id, type: e.type, aria: e.getAttribute('aria-label') || '',
-          ph: e.placeholder || '', value: e.type === 'password' ? (e.value ? '[set]' : '') : e.value,
+          ph: e.placeholder || '',
+          value: e.type === 'password' ? (e.value ? '[set]' : '') : e.value,
           x: b.x + b.width / 2, y: b.y + b.height / 2,
         };
       }),
@@ -193,7 +207,6 @@ async function main() {
     console.log('fill', sel, sel.includes('password') ? '[set]' : text);
   };
 
-  /** Digita no input (hint no aria/placeholder) e clica a opção do typeahead via CDP. */
   const typeahead = async (text, hintRe) => {
     const box = await evalv(`(() => {
       const re = new RegExp(${JSON.stringify(hintRe)}, 'i');
@@ -255,7 +268,7 @@ async function main() {
         opts.find((o) => o.text.toLowerCase().startsWith(first + ',')) ||
         opts.find((o) => o.text.toLowerCase().startsWith(first)) ||
         opts[0];
-      return { n: opts.length, chosen, sample: opts.slice(0, 5).map((o) => o.text) };
+      return { chosen, sample: opts.slice(0, 5).map((o) => o.text) };
     })()`);
     console.log('opts', pick.sample);
     if (!pick.chosen) throw new Error('sem opção typeahead para: ' + text);
@@ -267,7 +280,6 @@ async function main() {
   let st = await snap();
   console.log('now', st.href);
 
-  // signup se ainda não estiver no onboarding
   if (!/onboarding/i.test(st.href)) {
     await s.send('Page.navigate', { url: 'https://www.linkedin.com/signup' });
     await sleep(3000);
@@ -290,14 +302,18 @@ async function main() {
     st = await snap();
   }
 
-  // onboarding: cargo/empresa e depois localidade (--location)
   for (let i = 0; i < 6; i++) {
     st = await snap();
     console.log('step', i, st.href.slice(0, 80), '|', st.body.slice(0, 100));
 
     if (/código|confirma|confirmation|handle-confirmation/i.test(st.href + st.body)) {
       if (!CODE) throw new Error('passo PIN: passe --code 123456');
-      const pin = st.inputs.find((inp) => inp.type === 'text' || inp.type === 'tel' || /c[oó]digo|code|pin/i.test(inp.aria + inp.ph));
+      const pin = st.inputs.find(
+        (inp) =>
+          inp.type === 'text' ||
+          inp.type === 'tel' ||
+          /c[oó]digo|code|pin/i.test(inp.aria + inp.ph),
+      );
       if (!pin) throw new Error('campo PIN não encontrado');
       await clickXY(pin.x, pin.y);
       await s.send('Input.insertText', { text: CODE });
@@ -315,10 +331,21 @@ async function main() {
     }
 
     if (/profile-edit|experiência|cargo|empresa/i.test(st.href + st.body)) {
-      if (st.inputs.some((inp) => inp.type === 'text' && /cargo|title|job/i.test(inp.aria + inp.ph) && !inp.value)) {
+      if (
+        st.inputs.some(
+          (inp) => inp.type === 'text' && /cargo|title|job/i.test(inp.aria + inp.ph) && !inp.value,
+        )
+      ) {
         await typeahead(JOB, 'cargo|title|job');
       }
-      if (st.inputs.some((inp) => inp.type === 'text' && /empresa|company|empregador/i.test(inp.aria + inp.ph) && !inp.value)) {
+      if (
+        st.inputs.some(
+          (inp) =>
+            inp.type === 'text' &&
+            /empresa|company|empregador/i.test(inp.aria + inp.ph) &&
+            !inp.value,
+        )
+      ) {
         await typeahead(COMPANY, 'empresa|company|empregador');
       }
       try {
@@ -332,8 +359,8 @@ async function main() {
 
     break;
   }
-  st = await snap();
 
+  st = await snap();
   console.log('FINAL', st.href, '|', st.body.slice(0, 200));
   s.close();
 }

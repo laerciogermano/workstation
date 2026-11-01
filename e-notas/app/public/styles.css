@@ -581,7 +581,9 @@ td.mono {
 }
 
 #vitrine-lista,
-#vitrine-detalhe {
+#vitrine-detalhe,
+#notas-lista,
+#notas-detalhe {
   margin-top: 1.25rem;
 }
 

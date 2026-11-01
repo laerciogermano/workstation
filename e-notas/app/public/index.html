@@ -86,6 +86,9 @@
         <button type="button" class="tab" role="tab" id="tab-empresas" data-tab="empresas" aria-controls="panel-empresas" aria-selected="true">
           Estabelecimentos <span id="count-empresas" class="count"></span>
         </button>
+        <button type="button" class="tab" role="tab" id="tab-notas" data-tab="notas" aria-controls="panel-notas" aria-selected="false">
+          Notas <span id="count-notas" class="count"></span>
+        </button>
         <button type="button" class="tab" role="tab" id="tab-itens" data-tab="itens" aria-controls="panel-itens" aria-selected="false">
           Itens <span id="count-itens" class="count"></span>
         </button>
@@ -122,6 +125,40 @@
                 </tr>
               </thead>
               <tbody id="vitrine-itens"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="block tab-panel" id="panel-notas" role="tabpanel" aria-labelledby="tab-notas" hidden>
+        <div id="notas-lista">
+          <label class="search">
+            <span class="sr-only">Buscar notas</span>
+            <input id="busca-notas" type="search" placeholder="Buscar nota…" autocomplete="off" />
+          </label>
+          <div id="notas-grid" class="vitrine-grid" aria-live="polite"></div>
+        </div>
+
+        <div id="notas-detalhe" hidden>
+          <button type="button" class="back-link" id="notas-voltar">← Notas</button>
+          <article class="loja-card loja-card-head" id="nota-info"></article>
+          <label class="search" style="margin-top: 1rem">
+            <span class="sr-only">Buscar itens da nota</span>
+            <input id="busca-nota-itens" type="search" placeholder="Buscar item…" autocomplete="off" />
+          </label>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Produto</th>
+                  <th>EAN</th>
+                  <th>Cód.</th>
+                  <th>Qtd</th>
+                  <th>Preço</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="nota-itens"></tbody>
             </table>
           </div>
         </div>

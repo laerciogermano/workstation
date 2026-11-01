@@ -3,6 +3,8 @@ const buscaItensEl = document.getElementById('busca-itens');
 const buscaEanEl = document.getElementById('busca-ean');
 const buscaVitrineEl = document.getElementById('busca-vitrine');
 const buscaVitrineItensEl = document.getElementById('busca-vitrine-itens');
+const buscaNotasEl = document.getElementById('busca-notas');
+const buscaNotaItensEl = document.getElementById('busca-nota-itens');
 const filtroNotaEl = document.getElementById('filtro-nota');
 const modalEanEl = document.getElementById('modal-ean');
 const modalEanMetaEl = document.getElementById('modal-ean-meta');
@@ -17,10 +19,16 @@ const vitrineDetalheEl = document.getElementById('vitrine-detalhe');
 const vitrineGridEl = document.getElementById('vitrine-grid');
 const vitrineLojaInfoEl = document.getElementById('vitrine-loja-info');
 const vitrineItensEl = document.getElementById('vitrine-itens');
+const notasListaEl = document.getElementById('notas-lista');
+const notasDetalheEl = document.getElementById('notas-detalhe');
+const notasGridEl = document.getElementById('notas-grid');
+const notaInfoEl = document.getElementById('nota-info');
+const notaItensEl = document.getElementById('nota-itens');
 const tabs = [...document.querySelectorAll('.tab')];
 const subtabs = [...document.querySelectorAll('.subtab')];
 const panels = {
   empresas: document.getElementById('panel-empresas'),
+  notas: document.getElementById('panel-notas'),
   itens: document.getElementById('panel-itens'),
 };
 const itensViews = {
@@ -29,12 +37,14 @@ const itensViews = {
 };
 
 let allEmpresas = [];
+let allNotas = [];
 let allItens = [];
 let allCodigosBarras = [];
 let filtroNotaId = null;
 let filtroNotaLabel = '';
 let itensSub = 'lista';
 let lojaAbertaId = null;
+let notaAbertaId = null;
 let eanScanner = null;
 let eanScanBusy = false;
 let modalContext = { empresaNome: '', itemNome: '' };
@@ -98,6 +108,10 @@ function setTab(name, { updateHash = true } = {}) {
       renderEmpresasMap(allEmpresas);
     });
   }
+  if (name === 'notas') {
+    if (notaAbertaId != null) renderNotaDetalhe(notaAbertaId);
+    else renderNotasLista();
+  }
   if (updateHash) {
     const url = new URL(location.href);
     url.hash =
@@ -105,8 +119,12 @@ function setTab(name, { updateHash = true } = {}) {
         ? 'codigos-barras'
         : name === 'empresas' && lojaAbertaId != null
           ? `loja-${lojaAbertaId}`
-          : name;
-    if (name === 'itens' && itensSub === 'lista' && filtroNotaId != null) {
+          : name === 'notas' && notaAbertaId != null
+            ? `nota-${notaAbertaId}`
+            : name;
+    if (name === 'notas' && notaAbertaId != null) {
+      url.searchParams.set('nota', String(notaAbertaId));
+    } else if (name === 'itens' && itensSub === 'lista' && filtroNotaId != null) {
       url.searchParams.set('nota', String(filtroNotaId));
     } else {
       url.searchParams.delete('nota');
@@ -412,6 +430,141 @@ function closeVitrineLoja() {
   });
 }
 
+function notaLabel(n) {
+  if (!n) return '';
+  return n.numero ? `Nota ${n.numero}` : `Nota #${n.id}`;
+}
+
+function notaHaystack(n) {
+  return [
+    n.id,
+    n.numero,
+    n.serie,
+    n.empresa_nome,
+    n.empresa_cnpj,
+    formatDataNota(n.emissao),
+    n.valor_total,
+    n.valor_a_pagar,
+    n.qtd_itens,
+    n.chave_acesso,
+  ]
+    .map((v) => String(v ?? '').toLowerCase())
+    .join(' ');
+}
+
+function renderNotasLista() {
+  notaAbertaId = null;
+  notasListaEl.hidden = false;
+  notasDetalheEl.hidden = true;
+  buscaNotaItensEl.value = '';
+  const q = String(buscaNotasEl?.value || '')
+    .trim()
+    .toLowerCase();
+  const terms = q ? q.split(/\s+/).filter(Boolean) : [];
+  const rows = terms.length
+    ? allNotas.filter((n) => {
+        const hay = notaHaystack(n);
+        return terms.every((t) => hay.includes(t));
+      })
+    : allNotas;
+  document.getElementById('count-notas').textContent = `(${allNotas.length})`;
+  notasGridEl.innerHTML = rows.length
+    ? rows
+        .map((n) => {
+          const data = formatDataNota(n.emissao) || '—';
+          const total = formatPreco(n.valor_a_pagar || n.valor_total);
+          const qtd = n.qtd_itens != null && n.qtd_itens !== '' ? n.qtd_itens : '—';
+          return `<button type="button" class="loja-card" data-open-nota="${esc(n.id)}">
+            <p class="loja-nome">${esc(notaLabel(n))}</p>
+            <p class="loja-meta">${esc(n.empresa_nome || '—')}<br>${esc(data)}</p>
+            <div class="loja-stats">
+              <span class="chip">${esc(String(qtd))} itens</span>
+              <span class="chip">${esc(total)}</span>
+            </div>
+          </button>`;
+        })
+        .join('')
+    : `<p class="hint">${allNotas.length ? 'Nada encontrado.' : 'Sem notas.'}</p>`;
+}
+
+function renderNotaDetalhe(notaId) {
+  const n = allNotas.find((x) => Number(x.id) === Number(notaId));
+  if (!n) {
+    renderNotasLista();
+    return;
+  }
+  notaAbertaId = Number(n.id);
+  notasListaEl.hidden = true;
+  notasDetalheEl.hidden = false;
+  const data = formatDataNota(n.emissao) || '—';
+  const total = formatPreco(n.valor_a_pagar || n.valor_total);
+  const desc = n.descontos ? formatPreco(n.descontos) : null;
+  const outras = n.outras_despesas ? formatPreco(n.outras_despesas) : null;
+  notaInfoEl.innerHTML = `
+    <p class="loja-nome">${esc(notaLabel(n))}</p>
+    <p class="loja-meta">${esc(n.empresa_nome || '—')}<br>${esc(data)}${
+      n.serie ? ` · série ${esc(n.serie)}` : ''
+    }</p>
+    <div class="loja-stats">
+      <span class="chip">${esc(String(n.qtd_itens ?? '—'))} itens</span>
+      <span class="chip">${esc(total)}</span>
+      ${desc ? `<span class="chip">desc. ${esc(desc)}</span>` : ''}
+      ${outras ? `<span class="chip">outras ${esc(outras)}</span>` : ''}
+    </div>`;
+
+  const q = String(buscaNotaItensEl?.value || '')
+    .trim()
+    .toLowerCase();
+  const terms = q ? q.split(/\s+/).filter(Boolean) : [];
+  let rows = allItens.filter((r) => Number(r.nota_id) === Number(n.id));
+  if (terms.length) {
+    rows = rows.filter((r) => {
+      const hay = itemHaystack(r);
+      return terms.every((t) => hay.includes(t));
+    });
+  }
+  document.getElementById('count-notas').textContent = `(${rows.length}/${
+    allItens.filter((r) => Number(r.nota_id) === Number(n.id)).length
+  })`;
+  notaItensEl.innerHTML = rows.length
+    ? rows
+        .map(
+          (r) =>
+            `<tr>${cell(r.nome)}${cell(r.codigo_barras || '', 'mono')}${cell(
+              r.codigo || '',
+              'mono',
+            )}${cell(
+              [r.quantidade, r.unidade].filter(Boolean).join(' ') || '—',
+            )}<td class="price-cell">${esc(
+              formatPreco(r.valor_unitario),
+            )}</td><td><button type="button" class="btn-link" data-vincular-ean data-empresa-id="${esc(
+              r.empresa_id,
+            )}" data-empresa-nome="${esc(r.empresa_nome || '')}" data-codigo="${esc(
+              r.codigo,
+            )}" data-nome="${esc(r.nome || '')}" data-ean="${esc(
+              r.codigo_barras || '',
+            )}">${r.codigo_barras ? 'EAN' : '+ EAN'}</button></td></tr>`,
+        )
+        .join('')
+    : `<tr><td colspan="6">${
+        allItens.some((r) => Number(r.nota_id) === Number(n.id))
+          ? 'Nada encontrado.'
+          : 'Sem itens nesta nota.'
+      }</td></tr>`;
+}
+
+function openNota(notaId) {
+  buscaNotaItensEl.value = '';
+  renderNotaDetalhe(notaId);
+  setTab('notas');
+}
+
+function closeNotaDetalhe() {
+  buscaNotaItensEl.value = '';
+  renderNotasLista();
+  setTab('notas');
+}
+
 function formatDataNota(emissao) {
   const raw = String(emissao ?? '').trim();
   if (!raw) return '';
@@ -480,13 +633,8 @@ function clearFiltroNota() {
 }
 
 function openItensDaNota(notaId, label) {
-  filtroNotaId = Number(notaId);
-  filtroNotaLabel = label || `nota #${notaId}`;
-  buscaItensEl.value = '';
-  updateFiltroBanner();
-  applyItensFilter();
-  setItensSub('lista');
-  setTab('itens');
+  openNota(notaId);
+  if (label) filtroNotaLabel = label;
 }
 
 function applyItensFilter() {
@@ -699,6 +847,10 @@ for (const tab of tabs) {
       lojaAbertaId = null;
       renderVitrineLista();
     }
+    if (tab.dataset.tab === 'notas') {
+      notaAbertaId = null;
+      renderNotasLista();
+    }
     setTab(tab.dataset.tab);
   });
 }
@@ -707,7 +859,22 @@ for (const tab of subtabs) {
   tab.addEventListener('click', () => setItensSub(tab.dataset.sub));
 }
 
-document.getElementById('itens').addEventListener('click', (ev) => {
+buscaNotasEl?.addEventListener('input', () => {
+  if (notaAbertaId == null) renderNotasLista();
+});
+buscaNotaItensEl?.addEventListener('input', () => {
+  if (notaAbertaId != null) renderNotaDetalhe(notaAbertaId);
+});
+document.getElementById('notas-voltar')?.addEventListener('click', () => {
+  closeNotaDetalhe();
+});
+notasGridEl?.addEventListener('click', (ev) => {
+  const btn = ev.target.closest('[data-open-nota]');
+  if (!btn) return;
+  openNota(btn.dataset.openNota);
+});
+
+function onVincularEanClick(ev) {
   const btn = ev.target.closest('[data-vincular-ean]');
   if (!btn) return;
   openCadastroEan({
@@ -717,7 +884,10 @@ document.getElementById('itens').addEventListener('click', (ev) => {
     nome: btn.dataset.nome,
     ean: btn.dataset.ean,
   });
-});
+}
+
+document.getElementById('itens').addEventListener('click', onVincularEanClick);
+notaItensEl?.addEventListener('click', onVincularEanClick);
 
 formEanEl.addEventListener('submit', async (ev) => {
   ev.preventDefault();
@@ -742,6 +912,8 @@ async function reloadItens() {
   const data = await fetchJson('api/itens');
   allItens = data.itens || [];
   applyItensFilter();
+  if (notaAbertaId != null) renderNotaDetalhe(notaAbertaId);
+  if (lojaAbertaId != null) renderVitrineDetalhe(lojaAbertaId);
 }
 
 function readRoute() {
@@ -750,14 +922,17 @@ function readRoute() {
   const loja = params.get('loja');
   const hash = (location.hash || '').replace(/^#/, '');
   if (nota) {
-    filtroNotaId = Number(nota);
-    filtroNotaLabel = `nota #${nota}`;
-    itensSub = 'lista';
-    return 'itens';
+    notaAbertaId = Number(nota);
+    return 'notas';
   }
   if (loja) {
     lojaAbertaId = Number(loja);
     return 'empresas';
+  }
+  const notaHash = hash.match(/^nota-(\d+)$/);
+  if (notaHash) {
+    notaAbertaId = Number(notaHash[1]);
+    return 'notas';
   }
   const lojaHash = hash.match(/^loja-(\d+)$/);
   if (lojaHash) {
@@ -783,23 +958,23 @@ async function load() {
       fetchJson('api/codigos-barras'),
     ]);
     allEmpresas = empresas.empresas || [];
+    allNotas = notas.notas || [];
     allItens = itens.itens || [];
     allCodigosBarras = eans.codigosBarras || [];
+    const notaInicial = notaAbertaId;
     renderEmpresas(allEmpresas);
-    if (filtroNotaId != null) {
-      const n = (notas.notas || []).find(
-        (x) => Number(x.id) === Number(filtroNotaId),
-      );
-      if (n) {
-        filtroNotaLabel = n.numero ? `nota ${n.numero}` : `nota #${n.id}`;
-      }
+    if (notaInicial != null) {
+      const n = allNotas.find((x) => Number(x.id) === Number(notaInicial));
+      if (n) renderNotaDetalhe(n.id);
+      else renderNotasLista();
+    } else {
+      renderNotasLista();
     }
     updateFiltroBanner();
     renderItens();
     applyEanFilter();
     setItensSub(itensSub, { updateHash: false });
     let next = tab;
-    if (tab === 'notas') next = 'itens';
     if (tab === 'vitrine') next = 'empresas';
     setTab(next, { updateHash: true });
     setStatus('');

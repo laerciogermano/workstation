@@ -145,7 +145,7 @@ Curadoria: [`../marca/benchmarking-solucoes/README.md`](../marca/benchmarking-so
 
 ## REQ-017 — FAB adicionar nota (2026-11-01)
 
-- Home = listagem (`/`), abas **Empresas** / **Itens** (sem aba Notas, sem nav Escanear/Listagem).
+- Home = listagem (`/`), abas **Estabelecimentos** / **Notas** / **Itens** (sem nav Escanear/Listagem). *Revisto por REQ-025 (aba Notas).*
 - Botão fixo inferior direito (**FAB**) “Nota” abre `scan.html` (QR).
 - `/lista.html` redireciona para `/`. Após scan ok, volta à home.
 
@@ -221,6 +221,15 @@ Curadoria: [`../marca/benchmarking-solucoes/README.md`](../marca/benchmarking-so
 - Atualizar PRD §1/§3/§4/§5.9, apresentação (`marca/` + `app/public/apresentacao.html`) e matriz (coluna **CD** = Alvo).
 - Antes: Delivery/Full *future* / depósito. Depois: CD presente no pacote da proposta.
 - Rollback: restaurar §5.9 *future* e cards “Delivery / Full” nos decks.
+
+## REQ-025 — Tela Notas → itens + EAN (2026-11-01)
+
+- Aba **Notas**: cards das NFC-e (data, estabelecimento, qtd. itens, total), da mais nova à mais antiga.
+- Clique na nota abre **detalhe** com lista de itens daquela nota.
+- Em cada item: ação **+ EAN** / **EAN** (mesmo modal de câmera + digitação de REQ-011).
+- URL: `?nota=<id>` / `#nota-<id>`. Voltar → lista de notas.
+- Antes: home só Estabelecimentos/Itens; filtro de nota só na aba Itens. Depois: fluxo Notas → itens da nota.
+- Rollback: remover aba/painel Notas em `index.html` / `lista.js` (commit anterior).
 
 ---
 

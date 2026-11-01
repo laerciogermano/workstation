@@ -1,6 +1,6 @@
 # e-notas — app (scan QR)
 
-Front **notinhas.shop** (design system v1: light, azul `#0069B4` + verde `#00984B`, Plus Jakarta Sans). Home `/` lista empresas/itens; FAB inferior direito abre `/scan.html` (QR). Em Itens, **Cadastrar EAN** abre modal; subaba **Códigos de barras** consulta o mapeamento. Backend consulta a DANFE na **Fazenda PR**, cadastra **empresa** (se nova), **nota** e **itens** (histórico).
+Front **notinhas.shop** (design system v1: light, azul `#0069B4` + verde `#00984B`, Plus Jakarta Sans). Home `/` lista estabelecimentos / **notas** / itens; FAB inferior direito abre `/scan.html` (QR). Em **Notas**, clique abre os itens da NFC-e com **+ EAN**. Em Itens, **Cadastrar EAN** abre modal; subaba **Códigos de barras** consulta o mapeamento. Backend consulta a DANFE na **Fazenda PR**, cadastra **empresa** (se nova), **nota** e **itens** (histórico).
 
 Tema: [`../design-system.md`](../design-system.md) · tokens em `public/styles.css`.  
 Share/WhatsApp: metas OG em `index.html` / `scan.html` + `public/og-image.png`.
@@ -39,7 +39,7 @@ Credenciais não vão no git (`.env` ignorado).
 
 | Rota | Função |
 |------|--------|
-| `/` | Listagem: Empresas (mapa foca no pin ao abrir loja) / Itens (EAN, cód. produto); FAB → adicionar nota; rodapé → Apresentação |
+| `/` | Listagem: Estabelecimentos / **Notas** (detalhe → itens + EAN) / Itens; FAB → adicionar nota; rodapé → Apresentação |
 | `/apresentacao.html` | Deck produto (o quê / como / mercado / marca) — espelho web de [`../marca/apresentacao-notinhas-v1.html`](../marca/apresentacao-notinhas-v1.html) |
 | `/scan.html` | Scan do QR da nota |
 | `/lista.html` | Redirect → `/` |

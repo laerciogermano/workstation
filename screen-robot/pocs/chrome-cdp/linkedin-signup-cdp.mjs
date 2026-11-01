@@ -203,18 +203,31 @@ async function main() {
     await clickXY(hit.x, hit.y);
   };
 
-  /** Achado robusto de Pular (button ou link). */
+  /** Achado robusto de Pular (button ou link). Se varios, pega o de maior y (overlay/modal). */
   const findSkip = async () =>
     evalv(`(() => {
-      const el = [...document.querySelectorAll('button,a,[role=button]')].find((e) => {
-        if (!e.getClientRects().length) return false;
+      const hits = [...document.querySelectorAll('button,a,[role=button]')].map((e) => {
+        if (!e.getClientRects().length) return null;
         const t = (e.innerText || e.getAttribute('aria-label') || '').replace(/\\s+/g, ' ').trim();
-        return /^pular$|^skip$/i.test(t);
-      });
-      if (!el) return null;
-      const b = el.getBoundingClientRect();
-      return { text: (el.innerText || '').trim(), x: b.x + b.width / 2, y: b.y + b.height / 2 };
+        if (!/^pular$|^skip$/i.test(t)) return null;
+        const b = e.getBoundingClientRect();
+        if (b.width < 2 || b.height < 2) return null;
+        return { text: t, x: b.x + b.width / 2, y: b.y + b.height / 2, area: b.width * b.height };
+      }).filter(Boolean);
+      if (!hits.length) return null;
+      hits.sort((a, b) => b.y - a.y || b.area - a.area);
+      return hits[0];
     })()`);
+
+  /** Regra: se aparecer Pular, clica. */
+  const clickSkipIfAny = async () => {
+    const s = await findSkip();
+    if (!s) return false;
+    console.log('click', s.text);
+    await clickXY(s.x, s.y);
+    await sleep(2000);
+    return true;
+  };
 
   const fill = async (sel, text) => {
     const box = await evalv(`(() => {
@@ -300,9 +313,11 @@ async function main() {
       code: 'Backspace',
       windowsVirtualKeyCode: 8,
     });
-    await s.send('Input.insertText', { text });
+    // typeahead: digita so o 1o token (melhor sugestao); casa com texto completo se der
+    const typed = text.split(',')[0].trim();
+    await s.send('Input.insertText', { text: typed });
     await sleep(2500);
-    const first = text.split(',')[0].trim().toLowerCase();
+    const first = typed.toLowerCase();
     const pick = await evalv(`(() => {
       const first = ${JSON.stringify(first)};
       const full = ${JSON.stringify(text.trim().toLowerCase())};
@@ -315,6 +330,7 @@ async function main() {
         opts.find((o) => o.text.toLowerCase() === full) ||
         opts.find((o) => o.text.toLowerCase() === first) ||
         opts.find((o) => o.text.toLowerCase().startsWith(first + ',')) ||
+        opts.find((o) => o.text.toLowerCase().startsWith(first + ' ')) ||
         opts.find((o) => o.text.toLowerCase().startsWith(first)) ||
         opts[0];
       return { chosen, sample: opts.slice(0, 5).map((o) => o.text) };
@@ -326,15 +342,18 @@ async function main() {
     await sleep(500);
   };
 
-  /** Pos-PIN / opcionais: Pular… e Continuar no get-the-app; idade 18+. */
+  /** Pos-PIN / opcionais: SEMPRE Pular se existir; senao idade 18+ / Continuar app. */
   async function drainOptional() {
-    for (let n = 0; n < 14; n++) {
+    for (let n = 0; n < 16; n++) {
       let st = await snap();
       console.log('drain', n, st.href.slice(0, 90), '|', st.body.slice(0, 80));
 
       if (/feed/i.test(st.href) && !/onboarding/i.test(st.href)) {
         return st;
       }
+
+      // regra global: Pular sempre que existir
+      if (await clickSkipIfAny()) continue;
 
       // fechar toast
       const close = st.btns.find((b) => /^fechar$|^close$|^dismiss$/i.test(b.text));
@@ -363,18 +382,6 @@ async function main() {
         }
         await sleep(2500);
         continue;
-      }
-
-      // carreira / foto / pessoas / seguir: sempre Pular
-      const skip = (await findSkip()) || st.btns.find((b) => /^pular$|^skip$/i.test(b.text));
-      if (skip || /job-seeker|carreira|people-you-may|follow-recommend|profile-photo/i.test(st.href + st.body)) {
-        const s = skip || (await findSkip());
-        if (s) {
-          console.log('click', s.text);
-          await clickXY(s.x, s.y);
-          await sleep(2000);
-          continue;
-        }
       }
 
       if (/get-the-app|aplicativo/i.test(st.href + st.body)) {
@@ -417,7 +424,7 @@ async function main() {
     st = await snap();
   }
 
-  for (let i = 0; i < 12; i++) {
+  for (let i = 0; i < 16; i++) {
     st = await snap();
     console.log('step', i, st.href.slice(0, 90), '|', st.body.slice(0, 100));
 
@@ -426,7 +433,19 @@ async function main() {
       break;
     }
 
-    if (/código|confirma|confirmation|handle-confirmation/i.test(st.href + st.body)) {
+    // regra global: sempre que aparecer Pular, clica
+    if (await clickSkipIfAny()) continue;
+
+    if (
+      /handle-confirmation/i.test(st.href) ||
+      (/código de 6|confirme seu e-mail|confirm your email/i.test(st.body) &&
+        st.inputs.some(
+          (inp) =>
+            inp.type === 'text' ||
+            inp.type === 'tel' ||
+            /c[oó]digo|code|pin/i.test(inp.aria + inp.ph),
+        ))
+    ) {
       if (!CODE) {
         console.log('PIN: poll Mailcow…');
         for (let p = 0; p < 18; p++) {
@@ -491,7 +510,11 @@ async function main() {
       continue;
     }
 
-    if (/profile-edit|experiência|cargo|empresa/i.test(st.href + st.body)) {
+    if (
+      /profile-edit/i.test(st.href) ||
+      (/experiência mais recente|cargo\*|empresa\/empregador/i.test(st.body) &&
+        st.inputs.some((inp) => inp.type === 'text' && /cargo|empresa|title|company/i.test(inp.aria + inp.ph)))
+    ) {
       const hasJob = st.inputs.some(
         (inp) => inp.type === 'text' && /cargo|title|job/i.test(inp.aria + inp.ph),
       );
@@ -521,12 +544,9 @@ async function main() {
       continue;
     }
 
-    // carreira / pular / idade / app
+    // idade / app / resto do onboarding
     if (
-      (await findSkip()) ||
-      /job-seeker|carreira relevantes|get-the-app|aplicativo|maior de 18|birthday|people-you-may|follow-recommend|profile-photo/i.test(
-        st.href + st.body,
-      )
+      /get-the-app|aplicativo|maior de 18|birthday|job-seeker|onboarding/i.test(st.href + st.body)
     ) {
       st = await drainOptional();
       if (/feed/i.test(st.href)) break;

@@ -6,6 +6,7 @@ Insumos baixados do board Connect, uma pasta por **card ID**.
 |-------|------|
 | [`6ad93fb164e6790fe397fe5e/`](6ad93fb164e6790fe397fe5e/README.md) | Criar identidade visual Conect (manual HTML → PDF) — entrega em [`marca/`](../marca/) |
 | [`6ad9f22cf14c52879b6b565a/`](6ad9f22cf14c52879b6b565a/README.md) | Dashboard executivo: faturamento por vendedor + funil (mês/ano) |
+| [`6ae7206a2b01980ff66fa093/`](6ae7206a2b01980ff66fa093/README.md) | Pesquisar o que um vendedor precisa ter no perfil LinkedIn |
 
 ## Layout de cada task
 

@@ -53,11 +53,16 @@ node control-chrome.mjs --url https://example.com
 CDP_URL=http://127.0.0.1:9223 node setup-avatar-banner.mjs
 CDP_URL=http://127.0.0.1:9223 node setup-avatar-banner.mjs --avatar-only
 CDP_URL=http://127.0.0.1:9223 node setup-avatar-banner.mjs --banner-only
+
+# so foto de perfil (caminho passado):
+CDP_URL=http://127.0.0.1:9228 node linkedin-update-avatar-cdp.mjs --photo /caminho/foto.jpg
 ```
 
 Deps: Node 22+ (`fetch`/`WebSocket`). Clique via CDP (`Input.dispatchMouseEvent`) — janela pode ficar atrás.
 
 **Antes → depois (setup mídia LI):** só control/sannysoft → `setup-avatar-banner.mjs` sobe `conectmax-black.jpg` e `conectmax-banner.jpg` na conta da aba CDP. Rollback: `--avatar-only` / `--banner-only` / editar mídia no LinkedIn.
+
+**Antes → depois (update-avatar):** assets fixos ConectMax → `linkedin-update-avatar-cdp.mjs --photo PATH` na aba CDP logada. Rollback: trocar foto no LI ou reexecutar com outra imagem.
 
 ## Caminho inverso
 

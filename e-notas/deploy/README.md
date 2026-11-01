@@ -28,11 +28,13 @@ HTTP `http://…/enotas/` redireciona para HTTPS. Certificado em `:4173` é auto
 1. DNS no hPanel Hostinger (zona do domínio): A `@` = Contabo `144.126.154.90`
 2. Site nginx: `sites-available/notinhas` (proxy para `:4174`) + `sites-enabled`
 3. **HTTPS (Let's Encrypt / Certbot)** — mesmo padrão do RoleGo (nginx na Contabo já usa `:443` com mailcow/rolego; Caddy/Traefik brigariam pela porta).
-4. **Mail (Mailcow)** — domínio + DKIM no Mailcow (`mail.clozzy.com.br`); DNS Hostinger:
-   - MX `@` → `mail.clozzy.com.br` (prio 10)
-   - TXT `@` → `v=spf1 mx a:mail.clozzy.com.br ip4:144.126.154.90 ~all`
+4. **Mail (Mailcow)** — domínio + DKIM no Mailcow da Contabo; DNS Hostinger sob `notinhas.shop`:
+   - A `mail` → `144.126.154.90`
+   - MX `@` → `mail.notinhas.shop` (prio 10)
+   - TXT `@` → `v=spf1 mx a:mail.notinhas.shop ip4:144.126.154.90 ~all`
    - TXT `dkim._domainkey` → valor DKIM do Mailcow (`GET /api/v1/get/dkim/notinhas.shop`)
    - TXT `_dmarc` → `v=DMARC1; p=none; rua=mailto:contato@notinhas.shop`
+   - Webmail/admin ainda em https://mail.clozzy.com.br/ (mesmo stack); MX/SPF usam `mail.notinhas.shop`
 
 **Antes → depois (mail):** sem e-mail no domínio → Mailcow `notinhas.shop` + `contato@` + MX/SPF/DKIM/DMARC na Hostinger.
 **Rollback mail:** apagar mailbox/domínio no Mailcow admin; remover MX/SPF/DKIM/DMARC na zona Hostinger.

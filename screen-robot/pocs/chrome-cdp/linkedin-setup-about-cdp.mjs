@@ -1,13 +1,20 @@
 #!/usr/bin/env node
 /**
- * Configura a secao Sobre (about/summary) do LinkedIn via CDP.
+ * Configura a secao Sobre (About / summary) do LinkedIn via CDP.
+ *
+ * Base (LinkedIn Help a540837 / a553140 + notas CDP SPA):
+ *   1. Perfil (/in/me)
+ *   2. Sem Sobre: "Adicionar seção" → "Adicionar seção Sobre"
+ *      (href .../edit/forms/summary/new/) — CLICAR o <a>, nao Page.navigate
+ *      (Page.navigate na URL do form NAO hidrata o editor)
+ *   3. Com Sobre: lapis "Editar" na secao Sobre → popup "Editar sobre"
+ *   4. Campo contenteditable (ate 2600 chars) → Salvar
  *
  * Uso:
  *   CDP_URL=http://127.0.0.1:9228 node linkedin-setup-about-cdp.mjs --about "Texto..."
- *   node linkedin-setup-about-cdp.mjs   # usa assets/profile-defaults.json (about)
+ *   node linkedin-setup-about-cdp.mjs   # assets/profile-defaults.json
  *
- * Fluxo PT-BR: /in/me → Adicionar secao/resumo/Sobre (ou Editar Sobre) → cola texto → Salvar.
- * Cliques: Input.dispatchMouseEvent. Digita: Input.insertText.
+ * Cliques: Input.dispatchMouseEvent (+ DOM click no ancora SPA). Digita: Input.insertText.
  * Regra: se aparecer Pular, clica.
  */
 import { readFileSync, existsSync } from 'node:fs';
@@ -20,6 +27,7 @@ const PROFILE = process.env.LINKEDIN_PROFILE_URL || 'https://www.linkedin.com/in
 const DEFAULTS = resolve(__dir, '../../src/assets/profile-defaults.json');
 const FALLBACK_ABOUT =
   'A ConectMax chegou para facilitar o processo de compras da sua empresa, temos uma imensa variedade de produtos desde materiais básicos para o dia a dia até os itens mais atuais da tecnologia!';
+const ABOUT_MAX = 2600;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 function arg(...flags) {
@@ -47,7 +55,9 @@ function loadDefaultAbout() {
   }
 }
 
-const ABOUT = (arg('--about', '--sobre', '--text', '--texto') || loadDefaultAbout()).trim();
+const ABOUT = (arg('--about', '--sobre', '--text', '--texto') || loadDefaultAbout())
+  .trim()
+  .slice(0, ABOUT_MAX);
 const USO = `uso: node linkedin-setup-about-cdp.mjs --about "Texto da secao Sobre"`;
 
 async function json(path) {
@@ -87,7 +97,7 @@ async function main() {
     console.error(USO);
     process.exit(1);
   }
-  console.log({ CDP, PROFILE, aboutLen: ABOUT.length });
+  console.log({ CDP, PROFILE, aboutLen: ABOUT.length, max: ABOUT_MAX });
 
   const pages = await json('/json/list');
   const page =
@@ -151,43 +161,65 @@ async function main() {
     if (!sk) return false;
     console.log('click', sk.text);
     await clickXY(sk.x, sk.y);
-    await sleep(1500);
+    await sleep(1200);
     return true;
   };
 
-  const clickRe = async (reSrc) => {
-    const hit = await evalv(`(() => {
-      const re = new RegExp(${JSON.stringify(reSrc)}, 'i');
-      const el = [...document.querySelectorAll('button,a,[role=button],label,[role=menuitem]')].find((e) => {
+  /** Clique SPA: DOM click no ancora (hidrata form); fallback mouse. */
+  const clickAnchorHref = async (hrefRe) =>
+    evalv(`(() => {
+      const re = new RegExp(${JSON.stringify(hrefRe)}, 'i');
+      const el = [...document.querySelectorAll('a[href]')].find((e) => {
         if (!e.getClientRects().length) return false;
-        return re.test((e.innerText || e.getAttribute('aria-label') || '').replace(/\\s+/g, ' ').trim());
+        return re.test(e.getAttribute('href') || '');
       });
       if (!el) return null;
+      el.scrollIntoView({ block: 'center' });
+      el.click();
       const b = el.getBoundingClientRect();
       return {
         text: (el.innerText || el.getAttribute('aria-label') || '').replace(/\\s+/g, ' ').trim().slice(0, 80),
+        href: el.getAttribute('href') || '',
         x: b.x + b.width / 2,
         y: b.y + b.height / 2,
       };
     })()`);
+
+  const clickTextPreferLower = async (reSrc) => {
+    const hit = await evalv(`(() => {
+      const re = new RegExp(${JSON.stringify(reSrc)}, 'i');
+      const hits = [...document.querySelectorAll('button,a,[role=button],[role=menuitem]')].map((e) => {
+        if (!e.getClientRects().length) return null;
+        const text = (e.innerText || e.getAttribute('aria-label') || '').replace(/\\s+/g, ' ').trim();
+        if (!re.test(text)) return null;
+        const b = e.getBoundingClientRect();
+        if (b.width < 2 || b.height < 2) return null;
+        return { text: text.slice(0, 80), x: b.x + b.width / 2, y: b.y + b.height / 2 };
+      }).filter(Boolean);
+      if (!hits.length) return null;
+      hits.sort((a, b) => b.y - a.y);
+      return hits[0];
+    })()`);
     if (!hit) return false;
-    console.log('click', hit.text);
+    console.log('click', hit.text, `@${Math.round(hit.y)}`);
     await clickXY(hit.x, hit.y);
     return true;
   };
 
   const findAboutEditor = async () =>
     evalv(`(() => {
-      const areas = [...document.querySelectorAll('textarea,[contenteditable=true],div[role=textbox]')].filter(
-        (e) => e.getClientRects().length,
-      );
+      const areas = [...document.querySelectorAll(
+        'textarea,[contenteditable=true],div[role=textbox],[contenteditable=""]',
+      )].filter((e) => e.getClientRects().length);
       const pick =
-        areas.find((e) => /sobre|about|summary|resumo/i.test(
-          (e.getAttribute('aria-label') || '') + ' ' + (e.id || '') + ' ' + (e.name || ''),
-        )) ||
+        areas.find((e) =>
+          /sobre|about|summary|resumo/i.test(
+            (e.getAttribute('aria-label') || '') + ' ' + (e.id || '') + ' ' + (e.className || ''),
+          ),
+        ) ||
         areas.find((e) => {
           const b = e.getBoundingClientRect();
-          return b.height > 60 && b.width > 200;
+          return b.height > 50 && b.width > 180;
         }) ||
         areas[0];
       if (!pick) return null;
@@ -195,84 +227,114 @@ async function main() {
       return {
         tag: pick.tagName,
         aria: pick.getAttribute('aria-label') || '',
+        contentEditable: pick.getAttribute('contenteditable') || '',
         x: b.x + b.width / 2,
         y: b.y + Math.min(40, b.height / 2),
       };
     })()`);
 
+  const waitEditor = async (tries = 15) => {
+    for (let i = 0; i < tries; i++) {
+      const ed = await findAboutEditor();
+      if (ed) return ed;
+      await sleep(800);
+    }
+    return null;
+  };
+
+  // 1) perfil
   await s.send('Page.navigate', { url: PROFILE });
-  await sleep(4000);
+  await sleep(4500);
   await clickSkipIfAny();
   await evalv(`([...document.querySelectorAll('[aria-label="Fechar"],[aria-label="Fechar sugestão"]')]
     .forEach((e) => { try { e.click(); } catch {} }))`);
   await sleep(400);
 
-  // tenta abrir editor Sobre
+  // 2a) se ja existe Sobre com lapis
   let opened = false;
-  for (const step of [
-    async () => clickRe('^editar sobre$|^edit about$|^editar resumo$'),
-    async () => {
-      const pencil = await evalv(`(() => {
-        const sec = [...document.querySelectorAll('section,div')].find((e) => {
-          const h = e.querySelector('h2,h3');
-          return h && /^sobre$|^about$|^resumo$|^summary$/i.test((h.innerText || '').trim());
-        });
-        if (!sec) return null;
-        const btn = sec.querySelector('button[aria-label*="Editar"],button[aria-label*="Edit"],a[aria-label*="Editar"]');
-        if (!btn || !btn.getClientRects().length) return null;
-        const b = btn.getBoundingClientRect();
-        return { x: b.x + b.width / 2, y: b.y + b.height / 2, aria: btn.getAttribute('aria-label') || '' };
-      })()`);
-      if (!pencil) return false;
-      console.log('click', pencil.aria || 'editar secao Sobre');
-      await clickXY(pencil.x, pencil.y);
-      return true;
-    },
-    async () => clickRe('adicionar (um )?resumo|add a summary|adicionar sobre'),
-    async () => {
-      if (!(await clickRe('adicionar se[cç][aã]o|add section'))) return false;
-      await sleep(1200);
-      return clickRe('^sobre$|^about$|^resumo$|^summary$');
-    },
-  ]) {
-    if (await step()) {
-      opened = true;
-      await sleep(2000);
-      if (await findAboutEditor()) break;
+  const pencil = await evalv(`(() => {
+    const sec = [...document.querySelectorAll('section')].find((e) => {
+      const h = e.querySelector('h2,h3');
+      return h && /^sobre$|^about$/i.test((h.innerText || '').trim());
+    });
+    if (!sec) return null;
+    const btn = [...sec.querySelectorAll('button,a')].find((e) =>
+      /editar|edit/i.test(e.getAttribute('aria-label') || e.innerText || ''),
+    );
+    if (!btn || !btn.getClientRects().length) return null;
+    const b = btn.getBoundingClientRect();
+    return { x: b.x + b.width / 2, y: b.y + b.height / 2, aria: btn.getAttribute('aria-label') || 'Editar' };
+  })()`);
+  if (pencil) {
+    console.log('click', pencil.aria);
+    await clickXY(pencil.x, pencil.y);
+    opened = true;
+  }
+
+  // 2b) Adicionar seção (corpo do perfil) → ancora /edit/forms/summary/new/
+  if (!opened || !(await findAboutEditor())) {
+    if (await clickTextPreferLower('^adicionar se[cç][aã]o$|^add (profile )?section$')) {
+      await sleep(1800);
+      // ancora SPA — DOM click (nao Page.navigate)
+      let hit = await clickAnchorHref('/edit/forms/summary/new');
+      if (!hit) {
+        hit = await evalv(`(() => {
+          const el = [...document.querySelectorAll('a,button,[role=menuitem]')].find((e) => {
+            if (!e.getClientRects().length) return false;
+            const t = (e.innerText || e.getAttribute('aria-label') || '').replace(/\\s+/g, ' ').trim();
+            return /adicionar se[cç][aã]o sobre|add about/i.test(t);
+          });
+          if (!el) return null;
+          el.click();
+          const b = el.getBoundingClientRect();
+          return {
+            text: (el.innerText || '').replace(/\\s+/g, ' ').trim().slice(0, 80),
+            href: el.getAttribute('href') || '',
+            x: b.x + b.width / 2,
+            y: b.y + b.height / 2,
+          };
+        })()`);
+      }
+      if (hit) {
+        console.log('spa-click', hit.text || hit.href);
+        // reforca com mouse trusted se ancora ainda na tela
+        if (hit.x && hit.y) await clickXY(hit.x, hit.y);
+        opened = true;
+      }
     }
   }
 
-  let editor = await findAboutEditor();
-  if (!editor && !opened) {
-    // deep link edit about
-    console.log('nav overlay about');
-    await s.send('Page.navigate', {
-      url: 'https://www.linkedin.com/in/me/edit/forms/summary/new/?profileFormEntryPoint=PROFILE_SECTION',
-    });
-    await sleep(3500);
-    editor = await findAboutEditor();
+  const editor = await waitEditor();
+  if (!editor) {
+    console.error('FALHOU: editor Sobre nao hidratou (precisa clique SPA no ancora summary/new)');
+    const st = await evalv(
+      `({href:location.href,body:(document.body?.innerText||'').replace(/\\s+/g,' ').slice(0,300)})`,
+    );
+    console.log('state', st);
+    process.exitCode = 2;
+    s.close();
+    return;
   }
-  if (!editor) editor = await findAboutEditor();
-  if (!editor) throw new Error('editor Sobre nao encontrado');
-
   console.log('editor', editor);
+
+  // 3) limpa + cola (contenteditable / ProseMirror)
   await clickXY(editor.x, editor.y);
   await sleep(300);
-  // seleciona tudo e substitui
-  await s.send('Input.dispatchKeyEvent', {
-    type: 'keyDown',
-    modifiers: 4,
-    key: 'a',
-    code: 'KeyA',
-    windowsVirtualKeyCode: 65,
-  });
-  await s.send('Input.dispatchKeyEvent', {
-    type: 'keyUp',
-    modifiers: 4,
-    key: 'a',
-    code: 'KeyA',
-    windowsVirtualKeyCode: 65,
-  });
+  await evalv(`(() => {
+    const el = document.querySelector('[contenteditable=true],textarea,div[role=textbox]');
+    if (!el) return false;
+    el.focus();
+    if (el.tagName === 'TEXTAREA') {
+      el.select();
+      return true;
+    }
+    const range = document.createRange();
+    range.selectNodeContents(el);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+    return true;
+  })()`);
   await sleep(100);
   await s.send('Input.dispatchKeyEvent', {
     type: 'keyDown',
@@ -288,23 +350,35 @@ async function main() {
   });
   await s.send('Input.insertText', { text: ABOUT });
   console.log('about pasted', ABOUT.length);
-  await sleep(500);
+  await sleep(600);
 
-  if (!(await clickRe('^salvar$|^save$'))) {
-    if (!(await clickRe('salvar altera|save changes'))) throw new Error('botao Salvar ausente');
-  }
-  await sleep(4000);
+  // 4) Salvar
+  const saved = await evalv(`(() => {
+    const re = /^(salvar|save)$/i;
+    const el = [...document.querySelectorAll('button')].find((e) => {
+      if (!e.getClientRects().length) return false;
+      return re.test((e.innerText || e.getAttribute('aria-label') || '').replace(/\\s+/g, ' ').trim());
+    });
+    if (!el) return null;
+    const b = el.getBoundingClientRect();
+    return { text: (el.innerText || '').trim(), x: b.x + b.width / 2, y: b.y + b.height / 2 };
+  })()`);
+  if (!saved) throw new Error('botao Salvar ausente');
+  console.log('click', saved.text);
+  await clickXY(saved.x, saved.y);
+  await sleep(4500);
   await clickSkipIfAny();
 
+  // 5) verifica no perfil
   await s.send('Page.navigate', { url: PROFILE });
-  await sleep(3500);
+  await sleep(4000);
   const check = await evalv(`(() => {
     const body = (document.body?.innerText || '').replace(/\\s+/g, ' ');
-    const snippet = ${JSON.stringify(ABOUT.slice(0, 48))};
+    const snippet = ${JSON.stringify(ABOUT.slice(0, 40))};
     return {
       href: location.href,
       hasSnippet: body.includes(snippet),
-      aboutHead: (body.match(/Sobre[\\s\\S]{0,200}/) || [''])[0].slice(0, 180),
+      aboutHead: (body.match(/Sobre[\\s\\S]{0,220}/) || [''])[0].slice(0, 200),
     };
   })()`);
   console.log('FINAL', check);

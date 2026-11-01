@@ -67,7 +67,7 @@ Deps: Node 22+ (`fetch`/`WebSocket`). Clique via CDP (`Input.dispatchMouseEvent`
 
 **Antes → depois (update-avatar):** assets fixos ConectMax → `linkedin-update-avatar-cdp.mjs --photo PATH` na aba CDP logada. Rollback: trocar foto no LI ou reexecutar com outra imagem.
 
-**Antes → depois (update-banner / about):** banner só no setup conjunto → `linkedin-update-banner-cdp.mjs --photo PATH`; about AVD/`linkedin-setup` → `linkedin-setup-about-cdp.mjs` (web CDP). Rollback: editar capa/Sobre no LI.
+**Antes → depois (update-banner / about):** banner só no setup conjunto → `linkedin-update-banner-cdp.mjs --photo PATH`; about AVD/`linkedin-setup` → `linkedin-setup-about-cdp.mjs` (web CDP). Fluxo Help LI: Adicionar seção → Sobre; **SPA click** no ancora `/edit/forms/summary/new/` (não `Page.navigate` — form não hidrata). Limite 2600 chars. Rollback: editar capa/Sobre no LI.
 
 ## Caminho inverso
 

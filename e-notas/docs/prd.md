@@ -28,7 +28,7 @@ Preço de mercado é opaco; a NFC-e já traz EAN, preço, loja e data, mas o dad
 
 ## 3. Como (mecanismo)
 
-Transformar o QR/URL da NFC-e em índice EAN → preço → estabelecimento → data, e servir:
+Ler o QR/URL da NFC-e e indexar produto (EAN), preço, estabelecimento e data; servir:
 
 - menor preço e ocorrências;
 - histórico;
@@ -176,7 +176,8 @@ Ver matriz em [`../marca/benchmarking-solucoes/00-curadoria.html`](../marca/benc
 
 ## 10. Rollback / caminho inverso
 
-- PRD: remover ou marcar seções como *revogado*; §1 definição e §9 alcance são o “antes” desta clarificação.  
+- PRD: remover ou marcar seções como *revogado*; §1 definição e §9 alcance são o “antes” desta clarificação.
+- §3 mecanismo (antes): “índice EAN → preço → …” em setas; depois: frase legível “indexar produto (EAN), preço, estabelecimento e data”.  
 - REQ-014 em `requisitos.md` espelha as capacidades.  
 - Card Trello e pasta de benchmarking: ver READMEs locais.  
 - Apresentação: slides 03 = o quê, 04–05 = como, 06–07 = matriz/alcance.

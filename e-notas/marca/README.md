@@ -2,7 +2,7 @@
 
 ## Identidade visual v1
 
-Manual essencial (8 páginas A4 paisagem): capa, essência/tom, logo, versões, cores, tipografia, aplicações (app/splash/favicon), contracapa.
+Manual essencial (9 páginas A4 paisagem): capa, essência/tom, logo, versões, cores, tipografia, aplicações (app/splash/favicon), **redes sociais (exemplos de post)**, contracapa.
 
 | Arquivo | Uso |
 |---------|-----|

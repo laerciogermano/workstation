@@ -61,7 +61,22 @@ Direto, útil, sem hype. Destacar **menor preço**, **loja** e **data**. Evitar 
 
 ---
 
-## 6. Rollback
+## 6. Redes sociais
+
+Feed 1:1 e stories 9:16 — exemplos no manual HTML (seção *Publicações*).
+
+| Tipo | Conteúdo |
+|------|----------|
+| Menor preço | Produto + preço verde + loja/data + CTA buscar |
+| Contribuir | “Sua nota vira índice” + CTA colar URL do QR |
+| Geo / perto | Lista curta loja + distância + preço |
+| Story | Um preço do dia + “Abrir busca” |
+
+Regras: wordmark uma vez; preço em verde; loja+data; 1 CTA; hashtag `#notinhas`; bio `notinhas.org` (nunca “e-notas”).
+
+---
+
+## 7. Rollback
 
 ```bash
 rm -f e-notas/identidade-visual.md \

@@ -9,3 +9,5 @@ Uma imagem por código de barras cadastrado (`{EAN}.jpg`), baixada na ordem de f
 5. Catálogos BR (Kodebar / SI5 / Blendo / EncontraProduto / PreçoMelhor) — só se as anteriores falharem  
 
 `manifest.json` registra EAN → arquivo → URL/fonte usada.
+
+No banco: `enotas.codigos_barras.foto_url` = caminho relativo (ex. `ean-fotos/7894900701517.jpg`), preenchido no boot e no upsert do EAN.

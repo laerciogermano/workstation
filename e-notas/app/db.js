@@ -1,10 +1,46 @@
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import pg from 'pg';
 import { geocodeEndereco } from './geocode.js';
 
 const { Pool } = pg;
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const EAN_FOTOS_DIR = path.join(__dirname, 'public', 'ean-fotos');
+
 let pool;
 let schema = 'enotas';
+
+/** URL relativa pública `ean-fotos/{ean}.ext` se o arquivo existir. */
+export function resolveFotoUrlForEan(ean) {
+  const code = String(ean ?? '').trim();
+  if (!code) return null;
+  for (const ext of ['jpg', 'jpeg', 'png', 'webp', 'gif']) {
+    if (fs.existsSync(path.join(EAN_FOTOS_DIR, `${code}.${ext}`))) {
+      return `ean-fotos/${code}.${ext}`;
+    }
+  }
+  return null;
+}
+
+/** Preenche `foto_url` a partir dos arquivos em public/ean-fotos/. */
+export async function syncFotosCodigosBarras(client = getPool()) {
+  const r = await client.query(
+    `SELECT id, codigo_barras, foto_url FROM ${t('codigos_barras')}`,
+  );
+  let updated = 0;
+  for (const row of r.rows) {
+    const foto = resolveFotoUrlForEan(row.codigo_barras);
+    if (!foto || foto === row.foto_url) continue;
+    await client.query(
+      `UPDATE ${t('codigos_barras')} SET foto_url = $1, updated_at = now() WHERE id = $2`,
+      [foto, row.id],
+    );
+    updated += 1;
+  }
+  return { scanned: r.rows.length, updated };
+}
 
 function cfg() {
   return {
@@ -89,7 +125,10 @@ export async function initDb() {
   await p.query(`
     ALTER TABLE ${t('empresas')} ADD COLUMN IF NOT EXISTS lat DOUBLE PRECISION;
     ALTER TABLE ${t('empresas')} ADD COLUMN IF NOT EXISTS lng DOUBLE PRECISION;
+    ALTER TABLE ${t('codigos_barras')} ADD COLUMN IF NOT EXISTS foto_url TEXT;
   `);
+
+  await syncFotosCodigosBarras(p);
 
   // Migração: unicidade (nota_id, codigo) — remove duplicatas e aplica UNIQUE se faltar
   await p.query(`
@@ -312,7 +351,7 @@ export async function listNotas(client = getPool()) {
 export async function listItens(client = getPool()) {
   const r = await client.query(
     `SELECT i.*, e.nome AS empresa_nome, n.numero AS nota_numero, n.chave_acesso,
-            n.emissao AS nota_emissao, cb.codigo_barras
+            n.emissao AS nota_emissao, cb.codigo_barras, cb.foto_url
      FROM ${t('itens')} i
      JOIN ${t('empresas')} e ON e.id = i.empresa_id
      JOIN ${t('notas')} n ON n.id = i.nota_id
@@ -333,9 +372,9 @@ export async function listCodigosBarras(client = getPool()) {
   return r.rows;
 }
 
-/** Upsert: (empresa, código da unidade) → código de barras (EAN). */
+/** Upsert: (empresa, código da unidade) → código de barras (EAN) + foto_url se houver arquivo. */
 export async function upsertCodigoBarras(
-  { empresaId, codigoUnidade, codigoBarras },
+  { empresaId, codigoUnidade, codigoBarras, fotoUrl },
   client = getPool(),
 ) {
   const empresa = Number(empresaId);
@@ -358,15 +397,21 @@ export async function upsertCodigoBarras(
     throw Object.assign(new Error('empresa não encontrada'), { status: 404 });
   }
 
+  const foto =
+    (typeof fotoUrl === 'string' && fotoUrl.trim()) ||
+    resolveFotoUrlForEan(ean) ||
+    null;
+
   const r = await client.query(
-    `INSERT INTO ${t('codigos_barras')} (empresa_id, codigo_unidade, codigo_barras)
-     VALUES ($1, $2, $3)
+    `INSERT INTO ${t('codigos_barras')} (empresa_id, codigo_unidade, codigo_barras, foto_url)
+     VALUES ($1, $2, $3, $4)
      ON CONFLICT (empresa_id, codigo_unidade)
      DO UPDATE SET
        codigo_barras = EXCLUDED.codigo_barras,
+       foto_url = COALESCE(EXCLUDED.foto_url, ${t('codigos_barras')}.foto_url),
        updated_at = now()
      RETURNING *`,
-    [empresa, unidade, ean],
+    [empresa, unidade, ean, foto],
   );
   return r.rows[0];
 }

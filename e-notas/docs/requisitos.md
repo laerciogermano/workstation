@@ -229,6 +229,15 @@ Curadoria: [`../marca/benchmarking-solucoes/README.md`](../marca/benchmarking-so
 - Antes: Delivery/Full *future* / depósito. Depois: CD presente no pacote da proposta.
 - Rollback: restaurar §5.9 *future* e cards “Delivery / Full” nos decks.
 
+## REQ-026 — Foto do produto por EAN (2026-11-01)
+
+- Coluna `enotas.codigos_barras.foto_url` (URL relativa, ex. `ean-fotos/789….jpg`).
+- Arquivos em `public/ean-fotos/`; no boot (`initDb`) e no upsert de EAN, sincroniza `foto_url` se o arquivo existir.
+- APIs `GET /api/itens` e `GET /api/codigos-barras` devolvem `foto_url`.
+- Front (Notas detalhe, Itens, EAN, vitrine): coluna com thumbnail do produto.
+- Antes: só EAN textual. Depois: foto vinculada ao código de barras.
+- Rollback: `ALTER TABLE enotas.codigos_barras DROP COLUMN foto_url;` + remover thumbs no front / pasta `ean-fotos/`.
+
 ## REQ-025 — Tela Notas → itens + EAN (2026-11-01)
 
 - Aba **Notas**: cards das NFC-e (data, estabelecimento, qtd. itens, total), da mais nova à mais antiga.

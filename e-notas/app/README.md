@@ -61,9 +61,11 @@ Resposta: `{ ok, created, empresaCriada, url, empresa, nota, itens }`.
 | `GET` | `/api/empresas` | `{ ok, empresas }` (inclui `lat`/`lng` quando geocodificado) |
 | `POST` | `/api/empresas/geocode` | dispara geocode Nominatim das pendentes; `{ ok, started, empresas }` (endereço normalizado: remove `, 0,` / segmentos vazios da DANFE) |
 | `GET` | `/api/notas` | `{ ok, notas }` (com `empresa_nome` / `empresa_cnpj`; ordem emissão DESC) |
-| `GET` | `/api/itens` | `{ ok, itens }` (com `empresa_nome`, `nota_numero`, `nota_emissao`, `chave_acesso`, `codigo_barras` se mapeado) |
-| `GET` | `/api/codigos-barras` | `{ ok, codigosBarras }` |
-| `POST` | `/api/codigos-barras` | body `{ empresa_id, codigo_unidade, codigo_barras }` → upsert; `{ ok, codigoBarras }` |
+| `GET` | `/api/itens` | `{ ok, itens }` (com `empresa_nome`, `nota_numero`, `nota_emissao`, `chave_acesso`, `codigo_barras`, `foto_url` se mapeado) |
+| `GET` | `/api/codigos-barras` | `{ ok, codigosBarras }` (inclui `foto_url`) |
+| `POST` | `/api/codigos-barras` | body `{ empresa_id, codigo_unidade, codigo_barras, foto_url? }` → upsert; auto `ean-fotos/{ean}.*` se arquivo existir |
+
+Fotos: `public/ean-fotos/{ean}.jpg` · ver [`public/ean-fotos/README.md`](public/ean-fotos/README.md).
 
 ## Reverter
 

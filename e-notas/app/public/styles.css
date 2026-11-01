@@ -488,6 +488,31 @@ tr:last-child td {
   border-bottom: none;
 }
 
+td.foto-cell {
+  width: 48px;
+  padding-right: 0.35rem;
+  vertical-align: middle;
+}
+
+.foto-thumb {
+  display: block;
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  border-radius: 8px;
+  background: #f3f6f9;
+  border: 1px solid var(--nt-line);
+}
+
+.foto-empty {
+  display: block;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: #eef2f6;
+  border: 1px dashed var(--nt-line);
+}
+
 td.mono {
   font-family: var(--nt-mono);
   font-size: 0.75rem;

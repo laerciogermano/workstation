@@ -83,6 +83,16 @@ function cell(v, cls) {
   return `<td${cls ? ` class="${cls}"` : ''}>${esc(text)}</td>`;
 }
 
+function fotoThumb(url, alt) {
+  const src = String(url || '').trim();
+  if (!src) {
+    return `<td class="foto-cell"><span class="foto-empty" aria-hidden="true"></span></td>`;
+  }
+  return `<td class="foto-cell"><img class="foto-thumb" src="${esc(src)}" alt="${esc(
+    alt || '',
+  )}" loading="lazy" width="40" height="40" /></td>`;
+}
+
 async function fetchJson(path, opts) {
   const res = await fetch(path, opts);
   const data = await res.json().catch(() => ({}));
@@ -399,6 +409,7 @@ function renderVitrineDetalhe(empresaId) {
         .map(
           (r) =>
             `<tr>
+              ${fotoThumb(r.foto_url, r.nome)}
               <td>${esc(r.nome || '—')}</td>
               <td class="mono">${esc(r.codigo_barras || '—')}</td>
               <td>${esc(r.codigo || '—')}</td>
@@ -407,7 +418,7 @@ function renderVitrineDetalhe(empresaId) {
             </tr>`,
         )
         .join('')
-    : `<tr><td colspan="5">${catalogo.length ? 'Nada encontrado.' : 'Sem itens.'}</td></tr>`;
+    : `<tr><td colspan="6">${catalogo.length ? 'Nada encontrado.' : 'Sem itens.'}</td></tr>`;
 }
 
 function openVitrineLoja(empresaId) {
@@ -530,10 +541,10 @@ function renderNotaDetalhe(notaId) {
     ? rows
         .map(
           (r) =>
-            `<tr>${cell(r.nome)}${cell(r.codigo_barras || '', 'mono')}${cell(
-              r.codigo || '',
+            `<tr>${fotoThumb(r.foto_url, r.nome)}${cell(r.nome)}${cell(
+              r.codigo_barras || '',
               'mono',
-            )}${cell(
+            )}${cell(r.codigo || '', 'mono')}${cell(
               [r.quantidade, r.unidade].filter(Boolean).join(' ') || '—',
             )}<td class="price-cell">${esc(
               formatPreco(r.valor_unitario),
@@ -546,7 +557,7 @@ function renderNotaDetalhe(notaId) {
             )}">${r.codigo_barras ? 'EAN' : '+ EAN'}</button></td></tr>`,
         )
         .join('')
-    : `<tr><td colspan="6">${
+    : `<tr><td colspan="7">${
         allItens.some((r) => Number(r.nota_id) === Number(n.id))
           ? 'Nada encontrado.'
           : 'Sem itens nesta nota.'
@@ -654,10 +665,23 @@ function applyItensFilter() {
     ? rows
         .map(
           (r) =>
-            `<tr>${cell(formatDataNota(r.nota_emissao))}${cell(r.empresa_nome)}${cell(r.codigo_barras || '', 'mono')}${cell(r.codigo || '', 'mono')}${cell(r.nome)}<td class="price-cell">${esc(formatPreco(r.valor_unitario))}</td><td><button type="button" class="btn-link" data-vincular-ean data-empresa-id="${esc(r.empresa_id)}" data-empresa-nome="${esc(r.empresa_nome || '')}" data-codigo="${esc(r.codigo)}" data-nome="${esc(r.nome || '')}" data-ean="${esc(r.codigo_barras || '')}">${r.codigo_barras ? 'EAN' : '+ EAN'}</button></td></tr>`,
+            `<tr>${fotoThumb(r.foto_url, r.nome)}${cell(
+              formatDataNota(r.nota_emissao),
+            )}${cell(r.empresa_nome)}${cell(r.codigo_barras || '', 'mono')}${cell(
+              r.codigo || '',
+              'mono',
+            )}${cell(r.nome)}<td class="price-cell">${esc(
+              formatPreco(r.valor_unitario),
+            )}</td><td><button type="button" class="btn-link" data-vincular-ean data-empresa-id="${esc(
+              r.empresa_id,
+            )}" data-empresa-nome="${esc(r.empresa_nome || '')}" data-codigo="${esc(
+              r.codigo,
+            )}" data-nome="${esc(r.nome || '')}" data-ean="${esc(
+              r.codigo_barras || '',
+            )}">${r.codigo_barras ? 'EAN' : '+ EAN'}</button></td></tr>`,
         )
         .join('')
-    : `<tr><td colspan="7">${allItens.length ? 'Nada encontrado.' : 'Sem itens.'}</td></tr>`;
+    : `<tr><td colspan="8">${allItens.length ? 'Nada encontrado.' : 'Sem itens.'}</td></tr>`;
 }
 
 function eanHaystack(r) {
@@ -682,10 +706,12 @@ function applyEanFilter() {
     ? rows
         .map(
           (r) =>
-            `<tr>${cell(r.empresa_nome || r.empresa_cnpj)}${cell(r.codigo_unidade)}${cell(r.codigo_barras, 'mono')}</tr>`,
+            `<tr>${fotoThumb(r.foto_url, r.codigo_barras)}${cell(
+              r.empresa_nome || r.empresa_cnpj,
+            )}${cell(r.codigo_unidade)}${cell(r.codigo_barras, 'mono')}</tr>`,
         )
         .join('')
-    : `<tr><td colspan="3">${allCodigosBarras.length ? 'Nada encontrado.' : 'Sem EANs.'}</td></tr>`;
+    : `<tr><td colspan="4">${allCodigosBarras.length ? 'Nada encontrado.' : 'Sem EANs.'}</td></tr>`;
 }
 
 async function stopEanScanner() {

@@ -11,7 +11,14 @@ import {
   fetchDanfe,
   parseDanfeHtml,
 } from './fazenda-pr.js';
-import { cadastrarNotaCompleta, dbInfo, initDb } from './db.js';
+import {
+  cadastrarNotaCompleta,
+  dbInfo,
+  initDb,
+  listEmpresas,
+  listItens,
+  listNotas,
+} from './db.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PORT = Number(process.env.PORT) || 4173;
@@ -78,6 +85,36 @@ subjectAltName = ${san}
 const app = express();
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.get('/api/empresas', async (_req, res) => {
+  try {
+    const empresas = await listEmpresas();
+    return res.json({ ok: true, empresas });
+  } catch (err) {
+    console.error('[empresas:erro]', err.message);
+    return res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
+app.get('/api/notas', async (_req, res) => {
+  try {
+    const notas = await listNotas();
+    return res.json({ ok: true, notas });
+  } catch (err) {
+    console.error('[notas:erro]', err.message);
+    return res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
+app.get('/api/itens', async (_req, res) => {
+  try {
+    const itens = await listItens();
+    return res.json({ ok: true, itens });
+  } catch (err) {
+    console.error('[itens:erro]', err.message);
+    return res.status(500).json({ ok: false, error: err.message });
+  }
+});
 
 app.post('/api/nota', async (req, res) => {
   const url = typeof req.body?.url === 'string' ? req.body.url.trim() : '';

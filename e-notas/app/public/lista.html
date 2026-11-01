@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>e-notas — listagem</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="screen wide">
+      <nav class="nav">
+        <a href="/">Escanear</a>
+        <a href="/lista.html" aria-current="page">Listagem</a>
+      </nav>
+      <h1>Cadastros</h1>
+      <p class="hint">Empresas, notas e itens gravados no Postgres.</p>
+      <p id="status" class="status" aria-live="polite">Carregando…</p>
+
+      <section class="block">
+        <h2>Empresas <span id="count-empresas" class="count"></span></h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>CNPJ</th>
+                <th>Nome</th>
+                <th>Endereço</th>
+              </tr>
+            </thead>
+            <tbody id="empresas"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="block">
+        <h2>Notas <span id="count-notas" class="count"></span></h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Empresa</th>
+                <th>Número</th>
+                <th>Emissão</th>
+                <th>Total</th>
+                <th>Chave</th>
+              </tr>
+            </thead>
+            <tbody id="notas"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="block">
+        <h2>Itens <span id="count-itens" class="count"></span></h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Empresa</th>
+                <th>Nota</th>
+                <th>Código</th>
+                <th>Nome</th>
+                <th>Qtd</th>
+                <th>Unit.</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody id="itens"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+    <script src="/lista.js"></script>
+  </body>
+</html>

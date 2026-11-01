@@ -1,0 +1,23 @@
+---
+description: Requisitos descritos no e-notas devem ir para docs/requisitos.md
+globs: e-notas/**
+alwaysApply: false
+---
+
+# e-notas — requisitos no documento canônico
+
+Sempre que, no projeto **e-notas**, um **requisito ou regra nova** for descrito (chat, prompt, correção de comportamento), **adicione no mesmo turno** em [`e-notas/docs/requisitos.md`](e-notas/docs/requisitos.md).
+
+## Critérios
+
+- Criar item `REQ-NNN` com data e bullets objetivos (o que o sistema deve fazer)
+- Não deixar a regra só no código, README do app ou memória do chat
+- Se a regra mudar: atualizar o REQ; se revogar: marcar *revogado* sem apagar o histórico útil
+- Implementação e documento no mesmo entregável (commit junto quando houver alteração de código)
+
+## Exemplos
+
+```text
+✅ Pediu “só HTTPS” → REQ no requisitos.md + código HTTPS
+❌ Implementou cadastro e não registrou a regra de histórico por nota
+```

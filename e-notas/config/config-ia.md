@@ -25,6 +25,17 @@ Isso significa:
 
 Detalhe do formato: [`../prompts/README.md`](../prompts/README.md).
 
+### Documento de requisitos
+
+**Toda regra ou requisito novo descrito para o e-notas deve ser acrescentado em [`../docs/requisitos.md`](../docs/requisitos.md) no mesmo turno.**
+
+Isso significa:
+
+1. Extrair o requisito do pedido (comportamento obrigatório, restrição, persistência, UI, etc.).
+2. Criar ou atualizar um item `REQ-NNN` com data e bullets objetivos.
+3. Não deixar a regra só no código, no chat ou no README do app.
+4. Cursor: [`.cursor/rules/e-notas-requisitos.mdc`](../../.cursor/rules/e-notas-requisitos.mdc).
+
 ### Cascata de próximos passos
 
 **Para toda alteração em um arquivo da esteira de documentação, seguir os `Próximos passos` do documento até finalizar a árvore de execução.**

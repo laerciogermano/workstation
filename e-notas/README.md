@@ -5,6 +5,7 @@
 **No fluxo:** **este documento** → [`docs/`](docs/README.md) (`functionalities` → `user-stories` → `bdd` → `screens` → `screens-bdd` → `components` → `prototype`). Orienta toda a esteira; não substitui BDD nem UI.
 
 Derivados: [`docs/`](docs/README.md).  
+Requisitos / regras: [`docs/requisitos.md`](docs/requisitos.md).  
 Timeline de prompts: [`prompts/`](prompts/README.md).  
 Regras para a IA: [`config/config-ia.md`](config/config-ia.md).  
 App (scan QR + cadastro Postgres Contabo / schema `enotas`): [`app/`](app/README.md).

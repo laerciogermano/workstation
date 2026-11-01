@@ -156,6 +156,34 @@ export async function listItensByNota(notaId, client = getPool()) {
   return r.rows;
 }
 
+export async function listEmpresas(client = getPool()) {
+  const r = await client.query(
+    `SELECT * FROM ${t('empresas')} ORDER BY id DESC`,
+  );
+  return r.rows;
+}
+
+export async function listNotas(client = getPool()) {
+  const r = await client.query(
+    `SELECT n.*, e.nome AS empresa_nome, e.cnpj AS empresa_cnpj
+     FROM ${t('notas')} n
+     JOIN ${t('empresas')} e ON e.id = n.empresa_id
+     ORDER BY n.id DESC`,
+  );
+  return r.rows;
+}
+
+export async function listItens(client = getPool()) {
+  const r = await client.query(
+    `SELECT i.*, e.nome AS empresa_nome, n.numero AS nota_numero, n.chave_acesso
+     FROM ${t('itens')} i
+     JOIN ${t('empresas')} e ON e.id = i.empresa_id
+     JOIN ${t('notas')} n ON n.id = i.nota_id
+     ORDER BY i.id DESC`,
+  );
+  return r.rows;
+}
+
 /** Cadastra empresa (se faltar), nota e uma linha de item por produto (histórico). */
 export async function cadastrarNotaCompleta({ url, empresa, nota, itens }) {
   if (!empresa?.cnpj) {

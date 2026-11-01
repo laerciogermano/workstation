@@ -10,6 +10,7 @@ Timeline de prompts: [`../prompts/timeline.md`](../prompts/timeline.md).
 
 | Artefato | Arquivo | Papel no fluxo | Status |
 |----------|---------|----------------|--------|
+| Requisitos / regras | [`requisitos.md`](requisitos.md) | Regras canônicas pedidas (REQ-NNN); atualizar a cada requisito novo | Ativo |
 | Funcionalidades | `functionalities.md` | Capacidades de cada seção e página em bullets | A produzir |
 | Histórias de usuário | `user-stories.md` | O *quê* desejado pelo usuário (Como… quero… para…) | A produzir |
 | Cenários BDD | `bdd.md` | Critérios de aceite por história (Dado / Quando / Então) | A produzir |

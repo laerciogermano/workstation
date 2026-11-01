@@ -320,14 +320,24 @@ async function main() {
       console.log('code', CODE);
       await clickRe('continuar|continue|confirmar|verify');
       await sleep(3000);
-      // pós-PIN: Pular telas opcionais do onboarding
-      for (let s = 0; s < 10; s++) {
+      // pós-PIN: Pular telas opcionais; no fim Continuar (ex.: get-the-app)
+      for (let s = 0; s < 12; s++) {
         st = await snap();
         const skip = st.btns.find((b) => /^pular$|^skip$/i.test(b.text));
-        if (!skip) break;
-        console.log('click', skip.text);
-        await clickXY(skip.x, skip.y);
-        await sleep(2000);
+        if (skip) {
+          console.log('click', skip.text);
+          await clickXY(skip.x, skip.y);
+          await sleep(2000);
+          continue;
+        }
+        if (
+          /get-the-app|aplicativo/i.test(st.href + st.body) &&
+          st.btns.some((b) => /^continuar$|^continue$/i.test(b.text))
+        ) {
+          await clickRe('^continuar$|^continue$');
+          await sleep(3000);
+        }
+        break;
       }
       continue;
     }
@@ -338,6 +348,13 @@ async function main() {
       console.log('click', skip.text);
       await clickXY(skip.x, skip.y);
       await sleep(2000);
+      continue;
+    }
+
+    // último passo: Continuar (baixar app)
+    if (/get-the-app|aplicativo/i.test(st.href + st.body)) {
+      await clickRe('continuar|continue');
+      await sleep(3000);
       continue;
     }
 

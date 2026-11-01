@@ -27,8 +27,9 @@ Manual essencial (9 páginas A4 paisagem): capa, essência/tom, logo, versões, 
 | [`apresentacao-notinhas-v1.html`](apresentacao-notinhas-v1.html) | Apresentação (produto + benchmarking + DS) |
 | [`apresentacao-notinhas-v1.pdf`](apresentacao-notinhas-v1.pdf) | PDF da apresentação (8 págs. A4) |
 | [`apresentacao-notinhas-v1.md`](apresentacao-notinhas-v1.md) | Índice da apresentação |
+| [`benchmarking-logos/`](benchmarking-logos/README.md) | Benchmarking de logos NFC-e/preço (insumo do card logo) |
 
-**Cards:** [Criar identidade visual](https://trello.com/c/qUI3Rb9a) · [Criar design system](https://trello.com/c/qdH95gZX) · [Documento de apresentação](https://trello.com/c/hfGuzfMs) · tasks [`../tasks/6ae739e2ef0f49af2019c4f5/`](../tasks/6ae739e2ef0f49af2019c4f5/README.md) · [`../tasks/6ae739e3d95154fb9a7b51a6/`](../tasks/6ae739e3d95154fb9a7b51a6/README.md) · [`../tasks/6ae742a63b9ee278c2a0cc7e/`](../tasks/6ae742a63b9ee278c2a0cc7e/README.md)
+**Cards:** [Criar identidade visual](https://trello.com/c/qUI3Rb9a) · [Criar design system](https://trello.com/c/qdH95gZX) · [Documento de apresentação](https://trello.com/c/hfGuzfMs) · [Criar logo](https://trello.com/c/26aOrY0z) · tasks [`../tasks/6ae739e2ef0f49af2019c4f5/`](../tasks/6ae739e2ef0f49af2019c4f5/README.md) · [`../tasks/6ae739e3d95154fb9a7b51a6/`](../tasks/6ae739e3d95154fb9a7b51a6/README.md) · [`../tasks/6ae742a63b9ee278c2a0cc7e/`](../tasks/6ae742a63b9ee278c2a0cc7e/README.md) · [`../tasks/6ae7ae51f0d412693108b6ad/`](../tasks/6ae7ae51f0d412693108b6ad/README.md)
 
 **Antes → depois:** sem manual → identidade HTML v1 → DS HTML v1 → apresentação unificada `apresentacao-notinhas-v1.html`. PDF de marca e aplicação CSS no app ficam para passos seguintes.
 

@@ -14,7 +14,8 @@ Marca **notinhas.shop**: [`marca/README.md`](marca/README.md) · **DESIGN.md v2*
 Refs identidade: [`marca/referencias-identidade/README.md`](marca/referencias-identidade/README.md).  
 Benchmarking soluções similares: [`marca/benchmarking-solucoes/README.md`](marca/benchmarking-solucoes/README.md) · [card](https://trello.com/c/1fMjqGdR).  
 Comparar preços NFC-e vs iFood/99Food/outros: [`marca/comparacao-precos-apps/`](marca/comparacao-precos-apps/README.md) · [card](https://trello.com/c/fapxKp3l).  
-Documento de apresentação (produto + benchmarking + DS): [`marca/apresentacao-notinhas-v1.html`](marca/apresentacao-notinhas-v1.html) · [card](https://trello.com/c/hfGuzfMs) · [`tasks/6ae742a63b9ee278c2a0cc7e/`](tasks/6ae742a63b9ee278c2a0cc7e/README.md).  
+Documento de apresentação (produto + benchmarking + DS): [`marca/apresentacao-notinhas-v1.html`](marca/apresentacao-notinhas-v1.html) · [card](https://trello.com/c/hfGuzfMs) · [`tasks/6ae742a63b9ee278c2a0cc7e/`](tasks/6ae742a63b9ee278c2a0cc7e/README.md).
+Logo (card + benchmarking logos): [`marca/benchmarking-logos/README.md`](marca/benchmarking-logos/README.md) · [card](https://trello.com/c/26aOrY0z) · [`tasks/6ae7ae51f0d412693108b6ad/`](tasks/6ae7ae51f0d412693108b6ad/README.md).  
 PRD notinhas.shop: [`docs/prd.md`](docs/prd.md).
 
 ---

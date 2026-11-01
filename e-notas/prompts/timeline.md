@@ -24,4 +24,4 @@ Como registrar: [`README.md`](README.md).
 | 016 | 2026-11-01 | Home produtos + mercados | [016-2026-11-01-home-produtos-mercados-ifood.md](016-2026-11-01-home-produtos-mercados-ifood.md) | Aba Estabelecimentos: grade produtos (foto/preço) + mercados + mapa. |
 | 017 | 2026-11-01 | Aba Produtos; sem Itens | [017-2026-11-01-aba-produtos-sem-itens.md](017-2026-11-01-aba-produtos-sem-itens.md) | Estabelecimentos + Produtos + Notas; remove aba Itens. |
 | 018 | 2026-11-01 | Produtos inicial | [018-2026-11-01-produtos-inicial-menores-precos.md](018-2026-11-01-produtos-inicial-menores-precos.md) | Produtos inicial; título Menores preços; cards mobile. |
-| 018 | 2026-11-01 | Card criar logo notinhas | [018-2026-11-01-card-criar-logo-notinhas.md](018-2026-11-01-card-criar-logo-notinhas.md) | Card Trello Backlog: logo wordmark+símbolo; anexos identidade/DS/marca v2. |
+| 018 | 2026-11-01 | Card criar logo notinhas | [018-2026-11-01-card-criar-logo-notinhas.md](018-2026-11-01-card-criar-logo-notinhas.md) | Card Trello Backlog: logo wordmark+símbolo; anexos identidade/DS/marca v2 + benchmarking logos. |

@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>notinhas.shop — Benchmarking de logos</title>
+<style>
+  :root{--bg:#0B1220;--card:#121A2B;--line:#243149;--text:#F2F5FA;--muted:#8B97AD;--accent:#2DD4A8;--blue:#5B8CFF;--warn:#F5B942;--no:#F07178}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"IBM Plex Sans",system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.55;padding:40px 24px}
+  .wrap{max-width:980px;margin:0 auto}
+  h1{font-size:26px;letter-spacing:-.02em;margin-bottom:8px}
+  .lead{color:var(--muted);margin-bottom:14px;max-width:820px}
+  .meta{font-size:12px;color:var(--muted);margin-bottom:28px}
+  h2{font-size:17px;margin:28px 0 12px;color:var(--accent)}
+  h3{font-size:14px;margin:0 0 6px}
+  p,li{font-size:14px;color:#D5DCEC}
+  ul{padding-left:1.2em;margin:8px 0 12px}
+  a{color:var(--accent)}
+  table{width:100%;border-collapse:collapse;font-size:12px;margin:12px 0 8px}
+  th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--muted);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.04em}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin:14px 0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+  .logo-box{height:120px;display:flex;align-items:center;justify-content:center;background:#0a0f18;border-radius:8px;margin-bottom:10px;overflow:hidden;border:1px solid var(--line)}
+  .logo-box img{max-width:90%;max-height:100px;object-fit:contain}
+  .tag{display:inline-block;padding:2px 8px;border-radius:999px;background:#1a2438;color:#B4BCCC;font-size:11px;margin:0 4px 4px 0}
+  .tag.gov{background:#172844;color:#93B4FF}
+  .tag.colab{background:#123028;color:#6EE7B7}
+  .tag.warn{background:#2a2414;color:#F5D27A}
+  .do{color:var(--accent);font-weight:600}
+  .dont{color:var(--no);font-weight:600}
+  .concl{border-color:var(--accent);background:#0f1f1a}
+  .foot{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Benchmarking de logos — categoria preço / NFC-e</h1>
+  <p class="lead">Insumo para a logo oficial do <strong>notinhas.shop</strong>: padrões, clichês e gaps visuais dos apps/portais que competem no eixo <em>nota fiscal → preço de balcão</em>. Não copiar marcas; extrair regras.</p>
+  <p class="meta">Card · <a href="https://trello.com/c/26aOrY0z">trello.com/c/26aOrY0z</a> · refs em <code>referencias-identidade/</code> · 2026-11-01</p>
+
+  <h2>1. Campo competitivo (logo)</h2>
+  <p><span class="tag gov">gov / SEFAZ</span> Menor Preço (Nota Paraná) · Menor Preço Brasil<br>
+  <span class="tag colab">colaborativo NFC-e</span> Busca Preço · Nota Preço · Mercado Certo · GoMarket · PoupApp · Qual o Preço<br>
+  <span class="tag warn">fora do eixo (não confundir)</span> eNotas SaaS (emissão) · iFood/99/Rappi (delivery)</p>
+
+  <h2>2. Galeria</h2>
+  <div class="grid">
+    <div class="card">
+      <div class="logo-box"><img src="41-logo-menor-preco.gif" alt="Menor Preço / Nota Paraná"></div>
+      <h3>Menor Preço · Nota Paraná</h3>
+      <p><span class="tag gov">gov</span> Azul + verde + amarelo · wordmark MAIÚSCULO · QR de marca. Ícone de app: selo institucional, não “fintech cute”.</p>
+      <ul>
+        <li>Confiança = bandeira/estado, tipografia pesada</li>
+        <li>Símbolo literal: QR (dado fiscal)</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="logo-box"><img src="45-play-menor-asset0.png" alt="Ícone Play Menor Preço"></div>
+      <h3>Menor Preço — ícone store</h3>
+      <p>Mesmo DNA azul/verde em tile de loja. Legível em 48–512 px.</p>
+    </div>
+    <div class="card">
+      <div class="logo-box"><img src="42-nota-parana.png" alt="Nota Paraná"></div>
+      <h3>Nota Paraná (portal)</h3>
+      <p>Marca-mãe do programa. Verde institucional; “nota” como substantivo público (útil p/ notinhas).</p>
+    </div>
+    <div class="card">
+      <div class="logo-box" style="background:#0d2818"><img src="20-logo-buscapreco.png" alt="Busca Preço"></div>
+      <h3>Busca Preço</h3>
+      <p><span class="tag colab">colab</span> Quase só <strong>wordmark</strong> branco em verde escuro + tagline. Sem símbolo forte — marca tipográfica.</p>
+      <ul>
+        <li>Clareza &gt; mascote</li>
+        <li>Risco: pouco distintivo em favicon</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="logo-box" style="background:#000"><img src="21-logo-notapreco.png" alt="Nota Preço"></div>
+      <h3>Nota Preço</h3>
+      <p><span class="tag colab">colab</span> Mascote recibo kawaii + lupa + $ · verde/azul gloss. Literalismo máximo (nota + preço).</p>
+      <ul>
+        <li>Memorável, mas datado (3D/web 2.0)</li>
+        <li><span class="dont">Evitar</span> mascote + cifrão para notinhas</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="logo-box" style="background:#000"><img src="22-logo-mercadocerto.png" alt="Mercado Certo"></div>
+      <h3>Mercado Certo</h3>
+      <p><span class="tag colab">colab</span> Carrinho + check verde/laranja. Metáfora de <em>compra certa</em>, não de nota fiscal.</p>
+      <ul>
+        <li>Símbolo forte em tamanho pequeno</li>
+        <li>Categoria “mercado”, não “NFC-e”</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="logo-box" style="background:#fff"><img src="23-logo-gomarket.png" alt="GoMarket"></div>
+      <h3>GoMarket</h3>
+      <p><span class="tag colab">colab</span> Monograma G + seta + carrinho; gradiente azul→verde. Linguagem marketplace/delivery.</p>
+      <ul>
+        <li>Gradiente azul→verde ecoa Nota Paraná / notinhas</li>
+        <li><span class="dont">Evitar</span> carrinho (já saturado)</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="logo-box"><span style="color:var(--muted);font-size:13px;text-align:center;padding:12px">PoupApp · Qual o Preço<br><small>wordmark / landing — sem asset estável no kit</small></span></div>
+      <h3>PoupApp · Qual o Preço</h3>
+      <p>Nomes descritivos + UI light. Pouca marca icônica pública; reforçam que o mercado ainda é tipográfico/utilitário.</p>
+    </div>
+  </div>
+
+  <h2>3. Matriz de atributos</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Marca</th>
+        <th>Tipo</th>
+        <th>Metáfora</th>
+        <th>Cores</th>
+        <th>Tom</th>
+        <th>Risco se notinhas copiar</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Menor Preço / NP</td>
+        <td>Wordmark + QR</td>
+        <td>Dado fiscal / gov</td>
+        <td>Azul · verde · amarelo</td>
+        <td>Institucional</td>
+        <td>Parecer órgão público</td>
+      </tr>
+      <tr>
+        <td>Busca Preço</td>
+        <td>Wordmark</td>
+        <td>Nenhuma</td>
+        <td>Verde escuro · branco</td>
+        <td>Direto</td>
+        <td>Genérico; fraco em ícone</td>
+      </tr>
+      <tr>
+        <td>Nota Preço</td>
+        <td>Mascote + wordmark</td>
+        <td>Recibo + lupa + $</td>
+        <td>Verde · azul · gloss</td>
+        <td>Playful</td>
+        <td>Infantil / datado</td>
+      </tr>
+      <tr>
+        <td>Mercado Certo</td>
+        <td>Símbolo</td>
+        <td>Carrinho + check</td>
+        <td>Verde · laranja</td>
+        <td>Retail</td>
+        <td>Confusão com lista/mercado</td>
+      </tr>
+      <tr>
+        <td>GoMarket</td>
+        <td>Monograma</td>
+        <td>G + carrinho</td>
+        <td>Azul→verde</td>
+        <td>Tech marketplace</td>
+        <td>Parecer delivery</td>
+      </tr>
+      <tr>
+        <td><strong>notinhas.shop (alvo)</strong></td>
+        <td>Wordmark + símbolo</td>
+        <td>Recibo + QR + seta ↓ preço</td>
+        <td>#014380 · #0069B4 · #00984B</td>
+        <td>Claro · utilitário</td>
+        <td>—</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>4. Padrões do mercado</h2>
+  <div class="card">
+    <ul>
+      <li><strong>Azul + verde</strong> dominam (gov + “economia”). notinhas já está nesse eixo — diferenciar por <em>forma</em>, não por cor.</li>
+      <li><strong>Carrinho / check / lupa / $</strong> estão saturados nos colabs.</li>
+      <li><strong>QR / recibo</strong> ainda pouco explorados com acabamento adulto (exceto Nota Preço, que caricaturiza).</li>
+      <li><strong>Wordmark com domínio</strong> (`.shop`) é raro — vantagem de notinhas vs nomes genéricos “Preço/Mercado”.</li>
+      <li>Ícones de store gov = selo; privados = flat/gradiente. Favicon precisa de símbolo ≥24 px, não só tipografia.</li>
+    </ul>
+  </div>
+
+  <h2>5. Implicações para a logo notinhas</h2>
+  <div class="card concl">
+    <p class="do">Fazer</p>
+    <ul>
+      <li>Wordmark tipográfico limpo: <code>notinhas</code> azul profundo + <code>.shop</code> verde (Plus Jakarta ExtraBold)</li>
+      <li>Símbolo: recibo arredondado + QR sutil + seta ↓ verde (preço) — adulto, flat, sem mascote</li>
+      <li>Versões mono / negativo; mínimos 120 px (wordmark) e 24 px (símbolo)</li>
+      <li>Manter DNA azul+verde Nota Paraná como âncora de confiança, sem brasão/selo gov</li>
+    </ul>
+    <p class="dont" style="margin-top:12px">Não fazer</p>
+    <ul>
+      <li>Carrinho, lupa, cifrão, check “certo”, mascote recibo kawaii</li>
+      <li>Gradiente 3D estilo GoMarket/Nota Preço</li>
+      <li>Usar “e-notas” / “eNotas” no wordmark público (SaaS e emissão)</li>
+      <li>Copiar layout do QR-selo Menor Preço</li>
+    </ul>
+  </div>
+
+  <h2>6. Fontes</h2>
+  <ul>
+    <li>Assets: <code>e-notas/marca/referencias-identidade/</code> (`20`–`23`, `41`–`45`)</li>
+    <li>Sites: buscapreco.net · notapreco.com.br · mercadocerto.app.br · gomarket.app.br · poupapp.app.br · qualopreco.app · menorpreco.notaparana.pr.gov.br</li>
+    <li>Identidade alvo: <code>identidade-visual-notinhas-v1.html</code> § logo · <code>notinhas.shop.DESIGN.md</code></li>
+  </ul>
+
+  <p class="foot">Uso interno notinhas.shop / e-notas · fair use para análise de marca · não redistribuir assets de terceiros como kit oficial.</p>
+</div>
+</body>
+</html>

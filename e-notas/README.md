@@ -12,6 +12,7 @@ App (scan QR + cadastro Postgres Contabo / schema `enotas`): [`app/`](app/README
 Deploy Contabo (`/enotas/`): [`deploy/`](deploy/README.md).  
 Marca / refs identidade (card Trello; sugestão **notinhas.org**): [`marca/referencias-identidade/README.md`](marca/referencias-identidade/README.md).  
 Benchmarking soluções similares: [`marca/benchmarking-solucoes/README.md`](marca/benchmarking-solucoes/README.md) · [card](https://trello.com/c/1fMjqGdR).  
+Comparar preços NFC-e vs iFood/99Food/outros: [card](https://trello.com/c/fapxKp3l) · [`tasks/6ae7409d4aa645aaa1dd06b4/`](tasks/6ae7409d4aa645aaa1dd06b4/README.md).  
 PRD notinhas.org: [`docs/prd.md`](docs/prd.md).
 
 ---

@@ -15,6 +15,17 @@ Registro: [`../android-studio/contas-facebook-chrome.csv`](../android-studio/con
 
 **Antes → depois (Marina):** sem perfil → `~/chrome-profiles/marina-costa` + `start-marina-costa.sh` (:9224). Rollback: fechar Chrome; `rm -rf ~/chrome-profiles/marina-costa`; remover script/linha do CSV.
 
+## Cadastro LinkedIn via CDP (Marina)
+
+```bash
+./signup-marina-costa.sh                 # sobe Chrome se preciso + preenche signup
+./signup-marina-costa.sh --no-email-code # para antes da confirmação por e-mail
+# ou só o node (Chrome já no ar):
+CDP_URL=http://127.0.0.1:9224 node linkedin-signup-cdp.mjs
+```
+
+Defaults: `marina.costa@clozzy.com.br` / senha LI `in@12345678` / Marina Costa. Poll do código 6 dígitos via SSH Mailcow (`credenciais.md` ou `MAIL_SSH_PASS`). **Antes → depois:** cadastro manual → script CDP. Rollback: `--no-email-code` / apagar conta LI; CSV `nao_criada`.
+
 ## Script
 
 ```bash

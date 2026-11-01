@@ -561,6 +561,11 @@ td.mono {
   letter-spacing: -0.01em;
 }
 
+#vitrine-lista,
+#vitrine-detalhe {
+  margin-top: 1.25rem;
+}
+
 .vitrine-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));

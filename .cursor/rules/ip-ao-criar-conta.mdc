@@ -1,0 +1,22 @@
+---
+description: Ao criar conta LinkedIn (AVD/CDP), capturar IP público e gravar no CSV
+alwaysApply: true
+---
+
+# IP na criação de conta
+
+Sempre que **criar** uma conta LinkedIn (signup AVD ou Chrome/CDP) neste lab, **buscar o IP público de egress** no mesmo momento e **gravar na planilha**.
+
+## Critérios
+
+1. Antes ou logo após o signup bem-sucedido, obter o IP: `curl -sS https://api.ipify.org` (IPv4)
+2. Preencher a coluna `ip` em [`screen-robot/pocs/android-studio/contas-linkedin-clozzy.csv`](screen-robot/pocs/android-studio/contas-linkedin-clozzy.csv) na linha da conta
+3. Se o egress mudar no meio do fluxo (VPN/proxy), gravar o IP **efetivo no momento do submit** do cadastro; anotar troca em `observacoes` se houver
+4. Contas antigas sem `ip` não inventar — só preencher quando houver evidência da criação
+
+## Exemplos
+
+```text
+✅ Signup Marina → curl ipify → CSV `ip=191.x.x.x` na mesma atualização da linha
+❌ Criar conta e deixar `ip` vazio “para depois”
+```

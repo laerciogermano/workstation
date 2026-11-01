@@ -9,7 +9,7 @@
 
 ## 1. Problema
 
-Preço de mercado é opaco; a NFC-e já traz EAN, preço, loja e data, mas o dado some após a compra. Falta um índice consumer com comparação, histórico, cesta (inclusive apartada), **vitrine da loja**, **busca “onde comprar perto de mim”** e **API B2B**.
+Preço de mercado é opaco; a NFC-e já traz EAN, preço, loja e data, mas o dado some após a compra. Falta um índice consumer com comparação, histórico, cesta (inclusive apartada), **vitrine do estabelecimento**, **busca “onde comprar perto de mim”**, **gestão do que comprou / quando / quanto gasta** (análise financeira pessoal) e **API B2B**.
 
 ## 2. Proposta
 
@@ -18,8 +18,9 @@ Transformar o QR/URL da NFC-e em índice EAN → preço → estabelecimento → 
 - menor preço e ocorrências;
 - histórico;
 - cesta com montagem apartada;
-- tela da loja (catálogo read-only);
-- busca de item com **lojas físicas próximas** (ex.: “no centro”);
+- tela do estabelecimento (catálogo read-only);
+- busca de item com **estabelecimentos físicos próximos** (ex.: “no centro”);
+- **gestão de compras pessoais** (o que comprou, quando, gasto mensal, análise financeira);
 - API para empresas;
 - **futuro:** sistema de **delivery** (pedido + entrega a partir da vitrine/cesta).
 
@@ -28,7 +29,7 @@ Transformar o QR/URL da NFC-e em índice EAN → preço → estabelecimento → 
 | Persona | Job |
 |---------|-----|
 | **Contribuinte** | Escaneia/cola o QR e alimenta o índice |
-| **Comprador** | Busca EAN/nome, compara lojas, monta cesta, vê vitrine, descobre **onde comprar perto**; no futuro, pede **delivery** |
+| **Comprador** | Busca EAN/nome, compara estabelecimentos, monta cesta, vê vitrine, descobre **onde comprar perto**, **acompanha o próprio gasto**; no futuro, pede **delivery** |
 | **Empresa / parceiro** | Consome ou alimenta o índice via API; no futuro, recebe/atende pedidos de entrega |
 
 ## 4. Capacidades-alvo (must / should)
@@ -73,6 +74,20 @@ Transformar o QR/URL da NFC-e em índice EAN → preço → estabelecimento → 
 - **Fora da v1:** delivery não bloqueia comparação, geo, histórico nem montagem apartada.
 - **Gap vs apps (literatura):** preço em iFood/99/marketplaces costuma ficar acima do balcão (ordens típicas ~+8% a +22% em mercado; ~+17% a +30% em restaurante — ver [`../marca/comparacao-precos-apps/`](../marca/comparacao-precos-apps/README.md)). O índice NFC-e permanece fonte de **preço físico**; não misturar séries sem rótulo de canal.
 
+### 4.8 Gestão de compras e análise financeira — *should*
+- A partir das **notas que o usuário depositou** (conta / sessão autenticada), expor o **extrato pessoal** de compras — distinto do índice público de preços.
+- **O que comprou:** lista de itens (nome, EAN se houver, quantidade, valor) agrupáveis por nota ou por produto.
+- **Quando comprou:** data/hora da nota (emissão NFC-e); filtros por período (dia, semana, mês, intervalo).
+- **Onde comprou:** estabelecimento (nome, CNPJ) por nota/item.
+- **Gasto por mês:** total mensal (e opcionalmente por semana); comparação mês a mês (variação %).
+- **Análise financeira (MVP):**
+  - total no período; ticket médio por nota; nº de notas / itens;
+  - ranking de estabelecimentos por gasto;
+  - ranking de produtos / categorias (quando houver classificação; senão por descrição/EAN);
+  - tendência simples (últimos N meses) — sem assessoria de investimento.
+- Privacidade: só o dono da conta vê o extrato; notas no índice público continuam sem vincular identidade do contribuinte nas buscas de preço.
+- **Não é:** open banking completo, orçamento prescritivo, nem cartão de crédito — o insumo canônico é a NFC-e depositada.
+
 ## 5. Fora de escopo (PRD v1)
 
 - Checkout / pagamento / **delivery** (planejado em §4.7 *future*, não nesta versão)
@@ -90,19 +105,21 @@ Transformar o QR/URL da NFC-e em índice EAN → preço → estabelecimento → 
 | Buscas com ≥1 ocorrência EAN | Utilidade da comparação |
 | Buscas geo com resultado em raio | “Onde comprar perto” |
 | % cestas com split usado | Montagem apartada |
-| Sessões na vitrine da loja | Engajamento por estabelecimento |
+| Sessões na vitrine do estabelecimento | Engajamento por loja |
+| Usuários com extrato / gasto mensal visto | Ativação da gestão financeira pessoal |
 | Parceiros API ativos | Trilha B2B |
 | (futuro) Pedidos delivery concluídos | Ativação da trilha entrega |
 
 ## 7. Prioridade sugerida
 
 1. Comparação EAN + menor preço  
-2. Busca geo (item → lojas perto / no centro)  
-3. Histórico por produto/loja  
-4. Vitrine da loja (e-commerce read-only)  
-5. Montagem apartada (cesta + split)  
-6. API empresas (MVP: leitura + vínculo EAN)  
-7. **Sistema de delivery** (após vitrine + API + parceria com lojas)
+2. Busca geo (item → estabelecimentos perto / no centro)  
+3. Histórico por produto/estabelecimento  
+4. Vitrine do estabelecimento (e-commerce read-only)  
+5. **Gestão de compras + gasto mensal / análise financeira** (extrato das notas do usuário)  
+6. Montagem apartada (cesta + split)  
+7. API empresas (MVP: leitura + vínculo EAN)  
+8. **Sistema de delivery** (após vitrine + API + parceria)
 
 ## 8. Concorrência (síntese)
 
@@ -113,8 +130,9 @@ Ver matriz em [`../marca/benchmarking-solucoes/00-curadoria.html`](../marca/benc
 | Comparação | Todos + Nota Paraná | Paridade + UX |
 | Histórico | Busca Preço, Nota Preço | Expor série das observações |
 | Montagem apartada | Nota Preço, Mercado Certo | Poucos fazem split |
-| Vitrine loja | GoMarket, Qual o Preço | Poucos como e-commerce |
+| Vitrine estabelecimento | GoMarket, Qual o Preço | Poucos como e-commerce |
 | Busca geo / perto | Nota Paraná, MP Brasil, Qual o Preço, Mercado Certo | Âncora “centro” + vitrine |
+| Gestão de compras / gasto | Extratos de banco / apps de finanças | Poucos amarram **NFC-e depositada** → extrato + análise |
 | API empresas | Quantto, Economiza AL | Quase oceano azul no consumer NFC-e |
 
 ## 9. Rollback / caminho inverso

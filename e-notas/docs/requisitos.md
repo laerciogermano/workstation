@@ -117,6 +117,7 @@ Insumos do card [Benchmarking soluções similares](https://trello.com/c/1fMjqGd
 - **Busca geo / onde comprar perto** — pesquisar um item e ver lojas físicas próximas (GPS ou região, ex. centro), com distância, preço e data.
 - **Integrações via API para empresas** — API B2B para estabelecimentos/parceiros consultarem ou alimentarem o índice.
 - **Sistema de delivery (*future*)** — pedido + entrega a partir da vitrine/cesta; fora da v1 (ver [PRD](prd.md) §4.7).
+- **Gestão de compras e análise financeira** — extrato das notas do usuário: o que / quando / onde comprou; gasto por mês; rankings e tendência (ver [PRD](prd.md) §4.8).
 - **Fonte do preço** — observações do índice são NFC-e (balcão). Preços de apps/marketplaces, se exibidos no futuro, devem vir com **rótulo de canal** e não misturar na mesma série histórica sem aviso (insumo: [`../marca/comparacao-precos-apps/`](../marca/comparacao-precos-apps/README.md)).
 
 Curadoria: [`../marca/benchmarking-solucoes/README.md`](../marca/benchmarking-solucoes/README.md).

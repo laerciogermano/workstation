@@ -37,7 +37,6 @@ const subtabs = [...document.querySelectorAll('.subtab')];
 const panels = {
   empresas: document.getElementById('panel-empresas'),
   produtos: document.getElementById('panel-produtos'),
-  notas: document.getElementById('panel-notas'),
 };
 
 let allEmpresas = [];
@@ -127,10 +126,6 @@ function setTab(name, { updateHash = true } = {}) {
     if (produtoAbertaKey != null) renderProdutoDetalhe(produtoAbertaKey);
     else renderProdutosTab();
   }
-  if (name === 'notas') {
-    if (notaAbertaId != null) renderNotaDetalhe(notaAbertaId);
-    else renderNotasLista();
-  }
   if (updateHash) {
     const url = new URL(location.href);
     url.hash =
@@ -138,14 +133,8 @@ function setTab(name, { updateHash = true } = {}) {
         ? `loja-${lojaAbertaId}`
         : name === 'produtos' && produtoAbertaKey != null
           ? `produto-${encodeURIComponent(produtoAbertaKey)}`
-          : name === 'notas' && notaAbertaId != null
-            ? `nota-${notaAbertaId}`
-            : name;
-    if (name === 'notas' && notaAbertaId != null) {
-      url.searchParams.set('nota', String(notaAbertaId));
-    } else {
-      url.searchParams.delete('nota');
-    }
+          : name;
+    url.searchParams.delete('nota');
     if (name === 'empresas' && lojaAbertaId != null) {
       url.searchParams.set('loja', String(lojaAbertaId));
     } else {
@@ -715,116 +704,21 @@ function notaHaystack(n) {
 }
 
 function renderNotasLista() {
+  /* Aba Notas removida. */
   notaAbertaId = null;
-  notasListaEl.hidden = false;
-  notasDetalheEl.hidden = true;
-  buscaNotaItensEl.value = '';
-  const q = String(buscaNotasEl?.value || '')
-    .trim()
-    .toLowerCase();
-  const terms = q ? q.split(/\s+/).filter(Boolean) : [];
-  const rows = terms.length
-    ? allNotas.filter((n) => {
-        const hay = notaHaystack(n);
-        return terms.every((t) => hay.includes(t));
-      })
-    : allNotas;
-  document.getElementById('count-notas').textContent = `(${allNotas.length})`;
-  notasGridEl.innerHTML = rows.length
-    ? rows
-        .map((n) => {
-          const data = formatDataNota(n.emissao) || '—';
-          const total = formatPreco(n.valor_a_pagar || n.valor_total);
-          const qtd = n.qtd_itens != null && n.qtd_itens !== '' ? n.qtd_itens : '—';
-          return `<button type="button" class="loja-card" data-open-nota="${esc(n.id)}">
-            <p class="loja-nome">${esc(notaLabel(n))}</p>
-            <p class="loja-meta">${esc(n.empresa_nome || '—')}<br>${esc(data)}</p>
-            <div class="loja-stats">
-              <span class="chip">${esc(String(qtd))} itens</span>
-              <span class="chip">${esc(total)}</span>
-            </div>
-          </button>`;
-        })
-        .join('')
-    : `<p class="hint">${allNotas.length ? 'Nada encontrado.' : 'Sem notas.'}</p>`;
 }
 
-function renderNotaDetalhe(notaId) {
-  const n = allNotas.find((x) => Number(x.id) === Number(notaId));
-  if (!n) {
-    renderNotasLista();
-    return;
-  }
-  notaAbertaId = Number(n.id);
-  notasListaEl.hidden = true;
-  notasDetalheEl.hidden = false;
-  const data = formatDataNota(n.emissao) || '—';
-  const total = formatPreco(n.valor_a_pagar || n.valor_total);
-  const desc = n.descontos ? formatPreco(n.descontos) : null;
-  const outras = n.outras_despesas ? formatPreco(n.outras_despesas) : null;
-  notaInfoEl.innerHTML = `
-    <p class="loja-nome">${esc(notaLabel(n))}</p>
-    <p class="loja-meta">${esc(n.empresa_nome || '—')}<br>${esc(data)}${
-      n.serie ? ` · série ${esc(n.serie)}` : ''
-    }</p>
-    <div class="loja-stats">
-      <span class="chip">${esc(String(n.qtd_itens ?? '—'))} itens</span>
-      <span class="chip">${esc(total)}</span>
-      ${desc ? `<span class="chip">desc. ${esc(desc)}</span>` : ''}
-      ${outras ? `<span class="chip">outras ${esc(outras)}</span>` : ''}
-    </div>`;
-
-  const q = String(buscaNotaItensEl?.value || '')
-    .trim()
-    .toLowerCase();
-  const terms = q ? q.split(/\s+/).filter(Boolean) : [];
-  let rows = allItens.filter((r) => Number(r.nota_id) === Number(n.id));
-  if (terms.length) {
-    rows = rows.filter((r) => {
-      const hay = itemHaystack(r);
-      return terms.every((t) => hay.includes(t));
-    });
-  }
-  document.getElementById('count-notas').textContent = `(${rows.length}/${
-    allItens.filter((r) => Number(r.nota_id) === Number(n.id)).length
-  })`;
-  notaItensEl.innerHTML = rows.length
-    ? rows
-        .map(
-          (r) =>
-            `<tr>${fotoThumb(r.foto_url, r.nome)}${cell(r.nome)}${cell(
-              r.codigo_barras || '',
-              'mono',
-            )}${cell(r.codigo || '', 'mono')}${cell(
-              [r.quantidade, r.unidade].filter(Boolean).join(' ') || '—',
-            )}<td class="price-cell">${esc(
-              formatPreco(r.valor_unitario),
-            )}</td><td><button type="button" class="btn-link" data-vincular-ean data-empresa-id="${esc(
-              r.empresa_id,
-            )}" data-empresa-nome="${esc(r.empresa_nome || '')}" data-codigo="${esc(
-              r.codigo,
-            )}" data-nome="${esc(r.nome || '')}" data-ean="${esc(
-              r.codigo_barras || '',
-            )}">${r.codigo_barras ? 'EAN' : '+ EAN'}</button></td></tr>`,
-        )
-        .join('')
-    : `<tr><td colspan="7">${
-        allItens.some((r) => Number(r.nota_id) === Number(n.id))
-          ? 'Nada encontrado.'
-          : 'Sem itens nesta nota.'
-      }</td></tr>`;
+function renderNotaDetalhe() {
+  /* Aba Notas removida. */
 }
 
-function openNota(notaId) {
-  buscaNotaItensEl.value = '';
-  renderNotaDetalhe(notaId);
-  setTab('notas');
+function openNota() {
+  setTab('produtos');
 }
 
 function closeNotaDetalhe() {
-  buscaNotaItensEl.value = '';
-  renderNotasLista();
-  setTab('notas');
+  notaAbertaId = null;
+  setTab('produtos');
 }
 
 function formatDataNota(emissao) {
@@ -1114,10 +1008,6 @@ for (const tab of tabs) {
       produtoAbertaKey = null;
       renderProdutosTab();
     }
-    if (tab.dataset.tab === 'notas') {
-      notaAbertaId = null;
-      renderNotasLista();
-    }
     setTab(tab.dataset.tab);
   });
 }
@@ -1174,7 +1064,6 @@ async function reloadCodigosBarras() {
 async function reloadItens() {
   const data = await fetchJson('api/itens');
   allItens = data.itens || [];
-  if (notaAbertaId != null) renderNotaDetalhe(notaAbertaId);
   if (lojaAbertaId != null) renderVitrineDetalhe(lojaAbertaId);
   else if (!panels.empresas?.hidden) renderVitrineLista();
   if (!panels.produtos?.hidden) {
@@ -1185,14 +1074,9 @@ async function reloadItens() {
 
 function readRoute() {
   const params = new URLSearchParams(location.search);
-  const nota = params.get('nota');
   const loja = params.get('loja');
   const produto = params.get('produto');
   const hash = (location.hash || '').replace(/^#/, '');
-  if (nota) {
-    notaAbertaId = Number(nota);
-    return 'notas';
-  }
   if (produto) {
     produtoAbertaKey = produto;
     return 'produtos';
@@ -1200,11 +1084,6 @@ function readRoute() {
   if (loja) {
     lojaAbertaId = Number(loja);
     return 'empresas';
-  }
-  const notaHash = hash.match(/^nota-(\d+)$/);
-  if (notaHash) {
-    notaAbertaId = Number(notaHash[1]);
-    return 'notas';
   }
   const produtoHash = hash.match(/^produto-(.+)$/);
   if (produtoHash) {
@@ -1220,7 +1099,9 @@ function readRoute() {
     lojaAbertaId = Number(lojaHash[1]);
     return 'empresas';
   }
-  if (hash === 'itens' || hash === 'codigos-barras') return 'produtos';
+  if (hash === 'itens' || hash === 'codigos-barras' || hash === 'notas' || /^nota-/.test(hash)) {
+    return 'produtos';
+  }
   if (hash === 'vitrine') return 'empresas';
   if (panels[hash]) return hash;
   return 'produtos';
@@ -1229,28 +1110,21 @@ function readRoute() {
 async function load() {
   const tab = readRoute();
   try {
-    const [empresas, notas, itens, eans] = await Promise.all([
+    const [empresas, itens, eans] = await Promise.all([
       fetchJson('api/empresas'),
-      fetchJson('api/notas'),
       fetchJson('api/itens'),
       fetchJson('api/codigos-barras'),
     ]);
     allEmpresas = empresas.empresas || [];
-    allNotas = notas.notas || [];
+    allNotas = [];
     allItens = itens.itens || [];
     allCodigosBarras = eans.codigosBarras || [];
-    const notaInicial = notaAbertaId;
     renderEmpresas(allEmpresas);
     renderProdutosTab();
-    if (notaInicial != null) {
-      const n = allNotas.find((x) => Number(x.id) === Number(notaInicial));
-      if (n) renderNotaDetalhe(n.id);
-      else renderNotasLista();
-    } else {
-      renderNotasLista();
-    }
     let next = tab;
-    if (tab === 'vitrine' || tab === 'itens') next = tab === 'itens' ? 'produtos' : 'empresas';
+    if (tab === 'vitrine' || tab === 'itens' || tab === 'notas') {
+      next = tab === 'vitrine' ? 'empresas' : 'produtos';
+    }
     setTab(next, { updateHash: true });
     setStatus('');
   } catch (err) {

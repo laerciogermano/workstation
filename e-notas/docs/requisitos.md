@@ -146,7 +146,7 @@ Curadoria: [`../marca/benchmarking-solucoes/README.md`](../marca/benchmarking-so
 
 ## REQ-017 — FAB adicionar nota (2026-11-01)
 
-- Home = listagem (`/`), abas **Produtos** (inicial) / **Estabelecimentos** / **Notas** (aba **Itens** removida). *Revisto por REQ-025 (aba Notas) e aba Produtos.*
+- Home = listagem (`/`), abas **Produtos** (inicial) / **Estabelecimentos**. Abas **Itens** e **Notas** removidas da home. FAB **Nota** continua para escanear.
 - Botão fixo inferior direito (**FAB**) “Nota” abre `scan.html` (QR).
 - `/lista.html` redireciona para `/`. Após scan ok, volta à home.
 
@@ -156,7 +156,7 @@ Curadoria: [`../marca/benchmarking-solucoes/README.md`](../marca/benchmarking-so
 - Aba **Produtos** (separada, inicial): título **Menores preços**; grade com foto + preço + chip menor + loja/data; clique → detalhe do produto (REQ-028).
 - URL loja: `?loja=<id>` / `#loja-<id>`. UI enxuta (sem textos explicativos redundantes).
 - Ao **entrar** no estabelecimento (card, timeline do produto, popup ou deep-link), o mapa **foca no pin** daquela loja (zoom + popup). Ao voltar à lista, restaura o enquadramento de todos os pins.
-- Antes: produtos na mesma aba que mercados; aba Itens na home. Depois: Produtos em aba própria; Itens removida (itens da nota ficam no detalhe de Notas).
+- Antes: produtos na mesma aba que mercados; abas Itens/Notas na home. Depois: Produtos em aba própria; Itens e Notas removidas da home.
 
 ## REQ-019 — Viewport app-like (sem PWA) (2026-11-01)
 
@@ -252,12 +252,9 @@ Curadoria: [`../marca/benchmarking-solucoes/README.md`](../marca/benchmarking-so
 
 ## REQ-025 — Tela Notas → itens + EAN (2026-11-01)
 
-- Aba **Notas**: cards das NFC-e (data, estabelecimento, qtd. itens, total), da mais nova à mais antiga.
-- Clique na nota abre **detalhe** com lista de itens daquela nota.
-- Em cada item: ação **+ EAN** / **EAN** (mesmo modal de câmera + digitação de REQ-011).
-- URL: `?nota=<id>` / `#nota-<id>`. Voltar → lista de notas.
-- Antes: home só Estabelecimentos/Itens; filtro de nota só na aba Itens. Depois: fluxo Notas → itens da nota.
-- Rollback: remover aba/painel Notas em `index.html` / `lista.js` (commit anterior).
+- ~~Aba **Notas**~~ removida da home (2026-11-01): UI de cards/detalhe/`?nota=` não fica mais exposta.
+- Antes: aba Notas com detalhe + **+ EAN**. Depois: home só Produtos + Estabelecimentos; ingestão de nota continua via FAB/`scan.html`.
+- Rollback: restaurar `panel-notas` / `tab-notas` e handlers em `lista.js` (commits anteriores à remoção).
 
 ---
 

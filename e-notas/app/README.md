@@ -39,7 +39,8 @@ Credenciais não vão no git (`.env` ignorado).
 
 | Rota | Função |
 |------|--------|
-| `/` | Listagem: Empresas (mapa foca no pin ao abrir loja) / Itens (EAN, cód. produto); FAB → adicionar nota |
+| `/` | Listagem: Empresas (mapa foca no pin ao abrir loja) / Itens (EAN, cód. produto); FAB → adicionar nota; rodapé → Apresentação |
+| `/apresentacao.html` | Deck produto (o quê / como / mercado / marca) — espelho web de [`../marca/apresentacao-notinhas-v1.html`](../marca/apresentacao-notinhas-v1.html) |
 | `/scan.html` | Scan do QR da nota |
 | `/lista.html` | Redirect → `/` |
 

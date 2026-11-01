@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#014380" />
+    <meta name="color-scheme" content="light" />
+    <title>Apresentação — notinhas.shop</title>
+    <meta
+      name="description"
+      content="Sistema cooperativo de notinhas: o quê, como, mercado e marca."
+    />
+    <link rel="icon" type="image/png" href="icon-512.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="apresentacao-page">
+    <header class="apresentacao-hero">
+      <a class="back-link apresentacao-back" href="./">← notinhas.shop</a>
+      <p class="apresentacao-eyebrow"><span>v1</span> Apresentação · 2026</p>
+      <h1 class="brand apresentacao-wm" aria-label="notinhas.shop">
+        <span class="n">notinhas</span><span class="o">.shop</span>
+      </h1>
+      <p class="apresentacao-lead">
+        Sistema cooperativo de notinhas para comprar melhor no comércio local.
+      </p>
+      <p class="apresentacao-sub">Primeiro o quê. Depois o como. Depois o mercado e a marca.</p>
+      <nav class="apresentacao-toc" aria-label="Roteiro">
+        <a href="#o-que">1 · O quê</a>
+        <a href="#como">2 · Como</a>
+        <a href="#mercado">3 · Mercado</a>
+        <a href="#marca">4 · Marca</a>
+      </nav>
+    </header>
+
+    <main class="screen wide apresentacao">
+      <section class="apresentacao-sec" id="roteiro">
+        <p class="apresentacao-kicker"><span>00</span> Roteiro</p>
+        <h2>O quê → como → mercado → marca</h2>
+        <p class="hint">
+          Não começar pelo mecanismo (NFC-e). Começar pelo job do usuário e só então pelo índice.
+        </p>
+        <ol class="apresentacao-agenda">
+          <li>
+            <b>O quê</b>
+            <span>Jobs: comparar, economizar, perto, vitrine, local, split, delivery</span>
+          </li>
+          <li>
+            <b>Como</b>
+            <span>NFC-e → índice · personas · capacidades e prioridade</span>
+          </li>
+          <li>
+            <b>Mercado</b>
+            <span>Matriz vs concorrentes · alcance · gaps</span>
+          </li>
+          <li>
+            <b>Marca</b>
+            <span>Identidade (azul+verde) + tokens e componentes</span>
+          </li>
+        </ol>
+      </section>
+
+      <section class="apresentacao-sec" id="o-que">
+        <p class="apresentacao-kicker"><span>01</span> O quê</p>
+        <h2>Sistema cooperativo de notinhas</h2>
+        <p class="hint">
+          Quem contribui deposita a nota; quem consulta usa o índice coletivo. Sem margem de
+          marketplace no preço do balcão.
+        </p>
+        <div class="apresentacao-cards">
+          <article class="apresentacao-card"><h3>Comparar preço</h3><p>Mesmo produto entre estabelecimentos — loja + data.</p></article>
+          <article class="apresentacao-card"><h3>Simular economia</h3><p>Quanto se paga a menos com a escolha / split.</p></article>
+          <article class="apresentacao-card"><h3>Pesquisar item perto</h3><p>GPS, centro ou bairro — onde comprar fisicamente.</p></article>
+          <article class="apresentacao-card"><h3>Lojas mais baratas / caras</h3><p>Listagem perto — quem menos e quem mais cobra.</p></article>
+          <article class="apresentacao-card"><h3>Destaques de preço</h3><p>Publicou abaixo do mercado? Entra nos destaques.</p></article>
+          <article class="apresentacao-card"><h3>Vitrine de lojas</h3><p>Sortimento público — inclusive o que não está na internet.</p></article>
+          <article class="apresentacao-card accent-green"><h3>Sem margem de apps</h3><p>Preço NFC-e / balcão — não iFood, 99 ou marketplace.</p></article>
+          <article class="apresentacao-card accent-green"><h3>Comércio local</h3><p>Itens só no balcão ganham vitrine; descoberta → loja física.</p></article>
+          <article class="apresentacao-card accent-green"><h3>Separar compras</h3><p>Split entre lojas para menor custo total.</p></article>
+          <article class="apresentacao-card accent-warn"><h3>Delivery / Full <span class="chip warn">futuro</span></h3><p>Loja como depósito de vendas. Fora da v1.</p></article>
+        </div>
+      </section>
+
+      <section class="apresentacao-sec" id="como">
+        <p class="apresentacao-kicker"><span>02</span> Como</p>
+        <h2>Da nota ao índice</h2>
+        <div class="apresentacao-card dark">
+          <p class="label">Mecanismo</p>
+          <p class="apresentacao-strong">
+            Lemos o QR da NFC-e (preço, loja, data, cód. interno) e vinculamos o EAN em colaboração.
+          </p>
+        </div>
+        <div class="apresentacao-card accent-err">
+          <h3>Problema que o como resolve</h3>
+          <p>
+            A nota traz preço, loja e data — mas não o EAN; o vínculo é scan cooperativo. Apps de
+            delivery encarecem o mesmo item. Falta índice consumer + comércio local.
+          </p>
+        </div>
+        <div class="apresentacao-card soft-green">
+          <h3>Fluxo mínimo</h3>
+          <p class="apresentacao-flow">
+            QR → parse NFC-e → preço/loja/cód. → vínculo EAN → busca → menor preço / split / perto
+          </p>
+        </div>
+        <h3 class="apresentacao-h3">Personas</h3>
+        <div class="apresentacao-cards">
+          <article class="apresentacao-card"><h3>Contribuinte</h3><p>Cola o QR e, se faltar, escaneia o EAN.</p></article>
+          <article class="apresentacao-card"><h3>Comprador</h3><p>Compara, acha perto, vê ranking, separa cesta.</p></article>
+          <article class="apresentacao-card"><h3>Empresa / parceiro</h3><p>Vitrine + ranking; API B2B.</p></article>
+        </div>
+        <div class="apresentacao-card accent-green">
+          <h3>Slogan</h3>
+          <p class="apresentacao-slogan">Menor preço a partir da nota.</p>
+        </div>
+
+        <h3 class="apresentacao-h3">Capacidades e prioridade</h3>
+        <div class="apresentacao-cards">
+          <article class="apresentacao-card"><h3>Comparação <span class="chip">must</span></h3><p>EAN entre lojas · menor preço + loja + data</p></article>
+          <article class="apresentacao-card"><h3>Histórico <span class="chip">must</span></h3><p>Série temporal por produto / loja</p></article>
+          <article class="apresentacao-card"><h3>Busca geo <span class="chip">must</span></h3><p>Item → lojas perto</p></article>
+          <article class="apresentacao-card"><h3>Ranking lojas <span class="chip">must</span></h3><p>Quem menos / mais cobra perto</p></article>
+          <article class="apresentacao-card"><h3>Destaques <span class="chip">must</span></h3><p>Preço abaixo → feed</p></article>
+          <article class="apresentacao-card accent-green"><h3>Vitrine <span class="chip ok">should</span></h3><p>Catálogo público</p></article>
+          <article class="apresentacao-card accent-green"><h3>Split / economia <span class="chip ok">should</span></h3><p>Cesta + 2+ lojas</p></article>
+          <article class="apresentacao-card accent-green"><h3>API empresas <span class="chip ok">should</span></h3><p>Consulta B2B · vínculo EAN</p></article>
+          <article class="apresentacao-card accent-warn"><h3>Delivery / Full <span class="chip warn">future</span></h3><p>Fora da v1</p></article>
+        </div>
+        <ol class="apresentacao-prio">
+          <li>Comparação EAN + menor preço</li>
+          <li>Busca geo</li>
+          <li>Ranking lojas</li>
+          <li>Destaques</li>
+          <li>Histórico</li>
+          <li>Vitrine</li>
+          <li>Montagem apartada</li>
+          <li>API empresas</li>
+          <li>Delivery / Full (futuro)</li>
+        </ol>
+        <div class="apresentacao-card">
+          <p class="label">Fora da v1</p>
+          <ul class="apresentacao-dots">
+            <li>Checkout / pagamento / delivery</li>
+            <li>Emissão de NF-e</li>
+            <li>Substituir Nota Paraná SEFAZ</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="apresentacao-sec" id="mercado">
+        <p class="apresentacao-kicker"><span>03</span> Mercado</p>
+        <h2>Matriz · capacidades + alcance</h2>
+        <p class="hint">
+          Fontes públicas · 2026-11 ·
+          <span class="y">Sim</span> · <span class="p">Parc.</span> · <span class="n">Não</span> ·
+          <span class="y">Alvo</span>/<span class="p">Fut.</span> = notinhas
+        </p>
+        <div class="table-wrap apresentacao-matrix">
+          <table>
+            <thead>
+              <tr>
+                <th>Solução</th>
+                <th>Alcance</th>
+                <th>Comp</th>
+                <th>Hist</th>
+                <th>Apart</th>
+                <th>Vitr</th>
+                <th>Geo</th>
+                <th>Rank</th>
+                <th>Dest</th>
+                <th>API</th>
+                <th>Deliv</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Busca Preço</td><td>MG, SP, RJ</td><td class="y">Sim</td><td class="y">Sim</td><td class="p">Parc.</td><td class="p">Parc.</td><td class="p">Parc.</td><td class="n">Não</td><td class="n">Não</td><td class="n">Não</td><td class="n">Não</td></tr>
+              <tr><td>Nota Preço</td><td>RM Rio</td><td class="y">Sim</td><td class="y">Sim</td><td class="y">Sim</td><td class="n">Não</td><td class="p">Parc.</td><td class="n">Não</td><td class="n">Não</td><td class="n">Não</td><td class="n">Não</td></tr>
+              <tr><td>Mercado Certo</td><td>Por cidade</td><td class="y">Sim</td><td class="p">Parc.</td><td class="y">Sim</td><td class="n">Não</td><td class="y">Sim</td><td class="p">Parc.</td><td class="n">Não</td><td class="n">Não</td><td class="n">Não</td></tr>
+              <tr><td>GoMarket</td><td>Por cidade</td><td class="y">Sim</td><td class="y">Sim</td><td class="n">Não</td><td class="y">Sim</td><td class="y">Sim</td><td class="p">Parc.</td><td class="n">Não</td><td class="n">Não</td><td class="n">Não</td></tr>
+              <tr><td>Qual o Preço</td><td>Perto</td><td class="y">Sim</td><td class="p">Parc.</td><td class="p">Parc.</td><td class="y">Sim</td><td class="y">Sim</td><td class="p">Parc.</td><td class="n">Não</td><td class="n">Não</td><td class="n">Não</td></tr>
+              <tr><td>PoupApp</td><td>Nacional*</td><td class="y">Sim</td><td class="p">Parc.</td><td class="n">Não</td><td class="n">Não</td><td class="p">Parc.</td><td class="n">Não</td><td class="n">Não</td><td class="n">Não</td><td class="n">Não</td></tr>
+              <tr><td>Nota Paraná</td><td>PR</td><td class="y">Sim</td><td class="p">Parc.</td><td class="n">Não</td><td class="n">Não</td><td class="y">Sim</td><td class="p">Parc.</td><td class="n">Não</td><td class="p">Parc.</td><td class="n">Não</td></tr>
+              <tr><td>MP Brasil</td><td>~15–16 UFs</td><td class="y">Sim</td><td class="p">Parc.</td><td class="n">Não</td><td class="n">Não</td><td class="y">Sim</td><td class="p">Parc.</td><td class="n">Não</td><td class="n">Não</td><td class="n">Não</td></tr>
+              <tr><td>Economiza AL</td><td>AL</td><td class="y">Sim</td><td class="p">Parc.</td><td class="p">Via 3º</td><td class="n">Não</td><td class="y">Sim</td><td class="p">Parc.</td><td class="n">Não</td><td class="y">Sim</td><td class="n">Não</td></tr>
+              <tr><td>Quantto</td><td>B2B</td><td class="y">Sim</td><td class="y">Sim</td><td class="n">N/A</td><td class="n">N/A</td><td class="p">Reg.</td><td class="n">N/A</td><td class="n">N/A</td><td class="y">Sim</td><td class="n">Não</td></tr>
+              <tr class="apresentacao-hl"><td><b>notinhas.shop</b></td><td><b>Lab PR</b></td><td class="y">Alvo</td><td class="y">Alvo</td><td class="y">Alvo</td><td class="y">Alvo</td><td class="y">Alvo</td><td class="y">Alvo</td><td class="y">Alvo</td><td class="y">Alvo</td><td class="p">Fut.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="hint">*PoupApp 26 UF+DF. Lab SJP/PR.</p>
+
+        <h3 class="apresentacao-h3">Proposta vs concorrentes</h3>
+        <div class="apresentacao-card dark">
+          <p class="label">Onde a proposta se diferencia</p>
+          <ul class="apresentacao-dots on-dark">
+            <li>Pacote: comparar + ranking + destaques + perto + split + vitrine</li>
+            <li>Preço de balcão/NFC-e — sem margem iFood/99</li>
+            <li>Visibilidade do comércio local (itens fora da web)</li>
+            <li>Futuro: loja como depósito de vendas (Full)</li>
+            <li>API B2B no mesmo eixo consumer cooperativo</li>
+          </ul>
+        </div>
+        <div class="apresentacao-card">
+          <p class="label">Regra</p>
+          <p>Não competir com SEFAZ em “ter o dado”. Competir no <b>pacote completo</b>.</p>
+        </div>
+      </section>
+
+      <section class="apresentacao-sec" id="marca">
+        <p class="apresentacao-kicker"><span>04</span> Marca</p>
+        <h2>Identidade e tokens</h2>
+        <div class="apresentacao-card apresentacao-brand-row">
+          <div class="brand" aria-hidden="true"><span class="n">notinhas</span><span class="o">.shop</span></div>
+          <p class="hint" style="margin: 0">Wordmark = domínio · nunca “e-notas” na UI</p>
+        </div>
+        <div class="apresentacao-swatches">
+          <div><i style="background: #0069b4"></i><b>Azul</b><code>#0069B4</code></div>
+          <div><i style="background: #014380"></i><b>Azul profundo</b><code>#014380</code></div>
+          <div><i style="background: #00984b"></i><b>Verde / menor</b><code>#00984B</code></div>
+          <div><i style="background: #f5f7fa; border: 1px solid #d5dee8"></i><b>Fundo</b><code>#F5F7FA</code></div>
+        </div>
+        <div class="apresentacao-card soft-green">
+          <h3>Tom</h3>
+          <p>Direto, útil, sem hype. Destacar <b>menor preço</b>, <b>loja</b> e <b>data</b>.</p>
+        </div>
+      </section>
+
+      <section class="apresentacao-sec apresentacao-close">
+        <h2 class="brand" aria-label="notinhas.shop"><span class="n">notinhas</span><span class="o">.shop</span></h2>
+        <p>
+          Cooperativo local: comparar, simular economia, perto, vitrine, split — sem margem de app.
+          Depois: delivery.
+        </p>
+        <p class="hint">Menor preço a partir da nota.</p>
+        <a class="btn" href="./">Voltar ao app</a>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <a href="./">notinhas.shop</a>
+      <span aria-hidden="true">·</span>
+      <a href="apresentacao.html" aria-current="page">Apresentação</a>
+    </footer>
+  </body>
+</html>

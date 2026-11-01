@@ -194,6 +194,13 @@ Curadoria: [`../marca/benchmarking-solucoes/README.md`](../marca/benchmarking-so
 - Antes → depois: título/wordmark/OG `.org` → `.shop`.
 - Rollback: restaurar HTML + `og-image.png` do commit anterior; no remoto, `scp` dos arquivos antigos para `/opt/e-notas/public/`.
 
+## REQ-025 — Apresentação no front (`/apresentacao.html`) (2026-11-01)
+
+- Página scrollável no app com o mesmo conteúdo do deck [`../marca/apresentacao-notinhas-v1.html`](../marca/apresentacao-notinhas-v1.html) (o quê / como / mercado / marca).
+- Link **Apresentação** no rodapé da home (`index.html`), visível ao rolar até o fim.
+- Antes: só HTML print em `marca/`. Depois: também `app/public/apresentacao.html` + CSS em `styles.css`.
+- Rollback: remover `apresentacao.html`, link do rodapé e blocos CSS; no remoto apagar o arquivo em `/opt/e-notas/public/`.
+
 ---
 
 ## Próximos passos

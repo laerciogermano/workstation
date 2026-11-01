@@ -172,6 +172,13 @@ Curadoria: [`../marca/benchmarking-solucoes/README.md`](../marca/benchmarking-so
 - Antes: colunas Data / Estabelecimento / EAN / Nome / Preço / ação. Depois: inclui **Cód.** entre EAN e Nome.
 - Reverter: remover a coluna no `index.html` / `lista.js` (commit anterior).
 
+## REQ-022 — Domínio notinhas.shop → Contabo (2026-11-01)
+
+- Domínio **notinhas.shop** (Hostinger) aponta para a Contabo `144.126.154.90` (registro A `@`; `www` via CNAME).
+- nginx site `notinhas` faz proxy de `/` para o app Node `127.0.0.1:4174` (mesmo processo de `/enotas/`).
+- HTTPS no domínio via Certbot quando o DNS público propagar (ver [`../deploy/README.md`](../deploy/README.md)).
+- Rollback: desabilitar site `notinhas`; DNS A `@` → parking Hostinger `2.57.91.91`.
+
 ---
 
 ## Próximos passos

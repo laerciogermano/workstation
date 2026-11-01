@@ -13,6 +13,8 @@ Manual essencial (9 páginas A4 paisagem): capa, essência/tom, logo, versões, 
 
 **Card:** [Criar identidade visual](https://trello.com/c/qUI3Rb9a) · task [`../tasks/6ae739e2ef0f49af2019c4f5/`](../tasks/6ae739e2ef0f49af2019c4f5/README.md)
 
+**Apresentação (produto + benchmarking + DS):** [card](https://trello.com/c/hfGuzfMs) · task [`../tasks/6ae742a63b9ee278c2a0cc7e/`](../tasks/6ae742a63b9ee278c2a0cc7e/README.md) — identidade v1 anexada; documento unificado pendente.
+
 **Antes → depois:** sem manual → HTML v1 (azul `#0069B4` + verde `#00984B`, wordmark `notinhas.org`). PDF e design system ficam para cards seguintes.
 
 ### Gerar PDF (quando o escopo pedir)

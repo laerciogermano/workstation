@@ -84,11 +84,10 @@ Ordem aproximada (mais antiga → mais recente). Inclui trechos anteriores ao sc
 - **eu:** kkk organismo com drama próprio. amanhã na acad… cuidado que shape voltando assim do nada é arma ilegal
 - **dela:** eu sou dramática demais, não teria como o meu organismo ser diferente
 - **dela:** mas eu voltando a comer normal minha barriga já estufa de novo hahahaha
+- **eu:** kkk inventando defeito
+- **eu:** amanhã no treino a gente vê se essa história cola
 
 ### Pendente de envio (não mandar de novo se já proposto)
 
-- (evitar) kkk organismo te imitando… — ecoa “organismo/drama”
-- (evitar) kkk reclama de luxo / ainda quer me convencer que não tá no auge — não enviada; gerar outra
-- (proposta atual)
-  1. `kkk inventando defeito`
-  2. `amanhã no treino a gente vê se essa história cola`
+- (nenhuma — aguardando resposta dela)
+- (evitar reusar) organismo te imitando / reclama de luxo / inventando defeito + história cola

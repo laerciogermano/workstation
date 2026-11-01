@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="notinhas.shop">
+  <rect width="512" height="512" rx="112" fill="#00984B"/>
+  <g transform="translate(64 64) scale(6)" fill="none">
+    <rect x="14" y="10" width="36" height="44" rx="6" stroke="#fff" stroke-width="3"/>
+    <path d="M22 22h20M22 30h16M22 38h12" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+    <rect x="36" y="40" width="12" height="12" rx="2" stroke="#fff" stroke-width="2.5"/>
+    <path d="M25 46 L32 54 L39 46 Z" fill="#E6F6EE"/>
+  </g>
+</svg>

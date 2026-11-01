@@ -49,6 +49,8 @@ Gradiente de marca (capa, splash): `#014380 → #0069B4 → #00984B` (135°).
 
 ## 4. Logo
 
+Kit: [`marca/logo/README.md`](marca/logo/README.md) · card [Criar logo](https://trello.com/c/26aOrY0z).
+
 - **Wordmark:** `notinhas.shop` (nunca “e-notas” na UI consumer)
 - **Símbolo:** recibo arredondado + QR canto + seta verde de preço ↓ (ícone app / favicon)
 - Respiro mínimo = altura da letra “n”

@@ -7,7 +7,7 @@
 Derivados: [`docs/`](docs/README.md).  
 Timeline de prompts: [`prompts/`](prompts/README.md).  
 Regras para a IA: [`config/config-ia.md`](config/config-ia.md).  
-App (scan QR + extração de itens Fazenda PR): [`app/`](app/README.md).
+App (scan QR + cadastro Postgres Contabo / schema `enotas`): [`app/`](app/README.md).
 
 ---
 

@@ -1,40 +1,47 @@
 # e-notas — app (scan QR)
 
-Front: escaneia o QR da nota e envia a URL. Backend consulta a DANFE na **Fazenda PR** (`fazenda.pr.gov.br/nfce/qrcode`), extrai todos os itens e imprime no terminal.
+Front: escaneia o QR e envia a URL. Backend consulta a DANFE na **Fazenda PR**, cadastra **empresa** (se nova), **nota** e **uma linha de item por produto da nota** (histórico).
 
-Serve **HTTPS** (certificado autoassinado em `certs/`, gerado na 1ª subida se faltar).
+Persistência: **Postgres Contabo** (`connectmax`), schema `enotas` (via `.env`).
+
+HTTPS autoassinado em `certs/`.
 
 ## Subir
 
 ```bash
 cd e-notas/app
+cp .env.example .env   # se ainda não tiver .env
 npm install
 npm start
 ```
 
-Sobe em `0.0.0.0:4173`. No log: `https://<ip-lan>:4173`.
+`https://<ip-lan>:4173` · `PORT=4173`.
 
-Variável opcional: `PORT=4173`.
+## `.env`
 
-## Câmera na rede
+| Var | Exemplo |
+|-----|---------|
+| `DB_HOST` | `144.126.154.90` |
+| `DB_PORT` | `5432` |
+| `DB_USER` | `connectmax` |
+| `DB_PASSWORD` | (ver `credenciais.md`) |
+| `DB_NAME` | `connectmax` |
+| `DB_SCHEMA` | `enotas` |
 
-1. Abra `https://<ip-lan>:4173` no celular
-2. Aceite o certificado autoassinado
-3. Permita a câmera
-
-Se o IP mudar: apague `certs/` e suba de novo.
+Credenciais não vão no git (`.env` ignorado).
 
 ## API
 
-`POST /api/nota` body `{ "url": "http://www.fazenda.pr.gov.br/nfce/qrcode?p=..." }`
+`POST /api/nota` `{ "url": "http://www.fazenda.pr.gov.br/nfce/qrcode?p=..." }`
 
-- Busca o HTML da consulta pública
-- Extrai `estabelecimento` + `itens[]` (`nome`, `codigo`, `quantidade`, `unidade`, `valorUnitario`, `valorTotal`)
-- Loga cada item no terminal
-- Responde `{ ok, url, estabelecimento, itens }`
+1. Busca HTML da consulta pública  
+2. Extrai empresa / nota / itens  
+3. `enotas.empresas`: insert se CNPJ novo  
+4. `enotas.notas`: insert por `chave_acesso` (se já existir, não duplica)  
+5. `enotas.itens`: **novas linhas** por produto da nota (histórico)
 
-Só aceita host `fazenda.pr.gov.br` e path `/nfce/qrcode`.
+Resposta: `{ ok, created, empresaCriada, url, empresa, nota, itens }`.
 
 ## Reverter
 
-Parar porta `4173`. Remover `fazenda-pr.js` e voltar `POST /api/nota` só imprimindo a URL (commit anterior). Apagar `certs/` se quiser regenerar HTTPS.
+Parar `:4173`. `DROP SCHEMA enotas CASCADE;` no Postgres. Voltar `db.js`/`.env` ao commit anterior (SQLite local, se houver).

@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import express from 'express';
 import fs from 'fs';
 import https from 'https';
@@ -10,6 +11,7 @@ import {
   fetchDanfe,
   parseDanfeHtml,
 } from './fazenda-pr.js';
+import { cadastrarNotaCompleta, dbInfo, initDb } from './db.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PORT = Number(process.env.PORT) || 4173;
@@ -88,17 +90,32 @@ app.post('/api/nota', async (req, res) => {
     console.log('[nota]', nfceUrl);
 
     const html = await fetchDanfe(nfceUrl);
-    const { estabelecimento, itens } = parseDanfeHtml(html);
+    const parsed = parseDanfeHtml(html);
+    const saved = await cadastrarNotaCompleta({
+      url: nfceUrl,
+      empresa: parsed.empresa,
+      nota: parsed.nota,
+      itens: parsed.itens,
+    });
 
-    console.log('[estabelecimento]', estabelecimento);
-    console.log('[itens]', itens.length);
-    for (const item of itens) {
+    console.log(
+      `[cadastro] empresa=${saved.empresa.id}${saved.empresaCriada ? ' (nova)' : ''} nota=${saved.nota.id}${saved.created ? ' (nova)' : ' (já existia)'} itens=${saved.itens.length}`,
+    );
+    for (const item of saved.itens) {
       console.log(
-        `  - ${item.codigo || '-'} | ${item.nome} | qtd ${item.quantidade} ${item.unidade} | unit ${item.valorUnitario} | total ${item.valorTotal}`,
+        `  - #${item.id} ${item.codigo || '-'} | ${item.nome} | qtd ${item.quantidade} ${item.unidade} | unit ${item.valor_unitario} | total ${item.valor_total}`,
       );
     }
 
-    return res.json({ ok: true, url: nfceUrl, estabelecimento, itens });
+    return res.json({
+      ok: true,
+      created: saved.created,
+      empresaCriada: Boolean(saved.empresaCriada),
+      url: nfceUrl,
+      empresa: saved.empresa,
+      nota: saved.nota,
+      itens: saved.itens,
+    });
   } catch (err) {
     const status = err.status || 500;
     console.error('[nota:erro]', err.message);
@@ -107,6 +124,8 @@ app.post('/api/nota', async (req, res) => {
 });
 
 ensureCerts();
+
+await initDb();
 
 const server = https.createServer(
   {
@@ -118,6 +137,7 @@ const server = https.createServer(
 
 server.listen(PORT, '0.0.0.0', () => {
   console.log(`e-notas HTTPS em https://0.0.0.0:${PORT}`);
+  console.log(`  db: ${dbInfo()}`);
   console.log(`  local: https://localhost:${PORT}`);
   for (const ip of lanIPs()) {
     console.log(`  rede: https://${ip}:${PORT}`);

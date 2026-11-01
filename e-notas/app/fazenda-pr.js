@@ -40,23 +40,68 @@ function parseCode(raw) {
   return m ? m[1].trim() : raw.replace(/[()]/g, '').trim();
 }
 
+function normalizeCnpj(raw) {
+  const digits = String(raw || '').replace(/\D/g, '');
+  return digits.length === 14 ? digits : null;
+}
+
+function normalizeChave(raw) {
+  const digits = String(raw || '').replace(/\D/g, '');
+  return digits.length === 44 ? digits : null;
+}
+
+function labelFromBlock(block, label) {
+  const re = new RegExp(`${label}\\s*:\\s*([^\\n]+?)(?=\\s+[A-ZÁÉÍÓÚÂÊÔÃÕÇ][a-záéíóúâêôãõç].*:|$)`, 'i');
+  const m = block.match(re);
+  return m ? m[1].trim() : null;
+}
+
+function totalByLabel($, label) {
+  let value = null;
+  $('#totalNota #linhaTotal').each((_, el) => {
+    const $el = $(el);
+    if (text($el.find('label').first()).toLowerCase().includes(label.toLowerCase())) {
+      value = text($el.find('.totalNumb').first()) || null;
+    }
+  });
+  return value;
+}
+
 export function parseDanfeHtml(html) {
   const $ = cheerio.load(html);
-  const estabelecimento = text($('.txtTopo').first()) || null;
-  const itens = [];
+  const $emit = $('.txtCenter').first();
+  const nome = text($emit.find('.txtTopo').first()) || null;
 
+  let cnpjRaw = null;
+  let endereco = null;
+  $emit.find('.text').each((i, el) => {
+    const t = text($(el));
+    if (/CNPJ\s*:/i.test(t)) cnpjRaw = afterLabel(t, 'CNPJ');
+    else if (t && !endereco) endereco = t;
+  });
+
+  const chave = normalizeChave(text($('span.chave').first()));
+  const infoBlock = text($('#infos li').first());
+  const numero = labelFromBlock(infoBlock, 'Número');
+  const serie = labelFromBlock(infoBlock, 'Série');
+  let emissao = labelFromBlock(infoBlock, 'Emissão');
+  if (emissao) emissao = emissao.replace(/\s*-\s*Via Consumidor.*$/i, '').trim();
+  const protocoloMatch = infoBlock.match(/Protocolo de Autorização:\s*(\d+)/i);
+  const protocolo = protocoloMatch ? protocoloMatch[1] : null;
+
+  const itens = [];
   $('#tabResult tr[id^="Item"]').each((_, tr) => {
     const $tr = $(tr);
-    const nome = text($tr.find('.txtTit2').first());
+    const itemNome = text($tr.find('.txtTit2').first());
     const codigo = parseCode(text($tr.find('.RCod').first()));
     const quantidade = afterLabel(text($tr.find('.Rqtd').first()), 'Qtde\\.?');
     const unidade = afterLabel(text($tr.find('.RUN').first()), 'UN');
     const valorUnitario = afterLabel(text($tr.find('.RvlUnit').first()), 'Vl\\.\\s*Unit\\.?');
     const valorTotal = text($tr.find('span.valor').first());
 
-    if (!nome && !codigo) return;
+    if (!itemNome && !codigo) return;
     itens.push({
-      nome,
+      nome: itemNome,
       codigo: codigo || null,
       quantidade: quantidade || null,
       unidade: unidade || null,
@@ -65,7 +110,27 @@ export function parseDanfeHtml(html) {
     });
   });
 
-  return { estabelecimento, itens };
+  return {
+    empresa: {
+      nome,
+      cnpj: normalizeCnpj(cnpjRaw),
+      cnpjFormatado: cnpjRaw || null,
+      endereco,
+    },
+    nota: {
+      chave,
+      numero,
+      serie,
+      emissao,
+      protocolo,
+      qtdItens: totalByLabel($, 'Qtd. total de itens'),
+      valorTotal: totalByLabel($, 'Valor total'),
+      descontos: totalByLabel($, 'Descontos'),
+      outrasDespesas: totalByLabel($, 'Outras despesas'),
+      valorAPagar: totalByLabel($, 'Valor a pagar'),
+    },
+    itens,
+  };
 }
 
 export async function fetchDanfe(url) {

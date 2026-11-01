@@ -15,6 +15,9 @@ coverage/
 # Certificados locais (e-notas HTTPS)
 e-notas/app/certs/
 
+# Banco local e-notas (legado SQLite, se existir)
+e-notas/app/data/
+
 # Segredos locais (não versionar)
 /credenciais.md
 /credenciais.txt

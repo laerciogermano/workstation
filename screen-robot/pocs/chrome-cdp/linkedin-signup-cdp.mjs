@@ -1,59 +1,49 @@
 #!/usr/bin/env node
 /**
- * Cadastro LinkedIn via Chrome CDP (web).
+ * Cadastro LinkedIn via CDP — mínimo.
  *
- * Pré-req: Chrome isolado no ar (ex.: ./start-marina-costa.sh).
+ *   ./signup-marina-costa.sh \
+ *     --location "São Paulo, Brasil" \
+ *     --job "Analista" \
+ *     --company "Google"
  *
- * Uso (Marina — defaults):
- *   node linkedin-signup-cdp.mjs
- *   CDP_URL=http://127.0.0.1:9224 node linkedin-signup-cdp.mjs
- *
- * Env:
- *   CDP_URL      default http://127.0.0.1:9224
- *   LI_EMAIL     default marina.costa@clozzy.com.br
- *   LI_PASSWORD  default in@12345678
- *   LI_FIRST     default Marina
- *   LI_LAST      default Costa
- *   MAIL_SSH_HOST / MAIL_SSH_PASS — poll código 6 dígitos no Mailcow (opcional)
- *   --no-email-code  não espera/confirma e-mail
- *
- * Rollback: fechar aba; apagar conta LI; status CSV de volta a nao_criada.
+ * Obrigatórios: --location --job|--cargo --company|--empresa
+ * Opcional: --code 123456 (PIN e-mail)
+ * Cliques: só Input.dispatchMouseEvent (CDP). Digitação: Input.insertText.
  */
-import { spawnSync } from 'node:child_process';
-import { readFileSync, existsSync } from 'node:fs';
-import { resolve, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
-
-const __dir = dirname(fileURLToPath(import.meta.url));
-const args = new Set(process.argv.slice(2));
-const NO_EMAIL_CODE = args.has('--no-email-code');
-
-const CDP_BASE = process.env.CDP_URL || 'http://127.0.0.1:9224';
+const CDP = process.env.CDP_URL || 'http://127.0.0.1:9224';
 const EMAIL = process.env.LI_EMAIL || 'marina.costa@clozzy.com.br';
-const PASSWORD = process.env.LI_PASSWORD || 'in@12345678';
+const PASS = process.env.LI_PASSWORD || 'in@12345678';
 const FIRST = process.env.LI_FIRST || 'Marina';
 const LAST = process.env.LI_LAST || 'Costa';
-const MAIL_SSH_HOST = process.env.MAIL_SSH_HOST || 'root@144.126.154.90';
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-function resolveMailSshPass() {
-  if (process.env.MAIL_SSH_PASS) return process.env.MAIL_SSH_PASS;
-  const cred = resolve(__dir, '../../../credenciais.md');
-  if (!existsSync(cred)) return '';
-  const t = readFileSync(cred, 'utf8');
-  const m = t.match(/`root@144\.126\.154\.90`\s*—\s*`([^`]+)`/);
-  return m ? m[1] : '';
+function arg(...flags) {
+  for (const flag of flags) {
+    const i = process.argv.indexOf(flag);
+    if (i >= 0 && process.argv[i + 1] && !process.argv[i + 1].startsWith('-')) {
+      return process.argv[i + 1];
+    }
+    const eq = process.argv.find((a) => a.startsWith(flag + '='));
+    if (eq) return eq.slice(flag.length + 1);
+  }
+  return '';
 }
 
-async function getJson(path) {
-  const res = await fetch(`${CDP_BASE}${path}`);
-  if (!res.ok) throw new Error(`${path} → HTTP ${res.status}`);
-  return res.json();
+const LOCATION = arg('--location') || process.env.LI_LOCATION || '';
+const JOB = arg('--job', '--cargo') || process.env.LI_JOB || '';
+const COMPANY = arg('--company', '--empresa') || process.env.LI_COMPANY || '';
+const CODE = arg('--code') || process.env.LI_CODE || '';
+
+async function json(path) {
+  const r = await fetch(`${CDP}${path}`);
+  if (!r.ok) throw new Error(`${path} ${r.status}`);
+  return r.json();
 }
 
-function cdpSession(wsUrl) {
+function session(wsUrl) {
   const ws = new WebSocket(wsUrl);
-  let nextId = 0;
+  let id = 0;
   const pending = new Map();
   const ready = new Promise((ok, err) => {
     ws.addEventListener('open', ok);
@@ -61,94 +51,44 @@ function cdpSession(wsUrl) {
   });
   ws.addEventListener('message', (ev) => {
     const msg = JSON.parse(ev.data);
-    if (msg.id != null && pending.has(msg.id)) {
-      const { resolve: res, reject: rej } = pending.get(msg.id);
-      pending.delete(msg.id);
-      if (msg.error) rej(new Error(JSON.stringify(msg.error)));
-      else res(msg.result);
-    }
+    if (msg.id == null || !pending.has(msg.id)) return;
+    const { resolve, reject } = pending.get(msg.id);
+    pending.delete(msg.id);
+    msg.error ? reject(new Error(JSON.stringify(msg.error))) : resolve(msg.result);
   });
   async function send(method, params = {}) {
     await ready;
-    const id = ++nextId;
-    return new Promise((res, rej) => {
-      pending.set(id, { resolve: res, reject: rej });
-      ws.send(JSON.stringify({ id, method, params }));
+    const i = ++id;
+    return new Promise((resolve, reject) => {
+      pending.set(i, { resolve, reject });
+      ws.send(JSON.stringify({ id: i, method, params }));
     });
   }
   return { send, close: () => ws.close(), ready };
 }
 
-function fetchMailCode(email) {
-  const pass = resolveMailSshPass();
-  if (!pass) {
-    console.log('mail: sem MAIL_SSH_PASS / credenciais.md — skip poll');
-    return null;
-  }
-  const remote = `
-docker exec mailcowdockerized-dovecot-mailcow-1 doveadm fetch -u ${email} "hdr.date hdr.from hdr.subject text" MAILBOX INBOX 2>/dev/null | python3 -c '
-import sys,re
-data=sys.stdin.read()
-parts=re.split(r"(?=^date:)", data, flags=re.M|re.I)
-cands=[]
-for p in parts:
-  if not re.search(r"linkedin", p, re.I): continue
-  codes=re.findall(r"\\b(\\d{6})\\b", p)
-  for c in codes:
-    if c not in cands: cands.append(c)
-print("CODES", ",".join(cands[:5]))
-'
-`.trim();
-  const r = spawnSync(
-    'sshpass',
-    [
-      '-e',
-      'ssh',
-      '-o',
-      'StrictHostKeyChecking=no',
-      '-o',
-      'PreferredAuthentications=password',
-      '-o',
-      'PubkeyAuthentication=no',
-      '-o',
-      'ConnectTimeout=20',
-      MAIL_SSH_HOST,
-      remote,
-    ],
-    {
-      env: { ...process.env, SSHPASS: pass },
-      encoding: 'utf8',
-      timeout: 45_000,
-    },
-  );
-  const out = (r.stdout || '') + (r.stderr || '');
-  const m = out.match(/CODES\s+([0-9,\s]+)/);
-  if (!m) return null;
-  const codes = m[1]
-    .split(',')
-    .map((s) => s.trim())
-    .filter(Boolean);
-  return codes[0] || null;
-}
-
 async function main() {
-  console.log('CDP', CDP_BASE, '|', EMAIL, FIRST, LAST);
-
-  const targets = await getJson('/json/list');
-  const page =
-    targets.find((t) => t.type === 'page' && !String(t.url || '').startsWith('chrome://')) ||
-    targets.find((t) => t.type === 'page');
-  if (!page?.webSocketDebuggerUrl) {
-    throw new Error(`sem página CDP em ${CDP_BASE} — rode ./start-marina-costa.sh`);
+  if (!LOCATION || !JOB || !COMPANY) {
+    console.error(
+      'uso: node linkedin-signup-cdp.mjs --location "São Paulo, Brasil" --job "Analista" --company "Google"',
+    );
+    process.exit(1);
   }
+  console.log({ CDP, EMAIL, FIRST, LAST, LOCATION, JOB, COMPANY });
 
-  const s = cdpSession(page.webSocketDebuggerUrl);
+  const page =
+    (await json('/json/list')).find(
+      (t) => t.type === 'page' && !String(t.url || '').startsWith('chrome://'),
+    ) || (await json('/json/list')).find((t) => t.type === 'page');
+  if (!page?.webSocketDebuggerUrl) throw new Error(`sem página em ${CDP}`);
+
+  const s = session(page.webSocketDebuggerUrl);
   await s.ready;
   await s.send('Page.enable');
   await s.send('Runtime.enable');
   await s.send('Page.bringToFront');
 
-  async function evalv(expression) {
+  const evalv = async (expression) => {
     const r = await s.send('Runtime.evaluate', {
       returnByValue: true,
       awaitPromise: true,
@@ -156,9 +96,10 @@ async function main() {
     });
     if (r.exceptionDetails) throw new Error(JSON.stringify(r.exceptionDetails));
     return r.result?.value;
-  }
+  };
 
-  async function clickXY(x, y) {
+  /** Clique só via CDP. */
+  const clickXY = async (x, y) => {
     await s.send('Input.dispatchMouseEvent', {
       type: 'mousePressed',
       x,
@@ -173,21 +114,53 @@ async function main() {
       button: 'left',
       clickCount: 1,
     });
-  }
+  };
 
-  async function fillClean(sel, text) {
+  const snap = () =>
+    evalv(`(() => ({
+      href: location.href,
+      body: (document.body?.innerText || '').replace(/\\s+/g, ' ').slice(0, 400),
+      inputs: [...document.querySelectorAll('input')].filter((e) => e.getClientRects().length).map((e) => {
+        const b = e.getBoundingClientRect();
+        return {
+          id: e.id, type: e.type, aria: e.getAttribute('aria-label') || '',
+          ph: e.placeholder || '', value: e.type === 'password' ? (e.value ? '[set]' : '') : e.value,
+          x: b.x + b.width / 2, y: b.y + b.height / 2,
+        };
+      }),
+      btns: [...document.querySelectorAll('button,[role=button]')].filter((e) => e.getClientRects().length).map((e) => {
+        const b = e.getBoundingClientRect();
+        return {
+          text: (e.innerText || e.getAttribute('aria-label') || '').replace(/\\s+/g, ' ').trim().slice(0, 60),
+          x: b.x + b.width / 2, y: b.y + b.height / 2,
+        };
+      }).filter((b) => b.text),
+    }))()`);
+
+  const clickRe = async (reSrc) => {
+    const hit = await evalv(`(() => {
+      const re = new RegExp(${JSON.stringify(reSrc)}, 'i');
+      const el = [...document.querySelectorAll('button,[role=button],input[type=submit]')].find((e) =>
+        re.test(e.innerText || e.value || e.getAttribute('aria-label') || ''),
+      );
+      if (!el) return null;
+      const b = el.getBoundingClientRect();
+      return { text: (el.innerText || el.value || '').trim().slice(0, 60), x: b.x + b.width / 2, y: b.y + b.height / 2 };
+    })()`);
+    if (!hit) throw new Error('botão: ' + reSrc);
+    console.log('click', hit.text);
+    await clickXY(hit.x, hit.y);
+  };
+
+  const fill = async (sel, text) => {
     const box = await evalv(`(() => {
       const el = document.querySelector(${JSON.stringify(sel)});
       if (!el) return null;
       el.scrollIntoView({ block: 'center' });
-      el.focus();
-      const d = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value');
-      d.set.call(el, '');
-      el.dispatchEvent(new InputEvent('input', { bubbles: true, inputType: 'deleteContentBackward' }));
       const b = el.getBoundingClientRect();
       return { x: b.x + b.width / 2, y: b.y + b.height / 2 };
     })()`);
-    if (!box) throw new Error('campo ausente: ' + sel);
+    if (!box) throw new Error('campo: ' + sel);
     await clickXY(box.x, box.y);
     await s.send('Input.dispatchMouseEvent', {
       type: 'mousePressed',
@@ -216,215 +189,155 @@ async function main() {
       windowsVirtualKeyCode: 8,
     });
     await s.send('Input.insertText', { text });
-    const v = await evalv(`(() => {
-      const el = document.querySelector(${JSON.stringify(sel)});
-      if (!el) return null;
-      if (el.value !== ${JSON.stringify(text)}) {
-        const d = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value');
-        d.set.call(el, ${JSON.stringify(text)});
-        el.dispatchEvent(new InputEvent('input', { bubbles: true, data: ${JSON.stringify(text)}, inputType: 'insertText' }));
-        el.dispatchEvent(new Event('change', { bubbles: true }));
-      }
-      return el.value;
-    })()`);
-    console.log('fill', sel, '=>', sel.includes('password') ? '[set]' : v);
-  }
+    console.log('fill', sel, sel.includes('password') ? '[set]' : text);
+  };
 
-  async function clickBtn(reSrc) {
-    const hit = await evalv(`(() => {
-      const re = new RegExp(${JSON.stringify(reSrc)}, 'i');
-      const b = [...document.querySelectorAll('button,[role="button"],input[type="submit"]')].find((el) =>
-        re.test(el.innerText || el.value || el.getAttribute('aria-label') || ''),
-      );
-      if (!b) return null;
-      const box = b.getBoundingClientRect();
-      return {
-        text: (b.innerText || b.value || '').trim().slice(0, 80),
-        x: box.x + box.width / 2,
-        y: box.y + box.height / 2,
-      };
-    })()`);
-    if (!hit) throw new Error('botão não encontrado: ' + reSrc);
-    console.log('click', hit.text);
-    await clickXY(hit.x, hit.y);
-  }
-
-  async function snap() {
-    return evalv(`(() => {
-      const inputs = [...document.querySelectorAll('input')]
-        .filter((el) => el.getClientRects().length)
-        .map((el) => {
-          const b = el.getBoundingClientRect();
-          return {
-            id: el.id,
-            name: el.name,
-            type: el.type,
-            ph: el.placeholder || '',
-            value: el.type === 'password' ? (el.value ? '[set]' : '') : el.value,
-            x: b.x + b.width / 2,
-            y: b.y + b.height / 2,
-          };
-        });
-      const btns = [...document.querySelectorAll('button')]
-        .filter((el) => el.getClientRects().length)
-        .map((el) => {
-          const b = el.getBoundingClientRect();
-          return {
-            text: (el.innerText || '').replace(/\\s+/g, ' ').trim().slice(0, 60),
-            x: b.x + b.width / 2,
-            y: b.y + b.height / 2,
-          };
-        })
-        .filter((b) => b.text);
-      return {
-        href: location.href,
-        title: document.title,
-        body: (document.body?.innerText || '').replace(/\\s+/g, ' ').slice(0, 500),
-        inputs,
-        btns: btns.slice(0, 14),
-      };
-    })()`);
-  }
-
-  async function fillCode(code) {
-    const sel =
-      'input[name="email-confirmation-code"], input#email-confirmation-code, input[autocomplete="one-time-code"], input[inputmode="numeric"], input[maxlength="6"]';
+  /** Digita no input (hint no aria/placeholder) e clica a opção do typeahead via CDP. */
+  const typeahead = async (text, hintRe) => {
     const box = await evalv(`(() => {
-      const el = document.querySelector(${JSON.stringify(sel)});
+      const re = new RegExp(${JSON.stringify(hintRe)}, 'i');
+      const el = [...document.querySelectorAll('input[type=text],input:not([type])')]
+        .filter((e) => e.getClientRects().length)
+        .find((e) => re.test((e.getAttribute('aria-label') || '') + ' ' + (e.placeholder || '')))
+        || [...document.querySelectorAll('input[type=text]')].find((e) => e.getClientRects().length);
       if (!el) return null;
       el.scrollIntoView({ block: 'center' });
+      const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set;
+      setter.call(el, '');
+      el.dispatchEvent(new Event('input', { bubbles: true }));
       const b = el.getBoundingClientRect();
-      return { x: b.x + b.width / 2, y: b.y + b.height / 2, id: el.id, name: el.name };
+      return { x: b.x + b.width / 2, y: b.y + b.height / 2, aria: el.getAttribute('aria-label') || '' };
     })()`);
-    if (!box) {
-      // fallback: digitar no input focado / primeiro numérico
-      await s.send('Input.insertText', { text: code });
-      console.log('code typed (fallback insertText)');
-      return;
-    }
+    if (!box) throw new Error('typeahead input: ' + hintRe);
+    console.log('typeahead', box.aria || hintRe, '←', text);
     await clickXY(box.x, box.y);
-    await s.send('Input.insertText', { text: code });
-    console.log('code typed into', box.id || box.name);
-  }
-
-  console.log('navigate → /signup');
-  await s.send('Page.navigate', { url: 'https://www.linkedin.com/signup' });
-  await sleep(3500);
+    await s.send('Input.dispatchMouseEvent', {
+      type: 'mousePressed',
+      x: box.x,
+      y: box.y,
+      button: 'left',
+      clickCount: 3,
+    });
+    await s.send('Input.dispatchMouseEvent', {
+      type: 'mouseReleased',
+      x: box.x,
+      y: box.y,
+      button: 'left',
+      clickCount: 3,
+    });
+    await s.send('Input.dispatchKeyEvent', {
+      type: 'keyDown',
+      key: 'Backspace',
+      code: 'Backspace',
+      windowsVirtualKeyCode: 8,
+    });
+    await s.send('Input.dispatchKeyEvent', {
+      type: 'keyUp',
+      key: 'Backspace',
+      code: 'Backspace',
+      windowsVirtualKeyCode: 8,
+    });
+    await s.send('Input.insertText', { text });
+    await sleep(2500);
+    const first = text.split(',')[0].trim().toLowerCase();
+    const pick = await evalv(`(() => {
+      const first = ${JSON.stringify(first)};
+      const full = ${JSON.stringify(text.trim().toLowerCase())};
+      const opts = [...document.querySelectorAll('[role=option]')].map((el) => {
+        const b = el.getBoundingClientRect();
+        const t = (el.innerText || '').replace(/\\s+/g, ' ').trim();
+        return t ? { text: t, x: b.x + b.width / 2, y: b.y + b.height / 2 } : null;
+      }).filter(Boolean);
+      const chosen =
+        opts.find((o) => o.text.toLowerCase() === full) ||
+        opts.find((o) => o.text.toLowerCase() === first) ||
+        opts.find((o) => o.text.toLowerCase().startsWith(first + ',')) ||
+        opts.find((o) => o.text.toLowerCase().startsWith(first)) ||
+        opts[0];
+      return { n: opts.length, chosen, sample: opts.slice(0, 5).map((o) => o.text) };
+    })()`);
+    console.log('opts', pick.sample);
+    if (!pick.chosen) throw new Error('sem opção typeahead para: ' + text);
+    console.log('pick', pick.chosen.text);
+    await clickXY(pick.chosen.x, pick.chosen.y);
+    await sleep(500);
+  };
 
   let st = await snap();
-  console.log('start', st.href, '|', st.body.slice(0, 180));
+  console.log('now', st.href);
 
-  if (/feed|\/in\//i.test(st.href) && !/signup|checkpoint/i.test(st.href)) {
-    console.log('já logado / fora do signup — abort');
-    console.log(JSON.stringify({ href: st.href, title: st.title }, null, 2));
-    s.close();
-    return;
-  }
-
-  if (st.inputs.some((i) => i.id === 'email-or-phone' || i.name === 'email-address')) {
-    const emailSel = st.inputs.some((i) => i.id === 'email-or-phone')
-      ? '#email-or-phone'
-      : 'input[name="email-address"], input#email-address, input[type="email"]';
-    const passSel = st.inputs.some((i) => i.id === 'password')
-      ? '#password'
-      : 'input[name="password"], input#password, input[type="password"]';
-    await fillClean(emailSel.includes('#') ? emailSel : emailSel.split(',')[0].trim(), EMAIL);
-    // email-or-phone path uses #password; generic may need query again
-    try {
-      await fillClean(passSel.includes('#') ? passSel : '#password', PASSWORD);
-    } catch {
-      await fillClean('input[type="password"]', PASSWORD);
-    }
-    await clickBtn('aceite e cadastre|agree.*join|join now|cadastre-se|avan[cç]ar|continue|next');
-    await sleep(3500);
+  // signup se ainda não estiver no onboarding
+  if (!/onboarding/i.test(st.href)) {
+    await s.send('Page.navigate', { url: 'https://www.linkedin.com/signup' });
+    await sleep(3000);
     st = await snap();
-    console.log('after join', st.href, '|', st.body.slice(0, 200));
   }
 
-  if (
-    st.inputs.some((i) => i.id === 'first-name' || i.name === 'first-name') ||
-    /Nome|First name|Sobrenome|Last name/i.test(st.body)
-  ) {
-    await fillClean('#first-name', FIRST);
-    await fillClean('#last-name', LAST);
-    await clickBtn('continuar|continue');
-    for (let i = 0; i < 25; i++) {
-      await sleep(800);
-      st = await snap();
-      console.log('wait', (i + 1) * 800, st.href.slice(0, 80), '|', st.body.slice(0, 120));
-      if (
-        /código|confirma|onboarding|challenge|checkpoint|feed|location|localiza|job|cargo|pin/i.test(
-          st.href + st.body,
-        )
-      )
-        break;
-      if (!st.inputs.some((inp) => inp.id === 'first-name')) break;
+  if (st.inputs.some((i) => i.id === 'email-or-phone')) {
+    await fill('#email-or-phone', EMAIL);
+    await fill('#password', PASS);
+    await clickRe('avan[cç]ar|aceite|join|cadastre');
+    await sleep(3000);
+    st = await snap();
+  }
+
+  if (st.inputs.some((i) => i.id === 'first-name') || /Nome|Sobrenome/i.test(st.body)) {
+    await fill('#first-name', FIRST);
+    await fill('#last-name', LAST);
+    await clickRe('continuar|continue');
+    await sleep(3000);
+    st = await snap();
+  }
+
+  // onboarding: cargo/empresa e depois localidade (--location)
+  for (let i = 0; i < 6; i++) {
+    st = await snap();
+    console.log('step', i, st.href.slice(0, 80), '|', st.body.slice(0, 100));
+
+    if (/código|confirma|confirmation|handle-confirmation/i.test(st.href + st.body)) {
+      if (!CODE) throw new Error('passo PIN: passe --code 123456');
+      const pin = st.inputs.find((inp) => inp.type === 'text' || inp.type === 'tel' || /c[oó]digo|code|pin/i.test(inp.aria + inp.ph));
+      if (!pin) throw new Error('campo PIN não encontrado');
+      await clickXY(pin.x, pin.y);
+      await s.send('Input.insertText', { text: CODE });
+      console.log('code', CODE);
+      await clickRe('continuar|continue|confirmar|verify');
+      await sleep(3000);
+      continue;
     }
-  }
 
-  if (
-    !NO_EMAIL_CODE &&
-    /código|confirma|confirmation|pin|verif/i.test(st.body + st.href)
-  ) {
-    console.log('confirmação de e-mail — poll Mailcow…');
-    let code = null;
-    for (let i = 0; i < 12; i++) {
-      code = fetchMailCode(EMAIL);
-      if (code) break;
-      console.log('poll', i + 1, 'sem código — reenvio se houver botão');
-      try {
-        await clickBtn('reenviar|resend|enviar novamente');
-      } catch {
-        /* ignore */
+    if (/localidade|location|profile-location/i.test(st.href + st.body)) {
+      await typeahead(LOCATION, 'local|location|cidade|vaga');
+      await clickRe('continuar|continue');
+      await sleep(3000);
+      continue;
+    }
+
+    if (/profile-edit|experiência|cargo|empresa/i.test(st.href + st.body)) {
+      if (st.inputs.some((inp) => inp.type === 'text' && /cargo|title|job/i.test(inp.aria + inp.ph) && !inp.value)) {
+        await typeahead(JOB, 'cargo|title|job');
       }
-      await sleep(10_000);
-      st = await snap();
+      if (st.inputs.some((inp) => inp.type === 'text' && /empresa|company|empregador/i.test(inp.aria + inp.ph) && !inp.value)) {
+        await typeahead(COMPANY, 'empresa|company|empregador');
+      }
+      try {
+        await clickRe('continuar|continue');
+      } catch {
+        break;
+      }
+      await sleep(3000);
+      continue;
     }
-    if (!code) {
-      console.log('FINAL (sem código no Mailcow)', JSON.stringify({
-        href: st.href,
-        body: st.body,
-        inputs: st.inputs,
-        btns: st.btns.map((b) => b.text),
-      }, null, 2));
-      s.close();
-      process.exitCode = 2;
-      return;
-    }
-    console.log('código', code);
-    await fillCode(code);
-    await sleep(500);
-    try {
-      await clickBtn('enviar|submit|continuar|continue|confirmar|verify');
-    } catch {
-      /* alguns fluxos avançam sozinhos */
-    }
-    for (let i = 0; i < 15; i++) {
-      await sleep(1000);
-      st = await snap();
-      console.log('post-code', i + 1, st.href.slice(0, 90), '|', st.body.slice(0, 120));
-      if (/feed|onboarding|location|localiza|job|cargo|\/in\//i.test(st.href + st.body)) break;
-    }
-  }
 
-  console.log(
-    'FINAL',
-    JSON.stringify(
-      {
-        href: st.href,
-        title: st.title,
-        body: st.body,
-        inputs: st.inputs,
-        btns: st.btns.map((b) => b.text),
-      },
-      null,
-      2,
-    ),
-  );
+    break;
+  }
+  st = await snap();
+
+  console.log('FINAL', st.href, '|', st.body.slice(0, 200));
   s.close();
 }
 
-main().catch((err) => {
-  console.error('Falha:', err.message || err);
+main().catch((e) => {
+  console.error('Falha:', e.message || e);
   process.exit(1);
 });

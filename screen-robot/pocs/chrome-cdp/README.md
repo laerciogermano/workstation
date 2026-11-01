@@ -14,12 +14,16 @@ Controla um Chrome já rodando com `--remote-debugging-port=9222` (mesmo perfil/
 ./start-juliana-martins.sh                     # CDP :9228 (Juliana Martins / LI)
 ./start-camila-ferreira.sh                     # CDP :9229 (Camila Ferreira / LI)
 ./start-germano.sh                             # CDP :9230 (Germano / Hostinger rolego)
+./start-germano-firefox.sh                     # Firefox isolado (sem CDP; perfil ~/firefox-profiles/germano)
 # opcional URL: ./start-lucas-mendes.sh https://www.linkedin.com/
+# opcional URL: ./start-germano-firefox.sh https://tinder.com
 ```
 
 Registro: [`../android-studio/contas-facebook-chrome.csv`](../android-studio/contas-facebook-chrome.csv)
 
 **Antes → depois (Germano):** sem perfil → `~/chrome-profiles/germano` + `start-germano.sh` (:9230) para painel Hostinger do domínio `rolego.com.br`. Rollback: fechar Chrome; `rm -rf ~/chrome-profiles/germano`; remover script/linha README/CSV.
+
+**Antes → depois (Germano Firefox):** só Chrome CDP → `~/firefox-profiles/germano` + `start-germano-firefox.sh` (`-no-remote -profile`). Sem porta CDP (Marionette/RDP sob demanda). Rollback: fechar Firefox; `rm -rf ~/firefox-profiles/germano`; remover `start-germano-firefox.sh`/linha README.
 
 **Antes → depois (Marina):** sem perfil → `~/chrome-profiles/marina-costa` + `start-marina-costa.sh` (:9224). Rollback: fechar Chrome; `rm -rf ~/chrome-profiles/marina-costa`; remover script/linha do CSV.
 
@@ -82,6 +86,12 @@ Deps: Node 22+ (`fetch`/`WebSocket`). Clique via CDP (`Input.dispatchMouseEvent`
 **Antes → depois (job / experiência):** signup preenche cargo só no onboarding → `linkedin-setup-job-cdp.mjs` adiciona experiência no perfil logado (SPA `/edit/forms/position`, typeahead cargo+empresa ConectMax). Skip se já tem ambos (salvo `--force`). Rollback: apagar a experiência / editar intro no LI; ou reexecutar com outro `--job`/`--company`.
 
 **Antes → depois (banner menu / file-input):** 1 tentativa no menuitem + só `Carregar*` → falhava quando o menu LI usa `<a>` curto (“Adicionar imagem de capa”) ou rótulo “Selecionar imagem”. Depois: retry 4× no menu (`a`/`button`/`menuitem`, labels Adicionar/Alterar/Editar + EN), espera 2.5s, e também clica `Selecionar imagem` / `Alterar foto` / `Editar` antes do `setFile`. Scripts: `setup-avatar-banner.mjs`, `linkedin-update-banner-cdp.mjs`. Rollback: reverter esses dois arquivos ao commit anterior ao patch; fluxo manual: câmera capa → `<a>` “Adicionar imagem de capa” → Carregar foto única → setFile → Salvar alterações.
+
+## DM Instagram (Dora) — regras de tom
+
+Canônico: [`ig-dora-watch/REGRAS-CONVERSA.md`](ig-dora-watch/REGRAS-CONVERSA.md) (confirmação antes de enviar; tom informal; rodear; não fechar o papo).
+
+**Antes → depois:** regras só no chat → doc versionado em `ig-dora-watch/`. Rollback: apagar/reverter esse arquivo.
 
 ## Caminho inverso
 

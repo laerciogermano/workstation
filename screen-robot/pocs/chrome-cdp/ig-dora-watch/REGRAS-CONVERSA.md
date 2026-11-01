@@ -86,8 +86,11 @@ Ordem aproximada (mais antiga → mais recente). Inclui trechos anteriores ao sc
 - **dela:** mas eu voltando a comer normal minha barriga já estufa de novo hahahaha
 - **eu:** kkk inventando defeito
 - **eu:** amanhã no treino a gente vê se essa história cola
+- **dela:** aquele desespero pré verão
 
 ### Pendente de envio (não mandar de novo se já proposto)
 
-- (nenhuma — aguardando resposta dela)
-- (evitar reusar) organismo te imitando / reclama de luxo / inventando defeito + história cola
+- (proposta atual)
+  1. `desespero sem prova não vale`
+  2. `fotinha e eu te digo se faz sentido`
+- (evitar reusar) kkk / inventando defeito / história cola / arma ilegal / organismo

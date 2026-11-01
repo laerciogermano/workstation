@@ -23,6 +23,8 @@ Registro: [`../android-studio/contas-facebook-chrome.csv`](../android-studio/con
 
 **Antes → depois (until-name):** until-email/completo → `linkedin-signup-until-name-cdp.mjs` para apos nome+sobrenome+Continuar (sem PIN/captcha wait/onboarding). Rollback: `until-email` ou signup completo.
 
+**Antes → depois (confirm-email):** signup inclui PIN → `linkedin-confirm-email-cdp.mjs` so confirma e-mail (abre LI, poll Mailcow, digita PIN). Wrapper: `./confirm-email-juliana-martins.sh`. Rollback: confirmar manualmente no LI / reenviar codigo.
+
 ## Cadastro LinkedIn via CDP (Marina)
 
 ```bash
@@ -33,9 +35,10 @@ Registro: [`../android-studio/contas-facebook-chrome.csv`](../android-studio/con
 ./signup-juliana-martins-until-email.sh  # idem :9228
 # basico so ate nome:
 # CDP_URL=http://127.0.0.1:PORT node linkedin-signup-until-name-cdp.mjs --email … --password … --first … --last …
+./confirm-email-juliana-martins.sh  # so confirma e-mail (PIN Mailcow) :9228
 ```
 
-Entradas CLI (completo): `--email` `--password` `--first|--nome` `--last|--sobrenome` `--location` `--job|--cargo` `--company|--empresa` (`--code` opcional — senao poll Mailcow). Until-email / until-name: so email/senha/nome. **Regra (completo/until-email):** se aparecer **Pular**, clica. Cliques so CDP. Rollback: apagar mailbox/perfil; CSV `nao_criada`.
+Entradas CLI (completo): `--email` `--password` `--first|--nome` `--last|--sobrenome` `--location` `--job|--cargo` `--company|--empresa` (`--code` opcional — senao poll Mailcow). Until-email / until-name: so email/senha/nome. Confirm-email: `--email` + opcional `--password`/`--code`. **Regra (completo/until-email/confirm):** se aparecer **Pular**, clica. Cliques so CDP. Rollback: apagar mailbox/perfil; CSV `nao_criada`.
 
 ## Script
 

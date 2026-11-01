@@ -116,6 +116,7 @@ Insumos do card [Benchmarking soluções similares](https://trello.com/c/1fMjqGd
 - **Tela da loja (vitrine e-commerce)** — página do estabelecimento com itens observados (catálogo read-only, sem checkout).
 - **Busca geo / onde comprar perto** — pesquisar um item e ver lojas físicas próximas (GPS ou região, ex. centro), com distância, preço e data.
 - **Integrações via API para empresas** — API B2B para estabelecimentos/parceiros consultarem ou alimentarem o índice.
+- **Sistema de delivery (*future*)** — pedido + entrega a partir da vitrine/cesta; fora da v1 (ver [PRD](prd.md) §4.7).
 
 Curadoria: [`../marca/benchmarking-solucoes/README.md`](../marca/benchmarking-solucoes/README.md).
 

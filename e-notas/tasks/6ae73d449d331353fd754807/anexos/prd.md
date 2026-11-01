@@ -20,15 +20,16 @@ Transformar o QR/URL da NFC-e em índice EAN → preço → estabelecimento → 
 - cesta com montagem apartada;
 - tela da loja (catálogo read-only);
 - busca de item com **lojas físicas próximas** (ex.: “no centro”);
-- API para empresas.
+- API para empresas;
+- **futuro:** sistema de **delivery** (pedido + entrega a partir da vitrine/cesta).
 
 ## 3. Personas
 
 | Persona | Job |
 |---------|-----|
 | **Contribuinte** | Escaneia/cola o QR e alimenta o índice |
-| **Comprador** | Busca EAN/nome, compara lojas, monta cesta, vê vitrine, descobre **onde comprar perto** |
-| **Empresa / parceiro** | Consome ou alimenta o índice via API |
+| **Comprador** | Busca EAN/nome, compara lojas, monta cesta, vê vitrine, descobre **onde comprar perto**; no futuro, pede **delivery** |
+| **Empresa / parceiro** | Consome ou alimenta o índice via API; no futuro, recebe/atende pedidos de entrega |
 
 ## 4. Capacidades-alvo (must / should)
 
@@ -65,9 +66,15 @@ Transformar o QR/URL da NFC-e em índice EAN → preço → estabelecimento → 
 - API autenticada: consulta de preços / posição; vínculo EAN ↔ código de unidade; (futuro) catálogo oficial da loja.
 - Separar consumer (público/rate-limit) de B2B (chave, contrato, LGPD).
 
+### 4.7 Sistema de delivery — *future*
+- Evolução da vitrine/cesta para **pedido com entrega** (não só “onde comprar fisicamente”).
+- Escopo futuro típico: carrinho → checkout → pagamento → logística (própria, parceira ou da loja) → status do pedido.
+- Pré-requisitos: vitrine estável, API empresas, acordo com estabelecimentos (estoque/preço oficial — não só observação de NFC-e).
+- **Fora da v1:** delivery não bloqueia comparação, geo, histórico nem montagem apartada.
+
 ## 5. Fora de escopo (PRD v1)
 
-- Checkout / pagamento / entrega
+- Checkout / pagamento / **delivery** (planejado em §4.7 *future*, não nesta versão)
 - Emissão de NF-e/NFS-e
 - Scraping fora da URL do QR (exceto fontes oficiais explícitas no futuro)
 - App nativo obrigatório (web HTTPS primeiro)
@@ -84,6 +91,7 @@ Transformar o QR/URL da NFC-e em índice EAN → preço → estabelecimento → 
 | % cestas com split usado | Montagem apartada |
 | Sessões na vitrine da loja | Engajamento por estabelecimento |
 | Parceiros API ativos | Trilha B2B |
+| (futuro) Pedidos delivery concluídos | Ativação da trilha entrega |
 
 ## 7. Prioridade sugerida
 
@@ -92,7 +100,8 @@ Transformar o QR/URL da NFC-e em índice EAN → preço → estabelecimento → 
 3. Histórico por produto/loja  
 4. Vitrine da loja (e-commerce read-only)  
 5. Montagem apartada (cesta + split)  
-6. API empresas (MVP: leitura + vínculo EAN)
+6. API empresas (MVP: leitura + vínculo EAN)  
+7. **Sistema de delivery** (após vitrine + API + parceria com lojas)
 
 ## 8. Concorrência (síntese)
 

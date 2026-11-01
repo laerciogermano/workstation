@@ -5,6 +5,7 @@ Documento único (produto + benchmarking + design system) para stakeholders.
 | Artefato | Uso |
 |----------|-----|
 | [`apresentacao-notinhas-v1.html`](apresentacao-notinhas-v1.html) | Deck A4 paisagem print-ready (8 págs.) |
+| [`apresentacao-notinhas-v1.pdf`](apresentacao-notinhas-v1.pdf) | PDF gerado (Chrome headless) |
 | Card | https://trello.com/c/hfGuzfMs |
 
 ## Conteúdo

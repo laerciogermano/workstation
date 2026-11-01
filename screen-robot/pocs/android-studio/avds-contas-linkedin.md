@@ -21,6 +21,8 @@ CSV: [`contas-linkedin-clozzy.csv`](contas-linkedin-clozzy.csv) — cols `data_c
 
 **Antes → depois (Pedro Almeida signup):** `nao_criada` → `signup_incompleto` — pediu confirmação de número por retentativa de IPs cadastros. Rollback: status `nao_criada`; limpar obs do pedido de número.
 
+**Antes → depois (ativas 2026-11-01):** várias `restrita=nao` (Gabriel/Roberta/Pedro/Juliana + CDP) → só **Marina Costa**, **Lucas Mendes**, **Sofia Ribeiro** ativas; demais `restrita=sim`. Rollback: restaurar col `restrita` das linhas no CSV do commit anterior.
+
 ## Inventário atual
 
 | Conta | AVD (`AVD_NAME`) | Porta console (serial) | Notas |
@@ -28,10 +30,10 @@ CSV: [`contas-linkedin-clozzy.csv`](contas-linkedin-clozzy.csv) — cols `data_c
 | (lab ConnectMax) | `ConnectMax_Cam` | `5554` → `emulator-5554` | baseline / fonte de APKs |
 | Jacqueline Lima | `Jacqueline_Lima` | `5556` → `emulator-5556` | **restrita** (pediu nº) |
 | Pamela Gomes | `Pamela_Gomes` | `5558` → `emulator-5558` | **restrita** |
-| Gabriel Manfred | `Gabriel_Manfred` | `5560` → `emulator-5560` | signup incompleto — **pediu nº** (SMS) |
+| Gabriel Manfred | `Gabriel_Manfred` | `5560` → `emulator-5560` | signup incompleto — **pediu nº** (SMS); **restrita** (2026-11-01) |
 | Alex Romão | `Alex_Romao` | `5562` → `emulator-5562` | **restrita**; identidade Pixel 4 / flame |
 | Fernando Breda | `Fernando_Breda` | `5564` → `emulator-5564` | **restrita**; Pixel 4 / flame; worker `start-worker-fernando.sh` |
-| Roberta Machado | `Roberta_Machado` | `5566` → `emulator-5566` | **experiencia_longevidade**; máscara Pixel 4 (`pixel_4`); about+email only-me; medir tempo até restrição |
+| Roberta Machado | `Roberta_Machado` | `5566` → `emulator-5566` | **experiencia_longevidade**; máscara Pixel 4 (`pixel_4`); about+email only-me; **restrita** (2026-11-01) |
 | Ana Letícia (`teste@`) | `Ana_Leticia` | `5568` → `emulator-5568` | **restrita** (pediu nº); login `teste@clozzy.com.br` |
 | Camila Ferreira | `Camila_Ferreira` | `5570` → `emulator-5570` | conta LI **criada_chrome_web**; AVD p/ operações (Pixel 4); fechar LI ao fim de cada job |
 

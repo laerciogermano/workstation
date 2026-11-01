@@ -17,7 +17,10 @@ Insumos do card [Criar identidade visual](https://trello.com/c/qUI3Rb9a).
 ## Estrutura do manual
 Molde de seções/print-ready: RoleGo identidade v1 (`role-go/marca/identidade-visual-rolego-v1.*`) — anexos `ref-estrutura-*` no card. Não copiar marca RoleGo.
 
-Sugestão de nome: **notinhas.org**.
+## Entrega
+Manual v1: [`../identidade-visual-notinhas-v1.html`](../identidade-visual-notinhas-v1.html) · tokens [`../../identidade-visual.md`](../../identidade-visual.md) · índice [`../README.md`](../README.md).
+
+Marca: **notinhas.org**.
 
 ## Rollback
 ```bash

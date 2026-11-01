@@ -120,6 +120,15 @@ Insumos do card [Benchmarking soluções similares](https://trello.com/c/1fMjqGd
 
 Curadoria: [`../marca/benchmarking-solucoes/README.md`](../marca/benchmarking-solucoes/README.md).
 
+## REQ-015 — Identidade visual notinhas.org (2026-11-01)
+
+- Marca pública consumer: **notinhas.org** (não usar “e-notas” como wordmark na UI).
+- Paleta: azul `#0069B4` / `#014380` + verde `#00984B` (referência Nota Paraná / Menor Preço).
+- Tipografia: Plus Jakarta Sans; menor preço sempre em verde com loja + data.
+- Manual: [`../marca/identidade-visual-notinhas-v1.html`](../marca/identidade-visual-notinhas-v1.html) · tokens [`../identidade-visual.md`](../identidade-visual.md).
+- Card: [Criar identidade visual](https://trello.com/c/qUI3Rb9a).
+
+
 ---
 
 ## Próximos passos

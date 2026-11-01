@@ -11,6 +11,8 @@ CSV (data, nome, e-mail, status, senha_li, objetivo, obs): [`contas-linkedin-clo
 
 **Antes → depois (Camila):** signup `nao_criada`/AVD → conta LI **criada_chrome_web** (browser Chrome desktop); AVD `Camila_Ferreira` (`emulator-5570`) só para operações (fechar LI ao fim de cada job). Rollback: status/obs anteriores; `avdmanager delete avd -n Camila_Ferreira` + remover `~/.android/avd/Camila_Ferreira.*`.
 
+**Antes → depois (Marina Costa 2026-11-01):** sem linha → CSV `marina.costa@clozzy.com.br` status `nao_criada`, objetivo criar LI via Chrome+CDP; mailbox Mailcow. Rollback: remover linha do CSV; apagar mailbox no Mailcow; senha em `credenciais.md`.
+
 ## Inventário atual
 
 | Conta | AVD (`AVD_NAME`) | Porta console (serial) | Notas |

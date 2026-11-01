@@ -20,7 +20,7 @@ O **notinhas.shop** é um **sistema cooperativo de notinhas** para:
 - **dar visibilidade ao comércio local** — exposição ao público do sortimento de balcão (descoberta → loja física);
 - **comprar produtos sem a margem** típica de apps de e-commerce / delivery (ex.: iFood, 99) — preço do balcão/NFC-e, não do marketplace;
 - **separar compras** entre lojas para **menor custo total**;
-- **delivery / Full** (trilha futura): cada loja pode operar como **depósito de vendas** (fulfillment no sentido Mercado Livre **Full** — estoque na origem, pedido + entrega a partir da vitrine/cesta).
+- **transformar cada estabelecimento em centro de distribuição** — a loja física vira estoque de vendas online (CD local) a partir da vitrine/cesta.
 
 Cooperativo: quem contribui deposita a NFC-e; quem consulta usa o índice coletivo. Marca pública **notinhas.shop** · código/repo **e-notas**.
 
@@ -42,15 +42,15 @@ Ler o QR/URL da NFC-e (preço, estabelecimento, data, cód. interno), vincular E
 - **destaques** (itens com preço abaixo do mercado / referência);
 - **gestão de compras pessoais** (o que comprou, quando, gasto mensal, análise financeira);
 - API para empresas;
-- **futuro:** **delivery / Full** — loja como depósito de vendas (pedido + entrega a partir da vitrine/cesta).
+- **centro de distribuição** — cada estabelecimento opera como estoque de vendas online (CD).
 
 ## 4. Personas
 
 | Persona | Job |
 |---------|-----|
 | **Contribuinte** | Cola o QR da nota e vincula EAN (scan cooperativo) quando a nota só traz cód. interno |
-| **Comprador** | Busca EAN/nome, compara estabelecimentos, monta cesta, vê vitrine, descobre **onde comprar perto**, vê **quais lojas perto cobram menos ou mais**, **acompanha o próprio gasto**; no futuro, pede **delivery** |
-| **Empresa / parceiro** | Ganha **vitrine pública**; aparece no **ranking** (mais/menos cobra) e nos **destaques** se o preço publicado estiver abaixo do mercado; consome/alimenta via API; no futuro, opera a loja como depósito (**Full**) |
+| **Comprador** | Busca EAN/nome, compara estabelecimentos, monta cesta, vê vitrine, descobre **onde comprar perto**, vê **quais lojas perto cobram menos ou mais**, **acompanha o próprio gasto**; compra a partir do **CD** da loja |
+| **Empresa / parceiro** | Ganha **vitrine pública**; aparece no **ranking** (mais/menos cobra) e nos **destaques** se o preço publicado estiver abaixo do mercado; consome/alimenta via API; a loja opera como **centro de distribuição** |
 
 ## 5. Capacidades-alvo (must / should)
 
@@ -104,12 +104,11 @@ Ler o QR/URL da NFC-e (preço, estabelecimento, data, cód. interno), vincular E
 - API autenticada: consulta de preços / posição; vínculo EAN ↔ código de unidade; (futuro) catálogo oficial da loja.
 - Separar consumer (público/rate-limit) de B2B (chave, contrato, LGPD).
 
-### 5.9 Sistema de delivery / Full — *future*
-- Evolução da vitrine/cesta para **pedido com entrega** (não só “onde comprar fisicamente”).
-- Cada loja física pode tornar-se também um **depósito de vendas** — no jargão do Mercado Livre: **Full** (**Mercado Envios Full** / **fulfillment**): estoque na origem (ou CD parceiro), preparação e envio a partir da venda.
-- Escopo futuro típico: carrinho → checkout → pagamento → logística (própria, parceira ou da loja-depósito) → status do pedido.
+### 5.9 Centro de distribuição — *should*
+- O app trata **cada estabelecimento como centro de distribuição**: a loja física vira **estoque de vendas online** (CD local) a partir da vitrine/cesta.
+- Pedido + logística saem do próprio estabelecimento (ou rede parceira), sem reposicionar a loja como “depósito Full” de marketplace com margem de canal.
+- Escopo típico: carrinho → checkout → pagamento → logística (própria, parceira ou da loja-CD) → status do pedido.
 - Pré-requisitos: vitrine estável, API empresas, acordo com estabelecimentos (estoque/preço oficial — não só observação de NFC-e).
-- **Fora da v1:** delivery/Full não bloqueia comparação, geo, histórico, ranking, destaques, vitrine nem montagem apartada.
 - **Gap vs apps (literatura):** preço em iFood/99/marketplaces costuma ficar acima do balcão (ordens típicas ~+8% a +22% em mercado; ~+17% a +30% em restaurante — ver [`../marca/comparacao-precos-apps/`](../marca/comparacao-precos-apps/README.md)). O índice NFC-e permanece fonte de **preço físico**; não misturar séries sem rótulo de canal.
 
 ### 5.10 Gestão de compras e análise financeira — *should*
@@ -128,7 +127,6 @@ Ler o QR/URL da NFC-e (preço, estabelecimento, data, cód. interno), vincular E
 
 ## 6. Fora de escopo (PRD v1)
 
-- Checkout / pagamento / **delivery** (planejado em §5.9 *future*, não nesta versão)
 - Emissão de NF-e/NFS-e
 - Scraping fora da URL do QR (exceto fontes oficiais explícitas no futuro)
 - App nativo obrigatório (web HTTPS primeiro)
@@ -147,7 +145,7 @@ Ler o QR/URL da NFC-e (preço, estabelecimento, data, cód. interno), vincular E
 | Sessões na vitrine do estabelecimento | Engajamento por loja |
 | Usuários com extrato / gasto mensal visto | Ativação da gestão financeira pessoal |
 | Parceiros API ativos | Trilha B2B |
-| (futuro) Pedidos delivery concluídos | Ativação da trilha entrega |
+| Pedidos via CD da loja | Ativação do centro de distribuição |
 
 ## 8. Prioridade sugerida
 
@@ -160,7 +158,7 @@ Ler o QR/URL da NFC-e (preço, estabelecimento, data, cód. interno), vincular E
 7. **Gestão de compras + gasto mensal / análise financeira** (extrato das notas do usuário)  
 8. Montagem apartada (cesta + split)  
 9. API empresas (MVP: leitura + vínculo EAN)  
-10. **Delivery / Full** — loja como depósito de vendas (após vitrine + API + parceria)
+10. **Centro de distribuição** — cada estabelecimento = estoque de vendas online (após vitrine + API + parceria)
 
 ## 9. Concorrência (síntese)
 
@@ -184,8 +182,8 @@ Ver matriz em [`../marca/benchmarking-solucoes/00-curadoria.html`](../marca/benc
 
 ### 9.2 Matriz de comparação (todas as capacidades)
 
-| Solução | Comp | Hist | Apart | Vitr | Geo | Rank | Dest | API | Deliv |
-|---------|------|------|-------|------|-----|------|------|-----|-------|
+| Solução | Comp | Hist | Apart | Vitr | Geo | Rank | Dest | API | CD |
+|---------|------|------|-------|------|-----|------|------|-----|----|
 | Busca Preço | Sim | Sim | Parc. | Parc. | Parc. | Não | Não | Não | Não |
 | Nota Preço | Sim | Sim | **Sim** | Não | Parc. | Não | Não | Não | Não |
 | Mercado Certo | Sim | Parc. | **Sim** | Não | **Sim** | Parc. | Não | Não | Não |
@@ -196,9 +194,9 @@ Ver matriz em [`../marca/benchmarking-solucoes/00-curadoria.html`](../marca/benc
 | MP Brasil | Sim | Parc. | Não | Não | **Sim** | Parc. | Não | Não | Não |
 | Economiza AL | Sim | Parc. | Via 3º | Não | **Sim** | Parc. | Não | **Sim** | Não |
 | Quantto | Sim | Sim | N/A | N/A | Reg. | N/A | N/A | **Sim** | Não |
-| **notinhas.shop** | Alvo | Alvo | Alvo | Alvo | Alvo | Alvo | Alvo | Alvo | **Fut.** |
+| **notinhas.shop** | Alvo | Alvo | Alvo | Alvo | Alvo | Alvo | Alvo | Alvo | **Alvo** |
 
-Comp=comparar · Hist=histórico · Apart=split/economia · Vitr=vitrine + itens fora da web · Geo=item perto · Rank=lojas baratas/caras · Dest=destaques (preço abaixo) · API=B2B · Deliv=delivery/Full. Gasto pessoal = alvo notinhas (fora desta grade).
+Comp=comparar · Hist=histórico · Apart=split/economia · Vitr=vitrine + itens fora da web · Geo=item perto · Rank=lojas baratas/caras · Dest=destaques (preço abaixo) · API=B2B · CD=centro de distribuição (loja = estoque online). Gasto pessoal = alvo notinhas (fora desta grade).
 
 ### 9.3 Capacidade × gap da proposta
 
@@ -216,9 +214,9 @@ Comp=comparar · Hist=histórico · Apart=split/economia · Vitr=vitrine + itens
 | Comércio local | Implícito nos geo | Job explícito + exposição pública |
 | Gestão de compras / gasto | Extratos / finanças | NFC-e depositada → extrato |
 | API empresas | Quantto, Economiza AL | B2B no eixo consumer NFC-e |
-| Delivery / Full (loja-depósito) | Marketplaces (com margem) | Futuro: loja física = depósito (estilo Full) |
+| Centro de distribuição (loja = CD) | Marketplaces (com margem) | Cada estabelecimento = estoque de vendas online |
 
-**Leitura:** ninguém no consumer junta o pacote da §1 (comparar + simular + perto + ranking + vitrine + gasto + local + split + API + delivery futuro) com preço sem margem de marketplace. Gov cobre geo bem, mas sem vitrine/split/UX de compra. Alcance amplo (PoupApp / MP Brasil) ≠ pacote completo.
+**Leitura:** ninguém no consumer junta o pacote da §1 (comparar + simular + perto + ranking + vitrine + gasto + local + split + API + loja como CD) com preço sem margem de marketplace. Gov cobre geo bem, mas sem vitrine/split/UX de compra. Alcance amplo (PoupApp / MP Brasil) ≠ pacote completo.
 
 ## 10. Rollback / caminho inverso
 
@@ -230,4 +228,4 @@ Comp=comparar · Hist=histórico · Apart=split/economia · Vitr=vitrine + itens
 - Apresentação: slides 03 = o quê, 04–05 = como, 06–07 = matriz/alcance.
 - §5.6 ranking / §5.7 destaques: remover seções e correlatos em §1–§3, prioridade, matriz e slides.
 - Visibilidade comércio local / itens fora da web: reverter bullets §1, §5.4 e cards da apresentação.
-- §5.9 Full: reverter nomenclatura “Delivery / Full” e menção a loja-depósito.
+- §5.9 CD: reverter nomenclatura “centro de distribuição” / loja = estoque online.

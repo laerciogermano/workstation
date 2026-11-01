@@ -120,7 +120,7 @@ Insumos do card [Benchmarking soluções similares](https://trello.com/c/1fMjqGd
 - **Ranking de estabelecimentos perto** — listar lojas no raio ordenadas pelas que **menos cobram** ou **mais cobram** (nível de preço agregado da loja a partir das notas; distinto da busca por item).
 - **Destaques / concorrência de preços** — observação ou publicação **abaixo** do preço de referência do item → entra no feed de destaques (selo na vitrine / home / perto).
 - **Integrações via API para empresas** — API B2B para estabelecimentos/parceiros consultarem ou alimentarem o índice.
-- **Sistema de delivery / Full (*future*)** — loja como **depósito de vendas** (jargão Mercado Livre: **Full** / fulfillment); pedido + entrega a partir da vitrine/cesta; fora da v1 (ver [PRD](prd.md) §5.9).
+- **Centro de distribuição** — cada estabelecimento vira **estoque de vendas online** (CD local) a partir da vitrine/cesta; sem margem de marketplace (ver [PRD](prd.md) §5.9).
 - **Gestão de compras e análise financeira** — extrato das notas do usuário: o que / quando / onde comprou; gasto por mês; rankings e tendência (ver [PRD](prd.md) §5.10).
 - **Fonte do preço** — observações do índice são NFC-e (balcão). Preços de apps/marketplaces, se exibidos no futuro, devem vir com **rótulo de canal** e não misturar na mesma série histórica sem aviso (insumo: [`../marca/comparacao-precos-apps/`](../marca/comparacao-precos-apps/README.md)).
 
@@ -200,6 +200,20 @@ Curadoria: [`../marca/benchmarking-solucoes/README.md`](../marca/benchmarking-so
 - Link **Apresentação** no rodapé da home (`index.html`), visível ao rolar até o fim.
 - Antes: só HTML print em `marca/`. Depois: também `app/public/apresentacao.html` + CSS em `styles.css`.
 - Rollback: remover `apresentacao.html`, link do rodapé e blocos CSS; no remoto apagar o arquivo em `/opt/e-notas/public/`.
+
+## REQ-027 — Header gradiente + logo → apresentação (2026-11-01)
+
+- Header do app (`index.html`, `scan.html`) no mesmo estilo do hero da apresentação (gradiente azul→verde, wordmark branco + `.shop` menta).
+- Clique na logo (`notinhas.shop`) abre `/apresentacao.html`.
+- Antes: wordmark azul/verde no topo do `main`. Depois: `<header class="app-header">` full-bleed + link para apresentação.
+- Rollback: restaurar brand dentro do `main` apontando para `./`.
+
+## REQ-026 — Loja = centro de distribuição (2026-11-01)
+
+- Posicionamento: o app trata **cada estabelecimento como centro de distribuição** (estoque de vendas online), não como “delivery/Full futuro” nem “depósito de vendas”.
+- Atualizar PRD §1/§3/§4/§5.9, apresentação (`marca/` + `app/public/apresentacao.html`) e matriz (coluna **CD** = Alvo).
+- Antes: Delivery/Full *future* / depósito. Depois: CD presente no pacote da proposta.
+- Rollback: restaurar §5.9 *future* e cards “Delivery / Full” nos decks.
 
 ---
 

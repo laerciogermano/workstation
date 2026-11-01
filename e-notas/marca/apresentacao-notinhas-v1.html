@@ -151,7 +151,7 @@ ul.dots li::before{content:"";position:absolute;left:0;top:.55em;width:6px;heigh
     <div class="card acc" style="--acc:var(--nt-green)"><h3>Sem margem de apps</h3><p style="font-size:12px;color:var(--nt-muted)">Preço NFC-e / balcão — não iFood, 99 ou marketplace.</p></div>
     <div class="card acc" style="--acc:var(--nt-green)"><h3>Visibilidade do comércio local</h3><p style="font-size:12px;color:var(--nt-muted)">Itens só no balcão ganham vitrine pública; descoberta → loja física.</p></div>
     <div class="card acc" style="--acc:var(--nt-green)"><h3>Separar compras</h3><p style="font-size:12px;color:var(--nt-muted)">Split entre lojas para menor custo total.</p></div>
-    <div class="card acc" style="--acc:var(--nt-warn)"><h3>Delivery / Full <span class="chip warn">futuro</span></h3><p style="font-size:12px;color:var(--nt-muted)">Loja como depósito de vendas (estilo Full) — pedido + entrega. Fora da v1.</p></div>
+    <div class="card acc" style="--acc:var(--nt-green)"><h3>Centro de distribuição</h3><p style="font-size:12px;color:var(--nt-muted)">Cada estabelecimento vira estoque de vendas online — um CD local.</p></div>
   </div>
   <div class="foot"><span class="wm" style="font-size:13px"><span class="n">notinhas</span><span class="o">.shop</span></span><span>Apresentação v1 · O quê</span><span>03</span></div>
 </section>
@@ -179,8 +179,8 @@ ul.dots li::before{content:"";position:absolute;left:0;top:.55em;width:6px;heigh
     <div style="display:flex;flex-direction:column;gap:10px">
       <div class="label">Personas</div>
       <div class="card"><h3>Contribuinte</h3><p style="font-size:12px;color:var(--nt-muted)">Cola o QR da nota e, se faltar, escaneia o EAN (vínculo cooperativo).</p></div>
-      <div class="card"><h3>Comprador</h3><p style="font-size:12px;color:var(--nt-muted)">Compara, acha perto, vê lojas mais baratas/caras, separa cesta; no futuro pede delivery.</p></div>
-      <div class="card"><h3>Empresa / parceiro</h3><p style="font-size:12px;color:var(--nt-muted)">Vitrine + ranking; preço abaixo do mercado → destaque. API B2B.</p></div>
+      <div class="card"><h3>Comprador</h3><p style="font-size:12px;color:var(--nt-muted)">Compara, acha perto, vê lojas mais baratas/caras, separa cesta; compra do CD da loja.</p></div>
+      <div class="card"><h3>Empresa / parceiro</h3><p style="font-size:12px;color:var(--nt-muted)">Vitrine + ranking; a loja opera como centro de distribuição. API B2B.</p></div>
       <div class="card acc" style="--acc:var(--nt-green)">
         <h3>Slogan</h3>
         <p style="font-size:14px;font-weight:800">Menor preço a partir da nota.</p>
@@ -196,7 +196,7 @@ ul.dots li::before{content:"";position:absolute;left:0;top:.55em;width:6px;heigh
   <h2>Capacidades e prioridade</h2>
   <div class="grid" style="grid-template-columns:1.3fr 1fr;gap:16px;flex:1;min-height:0">
     <div>
-      <div class="label">Must / should / future</div>
+      <div class="label">Must / should</div>
       <div class="grid g2" style="gap:8px">
         <div class="card acc" style="--acc:var(--nt-blue)"><h3>Comparação <span class="chip">must</span></h3><p style="font-size:11.5px;color:var(--nt-muted)">EAN entre lojas · menor preço + loja + data</p></div>
         <div class="card acc" style="--acc:var(--nt-blue)"><h3>Histórico <span class="chip">must</span></h3><p style="font-size:11.5px;color:var(--nt-muted)">Série temporal por produto / loja</p></div>
@@ -207,7 +207,7 @@ ul.dots li::before{content:"";position:absolute;left:0;top:.55em;width:6px;heigh
         <div class="card acc" style="--acc:var(--nt-green)"><h3>Montagem apartada <span class="chip ok">should</span></h3><p style="font-size:11.5px;color:var(--nt-muted)">Cesta + split 2+ lojas · simula economia</p></div>
         <div class="card acc" style="--acc:var(--nt-green)"><h3>API empresas <span class="chip ok">should</span></h3><p style="font-size:11.5px;color:var(--nt-muted)">Consulta B2B · vínculo EAN</p></div>
       </div>
-      <div class="card" style="margin-top:10px;border-style:dashed"><h3>Delivery / Full <span class="chip warn">future</span></h3><p style="font-size:11.5px;color:var(--nt-muted)">Loja vira depósito de vendas (fulfillment estilo Mercado Livre Full). Fora da v1.</p></div>
+      <div class="card" style="margin-top:10px;border-color:rgba(0,152,75,.35)"><h3>Centro de distribuição <span class="chip ok">should</span></h3><p style="font-size:11.5px;color:var(--nt-muted)">Cada estabelecimento vira estoque de vendas online — um CD local.</p></div>
     </div>
     <div>
       <div class="label">Ordem sugerida</div>
@@ -220,12 +220,11 @@ ul.dots li::before{content:"";position:absolute;left:0;top:.55em;width:6px;heigh
         <div class="prio"><span class="rk">6</span> Vitrine da loja</div>
         <div class="prio"><span class="rk">7</span> Montagem apartada / simular economia</div>
         <div class="prio"><span class="rk">8</span> API empresas</div>
-        <div class="prio"><span class="rk">9</span> Delivery / Full — loja-depósito (futuro)</div>
+        <div class="prio"><span class="rk">9</span> Centro de distribuição (loja = CD)</div>
       </div>
       <div class="card" style="margin-top:10px">
         <div class="label">Fora da v1</div>
         <ul class="dots">
-          <li>Checkout / pagamento / delivery</li>
           <li>Emissão de NF-e</li>
           <li>Substituir Nota Paraná SEFAZ</li>
         </ul>
@@ -254,7 +253,7 @@ ul.dots li::before{content:"";position:absolute;left:0;top:.55em;width:6px;heigh
           <th title="Ranking lojas baratas/caras perto">Rank</th>
           <th title="Destaques: preço abaixo do mercado">Dest</th>
           <th title="API empresas">API</th>
-          <th title="Delivery / Full (loja-depósito)">Deliv</th>
+          <th title="Centro de distribuição (loja = estoque online)">CD</th>
         </tr>
       </thead>
       <tbody>
@@ -268,10 +267,10 @@ ul.dots li::before{content:"";position:absolute;left:0;top:.55em;width:6px;heigh
         <tr><td>MP Brasil</td><td>~15–16 UFs**</td><td><span class="y">Sim</span></td><td><span class="p">Parc.</span></td><td><span class="n">Não</span></td><td><span class="n">Não</span></td><td><span class="y">Sim</span></td><td><span class="p">Parc.</span></td><td><span class="n">Não</span></td><td><span class="n">Não</span></td><td><span class="n">Não</span></td></tr>
         <tr><td>Economiza AL</td><td>AL</td><td><span class="y">Sim</span></td><td><span class="p">Parc.</span></td><td><span class="p">Via 3º</span></td><td><span class="n">Não</span></td><td><span class="y">Sim</span></td><td><span class="p">Parc.</span></td><td><span class="n">Não</span></td><td><span class="y">Sim</span></td><td><span class="n">Não</span></td></tr>
         <tr><td>Quantto</td><td>B2B</td><td><span class="y">Sim</span></td><td><span class="y">Sim</span></td><td><span class="n">N/A</span></td><td><span class="n">N/A</span></td><td><span class="p">Reg.</span></td><td><span class="n">N/A</span></td><td><span class="n">N/A</span></td><td><span class="y">Sim</span></td><td><span class="n">Não</span></td></tr>
-        <tr style="background:var(--nt-blue-soft)"><td><b>notinhas.shop</b></td><td><b>Lab PR***</b></td><td><span class="y">Alvo</span></td><td><span class="y">Alvo</span></td><td><span class="y">Alvo</span></td><td><span class="y">Alvo</span></td><td><span class="y">Alvo</span></td><td><span class="y">Alvo</span></td><td><span class="y">Alvo</span></td><td><span class="y">Alvo</span></td><td><span class="p">Fut.</span></td></tr>
+        <tr style="background:var(--nt-blue-soft)"><td><b>notinhas.shop</b></td><td><b>Lab PR***</b></td><td><span class="y">Alvo</span></td><td><span class="y">Alvo</span></td><td><span class="y">Alvo</span></td><td><span class="y">Alvo</span></td><td><span class="y">Alvo</span></td><td><span class="y">Alvo</span></td><td><span class="y">Alvo</span></td><td><span class="y">Alvo</span></td><td><span class="y">Alvo</span></td></tr>
       </tbody>
     </table>
-    <p style="font-size:8.5px;color:var(--nt-muted);margin-top:5px"><b>Colunas:</b> Comp · Hist · Apart · Vitr · Geo · Rank=lojas baratas/caras · Dest=destaques (preço abaixo) · API · Deliv/Full. (Gasto pessoal = alvo notinhas; fora desta grade.) *PoupApp 26 UF+DF. **MP Brasil ≠ 27 UF. ***Lab SJP/PR.</p>
+    <p style="font-size:8.5px;color:var(--nt-muted);margin-top:5px"><b>Colunas:</b> Comp · Hist · Apart · Vitr · Geo · Rank=lojas baratas/caras · Dest=destaques (preço abaixo) · API · CD=centro de distribuição. (Gasto pessoal = alvo notinhas; fora desta grade.) *PoupApp 26 UF+DF. **MP Brasil ≠ 27 UF. ***Lab SJP/PR.</p>
   </div>
   <div class="foot"><span class="wm" style="font-size:13px"><span class="n">notinhas</span><span class="o">.shop</span></span><span>Apresentação v1 · Matriz</span><span>06</span></div>
 </section>
@@ -285,10 +284,10 @@ ul.dots li::before{content:"";position:absolute;left:0;top:.55em;width:6px;heigh
       <div class="card" style="background:var(--nt-blue-deep);color:#fff;border:0">
         <div class="label" style="color:#9ED0F5">Onde a proposta se diferencia</div>
         <ul class="dots" style="--acc:#7CFFB2;margin-top:8px">
-          <li style="color:rgba(255,255,255,.92)">Pacote: comparar + ranking lojas + destaques (preço abaixo) + perto + split + vitrine (+ delivery futuro)</li>
+          <li style="color:rgba(255,255,255,.92)">Pacote: comparar + ranking lojas + destaques (preço abaixo) + perto + split + vitrine</li>
           <li style="color:rgba(255,255,255,.92)">Preço de balcão/NFC-e — explicitamente sem margem iFood/99</li>
           <li style="color:rgba(255,255,255,.92)">Visibilidade do comércio local: itens que não estão na internet ganham vitrine pública</li>
-          <li style="color:rgba(255,255,255,.92)">Futuro: loja como depósito de vendas (Full / fulfillment)</li>
+          <li style="color:rgba(255,255,255,.92)">Cada estabelecimento vira centro de distribuição (estoque de vendas online)</li>
           <li style="color:rgba(255,255,255,.92)">API B2B no mesmo eixo consumer cooperativo</li>
         </ul>
       </div>
@@ -307,10 +306,10 @@ ul.dots li::before{content:"";position:absolute;left:0;top:.55em;width:6px;heigh
         <tr><td>Geo / Rank lojas</td><td>Gov + apps geo (Rank raro agregado)</td></tr>
         <tr><td>Gasto pessoal</td><td>Quase ninguém no NFC-e</td></tr>
         <tr><td>API</td><td>Quantto, Economiza AL</td></tr>
-        <tr><td>Delivery / Full</td><td>Marketplaces (com margem)</td></tr>
+        <tr><td>Centro de distribuição</td><td>Marketplaces (com margem) · notinhas: loja = CD</td></tr>
         <tr><td>Alcance amplo</td><td>PoupApp*, MP Brasil (~16 UF)</td></tr>
       </table>
-      <p style="font-size:11px;color:var(--nt-muted);margin-top:8px">Regra: não competir com SEFAZ em “ter o dado”. Competir no <b>pacote completo</b> (vitrine + rank + gasto + Full futuro).</p>
+      <p style="font-size:11px;color:var(--nt-muted);margin-top:8px">Regra: não competir com SEFAZ em “ter o dado”. Competir no <b>pacote completo</b> (vitrine + rank + gasto + loja como CD).</p>
     </div>
   </div>
   <div class="foot"><span class="wm" style="font-size:13px"><span class="n">notinhas</span><span class="o">.shop</span></span><span>Apresentação v1 · Posicionamento</span><span>07</span></div>
@@ -382,7 +381,7 @@ ul.dots li::before{content:"";position:absolute;left:0;top:.55em;width:6px;heigh
     <div class="eyebrow"><b>v1</b> Próximos passos</div>
     <div style="margin:auto 0;max-width:560px">
       <div class="wm" style="font-size:48px"><span class="n" style="color:#fff">notinhas</span><span class="o" style="color:#B8F5D0">.shop</span></div>
-      <p style="margin-top:14px;font-size:18px;font-weight:600;max-width:500px">Cooperativo local: comparar, simular economia, perto, vitrine, split — sem margem de app. Depois: delivery.</p>
+      <p style="margin-top:14px;font-size:18px;font-weight:600;max-width:500px">Cooperativo local: comparar, simular economia, perto, vitrine, split — sem margem de app. Cada estabelecimento vira um centro de distribuição.</p>
       <div class="grid g3" style="margin-top:22px;gap:10px">
         <div style="background:rgba(255,255,255,.12);border-radius:12px;padding:12px">
           <div style="font-size:11px;opacity:.8;font-weight:700;margin-bottom:4px">O QUÊ / COMO</div>

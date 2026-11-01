@@ -6,11 +6,11 @@
       name="viewport"
       content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
     />
-    <meta name="theme-color" content="#F5F7FA" />
+    <meta name="theme-color" content="#014380" />
     <meta name="color-scheme" content="light" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="notinhas" />
     <meta name="format-detection" content="telephone=no" />
     <title>notinhas.shop</title>
@@ -66,10 +66,15 @@
     ></script>
   </head>
   <body>
+    <header class="app-header">
+      <div class="app-header-inner wide">
+        <a class="brand app-header-brand" href="apresentacao.html" aria-label="notinhas.shop — apresentação">
+          <span class="n">notinhas</span><span class="o">.shop</span>
+        </a>
+        <p class="app-header-tag">Menor preço a partir da nota.</p>
+      </div>
+    </header>
     <main class="screen wide has-fab">
-      <a class="brand" href="./" aria-label="notinhas.shop">
-        <span class="n">notinhas</span><span class="o">.shop</span>
-      </a>
       <p id="status" class="status" aria-live="polite" hidden></p>
 
       <div class="tabs" role="tablist" aria-label="Seções">

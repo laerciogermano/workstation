@@ -23,22 +23,24 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body class="apresentacao-page">
-    <header class="apresentacao-hero">
-      <a class="back-link apresentacao-back" href="./">← notinhas.shop</a>
-      <p class="apresentacao-eyebrow"><span>v1</span> Apresentação · 2026</p>
-      <h1 class="brand apresentacao-wm" aria-label="notinhas.shop">
-        <span class="n">notinhas</span><span class="o">.shop</span>
-      </h1>
-      <p class="apresentacao-lead">
-        Sistema cooperativo de notinhas para comprar melhor no comércio local.
-      </p>
-      <p class="apresentacao-sub">Primeiro o quê. Depois o como. Depois o mercado e a marca.</p>
-      <nav class="apresentacao-toc" aria-label="Roteiro">
-        <a href="#o-que">1 · O quê</a>
-        <a href="#como">2 · Como</a>
-        <a href="#mercado">3 · Mercado</a>
-        <a href="#marca">4 · Marca</a>
-      </nav>
+    <header class="app-header apresentacao-hero">
+      <div class="app-header-inner">
+        <a class="back-link apresentacao-back" href="./">← App</a>
+        <p class="apresentacao-eyebrow"><span>v1</span> Apresentação · 2026</p>
+        <h1 class="brand app-header-brand apresentacao-wm" aria-label="notinhas.shop">
+          <span class="n">notinhas</span><span class="o">.shop</span>
+        </h1>
+        <p class="apresentacao-lead">
+          Sistema cooperativo de notinhas para comprar melhor no comércio local.
+        </p>
+        <p class="apresentacao-sub">Primeiro o quê. Depois o como. Depois o mercado e a marca.</p>
+        <nav class="apresentacao-toc" aria-label="Roteiro">
+          <a href="#o-que">1 · O quê</a>
+          <a href="#como">2 · Como</a>
+          <a href="#mercado">3 · Mercado</a>
+          <a href="#marca">4 · Marca</a>
+        </nav>
+      </div>
     </header>
 
     <main class="screen wide apresentacao">
@@ -85,7 +87,7 @@
           <article class="apresentacao-card accent-green"><h3>Sem margem de apps</h3><p>Preço NFC-e / balcão — não iFood, 99 ou marketplace.</p></article>
           <article class="apresentacao-card accent-green"><h3>Comércio local</h3><p>Itens só no balcão ganham vitrine; descoberta → loja física.</p></article>
           <article class="apresentacao-card accent-green"><h3>Separar compras</h3><p>Split entre lojas para menor custo total.</p></article>
-          <article class="apresentacao-card accent-warn"><h3>Delivery / Full <span class="chip warn">futuro</span></h3><p>Loja como depósito de vendas. Fora da v1.</p></article>
+          <article class="apresentacao-card accent-green"><h3>Centro de distribuição</h3><p>Cada estabelecimento vira estoque de vendas online — um CD local.</p></article>
         </div>
       </section>
 
@@ -114,8 +116,8 @@
         <h3 class="apresentacao-h3">Personas</h3>
         <div class="apresentacao-cards">
           <article class="apresentacao-card"><h3>Contribuinte</h3><p>Cola o QR e, se faltar, escaneia o EAN.</p></article>
-          <article class="apresentacao-card"><h3>Comprador</h3><p>Compara, acha perto, vê ranking, separa cesta.</p></article>
-          <article class="apresentacao-card"><h3>Empresa / parceiro</h3><p>Vitrine + ranking; API B2B.</p></article>
+          <article class="apresentacao-card"><h3>Comprador</h3><p>Compara, acha perto, vê ranking, separa cesta; compra do CD da loja.</p></article>
+          <article class="apresentacao-card"><h3>Empresa / parceiro</h3><p>Vitrine + ranking; a loja opera como centro de distribuição.</p></article>
         </div>
         <div class="apresentacao-card accent-green">
           <h3>Slogan</h3>
@@ -132,7 +134,7 @@
           <article class="apresentacao-card accent-green"><h3>Vitrine <span class="chip ok">should</span></h3><p>Catálogo público</p></article>
           <article class="apresentacao-card accent-green"><h3>Split / economia <span class="chip ok">should</span></h3><p>Cesta + 2+ lojas</p></article>
           <article class="apresentacao-card accent-green"><h3>API empresas <span class="chip ok">should</span></h3><p>Consulta B2B · vínculo EAN</p></article>
-          <article class="apresentacao-card accent-warn"><h3>Delivery / Full <span class="chip warn">future</span></h3><p>Fora da v1</p></article>
+          <article class="apresentacao-card accent-green"><h3>Centro de distribuição <span class="chip ok">should</span></h3><p>Cada loja = estoque de vendas online (CD)</p></article>
         </div>
         <ol class="apresentacao-prio">
           <li>Comparação EAN + menor preço</li>
@@ -143,12 +145,11 @@
           <li>Vitrine</li>
           <li>Montagem apartada</li>
           <li>API empresas</li>
-          <li>Delivery / Full (futuro)</li>
+          <li>Centro de distribuição (loja = CD)</li>
         </ol>
         <div class="apresentacao-card">
           <p class="label">Fora da v1</p>
           <ul class="apresentacao-dots">
-            <li>Checkout / pagamento / delivery</li>
             <li>Emissão de NF-e</li>
             <li>Substituir Nota Paraná SEFAZ</li>
           </ul>
@@ -161,7 +162,7 @@
         <p class="hint">
           Fontes públicas · 2026-11 ·
           <span class="y">Sim</span> · <span class="p">Parc.</span> · <span class="n">Não</span> ·
-          <span class="y">Alvo</span>/<span class="p">Fut.</span> = notinhas
+          <span class="y">Alvo</span> = notinhas
         </p>
         <div class="table-wrap apresentacao-matrix">
           <table>
@@ -177,7 +178,7 @@
                 <th>Rank</th>
                 <th>Dest</th>
                 <th>API</th>
-                <th>Deliv</th>
+                <th>CD</th>
               </tr>
             </thead>
             <tbody>
@@ -191,7 +192,7 @@
               <tr><td>MP Brasil</td><td>~15–16 UFs</td><td class="y">Sim</td><td class="p">Parc.</td><td class="n">Não</td><td class="n">Não</td><td class="y">Sim</td><td class="p">Parc.</td><td class="n">Não</td><td class="n">Não</td><td class="n">Não</td></tr>
               <tr><td>Economiza AL</td><td>AL</td><td class="y">Sim</td><td class="p">Parc.</td><td class="p">Via 3º</td><td class="n">Não</td><td class="y">Sim</td><td class="p">Parc.</td><td class="n">Não</td><td class="y">Sim</td><td class="n">Não</td></tr>
               <tr><td>Quantto</td><td>B2B</td><td class="y">Sim</td><td class="y">Sim</td><td class="n">N/A</td><td class="n">N/A</td><td class="p">Reg.</td><td class="n">N/A</td><td class="n">N/A</td><td class="y">Sim</td><td class="n">Não</td></tr>
-              <tr class="apresentacao-hl"><td><b>notinhas.shop</b></td><td><b>Lab PR</b></td><td class="y">Alvo</td><td class="y">Alvo</td><td class="y">Alvo</td><td class="y">Alvo</td><td class="y">Alvo</td><td class="y">Alvo</td><td class="y">Alvo</td><td class="y">Alvo</td><td class="p">Fut.</td></tr>
+              <tr class="apresentacao-hl"><td><b>notinhas.shop</b></td><td><b>Lab PR</b></td><td class="y">Alvo</td><td class="y">Alvo</td><td class="y">Alvo</td><td class="y">Alvo</td><td class="y">Alvo</td><td class="y">Alvo</td><td class="y">Alvo</td><td class="y">Alvo</td><td class="y">Alvo</td></tr>
             </tbody>
           </table>
         </div>
@@ -204,7 +205,7 @@
             <li>Pacote: comparar + ranking + destaques + perto + split + vitrine</li>
             <li>Preço de balcão/NFC-e — sem margem iFood/99</li>
             <li>Visibilidade do comércio local (itens fora da web)</li>
-            <li>Futuro: loja como depósito de vendas (Full)</li>
+            <li>Cada estabelecimento vira centro de distribuição (estoque online)</li>
             <li>API B2B no mesmo eixo consumer cooperativo</li>
           </ul>
         </div>
@@ -237,7 +238,7 @@
         <h2 class="brand" aria-label="notinhas.shop"><span class="n">notinhas</span><span class="o">.shop</span></h2>
         <p>
           Cooperativo local: comparar, simular economia, perto, vitrine, split — sem margem de app.
-          Depois: delivery.
+          Cada estabelecimento vira um centro de distribuição.
         </p>
         <p class="hint">Menor preço a partir da nota.</p>
         <a class="btn" href="./">Voltar ao app</a>

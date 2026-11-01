@@ -14,12 +14,23 @@
   --nt-err-soft: #fdecec;
   --nt-warn: #d97706;
   --nt-warn-soft: #fef3c7;
+  --nt-grad: linear-gradient(135deg, #014380 0%, #0069b4 48%, #00984b 100%);
   --nt-radius: 14px;
   --nt-radius-sm: 8px;
+  --nt-radius-lg: 20px;
   --nt-pill: 999px;
   --nt-shadow: 0 1px 2px rgba(11, 31, 51, 0.06), 0 8px 24px rgba(11, 31, 51, 0.06);
   --nt-font: 'Plus Jakarta Sans', system-ui, 'Segoe UI', sans-serif;
   --nt-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+  --nt-space-1: 4px;
+  --nt-space-2: 8px;
+  --nt-space-3: 12px;
+  --nt-space-4: 16px;
+  --nt-space-5: 24px;
+  --nt-space-6: 32px;
+  --nt-control-h: 40px;
+  --nt-read: 720px;
+  --nt-data: 1100px;
 }
 
 * {
@@ -42,20 +53,20 @@ body {
 }
 
 .screen {
-  max-width: 480px;
+  max-width: var(--nt-read);
   margin: 0 auto;
-  padding: 1.15rem 1rem 2rem;
-  padding-left: max(1rem, env(safe-area-inset-left));
-  padding-right: max(1rem, env(safe-area-inset-right));
-  padding-bottom: max(2rem, env(safe-area-inset-bottom));
+  padding: var(--nt-space-5) var(--nt-space-4) var(--nt-space-6);
+  padding-left: max(var(--nt-space-4), env(safe-area-inset-left));
+  padding-right: max(var(--nt-space-4), env(safe-area-inset-right));
+  padding-bottom: max(var(--nt-space-6), env(safe-area-inset-bottom));
 }
 
 .app-header + .screen {
-  padding-top: 0.55rem;
+  padding-top: var(--nt-space-4);
 }
 
 .screen.wide {
-  max-width: 1100px;
+  max-width: var(--nt-data);
 }
 
 .brand {
@@ -447,7 +458,6 @@ body.modal-open {
   border: 1px solid var(--nt-line);
   border-radius: var(--nt-radius);
   background: var(--nt-white);
-  box-shadow: var(--nt-shadow);
 }
 
 table {
@@ -541,28 +551,25 @@ td.mono {
 
 .fab {
   position: fixed;
-  right: max(1rem, env(safe-area-inset-right));
-  bottom: max(1rem, env(safe-area-inset-bottom));
+  right: max(var(--nt-space-4), env(safe-area-inset-right));
+  bottom: max(var(--nt-space-4), env(safe-area-inset-bottom));
   z-index: 30;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.35rem;
+  gap: var(--nt-space-2);
+  min-width: 56px;
   height: 56px;
-  padding: 0 1.15rem 0 0.95rem;
+  padding: 0 1.25rem 0 1.05rem;
   border-radius: var(--nt-pill);
   background: var(--nt-blue);
   color: #fff;
   font: inherit;
-  font-weight: 800;
-  font-size: 0.95rem;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0;
   text-decoration: none;
   box-shadow: 0 0 0 5px rgba(0, 105, 180, 0.16), var(--nt-shadow);
-}
-
-.fab.fab-icon {
-  width: 56px;
-  padding: 0;
 }
 
 .fab:hover {
@@ -571,9 +578,10 @@ td.mono {
 }
 
 .fab-svg {
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
   display: block;
+  flex: none;
 }
 
 .fab-label {
@@ -600,8 +608,7 @@ td.mono {
   border: 1px solid var(--nt-line);
   border-radius: var(--nt-radius);
   background: var(--nt-white);
-  padding: 1rem 1.05rem;
-  box-shadow: var(--nt-shadow);
+  padding: var(--nt-space-4);
   cursor: pointer;
   font: inherit;
   color: inherit;
@@ -611,18 +618,18 @@ td.mono {
 .loja-card:focus {
   outline: none;
   border-color: var(--nt-blue);
-  box-shadow: 0 0 0 3px rgba(0, 105, 180, 0.14), var(--nt-shadow);
+  box-shadow: 0 0 0 3px rgba(0, 105, 180, 0.14);
 }
 
 .loja-card-head {
   cursor: default;
-  box-shadow: var(--nt-shadow);
+  box-shadow: none;
 }
 
 .loja-card-head:hover,
 .loja-card-head:focus {
   border-color: var(--nt-line);
-  box-shadow: var(--nt-shadow);
+  box-shadow: none;
 }
 
 .loja-card .loja-nome {
@@ -676,28 +683,29 @@ td.mono {
   white-space: nowrap;
 }
 
-/* —— header do app (mesmo estilo da apresentação) —— */
+/* —— header do app (light shell — DS: gradiente só em cover/splash) —— */
 .app-header {
-  background: linear-gradient(135deg, #014380 0%, #0069b4 48%, #00984b 100%);
-  color: #fff;
-  padding: max(0.95rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right)) 1.05rem
-    max(1rem, env(safe-area-inset-left));
+  background: var(--nt-white);
+  color: var(--nt-ink);
+  border-bottom: 1px solid var(--nt-line);
+  padding: max(var(--nt-space-3), env(safe-area-inset-top)) max(var(--nt-space-4), env(safe-area-inset-right))
+    var(--nt-space-3) max(var(--nt-space-4), env(safe-area-inset-left));
 }
 
 .app-header-inner {
-  max-width: 480px;
+  max-width: var(--nt-read);
   margin: 0 auto;
 }
 
 .app-header-inner.wide {
-  max-width: 1100px;
+  max-width: var(--nt-data);
 }
 
 .app-header-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.85rem;
+  gap: var(--nt-space-3);
 }
 
 .app-header-copy {
@@ -707,23 +715,24 @@ td.mono {
 
 .app-header-brand {
   margin: 0 !important;
-  font-size: clamp(1.45rem, 5.5vw, 1.85rem);
+  font-size: 22px;
+  letter-spacing: -0.03em;
 }
 
 .app-header-brand .n {
-  color: #fff;
+  color: var(--nt-blue-deep);
 }
 
 .app-header-brand .o {
-  color: #b8f5d0;
+  color: var(--nt-green);
 }
 
 .app-header-tag {
-  margin: 0.4rem 0 0;
-  font-size: 0.84rem;
-  font-weight: 600;
+  margin: 0.3rem 0 0;
+  font-size: 13px;
+  font-weight: 500;
   line-height: 1.35;
-  opacity: 0.92;
+  color: var(--nt-muted);
 }
 
 .app-header-cta {
@@ -731,21 +740,22 @@ td.mono {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: 2.15rem;
-  padding: 0 0.95rem;
+  height: 32px;
+  padding: 0 14px;
   border-radius: var(--nt-pill);
-  background: #fff;
-  color: var(--nt-blue-deep);
-  font-size: 0.82rem;
-  font-weight: 800;
+  border: 1.5px solid var(--nt-blue);
+  background: var(--nt-white);
+  color: var(--nt-blue);
+  font-size: 12px;
+  font-weight: 700;
   text-decoration: none;
   white-space: nowrap;
-  box-shadow: 0 1px 2px rgba(11, 31, 51, 0.12);
 }
 
 .app-header-cta:hover {
-  background: #b8f5d0;
-  color: var(--nt-green-deep);
+  background: var(--nt-blue-soft);
+  color: var(--nt-blue-deep);
+  border-color: var(--nt-blue-deep);
 }
 
 /* —— rodapé do app —— */
@@ -790,11 +800,29 @@ td.mono {
 }
 
 .apresentacao-hero {
-  padding-bottom: 1.35rem;
+  background: var(--nt-grad);
+  color: #fff;
+  border-bottom: 0;
+  padding: max(0.95rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right)) 1.35rem
+    max(1rem, env(safe-area-inset-left));
 }
 
 .apresentacao-hero .app-header-inner {
-  max-width: 720px;
+  max-width: var(--nt-read);
+}
+
+.apresentacao-hero .app-header-brand .n,
+.apresentacao-hero .apresentacao-wm .n {
+  color: #fff;
+}
+
+.apresentacao-hero .app-header-brand .o,
+.apresentacao-hero .apresentacao-wm .o {
+  color: #b8f5d0;
+}
+
+.apresentacao-hero .app-header-tag {
+  color: rgba(255, 255, 255, 0.92);
 }
 
 .apresentacao-back {

@@ -20,3 +20,4 @@ Como registrar: [`README.md`](README.md).
 | 012 | 2026-11-01 | Card documento de apresentação | [012-2026-11-01-card-documento-apresentacao.md](012-2026-11-01-card-documento-apresentacao.md) | Card Trello Backlog: apresentação com produto + benchmarking + design system; anexo identidade v1. |
 | 013 | 2026-11-01 | Implementar apresentação | [013-2026-11-01-implementar-apresentacao.md](013-2026-11-01-implementar-apresentacao.md) | HTML unificado produto + benchmarking + DS; anexo no card; Done. |
 | 014 | 2026-11-01 | Estudo vs delivery apps + conclusão | [014-2026-11-01-estudo-foco-delivery-apps-conclusao.md](014-2026-11-01-estudo-foco-delivery-apps-conclusao.md) | Curadoria reescrita: diferencial balcão vs iFood/99/Rappi/Keeta + conclusão. |
+| 015 | 2026-11-01 | Layout app = design system | [015-2026-11-01-layout-app-design-system.md](015-2026-11-01-layout-app-design-system.md) | Shell light, FAB Nota, larguras DS; gradiente só na apresentação. |

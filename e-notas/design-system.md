@@ -44,19 +44,20 @@ Controles: altura **40 px** (sm 32 / lg 48). Fundo app `#F5F7FA`, superfície `#
 
 ## 3. Mapeamento `e-notas/app`
 
-Aplicado em `app/public/styles.css` + wordmark nas páginas (2026-11-01):
+Fonte canônica de tokens/layout: [`marca/notinhas.shop.DESIGN.md`](marca/notinhas.shop.DESIGN.md). Aplicado em `app/public/styles.css` + páginas (2026-11-01):
 
 | Antes | Depois |
 |-------|--------|
 | Dark `#0f1419` / `#1a222c` | Light `--nt-bg` / `--nt-white` |
+| Header gradiente no app | Shell **light** (hairline); gradiente só em `.apresentacao-hero` |
 | `.btn` `#4a90d9` | `--nt-blue` `#0069B4` · pill |
-| `.status.ok` / `.err` | `--nt-green-deep` / `--nt-err` |
-| `.search` / `.form-ean` | inputs light + focus ring azul |
-| `table` / `.tabs` / `.modal` | header mist, tabs underline, modal branco |
+| FAB só ícone | FAB pill azul + label **Nota** |
+| Largura 480 / 1100 | `--nt-read` 720px · `--nt-data` 1100px |
+| Cards/tabela com sombra forte | Hairline primeiro; sombra só onde o DS pede lift |
 | Título “e-notas” | wordmark **notinhas.shop** (`.brand`) |
 | Scan `#reader` | viewport `--nt-ink` (exceção DS) |
 
-**Rollback UI:** `git checkout HEAD~1 -- e-notas/app/public/` (ou restore dos arquivos anteriores ao commit de tema).
+**Rollback UI:** `git checkout HEAD~1 -- e-notas/app/public/ e-notas/design-system.md`
 
 ---
 

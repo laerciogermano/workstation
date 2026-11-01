@@ -1,6 +1,6 @@
 # e-notas — app (scan QR)
 
-Front **notinhas.shop** (design system v1: light, azul `#0069B4` + verde `#00984B`, Plus Jakarta Sans). Home `/` lista estabelecimentos / **notas** / itens; FAB inferior direito abre `/scan.html` (QR). Em **Notas**, clique abre os itens da NFC-e com **+ EAN**. Em Itens, **Cadastrar EAN** abre modal; subaba **Códigos de barras** consulta o mapeamento. Backend consulta a DANFE na **Fazenda PR**, cadastra **empresa** (se nova), **nota** e **itens** (histórico).
+Front **notinhas.shop** ([`notinhas.shop.DESIGN.md`](../marca/notinhas.shop.DESIGN.md): mist canvas, CTA azul, verde só menor preço, Plus Jakarta Sans). Home `/` lista estabelecimentos / **notas** / itens; FAB **Nota** abre `/scan.html` (QR). Shell light (gradiente só na apresentação). Em **Notas**, clique abre os itens da NFC-e com **+ EAN**. Em Itens, **Cadastrar EAN** abre modal; subaba **Códigos de barras** consulta o mapeamento. Backend consulta a DANFE na **Fazenda PR**, cadastra **empresa** (se nova), **nota** e **itens** (histórico).
 
 Tema: [`../design-system.md`](../design-system.md) · tokens em `public/styles.css`.  
 Share/WhatsApp: metas OG em `index.html` / `scan.html` + `public/og-image.png`.

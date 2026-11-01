@@ -138,6 +138,12 @@ Curadoria: [`../marca/benchmarking-solucoes/README.md`](../marca/benchmarking-so
 - Card: [Criar design system](https://trello.com/c/qdH95gZX).
 - App (`app/public/`): tema light com tokens `--nt-*`, wordmark notinhas.org; scan permanece viewport escuro.
 
+## REQ-017 — FAB adicionar nota (2026-11-01)
+
+- Home = listagem (`/`), abas só **Empresas** e **Itens** (sem aba Notas, sem nav Escanear/Listagem).
+- Botão fixo inferior direito (**FAB**) “Nota” abre `scan.html` (QR).
+- `/lista.html` redireciona para `/`. Após scan ok, volta à home.
+
 ---
 
 ## Próximos passos

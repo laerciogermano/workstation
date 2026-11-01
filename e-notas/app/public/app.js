@@ -34,7 +34,10 @@ async function onScanSuccess(decodedText) {
     const nome = data.empresa?.nome || 'Nota';
     const n = data.itens?.length ?? 0;
     const tag = data.created ? 'cadastrada' : 'já existia';
-    setStatus(`${nome} — ${n} itens (${tag})`, 'ok');
+    setStatus(`${nome} — ${n} itens (${tag}). Voltando…`, 'ok');
+    setTimeout(() => {
+      location.href = './';
+    }, 1200);
   } catch (err) {
     console.error(err);
     setStatus(`Falha: ${err.message}`, 'err');

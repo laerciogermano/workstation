@@ -14,7 +14,6 @@ const tabs = [...document.querySelectorAll('.tab')];
 const subtabs = [...document.querySelectorAll('.subtab')];
 const panels = {
   empresas: document.getElementById('panel-empresas'),
-  notas: document.getElementById('panel-notas'),
   itens: document.getElementById('panel-itens'),
 };
 const itensViews = {
@@ -225,18 +224,6 @@ function formatDataNota(emissao) {
   if (!m) return raw.replace(/\s*-\s*$/, '').trim();
   const data = `${m[1]}/${m[2]}/${m[3]}`;
   return m[4] != null ? `${data} às ${m[4]}:${m[5]}` : data;
-}
-
-function renderNotas(rows) {
-  document.getElementById('count-notas').textContent = `(${rows.length})`;
-  document.getElementById('notas').innerHTML = rows.length
-    ? rows
-        .map((r) => {
-          const label = r.numero ? `nota ${r.numero}` : `nota #${r.id}`;
-          return `<tr class="row-link" data-nota-id="${esc(r.id)}" data-nota-label="${esc(label)}" tabindex="0" title="Ver itens desta nota">${cell(r.id)}${cell(formatDataNota(r.emissao))}${cell(r.empresa_nome || r.empresa_cnpj)}${cell(r.numero)}${cell(r.qtd_itens)}${cell(r.valor_total)}${cell(r.descontos)}${cell(r.outras_despesas)}${cell(r.chave_acesso, 'mono')}</tr>`;
-        })
-        .join('')
-    : '<tr><td colspan="9">Nenhuma nota</td></tr>';
 }
 
 function itemHaystack(r) {
@@ -504,20 +491,6 @@ for (const tab of subtabs) {
   tab.addEventListener('click', () => setItensSub(tab.dataset.sub));
 }
 
-document.getElementById('notas').addEventListener('click', (ev) => {
-  const row = ev.target.closest('tr[data-nota-id]');
-  if (!row) return;
-  openItensDaNota(row.dataset.notaId, row.dataset.notaLabel);
-});
-
-document.getElementById('notas').addEventListener('keydown', (ev) => {
-  if (ev.key !== 'Enter' && ev.key !== ' ') return;
-  const row = ev.target.closest('tr[data-nota-id]');
-  if (!row) return;
-  ev.preventDefault();
-  openItensDaNota(row.dataset.notaId, row.dataset.notaLabel);
-});
-
 document.getElementById('itens').addEventListener('click', (ev) => {
   const btn = ev.target.closest('[data-vincular-ean]');
   if (!btn) return;
@@ -586,7 +559,6 @@ async function load() {
     allItens = itens.itens || [];
     allCodigosBarras = eans.codigosBarras || [];
     renderEmpresas(allEmpresas);
-    renderNotas(notas.notas || []);
     if (filtroNotaId != null) {
       const n = (notas.notas || []).find(
         (x) => Number(x.id) === Number(filtroNotaId),
@@ -599,7 +571,7 @@ async function load() {
     renderItens();
     applyEanFilter();
     setItensSub(itensSub, { updateHash: false });
-    setTab(tab, { updateHash: true });
+    setTab(tab === 'notas' ? 'itens' : tab, { updateHash: true });
     setStatus(
       `${allEmpresas.length} empresas · ${notas.notas?.length ?? 0} notas · ${allItens.length} itens · ${allCodigosBarras.length} EANs`,
       'ok',

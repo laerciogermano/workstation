@@ -1,6 +1,6 @@
 # e-notas — app (scan QR)
 
-Front **notinhas.org** (design system v1: light, azul `#0069B4` + verde `#00984B`, Plus Jakarta Sans). Escaneia o QR e envia a URL; `/lista.html` lista empresas, notas e itens. Em Itens, **Cadastrar EAN** abre modal (câmera + input manual); subaba **Códigos de barras** só consulta o mapeamento. Backend consulta a DANFE na **Fazenda PR**, cadastra **empresa** (se nova), **nota** e **uma linha de item por produto da nota** (histórico).
+Front **notinhas.org** (design system v1: light, azul `#0069B4` + verde `#00984B`, Plus Jakarta Sans). Home `/` lista empresas/itens; FAB inferior direito abre `/scan.html` (QR). Em Itens, **Cadastrar EAN** abre modal; subaba **Códigos de barras** consulta o mapeamento. Backend consulta a DANFE na **Fazenda PR**, cadastra **empresa** (se nova), **nota** e **itens** (histórico).
 
 Tema: [`../design-system.md`](../design-system.md) · tokens em `public/styles.css`.
 
@@ -38,8 +38,9 @@ Credenciais não vão no git (`.env` ignorado).
 
 | Rota | Função |
 |------|--------|
-| `/` | Scan do QR |
-| `/lista.html` | Listagem em abas: Empresas (mapa+pins) / Notas / Itens (EAN; clique na nota → itens) |
+| `/` | Listagem: Empresas (mapa) / Itens (+ EAN); FAB → adicionar nota |
+| `/scan.html` | Scan do QR da nota |
+| `/lista.html` | Redirect → `/` |
 
 ## API
 

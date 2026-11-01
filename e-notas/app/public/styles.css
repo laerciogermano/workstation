@@ -504,3 +504,59 @@ td.mono {
 .status.err {
   color: var(--nt-err);
 }
+
+.back-link {
+  display: inline-block;
+  margin: 0 0 0.75rem;
+  color: var(--nt-blue);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}
+
+.screen.has-fab {
+  padding-bottom: 5.5rem;
+}
+
+.fab {
+  position: fixed;
+  right: max(1rem, env(safe-area-inset-right));
+  bottom: max(1rem, env(safe-area-inset-bottom));
+  z-index: 30;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  height: 56px;
+  padding: 0 1.15rem 0 0.95rem;
+  border-radius: var(--nt-pill);
+  background: var(--nt-blue);
+  color: #fff;
+  font: inherit;
+  font-weight: 800;
+  font-size: 0.95rem;
+  text-decoration: none;
+  box-shadow: 0 0 0 5px rgba(0, 105, 180, 0.16), var(--nt-shadow);
+}
+
+.fab:hover {
+  background: var(--nt-blue-deep);
+  color: #fff;
+}
+
+.fab-plus {
+  display: grid;
+  place-items: center;
+  width: 1.35rem;
+  height: 1.35rem;
+  font-size: 1.45rem;
+  line-height: 1;
+  font-weight: 400;
+}
+
+.fab-label {
+  letter-spacing: -0.01em;
+}

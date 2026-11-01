@@ -12,6 +12,9 @@
 **/.env
 coverage/
 
+# Certificados locais (e-notas HTTPS)
+e-notas/app/certs/
+
 # Segredos locais (não versionar)
 /credenciais.md
 /credenciais.txt

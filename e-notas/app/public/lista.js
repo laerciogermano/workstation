@@ -41,11 +41,12 @@ function renderEmpresas(rows) {
 }
 
 function formatDataNota(emissao) {
-  const raw = String(emissao ?? '').trim().replace(/\s*-\s*$/, '');
+  const raw = String(emissao ?? '').trim();
   if (!raw) return '';
-  const m = raw.match(/^(\d{2}\/\d{2}\/\d{4})(?:\s+(\d{2}:\d{2}(?::\d{2})?))?/);
-  if (!m) return raw;
-  return m[2] ? `${m[1]} ${m[2].slice(0, 5)}` : m[1];
+  const m = raw.match(/(\d{2})\/(\d{2})\/(\d{4})(?:\s+(\d{2}):(\d{2})(?::\d{2})?)?/);
+  if (!m) return raw.replace(/\s*-\s*$/, '').trim();
+  const data = `${m[1]}/${m[2]}/${m[3]}`;
+  return m[4] != null ? `${data} às ${m[4]}:${m[5]}` : data;
 }
 
 function renderNotas(rows) {

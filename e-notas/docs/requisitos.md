@@ -71,6 +71,7 @@ App: [`../app/README.md`](../app/README.md).
 - Existe uma página web (`/lista.html`) que lista **todas as empresas**, **todas as notas** e **todos os itens** cadastrados.
 - APIs de leitura: `GET /api/empresas`, `GET /api/notas`, `GET /api/itens`.
 - Navegação entre a tela de scan (`/`) e a listagem.
+- Na listagem de notas, exibir também: **qtd. total de itens**, **valor total R$**, **descontos R$** e **outras despesas R$**.
 
 ---
 

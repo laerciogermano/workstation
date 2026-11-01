@@ -43,10 +43,10 @@ function renderNotas(rows) {
     ? rows
         .map(
           (r) =>
-            `<tr>${cell(r.id)}${cell(r.empresa_nome || r.empresa_cnpj)}${cell(r.numero)}${cell(r.emissao)}${cell(r.valor_total)}${cell(r.chave_acesso, 'mono')}</tr>`,
+            `<tr>${cell(r.id)}${cell(r.empresa_nome || r.empresa_cnpj)}${cell(r.numero)}${cell(r.emissao)}${cell(r.qtd_itens)}${cell(r.valor_total)}${cell(r.descontos)}${cell(r.outras_despesas)}${cell(r.chave_acesso, 'mono')}</tr>`,
         )
         .join('')
-    : '<tr><td colspan="6">Nenhuma nota</td></tr>';
+    : '<tr><td colspan="9">Nenhuma nota</td></tr>';
 }
 
 function renderItens(rows) {

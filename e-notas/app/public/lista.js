@@ -192,7 +192,7 @@ function renderEmpresasMap(rows) {
   if (!rows.length) {
     setMapStatus('');
   } else if (withCoords.length === 0) {
-    setMapStatus('Localizando lojas…');
+    setMapStatus('Localizando estabelecimentos…');
     startGeocodePoll();
   } else if (missing > 0) {
     setMapStatus('');
@@ -311,7 +311,7 @@ function renderVitrineLista() {
         .map((r) => {
           const n = catalogoLoja(r.id).length;
           return `<button type="button" class="loja-card" data-open-loja="${esc(r.id)}">
-            <h3 class="loja-nome">${esc(r.nome || r.cnpj || `Loja #${r.id}`)}</h3>
+            <h3 class="loja-nome">${esc(r.nome || r.cnpj || `Estabelecimento #${r.id}`)}</h3>
             <p class="loja-meta">${esc(r.endereco || '')}</p>
             <div class="loja-stats">
               <span class="chip">${n} item${n === 1 ? '' : 's'}</span>
@@ -319,7 +319,7 @@ function renderVitrineLista() {
           </button>`;
         })
         .join('')
-    : `<p class="hint">${allEmpresas.length ? 'Nada encontrado.' : 'Sem lojas.'}</p>`;
+    : `<p class="hint">${allEmpresas.length ? 'Nada encontrado.' : 'Sem estabelecimentos.'}</p>`;
 }
 
 function renderVitrineDetalhe(empresaId) {
@@ -346,7 +346,7 @@ function renderVitrineDetalhe(empresaId) {
     : catalogo;
 
   vitrineLojaInfoEl.innerHTML = `
-    <h3 class="loja-nome">${esc(loja.nome || loja.cnpj || `Loja #${loja.id}`)}</h3>
+    <h3 class="loja-nome">${esc(loja.nome || loja.cnpj || `Estabelecimento #${loja.id}`)}</h3>
     <p class="loja-meta">${esc(loja.endereco || '')}</p>
     <p class="loja-meta mono">${esc(loja.cnpj || '')}</p>
     <div class="loja-stats">

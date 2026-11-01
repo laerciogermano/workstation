@@ -43,7 +43,7 @@
 
       <div class="tabs" role="tablist" aria-label="Seções">
         <button type="button" class="tab" role="tab" id="tab-empresas" data-tab="empresas" aria-controls="panel-empresas" aria-selected="true">
-          Lojas <span id="count-empresas" class="count"></span>
+          Estabelecimentos <span id="count-empresas" class="count"></span>
         </button>
         <button type="button" class="tab" role="tab" id="tab-itens" data-tab="itens" aria-controls="panel-itens" aria-selected="false">
           Itens <span id="count-itens" class="count"></span>
@@ -56,14 +56,14 @@
 
         <div id="vitrine-lista">
           <label class="search">
-            <span class="sr-only">Buscar lojas</span>
-            <input id="busca-vitrine" type="search" placeholder="Buscar loja…" autocomplete="off" />
+            <span class="sr-only">Buscar estabelecimentos</span>
+            <input id="busca-vitrine" type="search" placeholder="Buscar estabelecimento…" autocomplete="off" />
           </label>
           <div id="vitrine-grid" class="vitrine-grid" aria-live="polite"></div>
         </div>
 
         <div id="vitrine-detalhe" hidden>
-          <button type="button" class="back-link" id="vitrine-voltar">← Lojas</button>
+          <button type="button" class="back-link" id="vitrine-voltar">← Estabelecimentos</button>
           <article class="loja-card loja-card-head" id="vitrine-loja-info"></article>
           <label class="search" style="margin-top: 1rem">
             <span class="sr-only">Buscar itens</span>
@@ -128,8 +128,8 @@
             <table>
               <thead>
                 <tr>
-                  <th>Loja</th>
-                  <th>Cód. loja</th>
+                  <th>Estabelecimento</th>
+                  <th>Cód.</th>
                   <th>EAN</th>
                 </tr>
               </thead>

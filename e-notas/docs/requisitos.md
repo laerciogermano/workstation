@@ -146,7 +146,7 @@ Curadoria: [`../marca/benchmarking-solucoes/README.md`](../marca/benchmarking-so
 
 ## REQ-018 — Vitrine das lojas (2026-11-01)
 
-- Em **Lojas**: mapa + cards; clique abre detalhe + catálogo (preço mais recente por EAN/código).
+- Em **Estabelecimentos**: mapa + cards; clique abre detalhe + catálogo (preço mais recente por EAN/código).
 - Entrada também pelo mapa. URL: `?loja=<id>` / `#loja-<id>`. UI enxuta (sem textos explicativos redundantes).
 
 ## REQ-019 — Viewport app-like (sem PWA) (2026-11-01)

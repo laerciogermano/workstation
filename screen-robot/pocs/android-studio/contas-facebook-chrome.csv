@@ -6,3 +6,4 @@ data,nome,plataforma,chrome_user_data_dir,cdp_port,start_script,obs
 2026-11-01,Sofia Ribeiro,linkedin,~/chrome-profiles/sofia-ribeiro,9226,screen-robot/pocs/chrome-cdp/start-sofia-ribeiro.sh,perfil Chrome isolado; signup ./signup-sofia-ribeiro.sh
 2026-11-01,Pedro Almeida,linkedin,~/chrome-profiles/pedro-almeida,9227,screen-robot/pocs/chrome-cdp/start-pedro-almeida.sh,perfil Chrome isolado; signup ate e-mail ./signup-pedro-almeida-until-email.sh
 2026-11-01,Juliana Martins,linkedin,~/chrome-profiles/juliana-martins,9228,screen-robot/pocs/chrome-cdp/start-juliana-martins.sh,perfil Chrome isolado; signup ate e-mail ./signup-juliana-martins-until-email.sh
+2026-11-01,Germano,hostinger,~/chrome-profiles/germano,9230,screen-robot/pocs/chrome-cdp/start-germano.sh,perfil Chrome isolado; painel Hostinger dominio rolego.com.br

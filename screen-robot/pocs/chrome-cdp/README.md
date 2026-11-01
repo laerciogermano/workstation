@@ -13,10 +13,13 @@ Controla um Chrome já rodando com `--remote-debugging-port=9222` (mesmo perfil/
 ./start-pedro-almeida.sh                       # CDP :9227 (Pedro Almeida / LI)
 ./start-juliana-martins.sh                     # CDP :9228 (Juliana Martins / LI)
 ./start-camila-ferreira.sh                     # CDP :9229 (Camila Ferreira / LI)
+./start-germano.sh                             # CDP :9230 (Germano / Hostinger rolego)
 # opcional URL: ./start-lucas-mendes.sh https://www.linkedin.com/
 ```
 
 Registro: [`../android-studio/contas-facebook-chrome.csv`](../android-studio/contas-facebook-chrome.csv)
+
+**Antes → depois (Germano):** sem perfil → `~/chrome-profiles/germano` + `start-germano.sh` (:9230) para painel Hostinger do domínio `rolego.com.br`. Rollback: fechar Chrome; `rm -rf ~/chrome-profiles/germano`; remover script/linha README/CSV.
 
 **Antes → depois (Marina):** sem perfil → `~/chrome-profiles/marina-costa` + `start-marina-costa.sh` (:9224). Rollback: fechar Chrome; `rm -rf ~/chrome-profiles/marina-costa`; remover script/linha do CSV.
 

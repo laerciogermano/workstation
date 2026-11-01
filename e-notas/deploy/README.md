@@ -26,17 +26,24 @@ HTTP `http://…/enotas/` redireciona para HTTPS. Certificado em `:4173` é auto
 
 1. DNS no hPanel Hostinger (zona do domínio): A `@` = Contabo `144.126.154.90`
 2. Site nginx: `sites-available/notinhas` (proxy para `:4174`) + `sites-enabled`
-3. Após DNS público propagar (hoje NS Hostinger já responde o A; LE pode ver NXDOMAIN até o registro `.shop` propagar):
+3. **HTTPS (Let's Encrypt / Certbot)** — mesmo padrão do RoleGo (nginx na Contabo já usa `:443` com mailcow/rolego; Caddy/Traefik brigariam pela porta).
+
+Enquanto o registro `.shop` ainda der **NXDOMAIN** nos resolvers públicos, o ACME falha. Quando `dig +short A notinhas.shop @1.1.1.1` = `144.126.154.90`:
 
 ```bash
-export SSHPASS='…'   # root Contabo
-HOST=144.126.154.90
-sshpass -e ssh root@$HOST 'certbot --nginx -d notinhas.shop -d www.notinhas.shop --non-interactive --agree-tos -m laerciogermanoo@gmail.com --redirect'
+# one-shot
+ssh root@144.126.154.90 'certbot --nginx -d notinhas.shop -d www.notinhas.shop --non-interactive --agree-tos -m laerciogermanoo@gmail.com --redirect'
+
+# ou waiter (já em /opt/e-notas/deploy/):
+ssh root@144.126.154.90 'bash /opt/e-notas/deploy/issue-ssl-notinhas.sh'
+# log: /var/log/issue-ssl-notinhas.log
 ```
+
+Script canônico: [`issue-ssl-notinhas.sh`](issue-ssl-notinhas.sh).
 
 **Antes → depois (domínio):** só `/enotas/` no IP → também `notinhas.shop` (HTTP) apontando ao mesmo Node; HTTPS via Certbot no site `notinhas`.
 
-**Rollback domínio:** `rm /etc/nginx/sites-enabled/notinhas` + `nginx -t && systemctl reload nginx`; DNS A `@` voltar a `2.57.91.91` (parking Hostinger) se quiser.
+**Rollback domínio:** `rm /etc/nginx/sites-enabled/notinhas` + `nginx -t && systemctl reload nginx`; DNS A `@` voltar a `2.57.91.91` (parking Hostinger) se quiser. SSL: `certbot delete --cert-name notinhas.shop`.
 
 ## Rollback
 

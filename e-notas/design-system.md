@@ -1,4 +1,4 @@
-# notinhas.org — Design system v1
+# notinhas.shop — Design system v1
 
 Tokens e componentes de UI a partir da [identidade visual](identidade-visual.md). Manual print-ready: [`marca/design-system-notinhas-v1.html`](marca/design-system-notinhas-v1.html) · card [Criar design system](https://trello.com/c/qdH95gZX).
 
@@ -53,7 +53,7 @@ Aplicado em `app/public/styles.css` + wordmark nas páginas (2026-11-01):
 | `.status.ok` / `.err` | `--nt-green-deep` / `--nt-err` |
 | `.search` / `.form-ean` | inputs light + focus ring azul |
 | `table` / `.tabs` / `.modal` | header mist, tabs underline, modal branco |
-| Título “e-notas” | wordmark **notinhas.org** (`.brand`) |
+| Título “e-notas” | wordmark **notinhas.shop** (`.brand`) |
 | Scan `#reader` | viewport `--nt-ink` (exceção DS) |
 
 **Rollback UI:** `git checkout HEAD~1 -- e-notas/app/public/` (ou restore dos arquivos anteriores ao commit de tema).

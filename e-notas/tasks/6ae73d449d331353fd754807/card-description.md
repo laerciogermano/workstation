@@ -1,5 +1,5 @@
 ## Objetivo
-Mapear **soluções similares** ao **notinhas.org** / e-notas e comparar nos requisitos do PRD.
+Mapear **soluções similares** ao **notinhas.shop** / e-notas e comparar nos requisitos do PRD.
 
 ## PRD
 `e-notas/docs/prd.md`

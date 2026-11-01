@@ -6,7 +6,7 @@
 
 ## Objetivo
 
-Design system v1 do **notinhas.org** (tokens + componentes) a partir da identidade visual.
+Design system v1 do **notinhas.shop** (tokens + componentes) a partir da identidade visual.
 
 ## Entrega
 

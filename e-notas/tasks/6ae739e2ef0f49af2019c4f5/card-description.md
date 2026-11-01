@@ -2,7 +2,7 @@
 Criar a identidade visual do **e-notas** (índice de preços via QR de nota fiscal), entregue como **HTML** estruturado para depois gerar PDF (brand guidelines / brand book).
 
 ## Sugestão de nome
-**notinhas.org** — candidato a nome/marca (domínio) para a identidade visual. Validar no manual (wordmark, domínio, tom).
+**notinhas.shop** — candidato a nome/marca (domínio) para a identidade visual. Validar no manual (wordmark, domínio, tom).
 
 ## Referência visual PRINCIPAL
 Usar **principalmente** os anexos **Nota Paraná / Menor Preço (Paraná)** (`ref-30`…`ref-45`):
@@ -25,7 +25,7 @@ Produto: escaneia QR da NFC-e/NF-e → indexa preços por código de barras → 
 - Manual de identidade visual em HTML (print-ready / conversível para PDF)
 - Escopo enxuto: logo/símbolo, paleta, tipografia, voz visual, usos básicos (app, favicon, splash)
 - Alinhar a produto consumer / utilidade (preço, clareza, confiança)
-- Explorar wordmark / domínio **notinhas.org**
+- Explorar wordmark / domínio **notinhas.shop**
 - Partir da referência **Nota Paraná / Menor Preço** (anexos)
 
 ## Fora de escopo (neste card)

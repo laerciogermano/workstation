@@ -1,4 +1,4 @@
-# Benchmarking — soluções similares (notinhas.org)
+# Benchmarking — soluções similares (notinhas.shop)
 
 Matriz vs **todas** as capacidades do PRD + **alcance geográfico** + gap vs proposta (sistema cooperativo de notinhas).
 
@@ -22,7 +22,7 @@ Matriz vs **todas** as capacidades do PRD + **alcance geográfico** + gap vs pro
 | MP Brasil | ~15–16 UFs** | Sim | Parc. | Não | Não | **Sim** | Parc. | Não | Não | Não |
 | Economiza AL | **AL** | Sim | Parc. | Via 3º | Não | **Sim** | Parc. | Não | **Sim** | Não |
 | Quantto | B2B contratual | Sim | Sim | N/A | N/A | Reg. | N/A | N/A | **B2B** | Não |
-| **notinhas.org** | Lab **PR** → expansão*** | Alvo | Alvo | Alvo | Alvo | Alvo | Alvo | Alvo | Alvo | **Fut.** |
+| **notinhas.shop** | Lab **PR** → expansão*** | Alvo | Alvo | Alvo | Alvo | Alvo | Alvo | Alvo | Alvo | **Fut.** |
 
 **Colunas:** Comp=comparar · Hist=histórico · Apart=split/economia · Vitr=vitrine + itens fora da web · Geo=item perto · Rank=lojas baratas/caras · Dest=destaques (preço abaixo do mercado) · API=B2B · Deliv=delivery/Full (loja-depósito).
 

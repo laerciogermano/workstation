@@ -1,4 +1,16 @@
-# Marca — notinhas.org / e-notas
+# Marca — notinhas.shop / e-notas
+
+## Marca v2 (canônico para agentes)
+
+Craft dos clássicos [`core/shadcn-design/`](../../core/shadcn-design/README.md) (Stripe / Linear / Vercel…) + DNA azul+verde.
+
+| Arquivo | Uso |
+|---------|-----|
+| [`notinhas.shop.DESIGN.md`](notinhas.shop.DESIGN.md) | **DESIGN.md** (tokens YAML + prosa) — Cursor/Claude |
+| [`marca-notinhas-shop-v2.html`](marca-notinhas-shop-v2.html) | Manual print 6 págs. (craft + tokens + do/don’t) |
+
+**Antes → depois:** identidade v1 HTML → + DESIGN.md v2 (mesmo hex; regras de craft explícitas).  
+**Rollback:** `rm marca/notinhas.shop.DESIGN.md marca/marca-notinhas-shop-v2.html`
 
 ## Identidade visual v1
 

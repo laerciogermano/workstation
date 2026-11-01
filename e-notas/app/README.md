@@ -1,6 +1,6 @@
 # e-notas — app (scan QR)
 
-Front **notinhas.org** (design system v1: light, azul `#0069B4` + verde `#00984B`, Plus Jakarta Sans). Home `/` lista empresas/itens; FAB inferior direito abre `/scan.html` (QR). Em Itens, **Cadastrar EAN** abre modal; subaba **Códigos de barras** consulta o mapeamento. Backend consulta a DANFE na **Fazenda PR**, cadastra **empresa** (se nova), **nota** e **itens** (histórico).
+Front **notinhas.shop** (design system v1: light, azul `#0069B4` + verde `#00984B`, Plus Jakarta Sans). Home `/` lista empresas/itens; FAB inferior direito abre `/scan.html` (QR). Em Itens, **Cadastrar EAN** abre modal; subaba **Códigos de barras** consulta o mapeamento. Backend consulta a DANFE na **Fazenda PR**, cadastra **empresa** (se nova), **nota** e **itens** (histórico).
 
 Tema: [`../design-system.md`](../design-system.md) · tokens em `public/styles.css`.  
 Share/WhatsApp: metas OG em `index.html` / `scan.html` + `public/og-image.png`.

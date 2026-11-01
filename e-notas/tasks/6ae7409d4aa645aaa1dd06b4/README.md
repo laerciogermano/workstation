@@ -6,7 +6,7 @@
 
 ## Objetivo
 
-Comparar preço de balcão (NFC-e / índice notinhas.org) com preço em apps de delivery — iFood, 99Food e outros.
+Comparar preço de balcão (NFC-e / índice notinhas.shop) com preço em apps de delivery — iFood, 99Food e outros.
 
 ## Entrega
 

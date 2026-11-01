@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>notinhas.shop | Marca v2 (DESIGN.md)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --nt-blue:#0069B4;--nt-blue-deep:#014380;--nt-blue-soft:#E3F2FB;
+  --nt-green:#00984B;--nt-green-deep:#007A3D;--nt-green-soft:#E6F6EE;
+  --nt-ink:#0B1F33;--nt-muted:#5A6B7D;--nt-line:#D5DEE8;--nt-bg:#F5F7FA;--nt-white:#fff;--nt-err:#C62828;
+  --nt-grad:linear-gradient(135deg,#014380 0%,#0069B4 48%,#00984B 100%);
+  --nt-radius:14px;--nt-pill:999px;
+  --nt-font:"Plus Jakarta Sans",system-ui,sans-serif;
+  --nt-shadow:0 1px 2px rgba(11,31,51,.06),0 8px 24px rgba(11,31,51,.06);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#C5CDD8;color:var(--nt-ink);font-family:var(--nt-font);font-size:13px;line-height:1.55;
+  -webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{padding:24px 0}
+@page{size:297mm 210mm;margin:0}
+.page{width:297mm;height:210mm;margin:0 auto 24px;padding:14mm 16mm 11mm;position:relative;overflow:hidden;
+  background:var(--nt-white);box-shadow:0 8px 30px rgba(11,31,51,.16);display:flex;flex-direction:column}
+.page.mist{background:var(--nt-bg)}
+.page.cover{background:var(--nt-grad);color:#fff;padding:0}
+@media print{html,body{background:none;padding:0}.page{margin:0;box-shadow:none;break-after:page}.no-print{display:none!important}}
+.eyebrow{font-size:12px;font-weight:700;color:var(--nt-blue);display:flex;align-items:center;gap:10px}
+.eyebrow b{display:inline-flex;align-items:center;justify-content:center;min-width:28px;height:22px;padding:0 8px;
+  border-radius:8px;background:var(--nt-blue);color:#fff;font-size:12px}
+.cover .eyebrow{color:rgba(255,255,255,.85)}
+.cover .eyebrow b{background:rgba(255,255,255,.2)}
+h2{font-size:28px;font-weight:800;letter-spacing:-.02em;line-height:1.12;margin:6px 0 12px}
+.lead{font-size:14px;color:var(--nt-muted);max-width:640px}
+.foot{margin-top:auto;padding-top:9px;border-top:1px solid var(--nt-line);display:flex;justify-content:space-between;
+  font-size:10px;color:var(--nt-muted)}
+.cover .foot{border-color:rgba(255,255,255,.25);color:rgba(255,255,255,.75)}
+.label{font-size:10px;font-weight:700;color:var(--nt-muted);letter-spacing:.04em;text-transform:uppercase;margin-bottom:6px}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+.card{border-radius:var(--nt-radius);padding:14px;background:var(--nt-bg);border:1px solid var(--nt-line)}
+.mist .card{background:var(--nt-white)}
+.wm{font-weight:800;letter-spacing:-.03em;line-height:1;white-space:nowrap}
+.wm .n{color:var(--nt-blue-deep)}.wm .o{color:var(--nt-green)}
+.wm.white .n,.wm.white .o{color:#fff}
+.btn{display:inline-flex;align-items:center;justify-content:center;height:40px;padding:0 20px;border-radius:var(--nt-pill);
+  font-weight:700;font-size:13px;border:1.5px solid transparent}
+.btn.pri{background:var(--nt-blue);color:#fff}
+.btn.ok{background:var(--nt-green);color:#fff}
+.btn.sec{border-color:var(--nt-blue);color:var(--nt-blue);background:#fff}
+.chip{display:inline-flex;align-items:center;height:26px;padding:0 12px;border-radius:var(--nt-pill);font-size:11px;font-weight:700;
+  background:var(--nt-blue-soft);color:var(--nt-blue-deep)}
+.chip.ok{background:var(--nt-green-soft);color:var(--nt-green-deep)}
+.sw{border-radius:12px;overflow:hidden;border:1px solid var(--nt-line);background:#fff}
+.sw .c{height:48px}.sw .t{padding:8px 10px}.sw b{display:block;font-size:12px}.sw code{font-size:10px;color:var(--nt-muted)}
+.price{font-variant-numeric:tabular-nums;font-weight:800;font-size:22px;color:var(--nt-green-deep);letter-spacing:-.02em}
+.meta{font-size:12px;color:var(--nt-muted)}
+.yes{border-left:4px solid var(--nt-green)}.no{border-left:4px solid var(--nt-err);opacity:.92}
+.tag{display:inline-block;padding:2px 8px;border-radius:6px;background:var(--nt-blue-soft);color:var(--nt-blue-deep);font-size:10px;font-weight:700;margin:2px 2px 0 0}
+.help{max-width:297mm;margin:0 auto 14px;font-size:12px;color:#3A4254;padding:0 4px}
+table.mat{width:100%;border-collapse:collapse;font-size:11.5px}
+table.mat th,table.mat td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--nt-line);vertical-align:top}
+table.mat th{font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--nt-muted)}
+</style>
+</head>
+<body>
+<p class="help no-print">Marca notinhas.shop v2 · craft dos clássicos shadcn.io/design · A4 paisagem · PDF: Imprimir → Salvar como PDF, margens Nenhuma. Tokens: <code>notinhas.shop.DESIGN.md</code></p>
+
+<!-- 01 CAPA -->
+<section class="page cover">
+  <div style="position:absolute;inset:0;background:
+    radial-gradient(ellipse 50% 60% at 85% 20%,rgba(255,255,255,.18),transparent 60%),
+    radial-gradient(ellipse 40% 50% at 10% 90%,rgba(0,0,0,.12),transparent 55%)"></div>
+  <div style="position:relative;z-index:1;padding:16mm 18mm;height:100%;display:flex;flex-direction:column">
+    <div class="eyebrow"><b>v2</b> Marca · DESIGN.md · 2026-11-01</div>
+    <div style="margin:auto 0;max-width:560px">
+      <div class="wm" style="font-size:64px"><span class="n" style="color:#fff">notinhas</span><span class="o" style="color:#B8F5D0">.shop</span></div>
+      <p style="margin-top:16px;font-size:18px;font-weight:600;line-height:1.4;max-width:480px">Documento de marca para agentes e time — light canvas, um CTA azul, verde só no menor preço.</p>
+      <div style="display:flex;gap:8px;margin-top:20px;flex-wrap:wrap">
+        <span class="chip" style="background:rgba(255,255,255,.18);color:#fff">Stripe · tnum + 1 voltage</span>
+        <span class="chip" style="background:rgba(255,255,255,.18);color:#fff">Linear · accent scarce</span>
+        <span class="chip" style="background:rgba(255,255,255,.18);color:#fff">Vercel · hairlines</span>
+      </div>
+    </div>
+    <div class="foot"><span>HTML print-ready · acompanha DESIGN.md</span><span>Repo e-notas</span><span>01</span></div>
+  </div>
+</section>
+
+<!-- 02 CRAFT -->
+<section class="page mist">
+  <div class="eyebrow"><b>01</b> Referências de craft</div>
+  <h2>Disciplina dos clássicos, DNA próprio</h2>
+  <p class="lead">Fontes em <code>core/shadcn-design/</code>. Copiamos <b>regras</b>, não paletas.</p>
+  <table class="mat" style="margin-top:10px">
+    <thead><tr><th>Clássico</th><th>O que pegamos</th><th>O que NÃO pegamos</th></tr></thead>
+    <tbody>
+      <tr><td><b>Stripe</b></td><td>Canvas claro; um fill de CTA; <code>tnum</code> em dinheiro</td><td>Indigo #533afd, mesh pastel, Söhne thin</td></tr>
+      <tr><td><b>Linear</b></td><td>Acento escasso; hierarquia por superfície</td><td>Near-black #010102, lavender único</td></tr>
+      <tr><td><b>Vercel</b></td><td>Hairlines; tracking preciso no display</td><td>P&amp;B absoluto como sistema</td></tr>
+      <tr><td><b>Apple / GitHub</b></td><td>Clareza; tabela densa legível</td><td>SF-only / primer dark marketing</td></tr>
+      <tr><td><b>Nota Paraná</b></td><td>Azul + verde de confiança pública</td><td>—</td></tr>
+    </tbody>
+  </table>
+  <div class="grid g3" style="margin-top:14px">
+    <div class="card"><div class="label">Regra 1</div><b>1 CTA azul por faixa</b><p class="meta" style="margin-top:6px">Verde não compete como botão filled na mesma band.</p></div>
+    <div class="card"><div class="label">Regra 2</div><b>Preço sempre contextual</b><p class="meta" style="margin-top:6px">Menor preço verde + chip + loja + data.</p></div>
+    <div class="card"><div class="label">Regra 3</div><b>Wordmark = domínio</b><p class="meta" style="margin-top:6px"><span class="wm" style="font-size:18px"><span class="n">notinhas</span><span class="o">.shop</span></span> — nunca “e-notas” na UI.</p></div>
+  </div>
+  <div class="foot"><span>notinhas.shop · marca v2</span><span>02</span></div>
+</section>
+
+<!-- 03 TOKENS -->
+<section class="page">
+  <div class="eyebrow"><b>02</b> Tokens</div>
+  <h2>Paleta e tipo</h2>
+  <div class="grid g4" style="margin-top:4px">
+    <div class="sw"><div class="c" style="background:#0069B4"></div><div class="t"><b>primary</b><code>#0069B4</code></div></div>
+    <div class="sw"><div class="c" style="background:#014380"></div><div class="t"><b>primary-deep</b><code>#014380</code></div></div>
+    <div class="sw"><div class="c" style="background:#00984B"></div><div class="t"><b>accent</b><code>#00984B</code></div></div>
+    <div class="sw"><div class="c" style="background:#0B1F33"></div><div class="t"><b>ink</b><code>#0B1F33</code></div></div>
+    <div class="sw"><div class="c" style="background:#F5F7FA;border-bottom:1px solid var(--nt-line)"></div><div class="t"><b>canvas</b><code>#F5F7FA</code></div></div>
+    <div class="sw"><div class="c" style="background:#fff;border-bottom:1px solid var(--nt-line)"></div><div class="t"><b>surface</b><code>#FFFFFF</code></div></div>
+    <div class="sw"><div class="c" style="background:#D5DEE8"></div><div class="t"><b>hairline</b><code>#D5DEE8</code></div></div>
+    <div class="sw"><div class="c" style="background:var(--nt-grad)"></div><div class="t"><b>gradient</b><code>135°</code></div></div>
+  </div>
+  <div class="grid g2" style="margin-top:14px;flex:1">
+    <div class="card">
+      <div class="label">Tipografia</div>
+      <p style="font-size:28px;font-weight:800;letter-spacing:-.03em">Plus Jakarta Sans</p>
+      <p class="meta" style="margin-top:8px">Display 800 · body 400 · button 700 · price <code>tnum</code></p>
+      <div style="margin-top:14px" class="price">R$ 4,29</div>
+      <p class="meta">Menor preço · Mercado X · ontem</p>
+    </div>
+    <div class="card">
+      <div class="label">Espaço / forma</div>
+      <p>Base <b>4px</b> · controles <b>40px</b> · card radius <b>14px</b> · chips/botões <b>pill</b></p>
+      <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <span class="btn pri">Buscar</span>
+        <span class="btn sec">Outline</span>
+        <span class="btn ok">Confirmar</span>
+        <span class="chip ok">menor</span>
+        <span class="chip">filtro</span>
+      </div>
+      <p class="meta" style="margin-top:12px">Sombra só quando precisa: hairline primeiro (Vercel/Linear).</p>
+    </div>
+  </div>
+  <div class="foot"><span>notinhas.shop · marca v2</span><span>03</span></div>
+</section>
+
+<!-- 04 COMPONENTES -->
+<section class="page mist">
+  <div class="eyebrow"><b>03</b> Componentes-chave</div>
+  <h2>Preço, lista, scan</h2>
+  <div class="grid" style="grid-template-columns:1.1fr 1fr 0.9fr;gap:14px;flex:1">
+    <div class="card" style="box-shadow:var(--nt-shadow)">
+      <div class="label">Price card</div>
+      <div class="price">R$ 4,29</div>
+      <div style="margin:8px 0"><span class="chip ok">menor</span></div>
+      <p><b>Mercado X</b></p>
+      <p class="meta">Nota de ontem · 1,2 km</p>
+      <div style="margin-top:14px"><span class="btn pri">Ver no mapa</span></div>
+    </div>
+    <div class="card">
+      <div class="label">Lista / tabela</div>
+      <div style="display:grid;gap:0;border:1px solid var(--nt-line);border-radius:12px;overflow:hidden">
+        <div style="display:grid;grid-template-columns:1fr auto;padding:10px 12px;background:var(--nt-bg);font-size:10px;font-weight:700;color:var(--nt-muted);text-transform:uppercase">Item<span>Preço</span></div>
+        <div style="display:grid;grid-template-columns:1fr auto;padding:10px 12px;border-top:1px solid var(--nt-line)"><span>Leite 1L</span><span style="font-variant-numeric:tabular-nums;font-weight:700;color:var(--nt-green-deep)">4,29</span></div>
+        <div style="display:grid;grid-template-columns:1fr auto;padding:10px 12px;border-top:1px solid var(--nt-line)"><span>Pão 500g</span><span style="font-variant-numeric:tabular-nums;font-weight:700">7,90</span></div>
+        <div style="display:grid;grid-template-columns:1fr auto;padding:10px 12px;border-top:1px solid var(--nt-line)"><span>Café 500g</span><span style="font-variant-numeric:tabular-nums;font-weight:700">18,50</span></div>
+      </div>
+      <p class="meta" style="margin-top:10px">Densidade GitHub · números alinhados Stripe.</p>
+    </div>
+    <div class="card" style="background:var(--nt-ink);color:#fff;border:0">
+      <div class="label" style="color:#9ED0F5">Scan (exceção)</div>
+      <div style="margin:16px auto;width:120px;height:120px;border:2px dashed #7CFFB2;border-radius:12px;display:grid;place-items:center;font-size:11px;color:#B8F5D0">QR</div>
+      <p style="font-size:12px;opacity:.85;text-align:center">Viewport escuro só na câmera. Home volta ao mist claro.</p>
+    </div>
+  </div>
+  <div class="foot"><span>notinhas.shop · marca v2</span><span>04</span></div>
+</section>
+
+<!-- 05 DO / DON'T -->
+<section class="page">
+  <div class="eyebrow"><b>04</b> Do / Don’t</div>
+  <h2>Checklist rápido</h2>
+  <div class="grid g2" style="flex:1">
+    <div class="card yes">
+      <div class="label" style="color:var(--nt-green-deep)">Do</div>
+      <ul style="margin-left:16px;display:grid;gap:8px;margin-top:8px">
+        <li>Wordmark <b>notinhas.shop</b> (azul + verde)</li>
+        <li>Um botão filled azul por seção</li>
+        <li>Menor preço em verde + loja + data</li>
+        <li>UI light; sombra só se hairline não basta</li>
+        <li>Agente: ler <code>notinhas.shop.DESIGN.md</code></li>
+      </ul>
+    </div>
+    <div class="card no">
+      <div class="label" style="color:var(--nt-err)">Don’t</div>
+      <ul style="margin-left:16px;display:grid;gap:8px;margin-top:8px">
+        <li>“e-notas” como marca pública</li>
+        <li>Verde e azul filled competindo na mesma band</li>
+        <li>Preço sem loja/data</li>
+        <li>Clonar dark Linear ou mesh Stripe</li>
+        <li>Glow / purple SaaS genérico</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="margin-top:12px;background:var(--nt-blue-deep);color:#fff;border:0">
+    <div class="label" style="color:#9ED0F5">Arquivos</div>
+    <p style="font-size:14px;font-weight:600;margin-top:4px">
+      <code style="color:#B8F5D0">marca/notinhas.shop.DESIGN.md</code> · este HTML ·
+      identidade v1 · DS v1 · refs <code>core/shadcn-design/</code>
+    </p>
+  </div>
+  <div class="foot"><span>notinhas.shop · marca v2</span><span>05</span></div>
+</section>
+
+<!-- 06 CONTRACAPA -->
+<section class="page cover">
+  <div style="position:relative;z-index:1;padding:16mm 18mm;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:flex-start">
+    <div class="wm" style="font-size:48px"><span class="n" style="color:#fff">notinhas</span><span class="o" style="color:#B8F5D0">.shop</span></div>
+    <p style="margin-top:14px;font-size:16px;max-width:420px;opacity:.92">Menor preço a partir da nota.</p>
+    <p style="margin-top:28px;font-size:12px;opacity:.75">Antes: identidade v1 (Nota Paraná). Depois: DESIGN.md + craft Stripe/Linear/Vercel.<br>
+    Rollback: remover <code>notinhas.shop.DESIGN.md</code> e este HTML.</p>
+  </div>
+  <div class="foot" style="position:absolute;left:18mm;right:18mm;bottom:14mm"><span>marca v2</span><span>06</span></div>
+</section>
+</body>
+</html>

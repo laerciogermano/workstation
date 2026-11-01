@@ -1,4 +1,4 @@
-# Referências de identidade — e-notas / notinhas.org
+# Referências de identidade — e-notas / notinhas.shop
 
 Insumos do card [Criar identidade visual](https://trello.com/c/qUI3Rb9a).
 
@@ -20,7 +20,7 @@ Molde de seções/print-ready: RoleGo identidade v1 (`role-go/marca/identidade-v
 ## Entrega
 Manual v1: [`../identidade-visual-notinhas-v1.html`](../identidade-visual-notinhas-v1.html) · tokens [`../../identidade-visual.md`](../../identidade-visual.md) · índice [`../README.md`](../README.md).
 
-Marca: **notinhas.org**.
+Marca: **notinhas.shop**.
 
 ## Rollback
 ```bash

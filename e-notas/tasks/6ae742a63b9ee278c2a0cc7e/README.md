@@ -6,7 +6,7 @@
 
 ## Objetivo
 
-Documento de apresentação com: **o que é o e-notas**, **benchmarking** e **design system** (identidade notinhas.org).
+Documento de apresentação com: **o que é o e-notas**, **benchmarking** e **design system** (identidade notinhas.shop).
 
 ## Entrega
 

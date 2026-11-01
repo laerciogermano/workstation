@@ -1,6 +1,6 @@
-# PRD — notinhas.org (e-notas)
+# PRD — notinhas.shop (e-notas)
 
-**Produto:** notinhas.org · código / repo: e-notas  
+**Produto:** notinhas.shop · código / repo: e-notas  
 **Status:** rascunho pós-benchmarking (2026-11-01)  
 **Card:** [Benchmarking soluções similares](https://trello.com/c/1fMjqGdR)  
 **Visão:** [`../README.md`](../README.md) · **REQ:** [`requisitos.md`](requisitos.md) · **Benchmarking:** [`../marca/benchmarking-solucoes/README.md`](../marca/benchmarking-solucoes/README.md)
@@ -9,7 +9,7 @@
 
 ## 1. Definição (o quê)
 
-O **notinhas.org** é um **sistema cooperativo de notinhas** para:
+O **notinhas.shop** é um **sistema cooperativo de notinhas** para:
 
 - **comparar preço** entre estabelecimentos;
 - **simular economia** (quanto se paga a menos com a escolha / split);
@@ -22,7 +22,7 @@ O **notinhas.org** é um **sistema cooperativo de notinhas** para:
 - **separar compras** entre lojas para **menor custo total**;
 - **delivery / Full** (trilha futura): cada loja pode operar como **depósito de vendas** (fulfillment no sentido Mercado Livre **Full** — estoque na origem, pedido + entrega a partir da vitrine/cesta).
 
-Cooperativo: quem contribui deposita a NFC-e; quem consulta usa o índice coletivo. Marca pública **notinhas.org** · código/repo **e-notas**.
+Cooperativo: quem contribui deposita a NFC-e; quem consulta usa o índice coletivo. Marca pública **notinhas.shop** · código/repo **e-notas**.
 
 ## 2. Problema
 
@@ -180,7 +180,7 @@ Ver matriz em [`../marca/benchmarking-solucoes/00-curadoria.html`](../marca/benc
 | Menor Preço Brasil | **~15–16 UFs** (adesão; lista muda; SP tipicamente fora) — *não é nacional* | Gov multi-UF |
 | Economiza AL | **AL** | Gov SEFAZ + API |
 | Quantto | **B2B contratual** (não consumer nacional) | B2B |
-| **notinhas.org** | **Lab PR** (ex. São José dos Pinhais) → expansão por liquidez NFC-e | Consumer cooperativo + B2B |
+| **notinhas.shop** | **Lab PR** (ex. São José dos Pinhais) → expansão por liquidez NFC-e | Consumer cooperativo + B2B |
 
 ### 9.2 Matriz de comparação (todas as capacidades)
 
@@ -196,7 +196,7 @@ Ver matriz em [`../marca/benchmarking-solucoes/00-curadoria.html`](../marca/benc
 | MP Brasil | Sim | Parc. | Não | Não | **Sim** | Parc. | Não | Não | Não |
 | Economiza AL | Sim | Parc. | Via 3º | Não | **Sim** | Parc. | Não | **Sim** | Não |
 | Quantto | Sim | Sim | N/A | N/A | Reg. | N/A | N/A | **Sim** | Não |
-| **notinhas.org** | Alvo | Alvo | Alvo | Alvo | Alvo | Alvo | Alvo | Alvo | **Fut.** |
+| **notinhas.shop** | Alvo | Alvo | Alvo | Alvo | Alvo | Alvo | Alvo | Alvo | **Fut.** |
 
 Comp=comparar · Hist=histórico · Apart=split/economia · Vitr=vitrine + itens fora da web · Geo=item perto · Rank=lojas baratas/caras · Dest=destaques (preço abaixo) · API=B2B · Deliv=delivery/Full. Gasto pessoal = alvo notinhas (fora desta grade).
 

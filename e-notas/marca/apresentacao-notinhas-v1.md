@@ -1,4 +1,4 @@
-# Apresentação notinhas.org v1
+# Apresentação notinhas.shop v1
 
 Documento único (produto + benchmarking + design system) para stakeholders.
 

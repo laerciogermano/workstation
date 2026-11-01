@@ -18,7 +18,7 @@ Síntese a partir de **artigos e documentos públicos** (sem coleta em apps/site
 | InfoMoney (2026) | 99Food | “taxa de serviço” até **~5,6%** mesmo com frete “grátis” |
 | Folha / 99 (2025) | Custo do restaurante | simulação mercado ~**26%** do pedido vs modelo 99 com comissão 0 |
 
-## Implicação notinhas.org
+## Implicação notinhas.shop
 
 Índice NFC-e = **preço de balcão observado**. Não misturar com preço de app sem rótulo de fonte. Gap apps reforça valor do índice físico e informa a trilha delivery (§4.7) sem scrapear marketplaces.
 

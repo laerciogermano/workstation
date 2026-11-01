@@ -1,4 +1,4 @@
-Benchmarking executado (2026-11-01) — soluções similares ao notinhas.org / e-notas.
+Benchmarking executado (2026-11-01) — soluções similares ao notinhas.shop / e-notas.
 
 Ranking (prioridade de olhar):
 1. Busca Preço — https://buscapreco.net/ (QR → histórico EAN → compare; freemium; MG/SP/RJ)

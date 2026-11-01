@@ -110,7 +110,7 @@ App: [`../app/README.md`](../app/README.md).
 
 ## REQ-014 — Capacidades-alvo pós-benchmarking (2026-11-01)
 
-Insumos do card [Benchmarking soluções similares](https://trello.com/c/1fMjqGdR) e do [PRD](prd.md) — capacidades a considerar no notinhas.org / e-notas (ainda sem implementação obrigatória neste REQ):
+Insumos do card [Benchmarking soluções similares](https://trello.com/c/1fMjqGdR) e do [PRD](prd.md) — capacidades a considerar no notinhas.shop / e-notas (ainda sem implementação obrigatória neste REQ):
 
 - **Comparação de preços** — mesmo produto (EAN) entre estabelecimentos; menor preço com loja e data.
 - **Histórico de preços** — evolução do preço por produto e por mercado ao longo do tempo.
@@ -126,22 +126,22 @@ Insumos do card [Benchmarking soluções similares](https://trello.com/c/1fMjqGd
 
 Curadoria: [`../marca/benchmarking-solucoes/README.md`](../marca/benchmarking-solucoes/README.md).
 
-## REQ-015 — Identidade visual notinhas.org (2026-11-01)
+## REQ-015 — Identidade visual notinhas.shop (2026-11-01)
 
-- Marca pública consumer: **notinhas.org** (não usar “e-notas” como wordmark na UI).
+- Marca pública consumer: **notinhas.shop** (não usar “e-notas” como wordmark na UI).
 - Paleta: azul `#0069B4` / `#014380` + verde `#00984B` (referência Nota Paraná / Menor Preço).
 - Tipografia: Plus Jakarta Sans; menor preço sempre em verde com loja + data.
 - Manual: [`../marca/identidade-visual-notinhas-v1.html`](../marca/identidade-visual-notinhas-v1.html) · tokens [`../identidade-visual.md`](../identidade-visual.md).
 - Card: [Criar identidade visual](https://trello.com/c/qUI3Rb9a).
 
-## REQ-016 — Design system notinhas.org (2026-11-01)
+## REQ-016 — Design system notinhas.shop (2026-11-01)
 
 - Tokens de UI herdam `--nt-*` da identidade; espaço 4–32, radius 8/14, controles 40 px.
 - Componentes v1: botão, chip, busca/input, card de preço, lista, nav/tabs, tabela, empty/error/loading, scan.
-- Menor preço sempre verde + chip; loja + data em toda ocorrência; wordmark **notinhas.org** na UI.
+- Menor preço sempre verde + chip; loja + data em toda ocorrência; wordmark **notinhas.shop** na UI.
 - Manual: [`../marca/design-system-notinhas-v1.html`](../marca/design-system-notinhas-v1.html) · mapa [`../design-system.md`](../design-system.md).
 - Card: [Criar design system](https://trello.com/c/qdH95gZX).
-- App (`app/public/`): tema light com tokens `--nt-*`, wordmark notinhas.org; scan permanece viewport escuro.
+- App (`app/public/`): tema light com tokens `--nt-*`, wordmark notinhas.shop; scan permanece viewport escuro.
 
 ## REQ-017 — FAB adicionar nota (2026-11-01)
 
@@ -178,6 +178,14 @@ Curadoria: [`../marca/benchmarking-solucoes/README.md`](../marca/benchmarking-so
 - nginx site `notinhas` faz proxy de `/` para o app Node `127.0.0.1:4174` (mesmo processo de `/enotas/`).
 - HTTPS no domínio via Certbot quando o DNS público propagar (ver [`../deploy/README.md`](../deploy/README.md)).
 - Rollback: desabilitar site `notinhas`; DNS A `@` → parking Hostinger `2.57.91.91`.
+
+## REQ-023 — Marca v2 DESIGN.md notinhas.shop (2026-11-01)
+
+- Wordmark/domínio público: **notinhas.shop** (antes: notinhas.org).
+- Documento canônico para agentes: [`../marca/notinhas.shop.DESIGN.md`](../marca/notinhas.shop.DESIGN.md) (formato Google Labs DESIGN.md).
+- Print: [`../marca/marca-notinhas-shop-v2.html`](../marca/marca-notinhas-shop-v2.html).
+- Craft de referência: [`../../core/shadcn-design/README.md`](../../core/shadcn-design/README.md) — regras Stripe/Linear/Vercel; paleta própria azul+verde.
+- Rollback: remover os dois arquivos v2; UI/tokens hex da v1 permanecem.
 
 ---
 

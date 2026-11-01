@@ -1,4 +1,4 @@
-# Benchmarking — soluções similares (notinhas.org)
+# Benchmarking — soluções similares (notinhas.shop)
 
 Matriz vs **6 requisitos** do PRD: comparação, histórico, montagem apartada, vitrine da loja, busca geo, API empresas.
 

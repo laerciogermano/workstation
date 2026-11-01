@@ -1,10 +1,10 @@
 ## Objetivo
-Criar um **documento de apresentação** do **notinhas.org** / e-notas (deck ou HTML print-ready) para stakeholders.
+Criar um **documento de apresentação** do **notinhas.shop** / e-notas (deck ou HTML print-ready) para stakeholders.
 
 ## Conteúdo obrigatório do documento
-1. **O que é o e-notas / notinhas.org** — problema, proposta, personas, capacidades-alvo (síntese do PRD)
+1. **O que é o e-notas / notinhas.shop** — problema, proposta, personas, capacidades-alvo (síntese do PRD)
 2. **Benchmarking** — concorrência e gaps (curadoria já existente)
-3. **Design system / identidade** — marca notinhas.org (manual v1 + tokens)
+3. **Design system / identidade** — marca notinhas.shop (manual v1 + tokens)
 
 ## Insumos (anexos / links)
 - Identidade visual v1 (anexo neste card)

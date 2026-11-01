@@ -1,4 +1,4 @@
-# Task Trello: Benchmarking soluções similares (notinhas.org)
+# Task Trello: Benchmarking soluções similares (notinhas.shop)
 
 - **Card ID:** `6ae73d449d331353fd754807`
 - **URL:** https://trello.com/c/1fMjqGdR
@@ -6,7 +6,7 @@
 
 ## Objetivo
 
-Mapear soluções similares ao notinhas.org / e-notas (QR NFC-e → índice EAN → menor preço).
+Mapear soluções similares ao notinhas.shop / e-notas (QR NFC-e → índice EAN → menor preço).
 
 ## Entrega
 

@@ -6,7 +6,7 @@
 
 ## Objetivo
 
-Manual de identidade visual do **notinhas.org** (HTML print-ready), referência Nota Paraná / Menor Preço (azul+verde), estrutura no molde RoleGo (sem copiar marca).
+Manual de identidade visual do **notinhas.shop** (HTML print-ready), referência Nota Paraná / Menor Preço (azul+verde), estrutura no molde RoleGo (sem copiar marca).
 
 ## Entrega
 

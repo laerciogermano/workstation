@@ -1,6 +1,6 @@
-# PRD — notinhas.org (e-notas)
+# PRD — notinhas.shop (e-notas)
 
-**Produto:** notinhas.org · código / repo: e-notas  
+**Produto:** notinhas.shop · código / repo: e-notas  
 **Status:** rascunho pós-benchmarking (2026-11-01)  
 **Card:** [Benchmarking soluções similares](https://trello.com/c/1fMjqGdR)  
 **Visão:** [`../README.md`](../README.md) · **REQ:** [`requisitos.md`](requisitos.md) · **Benchmarking:** [`../marca/benchmarking-solucoes/README.md`](../marca/benchmarking-solucoes/README.md)

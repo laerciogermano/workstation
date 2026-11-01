@@ -1,4 +1,4 @@
-# Tasks Trello — e-notas / notinhas.org
+# Tasks Trello — e-notas / notinhas.shop
 
 | Pasta | Card |
 |-------|------|

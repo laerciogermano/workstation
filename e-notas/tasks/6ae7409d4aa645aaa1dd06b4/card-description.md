@@ -1,9 +1,9 @@
 ## Objetivo
-Comparar **preços reais** observados em NFC-e (índice notinhas.org / e-notas) com os preços cobrados em apps de **delivery / marketplace de comida e mercado**, começando por **iFood** e **99Food**, e ampliando para outros relevantes.
+Comparar **preços reais** observados em NFC-e (índice notinhas.shop / e-notas) com os preços cobrados em apps de **delivery / marketplace de comida e mercado**, começando por **iFood** e **99Food**, e ampliando para outros relevantes.
 
 ## Por quê
 O preço de balcão (nota) e o preço no app (taxa de serviço, delivery, markup da loja no canal digital) costumam divergir. Entender o gap ajuda a:
-- posicionar o notinhas.org como índice de **preço físico real**;
+- posicionar o notinhas.shop como índice de **preço físico real**;
 - informar a trilha **delivery** do PRD (§4.7) sem misturar fontes;
 - decidir se/quando expor “preço na loja vs preço no app”.
 

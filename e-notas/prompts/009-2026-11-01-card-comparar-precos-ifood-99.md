@@ -15,7 +15,7 @@ crie um card no enotas para comparar precos reais com ifod e 99 dentre outros
 
 ## Interpretação
 
-Criar card no board **enotas** (Trello) para pesquisar/comparar preços de balcão (NFC-e / índice notinhas.org) com preços em apps de delivery — iFood, 99Food e demais (Rappi, Aiqfome, etc.). Não executar a comparação neste turno; só abrir o card + pasta de task.
+Criar card no board **enotas** (Trello) para pesquisar/comparar preços de balcão (NFC-e / índice notinhas.shop) com preços em apps de delivery — iFood, 99Food e demais (Rappi, Aiqfome, etc.). Não executar a comparação neste turno; só abrir o card + pasta de task.
 
 ## O que foi feito
 

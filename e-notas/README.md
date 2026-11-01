@@ -10,12 +10,12 @@ Timeline de prompts: [`prompts/`](prompts/README.md).
 Regras para a IA: [`config/config-ia.md`](config/config-ia.md).  
 App (scan QR + cadastro Postgres Contabo / schema `enotas`): [`app/`](app/README.md).  
 Deploy Contabo (`/enotas/`): [`deploy/`](deploy/README.md).  
-Marca **notinhas.org**: [`marca/README.md`](marca/README.md) · identidade [`marca/identidade-visual-notinhas-v1.html`](marca/identidade-visual-notinhas-v1.html) · DS [`marca/design-system-notinhas-v1.html`](marca/design-system-notinhas-v1.html) · tokens [`identidade-visual.md`](identidade-visual.md) · [`design-system.md`](design-system.md) · [identidade](https://trello.com/c/qUI3Rb9a) · [DS](https://trello.com/c/qdH95gZX).  
+Marca **notinhas.shop**: [`marca/README.md`](marca/README.md) · **DESIGN.md v2** [`marca/notinhas.shop.DESIGN.md`](marca/notinhas.shop.DESIGN.md) · print [`marca/marca-notinhas-shop-v2.html`](marca/marca-notinhas-shop-v2.html) · identidade [`marca/identidade-visual-notinhas-v1.html`](marca/identidade-visual-notinhas-v1.html) · DS [`marca/design-system-notinhas-v1.html`](marca/design-system-notinhas-v1.html) · tokens [`identidade-visual.md`](identidade-visual.md) · [`design-system.md`](design-system.md) · refs [`../core/shadcn-design/README.md`](../core/shadcn-design/README.md) · [identidade](https://trello.com/c/qUI3Rb9a) · [DS](https://trello.com/c/qdH95gZX).  
 Refs identidade: [`marca/referencias-identidade/README.md`](marca/referencias-identidade/README.md).  
 Benchmarking soluções similares: [`marca/benchmarking-solucoes/README.md`](marca/benchmarking-solucoes/README.md) · [card](https://trello.com/c/1fMjqGdR).  
 Comparar preços NFC-e vs iFood/99Food/outros: [`marca/comparacao-precos-apps/`](marca/comparacao-precos-apps/README.md) · [card](https://trello.com/c/fapxKp3l).  
 Documento de apresentação (produto + benchmarking + DS): [`marca/apresentacao-notinhas-v1.html`](marca/apresentacao-notinhas-v1.html) · [card](https://trello.com/c/hfGuzfMs) · [`tasks/6ae742a63b9ee278c2a0cc7e/`](tasks/6ae742a63b9ee278c2a0cc7e/README.md).  
-PRD notinhas.org: [`docs/prd.md`](docs/prd.md).
+PRD notinhas.shop: [`docs/prd.md`](docs/prd.md).
 
 ---
 

@@ -1,4 +1,4 @@
-Identidade visual v1 entregue (2026-11-01) — notinhas.org.
+Identidade visual v1 entregue (2026-11-01) — notinhas.shop.
 
 - Wordmark: notinhas (#014380) + .org (#00984B)
 - Paleta: azul #0069B4 + verde #00984B (Nota Paraná / Menor Preço)

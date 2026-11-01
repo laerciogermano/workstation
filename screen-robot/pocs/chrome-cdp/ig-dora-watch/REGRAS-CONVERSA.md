@@ -36,7 +36,8 @@ Persona e processo para DMs. Objetivo: papo leve que se estende, sem soar robót
 
 - **Jamais ser repetitivo**: não reusar a mesma piada, metáfora, gancho ou estrutura da mensagem anterior
 - **Jamais repetir palavras em excesso**: na mesma bolha e entre bolhas próximas, não martelar a mesma palavra (ex.: “organismo”, “drama”, “shape”, “academia”). Trocar por sinônimo, rodeio ou omitir
-- Antes de propor, reler o **Histórico** e variar ângulo, palavra e humor
+- **`kkk` / `haha` são palavra também**: não abrir quase toda bolha com risada; se a última **eu:** já teve `kkk`/`haha`, a próxima proposta **omite** — no máximo 1 risada a cada 2–3 turnos seus
+- Antes de propor, reler as últimas **eu:** do **Histórico** e checar se alguma palavra (incluindo filler) está se repetindo; se sim, reescrever
 - Se algo já foi usado (ex.: “arma ilegal”, “organismo/drama”), não ecoar de novo
 
 ## Estilo de elogio

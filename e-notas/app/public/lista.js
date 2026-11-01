@@ -40,6 +40,7 @@ let eanScanBusy = false;
 let modalContext = { empresaNome: '', itemNome: '' };
 let empresasMap = null;
 let empresasMarkers = null;
+let empresasMarkerById = new Map();
 let geocodePoll = null;
 
 function setStatus(text, kind) {
@@ -151,6 +152,31 @@ function setMapStatus(text, kind) {
   statusElMap.className = 'status' + (kind ? ` ${kind}` : '');
 }
 
+function fitEmpresasOverview(rows) {
+  if (!empresasMap) return;
+  const bounds = rows
+    .filter(
+      (r) => r.lat != null && r.lng != null && !Number.isNaN(Number(r.lat)),
+    )
+    .map((r) => [Number(r.lat), Number(r.lng)]);
+  if (bounds.length === 1) empresasMap.setView(bounds[0], 15);
+  else if (bounds.length > 1) empresasMap.fitBounds(bounds, { padding: [28, 28] });
+}
+
+/** Centraliza o mapa no pin da empresa aberta (e abre o popup). */
+function focusEmpresaPin(empresaId) {
+  if (!empresasMap) return false;
+  const id = Number(empresaId);
+  const emp = allEmpresas.find((e) => Number(e.id) === id);
+  if (!emp || emp.lat == null || emp.lng == null) return false;
+  const lat = Number(emp.lat);
+  const lng = Number(emp.lng);
+  if (Number.isNaN(lat) || Number.isNaN(lng)) return false;
+  empresasMap.setView([lat, lng], 16, { animate: true });
+  empresasMarkerById.get(id)?.openPopup();
+  return true;
+}
+
 function renderEmpresasMap(rows) {
   if (typeof L === 'undefined') {
     setMapStatus('Mapa indisponível.', 'err');
@@ -158,10 +184,10 @@ function renderEmpresasMap(rows) {
   }
   ensureEmpresasMap();
   empresasMarkers.clearLayers();
+  empresasMarkerById.clear();
   const withCoords = rows.filter(
     (r) => r.lat != null && r.lng != null && !Number.isNaN(Number(r.lat)),
   );
-  const bounds = [];
   for (const r of withCoords) {
     const lat = Number(r.lat);
     const lng = Number(r.lng);
@@ -181,13 +207,10 @@ function renderEmpresasMap(rows) {
       );
     });
     empresasMarkers.addLayer(marker);
-    bounds.push([lat, lng]);
+    empresasMarkerById.set(Number(r.id), marker);
   }
-  if (bounds.length === 1) {
-    empresasMap.setView(bounds[0], 15);
-  } else if (bounds.length > 1) {
-    empresasMap.fitBounds(bounds, { padding: [28, 28] });
-  }
+  if (lojaAbertaId != null) focusEmpresaPin(lojaAbertaId);
+  else fitEmpresasOverview(withCoords);
   const missing = rows.length - withCoords.length;
   if (!rows.length) {
     setMapStatus('');
@@ -373,12 +396,20 @@ function openVitrineLoja(empresaId) {
   buscaVitrineItensEl.value = '';
   renderVitrineDetalhe(empresaId);
   setTab('empresas');
+  requestAnimationFrame(() => {
+    empresasMap?.invalidateSize();
+    focusEmpresaPin(empresaId);
+  });
 }
 
 function closeVitrineLoja() {
   buscaVitrineItensEl.value = '';
   renderVitrineLista();
   setTab('empresas');
+  requestAnimationFrame(() => {
+    empresasMap?.invalidateSize();
+    fitEmpresasOverview(allEmpresas);
+  });
 }
 
 function formatDataNota(emissao) {

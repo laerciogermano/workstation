@@ -150,6 +150,7 @@ Curadoria: [`../marca/benchmarking-solucoes/README.md`](../marca/benchmarking-so
 
 - Em **Estabelecimentos**: mapa + cards; clique abre detalhe + catálogo (preço mais recente por EAN/código).
 - Entrada também pelo mapa. URL: `?loja=<id>` / `#loja-<id>`. UI enxuta (sem textos explicativos redundantes).
+- Ao **entrar** no estabelecimento (card, popup ou deep-link), o mapa **foca no pin** daquela loja (zoom + popup). Ao voltar à lista, restaura o enquadramento de todos os pins.
 
 ## REQ-019 — Viewport app-like (sem PWA) (2026-11-01)
 

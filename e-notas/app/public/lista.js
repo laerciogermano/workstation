@@ -296,7 +296,10 @@ function renderEmpresas(rows) {
     if (lojaAbertaId != null) renderVitrineDetalhe(lojaAbertaId);
     else renderVitrineLista();
   }
-  if (!panels.produtos?.hidden) renderProdutosTab();
+  if (!panels.produtos?.hidden) {
+    if (produtoAbertaKey != null) renderProdutoDetalhe(produtoAbertaKey);
+    else renderProdutosTab();
+  }
 }
 
 function emissaoSortKey(emissao) {
@@ -408,6 +411,9 @@ function lojaHaystack(r) {
 }
 
 function renderProdutosTab() {
+  produtoAbertaKey = null;
+  if (produtosListaEl) produtosListaEl.hidden = false;
+  if (produtoDetalheEl) produtoDetalheEl.hidden = true;
   const catalogo = catalogoProdutos();
   const terms = searchTermsFrom(buscaProdutosEl);
   const rows = terms.length
@@ -441,9 +447,9 @@ function renderProdutosTab() {
               ?.nome ||
             'Mercado';
           const data = formatDataNota(r.nota_emissao) || '';
-          return `<button type="button" class="produto-card" data-open-loja="${esc(
-            r.empresa_id,
-          )}" data-produto-key="${esc(r._key)}">
+          return `<button type="button" class="produto-card" data-open-produto="${esc(
+            r._key,
+          )}">
             <div class="produto-media">${img}</div>
             <div class="produto-body">
               <h3 class="produto-nome">${esc(r.nome || 'Produto')}</h3>
@@ -457,6 +463,134 @@ function renderProdutosTab() {
         })
         .join('')
     : `<p class="hint">${catalogo.length ? 'Nenhum produto nesta busca.' : 'Sem produtos no índice.'}</p>`;
+}
+
+function historicoProduto(key) {
+  const rows = allItens
+    .filter((r) => produtoKey(r) === key)
+    .map((r) => {
+      const preco = parseValor(r.valor_unitario);
+      return {
+        ...r,
+        _preco: preco,
+        _sk: emissaoSortKey(r.nota_emissao),
+        empresa_nome:
+          r.empresa_nome ||
+          allEmpresas.find((e) => Number(e.id) === Number(r.empresa_id))
+            ?.nome ||
+          '',
+      };
+    })
+    .filter((r) => Number.isFinite(r._preco) && r._preco > 0);
+  rows.sort((a, b) => b._sk - a._sk || a._preco - b._preco);
+  return rows;
+}
+
+function renderProdutoDetalhe(key) {
+  const hist = historicoProduto(key);
+  if (!hist.length) {
+    produtoAbertaKey = null;
+    renderProdutosTab();
+    return;
+  }
+  produtoAbertaKey = key;
+  if (produtosListaEl) produtosListaEl.hidden = true;
+  if (produtoDetalheEl) produtoDetalheEl.hidden = false;
+
+  const menor = hist.reduce((best, r) =>
+    !best || r._preco < best._preco ? r : best,
+  );
+  const head = hist.find((r) => String(r.foto_url || '').trim()) || hist[0];
+  const foto = String(head.foto_url || '').trim();
+  const img = foto
+    ? `<img class="produto-img" src="${esc(foto)}" alt="" width="160" height="160" />`
+    : `<span class="produto-img produto-img-empty" aria-hidden="true"></span>`;
+  const ean = String(head.codigo_barras || '').trim();
+  const codigos = [
+    ...new Set(
+      hist.map((r) => String(r.codigo || '').trim()).filter(Boolean),
+    ),
+  ];
+  const mercados = new Set(
+    hist.map((r) => String(r.empresa_id || '')).filter(Boolean),
+  ).size;
+  const metaParts = [];
+  if (ean) metaParts.push(`EAN <span class="mono">${esc(ean)}</span>`);
+  if (codigos.length) {
+    metaParts.push(
+      `Cód. ${codigos
+        .slice(0, 3)
+        .map((c) => esc(c))
+        .join(', ')}${codigos.length > 3 ? '…' : ''}`,
+    );
+  }
+  metaParts.push(
+    `${hist.length} preço${hist.length === 1 ? '' : 's'} · ${mercados} mercado${
+      mercados === 1 ? '' : 's'
+    }`,
+  );
+
+  if (produtoInfoEl) {
+    produtoInfoEl.innerHTML = `
+    <div class="produto-hero-media">${img}</div>
+    <div class="produto-hero-body">
+      <h3 class="produto-hero-nome">${esc(head.nome || 'Produto')}</h3>
+      <p class="produto-hero-meta">${metaParts.join('<br>')}</p>
+      <p class="produto-hero-preco">
+        <span class="price-cell">${esc(formatPreco(menor.valor_unitario))}</span>
+        <span class="chip ok">menor</span>
+      </p>
+      <p class="produto-hero-meta">${esc(menor.empresa_nome || 'Mercado')}${
+        formatDataNota(menor.nota_emissao)
+          ? ` · ${esc(formatDataNota(menor.nota_emissao))}`
+          : ''
+      }</p>
+    </div>`;
+  }
+
+  if (countProdutoPrecosEl) {
+    countProdutoPrecosEl.textContent = `(${hist.length})`;
+  }
+  if (produtoTimelineEl) {
+    produtoTimelineEl.innerHTML = hist
+      .map((r) => {
+        const isMenor = r._preco === menor._preco;
+        const data = formatDataNota(r.nota_emissao) || '—';
+        const loja = r.empresa_nome || 'Mercado';
+        const nota = r.nota_numero
+          ? `Nota ${r.nota_numero}`
+          : r.nota_id
+            ? `Nota #${r.nota_id}`
+            : '';
+        return `<li class="preco-timeline-item${isMenor ? ' is-menor' : ''}">
+        <button type="button" class="preco-timeline-card${
+          isMenor ? ' is-menor' : ''
+        }" data-open-loja="${esc(r.empresa_id)}">
+          <div class="preco-timeline-top">
+            <p class="preco-timeline-data">${esc(data)}</p>
+            <p class="preco-timeline-preco">
+              <span class="price-cell">${esc(formatPreco(r.valor_unitario))}</span>
+              ${isMenor ? '<span class="chip ok">menor</span>' : ''}
+            </p>
+          </div>
+          <p class="preco-timeline-loja">${esc(loja)}</p>
+          ${nota ? `<p class="preco-timeline-nota">${esc(nota)}</p>` : ''}
+        </button>
+      </li>`;
+      })
+      .join('');
+  }
+}
+
+function openProduto(key) {
+  renderProdutoDetalhe(key);
+  setTab('produtos');
+}
+
+function closeProdutoDetalhe() {
+  produtoAbertaKey = null;
+  renderProdutosTab();
+  setTab('produtos');
 }
 
 function renderVitrineLista() {
@@ -763,39 +897,7 @@ function openItensDaNota(notaId, label) {
 }
 
 function applyItensFilter() {
-  const scoped =
-    filtroNotaId != null
-      ? allItens.filter((r) => Number(r.nota_id) === Number(filtroNotaId))
-      : allItens;
-  const rows = filterItens(allItens);
-  const shown = rows.length;
-  const total = scoped.length;
-  const label =
-    shown !== allItens.length || filtroNotaId != null
-      ? `(${shown}/${filtroNotaId != null ? total : allItens.length})`
-      : `(${shown})`;
-  document.getElementById('count-itens').textContent = label;
-  document.getElementById('itens').innerHTML = rows.length
-    ? rows
-        .map(
-          (r) =>
-            `<tr>${fotoThumb(r.foto_url, r.nome)}${cell(
-              formatDataNota(r.nota_emissao),
-            )}${cell(r.empresa_nome)}${cell(r.codigo_barras || '', 'mono')}${cell(
-              r.codigo || '',
-              'mono',
-            )}${cell(r.nome)}<td class="price-cell">${esc(
-              formatPreco(r.valor_unitario),
-            )}</td><td><button type="button" class="btn-link" data-vincular-ean data-empresa-id="${esc(
-              r.empresa_id,
-            )}" data-empresa-nome="${esc(r.empresa_nome || '')}" data-codigo="${esc(
-              r.codigo,
-            )}" data-nome="${esc(r.nome || '')}" data-ean="${esc(
-              r.codigo_barras || '',
-            )}">${r.codigo_barras ? 'EAN' : '+ EAN'}</button></td></tr>`,
-        )
-        .join('')
-    : `<tr><td colspan="8">${allItens.length ? 'Nada encontrado.' : 'Sem itens.'}</td></tr>`;
+  /* Aba Itens removida; mantido no-op para callers legados. */
 }
 
 function eanHaystack(r) {
@@ -970,6 +1072,7 @@ buscaVitrineEl?.addEventListener('input', () => {
   renderVitrineLista();
 });
 buscaProdutosEl?.addEventListener('input', () => {
+  produtoAbertaKey = null;
   renderProdutosTab();
 });
 buscaVitrineItensEl?.addEventListener('input', () => {
@@ -978,12 +1081,20 @@ buscaVitrineItensEl?.addEventListener('input', () => {
 document.getElementById('vitrine-voltar')?.addEventListener('click', () => {
   closeVitrineLoja();
 });
+document.getElementById('produto-voltar')?.addEventListener('click', () => {
+  closeProdutoDetalhe();
+});
 vitrineGridEl?.addEventListener('click', (ev) => {
   const btn = ev.target.closest('[data-open-loja]');
   if (!btn) return;
   openVitrineLoja(btn.dataset.openLoja);
 });
 produtosGridEl?.addEventListener('click', (ev) => {
+  const btn = ev.target.closest('[data-open-produto]');
+  if (!btn) return;
+  openProduto(btn.dataset.openProduto);
+});
+produtoTimelineEl?.addEventListener('click', (ev) => {
   const btn = ev.target.closest('[data-open-loja]');
   if (!btn) return;
   openVitrineLoja(btn.dataset.openLoja);
@@ -996,6 +1107,7 @@ for (const tab of tabs) {
       renderVitrineLista();
     }
     if (tab.dataset.tab === 'produtos') {
+      produtoAbertaKey = null;
       renderProdutosTab();
     }
     if (tab.dataset.tab === 'notas') {
@@ -1033,7 +1145,7 @@ function onVincularEanClick(ev) {
   });
 }
 
-document.getElementById('itens').addEventListener('click', onVincularEanClick);
+document.getElementById('itens')?.addEventListener('click', onVincularEanClick);
 notaItensEl?.addEventListener('click', onVincularEanClick);
 
 formEanEl.addEventListener('submit', async (ev) => {
@@ -1061,17 +1173,25 @@ async function reloadItens() {
   if (notaAbertaId != null) renderNotaDetalhe(notaAbertaId);
   if (lojaAbertaId != null) renderVitrineDetalhe(lojaAbertaId);
   else if (!panels.empresas?.hidden) renderVitrineLista();
-  if (!panels.produtos?.hidden) renderProdutosTab();
+  if (!panels.produtos?.hidden) {
+    if (produtoAbertaKey != null) renderProdutoDetalhe(produtoAbertaKey);
+    else renderProdutosTab();
+  }
 }
 
 function readRoute() {
   const params = new URLSearchParams(location.search);
   const nota = params.get('nota');
   const loja = params.get('loja');
+  const produto = params.get('produto');
   const hash = (location.hash || '').replace(/^#/, '');
   if (nota) {
     notaAbertaId = Number(nota);
     return 'notas';
+  }
+  if (produto) {
+    produtoAbertaKey = produto;
+    return 'produtos';
   }
   if (loja) {
     lojaAbertaId = Number(loja);
@@ -1081,6 +1201,15 @@ function readRoute() {
   if (notaHash) {
     notaAbertaId = Number(notaHash[1]);
     return 'notas';
+  }
+  const produtoHash = hash.match(/^produto-(.+)$/);
+  if (produtoHash) {
+    try {
+      produtoAbertaKey = decodeURIComponent(produtoHash[1]);
+    } catch {
+      produtoAbertaKey = produtoHash[1];
+    }
+    return 'produtos';
   }
   const lojaHash = hash.match(/^loja-(\d+)$/);
   if (lojaHash) {

@@ -84,7 +84,7 @@
 
       <div class="tabs" role="tablist" aria-label="Seções">
         <button type="button" class="tab" role="tab" id="tab-empresas" data-tab="empresas" aria-controls="panel-empresas" aria-selected="true">
-          Estabelecimentos <span id="count-empresas" class="count"></span>
+          Estabelecimentos <span id="count-empresas-tab" class="count"></span>
         </button>
         <button type="button" class="tab" role="tab" id="tab-notas" data-tab="notas" aria-controls="panel-notas" aria-selected="false">
           Notas <span id="count-notas" class="count"></span>
@@ -95,15 +95,34 @@
       </div>
 
       <section class="block tab-panel" id="panel-empresas" role="tabpanel" aria-labelledby="tab-empresas">
-        <div id="empresas-mapa" class="empresas-mapa" aria-label="Mapa"></div>
-        <p id="empresas-mapa-status" class="status" aria-live="polite" hidden></p>
-
-        <div id="vitrine-lista">
-          <label class="search">
-            <span class="sr-only">Buscar estabelecimentos</span>
-            <input id="busca-vitrine" type="search" placeholder="Buscar estabelecimento…" autocomplete="off" />
+        <div id="vitrine-lista" class="home-feed">
+          <label class="search search-home">
+            <span class="sr-only">Buscar produto ou mercado</span>
+            <input
+              id="busca-vitrine"
+              type="search"
+              placeholder="Buscar produto ou mercado…"
+              autocomplete="off"
+            />
           </label>
-          <div id="vitrine-grid" class="vitrine-grid" aria-live="polite"></div>
+
+          <header class="home-section-head">
+            <h2 class="home-section-title">Produtos</h2>
+            <span id="count-produtos" class="count"></span>
+          </header>
+          <div id="produtos-grid" class="produto-grid" aria-live="polite"></div>
+
+          <header class="home-section-head">
+            <h2 class="home-section-title">Mercados</h2>
+            <span id="count-empresas" class="count"></span>
+          </header>
+          <div id="vitrine-grid" class="mercados-grid" aria-live="polite"></div>
+
+          <header class="home-section-head">
+            <h2 class="home-section-title">Mapa</h2>
+          </header>
+          <div id="empresas-mapa" class="empresas-mapa empresas-mapa-home" aria-label="Mapa"></div>
+          <p id="empresas-mapa-status" class="status" aria-live="polite" hidden></p>
         </div>
 
         <div id="vitrine-detalhe" hidden>

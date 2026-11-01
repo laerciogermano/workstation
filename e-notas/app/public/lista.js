@@ -17,6 +17,8 @@ const eanCamStatusEl = document.getElementById('ean-cam-status');
 const vitrineListaEl = document.getElementById('vitrine-lista');
 const vitrineDetalheEl = document.getElementById('vitrine-detalhe');
 const vitrineGridEl = document.getElementById('vitrine-grid');
+const produtosGridEl = document.getElementById('produtos-grid');
+const countProdutosEl = document.getElementById('count-produtos');
 const vitrineLojaInfoEl = document.getElementById('vitrine-loja-info');
 const vitrineItensEl = document.getElementById('vitrine-itens');
 const notasListaEl = document.getElementById('notas-lista');
@@ -288,7 +290,8 @@ function startGeocodePoll() {
 }
 
 function renderEmpresas(rows) {
-  document.getElementById('count-empresas').textContent = `(${rows.length})`;
+  const tabCount = document.getElementById('count-empresas-tab');
+  if (tabCount) tabCount.textContent = `(${rows.length})`;
   if (!panels.empresas.hidden) {
     renderEmpresasMap(rows);
     if (lojaAbertaId != null) renderVitrineDetalhe(lojaAbertaId);
@@ -309,6 +312,68 @@ function formatPreco(v) {
   if (!raw) return '—';
   if (/^R\$/i.test(raw)) return raw;
   return `R$ ${raw}`;
+}
+
+function parseValor(v) {
+  const s = String(v ?? '')
+    .replace(/R\$\s*/i, '')
+    .trim();
+  if (!s) return NaN;
+  const n = Number(s.replace(/\./g, '').replace(',', '.'));
+  return Number.isFinite(n) ? n : NaN;
+}
+
+function produtoKey(r) {
+  const ean = String(r.codigo_barras || '').trim();
+  if (ean) return `ean:${ean}`;
+  const nome = String(r.nome || '')
+    .trim()
+    .toLowerCase();
+  if (nome) return `nome:${nome}`;
+  return `cod:${String(r.codigo || '').trim()}`;
+}
+
+/** Catálogo home: 1 card por produto com menor preço (loja + data + foto). */
+function catalogoProdutos() {
+  const byKey = new Map();
+  for (const r of allItens) {
+    const key = produtoKey(r);
+    if (key === 'cod:' || key === 'nome:') continue;
+    const preco = parseValor(r.valor_unitario);
+    if (!Number.isFinite(preco) || preco <= 0) continue;
+    const sk = emissaoSortKey(r.nota_emissao);
+    const prev = byKey.get(key);
+    if (
+      !prev ||
+      preco < prev._preco ||
+      (preco === prev._preco && sk > prev._sk)
+    ) {
+      byKey.set(key, {
+        ...r,
+        _key: key,
+        _preco: preco,
+        _sk: sk,
+        empresa_nome:
+          r.empresa_nome ||
+          allEmpresas.find((e) => Number(e.id) === Number(r.empresa_id))
+            ?.nome ||
+          '',
+      });
+    }
+  }
+  return [...byKey.values()].sort((a, b) => {
+    const fa = a.foto_url ? 0 : 1;
+    const fb = b.foto_url ? 0 : 1;
+    if (fa !== fb) return fa - fb;
+    return String(a.nome || '').localeCompare(String(b.nome || ''), 'pt-BR');
+  });
+}
+
+function homeSearchTerms() {
+  const q = String(buscaVitrineEl?.value || '')
+    .trim()
+    .toLowerCase();
+  return q ? q.split(/\s+/).filter(Boolean) : [];
 }
 
 function catalogoLoja(empresaId) {
@@ -342,26 +407,79 @@ function lojaHaystack(r) {
     .join(' ');
 }
 
+function renderProdutosHome(terms) {
+  const catalogo = catalogoProdutos();
+  const rows = terms.length
+    ? catalogo.filter((r) => {
+        const hay = [
+          r.nome,
+          r.codigo_barras,
+          r.codigo,
+          r.empresa_nome,
+          r.valor_unitario,
+        ]
+          .map((v) => String(v ?? '').toLowerCase())
+          .join(' ');
+        return terms.every((t) => hay.includes(t));
+      })
+    : catalogo;
+  if (countProdutosEl) {
+    countProdutosEl.textContent = `(${rows.length})`;
+  }
+  if (!produtosGridEl) return;
+  produtosGridEl.innerHTML = rows.length
+    ? rows
+        .map((r) => {
+          const foto = String(r.foto_url || '').trim();
+          const img = foto
+            ? `<img class="produto-img" src="${esc(foto)}" alt="" loading="lazy" width="160" height="160" />`
+            : `<span class="produto-img produto-img-empty" aria-hidden="true"></span>`;
+          const loja =
+            r.empresa_nome ||
+            allEmpresas.find((e) => Number(e.id) === Number(r.empresa_id))
+              ?.nome ||
+            'Mercado';
+          const data = formatDataNota(r.nota_emissao) || '';
+          return `<button type="button" class="produto-card" data-open-loja="${esc(
+            r.empresa_id,
+          )}" data-produto-key="${esc(r._key)}">
+            <div class="produto-media">${img}</div>
+            <div class="produto-body">
+              <h3 class="produto-nome">${esc(r.nome || 'Produto')}</h3>
+              <p class="produto-preco">
+                <span class="price-cell">${esc(formatPreco(r.valor_unitario))}</span>
+                <span class="chip ok">menor</span>
+              </p>
+              <p class="produto-meta">${esc(loja)}${data ? ` · ${esc(data)}` : ''}</p>
+            </div>
+          </button>`;
+        })
+        .join('')
+    : `<p class="hint">${catalogo.length ? 'Nenhum produto nesta busca.' : 'Sem produtos no índice.'}</p>`;
+}
+
 function renderVitrineLista() {
   lojaAbertaId = null;
   vitrineListaEl.hidden = false;
   vitrineDetalheEl.hidden = true;
-  const q = String(buscaVitrineEl?.value || '')
-    .trim()
-    .toLowerCase();
-  const terms = q ? q.split(/\s+/).filter(Boolean) : [];
+  const terms = homeSearchTerms();
+  renderProdutosHome(terms);
   const rows = terms.length
     ? allEmpresas.filter((r) => {
         const hay = lojaHaystack(r);
         return terms.every((t) => hay.includes(t));
       })
     : allEmpresas;
-  document.getElementById('count-empresas').textContent = `(${allEmpresas.length})`;
+  const countEmpresas = `(${allEmpresas.length})`;
+  const countEl = document.getElementById('count-empresas');
+  const countTabEl = document.getElementById('count-empresas-tab');
+  if (countEl) countEl.textContent = `(${rows.length})`;
+  if (countTabEl) countTabEl.textContent = countEmpresas;
   vitrineGridEl.innerHTML = rows.length
     ? rows
         .map((r) => {
           const n = catalogoLoja(r.id).length;
-          return `<button type="button" class="loja-card" data-open-loja="${esc(r.id)}">
+          return `<button type="button" class="loja-card loja-card-compact" data-open-loja="${esc(r.id)}">
             <h3 class="loja-nome">${esc(r.nome || r.cnpj || `Estabelecimento #${r.id}`)}</h3>
             <p class="loja-meta">${esc(r.endereco || '')}</p>
             <div class="loja-stats">
@@ -370,7 +488,7 @@ function renderVitrineLista() {
           </button>`;
         })
         .join('')
-    : `<p class="hint">${allEmpresas.length ? 'Nada encontrado.' : 'Sem estabelecimentos.'}</p>`;
+    : `<p class="hint">${allEmpresas.length ? 'Nenhum mercado nesta busca.' : 'Sem mercados.'}</p>`;
 }
 
 function renderVitrineDetalhe(empresaId) {
@@ -865,6 +983,11 @@ vitrineGridEl?.addEventListener('click', (ev) => {
   if (!btn) return;
   openVitrineLoja(btn.dataset.openLoja);
 });
+produtosGridEl?.addEventListener('click', (ev) => {
+  const btn = ev.target.closest('[data-open-loja]');
+  if (!btn) return;
+  openVitrineLoja(btn.dataset.openLoja);
+});
 
 for (const tab of tabs) {
   tab.addEventListener('click', () => {
@@ -940,6 +1063,7 @@ async function reloadItens() {
   applyItensFilter();
   if (notaAbertaId != null) renderNotaDetalhe(notaAbertaId);
   if (lojaAbertaId != null) renderVitrineDetalhe(lojaAbertaId);
+  else if (!panels.empresas.hidden) renderVitrineLista();
 }
 
 function readRoute() {

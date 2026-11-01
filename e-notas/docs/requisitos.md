@@ -152,9 +152,10 @@ Curadoria: [`../marca/benchmarking-solucoes/README.md`](../marca/benchmarking-so
 
 ## REQ-018 — Vitrine das lojas (2026-11-01)
 
-- Em **Estabelecimentos**: mapa + cards; clique abre detalhe + catálogo (preço mais recente por EAN/código).
-- Entrada também pelo mapa. URL: `?loja=<id>` / `#loja-<id>`. UI enxuta (sem textos explicativos redundantes).
-- Ao **entrar** no estabelecimento (card, popup ou deep-link), o mapa **foca no pin** daquela loja (zoom + popup). Ao voltar à lista, restaura o enquadramento de todos os pins.
+- Aba **Estabelecimentos** (nome mantido): feed estilo marketplace — **Produtos** (foto + menor preço + loja/data) acima, **Mercados** (cards) abaixo, **Mapa** em seguida.
+- Clique no produto abre o estabelecimento do menor preço; clique no mercado/mapa abre detalhe + catálogo (preço mais recente por EAN/código).
+- URL: `?loja=<id>` / `#loja-<id>`. UI enxuta (sem textos explicativos redundantes).
+- Ao **entrar** no estabelecimento (card, produto, popup ou deep-link), o mapa **foca no pin** daquela loja (zoom + popup). Ao voltar à lista, restaura o enquadramento de todos os pins.
 
 ## REQ-019 — Viewport app-like (sem PWA) (2026-11-01)
 

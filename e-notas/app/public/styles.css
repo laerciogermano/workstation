@@ -89,13 +89,12 @@ h2 {
 }
 
 .empresas-mapa {
-  height: 340px;
+  height: 320px;
   margin: 0 0 0.75rem;
   border: 1px solid #243040;
   border-radius: 10px;
-  background: #0b1016;
+  background: #1a222c;
   z-index: 0;
-  overflow: hidden;
 }
 
 .empresas-mapa .leaflet-container {
@@ -103,75 +102,12 @@ h2 {
   width: 100%;
   border-radius: 10px;
   font: inherit;
-  background: #0b1016;
-}
-
-.empresas-mapa .leaflet-control-zoom a {
-  background: #1a222c;
-  color: #e8eef5;
-  border-color: #243040;
-}
-
-.empresas-mapa .leaflet-control-zoom a:hover {
-  background: #243040;
-  color: #fff;
-}
-
-.empresas-mapa .leaflet-control-attribution {
-  background: rgba(15, 20, 25, 0.75);
-  color: #6b7a8c;
-  font-size: 0.65rem;
-}
-
-.empresas-mapa .leaflet-control-attribution a {
-  color: #9aa8b8;
-}
-
-.empresas-mapa .leaflet-popup-content-wrapper {
-  background: #1a222c;
-  color: #e8eef5;
-  border-radius: 10px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
-  border: 1px solid #243040;
-}
-
-.empresas-mapa .leaflet-popup-tip {
-  background: #1a222c;
-  border: 1px solid #243040;
-  box-shadow: none;
 }
 
 .empresas-mapa .leaflet-popup-content {
   margin: 0.55rem 0.7rem;
   font-size: 0.85rem;
   line-height: 1.35;
-}
-
-.empresas-mapa .leaflet-popup-close-button {
-  color: #9aa8b8 !important;
-}
-
-.empresa-popup .mono {
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 0.75rem;
-  color: #9aa8b8;
-  word-break: break-all;
-}
-
-.empresa-pin {
-  background: transparent;
-  border: 0;
-}
-
-.empresa-pin-dot {
-  display: block;
-  width: 14px;
-  height: 14px;
-  margin: 4px;
-  border-radius: 50%;
-  background: #4a90d9;
-  border: 2px solid #e8eef5;
-  box-shadow: 0 0 0 4px rgba(74, 144, 217, 0.28);
 }
 
 .tab-panel[hidden] {

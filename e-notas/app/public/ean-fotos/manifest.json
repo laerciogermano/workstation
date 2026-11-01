@@ -1,0 +1,98 @@
+[
+  {
+    "ean": "78938823",
+    "ok": true,
+    "file": "78938823.jpg",
+    "bytes": 8934,
+    "image_url": "https://images.openfoodfacts.org/images/products/000/007/893/8823/front_en.3.400.jpg",
+    "source": "world.openfoodfacts.org"
+  },
+  {
+    "ean": "7895144893730",
+    "ok": true,
+    "file": "7895144893730.jpg",
+    "bytes": 12521,
+    "image_url": "https://global.si5.com.br/images/produto-em-breve.jpg?v=3bafd5cb",
+    "source": "https://global.si5.com.br/produtos/7895144893730"
+  },
+  {
+    "ean": "7894900701517",
+    "ok": true,
+    "file": "7894900701517.jpg",
+    "bytes": 18921,
+    "image_url": "https://images.openfoodfacts.org/images/products/789/490/070/1517/front_pt.38.400.jpg",
+    "source": "world.openfoodfacts.org"
+  },
+  {
+    "ean": "7891000457368",
+    "ok": true,
+    "file": "7891000457368.jpg",
+    "bytes": 25241,
+    "image_url": "https://pub-3ae9a3bbec874ad1ba4d4300419f300e.r2.dev/products/7891000457368/1784740600833.jpg?v=1784740601411",
+    "source": "https://kodebar.korvensistemas.com.br/produto/7891000457368"
+  },
+  {
+    "ean": "7891962051338",
+    "ok": true,
+    "file": "7891962051338.jpg",
+    "bytes": 18804,
+    "image_url": "https://images.openfoodfacts.org/images/products/789/196/205/1338/front_en.3.400.jpg",
+    "source": "world.openfoodfacts.org"
+  },
+  {
+    "ean": "7891991011877",
+    "ok": true,
+    "file": "7891991011877.jpg",
+    "bytes": 22877,
+    "image_url": "https://images.openfoodfacts.org/images/products/789/199/101/1877/front_en.4.400.jpg",
+    "source": "world.openfoodfacts.org"
+  },
+  {
+    "ean": "7896045506590",
+    "ok": true,
+    "file": "7896045506590.jpg",
+    "bytes": 18829,
+    "image_url": "https://images.openfoodfacts.org/images/products/789/604/550/6590/front_en.3.400.jpg",
+    "source": "world.openfoodfacts.org"
+  },
+  {
+    "ean": "070847022206",
+    "ok": true,
+    "file": "070847022206.jpg",
+    "bytes": 14441,
+    "image_url": "https://images.openfoodfacts.org/images/products/007/084/702/2206/front_pt.4.400.jpg",
+    "source": "world.openfoodfacts.org"
+  },
+  {
+    "ean": "070847033301",
+    "ok": true,
+    "file": "070847033301.jpg",
+    "bytes": 24174,
+    "image_url": "https://images.openfoodfacts.org/images/products/007/084/703/3301/front_en.5.400.jpg",
+    "source": "world.openfoodfacts.org"
+  },
+  {
+    "ean": "7898422746759",
+    "ok": true,
+    "file": "7898422746759.jpg",
+    "bytes": 21320,
+    "image_url": "https://images.openbeautyfacts.org/images/products/789/842/274/6759/front_en.3.400.jpg",
+    "source": "world.openbeautyfacts.org"
+  },
+  {
+    "ean": "7896256601848",
+    "ok": true,
+    "file": "7896256601848.jpg",
+    "bytes": 17940,
+    "image_url": "https://images.openfoodfacts.org/images/products/789/625/660/1848/front_en.11.400.jpg",
+    "source": "world.openfoodfacts.org"
+  },
+  {
+    "ean": "7896256602005",
+    "ok": true,
+    "file": "7896256602005.jpg",
+    "bytes": 14091,
+    "image_url": "https://images.openfoodfacts.org/images/products/789/625/660/2005/front_pt.9.400.jpg",
+    "source": "world.openfoodfacts.org"
+  }
+]

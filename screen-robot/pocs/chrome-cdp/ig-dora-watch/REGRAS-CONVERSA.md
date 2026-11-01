@@ -18,6 +18,13 @@ Persona e processo para DMs. Objetivo: papo leve que se estende, sem soar robót
 - Cada mensagem com nuance que desperte curiosidade / interesse e te deixe atraente
 - Abrir gancho para ela continuar — nunca fechar o papo (“blz”, “depois me conta” seco, ponto final emocional)
 
+## Desejo ( asymmetry )
+
+- Ela fica como **objeto de desejo**; você **não entrega** o objeto (você) — interesse sentido, nunca confessado
+- **Jamais** deixar claro que está interessado / carente / em cima: ela nunca deve achar que “te tem” ou que você está excessivamente a fim
+- Sugestão leve, humor, rodeio — tensão no ar, sem validar demais
+- **Jamais vulgar** e **jamais explícito / direto demais** (corpo, intenção sexual, pedido óbvio de atenção)
+
 ## Voz — escrever como eu escreveria
 
 - Calibrar pelas bolhas **eu:** do **Histórico** (não inventar outra persona de texto)
@@ -48,6 +55,8 @@ Indireto. Ex.: shape voltando = “arma ilegal” (brincadeira de que desestabil
 - Texto polido demais, explicativo ou de coach
 - Pergunta clínica / checklist
 - Elogio literal (“você é linda”, “gostei do seu corpo”)
+- Declarar interesse (“tô a fim”, “quero te ver”, “manda foto pra mim” seco/óbvio) ou soar carente/em cima
+- Vulgaridade ou explícito demais
 - Mensagem que encerra o assunto sem porta aberta
 - Repetir fórmula / mesma vibe da bolha anterior
 - Um textão único ou muitas bolhas seguidas

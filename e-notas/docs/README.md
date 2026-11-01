@@ -10,7 +10,7 @@ Timeline de prompts: [`../prompts/timeline.md`](../prompts/timeline.md).
 
 | Artefato | Arquivo | Papel no fluxo | Status |
 |----------|---------|----------------|--------|
-| PRD (notinhas.org) | [`prd.md`](prd.md) | Capacidades-alvo pós-benchmarking (comparação, histórico, cesta, vitrine, geo, API) | Ativo |
+| PRD (notinhas.org) | [`prd.md`](prd.md) | Capacidades-alvo: comparação, histórico, cesta, vitrine, geo, gestão financeira, API | Ativo |
 | Requisitos / regras | [`requisitos.md`](requisitos.md) | Regras canônicas pedidas (REQ-NNN); atualizar a cada requisito novo | Ativo |
 | Identidade visual | [`../marca/identidade-visual-notinhas-v1.html`](../marca/identidade-visual-notinhas-v1.html) | Manual marca notinhas.org (REQ-015) | Ativo |
 | Design system | [`../marca/design-system-notinhas-v1.html`](../marca/design-system-notinhas-v1.html) | Tokens + componentes UI (REQ-016) | Ativo |

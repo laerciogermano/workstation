@@ -9,7 +9,7 @@
  *
  * Fluxo web PT-BR:
  * - Avatar (já tem foto): canto da "Foto do perfil" → Editar → Atualizar → Carregar foto → setFile → Salvar alterações
- * - Banner: câmera "Adicionar imagem de fundo" → menuitem "Adicionar imagem de capa" → Carregar foto única → setFile → Salvar alterações
+ * - Banner: câmera "Adicionar/Editar imagem de fundo" → menuitem "Adicionar/Alterar/Editar imagem de capa" → Carregar foto única → setFile → Salvar alterações
  *
  * Assets: src/assets/avatars/conectmax-black.jpg + banners/conectmax-banner.jpg
  * Rollback: editar/excluir mídia no próprio LinkedIn; omitir flags *-only.
@@ -214,33 +214,63 @@ async function main() {
   if (!cam) throw new Error('sem câmera de capa');
   console.log('open capa', cam);
   await mouseClick(cam.x, cam.y);
-  await sleep(1500);
+  await sleep(2500);
 
-  const item = await evalv(`(() => {
-    const cands = [...document.querySelectorAll('a[role=menuitem],button,a,div')]
-      .filter((e) => (e.innerText || '').replace(/\\s+/g, ' ').trim() === 'Adicionar imagem de capa'
-        || (e.innerText || '').replace(/\\s+/g, ' ').trim() === 'Alterar imagem de capa')
-      .map((e) => {
-        const r = e.getBoundingClientRect();
-        return {
-          role: e.getAttribute('role'),
-          x: r.x + r.width / 2,
-          y: r.y + r.height / 2,
-          w: r.width,
-          h: r.height,
-          topish: r.y < 250,
-        };
-      })
-      .filter((c) => c.w > 0 && c.h > 0 && c.h < 60);
-    return cands.filter((c) => c.topish).sort((a, b) => a.y - b.y)[0] || cands[0] || null;
-  })()`);
+  // Menu LI: <a> "Adicionar imagem de capa" (não menuitem); retry até aparecer.
+  let item = null;
+  for (let attempt = 0; attempt < 4 && !item; attempt++) {
+    item = await evalv(`(() => {
+      const labels = [
+        'Adicionar imagem de capa',
+        'Alterar imagem de capa',
+        'Editar imagem de capa',
+      ];
+      const nodes = [
+        ...document.querySelectorAll('a[role=menuitem]'),
+        ...document.querySelectorAll('button,a,div'),
+      ];
+      const cands = nodes
+        .map((e) => {
+          const t = (e.innerText || e.getAttribute('aria-label') || '').replace(/\\s+/g, ' ').trim();
+          if (!labels.some((l) => t === l || t.startsWith(l))) return null;
+          const r = e.getBoundingClientRect();
+          if (r.width < 2 || r.height < 2 || r.height > 80) return null;
+          return {
+            role: e.getAttribute('role'),
+            tag: e.tagName,
+            text: t.slice(0, 40),
+            x: r.x + r.width / 2,
+            y: r.y + r.height / 2,
+            w: r.width,
+            h: r.height,
+            topish: r.y < 320,
+            exact: labels.includes(t),
+            menuitem: e.getAttribute('role') === 'menuitem',
+          };
+        })
+        .filter(Boolean);
+      cands.sort((a, b) => Number(b.exact) - Number(a.exact) || a.h - b.h || a.y - b.y);
+      return cands.filter((c) => c.topish)[0] || cands[0] || null;
+    })()`);
+    if (!item) await sleep(700);
+  }
   if (item) {
     console.log('menu item', item);
     await mouseClick(item.x, item.y);
-    await sleep(2000);
+    await sleep(2500);
+  } else {
+    console.log('menu miss: Adicionar/Alterar imagem de capa');
   }
 
-  for (const t of ['Carregar foto única', 'Carregar foto', 'Carregar']) {
+  // Nova capa: Carregar*; capa existente: Alterar/Editar.
+  for (const t of [
+    'Carregar foto única',
+    'Selecionar imagem',
+    'Alterar foto',
+    'Carregar foto',
+    'Carregar',
+    'Editar',
+  ]) {
     if (await clickText(t)) break;
   }
   await sleep(800);

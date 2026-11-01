@@ -205,39 +205,62 @@ async function main() {
   if (!cam) throw new Error('sem controle de imagem de fundo/capa');
   console.log('open capa', cam);
   await clickXY(cam.x, cam.y);
-  await sleep(1500);
+  await sleep(2500);
   await clickSkipIfAny();
 
-  const item = await evalv(`(() => {
-    const labels = [
-      'Adicionar imagem de capa',
-      'Alterar imagem de capa',
-      'Add cover image',
-      'Change cover image',
-    ];
-    const cands = [...document.querySelectorAll('a[role=menuitem],button,a,[role=button],div')]
-      .map((e) => {
-        const t = (e.innerText || e.getAttribute('aria-label') || '').replace(/\\s+/g, ' ').trim();
-        if (!labels.includes(t)) return null;
-        const r = e.getBoundingClientRect();
-        if (r.width < 2 || r.height < 2 || r.height > 80) return null;
-        return { text: t, x: r.x + r.width / 2, y: r.y + r.height / 2, topish: r.y < 280 };
-      })
-      .filter(Boolean);
-    return cands.filter((c) => c.topish).sort((a, b) => a.y - b.y)[0] || cands[0] || null;
-  })()`);
+  // Menu LI: <a> curto (não menuitem); retry + preferir label exato.
+  let item = null;
+  for (let attempt = 0; attempt < 4 && !item; attempt++) {
+    item = await evalv(`(() => {
+      const labels = [
+        'Adicionar imagem de capa',
+        'Alterar imagem de capa',
+        'Editar imagem de capa',
+        'Add cover image',
+        'Change cover image',
+        'Edit cover image',
+      ];
+      const cands = [...document.querySelectorAll('a,button,[role=menuitem],[role=button],div')]
+        .map((e) => {
+          const t = (e.innerText || e.getAttribute('aria-label') || '').replace(/\\s+/g, ' ').trim();
+          if (!labels.some((l) => t === l || t.startsWith(l))) return null;
+          const r = e.getBoundingClientRect();
+          if (r.width < 2 || r.height < 2 || r.height > 80) return null;
+          return {
+            text: t.slice(0, 40),
+            x: r.x + r.width / 2,
+            y: r.y + r.height / 2,
+            h: r.height,
+            topish: r.y < 320,
+            exact: labels.includes(t),
+          };
+        })
+        .filter(Boolean);
+      cands.sort((a, b) => Number(b.exact) - Number(a.exact) || a.h - b.h || a.y - b.y);
+      return cands.filter((c) => c.topish)[0] || cands[0] || null;
+    })()`);
+    if (!item) await sleep(700);
+  }
   if (item) {
     console.log('menu', item.text);
     await clickXY(item.x, item.y);
-    await sleep(2000);
+    await sleep(2500);
+  } else {
+    console.log('menu miss: Adicionar/Alterar imagem de capa');
   }
 
+  // Nova capa: Carregar*; capa existente: Alterar/Editar.
   for (const t of [
     'Carregar foto única',
+    'Selecionar imagem',
+    'Alterar foto',
     'Carregar foto',
     'Carregar',
     'Upload photo',
     'Upload single photo',
+    'Change photo',
+    'Editar',
+    'Edit',
   ]) {
     if (await clickText(t)) break;
   }

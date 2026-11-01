@@ -14,6 +14,7 @@ import {
 import {
   cadastrarNotaCompleta,
   dbInfo,
+  geocodeEmpresasPendentes,
   initDb,
   listCodigosBarras,
   listEmpresas,
@@ -94,6 +95,25 @@ app.get('/api/empresas', async (_req, res) => {
     return res.json({ ok: true, empresas });
   } catch (err) {
     console.error('[empresas:erro]', err.message);
+    return res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
+let geocodeRunning = false;
+app.post('/api/empresas/geocode', async (_req, res) => {
+  try {
+    if (!geocodeRunning) {
+      geocodeRunning = true;
+      geocodeEmpresasPendentes()
+        .catch((err) => console.error('[empresas:geocode]', err.message))
+        .finally(() => {
+          geocodeRunning = false;
+        });
+    }
+    const empresas = await listEmpresas();
+    return res.json({ ok: true, started: true, empresas });
+  } catch (err) {
+    console.error('[empresas:geocode]', err.message);
     return res.status(500).json({ ok: false, error: err.message });
   }
 });
@@ -191,6 +211,10 @@ app.post('/api/nota', async (req, res) => {
 });
 
 await initDb();
+
+geocodeEmpresasPendentes().catch((err) =>
+  console.warn('[geo:boot]', err.message),
+);
 
 const useHttp = /^(1|true|yes)$/i.test(String(process.env.USE_HTTP || ''));
 const host = process.env.HOST || (useHttp ? '127.0.0.1' : '0.0.0.0');

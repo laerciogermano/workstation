@@ -1,4 +1,5 @@
 import pg from 'pg';
+import { geocodeEndereco } from './geocode.js';
 
 const { Pool } = pg;
 
@@ -83,6 +84,11 @@ export async function initDb() {
       ON ${t('codigos_barras')}(codigo_barras);
     CREATE INDEX IF NOT EXISTS codigos_barras_empresa_idx
       ON ${t('codigos_barras')}(empresa_id);
+  `);
+
+  await p.query(`
+    ALTER TABLE ${t('empresas')} ADD COLUMN IF NOT EXISTS lat DOUBLE PRECISION;
+    ALTER TABLE ${t('empresas')} ADD COLUMN IF NOT EXISTS lng DOUBLE PRECISION;
   `);
 
   // Migração: unicidade (nota_id, codigo) — remove duplicatas e aplica UNIQUE se faltar
@@ -219,11 +225,72 @@ export async function listItensByNota(notaId, client = getPool()) {
   return r.rows;
 }
 
+export async function updateEmpresaCoords(id, lat, lng, client = getPool()) {
+  const r = await client.query(
+    `UPDATE ${t('empresas')} SET lat = $2, lng = $3 WHERE id = $1 RETURNING *`,
+    [id, lat, lng],
+  );
+  return r.rows[0] || null;
+}
+
+/** Preenche lat/lng faltantes via Nominatim (cache no banco). */
+export async function ensureEmpresasCoords(empresas, client = getPool()) {
+  const out = [];
+  for (const emp of empresas) {
+    if (emp.lat != null && emp.lng != null) {
+      out.push(emp);
+      continue;
+    }
+    if (!emp.endereco) {
+      out.push(emp);
+      continue;
+    }
+    try {
+      const coords = await geocodeEndereco(emp.endereco);
+      if (coords) {
+        const updated = await updateEmpresaCoords(
+          emp.id,
+          coords.lat,
+          coords.lng,
+          client,
+        );
+        out.push(updated || { ...emp, lat: coords.lat, lng: coords.lng });
+        console.log(
+          `[geo] empresa #${emp.id} ${coords.lat},${coords.lng} — ${emp.nome || emp.cnpj}`,
+        );
+      } else {
+        out.push(emp);
+        console.warn(`[geo] sem resultado #${emp.id}`);
+      }
+    } catch (err) {
+      console.warn(`[geo] falha #${emp.id}:`, err.message);
+      out.push(emp);
+    }
+    await new Promise((r) => setTimeout(r, 1100));
+  }
+  return out;
+}
+
 export async function listEmpresas(client = getPool()) {
   const r = await client.query(
     `SELECT * FROM ${t('empresas')} ORDER BY id DESC`,
   );
   return r.rows;
+}
+
+/** Geocodifica empresas ainda sem lat/lng e devolve a lista atualizada. */
+export async function geocodeEmpresasPendentes(client = getPool()) {
+  const pending = await client.query(
+    `SELECT * FROM ${t('empresas')}
+     WHERE (lat IS NULL OR lng IS NULL)
+       AND endereco IS NOT NULL
+       AND TRIM(endereco) <> ''
+     ORDER BY id`,
+  );
+  if (pending.rows.length) {
+    await ensureEmpresasCoords(pending.rows, client);
+  }
+  return listEmpresas(client);
 }
 
 export async function listNotas(client = getPool()) {

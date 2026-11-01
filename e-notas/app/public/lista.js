@@ -31,6 +31,9 @@ let itensSub = 'lista';
 let eanScanner = null;
 let eanScanBusy = false;
 let modalContext = { empresaNome: '', itemNome: '' };
+let empresasMap = null;
+let empresasMarkers = null;
+let geocodePoll = null;
 
 function setStatus(text, kind) {
   statusEl.textContent = text;
@@ -76,6 +79,13 @@ function setTab(name, { updateHash = true } = {}) {
   for (const [key, panel] of Object.entries(panels)) {
     panel.hidden = key !== name;
   }
+  if (name === 'empresas') {
+    requestAnimationFrame(() => {
+      ensureEmpresasMap();
+      empresasMap?.invalidateSize();
+      renderEmpresasMap(allEmpresas);
+    });
+  }
   if (updateHash) {
     const url = new URL(location.href);
     url.hash = name === 'itens' && itensSub === 'ean' ? 'codigos-barras' : name;
@@ -99,6 +109,100 @@ function setItensSub(name, { updateHash = true } = {}) {
   if (!panels.itens.hidden && updateHash) setTab('itens');
 }
 
+function ensureEmpresasMap() {
+  if (empresasMap || typeof L === 'undefined') return empresasMap;
+  empresasMap = L.map('empresas-mapa', {
+    scrollWheelZoom: true,
+  }).setView([-25.534, -49.206], 12);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; OpenStreetMap',
+  }).addTo(empresasMap);
+  empresasMarkers = L.layerGroup().addTo(empresasMap);
+  return empresasMap;
+}
+
+function renderEmpresasMap(rows) {
+  const statusElMap = document.getElementById('empresas-mapa-status');
+  if (typeof L === 'undefined') {
+    statusElMap.textContent = 'Mapa indisponível (Leaflet não carregou).';
+    statusElMap.className = 'status err';
+    return;
+  }
+  ensureEmpresasMap();
+  empresasMarkers.clearLayers();
+  const withCoords = rows.filter(
+    (r) => r.lat != null && r.lng != null && !Number.isNaN(Number(r.lat)),
+  );
+  const bounds = [];
+  for (const r of withCoords) {
+    const lat = Number(r.lat);
+    const lng = Number(r.lng);
+    const marker = L.marker([lat, lng]);
+    marker.bindPopup(
+      `<strong>${esc(r.nome || r.cnpj || `#${r.id}`)}</strong><br>${esc(r.endereco || '')}<br><span class="mono">${esc(r.cnpj || '')}</span>`,
+    );
+    empresasMarkers.addLayer(marker);
+    bounds.push([lat, lng]);
+  }
+  if (bounds.length === 1) {
+    empresasMap.setView(bounds[0], 15);
+  } else if (bounds.length > 1) {
+    empresasMap.fitBounds(bounds, { padding: [28, 28] });
+  }
+  const missing = rows.length - withCoords.length;
+  if (!rows.length) {
+    statusElMap.textContent = 'Nenhuma empresa para mapear.';
+    statusElMap.className = 'status';
+  } else if (withCoords.length === 0) {
+    statusElMap.textContent =
+      'Geocodificando endereços… os pins aparecem em seguida.';
+    statusElMap.className = 'status';
+    startGeocodePoll();
+  } else if (missing > 0) {
+    statusElMap.textContent = `${withCoords.length} pin(s) · ${missing} sem coordenada (geocodificando…).`;
+    statusElMap.className = 'status';
+    startGeocodePoll();
+  } else {
+    statusElMap.textContent = `${withCoords.length} empresa(s) no mapa.`;
+    statusElMap.className = 'status ok';
+    stopGeocodePoll();
+  }
+}
+
+function stopGeocodePoll() {
+  if (geocodePoll) {
+    clearInterval(geocodePoll);
+    geocodePoll = null;
+  }
+}
+
+function startGeocodePoll() {
+  if (geocodePoll) return;
+  fetchJson('api/empresas/geocode', { method: 'POST' }).catch((err) =>
+    console.warn(err),
+  );
+  let tries = 0;
+  geocodePoll = setInterval(async () => {
+    tries += 1;
+    try {
+      const data = await fetchJson('api/empresas');
+      allEmpresas = data.empresas || [];
+      renderEmpresas(allEmpresas);
+      const pending = allEmpresas.filter(
+        (e) =>
+          e.endereco &&
+          String(e.endereco).trim() &&
+          (e.lat == null || e.lng == null),
+      );
+      if (!pending.length || tries >= 20) stopGeocodePoll();
+    } catch (err) {
+      console.warn(err);
+      if (tries >= 5) stopGeocodePoll();
+    }
+  }, 2500);
+}
+
 function renderEmpresas(rows) {
   document.getElementById('count-empresas').textContent = `(${rows.length})`;
   document.getElementById('empresas').innerHTML = rows.length
@@ -109,6 +213,7 @@ function renderEmpresas(rows) {
         )
         .join('')
     : '<tr><td colspan="4">Nenhuma empresa</td></tr>';
+  if (!panels.empresas.hidden) renderEmpresasMap(rows);
 }
 
 function formatDataNota(emissao) {

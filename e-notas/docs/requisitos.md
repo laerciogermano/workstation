@@ -101,6 +101,11 @@ App: [`../app/README.md`](../app/README.md).
 - A lista de itens exibe a coluna **Data da nota** (emissão da NFC-e: `notas.emissao` → `nota_emissao` na API).
 - Não usar `itens.created_at` (quando a tupla foi inserida) como data visível no front.
 
+## REQ-013 — Mapa de empresas (2026-11-01)
+
+- Na aba **Empresas**, exibir um **mapa com pins** de cada empresa (Leaflet + OSM).
+- Coordenadas (`lat`/`lng`) gravadas em `enotas.empresas`, preenchidas por geocoding Nominatim a partir do `endereco` (cache; `POST /api/empresas/geocode` dispara pendentes).
+
 ---
 
 ## Próximos passos

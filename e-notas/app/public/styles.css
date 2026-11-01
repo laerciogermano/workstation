@@ -88,6 +88,28 @@ h2 {
   margin: 1.5rem 0 0;
 }
 
+.empresas-mapa {
+  height: 320px;
+  margin: 0 0 0.75rem;
+  border: 1px solid #243040;
+  border-radius: 10px;
+  background: #1a222c;
+  z-index: 0;
+}
+
+.empresas-mapa .leaflet-container {
+  height: 100%;
+  width: 100%;
+  border-radius: 10px;
+  font: inherit;
+}
+
+.empresas-mapa .leaflet-popup-content {
+  margin: 0.55rem 0.7rem;
+  font-size: 0.85rem;
+  line-height: 1.35;
+}
+
 .tab-panel[hidden] {
   display: none;
 }

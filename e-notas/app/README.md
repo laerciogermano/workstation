@@ -37,7 +37,7 @@ Credenciais não vão no git (`.env` ignorado).
 | Rota | Função |
 |------|--------|
 | `/` | Scan do QR |
-| `/lista.html` | Listagem em abas: Empresas / Notas / Itens (subaba Códigos de barras; clique na nota → itens dela) |
+| `/lista.html` | Listagem em abas: Empresas (mapa+pins) / Notas / Itens (EAN; clique na nota → itens) |
 
 ## API
 
@@ -53,7 +53,8 @@ Resposta: `{ ok, created, empresaCriada, url, empresa, nota, itens }`.
 
 | Método | Rota | Resposta |
 |--------|------|----------|
-| `GET` | `/api/empresas` | `{ ok, empresas }` |
+| `GET` | `/api/empresas` | `{ ok, empresas }` (inclui `lat`/`lng` quando geocodificado) |
+| `POST` | `/api/empresas/geocode` | dispara geocode Nominatim das pendentes; `{ ok, started, empresas }` |
 | `GET` | `/api/notas` | `{ ok, notas }` (com `empresa_nome` / `empresa_cnpj`; ordem emissão DESC) |
 | `GET` | `/api/itens` | `{ ok, itens }` (com `empresa_nome`, `nota_numero`, `nota_emissao`, `chave_acesso`, `codigo_barras` se mapeado) |
 | `GET` | `/api/codigos-barras` | `{ ok, codigosBarras }` |

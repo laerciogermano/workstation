@@ -1,6 +1,6 @@
 # e-notas — app (scan QR)
 
-Front: escaneia o QR e envia a URL. Backend consulta a DANFE na **Fazenda PR**, cadastra **empresa** (se nova), **nota** e **uma linha de item por produto da nota** (histórico).
+Front: escaneia o QR e envia a URL; página `/lista.html` lista empresas, notas e itens. Backend consulta a DANFE na **Fazenda PR**, cadastra **empresa** (se nova), **nota** e **uma linha de item por produto da nota** (histórico).
 
 Persistência: **Postgres Contabo** (`connectmax`), schema `enotas` (via `.env`).
 
@@ -30,6 +30,13 @@ npm start
 
 Credenciais não vão no git (`.env` ignorado).
 
+## Páginas
+
+| Rota | Função |
+|------|--------|
+| `/` | Scan do QR |
+| `/lista.html` | Listagem de empresas, notas e itens |
+
 ## API
 
 `POST /api/nota` `{ "url": "http://www.fazenda.pr.gov.br/nfce/qrcode?p=..." }`
@@ -42,6 +49,12 @@ Credenciais não vão no git (`.env` ignorado).
 
 Resposta: `{ ok, created, empresaCriada, url, empresa, nota, itens }`.
 
+| Método | Rota | Resposta |
+|--------|------|----------|
+| `GET` | `/api/empresas` | `{ ok, empresas }` |
+| `GET` | `/api/notas` | `{ ok, notas }` (com `empresa_nome` / `empresa_cnpj`) |
+| `GET` | `/api/itens` | `{ ok, itens }` (com `empresa_nome`, `nota_numero`, `chave_acesso`) |
+
 ## Reverter
 
-Parar `:4173`. `DROP SCHEMA enotas CASCADE;` no Postgres. Voltar `db.js`/`.env` ao commit anterior (SQLite local, se houver).
+Parar `:4173`. Remover `/lista.html` + rotas `GET /api/{empresas,notas,itens}` (voltar ao commit anterior). Schema Postgres inalterado. `DROP SCHEMA enotas CASCADE;` só se quiser apagar dados.

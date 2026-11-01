@@ -44,16 +44,19 @@ Controles: altura **40 px** (sm 32 / lg 48). Fundo app `#F5F7FA`, superfície `#
 
 ## 3. Mapeamento `e-notas/app`
 
-| Atual (`app/public/styles.css`) | Alvo DS |
-|----------------------------------|---------|
-| Dark `#0f1419` / `#1a222c` | Light `--nt-bg` / `--nt-white` (consumer) |
-| `.btn` `#4a90d9` | `--nt-blue` `#0069B4` |
-| `.status.ok` | `--nt-green` |
-| `.search` / `.form-ean` | tokens input DS |
-| `table` / `.tabs` / `.modal` | tabela + tabs + card modal light |
-| Título “e-notas” | wordmark **notinhas.org** |
+Aplicado em `app/public/styles.css` + wordmark nas páginas (2026-11-01):
 
-Aplicar por tela sem reescrever tudo de uma vez; priorizar home de busca e scan.
+| Antes | Depois |
+|-------|--------|
+| Dark `#0f1419` / `#1a222c` | Light `--nt-bg` / `--nt-white` |
+| `.btn` `#4a90d9` | `--nt-blue` `#0069B4` · pill |
+| `.status.ok` / `.err` | `--nt-green-deep` / `--nt-err` |
+| `.search` / `.form-ean` | inputs light + focus ring azul |
+| `table` / `.tabs` / `.modal` | header mist, tabs underline, modal branco |
+| Título “e-notas” | wordmark **notinhas.org** (`.brand`) |
+| Scan `#reader` | viewport `--nt-ink` (exceção DS) |
+
+**Rollback UI:** `git checkout HEAD~1 -- e-notas/app/public/` (ou restore dos arquivos anteriores ao commit de tema).
 
 ---
 

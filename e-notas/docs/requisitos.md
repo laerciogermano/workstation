@@ -135,7 +135,8 @@ Curadoria: [`../marca/benchmarking-solucoes/README.md`](../marca/benchmarking-so
 - Componentes v1: botão, chip, busca/input, card de preço, lista, nav/tabs, tabela, empty/error/loading, scan.
 - Menor preço sempre verde + chip; loja + data em toda ocorrência; wordmark **notinhas.org** na UI.
 - Manual: [`../marca/design-system-notinhas-v1.html`](../marca/design-system-notinhas-v1.html) · mapa [`../design-system.md`](../design-system.md).
-- Card: [Criar design system](https://trello.com/c/qdH95gZX). Aplicação CSS no app fica fora deste REQ (só documentação + mapeamento).
+- Card: [Criar design system](https://trello.com/c/qdH95gZX).
+- App (`app/public/`): tema light com tokens `--nt-*`, wordmark notinhas.org; scan permanece viewport escuro.
 
 ---
 

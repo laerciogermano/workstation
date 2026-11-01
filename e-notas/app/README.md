@@ -1,6 +1,8 @@
 # e-notas — app (scan QR)
 
-Front: escaneia o QR e envia a URL; página `/lista.html` lista empresas, notas e itens. Em Itens, **Cadastrar EAN** abre modal (câmera + input manual) sem sair da lista; subaba **Códigos de barras** só consulta o mapeamento. Backend consulta a DANFE na **Fazenda PR**, cadastra **empresa** (se nova), **nota** e **uma linha de item por produto da nota** (histórico).
+Front **notinhas.org** (design system v1: light, azul `#0069B4` + verde `#00984B`, Plus Jakarta Sans). Escaneia o QR e envia a URL; `/lista.html` lista empresas, notas e itens. Em Itens, **Cadastrar EAN** abre modal (câmera + input manual); subaba **Códigos de barras** só consulta o mapeamento. Backend consulta a DANFE na **Fazenda PR**, cadastra **empresa** (se nova), **nota** e **uma linha de item por produto da nota** (histórico).
+
+Tema: [`../design-system.md`](../design-system.md) · tokens em `public/styles.css`.
 
 Persistência: **Postgres Contabo** (`connectmax`), schema `enotas` (via `.env`) — tabelas `empresas`, `notas`, `itens`, `codigos_barras`.
 

@@ -109,7 +109,7 @@ Ler o QR/URL da NFC-e (preço, estabelecimento, data, cód. interno), vincular E
 - Pedido + logística saem do próprio estabelecimento (ou rede parceira), sem reposicionar a loja como “depósito Full” de marketplace com margem de canal.
 - Escopo típico: carrinho → checkout → pagamento → logística (própria, parceira ou da loja-CD) → status do pedido.
 - Pré-requisitos: vitrine estável, API empresas, acordo com estabelecimentos (estoque/preço oficial — não só observação de NFC-e).
-- **Gap vs apps (literatura):** preço em iFood/99/marketplaces costuma ficar acima do balcão (ordens típicas ~+8% a +22% em mercado; ~+17% a +30% em restaurante — ver [`../marca/comparacao-precos-apps/`](../marca/comparacao-precos-apps/README.md)). O índice NFC-e permanece fonte de **preço físico**; não misturar séries sem rótulo de canal.
+- **Diferencial vs delivery apps:** o índice NFC-e é **preço de balcão**; iFood / 99Food / Rappi / Keeta vendem preço de canal (tipicamente ~+8% a +22% mercearia; ~+17% a +30% restaurante). Conclusão e evidências: [`../marca/comparacao-precos-apps/`](../marca/comparacao-precos-apps/README.md). Não misturar séries sem rótulo de canal; o contraste de marca é contra esses apps — não contra índices NFC-e peers.
 
 ### 5.10 Gestão de compras e análise financeira — *should*
 - A partir das **notas que o usuário depositou** (conta / sessão autenticada), expor o **extrato pessoal** de compras — distinto do índice público de preços.

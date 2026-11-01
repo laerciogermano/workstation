@@ -1,31 +1,42 @@
-# Comparação — preço físico (NFC-e) vs iFood / 99Food / outros
+# Diferencial notinhas — preço de balcão vs delivery apps
 
-Síntese a partir de **artigos e documentos públicos** (sem coleta em apps/sites de marketplace). Card: https://trello.com/c/fapxKp3l
+Estudo de **posicionamento**: o notinhas.shop indexa **preço de balcão** (NFC-e). O contraste competitivo relevante aqui é com **apps de delivery / marketplace**, não com outros índices NFC-e (Busca Preço, Nota Paraná, etc. — esses também miram físico).
 
-- Entrada: [`00-curadoria.html`](00-curadoria.html)
-- Tabela de achados: [`achados.csv`](achados.csv)
-- Task: [`../../tasks/6ae7409d4aa645aaa1dd06b4/README.md`](../../tasks/6ae7409d4aa645aaa1dd06b4/README.md)
-- PRD delivery *future*: [`../../docs/prd.md`](../../docs/prd.md) §4.7
+- Entrada: [`00-curadoria.html`](00-curadoria.html) / [`00-curadoria.pdf`](00-curadoria.pdf)
+- Evidências: [`achados.csv`](achados.csv)
+- Card: https://trello.com/c/fapxKp3l · PRD §5.9: [`../../docs/prd.md`](../../docs/prd.md)
 
-## Achados (ordem de grandeza)
+## Quem entra no contraste
 
-| Fonte | Escopo | Gap típico |
-|-------|--------|------------|
-| Abrasel (2022) | Prato iFood vs salão | **+17,5%** (sem frete) |
-| Mercado Mineiro / comOferta (BH, jul/2026) | 77 SKUs físico vs digital | mediana **+7,8%** online; Rappi/Amazon Now **+21,9%** |
-| BXTData (jan–mai/2026) | FMCG multi-canal | iFood **~+12%** vs “mercado”; até **35%** entre canais |
-| Revista E&S | Rede SP no iFood vs concorrentes no app | markup interno **8%** no canal digital; IC médio 105,2% |
-| InfoMoney (2026) | 99Food | “taxa de serviço” até **~5,6%** mesmo com frete “grátis” |
-| Folha / 99 (2025) | Custo do restaurante | simulação mercado ~**26%** do pedido vs modelo 99 com comissão 0 |
+| Marca | Papel no contraste |
+|-------|--------------------|
+| **iFood** (restaurante + Mercado) | Líder; preço de canal com comissão/taxas |
+| **99Food / 99Compras** | Guerra de preço; taxa de serviço mesmo com “frete grátis” |
+| **Rappi** (+ Amazon Now onde acoplado) | Markup alto vs físico em mercearia (BH) |
+| **Keeta** e similares | Mesmo modelo de marketplace de entrega |
 
-## Implicação notinhas.shop
+**Fora deste estudo (mesmo eixo “balcão”):** Busca Preço, Nota Preço, Mercado Certo, GoMarket, Qual o Preço, PoupApp, Nota Paraná, MP Brasil — ver [`../benchmarking-solucoes/`](../benchmarking-solucoes/README.md).
 
-Índice NFC-e = **preço de balcão observado**. Não misturar com preço de app sem rótulo de fonte. Gap apps reforça valor do índice físico e informa a trilha delivery (§4.7) sem scrapear marketplaces.
+## Evidência (ordem de grandeza)
+
+| Fonte | Delivery app | Gap vs balcão / salão |
+|-------|--------------|------------------------|
+| Abrasel (2022) | iFood | **+17,5%** prato vs salão (s/ frete) |
+| Abrasel / UOL TAB (2025) | iFood (estimativa) | **+20–30%** vs restaurante |
+| Mercado Mineiro BH (2026) | Amazon Now / Rappi | **+21,9%** vs média física |
+| Mercado Mineiro BH (2026) | digital em geral | mediana **+7,8%** (marketplaces puxam mais) |
+| BXTData (2026) | iFood | **~+12%** vs “mercado” (fonte comercial) |
+| InfoMoney (2026) | 99Food | taxa serviço até **~5,6%** (além do item) |
+
+## Conclusão
+
+1. **Delivery apps não vendem o preço de balcão** — vendem preço de canal (item + comissão + logística + taxas), tipicamente **acima** do físico (~+8% a +22% mercearia; ~+17% a +30% restaurante).
+2. **notinhas.shop se diferencia dessas marcas** ao expor o **custo real de prateleira** observado na NFC-e — o que o consumidor paga no caixa, sem markup de app.
+3. Esse eixo **não** diferencia o notinhas dos apps/portais de nota fiscal; o diferencial vs eles é produto (geo, vitrine, split, API, cooperativa).
+4. Implicação: marketing e PRD devem contrastar explicitamente com **iFood / 99 / Rappi / Keeta**; delivery futuro (§5.9) exige preço oficial do canal, **sem misturar** na série NFC-e.
 
 ## Rollback
 
 ```bash
-rm -rf e-notas/marca/comparacao-precos-apps
-# reabrir card se arquivado:
-# trello card:archive --id 6ae7409d4aa645aaa1dd06b4  # (já Done)
+git checkout -- e-notas/marca/comparacao-precos-apps
 ```

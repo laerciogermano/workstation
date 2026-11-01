@@ -122,7 +122,8 @@ Insumos do card [Benchmarking soluções similares](https://trello.com/c/1fMjqGd
 - **Integrações via API para empresas** — API B2B para estabelecimentos/parceiros consultarem ou alimentarem o índice.
 - **Centro de distribuição** — cada estabelecimento vira **estoque de vendas online** (CD local) a partir da vitrine/cesta; sem margem de marketplace (ver [PRD](prd.md) §5.9).
 - **Gestão de compras e análise financeira** — extrato das notas do usuário: o que / quando / onde comprou; gasto por mês; rankings e tendência (ver [PRD](prd.md) §5.10).
-- **Fonte do preço** — observações do índice são NFC-e (balcão). Preços de apps/marketplaces, se exibidos no futuro, devem vir com **rótulo de canal** e não misturar na mesma série histórica sem aviso (insumo: [`../marca/comparacao-precos-apps/`](../marca/comparacao-precos-apps/README.md)).
+- **Fonte do preço** — observações do índice são NFC-e (balcão). Preços de apps/marketplaces, se exibidos no futuro, devem vir com **rótulo de canal** e não misturar na mesma série histórica sem aviso.
+- **Posicionamento vs delivery** — o diferencial “preço de balcão” contrasta com **iFood / 99Food / Rappi / Keeta** (e similares); não usar o mesmo argumento como diferencial vs índices NFC-e peers (insumo: [`../marca/comparacao-precos-apps/`](../marca/comparacao-precos-apps/README.md)).
 
 Curadoria: [`../marca/benchmarking-solucoes/README.md`](../marca/benchmarking-solucoes/README.md).
 

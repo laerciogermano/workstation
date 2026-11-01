@@ -162,21 +162,21 @@ ul.dots li::before{content:"";position:absolute;left:0;top:.55em;width:6px;heigh
     <div style="display:flex;flex-direction:column;gap:10px">
       <div class="card" style="background:var(--nt-blue-deep);color:#fff;border:0">
         <div class="label" style="color:#9ED0F5">Mecanismo</div>
-        <p style="font-size:16px;font-weight:700;line-height:1.35;margin-top:4px">Lemos o QR da NFC-e e indexamos produto (EAN), preço, loja e data.</p>
+        <p style="font-size:16px;font-weight:700;line-height:1.35;margin-top:4px">Lemos o QR da NFC-e (preço, loja, data, cód. interno) e vinculamos o EAN em colaboração.</p>
         <p style="font-size:12px;opacity:.9;margin-top:10px">Marca <b>notinhas.org</b> · repo <b>e-notas</b>.</p>
       </div>
       <div class="card acc" style="--acc:var(--nt-err)">
         <h3>Problema que o como resolve</h3>
-        <p style="font-size:12.5px;color:var(--nt-muted)">A nota já traz EAN, preço, loja e data — e some depois da compra. Apps de delivery encarecem o mesmo item. Falta índice consumer + comércio local.</p>
+        <p style="font-size:12.5px;color:var(--nt-muted)">A nota traz preço, loja e data — mas não o EAN; o vínculo é scan cooperativo. Apps de delivery encarecem o mesmo item. Falta índice consumer + comércio local.</p>
       </div>
       <div class="card" style="background:var(--nt-green-soft);border-color:rgba(0,152,75,.25)">
         <h3 style="color:var(--nt-green-deep)">Fluxo mínimo</h3>
-        <p style="font-size:12px;color:var(--nt-green-deep);font-weight:600">QR → parse NFC-e → EAN/preço/loja → busca → menor preço / split / perto</p>
+        <p style="font-size:12px;color:var(--nt-green-deep);font-weight:600">QR → parse NFC-e → preço/loja/cód. → vínculo EAN → busca → menor preço / split / perto</p>
       </div>
     </div>
     <div style="display:flex;flex-direction:column;gap:10px">
       <div class="label">Personas</div>
-      <div class="card"><h3>Contribuinte</h3><p style="font-size:12px;color:var(--nt-muted)">Escaneia/cola o QR e alimenta o índice.</p></div>
+      <div class="card"><h3>Contribuinte</h3><p style="font-size:12px;color:var(--nt-muted)">Cola o QR da nota e, se faltar, escaneia o EAN (vínculo cooperativo).</p></div>
       <div class="card"><h3>Comprador</h3><p style="font-size:12px;color:var(--nt-muted)">Compara, simula economia, acha perto, separa cesta; no futuro pede delivery.</p></div>
       <div class="card"><h3>Empresa / parceiro</h3><p style="font-size:12px;color:var(--nt-muted)">Consome ou alimenta o índice via API B2B.</p></div>
       <div class="card acc" style="--acc:var(--nt-green)">

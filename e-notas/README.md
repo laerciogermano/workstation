@@ -31,45 +31,46 @@ Comprar no dia a dia concentra três dores:
 |-----|---------------------|
 | **Preço opaco** | O mesmo EAN custa valores diferentes em lojas próximas; o comprador só descobre depois de ir até o caixa. |
 | **Comparação manual** | Apps e folhetos listam promoções genéricas; falta cruzar o **código de barras real** da compra com ocorrências recentes. |
-| **Dado descartado** | Toda nota fiscal já traz EAN, descrição, preço, loja e data no QR — e esse dado some na gaveta ou no PDF. |
+| **Dado descartado** | A nota traz descrição, preço, loja, data e código interno — **sem EAN**; o cupom vai para a gaveta/PDF sem virar índice. |
 
-As notas **já existem** e já carregam o mapa produto–preço–lugar. O que falta é **ingerir a URL do QR**, indexar por código de barras e servir a busca do **menor preço**.
+As notas **já existem** com preço–lugar–data. O que falta é **ingerir a URL do QR**, **vincular EAN em colaboração** (a nota não traz código de barras) e servir a busca do **menor preço**.
 
 ## Para quem
 
 | Persona | Para quem | Necessidade |
 |---------|-----------|-------------|
-| **Contribuinte** | Quem compra e guarda (ou escaneia) o cupom fiscal | Depositar a nota via QR e alimentar o índice sem digitar item a item |
+| **Contribuinte** | Quem compra e guarda (ou escaneia) o cupom fiscal | Depositar a nota via QR e, quando faltar, **escanear o EAN** para vincular ao código interno da loja |
 | **Comprador** | Quem quer pagar menos no próximo item | Buscar por EAN ou nome e ver o menor preço, loja e data |
 
 ## Objetivo
 
-Ser a **fonte de busca de menor preço** alimentada por notas fiscais reais: QR → itens com código de barras → índice consultável.
+Ser a **fonte de busca de menor preço** alimentada por notas fiscais reais: QR → itens (cód. interno + preço) → **vínculo EAN cooperativo** → índice consultável.
 
 ## Proposta de valor
 
-O e-notas trata a nota fiscal como **sensor coletivo de preço**: cada QR lido reforça o mapa EAN → preço → estabelecimento → data.
+O e-notas trata a nota fiscal como **sensor coletivo de preço**: cada QR lido + vínculo EAN reforça o mapa produto → preço → estabelecimento → data.
 
 | Necessidade | O que o e-notas faz |
 |-------------|---------------------|
 | Entrar a nota sem digitação | Aceitar a **URL do QR** da NFC-e / NF-e consumidor |
-| Saber o que foi comprado | Extrair itens com **EAN/GTIN**, descrição e preço unitário |
+| Saber o que foi comprado | Extrair itens com **código interno**, descrição e preço unitário |
+| Cruzar o mesmo produto entre lojas | **Vincular EAN** (scan cooperativo) a `(empresa, cód. unidade)` — a nota **não traz** código de barras |
 | Saber onde e quando | Registrar **estabelecimento** e **data** da nota |
 | Evitar lixo no índice | **Deduplicar** a mesma nota (chave de acesso / id da consulta) |
 | Achar o barato | Buscar por EAN ou descrição e listar o **menor preço** e as ocorrências |
 
 ### Exemplos
 
-**Contribuir** — Ana sai do mercado, escaneia o QR do cupom e cola a URL. O e-notas lê os itens, grava cada EAN com preço, loja e data.
+**Contribuir** — Ana sai do mercado, escaneia o QR do cupom e cola a URL. O e-notas lê itens (cód. interno, preço, loja, data). Depois ela (ou outra pessoa) escaneia o código de barras e vincula o EAN.
 
 **Buscar o menor** — Bruno quer o mesmo leite (EAN `789…`). A busca mostra R$ 4,29 no Mercado X (ontem) e R$ 4,89 no Mercado Y (hoje) — o menor preço em destaque.
 
-**Sem EAN** — Um item só veio com descrição interna da loja. Entra no índice pela descrição normalizada; a busca por nome ainda encontra, mas com menor confiança de match.
+**Sem EAN ainda** — Item só com descrição/cód. interno: entra no índice da loja; até haver vínculo EAN, a comparação cross-loja fica pela descrição (confiança menor).
 
 ## Princípios
 
 1. **QR primeiro** — a entrada canônica é a URL do cupom, não cadastro manual de preço.
-2. **EAN é a chave** — quando existe código de barras, ele amarra ocorrências do mesmo produto.
+2. **EAN é a chave** — vem do **vínculo cooperativo** (não da nota); quando existe, amarra o mesmo produto entre lojas.
 3. **Preço contextualizado** — todo preço carrega loja e data; número solto não basta.
 4. **Nota única** — a mesma nota não reconta; deduplicação protege o índice.
 5. **Menor preço explícito** — a busca responde com o mínimo observado e as demais ocorrências.
@@ -82,9 +83,10 @@ O e-notas trata a nota fiscal como **sensor coletivo de preço**: cada QR lido r
 | Área | Em escopo |
 |------|-----------|
 | **Ingestão** | Receber URL do QR; validar que é URL de consulta de nota; buscar o conteúdo da consulta |
-| **Extração** | Ler itens (EAN quando houver, descrição, quantidade, preço unitário), estabelecimento e data |
+| **Extração** | Ler itens (cód. interno, descrição, quantidade, preço unitário), estabelecimento e data — **sem EAN na NFC-e** |
+| **Vínculo EAN** | Cadastrar EAN por `(empresa, cód. unidade)` via scan/manual cooperativo |
 | **Deduplicação** | Identificar nota já ingerida e ignorar reprocessamento |
-| **Índice** | Mapear EAN (e descrição) → observações de preço (loja, data, valor) |
+| **Índice** | Mapear EAN (quando vinculado) e descrição → observações de preço (loja, data, valor) |
 | **Busca** | Consultar por EAN ou texto; retornar menor preço e lista de ocorrências |
 | **Contribuinte / comprador** | Fluxos distintos de depositar nota e de buscar preço (conta mínima se necessário) |
 
@@ -105,7 +107,7 @@ Documento fiscal consultável pela **URL do QR**. Tem identificador de acesso, e
 
 ### Item
 
-Linha da nota: **código de barras (EAN/GTIN)** quando presente, descrição, quantidade e **preço unitário**.
+Linha da nota: **código interno** da loja, descrição, quantidade e **preço unitário**. O **EAN/GTIN** não vem na NFC-e; entra depois via vínculo cooperativo.
 
 ### Estabelecimento
 

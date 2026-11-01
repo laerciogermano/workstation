@@ -90,7 +90,8 @@ App: [`../app/README.md`](../app/README.md).
 
 - Na aba **Itens** existe a opção **Códigos de barras** para cadastrar o mapeamento:
   - **empresa** + **código da unidade** (código interno do item na nota) + **código de barras (EAN)**.
-- Finalidade: o EAN é o identificador comum entre empresas; cada loja usa códigos de unidade diferentes e a nota **não expõe** o código de barras — o vínculo é populado manualmente.
+- Finalidade: o EAN é o identificador comum entre empresas; cada loja usa códigos de unidade diferentes e a NFC-e / DANFE **não traz** o código de barras — o vínculo é populado **manualmente / em colaboração** (scan ou digitação).
+- Copy/visão/PRD **não** devem afirmar que a nota “já traz EAN”.
 - Chave natural: **`(empresa_id, codigo_unidade)`** — um EAN por código de unidade em cada empresa; reenvio atualiza o EAN (`UPSERT`).
 - Tabela `enotas.codigos_barras`. APIs: `GET` / `POST` `/api/codigos-barras`.
 - Na lista de itens: coluna **EAN** (quando já vinculado) e ação **Cadastrar EAN** / **Editar EAN**.

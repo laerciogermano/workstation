@@ -24,11 +24,11 @@ Cooperativo: quem contribui deposita a NFC-e; quem consulta usa o índice coleti
 
 ## 2. Problema
 
-Preço de mercado é opaco; a NFC-e já traz EAN, preço, loja e data, mas o dado some após a compra. Falta um índice consumer com comparação, histórico, cesta (inclusive apartada), **vitrine do estabelecimento**, **busca “onde comprar perto de mim”**, **gestão do que comprou / quando / quanto gasta** (análise financeira pessoal) e **API B2B**. Apps de marketplace encarecem o mesmo item com margem de canal — o índice NFC-e expõe o **preço físico** e o comércio local.
+Preço de mercado é opaco; a NFC-e traz preço, loja, data e código interno do item — **não o EAN** (o vínculo EAN é scan cooperativo). Sem índice consumer, o sinal de preço físico não vira comparação coletiva. Falta comparação, histórico, cesta (inclusive apartada), **vitrine do estabelecimento**, **busca “onde comprar perto de mim”**, **gestão do que comprou / quando / quanto gasta** (análise financeira pessoal) e **API B2B**. Apps de marketplace encarecem o mesmo item com margem de canal — o índice NFC-e + EAN colaborativo expõe o **preço físico** e o comércio local.
 
 ## 3. Como (mecanismo)
 
-Ler o QR/URL da NFC-e e indexar produto (EAN), preço, estabelecimento e data; servir:
+Ler o QR/URL da NFC-e (preço, estabelecimento, data, cód. interno), vincular EAN por contribuição cooperativa e servir:
 
 - menor preço e ocorrências;
 - histórico;
@@ -44,7 +44,7 @@ Ler o QR/URL da NFC-e e indexar produto (EAN), preço, estabelecimento e data; s
 
 | Persona | Job |
 |---------|-----|
-| **Contribuinte** | Escaneia/cola o QR e alimenta o índice |
+| **Contribuinte** | Cola o QR da nota e vincula EAN (scan cooperativo) quando a nota só traz cód. interno |
 | **Comprador** | Busca EAN/nome, compara estabelecimentos, monta cesta, vê vitrine, descobre **onde comprar perto**, **acompanha o próprio gasto**; no futuro, pede **delivery** |
 | **Empresa / parceiro** | Consome ou alimenta o índice via API; no futuro, recebe/atende pedidos de entrega |
 
@@ -177,7 +177,8 @@ Ver matriz em [`../marca/benchmarking-solucoes/00-curadoria.html`](../marca/benc
 ## 10. Rollback / caminho inverso
 
 - PRD: remover ou marcar seções como *revogado*; §1 definição e §9 alcance são o “antes” desta clarificação.
-- §3 mecanismo (antes): “índice EAN → preço → …” em setas; depois: frase legível “indexar produto (EAN), preço, estabelecimento e data”.  
+- §3 mecanismo (antes): setas / “indexar produto (EAN)…”; depois: NFC-e traz preço/loja/data/cód. interno; EAN = vínculo cooperativo (não vem na nota).
+- §2 (antes): “NFC-e já traz EAN…”; depois: nota **não** traz EAN.  
 - REQ-014 em `requisitos.md` espelha as capacidades.  
 - Card Trello e pasta de benchmarking: ver READMEs locais.  
 - Apresentação: slides 03 = o quê, 04–05 = como, 06–07 = matriz/alcance.

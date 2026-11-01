@@ -12,12 +12,15 @@ Controla um Chrome já rodando com `--remote-debugging-port=9222` (mesmo perfil/
 ./start-sofia-ribeiro.sh                       # CDP :9226 (Sofia Ribeiro / LI)
 ./start-pedro-almeida.sh                       # CDP :9227 (Pedro Almeida / LI)
 ./start-juliana-martins.sh                     # CDP :9228 (Juliana Martins / LI)
+./start-camila-ferreira.sh                     # CDP :9229 (Camila Ferreira / LI)
 # opcional URL: ./start-lucas-mendes.sh https://www.linkedin.com/
 ```
 
 Registro: [`../android-studio/contas-facebook-chrome.csv`](../android-studio/contas-facebook-chrome.csv)
 
 **Antes → depois (Marina):** sem perfil → `~/chrome-profiles/marina-costa` + `start-marina-costa.sh` (:9224). Rollback: fechar Chrome; `rm -rf ~/chrome-profiles/marina-costa`; remover script/linha do CSV.
+
+**Antes → depois (Camila):** só Chrome desktop genérico / AVD → `~/chrome-profiles/camila-ferreira` + `start-camila-ferreira.sh` (:9229). Sessão LI antiga não migra automaticamente (login se necessário). Rollback: fechar Chrome; `rm -rf ~/chrome-profiles/camila-ferreira`; remover script/linha README/CSV.
 
 **Antes → depois (Pedro / until-email):** signup completo (`linkedin-signup-cdp.mjs`) → variante `linkedin-signup-until-email-cdp.mjs` para no PIN e navega `/feed/` sem preencher onboarding. Ordem: nome+sobrenome → Continuar → se modal **Verificação de segurança** (iframe visível), pausa até resolução manual. Rollback: usar `./signup-*.sh` completo; apagar perfil `pedro-almeida`.
 

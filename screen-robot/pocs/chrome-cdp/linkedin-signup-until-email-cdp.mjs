@@ -224,16 +224,21 @@ async function main() {
     return true;
   };
 
-  /** Captcha / Verificação de segurança (Arkose/reCAPTCHA) — espera resolucao manual. */
+  /** Modal visivel de Verificação de segurança (apos Continuar do nome). Nao usa footer/iframes ocultos. */
   const hasSecurityChallenge = async () =>
     evalv(`(() => {
-      const body = (document.body?.innerText || '');
-      if (/verifica[cç][aã]o de seguran[cç]a|security (verification|check)|challenge/i.test(body)) return true;
-      const ifr = [...document.querySelectorAll('iframe')];
-      return ifr.some((f) =>
-        /protechts|challengeIframe|recaptcha|arkoselabs|funcaptcha/i.test(f.src || '') ||
-        /verifica[cç][aã]o de seguran[cç]a|security verification/i.test(f.title || ''),
-      );
+      const visible = (el) => {
+        if (!el || !el.getClientRects().length) return false;
+        const b = el.getBoundingClientRect();
+        return b.width > 80 && b.height > 80;
+      };
+      return [...document.querySelectorAll('iframe')].some((f) => {
+        if (!visible(f)) return false;
+        return (
+          /verifica[cç][aã]o de seguran[cç]a|security verification/i.test(f.title || '') ||
+          /checkpoint\\/challengeIframe/i.test(f.src || '')
+        );
+      });
     })()`);
 
   const waitSecurityChallenge = async (maxMs = 10 * 60_000) => {
@@ -360,12 +365,9 @@ async function main() {
     st = await snap();
   }
 
+  // fluxo: nome+sobrenome → Continuar → (aí) verificação de segurança se aparecer
   for (let nameTry = 0; nameTry < 3; nameTry++) {
     st = await snap();
-    if (await hasSecurityChallenge()) {
-      await waitSecurityChallenge();
-      st = await snap();
-    }
     if (
       !(
         st.inputs.some((i) => i.id === 'first-name') ||
@@ -373,6 +375,10 @@ async function main() {
           !/handle-confirmation|código de 6/i.test(st.href + st.body))
       )
     ) {
+      break;
+    }
+    if (await hasSecurityChallenge()) {
+      // modal ja aberto de tentativa anterior — nao re-clicar Continuar
       break;
     }
     await fill('#first-name', FIRST);
@@ -383,11 +389,10 @@ async function main() {
     console.log('name values', vals);
     await clickRe('continuar|continue');
     await sleep(4500);
-    if (await hasSecurityChallenge()) {
-      await waitSecurityChallenge();
-      break;
-    }
+    // so depois do Continuar do nome
+    if (await hasSecurityChallenge()) break;
   }
+  await waitSecurityChallenge();
 
   let emailConfirmed = false;
 

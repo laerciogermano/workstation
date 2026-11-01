@@ -18,7 +18,7 @@ Registro: [`../android-studio/contas-facebook-chrome.csv`](../android-studio/con
 
 **Antes → depois (Marina):** sem perfil → `~/chrome-profiles/marina-costa` + `start-marina-costa.sh` (:9224). Rollback: fechar Chrome; `rm -rf ~/chrome-profiles/marina-costa`; remover script/linha do CSV.
 
-**Antes → depois (Pedro / until-email):** signup completo (`linkedin-signup-cdp.mjs`) → variante `linkedin-signup-until-email-cdp.mjs` para no PIN e navega `/feed/` sem preencher onboarding. Se aparecer **Verificação de segurança** (captcha), o script pausa até resolução manual na janela Chrome. Rollback: usar `./signup-*.sh` completo; apagar perfil `pedro-almeida`.
+**Antes → depois (Pedro / until-email):** signup completo (`linkedin-signup-cdp.mjs`) → variante `linkedin-signup-until-email-cdp.mjs` para no PIN e navega `/feed/` sem preencher onboarding. Ordem: nome+sobrenome → Continuar → se modal **Verificação de segurança** (iframe visível), pausa até resolução manual. Rollback: usar `./signup-*.sh` completo; apagar perfil `pedro-almeida`.
 
 ## Cadastro LinkedIn via CDP (Marina)
 

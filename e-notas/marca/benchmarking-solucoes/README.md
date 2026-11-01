@@ -1,6 +1,6 @@
 # Benchmarking — soluções similares (notinhas.org)
 
-Matriz vs requisitos do PRD + **alcance geográfico** + gap vs proposta (sistema cooperativo de notinhas).
+Matriz vs **todas** as capacidades do PRD + **alcance geográfico** + gap vs proposta (sistema cooperativo de notinhas).
 
 - **Card Trello:** https://trello.com/c/1fMjqGdR
 - **PRD:** [`../../docs/prd.md`](../../docs/prd.md) (§1 definição · §9 concorrência)
@@ -10,19 +10,21 @@ Matriz vs requisitos do PRD + **alcance geográfico** + gap vs proposta (sistema
 
 ## Matriz (resumo)
 
-| Solução | Alcance | Comp. | Hist. | Apartada | Vitrine | Geo | API | vs notinhas (gap deles) |
-|---------|---------|-------|-------|----------|---------|-----|-----|-------------------------|
-| Busca Preço | MG, SP, RJ | Sim | Sim | Parcial | Parcial | Parcial | Não | Vitrine · split · API · centro |
-| Nota Preço | RM Rio (RJ) | Sim | Sim | **Sim** | Não | Parcial | Não | Vitrine · API · fora RJ |
-| Mercado Certo | Por cidade | Sim | Parcial | **Sim** | Não | **Sim** | Não | Vitrine · API · histórico |
-| GoMarket | Por cidade | Sim | Sim | Não | **Sim** | **Sim** | Não | Split · API · simular economia |
-| Qual o Preço | Perto (em breve) | Sim | Parcial | Parcial | **Sim** | **Sim** | Não | API · split explícito |
-| PoupApp | Nacional* | Sim | Parcial | Não | Não | Parcial | Não | Vitrine · split · API |
-| Nota Paraná | **PR** | Sim | Parcial | Não | Não | **Sim** | Parcial | Vitrine · split · UX · B2B |
-| MP Brasil | ~15–16 UFs** | Sim | Parcial | Não | Não | **Sim** | Não | Vitrine · split · API · não 27 UF |
-| Economiza AL | **AL** | Sim | Parcial | Via 3º | Não | **Sim** | **API** | Consumer UX · vitrine · split |
-| Quantto | B2B contratual | Sim | Sim | N/A | N/A | Regional | **B2B** | Não é consumer cooperativo |
-| **notinhas.org** | Lab **PR** → expansão*** | Alvo | Alvo | Alvo | Alvo | Alvo | Alvo | Pacote §1 + preço sem margem app |
+| Solução | Alcance | Comp | Hist | Apart | Vitr | Geo | Rank | Gasto | API | Deliv |
+|---------|---------|------|------|-------|------|-----|------|-------|-----|-------|
+| Busca Preço | MG, SP, RJ | Sim | Sim | Parc. | Parc. | Parc. | Não | Não | Não | Não |
+| Nota Preço | RM Rio (RJ) | Sim | Sim | **Sim** | Não | Parc. | Não | Não | Não | Não |
+| Mercado Certo | Por cidade | Sim | Parc. | **Sim** | Não | **Sim** | Parc. | Não | Não | Não |
+| GoMarket | Por cidade | Sim | Sim | Não | **Sim** | **Sim** | Parc. | Não | Não | Não |
+| Qual o Preço | Perto (em breve) | Sim | Parc. | Parc. | **Sim** | **Sim** | Parc. | Não | Não | Não |
+| PoupApp | Nacional* | Sim | Parc. | Não | Não | Parc. | Não | Não | Não | Não |
+| Nota Paraná | **PR** | Sim | Parc. | Não | Não | **Sim** | Parc. | Não | Parc. | Não |
+| MP Brasil | ~15–16 UFs** | Sim | Parc. | Não | Não | **Sim** | Parc. | Não | Não | Não |
+| Economiza AL | **AL** | Sim | Parc. | Via 3º | Não | **Sim** | Parc. | Não | **Sim** | Não |
+| Quantto | B2B contratual | Sim | Sim | N/A | N/A | Reg. | N/A | N/A | **B2B** | Não |
+| **notinhas.org** | Lab **PR** → expansão*** | Alvo | Alvo | Alvo | Alvo | Alvo | Alvo | Alvo | Alvo | **Fut.** |
+
+**Colunas:** Comp=comparar · Hist=histórico · Apart=split/economia · Vitr=vitrine + itens fora da web · Geo=item perto · Rank=lojas baratas/caras · Gasto=extrato/análise · API=B2B · Deliv=delivery/Full (loja-depósito).
 
 \*PoupApp declara monitoramento em 26 UF+DF; liquidez varia por cidade.  
 \*\*MP Brasil: adesão SEFAZ (lista muda; SP tipicamente fora) — **não é nacional**.  

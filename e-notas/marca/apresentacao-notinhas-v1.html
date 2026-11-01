@@ -236,37 +236,39 @@ ul.dots li::before{content:"";position:absolute;left:0;top:.55em;width:6px;heigh
 <section class="page mist">
   <div class="eyebrow"><b>03</b> Mercado</div>
   <h2>Matriz · capacidades + alcance</h2>
-  <p class="lead" style="margin-bottom:6px;font-size:12px">Fontes públicas · 2026-11 · legenda: <span class="y">Sim</span> · <span class="p">Parcial</span> · <span class="n">Não</span> · coluna <b>vs notinhas</b> = o que a proposta cobre a mais / o gap deles</p>
+  <p class="lead" style="margin-bottom:4px;font-size:11px">Fontes públicas · 2026-11 · <span class="y">Sim</span> · <span class="p">Parc.</span> · <span class="n">Não</span> · <span class="y">Alvo</span>/<span class="p">Fut.</span> = notinhas</p>
   <div style="flex:1;overflow:hidden">
-    <table class="m" style="font-size:10px">
+    <table class="m" style="font-size:8.5px">
       <thead>
         <tr>
           <th>Solução</th>
           <th>Alcance</th>
-          <th>Comp</th>
-          <th>Hist</th>
-          <th>Apart</th>
-          <th>Vitrine</th>
-          <th>Geo</th>
-          <th>API</th>
-          <th>vs notinhas (gap deles)</th>
+          <th title="Comparação de preços">Comp</th>
+          <th title="Histórico de preços">Hist</th>
+          <th title="Montagem apartada / simular economia">Apart</th>
+          <th title="Vitrine + itens fora da web">Vitr</th>
+          <th title="Busca geo / item perto">Geo</th>
+          <th title="Ranking lojas baratas/caras perto">Rank</th>
+          <th title="Gestão de compras / gasto">Gasto</th>
+          <th title="API empresas">API</th>
+          <th title="Delivery / Full (loja-depósito)">Deliv</th>
         </tr>
       </thead>
       <tbody>
-        <tr><td>Busca Preço</td><td>MG, SP, RJ</td><td><span class="y">Sim</span></td><td><span class="y">Sim</span></td><td><span class="p">Parc.</span></td><td><span class="p">Parc.</span></td><td><span class="p">Parc.</span></td><td><span class="n">Não</span></td><td>Vitrine loja · split · API · âncora centro</td></tr>
-        <tr><td>Nota Preço</td><td>RM Rio (RJ)</td><td><span class="y">Sim</span></td><td><span class="y">Sim</span></td><td><span class="y">Sim</span></td><td><span class="n">Não</span></td><td><span class="p">Parc.</span></td><td><span class="n">Não</span></td><td>Vitrine · API · fora do RJ</td></tr>
-        <tr><td>Mercado Certo</td><td>Por cidade (colab.)</td><td><span class="y">Sim</span></td><td><span class="p">Parc.</span></td><td><span class="y">Sim</span></td><td><span class="n">Não</span></td><td><span class="y">Sim</span></td><td><span class="n">Não</span></td><td>Vitrine · API · histórico cheio</td></tr>
-        <tr><td>GoMarket</td><td>Por cidade (colab.)</td><td><span class="y">Sim</span></td><td><span class="y">Sim</span></td><td><span class="n">Não</span></td><td><span class="y">Sim</span></td><td><span class="y">Sim</span></td><td><span class="n">Não</span></td><td>Split · API · simular economia</td></tr>
-        <tr><td>Qual o Preço</td><td>Perto de você (em breve)</td><td><span class="y">Sim</span></td><td><span class="p">Parc.</span></td><td><span class="p">Parc.</span></td><td><span class="y">Sim</span></td><td><span class="y">Sim</span></td><td><span class="n">Não</span></td><td>API · split explícito · delivery</td></tr>
-        <tr><td>PoupApp</td><td>Nacional (26 UF+DF)*</td><td><span class="y">Sim</span></td><td><span class="p">Parc.</span></td><td><span class="n">Não</span></td><td><span class="n">Não</span></td><td><span class="p">Parc.</span></td><td><span class="n">Não</span></td><td>Vitrine · split · API</td></tr>
-        <tr><td>Nota Paraná</td><td>PR</td><td><span class="y">Sim</span></td><td><span class="p">Parc.</span></td><td><span class="n">Não</span></td><td><span class="n">Não</span></td><td><span class="y">Sim</span></td><td><span class="p">Parc.</span></td><td>Vitrine · split · UX compra · B2B</td></tr>
-        <tr><td>MP Brasil</td><td>~15–16 UFs (adesão)**</td><td><span class="y">Sim</span></td><td><span class="p">Parc.</span></td><td><span class="n">Não</span></td><td><span class="n">Não</span></td><td><span class="y">Sim</span></td><td><span class="n">Não</span></td><td>Vitrine · split · API B2B · não é 27 UF</td></tr>
-        <tr><td>Economiza AL</td><td>AL</td><td><span class="y">Sim</span></td><td><span class="p">Parc.</span></td><td><span class="p">Via 3º</span></td><td><span class="n">Não</span></td><td><span class="y">Sim</span></td><td><span class="y">Sim</span></td><td>Consumer UX · vitrine · split</td></tr>
-        <tr><td>Quantto</td><td>B2B · contratual</td><td><span class="y">Sim</span></td><td><span class="y">Sim</span></td><td><span class="n">N/A</span></td><td><span class="n">N/A</span></td><td><span class="p">Reg.</span></td><td><span class="y">Sim</span></td><td>Não é consumer NFC-e cooperativo</td></tr>
-        <tr style="background:var(--nt-blue-soft)"><td><b>notinhas.org</b></td><td><b>Lab PR → expansão***</b></td><td><span class="y">Alvo</span></td><td><span class="y">Alvo</span></td><td><span class="y">Alvo</span></td><td><span class="y">Alvo</span></td><td><span class="y">Alvo</span></td><td><span class="y">Alvo</span></td><td><b>Pacote completo + preço sem margem app</b></td></tr>
+        <tr><td>Busca Preço</td><td>MG, SP, RJ</td><td><span class="y">Sim</span></td><td><span class="y">Sim</span></td><td><span class="p">Parc.</span></td><td><span class="p">Parc.</span></td><td><span class="p">Parc.</span></td><td><span class="n">Não</span></td><td><span class="n">Não</span></td><td><span class="n">Não</span></td><td><span class="n">Não</span></td></tr>
+        <tr><td>Nota Preço</td><td>RM Rio (RJ)</td><td><span class="y">Sim</span></td><td><span class="y">Sim</span></td><td><span class="y">Sim</span></td><td><span class="n">Não</span></td><td><span class="p">Parc.</span></td><td><span class="n">Não</span></td><td><span class="n">Não</span></td><td><span class="n">Não</span></td><td><span class="n">Não</span></td></tr>
+        <tr><td>Mercado Certo</td><td>Por cidade</td><td><span class="y">Sim</span></td><td><span class="p">Parc.</span></td><td><span class="y">Sim</span></td><td><span class="n">Não</span></td><td><span class="y">Sim</span></td><td><span class="p">Parc.</span></td><td><span class="n">Não</span></td><td><span class="n">Não</span></td><td><span class="n">Não</span></td></tr>
+        <tr><td>GoMarket</td><td>Por cidade</td><td><span class="y">Sim</span></td><td><span class="y">Sim</span></td><td><span class="n">Não</span></td><td><span class="y">Sim</span></td><td><span class="y">Sim</span></td><td><span class="p">Parc.</span></td><td><span class="n">Não</span></td><td><span class="n">Não</span></td><td><span class="n">Não</span></td></tr>
+        <tr><td>Qual o Preço</td><td>Perto (em breve)</td><td><span class="y">Sim</span></td><td><span class="p">Parc.</span></td><td><span class="p">Parc.</span></td><td><span class="y">Sim</span></td><td><span class="y">Sim</span></td><td><span class="p">Parc.</span></td><td><span class="n">Não</span></td><td><span class="n">Não</span></td><td><span class="n">Não</span></td></tr>
+        <tr><td>PoupApp</td><td>Nacional*</td><td><span class="y">Sim</span></td><td><span class="p">Parc.</span></td><td><span class="n">Não</span></td><td><span class="n">Não</span></td><td><span class="p">Parc.</span></td><td><span class="n">Não</span></td><td><span class="n">Não</span></td><td><span class="n">Não</span></td><td><span class="n">Não</span></td></tr>
+        <tr><td>Nota Paraná</td><td>PR</td><td><span class="y">Sim</span></td><td><span class="p">Parc.</span></td><td><span class="n">Não</span></td><td><span class="n">Não</span></td><td><span class="y">Sim</span></td><td><span class="p">Parc.</span></td><td><span class="n">Não</span></td><td><span class="p">Parc.</span></td><td><span class="n">Não</span></td></tr>
+        <tr><td>MP Brasil</td><td>~15–16 UFs**</td><td><span class="y">Sim</span></td><td><span class="p">Parc.</span></td><td><span class="n">Não</span></td><td><span class="n">Não</span></td><td><span class="y">Sim</span></td><td><span class="p">Parc.</span></td><td><span class="n">Não</span></td><td><span class="n">Não</span></td><td><span class="n">Não</span></td></tr>
+        <tr><td>Economiza AL</td><td>AL</td><td><span class="y">Sim</span></td><td><span class="p">Parc.</span></td><td><span class="p">Via 3º</span></td><td><span class="n">Não</span></td><td><span class="y">Sim</span></td><td><span class="p">Parc.</span></td><td><span class="n">Não</span></td><td><span class="y">Sim</span></td><td><span class="n">Não</span></td></tr>
+        <tr><td>Quantto</td><td>B2B</td><td><span class="y">Sim</span></td><td><span class="y">Sim</span></td><td><span class="n">N/A</span></td><td><span class="n">N/A</span></td><td><span class="p">Reg.</span></td><td><span class="n">N/A</span></td><td><span class="n">N/A</span></td><td><span class="y">Sim</span></td><td><span class="n">Não</span></td></tr>
+        <tr style="background:var(--nt-blue-soft)"><td><b>notinhas.org</b></td><td><b>Lab PR***</b></td><td><span class="y">Alvo</span></td><td><span class="y">Alvo</span></td><td><span class="y">Alvo</span></td><td><span class="y">Alvo</span></td><td><span class="y">Alvo</span></td><td><span class="y">Alvo</span></td><td><span class="y">Alvo</span></td><td><span class="y">Alvo</span></td><td><span class="p">Fut.</span></td></tr>
       </tbody>
     </table>
-    <p style="font-size:9px;color:var(--nt-muted);margin-top:6px">*PoupApp declara índice/monitoramento em todas as UFs (liquidez por cidade). **MP Brasil: adesão SEFAZ (ex. AC AL DF ES PA PE PI RJ RN RS RO RR SC SE TO; lista muda; SP tipicamente fora). ***notinhas: lab São José dos Pinhais/PR; expansão por liquidez de notas.</p>
+    <p style="font-size:8.5px;color:var(--nt-muted);margin-top:5px"><b>Colunas:</b> Comp=comparar · Hist=histórico · Apart=split/economia · Vitr=vitrine + itens fora da web · Geo=item perto · Rank=lojas baratas/caras · Gasto=extrato/análise · API=B2B · Deliv=delivery/Full. *PoupApp 26 UF+DF (liquidez/cidade). **MP Brasil adesão SEFAZ (não é 27 UF). ***Lab SJP/PR → expansão por liquidez.</p>
   </div>
   <div class="foot"><span class="wm" style="font-size:13px"><span class="n">notinhas</span><span class="o">.org</span></span><span>Apresentação v1 · Matriz</span><span>06</span></div>
 </section>
@@ -294,16 +296,18 @@ ul.dots li::before{content:"";position:absolute;left:0;top:.55em;width:6px;heigh
     </div>
     <div class="card">
       <div class="label">Quem já faz bem (capacidade)</div>
-      <table class="m">
+      <table class="m" style="font-size:10px">
         <tr><td>Comparação</td><td>Todos + gov</td></tr>
         <tr><td>Histórico</td><td>Busca Preço, Nota Preço, GoMarket</td></tr>
-        <tr><td>Montagem / economia</td><td>Nota Preço, Mercado Certo</td></tr>
-        <tr><td>Vitrine loja</td><td>GoMarket, Qual o Preço</td></tr>
-        <tr><td>Busca geo</td><td>Nota Paraná, MP Brasil, apps geo</td></tr>
+        <tr><td>Apart / economia</td><td>Nota Preço, Mercado Certo</td></tr>
+        <tr><td>Vitrine / fora da web</td><td>GoMarket, Qual o Preço (parcial)</td></tr>
+        <tr><td>Geo / Rank lojas</td><td>Gov + apps geo (Rank raro agregado)</td></tr>
+        <tr><td>Gasto pessoal</td><td>Quase ninguém no NFC-e</td></tr>
         <tr><td>API</td><td>Quantto, Economiza AL</td></tr>
+        <tr><td>Delivery / Full</td><td>Marketplaces (com margem)</td></tr>
         <tr><td>Alcance amplo</td><td>PoupApp*, MP Brasil (~16 UF)</td></tr>
       </table>
-      <p style="font-size:11px;color:var(--nt-muted);margin-top:8px">Regra: não competir com SEFAZ em “ter o dado”. Competir em <b>UX de compra física + pacote + B2B</b>.</p>
+      <p style="font-size:11px;color:var(--nt-muted);margin-top:8px">Regra: não competir com SEFAZ em “ter o dado”. Competir no <b>pacote completo</b> (vitrine + rank + gasto + Full futuro).</p>
     </div>
   </div>
   <div class="foot"><span class="wm" style="font-size:13px"><span class="n">notinhas</span><span class="o">.org</span></span><span>Apresentação v1 · Posicionamento</span><span>07</span></div>

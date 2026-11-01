@@ -171,7 +171,25 @@ Ver matriz em [`../marca/benchmarking-solucoes/00-curadoria.html`](../marca/benc
 | Quantto | **B2B contratual** (não consumer nacional) | B2B |
 | **notinhas.org** | **Lab PR** (ex. São José dos Pinhais) → expansão por liquidez NFC-e | Consumer cooperativo + B2B |
 
-### 9.2 Capacidade × gap da proposta
+### 9.2 Matriz de comparação (todas as capacidades)
+
+| Solução | Comp | Hist | Apart | Vitr | Geo | Rank | Gasto | API | Deliv |
+|---------|------|------|-------|------|-----|------|-------|-----|-------|
+| Busca Preço | Sim | Sim | Parc. | Parc. | Parc. | Não | Não | Não | Não |
+| Nota Preço | Sim | Sim | **Sim** | Não | Parc. | Não | Não | Não | Não |
+| Mercado Certo | Sim | Parc. | **Sim** | Não | **Sim** | Parc. | Não | Não | Não |
+| GoMarket | Sim | Sim | Não | **Sim** | **Sim** | Parc. | Não | Não | Não |
+| Qual o Preço | Sim | Parc. | Parc. | **Sim** | **Sim** | Parc. | Não | Não | Não |
+| PoupApp | Sim | Parc. | Não | Não | Parc. | Não | Não | Não | Não |
+| Nota Paraná | Sim | Parc. | Não | Não | **Sim** | Parc. | Não | Parc. | Não |
+| MP Brasil | Sim | Parc. | Não | Não | **Sim** | Parc. | Não | Não | Não |
+| Economiza AL | Sim | Parc. | Via 3º | Não | **Sim** | Parc. | Não | **Sim** | Não |
+| Quantto | Sim | Sim | N/A | N/A | Reg. | N/A | N/A | **Sim** | Não |
+| **notinhas.org** | Alvo | Alvo | Alvo | Alvo | Alvo | Alvo | Alvo | Alvo | **Fut.** |
+
+Comp=comparar · Hist=histórico · Apart=split/economia · Vitr=vitrine + itens fora da web · Geo=item perto · Rank=lojas baratas/caras · Gasto=extrato · API=B2B · Deliv=delivery/Full.
+
+### 9.3 Capacidade × gap da proposta
 
 | Capacidade | Quem já faz bem | Gap / proposta notinhas |
 |------------|-----------------|-------------------------|
@@ -188,7 +206,7 @@ Ver matriz em [`../marca/benchmarking-solucoes/00-curadoria.html`](../marca/benc
 | API empresas | Quantto, Economiza AL | B2B no eixo consumer NFC-e |
 | Delivery / Full (loja-depósito) | Marketplaces (com margem) | Futuro: loja física = depósito (estilo Full) |
 
-**Leitura:** ninguém no consumer junta o pacote da §1 (comparar + simular + perto + ranking lojas + vitrine + local + split + API + delivery futuro) com preço sem margem de marketplace. Gov cobre geo bem, mas sem vitrine/split/UX de compra. Alcance amplo (PoupApp / MP Brasil) ≠ pacote completo.
+**Leitura:** ninguém no consumer junta o pacote da §1 (comparar + simular + perto + ranking + vitrine + gasto + local + split + API + delivery futuro) com preço sem margem de marketplace. Gov cobre geo bem, mas sem vitrine/split/UX de compra. Alcance amplo (PoupApp / MP Brasil) ≠ pacote completo.
 
 ## 10. Rollback / caminho inverso
 

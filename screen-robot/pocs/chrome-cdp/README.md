@@ -8,7 +8,8 @@ Controla um Chrome já rodando com `--remote-debugging-port=9222` (mesmo perfil/
 ./start-marcelino-jidarir-facebook.sh          # CDP :9222
 ./start-laercio-germano.sh                     # CDP :9223
 ./start-marina-costa.sh                        # CDP :9224 (Marina Costa / LI)
-# opcional URL: ./start-marina-costa.sh https://www.linkedin.com/
+./start-lucas-mendes.sh                        # CDP :9225 (Lucas Mendes / LI)
+# opcional URL: ./start-lucas-mendes.sh https://www.linkedin.com/
 ```
 
 Registro: [`../android-studio/contas-facebook-chrome.csv`](../android-studio/contas-facebook-chrome.csv)
@@ -19,13 +20,10 @@ Registro: [`../android-studio/contas-facebook-chrome.csv`](../android-studio/con
 
 ```bash
 ./signup-marina-costa.sh --location "São Paulo, Brasil"
-# shell já passa email/senha/nome + cargo/empresa dos vendedores; override:
-./signup-marina-costa.sh --location "Campinas, São Paulo, Brasil" \
-  --cargo "Especialista em suprimentos e itens corporativos" \
-  --empresa ConectMax --code 123456
+./signup-lucas-mendes.sh   # ja inclui location/cargo/empresa; PIN via Mailcow
 ```
 
-Entradas CLI do `linkedin-signup-cdp.mjs`: `--email` `--password` `--first|--nome` `--last|--sobrenome` `--location` `--job|--cargo` `--company|--empresa` (`--code` se PIN). Após o PIN: **Pular** nas telas opcionais e **Continuar** no último passo (app). Cliques só via `Input.dispatchMouseEvent`. Rollback: apagar conta LI; CSV `nao_criada`.
+Entradas CLI: `--email` `--password` `--first|--nome` `--last|--sobrenome` `--location` `--job|--cargo` `--company|--empresa` (`--code` opcional — senao poll Mailcow). Após PIN: **Pular** + **Continuar** (app) + idade 18+. Cliques so CDP. **Antes → depois (Lucas):** sem conta → mailbox + Chrome `:9225` + script autonomo. Rollback: apagar mailbox/perfil; CSV `nao_criada`.
 
 ## Script
 

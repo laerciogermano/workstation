@@ -1,29 +1,23 @@
 #!/usr/bin/env node
 /**
- * Cadastro LinkedIn via CDP — mínimo.
+ * Cadastro LinkedIn via CDP — autonomo (sem intermediacao).
  *
- * Entradas (CLI):
- *   --email      --password
- *   --first|--nome   --last|--sobrenome
- *   --location
- *   --job|--cargo
- *   --company|--empresa
- *   --code   (PIN, se pedir)
+ * Entradas CLI (obrigatorias):
+ *   --email --password --first|--nome --last|--sobrenome
+ *   --location --job|--cargo --company|--empresa
+ * Opcional: --code PIN  (senao busca no Mailcow via SSH)
  *
- * Ex.:
- *   node linkedin-signup-cdp.mjs \
- *     --email marina.costa@clozzy.com.br --password 'in@12345678' \
- *     --first Marina --last Costa \
- *     --location "São Paulo, Brasil" \
- *     --job "Especialista em suprimentos e itens corporativos" \
- *     --company ConectMax
- *
- * Cliques: só Input.dispatchMouseEvent. Digitação: Input.insertText.
+ * Cliques: so Input.dispatchMouseEvent. Digita: Input.insertText.
  */
+import { spawnSync } from 'node:child_process';
+import { readFileSync, existsSync } from 'node:fs';
+import { resolve, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __dir = dirname(fileURLToPath(import.meta.url));
 const CDP = process.env.CDP_URL || 'http://127.0.0.1:9224';
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-/** Última ocorrência vence (permite defaults no shell + override). */
 function arg(...flags) {
   let found = '';
   const argv = process.argv;
@@ -31,7 +25,7 @@ function arg(...flags) {
     for (const flag of flags) {
       if (argv[i] === flag && argv[i + 1] && !String(argv[i + 1]).startsWith('-')) {
         found = argv[i + 1];
-      } else if (argv[i].startsWith(flag + '=')) {
+      } else if (String(argv[i]).startsWith(flag + '=')) {
         found = argv[i].slice(flag.length + 1);
       }
     }
@@ -46,11 +40,53 @@ const LAST = arg('--last', '--sobrenome');
 const LOCATION = arg('--location');
 const JOB = arg('--job', '--cargo');
 const COMPANY = arg('--company', '--empresa');
-const CODE = arg('--code');
+let CODE = arg('--code');
 
 const USO = `uso: node linkedin-signup-cdp.mjs \\
   --email EMAIL --password SENHA --first NOME --last SOBRENOME \\
-  --location "Cidade, País" --job "Cargo" --company "Empresa"`;
+  --location "Cidade, Pais" --job "Cargo" --company "Empresa"`;
+
+function mailSshPass() {
+  if (process.env.MAIL_SSH_PASS) return process.env.MAIL_SSH_PASS;
+  const cred = resolve(__dir, '../../../credenciais.md');
+  if (!existsSync(cred)) return '';
+  const m = readFileSync(cred, 'utf8').match(
+    /`root@144\.126\.154\.90`\s*—\s*`([^`]+)`/,
+  );
+  return m ? m[1] : '';
+}
+
+/** Ultimo PIN LinkedIn na INBOX (assunto encoded). */
+function fetchPin(email) {
+  const pass = mailSshPass();
+  if (!pass) return null;
+  const remote = `docker exec mailcowdockerized-dovecot-mailcow-1 doveadm fetch -u ${email} "hdr.date hdr.subject" MAILBOX INBOX 2>/dev/null | grep -E 'hdr\\.(date|subject)' | paste - - | tail -5`;
+  const r = spawnSync(
+    'sshpass',
+    [
+      '-e',
+      'ssh',
+      '-o',
+      'StrictHostKeyChecking=no',
+      '-o',
+      'PreferredAuthentications=password',
+      '-o',
+      'PubkeyAuthentication=no',
+      '-o',
+      'ConnectTimeout=20',
+      process.env.MAIL_SSH_HOST || 'root@144.126.154.90',
+      remote,
+    ],
+    { env: { ...process.env, SSHPASS: pass }, encoding: 'utf8', timeout: 45_000 },
+  );
+  const out = (r.stdout || '') + (r.stderr || '');
+  const codes = [...out.matchAll(/PIN_=C3=A9_(\d{6})/g)].map((m) => m[1]);
+  if (!codes.length) {
+    const alt = [...out.matchAll(/PIN[^\d]{0,20}(\d{6})/gi)].map((m) => m[1]);
+    return alt.length ? alt[alt.length - 1] : null;
+  }
+  return codes[codes.length - 1];
+}
 
 async function json(path) {
   const r = await fetch(`${CDP}${path}`);
@@ -95,7 +131,7 @@ async function main() {
   const page =
     pages.find((t) => t.type === 'page' && !String(t.url || '').startsWith('chrome://')) ||
     pages.find((t) => t.type === 'page');
-  if (!page?.webSocketDebuggerUrl) throw new Error(`sem página em ${CDP}`);
+  if (!page?.webSocketDebuggerUrl) throw new Error(`sem pagina em ${CDP}`);
 
   const s = session(page.webSocketDebuggerUrl);
   await s.ready;
@@ -133,7 +169,7 @@ async function main() {
   const snap = () =>
     evalv(`(() => ({
       href: location.href,
-      body: (document.body?.innerText || '').replace(/\\s+/g, ' ').slice(0, 400),
+      body: (document.body?.innerText || '').replace(/\\s+/g, ' ').slice(0, 450),
       inputs: [...document.querySelectorAll('input')].filter((e) => e.getClientRects().length).map((e) => {
         const b = e.getBoundingClientRect();
         return {
@@ -143,7 +179,7 @@ async function main() {
           x: b.x + b.width / 2, y: b.y + b.height / 2,
         };
       }),
-      btns: [...document.querySelectorAll('button,[role=button]')].filter((e) => e.getClientRects().length).map((e) => {
+      btns: [...document.querySelectorAll('button,a,[role=button]')].filter((e) => e.getClientRects().length).map((e) => {
         const b = e.getBoundingClientRect();
         return {
           text: (e.innerText || e.getAttribute('aria-label') || '').replace(/\\s+/g, ' ').trim().slice(0, 60),
@@ -155,17 +191,30 @@ async function main() {
   const clickRe = async (reSrc) => {
     const hit = await evalv(`(() => {
       const re = new RegExp(${JSON.stringify(reSrc)}, 'i');
-      const el = [...document.querySelectorAll('button,[role=button],input[type=submit]')].find((e) =>
+      const el = [...document.querySelectorAll('button,a,[role=button],input[type=submit]')].find((e) =>
         re.test(e.innerText || e.value || e.getAttribute('aria-label') || ''),
       );
       if (!el) return null;
       const b = el.getBoundingClientRect();
       return { text: (el.innerText || el.value || '').trim().slice(0, 60), x: b.x + b.width / 2, y: b.y + b.height / 2 };
     })()`);
-    if (!hit) throw new Error('botão: ' + reSrc);
+    if (!hit) throw new Error('botao: ' + reSrc);
     console.log('click', hit.text);
     await clickXY(hit.x, hit.y);
   };
+
+  /** Achado robusto de Pular (button ou link). */
+  const findSkip = async () =>
+    evalv(`(() => {
+      const el = [...document.querySelectorAll('button,a,[role=button]')].find((e) => {
+        if (!e.getClientRects().length) return false;
+        const t = (e.innerText || e.getAttribute('aria-label') || '').replace(/\\s+/g, ' ').trim();
+        return /^pular$|^skip$/i.test(t);
+      });
+      if (!el) return null;
+      const b = el.getBoundingClientRect();
+      return { text: (el.innerText || '').trim(), x: b.x + b.width / 2, y: b.y + b.height / 2 };
+    })()`);
 
   const fill = async (sel, text) => {
     const box = await evalv(`(() => {
@@ -271,18 +320,84 @@ async function main() {
       return { chosen, sample: opts.slice(0, 5).map((o) => o.text) };
     })()`);
     console.log('opts', pick.sample);
-    if (!pick.chosen) throw new Error('sem opção typeahead para: ' + text);
+    if (!pick.chosen) throw new Error('sem opcao typeahead: ' + text);
     console.log('pick', pick.chosen.text);
     await clickXY(pick.chosen.x, pick.chosen.y);
     await sleep(500);
   };
+
+  /** Pos-PIN / opcionais: Pular… e Continuar no get-the-app; idade 18+. */
+  async function drainOptional() {
+    for (let n = 0; n < 14; n++) {
+      let st = await snap();
+      console.log('drain', n, st.href.slice(0, 90), '|', st.body.slice(0, 80));
+
+      if (/feed/i.test(st.href) && !/onboarding/i.test(st.href)) {
+        return st;
+      }
+
+      // fechar toast
+      const close = st.btns.find((b) => /^fechar$|^close$|^dismiss$/i.test(b.text));
+      if (close && /c[oó]digo|notifica/i.test(st.body)) {
+        await clickXY(close.x, close.y);
+        await sleep(400);
+        continue;
+      }
+
+      // maior de 18
+      if (/maior de 18|birthday|tem mais de 18/i.test(st.body + st.href)) {
+        const yes = await evalv(`(() => {
+          const radios = [...document.querySelectorAll('input[type=radio]')];
+          if (!radios[0]) return null;
+          const b = radios[0].getBoundingClientRect();
+          return { x: b.x + b.width / 2, y: b.y + b.height / 2 };
+        })()`);
+        if (yes) {
+          await clickXY(yes.x, yes.y);
+          await sleep(300);
+        }
+        try {
+          await clickRe('continuar|continue');
+        } catch {
+          /* ignore */
+        }
+        await sleep(2500);
+        continue;
+      }
+
+      // carreira / foto / pessoas / seguir: sempre Pular
+      const skip = (await findSkip()) || st.btns.find((b) => /^pular$|^skip$/i.test(b.text));
+      if (skip || /job-seeker|carreira|people-you-may|follow-recommend|profile-photo/i.test(st.href + st.body)) {
+        const s = skip || (await findSkip());
+        if (s) {
+          console.log('click', s.text);
+          await clickXY(s.x, s.y);
+          await sleep(2000);
+          continue;
+        }
+      }
+
+      if (/get-the-app|aplicativo/i.test(st.href + st.body)) {
+        try {
+          await clickRe('continuar|continue');
+        } catch {
+          break;
+        }
+        await sleep(3000);
+        continue;
+      }
+
+      break;
+    }
+    return snap();
+  }
 
   let st = await snap();
   console.log('now', st.href);
 
   if (!/onboarding/i.test(st.href)) {
     await s.send('Page.navigate', { url: 'https://www.linkedin.com/signup' });
-    await sleep(3000);
+    await sleep(3500);
     st = await snap();
   }
 
@@ -290,7 +405,7 @@ async function main() {
     await fill('#email-or-phone', EMAIL);
     await fill('#password', PASS);
     await clickRe('avan[cç]ar|aceite|join|cadastre');
-    await sleep(3000);
+    await sleep(3500);
     st = await snap();
   }
 
@@ -298,63 +413,74 @@ async function main() {
     await fill('#first-name', FIRST);
     await fill('#last-name', LAST);
     await clickRe('continuar|continue');
-    await sleep(3000);
+    await sleep(3500);
     st = await snap();
   }
 
-  for (let i = 0; i < 6; i++) {
+  for (let i = 0; i < 12; i++) {
     st = await snap();
-    console.log('step', i, st.href.slice(0, 80), '|', st.body.slice(0, 100));
+    console.log('step', i, st.href.slice(0, 90), '|', st.body.slice(0, 100));
+
+    if (/feed/i.test(st.href) && !/onboarding/i.test(st.href)) {
+      console.log('ok feed');
+      break;
+    }
 
     if (/código|confirma|confirmation|handle-confirmation/i.test(st.href + st.body)) {
-      if (!CODE) throw new Error('passo PIN: passe --code 123456');
+      if (!CODE) {
+        console.log('PIN: poll Mailcow…');
+        for (let p = 0; p < 18; p++) {
+          CODE = fetchPin(EMAIL);
+          if (CODE) break;
+          console.log('poll', p + 1, 'sem PIN');
+          try {
+            await clickRe('reenviar|resend');
+          } catch {
+            /* ignore */
+          }
+          await sleep(8000);
+        }
+      }
+      if (!CODE) throw new Error('PIN nao chegou no Mailcow');
+      console.log('code', CODE);
       const pin = st.inputs.find(
         (inp) =>
           inp.type === 'text' ||
           inp.type === 'tel' ||
           /c[oó]digo|code|pin/i.test(inp.aria + inp.ph),
       );
-      if (!pin) throw new Error('campo PIN não encontrado');
+      if (!pin) throw new Error('campo PIN ausente');
       await clickXY(pin.x, pin.y);
+      await s.send('Input.dispatchMouseEvent', {
+        type: 'mousePressed',
+        x: pin.x,
+        y: pin.y,
+        button: 'left',
+        clickCount: 3,
+      });
+      await s.send('Input.dispatchMouseEvent', {
+        type: 'mouseReleased',
+        x: pin.x,
+        y: pin.y,
+        button: 'left',
+        clickCount: 3,
+      });
+      await s.send('Input.dispatchKeyEvent', {
+        type: 'keyDown',
+        key: 'Backspace',
+        code: 'Backspace',
+        windowsVirtualKeyCode: 8,
+      });
+      await s.send('Input.dispatchKeyEvent', {
+        type: 'keyUp',
+        key: 'Backspace',
+        code: 'Backspace',
+        windowsVirtualKeyCode: 8,
+      });
       await s.send('Input.insertText', { text: CODE });
-      console.log('code', CODE);
       await clickRe('continuar|continue|confirmar|verify');
       await sleep(3000);
-      // pós-PIN: Pular telas opcionais; no fim Continuar (ex.: get-the-app)
-      for (let s = 0; s < 12; s++) {
-        st = await snap();
-        const skip = st.btns.find((b) => /^pular$|^skip$/i.test(b.text));
-        if (skip) {
-          console.log('click', skip.text);
-          await clickXY(skip.x, skip.y);
-          await sleep(2000);
-          continue;
-        }
-        if (
-          /get-the-app|aplicativo/i.test(st.href + st.body) &&
-          st.btns.some((b) => /^continuar$|^continue$/i.test(b.text))
-        ) {
-          await clickRe('^continuar$|^continue$');
-          await sleep(3000);
-        }
-        break;
-      }
-      continue;
-    }
-
-    // Pular passos opcionais (carreira, foto, pessoas, seguir…)
-    if (st.btns.some((b) => /^pular$|^skip$/i.test(b.text))) {
-      const skip = st.btns.find((b) => /^pular$|^skip$/i.test(b.text));
-      console.log('click', skip.text);
-      await clickXY(skip.x, skip.y);
-      await sleep(2000);
-      continue;
-    }
-
-    // último passo: Continuar (baixar app)
-    if (/get-the-app|aplicativo/i.test(st.href + st.body)) {
-      await clickRe('continuar|continue');
-      await sleep(3000);
+      st = await drainOptional();
       continue;
     }
 
@@ -366,29 +492,44 @@ async function main() {
     }
 
     if (/profile-edit|experiência|cargo|empresa/i.test(st.href + st.body)) {
-      if (
-        st.inputs.some(
-          (inp) => inp.type === 'text' && /cargo|title|job/i.test(inp.aria + inp.ph) && !inp.value,
-        )
-      ) {
-        await typeahead(JOB, 'cargo|title|job');
-      }
+      const hasJob = st.inputs.some(
+        (inp) => inp.type === 'text' && /cargo|title|job/i.test(inp.aria + inp.ph),
+      );
+      const hasCo = st.inputs.some(
+        (inp) =>
+          inp.type === 'text' && /empresa|company|empregador/i.test(inp.aria + inp.ph),
+      );
+      if (hasJob) await typeahead(JOB, 'cargo|title|job');
+      st = await snap();
       if (
         st.inputs.some(
           (inp) =>
-            inp.type === 'text' &&
-            /empresa|company|empregador/i.test(inp.aria + inp.ph) &&
-            !inp.value,
+            inp.type === 'text' && /empresa|company|empregador/i.test(inp.aria + inp.ph),
         )
       ) {
+        await typeahead(COMPANY, 'empresa|company|empregador');
+      } else if (hasCo) {
         await typeahead(COMPANY, 'empresa|company|empregador');
       }
       try {
         await clickRe('continuar|continue');
-      } catch {
+      } catch (e) {
+        console.log('experience continue fail', e.message);
         break;
       }
       await sleep(3000);
+      continue;
+    }
+
+    // carreira / pular / idade / app
+    if (
+      (await findSkip()) ||
+      /job-seeker|carreira relevantes|get-the-app|aplicativo|maior de 18|birthday|people-you-may|follow-recommend|profile-photo/i.test(
+        st.href + st.body,
+      )
+    ) {
+      st = await drainOptional();
+      if (/feed/i.test(st.href)) break;
       continue;
     }
 
@@ -397,6 +538,12 @@ async function main() {
 
   st = await snap();
   console.log('FINAL', st.href, '|', st.body.slice(0, 200));
+  if (!/feed/i.test(st.href)) {
+    console.error('FALHOU: nao chegou no feed');
+    process.exitCode = 2;
+  } else {
+    console.log('OK feed');
+  }
   s.close();
 }
 

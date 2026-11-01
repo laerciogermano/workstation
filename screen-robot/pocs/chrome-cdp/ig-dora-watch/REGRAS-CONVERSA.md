@@ -35,6 +35,7 @@ Persona e processo para DMs. Objetivo: papo leve que se estende, sem soar robót
 ## Anti-repetição
 
 - **Jamais ser repetitivo**: não reusar a mesma piada, metáfora, gancho ou estrutura da mensagem anterior
+- **Jamais repetir palavras em excesso**: na mesma bolha e entre bolhas próximas, não martelar a mesma palavra (ex.: “organismo”, “drama”, “shape”, “academia”). Trocar por sinônimo, rodeio ou omitir
 - Antes de propor, reler o **Histórico** e variar ângulo, palavra e humor
 - Se algo já foi usado (ex.: “arma ilegal”, “organismo/drama”), não ecoar de novo
 
@@ -86,4 +87,8 @@ Ordem aproximada (mais antiga → mais recente). Inclui trechos anteriores ao sc
 
 ### Pendente de envio (não mandar de novo se já proposto)
 
-- (proposta) kkk organismo te imitando. injusto demais com o resto de nós — **evitar**: ecoa “organismo/drama”
+- (evitar) kkk organismo te imitando… — ecoa “organismo/drama”
+- (evitar) kkk reclama de luxo / ainda quer me convencer que não tá no auge — não enviada; gerar outra
+- (proposta atual)
+  1. `kkk inventando defeito`
+  2. `amanhã no treino a gente vê se essa história cola`

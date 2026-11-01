@@ -10,6 +10,7 @@ Controla um Chrome já rodando com `--remote-debugging-port=9222` (mesmo perfil/
 ./start-marina-costa.sh                        # CDP :9224 (Marina Costa / LI)
 ./start-lucas-mendes.sh                        # CDP :9225 (Lucas Mendes / LI)
 ./start-sofia-ribeiro.sh                       # CDP :9226 (Sofia Ribeiro / LI)
+./start-pedro-almeida.sh                       # CDP :9227 (Pedro Almeida / LI)
 # opcional URL: ./start-lucas-mendes.sh https://www.linkedin.com/
 ```
 
@@ -17,15 +18,18 @@ Registro: [`../android-studio/contas-facebook-chrome.csv`](../android-studio/con
 
 **Antes → depois (Marina):** sem perfil → `~/chrome-profiles/marina-costa` + `start-marina-costa.sh` (:9224). Rollback: fechar Chrome; `rm -rf ~/chrome-profiles/marina-costa`; remover script/linha do CSV.
 
+**Antes → depois (Pedro / until-email):** signup completo (`linkedin-signup-cdp.mjs`) → variante `linkedin-signup-until-email-cdp.mjs` para no PIN e navega `/feed/` sem preencher onboarding. Se aparecer **Verificação de segurança** (captcha), o script pausa até resolução manual na janela Chrome. Rollback: usar `./signup-*.sh` completo; apagar perfil `pedro-almeida`.
+
 ## Cadastro LinkedIn via CDP (Marina)
 
 ```bash
 ./signup-marina-costa.sh --location "São Paulo, Brasil"
 ./signup-lucas-mendes.sh   # PIN via Mailcow; Pular carreira
 ./signup-sofia-ribeiro.sh  # idem :9226
+./signup-pedro-almeida-until-email.sh  # so ate PIN; probe /feed sem onboarding
 ```
 
-Entradas CLI: `--email` `--password` `--first|--nome` `--last|--sobrenome` `--location` `--job|--cargo` `--company|--empresa` (`--code` opcional — senao poll Mailcow). **Regra:** se aparecer **Pular**, clica; no fim **Continuar** (app) + idade 18+. Cliques so CDP. Rollback: apagar mailbox/perfil; CSV `nao_criada`.
+Entradas CLI (completo): `--email` `--password` `--first|--nome` `--last|--sobrenome` `--location` `--job|--cargo` `--company|--empresa` (`--code` opcional — senao poll Mailcow). Until-email: so email/senha/nome. **Regra:** se aparecer **Pular**, clica. Cliques so CDP. Rollback: apagar mailbox/perfil; CSV `nao_criada`.
 
 ## Script
 

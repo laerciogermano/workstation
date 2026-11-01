@@ -4,3 +4,4 @@ data,nome,plataforma,chrome_user_data_dir,cdp_port,start_script,obs
 2026-11-01,Marina Costa,linkedin,~/chrome-profiles/marina-costa,9224,screen-robot/pocs/chrome-cdp/start-marina-costa.sh,perfil Chrome isolado (cookies/sessão); objetivo criar LI via CDP
 2026-11-01,Lucas Mendes,linkedin,~/chrome-profiles/lucas-mendes,9225,screen-robot/pocs/chrome-cdp/start-lucas-mendes.sh,perfil Chrome isolado; signup ./signup-lucas-mendes.sh
 2026-11-01,Sofia Ribeiro,linkedin,~/chrome-profiles/sofia-ribeiro,9226,screen-robot/pocs/chrome-cdp/start-sofia-ribeiro.sh,perfil Chrome isolado; signup ./signup-sofia-ribeiro.sh
+2026-11-01,Pedro Almeida,linkedin,~/chrome-profiles/pedro-almeida,9227,screen-robot/pocs/chrome-cdp/start-pedro-almeida.sh,perfil Chrome isolado; signup ate e-mail ./signup-pedro-almeida-until-email.sh

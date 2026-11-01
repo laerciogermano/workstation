@@ -15,6 +15,8 @@ CSV (data, nome, e-mail, status, senha_li, objetivo, obs): [`contas-linkedin-clo
 
 **Antes → depois (Marina signup CDP):** `nao_criada` → `criada_chrome_cdp` via `./signup-marina-costa.sh` (botão **Avançar** + nome); onboarding location→profile-edit. Rollback: status `nao_criada`; fechar sessão Chrome `marina-costa`.
 
+**Antes → depois (Pedro Almeida 2026-11-01):** sem linha → CSV `pedro.almeida@clozzy.com.br` + Chrome `:9227` + script until-email (para no PIN, probe `/feed`). Rollback: remover linha CSV; apagar mailbox/perfil; senha em `credenciais.md`.
+
 ## Inventário atual
 
 | Conta | AVD (`AVD_NAME`) | Porta console (serial) | Notas |

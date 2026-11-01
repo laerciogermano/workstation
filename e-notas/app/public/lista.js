@@ -907,8 +907,10 @@ function eanHaystack(r) {
 }
 
 function applyEanFilter() {
-  if (!buscaEanEl) return;
-  const q = String(buscaEanEl.value || '')
+  const countEanEl = document.getElementById('count-ean');
+  const tableEl = document.getElementById('codigos-barras');
+  if (!countEanEl || !tableEl) return;
+  const q = String(buscaEanEl?.value || '')
     .trim()
     .toLowerCase();
   const terms = q ? q.split(/\s+/).filter(Boolean) : [];
@@ -918,8 +920,8 @@ function applyEanFilter() {
         return terms.every((t) => hay.includes(t));
       })
     : allCodigosBarras;
-  document.getElementById('count-ean').textContent = `(${allCodigosBarras.length})`;
-  document.getElementById('codigos-barras').innerHTML = rows.length
+  countEanEl.textContent = `(${allCodigosBarras.length})`;
+  tableEl.innerHTML = rows.length
     ? rows
         .map(
           (r) =>

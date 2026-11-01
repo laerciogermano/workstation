@@ -29,3 +29,4 @@ Como registrar: [`README.md`](README.md).
 | 020 | 2026-11-01 | Executar card logo | [020-2026-11-01-executar-card-logo.md](020-2026-11-01-executar-card-logo.md) | Entrega SVG/PNG em marca/logo/; anexos no card; Done. |
 | 021 | 2026-11-01 | Vitrine loja em grid | [021-2026-11-01-vitrine-loja-grid-ifood.md](021-2026-11-01-vitrine-loja-grid-ifood.md) | Detalhe da loja: catálogo em grade foto/preço (ref. Produtos + iFood). |
 | 022 | 2026-11-01 | Clique foto visualização | [022-2026-11-01-clique-foto-visualizacao.md](022-2026-11-01-clique-foto-visualizacao.md) | Clique na foto do card abre lightbox da imagem. |
+| 023 | 2026-11-01 | Foto só no detalhe | [023-2026-11-01-foto-so-detalhe-produto.md](023-2026-11-01-foto-so-detalhe-produto.md) | Lightbox da foto só na tela do produto, não no feed. |

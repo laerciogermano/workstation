@@ -238,8 +238,8 @@ Curadoria: [`../marca/benchmarking-solucoes/README.md`](../marca/benchmarking-so
 - Arquivos em `public/ean-fotos/`; no boot (`initDb`) e no upsert de EAN, sincroniza `foto_url` se o arquivo existir.
 - APIs `GET /api/itens` e `GET /api/codigos-barras` devolvem `foto_url`.
 - Front (Notas detalhe, Itens, EAN, vitrine): coluna com thumbnail do produto.
-- Clique na **foto** (cards da aba Produtos, vitrine da loja e hero do detalhe) abre **lightbox** com a imagem ampliada; clique no restante do card continua abrindo o detalhe do produto.
-- Antes: só EAN textual / thumb sem ampliar. Depois: foto vinculada ao EAN + visualização em overlay.
+- Clique na **foto** no **detalhe do produto** abre **lightbox** ampliado; no feed (cards Produtos / vitrine) o clique na foto só abre o detalhe.
+- Antes: só EAN textual / thumb sem ampliar. Depois: foto vinculada ao EAN + visualização no detalhe.
 - Rollback: `ALTER TABLE enotas.codigos_barras DROP COLUMN foto_url;` + remover thumbs/lightbox no front / pasta `ean-fotos/`.
 
 ## REQ-028 — Detalhe do produto + timeline de preços (2026-11-01)

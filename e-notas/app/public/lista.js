@@ -450,13 +450,10 @@ function renderProdutosTab() {
               ?.nome ||
             'Mercado';
           const data = formatDataNota(r.nota_emissao) || '';
-          const mediaAttrs = foto
-            ? ` class="produto-media" data-open-foto="${esc(foto)}"`
-            : ` class="produto-media"`;
           return `<button type="button" class="produto-card" data-open-produto="${esc(
             r._key,
           )}">
-            <div${mediaAttrs}>${img}</div>
+            <div class="produto-media">${img}</div>
             <div class="produto-body">
               <h3 class="produto-nome">${esc(r.nome || 'Produto')}</h3>
               <p class="produto-preco">
@@ -680,13 +677,10 @@ function renderVitrineDetalhe(empresaId) {
           const data = formatDataNota(r.nota_emissao) || '';
           const isMenor =
             Number.isFinite(r._preco) && menores.get(r._key) === r._preco;
-          const mediaAttrs = foto
-            ? ` class="produto-media" data-open-foto="${esc(foto)}"`
-            : ` class="produto-media"`;
           return `<button type="button" class="produto-card" data-open-produto="${esc(
             r._key,
           )}">
-            <div${mediaAttrs}>${img}</div>
+            <div class="produto-media">${img}</div>
             <div class="produto-body">
               <h3 class="produto-nome">${esc(r.nome || 'Produto')}</h3>
               <p class="produto-preco">
@@ -1058,13 +1052,11 @@ function handleOpenFotoClick(ev) {
 }
 
 produtosGridEl?.addEventListener('click', (ev) => {
-  if (handleOpenFotoClick(ev)) return;
   const btn = ev.target.closest('[data-open-produto]');
   if (!btn) return;
   openProduto(btn.dataset.openProduto);
 });
 vitrineItensEl?.addEventListener('click', (ev) => {
-  if (handleOpenFotoClick(ev)) return;
   const btn = ev.target.closest('[data-open-produto]');
   if (!btn) return;
   openProduto(btn.dataset.openProduto);

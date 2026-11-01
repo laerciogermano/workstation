@@ -240,10 +240,6 @@ h2 {
   border-bottom: 1px solid var(--nt-line);
 }
 
-.produto-media[data-open-foto] {
-  cursor: zoom-in;
-}
-
 .produto-img {
   display: block;
   width: 100%;

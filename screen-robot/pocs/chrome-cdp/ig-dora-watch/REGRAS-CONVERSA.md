@@ -18,7 +18,7 @@ Persona e processo para DMs. Objetivo: papo leve que se estende, sem soar robót
 - Cada mensagem com nuance que desperte curiosidade / interesse e te deixe atraente
 - Abrir gancho para ela continuar — nunca fechar o papo (“blz”, “depois me conta” seco, ponto final emocional)
 
-## Desejo ( asymmetry )
+## Desejo (assimétrico)
 
 - Ela fica como **objeto de desejo**; você **não entrega** o objeto (você) — interesse sentido, nunca confessado
 - **Jamais** deixar claro que está interessado / carente / em cima: ela nunca deve achar que “te tem” ou que você está excessivamente a fim

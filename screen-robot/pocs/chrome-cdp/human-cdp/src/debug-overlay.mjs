@@ -226,19 +226,21 @@ export function enableDebugOverlayExpression() {
         return { status: 'pass', detail: 'avg=' + avg.toFixed(0) + 'ms' };
       };
 
-      const focusLive = () => {
-        const hasFocus = document.hasFocus();
-        const visible = document.visibilityState === 'visible' && !document.hidden;
-        return hasFocus && visible && !state.backgroundTainted;
-      };
+      /** Foco real da aba (sem “taint” sticky de blur transitório). */
+      const rawFocused = () =>
+        document.hasFocus() &&
+        document.visibilityState === 'visible' &&
+        !document.hidden;
 
       const noteActionFocus = () => {
-        if (!focusLive()) {
+        // só conta o estado NO momento da ação — blur antigo não condena clique focado
+        if (!rawFocused()) {
           state.actionsUnfocused++;
           state.backgroundTainted = true;
           state.backgroundLocked = true;
         } else {
           state.actionsFocused++;
+          if (!state.backgroundLocked) state.backgroundTainted = false;
         }
       };
 
@@ -260,14 +262,14 @@ export function enableDebugOverlayExpression() {
         const af = state.actionsFocused;
         const au = state.actionsUnfocused;
         let focusStatus = 'warn';
-        let focusDetail = 'sem ações';
+        let focusDetail = 'sem ações · agora ' + (rawFocused() ? 'focado' : 'sem foco');
         if (af + au > 0) {
           if (au > 0) {
             focusStatus = 'fail';
-            focusDetail = 'sem foco (' + au + ')';
+            focusDetail = 'ações sem foco ' + au + '/' + (af + au) + ' · agora ' + (rawFocused() ? 'focado' : 'sem foco');
           } else {
             focusStatus = 'pass';
-            focusDetail = 'com foco (' + af + ')';
+            focusDetail = 'com foco (' + af + ') · agora ' + (rawFocused() ? 'focado' : 'sem foco');
           }
         }
         results.push({ id: 'page-focus', status: focusStatus, detail: focusDetail });
@@ -327,7 +329,7 @@ export function enableDebugOverlayExpression() {
         set('human-cdp-debug-clicks', String(state.clicks.length));
         set('human-cdp-debug-keys', String(state.keys.length));
         set('human-cdp-debug-trusted', state.lastClickTrusted == null ? '—' : String(state.lastClickTrusted));
-        set('human-cdp-debug-focus', focusLive() ? 'sim' : 'não');
+        set('human-cdp-debug-focus', rawFocused() ? 'sim' : 'não');
       };
 
       const reset = () => {
@@ -383,15 +385,23 @@ export function enableDebugOverlayExpression() {
       window.addEventListener('click', onClick, true);
       window.addEventListener('keydown', onKey, true);
       window.addEventListener('blur', () => {
+        // blur transitório (activate/troca de app) — só marca taint; não trava veredito sozinho
         state.backgroundTainted = true;
         state._focusedSince = null;
         render();
       });
       window.addEventListener('focus', () => {
-        if (!state.backgroundLocked) state._focusedSince = performance.now();
+        // voltou o foco: limpa taint se não houve ação sem foco
+        if (!state.backgroundLocked) {
+          state.backgroundTainted = false;
+          state._focusedSince = performance.now();
+        }
         render();
       });
-      document.addEventListener('visibilitychange', () => render());
+      document.addEventListener('visibilitychange', () => {
+        if (rawFocused() && !state.backgroundLocked) state.backgroundTainted = false;
+        render();
+      });
 
       const resetBtn = rail.querySelector('.rail-reset');
       if (resetBtn && resetBtn.dataset.wired !== '1') {

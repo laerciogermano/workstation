@@ -97,7 +97,11 @@ Canônico: [`ig-dora-watch/REGRAS-CONVERSA.md`](ig-dora-watch/REGRAS-CONVERSA.md
 
 System prompt (IA = Laércio Germano no Tinder; **só a última não lida**; próxima msg + vinho se propício): [`PROMPT-TINDER-LAERCIO.md`](PROMPT-TINDER-LAERCIO.md). Voz canônica: [`core/PERSONALIDADE-LAERCIO-GERMANO.md`](../../../core/PERSONALIDADE-LAERCIO-GERMANO.md).
 
-**Antes → depois:** só personalidade/§7.1 → prompt autocontido com template PERFIL/HISTÓRICO + regra “uma não lida por vez”. Rollback: apagar o arquivo; usar só o doc de personalidade.
+**Autorização:** rascunho `[EU]` → “Autorizo enviar?” → só manda após ok explícito. Conteúdo decide sozinho; envio não.
+
+**Tom:** linguagem sempre informal de celular; **proibido** português extremamente correto.
+
+**Antes → depois:** só personalidade/§7.1 → prompt autocontido + ok antes de enviar + regra anti-português-certo. Rollback: apagar o arquivo; usar só o doc de personalidade.
 
 ### Loop contínuo (CDP :9230)
 

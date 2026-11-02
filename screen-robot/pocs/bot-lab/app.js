@@ -10,7 +10,11 @@ const state = {
   lastClickTrusted: null,
   hadMouseMoveBeforeClick: false,
   movedSinceLoad: false,
-  dragDistance: 0,
+  /** distância só de pointermove isTrusted durante drag */
+  dragDistanceTrusted: 0,
+  /** distância de eventos sintéticos (JS dispatch) durante drag */
+  dragDistanceSynthetic: 0,
+  lastDragTrusted: null,
   scrollEvents: 0,
   hoverWithoutMove: 0,
   formInteractions: 0,
@@ -322,19 +326,23 @@ function evaluateBehavior() {
     ...timingHuman(state.keys, { min: 4, softMin: 30 }),
   });
 
-  results.push({
-    id: "drag",
-    status:
-      state.dragDistance === 0
-        ? "warn"
-        : state.dragDistance > 30
-          ? "pass"
-          : "fail",
-    detail:
-      state.dragDistance === 0
-        ? "não arrastou"
-        : `${state.dragDistance.toFixed(0)}px`,
-  });
+  // drag: só passa com movimento trusted; sintético (JS) = fail
+  const dragTrusted = state.dragDistanceTrusted;
+  const dragSynth = state.dragDistanceSynthetic;
+  let dragStatus = "warn";
+  let dragDetail = "não arrastou";
+  if (dragSynth > 30 && dragTrusted <= 30) {
+    dragStatus = "fail";
+    dragDetail = `sintético ${dragSynth.toFixed(0)}px (isTrusted=false)`;
+  } else if (dragTrusted > 30) {
+    dragStatus = "pass";
+    dragDetail = `trusted ${dragTrusted.toFixed(0)}px`;
+    if (dragSynth > 0) dragDetail += ` (+synth ${dragSynth.toFixed(0)}px)`;
+  } else if (dragTrusted > 0 || dragSynth > 0) {
+    dragStatus = "fail";
+    dragDetail = `curto trusted=${dragTrusted.toFixed(0)} synth=${dragSynth.toFixed(0)}`;
+  }
+  results.push({ id: "drag", status: dragStatus, detail: dragDetail });
 
   return results;
 }
@@ -385,14 +393,17 @@ function renderVerdict(envChecks, behavior) {
   const verdict = el("score-verdict");
   const meta = el("score-meta");
 
-  let label = "humano";
-  let cls = "ok";
-  if (e.fail >= 2 || b.fail >= 2) {
+  // humano: evidência positiva mínima (pass≥3) e zero fails de comportamento
+  // robô: ≥2 fails OU 1 fail de sinal sintético/forte com pouca evidência
+  // inconclusivo: resto (muitos warns / pouca interação)
+  let label = "inconclusivo";
+  let cls = "warn";
+  if (e.fail >= 2 || b.fail >= 2 || (b.fail >= 1 && b.pass < 3)) {
     label = "robô / suspeito";
     cls = "fail";
-  } else if (e.fail >= 1 || b.fail >= 1 || (b.warn >= 3 && b.pass === 0)) {
-    label = "inconclusivo";
-    cls = "warn";
+  } else if (b.fail === 0 && b.pass >= 3) {
+    label = "humano";
+    cls = "ok";
   }
 
   verdict.textContent = label;
@@ -415,6 +426,11 @@ function wireBehavior() {
   window.addEventListener(
     "pointermove",
     (e) => {
+      // só trajetória trusted conta como humana (CDP Input = trusted; JS dispatch = não)
+      if (!e.isTrusted) {
+        refresh();
+        return;
+      }
       state.movedSinceLoad = true;
       const now = performance.now();
       if (now - lastSampleT < 16) return;
@@ -490,6 +506,7 @@ function wireBehavior() {
     startX = e.clientX;
     originLeft = handle.offsetLeft;
     lastX = e.clientX;
+    state.lastDragTrusted = e.isTrusted;
     handle.setPointerCapture?.(e.pointerId);
   };
   const onMove = (e) => {
@@ -498,7 +515,9 @@ function wireBehavior() {
     let next = originLeft + (e.clientX - startX);
     next = Math.max(6, Math.min(max, next));
     handle.style.left = `${next}px`;
-    state.dragDistance += Math.abs(e.clientX - lastX);
+    const delta = Math.abs(e.clientX - lastX);
+    if (e.isTrusted) state.dragDistanceTrusted += delta;
+    else state.dragDistanceSynthetic += delta;
     lastX = e.clientX;
     const pct = Math.round(((next - 6) / Math.max(1, max - 6)) * 100);
     handle.setAttribute("aria-valuenow", String(pct));
@@ -507,7 +526,9 @@ function wireBehavior() {
   const onUp = () => {
     if (!dragging) return;
     dragging = false;
-    logUi(`drag: ${state.dragDistance.toFixed(0)}px`);
+    const t = state.dragDistanceTrusted;
+    const s = state.dragDistanceSynthetic;
+    logUi(`drag: trusted=${t.toFixed(0)}px synth=${s.toFixed(0)}px`);
     refresh();
   };
   handle.addEventListener("pointerdown", onDown);
@@ -521,7 +542,9 @@ function wireBehavior() {
     state.lastClickTrusted = null;
     state.hadMouseMoveBeforeClick = false;
     state.movedSinceLoad = false;
-    state.dragDistance = 0;
+    state.dragDistanceTrusted = 0;
+    state.dragDistanceSynthetic = 0;
+    state.lastDragTrusted = null;
     handle.style.left = "6px";
     logUi("comportamento zerado");
     refresh();

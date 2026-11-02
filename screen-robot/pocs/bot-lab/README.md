@@ -32,13 +32,13 @@ Sem script: `python3 -m http.server 8766` nesta pasta.
 
 ### Comportamento
 
-- trajetória do ponteiro (teleporte / caminho curto)
+- trajetória do ponteiro **só com `isTrusted`** (teleporte / caminho curto)
 - mousemove antes do clique
 - `click.isTrusted`
 - ritmo de cliques e digitação
-- drag com distância
+- drag: **pass só com distância trusted**; drag JS sintético → **fail**
 
-**Veredito:** `humano` · `inconclusivo` · `robô / suspeito`. Layout: site à esquerda · trilho fixo à direita (veredito + comportamento).
+**Veredito:** `humano` (pass≥3 e 0 fails) · `robô / suspeito` (≥2 fails, ou ≥1 fail com pass&lt;3) · `inconclusivo` (pouca evidência). Layout: site à esquerda · trilho fixo à direita.
 
 ## Aceite rápido
 

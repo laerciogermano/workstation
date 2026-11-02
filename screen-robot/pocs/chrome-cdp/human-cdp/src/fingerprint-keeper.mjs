@@ -9,6 +9,7 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
 import { createCdpSession, getJson } from './cdp.mjs';
+import { enableDebugOverlayExpression } from './debug-overlay.mjs';
 import { applyFingerprint, normalizeFingerprint } from './fingerprint.mjs';
 
 const id = process.argv[2];
@@ -43,6 +44,10 @@ function loadFp() {
   return normalizeFingerprint(readMeta()?.fingerprint);
 }
 
+function loadDebug() {
+  return !!readMeta()?.debug;
+}
+
 mkdirSync(profileDir, { recursive: true });
 writeFileSync(pidPath, String(process.pid));
 
@@ -71,23 +76,42 @@ async function attachBrowser(fp) {
   const browser = createCdpSession(browserWs);
   await browser.ready;
 
-  /** @type {Map<string, { appliedScript: boolean, timer: NodeJS.Timeout|null }>} */
+  /** @type {Map<string, { appliedScript: boolean, debugScript: boolean, timer: NodeJS.Timeout|null }>} */
   const pages = new Map();
+
+  const injectDebug = async (session, st) => {
+    if (!loadDebug()) return;
+    const source = enableDebugOverlayExpression();
+    try {
+      if (!st.debugScript) {
+        await session.send('Page.addScriptToEvaluateOnNewDocument', { source });
+        st.debugScript = true;
+      }
+      await session.send('Runtime.evaluate', {
+        expression: source,
+        returnByValue: true,
+      });
+    } catch {
+      /* ignore */
+    }
+  };
 
   const schedule = (sessionId, { withNewDocumentScript = false } = {}) => {
     const st = pages.get(sessionId);
     if (!st) return;
     if (st.timer) clearTimeout(st.timer);
     st.timer = setTimeout(async () => {
-      const next = loadFp() || fp;
-      if (!next) return;
       const session = pageSession(browser, sessionId);
       try {
-        const needScript = withNewDocumentScript || !st.appliedScript;
-        await applyFingerprint(session, next, {
-          onNewDocument: needScript,
-        });
-        if (needScript) st.appliedScript = true;
+        const next = loadFp() || fp;
+        if (next) {
+          const needScript = withNewDocumentScript || !st.appliedScript;
+          await applyFingerprint(session, next, {
+            onNewDocument: needScript,
+          });
+          if (needScript) st.appliedScript = true;
+        }
+        await injectDebug(session, st);
       } catch {
         /* target sumiu */
         pages.delete(sessionId);
@@ -100,7 +124,7 @@ async function attachBrowser(fp) {
     const type = params?.targetInfo?.type;
     if (!sessionId || type !== 'page') return;
     if (pages.has(sessionId)) return;
-    pages.set(sessionId, { appliedScript: false, timer: null });
+    pages.set(sessionId, { appliedScript: false, debugScript: false, timer: null });
     try {
       await browser.send('Page.enable', {}, { sessionId });
       await browser.send('Runtime.enable', {}, { sessionId });
@@ -179,7 +203,9 @@ async function main() {
   console.log(`[fingerprint-keeper] ${id} pid=${process.pid} multi-target`);
   while (true) {
     const fp = loadFp();
-    if (!fp) {
+    const debug = loadDebug();
+    // sobe mesmo sem fingerprint se meta.debug (overlay em todas as abas)
+    if (!fp && !debug) {
       await sleep(2000);
       continue;
     }

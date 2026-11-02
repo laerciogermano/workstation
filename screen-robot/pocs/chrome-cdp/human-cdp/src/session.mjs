@@ -73,6 +73,9 @@ export class HumanCdpSession {
     this._lastFocusAt = 0;
     /** Emulation.setFocusEmulationEnabled ligado (padrão em toda sessão). */
     this._focusEmulationOn = false;
+    /** Page.addScriptToEvaluateOnNewDocument do overlay já registrado nesta sessão. */
+    this._debugOnNewDocument = false;
+    this._debugNavHook = false;
   }
 
   /**
@@ -95,10 +98,34 @@ export class HumanCdpSession {
     cursorByCdp.set(cursorKey(this.cdpUrl), { x, y });
   }
 
-  /** Injeta/reativa mouse virtual + painel fixo à direita (no-op se debug=false). */
+  /**
+   * Injeta/reativa mouse virtual + painel à direita (no-op se debug=false).
+   * Persiste em F5/navegações desta aba via Page.addScriptToEvaluateOnNewDocument
+   * + reapply em frameNavigated/load. Outras abas: meta.debug + fingerprint-keeper.
+   */
   async enableDebugOverlay() {
     if (!this.debug) return null;
-    return this.evaluate(enableDebugOverlayExpression());
+    const source = enableDebugOverlayExpression();
+    if (!this._debugOnNewDocument) {
+      try {
+        await this.send('Page.addScriptToEvaluateOnNewDocument', { source });
+        this._debugOnNewDocument = true;
+      } catch {
+        /* ignore */
+      }
+    }
+    if (!this._debugNavHook) {
+      this._debugNavHook = true;
+      const reapply = () => {
+        this.evaluate(source).catch(() => {});
+      };
+      this._cdp.on('Page.frameNavigated', (params) => {
+        if (params?.frame?.parentId) return;
+        reapply();
+      });
+      this._cdp.on('Page.loadEventFired', reapply);
+    }
+    return this.evaluate(source);
   }
 
   async _followDebugCursor(x, y) {

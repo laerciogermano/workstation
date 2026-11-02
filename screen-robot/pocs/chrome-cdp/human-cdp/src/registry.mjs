@@ -85,7 +85,9 @@ export function ensureFingerprintKeeper(id, opts = {}) {
   if (!row) return null;
   const meta = readMeta(row.id);
   const fp = normalizeFingerprint(meta?.fingerprint);
-  if (!fp) {
+  const debug = !!meta?.debug;
+  // keeper também cobre debug overlay em todas as abas (meta.debug)
+  if (!fp && !debug) {
     stopFingerprintKeeper(row.id);
     return null;
   }
@@ -252,6 +254,7 @@ export function listCdps() {
       hasMeta: Boolean(meta),
       defaultUrl: meta?.defaultUrl || '',
       obs: meta?.obs || '',
+      debug: !!meta?.debug,
       fingerprint: normalizeFingerprint(meta?.fingerprint),
       createdAt: meta?.createdAt || null,
       updatedAt: meta?.updatedAt || null,
@@ -491,14 +494,30 @@ export async function connectCdp(id, connectOpts = {}) {
     st = await startCdp(row.id, { url: connectOpts.url || row.defaultUrl });
   }
   if (!st.cdpUrl) throw new Error(`sem cdpUrl para ${row.id}`);
-  ensureFingerprintKeeper(row.id);
+
+  // debug:true → grava na meta e reinicia keeper p/ overlay em todas as abas
+  const wantDebug =
+    connectOpts.debug != null
+      ? !!connectOpts.debug
+      : !!readMeta(row.id)?.debug;
+  if (connectOpts.debug != null && readMeta(row.id)) {
+    try {
+      updateCdp(row.id, { debug: !!connectOpts.debug });
+    } catch {
+      /* meta ausente */
+    }
+  }
+  ensureFingerprintKeeper(row.id, {
+    restart: connectOpts.debug === true,
+  });
+
   const session = await connect({
     cdpUrl: st.cdpUrl,
     url: connectOpts.url,
     urlIncludes: connectOpts.urlIncludes,
     newTab: connectOpts.newTab,
     chromeApp: connectOpts.chromeApp,
-    debug: connectOpts.debug,
+    debug: wantDebug,
   });
   const fp =
     normalizeFingerprint(connectOpts.fingerprint) ||
@@ -507,6 +526,9 @@ export async function connectCdp(id, connectOpts = {}) {
   if (fp) {
     session._fingerprint = fp;
     await applyFingerprint(session, fp);
+  }
+  if (wantDebug) {
+    await session.enableDebugOverlay();
   }
   return session;
 }

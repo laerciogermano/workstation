@@ -79,7 +79,7 @@ CDP_URL=http://127.0.0.1:9230 npm run test:debug
 | `type` / `fill` | foco + click humano + `Input.insertText` ritmado (sem `text` no keyDown — evita char duplicado) |
 | `bringToFront` / `ensureFocus` | `Emulation.setFocusEmulationEnabled` (bringToFront + activate **comentados**) |
 | `enableFocusEmulation` | liga emulação de foco na página (padrão no `connect` / `ensureFocus` / keeper) |
-| `enableDebugOverlay` | re-injeta o painel (já chamado em `connect`/`goto` se `debug`) |
+| `enableDebugOverlay` | injeta painel + `addScriptToEvaluateOnNewDocument` (F5/nav na aba); `connectCdp({ debug: true })` grava `meta.debug` e o keeper aplica em **todas** as abas |
 | `evaluate` | só leitura/DOM — **não** usa foco; **não** use para clicar |
 
 Toda interação de UI **obriga foco** (não há mais `focused: false`).
@@ -180,6 +180,8 @@ Scripts CDP crus (`el.click`, `dispatchMouseEvent` sem move) → importam `human
 **Antes → depois (type):** `keyDown` com `text` + `insertText` → cada char duplicado (Rafaela→RRaaffaaeellaa). Agora: keyDown/Up sem `text`; só `insertText` insere. `fill` clear: `el.select()` + Backspace + setter nativo (Cmd+A CDP falhava no FB). Rollback: keyDown com `text` + clear só Ctrl+A.
 
 **Antes → depois (debug):** fora do bot-lab mostrava “fora do bot-lab” sem veredito → painel com detector portátil (trajetória/cliques/teclas/foco) e veredito live humano/robô/inconclusivo. No lab, usa o trilho nativo. Rollback: `debug: false`.
+
+**Antes → depois (debug persistente):** overlay só na aba do `connect` → `Page.addScriptToEvaluateOnNewDocument` + reapply em nav; `connectCdp({ debug: true })` → `meta.debug` + keeper injeta em todas as abas (keeper sobe mesmo sem fingerprint). Rollback: `updateCdp(id, { debug: false })` + `ensureFingerprintKeeper(id, { restart: true })`; sessão sem `addScript`.
 
 **Antes → depois (trajetória):** pontas com jitter + passos longos + press deslocado do último `mouseMoved` → teleportes no bot-lab. Agora: âncoras exatas, densify ≤36px, step ≥16ms, press na posição atual, cursor persistido por `cdpUrl`. Rollback: `trajectoryPoints`/`_moveTo`/`click` anteriores.
 

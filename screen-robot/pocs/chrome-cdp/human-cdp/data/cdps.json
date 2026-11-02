@@ -1,0 +1,108 @@
+{
+  "cdps": [
+    {
+      "id": "f5093635-149c-4ed2-9f84-edcdcf0d4cab",
+      "name": "Marcelino Jidarir",
+      "userDataDir": "~/chrome-profiles/marcelino-jidarir-facebook",
+      "port": 9222,
+      "startScript": "screen-robot/pocs/chrome-cdp/start-marcelino-jidarir-facebook.sh",
+      "platform": "facebook",
+      "defaultUrl": "",
+      "obs": "perfil Chrome isolado (cookies/sessão)",
+      "createdAt": "2026-11-02T16:00:51.638Z",
+      "updatedAt": "2026-11-02T16:00:51.639Z",
+      "source": "contas-facebook-chrome.csv"
+    },
+    {
+      "id": "cb6c39ae-faa7-4f08-9917-a1bd91a2b66a",
+      "name": "Laercio Germano",
+      "userDataDir": "~/chrome-profiles/laercio-germano",
+      "port": 9223,
+      "startScript": "screen-robot/pocs/chrome-cdp/start-laercio-germano.sh",
+      "platform": "",
+      "defaultUrl": "",
+      "obs": "perfil Chrome isolado (cookies/sessão)",
+      "createdAt": "2026-11-02T16:00:51.639Z",
+      "updatedAt": "2026-11-02T16:00:51.639Z",
+      "source": "contas-facebook-chrome.csv"
+    },
+    {
+      "id": "f4dd129c-ca35-4b7f-8bd3-9a01850633d4",
+      "name": "Marina Costa",
+      "userDataDir": "~/chrome-profiles/marina-costa",
+      "port": 9224,
+      "startScript": "screen-robot/pocs/chrome-cdp/start-marina-costa.sh",
+      "platform": "linkedin",
+      "defaultUrl": "",
+      "obs": "perfil Chrome isolado (cookies/sessão); objetivo criar LI via CDP",
+      "createdAt": "2026-11-02T16:00:51.639Z",
+      "updatedAt": "2026-11-02T16:00:51.639Z",
+      "source": "contas-facebook-chrome.csv"
+    },
+    {
+      "id": "fda6c4d8-eb69-4228-8288-f02a6c1f5e78",
+      "name": "Lucas Mendes",
+      "userDataDir": "~/chrome-profiles/lucas-mendes",
+      "port": 9225,
+      "startScript": "screen-robot/pocs/chrome-cdp/start-lucas-mendes.sh",
+      "platform": "linkedin",
+      "defaultUrl": "",
+      "obs": "perfil Chrome isolado; signup ./signup-lucas-mendes.sh",
+      "createdAt": "2026-11-02T16:00:51.639Z",
+      "updatedAt": "2026-11-02T16:00:51.639Z",
+      "source": "contas-facebook-chrome.csv"
+    },
+    {
+      "id": "82e0e2ee-4fa4-4219-b9d5-99528b498dfd",
+      "name": "Sofia Ribeiro",
+      "userDataDir": "~/chrome-profiles/sofia-ribeiro",
+      "port": 9226,
+      "startScript": "screen-robot/pocs/chrome-cdp/start-sofia-ribeiro.sh",
+      "platform": "linkedin",
+      "defaultUrl": "",
+      "obs": "perfil Chrome isolado; signup ./signup-sofia-ribeiro.sh",
+      "createdAt": "2026-11-02T16:00:51.639Z",
+      "updatedAt": "2026-11-02T16:00:51.639Z",
+      "source": "contas-facebook-chrome.csv"
+    },
+    {
+      "id": "6635cfe8-ee65-4632-b29c-e49ffe6bfdc8",
+      "name": "Pedro Almeida",
+      "userDataDir": "~/chrome-profiles/pedro-almeida",
+      "port": 9227,
+      "startScript": "screen-robot/pocs/chrome-cdp/start-pedro-almeida.sh",
+      "platform": "linkedin",
+      "defaultUrl": "",
+      "obs": "perfil Chrome isolado; signup ate e-mail ./signup-pedro-almeida-until-email.sh",
+      "createdAt": "2026-11-02T16:00:51.639Z",
+      "updatedAt": "2026-11-02T16:00:51.639Z",
+      "source": "contas-facebook-chrome.csv"
+    },
+    {
+      "id": "9fd39207-be9e-41d8-ab28-b518adc6dd7e",
+      "name": "Juliana Martins",
+      "userDataDir": "~/chrome-profiles/juliana-martins",
+      "port": 9228,
+      "startScript": "screen-robot/pocs/chrome-cdp/start-juliana-martins.sh",
+      "platform": "linkedin",
+      "defaultUrl": "",
+      "obs": "perfil Chrome isolado; signup ate e-mail ./signup-juliana-martins-until-email.sh",
+      "createdAt": "2026-11-02T16:00:51.639Z",
+      "updatedAt": "2026-11-02T16:00:51.639Z",
+      "source": "contas-facebook-chrome.csv"
+    },
+    {
+      "id": "ffe38c82-b9cf-46ed-9f2e-6dca552e276f",
+      "name": "Germano",
+      "userDataDir": "~/chrome-profiles/germano",
+      "port": 9230,
+      "startScript": "screen-robot/pocs/chrome-cdp/start-germano.sh",
+      "platform": "hostinger",
+      "defaultUrl": "",
+      "obs": "perfil Chrome isolado; painel Hostinger dominio rolego.com.br",
+      "createdAt": "2026-11-02T16:00:51.639Z",
+      "updatedAt": "2026-11-02T16:00:51.639Z",
+      "source": "contas-facebook-chrome.csv"
+    }
+  ]
+}

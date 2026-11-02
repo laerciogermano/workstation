@@ -52,6 +52,34 @@ CDP_URL=http://127.0.0.1:9230 npm run test:bot-lab
 # esperado: veredicto humano · exit 0
 ```
 
+## CRUD de CDPs (contrato na lib)
+
+Sem UI. Persistência: `data/cdps.json`.
+
+```js
+import {
+  listCdps, getCdp, createCdp, updateCdp, removeCdp,
+  statusCdp, startCdp, stopCdp, connectCdp,
+} from './src/index.mjs';
+
+listCdps();
+createCdp({ name: 'Germano', port: 9230, userDataDir: '~/chrome-profiles/germano',
+  startScript: 'screen-robot/pocs/chrome-cdp/start-germano.sh' });
+await startCdp(9230);
+const page = await connectCdp(9230); // HumanCdpSession
+await page.click('button');
+page.close();
+await stopCdp(9230);
+removeCdp(9230);
+```
+
+```bash
+npm run seed:cdps      # CSV → data/cdps.json
+npm run test:registry  # create/list/update/remove/status
+```
+
+**Card:** [CRUD de CDPs na lib](https://trello.com/c/hoLSkLko)
+
 ## Antes → depois
 
 Scripts CDP crus (`el.click`, `dispatchMouseEvent` sem move) → importam `human-cdp` e usam `click`/`type`.

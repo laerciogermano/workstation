@@ -33,3 +33,14 @@ Credenciais: [`.env`](.env) (mesmo host/user do e-notas; `DB_SCHEMA=tinder`).
 - Lista: `../tinder-conversas-germano.xlsx`
 - Pendentes: `../tinder-conversas-pendentes.json` / `../tinder-nao-respondidas.md`
 - Mensagens: `../tinder-conversas-nao-respondidas/*.json` (dump CDP em andamento)
+
+## Dump CDP: só sequencial (1 aba)
+
+O Tinder web **não tolera** dump em várias abas em paralelo (chat não carrega / 0 msgs). Usar **uma** aba no Chrome Germano (`:9230`) e o script serial. Detalhe: [`../../postmortem.md`](../../postmortem.md) (lição 7).
+
+```bash
+# 1 aba Tinder no Germano; resume pelo state
+python3 -u /tmp/tinder-dump-pendentes.py   # ou o caminho canônico do script de dump
+```
+
+**Antes → depois:** tentativa com 10 workers/abas → sequencial 1 aba. Rollback do paralelo: não usar `dump-pendentes-parallel.py`.

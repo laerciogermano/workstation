@@ -50,6 +50,7 @@ O que **funcionava** no redroid: provision ADB, install de alguns APKs, telas mu
 4. Disco no Mac é pré-requisito do AVD (≥ ~8 GB livres); Colima+redroid + AVD juntos esgotam o volume.
 5. **Tinder Huawei vs Play:** APKPure costuma entregar só `armeabi-v7a` (não instala no AVD `arm64-v8a`). A App Gallery Huawei entrega arm64, mas o Location Kit falha no AVD Google com **10808 AGC_CHECK_FAIL** (“Unable to fetch location…”). Mitigação: XAPK **universal GMS** (ex. APKCombo, com split `arm64-v8a`) em `apks/com.tinder.xapk` + `geo fix` antes do launch.
 6. **Continue with Google no-op:** AVD `google_apis` traz GMS velho (~20.x) sem Play Store; LinkedIn pede GMS ≥23 e falha com `SERVICE_VERSION_UPDATE_REQUIRED` / `resolution=null` (sem diálogo). Mitigação: imagem **`google_apis_playstore`**, conta Google no device e atualizar Play Services. Automação continua em **Sign in with Email**.
+7. **Tinder web: não paralelizar em várias abas.** Dump CDP de conversas (`pocs/chrome-cdp`, perfil Germano `:9230`) com N abas (`/json/new` + workers) falha na prática: UI/chat não carrega de forma confiável (`no_chat`, dumps com 0 msgs), abas em background não pintam o histórico, e o produto se comporta como se **proibisse / invalidasse** sessão multi-aba. Mitigação: **1 aba só**, dump **sequencial** (`tinder-dump-pendentes.py`); sync Contabo (`tinder-db/import.py`) à parte. Não reabrir o caminho paralelo sem evidência nova.
 
 ---
 

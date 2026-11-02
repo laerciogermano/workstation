@@ -138,6 +138,8 @@ updateCdp('ometv-2', {
 Override pontual: `connectCdp(id, { fingerprint })`.  
 **Não cobre:** vendor/product/battery/plugins/WebGL/canvas/audio/fonts/mediaDevices fakes, IP de egress.
 
+**Catálogo de combinações reais (device + browser):** card [x3dClHJu](https://trello.com/c/x3dClHJu) · task [`../../../tasks/6ae8dc57b01c993b519a5030/README.md`](../../../tasks/6ae8dc57b01c993b519a5030/README.md) — lista curada para preencher `fingerprint` sem inconsistências (UA ↔ CH ↔ screen ↔ cores/mem).
+
 **Antes → depois:** extras (battery, plugins, WebGL fake, canvas noise…) removidos — voltou ao conjunto estável acima. Rollback total: `updateCdp(id, { fingerprint: null })` + restart.
 
 ```bash

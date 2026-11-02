@@ -53,3 +53,4 @@ Hub de projetos, board, tasks e processo de desenvolvimento.
 | 📚 | [**Aulas**](aulas/README.md) | Árvore de seções / conteúdo didático | [visão](aulas/README.md) |
 | 📂 | [**google-drive-cli**](google-drive-cli/README.md) | CLI da Drive API (OAuth usuário) | [visão](google-drive-cli/README.md) |
 | 💬 | [**low-chat**](low-chat/README.md) | Persona + contexto + LLM barato (LinkedIn / Tinder / WhatsApp / CRM) | [visão](low-chat/README.md) · [board](https://trello.com/b/tgOTRfNq/low-chat) |
+| 🛒 | [**Agent Shop**](agent-shop/README.md) | Comprar agente, dar nome/vida, pedir e agendar (chat + CDP/screen-robot) | [visão](agent-shop/README.md) · [docs](agent-shop/docs/README.md) · [discovery](agent-shop/docs/discovery/README.md) · [config IA](agent-shop/config/config-ia.md) |

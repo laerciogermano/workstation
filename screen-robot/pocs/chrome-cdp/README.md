@@ -101,7 +101,7 @@ System prompt (IA = Laércio Germano no Tinder; **só a última não lida**; pr�
 
 **Tom:** informal de celular; simpático; sempre puxa/continua papo; **vinho na brecha**; **proibido** português extremamente correto.
 
-**Antes → depois:** prompt só voz/última não lida → + ok antes de enviar + anti-português-certo + simpatia/continuidade + vinho como destino na brecha. Depois: vinho **só** na brecha oportuna — proibido insistir/repetir “bora vinho / que dia” em todo turno. Rollback: commit anterior do `PROMPT-TINDER-LAERCIO.md`; ou apagar o arquivo e usar só o doc de personalidade.
+**Antes → depois:** prompt só voz/última não lida → + ok antes de enviar + anti-português-certo + simpatia/continuidade + vinho na brecha → vinho sem insistência → tom **engraçado+provocativo** como default e vinho **raro**/sem excesso. Rollback: commit anterior do `PROMPT-TINDER-LAERCIO.md`; ou apagar o arquivo e usar só o doc de personalidade.
 
 ### Loop contínuo (CDP :9230)
 

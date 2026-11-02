@@ -78,26 +78,21 @@ Janela nativa do emulator. scrcpy é opcional no serial ADB (`npm run view` em [
 
 ## Câmera com vídeo (OBS)
 
-Para o app Camera ver um vídeo em loop (não a webcam física):
+Sobe OBS (cena `ConnectMax` / `VideoLoop`) + **Virtual Camera ativa** via obs-websocket (sem isso fica a logo OBS).
 
 ```bash
-# 1) OBS com Virtual Camera + sample.mp4
-./scripts/start-obs-camera.sh
-
-# 2) No macOS: Ajustes → Geral → Itens de Início e Extensões → Extensões de Câmera
-#    → ative "OBS Virtual Camera" (só na primeira vez)
-
-# 3) Suba o emulador (ele escolhe a webcam OBS se aparecer na lista)
-./scripts/start.sh
-./scripts/wait-boot.sh
-./scripts/open-camera.sh
+cd screen-robot/pocs/android-studio
+./scripts/start-obs-camera.sh                  # default: media/loop-preview.mp4 ou sample.mp4
+./scripts/start-obs-camera.sh /caminho/video.mp4
 ```
 
-Vídeo padrão: `media/sample.mp4`. Pode passar outro:
+1ª vez no macOS: **Ajustes → Extensões de Câmera → ative OBS Virtual Camera**.
 
-```bash
-./scripts/start-obs-camera.sh /caminho/para/video.mp4
-```
+Depois (AVD): `./scripts/start.sh` → `wait-boot` → `open-camera` (escolhe webcam OBS se listar).
+
+Chrome/CDP: device `OBS Virtual Camera` (sem flags `--use-fake-*`). Ofuscar nome = patch JS no CDP.
+
+**Antes → depois:** só `--startvirtualcam` (logo) → cena forçada `VideoLoop` + `StartVirtualCam` no websocket `:4455`. Rollback: `pkill -x OBS`; restaurar `~/Library/Application Support/obs-studio/basic/scenes/ConnectMax.json.bak` antigo.
 
 ## Aplicar mascaramento neste vendor
 

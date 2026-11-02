@@ -82,6 +82,8 @@ CDP_URL=http://127.0.0.1:9224 node linkedin-extract-leads-cdp.mjs -n 5 --query "
 
 **Antes → depois (extract leads CDP):** só extract no AVD (`login-extract-profiles` / job `extrair_leads`) → `linkedin-extract-leads-cdp.mjs` na aba Chrome logada (`/search/results/people/?keywords=`). Saída: `screenshots/linkedin-extract-leads-cdp/<stamp>/profiles.json`. Skip match/by-url + POST `/profiles` + `/profile-details` + conexão se `PROFILES_API_URL`/`AGENT_ID`. Rollback: use o AVD; apague o `.mjs` e esta seção.
 
+**Antes → depois (parser UI LI 2026):** seletores `li.reusable-search__result-container` / `div.entity-result` → 0 cards (classes ofuscadas) → parse por `a[href*="/in/"]` + texto “Nome • grau … Conectar”; header do perfil pela 1ª linhas do `main` (sem depender de `h1`). Rollback: commit anterior do `.mjs`.
+
 Deps: Node 22+ (`fetch`/`WebSocket`). Clique via CDP (`Input.dispatchMouseEvent`) — janela pode ficar atrás.
 
 **Antes → depois (setup mídia LI):** só control/sannysoft → `setup-avatar-banner.mjs` sobe `conectmax-black.jpg` e `conectmax-banner.jpg` na conta da aba CDP. Rollback: `--avatar-only` / `--banner-only` / editar mídia no LinkedIn.

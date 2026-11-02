@@ -381,14 +381,13 @@ async function main() {
     while (Date.now() - t0 < timeoutMs) {
       await clickSkipIfAny();
       const st = await evalv(`(() => {
-        const url = location.href;
-        const body = (document.body?.innerText || '').slice(0, 400);
-        const cards = document.querySelectorAll(
-          'li.reusable-search__result-container, div.entity-result, ul[role=list] > li',
-        ).length;
+        const body = (document.body?.innerText || '').slice(0, 500);
         const links = [...document.querySelectorAll('a[href*="/in/"]')].length;
         const member = /linkedin\\s*member|membro\\s+do\\s+linkedin/i.test(body);
-        return { url, cards, links, member, ready: cards > 0 || links > 2 };
+        const hasPeople =
+          /\\bpessoas\\b|\\bpeople\\b/i.test(body) &&
+          /conectar|connect|pendente|pending|mensagem|message/i.test(body);
+        return { url: location.href, links, member, ready: links >= 2 || hasPeople };
       })()`);
       if (st?.ready || st?.member) return st;
       await sleep(800);
@@ -396,7 +395,10 @@ async function main() {
     throw new Error('timeout aguardando resultados People');
   };
 
-  /** Cards visíveis na busca People. */
+  /**
+   * Cards da busca People (UI nova LI: classes ofuscadas).
+   * Fonte: a[href*="/in/"] com texto longo "Nome • grau Title Local Conectar".
+   */
   const listCards = () =>
     evalv(`(() => {
       const normUrl = (href) => {
@@ -411,60 +413,95 @@ async function main() {
       };
       const parseAction = (raw) => {
         const t = String(raw || '').replace(/\\s+/g, ' ').trim();
-        if (/\\bpending\\b|pendente/i.test(t)) return 'Pending';
-        if (/\\bconnect\\b|conectar|convidar/i.test(t)) return 'Connect';
-        if (/\\bmessage\\b|mensagem/i.test(t)) return 'Message';
-        if (/\\bfollow\\b|seguir/i.test(t)) return 'Follow';
+        if (/pending|pendente|invitation sent|convite enviado/i.test(t)) return 'Pending';
+        if (/\\bmessage\\b|mensagem|enviar mensagem/i.test(t)) return 'Message';
+        if (/connect|conectar|convidar/i.test(t)) return 'Connect';
+        if (/follow|seguir/i.test(t)) return 'Follow';
         return null;
       };
-      const roots = [
-        ...document.querySelectorAll('li.reusable-search__result-container'),
-        ...document.querySelectorAll('div.entity-result'),
-        ...document.querySelectorAll('ul[role=list] > li'),
-      ];
-      const seen = new Set();
-      const out = [];
-      const bodyLimit = /linkedin\\s*member|membro\\s+do\\s+linkedin/i.test(
-        document.body?.innerText || '',
-      );
+      const bodyText = document.body?.innerText || '';
+      if (/linkedin\\s*member|membro\\s+do\\s+linkedin/i.test(bodyText)) {
+        const onlyMember = ![...document.querySelectorAll('a[href*="/in/"]')].some((a) => {
+          const t = (a.innerText || '').replace(/\\s+/g, ' ').trim();
+          return t.length > 3 && !/linkedin\\s*member|membro\\s+do\\s+linkedin/i.test(t);
+        });
+        if (onlyMember) return { memberLimit: true, cards: [] };
+      }
 
-      for (const root of roots) {
-        const a = root.querySelector('a[href*="/in/"]');
-        if (!a || !a.getClientRects().length) continue;
+      const byUrl = new Map();
+      for (const a of document.querySelectorAll('a[href*="/in/"]')) {
+        if (!a.getClientRects().length) continue;
         const profileUrl = normUrl(a.href);
-        if (!profileUrl || seen.has(profileUrl)) continue;
-        const nameEl =
-          root.querySelector('.entity-result__title-text a span[aria-hidden="true"]') ||
-          root.querySelector('.entity-result__title-text a') ||
-          root.querySelector('span[aria-hidden="true"]') ||
-          a;
-        let name = (nameEl.innerText || a.innerText || '')
-          .replace(/\\s+/g, ' ')
-          .replace(/·.*$/, '')
-          .replace(/Verified|Verificado/gi, '')
-          .trim();
-        if (!name || name.length < 3) continue;
-        if (/^linkedin\\s*member$/i.test(name) || /^membro\\s+do\\s+linkedin$/i.test(name)) {
+        if (!profileUrl) continue;
+        const text = (a.innerText || '').replace(/\\s+/g, ' ').trim();
+        if (!text) continue;
+        const prev = byUrl.get(profileUrl) || { texts: [], el: a };
+        prev.texts.push(text);
+        // Preferir o link com texto mais longo (card completo).
+        if (text.length >= (prev.texts[0]?.length || 0)) prev.el = a;
+        byUrl.set(profileUrl, prev);
+      }
+
+      const out = [];
+      for (const [profileUrl, pack] of byUrl) {
+        const texts = pack.texts.sort((x, y) => y.length - x.length);
+        const long = texts[0] || '';
+        const short = texts.find((t) => t.length < 80 && !/[•·]/.test(t)) || '';
+        if (/^linkedin\\s*member$/i.test(short || long) || /^membro\\s+do\\s+linkedin$/i.test(short || long)) {
           return { memberLimit: true, cards: out };
         }
-        const title =
-          (root.querySelector('.entity-result__primary-subtitle')?.innerText ||
-            root.querySelector('.entity-result__summary')?.innerText ||
-            '')
-            .replace(/\\s+/g, ' ')
-            .trim() || null;
-        const city =
-          (root.querySelector('.entity-result__secondary-subtitle')?.innerText || '')
-            .replace(/\\s+/g, ' ')
-            .trim() || null;
-        const btn = [...root.querySelectorAll('button, a[role=button], div[role=button]')].find(
-          (b) => parseAction(b.innerText || b.getAttribute('aria-label') || ''),
-        );
-        const action = parseAction(btn?.innerText || btn?.getAttribute('aria-label') || '') || null;
+        // Só cards de resultado (têm ação ou grau no texto).
+        const action =
+          parseAction(long) ||
+          (() => {
+            // Botão/ancora Convidar próximo ao card.
+            const invite = [...document.querySelectorAll('a[href*="search-custom-invite"], a[aria-label*="conectar" i], a[aria-label*="connect" i], a[aria-label*="Convidar" i]')]
+              .find((el) => {
+                const al = el.getAttribute('aria-label') || '';
+                const href = el.getAttribute('href') || '';
+                const slug = profileUrl.match(/\\/in\\/([^/]+)/)?.[1];
+                return (slug && href.includes(slug)) || (short && al.includes(short.split(' ')[0]));
+              });
+            return parseAction(invite?.getAttribute('aria-label') || invite?.innerText || '');
+          })();
+        if (!action && !/[•·]\\s*\\d|\\d+(?:st|nd|rd|th)|\\dº/i.test(long)) continue;
+
+        let name = (short || long.split(/[•·]/)[0] || '')
+          .replace(/Verified|Verificado/gi, '')
+          .replace(/\\s+/g, ' ')
+          .trim();
+        if (!name || name.length < 3 || name.length > 80) continue;
+
         const degree =
-          (root.innerText.match(/\\b(\\d+(?:st|nd|rd|th))\\b/i) || [])[1] || null;
-        const b = a.getBoundingClientRect();
-        seen.add(profileUrl);
+          (long.match(/[•·]\\s*(\\d+(?:st|nd|rd|th)|\\dº(?:\\s*e\\s*\\+)?)/i) || [])[1] ||
+          (long.match(/\\b(\\d+(?:st|nd|rd|th))\\b/i) || [])[1] ||
+          null;
+
+        // Título + cidade: entre grau e ação (sem RegExp do nome — acentos/escaping).
+        let mid = long;
+        const cut = long.indexOf('•') >= 0 ? long.indexOf('•') : long.indexOf('·');
+        if (cut >= 0) mid = long.slice(cut + 1);
+        mid = mid
+          .replace(/^\\s*\\d+(?:st|nd|rd|th|º)(?:\\s*e\\s*\\+)?\\s*/i, '')
+          .replace(/\\s+(Conectar|Connect|Pendente|Pending|Mensagem|Message|Seguir|Follow)\\b.*$/i, '')
+          .replace(/\\s+Anterior:.*$/i, '')
+          .trim();
+
+        let city = null;
+        let title = mid || null;
+        const loc = mid.match(/(.+?)\\s+([A-ZÀ-Ü][^,]*,\\s*(?:Brasil|Brazil|[A-Z]{2}).*)$/i);
+        if (loc) {
+          title = loc[1].trim() || null;
+          city = loc[2].trim() || null;
+        } else {
+          const br = mid.match(/(.+?)\\s+((?:São Paulo|Rio de Janeiro|Belo Horizonte|Curitiba|Goiânia|Campinas|Macaé|Cotia|Jales|Valinhos)(?:,.*)?)$/i);
+          if (br) {
+            title = br[1].trim() || null;
+            city = br[2].trim() || null;
+          }
+        }
+
+        const b = pack.el.getBoundingClientRect();
         out.push({
           key: profileUrl,
           name,
@@ -472,13 +509,15 @@ async function main() {
           city,
           current: title,
           level: degree,
-          action,
+          action: action || null,
           profileUrl,
           x: b.x + b.width / 2,
           y: b.y + b.height / 2,
         });
       }
-      return { memberLimit: bodyLimit && out.length === 0, cards: out };
+      // Ordem visual (topo → baixo).
+      out.sort((a, b) => (a.y || 0) - (b.y || 0));
+      return { memberLimit: false, cards: out };
     })()`);
 
   const extractProfileHeader = () =>
@@ -493,56 +532,87 @@ async function main() {
           return 'https://www.linkedin.com/in/' + slug + '/';
         } catch { return null; }
       };
-      const h1 = document.querySelector('h1');
-      const name = (h1?.innerText || '').replace(/\\s+/g, ' ').trim() || null;
-      const top = document.querySelector('main section') || document.querySelector('main') || document.body;
+      const top = document.querySelector('main') || document.body;
       const lines = (top?.innerText || '')
         .split('\\n')
         .map((t) => t.replace(/\\s+/g, ' ').trim())
         .filter(Boolean);
+      // UI nova: nome costuma ser a 1ª linha do main (h1 pode não existir).
+      const h1 = (document.querySelector('h1')?.innerText || '').replace(/\\s+/g, ' ').trim();
+      let name = h1 || null;
+      if (!name) {
+        name = lines.find((l) =>
+          l.length >= 3 &&
+          l.length <= 80 &&
+          !/^(sobre|about|atividade|experience|educa|conectar|connect|mensagem|message)/i.test(l) &&
+          !/brasil|brazil|conex/i.test(l),
+        ) || null;
+      }
       let headline = null;
       let location = null;
       let company = null;
       let connections = null;
       let mutualConnections = null;
       let connectionDegree = null;
-      for (const line of lines.slice(0, 40)) {
-        if (!headline && name && line !== name && line.length > 8 && line.length < 180 &&
-            !/^(connect|pending|message|seguir|follow|more|abrir|open)/i.test(line) &&
+      const nameIdx = name ? lines.findIndex((l) => l === name) : -1;
+      const after = nameIdx >= 0 ? lines.slice(nameIdx + 1, nameIdx + 12) : lines.slice(0, 12);
+      for (const line of after) {
+        if (!headline && line !== name && line.length >= 2 && line.length < 180 &&
+            line !== '·' &&
+            !/^(connect|conectar|pending|pendente|message|mensagem|enviar mensagem|seguir|follow|mais|more|dados de contato|contact info)/i.test(line) &&
             !/\\d+\\s*(connections|conex)/i.test(line) &&
-            !/contato|contact/i.test(line)) {
+            !/contato|contact info/i.test(line) &&
+            !/^(universidade|university|faculdade)/i.test(line)) {
+          // Local antes do headline? (raro) — se parece cidade, guarda e segue.
+          if (/brasil|brazil|remote|remoto|são paulo|rio de janeiro|goiânia/i.test(line) && line.length < 90) {
+            if (!location) location = line;
+            continue;
+          }
           headline = line;
           continue;
         }
-        if (!location && /brasil|brazil|,\\s*[A-Z]{2}\\b|remote|remoto|são paulo|sao paulo|rio de/i.test(line) && line.length < 80) {
+        if (!location && /brasil|brazil|,\\s*[A-Z]{2}\\b|remote|remoto|são paulo|sao paulo|rio de|goiânia/i.test(line) && line.length < 90) {
           location = line;
         }
-        const cm = line.match(/(\\d[\\d.,]*)\\s*(connections|conex[oõ]es)/i);
-        if (cm) connections = cm[0];
+        if (/^mais de\\s+\\d+|\\d[\\d.,]*\\s*(connections|conex)/i.test(line) ||
+            (connections == null && /conex[oõ]es|connections/i.test(line) && /\\d/.test(line))) {
+          connections = line;
+        }
         if (/mutual|em comum/i.test(line)) mutualConnections = line;
-        const deg = line.match(/\\b(\\d+(?:st|nd|rd|th))\\b/i);
+        const deg = line.match(/\\b(\\d+(?:st|nd|rd|th)|\\dº(?:\\s*e\\s*\\+)?)\\b/i);
         if (deg) connectionDegree = deg[1];
+      }
+      // "mais de 500" + "conexões" em linhas separadas
+      if (!connections) {
+        for (let i = 0; i < lines.length - 1; i++) {
+          if (/^mais de\\s+\\d+|^\d[\\d.,]*$/.test(lines[i]) && /^conex/i.test(lines[i + 1])) {
+            connections = lines[i] + ' ' + lines[i + 1];
+            break;
+          }
+        }
       }
       if (headline) {
         const at = headline.split(/\\s+(?:at|@|na|no|em)\\s+/i);
         if (at.length > 1) company = at[at.length - 1].trim();
       }
-      const btnTexts = [...document.querySelectorAll('button, a[role=button]')].map(
+      const btnTexts = [...document.querySelectorAll('button, a, [role=button]')].map(
         (b) => (b.innerText || b.getAttribute('aria-label') || '').replace(/\\s+/g, ' ').trim(),
       );
       let inviteStatus = null;
       let canConnect = false;
       let canMessage = false;
       for (const t of btnTexts) {
-        if (/\\bpending\\b|pendente|invitation sent|convite enviado/i.test(t)) inviteStatus = 'pending';
-        else if (/^connect$|^conectar$|convidar para|invite/i.test(t) && !inviteStatus) {
-          inviteStatus = 'connect';
+        if (/pending|pendente|invitation sent|convite enviado/i.test(t)) {
+          inviteStatus = 'pending';
+        } else if (/^(connect|conectar)$/i.test(t) || /convidar .+ conectar/i.test(t)) {
+          if (!inviteStatus || inviteStatus === 'connected') inviteStatus = 'connect';
           canConnect = true;
-        } else if (/^message$|^mensagem$|enviar mensagem/i.test(t)) {
+        } else if (/^(message|mensagem)$/i.test(t) || /enviar mensagem/i.test(t)) {
           canMessage = true;
-          if (!inviteStatus) inviteStatus = 'connected';
+          // Message no perfil não implica connected se ainda há Connect.
         }
       }
+      if (canMessage && !canConnect && !inviteStatus) inviteStatus = 'connected';
       return {
         profileUrl: normUrl(location.href),
         header: {

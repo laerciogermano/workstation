@@ -123,7 +123,6 @@ function appendCredenciais({ email, name, password }) {
   const line = `- \`${email}\` — ${name} — mailbox \`${password}\` — senha LI \`in@12345678\`\n`;
   const marker = '### Caixas `@clozzy.com.br`\n';
   if (!t.includes(marker)) throw new Error('seção Caixas @clozzy.com.br ausente em credenciais.md');
-  // anexa antes do próximo ### ou no fim da seção
   const start = t.indexOf(marker) + marker.length;
   let end = t.indexOf('\n### ', start);
   if (end < 0) end = t.length;
@@ -132,76 +131,116 @@ function appendCredenciais({ email, name, password }) {
   return true;
 }
 
-const dryRun = hasFlag('--dry-run');
-const writeCred = hasFlag('--write-credenciais');
-const first = arg('--first', '--nome');
-const last = arg('--last', '--sobrenome');
-let email = arg('--email');
-let name = arg('--name', '--nome-completo');
+/**
+ * Cria o e-mail (mailbox Mailcow).
+ * @param {{ email: string, name: string, password?: string, dryRun?: boolean, writeCredenciais?: boolean }} opts
+ */
+export function createEmail(opts) {
+  const email = String(opts.email || '').trim();
+  const name = String(opts.name || '').trim();
+  if (!email || !name) throw new Error('createEmail: email e name obrigatórios');
+  if (!email.endsWith(`@${DOMAIN}`)) throw new Error(`e-mail deve ser @${DOMAIN}`);
 
-if (hasFlag('--help') || hasFlag('-h')) usage();
+  const localPart = email.slice(0, email.indexOf('@'));
+  const password = opts.password || genPassword();
+  const dryRun = !!opts.dryRun;
 
-if (!email) {
-  if (!first || !last) usage('informe --first/--last ou --email');
-  email = `${slugLocal(first, last)}@${DOMAIN}`;
-  name = name || `${first} ${last}`;
-} else {
-  if (!email.endsWith(`@${DOMAIN}`)) usage(`e-mail deve ser @${DOMAIN}`);
-  if (!name) {
-    if (first && last) name = `${first} ${last}`;
-    else usage('com --email informe --name (ou --first/--last)');
+  if (dryRun) {
+    return {
+      email,
+      name,
+      localPart,
+      domain: DOMAIN,
+      password,
+      dryRun: true,
+      created: false,
+      existed: false,
+      credenciais: false,
+    };
+  }
+
+  const existing = mailcowApi('GET', `/api/v1/get/mailbox/${email}`);
+  let existed = false;
+  try {
+    const parsed = JSON.parse(existing);
+    existed = !!(parsed && parsed.username === email);
+  } catch {
+    existed = /"username"\s*:\s*"/.test(existing) && existing.includes(email);
+  }
+
+  if (existed) {
+    return { email, name, created: false, existed: true, credenciais: false };
+  }
+
+  const raw = mailcowApi('POST', '/api/v1/add/mailbox', {
+    local_part: localPart,
+    domain: DOMAIN,
+    name,
+    quota: '3072',
+    password,
+    password2: password,
+    active: '1',
+    force_pw_update: '0',
+    tls_enforce_in: '0',
+    tls_enforce_out: '0',
+  });
+
+  if (!/mailbox_added|success/i.test(raw)) {
+    console.error(raw.slice(0, 800));
+    throw new Error(`falha ao criar mailbox ${email}`);
+  }
+
+  let credenciais = false;
+  if (opts.writeCredenciais) {
+    credenciais = appendCredenciais({ email, name, password });
+  }
+
+  return { email, name, password, created: true, existed: false, credenciais };
+}
+
+function parseCli() {
+  if (hasFlag('--help') || hasFlag('-h')) usage();
+
+  const first = arg('--first', '--nome');
+  const last = arg('--last', '--sobrenome');
+  let email = arg('--email');
+  let name = arg('--name', '--nome-completo');
+
+  if (!email) {
+    if (!first || !last) usage('informe --first/--last ou --email');
+    email = `${slugLocal(first, last)}@${DOMAIN}`;
+    name = name || `${first} ${last}`;
+  } else {
+    if (!email.endsWith(`@${DOMAIN}`)) usage(`e-mail deve ser @${DOMAIN}`);
+    if (!name) {
+      if (first && last) name = `${first} ${last}`;
+      else usage('com --email informe --name (ou --first/--last)');
+    }
+  }
+
+  return {
+    email,
+    name,
+    dryRun: hasFlag('--dry-run'),
+    writeCredenciais: hasFlag('--write-credenciais'),
+  };
+}
+
+export function main() {
+  const opts = parseCli();
+  const result = createEmail(opts);
+  console.log(JSON.stringify(result, null, 2));
+}
+
+const isDirect =
+  process.argv[1] &&
+  resolve(process.argv[1]) === fileURLToPath(import.meta.url);
+
+if (isDirect) {
+  try {
+    main();
+  } catch (e) {
+    console.error(e.message || e);
+    process.exit(1);
   }
 }
-
-const localPart = email.slice(0, email.indexOf('@'));
-const password = genPassword();
-
-const plan = { email, name, localPart, domain: DOMAIN, password, dryRun };
-if (dryRun) {
-  console.log(JSON.stringify({ ...plan, action: 'dry-run' }, null, 2));
-  process.exit(0);
-}
-
-const existing = mailcowApi('GET', `/api/v1/get/mailbox/${email}`);
-let existed = false;
-try {
-  const parsed = JSON.parse(existing);
-  existed = !!(parsed && parsed.username === email);
-} catch {
-  existed = /"username"\s*:\s*"/.test(existing) && existing.includes(email);
-}
-
-if (existed) {
-  console.log(JSON.stringify({ email, name, created: false, existed: true }, null, 2));
-  process.exit(0);
-}
-
-const raw = mailcowApi('POST', '/api/v1/add/mailbox', {
-  local_part: localPart,
-  domain: DOMAIN,
-  name,
-  quota: '3072',
-  password,
-  password2: password,
-  active: '1',
-  force_pw_update: '0',
-  tls_enforce_in: '0',
-  tls_enforce_out: '0',
-});
-
-const ok = /mailbox_added|success/i.test(raw);
-if (!ok) {
-  console.error(raw.slice(0, 800));
-  throw new Error(`falha ao criar mailbox ${email}`);
-}
-
-let credenciais = false;
-if (writeCred) credenciais = appendCredenciais({ email, name, password });
-
-console.log(
-  JSON.stringify(
-    { email, name, password, created: true, existed: false, credenciais },
-    null,
-    2,
-  ),
-);

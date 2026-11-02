@@ -91,6 +91,7 @@ async function main() {
     password: 'in@12345678',
     first: emailResult.name?.split(/\s+/)[0] || 'Rafael',
     last: emailResult.name?.split(/\s+/).slice(1).join(' ') || 'Campos',
+    location: 'Rio de Janeiro',
     dryRun,
     skipBrowser: noBrowser,
   });

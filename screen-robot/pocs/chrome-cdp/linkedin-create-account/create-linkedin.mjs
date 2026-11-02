@@ -1,6 +1,6 @@
 /**
  * Criação da conta LinkedIn (passo browser).
- * Abre signup → e-mail → senha → submit → nome/sobrenome → Continuar.
+ * signup → e-mail → senha → submit → nome → Continuar → localidade → Continuar.
  */
 import { openLinkedInSignup } from './open-signup.mjs';
 import { fillSignupEmail } from './fill-signup-email.mjs';
@@ -8,6 +8,7 @@ import { fillSignupPassword } from './fill-signup-password.mjs';
 import { clickSignupSubmit } from './click-signup-submit.mjs';
 import { fillSignupName } from './fill-signup-name.mjs';
 import { clickSignupContinue } from './click-signup-continue.mjs';
+import { fillSignupLocation } from './fill-signup-location.mjs';
 
 const DEFAULT_LI_PASSWORD = 'in@12345678';
 
@@ -18,6 +19,7 @@ const DEFAULT_LI_PASSWORD = 'in@12345678';
  *   password?: string,
  *   first?: string,
  *   last?: string,
+ *   location?: string,
  *   url?: string,
  *   dryRun?: boolean,
  *   skipBrowser?: boolean,
@@ -37,6 +39,7 @@ export async function createLinkedin(opts = {}) {
       submit: null,
       name: null,
       continue: null,
+      location: null,
     };
   }
 
@@ -85,6 +88,16 @@ export async function createLinkedin(opts = {}) {
     dryRun: opts.dryRun,
   });
 
+  let locationFill = null;
+  const location = String(opts.location || '').trim();
+  if (location) {
+    locationFill = await fillSignupLocation({
+      id,
+      location,
+      dryRun: opts.dryRun,
+    });
+  }
+
   return {
     id,
     skipped: false,
@@ -94,5 +107,6 @@ export async function createLinkedin(opts = {}) {
     submit,
     name: nameFill,
     continue: cont,
+    location: locationFill,
   };
 }

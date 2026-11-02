@@ -12,6 +12,11 @@ const __dir = dirname(fileURLToPath(import.meta.url));
 const CRED_PATH = resolve(__dir, '../../../../credenciais.md');
 const DEFAULT_DOMAIN = (process.env.MAIL_DOMAIN || 'clozzy.com.br').trim();
 const SSH_HOST = (process.env.MAIL_SSH_HOST || 'root@144.126.154.90').trim();
+/** Teto do domínio em MiB — bem alto p/ não estourar mailbox_quota_left_exceeded. */
+const DOMAIN_MAX_QUOTA_MIB = String(
+  process.env.MAIL_DOMAIN_MAX_QUOTA_MIB || '10485760',
+); // 10 TiB
+const DEFAULT_MBOX_QUOTA_MIB = String(process.env.MAIL_MBOX_QUOTA_MIB || '1024');
 
 function slugLocal(first, last) {
   return `${first}.${last}`
@@ -97,6 +102,81 @@ function appendCredenciais({ email, name, password }) {
   return true;
 }
 
+/**
+ * Sobe o teto de quota do domínio via MySQL (a API edit/domain não persiste esses campos).
+ * Colunas: quota=max domínio MiB · mailboxes=máx caixas · defquota/maxquota por caixa MiB.
+ * @param {string} domain
+ */
+function ensureDomainQuotaHigh(domain) {
+  const targetMib = Number(DOMAIN_MAX_QUOTA_MIB);
+  if (!Number.isFinite(targetMib) || targetMib <= 0) return;
+
+  let currentBytes = 0;
+  try {
+    const raw = mailcowApi('GET', `/api/v1/get/domain/${domain}`);
+    const d = JSON.parse(raw);
+    currentBytes = Number(d.max_quota_for_domain) || 0;
+  } catch {
+    currentBytes = 0;
+  }
+
+  const targetBytes = targetMib * 1024 * 1024;
+  if (currentBytes >= targetBytes) return;
+
+  console.error(
+    `[createEmail] elevando quota domínio ${domain}: ${Math.round(currentBytes / 1024 / 1024)} → ${targetMib} MiB (MySQL)`,
+  );
+
+  const pass = sshPass();
+  if (!pass) throw new Error('MAIL_SSH_PASS / credenciais.md ausente');
+
+  const safeDomain = domain.replace(/'/g, "''");
+  const remote = `
+set -euo pipefail
+cd /opt/mailcow-dockerized
+DBPASS=$(grep ^DBPASS mailcow.conf | cut -d= -f2-)
+CID=$(docker ps -qf name=mysql-mailcow | head -1)
+docker exec "$CID" mysql -u mailcow -p"$DBPASS" mailcow -e "
+UPDATE domain
+SET quota = ${targetMib},
+    mailboxes = 500,
+    defquota = ${Number(DEFAULT_MBOX_QUOTA_MIB) || 1024},
+    maxquota = 10240
+WHERE domain = '${safeDomain}';
+" 2>/dev/null
+`.trim();
+
+  const r = spawnSync(
+    'sshpass',
+    [
+      '-e',
+      'ssh',
+      '-o',
+      'StrictHostKeyChecking=no',
+      '-o',
+      'PreferredAuthentications=password',
+      '-o',
+      'PubkeyAuthentication=no',
+      '-o',
+      'ConnectTimeout=25',
+      SSH_HOST,
+      'bash -s',
+    ],
+    {
+      input: remote,
+      env: { ...process.env, SSHPASS: pass },
+      encoding: 'utf8',
+      timeout: 60_000,
+    },
+  );
+  if (r.error) throw r.error;
+  if (r.status !== 0) {
+    throw new Error(
+      `falha ao elevar quota domínio: ${(r.stderr || r.stdout || '').slice(0, 400)}`,
+    );
+  }
+}
+
 function resolveIdentity(opts, domain) {
   const first = String(opts.first || opts.nome || '').trim();
   const last = String(opts.last || opts.sobrenome || '').trim();
@@ -165,12 +245,15 @@ export function createEmail(opts = {}) {
     return { email, name, created: false, existed: true, credenciais: false };
   }
 
+  // Garante teto alto no domínio antes de criar (evita mailbox_quota_left_exceeded).
+  ensureDomainQuotaHigh(domain);
+
+  const quota = String(opts.quota ?? DEFAULT_MBOX_QUOTA_MIB);
   const raw = mailcowApi('POST', '/api/v1/add/mailbox', {
     local_part: localPart,
     domain,
     name,
-    // domínio quase cheio → 1024 MiB (antes 3072; erro mailbox_quota_left_exceeded)
-    quota: String(opts.quota ?? '1024'),
+    quota,
     password,
     password2: password,
     active: '1',

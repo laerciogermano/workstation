@@ -372,6 +372,7 @@ export async function connectCdp(id, connectOpts = {}) {
     urlIncludes: connectOpts.urlIncludes,
     newTab: connectOpts.newTab,
     chromeApp: connectOpts.chromeApp,
+    debug: connectOpts.debug,
   });
 }
 

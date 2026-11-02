@@ -2,7 +2,8 @@
 
 Lib entre o **programador** e o **Chrome via CDP**: clique, digitar, drag, etc. com trajetória/ritmo/foco para o [bot-lab](../../bot-lab/README.md) marcar **humano**.
 
-**Card:** [Lib CDP humana](https://trello.com/c/5tt5ZTeN) · task [`../../../tasks/6ae8ac1d5228997f864b40c5/README.md`](../../../tasks/6ae8ac1d5228997f864b40c5/README.md)
+**Card:** [Lib CDP humana](https://trello.com/c/5tt5ZTeN) · task [`../../../tasks/6ae8ac1d5228997f864b40c5/README.md`](../../../tasks/6ae8ac1d5228997f864b40c5/README.md)  
+**Debug overlay:** [modo debug no connect](https://trello.com/c/W4GN946S) · task [`../../../tasks/6ae8d5241aa4adad65cdd8f1/README.md`](../../../tasks/6ae8d5241aa4adad65cdd8f1/README.md)
 
 ## Pré-req
 
@@ -31,15 +32,33 @@ await page.goto('https://example.com');
 page.close();
 ```
 
+### Modo debug
+
+```js
+const page = await connect({
+  cdpUrl: 'http://127.0.0.1:9230',
+  url: 'http://127.0.0.1:8766/',
+  debug: true, // painel do bot-lab (feedback-rail) flutua junto ao mouse
+});
+// connectCdp('germano', { debug: true }) — mesma flag
+```
+
+No bot-lab: o `feedback-rail` vira overlay `position: fixed` ao lado do cursor (`pointer-events: none`). Fora do lab: badge mínimo `human-cdp debug · fora do bot-lab`. Default `debug: false` → zero overlay. Rollback: omitir a flag / `debug: false`.
+
+```bash
+CDP_URL=http://127.0.0.1:9230 npm run test:debug
+```
+
 ### API
 
 | Método | Comportamento |
 |--------|----------------|
-| `connect({ cdpUrl, url, newTab, urlIncludes })` | abre sessão + **foco** |
+| `connect({ cdpUrl, url, newTab, urlIncludes, debug })` | abre sessão + **foco**; `debug: true` injeta overlay |
 | `click` / `hover` / `type` / `fill` / `drag` / `scroll` / `select` / `goto` / `waitFor` | **sempre** chamam `ensureFocus` (aba + activate Chrome) antes da ação |
 | `click(sel)` | foco + `mouseMoved` em curva + `press`/`release` |
 | `type` / `fill` | foco + click humano + `Input.insertText` ritmado (sem `text` no keyDown — evita char duplicado) |
 | `bringToFront` / `ensureFocus` | aba + app Chrome (+ `Emulation.setFocusEmulationEnabled`) |
+| `enableDebugOverlay` | re-injeta o painel (já chamado em `connect`/`goto` se `debug`) |
 | `evaluate` | só leitura/DOM — **não** usa foco; **não** use para clicar |
 
 Toda interação de UI **obriga foco** (não há mais `focused: false`).
@@ -83,6 +102,8 @@ Scripts CDP crus (`el.click`, `dispatchMouseEvent` sem move) → importam `human
 **Antes → depois (foco):** `focused: false` permitia background → toda interação chama `ensureFocus` (bringToFront + activate). Rollback: `ensureFocus` com early-return se `this.focused === false`.
 
 **Antes → depois (type):** `keyDown` com `text` + `insertText` → cada char duplicado (Rafaela→RRaaffaaeellaa). Agora: keyDown/Up sem `text`; só `insertText` insere. `fill` clear: `el.select()` + Backspace + setter nativo (Cmd+A CDP falhava no FB). Rollback: keyDown com `text` + clear só Ctrl+A.
+
+**Antes → depois (debug):** trilho fixo só no layout do bot-lab → `connect({ debug: true })` flutua o `feedback-rail` junto ao mouse (e badge fora do lab). Rollback: `debug: false` / omitir flag.
 
 **Rollback:** voltar ao CDP cru nos scripts; apagar `human-cdp/`.
 

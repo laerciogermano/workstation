@@ -6,6 +6,10 @@ import {
   pickPage,
 } from './cdp.mjs';
 import {
+  enableDebugOverlayExpression,
+  moveDebugOverlayExpression,
+} from './debug-overlay.mjs';
+import {
   clickGapMs,
   keyGapMs,
   moveAlong,
@@ -22,6 +26,7 @@ import {
  * @property {string} [urlIncludes] filtra aba existente
  * @property {string} [url] se setado, abre/navega
  * @property {boolean} [newTab]
+ * @property {boolean} [debug] painel de diagnóstico do bot-lab junto ao mouse
  * @property {string} [chromeApp] nome AppleScript (default "Google Chrome")
  */
 
@@ -45,9 +50,25 @@ export class HumanCdpSession {
     this.cdpUrl = opts.cdpUrl;
     /** @deprecated sempre true — toda interação chama foco */
     this.focused = true;
+    this.debug = !!opts.debug;
     this.chromeApp = opts.chromeApp || 'Google Chrome';
     this._cursor = { x: 40, y: 40 };
     this._lastFocusAt = 0;
+  }
+
+  /** Injeta/reativa o painel flutuante (no-op se debug=false). */
+  async enableDebugOverlay() {
+    if (!this.debug) return null;
+    return this.evaluate(enableDebugOverlayExpression());
+  }
+
+  async _followDebugCursor(x, y) {
+    if (!this.debug) return;
+    try {
+      await this.evaluate(moveDebugOverlayExpression(x, y));
+    } catch {
+      /* página trocou / ainda sem inject */
+    }
   }
 
   send(method, params) {
@@ -106,6 +127,7 @@ export class HumanCdpSession {
       await sleep(150);
     }
     await this.ensureFocus({ settleMs: 150, force: true });
+    await this.enableDebugOverlay();
   }
 
   async waitFor(selector, { timeoutMs = 15000, visible = true } = {}) {
@@ -144,6 +166,7 @@ export class HumanCdpSession {
     const pts = trajectoryPoints(this._cursor, { x, y }, { steps: n });
     await moveAlong(this.send.bind(this), pts);
     this._cursor = { x, y };
+    await this._followDebugCursor(x, y);
   }
 
   /**
@@ -167,6 +190,7 @@ export class HumanCdpSession {
       const oy = y + rand(-2, 2);
       await pressRelease(this.send.bind(this), ox, oy);
       this._cursor = { x: ox, y: oy };
+      await this._followDebugCursor(ox, oy);
       if (i < clicks - 1) {
         await this.ensureFocus({ settleMs: 40 });
         await sleep(delayMs ?? clickGapMs());
@@ -314,6 +338,7 @@ export class HumanCdpSession {
       clickCount: 1,
     });
     this._cursor = { x: toX, y: toY };
+    await this._followDebugCursor(toX, toY);
   }
 
   async select(selector, value) {
@@ -354,11 +379,13 @@ export async function connect(opts = {}) {
   const session = new HumanCdpSession(cdp, {
     cdpUrl,
     chromeApp: opts.chromeApp,
+    debug: opts.debug,
   });
   if (opts.url && !opts.newTab) {
     await session.goto(opts.url);
   } else {
     await session.ensureFocus({ force: true });
+    await session.enableDebugOverlay();
   }
   await getJson(cdpUrl, '/json/version');
   return session;

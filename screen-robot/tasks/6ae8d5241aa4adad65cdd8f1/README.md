@@ -1,7 +1,7 @@
 # Task Trello: Modo debug no connect
 
 - **Card:** [Modo debug no connect: painel de diagnóstico do bot-lab junto ao mouse](https://trello.com/c/W4GN946S)
-- **Board:** [Robô Prospecção](https://trello.com/b/JPntFgwO/robô-prospecção) · lista `Backlog`
+- **Board:** [Robô Prospecção](https://trello.com/b/JPntFgwO/robô-prospecção) · lista `Concluído`
 - **ID:** `6ae8d5241aa4adad65cdd8f1`
 - **Descrição:** [`card-description.md`](card-description.md)
 

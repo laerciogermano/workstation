@@ -49,6 +49,7 @@ Copiar/colar: [`PROMPT-NOVO-VENDEDOR.md`](PROMPT-NOVO-VENDEDOR.md) (mailbox + CD
 ./signup-marina-costa.sh --location "São Paulo, Brasil"
 ./signup-lucas-mendes.sh   # PIN via Mailcow; Pular carreira
 ./signup-sofia-ribeiro.sh  # idem :9226
+./signup-amanda-rocha.sh   # PIN via Mailcow; fingerprint Win129 Manaus :9236
 ./signup-pedro-almeida-until-email.sh  # so ate PIN; probe /feed sem onboarding
 ./signup-juliana-martins-until-email.sh  # idem :9228
 # basico so ate nome:
@@ -58,7 +59,11 @@ Copiar/colar: [`PROMPT-NOVO-VENDEDOR.md`](PROMPT-NOVO-VENDEDOR.md) (mailbox + CD
 
 Entradas CLI (completo): `--email` `--password` `--first|--nome` `--last|--sobrenome` `--location` `--job|--cargo` `--company|--empresa` (`--code` opcional — senao poll Mailcow). Until-email / until-name: so email/senha/nome. Confirm-email: `--email` + opcional `--password`/`--code`. **Regra (completo/until-email/confirm):** se aparecer **Pular**, clica. Cliques so CDP. Rollback: apagar mailbox/perfil; CSV `nao_criada`.
 
+**Fingerprint no CSV:** cols `cdp`,`cdp_port`,`fp_ua`,`fp_platform`,`fp_lang`,`fp_timezone`,`fp_locale`,`fp_hw`,`fp_mem`,`fp_geo_lat`,`fp_geo_lon`,`fp_screen`,`fp_chrome` (preencher na criação; linhas antigas vazias). Rollback: limpar cols novas.
+
 **IP no CSV:** a cada signup novo, gravar IPv4 de egress (`curl -sS https://api.ipify.org`) na col `ip` de [`../android-studio/contas-linkedin-clozzy.csv`](../android-studio/contas-linkedin-clozzy.csv). Rollback: deixar `ip` vazio só em linhas históricas sem evidência.
+
+**Antes → depois (Amanda Rocha 2026-11-02):** sem linha → CSV `amanda.rocha@clozzy.com.br` + CDP `amanda-rocha` :9236 + fingerprint Win/Chrome129/`America/Manaus` gravado em cols `fp_*`; signup `./signup-amanda-rocha.sh` → `/feed`. Rollback: remover linha CSV/`credenciais.md`; `removeCdp('amanda-rocha', { deleteProfile: true })`; apagar mailbox Mailcow.
 
 ## Script
 

@@ -10,8 +10,9 @@ Script novo, passo a passo. **Agora só o passo 1:** mailbox Mailcow.
 | [`create-email.mjs`](create-email.mjs) | `createEmail({ first, last, … })` |
 | [`create-cdp.mjs`](create-cdp.mjs) | `createLinkedInCdp({ first, last, … })` |
 | [`save-csv.mjs`](save-csv.mjs) | `saveAccountCsv({ email, cdp })` → LI + chrome CSV |
-| [`create-linkedin.mjs`](create-linkedin.mjs) | `createLinkedin({ id })` — chama `openLinkedInSignup` |
+| [`create-linkedin.mjs`](create-linkedin.mjs) | `createLinkedin({ id, email })` — signup + preenche e-mail |
 | [`open-signup.mjs`](open-signup.mjs) | `openLinkedInSignup({ id })` → `startCdp` + URL signup |
+| [`fill-signup-email.mjs`](fill-signup-email.mjs) | `fillSignupEmail({ id, email })` → `#email-or-phone` |
 
 ```bash
 cd screen-robot/pocs/chrome-cdp/linkedin-create-account
@@ -24,7 +25,7 @@ node create-mailbox.mjs --first Bruno --last Nunes --write-credenciais --no-brow
 
 Saída JSON: `{ email, cdp, csv, linkedin }`.
 
-**LinkedIn:** após CSV, `createLinkedin` → `openLinkedInSignup` sobe o Chrome (`startCdp`) em `https://www.linkedin.com/signup`. `--no-browser` pula. Rollback: não chamar / usar `--no-browser`. Após criar, `saveAccountCsv` grava [`contas-linkedin-clozzy.csv`](../../android-studio/contas-linkedin-clozzy.csv) com **todos** os campos do fingerprint configurados (`fp_ua` … `fp_full_version_list`, `fp_webrtc`, geo accuracy, Client Hints; `fp_screen` vazio — sem viewport) + `ip` (ipify), e [`contas-facebook-chrome.csv`](../../android-studio/contas-facebook-chrome.csv).
+**LinkedIn:** após CSV, `createLinkedin` → abre signup → `fillSignupEmail` no `#email-or-phone`. `--no-browser` pula. Rollback: não chamar / usar `--no-browser`. Após criar, `saveAccountCsv` grava [`contas-linkedin-clozzy.csv`](../../android-studio/contas-linkedin-clozzy.csv) com **todos** os campos do fingerprint configurados (`fp_ua` … `fp_full_version_list`, `fp_webrtc`, geo accuracy, Client Hints; `fp_screen` vazio — sem viewport) + `ip` (ipify), e [`contas-facebook-chrome.csv`](../../android-studio/contas-facebook-chrome.csv).
 
 **Antes → depois (fp cols):** só ua/platform/lang/tz/hw/mem/geo/chrome → + accept_language, geo_accuracy, max_touch, touch, webrtc, ch_platform, platform_version, arch, model, mobile, bitness, brands, full_version_list. Sem hash. Rollback: remover cols novas do header/`save-csv.mjs`.
 

@@ -1,14 +1,14 @@
 /**
  * Criação da conta LinkedIn (passo browser).
- * Por enquanto: abre o signup; depois entra o preenchimento/PIN.
+ * Abre signup e preenche o e-mail.
  */
 import { openLinkedInSignup } from './open-signup.mjs';
+import { fillSignupEmail } from './fill-signup-email.mjs';
 
 /**
- * Inicia o fluxo LinkedIn no CDP (abre signup).
- *
  * @param {{
  *   id: string,
+ *   email?: string,
  *   url?: string,
  *   dryRun?: boolean,
  *   skipBrowser?: boolean,
@@ -19,7 +19,7 @@ export async function createLinkedin(opts = {}) {
   if (!id) throw new Error('createLinkedin: id obrigatório');
 
   if (opts.skipBrowser) {
-    return { id, skipped: true, browser: null };
+    return { id, skipped: true, browser: null, email: null };
   }
 
   const browser = await openLinkedInSignup({
@@ -28,9 +28,20 @@ export async function createLinkedin(opts = {}) {
     dryRun: opts.dryRun,
   });
 
+  let emailFill = null;
+  const email = String(opts.email || '').trim();
+  if (email) {
+    emailFill = await fillSignupEmail({
+      id,
+      email,
+      dryRun: opts.dryRun,
+    });
+  }
+
   return {
     id,
     skipped: false,
     browser,
+    email: emailFill,
   };
 }

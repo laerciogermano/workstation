@@ -7,10 +7,24 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <aside class="score-card score-card--fixed" id="score-card" aria-live="polite">
-      <p class="score-label">Veredito</p>
-      <p class="score-verdict" id="score-verdict">…</p>
-      <p class="score-meta" id="score-meta">ambiente — · comportamento —</p>
+    <aside class="feedback-rail" aria-label="Feedback de detecção">
+      <div class="score-card" id="score-card" aria-live="polite">
+        <p class="score-label">Veredito</p>
+        <p class="score-verdict" id="score-verdict">…</p>
+        <p class="score-meta" id="score-meta">ambiente — · comportamento —</p>
+      </div>
+
+      <section class="panel panel--behavior">
+        <h2>Comportamento</h2>
+        <p class="hint">CDP sem trajetória tende a falhar.</p>
+        <ul class="checks-list" id="behavior-list"></ul>
+        <div class="meters meters--compact">
+          <div><span>Pontos</span><strong id="m-points">0</strong></div>
+          <div><span>Cliques</span><strong id="m-clicks">0</strong></div>
+          <div><span>Teclas</span><strong id="m-keys">0</strong></div>
+          <div><span>Trusted</span><strong id="m-trusted">—</strong></div>
+        </div>
+      </section>
     </aside>
 
     <header class="top">
@@ -25,7 +39,7 @@
       </div>
     </header>
 
-    <main class="grid">
+    <main class="grid grid--with-rail">
       <section class="panel">
         <h2>Ambiente (paridade sannysoft)</h2>
         <p class="hint">Pass = verde · Fail = vermelho. Mesmos tipos de sinal do Intoli/sannysoft.</p>
@@ -42,18 +56,6 @@
           <summary>Detalhes do navigator / screen</summary>
           <pre id="env-details"></pre>
         </details>
-      </section>
-
-      <section class="panel">
-        <h2>Comportamento (mouse / teclado)</h2>
-        <p class="hint">Interaja na área abaixo. CDP sem trajetória tende a falhar.</p>
-        <ul class="checks-list" id="behavior-list"></ul>
-        <div class="meters">
-          <div><span>Pontos de ponteiro</span><strong id="m-points">0</strong></div>
-          <div><span>Cliques</span><strong id="m-clicks">0</strong></div>
-          <div><span>Teclas</span><strong id="m-keys">0</strong></div>
-          <div><span>Último click trusted</span><strong id="m-trusted">—</strong></div>
-        </div>
       </section>
 
       <section class="panel playground" id="playground">

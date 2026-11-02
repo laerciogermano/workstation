@@ -535,26 +535,61 @@ function logUi(msg) {
   el("ui-log").textContent = msg;
 }
 
+function moveFigMouse(x, y, { press = false } = {}) {
+  const m = el("fig-mouse");
+  if (!m) return;
+  m.classList.add("is-on");
+  m.style.transform = `translate(${Math.round(x)}px, ${Math.round(y)}px)`;
+  m.classList.toggle("is-press", !!press);
+}
+
+function pulseFigMouseClick() {
+  const m = el("fig-mouse");
+  if (!m) return;
+  m.classList.remove("is-click");
+  void m.offsetWidth;
+  m.classList.add("is-click");
+}
+
 function wireBehavior() {
   let lastSampleT = 0;
-  window.addEventListener(
-    "pointermove",
-    (e) => {
-      // só trajetória trusted conta como humana (CDP Input = trusted; JS dispatch = não)
-      if (!e.isTrusted) {
-        refresh();
-        return;
-      }
-      state.movedSinceLoad = true;
-      const now = performance.now();
-      if (now - lastSampleT < 16) return;
-      lastSampleT = now;
-      state.pointerSamples.push({ x: e.clientX, y: e.clientY, t: now });
-      if (state.pointerSamples.length > 400) state.pointerSamples.shift();
+  let figPressed = false;
+
+  const figOnMove = (e) => {
+    if (!e.isTrusted) {
       refresh();
-    },
-    { passive: true },
-  );
+      return;
+    }
+    // cursor virtual (CDP Input mouseMoved / mouse real)
+    moveFigMouse(e.clientX, e.clientY, { press: figPressed });
+    state.movedSinceLoad = true;
+    const now = performance.now();
+    if (now - lastSampleT < 16) return;
+    lastSampleT = now;
+    state.pointerSamples.push({ x: e.clientX, y: e.clientY, t: now });
+    if (state.pointerSamples.length > 400) state.pointerSamples.shift();
+    refresh();
+  };
+
+  // pointer + mouse: CDP costuma emitir mouse*; pointer cobre o resto
+  window.addEventListener("pointermove", figOnMove, { passive: true });
+  window.addEventListener("mousemove", figOnMove, { passive: true });
+
+  const figOnDown = (e) => {
+    if (!e.isTrusted) return;
+    figPressed = true;
+    moveFigMouse(e.clientX, e.clientY, { press: true });
+  };
+  const figOnUp = (e) => {
+    if (!e.isTrusted) return;
+    figPressed = false;
+    moveFigMouse(e.clientX, e.clientY, { press: false });
+    pulseFigMouseClick();
+  };
+  window.addEventListener("pointerdown", figOnDown, true);
+  window.addEventListener("mousedown", figOnDown, true);
+  window.addEventListener("pointerup", figOnUp, true);
+  window.addEventListener("mouseup", figOnUp, true);
 
   window.addEventListener(
     "click",

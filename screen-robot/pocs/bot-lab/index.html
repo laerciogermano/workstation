@@ -41,7 +41,6 @@
           <section class="panel playground" id="playground">
             <h2>Playground UI</h2>
             <p class="hint">Use mouse e teclado como humano. Arraste o handle; preencha o formulário.</p>
-
             <div class="ui-row">
               <button type="button" class="btn" id="btn-primary">Botão primário</button>
               <button type="button" class="btn ghost" id="btn-secondary">Secundário</button>
@@ -113,6 +112,20 @@
           </div>
         </section>
       </aside>
+    </div>
+
+    <div id="fig-mouse" class="fig-mouse" aria-hidden="true">
+      <svg viewBox="0 0 28 40" width="28" height="40">
+        <path
+          d="M3 2 L3 30 L10 24 L15 36 L19 34 L14 22 L24 22 Z"
+          fill="#f4f7fb"
+          stroke="#0b1220"
+          stroke-width="1.6"
+          stroke-linejoin="round"
+        />
+        <path d="M3 2 L3 30 L10 24 L24 22 Z" fill="#5eb0ff" opacity="0.35" />
+      </svg>
+      <span class="fig-mouse-ripple"></span>
     </div>
 
     <canvas id="c1" width="220" height="30" hidden></canvas>

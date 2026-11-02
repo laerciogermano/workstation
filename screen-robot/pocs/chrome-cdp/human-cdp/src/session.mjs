@@ -71,6 +71,22 @@ export class HumanCdpSession {
     const saved = cursorByCdp.get(cursorKey(opts.cdpUrl));
     this._cursor = saved ? { ...saved } : { x: 40, y: 40 };
     this._lastFocusAt = 0;
+    /** Emulation.setFocusEmulationEnabled ligado (padrão em toda sessão). */
+    this._focusEmulationOn = false;
+  }
+
+  /**
+   * Força foco lógico da página via CDP (hasFocus/visibility) sem depender do SO.
+   * Padrão em toda sessão — idempotente.
+   */
+  async enableFocusEmulation() {
+    try {
+      await this.send('Emulation.setFocusEmulationEnabled', { enabled: true });
+      this._focusEmulationOn = true;
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   /** Atualiza cursor interno + mapa persistente (sempre a última posição despachada). */
@@ -122,9 +138,9 @@ export class HumanCdpSession {
   }
 
   /**
-   * Garante foco antes de qualquer operação:
-   * 1) se já focado → segue
-   * 2) senão bringToFront + activate até hasFocus === true
+   * Garante foco lógico antes de qualquer operação via
+   * Emulation.setFocusEmulationEnabled (não rouba foco do SO).
+   * bringToFront + activate comentados de propósito.
    * @param {{ settleMs?: number, force?: boolean, require?: boolean, attempts?: number }} [opts]
    * @returns {Promise<boolean>}
    */
@@ -134,6 +150,8 @@ export class HumanCdpSession {
     require = true,
     attempts = 5,
   } = {}) {
+    await this.enableFocusEmulation();
+
     if (!force) {
       const already = await this.isPageFocused();
       if (already) {
@@ -142,32 +160,29 @@ export class HumanCdpSession {
       }
     }
 
-    for (let i = 0; i < attempts; i++) {
-      try {
-        await this.send('Page.bringToFront');
-      } catch {
-        /* target pode estar trocando */
-      }
-      activateApp(this.chromeApp);
-      await sleep(settleMs);
-      const ok = await this.isPageFocused();
-      if (ok) {
-        this._lastFocusAt = Date.now();
-        return true;
-      }
-      // último recurso: emulação de foco CDP (alguns hosts)
-      if (i >= attempts - 2) {
-        try {
-          await this.send('Emulation.setFocusEmulationEnabled', { enabled: true });
-        } catch {
-          /* ignore */
-        }
-        await sleep(80);
-        if (await this.isPageFocused()) {
-          this._lastFocusAt = Date.now();
-          return true;
-        }
-      }
+    // Foco de SO desligado: não trazer Chrome à frente (atrapalha uso do Mac).
+    // Rollback: descomentar o loop abaixo.
+    // for (let i = 0; i < attempts; i++) {
+    //   try {
+    //     await this.send('Page.bringToFront');
+    //   } catch {
+    //     /* target pode estar trocando */
+    //   }
+    //   activateApp(this.chromeApp);
+    //   await sleep(settleMs);
+    //   await this.enableFocusEmulation();
+    //   const ok = await this.isPageFocused();
+    //   if (ok) {
+    //     this._lastFocusAt = Date.now();
+    //     return true;
+    //   }
+    // }
+
+    await sleep(Math.min(settleMs, 80));
+    await this.enableFocusEmulation();
+    if (await this.isPageFocused()) {
+      this._lastFocusAt = Date.now();
+      return true;
     }
 
     if (require) {
@@ -564,6 +579,7 @@ export async function connect(opts = {}) {
     chromeApp: opts.chromeApp,
     debug: opts.debug,
   });
+  await session.enableFocusEmulation();
   if (opts.url && !opts.newTab) {
     await session.goto(opts.url);
   } else {

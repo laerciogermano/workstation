@@ -104,6 +104,12 @@ async function attachBrowser(fp) {
     try {
       await browser.send('Page.enable', {}, { sessionId });
       await browser.send('Runtime.enable', {}, { sessionId });
+      // foco lógico padrão em toda aba (hasFocus/visibility sem depender do SO)
+      await browser.send(
+        'Emulation.setFocusEmulationEnabled',
+        { enabled: true },
+        { sessionId },
+      );
     } catch {
       pages.delete(sessionId);
       return;

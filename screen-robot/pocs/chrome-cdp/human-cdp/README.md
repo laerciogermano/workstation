@@ -74,10 +74,11 @@ CDP_URL=http://127.0.0.1:9230 npm run test:debug
 | Método | Comportamento |
 |--------|----------------|
 | `connect({ cdpUrl, url, newTab, urlIncludes, debug })` | abre sessão + **foco**; `debug: true` injeta overlay |
-| `click` / `hover` / `type` / `fill` / `drag` / `scroll` / `select` / `goto` / `waitFor` | **sempre** chamam `ensureFocus` (aba + activate Chrome) antes da ação |
+| `click` / `hover` / `type` / `fill` / `drag` / `scroll` / `select` / `goto` / `waitFor` | **sempre** chamam `ensureFocus` (só emulação CDP; sem activate) |
 | `click(sel)` | foco + `mouseMoved` em curva + `press`/`release` |
 | `type` / `fill` | foco + click humano + `Input.insertText` ritmado (sem `text` no keyDown — evita char duplicado) |
-| `bringToFront` / `ensureFocus` | aba + app Chrome (+ `Emulation.setFocusEmulationEnabled`) |
+| `bringToFront` / `ensureFocus` | `Emulation.setFocusEmulationEnabled` (bringToFront + activate **comentados**) |
+| `enableFocusEmulation` | liga emulação de foco na página (padrão no `connect` / `ensureFocus` / keeper) |
 | `enableDebugOverlay` | re-injeta o painel (já chamado em `connect`/`goto` se `debug`) |
 | `evaluate` | só leitura/DOM — **não** usa foco; **não** use para clicar |
 
@@ -187,6 +188,8 @@ Scripts CDP crus (`el.click`, `dispatchMouseEvent` sem move) → importam `human
 **Antes → depois (todas interações):** `hover`/`drag`/`scroll`/`select`/`type` alinhados — `_pointOf` + arrasto obrigatório; `scroll` move ao centro/alvo antes do wheel; `drag` usa `pathToTarget`; `select` tenta clicar a option. Rollback: métodos anteriores em `session.mjs`.
 
 **Antes → depois (foco):** `ensureFocus` só activate/bringToFront sem checar → agora lê `document.hasFocus()`; se false, traz ao foco e **bloqueia** a operação até true (clique já exige). Rollback: early-return por throttle 120ms sem verificação.
+
+**Antes → depois (foco lógico):** emulação só no fim do retry → `Emulation.setFocusEmulationEnabled` **padrão** em `connect`, todo `ensureFocus` e no `fingerprint-keeper` (todas as abas). `Page.bringToFront` + `activate` do SO **comentados** (não roubam Cursor). Rollback: descomentar o loop em `ensureFocus`; remover `enableFocusEmulation` do `connect`/keeper.
 
 **Rollback:** voltar ao CDP cru nos scripts; apagar `human-cdp/`.
 

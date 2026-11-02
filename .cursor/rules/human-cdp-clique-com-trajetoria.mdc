@@ -5,13 +5,13 @@ alwaysApply: true
 
 # Interação = foco true + arrastar até o ponto
 
-Em Chrome/CDP neste lab: **antes de qualquer operação**, garantir `document.hasFocus()` (aba visível). Se não estiver, trazer ao foco; só então agir. O ponteiro **sempre** se move com trajetória até o alvo antes de press/release/wheel.
+Em Chrome/CDP neste lab: **antes de qualquer operação**, garantir foco lógico (`Emulation.setFocusEmulationEnabled` + `document.hasFocus()`). **Não** ativar o Chrome no SO. O ponteiro **sempre** se move com trajetória até o alvo antes de press/release/wheel.
 
 ## Critérios
 
 1. Usar só `human-cdp`: `click` / `clickAt` / `hover` / `drag` / `type` / `fill` / `select` / `scroll`
-2. Ordem: `ensureFocus` (hasFocus true) → trajetória (`pathToTarget`) → ação na posição atual
-3. Sem foco → `Page.bringToFront` + activate Chrome; se ainda falhar, não operar
+2. Ordem: `ensureFocus` (emulação CDP → hasFocus true) → trajetória (`pathToTarget`) → ação na posição atual
+3. Sem foco lógico → não operar (bringToFront/activate comentados; rollback = descomentar em `session.mjs`)
 4. Distância curta ainda gera micro-arco — sem teleporte
 5. `scroll({ selector })` arrasta até o elemento (ou centro) antes do wheel
 6. Nunca `el.click()` / `dispatchEvent` / `Input.*` de press solto

@@ -13,3 +13,5 @@ data,nome,plataforma,chrome_user_data_dir,cdp_port,start_script,obs
 2026-11-02,Bruno Nunes,linkedin,~/chrome-profiles/bruno-nunes,9237,human-cdp createCdp bruno-nunes,perfil Chrome isolado; fingerprint Mac130 Fortaleza; LI signup
 2026-11-02,Fernanda Dias,linkedin,~/chrome-profiles/fernanda-dias,9238,human-cdp createCdp fernanda-dias,perfil Chrome isolado; fingerprint Win32 America/Sao_Paulo; LI signup
 2026-11-02,Rafael Campos,linkedin,~/chrome-profiles/rafael-campos,9239,human-cdp createCdp rafael-campos,perfil Chrome isolado; fingerprint MacIntel America/Sao_Paulo; LI signup
+2026-11-02,Thiago Oliveira,linkedin,~/chrome-profiles/thiago-oliveira,9240,human-cdp createCdp thiago-oliveira,perfil Chrome isolado; fingerprint Win32 America/Belem; LI signup
+2026-11-02,Carla Souza,linkedin,~/chrome-profiles/carla-souza,9241,human-cdp createCdp carla-souza,perfil Chrome isolado; fingerprint Win32 America/Sao_Paulo; LI signup

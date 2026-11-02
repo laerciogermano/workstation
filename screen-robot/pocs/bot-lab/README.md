@@ -38,7 +38,7 @@ Sem script: `python3 -m http.server 8766` nesta pasta.
 - ritmo de cliques e digitação
 - drag com distância
 
-**Veredito:** `humano` · `inconclusivo` · `robô / suspeito` (falhas de ambiente e/ou comportamento).
+**Veredito:** `humano` · `inconclusivo` · `robô / suspeito` (falhas de ambiente e/ou comportamento). Card fixo no canto (sempre visível ao rolar).
 
 ## Aceite rápido
 

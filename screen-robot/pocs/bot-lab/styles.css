@@ -37,11 +37,8 @@ a {
 }
 
 .top {
-  display: flex;
-  gap: 1.5rem;
-  justify-content: space-between;
-  align-items: flex-start;
   padding: 1.75rem 1.5rem 0.5rem;
+  padding-right: min(18rem, 42vw);
   max-width: 1100px;
   margin: 0 auto;
 }
@@ -74,6 +71,18 @@ h1 {
   border-radius: var(--radius);
   background: var(--panel);
   text-align: right;
+}
+
+.score-card--fixed {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 1000;
+  min-width: 12.5rem;
+  max-width: min(18rem, calc(100vw - 2rem));
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(8px);
+  background: rgba(26, 34, 44, 0.94);
 }
 
 .score-label {
@@ -355,7 +364,14 @@ h1 {
 
 @media (max-width: 820px) {
   .top {
-    flex-direction: column;
+    padding-right: 1.5rem;
+    padding-top: 5.5rem;
+  }
+  .score-card--fixed {
+    left: 1rem;
+    right: 1rem;
+    max-width: none;
+    text-align: left;
   }
   .grid {
     grid-template-columns: 1fr;

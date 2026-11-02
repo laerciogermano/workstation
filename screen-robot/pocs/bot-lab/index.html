@@ -7,6 +7,12 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
+    <aside class="score-card score-card--fixed" id="score-card" aria-live="polite">
+      <p class="score-label">Veredito</p>
+      <p class="score-verdict" id="score-verdict">…</p>
+      <p class="score-meta" id="score-meta">ambiente — · comportamento —</p>
+    </aside>
+
     <header class="top">
       <div>
         <p class="eyebrow">screen-robot · POC</p>
@@ -17,11 +23,6 @@
           e heurísticas de mouse/teclado.
         </p>
       </div>
-      <aside class="score-card" id="score-card" aria-live="polite">
-        <p class="score-label">Veredito</p>
-        <p class="score-verdict" id="score-verdict">…</p>
-        <p class="score-meta" id="score-meta">ambiente — · comportamento —</p>
-      </aside>
     </header>
 
     <main class="grid">

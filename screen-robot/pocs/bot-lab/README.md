@@ -47,7 +47,9 @@ Painel no topo com **hash curto** + tabela (UA, platform, lang/tz, screen, cores
 - drag: **pass só com distância trusted**; drag JS sintético → **fail**
 - **tela/aba com foco** — `hasFocus` + visible; sem foco/`blur` → **tainted** (poll 150ms; CDP `Input` re-foca no clique). Ação enquanto tainted → **fail** + **lock** até reset → veredito **robô**. Sem ação: limpa após ~450ms de foco estável.
 
-**Veredito:** `humano` (pass≥3 e 0 fails) · `robô / suspeito` (qualquer ação sem foco; ≥2 fails; ou ≥1 fail com pass&lt;3) · `inconclusivo` (pouca evidência). Layout: site à esquerda · trilho fixo à direita (botão « minimizar/expandir). Cursor virtual `fig-mouse` segue o ponteiro.
+**Veredito:** `humano` (pass≥3 e 0 fails) · `robô / suspeito` (qualquer ação sem foco; ≥2 fails; ou ≥1 fail com pass&lt;3) · `inconclusivo` (pouca evidência). Layout: site à esquerda · **trilho `position: fixed` à direita** (sempre visível mesmo com viewport CDP) · botão « minimizar. Cursor virtual `fig-mouse` segue o ponteiro.
+
+**Antes → depois (trilho):** rail em grid/`sticky` sumia quando `setDeviceMetricsOverride` > janela real → `fixed` + `padding-right` no `.shell`; human-cdp limpa metrics no goto do lab. Rollback: grid sticky antigo.
 
 ## Aceite rápido
 

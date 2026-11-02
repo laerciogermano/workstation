@@ -38,11 +38,10 @@ a {
 }
 
 .shell {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) var(--rail-w);
-  align-items: start;
+  display: block;
   min-height: 100vh;
-  gap: 0;
+  /* espaço pro trilho fixo — sobrevive a viewport CDP menor que o layout */
+  padding-right: var(--rail-w);
 }
 
 .site-col {
@@ -76,8 +75,11 @@ h1 {
 }
 
 .feedback-rail {
-  position: sticky;
+  /* fixed: visível mesmo com Emulation.setDeviceMetricsOverride maior/menor que a janela */
+  position: fixed;
   top: 0;
+  right: 0;
+  bottom: 0;
   height: 100vh;
   width: var(--rail-w);
   display: flex;
@@ -86,9 +88,9 @@ h1 {
   padding: 1rem 1rem 1rem 0.75rem;
   overflow: auto;
   border-left: 1px solid var(--line);
-  background: rgba(12, 16, 22, 0.92);
+  background: rgba(12, 16, 22, 0.94);
   backdrop-filter: blur(10px);
-  z-index: 20;
+  z-index: 2147483000;
   transition: width 0.18s ease, padding 0.18s ease;
 }
 

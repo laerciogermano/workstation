@@ -2,8 +2,9 @@
 
 Lib entre o **programador** e o **Chrome via CDP**: clique, digitar, drag, etc. com trajetória/ritmo/foco para o [bot-lab](../../bot-lab/README.md) marcar **humano**.
 
-**Card:** [Lib CDP humana](https://trello.com/c/5tt5ZTeN) · task [`../../../tasks/6ae8ac1d5228997f864b40c5/README.md`](../../../tasks/6ae8ac1d5228997f864b40c5/README.md)  
+**Card:** [Lib CDP humana](https://trello.com/c/5tt5ZTeN) · task [`../../../tasks/6ae8ac1d5228997f864b40c5/README.md`](../../../tasks/6ae8ac1d5228997f864b40c5/README.md)
 **Debug overlay:** [modo debug no connect](https://trello.com/c/W4GN946S) · task [`../../../tasks/6ae8d5241aa4adad65cdd8f1/README.md`](../../../tasks/6ae8d5241aa4adad65cdd8f1/README.md)
+**Trajetória contínua:** [sem teleportes](https://trello.com/c/5N5E2vlJ) · task [`../../../tasks/6ae8dd3e5c359e796ef30a66/README.md`](../../../tasks/6ae8dd3e5c359e796ef30a66/README.md) — ponteiro parte de onde parou; passos ≤36px; press na posição atual.
 
 ## Pré-req
 
@@ -157,6 +158,8 @@ Scripts CDP crus (`el.click`, `dispatchMouseEvent` sem move) → importam `human
 **Antes → depois (type):** `keyDown` com `text` + `insertText` → cada char duplicado (Rafaela→RRaaffaaeellaa). Agora: keyDown/Up sem `text`; só `insertText` insere. `fill` clear: `el.select()` + Backspace + setter nativo (Cmd+A CDP falhava no FB). Rollback: keyDown com `text` + clear só Ctrl+A.
 
 **Antes → depois (debug):** trilho fixo só no layout do bot-lab → `connect({ debug: true })` flutua o `feedback-rail` junto ao mouse (e badge fora do lab). Rollback: `debug: false` / omitir flag.
+
+**Antes → depois (trajetória):** pontas com jitter + passos longos + press deslocado do último `mouseMoved` → teleportes no bot-lab. Agora: âncoras exatas, densify ≤36px, step ≥16ms, press na posição atual, cursor persistido por `cdpUrl`. Rollback: `trajectoryPoints`/`_moveTo`/`click` anteriores.
 
 **Rollback:** voltar ao CDP cru nos scripts; apagar `human-cdp/`.
 

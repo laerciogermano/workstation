@@ -22,6 +22,16 @@ import {
 } from './human.mjs';
 
 /**
+ * Última posição do ponteiro por CDP (porta/url) — sobrevive a reconnect.
+ * @type {Map<string, { x: number, y: number }>}
+ */
+const cursorByCdp = new Map();
+
+function cursorKey(cdpUrl) {
+  return String(cdpUrl || 'default').replace(/\/$/, '');
+}
+
+/**
  * @typedef {object} ConnectOptions
  * @property {string} [cdpUrl]
  * @property {string} [urlIncludes] filtra aba existente
@@ -53,8 +63,15 @@ export class HumanCdpSession {
     this.focused = true;
     this.debug = !!opts.debug;
     this.chromeApp = opts.chromeApp || 'Google Chrome';
-    this._cursor = { x: 40, y: 40 };
+    const saved = cursorByCdp.get(cursorKey(opts.cdpUrl));
+    this._cursor = saved ? { ...saved } : { x: 40, y: 40 };
     this._lastFocusAt = 0;
+  }
+
+  /** Atualiza cursor interno + mapa persistente (sempre a última posição despachada). */
+  _setCursor(x, y) {
+    this._cursor = { x, y };
+    cursorByCdp.set(cursorKey(this.cdpUrl), { x, y });
   }
 
   /** Injeta/reativa mouse virtual + painel fixo à direita (no-op se debug=false). */
@@ -131,6 +148,14 @@ export class HumanCdpSession {
     if (this._fingerprint) {
       await applyFingerprint(this, this._fingerprint);
     }
+    // bot-lab: viewport CDP maior que a janela escondia o trilho de comportamento
+    if (/127\.0\.0\.1:8766|localhost:8766/.test(String(url))) {
+      try {
+        await this.send('Emulation.clearDeviceMetricsOverride');
+      } catch {
+        /* ignore */
+      }
+    }
     await this.enableDebugOverlay();
   }
 
@@ -163,18 +188,34 @@ export class HumanCdpSession {
     })()`);
   }
 
+  /**
+   * Move continuamente de `_cursor` até (x,y). Sem pulos.
+   * @returns {{ x: number, y: number }}
+   */
   async _moveTo(x, y, { steps } = {}) {
     await this.ensureFocus({ settleMs: 80 });
+    const target = { x, y };
     const dist = Math.hypot(x - this._cursor.x, y - this._cursor.y);
-    const n = steps ?? Math.max(18, Math.min(40, Math.round(dist / 12)));
-    const pts = trajectoryPoints(this._cursor, { x, y }, { steps: n });
-    await moveAlong(this.send.bind(this), pts);
-    this._cursor = { x, y };
-    await this._followDebugCursor(x, y);
+    if (dist < 0.5) {
+      // ainda assim emite um mouseMoved âncora (continuidade / pre-click-move)
+      await this.send('Input.dispatchMouseEvent', {
+        type: 'mouseMoved',
+        x: this._cursor.x,
+        y: this._cursor.y,
+      });
+      await this._followDebugCursor(this._cursor.x, this._cursor.y);
+      return this._cursor;
+    }
+    const pts = trajectoryPoints(this._cursor, target, { steps });
+    const last = await moveAlong(this.send.bind(this), pts);
+    this._setCursor(last.x, last.y);
+    await this._followDebugCursor(last.x, last.y);
+    return last;
   }
 
   /**
-   * Clique humano: foco + trajetória + press/release CDP (isTrusted).
+   * Clique humano: foco + trajetória contínua até o alvo + press/release.
+   * O press ocorre exatamente onde o ponteiro parou (sem teleporte no down).
    * @param {string} selector
    * @param {{ clicks?: number, delayMs?: number }} [opts]
    */
@@ -190,11 +231,12 @@ export class HumanCdpSession {
     await sleep(randInt(40, 120));
     await this.ensureFocus({ settleMs: 60, force: true });
     for (let i = 0; i < clicks; i++) {
-      const ox = x + rand(-2, 2);
-      const oy = y + rand(-2, 2);
-      await pressRelease(this.send.bind(this), ox, oy);
-      this._cursor = { x: ox, y: oy };
-      await this._followDebugCursor(ox, oy);
+      // micro-ajuste contínuo (não teleporta o down)
+      const ox = this._cursor.x + rand(-1.5, 1.5);
+      const oy = this._cursor.y + rand(-1.5, 1.5);
+      await this._moveTo(ox, oy);
+      await pressRelease(this.send.bind(this), this._cursor.x, this._cursor.y);
+      await this._followDebugCursor(this._cursor.x, this._cursor.y);
       if (i < clicks - 1) {
         await this.ensureFocus({ settleMs: 40 });
         await sleep(delayMs ?? clickGapMs());
@@ -319,30 +361,32 @@ export class HumanCdpSession {
     await this.ensureFocus({ settleMs: 100, force: true });
     await this._moveTo(from.cx, from.cy);
     await this.ensureFocus({ settleMs: 50, force: true });
+    const pressX = this._cursor.x;
+    const pressY = this._cursor.y;
     await this.send('Input.dispatchMouseEvent', {
       type: 'mousePressed',
-      x: from.cx,
-      y: from.cy,
+      x: pressX,
+      y: pressY,
       button: 'left',
       buttons: 1,
       clickCount: 1,
     });
     const pts = trajectoryPoints(
-      { x: from.cx, y: from.cy },
+      { x: pressX, y: pressY },
       { x: toX, y: toY },
       { steps },
     );
-    await moveAlong(this.send.bind(this), pts, { stepMs: [12, 22] });
+    const last = await moveAlong(this.send.bind(this), pts, { stepMs: [16, 26] });
     await this.send('Input.dispatchMouseEvent', {
       type: 'mouseReleased',
-      x: toX,
-      y: toY,
+      x: last.x,
+      y: last.y,
       button: 'left',
       buttons: 0,
       clickCount: 1,
     });
-    this._cursor = { x: toX, y: toY };
-    await this._followDebugCursor(toX, toY);
+    this._setCursor(last.x, last.y);
+    await this._followDebugCursor(last.x, last.y);
   }
 
   async select(selector, value) {

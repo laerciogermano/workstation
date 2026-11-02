@@ -85,3 +85,4 @@ tasks/
 | [`6ae8b23dccd25f22a26e5916/`](6ae8b23dccd25f22a26e5916/README.md) | [CRUD de CDPs na lib](https://trello.com/c/hoLSkLko) |
 | [`6ae8d5241aa4adad65cdd8f1/`](6ae8d5241aa4adad65cdd8f1/README.md) | [Modo debug no connect (painel junto ao mouse)](https://trello.com/c/W4GN946S) |
 | [`6ae8dc57b01c993b519a5030/`](6ae8dc57b01c993b519a5030/README.md) | [Catálogo devices + browsers (fingerprint)](https://trello.com/c/x3dClHJu) |
+| [`6ae8dd3e5c359e796ef30a66/`](6ae8dd3e5c359e796ef30a66/README.md) | [Trajetória contínua do mouse (sem teleportes)](https://trello.com/c/5N5E2vlJ) |

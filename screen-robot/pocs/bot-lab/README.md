@@ -48,6 +48,16 @@ Sem script: `python3 -m http.server 8766` nesta pasta.
 
 Script CDP existente que lê o sannysoft: [`../chrome-cdp/sannysoft-points.mjs`](../chrome-cdp/sannysoft-points.mjs).
 
+### Teste automatizado (JS vs CDP vs trajetória)
+
+Com Chrome Germano em `:9230` e o lab no ar:
+
+```bash
+CDP_URL=http://127.0.0.1:9230 node test-cdp-clicks.mjs
+```
+
+Esperado: `el.click` / `dispatchEvent` → robô; CDP sem `mouseMoved` → robô (mesmo com `isTrusted=true`); CDP com trajetória + ritmo → humano.
+
 ## Antes → depois
 
 Não existia alvo local controlado → `pocs/bot-lab/` com checks sannysoft-like + playground UI.

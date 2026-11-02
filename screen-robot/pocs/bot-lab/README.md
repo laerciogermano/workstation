@@ -18,6 +18,12 @@ Sem script: `python3 -m http.server 8766` nesta pasta.
 
 ## O que mede
 
+### Fingerprint (comparação visual)
+
+Painel no topo com **hash curto** + tabela (UA, platform, lang/tz, screen, cores/mem, WebGL, webdriver, geo…). Abra dois CDPs lado a lado: hashes iguais = mesmo fingerprint efetivo.
+
+**Antes → depois:** só checks sannysoft + playground → painel Fingerprint explícito. Rollback: remover `#fingerprint-panel` / `collectFingerprint` em `app.js`.
+
 ### Ambiente (paridade [bot.sannysoft.com](https://bot.sannysoft.com/))
 
 | Check lab | Equivalente sannysoft / Intoli |

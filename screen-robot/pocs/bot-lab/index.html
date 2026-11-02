@@ -20,6 +20,23 @@
         </header>
 
         <main class="grid">
+          <section class="panel panel--fp" id="fingerprint-panel">
+            <h2>Fingerprint</h2>
+            <p class="hint">
+              Sinais visíveis para comparar dois CDPs lado a lado. Hash curto muda se UA/lang/tz/screen/WebGL divergirem.
+            </p>
+            <div class="fp-hash" id="fp-hash" aria-live="polite">…</div>
+            <table class="checks fp-table" id="fp-table">
+              <thead>
+                <tr>
+                  <th>Campo</th>
+                  <th>Valor</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </section>
+
           <section class="panel">
             <h2>Ambiente (paridade sannysoft)</h2>
             <p class="hint">Pass = verde · Fail = vermelho. Mesmos tipos de sinal do Intoli/sannysoft.</p>

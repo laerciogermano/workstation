@@ -180,6 +180,126 @@ function webdriverAdvanced() {
   return markers;
 }
 
+function shortHash(str) {
+  let h = 2166136261;
+  for (let i = 0; i < str.length; i++) {
+    h ^= str.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return (h >>> 0).toString(16).padStart(8, "0");
+}
+
+async function collectFingerprint() {
+  const webgl = getWebGLInfo();
+  let timezone = null;
+  try {
+    timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  } catch {}
+  let locale = null;
+  try {
+    locale = Intl.DateTimeFormat().resolvedOptions().locale;
+  } catch {}
+  let colorScheme = "unknown";
+  try {
+    colorScheme = matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : matchMedia("(prefers-color-scheme: light)").matches
+        ? "light"
+        : "no-preference";
+  } catch {}
+  let geo = null;
+  try {
+    if (navigator.geolocation) {
+      geo = await new Promise((resolve) => {
+        const t = setTimeout(() => resolve(null), 800);
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            clearTimeout(t);
+            resolve({
+              lat: Number(pos.coords.latitude.toFixed(4)),
+              lon: Number(pos.coords.longitude.toFixed(4)),
+              acc: Math.round(pos.coords.accuracy),
+            });
+          },
+          () => {
+            clearTimeout(t);
+            resolve(null);
+          },
+          { maximumAge: 60_000, timeout: 700, enableHighAccuracy: false },
+        );
+      });
+    }
+  } catch {}
+
+  const uaChrome = (navigator.userAgent.match(/Chrome\/[\d.]+/) || ["?"])[0];
+  const rows = [
+    ["userAgent (Chrome)", uaChrome],
+    ["userAgent", navigator.userAgent],
+    ["platform", navigator.platform],
+    ["language", navigator.language],
+    ["languages", JSON.stringify(navigator.languages || null)],
+    ["timezone", timezone],
+    ["locale", locale],
+    ["webdriver", String(navigator.webdriver)],
+    ["hardwareConcurrency", String(navigator.hardwareConcurrency)],
+    ["deviceMemory", String(navigator.deviceMemory ?? "—")],
+    ["maxTouchPoints", String(navigator.maxTouchPoints)],
+    ["colorScheme", colorScheme],
+    ["screen", `${screen.width}×${screen.height} · dpr ${devicePixelRatio}`],
+    ["inner", `${window.innerWidth}×${window.innerHeight}`],
+    ["outer", `${window.outerWidth}×${window.outerHeight}`],
+    ["webgl.vendor", webgl.vendor],
+    ["webgl.renderer", webgl.renderer],
+    ["doNotTrack", String(navigator.doNotTrack)],
+    ["vendor", navigator.vendor],
+    [
+      "geolocation",
+      geo ? `${geo.lat}, ${geo.lon} (±${geo.acc}m)` : "negado / n/d",
+    ],
+  ];
+
+  const hashInput = rows
+    .filter(([k]) =>
+      [
+        "userAgent",
+        "platform",
+        "language",
+        "languages",
+        "timezone",
+        "hardwareConcurrency",
+        "deviceMemory",
+        "colorScheme",
+        "screen",
+        "webgl.vendor",
+        "webgl.renderer",
+        "webdriver",
+      ].includes(k),
+    )
+    .map(([, v]) => String(v))
+    .join("|");
+
+  return { rows, hash: shortHash(hashInput), webgl, timezone, locale, colorScheme, geo };
+}
+
+function renderFingerprint(fp) {
+  const hashEl = el("fp-hash");
+  const tbody = el("fp-table")?.querySelector("tbody");
+  if (!hashEl || !tbody) return;
+  hashEl.textContent = fp.hash;
+  hashEl.title = "Hash dos campos principais — compare entre janelas";
+  tbody.innerHTML = "";
+  for (const [name, value] of fp.rows) {
+    const tr = document.createElement("tr");
+    const tdN = document.createElement("td");
+    const tdV = document.createElement("td");
+    tdN.textContent = name;
+    tdV.textContent = value == null ? "—" : String(value);
+    tr.append(tdN, tdV);
+    tbody.append(tr);
+  }
+  window.__fingerprint = fp;
+}
+
 async function runEnvChecks() {
   const ua = navigator.userAgent || "";
   const webgl = getWebGLInfo();
@@ -745,6 +865,8 @@ function wireRailToggle() {
 async function main() {
   wireBehavior();
   wireRailToggle();
+  const fp = await collectFingerprint();
+  renderFingerprint(fp);
   const broken = el("broken-img");
   const rerunBroken = () => {
     // reavalia broken image após load

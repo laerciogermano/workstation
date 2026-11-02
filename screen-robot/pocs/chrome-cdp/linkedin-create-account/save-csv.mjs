@@ -21,6 +21,7 @@ export const LI_HEADER = [
   'email',
   'senha_li',
   'restrita',
+  'li_criado',
   'origem',
   'ip',
   'objetivo',
@@ -186,7 +187,31 @@ export function ensureLinkedinCsvHeader() {
 }
 
 /**
+ * Infere se a conta LI chegou a ser criada (sim/nao) a partir de observacoes.
+ */
+export function inferLiCriado(observacoes = '', explicit) {
+  if (explicit === 'sim' || explicit === 'nao') return explicit;
+  const o = String(observacoes || '').toLowerCase();
+  if (
+    /criada_chrome_cdp|email_confirmado|onboarding completo|onboarding → \/feed|status criada/.test(
+      o,
+    )
+  ) {
+    return 'sim';
+  }
+  if (
+    /mailbox_cdp_prontos|signup_em_andamento|signup incompleto|nao_criada/.test(o)
+  ) {
+    return 'nao';
+  }
+  // restrita / AVD antigo: conta existiu (mesmo que depois restrita)
+  if (/restrita|avd |criada via chrome/.test(o)) return 'sim';
+  return 'nao';
+}
+
+/**
  * Preenche fp_* a partir do .human-cdp.json quando a linha tem cdp e fp incompleto.
+ * Também preenche li_criado vazio via inferência.
  */
 export function backfillFingerprintFromMeta() {
   ensureLinkedinCsvHeader();
@@ -195,12 +220,19 @@ export function backfillFingerprintFromMeta() {
   const next = rows.map((r) => {
     const o = { ...r };
     for (const h of LI_HEADER) if (o[h] == null) o[h] = '';
-    if (!o.cdp) return o;
-    if (o.fp_accept_language && o.fp_webrtc && o.fp_brands) return o;
-    const fp = readMetaFingerprint(o.cdp);
-    if (!fp) return o;
-    Object.assign(o, fingerprintToCsvCols(fp));
-    updated += 1;
+    let changed = false;
+    if (!o.li_criado) {
+      o.li_criado = inferLiCriado(o.observacoes);
+      changed = true;
+    }
+    if (o.cdp && !(o.fp_accept_language && o.fp_webrtc && o.fp_brands)) {
+      const fp = readMetaFingerprint(o.cdp);
+      if (fp) {
+        Object.assign(o, fingerprintToCsvCols(fp));
+        changed = true;
+      }
+    }
+    if (changed) updated += 1;
     return o;
   });
   writeCsv(LI_CSV, LI_HEADER, next);
@@ -215,6 +247,7 @@ export function backfillFingerprintFromMeta() {
  *   cdp: object,
  *   ip?: string,
  *   senhaLi?: string,
+ *   liCriado?: 'sim'|'nao',
  *   dryRun?: boolean,
  *   writeChromeCsv?: boolean,
  * }} opts
@@ -237,6 +270,15 @@ export function saveAccountCsv(opts = {}) {
   const cdpId = cdpRes.id || '';
   const cdpPort = cdpRes.port != null ? String(cdpRes.port) : '';
   const fpCols = fingerprintToCsvCols(fp);
+  const observacoes = [
+    `conta LI via CDP (perfil ${cdpId} :${cdpPort})`,
+    fp.timezone ? `fingerprint ${fp.platform}/${fp.timezone}` : '',
+    'senha mailbox em credenciais.md',
+    opts.liCriado === 'sim' ? 'status criada_chrome_cdp' : 'status mailbox_cdp_prontos',
+    'fingerprint sem viewport',
+  ]
+    .filter(Boolean)
+    .join('; ');
 
   const row = {
     data_criacao: today(),
@@ -244,18 +286,11 @@ export function saveAccountCsv(opts = {}) {
     email,
     senha_li: opts.senhaLi || 'in@12345678',
     restrita: 'nao',
+    li_criado: opts.liCriado === 'sim' ? 'sim' : 'nao',
     origem: 'CDP',
     ip,
     objetivo: 'Criar a conta LinkedIn via Chrome + CDP com fingerprint novo',
-    observacoes: [
-      `conta LI via CDP (perfil ${cdpId} :${cdpPort})`,
-      fp.timezone ? `fingerprint ${fp.platform}/${fp.timezone}` : '',
-      'senha mailbox em credenciais.md',
-      'status mailbox_cdp_prontos',
-      'fingerprint sem viewport',
-    ]
-      .filter(Boolean)
-      .join('; '),
+    observacoes,
     cdp: cdpId,
     cdp_port: cdpPort,
     ...fpCols,

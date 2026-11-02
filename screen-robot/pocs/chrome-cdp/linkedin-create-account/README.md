@@ -22,6 +22,8 @@ Saída JSON: `{ email, cdp, csv }`. Após criar, `saveAccountCsv` grava [`contas
 
 **Antes → depois (fp cols):** só ua/platform/lang/tz/hw/mem/geo/chrome → + accept_language, geo_accuracy, max_touch, touch, webrtc, ch_platform, platform_version, arch, model, mobile, bitness, brands, full_version_list. Sem hash. Rollback: remover cols novas do header/`save-csv.mjs`.
 
+**Coluna `li_criado`:** `sim`/`nao` — se a conta LinkedIn foi criada (signup). Default na criação mailbox+CDP: `nao`. Atualizar para `sim` após signup. Rollback: remover a coluna.
+
 **CDP:** porta livre a partir de `9237`; fingerprint **dinâmico** via `generateFingerprint()` — catálogo **conservador** (Win64 / Mac 10_15_7 / **Linux**, Chrome 129–132, cidades BR principais; sem viewport). Evita colisão tz+UA+platformVersion+hw+mem. `debug: true`. Override: `createLinkedInCdp({ fingerprint })`.
 
 **E-mail:** `MAIL_SSH_HOST` · `MAIL_SSH_PASS` · `MAIL_DOMAIN`. Quota default `1024` MiB. Idempotente se a caixa já existir.

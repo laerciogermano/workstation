@@ -165,6 +165,8 @@ Scripts CDP crus (`el.click`, `dispatchMouseEvent` sem move) → importam `human
 
 **Antes → depois (todas interações):** `hover`/`drag`/`scroll`/`select`/`type` alinhados — `_pointOf` + arrasto obrigatório; `scroll` move ao centro/alvo antes do wheel; `drag` usa `pathToTarget`; `select` tenta clicar a option. Rollback: métodos anteriores em `session.mjs`.
 
+**Antes → depois (foco):** `ensureFocus` só activate/bringToFront sem checar → agora lê `document.hasFocus()`; se false, traz ao foco e **bloqueia** a operação até true (clique já exige). Rollback: early-return por throttle 120ms sem verificação.
+
 **Rollback:** voltar ao CDP cru nos scripts; apagar `human-cdp/`.
 
 ## Caminho inverso

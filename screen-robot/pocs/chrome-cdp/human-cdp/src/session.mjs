@@ -105,30 +105,74 @@ export class HumanCdpSession {
     return result?.value;
   }
 
-  /**
-   * Obriga foco da aba + app Chrome. Toda interação pública chama isto.
-   * @param {{ settleMs?: number, force?: boolean }} [opts]
-   */
-  async ensureFocus({ settleMs = 280, force = false } = {}) {
-    const now = Date.now();
-    // evita storm de osascript em type() char-a-char; force=true sempre aplica
-    if (!force && now - this._lastFocusAt < 120) {
-      await this.send('Page.bringToFront');
-      return;
-    }
-    await this.send('Page.bringToFront');
+  /** true se a página tem foco real (aba visível + document.hasFocus). */
+  async isPageFocused() {
     try {
-      await this.send('Emulation.setFocusEmulationEnabled', { enabled: true });
+      return !!(await this.evaluate(
+        `document.hasFocus() && document.visibilityState === 'visible' && !document.hidden`,
+      ));
     } catch {
-      /* Chrome antigo / sem suporte */
+      return false;
     }
-    activateApp(this.chromeApp);
-    await sleep(settleMs);
-    this._lastFocusAt = Date.now();
+  }
+
+  /**
+   * Garante foco antes de qualquer operação:
+   * 1) se já focado → segue
+   * 2) senão bringToFront + activate até hasFocus === true
+   * @param {{ settleMs?: number, force?: boolean, require?: boolean, attempts?: number }} [opts]
+   * @returns {Promise<boolean>}
+   */
+  async ensureFocus({
+    settleMs = 200,
+    force = false,
+    require = true,
+    attempts = 5,
+  } = {}) {
+    if (!force) {
+      const already = await this.isPageFocused();
+      if (already) {
+        this._lastFocusAt = Date.now();
+        return true;
+      }
+    }
+
+    for (let i = 0; i < attempts; i++) {
+      try {
+        await this.send('Page.bringToFront');
+      } catch {
+        /* target pode estar trocando */
+      }
+      activateApp(this.chromeApp);
+      await sleep(settleMs);
+      const ok = await this.isPageFocused();
+      if (ok) {
+        this._lastFocusAt = Date.now();
+        return true;
+      }
+      // último recurso: emulação de foco CDP (alguns hosts)
+      if (i >= attempts - 2) {
+        try {
+          await this.send('Emulation.setFocusEmulationEnabled', { enabled: true });
+        } catch {
+          /* ignore */
+        }
+        await sleep(80);
+        if (await this.isPageFocused()) {
+          this._lastFocusAt = Date.now();
+          return true;
+        }
+      }
+    }
+
+    if (require) {
+      throw new Error('operação bloqueada: página sem foco (hasFocus=false)');
+    }
+    return false;
   }
 
   async bringToFront() {
-    await this.ensureFocus({ settleMs: 200, force: true });
+    await this.ensureFocus({ settleMs: 200, force: true, require: true });
   }
 
   async goto(url, { waitUntil = 'complete', timeoutMs = 20000 } = {}) {
@@ -209,7 +253,7 @@ export class HumanCdpSession {
    * @returns {{ x: number, y: number }}
    */
   async _moveTo(x, y, { steps, minSteps = 10 } = {}) {
-    await this.ensureFocus({ settleMs: 80 });
+    await this.ensureFocus({ require: true });
     const pts = pathToTarget(this._cursor, { x, y }, { steps, minSteps });
     const last = await moveAlong(this.send.bind(this), pts);
     this._setCursor(last.x, last.y);
@@ -218,38 +262,40 @@ export class HumanCdpSession {
   }
 
   /**
-   * Clique em coordenadas: **sempre** arrasta até (x,y) antes do press.
+   * Clique em coordenadas: foco garantido → arrasta até (x,y) → press.
+   * Não pressiona se hasFocus for false.
    * @param {number} x
    * @param {number} y
    * @param {{ clicks?: number, delayMs?: number }} [opts]
    */
   async clickAt(x, y, { clicks = 1, delayMs } = {}) {
-    await this.ensureFocus({ force: true });
+    await this.ensureFocus({ force: false, require: true });
     await this._moveTo(x, y);
     await sleep(randInt(40, 120));
-    await this.ensureFocus({ settleMs: 60, force: true });
+    await this.ensureFocus({ require: true });
     for (let i = 0; i < clicks; i++) {
+      await this.ensureFocus({ require: true });
       const ox = this._cursor.x + rand(-1.2, 1.2);
       const oy = this._cursor.y + rand(-1.2, 1.2);
       await this._moveTo(ox, oy, { minSteps: 6 });
+      await this.ensureFocus({ require: true });
       await pressRelease(this.send.bind(this), this._cursor.x, this._cursor.y);
       await this._followDebugCursor(this._cursor.x, this._cursor.y);
       if (i < clicks - 1) {
-        await this.ensureFocus({ settleMs: 40 });
         await sleep(delayMs ?? clickGapMs());
       }
     }
   }
 
   /**
-   * Clique humano: arrasta até o alvo + press/release na posição atual.
+   * Clique humano: foco true → arrasta até o alvo → press/release.
    * @param {string} selector
    * @param {{ clicks?: number, delayMs?: number }} [opts]
    */
   async click(selector, { clicks = 1, delayMs } = {}) {
-    await this.ensureFocus({ force: true });
+    await this.ensureFocus({ require: true });
     const { x, y } = await this._pointOf(selector, { jitter: 3 });
-    await this.ensureFocus({ settleMs: 120, force: true });
+    await this.ensureFocus({ require: true });
     return this.clickAt(x, y, { clicks, delayMs });
   }
 

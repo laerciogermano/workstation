@@ -3,17 +3,18 @@ description: Toda interação human-cdp arrasta o mouse até o alvo antes de pre
 alwaysApply: true
 ---
 
-# Interação = arrastar até o ponto
+# Interação = foco true + arrastar até o ponto
 
-Em Chrome/CDP neste lab, o ponteiro **sempre se move com trajetória** até o alvo antes de press, release ou wheel.
+Em Chrome/CDP neste lab: **antes de qualquer operação**, garantir `document.hasFocus()` (aba visível). Se não estiver, trazer ao foco; só então agir. O ponteiro **sempre** se move com trajetória até o alvo antes de press/release/wheel.
 
 ## Critérios
 
-1. Usar só `human-cdp`: `click` / `clickAt` / `hover` / `drag` / `type` / `fill` / `select` / `scroll` — nunca `el.click()`, `dispatchEvent`, nem `Input.dispatchMouseEvent` de press/click/wheel solto
-2. Fluxo: `mouseMoved` multi-ponto (`pathToTarget`) → ação **na posição atual** do cursor
-3. Distância curta ainda gera micro-arco — sem teleporte
-4. `scroll({ selector })` arrasta até o elemento (ou centro da viewport) antes do wheel
-5. `type`/`fill`/`select` focam via `click`/`hover` (já com trajetória)
+1. Usar só `human-cdp`: `click` / `clickAt` / `hover` / `drag` / `type` / `fill` / `select` / `scroll`
+2. Ordem: `ensureFocus` (hasFocus true) → trajetória (`pathToTarget`) → ação na posição atual
+3. Sem foco → `Page.bringToFront` + activate Chrome; se ainda falhar, não operar
+4. Distância curta ainda gera micro-arco — sem teleporte
+5. `scroll({ selector })` arrasta até o elemento (ou centro) antes do wheel
+6. Nunca `el.click()` / `dispatchEvent` / `Input.*` de press solto
 
 ## Exemplos
 

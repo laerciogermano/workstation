@@ -72,7 +72,7 @@ node create-mailbox.mjs --first Nome --last Sobrenome --write-credenciais
 
 Entradas CLI (completo): `--email` `--password` `--first|--nome` `--last|--sobrenome` `--location` `--job|--cargo` `--company|--empresa` (`--code` opcional — senao poll Mailcow). Until-email / until-name: so email/senha/nome. Confirm-email: `--email` + opcional `--password`/`--code`. **Regra (completo/until-email/confirm):** se aparecer **Pular**, clica. Cliques so CDP. Rollback: apagar mailbox/perfil; CSV `nao_criada`.
 
-**Fingerprint no CSV:** cols `cdp`,`cdp_port`,`fp_ua`,`fp_platform`,`fp_lang`,`fp_timezone`,`fp_locale`,`fp_hw`,`fp_mem`,`fp_geo_lat`,`fp_geo_lon`,`fp_screen`,`fp_chrome` (preencher na criação; linhas antigas vazias). Rollback: limpar cols novas.
+**Fingerprint no CSV:** cols `cdp`,`cdp_port` + todos os `fp_*` do fingerprint configurado (`fp_ua`, `fp_platform`, `fp_lang`, `fp_accept_language`, `fp_timezone`, `fp_locale`, `fp_hw`, `fp_mem`, `fp_geo_lat`/`lon`/`accuracy`, `fp_max_touch`, `fp_touch`, `fp_webrtc`, Client Hints `fp_ch_platform`/`fp_platform_version`/`fp_arch`/`fp_model`/`fp_mobile`/`fp_bitness`/`fp_brands`/`fp_full_version_list`, `fp_chrome`; `fp_screen` vazio). Ver [`linkedin-create-account/save-csv.mjs`](linkedin-create-account/save-csv.mjs). Rollback: limpar cols novas.
 
 **IP no CSV:** a cada signup novo, gravar IPv4 de egress (`curl -sS https://api.ipify.org`) na col `ip` de [`../android-studio/contas-linkedin-clozzy.csv`](../android-studio/contas-linkedin-clozzy.csv). Rollback: deixar `ip` vazio só em linhas históricas sem evidência.
 

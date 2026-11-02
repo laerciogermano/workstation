@@ -1,0 +1,21 @@
+# Carolina
+url: https://tinder.com/app/messages/697e4b6a42f4daf3d64d0ada6a9fc96d545c428ee36f53a6
+ultima_lista: Vou chamar
+
+---
+
+[MATCH] (18:19) Oii tudo bem ?
+[EU] (18:23) Bem e você?
+[MATCH] (22:36) Bem também
+[MATCH] (22:36) Que bom
+[MATCH] (22:36) Vc mora aonde?
+[EU] (20:24) Bem tbm
+[EU] (20:25) Moro duas quadras do shopping sjp
+[EU] (20:25) Conhece?
+[MATCH] (00:41) Conheço sim, fui uma vez só
+[MATCH] (00:41) Vou ter que frequentar mais agora acho hahaha
+[EU] (19:30) Hahahaha
+[EU] (19:30) Menchama no wpp?
+[EU] (19:30) Mal entro aqui
+[EU] (19:30) 41998048407
+[MATCH] (19:51) Vou chamar

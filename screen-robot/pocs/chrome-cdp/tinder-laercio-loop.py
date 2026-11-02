@@ -252,7 +252,7 @@ def decide_msgs(chat: dict, profile: dict | None = None) -> list[str]:
 
     if asks and not opening:
         if re.search(r"\b(idade|anos|quantos)\b", last_l):
-            return _pick([["Tenho meus anos kkk", "E tu?"], ["Chuta"], ["Descobre depois"]])
+            return _pick([["27", "E tu?"], ["27 kkk", "E tu?"]])
         if re.search(r"\b(trabalh|faz da vida|profiss|emprego)\b", last_l):
             return _pick([["Mexo com software", "E tu?"], ["Tecnologia", "Tu trabalha com oq?"]])
         if re.search(r"\b(mora|onde|cidade|bairro)\b", last_l):
@@ -468,7 +468,7 @@ async def one_cycle(ws):
         log("empty chat", t["href"][-16:])
         chat = {"msgs": [{"who": "match", "text": t.get("text", ""), "mine": False}]}
 
-    replies = decide_msgs(chat, profile)[:2]
+    replies = decide_msgs(chat, profile)[:4]
     log(
         "chat",
         json.dumps([{"w": m["who"][:10], "t": m["text"][:60]} for m in (chat.get("msgs") or [])[-6:]], ensure_ascii=False),

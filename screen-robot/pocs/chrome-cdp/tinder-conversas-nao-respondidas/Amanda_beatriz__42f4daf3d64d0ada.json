@@ -1,0 +1,39 @@
+{
+  "nome": "Amanda beatriz",
+  "href": "/app/messages/68e06c9672a9d3691987396a697e4b6a42f4daf3d64d0ada",
+  "url": "https://tinder.com/app/messages/68e06c9672a9d3691987396a697e4b6a42f4daf3d64d0ada",
+  "ultima_lista": "Faz tempinho viu kkkk",
+  "mensagens": [
+    {
+      "quem": "eu",
+      "nome_exibido": "Você",
+      "texto": "Oii",
+      "hora": "23:03"
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "Amanda beatriz",
+      "texto": "Oie",
+      "hora": "11:08"
+    },
+    {
+      "quem": "eu",
+      "nome_exibido": "Você",
+      "texto": "Bem?",
+      "hora": "20:32"
+    },
+    {
+      "quem": "eu",
+      "nome_exibido": "Você",
+      "texto": "Tava por Curitiba esses dias?",
+      "hora": "20:32"
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "Amanda beatriz",
+      "texto": "Faz tempinho viu kkkk",
+      "hora": "17:13"
+    }
+  ],
+  "total": 5
+}

@@ -1,0 +1,21 @@
+{
+  "nome": "Aghata polonia",
+  "href": "/app/messages/697e4b6a42f4daf3d64d0ada6a9f642664b4df53d46e5efc",
+  "url": "https://tinder.com/app/messages/697e4b6a42f4daf3d64d0ada6a9f642664b4df53d46e5efc",
+  "ultima_lista": "oi gatinho, tudo bem com você?",
+  "mensagens": [
+    {
+      "quem": "eu",
+      "nome_exibido": "Você",
+      "texto": "Oii",
+      "hora": "16:58"
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "Aghata polonia",
+      "texto": "oi gatinho, tudo bem com você?",
+      "hora": "21:35"
+    }
+  ],
+  "total": 2
+}

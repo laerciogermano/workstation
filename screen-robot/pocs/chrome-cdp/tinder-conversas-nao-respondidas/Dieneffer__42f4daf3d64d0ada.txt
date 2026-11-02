@@ -1,0 +1,9 @@
+# Dieneffer
+url: https://tinder.com/app/messages/683d1d6aa727caedc218b6f6697e4b6a42f4daf3d64d0ada
+ultima_lista: Tudo bem?
+
+---
+
+[EU] (23:26) Oii
+[MATCH] (13:44) Oiee
+[MATCH] (13:44) Tudo bem?

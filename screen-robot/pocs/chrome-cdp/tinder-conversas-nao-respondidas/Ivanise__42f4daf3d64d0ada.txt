@@ -1,0 +1,12 @@
+# Ivanise
+url: https://tinder.com/app/messages/5eb1ffee3382d501008e27a3697e4b6a42f4daf3d64d0ada
+ultima_lista: Oii
+
+---
+
+[EU] Oii
+[MATCH] Oii
+[EU] (08:58) Oii
+[MATCH] (08:58) 08:58
+[MATCH] (11:25) Oii
+[MATCH] (11:25) 11:25

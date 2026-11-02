@@ -1,0 +1,45 @@
+{
+  "nome": "Jessica Maria Mottin",
+  "href": "/app/messages/64d6fa7ddd67ce01005561e8697e4b6a42f4daf3d64d0ada",
+  "url": "https://tinder.com/app/messages/64d6fa7ddd67ce01005561e8697e4b6a42f4daf3d64d0ada",
+  "ultima_lista": "E você?",
+  "mensagens": [
+    {
+      "quem": "eu",
+      "nome_exibido": "Você",
+      "texto": "Oii",
+      "hora": "13:11"
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "Jessica Maria Mottin",
+      "texto": "Oiii",
+      "hora": "13:33"
+    },
+    {
+      "quem": "eu",
+      "nome_exibido": "Você",
+      "texto": "Bem??",
+      "hora": "13:33"
+    },
+    {
+      "quem": "eu",
+      "nome_exibido": "Você",
+      "texto": "De curitba mesmo?",
+      "hora": "13:33"
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "Jessica Maria Mottin",
+      "texto": "Ponta Grossa",
+      "hora": "13:38"
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "Jessica Maria Mottin",
+      "texto": "E você?",
+      "hora": "13:38"
+    }
+  ],
+  "total": 6
+}

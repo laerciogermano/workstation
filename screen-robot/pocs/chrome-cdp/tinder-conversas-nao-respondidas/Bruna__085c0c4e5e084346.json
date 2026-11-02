@@ -1,0 +1,39 @@
+{
+  "nome": "Bruna",
+  "href": "/app/messages/697e4b6a42f4daf3d64d0ada6ac529e4085c0c4e5e084346",
+  "url": "https://tinder.com/app/messages/697e4b6a42f4daf3d64d0ada6ac529e4085c0c4e5e084346",
+  "ultima_lista": "Daqui mesmo",
+  "mensagens": [
+    {
+      "quem": "eu",
+      "nome_exibido": "Você",
+      "texto": "Oii",
+      "hora": "16:25"
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "Bruna",
+      "texto": "Oie",
+      "hora": "18:14"
+    },
+    {
+      "quem": "eu",
+      "nome_exibido": "Você",
+      "texto": "Bem?",
+      "hora": "18:39"
+    },
+    {
+      "quem": "eu",
+      "nome_exibido": "Você",
+      "texto": "Daqui mesmo ou passando uns dias?",
+      "hora": "18:39"
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "Bruna",
+      "texto": "Daqui mesmo",
+      "hora": "22:16"
+    }
+  ],
+  "total": 5
+}

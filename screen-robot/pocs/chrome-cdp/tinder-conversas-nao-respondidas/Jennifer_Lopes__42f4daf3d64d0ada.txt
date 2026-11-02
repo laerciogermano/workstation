@@ -1,0 +1,14 @@
+# Jennifer Lopes
+url: https://tinder.com/app/messages/696450d4ba61b2c2005022c3697e4b6a42f4daf3d64d0ada
+ultima_lista: Tudo bem?
+
+---
+
+[EU] Oii
+[MATCH] Oii
+[MATCH] Tudo bem?
+[EU] (14:24) Oii
+[MATCH] (14:24) 14:24
+[MATCH] (08:40) Oii
+[MATCH] (08:40) 08:40
+[MATCH] (08:40) Tudo bem?

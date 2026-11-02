@@ -1,0 +1,45 @@
+{
+  "nome": "Camilli",
+  "href": "/app/messages/697e4b6a42f4daf3d64d0ada6a316ec3e6329c5b224bd7bc",
+  "url": "https://tinder.com/app/messages/697e4b6a42f4daf3d64d0ada6a316ec3e6329c5b224bd7bc",
+  "ultima_lista": "Hahaha importante né ? Cuidar da saúde",
+  "mensagens": [
+    {
+      "quem": "eu",
+      "nome_exibido": "Você",
+      "texto": "Olá",
+      "hora": "09:24"
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "Camilli",
+      "texto": "Oii",
+      "hora": "10:25"
+    },
+    {
+      "quem": "eu",
+      "nome_exibido": "Você",
+      "texto": "Bem??",
+      "hora": "16:18"
+    },
+    {
+      "quem": "eu",
+      "nome_exibido": "Você",
+      "texto": "Fitness então?",
+      "hora": "16:18"
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "Camilli",
+      "texto": "Tudo bem e você ?",
+      "hora": "12:34"
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "Camilli",
+      "texto": "Hahaha importante né ? Cuidar da saúde",
+      "hora": "12:34"
+    }
+  ],
+  "total": 6
+}

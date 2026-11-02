@@ -1,0 +1,15 @@
+# Agatha
+url: https://tinder.com/app/messages/697e4b6a42f4daf3d64d0ada69bca39903ff063075466c66
+ultima_lista: Estava dormindo e você?
+
+---
+
+[EU] (22:47) Olá
+[MATCH] (22:48) Oii
+[EU] (22:50) Bem??
+[EU] (22:50) Você parece ser bem inteligente
+[MATCH] (23:20) Tudo ótimo e contigo?
+[EU] (23:58) Bemm tbm
+[EU] (23:58) Fazendo o q de bom?
+[MATCH] (07:43) Bom dia
+[MATCH] (07:43) Estava dormindo e você?

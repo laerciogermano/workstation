@@ -1,0 +1,22 @@
+# Carol
+url: https://tinder.com/app/messages/695f112d0ae04daad75bed73697e4b6a42f4daf3d64d0ada
+ultima_lista: Tem insta ?
+
+---
+
+[EU] (12:58) Oii
+[MATCH] (13:00) Olá
+[EU] (13:03) Bem??
+[EU] (13:03) Daqui mesmo de Curitiba?
+[MATCH] (13:03) Tudo ótimo e você ?
+[MATCH] (13:03) Sim sim
+[EU] (13:04) Mmmm
+[EU] (13:04) Bem tbm
+[EU] (13:04) Mora onde?
+[MATCH] (13:20) Região metropolitana de Curitiba e você ?
+[EU] (13:22) Duas quadras do shopping sjp
+[EU] (13:22) Curte um vinho?
+[MATCH] (13:24) Simm
+[EU] (13:24) Topa tomar um vinho comigo hoje?
+[MATCH] (13:47) Haha hoje não posso, mas combinamos um dia sim
+[MATCH] (13:47) Tem insta ?

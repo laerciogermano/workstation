@@ -1,0 +1,21 @@
+{
+  "nome": "Flavia",
+  "href": "/app/messages/697e4b6a42f4daf3d64d0ada6a85c6f71041891553c53d9a",
+  "url": "https://tinder.com/app/messages/697e4b6a42f4daf3d64d0ada6a85c6f71041891553c53d9a",
+  "ultima_lista": "Oioi",
+  "mensagens": [
+    {
+      "quem": "eu",
+      "nome_exibido": "Você",
+      "texto": "Oii",
+      "hora": "20:13"
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "Flavia",
+      "texto": "Oioi",
+      "hora": "23:15"
+    }
+  ],
+  "total": 2
+}

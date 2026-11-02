@@ -1,0 +1,69 @@
+{
+  "nome": "Giovana",
+  "href": "/app/messages/67c22a8ff12dcb60d03f4551697e4b6a42f4daf3d64d0ada",
+  "url": "https://tinder.com/app/messages/67c22a8ff12dcb60d03f4551697e4b6a42f4daf3d64d0ada",
+  "ultima_lista": "Ok…",
+  "mensagens": [
+    {
+      "quem": "eu",
+      "nome_exibido": "Você",
+      "texto": "Oii",
+      "hora": "22:46"
+    },
+    {
+      "quem": "eu",
+      "nome_exibido": "Você",
+      "texto": "Tá por ai?",
+      "hora": "09:34"
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "Giovana",
+      "texto": "Oiee",
+      "hora": "11:11"
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "Giovana",
+      "texto": "Perdão",
+      "hora": "11:11"
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "Giovana",
+      "texto": "Tô sim hahahah",
+      "hora": "11:11"
+    },
+    {
+      "quem": "eu",
+      "nome_exibido": "Você",
+      "texto": "bem??",
+      "hora": "11:50"
+    },
+    {
+      "quem": "eu",
+      "nome_exibido": "Você",
+      "texto": "Vou desinstalar esse treco",
+      "hora": "11:50"
+    },
+    {
+      "quem": "eu",
+      "nome_exibido": "Você",
+      "texto": "me chama no insta",
+      "hora": "11:50"
+    },
+    {
+      "quem": "eu",
+      "nome_exibido": "Você",
+      "texto": "laerciogermano",
+      "hora": "11:50"
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "Giovana",
+      "texto": "Ok…",
+      "hora": "13:19"
+    }
+  ],
+  "total": 10
+}

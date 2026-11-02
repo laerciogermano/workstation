@@ -1,0 +1,51 @@
+{
+  "nome": "Florys",
+  "href": "/app/messages/697e4b6a42f4daf3d64d0ada6a110e3a441d6305fea3e626",
+  "url": "https://tinder.com/app/messages/697e4b6a42f4daf3d64d0ada6a110e3a441d6305fea3e626",
+  "ultima_lista": "Sou taurina",
+  "mensagens": [
+    {
+      "quem": "match",
+      "nome_exibido": "Florys",
+      "texto": "Me deixou curiosa haha \nQual seu signo ?",
+      "hora": "17:26"
+    },
+    {
+      "quem": "eu",
+      "nome_exibido": "Você",
+      "texto": "Oii kk",
+      "hora": "17:26"
+    },
+    {
+      "quem": "eu",
+      "nome_exibido": "Você",
+      "texto": "Não vai me julgar? Kkk",
+      "hora": "17:27"
+    },
+    {
+      "quem": "eu",
+      "nome_exibido": "Você",
+      "texto": "Leão",
+      "hora": "17:27"
+    },
+    {
+      "quem": "eu",
+      "nome_exibido": "Você",
+      "texto": "E o teu?",
+      "hora": "17:27"
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "Florys",
+      "texto": "Kkkkkk julgar não",
+      "hora": "21:42"
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "Florys",
+      "texto": "Sou taurina",
+      "hora": "21:42"
+    }
+  ],
+  "total": 7
+}

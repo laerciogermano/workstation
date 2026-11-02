@@ -1,0 +1,9 @@
+# Julia
+url: https://tinder.com/app/messages/697e4b6a42f4daf3d64d0ada6a42f655e6329cd69a55bf16
+ultima_lista: Tudo bem?
+
+---
+
+[EU] (18:28) Oii
+[MATCH] (20:01) Oiee
+[MATCH] (20:01) Tudo bem?

@@ -1,0 +1,9 @@
+# Estefane
+url: https://tinder.com/app/messages/68fed2252749932e8929d071697e4b6a42f4daf3d64d0ada
+ultima_lista: Tudo bem ?
+
+---
+
+[EU] (22:26) Oii
+[MATCH] (23:59) Oie
+[MATCH] (00:00) Tudo bem ?

@@ -1,0 +1,20 @@
+# Jheniffer
+url: https://tinder.com/app/messages/697e4b6a42f4daf3d64d0ada6a6781a158b6d98ec5680df3
+ultima_lista: Eu tô bem e você como está?
+
+---
+
+[MATCH] 👋
+[EU] Bem??
+[EU] Daqui mesmo?
+[MATCH] Daqui aonde exatamente?
+[MATCH] Eu tô bem e você como está?
+[MATCH] (12:41) 👋
+[MATCH] (12:41) 12:41
+[EU] (15:29) Bem??
+[MATCH] (15:29) 15:29
+[EU] (15:29) Daqui mesmo?
+[MATCH] (19:55) Daqui aonde exatamente?
+[MATCH] (19:55) 19:55
+[MATCH] (19:59) Eu tô bem e você como está?
+[MATCH] (19:59) 19:59

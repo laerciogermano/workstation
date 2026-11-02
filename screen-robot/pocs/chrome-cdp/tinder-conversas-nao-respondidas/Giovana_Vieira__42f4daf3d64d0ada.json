@@ -1,0 +1,21 @@
+{
+  "nome": "Giovana Vieira",
+  "href": "/app/messages/68acd8c4ec6acd67e020b203697e4b6a42f4daf3d64d0ada",
+  "url": "https://tinder.com/app/messages/68acd8c4ec6acd67e020b203697e4b6a42f4daf3d64d0ada",
+  "ultima_lista": "Oie",
+  "mensagens": [
+    {
+      "quem": "eu",
+      "nome_exibido": "Você",
+      "texto": "Oii",
+      "hora": "10:24"
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "Giovana Vieira",
+      "texto": "Oie",
+      "hora": "14:18"
+    }
+  ],
+  "total": 2
+}

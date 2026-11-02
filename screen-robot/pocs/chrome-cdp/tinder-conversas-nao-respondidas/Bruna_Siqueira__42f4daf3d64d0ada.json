@@ -1,0 +1,21 @@
+{
+  "nome": "Bruna Siqueira",
+  "href": "/app/messages/666a4cef84b286010062f62f697e4b6a42f4daf3d64d0ada",
+  "url": "https://tinder.com/app/messages/666a4cef84b286010062f62f697e4b6a42f4daf3d64d0ada",
+  "ultima_lista": "oii",
+  "mensagens": [
+    {
+      "quem": "eu",
+      "nome_exibido": "Você",
+      "texto": "Oii",
+      "hora": "21:06"
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "Bruna Siqueira",
+      "texto": "oii",
+      "hora": "21:11"
+    }
+  ],
+  "total": 2
+}

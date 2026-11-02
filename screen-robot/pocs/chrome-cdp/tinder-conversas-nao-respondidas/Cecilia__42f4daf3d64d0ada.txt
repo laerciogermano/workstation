@@ -1,0 +1,18 @@
+# Cecilia
+url: https://tinder.com/app/messages/68ae6357ec6acd3f212165c5697e4b6a42f4daf3d64d0ada
+ultima_lista: Tudo bem sim, e você?
+
+---
+
+[EU] Olá
+[MATCH] Olá
+[EU] Bem??
+[MATCH] Tudo bem sim, e você?
+[EU] (18:17) Olá
+[MATCH] (18:17) 18:17
+[MATCH] (22:05) Olá
+[MATCH] (22:05) 22:05
+[EU] (16:47) Bem??
+[MATCH] (16:47) 16:47
+[MATCH] (19:57) Tudo bem sim, e você?
+[MATCH] (19:57) 19:57

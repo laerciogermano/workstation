@@ -1,0 +1,15 @@
+# Daniele
+url: https://tinder.com/app/messages/697e4b6a42f4daf3d64d0ada6a4b0917ddf0ecf3501d89e4
+ultima_lista: Tudo bem? rs
+
+---
+
+[MATCH] Oi
+[EU] Oii
+[MATCH] Tudo bem? rs
+[MATCH] (12:39) Oi
+[MATCH] (12:39) 12:39
+[EU] (17:33) Oii
+[MATCH] (17:33) 17:33
+[MATCH] (20:33) Tudo bem? rs
+[MATCH] (20:33) 20:33

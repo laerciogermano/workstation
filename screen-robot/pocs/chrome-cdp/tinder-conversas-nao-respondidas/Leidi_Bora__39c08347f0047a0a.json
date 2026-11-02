@@ -1,0 +1,45 @@
+{
+  "nome": "Leidi Bora",
+  "href": "/app/messages/697e4b6a42f4daf3d64d0ada6a20cc8a39c08347f0047a0a",
+  "url": "https://tinder.com/app/messages/697e4b6a42f4daf3d64d0ada6a20cc8a39c08347f0047a0a",
+  "ultima_lista": "Oiii",
+  "mensagens": [
+    {
+      "quem": "eu",
+      "nome_exibido": "Você",
+      "texto": "Oii",
+      "hora": null
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "Leidi Bora",
+      "texto": "Oiii",
+      "hora": null
+    },
+    {
+      "quem": "eu",
+      "nome_exibido": "Você",
+      "texto": "Oii",
+      "hora": "13:47"
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "match",
+      "texto": "13:47",
+      "hora": "13:47"
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "Leidi Bora",
+      "texto": "Oiii",
+      "hora": "23:20"
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "match",
+      "texto": "23:20",
+      "hora": "23:20"
+    }
+  ],
+  "total": 6
+}

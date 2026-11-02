@@ -1,0 +1,39 @@
+{
+  "nome": "Camila",
+  "href": "/app/messages/697e4b6a42f4daf3d64d0ada6a9b71f7e2cf08bdbea7c2c2",
+  "url": "https://tinder.com/app/messages/697e4b6a42f4daf3d64d0ada6a9b71f7e2cf08bdbea7c2c2",
+  "ultima_lista": "Sim",
+  "mensagens": [
+    {
+      "quem": "eu",
+      "nome_exibido": "Você",
+      "texto": "Oii",
+      "hora": "03:51"
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "Camila",
+      "texto": "Oi",
+      "hora": "07:36"
+    },
+    {
+      "quem": "eu",
+      "nome_exibido": "Você",
+      "texto": "Bem?",
+      "hora": "10:42"
+    },
+    {
+      "quem": "eu",
+      "nome_exibido": "Você",
+      "texto": "Daqui mesmo?",
+      "hora": "10:42"
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "Camila",
+      "texto": "Sim",
+      "hora": "14:15"
+    }
+  ],
+  "total": 5
+}

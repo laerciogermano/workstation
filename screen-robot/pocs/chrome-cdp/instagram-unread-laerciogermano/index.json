@@ -1,0 +1,18 @@
+{
+  "fetchedAt": "2026-11-01T22:45:07.907Z",
+  "unreadList": [
+    {
+      "name": "Dora Leão",
+      "preview": "Typing... | Unread",
+      "raw": "Dora Leão\nTyping...\nUnread"
+    }
+  ],
+  "dumps": [
+    {
+      "name": "Dora Leão",
+      "jsonPath": "/Users/laerciogermano/Documents/works/screen-robot/pocs/chrome-cdp/instagram-unread-laerciogermano/Dora_Leao.json",
+      "txtPath": "/Users/laerciogermano/Documents/works/screen-robot/pocs/chrome-cdp/instagram-unread-laerciogermano/Dora_Leao.txt",
+      "url": "https://www.instagram.com/direct/t/105056010889184/"
+    }
+  ]
+}

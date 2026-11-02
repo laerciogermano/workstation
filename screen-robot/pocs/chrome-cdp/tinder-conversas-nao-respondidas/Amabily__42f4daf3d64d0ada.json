@@ -1,0 +1,21 @@
+{
+  "nome": "Amabily",
+  "href": "/app/messages/65d0fc15d42acd0100cc2063697e4b6a42f4daf3d64d0ada",
+  "url": "https://tinder.com/app/messages/65d0fc15d42acd0100cc2063697e4b6a42f4daf3d64d0ada",
+  "ultima_lista": "Oiee",
+  "mensagens": [
+    {
+      "quem": "eu",
+      "nome_exibido": "Você",
+      "texto": "Oii",
+      "hora": "20:57"
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "Amabily",
+      "texto": "Oiee",
+      "hora": "19:26"
+    }
+  ],
+  "total": 2
+}

@@ -1,0 +1,190 @@
+GMAIL GSUITE
+noreply@clozzy.com.br
+nr@c1ozzy
+
+suporte@clozzy.com.br
+sprt@cl0zzy
+
+Locaweb
+laerciogermano
+sd7rf65sdrsd65
+
+Hostgator
+laerciogermano
+Sd7@rf6_5sdrsd65
+
+Vultr
+contact.happyend@gmail.com
+Happy3nd@vultr
+
+Vutrl Server Produção
+clozzy-prod
+ssh root@144.202.97.224
+L2v..@%-FS%e3_Dx
+
+
+cdn
+ssh root@216.238.114.64
+s7$Uvxq#[ya?U{JH
+
+
+cd /opt/clozzy/clozzy-api-new && git pull && npm run build --prod && pm2 reload  clozzy-api-prod && pm2 logs
+
+Vutrl Server Homologação
+root@45.32.131.214
+*4tGrPR@jto$T]9w
+
+ssh root@45.32.131.214
+
+ cd /opt/clozzy-api/ && git pull && npm run build --prod && pm2 reload all && pm2 logs
+
+Certificado
+7E0E2108106BD7ED 00005909420348
+fe2zo23va49
+
+https://painel.redehost.com.br/Default.aspx
+laerciogermanoo@hotmail.com
+lgpagseguro@hotmail.com
+L@germano93
+
+https://registro.br/login/
+—---------------------------------------------------------
+
+
+# GMAIL
+contact.happyend@gmail.com
+pt022590
+
+# TWITTER
+happyendapp
+h4ppy@3nd
+contact.happyend@gmail.com
+
+# INSTAGRAM
+happyendapp
+h4ppy@3nd
+
+# INSTAGRAM
+clozzy_robot
+Cl0zzy@app
+
+38.185.322/0001-25
+clozzy.com.br@gmail.com
+Cl0zzy@4app
+meuclozzy.com (pagarme)
+-----------------
+
+clozzyapp@gmail.com
+Cl0zzy@4pp
+clozzy.com.br (pagarme)
+
+# VULTR
+contact.happyend@gmail.com
+Happy3nd@vultr
+A!y6@_8=zY$BWb9%
+
+(PAGAMENTO FEITO COM PAYPAL)
+laerciogermanoo@gmail.com
+
+
+# NÚMERO
+41997233977
+
+# SERVIDOR
+149.28.194.87
+A!y6@_8=zY$BWb9%
+
+# REDEHOST 
+
+
+
+https://app.umbler.com/# (clozzy.com.br)
+https://app.umbler.com/clozzy.com.br/domain
+laerciogermano
+L@germano93
+
+Esse daqui, bata entrar agora via gmail laerciogermanoo@gmail.com sso
+
+
+
+
+
+Como tá no email hotmail no redehost… (abaixo)
+
+
+
+https://hpanel.hostinger.com/ (clozzy.link)
+
+
+
+
+
+
+#INSTAGRAM
+meuclozzy
+meuclozzy@.com
+
+gmail senha
+meuclozzy@gmail.com
+meuclozzy.com
+
+-----------
+GMAIL GSUITE
+
+noreply@clozzy.com.br
+nr@c1ozzy
+
+suporte@clozzy.com.br
+sprt@cl0zzy
+
+
+# LOCAWEB
+laerciogermano
+sd7rf65sdrsd65
+
+# HOSTGATOS
+laerciogermano
+Sd7@rf6_5sdrsd65
+
+# VULTR SERVER
+clozzy-prod
+ssh root@144.202.97.224
+L2v..@%-FS%e3_Dx
+
+clozzy-hml
+ssh root@45.32.131.214
+*4tGrPR@jto$T]9w
+
+# CERTIFICADO
+7E0E2108106BD7ED 00005909420348
+fe2zo23va49
+
+04c3383b-bf17-411a-b7ee-71f9dbea2d37
+
+db.createUser({ user: "readWriteUser", pwd: "04c3383b-bf17-411a-b7ee-71f9dbea2d37", roles: [{ role: "userAdminAnyDatabase", db: "admin" }] });
+
+db.auth("readWriteUser", "04c3383b-bf17-411a-b7ee-71f9dbea2d37");
+
+
+ssh root@45.32.131.214
+
+RESTORE DA BASE ORIGINAL
+
+sudo mongodump --uri="mongodb+srv://clozzy_prod:ab71a9007d841dc121547e35eca6346c@clz-1.tladw.mongodb.net/clozzy_prod?retryWrites=true&w=majority" --gzip --out=/home/lg/backup
+
+sudo mongodump --uri="mongodb+srv://clozzy_prod:ab71a9007d841dc121547e35eca6346c@clz-1.tladw.mongodb.net/clozzy_prod?retryWrites=true&w=majority"  --out=~/backup
+
+
+mongorestore --uri="mongodb://readWriteUser:SENHA@45.32.131.214:27017" --db=clozzy_prod /home/lg/backup2/clozzy_prod
+
+mongorestore --uri="mongodb://readWriteUser:SENHA@45.32.131.214:27017" --db=clozzy_prod –gzip /opt/mongo/clozzy_prod
+
+mongorestore --uri="mongodb://readWriteUser:04c3383b-bf17-411a-b7ee-71f9dbea2d37@45.32.131.214:27017" --db=clozzy_prod --gzip /opt/mongo/clozzy_prod
+
+
+
+mongosh mongodb://readWriteUser:04c3383b-bf17-411a-b7ee-71f9dbea2d37@45.32.131.214:27017 --db=clozzy_prod
+
+mongodump --uri="mongodb://readWriteUser:04c3383b-bf17-411a-b7ee-71f9dbea2d37@45.32.131.214:27017"  --out=/backup2
+
+mongodump --uri="mongodb://readWriteUser:04c3383b-bf17-411a-b7ee-71f9dbea2d37@45.32.131.214:27017/clozzy_prod?authSource=admin" --out=/opt --gzip

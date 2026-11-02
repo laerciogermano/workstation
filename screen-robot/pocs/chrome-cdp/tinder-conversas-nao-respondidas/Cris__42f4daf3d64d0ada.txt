@@ -1,0 +1,14 @@
+# Cris
+url: https://tinder.com/app/messages/683b8105aa9ff4dad889b0e3697e4b6a42f4daf3d64d0ada
+ultima_lista: Simm
+
+---
+
+[EU] (14:46) Olá
+[MATCH] (16:14) Oi Germano
+[MATCH] (16:14) Tudo bem ?
+[EU] (21:25) Bem e você ?
+[MATCH] (23:38) Que bom
+[MATCH] (23:38) Tudo bem sim
+[EU] (15:17) De sjp tbm?
+[MATCH] (12:26) Simm

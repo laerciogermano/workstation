@@ -1,0 +1,15 @@
+# Kelly
+url: https://tinder.com/app/messages/697024aef3e603af4d5f780d697e4b6a42f4daf3d64d0ada
+ultima_lista: ?
+
+---
+
+[EU] Oii
+[MATCH] Oie
+[MATCH] ?
+[EU] (13:50) Oii
+[MATCH] (13:50) 13:50
+[MATCH] (13:54) Oie
+[MATCH] (13:54) 13:54
+[MATCH] (21:53) ?
+[MATCH] (21:53) 21:53

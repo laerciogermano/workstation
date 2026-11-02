@@ -1,0 +1,27 @@
+{
+  "nome": "Amanda Ribeiro",
+  "href": "/app/messages/697e4b6a42f4daf3d64d0ada6a4e4cf77c60144ad5ac1c73",
+  "url": "https://tinder.com/app/messages/697e4b6a42f4daf3d64d0ada6a4e4cf77c60144ad5ac1c73",
+  "ultima_lista": "Oiii",
+  "mensagens": [
+    {
+      "quem": "eu",
+      "nome_exibido": "Você",
+      "texto": "Ii",
+      "hora": "10:11"
+    },
+    {
+      "quem": "eu",
+      "nome_exibido": "Você",
+      "texto": "Oii",
+      "hora": "10:11"
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "Amanda Ribeiro",
+      "texto": "Oiii",
+      "hora": "08:02"
+    }
+  ],
+  "total": 3
+}

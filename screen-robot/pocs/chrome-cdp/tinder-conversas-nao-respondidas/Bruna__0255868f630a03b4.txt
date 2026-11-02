@@ -1,0 +1,10 @@
+# Bruna
+url: https://tinder.com/app/messages/697e4b6a42f4daf3d64d0ada6a7b68da0255868f630a03b4
+ultima_lista: Tudo bem?
+
+---
+
+[EU] (22:17) Oii
+[MATCH] (22:26) Oiie
+[MATCH] (22:26) Boa noite
+[MATCH] (22:26) Tudo bem?

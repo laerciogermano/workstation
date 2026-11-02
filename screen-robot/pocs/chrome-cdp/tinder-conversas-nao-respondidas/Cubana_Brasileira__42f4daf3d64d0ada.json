@@ -1,0 +1,45 @@
+{
+  "nome": "Cubana Brasileira",
+  "href": "/app/messages/67f6fecfce072fb029099f13697e4b6a42f4daf3d64d0ada",
+  "url": "https://tinder.com/app/messages/67f6fecfce072fb029099f13697e4b6a42f4daf3d64d0ada",
+  "ultima_lista": "Curitiba e vc?",
+  "mensagens": [
+    {
+      "quem": "eu",
+      "nome_exibido": "Você",
+      "texto": "Oii",
+      "hora": "16:56"
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "Cubana Brasileira",
+      "texto": "Oie👀",
+      "hora": "00:03"
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "Cubana Brasileira",
+      "texto": "Boa noit",
+      "hora": "00:03"
+    },
+    {
+      "quem": "eu",
+      "nome_exibido": "Você",
+      "texto": "Bem?? Daqui mesmo?",
+      "hora": "08:21"
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "Cubana Brasileira",
+      "texto": "Sim",
+      "hora": "13:12"
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "Cubana Brasileira",
+      "texto": "Curitiba e vc?",
+      "hora": "13:12"
+    }
+  ],
+  "total": 6
+}

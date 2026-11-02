@@ -1,0 +1,19 @@
+# Dandara
+url: https://tinder.com/app/messages/6551282cfa831f0100dae3e6697e4b6a42f4daf3d64d0ada
+ultima_lista: Falo de Umuarama, e você?
+
+---
+
+[EU] (17:10) Oii
+[MATCH] (20:52) Oii
+[EU] (12:15) Bem??
+[EU] (12:16) Daqui mesmo ou passando uns dias?
+[MATCH] (13:52) Oii boa tarde!!
+[EU] (13:56) Boa kkk
+[MATCH] (13:57) Tudo bem?
+[EU] (17:23) Bem e vc
+[EU] (17:23) De onde fala?
+[MATCH] (12:20) Oiii
+[MATCH] (12:20) Que bom
+[MATCH] (12:20) Estou bem!
+[MATCH] (12:20) Falo de Umuarama, e você?

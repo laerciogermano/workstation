@@ -1,0 +1,75 @@
+{
+  "nome": "Bruna",
+  "href": "/app/messages/697e4b6a42f4daf3d64d0ada6acac4278c22598bc228ebb7",
+  "url": "https://tinder.com/app/messages/697e4b6a42f4daf3d64d0ada6acac4278c22598bc228ebb7",
+  "ultima_lista": "Tudo bem?",
+  "mensagens": [
+    {
+      "quem": "match",
+      "nome_exibido": "Bruna",
+      "texto": "👋",
+      "hora": null
+    },
+    {
+      "quem": "eu",
+      "nome_exibido": "Você",
+      "texto": "Oii",
+      "hora": null
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "Bruna",
+      "texto": "Oiiee",
+      "hora": null
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "Bruna",
+      "texto": "Tudo bem?",
+      "hora": null
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "Bruna",
+      "texto": "👋",
+      "hora": "19:11"
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "match",
+      "texto": "19:11",
+      "hora": "19:11"
+    },
+    {
+      "quem": "eu",
+      "nome_exibido": "Você",
+      "texto": "Oii",
+      "hora": "21:37"
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "match",
+      "texto": "21:37",
+      "hora": "21:37"
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "Bruna",
+      "texto": "Oiiee",
+      "hora": "10:47"
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "match",
+      "texto": "10:47",
+      "hora": "10:47"
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "Bruna",
+      "texto": "Tudo bem?",
+      "hora": "10:47"
+    }
+  ],
+  "total": 11
+}

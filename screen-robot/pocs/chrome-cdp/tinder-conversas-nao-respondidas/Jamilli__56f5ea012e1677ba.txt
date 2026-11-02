@@ -1,0 +1,13 @@
+# Jamilli
+url: https://tinder.com/app/messages/697e4b6a42f4daf3d64d0ada6a3dc34a56f5ea012e1677ba
+ultima_lista: Assistindo e você ?
+
+---
+
+[EU] (17:32) Oii
+[MATCH] (23:27) Oii
+[MATCH] (23:27) Tudo bem ?
+[EU] (23:29) Bem e você?
+[EU] (23:29) Fazendo o q de bom?
+[MATCH] (23:03) Tô ótima
+[MATCH] (23:03) Assistindo e você ?

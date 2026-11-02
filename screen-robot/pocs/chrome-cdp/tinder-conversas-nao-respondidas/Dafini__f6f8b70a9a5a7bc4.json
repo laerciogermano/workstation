@@ -1,0 +1,33 @@
+{
+  "nome": "Dafini",
+  "href": "/app/messages/697e4b6a42f4daf3d64d0ada6a50347cf6f8b70a9a5a7bc4",
+  "url": "https://tinder.com/app/messages/697e4b6a42f4daf3d64d0ada6a50347cf6f8b70a9a5a7bc4",
+  "ultima_lista": "Bem e vc?",
+  "mensagens": [
+    {
+      "quem": "eu",
+      "nome_exibido": "Você",
+      "texto": "Oii",
+      "hora": "19:29"
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "Dafini",
+      "texto": "Oii",
+      "hora": "21:02"
+    },
+    {
+      "quem": "eu",
+      "nome_exibido": "Você",
+      "texto": "Bem!?",
+      "hora": "15:33"
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "Dafini",
+      "texto": "Bem e vc?",
+      "hora": "18:01"
+    }
+  ],
+  "total": 4
+}

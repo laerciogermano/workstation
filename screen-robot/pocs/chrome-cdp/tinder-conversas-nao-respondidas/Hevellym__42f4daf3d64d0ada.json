@@ -1,0 +1,27 @@
+{
+  "nome": "Hevellym",
+  "href": "/app/messages/696c4f06a5949acc0f03997a697e4b6a42f4daf3d64d0ada",
+  "url": "https://tinder.com/app/messages/696c4f06a5949acc0f03997a697e4b6a42f4daf3d64d0ada",
+  "ultima_lista": "Olá",
+  "mensagens": [
+    {
+      "quem": "eu",
+      "nome_exibido": "Você",
+      "texto": "Oii",
+      "hora": "14:05"
+    },
+    {
+      "quem": "eu",
+      "nome_exibido": "Você",
+      "texto": "Tá por ai?",
+      "hora": "09:39"
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "Hevellym",
+      "texto": "Olá",
+      "hora": "18:12"
+    }
+  ],
+  "total": 3
+}

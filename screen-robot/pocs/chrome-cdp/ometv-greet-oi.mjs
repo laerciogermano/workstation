@@ -1,10 +1,9 @@
 #!/usr/bin/env node
 /**
- * Em cada ometv CDP: quando aparece pessoa nova (mensagem "conexão estabelecida"),
- * manda "oi" uma vez via #chat-text + Enter.
+ * Em cada ometv CDP: pessoa nova ("conexão estabelecida") → manda "oi" 1x.
  *
  *   node ometv-greet-oi.mjs
- *   IDS=ometv-1,ometv-2 MSG=oi node ometv-greet-oi.mjs
+ *   IDS=ometv-1 MSG=oi node ometv-greet-oi.mjs
  */
 import {
   connectCdp,
@@ -55,16 +54,16 @@ function connectionKeyExpr() {
 
 async function sendOi(page, id) {
   await page.ensureFocus({ require: true });
-  // input de chat
   const ready = await page.evaluate(`!!document.querySelector('#chat-text')`);
   if (!ready) {
     console.log(new Date().toISOString(), id, 'sem #chat-text');
     return false;
   }
   await page.click('#chat-text');
-  await sleep(120);
+  await sleep(150);
   await page.type('#chat-text', MSG, { clickFirst: false, clear: true });
-  await sleep(80);
+  await sleep(100);
+  await page.ensureFocus({ require: true });
   await page.send('Input.dispatchKeyEvent', {
     type: 'keyDown',
     key: 'Enter',
@@ -81,46 +80,61 @@ async function sendOi(page, id) {
   return true;
 }
 
-async function watchOne(id) {
+async function openSession(id) {
   await ensureUp(id);
   const page = await connectCdp(id, { debug: true });
   await page.send('Emulation.clearDeviceMetricsOverride').catch(() => {});
-  let lastKey = await page.evaluate(connectionKeyExpr());
-  let greeted = new Set(lastKey ? [lastKey] : []);
-  // se já tem conexão aberta e ainda não cumprimentou nesta sessão, manda oi
-  if (lastKey) {
-    console.log(new Date().toISOString(), id, 'conexão atual', lastKey.slice(0, 60));
-    await sendOi(page, id);
-  } else {
-    console.log(new Date().toISOString(), id, 'aguardando pessoa…');
-  }
+  return page;
+}
+
+async function watchOne(id) {
+  let greeted = new Set();
+  let page = null;
 
   while (true) {
     try {
+      if (!page) {
+        page = await openSession(id);
+        const key0 = await page.evaluate(connectionKeyExpr());
+        if (key0 && !greeted.has(key0)) {
+          greeted.add(key0);
+          console.log(new Date().toISOString(), id, 'conexão atual', key0.slice(0, 60));
+          await sleep(350);
+          await sendOi(page, id);
+        } else {
+          console.log(new Date().toISOString(), id, 'aguardando pessoa…');
+        }
+      }
+
       const key = await page.evaluate(connectionKeyExpr());
       if (key && !greeted.has(key)) {
         greeted.add(key);
-        // limpa set se crescer demais
-        if (greeted.size > 40) {
-          greeted = new Set([key]);
-        }
+        if (greeted.size > 50) greeted = new Set([key]);
         console.log(new Date().toISOString(), id, 'nova pessoa', key.slice(0, 60));
-        await sleep(400); // deixa UI estabilizar
+        await sleep(450);
         await sendOi(page, id);
       }
-      lastKey = key;
     } catch (err) {
-      console.log(new Date().toISOString(), id, 'erro', String(err.message || err));
-      await sleep(1500);
+      console.log(new Date().toISOString(), id, 'reconnect', String(err.message || err));
       try {
-        await ensureUp(id);
+        page?.close?.();
       } catch {
         /* ignore */
       }
+      page = null;
+      await sleep(1500);
+      continue;
     }
     await sleep(POLL_MS);
   }
 }
+
+process.on('uncaughtException', (e) => {
+  console.error('uncaught', e);
+});
+process.on('unhandledRejection', (e) => {
+  console.error('unhandled', e);
+});
 
 console.log('ometv-greet-oi', { IDS, MSG, POLL_MS });
 await Promise.all(IDS.map((id) => watchOne(id)));

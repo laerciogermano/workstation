@@ -1,0 +1,63 @@
+{
+  "nome": "Ana Clara",
+  "href": "/app/messages/697e4b6a42f4daf3d64d0ada6a8f56cfe2cf085f1ba0cad0",
+  "url": "https://tinder.com/app/messages/697e4b6a42f4daf3d64d0ada6a8f56cfe2cf085f1ba0cad0",
+  "ultima_lista": "🥲",
+  "mensagens": [
+    {
+      "quem": "eu",
+      "nome_exibido": "Você",
+      "texto": "Oii",
+      "hora": "22:06"
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "Ana Clara",
+      "texto": "Oii",
+      "hora": "23:01"
+    },
+    {
+      "quem": "eu",
+      "nome_exibido": "Você",
+      "texto": "Ta onde",
+      "hora": "23:02"
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "Ana Clara",
+      "texto": "Em casa, moro em pg",
+      "hora": "23:02"
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "Ana Clara",
+      "texto": "E vc?",
+      "hora": "23:36"
+    },
+    {
+      "quem": "eu",
+      "nome_exibido": "Você",
+      "texto": "Aaah",
+      "hora": "16:55"
+    },
+    {
+      "quem": "eu",
+      "nome_exibido": "Você",
+      "texto": "Q pena",
+      "hora": "16:55"
+    },
+    {
+      "quem": "eu",
+      "nome_exibido": "Você",
+      "texto": "Cwb",
+      "hora": "16:55"
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "Ana Clara",
+      "texto": "🥲",
+      "hora": "18:28"
+    }
+  ],
+  "total": 9
+}

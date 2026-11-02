@@ -1,0 +1,51 @@
+{
+  "nome": "Bruna",
+  "href": "/app/messages/687ebb27a727ca7d5638e8f0697e4b6a42f4daf3d64d0ada",
+  "url": "https://tinder.com/app/messages/687ebb27a727ca7d5638e8f0697e4b6a42f4daf3d64d0ada",
+  "ultima_lista": "Gostei da ideia, vamos combinar",
+  "mensagens": [
+    {
+      "quem": "eu",
+      "nome_exibido": "Você",
+      "texto": "Ii",
+      "hora": "21:02"
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "Bruna",
+      "texto": "Oii",
+      "hora": "10:12"
+    },
+    {
+      "quem": "eu",
+      "nome_exibido": "Você",
+      "texto": "Oii, lindona!! Mal entro aqui… bora cvs no insta \n@laerciogermano",
+      "hora": "23:27"
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "Bruna",
+      "texto": "Oii, solicitei para te seguir",
+      "hora": "22:42"
+    },
+    {
+      "quem": "eu",
+      "nome_exibido": "Você",
+      "texto": "Booa",
+      "hora": "18:49"
+    },
+    {
+      "quem": "eu",
+      "nome_exibido": "Você",
+      "texto": "Bora tomar um vinho",
+      "hora": "18:49"
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "Bruna",
+      "texto": "Gostei da ideia, vamos combinar",
+      "hora": "20:03"
+    }
+  ],
+  "total": 7
+}

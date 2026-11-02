@@ -1,0 +1,12 @@
+# Gabriela
+url: https://tinder.com/app/messages/697e4b6a42f4daf3d64d0ada69be982d30f9dd54a407b52c
+ultima_lista: Sou de piraquara e você?
+
+---
+
+[EU] (20:14) Oii
+[MATCH] (14:05) Oii
+[EU] (20:32) Bem?
+[EU] (20:32) Daqui mesmo?
+[MATCH] (22:01) To bem e você?
+[MATCH] (22:01) Sou de piraquara e você?

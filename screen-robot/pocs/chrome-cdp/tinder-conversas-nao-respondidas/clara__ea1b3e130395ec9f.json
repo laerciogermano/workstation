@@ -1,0 +1,51 @@
+{
+  "nome": "clara",
+  "href": "/app/messages/697e4b6a42f4daf3d64d0ada6a9c02deea1b3e130395ec9f",
+  "url": "https://tinder.com/app/messages/697e4b6a42f4daf3d64d0ada6a9c02deea1b3e130395ec9f",
+  "ultima_lista": "e vc??",
+  "mensagens": [
+    {
+      "quem": "eu",
+      "nome_exibido": "Você",
+      "texto": "Oii",
+      "hora": "10:44"
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "clara",
+      "texto": "oiii",
+      "hora": "10:49"
+    },
+    {
+      "quem": "eu",
+      "nome_exibido": "Você",
+      "texto": "Bem??",
+      "hora": "12:42"
+    },
+    {
+      "quem": "eu",
+      "nome_exibido": "Você",
+      "texto": "De onde? Kkk",
+      "hora": "12:42"
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "clara",
+      "texto": "to sim, e você?",
+      "hora": "14:04"
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "clara",
+      "texto": "eu sou de joão pessoa",
+      "hora": "14:04"
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "clara",
+      "texto": "e vc??",
+      "hora": "14:04"
+    }
+  ],
+  "total": 7
+}

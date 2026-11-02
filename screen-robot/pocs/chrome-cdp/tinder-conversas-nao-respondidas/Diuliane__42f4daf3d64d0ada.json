@@ -1,0 +1,45 @@
+{
+  "nome": "Diuliane",
+  "href": "/app/messages/687ae4e8afe0e548f5679c39697e4b6a42f4daf3d64d0ada",
+  "url": "https://tinder.com/app/messages/687ae4e8afe0e548f5679c39697e4b6a42f4daf3d64d0ada",
+  "ultima_lista": "Vc é de qual bairro?",
+  "mensagens": [
+    {
+      "quem": "eu",
+      "nome_exibido": "Você",
+      "texto": "Oii",
+      "hora": "16:58"
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "Diuliane",
+      "texto": "Oii",
+      "hora": "20:19"
+    },
+    {
+      "quem": "eu",
+      "nome_exibido": "Você",
+      "texto": "Bem?? Daqui mesmo?",
+      "hora": "08:23"
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "Diuliane",
+      "texto": "Tudo certo sim\nE contigo ?",
+      "hora": "09:23"
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "Diuliane",
+      "texto": "Eu sou da região metropolitana de Curitiba, mas sempre estou por aí 😊",
+      "hora": "09:23"
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "Diuliane",
+      "texto": "Vc é de qual bairro?",
+      "hora": "09:23"
+    }
+  ],
+  "total": 6
+}

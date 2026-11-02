@@ -1,0 +1,33 @@
+{
+  "nome": "Bruna",
+  "href": "/app/messages/697e4b6a42f4daf3d64d0ada6a36f69ef6f8b7dd474c3ae7",
+  "url": "https://tinder.com/app/messages/697e4b6a42f4daf3d64d0ada6a36f69ef6f8b7dd474c3ae7",
+  "ultima_lista": "Como vai?",
+  "mensagens": [
+    {
+      "quem": "eu",
+      "nome_exibido": "Você",
+      "texto": "Ii",
+      "hora": "18:30"
+    },
+    {
+      "quem": "eu",
+      "nome_exibido": "Você",
+      "texto": "Oii",
+      "hora": "18:30"
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "Bruna",
+      "texto": "Oiii",
+      "hora": "18:30"
+    },
+    {
+      "quem": "match",
+      "nome_exibido": "Bruna",
+      "texto": "Como vai?",
+      "hora": "18:30"
+    }
+  ],
+  "total": 4
+}

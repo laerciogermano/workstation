@@ -1,0 +1,22 @@
+# Gessica
+url: https://tinder.com/app/messages/697e4b6a42f4daf3d64d0ada6a95f529dd95b922f95d9015
+ultima_lista: Fazenda rio grande, e vc?
+
+---
+
+[EU] Oii
+[MATCH] Ooi
+[EU] Bem??
+[EU] De sjp?
+[MATCH] Tudo certo e você?
+[MATCH] Fazenda rio grande, e vc?
+[EU] (23:15) Oii
+[MATCH] (23:15) 23:15
+[MATCH] (09:34) Ooi
+[MATCH] (09:34) 09:34
+[EU] (21:06) Bem??
+[MATCH] (21:06) 21:06
+[EU] (21:06) De sjp?
+[MATCH] (09:56) Tudo certo e você?
+[MATCH] (09:56) 09:56
+[MATCH] (09:56) Fazenda rio grande, e vc?

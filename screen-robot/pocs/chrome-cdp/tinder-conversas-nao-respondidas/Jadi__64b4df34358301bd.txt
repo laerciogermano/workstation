@@ -1,0 +1,15 @@
+# Jadi
+url: https://tinder.com/app/messages/697e4b6a42f4daf3d64d0ada6ac3163664b4df34358301bd
+ultima_lista: E você ?
+
+---
+
+[EU] (20:45) Oii
+[MATCH] (20:45) Oi
+Prazer!
+[EU] (08:50) Bem?
+[EU] (08:50) De onde vc é?
+[MATCH] (12:48) Tudo ótimo 
+E você ?
+[MATCH] (12:48) Lauro de Freitas
+[MATCH] (12:49) E você ?

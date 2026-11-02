@@ -1,10 +1,11 @@
 /**
- * Grava conta LinkedIn nos CSVs do lab (fingerprint + CDP + IP).
+ * Grava conta LinkedIn nos CSVs do lab (fingerprint completo + CDP + IP).
  */
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
+import { homedir } from 'node:os';
 
 const __dir = dirname(fileURLToPath(import.meta.url));
 const LI_CSV = resolve(__dir, '../../android-studio/contas-linkedin-clozzy.csv');
@@ -13,7 +14,8 @@ const CHROME_CSV = resolve(
   '../../android-studio/contas-facebook-chrome.csv',
 );
 
-const LI_HEADER = [
+/** Header canônico — todos os campos configurados no fingerprint (sem viewport/hash). */
+export const LI_HEADER = [
   'data_criacao',
   'nome',
   'email',
@@ -28,14 +30,27 @@ const LI_HEADER = [
   'fp_ua',
   'fp_platform',
   'fp_lang',
+  'fp_accept_language',
   'fp_timezone',
   'fp_locale',
   'fp_hw',
   'fp_mem',
   'fp_geo_lat',
   'fp_geo_lon',
-  'fp_screen',
+  'fp_geo_accuracy',
+  'fp_max_touch',
+  'fp_touch',
+  'fp_webrtc',
+  'fp_ch_platform',
+  'fp_platform_version',
+  'fp_arch',
+  'fp_model',
+  'fp_mobile',
+  'fp_bitness',
+  'fp_brands',
+  'fp_full_version_list',
   'fp_chrome',
+  'fp_screen',
 ];
 
 function today() {
@@ -99,11 +114,97 @@ function fetchIp() {
   return (r.stdout || '').trim();
 }
 
+function brandsCompact(list) {
+  if (!Array.isArray(list) || !list.length) return '';
+  return list.map((b) => `${b.brand}:${b.version}`).join('|');
+}
+
 function chromeVersion(fp) {
   const full = fp?.userAgentMetadata?.fullVersionList?.find(
     (b) => /chrome/i.test(b.brand),
   );
   return full?.version || '';
+}
+
+/** Mapeia fingerprint → cols fp_* da planilha. */
+export function fingerprintToCsvCols(fp = {}) {
+  const geo = fp.geolocation || {};
+  const meta = fp.userAgentMetadata || {};
+  return {
+    fp_ua: fp.userAgent || '',
+    fp_platform: fp.platform || '',
+    fp_lang: fp.lang || '',
+    fp_accept_language: fp.acceptLanguage || '',
+    fp_timezone: fp.timezone || '',
+    fp_locale: fp.locale || '',
+    fp_hw: fp.hardwareConcurrency != null ? String(fp.hardwareConcurrency) : '',
+    fp_mem: fp.deviceMemory != null ? String(fp.deviceMemory) : '',
+    fp_geo_lat: geo.latitude != null ? String(geo.latitude) : '',
+    fp_geo_lon: geo.longitude != null ? String(geo.longitude) : '',
+    fp_geo_accuracy: geo.accuracy != null ? String(geo.accuracy) : '',
+    fp_max_touch: fp.maxTouchPoints != null ? String(fp.maxTouchPoints) : '',
+    fp_touch: fp.touch != null ? String(!!fp.touch) : '',
+    fp_webrtc: fp.webrtcIpHandling || '',
+    fp_ch_platform: meta.platform || '',
+    fp_platform_version: meta.platformVersion || '',
+    fp_arch: meta.architecture || '',
+    fp_model: meta.model || '',
+    fp_mobile: meta.mobile != null ? String(!!meta.mobile) : '',
+    fp_bitness: meta.bitness || '',
+    fp_brands: brandsCompact(meta.brands),
+    fp_full_version_list: brandsCompact(meta.fullVersionList),
+    fp_chrome: chromeVersion(fp),
+    fp_screen: '', // viewport proibido
+  };
+}
+
+function readMetaFingerprint(cdpId) {
+  if (!cdpId) return null;
+  const p = resolve(homedir(), 'chrome-profiles', cdpId, '.human-cdp.json');
+  if (!existsSync(p)) return null;
+  try {
+    const meta = JSON.parse(readFileSync(p, 'utf8'));
+    return meta.fingerprint || null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Garante header canônico no CSV LI (migra cols novas vazias nas linhas antigas).
+ */
+export function ensureLinkedinCsvHeader() {
+  if (!existsSync(LI_CSV)) throw new Error(`CSV ausente: ${LI_CSV}`);
+  const { rows } = parseCsv(readFileSync(LI_CSV, 'utf8'));
+  const next = rows.map((r) => {
+    const o = {};
+    for (const h of LI_HEADER) o[h] = r[h] ?? '';
+    return o;
+  });
+  writeCsv(LI_CSV, LI_HEADER, next);
+  return { rows: next.length, header: LI_HEADER };
+}
+
+/**
+ * Preenche fp_* a partir do .human-cdp.json quando a linha tem cdp e fp incompleto.
+ */
+export function backfillFingerprintFromMeta() {
+  ensureLinkedinCsvHeader();
+  const { rows } = parseCsv(readFileSync(LI_CSV, 'utf8'));
+  let updated = 0;
+  const next = rows.map((r) => {
+    const o = { ...r };
+    for (const h of LI_HEADER) if (o[h] == null) o[h] = '';
+    if (!o.cdp) return o;
+    if (o.fp_accept_language && o.fp_webrtc && o.fp_brands) return o;
+    const fp = readMetaFingerprint(o.cdp);
+    if (!fp) return o;
+    Object.assign(o, fingerprintToCsvCols(fp));
+    updated += 1;
+    return o;
+  });
+  writeCsv(LI_CSV, LI_HEADER, next);
+  return { updated, rows: next.length };
 }
 
 /**
@@ -121,7 +222,10 @@ function chromeVersion(fp) {
 export function saveAccountCsv(opts = {}) {
   const emailRes = opts.email || {};
   const cdpRes = opts.cdp || {};
-  const fp = cdpRes.fingerprint || {};
+  let fp = cdpRes.fingerprint || {};
+  if (!fp.userAgent && cdpRes.id) {
+    fp = readMetaFingerprint(cdpRes.id) || fp;
+  }
   const dryRun = !!opts.dryRun;
   const writeChrome = opts.writeChromeCsv !== false;
 
@@ -132,7 +236,7 @@ export function saveAccountCsv(opts = {}) {
   const ip = opts.ip != null ? String(opts.ip).trim() : fetchIp();
   const cdpId = cdpRes.id || '';
   const cdpPort = cdpRes.port != null ? String(cdpRes.port) : '';
-  const geo = fp.geolocation || {};
+  const fpCols = fingerprintToCsvCols(fp);
 
   const row = {
     data_criacao: today(),
@@ -154,17 +258,7 @@ export function saveAccountCsv(opts = {}) {
       .join('; '),
     cdp: cdpId,
     cdp_port: cdpPort,
-    fp_ua: fp.userAgent || '',
-    fp_platform: fp.platform || '',
-    fp_lang: fp.lang || '',
-    fp_timezone: fp.timezone || '',
-    fp_locale: fp.locale || '',
-    fp_hw: fp.hardwareConcurrency != null ? String(fp.hardwareConcurrency) : '',
-    fp_mem: fp.deviceMemory != null ? String(fp.deviceMemory) : '',
-    fp_geo_lat: geo.latitude != null ? String(geo.latitude) : '',
-    fp_geo_lon: geo.longitude != null ? String(geo.longitude) : '',
-    fp_screen: '',
-    fp_chrome: chromeVersion(fp),
+    ...fpCols,
   };
 
   const chromeRow = {
@@ -182,11 +276,11 @@ export function saveAccountCsv(opts = {}) {
   }
 
   if (!existsSync(LI_CSV)) throw new Error(`CSV ausente: ${LI_CSV}`);
-  const { header, rows } = parseCsv(readFileSync(LI_CSV, 'utf8'));
-  const cols = header.length ? header : LI_HEADER;
+  ensureLinkedinCsvHeader();
+  const { rows } = parseCsv(readFileSync(LI_CSV, 'utf8'));
   const next = rows.filter((r) => r.email !== email);
   next.push(row);
-  writeCsv(LI_CSV, cols, next);
+  writeCsv(LI_CSV, LI_HEADER, next);
 
   let chromeSaved = false;
   if (writeChrome && cdpId && existsSync(CHROME_CSV)) {

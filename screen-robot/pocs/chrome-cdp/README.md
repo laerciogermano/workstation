@@ -98,3 +98,15 @@ Canônico: [`ig-dora-watch/REGRAS-CONVERSA.md`](ig-dora-watch/REGRAS-CONVERSA.md
 - Parar: fechar a janela do Chrome desse `user-data-dir` ou `pkill -f marcelino-jidarir-facebook`
 - Sem CDP: suba o Chrome **sem** `--remote-debugging-port`
 - Clique SO (antigo): `cliclick` + `osascript` activate
+
+## Tinder → Postgres Contabo
+
+Schema `tinder` no DB Contabo `connectmax` (conta `germano`): perfis, conversas e mensagens.
+
+- Código/docs: [`tinder-db/README.md`](tinder-db/README.md)
+- Import: `cd tinder-db && python3 import.py` (ou `dumps` / `xlsx`)
+- Dump local das não respondidas: `tinder-conversas-nao-respondidas/`
+- Lista: `tinder-conversas-germano.xlsx` / `tinder-nao-respondidas.md`
+
+**Antes → depois:** só arquivos locais → `connectmax.tinder.*`. Rollback: `DROP SCHEMA tinder CASCADE;`.
+

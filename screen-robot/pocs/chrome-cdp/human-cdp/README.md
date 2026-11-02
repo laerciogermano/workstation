@@ -81,7 +81,7 @@ CDP_URL=http://127.0.0.1:9230 npm run test:debug
 | `enableFocusEmulation` | liga emulação de foco na página (padrão no `connect` / `ensureFocus` / keeper) |
 | `send` | **bloqueia** `Page.bringToFront` / `Target.activateTarget` (no-op) |
 | `openPage` | `Target.createTarget({ background: true })` — **não** usa `/json/new` |
-| `enableDebugOverlay` | injeta painel **só Fingerprint** (meta) + `addScriptToEvaluateOnNewDocument` (F5/nav); no bot-lab mantém o rail nativo e acrescenta FP; `connectCdp({ debug: true })` → `meta.debug` + keeper em todas as abas |
+| `enableDebugOverlay` | injeta painel (veredito + comportamento + **resumo** Fingerprint) + `addScriptToEvaluateOnNewDocument` (F5/nav); `connectCdp({ debug: true })` → `meta.debug` + keeper em todas as abas |
 | `evaluate` | só leitura/DOM — **não** usa foco; **não** use para clicar |
 
 Toda interação de UI **obriga foco** (não há mais `focused: false`).

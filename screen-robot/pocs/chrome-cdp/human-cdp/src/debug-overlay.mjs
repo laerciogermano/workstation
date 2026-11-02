@@ -31,7 +31,7 @@ export function enableDebugOverlayExpression(fingerprint) {
         panel = document.createElement('section');
         panel.id = 'human-cdp-fp-panel';
         panel.className = 'panel';
-        panel.innerHTML = '<h2>Fingerprint</h2><p class="hint">meta.fingerprint (CDP)</p><pre id="human-cdp-fp-pre" style="margin:0;white-space:pre-wrap;word-break:break-word;font-size:0.72rem;line-height:1.35;color:#c5d0db;max-height:14rem;overflow:auto"></pre>';
+        panel.innerHTML = '<h2>Fingerprint</h2><p class="hint">resumo da meta</p><pre id="human-cdp-fp-pre" style="margin:0;white-space:pre-wrap;word-break:break-word;font-size:0.72rem;line-height:1.35;color:#c5d0db;max-height:9rem;overflow:auto"></pre>';
         const score = body.querySelector('.score-card');
         if (score && score.nextSibling) body.insertBefore(panel, score.nextSibling);
         else body.insertBefore(panel, body.firstChild);
@@ -42,54 +42,30 @@ export function enableDebugOverlayExpression(fingerprint) {
         pre.textContent = '(sem fingerprint na meta)';
         return;
       }
+      // Só o essencial — não dump completo da meta.
       const lines = [];
-      const put = (k, v) => {
-        if (v == null || v === '') return;
-        if (typeof v === 'object') {
-          try { lines.push(k + ': ' + JSON.stringify(v)); } catch { lines.push(k + ': [object]'); }
-        } else lines.push(k + ': ' + String(v));
-      };
-      put('userAgent', fp.userAgent);
+      const put = (k, v) => { if (v != null && v !== '') lines.push(k + ': ' + v); };
+      const ua = fp.userAgent ? String(fp.userAgent) : '';
+      put('UA', ua.length > 72 ? ua.slice(0, 72) + '…' : ua);
       put('platform', fp.platform);
-      put('lang', fp.lang);
-      put('acceptLanguage', fp.acceptLanguage);
-      put('locale', fp.locale);
+      put('lang', fp.lang || fp.locale);
       put('timezone', fp.timezone);
-      put('hardwareConcurrency', fp.hardwareConcurrency);
-      put('deviceMemory', fp.deviceMemory);
-      put('maxTouchPoints', fp.maxTouchPoints);
-      put('colorScheme', fp.colorScheme);
-      put('reducedMotion', fp.reducedMotion);
-      put('touch', fp.touch);
-      put('webrtcIpHandling', fp.webrtcIpHandling);
       if (fp.viewport) {
         put('viewport', fp.viewport.width + '×' + fp.viewport.height
-          + (fp.viewport.deviceScaleFactor != null ? ' @' + fp.viewport.deviceScaleFactor : '')
-          + (fp.viewport.screenWidth ? ' screen ' + fp.viewport.screenWidth + '×' + fp.viewport.screenHeight : ''));
+          + (fp.viewport.deviceScaleFactor != null ? ' @' + fp.viewport.deviceScaleFactor : ''));
       }
       if (fp.geolocation) {
-        put('geolocation', fp.geolocation.latitude + ', ' + fp.geolocation.longitude
-          + (fp.geolocation.accuracy != null ? ' ±' + fp.geolocation.accuracy + 'm' : ''));
+        put('geo', Number(fp.geolocation.latitude).toFixed(2) + ', ' + Number(fp.geolocation.longitude).toFixed(2));
       }
-      if (fp.userAgentMetadata) {
-        const m = fp.userAgentMetadata;
-        put('uaMeta', (m.platform || '') + ' ' + (m.platformVersion || '')
-          + (m.architecture ? ' ' + m.architecture : '')
-          + (m.mobile ? ' mobile' : ''));
-        if (m.brands?.length) put('brands', m.brands.map((b) => b.brand + '/' + b.version).join(', '));
-      }
-      if (fp.permissions?.length) {
-        put('permissions', fp.permissions.map((p) => (p.permission || '') + '@' + (p.origin || '') + '=' + (p.setting || 'granted')).join('; '));
-      }
-      pre.textContent = lines.length ? lines.join('\\n') : JSON.stringify(fp, null, 2);
+      put('cores/mem', [fp.hardwareConcurrency, fp.deviceMemory != null ? fp.deviceMemory + 'GB' : null].filter(Boolean).join(' / ') || null);
+      pre.textContent = lines.length ? lines.join('\\n') : '(vazio)';
     };
 
-    // Overlay antigo / com painel de comportamento → reinstala (só fingerprint).
+    // Overlay fingerprint-only (erro anterior) ou sem setFingerprint → reinstala completo.
     if (window.__humanCdpDebug?.enabled) {
-      const onlyFp = !!document.getElementById('human-cdp-fp-panel')
-        && !document.querySelector('#' + RAIL_ID + ' .score-card')
-        && !document.querySelector('#' + RAIL_ID + ' .checks-list');
-      if (onlyFp && typeof window.__humanCdpDebug.setFingerprint === 'function') {
+      const fullDiag = !!document.querySelector('#' + RAIL_ID + ' .score-card')
+        && !!document.querySelector('#' + RAIL_ID + ' .checks-list');
+      if (fullDiag && typeof window.__humanCdpDebug.setFingerprint === 'function') {
         window.__humanCdpDebug.refresh();
         window.__humanCdpDebug.setFingerprint(FP);
         return window.__humanCdpDebug.snapshot();
@@ -495,24 +471,43 @@ export function enableDebugOverlayExpression(fingerprint) {
 
     const ensureFallbackRail = () => {
       let rail = document.getElementById(RAIL_ID);
-      // remove versão antiga com veredito/comportamento
-      if (rail && (rail.querySelector('.score-card') || rail.querySelector('.checks-list'))) {
+      // fingerprint-only (sem diagnóstico) → recria completo
+      if (rail && !rail.querySelector('.score-card')) {
         rail.remove();
         rail = null;
       }
       if (!rail) {
         rail = document.createElement('aside');
         rail.id = RAIL_ID;
-        rail.setAttribute('aria-label', 'Fingerprint CDP');
+        rail.setAttribute('aria-label', 'Feedback de detecção');
         rail.innerHTML = \`
           <div class="rail-toolbar">
+            <button type="button" class="rail-reset" title="Zerar comportamento">↺</button>
             <button type="button" class="rail-toggle" id="btn-rail-toggle" aria-expanded="true" title="Minimizar painel">«</button>
           </div>
           <div class="rail-body">
+            <div class="score-card">
+              <p class="score-label">Veredito</p>
+              <p class="score-verdict is-warn">inconclusivo</p>
+              <p class="score-meta">comportamento — · live</p>
+            </div>
             <section class="panel" id="human-cdp-fp-panel">
               <h2>Fingerprint</h2>
-              <p class="hint">meta.fingerprint (CDP)</p>
-              <pre id="human-cdp-fp-pre" style="margin:0;white-space:pre-wrap;word-break:break-word;font-size:0.72rem;line-height:1.35;color:#c5d0db;max-height:none;overflow:auto">(carregando…)</pre>
+              <p class="hint">resumo da meta</p>
+              <pre id="human-cdp-fp-pre" style="margin:0;white-space:pre-wrap;word-break:break-word;font-size:0.72rem;line-height:1.35;color:#c5d0db;max-height:9rem;overflow:auto">(carregando…)</pre>
+            </section>
+            <section class="panel">
+              <h2>Comportamento</h2>
+              <p class="hint">Detector portátil (fora do bot-lab). Interaja na página.</p>
+              <ul class="checks-list"></ul>
+              <div class="meters">
+                <div><span>Pontos</span><strong id="human-cdp-debug-points">0</strong></div>
+                <div><span>Cliques</span><strong id="human-cdp-debug-clicks">0</strong></div>
+                <div><span>Teclas</span><strong id="human-cdp-debug-keys">0</strong></div>
+                <div><span>Trusted</span><strong id="human-cdp-debug-trusted">—</strong></div>
+                <div><span>Foco</span><strong id="human-cdp-debug-focus">—</strong></div>
+                <div><span>Cursor</span><strong id="human-cdp-debug-xy">—</strong></div>
+              </div>
             </section>
           </div>
         \`;
@@ -520,16 +515,18 @@ export function enableDebugOverlayExpression(fingerprint) {
         document.body.classList.add('human-cdp-debug-pad');
       }
       wireMinimize(rail, rail.querySelector('.rail-toggle'));
+      createLiveVerdict(rail);
       renderFingerprint(rail, FP);
       return rail;
     };
 
-    // Fora do bot-lab: só fingerprint. No bot-lab, mantém rail nativo + injeta FP.
     const labRail = document.querySelector('.feedback-rail')
       || document.getElementById('feedback-rail');
     const isBotLab = !!(labRail && document.getElementById('score-verdict') && document.getElementById('behavior-list'));
     const rail = isBotLab ? ensureBotLabRail() : ensureFallbackRail();
     if (isBotLab) renderFingerprint(rail, FP);
+    ensureFigMouse();
+    moveMouse(40, 40);
 
     window.__humanCdpDebug = {
       enabled: true,
@@ -551,19 +548,24 @@ export function enableDebugOverlayExpression(fingerprint) {
         const railEl = document.querySelector('.feedback-rail')
           || document.getElementById(RAIL_ID);
         renderFingerprint(railEl, this.fingerprint);
+        ensureFigMouse();
       },
       snapshot() {
+        const fig = document.getElementById('fig-mouse');
         const railEl = document.querySelector('.feedback-rail')
           || document.getElementById(RAIL_ID);
         return {
           enabled: true,
           isBotLab: this.isBotLab,
           hasFingerprint: !!(this.fingerprint && typeof this.fingerprint === 'object'),
+          mouseOn: !!(fig && fig.classList.contains('is-on')),
           railFixed: !!railEl,
           railMinimizable: !!document.getElementById('btn-rail-toggle')
             || !!document.querySelector('.rail-toggle'),
           floating: false,
-          fingerprintOnly: !this.isBotLab,
+          verdict: (railEl && railEl.querySelector('.score-verdict')?.textContent?.trim())
+            || document.getElementById('score-verdict')?.textContent?.trim()
+            || null,
         };
       },
     };

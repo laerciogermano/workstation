@@ -22,11 +22,10 @@ import { connect } from './src/index.mjs';
 const page = await connect({
   cdpUrl: 'http://127.0.0.1:9230',
   url: 'http://127.0.0.1:8766/',
-  focused: true, // default — bringToFront + activate Chrome
 });
 
-await page.click('#btn-primary');      // trajetória + press/release
-await page.type('#input-nome', 'oi');  // click + teclas ritmadas
+await page.click('#btn-primary');      // foco + trajetória + press/release
+await page.type('#input-nome', 'oi');  // foco + click + teclas ritmadas
 await page.drag('#drag-handle', { dx: 160 });
 await page.goto('https://example.com');
 page.close();
@@ -36,14 +35,14 @@ page.close();
 
 | Método | Comportamento |
 |--------|----------------|
-| `connect({ cdpUrl, url, focused, newTab, urlIncludes })` | abre sessão |
-| `click(sel)` | **sempre** `mouseMoved` em curva + `press`/`release` |
-| `type` / `fill` | foco via click humano + `Input.insertText` ritmado |
-| `hover` / `scroll` / `drag` / `select` / `waitFor` / `goto` | CDP Input / Page |
-| `bringToFront` / `ensureFocus` | aba + app Chrome |
-| `evaluate` | só leitura/DOM — **não** use para clicar |
+| `connect({ cdpUrl, url, newTab, urlIncludes })` | abre sessão + **foco** |
+| `click` / `hover` / `type` / `fill` / `drag` / `scroll` / `select` / `goto` / `waitFor` | **sempre** chamam `ensureFocus` (aba + activate Chrome) antes da ação |
+| `click(sel)` | foco + `mouseMoved` em curva + `press`/`release` |
+| `type` / `fill` | foco + click humano + `Input.insertText` ritmado |
+| `bringToFront` / `ensureFocus` | aba + app Chrome (+ `Emulation.setFocusEmulationEnabled`) |
+| `evaluate` | só leitura/DOM — **não** usa foco; **não** use para clicar |
 
-`focused: false` → operação em background; o bot-lab marca **robô**.
+Toda interação de UI **obriga foco** (não há mais `focused: false`).
 
 ## Aceite (bot-lab)
 
@@ -56,6 +55,8 @@ CDP_URL=http://127.0.0.1:9230 npm run test:bot-lab
 ## Antes → depois
 
 Scripts CDP crus (`el.click`, `dispatchMouseEvent` sem move) → importam `human-cdp` e usam `click`/`type`.
+
+**Antes → depois (foco):** `focused: false` permitia background → toda interação chama `ensureFocus` (bringToFront + activate). Rollback: `ensureFocus` com early-return se `this.focused === false`.
 
 **Rollback:** voltar ao CDP cru nos scripts; apagar `human-cdp/`.
 

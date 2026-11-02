@@ -22,7 +22,6 @@ import {
  * @property {string} [urlIncludes] filtra aba existente
  * @property {string} [url] se setado, abre/navega
  * @property {boolean} [newTab]
- * @property {boolean} [focused] default true — bringToFront + activate Chrome
  * @property {string} [chromeApp] nome AppleScript (default "Google Chrome")
  */
 
@@ -44,9 +43,11 @@ export class HumanCdpSession {
   constructor(cdp, opts) {
     this._cdp = cdp;
     this.cdpUrl = opts.cdpUrl;
-    this.focused = opts.focused !== false;
+    /** @deprecated sempre true — toda interação chama foco */
+    this.focused = true;
     this.chromeApp = opts.chromeApp || 'Google Chrome';
     this._cursor = { x: 40, y: 40 };
+    this._lastFocusAt = 0;
   }
 
   send(method, params) {
@@ -65,21 +66,34 @@ export class HumanCdpSession {
     return result?.value;
   }
 
-  async ensureFocus() {
-    if (!this.focused) return;
+  /**
+   * Obriga foco da aba + app Chrome. Toda interação pública chama isto.
+   * @param {{ settleMs?: number, force?: boolean }} [opts]
+   */
+  async ensureFocus({ settleMs = 280, force = false } = {}) {
+    const now = Date.now();
+    // evita storm de osascript em type() char-a-char; force=true sempre aplica
+    if (!force && now - this._lastFocusAt < 120) {
+      await this.send('Page.bringToFront');
+      return;
+    }
     await this.send('Page.bringToFront');
+    try {
+      await this.send('Emulation.setFocusEmulationEnabled', { enabled: true });
+    } catch {
+      /* Chrome antigo / sem suporte */
+    }
     activateApp(this.chromeApp);
-    await sleep(350);
+    await sleep(settleMs);
+    this._lastFocusAt = Date.now();
   }
 
   async bringToFront() {
-    await this.send('Page.bringToFront');
-    activateApp(this.chromeApp);
-    await sleep(200);
+    await this.ensureFocus({ settleMs: 200, force: true });
   }
 
   async goto(url, { waitUntil = 'complete', timeoutMs = 20000 } = {}) {
-    await this.ensureFocus();
+    await this.ensureFocus({ force: true });
     await this.send('Page.enable');
     await this.send('Page.navigate', { url });
     const start = Date.now();
@@ -91,10 +105,11 @@ export class HumanCdpSession {
       if (ready === 'complete') break;
       await sleep(150);
     }
-    await sleep(200);
+    await this.ensureFocus({ settleMs: 150, force: true });
   }
 
   async waitFor(selector, { timeoutMs = 15000, visible = true } = {}) {
+    await this.ensureFocus({ settleMs: 100 });
     const start = Date.now();
     while (Date.now() - start < timeoutMs) {
       const box = await this.boundingBox(selector);
@@ -123,6 +138,7 @@ export class HumanCdpSession {
   }
 
   async _moveTo(x, y, { steps } = {}) {
+    await this.ensureFocus({ settleMs: 80 });
     const dist = Math.hypot(x - this._cursor.x, y - this._cursor.y);
     const n = steps ?? Math.max(18, Math.min(40, Math.round(dist / 12)));
     const pts = trajectoryPoints(this._cursor, { x, y }, { steps: n });
@@ -131,31 +147,37 @@ export class HumanCdpSession {
   }
 
   /**
-   * Clique humano: trajetória obrigatória + press/release CDP (isTrusted).
+   * Clique humano: foco + trajetória + press/release CDP (isTrusted).
    * @param {string} selector
    * @param {{ clicks?: number, delayMs?: number }} [opts]
    */
   async click(selector, { clicks = 1, delayMs } = {}) {
-    await this.ensureFocus();
+    await this.ensureFocus({ force: true });
     const box = await this.waitFor(selector);
+    await this.ensureFocus({ settleMs: 120, force: true });
     const jitterX = rand(-3, 3);
     const jitterY = rand(-3, 3);
     const x = box.cx + jitterX;
     const y = box.cy + jitterY;
     await this._moveTo(x, y);
     await sleep(randInt(40, 120));
+    await this.ensureFocus({ settleMs: 60, force: true });
     for (let i = 0; i < clicks; i++) {
       const ox = x + rand(-2, 2);
       const oy = y + rand(-2, 2);
       await pressRelease(this.send.bind(this), ox, oy);
       this._cursor = { x: ox, y: oy };
-      if (i < clicks - 1) await sleep(delayMs ?? clickGapMs());
+      if (i < clicks - 1) {
+        await this.ensureFocus({ settleMs: 40 });
+        await sleep(delayMs ?? clickGapMs());
+      }
     }
   }
 
   async hover(selector) {
-    await this.ensureFocus();
+    await this.ensureFocus({ force: true });
     const box = await this.waitFor(selector);
+    await this.ensureFocus({ settleMs: 80, force: true });
     await this._moveTo(box.cx + rand(-2, 2), box.cy + rand(-2, 2));
   }
 
@@ -164,9 +186,10 @@ export class HumanCdpSession {
    * Foca o campo com click humano antes.
    */
   async type(selector, text, { clickFirst = true, clear = false } = {}) {
-    await this.ensureFocus();
+    await this.ensureFocus({ force: true });
     if (clickFirst) await this.click(selector);
     else await this.hover(selector);
+    await this.ensureFocus({ settleMs: 100, force: true });
     if (clear) {
       await this.send('Input.dispatchKeyEvent', {
         type: 'keyDown',
@@ -196,7 +219,7 @@ export class HumanCdpSession {
       });
     }
     for (const ch of String(text)) {
-      // keyDown/Up + insertText: ritmo de digitação no bot-lab conta key events
+      await this.ensureFocus({ settleMs: 0 });
       await this.send('Input.dispatchKeyEvent', {
         type: 'keyDown',
         text: ch,
@@ -217,8 +240,9 @@ export class HumanCdpSession {
   }
 
   async scroll({ dy = 400, steps = 12 } = {}) {
-    await this.ensureFocus();
+    await this.ensureFocus({ force: true });
     for (let i = 0; i < steps; i++) {
+      await this.ensureFocus({ settleMs: 0 });
       await this.send('Input.dispatchMouseEvent', {
         type: 'mouseWheel',
         x: this._cursor.x,
@@ -231,12 +255,12 @@ export class HumanCdpSession {
   }
 
   /**
-   * Drag humano: move até origem, press, trajetória, release.
+   * Drag humano: foco + move + press + trajetória + release.
    * @param {string} fromSelector
    * @param {{ dx?: number, dy?: number, toSelector?: string }} opts
    */
   async drag(fromSelector, { dx = 160, dy = 0, toSelector, steps = 20 } = {}) {
-    await this.ensureFocus();
+    await this.ensureFocus({ force: true });
     const from = await this.waitFor(fromSelector);
     let toX = from.cx + dx;
     let toY = from.cy + dy;
@@ -245,7 +269,9 @@ export class HumanCdpSession {
       toX = to.cx;
       toY = to.cy;
     }
+    await this.ensureFocus({ settleMs: 100, force: true });
     await this._moveTo(from.cx, from.cy);
+    await this.ensureFocus({ settleMs: 50, force: true });
     await this.send('Input.dispatchMouseEvent', {
       type: 'mousePressed',
       x: from.cx,
@@ -272,7 +298,9 @@ export class HumanCdpSession {
   }
 
   async select(selector, value) {
+    await this.ensureFocus({ force: true });
     await this.click(selector);
+    await this.ensureFocus({ settleMs: 80, force: true });
     await this.evaluate(`(() => {
       const el = document.querySelector(${JSON.stringify(selector)});
       if (!el) throw new Error('select missing');
@@ -306,15 +334,13 @@ export async function connect(opts = {}) {
   await cdp.send('Runtime.enable');
   const session = new HumanCdpSession(cdp, {
     cdpUrl,
-    focused: opts.focused !== false,
     chromeApp: opts.chromeApp,
   });
   if (opts.url && !opts.newTab) {
     await session.goto(opts.url);
-  } else if (opts.focused !== false) {
-    await session.ensureFocus();
+  } else {
+    await session.ensureFocus({ force: true });
   }
-  // warm version endpoint (sanidade)
   await getJson(cdpUrl, '/json/version');
   return session;
 }

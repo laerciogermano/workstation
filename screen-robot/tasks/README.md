@@ -76,3 +76,9 @@ tasks/
 | TSK-029..031 | Filhas EP-06 | sob `TSK-028-sessao/` |
 | TSK-038 | Motor Gemini | [`TSK-038-motor-gemini/`](TSK-038-motor-gemini/README.md) |
 | TSK-039..040 | Filhas EP-07 | sob `TSK-038-motor-gemini/` |
+
+## Cards Trello (POC / board Robô Prospecção)
+
+| Pasta | Card |
+|-------|------|
+| [`6ae8ac1d5228997f864b40c5/`](6ae8ac1d5228997f864b40c5/README.md) | [Lib CDP humana](https://trello.com/c/5tt5ZTeN) |

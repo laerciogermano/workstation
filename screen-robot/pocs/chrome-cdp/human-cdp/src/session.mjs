@@ -20,6 +20,11 @@ import {
   randInt,
   sleep,
 } from './human.mjs';
+import {
+  captureScreenshot,
+  findOcrWord,
+  ocrFromSession,
+} from './ocr.mjs';
 
 /**
  * Última posição do ponteiro por CDP (porta/url) — sobrevive a reconnect.
@@ -173,6 +178,45 @@ export class HumanCdpSession {
 
   async bringToFront() {
     await this.ensureFocus({ settleMs: 200, force: true, require: true });
+  }
+
+  /**
+   * Screenshot da viewport (PNG Buffer).
+   * @param {{ format?: 'png'|'jpeg', quality?: number, clip?: object }} [opts]
+   */
+  async screenshot(opts = {}) {
+    return captureScreenshot(this, opts);
+  }
+
+  /**
+   * OCR da viewport: screenshot CDP + engine (macos-vision|rapidocr|tesseract).
+   * @param {{ engine?: string, lang?: string, path?: string, keepFile?: boolean, clip?: object }} [opts]
+   * @returns {Promise<{ engine: string, text: string, words: object[], imagePath: string|null }>}
+   */
+  async ocr(opts = {}) {
+    await this.ensureFocus({ require: false }).catch(() => {});
+    return ocrFromSession(this, opts);
+  }
+
+  /**
+   * Localiza texto via OCR e devolve centro (para clickAt).
+   * @param {string} query
+   * @param {{ engine?: string, lang?: string }} [opts]
+   */
+  async findByOcr(query, opts = {}) {
+    const { words } = await this.ocr(opts);
+    return findOcrWord(words, query);
+  }
+
+  /**
+   * OCR → arrasta e clica no texto encontrado.
+   * @param {string} query
+   * @param {{ engine?: string, lang?: string, clicks?: number }} [opts]
+   */
+  async clickOcr(query, opts = {}) {
+    const hit = await this.findByOcr(query, opts);
+    if (!hit) throw new Error(`OCR não encontrou: ${query}`);
+    return this.clickAt(hit.cx, hit.cy, { clicks: opts.clicks ?? 1 });
   }
 
   async goto(url, { waitUntil = 'complete', timeoutMs = 20000 } = {}) {

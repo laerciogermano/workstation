@@ -29,9 +29,28 @@ const page = await connect({
 await page.click('#btn-primary');      // foco + trajetória + press/release
 await page.type('#input-nome', 'oi');  // foco + click + teclas ritmadas
 await page.drag('#drag-handle', { dx: 160 });
+
+// OCR da viewport (CDP screenshot + macos-vision|rapidocr|tesseract)
+const { text, words } = await page.ocr();           // HUMAN_CDP_OCR / SCREEN_ROBOT_OCR
+const hit = await page.findByOcr('Iniciar');        // { cx, cy, bounds, text }
+await page.clickOcr('Iniciar');                     // trajetória + clique no texto
+
 await page.goto('https://example.com');
 page.close();
 ```
+
+### OCR
+
+| Método | Retorno |
+|--------|---------|
+| `screenshot(opts?)` | `Buffer` PNG |
+| `ocr({ engine, lang, path, keepFile, clip })` | `{ text, words[], imagePath, engine }` |
+| `findByOcr(query, opts?)` | `{ text, bounds, cx, cy, confidence }` ou `null` |
+| `clickOcr(query, opts?)` | clique humano no centro do hit |
+
+Engines: `macos-vision` (default darwin), `rapidocr`, `tesseract` (CLI). Reusa [`../../../src/lib/`](../../../src/lib/README.md). Env: `HUMAN_CDP_OCR` / `SCREEN_ROBOT_OCR`.
+
+**Antes → depois:** sem OCR na lib → screenshot+OCR+find/click por texto. Rollback: não chamar `ocr`/`clickOcr`; apagar `src/ocr.mjs`.
 
 ### Modo debug
 

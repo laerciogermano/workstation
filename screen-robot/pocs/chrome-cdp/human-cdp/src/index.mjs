@@ -16,6 +16,12 @@ export {
   normalizeFingerprint,
 } from './fingerprint.mjs';
 export {
+  captureScreenshot,
+  ocrFromSession,
+  ocrImage,
+  findOcrWord,
+} from './ocr.mjs';
+export {
   listCdps,
   getCdp,
   createCdp,

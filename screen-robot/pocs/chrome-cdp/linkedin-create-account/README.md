@@ -23,6 +23,7 @@ Script novo, passo a passo. **Agora só o passo 1:** mailbox Mailcow.
 | [`fetch-signup-pin.mjs`](fetch-signup-pin.mjs) | `fetchSignupPin({ email })` → poll Mailcow ≤5 min pelo PIN 6 dígitos |
 | [`fill-signup-pin.mjs`](fill-signup-pin.mjs) | `fillSignupPin({ id, code })` → digita PIN → Continuar |
 | [`click-signup-age18.mjs`](click-signup-age18.mjs) | `clickSignupAge18({ id })` → Sim, maior de 18 → Continuar |
+| [`click-signup-skip.mjs`](click-signup-skip.mjs) | `clickSignupSkip({ id })` → Pular / Skip |
 
 ```bash
 cd screen-robot/pocs/chrome-cdp/linkedin-create-account

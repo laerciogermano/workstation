@@ -14,6 +14,7 @@ import { fillSignupCompany } from './fill-signup-company.mjs';
 import { fetchSignupPin } from './fetch-signup-pin.mjs';
 import { fillSignupPin } from './fill-signup-pin.mjs';
 import { clickSignupAge18 } from './click-signup-age18.mjs';
+import { clickSignupSkip } from './click-signup-skip.mjs';
 
 const DEFAULT_LI_PASSWORD = 'in@12345678';
 
@@ -53,6 +54,7 @@ export async function createLinkedin(opts = {}) {
       pin: null,
       pinFill: null,
       age18: null,
+      skip: null,
     };
   }
 
@@ -153,6 +155,11 @@ export async function createLinkedin(opts = {}) {
     dryRun: opts.dryRun,
   });
 
+  const skip = await clickSignupSkip({
+    id,
+    dryRun: opts.dryRun,
+  });
+
   return {
     id,
     skipped: false,
@@ -168,5 +175,6 @@ export async function createLinkedin(opts = {}) {
     pin: pinFetch,
     pinFill,
     age18,
+    skip,
   };
 }

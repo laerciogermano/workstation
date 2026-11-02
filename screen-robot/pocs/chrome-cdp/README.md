@@ -50,6 +50,7 @@ Copiar/colar: [`PROMPT-NOVO-VENDEDOR.md`](PROMPT-NOVO-VENDEDOR.md) (mailbox + CD
 ./signup-lucas-mendes.sh   # PIN via Mailcow; Pular carreira
 ./signup-sofia-ribeiro.sh  # idem :9226
 ./signup-amanda-rocha.sh   # PIN via Mailcow; fingerprint Win129 Manaus :9236
+./signup-bruno-nunes.sh    # PIN via Mailcow; fingerprint Mac130 Fortaleza :9237
 ./signup-pedro-almeida-until-email.sh  # so ate PIN; probe /feed sem onboarding
 ./signup-juliana-martins-until-email.sh  # idem :9228
 # basico so ate nome:
@@ -62,6 +63,8 @@ Entradas CLI (completo): `--email` `--password` `--first|--nome` `--last|--sobre
 **Fingerprint no CSV:** cols `cdp`,`cdp_port`,`fp_ua`,`fp_platform`,`fp_lang`,`fp_timezone`,`fp_locale`,`fp_hw`,`fp_mem`,`fp_geo_lat`,`fp_geo_lon`,`fp_screen`,`fp_chrome` (preencher na criação; linhas antigas vazias). Rollback: limpar cols novas.
 
 **IP no CSV:** a cada signup novo, gravar IPv4 de egress (`curl -sS https://api.ipify.org`) na col `ip` de [`../android-studio/contas-linkedin-clozzy.csv`](../android-studio/contas-linkedin-clozzy.csv). Rollback: deixar `ip` vazio só em linhas históricas sem evidência.
+
+**Antes → depois (Bruno Nunes 2026-11-02):** sem linha → CSV `bruno.nunes@clozzy.com.br` + CDP `bruno-nunes` :9237 + fingerprint Mac/Chrome130/`America/Fortaleza` nas cols `fp_*`; signup `./signup-bruno-nunes.sh` → `/feed`. Rollback: remover linha CSV/`credenciais.md`; `removeCdp('bruno-nunes', { deleteProfile: true })`; apagar mailbox Mailcow.
 
 **Antes → depois (Amanda Rocha 2026-11-02):** sem linha → CSV `amanda.rocha@clozzy.com.br` + CDP `amanda-rocha` :9236 + fingerprint Win/Chrome129/`America/Manaus` gravado em cols `fp_*`; signup `./signup-amanda-rocha.sh` → `/feed`. Rollback: remover linha CSV/`credenciais.md`; `removeCdp('amanda-rocha', { deleteProfile: true })`; apagar mailbox Mailcow.
 

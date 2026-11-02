@@ -22,6 +22,8 @@ CSV: [`contas-linkedin-clozzy.csv`](contas-linkedin-clozzy.csv) — cols conta +
 **Antes → depois (Pedro Almeida signup):** `nao_criada` → `signup_incompleto` — pediu confirmação de número por retentativa de IPs cadastros. Rollback: status `nao_criada`; limpar obs do pedido de número.
 
 
+**Antes → depois (Bruno Nunes 2026-11-02):** sem linha → CSV + mailbox + CDP `bruno-nunes` :9237 (fingerprint Mac130 Fortaleza nas cols `fp_*`); LI `criada_chrome_cdp` via `./signup-bruno-nunes.sh`. Rollback: remover linha CSV; apagar mailbox/`credenciais.md`; `removeCdp('bruno-nunes', { deleteProfile: true })`.
+
 **Antes → depois (Amanda Rocha 2026-11-02):** sem linha → CSV + mailbox + CDP `amanda-rocha` :9236 (fingerprint Win129 Manaus nas cols `fp_*`); LI `criada_chrome_cdp` via `./signup-amanda-rocha.sh`. Rollback: remover linha CSV; apagar mailbox/`credenciais.md`; `removeCdp('amanda-rocha', { deleteProfile: true }).
 **Antes → depois (ativas 2026-11-01):** várias `restrita=nao` (Gabriel/Roberta/Pedro/Juliana + CDP) → só **Marina Costa**, **Lucas Mendes**, **Sofia Ribeiro** ativas; demais `restrita=sim`. Rollback: restaurar col `restrita` das linhas no CSV do commit anterior.
 

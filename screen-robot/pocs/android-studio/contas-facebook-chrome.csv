@@ -10,3 +10,4 @@ data,nome,plataforma,chrome_user_data_dir,cdp_port,start_script,obs
 2026-11-02,Larissa Souza,facebook,~/chrome-profiles/ometv-3,9234,human-cdp createCdp ometv-3,perfil Chrome isolado; fingerprint Win31 Recife; FB+OmeTV
 2026-11-02,Helena Duarte,linkedin,~/chrome-profiles/helena-duarte,9235,human-cdp createCdp helena-duarte,perfil Chrome isolado; fingerprint Win129 Bahia; LI signup
 2026-11-02,Amanda Rocha,linkedin,~/chrome-profiles/amanda-rocha,9236,human-cdp createCdp amanda-rocha,perfil Chrome isolado; fingerprint Win129 Manaus; LI signup
+2026-11-02,Bruno Nunes,linkedin,~/chrome-profiles/bruno-nunes,9237,human-cdp createCdp bruno-nunes,perfil Chrome isolado; fingerprint Mac130 Fortaleza; LI signup

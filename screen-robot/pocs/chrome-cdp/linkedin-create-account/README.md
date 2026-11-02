@@ -24,6 +24,7 @@ Script novo, passo a passo. **Agora só o passo 1:** mailbox Mailcow.
 | [`fill-signup-pin.mjs`](fill-signup-pin.mjs) | `fillSignupPin({ id, code })` → digita PIN → Continuar |
 | [`click-signup-age18.mjs`](click-signup-age18.mjs) | `clickSignupAge18({ id })` → Sim, maior de 18 → Continuar |
 | [`click-signup-skip.mjs`](click-signup-skip.mjs) | `clickSignupSkip({ id })` → Pular / Skip |
+| [`click-signup-finish.mjs`](click-signup-finish.mjs) | `clickSignupFinish({ id })` → Concluir |
 
 ```bash
 cd screen-robot/pocs/chrome-cdp/linkedin-create-account

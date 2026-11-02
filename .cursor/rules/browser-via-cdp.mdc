@@ -17,24 +17,23 @@ Sempre que for abrir, navegar ou controlar um browser neste lab, use **Chrome co
 
 ## Foco da tela (visível vs background)
 
-Decida e declare o modo; default = **com foco** quando o usuário precisa ver a operação.
+**Default do `human-cdp` = sem roubar foco do SO.** Só emulação CDP (`Emulation.setFocusEmulationEnabled`). `Page.bringToFront` / `Target.activateTarget` / `osascript activate` / `/json/new` estão bloqueados ou substituídos na lib.
 
 | Modo | Quando | Como |
 |------|--------|------|
-| **Com foco** (visível) | Usuário pediu para ver / “abra” / login manual / captcha | `Page.bringToFront` + `osascript` `tell application "Google Chrome" to activate` (ou o app do perfil) |
-| **Sem foco** (background) | Automação longa em paralelo; usuário no Cursor | **Não** activate; CDP `Input.*` / `Runtime.evaluate`; `Emulation.setFocusEmulationEnabled` (padrão no `human-cdp`) |
+| **Sem foco** (padrão) | Automação / usuário no Cursor | Só `human-cdp`; emulação de foco; `openPage` = `Target.createTarget({ background: true })` |
+| **Com foco** (visível) | Usuário pediu **explicitamente** ver / captcha manual | `osascript` activate **fora** da lib (script ad-hoc); nunca via `session.send` |
 
-- `human-cdp` **padrão** = emulação de foco CDP; `bringToFront`/`activate` comentados (não roubam o SO). Rollback: descomentar loop em `ensureFocus`
-- Clique CDP (`Input.dispatchMouseEvent`) funciona com a janela atrás — não use `cliclick`/clique SO salvo pedido explícito
-- `Runtime.evaluate` em background **não** rouba o app frontmost; `Page.navigate` **pode** trazer o Chrome para frente (evitar no modo sem foco, ou re-`activate` o app do usuário depois)
-- Se o usuário disser que não está vendo: mude imediatamente para **com foco** e reabra a aba (descomentar activate se necessário)
+- Clique CDP funciona com janela atrás — não use `cliclick`/clique SO salvo pedido explícito
+- `Page.navigate` em alguns Chromes ainda pode elevar a janela (limitação do browser); preferir reusar aba já aberta
+- Se o usuário disser que não está vendo: activate pontual via osascript no script, não reativar na lib
 
 ## Exemplos
 
 ```text
-✅ ./start-germano.sh https://hpanel.hostinger.com/  → CDP :9230 → bringToFront + activate → login
-✅ dump Tinder em background: sem activate; setFocusEmulationEnabled
+✅ connectCdp + click/type com Cursor na frente (sem activate)
+✅ dump Tinder em background: setFocusEmulationEnabled
+❌ Page.bringToFront / Target.activateTarget / /json/new / osascript activate na lib
 ❌ cursor-ide-browser / browser_navigate MCP
 ❌ Chrome sem --remote-debugging-port
-❌ Automação “abra pra eu ver” sem trazer a janela ao foco
 ```

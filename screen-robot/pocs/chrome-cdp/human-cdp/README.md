@@ -77,8 +77,10 @@ CDP_URL=http://127.0.0.1:9230 npm run test:debug
 | `click` / `hover` / `type` / `fill` / `drag` / `scroll` / `select` / `goto` / `waitFor` | **sempre** chamam `ensureFocus` (só emulação CDP; sem activate) |
 | `click(sel)` | foco + `mouseMoved` em curva + `press`/`release` |
 | `type` / `fill` | foco + click humano + `Input.insertText` ritmado (sem `text` no keyDown — evita char duplicado) |
-| `bringToFront` / `ensureFocus` | `Emulation.setFocusEmulationEnabled` (bringToFront + activate **comentados**) |
+| `bringToFront` / `ensureFocus` | só `Emulation.setFocusEmulationEnabled` (não eleva SO) |
 | `enableFocusEmulation` | liga emulação de foco na página (padrão no `connect` / `ensureFocus` / keeper) |
+| `send` | **bloqueia** `Page.bringToFront` / `Target.activateTarget` (no-op) |
+| `openPage` | `Target.createTarget({ background: true })` — **não** usa `/json/new` |
 | `enableDebugOverlay` | injeta painel + `addScriptToEvaluateOnNewDocument` (F5/nav na aba); `connectCdp({ debug: true })` grava `meta.debug` e o keeper aplica em **todas** as abas |
 | `evaluate` | só leitura/DOM — **não** usa foco; **não** use para clicar |
 
@@ -192,6 +194,8 @@ Scripts CDP crus (`el.click`, `dispatchMouseEvent` sem move) → importam `human
 **Antes → depois (foco):** `ensureFocus` só activate/bringToFront sem checar → agora lê `document.hasFocus()`; se false, traz ao foco e **bloqueia** a operação até true (clique já exige). Rollback: early-return por throttle 120ms sem verificação.
 
 **Antes → depois (foco lógico):** emulação só no fim do retry → `Emulation.setFocusEmulationEnabled` **padrão** em `connect`, todo `ensureFocus` e no `fingerprint-keeper` (todas as abas). `Page.bringToFront` + `activate` do SO **comentados** (não roubam Cursor). Rollback: descomentar o loop em `ensureFocus`; remover `enableFocusEmulation` do `connect`/keeper.
+
+**Antes → depois (anti-roubo SO):** `activateApp`/`osascript` removidos; `send` no-op em `Page.bringToFront`/`Target.activateTarget`; `openPage` deixa `/json/new` e usa `Target.createTarget({ background: true })`. Rollback: restaurar `activateApp` + `/json/new` + send direto.
 
 **Rollback:** voltar ao CDP cru nos scripts; apagar `human-cdp/`.
 

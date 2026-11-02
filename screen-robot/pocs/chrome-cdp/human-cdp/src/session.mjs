@@ -1,4 +1,3 @@
-import { execFileSync } from 'node:child_process';
 import {
   createCdpSession,
   getJson,
@@ -43,18 +42,14 @@ function cursorKey(cdpUrl) {
  * @property {string} [url] se setado, abre/navega
  * @property {boolean} [newTab]
  * @property {boolean} [debug] painel de diagnóstico do bot-lab junto ao mouse
- * @property {string} [chromeApp] nome AppleScript (default "Google Chrome")
+ * @property {string} [chromeApp] legado (não ativa o SO)
  */
 
-function activateApp(name) {
-  try {
-    execFileSync('osascript', ['-e', `tell application "${name}" to activate`], {
-      stdio: 'ignore',
-    });
-  } catch {
-    /* ignore */
-  }
-}
+/** CDP que elevam a janela no macOS — bloqueados na lib. */
+const OS_FOCUS_BLOCKED = new Set([
+  'Page.bringToFront',
+  'Target.activateTarget',
+]);
 
 export class HumanCdpSession {
   /**
@@ -138,6 +133,10 @@ export class HumanCdpSession {
   }
 
   send(method, params) {
+    if (OS_FOCUS_BLOCKED.has(method)) {
+      // no-op: Page.bringToFront / Target.activateTarget roubam foco no macOS
+      return Promise.resolve({});
+    }
     return this._cdp.send(method, params);
   }
 
@@ -165,9 +164,8 @@ export class HumanCdpSession {
   }
 
   /**
-   * Garante foco lógico antes de qualquer operação via
-   * Emulation.setFocusEmulationEnabled (não rouba foco do SO).
-   * bringToFront + activate comentados de propósito.
+   * Garante foco lógico via Emulation.setFocusEmulationEnabled.
+   * Nunca Page.bringToFront / osascript activate (roubam o SO).
    * @param {{ settleMs?: number, force?: boolean, require?: boolean, attempts?: number }} [opts]
    * @returns {Promise<boolean>}
    */
@@ -175,7 +173,6 @@ export class HumanCdpSession {
     settleMs = 200,
     force = false,
     require = true,
-    attempts = 5,
   } = {}) {
     await this.enableFocusEmulation();
 
@@ -186,24 +183,6 @@ export class HumanCdpSession {
         return true;
       }
     }
-
-    // Foco de SO desligado: não trazer Chrome à frente (atrapalha uso do Mac).
-    // Rollback: descomentar o loop abaixo.
-    // for (let i = 0; i < attempts; i++) {
-    //   try {
-    //     await this.send('Page.bringToFront');
-    //   } catch {
-    //     /* target pode estar trocando */
-    //   }
-    //   activateApp(this.chromeApp);
-    //   await sleep(settleMs);
-    //   await this.enableFocusEmulation();
-    //   const ok = await this.isPageFocused();
-    //   if (ok) {
-    //     this._lastFocusAt = Date.now();
-    //     return true;
-    //   }
-    // }
 
     await sleep(Math.min(settleMs, 80));
     await this.enableFocusEmulation();
@@ -218,6 +197,7 @@ export class HumanCdpSession {
     return false;
   }
 
+  /** Alias de ensureFocus — só emulação CDP; não eleva a janela no SO. */
   async bringToFront() {
     await this.ensureFocus({ settleMs: 200, force: true, require: true });
   }

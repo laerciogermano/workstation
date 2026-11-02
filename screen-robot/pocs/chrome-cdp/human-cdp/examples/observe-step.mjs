@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Um passo por execução (Chrome em foco) para observar.
+ * Um passo por execução (foco lógico CDP; sem activate do SO).
  *
  *   CDP_URL=http://127.0.0.1:9230 node examples/observe-step.mjs <passo>
  *
@@ -15,10 +15,9 @@ const SITE = process.env.BOT_LAB_URL || 'http://127.0.0.1:8766/';
 const session = await connect({
   cdpUrl: CDP,
   urlIncludes: '8766',
-  focused: true,
 });
 
-await session.bringToFront();
+await session.ensureFocus({ force: true });
 
 const show = async () => {
   const s = await session.evaluate(`({

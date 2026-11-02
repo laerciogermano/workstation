@@ -11,7 +11,7 @@ Em Chrome/CDP neste lab: **antes de qualquer operação**, garantir foco lógico
 
 1. Usar só `human-cdp`: `click` / `clickAt` / `hover` / `drag` / `type` / `fill` / `select` / `scroll`
 2. Ordem: `ensureFocus` (emulação CDP → hasFocus true) → trajetória (`pathToTarget`) → ação na posição atual
-3. Sem foco lógico → não operar (bringToFront/activate comentados; rollback = descomentar em `session.mjs`)
+3. Sem foco lógico → não operar. Proibido na lib: `Page.bringToFront`, `Target.activateTarget`, `osascript activate`, `/json/new`
 4. Distância curta ainda gera micro-arco — sem teleporte
 5. `scroll({ selector })` arrasta até o elemento (ou centro) antes do wheel
 6. Nunca `el.click()` / `dispatchEvent` / `Input.*` de press solto

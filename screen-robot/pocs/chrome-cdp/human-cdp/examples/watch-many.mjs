@@ -1,20 +1,10 @@
 #!/usr/bin/env node
 import { connect, sleep } from '../src/index.mjs';
-import { execFileSync } from 'node:child_process';
-
-try {
-  execFileSync('osascript', ['-e', 'tell application "Google Chrome" to activate'], {
-    stdio: 'ignore',
-  });
-} catch {
-  /* ignore */
-}
 
 const page = await connect({
   cdpUrl: process.env.CDP_URL || 'http://127.0.0.1:9230',
   urlIncludes: '8766',
   url: 'http://127.0.0.1:8766/',
-  focused: true,
 });
 
 const step = async (cmd, fn) => {
@@ -23,8 +13,8 @@ const step = async (cmd, fn) => {
   await sleep(Number(process.env.STEP_MS || 1600));
 };
 
-await page.bringToFront();
-await sleep(800);
+await page.ensureFocus({ force: true });
+await sleep(200);
 
 await step("await page.goto('http://127.0.0.1:8766/')", () =>
   page.goto('http://127.0.0.1:8766/'),

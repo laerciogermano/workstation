@@ -92,11 +92,39 @@ export async function pickPage(cdpBase, { urlIncludes } = {}) {
   return page;
 }
 
+/**
+ * Abre aba sem elevar o Chrome no SO.
+ * Usa Target.createTarget({ background: true }) — evita /json/new (roubava foco).
+ */
 export async function openPage(cdpBase, url) {
-  const res = await fetch(
-    `${cdpBase.replace(/\/$/, '')}/json/new?${encodeURIComponent(url)}`,
-    { method: 'PUT' },
-  );
-  if (!res.ok) throw new Error(`json/new → HTTP ${res.status}`);
-  return res.json();
+  const version = await getJson(cdpBase, '/json/version');
+  const browserWs = version?.webSocketDebuggerUrl;
+  if (!browserWs) throw new Error('sem browser WS em /json/version');
+
+  const browser = createCdpSession(browserWs);
+  await browser.ready;
+  let targetId;
+  try {
+    const created = await browser.send('Target.createTarget', {
+      url: url || 'about:blank',
+      background: true,
+    });
+    targetId = created?.targetId;
+  } finally {
+    browser.close();
+  }
+  if (!targetId) throw new Error('Target.createTarget sem targetId');
+
+  for (let i = 0; i < 50; i++) {
+    const list = await getJson(cdpBase, '/json/list');
+    const page = (list || []).find(
+      (t) =>
+        t.type === 'page' &&
+        (t.id === targetId || t.targetId === targetId) &&
+        t.webSocketDebuggerUrl,
+    );
+    if (page) return page;
+    await new Promise((r) => setTimeout(r, 100));
+  }
+  throw new Error(`aba ${targetId} não apareceu em /json/list`);
 }

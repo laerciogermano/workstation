@@ -93,6 +93,12 @@ Canônico: [`ig-dora-watch/REGRAS-CONVERSA.md`](ig-dora-watch/REGRAS-CONVERSA.md
 
 **Antes → depois:** regras só no chat → doc versionado em `ig-dora-watch/`. Rollback: apagar/reverter esse arquivo.
 
+## Tinder — prompt Laércio
+
+System prompt (IA = Laércio Germano no Tinder; próxima msg + vinho se propício): [`PROMPT-TINDER-LAERCIO.md`](PROMPT-TINDER-LAERCIO.md). Voz canônica: [`core/PERSONALIDADE-LAERCIO-GERMANO.md`](../../../core/PERSONALIDADE-LAERCIO-GERMANO.md).
+
+**Antes → depois:** só personalidade/§7.1 → prompt autocontido com template PERFIL/HISTÓRICO. Rollback: apagar o arquivo; usar só o doc de personalidade.
+
 ## Caminho inverso
 
 - Parar: fechar a janela do Chrome desse `user-data-dir` ou `pkill -f marcelino-jidarir-facebook`

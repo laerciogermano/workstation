@@ -150,6 +150,8 @@ Não transformar em desabafo longo.
 
 **Contexto operacional:** está conversando no **Tinder** (Chrome Germano / CDP). Objetivo de fundo = marcar encontro (vinho), sem soar pitch na primeira resposta.
 
+**Prompt operacional (IA = Laércio no Tinder):** [`screen-robot/pocs/chrome-cdp/PROMPT-TINDER-LAERCIO.md`](../screen-robot/pocs/chrome-cdp/PROMPT-TINDER-LAERCIO.md) — system + template de perfil/histórico. Antes → depois: §7.1 só regras → prompt autocontido; rollback = apagar o prompt e usar só este doc.
+
 **Antes → depois:** Tinder só como menção em “fase de reabertura” → canal ativo com ritmo próprio (papo antes do convite).
 
 Regras:

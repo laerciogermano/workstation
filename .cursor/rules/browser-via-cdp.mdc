@@ -25,6 +25,7 @@ Decida e declare o modo; default = **com foco** quando o usuário precisa ver a 
 | **Sem foco** (background) | Automação longa em paralelo; usuário no Cursor | **Não** activate; CDP `Input.*` / `Runtime.evaluate`; opcional `Page.setWebLifecycleState` + `Emulation.setFocusEmulationEnabled` (janela atrás) |
 
 - Clique CDP (`Input.dispatchMouseEvent`) funciona com a janela atrás — não use `cliclick`/clique SO salvo pedido explícito
+- `Runtime.evaluate` em background **não** rouba o app frontmost; `Page.navigate` **pode** trazer o Chrome para frente (evitar no modo sem foco, ou re-`activate` o app do usuário depois)
 - Se o usuário disser que não está vendo: mude imediatamente para **com foco** e reabra a aba
 
 ## Exemplos

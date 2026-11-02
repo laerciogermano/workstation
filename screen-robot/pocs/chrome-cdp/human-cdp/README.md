@@ -157,7 +157,7 @@ Scripts CDP crus (`el.click`, `dispatchMouseEvent` sem move) → importam `human
 
 **Antes → depois (type):** `keyDown` com `text` + `insertText` → cada char duplicado (Rafaela→RRaaffaaeellaa). Agora: keyDown/Up sem `text`; só `insertText` insere. `fill` clear: `el.select()` + Backspace + setter nativo (Cmd+A CDP falhava no FB). Rollback: keyDown com `text` + clear só Ctrl+A.
 
-**Antes → depois (debug):** trilho fixo só no layout do bot-lab → `connect({ debug: true })` flutua o `feedback-rail` junto ao mouse (e badge fora do lab). Rollback: `debug: false` / omitir flag.
+**Antes → depois (debug):** fora do bot-lab mostrava “fora do bot-lab” sem veredito → painel com detector portátil (trajetória/cliques/teclas/foco) e veredito live humano/robô/inconclusivo. No lab, usa o trilho nativo. Rollback: `debug: false`.
 
 **Antes → depois (trajetória):** pontas com jitter + passos longos + press deslocado do último `mouseMoved` → teleportes no bot-lab. Agora: âncoras exatas, densify ≤36px, step ≥16ms, press na posição atual, cursor persistido por `cdpUrl`. Rollback: `trajectoryPoints`/`_moveTo`/`click` anteriores.
 

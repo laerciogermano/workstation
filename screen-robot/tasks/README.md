@@ -83,3 +83,4 @@ tasks/
 |-------|------|
 | [`6ae8ac1d5228997f864b40c5/`](6ae8ac1d5228997f864b40c5/README.md) | [Lib CDP humana](https://trello.com/c/5tt5ZTeN) |
 | [`6ae8b23dccd25f22a26e5916/`](6ae8b23dccd25f22a26e5916/README.md) | [CRUD de CDPs na lib](https://trello.com/c/hoLSkLko) |
+| [`6ae8d5241aa4adad65cdd8f1/`](6ae8d5241aa4adad65cdd8f1/README.md) | [Modo debug no connect (painel junto ao mouse)](https://trello.com/c/W4GN946S) |

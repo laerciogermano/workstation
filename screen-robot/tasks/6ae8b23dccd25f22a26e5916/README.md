@@ -9,7 +9,8 @@
 
 - Contrato em [`../../pocs/chrome-cdp/human-cdp/src/registry.mjs`](../../pocs/chrome-cdp/human-cdp/src/registry.mjs)
 - Export: [`../../pocs/chrome-cdp/human-cdp/src/index.mjs`](../../pocs/chrome-cdp/human-cdp/src/index.mjs)
-- Seed: `npm run seed:cdps` · aceite: `npm run test:registry`
+- Store: `human-cdp/data/cdps.json` (só via lib; sem CSV)
+- Aceite: `npm run test:registry`
 - Docs: [`../../pocs/chrome-cdp/human-cdp/README.md`](../../pocs/chrome-cdp/human-cdp/README.md)
 
 ## Relacionados

@@ -54,7 +54,9 @@ CDP_URL=http://127.0.0.1:9230 npm run test:bot-lab
 
 ## CRUD de CDPs (contrato na lib)
 
-Sem UI. Persistência: `data/cdps.json`.
+Sem UI e **sem CSV**. Fonte de verdade: `data/cdps.json` via `createCdp` / `updateCdp` / `removeCdp`.
+
+`platform` (opcional) = rótulo do alvo do perfil (`linkedin`, `hostinger`, …) — metadado do registro, não vem de planilha.
 
 ```js
 import {
@@ -62,19 +64,20 @@ import {
   statusCdp, startCdp, stopCdp, connectCdp,
 } from './src/index.mjs';
 
+createCdp({
+  name: 'Germano',
+  port: 9230,
+  userDataDir: '~/chrome-profiles/germano',
+  startScript: 'screen-robot/pocs/chrome-cdp/start-germano.sh',
+  platform: 'hostinger',
+});
 listCdps();
-createCdp({ name: 'Germano', port: 9230, userDataDir: '~/chrome-profiles/germano',
-  startScript: 'screen-robot/pocs/chrome-cdp/start-germano.sh' });
 await startCdp(9230);
-const page = await connectCdp(9230); // HumanCdpSession
-await page.click('button');
+const page = await connectCdp(9230);
 page.close();
-await stopCdp(9230);
-removeCdp(9230);
 ```
 
 ```bash
-npm run seed:cdps      # CSV → data/cdps.json
 npm run test:registry  # create/list/update/remove/status
 ```
 

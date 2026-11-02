@@ -17,19 +17,19 @@ connectCdp(id): Promise<HumanCdpSession>
 ### Modelo `CdpRecord`
 `id`, `name`, `userDataDir`, `port`, `startScript`, `platform?`, `defaultUrl?`, `obs?`, `createdAt`, `updatedAt`
 
-Persistência JSON local + seed a partir de `contas-facebook-chrome.csv`.
+Persistência: `human-cdp/data/cdps.json` via a própria API da lib. **Sem CSV** e **sem UI**.
 
 ## Entrega
 - Módulo na `human-cdp`
 - README do contrato + exemplos
-- Aceite: seed → list → create → start → connect → stop → remove
-- **Sem** painel HTML / servidor de UI
+- Aceite: create → list → start → connect → stop → remove
+- **Sem** painel HTML / servidor de UI / dependência de CSV
 
 ## Fora de escopo
 - Frontend CRUD
+- Import/sync de planilhas CSV
 - Cloud / multi-host
 
 ## Relacionados
 - Lib humana: https://trello.com/c/5tt5ZTeN
 - Lab: https://trello.com/c/XcjfqioO
-- CSV: `screen-robot/pocs/android-studio/contas-facebook-chrome.csv`

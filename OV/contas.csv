@@ -1,4 +1,4 @@
-nome,sobrenome,email,data_hora,ip,senha_facebook
-Rafaela,Nogueira,rafaela.nogueira@clozzy.com.br,2026-11-02 13:11:24,177.51.200.191,Rn@xnua5eZywxhE9V1
-Beatriz,Carvalho,beatriz.carvalho@clozzy.com.br,2026-11-02 15:21:59,181.77.194.209,Bc@Xs7RtXE9e8St1
-Larissa,Souza,larissa.souza@clozzy.com.br,2026-11-02 16:49:30,191.177.175.239,Ls@TlNgx4pGMsws1
+nome,sobrenome,email,data_hora,ip,senha_facebook,status,cdp,observacoes
+Rafaela,Nogueira,rafaela.nogueira@clozzy.com.br,2026-11-02 13:11:24,177.51.200.191,Rn@xnua5eZywxhE9V1,banida_ometv,ometv-1,Ban ome.tv 2026-11-02: imagem irrelevante (teste OBS/sample.mp4)
+Beatriz,Carvalho,beatriz.carvalho@clozzy.com.br,2026-11-02 15:21:59,181.77.194.209,Bc@Xs7RtXE9e8St1,ativa,ometv-2,
+Larissa,Souza,larissa.souza@clozzy.com.br,2026-11-02 16:49:30,191.177.175.239,Ls@TlNgx4pGMsws1,ativa,ometv-3,

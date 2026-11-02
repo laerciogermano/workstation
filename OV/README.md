@@ -14,6 +14,11 @@ Contas OmeTV (Chrome CDP `ometv-*`).
 | `data_hora` | criação (`YYYY-MM-DD HH:MM:SS`) |
 | `ip` | IPv4 de egress no signup (`curl -sS https://api.ipify.org`) |
 | `senha_facebook` | senha da conta Facebook |
+| `status` | `ativa` / `banida_ometv` / … |
+| `cdp` | id Chrome (`ometv-1`…) |
+| `observacoes` | ban, testes, notas |
+
+**Antes → depois (status):** só criação → + `status`/`cdp`/`observacoes`. Rafaela = `banida_ometv` (2026-11-02, imagem irrelevante no teste OBS). Rollback: remover colunas extras; `status=ativa` na linha.
 
 Mailbox Mailcow: criar via API no VPS (`add/mailbox`); senha em [`credenciais.md`](../credenciais.md) (§ Caixas `@clozzy.com.br`).
 

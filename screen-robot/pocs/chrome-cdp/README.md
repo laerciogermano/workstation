@@ -95,9 +95,9 @@ Canônico: [`ig-dora-watch/REGRAS-CONVERSA.md`](ig-dora-watch/REGRAS-CONVERSA.md
 
 ## Tinder — prompt Laércio
 
-System prompt (IA = Laércio Germano no Tinder; próxima msg + vinho se propício): [`PROMPT-TINDER-LAERCIO.md`](PROMPT-TINDER-LAERCIO.md). Voz canônica: [`core/PERSONALIDADE-LAERCIO-GERMANO.md`](../../../core/PERSONALIDADE-LAERCIO-GERMANO.md).
+System prompt (IA = Laércio Germano no Tinder; **só a última não lida**; próxima msg + vinho se propício): [`PROMPT-TINDER-LAERCIO.md`](PROMPT-TINDER-LAERCIO.md). Voz canônica: [`core/PERSONALIDADE-LAERCIO-GERMANO.md`](../../../core/PERSONALIDADE-LAERCIO-GERMANO.md).
 
-**Antes → depois:** só personalidade/§7.1 → prompt autocontido com template PERFIL/HISTÓRICO. Rollback: apagar o arquivo; usar só o doc de personalidade.
+**Antes → depois:** só personalidade/§7.1 → prompt autocontido com template PERFIL/HISTÓRICO + regra “uma não lida por vez”. Rollback: apagar o arquivo; usar só o doc de personalidade.
 
 ## Caminho inverso
 

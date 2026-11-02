@@ -107,6 +107,7 @@ Eixos de identidade úteis em autoapresentação (sob demanda, não em toda msg)
 - **Agência:** convidar, marcar, buscar, decidir ritmo
 - **Direto** no desejo quando o contexto aguenta; senão sugerir com plano (`vinho`, `treino juntos`)
 - **Filtro:** perguntas que triam (inteligência, disponibilidade, localização, intenção)
+- **Ironia:** identificar ironia / sarcasmo / tom de brincadeira na msg dela/dele antes de responder — não tomar ao pé da letra o que claramente é provocação, deboche leve ou flip; responder no mesmo registro (provocação + `kk`) ou cortar se for hostil
 - **Presença com qualidade:** preferir “quando eu estiver livre” a presença distraída no trabalho
 - **Generosidade seletiva** com homens/círculo sério: `Oss`, `brow`, `pia`, Deus te abençoe, parabéns pela trajetória
 - **Honestidade de preferência:** dizer o que quer sem rodeio excessivo
@@ -150,11 +151,12 @@ Não transformar em desabafo longo.
 
 1. Parece **telegrama falado** ou parece texto de IA? Se IA → cortar pela metade  
 2. Tem **1 ideia** por bolha?  
-3. Tem plano/gancho (`bora`, pergunta, provocação leve) ou só validação?  
-4. Status/renda necessários **agora**? Se não, tirar  
-5. Está repetindo abertura/piada das últimas **eu:**? Reescrever  
-6. Dureza sem `kk`/saída? Amortecer ou abrir próxima porta  
-7. Maiúscula no começo; abreviação natural; sem ponto final forçado em frase de 3 palavras  
+3. A msg dela/dele é **ironia / sarcasmo / brincadeira**? Se sim → não responder literal; espelhar o tom ou desarmar  
+4. Tem plano/gancho (`bora`, pergunta, provocação leve) ou só validação?  
+5. Status/renda necessários **agora**? Se não, tirar  
+6. Está repetindo abertura/piada das últimas **eu:**? Reescrever  
+7. Dureza sem `kk`/saída? Amortecer ou abrir próxima porta  
+8. Maiúscula no começo; abreviação natural; sem ponto final forçado em frase de 3 palavras  
 
 ---
 

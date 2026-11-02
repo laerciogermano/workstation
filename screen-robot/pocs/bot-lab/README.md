@@ -37,9 +37,9 @@ Sem script: `python3 -m http.server 8766` nesta pasta.
 - `click.isTrusted`
 - ritmo de cliques e digitação
 - drag: **pass só com distância trusted**; drag JS sintético → **fail**
-- **tela/aba com foco** (`document.hasFocus()` + `visibilityState=visible`) no momento da ação — operação em background → **fail**
+- **tela/aba com foco** — `hasFocus` + visible; sem foco/`blur` → **tainted** (poll 150ms; CDP `Input` re-foca no clique). Ação enquanto tainted → **fail** + **lock** até reset → veredito **robô**. Sem ação: limpa após ~450ms de foco estável.
 
-**Veredito:** `humano` (pass≥3 e 0 fails) · `robô / suspeito` (≥2 fails, ou ≥1 fail com pass&lt;3) · `inconclusivo` (pouca evidência). Layout: site à esquerda · trilho fixo à direita.
+**Veredito:** `humano` (pass≥3 e 0 fails) · `robô / suspeito` (qualquer ação sem foco; ≥2 fails; ou ≥1 fail com pass&lt;3) · `inconclusivo` (pouca evidência). Layout: site à esquerda · trilho fixo à direita.
 
 ## Aceite rápido
 
@@ -58,6 +58,16 @@ CDP_URL=http://127.0.0.1:9230 node test-cdp-clicks.mjs
 ```
 
 Esperado: `el.click` / `dispatchEvent` → robô; CDP sem `mouseMoved` → robô (mesmo com `isTrusted=true`); CDP com trajetória + ritmo → humano.
+
+### Teste de foco (com vs sem)
+
+```bash
+CDP_URL=http://127.0.0.1:9230 node test-cdp-focus.mjs
+```
+
+Esperado: mesma trajetória CDP **com foco** → `humano`; **sem foco** (Cursor na frente) → `robô / suspeito` (page-focus fail).
+
+**Antes → depois (foco):** page-focus falhava na lista mas CDP `Input` re-focava o document e/ou o veredito ignorava 1 fail com pass≥3 → podia dar `humano`. Agora: tainted+lock em ação sem foco → sempre **robô**; `test-cdp-focus.mjs` cobre A/B. Rollback: `renderVerdict` antigo + só `hasFocus` live (sem tainted/lock).
 
 ## Antes → depois
 

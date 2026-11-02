@@ -20,6 +20,13 @@ const state = {
   /** ações com janela/aba sem foco ou hidden */
   actionsUnfocused: 0,
   lastActionFocus: null,
+  /**
+   * Janela perdeu foco (app atrás). CDP Input re-foca o document na hora do
+   * clique — se agir enquanto tainted, trava até reset (veredito robô).
+   */
+  backgroundTainted: false,
+  backgroundLocked: false,
+  _focusedSince: null,
   scrollEvents: 0,
   hoverWithoutMove: 0,
   formInteractions: 0,
@@ -39,15 +46,59 @@ function focusSnapshot() {
   const hasFocus = document.hasFocus();
   const visibilityState = document.visibilityState;
   const hidden = document.hidden;
-  const focused = hasFocus && visibilityState === "visible" && !hidden;
-  return { hasFocus, visibilityState, hidden, focused };
+  const liveFocused = hasFocus && visibilityState === "visible" && !hidden;
+  // CDP foca o document no Input.* — se houve blur recente, continua "sem foco"
+  const focused = liveFocused && !state.backgroundTainted;
+  return {
+    hasFocus,
+    visibilityState,
+    hidden,
+    liveFocused,
+    backgroundTainted: state.backgroundTainted,
+    focused,
+  };
+}
+
+function markBackgroundBlur() {
+  state.backgroundTainted = true;
+  state._focusedSince = null;
+}
+
+function syncBackgroundFromLive() {
+  const live =
+    document.hasFocus() &&
+    document.visibilityState === "visible" &&
+    !document.hidden;
+  if (!live) {
+    markBackgroundBlur();
+    return;
+  }
+  if (state.backgroundLocked) return;
+  if (!state.backgroundTainted) return;
+  // foco estável sem pointer/tecla — usuário voltou à aba (não limpar no meio de trajetória CDP)
+  if (
+    state._focusedSince &&
+    performance.now() - state._focusedSince >= 450 &&
+    !state.movedSinceLoad &&
+    state.clicks.length === 0 &&
+    state.keys.length === 0
+  ) {
+    state.backgroundTainted = false;
+  }
 }
 
 function noteActionFocus() {
+  syncBackgroundFromLive();
   const snap = focusSnapshot();
   state.lastActionFocus = snap;
-  if (snap.focused) state.actionsFocused++;
-  else state.actionsUnfocused++;
+  if (!snap.focused) {
+    state.actionsUnfocused++;
+    state.backgroundTainted = true;
+    state.backgroundLocked = true; // ação sem foco → robô até reset
+    state._focusedSince = null;
+  } else {
+    state.actionsFocused++;
+  }
   return snap;
 }
 
@@ -366,7 +417,7 @@ function evaluateBehavior() {
   }
   results.push({ id: "drag", status: dragStatus, detail: dragDetail });
 
-  // foco da tela/aba no momento das ações (CDP em background → fail)
+  // foco da tela/aba no momento das ações (CDP em background → fail → robô)
   const af = state.actionsFocused;
   const au = state.actionsUnfocused;
   const totalFocusActions = af + au;
@@ -375,7 +426,7 @@ function evaluateBehavior() {
   if (totalFocusActions > 0) {
     const last = state.lastActionFocus;
     const lastTxt = last
-      ? `hasFocus=${last.hasFocus} vis=${last.visibilityState}`
+      ? `hasFocus=${last.hasFocus} vis=${last.visibilityState} tainted=${!!last.backgroundTainted}`
       : "";
     if (au > 0 && af === 0) {
       focusStatus = "fail";
@@ -389,7 +440,7 @@ function evaluateBehavior() {
     }
   } else {
     const live = focusSnapshot();
-    focusDetail = `agora hasFocus=${live.hasFocus} vis=${live.visibilityState}`;
+    focusDetail = `agora hasFocus=${live.hasFocus} vis=${live.visibilityState} tainted=${live.backgroundTainted}`;
   }
   results.push({ id: "page-focus", status: focusStatus, detail: focusDetail });
 
@@ -448,11 +499,20 @@ function renderVerdict(envChecks, behavior) {
   const meta = el("score-meta");
 
   // humano: evidência positiva mínima (pass≥3) e zero fails de comportamento
-  // robô: ≥2 fails OU 1 fail de sinal sintético/forte com pouca evidência
+  // robô: qualquer ação sem foco da tela/aba; ≥2 fails; ou 1 fail com pouca evidência
   // inconclusivo: resto (muitos warns / pouca interação)
+  const focusFail = behavior.some(
+    (x) => x.id === "page-focus" && x.status === "fail",
+  );
   let label = "inconclusivo";
   let cls = "warn";
-  if (e.fail >= 2 || b.fail >= 2 || (b.fail >= 1 && b.pass < 3)) {
+  if (
+    focusFail ||
+    state.actionsUnfocused > 0 ||
+    e.fail >= 2 ||
+    b.fail >= 2 ||
+    (b.fail >= 1 && b.pass < 3)
+  ) {
     label = "robô / suspeito";
     cls = "fail";
   } else if (b.fail === 0 && b.pass >= 3) {
@@ -521,9 +581,24 @@ function wireBehavior() {
     true,
   );
 
-  window.addEventListener("focus", () => refresh());
-  window.addEventListener("blur", () => refresh());
-  document.addEventListener("visibilitychange", () => refresh());
+  window.addEventListener("blur", () => {
+    markBackgroundBlur();
+    refresh();
+  });
+  window.addEventListener("focus", () => {
+    state._focusedSince = performance.now();
+    refresh();
+  });
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) markBackgroundBlur();
+    refresh();
+  });
+  // !hasFocus não dispara blur se a página nunca teve foco (app já atrás)
+  setInterval(() => {
+    const before = state.backgroundTainted;
+    syncBackgroundFromLive();
+    if (before !== state.backgroundTainted) refresh();
+  }, 150);
 
   window.addEventListener(
     "scroll",
@@ -609,6 +684,10 @@ function wireBehavior() {
     state.actionsFocused = 0;
     state.actionsUnfocused = 0;
     state.lastActionFocus = null;
+    state.backgroundTainted = false;
+    state.backgroundLocked = false;
+    state._focusedSince = document.hasFocus() ? performance.now() : null;
+    if (!document.hasFocus() || document.hidden) markBackgroundBlur();
     handle.style.left = "6px";
     logUi("comportamento zerado");
     refresh();

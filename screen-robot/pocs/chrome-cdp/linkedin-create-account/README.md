@@ -27,17 +27,26 @@ Script novo, passo a passo. **Agora só o passo 1:** mailbox Mailcow.
 | [`click-signup-finish.mjs`](click-signup-finish.mjs) | `clickSignupFinish({ id })` → Concluir |
 
 ```bash
-cd screen-robot/pocs/chrome-cdp/linkedin-create-account
+cd /Users/laerciogermano/Documents/works/screen-robot/pocs/chrome-cdp/linkedin-create-account
 
+# fluxo completo (mailbox + CDP + signup até /feed):
+node create-mailbox.mjs --first Bruno --last Nunes --write-credenciais \
+  --location "Rio de Janeiro" \
+  --job "Especialista em suprimentos e itens corporativos" \
+  --company ConectMax
+
+# só simular:
 node create-mailbox.mjs --first Bruno --last Nunes --dry-run
-node create-mailbox.mjs --first Bruno --last Nunes --write-credenciais
+
 # sem abrir Chrome:
 node create-mailbox.mjs --first Bruno --last Nunes --write-credenciais --no-browser
 ```
 
-Saída JSON: `{ email, cdp, csv, linkedin }`.
+Saída JSON: `{ email, cdp, csv, linkedin, li_criado }`.
 
-**LinkedIn:** após CSV, `createLinkedin` → … → nome → Continuar → **localidade** (digita → 1ª opção do dropdown → Continuar). `--no-browser` pula. Rollback: não chamar / usar `--no-browser`. Após criar, `saveAccountCsv` grava [`contas-linkedin-clozzy.csv`](../../android-studio/contas-linkedin-clozzy.csv) com **todos** os campos do fingerprint configurados (`fp_ua` … `fp_full_version_list`, `fp_webrtc`, geo accuracy, Client Hints; `fp_screen` vazio — sem viewport) + `ip` (ipify), e [`contas-facebook-chrome.csv`](../../android-studio/contas-facebook-chrome.csv).
+**LinkedIn:** após CSV, `createLinkedin` roda o signup até `/feed` (e-mail → senha → cadastro → nome → localidade → cargo → empresa → PIN Mailcow → maior 18 → Pulares → Continuar app → Concluir). Defaults: localidade `Rio de Janeiro`, cargo/empresa ConectMax, senha `in@12345678`. `--no-browser` pula o browser. Ao chegar no feed, `li_criado=sim` no CSV. `saveAccountCsv` grava [`contas-linkedin-clozzy.csv`](../../android-studio/contas-linkedin-clozzy.csv) (`fp_*` + `ip`) e [`contas-facebook-chrome.csv`](../../android-studio/contas-facebook-chrome.csv).
+
+**Antes → depois (main):** DEV hardcoded Rafael → fluxo prod completo; `li_criado` atualizado se `/feed`. Rollback: comentar createEmail/CDP e fixar id/email.
 
 **Antes → depois (fp cols):** só ua/platform/lang/tz/hw/mem/geo/chrome → + accept_language, geo_accuracy, max_touch, touch, webrtc, ch_platform, platform_version, arch, model, mobile, bitness, brands, full_version_list. Sem hash. Rollback: remover cols novas do header/`save-csv.mjs`.
 

@@ -1,0 +1,25 @@
+---
+description: Sempre abrir e controlar browser via Chrome CDP (nunca IDE browser / MCP)
+alwaysApply: true
+---
+
+# Browser sempre via CDP
+
+Sempre que for abrir, navegar ou controlar um browser neste lab, use **Chrome com Remote Debugging (CDP)** — nunca o browser embutido do Cursor (`cursor-ide-browser`), Claude in Chrome MCP, nem browser genérico sem porta de debug.
+
+## Critérios
+
+1. Subir (ou reusar) o perfil certo com o `start-*.sh` em [`screen-robot/pocs/chrome-cdp/`](screen-robot/pocs/chrome-cdp/README.md)
+2. Registrar/consultar porta e perfil em [`screen-robot/pocs/android-studio/contas-facebook-chrome.csv`](screen-robot/pocs/android-studio/contas-facebook-chrome.csv)
+3. Controlar via `CDP_URL=http://127.0.0.1:PORT` + scripts (`control-chrome.mjs`, `.mjs`/Python CDP) ou WebSocket em `/json/list`
+4. Se a porta já estiver em LISTEN, **reusar** — não abrir segundo Chrome no mesmo `user-data-dir`
+5. Só usar outro browser se o usuário pedir **explicitamente** (ex.: Firefox Germano)
+
+## Exemplos
+
+```text
+✅ ./start-germano.sh https://hpanel.hostinger.com/  → CDP :9230 → login via Runtime.evaluate / Input
+✅ CDP_URL=http://127.0.0.1:9224 node control-chrome.mjs --url https://www.linkedin.com/
+❌ cursor-ide-browser / browser_navigate MCP
+❌ Chrome sem --remote-debugging-port
+```

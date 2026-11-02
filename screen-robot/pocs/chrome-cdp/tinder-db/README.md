@@ -44,3 +44,5 @@ python3 -u /tmp/tinder-dump-pendentes.py   # ou o caminho canônico do script de
 ```
 
 **Antes → depois:** tentativa com 10 workers/abas → sequencial 1 aba. Rollback do paralelo: não usar `dump-pendentes-parallel.py`.
+
+**Foco macOS:** o dump sequencial não usa `Page.bringToFront`; mantém a aba “active” via CDP (`Page.setWebLifecycleState` + `Emulation.setFocusEmulationEnabled`) para rodar com a janela atrás. Extração por DOM (sem depender de layout visível).

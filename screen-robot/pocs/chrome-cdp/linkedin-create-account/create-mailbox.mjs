@@ -13,7 +13,7 @@ import { fileURLToPath } from 'node:url';
 import { createEmail } from './create-email.mjs';
 import { createLinkedInCdp } from './create-cdp.mjs';
 import { saveAccountCsv } from './save-csv.mjs';
-import { openLinkedInSignup } from './open-signup.mjs';
+import { createLinkedin } from './create-linkedin.mjs';
 
 const DOMAIN = (process.env.MAIL_DOMAIN || 'clozzy.com.br').trim();
 
@@ -77,13 +77,11 @@ async function main() {
     dryRun,
   });
 
-  let browserResult = { skipped: true };
-  if (!noBrowser) {
-    browserResult = await openLinkedInSignup({
-      id: cdpResult.id,
-      dryRun,
-    });
-  }
+  const linkedinResult = await createLinkedin({
+    id: cdpResult.id,
+    dryRun,
+    skipBrowser: noBrowser,
+  });
 
   console.log(
     JSON.stringify(
@@ -91,7 +89,7 @@ async function main() {
         email: emailResult,
         cdp: cdpResult,
         csv: csvResult,
-        browser: browserResult,
+        linkedin: linkedinResult,
       },
       null,
       2,

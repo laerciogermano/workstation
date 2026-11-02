@@ -1,24 +1,30 @@
 ---
-description: Todo clique via human-cdp deve arrastar o mouse até o alvo antes do press
+description: Toda interação human-cdp arrasta o mouse até o alvo antes de press/wheel
 alwaysApply: true
 ---
 
-# Clique = arrastar até o ponto
+# Interação = arrastar até o ponto
 
-Sempre que for clicar em Chrome/CDP neste lab, o ponteiro **tem que se mover até o alvo** antes do `mousePressed`.
+Em Chrome/CDP neste lab, o ponteiro **sempre se move com trajetória** até o alvo antes de press, release ou wheel.
 
 ## Critérios
 
-1. Usar só `human-cdp`: `click(selector)`, `clickAt(x,y)`, `hover`, `drag` — nunca `el.click()`, `dispatchEvent`, nem `Input.dispatchMouseEvent` de press/click solto
-2. O fluxo obrigatório é: trajetória contínua (`mouseMoved` multi-ponto) → depois press/release **na posição atual do cursor**
-3. Não “pular” o mouse para o botão; distância curta ainda gera micro-arco (`pathToTarget`)
-4. Scripts/automatizações novas: importar `connectCdp` / `connect` e chamar `page.click(...)`
+1. Usar só `human-cdp`: `click` / `clickAt` / `hover` / `drag` / `type` / `fill` / `select` / `scroll` — nunca `el.click()`, `dispatchEvent`, nem `Input.dispatchMouseEvent` de press/click/wheel solto
+2. Fluxo: `mouseMoved` multi-ponto (`pathToTarget`) → ação **na posição atual** do cursor
+3. Distância curta ainda gera micro-arco — sem teleporte
+4. `scroll({ selector })` arrasta até o elemento (ou centro da viewport) antes do wheel
+5. `type`/`fill`/`select` focam via `click`/`hover` (já com trajetória)
 
 ## Exemplos
 
 ```text
-✅ await page.click('#btn-primary')
-✅ await page.clickAt(cx, cy)
-❌ await page.send('Input.dispatchMouseEvent', { type: 'mousePressed', x, y })
+✅ await page.click('#btn')
+✅ await page.hover('.menu')
+✅ await page.drag('#handle', { dx: 160 })
+✅ await page.type('#nome', 'ana')
+✅ await page.select('#opcao', 'a')
+✅ await page.scroll({ dy: 400 })
+✅ await page.scroll({ selector: '#lista', dy: 300 })
+❌ Input.dispatchMouseEvent press/click/wheel sem moveAlong prévio
 ❌ el.click() / element.click() via Runtime.evaluate
 ```

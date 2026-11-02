@@ -163,6 +163,8 @@ Scripts CDP crus (`el.click`, `dispatchMouseEvent` sem move) → importam `human
 
 **Antes → depois (clique):** distância curta podia só âncora sem “arrasto” → `pathToTarget` + `clickAt`: **sempre** trajetória multi-ponto até o alvo antes do press (micro-arco se perto). Regra: [`.cursor/rules/human-cdp-clique-com-trajetoria.mdc`](../../../../.cursor/rules/human-cdp-clique-com-trajetoria.mdc).
 
+**Antes → depois (todas interações):** `hover`/`drag`/`scroll`/`select`/`type` alinhados — `_pointOf` + arrasto obrigatório; `scroll` move ao centro/alvo antes do wheel; `drag` usa `pathToTarget`; `select` tenta clicar a option. Rollback: métodos anteriores em `session.mjs`.
+
 **Rollback:** voltar ao CDP cru nos scripts; apagar `human-cdp/`.
 
 ## Caminho inverso

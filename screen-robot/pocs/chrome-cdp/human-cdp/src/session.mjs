@@ -19,7 +19,6 @@ import {
   rand,
   randInt,
   sleep,
-  trajectoryPoints,
 } from './human.mjs';
 
 /**
@@ -190,6 +189,21 @@ export class HumanCdpSession {
   }
 
   /**
+   * Centro (com jitter) de um seletor após scrollIntoView — ponto para onde arrastar.
+   * @returns {Promise<{ x: number, y: number, box: object }>}
+   */
+  async _pointOf(selector, { jitter = 2 } = {}) {
+    await this.waitFor(selector);
+    const box = await this.boundingBox(selector);
+    if (!box) throw new Error(`sem box: ${selector}`);
+    return {
+      x: box.cx + rand(-jitter, jitter),
+      y: box.cy + rand(-jitter, jitter),
+      box,
+    };
+  }
+
+  /**
    * Arrasta o ponteiro continuamente de `_cursor` até (x,y).
    * Sempre multi-ponto — nunca teleporta, mesmo perto do alvo.
    * @returns {{ x: number, y: number }}
@@ -228,33 +242,31 @@ export class HumanCdpSession {
   }
 
   /**
-   * Clique humano: foco + **arrasta** até o alvo + press/release na posição atual.
-   * Proibido press sem trajetória prévia.
+   * Clique humano: arrasta até o alvo + press/release na posição atual.
    * @param {string} selector
    * @param {{ clicks?: number, delayMs?: number }} [opts]
    */
   async click(selector, { clicks = 1, delayMs } = {}) {
     await this.ensureFocus({ force: true });
-    const box = await this.waitFor(selector);
-    // re-lê box após scrollIntoView (waitFor) — alvo final antes de arrastar
-    const box2 = (await this.boundingBox(selector)) || box;
+    const { x, y } = await this._pointOf(selector, { jitter: 3 });
     await this.ensureFocus({ settleMs: 120, force: true });
-    const x = box2.cx + rand(-3, 3);
-    const y = box2.cy + rand(-3, 3);
     return this.clickAt(x, y, { clicks, delayMs });
   }
 
+  /**
+   * Hover humano: arrasta até o elemento (sem press).
+   * @param {string} selector
+   */
   async hover(selector) {
     await this.ensureFocus({ force: true });
-    const box = await this.waitFor(selector);
+    const { x, y } = await this._pointOf(selector, { jitter: 2 });
     await this.ensureFocus({ settleMs: 80, force: true });
-    await this._moveTo(box.cx + rand(-2, 2), box.cy + rand(-2, 2));
+    await this._moveTo(x, y);
   }
 
   /**
-   * Digita caractere a caractere via Input.insertText (ritmo humano).
-   * Foca o campo com click humano antes.
-   * Não manda `text` no keyDown — isso + insertText duplicava cada char (ex.: Rafaela → RRaaffaaeellaa).
+   * Digita com ritmo humano. Sempre posiciona o ponteiro no campo antes
+   * (`click` ou `hover` — ambos com trajetória).
    */
   async type(selector, text, { clickFirst = true, clear = false } = {}) {
     await this.ensureFocus({ force: true });
@@ -262,7 +274,6 @@ export class HumanCdpSession {
     else await this.hover(selector);
     await this.ensureFocus({ settleMs: 100, force: true });
     if (clear) {
-      // selectAll nativo no elemento focado (Cmd/Ctrl+A via CDP falha em vários forms React)
       await this.evaluate(`(() => {
         const el = document.querySelector(${JSON.stringify(selector)});
         if (!el) return;
@@ -290,7 +301,6 @@ export class HumanCdpSession {
         windowsVirtualKeyCode: 8,
       });
       await sleep(60);
-      // se ainda sobrou (React), força valor vazio + eventos
       await this.evaluate(`(() => {
         const el = document.querySelector(${JSON.stringify(selector)});
         if (!el) return;
@@ -306,7 +316,6 @@ export class HumanCdpSession {
     }
     for (const ch of String(text)) {
       await this.ensureFocus({ settleMs: 0 });
-      // keyDown/Up sem `text` — só presença de tecla; inserção só via insertText
       await this.send('Input.dispatchKeyEvent', {
         type: 'keyDown',
         key: ch,
@@ -328,8 +337,20 @@ export class HumanCdpSession {
     return this.type(selector, text, { clickFirst: true, clear: true });
   }
 
-  async scroll({ dy = 400, steps = 12 } = {}) {
+  /**
+   * Wheel humano. Antes: arrasta até `selector` (se dado) ou centro da viewport.
+   * Wheel sempre na posição atual do cursor (nunca teleporta o ponteiro).
+   * @param {{ dy?: number, steps?: number, selector?: string }} [opts]
+   */
+  async scroll({ dy = 400, steps = 12, selector } = {}) {
     await this.ensureFocus({ force: true });
+    if (selector) {
+      await this.hover(selector);
+    } else {
+      const mid = await this.evaluate(`({ x: Math.round(innerWidth / 2), y: Math.round(innerHeight / 2) })`);
+      await this._moveTo(mid.x + rand(-20, 20), mid.y + rand(-20, 20));
+    }
+    await sleep(randInt(40, 90));
     for (let i = 0; i < steps; i++) {
       await this.ensureFocus({ settleMs: 0 });
       await this.send('Input.dispatchMouseEvent', {
@@ -344,22 +365,22 @@ export class HumanCdpSession {
   }
 
   /**
-   * Drag humano: foco + move + press + trajetória + release.
+   * Drag humano: arrasta até origem → press → trajetória até destino → release.
    * @param {string} fromSelector
-   * @param {{ dx?: number, dy?: number, toSelector?: string }} opts
+   * @param {{ dx?: number, dy?: number, toSelector?: string, steps?: number }} opts
    */
-  async drag(fromSelector, { dx = 160, dy = 0, toSelector, steps = 20 } = {}) {
+  async drag(fromSelector, { dx = 160, dy = 0, toSelector, steps } = {}) {
     await this.ensureFocus({ force: true });
-    const from = await this.waitFor(fromSelector);
-    let toX = from.cx + dx;
-    let toY = from.cy + dy;
+    const fromPt = await this._pointOf(fromSelector, { jitter: 2 });
+    let toX = fromPt.box.cx + dx;
+    let toY = fromPt.box.cy + dy;
     if (toSelector) {
-      const to = await this.waitFor(toSelector);
-      toX = to.cx;
-      toY = to.cy;
+      const toPt = await this._pointOf(toSelector, { jitter: 2 });
+      toX = toPt.x;
+      toY = toPt.y;
     }
     await this.ensureFocus({ settleMs: 100, force: true });
-    await this._moveTo(from.cx, from.cy);
+    await this._moveTo(fromPt.x, fromPt.y);
     await this.ensureFocus({ settleMs: 50, force: true });
     const pressX = this._cursor.x;
     const pressY = this._cursor.y;
@@ -371,10 +392,10 @@ export class HumanCdpSession {
       buttons: 1,
       clickCount: 1,
     });
-    const pts = trajectoryPoints(
+    const pts = pathToTarget(
       { x: pressX, y: pressY },
       { x: toX, y: toY },
-      { steps },
+      { steps: steps ?? 20, minSteps: 12 },
     );
     const last = await moveAlong(this.send.bind(this), pts, { stepMs: [16, 26] });
     await this.send('Input.dispatchMouseEvent', {
@@ -389,10 +410,34 @@ export class HumanCdpSession {
     await this._followDebugCursor(last.x, last.y);
   }
 
+  /**
+   * Select humano: arrasta+clique no `<select>`; tenta clicar na option;
+   * se não achar hit-testável, seta value (fallback) com ponteiro já no controle.
+   */
   async select(selector, value) {
     await this.ensureFocus({ force: true });
     await this.click(selector);
-    await this.ensureFocus({ settleMs: 80, force: true });
+    await this.ensureFocus({ settleMs: 100, force: true });
+    const optSel = await this.evaluate(`(() => {
+      const el = document.querySelector(${JSON.stringify(selector)});
+      if (!el) return null;
+      const opt = [...el.options].find((o) => o.value === ${JSON.stringify(value)} || o.text === ${JSON.stringify(value)});
+      if (!opt) return null;
+      if (!opt.id) opt.setAttribute('data-human-cdp-opt', '1');
+      const r = opt.getBoundingClientRect();
+      if (r.width > 2 && r.height > 2) {
+        return opt.id ? '#' + opt.id : '[data-human-cdp-opt="1"]';
+      }
+      return null;
+    })()`);
+    if (optSel) {
+      try {
+        await this.click(optSel);
+        return value;
+      } catch {
+        /* fallback abaixo */
+      }
+    }
     await this.evaluate(`(() => {
       const el = document.querySelector(${JSON.stringify(selector)});
       if (!el) throw new Error('select missing');

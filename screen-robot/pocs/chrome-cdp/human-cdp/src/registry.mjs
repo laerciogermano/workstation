@@ -1,15 +1,20 @@
 /**
- * CRUD de CDPs no disco — lê/escreve `start-*.sh` + `~/chrome-profiles/*`.
- * Sem JSON / sem CSV.
+ * CRUD de CDPs só no disco:
+ * - perfil: ~/chrome-profiles/<id>/
+ * - meta:   ~/chrome-profiles/<id>/.human-cdp.json
+ * - porta em execução: processo Chrome com --user-data-dir + --remote-debugging-port
+ *
+ * Sem start-*.sh, sem JSON central, sem fallbacks.
  */
 import { execFileSync, spawn } from 'node:child_process';
+import { randomUUID } from 'node:crypto';
 import {
-  chmodSync,
   existsSync,
   mkdirSync,
   readdirSync,
   readFileSync,
-  unlinkSync,
+  rmSync,
+  statSync,
   writeFileSync,
 } from 'node:fs';
 import { homedir } from 'node:os';
@@ -19,8 +24,11 @@ import { connect } from './session.mjs';
 
 const __dir = dirname(fileURLToPath(import.meta.url));
 const PKG_ROOT = resolve(__dir, '..');
-const CHROME_CDP_DIR = resolve(PKG_ROOT, '..'); // pocs/chrome-cdp
 const PROFILES_DIR = join(homedir(), 'chrome-profiles');
+const META_FILE = '.human-cdp.json';
+const CHROME_BIN =
+  process.env.CHROME_BIN ||
+  '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 
 /** @type {Map<string, import('node:child_process').ChildProcess>} */
 const children = new Map();
@@ -29,10 +37,13 @@ function sleep(ms) {
   return new Promise((r) => setTimeout(r, ms));
 }
 
+export function profilesDir() {
+  return PROFILES_DIR;
+}
+
 export function expandHome(p) {
   if (!p) return p;
   if (p.startsWith('~/')) return resolve(homedir(), p.slice(2));
-  if (p.includes('$HOME/')) return p.replace(/\$HOME\//g, `${homedir()}/`);
   return p;
 }
 
@@ -49,212 +60,194 @@ export function isPortListening(port) {
 }
 
 function slugify(name) {
-  return String(name || '')
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '') || 'cdp';
+  return (
+    String(name || '')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '') || `cdp-${randomUUID().slice(0, 8)}`
+  );
 }
 
-/** @param {string} scriptPath */
-function parseStartScript(scriptPath) {
-  const text = readFileSync(scriptPath, 'utf8');
-  // só Chrome CDP neste contrato (Firefox fica de fora)
-  if (!/Google Chrome|chrome/i.test(text) && !/--user-data-dir=/.test(text)) {
-    return null;
-  }
-  if (/Firefox|firefox-profiles/i.test(text) && !/--user-data-dir=/.test(text)) {
-    return null;
-  }
-  const portM = text.match(/--remote-debugging-port=(\d+)/);
-  const dirM = text.match(/--user-data-dir="([^"]+)"|--user-data-dir=(\S+)/);
-  if (!portM || !dirM) return null;
+function profilePath(id) {
+  return join(PROFILES_DIR, id);
+}
 
-  const port = Number(portM[1]);
-  let userDataDir = (dirM[1] || dirM[2] || '').trim();
-  userDataDir = userDataDir
-    .replace(/\$HOME/g, '~')
-    .replace(/^"\s*|\s*"$/g, '');
-  if (userDataDir.startsWith('$HOME/')) {
-    userDataDir = `~/${userDataDir.slice(6)}`;
+function metaPath(id) {
+  return join(profilePath(id), META_FILE);
+}
+
+function readMeta(id) {
+  const p = metaPath(id);
+  if (!existsSync(p)) return null;
+  try {
+    return JSON.parse(readFileSync(p, 'utf8'));
+  } catch {
+    throw new Error(`meta inválida: ${p}`);
   }
+}
 
-  const base = scriptPath.split('/').pop() || '';
-  const id = base.replace(/^start-/, '').replace(/\.sh$/, '');
+function writeMeta(id, meta) {
+  mkdirSync(profilePath(id), { recursive: true });
+  writeFileSync(metaPath(id), JSON.stringify(meta, null, 2) + '\n');
+}
 
-  let name = id;
-  let platform = '';
-  const comment = text.match(/^#\s*Chrome isolado:\s*(.+)$/m);
-  if (comment) {
-    let rest = comment[1]
-      .replace(/\(CDP\s*:\d+\)/i, '')
-      .trim();
-    const parts = rest.split(/\s*\/\s*/);
-    if (parts.length >= 2) {
-      name = parts[0].trim();
-      platform = parts.slice(1).join(' / ').replace(/\s*\(.*$/, '').trim();
-    } else {
-      name = rest.replace(/\s*\(.*$/, '').trim() || id;
+function listProfileIds() {
+  if (!existsSync(PROFILES_DIR)) return [];
+  return readdirSync(PROFILES_DIR).filter((name) => {
+    try {
+      return statSync(join(PROFILES_DIR, name)).isDirectory();
+    } catch {
+      return false;
     }
+  });
+}
+
+/** slug -> port a partir de processos Chrome no ar */
+function runningPortsByProfile() {
+  /** @type {Map<string, number>} */
+  const map = new Map();
+  let out = '';
+  try {
+    out = execFileSync('ps', ['-ax', '-o', 'command='], { encoding: 'utf8' });
+  } catch {
+    return map;
   }
-
-  const relScript = `screen-robot/pocs/chrome-cdp/${base}`;
-  return {
-    id,
-    name,
-    port,
-    platform,
-    userDataDir,
-    userDataDirExpanded: expandHome(userDataDir),
-    startScript: relScript,
-    startScriptPath: scriptPath,
-    profileExists: existsSync(expandHome(userDataDir)),
-    browser: 'chrome',
-  };
-}
-
-function scriptPathForId(id) {
-  return join(CHROME_CDP_DIR, `start-${id}.sh`);
-}
-
-function renderStartScript({ name, platform, port, profileSlug }) {
-  const label = platform
-    ? `Chrome isolado: ${name} / ${platform} (CDP :${port})`
-    : `Chrome isolado: ${name} (CDP :${port})`;
-  return `#!/usr/bin/env bash
-# ${label}
-exec "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" \\
-  --user-data-dir="$HOME/chrome-profiles/${profileSlug}" \\
-  --remote-debugging-address=127.0.0.1 \\
-  --remote-debugging-port=${port} \\
-  --remote-allow-origins='*' \\
-  --no-first-run \\
-  --no-default-browser-check \\
-  "$@"
-`;
+  for (const line of out.split('\n')) {
+    if (!/Chrome|Chromium/i.test(line)) continue;
+    if (!/--remote-debugging-port=/.test(line)) continue;
+    if (!/--user-data-dir=/.test(line)) continue;
+    const portM = line.match(/--remote-debugging-port=(\d+)/);
+    const dirM = line.match(/--user-data-dir=(\S+)/);
+    if (!portM || !dirM) continue;
+    let dir = dirM[1].replace(/^"|"$/g, '');
+    dir = expandHome(dir.replace(/^\$HOME/, '~'));
+    const slug = dir.split('/').filter(Boolean).pop();
+    if (slug) map.set(slug, Number(portM[1]));
+  }
+  return map;
 }
 
 function matchKey(row, key) {
   if (row.id === key) return true;
-  if (String(row.port) === String(key)) return true;
+  if (row.port != null && String(row.port) === String(key)) return true;
   if (row.name && row.name.toLowerCase() === String(key).toLowerCase()) return true;
   return false;
 }
 
 /**
- * Lista CDPs a partir dos `start-*.sh` no disco.
  * @returns {object[]}
  */
 export function listCdps() {
-  if (!existsSync(CHROME_CDP_DIR)) return [];
-  const files = readdirSync(CHROME_CDP_DIR)
-    .filter((f) => /^start-.*\.sh$/.test(f) && !f.includes('firefox'))
-    .map((f) => join(CHROME_CDP_DIR, f));
+  const running = runningPortsByProfile();
   const rows = [];
-  for (const file of files) {
-    try {
-      const row = parseStartScript(file);
-      if (row) rows.push(row);
-    } catch {
-      /* script inválido */
-    }
+  for (const id of listProfileIds()) {
+    const meta = readMeta(id);
+    const runPort = running.get(id);
+    const metaPort = meta?.port != null ? Number(meta.port) : null;
+    // porta: só processo em execução; meta.port é preferência para start, não inventa “up”
+    const port = runPort ?? null;
+    rows.push({
+      id,
+      name: meta?.name || id,
+      port,
+      preferredPort: Number.isFinite(metaPort) ? metaPort : null,
+      status: port != null ? 'up' : 'down',
+      cdpUrl: port != null ? `http://127.0.0.1:${port}` : null,
+      userDataDir: `~/chrome-profiles/${id}`,
+      userDataDirExpanded: profilePath(id),
+      profileExists: true,
+      hasMeta: Boolean(meta),
+      defaultUrl: meta?.defaultUrl || '',
+      obs: meta?.obs || '',
+      createdAt: meta?.createdAt || null,
+      updatedAt: meta?.updatedAt || null,
+    });
   }
-  return rows.sort((a, b) => a.port - b.port);
+  return rows.sort((a, b) => {
+    if (a.status !== b.status) return a.status === 'up' ? -1 : 1;
+    const pa = a.port ?? a.preferredPort ?? 9e9;
+    const pb = b.port ?? b.preferredPort ?? 9e9;
+    if (pa !== pb) return pa - pb;
+    return a.id.localeCompare(b.id);
+  });
 }
 
-/** @param {string|number} key id | port | name */
 export function getCdp(key) {
   return listCdps().find((c) => matchKey(c, key)) || null;
 }
 
-export function resolveStartScript(startScriptOrId) {
-  if (!startScriptOrId) return null;
-  const byId = scriptPathForId(String(startScriptOrId));
-  if (existsSync(byId)) return byId;
-  const row = getCdp(startScriptOrId);
-  if (row?.startScriptPath) return row.startScriptPath;
-  return null;
-}
-
 /**
- * Cria `start-{id}.sh` + pasta do perfil no disco.
- * @param {{ name: string, port: number, id?: string, platform?: string, userDataDir?: string }} input
+ * Cria ~/chrome-profiles/<id>/ + .human-cdp.json
  */
 export function createCdp(input) {
   const name = String(input.name || '').trim();
   const port = Number(input.port);
   if (!name) throw new Error('name obrigatório');
   if (!Number.isFinite(port) || port < 1) throw new Error('port inválida');
-  if (listCdps().some((c) => c.port === port)) {
-    throw new Error(`porta ${port} já existe no disco`);
-  }
 
   const id = String(input.id || slugify(name)).trim();
-  const path = scriptPathForId(id);
-  if (existsSync(path)) throw new Error(`script já existe: ${path}`);
-
-  let profileSlug = id;
-  if (input.userDataDir) {
-    const exp = expandHome(input.userDataDir);
-    const m = exp.match(/chrome-profiles\/([^/]+)\/?$/);
-    if (m) profileSlug = m[1];
+  if (existsSync(metaPath(id))) {
+    throw new Error(`cdp já existe no disco: ${id}`);
+  }
+  if (
+    listCdps().some(
+      (c) => c.port === port || c.preferredPort === port,
+    )
+  ) {
+    throw new Error(`porta ${port} já em uso`);
   }
 
-  const body = renderStartScript({
+  const now = new Date().toISOString();
+  writeMeta(id, {
+    id,
     name,
-    platform: String(input.platform || '').trim(),
     port,
-    profileSlug,
+    defaultUrl: String(input.defaultUrl || '').trim(),
+    obs: String(input.obs || '').trim(),
+    createdAt: now,
+    updatedAt: now,
   });
-  writeFileSync(path, body, { mode: 0o755 });
-  chmodSync(path, 0o755);
-
-  const profileDir = join(PROFILES_DIR, profileSlug);
-  mkdirSync(profileDir, { recursive: true });
-
-  const row = getCdp(id);
-  if (!row) throw new Error('falha ao re-ler script criado');
-  return row;
+  return getCdp(id);
 }
 
-/**
- * Reescreve o start script no disco.
- */
 export function updateCdp(id, patch) {
   const cur = getCdp(id);
   if (!cur) throw new Error(`cdp não encontrado: ${id}`);
-  const name = patch.name != null ? String(patch.name).trim() : cur.name;
-  const platform =
-    patch.platform != null ? String(patch.platform).trim() : cur.platform;
-  const port = patch.port != null ? Number(patch.port) : cur.port;
-  if (listCdps().some((c) => c.id !== cur.id && c.port === port)) {
-    throw new Error(`porta ${port} já existe`);
+  const prev = readMeta(cur.id);
+  if (!prev) throw new Error(`meta ausente: ${cur.id}`);
+  const next = {
+    ...prev,
+    ...patch,
+    id: cur.id,
+    port: patch.port != null ? Number(patch.port) : prev.port,
+    updatedAt: new Date().toISOString(),
+  };
+  if (
+    listCdps().some(
+      (c) =>
+        c.id !== cur.id &&
+        (c.port === next.port || c.preferredPort === next.port),
+    )
+  ) {
+    throw new Error(`porta ${next.port} já em uso`);
   }
-  const profileSlug =
-    cur.userDataDirExpanded?.split('/').filter(Boolean).pop() || cur.id;
-  const body = renderStartScript({ name, platform, port, profileSlug });
-  writeFileSync(cur.startScriptPath, body, { mode: 0o755 });
-  chmodSync(cur.startScriptPath, 0o755);
+  writeMeta(cur.id, next);
   return getCdp(cur.id);
 }
 
 /**
- * Remove só o `start-*.sh` do id pedido.
- * Nunca apaga perfil em `~/chrome-profiles` a menos que `deleteProfile: true`
- * (default false). Não use em CDPs de lab sem necessidade.
- * @returns {boolean}
+ * Remove .human-cdp.json. Com deleteProfile: true apaga a pasta do perfil.
+ * Default não apaga o user-data-dir.
  */
 export function removeCdp(id, { deleteProfile = false } = {}) {
-  const row = getCdp(id);
-  if (!row) return false;
-  unlinkSync(row.startScriptPath);
-  if (
-    deleteProfile === true &&
-    row.userDataDirExpanded &&
-    existsSync(row.userDataDirExpanded)
-  ) {
-    execFileSync('rm', ['-rf', row.userDataDirExpanded]);
+  const cur = getCdp(id);
+  if (!cur) return false;
+  const meta = metaPath(cur.id);
+  if (existsSync(meta)) rmSync(meta);
+  if (deleteProfile === true) {
+    rmSync(profilePath(cur.id), { recursive: true, force: true });
   }
   return true;
 }
@@ -262,7 +255,7 @@ export function removeCdp(id, { deleteProfile = false } = {}) {
 export async function statusCdp(id) {
   const row = getCdp(id);
   if (!row) throw new Error(`cdp não encontrado: ${id}`);
-  const up = isPortListening(row.port);
+  const up = row.port != null && isPortListening(row.port);
   let version = null;
   if (up) {
     try {
@@ -277,34 +270,50 @@ export async function statusCdp(id) {
   return {
     ...row,
     status: up ? 'up' : 'down',
-    cdpUrl: `http://127.0.0.1:${row.port}`,
+    cdpUrl: row.port != null ? `http://127.0.0.1:${row.port}` : null,
     version,
-    startScriptResolved: row.startScriptPath,
   };
 }
 
 export async function startCdp(id, { url } = {}) {
   const row = getCdp(id);
   if (!row) throw new Error(`cdp não encontrado: ${id}`);
+  const port = row.port ?? row.preferredPort;
+  if (port == null) throw new Error(`porta ausente na meta de ${row.id}`);
   const st = await statusCdp(row.id);
   if (st.status === 'up') return { ...st, already: true };
-  const script = row.startScriptPath;
-  if (!existsSync(script)) throw new Error(`script ausente: ${script}`);
-  const args = [];
-  if (url) args.push(url);
-  const child = spawn(script, args, {
+
+  if (!existsSync(CHROME_BIN)) {
+    throw new Error(`Chrome não encontrado: ${CHROME_BIN}`);
+  }
+  mkdirSync(row.userDataDirExpanded, { recursive: true });
+  const args = [
+    `--user-data-dir=${row.userDataDirExpanded}`,
+    '--remote-debugging-address=127.0.0.1',
+    `--remote-debugging-port=${port}`,
+    '--remote-allow-origins=*',
+    '--no-first-run',
+    '--no-default-browser-check',
+  ];
+  const openUrl = url || row.defaultUrl;
+  if (openUrl) args.push(openUrl);
+
+  const child = spawn(CHROME_BIN, args, {
     detached: true,
     stdio: 'ignore',
     env: process.env,
   });
   child.unref();
   children.set(row.id, child);
+
   for (let i = 0; i < 40; i++) {
     await sleep(250);
-    if (isPortListening(row.port)) break;
+    if (isPortListening(port)) break;
   }
   const next = await statusCdp(row.id);
-  if (next.status !== 'up') throw new Error(`Chrome não abriu a porta ${row.port}`);
+  if (next.status !== 'up') {
+    throw new Error(`Chrome não abriu a porta ${port}`);
+  }
   return { ...next, already: false };
 }
 
@@ -324,22 +333,26 @@ export async function stopCdp(id) {
     }
     children.delete(row.id);
   }
-  try {
-    const pids = execFileSync('lsof', [`-tiTCP:${row.port}`, '-sTCP:LISTEN'], {
-      encoding: 'utf8',
-    })
-      .trim()
-      .split('\n')
-      .filter(Boolean);
-    for (const pid of pids) {
-      try {
-        process.kill(Number(pid), 'SIGTERM');
-      } catch {
-        /* ignore */
+  if (row.port != null) {
+    try {
+      const pids = execFileSync(
+        'lsof',
+        [`-tiTCP:${row.port}`, '-sTCP:LISTEN'],
+        { encoding: 'utf8' },
+      )
+        .trim()
+        .split('\n')
+        .filter(Boolean);
+      for (const pid of pids) {
+        try {
+          process.kill(Number(pid), 'SIGTERM');
+        } catch {
+          /* ignore */
+        }
       }
+    } catch {
+      /* nada */
     }
-  } catch {
-    /* nada */
   }
   await sleep(400);
   return statusCdp(row.id);
@@ -350,8 +363,9 @@ export async function connectCdp(id, connectOpts = {}) {
   if (!row) throw new Error(`cdp não encontrado: ${id}`);
   let st = await statusCdp(row.id);
   if (st.status !== 'up') {
-    st = await startCdp(row.id, { url: connectOpts.url });
+    st = await startCdp(row.id, { url: connectOpts.url || row.defaultUrl });
   }
+  if (!st.cdpUrl) throw new Error(`sem cdpUrl para ${row.id}`);
   return connect({
     cdpUrl: st.cdpUrl,
     url: connectOpts.url,
@@ -361,11 +375,15 @@ export async function connectCdp(id, connectOpts = {}) {
   });
 }
 
-/** Diretório canônico dos scripts (fonte no disco). */
-export function scriptsDir() {
-  return CHROME_CDP_DIR;
+// compat exports
+export function storePath() {
+  return PROFILES_DIR;
 }
 
-export function profilesDir() {
+export function scriptsDir() {
   return PROFILES_DIR;
+}
+
+export function resolveStartScript() {
+  return null;
 }

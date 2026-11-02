@@ -54,21 +54,20 @@ CDP_URL=http://127.0.0.1:9230 npm run test:bot-lab
 
 ## CRUD de CDPs (contrato na lib)
 
-Sem UI, **sem CSV**, **sem JSON**. Fonte de verdade no disco:
+Sem UI, **sem CSV**, **sem JSON central**, **sem `start-*.sh`**. Fonte no disco:
 
-- scripts `screen-robot/pocs/chrome-cdp/start-*.sh`
-- perfis `~/chrome-profiles/<slug>`
-
-`listCdps()` / `getCdp()` **só leem** o que já existe. `createCdp` grava um `start-*.sh` novo + pasta de perfil. `removeCdp` apaga só o script do id pedido (`deleteProfile: true` para apagar a pasta — default **não** apaga perfil).
+- pastas `~/chrome-profiles/<id>/`
+- meta `~/chrome-profiles/<id>/.human-cdp.json` (só se criado via `createCdp`)
+- porta `up`: processo Chrome com `--user-data-dir` + `--remote-debugging-port`
 
 ```js
 import { listCdps, createCdp, connectCdp, removeCdp } from './src/index.mjs';
 
-listCdps(); // lê start-*.sh do disco
-createCdp({ id: 'meu-perfil', name: 'Meu Perfil', port: 9240, platform: 'linkedin' });
+listCdps(); // pastas em ~/chrome-profiles + porta se Chrome estiver no ar
+createCdp({ id: 'meu-perfil', name: 'Meu Perfil', port: 9240 });
 const page = await connectCdp('meu-perfil');
 page.close();
-// removeCdp('meu-perfil') // não use nos CDPs de lab sem querer
+// removeCdp('meu-perfil') // default não apaga a pasta do perfil
 ```
 
 ```bash

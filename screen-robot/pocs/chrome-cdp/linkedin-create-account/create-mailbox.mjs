@@ -88,6 +88,7 @@ async function main() {
   const linkedinResult = await createLinkedin({
     id: cdpResult.id,
     email: emailResult.email,
+    password: 'in@12345678',
     dryRun,
     skipBrowser: noBrowser,
   });

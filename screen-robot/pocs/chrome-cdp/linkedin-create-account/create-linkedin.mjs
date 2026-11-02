@@ -1,14 +1,18 @@
 /**
  * Criação da conta LinkedIn (passo browser).
- * Abre signup e preenche o e-mail.
+ * Abre signup e preenche e-mail + senha.
  */
 import { openLinkedInSignup } from './open-signup.mjs';
 import { fillSignupEmail } from './fill-signup-email.mjs';
+import { fillSignupPassword } from './fill-signup-password.mjs';
+
+const DEFAULT_LI_PASSWORD = 'in@12345678';
 
 /**
  * @param {{
  *   id: string,
  *   email?: string,
+ *   password?: string,
  *   url?: string,
  *   dryRun?: boolean,
  *   skipBrowser?: boolean,
@@ -19,7 +23,7 @@ export async function createLinkedin(opts = {}) {
   if (!id) throw new Error('createLinkedin: id obrigatório');
 
   if (opts.skipBrowser) {
-    return { id, skipped: true, browser: null, email: null };
+    return { id, skipped: true, browser: null, email: null, password: null };
   }
 
   const browser = await openLinkedInSignup({
@@ -38,10 +42,18 @@ export async function createLinkedin(opts = {}) {
     });
   }
 
+  const password = String(opts.password || DEFAULT_LI_PASSWORD).trim();
+  const passwordFill = await fillSignupPassword({
+    id,
+    password,
+    dryRun: opts.dryRun,
+  });
+
   return {
     id,
     skipped: false,
     browser,
     email: emailFill,
+    password: passwordFill,
   };
 }

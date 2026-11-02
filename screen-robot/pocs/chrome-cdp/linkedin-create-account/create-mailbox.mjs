@@ -1,18 +1,19 @@
 #!/usr/bin/env node
 /**
- * Main — cria mailbox + CDP LinkedIn (em paralelo) e grava CSV.
+ * Main — mailbox + CDP (paralelo) → CSV → abre LinkedIn signup no Chrome.
  *
  * Uso:
  *   node create-mailbox.mjs --first Bruno --last Nunes
  *   node create-mailbox.mjs --email bruno.nunes@clozzy.com.br --name "Bruno Nunes"
  *
- * Flags: --dry-run · --write-credenciais
+ * Flags: --dry-run · --write-credenciais · --no-browser
  */
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createEmail } from './create-email.mjs';
 import { createLinkedInCdp } from './create-cdp.mjs';
 import { saveAccountCsv } from './save-csv.mjs';
+import { openLinkedInSignup } from './open-signup.mjs';
 
 const DOMAIN = (process.env.MAIL_DOMAIN || 'clozzy.com.br').trim();
 
@@ -32,7 +33,7 @@ function usage(msg) {
   if (msg) console.error(msg);
   console.error(`uso: node create-mailbox.mjs --first NOME --last SOBRENOME
        node create-mailbox.mjs --email LOCAL@${DOMAIN} --name "Nome Completo"
-  --dry-run · --write-credenciais`);
+  --dry-run · --write-credenciais · --no-browser`);
   process.exit(msg ? 1 : 0);
 }
 
@@ -45,6 +46,7 @@ async function main() {
   const name = arg('--name', '--nome-completo');
   const dryRun = hasFlag('--dry-run');
   const writeCredenciais = hasFlag('--write-credenciais');
+  const noBrowser = hasFlag('--no-browser');
 
   if (!email && (!first || !last)) usage('informe --first/--last ou --email');
   if (email && !name && !(first && last)) {
@@ -75,8 +77,25 @@ async function main() {
     dryRun,
   });
 
+  let browserResult = { skipped: true };
+  if (!noBrowser) {
+    browserResult = await openLinkedInSignup({
+      id: cdpResult.id,
+      dryRun,
+    });
+  }
+
   console.log(
-    JSON.stringify({ email: emailResult, cdp: cdpResult, csv: csvResult }, null, 2),
+    JSON.stringify(
+      {
+        email: emailResult,
+        cdp: cdpResult,
+        csv: csvResult,
+        browser: browserResult,
+      },
+      null,
+      2,
+    ),
   );
 }
 

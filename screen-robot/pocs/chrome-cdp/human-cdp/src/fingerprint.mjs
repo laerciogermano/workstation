@@ -1,7 +1,6 @@
 /**
  * Fingerprint por CDP (meta.fingerprint).
- * Cobre o que Chrome CDP/flags permitem de forma estável.
- * Não altera canvas/WebGL/áudio reais nem IP de egress.
+ * CDP/flags + inject JS. Não muda IP de egress nem TLS/JA3.
  */
 
 /**
@@ -12,6 +11,8 @@
  * @property {boolean} [mobile]
  * @property {number} [screenWidth]
  * @property {number} [screenHeight]
+ * @property {number} [outerWidth]
+ * @property {number} [outerHeight]
  * @property {number} [positionX]
  * @property {number} [positionY]
  */
@@ -38,9 +39,44 @@
  */
 
 /**
+ * @typedef {object} ConnectionConfig
+ * @property {string} [effectiveType]
+ * @property {number} [rtt]
+ * @property {number} [downlink]
+ * @property {boolean} [saveData]
+ */
+
+/**
+ * @typedef {object} BatteryConfig
+ * @property {boolean} [charging]
+ * @property {number} [level]
+ * @property {number} [chargingTime]
+ * @property {number} [dischargingTime]
+ */
+
+/**
+ * @typedef {object} WebglConfig
+ * @property {string} [vendor]
+ * @property {string} [renderer]
+ */
+
+/**
+ * @typedef {object} MediaDeviceConfig
+ * @property {string} [deviceId]
+ * @property {string} [kind]
+ * @property {string} [label]
+ * @property {string} [groupId]
+ */
+
+/**
  * @typedef {object} FingerprintConfig
  * @property {string} [userAgent]
- * @property {string} [platform] navigator.platform / UA override platform
+ * @property {string} [platform]
+ * @property {string} [vendor]
+ * @property {string} [product]
+ * @property {string} [productSub]
+ * @property {string} [appVersion]
+ * @property {string|null} [doNotTrack]
  * @property {string} [lang]
  * @property {string} [acceptLanguage]
  * @property {string} [timezone]
@@ -55,11 +91,21 @@
  * @property {boolean} [touch]
  * @property {UserAgentMetadata} [userAgentMetadata]
  * @property {'disable_non_proxied_udp'|'default_public_interface_only'|'default_public_and_private_interfaces'} [webrtcIpHandling]
- * @property {string[]} [chromeArgs] flags extras no startCdp
+ * @property {string[]} [chromeArgs]
  * @property {Array<{origin: string, permission: string, setting?: 'granted'|'denied'|'prompt'}>} [permissions]
+ * @property {ConnectionConfig} [connection]
+ * @property {BatteryConfig} [battery]
+ * @property {string[]} [plugins]
+ * @property {string[]} [mimeTypes]
+ * @property {string} [keyboardLayout]
+ * @property {MediaDeviceConfig[]} [mediaDevices]
+ * @property {WebglConfig} [webgl]
+ * @property {number} [canvasNoise]
+ * @property {number} [audioNoise]
+ * @property {string[]} [fonts]
  */
 
-function num(v, { min = 0 } = {}) {
+function num(v, { min = Number.NEGATIVE_INFINITY } = {}) {
   const n = Number(v);
   return Number.isFinite(n) && n >= min ? n : null;
 }
@@ -78,18 +124,26 @@ export function normalizeFingerprint(raw) {
   /** @type {FingerprintConfig} */
   const out = {};
 
-  const userAgent = str(o.userAgent);
-  if (userAgent) out.userAgent = userAgent;
-  const platform = str(o.platform);
-  if (platform) out.platform = platform;
-  const lang = str(o.lang);
-  if (lang) out.lang = lang;
-  const acceptLanguage = str(o.acceptLanguage);
-  if (acceptLanguage) out.acceptLanguage = acceptLanguage;
-  const timezone = str(o.timezone);
-  if (timezone) out.timezone = timezone;
-  const locale = str(o.locale);
-  if (locale) out.locale = locale;
+  for (const k of [
+    'userAgent',
+    'platform',
+    'vendor',
+    'product',
+    'productSub',
+    'appVersion',
+    'lang',
+    'acceptLanguage',
+    'timezone',
+    'locale',
+    'keyboardLayout',
+  ]) {
+    const v = str(o[k]);
+    if (v) out[k] = v;
+  }
+  if (o.doNotTrack === null) out.doNotTrack = null;
+  else if (o.doNotTrack === '1' || o.doNotTrack === '0' || o.doNotTrack === 'unspecified') {
+    out.doNotTrack = o.doNotTrack;
+  }
 
   if (o.viewport && typeof o.viewport === 'object') {
     const v = /** @type {Record<string, unknown>} */ (o.viewport);
@@ -103,14 +157,10 @@ export function normalizeFingerprint(raw) {
         deviceScaleFactor: num(v.deviceScaleFactor, { min: 0.1 }) ?? 1,
         mobile: v.mobile === true,
       };
-      const sw = num(v.screenWidth, { min: 1 });
-      const sh = num(v.screenHeight, { min: 1 });
-      if (sw) viewport.screenWidth = Math.round(sw);
-      if (sh) viewport.screenHeight = Math.round(sh);
-      const px = num(v.positionX);
-      const py = num(v.positionY);
-      if (px != null) viewport.positionX = Math.round(px);
-      if (py != null) viewport.positionY = Math.round(py);
+      for (const key of ['screenWidth', 'screenHeight', 'outerWidth', 'outerHeight', 'positionX', 'positionY']) {
+        const n = num(v[key], { min: key.startsWith('position') ? Number.NEGATIVE_INFINITY : 1 });
+        if (n != null) viewport[key] = Math.round(n);
+      }
       out.viewport = viewport;
     }
   }
@@ -177,11 +227,84 @@ export function normalizeFingerprint(raw) {
     if (permissions.length) out.permissions = permissions;
   }
 
+  if (o.connection && typeof o.connection === 'object') {
+    const c = /** @type {Record<string, unknown>} */ (o.connection);
+    /** @type {ConnectionConfig} */
+    const connection = {};
+    const et = str(c.effectiveType);
+    if (et) connection.effectiveType = et;
+    const rtt = num(c.rtt, { min: 0 });
+    if (rtt != null) connection.rtt = Math.round(rtt);
+    const downlink = num(c.downlink, { min: 0 });
+    if (downlink != null) connection.downlink = downlink;
+    if (typeof c.saveData === 'boolean') connection.saveData = c.saveData;
+    if (Object.keys(connection).length) out.connection = connection;
+  }
+
+  if (o.battery && typeof o.battery === 'object') {
+    const b = /** @type {Record<string, unknown>} */ (o.battery);
+    /** @type {BatteryConfig} */
+    const battery = {};
+    if (typeof b.charging === 'boolean') battery.charging = b.charging;
+    const level = num(b.level, { min: 0 });
+    if (level != null) battery.level = Math.min(1, level);
+    const ct = num(b.chargingTime, { min: 0 });
+    if (ct != null) battery.chargingTime = ct;
+    const dt = num(b.dischargingTime, { min: 0 });
+    if (dt != null) battery.dischargingTime = dt;
+    if (Object.keys(battery).length) out.battery = battery;
+  }
+
+  if (Array.isArray(o.plugins)) {
+    const plugins = o.plugins.map((x) => str(x)).filter(Boolean);
+    if (plugins.length) out.plugins = /** @type {string[]} */ (plugins);
+  }
+  if (Array.isArray(o.mimeTypes)) {
+    const mimeTypes = o.mimeTypes.map((x) => str(x)).filter(Boolean);
+    if (mimeTypes.length) out.mimeTypes = /** @type {string[]} */ (mimeTypes);
+  }
+  if (Array.isArray(o.fonts)) {
+    const fonts = o.fonts.map((x) => str(x)).filter(Boolean);
+    if (fonts.length) out.fonts = /** @type {string[]} */ (fonts);
+  }
+
+  if (Array.isArray(o.mediaDevices)) {
+    const mediaDevices = [];
+    for (const d of o.mediaDevices) {
+      if (!d || typeof d !== 'object') continue;
+      const row = /** @type {Record<string, unknown>} */ (d);
+      const kind = str(row.kind);
+      if (!kind) continue;
+      mediaDevices.push({
+        deviceId: str(row.deviceId) || `id-${mediaDevices.length}`,
+        kind,
+        label: str(row.label) || '',
+        groupId: str(row.groupId) || `group-${mediaDevices.length}`,
+      });
+    }
+    if (mediaDevices.length) out.mediaDevices = mediaDevices;
+  }
+
+  if (o.webgl && typeof o.webgl === 'object') {
+    const w = /** @type {Record<string, unknown>} */ (o.webgl);
+    /** @type {WebglConfig} */
+    const webgl = {};
+    const vendor = str(w.vendor);
+    const renderer = str(w.renderer);
+    if (vendor) webgl.vendor = vendor;
+    if (renderer) webgl.renderer = renderer;
+    if (Object.keys(webgl).length) out.webgl = webgl;
+  }
+
+  const canvasNoise = num(o.canvasNoise);
+  if (canvasNoise != null) out.canvasNoise = canvasNoise;
+  const audioNoise = num(o.audioNoise);
+  if (audioNoise != null) out.audioNoise = audioNoise;
+
   return Object.keys(out).length ? out : null;
 }
 
 /**
- * Flags Chrome derivadas do fingerprint (startCdp).
  * @param {FingerprintConfig|null|undefined} fp
  * @returns {string[]}
  */
@@ -197,40 +320,222 @@ export function chromeArgsFromFingerprint(fp) {
   return args;
 }
 
-function patchNavigatorScript(n) {
-  const patches = {};
-  if (n.platform) patches.platform = n.platform;
-  if (n.hardwareConcurrency) patches.hardwareConcurrency = n.hardwareConcurrency;
-  if (n.deviceMemory) patches.deviceMemory = n.deviceMemory;
-  if (n.maxTouchPoints != null) patches.maxTouchPoints = n.maxTouchPoints;
-  if (n.lang) patches.language = n.lang;
-  if (n.acceptLanguage || n.lang) {
-    patches.languages = (n.acceptLanguage || `${n.lang},${String(n.lang).split('-')[0]};q=0.9`)
+function buildInjectScript(n) {
+  const cfg = {
+    platform: n.platform,
+    vendor: n.vendor,
+    product: n.product,
+    productSub: n.productSub,
+    appVersion: n.appVersion,
+    doNotTrack: n.doNotTrack,
+    hardwareConcurrency: n.hardwareConcurrency,
+    deviceMemory: n.deviceMemory,
+    maxTouchPoints: n.maxTouchPoints,
+    language: n.lang,
+    languages: (n.acceptLanguage || (n.lang ? `${n.lang},${String(n.lang).split('-')[0]};q=0.9` : ''))
       .split(',')
       .map((x) => x.trim().split(';')[0])
-      .filter(Boolean);
-  }
-  if (n.viewport?.screenWidth) patches.screenWidth = n.viewport.screenWidth;
-  if (n.viewport?.screenHeight) patches.screenHeight = n.viewport.screenHeight;
-  if (!Object.keys(patches).length) return null;
+      .filter(Boolean),
+    screenWidth: n.viewport?.screenWidth,
+    screenHeight: n.viewport?.screenHeight,
+    outerWidth: n.viewport?.outerWidth ?? (n.viewport ? n.viewport.width + 16 : undefined),
+    outerHeight: n.viewport?.outerHeight ?? (n.viewport ? n.viewport.height + 88 : undefined),
+    connection: n.connection,
+    battery: n.battery,
+    plugins: n.plugins,
+    mimeTypes: n.mimeTypes,
+    keyboardLayout: n.keyboardLayout,
+    mediaDevices: n.mediaDevices,
+    webgl: n.webgl,
+    canvasNoise: n.canvasNoise,
+    audioNoise: n.audioNoise,
+    fonts: n.fonts,
+  };
 
   return `(() => {
-    const p = ${JSON.stringify(patches)};
+    const cfg = ${JSON.stringify(cfg)};
     const def = (obj, key, value) => {
-      try {
-        Object.defineProperty(obj, key, { get: () => value, configurable: true });
-      } catch {}
+      try { Object.defineProperty(obj, key, { get: () => value, configurable: true }); } catch {}
     };
-    if (p.platform != null) def(Navigator.prototype, 'platform', p.platform);
-    if (p.hardwareConcurrency != null) def(Navigator.prototype, 'hardwareConcurrency', p.hardwareConcurrency);
-    if (p.deviceMemory != null) def(Navigator.prototype, 'deviceMemory', p.deviceMemory);
-    if (p.maxTouchPoints != null) def(Navigator.prototype, 'maxTouchPoints', p.maxTouchPoints);
-    if (p.language != null) def(Navigator.prototype, 'language', p.language);
-    if (p.languages != null) def(Navigator.prototype, 'languages', p.languages);
-    if (p.screenWidth != null) def(Screen.prototype, 'width', p.screenWidth);
-    if (p.screenHeight != null) def(Screen.prototype, 'height', p.screenHeight);
-    if (p.screenWidth != null) def(Screen.prototype, 'availWidth', p.screenWidth);
-    if (p.screenHeight != null) def(Screen.prototype, 'availHeight', p.screenHeight);
+    if (cfg.platform != null) def(Navigator.prototype, 'platform', cfg.platform);
+    if (cfg.vendor != null) def(Navigator.prototype, 'vendor', cfg.vendor);
+    if (cfg.product != null) def(Navigator.prototype, 'product', cfg.product);
+    if (cfg.productSub != null) def(Navigator.prototype, 'productSub', cfg.productSub);
+    if (cfg.appVersion != null) def(Navigator.prototype, 'appVersion', cfg.appVersion);
+    if ('doNotTrack' in cfg) def(Navigator.prototype, 'doNotTrack', cfg.doNotTrack);
+    if (cfg.hardwareConcurrency != null) def(Navigator.prototype, 'hardwareConcurrency', cfg.hardwareConcurrency);
+    if (cfg.deviceMemory != null) def(Navigator.prototype, 'deviceMemory', cfg.deviceMemory);
+    if (cfg.maxTouchPoints != null) def(Navigator.prototype, 'maxTouchPoints', cfg.maxTouchPoints);
+    if (cfg.language != null) def(Navigator.prototype, 'language', cfg.language);
+    if (cfg.languages && cfg.languages.length) def(Navigator.prototype, 'languages', cfg.languages);
+    if (cfg.screenWidth != null) {
+      def(Screen.prototype, 'width', cfg.screenWidth);
+      def(Screen.prototype, 'availWidth', cfg.screenWidth);
+    }
+    if (cfg.screenHeight != null) {
+      def(Screen.prototype, 'height', cfg.screenHeight);
+      def(Screen.prototype, 'availHeight', cfg.screenHeight);
+    }
+    if (cfg.outerWidth != null) def(window, 'outerWidth', cfg.outerWidth);
+    if (cfg.outerHeight != null) def(window, 'outerHeight', cfg.outerHeight);
+
+    if (cfg.connection) {
+      const c = Object.assign({}, navigator.connection || {}, cfg.connection);
+      def(Navigator.prototype, 'connection', c);
+      def(Navigator.prototype, 'mozConnection', c);
+      def(Navigator.prototype, 'webkitConnection', c);
+    }
+
+    if (cfg.battery) {
+      const batt = {
+        charging: cfg.battery.charging !== false,
+        chargingTime: cfg.battery.chargingTime ?? (cfg.battery.charging === false ? Infinity : 0),
+        dischargingTime: cfg.battery.dischargingTime ?? (cfg.battery.charging === false ? 12000 : Infinity),
+        level: cfg.battery.level ?? 0.87,
+        addEventListener() {},
+        removeEventListener() {},
+        dispatchEvent() { return false; },
+        onchargingchange: null,
+        onchargingtimechange: null,
+        ondischargingtimechange: null,
+        onlevelchange: null,
+      };
+      Navigator.prototype.getBattery = () => Promise.resolve(batt);
+    }
+
+    if (cfg.plugins && cfg.plugins.length) {
+      const fakePlugins = cfg.plugins.map((name, i) => ({
+        name,
+        filename: name.toLowerCase().replace(/\\s+/g, '-') + '.plugin',
+        description: name,
+        length: 1,
+        item: () => null,
+        namedItem: () => null,
+      }));
+      fakePlugins.item = (i) => fakePlugins[i] || null;
+      fakePlugins.namedItem = (n) => fakePlugins.find((p) => p.name === n) || null;
+      fakePlugins.refresh = () => {};
+      def(Navigator.prototype, 'plugins', fakePlugins);
+    }
+    if (cfg.mimeTypes && cfg.mimeTypes.length) {
+      const fakeMimes = cfg.mimeTypes.map((type) => ({
+        type,
+        suffixes: type.includes('pdf') ? 'pdf' : '',
+        description: type,
+        enabledPlugin: null,
+      }));
+      fakeMimes.item = (i) => fakeMimes[i] || null;
+      fakeMimes.namedItem = (n) => fakeMimes.find((m) => m.type === n) || null;
+      def(Navigator.prototype, 'mimeTypes', fakeMimes);
+    }
+
+    if (cfg.keyboardLayout) {
+      const kb = {
+        getLayoutMap: async () => {
+          const map = new Map();
+          map.set('KeyA', cfg.keyboardLayout === 'en-US' ? 'a' : 'a');
+          return map;
+        },
+        lock: async () => {},
+        unlock: () => {},
+        addEventListener() {},
+        removeEventListener() {},
+      };
+      def(Navigator.prototype, 'keyboard', kb);
+    }
+
+    if (cfg.mediaDevices && cfg.mediaDevices.length && navigator.mediaDevices) {
+      const devices = cfg.mediaDevices.slice();
+      const orig = navigator.mediaDevices.enumerateDevices.bind(navigator.mediaDevices);
+      navigator.mediaDevices.enumerateDevices = async () => {
+        try { await orig(); } catch {}
+        return devices.map((d) => ({ ...d, toJSON() { return this; } }));
+      };
+    }
+
+    if (cfg.webgl) {
+      const patchCtx = (proto) => {
+        if (!proto || !proto.getParameter) return;
+        const orig = proto.getParameter;
+        proto.getParameter = function (param) {
+          const dbg = this.getExtension && this.getExtension('WEBGL_debug_renderer_info');
+          if (dbg) {
+            if (param === dbg.UNMASKED_VENDOR_WEBGL && cfg.webgl.vendor) return cfg.webgl.vendor;
+            if (param === dbg.UNMASKED_RENDERER_WEBGL && cfg.webgl.renderer) return cfg.webgl.renderer;
+          }
+          return orig.call(this, param);
+        };
+      };
+      try { patchCtx(WebGLRenderingContext && WebGLRenderingContext.prototype); } catch {}
+      try { patchCtx(WebGL2RenderingContext && WebGL2RenderingContext.prototype); } catch {}
+    }
+
+    if (typeof cfg.canvasNoise === 'number' && cfg.canvasNoise !== 0) {
+      const noise = cfg.canvasNoise;
+      const patch = (proto, method) => {
+        if (!proto || !proto[method]) return;
+        const orig = proto[method];
+        proto[method] = function (...args) {
+          const ret = orig.apply(this, args);
+          try {
+            if (method === 'toDataURL' || method === 'toBlob') {
+              const ctx = this.getContext && this.getContext('2d');
+              if (ctx) {
+                const img = ctx.getImageData(0, 0, Math.min(8, this.width || 8), Math.min(8, this.height || 8));
+                for (let i = 0; i < img.data.length; i += 4) {
+                  img.data[i] = (img.data[i] + (noise * 7 + i) % 3) % 256;
+                }
+                ctx.putImageData(img, 0, 0);
+              }
+            }
+          } catch {}
+          return method === 'toDataURL' ? orig.apply(this, args) : ret;
+        };
+      };
+      try { patch(HTMLCanvasElement.prototype, 'toDataURL'); } catch {}
+      try { patch(HTMLCanvasElement.prototype, 'toBlob'); } catch {}
+    }
+
+    if (typeof cfg.audioNoise === 'number' && cfg.audioNoise !== 0) {
+      const noise = cfg.audioNoise;
+      const wrap = (Orig) => {
+        if (!Orig) return Orig;
+        return function (...args) {
+          const ctx = new Orig(...args);
+          try {
+            const origCreate = ctx.createAnalyser.bind(ctx);
+            ctx.createAnalyser = (...a) => {
+              const node = origCreate(...a);
+              const origGet = node.getFloatFrequencyData.bind(node);
+              node.getFloatFrequencyData = (arr) => {
+                origGet(arr);
+                for (let i = 0; i < arr.length; i++) arr[i] = arr[i] + noise * 0.0001 * ((i % 5) - 2);
+              };
+              return node;
+            };
+          } catch {}
+          return ctx;
+        };
+      };
+      try {
+        if (window.AudioContext) window.AudioContext = wrap(window.AudioContext);
+        if (window.webkitAudioContext) window.webkitAudioContext = wrap(window.webkitAudioContext);
+      } catch {}
+    }
+
+    if (cfg.fonts && cfg.fonts.length && document.fonts) {
+      try {
+        const wanted = new Set(cfg.fonts.map((f) => f.toLowerCase()));
+        const origCheck = document.fonts.check.bind(document.fonts);
+        document.fonts.check = (font, text) => {
+          const family = String(font).toLowerCase();
+          for (const w of wanted) {
+            if (family.includes(w.toLowerCase())) return true;
+          }
+          return origCheck(font, text);
+        };
+      } catch {}
+    }
   })();`;
 }
 
@@ -346,12 +651,8 @@ export async function applyFingerprint(session, fp) {
 
   if (n.colorScheme || n.reducedMotion) {
     const features = [];
-    if (n.colorScheme) {
-      features.push({ name: 'prefers-color-scheme', value: n.colorScheme });
-    }
-    if (n.reducedMotion) {
-      features.push({ name: 'prefers-reduced-motion', value: n.reducedMotion });
-    }
+    if (n.colorScheme) features.push({ name: 'prefers-color-scheme', value: n.colorScheme });
+    if (n.reducedMotion) features.push({ name: 'prefers-reduced-motion', value: n.reducedMotion });
     if (
       await softFail('Emulation.setEmulatedMedia', () =>
         session.send('Emulation.setEmulatedMedia', { features }),
@@ -390,23 +691,41 @@ export async function applyFingerprint(session, fp) {
     }
   }
 
-  const script = patchNavigatorScript(n);
-  if (script) {
-    if (
-      await softFail('Page.addScriptToEvaluateOnNewDocument', () =>
-        session.send('Page.addScriptToEvaluateOnNewDocument', { source: script }),
-      )
-    ) {
-      applied.navigatorPatchOnNewDocument = true;
-    }
-    if (await softFail('Runtime.evaluate:navigatorPatch', () => session.send('Runtime.evaluate', { expression: script }))) {
-      applied.navigatorPatchNow = true;
-    }
+  const script = buildInjectScript(n);
+  if (
+    await softFail('Page.addScriptToEvaluateOnNewDocument', () =>
+      session.send('Page.addScriptToEvaluateOnNewDocument', { source: script }),
+    )
+  ) {
+    applied.injectOnNewDocument = true;
+  }
+  if (
+    await softFail('Runtime.evaluate:inject', () =>
+      session.send('Runtime.evaluate', { expression: script }),
+    )
+  ) {
+    applied.injectNow = true;
   }
 
-  if (n.deviceMemory) applied.deviceMemory = n.deviceMemory;
-  if (n.maxTouchPoints != null) applied.maxTouchPoints = n.maxTouchPoints;
-  if (n.webrtcIpHandling) applied.webrtcIpHandling = n.webrtcIpHandling;
+  for (const k of [
+    'vendor',
+    'product',
+    'connection',
+    'battery',
+    'plugins',
+    'mimeTypes',
+    'keyboardLayout',
+    'mediaDevices',
+    'webgl',
+    'canvasNoise',
+    'audioNoise',
+    'fonts',
+    'deviceMemory',
+    'maxTouchPoints',
+    'webrtcIpHandling',
+  ]) {
+    if (n[k] != null) applied[k] = n[k];
+  }
 
   return { applied: true, ...applied };
 }

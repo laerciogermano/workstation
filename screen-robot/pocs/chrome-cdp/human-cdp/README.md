@@ -94,7 +94,7 @@ page.close();
 Meta `~/chrome-profiles/<id>/.human-cdp.json` → `fingerprint`.
 
 **startCdp:** `--lang`, `--force-webrtc-ip-handling-policy=…`, `chromeArgs[]`  
-**connectCdp / goto:** UA + Client Hints (`userAgentMetadata`), platform, Accept-Language, timezone, locale, viewport/screen, geolocation, hardwareConcurrency, deviceMemory, maxTouchPoints, colorScheme, reducedMotion, touch, permissions + patch JS de `navigator`/`screen`.
+**connectCdp / goto:** UA + Client Hints, platform/vendor/product/appVersion/doNotTrack, Accept-Language, timezone, locale, viewport/screen/outer, geolocation, hardwareConcurrency, deviceMemory, maxTouchPoints, colorScheme, reducedMotion, touch, permissions, connection, battery, plugins/mimeTypes, keyboardLayout, mediaDevices, webgl vendor/renderer, canvasNoise, audioNoise, fonts.
 
 ```js
 updateCdp('ometv-2', {

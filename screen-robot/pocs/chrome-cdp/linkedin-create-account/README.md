@@ -17,6 +17,7 @@ Script novo, passo a passo. **Agora só o passo 1:** mailbox Mailcow.
 | [`click-signup-submit.mjs`](click-signup-submit.mjs) | `clickSignupSubmit({ id })` → Aceite e cadastre-se |
 | [`fill-signup-name.mjs`](fill-signup-name.mjs) | `fillSignupName({ id, first, last })` → `#first-name` / `#last-name` |
 | [`click-signup-continue.mjs`](click-signup-continue.mjs) | `clickSignupContinue({ id })` → Continuar |
+| [`wait-signup-after-name.mjs`](wait-signup-after-name.mjs) | `waitSignupAfterName({ id })` → após nome: próxima tela **ou** espera indeterminada na verificação humana |
 | [`fill-signup-location.mjs`](fill-signup-location.mjs) | `fillSignupLocation({ id, location })` → digita → 1ª opção → Continuar |
 | [`fill-signup-job.mjs`](fill-signup-job.mjs) | `fillSignupJob({ id, job })` → cargo (typeahead) |
 | [`fill-signup-company.mjs`](fill-signup-company.mjs) | `fillSignupCompany({ id, company })` → empresa → Continuar |
@@ -44,7 +45,9 @@ node create-mailbox.mjs --first Bruno --last Nunes --write-credenciais --no-brow
 
 Saída: progresso em **stderr** (`[create-mailbox]`, `[createLinkedin]`, `[PIN]`); JSON final em **stdout** `{ email, cdp, csv, linkedin }`.
 
-**Ordem:** mailbox+CDP → **CSV** → `createLinkedin` (signup até `/feed`). Sem regravar CSV depois do LinkedIn (`li_criado` fica `nao` no save inicial). Defaults: localidade `Rio de Janeiro`, cargo/empresa ConectMax, senha `in@12345678`. `--no-browser` pula o browser. `saveAccountCsv` grava [`contas-linkedin-clozzy.csv`](../../android-studio/contas-linkedin-clozzy.csv) (`fp_*` + `ip`) e [`contas-facebook-chrome.csv`](../../android-studio/contas-facebook-chrome.csv).
+**Ordem:** mailbox+CDP → **CSV** → `createLinkedin` (signup até `/feed`). Após nome+Continuar: se **verificação humana**, espera **sem timeout** até a próxima tela (localidade etc.). Sem regravar CSV depois do LinkedIn (`li_criado` fica `nao` no save inicial). Defaults: localidade `Rio de Janeiro`, cargo/empresa ConectMax, senha `in@12345678`. `--no-browser` pula o browser. `saveAccountCsv` grava [`contas-linkedin-clozzy.csv`](../../android-studio/contas-linkedin-clozzy.csv) (`fp_*` + `ip`) e [`contas-facebook-chrome.csv`](../../android-studio/contas-facebook-chrome.csv).
+
+**Antes → depois (captcha):** seguia direto p/ localidade → `waitSignupAfterName` pausa indeterminada se iframe/desafio de segurança. Rollback: remover a chamada.
 
 **Antes → depois (logs):** silencioso no meio → logs de passo em stderr. Rollback: remover `log()` / `console.error` de progresso.
 

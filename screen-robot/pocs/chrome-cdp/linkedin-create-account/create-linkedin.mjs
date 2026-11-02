@@ -8,6 +8,7 @@ import { fillSignupPassword } from './fill-signup-password.mjs';
 import { clickSignupSubmit } from './click-signup-submit.mjs';
 import { fillSignupName } from './fill-signup-name.mjs';
 import { clickSignupContinue } from './click-signup-continue.mjs';
+import { waitSignupAfterName } from './wait-signup-after-name.mjs';
 import { fillSignupLocation } from './fill-signup-location.mjs';
 import { fillSignupJob } from './fill-signup-job.mjs';
 import { fillSignupCompany } from './fill-signup-company.mjs';
@@ -117,6 +118,17 @@ export async function createLinkedin(opts = {}) {
     id,
     dryRun: opts.dryRun,
   });
+
+  log('após nome: checar próxima tela ou verificação humana…');
+  const afterName = await waitSignupAfterName({
+    id,
+    dryRun: opts.dryRun,
+  });
+  if (afterName?.security) {
+    log(`verificação humana resolvida (${afterName.waitedMs || 0}ms)`);
+  } else {
+    log(`sem captcha — ${afterName?.href || 'ok'}`);
+  }
 
   let locationFill = null;
   const location = String(opts.location || '').trim();
@@ -239,6 +251,7 @@ export async function createLinkedin(opts = {}) {
     submit,
     name: nameFill,
     continue: cont,
+    afterName,
     location: locationFill,
     job: jobFill,
     company: companyFill,

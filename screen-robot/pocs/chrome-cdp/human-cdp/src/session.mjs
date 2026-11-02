@@ -100,7 +100,7 @@ export class HumanCdpSession {
    */
   async enableDebugOverlay() {
     if (!this.debug) return null;
-    const source = enableDebugOverlayExpression();
+    const source = enableDebugOverlayExpression(this._fingerprint || null);
     if (!this._debugOnNewDocument) {
       try {
         await this.send('Page.addScriptToEvaluateOnNewDocument', { source });
@@ -112,7 +112,8 @@ export class HumanCdpSession {
     if (!this._debugNavHook) {
       this._debugNavHook = true;
       const reapply = () => {
-        this.evaluate(source).catch(() => {});
+        const next = enableDebugOverlayExpression(this._fingerprint || null);
+        this.evaluate(next).catch(() => {});
       };
       this._cdp.on('Page.frameNavigated', (params) => {
         if (params?.frame?.parentId) return;

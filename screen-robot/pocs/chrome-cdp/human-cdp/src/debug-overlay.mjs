@@ -11,15 +11,84 @@ const FIG_MOUSE_HTML = `<div id="fig-mouse" class="fig-mouse" aria-hidden="true"
   <span class="fig-mouse-ripple"></span>
 </div>`;
 
-/** Expressão JS (IIFE) que ativa mouse + painel fixo à direita. */
-export function enableDebugOverlayExpression() {
+/**
+ * Expressão JS (IIFE) que ativa mouse + painel fixo à direita.
+ * @param {object|null|undefined} [fingerprint] meta.fingerprint (UA, lang, tz…)
+ */
+export function enableDebugOverlayExpression(fingerprint) {
+  const fpJson = JSON.stringify(fingerprint && typeof fingerprint === 'object' ? fingerprint : null);
   return `(() => {
     const STYLE_ID = 'human-cdp-debug-style';
     const RAIL_ID = 'human-cdp-debug-rail';
     const FIG_HTML = ${JSON.stringify(FIG_MOUSE_HTML)};
+    const FP = ${fpJson};
+
+    const renderFingerprint = (rail, fp) => {
+      if (!rail) return;
+      let panel = rail.querySelector('#human-cdp-fp-panel');
+      if (!panel) {
+        const body = rail.querySelector('.rail-body') || rail;
+        panel = document.createElement('section');
+        panel.id = 'human-cdp-fp-panel';
+        panel.className = 'panel';
+        panel.innerHTML = '<h2>Fingerprint</h2><p class="hint">meta.fingerprint (CDP)</p><pre id="human-cdp-fp-pre" style="margin:0;white-space:pre-wrap;word-break:break-word;font-size:0.72rem;line-height:1.35;color:#c5d0db;max-height:14rem;overflow:auto"></pre>';
+        const score = body.querySelector('.score-card');
+        if (score && score.nextSibling) body.insertBefore(panel, score.nextSibling);
+        else body.insertBefore(panel, body.firstChild);
+      }
+      const pre = panel.querySelector('#human-cdp-fp-pre');
+      if (!pre) return;
+      if (!fp || typeof fp !== 'object') {
+        pre.textContent = '(sem fingerprint na meta)';
+        return;
+      }
+      const lines = [];
+      const put = (k, v) => {
+        if (v == null || v === '') return;
+        if (typeof v === 'object') {
+          try { lines.push(k + ': ' + JSON.stringify(v)); } catch { lines.push(k + ': [object]'); }
+        } else lines.push(k + ': ' + String(v));
+      };
+      put('userAgent', fp.userAgent);
+      put('platform', fp.platform);
+      put('lang', fp.lang);
+      put('acceptLanguage', fp.acceptLanguage);
+      put('locale', fp.locale);
+      put('timezone', fp.timezone);
+      put('hardwareConcurrency', fp.hardwareConcurrency);
+      put('deviceMemory', fp.deviceMemory);
+      put('maxTouchPoints', fp.maxTouchPoints);
+      put('colorScheme', fp.colorScheme);
+      put('reducedMotion', fp.reducedMotion);
+      put('touch', fp.touch);
+      put('webrtcIpHandling', fp.webrtcIpHandling);
+      if (fp.viewport) {
+        put('viewport', fp.viewport.width + '×' + fp.viewport.height
+          + (fp.viewport.deviceScaleFactor != null ? ' @' + fp.viewport.deviceScaleFactor : '')
+          + (fp.viewport.screenWidth ? ' screen ' + fp.viewport.screenWidth + '×' + fp.viewport.screenHeight : ''));
+      }
+      if (fp.geolocation) {
+        put('geolocation', fp.geolocation.latitude + ', ' + fp.geolocation.longitude
+          + (fp.geolocation.accuracy != null ? ' ±' + fp.geolocation.accuracy + 'm' : ''));
+      }
+      if (fp.userAgentMetadata) {
+        const m = fp.userAgentMetadata;
+        put('uaMeta', (m.platform || '') + ' ' + (m.platformVersion || '')
+          + (m.architecture ? ' ' + m.architecture : '')
+          + (m.mobile ? ' mobile' : ''));
+        if (m.brands?.length) put('brands', m.brands.map((b) => b.brand + '/' + b.version).join(', '));
+      }
+      if (fp.permissions?.length) {
+        put('permissions', fp.permissions.map((p) => (p.permission || '') + '@' + (p.origin || '') + '=' + (p.setting || 'granted')).join('; '));
+      }
+      pre.textContent = lines.length ? lines.join('\\n') : JSON.stringify(fp, null, 2);
+    };
 
     if (window.__humanCdpDebug?.enabled) {
       window.__humanCdpDebug.refresh();
+      if (typeof window.__humanCdpDebug.setFingerprint === 'function') {
+        window.__humanCdpDebug.setFingerprint(FP);
+      }
       return window.__humanCdpDebug.snapshot();
     }
 
@@ -430,6 +499,11 @@ export function enableDebugOverlayExpression() {
               <p class="score-verdict is-warn">inconclusivo</p>
               <p class="score-meta">comportamento — · live</p>
             </div>
+            <section class="panel" id="human-cdp-fp-panel">
+              <h2>Fingerprint</h2>
+              <p class="hint">meta.fingerprint (CDP)</p>
+              <pre id="human-cdp-fp-pre" style="margin:0;white-space:pre-wrap;word-break:break-word;font-size:0.72rem;line-height:1.35;color:#c5d0db;max-height:14rem;overflow:auto">(carregando…)</pre>
+            </section>
             <section class="panel">
               <h2>Comportamento</h2>
               <p class="hint">Detector portátil (fora do bot-lab). Interaja na página.</p>
@@ -450,6 +524,7 @@ export function enableDebugOverlayExpression() {
       }
       wireMinimize(rail, rail.querySelector('.rail-toggle'));
       createLiveVerdict(rail);
+      renderFingerprint(rail, FP);
       return rail;
     };
 
@@ -457,19 +532,30 @@ export function enableDebugOverlayExpression() {
       || document.getElementById('feedback-rail');
     const isBotLab = !!(labRail && document.getElementById('score-verdict') && document.getElementById('behavior-list'));
     const rail = isBotLab ? ensureBotLabRail() : ensureFallbackRail();
+    if (isBotLab) renderFingerprint(rail, FP);
     ensureFigMouse();
     moveMouse(40, 40);
 
     window.__humanCdpDebug = {
       enabled: true,
       isBotLab,
+      fingerprint: FP,
       move: moveMouse,
+      setFingerprint(fp) {
+        this.fingerprint = fp;
+        const railEl = document.querySelector('.feedback-rail')
+          || document.getElementById(RAIL_ID);
+        renderFingerprint(railEl, fp);
+      },
       refresh() {
         const r = document.querySelector('.feedback-rail')
           || document.getElementById('feedback-rail');
         this.isBotLab = !!(r && document.getElementById('score-verdict') && document.getElementById('behavior-list'));
         if (this.isBotLab) ensureBotLabRail();
         else ensureFallbackRail();
+        const railEl = document.querySelector('.feedback-rail')
+          || document.getElementById(RAIL_ID);
+        renderFingerprint(railEl, this.fingerprint);
         ensureFigMouse();
       },
       snapshot() {
@@ -479,6 +565,7 @@ export function enableDebugOverlayExpression() {
         return {
           enabled: true,
           isBotLab: this.isBotLab,
+          hasFingerprint: !!(this.fingerprint && typeof this.fingerprint === 'object'),
           mouseOn: !!(fig && fig.classList.contains('is-on')),
           railFixed: !!railEl,
           railMinimizable: !!document.getElementById('btn-rail-toggle')

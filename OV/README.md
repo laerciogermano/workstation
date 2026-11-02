@@ -12,7 +12,10 @@ Contas OmeTV (Chrome CDP `ometv-*`).
 | `sobrenome` | sobrenome |
 | `email` | caixa `@clozzy.com.br` |
 | `data_hora` | criação (`YYYY-MM-DD HH:MM:SS`) |
+| `ip` | IPv4 de egress no signup (`curl -sS https://api.ipify.org`) |
 
-**Antes → depois:** sem projeto → pasta `OV/` + CSV com header + linhas de conta.
+Mailbox Mailcow: criar via API no VPS (`add/mailbox`); senha em [`credenciais.md`](../credenciais.md) (§ Caixas `@clozzy.com.br`).
 
-**Rollback:** apagar a linha no CSV; se só o projeto, remover `OV/`.
+**Antes → depois:** sem projeto → pasta `OV/` + CSV; conta `rafaela.nogueira@clozzy.com.br` no Mailcow + linha no CSV.
+
+**Rollback:** apagar linha no CSV; remover mailbox no Mailcow; tirar linha de `credenciais.md`; se só o projeto, remover `OV/`.

@@ -80,7 +80,7 @@ Sem UI, **sem CSV**, **sem JSON central**, **sem `start-*.sh`**. Fonte no disco:
 - porta `up`: processo Chrome com `--user-data-dir` + `--remote-debugging-port`
 
 ```js
-import { listCdps, createCdp, connectCdp, removeCdp } from './src/index.mjs';
+import { listCdps, createCdp, connectCdp, removeCdp, updateCdp } from './src/index.mjs';
 
 listCdps(); // pastas em ~/chrome-profiles + porta se Chrome estiver no ar
 createCdp({ id: 'meu-perfil', name: 'Meu Perfil', port: 9240 });
@@ -88,6 +88,34 @@ const page = await connectCdp('meu-perfil');
 page.close();
 // removeCdp('meu-perfil') // default não apaga a pasta do perfil
 ```
+
+### Fingerprint por CDP
+
+Meta `~/chrome-profiles/<id>/.human-cdp.json` → campo `fingerprint`. Aplicado em `startCdp` (`--lang`) e automaticamente em `connectCdp` (UA / Accept-Language / timezone / locale / viewport). Reaplica no `goto`.
+
+```js
+updateCdp('ometv-1', {
+  fingerprint: {
+    userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36',
+    lang: 'pt-BR',
+    timezone: 'America/Sao_Paulo',
+    viewport: { width: 1512, height: 982, deviceScaleFactor: 2 },
+  },
+});
+updateCdp('ometv-2', {
+  fingerprint: {
+    userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36',
+    lang: 'en-US',
+    timezone: 'America/Fortaleza',
+    viewport: { width: 1440, height: 900, deviceScaleFactor: 2 },
+  },
+});
+// --lang só vale no próximo startCdp (parar e subir de novo)
+```
+
+Override pontual: `connectCdp('ometv-2', { fingerprint: { … } })`. Limite: canvas/WebGL/áudio/IP não mudam.
+
+**Antes → depois:** CDPs sem diferenciação → `fingerprint` na meta + apply no connect. Rollback: `updateCdp(id, { fingerprint: null })` e reiniciar Chrome.
 
 ```bash
 npm run test:registry  # usa só id temporário smoke-tmp-registry

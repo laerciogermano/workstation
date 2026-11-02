@@ -41,8 +41,28 @@ if (!existsSync(join(profilesDir(), SMOKE_ID, '.human-cdp.json'))) {
 }
 if (!getCdp(SMOKE_ID)) throw new Error('getCdp falhou');
 
-const updated = updateCdp(SMOKE_ID, { obs: 'smoke-ok' });
+const updated = updateCdp(SMOKE_ID, {
+  obs: 'smoke-ok',
+  fingerprint: {
+    lang: 'en-US',
+    timezone: 'America/Fortaleza',
+    viewport: { width: 1280, height: 720, deviceScaleFactor: 1 },
+  },
+});
 if (updated.obs !== 'smoke-ok') throw new Error('updateCdp falhou');
+if (updated.fingerprint?.lang !== 'en-US') throw new Error('fingerprint não persistiu');
+if (updated.fingerprint?.timezone !== 'America/Fortaleza') {
+  throw new Error('fingerprint timezone ausente');
+}
+
+const cleared = updateCdp(SMOKE_ID, { fingerprint: null });
+if (cleared.fingerprint) throw new Error('fingerprint null não removeu');
+updateCdp(SMOKE_ID, {
+  fingerprint: {
+    lang: 'pt-BR',
+    timezone: 'America/Sao_Paulo',
+  },
+});
 
 const st = await statusCdp(SMOKE_ID);
 console.log('statusCdp', st.status, st.cdpUrl);

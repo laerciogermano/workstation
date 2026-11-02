@@ -9,6 +9,7 @@ import {
   enableDebugOverlayExpression,
   moveDebugOverlayExpression,
 } from './debug-overlay.mjs';
+import { applyFingerprint } from './fingerprint.mjs';
 import {
   clickGapMs,
   keyGapMs,
@@ -127,6 +128,9 @@ export class HumanCdpSession {
       await sleep(150);
     }
     await this.ensureFocus({ settleMs: 150, force: true });
+    if (this._fingerprint) {
+      await applyFingerprint(this, this._fingerprint);
+    }
     await this.enableDebugOverlay();
   }
 

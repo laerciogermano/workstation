@@ -9,6 +9,10 @@ export {
 } from './human.mjs';
 export { createCdpSession, pickPage, openPage, getJson } from './cdp.mjs';
 export {
+  applyFingerprint,
+  normalizeFingerprint,
+} from './fingerprint.mjs';
+export {
   listCdps,
   getCdp,
   createCdp,

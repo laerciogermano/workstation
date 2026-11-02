@@ -20,6 +20,10 @@ import {
 import { homedir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import {
+  applyFingerprint,
+  normalizeFingerprint,
+} from './fingerprint.mjs';
 import { connect } from './session.mjs';
 
 const __dir = dirname(fileURLToPath(import.meta.url));
@@ -161,6 +165,7 @@ export function listCdps() {
       hasMeta: Boolean(meta),
       defaultUrl: meta?.defaultUrl || '',
       obs: meta?.obs || '',
+      fingerprint: normalizeFingerprint(meta?.fingerprint),
       createdAt: meta?.createdAt || null,
       updatedAt: meta?.updatedAt || null,
     });
@@ -200,12 +205,14 @@ export function createCdp(input) {
   }
 
   const now = new Date().toISOString();
+  const fingerprint = normalizeFingerprint(input.fingerprint);
   writeMeta(id, {
     id,
     name,
     port,
     defaultUrl: String(input.defaultUrl || '').trim(),
     obs: String(input.obs || '').trim(),
+    ...(fingerprint ? { fingerprint } : {}),
     createdAt: now,
     updatedAt: now,
   });
@@ -224,6 +231,11 @@ export function updateCdp(id, patch) {
     port: patch.port != null ? Number(patch.port) : prev.port,
     updatedAt: new Date().toISOString(),
   };
+  if ('fingerprint' in patch) {
+    const fingerprint = normalizeFingerprint(patch.fingerprint);
+    if (fingerprint) next.fingerprint = fingerprint;
+    else delete next.fingerprint;
+  }
   if (
     listCdps().some(
       (c) =>
@@ -287,6 +299,8 @@ export async function startCdp(id, { url } = {}) {
     throw new Error(`Chrome não encontrado: ${CHROME_BIN}`);
   }
   mkdirSync(row.userDataDirExpanded, { recursive: true });
+  const meta = readMeta(row.id);
+  const fp = normalizeFingerprint(meta?.fingerprint);
   const args = [
     `--user-data-dir=${row.userDataDirExpanded}`,
     '--remote-debugging-address=127.0.0.1',
@@ -295,6 +309,7 @@ export async function startCdp(id, { url } = {}) {
     '--no-first-run',
     '--no-default-browser-check',
   ];
+  if (fp?.lang) args.push(`--lang=${fp.lang}`);
   const openUrl = url || row.defaultUrl;
   if (openUrl) args.push(openUrl);
 
@@ -366,7 +381,7 @@ export async function connectCdp(id, connectOpts = {}) {
     st = await startCdp(row.id, { url: connectOpts.url || row.defaultUrl });
   }
   if (!st.cdpUrl) throw new Error(`sem cdpUrl para ${row.id}`);
-  return connect({
+  const session = await connect({
     cdpUrl: st.cdpUrl,
     url: connectOpts.url,
     urlIncludes: connectOpts.urlIncludes,
@@ -374,6 +389,15 @@ export async function connectCdp(id, connectOpts = {}) {
     chromeApp: connectOpts.chromeApp,
     debug: connectOpts.debug,
   });
+  const fp =
+    normalizeFingerprint(connectOpts.fingerprint) ||
+    normalizeFingerprint(row.fingerprint) ||
+    normalizeFingerprint(readMeta(row.id)?.fingerprint);
+  if (fp) {
+    session._fingerprint = fp;
+    await applyFingerprint(session, fp);
+  }
+  return session;
 }
 
 // compat exports

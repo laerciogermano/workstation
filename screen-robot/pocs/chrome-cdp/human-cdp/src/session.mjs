@@ -14,6 +14,7 @@ import {
   clickGapMs,
   keyGapMs,
   moveAlong,
+  pathToTarget,
   pressRelease,
   rand,
   randInt,
@@ -189,24 +190,13 @@ export class HumanCdpSession {
   }
 
   /**
-   * Move continuamente de `_cursor` até (x,y). Sem pulos.
+   * Arrasta o ponteiro continuamente de `_cursor` até (x,y).
+   * Sempre multi-ponto — nunca teleporta, mesmo perto do alvo.
    * @returns {{ x: number, y: number }}
    */
-  async _moveTo(x, y, { steps } = {}) {
+  async _moveTo(x, y, { steps, minSteps = 10 } = {}) {
     await this.ensureFocus({ settleMs: 80 });
-    const target = { x, y };
-    const dist = Math.hypot(x - this._cursor.x, y - this._cursor.y);
-    if (dist < 0.5) {
-      // ainda assim emite um mouseMoved âncora (continuidade / pre-click-move)
-      await this.send('Input.dispatchMouseEvent', {
-        type: 'mouseMoved',
-        x: this._cursor.x,
-        y: this._cursor.y,
-      });
-      await this._followDebugCursor(this._cursor.x, this._cursor.y);
-      return this._cursor;
-    }
-    const pts = trajectoryPoints(this._cursor, target, { steps });
+    const pts = pathToTarget(this._cursor, { x, y }, { steps, minSteps });
     const last = await moveAlong(this.send.bind(this), pts);
     this._setCursor(last.x, last.y);
     await this._followDebugCursor(last.x, last.y);
@@ -214,27 +204,20 @@ export class HumanCdpSession {
   }
 
   /**
-   * Clique humano: foco + trajetória contínua até o alvo + press/release.
-   * O press ocorre exatamente onde o ponteiro parou (sem teleporte no down).
-   * @param {string} selector
+   * Clique em coordenadas: **sempre** arrasta até (x,y) antes do press.
+   * @param {number} x
+   * @param {number} y
    * @param {{ clicks?: number, delayMs?: number }} [opts]
    */
-  async click(selector, { clicks = 1, delayMs } = {}) {
+  async clickAt(x, y, { clicks = 1, delayMs } = {}) {
     await this.ensureFocus({ force: true });
-    const box = await this.waitFor(selector);
-    await this.ensureFocus({ settleMs: 120, force: true });
-    const jitterX = rand(-3, 3);
-    const jitterY = rand(-3, 3);
-    const x = box.cx + jitterX;
-    const y = box.cy + jitterY;
     await this._moveTo(x, y);
     await sleep(randInt(40, 120));
     await this.ensureFocus({ settleMs: 60, force: true });
     for (let i = 0; i < clicks; i++) {
-      // micro-ajuste contínuo (não teleporta o down)
-      const ox = this._cursor.x + rand(-1.5, 1.5);
-      const oy = this._cursor.y + rand(-1.5, 1.5);
-      await this._moveTo(ox, oy);
+      const ox = this._cursor.x + rand(-1.2, 1.2);
+      const oy = this._cursor.y + rand(-1.2, 1.2);
+      await this._moveTo(ox, oy, { minSteps: 6 });
       await pressRelease(this.send.bind(this), this._cursor.x, this._cursor.y);
       await this._followDebugCursor(this._cursor.x, this._cursor.y);
       if (i < clicks - 1) {
@@ -242,6 +225,23 @@ export class HumanCdpSession {
         await sleep(delayMs ?? clickGapMs());
       }
     }
+  }
+
+  /**
+   * Clique humano: foco + **arrasta** até o alvo + press/release na posição atual.
+   * Proibido press sem trajetória prévia.
+   * @param {string} selector
+   * @param {{ clicks?: number, delayMs?: number }} [opts]
+   */
+  async click(selector, { clicks = 1, delayMs } = {}) {
+    await this.ensureFocus({ force: true });
+    const box = await this.waitFor(selector);
+    // re-lê box após scrollIntoView (waitFor) — alvo final antes de arrastar
+    const box2 = (await this.boundingBox(selector)) || box;
+    await this.ensureFocus({ settleMs: 120, force: true });
+    const x = box2.cx + rand(-3, 3);
+    const y = box2.cy + rand(-3, 3);
+    return this.clickAt(x, y, { clicks, delayMs });
   }
 
   async hover(selector) {

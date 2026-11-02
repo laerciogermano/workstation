@@ -161,6 +161,8 @@ Scripts CDP crus (`el.click`, `dispatchMouseEvent` sem move) → importam `human
 
 **Antes → depois (trajetória):** pontas com jitter + passos longos + press deslocado do último `mouseMoved` → teleportes no bot-lab. Agora: âncoras exatas, densify ≤36px, step ≥16ms, press na posição atual, cursor persistido por `cdpUrl`. Rollback: `trajectoryPoints`/`_moveTo`/`click` anteriores.
 
+**Antes → depois (clique):** distância curta podia só âncora sem “arrasto” → `pathToTarget` + `clickAt`: **sempre** trajetória multi-ponto até o alvo antes do press (micro-arco se perto). Regra: [`.cursor/rules/human-cdp-clique-com-trajetoria.mdc`](../../../../.cursor/rules/human-cdp-clique-com-trajetoria.mdc).
+
 **Rollback:** voltar ao CDP cru nos scripts; apagar `human-cdp/`.
 
 ## Caminho inverso

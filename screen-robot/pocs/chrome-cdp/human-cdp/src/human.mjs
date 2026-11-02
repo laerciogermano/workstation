@@ -52,6 +52,25 @@ export function trajectoryPoints(from, to, { steps, jitter = 0.9, maxStepPx = MA
 }
 
 /** Insere midpoints se algum segmento passar de maxStepPx. */
+/**
+ * Trajetória obrigatória até o alvo (sempre ≥ minSteps).
+ * Distância curta → micro-arco (sai e volta) para nunca “teleportar” o clique.
+ */
+export function pathToTarget(from, to, { steps, minSteps = 10 } = {}) {
+  const dist = Math.hypot(to.x - from.x, to.y - from.y);
+  if (dist < 12) {
+    const mid = {
+      x: from.x + rand(-22, 22),
+      y: from.y + rand(-22, 22),
+    };
+    const a = trajectoryPoints(from, mid, { steps: Math.max(6, Math.ceil(minSteps / 2)) });
+    const b = trajectoryPoints(mid, to, { steps: Math.max(6, Math.ceil(minSteps / 2)) });
+    return densify([...a, ...b.slice(1)]);
+  }
+  const n = Math.max(minSteps, steps ?? Math.min(80, Math.max(12, Math.round(dist / 10))));
+  return trajectoryPoints(from, to, { steps: n });
+}
+
 export function densify(points, maxStepPx = MAX_STEP_PX) {
   if (!points?.length) return [];
   const out = [{ x: points[0].x, y: points[0].y }];

@@ -1,0 +1,24 @@
+---
+description: Todo clique via human-cdp deve arrastar o mouse até o alvo antes do press
+alwaysApply: true
+---
+
+# Clique = arrastar até o ponto
+
+Sempre que for clicar em Chrome/CDP neste lab, o ponteiro **tem que se mover até o alvo** antes do `mousePressed`.
+
+## Critérios
+
+1. Usar só `human-cdp`: `click(selector)`, `clickAt(x,y)`, `hover`, `drag` — nunca `el.click()`, `dispatchEvent`, nem `Input.dispatchMouseEvent` de press/click solto
+2. O fluxo obrigatório é: trajetória contínua (`mouseMoved` multi-ponto) → depois press/release **na posição atual do cursor**
+3. Não “pular” o mouse para o botão; distância curta ainda gera micro-arco (`pathToTarget`)
+4. Scripts/automatizações novas: importar `connectCdp` / `connect` e chamar `page.click(...)`
+
+## Exemplos
+
+```text
+✅ await page.click('#btn-primary')
+✅ await page.clickAt(cx, cy)
+❌ await page.send('Input.dispatchMouseEvent', { type: 'mousePressed', x, y })
+❌ el.click() / element.click() via Runtime.evaluate
+```

@@ -4,6 +4,8 @@ export {
   rand,
   randInt,
   trajectoryPoints,
+  pathToTarget,
+  densify,
   moveAlong,
   pressRelease,
 } from './human.mjs';

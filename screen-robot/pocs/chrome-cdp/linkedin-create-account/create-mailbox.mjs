@@ -93,6 +93,7 @@ async function main() {
     last: emailResult.name?.split(/\s+/).slice(1).join(' ') || 'Campos',
     location: 'Rio de Janeiro',
     job: 'Especialista em suprimentos e itens corporativos',
+    company: 'ConectMax',
     dryRun,
     skipBrowser: noBrowser,
   });

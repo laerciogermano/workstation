@@ -1,6 +1,6 @@
 /**
  * Criação da conta LinkedIn (passo browser).
- * … → localidade → Continuar → cargo.
+ * … → localidade → cargo → empresa → Continuar.
  */
 import { openLinkedInSignup } from './open-signup.mjs';
 import { fillSignupEmail } from './fill-signup-email.mjs';
@@ -10,6 +10,7 @@ import { fillSignupName } from './fill-signup-name.mjs';
 import { clickSignupContinue } from './click-signup-continue.mjs';
 import { fillSignupLocation } from './fill-signup-location.mjs';
 import { fillSignupJob } from './fill-signup-job.mjs';
+import { fillSignupCompany } from './fill-signup-company.mjs';
 
 const DEFAULT_LI_PASSWORD = 'in@12345678';
 
@@ -22,6 +23,7 @@ const DEFAULT_LI_PASSWORD = 'in@12345678';
  *   last?: string,
  *   location?: string,
  *   job?: string,
+ *   company?: string,
  *   url?: string,
  *   dryRun?: boolean,
  *   skipBrowser?: boolean,
@@ -43,6 +45,7 @@ export async function createLinkedin(opts = {}) {
       continue: null,
       location: null,
       job: null,
+      company: null,
     };
   }
 
@@ -111,6 +114,16 @@ export async function createLinkedin(opts = {}) {
     });
   }
 
+  let companyFill = null;
+  const company = String(opts.company || opts.empresa || '').trim();
+  if (company) {
+    companyFill = await fillSignupCompany({
+      id,
+      company,
+      dryRun: opts.dryRun,
+    });
+  }
+
   return {
     id,
     skipped: false,
@@ -122,5 +135,6 @@ export async function createLinkedin(opts = {}) {
     continue: cont,
     location: locationFill,
     job: jobFill,
+    company: companyFill,
   };
 }

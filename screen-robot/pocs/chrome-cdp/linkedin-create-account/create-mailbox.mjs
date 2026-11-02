@@ -60,22 +60,30 @@ async function main() {
     dryRun,
   };
 
-  const [emailResult, cdpResult] = await Promise.all([
-    Promise.resolve(
-      createEmail({
-        ...common,
-        email: email || undefined,
-        writeCredenciais,
-      }),
-    ),
-    Promise.resolve(createLinkedInCdp(common)),
-  ]);
+  // const [emailResult, cdpResult] = await Promise.all([
+  //   Promise.resolve(
+  //     createEmail({
+  //       ...common,
+  //       email: email || undefined,
+  //       writeCredenciais,
+  //     }),
+  //   ),
+  //   Promise.resolve(createLinkedInCdp(common)),
+  // ]);
 
-  const csvResult = saveAccountCsv({
-    email: emailResult,
-    cdp: cdpResult,
-    dryRun,
-  });
+  // const csvResult = saveAccountCsv({
+  //   email: emailResult,
+  //   cdp: cdpResult,
+  //   dryRun,
+  // });
+
+  // --- DEV: conta já criada (mailbox + CDP). Trocar id/email ao testar outra. ---
+  const emailResult = {
+    email: 'rafael.campos@clozzy.com.br',
+    name: 'Rafael Campos',
+  };
+  const cdpResult = { id: 'rafael-campos', port: 9239 };
+  const csvResult = { skipped: true, note: 'dev-connect' };
 
   const linkedinResult = await createLinkedin({
     id: cdpResult.id,

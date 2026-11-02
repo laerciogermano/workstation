@@ -99,9 +99,9 @@ System prompt (IA = Laércio Germano no Tinder; **só a última não lida**; pr�
 
 **Autorização:** rascunho `[EU]` → “Autorizo enviar?” → só manda após ok explícito. Conteúdo decide sozinho; envio não.
 
-**Tom:** linguagem sempre informal de celular; **proibido** português extremamente correto.
+**Tom:** informal de celular; simpático; sempre puxa/continua papo; **vinho na brecha**; **proibido** português extremamente correto.
 
-**Antes → depois:** só personalidade/§7.1 → prompt autocontido + ok antes de enviar + regra anti-português-certo. Rollback: apagar o arquivo; usar só o doc de personalidade.
+**Antes → depois:** prompt só voz/última não lida → + ok antes de enviar + anti-português-certo + simpatia/continuidade + vinho como destino na brecha. Rollback: apagar o arquivo; usar só o doc de personalidade.
 
 ### Loop contínuo (CDP :9230)
 

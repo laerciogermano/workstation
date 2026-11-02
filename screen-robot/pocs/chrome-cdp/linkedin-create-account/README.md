@@ -19,7 +19,7 @@ node create-mailbox.mjs --first Bruno --last Nunes --write-credenciais
 
 Saída JSON: `{ email, cdp }`.
 
-**CDP:** porta livre a partir de `9237`, fingerprint default Win/Chrome130/Curitiba (**sem viewport**), `debug: true`. Idempotente se o id já existir.
+**CDP:** porta livre a partir de `9237`; fingerprint **dinâmico** via `generateFingerprint()` (OS/Chrome/cidade BR coerentes, sem viewport; evita tz+UA+hw+mem já usados); `debug: true`. Idempotente se o id já existir. Override: `createLinkedInCdp({ fingerprint })`.
 
 **E-mail:** `MAIL_SSH_HOST` · `MAIL_SSH_PASS` · `MAIL_DOMAIN`. Quota default `1024` MiB. Idempotente se a caixa já existir.
 

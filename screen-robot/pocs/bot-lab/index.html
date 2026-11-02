@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>bot-lab — detecção humano vs robô</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="top">
+      <div>
+        <p class="eyebrow">screen-robot · POC</p>
+        <h1>bot-lab</h1>
+        <p class="lede">
+          UI de laboratório + checks no espírito de
+          <a href="https://bot.sannysoft.com/" target="_blank" rel="noreferrer">bot.sannysoft.com</a>
+          e heurísticas de mouse/teclado.
+        </p>
+      </div>
+      <aside class="score-card" id="score-card" aria-live="polite">
+        <p class="score-label">Veredito</p>
+        <p class="score-verdict" id="score-verdict">…</p>
+        <p class="score-meta" id="score-meta">ambiente — · comportamento —</p>
+      </aside>
+    </header>
+
+    <main class="grid">
+      <section class="panel">
+        <h2>Ambiente (paridade sannysoft)</h2>
+        <p class="hint">Pass = verde · Fail = vermelho. Mesmos tipos de sinal do Intoli/sannysoft.</p>
+        <table class="checks" id="env-table">
+          <thead>
+            <tr>
+              <th>Teste</th>
+              <th>Resultado</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <details class="details">
+          <summary>Detalhes do navigator / screen</summary>
+          <pre id="env-details"></pre>
+        </details>
+      </section>
+
+      <section class="panel">
+        <h2>Comportamento (mouse / teclado)</h2>
+        <p class="hint">Interaja na área abaixo. CDP sem trajetória tende a falhar.</p>
+        <ul class="checks-list" id="behavior-list"></ul>
+        <div class="meters">
+          <div><span>Pontos de ponteiro</span><strong id="m-points">0</strong></div>
+          <div><span>Cliques</span><strong id="m-clicks">0</strong></div>
+          <div><span>Teclas</span><strong id="m-keys">0</strong></div>
+          <div><span>Último click trusted</span><strong id="m-trusted">—</strong></div>
+        </div>
+      </section>
+
+      <section class="panel playground" id="playground">
+        <h2>Playground UI</h2>
+        <p class="hint">Use mouse e teclado como humano. Arraste o handle; preencha o formulário.</p>
+
+        <div class="ui-row">
+          <button type="button" class="btn" id="btn-primary">Botão primário</button>
+          <button type="button" class="btn ghost" id="btn-secondary">Secundário</button>
+          <a class="link" href="#playground" id="link-demo">Link interno</a>
+        </div>
+
+        <form class="form" id="demo-form" autocomplete="on">
+          <label>
+            Nome
+            <input type="text" name="nome" id="input-nome" placeholder="Digite algo" />
+          </label>
+          <label>
+            Opção
+            <select name="opcao" id="select-opcao">
+              <option value="">—</option>
+              <option value="a">Alpha</option>
+              <option value="b">Beta</option>
+              <option value="c">Gamma</option>
+            </select>
+          </label>
+          <label class="check">
+            <input type="checkbox" name="aceito" id="check-aceito" />
+            Aceito os termos
+          </label>
+          <button type="submit" class="btn">Enviar</button>
+        </form>
+
+        <div class="drag-zone" id="drag-zone">
+          <div class="drag-handle" id="drag-handle" role="slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0">
+            arraste
+          </div>
+        </div>
+
+        <p class="log" id="ui-log">Nenhuma ação ainda.</p>
+      </section>
+    </main>
+
+    <footer class="foot">
+      <span>Local only · não envia dados</span>
+      <button type="button" class="btn ghost" id="btn-reset">Zerar comportamento</button>
+    </footer>
+
+    <!-- canvas ocultos para fingerprint / broken image -->
+    <canvas id="c1" width="220" height="30" hidden></canvas>
+    <img id="broken-img" alt="" src="./missing-image-bot-lab.png" width="16" height="16" hidden />
+
+    <script src="app.js" type="module"></script>
+  </body>
+</html>

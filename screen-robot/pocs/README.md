@@ -5,6 +5,8 @@ Runtime canônico (Mac / apps de loja): **Android Emulator / AVD**.
 | POC | Descrição |
 |-----|-----------|
 | [`android-studio/`](android-studio/README.md) | **Canônico** — AVD no host (`provision.kind: "avd"`) |
+| [`chrome-cdp/`](chrome-cdp/README.md) | Controlar Chrome aberto via CDP (LinkedIn / sannysoft / …) |
+| [`bot-lab/`](bot-lab/README.md) | Site lab: UI + detecção robô (paridade sannysoft + mouse/teclado) |
 | [`docker-avd/`](docker-avd/README.md) | **Opcional Linux+KVM** — emulador oficial Google em Docker (`kind: "docker-avd"`); estado em volume + export/import |
 | [`redroid/`](redroid/README.md) | Legado — Android container sem GMS útil para loja |
 

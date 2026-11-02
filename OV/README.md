@@ -13,6 +13,7 @@ Contas OmeTV (Chrome CDP `ometv-*`).
 | `email` | caixa `@clozzy.com.br` |
 | `data_hora` | criação (`YYYY-MM-DD HH:MM:SS`) |
 | `ip` | IPv4 de egress no signup (`curl -sS https://api.ipify.org`) |
+| `senha_facebook` | senha da conta Facebook |
 
 Mailbox Mailcow: criar via API no VPS (`add/mailbox`); senha em [`credenciais.md`](../credenciais.md) (§ Caixas `@clozzy.com.br`).
 

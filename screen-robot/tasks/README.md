@@ -82,3 +82,4 @@ tasks/
 | Pasta | Card |
 |-------|------|
 | [`6ae8ac1d5228997f864b40c5/`](6ae8ac1d5228997f864b40c5/README.md) | [Lib CDP humana](https://trello.com/c/5tt5ZTeN) |
+| [`6ae8b23dccd25f22a26e5916/`](6ae8b23dccd25f22a26e5916/README.md) | [CRUD de CDPs](https://trello.com/c/hoLSkLko) |

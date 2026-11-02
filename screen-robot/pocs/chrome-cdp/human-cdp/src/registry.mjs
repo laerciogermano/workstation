@@ -22,6 +22,7 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   applyFingerprint,
+  chromeArgsFromFingerprint,
   normalizeFingerprint,
 } from './fingerprint.mjs';
 import { connect } from './session.mjs';
@@ -308,8 +309,8 @@ export async function startCdp(id, { url } = {}) {
     '--remote-allow-origins=*',
     '--no-first-run',
     '--no-default-browser-check',
+    ...chromeArgsFromFingerprint(fp),
   ];
-  if (fp?.lang) args.push(`--lang=${fp.lang}`);
   const openUrl = url || row.defaultUrl;
   if (openUrl) args.push(openUrl);
 

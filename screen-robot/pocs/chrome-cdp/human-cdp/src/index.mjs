@@ -10,6 +10,7 @@ export {
 export { createCdpSession, pickPage, openPage, getJson } from './cdp.mjs';
 export {
   applyFingerprint,
+  chromeArgsFromFingerprint,
   normalizeFingerprint,
 } from './fingerprint.mjs';
 export {

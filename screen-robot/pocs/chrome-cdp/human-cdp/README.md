@@ -91,31 +91,53 @@ page.close();
 
 ### Fingerprint por CDP
 
-Meta `~/chrome-profiles/<id>/.human-cdp.json` → campo `fingerprint`. Aplicado em `startCdp` (`--lang`) e automaticamente em `connectCdp` (UA / Accept-Language / timezone / locale / viewport). Reaplica no `goto`.
+Meta `~/chrome-profiles/<id>/.human-cdp.json` → `fingerprint`.
+
+**startCdp:** `--lang`, `--force-webrtc-ip-handling-policy=…`, `chromeArgs[]`  
+**connectCdp / goto:** UA + Client Hints (`userAgentMetadata`), platform, Accept-Language, timezone, locale, viewport/screen, geolocation, hardwareConcurrency, deviceMemory, maxTouchPoints, colorScheme, reducedMotion, touch, permissions + patch JS de `navigator`/`screen`.
 
 ```js
-updateCdp('ometv-1', {
-  fingerprint: {
-    userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36',
-    lang: 'pt-BR',
-    timezone: 'America/Sao_Paulo',
-    viewport: { width: 1512, height: 982, deviceScaleFactor: 2 },
-  },
-});
 updateCdp('ometv-2', {
   fingerprint: {
-    userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36',
+    userAgent: 'Mozilla/5.0 … Chrome/140.0.0.0 Safari/537.36',
+    platform: 'MacIntel',
     lang: 'en-US',
+    acceptLanguage: 'en-US,en;q=0.9',
     timezone: 'America/Fortaleza',
-    viewport: { width: 1440, height: 900, deviceScaleFactor: 2 },
+    locale: 'en-US',
+    viewport: {
+      width: 1440, height: 900, deviceScaleFactor: 2,
+      screenWidth: 1920, screenHeight: 1080,
+    },
+    geolocation: { latitude: -3.73, longitude: -38.52, accuracy: 40 },
+    hardwareConcurrency: 8,
+    deviceMemory: 8,
+    maxTouchPoints: 0,
+    colorScheme: 'dark',
+    reducedMotion: 'no-preference',
+    touch: false,
+    webrtcIpHandling: 'default_public_interface_only',
+    userAgentMetadata: {
+      platform: 'macOS', platformVersion: '14.5.0', architecture: 'x86',
+      model: '', mobile: false, bitness: '64',
+      brands: [
+        { brand: 'Chromium', version: '140' },
+        { brand: 'Not=A?Brand', version: '24' },
+        { brand: 'Google Chrome', version: '140' },
+      ],
+    },
+    permissions: [
+      { origin: 'https://ome.tv', permission: 'geolocation', setting: 'granted' },
+    ],
   },
 });
-// --lang só vale no próximo startCdp (parar e subir de novo)
+// flags (--lang / webrtc) só no próximo startCdp
 ```
 
-Override pontual: `connectCdp('ometv-2', { fingerprint: { … } })`. Limite: canvas/WebGL/áudio/IP não mudam.
+Override pontual: `connectCdp(id, { fingerprint })`.  
+**Não cobre:** canvas/WebGL/áudio reais, IP de egress.
 
-**Antes → depois:** CDPs sem diferenciação → `fingerprint` na meta + apply no connect. Rollback: `updateCdp(id, { fingerprint: null })` e reiniciar Chrome.
+**Antes → depois:** fingerprint básico (UA/lang/tz/viewport) → conjunto completo acima. Rollback: `updateCdp(id, { fingerprint: null })` + restart.
 
 ```bash
 npm run test:registry  # usa só id temporário smoke-tmp-registry

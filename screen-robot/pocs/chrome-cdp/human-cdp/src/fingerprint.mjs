@@ -261,10 +261,13 @@ function patchNavigatorScript(n) {
 /**
  * @param {{ send: (method: string, params?: object) => Promise<unknown> }} session
  * @param {FingerprintConfig|null|undefined} fp
+ * @param {{ onNewDocument?: boolean }} [opts] onNewDocument=false → só Runtime.evaluate
+ *   (evita empilhar Page.addScriptToEvaluateOnNewDocument a cada F5)
  */
-export async function applyFingerprint(session, fp) {
+export async function applyFingerprint(session, fp, opts = {}) {
   const n = normalizeFingerprint(fp);
   if (!n) return { applied: false };
+  const onNewDocument = opts.onNewDocument !== false;
 
   const applied = {};
   const softFail = async (label, fn) => {
@@ -415,12 +418,14 @@ export async function applyFingerprint(session, fp) {
   }
 
   const script = patchNavigatorScript(n);
-  if (
-    await softFail('Page.addScriptToEvaluateOnNewDocument', () =>
-      session.send('Page.addScriptToEvaluateOnNewDocument', { source: script }),
-    )
-  ) {
-    applied.navigatorPatchOnNewDocument = true;
+  if (onNewDocument) {
+    if (
+      await softFail('Page.addScriptToEvaluateOnNewDocument', () =>
+        session.send('Page.addScriptToEvaluateOnNewDocument', { source: script }),
+      )
+    ) {
+      applied.navigatorPatchOnNewDocument = true;
+    }
   }
   if (
     await softFail('Runtime.evaluate:navigatorPatch', () =>

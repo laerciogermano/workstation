@@ -1,13 +1,14 @@
 /**
- * Mantém fingerprint aplicado no CDP enquanto o Chrome estiver up.
- * Reaplica em frameNavigated / load — F5 e navegações não perdem o override.
+ * Mantém fingerprint em TODAS as abas do CDP enquanto o Chrome estiver up.
+ * Conecta no browser WS + Target.setAutoAttach (flatten) — F5/nova aba não
+ * perdem o override quando o connectCdp fecha a sessão.
  *
  * Uso: node src/fingerprint-keeper.mjs <cdp-id>
  */
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
-import { createCdpSession, pickPage } from './cdp.mjs';
+import { createCdpSession, getJson } from './cdp.mjs';
 import { applyFingerprint, normalizeFingerprint } from './fingerprint.mjs';
 
 const id = process.argv[2];
@@ -48,46 +49,128 @@ writeFileSync(pidPath, String(process.pid));
 process.on('SIGTERM', () => process.exit(0));
 process.on('SIGINT', () => process.exit(0));
 
-async function attachOnce(fp) {
+/**
+ * Sessão lógica num target page (via flatten + sessionId no browser WS).
+ */
+function pageSession(browser, sessionId) {
+  return {
+    send(method, params = {}) {
+      return browser.send(method, params, { sessionId });
+    },
+  };
+}
+
+async function attachBrowser(fp) {
   const port = portOf();
   if (port == null) throw new Error('sem porta');
   const cdpBase = `http://127.0.0.1:${port}`;
-  const page = await pickPage(cdpBase);
-  const session = createCdpSession(page.webSocketDebuggerUrl);
-  await session.ready;
-  await session.send('Page.enable', {});
-  await session.send('Runtime.enable', {});
-  await applyFingerprint(session, fp);
+  const version = await getJson(cdpBase, '/json/version');
+  const browserWs = version?.webSocketDebuggerUrl;
+  if (!browserWs) throw new Error('sem browser WS');
 
-  let timer = null;
-  const reapply = () => {
-    if (timer) clearTimeout(timer);
-    timer = setTimeout(async () => {
+  const browser = createCdpSession(browserWs);
+  await browser.ready;
+
+  /** @type {Map<string, { appliedScript: boolean, timer: NodeJS.Timeout|null }>} */
+  const pages = new Map();
+
+  const schedule = (sessionId, { withNewDocumentScript = false } = {}) => {
+    const st = pages.get(sessionId);
+    if (!st) return;
+    if (st.timer) clearTimeout(st.timer);
+    st.timer = setTimeout(async () => {
       const next = loadFp() || fp;
+      if (!next) return;
+      const session = pageSession(browser, sessionId);
       try {
-        await applyFingerprint(session, next);
+        const needScript = withNewDocumentScript || !st.appliedScript;
+        await applyFingerprint(session, next, {
+          onNewDocument: needScript,
+        });
+        if (needScript) st.appliedScript = true;
       } catch {
-        /* target sumiu — loop externo reconecta */
+        /* target sumiu */
+        pages.delete(sessionId);
       }
-    }, 120);
+    }, 0);
   };
 
-  session.on('Page.frameNavigated', (params) => {
-    if (params?.frame?.parentId) return; // só main frame
-    reapply();
+  const onAttached = async (params) => {
+    const sessionId = params?.sessionId;
+    const type = params?.targetInfo?.type;
+    if (!sessionId || type !== 'page') return;
+    if (pages.has(sessionId)) return;
+    pages.set(sessionId, { appliedScript: false, timer: null });
+    try {
+      await browser.send('Page.enable', {}, { sessionId });
+      await browser.send('Runtime.enable', {}, { sessionId });
+    } catch {
+      pages.delete(sessionId);
+      return;
+    }
+    schedule(sessionId, { withNewDocumentScript: true });
+  };
+
+  browser.on('Target.attachedToTarget', onAttached);
+  browser.on('Target.detachedFromTarget', (params) => {
+    const sessionId = params?.sessionId;
+    if (!sessionId) return;
+    const st = pages.get(sessionId);
+    if (st?.timer) clearTimeout(st.timer);
+    pages.delete(sessionId);
   });
-  session.on('Page.loadEventFired', reapply);
-  session.on('Page.navigatedWithinDocument', reapply);
+  browser.on('Page.frameNavigated', (params, msg) => {
+    const sessionId = msg?.sessionId;
+    if (!sessionId || !pages.has(sessionId)) return;
+    if (params?.frame?.parentId) return;
+    // overrides de Network/Emulation costumam sobreviver ao F5 se a sessão
+    // do keeper segue aberta; reaplica na hora + patch Runtime.evaluate
+    schedule(sessionId, { withNewDocumentScript: false });
+  });
+  browser.on('Page.loadEventFired', (_params, msg) => {
+    const sessionId = msg?.sessionId;
+    if (!sessionId || !pages.has(sessionId)) return;
+    schedule(sessionId, { withNewDocumentScript: false });
+  });
+
+  await browser.send('Target.setDiscoverTargets', { discover: true });
+  await browser.send('Target.setAutoAttach', {
+    autoAttach: true,
+    waitForDebuggerOnStart: false,
+    flatten: true,
+  });
+
+  // targets já abertos: setAutoAttach costuma anexar; reforço via attachToTarget
+  try {
+    const { targetInfos } = await browser.send('Target.getTargets', {});
+    for (const t of targetInfos || []) {
+      if (t.type !== 'page') continue;
+      try {
+        await browser.send('Target.attachToTarget', {
+          targetId: t.targetId,
+          flatten: true,
+        });
+      } catch {
+        /* já anexado */
+      }
+    }
+  } catch {
+    /* ignore */
+  }
 
   await new Promise((resolve) => {
-    session.ws.addEventListener('close', resolve);
-    session.ws.addEventListener('error', resolve);
+    browser.ws.addEventListener('close', resolve);
+    browser.ws.addEventListener('error', resolve);
   });
-  session.close();
+  for (const st of pages.values()) {
+    if (st.timer) clearTimeout(st.timer);
+  }
+  pages.clear();
+  browser.close();
 }
 
 async function main() {
-  console.log(`[fingerprint-keeper] ${id} pid=${process.pid}`);
+  console.log(`[fingerprint-keeper] ${id} pid=${process.pid} multi-target`);
   while (true) {
     const fp = loadFp();
     if (!fp) {
@@ -100,9 +183,9 @@ async function main() {
       continue;
     }
     try {
-      await attachOnce(fp);
-    } catch (err) {
-      // porta down / sem página — espera e tenta de novo
+      await attachBrowser(fp);
+    } catch {
+      // porta down / sem browser WS — espera e tenta de novo
     }
     await sleep(800);
   }

@@ -75,10 +75,12 @@ function stopFingerprintKeeper(id) {
 }
 
 /**
- * Processo detached que reaplica fingerprint em F5/navegação.
+ * Processo detached: browser WS + auto-attach em todas as abas; reaplica em F5.
  * Só sobe se meta.fingerprint existir e a porta estiver up.
+ * @param {string} id
+ * @param {{ restart?: boolean }} [opts] restart=true mata keeper antigo e sobe de novo
  */
-export function ensureFingerprintKeeper(id) {
+export function ensureFingerprintKeeper(id, opts = {}) {
   const row = getCdp(id);
   if (!row) return null;
   const meta = readMeta(row.id);
@@ -89,25 +91,29 @@ export function ensureFingerprintKeeper(id) {
   }
   if (row.port == null || !isPortListening(row.port)) return null;
 
-  const existing = keepers.get(row.id);
-  if (existing && !existing.killed) return existing;
+  if (opts.restart) {
+    stopFingerprintKeeper(row.id);
+  } else {
+    const existing = keepers.get(row.id);
+    if (existing && !existing.killed) return existing;
 
-  // pid residual de sessão anterior
-  const pidFile = keeperPidPath(row.id);
-  if (existsSync(pidFile)) {
-    try {
-      const pid = Number(readFileSync(pidFile, 'utf8').trim());
-      if (pid) {
-        try {
-          process.kill(pid, 0);
-          // já vive — registra placeholder só com pid (sem handle)
-          return { pid, already: true };
-        } catch {
-          /* morto */
+    // pid residual de sessão anterior
+    const pidFile = keeperPidPath(row.id);
+    if (existsSync(pidFile)) {
+      try {
+        const pid = Number(readFileSync(pidFile, 'utf8').trim());
+        if (pid) {
+          try {
+            process.kill(pid, 0);
+            // já vive — registra placeholder só com pid (sem handle)
+            return { pid, already: true };
+          } catch {
+            /* morto */
+          }
         }
+      } catch {
+        /* ignore */
       }
-    } catch {
-      /* ignore */
     }
   }
 

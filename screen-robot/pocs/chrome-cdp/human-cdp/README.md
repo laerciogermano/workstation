@@ -115,7 +115,9 @@ Meta `~/chrome-profiles/<id>/.human-cdp.json` → `fingerprint`.
 
 **startCdp (CLI):** só `--lang=…` (sem webrtc/AutomationControlled — infobar amarela).  
 **connectCdp / goto:** UA + Client Hints (`userAgentMetadata`), platform, Accept-Language, timezone, locale, viewport/screen, geolocation, hardwareConcurrency, deviceMemory, maxTouchPoints, colorScheme, reducedMotion, touch, permissions + patch JS (`navigator`/`screen`, `webdriver=false`, WebRTC via inject).  
-**Persistência:** `startCdp`/`connectCdp` sobem `fingerprint-keeper` (pid em `~/chrome-profiles/<id>/.fingerprint-keeper.pid`) que reaplica em F5/`frameNavigated`. Sem keeper, override some ao desconectar o CDP. `stopCdp` mata o keeper. Rollback: não chamar `ensureFingerprintKeeper` / apagar o processo.
+**Persistência:** `startCdp`/`connectCdp` sobem `fingerprint-keeper` (pid em `~/chrome-profiles/<id>/.fingerprint-keeper.pid`). O keeper usa o **browser WS** + `Target.setAutoAttach` (flatten) e aplica em **todas** as abas — F5 e `page.close()` do connect não revertem ao fingerprint real. Reaplica em `frameNavigated`/`load` (só `Runtime.evaluate` no F5; `addScriptToEvaluateOnNewDocument` uma vez por aba). `ensureFingerprintKeeper(id, { restart: true })` mata e sobe de novo. Sem keeper, override some ao desconectar o CDP. `stopCdp` mata o keeper. Rollback: não chamar `ensureFingerprintKeeper` / apagar o processo.
+
+**Antes → depois:** keeper numa única aba (`pickPage`) → multi-target no browser WS.
 
 ```js
 updateCdp('ometv-2', {

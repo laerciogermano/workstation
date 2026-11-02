@@ -28,7 +28,8 @@ export function createCdpSession(wsUrl) {
       if (set) {
         for (const fn of set) {
           try {
-            fn(msg.params || {});
+            // 2º arg = mensagem crua (sessionId no flatten Target.setAutoAttach)
+            fn(msg.params || {}, msg);
           } catch {
             /* ignore */
           }
@@ -37,12 +38,19 @@ export function createCdpSession(wsUrl) {
     }
   });
 
-  async function send(method, params = {}) {
+  /**
+   * @param {string} method
+   * @param {object} [params]
+   * @param {{ sessionId?: string }} [opts]
+   */
+  async function send(method, params = {}, opts = {}) {
     await ready;
     const id = ++nextId;
     return new Promise((resolve, reject) => {
       pending.set(id, { resolve, reject });
-      ws.send(JSON.stringify({ id, method, params }));
+      const payload = { id, method, params };
+      if (opts.sessionId) payload.sessionId = opts.sessionId;
+      ws.send(JSON.stringify(payload));
     });
   }
 

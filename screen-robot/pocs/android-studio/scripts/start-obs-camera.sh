@@ -223,10 +223,26 @@ async def main():
         )
         st = await req("GetVirtualCamStatus")
         active = (st.get("responseData") or {}).get("outputActive")
+        # No macOS, StartVirtualCam frequentemente não liga o output (fica a logo).
+        # Toggle false→true é o que realmente ativa.
         if not active:
             await req("StartVirtualCam")
             st = await req("GetVirtualCamStatus")
             active = (st.get("responseData") or {}).get("outputActive")
+        for _ in range(4):
+            if active:
+                break
+            t = await req("ToggleVirtualCam")
+            active = (t.get("responseData") or {}).get("outputActive")
+            if active is None:
+                st = await req("GetVirtualCamStatus")
+                active = (st.get("responseData") or {}).get("outputActive")
+            if not active:
+                import time
+
+                time.sleep(1.0)
+                st = await req("GetVirtualCamStatus")
+                active = (st.get("responseData") or {}).get("outputActive")
         print("virtual_cam_active=", active)
 
 

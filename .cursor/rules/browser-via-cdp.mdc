@@ -15,11 +15,24 @@ Sempre que for abrir, navegar ou controlar um browser neste lab, use **Chrome co
 4. Se a porta já estiver em LISTEN, **reusar** — não abrir segundo Chrome no mesmo `user-data-dir`
 5. Só usar outro browser se o usuário pedir **explicitamente** (ex.: Firefox Germano)
 
+## Foco da tela (visível vs background)
+
+Decida e declare o modo; default = **com foco** quando o usuário precisa ver a operação.
+
+| Modo | Quando | Como |
+|------|--------|------|
+| **Com foco** (visível) | Usuário pediu para ver / “abra” / login manual / captcha | `Page.bringToFront` + `osascript` `tell application "Google Chrome" to activate` (ou o app do perfil) |
+| **Sem foco** (background) | Automação longa em paralelo; usuário no Cursor | **Não** activate; CDP `Input.*` / `Runtime.evaluate`; opcional `Page.setWebLifecycleState` + `Emulation.setFocusEmulationEnabled` (janela atrás) |
+
+- Clique CDP (`Input.dispatchMouseEvent`) funciona com a janela atrás — não use `cliclick`/clique SO salvo pedido explícito
+- Se o usuário disser que não está vendo: mude imediatamente para **com foco** e reabra a aba
+
 ## Exemplos
 
 ```text
-✅ ./start-germano.sh https://hpanel.hostinger.com/  → CDP :9230 → login via Runtime.evaluate / Input
-✅ CDP_URL=http://127.0.0.1:9224 node control-chrome.mjs --url https://www.linkedin.com/
+✅ ./start-germano.sh https://hpanel.hostinger.com/  → CDP :9230 → bringToFront + activate → login
+✅ dump Tinder em background: sem activate; setFocusEmulationEnabled
 ❌ cursor-ide-browser / browser_navigate MCP
 ❌ Chrome sem --remote-debugging-port
+❌ Automação “abra pra eu ver” sem trazer a janela ao foco
 ```

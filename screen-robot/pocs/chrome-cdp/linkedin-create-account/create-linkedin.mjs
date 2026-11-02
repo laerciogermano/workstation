@@ -1,6 +1,6 @@
 /**
  * Criação da conta LinkedIn (passo browser).
- * … → localidade → cargo → empresa → Continuar → poll PIN Mailcow (≤5 min).
+ * … → empresa → poll PIN Mailcow (≤5 min) → digita PIN → Continuar.
  */
 import { openLinkedInSignup } from './open-signup.mjs';
 import { fillSignupEmail } from './fill-signup-email.mjs';
@@ -12,6 +12,7 @@ import { fillSignupLocation } from './fill-signup-location.mjs';
 import { fillSignupJob } from './fill-signup-job.mjs';
 import { fillSignupCompany } from './fill-signup-company.mjs';
 import { fetchSignupPin } from './fetch-signup-pin.mjs';
+import { fillSignupPin } from './fill-signup-pin.mjs';
 
 const DEFAULT_LI_PASSWORD = 'in@12345678';
 
@@ -49,6 +50,7 @@ export async function createLinkedin(opts = {}) {
       job: null,
       company: null,
       pin: null,
+      pinFill: null,
     };
   }
 
@@ -128,12 +130,20 @@ export async function createLinkedin(opts = {}) {
   }
 
   let pinFetch = null;
+  let pinFill = null;
   if (email) {
     pinFetch = await fetchSignupPin({
       email,
       code: opts.code || opts.pin,
       dryRun: opts.dryRun,
     });
+    if (pinFetch?.code) {
+      pinFill = await fillSignupPin({
+        id,
+        code: pinFetch.code,
+        dryRun: opts.dryRun,
+      });
+    }
   }
 
   return {
@@ -149,5 +159,6 @@ export async function createLinkedin(opts = {}) {
     job: jobFill,
     company: companyFill,
     pin: pinFetch,
+    pinFill,
   };
 }

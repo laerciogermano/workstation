@@ -103,26 +103,13 @@ async function main() {
     skipBrowser: noBrowser,
   });
 
-  const reachedFeed = /\/feed\/?/i.test(String(linkedinResult?.finish?.href || ''));
-  let csvFinal = csvResult;
-  if (reachedFeed && !dryRun) {
-    csvFinal = saveAccountCsv({
-      email: emailResult,
-      cdp: cdpResult,
-      senhaLi: password,
-      liCriado: 'sim',
-      dryRun,
-    });
-  }
-
   console.log(
     JSON.stringify(
       {
         email: emailResult,
         cdp: cdpResult,
-        csv: csvFinal,
+        csv: csvResult,
         linkedin: linkedinResult,
-        li_criado: reachedFeed ? 'sim' : 'nao',
       },
       null,
       2,

@@ -312,11 +312,19 @@ export function chromeArgsFromFingerprint(fp) {
   const n = normalizeFingerprint(fp);
   if (!n) return [];
   const args = [];
+  // Só --lang automático. Flags tipo --force-webrtc-ip-handling-policy /
+  // --disable-blink-features=AutomationControlled disparam o aviso
+  // "sinalizador de linha de comando sem suporte" no Chrome.
   if (n.lang) args.push(`--lang=${n.lang}`);
-  if (n.webrtcIpHandling) {
-    args.push(`--force-webrtc-ip-handling-policy=${n.webrtcIpHandling}`);
+  // chromeArgs: allowlist segura (sem flags que abrem infobar amarela)
+  const blocked =
+    /force-webrtc-ip-handling-policy|disable-blink-features\s*=\s*AutomationControlled|disable-web-security|no-sandbox|single-process/i;
+  if (n.chromeArgs?.length) {
+    for (const a of n.chromeArgs) {
+      if (blocked.test(a)) continue;
+      args.push(a);
+    }
   }
-  if (n.chromeArgs?.length) args.push(...n.chromeArgs);
   return args;
 }
 
@@ -350,6 +358,7 @@ function buildInjectScript(n) {
     canvasNoise: n.canvasNoise,
     audioNoise: n.audioNoise,
     fonts: n.fonts,
+    webrtcIpHandling: n.webrtcIpHandling,
   };
 
   return `(() => {
@@ -357,6 +366,7 @@ function buildInjectScript(n) {
     const def = (obj, key, value) => {
       try { Object.defineProperty(obj, key, { get: () => value, configurable: true }); } catch {}
     };
+    try { def(Navigator.prototype, 'webdriver', false); } catch {}
     if (cfg.platform != null) def(Navigator.prototype, 'platform', cfg.platform);
     if (cfg.vendor != null) def(Navigator.prototype, 'vendor', cfg.vendor);
     if (cfg.product != null) def(Navigator.prototype, 'product', cfg.product);
@@ -534,6 +544,39 @@ function buildInjectScript(n) {
           }
           return origCheck(font, text);
         };
+      } catch {}
+    }
+
+    // WebRTC: sem flag CLI (infobar). Preferir host candidates públicos / filtrar local.
+    if (cfg.webrtcIpHandling && window.RTCPeerConnection) {
+      const mode = cfg.webrtcIpHandling;
+      const Orig = window.RTCPeerConnection;
+      window.RTCPeerConnection = function (...args) {
+        const pc = new Orig(...args);
+        if (mode === 'disable_non_proxied_udp' || mode === 'default_public_interface_only') {
+          const origAdd = pc.addIceCandidate.bind(pc);
+          pc.addIceCandidate = (c, ...rest) => {
+            try {
+              const cand = c && (c.candidate || c);
+              if (typeof cand === 'string' && / (typ host|typ srflx) /.test(' ' + cand + ' ') && /\\d+\\.\\d+\\.\\d+\\.\\d+/.test(cand)) {
+                // mantém; host filtrado abaixo via event
+              }
+            } catch {}
+            return origAdd(c, ...rest);
+          };
+          pc.addEventListener('icecandidate', (ev) => {
+            if (!ev.candidate) return;
+            const s = ev.candidate.candidate || '';
+            if (mode === 'disable_non_proxied_udp' && /typ host/.test(s)) {
+              try { Object.defineProperty(ev, 'candidate', { value: null }); } catch {}
+            }
+          });
+        }
+        return pc;
+      };
+      window.RTCPeerConnection.prototype = Orig.prototype;
+      try {
+        window.webkitRTCPeerConnection = window.RTCPeerConnection;
       } catch {}
     }
   })();`;

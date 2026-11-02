@@ -93,8 +93,8 @@ page.close();
 
 Meta `~/chrome-profiles/<id>/.human-cdp.json` → `fingerprint`.
 
-**startCdp:** `--lang`, `--force-webrtc-ip-handling-policy=…`, `chromeArgs[]`  
-**connectCdp / goto:** UA + Client Hints, platform/vendor/product/appVersion/doNotTrack, Accept-Language, timezone, locale, viewport/screen/outer, geolocation, hardwareConcurrency, deviceMemory, maxTouchPoints, colorScheme, reducedMotion, touch, permissions, connection, battery, plugins/mimeTypes, keyboardLayout, mediaDevices, webgl vendor/renderer, canvasNoise, audioNoise, fonts.
+**startCdp (CLI):** só `--lang=…` automático. `chromeArgs[]` allowlist — **não** usa `--force-webrtc-ip-handling-policy` nem `--disable-blink-features=AutomationControlled` (disparam “sinalizador de linha de comando sem suporte”).  
+**connectCdp / goto:** UA + Client Hints, platform/vendor/product/appVersion/doNotTrack/webdriver, Accept-Language, timezone, locale, viewport/screen/outer, geolocation, hardwareConcurrency, deviceMemory, maxTouchPoints, colorScheme, reducedMotion, touch, permissions, connection, battery, plugins/mimeTypes, keyboardLayout, mediaDevices, webgl, canvasNoise, audioNoise, fonts, WebRTC via inject (`webrtcIpHandling`).
 
 ```js
 updateCdp('ometv-2', {

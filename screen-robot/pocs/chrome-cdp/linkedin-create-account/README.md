@@ -6,9 +6,10 @@ Script novo, passo a passo. **Agora só o passo 1:** mailbox Mailcow.
 
 | Arquivo | Papel |
 |---|---|
-| [`create-mailbox.mjs`](create-mailbox.mjs) | **main** (CLI) — `Promise.all` email + CDP |
+| [`create-mailbox.mjs`](create-mailbox.mjs) | **main** (CLI) — email+CDP em paralelo → CSV |
 | [`create-email.mjs`](create-email.mjs) | `createEmail({ first, last, … })` |
 | [`create-cdp.mjs`](create-cdp.mjs) | `createLinkedInCdp({ first, last, … })` |
+| [`save-csv.mjs`](save-csv.mjs) | `saveAccountCsv({ email, cdp })` → LI + chrome CSV |
 
 ```bash
 cd screen-robot/pocs/chrome-cdp/linkedin-create-account
@@ -17,7 +18,7 @@ node create-mailbox.mjs --first Bruno --last Nunes --dry-run
 node create-mailbox.mjs --first Bruno --last Nunes --write-credenciais
 ```
 
-Saída JSON: `{ email, cdp }`.
+Saída JSON: `{ email, cdp, csv }`. Após criar, `saveAccountCsv` grava [`contas-linkedin-clozzy.csv`](../../android-studio/contas-linkedin-clozzy.csv) (cols `fp_*` + `ip` via ipify) e [`contas-facebook-chrome.csv`](../../android-studio/contas-facebook-chrome.csv).
 
 **CDP:** porta livre a partir de `9237`; fingerprint **dinâmico** via `generateFingerprint()` (OS/Chrome/cidade BR coerentes, sem viewport; evita tz+UA+hw+mem já usados); `debug: true`. Idempotente se o id já existir. Override: `createLinkedInCdp({ fingerprint })`.
 

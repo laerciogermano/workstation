@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Main — cria mailbox + CDP LinkedIn (em paralelo).
+ * Main — cria mailbox + CDP LinkedIn (em paralelo) e grava CSV.
  *
  * Uso:
  *   node create-mailbox.mjs --first Bruno --last Nunes
@@ -12,6 +12,7 @@ import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createEmail } from './create-email.mjs';
 import { createLinkedInCdp } from './create-cdp.mjs';
+import { saveAccountCsv } from './save-csv.mjs';
 
 const DOMAIN = (process.env.MAIL_DOMAIN || 'clozzy.com.br').trim();
 
@@ -68,7 +69,15 @@ async function main() {
     Promise.resolve(createLinkedInCdp(common)),
   ]);
 
-  console.log(JSON.stringify({ email: emailResult, cdp: cdpResult }, null, 2));
+  const csvResult = saveAccountCsv({
+    email: emailResult,
+    cdp: cdpResult,
+    dryRun,
+  });
+
+  console.log(
+    JSON.stringify({ email: emailResult, cdp: cdpResult, csv: csvResult }, null, 2),
+  );
 }
 
 const isDirect =

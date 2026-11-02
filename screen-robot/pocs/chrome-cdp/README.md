@@ -43,6 +43,18 @@ Copiar/colar: [`PROMPT-NOVO-VENDEDOR.md`](PROMPT-NOVO-VENDEDOR.md) (mailbox + CD
 
 **Antes → depois:** fluxo só nos chats → prompt reutilizável. Rollback: apagar o arquivo / esta seção.
 
+## Criar conta LinkedIn (script do zero)
+
+Pasta [`linkedin-create-account/`](linkedin-create-account/README.md) — por enquanto **só passo 1** (mailbox Mailcow):
+
+```bash
+cd linkedin-create-account
+node create-mailbox.mjs --first Nome --last Sobrenome --dry-run
+node create-mailbox.mjs --first Nome --last Sobrenome --write-credenciais
+```
+
+**Antes → depois:** mailbox ad-hoc via SSH no chat → `create-mailbox.mjs` reutilizável. Rollback: apagar a pasta; criar mailbox manualmente / pelo prompt antigo.
+
 ## Cadastro LinkedIn via CDP (Marina)
 
 ```bash

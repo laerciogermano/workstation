@@ -158,6 +158,7 @@ Regras:
 3. **Não ser direto demais** no início: 1–2 bolhas de papo (`E aí`, `Como tu tá?`, reagir a cidade/desculpa/pergunta) **antes** de puxar vinho
 4. Vinho só quando a thread já engatou (localização, disponibilidade, troca > abertura `oi`/`oie`) ou ela já falou de sair
 5. Variar frases; espelhar o que ela mandou; 2 bolhas curtas no máximo por turno, estilo §4
+6. **Horário local (America/Sao_Paulo):** não mandar pergunta que soe absurda fora de hora — ex. `Trabalhando?` / `Trabalhou hoje?` de noite (~22h–6h); de madrugada evitar `Como foi teu fds?` no meio da semana; preferir `Ainda acordada?`, `E aí`, `Como tu tá?`, `O que tá rolando?`
 
 ---
 
@@ -172,6 +173,7 @@ Regras:
 7. Dureza sem `kk`/saída? Amortecer ou abrir próxima porta  
 8. Maiúscula no começo; abreviação natural; sem ponto final forçado em frase de 3 palavras  
 9. **Tinder:** se a thread ainda é só `oi`/`oie`, ainda **não** mandar vinho — papo primeiro (§7.1)  
+10. **Horário:** a pergunta faz sentido **agora**? Se não (ex. trabalho às 23h), trocar (§7.1)  
 
 ---
 

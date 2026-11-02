@@ -1,6 +1,6 @@
 /**
  * Criação da conta LinkedIn (passo browser).
- * … → empresa → poll PIN Mailcow (≤5 min) → digita PIN → Continuar.
+ * … → PIN → maior de 18 → Continuar.
  */
 import { openLinkedInSignup } from './open-signup.mjs';
 import { fillSignupEmail } from './fill-signup-email.mjs';
@@ -13,6 +13,7 @@ import { fillSignupJob } from './fill-signup-job.mjs';
 import { fillSignupCompany } from './fill-signup-company.mjs';
 import { fetchSignupPin } from './fetch-signup-pin.mjs';
 import { fillSignupPin } from './fill-signup-pin.mjs';
+import { clickSignupAge18 } from './click-signup-age18.mjs';
 
 const DEFAULT_LI_PASSWORD = 'in@12345678';
 
@@ -51,6 +52,7 @@ export async function createLinkedin(opts = {}) {
       company: null,
       pin: null,
       pinFill: null,
+      age18: null,
     };
   }
 
@@ -146,6 +148,11 @@ export async function createLinkedin(opts = {}) {
     }
   }
 
+  const age18 = await clickSignupAge18({
+    id,
+    dryRun: opts.dryRun,
+  });
+
   return {
     id,
     skipped: false,
@@ -160,5 +167,6 @@ export async function createLinkedin(opts = {}) {
     company: companyFill,
     pin: pinFetch,
     pinFill,
+    age18,
   };
 }

@@ -18,6 +18,7 @@ Script novo, passo a passo. **Agora só o passo 1:** mailbox Mailcow.
 | [`fill-signup-name.mjs`](fill-signup-name.mjs) | `fillSignupName({ id, first, last })` → `#first-name` / `#last-name` |
 | [`click-signup-continue.mjs`](click-signup-continue.mjs) | `clickSignupContinue({ id })` → Continuar |
 | [`fill-signup-location.mjs`](fill-signup-location.mjs) | `fillSignupLocation({ id, location })` → digita → 1ª opção → Continuar |
+| [`fill-signup-job.mjs`](fill-signup-job.mjs) | `fillSignupJob({ id, job })` → cargo (typeahead) |
 
 ```bash
 cd screen-robot/pocs/chrome-cdp/linkedin-create-account

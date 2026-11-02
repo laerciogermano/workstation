@@ -92,6 +92,7 @@ async function main() {
     first: emailResult.name?.split(/\s+/)[0] || 'Rafael',
     last: emailResult.name?.split(/\s+/).slice(1).join(' ') || 'Campos',
     location: 'Rio de Janeiro',
+    job: 'Especialista em suprimentos e itens corporativos',
     dryRun,
     skipBrowser: noBrowser,
   });

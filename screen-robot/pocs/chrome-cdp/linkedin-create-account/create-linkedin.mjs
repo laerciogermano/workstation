@@ -155,7 +155,12 @@ export async function createLinkedin(opts = {}) {
     dryRun: opts.dryRun,
   });
 
-  const skip = await clickSignupSkip({
+  const skipCareer = await clickSignupSkip({
+    id,
+    dryRun: opts.dryRun,
+  });
+
+  const skipPhoto = await clickSignupSkip({
     id,
     dryRun: opts.dryRun,
   });
@@ -175,6 +180,7 @@ export async function createLinkedin(opts = {}) {
     pin: pinFetch,
     pinFill,
     age18,
-    skip,
+    skip: skipCareer,
+    skipPhoto,
   };
 }

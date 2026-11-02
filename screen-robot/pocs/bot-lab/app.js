@@ -729,8 +729,22 @@ function wireBehavior() {
   });
 }
 
+function wireRailToggle() {
+  const rail = el("feedback-rail");
+  const btn = el("btn-rail-toggle");
+  const shell = document.querySelector(".shell");
+  if (!rail || !btn) return;
+  btn.addEventListener("click", () => {
+    const min = rail.classList.toggle("is-minimized");
+    shell?.classList.toggle("rail-minimized", min);
+    btn.setAttribute("aria-expanded", min ? "false" : "true");
+    btn.title = min ? "Expandir painel" : "Minimizar painel";
+  });
+}
+
 async function main() {
   wireBehavior();
+  wireRailToggle();
   const broken = el("broken-img");
   const rerunBroken = () => {
     // reavalia broken image após load

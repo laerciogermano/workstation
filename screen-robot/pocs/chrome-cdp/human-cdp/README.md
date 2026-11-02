@@ -38,12 +38,12 @@ page.close();
 const page = await connect({
   cdpUrl: 'http://127.0.0.1:9230',
   url: 'http://127.0.0.1:8766/',
-  debug: true, // painel do bot-lab (feedback-rail) flutua junto ao mouse
+  debug: true, // fig-mouse + painel de comportamento fixo à direita (minimizável)
 });
 // connectCdp('germano', { debug: true }) — mesma flag
 ```
 
-No bot-lab: o `feedback-rail` vira overlay `position: fixed` ao lado do cursor (`pointer-events: none`). Fora do lab: badge mínimo `human-cdp debug · fora do bot-lab`. Default `debug: false` → zero overlay. Rollback: omitir a flag / `debug: false`.
+No bot-lab: cursor virtual (`fig-mouse`) + `feedback-rail` **fixo à direita**, com botão minimizar/expandir (igual ao lab). Fora do lab: injeta o mesmo par (mouse + trilho). Default `debug: false` → zero overlay. Rollback: omitir a flag / `debug: false`.
 
 ```bash
 CDP_URL=http://127.0.0.1:9230 npm run test:debug
@@ -153,7 +153,7 @@ Scripts CDP crus (`el.click`, `dispatchMouseEvent` sem move) → importam `human
 
 **Antes → depois (type):** `keyDown` com `text` + `insertText` → cada char duplicado (Rafaela→RRaaffaaeellaa). Agora: keyDown/Up sem `text`; só `insertText` insere. `fill` clear: `el.select()` + Backspace + setter nativo (Cmd+A CDP falhava no FB). Rollback: keyDown com `text` + clear só Ctrl+A.
 
-**Antes → depois (debug):** trilho fixo só no layout do bot-lab → `connect({ debug: true })` flutua o `feedback-rail` junto ao mouse (e badge fora do lab). Rollback: `debug: false` / omitir flag.
+**Antes → depois (debug):** sem overlay na sessão → `connect({ debug: true })` mostra `fig-mouse` + painel de comportamento fixo à direita (minimizável, como o bot-lab). Rollback: `debug: false` / omitir flag.
 
 **Rollback:** voltar ao CDP cru nos scripts; apagar `human-cdp/`.
 

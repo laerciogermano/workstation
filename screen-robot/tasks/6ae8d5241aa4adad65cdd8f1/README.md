@@ -7,10 +7,11 @@
 
 ## Implementação
 
-- Overlay: [`../../pocs/chrome-cdp/human-cdp/src/debug-overlay.mjs`](../../pocs/chrome-cdp/human-cdp/src/debug-overlay.mjs)
+- Overlay (mouse + rail fixo): [`../../pocs/chrome-cdp/human-cdp/src/debug-overlay.mjs`](../../pocs/chrome-cdp/human-cdp/src/debug-overlay.mjs)
 - Flag em `connect` / sessão: [`../../pocs/chrome-cdp/human-cdp/src/session.mjs`](../../pocs/chrome-cdp/human-cdp/src/session.mjs)
 - `connectCdp(..., { debug })`: [`../../pocs/chrome-cdp/human-cdp/src/registry.mjs`](../../pocs/chrome-cdp/human-cdp/src/registry.mjs)
-- Aceite: `npm run test:debug` (bot-lab + Chrome CDP)
+- Minimizar no lab: [`../../pocs/bot-lab/`](../../pocs/bot-lab/README.md) (`btn-rail-toggle`)
+- Aceite: `npm run test:debug`
 - Docs: [`../../pocs/chrome-cdp/human-cdp/README.md`](../../pocs/chrome-cdp/human-cdp/README.md)
 
 ## Relacionados

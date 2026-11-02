@@ -89,6 +89,49 @@ h1 {
   background: rgba(12, 16, 22, 0.92);
   backdrop-filter: blur(10px);
   z-index: 20;
+  transition: width 0.18s ease, padding 0.18s ease;
+}
+
+.rail-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  flex: 0 0 auto;
+}
+
+.rail-toggle {
+  min-width: 2rem;
+  padding: 0.25rem 0.45rem;
+  font-size: 0.95rem;
+  line-height: 1;
+}
+
+.rail-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  min-height: 0;
+  flex: 1 1 auto;
+}
+
+.shell.rail-minimized {
+  --rail-w: 2.75rem;
+}
+
+.feedback-rail.is-minimized {
+  padding: 0.55rem 0.35rem;
+  overflow: hidden;
+}
+
+.feedback-rail.is-minimized .rail-toolbar {
+  justify-content: center;
+}
+
+.feedback-rail.is-minimized .rail-body {
+  display: none;
+}
+
+.feedback-rail.is-minimized .rail-toggle {
+  transform: scaleX(-1);
 }
 
 .score-card {

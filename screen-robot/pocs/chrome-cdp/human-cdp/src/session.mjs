@@ -57,7 +57,7 @@ export class HumanCdpSession {
     this._lastFocusAt = 0;
   }
 
-  /** Injeta/reativa o painel flutuante (no-op se debug=false). */
+  /** Injeta/reativa mouse virtual + painel fixo à direita (no-op se debug=false). */
   async enableDebugOverlay() {
     if (!this.debug) return null;
     return this.evaluate(enableDebugOverlayExpression());

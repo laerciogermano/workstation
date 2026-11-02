@@ -92,25 +92,39 @@
         </footer>
       </div>
 
-      <aside class="feedback-rail" aria-label="Feedback de detecção">
-        <div class="score-card" id="score-card" aria-live="polite">
-          <p class="score-label">Veredito</p>
-          <p class="score-verdict" id="score-verdict">…</p>
-          <p class="score-meta" id="score-meta">ambiente — · comportamento —</p>
+      <aside class="feedback-rail" id="feedback-rail" aria-label="Feedback de detecção">
+        <div class="rail-toolbar">
+          <button
+            type="button"
+            class="btn ghost rail-toggle"
+            id="btn-rail-toggle"
+            aria-expanded="true"
+            aria-controls="rail-body"
+            title="Minimizar painel"
+          >
+            «
+          </button>
         </div>
-
-        <section class="panel panel--behavior">
-          <h2>Comportamento</h2>
-          <p class="hint">CDP sem trajetória tende a falhar.</p>
-          <ul class="checks-list" id="behavior-list"></ul>
-          <div class="meters meters--compact">
-            <div><span>Pontos</span><strong id="m-points">0</strong></div>
-            <div><span>Cliques</span><strong id="m-clicks">0</strong></div>
-            <div><span>Teclas</span><strong id="m-keys">0</strong></div>
-            <div><span>Trusted</span><strong id="m-trusted">—</strong></div>
-            <div><span>Foco agora</span><strong id="m-focus">—</strong></div>
+        <div class="rail-body" id="rail-body">
+          <div class="score-card" id="score-card" aria-live="polite">
+            <p class="score-label">Veredito</p>
+            <p class="score-verdict" id="score-verdict">…</p>
+            <p class="score-meta" id="score-meta">ambiente — · comportamento —</p>
           </div>
-        </section>
+
+          <section class="panel panel--behavior">
+            <h2>Comportamento</h2>
+            <p class="hint">CDP sem trajetória tende a falhar.</p>
+            <ul class="checks-list" id="behavior-list"></ul>
+            <div class="meters meters--compact">
+              <div><span>Pontos</span><strong id="m-points">0</strong></div>
+              <div><span>Cliques</span><strong id="m-clicks">0</strong></div>
+              <div><span>Teclas</span><strong id="m-keys">0</strong></div>
+              <div><span>Trusted</span><strong id="m-trusted">—</strong></div>
+              <div><span>Foco agora</span><strong id="m-focus">—</strong></div>
+            </div>
+          </section>
+        </div>
       </aside>
     </div>
 

@@ -1,30 +1,30 @@
 ## Objetivo
-Na **lib human-cdp**, ao conectar (`connect` / `connectCdp`), permitir optar por **modo debug**. Com debug ligado, o **painel lateral de diagnóstico do bot-lab** (veredito + checks de comportamento / ambiente) **aparece flutuando junto ao mouse**, acompanhando o ponteiro enquanto a sessão roda.
+Na **lib human-cdp**, ao conectar (`connect` / `connectCdp`), permitir optar por **modo debug**. Com debug ligado, aparecem o **cursor virtual** (`fig-mouse`) e o **painel de comportamento fixo à direita**, minimizável — **conforme o bot-lab**.
 
 ## Problema
-Hoje o feedback de detecção só existe no trilho fixo (`feedback-rail`) da página do bot-lab. Ao automatizar (mesmo no lab), o olhar fica longe do cursor; fora do lab não há overlay de diagnóstico. Precisamos de um modo explícito de conexão para inspecionar o que o lab “vê” **ao lado do mouse**.
+Sem debug, o programador não vê o ponteiro CDP nem o trilho de diagnóstico enquanto automatiza. O painel não deve flutuar junto ao mouse: deve permanecer no trilho direito do lab, com minimizar.
 
 ## Escopo
-1. Opção na conexão, ex.: `connect({ …, debug: true })` e `connectCdp(id, { debug: true })` (default **off**)
+1. Opção na conexão: `connect({ …, debug: true })` e `connectCdp(id, { debug: true })` (default **off**)
 2. Com `debug: true`:
-   - injetar/exibir o painel de diagnóstico (mesmo conteúdo essencial do `feedback-rail`: veredito, lista de comportamento, meters)
-   - posicionar o painel **próximo ao cursor** (offset fixo, sem cobrir o ponto de clique; atualizar em `mousemove` / CDP mouseMoved)
-   - atualizar o painel em tempo real com os sinais do bot-lab quando a página for o lab; documentar comportamento em páginas que não são o lab (só cursor/overlay mínimo ou N/A)
+   - cursor virtual seguindo o ponteiro (mousemove / CDP)
+   - painel de comportamento **fixo à direita** (veredito + checks + meters no bot-lab)
+   - botão minimizar/expandir (mesmo UX do bot-lab)
+   - fora do lab: injeta mouse + trilho equivalente (sem checks ao vivo do lab)
 3. Com `debug: false` (default): zero overlay, zero impacto no aceite humano
-4. Docs: README human-cdp — exemplo de connect com debug + caminho inverso (omitir flag / `debug: false`)
-5. Aceite: connect com debug no bot-lab → painel visível e segue o mouse; connect sem debug → painel ausente; suíte `test:bot-lab` continua **humano** sem debug
+4. Docs + aceite `npm run test:debug`
 
 ## Entrega
-- Flag `debug` no contrato de `connect` / `connectCdp`
-- Overlay do diagnóstico junto ao mouse (CDP inject / página lab)
+- Flag `debug` em `connect` / `connectCdp`
+- Overlay: mouse + rail fixo minimizável
+- Minimizar nativo no bot-lab (`btn-rail-toggle`)
 - README atualizado (uso + rollback)
 
 ## Fora de escopo
-- UI de configuração persistente / preferência global
-- Substituir o trilho fixo do bot-lab no layout normal (só modo debug flutuante)
-- Debug de páginas arbitrárias com a suíte completa de checks do lab (salvo reuso mínimo documentado)
+- Preferência global persistente
+- Suíte completa de checks do lab em páginas arbitrárias
 
 ## Relacionados
 - Lib humana: https://trello.com/c/5tt5ZTeN · `screen-robot/pocs/chrome-cdp/human-cdp/`
-- Lab: https://trello.com/c/XcjfqioO · `screen-robot/pocs/bot-lab/` (`feedback-rail`)
+- Lab: https://trello.com/c/XcjfqioO · `screen-robot/pocs/bot-lab/`
 - CRUD CDPs: https://trello.com/c/hoLSkLko

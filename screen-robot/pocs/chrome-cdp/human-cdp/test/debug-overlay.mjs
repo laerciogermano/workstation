@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Aceite: connect({ debug: true }) no bot-lab → feedback-rail flutuante junto ao mouse.
+ * Aceite: connect({ debug: true }) no bot-lab → fig-mouse + painel fixo à direita (minimizável).
  *
  * Pré-req: Chrome :9230 + bot-lab :8766
  *
@@ -36,23 +36,37 @@ await sleep(200);
 const onSnap = await on.evaluate(`({
   enabled: !!window.__humanCdpDebug?.enabled,
   isBotLab: !!window.__humanCdpDebug?.isBotLab,
+  mouseOn: !!document.getElementById('fig-mouse')?.classList.contains('is-on'),
+  railFixed: !!document.querySelector('.feedback-rail'),
+  railMinimizable: !!document.getElementById('btn-rail-toggle'),
   floating: !!document.querySelector('.feedback-rail.human-cdp-debug-float'),
-  transform: document.querySelector('.feedback-rail')?.style?.transform || '',
-  shell: !!document.querySelector('.shell.human-cdp-debug-shell'),
+  floatTransform: document.querySelector('.feedback-rail')?.style?.transform || '',
+})`);
+
+await on.evaluate(`document.getElementById('btn-rail-toggle')?.click()`);
+await sleep(100);
+const minSnap = await on.evaluate(`({
+  minimized: !!document.querySelector('.feedback-rail.is-minimized'),
+  shellMin: !!document.querySelector('.shell.rail-minimized'),
 })`);
 on.close();
 
 console.log('debug=false:', offSnap);
 console.log('debug=true:', onSnap);
+console.log('minimizado:', minSnap);
 
 const ok =
   offSnap.enabled === false &&
   offSnap.floating === false &&
   onSnap.enabled === true &&
   onSnap.isBotLab === true &&
-  onSnap.floating === true &&
-  onSnap.shell === true &&
-  /translate\(/.test(onSnap.transform || '');
+  onSnap.mouseOn === true &&
+  onSnap.railFixed === true &&
+  onSnap.railMinimizable === true &&
+  onSnap.floating === false &&
+  !onSnap.floatTransform &&
+  minSnap.minimized === true &&
+  minSnap.shellMin === true;
 
-console.log(ok ? 'OK → overlay debug junto ao mouse' : 'FALHA → overlay debug');
+console.log(ok ? 'OK → mouse + painel fixo minimizável' : 'FALHA → debug overlay');
 process.exitCode = ok ? 0 : 1;

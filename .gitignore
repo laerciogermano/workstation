@@ -23,3 +23,6 @@ e-notas/app/data/
 /credenciais.txt
 /credentials.md
 /credentials.txt
+
+# Export Instagram (dados pessoais — não versionar)
+/core/instagram-*/

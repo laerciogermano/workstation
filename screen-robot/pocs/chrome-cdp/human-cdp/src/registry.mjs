@@ -518,7 +518,9 @@ export async function connectCdp(id, connectOpts = {}) {
     newTab: connectOpts.newTab,
     chromeApp: connectOpts.chromeApp,
     debug: wantDebug,
+    cdpId: row.id,
   });
+  session._cdpId = row.id;
   const fp =
     normalizeFingerprint(connectOpts.fingerprint) ||
     normalizeFingerprint(row.fingerprint) ||

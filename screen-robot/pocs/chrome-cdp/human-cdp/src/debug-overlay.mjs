@@ -14,16 +14,224 @@ const FIG_MOUSE_HTML = `<div id="fig-mouse" class="fig-mouse" aria-hidden="true"
 /**
  * Expressão JS (IIFE) que ativa mouse + painel fixo à direita.
  * @param {object|null|undefined} [fingerprint] meta.fingerprint (UA, lang, tz…)
+ * @param {{ id?: string }} [opts] id do CDP (ex. ometv-2)
  */
-export function enableDebugOverlayExpression(fingerprint) {
+export function enableDebugOverlayExpression(fingerprint, opts = {}) {
   const fpJson = JSON.stringify(fingerprint && typeof fingerprint === 'object' ? fingerprint : null);
+  const idJson = JSON.stringify(opts?.id ? String(opts.id) : '');
   return `(() => {
     const STYLE_ID = 'human-cdp-debug-style';
     const RAIL_ID = 'human-cdp-debug-rail';
     const FIG_HTML = ${JSON.stringify(FIG_MOUSE_HTML)};
     const FP = ${fpJson};
+    const CDP_ID = ${idJson};
 
-    const renderFingerprint = (rail, fp) => {
+    const UI_VER = 'en-diag-fp-flat-dot-4';
+
+    // Same shortHash as bot-lab (8 hex chars, e.g. f94864e9).
+    const shortHash = (str) => {
+      let h = 2166136261;
+      for (let i = 0; i < str.length; i++) {
+        h ^= str.charCodeAt(i);
+        h = Math.imul(h, 16777619);
+      }
+      return (h >>> 0).toString(16).padStart(8, '0');
+    };
+
+    const liveFpHash = () => {
+      let timezone = null;
+      let locale = null;
+      try { timezone = Intl.DateTimeFormat().resolvedOptions().timeZone; } catch {}
+      try { locale = Intl.DateTimeFormat().resolvedOptions().locale; } catch {}
+      let colorScheme = 'unknown';
+      try {
+        colorScheme = matchMedia('(prefers-color-scheme: dark)').matches
+          ? 'dark'
+          : matchMedia('(prefers-color-scheme: light)').matches
+            ? 'light'
+            : 'no-preference';
+      } catch {}
+      let webglVendor = '—';
+      let webglRenderer = '—';
+      try {
+        const c = document.createElement('canvas');
+        const gl = c.getContext('webgl') || c.getContext('experimental-webgl');
+        if (gl) {
+          const dbg = gl.getExtension('WEBGL_debug_renderer_info');
+          if (dbg) {
+            webglVendor = String(gl.getParameter(dbg.UNMASKED_VENDOR_WEBGL) || '—');
+            webglRenderer = String(gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) || '—');
+          }
+        }
+      } catch {}
+      const rows = {
+        userAgent: navigator.userAgent,
+        platform: navigator.platform,
+        language: navigator.language,
+        languages: JSON.stringify(navigator.languages || null),
+        timezone,
+        hardwareConcurrency: String(navigator.hardwareConcurrency),
+        deviceMemory: String(navigator.deviceMemory ?? '—'),
+        colorScheme,
+        screen: screen.width + '×' + screen.height + ' · dpr ' + devicePixelRatio,
+        'webgl.vendor': webglVendor,
+        'webgl.renderer': webglRenderer,
+        webdriver: String(navigator.webdriver),
+      };
+      const keys = [
+        'userAgent', 'platform', 'language', 'languages', 'timezone',
+        'hardwareConcurrency', 'deviceMemory', 'colorScheme', 'screen',
+        'webgl.vendor', 'webgl.renderer', 'webdriver',
+      ];
+      return shortHash(keys.map((k) => String(rows[k])).join('|'));
+    };
+
+    const isPlainObject = (v) =>
+      v != null && typeof v === 'object' && !Array.isArray(v);
+
+    // Short labels + tooltip = full dotted path / meaning.
+    const FP_ABBR = {
+      hash: ['hash', 'Live shortHash (bot-lab FNV-1a, 8 hex)'],
+      cdp: ['cdp', 'Chrome CDP profile id'],
+      userAgent: ['ua', 'userAgent'],
+      platform: ['plat', 'platform'],
+      lang: ['lang', 'lang'],
+      acceptLanguage: ['al', 'acceptLanguage'],
+      locale: ['loc', 'locale'],
+      timezone: ['tz', 'timezone'],
+      hardwareConcurrency: ['hw', 'hardwareConcurrency'],
+      deviceMemory: ['mem', 'deviceMemory'],
+      maxTouchPoints: ['mtp', 'maxTouchPoints'],
+      colorScheme: ['cs', 'colorScheme'],
+      reducedMotion: ['rm', 'reducedMotion'],
+      touch: ['touch', 'touch'],
+      webrtcIpHandling: ['webrtc', 'webrtcIpHandling'],
+      viewport: ['vp', 'viewport'],
+      geolocation: ['geo', 'geolocation'],
+      userAgentMetadata: ['uam', 'userAgentMetadata'],
+      permissions: ['perm', 'permissions'],
+      chromeArgs: ['args', 'chromeArgs'],
+      width: ['w', 'width'],
+      height: ['h', 'height'],
+      deviceScaleFactor: ['dpr', 'deviceScaleFactor'],
+      latitude: ['lat', 'latitude'],
+      longitude: ['lng', 'longitude'],
+      accuracy: ['acc', 'accuracy'],
+      platformVersion: ['pv', 'platformVersion'],
+      architecture: ['arch', 'architecture'],
+      model: ['model', 'model'],
+      mobile: ['mob', 'mobile'],
+      bitness: ['bits', 'bitness'],
+      brands: ['brands', 'brands'],
+      fullVersionList: ['fvl', 'fullVersionList'],
+      brand: ['brand', 'brand'],
+      version: ['ver', 'version'],
+      origin: ['origin', 'origin'],
+      permission: ['perm', 'permission'],
+      setting: ['set', 'setting'],
+    };
+
+    const segmentAbbr = (seg) => {
+      if (FP_ABBR[seg]) return FP_ABBR[seg];
+      if (/^\d+$/.test(seg)) return [seg, 'index ' + seg];
+      return [seg, seg];
+    };
+
+    const labelForPath = (path) => {
+      const parts = String(path).split('.');
+      const abbrs = [];
+      const fullHints = [];
+      for (const p of parts) {
+        const [a, full] = segmentAbbr(p);
+        abbrs.push(a);
+        fullHints.push(full);
+      }
+      return { abbr: abbrs.join('.'), full: fullHints.join('.') };
+    };
+
+    const flattenLeaves = (value, path, out) => {
+      if (value == null || value === '') return;
+      if (Array.isArray(value)) {
+        if (!value.length) {
+          out.push([path, '[]']);
+          return;
+        }
+        value.forEach((item, i) => {
+          let seg = String(i);
+          if (isPlainObject(item)) {
+            if (item.permission) seg = String(item.permission);
+            else if (item.brand) seg = String(item.brand).replace(/\s+/g, '');
+            else if (item.name) seg = String(item.name);
+          }
+          const next = path ? path + '.' + seg : seg;
+          if (isPlainObject(item) || Array.isArray(item)) flattenLeaves(item, next, out);
+          else out.push([next, item]);
+        });
+        return;
+      }
+      if (isPlainObject(value)) {
+        const keys = Object.keys(value);
+        if (!keys.length) {
+          out.push([path, '{}']);
+          return;
+        }
+        for (const k of keys) flattenLeaves(value[k], path ? path + '.' + k : k, out);
+        return;
+      }
+      out.push([path, value]);
+    };
+
+    const needsOverflow = (value) =>
+      typeof value === 'string' && value.length > 72;
+
+    const fpFlatRows = (fp, cdpId, hash) => {
+      const rows = [];
+      rows.push(['hash', hash]);
+      if (cdpId) rows.push(['cdp', cdpId]);
+      if (!fp || typeof fp !== 'object') return rows;
+      const order = [
+        'userAgent', 'platform', 'lang', 'acceptLanguage', 'locale', 'timezone',
+        'hardwareConcurrency', 'deviceMemory', 'maxTouchPoints', 'colorScheme',
+        'reducedMotion', 'touch', 'webrtcIpHandling', 'viewport', 'geolocation',
+        'userAgentMetadata', 'permissions', 'chromeArgs',
+      ];
+      const seen = new Set();
+      const pushKey = (k) => {
+        if (!(k in fp) || seen.has(k)) return;
+        seen.add(k);
+        flattenLeaves(fp[k], k, rows);
+      };
+      for (const k of order) pushKey(k);
+      for (const k of Object.keys(fp)) pushKey(k);
+      return rows;
+    };
+
+    const renderFieldCell = (td, path) => {
+      const { abbr, full } = labelForPath(path);
+      const code = document.createElement('code');
+      code.className = 'fp-key';
+      code.textContent = abbr;
+      code.title = full === abbr ? path : full;
+      td.appendChild(code);
+    };
+
+    const renderValueCell = (td, value) => {
+      if (value == null || value === '') {
+        td.textContent = '—';
+        return;
+      }
+      const s = typeof value === 'string' ? value : String(value);
+      if (needsOverflow(s)) {
+        const span = document.createElement('span');
+        span.className = 'fp-long';
+        span.textContent = s;
+        td.appendChild(span);
+      } else {
+        td.textContent = s;
+      }
+    };
+
+    const renderFingerprint = (rail, fp, cdpId) => {
       if (!rail) return;
       let panel = rail.querySelector('#human-cdp-fp-panel');
       if (!panel) {
@@ -31,43 +239,65 @@ export function enableDebugOverlayExpression(fingerprint) {
         panel = document.createElement('section');
         panel.id = 'human-cdp-fp-panel';
         panel.className = 'panel';
-        panel.innerHTML = '<h2>Fingerprint</h2><p class="hint">resumo da meta</p><pre id="human-cdp-fp-pre" style="margin:0;white-space:pre-wrap;word-break:break-word;font-size:0.72rem;line-height:1.35;color:#c5d0db;max-height:9rem;overflow:auto"></pre>';
+        panel.innerHTML = '<h2>Fingerprint</h2><div class="fp-hash" id="human-cdp-fp-hash" aria-live="polite">…</div><p class="hint" id="human-cdp-fp-id"></p><table class="fp-table" id="human-cdp-fp-table"><thead><tr><th>Field</th><th>Value</th></tr></thead><tbody></tbody></table>';
         const score = body.querySelector('.score-card');
         if (score && score.nextSibling) body.insertBefore(panel, score.nextSibling);
         else body.insertBefore(panel, body.firstChild);
       }
-      const pre = panel.querySelector('#human-cdp-fp-pre');
-      if (!pre) return;
-      if (!fp || typeof fp !== 'object') {
-        pre.textContent = '(sem fingerprint na meta)';
+      panel.querySelector('#human-cdp-fp-pre')?.remove();
+      if (!panel.querySelector('#human-cdp-fp-table')) {
+        const table = document.createElement('table');
+        table.className = 'fp-table';
+        table.id = 'human-cdp-fp-table';
+        table.innerHTML = '<thead><tr><th>Field</th><th>Value</th></tr></thead><tbody></tbody>';
+        panel.appendChild(table);
+      }
+      if (!panel.querySelector('#human-cdp-fp-hash')) {
+        const h = document.createElement('div');
+        h.className = 'fp-hash';
+        h.id = 'human-cdp-fp-hash';
+        h.setAttribute('aria-live', 'polite');
+        const title = panel.querySelector('h2');
+        if (title && title.nextSibling) panel.insertBefore(h, title.nextSibling);
+        else panel.insertBefore(h, panel.firstChild);
+      }
+      const hash = liveFpHash();
+      const hashEl = panel.querySelector('#human-cdp-fp-hash');
+      if (hashEl) {
+        hashEl.textContent = hash;
+        hashEl.title = 'Short hash of main live signals (same algo as bot-lab)';
+      }
+      const idEl = panel.querySelector('#human-cdp-fp-id');
+      if (idEl) idEl.textContent = cdpId ? ('cdp: ' + cdpId) : 'meta.fingerprint';
+      const tbody = panel.querySelector('#human-cdp-fp-table tbody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+      const rows = fpFlatRows(fp, cdpId, hash);
+      if (!rows.length) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = '<td colspan="2">(no fingerprint in meta)</td>';
+        tbody.appendChild(tr);
         return;
       }
-      // Só o essencial — não dump completo da meta.
-      const lines = [];
-      const put = (k, v) => { if (v != null && v !== '') lines.push(k + ': ' + v); };
-      const ua = fp.userAgent ? String(fp.userAgent) : '';
-      put('UA', ua.length > 72 ? ua.slice(0, 72) + '…' : ua);
-      put('platform', fp.platform);
-      put('lang', fp.lang || fp.locale);
-      put('timezone', fp.timezone);
-      if (fp.viewport) {
-        put('viewport', fp.viewport.width + '×' + fp.viewport.height
-          + (fp.viewport.deviceScaleFactor != null ? ' @' + fp.viewport.deviceScaleFactor : ''));
+      for (const [path, value] of rows) {
+        const tr = document.createElement('tr');
+        const tdN = document.createElement('td');
+        const tdV = document.createElement('td');
+        tdN.className = 'fp-field';
+        renderFieldCell(tdN, path);
+        renderValueCell(tdV, value);
+        tr.append(tdN, tdV);
+        tbody.appendChild(tr);
       }
-      if (fp.geolocation) {
-        put('geo', Number(fp.geolocation.latitude).toFixed(2) + ', ' + Number(fp.geolocation.longitude).toFixed(2));
-      }
-      put('cores/mem', [fp.hardwareConcurrency, fp.deviceMemory != null ? fp.deviceMemory + 'GB' : null].filter(Boolean).join(' / ') || null);
-      pre.textContent = lines.length ? lines.join('\\n') : '(vazio)';
     };
 
-    // Overlay fingerprint-only (erro anterior) ou sem setFingerprint → reinstala completo.
+    // Old PT UI / fingerprint-only / missing setFingerprint → rebuild.
     if (window.__humanCdpDebug?.enabled) {
-      const fullDiag = !!document.querySelector('#' + RAIL_ID + ' .score-card')
-        && !!document.querySelector('#' + RAIL_ID + ' .checks-list');
-      if (fullDiag && typeof window.__humanCdpDebug.setFingerprint === 'function') {
+      const railEl = document.getElementById(RAIL_ID);
+      const current = railEl?.dataset?.humanCdpUi;
+      if (current === UI_VER && typeof window.__humanCdpDebug.setFingerprint === 'function') {
         window.__humanCdpDebug.refresh();
-        window.__humanCdpDebug.setFingerprint(FP);
+        window.__humanCdpDebug.setFingerprint(FP, CDP_ID);
         return window.__humanCdpDebug.snapshot();
       }
       try {
@@ -149,6 +379,42 @@ export function enableDebugOverlayExpression(fingerprint) {
         }
         #\${RAIL_ID} .panel h2 { margin: 0 0 0.35rem; font-size: 1.05rem; }
         #\${RAIL_ID} .hint { margin: 0 0 0.5rem; color: #8b9aab; font-size: 0.8rem; }
+        #\${RAIL_ID} .fp-hash {
+          display: inline-flex; align-items: center; gap: 0.5rem;
+          margin: 0 0 0.65rem; padding: 0.45rem 0.75rem;
+          border-radius: 8px; border: 1px solid #4a6a88; background: #0d1520;
+          color: #7ec8ff; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+          font-size: 1.05rem; letter-spacing: 0.06em; font-weight: 600;
+        }
+        #\${RAIL_ID} .fp-hash::before {
+          content: "id"; color: #8b9aab; font-size: 0.7rem;
+          letter-spacing: 0.12em; text-transform: uppercase; font-weight: 500;
+        }
+        #\${RAIL_ID} .fp-table {
+          width: 100%; border-collapse: collapse; font-size: 0.72rem;
+        }
+        #\${RAIL_ID} .fp-table th, #\${RAIL_ID} .fp-table td {
+          text-align: left; padding: 0.28rem 0.35rem; border-bottom: 1px solid #2c3846;
+          vertical-align: top;
+        }
+        #\${RAIL_ID} .fp-table th { color: #8b9aab; font-weight: 600; background: #1a222c; }
+        #\${RAIL_ID} .fp-table > thead th { position: sticky; top: 0; z-index: 1; }
+        #\${RAIL_ID} .fp-table td.fp-field {
+          width: 4.6rem; max-width: 4.6rem; min-width: 4.6rem;
+          white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+          color: #8b9aab; padding-right: 0.35rem;
+        }
+        #\${RAIL_ID} .fp-key {
+          display: block; max-width: 100%;
+          white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+          font: 0.62rem/1.2 ui-monospace, SFMono-Regular, Menlo, monospace;
+          color: #b8c6d6; background: transparent;
+        }
+        #\${RAIL_ID} .fp-table td:last-child { word-break: break-word; }
+        #\${RAIL_ID} .fp-long {
+          max-height: 4.5rem; overflow: auto; display: block;
+          white-space: pre-wrap; word-break: break-word;
+        }
         #\${RAIL_ID} .meters {
           display: grid; grid-template-columns: 1fr 1fr; gap: 0.35rem; margin-top: 0.5rem;
         }
@@ -196,7 +462,7 @@ export function enableDebugOverlayExpression(fingerprint) {
         document.querySelector('.shell')?.classList.toggle('rail-minimized', min);
         document.body.classList.toggle('rail-minimized', min);
         btn.setAttribute('aria-expanded', min ? 'false' : 'true');
-        btn.title = min ? 'Expandir painel' : 'Minimizar painel';
+        btn.title = min ? 'Expand panel' : 'Minimize panel';
       });
     };
 
@@ -215,7 +481,7 @@ export function enableDebugOverlayExpression(fingerprint) {
         btn.className = 'btn ghost rail-toggle';
         btn.id = 'btn-rail-toggle';
         btn.setAttribute('aria-expanded', 'true');
-        btn.title = 'Minimizar painel';
+        btn.title = 'Minimize panel';
         btn.textContent = '«';
         toolbar.appendChild(btn);
         rail.insertBefore(toolbar, rail.firstChild);
@@ -224,7 +490,7 @@ export function enableDebugOverlayExpression(fingerprint) {
       return rail;
     };
 
-    /** Detector portátil (comportamento) — funciona em qualquer site. */
+    /** Portable diagnostics detector — works on any site. */
     const createLiveVerdict = (rail) => {
       if (!rail || rail.dataset.verdictWired === '1') return;
       rail.dataset.verdictWired = '1';
@@ -244,18 +510,18 @@ export function enableDebugOverlayExpression(fingerprint) {
       };
 
       const labels = {
-        'pointer-path': 'Trajetória',
-        'pre-click-move': 'Move antes do clique',
+        'pointer-path': 'Trajectory',
+        'pre-click-move': 'Move before click',
         'click-trusted': 'Click isTrusted',
-        'click-timing': 'Ritmo cliques',
-        'key-timing': 'Ritmo teclas',
-        'page-focus': 'Tela com foco',
+        'click-timing': 'Click rhythm',
+        'key-timing': 'Key rhythm',
+        'page-focus': 'Page focus',
       };
 
       const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
 
       const pathLooksHuman = (samples) => {
-        if (samples.length < 8) return { status: 'warn', detail: 'poucos pts (' + samples.length + ')' };
+        if (samples.length < 8) return { status: 'warn', detail: 'few pts (' + samples.length + ')' };
         let teleports = 0;
         let total = 0;
         for (let i = 1; i < samples.length; i++) {
@@ -265,8 +531,8 @@ export function enableDebugOverlayExpression(fingerprint) {
           if (d > 80 && dt < 8) teleports++;
           if (d > 400 && dt < 30) teleports++;
         }
-        if (total < 40) return { status: 'fail', detail: 'caminho curto' };
-        if (teleports >= 3) return { status: 'fail', detail: teleports + ' teleportes' };
+        if (total < 40) return { status: 'fail', detail: 'short path' };
+        if (teleports >= 3) return { status: 'fail', detail: teleports + ' teleports' };
         return { status: 'pass', detail: samples.length + ' pts · ' + total.toFixed(0) + 'px' };
       };
 
@@ -277,19 +543,17 @@ export function enableDebugOverlayExpression(fingerprint) {
         const avg = gaps.reduce((a, b) => a + b, 0) / gaps.length;
         const tooFast = gaps.filter((g) => g < softMin).length;
         if (tooFast >= Math.ceil(gaps.length * 0.6)) {
-          return { status: 'fail', detail: 'rápido avg=' + avg.toFixed(0) + 'ms' };
+          return { status: 'fail', detail: 'fast avg=' + avg.toFixed(0) + 'ms' };
         }
         return { status: 'pass', detail: 'avg=' + avg.toFixed(0) + 'ms' };
       };
 
-      /** Foco real da aba (sem “taint” sticky de blur transitório). */
       const rawFocused = () =>
         document.hasFocus() &&
         document.visibilityState === 'visible' &&
         !document.hidden;
 
       const noteActionFocus = () => {
-        // só conta o estado NO momento da ação — blur antigo não condena clique focado
         if (!rawFocused()) {
           state.actionsUnfocused++;
           state.backgroundTainted = true;
@@ -306,7 +570,7 @@ export function enableDebugOverlayExpression(fingerprint) {
         results.push({
           id: 'pre-click-move',
           status: state.clicks.length === 0 ? 'warn' : state.hadMouseMoveBeforeClick ? 'pass' : 'fail',
-          detail: state.clicks.length === 0 ? 'sem cliques' : state.hadMouseMoveBeforeClick ? 'houve move' : 'sem move',
+          detail: state.clicks.length === 0 ? 'no clicks' : state.hadMouseMoveBeforeClick ? 'had move' : 'no move',
         });
         results.push({
           id: 'click-trusted',
@@ -318,14 +582,14 @@ export function enableDebugOverlayExpression(fingerprint) {
         const af = state.actionsFocused;
         const au = state.actionsUnfocused;
         let focusStatus = 'warn';
-        let focusDetail = 'sem ações · agora ' + (rawFocused() ? 'focado' : 'sem foco');
+        let focusDetail = 'no actions · now ' + (rawFocused() ? 'focused' : 'unfocused');
         if (af + au > 0) {
           if (au > 0) {
             focusStatus = 'fail';
-            focusDetail = 'ações sem foco ' + au + '/' + (af + au) + ' · agora ' + (rawFocused() ? 'focado' : 'sem foco');
+            focusDetail = 'unfocused actions ' + au + '/' + (af + au) + ' · now ' + (rawFocused() ? 'focused' : 'unfocused');
           } else {
             focusStatus = 'pass';
-            focusDetail = 'com foco (' + af + ') · agora ' + (rawFocused() ? 'focado' : 'sem foco');
+            focusDetail = 'focused (' + af + ') · now ' + (rawFocused() ? 'focused' : 'unfocused');
           }
         }
         results.push({ id: 'page-focus', status: focusStatus, detail: focusDetail });
@@ -341,25 +605,21 @@ export function enableDebugOverlayExpression(fingerprint) {
           else warn++;
         }
         const focusFail = results.some((x) => x.id === 'page-focus' && x.status === 'fail');
-        let label = 'inconclusivo';
+        let label = 'inconclusive';
         let cls = 'is-warn';
         if (focusFail || state.actionsUnfocused > 0 || fail >= 2 || (fail >= 1 && pass < 3)) {
-          label = 'robô / suspeito';
+          label = 'bot / suspicious';
           cls = 'is-fail';
         } else if (fail === 0 && pass >= 3) {
-          label = 'humano';
+          label = 'human';
           cls = 'is-ok';
         }
 
         const vEl = rail.querySelector('.score-verdict');
-        const mEl = rail.querySelector('.score-meta');
         if (vEl) {
           vEl.textContent = label;
           vEl.classList.remove('is-ok', 'is-fail', 'is-warn');
           vEl.classList.add(cls);
-        }
-        if (mEl) {
-          mEl.textContent = 'comportamento ' + pass + '✓ ' + fail + '✗ ' + warn + '? · live';
         }
 
         const ul = rail.querySelector('.checks-list');
@@ -385,7 +645,7 @@ export function enableDebugOverlayExpression(fingerprint) {
         set('human-cdp-debug-clicks', String(state.clicks.length));
         set('human-cdp-debug-keys', String(state.keys.length));
         set('human-cdp-debug-trusted', state.lastClickTrusted == null ? '—' : String(state.lastClickTrusted));
-        set('human-cdp-debug-focus', rawFocused() ? 'sim' : 'não');
+        set('human-cdp-debug-focus', rawFocused() ? 'yes' : 'no');
       };
 
       const reset = () => {
@@ -471,41 +731,43 @@ export function enableDebugOverlayExpression(fingerprint) {
 
     const ensureFallbackRail = () => {
       let rail = document.getElementById(RAIL_ID);
-      // fingerprint-only (sem diagnóstico) → recria completo
-      if (rail && !rail.querySelector('.score-card')) {
+      if (rail && (!rail.querySelector('.score-card') || rail.dataset.humanCdpUi !== UI_VER)) {
         rail.remove();
         rail = null;
       }
       if (!rail) {
         rail = document.createElement('aside');
         rail.id = RAIL_ID;
-        rail.setAttribute('aria-label', 'Feedback de detecção');
+        rail.dataset.humanCdpUi = UI_VER;
+        rail.setAttribute('aria-label', 'Detection feedback');
         rail.innerHTML = \`
           <div class="rail-toolbar">
-            <button type="button" class="rail-reset" title="Zerar comportamento">↺</button>
-            <button type="button" class="rail-toggle" id="btn-rail-toggle" aria-expanded="true" title="Minimizar painel">«</button>
+            <button type="button" class="rail-reset" title="Reset diagnostics">↺</button>
+            <button type="button" class="rail-toggle" id="btn-rail-toggle" aria-expanded="true" title="Minimize panel">«</button>
           </div>
           <div class="rail-body">
             <div class="score-card">
-              <p class="score-label">Veredito</p>
-              <p class="score-verdict is-warn">inconclusivo</p>
-              <p class="score-meta">comportamento — · live</p>
+              <p class="score-label">Verdict</p>
+              <p class="score-verdict is-warn">inconclusive</p>
             </div>
             <section class="panel" id="human-cdp-fp-panel">
               <h2>Fingerprint</h2>
-              <p class="hint">resumo da meta</p>
-              <pre id="human-cdp-fp-pre" style="margin:0;white-space:pre-wrap;word-break:break-word;font-size:0.72rem;line-height:1.35;color:#c5d0db;max-height:9rem;overflow:auto">(carregando…)</pre>
+              <div class="fp-hash" id="human-cdp-fp-hash" aria-live="polite">…</div>
+              <p class="hint" id="human-cdp-fp-id">meta.fingerprint</p>
+              <table class="fp-table" id="human-cdp-fp-table">
+                <thead><tr><th>Field</th><th>Value</th></tr></thead>
+                <tbody></tbody>
+              </table>
             </section>
             <section class="panel">
-              <h2>Comportamento</h2>
-              <p class="hint">Detector portátil (fora do bot-lab). Interaja na página.</p>
+              <h2>Diagnostics</h2>
               <ul class="checks-list"></ul>
               <div class="meters">
-                <div><span>Pontos</span><strong id="human-cdp-debug-points">0</strong></div>
-                <div><span>Cliques</span><strong id="human-cdp-debug-clicks">0</strong></div>
-                <div><span>Teclas</span><strong id="human-cdp-debug-keys">0</strong></div>
+                <div><span>Points</span><strong id="human-cdp-debug-points">0</strong></div>
+                <div><span>Clicks</span><strong id="human-cdp-debug-clicks">0</strong></div>
+                <div><span>Keys</span><strong id="human-cdp-debug-keys">0</strong></div>
                 <div><span>Trusted</span><strong id="human-cdp-debug-trusted">—</strong></div>
-                <div><span>Foco</span><strong id="human-cdp-debug-focus">—</strong></div>
+                <div><span>Focus</span><strong id="human-cdp-debug-focus">—</strong></div>
                 <div><span>Cursor</span><strong id="human-cdp-debug-xy">—</strong></div>
               </div>
             </section>
@@ -514,9 +776,10 @@ export function enableDebugOverlayExpression(fingerprint) {
         document.documentElement.appendChild(rail);
         document.body.classList.add('human-cdp-debug-pad');
       }
+      rail.dataset.humanCdpUi = UI_VER;
       wireMinimize(rail, rail.querySelector('.rail-toggle'));
       createLiveVerdict(rail);
-      renderFingerprint(rail, FP);
+      renderFingerprint(rail, FP, CDP_ID);
       return rail;
     };
 
@@ -524,7 +787,7 @@ export function enableDebugOverlayExpression(fingerprint) {
       || document.getElementById('feedback-rail');
     const isBotLab = !!(labRail && document.getElementById('score-verdict') && document.getElementById('behavior-list'));
     const rail = isBotLab ? ensureBotLabRail() : ensureFallbackRail();
-    if (isBotLab) renderFingerprint(rail, FP);
+    if (isBotLab) renderFingerprint(rail, FP, CDP_ID);
     ensureFigMouse();
     moveMouse(40, 40);
 
@@ -532,12 +795,14 @@ export function enableDebugOverlayExpression(fingerprint) {
       enabled: true,
       isBotLab,
       fingerprint: FP,
+      cdpId: CDP_ID || null,
       move: moveMouse,
-      setFingerprint(fp) {
+      setFingerprint(fp, cdpId) {
         this.fingerprint = fp;
+        if (cdpId != null) this.cdpId = cdpId || null;
         const railEl = document.querySelector('.feedback-rail')
           || document.getElementById(RAIL_ID);
-        renderFingerprint(railEl, fp);
+        renderFingerprint(railEl, fp, this.cdpId);
       },
       refresh() {
         const r = document.querySelector('.feedback-rail')
@@ -547,7 +812,7 @@ export function enableDebugOverlayExpression(fingerprint) {
         else ensureFallbackRail();
         const railEl = document.querySelector('.feedback-rail')
           || document.getElementById(RAIL_ID);
-        renderFingerprint(railEl, this.fingerprint);
+        renderFingerprint(railEl, this.fingerprint, this.cdpId);
         ensureFigMouse();
       },
       snapshot() {
@@ -557,6 +822,7 @@ export function enableDebugOverlayExpression(fingerprint) {
         return {
           enabled: true,
           isBotLab: this.isBotLab,
+          cdpId: this.cdpId || null,
           hasFingerprint: !!(this.fingerprint && typeof this.fingerprint === 'object'),
           mouseOn: !!(fig && fig.classList.contains('is-on')),
           railFixed: !!railEl,

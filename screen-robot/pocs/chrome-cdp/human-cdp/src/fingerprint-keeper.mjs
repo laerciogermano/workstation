@@ -81,7 +81,7 @@ async function attachBrowser(fp) {
 
   const injectDebug = async (session, st) => {
     if (!loadDebug()) return;
-    const source = enableDebugOverlayExpression(loadFp() || fp || null);
+    const source = enableDebugOverlayExpression(loadFp() || fp || null, { id });
     try {
       // fingerprint no overlay pode mudar — re-registra script com FP atual
       await session.send('Page.addScriptToEvaluateOnNewDocument', { source });

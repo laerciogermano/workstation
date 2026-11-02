@@ -63,6 +63,8 @@ export class HumanCdpSession {
     this.focused = true;
     this.debug = !!opts.debug;
     this.chromeApp = opts.chromeApp || 'Google Chrome';
+    /** id do CDP (createCdp / connectCdp), ex. ometv-2 — usado no painel debug. */
+    this._cdpId = opts.cdpId || null;
     const saved = cursorByCdp.get(cursorKey(opts.cdpUrl));
     this._cursor = saved ? { ...saved } : { x: 40, y: 40 };
     this._lastFocusAt = 0;
@@ -100,7 +102,9 @@ export class HumanCdpSession {
    */
   async enableDebugOverlay() {
     if (!this.debug) return null;
-    const source = enableDebugOverlayExpression(this._fingerprint || null);
+    const source = enableDebugOverlayExpression(this._fingerprint || null, {
+      id: this._cdpId || undefined,
+    });
     if (!this._debugOnNewDocument) {
       try {
         await this.send('Page.addScriptToEvaluateOnNewDocument', { source });
@@ -112,7 +116,9 @@ export class HumanCdpSession {
     if (!this._debugNavHook) {
       this._debugNavHook = true;
       const reapply = () => {
-        const next = enableDebugOverlayExpression(this._fingerprint || null);
+        const next = enableDebugOverlayExpression(this._fingerprint || null, {
+          id: this._cdpId || undefined,
+        });
         this.evaluate(next).catch(() => {});
       };
       this._cdp.on('Page.frameNavigated', (params) => {
@@ -586,6 +592,7 @@ export async function connect(opts = {}) {
     cdpUrl,
     chromeApp: opts.chromeApp,
     debug: opts.debug,
+    cdpId: opts.cdpId,
   });
   await session.enableFocusEmulation();
   if (opts.url && !opts.newTab) {

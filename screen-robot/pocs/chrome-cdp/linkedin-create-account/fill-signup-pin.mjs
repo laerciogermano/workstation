@@ -86,7 +86,12 @@ export async function fillSignupPin(opts = {}) {
         };
       })()`);
 
-      if (st.leftPin || /birthday|profile|location|experience|feed|onboarding\\/start\\/(?!.*confirmation)/i.test(st.href)) {
+      const href = String(st.href || '');
+      const leftConfirm =
+        /birthday|profile|location|experience|feed/i.test(href) ||
+        (/onboarding\/start\//i.test(href) &&
+          !/confirmation|confirm.*email|challenge/i.test(href));
+      if (st.leftPin || leftConfirm) {
         autoAdvanced = true;
         cont = '(auto)';
         break;

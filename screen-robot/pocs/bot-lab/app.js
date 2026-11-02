@@ -15,6 +15,11 @@ const state = {
   /** distância de eventos sintéticos (JS dispatch) durante drag */
   dragDistanceSynthetic: 0,
   lastDragTrusted: null,
+  /** ações (click/key/drag) com document.hasFocus() + visible */
+  actionsFocused: 0,
+  /** ações com janela/aba sem foco ou hidden */
+  actionsUnfocused: 0,
+  lastActionFocus: null,
   scrollEvents: 0,
   hoverWithoutMove: 0,
   formInteractions: 0,
@@ -27,7 +32,24 @@ const BEHAVIOR = [
   { id: "click-timing", label: "Ritmo de cliques humano" },
   { id: "key-timing", label: "Ritmo de digitação" },
   { id: "drag", label: "Drag com trajetória" },
+  { id: "page-focus", label: "Tela/aba com foco" },
 ];
+
+function focusSnapshot() {
+  const hasFocus = document.hasFocus();
+  const visibilityState = document.visibilityState;
+  const hidden = document.hidden;
+  const focused = hasFocus && visibilityState === "visible" && !hidden;
+  return { hasFocus, visibilityState, hidden, focused };
+}
+
+function noteActionFocus() {
+  const snap = focusSnapshot();
+  state.lastActionFocus = snap;
+  if (snap.focused) state.actionsFocused++;
+  else state.actionsUnfocused++;
+  return snap;
+}
 
 function el(id) {
   return document.getElementById(id);
@@ -344,6 +366,33 @@ function evaluateBehavior() {
   }
   results.push({ id: "drag", status: dragStatus, detail: dragDetail });
 
+  // foco da tela/aba no momento das ações (CDP em background → fail)
+  const af = state.actionsFocused;
+  const au = state.actionsUnfocused;
+  const totalFocusActions = af + au;
+  let focusStatus = "warn";
+  let focusDetail = "sem ações";
+  if (totalFocusActions > 0) {
+    const last = state.lastActionFocus;
+    const lastTxt = last
+      ? `hasFocus=${last.hasFocus} vis=${last.visibilityState}`
+      : "";
+    if (au > 0 && af === 0) {
+      focusStatus = "fail";
+      focusDetail = `todas sem foco (${au}) · ${lastTxt}`;
+    } else if (au > 0) {
+      focusStatus = "fail";
+      focusDetail = `mistas foco=${af} sem=${au} · ${lastTxt}`;
+    } else {
+      focusStatus = "pass";
+      focusDetail = `com foco (${af}) · ${lastTxt}`;
+    }
+  } else {
+    const live = focusSnapshot();
+    focusDetail = `agora hasFocus=${live.hasFocus} vis=${live.visibilityState}`;
+  }
+  results.push({ id: "page-focus", status: focusStatus, detail: focusDetail });
+
   return results;
 }
 
@@ -373,6 +422,11 @@ function renderBehavior(results) {
   el("m-keys").textContent = String(state.keys.length);
   el("m-trusted").textContent =
     state.lastClickTrusted == null ? "—" : String(state.lastClickTrusted);
+  const focusEl = el("m-focus");
+  if (focusEl) {
+    const live = focusSnapshot();
+    focusEl.textContent = live.focused ? "sim" : "não";
+  }
 }
 
 function scoreOf(items) {
@@ -445,6 +499,7 @@ function wireBehavior() {
   window.addEventListener(
     "click",
     (e) => {
+      noteActionFocus();
       state.lastClickTrusted = e.isTrusted;
       if (state.movedSinceLoad) state.hadMouseMoveBeforeClick = true;
       state.clicks.push({ t: performance.now(), trusted: e.isTrusted });
@@ -458,12 +513,17 @@ function wireBehavior() {
     "keydown",
     (e) => {
       if (e.metaKey || e.ctrlKey || e.altKey) return;
+      noteActionFocus();
       state.keys.push({ t: performance.now(), key: e.key });
       if (state.keys.length > 80) state.keys.shift();
       refresh();
     },
     true,
   );
+
+  window.addEventListener("focus", () => refresh());
+  window.addEventListener("blur", () => refresh());
+  document.addEventListener("visibilitychange", () => refresh());
 
   window.addEventListener(
     "scroll",
@@ -507,6 +567,7 @@ function wireBehavior() {
     originLeft = handle.offsetLeft;
     lastX = e.clientX;
     state.lastDragTrusted = e.isTrusted;
+    noteActionFocus();
     handle.setPointerCapture?.(e.pointerId);
   };
   const onMove = (e) => {
@@ -545,6 +606,9 @@ function wireBehavior() {
     state.dragDistanceTrusted = 0;
     state.dragDistanceSynthetic = 0;
     state.lastDragTrusted = null;
+    state.actionsFocused = 0;
+    state.actionsUnfocused = 0;
+    state.lastActionFocus = null;
     handle.style.left = "6px";
     logUi("comportamento zerado");
     refresh();

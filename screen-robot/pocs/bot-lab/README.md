@@ -37,6 +37,7 @@ Sem script: `python3 -m http.server 8766` nesta pasta.
 - `click.isTrusted`
 - ritmo de cliques e digitação
 - drag: **pass só com distância trusted**; drag JS sintético → **fail**
+- **tela/aba com foco** (`document.hasFocus()` + `visibilityState=visible`) no momento da ação — operação em background → **fail**
 
 **Veredito:** `humano` (pass≥3 e 0 fails) · `robô / suspeito` (≥2 fails, ou ≥1 fail com pass&lt;3) · `inconclusivo` (pouca evidência). Layout: site à esquerda · trilho fixo à direita.
 

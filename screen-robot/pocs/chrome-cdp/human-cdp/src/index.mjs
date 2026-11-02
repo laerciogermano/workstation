@@ -23,6 +23,7 @@ export {
   startCdp,
   stopCdp,
   connectCdp,
+  ensureFingerprintKeeper,
   scriptsDir,
   profilesDir,
   expandHome,

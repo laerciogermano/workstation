@@ -6,6 +6,8 @@ export function createCdpSession(wsUrl) {
   const ws = new WebSocket(wsUrl);
   let nextId = 0;
   const pending = new Map();
+  /** @type {Map<string, Set<(params: object) => void>>} */
+  const listeners = new Map();
 
   const ready = new Promise((resolve, reject) => {
     ws.addEventListener('open', resolve);
@@ -19,6 +21,19 @@ export function createCdpSession(wsUrl) {
       pending.delete(msg.id);
       if (msg.error) reject(new Error(JSON.stringify(msg.error)));
       else resolve(msg.result);
+      return;
+    }
+    if (msg.method) {
+      const set = listeners.get(msg.method);
+      if (set) {
+        for (const fn of set) {
+          try {
+            fn(msg.params || {});
+          } catch {
+            /* ignore */
+          }
+        }
+      }
     }
   });
 
@@ -31,6 +46,12 @@ export function createCdpSession(wsUrl) {
     });
   }
 
+  function on(method, handler) {
+    if (!listeners.has(method)) listeners.set(method, new Set());
+    listeners.get(method).add(handler);
+    return () => listeners.get(method)?.delete(handler);
+  }
+
   function close() {
     try {
       ws.close();
@@ -39,7 +60,7 @@ export function createCdpSession(wsUrl) {
     }
   }
 
-  return { send, close, ready };
+  return { send, close, ready, on, ws };
 }
 
 export async function getJson(cdpBase, path) {

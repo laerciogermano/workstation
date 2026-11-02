@@ -94,7 +94,8 @@ page.close();
 Meta `~/chrome-profiles/<id>/.human-cdp.json` → `fingerprint`.
 
 **startCdp (CLI):** só `--lang=…` (sem webrtc/AutomationControlled — infobar amarela).  
-**connectCdp / goto:** UA + Client Hints (`userAgentMetadata`), platform, Accept-Language, timezone, locale, viewport/screen, geolocation, hardwareConcurrency, deviceMemory, maxTouchPoints, colorScheme, reducedMotion, touch, permissions + patch JS (`navigator`/`screen`, `webdriver=false`, WebRTC via inject).
+**connectCdp / goto:** UA + Client Hints (`userAgentMetadata`), platform, Accept-Language, timezone, locale, viewport/screen, geolocation, hardwareConcurrency, deviceMemory, maxTouchPoints, colorScheme, reducedMotion, touch, permissions + patch JS (`navigator`/`screen`, `webdriver=false`, WebRTC via inject).  
+**Persistência:** `startCdp`/`connectCdp` sobem `fingerprint-keeper` (pid em `~/chrome-profiles/<id>/.fingerprint-keeper.pid`) que reaplica em F5/`frameNavigated`. Sem keeper, override some ao desconectar o CDP. `stopCdp` mata o keeper. Rollback: não chamar `ensureFingerprintKeeper` / apagar o processo.
 
 ```js
 updateCdp('ometv-2', {

@@ -37,9 +37,89 @@ const CHROME_BIN =
 
 /** @type {Map<string, import('node:child_process').ChildProcess>} */
 const children = new Map();
+/** @type {Map<string, import('node:child_process').ChildProcess>} */
+const keepers = new Map();
 
 function sleep(ms) {
   return new Promise((r) => setTimeout(r, ms));
+}
+
+function keeperPidPath(id) {
+  return join(profilePath(id), '.fingerprint-keeper.pid');
+}
+
+function stopFingerprintKeeper(id) {
+  const child = keepers.get(id);
+  if (child && !child.killed) {
+    try {
+      child.kill('SIGTERM');
+    } catch {
+      /* ignore */
+    }
+  }
+  keepers.delete(id);
+  const pidFile = keeperPidPath(id);
+  if (existsSync(pidFile)) {
+    try {
+      const pid = Number(readFileSync(pidFile, 'utf8').trim());
+      if (pid) process.kill(pid, 'SIGTERM');
+    } catch {
+      /* ignore */
+    }
+    try {
+      rmSync(pidFile);
+    } catch {
+      /* ignore */
+    }
+  }
+}
+
+/**
+ * Processo detached que reaplica fingerprint em F5/navegação.
+ * Só sobe se meta.fingerprint existir e a porta estiver up.
+ */
+export function ensureFingerprintKeeper(id) {
+  const row = getCdp(id);
+  if (!row) return null;
+  const meta = readMeta(row.id);
+  const fp = normalizeFingerprint(meta?.fingerprint);
+  if (!fp) {
+    stopFingerprintKeeper(row.id);
+    return null;
+  }
+  if (row.port == null || !isPortListening(row.port)) return null;
+
+  const existing = keepers.get(row.id);
+  if (existing && !existing.killed) return existing;
+
+  // pid residual de sessão anterior
+  const pidFile = keeperPidPath(row.id);
+  if (existsSync(pidFile)) {
+    try {
+      const pid = Number(readFileSync(pidFile, 'utf8').trim());
+      if (pid) {
+        try {
+          process.kill(pid, 0);
+          // já vive — registra placeholder só com pid (sem handle)
+          return { pid, already: true };
+        } catch {
+          /* morto */
+        }
+      }
+    } catch {
+      /* ignore */
+    }
+  }
+
+  const script = join(__dir, 'fingerprint-keeper.mjs');
+  const child = spawn(process.execPath, [script, row.id], {
+    detached: true,
+    stdio: 'ignore',
+    env: process.env,
+  });
+  child.unref();
+  keepers.set(row.id, child);
+  return child;
 }
 
 export function profilesDir() {
@@ -247,6 +327,10 @@ export function updateCdp(id, patch) {
     throw new Error(`porta ${next.port} já em uso`);
   }
   writeMeta(cur.id, next);
+  if ('fingerprint' in patch) {
+    stopFingerprintKeeper(cur.id);
+    ensureFingerprintKeeper(cur.id);
+  }
   return getCdp(cur.id);
 }
 
@@ -294,7 +378,10 @@ export async function startCdp(id, { url } = {}) {
   const port = row.port ?? row.preferredPort;
   if (port == null) throw new Error(`porta ausente na meta de ${row.id}`);
   const st = await statusCdp(row.id);
-  if (st.status === 'up') return { ...st, already: true };
+  if (st.status === 'up') {
+    ensureFingerprintKeeper(row.id);
+    return { ...st, already: true };
+  }
 
   if (!existsSync(CHROME_BIN)) {
     throw new Error(`Chrome não encontrado: ${CHROME_BIN}`);
@@ -330,12 +417,28 @@ export async function startCdp(id, { url } = {}) {
   if (next.status !== 'up') {
     throw new Error(`Chrome não abriu a porta ${port}`);
   }
+  ensureFingerprintKeeper(row.id);
+  // aplica uma vez já na página inicial (keeper também sobe)
+  if (fp) {
+    try {
+      const session = await connect({
+        cdpUrl: next.cdpUrl,
+        chromeApp: 'Google Chrome',
+      });
+      session._fingerprint = fp;
+      await applyFingerprint(session, fp);
+      session.close();
+    } catch {
+      /* keeper cobre o retry */
+    }
+  }
   return { ...next, already: false };
 }
 
 export async function stopCdp(id) {
   const row = getCdp(id);
   if (!row) throw new Error(`cdp não encontrado: ${id}`);
+  stopFingerprintKeeper(row.id);
   const child = children.get(row.id);
   if (child && !child.killed) {
     try {
@@ -382,6 +485,7 @@ export async function connectCdp(id, connectOpts = {}) {
     st = await startCdp(row.id, { url: connectOpts.url || row.defaultUrl });
   }
   if (!st.cdpUrl) throw new Error(`sem cdpUrl para ${row.id}`);
+  ensureFingerprintKeeper(row.id);
   const session = await connect({
     cdpUrl: st.cdpUrl,
     url: connectOpts.url,

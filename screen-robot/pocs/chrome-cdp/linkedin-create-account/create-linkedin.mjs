@@ -165,6 +165,12 @@ export async function createLinkedin(opts = {}) {
     dryRun: opts.dryRun,
   });
 
+  // modal "Adicione sua foto" (segundo Pular)
+  const skipPhotoModal = await clickSignupSkip({
+    id,
+    dryRun: opts.dryRun,
+  });
+
   return {
     id,
     skipped: false,
@@ -182,5 +188,6 @@ export async function createLinkedin(opts = {}) {
     age18,
     skip: skipCareer,
     skipPhoto,
+    skipPhotoModal,
   };
 }

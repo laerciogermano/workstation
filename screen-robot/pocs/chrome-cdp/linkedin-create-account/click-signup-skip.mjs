@@ -20,6 +20,7 @@ export async function clickSignupSkip(opts = {}) {
   try {
     const clicks = [];
     let after = null;
+    const startHref = await s.evaluate(`(() => location.href)`);
 
     for (let n = 0; n < maxClicks; n++) {
       const hit = await s.evaluate(`(() => {
@@ -32,12 +33,12 @@ export async function clickSignupSkip(opts = {}) {
         const score = (el, t) => {
           const tag = el.tagName;
           let s = t.length;
-          if (tag === 'BUTTON') s -= 100;
-          else if (el.getAttribute('role') === 'button') s -= 80;
-          else if (tag === 'A') s -= 40;
-          // preferir centro/modal (y maior) a header
+          // botão/modal no centro > link Pular do header
+          if (tag === 'BUTTON') s -= 200;
+          else if (el.getAttribute('role') === 'button') s -= 160;
+          else if (tag === 'A') s -= 20;
           const r = el.getBoundingClientRect();
-          s -= Math.min(40, Math.floor(r.y / 20));
+          s -= Math.min(80, Math.floor(r.y / 10));
           return s;
         };
         const cands = [
@@ -72,16 +73,13 @@ export async function clickSignupSkip(opts = {}) {
       clicks.push(hit);
       await sleep(2500);
 
-      after = await s.evaluate(`(() => ({
-        href: location.href,
-        body: (document.body?.innerText || '').replace(/\\s+/g, ' ').trim().slice(0, 220),
-        stillIntent: /job-seeker-intent|interesse em novas oportunidades|looking for job/i.test(
-          location.href + ' ' + (document.body?.innerText || ''),
-        ),
-        hasSkip: [...document.querySelectorAll('button,a,[role=button]')]
+      after = await s.evaluate(`((startHref) => {
+        const href = location.href;
+        const body = (document.body?.innerText || '').replace(/\\s+/g, ' ').trim();
+        const hasButtonSkip = [...document.querySelectorAll('button, [role=button]')]
           .filter((el) => {
             const r = el.getBoundingClientRect();
-            return r.width > 0 && r.height > 0;
+            return r.width > 0 && r.height > 0 && r.y > 80;
           })
           .some((el) =>
             /^pular$|^skip$/i.test(
@@ -89,11 +87,17 @@ export async function clickSignupSkip(opts = {}) {
                 .replace(/\\s+/g, ' ')
                 .trim(),
             ),
-          ),
-      }))()`);
+          );
+        return {
+          href,
+          body: body.slice(0, 220),
+          sameStep: href === startHref,
+          hasButtonSkip,
+        };
+      })(${JSON.stringify(startHref)})`);
 
-      // saiu do passo de intenção / modal fechado sem novo Pular crítico
-      if (!after.stillIntent || !after.hasSkip) break;
+      // avançou de URL, ou só resta Pular do header
+      if (!after.sameStep || !after.hasButtonSkip) break;
     }
 
     if (!clicks.length) throw new Error('botão Pular ausente');

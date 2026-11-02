@@ -24,8 +24,9 @@ Script novo, passo a passo. **Agora só o passo 1:** mailbox Mailcow.
 | [`fetch-signup-pin.mjs`](fetch-signup-pin.mjs) | `fetchSignupPin({ email })` → poll Mailcow ≤5 min pelo PIN 6 dígitos |
 | [`fill-signup-pin.mjs`](fill-signup-pin.mjs) | `fillSignupPin({ id, code })` → digita PIN → Continuar |
 | [`click-signup-age18.mjs`](click-signup-age18.mjs) | `clickSignupAge18({ id })` → Sim, maior de 18 → Continuar |
-| [`click-signup-skip.mjs`](click-signup-skip.mjs) | `clickSignupSkip({ id })` → Pular / Skip |
-| [`click-signup-finish.mjs`](click-signup-finish.mjs) | `clickSignupFinish({ id })` → Concluir |
+| [`click-signup-skip.mjs`](click-signup-skip.mjs) | `clickSignupSkip({ id })` → Pular / Skip (unitário) |
+| [`click-signup-finish.mjs`](click-signup-finish.mjs) | `clickSignupFinish({ id })` → Concluir (unitário) |
+| [`finish-signup-onboarding.mjs`](finish-signup-onboarding.mjs) | `finishSignupOnboarding({ id })` → loop Pular→Concluir→Continuar até `/feed` |
 
 ```bash
 cd /Users/laerciogermano/Documents/works/screen-robot/pocs/chrome-cdp/linkedin-create-account
@@ -48,6 +49,8 @@ Saída: progresso em **stderr** (`[create-mailbox]`, `[createLinkedin]`, `[PIN]`
 **Ordem:** mailbox+CDP → **CSV** → `createLinkedin` (signup até `/feed`). Após nome+Continuar: se **verificação humana**, espera **sem timeout** até a próxima tela (localidade etc.). Sem regravar CSV depois do LinkedIn (`li_criado` fica `nao` no save inicial). Defaults: localidade `Rio de Janeiro`, cargo/empresa ConectMax, senha `in@12345678`. `--no-browser` pula o browser. `saveAccountCsv` grava [`contas-linkedin-clozzy.csv`](../../android-studio/contas-linkedin-clozzy.csv) (`fp_*` + `ip`) e [`contas-facebook-chrome.csv`](../../android-studio/contas-facebook-chrome.csv).
 
 **Antes → depois (captcha):** seguia direto p/ localidade → `waitSignupAfterName` pausa indeterminada se iframe/desafio de segurança. Rollback: remover a chamada.
+
+**Antes → depois (onboarding):** sequência fixa de Pulares → `finishSignupOnboarding` adaptativo (Pular se houver, senão Concluir/Continuar) até `/feed`. Rollback: voltar calls `clickSignupSkip`/`Continue`/`Finish`.
 
 **Antes → depois (logs):** silencioso no meio → logs de passo em stderr. Rollback: remover `log()` / `console.error` de progresso.
 

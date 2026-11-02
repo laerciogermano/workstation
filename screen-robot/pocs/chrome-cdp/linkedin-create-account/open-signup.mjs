@@ -45,9 +45,9 @@ export async function openLinkedInSignup(opts = {}) {
   // se Chrome já estava up, startCdp pode não navegar — força signup
   const s = await connectCdp(id, { debug: true });
   try {
-    const href = await s.evaluate(`(() => location.href)`);
-    if (!/linkedin\.com\/signup/i.test(String(href || ''))) {
-      console.error(`[open-signup] navegando para signup (era ${href})`);
+    const href = String((await s.evaluate(`(() => location.href)`)) || '');
+    if (!/linkedin\.com\/signup/i.test(href)) {
+      console.error(`[open-signup] navegando para signup (era ${href || '—'})`);
       await s.goto(url);
     }
     const t0 = Date.now();

@@ -15,8 +15,7 @@ import { fillSignupCompany } from './fill-signup-company.mjs';
 import { fetchSignupPin } from './fetch-signup-pin.mjs';
 import { fillSignupPin } from './fill-signup-pin.mjs';
 import { clickSignupAge18 } from './click-signup-age18.mjs';
-import { clickSignupSkip } from './click-signup-skip.mjs';
-import { clickSignupFinish } from './click-signup-finish.mjs';
+import { finishSignupOnboarding } from './finish-signup-onboarding.mjs';
 
 const DEFAULT_LI_PASSWORD = 'in@12345678';
 
@@ -193,54 +192,14 @@ export async function createLinkedin(opts = {}) {
   });
   log(`após idade: ${age18?.href || '—'}`);
 
-  log('Pular (carreira)…');
-  const skipCareer = await clickSignupSkip({
+  log('onboarding: Pular/Continuar/Concluir até /feed…');
+  const onboarding = await finishSignupOnboarding({
     id,
     dryRun: opts.dryRun,
   });
-  log(`→ ${skipCareer?.href || '—'}`);
-
-  log('Pular (foto)…');
-  const skipPhoto = await clickSignupSkip({
-    id,
-    dryRun: opts.dryRun,
-  });
-  log(`→ ${skipPhoto?.href || '—'}`);
-
-  log('Pular (modal foto)…');
-  const skipPhotoModal = await clickSignupSkip({
-    id,
-    dryRun: opts.dryRun,
-  });
-  log(`→ ${skipPhotoModal?.href || '—'}`);
-
-  log('Pular (pessoas)…');
-  const skipPeople = await clickSignupSkip({
-    id,
-    dryRun: opts.dryRun,
-  });
-  log(`→ ${skipPeople?.href || '—'}`);
-
-  log('Pular (seguir)…');
-  const skipFollow = await clickSignupSkip({
-    id,
-    dryRun: opts.dryRun,
-  });
-  log(`→ ${skipFollow?.href || '—'}`);
-
-  log('Continuar (app)…');
-  const continueApp = await clickSignupContinue({
-    id,
-    dryRun: opts.dryRun,
-  });
-  log(`→ ${continueApp?.href || '—'}`);
-
-  log('Concluir…');
-  const finish = await clickSignupFinish({
-    id,
-    dryRun: opts.dryRun,
-  });
-  log(`fim: ${finish?.href || '—'}`);
+  log(
+    `onboarding fim: ${onboarding?.done ? 'feed' : 'parado'} — ${onboarding?.href || '—'} (${onboarding?.steps?.length || 0} passos)`,
+  );
 
   return {
     id,
@@ -258,12 +217,7 @@ export async function createLinkedin(opts = {}) {
     pin: pinFetch,
     pinFill,
     age18,
-    skip: skipCareer,
-    skipPhoto,
-    skipPhotoModal,
-    skipPeople,
-    skipFollow,
-    continueApp,
-    finish,
+    onboarding,
+    finish: onboarding,
   };
 }

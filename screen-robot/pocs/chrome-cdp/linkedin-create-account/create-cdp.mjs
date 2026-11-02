@@ -38,7 +38,7 @@ function freePort(start = PORT_START) {
   return port;
 }
 
-/** Catálogo coerente OS ↔ UA ↔ Client Hints (desktop). */
+/** Catálogo conservador (coerente) + Linux. Sem WOW64 / Chrome antigo / extremos. */
 const OS_PROFILES = [
   {
     platform: 'Win32',
@@ -88,21 +88,68 @@ const OS_PROFILES = [
       bitness: '64',
     },
   },
+  {
+    platform: 'MacIntel',
+    uaOs: 'Macintosh; Intel Mac OS X 10_15_7',
+    meta: {
+      platform: 'macOS',
+      platformVersion: '15.0.0',
+      architecture: 'arm',
+      model: '',
+      mobile: false,
+      bitness: '64',
+    },
+  },
+  {
+    platform: 'Linux x86_64',
+    uaOs: 'X11; Linux x86_64',
+    meta: {
+      platform: 'Linux',
+      platformVersion: '6.5.0',
+      architecture: 'x86',
+      model: '',
+      mobile: false,
+      bitness: '64',
+    },
+  },
+  {
+    platform: 'Linux x86_64',
+    uaOs: 'X11; Ubuntu; Linux x86_64',
+    meta: {
+      platform: 'Linux',
+      platformVersion: '6.8.0',
+      architecture: 'x86',
+      model: '',
+      mobile: false,
+      bitness: '64',
+    },
+  },
+];
+
+const BRAND_NOT = [
+  { short: '8', full: '10.0.0.4', name: 'Not=A?Brand' },
+  { short: '99', full: '10.0.1.4', name: 'Not?A_Brand' },
+  { short: '24', full: '10.0.2.3', name: 'Not_A Brand' },
 ];
 
 const CHROME_BUILDS = [
-  { major: '129', full: '129.0.6668.100', brandNot: { short: '8', full: '10.0.0.4', name: 'Not=A?Brand' } },
-  { major: '130', full: '130.0.6723.117', brandNot: { short: '99', full: '10.0.1.4', name: 'Not?A_Brand' } },
-  { major: '131', full: '131.0.6778.205', brandNot: { short: '24', full: '10.0.2.3', name: 'Not_A Brand' } },
-  { major: '132', full: '132.0.6834.110', brandNot: { short: '99', full: '10.0.1.4', name: 'Not?A_Brand' } },
+  { major: '129', full: '129.0.6668.100' },
+  { major: '130', full: '130.0.6723.91' },
+  { major: '130', full: '130.0.6723.117' },
+  { major: '131', full: '131.0.6778.109' },
+  { major: '131', full: '131.0.6778.205' },
+  { major: '132', full: '132.0.6834.110' },
+  { major: '132', full: '132.0.6834.159' },
 ];
 
-/** Cidade BR ↔ timezone ↔ geo (jitter leve na geração). */
 const BR_LOCALES = [
   { timezone: 'America/Sao_Paulo', lat: -23.5505, lon: -46.6333 }, // SP
   { timezone: 'America/Sao_Paulo', lat: -22.9068, lon: -43.1729 }, // RJ
   { timezone: 'America/Sao_Paulo', lat: -25.4284, lon: -49.2733 }, // Curitiba
   { timezone: 'America/Sao_Paulo', lat: -19.9167, lon: -43.9345 }, // BH
+  { timezone: 'America/Sao_Paulo', lat: -30.0346, lon: -51.2177 }, // Porto Alegre
+  { timezone: 'America/Sao_Paulo', lat: -22.9099, lon: -47.0626 }, // Campinas
+  { timezone: 'America/Sao_Paulo', lat: -15.8267, lon: -47.9218 }, // Brasília
   { timezone: 'America/Fortaleza', lat: -3.7319, lon: -38.5267 }, // Fortaleza
   { timezone: 'America/Recife', lat: -8.0476, lon: -34.877 }, // Recife
   { timezone: 'America/Bahia', lat: -12.9714, lon: -38.5014 }, // Salvador
@@ -113,9 +160,17 @@ const BR_LOCALES = [
 
 const HW_OPTS = [4, 6, 8, 12, 16];
 const MEM_OPTS = [4, 8, 16];
-const WEBRTC_OPTS = ['default_public_interface_only', 'disable_non_proxied_udp'];
+const WEBRTC_OPTS = ['default_public_interface_only'];
 
-function jitter(n, delta = 0.02) {
+const LANG_OPTS = [
+  {
+    lang: 'pt-BR',
+    locale: 'pt-BR',
+    acceptLanguage: 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
+  },
+];
+
+function jitter(n, delta = 0.035) {
   return Number((n + (Math.random() * 2 - 1) * delta).toFixed(4));
 }
 
@@ -124,38 +179,43 @@ function existingFpKeys() {
   for (const c of listCdps()) {
     const fp = c.fingerprint;
     if (!fp) continue;
-    keys.add(`${fp.timezone}|${fp.userAgent}|${fp.hardwareConcurrency}|${fp.deviceMemory}`);
+    const pv = fp.userAgentMetadata?.platformVersion || '';
+    keys.add(
+      `${fp.timezone}|${fp.userAgent}|${fp.platform}|${pv}|${fp.hardwareConcurrency}|${fp.deviceMemory}`,
+    );
   }
   return keys;
 }
 
 /**
  * Fingerprint novo e coerente a cada chamada (sem viewport).
- * Evita colisão grosseira com CDPs já existentes (tz+UA+hw+mem).
+ * Sorteia Mozilla/OS/Chrome/cidade/hw entre o catálogo ampliado.
  */
 export function generateFingerprint() {
   const used = existingFpKeys();
-  for (let i = 0; i < 40; i++) {
+  for (let i = 0; i < 80; i++) {
     const os = pick(OS_PROFILES);
     const chrome = pick(CHROME_BUILDS);
+    const brandNot = pick(BRAND_NOT);
     const city = pick(BR_LOCALES);
     const hw = pick(HW_OPTS);
     const mem = pick(MEM_OPTS);
+    const lang = pick(LANG_OPTS);
     const userAgent = `Mozilla/5.0 (${os.uaOs}) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${chrome.major}.0.0.0 Safari/537.36`;
-    const key = `${city.timezone}|${userAgent}|${hw}|${mem}`;
-    if (used.has(key) && i < 35) continue;
+    const key = `${city.timezone}|${userAgent}|${os.platform}|${os.meta.platformVersion}|${hw}|${mem}`;
+    if (used.has(key) && i < 70) continue;
 
     return {
       userAgent,
       platform: os.platform,
-      lang: 'pt-BR',
-      acceptLanguage: 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
+      lang: lang.lang,
+      acceptLanguage: lang.acceptLanguage,
       timezone: city.timezone,
-      locale: 'pt-BR',
+      locale: lang.locale,
       geolocation: {
         latitude: jitter(city.lat),
         longitude: jitter(city.lon),
-        accuracy: 30 + randomInt(40),
+        accuracy: 20 + randomInt(80),
       },
       hardwareConcurrency: hw,
       deviceMemory: mem,
@@ -166,12 +226,12 @@ export function generateFingerprint() {
         ...os.meta,
         brands: [
           { brand: 'Chromium', version: chrome.major },
-          { brand: chrome.brandNot.name, version: chrome.brandNot.short },
+          { brand: brandNot.name, version: brandNot.short },
           { brand: 'Google Chrome', version: chrome.major },
         ],
         fullVersionList: [
           { brand: 'Chromium', version: chrome.full },
-          { brand: chrome.brandNot.name, version: chrome.brandNot.full },
+          { brand: brandNot.name, version: brandNot.full },
           { brand: 'Google Chrome', version: chrome.full },
         ],
       },

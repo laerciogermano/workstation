@@ -20,7 +20,7 @@ node create-mailbox.mjs --first Bruno --last Nunes --write-credenciais
 
 Saída JSON: `{ email, cdp, csv }`. Após criar, `saveAccountCsv` grava [`contas-linkedin-clozzy.csv`](../../android-studio/contas-linkedin-clozzy.csv) (cols `fp_*` + `ip` via ipify) e [`contas-facebook-chrome.csv`](../../android-studio/contas-facebook-chrome.csv).
 
-**CDP:** porta livre a partir de `9237`; fingerprint **dinâmico** via `generateFingerprint()` (OS/Chrome/cidade BR coerentes, sem viewport; evita tz+UA+hw+mem já usados); `debug: true`. Idempotente se o id já existir. Override: `createLinkedInCdp({ fingerprint })`.
+**CDP:** porta livre a partir de `9237`; fingerprint **dinâmico** via `generateFingerprint()` — catálogo **conservador** (Win64 / Mac 10_15_7 / **Linux**, Chrome 129–132, cidades BR principais; sem viewport). Evita colisão tz+UA+platformVersion+hw+mem. `debug: true`. Override: `createLinkedInCdp({ fingerprint })`.
 
 **E-mail:** `MAIL_SSH_HOST` · `MAIL_SSH_PASS` · `MAIL_DOMAIN`. Quota default `1024` MiB. Idempotente se a caixa já existir.
 

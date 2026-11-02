@@ -11,7 +11,7 @@ Sempre que for abrir, navegar ou controlar um browser neste lab, use **Chrome co
 
 1. Subir (ou reusar) o perfil certo com o `start-*.sh` em [`screen-robot/pocs/chrome-cdp/`](screen-robot/pocs/chrome-cdp/README.md)
 2. Registrar/consultar porta e perfil em [`screen-robot/pocs/android-studio/contas-facebook-chrome.csv`](screen-robot/pocs/android-studio/contas-facebook-chrome.csv)
-3. Controlar via `CDP_URL=http://127.0.0.1:PORT` + scripts (`control-chrome.mjs`, `.mjs`/Python CDP) ou WebSocket em `/json/list`
+3. Controlar via `CDP_URL=http://127.0.0.1:PORT` + preferir [`human-cdp`](screen-robot/pocs/chrome-cdp/human-cdp/README.md) (`click`/`type` com trajetória); senão scripts CDP / WebSocket em `/json/list`
 4. Se a porta já estiver em LISTEN, **reusar** — não abrir segundo Chrome no mesmo `user-data-dir`
 5. Só usar outro browser se o usuário pedir **explicitamente** (ex.: Firefox Germano)
 

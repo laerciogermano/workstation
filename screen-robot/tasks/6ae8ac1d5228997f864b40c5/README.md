@@ -8,3 +8,8 @@
 ## Dependência
 
 Lab de detecção (aceite): [`../../pocs/bot-lab/README.md`](../../pocs/bot-lab/README.md) · card [XcjfqioO](https://trello.com/c/XcjfqioO)
+
+## Implementação
+
+- Código: [`../../pocs/chrome-cdp/human-cdp/README.md`](../../pocs/chrome-cdp/human-cdp/README.md)
+- Aceite (bot-lab como teste): `cd screen-robot/pocs/chrome-cdp/human-cdp && npm run test:bot-lab` → veredito **humano**

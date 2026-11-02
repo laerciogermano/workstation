@@ -4,7 +4,7 @@ UI mínima + painel de detecção para validar automação Chrome/CDP e, depois,
 
 **Card:** [Site laboratório: UI + detecção de operação por robô](https://trello.com/c/XcjfqioO) · board [Robô Prospecção](https://trello.com/b/JPntFgwO/robô-prospecção)
 
-**Próximo (lib):** [Lib CDP humana — interface programador↔browser anti-detecção](https://trello.com/c/5tt5ZTeN) · task [`../../tasks/6ae8ac1d5228997f864b40c5/README.md`](../../tasks/6ae8ac1d5228997f864b40c5/README.md)
+**Lib humana:** [`../chrome-cdp/human-cdp/README.md`](../chrome-cdp/human-cdp/README.md) · card [5tt5ZTeN](https://trello.com/c/5tt5ZTeN) · task [`../../tasks/6ae8ac1d5228997f864b40c5/README.md`](../../tasks/6ae8ac1d5228997f864b40c5/README.md) · aceite: `cd ../chrome-cdp/human-cdp && npm run test:bot-lab` → **humano**
 
 ## Subir
 

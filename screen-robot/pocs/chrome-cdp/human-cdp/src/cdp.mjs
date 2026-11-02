@@ -1,0 +1,73 @@
+/**
+ * Sessão WebSocket CDP mínima (sem deps).
+ */
+
+export function createCdpSession(wsUrl) {
+  const ws = new WebSocket(wsUrl);
+  let nextId = 0;
+  const pending = new Map();
+
+  const ready = new Promise((resolve, reject) => {
+    ws.addEventListener('open', resolve);
+    ws.addEventListener('error', reject);
+  });
+
+  ws.addEventListener('message', (ev) => {
+    const msg = JSON.parse(ev.data);
+    if (msg.id != null && pending.has(msg.id)) {
+      const { resolve, reject } = pending.get(msg.id);
+      pending.delete(msg.id);
+      if (msg.error) reject(new Error(JSON.stringify(msg.error)));
+      else resolve(msg.result);
+    }
+  });
+
+  async function send(method, params = {}) {
+    await ready;
+    const id = ++nextId;
+    return new Promise((resolve, reject) => {
+      pending.set(id, { resolve, reject });
+      ws.send(JSON.stringify({ id, method, params }));
+    });
+  }
+
+  function close() {
+    try {
+      ws.close();
+    } catch {
+      /* ignore */
+    }
+  }
+
+  return { send, close, ready };
+}
+
+export async function getJson(cdpBase, path) {
+  const res = await fetch(`${cdpBase.replace(/\/$/, '')}${path}`);
+  if (!res.ok) throw new Error(`${path} → HTTP ${res.status}`);
+  return res.json();
+}
+
+export async function pickPage(cdpBase, { urlIncludes } = {}) {
+  const targets = await getJson(cdpBase, '/json/list');
+  const pages = targets.filter((t) => t.type === 'page');
+  if (urlIncludes) {
+    const hit = pages.find((t) => String(t.url || '').includes(urlIncludes));
+    if (hit?.webSocketDebuggerUrl) return hit;
+  }
+  const page =
+    pages.find((t) => !String(t.url || '').startsWith('chrome://')) || pages[0];
+  if (!page?.webSocketDebuggerUrl) {
+    throw new Error(`Nenhuma página em ${cdpBase}`);
+  }
+  return page;
+}
+
+export async function openPage(cdpBase, url) {
+  const res = await fetch(
+    `${cdpBase.replace(/\/$/, '')}/json/new?${encodeURIComponent(url)}`,
+    { method: 'PUT' },
+  );
+  if (!res.ok) throw new Error(`json/new → HTTP ${res.status}`);
+  return res.json();
+}

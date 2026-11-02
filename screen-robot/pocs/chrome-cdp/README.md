@@ -2,6 +2,8 @@
 
 Controla um Chrome já rodando com `--remote-debugging-port=9222` (mesmo perfil/cookies).
 
+**Lib humana (clique com trajetória / anti bot-lab):** [`human-cdp/README.md`](human-cdp/README.md) · aceite `cd human-cdp && npm run test:bot-lab` · card [5tt5ZTeN](https://trello.com/c/5tt5ZTeN).
+
 ## Subir o Chrome (perfis isolados)
 
 ```bash

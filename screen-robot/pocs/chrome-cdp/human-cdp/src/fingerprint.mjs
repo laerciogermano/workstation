@@ -3,6 +3,7 @@
  * Cobre o que Chrome CDP/flags permitem de forma estável.
  * Não altera canvas/WebGL/áudio reais nem IP de egress.
  */
+import { applyCameraSpoof } from './camera-spoof.mjs';
 
 /**
  * @typedef {object} ViewportConfig
@@ -261,13 +262,20 @@ function patchNavigatorScript(n) {
 /**
  * @param {{ send: (method: string, params?: object) => Promise<unknown> }} session
  * @param {FingerprintConfig|null|undefined} fp
- * @param {{ onNewDocument?: boolean }} [opts] onNewDocument=false → só Runtime.evaluate
+ * @param {{ onNewDocument?: boolean, cameraLabel?: string }} [opts] onNewDocument=false → só Runtime.evaluate
  *   (evita empilhar Page.addScriptToEvaluateOnNewDocument a cada F5)
  */
 export async function applyFingerprint(session, fp, opts = {}) {
   const n = normalizeFingerprint(fp);
-  if (!n) return { applied: false };
   const onNewDocument = opts.onNewDocument !== false;
+  // Sem fingerprint ainda aplicamos spoof de câmera (OBS nunca deve vazar o nome real).
+  if (!n) {
+    const cam = await applyCameraSpoof(session, {
+      onNewDocument,
+      label: opts.cameraLabel,
+    });
+    return { applied: false, cameraSpoof: cam };
+  }
 
   const applied = {};
   const softFail = async (label, fn) => {
@@ -438,6 +446,12 @@ export async function applyFingerprint(session, fp, opts = {}) {
   if (n.deviceMemory) applied.deviceMemory = n.deviceMemory;
   if (n.maxTouchPoints != null) applied.maxTouchPoints = n.maxTouchPoints;
   if (n.webrtcIpHandling) applied.webrtcIpHandling = n.webrtcIpHandling;
+
+  // OBS / virtual → label fictício (FaceTime HD Camera por padrão).
+  applied.cameraSpoof = await applyCameraSpoof(session, {
+    onNewDocument,
+    label: opts.cameraLabel || n.cameraLabel || undefined,
+  });
 
   return { applied: true, ...applied };
 }

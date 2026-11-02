@@ -103,13 +103,12 @@ async function attachBrowser(fp) {
       const session = pageSession(browser, sessionId);
       try {
         const next = loadFp() || fp;
-        if (next) {
-          const needScript = withNewDocumentScript || !st.appliedScript;
-          await applyFingerprint(session, next, {
-            onNewDocument: needScript,
-          });
-          if (needScript) st.appliedScript = true;
-        }
+        const needScript = withNewDocumentScript || !st.appliedScript;
+        // Sempre aplica spoof de câmera (OBS → FaceTime); fingerprint se houver.
+        await applyFingerprint(session, next || null, {
+          onNewDocument: needScript,
+        });
+        if (needScript) st.appliedScript = true;
         await injectDebug(session, st);
       } catch {
         /* target sumiu */

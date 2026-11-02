@@ -16,6 +16,11 @@ export {
   normalizeFingerprint,
 } from './fingerprint.mjs';
 export {
+  applyCameraSpoof,
+  cameraSpoofExpression,
+  DEFAULT_LABEL as CAMERA_SPOOF_LABEL,
+} from './camera-spoof.mjs';
+export {
   captureScreenshot,
   ocrFromSession,
   ocrImage,

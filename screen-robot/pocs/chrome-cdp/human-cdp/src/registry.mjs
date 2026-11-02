@@ -525,10 +525,9 @@ export async function connectCdp(id, connectOpts = {}) {
     normalizeFingerprint(connectOpts.fingerprint) ||
     normalizeFingerprint(row.fingerprint) ||
     normalizeFingerprint(readMeta(row.id)?.fingerprint);
-  if (fp) {
-    session._fingerprint = fp;
-    await applyFingerprint(session, fp);
-  }
+  if (fp) session._fingerprint = fp;
+  // fingerprint + spoof de câmera (OBS → FaceTime); spoof roda mesmo sem fp
+  await applyFingerprint(session, fp || null);
   if (wantDebug) {
     await session.enableDebugOverlay();
   }

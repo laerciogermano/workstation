@@ -42,9 +42,11 @@ node create-mailbox.mjs --first Bruno --last Nunes --dry-run
 node create-mailbox.mjs --first Bruno --last Nunes --write-credenciais --no-browser
 ```
 
-Saída JSON: `{ email, cdp, csv, linkedin }`.
+Saída: progresso em **stderr** (`[create-mailbox]`, `[createLinkedin]`, `[PIN]`); JSON final em **stdout** `{ email, cdp, csv, linkedin }`.
 
 **Ordem:** mailbox+CDP → **CSV** → `createLinkedin` (signup até `/feed`). Sem regravar CSV depois do LinkedIn (`li_criado` fica `nao` no save inicial). Defaults: localidade `Rio de Janeiro`, cargo/empresa ConectMax, senha `in@12345678`. `--no-browser` pula o browser. `saveAccountCsv` grava [`contas-linkedin-clozzy.csv`](../../android-studio/contas-linkedin-clozzy.csv) (`fp_*` + `ip`) e [`contas-facebook-chrome.csv`](../../android-studio/contas-facebook-chrome.csv).
+
+**Antes → depois (logs):** silencioso no meio → logs de passo em stderr. Rollback: remover `log()` / `console.error` de progresso.
 
 **Antes → depois (CSV):** save antes + update `li_criado` após feed → só save antes do LinkedIn. Rollback: voltar o 2º `saveAccountCsv` com `liCriado: 'sim'`.
 

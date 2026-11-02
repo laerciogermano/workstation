@@ -106,6 +106,10 @@ export async function fetchSignupPin(opts = {}) {
   let attempts = 0;
   let lastRawLen = 0;
 
+  console.error(
+    `[PIN] poll Mailcow ${email} (timeout ${Math.round(timeoutMs / 1000)}s, intervalo ${intervalMs}ms)`,
+  );
+
   while (Date.now() - started < timeoutMs) {
     attempts += 1;
     let raw = '';
@@ -113,12 +117,15 @@ export async function fetchSignupPin(opts = {}) {
       raw = mailFetchText(email);
       lastRawLen = raw.length;
     } catch (e) {
-      console.error(`PIN poll ${attempts}: ssh/erro — ${e.message || e}`);
+      console.error(`[PIN] tentativa ${attempts}: ssh/erro — ${e.message || e}`);
       await sleep(intervalMs);
       continue;
     }
     const code = extractLinkedInPin(raw);
     if (code) {
+      console.error(
+        `[PIN] encontrado na tentativa ${attempts} (${Date.now() - started}ms)`,
+      );
       return {
         email,
         code,
@@ -129,7 +136,7 @@ export async function fetchSignupPin(opts = {}) {
     }
     const left = Math.max(0, timeoutMs - (Date.now() - started));
     console.error(
-      `PIN poll ${attempts}: sem código (inbox ~${lastRawLen}b, restam ${Math.ceil(left / 1000)}s)`,
+      `[PIN] tentativa ${attempts}: sem código (inbox ~${lastRawLen}b, restam ${Math.ceil(left / 1000)}s)`,
     );
     if (left < intervalMs) break;
     await sleep(intervalMs);

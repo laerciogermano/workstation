@@ -36,6 +36,10 @@ function hasFlag(name) {
   return process.argv.includes(name);
 }
 
+function log(...parts) {
+  console.error(`[create-mailbox] ${parts.join(' ')}`);
+}
+
 function usage(msg) {
   if (msg) console.error(msg);
   console.error(`uso: node create-mailbox.mjs --first NOME --last SOBRENOME
@@ -72,6 +76,13 @@ async function main() {
     dryRun,
   };
 
+  log(
+    'início',
+    first && last ? `${first} ${last}` : name || email,
+    dryRun ? '(dry-run)' : '',
+    noBrowser ? '(no-browser)' : '',
+  );
+  log('1/4 mailbox + CDP em paralelo…');
   const [emailResult, cdpResult] = await Promise.all([
     Promise.resolve(
       createEmail({
@@ -82,14 +93,19 @@ async function main() {
     ),
     Promise.resolve(createLinkedInCdp(common)),
   ]);
+  log(`mailbox ok: ${emailResult.email}`);
+  log(`CDP ok: ${cdpResult.id} :${cdpResult.port}`);
 
+  log('2/4 salvando CSV…');
   const csvResult = saveAccountCsv({
     email: emailResult,
     cdp: cdpResult,
     senhaLi: password,
     dryRun,
   });
+  log(`CSV ok: ip=${csvResult.ip || csvResult.linkedin?.ip || '—'}`);
 
+  log('3/4 signup LinkedIn…', `local=${location}`, `empresa=${company}`);
   const linkedinResult = await createLinkedin({
     id: cdpResult.id,
     email: emailResult.email,
@@ -102,6 +118,14 @@ async function main() {
     dryRun,
     skipBrowser: noBrowser,
   });
+  log(
+    '4/4 fim',
+    linkedinResult?.finish?.href || linkedinResult?.skipped
+      ? linkedinResult.skipped
+        ? 'skipped'
+        : linkedinResult.finish?.href
+      : 'ok',
+  );
 
   console.log(
     JSON.stringify(

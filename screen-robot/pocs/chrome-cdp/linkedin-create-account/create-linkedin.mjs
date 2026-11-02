@@ -1,6 +1,6 @@
 /**
  * Criação da conta LinkedIn (passo browser).
- * … → PIN → maior de 18 → Continuar.
+ * … → PIN → maior de 18 → Continuar → Pulares → Concluir.
  */
 import { openLinkedInSignup } from './open-signup.mjs';
 import { fillSignupEmail } from './fill-signup-email.mjs';
@@ -18,6 +18,10 @@ import { clickSignupSkip } from './click-signup-skip.mjs';
 import { clickSignupFinish } from './click-signup-finish.mjs';
 
 const DEFAULT_LI_PASSWORD = 'in@12345678';
+
+function log(...parts) {
+  console.error(`[createLinkedin] ${parts.join(' ')}`);
+}
 
 /**
  * @param {{
@@ -40,6 +44,7 @@ export async function createLinkedin(opts = {}) {
   if (!id) throw new Error('createLinkedin: id obrigatório');
 
   if (opts.skipBrowser) {
+    log('skipBrowser — sem browser');
     return {
       id,
       skipped: true,
@@ -59,15 +64,20 @@ export async function createLinkedin(opts = {}) {
     };
   }
 
+  log(`id=${id}`, opts.dryRun ? '(dry-run)' : '');
+
+  log('abrir signup…');
   const browser = await openLinkedInSignup({
     id,
     url: opts.url,
     dryRun: opts.dryRun,
   });
+  log(`signup aberto :${browser.port || '—'} ${browser.url || ''}`);
 
   let emailFill = null;
   const email = String(opts.email || '').trim();
   if (email) {
+    log(`e-mail: ${email}`);
     emailFill = await fillSignupEmail({
       id,
       email,
@@ -75,6 +85,7 @@ export async function createLinkedin(opts = {}) {
     });
   }
 
+  log('senha…');
   const password = String(opts.password || DEFAULT_LI_PASSWORD).trim();
   const passwordFill = await fillSignupPassword({
     id,
@@ -82,6 +93,7 @@ export async function createLinkedin(opts = {}) {
     dryRun: opts.dryRun,
   });
 
+  log('Aceite e cadastre-se…');
   const submit = await clickSignupSubmit({
     id,
     dryRun: opts.dryRun,
@@ -91,6 +103,7 @@ export async function createLinkedin(opts = {}) {
   const first = String(opts.first || opts.nome || '').trim();
   const last = String(opts.last || opts.sobrenome || '').trim();
   if (first && last) {
+    log(`nome: ${first} ${last}`);
     nameFill = await fillSignupName({
       id,
       first,
@@ -99,6 +112,7 @@ export async function createLinkedin(opts = {}) {
     });
   }
 
+  log('Continuar (após nome)…');
   const cont = await clickSignupContinue({
     id,
     dryRun: opts.dryRun,
@@ -107,6 +121,7 @@ export async function createLinkedin(opts = {}) {
   let locationFill = null;
   const location = String(opts.location || '').trim();
   if (location) {
+    log(`localidade: ${location}`);
     locationFill = await fillSignupLocation({
       id,
       location,
@@ -117,6 +132,7 @@ export async function createLinkedin(opts = {}) {
   let jobFill = null;
   const job = String(opts.job || opts.cargo || '').trim();
   if (job) {
+    log(`cargo: ${job}`);
     jobFill = await fillSignupJob({
       id,
       job,
@@ -127,6 +143,7 @@ export async function createLinkedin(opts = {}) {
   let companyFill = null;
   const company = String(opts.company || opts.empresa || '').trim();
   if (company) {
+    log(`empresa: ${company}`);
     companyFill = await fillSignupCompany({
       id,
       company,
@@ -137,60 +154,81 @@ export async function createLinkedin(opts = {}) {
   let pinFetch = null;
   let pinFill = null;
   if (email) {
+    log(`PIN Mailcow (até 5 min): ${email}`);
     pinFetch = await fetchSignupPin({
       email,
       code: opts.code || opts.pin,
       dryRun: opts.dryRun,
     });
     if (pinFetch?.code) {
+      log(
+        `PIN ok (${pinFetch.source}, ${pinFetch.attempts || 0} tent., ${pinFetch.waitedMs || 0}ms)`,
+      );
+      log('digitar PIN + Continuar…');
       pinFill = await fillSignupPin({
         id,
         code: pinFetch.code,
         dryRun: opts.dryRun,
       });
+      log(`após PIN: ${pinFill?.href || '—'}`);
     }
   }
 
+  log('maior de 18…');
   const age18 = await clickSignupAge18({
     id,
     dryRun: opts.dryRun,
   });
+  log(`após idade: ${age18?.href || '—'}`);
 
+  log('Pular (carreira)…');
   const skipCareer = await clickSignupSkip({
     id,
     dryRun: opts.dryRun,
   });
+  log(`→ ${skipCareer?.href || '—'}`);
 
+  log('Pular (foto)…');
   const skipPhoto = await clickSignupSkip({
     id,
     dryRun: opts.dryRun,
   });
+  log(`→ ${skipPhoto?.href || '—'}`);
 
-  // modal "Adicione sua foto" (segundo Pular)
+  log('Pular (modal foto)…');
   const skipPhotoModal = await clickSignupSkip({
     id,
     dryRun: opts.dryRun,
   });
+  log(`→ ${skipPhotoModal?.href || '—'}`);
 
+  log('Pular (pessoas)…');
   const skipPeople = await clickSignupSkip({
     id,
     dryRun: opts.dryRun,
   });
+  log(`→ ${skipPeople?.href || '—'}`);
 
+  log('Pular (seguir)…');
   const skipFollow = await clickSignupSkip({
     id,
     dryRun: opts.dryRun,
   });
+  log(`→ ${skipFollow?.href || '—'}`);
 
+  log('Continuar (app)…');
   const continueApp = await clickSignupContinue({
     id,
     dryRun: opts.dryRun,
   });
+  log(`→ ${continueApp?.href || '—'}`);
 
+  log('Concluir…');
   const finish = await clickSignupFinish({
     id,
     dryRun: opts.dryRun,
   });
+  log(`fim: ${finish?.href || '—'}`);
 
   return {
     id,

@@ -93,8 +93,8 @@ page.close();
 
 Meta `~/chrome-profiles/<id>/.human-cdp.json` → `fingerprint`.
 
-**startCdp (CLI):** só `--lang=…`. Sem flags webrtc/AutomationControlled (infobar amarela).  
-**connectCdp / goto (essencial):** `userAgent` + Client Hints, `platform`, `lang`/`acceptLanguage`/`locale`, `timezone`, `viewport`/`screen`, `geolocation`, `hardwareConcurrency`, `webgl`, `webrtcIpHandling` (inject). `webdriver=false` sempre no inject.
+**startCdp (CLI):** só `--lang=…` automático. `chromeArgs[]` allowlist — **não** usa `--force-webrtc-ip-handling-policy` nem `--disable-blink-features=AutomationControlled` (disparam “sinalizador de linha de comando sem suporte”).  
+**connectCdp / goto:** UA + Client Hints, platform/vendor/product/appVersion/doNotTrack/webdriver, Accept-Language, timezone, locale, viewport/screen/outer, geolocation, hardwareConcurrency, deviceMemory, maxTouchPoints, colorScheme, reducedMotion, touch, permissions, connection, battery, plugins/mimeTypes, keyboardLayout, mediaDevices, webgl, canvasNoise, audioNoise, fonts, WebRTC via inject (`webrtcIpHandling`).
 
 ```js
 updateCdp('ometv-2', {
@@ -111,11 +111,12 @@ updateCdp('ometv-2', {
     },
     geolocation: { latitude: -3.73, longitude: -38.52, accuracy: 40 },
     hardwareConcurrency: 8,
+    deviceMemory: 8,
+    maxTouchPoints: 0,
+    colorScheme: 'dark',
+    reducedMotion: 'no-preference',
+    touch: false,
     webrtcIpHandling: 'default_public_interface_only',
-    webgl: {
-      vendor: 'Google Inc. (Intel)',
-      renderer: 'ANGLE (Intel, Intel(R) UHD Graphics 630, OpenGL 4.1)',
-    },
     userAgentMetadata: {
       platform: 'macOS', platformVersion: '14.5.0', architecture: 'x86',
       model: '', mobile: false, bitness: '64',
@@ -125,15 +126,18 @@ updateCdp('ometv-2', {
         { brand: 'Google Chrome', version: '140' },
       ],
     },
+    permissions: [
+      { origin: 'https://ome.tv', permission: 'geolocation', setting: 'granted' },
+    ],
   },
 });
-// --lang só no próximo startCdp
+// flags (--lang / webrtc) só no próximo startCdp
 ```
 
 Override pontual: `connectCdp(id, { fingerprint })`.  
-**Não cobre:** IP de egress, TLS/JA3, canvas/áudio noise, battery/plugins/fonts.
+**Não cobre:** canvas/WebGL/áudio reais, IP de egress.
 
-**Antes → depois:** conjunto largo (battery, plugins, fonts, mediaDevices, canvasNoise…) → só o essencial acima. Rollback: `updateCdp(id, { fingerprint: null })` + restart; params extras no JSON são ignorados.
+**Antes → depois:** fingerprint básico (UA/lang/tz/viewport) → conjunto completo acima. Rollback: `updateCdp(id, { fingerprint: null })` + restart.
 
 ```bash
 npm run test:registry  # usa só id temporário smoke-tmp-registry

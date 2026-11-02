@@ -17,17 +17,17 @@ connectCdp(id): Promise<HumanCdpSession>
 ### Modelo `CdpRecord`
 `id`, `name`, `userDataDir`, `port`, `startScript`, `platform?`, `defaultUrl?`, `obs?`, `createdAt`, `updatedAt`
 
-Persistência: `human-cdp/data/cdps.json` via a própria API da lib. **Sem CSV** e **sem UI**.
+Persistência **no disco**: `start-*.sh` + `~/chrome-profiles`. **Sem JSON, sem CSV, sem UI.**
 
 ## Entrega
-- Módulo na `human-cdp`
+- Módulo na `human-cdp` (`listCdps` lê scripts existentes; `createCdp` só adiciona)
 - README do contrato + exemplos
-- Aceite: create → list → start → connect → stop → remove
-- **Sem** painel HTML / servidor de UI / dependência de CSV
+- Aceite: list (existentes) → create temp → remove temp (lab intacto)
+- **Não apagar** CDPs/scripts/perfis já existentes no lab
 
 ## Fora de escopo
 - Frontend CRUD
-- Import/sync de planilhas CSV
+- JSON/CSV store
 - Cloud / multi-host
 
 ## Relacionados

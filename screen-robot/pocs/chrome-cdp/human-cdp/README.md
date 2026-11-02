@@ -54,31 +54,25 @@ CDP_URL=http://127.0.0.1:9230 npm run test:bot-lab
 
 ## CRUD de CDPs (contrato na lib)
 
-Sem UI e **sem CSV**. Fonte de verdade: `data/cdps.json` via `createCdp` / `updateCdp` / `removeCdp`.
+Sem UI, **sem CSV**, **sem JSON**. Fonte de verdade no disco:
 
-`platform` (opcional) = rótulo do alvo do perfil (`linkedin`, `hostinger`, …) — metadado do registro, não vem de planilha.
+- scripts `screen-robot/pocs/chrome-cdp/start-*.sh`
+- perfis `~/chrome-profiles/<slug>`
+
+`listCdps()` / `getCdp()` **só leem** o que já existe. `createCdp` grava um `start-*.sh` novo + pasta de perfil. `removeCdp` apaga só o script do id pedido (`deleteProfile: true` para apagar a pasta — default **não** apaga perfil).
 
 ```js
-import {
-  listCdps, getCdp, createCdp, updateCdp, removeCdp,
-  statusCdp, startCdp, stopCdp, connectCdp,
-} from './src/index.mjs';
+import { listCdps, createCdp, connectCdp, removeCdp } from './src/index.mjs';
 
-createCdp({
-  name: 'Germano',
-  port: 9230,
-  userDataDir: '~/chrome-profiles/germano',
-  startScript: 'screen-robot/pocs/chrome-cdp/start-germano.sh',
-  platform: 'hostinger',
-});
-listCdps();
-await startCdp(9230);
-const page = await connectCdp(9230);
+listCdps(); // lê start-*.sh do disco
+createCdp({ id: 'meu-perfil', name: 'Meu Perfil', port: 9240, platform: 'linkedin' });
+const page = await connectCdp('meu-perfil');
 page.close();
+// removeCdp('meu-perfil') // não use nos CDPs de lab sem querer
 ```
 
 ```bash
-npm run test:registry  # create/list/update/remove/status
+npm run test:registry  # usa só id temporário smoke-tmp-registry
 ```
 
 **Card:** [CRUD de CDPs na lib](https://trello.com/c/hoLSkLko)

@@ -9,8 +9,8 @@
 
 - Contrato em [`../../pocs/chrome-cdp/human-cdp/src/registry.mjs`](../../pocs/chrome-cdp/human-cdp/src/registry.mjs)
 - Export: [`../../pocs/chrome-cdp/human-cdp/src/index.mjs`](../../pocs/chrome-cdp/human-cdp/src/index.mjs)
-- Store: `human-cdp/data/cdps.json` (só via lib; sem CSV)
-- Aceite: `npm run test:registry`
+- Disco: `start-*.sh` + `~/chrome-profiles` (sem JSON/CSV)
+- Aceite: `npm run test:registry` (só cria/remove `smoke-tmp-registry`)
 - Docs: [`../../pocs/chrome-cdp/human-cdp/README.md`](../../pocs/chrome-cdp/human-cdp/README.md)
 
 ## Relacionados

@@ -2,7 +2,7 @@
 
 Controla um Chrome já rodando com `--remote-debugging-port=9222` (mesmo perfil/cookies).
 
-**Lib humana (clique + CRUD de CDPs):** [`human-cdp/README.md`](human-cdp/README.md) · `npm run test:bot-lab` · `npm run test:registry` · cards [5tt5ZTeN](https://trello.com/c/5tt5ZTeN) · [hoLSkLko](https://trello.com/c/hoLSkLko). Store: `human-cdp/data/cdps.json` (não CSV).
+**Lib humana (clique + CRUD de CDPs):** [`human-cdp/README.md`](human-cdp/README.md) · `npm run test:bot-lab` · `npm run test:registry` · cards [5tt5ZTeN](https://trello.com/c/5tt5ZTeN) · [hoLSkLko](https://trello.com/c/hoLSkLko). CDPs = `start-*.sh` + `~/chrome-profiles` (sem JSON/CSV).
 
 ## Subir o Chrome (perfis isolados)
 

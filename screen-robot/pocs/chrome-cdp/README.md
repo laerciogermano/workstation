@@ -99,6 +99,19 @@ System prompt (IA = Laércio Germano no Tinder; **só a última não lida**; pr�
 
 **Antes → depois:** só personalidade/§7.1 → prompt autocontido com template PERFIL/HISTÓRICO + regra “uma não lida por vez”. Rollback: apagar o arquivo; usar só o doc de personalidade.
 
+### Loop contínuo (CDP :9230)
+
+```bash
+# Chrome Germano com Tinder aberto; depois:
+python3 tinder-laercio-loop.py
+# ou:
+nohup python3 -u tinder-laercio-loop.py >> /tmp/tinder-laercio-loop.log 2>&1 &
+```
+
+Uma não lida por ciclo (match falou por último) → extrai chat/perfil → 1–2 bolhas no tom do prompt → próxima. Estado: `/tmp/tinder-laercio-loop-state.json`. Log: `/tmp/tinder-laercio-loop.log`.
+
+**Antes → depois:** respostas manuais / loop genérico em `/tmp` → `tinder-laercio-loop.py` no repo. Rollback: `pkill -f tinder-laercio-loop.py`; apagar o script.
+
 ## Caminho inverso
 
 - Parar: fechar a janela do Chrome desse `user-data-dir` ou `pkill -f marcelino-jidarir-facebook`

@@ -29,6 +29,8 @@ Saída: `email`, `name`, `password`, `created` / `existed`.
 
 **Idempotente:** se a caixa já existe, não recria (não devolve a senha antiga).
 
+**Quota:** default `1024` MiB (`opts.quota`). Antes `3072` — domínio com pouco espaço restante (`mailbox_quota_left_exceeded`). Rollback: `quota: '3072'` ou passar `quota` maior se houver espaço.
+
 **Antes → depois:** tudo num arquivo → CLI + `createEmail` separados. Rollback: juntar de novo / apagar `create-email.mjs`.
 
 **Rollback mailbox:** apagar no Mailcow; remover linha de [`credenciais.md`](../../../../credenciais.md) se usou `--write-credenciais`.

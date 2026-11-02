@@ -169,7 +169,8 @@ export function createEmail(opts = {}) {
     local_part: localPart,
     domain,
     name,
-    quota: '3072',
+    // domínio quase cheio → 1024 MiB (antes 3072; erro mailbox_quota_left_exceeded)
+    quota: String(opts.quota ?? '1024'),
     password,
     password2: password,
     active: '1',

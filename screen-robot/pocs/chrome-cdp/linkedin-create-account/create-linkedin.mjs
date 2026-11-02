@@ -1,12 +1,13 @@
 /**
  * Criação da conta LinkedIn (passo browser).
- * Abre signup → e-mail → senha → submit → nome/sobrenome.
+ * Abre signup → e-mail → senha → submit → nome/sobrenome → Continuar.
  */
 import { openLinkedInSignup } from './open-signup.mjs';
 import { fillSignupEmail } from './fill-signup-email.mjs';
 import { fillSignupPassword } from './fill-signup-password.mjs';
 import { clickSignupSubmit } from './click-signup-submit.mjs';
 import { fillSignupName } from './fill-signup-name.mjs';
+import { clickSignupContinue } from './click-signup-continue.mjs';
 
 const DEFAULT_LI_PASSWORD = 'in@12345678';
 
@@ -35,6 +36,7 @@ export async function createLinkedin(opts = {}) {
       password: null,
       submit: null,
       name: null,
+      continue: null,
     };
   }
 
@@ -78,6 +80,11 @@ export async function createLinkedin(opts = {}) {
     });
   }
 
+  const cont = await clickSignupContinue({
+    id,
+    dryRun: opts.dryRun,
+  });
+
   return {
     id,
     skipped: false,
@@ -86,5 +93,6 @@ export async function createLinkedin(opts = {}) {
     password: passwordFill,
     submit,
     name: nameFill,
+    continue: cont,
   };
 }

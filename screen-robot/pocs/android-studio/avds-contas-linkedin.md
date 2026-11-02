@@ -4,7 +4,7 @@ SOP para criar um AVD local (Mac) **1:1 com uma caixa `@clozzy.com.br`**, com im
 
 Credenciais das caixas: [`credenciais.md`](../../../../credenciais.md) (§ Caixas `@clozzy.com.br`).
 
-CSV: [`contas-linkedin-clozzy.csv`](contas-linkedin-clozzy.csv) — cols `data_criacao,nome,email,senha_li,restrita,origem,ip,objetivo,observacoes` (`restrita`=sim/nao; `origem`=AVD|CDP; `ip`=IPv4 de egress no signup).  
+CSV: [`contas-linkedin-clozzy.csv`](contas-linkedin-clozzy.csv) — cols conta + `ip` + fingerprint (`cdp`, `fp_*`; **sem** viewport). Prompt de criação CDP: [`../chrome-cdp/PROMPT-NOVO-VENDEDOR.md`](../chrome-cdp/PROMPT-NOVO-VENDEDOR.md).  
 **Antes → depois:** `status`+`obs` misturados → cols `restrita` + `origem` + `objetivo` + `observacoes` (status legado fica em `observacoes`). Rollback: restaurar header `data_criacao,nome,email,status,senha_li,objetivo,obs` do commit anterior.
 
 **Antes → depois (col `ip`):** sem controle de egress → coluna `ip` obrigatória em **toda criação** nova (`curl -sS https://api.ipify.org`); linhas antigas ficam vazias (não inventar). Rollback: remover col `ip` do header/linhas.

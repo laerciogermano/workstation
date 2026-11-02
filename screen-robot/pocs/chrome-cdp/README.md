@@ -37,6 +37,12 @@ Registro: [`../android-studio/contas-facebook-chrome.csv`](../android-studio/con
 
 **Antes → depois (confirm-email):** signup inclui PIN → `linkedin-confirm-email-cdp.mjs` confirma e-mail via **link** do Mailcow e/ou **PIN** (abre LI → settings e-mail → navega confirm link). Wrapper: `./confirm-email-juliana-martins.sh`. Rollback: confirmar manualmente / reenviar link.
 
+## Prompt — novo vendedor
+
+Copiar/colar: [`PROMPT-NOVO-VENDEDOR.md`](PROMPT-NOVO-VENDEDOR.md) (mailbox + CDP + fingerprint **sem viewport** + signup LI + CSV).
+
+**Antes → depois:** fluxo só nos chats → prompt reutilizável. Rollback: apagar o arquivo / esta seção.
+
 ## Cadastro LinkedIn via CDP (Marina)
 
 ```bash

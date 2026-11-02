@@ -181,6 +181,11 @@ export async function createLinkedin(opts = {}) {
     dryRun: opts.dryRun,
   });
 
+  const continueApp = await clickSignupContinue({
+    id,
+    dryRun: opts.dryRun,
+  });
+
   return {
     id,
     skipped: false,
@@ -201,5 +206,6 @@ export async function createLinkedin(opts = {}) {
     skipPhotoModal,
     skipPeople,
     skipFollow,
+    continueApp,
   };
 }

@@ -171,6 +171,11 @@ export async function createLinkedin(opts = {}) {
     dryRun: opts.dryRun,
   });
 
+  const skipPeople = await clickSignupSkip({
+    id,
+    dryRun: opts.dryRun,
+  });
+
   return {
     id,
     skipped: false,
@@ -189,5 +194,6 @@ export async function createLinkedin(opts = {}) {
     skip: skipCareer,
     skipPhoto,
     skipPhotoModal,
+    skipPeople,
   };
 }

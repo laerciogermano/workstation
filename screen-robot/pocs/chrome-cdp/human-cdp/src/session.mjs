@@ -184,6 +184,7 @@ export class HumanCdpSession {
   /**
    * Digita caractere a caractere via Input.insertText (ritmo humano).
    * Foca o campo com click humano antes.
+   * Não manda `text` no keyDown — isso + insertText duplicava cada char (ex.: Rafaela → RRaaffaaeellaa).
    */
   async type(selector, text, { clickFirst = true, clear = false } = {}) {
     await this.ensureFocus({ force: true });
@@ -191,20 +192,21 @@ export class HumanCdpSession {
     else await this.hover(selector);
     await this.ensureFocus({ settleMs: 100, force: true });
     if (clear) {
-      await this.send('Input.dispatchKeyEvent', {
-        type: 'keyDown',
-        key: 'a',
-        code: 'KeyA',
-        modifiers: 2,
-        windowsVirtualKeyCode: 65,
-      });
-      await this.send('Input.dispatchKeyEvent', {
-        type: 'keyUp',
-        key: 'a',
-        code: 'KeyA',
-        modifiers: 2,
-        windowsVirtualKeyCode: 65,
-      });
+      // selectAll nativo no elemento focado (Cmd/Ctrl+A via CDP falha em vários forms React)
+      await this.evaluate(`(() => {
+        const el = document.querySelector(${JSON.stringify(selector)});
+        if (!el) return;
+        el.focus();
+        if (typeof el.select === 'function') el.select();
+        else if (window.getSelection && el.childNodes?.length) {
+          const range = document.createRange();
+          range.selectNodeContents(el);
+          const sel = window.getSelection();
+          sel.removeAllRanges();
+          sel.addRange(range);
+        }
+      })()`);
+      await sleep(40);
       await this.send('Input.dispatchKeyEvent', {
         type: 'keyDown',
         key: 'Backspace',
@@ -217,19 +219,36 @@ export class HumanCdpSession {
         code: 'Backspace',
         windowsVirtualKeyCode: 8,
       });
+      await sleep(60);
+      // se ainda sobrou (React), força valor vazio + eventos
+      await this.evaluate(`(() => {
+        const el = document.querySelector(${JSON.stringify(selector)});
+        if (!el) return;
+        const proto = Object.getPrototypeOf(el);
+        const desc = Object.getOwnPropertyDescriptor(proto, 'value')
+          || Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value');
+        if (desc?.set) desc.set.call(el, '');
+        else el.value = '';
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+        el.dispatchEvent(new Event('change', { bubbles: true }));
+      })()`);
+      await sleep(40);
     }
     for (const ch of String(text)) {
       await this.ensureFocus({ settleMs: 0 });
+      // keyDown/Up sem `text` — só presença de tecla; inserção só via insertText
       await this.send('Input.dispatchKeyEvent', {
         type: 'keyDown',
-        text: ch,
-        unmodifiedText: ch,
         key: ch,
+        code: ch.length === 1 && /[a-zA-Z]/.test(ch) ? `Key${ch.toUpperCase()}` : undefined,
+        windowsVirtualKeyCode: ch.length === 1 ? ch.toUpperCase().charCodeAt(0) : undefined,
       });
       await this.send('Input.insertText', { text: ch });
       await this.send('Input.dispatchKeyEvent', {
         type: 'keyUp',
         key: ch,
+        code: ch.length === 1 && /[a-zA-Z]/.test(ch) ? `Key${ch.toUpperCase()}` : undefined,
+        windowsVirtualKeyCode: ch.length === 1 ? ch.toUpperCase().charCodeAt(0) : undefined,
       });
       await sleep(keyGapMs());
     }

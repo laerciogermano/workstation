@@ -38,7 +38,7 @@ page.close();
 | `connect({ cdpUrl, url, newTab, urlIncludes })` | abre sessão + **foco** |
 | `click` / `hover` / `type` / `fill` / `drag` / `scroll` / `select` / `goto` / `waitFor` | **sempre** chamam `ensureFocus` (aba + activate Chrome) antes da ação |
 | `click(sel)` | foco + `mouseMoved` em curva + `press`/`release` |
-| `type` / `fill` | foco + click humano + `Input.insertText` ritmado |
+| `type` / `fill` | foco + click humano + `Input.insertText` ritmado (sem `text` no keyDown — evita char duplicado) |
 | `bringToFront` / `ensureFocus` | aba + app Chrome (+ `Emulation.setFocusEmulationEnabled`) |
 | `evaluate` | só leitura/DOM — **não** usa foco; **não** use para clicar |
 
@@ -81,6 +81,8 @@ npm run test:registry  # usa só id temporário smoke-tmp-registry
 Scripts CDP crus (`el.click`, `dispatchMouseEvent` sem move) → importam `human-cdp` e usam `click`/`type`.
 
 **Antes → depois (foco):** `focused: false` permitia background → toda interação chama `ensureFocus` (bringToFront + activate). Rollback: `ensureFocus` com early-return se `this.focused === false`.
+
+**Antes → depois (type):** `keyDown` com `text` + `insertText` → cada char duplicado (Rafaela→RRaaffaaeellaa). Agora: keyDown/Up sem `text`; só `insertText` insere. `fill` clear: `el.select()` + Backspace + setter nativo (Cmd+A CDP falhava no FB). Rollback: keyDown com `text` + clear só Ctrl+A.
 
 **Rollback:** voltar ao CDP cru nos scripts; apagar `human-cdp/`.
 

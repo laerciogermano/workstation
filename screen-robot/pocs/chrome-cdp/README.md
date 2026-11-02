@@ -73,7 +73,14 @@ CDP_URL=http://127.0.0.1:9228 node linkedin-setup-about-cdp.mjs --about "Texto..
 # about sem --about usa src/assets/profile-defaults.json
 CDP_URL=http://127.0.0.1:9224 node linkedin-setup-job-cdp.mjs
 # job/company sem flags → profile-defaults.json; --force regrava
+
+# extrair leads (espelho AVD login-extract-profiles): People search → abre perfil → JSON (+ API)
+CDP_URL=http://127.0.0.1:9224 node linkedin-extract-leads-cdp.mjs -n 5 --query "comprador"
+# opcional API (mesmo contrato do AVD):
+# PROFILES_API_URL=http://localhost:3000 AGENT_ID=… AGENT_API_KEY=… CDP_URL=… node linkedin-extract-leads-cdp.mjs -n 5 --query "…"
 ```
+
+**Antes → depois (extract leads CDP):** só extract no AVD (`login-extract-profiles` / job `extrair_leads`) → `linkedin-extract-leads-cdp.mjs` na aba Chrome logada (`/search/results/people/?keywords=`). Saída: `screenshots/linkedin-extract-leads-cdp/<stamp>/profiles.json`. Skip match/by-url + POST `/profiles` + `/profile-details` + conexão se `PROFILES_API_URL`/`AGENT_ID`. Rollback: use o AVD; apague o `.mjs` e esta seção.
 
 Deps: Node 22+ (`fetch`/`WebSocket`). Clique via CDP (`Input.dispatchMouseEvent`) — janela pode ficar atrás.
 

@@ -89,6 +89,8 @@ async function main() {
     id: cdpResult.id,
     email: emailResult.email,
     password: 'in@12345678',
+    first: emailResult.name?.split(/\s+/)[0] || 'Rafael',
+    last: emailResult.name?.split(/\s+/).slice(1).join(' ') || 'Campos',
     dryRun,
     skipBrowser: noBrowser,
   });

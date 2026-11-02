@@ -11,8 +11,8 @@ Script novo, passo a passo. **Agora só o passo 1:** mailbox Mailcow.
 | [`create-cdp.mjs`](create-cdp.mjs) | `createLinkedInCdp({ first, last, … })` |
 | [`save-csv.mjs`](save-csv.mjs) | `saveAccountCsv({ email, cdp })` → LI + chrome CSV |
 | [`create-linkedin.mjs`](create-linkedin.mjs) | `createLinkedin({ id, email })` — signup + preenche e-mail |
-| [`open-signup.mjs`](open-signup.mjs) | `openLinkedInSignup({ id })` → `startCdp` + URL signup |
-| [`fill-signup-email.mjs`](fill-signup-email.mjs) | `fillSignupEmail({ id, email })` → `#email-or-phone` |
+| [`open-signup.mjs`](open-signup.mjs) | `openLinkedInSignup({ id })` → `startCdp` + URL signup + espera `#email-or-phone` |
+| [`fill-signup-email.mjs`](fill-signup-email.mjs) | `fillSignupEmail({ id, email })` → espera campo (até 60s) → `#email-or-phone` |
 | [`fill-signup-password.mjs`](fill-signup-password.mjs) | `fillSignupPassword({ id, password })` → `#password` (default `in@12345678`) |
 | [`click-signup-submit.mjs`](click-signup-submit.mjs) | `clickSignupSubmit({ id })` → Aceite e cadastre-se |
 | [`fill-signup-name.mjs`](fill-signup-name.mjs) | `fillSignupName({ id, first, last })` → `#first-name` / `#last-name` |

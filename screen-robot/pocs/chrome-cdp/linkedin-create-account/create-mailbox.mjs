@@ -15,7 +15,7 @@ import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createEmail } from './create-email.mjs';
 import { createLinkedInCdp } from './create-cdp.mjs';
-import { saveAccountCsv } from './save-csv.mjs';
+import { saveAccountCsv, markLiCriado } from './save-csv.mjs';
 import { createLinkedin } from './create-linkedin.mjs';
 
 const DOMAIN = (process.env.MAIL_DOMAIN || 'clozzy.com.br').trim();
@@ -118,22 +118,44 @@ async function main() {
     dryRun,
     skipBrowser: noBrowser,
   });
-  log(
-    '4/4 fim',
-    linkedinResult?.finish?.href || linkedinResult?.skipped
-      ? linkedinResult.skipped
+
+  const reachedFeed =
+    !!linkedinResult?.onboarding?.done ||
+    /\/feed\/?/i.test(
+      String(
+        linkedinResult?.onboarding?.href ||
+          linkedinResult?.finish?.href ||
+          '',
+      ),
+    );
+
+  let csvFinal = csvResult;
+  if (reachedFeed && !dryRun && !noBrowser) {
+    log('4/4 conta criada — marcando li_criado=sim no CSV…');
+    csvFinal = {
+      ...csvResult,
+      ...markLiCriado({ email: emailResult.email, liCriado: 'sim' }),
+    };
+    log(`CSV li_criado=sim (${emailResult.email})`);
+  } else {
+    log(
+      '4/4 fim',
+      linkedinResult?.skipped
         ? 'skipped'
-        : linkedinResult.finish?.href
-      : 'ok',
-  );
+        : reachedFeed
+          ? 'feed'
+          : linkedinResult?.finish?.href || linkedinResult?.onboarding?.href || 'sem feed',
+    );
+  }
 
   console.log(
     JSON.stringify(
       {
         email: emailResult,
         cdp: cdpResult,
-        csv: csvResult,
+        csv: csvFinal,
         linkedin: linkedinResult,
+        li_criado: reachedFeed ? 'sim' : 'nao',
       },
       null,
       2,

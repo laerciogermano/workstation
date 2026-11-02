@@ -337,3 +337,39 @@ export function saveAccountCsv(opts = {}) {
     chromeCsv: chromeSaved ? CHROME_CSV : null,
   };
 }
+
+/**
+ * Atualiza só li_criado (+ status em observacoes) na linha existente.
+ * @param {{ email: string, liCriado?: 'sim'|'nao', dryRun?: boolean }} opts
+ */
+export function markLiCriado(opts = {}) {
+  const email = String(opts.email || '').trim();
+  if (!email) throw new Error('markLiCriado: email obrigatório');
+  const liCriado = opts.liCriado === 'nao' ? 'nao' : 'sim';
+  if (opts.dryRun) {
+    return { dryRun: true, email, li_criado: liCriado };
+  }
+  if (!existsSync(LI_CSV)) throw new Error(`CSV ausente: ${LI_CSV}`);
+  ensureLinkedinCsvHeader();
+  const { rows } = parseCsv(readFileSync(LI_CSV, 'utf8'));
+  let found = false;
+  const next = rows.map((r) => {
+    if (r.email !== email) return r;
+    found = true;
+    const o = { ...r };
+    o.li_criado = liCriado;
+    const obs = String(o.observacoes || '');
+    if (liCriado === 'sim') {
+      o.observacoes = obs
+        .replace(/status\s+\w+/gi, 'status criada_chrome_cdp')
+        .replace(/mailbox_cdp_prontos/gi, 'criada_chrome_cdp');
+      if (!/criada_chrome_cdp|li_criado/i.test(o.observacoes)) {
+        o.observacoes = (obs ? `${obs}; ` : '') + 'status criada_chrome_cdp';
+      }
+    }
+    return o;
+  });
+  if (!found) throw new Error(`markLiCriado: e-mail não está no CSV: ${email}`);
+  writeCsv(LI_CSV, LI_HEADER, next);
+  return { saved: true, email, li_criado: liCriado, linkedinCsv: LI_CSV };
+}

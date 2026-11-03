@@ -108,9 +108,11 @@ Cadastro B2B a partir do funil Conect. Seed: [`../../docs/planilhas-funil/empres
 
 **Uma linha = host (IP/SSH) + device (container/ADB) + conta LinkedIn.** Não há mais tabelas/UI de `servidores`, `avds` nem `contas_linkedin`. `nome` = agentId (`provision.name`). Gestores têm `agentes:read`/`agentes:write` e, ao criar, são vinculados em `gestor_agentes`.
 
+**Antes → depois (ordem lista):** `orderBy(a.nome ASC)` → `orderBy(a.createdAt DESC)`. **Rollback:** volte `.orderBy('a.nome', 'ASC')` em `agentes.service.ts` `findAll`.
+
 | Método | Papel |
 |--------|--------|
-| `GET /agentes` | Lista (`grouped`, `sync`, `q`, `hostKey`, `status`) |
+| `GET /agentes` | Lista (`grouped`, `sync`, `q`, `hostKey`, `status`); ordem `createdAt DESC` (mais novo → mais antigo) |
 | `POST /agentes` | Cria (host inline ou `copyHostFromAgenteId`; LI opcional; `provisionDevice=false` só cadastro) |
 | `PATCH /agentes/:id` | `nome` (rótulo; não é chave da fila) / host / notas / LinkedIn |
 

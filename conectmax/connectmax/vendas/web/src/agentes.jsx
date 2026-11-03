@@ -256,12 +256,9 @@ export default function Agentes() {
         ramGb,
         diskGb,
         agents: g.agents.slice().sort((a, b) => {
-          const rank = (s) =>
-            s === 'ativo' ? 0 : s === 'dormindo' ? 1 : 2;
-          return (
-            rank(a.status) - rank(b.status) ||
-            String(a.nome || '').localeCompare(String(b.nome || ''), 'pt-BR')
-          );
+          const ta = new Date(a.createdAt || 0).getTime();
+          const tb = new Date(b.createdAt || 0).getTime();
+          return tb - ta;
         }),
       };
     });

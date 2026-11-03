@@ -292,7 +292,7 @@ export class AgentesService implements OnModuleInit {
 
     const qb = this.agentes
       .createQueryBuilder('a')
-      .orderBy('a.nome', 'ASC');
+      .orderBy('a.createdAt', 'DESC');
 
     if (opts?.hostKey) {
       if (opts.hostKey === 'localhost') {

@@ -120,7 +120,7 @@ CDP_ID=marina-costa npm run linkedin-connect-cdp -- --url 'https://www.linkedin.
 
 **Antes → depois:** só scripts ad-hoc nesta pasta + AVD `src/lib/linkedin-*.js` → `src/lib/cdp/` + API `:3098` para workers. Signup/setup continuam nos `.mjs` daqui. Rollback: AVD `:3099` / libs `serial`.
 
-**Antes → depois (extract leads CDP):** só extract no AVD (`login-extract-profiles` / job `extrair_leads`) → `linkedin-extract-leads-cdp.mjs` (POC) **e** lib worker `src/lib/cdp/linkedin-extract-leads.js` (`npm run linkedin-extract-leads-cdp`). Saída: `screenshots/linkedin-extract-leads-cdp/<stamp>/profiles.json`. Rollback: use o AVD; apague o `.mjs` / lib.
+**Antes → depois (extract leads CDP):** só extract no AVD (`login-extract-profiles` / job `extrair_leads`) → `linkedin-extract-leads-cdp.mjs` (POC) **e** lib worker `src/lib/cdp/linkedin-extract-leads.js` (`npm run linkedin-extract-leads-cdp`). Lib worker: **só cards da lista** (sem abrir `/in/`) + **paginação** `page=N` (~10/página). Saída: `screenshots/linkedin-extract-leads-cdp/<stamp>/profiles.json`. Rollback: AVD; ou lib sem paginação/abrir perfil.
 
 **Antes → depois (parser UI LI 2026):** seletores `li.reusable-search__result-container` / `div.entity-result` → 0 cards (classes ofuscadas) → parse por `a[href*="/in/"]` + texto “Nome • grau … Conectar”; header do perfil pela 1ª linhas do `main` (sem depender de `h1`). Rollback: commit anterior do `.mjs`.
 

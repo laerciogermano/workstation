@@ -1,6 +1,7 @@
 /**
  * Extrair leads LinkedIn via People search (CDP / web).
- * Espelho do job AVD `login-extract-profiles` / CLI `linkedin-extract-leads-cdp.mjs`.
+ * Só lista: lê cada card (HTML/texto visível) — **não** abre o perfil.
+ * Paginação: ~10 por página; se `n > 10`, segue para `page=2`, `page=3`, …
  *
  * @param {{
  *   page?: object,
@@ -20,19 +21,21 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 import {
-  connectionStatusFromInviteStatus,
   normalizeLinkedInProfileUrl,
   resolveAgentId,
-  syncConnectionFromInviteStatus,
 } from "../linkedin-connect.js";
 import { shot, sleep } from "./linkedin-dom.js";
 import { withLinkedInPage } from "./session.js";
 
-const SCROLL_STABLE = Number(process.env.EXTRACT_SCROLL_STABLE || 4);
-const MAX_ROUNDS = 80;
+/** Resultados típicos por página da People search. */
+const PAGE_SIZE = Number(process.env.EXTRACT_PAGE_SIZE || 10);
+const MAX_SEARCH_PAGES = Number(process.env.EXTRACT_MAX_PAGES || 50);
 
-function peopleSearchUrl(query) {
-  return `https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(query)}`;
+function peopleSearchUrl(query, pageNum = 1) {
+  const u = new URL("https://www.linkedin.com/search/results/people/");
+  u.searchParams.set("keywords", query);
+  if (pageNum > 1) u.searchParams.set("page", String(pageNum));
+  return u.toString();
 }
 
 function apiBase() {
@@ -43,102 +46,212 @@ function apiBase() {
   ).replace(/\/$/, "");
 }
 
+/**
+ * Cards da People search — tudo que o HTML do item expõe (sem abrir /in/).
+ * Usa `awaitPromise` no CDP (fetch da foto no browser).
+ */
 async function scrapeSearchCards(page) {
-  return page.evaluate(`(() => {
-    const out = [];
-    const seen = new Set();
-    const links = [...document.querySelectorAll('a[href*="/in/"]')];
-    for (const a of links) {
+  const expression = `(async () => {
+    const normUrl = (href) => {
       try {
-        const u = new URL(a.href, location.origin);
+        const u = new URL(href, location.origin);
         const m = u.pathname.match(/\\/in\\/([^/?#]+)/i);
-        if (!m) continue;
+        if (!m) return null;
         const slug = decodeURIComponent(m[1]).replace(/\\/+$/, '');
-        if (!slug || /^(me|edit|detail)$/i.test(slug)) continue;
-        const profileUrl = 'https://www.linkedin.com/in/' + slug + '/';
-        if (seen.has(profileUrl)) continue;
-        const card = a.closest('li') || a.closest('div') || a.parentElement;
-        const text = (card?.innerText || a.innerText || '').replace(/\\s+/g, ' ').trim();
-        if (!text || text.length < 3) continue;
-        let action = null;
-        if (/\\bpending\\b|pendente/i.test(text)) action = 'Pending';
-        else if (/\\bmessage\\b|mensagem/i.test(text)) action = 'Message';
-        else if (/\\bconnect\\b|conectar|convidar/i.test(text)) action = 'Connect';
-        if (!action) continue;
-        const name = (a.innerText || '')
-          .replace(/\\s+/g, ' ')
-          .trim()
-          .split('·')[0]
-          .replace(/\\s+(Conectar|Connect|Pendente|Pending|Mensagem|Message|Seguir|Follow)\\b.*$/i, '')
-          .trim();
-        if (!name || /^linkedin member$/i.test(name)) continue;
-        seen.add(profileUrl);
-        const lines = text.split(/(?<=\\.)\\s+|\\s{2,}/).map((s) => s.trim()).filter(Boolean);
-        out.push({
-          name,
-          title: lines[1] || null,
-          location: lines[2] || null,
-          action,
-          profileUrl,
-        });
-      } catch { /* ignore */ }
+        if (!slug || /^(me|edit|detail)$/i.test(slug)) return null;
+        return 'https://www.linkedin.com/in/' + slug + '/';
+      } catch { return null; }
+    };
+    const parseAction = (raw) => {
+      const t = String(raw || '').replace(/\\s+/g, ' ').trim();
+      if (/pending|pendente|invitation sent|convite enviado/i.test(t)) return 'Pending';
+      if (/\\bmessage\\b|mensagem|enviar mensagem/i.test(t)) return 'Message';
+      if (/connect|conectar|convidar/i.test(t)) return 'Connect';
+      if (/follow|seguir/i.test(t)) return 'Follow';
+      return null;
+    };
+    const clean = (s) => String(s || '').replace(/\\s+/g, ' ').trim();
+
+    const bodyText = document.body?.innerText || '';
+    if (/linkedin\\s*member|membro\\s+do\\s+linkedin/i.test(bodyText)) {
+      const onlyMember = ![...document.querySelectorAll('a[href*="/in/"]')].some((a) => {
+        const t = clean(a.innerText);
+        return t.length > 3 && !/linkedin\\s*member|membro\\s+do\\s+linkedin/i.test(t);
+      });
+      if (onlyMember) return { memberLimit: true, cards: [] };
     }
-    return out;
-  })()`);
+
+    const byUrl = new Map();
+    for (const a of document.querySelectorAll('a[href*="/in/"]')) {
+      if (!a.getClientRects().length) continue;
+      const profileUrl = normUrl(a.href);
+      if (!profileUrl) continue;
+      const text = clean(a.innerText);
+      if (!text) continue;
+      const prev = byUrl.get(profileUrl) || { texts: [], el: a };
+      prev.texts.push(text);
+      if (text.length >= (prev.texts[0]?.length || 0)) prev.el = a;
+      byUrl.set(profileUrl, prev);
+    }
+
+    const toDataUrl = async (src) => {
+      if (!src || src.startsWith('data:')) return src || null;
+      try {
+        const res = await fetch(src, { credentials: 'include' });
+        if (!res.ok) return null;
+        const buf = await res.arrayBuffer();
+        const bytes = new Uint8Array(buf);
+        let bin = '';
+        const chunk = 0x8000;
+        for (let i = 0; i < bytes.length; i += chunk) {
+          bin += String.fromCharCode(...bytes.subarray(i, i + chunk));
+        }
+        const mime = res.headers.get('content-type') || 'image/jpeg';
+        return 'data:' + mime + ';base64,' + btoa(bin);
+      } catch {
+        return null;
+      }
+    };
+
+    const out = [];
+    for (const [profileUrl, pack] of byUrl) {
+      const texts = pack.texts.sort((x, y) => y.length - x.length);
+      const long = texts[0] || '';
+      const short =
+        texts.find((t) => t.length < 80 && !/[•·]/.test(t)) || '';
+      if (
+        /^linkedin\\s*member$/i.test(short || long) ||
+        /^membro\\s+do\\s+linkedin$/i.test(short || long)
+      ) {
+        return { memberLimit: true, cards: out };
+      }
+
+      let card = pack.el.closest('li') ||
+        pack.el.closest('[data-chameleon-result-urn]') ||
+        pack.el.parentElement;
+      for (let i = 0; i < 6 && card; i++) {
+        const t = card.innerText || '';
+        if (
+          /Conectar|Connect|Pendente|Pending|Mensagem|Message|Seguir|Follow/i.test(t) &&
+          t.length > 40
+        ) break;
+        card = card.parentElement;
+      }
+      const cardText = clean(card?.innerText || long);
+
+      const action =
+        parseAction(cardText) ||
+        parseAction(long) ||
+        (() => {
+          const btn = [...(card?.querySelectorAll('button, a, [role=button]') || [])]
+            .map((el) => el.getAttribute('aria-label') || el.innerText || '')
+            .find((t) => parseAction(t));
+          return parseAction(btn || '');
+        })();
+      if (!action && !/[•·]\\s*\\d|\\d+(?:st|nd|rd|th)|\\dº/i.test(long + cardText)) continue;
+
+      let name = clean(short || long.split(/[•·]/)[0] || '')
+        .replace(/Verified|Verificado/gi, '')
+        .trim();
+      if (!name || name.length < 3) {
+        name = clean((cardText.split(/[•·]/)[0] || '')).slice(0, 80);
+      }
+      if (!name || name.length < 3 || name.length > 80) continue;
+
+      const degree =
+        (cardText.match(/[•·]\\s*(\\d+(?:st|nd|rd|th)|\\dº(?:\\s*e\\s*\\+)?)/i) || [])[1] ||
+        (cardText.match(/\\b(\\d+(?:st|nd|rd|th))\\b/i) || [])[1] ||
+        null;
+
+      const atualM = cardText.match(/\\bAtual:\\s*(.+?)(?=\\s+Anterior:|$)/i);
+      const pastM = cardText.match(/\\bAnterior:\\s*(.+?)(?=\\s+Atual:|$)/i);
+      const current = atualM ? clean(atualM[1]) : null;
+      const past = pastM ? clean(pastM[1]) : null;
+
+      const mutualM = cardText.match(
+        /((?:\\d+[\\d.,]*\\+?\\s*)?(?:conexões? em comum|mutual connections?|em comum)[^]*?)(?=\\s+Atual:|\\s+Anterior:|$)/i,
+      );
+      const mutualConnections = mutualM ? clean(mutualM[1]).slice(0, 200) : null;
+
+      let mid = cardText;
+      const cut = Math.max(cardText.indexOf('•'), cardText.indexOf('·'));
+      if (cut >= 0) mid = cardText.slice(cut + 1);
+      mid = mid
+        .replace(/^\\s*\\d+(?:st|nd|rd|th|º)(?:\\s*e\\s*\\+)?\\s*/i, '')
+        .replace(/\\s+(Conectar|Connect|Pendente|Pending|Mensagem|Message|Enviar mensagem|Seguir|Follow)\\b.*$/i, '')
+        .replace(/\\s+Atual:.*$/i, '')
+        .replace(/\\s+Anterior:.*$/i, '')
+        .trim();
+
+      let city = null;
+      let title = mid || null;
+      const loc = mid.match(
+        /(.+?)\\s+([A-ZÀ-Ü][^,]*,\\s*(?:Brasil|Brazil|[A-ZÀ-Ü][^,]*)(?:,\\s*Brasil|,\\s*Brazil)?.*)$/i,
+      );
+      if (loc) {
+        title = clean(loc[1]) || null;
+        city = clean(loc[2]) || null;
+      } else {
+        const br = mid.match(
+          /(.+?)\\s+((?:São Paulo|Rio de Janeiro|Belo Horizonte|Curitiba|Goiânia|Campinas|Macaé|Cotia|Jales|Valinhos|Recife|Fortaleza|Salvador|Brasília|Porto Alegre)(?:,.*)?)$/i,
+        );
+        if (br) {
+          title = clean(br[1]) || null;
+          city = clean(br[2]) || null;
+        }
+      }
+
+      const img =
+        [...(card?.querySelectorAll('img') || [])].find((i) => {
+          const src = i.currentSrc || i.src || '';
+          const alt = clean(i.alt);
+          return (
+            /profile-displayphoto|media\\.licdn\\.com/i.test(src) ||
+            (alt && name && alt.toLowerCase().includes(name.split(' ')[0].toLowerCase()))
+          );
+        }) || card?.querySelector('img');
+      const photoUrl = img ? (img.currentSrc || img.src || null) : null;
+      const photoBase64 = photoUrl ? await toDataUrl(photoUrl) : null;
+
+      const b = (card || pack.el).getBoundingClientRect();
+      out.push({
+        key: profileUrl,
+        name,
+        title,
+        city,
+        current: current || title || null,
+        past,
+        level: degree,
+        action: action || null,
+        mutualConnections,
+        summary: cardText.slice(0, 500) || null,
+        photoUrl,
+        photoBase64,
+        profileUrl,
+        x: b.x + b.width / 2,
+        y: b.y + b.height / 2,
+      });
+    }
+    out.sort((a, b) => (a.y || 0) - (b.y || 0));
+    return { memberLimit: false, cards: out };
+  })()`;
+
+  const listed = await page.evaluate(expression, { awaitPromise: true });
+  if (!listed || typeof listed !== "object") {
+    return { memberLimit: false, cards: [] };
+  }
+  if (!Array.isArray(listed.cards)) {
+    return { memberLimit: Boolean(listed.memberLimit), cards: [] };
+  }
+  return listed;
 }
 
-async function scrapeProfileHeader(page) {
-  return page.evaluate(`(() => {
-    const main = document.querySelector('main') || document.body;
-    const lines = (main?.innerText || '')
-      .split('\\n')
-      .map((s) => s.replace(/\\s+/g, ' ').trim())
-      .filter(Boolean)
-      .slice(0, 40);
-    const name = lines[0] || null;
-    let title = null;
-    let location = null;
-    let mutualConnections = null;
-    let inviteStatus = null;
-    let canConnect = false;
-    let canMessage = false;
-    for (const line of lines.slice(1, 12)) {
-      if (!title && line.length > 2 && !/^(connect|message|more|seguir|follow)/i.test(line)) {
-        title = line;
-        continue;
-      }
-      if (!location && /(brasil|brazil|,\\s*[A-Z]{2}\\b|remote|híbrido|hybrid)/i.test(line)) {
-        location = line;
-      }
-      if (/mutual|em comum/i.test(line)) mutualConnections = line;
-    }
-    for (const el of document.querySelectorAll('button, [role=button], a')) {
-      const t = ((el.getAttribute('aria-label') || '') + ' ' + (el.innerText || ''))
-        .replace(/\\s+/g, ' ')
-        .trim();
-      if (/^pending\\b/i.test(t) || /^pendente\\b/i.test(t)) inviteStatus = 'pending';
-      if (/^connect$/i.test(t) || /^conectar$/i.test(t) || /invite .+ to connect/i.test(t)) canConnect = true;
-      if (/^message\\b/i.test(t) || /^mensagem\\b/i.test(t)) canMessage = true;
-    }
-    if (canConnect && !inviteStatus) inviteStatus = 'connect';
-    if (canMessage && !canConnect && !inviteStatus) inviteStatus = 'connected';
-    let profileUrl = null;
-    try {
-      const m = location.pathname.match(/\\/in\\/([^/?#]+)/i);
-      if (m) profileUrl = 'https://www.linkedin.com/in/' + decodeURIComponent(m[1]).replace(/\\/+$/, '') + '/';
-    } catch { /* */ }
-    return {
-      name,
-      title,
-      location,
-      mutualConnections,
-      inviteStatus,
-      canConnect,
-      canMessage,
-      profileUrl,
-      href: location.href,
-    };
-  })()`);
+function inviteStatusFromAction(action) {
+  const a = String(action || "").toLowerCase();
+  if (/pending|pendente/.test(a)) return "pending";
+  if (/message|mensagem/.test(a)) return "connected";
+  if (/connect|conectar|convidar/.test(a)) return "connect";
+  return null;
 }
 
 async function postProfile(profile, agentId) {
@@ -147,13 +260,27 @@ async function postProfile(profile, agentId) {
   const headers = { "content-type": "application/json" };
   const key = String(process.env.AGENT_API_KEY || "").trim();
   if (key) headers["x-api-key"] = key;
+  // CreateProfileDto: agentId + profileUrl no mesmo POST → API reserva conexão.
+  const body = {
+    name: profile.name,
+    title: profile.title || null,
+    searchQuery: profile.query || profile.searchQuery || null,
+    level: profile.level || null,
+    connection: profile.action || profile.connection || null,
+    city: profile.city || profile.location || null,
+    mutualConnections: profile.mutualConnections || null,
+    current: profile.current || null,
+    past: profile.past || null,
+    photoBase64: profile.photoBase64 || null,
+    round: profile.round ?? null,
+    extractedAt: profile.extractedAt || new Date().toISOString(),
+    profileUrl: profile.profileUrl || null,
+    agentId: agentId || resolveAgentId() || null,
+  };
   const res = await fetch(`${base}/profiles`, {
     method: "POST",
     headers,
-    body: JSON.stringify({
-      ...profile,
-      agentId: agentId || resolveAgentId(),
-    }),
+    body: JSON.stringify(body),
   });
   const text = await res.text().catch(() => "");
   if (!res.ok) {
@@ -180,63 +307,110 @@ export async function extractLeads(opts = {}) {
   const notifyApi = opts.notifyApi !== false;
   const agentId = opts.agentId || resolveAgentId();
   const steps = [];
-  const searchUrl = peopleSearchUrl(query);
+  const maxPages = Math.min(
+    MAX_SEARCH_PAGES,
+    Math.max(1, Math.ceil(n / Math.max(1, PAGE_SIZE)) + 2),
+  );
 
   return withLinkedInPage(opts, async (page) => {
-    await page.goto(searchUrl);
-    steps.push(`search:${query}`);
-    await sleep(4_000);
-    await shot(page, opts.outDir, "01-search.png");
-
     /** @type {object[]} */
     const profiles = [];
     const seen = new Set();
-    let stable = 0;
-    let prevVisible = 0;
+    let searchPage = 1;
     let round = 0;
 
-    while (profiles.length < n && round < MAX_ROUNDS) {
+    while (profiles.length < n && searchPage <= maxPages) {
+      const searchUrl = peopleSearchUrl(query, searchPage);
+      await page.goto(searchUrl);
+      steps.push(`search:${query}:page=${searchPage}`);
+      await sleep(searchPage === 1 ? 4_000 : 3_000);
+      await shot(page, opts.outDir, `${String(searchPage).padStart(2, "0")}-page.png`);
+
+      // Garante que os ~10 cards da página carregaram (scroll leve no fim).
+      await page.scroll({ dy: 400, steps: 8 });
+      await sleep(800);
+
       round++;
-      const cards = await scrapeSearchCards(page);
-      steps.push(`list-round:${round}:cards=${cards.length}`);
+      const listed = await scrapeSearchCards(page);
+      if (listed.memberLimit) {
+        steps.push("member_limit");
+        break;
+      }
+      const cards = listed.cards;
+      steps.push(`list-page:${searchPage}:cards=${cards.length}`);
       if (opts.outDir) {
         mkdirSync(opts.outDir, { recursive: true });
         writeFileSync(
-          join(opts.outDir, `list-round-${String(round).padStart(3, "0")}.json`),
-          JSON.stringify(cards, null, 2),
+          join(
+            opts.outDir,
+            `list-page-${String(searchPage).padStart(3, "0")}.json`,
+          ),
+          JSON.stringify(
+            cards.map((c) => ({
+              ...c,
+              photoBase64: c.photoBase64
+                ? `[base64 ${c.photoBase64.length} chars]`
+                : null,
+            })),
+            null,
+            2,
+          ),
         );
       }
 
+      let addedOnPage = 0;
       for (const card of cards) {
         if (profiles.length >= n) break;
         const url = normalizeLinkedInProfileUrl(card.profileUrl);
         if (!url || seen.has(url)) continue;
         seen.add(url);
+        addedOnPage++;
 
-        await page.goto(url);
-        await sleep(2_500);
-        const header = await scrapeProfileHeader(page);
+        const inviteStatus = inviteStatusFromAction(card.action);
         const profile = {
-          name: header.name || card.name,
-          title: header.title || card.title,
-          location: header.location || card.location,
-          profileUrl: header.profileUrl || url,
-          mutualConnections: header.mutualConnections || null,
-          inviteStatus: header.inviteStatus || null,
-          canConnect: header.canConnect ?? null,
-          canMessage: header.canMessage ?? null,
-          action: card.action,
+          name: card.name,
+          title: card.title || null,
+          city: card.city || null,
+          location: card.city || null,
+          current: card.current || card.title || null,
+          past: card.past || null,
+          level: card.level || null,
+          action: card.action || null,
+          connection: card.action || null,
+          mutualConnections: card.mutualConnections || null,
+          summary: card.summary || null,
+          photoUrl: card.photoUrl || null,
+          photoBase64: card.photoBase64 || null,
+          profileUrl: url,
+          inviteStatus,
+          canConnect: inviteStatus === "connect",
+          canMessage: inviteStatus === "connected",
           query,
+          searchQuery: query,
+          searchPage,
+          round,
+          extractedAt: new Date().toISOString(),
+          source: "search_card",
         };
         profiles.push(profile);
-        steps.push(`profile:${profiles.length}:${profile.name}`);
+        steps.push(`card:${profiles.length}:p${searchPage}:${profile.name}`);
+
         if (opts.outDir) {
           writeFileSync(
             join(
               opts.outDir,
-              `profile-${String(profiles.length).padStart(3, "0")}-page.json`,
+              `profile-${String(profiles.length).padStart(3, "0")}-card.json`,
             ),
-            JSON.stringify(profile, null, 2),
+            JSON.stringify(
+              {
+                ...profile,
+                photoBase64: profile.photoBase64
+                  ? `[base64 ${profile.photoBase64.length} chars]`
+                  : null,
+              },
+              null,
+              2,
+            ),
           );
         }
 
@@ -248,52 +422,40 @@ export async function extractLeads(opts = {}) {
                 ? "api:profiles:ok"
                 : `api:profiles:skip:${posted.reason || posted.error}`,
             );
-            const status = connectionStatusFromInviteStatus(
-              profile.inviteStatus,
-            );
-            if (status != null) {
-              await syncConnectionFromInviteStatus({
-                profileUrl: profile.profileUrl,
-                inviteStatus: profile.inviteStatus,
-                agentId,
-              });
-              steps.push(`api:connection:${status}`);
-            }
           } catch (e) {
             steps.push(`api:fail:${String(e?.message || e).slice(0, 80)}`);
           }
         }
-
-        await page.goto(searchUrl);
-        await sleep(2_000);
-        // re-scroll até a profundidade atual
-        for (let s = 0; s < round; s++) {
-          await page.scroll({ dy: 500, steps: 8 });
-          await sleep(400);
-        }
       }
 
       if (profiles.length >= n) break;
-
-      if (cards.length === prevVisible) {
-        stable++;
-        if (stable >= SCROLL_STABLE) {
-          steps.push("scroll_end");
-          break;
-        }
-      } else {
-        stable = 0;
-        prevVisible = cards.length;
+      // Página vazia / sem cards novos → fim dos resultados.
+      if (cards.length === 0 || addedOnPage === 0) {
+        steps.push(`page_end:${searchPage}`);
+        break;
       }
-      await page.scroll({ dy: 520, steps: 10 });
-      await sleep(1_200);
+      searchPage += 1;
     }
 
     if (opts.outDir) {
       mkdirSync(opts.outDir, { recursive: true });
       writeFileSync(
         join(opts.outDir, "profiles.json"),
-        JSON.stringify({ query, count: profiles.length, profiles }, null, 2),
+        JSON.stringify(
+          {
+            query,
+            count: profiles.length,
+            pages: searchPage,
+            profiles: profiles.map((p) => ({
+              ...p,
+              photoBase64: p.photoBase64
+                ? `[base64 ${p.photoBase64.length} chars]`
+                : null,
+            })),
+          },
+          null,
+          2,
+        ),
       );
     }
     await shot(page, opts.outDir, "99-done.png");
@@ -303,6 +465,7 @@ export async function extractLeads(opts = {}) {
       query,
       n,
       count: profiles.length,
+      pagesUsed: Math.min(searchPage, maxPages),
       profiles,
       steps,
       truncated: profiles.length < n,

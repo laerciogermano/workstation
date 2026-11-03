@@ -3,8 +3,9 @@ import { run as enviarProspeccao } from './enviar_prospeccao.mjs';
 import { run as extrairLeads } from './extrair_leads.mjs';
 import { run as lerMensagens } from './ler_mensagens.mjs';
 import { run as verificarConexoes } from './verificar_conexoes.mjs';
+import { getCdpHandler, isCdpRuntime } from './cdp/index.mjs';
 
-const handlers = {
+const avdHandlers = {
   extrair_leads: extrairLeads,
   conectar,
   verificar_conexoes: verificarConexoes,
@@ -13,7 +14,10 @@ const handlers = {
 };
 
 export function getHandler(type) {
-  const h = handlers[type];
+  if (isCdpRuntime()) return getCdpHandler(type);
+  const h = avdHandlers[type];
   if (!h) throw new Error(`tipo de job desconhecido: ${type}`);
   return h;
 }
+
+export { isCdpRuntime };

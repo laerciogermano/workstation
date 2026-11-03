@@ -1,14 +1,16 @@
-# agent-worker — pull uniforme (AVD local)
+# agent-worker — pull uniforme (AVD ou CDP)
 
-**Por quê:** mesmo processo em servidor e PC de gestor — puxa jobs da API, executa no ADB localhost, reporta complete/fail.  
-**Plano:** [`../../docs/plano-implementacao-worker-avd.md`](../../docs/plano-implementacao-worker-avd.md) · **API:** [`../api/README.md`](../api/README.md)  
+**Por quê:** mesmo processo em servidor e PC de gestor — puxa jobs da API, executa no device local (AVD **ou** Chrome CDP), reporta complete/fail.  
+**Plano:** [`../../docs/plano-implementacao-worker-avd.md`](../../docs/plano-implementacao-worker-avd.md) · **API:** [`../api/README.md`](../api/README.md) · **libs CDP:** [`../../../../screen-robot/src/lib/cdp/README.md`](../../../../screen-robot/src/lib/cdp/README.md)  
 **Antes:** rodízio só após N turnos idle. **Depois:** ao esvaziar a fila do agente, **troca o slot na hora**; se ainda há pending, drena com claim seguido.  
 **Rollback:** pare o worker; `MODE=single`; status pode ficar `ativo` — sleep manual / `device-status`.
 
-**Produção:** API em `http://144.126.154.90` — workers **só no Mac** (AVD local). Unit `connectmax-worker` na VPS permanece disabled (sem KVM). Scripts: [`scripts/start-worker-*.sh`](scripts/) (`API_URL` Contabo).
+**Produção:** API em `http://144.126.154.90` — workers **só no Mac** (AVD/CDP local). Unit `connectmax-worker` na VPS permanece disabled (sem KVM). Scripts: [`scripts/start-worker-*.sh`](scripts/) (`API_URL` Contabo).
 
 **Antes → depois:** `API_URL=http://localhost:3000` (API local) → `API_URL=http://144.126.154.90`.  
 **Rollback:** scripts/env de volta a `localhost:3000` e subir API local.
+
+**Antes → depois (runtime CDP):** só AVD (`SERIAL` + handlers ADB) → `WORKER_RUNTIME=cdp` + `CDP_ID`/`CDP_URL` usa `handlers/cdp/` → scripts `linkedin-*-cdp` (mesmo contrato de jobs). **Rollback:** remova `WORKER_RUNTIME`/`CDP_*` e use `SERIAL` + scripts AVD; apague `handlers/cdp/` se precisar.
 
 ## Modos
 
@@ -32,6 +34,22 @@ npm start
 ```
 
 **Antes → depois (cadastro):** criar no painel antes do worker → worker enroll sozinho; painel só edita LI/notas. **Rollback:** remova `enroll()` em `loop.mjs`.
+
+### Single — 1 agente / 1 Chrome CDP
+
+Mesmos jobs; handlers em `handlers/cdp/` (`CDP_ID` / `CDP_URL` no lugar de `SERIAL`).
+
+```bash
+cd vendas/worker
+./scripts/start-worker-daniela-cdp.sh   # CDP daniela-hoffmann :9255
+
+# ou:
+WORKER_RUNTIME=cdp CDP_ID=daniela-hoffmann \
+  AGENT_ID=<uuid|slug> AGENT_API_KEY=… API_URL=http://144.126.154.90 \
+  npm start
+```
+
+Allowlist de procedimentos no agente (ex. só `["extrair_leads"]`) continua valendo via `PATCH /agentes/:id`.
 
 ### Host — N slots, troca on-empty
 
@@ -67,23 +85,25 @@ Use **chave global** no supervisor.
 | `SKIP_DOCKER=1` | Só `device-status` |
 | `SLEEP_MS` | Pausa entre turnos quando slots ociosos (default 15s) |
 | `EXTRACT_MAX_PROFILES` | Fallback se o job não trouxer `maxProfiles` (API manda `min(EXTRACT_MAX_PROFILES, slots do dia)`; default **5**) |
+| `WORKER_RUNTIME` | `cdp` → handlers Chrome; omit/`avd` → AVD |
+| `CDP_ID` / `CDP_URL` | Perfil/porta human-cdp (obrigatório no runtime CDP) |
 | `DRY` / `ONCE` / `ALLOW_STUB` | Smoke / stubs |
 
 ## Handlers
 
-| `type` | Status |
-|--------|--------|
-| `extrair_leads` | `login-extract-profiles --device $SERIAL` — `query` + `maxProfiles` do job (limite diário API); `EXTRACT_QUERY` / `EXTRACT_MAX_PROFILES` só fallback; passa `AGENT_ID` p/ reservar candidatos (`status=0`) |
+| `type` | AVD | CDP (`WORKER_RUNTIME=cdp`) |
+|--------|-----|------------------------------|
+| `extrair_leads` | `login-extract-profiles --device $SERIAL` — `query` + `maxProfiles` do job; `AGENT_ID` reserva `status=0` | `linkedin-extract-leads-cdp -n …` |
+| `conectar` | `linkedin-connect` (URL do payload) | `linkedin-connect-cdp` |
+| `verificar_conexoes` | `linkedin-extract-connections --n 20` → `mark-accepted` | `linkedin-extract-connections-cdp` |
+| `enviar_prospeccao` | `linkedin-message` | `linkedin-message-cdp` |
+| `ler_mensagens` | `linkedin-unread-messages --sync` | `linkedin-unread-messages-cdp --sync` |
 
 **Antes → depois (extract → Candidatos):** extract sem `AGENT_ID` → só perfil no pool livre (funil por agente não mostrava Elaine etc.) → handler injeta `AGENT_ID` e script faz `POST` conexão `status=0` em Connect. **Rollback:** remova `AGENT_ID` do env em `extrair_leads.mjs`; `connectionStatusFromInviteStatus("connect")` → `null`.
 
 **Antes → depois (`maxProfiles` diário):** env `EXTRACT_MAX_PROFILES` vencia o payload → job `maxProfiles` (`min(EXTRACT_MAX_PROFILES, slots do dia)`, default **5**/run) tem prioridade. **Rollback:** `EXTRACT_MAX_PROFILES \|\| payload.maxProfiles` em `extrair_leads.mjs`; fallback `10` + `maxProfiles: remaining` na API.
 
 **Antes → depois (multi-AVD):** extract/unread usavam só `device.config` (`ConnectMax_Cam`→`emulator-5554`) mesmo com `SERIAL` do worker → passam `--device` / serial explícito; `start-runtime` prioriza serial alcançável sobre lookup por `provision.name`. **Rollback:** remova `--device` do handler; reverta o prefer-serial em `screen-robot/src/lib/start-runtime.js`.
-| `conectar` | `linkedin-connect` (URL do payload; teto diário na API) |
-| `verificar_conexoes` | `linkedin-extract-connections --n 20` (lote) → `mark-accepted`; intervalo API `AGENT_CONNECTIONS_INTERVAL_MS` (default **4 h**) |
-| `enviar_prospeccao` | `linkedin-message` (`payload.profileUrl` + `payload.message`; persiste `sent` na API) |
-| `ler_mensagens` | `linkedin-unread-messages --sync` (Messaging → Unread → abre cada chat → `client_linkedin_message`; `INBOX_MAX_RESULTS` / payload `maxResults`, default 20) |
 
 **Antes → depois (conectar):** stub → spawn `npm run linkedin-connect -- --url … --no-shot`. Página inexistente → job OK + conexão `status=3`/`discardReason` (funil Descartados). Rollback: `conectar: makeStub('conectar')` em `handlers/index.mjs`.
 

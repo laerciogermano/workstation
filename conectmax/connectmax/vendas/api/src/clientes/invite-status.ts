@@ -21,7 +21,10 @@ export function normalizeInviteStatus(
     s === 'connected' ||
     s === 'conectado' ||
     s === 'accepted' ||
-    s === '1st'
+    s === '1st' ||
+    s === 'message' ||
+    s === 'mensagem' ||
+    s === 'enviar mensagem'
   ) {
     return 'connected';
   }
@@ -30,6 +33,8 @@ export function normalizeInviteStatus(
   }
   if (
     s === 'connect' ||
+    s === 'conectar' ||
+    s === 'convidar' ||
     s === 'nao_enviado' ||
     s === 'não enviado' ||
     s === 'nao enviado' ||

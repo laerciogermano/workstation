@@ -47,6 +47,8 @@ export type ExtractListUpsert = {
   extractedAt?: string | null;
   round?: number | null;
   profileUrl?: string | null;
+  /** Se presente, `ProfilesService` reserva conexão neste agente. */
+  agentId?: string | null;
 };
 
 export type ExtractDetailUpsert = {

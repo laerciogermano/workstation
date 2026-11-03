@@ -16,6 +16,7 @@ API NestJS: **base canônica** `clientes` + `cliente_linkedin` (extract incluso)
 | Extract separado do CRM | Mesma linha: URL, foto, headline, inviteStatus, soft-delete |
 | Sem vínculo agente ↔ cliente LinkedIn | `client_connection_linkedin` + `POST /client-connections-linkedin` (status int 0/1/2/3) |
 | Extract Connect → só perfil (pool livre; sumia do funil por agente) | Com `AGENT_ID`, Connect reserva `status=0` (Candidatos); worker `extrair_leads` injeta `AGENT_ID` |
+| `POST /profiles` rejeitava `agentId`/`profileUrl` | Aceita ambos; com `agentId` a API reserva `client_connection_linkedin` no mesmo request (status via `connection`). **Rollback:** remova campos do DTO + `maybeReserveForAgent` em `profiles.service.ts` |
 
 **Migração de dados:** `npm run migrate:profiles-to-cliente-linkedin` — **apaga soft-deletes** em `linkedin_profiles`, migra só ativos → `cliente_linkedin`, depois `DROP` das tabelas antigas.
 

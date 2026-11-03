@@ -8,6 +8,8 @@ export async function runAgentCycle(api, opts) {
   const {
     agentId,
     serial = '',
+    cdpId = '',
+    cdpUrl = '',
     apiUrl,
     apiKey,
     dry = false,
@@ -35,6 +37,8 @@ export async function runAgentCycle(api, opts) {
       apiUrl,
       apiKey,
       serial,
+      cdpId,
+      cdpUrl,
       agentId,
     });
     await api.complete(agentId, j.id, result || { ok: true });

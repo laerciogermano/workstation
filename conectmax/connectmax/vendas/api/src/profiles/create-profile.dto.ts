@@ -80,6 +80,18 @@ export class CreateProfileDto {
   @IsInt()
   @Min(1)
   round?: number | null;
+
+  /** URL do perfil LinkedIn (dedupe + conexão). */
+  @IsOptional()
+  @IsString()
+  @MaxLength(500)
+  profileUrl?: string | null;
+
+  /** Reserva o lead neste agente (status via `connection` / invite). */
+  @IsOptional()
+  @IsString()
+  @MaxLength(64)
+  agentId?: string | null;
 }
 
 export class CreateProfilesBatchDto {

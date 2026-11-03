@@ -6,6 +6,9 @@
  *   AGENT_ID=<agentes.id uuid> AGENT_API_KEY=… SERIAL=127.0.0.1:5560 npm start
  *   (path ainda aceita nome legado; enroll devolve agentId=uuid)
  *
+ * Single (Chrome CDP):
+ *   WORKER_RUNTIME=cdp AGENT_ID=… AGENT_API_KEY=… CDP_ID=daniela-hoffmann npm start
+ *
  * Host supervisor (N slots, rodízio de AVDs):
  *   MODE=host HOST_KEY=localhost AGENT_API_KEY=… npm run start:host
  *
@@ -15,6 +18,7 @@ import { execFileSync } from 'node:child_process';
 import { hostname, totalmem } from 'node:os';
 import { createApiClient } from './api.mjs';
 import { runAgentCycle } from './agent-cycle.mjs';
+import { isCdpRuntime } from './handlers/index.mjs';
 
 function hostRamGb() {
   const fromEnv = Number(process.env.HOST_RAM_GB);
@@ -66,6 +70,9 @@ const WORKER_VERSION = process.env.WORKER_VERSION || '0.1.0';
 const HOST_INSTANCE_ID =
   process.env.HOST_INSTANCE_ID || `${hostname()}:${process.pid}`;
 const SERIAL = process.env.SERIAL || process.env.ADB_SERIAL || '';
+const CDP_ID = String(process.env.CDP_ID || '').trim();
+const CDP_URL = String(process.env.CDP_URL || '').trim();
+const CDP = isCdpRuntime();
 const CONTAINER =
   process.env.CONTAINER_NAME ||
   process.env.AVD_CONTAINER ||
@@ -88,7 +95,9 @@ async function enroll() {
       status: 'ativo',
     };
     if (SERIAL) body.serial = SERIAL;
+    else if (CDP && CDP_ID) body.serial = `cdp:${CDP_ID}`;
     if (CONTAINER) body.containerName = CONTAINER;
+    else if (CDP && CDP_ID) body.containerName = `cdp-${CDP_ID}`;
     if (Number.isFinite(ADB_PORT) && ADB_PORT > 0) body.adbPort = ADB_PORT;
     if (HOST_NOME) body.hostNome = HOST_NOME;
     body.ramGb = hostRamGb();
@@ -134,7 +143,7 @@ async function main() {
     );
   }
   console.log(
-    `agent-worker API=${API_URL} AGENT=${AGENT_ID_ENV} DRY=${DRY ? 1 : 0} SERIAL=${SERIAL || '(env)'}`,
+    `agent-worker API=${API_URL} AGENT=${AGENT_ID_ENV} DRY=${DRY ? 1 : 0} runtime=${CDP ? 'cdp' : 'avd'} SERIAL=${SERIAL || '(env)'} CDP_ID=${CDP_ID || '-'} CDP_URL=${CDP_URL || '-'}`,
   );
   await enroll();
   console.log(`agent-worker agentId canônico=${AGENT_ID}`);
@@ -146,6 +155,8 @@ async function main() {
         await runAgentCycle(api, {
           agentId: AGENT_ID,
           serial: SERIAL,
+          cdpId: CDP_ID,
+          cdpUrl: CDP_URL,
           apiUrl: API_URL,
           apiKey: API_KEY,
           dry: DRY,

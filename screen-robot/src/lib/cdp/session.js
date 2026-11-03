@@ -67,19 +67,20 @@ export async function resolveLinkedInPage(opts = {}) {
 }
 
 /**
- * Abre sessão, roda `fn(page)`, fecha WS se a sessão foi criada aqui e `closePage`.
+ * Abre sessão, roda `fn(page)`, desconecta o WS se a sessão foi criada aqui.
+ * `closePage` é legado (espelho AVD closeApp); o Chrome/aba **não** são fechados —
+ * `page.close()` só encerra o WebSocket CDP (senão o Node fica pendurado).
  * @template T
  * @param {object} opts
  * @param {(page: object) => Promise<T>} fn
  * @returns {Promise<T>}
  */
 export async function withLinkedInPage(opts, fn) {
-  const closePage = opts.closePage === true;
   const { page, owned } = await resolveLinkedInPage(opts);
   try {
     return await fn(page);
   } finally {
-    if (owned && closePage) {
+    if (owned) {
       try {
         page.close();
       } catch {

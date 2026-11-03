@@ -10,8 +10,14 @@ data,nome,plataforma,chrome_user_data_dir,cdp_port,start_script,obs
 2026-11-02,Larissa Souza,facebook,~/chrome-profiles/ometv-3,9234,human-cdp createCdp ometv-3,perfil Chrome isolado; fingerprint Win31 Recife; FB+OmeTV
 2026-11-02,Helena Duarte,linkedin,~/chrome-profiles/helena-duarte,9235,human-cdp createCdp helena-duarte,perfil Chrome isolado; fingerprint Win129 Bahia; LI signup
 2026-11-02,Amanda Rocha,linkedin,~/chrome-profiles/amanda-rocha,9236,human-cdp createCdp amanda-rocha,perfil Chrome isolado; fingerprint Win129 Manaus; LI signup
-2026-11-02,Bruno Nunes,linkedin,~/chrome-profiles/bruno-nunes,9237,human-cdp createCdp bruno-nunes,perfil Chrome isolado; fingerprint Mac130 Fortaleza; LI signup
 2026-11-02,Fernanda Dias,linkedin,~/chrome-profiles/fernanda-dias,9238,human-cdp createCdp fernanda-dias,perfil Chrome isolado; fingerprint Win32 America/Sao_Paulo; LI signup
 2026-11-02,Rafael Campos,linkedin,~/chrome-profiles/rafael-campos,9239,human-cdp createCdp rafael-campos,perfil Chrome isolado; fingerprint MacIntel America/Sao_Paulo; LI signup
 2026-11-02,Thiago Oliveira,linkedin,~/chrome-profiles/thiago-oliveira,9240,human-cdp createCdp thiago-oliveira,perfil Chrome isolado; fingerprint Win32 America/Belem; LI signup
 2026-11-02,Carla Souza,linkedin,~/chrome-profiles/carla-souza,9241,human-cdp createCdp carla-souza,perfil Chrome isolado; fingerprint Win32 America/Sao_Paulo; LI signup
+2026-11-03,Bruno Nunes,linkedin,~/chrome-profiles/bruno-nunes,9237,human-cdp createCdp bruno-nunes,perfil Chrome isolado; fingerprint MacIntel America/Fortaleza; LI signup
+2026-11-03,Eduardo Vargas,linkedin,~/chrome-profiles/eduardo-vargas,9242,human-cdp createCdp eduardo-vargas,perfil Chrome isolado; fingerprint MacIntel America/Sao_Paulo; LI signup
+2026-11-03,Larissa Melo,linkedin,~/chrome-profiles/larissa-melo,9243,human-cdp createCdp larissa-melo,perfil Chrome isolado; fingerprint Win32 America/Sao_Paulo; LI signup
+2026-11-03,Gustavo Pires,linkedin,~/chrome-profiles/gustavo-pires,9244,human-cdp createCdp gustavo-pires,perfil Chrome isolado; fingerprint MacIntel America/Fortaleza; LI signup
+2026-11-03,Beatriz Nogueira,linkedin,~/chrome-profiles/beatriz-nogueira,9245,human-cdp createCdp beatriz-nogueira,perfil Chrome isolado; fingerprint Linux x86_64 America/Sao_Paulo; LI signup
+2026-11-03,Renato Azevedo,linkedin,~/chrome-profiles/renato-azevedo,9246,human-cdp createCdp renato-azevedo,perfil Chrome isolado; fingerprint MacIntel America/Sao_Paulo; LI signup
+2026-11-03,Patricia Ramos,linkedin,~/chrome-profiles/patricia-ramos,9247,human-cdp createCdp patricia-ramos,perfil Chrome isolado; fingerprint MacIntel America/Manaus; LI signup

@@ -101,6 +101,8 @@ async function main() {
     email: emailResult,
     cdp: cdpResult,
     senhaLi: password,
+    cidade: location,
+    company,
     dryRun,
   });
   log(`CSV ok: ip=${csvResult.ip || csvResult.linkedin?.ip || '—'}`);

@@ -32,7 +32,7 @@ Crie um novo vendedor LinkedIn (1 conta):
 4. IP de egress no submit: curl -sS https://api.ipify.org → coluna ip.
 5. Signup LinkedIn completo via CDP (senha LI in@12345678; PIN Mailcow).
 6. Gravar tudo em screen-robot/pocs/android-studio/contas-linkedin-clozzy.csv
-   (incluir colunas do fingerprint usado) + credenciais.md + contas-facebook-chrome.csv.
+   (incluir cidade, company e colunas do fingerprint usado) + credenciais.md + contas-facebook-chrome.csv.
 7. Browser só CDP/human-cdp. Sem AVD.
 ```
 

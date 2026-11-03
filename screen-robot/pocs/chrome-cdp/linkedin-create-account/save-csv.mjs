@@ -26,6 +26,8 @@ export const LI_HEADER = [
   'ip',
   'objetivo',
   'observacoes',
+  'cidade',
+  'company',
   'cdp',
   'cdp_port',
   'fp_ua',
@@ -247,6 +249,8 @@ export function backfillFingerprintFromMeta() {
  *   cdp: object,
  *   ip?: string,
  *   senhaLi?: string,
+ *   cidade?: string,
+ *   company?: string,
  *   liCriado?: 'sim'|'nao',
  *   dryRun?: boolean,
  *   writeChromeCsv?: boolean,
@@ -269,6 +273,8 @@ export function saveAccountCsv(opts = {}) {
   const ip = opts.ip != null ? String(opts.ip).trim() : fetchIp();
   const cdpId = cdpRes.id || '';
   const cdpPort = cdpRes.port != null ? String(cdpRes.port) : '';
+  const cidade = String(opts.cidade || opts.location || '').trim();
+  const company = String(opts.company || opts.empresa || '').trim();
   const fpCols = fingerprintToCsvCols(fp);
   const observacoes = [
     `conta LI via CDP (perfil ${cdpId} :${cdpPort})`,
@@ -291,6 +297,8 @@ export function saveAccountCsv(opts = {}) {
     ip,
     objetivo: 'Criar a conta LinkedIn via Chrome + CDP com fingerprint novo',
     observacoes,
+    cidade,
+    company,
     cdp: cdpId,
     cdp_port: cdpPort,
     ...fpCols,

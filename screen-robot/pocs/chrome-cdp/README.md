@@ -108,7 +108,19 @@ CDP_URL=http://127.0.0.1:9224 node linkedin-extract-leads-cdp.mjs -n 5 --query "
 # PROFILES_API_URL=http://localhost:3000 AGENT_ID=… AGENT_API_KEY=… CDP_URL=… node linkedin-extract-leads-cdp.mjs -n 5 --query "…"
 ```
 
-**Antes → depois (extract leads CDP):** só extract no AVD (`login-extract-profiles` / job `extrair_leads`) → `linkedin-extract-leads-cdp.mjs` na aba Chrome logada (`/search/results/people/?keywords=`). Saída: `screenshots/linkedin-extract-leads-cdp/<stamp>/profiles.json`. Skip match/by-url + POST `/profiles` + `/profile-details` + conexão se `PROFILES_API_URL`/`AGENT_ID`. Rollback: use o AVD; apague o `.mjs` e esta seção.
+## Workers LinkedIn CDP (libs = contrato AVD)
+
+Ações de worker (connect / connections / message / unread / profile-messages / extract leads) com **mesma interface** das libs AVD: [`../../src/lib/cdp/README.md`](../../src/lib/cdp/README.md).
+
+```bash
+cd ../../src
+CDP_ID=marina-costa npm run linkedin-connect-api-cdp   # HTTP :3098
+CDP_ID=marina-costa npm run linkedin-connect-cdp -- --url 'https://www.linkedin.com/in/…'
+```
+
+**Antes → depois:** só scripts ad-hoc nesta pasta + AVD `src/lib/linkedin-*.js` → `src/lib/cdp/` + API `:3098` para workers. Signup/setup continuam nos `.mjs` daqui. Rollback: AVD `:3099` / libs `serial`.
+
+**Antes → depois (extract leads CDP):** só extract no AVD (`login-extract-profiles` / job `extrair_leads`) → `linkedin-extract-leads-cdp.mjs` (POC) **e** lib worker `src/lib/cdp/linkedin-extract-leads.js` (`npm run linkedin-extract-leads-cdp`). Saída: `screenshots/linkedin-extract-leads-cdp/<stamp>/profiles.json`. Rollback: use o AVD; apague o `.mjs` / lib.
 
 **Antes → depois (parser UI LI 2026):** seletores `li.reusable-search__result-container` / `div.entity-result` → 0 cards (classes ofuscadas) → parse por `a[href*="/in/"]` + texto “Nome • grau … Conectar”; header do perfil pela 1ª linhas do `main` (sem depender de `h1`). Rollback: commit anterior do `.mjs`.
 

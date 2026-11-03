@@ -88,6 +88,7 @@ const elements = await extract({ serial });
 | `npm run <acao>` | [`lib/run-action.js`](lib/run-action.js) · [`lib/README.md`](lib/README.md) |
 | `decide` / `runAgent` (EP-07) | [`lib/agent-decide.js`](lib/agent-decide.js) · [`lib/agent-run.js`](lib/agent-run.js) (shim → **2.0**) · [`lib/agent-run-2.0.js`](lib/agent-run-2.0.js) · [`lib/agent-run-v1.js`](lib/agent-run-v1.js) · [`lib/gemini.js`](lib/gemini.js) · [`lib/openai.js`](lib/openai.js) · [`lib/vision-frame.js`](lib/vision-frame.js) (`sense=vision`) |
 | Sessão | [`lib/session.js`](lib/session.js) |
+| LinkedIn CDP (workers web) | [`lib/cdp/`](lib/cdp/README.md) — mesmas funções AVD com `cdpId`/`cdpUrl`/`page` |
 
 ---
 
@@ -102,6 +103,7 @@ const elements = await extract({ serial });
 | LinkedIn signup / setup | Defaults em [`assets/profile-defaults.json`](assets/profile-defaults.json) · `npm run linkedin-setup -- --device … --defaults` (avatar+banner+about via `/me`; não reabre job onboarding) · `--avatar-only` / `--banner-only` / `--about-only` · rollback: omitir flags ou editar o JSON |
 | LinkedIn Search comprador → See all | `npm run login-extract-profiles` |
 | LinkedIn conectar por URL (Connect→Skip→Pending) | `npm run linkedin-connect` · API `npm run linkedin-connect-api` |
+| LinkedIn **CDP** (mesmas ações p/ workers web) | [`lib/cdp/README.md`](lib/cdp/README.md) · `npm run linkedin-connect-api-cdp` (:3098) · `linkedin-*-cdp` |
 | LinkedIn boolean por perfil + abrir | `npm run login-visit-profiles` |
 
 **Fechar LinkedIn ao fim:** todo procedimento LinkedIn (connect / message / connections / unread / profile-messages / signup / setup / login-extract* / visit / login) faz `am force-stop` no `finally` via [`closeLinkedInApp`](lib/operate.js). Opt-out lib: `closeApp: false` (ex.: sync unread → chat em lote). Rollback: remova o `finally` / passe `closeApp: false`.
@@ -451,6 +453,24 @@ Lib [`lib/linkedin-connect.js`](lib/linkedin-connect.js):
 **Antes → depois (Invitation sent):** sucesso só com Pending → também toast/OCR **`Invitation sent`** (já no perfil **ou** após Skip). Mesmo upsert `status=1`. Rollback: tire `/\binvitation\s+sent\b/i` de `hasPending`.
 
 **Antes → depois (já Pending):** podia falhar/ignorar API → **só upsert status=1** (sem tap Connect); exige POST ok (`X-Api-Key` via `installConnectmaxApiAuth`). Rollback: retorno `ok` sem exigir notify.
+
+---
+
+## linkedin-*-cdp (mesmas ações no Chrome)
+
+Contrato idêntico às libs AVD (`connectByLinkedInUrl`, `extractRecentConnections`, `sendLinkedInMessage`, `listUnreadMessages`, `listProfileMessages`, `extractLeads`) via [`lib/cdp/README.md`](lib/cdp/README.md) + human-cdp.
+
+```bash
+cd screen-robot/src
+CDP_ID=marina-costa npm run linkedin-connect-api-cdp   # :3098
+CDP_ID=marina-costa npm run linkedin-connect-cdp -- --url 'https://www.linkedin.com/in/…'
+curl -s -X POST http://127.0.0.1:3098/connect -H 'content-type: application/json' \
+  -d '{"url":"https://www.linkedin.com/in/…"}'
+```
+
+`serial` → `cdpId` | `cdpUrl` | `page`. `closeApp` → `closePage` (default `false`). Signup/setup continuam em [`../pocs/chrome-cdp/`](../pocs/chrome-cdp/README.md).
+
+**Antes → depois:** workers só AVD `:3099` → espelho CDP `:3098` + `lib/cdp/`. Rollback: AVD / remova `lib/cdp/` e scripts `*-cdp`.
 
 ---
 

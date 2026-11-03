@@ -195,6 +195,8 @@ Scripts CDP crus (`el.click`, `dispatchMouseEvent` sem move) → importam `human
 
 **Antes → depois (foco):** `ensureFocus` só activate/bringToFront sem checar → agora lê `document.hasFocus()`; se false, traz ao foco e **bloqueia** a operação até true (clique já exige). Rollback: early-return por throttle 120ms sem verificação.
 
+**Antes → depois (foco/background):** `isPageFocused` exigia `visibilityState===visible` → falhava com Chrome atrás → só `document.hasFocus()` (emulação CDP). Rollback: voltar o `&& visibilityState`.
+
 **Antes → depois (foco lógico):** emulação só no fim do retry → `Emulation.setFocusEmulationEnabled` **padrão** em `connect`, todo `ensureFocus` e no `fingerprint-keeper` (todas as abas). `Page.bringToFront` + `activate` do SO **comentados** (não roubam Cursor). Rollback: descomentar o loop em `ensureFocus`; remover `enableFocusEmulation` do `connect`/keeper.
 
 **Antes → depois (anti-roubo SO):** `activateApp`/`osascript` removidos; `send` no-op em `Page.bringToFront`/`Target.activateTarget`; `openPage` deixa `/json/new` e usa `Target.createTarget({ background: true })`. Rollback: restaurar `activateApp` + `/json/new` + send direto.

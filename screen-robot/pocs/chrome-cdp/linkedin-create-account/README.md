@@ -52,6 +52,8 @@ Saída: progresso em **stderr** (`[create-mailbox]`, `[createLinkedin]`, `[PIN]`
 
 **Antes → depois (captcha):** seguia direto p/ localidade → `waitSignupAfterName` pausa indeterminada se iframe/desafio de segurança. Rollback: remover a chamada.
 
+**Antes → depois (after-name falso):** “próxima tela” batia em texto genérico no `/signup` → exige sair do signup + href onboarding/campo local. Rollback: regex antiga em body.
+
 **Antes → depois (não-robô):** tentava clicar “Não sou um robô” via script → **só humano** resolve o captcha; script só espera. Rollback: restaurar `FIND_NOT_ROBOT` do commit `ca71c342`.
 
 **Antes → depois (onboarding):** sequência fixa de Pulares → `finishSignupOnboarding` adaptativo (Pular se houver, senão Concluir/Continuar) até `/feed`. Rollback: voltar calls `clickSignupSkip`/`Continue`/`Finish`.

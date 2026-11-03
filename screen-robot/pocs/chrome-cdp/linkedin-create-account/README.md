@@ -48,6 +48,8 @@ Saída: progresso em **stderr** (`[create-mailbox]`, `[createLinkedin]`, `[PIN]`
 
 **Ordem:** mailbox+CDP → **CSV** (`li_criado=nao`) → `createLinkedin` → se chegar no `/feed`, `markLiCriado` → **`li_criado=sim`**. Após nome+Continuar: se **verificação humana**, espera **sem timeout**. Defaults: localidade `Rio de Janeiro`, cargo/empresa ConectMax, senha `in@12345678`. `--no-browser` pula o browser. CSVs: [`contas-linkedin-clozzy.csv`](../../android-studio/contas-linkedin-clozzy.csv) + [`contas-facebook-chrome.csv`](../../android-studio/contas-facebook-chrome.csv).
 
+**Personas (job/location/about/avatar):** catálogo [`../../../tasks/6ae9c89d7f2951914a023746/personas.csv`](../../../tasks/6ae9c89d7f2951914a023746/personas.csv) · mapa [`persona-para-vendedor.md`](../../../tasks/6ae9c89d7f2951914a023746/persona-para-vendedor.md). Antes: só defaults genéricos em `profile-defaults.json`. Depois: escolher `id` da persona e passar `--job`/`--location`/`--company`. Rollback: defaults do JSON.
+
 **Antes → depois (li_criado):** só save inicial `nao` → ao fim com `/feed`, atualiza para `sim` via `markLiCriado`. Rollback: não chamar `markLiCriado`.
 
 **Antes → depois (captcha):** seguia direto p/ localidade → `waitSignupAfterName` pausa indeterminada se iframe/desafio de segurança. Rollback: remover a chamada.

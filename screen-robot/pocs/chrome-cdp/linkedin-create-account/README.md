@@ -17,7 +17,7 @@ Script novo, passo a passo. **Agora só o passo 1:** mailbox Mailcow.
 | [`click-signup-submit.mjs`](click-signup-submit.mjs) | `clickSignupSubmit({ id })` → Aceite e cadastre-se |
 | [`fill-signup-name.mjs`](fill-signup-name.mjs) | `fillSignupName({ id, first, last })` → `#first-name` / `#last-name` |
 | [`click-signup-continue.mjs`](click-signup-continue.mjs) | `clickSignupContinue({ id })` → Continuar |
-| [`wait-signup-after-name.mjs`](wait-signup-after-name.mjs) | `waitSignupAfterName({ id })` → após nome: próxima tela **ou** espera indeterminada na verificação humana |
+| [`wait-signup-after-name.mjs`](wait-signup-after-name.mjs) | `waitSignupAfterName({ id })` → após nome: clica “Não sou um robô” se houver; senão espera verificação humana |
 | [`fill-signup-location.mjs`](fill-signup-location.mjs) | `fillSignupLocation({ id, location })` → digita → 1ª opção → Continuar |
 | [`fill-signup-job.mjs`](fill-signup-job.mjs) | `fillSignupJob({ id, job })` → cargo (typeahead) |
 | [`fill-signup-company.mjs`](fill-signup-company.mjs) | `fillSignupCompany({ id, company })` → empresa → Continuar |
@@ -51,6 +51,8 @@ Saída: progresso em **stderr** (`[create-mailbox]`, `[createLinkedin]`, `[PIN]`
 **Antes → depois (li_criado):** só save inicial `nao` → ao fim com `/feed`, atualiza para `sim` via `markLiCriado`. Rollback: não chamar `markLiCriado`.
 
 **Antes → depois (captcha):** seguia direto p/ localidade → `waitSignupAfterName` pausa indeterminada se iframe/desafio de segurança. Rollback: remover a chamada.
+
+**Antes → depois (não-robô):** só esperava resolução manual → tenta clicar “Não sou um robô” / checkbox reCAPTCHA (`clickAt`) no loop; se não bastar, continua esperando. Rollback: remover `FIND_NOT_ROBOT` / clique no wait.
 
 **Antes → depois (onboarding):** sequência fixa de Pulares → `finishSignupOnboarding` adaptativo (Pular se houver, senão Concluir/Continuar) até `/feed`. Rollback: voltar calls `clickSignupSkip`/`Continue`/`Finish`.
 

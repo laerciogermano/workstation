@@ -2,7 +2,7 @@
 
 - **Card ID:** `6ae9ee30f2d6dd00248e239c`
 - **URL:** https://trello.com/c/vLJJBkPs
-- **Board:** [enotas](https://trello.com/b/6ae737d774f8555f2cf0fd96) · lista `Concluído`
+- **Board:** [enotas](https://trello.com/b/6ae737d774f8555f2cf0fd96) · lista `Done`
 
 ## Objetivo
 

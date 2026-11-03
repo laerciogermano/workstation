@@ -184,31 +184,74 @@ async function scrapeSearchCards(page) {
       );
       const mutualConnections = mutualM ? clean(mutualM[1]).slice(0, 200) : null;
 
-      let mid = cardText;
-      const cut = Math.max(cardText.indexOf('•'), cardText.indexOf('·'));
-      if (cut >= 0) mid = cardText.slice(cut + 1);
-      mid = mid
-        .replace(/^\\s*\\d+(?:st|nd|rd|th|º)(?:\\s*e\\s*\\+)?\\s*/i, '')
-        .replace(/\\s+(Conectar|Connect|Pendente|Pending|Mensagem|Message|Enviar mensagem|Seguir|Follow)\\b.*$/i, '')
-        .replace(/\\s+Atual:.*$/i, '')
-        .replace(/\\s+Anterior:.*$/i, '')
-        .trim();
+      // Título/cidade pelas LINHAS do card (innerText com \\n).
+      // Evita o bug do regex /i em [A-ZÀ-Ü]: "Comprador - material direto Campinas…"
+      // virava title="Comprador" porque "material" casava como início de cidade.
+      const lines = String(card?.innerText || '')
+        .split(/\\n/)
+        .map((s) => clean(s))
+        .filter(Boolean);
+      const skipLine = (t) =>
+        /^(Conectar|Connect|Pendente|Pending|Mensagem|Message|Enviar mensagem|Seguir|Follow)$/i.test(t) ||
+        /^(Atual|Anterior|Current|Past):/i.test(t) ||
+        /conexões? em comum|mutual connections?|em comum/i.test(t) ||
+        /^[•·]\\s*\\d/i.test(t) ||
+        /^\\d+(?:st|nd|rd|th|º)/i.test(t);
 
+      let title = null;
       let city = null;
-      let title = mid || null;
-      const loc = mid.match(
-        /(.+?)\\s+([A-ZÀ-Ü][^,]*,\\s*(?:Brasil|Brazil|[A-ZÀ-Ü][^,]*)(?:,\\s*Brasil|,\\s*Brazil)?.*)$/i,
-      );
-      if (loc) {
-        title = clean(loc[1]) || null;
-        city = clean(loc[2]) || null;
-      } else {
-        const br = mid.match(
-          /(.+?)\\s+((?:São Paulo|Rio de Janeiro|Belo Horizonte|Curitiba|Goiânia|Campinas|Macaé|Cotia|Jales|Valinhos|Recife|Fortaleza|Salvador|Brasília|Porto Alegre)(?:,.*)?)$/i,
+      const nameNorm = clean(name).toLowerCase();
+      const contentLines = lines.filter((t) => {
+        if (skipLine(t)) return false;
+        const low = t.toLowerCase();
+        if (nameNorm && (low === nameNorm || low.startsWith(nameNorm + ' •') || low.startsWith(nameNorm + ' ·'))) {
+          return false;
+        }
+        if (/[•·]\\s*\\d+(?:st|nd|rd|th|º)/i.test(t) && t.length < 100) return false;
+        return true;
+      });
+      // 1ª linha de conteúdo = headline; 2ª costuma ser cidade (tem vírgula / Brasil)
+      if (contentLines[0]) title = contentLines[0];
+      const cityLine = contentLines.find((t, i) => {
+        if (i === 0 && contentLines.length > 1) {
+          /* prefer 2ª+ for city when title took [0] */
+        }
+        return (
+          /,/.test(t) &&
+          /Brasil|Brazil|São Paulo|Rio de Janeiro|Campinas|Belo Horizonte|Curitiba|Recife|Fortaleza|Salvador|Brasília|Porto Alegre|Goiânia/i.test(t)
         );
-        if (br) {
-          title = clean(br[1]) || null;
-          city = clean(br[2]) || null;
+      });
+      if (cityLine && cityLine !== title) city = cityLine;
+      else if (contentLines[1] && /,/.test(contentLines[1])) city = contentLines[1];
+
+      // Fallback: texto colapsado (cards sem \\n)
+      if (!title || !city) {
+        let mid = cardText;
+        const cut = Math.max(cardText.indexOf('•'), cardText.indexOf('·'));
+        if (cut >= 0) mid = cardText.slice(cut + 1);
+        mid = mid
+          .replace(/^\\s*\\d+(?:st|nd|rd|th|º)(?:\\s*e\\s*\\+)?\\s*/i, '')
+          .replace(/\\s+(Conectar|Connect|Pendente|Pending|Mensagem|Message|Enviar mensagem|Seguir|Follow)\\b.*$/i, '')
+          .replace(/\\s+Atual:.*$/i, '')
+          .replace(/\\s+Anterior:.*$/i, '')
+          .trim();
+        // SEM flag i no [A-ZÀ-Ü] — senão "material" vira início de cidade
+        const loc = mid.match(
+          /(.+?)\\s+([A-ZÀ-Ü][^,]*,\\s*(?:Brasil|Brazil|[A-ZÀ-Ü][^,]*)(?:,\\s*Brasil|,\\s*Brazil)?.*)$/,
+        );
+        if (loc) {
+          if (!title) title = clean(loc[1]) || null;
+          if (!city) city = clean(loc[2]) || null;
+        } else {
+          const br = mid.match(
+            /(.+?)\\s+((?:São Paulo|Rio de Janeiro|Belo Horizonte|Curitiba|Goiânia|Campinas|Macaé|Cotia|Jales|Valinhos|Recife|Fortaleza|Salvador|Brasília|Porto Alegre)(?:,.*)?)$/i,
+          );
+          if (br) {
+            if (!title) title = clean(br[1]) || null;
+            if (!city) city = clean(br[2]) || null;
+          } else if (!title && mid) {
+            title = mid;
+          }
         }
       }
 

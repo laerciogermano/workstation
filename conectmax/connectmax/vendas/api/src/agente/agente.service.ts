@@ -3,6 +3,7 @@ import {
   Injectable,
   Logger,
   NotFoundException,
+  OnModuleDestroy,
   OnModuleInit,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -85,8 +86,10 @@ export type SlotAgentView = {
 };
 
 @Injectable()
-export class AgenteService implements OnModuleInit {
+export class AgenteService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(AgenteService.name);
+  /** Sweep global de claimed órfãos (worker morto sem próximo claim). */
+  private staleSweepTimer: ReturnType<typeof setInterval> | null = null;
 
   constructor(
     @InjectRepository(AgentJob)
@@ -110,6 +113,44 @@ export class AgenteService implements OnModuleInit {
   async onModuleInit(): Promise<void> {
     await this.ensureHostConfigTable();
     await this.ensureRuntimeSchemaColumns();
+    this.startStaleClaimSweep();
+  }
+
+  onModuleDestroy(): void {
+    if (this.staleSweepTimer) {
+      clearInterval(this.staleSweepTimer);
+      this.staleSweepTimer = null;
+    }
+  }
+
+  /**
+   * Varre claimed de **todos** os agentes (worker morto não chama claim →
+   * sem isto o job fica “em execução” para sempre).
+   */
+  private startStaleClaimSweep(): void {
+    const ms = Number(this.config.get('AGENT_STALE_SWEEP_MS', '60000'));
+    const every = Number.isFinite(ms) && ms >= 15_000 ? ms : 60_000;
+    this.staleSweepTimer = setInterval(() => {
+      void this.releaseAllStaleClaims().catch((err) => {
+        const msg = err instanceof Error ? err.message : String(err);
+        this.logger.warn(`staleClaimSweep: ${msg}`);
+      });
+    }, every);
+    this.logger.log(`staleClaimSweep a cada ${every}ms`);
+  }
+
+  /** Public/internal: libera claimed vencidos em qualquer agente. */
+  async releaseAllStaleClaims(): Promise<void> {
+    const claimed = await this.jobs.find({
+      where: { status: 'claimed' },
+      select: ['agentId'],
+    });
+    const agentIds = [
+      ...new Set(claimed.map((j) => j.agentId).filter(Boolean)),
+    ];
+    for (const agentId of agentIds) {
+      await this.releaseStaleClaims(agentId);
+    }
   }
 
   private async ensureHostConfigTable(): Promise<void> {
@@ -836,6 +877,15 @@ export class AgenteService implements OnModuleInit {
   private claimTimeoutMs(): number {
     const n = Number(this.config.get('AGENT_CLAIM_TIMEOUT_MS', '1800000'));
     return Number.isFinite(n) && n >= 60_000 ? n : 1_800_000;
+  }
+
+  /**
+   * Com worker offline (heartbeat stale): libera claimed após este prazo
+   * (default 3 min) — bem antes do CLAIM_TIMEOUT duro.
+   */
+  private claimOfflineMs(): number {
+    const n = Number(this.config.get('AGENT_CLAIM_OFFLINE_MS', '180000'));
+    return Number.isFinite(n) && n >= 30_000 ? n : 180_000;
   }
 
   private heartbeatStaleMs(): number {
@@ -2436,20 +2486,46 @@ export class AgenteService implements OnModuleInit {
   }
 
   /**
-   * Claimed sem complete/fail além de AGENT_CLAIM_TIMEOUT_MS.
-   * Demais tipos → reabre `pending`.
-   * `conectar` → **fail + descarta** o lead (status=3): reabrir só reenfileirava
-   * o mesmo 404 / tela travada (worker morto) em loop; OCR já descarta se o
-   * script terminar — aqui cobre o caso em que o claim morre no meio.
+   * Claimed órfão:
+   * - **offline** (sem heartbeat) + `AGENT_CLAIM_OFFLINE_MS` → reabre `pending`
+   *   (worker morto/reinício; lead pode estar ok — não descarta).
+   * - **duro** `AGENT_CLAIM_TIMEOUT_MS` (worker ainda “vivo” ou prazo longo) →
+   *   demais tipos reabrem; `conectar` **fail + descarta** lead status=0
+   *   (tela travada / 404 em loop).
+   * Chamado no claim **e** no sweep global (`AGENT_STALE_SWEEP_MS`).
    */
   private async releaseStaleClaims(agentId: string): Promise<void> {
-    const timeoutMs = this.claimTimeoutMs();
-    const cutoff = new Date(Date.now() - timeoutMs);
+    const hardCutoff = new Date(Date.now() - this.claimTimeoutMs());
+    const offlineCutoff = new Date(Date.now() - this.claimOfflineMs());
+    const runtime = await this.ensureRuntime(agentId);
+    const offline = !this.isOnline(runtime);
     const stale = await this.jobs.find({
       where: { agentId, status: 'claimed' },
     });
     for (const job of stale) {
-      if (!job.claimedAt || job.claimedAt >= cutoff) continue;
+      if (!job.claimedAt) continue;
+      const hardExpired = job.claimedAt < hardCutoff;
+      const offlineExpired = offline && job.claimedAt < offlineCutoff;
+      if (!hardExpired && !offlineExpired) continue;
+
+      // Offline cedo (processo morto): reabre — não descarta lead de conectar.
+      if (offlineExpired && !hardExpired) {
+        job.status = 'pending';
+        job.claimedAt = null;
+        job.lastError =
+          'claim offline — worker sem heartbeat; job reaberto';
+        await this.jobs.save(job);
+        this.logger.warn(
+          `releaseStale offline→pending agent=${agentId} job=${job.id} type=${job.type}`,
+        );
+        if (runtime.currentJobId === job.id) {
+          runtime.currentJobId = null;
+          runtime.status = 'idle';
+          runtime.lastError = job.lastError;
+          await this.runtimes.save(runtime);
+        }
+        continue;
+      }
 
       if (job.type === 'conectar') {
         const payload = {
@@ -2473,7 +2549,6 @@ export class AgenteService implements OnModuleInit {
         this.logger.warn(
           `releaseStale conectar fail+discard agent=${agentId} job=${job.id} discarded=${discarded}`,
         );
-        const runtime = await this.ensureRuntime(agentId);
         if (runtime.currentJobId === job.id) {
           runtime.currentJobId = null;
           runtime.status = 'idle';

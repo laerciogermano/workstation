@@ -136,6 +136,25 @@ async function heartbeat() {
   }
 }
 
+/** Job em andamento — fail no SIGTERM/SIGINT para não deixar claimed órfão. */
+let currentJobId = null;
+let shuttingDown = false;
+
+async function failCurrentJob(reason) {
+  if (!currentJobId) return;
+  const id = currentJobId;
+  currentJobId = null;
+  try {
+    await api.fail(AGENT_ID, id, reason);
+    console.warn(`[${AGENT_ID}] fail no shutdown job=${id}: ${reason}`);
+  } catch (e) {
+    console.error(
+      `[${AGENT_ID}] fail shutdown job=${id}:`,
+      e.message || e,
+    );
+  }
+}
+
 async function main() {
   if (!API_KEY) {
     console.warn(
@@ -149,8 +168,20 @@ async function main() {
   console.log(`agent-worker agentId canônico=${AGENT_ID}`);
   const hb = setInterval(heartbeat, HEARTBEAT_MS);
 
+  const onSignal = async (sig) => {
+    if (shuttingDown) return;
+    shuttingDown = true;
+    console.warn(`[${AGENT_ID}] ${sig} — encerrando…`);
+    clearInterval(hb);
+    await failCurrentJob(`worker ${sig} — job interrompido`);
+    process.exit(0);
+  };
+  process.on('SIGTERM', () => void onSignal('SIGTERM'));
+  process.on('SIGINT', () => void onSignal('SIGINT'));
+
   try {
     for (;;) {
+      if (shuttingDown) break;
       try {
         await runAgentCycle(api, {
           agentId: AGENT_ID,
@@ -160,11 +191,18 @@ async function main() {
           apiUrl: API_URL,
           apiKey: API_KEY,
           dry: DRY,
+          onClaimed: (id) => {
+            currentJobId = id;
+          },
+          onSettled: () => {
+            currentJobId = null;
+          },
         });
       } catch (e) {
+        currentJobId = null;
         console.error(`[${AGENT_ID}] erro:`, e.message || e);
       }
-      if (ONCE) break;
+      if (ONCE || shuttingDown) break;
       await new Promise((r) => setTimeout(r, SLEEP_MS));
     }
   } finally {

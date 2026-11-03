@@ -43,14 +43,20 @@ Mesmos jobs; handlers em `handlers/cdp/` (`CDP_ID` / `CDP_URL` no lugar de `SERI
 
 ```bash
 cd vendas/worker
-./scripts/start-worker-daniela-cdp.sh   # CDP daniela-hoffmann :9255 (extrair_leads + conectar)
-./scripts/start-worker-thiago-cdp.sh    # CDP thiago-nascimento :9256 (extrair_leads + conectar)
+# keep-alive (reinicia se o processo morrer — preferível no Mac):
+./scripts/keep-worker.sh ./scripts/start-worker-daniela-cdp.sh   # :9255
+./scripts/keep-worker.sh ./scripts/start-worker-thiago-cdp.sh    # :9256
+# one-shot:
+./scripts/start-worker-daniela-cdp.sh
+./scripts/start-worker-thiago-cdp.sh
 
 # ou:
 WORKER_RUNTIME=cdp CDP_ID=daniela-hoffmann \
   AGENT_ID=<uuid|slug> AGENT_API_KEY=… API_URL=http://144.126.154.90 \
   npm start
 ```
+
+**Claimed órfão:** processo morto no meio do job → API (sweep + heartbeat offline) reabre `pending` em ~3 min; `SIGTERM` tenta `fail` imediato. Ver [`../api/README.md`](../api/README.md) (`AGENT_CLAIM_OFFLINE_MS` / `AGENT_STALE_SWEEP_MS`).
 
 Allowlist via `PATCH /agentes/:id` `{ "procedimentos": ["extrair_leads","conectar",…] }`.  
 Daniela/Thiago: `extrair_leads` + `conectar`. **Antes → depois:** só extract → + conectar. Rollback: `procedimentos: ["extrair_leads"]`.

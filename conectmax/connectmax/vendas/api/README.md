@@ -336,6 +336,8 @@ Upsert. Resolve `cliente_linkedin` por `clienteLinkedinId` **ou** `profileUrl`. 
 
 **Antes → depois (claim timeout em `conectar`):** timeout só reabria `pending` e o mesmo lead 404/tela travada voltava em loop (worker morto no meio do `linkedin-connect`) → `releaseStaleClaims` **falha o job + `status=3`/`discardReason`** no lead `status=0` (não mexe em 1|2). Demais tipos seguem reabrindo. **Rollback:** volte o `UPDATE … status=pending` único em `releaseStaleClaims`. Timeout: `AGENT_CLAIM_TIMEOUT_MS` (Contabo 10 min / default 30 min).
 
+**Antes → depois (claimed órfão / worker morto):** `releaseStaleClaims` só no próximo `claim` do mesmo agente → worker morto deixava job `claimed` (“em execução”) para sempre. Agora: (1) **sweep global** a cada `AGENT_STALE_SWEEP_MS` (default **60 s**); (2) se **heartbeat stale** + claim &gt; `AGENT_CLAIM_OFFLINE_MS` (default **3 min**) → reabre `pending` (não descarta lead); (3) timeout duro `AGENT_CLAIM_TIMEOUT_MS` mantém fail+descarte em `conectar`. Worker: `SIGTERM`/`SIGINT` faz `fail` do job atual; `scripts/keep-worker.sh` reinicia o processo se cair. **Rollback:** remova `startStaleClaimSweep` / `claimOfflineMs`; unset `AGENT_CLAIM_OFFLINE_MS`/`AGENT_STALE_SWEEP_MS`; rode `start-worker-*.sh` sem keep.
+
 ```json
 {
   "profileUrl": "https://www.linkedin.com/in/…",
@@ -879,6 +881,8 @@ curl -s -X POST http://localhost:3000/agente/agent-d/claim -H "X-Api-Key: $AGENT
 | `AUTH_ADMIN_EMAIL` / `AUTH_ADMIN_PASSWORD` | `admin@connectmax.local` / `ChangeMeAdmin!2026` | seed do 1º admin |
 | `AGENT_API_KEY` | (vazio) | chave global `X-Api-Key` (admin); preferir `POST /agentes/:id/api-key` |
 | `AGENT_HEARTBEAT_STALE_MS` | `120000` | sem heartbeat → `online: false` |
+| `AGENT_CLAIM_OFFLINE_MS` | `180000` | claimed + worker offline → reabre `pending` (3 min) |
+| `AGENT_STALE_SWEEP_MS` | `60000` | intervalo do sweep global de claimed órfãos |
 
 ### Produção Contabo
 

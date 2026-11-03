@@ -13,6 +13,8 @@ export async function runAgentCycle(api, opts) {
     apiUrl,
     apiKey,
     dry = false,
+    onClaimed,
+    onSettled,
   } = opts;
 
   const claim = await api.claim(agentId);
@@ -24,29 +26,42 @@ export async function runAgentCycle(api, opts) {
   console.log(
     `[${agentId}] claimed ${j.type} p=${j.priority} id=${j.id}`,
   );
-
-  if (dry) {
-    await api.complete(agentId, j.id, { dry: true });
-    console.log(`[${agentId}] completed (DRY)`);
-    return true;
+  try {
+    onClaimed?.(j.id);
+  } catch {
+    /* ignore */
   }
 
   try {
-    const handler = getHandler(j.type);
-    const result = await handler(j, {
-      apiUrl,
-      apiKey,
-      serial,
-      cdpId,
-      cdpUrl,
-      agentId,
-    });
-    await api.complete(agentId, j.id, result || { ok: true });
-    console.log(`[${agentId}] completed ${j.type}`);
-  } catch (e) {
-    const msg = e instanceof Error ? e.message : String(e);
-    console.error(`[${agentId}] fail ${j.type}:`, msg);
-    await api.fail(agentId, j.id, msg);
+    if (dry) {
+      await api.complete(agentId, j.id, { dry: true });
+      console.log(`[${agentId}] completed (DRY)`);
+      return true;
+    }
+
+    try {
+      const handler = getHandler(j.type);
+      const result = await handler(j, {
+        apiUrl,
+        apiKey,
+        serial,
+        cdpId,
+        cdpUrl,
+        agentId,
+      });
+      await api.complete(agentId, j.id, result || { ok: true });
+      console.log(`[${agentId}] completed ${j.type}`);
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      console.error(`[${agentId}] fail ${j.type}:`, msg);
+      await api.fail(agentId, j.id, msg);
+    }
+    return true;
+  } finally {
+    try {
+      onSettled?.(j.id);
+    } catch {
+      /* ignore */
+    }
   }
-  return true;
 }

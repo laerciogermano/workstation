@@ -54,6 +54,31 @@ export const LI_HEADER = [
   'fp_full_version_list',
   'fp_chrome',
   'fp_screen',
+  // perfil LinkedIn (pós-signup)
+  'li_url',
+  'li_headline',
+  'li_cargo',
+  'li_about',
+  'li_foto',
+  'li_banner',
+  'li_exp1_titulo',
+  'li_exp1_empresa',
+  'li_exp1_inicio',
+  'li_exp1_fim',
+  'li_exp1_atual',
+  'li_exp1_desc',
+  'li_exp2_titulo',
+  'li_exp2_empresa',
+  'li_exp2_inicio',
+  'li_exp2_fim',
+  'li_exp2_atual',
+  'li_exp2_desc',
+  'li_exp3_titulo',
+  'li_exp3_empresa',
+  'li_exp3_inicio',
+  'li_exp3_fim',
+  'li_exp3_atual',
+  'li_exp3_desc',
 ];
 
 function today() {
@@ -380,4 +405,90 @@ export function markLiCriado(opts = {}) {
   if (!found) throw new Error(`markLiCriado: e-mail não está no CSV: ${email}`);
   writeCsv(LI_CSV, LI_HEADER, next);
   return { saved: true, email, li_criado: liCriado, linkedinCsv: LI_CSV };
+}
+
+function periodStart(exp = {}) {
+  const m = String(exp.startMonth || '').trim();
+  const y = String(exp.startYear || '').trim();
+  if (!y) return '';
+  return m ? `${m}/${y}` : y;
+}
+
+function periodEnd(exp = {}) {
+  if (exp.current) return 'presente';
+  const m = String(exp.endMonth || '').trim();
+  const y = String(exp.endYear || '').trim();
+  if (!y) return '';
+  return m ? `${m}/${y}` : y;
+}
+
+/**
+ * Atualiza colunas de perfil LinkedIn (url, headline, about, foto, banner, até 3 exps).
+ *
+ * @param {{
+ *   email: string,
+ *   liUrl?: string,
+ *   headline?: string,
+ *   cargo?: string,
+ *   about?: string,
+ *   foto?: string,
+ *   banner?: string,
+ *   experiences?: Array<Record<string, any>>,
+ *   observacoesExtra?: string,
+ *   dryRun?: boolean,
+ * }} opts
+ */
+export function updateLinkedinProfileCsv(opts = {}) {
+  const email = String(opts.email || '').trim();
+  if (!email) throw new Error('updateLinkedinProfileCsv: email obrigatório');
+
+  const patch = {
+    li_url: opts.liUrl != null ? String(opts.liUrl).trim() : undefined,
+    li_headline: opts.headline != null ? String(opts.headline).trim() : undefined,
+    li_cargo: opts.cargo != null ? String(opts.cargo).trim() : undefined,
+    li_about: opts.about != null ? String(opts.about).trim() : undefined,
+    li_foto: opts.foto != null ? String(opts.foto).trim() : undefined,
+    li_banner: opts.banner != null ? String(opts.banner).trim() : undefined,
+  };
+
+  const exps = Array.isArray(opts.experiences) ? opts.experiences.slice(0, 3) : null;
+  if (exps) {
+    for (let i = 0; i < 3; i++) {
+      const n = i + 1;
+      const e = exps[i] || {};
+      patch[`li_exp${n}_titulo`] = String(e.title || '').trim();
+      patch[`li_exp${n}_empresa`] = String(e.company || '').trim();
+      patch[`li_exp${n}_inicio`] = periodStart(e);
+      patch[`li_exp${n}_fim`] = periodEnd(e);
+      patch[`li_exp${n}_atual`] = e.current ? 'sim' : e.title ? 'nao' : '';
+      patch[`li_exp${n}_desc`] = String(e.description || '').trim();
+    }
+  }
+
+  if (opts.dryRun) {
+    return { dryRun: true, email, patch };
+  }
+
+  if (!existsSync(LI_CSV)) throw new Error(`CSV ausente: ${LI_CSV}`);
+  ensureLinkedinCsvHeader();
+  const { rows } = parseCsv(readFileSync(LI_CSV, 'utf8'));
+  let found = false;
+  const next = rows.map((r) => {
+    if (r.email !== email) return r;
+    found = true;
+    const o = { ...r };
+    for (const [k, v] of Object.entries(patch)) {
+      if (v !== undefined) o[k] = v;
+    }
+    if (opts.observacoesExtra) {
+      const extra = String(opts.observacoesExtra).trim();
+      if (extra && !String(o.observacoes || '').includes(extra)) {
+        o.observacoes = (o.observacoes ? `${o.observacoes}; ` : '') + extra;
+      }
+    }
+    return o;
+  });
+  if (!found) throw new Error(`updateLinkedinProfileCsv: e-mail não está no CSV: ${email}`);
+  writeCsv(LI_CSV, LI_HEADER, next);
+  return { saved: true, email, linkedinCsv: LI_CSV, keys: Object.keys(patch) };
 }

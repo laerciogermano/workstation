@@ -70,7 +70,7 @@ node upload-profile-experience.mjs --id daniela-hoffmann \
 
 **Antes → depois (about):** só `linkedin-setup-about-cdp.mjs` (CDP cru) → `upload-profile-about.mjs` (human-cdp + `--id` / `--about-file`). Clique SPA no `/edit/forms/summary` (não `Page.navigate`). Rollback: remover o script; editar Sobre no LI.
 
-**Antes → depois (experiência):** só `linkedin-setup-job-cdp.mjs` (1 cargo) → `upload-profile-experience.mjs` (lote JSON: cargo/empresa/datas/descrição; SPA `/edit/forms/position`). Rollback: remover o script; apagar experiências no LI.
+**Antes → depois (experiência):** só `linkedin-setup-job-cdp.mjs` (1 cargo) → `upload-profile-experience.mjs` (lote JSON: cargo/empresa/datas/descrição; SPA `/edit/forms/position`). Datas: **meses variados** (não jan–dez fixo). Edição: `--edit`. Rollback: remover o script; apagar experiências no LI.
 
 **Antes → depois (typeahead):** podia escolher 2ª+ opção por match de texto → **sempre a 1ª** sugestão (`opts[0]` por Y). Rollback: restaurar `find` exact/startsWith/includes.
 

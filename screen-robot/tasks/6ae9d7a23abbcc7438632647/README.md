@@ -1,4 +1,4 @@
-# Task Trello: Comparar fotos Unsplash × TPDNE (doc v3 igual)
+# Task Trello: Comparar fotos — doc v3 igual com lote TPDNE alt
 
 - **Card:** [Comparar fotos: doc vendedores igual com lote alternativo](https://trello.com/c/4svbSI4J)
 - **Board:** [Robô Prospecção](https://trello.com/b/JPntFgwO/robô-prospecção) · lista `Concluído`
@@ -7,18 +7,18 @@
 
 ## Objetivo
 
-Mesmo documento v3 (textos intactos); **só fotos** trocadas por lote fresco **This Person Does Not Exist**, com página de comparação lado a lado vs Unsplash. **Cada imagem aparece uma vez** (só na §0); perfis são texto.
+Mesmo documento v3 (estrutura e textos intactos); **só as 12 fotos** trocadas por lote fresco **This Person Does Not Exist**.
 
 ## Entrega
 
 | Artefato | Caminho |
 |---|---|
-| PDF comparação (TPDNE alt + pares Unsplash×TPDNE) | [`reports/Vendedores-v3-tpdne-alt-comparacao.pdf`](reports/Vendedores-v3-tpdne-alt-comparacao.pdf) |
+| PDF (v3 + fotos TPDNE alt, 16 págs.) | [`reports/Vendedores-v3-tpdne-alt-fotos.pdf`](reports/Vendedores-v3-tpdne-alt-fotos.pdf) |
 | Fontes lote alt | [`fontes-tpdne-alt.csv`](fontes-tpdne-alt.csv) |
 | Avatares TPDNE | [`avatars/`](avatars/) |
 | CSV/Experience (cópia v3) | [`vendedores.csv`](vendedores.csv) · [`experiencia-por-vendedor.csv`](experiencia-por-vendedor.csv) |
 
-**Antes → depois:** doc só Unsplash → mesmo v3 com lote TPDNE fresco + índice visual Unsplash×TPDNE. Rollback: PDF Unsplash em [`../6ae9d6add727a12aafdbe85b/`](../6ae9d6add727a12aafdbe85b/README.md).
+**Antes → depois:** doc Unsplash foto-only → mesmo layout/seções com fotos TPDNE alt + §6 de atribuição TPDNE. Rollback: PDF Unsplash em [`../6ae9d6add727a12aafdbe85b/`](../6ae9d6add727a12aafdbe85b/README.md).
 
 ## Relacionados
 

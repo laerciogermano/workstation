@@ -46,13 +46,19 @@ export async function findByTexts(page, texts, opts = {}) {
     const includeDisabled = ${JSON.stringify(!!opts.includeDisabled)};
     const menuOnly = ${JSON.stringify(!!opts.menuOnly)};
     const primaryOnly = ${JSON.stringify(!!opts.primaryOnly)};
+    // primaryOnly: botão Connect do hero OU <a> invite do perfil atual (não cards laterais)
     const nodes = menuOnly
       ? [...document.querySelectorAll('[role="menuitem"], .artdeco-dropdown__item')]
       : primaryOnly
-        ? [...document.querySelectorAll('button, [role="button"]')]
+        ? [...document.querySelectorAll(
+            'button, [role="button"], a[href*="custom-invite"], a[href*="vanityName="]',
+          )]
         : [...document.querySelectorAll(
             'button, a, [role="button"], [role="link"], [role="menuitem"], .artdeco-dropdown__item',
           )];
+    const vanityRaw = (location.pathname.match(/\\/in\\/([^/]+)/) || [])[1] || '';
+    let vanity = vanityRaw;
+    try { vanity = decodeURIComponent(vanityRaw); } catch { /* keep raw */ }
     const score = (t) => {
       const s = String(t || '').replace(/\\s+/g, ' ').trim().toLowerCase();
       if (!s) return -1;
@@ -81,13 +87,19 @@ export async function findByTexts(page, texts, opts = {}) {
       let rank = score(rawTxt);
       if (rank < 0) rank = score(rawAria);
       if (rank < 0) continue;
-      // primaryOnly: Connect do hero — ignorar "Convidar Fulano" de cards laterais (links)
+      // primaryOnly: Connect do hero — ignorar cards laterais / outros vanity
       if (primaryOnly) {
-        const both = (rawAria + ' ' + rawTxt).toLowerCase();
-        if (/convidar .+ (para se conectar|a conectar)/i.test(both) && !/^conectar$/i.test(rawTxt)) {
-          /* aria invite ok se o botão for Connect/Conectar no hero */
-        }
         if (el.closest && el.closest('[data-view-name="profile-card"], aside, .scaffold-layout__aside')) continue;
+        if (el.tagName === 'A') {
+          const href = el.getAttribute('href') || '';
+          if (vanity && href.includes('vanityName=')) {
+            const ok =
+              href.includes('vanityName=' + vanity) ||
+              href.includes('vanityName=' + encodeURIComponent(vanity)) ||
+              href.includes('vanityName=' + vanityRaw);
+            if (!ok) continue;
+          }
+        }
       }
       const r = el.getBoundingClientRect();
       if (r.width < 2 || r.height < 2) continue;
@@ -155,7 +167,9 @@ export async function findProfileMore(page) {
  */
 export async function findMenuConnect(page) {
   return page.evaluate(`(() => {
-    const vanity = (location.pathname.match(/\\/in\\/([^/]+)/) || [])[1] || '';
+    const vanityRaw = (location.pathname.match(/\\/in\\/([^/]+)/) || [])[1] || '';
+    let vanity = vanityRaw;
+    try { vanity = decodeURIComponent(vanityRaw); } catch { /* keep */ }
     const items = [...document.querySelectorAll('a[role=menuitem], [role=menuitem]')];
     /** @type {{ cx: number, cy: number, text: string, href: string }[]} */
     const hits = [];
@@ -170,7 +184,10 @@ export async function findMenuConnect(page) {
       const vanityOk =
         !vanity ||
         href.includes('vanityName=' + vanity) ||
-        href.includes('/in/' + vanity);
+        href.includes('vanityName=' + encodeURIComponent(vanity)) ||
+        href.includes('vanityName=' + vanityRaw) ||
+        href.includes('/in/' + vanity) ||
+        href.includes('/in/' + vanityRaw);
       if (vanity && href.includes('vanityName=') && !vanityOk) continue;
       hits.push({
         cx: r.x + r.width / 2,
@@ -227,12 +244,6 @@ export async function clickProfileMenuConnect(page, steps) {
   steps?.push(`more:${more.text}@${Math.round(more.cx)},${Math.round(more.cy)}`);
   await sleep(700);
 
-  const vanity = await page.evaluate(
-    `(() => (location.pathname.match(/\\/in\\/([^/]+)/) || [])[1] || '')()`,
-  );
-  const safeVanity = String(vanity || "").replace(/\\/g, "\\\\").replace(/"/g, '\\"');
-  const connectSel = `a[role="menuitem"][href*="vanityName=${safeVanity}"]`;
-
   let menuHit = await findMenuConnect(page);
   for (let i = 0; i < 6 && !menuHit; i++) {
     await sleep(300);
@@ -246,15 +257,11 @@ export async function clickProfileMenuConnect(page, steps) {
     await sleep(50);
   }
 
-  const box = await page.boundingBox(connectSel).catch(() => null);
-  if (!box) {
-    return { ok: false, error: "Conectar no menu sumiu antes do clique" };
-  }
-  await page.click(connectSel);
+  await page.clickAt(menuHit.cx, menuHit.cy);
   steps?.push(
-    `menu-connect:${menuHit.text}@${Math.round(box.cx)},${Math.round(box.cy)}:sel`,
+    `menu-connect:${menuHit.text}@${Math.round(menuHit.cx)},${Math.round(menuHit.cy)}`,
   );
-  return { ok: true, more, menuHit, selector: connectSel };
+  return { ok: true, more, menuHit };
 }
 
 /**
@@ -318,13 +325,28 @@ export async function profileSignals(page) {
       const txt = (el.innerText || '').replace(/\\s+/g, ' ').trim();
       return { aria, txt, both: (aria + ' ' + txt).replace(/\\s+/g, ' ').trim() };
     };
-    // Connect do hero (botão) — NÃO contar <a> "Conectar" de "Pessoas que você pode conhecer"
-    const hasConnect = [...document.querySelectorAll('button, [role=button]')].some((el) => {
+    // Connect do hero: button OU <a> invite do vanity atual — NÃO cards laterais
+    const vanityRaw = (location.pathname.match(/\\/in\\/([^/]+)/) || [])[1] || '';
+    let vanity = vanityRaw;
+    try { vanity = decodeURIComponent(vanityRaw); } catch { /* keep */ }
+    const hasConnect = [...document.querySelectorAll(
+      'button, [role=button], a[href*="custom-invite"], a[href*="vanityName="]',
+    )].some((el) => {
       const r = el.getBoundingClientRect();
       if (r.width < 2 || r.height < 2 || r.y < 72) return false;
-      if (el.closest('aside, .scaffold-layout__aside')) return false;
+      if (el.closest('aside, .scaffold-layout__aside, [data-view-name="profile-card"]')) return false;
       const { aria, txt, both } = labelOf(el);
       if (/\\bconnections?\\b/i.test(both) && !/invite.+to connect/i.test(both)) return false;
+      if (el.tagName === 'A') {
+        const href = el.getAttribute('href') || '';
+        if (vanity && href.includes('vanityName=')) {
+          const ok =
+            href.includes('vanityName=' + vanity) ||
+            href.includes('vanityName=' + encodeURIComponent(vanity)) ||
+            href.includes('vanityName=' + vanityRaw);
+          if (!ok) return false;
+        }
+      }
       return (
         /^(connect|conectar)$/i.test(txt) ||
         /^(connect|conectar)$/i.test(aria) ||

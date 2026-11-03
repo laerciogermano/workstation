@@ -2,7 +2,8 @@
  * Conectar em perfil LinkedIn via URL (CDP / web).
  * Mesma interface de `../linkedin-connect.js` (AVD), trocando `serial` por sessão CDP.
  *
- * Fluxo: Connect do hero **ou** Mais → menuitem Conectar → Enviar sem nota/Skip → Pending.
+ * Fluxo: se Connect/Conectar já está no hero → clica nele (sem abrir ⋮).
+ * Senão: Mais → menuitem Conectar → Enviar sem nota/Skip → Pending.
  * Manipulação só via human-cdp (clickAt/click).
  *
  * @param {{
@@ -281,7 +282,7 @@ export async function connectByLinkedInUrl(opts) {
         });
       }
 
-      // Connect no hero (botão) — nunca <a> de recomendações
+      // Connect já no hero (botão ou <a> do vanity) — NÃO abrir ⋮/Mais
       if (sig.hasConnect) {
         await shot(page, opts.outDir, "02-connect.png");
         if (!dryRun) {
@@ -335,8 +336,8 @@ export async function connectByLinkedInUrl(opts) {
         continue;
       }
 
-      // Mais → Conectar no menu (trajeto dentro do dropdown)
-      if (sig.hasMore && !didMore && !sig.pending) {
+      // Só abre ⋮/Mais se Connect NÃO está no hero
+      if (sig.hasMore && !didMore && !sig.pending && !sig.hasConnect) {
         await shot(page, opts.outDir, "02-follow-more.png");
         if (!dryRun) {
           const tapped = await clickProfileMenuConnect(page, steps);

@@ -15,11 +15,11 @@ Criar lista de vendedores com traits das personas que mais vendem no nosso conte
 |---|---|
 | Lista CSV (12 vendedores + `avatar_file`) | [`vendedores.csv`](vendedores.csv) |
 | Resumo MD | [`vendedores.md`](vendedores.md) |
-| Relatório PDF (foto + dados) | [`reports/Vendedores-avatares.pdf`](reports/Vendedores-avatares.pdf) |
+| Playbook PDF (estudo personas + checklist LinkedIn + 12 fotos) | [`reports/Vendedores-avatares.pdf`](reports/Vendedores-avatares.pdf) |
 | Avatares atribuídos | [`avatars/`](avatars/) |
 | Personas (dep.) | [`../6ae9c89d7f2951914a023746/personas.csv`](../6ae9c89d7f2951914a023746/personas.csv) |
 
-**Antes → depois:** só CSV/MD → PDF no card Trello com headshot sintético por vendedor (`avatar_file`). Rollback: remover `reports/Vendedores-avatares.pdf`, pasta `avatars/` e coluna `avatar_file` do CSV.
+**Antes → depois:** PDF só com cards de vendedores → playbook com estudo (métricas, 3 personas canônicas, prospecção BR, mapeamento campo→LinkedIn, checklist) + 12 vendedores. Fonte estudo: [`../6ae9c89d7f2951914a023746/reports/Personas LinkedIn que mais vendem.md`](../6ae9c89d7f2951914a023746/reports/Personas%20LinkedIn%20que%20mais%20vendem.md). Rollback: regenerar PDF só com catálogo ou remover `reports/Vendedores-avatares.pdf`, `avatars/` e coluna `avatar_file`.
 
 ## Dependência
 

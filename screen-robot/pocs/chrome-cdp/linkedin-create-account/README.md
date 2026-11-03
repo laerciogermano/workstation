@@ -27,6 +27,7 @@ Script novo, passo a passo. **Agora só o passo 1:** mailbox Mailcow.
 | [`click-signup-skip.mjs`](click-signup-skip.mjs) | `clickSignupSkip({ id })` → Pular / Skip (unitário) |
 | [`click-signup-finish.mjs`](click-signup-finish.mjs) | `clickSignupFinish({ id })` → Concluir (unitário) |
 | [`finish-signup-onboarding.mjs`](finish-signup-onboarding.mjs) | `finishSignupOnboarding({ id })` → choice (job-seeker “Não”)→Pular→Concluir→Continuar até `/feed` |
+| [`upload-profile-photo.mjs`](upload-profile-photo.mjs) | `uploadProfilePhoto({ id, photo })` — `/in/me` → Carregar foto → `DOM.setFileInputFiles` → Salvar |
 
 ```bash
 cd /Users/laerciogermano/Documents/works/screen-robot/pocs/chrome-cdp/linkedin-create-account
@@ -42,7 +43,13 @@ node create-mailbox.mjs --first Bruno --last Nunes --dry-run
 
 # sem abrir Chrome:
 node create-mailbox.mjs --first Bruno --last Nunes --write-credenciais --no-browser
+
+# foto de perfil (pós-signup; human-cdp) — usar avatar do doc escolhidos-v2.1:
+node upload-profile-photo.mjs --id daniela-hoffmann \
+  --photo ../../../tasks/6ae9def6a28b279ac20b6ffc/avatars/v06-daniela-hoffmann.jpg
 ```
+
+**Antes → depois (foto):** sem passo de avatar no create-account → `upload-profile-photo.mjs` (cliques human-cdp + `setFileInputFiles`). Foto Daniela = escolhidos-v2.1 (`6ae9def6a28b279ac20b6ffc`, Vitaly Gariev), **não** a lista Unsplash nova (`6ae9def02d6e0ab7a0ab0737`). Rollback: remover o script; editar/excluir foto no LinkedIn.
 
 Saída: progresso em **stderr** (`[create-mailbox]`, `[createLinkedin]`, `[PIN]`); JSON final em **stdout** `{ email, cdp, csv, linkedin }`.
 

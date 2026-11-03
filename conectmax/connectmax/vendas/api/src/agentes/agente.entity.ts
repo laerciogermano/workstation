@@ -196,8 +196,9 @@ export class Agente {
   mensagemProspeccao!: string | null;
 
   /**
-   * Início da janela de envio de prospecção (HH:MM, America/Sao_Paulo).
-   * `null` → default `08:00`. Inclusivo.
+   * Início da janela de funcionamento do worker (todos os jobs).
+   * HH:MM, America/Sao_Paulo. `null` → default `08:00`. Inclusivo.
+   * Nome da coluna legado (`prospeccao_hora_*`).
    */
   @Column({
     name: 'prospeccao_hora_inicio',
@@ -208,8 +209,9 @@ export class Agente {
   prospeccaoHoraInicio!: string | null;
 
   /**
-   * Fim da janela de envio de prospecção (HH:MM, America/Sao_Paulo).
-   * `null` → default `18:00`. Exclusivo (ex.: 18:00 = até 17:59).
+   * Fim da janela de funcionamento do worker (todos os jobs).
+   * HH:MM, America/Sao_Paulo. `null` → default `21:00`. Exclusivo (21:00 = até 20:59).
+   * Nome da coluna legado (`prospeccao_hora_*`).
    */
   @Column({
     name: 'prospeccao_hora_fim',

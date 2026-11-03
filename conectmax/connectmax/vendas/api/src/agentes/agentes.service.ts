@@ -100,6 +100,9 @@ export class AgentesService implements OnModuleInit {
       `ALTER TABLE agentes ADD COLUMN IF NOT EXISTS first_name varchar(120)`,
       `ALTER TABLE agentes ADD COLUMN IF NOT EXISTS last_name varchar(120)`,
       `UPDATE agentes SET host_kind = 'localhost' WHERE localhost = true AND (host_kind IS NULL OR host_kind = 'server')`,
+      // Janela do worker: preenche NULL com default 08:00–21:00 SP.
+      `UPDATE agentes SET prospeccao_hora_inicio = '08:00' WHERE prospeccao_hora_inicio IS NULL`,
+      `UPDATE agentes SET prospeccao_hora_fim = '21:00' WHERE prospeccao_hora_fim IS NULL`,
     ];
     for (const sql of stmts) {
       try {

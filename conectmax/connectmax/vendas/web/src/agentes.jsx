@@ -101,8 +101,9 @@ const PROSPECCAO_VAR_GROUPS = [
   },
 ];
 
+/** Janela de funcionamento do worker (America/Sao_Paulo); fim exclusivo. */
 const DEFAULT_PROSPECCAO_HORA_INICIO = '08:00';
-const DEFAULT_PROSPECCAO_HORA_FIM = '18:00';
+const DEFAULT_PROSPECCAO_HORA_FIM = '21:00';
 
 const EMPTY_FORM = {
   nome: '',
@@ -873,37 +874,42 @@ export default function Agentes() {
                   </label>
                 </fieldset>
               ) : null}
+              <fieldset className="agt-proc-fieldset srv-form-span">
+                <legend>Horário de funcionamento</legend>
+                <p className="muted agt-proc-hint">
+                  Worker só materializa/claima jobs nesta janela
+                  (America/Sao_Paulo): conectar, extrair, mensagens, prospecção.
+                  Fora dela cancela pending e fica parado. Fim exclusivo (21:00 =
+                  até 20:59).
+                </p>
+                <div className="agt-proc-hours">
+                  <label>
+                    De
+                    <input
+                      type="time"
+                      value={form.prospeccaoHoraInicio}
+                      onChange={(e) =>
+                        setField('prospeccaoHoraInicio', e.target.value)
+                      }
+                      required
+                    />
+                  </label>
+                  <label>
+                    Até
+                    <input
+                      type="time"
+                      value={form.prospeccaoHoraFim}
+                      onChange={(e) =>
+                        setField('prospeccaoHoraFim', e.target.value)
+                      }
+                      required
+                    />
+                  </label>
+                </div>
+              </fieldset>
               {(form.procedimentos || []).includes('enviar_prospeccao') ? (
                 <fieldset className="agt-proc-fieldset srv-form-span">
                   <legend>Enviar prospecção</legend>
-                  <p className="muted agt-proc-hint">
-                    Horário permitido (America/Sao_Paulo). Fora da janela o envio
-                    fica em espera. Fim é exclusivo (18:00 = até 17:59).
-                  </p>
-                  <div className="agt-proc-hours">
-                    <label>
-                      De
-                      <input
-                        type="time"
-                        value={form.prospeccaoHoraInicio}
-                        onChange={(e) =>
-                          setField('prospeccaoHoraInicio', e.target.value)
-                        }
-                        required
-                      />
-                    </label>
-                    <label>
-                      Até
-                      <input
-                        type="time"
-                        value={form.prospeccaoHoraFim}
-                        onChange={(e) =>
-                          setField('prospeccaoHoraFim', e.target.value)
-                        }
-                        required
-                      />
-                    </label>
-                  </div>
                   <p className="muted agt-proc-hint">
                     Clique para inserir no texto:
                   </p>

@@ -447,8 +447,15 @@ export class AgenteService implements OnModuleInit {
       .getCount();
   }
 
-  /** Fuso fixo da janela/cota diária de prospecção (independente da TZ do processo). */
+  /**
+   * Fuso fixo da janela de funcionamento do worker e cotas diárias
+   * (independente da TZ do processo).
+   */
   private static readonly PROSPECCAO_TZ = 'America/Sao_Paulo';
+  /** Default início da janela (minutos desde 00:00 SP). */
+  private static readonly OPERATING_WINDOW_START_DEFAULT_MIN = 8 * 60;
+  /** Default fim exclusivo (21:00 SP = até 20:59). */
+  private static readonly OPERATING_WINDOW_END_DEFAULT_MIN = 21 * 60;
 
   private saoPauloParts(date: Date): {
     year: number;
@@ -536,8 +543,12 @@ export class AgenteService implements OnModuleInit {
     return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
   }
 
-  /** Janela do agente (default 08:00–18:00, fim exclusivo). America/Sao_Paulo. */
-  private resolveProspeccaoWindow(agente: {
+  /**
+   * Janela de funcionamento do worker (todos os jobs).
+   * Colunas `prospeccao_hora_*` = horário do agente (legado do nome).
+   * Default 08:00–21:00, fim exclusivo. America/Sao_Paulo.
+   */
+  private resolveOperatingWindow(agente: {
     prospeccaoHoraInicio?: string | null;
     prospeccaoHoraFim?: string | null;
   } | null): {
@@ -546,8 +557,14 @@ export class AgenteService implements OnModuleInit {
     startLabel: string;
     endLabel: string;
   } {
-    const startMin = this.parseHmToMinutes(agente?.prospeccaoHoraInicio, 8 * 60);
-    let endMin = this.parseHmToMinutes(agente?.prospeccaoHoraFim, 18 * 60);
+    const startMin = this.parseHmToMinutes(
+      agente?.prospeccaoHoraInicio,
+      AgenteService.OPERATING_WINDOW_START_DEFAULT_MIN,
+    );
+    let endMin = this.parseHmToMinutes(
+      agente?.prospeccaoHoraFim,
+      AgenteService.OPERATING_WINDOW_END_DEFAULT_MIN,
+    );
     if (endMin <= startMin) {
       endMin = Math.min(24 * 60, startMin + 60);
     }
@@ -559,7 +576,41 @@ export class AgenteService implements OnModuleInit {
     };
   }
 
-  private nextProspeccaoWindowOpen(
+  /** @deprecated use resolveOperatingWindow */
+  private resolveProspeccaoWindow(agente: {
+    prospeccaoHoraInicio?: string | null;
+    prospeccaoHoraFim?: string | null;
+  } | null) {
+    return this.resolveOperatingWindow(agente);
+  }
+
+  private operatingWindowStatus(
+    agente: {
+      prospeccaoHoraInicio?: string | null;
+      prospeccaoHoraFim?: string | null;
+    } | null,
+    from: Date = new Date(),
+  ): {
+    startMin: number;
+    endMin: number;
+    startLabel: string;
+    endLabel: string;
+    outsideWindow: boolean;
+    nextDueAt: Date | null;
+  } {
+    const win = this.resolveOperatingWindow(agente);
+    const nowMin = this.minutesInSaoPaulo(from);
+    const outsideWindow = nowMin < win.startMin || nowMin >= win.endMin;
+    return {
+      ...win,
+      outsideWindow,
+      nextDueAt: outsideWindow
+        ? this.nextOperatingWindowOpen(win.startMin, from)
+        : null,
+    };
+  }
+
+  private nextOperatingWindowOpen(
     startMin: number,
     from: Date = new Date(),
   ): Date {
@@ -585,6 +636,33 @@ export class AgenteService implements OnModuleInit {
     );
   }
 
+  /** @deprecated use nextOperatingWindowOpen */
+  private nextProspeccaoWindowOpen(
+    startMin: number,
+    from: Date = new Date(),
+  ): Date {
+    return this.nextOperatingWindowOpen(startMin, from);
+  }
+
+  /** Cancela todos os pending do agente (fora da janela de funcionamento). */
+  private async cancelPendingOutsideWindow(
+    agentId: string,
+    reason: string,
+  ): Promise<number> {
+    const pending = await this.jobs.find({
+      where: { agentId, status: 'pending' },
+    });
+    if (!pending.length) return 0;
+    for (const j of pending) {
+      j.status = 'cancelled';
+      j.lastError = reason;
+      j.completedAt = new Date();
+      j.dedupeKey = null;
+    }
+    await this.jobs.save(pending);
+    return pending.length;
+  }
+
   /**
    * 1 slot se dentro da janela, ainda há cota do dia e passou o intervalo;
    * senão 0 (fora do horário / cooldown / daily).
@@ -607,17 +685,14 @@ export class AgenteService implements OnModuleInit {
     const successIntervalMs = this.prospeccaoIntervalMs();
     const retryIntervalMs = this.prospeccaoRetryIntervalMs();
     const agente = await this.agentesCadastro.findOneBy({ id: agentId });
-    const win = this.resolveProspeccaoWindow(agente);
-    const now = new Date();
-    const nowMin = this.minutesInSaoPaulo(now);
+    const win = this.operatingWindowStatus(agente);
     const remainingDaily = Math.max(0, dailyLimit - sentToday);
     const lastTerminal = await this.lastProspeccaoTerminal(agentId);
     const afterFail = lastTerminal?.status === 'failed';
     const intervalMs = afterFail ? retryIntervalMs : successIntervalMs;
     const lastAt = lastTerminal?.at ?? runtime.lastProspeccaoAt;
 
-    if (nowMin < win.startMin || nowMin >= win.endMin) {
-      const nextDueAt = this.nextProspeccaoWindowOpen(win.startMin, now);
+    if (win.outsideWindow) {
       return {
         slots: 0,
         intervalMs,
@@ -625,7 +700,7 @@ export class AgenteService implements OnModuleInit {
         reason: `fora da janela ${win.startLabel}–${win.endLabel}`,
         windowStart: win.startLabel,
         windowEnd: win.endLabel,
-        nextDueAt,
+        nextDueAt: win.nextDueAt,
         outsideWindow: true,
       };
     }
@@ -819,6 +894,7 @@ export class AgenteService implements OnModuleInit {
 
   /**
    * Materializa jobs a partir do banco (AC-01…04) e faz claim SKIP LOCKED.
+   * Fora da janela de funcionamento do agente: cancela pending e não claima.
    */
   async claimNext(agentIdRaw: string): Promise<ClaimResult> {
     const agentId = await this.canonicalAgentId(agentIdRaw);
@@ -826,8 +902,22 @@ export class AgenteService implements OnModuleInit {
     await this.releaseStaleClaims(agentId);
     await this.materializeJobs(agentId);
 
-    const claimed = await this.claimPendingRow(agentId);
     const runtime = await this.ensureRuntime(agentId);
+    const agente = await this.agentesCadastro.findOneBy({ id: agentId });
+    const win = this.operatingWindowStatus(agente);
+    if (win.outsideWindow) {
+      runtime.status = 'idle';
+      runtime.currentJobId = null;
+      runtime.lastClaimAt = new Date();
+      await this.runtimes.save(runtime);
+      return {
+        job: null,
+        reason: `fora da janela ${win.startLabel}–${win.endLabel} (America/Sao_Paulo)`,
+        runtime,
+      };
+    }
+
+    const claimed = await this.claimPendingRow(agentId);
 
     if (!claimed) {
       runtime.status = 'idle';
@@ -1263,9 +1353,24 @@ export class AgenteService implements OnModuleInit {
       ler_mensagens: 3,
       enviar_prospeccao: 4,
     };
-    return [inbox, connections, prospeccao, conectar, leads]
+    const items = [inbox, connections, prospeccao, conectar, leads]
       .filter((x): x is NonNullable<typeof connections> => Boolean(x))
       .sort((a, b) => (typeOrder[a.type] ?? 99) - (typeOrder[b.type] ?? 99));
+
+    /** Fora da janela: worker parado — agenda toda em waiting até a abertura. */
+    if (opts.prospeccaoOutsideWindow) {
+      const dueAt = opts.prospeccaoNextDueAt;
+      const dueInMs = dueAt ? Math.max(0, dueAt.getTime() - now) : null;
+      const reason = `fora da janela ${opts.prospeccaoWindowStart}–${opts.prospeccaoWindowEnd}`;
+      return items.map((item) => ({
+        ...item,
+        state: 'waiting' as const,
+        dueAt: dueAt ? dueAt.toISOString() : null,
+        dueInMs,
+        reason,
+      }));
+    }
+    return items;
   }
 
   async peek(agentIdRaw: string): Promise<{
@@ -1782,6 +1887,13 @@ export class AgenteService implements OnModuleInit {
   /** Cria/atualiza filas a partir do estado atual do CRM. */
   private async materializeJobs(agentId: string): Promise<void> {
     await this.cancelDisabledPending(agentId);
+    const agente = await this.agentesCadastro.findOneBy({ id: agentId });
+    const win = this.operatingWindowStatus(agente);
+    if (win.outsideWindow) {
+      const reason = `fora da janela ${win.startLabel}–${win.endLabel} (America/Sao_Paulo)`;
+      await this.cancelPendingOutsideWindow(agentId, reason);
+      return;
+    }
     const allowed = new Set(await this.allowedTypesForAgent(agentId));
     if (allowed.has('ler_mensagens')) {
       await this.enqueueInboxIfDue(agentId);

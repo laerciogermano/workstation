@@ -1,0 +1,27 @@
+id,nome,segmento,porte,sede,site,linkedin_company,uso_experiencia,prioridade,notas
+ref01,ConectMax,suprimentos corporativos B2B / indiretos,média,Brasil (ConectMax),,,"atual / atual no signup",alta,Empresa âncora dos perfis; grafia ConectMax no lab
+ref02,BR Supply,suprimentos corporativos (EPI hygiene escritório copa),grande / conhecida,"São Leopoldo, RS / operação SP",https://www.brsupply.com.br/,https://www.linkedin.com/company/brsupply-suprimentos-corporativos,experiencia_previa_ou_atual,alta,Referência direta do pedido; portfólio amplo + gestão de suprimentos
+c01,Onfinity,suprimentos corporativos (escritório higiene embalagens EPI),média,"Chapecó, SC (+ Osasco/SP)",https://onfinity.com.br/,https://www.linkedin.com/company/onfinity,experiencia_previa,alta,Concorrente típico BR Supply; 5k+ itens; B2B nacional
+c02,Viasupri,suprimentos corporativos (limpeza escritório copa),média,"Diadema, SP",https://www.viasupri.com.br/,https://www.linkedin.com/company/viasupri-suprimentos-corporativos,experiencia_previa,alta,Portal B2B; 14k+ itens; forte presença LinkedIn
+c03,Columbia Suprimentos,suprimentos corporativos (higiene limpeza descartáveis),média,Brasil,https://www.columbiasuprimentos.com.br/,https://www.linkedin.com/company/columbia-suprimentos,experiencia_previa,alta,Citada junto a BR Supply/Onfinity em rankings de suprimentos
+c04,Oceano B2B,e-commerce B2B suprimentos (escritório higiene EPI MRO),média,Brasil,https://www.oceanob2b.com.br/,,experiencia_previa,media,Operação logística nacional; bom para experiência e-commerce B2B
+c05,Sodine,suprimentos (papelaria limpeza descartáveis EPI informática),grande regional,"Fortaleza, CE",https://www.sodine.com.br/,https://www.linkedin.com/company/sodine,experiencia_previa,alta,Referência Nordeste; varejo+atacado+corporativo; 50+ anos
+c06,Kalunga,papelaria informática materiais de escritório,grande / famosa,"São Paulo, SP",https://www.kalunga.com.br/,https://www.linkedin.com/company/kalunga,experiencia_previa,alta,Marca muito reconhecida; bom para experiência vendas/inside sales
+c07,Nagem,papelaria informática escritório,grande regional,"Recife, PE",https://www.nagem.com.br/,https://www.linkedin.com/company/nagem,experiencia_previa,media,Marca forte Nordeste/SE; canal televendas/e-commerce
+c08,Ferramentas Gerais,MRO ferramentas equipamentos suprimentos industriais,grande / famosa,"Curitiba, PR",https://www.ferramentasgerais.com.br/,https://www.linkedin.com/company/ferramentas-gerais,experiencia_previa,alta,Líder nacional MRO; ideal persona KAM técnico
+c09,Nortel-Dimensional,MRO materiais elétricos suprimentos industriais,grande,"Campinas, SP",https://www.nortel.com.br/,https://www.linkedin.com/company/nortel-suprimentos-industriais,experiencia_previa,alta,Distribuidora multiespecialista; filiais nacionais
+c10,Anhanguera Ferramentas,MRO ferramentas soluções industriais,média-grande,"Campinas, SP",https://www.anhangueraferramentas.com.br/,https://www.linkedin.com/company/anhanguera-ferramentas,experiencia_previa,alta,30+ anos MRO; mix varejo+industrial
+c11,Luitex Máquinas e Ferramentas,MRO suprimentos industriais,média-grande,"Americana, SP",https://www.luitex.com.br/,https://www.linkedin.com/company/luitex,experiencia_previa,media,Distribuidor MRO consolidado interior SP
+c12,LF Máquinas e Ferramentas,MRO suprimentos industriais,média,"Dois Irmãos, RS",https://www.lf.com.br/,,experiencia_previa,media,MRO Sul; PME até grandes contas
+c13,Abecom,rolamentos MRO manutenção industrial,média-grande,"São Paulo, SP",https://www.abecom.com.br/,https://www.linkedin.com/company/abecom,experiencia_previa,media,Desde 1963; perfil técnico industrial
+c14,Mipe Supply,MRO + suprimentos corporativos,média,Brasil,https://www.mips.com.br/,https://www.linkedin.com/company/mipe-supply,experiencia_previa,media,ISO/AS9120; marcas 3M Henkel Norton
+c15,R3 Suprimentos,suprimentos corporativos,média,"Aparecida de Goiânia, GO",https://www.r3suprimentos.com.br/,,experiencia_previa,media,45+ anos; regional Centro-Oeste
+c16,Reis Office,equipamentos e suprimentos de escritório,média,"Guarulhos, SP",https://www.reisoffice.com.br/,,experiencia_previa,media,Desde 1984; escritório/equipamentos
+c17,PORT,distribuição papelaria informática escritório,média,"Belo Horizonte, MG",https://www.port.com.br/,,experiencia_previa,media,Desde 1993; MG e região
+c18,Lepok,papelaria e informática,média,"São Paulo, SP",https://www.lepok.com.br/,,experiencia_previa,baixa,Desde 1983; marca regional SP
+c19,Superbuy,compras inteligentes / MRO B2B,média,"Belo Horizonte, MG",https://www.superbuy.com.br/,,experiencia_previa,media,Posicionamento operação inteligente de compras
+c20,Ferramac,soluções industriais MRO segurança,média,"Uberlândia, MG",https://www.ferramac.com.br/,,experiencia_previa,baixa,Interior MG; manutenção/produção
+c21,NEI (Marketplace / Gaveteiro),marketplace MRO e suprimentos,média-grande,Brasil,https://www.nei.com.br/,,experiencia_previa,media,Marketplace B2B; crédito corporativo; milhares de SKUs
+c22,Esperança Nordeste,suprimentos industriais MRO,média,"Recife, PE",,,experiencia_previa,baixa,Atuação Nordeste; complementar Sodine/Nagem
+c23,Evsa,suprimentos e serviços industriais,grande,"Diadema, SP",,,experiencia_previa,baixa,Porte grande; menos “marca de vitrine” que Kalunga/FG
+c24,OrçaAqui,plataforma cotação / compras corporativas,média,Brasil,https://orcaaqui.com.br/,,experiencia_previa,baixa,Mais tech de compras do que distribuidor; uso pontual

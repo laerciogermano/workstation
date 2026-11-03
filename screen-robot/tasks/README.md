@@ -89,3 +89,4 @@ tasks/
 | [`6ae8ef85ddea48cb1414b3be/`](6ae8ef85ddea48cb1414b3be/README.md) | [Dashboard de bots (frota + atividade + controles)](https://trello.com/c/A1h6DvaX) |
 | [`6ae9c89d7f2951914a023746/`](6ae9c89d7f2951914a023746/README.md) | [Pesquisar na net personas LinkedIn que mais vendem](https://trello.com/c/WAZ9CciT) |
 | [`6ae9ca1e215a10fb339d26e4/`](6ae9ca1e215a10fb339d26e4/README.md) | [Lista de vendedores alinhados às personas (aparência)](https://trello.com/c/1KXbnbBZ) |
+| [`6ae9d0bc128614a8c22f6afc/`](6ae9d0bc128614a8c22f6afc/README.md) | [Empresas BR (suprimentos/vendas) para experiência LinkedIn](https://trello.com/c/W1XpTjvv) |

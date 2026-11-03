@@ -7,7 +7,7 @@
 
 ## Objetivo
 
-Mapear as personas dos vendedores LinkedIn de alto desempenho e usá-las como base para gerar novos vendedores.
+Pesquisar na net as personas dos vendedores LinkedIn de alto desempenho e usá-las como base para gerar novos vendedores.
 
 ## Rollback
 

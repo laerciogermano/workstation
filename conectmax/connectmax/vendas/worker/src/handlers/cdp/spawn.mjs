@@ -39,14 +39,51 @@ export function resolveApiUrl(ctx = {}) {
 }
 
 export function spawnNpm(cwd, args, env) {
+  const timeoutMs = Number(
+    env.WORKER_SCRIPT_TIMEOUT_MS ||
+      process.env.WORKER_SCRIPT_TIMEOUT_MS ||
+      0,
+  );
   return new Promise((resolvePromise, reject) => {
     const child = spawn('npm', args, {
       cwd,
       env,
       stdio: ['ignore', 'inherit', 'inherit'],
     });
-    child.on('error', reject);
-    child.on('close', (code) => resolvePromise(code ?? 1));
+    let timer = null;
+    const clear = () => {
+      if (timer) clearTimeout(timer);
+      timer = null;
+    };
+    if (Number.isFinite(timeoutMs) && timeoutMs >= 30_000) {
+      timer = setTimeout(() => {
+        try {
+          child.kill('SIGTERM');
+        } catch {
+          /* ignore */
+        }
+        setTimeout(() => {
+          try {
+            child.kill('SIGKILL');
+          } catch {
+            /* ignore */
+          }
+        }, 5_000);
+        reject(
+          new Error(
+            `script timeout ${Math.round(timeoutMs / 1000)}s: npm ${args.join(' ')}`,
+          ),
+        );
+      }, timeoutMs);
+    }
+    child.on('error', (err) => {
+      clear();
+      reject(err);
+    });
+    child.on('close', (code) => {
+      clear();
+      resolvePromise(code ?? 1);
+    });
   });
 }
 

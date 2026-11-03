@@ -28,7 +28,15 @@ export async function run(job, ctx) {
     '--no-shot',
   ];
 
-  const code = await spawnNpm(cwd, args, cdpScriptEnv(ctx, apiUrl));
+  // Connect travado (CDP/modal) não pode segurar o worker para sempre.
+  const code = await spawnNpm(
+    cwd,
+    args,
+    cdpScriptEnv(ctx, apiUrl, {
+      WORKER_SCRIPT_TIMEOUT_MS:
+        process.env.CONNECT_SCRIPT_TIMEOUT_MS || '360000',
+    }),
+  );
   if (code !== 0) {
     throw new Error(`linkedin-connect-cdp exit=${code} url=${profileUrl}`);
   }

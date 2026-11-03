@@ -1,9 +1,11 @@
 #!/bin/zsh
 # Worker LinkedIn via Chrome CDP — Daniela Hoffmann (extrair_leads + conectar).
+# Sem `exec … | tee`: keep-worker precisa do PID real do node e do wait correto.
 cd /Users/laerciogermano/Documents/works/conectmax/connectmax/vendas/worker
 mkdir -p logs
-echo $$ > logs/worker-daniela-cdp.pid
-exec env API_URL=http://144.126.154.90 \
+LOG=logs/worker-daniela-cdp.out
+PIDF=logs/worker-daniela-cdp.pid
+env API_URL=http://144.126.154.90 \
   AGENT_ID="${AGENT_ID:-f505db3b-3ed8-491c-8600-0cb14993158f}" \
   AGENT_API_KEY=dev-local-agent-key \
   WORKER_RUNTIME=cdp \
@@ -15,4 +17,7 @@ exec env API_URL=http://144.126.154.90 \
   PROFILES_API_URL=http://144.126.154.90 \
   MESSAGES_API_URL=http://144.126.154.90 \
   INVITES_API_URL=http://144.126.154.90 \
-  npm start 2>&1 | tee -a logs/worker-daniela-cdp.out
+  npm start >>"$LOG" 2>&1 &
+echo $! >"$PIDF"
+wait "$(cat "$PIDF")"
+exit $?

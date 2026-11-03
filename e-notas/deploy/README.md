@@ -21,7 +21,7 @@ HTTP `http://…/enotas/` redireciona para HTTPS. Certificado em `:4173` é auto
 | nginx domínio | [`nginx-notinhas.conf`](nginx-notinhas.conf) → `/etc/nginx/sites-available/notinhas` |
 | Certs `:4173` | `/opt/e-notas/certs/` |
 | DNS | Hostinger: A `@` → `144.126.154.90` (TTL 300); CNAME `www` → `notinhas.shop` |
-| E-mail | 1 Mailcow (`/opt/mailcow-dockerized`); domínios `clozzy.com.br` + `notinhas.shop` + `conectmax.email`; hostnames `mail.clozzy.com.br` + `mail.notinhas.shop` + `mail.conectmax.email` |
+| E-mail | 1 Mailcow (`/opt/mailcow-dockerized`); domínios `clozzy.com.br` + `notinhas.shop` + `conectmax.email` + `brsupply.email`; hostnames `mail.clozzy.com.br` + `mail.notinhas.shop` + `mail.conectmax.email` + `mail.brsupply.email` |
 
 ## Mailcow (clozzy + notinhas + conectmax no mesmo servidor)
 
@@ -31,14 +31,23 @@ Não dá para rodar **dois** stacks Mailcow no mesmo IP (portas 25/465/587/993).
 |------|--------|
 | Path | `/opt/mailcow-dockerized` |
 | `MAILCOW_HOSTNAME` | `mail.clozzy.com.br` |
-| `ADDITIONAL_SAN` | `mail.notinhas.shop,mail.conectmax.email` |
-| Domínios | `clozzy.com.br`, `notinhas.shop`, `conectmax.email` |
-| Web | https://mail.clozzy.com.br/ · https://mail.notinhas.shop/ · https://mail.conectmax.email/ |
+| `ADDITIONAL_SAN` | `mail.notinhas.shop,mail.conectmax.email,mail.brsupply.email` |
+| Domínios | `clozzy.com.br`, `notinhas.shop`, `conectmax.email`, `brsupply.email` |
+| Web | https://mail.clozzy.com.br/ · https://mail.notinhas.shop/ · https://mail.conectmax.email/ · https://mail.brsupply.email/ |
 | nginx host | [`nginx-mailcow.conf`](nginx-mailcow.conf) → `/etc/nginx/sites-available/mailcow` |
 | Cert LE | `mail-clozzy-notinhas` (SAN: `mail.*`); copiado p/ `data/assets/ssl/` + hook renew |
 
-**Antes → depois:** `mail.clozzy` + `mail.notinhas` → também `mail.conectmax.email` + domínio `conectmax.email` + `contato@`.
-**Rollback hostname conectmax:** tirar `mail.conectmax.email` do nginx/`ADDITIONAL_SAN`; apagar domínio/mailbox no Mailcow; DNS A/MX do `mail` conectmax.
+**Antes → depois:** `mail.clozzy` + `mail.notinhas` → `mail.conectmax.email` + `mail.brsupply.email` (+ domínios/`contato@`).
+**Rollback hostname brsupply/conectmax:** tirar o `mail.*` do nginx/`ADDITIONAL_SAN`; apagar domínio/mailbox no Mailcow; DNS A/MX do `mail` na Hostinger.
+
+### Domínio `brsupply.email` (Mailcow Contabo 2026-11-03)
+
+1. Mailcow: domínio + DKIM + `contato@brsupply.email`
+2. `ADDITIONAL_SAN` + nginx vhost `mail.brsupply.email`
+3. DNS Hostinger: A `mail` → `144.126.154.90`; MX `@` → `mail.brsupply.email`; TXT SPF/DKIM/DMARC
+4. Após propagar A `mail`: expand LE com `-d mail.brsupply.email`
+
+**Rollback:** apagar mailbox/domínio; remover DNS Hostinger; reverter nginx/`ADDITIONAL_SAN`.
 
 ### Domínio `conectmax.email` (Mailcow Contabo 2026-11-03)
 

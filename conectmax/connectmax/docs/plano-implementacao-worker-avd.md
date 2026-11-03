@@ -487,7 +487,7 @@ Deploy gestor = mesmo artefato do servidor (systemd / pm2 / Docker sidecar). Sem
 | `EXTRACT_MAX_PROFILES` | `5` | AC-04 máx. por run do script (`min` com slots do dia) |
 | `AGENT_CONNECT_DAILY_LIMIT` | `15` | AC-03 máx. convites/dia por agente |
 | `AGENT_CONNECT_BATCH_SIZE` | `5` | AC-03 tamanho do lote antes da pausa |
-| `AGENT_CONNECT_BATCH_INTERVAL_MS` | `3600000` (1 h) | AC-03 pausa entre lotes |
+| `AGENT_CONNECT_BATCH_INTERVAL_MS` | `1800000` (30 min) | AC-03 pausa entre lotes |
 | `AVD_MAX_ATIVOS_POR_SERVIDOR` | `4` | slots |
 | `AGENT_CLAIM_TIMEOUT_MS` | `600000` (10 min) | reopen |
 | `AGENT_HEARTBEAT_STALE_MS` | *(novo)* `120000` | offline se sem heartbeat |

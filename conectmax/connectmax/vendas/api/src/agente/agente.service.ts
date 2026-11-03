@@ -204,12 +204,12 @@ export class AgenteService implements OnModuleInit {
     return Number.isFinite(n) && n >= 1 ? Math.floor(n) : 5;
   }
 
-  /** Pausa entre lotes de connect (default 2h). */
+  /** Pausa entre lotes de connect (default 30 min). */
   private connectBatchIntervalMs(): number {
     const n = Number(
-      this.config.get('AGENT_CONNECT_BATCH_INTERVAL_MS', '3600000'),
+      this.config.get('AGENT_CONNECT_BATCH_INTERVAL_MS', '1800000'),
     );
-    return Number.isFinite(n) && n >= 60_000 ? n : 7_200_000;
+    return Number.isFinite(n) && n >= 60_000 ? n : 1_800_000;
   }
 
   /** Máx. mensagens de prospecção por agente / dia civil (default 15). */

@@ -395,10 +395,20 @@ async function captureAvatarBase64(page, box) {
   }
 }
 
-function inviteStatusFromAction(action) {
+/**
+ * Message no card ≠ conexão se o grau for 2º/3º (Open Profile / InMail).
+ * Só 1º + Message → connected; Message sem 1º explícito → connect (candidato).
+ */
+function inviteStatusFromAction(action, level) {
   const a = String(action || "").toLowerCase();
+  const deg = String(level || "").toLowerCase();
+  const isFirst = /(?:^|[^0-9])1(?:st|º)|primeiro/i.test(deg);
+  const isDistant = /(?:2(?:nd|º)?|3(?:rd|º)?|\+)/i.test(deg);
   if (/pending|pendente/.test(a)) return "pending";
-  if (/message|mensagem/.test(a)) return "connected";
+  if (/message|mensagem/.test(a)) {
+    if (isFirst && !isDistant) return "connected";
+    return "connect";
+  }
   if (/connect|conectar|convidar/.test(a)) return "connect";
   return null;
 }
@@ -415,7 +425,9 @@ async function postProfile(profile, agentId) {
     title: profile.title || null,
     searchQuery: profile.query || profile.searchQuery || null,
     level: profile.level || null,
-    connection: profile.action || profile.connection || null,
+    // Canônico (connect|pending|connected) — raw "Message" em 3º virava conectado na API.
+    connection:
+      profile.inviteStatus || profile.connection || profile.action || null,
     city: profile.city || profile.location || null,
     mutualConnections: profile.mutualConnections || null,
     current: profile.current || null,
@@ -515,7 +527,7 @@ export async function extractLeads(opts = {}) {
         seen.add(url);
         addedOnPage++;
 
-        const inviteStatus = inviteStatusFromAction(card.action);
+        const inviteStatus = inviteStatusFromAction(card.action, card.level);
         const profile = {
           name: card.name,
           title: card.title || null,
@@ -525,7 +537,7 @@ export async function extractLeads(opts = {}) {
           past: card.past || null,
           level: card.level || null,
           action: card.action || null,
-          connection: card.action || null,
+          connection: inviteStatus || card.action || null,
           mutualConnections: card.mutualConnections || null,
           summary: card.summary || null,
           photoUrl: card.photoUrl || null,

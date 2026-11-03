@@ -28,6 +28,7 @@ Script novo, passo a passo. **Agora só o passo 1:** mailbox Mailcow.
 | [`click-signup-finish.mjs`](click-signup-finish.mjs) | `clickSignupFinish({ id })` → Concluir (unitário) |
 | [`finish-signup-onboarding.mjs`](finish-signup-onboarding.mjs) | `finishSignupOnboarding({ id })` → choice (job-seeker “Não”)→Pular→Concluir→Continuar até `/feed` |
 | [`upload-profile-photo.mjs`](upload-profile-photo.mjs) | `uploadProfilePhoto({ id, photo })` — `/in/me` → Carregar foto → `DOM.setFileInputFiles` → Salvar |
+| [`upload-profile-banner.mjs`](upload-profile-banner.mjs) | `uploadProfileBanner({ id, banner })` — `/in/me` → imagem de fundo/capa → Carregar → Salvar |
 
 ```bash
 cd /Users/laerciogermano/Documents/works/screen-robot/pocs/chrome-cdp/linkedin-create-account
@@ -47,9 +48,15 @@ node create-mailbox.mjs --first Bruno --last Nunes --write-credenciais --no-brow
 # foto de perfil (pós-signup; human-cdp) — usar avatar do doc escolhidos-v2.1:
 node upload-profile-photo.mjs --id daniela-hoffmann \
   --photo ../../../tasks/6ae9def6a28b279ac20b6ffc/avatars/v06-daniela-hoffmann.jpg
+
+# banner BR Supply com logo (01 caixas; não usar 03 sem logo):
+node upload-profile-banner.mjs --id daniela-hoffmann \
+  --banner ../../../src/assets/banners/br-supply-01-caixas.jpg
 ```
 
 **Antes → depois (foto):** sem passo de avatar no create-account → `upload-profile-photo.mjs` (cliques human-cdp + `setFileInputFiles`). Foto Daniela = escolhidos-v2.1 (`6ae9def6a28b279ac20b6ffc`, Vitaly Gariev), **não** a lista Unsplash nova (`6ae9def02d6e0ab7a0ab0737`). Rollback: remover o script; editar/excluir foto no LinkedIn.
+
+**Antes → depois (banner):** sem passo de capa → `upload-profile-banner.mjs`. Daniela: `br-supply-01-caixas.jpg` (logo BR; card prioriza 01/02, não o 03). Rollback: remover o script; editar/excluir capa no LinkedIn.
 
 Saída: progresso em **stderr** (`[create-mailbox]`, `[createLinkedin]`, `[PIN]`); JSON final em **stdout** `{ email, cdp, csv, linkedin }`.
 

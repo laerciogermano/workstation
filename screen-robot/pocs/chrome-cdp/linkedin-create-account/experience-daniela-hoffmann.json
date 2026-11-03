@@ -1,11 +1,12 @@
 [
   {
-    "title": "KAM Industriais | Especialista em MRO e Ferramentas",
+    "title": "KAM Industrial | Especialista em biorremediantes",
     "company": "BR Supply",
+    "matchTitle": "KAM Industriais | Especialista em MRO e Ferramentas",
     "current": true,
     "startMonth": "jan",
     "startYear": "2022",
-    "description": "Negociação de contratos de longo prazo para plantas: MRO, ferramentas e materiais técnicos. Elaboro propostas com savings e cost avoidance, com governança de prazo e qualidade junto à engenharia. Expansão de carteira industrial e parcerias com fabricantes."
+    "description": "Negociação de contratos de longo prazo para plantas industriais, com ênfase em biorremediantes, MRO e materiais técnicos. Elaboro propostas com savings e cost avoidance documentados, acompanho prazo e qualidade com engenharia e manutenção, e conduzo a expansão da carteira industrial e as parcerias com fabricantes. Atuo no relacionamento com compradores e times de planta para garantir abastecimento contínuo e conformidade contratual."
   },
   {
     "title": "Key Account Manager Industrial",
@@ -15,16 +16,17 @@
     "startYear": "2015",
     "endMonth": "dez",
     "endYear": "2022",
-    "description": "KAM de ferramentas e soluções MRO para grandes contas. Atuação da necessidade à proposta, contrato e pós-venda, com compliance e relacionamento com engenharia de fábrica. Otimização de processos comerciais internos e expansão de categorias."
+    "description": "KAM de ferramentas e soluções MRO para grandes contas industriais. Atuei da necessidade à proposta, contrato e pós-venda, com compliance e relacionamento permanente com engenharia de fábrica. Participei da otimização de processos comerciais internos, da documentação de savings e da expansão de categorias técnicas na carteira."
   },
   {
-    "title": "Especialista Comercial — Rolamentos e MRO",
+    "title": "Especialista Comercial em Rolamentos e MRO",
     "company": "Abecom",
+    "matchTitle": "Especialista Comercial — Rolamentos e MRO",
     "current": false,
     "startMonth": "jan",
     "startYear": "2011",
     "endMonth": "dez",
     "endYear": "2015",
-    "description": "Vendas técnicas de rolamentos e insumos de manutenção. Especificação de aplicação com compradores industriais, suporte a manutenção e desenvolvimento de carteira em categorias MRO críticas para a operação."
+    "description": "Vendas técnicas de rolamentos e insumos de manutenção para indústria. Apoiei compradores na especificação de aplicação, dei suporte a equipes de manutenção e desenvolvi carteira em categorias MRO críticas para a operação, com atenção a prazo de entrega e continuidade de linha."
   }
 ]

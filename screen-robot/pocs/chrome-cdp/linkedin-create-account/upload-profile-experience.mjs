@@ -594,12 +594,126 @@ export async function uploadProfileExperience(opts = {}) {
   }
 }
 
+const DETAILS_EXP_URL = 'https://www.linkedin.com/in/me/details/experience/';
+
+/**
+ * Edita experiências existentes (lápis em /details/experience/).
+ * Use matchTitle para achar o card quando o cargo for renomeado.
+ *
+ * @param {{
+ *   id: string,
+ *   experiences: Array<Record<string, any>>,
+ *   dryRun?: boolean,
+ * }} opts
+ */
+export async function editProfileExperiences(opts = {}) {
+  const id = String(opts.id || '').trim();
+  const experiences = Array.isArray(opts.experiences) ? opts.experiences : [];
+  if (!id) throw new Error('editProfileExperiences: id obrigatório');
+  if (!experiences.length) throw new Error('editProfileExperiences: experiences vazio');
+  if (opts.dryRun) {
+    return { dryRun: true, id, count: experiences.length, edited: false };
+  }
+  if (!getCdp(id)) throw new Error(`CDP não encontrado: ${id}`);
+
+  log(`startCdp ${id} edit n=${experiences.length}`);
+  await startCdp(id);
+  const s = await connectCdp(id, { debug: true });
+  const results = [];
+
+  try {
+    await s.send('Page.enable');
+
+    for (let i = 0; i < experiences.length; i++) {
+      const exp = experiences[i];
+      const title = String(exp.title || '').trim();
+      const company = String(exp.company || '').trim();
+      const matchTitle = String(exp.matchTitle || title).trim();
+      if (!title || !company) throw new Error(`experiência[${i}]: title/company obrigatórios`);
+
+      log(`--- edit [${i + 1}/${experiences.length}] ${matchTitle} → ${title} @ ${company}`);
+      await s.goto(DETAILS_EXP_URL);
+      await sleep(4500);
+      await clickSkipIfAny(s);
+      await dismissModals(s);
+
+      const opened = await s.evaluate(`(() => {
+        const matchTitle = ${JSON.stringify(matchTitle)};
+        const company = ${JSON.stringify(company)};
+        document.querySelectorAll('[data-hcdp=exp-edit]').forEach((e) => e.removeAttribute('data-hcdp'));
+        const links = [...document.querySelectorAll('a[href*="experience/edit/forms"], a[href*="edit/forms/position"]')];
+        const el = links.find((a) => {
+          const aria = (a.getAttribute('aria-label') || '').replace(/\\s+/g, ' ');
+          const text = (a.innerText || '').replace(/\\s+/g, ' ');
+          const blob = (aria + ' ' + text).toLowerCase();
+          return blob.includes(matchTitle.toLowerCase()) && new RegExp(company, 'i').test(blob);
+        }) || links.find((a) => {
+          const aria = (a.getAttribute('aria-label') || '').replace(/\\s+/g, ' ');
+          return /editar/i.test(aria) && aria.toLowerCase().includes(matchTitle.toLowerCase());
+        });
+        if (!el) return null;
+        el.scrollIntoView({ block: 'center' });
+        el.setAttribute('data-hcdp', 'exp-edit');
+        return {
+          aria: (el.getAttribute('aria-label') || '').slice(0, 120),
+          href: el.getAttribute('href') || '',
+        };
+      })()`);
+      if (!opened) throw new Error(`lápis de edição não encontrado: ${matchTitle} @ ${company}`);
+      log(`spa-click «${opened.aria || opened.href}»`);
+      await s.click('[data-hcdp=exp-edit]');
+      await sleep(2000);
+
+      const form = await waitPositionForm(s, 25);
+      if (!form?.hydrated) throw new Error('form de edição não hidratou');
+
+      await typeahead(
+        s,
+        title,
+        /cargo|title|job|fun[cç][aã]o|gerente de produtos|exemplo:\s*gerente/i,
+        'exp-title',
+      );
+      await sleep(400);
+      // empresa já associada — não mexe no typeahead (evita trocar entidade)
+
+      await setCurrentRole(s, !!exp.current);
+      await sleep(800);
+      await setDatePart(s, 'startMonth', exp.startMonth || 'jan');
+      await setDatePart(s, 'startYear', exp.startYear);
+      if (!exp.current) {
+        await sleep(500);
+        await setDatePart(s, 'endMonth', exp.endMonth || 'dez');
+        await setDatePart(s, 'endYear', exp.endYear);
+      }
+      await fillDescription(s, exp.description);
+
+      if (
+        !(await clickText(s, /^(salvar|save)$/i, 'exp-save')) &&
+        !(await clickText(s, /^salvar alterações$|^save changes$/i, 'exp-save'))
+      ) {
+        throw new Error('botão Salvar ausente');
+      }
+      await sleep(5000);
+      await clickSkipIfAny(s);
+      log(`OK edit ${title}`);
+      results.push({ title, company, edited: true });
+    }
+
+    await s.goto(PROFILE_URL);
+    await sleep(3500);
+    return { id, edited: true, results };
+  } finally {
+    s.close();
+  }
+}
+
 async function main() {
   if (hasFlag('--help') || hasFlag('-h')) {
     console.error(
       `uso: node upload-profile-experience.mjs --id <cdp> --file experiences.json
+       node upload-profile-experience.mjs --id <cdp> --file experiences.json --edit
        node upload-profile-experience.mjs --id <cdp> --title "Cargo" --company "Empresa" [--current]
-  flags: --force · --dry-run`,
+  flags: --edit · --force · --dry-run`,
     );
     process.exit(0);
   }
@@ -638,12 +752,18 @@ async function main() {
     process.exit(1);
   }
 
-  const result = await uploadProfileExperience({
-    id,
-    experiences,
-    force: hasFlag('--force'),
-    dryRun: hasFlag('--dry-run'),
-  });
+  const result = hasFlag('--edit')
+    ? await editProfileExperiences({
+        id,
+        experiences,
+        dryRun: hasFlag('--dry-run'),
+      })
+    : await uploadProfileExperience({
+        id,
+        experiences,
+        force: hasFlag('--force'),
+        dryRun: hasFlag('--dry-run'),
+      });
   console.log(JSON.stringify(result, null, 2));
 }
 

@@ -7,7 +7,7 @@
 
 ## Objetivo
 
-Mesmo documento v3 (textos intactos); **só fotos** trocadas por lote fresco **This Person Does Not Exist**, com página de comparação lado a lado vs Unsplash.
+Mesmo documento v3 (textos intactos); **só fotos** trocadas por lote fresco **This Person Does Not Exist**, com página de comparação lado a lado vs Unsplash. **Cada imagem aparece uma vez** (só na §0); perfis são texto.
 
 ## Entrega
 

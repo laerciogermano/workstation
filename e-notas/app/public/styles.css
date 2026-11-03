@@ -224,10 +224,40 @@ h2 {
 }
 
 .produto-card:hover,
-.produto-card:focus {
+.produto-card:focus,
+.produto-card:focus-within {
   outline: none;
   border-color: var(--nt-blue);
   box-shadow: 0 0 0 3px rgba(0, 105, 180, 0.14);
+}
+
+.produto-card-loja {
+  cursor: default;
+}
+
+.produto-card-hit {
+  appearance: none;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+.produto-card-loja .btn-ean {
+  margin: 0 0.65rem 0.65rem;
+  width: calc(100% - 1.3rem);
+  min-width: 0;
+  flex: 0 0 auto;
+  font-size: 0.8rem;
+  height: 2.1rem;
+  padding: 0 0.6rem;
 }
 
 .produto-media {

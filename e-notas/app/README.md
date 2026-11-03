@@ -65,6 +65,8 @@ Resposta: `{ ok, created, empresaCriada, url, empresa, nota, itens }`.
 | `GET` | `/api/codigos-barras` | `{ ok, codigosBarras }` (inclui `foto_url`) |
 | `POST` | `/api/codigos-barras` | body `{ empresa_id, codigo_unidade, codigo_barras, foto_url? }` → upsert; auto `ean-fotos/{ean}.*` se arquivo existir |
 
+UI: na **vitrine do estabelecimento**, botão **Código de barras** / **Editar EAN** no item (câmera, tirar foto / escolher imagem, digitação) → modal `#modal-ean` → `POST` acima (REQ-031).
+
 Fotos: `public/ean-fotos/{ean}.jpg` · ver [`public/ean-fotos/README.md`](public/ean-fotos/README.md).
 
 ## Reverter

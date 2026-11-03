@@ -176,6 +176,21 @@
         </header>
         <p id="modal-ean-meta" class="hint modal-meta"></p>
         <div id="ean-reader" class="ean-reader"></div>
+        <div class="scan-alt" role="group" aria-label="Ler código por foto">
+          <button type="button" class="btn" id="btn-ean-tirar-foto">Tirar foto</button>
+          <button type="button" class="btn btn-ghost" id="btn-ean-escolher-imagem">
+            Escolher imagem
+          </button>
+          <input
+            id="ean-capture"
+            type="file"
+            accept="image/*"
+            capture="environment"
+            hidden
+            aria-hidden="true"
+          />
+          <input id="ean-file" type="file" accept="image/*" hidden aria-hidden="true" />
+        </div>
         <p id="ean-cam-status" class="status" aria-live="polite"></p>
         <form id="form-ean" class="form-ean modal-form">
           <input type="hidden" id="ean-empresa" />

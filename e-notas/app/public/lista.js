@@ -17,6 +17,10 @@ const eanUnidadeEl = document.getElementById('ean-unidade');
 const eanBarrasEl = document.getElementById('ean-barras');
 const eanFormStatusEl = document.getElementById('ean-form-status');
 const eanCamStatusEl = document.getElementById('ean-cam-status');
+const eanCaptureEl = document.getElementById('ean-capture');
+const eanFileEl = document.getElementById('ean-file');
+const btnEanTirarFotoEl = document.getElementById('btn-ean-tirar-foto');
+const btnEanEscolherImagemEl = document.getElementById('btn-ean-escolher-imagem');
 const vitrineListaEl = document.getElementById('vitrine-lista');
 const vitrineDetalheEl = document.getElementById('vitrine-detalhe');
 const produtosListaEl = document.getElementById('produtos-lista');
@@ -667,6 +671,7 @@ function renderVitrineDetalhe(empresaId) {
   );
 
   if (!vitrineItensEl) return;
+  const empresaNome = loja.nome || loja.cnpj || `Estabelecimento #${loja.id}`;
   vitrineItensEl.innerHTML = rows.length
     ? rows
         .map((r) => {
@@ -677,19 +682,35 @@ function renderVitrineDetalhe(empresaId) {
           const data = formatDataNota(r.nota_emissao) || '';
           const isMenor =
             Number.isFinite(r._preco) && menores.get(r._key) === r._preco;
-          return `<button type="button" class="produto-card" data-open-produto="${esc(
-            r._key,
-          )}">
-            <div class="produto-media">${img}</div>
-            <div class="produto-body">
-              <h3 class="produto-nome">${esc(r.nome || 'Produto')}</h3>
-              <p class="produto-preco">
-                <span class="price-cell">${esc(formatPreco(r.valor_unitario))}</span>
-                ${isMenor ? '<span class="chip ok">menor</span>' : ''}
-              </p>
-              <p class="produto-meta">${data ? esc(data) : ''}</p>
-            </div>
-          </button>`;
+          const codigo = String(r.codigo || '').trim();
+          const ean = String(r.codigo_barras || '').trim();
+          const eanBtn = codigo
+            ? `<button type="button" class="btn btn-ghost btn-ean" data-vincular-ean
+                data-empresa-id="${esc(loja.id)}"
+                data-empresa-nome="${esc(empresaNome)}"
+                data-codigo="${esc(codigo)}"
+                data-nome="${esc(r.nome || '')}"
+                data-ean="${esc(ean)}"
+              >${ean ? 'Editar EAN' : 'Código de barras'}</button>`
+            : '';
+          return `<article class="produto-card produto-card-loja">
+            <button type="button" class="produto-card-hit" data-open-produto="${esc(
+              r._key,
+            )}">
+              <div class="produto-media">${img}</div>
+              <div class="produto-body">
+                <h3 class="produto-nome">${esc(r.nome || 'Produto')}</h3>
+                <p class="produto-preco">
+                  <span class="price-cell">${esc(formatPreco(r.valor_unitario))}</span>
+                  ${isMenor ? '<span class="chip ok">menor</span>' : ''}
+                </p>
+                <p class="produto-meta">${data ? esc(data) : ''}${
+                  ean ? ` · EAN ${esc(ean)}` : ''
+                }</p>
+              </div>
+            </button>
+            ${eanBtn}
+          </article>`;
         })
         .join('')
     : `<p class="hint">${catalogo.length ? 'Nenhum produto nesta busca.' : 'Sem produtos nesta loja.'}</p>`;
@@ -926,6 +947,29 @@ async function onBarcodeScanned(decodedText) {
   }
 }
 
+async function decodeEanFromFile(file) {
+  if (!file || eanScanBusy) return;
+  if (typeof Html5Qrcode === 'undefined') {
+    setEanCamStatus('Biblioteca de câmera indisponível.', 'err');
+    return;
+  }
+  setEanCamStatus('Lendo código da imagem…');
+  try {
+    await stopEanScanner();
+    eanScanner = new Html5Qrcode('ean-reader');
+    const text = await eanScanner.scanFile(file, true);
+    await onBarcodeScanned(text);
+    if (modalEanEl && !modalEanEl.hidden) await startEanScanner();
+  } catch (err) {
+    console.error(err);
+    setEanCamStatus('Código não encontrado na imagem. Tente outra foto.', 'err');
+    if (modalEanEl && !modalEanEl.hidden) await startEanScanner();
+  } finally {
+    if (eanCaptureEl) eanCaptureEl.value = '';
+    if (eanFileEl) eanFileEl.value = '';
+  }
+}
+
 async function openCadastroEan({
   empresaId,
   empresaNome,
@@ -1057,6 +1101,10 @@ produtosGridEl?.addEventListener('click', (ev) => {
   openProduto(btn.dataset.openProduto);
 });
 vitrineItensEl?.addEventListener('click', (ev) => {
+  if (ev.target.closest('[data-vincular-ean]')) {
+    onVincularEanClick(ev);
+    return;
+  }
   const btn = ev.target.closest('[data-open-produto]');
   if (!btn) return;
   openProduto(btn.dataset.openProduto);
@@ -1124,6 +1172,17 @@ notaItensEl?.addEventListener('click', onVincularEanClick);
 formEanEl.addEventListener('submit', async (ev) => {
   ev.preventDefault();
   await saveEan();
+});
+
+btnEanTirarFotoEl?.addEventListener('click', () => eanCaptureEl?.click());
+btnEanEscolherImagemEl?.addEventListener('click', () => eanFileEl?.click());
+eanCaptureEl?.addEventListener('change', () => {
+  const file = eanCaptureEl.files?.[0];
+  if (file) decodeEanFromFile(file);
+});
+eanFileEl?.addEventListener('change', () => {
+  const file = eanFileEl.files?.[0];
+  if (file) decodeEanFromFile(file);
 });
 
 modalEanEl.addEventListener('click', (ev) => {

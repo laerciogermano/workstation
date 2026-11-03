@@ -267,6 +267,16 @@ Curadoria: [`../marca/benchmarking-solucoes/README.md`](../marca/benchmarking-so
 - Antes: aba Notas com detalhe + **+ EAN**. Depois: home só Produtos + Estabelecimentos; ingestão de nota continua via FAB/`scan.html`.
 - Rollback: restaurar `panel-notas` / `tab-notas` e handlers em `lista.js` (commits anteriores à remoção).
 
+## REQ-031 — EAN na vitrine do estabelecimento (2026-11-03)
+
+- Na vitrine da loja (Estabelecimentos → detalhe), cada produto com **código de unidade** tem botão **Código de barras** / **Editar EAN**.
+- Abre o modal `#modal-ean` já usado no vínculo `empresa_id` + `codigo_unidade` → EAN (`POST /api/codigos-barras`).
+- No modal: **câmera ao vivo** + **Tirar foto** + **Escolher imagem** + **digitação** do número + Salvar.
+- Foto/imagem: Html5Qrcode `scanFile`; se não houver código legível, feedback e a câmera volta.
+- Card: [JllifNBV](https://trello.com/c/JllifNBV).
+- Antes: vitrine só abria o detalhe do produto; EAN só por fluxos antigos (itens/nota). Depois: cadastro/vínculo a partir do item da loja.
+- Rollback: remover `data-vincular-ean` / `.btn-ean` / `.produto-card-hit` na vitrine; remover `.scan-alt` do modal EAN e `decodeEanFromFile` em `lista.js`.
+
 ---
 
 ## Próximos passos

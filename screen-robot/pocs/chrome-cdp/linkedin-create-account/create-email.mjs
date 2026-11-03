@@ -1,6 +1,7 @@
 /**
- * Criação de mailbox @clozzy.com.br (API Mailcow no VPS).
+ * Criação de mailbox @brsupply.email (API Mailcow no VPS).
  * Toda a lógica fica aqui; o CLI só chama createEmail().
+ * Override: MAIL_DOMAIN (ex.: clozzy.com.br).
  */
 import { randomBytes } from 'node:crypto';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
@@ -10,7 +11,7 @@ import { spawnSync } from 'node:child_process';
 
 const __dir = dirname(fileURLToPath(import.meta.url));
 const CRED_PATH = resolve(__dir, '../../../../credenciais.md');
-const DEFAULT_DOMAIN = (process.env.MAIL_DOMAIN || 'clozzy.com.br').trim();
+const DEFAULT_DOMAIN = (process.env.MAIL_DOMAIN || 'brsupply.email').trim();
 const SSH_HOST = (process.env.MAIL_SSH_HOST || 'root@144.126.154.90').trim();
 /** Teto do domínio em MiB — bem alto p/ não estourar mailbox_quota_left_exceeded. */
 const DOMAIN_MAX_QUOTA_MIB = String(
@@ -87,13 +88,13 @@ curl -skS -X ${method} "$BASE${path}" \\
   return (r.stdout || '').trim();
 }
 
-function appendCredenciais({ email, name, password }) {
+function appendCredenciais({ email, name, password, domain }) {
   if (!existsSync(CRED_PATH)) throw new Error(`credenciais.md não encontrado: ${CRED_PATH}`);
   let t = readFileSync(CRED_PATH, 'utf8');
   if (t.includes(email)) return false;
   const line = `- \`${email}\` — ${name} — mailbox \`${password}\` — senha LI \`in@12345678\`\n`;
-  const marker = '### Caixas `@clozzy.com.br`\n';
-  if (!t.includes(marker)) throw new Error('seção Caixas @clozzy.com.br ausente em credenciais.md');
+  const marker = `### Caixas \`@${domain}\`\n`;
+  if (!t.includes(marker)) throw new Error(`seção Caixas @${domain} ausente em credenciais.md`);
   const start = t.indexOf(marker) + marker.length;
   let end = t.indexOf('\n### ', start);
   if (end < 0) end = t.length;
@@ -268,7 +269,7 @@ export function createEmail(opts = {}) {
 
   let credenciais = false;
   if (opts.writeCredenciais) {
-    credenciais = appendCredenciais({ email, name, password });
+    credenciais = appendCredenciais({ email, name, password, domain });
   }
 
   return { email, name, password, created: true, existed: false, credenciais };

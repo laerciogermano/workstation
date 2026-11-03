@@ -7,7 +7,7 @@ Colar no chat quando for criar um vendedor novo.
 ```text
 Crie um novo vendedor LinkedIn (1 conta):
 
-1. Identidade BR nova (nome+sobrenome) e mailbox @clozzy.com.br (Mailcow).
+1. Identidade BR nova (nome+sobrenome) e mailbox @brsupply.email (Mailcow).
 2. CDP novo via human-cdp (createCdp + startCdp), porta livre, perfil ~/chrome-profiles/<id>, debug: true.
    Abrir o Chrome/CDP num terminal à parte (não no terminal do chat/agent).
 3. Fingerprint totalmente novo e coerente — distinto dos CDPs existentes.

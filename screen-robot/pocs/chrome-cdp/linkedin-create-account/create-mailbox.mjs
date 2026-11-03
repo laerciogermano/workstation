@@ -18,7 +18,7 @@ import { createLinkedInCdp } from './create-cdp.mjs';
 import { saveAccountCsv, markLiCriado } from './save-csv.mjs';
 import { createLinkedin } from './create-linkedin.mjs';
 
-const DOMAIN = (process.env.MAIL_DOMAIN || 'clozzy.com.br').trim();
+const DOMAIN = (process.env.MAIL_DOMAIN || 'brsupply.email').trim();
 const DEFAULT_LI_PASSWORD = 'in@12345678';
 const DEFAULT_LOCATION = 'Rio de Janeiro';
 const DEFAULT_JOB = 'Especialista em suprimentos e itens corporativos';

@@ -12,6 +12,9 @@
  * e **mata o processo** no fim (`stopCdp`) — não deixa a tela logada aberta.
  * Escape: `keepBrowser: true` | `closeBrowser: false` | `CDP_KEEP_BROWSER=1`.
  * Sessão já passada (`page`) → não mata (nested, ex.: unread → profile chat).
+ *
+ * Debug overlay: **sempre off** nos workers (`debug: false` no connect) —
+ * ignora `opts.debug` e grava `meta.debug=false` via connectCdp.
  */
 import { dirname, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -74,6 +77,7 @@ function shouldKeepBrowser(opts = {}) {
  *   newTab?: boolean,
  *   debug?: boolean,
  * }} opts
+ * `debug` é ignorado — workers nunca ligam overlay (sempre false).
  * @returns {Promise<{ page: object, owned: boolean, cdpId: string|null }>}
  */
 export async function resolveLinkedInPage(opts = {}) {
@@ -88,12 +92,14 @@ export async function resolveLinkedInPage(opts = {}) {
   const { connect, connectCdp } = await humanCdp();
   const urlIncludes = opts.urlIncludes ?? "linkedin.com";
   const cdpId = await resolveCdpId(opts);
+  // Jamais overlay/debug nos workers (também limpa meta.debug no connectCdp).
+  const debug = false;
 
   if (cdpId) {
     const page = await connectCdp(cdpId, {
       urlIncludes,
       newTab: opts.newTab,
-      debug: opts.debug,
+      debug,
     });
     return { page, owned: true, cdpId };
   }
@@ -105,7 +111,7 @@ export async function resolveLinkedInPage(opts = {}) {
     cdpUrl,
     urlIncludes,
     newTab: opts.newTab,
-    debug: opts.debug,
+    debug,
     cdpId: opts.cdpId,
   });
   return { page, owned: true, cdpId: null };

@@ -62,6 +62,7 @@ CDP_ID=… npm run linkedin-extract-leads-cdp -- -n 5 --query 'comprador'
 
 ## Antes → depois
 
+- **Debug overlay:** `resolveLinkedInPage` / workers podiam herdar `opts.debug` ou `meta.debug` → painel human-cdp na página LinkedIn. Agora **sempre `debug: false`** no `connect`/`connectCdp` (ignora opts; limpa `meta.debug`). Signup/POC em `pocs/chrome-cdp/` podem continuar com `debug: true`. Rollback: volte `debug: opts.debug` em [`session.js`](session.js).
 - **Lifecycle Chrome:** `withLinkedInPage` só fechava o WebSocket → Chrome ficava logado na tela. Agora **provisiona** (`connectCdp`/`startCdp` se down) e **mata** (`stopCdp`) no `finally`. Escape: `keepBrowser: true` / `closeBrowser: false` / `CDP_KEEP_BROWSER=1`. Nested (`page` já aberta, ex. unread→chat) não mata. Rollback: `keepBrowser: true` ou reverta o `finally` com `stopCdp` em [`session.js`](session.js).
 - Só AVD (`serial` + uiautomator/OCR) → libs CDP com o mesmo contrato para workers web.
 - Scripts ad-hoc em `pocs/chrome-cdp/linkedin-*-cdp.mjs` (signup/setup) continuam; **ações de worker** passam por aqui.
@@ -74,6 +75,7 @@ CDP_ID=… npm run linkedin-extract-leads-cdp -- -n 5 --query 'comprador'
 
 ## Proibido
 
+- `debug: true` / overlay human-cdp nos workers (`session.js` força `false`)
 - `Page.bringToFront` / `Target.activateTarget` / `osascript activate` (bloqueados no human-cdp)
 - `el.click()` / `dispatchEvent` / `Input.*` solto fora do human-cdp — só `page.click` / `clickAt` / `type` / `fill` / `scroll`
 - **Connect CDP:** se Connect/Conectar já no hero (botão ou `<a>` invite do vanity) → clica direto (sem ⋮). Senão: **1º clique = ⋮/Mais do perfil** → `menuitem` Conectar → **Enviar sem nota** (shadow) → Pending. Vanity com acento: `decodeURIComponent` no match. **Pending** também é `<a aria-label="Pendente; clique para retirar…">` (não só `button`) — senão reabre Mais em loop. Rollback: só `button` no `hasConnect`/`pending` + `page.click(selector vanity)` cego.

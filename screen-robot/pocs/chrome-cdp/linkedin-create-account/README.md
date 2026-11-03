@@ -56,6 +56,8 @@ Saída: progresso em **stderr** (`[create-mailbox]`, `[createLinkedin]`, `[PIN]`
 
 **Antes → depois (job-seeker):** parava em `/job-seeker-intent` sem botão → clica “Não / Não estou procurando” e segue. Rollback: remover branch `choice` no SNAP/loop.
 
+**Antes → depois (Pular/foto):** `click('[data-hcdp=ob-skip]')` podia dar `waitFor timeout` na foto → `clickAt(x,y)` do SNAP; Pular sempre antes de Concluir/Continuar (modal foto incluso). Rollback: voltar clique por seletor.
+
 **Antes → depois (logs):** silencioso no meio → logs de passo em stderr. Rollback: remover `log()` / `console.error` de progresso.
 
 **Antes → depois (CSV):** save antes + update `li_criado` após feed → só save antes do LinkedIn. Rollback: voltar o 2º `saveAccountCsv` com `liCriado: 'sim'`.

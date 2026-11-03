@@ -1,6 +1,7 @@
 /**
  * Fecha o onboarding LinkedIn de forma adaptativa:
- * choice (ex. "não estou procurando") → Pular → Concluir → Continuar até /feed.
+ * choice (job-seeker) → Pular (sempre que existir) → Concluir → Continuar até /feed.
+ * Clique por coordenadas (sem waitFor de data-hcdp) — evita timeout na tela de foto.
  */
 import { connectCdp } from '../human-cdp/src/index.mjs';
 import { sleep } from '../human-cdp/src/human.mjs';
@@ -16,36 +17,52 @@ const SNAP = `(() => {
     (el.innerText || el.value || el.getAttribute('aria-label') || '')
       .replace(/\\s+/g, ' ')
       .trim();
+  const point = (el) => {
+    const r = el.getBoundingClientRect();
+    return {
+      label: labelOf(el).slice(0, 80),
+      tag: el.tagName,
+      x: Math.round(r.x + r.width / 2),
+      y: Math.round(r.y + r.height / 2),
+    };
+  };
 
-  document.querySelectorAll('[data-hcdp^=ob-]').forEach((el) => {
-    [...el.attributes]
-      .filter((a) => a.name.startsWith('data-hcdp'))
-      .forEach((a) => el.removeAttribute(a.name));
-  });
-
-  const nodes = [...document.querySelectorAll('button, a, [role=button]')].filter(visible);
-
-  const markBest = (re, attr, preferButton = true) => {
+  const markBest = (nodes, re, { preferButton = true, maxLen = 40 } = {}) => {
     const cands = nodes
       .map((el) => ({ el, t: labelOf(el) }))
-      .filter((x) => x.t && x.t.length <= 40 && re.test(x.t) && !x.el.disabled);
+      .filter(
+        (x) =>
+          x.t &&
+          x.t.length <= maxLen &&
+          re.test(x.t) &&
+          !x.el.disabled &&
+          x.el.getAttribute('aria-disabled') !== 'true',
+      );
     if (!cands.length) return null;
     cands.sort((a, b) => {
       let sa = a.t.length;
       let sb = b.t.length;
       if (preferButton) {
-        if (a.el.tagName === 'BUTTON') sa -= 100;
-        if (b.el.tagName === 'BUTTON') sb -= 100;
+        if (a.el.tagName === 'BUTTON') sa -= 200;
+        else if (a.el.getAttribute('role') === 'button') sa -= 160;
+        else if (a.el.tagName === 'A') sa -= 20;
+        if (b.el.tagName === 'BUTTON') sb -= 200;
+        else if (b.el.getAttribute('role') === 'button') sb -= 160;
+        else if (b.el.tagName === 'A') sb -= 20;
       }
       const ra = a.el.getBoundingClientRect();
       const rb = b.el.getBoundingClientRect();
-      sa -= Math.min(50, Math.floor(ra.y / 15));
-      sb -= Math.min(50, Math.floor(rb.y / 15));
+      // preferir centro/baixo (modal) vs header
+      sa -= Math.min(80, Math.floor(ra.y / 10));
+      sb -= Math.min(80, Math.floor(rb.y / 10));
       return sa - sb;
     });
-    cands[0].el.setAttribute('data-hcdp', attr);
-    return { label: cands[0].t.slice(0, 80), tag: cands[0].el.tagName };
+    return point(cands[0].el);
   };
+
+  const btnNodes = [
+    ...document.querySelectorAll('button, a, [role=button], span, div'),
+  ].filter(visible);
 
   // tela "Você está procurando emprego?" — preferir Não
   let choice = null;
@@ -63,20 +80,24 @@ const SNAP = `(() => {
       .map((el) => ({ el, t: labelOf(el) }))
       .filter((x) => x.t && x.t.length <= 90 && reNao.test(x.t));
     cands.sort((a, b) => a.t.length - b.t.length);
-    if (cands.length) {
-      cands[0].el.setAttribute('data-hcdp', 'ob-choice');
-      choice = { label: cands[0].t.slice(0, 80), tag: cands[0].el.tagName };
-    }
+    if (cands.length) choice = point(cands[0].el);
   }
 
-  const skip = markBest(/^pular$|^skip$|agora n[aã]o|^not now$/i, 'ob-skip');
-  const finish = markBest(/^concluir$|^done$|^finish$|^fechar$|^got it$/i, 'ob-finish');
-  const cont = markBest(/^continuar$|^continue$|^next$/i, 'ob-continue');
+  // Pular: sempre prioridade quando existir (foto, people, follow, modal)
+  const skip = markBest(btnNodes, /^pular$|^skip$|agora n[aã]o|^not now$/i);
+  const finish = markBest(
+    btnNodes,
+    /^concluir$|^done$|^finish$|^fechar$|^got it$/i,
+  );
+  const cont = markBest(btnNodes, /^continuar$|^continue$|^next$/i);
 
   return {
     href,
     body: body.slice(0, 180),
     onFeed: /\\/feed\\/?/i.test(href) && !/onboarding/i.test(href),
+    isPhoto: /profile-photo|adicionar? (sua )?foto|add (a )?photo|upload.*photo/i.test(
+      href + ' ' + body,
+    ),
     choice,
     skip,
     finish,
@@ -106,37 +127,35 @@ export async function finishSignupOnboarding(opts = {}) {
         return { id, steps, href: st.href, body: st.body, done: true };
       }
 
-      // prioridade: choice (job-seeker) → Pular → Concluir → Continuar
+      // prioridade: choice → Pular (sempre, incl. foto) → Concluir → Continuar
       let action = null;
-      let sel = null;
-      let label = null;
+      let target = null;
       if (st.choice) {
         action = 'Choice';
-        sel = '[data-hcdp=ob-choice]';
-        label = st.choice.label;
+        target = st.choice;
       } else if (st.skip) {
         action = 'Pular';
-        sel = '[data-hcdp=ob-skip]';
-        label = st.skip.label;
+        target = st.skip;
       } else if (st.finish) {
         action = 'Concluir';
-        sel = '[data-hcdp=ob-finish]';
-        label = st.finish.label;
+        target = st.finish;
       } else if (st.cont) {
         action = 'Continuar';
-        sel = '[data-hcdp=ob-continue]';
-        label = st.cont.label;
+        target = st.cont;
       }
 
-      if (!action) {
+      if (!action || !target?.x || !target?.y) {
         console.error(`[onboarding] sem ação em ${st.href} — body: ${st.body}`);
         return { id, steps, href: st.href, body: st.body, done: false };
       }
 
-      console.error(`[onboarding] ${i + 1}/${maxSteps} ${action} (${label}) @ ${st.href}`);
-      await s.click(sel);
+      console.error(
+        `[onboarding] ${i + 1}/${maxSteps} ${action} (${target.label}) @ ${st.href}` +
+          (st.isPhoto ? ' [foto]' : ''),
+      );
+      await s.clickAt(target.x, target.y);
       await sleep(action === 'Choice' ? 1200 : 2800);
-      steps.push({ action, from: st.href, label });
+      steps.push({ action, from: st.href, label: target.label });
     }
 
     const last = await s.evaluate(SNAP);

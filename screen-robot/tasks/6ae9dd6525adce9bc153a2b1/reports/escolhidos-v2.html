@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<title>Escolhidos v2 — persona × LinkedIn</title>
+<style>
+  @page { size: A4; margin: 12mm; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #191919; background: #fff; font-size: 11.5px; line-height: 1.45;
+  }
+  .cover {
+    page-break-after: always; padding: 48px 24px;
+  }
+  .cover h1 { font-size: 26px; margin: 0 0 8px; color: #0a66c2; }
+  .cover p { color: #666; max-width: 520px; }
+  .cover table { border-collapse: collapse; margin-top: 28px; width: 100%; }
+  .cover th, .cover td { border-bottom: 1px solid #e0e0e0; text-align: left; padding: 8px 6px; font-size: 12px; }
+  .vendor { page-break-after: always; }
+  .vendor:last-child { page-break-after: auto; }
+  .sec-label {
+    display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: .04em;
+    text-transform: uppercase; color: #0a66c2; margin: 0 0 10px;
+  }
+  .persona {
+    background: #f3f6f8; border: 1px solid #e0e0e0; border-radius: 8px; padding: 14px 16px; margin-bottom: 18px;
+  }
+  .persona h2 { margin: 0 0 10px; font-size: 16px; }
+  .persona dl { display: grid; grid-template-columns: 140px 1fr; gap: 6px 12px; margin: 0; }
+  .persona dt { color: #666; font-weight: 600; }
+  .persona dd { margin: 0; }
+  .li-card {
+    border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; background: #fff;
+    box-shadow: 0 0 0 1px rgba(0,0,0,.04);
+  }
+  .li-banner {
+    height: 118px; width: 100%; object-fit: cover; display: block; background: #dce6f1;
+  }
+  .li-top { padding: 0 16px 14px; position: relative; }
+  .li-avatar {
+    width: 96px; height: 96px; border-radius: 50%; object-fit: cover;
+    border: 3px solid #fff; margin-top: -48px; background: #ccc; display: block;
+  }
+  .li-actions { position: absolute; right: 16px; top: 12px; display: flex; gap: 8px; }
+  .btn {
+    border-radius: 16px; padding: 6px 14px; font-size: 12px; font-weight: 600;
+    border: 1px solid #0a66c2; color: #0a66c2; background: #fff;
+  }
+  .btn.primary { background: #0a66c2; color: #fff; }
+  .li-name { font-size: 18px; font-weight: 650; margin: 8px 0 2px; }
+  .li-headline { color: #191919; margin: 0 0 4px; font-size: 12.5px; }
+  .li-meta { color: #666; font-size: 12px; margin: 0; }
+  .li-company-line { color: #191919; font-size: 12px; margin: 4px 0 0; }
+  .li-block { border-top: 1px solid #e0e0e0; padding: 12px 16px; }
+  .li-block h3 { margin: 0 0 8px; font-size: 14px; }
+  .exp { display: grid; grid-template-columns: 40px 1fr; gap: 10px; margin-bottom: 12px; }
+  .exp-ico {
+    width: 40px; height: 40px; border-radius: 4px; background: #e8f0fe; color: #0a66c2;
+    display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 11px;
+  }
+  .exp h4 { margin: 0 0 2px; font-size: 13px; }
+  .exp .co { font-weight: 600; color: #191919; }
+  .exp .per { color: #666; font-size: 11.5px; }
+  .exp p { margin: 4px 0 0; color: #191919; }
+  .badge-atual {
+    display: inline-block; font-size: 10px; background: #e8f5e9; color: #2e7d32;
+    padding: 1px 6px; border-radius: 4px; margin-left: 6px; font-weight: 600;
+  }
+</style>
+</head>
+<body>
+  <section class="cover">
+    <h1>Escolhidos v2</h1>
+    <p>Persona (interno) + mock da página LinkedIn (banner BR Supply + foto escolhida + sobre + experiência). Seis vendedores da seleção final.</p>
+    <table>
+      <thead><tr><th>ID</th><th>Nome</th><th>Persona</th><th>Banner</th></tr></thead>
+      <tbody><tr><td>v04</td><td>Juliana Peixoto</td><td><code>esp_suprimentos_indiretos</code></td><td>br-supply-01-caixas.jpg</td></tr><tr><td>v05</td><td>Roberto Menezes</td><td><code>kam_tecnico_mro</code></td><td>br-supply-02-fachada.jpg</td></tr><tr><td>v06</td><td>Daniela Hoffmann</td><td><code>kam_tecnico_mro</code></td><td>br-supply-03-logistica.jpg</td></tr><tr><td>v09</td><td>Thiago Nascimento</td><td><code>inside_sales_alta_performance</code></td><td>br-supply-01-caixas.jpg</td></tr><tr><td>v11</td><td>Gabriel Rocha</td><td><code>inside_sales_alta_performance</code></td><td>br-supply-02-fachada.jpg</td></tr><tr><td>v12</td><td>Aline Monteiro</td><td><code>inside_sales_alta_performance</code></td><td>br-supply-03-logistica.jpg</td></tr></tbody>
+    </table>
+  </section>
+  
+  <section class="vendor">
+    
+    <div class="persona">
+      <div class="sec-label">A · Perfil / persona</div>
+      <h2>Juliana Peixoto · v04</h2>
+      <dl>
+        <dt>persona_id</dt><dd><code>esp_suprimentos_indiretos</code> — Especialista Consultivo de Suprimentos Indiretos</dd>
+        <dt>Por que encaixa</dt><dd>Encaixa no piso consultivo de indiretos (Curva C / TCO / SLA): trajetória B2B em suprimentos corporativos alinhada à persona Mariana Medeiros.</dd>
+        <dt>Idade / faixa</dt><dd>28–32 anos</dd>
+        <dt>Aparência</dt><dd>Mulher, 28–32 anos, cabelo cacheado castanho claro volume médio preso parcialmente, sem óculos, blazer verde-musgo sobre blusa bege, fundo bege/pastel, sorriso aberto acessível</dd>
+        <dt>avatar_style</dt><dd>woman, ~30, light brown curly hair, moss green blazer, beige blouse, pastel bg, open smile</dd>
+        <dt>Experiência</dt><dd>8 anos — 8 anos em suprimentos Curva C / contas B2B (perfil mais júnior da persona)</dd>
+        <dt>Foto (fonte)</dt><dd>TPDNE alt · This Person Does Not Exist · tpdne-05-e5718d21.jpg · Synthetic (TPDNE / StyleGAN) — lab use</dd>
+      </dl>
+    </div>
+    
+    <div class="li-card">
+      <div class="sec-label" style="padding:10px 16px 0">B · Vendedor / LinkedIn (layout página)</div>
+      <img class="li-banner" src="../banners/br-supply-01-caixas.jpg" alt="banner" />
+      <div class="li-top">
+        <div class="li-actions">
+          <span class="btn">Mensagem</span>
+          <span class="btn primary">Conectar</span>
+        </div>
+        <img class="li-avatar" src="../avatars/v04-juliana-peixoto.jpg" alt="foto" />
+        <div class="li-name">Juliana Peixoto</div>
+        <p class="li-headline">Especialista em Suprimentos Corporativos | Indiretos | Simplifico compras e garanto abastecimento</p>
+        <p class="li-meta">Belo Horizonte, MG · Brasil</p>
+        <p class="li-company-line">BR Supply · Especialista em Suprimentos Corporativos | Contas B2B</p>
+      </div>
+      <div class="li-block">
+        <h3>Sobre</h3>
+        <p>Ajudo compradores a consolidar fornecedores de Curva C e reduzir custo total de aquisição, com foco em higiene, limpeza, descartáveis e escritório.</p>
+      </div>
+      <div class="li-block">
+        <h3>Experiência</h3>
+        
+        <div class="exp">
+          <div class="exp-ico">BS</div>
+          <div>
+            <h4>Especialista em Suprimentos Corporativos | Contas B2B<span class="badge-atual">Atual</span></h4>
+            <div class="co">BR Supply</div>
+            <div class="per">2023–Presente · 3 ano(s)</div>
+            <p>Consolidação de fornecedores de Curva C e redução de TCO em higiene, limpeza, descartáveis e escritório.</p>
+          </div>
+        </div>
+        <div class="exp">
+          <div class="exp-ico">BS</div>
+          <div>
+            <h4>Executiva de Contas Corporativas</h4>
+            <div class="co">BR Supply</div>
+            <div class="per">2018–2023 · 5 ano(s)</div>
+            <p>Gestão de contas PME/médio porte em suprimentos corporativos. Contratos, amostras e acompanhamento de SLA de entrega.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="vendor">
+    
+    <div class="persona">
+      <div class="sec-label">A · Perfil / persona</div>
+      <h2>Roberto Menezes · v05</h2>
+      <dl>
+        <dt>persona_id</dt><dd><code>kam_tecnico_mro</code> — Key Account Manager Técnico — MRO &amp; Equipamentos</dd>
+        <dt>Por que encaixa</dt><dd>Encaixa no perfil KAM técnico industrial (MRO, savings, compliance): senioridade e linguagem de planta alinhadas à persona Carlos Henrique Diniz.</dd>
+        <dt>Idade / faixa</dt><dd>42–48 anos</dd>
+        <dt>Aparência</dt><dd>Homem, 42–48 anos, cabelo preto com grisalho nas laterais, barba curta grisalha bem aparada, sem óculos, camisa azul claro + blazer cinza chumbo, braços cruzados, fundo escritório técnico desfocado, expressão séria acessível</dd>
+        <dt>avatar_style</dt><dd>man, mid-40s, salt-pepper hair, short gray beard, light blue shirt, steel gray blazer, arms crossed, technical office bg, serious approachable</dd>
+        <dt>Experiência</dt><dd>18 anos — 18 anos em grandes contas industriais / MRO (acima do piso 15+ da persona)</dd>
+        <dt>Foto (fonte)</dt><dd>TPDNE v1 · This Person Does Not Exist · Synthetic (TPDNE / StyleGAN) — lab use (pool v1)</dd>
+      </dl>
+    </div>
+    
+    <div class="li-card">
+      <div class="sec-label" style="padding:10px 16px 0">B · Vendedor / LinkedIn (layout página)</div>
+      <img class="li-banner" src="../banners/br-supply-02-fachada.jpg" alt="banner" />
+      <div class="li-top">
+        <div class="li-actions">
+          <span class="btn">Mensagem</span>
+          <span class="btn primary">Conectar</span>
+        </div>
+        <img class="li-avatar" src="../avatars/v05-roberto-menezes.jpg" alt="foto" />
+        <div class="li-name">Roberto Menezes</div>
+        <p class="li-headline">Key Account Manager | MRO Industrial | Contratos estruturados, TCO e zero parada de máquina</p>
+        <p class="li-meta">Joinville, SC · Brasil</p>
+        <p class="li-company-line">BR Supply · Key Account Manager | MRO &amp; Equipamentos Industriais</p>
+      </div>
+      <div class="li-block">
+        <h3>Sobre</h3>
+        <p>Ajudo gestores de fábrica a estruturar contratos de MRO (mecânica, elétrica, pneumática, EPIs) com tabela fixa, compliance e abastecimento contínuo.</p>
+      </div>
+      <div class="li-block">
+        <h3>Experiência</h3>
+        
+        <div class="exp">
+          <div class="exp-ico">BS</div>
+          <div>
+            <h4>Key Account Manager | MRO &amp; Equipamentos Industriais<span class="badge-atual">Atual</span></h4>
+            <div class="co">BR Supply</div>
+            <div class="per">2021–Presente · 5 ano(s)</div>
+            <p>Contratos estruturados de MRO (mecânica, elétrica, pneumática, EPIs) com tabela fixa, compliance e abastecimento contínuo para plantas.</p>
+          </div>
+        </div>
+        <div class="exp">
+          <div class="exp-ico">FG</div>
+          <div>
+            <h4>Account Manager — Grandes Contas Industriais</h4>
+            <div class="co">Ferramentas Gerais</div>
+            <div class="per">2012–2021 · 9 ano(s)</div>
+            <p>KAM de ferramentas e equipamentos industriais. Savings documentados, cost avoidance e governança de entrega para engenharia/manutenção.</p>
+          </div>
+        </div>
+        <div class="exp">
+          <div class="exp-ico">N</div>
+          <div>
+            <h4>Consultor Técnico-Comercial MRO</h4>
+            <div class="co">Nortel-Dimensional</div>
+            <div class="per">2008–2012 · 4 ano(s)</div>
+            <p>Suporte técnico-comercial em materiais elétricos e industriais. Qualificação de demanda de manutenção e reposição sobressalente.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="vendor">
+    
+    <div class="persona">
+      <div class="sec-label">A · Perfil / persona</div>
+      <h2>Daniela Hoffmann · v06</h2>
+      <dl>
+        <dt>persona_id</dt><dd><code>kam_tecnico_mro</code> — Key Account Manager Técnico — MRO &amp; Equipamentos</dd>
+        <dt>Por que encaixa</dt><dd>Encaixa no perfil KAM técnico industrial (MRO, savings, compliance): senioridade e linguagem de planta alinhadas à persona Carlos Henrique Diniz.</dd>
+        <dt>Idade / faixa</dt><dd>38–42 anos</dd>
+        <dt>Aparência</dt><dd>Mulher, 38–42 anos, cabelo loiro-escuro liso preso em coque baixo, óculos retangulares finos, blazer preto + camisa branca, fundo industrial/escritório desfocado, olhar direto confiante</dd>
+        <dt>avatar_style</dt><dd>woman, ~40, dark blonde hair in low bun, thin rectangular glasses, black blazer, white shirt, industrial office bg, direct confident gaze</dd>
+        <dt>Experiência</dt><dd>15 anos — 15 anos em KAM industrial, MRO e savings documentados</dd>
+        <dt>Foto (fonte)</dt><dd>Unsplash · Vitaly Gariev · s3aDHKxHZSc · Unsplash License</dd>
+      </dl>
+    </div>
+    
+    <div class="li-card">
+      <div class="sec-label" style="padding:10px 16px 0">B · Vendedor / LinkedIn (layout página)</div>
+      <img class="li-banner" src="../banners/br-supply-03-logistica.jpg" alt="banner" />
+      <div class="li-top">
+        <div class="li-actions">
+          <span class="btn">Mensagem</span>
+          <span class="btn primary">Conectar</span>
+        </div>
+        <img class="li-avatar" src="../avatars/v06-daniela-hoffmann.jpg" alt="foto" />
+        <div class="li-name">Daniela Hoffmann</div>
+        <p class="li-headline">Key Account Manager | Grandes Contas Industriais | MRO, ferramentas e savings documentados</p>
+        <p class="li-meta">Caxias do Sul, RS · Brasil</p>
+        <p class="li-company-line">BR Supply · KAM Industriais | Especialista em MRO e Ferramentas</p>
+      </div>
+      <div class="li-block">
+        <h3>Sobre</h3>
+        <p>Negocio contratos de longo prazo para plantas industriais: savings, cost avoidance e governança de entrega. Foco em engenharia e manutenção.</p>
+      </div>
+      <div class="li-block">
+        <h3>Experiência</h3>
+        
+        <div class="exp">
+          <div class="exp-ico">BS</div>
+          <div>
+            <h4>KAM Industriais | Especialista em MRO e Ferramentas<span class="badge-atual">Atual</span></h4>
+            <div class="co">BR Supply</div>
+            <div class="per">2022–Presente · 4 ano(s)</div>
+            <p>Negociação de contratos de longo prazo para plantas: savings, cost avoidance e governança de entrega em MRO e ferramentas.</p>
+          </div>
+        </div>
+        <div class="exp">
+          <div class="exp-ico">AF</div>
+          <div>
+            <h4>Key Account Manager Industrial</h4>
+            <div class="co">Anhanguera Ferramentas</div>
+            <div class="per">2015–2022 · 7 ano(s)</div>
+            <p>Grandes contas industriais em ferramentas e soluções MRO. Ciclo end-to-end, compliance e parcerias com engenharia de fábrica.</p>
+          </div>
+        </div>
+        <div class="exp">
+          <div class="exp-ico">A</div>
+          <div>
+            <h4>Especialista Comercial — Rolamentos e MRO</h4>
+            <div class="co">Abecom</div>
+            <div class="per">2011–2015 · 4 ano(s)</div>
+            <p>Vendas técnicas de rolamentos e insumos de manutenção. Atendimento a compradores industriais e especificação de aplicação.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="vendor">
+    
+    <div class="persona">
+      <div class="sec-label">A · Perfil / persona</div>
+      <h2>Thiago Nascimento · v09</h2>
+      <dl>
+        <dt>persona_id</dt><dd><code>inside_sales_alta_performance</code> — Inside Sales de Alta Performance</dd>
+        <dt>Por que encaixa</dt><dd>Encaixa no perfil ágil PME (cotação &lt;24h, WhatsApp, faturamento CNPJ): ritmo e canais alinhados à persona Lucas Stefan Albuquerque.</dd>
+        <dt>Idade / faixa</dt><dd>26–30 anos</dd>
+        <dt>Aparência</dt><dd>Homem, 26–30 anos, cabelo castanho curto texturizado, barba por fazer leve, sem óculos, polo azul-marinho, fundo open space claro, sorriso energético amplo</dd>
+        <dt>avatar_style</dt><dd>man, late-20s, textured short brown hair, light stubble, navy polo, bright open-space bg, energetic wide smile</dd>
+        <dt>Experiência</dt><dd>5 anos — 5 anos em inside sales / cotações ágeis B2B</dd>
+        <dt>Foto (fonte)</dt><dd>TPDNE v1 · This Person Does Not Exist · Synthetic (TPDNE / StyleGAN) — lab use (pool v1)</dd>
+      </dl>
+    </div>
+    
+    <div class="li-card">
+      <div class="sec-label" style="padding:10px 16px 0">B · Vendedor / LinkedIn (layout página)</div>
+      <img class="li-banner" src="../banners/br-supply-01-caixas.jpg" alt="banner" />
+      <div class="li-top">
+        <div class="li-actions">
+          <span class="btn">Mensagem</span>
+          <span class="btn primary">Conectar</span>
+        </div>
+        <img class="li-avatar" src="../avatars/v09-thiago-nascimento.jpg" alt="foto" />
+        <div class="li-name">Thiago Nascimento</div>
+        <p class="li-headline">Consultor de Vendas B2B | Suprimentos | Cotações e amostras em até 24h</p>
+        <p class="li-meta">Barueri, SP · Brasil</p>
+        <p class="li-company-line">BR Supply · Consultor Comercial B2B | Vendas Internas</p>
+      </div>
+      <div class="li-block">
+        <h3>Sobre</h3>
+        <p>Especialista em atendimento ágil para PMEs: orçamento rápido, faturamento corporativo e reposição spot de higiene, limpeza e escritório. Chama no WhatsApp.</p>
+      </div>
+      <div class="li-block">
+        <h3>Experiência</h3>
+        
+        <div class="exp">
+          <div class="exp-ico">BS</div>
+          <div>
+            <h4>Consultor Comercial B2B | Vendas Internas<span class="badge-atual">Atual</span></h4>
+            <div class="co">BR Supply</div>
+            <div class="per">2023–Presente · 3 ano(s)</div>
+            <p>Atendimento ágil a PMEs: cotações e amostras em até 24h, faturamento corporativo e reposição spot de higiene/limpeza/escritório.</p>
+          </div>
+        </div>
+        <div class="exp">
+          <div class="exp-ico">K</div>
+          <div>
+            <h4>Executivo de Vendas Internas</h4>
+            <div class="co">Kalunga</div>
+            <div class="per">2021–2023 · 2 ano(s)</div>
+            <p>Inside sales de papelaria e informática. Televendas, cotações digitais e cadastro de CNPJ para contas PME.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="vendor">
+    
+    <div class="persona">
+      <div class="sec-label">A · Perfil / persona</div>
+      <h2>Gabriel Rocha · v11</h2>
+      <dl>
+        <dt>persona_id</dt><dd><code>inside_sales_alta_performance</code> — Inside Sales de Alta Performance</dd>
+        <dt>Por que encaixa</dt><dd>Encaixa no perfil ágil PME (cotação &lt;24h, WhatsApp, faturamento CNPJ): ritmo e canais alinhados à persona Lucas Stefan Albuquerque.</dd>
+        <dt>Idade / faixa</dt><dd>30–34 anos</dd>
+        <dt>Aparência</dt><dd>Homem, 30–34 anos, cabelo preto curto, limpo de barba (ou bigode fino), sem óculos, camisa social branca manga curta / polo escuro, fundo open space, expressão prestativa</dd>
+        <dt>avatar_style</dt><dd>man, early-30s, short black hair, clean-shaven, white short-sleeve shirt or dark polo, open-space bg, helpful expression</dd>
+        <dt>Experiência</dt><dd>7 anos — 7 anos em consultoria comercial B2B e reposição spot</dd>
+        <dt>Foto (fonte)</dt><dd>TPDNE alt · This Person Does Not Exist · tpdne-33-c4da5905.jpg · Synthetic (TPDNE / StyleGAN) — lab use</dd>
+      </dl>
+    </div>
+    
+    <div class="li-card">
+      <div class="sec-label" style="padding:10px 16px 0">B · Vendedor / LinkedIn (layout página)</div>
+      <img class="li-banner" src="../banners/br-supply-02-fachada.jpg" alt="banner" />
+      <div class="li-top">
+        <div class="li-actions">
+          <span class="btn">Mensagem</span>
+          <span class="btn primary">Conectar</span>
+        </div>
+        <img class="li-avatar" src="../avatars/v11-gabriel-rocha.jpg" alt="foto" />
+        <div class="li-name">Gabriel Rocha</div>
+        <p class="li-headline">Consultor B2B | Suprimentos Corporativos | Cotação rápida, amostra e boleto corporativo</p>
+        <p class="li-meta">Rio de Janeiro, RJ · Brasil</p>
+        <p class="li-company-line">BR Supply · Consultor de Vendas B2B | Atendimento Ágil Suprimentos</p>
+      </div>
+      <div class="li-block">
+        <h3>Sobre</h3>
+        <p>Ajudo analistas de compras a fechar reposição urgente: cotação, amostra e faturamento. Foco em velocidade e clareza no WhatsApp comercial.</p>
+      </div>
+      <div class="li-block">
+        <h3>Experiência</h3>
+        
+        <div class="exp">
+          <div class="exp-ico">BS</div>
+          <div>
+            <h4>Consultor de Vendas B2B | Atendimento Ágil Suprimentos<span class="badge-atual">Atual</span></h4>
+            <div class="co">BR Supply</div>
+            <div class="per">2023–Presente · 3 ano(s)</div>
+            <p>Reposição urgente: cotação, amostra e boleto corporativo. Foco em velocidade e clareza no WhatsApp comercial.</p>
+          </div>
+        </div>
+        <div class="exp">
+          <div class="exp-ico">V</div>
+          <div>
+            <h4>Inside Sales — Atendimento Corporativo</h4>
+            <div class="co">Viasupri</div>
+            <div class="per">2021–2023 · 2 ano(s)</div>
+            <p>Atendimento a analistas de compras via portal/telefone. Cotações de limpeza, escritório e copa com SLA curto.</p>
+          </div>
+        </div>
+        <div class="exp">
+          <div class="exp-ico">N</div>
+          <div>
+            <h4>Consultor Comercial — Televendas</h4>
+            <div class="co">Nagem</div>
+            <div class="per">2019–2021 · 2 ano(s)</div>
+            <p>Televendas de papelaria e informática. Geração de pedidos spot e retenção de contas PME.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="vendor">
+    
+    <div class="persona">
+      <div class="sec-label">A · Perfil / persona</div>
+      <h2>Aline Monteiro · v12</h2>
+      <dl>
+        <dt>persona_id</dt><dd><code>inside_sales_alta_performance</code> — Inside Sales de Alta Performance</dd>
+        <dt>Por que encaixa</dt><dd>Encaixa no perfil ágil PME (cotação &lt;24h, WhatsApp, faturamento CNPJ): ritmo e canais alinhados à persona Lucas Stefan Albuquerque.</dd>
+        <dt>Idade / faixa</dt><dd>27–31 anos</dd>
+        <dt>Aparência</dt><dd>Mulher, 27–31 anos, cabelo castanho com luzes, preso em rabo de cavalo alto, sem óculos, blazer fino bege sobre camiseta/blusa preta (smart casual), fundo escritório claro, sorriso energético</dd>
+        <dt>avatar_style</dt><dd>woman, ~29, highlighted brown hair high ponytail, beige light blazer over black top, bright office, energetic smile</dd>
+        <dt>Experiência</dt><dd>5 anos — 5 anos em inside sales e cotações multicategoria</dd>
+        <dt>Foto (fonte)</dt><dd>TPDNE alt · This Person Does Not Exist · tpdne-13-df58862c.jpg · Synthetic (TPDNE / StyleGAN) — lab use</dd>
+      </dl>
+    </div>
+    
+    <div class="li-card">
+      <div class="sec-label" style="padding:10px 16px 0">B · Vendedor / LinkedIn (layout página)</div>
+      <img class="li-banner" src="../banners/br-supply-03-logistica.jpg" alt="banner" />
+      <div class="li-top">
+        <div class="li-actions">
+          <span class="btn">Mensagem</span>
+          <span class="btn primary">Conectar</span>
+        </div>
+        <img class="li-avatar" src="../avatars/v12-aline-monteiro.jpg" alt="foto" />
+        <div class="li-name">Aline Monteiro</div>
+        <p class="li-headline">Inside Sales B2B | Cotações de suprimentos em até 24h | PME e facilities</p>
+        <p class="li-meta">Guarulhos, SP · Brasil</p>
+        <p class="li-company-line">BR Supply · Inside Sales B2B | Especialista em Cotações de Suprimentos</p>
+      </div>
+      <div class="li-block">
+        <h3>Sobre</h3>
+        <p>Atendimento comercial rápido para facilities e PME: descartáveis, limpeza e escritório. Envio de amostras e proposta objetiva.</p>
+      </div>
+      <div class="li-block">
+        <h3>Experiência</h3>
+        
+        <div class="exp">
+          <div class="exp-ico">BS</div>
+          <div>
+            <h4>Inside Sales B2B | Especialista em Cotações de Suprimentos<span class="badge-atual">Atual</span></h4>
+            <div class="co">BR Supply</div>
+            <div class="per">2023–Presente · 3 ano(s)</div>
+            <p>Cotações em até 24h para facilities e PME: descartáveis, limpeza e escritório. Envio de amostras e propostas objetivas.</p>
+          </div>
+        </div>
+        <div class="exp">
+          <div class="exp-ico">S</div>
+          <div>
+            <h4>Executiva de Cotações Corporativas</h4>
+            <div class="co">Sodine</div>
+            <div class="per">2021–2023 · 2 ano(s)</div>
+            <p>Montagem de orçamentos multicategoria e suporte a compradores. Cadastro corporativo e follow-up de pedidos.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</body>
+</html>

@@ -103,14 +103,17 @@ Sem UI, **sem CSV**, **sem JSON central**, **sem `start-*.sh`**. Fonte no disco:
 - porta `up`: processo Chrome com `--user-data-dir` + `--remote-debugging-port`
 
 ```js
-import { listCdps, createCdp, connectCdp, removeCdp, updateCdp } from './src/index.mjs';
+import { listCdps, createCdp, connectCdp, stopCdp, removeCdp, updateCdp } from './src/index.mjs';
 
 listCdps(); // pastas em ~/chrome-profiles + porta se Chrome estiver no ar
 createCdp({ id: 'meu-perfil', name: 'Meu Perfil', port: 9240 });
-const page = await connectCdp('meu-perfil');
+const page = await connectCdp('meu-perfil'); // sobe se down
 page.close();
+await stopCdp('meu-perfil'); // workers: withLinkedInPage mata no finally
 // removeCdp('meu-perfil') // default não apaga a pasta do perfil
 ```
+
+**Workers LinkedIn (`src/lib/cdp/session.js`):** cada operação sobe o Chrome e mata no fim (`stopCdp`) — sem tela logada ociosa. `getCdp` também casa `preferredPort` (porta na meta mesmo com status down). Escape: `CDP_KEEP_BROWSER=1`.
 
 ### Fingerprint por CDP
 

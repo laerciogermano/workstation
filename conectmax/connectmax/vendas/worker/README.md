@@ -12,6 +12,8 @@
 
 **Antes → depois (runtime CDP):** só AVD (`SERIAL` + handlers ADB) → `WORKER_RUNTIME=cdp` + `CDP_ID`/`CDP_URL` usa `handlers/cdp/` → scripts `linkedin-*-cdp` (mesmo contrato de jobs). **Rollback:** remova `WORKER_RUNTIME`/`CDP_*` e use `SERIAL` + scripts AVD; apague `handlers/cdp/` se precisar.
 
+**Antes → depois (lifecycle Chrome por job):** CDP ficava aberto logado entre jobs → `withLinkedInPage` sobe o Chrome e chama `stopCdp` no fim de cada operação. Escape: `CDP_KEEP_BROWSER=1`. **Rollback:** `CDP_KEEP_BROWSER=1` ou reverta o `finally` em `screen-robot/src/lib/cdp/session.js`.
+
 ## Modos
 
 ### Single — 1 agente / 1 AVD

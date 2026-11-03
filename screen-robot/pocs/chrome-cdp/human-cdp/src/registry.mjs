@@ -225,6 +225,12 @@ function runningPortsByProfile() {
 function matchKey(row, key) {
   if (row.id === key) return true;
   if (row.port != null && String(row.port) === String(key)) return true;
+  if (
+    row.preferredPort != null &&
+    String(row.preferredPort) === String(key)
+  ) {
+    return true;
+  }
   if (row.name && row.name.toLowerCase() === String(key).toLowerCase()) return true;
   return false;
 }

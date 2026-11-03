@@ -268,7 +268,8 @@ export function createLinkedInCdp(opts = {}) {
 
   const port = opts.port != null ? Number(opts.port) : freePort();
   const fingerprint = opts.fingerprint || generateFingerprint();
-  const debug = opts.debug !== false;
+  // Default off — overlay no LinkedIn/signup só se pedir debug: true.
+  const debug = opts.debug === true;
   const dryRun = !!opts.dryRun;
 
   if (dryRun) {

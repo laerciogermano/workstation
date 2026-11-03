@@ -342,7 +342,7 @@ export function updateCdp(id, patch) {
     throw new Error(`porta ${next.port} já em uso`);
   }
   writeMeta(cur.id, next);
-  if ('fingerprint' in patch) {
+  if ('fingerprint' in patch || 'debug' in patch) {
     stopFingerprintKeeper(cur.id);
     ensureFingerprintKeeper(cur.id);
   }

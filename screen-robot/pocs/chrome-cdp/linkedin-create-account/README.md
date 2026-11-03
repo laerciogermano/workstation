@@ -124,7 +124,7 @@ Saída: progresso em **stderr** (`[create-mailbox]`, `[createLinkedin]`, `[PIN]`
 
 **Coluna `li_criado`:** `sim`/`nao` — se a conta LinkedIn foi criada (signup). Default na criação mailbox+CDP: `nao`. Atualizar para `sim` após signup. Rollback: remover a coluna.
 
-**CDP:** porta livre a partir de `9237`; fingerprint **dinâmico** via `generateFingerprint()` — catálogo **conservador** (Win64 / Mac 10_15_7 / **Linux**, Chrome 129–132, cidades BR principais; sem viewport). Evita colisão tz+UA+platformVersion+hw+mem. `debug: true`. Override: `createLinkedInCdp({ fingerprint })`.
+**CDP:** porta livre a partir de `9237`; fingerprint **dinâmico** via `generateFingerprint()` — catálogo **conservador** (Win64 / Mac 10_15_7 / **Linux**, Chrome 129–132, cidades BR principais; sem viewport). Evita colisão tz+UA+platformVersion+hw+mem. **`debug` default off** (overlay só com `createLinkedInCdp({ debug: true })`). Override fingerprint: `createLinkedInCdp({ fingerprint })`.
 
 **E-mail:** default `@brsupply.email` (`MAIL_DOMAIN` override, ex. `clozzy.com.br`). `MAIL_SSH_HOST` · `MAIL_SSH_PASS`. Quota mailbox default `1024` MiB (`MAIL_MBOX_QUOTA_MIB`). Antes de criar, `ensureDomainQuotaHigh` sobe o teto do domínio para **10 TiB** (`MAIL_DOMAIN_MAX_QUOTA_MIB=10485760`) e até **500** caixas via MySQL (a API `edit/domain` não persiste). Idempotente se a caixa já existir. `--write-credenciais` grava na seção `### Caixas @<domínio>` de `credenciais.md`.
 

@@ -96,3 +96,4 @@ tasks/
 | [`6ae9d41cca30d13ffbba775f/`](6ae9d41cca30d13ffbba775f/README.md) | [Vendedores v3: LinkedIn × persona + BR Supply](https://trello.com/c/phrqBZpX) |
 | [`6ae9d6add727a12aafdbe85b/`](6ae9d6add727a12aafdbe85b/README.md) | [Vendedores: fotos Unsplash no último documento (foto-only)](https://trello.com/c/WoiK15WJ) |
 | [`6ae9d7a23abbcc7438632647/`](6ae9d7a23abbcc7438632647/README.md) | [Comparar fotos: doc v3 com lote TPDNE alternativo](https://trello.com/c/4svbSI4J) |
+| [`6ae9db12f2929dff03af4f93/`](6ae9db12f2929dff03af4f93/README.md) | [Vendedores escolhidos: PDF só com a seleção final](https://trello.com/c/b3v1eoH5) |

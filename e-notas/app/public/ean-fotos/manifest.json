@@ -94,5 +94,13 @@
     "bytes": 14091,
     "image_url": "https://images.openfoodfacts.org/images/products/789/625/660/2005/front_pt.9.400.jpg",
     "source": "world.openfoodfacts.org"
+  },
+  {
+    "ean": "7893299000188",
+    "ok": true,
+    "file": "7893299000188.jpg",
+    "bytes": 17005,
+    "image_url": "https://www.lg.com/content/dam/channel/wcms/br/images/tv/ua8550psa/55inch/450.jpg",
+    "source": "https://www.lg.com/br/tvs-e-soundbars/tv-uhd-4k/55ua8550psa/"
   }
 ]

@@ -17,7 +17,8 @@ No board **Robô Prospecção** (`JPntFgwO`), a lista `Concluído` deve ficar **
 ## Exemplos
 
 ```text
-✅ trello card:move --id <CARD> --to "Concluído" --position top --board "Robô Prospecção"
+✅ trello card:move --id <CARD> --to "Concluído" --position top
+✅ trello card:move --board "Robô Prospecção" --card "<nome>" --to "Concluído" --position top
 ✅ API: idList=<Concluído> & pos=top
 ❌ trello card:move … --to "Concluído"   # default bottom = mais antigo no topo invertido
 ❌ Deixar o card recém-feito no fim da lista Concluído

@@ -72,6 +72,8 @@ node upload-profile-experience.mjs --id daniela-hoffmann \
 
 **Antes → depois (experiência):** só `linkedin-setup-job-cdp.mjs` (1 cargo) → `upload-profile-experience.mjs` (lote JSON: cargo/empresa/datas/descrição; SPA `/edit/forms/position`). Rollback: remover o script; apagar experiências no LI.
 
+**Antes → depois (typeahead):** podia escolher 2ª+ opção por match de texto → **sempre a 1ª** sugestão (`opts[0]` por Y). Rollback: restaurar `find` exact/startsWith/includes.
+
 Saída: progresso em **stderr** (`[create-mailbox]`, `[createLinkedin]`, `[PIN]`); JSON final em **stdout** `{ email, cdp, csv, linkedin }`.
 
 **Ordem:** mailbox+CDP → **CSV** (`li_criado=nao`) → `createLinkedin` → se chegar no `/feed`, `markLiCriado` → **`li_criado=sim`**. Após nome+Continuar: se **verificação humana**, espera **sem timeout**. Defaults: localidade `Rio de Janeiro`, cargo/empresa ConectMax, senha `in@12345678`. `--no-browser` pula o browser. CSVs: [`contas-linkedin-clozzy.csv`](../../android-studio/contas-linkedin-clozzy.csv) + [`contas-facebook-chrome.csv`](../../android-studio/contas-facebook-chrome.csv).

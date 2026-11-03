@@ -154,28 +154,26 @@ async function typeahead(s, text, hintRe, mark) {
   await sleep(2800);
 
   const optMark = `${mark}-opt`;
+  // Sempre a 1ª sugestão do typeahead (nunca 2ª+ por match de texto).
   const pick = await s.evaluate(`(() => {
-    const first = ${JSON.stringify(typed.toLowerCase())};
     document.querySelectorAll('[data-hcdp=${JSON.stringify(optMark)}]').forEach((e) => e.removeAttribute('data-hcdp'));
     const opts = [...document.querySelectorAll('[role=option],.basic-typeahead__selectable')]
       .filter((el) => el.getClientRects().length)
       .map((el) => ({
         el,
         text: (el.innerText || '').replace(/\\s+/g, ' ').trim(),
+        y: el.getBoundingClientRect().y,
       }))
       .filter((o) => o.text);
-    const chosen =
-      opts.find((o) => o.text.toLowerCase() === first) ||
-      opts.find((o) => o.text.toLowerCase().startsWith(first)) ||
-      opts.find((o) => o.text.toLowerCase().includes(first)) ||
-      opts[0];
-    if (!chosen) return { sample: opts.slice(0, 5).map((o) => o.text) };
+    opts.sort((a, b) => a.y - b.y);
+    const chosen = opts[0];
+    if (!chosen) return { sample: [] };
     chosen.el.setAttribute('data-hcdp', ${JSON.stringify(optMark)});
     return { text: chosen.text.slice(0, 120), sample: opts.slice(0, 5).map((o) => o.text) };
   })()`);
   log(`opts ${JSON.stringify(pick.sample || [])}`);
   if (pick.text) {
-    log(`pick «${pick.text}»`);
+    log(`pick 1ª «${pick.text}»`);
     await s.click(`[data-hcdp=${optMark}]`);
     await sleep(700);
   } else {

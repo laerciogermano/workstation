@@ -95,3 +95,4 @@ tasks/
 | [`6ae9d2e4e3474dba682bde66/`](6ae9d2e4e3474dba682bde66/README.md) | [Documento de vendedores v2 (playbook + trajetória Experience)](https://trello.com/c/nmrVC9iS) |
 | [`6ae9d41cca30d13ffbba775f/`](6ae9d41cca30d13ffbba775f/README.md) | [Vendedores v3: LinkedIn × persona + BR Supply](https://trello.com/c/phrqBZpX) |
 | [`6ae9d6add727a12aafdbe85b/`](6ae9d6add727a12aafdbe85b/README.md) | [Vendedores: fotos Unsplash no último documento (foto-only)](https://trello.com/c/WoiK15WJ) |
+| [`6ae9d7a23abbcc7438632647/`](6ae9d7a23abbcc7438632647/README.md) | [Comparar fotos: doc v3 com lote TPDNE alternativo](https://trello.com/c/4svbSI4J) |

@@ -1,0 +1,22 @@
+[
+  {
+    "title": "Consultor Comercial B2B | Vendas Internas",
+    "company": "BR Supply",
+    "matchTitle": "Consultor Comercial B2B | Vendas Internas",
+    "current": true,
+    "startMonth": "mar",
+    "startYear": "2023",
+    "description": "Inside sales para PMEs: cotações e amostras em até 24h, faturamento corporativo e reposição spot (higiene, limpeza, escritório). Canal principal WhatsApp; foco em objetividade, cadastro CNPJ e retenção de contas de compra recorrente."
+  },
+  {
+    "title": "Executivo de Vendas Internas",
+    "company": "Kalunga",
+    "matchTitle": "Executivo de Vendas Internas",
+    "current": false,
+    "startMonth": "ago",
+    "startYear": "2021",
+    "endMonth": "fev",
+    "endYear": "2023",
+    "description": "Televendas e cotações digitais de papelaria e informática. Cadastro de CNPJ, follow-up de pedidos spot e gestão de carteira PME com metas de velocidade de resposta e conversão de orçamento."
+  }
+]

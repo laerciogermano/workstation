@@ -62,11 +62,25 @@ node upload-profile-about.mjs --id daniela-hoffmann \
 # Experiências (JSON; atual pode já existir do signup → skip):
 node upload-profile-experience.mjs --id daniela-hoffmann \
   --file ./experience-daniela-hoffmann.json
+
+# Thiago Nascimento (v09) — mesmo doc escolhidos-v2.1:
+node create-mailbox.mjs --first Thiago --last Nascimento --write-credenciais \
+  --location "Barueri" \
+  --job "Consultor Comercial B2B | Vendas Internas" \
+  --company "BR Supply"
+node upload-profile-photo.mjs --id thiago-nascimento \
+  --photo ../../../tasks/6ae9def6a28b279ac20b6ffc/avatars/v09-thiago-nascimento.jpg
+node upload-profile-banner.mjs --id thiago-nascimento \
+  --banner ../../../src/assets/banners/br-supply-01-caixas.jpg
+node upload-profile-about.mjs --id thiago-nascimento \
+  --about-file ./about-thiago-nascimento.txt
+node upload-profile-experience.mjs --id thiago-nascimento \
+  --file ./experience-thiago-nascimento.json
 ```
 
-**Antes → depois (foto):** sem passo de avatar no create-account → `upload-profile-photo.mjs` (cliques human-cdp + `setFileInputFiles`). Foto Daniela = escolhidos-v2.1 (`6ae9def6a28b279ac20b6ffc`, Vitaly Gariev), **não** a lista Unsplash nova (`6ae9def02d6e0ab7a0ab0737`). Rollback: remover o script; editar/excluir foto no LinkedIn.
+**Antes → depois (foto):** sem passo de avatar no create-account → `upload-profile-photo.mjs` (cliques human-cdp + `setFileInputFiles`). Foto Daniela/Thiago = escolhidos-v2.1 (`6ae9def6a28b279ac20b6ffc`), **não** a lista Unsplash nova (`6ae9def02d6e0ab7a0ab0737`). Rollback: remover o script; editar/excluir foto no LinkedIn.
 
-**Antes → depois (banner):** sem passo de capa → `upload-profile-banner.mjs`. Daniela: `br-supply-01-caixas.jpg` (logo BR; card prioriza 01/02, não o 03). Rollback: remover o script; editar/excluir capa no LinkedIn.
+**Antes → depois (banner):** sem passo de capa → `upload-profile-banner.mjs`. Daniela/Thiago: `br-supply-01-caixas.jpg` (logo BR; card prioriza 01/02, não o 03). Rollback: remover o script; editar/excluir capa no LinkedIn.
 
 **Antes → depois (about):** só `linkedin-setup-about-cdp.mjs` (CDP cru) → `upload-profile-about.mjs` (human-cdp + `--id` / `--about-file`). Clique SPA no `/edit/forms/summary` (não `Page.navigate`). Rollback: remover o script; editar Sobre no LI.
 

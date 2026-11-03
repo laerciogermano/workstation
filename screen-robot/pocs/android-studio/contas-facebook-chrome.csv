@@ -21,3 +21,12 @@ data,nome,plataforma,chrome_user_data_dir,cdp_port,start_script,obs
 2026-11-03,Beatriz Nogueira,linkedin,~/chrome-profiles/beatriz-nogueira,9245,human-cdp createCdp beatriz-nogueira,perfil Chrome isolado; fingerprint Linux x86_64 America/Sao_Paulo; LI signup
 2026-11-03,Renato Azevedo,linkedin,~/chrome-profiles/renato-azevedo,9246,human-cdp createCdp renato-azevedo,perfil Chrome isolado; fingerprint MacIntel America/Sao_Paulo; LI signup
 2026-11-03,Patricia Ramos,linkedin,~/chrome-profiles/patricia-ramos,9247,human-cdp createCdp patricia-ramos,perfil Chrome isolado; fingerprint MacIntel America/Manaus; LI signup
+2026-11-03,Felipe Monteiro,linkedin,~/chrome-profiles/felipe-monteiro,9248,human-cdp createCdp felipe-monteiro,perfil Chrome isolado; fingerprint MacIntel America/Bahia; LI signup
+2026-11-03,Vanessa Prado,linkedin,~/chrome-profiles/vanessa-prado,9249,human-cdp createCdp vanessa-prado,perfil Chrome isolado; fingerprint MacIntel America/Recife; LI signup
+2026-11-03,Rodrigo Barbosa,linkedin,~/chrome-profiles/rodrigo-barbosa,9250,human-cdp createCdp rodrigo-barbosa,perfil Chrome isolado; fingerprint Win32 America/Belem; LI signup
+2026-11-03,Isabela Freitas,linkedin,~/chrome-profiles/isabela-freitas,9251,human-cdp createCdp isabela-freitas,perfil Chrome isolado; fingerprint MacIntel America/Sao_Paulo; LI signup
+2026-11-03,Marcelo Teixeira,linkedin,~/chrome-profiles/marcelo-teixeira,9252,human-cdp createCdp marcelo-teixeira,perfil Chrome isolado; fingerprint MacIntel America/Sao_Paulo; LI signup
+2026-11-03,Aline Cardoso,linkedin,~/chrome-profiles/aline-cardoso,9253,human-cdp createCdp aline-cardoso,perfil Chrome isolado; fingerprint MacIntel America/Sao_Paulo; LI signup
+2026-11-03,Camila Andrade,linkedin,~/chrome-profiles/camila-andrade,9254,human-cdp createCdp camila-andrade,perfil Chrome isolado; fingerprint MacIntel America/Sao_Paulo; LI signup
+2026-11-03,Daniela Hoffmann,linkedin,~/chrome-profiles/daniela-hoffmann,9255,human-cdp createCdp daniela-hoffmann,perfil Chrome isolado; fingerprint MacIntel America/Recife; LI signup
+2026-11-03,Thiago Nascimento,linkedin,~/chrome-profiles/thiago-nascimento,9256,human-cdp createCdp thiago-nascimento,perfil Chrome isolado; fingerprint MacIntel America/Sao_Paulo; LI signup

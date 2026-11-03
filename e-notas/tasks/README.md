@@ -2,6 +2,7 @@
 
 | Pasta | Card |
 |-------|------|
+| [`6ae9ee30f2d6dd00248e239c/`](6ae9ee30f2d6dd00248e239c/README.md) | [Escanear QR também por foto (além da câmera ao vivo)](https://trello.com/c/vLJJBkPs) |
 | [`6ae90c796fe1cc9c667dd452/`](6ae90c796fe1cc9c667dd452/README.md) | [Melhorar scaneio de código de barras](https://trello.com/c/xdeWAy5y) |
 | [`6ae7ae51f0d412693108b6ad/`](6ae7ae51f0d412693108b6ad/README.md) | [Criar logo do notinhas.shop](https://trello.com/c/26aOrY0z) |
 | [`6ae742a63b9ee278c2a0cc7e/`](6ae742a63b9ee278c2a0cc7e/README.md) | [Criar documento de apresentação (produto + benchmarking + design system)](https://trello.com/c/hfGuzfMs) |

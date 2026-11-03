@@ -124,9 +124,42 @@ export async function extractRecentConnections(opts) {
     await sleep(WAIT_MS + 2_000);
     await shot(page, opts.outDir, "01-connections.png");
 
-    let listReady = await page.evaluate(
-      `!!document.querySelector('li.mn-connection-card, .mn-connection-card, a[href*="/in/"]')`,
+    const pageState = await page.evaluate(`(() => {
+      const body = (document.body?.innerText || '').replace(/\\s+/g, ' ');
+      const zero =
+        /\\b0\\s*(conexão|conexao|conexões|connections?)\\b/i.test(body) ||
+        /ainda não tem conexões|no connections yet|doesn't have any connections/i.test(body);
+      const hasCards = !!document.querySelector(
+        'li.mn-connection-card, .mn-connection-card, a[href*="/in/"]',
+      );
+      const countLabel = (body.match(/(\\d[\\d.,]*)\\s*(conexões|conexao|conexão|connections?)/i) || [])[0] || null;
+      return { zero, hasCards, countLabel, href: location.href };
+    })()`);
+    steps.push(
+      pageState.zero
+        ? `lista:vazia:${pageState.countLabel || "0"}`
+        : pageState.hasCards
+          ? `lista:ok:${pageState.countLabel || "cards"}`
+          : `lista:sem-cards`,
     );
+
+    // Página de conexões carregou com 0 — sucesso (conta nova / sem aceites).
+    if (pageState.zero && !pageState.hasCards) {
+      await shot(page, opts.outDir, "99-empty.png");
+      return {
+        ok: true,
+        n,
+        count: 0,
+        connections: [],
+        steps,
+        truncated: false,
+        db: { notified: false, reason: "sem conexões para marcar" },
+        sense: "dom",
+        profileUrl,
+      };
+    }
+
+    let listReady = pageState.hasCards;
     if (!listReady) {
       await page.goto(profileUrl);
       steps.push(`deeplink:${profileUrl}`);
@@ -138,7 +171,6 @@ export async function extractRecentConnections(opts) {
         { steps },
       );
       if (!tapped) {
-        // link "N connections"
         const hit = await page.evaluate(`(() => {
           const a = [...document.querySelectorAll('a')].find((el) =>
             /\\d[\\d,.]*\\+?\\s*(connections|conexões)/i.test((el.innerText || '').trim())

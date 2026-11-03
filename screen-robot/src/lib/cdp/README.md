@@ -51,7 +51,8 @@ Endpoints: `POST /connect`, `POST|GET /connections`, `POST /message`, `POST|GET 
 
 ```bash
 CDP_ID=marina-costa npm run linkedin-connect-cdp -- --url 'https://www.linkedin.com/in/…'
-CDP_URL=http://127.0.0.1:9224 npm run linkedin-extract-connections-cdp -- --n 20
+CDP_ID=daniela-hoffmann npm run linkedin-extract-connections-cdp -- --n 20
+# lista vazia ("0 conexão") → ok:true count=0 (não erro)
 CDP_ID=… npm run linkedin-message-cdp -- --url '…' --text 'Oi'
 CDP_ID=… npm run linkedin-unread-messages-cdp -- --max 20
 CDP_ID=… npm run linkedin-profile-messages-cdp -- --url '…' --max 10

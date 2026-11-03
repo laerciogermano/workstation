@@ -1,6 +1,8 @@
 # LinkedIn — criar conta (do zero)
 
-Script novo, passo a passo. **Agora só o passo 1:** mailbox Mailcow.
+Prompt canônico (evitar erros repetidos): [`../PROMPT-NOVO-VENDEDOR.md`](../PROMPT-NOVO-VENDEDOR.md) · copy: [`COPY-HUMANA.md`](COPY-HUMANA.md).
+
+Script novo, passo a passo. Mailbox + CDP + signup + foto/banner/sobre/experiências.
 
 ## Main — e-mail + CDP em paralelo
 

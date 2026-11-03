@@ -91,3 +91,4 @@ tasks/
 | [`6ae9ca1e215a10fb339d26e4/`](6ae9ca1e215a10fb339d26e4/README.md) | [Lista de vendedores alinhados às personas (aparência)](https://trello.com/c/1KXbnbBZ) |
 | [`6ae9d0bc128614a8c22f6afc/`](6ae9d0bc128614a8c22f6afc/README.md) | [Empresas BR (suprimentos/vendas) para experiência LinkedIn](https://trello.com/c/W1XpTjvv) |
 | [`6ae9d21f09e7040253b84179/`](6ae9d21f09e7040253b84179/README.md) | [Experiência LinkedIn por vendedor (títulos + empresas BR)](https://trello.com/c/uAP602Qv) |
+| [`6ae9d2e4e3474dba682bde66/`](6ae9d2e4e3474dba682bde66/README.md) | [Documento de vendedores v2 (playbook + trajetória Experience)](https://trello.com/c/nmrVC9iS) |

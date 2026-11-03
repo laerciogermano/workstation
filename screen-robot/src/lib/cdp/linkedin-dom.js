@@ -312,13 +312,31 @@ export async function profileSignals(page) {
       /please check your url/i.test(body) ||
       /essa página não existe/i.test(body) ||
       /página não encontrada/i.test(body);
+    // Pending/Pendente: botão OU <a> do hero ("Pendente; clique para retirar o convite…")
+    const isPendingLabel = (aria, txt) => {
+      const a = String(aria || '').replace(/\\s+/g, ' ').trim();
+      const t = String(txt || '').replace(/\\s+/g, ' ').trim();
+      const both = (a + ' ' + t).replace(/\\s+/g, ' ').trim();
+      return (
+        /^(pending|pendente)$/i.test(t) ||
+        /^(pending|pendente)\\b/i.test(a) ||
+        /\\b(pending|pendente)\\b.+(withdraw|retirar|convite|invitation)/i.test(both) ||
+        /retirar o convite|withdraw .+ invitation|invitation sent/i.test(both)
+      );
+    };
     const pending =
       /\\binvitation sent\\b/i.test(body) ||
       /\\bconvite enviado\\b/i.test(body) ||
-      !!document.querySelector('button[aria-label*="Pending" i], button[aria-label*="Pendente" i]');
-    const hasPendingBtn = [...document.querySelectorAll('button, [role=button]')].some((el) => {
-      const t = ((el.getAttribute('aria-label') || '') + ' ' + (el.innerText || '')).trim();
-      return /^pending\\b/i.test(t) || /^pendente\\b/i.test(t) || /\\bpending\\b.+(withdraw|retirar)/i.test(t);
+      !!document.querySelector(
+        'button[aria-label*="Pending" i], button[aria-label*="Pendente" i], a[aria-label*="Pending" i], a[aria-label*="Pendente" i]',
+      );
+    const hasPendingBtn = [...document.querySelectorAll('button, [role=button], a')].some((el) => {
+      const r = el.getBoundingClientRect();
+      if (r.width < 2 || r.height < 2) return false;
+      if (el.closest('aside, .scaffold-layout__aside')) return false;
+      const aria = el.getAttribute('aria-label') || '';
+      const txt = el.innerText || '';
+      return isPendingLabel(aria, txt);
     });
     const labelOf = (el) => {
       const aria = (el.getAttribute('aria-label') || '').replace(/\\s+/g, ' ').trim();

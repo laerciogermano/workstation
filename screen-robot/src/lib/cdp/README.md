@@ -73,5 +73,5 @@ CDP_ID=… npm run linkedin-extract-leads-cdp -- -n 5 --query 'comprador'
 
 - `Page.bringToFront` / `Target.activateTarget` / `osascript activate` (bloqueados no human-cdp)
 - `el.click()` / `dispatchEvent` / `Input.*` solto fora do human-cdp — só `page.click` / `clickAt` / `type` / `fill` / `scroll`
-- **Connect CDP:** se Connect/Conectar já no hero (botão ou `<a>` invite do vanity) → clica direto (sem ⋮). Senão: Mais → `menuitem` Conectar → **Enviar sem nota** (shadow) → Pending. Vanity com acento: `decodeURIComponent` no match. Rollback: só `button` no `hasConnect` + `page.click(selector vanity)` cego.
+- **Connect CDP:** se Connect/Conectar já no hero (botão ou `<a>` invite do vanity) → clica direto (sem ⋮). Senão: Mais → `menuitem` Conectar → **Enviar sem nota** (shadow) → Pending. Vanity com acento: `decodeURIComponent` no match. **Pending** também é `<a aria-label="Pendente; clique para retirar…">` (não só `button`) — senão reabre Mais em loop. Rollback: só `button` no `hasConnect`/`pending` + `page.click(selector vanity)` cego.
 - **Enviar sem nota:** `document.querySelector` não acha (shadow) → `findSkipInvite` percorre `shadowRoot` e `page.clickAt` no centro. Rollback: `querySelector('button[aria-label="Enviar sem nota"]')` cego.

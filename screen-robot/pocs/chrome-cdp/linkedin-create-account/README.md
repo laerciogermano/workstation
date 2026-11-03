@@ -108,6 +108,8 @@ Saída: progresso em **stderr** (`[create-mailbox]`, `[createLinkedin]`, `[PIN]`
 
 **Antes → depois (onboarding):** sequência fixa de Pulares → `finishSignupOnboarding` adaptativo (Pular se houver, senão Concluir/Continuar) até `/feed`. Rollback: voltar calls `clickSignupSkip`/`Continue`/`Finish`.
 
+**Antes → depois (maior de 18 / birthday):** marcava `[data-hcdp]` no texto/`radio` (0×0 + label vazio → `waitFor timeout` / “opção ausente”) → `clickAt` no label do 1º radio + Continuar por coords. Rollback: restaurar clique por seletor/`innerText`.
+
 **Antes → depois (job-seeker):** parava em `/job-seeker-intent` sem botão → clica “Não / Não estou procurando” e segue. Rollback: remover branch `choice` no SNAP/loop.
 
 **Antes → depois (Pular/foto):** `click('[data-hcdp=ob-skip]')` podia dar `waitFor timeout` na foto → `clickAt(x,y)` do SNAP; Pular sempre antes de Concluir/Continuar (modal foto incluso). Rollback: voltar clique por seletor.

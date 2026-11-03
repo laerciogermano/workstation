@@ -30,3 +30,4 @@ data,nome,plataforma,chrome_user_data_dir,cdp_port,start_script,obs
 2026-11-03,Camila Andrade,linkedin,~/chrome-profiles/camila-andrade,9254,human-cdp createCdp camila-andrade,perfil Chrome isolado; fingerprint MacIntel America/Sao_Paulo; LI signup
 2026-11-03,Daniela Hoffmann,linkedin,~/chrome-profiles/daniela-hoffmann,9255,human-cdp createCdp daniela-hoffmann,perfil Chrome isolado; fingerprint MacIntel America/Recife; LI signup
 2026-11-03,Thiago Nascimento,linkedin,~/chrome-profiles/thiago-nascimento,9256,human-cdp createCdp thiago-nascimento,perfil Chrome isolado; fingerprint MacIntel America/Sao_Paulo; LI signup
+2026-11-03,Aline Monteiro,linkedin,~/chrome-profiles/aline-monteiro,9257,human-cdp createCdp aline-monteiro,perfil Chrome isolado; fingerprint Win32 America/Sao_Paulo; LI signup

@@ -100,5 +100,6 @@ tasks/
 | [`6ae9d90ed27d4ff66ba2b066/`](6ae9d90ed27d4ff66ba2b066/README.md) | [Estudo: client remoto (instalador + agent leve CDP via WebSocket)](https://trello.com/c/3Glk2RLz) |
 | [`6ae9dc16dd4a9cb567b8f5cd/`](6ae9dc16dd4a9cb567b8f5cd/README.md) | [Buscar banners BR Supply para capas LinkedIn](https://trello.com/c/YKQ8HAsu) |
 | [`6ae9dd6525adce9bc153a2b1/`](6ae9dd6525adce9bc153a2b1/README.md) | [Escolhidos v2: persona + LinkedIn layout página](https://trello.com/c/aTIPjSjZ) |
+| [`6ae9def02d6e0ab7a0ab0737/`](6ae9def02d6e0ab7a0ab0737/README.md) | [Escolhidos: nova lista com fotos Unsplash diferentes](https://trello.com/c/DV55oGU2) |
 | [`6ae9def6a28b279ac20b6ffc/`](6ae9def6a28b279ac20b6ffc/README.md) | [Enriquecer Sobre e Experiências dos escolhidos](https://trello.com/c/VMn5CsD0) |
 | [`6ae9df3a523bb9ffbc3ab31e/`](6ae9df3a523bb9ffbc3ab31e/README.md) | [Daniela + Aline: banner 03 → BR Supply com logo](https://trello.com/c/r21j4TO0) |

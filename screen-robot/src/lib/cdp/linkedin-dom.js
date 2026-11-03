@@ -225,21 +225,14 @@ export async function dismissA11ySkipMenu(page, steps) {
 
 /**
  * Abre Mais e clica o menuitem Conectar do perfil (human-cdp).
- * Pré-posiciona o cursor perto do menu para o trajeto pós-abertura ser curto
- * (trajeto longo fecha o dropdown antes do press).
+ * 1º clique = três pontos do perfil (sem dismiss a11y/Premium no topo).
+ * Depois aproxima o ponteiro no overlay e clica Conectar.
  */
 export async function clickProfileMenuConnect(page, steps) {
-  await dismissA11ySkipMenu(page, steps);
-
   const more = await findProfileMore(page);
   if (!more) return { ok: false, error: "Mais do perfil não encontrado" };
 
-  // Menu costuma abrir acima/ao lado do Mais — aproxima o ponteiro antes
-  if (typeof page._moveTo === "function") {
-    await page._moveTo(more.cx + 90, more.cy - 140);
-    await sleep(80);
-  }
-
+  // 1º passo: só os ⋮ do perfil — sem ir ao canto superior (Fechar menu pular ≈ Premium)
   await page.clickAt(more.cx, more.cy);
   steps?.push(`more:${more.text}@${Math.round(more.cx)},${Math.round(more.cy)}`);
   await sleep(700);
@@ -251,9 +244,12 @@ export async function clickProfileMenuConnect(page, steps) {
   }
   if (!menuHit) return { ok: false, error: "Conectar no menu não apareceu" };
 
-  // Re-aproxima na coluna do item (ainda dentro do overlay) e clica já perto
+  // Trajeto curto dentro do dropdown (trajeto longo fecha antes do press)
   if (typeof page._moveTo === "function") {
-    await page._moveTo(menuHit.cx, menuHit.cy + Math.sign(more.cy - menuHit.cy) * 24);
+    await page._moveTo(
+      menuHit.cx,
+      menuHit.cy + Math.sign(more.cy - menuHit.cy) * 24,
+    );
     await sleep(50);
   }
 

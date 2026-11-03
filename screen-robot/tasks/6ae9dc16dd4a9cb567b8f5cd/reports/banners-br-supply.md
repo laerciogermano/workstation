@@ -14,10 +14,11 @@
 |---|---|---|---|
 | 01 | `src/assets/banners/br-supply-01-caixas.jpg` | [Cesar Folle](https://www.linkedin.com/in/cesarfolle/) | Marca forte: caixas Br SUPPLY + logo |
 | 02 | `src/assets/banners/br-supply-02-fachada.jpg` | [Gabriela Cabral](https://www.linkedin.com/in/gabriela-cabral-b6ab34137/) | Fachada corporativa com logo |
-| 03 | `src/assets/banners/br-supply-03-logistica.jpg` | [Rodrigo Gallisa](https://www.linkedin.com/in/rodrigo-gallisa-25996a39/) | Tema supply chain genérico (sem logo BR) |
+
+Descartado: `br-supply-03-logistica.jpg` (Rodrigo Gallisa) — supply chain genérico sem logo BR; não atende às exigências de marca.
 
 ## Aplicação
 
-Rotacionar 01/02/03 entre vendedores escolhidos (evitar capa idêntica em massa). Upload: `linkedin-update-banner-cdp.mjs --photo …`.
+Rotacionar 01/02 entre vendedores escolhidos (evitar capa idêntica em massa). Upload: `linkedin-update-banner-cdp.mjs --photo …`.
 
-**Antes → depois:** só `conectmax-banner.jpg` → +3 capas BR Supply. Rollback: remover `br-supply-0*.jpg` e voltar ao default ConectMax.
+**Antes → depois:** só `conectmax-banner.jpg` → +2 capas BR Supply com marca. Rollback: remover `br-supply-0*.jpg` e voltar ao default ConectMax.

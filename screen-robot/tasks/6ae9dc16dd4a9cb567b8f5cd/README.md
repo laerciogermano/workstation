@@ -21,7 +21,7 @@ Coletar 2–3 variações de banner BR Supply (referência de capas reais no Lin
 |---|---|
 | Relatório | [`reports/banners-br-supply.md`](reports/banners-br-supply.md) |
 | Originais (task) | [`banners/`](banners/README.md) |
-| Assets prontos | [`src/assets/banners/br-supply-0{1,2,3}-*.jpg`](../../src/assets/banners/README.md) |
+| Assets prontos | [`src/assets/banners/br-supply-0{1,2}-*.jpg`](../../src/assets/banners/README.md) |
 
 ## Uso
 
@@ -34,6 +34,6 @@ CDP_URL=http://127.0.0.1:PORT node pocs/chrome-cdp/linkedin-update-banner-cdp.mj
 
 ```bash
 rm -rf screen-robot/tasks/6ae9dc16dd4a9cb567b8f5cd
-rm -f screen-robot/src/assets/banners/br-supply-0{1,2,3}-*.jpg
+rm -f screen-robot/src/assets/banners/br-supply-0{1,2}-*.jpg
 trello card:archive --id 6ae9dc16dd4a9cb567b8f5cd
 ```

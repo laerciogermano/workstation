@@ -4,6 +4,7 @@
 |---------|-----|
 | [`conectmax-black.jpg`](conectmax-black.jpg) | Default `--avatar` (logo ConectMax preta, sem “BELO HORIZONTE - MG”) |
 | [`thispersondoesnotexist/`](thispersondoesnotexist/) | 10 faces sintéticas (`person-YYYYMMDD-NN.jpg`) de [thispersondoesnotexist.com](https://thispersondoesnotexist.com/) — pool de avatar LI |
+| [`fontes-avatar.md`](fontes-avatar.md) | Curadoria de sites (TPDNE, Open Pravatar, Unsplash, headshot IA…) para pesquisar depois |
 
 **Antes → depois (TPDNE):** sem pool local → pasta `thispersondoesnotexist/` com 10 JPGs únicos. Rollback: `rm -rf src/assets/avatars/thispersondoesnotexist`.
 

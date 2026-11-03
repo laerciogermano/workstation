@@ -30,6 +30,7 @@ Script novo, passo a passo. **Agora só o passo 1:** mailbox Mailcow.
 | [`upload-profile-photo.mjs`](upload-profile-photo.mjs) | `uploadProfilePhoto({ id, photo })` — `/in/me` → Carregar foto → `DOM.setFileInputFiles` → Salvar |
 | [`upload-profile-banner.mjs`](upload-profile-banner.mjs) | `uploadProfileBanner({ id, banner })` — `/in/me` → imagem de fundo/capa → Carregar → Salvar |
 | [`upload-profile-about.mjs`](upload-profile-about.mjs) | `uploadProfileAbout({ id, about })` — `/in/me` → SPA `/edit/forms/summary` → insertText → Salvar |
+| [`upload-profile-experience.mjs`](upload-profile-experience.mjs) | `uploadProfileExperience({ id, experiences[] })` — SPA `/edit/forms/position` → cargo/empresa/datas/desc → Salvar |
 
 ```bash
 cd /Users/laerciogermano/Documents/works/screen-robot/pocs/chrome-cdp/linkedin-create-account
@@ -57,6 +58,10 @@ node upload-profile-banner.mjs --id daniela-hoffmann \
 # Sobre (escolhidos-v2.1):
 node upload-profile-about.mjs --id daniela-hoffmann \
   --about-file ./about-daniela-hoffmann.txt
+
+# Experiências (JSON; atual pode já existir do signup → skip):
+node upload-profile-experience.mjs --id daniela-hoffmann \
+  --file ./experience-daniela-hoffmann.json
 ```
 
 **Antes → depois (foto):** sem passo de avatar no create-account → `upload-profile-photo.mjs` (cliques human-cdp + `setFileInputFiles`). Foto Daniela = escolhidos-v2.1 (`6ae9def6a28b279ac20b6ffc`, Vitaly Gariev), **não** a lista Unsplash nova (`6ae9def02d6e0ab7a0ab0737`). Rollback: remover o script; editar/excluir foto no LinkedIn.
@@ -64,6 +69,8 @@ node upload-profile-about.mjs --id daniela-hoffmann \
 **Antes → depois (banner):** sem passo de capa → `upload-profile-banner.mjs`. Daniela: `br-supply-01-caixas.jpg` (logo BR; card prioriza 01/02, não o 03). Rollback: remover o script; editar/excluir capa no LinkedIn.
 
 **Antes → depois (about):** só `linkedin-setup-about-cdp.mjs` (CDP cru) → `upload-profile-about.mjs` (human-cdp + `--id` / `--about-file`). Clique SPA no `/edit/forms/summary` (não `Page.navigate`). Rollback: remover o script; editar Sobre no LI.
+
+**Antes → depois (experiência):** só `linkedin-setup-job-cdp.mjs` (1 cargo) → `upload-profile-experience.mjs` (lote JSON: cargo/empresa/datas/descrição; SPA `/edit/forms/position`). Rollback: remover o script; apagar experiências no LI.
 
 Saída: progresso em **stderr** (`[create-mailbox]`, `[createLinkedin]`, `[PIN]`); JSON final em **stdout** `{ email, cdp, csv, linkedin }`.
 

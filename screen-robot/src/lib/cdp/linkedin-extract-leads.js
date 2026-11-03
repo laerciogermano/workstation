@@ -48,10 +48,10 @@ function apiBase() {
 
 /**
  * Cards da People search — tudo que o HTML do item expõe (sem abrir /in/).
- * Usa `awaitPromise` no CDP (fetch da foto no browser).
+ * Avatar: `photoBox` no DOM; Node captura JPEG via CDP → `photoBase64` (fetch/canvas CORS falham).
  */
 async function scrapeSearchCards(page) {
-  const expression = `(async () => {
+  const expression = `(() => {
     const normUrl = (href) => {
       try {
         const u = new URL(href, location.origin);
@@ -94,23 +94,34 @@ async function scrapeSearchCards(page) {
       byUrl.set(profileUrl, prev);
     }
 
-    const toDataUrl = async (src) => {
-      if (!src || src.startsWith('data:')) return src || null;
-      try {
-        const res = await fetch(src, { credentials: 'include' });
-        if (!res.ok) return null;
-        const buf = await res.arrayBuffer();
-        const bytes = new Uint8Array(buf);
-        let bin = '';
-        const chunk = 0x8000;
-        for (let i = 0; i < bytes.length; i += chunk) {
-          bin += String.fromCharCode(...bytes.subarray(i, i + chunk));
+    // fetch/canvas da CDN LinkedIn falham (CORS / canvas tainted).
+    // Devolve photoBox p/ o Node capturar via Page.captureScreenshot.
+    const findPhotoImg = (startEl, name, profileUrl) => {
+      const firstName = clean(name).split(/\\s+/)[0]?.toLowerCase() || '';
+      let el = startEl;
+      let best = null;
+      for (let depth = 0; depth < 12 && el; depth++) {
+        const photos = [...(el.querySelectorAll?.('img') || [])].filter((i) => {
+          const src = i.currentSrc || i.src || '';
+          return (
+            /profile-displayphoto|media\\.licdn\\.com/i.test(src) &&
+            i.getClientRects().length
+          );
+        });
+        const links = [...(el.querySelectorAll?.('a[href*=\"/in/\"]') || [])];
+        const hasSelf = links.some((a) => normUrl(a.href) === profileUrl);
+        if (photos.length === 1 && hasSelf) {
+          return photos[0];
         }
-        const mime = res.headers.get('content-type') || 'image/jpeg';
-        return 'data:' + mime + ';base64,' + btoa(bin);
-      } catch {
-        return null;
+        for (const img of photos) {
+          const alt = clean(img.alt).toLowerCase();
+          const score =
+            firstName && alt.includes(firstName) ? 100 - depth : 10 - depth;
+          if (!best || score > best.score) best = { img, score };
+        }
+        el = el.parentElement;
       }
+      return best?.img || null;
     };
 
     const out = [];
@@ -202,16 +213,30 @@ async function scrapeSearchCards(page) {
       }
 
       const img =
-        [...(card?.querySelectorAll('img') || [])].find((i) => {
-          const src = i.currentSrc || i.src || '';
-          const alt = clean(i.alt);
-          return (
-            /profile-displayphoto|media\\.licdn\\.com/i.test(src) ||
-            (alt && name && alt.toLowerCase().includes(name.split(' ')[0].toLowerCase()))
-          );
-        }) || card?.querySelector('img');
-      const photoUrl = img ? (img.currentSrc || img.src || null) : null;
-      const photoBase64 = photoUrl ? await toDataUrl(photoUrl) : null;
+        findPhotoImg(card || pack.el, name, profileUrl) ||
+        findPhotoImg(pack.el, name, profileUrl);
+      const photoUrl = img ? img.currentSrc || img.src || null : null;
+      let photoBox = null;
+      if (img) {
+        try {
+          img.scrollIntoView({ block: "nearest", inline: "nearest" });
+        } catch {
+          /* ignore */
+        }
+        const r = img.getBoundingClientRect();
+        if (r.width >= 8 && r.height >= 8) {
+          photoBox = {
+            x: Math.max(0, r.x),
+            y: Math.max(0, r.y),
+            width: Math.min(r.width, Math.max(0, innerWidth - Math.max(0, r.x))),
+            height: Math.min(
+              r.height,
+              Math.max(0, innerHeight - Math.max(0, r.y)),
+            ),
+          };
+          if (photoBox.width < 8 || photoBox.height < 8) photoBox = null;
+        }
+      }
 
       const b = (card || pack.el).getBoundingClientRect();
       out.push({
@@ -226,7 +251,8 @@ async function scrapeSearchCards(page) {
         mutualConnections,
         summary: cardText.slice(0, 500) || null,
         photoUrl,
-        photoBase64,
+        photoBox,
+        photoBase64: null,
         profileUrl,
         x: b.x + b.width / 2,
         y: b.y + b.height / 2,
@@ -236,14 +262,137 @@ async function scrapeSearchCards(page) {
     return { memberLimit: false, cards: out };
   })()`;
 
-  const listed = await page.evaluate(expression, { awaitPromise: true });
+  const listed = await page.evaluate(expression);
   if (!listed || typeof listed !== "object") {
     return { memberLimit: false, cards: [] };
   }
   if (!Array.isArray(listed.cards)) {
     return { memberLimit: Boolean(listed.memberLimit), cards: [] };
   }
+  // CORS bloqueia fetch/canvas da CDN — clip CDP → data URL JPEG em photoBase64.
+  // Sempre re-resolve o box na hora (coords do scrape ficam stale após scroll).
+  for (const card of listed.cards) {
+    let box = await resolveAvatarBox(page, card.profileUrl, card.name);
+    if (!box) {
+      await sleep(200);
+      box = await resolveAvatarBox(page, card.profileUrl, card.name);
+    }
+    card.photoBox = box || null;
+    if (box?.photoUrl) card.photoUrl = box.photoUrl;
+    if (box) await sleep(150);
+    card.photoBase64 = await captureAvatarBase64(page, box);
+  }
   return listed;
+}
+
+/**
+ * Re-localiza o avatar no DOM (scrollIntoView center) e devolve box CSS atual.
+ * @param {object} page
+ * @param {string} profileUrl
+ * @param {string} [name]
+ */
+async function resolveAvatarBox(page, profileUrl, name) {
+  if (!page?.evaluate || !profileUrl) return null;
+  try {
+    return await page.evaluate(`(() => {
+      const wantSlug = (() => {
+        try {
+          const m = new URL(${JSON.stringify(String(profileUrl))}).pathname.match(/\\/in\\/([^/?#]+)/i);
+          return m ? decodeURIComponent(m[1]).replace(/\\/+$/, '').toLowerCase() : '';
+        } catch { return ''; }
+      })();
+      const firstName = ${JSON.stringify(String(name || "").split(/\\s+/)[0] || "")}.toLowerCase();
+      if (!wantSlug) return null;
+      const slugOf = (href) => {
+        try {
+          const m = new URL(href, location.origin).pathname.match(/\\/in\\/([^/?#]+)/i);
+          return m ? decodeURIComponent(m[1]).replace(/\\/+$/, '').toLowerCase() : null;
+        } catch { return null; }
+      };
+      const anchors = [...document.querySelectorAll('a[href*="/in/"]')].filter(
+        (a) => slugOf(a.href) === wantSlug && a.getClientRects().length,
+      );
+      if (!anchors.length) return null;
+      let best = null;
+      for (const a of anchors) {
+        let el = a;
+        for (let depth = 0; depth < 12 && el; depth++) {
+          const photos = [...(el.querySelectorAll?.('img') || [])].filter((i) => {
+            const src = i.currentSrc || i.src || '';
+            return /profile-displayphoto|media\\.licdn\\.com/i.test(src) && i.getClientRects().length;
+          });
+          const hasSelf = [...(el.querySelectorAll?.('a[href*="/in/"]') || [])].some(
+            (x) => slugOf(x.href) === wantSlug,
+          );
+          let img = null;
+          if (photos.length === 1 && hasSelf) img = photos[0];
+          else if (firstName) {
+            img = photos.find((i) => (i.alt || '').toLowerCase().includes(firstName)) || null;
+          } else if (photos.length === 1) {
+            img = photos[0];
+          }
+          if (img) {
+            try { img.scrollIntoView({ block: 'center', inline: 'nearest' }); } catch {}
+            const r = img.getBoundingClientRect();
+            // Exige avatar 100% na viewport — senão o clip CDP (y<0→0) pega outro pedaço da tela.
+            if (
+              r.width >= 8 &&
+              r.height >= 8 &&
+              r.x >= 0 &&
+              r.y >= 0 &&
+              r.right <= innerWidth + 1 &&
+              r.bottom <= innerHeight + 1
+            ) {
+              best = {
+                x: r.x,
+                y: r.y,
+                width: r.width,
+                height: r.height,
+                photoUrl: img.currentSrc || img.src || null,
+              };
+              if (photos.length === 1 && hasSelf) return best;
+            }
+          }
+          el = el.parentElement;
+        }
+      }
+      return best && best.width >= 8 && best.height >= 8 ? best : null;
+    })()`);
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Screenshot do retângulo do avatar (CSS px) → data URL JPEG (`photoBase64`).
+ * @param {object} page
+ * @param {{ x: number, y: number, width: number, height: number }|null|undefined} box
+ */
+async function captureAvatarBase64(page, box) {
+  if (!page?.send || !box) return null;
+  const x = Number(box.x);
+  const y = Number(box.y);
+  const width = Number(box.width);
+  const height = Number(box.height);
+  if (
+    ![x, y, width, height].every((n) => Number.isFinite(n)) ||
+    width < 8 ||
+    height < 8
+  ) {
+    return null;
+  }
+  try {
+    const res = await page.send("Page.captureScreenshot", {
+      format: "jpeg",
+      quality: 85,
+      fromSurface: true,
+      clip: { x, y, width, height, scale: 1 },
+    });
+    if (!res?.data) return null;
+    return `data:image/jpeg;base64,${res.data}`;
+  } catch {
+    return null;
+  }
 }
 
 function inviteStatusFromAction(action) {

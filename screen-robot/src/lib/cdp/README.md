@@ -62,7 +62,8 @@ CDP_ID=… npm run linkedin-extract-leads-cdp -- -n 5 --query 'comprador'
 
 - Só AVD (`serial` + uiautomator/OCR) → libs CDP com o mesmo contrato para workers web.
 - Scripts ad-hoc em `pocs/chrome-cdp/linkedin-*-cdp.mjs` (signup/setup) continuam; **ações de worker** passam por aqui.
-- **extract leads CDP:** abria cada `/in/` após o card → **só lista**: parse do HTML/texto do card (name, title, city, current/past, level, action, mutual, photoUrl/photoBase64, profileUrl); sem `goto` no perfil. **Paginação:** ~10/página (`page=1`, `page=2`, …) quando `n > 10`. `POST /profiles` manda `agentId`+`profileUrl` de cara (API reserva conexão). Rollback: reintroduza `scrapeProfileHeader` + `page.goto(url)` / remova loop `searchPage` / sync separada.
+- **extract leads CDP:** abria cada `/in/` após o card → **só lista**: parse do HTML/texto do card (name, title, city, current/past, level, action, mutual, photoUrl/photoBase64, profileUrl); sem `goto` no perfil. **Paginação:** ~10/página (`page=1`, `page=2`, …) quando `n > 10`. `POST /profiles` manda `agentId`+`profileUrl` de cara (API reserva conexão).
+- **avatar `photoBase64`:** `fetch`/canvas da CDN LinkedIn falham (CORS / canvas tainted) → clip `Page.captureScreenshot` no retângulo do `<img>` → `data:image/jpeg;base64,…` no POST. Rollback: volte `toDataUrl(fetch)` no browser (vai voltar a gravar `null`).
 
 **Rollback:** use as libs AVD / `npm run linkedin-connect-api`; remova `src/lib/cdp/` e scripts `*-cdp`.
 

@@ -41,7 +41,7 @@ Mesmos jobs; handlers em `handlers/cdp/` (`CDP_ID` / `CDP_URL` no lugar de `SERI
 
 ```bash
 cd vendas/worker
-./scripts/start-worker-daniela-cdp.sh   # CDP daniela-hoffmann :9255
+./scripts/start-worker-daniela-cdp.sh   # CDP daniela-hoffmann :9255 (extrair_leads + conectar)
 
 # ou:
 WORKER_RUNTIME=cdp CDP_ID=daniela-hoffmann \
@@ -49,7 +49,8 @@ WORKER_RUNTIME=cdp CDP_ID=daniela-hoffmann \
   npm start
 ```
 
-Allowlist de procedimentos no agente (ex. só `["extrair_leads"]`) continua valendo via `PATCH /agentes/:id`.
+Allowlist via `PATCH /agentes/:id` `{ "procedimentos": ["extrair_leads","conectar",…] }`.  
+Daniela: `extrair_leads` + `conectar`. **Antes → depois:** só extract → + conectar. Rollback: `procedimentos: ["extrair_leads"]`.
 
 ### Host — N slots, troca on-empty
 

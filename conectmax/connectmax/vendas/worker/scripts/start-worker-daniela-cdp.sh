@@ -1,5 +1,5 @@
 #!/bin/zsh
-# Worker LinkedIn via Chrome CDP — Daniela Hoffmann (só extrair_leads no agente).
+# Worker LinkedIn via Chrome CDP — Daniela Hoffmann (extrair_leads + conectar).
 cd /Users/laerciogermano/Documents/works/conectmax/connectmax/vendas/worker
 mkdir -p logs
 echo $$ > logs/worker-daniela-cdp.pid

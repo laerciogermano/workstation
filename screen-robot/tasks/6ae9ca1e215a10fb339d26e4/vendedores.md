@@ -4,7 +4,8 @@ Fonte personas: [`../6ae9c89d7f2951914a023746/personas.csv`](../6ae9c89d7f295191
 CSV acionável: [`vendedores.csv`](vendedores.csv)  
 Playbook PDF (estudo + checklist config LinkedIn + fotos): [`reports/Vendedores-avatares.pdf`](reports/Vendedores-avatares.pdf) · avatares: [`avatars/`](avatars/)
 
-**12 vendedores** · **3 personas** · empresa default `ConectMax` · fotos pool `thispersondoesnotexist`
+**12 vendedores** · **3 personas** · empresa default `ConectMax` · fotos pool `thispersondoesnotexist`  
+Experiência: colunas `experiencia_anos` / `experiencia_detalhe` (piso persona: indiretos 12+, KAM 15+, inside 4–7).
 
 ## Por persona
 

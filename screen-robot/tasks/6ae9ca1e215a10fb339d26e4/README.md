@@ -13,9 +13,13 @@ Criar lista de vendedores com traits das personas que mais vendem no nosso conte
 
 | Artefato | Caminho |
 |---|---|
-| Lista CSV (12 vendedores) | [`vendedores.csv`](vendedores.csv) |
+| Lista CSV (12 vendedores + `avatar_file`) | [`vendedores.csv`](vendedores.csv) |
 | Resumo MD | [`vendedores.md`](vendedores.md) |
+| Relatório PDF (foto + dados) | [`reports/Vendedores-avatares.pdf`](reports/Vendedores-avatares.pdf) |
+| Avatares atribuídos | [`avatars/`](avatars/) |
 | Personas (dep.) | [`../6ae9c89d7f2951914a023746/personas.csv`](../6ae9c89d7f2951914a023746/personas.csv) |
+
+**Antes → depois:** só CSV/MD → PDF no card Trello com headshot sintético por vendedor (`avatar_file`). Rollback: remover `reports/Vendedores-avatares.pdf`, pasta `avatars/` e coluna `avatar_file` do CSV.
 
 ## Dependência
 

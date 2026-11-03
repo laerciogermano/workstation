@@ -1,5 +1,11 @@
 const statusEl = document.getElementById('status');
+const fileCaptureEl = document.getElementById('qr-capture');
+const filePickEl = document.getElementById('qr-file');
+const btnFotoEl = document.getElementById('btn-tirar-foto');
+const btnGaleriaEl = document.getElementById('btn-escolher-imagem');
+
 let busy = false;
+let cameraRunning = false;
 
 function setStatus(text, kind) {
   statusEl.textContent = text;
@@ -50,13 +56,65 @@ async function onScanSuccess(decodedText) {
 
 const scanner = new Html5Qrcode('reader');
 
-scanner
-  .start(
-    { facingMode: 'environment' },
-    { fps: 10, qrbox: { width: 250, height: 250 } },
-    onScanSuccess,
-  )
-  .catch((err) => {
+async function startCamera() {
+  try {
+    await scanner.start(
+      { facingMode: 'environment' },
+      { fps: 10, qrbox: { width: 250, height: 250 } },
+      onScanSuccess,
+    );
+    cameraRunning = true;
+  } catch (err) {
+    cameraRunning = false;
     console.error(err);
-    setStatus('Câmera indisponível. Use HTTPS.', 'err');
-  });
+    setStatus('Câmera indisponível. Use HTTPS ou tire uma foto.', 'err');
+  }
+}
+
+async function stopCamera() {
+  if (!cameraRunning) return;
+  try {
+    await scanner.stop();
+  } catch (err) {
+    console.warn(err);
+  }
+  cameraRunning = false;
+  try {
+    await scanner.clear();
+  } catch {
+    /* ignore */
+  }
+}
+
+async function decodeFromFile(file) {
+  if (!file || busy) return;
+  busy = true;
+  setStatus('Lendo QR da imagem…');
+  try {
+    await stopCamera();
+    const text = await scanner.scanFile(file, true);
+    busy = false;
+    await onScanSuccess(text);
+  } catch (err) {
+    console.error(err);
+    setStatus('QR não encontrado na imagem. Tente outra foto.', 'err');
+    busy = false;
+    await startCamera();
+  } finally {
+    if (fileCaptureEl) fileCaptureEl.value = '';
+    if (filePickEl) filePickEl.value = '';
+  }
+}
+
+btnFotoEl?.addEventListener('click', () => fileCaptureEl?.click());
+btnGaleriaEl?.addEventListener('click', () => filePickEl?.click());
+fileCaptureEl?.addEventListener('change', () => {
+  const file = fileCaptureEl.files?.[0];
+  if (file) decodeFromFile(file);
+});
+filePickEl?.addEventListener('change', () => {
+  const file = filePickEl.files?.[0];
+  if (file) decodeFromFile(file);
+});
+
+startCamera();

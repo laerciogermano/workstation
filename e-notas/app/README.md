@@ -41,7 +41,7 @@ Credenciais não vão no git (`.env` ignorado).
 |------|--------|
 | `/` | Listagem: Estabelecimentos / **Notas** (detalhe → itens + EAN) / Itens; FAB → adicionar nota; rodapé → Apresentação |
 | `/apresentacao.html` | Deck produto (o quê / como / mercado / marca) — espelho web de [`../marca/apresentacao-notinhas-v1.html`](../marca/apresentacao-notinhas-v1.html) |
-| `/scan.html` | Scan do QR da nota |
+| `/scan.html` | Scan do QR da nota (câmera ao vivo + tirar foto / escolher imagem) |
 | `/lista.html` | Redirect → `/` |
 
 ## API

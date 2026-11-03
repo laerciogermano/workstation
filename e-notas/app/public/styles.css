@@ -732,6 +732,32 @@ td.mono {
   border-radius: var(--nt-radius);
 }
 
+.scan-alt {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0.85rem 0 0;
+}
+
+.scan-alt .btn {
+  justify-self: auto;
+  flex: 1 1 auto;
+  min-width: 9.5rem;
+}
+
+.btn-ghost {
+  background: var(--nt-white);
+  color: var(--nt-blue);
+  border-color: var(--nt-blue);
+  box-shadow: none;
+}
+
+.btn-ghost:hover {
+  background: rgba(0, 105, 180, 0.08);
+  color: var(--nt-blue-deep);
+  border-color: var(--nt-blue-deep);
+}
+
 .status {
   margin: 0.75rem 0 0;
   font-size: 0.9rem;

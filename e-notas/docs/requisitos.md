@@ -21,6 +21,15 @@ App: [`../app/README.md`](../app/README.md).
 - Existe um front com **uma única tela** que abre a câmera para escanear o QR Code da nota.
 - A URL lida do QR é impressa no **console** do browser.
 - O front é acessível via **web na rede local** (não só localhost do desktop).
+- *Complementado por REQ-030 (foto / imagem além do scan ao vivo).*
+
+## REQ-030 — Scan do QR também por foto (2026-11-03)
+
+- Em `scan.html`, além da câmera ao vivo: ações **Tirar foto** (`capture=environment`) e **Escolher imagem** (galeria / arquivo).
+- A imagem é decodificada (Html5Qrcode `scanFile`) e segue o mesmo pipeline (`POST /api/nota`).
+- Se não houver QR legível: feedback de erro e o scan ao vivo volta.
+- Antes: só câmera contínua. Depois: ao vivo **ou** foto/imagem.
+- Rollback: remover `.scan-alt` / inputs de arquivo em `scan.html` + lógica em `app.js`; CSS `.scan-alt` / `.btn-ghost`.
 
 ## REQ-002 — HTTPS obrigatório (2026-11-01)
 

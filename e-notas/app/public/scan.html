@@ -60,6 +60,19 @@
     <main class="screen">
       <a class="back-link" href="./">← Voltar</a>
       <div id="reader"></div>
+      <div class="scan-alt" role="group" aria-label="Alternativas ao scan ao vivo">
+        <button type="button" class="btn" id="btn-tirar-foto">Tirar foto</button>
+        <button type="button" class="btn btn-ghost" id="btn-escolher-imagem">Escolher imagem</button>
+        <input
+          id="qr-capture"
+          type="file"
+          accept="image/*"
+          capture="environment"
+          hidden
+          aria-hidden="true"
+        />
+        <input id="qr-file" type="file" accept="image/*" hidden aria-hidden="true" />
+      </div>
       <p id="status" class="status" aria-live="polite"></p>
     </main>
     <script src="app.js"></script>

@@ -15,7 +15,7 @@ export async function clickSignupSubmit(opts = {}) {
     return { dryRun: true, id, clicked: false };
   }
 
-  const s = await connectCdp(id, { debug: true });
+  const s = await connectCdp(id);
   try {
     const hit = await s.evaluate(`(() => {
       const re = /aceite\\s*e\\s*cadastre|aceitar\\s*e\\s*cadastrar|join\\s*now|agree\\s*&\\s*join|continuar|continue/i;

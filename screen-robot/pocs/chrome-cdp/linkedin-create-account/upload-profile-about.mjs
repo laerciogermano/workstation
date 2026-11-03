@@ -170,7 +170,7 @@ export async function uploadProfileAbout(opts = {}) {
 
   log(`startCdp ${id} aboutLen=${about.length}`);
   await startCdp(id);
-  const s = await connectCdp(id, { debug: true });
+  const s = await connectCdp(id);
   try {
     await s.send('Page.enable');
 

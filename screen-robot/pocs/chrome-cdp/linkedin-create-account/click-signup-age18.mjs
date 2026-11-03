@@ -16,7 +16,7 @@ export async function clickSignupAge18(opts = {}) {
     return { dryRun: true, id, clicked: false };
   }
 
-  const s = await connectCdp(id, { debug: true });
+  const s = await connectCdp(id);
   try {
     const target = await s.evaluate(`(() => {
       const body = (document.body?.innerText || '').replace(/\\s+/g, ' ');

@@ -63,7 +63,7 @@ export async function waitSignupAfterName(opts = {}) {
     return { dryRun: true, id, waited: false, security: false };
   }
 
-  const s = await connectCdp(id, { debug: true });
+  const s = await connectCdp(id);
   try {
     // transição pós-Continuar
     await sleep(2000);

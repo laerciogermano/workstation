@@ -43,7 +43,7 @@ export async function openLinkedInSignup(opts = {}) {
   const st = await startCdp(id, { url });
 
   // se Chrome já estava up, startCdp pode não navegar — força signup
-  const s = await connectCdp(id, { debug: true });
+  const s = await connectCdp(id);
   try {
     const href = String((await s.evaluate(`location.href`)) || '');
     if (!/linkedin\.com\/signup/i.test(href)) {

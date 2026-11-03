@@ -17,7 +17,7 @@ export async function fillSignupCompany(opts = {}) {
     return { dryRun: true, id, company, filled: false };
   }
 
-  const s = await connectCdp(id, { debug: true });
+  const s = await connectCdp(id);
   try {
     const marked = await s.evaluate(`(() => {
       const re = /empresa|company|empregador|organiza/i;

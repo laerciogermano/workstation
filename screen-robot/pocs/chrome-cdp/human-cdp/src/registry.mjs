@@ -501,21 +501,18 @@ export async function connectCdp(id, connectOpts = {}) {
   }
   if (!st.cdpUrl) throw new Error(`sem cdpUrl para ${row.id}`);
 
-  // debug:true → grava na meta e reinicia keeper p/ overlay em todas as abas
-  const wantDebug =
-    connectOpts.debug != null
-      ? !!connectOpts.debug
-      : !!readMeta(row.id)?.debug;
-  if (connectOpts.debug != null && readMeta(row.id)) {
+  // Overlay só com `debug: true` explícito. Omitido ou false → false (não herda meta).
+  const wantDebug = connectOpts.debug === true;
+  if (readMeta(row.id)) {
     try {
-      updateCdp(row.id, { debug: !!connectOpts.debug });
+      // Persiste o pedido desta conexão; false limpa meta antiga e reinicia keeper.
+      updateCdp(row.id, { debug: wantDebug });
     } catch {
-      /* meta ausente */
+      ensureFingerprintKeeper(row.id, { restart: wantDebug });
     }
+  } else {
+    ensureFingerprintKeeper(row.id, { restart: wantDebug });
   }
-  ensureFingerprintKeeper(row.id, {
-    restart: connectOpts.debug === true,
-  });
 
   const session = await connect({
     cdpUrl: st.cdpUrl,
@@ -534,6 +531,7 @@ export async function connectCdp(id, connectOpts = {}) {
   if (fp) session._fingerprint = fp;
   // fingerprint + spoof de câmera (OBS → FaceTime); spoof roda mesmo sem fp
   await applyFingerprint(session, fp || null);
+  // Sem wantDebug: zero script/overlay de debug (ToS LinkedIn — não alterar UI)
   if (wantDebug) {
     await session.enableDebugOverlay();
   }

@@ -62,7 +62,7 @@ CDP_ID=… npm run linkedin-extract-leads-cdp -- -n 5 --query 'comprador'
 
 ## Antes → depois
 
-- **Debug overlay:** `resolveLinkedInPage` / workers podiam herdar `opts.debug` ou `meta.debug` → painel human-cdp na página LinkedIn. Agora **sempre `debug: false`** no `connect`/`connectCdp` (ignora opts; limpa `meta.debug`). Signup/POC em `pocs/chrome-cdp/` podem continuar com `debug: true`. Rollback: volte `debug: opts.debug` em [`session.js`](session.js).
+- **Debug overlay:** workers e `human-cdp` **só** injetam overlay com `debug: true` explícito; omitido/`false` → sem script de UI (ToS LinkedIn: não alterar aparência). `connectCdp` não herda `meta.debug`. Rollback: herdar meta / `debug: opts.debug` em [`session.js`](session.js) + `registry.mjs`.
 - **Lifecycle Chrome:** `withLinkedInPage` só fechava o WebSocket → Chrome ficava logado na tela. Agora **provisiona** (`connectCdp`/`startCdp` se down) e **mata** (`stopCdp`) no `finally`. Escape: `keepBrowser: true` / `closeBrowser: false` / `CDP_KEEP_BROWSER=1`. Nested (`page` já aberta, ex. unread→chat) não mata. Rollback: `keepBrowser: true` ou reverta o `finally` com `stopCdp` em [`session.js`](session.js).
 - Só AVD (`serial` + uiautomator/OCR) → libs CDP com o mesmo contrato para workers web.
 - Scripts ad-hoc em `pocs/chrome-cdp/linkedin-*-cdp.mjs` (signup/setup) continuam; **ações de worker** passam por aqui.

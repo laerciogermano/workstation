@@ -63,7 +63,7 @@ const page = await connect({
 // connectCdp('germano', { debug: true }) — mesma flag
 ```
 
-No bot-lab: o `feedback-rail` vira overlay `position: fixed` ao lado do cursor (`pointer-events: none`). Fora do lab: badge mínimo `human-cdp debug · fora do bot-lab`. Default `debug: false` → zero overlay. Rollback: omitir a flag / `debug: false`.
+No bot-lab: o `feedback-rail` vira overlay `position: fixed` ao lado do cursor (`pointer-events: none`). Fora do lab: badge mínimo `human-cdp debug · fora do bot-lab`. **Só injeta com `debug: true` explícito** — omitido/`false` → `meta.debug=false`, zero script de overlay (não herda meta antiga). Workers LinkedIn nunca passam `true`. Rollback: `connectCdp(id, { debug: true })`.
 
 ```bash
 CDP_URL=http://127.0.0.1:9230 npm run test:debug
@@ -188,7 +188,7 @@ Scripts CDP crus (`el.click`, `dispatchMouseEvent` sem move) → importam `human
 
 **Antes → depois (debug):** fora do bot-lab mostrava “fora do bot-lab” sem veredito → painel com detector portátil (trajetória/cliques/teclas/foco) e veredito live humano/robô/inconclusivo. No lab, usa o trilho nativo. Rollback: `debug: false`.
 
-**Antes → depois (debug persistente):** overlay só na aba do `connect` → `Page.addScriptToEvaluateOnNewDocument` + reapply em nav; `connectCdp({ debug: true })` → `meta.debug` + keeper injeta em todas as abas (keeper sobe mesmo sem fingerprint). Rollback: `updateCdp(id, { debug: false })` + `ensureFingerprintKeeper(id, { restart: true })`; sessão sem `addScript`. `updateCdp({ debug })` também reinicia o keeper (como fingerprint). Scripts `addScript` já registrados no processo Chrome só somem com **restart do Chrome** (`stopCdp`/`startCdp`).
+**Antes → depois (debug persistente):** overlay herdava `meta.debug` se omitisse a flag → agora **só** `debug: true` explícito; omitido/`false` grava `meta.debug=false` e **não** chama `enableDebugOverlay` / `addScript`. Keeper só injeta overlay se `meta.debug`. Scripts já no processo Chrome somem com restart (`stopCdp`/`startCdp`). Rollback: herdar `meta.debug` no `wantDebug` de `connectCdp`.
 
 **Antes → depois (trajetória):** pontas com jitter + passos longos + press deslocado do último `mouseMoved` → teleportes no bot-lab. Agora: âncoras exatas, densify ≤36px, step ≥16ms, press na posição atual, cursor persistido por `cdpUrl`. Rollback: `trajectoryPoints`/`_moveTo`/`click` anteriores.
 

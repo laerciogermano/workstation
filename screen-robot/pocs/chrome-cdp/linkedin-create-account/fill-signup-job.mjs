@@ -17,7 +17,7 @@ export async function fillSignupJob(opts = {}) {
     return { dryRun: true, id, job, filled: false };
   }
 
-  const s = await connectCdp(id, { debug: true });
+  const s = await connectCdp(id);
   try {
     const marked = await s.evaluate(`(() => {
       const re = /cargo|t[ií]tulo|title|job|fun[cç][aã]o/i;

@@ -16,7 +16,7 @@ export async function clickSignupSkip(opts = {}) {
     return { dryRun: true, id, clicked: false };
   }
 
-  const s = await connectCdp(id, { debug: true });
+  const s = await connectCdp(id);
   try {
     const clicks = [];
     let after = null;

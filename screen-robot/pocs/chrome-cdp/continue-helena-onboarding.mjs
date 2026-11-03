@@ -9,7 +9,6 @@ const COMPANY = 'ConectMax';
 
 const s = await connectCdp('helena-duarte', {
   urlIncludes: 'linkedin.com',
-  debug: true,
 });
 
 async function snap() {

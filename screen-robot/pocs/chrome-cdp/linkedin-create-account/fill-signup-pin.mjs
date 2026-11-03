@@ -17,7 +17,7 @@ export async function fillSignupPin(opts = {}) {
     return { dryRun: true, id, code, filled: false };
   }
 
-  const s = await connectCdp(id, { debug: true });
+  const s = await connectCdp(id);
   try {
     const marked = await s.evaluate(`(() => {
       const re = /c[oó]digo|code|pin|d[ií]gito|verifica/i;

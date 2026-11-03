@@ -17,7 +17,7 @@ export async function fillSignupPassword(opts = {}) {
     return { dryRun: true, id, filled: false };
   }
 
-  const s = await connectCdp(id, { debug: true });
+  const s = await connectCdp(id);
   try {
     const marked = await s.evaluate(`(() => {
       const el =

@@ -35,7 +35,7 @@ export async function fillSignupEmail(opts = {}) {
   }
 
   const timeoutMs = Number(opts.timeoutMs) > 0 ? Number(opts.timeoutMs) : 60_000;
-  const s = await connectCdp(id, { debug: true });
+  const s = await connectCdp(id);
   try {
     const t0 = Date.now();
     let marked = null;

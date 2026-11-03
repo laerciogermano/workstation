@@ -117,7 +117,7 @@ export async function finishSignupOnboarding(opts = {}) {
     return { dryRun: true, id, steps: [] };
   }
 
-  const s = await connectCdp(id, { debug: true });
+  const s = await connectCdp(id);
   const steps = [];
   try {
     for (let i = 0; i < maxSteps; i++) {

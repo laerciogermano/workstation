@@ -15,7 +15,7 @@ export async function clickSignupFinish(opts = {}) {
     return { dryRun: true, id, clicked: false };
   }
 
-  const s = await connectCdp(id, { debug: true });
+  const s = await connectCdp(id);
   try {
     const hit = await s.evaluate(`(() => {
       const re = /^concluir$|^done$|^finish$|^fechar$|^got it$|^ok$/i;

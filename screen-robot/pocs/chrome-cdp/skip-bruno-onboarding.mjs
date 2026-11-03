@@ -5,7 +5,6 @@ import { sleep } from './human-cdp/src/human.mjs';
 
 const s = await connectCdp('bruno-nunes', {
   urlIncludes: 'linkedin.com',
-  debug: true,
 });
 
 async function snap() {

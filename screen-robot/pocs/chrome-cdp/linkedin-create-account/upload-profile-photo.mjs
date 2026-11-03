@@ -111,7 +111,7 @@ export async function uploadProfilePhoto(opts = {}) {
 
   log(`startCdp ${id}`);
   await startCdp(id);
-  const s = await connectCdp(id, { debug: true });
+  const s = await connectCdp(id);
   try {
     await s.send('Page.enable');
     await s.send('DOM.enable');

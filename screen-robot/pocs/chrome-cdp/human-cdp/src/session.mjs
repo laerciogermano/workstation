@@ -61,7 +61,7 @@ export class HumanCdpSession {
     this.cdpUrl = opts.cdpUrl;
     /** @deprecated sempre true — toda interação chama foco */
     this.focused = true;
-    this.debug = !!opts.debug;
+    this.debug = opts.debug === true;
     this.chromeApp = opts.chromeApp || 'Google Chrome';
     /** id do CDP (createCdp / connectCdp), ex. ometv-2 — usado no painel debug. */
     this._cdpId = opts.cdpId || null;
@@ -273,7 +273,7 @@ export class HumanCdpSession {
         /* ignore */
       }
     }
-    await this.enableDebugOverlay();
+    if (this.debug) await this.enableDebugOverlay();
   }
 
   async waitFor(selector, { timeoutMs = 15000, visible = true } = {}) {
@@ -602,7 +602,7 @@ export async function connect(opts = {}) {
     await session.goto(opts.url);
   } else {
     await session.ensureFocus({ force: true });
-    await session.enableDebugOverlay();
+    if (session.debug) await session.enableDebugOverlay();
   }
   await getJson(cdpUrl, '/json/version');
   return session;

@@ -11,7 +11,6 @@ const COMPANY = 'ConectMax';
 
 const s = await connectCdp('bruno-nunes', {
   urlIncludes: 'linkedin.com',
-  debug: true,
 });
 
 async function snap() {

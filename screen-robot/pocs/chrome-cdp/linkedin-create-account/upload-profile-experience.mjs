@@ -494,7 +494,7 @@ export async function uploadProfileExperience(opts = {}) {
 
   log(`startCdp ${id} n=${experiences.length}`);
   await startCdp(id);
-  const s = await connectCdp(id, { debug: true });
+  const s = await connectCdp(id);
   const results = [];
 
   try {
@@ -618,7 +618,7 @@ export async function editProfileExperiences(opts = {}) {
 
   log(`startCdp ${id} edit n=${experiences.length}`);
   await startCdp(id);
-  const s = await connectCdp(id, { debug: true });
+  const s = await connectCdp(id);
   const results = [];
 
   try {

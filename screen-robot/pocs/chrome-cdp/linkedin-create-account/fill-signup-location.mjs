@@ -24,7 +24,7 @@ export async function fillSignupLocation(opts = {}) {
     return { dryRun: true, id, location, filled: false };
   }
 
-  const s = await connectCdp(id, { debug: true });
+  const s = await connectCdp(id);
   try {
     const marked = await s.evaluate(`(() => {
       const re = /local|cidade|location|ex\\.:|são paulo|vaga|trabalhar/i;

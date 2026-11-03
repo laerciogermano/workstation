@@ -50,6 +50,8 @@ Saída: progresso em **stderr** (`[create-mailbox]`, `[createLinkedin]`, `[PIN]`
 
 **Personas (job/location/about/avatar):** catálogo [`../../../tasks/6ae9c89d7f2951914a023746/personas.csv`](../../../tasks/6ae9c89d7f2951914a023746/personas.csv) · mapa [`persona-para-vendedor.md`](../../../tasks/6ae9c89d7f2951914a023746/persona-para-vendedor.md). Antes: só defaults genéricos em `profile-defaults.json`. Depois: escolher `id` da persona e passar `--job`/`--location`/`--company`. Rollback: defaults do JSON.
 
+**Lista de vendedores (nome + aparência):** [`../../../tasks/6ae9ca1e215a10fb339d26e4/vendedores.csv`](../../../tasks/6ae9ca1e215a10fb339d26e4/vendedores.csv) · resumo [`vendedores.md`](../../../tasks/6ae9ca1e215a10fb339d26e4/vendedores.md). Usar `first`/`last`/`job`/`location` da linha + `aparencia`/`avatar_style` para foto. Rollback: signup só com CLI/defaults.
+
 **Antes → depois (li_criado):** só save inicial `nao` → ao fim com `/feed`, atualiza para `sim` via `markLiCriado`. Rollback: não chamar `markLiCriado`.
 
 **Antes → depois (captcha):** seguia direto p/ localidade → `waitSignupAfterName` pausa indeterminada se iframe/desafio de segurança. Rollback: remover a chamada.

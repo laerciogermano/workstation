@@ -1,13 +1,21 @@
 # Task Trello: Lista de vendedores alinhados às personas
 
 - **Card:** [Lista de vendedores alinhados às personas (com descrição de aparência)](https://trello.com/c/1KXbnbBZ)
-- **Board:** [Robô Prospecção](https://trello.com/b/JPntFgwO/robô-prospecção) · lista `Backlog`
+- **Board:** [Robô Prospecção](https://trello.com/b/JPntFgwO/robô-prospecção) · lista `Concluído`
 - **ID:** `6ae9ca1e215a10fb339d26e4`
 - **Descrição:** [`card-description.md`](card-description.md)
 
 ## Objetivo
 
 Criar lista de vendedores com traits das personas que mais vendem no nosso contexto, incluindo descrição de aparência para avatar.
+
+## Entrega
+
+| Artefato | Caminho |
+|---|---|
+| Lista CSV (12 vendedores) | [`vendedores.csv`](vendedores.csv) |
+| Resumo MD | [`vendedores.md`](vendedores.md) |
+| Personas (dep.) | [`../6ae9c89d7f2951914a023746/personas.csv`](../6ae9c89d7f2951914a023746/personas.csv) |
 
 ## Dependência
 

@@ -71,4 +71,6 @@ CDP_ID=… npm run linkedin-extract-leads-cdp -- -n 5 --query 'comprador'
 ## Proibido
 
 - `Page.bringToFront` / `Target.activateTarget` / `osascript activate` (bloqueados no human-cdp)
-- `el.click()` / `dispatchEvent` de mouse sem trajetória — só `page.click` / `clickAt` / `type` / `scroll`
+- `el.click()` / `dispatchEvent` / `Input.*` solto fora do human-cdp — só `page.click` / `clickAt` / `type` / `fill` / `scroll`
+- **Connect CDP:** Mais → `menuitem` Conectar → **Enviar sem nota** (`aria-label`, em open shadow) → Pending.
+- **Enviar sem nota:** `document.querySelector` não acha (shadow) → `findSkipInvite` percorre `shadowRoot` e `page.clickAt` no centro. Rollback: `querySelector('button[aria-label="Enviar sem nota"]')` cego.

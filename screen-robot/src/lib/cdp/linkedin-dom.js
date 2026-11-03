@@ -1,6 +1,6 @@
 /**
  * Helpers DOM LinkedIn web (human-cdp: find → trajetória → click).
- * Sem el.click() / dispatchEvent de mouse solto.
+ * Leitura via evaluate; manipulação só page.click / clickAt / type / fill / scroll.
  */
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -29,10 +29,10 @@ export async function shot(page, outDir, name) {
 }
 
 /**
- * Hit-testável por texto / aria-label (botão, link, role=button).
+ * Hit-testável por texto / aria-label.
  * @param {object} page
  * @param {string[]} texts
- * @param {{ exact?: boolean, includeDisabled?: boolean }} [opts]
+ * @param {{ exact?: boolean, includeDisabled?: boolean, menuOnly?: boolean, primaryOnly?: boolean }} [opts]
  * @returns {Promise<{ cx: number, cy: number, text: string }|null>}
  */
 export async function findByTexts(page, texts, opts = {}) {
@@ -44,9 +44,15 @@ export async function findByTexts(page, texts, opts = {}) {
     const want = ${JSON.stringify(want)}.map((t) => t.toLowerCase());
     const exact = ${JSON.stringify(!!opts.exact)};
     const includeDisabled = ${JSON.stringify(!!opts.includeDisabled)};
-    const nodes = [
-      ...document.querySelectorAll('button, a, [role="button"], [role="link"]'),
-    ];
+    const menuOnly = ${JSON.stringify(!!opts.menuOnly)};
+    const primaryOnly = ${JSON.stringify(!!opts.primaryOnly)};
+    const nodes = menuOnly
+      ? [...document.querySelectorAll('[role="menuitem"], .artdeco-dropdown__item')]
+      : primaryOnly
+        ? [...document.querySelectorAll('button, [role="button"]')]
+        : [...document.querySelectorAll(
+            'button, a, [role="button"], [role="link"], [role="menuitem"], .artdeco-dropdown__item',
+          )];
     const score = (t) => {
       const s = String(t || '').replace(/\\s+/g, ' ').trim().toLowerCase();
       if (!s) return -1;
@@ -68,16 +74,30 @@ export async function findByTexts(page, texts, opts = {}) {
       if (!includeDisabled && el.disabled) continue;
       const aria = el.getAttribute('aria-label') || '';
       const label = el.innerText || el.textContent || '';
-      const raw = (aria || label).replace(/\\s+/g, ' ').trim();
-      const rank = score(raw);
+      // Preferir texto curto do botão; aria longo só se texto vazio / exact fail
+      const rawTxt = label.replace(/\\s+/g, ' ').trim();
+      const rawAria = aria.replace(/\\s+/g, ' ').trim();
+      const raw = rawTxt || rawAria;
+      let rank = score(rawTxt);
+      if (rank < 0) rank = score(rawAria);
       if (rank < 0) continue;
+      // primaryOnly: Connect do hero — ignorar "Convidar Fulano" de cards laterais (links)
+      if (primaryOnly) {
+        const both = (rawAria + ' ' + rawTxt).toLowerCase();
+        if (/convidar .+ (para se conectar|a conectar)/i.test(both) && !/^conectar$/i.test(rawTxt)) {
+          /* aria invite ok se o botão for Connect/Conectar no hero */
+        }
+        if (el.closest && el.closest('[data-view-name="profile-card"], aside, .scaffold-layout__aside')) continue;
+      }
       const r = el.getBoundingClientRect();
       if (r.width < 2 || r.height < 2) continue;
       if (r.bottom < 0 || r.top > innerHeight || r.right < 0 || r.left > innerWidth) continue;
+      // nav topo (Mais da global nav) — primary/menu profile ficam mais abaixo
+      if (primaryOnly && r.y < 72) continue;
       hits.push({
         cx: r.x + r.width / 2,
         cy: r.y + r.height / 2,
-        text: raw.slice(0, 80),
+        text: (rawTxt || rawAria).slice(0, 80),
         rank,
       });
     }
@@ -89,13 +109,189 @@ export async function findByTexts(page, texts, opts = {}) {
 /**
  * @param {object} page
  * @param {string[]} texts
- * @param {{ exact?: boolean, steps?: string[] }} [opts]
+ * @param {{ exact?: boolean, menuOnly?: boolean, primaryOnly?: boolean, steps?: string[] }} [opts]
  */
 export async function clickByTexts(page, texts, opts = {}) {
   const hit = await findByTexts(page, texts, opts);
   if (!hit) return null;
   await page.clickAt(hit.cx, hit.cy);
   opts.steps?.push(`click:${hit.text}@${Math.round(hit.cx)},${Math.round(hit.cy)}`);
+  return hit;
+}
+
+/** Mais/More do perfil (não o da nav global). */
+export async function findProfileMore(page) {
+  return page.evaluate(`(() => {
+    const els = [...document.querySelectorAll('button, [role=button]')].filter((el) => {
+      const aria = (el.getAttribute('aria-label') || '').trim();
+      const txt = (el.innerText || '').replace(/\\s+/g, ' ').trim();
+      const r = el.getBoundingClientRect();
+      if (r.width < 2 || r.height < 2) return false;
+      if (r.y < 80) return false; // nav global
+      return (
+        /^(more|mais)$/i.test(aria) ||
+        /^(more|mais)$/i.test(txt) ||
+        /more actions|mais ações/i.test(aria + ' ' + txt)
+      );
+    });
+    const ranked = els
+      .map((el) => {
+        const r = el.getBoundingClientRect();
+        return {
+          cx: r.x + r.width / 2,
+          cy: r.y + r.height / 2,
+          y: r.y,
+          text: (el.getAttribute('aria-label') || el.innerText || '').replace(/\\s+/g, ' ').trim().slice(0, 40),
+        };
+      })
+      .sort((a, b) => a.y - b.y);
+    return ranked[0] || null;
+  })()`);
+}
+
+/**
+ * Conectar/Connect do menu overflow do perfil atual (vanity da URL).
+ * Ignora cards laterais / outros vanityName.
+ */
+export async function findMenuConnect(page) {
+  return page.evaluate(`(() => {
+    const vanity = (location.pathname.match(/\\/in\\/([^/]+)/) || [])[1] || '';
+    const items = [...document.querySelectorAll('a[role=menuitem], [role=menuitem]')];
+    /** @type {{ cx: number, cy: number, text: string, href: string }[]} */
+    const hits = [];
+    for (const el of items) {
+      const txt = (el.innerText || '').replace(/\\s+/g, ' ').trim();
+      const aria = (el.getAttribute('aria-label') || '').replace(/\\s+/g, ' ').trim();
+      const href = el.getAttribute('href') || '';
+      if (!/^(connect|conectar)$/i.test(txt) && !/^(connect|conectar)$/i.test(aria)) continue;
+      const r = el.getBoundingClientRect();
+      if (r.width < 2 || r.height < 2) continue;
+      if (r.bottom < 0 || r.top > innerHeight || r.right < 0 || r.left > innerWidth) continue;
+      const vanityOk =
+        !vanity ||
+        href.includes('vanityName=' + vanity) ||
+        href.includes('/in/' + vanity);
+      if (vanity && href.includes('vanityName=') && !vanityOk) continue;
+      hits.push({
+        cx: r.x + r.width / 2,
+        cy: r.y + r.height / 2,
+        text: (txt || aria).slice(0, 80),
+        href: href.slice(0, 160),
+        vanityOk: vanityOk || !href.includes('vanityName='),
+      });
+    }
+    hits.sort((a, b) => Number(b.vanityOk) - Number(a.vanityOk) || a.cy - b.cy);
+    const best = hits[0];
+    return best
+      ? { cx: best.cx, cy: best.cy, text: best.text, href: best.href }
+      : null;
+  })()`);
+}
+
+/** Fecha o menu a11y "Pular para…" se estiver aberto (atrapalha coords). */
+export async function dismissA11ySkipMenu(page, steps) {
+  const hit = await page.evaluate(`(() => {
+    const el = [...document.querySelectorAll('button')].find((b) =>
+      /fechar menu pular/i.test(b.getAttribute('aria-label') || ''),
+    );
+    if (!el) return null;
+    const r = el.getBoundingClientRect();
+    if (r.width < 2 || r.height < 2) return null;
+    return { cx: r.x + r.width / 2, cy: r.y + r.height / 2 };
+  })()`);
+  if (!hit) return false;
+  await page.clickAt(hit.cx, hit.cy);
+  steps?.push(`a11y-skip-close@${Math.round(hit.cx)},${Math.round(hit.cy)}`);
+  await sleep(300);
+  return true;
+}
+
+/**
+ * Abre Mais e clica o menuitem Conectar do perfil (human-cdp).
+ * Pré-posiciona o cursor perto do menu para o trajeto pós-abertura ser curto
+ * (trajeto longo fecha o dropdown antes do press).
+ */
+export async function clickProfileMenuConnect(page, steps) {
+  await dismissA11ySkipMenu(page, steps);
+
+  const more = await findProfileMore(page);
+  if (!more) return { ok: false, error: "Mais do perfil não encontrado" };
+
+  // Menu costuma abrir acima/ao lado do Mais — aproxima o ponteiro antes
+  if (typeof page._moveTo === "function") {
+    await page._moveTo(more.cx + 90, more.cy - 140);
+    await sleep(80);
+  }
+
+  await page.clickAt(more.cx, more.cy);
+  steps?.push(`more:${more.text}@${Math.round(more.cx)},${Math.round(more.cy)}`);
+  await sleep(700);
+
+  const vanity = await page.evaluate(
+    `(() => (location.pathname.match(/\\/in\\/([^/]+)/) || [])[1] || '')()`,
+  );
+  const safeVanity = String(vanity || "").replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+  const connectSel = `a[role="menuitem"][href*="vanityName=${safeVanity}"]`;
+
+  let menuHit = await findMenuConnect(page);
+  for (let i = 0; i < 6 && !menuHit; i++) {
+    await sleep(300);
+    menuHit = await findMenuConnect(page);
+  }
+  if (!menuHit) return { ok: false, error: "Conectar no menu não apareceu" };
+
+  // Re-aproxima na coluna do item (ainda dentro do overlay) e clica já perto
+  if (typeof page._moveTo === "function") {
+    await page._moveTo(menuHit.cx, menuHit.cy + Math.sign(more.cy - menuHit.cy) * 24);
+    await sleep(50);
+  }
+
+  const box = await page.boundingBox(connectSel).catch(() => null);
+  if (!box) {
+    return { ok: false, error: "Conectar no menu sumiu antes do clique" };
+  }
+  await page.click(connectSel);
+  steps?.push(
+    `menu-connect:${menuHit.text}@${Math.round(box.cx)},${Math.round(box.cy)}:sel`,
+  );
+  return { ok: true, more, menuHit, selector: connectSel };
+}
+
+/**
+ * Enviar sem nota — LinkedIn coloca o modal em open shadow root;
+ * document.querySelector não acha; percorre shadow e devolve o centro.
+ */
+export async function findSkipInvite(page) {
+  return page.evaluate(`(() => {
+    const want = /^(enviar sem nota|send without a note)$/i;
+    const visit = (root) => {
+      for (const el of root.querySelectorAll('button, [role="button"]')) {
+        const aria = (el.getAttribute('aria-label') || '').trim();
+        const txt = (el.innerText || '').replace(/\\s+/g, ' ').trim();
+        if (!want.test(aria) && !want.test(txt)) continue;
+        const r = el.getBoundingClientRect();
+        if (r.width < 2 || r.height < 2) continue;
+        if (r.bottom < 0 || r.top > innerHeight) continue;
+        return { cx: r.x + r.width / 2, cy: r.y + r.height / 2, text: aria || txt };
+      }
+      for (const el of root.querySelectorAll('*')) {
+        if (el.shadowRoot) {
+          const hit = visit(el.shadowRoot);
+          if (hit) return hit;
+        }
+      }
+      return null;
+    };
+    return visit(document);
+  })()`);
+}
+
+/** Clique humano no Enviar sem nota (coords via shadow → page.clickAt). */
+export async function clickSkipInvite(page, steps) {
+  const hit = await findSkipInvite(page);
+  if (!hit) return null;
+  await page.clickAt(hit.cx, hit.cy);
+  steps?.push(`skip:${hit.text}@${Math.round(hit.cx)},${Math.round(hit.cy)}`);
   return hit;
 }
 
@@ -117,32 +313,84 @@ export async function profileSignals(page) {
       const t = ((el.getAttribute('aria-label') || '') + ' ' + (el.innerText || '')).trim();
       return /^pending\\b/i.test(t) || /^pendente\\b/i.test(t) || /\\bpending\\b.+(withdraw|retirar)/i.test(t);
     });
+    const labelOf = (el) => {
+      const aria = (el.getAttribute('aria-label') || '').replace(/\\s+/g, ' ').trim();
+      const txt = (el.innerText || '').replace(/\\s+/g, ' ').trim();
+      return { aria, txt, both: (aria + ' ' + txt).replace(/\\s+/g, ' ').trim() };
+    };
+    // Connect do hero (botão) — NÃO contar <a> "Conectar" de "Pessoas que você pode conhecer"
     const hasConnect = [...document.querySelectorAll('button, [role=button]')].some((el) => {
-      const t = ((el.getAttribute('aria-label') || '') + ' ' + (el.innerText || '')).replace(/\\s+/g, ' ').trim();
-      if (/\\bconnections?\\b/i.test(t) && !/invite.+to connect/i.test(t)) return false;
-      return /^connect$/i.test(t) || /^conectar$/i.test(t) || /invite .+ to connect/i.test(t) || /convidar .+ a conectar/i.test(t);
+      const r = el.getBoundingClientRect();
+      if (r.width < 2 || r.height < 2 || r.y < 72) return false;
+      if (el.closest('aside, .scaffold-layout__aside')) return false;
+      const { aria, txt, both } = labelOf(el);
+      if (/\\bconnections?\\b/i.test(both) && !/invite.+to connect/i.test(both)) return false;
+      return (
+        /^(connect|conectar)$/i.test(txt) ||
+        /^(connect|conectar)$/i.test(aria) ||
+        /invite .+ to connect/i.test(aria) ||
+        /convidar .+ (para se conectar|a conectar)/i.test(aria)
+      );
     });
-    const hasMessage = [...document.querySelectorAll('button, [role=button], a')].some((el) => {
-      const t = ((el.getAttribute('aria-label') || '') + ' ' + (el.innerText || '')).replace(/\\s+/g, ' ').trim();
-      return /^(message|mensagem|send a message|enviar mensagem)$/i.test(t) || /^message\\b/i.test(t) || /^mensagem\\b/i.test(t);
+    // Connect já visível no dropdown Mais
+    const hasMenuConnect = [...document.querySelectorAll('[role=menuitem], .artdeco-dropdown__item')].some((el) => {
+      const r = el.getBoundingClientRect();
+      if (r.width < 2 || r.height < 2) return false;
+      const { txt, aria } = labelOf(el);
+      return /^(connect|conectar)$/i.test(txt) || /invite .+ to connect|convidar .+ conectar/i.test(aria);
+    });
+    const hasMessage = [...document.querySelectorAll('button, [role=button]')].some((el) => {
+      const r = el.getBoundingClientRect();
+      if (r.y < 72 || r.width < 2) return false;
+      const { aria, txt, both } = labelOf(el);
+      return (
+        /^(message|mensagem|send a message|enviar mensagem)$/i.test(txt) ||
+        /^(message|mensagem)\\b/i.test(aria) ||
+        /^(message|mensagem)\\b/i.test(both)
+      );
     });
     const hasFollow = [...document.querySelectorAll('button, [role=button]')].some((el) => {
-      const t = ((el.getAttribute('aria-label') || '') + ' ' + (el.innerText || '')).replace(/\\s+/g, ' ').trim();
-      return /^follow$/i.test(t) || /^seguir$/i.test(t);
+      const r = el.getBoundingClientRect();
+      if (r.y < 72 || r.width < 2) return false;
+      const { aria, txt } = labelOf(el);
+      return /^(follow|seguir)$/i.test(txt) || /^(follow|seguir)\\b/i.test(aria);
     });
-    const hasSkip = [...document.querySelectorAll('button, [role=button]')].some((el) => {
-      const t = ((el.getAttribute('aria-label') || '') + ' ' + (el.innerText || '')).replace(/\\s+/g, ' ').trim();
-      return /^(skip|pular)$/i.test(t) || /^skip without note$/i.test(t);
-    });
+    // Enviar sem nota costuma estar em open shadow root
+    const hasSkip = (() => {
+      const want = /^(enviar sem nota|send without a note|skip without note|skip|pular)$/i;
+      const visit = (root) => {
+        for (const el of root.querySelectorAll('button, [role=button]')) {
+          const aria = (el.getAttribute('aria-label') || '').trim();
+          const txt = (el.innerText || '').replace(/\\s+/g, ' ').trim();
+          if (/pular para/i.test(aria + ' ' + txt)) continue;
+          if (!want.test(aria) && !want.test(txt)) continue;
+          const r = el.getBoundingClientRect();
+          if (r.width > 2 && r.height > 2) return true;
+        }
+        for (const el of root.querySelectorAll('*')) {
+          if (el.shadowRoot && visit(el.shadowRoot)) return true;
+        }
+        return false;
+      };
+      return visit(document);
+    })();
     const hasMore = [...document.querySelectorAll('button, [role=button]')].some((el) => {
-      const t = ((el.getAttribute('aria-label') || '') + ' ' + (el.innerText || '')).replace(/\\s+/g, ' ').trim();
-      return /^(more|mais)$/i.test(t) || /more actions/i.test(t) || /mais ações/i.test(t);
+      const r = el.getBoundingClientRect();
+      if (r.width < 2 || r.height < 2 || r.y < 80) return false;
+      const { aria, txt, both } = labelOf(el);
+      return (
+        /^(more|mais)$/i.test(aria) ||
+        /^(more|mais)$/i.test(txt) ||
+        /more actions/i.test(both) ||
+        /mais ações/i.test(both)
+      );
     });
     return {
       href: location.href,
       pageMissing,
       pending: pending || hasPendingBtn,
       hasConnect,
+      hasMenuConnect,
       hasMessage,
       hasFollow,
       hasSkip,
@@ -169,70 +417,22 @@ export async function clickFirstSelector(page, selectors, steps) {
   return null;
 }
 
-/** Texto exato no composer LinkedIn messaging. */
+/** Texto exato no composer LinkedIn messaging (só human-cdp fill). */
 export async function fillMessageComposer(page, text, steps) {
   const selectors = [
     'div.msg-form__contenteditable',
     '.msg-form__contenteditable[contenteditable="true"]',
     'div[role="textbox"][contenteditable="true"]',
-    '.msg-form formmsg-form__msg-content-container--scrollable div[contenteditable="true"]',
+    '.msg-form .msg-form__msg-content-container--scrollable div[contenteditable="true"]',
   ];
-  let used = null;
   for (const sel of selectors) {
     const box = await page.boundingBox(sel).catch(() => null);
-    if (box) {
-      used = sel;
-      break;
-    }
+    if (!box) continue;
+    await page.fill(sel, text);
+    steps?.push(`composer:${sel}`);
+    return true;
   }
-  if (!used) {
-    // fallback: qualquer contenteditable visível no rodapé
-    const hit = await page.evaluate(`(() => {
-      const els = [...document.querySelectorAll('[contenteditable="true"]')];
-      for (const el of els) {
-        const r = el.getBoundingClientRect();
-        if (r.width > 40 && r.height > 20 && r.top > innerHeight * 0.4) {
-          el.setAttribute('data-sr-composer', '1');
-          return { cx: r.x + r.width / 2, cy: r.y + r.height / 2 };
-        }
-      }
-      return null;
-    })()`);
-    if (!hit) return false;
-    await page.clickAt(hit.cx, hit.cy);
-    used = '[data-sr-composer="1"]';
-  } else {
-    await page.click(used);
-  }
-  steps?.push(`composer:${used}`);
-  await sleep(200);
-  // limpa e insere texto exato (Input.insertText via type char-a-char é lento; paste via insertText lote)
-  await page.evaluate(`(() => {
-    const el = document.querySelector(${JSON.stringify(used)}) || document.querySelector('[data-sr-composer="1"]');
-    if (!el) return;
-    el.focus();
-    const sel = window.getSelection();
-    const range = document.createRange();
-    range.selectNodeContents(el);
-    sel.removeAllRanges();
-    sel.addRange(range);
-  })()`);
-  await page.send("Input.dispatchKeyEvent", {
-    type: "keyDown",
-    key: "Backspace",
-    code: "Backspace",
-    windowsVirtualKeyCode: 8,
-  });
-  await page.send("Input.dispatchKeyEvent", {
-    type: "keyUp",
-    key: "Backspace",
-    code: "Backspace",
-    windowsVirtualKeyCode: 8,
-  });
-  await sleep(60);
-  // type humano (ritmo) — mensagem completa
-  await page.type(used, text, { clickFirst: false, clear: false });
-  return true;
+  return false;
 }
 
 export async function clickSendMessage(page, steps) {

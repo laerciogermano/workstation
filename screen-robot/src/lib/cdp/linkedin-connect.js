@@ -2,6 +2,9 @@
  * Conectar em perfil LinkedIn via URL (CDP / web).
  * Mesma interface de `../linkedin-connect.js` (AVD), trocando `serial` por sessão CDP.
  *
+ * Fluxo: Connect do hero **ou** Mais → menuitem Conectar → Enviar sem nota/Skip → Pending.
+ * Manipulação só via human-cdp (clickAt/click).
+ *
  * @param {{
  *   page?: object,
  *   cdpUrl?: string,
@@ -24,6 +27,10 @@ import {
 } from "../linkedin-connect.js";
 import {
   clickByTexts,
+  clickProfileMenuConnect,
+  clickSkipInvite,
+  findMenuConnect,
+  findSkipInvite,
   profileSignals,
   shot,
   sleep,
@@ -34,6 +41,7 @@ const WAIT_AFTER_VIEW_MS = Number(process.env.LINKEDIN_CONNECT_WAIT_VIEW_MS || 5
 const WAIT_AFTER_TAP_MS = Number(process.env.LINKEDIN_CONNECT_WAIT_TAP_MS || 2_500);
 const WAIT_PENDING_MS = Number(process.env.LINKEDIN_CONNECT_WAIT_PENDING_MS || 1_500);
 const PENDING_TRIES = Number(process.env.LINKEDIN_CONNECT_PENDING_TRIES || 6);
+const SKIP_TRIES = Number(process.env.LINKEDIN_CONNECT_SKIP_TRIES || 8);
 const MAX_ROUNDS = 12;
 
 async function waitForPending(page, { outDir, steps }) {
@@ -48,6 +56,69 @@ async function waitForPending(page, { outDir, steps }) {
     await sleep(WAIT_PENDING_MS);
   }
   return false;
+}
+
+/** Após Connect: espera o modal e clica Enviar sem nota. */
+async function waitAndClickSkip(page, { outDir, steps, dryRun }) {
+  for (let i = 0; i < SKIP_TRIES; i++) {
+    const hit = await findSkipInvite(page);
+    if (hit) {
+      await shot(page, outDir, "03-add-note-skip.png");
+      if (!dryRun) await clickSkipInvite(page, steps);
+      else steps.push(`skip:dry`);
+      await sleep(WAIT_AFTER_TAP_MS);
+      return true;
+    }
+    steps.push(`skip-miss:try${i + 1}`);
+    await sleep(800);
+  }
+  return false;
+}
+
+async function finishPending(page, {
+  url,
+  steps,
+  outDir,
+  dryRun,
+  notifyApi,
+  agentId,
+  skipped,
+}) {
+  const pending = dryRun
+    ? true
+    : await waitForPending(page, { outDir, steps });
+  if (!pending) {
+    await shot(page, outDir, "99-sem-pending.png");
+    return {
+      ok: false,
+      status: "failed",
+      url,
+      steps,
+      error: skipped
+        ? "Skip ok mas Pending/Invitation sent não apareceu — convite não confirmado"
+        : "Connect ok mas Pending/Invitation sent não apareceu — convite não confirmado",
+    };
+  }
+  let notify = { notified: false, reason: "notify desligado" };
+  if (notifyApi && !dryRun) {
+    try {
+      notify = await notifyInviteSent({
+        profileUrl: url,
+        steps,
+        agentId,
+        status: CONNECTION_STATUS.PENDING,
+      });
+      steps.push(
+        notify.notified
+          ? "api:client-connections-linkedin:ok"
+          : `api:client-connections-linkedin:skip:${notify.reason}`,
+      );
+    } catch (e) {
+      notify = { notified: false, error: String(e?.message || e) };
+      steps.push(`api:client-connections-linkedin:fail:${notify.error}`);
+    }
+  }
+  return { ok: true, status: "pending", url, steps, notify };
 }
 
 /**
@@ -68,6 +139,8 @@ export async function connectByLinkedInUrl(opts) {
     await shot(page, opts.outDir, "01-perfil.png");
 
     let skipped = false;
+    let didMore = false;
+    let didConnect = false;
 
     for (let round = 0; round < MAX_ROUNDS; round++) {
       const sig = await profileSignals(page);
@@ -151,105 +224,139 @@ export async function connectByLinkedInUrl(opts) {
         return { ok: true, status: "already", url, steps, notify };
       }
 
-      if (sig.hasSkip) {
+      // Modal "Add a note" / "Enviar sem nota" — prioridade máxima
+      if (sig.hasSkip || (await findSkipInvite(page))) {
         await shot(page, opts.outDir, "03-add-note-skip.png");
         if (!dryRun) {
-          await clickByTexts(page, ["Skip", "Pular", "Skip without note"], {
-            steps,
-          });
+          const hit = await clickSkipInvite(page, steps);
+          if (!hit) {
+            return {
+              ok: false,
+              status: "failed",
+              url,
+              steps,
+              error: "Enviar sem nota/Skip visível mas não clicável",
+            };
+          }
           await sleep(WAIT_AFTER_TAP_MS);
         }
         skipped = true;
-        const pending = dryRun
-          ? true
-          : await waitForPending(page, { outDir: opts.outDir, steps });
-        if (!pending) {
-          await shot(page, opts.outDir, "99-sem-pending.png");
+        return finishPending(page, {
+          url,
+          steps,
+          outDir: opts.outDir,
+          dryRun,
+          notifyApi,
+          agentId,
+          skipped: true,
+        });
+      }
+
+      // Já clicou Connect: só espera Skip — não reabre Mais
+      if (didConnect) {
+        const okSkip = await waitAndClickSkip(page, {
+          outDir: opts.outDir,
+          steps,
+          dryRun,
+        });
+        if (!okSkip) {
+          await shot(page, opts.outDir, "99-sem-skip.png");
           return {
             ok: false,
             status: "failed",
             url,
             steps,
-            error:
-              "Skip ok mas Pending/Invitation sent não apareceu — convite não confirmado",
+            error: "Connect ok mas Enviar sem nota/Skip não apareceu",
           };
         }
-        let notify = { notified: false, reason: "notify desligado" };
-        if (notifyApi && !dryRun) {
-          try {
-            notify = await notifyInviteSent({
-              profileUrl: url,
-              steps,
-              agentId,
-              status: CONNECTION_STATUS.PENDING,
-            });
-            steps.push(
-              notify.notified
-                ? "api:client-connections-linkedin:ok"
-                : `api:client-connections-linkedin:skip:${notify.reason}`,
-            );
-          } catch (e) {
-            notify = { notified: false, error: String(e?.message || e) };
-            steps.push(`api:client-connections-linkedin:fail:${notify.error}`);
-          }
-        }
-        return { ok: true, status: "pending", url, steps, notify };
+        skipped = true;
+        return finishPending(page, {
+          url,
+          steps,
+          outDir: opts.outDir,
+          dryRun,
+          notifyApi,
+          agentId,
+          skipped: true,
+        });
       }
 
+      // Connect no hero (botão) — nunca <a> de recomendações
       if (sig.hasConnect) {
         await shot(page, opts.outDir, "02-connect.png");
         if (!dryRun) {
-          const hit = await clickByTexts(
-            page,
-            ["Connect", "Conectar", "Invite"],
-            { steps },
-          );
+          const hit = await clickByTexts(page, ["Connect", "Conectar"], {
+            exact: true,
+            primaryOnly: true,
+            steps,
+          });
           if (!hit) {
-            // aria Invite X to connect
-            const aria = await page.evaluate(`(() => {
-              const el = [...document.querySelectorAll('button,[role=button]')].find((b) => {
-                const t = (b.getAttribute('aria-label') || '') + ' ' + (b.innerText || '');
-                return /invite .+ to connect/i.test(t) || /convidar .+ a conectar/i.test(t) || /^connect$/i.test(t.trim()) || /^conectar$/i.test(t.trim());
-              });
-              if (!el) return null;
-              const r = el.getBoundingClientRect();
-              return { cx: r.x + r.width / 2, cy: r.y + r.height / 2, text: (el.getAttribute('aria-label') || el.innerText || '').slice(0, 60) };
-            })()`);
-            if (!aria) {
-              return {
-                ok: false,
-                status: "failed",
-                url,
-                steps,
-                error: "Connect sinalizado mas botão não clicável",
-              };
-            }
-            await page.clickAt(aria.cx, aria.cy);
-            steps.push(`click:${aria.text}`);
+            return {
+              ok: false,
+              status: "failed",
+              url,
+              steps,
+              error: "Connect do perfil sinalizado mas botão não clicável",
+            };
           }
           await sleep(WAIT_AFTER_TAP_MS);
         }
+        didConnect = true;
         continue;
       }
 
-      if (sig.hasFollow && sig.hasMore) {
+      // Menu já aberto → só menuitem Conectar do perfil (vanity)
+      if (sig.hasMenuConnect && !didConnect) {
+        await shot(page, opts.outDir, "02-menu-connect.png");
+        if (!dryRun) {
+          const menuHit = await findMenuConnect(page);
+          if (!menuHit) {
+            return {
+              ok: false,
+              status: "failed",
+              url,
+              steps,
+              error: "Conectar no menu visível mas não clicável",
+            };
+          }
+          if (typeof page._moveTo === "function") {
+            const moreY = menuHit.cy + 80;
+            await page._moveTo(menuHit.cx, moreY);
+            await sleep(60);
+          }
+          await page.clickAt(menuHit.cx, menuHit.cy);
+          steps.push(
+            `menu-connect:${menuHit.text}@${Math.round(menuHit.cx)},${Math.round(menuHit.cy)}`,
+          );
+          await sleep(WAIT_AFTER_TAP_MS);
+        }
+        didConnect = true;
+        didMore = true;
+        continue;
+      }
+
+      // Mais → Conectar no menu (trajeto dentro do dropdown)
+      if (sig.hasMore && !didMore && !sig.pending) {
         await shot(page, opts.outDir, "02-follow-more.png");
         if (!dryRun) {
-          await clickByTexts(page, ["More", "Mais", "More actions"], { steps });
+          const tapped = await clickProfileMenuConnect(page, steps);
+          if (!tapped.ok) {
+            return {
+              ok: false,
+              status: "failed",
+              url,
+              steps,
+              error: tapped.error,
+            };
+          }
+          await shot(page, opts.outDir, "02-menu-connect.png");
           await sleep(WAIT_AFTER_TAP_MS);
+          didConnect = true;
+        } else {
+          didConnect = true;
         }
+        didMore = true;
         continue;
-      }
-
-      // sheet pós-More: Connect
-      if (sig.hasFollow) {
-        const sheet = await clickByTexts(page, ["Connect", "Conectar"], {
-          steps,
-        });
-        if (sheet) {
-          await sleep(WAIT_AFTER_TAP_MS);
-          continue;
-        }
       }
 
       steps.push(`wait:round${round}`);

@@ -87,4 +87,4 @@ tasks/
 | [`6ae8dc57b01c993b519a5030/`](6ae8dc57b01c993b519a5030/README.md) | [Catálogo devices + browsers (fingerprint)](https://trello.com/c/x3dClHJu) |
 | [`6ae8dd3e5c359e796ef30a66/`](6ae8dd3e5c359e796ef30a66/README.md) | [Trajetória contínua do mouse (sem teleportes)](https://trello.com/c/5N5E2vlJ) |
 | [`6ae8ef85ddea48cb1414b3be/`](6ae8ef85ddea48cb1414b3be/README.md) | [Dashboard de bots (frota + atividade + controles)](https://trello.com/c/A1h6DvaX) |
-| [`6ae9c89d7f2951914a023746/`](6ae9c89d7f2951914a023746/README.md) | [Personas dos perfis LinkedIn que mais vendem](https://trello.com/c/WAZ9CciT) |
+| [`6ae9c89d7f2951914a023746/`](6ae9c89d7f2951914a023746/README.md) | [Pesquisar na net personas LinkedIn que mais vendem](https://trello.com/c/WAZ9CciT) |

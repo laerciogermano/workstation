@@ -199,6 +199,8 @@ Scripts CDP crus (`el.click`, `dispatchMouseEvent` sem move) → importam `human
 
 **Antes → depois (anti-roubo SO):** `activateApp`/`osascript` removidos; `send` no-op em `Page.bringToFront`/`Target.activateTarget`; `openPage` deixa `/json/new` e usa `Target.createTarget({ background: true })`. Rollback: restaurar `activateApp` + `/json/new` + send direto.
 
+**Antes → depois (sem aba):** `pickPage` falhava com “Nenhuma página” se `/json/list` vazio (Chrome up sem tab) → retry curto + `openPage(about:blank|url)`. Rollback: throw imediato sem `createIfMissing`.
+
 **Rollback:** voltar ao CDP cru nos scripts; apagar `human-cdp/`.
 
 ## Caminho inverso

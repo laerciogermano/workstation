@@ -582,7 +582,10 @@ export async function connect(opts = {}) {
   if (opts.newTab && opts.url) {
     page = await openPage(cdpUrl, opts.url);
   } else {
-    page = await pickPage(cdpUrl, { urlIncludes: opts.urlIncludes });
+    page = await pickPage(cdpUrl, {
+      urlIncludes: opts.urlIncludes,
+      url: opts.url,
+    });
   }
   const cdp = createCdpSession(page.webSocketDebuggerUrl);
   await cdp.ready;

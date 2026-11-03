@@ -77,19 +77,36 @@ export async function getJson(cdpBase, path) {
   return res.json();
 }
 
-export async function pickPage(cdpBase, { urlIncludes } = {}) {
-  const targets = await getJson(cdpBase, '/json/list');
-  const pages = targets.filter((t) => t.type === 'page');
-  if (urlIncludes) {
-    const hit = pages.find((t) => String(t.url || '').includes(urlIncludes));
-    if (hit?.webSocketDebuggerUrl) return hit;
+export async function pickPage(
+  cdpBase,
+  { urlIncludes, createIfMissing = true, url } = {},
+) {
+  const pickOnce = async () => {
+    const targets = await getJson(cdpBase, '/json/list');
+    const pages = (targets || []).filter((t) => t.type === 'page');
+    if (urlIncludes) {
+      const hit = pages.find((t) => String(t.url || '').includes(urlIncludes));
+      if (hit?.webSocketDebuggerUrl) return hit;
+    }
+    return (
+      pages.find((t) => !String(t.url || '').startsWith('chrome://')) ||
+      pages[0] ||
+      null
+    );
+  };
+
+  // Chrome pode escutar a porta antes de expor abas em /json/list
+  let page = await pickOnce();
+  for (let i = 0; !page?.webSocketDebuggerUrl && i < 10; i++) {
+    await new Promise((r) => setTimeout(r, 200));
+    page = await pickOnce();
   }
-  const page =
-    pages.find((t) => !String(t.url || '').startsWith('chrome://')) || pages[0];
-  if (!page?.webSocketDebuggerUrl) {
-    throw new Error(`Nenhuma página em ${cdpBase}`);
+  if (page?.webSocketDebuggerUrl) return page;
+
+  if (createIfMissing) {
+    return openPage(cdpBase, url || 'about:blank');
   }
-  return page;
+  throw new Error(`Nenhuma página em ${cdpBase}`);
 }
 
 /**

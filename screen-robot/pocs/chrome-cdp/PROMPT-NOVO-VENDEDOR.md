@@ -31,9 +31,11 @@ Crie um novo vendedor LinkedIn (1 conta):
    Proibido: viewport (e não precisa colorScheme / reducedMotion / permissions).
 4. IP de egress no submit: curl -sS https://api.ipify.org → coluna ip.
 5. Signup LinkedIn completo via CDP (senha LI in@12345678; PIN Mailcow).
-6. Gravar tudo em screen-robot/pocs/android-studio/contas-linkedin-clozzy.csv
+6. Pós-signup: foto, banner, Sobre e experiências do doc do vendedor.
+   Copy: formalismo do doc, sem cacoete de IA (linkedin-create-account/COPY-HUMANA.md).
+7. Gravar tudo em screen-robot/pocs/android-studio/contas-linkedin-clozzy.csv
    (incluir cidade, company e colunas do fingerprint usado) + credenciais.md + contas-facebook-chrome.csv.
-7. Browser só CDP/human-cdp. Sem AVD.
+8. Browser só CDP/human-cdp. Sem AVD.
 ```
 
 Rollback: apagar linha CSV; mailbox Mailcow; linha em credenciais.md; `removeCdp('<id>', { deleteProfile: true })`.

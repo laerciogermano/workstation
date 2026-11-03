@@ -159,13 +159,12 @@ export class HumanCdpSession {
     return result?.value;
   }
 
-  /**
-   * true se a página tem foco lógico (Emulation.setFocusEmulationEnabled → hasFocus).
-   * Não exige visibilityState=visible: Chrome atrás do Cursor continua operável via CDP.
-   */
+  /** true se a página tem foco real (aba visível + document.hasFocus). */
   async isPageFocused() {
     try {
-      return !!(await this.evaluate(`document.hasFocus()`));
+      return !!(await this.evaluate(
+        `document.hasFocus() && document.visibilityState === 'visible' && !document.hidden`,
+      ));
     } catch {
       return false;
     }

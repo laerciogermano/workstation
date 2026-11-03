@@ -31,21 +31,17 @@ const SNAP = `(() => {
     body,
   );
   const stillName =
-    /\\/signup\\/?/i.test(href) ||
-    (!!(document.querySelector('#first-name') || document.querySelector('#last-name')) &&
-      /primeiro nome|sobrenome|first name|last name|cadastre-se/i.test(body));
-  // próxima tela = onboarding real (href) ou campo de localidade — nunca só palavra solta no body do signup
-  const nextByHref =
-    /onboarding\\/start\\/(profile-location|profile-edit|handle-confirmation|email-confirmation|birthday|experience)/i.test(
-      href,
+    !!(document.querySelector('#first-name') || document.querySelector('#last-name')) &&
+    /primeiro nome|sobrenome|first name|last name/i.test(body);
+  const nextScreen =
+    /profile-location|profile-edit|experience|localidade|location|onde voc[eê]|cidade|handle-confirmation|email-confirmation|birthday/i.test(
+      href + ' ' + body,
+    ) ||
+    [...document.querySelectorAll('input')].some((i) =>
+      /local|cidade|location|empresa|company|cargo|job|title/i.test(
+        [i.placeholder, i.getAttribute('aria-label'), i.name, i.id].join(' '),
+      ),
     );
-  const nextByInput = [...document.querySelectorAll('input')].some((i) => {
-    if (!(i.offsetWidth || i.getClientRects().length)) return false;
-    return /local|cidade|location|typeahead/i.test(
-      [i.placeholder, i.getAttribute('aria-label'), i.name, i.id].join(' '),
-    );
-  });
-  const nextScreen = !stillName && (nextByHref || nextByInput);
   return {
     href,
     body: body.slice(0, 180),
@@ -73,7 +69,7 @@ export async function waitSignupAfterName(opts = {}) {
     await sleep(2000);
     let st = await s.evaluate(SNAP);
 
-    if (st.nextScreen && !st.hasSecurity && !st.stillName) {
+    if (st.nextScreen && !st.hasSecurity) {
       console.error(`[after-name] próxima tela ok — ${st.href}`);
       return {
         id,

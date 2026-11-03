@@ -1,0 +1,24 @@
+---
+description: Lista Concluído do Trello sempre do mais recente para o mais antigo
+alwaysApply: true
+---
+
+# Trello Concluído: mais recente no topo
+
+No board **Robô Prospecção** (`JPntFgwO`), a lista `Concluído` deve ficar **ordenada do mais recente para o mais antigo** (card recém-concluído = topo).
+
+## Critérios
+
+1. Ao mover um card para `Concluído`, usar **`--position top`** (nunca o default `bottom`)
+2. Se o card **já estiver** em `Concluído` e for a entrega mais nova da sessão, garantir posição **top**
+3. Não reordenar o restante da lista só por estética — basta o novo card ir para o topo
+4. Vale para `trello card:move`, API `PUT /cards/{id}` (`idList` + `pos=top`) e fluxos equivalentes
+
+## Exemplos
+
+```text
+✅ trello card:move --id <CARD> --to "Concluído" --position top --board "Robô Prospecção"
+✅ API: idList=<Concluído> & pos=top
+❌ trello card:move … --to "Concluído"   # default bottom = mais antigo no topo invertido
+❌ Deixar o card recém-feito no fim da lista Concluído
+```

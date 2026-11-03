@@ -3,10 +3,10 @@
 | Arquivo | Uso |
 |---------|-----|
 | [`conectmax-black.jpg`](conectmax-black.jpg) | Default `--avatar` (logo ConectMax preta, sem “BELO HORIZONTE - MG”) |
-| [`thispersondoesnotexist/`](thispersondoesnotexist/) | 10 faces sintéticas (`person-YYYYMMDD-NN.jpg`) de [thispersondoesnotexist.com](https://thispersondoesnotexist.com/) — pool de avatar LI |
+| [`thispersondoesnotexist/`](thispersondoesnotexist/) | 110 faces sintéticas (`person-YYYYMMDD-*.jpg`) de [thispersondoesnotexist.com](https://thispersondoesnotexist.com/) — pool de avatar LI |
 | [`fontes-avatar.md`](fontes-avatar.md) | Curadoria de sites (TPDNE, Open Pravatar, Unsplash, headshot IA…) para pesquisar depois |
 
-**Antes → depois (TPDNE):** sem pool local → pasta `thispersondoesnotexist/` com 10 JPGs únicos. Rollback: `rm -rf src/assets/avatars/thispersondoesnotexist`.
+**Antes → depois (TPDNE):** sem pool local → 10 JPGs → **110** JPGs únicos (`01`–`10` + `011`–`110`). Rollback: `rm -rf src/assets/avatars/thispersondoesnotexist`.
 
 **Antes → depois:** foto Marcelo (LinkedIn) com BH → retângulo preto cobrindo a linha BH; só CONECTMAX + tagline.
 

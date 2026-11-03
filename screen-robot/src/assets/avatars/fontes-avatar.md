@@ -6,7 +6,7 @@ Lista para retomar depois — fotos/headshots para perfis LinkedIn do lab.
 
 | Fonte | URL | Notas |
 |---|---|---|
-| This Person Does Not Exist | https://thispersondoesnotexist.com/ | Face sintética StyleGAN; refresh gera outra. Download: `/random-person.jpeg` (cache-bust). Pool local: [`thispersondoesnotexist/`](thispersondoesnotexist/) |
+| This Person Does Not Exist | https://thispersondoesnotexist.com/ | Face sintética StyleGAN; refresh gera outra. Download: `/random-person.jpeg` (cache-bust). Pool local: [`thispersondoesnotexist/`](thispersondoesnotexist/) (110 JPGs) |
 
 ## Públicas / gratuitas (para avaliar)
 

@@ -51,10 +51,12 @@ cd vendas/worker
 ./scripts/keep-worker.sh ./scripts/start-worker-daniela-cdp.sh   # :9255
 ./scripts/keep-worker.sh ./scripts/start-worker-thiago-cdp.sh    # :9256
 ./scripts/keep-worker.sh ./scripts/start-worker-juliana-cdp.sh   # :9258
+./scripts/keep-worker.sh ./scripts/start-worker-roberto-cdp.sh   # :9259
 # one-shot:
 ./scripts/start-worker-daniela-cdp.sh
 ./scripts/start-worker-thiago-cdp.sh
 ./scripts/start-worker-juliana-cdp.sh
+./scripts/start-worker-roberto-cdp.sh
 
 # ou:
 WORKER_RUNTIME=cdp CDP_ID=daniela-hoffmann \
@@ -65,7 +67,7 @@ WORKER_RUNTIME=cdp CDP_ID=daniela-hoffmann \
 **Claimed órfão:** processo morto no meio do job → API (sweep + heartbeat offline) reabre `pending` em ~3 min; `SIGTERM` tenta `fail` imediato. Ver [`../api/README.md`](../api/README.md) (`AGENT_CLAIM_OFFLINE_MS` / `AGENT_STALE_SWEEP_MS`).
 
 Allowlist via `PATCH /agentes/:id` `{ "procedimentos": ["extrair_leads","conectar",…] }`.  
-Daniela/Thiago/Juliana: `extrair_leads` + `conectar`. **Antes → depois:** só extract → + conectar. Rollback: `procedimentos: ["extrair_leads"]`.
+Daniela/Thiago/Juliana/Roberto: `extrair_leads` + `conectar`. **Antes → depois:** só extract → + conectar. Rollback: `procedimentos: ["extrair_leads"]`.
 
 ### Host — N slots, troca on-empty
 

@@ -39,8 +39,8 @@
 | T-22 | Nota ingerida | E01 | US-01.08, 01.10 | verde |
 | T-23 | Vincular EAN (câmera já aberta) | E01 | US-01.11 | azul |
 | T-24 | Escolher foto EAN | E01 | US-01.12 | azul |
-| T-30 | Onde comprar perto | E03 | US-03.01 | verde |
-| T-31 | Ranking lojas | E03 | US-03.02 | verde |
+| T-30 | Onde comprar perto (item) | E03 | US-03.01 | verde |
+| T-31 | Mais baratas (entrada Estabelecimentos) | E03 | US-03.02 | verde |
 | T-32 | Mapa | E03 | US-03.03 | azul |
 | T-33 | Vitrine da loja | E03 | US-03.04–06 | verde |
 | T-40 | Cestas (várias) | E04 | US-04.01, 04.02 | verde |
@@ -51,7 +51,7 @@
 
 ## 3. Navegação
 
-Tab bar: **Destaques** (T-10) · **Perto** (T-30/31) · **Nota** FAB (T-20) · **Cestas** (T-40) · **Perfil** (T-51). Entrada default = home anônima. Mapa em [07-diagramas](07-diagramas.md).
+Tab bar: **Destaques** (T-10) · **Lojas** (T-31) · **Nota** FAB (T-20) · **Cestas** (T-40) · **Perfil** (T-51). Entrada default = home anônima. Mapa em [07-diagramas](07-diagramas.md).
 
 ### Ajustes UX (2026-11-04) — card [BXKZ55Wb](https://trello.com/c/BXKZ55Wb)
 
@@ -60,6 +60,12 @@ Tab bar: **Destaques** (T-10) · **Perto** (T-30/31) · **Nota** FAB (T-20) · *
 - Banner GPS opcional (não bloqueia)
 - Detalhe com comparação / histórico / perto já abertos
 - Vincular EAN com câmera aberta; várias cestas
+
+### Estabelecimentos (2026-11-04)
+
+- Fluxo E03 renomeado para **Estabelecimentos**; tela inicial = **Mais baratas** (T-31), não “Perto de mim”
+- Sem tabs baratas/caras: lista ordenada das mais baratas no raio; cada linha mostra **Nª mais barata** e **Mª mais cara da região**
+- Busca de estabelecimento + chips de raio; T-30 permanece como perto por item (detalhe)
 
 ## 4. Componentes do design system
 

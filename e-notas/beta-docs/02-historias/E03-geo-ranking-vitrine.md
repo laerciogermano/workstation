@@ -1,11 +1,11 @@
-# E03 — Geo, ranking e vitrine da loja
+# E03 — Estabelecimentos (geo, ranking e vitrine)
 
-Objetivo: permitir que o comprador encontre produtos fisicamente próximos pelo raio de distância, consulte o ranking agregado de quais supermercados cobram mais barato ou mais caro no bairro, explore o mapa interativo de estabelecimentos e navegue pela vitrine (catálogo público de sortimento de balcão) de cada loja, vinculando novos códigos de barras diretamente da vitrine.
+Objetivo: permitir que o comprador abra **Estabelecimentos** já nas lojas **mais baratas** perto (ranking na listagem), busque mercados, explore o mapa e a vitrine, e — a partir do detalhe de um item — veja onde comprar perto no raio.
 
 | ID | História | RF | Prio | Pts | Telas |
 |---|---|---|---|---|---|
 | US-03.01 | Buscar item perto da minha localização (raio em km) | RF-E03-01 | M | 3 | T-30 |
-| US-03.02 | Ranking de estabelecimentos no raio (mais baratos x mais caros) | RF-E03-02 | M | 5 | T-31 |
+| US-03.02 | Ranking de estabelecimentos no raio (mais baratas na lista) | RF-E03-02 | M | 5 | T-31 |
 | US-03.03 | Mapa de estabelecimentos com pins e popup de status | RF-E03-03 | M | 3 | T-32 |
 | US-03.04 | Vitrine da loja em grade com sortimento observado | RF-E03-04 | S | 3 | T-33 |
 | US-03.05 | Detalhe do item observado na vitrine da loja | RF-E03-05 | S | 2 | T-14, T-33 |
@@ -49,37 +49,35 @@ Funcionalidade: Buscar item perto da minha localização
 
 ---
 
-## US-03.02 — Ranking de estabelecimentos no raio (mais baratos x mais caros)
+## US-03.02 — Ranking de estabelecimentos no raio (mais baratas na lista)
 **Como** consumidor curioso sobre a competitividade dos mercados da minha região,  
-**quero** ver um ranking das lojas do meu raio classificadas pelas que cobram mais barato ou mais caro no geral,  
+**quero** abrir Estabelecimentos já na lista das lojas **mais baratas** perto, com ranking em cada linha (incluindo posição entre as mais caras),  
 **para** escolher o meu mercado preferencial para compras volumosas do mês.
 
 **Regras de negócio:**
-- Tela `T-31`.
-- O score de preço do estabelecimento não é baseado em apenas um produto, mas em um **índice ponderado de desvio relativo** sobre uma cesta comum de produtos (EANs compartilhados com pelo menos 3 concorrentes) nos últimos 30 dias.
-- Exclusão de outliers e notas com suspeita de digitação anômala.
-- Filtros disponíveis:
-  - "Mais baratas" (estabelecimentos com maior índice de economia, ou seja, preços consistentemente abaixo da média).
-  - "Mais caras" (estabelecimentos com maiores sobrepreços em relação à média local).
-- Critério de elegibilidade: o estabelecimento deve possuir no mínimo 15 itens cadastrados com notas recentes para figurar no ranking.
-- Transparência: exibe aviso explícito informando a quantidade de notas analisadas e a data da amostra.
+- Tela `T-31` = **entrada** do fluxo Estabelecimentos (aba **Lojas**); título **Mais baratas**.
+- Lista ordenada das mais baratas no raio (sem tabs “Mais baratas / Mais caras”).
+- Cada linha exibe: posição **Nª mais barata** e **Mª mais cara da região**, desvio vs mediana e distância.
+- Campo de **busca** de estabelecimento + chips de raio.
+- O score não é de um único produto: **índice ponderado de desvio relativo** sobre cesta comum (EANs com ≥3 concorrentes) nos últimos 30 dias.
+- Critério de elegibilidade: ≥15 itens com notas recentes (protótipo: ≥20 EANs / mediana 14d).
+- Transparência: amostra e critério visíveis no subtítulo.
 
 ```gherkin
 # language: pt
 Funcionalidade: Ranking de estabelecimentos no raio
 
-  Cenário: Visualização do ranking de mercados mais baratos no raio de 5 km
-    Dado que estou na tela "Ranking" (T-31) com raio de 5 km
-    Quando seleciono a visão "Mais baratas"
-    Então vejo a tabela ordenada dos estabelecimentos com o "Atacadão Curitiba" na 1ª posição (índice -14% da média)
-    E o "Assaí Atacadista" na 2ª posição (índice -11% da média)
-    E cada card exibe a distância, a quantidade de itens analisados e o selo de economia
+  Cenário: Entrada em Estabelecimentos nas mais baratas
+    Dado que abro a aba "Lojas" (T-31) com raio de 5 km
+    Então vejo a lista ordenada das mais baratas perto
+    E o "Condor Centro" está na 1ª posição com "1ª mais barata · 3ª mais cara da região"
+    E o "Super Muffato" na 2ª com "2ª mais barata · 2ª mais cara da região"
+    E há campo de busca de estabelecimento
 
-  Cenário: Visualização dos estabelecimentos mais caros
-    Dado que estou na tela "Ranking" (T-31)
-    Quando alterno para a visão "Mais caras"
-    Então vejo os estabelecimentos que praticam as maiores margens da região
-    E o topo exibe o "Supermercado Gourmet Festval" com índice +22% acima da média da cidade
+  Cenário: Sem toggle baratas/caras
+    Dado que estou na tela "Mais baratas" (T-31)
+    Então não vejo tabs "Mais baratas" / "Mais caras"
+    E a posição cara aparece na própria linha do ranking
 ```
 
 ---

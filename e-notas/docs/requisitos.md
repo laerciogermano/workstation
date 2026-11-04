@@ -315,6 +315,17 @@ Card: [BXKZ55Wb](https://trello.com/c/BXKZ55Wb).
 - Fonte canônica do protótipo: `beta-docs/prototipos/index.html` → copiar para `app/public/prototipos.html` e Contabo.
 - Rollback: restaurar HTML anterior do protótipo + `scp` para Contabo.
 
+## REQ-035 — Estabelecimentos: entrada nas mais baratas (2026-11-04)
+
+- No protótipo, fluxo E03 chama-se **Estabelecimentos** (antes “Geo, ranking e vitrine”).
+- Tela inicial do fluxo / aba **Lojas** = **Mais baratas** (`T-31`), não “Perto de mim” (`T-30`).
+- `T-31`: busca de estabelecimento + chips de raio; lista ordenada das mais baratas no raio.
+- Sem tabs “Mais baratas / Mais caras”: cada linha mostra **Nª mais barata** e **Mª mais cara da região** (+ desvio e distância).
+- `T-30` permanece para **perto por item** (detalhe / busca de produto no raio).
+- Fonte: `beta-docs/prototipos/index.html` → `app/public/prototipos.html` + Contabo.
+- Antes: entrada em Perto (T-30) + toggle baratas/caras no ranking. Depois: entrada em Mais baratas com ranking duplo na lista.
+- Rollback: restaurar HTML/docs anteriores do fluxo E03.
+
 ## Próximos passos
 
 → Manter este arquivo alinhado a cada pedido novo · esteira de docs em [`README.md`](README.md) quando avançar funcionalidades/BDD.

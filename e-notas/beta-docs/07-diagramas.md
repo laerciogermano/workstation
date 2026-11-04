@@ -126,7 +126,7 @@ Demonstra a consulta de lojas físicas no raio do usuário e a computação do r
 sequenceDiagram
   autonumber
   actor C as Comprador
-  participant W as Web (Perto T-30 / Ranking T-31)
+  participant W as Web (Mais baratas T-31 / Perto item T-30)
   participant API as Backend (/api/v1/geo/*)
   participant DB as PostgreSQL (enotas)
 
@@ -256,7 +256,7 @@ flowchart TD
     HOME[T-10 Home Destaques]
     BUS[T-11 Busca Produtos]
     PER[T-30 Perto de Mim]
-    RNK[T-31 Ranking de Lojas]
+    RNK[T-31 Mais baratas]
     MAP[T-32 Mapa de Estabelecimentos]
     VIT[T-33 Vitrine da Loja]
   end

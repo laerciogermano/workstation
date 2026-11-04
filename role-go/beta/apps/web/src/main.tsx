@@ -10,7 +10,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { App } from './app/App';
 
-/** PWA-like: sem zoom por double-tap em campos; pinch Safari bloqueado. */
+/** PWA-like: desliga zoom (double-tap, pinch, Ctrl+scroll, Ctrl+/−). */
 function installAppGestures(): void {
   const isField = (t: EventTarget | null) =>
     t instanceof Element && !!t.closest('input, textarea, select, [contenteditable="true"]');
@@ -25,8 +25,33 @@ function installAppGestures(): void {
     },
     { passive: false, capture: true },
   );
+  // pinch (iOS Safari ignora user-scalable=no em alguns casos)
+  document.addEventListener(
+    'touchmove',
+    (e) => {
+      if (e.touches.length > 1) e.preventDefault();
+    },
+    { passive: false, capture: true },
+  );
+  for (const ev of ['gesturestart', 'gesturechange', 'gestureend'] as const) {
+    document.addEventListener(ev, (e) => e.preventDefault(), { passive: false });
+  }
   document.addEventListener('dblclick', (e) => e.preventDefault(), { capture: true });
-  document.addEventListener('gesturestart', (e) => e.preventDefault(), { passive: false });
+  document.addEventListener(
+    'wheel',
+    (e) => {
+      if (e.ctrlKey || e.metaKey) e.preventDefault();
+    },
+    { passive: false, capture: true },
+  );
+  document.addEventListener(
+    'keydown',
+    (e) => {
+      if (!(e.ctrlKey || e.metaKey)) return;
+      if (e.key === '+' || e.key === '-' || e.key === '=' || e.key === '0') e.preventDefault();
+    },
+    { capture: true },
+  );
 }
 
 installAppGestures();

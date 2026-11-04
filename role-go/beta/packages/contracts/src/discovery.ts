@@ -9,6 +9,11 @@ export const DiscoveryQuery = z.object({
   to: z.string().datetime().optional(),
   radiusKm: z.coerce.number().int().min(RADIUS_MIN_KM).max(RADIUS_MAX_KM).optional(),
   freeOnly: z.enum(['true', 'false']).transform((v) => v === 'true').optional(),
+  /** Visitante: cidade explícita (sem preferências salvas). */
+  cityId: z.string().uuid().optional(),
+  /** Visitante: GPS explícito. */
+  lat: z.coerce.number().min(-90).max(90).optional(),
+  lng: z.coerce.number().min(-180).max(180).optional(),
   cursor: z.string().max(200).optional(),
   sort: z.enum(['soonest', 'nearest']).default('soonest'),
 });

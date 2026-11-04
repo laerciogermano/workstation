@@ -43,7 +43,8 @@ export function App(): JSX.Element {
         <div className={ui.app}>
           <BrowserRouter>
             <Routes>
-              <Route path="/" element={page(<PublicOnly><Auth view="splash" /></PublicOnly>)} />
+              <Route path="/" element={<Navigate to="/explorar" replace />} />
+              <Route path="/bem-vindo" element={page(<PublicOnly><Auth view="splash" /></PublicOnly>)} />
               <Route path="/cadastro" element={page(<PublicOnly><Auth view="register" /></PublicOnly>)} />
               <Route path="/entrar" element={page(<PublicOnly><Auth view="login" /></PublicOnly>)} />
               <Route path="/recuperar-senha" element={page(<Auth view="forgot" />)} />
@@ -54,14 +55,14 @@ export function App(): JSX.Element {
               <Route path="/privacidade" element={page(<Legal kind="privacy" />)} />
               <Route path="/consentimento" element={page(<RequireAuth allowOnboarding><Auth view="consent" /></RequireAuth>)} />
               <Route path="/onboarding/*" element={page(<RequireAuth allowOnboarding><Onboarding /></RequireAuth>)} />
-              <Route path="/explorar/*" element={page(<RequireAuth><Discovery /></RequireAuth>)} />
+              <Route path="/explorar/*" element={page(<Discovery />)} />
               <Route path="/app/*" element={page(<EventRoutes />)} />
               <Route path="/codigo" element={page(<RequireAuth><EventRoutes view="code" /></RequireAuth>)} />
               <Route path="/meus-roles" element={page(<RequireAuth><MeRoutes view="mine" /></RequireAuth>)} />
               <Route path="/perfil/*" element={page(<RequireAuth><MeRoutes view="profile" /></RequireAuth>)} />
               <Route path="/organizar/*" element={page(<RequireAuth><Organizer /></RequireAuth>)} />
               <Route path="/admin/*" element={page(<RequireAdmin><Admin /></RequireAdmin>)} />
-              <Route path="*" element={<Navigate to="/" replace />} />
+              <Route path="*" element={<Navigate to="/explorar" replace />} />
             </Routes>
           </BrowserRouter>
         </div>

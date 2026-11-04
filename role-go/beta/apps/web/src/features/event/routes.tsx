@@ -116,7 +116,7 @@ function EventPage(): JSX.Element {
   const isPrivate = e.visibility === 'private';
   const going = e.viewer.rsvp === 'confirmed' || e.viewer.rsvp === 'approved';
   const pending = e.viewer.rsvp === 'pending';
-  const requireLogin = () => nav(`/cadastro?next=${encodeURIComponent(loc.pathname + loc.search)}`);
+  const requireLogin = () => nav(`/entrar?next=${encodeURIComponent(loc.pathname + loc.search)}`);
   const canGo = !!e.venue.location && !e.venue.addressLocked;
 
   let cta: ReactNode;
@@ -326,7 +326,18 @@ function EventPage(): JSX.Element {
       </Screen>
       <Footer>
         {me && e.status === 'published' && e.phase !== 'ended' ? (
-          <HeartButton on={e.viewer.interested} size={50} title={e.title} onToggle={() => toggle.mutate({ id: e.id, on: !e.viewer.interested }, { onSettled: refresh })} />
+          <HeartButton
+            on={e.viewer.interested}
+            size={50}
+            title={e.title}
+            onToggle={() => {
+              if (!me) {
+                requireLogin();
+                return;
+              }
+              toggle.mutate({ id: e.id, on: !e.viewer.interested }, { onSettled: refresh });
+            }}
+          />
         ) : null}
         {cta}
       </Footer>
@@ -503,7 +514,13 @@ function ReportSheet({ open, onClose, targetId, targetType = 'event' }: { open: 
 /** T-21 · Quem vai: só quem deixou a presença visível; o resto entra na contagem. */
 function PeoplePage(): JSX.Element {
   const { data: e } = useEvent();
-  const [kind, setKind] = useState<'going' | 'interested'>('going');
+  const [params, setParams] = useSearchParams();
+  const kind = params.get('tab') === 'interested' ? 'interested' : 'going';
+  const setKind = (v: 'going' | 'interested') => {
+    const next = new URLSearchParams(params);
+    next.set('tab', v);
+    setParams(next, { replace: true });
+  };
   const q = useQuery({ queryKey: ['event', e?.slug, 'people', kind], queryFn: () => A.people(e?.id ?? '', kind), enabled: !!e });
   return (
     <Screen title="Quem vai">

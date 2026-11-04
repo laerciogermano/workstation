@@ -1,6 +1,7 @@
 import type { Accent } from '@rolego/contracts';
 import { type JSX, type ReactNode, useEffect, useRef } from 'react';
 import { NavLink, useNavigate } from 'react-router';
+import { useMe } from '../lib/queries';
 import { t } from '../lib/i18n/pt-BR';
 import { Icon, type IconName } from './Icon';
 import { accentStyle, cx, IconButton } from './primitives';
@@ -32,7 +33,10 @@ const TABS: { to: string; label: string; icon: IconName }[] = [
   { to: '/perfil', label: t.tabs.profile, icon: 'user' },
 ];
 
-export function TabBar(): JSX.Element {
+/** Tab bar só para quem está logado (visitante vê só Explorar, sem rodapé). */
+export function TabBar(): JSX.Element | null {
+  const { data: me } = useMe();
+  if (!me) return null;
   return (
     <nav className={s.tabbar} aria-label="Navegação principal">
       {TABS.map((tab) => (

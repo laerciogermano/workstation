@@ -17,6 +17,8 @@ O RoleGo junta num app só o que hoje está espalhado entre Instagram, Google, s
 
 > **Organizador publica um evento → usuário descobre por raio (feed / swipe / lista) → abre a página do evento → demonstra interesse ou confirma presença → vai ao rolê → avalia.**
 
+O app é **híbrido**: a descoberta (feed / swipe / lista / busca / página do evento) funciona **sem cadastro**. A home abre em Explorar; a tab bar (Meus rolês / Organizar / Perfil) só aparece logado. Interesse, RSVP, organizar e perfil pedem login. Visitante usa filtros/origem em sessão local; logado persiste no perfil.
+
 O Beta não vende ingresso. Eventos pagos mostram os **valores informativos** (pista, VIP, bebida) e, se o organizador quiser, um **link externo de compra**. A venda dentro do app fica para a próxima release (E04).
 
 ## 2. Problema
@@ -110,11 +112,11 @@ O detalhamento com histórias e critérios de aceite em Gherkin fica em [`02-his
 
 | ID | Requisito | Prio |
 |---|---|---|
-| RF-E02-20 | **Feed**: cards de eventos públicos e privados-descobríveis dentro do raio, a partir de agora, agrupados em "Hoje", "Amanhã", "Este fim de semana", "Próximos" | M |
-| RF-E02-21 | **Swipe** ("Tinder de eventos"): um card por vez; direita/♥ = interesse; esquerda/✕ = passar (o evento some do swipe); desfazer o último | M |
-| RF-E02-22 | **Lista**: visão compacta e ordenável (data / distância) | M |
-| RF-E02-23 | Filtros: tipo de evento, dia (hoje, amanhã, sex, sáb, dom, intervalo) e raio 1–100 km. São persistidos por usuário | M |
-| RF-E02-24 | Origem da busca: localização atual (se permitida) ou cidade escolhida. Trocar a cidade na hora, para quem está viajando | M |
+| RF-E02-20 | **Feed**: cards de eventos públicos e privados-descobríveis dentro do raio, a partir de agora, agrupados em "Hoje", "Amanhã", "Este fim de semana", "Próximos". **Público sem login** | M |
+| RF-E02-21 | **Swipe** ("Tinder de eventos"): um card por vez; direita/♥ = interesse; esquerda/✕ = passar (o evento some do swipe); desfazer o último. Ver o deck é público; like/passar pedem login | M |
+| RF-E02-22 | **Lista**: visão compacta e ordenável (data / distância). **Pública sem login** | M |
+| RF-E02-23 | Filtros: tipo de evento, dia (hoje, amanhã, sex, sáb, dom, intervalo) e raio 1–100 km. Persistidos no perfil se logado; em sessão local se visitante | M |
+| RF-E02-24 | Origem da busca: localização atual (se permitida) ou cidade escolhida. Trocar a cidade na hora, para quem está viajando (também visitante) | M |
 | RF-E02-25 | Estado vazio útil: sugere aumentar o raio ou trocar o dia | M |
 | RF-E02-26 | Busca por texto (nome do evento ou do local) | S |
 | RF-E02-27 | Ranking simples: início mais próximo → distância → preferência de tipo. Sem patrocínio no Beta | M |

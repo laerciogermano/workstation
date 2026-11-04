@@ -1,5 +1,5 @@
 import type { JSX, ReactNode } from 'react';
-import { Navigate, useLocation } from 'react-router';
+import { Navigate, useLocation, useNavigate } from 'react-router';
 import { useMe } from '../lib/queries';
 import { Loading } from '../ui/primitives';
 
@@ -35,12 +35,26 @@ export function PublicOnly({ children }: { children: ReactNode }): JSX.Element {
 
 /**
  * Destino pós-login. Home é sempre Explorar.
- * Só honra `?next=` para deep link de evento/código (ex.: confirmar presença).
- * Ignora /meus-roles, /perfil, /organizar etc.
+ * Honra `?next=` para explorar, evento/código; ignora /meus-roles, /perfil, /organizar etc.
  */
 export const safeNext = (search: string, fallback = '/explorar'): string => {
   const next = new URLSearchParams(search).get('next');
   if (!next || !next.startsWith('/') || next.startsWith('//')) return fallback;
-  if (next.startsWith('/app/') || next === '/codigo' || next.startsWith('/codigo?')) return next;
+  if (next.startsWith('/explorar') || next.startsWith('/app/') || next === '/codigo' || next.startsWith('/codigo?')) return next;
   return fallback;
 };
+
+/** Redireciona visitante para login; retorna false se bloqueou. */
+export function useLoginGate() {
+  const { data: me, isLoading } = useMe();
+  const nav = useNavigate();
+  const loc = useLocation();
+  return {
+    me: me ?? null,
+    isLoading,
+    requireLogin: (path = loc.pathname + loc.search): false => {
+      nav(`/entrar?next=${encodeURIComponent(path)}`);
+      return false;
+    },
+  };
+}

@@ -18,11 +18,28 @@ export class DiscoveryService {
     private readonly origins: OriginResolver,
   ) {}
 
-  private async resolve(viewer: Viewer, q: Partial<DiscoveryQuery>): Promise<Resolved> {
+  private async resolve(viewer: Viewer | null, q: Partial<DiscoveryQuery>): Promise<Resolved> {
     const now = this.clock.now();
-    const origin = await this.origins.forUser(viewer.userId, q.radiusKm);
-    const [p] = await rows<{ filters: unknown }>(this.db, sql`SELECT filters FROM discovery_preferences WHERE user_id = ${viewer.userId}`);
-    const saved = DiscoveryFilters.parse(p?.filters ?? {});
+    let origin = await this.origins.forUser(viewer?.userId ?? null, q.radiusKm);
+    if (q.cityId) {
+      const c = await this.origins.city(q.cityId);
+      if (c) {
+        origin = {
+          mode: 'override',
+          label: c.name,
+          city: { id: c.id, name: c.name, uf: c.uf, launchStatus: c.launchStatus },
+          point: { lat: c.lat, lng: c.lng },
+          radiusKm: q.radiusKm ?? origin.radiusKm,
+          preferredTypes: origin.preferredTypes,
+        };
+      }
+    } else if (q.lat !== undefined && q.lng !== undefined) {
+      origin = { ...origin, mode: 'gps', point: { lat: q.lat, lng: q.lng }, radiusKm: q.radiusKm ?? origin.radiusKm };
+    }
+    const [p] = viewer
+      ? await rows<{ filters: unknown }>(this.db, sql`SELECT filters FROM discovery_preferences WHERE user_id = ${viewer.userId}`)
+      : [];
+    const saved = DiscoveryFilters.parse(viewer ? (p?.filters ?? {}) : {});
     const types = q.types ?? saved.types;
     const days = q.days ?? saved.days;
     const freeOnly = q.freeOnly ?? saved.freeOnly;
@@ -42,17 +59,21 @@ export class DiscoveryService {
     return { origin, where: sql.join(parts, sql` AND `) };
   }
 
-  private cards(recs: Awaited<ReturnType<typeof findEvents>>, viewer: Viewer): EventCard[] {
+  private cards(recs: Awaited<ReturnType<typeof findEvents>>, viewer: Viewer | null): EventCard[] {
     const now = this.clock.now();
     return recs.map((r) => toEventCard(r, viewerFor(r, viewer), now));
   }
 
+  private vid(viewer: Viewer | null): string | null {
+    return viewer?.userId ?? null;
+  }
+
   /** Feed: ordena por início, cursor (starts_at, id). */
-  async feed(viewer: Viewer, q: DiscoveryQuery): Promise<Page<EventCard> & { origin: Origin }> {
+  async feed(viewer: Viewer | null, q: DiscoveryQuery): Promise<Page<EventCard> & { origin: Origin }> {
     const { origin, where } = await this.resolve(viewer, q);
     const c = decodeCursor(q.cursor);
     const after = c?.k === 't' ? sql` AND (e.starts_at, e.id) > (${new Date(c.s)}, ${c.id})` : sql``;
-    const recs = await findEvents(this.db, { viewerId: viewer.userId, origin: origin.point }, sql`${where}${after}`, sql`ORDER BY e.starts_at, e.id LIMIT ${PAGE_LIMIT + 1}`);
+    const recs = await findEvents(this.db, { viewerId: this.vid(viewer), origin: origin.point }, sql`${where}${after}`, sql`ORDER BY e.starts_at, e.id LIMIT ${PAGE_LIMIT + 1}`);
     const page = recs.slice(0, PAGE_LIMIT);
     const last = page[page.length - 1];
     return {
@@ -62,26 +83,31 @@ export class DiscoveryService {
     };
   }
 
-  /** Swipe: exclui já curtidos e passados; tipos preferidos primeiro (RF-E02-27). */
-  async swipe(viewer: Viewer, q: DiscoveryQuery): Promise<EventCard[]> {
+  /** Swipe: exclui já curtidos e passados (só logado); tipos preferidos primeiro (RF-E02-27). */
+  async swipe(viewer: Viewer | null, q: DiscoveryQuery): Promise<EventCard[]> {
     const { origin, where } = await this.resolve(viewer, q);
+    const uid = this.vid(viewer);
+    const exclude =
+      uid
+        ? sql` AND i.user_id IS NULL AND NOT EXISTS (SELECT 1 FROM swipe_passes p WHERE p.event_id = e.id AND p.user_id = ${uid})`
+        : sql``;
     const recs = await findEvents(
       this.db,
-      { viewerId: viewer.userId, origin: origin.point },
-      sql`${where} AND i.user_id IS NULL AND NOT EXISTS (SELECT 1 FROM swipe_passes p WHERE p.event_id = e.id AND p.user_id = ${viewer.userId})`,
+      { viewerId: uid, origin: origin.point },
+      sql`${where}${exclude}`,
       sql`ORDER BY (e.type_slug = ANY(${textArray(origin.preferredTypes)}))::int DESC, e.starts_at, ST_Distance(e.location, ${originPoint(origin.point)}) LIMIT 10`,
     );
     return this.cards(recs, viewer);
   }
 
-  async list(viewer: Viewer, q: DiscoveryQuery): Promise<Page<EventCard> & { origin: Origin }> {
+  async list(viewer: Viewer | null, q: DiscoveryQuery): Promise<Page<EventCard> & { origin: Origin }> {
     if (q.sort === 'soonest') return this.feed(viewer, q);
     const { origin, where } = await this.resolve(viewer, q);
     const c = decodeCursor(q.cursor);
     const offset = c?.k === 'o' ? c.o : 0;
     const recs = await findEvents(
       this.db,
-      { viewerId: viewer.userId, origin: origin.point },
+      { viewerId: this.vid(viewer), origin: origin.point },
       where,
       sql`ORDER BY ST_Distance(e.location, ${originPoint(origin.point)}), e.starts_at, e.id LIMIT ${PAGE_LIMIT + 1} OFFSET ${offset}`,
     );
@@ -92,7 +118,7 @@ export class DiscoveryService {
     };
   }
 
-  async count(viewer: Viewer, q: Partial<DiscoveryQuery>): Promise<{ total: number }> {
+  async count(viewer: Viewer | null, q: Partial<DiscoveryQuery>): Promise<{ total: number }> {
     const { where } = await this.resolve(viewer, q);
     const [r] = await rows<{ total: number }>(
       this.db,
@@ -102,9 +128,9 @@ export class DiscoveryService {
   }
 
   /** Busca por título ou local sem acento (unaccent + trigram), só eventos futuros. */
-  async search(viewer: Viewer, q: { q: string; scope: 'radius' | 'city'; cursor?: string }): Promise<Page<EventCard>> {
+  async search(viewer: Viewer | null, q: { q: string; scope: 'radius' | 'city'; cursor?: string }): Promise<Page<EventCard>> {
     const now = this.clock.now();
-    const origin = await this.origins.forUser(viewer.userId);
+    const origin = await this.origins.forUser(this.vid(viewer));
     const like = `%${q.q.replace(/[%_\\]/g, '')}%`;
     const scope =
       q.scope === 'city' && origin.city
@@ -114,7 +140,7 @@ export class DiscoveryService {
     const offset = c?.k === 'o' ? c.o : 0;
     const recs = await findEvents(
       this.db,
-      { viewerId: viewer.userId, origin: origin.point },
+      { viewerId: this.vid(viewer), origin: origin.point },
       sql`${discoverableWhere(now)} AND ${scope} AND (
             immutable_unaccent(lower(e.title)) LIKE immutable_unaccent(lower(${like}))
             OR immutable_unaccent(lower(e.venue_name)) LIKE immutable_unaccent(lower(${like}))

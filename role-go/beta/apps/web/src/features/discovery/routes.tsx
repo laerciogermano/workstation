@@ -2,17 +2,19 @@ import { DAY_FILTERS, type DayFilter, type EventCard, type Me, RADIUS_MAX_KM, RA
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { type JSX, type PointerEvent as RPointerEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, Navigate, Route, Routes, useNavigate } from 'react-router';
+import { useLoginGate } from '../../app/guards';
 import { api, errorMessage } from '../../lib/http';
 import { feedGroup, type FeedGroup, distanceLabel, whenLabel, priceLabel } from '../../lib/format';
 import { t } from '../../lib/i18n/pt-BR';
 import { keys, setMe, useCities, useEventTypes, useMe, useToggleInterest } from '../../lib/queries';
 import { EventCover } from '../../ui/EventCover';
-import { EventCardFeed, EventCardMini, eventPath } from '../../ui/EventCard';
+import { EventCardFeed, EventCardMini, eventPath, peoplePath } from '../../ui/EventCard';
 import { Icon } from '../../ui/Icon';
 import { Screen, Sheet, TabBar, TopBar } from '../../ui/layout';
 import { AvatarStack, Badge, Button, Chip, cx, EmptyState, ErrorState, IconButton, NeonCard, RangeSlider, Section, Segmented, Skeleton, Stars, TextInput, Title, Toggle, ui } from '../../ui/primitives';
 import { useToast } from '../../ui/toast';
 import * as D from './api';
+import { type GuestDiscovery, readGuest, writeGuest } from './guestPrefs';
 import s from './discovery.module.css';
 
 export default function DiscoveryRoutes(): JSX.Element {
@@ -42,23 +44,60 @@ function useSavePrefs() {
   });
 }
 
+function useGuestTick() {
+  const [tick, setTick] = useState(0);
+  const bump = useCallback(() => setTick((n) => n + 1), []);
+  const guest = useMemo(() => readGuest(), [tick]);
+  return { guest, bump, tick };
+}
+
 function Explore({ view }: { view: View }): JSX.Element {
   const nav = useNavigate();
   const { data: me } = useMe();
+  const { guest, bump } = useGuestTick();
   const [filtersOpen, setFiltersOpen] = useState(false);
   const save = useSavePrefs();
-  const f = me?.preferences.filters;
+  const f = me ? me.preferences.filters : guest.filters;
+  const radiusKm = me ? me.preferences.radiusKm : guest.radiusKm;
   const activeCount = (f?.types.length ?? 0) + (f?.days.length ?? 0) + (f?.freeOnly ? 1 : 0);
   const { data: types } = useEventTypes();
-  const origin = me?.preferences;
-  const originLabel = origin?.originMode === 'override' ? origin.overrideCity?.name : origin?.city?.name;
-  const originSub = `${origin?.originMode === 'gps' ? 'Minha localização' : origin?.originMode === 'override' ? 'Explorando' : 'Centro da cidade'} · ${origin?.radiusKm ?? 20} km`;
 
-  const removeFilter = (patch: Partial<Me['preferences']['filters']>) => save.mutate({ filters: patch });
+  const originLabel = me
+    ? me.preferences.originMode === 'override'
+      ? me.preferences.overrideCity?.name
+      : me.preferences.city?.name
+    : guest.originMode === 'override'
+      ? guest.cityName
+      : guest.originMode === 'gps'
+        ? 'Minha localização'
+        : guest.cityName ?? 'Curitiba';
+  const originSub = me
+    ? `${me.preferences.originMode === 'gps' ? 'Minha localização' : me.preferences.originMode === 'override' ? 'Explorando' : 'Centro da cidade'} · ${radiusKm} km`
+    : `${guest.originMode === 'gps' ? 'Minha localização' : guest.originMode === 'override' ? 'Explorando' : 'Centro da cidade'} · ${radiusKm} km`;
+
+  const qc = useQueryClient();
+  const onRemove = (patch: Partial<GuestDiscovery['filters']>) => {
+    if (me) {
+      save.mutate({ filters: patch });
+      return;
+    }
+    writeGuest({ filters: { ...guest.filters, ...patch } });
+    bump();
+    void qc.invalidateQueries({ queryKey: keys.discovery });
+  };
+
+  const onWiden = (km: number) => {
+    if (me) save.mutate({ radiusKm: km });
+    else {
+      writeGuest({ radiusKm: km });
+      bump();
+      void qc.invalidateQueries({ queryKey: keys.discovery });
+    }
+  };
 
   return (
     <>
-      <Screen tabs title={t.tabs.explore}>
+      <Screen tabs={!!me} title={t.tabs.explore}>
         <div className={s.ehead}>
           <button type="button" className={s.locbtn} onClick={() => nav('/explorar/onde')} aria-label="Trocar onde explorar">
             <Icon name="pin" className={ui.cy} />
@@ -68,16 +107,39 @@ function Explore({ view }: { view: View }): JSX.Element {
             </span>
           </button>
           <span className={ui.grow} />
+          {!me ? (
+            <Button small variant="secondary" onClick={() => nav('/entrar?next=/explorar')}>
+              Entrar
+            </Button>
+          ) : null}
           <IconButton icon="search" label="Buscar" onClick={() => nav('/explorar/busca')} />
           <IconButton icon="filter" label="Filtros" badge={activeCount} onClick={() => setFiltersOpen(true)} />
         </div>
-        {origin?.originMode === 'override' && origin.overrideCity ? (
+        {me?.preferences.originMode === 'override' && me.preferences.overrideCity ? (
           <div className={s.override}>
             <span>
-              Explorando <b>{origin.overrideCity.name}</b>
+              Explorando <b>{me.preferences.overrideCity.name}</b>
             </span>
             <button type="button" className={ui.link} onClick={() => save.mutate({ overrideCityId: null })}>
-              Voltar para {origin.city?.name ?? 'minha cidade'}
+              Voltar para {me.preferences.city?.name ?? 'minha cidade'}
+            </button>
+          </div>
+        ) : null}
+        {!me && guest.originMode === 'override' && guest.cityName ? (
+          <div className={s.override}>
+            <span>
+              Explorando <b>{guest.cityName}</b>
+            </span>
+            <button
+              type="button"
+              className={ui.link}
+              onClick={() => {
+                writeGuest({ originMode: 'city', cityId: undefined, cityName: undefined, cityUf: undefined });
+                bump();
+                void qc.invalidateQueries({ queryKey: keys.discovery });
+              }}
+            >
+              Voltar ao padrão
             </button>
           </div>
         ) : null}
@@ -94,27 +156,27 @@ function Explore({ view }: { view: View }): JSX.Element {
         {activeCount ? (
           <div className={cx(ui.hscroll, ui.mt12)}>
             {f?.types.map((slug) => (
-              <Chip key={slug} small on removable onClick={() => removeFilter({ types: f.types.filter((x) => x !== slug) })}>
+              <Chip key={slug} small on removable onClick={() => onRemove({ types: f.types.filter((x) => x !== slug) })}>
                 {types?.find((x) => x.slug === slug)?.label ?? slug}
               </Chip>
             ))}
             {f?.days.map((d) => (
-              <Chip key={d} small on removable onClick={() => removeFilter({ days: f.days.filter((x) => x !== d) })}>
+              <Chip key={d} small on removable onClick={() => onRemove({ days: f.days.filter((x) => x !== d) })}>
                 {DAY_LABEL[d]}
               </Chip>
             ))}
             {f?.freeOnly ? (
-              <Chip small on removable onClick={() => removeFilter({ freeOnly: false })}>
+              <Chip small on removable onClick={() => onRemove({ freeOnly: false })}>
                 {t.free}
               </Chip>
             ) : null}
           </div>
         ) : null}
-        {view === 'feed' ? <Feed onWiden={(km) => save.mutate({ radiusKm: km })} radiusKm={origin?.radiusKm ?? 20} /> : null}
-        {view === 'swipe' ? <SwipeDeck /> : null}
-        {view === 'list' ? <ListView /> : null}
+        {view === 'feed' ? <Feed onWiden={onWiden} radiusKm={radiusKm} guest={me ? null : guest} guestKey={me ? 'me' : JSON.stringify(guest)} /> : null}
+        {view === 'swipe' ? <SwipeDeck guest={me ? null : guest} guestKey={me ? 'me' : JSON.stringify(guest)} /> : null}
+        {view === 'list' ? <ListView guest={me ? null : guest} guestKey={me ? 'me' : JSON.stringify(guest)} /> : null}
       </Screen>
-      <FiltersSheet open={filtersOpen} onClose={() => setFiltersOpen(false)} />
+      <FiltersSheet open={filtersOpen} onClose={() => setFiltersOpen(false)} guest={guest} onGuestChange={bump} />
       <TabBar />
     </>
   );
@@ -123,10 +185,21 @@ function Explore({ view }: { view: View }): JSX.Element {
 const nextRadius = (km: number) => Math.min(RADIUS_MAX_KM, km < 10 ? 10 : km < 25 ? 25 : km < 50 ? 50 : 100);
 
 /** T-10 · Feed agrupado (Hoje / Amanhã / Este fim de semana / Próximos), ♥ otimista. */
-function Feed({ onWiden, radiusKm }: { onWiden: (km: number) => void; radiusKm: number }): JSX.Element {
+function Feed({
+  onWiden,
+  radiusKm,
+  guest,
+  guestKey,
+}: {
+  onWiden: (km: number) => void;
+  radiusKm: number;
+  guest: GuestDiscovery | null;
+  guestKey: string;
+}): JSX.Element {
+  const gate = useLoginGate();
   const q = useInfiniteQuery({
-    queryKey: [...keys.discovery, 'feed'],
-    queryFn: ({ pageParam }) => D.feed(pageParam),
+    queryKey: [...keys.discovery, 'feed', guestKey],
+    queryFn: ({ pageParam }) => D.feed(pageParam, guest),
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (p) => p.nextCursor ?? undefined,
   });
@@ -142,7 +215,7 @@ function Feed({ onWiden, radiusKm }: { onWiden: (km: number) => void; radiusKm: 
 
   return (
     <>
-      <PendingReviewCard />
+      {gate.me ? <PendingReviewCard /> : null}
       {q.isLoading ? (
         <div className={ui.mt16}>
           <Skeleton height={190} />
@@ -171,7 +244,18 @@ function Feed({ onWiden, radiusKm }: { onWiden: (km: number) => void; radiusKm: 
               {t.groups[k]}
             </Section>
             {groups[k].map((e, i) => (
-              <EventCardFeed key={e.id} e={e} eager={k === 'today' && i < 2} onToggleInterest={(on) => toggle.mutate({ id: e.id, on })} />
+              <EventCardFeed
+                key={e.id}
+                e={e}
+                eager={k === 'today' && i < 2}
+                onToggleInterest={(on) => {
+                  if (!gate.me) {
+                    gate.requireLogin();
+                    return;
+                  }
+                  toggle.mutate({ id: e.id, on });
+                }}
+              />
             ))}
           </section>
         ) : null,
@@ -219,16 +303,23 @@ function PendingReviewCard(): JSX.Element | null {
 }
 
 /** T-11 · Swipe: direita/♥ = interesse, esquerda/✕ = passar, ↺ desfaz. Botões e teclado como alternativa (a11y). */
-function SwipeDeck(): JSX.Element {
+function SwipeDeck({ guest, guestKey }: { guest: GuestDiscovery | null; guestKey: string }): JSX.Element {
   const qc = useQueryClient();
   const nav = useNavigate();
   const toast = useToast();
+  const gate = useLoginGate();
   const [deck, setDeck] = useState<EventCard[]>([]);
   const [history, setHistory] = useState<{ e: EventCard; action: 'like' | 'pass' }[]>([]);
   const [drag, setDrag] = useState({ x: 0, active: false });
   const start = useRef<{ x: number; y: number } | null>(null);
   const seen = useRef(new Set<string>());
-  const q = useQuery({ queryKey: [...keys.discovery, 'swipe'], queryFn: D.swipe, staleTime: 0 });
+  const q = useQuery({ queryKey: [...keys.discovery, 'swipe', guestKey], queryFn: () => D.swipe(guest), staleTime: 0 });
+
+  useEffect(() => {
+    seen.current = new Set();
+    setDeck([]);
+    setHistory([]);
+  }, [guestKey]);
 
   useEffect(() => {
     if (!q.data) return;
@@ -237,7 +328,6 @@ function SwipeDeck(): JSX.Element {
     if (fresh.length) setDeck((d) => [...d, ...fresh]);
   }, [q.data]);
 
-  // prefetch quando restam 3 ou menos
   useEffect(() => {
     if (deck.length <= 3 && q.isSuccess && !q.isFetching) void q.refetch();
   }, [deck.length, q]);
@@ -246,6 +336,10 @@ function SwipeDeck(): JSX.Element {
     async (action: 'like' | 'pass') => {
       const top = deck[0];
       if (!top) return;
+      if (!gate.me) {
+        gate.requireLogin();
+        return;
+      }
       setDeck((d) => d.slice(1));
       setHistory((h) => [...h.slice(-9), { e: top, action }]);
       setDrag({ x: 0, active: false });
@@ -257,12 +351,16 @@ function SwipeDeck(): JSX.Element {
         toast.error(errorMessage(e));
       }
     },
-    [deck, qc, toast],
+    [deck, qc, toast, gate],
   );
 
   const undo = useCallback(async () => {
     const last = history[history.length - 1];
     if (!last) return;
+    if (!gate.me) {
+      gate.requireLogin();
+      return;
+    }
     setHistory((h) => h.slice(0, -1));
     setDeck((d) => [last.e, ...d]);
     try {
@@ -271,7 +369,7 @@ function SwipeDeck(): JSX.Element {
     } catch (e) {
       toast.error(errorMessage(e));
     }
-  }, [history, toast]);
+  }, [history, toast, gate]);
 
   useEffect(() => {
     const onKey = (ev: KeyboardEvent) => {
@@ -339,7 +437,13 @@ function SwipeDeck(): JSX.Element {
 }
 
 function SwipeCard({ e, className, style, stamp, handlers }: { e: EventCard; className?: string; style?: React.CSSProperties; stamp?: 'yes' | 'no' | null; handlers?: Record<string, (ev: RPointerEvent) => void> }): JSX.Element {
+  const nav = useNavigate();
   const price = priceLabel(e);
+  const openPeople = (tab: 'going' | 'interested') => (ev: React.MouseEvent | RPointerEvent) => {
+    ev.preventDefault();
+    ev.stopPropagation();
+    nav(peoplePath(e, tab));
+  };
   return (
     <article className={cx(s.scard, className)} style={style} aria-label={e.title} {...handlers}>
       <EventCover coverUrl={e.coverUrl} thumbUrl={e.coverThumbUrl} height="100%" className={s.cover} eager />
@@ -358,13 +462,20 @@ function SwipeCard({ e, className, style, stamp, handlers }: { e: EventCard; cla
           {whenLabel(e.startsAt, e.endsAt)} · {e.visibility === 'private' ? e.venue.neighborhood : e.venue.name}
           {e.distanceKm !== null ? ` · ${distanceLabel(e.distanceKm, e.visibility)}` : ''}
         </p>
-        <div className={cx(ui.row, ui.mt8)}>
-          {e.peoplePreview.length ? <AvatarStack people={e.peoplePreview} /> : null}
+        <div className={cx(ui.row, ui.mt8, ui.wrap)} style={{ gap: 10 }}>
+          {e.peoplePreview.length ? (
+            <button type="button" className={ui.row} style={{ gap: 6, background: 'none', border: 0, padding: 0, color: 'inherit' }} aria-label={`Quem vai em ${e.title}`} onClick={openPeople('going')} onPointerDown={(ev) => ev.stopPropagation()}>
+              <AvatarStack people={e.peoplePreview} />
+            </button>
+          ) : null}
           <span className={ui.small}>
-            <b className={ui.mg}>
+            <button type="button" className={ui.mg} style={{ background: 'none', border: 0, padding: 0, font: 'inherit', fontWeight: 700, cursor: 'pointer' }} aria-label={`${e.counts.going} ${t.going}`} onClick={openPeople('going')} onPointerDown={(ev) => ev.stopPropagation()}>
               {e.counts.going} {t.going}
-            </b>{' '}
-            · {e.counts.interested} com interesse
+            </button>
+            {' · '}
+            <button type="button" style={{ background: 'none', border: 0, padding: 0, font: 'inherit', color: 'inherit', cursor: 'pointer' }} aria-label={`${e.counts.interested} com interesse`} onClick={openPeople('interested')} onPointerDown={(ev) => ev.stopPropagation()}>
+              {e.counts.interested} com interesse
+            </button>
           </span>
         </div>
       </div>
@@ -373,11 +484,11 @@ function SwipeCard({ e, className, style, stamp, handlers }: { e: EventCard; cla
 }
 
 /** T-12 · Lista compacta, ordenável. */
-function ListView(): JSX.Element {
+function ListView({ guest, guestKey }: { guest: GuestDiscovery | null; guestKey: string }): JSX.Element {
   const [sort, setSort] = useState<'soonest' | 'nearest'>('soonest');
   const q = useInfiniteQuery({
-    queryKey: [...keys.discovery, 'list', sort],
-    queryFn: ({ pageParam }) => D.list(sort, pageParam),
+    queryKey: [...keys.discovery, 'list', sort, guestKey],
+    queryFn: ({ pageParam }) => D.list(sort, pageParam, guest),
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (p) => p.nextCursor ?? undefined,
   });
@@ -408,27 +519,58 @@ function ListView(): JSX.Element {
 }
 
 /** T-13 · Filtros: tipo (multi), quando, distância e grátis; contagem ao vivo; salvos no perfil. */
-function FiltersSheet({ open, onClose }: { open: boolean; onClose: () => void }): JSX.Element | null {
+function FiltersSheet({
+  open,
+  onClose,
+  guest,
+  onGuestChange,
+}: {
+  open: boolean;
+  onClose: () => void;
+  guest: GuestDiscovery;
+  onGuestChange: () => void;
+}): JSX.Element | null {
   const { data: me } = useMe();
   const { data: types } = useEventTypes();
   const save = useSavePrefs();
+  const qc = useQueryClient();
   const toast = useToast();
   const [f, setF] = useState({ types: [] as string[], days: [] as DayFilter[], freeOnly: false, radiusKm: 20 });
   useEffect(() => {
-    if (open && me) setF({ types: me.preferences.filters.types, days: me.preferences.filters.days, freeOnly: me.preferences.filters.freeOnly, radiusKm: me.preferences.radiusKm });
-  }, [open, me]);
+    if (!open) return;
+    if (me) setF({ types: me.preferences.filters.types, days: me.preferences.filters.days, freeOnly: me.preferences.filters.freeOnly, radiusKm: me.preferences.radiusKm });
+    else setF({ types: guest.filters.types, days: guest.filters.days, freeOnly: guest.filters.freeOnly, radiusKm: guest.radiusKm });
+  }, [open, me, guest]);
   const [debounced, setDebounced] = useState(f);
   useEffect(() => {
     const h = setTimeout(() => setDebounced(f), 300);
     return () => clearTimeout(h);
   }, [f]);
-  const count = useQuery({ queryKey: [...keys.discovery, 'count', debounced], queryFn: () => D.count(debounced), enabled: open });
+  const count = useQuery({
+    queryKey: [...keys.discovery, 'count', debounced, me ? 'me' : guest.cityId, guest.lat, guest.lng],
+    queryFn: () =>
+      D.count({
+        ...debounced,
+        cityId: !me && guest.originMode === 'override' ? guest.cityId : undefined,
+        lat: !me && guest.originMode === 'gps' ? guest.lat : undefined,
+        lng: !me && guest.originMode === 'gps' ? guest.lng : undefined,
+      }),
+    enabled: open,
+  });
   const toggle = <T extends string>(xs: T[], x: T) => (xs.includes(x) ? xs.filter((y) => y !== x) : [...xs, x]);
-  const apply = () =>
-    save.mutate(
-      { filters: { types: f.types, days: f.days, freeOnly: f.freeOnly }, radiusKm: f.radiusKm },
-      { onSuccess: onClose, onError: (e) => toast.error(errorMessage(e)) },
-    );
+  const apply = () => {
+    if (me) {
+      save.mutate(
+        { filters: { types: f.types, days: f.days, freeOnly: f.freeOnly }, radiusKm: f.radiusKm },
+        { onSuccess: onClose, onError: (e) => toast.error(errorMessage(e)) },
+      );
+      return;
+    }
+    writeGuest({ filters: { types: f.types, days: f.days, freeOnly: f.freeOnly }, radiusKm: f.radiusKm });
+    onGuestChange();
+    void qc.invalidateQueries({ queryKey: keys.discovery });
+    onClose();
+  };
   return (
     <Sheet open={open} onClose={onClose} label="Filtros">
       <div className={cx(ui.row, ui.between)}>
@@ -474,13 +616,26 @@ function Where(): JSX.Element {
   const nav = useNavigate();
   const toast = useToast();
   const save = useSavePrefs();
+  const qc = useQueryClient();
   const [q, setQ] = useState('');
   const { data: cities } = useCities(q);
+  const guest = readGuest();
   const done = { onSuccess: () => nav('/explorar'), onError: (e: unknown) => toast.error(errorMessage(e)) };
+  const guestDone = () => {
+    void qc.invalidateQueries({ queryKey: keys.discovery });
+    nav('/explorar');
+  };
   const useGps = () => {
     if (!('geolocation' in navigator)) return toast.error('Seu navegador não oferece localização.');
     navigator.geolocation.getCurrentPosition(
-      (p) => save.mutate({ originMode: 'gps', overrideCityId: null, location: { lat: p.coords.latitude, lng: p.coords.longitude } }, done),
+      (p) => {
+        if (me) {
+          save.mutate({ originMode: 'gps', overrideCityId: null, location: { lat: p.coords.latitude, lng: p.coords.longitude } }, done);
+          return;
+        }
+        writeGuest({ originMode: 'gps', lat: p.coords.latitude, lng: p.coords.longitude, cityId: undefined, cityName: undefined });
+        guestDone();
+      },
       () => toast.error('Não conseguimos sua localização. Verifique a permissão do navegador.'),
       { timeout: 10_000 },
     );
@@ -495,7 +650,11 @@ function Where(): JSX.Element {
         </span>
         <span className={ui.grow}>
           <b>Minha localização atual</b>
-          {me?.preferences.originMode === 'gps' ? <span className={cx(ui.xs, ui.cy)} style={{ display: 'block' }}>em uso</span> : null}
+          {(me?.preferences.originMode === 'gps' || (!me && guest.originMode === 'gps')) ? (
+            <span className={cx(ui.xs, ui.cy)} style={{ display: 'block' }}>
+              em uso
+            </span>
+          ) : null}
         </span>
       </button>
       {me?.preferences.city ? (
@@ -508,12 +667,41 @@ function Where(): JSX.Element {
           </span>
         </button>
       ) : null}
+      {!me ? (
+        <button
+          type="button"
+          className={ui.lrow}
+          onClick={() => {
+            writeGuest({ originMode: 'city', cityId: undefined, cityName: undefined, lat: undefined, lng: undefined });
+            guestDone();
+          }}
+        >
+          <span className={ui.lrowIco}>
+            <Icon name="home" />
+          </span>
+          <span className={ui.grow}>
+            <b>Cidade padrão</b> <span className={ui.muted}>· Curitiba</span>
+          </span>
+        </button>
+      ) : null}
       <div className={ui.mt16} />
       <TextInput placeholder="Buscar cidade" aria-label="Buscar cidade" value={q} onChange={(e) => setQ(e.target.value)} />
       {cities
         ?.filter((c) => c.id !== me?.preferences.city?.id)
         .map((c) => (
-          <button key={c.id} type="button" className={ui.lrow} onClick={() => save.mutate({ originMode: 'override', overrideCityId: c.id }, done)}>
+          <button
+            key={c.id}
+            type="button"
+            className={ui.lrow}
+            onClick={() => {
+              if (me) {
+                save.mutate({ originMode: 'override', overrideCityId: c.id }, done);
+                return;
+              }
+              writeGuest({ originMode: 'override', cityId: c.id, cityName: c.name, cityUf: c.uf, lat: undefined, lng: undefined });
+              guestDone();
+            }}
+          >
             <span className={ui.lrowIco}>
               <Icon name="pin" />
             </span>
@@ -529,6 +717,9 @@ function Where(): JSX.Element {
 
 /** T-15 · Busca sem acento por título ou local; raio por padrão, "Toda a cidade" amplia. */
 function Search(): JSX.Element {
+  const { data: me } = useMe();
+  const guest = me ? null : readGuest();
+  const guestKey = me ? 'me' : JSON.stringify(guest);
   const [q, setQ] = useState('');
   const [debounced, setDebounced] = useState('');
   const [wide, setWide] = useState(false);
@@ -536,7 +727,11 @@ function Search(): JSX.Element {
     const h = setTimeout(() => setDebounced(q.trim()), 300);
     return () => clearTimeout(h);
   }, [q]);
-  const r = useQuery({ queryKey: [...keys.discovery, 'search', debounced, wide], queryFn: () => D.search(debounced, wide ? 'city' : 'radius'), enabled: debounced.length >= 2 });
+  const r = useQuery({
+    queryKey: [...keys.discovery, 'search', debounced, wide, guestKey],
+    queryFn: () => D.search(debounced, wide ? 'city' : 'radius', undefined, guest),
+    enabled: debounced.length >= 2,
+  });
   return (
     <Screen title="Buscar">
       <TopBar title="Buscar" />

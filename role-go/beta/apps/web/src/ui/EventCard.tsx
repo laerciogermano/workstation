@@ -1,6 +1,6 @@
 import type { EventCard as Card, RsvpStatus } from '@rolego/contracts';
-import type { JSX } from 'react';
-import { Link } from 'react-router';
+import type { JSX, MouseEvent, PointerEvent, ReactNode } from 'react';
+import { Link, useNavigate } from 'react-router';
 import { dayLabel, distanceLabel, endsIn, hhmm, priceLabel, whenLabel } from '../lib/format';
 import { t } from '../lib/i18n/pt-BR';
 import { CoverBadges, EventCover } from './EventCover';
@@ -10,6 +10,31 @@ import s from './event-card.module.css';
 import u from './ui.module.css';
 
 export const eventPath = (e: { slug: string }): string => `/app/e/${e.slug}`;
+export const peoplePath = (e: { slug: string }, tab: 'going' | 'interested' = 'going'): string =>
+  `/app/e/${e.slug}/quem-vai?tab=${tab}`;
+
+/** Contador clicável: abre a lista (não o evento). Para de propagar clique/gesto do card. */
+function PeopleCount({
+  to,
+  children,
+  label,
+}: {
+  to: string;
+  children: ReactNode;
+  label: string;
+}): JSX.Element {
+  const nav = useNavigate();
+  const go = (ev: MouseEvent | PointerEvent) => {
+    ev.preventDefault();
+    ev.stopPropagation();
+    nav(to);
+  };
+  return (
+    <button type="button" className={s.countBtn} aria-label={label} onClick={go} onPointerDown={(ev) => ev.stopPropagation()}>
+      {children}
+    </button>
+  );
+}
 
 export function HeartButton({ on, onToggle, size = 44, title }: { on: boolean; onToggle: () => void; size?: number; title: string }): JSX.Element {
   return (
@@ -85,14 +110,18 @@ export function EventCardFeed({ e, onToggleInterest, eager }: { e: Card; onToggl
         </p>
         <div className={s.soc}>
           <div className={u.row}>
-            {e.peoplePreview.length ? <AvatarStack people={e.peoplePreview} /> : null}
+            {e.peoplePreview.length ? (
+              <PeopleCount to={peoplePath(e, 'going')} label={`Quem vai em ${e.title}`}>
+                <AvatarStack people={e.peoplePreview} />
+              </PeopleCount>
+            ) : null}
             <div className={s.counts}>
-              <span>
+              <PeopleCount to={peoplePath(e, 'going')} label={`${e.counts.going} ${t.going}`}>
                 <b>{e.counts.going}</b> {t.going}
-              </span>
-              <span>
+              </PeopleCount>
+              <PeopleCount to={peoplePath(e, 'interested')} label={`${e.counts.interested} com interesse`}>
                 <b>{e.counts.interested}</b> ♥
-              </span>
+              </PeopleCount>
             </div>
           </div>
           {onToggleInterest ? <HeartButton on={e.viewer.interested} title={e.title} onToggle={() => onToggleInterest(!e.viewer.interested)} /> : null}
@@ -126,6 +155,14 @@ export function EventCardMini({ e, rsvp, right, to }: { e: Card; rsvp?: RsvpStat
           {e.distanceKm !== null ? ` · ${distanceLabel(e.distanceKm, e.visibility)}` : ''}
           {priceLabel(e) ? ` · ${priceLabel(e)}` : ''}
         </p>
+        <div className={cx(s.counts, u.mt4)}>
+          <PeopleCount to={peoplePath(e, 'going')} label={`${e.counts.going} ${t.going}`}>
+            <b>{e.counts.going}</b> {t.going}
+          </PeopleCount>
+          <PeopleCount to={peoplePath(e, 'interested')} label={`${e.counts.interested} com interesse`}>
+            <b>{e.counts.interested}</b> ♥
+          </PeopleCount>
+        </div>
         {badge ? (
           <span className={u.mt4} style={{ display: 'inline-block' }}>
             <Badge tone={badge.tone}>{badge.label}</Badge>

@@ -22,6 +22,8 @@ Stack Docker (`api` + `worker` + PostGIS + `web` + Mailpit) a partir de [`../bet
 
 **Antes → depois (2026-11-04):** protótipo HTML estático em `/opt/rolego/web` → PWA + API Docker (proxy nginx `:8090`).
 
+**Antes → depois (híbrido visitante):** `/` e `/explorar` exigiam login + tab bar sempre → home abre Explorar **sem cadastro**; tab bar só logado; `GET /discovery/*` `@Public`. Rollback: reverter commit `709bc9ab` (ou repor `RequireAuth` em `/explorar` + discovery autenticado).
+
 **Antes → depois (SMTP):** `SMTP_HOST=mailpit:1025` (só captura local) → Mailcow real `mail.clozzy.com.br:587` + domínio/mailbox `rolego.com.br` / `nao-responda@`. Rollback: restaurar backup `/srv/rolego/prod/.env.bak-smtp-*` e `compose up -d --force-recreate api worker web`.
 
 ### DNS Hostinger (`rolego.com.br`) — e-mail

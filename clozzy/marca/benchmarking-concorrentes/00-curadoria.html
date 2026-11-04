@@ -17,6 +17,7 @@
   table{width:100%;border-collapse:collapse;font-size:11.5px;margin-bottom:8px}
   th,td{text-align:left;padding:8px 9px;border-bottom:1px solid var(--line);vertical-align:top}
   th{color:var(--muted);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.04em}
+  td.num{font-weight:700;color:var(--accent);width:28px}
   a{color:var(--accent);text-decoration:none}
   a:hover{text-decoration:underline}
   .tag{display:inline-block;padding:2px 8px;border-radius:999px;background:#1a2438;color:#B4BCCC;font-size:11px;margin:0 4px 4px 0}
@@ -38,10 +39,20 @@
 <body>
 <div class="wrap">
   <h1>Benchmarking — concorrentes do Clozzy</h1>
-  <p class="lead">Proposta Clozzy: <strong>site onde influencers vendem conteúdo exclusivo</strong> — fluxo canônico <em>perfil → oferta → compra → biblioteca</em>. Matriz vs plataformas de creator monetization (BR + global) e insights para a <strong>nova identidade visual (Clozzy 2028)</strong>.</p>
-  <p class="meta">Card · <a href="https://trello.com/c/RR95Cei7">trello.com/c/RR95Cei7</a> · Board · <a href="https://trello.com/b/n24j78NT/clozzy-2028">Clozzy 2028</a> · Visão · <code>clozzy/README.md</code> · v1 · 2026-11-04</p>
+  <p class="lead">Proposta Clozzy: <strong>site onde influencers vendem conteúdo exclusivo</strong> — fluxo canônico <em>perfil → oferta → compra → biblioteca</em>. Plataformas ordenadas do <strong>mais importante ao menos importante</strong> (escala global de usuários/visitas/receita; no empate, relevância BR).</p>
+  <p class="meta">Card · <a href="https://trello.com/c/RR95Cei7">trello.com/c/RR95Cei7</a> · Board · <a href="https://trello.com/b/n24j78NT/clozzy-2028">Clozzy 2028</a> · Visão · <code>clozzy/README.md</code> · v1.1 · 2026-11-04</p>
 
-  <h2>1. Capacidades sob análise (visão Clozzy)</h2>
+  <h2>1. Critério de ordem</h2>
+  <div class="card">
+    <ul>
+      <li><strong>#1→#N</strong> = importância de mercado: receita da plataforma / GMV / MAU / visitas mensais (fontes públicas 2025–2026).</li>
+      <li>Patreon entra alto por escala, mesmo sendo <em>adjacente</em> (membership SFW, não adulto explícito).</li>
+      <li>Privacy sobe na lista BR: #1 doméstico, atrás só de OF/Patreon em peso absoluto.</li>
+      <li>BR menores (CloseFans → FanFever) ficam no fim por tráfego/audiência.</li>
+    </ul>
+  </div>
+
+  <h2>2. Capacidades sob análise (visão Clozzy)</h2>
   <div class="card">
     <div class="req"><strong>Perfil / vitrine</strong> — página pública do criador com bio e catálogo.</div>
     <div class="req"><strong>Ofertas / packs</strong> — itens exclusivos com preço e preview sem entregar o pago.</div>
@@ -53,189 +64,182 @@
     <div class="req"><strong>Chat / tip / live</strong> — monetização complementar (secundário na v1 Clozzy).</div>
   </div>
 
-  <h2>2. Universo mapeado</h2>
-  <div class="card">
-    <span class="tag br">BR / LATAM</span> Privacy · CloseFans · FatalFans · FanFever<br>
-    <span class="tag global">Global adult-first</span> OnlyFans · Fansly · Fanvue · LoyalFans · JustForFans · FanCentro<br>
-    <span class="tag adj">Adjacentes</span> Patreon · Passes (PG-13)
-  </div>
-
-  <h2>3. Matriz de produto</h2>
+  <h2>3. Matriz de produto (mais → menos importante)</h2>
   <table>
     <thead>
       <tr>
+        <th>#</th>
         <th>Plataforma</th>
+        <th>Escala (âncora)</th>
         <th>Foco</th>
         <th>Taxa*</th>
         <th>Assinatura</th>
         <th>PPV / pack</th>
-        <th>Biblioteca</th>
         <th>Discovery</th>
         <th>Pix / BR</th>
-        <th>Live / chat</th>
         <th>vs Clozzy (gap deles)</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td><a href="https://privacy.com.br/">Privacy</a></td>
-        <td>BR adulto</td>
-        <td>20%</td>
-        <td><span class="y">Sim</span> R$19,90–200</td>
-        <td><span class="y">Sim</span></td>
-        <td><span class="y">Sim</span> feed pago</td>
-        <td><span class="p">Parcial</span> marca local</td>
-        <td><span class="y">Sim</span> Pix same-day</td>
-        <td><span class="y">Sim</span> live + calls</td>
-        <td>Vitrine de <em>ofertas como produto</em>; leak/support</td>
-      </tr>
-      <tr>
-        <td><a href="https://close.fans/">CloseFans</a></td>
-        <td>BR + Telegram</td>
-        <td>20% + fixo</td>
-        <td><span class="y">Sim</span></td>
-        <td><span class="y">Sim</span></td>
-        <td><span class="p">Parcial</span> grupo externo</td>
-        <td><span class="n">Fraco</span></td>
-        <td><span class="y">Sim</span> Pix/boleto</td>
-        <td><span class="p">Via Telegram</span></td>
-        <td>Site-first catálogo; tarifa fixa no ticket baixo</td>
-      </tr>
-      <tr>
-        <td>FatalFans</td>
-        <td>BR</td>
-        <td>~15%</td>
-        <td><span class="y">Sim</span></td>
-        <td><span class="y">Sim</span></td>
-        <td><span class="p">Parcial</span></td>
-        <td><span class="n">Fraco</span></td>
-        <td><span class="y">Sim</span></td>
-        <td><span class="p">Parcial</span></td>
-        <td>Escala/audiência; clareza de produto</td>
-      </tr>
-      <tr>
-        <td>FanFever</td>
-        <td>BR multi-nicho</td>
-        <td>~10%**</td>
-        <td><span class="y">Sim</span></td>
-        <td><span class="y">Sim</span></td>
-        <td><span class="p">Parcial</span></td>
-        <td><span class="n">Fraco</span> tráfego baixo</td>
-        <td><span class="y">Sim</span> carteira</td>
-        <td><span class="y">Lives</span></td>
-        <td>Liquidez de fãs; marca</td>
-      </tr>
-      <tr>
+        <td class="num">1</td>
         <td><a href="https://onlyfans.com/">OnlyFans</a></td>
+        <td>~US$1,6B receita · ~378M visitas/mês · ~377M contas</td>
         <td>Global</td>
         <td>20%</td>
         <td><span class="y">Sim</span></td>
         <td><span class="y">Sim</span></td>
-        <td><span class="y">Sim</span></td>
         <td><span class="n">Quase zero</span>***</td>
         <td><span class="n">Não</span> USD/card</td>
-        <td><span class="y">Sim</span></td>
         <td>Pix; discovery; vitrine “pack como produto”</td>
       </tr>
       <tr>
+        <td class="num">2</td>
+        <td><a href="https://www.patreon.com/">Patreon</a></td>
+        <td>~US$2B+/ano aos creators · ~136M visitas/mês</td>
+        <td>Membership SFW</td>
+        <td>10%+proc.*****</td>
+        <td><span class="y">Tiers</span></td>
+        <td><span class="p">Shop limitado</span></td>
+        <td><span class="p">Parcial</span></td>
+        <td><span class="n">Não nativo</span></td>
+        <td>Adult explícito; pack/vitrine sexy</td>
+      </tr>
+      <tr>
+        <td class="num">3</td>
+        <td><a href="https://privacy.com.br/">Privacy</a></td>
+        <td>#1 BR/LATAM · ~12,6M visitas/mês (Semrush)</td>
+        <td>BR adulto</td>
+        <td>20%</td>
+        <td><span class="y">Sim</span> R$19,90–200</td>
+        <td><span class="y">Sim</span></td>
+        <td><span class="p">Parcial</span> marca local</td>
+        <td><span class="y">Sim</span> Pix same-day</td>
+        <td>Vitrine de <em>ofertas como produto</em>; leak/support</td>
+      </tr>
+      <tr>
+        <td class="num">4</td>
         <td><a href="https://fansly.com/">Fansly</a></td>
+        <td>~37–39M visitas/mês · ~130M registrados</td>
         <td>Global + search</td>
         <td>20%</td>
         <td><span class="y">Sim</span> tiers</td>
         <td><span class="y">Sim</span></td>
-        <td><span class="y">Sim</span></td>
         <td><span class="y">Sim</span> search + FY</td>
         <td><span class="n">Não</span></td>
-        <td><span class="y">Sim</span></td>
         <td>Rails BR; UX em PT</td>
       </tr>
       <tr>
+        <td class="num">5</td>
         <td><a href="https://www.fanvue.com/">Fanvue</a></td>
+        <td>&gt;US$200M ARR · ~17M MAU · ~20M visitas</td>
         <td>Global + AI tools</td>
         <td>20%</td>
         <td><span class="y">Sim</span></td>
         <td><span class="y">Sim</span></td>
-        <td><span class="y">Sim</span></td>
         <td><span class="y">Sim</span> Discover</td>
         <td><span class="n">Não</span></td>
-        <td><span class="y">Sim</span></td>
         <td>Pix; hold de saque longo</td>
       </tr>
       <tr>
+        <td class="num">6</td>
         <td><a href="https://www.loyalfans.com/">LoyalFans</a></td>
+        <td>~8–9M visitas/mês</td>
         <td>Adult + live</td>
         <td>20%</td>
         <td><span class="y">Sim</span></td>
         <td><span class="y">Sim</span> store</td>
-        <td><span class="y">Sim</span></td>
         <td><span class="p">Parcial</span></td>
         <td><span class="n">Não</span></td>
-        <td><span class="y">Ticketed live</span></td>
         <td>Pix; marca consumer BR</td>
       </tr>
       <tr>
-        <td><a href="https://justfor.fans/">JustForFans</a></td>
-        <td>Adult-first</td>
-        <td>20% / 85%****</td>
-        <td><span class="y">Sim</span> multi-tier</td>
-        <td><span class="y">Sim</span> store físico</td>
-        <td><span class="y">Sim</span></td>
-        <td><span class="p">Search</span></td>
-        <td><span class="n">Não</span></td>
-        <td><span class="y">Cam + SMS</span></td>
-        <td>Pix; foco influencer BR não-adult-only</td>
-      </tr>
-      <tr>
+        <td class="num">7</td>
         <td><a href="https://fancentro.com/">FanCentro</a></td>
+        <td>~3,9M visitas/mês</td>
         <td>Social privado</td>
         <td>20%</td>
         <td><span class="y">Sim</span></td>
         <td><span class="y">Clips</span></td>
-        <td><span class="y">Feed</span></td>
         <td><span class="n">Fraco</span></td>
         <td><span class="n">Não</span></td>
-        <td><span class="y">DM pago</span></td>
         <td>UX moderna; Pix; PT</td>
       </tr>
       <tr>
-        <td><a href="https://www.patreon.com/">Patreon</a></td>
-        <td>Membership</td>
-        <td>10%+proc.*****</td>
-        <td><span class="y">Tiers</span></td>
-        <td><span class="p">Shop limitado</span></td>
-        <td><span class="y">Posts</span></td>
-        <td><span class="p">Parcial</span></td>
-        <td><span class="n">Não nativo</span></td>
-        <td><span class="n">Não core</span></td>
-        <td>Adult explícito; pack/vitrine sexy</td>
+        <td class="num">8</td>
+        <td><a href="https://justfor.fans/">JustForFans</a></td>
+        <td>~3M visitas/mês</td>
+        <td>Adult-first</td>
+        <td>20% / 85%****</td>
+        <td><span class="y">Sim</span> multi-tier</td>
+        <td><span class="y">Sim</span> store físico</td>
+        <td><span class="p">Search</span></td>
+        <td><span class="n">Não</span></td>
+        <td>Pix; foco influencer BR não-adult-only</td>
       </tr>
       <tr>
+        <td class="num">9</td>
         <td><a href="https://www.passes.com/">Passes</a></td>
+        <td>~2,5M visitas/mês</td>
         <td>PG-13 creator</td>
         <td>~10–20%</td>
         <td><span class="y">Sim</span></td>
         <td><span class="y">Sim</span></td>
-        <td><span class="y">Sim</span></td>
         <td><span class="p">Parcial</span></td>
         <td><span class="n">Não</span></td>
-        <td><span class="y">Live/calls</span></td>
         <td>Adult; Pix; mercado BR</td>
       </tr>
       <tr>
+        <td class="num">10</td>
+        <td><a href="https://close.fans/">CloseFans</a></td>
+        <td>BR · alega &gt;1M MAU</td>
+        <td>BR + Telegram</td>
+        <td>20% + fixo</td>
+        <td><span class="y">Sim</span></td>
+        <td><span class="y">Sim</span></td>
+        <td><span class="n">Fraco</span></td>
+        <td><span class="y">Sim</span> Pix/boleto</td>
+        <td>Site-first catálogo; tarifa fixa no ticket baixo</td>
+      </tr>
+      <tr>
+        <td class="num">11</td>
+        <td>FatalFans</td>
+        <td>BR · escala &lt; Privacy/Close</td>
+        <td>BR</td>
+        <td>~15%</td>
+        <td><span class="y">Sim</span></td>
+        <td><span class="y">Sim</span></td>
+        <td><span class="n">Fraco</span></td>
+        <td><span class="y">Sim</span></td>
+        <td>Escala/audiência; clareza de produto</td>
+      </tr>
+      <tr>
+        <td class="num">12</td>
+        <td>FanFever</td>
+        <td>BR · ~141k visitas/mês</td>
+        <td>BR multi-nicho</td>
+        <td>~10%**</td>
+        <td><span class="y">Sim</span></td>
+        <td><span class="y">Sim</span></td>
+        <td><span class="n">Fraco</span></td>
+        <td><span class="y">Sim</span> carteira</td>
+        <td>Liquidez de fãs; marca</td>
+      </tr>
+      <tr>
+        <td class="num">—</td>
         <td><strong>Clozzy 2028</strong> (alvo)</td>
+        <td>Entrante</td>
         <td>Exclusivo influencer</td>
         <td>A definir</td>
         <td><span class="y">Alvo</span></td>
         <td><span class="y">Alvo</span> pack=produto</td>
-        <td><span class="y">Alvo</span> biblioteca clara</td>
         <td><span class="p">Evolução</span></td>
         <td><span class="y">Alvo</span> Pix-first</td>
-        <td><span class="p">Secundário v1</span></td>
         <td><strong>Vitrine → compra → acesso</strong> sem DM como núcleo</td>
       </tr>
     </tbody>
   </table>
-  <p class="meta">*Taxa tipicamente sobre receita bruta do fã (creator keep ~80% salvo nota). **FanFever: % divulgado pela empresa — confirmar contrato. ***OnlyFans começou páginas de categoria (2026); discovery adulto ainda depende de tráfego externo. ****JFF 85% em programa exclusive (tips/store/etc.). *****Patreon páginas novas pós-2025-08-04: 10% + processing.</p>
+  <p class="meta">*Taxa tipicamente sobre receita bruta do fã (creator keep ~80% salvo nota). **FanFever: % divulgado pela empresa — confirmar contrato. ***OnlyFans categorias 2026 ainda fracas p/ adulto. ****JFF 85% em programa exclusive. *****Patreon páginas novas pós-2025-08-04: 10% + processing. Escala = âncoras públicas (OFStats, Semrush/TopAgencies, New Market Pitch, Contrary/Patreon, GuiaFans) — não auditadas.</p>
 
   <h2>4. Leitura por eixo Clozzy</h2>
 
@@ -250,16 +254,16 @@
   <div class="card">
     <h3>Rails Brasil (Pix)</h3>
     <ul>
-      <li><strong>Privacy</strong> é a referência: Pix same-day, audiência doméstica, PT/ES.</li>
-      <li>CloseFans / FatalFans / FanFever competem no mesmo trilho; escala &lt; Privacy.</li>
-      <li>Globais (OF/Fansly/Fanvue) perdem no BR por USD + cartão internacional.</li>
+      <li><strong>Privacy (#3 global / #1 BR)</strong> é a referência: Pix same-day, audiência doméstica, PT/ES.</li>
+      <li>CloseFans / FatalFans / FanFever (#10–12) competem no mesmo trilho; escala bem menor.</li>
+      <li>Globais #1–2 e #4–9 perdem no BR por USD + cartão internacional.</li>
     </ul>
   </div>
 
   <div class="card">
     <h3>Discovery</h3>
     <ul>
-      <li><strong>Fansly / Fanvue</strong> lideram (search + feed). OnlyFans ainda é “traga seu tráfego”.</li>
+      <li><strong>Fansly (#4) / Fanvue (#5)</strong> lideram (search + feed). OnlyFans (#1) ainda é “traga seu tráfego”.</li>
       <li>Privacy substitui algoritmo por <strong>marca + densidade BR</strong>.</li>
       <li>Clozzy v1: criador no centro (perfil); discovery pode ser evolução, não bloqueio.</li>
     </ul>
@@ -268,7 +272,7 @@
   <div class="card">
     <h3>Taxa e ticket</h3>
     <ul>
-      <li>Padrão de mercado adulto: <strong>20%</strong>. FanFever (~10%) e FatalFans (~15%) tentam preço; Patreon 10%+proc. fora do adulto explícito.</li>
+      <li>Padrão adulto (#1, #3–8): <strong>20%</strong>. FanFever (~10%) e FatalFans (~15%) tentam preço; Patreon 10%+proc. fora do adulto explícito.</li>
       <li>CloseFans: 20% + tarifa fixa — pune ticket baixo.</li>
     </ul>
   </div>
@@ -276,25 +280,25 @@
   <h2>5. Identidade visual — padrões observados (insumo do card irmão)</h2>
   <div class="card">
     <ul>
-      <li><span class="swatch" style="background:#00AFF0"></span><strong>OnlyFans</strong> — azul ciano + branco; wordmark simples; “app utilitário”, pouco sensual na chrome.</li>
-      <li><span class="swatch" style="background:#1DB954"></span><strong>Privacy</strong> — verde/escuro; marca forte BR; vibe “app financeiro + conteúdo”.</li>
-      <li><span class="swatch" style="background:#7C3AED"></span><strong>Fansly</strong> — roxo/escuro; discovery-first; tipografia tech.</li>
-      <li><span class="swatch" style="background:#111827"></span><strong>Fanvue / Passes</strong> — dark luxury / creator-tool; muito preto + acento.</li>
-      <li><span class="swatch" style="background:#FF424D"></span><strong>Patreon</strong> — coral + tipografia amigável; membership, não “exclusivo sexy”.</li>
-      <li><strong>Padrão do mercado:</strong> dark mode, rosa/roxo/ciano como acento, foto do criador como herói, chrome mínima.</li>
-      <li><strong>Oportunidade Clozzy 2028:</strong> sair do cluster roxo-on-black genérico — tratar exclusivo como <em>produto de vitrine</em> (clareza de catálogo, confiança de compra), não só feed NSFW. Evitar clichê OnlyFans-clone.</li>
+      <li><span class="swatch" style="background:#00AFF0"></span><strong>OnlyFans (#1)</strong> — azul ciano + branco; wordmark simples; “app utilitário”.</li>
+      <li><span class="swatch" style="background:#FF424D"></span><strong>Patreon (#2)</strong> — coral + tipografia amigável; membership, não “exclusivo sexy”.</li>
+      <li><span class="swatch" style="background:#1DB954"></span><strong>Privacy (#3)</strong> — verde/escuro; marca forte BR.</li>
+      <li><span class="swatch" style="background:#7C3AED"></span><strong>Fansly (#4)</strong> — roxo/escuro; discovery-first.</li>
+      <li><span class="swatch" style="background:#111827"></span><strong>Fanvue / Passes</strong> — dark luxury / creator-tool.</li>
+      <li><strong>Padrão do mercado:</strong> dark mode, rosa/roxo/ciano como acento, foto do criador como herói.</li>
+      <li><strong>Oportunidade Clozzy 2028:</strong> sair do cluster roxo-on-black e do clone ciano OF — exclusivo como <em>produto de vitrine</em>.</li>
     </ul>
   </div>
 
-  <h2>6. Ranking (à luz da visão Clozzy)</h2>
+  <h2>6. Ranking estratégico (relevância p/ Clozzy — distinto da ordem de escala)</h2>
   <div class="card">
     <ul>
-      <li><span class="rank">1.</span> <strong>Privacy</strong> — referência BR (Pix + audiência). Clozzy deve empatar em rails e ganhar em clareza de produto/vitrine.</li>
-      <li><span class="rank">2.</span> <strong>Fansly / Fanvue</strong> — discovery + produto maduro; blueprint UX global (sem Pix).</li>
-      <li><span class="rank">3.</span> <strong>OnlyFans</strong> — escala e expectativa de mercado; fraco em discovery e BR.</li>
-      <li><span class="rank">4.</span> <strong>CloseFans / FatalFans / FanFever</strong> — rivais locais menores; estudar Pix/Telegram, não copiar.</li>
-      <li><span class="rank">5.</span> <strong>LoyalFans / JFF / FanCentro</strong> — features adult-específicas (live ticketed, store); secundário p/ v1 Clozzy.</li>
-      <li><span class="rank">6.</span> <strong>Patreon / Passes</strong> — membership limpo; úteis como antítese (não-adulto / PG-13).</li>
+      <li><span class="rank">A.</span> <strong>Privacy (#3)</strong> — referência BR. Empatar rails; ganhar em clareza de produto/vitrine.</li>
+      <li><span class="rank">B.</span> <strong>OnlyFans (#1)</strong> — expectativa de mercado / escala; fraco em discovery e BR.</li>
+      <li><span class="rank">C.</span> <strong>Fansly (#4) / Fanvue (#5)</strong> — blueprint UX/discovery (sem Pix).</li>
+      <li><span class="rank">D.</span> <strong>CloseFans / FatalFans / FanFever (#10–12)</strong> — rivais locais menores.</li>
+      <li><span class="rank">E.</span> <strong>LoyalFans / JFF / FanCentro (#6–8)</strong> — features adult-específicas; secundário v1.</li>
+      <li><span class="rank">F.</span> <strong>Patreon (#2) / Passes (#9)</strong> — antítese membership limpo / PG-13.</li>
     </ul>
   </div>
 
@@ -302,14 +306,14 @@
   <div class="card">
     <ul>
       <li><strong>Paridade obrigatória:</strong> Pix-first, assinatura + compra avulsa, perfil público, acesso pós-compra auditável.</li>
-      <li><strong>Diferencial da visão:</strong> exclusivo como <strong>produto de vitrine</strong> (pack com nome/preço/preview/escopo) — não só feed + DM.</li>
+      <li><strong>Diferencial da visão:</strong> exclusivo como <strong>produto de vitrine</strong> (pack com nome/preço/preview/escopo).</li>
       <li><strong>Não competir</strong> em “ser o OnlyFans brasileiro” só por taxa; competir em <em>compra clara + biblioteca + confiança</em>.</li>
-      <li><strong>Marca:</strong> evitar clone azul-ciano OF e cluster roxo dark genérico; identidade própria (card identidade visual).</li>
-      <li><strong>v1 fora do núcleo:</strong> live ticketed, store físico, AI tools — evoluções.</li>
+      <li><strong>Marca:</strong> evitar clone azul-ciano OF e cluster roxo dark genérico.</li>
+      <li><strong>Atenção prioritária:</strong> estudar a fundo #1–5; BR deep-dive em #3 e #10–12.</li>
     </ul>
   </div>
 
-  <p class="foot">Fontes públicas 2026-11-04 (FansChart, GuiaFans, Maxmo, help centers, Wikipedia FanCentro, Supercreator JFF). Legenda: <span class="y">Sim</span> · <span class="p">Parcial</span> · <span class="n">Não/Fraco</span>. Visão: <code>clozzy/README.md</code>.</p>
+  <p class="foot">Fontes públicas 2026-11-04 (OFStats/Variety, New Market Pitch, Contrary/Patreon, TopAgencies, FansChart, GuiaFans, Semrush via GuiaFans). Legenda: <span class="y">Sim</span> · <span class="p">Parcial</span> · <span class="n">Não/Fraco</span>. Visão: <code>clozzy/README.md</code>.</p>
 </div>
 </body>
 </html>

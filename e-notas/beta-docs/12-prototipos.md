@@ -2,7 +2,7 @@
 
 **Protótipo navegável:** [`prototipos/index.html`](prototipos/index.html) · no app: [notinhas.shop/#prototipo](https://notinhas.shop/#prototipo) → `prototipos.html` · PDF: [`prototipos/prototipos-notinhas-beta.pdf`](prototipos/prototipos-notinhas-beta.pdf). Abra no navegador, sem build.
 
-- **Galeria:** telas agrupadas por fluxo (E01–E04 + ADM), celulares com contorno azul/verde e setas entre passos.
+- **Galeria:** telas agrupadas por fluxo (E01–E04; sem ADM/backoffice neste momento), celulares com contorno azul/verde e setas entre passos.
 - **Modo navegável:** clique em qualquer tela ou em “▶ Navegar”. Elementos com `data-go` avançam. Atalhos: `←/→`, `Backspace`, `H` (áreas clicáveis), `Esc`. Deep-link: `index.html#T-12`.
 - **Notas por tela:** painel direito com histórias (US) e regras.
 
@@ -24,21 +24,21 @@
 
 | Código | Tela | Épico | Histórias | Contorno |
 |---|---|---|---|---|
-| T-01 | Splash (CTA → home anônima) | E01 | US-01.01 | azul |
-| T-02 | Criar conta (opcional) | E01 | US-01.01, 01.02 | azul |
-| T-03 | Entrar | E01 | US-01.03, 01.04 | azul |
+| T-01 | Splash (só Explorar → home) | E01 | US-01.01 | azul |
+| T-02 | Criar conta (fora do onboarding; via Perfil) | E01 | US-01.01, 01.02 | azul |
+| T-03 | Entrar (fora do onboarding; via Perfil) | E01 | US-01.03, 01.04 | azul |
 | T-04 | Recuperar senha | E01 | US-01.05 | azul |
 | T-05 | Localização (opcional / banner) | E01 | US-01.06, 01.07 | azul |
-| T-10 | Home · Destaques + busca/filtros | E02 | US-02.01, 02.02 | verde |
-| T-11 | Busca + categorias | E02 | US-02.03, 02.04 | azul |
-| T-12 | Comparação | E02 | US-02.05 | verde |
-| T-13 | Histórico | E02 | US-02.06 | verde |
-| T-14 | Detalhe expandido (comp./hist./perto) | E02 | US-02.07 | verde |
-| T-20 | Scan QR · câmera | E01 | US-01.08 | azul |
-| T-21 | Scan QR · foto | E01 | US-01.09 | azul |
-| T-22 | Nota ingerida | E01 | US-01.08, 01.10 | verde |
-| T-23 | Vincular EAN (câmera já aberta) | E01 | US-01.11 | azul |
-| T-24 | Escolher foto EAN | E01 | US-01.12 | azul |
+| T-10 | Home · Destaques + busca/filtros | E01 | US-02.01, 02.02 | verde |
+| T-11 | Busca + categorias | E01 | US-02.03, 02.04 | azul |
+| T-12 | Comparação | E01 | US-02.05 | verde |
+| T-13 | Histórico | E01 | US-02.06 | verde |
+| T-14 | Detalhe expandido (comp./hist./perto) | E01 | US-02.07 | verde |
+| T-20 | Scan QR · câmera | E02 | US-01.08 | azul |
+| T-21 | Scan QR · foto | E02 | US-01.09 | azul |
+| T-22 | Nota ingerida | E02 | US-01.08, 01.10 | verde |
+| T-23 | Vincular EAN (câmera já aberta) | E02 | US-01.11 | azul |
+| T-24 | Escolher foto EAN | E02 | US-01.12 | azul |
 | T-30 | Onde comprar perto (item) | E03 | US-03.01 | verde |
 | T-31 | Mais baratas (entrada Estabelecimentos) | E03 | US-03.02 | verde |
 | T-32 | Mapa | E03 | US-03.03 | azul |
@@ -47,7 +47,7 @@
 | T-41 | Split · economia | E04 | US-04.03 | verde |
 | T-50 | Extrato · gastos | E04 | US-04.04–06 | azul |
 | T-51 | Perfil | E01 | US-01.13, 01.14 | azul |
-| T-61 | Admin · Métricas | ADM | US-ADM.01–03 | azul (desktop) |
+| T-61 | Admin · Métricas | — (fora da galeria neste momento) | US-ADM.01–03 | azul (desktop) |
 
 ## 3. Navegação
 
@@ -60,6 +60,16 @@ Tab bar: **Destaques** (T-10) · **Lojas** (T-31) · **Nota** FAB (T-20) · **Ce
 - Banner GPS opcional (não bloqueia)
 - Detalhe com comparação / histórico / perto já abertos
 - Vincular EAN com câmera aberta; várias cestas
+
+### Onboarding sem conta (2026-11-04)
+
+- Splash só **Explorar preços**; conta (T-02/03/04) fora do onboarding, só pelo Perfil neste momento
+- Galeria sem fluxo “Conta e onboarding” / ADM
+
+### Épicos na galeria (2026-11-04)
+
+- **E01** Descoberta de preços · **E02** Contribuir nota e EAN · **E03** Estabelecimentos · **E04** Cestas e gastos
+- Backoffice (T-61) fora da galeria neste momento
 
 ### Estabelecimentos (2026-11-04)
 

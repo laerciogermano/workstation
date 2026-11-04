@@ -210,13 +210,13 @@ th{color:var(--muted);font-weight:600}
 <header class="hero wrap">
   <div class="chipnum">BETA 1.0</div>
   <h1 class="htitle">Protótipos notinhas.shop</h1>
-  <p class="hsub">Galeria navegável das telas do Beta (E01–E04 + ADM). Identidade light: CTA azul <b>#0069B4</b>, verde só para <b>menor preço</b>. Abra no navegador — sem build.</p>
+  <p class="hsub">Galeria navegável das telas do Beta (E01–E04). Identidade light: CTA azul <b>#0069B4</b>, verde só para <b>menor preço</b>. Abra no navegador — sem build. Sem backoffice neste momento.</p>
   <div class="hactions">
     <button class="btn p" style="width:auto;padding:0 20px" onclick="openPlayer('T-10')">▶ Navegar (home anônima)</button>
-    <button class="btn s" style="width:auto;padding:0 20px" onclick="openPlayer('T-01')">Splash / conta</button>
+    <button class="btn s" style="width:auto;padding:0 20px" onclick="openPlayer('T-01')">Splash</button>
   </div>
   <div class="legend">
-    <span class="c-blue"><i></i> Conta / contribuição</span>
+    <span class="c-blue"><i></i> Onboarding / contribuição</span>
     <span class="c-green"><i></i> Preço / economia</span>
   </div>
 </header>
@@ -231,17 +231,15 @@ th{color:var(--muted);font-weight:600}
   <div id="pnotes"></div>
 </div>
 
-<template data-id="T-01" data-name="Splash" data-accent="blue" data-us="US-01.01" data-notes="CTA principal entra na home sem cadastro. Conta é opcional (avaliação etc.).">
+<template data-id="T-01" data-name="Splash" data-accent="blue" data-us="US-01.01" data-notes="Só CTA Explorar → home. Sem criar/entrar no onboarding; conta fora deste fluxo (só Perfil, se precisar depois).">
 <div class="body flush splash">
   <div class="splash-inner">
     <span class="wm xl"><b>notinhas</b><i>.shop</i></span>
     <p class="splash-sub">Sua nota vira menor preço</p>
     <button class="btn p" data-go="T-10">Explorar preços</button>
-    <button class="btn gh" data-go="T-02">Criar conta</button>
-    <button class="btn gh" data-go="T-03">Já tenho conta</button>
   </div>
 </div></template>
-<template data-id="T-02" data-name="Criar conta" data-accent="blue" data-us="US-01.01,US-01.02" data-notes="Opcional. Conta libera avaliação e recursos autenticados; busca/nota/listagem funcionam sem login.">
+<template data-id="T-02" data-name="Criar conta" data-accent="blue" data-us="US-01.01,US-01.02" data-notes="Fora do onboarding neste momento. Acessível só pelo Perfil; não aparece no splash.">
 <div class="body ft">
   <div class="top"><button class="ibtn" data-go="back">‹</button><span class="t">Criar conta</span></div>
   <h1 class="h1">Bem-vindo</h1>
@@ -605,7 +603,7 @@ th{color:var(--muted);font-weight:600}
   <div class="tab" data-go="T-40"><span>□</span>Cestas</div>
   <div class="tab on" data-go="T-51"><span>○</span>Perfil</div>
 </div></template>
-<template data-id="T-61" data-name="Admin · Métricas" data-accent="blue" data-us="US-ADM.01,US-ADM.02,US-ADM.03" data-notes="Desktop /admin. Fila notas falhas, ocultar spam, KPIs beta." data-kind="desk">
+<template data-id="T-61" data-name="Admin · Métricas" data-accent="blue" data-us="US-ADM.01,US-ADM.02,US-ADM.03" data-notes="Fora da galeria neste momento. Desktop /admin. Fila notas falhas, ocultar spam, KPIs beta." data-kind="desk">
 <div class="side">
   <span class="wm sm"><b>notinhas</b><i>.shop</i></span>
   <a class="on">Métricas</a>
@@ -632,37 +630,37 @@ th{color:var(--muted);font-weight:600}
 <script>
 const FLOWS = [
   {
-    "id": "e01a",
+    "id": "e01",
     "n": "E01",
-    "title": "Conta e onboarding",
-    "color": "c-blue",
-    "desc": "Splash → home anônima. Conta e local opcionais (GPS via banner).",
+    "title": "Descoberta de preços",
+    "color": "c-green",
+    "desc": "Home com destaques (abaixo da média), busca/filtros, detalhe expandido. Entrada anônima (splash sem conta).",
     "steps": [
       [
-        "T-01",
-        "Abrir"
+        "T-10",
+        "Home"
       ],
       [
-        "T-02",
-        "Criar"
+        "T-11",
+        "Busca"
       ],
       [
-        "T-03",
-        "Entrar"
+        "T-14",
+        "Detalhe"
       ],
       [
-        "T-04",
-        "Recuperar"
+        "T-12",
+        "Comparar"
       ],
       [
-        "T-05",
-        "Local"
+        "T-13",
+        "Histórico"
       ]
     ]
   },
   {
-    "id": "e01c",
-    "n": "E01",
+    "id": "e02",
+    "n": "E02",
     "title": "Contribuir nota e EAN",
     "color": "c-blue",
     "desc": "QR ao vivo ou foto → ingestão → vínculo EAN → foto do produto.",
@@ -686,35 +684,6 @@ const FLOWS = [
       [
         "T-24",
         "Foto"
-      ]
-    ]
-  },
-  {
-    "id": "e02",
-    "n": "E02",
-    "title": "Descoberta de preços",
-    "color": "c-green",
-    "desc": "Home com destaques (abaixo da média), busca/filtros, detalhe expandido.",
-    "steps": [
-      [
-        "T-10",
-        "Home"
-      ],
-      [
-        "T-11",
-        "Busca"
-      ],
-      [
-        "T-14",
-        "Detalhe"
-      ],
-      [
-        "T-12",
-        "Comparar"
-      ],
-      [
-        "T-13",
-        "Histórico"
       ]
     ]
   },
@@ -765,19 +734,6 @@ const FLOWS = [
       [
         "T-51",
         "Perfil"
-      ]
-    ]
-  },
-  {
-    "id": "adm",
-    "n": "ADM",
-    "title": "Backoffice",
-    "color": "c-blue",
-    "desc": "Métricas do beta e fila de ingestão.",
-    "steps": [
-      [
-        "T-61",
-        "Admin"
       ]
     ]
   }

@@ -315,6 +315,22 @@ Card: [BXKZ55Wb](https://trello.com/c/BXKZ55Wb).
 - Fonte canônica do protótipo: `beta-docs/prototipos/index.html` → copiar para `app/public/prototipos.html` e Contabo.
 - Rollback: restaurar HTML anterior do protótipo + `scp` para Contabo.
 
+## REQ-036 — Onboarding sem conta (2026-11-04)
+
+- No protótipo, o onboarding **não** inclui criar conta, entrar nem recuperar senha.
+- Splash (`T-01`): só CTA **Explorar preços** → home anônima.
+- Telas de conta (`T-02`/`T-03`/`T-04`) só pelo **Perfil**; fora da galeria de entrada.
+- Antes: splash com Criar conta / Já tenho conta e galeria “Conta e onboarding”. Depois: entrada anônima.
+- Rollback: restaurar botões no splash e fluxo de conta na galeria.
+
+## REQ-037 — Galeria: E01 descoberta, E02 contribuição, sem backoffice (2026-11-04)
+
+- Ordem dos épicos na galeria do protótipo: **E01** Descoberta de preços · **E02** Contribuir nota e EAN · **E03** Estabelecimentos · **E04** Cestas e gastos.
+- **Sem backoffice** na galeria neste momento (`T-61` / ADM fora dos `FLOWS`).
+- RoleGo não alterado neste REQ.
+- Antes: E01 conta/contribuição misturados, descoberta como E02, ADM na galeria. Depois: numeração acima, sem ADM.
+- Rollback: restaurar `FLOWS` anteriores em `prototipos/index.html` (+ cópia `app/public` / Contabo).
+
 ## REQ-035 — Estabelecimentos: entrada nas mais baratas (2026-11-04)
 
 - No protótipo, fluxo E03 chama-se **Estabelecimentos** (antes “Geo, ranking e vitrine”).

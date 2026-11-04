@@ -2,10 +2,10 @@
 
 ## Relatório
 
-- [`relatorio-entradas-saidas.html`](relatorio-entradas-saidas.html) — **2025 + 2026 juntos**: entradas/saídas por mês (gráfico de barras), composição, top contrapartes e insights
+- [`relatorio-entradas-saidas.html`](relatorio-entradas-saidas.html) — **jan/2025–nov/2026 completo** (gráfico de barras mensal, zeros em jan–set/2025, insights)
 - [`relatorio-entradas-saidas.pdf`](relatorio-entradas-saidas.pdf) — mesma versão em PDF
 
-Período com movimento: 17/10/2025 → 03/11/2026. Jan–set/2025 sem lançamentos (CSV vazios arquivados).
+Jan–set/2025: CSVs do Inter sem lançamentos (reconfirmado). Movimento a partir de 17/10/2025.
 
 ## Inter (conta corrente)
 

@@ -10,7 +10,7 @@
 | Mail | `mail.rolego.com.br` | VPS mail + obs (Mailcow) | e-mails | manual (runbook) |
 | Observabilidade | `grafana.rolego.com.br` | VPS mail + obs (LGTM) | telemetria | manual |
 
-Em `rolego.com.br` (`/opt/rolego/web`) está o **protótipo Beta HTML** ([`prototipos/index.html`](prototipos/index.html)); o SPA Vite E01 ficou em `/opt/rolego/web-e01-vite-bak`. No BETA-607 esse root passa a ser o build de produção. Rollback: [`../deploy/README.md`](../deploy/README.md).
+Em `rolego.com.br` está o **Beta monorepo** (PWA + API Docker, nginx → `127.0.0.1:8090`). Protótipo HTML em `/opt/rolego/web-proto-bak`; SPA Vite E01 em `/opt/rolego/web-e01-vite-bak`. Deploy: [`../deploy/README.md`](../deploy/README.md) (`deploy-beta-vps.sh`).
 
 ## 2. Topologia
 

@@ -1,0 +1,60 @@
+# Deploy Contabo em rolego.com.br — build local (sem GHCR).
+# Variáveis do container vêm só de ENV_FILE (/srv/rolego/prod/.env).
+# Uso: ver ../../deploy/README.md § Beta monorepo
+name: rolego-prod
+x-api: &api
+  build:
+    context: ..
+    dockerfile: infra/Dockerfile.api
+  image: rolego-api:local
+  env_file: ${ENV_FILE:-/srv/rolego/prod/.env}
+  environment:
+    MEDIA_DIR: /media
+    WORKER_INLINE: "false"
+  volumes: ["media:/media"]
+  depends_on: { db: { condition: service_healthy } }
+  restart: unless-stopped
+services:
+  db:
+    image: postgis/postgis:16-3.4
+    env_file: ${ENV_FILE:-/srv/rolego/prod/.env}
+    environment:
+      POSTGRES_USER: rolego
+      POSTGRES_DB: rolego
+      # POSTGRES_PASSWORD vem do env_file
+    volumes: ["db:/var/lib/postgresql/data"]
+    healthcheck: { test: ["CMD-SHELL", "pg_isready -U rolego"], interval: 5s, retries: 20 }
+    restart: unless-stopped
+  migrate:
+    <<: *api
+    command: ["node", "dist/cli/migrate.js"]
+    restart: "no"
+  api:
+    <<: *api
+    depends_on: { migrate: { condition: service_completed_successfully } }
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/api/v1/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 15s
+      retries: 10
+      start_period: 25s
+  worker:
+    <<: *api
+    command: ["node", "dist/worker.js"]
+    depends_on: { migrate: { condition: service_completed_successfully } }
+  web:
+    build:
+      context: ..
+      dockerfile: infra/Dockerfile.web
+    image: rolego-web:local
+    # 8080 = Mailcow nginx; RoleGo usa 8090
+    ports: ["127.0.0.1:8090:80"]
+    volumes: ["media:/media:ro"]
+    depends_on: [api]
+    restart: unless-stopped
+  mailpit:
+    image: axllent/mailpit:latest
+    ports: ["127.0.0.1:8025:8025"]
+    restart: unless-stopped
+volumes:
+  db:
+  media:

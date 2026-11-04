@@ -1,0 +1,20 @@
+# API e worker: mesmo build, dois entrypoints (docs/03 §2.2)
+FROM node:22-alpine AS build
+WORKDIR /repo
+RUN corepack enable
+COPY pnpm-lock.yaml pnpm-workspace.yaml package.json turbo.json ./
+COPY packages ./packages
+COPY apps/api ./apps/api
+RUN pnpm install --frozen-lockfile --filter @rolego/api... \
+ && pnpm --filter @rolego/contracts build \
+ && pnpm --filter @rolego/api build \
+ && pnpm deploy --filter @rolego/api --prod /out
+
+FROM node:22-alpine
+WORKDIR /app
+ENV NODE_ENV=production
+COPY --from=build /out ./
+COPY apps/api/drizzle ./drizzle
+USER node
+EXPOSE 3000
+CMD ["node", "dist/main.js"]

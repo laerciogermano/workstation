@@ -1,0 +1,62 @@
+/* RoleGo design tokens — fonte: identidade-visual.md §6 e protótipo Beta.
+   Único lugar do projeto onde hex é permitido (stylelint color-no-hex fora daqui). */
+:root {
+  --rg-bg: #04050b;
+  --rg-screen: #000000;
+  --rg-surface-2: #0f0f13;
+  --rg-surface-3: #1a1a20;
+  --rg-sheet: #07080f;
+  --rg-line: #1e1e25;
+  --rg-line-2: #34384a;
+
+  --rg-text: #ffffff;
+  --rg-soft: #c9cdd8;
+  --rg-muted: #9ca3af;
+  --rg-faint: #6b7286;
+
+  --rg-violet: #8749ff;
+  --rg-violet-text: #b79bff;
+  --rg-blue: #452eff;
+  --rg-cyan: #00e5e5;
+  --rg-magenta: #ff1f7a;
+  --rg-magenta-text: #ff6aa6;
+  --rg-green: #00ff00;
+  --rg-yellow: #ffcc00;
+
+  --rg-cyan-a06: rgba(0, 229, 229, 0.06);
+  --rg-cyan-a12: rgba(0, 229, 229, 0.12);
+  --rg-cyan-a25: rgba(0, 229, 229, 0.25);
+  --rg-magenta-a12: rgba(255, 31, 122, 0.12);
+  --rg-violet-a16: rgba(135, 73, 255, 0.16);
+  --rg-violet-a20: rgba(135, 73, 255, 0.2);
+  --rg-yellow-a05: rgba(255, 204, 0, 0.05);
+  --rg-yellow-a14: rgba(255, 204, 0, 0.14);
+  --rg-yellow-a55: rgba(255, 204, 0, 0.55);
+  --rg-green-a10: rgba(0, 255, 0, 0.1);
+  --rg-white-a10: rgba(255, 255, 255, 0.1);
+  --rg-black-a60: rgba(0, 0, 0, 0.6);
+  --rg-black-a66: rgba(0, 0, 0, 0.66);
+  --rg-black-a94: rgba(0, 0, 0, 0.94);
+
+  --rg-g-brand: linear-gradient(135deg, #8749ff, #452eff);
+  --rg-g-cta: linear-gradient(90deg, #00e5e5, #8749ff);
+  --rg-g-go: linear-gradient(90deg, #00e5e5, #8749ff 55%, #ff1f7a);
+  --rg-g-bar: linear-gradient(180deg, #b13cff, #452eff);
+  --rg-g-private: linear-gradient(90deg, #ffcc00, #ff1f7a);
+  --rg-g-pin: linear-gradient(135deg, #8749ff, #ff1f7a);
+  --rg-g-avatar-1: linear-gradient(135deg, #ff1f7a, #8749ff);
+  --rg-g-avatar-2: linear-gradient(135deg, #00b8c4, #452eff);
+  --rg-g-avatar-3: linear-gradient(135deg, #ffcc00, #ff1f7a);
+  --rg-g-avatar-4: linear-gradient(135deg, #8749ff, #00e5e5);
+  --rg-g-avatar-5: linear-gradient(135deg, #21c47b, #00808a);
+  --rg-g-avatar-6: linear-gradient(135deg, #6539cb, #ff6aa6);
+
+  --rg-shadow-cta: 0 8px 24px -6px rgba(0, 229, 229, 0.45), 0 8px 24px -8px rgba(135, 73, 255, 0.6);
+  --rg-glow-violet: 0 0 14px -2px rgba(135, 73, 255, 0.7);
+
+  --rg-radius-pill: 999px;
+  --rg-radius: 16px;
+  --rg-radius-2: 12px;
+  --rg-font: 'Poppins', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --rg-tap: 44px;
+}

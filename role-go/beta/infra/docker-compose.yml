@@ -1,0 +1,44 @@
+# Staging/produção numa VPS (docs/14 §3). Uso: docker compose --env-file /srv/rolego/<env>/.env -f infra/docker-compose.yml up -d
+name: rolego-${ROLEGO_ENV:-staging}
+x-api: &api
+  image: ghcr.io/rolego/api:${IMAGE_TAG:-latest}
+  env_file: ${ENV_FILE:-.env}
+  environment:
+    DATABASE_URL: postgres://rolego:${POSTGRES_PASSWORD}@db:5432/rolego
+    MEDIA_DIR: /media
+    WORKER_INLINE: "false"
+  volumes: ["media:/media"]
+  depends_on: { db: { condition: service_healthy } }
+  restart: unless-stopped
+services:
+  db:
+    image: postgis/postgis:16-3.4
+    environment: { POSTGRES_USER: rolego, POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}", POSTGRES_DB: rolego }
+    volumes: ["db:/var/lib/postgresql/data"]
+    healthcheck: { test: ["CMD-SHELL", "pg_isready -U rolego"], interval: 5s, retries: 20 }
+    restart: unless-stopped
+  migrate:
+    <<: *api
+    command: ["node", "dist/cli/migrate.js"]
+    restart: "no"
+  api:
+    <<: *api
+    depends_on: { migrate: { condition: service_completed_successfully } }
+    healthcheck: { test: ["CMD", "wget", "-qO-", "http://localhost:3000/api/v1/health"], interval: 15s }
+  worker:
+    <<: *api
+    command: ["node", "dist/worker.js"]
+    depends_on: { migrate: { condition: service_completed_successfully } }
+  web:
+    image: ghcr.io/rolego/web:${IMAGE_TAG:-latest}
+    ports: ["127.0.0.1:${WEB_PORT:-8080}:80"]
+    volumes: ["media:/media:ro"]
+    depends_on: [api]
+    restart: unless-stopped
+  mailpit:
+    image: axllent/mailpit:latest
+    profiles: ["staging"]
+    ports: ["127.0.0.1:8025:8025"]
+volumes:
+  db:
+  media:

@@ -1,0 +1,41 @@
+{
+  "name": "rolego",
+  "private": true,
+  "version": "0.1.0",
+  "packageManager": "pnpm@9.15.9",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "pnpm infra:up && turbo run dev --parallel",
+    "infra:up": "docker compose -f infra/docker-compose.dev.yml up -d --wait",
+    "infra:down": "docker compose -f infra/docker-compose.dev.yml down",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "test:int": "pnpm --filter @rolego/api test:int",
+    "test:e2e": "playwright test -c e2e/playwright.config.ts",
+    "db:migrate": "pnpm --filter @rolego/api db:migrate",
+    "db:seed": "pnpm --filter @rolego/api db:seed",
+    "admin:grant": "pnpm --filter @rolego/api admin:grant",
+    "verify": "turbo run lint typecheck test && pnpm test:int"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.20.0",
+    "@playwright/test": "^1.50.0",
+    "eslint": "^9.20.0",
+    "prettier": "^3.5.0",
+    "turbo": "^2.4.0",
+    "typescript": "~5.8.2",
+    "typescript-eslint": "^8.24.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "sharp",
+      "esbuild",
+      "@swc/core",
+      "@nestjs/core"
+    ]
+  }
+}

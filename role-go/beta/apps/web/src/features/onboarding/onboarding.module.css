@@ -1,0 +1,15 @@
+.radar { position: relative; width: 220px; height: 220px; margin: 12px auto 18px; }
+.radar i { position: absolute; left: 50%; top: 50%; border-radius: 50%; border: 1.5px solid rgba(0, 229, 229, 0.5); transform: translate(-50%, -50%); box-shadow: 0 0 12px -3px rgba(0, 229, 229, 0.6); }
+.radar i:nth-child(1) { width: 220px; height: 220px; border-color: rgba(0, 229, 229, 0.18); }
+.radar i:nth-child(2) { width: 150px; height: 150px; border-color: rgba(0, 229, 229, 0.32); }
+.radar i:nth-child(3) { width: 84px; height: 84px; }
+.sweep { position: absolute; inset: 0; border-radius: 50%; background: conic-gradient(from 20deg, rgba(0, 229, 229, 0.35), transparent 60deg); animation: rot 4s linear infinite; }
+@keyframes rot { to { transform: rotate(360deg); } }
+.me { position: absolute; left: 50%; top: 50%; width: 16px; height: 16px; border-radius: 50%; background: var(--rg-cyan); transform: translate(-50%, -50%); box-shadow: 0 0 0 6px rgba(0, 229, 229, 0.2), 0 0 20px var(--rg-cyan); }
+.big { font-weight: 900; font-style: italic; font-size: 64px; line-height: 1; letter-spacing: -0.03em; text-align: center; margin-top: 16px; }
+.big small { font-size: 22px; color: var(--rg-cyan); margin-left: 4px; }
+.preview { text-align: center; margin-top: 18px; color: var(--rg-soft); }
+.cityRow { display: flex; align-items: center; gap: 12px; width: 100%; padding: 14px 4px; border-bottom: 1px solid var(--rg-line); text-align: left; min-height: 56px; }
+.cityOn { color: var(--rg-text); }
+.cityOn .radioDot { border-color: var(--rg-cyan); background: var(--rg-cyan); box-shadow: inset 0 0 0 4px var(--rg-screen); }
+.radioDot { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--rg-line-2); flex: none; }

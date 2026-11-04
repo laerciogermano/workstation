@@ -1,0 +1,32 @@
+name: CI
+on:
+  push: { branches: [main] }
+  pull_request:
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: role-go/beta } }
+    services:
+      db:
+        image: postgis/postgis:16-3.4
+        env: { POSTGRES_USER: rolego, POSTGRES_PASSWORD: rolego, POSTGRES_DB: rolego_test }
+        ports: ["5432:5432"]
+        options: --health-cmd "pg_isready -U rolego" --health-interval 5s --health-retries 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: 9.15.9 }
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: pnpm, cache-dependency-path: role-go/beta/pnpm-lock.yaml }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @rolego/contracts build
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm test:int
+        env: { TEST_DATABASE_URL: postgres://rolego:rolego@localhost:5432/rolego_test }
+      - run: pnpm build
+      - name: Orçamento de bundle (≤ 250 KB gzip no JS inicial)
+        run: node scripts/bundle-budget.mjs
+      - uses: gitleaks/gitleaks-action@v2
+        env: { GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}" }

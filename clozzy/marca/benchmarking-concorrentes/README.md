@@ -28,6 +28,20 @@ Matriz vs plataformas de **conteúdo exclusivo / creator monetization**, ordenad
 
 \*Creator keep típico ~80% salvo nota. Âncoras públicas 2025–2026 (não auditadas).
 
+## IA — o que fazem / prometem (resumo)
+
+| # | Plataforma | Política | Conta 100% IA | Tools nativos | Chat/auto fãs | Promessa |
+|---|------------|----------|---------------|---------------|---------------|----------|
+| 1 | OnlyFans | IA do criador verificado + label | Não | Sem suite | Opaco | Enhancement com transparência |
+| 2 | Patreon | Adult: ilustrado ok; hiper-realista c/ consent | Arte ok; sexbot ban | Sem chatbot core | Ban companion adult | IA = mídia, não relacionamento |
+| 3 | Privacy | A confirmar | Inspecionar | Sem suite anunciada | Inspecionar | Gap doc vs Fanvue |
+| 4 | Fansly | Ban fotorealista (label não libera) | Não | Sem product | Ban sem humano | “Conteúdo humano real” |
+| 5 | **Fanvue** | Aberta + disclosure | **Sim** | **Messaging, Chatbot, Agent, voice, Insights** | **Sim** | Escalar chat/conteúdo com IA |
+| 6 | LoyalFans | Ban fotorealista (AUP) | Não | Sem suite | Ban sem humano | Humano + live |
+| 10 | CloseFans | A confirmar | Inspecionar | Sem suite anunciada | Inspecionar | Telegram-first; IA não é pitch |
+
+Detalhe + implicações Clozzy: §5 de [`00-curadoria.html`](00-curadoria.html).
+
 ## Cards filhos — inspeção profunda
 
 Cadastro + prints de todas as telas + inventário de funcionalidades (Backlog Clozzy 2028):
@@ -42,7 +56,7 @@ Cadastro + prints de todas as telas + inventário de funcionalidades (Backlog Cl
 | 6 | LoyalFans | https://trello.com/c/iBZZX5G0 |
 | 10 | CloseFans | https://trello.com/c/JFzUjNaW |
 
-Entrega esperada por card: `clozzy/marca/benchmarking-concorrentes/<plataforma>/` (`prints/` + `funcionalidades.md` + `README.md`).
+Entrega esperada por card: `clozzy/marca/benchmarking-concorrentes/<plataforma>/` (`prints/` + `funcionalidades.md` + `ia.md` + `README.md`).
 
 ## Insights p/ identidade visual
 

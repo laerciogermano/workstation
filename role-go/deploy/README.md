@@ -13,13 +13,30 @@ Stack Docker (`api` + `worker` + PostGIS + `web` + Mailpit) a partir de [`../bet
 | Compose | [`../beta/infra/docker-compose.vps.yml`](../beta/infra/docker-compose.vps.yml) |
 | Web (container) | `127.0.0.1:8090` (8080 = Mailcow) |
 | nginx host | proxy → `:8090` · canônico [`nginx-rolego-app.conf`](nginx-rolego-app.conf) |
-| Mailpit UI | `127.0.0.1:8025` (só localhost) |
+| SMTP | Mailcow `mail.clozzy.com.br:587` · `nao-responda@rolego.com.br` (creds em `credenciais.md`) |
+| Mailpit UI | `127.0.0.1:8025` (só localhost; legado — prod não usa mais) |
 | Seed | `ana@rolego.dev` / `rolego2026` (e demais contas do README do beta) |
 | Backup protótipo HTML | `/opt/rolego/web-proto-bak` |
 | Backup SPA E01 Vite | `/opt/rolego/web-e01-vite-bak` |
 | Em breve | `/opt/rolego/embreve` |
 
 **Antes → depois (2026-11-04):** protótipo HTML estático em `/opt/rolego/web` → PWA + API Docker (proxy nginx `:8090`).
+
+**Antes → depois (SMTP):** `SMTP_HOST=mailpit:1025` (só captura local) → Mailcow real `mail.clozzy.com.br:587` + domínio/mailbox `rolego.com.br` / `nao-responda@`. Rollback: restaurar backup `/srv/rolego/prod/.env.bak-smtp-*` e `compose up -d --force-recreate api worker web`.
+
+### DNS Hostinger (`rolego.com.br`) — e-mail
+
+Ainda falta no painel (perfil Chrome Germano `:9230`):
+
+| Tipo | Nome | Valor |
+|------|------|--------|
+| A | `mail` | `144.126.154.90` |
+| MX | `@` | `mail.rolego.com.br` (prio 10) — ou `mail.clozzy.com.br` enquanto o SAN não incluir `mail.rolego` |
+| TXT | `@` | `v=spf1 mx a:mail.clozzy.com.br ip4:144.126.154.90 ~all` |
+| TXT | `dkim._domainkey` | conteúdo em `/tmp/rolego-dkim.txt` no Mac (gerado no Mailcow) |
+| TXT | `_dmarc` | `v=DMARC1; p=none; rua=mailto:nao-responda@rolego.com.br` |
+
+Sem esses registros, Gmail/Outlook podem rejeitar ou jogar no spam; envio SMTP interno já funciona.
 
 ### PWA / viewport (app instalável)
 

@@ -26,8 +26,13 @@ const vitrineDetalheEl = document.getElementById('vitrine-detalhe');
 const produtosListaEl = document.getElementById('produtos-lista');
 const produtoDetalheEl = document.getElementById('produto-detalhe');
 const produtoInfoEl = document.getElementById('produto-info');
+const produtoFotosEl = document.getElementById('produto-fotos');
+const produtoFotosGridEl = document.getElementById('produto-fotos-grid');
+const produtoFotosStatusEl = document.getElementById('produto-fotos-status');
+const produtoFotosBuscarEl = document.getElementById('produto-fotos-buscar');
 const produtoTimelineEl = document.getElementById('produto-timeline');
 const countProdutoPrecosEl = document.getElementById('count-produto-precos');
+let produtoFotosEan = '';
 const vitrineGridEl = document.getElementById('vitrine-grid');
 const produtosGridEl = document.getElementById('produtos-grid');
 const countProdutosEl = document.getElementById('count-produtos');
@@ -43,6 +48,7 @@ const subtabs = [...document.querySelectorAll('.subtab')];
 const panels = {
   empresas: document.getElementById('panel-empresas'),
   produtos: document.getElementById('panel-produtos'),
+  prototipo: document.getElementById('panel-prototipo'),
 };
 
 let allEmpresas = [];
@@ -590,6 +596,110 @@ function renderProdutoDetalhe(key) {
       })
       .join('');
   }
+
+  void loadProdutoFotos(ean);
+}
+
+function setProdutoFotosStatus(msg, kind) {
+  if (!produtoFotosStatusEl) return;
+  if (!msg) {
+    produtoFotosStatusEl.hidden = true;
+    produtoFotosStatusEl.textContent = '';
+    produtoFotosStatusEl.className = 'hint';
+    return;
+  }
+  produtoFotosStatusEl.hidden = false;
+  produtoFotosStatusEl.textContent = msg;
+  produtoFotosStatusEl.className = `hint${kind ? ` ${kind}` : ''}`;
+}
+
+function renderProdutoFotosGrid(imagens) {
+  if (!produtoFotosGridEl) return;
+  if (!imagens.length) {
+    produtoFotosGridEl.innerHTML =
+      '<p class="hint">Nenhuma foto ainda. Use Buscar fotos.</p>';
+    return;
+  }
+  produtoFotosGridEl.innerHTML = imagens
+    .map((img) => {
+      const src = String(img.path_local || '').trim();
+      const sel = Boolean(img.selecionada);
+      return `<button type="button" class="ean-foto-card${
+        sel ? ' is-selected' : ''
+      }" data-ean-img-id="${esc(img.id)}" aria-pressed="${sel ? 'true' : 'false'}" title="${esc(
+        img.fonte || 'fonte',
+      )}">
+        <img src="${esc(src)}" alt="" loading="lazy" width="96" height="96" />
+        ${sel ? '<span class="chip ok">feed</span>' : ''}
+        <span class="ean-foto-fonte">${esc(img.fonte || '')}</span>
+      </button>`;
+    })
+    .join('');
+}
+
+async function loadProdutoFotos(ean) {
+  produtoFotosEan = String(ean || '').trim();
+  if (!produtoFotosEl) return;
+  if (!produtoFotosEan) {
+    produtoFotosEl.hidden = true;
+    if (produtoFotosGridEl) produtoFotosGridEl.innerHTML = '';
+    setProdutoFotosStatus('');
+    return;
+  }
+  produtoFotosEl.hidden = false;
+  setProdutoFotosStatus('Carregando fotos…');
+  try {
+    const data = await fetchJson(
+      `api/ean-imagens?codigo_barras=${encodeURIComponent(produtoFotosEan)}`,
+    );
+    const imagens = data.imagens || [];
+    renderProdutoFotosGrid(imagens);
+    setProdutoFotosStatus(
+      imagens.length
+        ? 'Toque numa foto para usar no feed.'
+        : 'Sem candidatas — busque automaticamente.',
+    );
+  } catch (err) {
+    setProdutoFotosStatus(`Falha: ${err.message}`, 'err');
+  }
+}
+
+async function buscarProdutoFotos(force) {
+  if (!produtoFotosEan) return;
+  setProdutoFotosStatus(force ? 'Buscando de novo…' : 'Buscando fotos…');
+  try {
+    const data = await fetchJson('api/ean-imagens/buscar', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        codigo_barras: produtoFotosEan,
+        force: Boolean(force),
+      }),
+    });
+    renderProdutoFotosGrid(data.imagens || []);
+    setProdutoFotosStatus(
+      data.skipped
+        ? 'Já havia fotos (idempotente). Force via buscar de novo se precisar.'
+        : `Baixadas: ${data.baixadas || 0}. Toque para escolher a do feed.`,
+    );
+    await reloadItens();
+    if (produtoAbertaKey) renderProdutoDetalhe(produtoAbertaKey);
+  } catch (err) {
+    setProdutoFotosStatus(`Falha: ${err.message}`, 'err');
+  }
+}
+
+async function selecionarProdutoFoto(id) {
+  try {
+    await fetchJson(`api/ean-imagens/${encodeURIComponent(id)}/selecionar`, {
+      method: 'POST',
+    });
+    await reloadItens();
+    if (produtoAbertaKey) renderProdutoDetalhe(produtoAbertaKey);
+    else await loadProdutoFotos(produtoFotosEan);
+  } catch (err) {
+    setProdutoFotosStatus(`Falha ao selecionar: ${err.message}`, 'err');
+  }
 }
 
 function openProduto(key) {
@@ -1059,6 +1169,17 @@ document.getElementById('vitrine-voltar')?.addEventListener('click', () => {
 });
 document.getElementById('produto-voltar')?.addEventListener('click', () => {
   closeProdutoDetalhe();
+});
+produtoFotosBuscarEl?.addEventListener('click', () => {
+  const force = Boolean(
+    produtoFotosGridEl?.querySelector('.ean-foto-card'),
+  );
+  void buscarProdutoFotos(force);
+});
+produtoFotosGridEl?.addEventListener('click', (ev) => {
+  const btn = ev.target.closest('[data-ean-img-id]');
+  if (!btn) return;
+  void selecionarProdutoFoto(btn.dataset.eanImgId);
 });
 vitrineGridEl?.addEventListener('click', (ev) => {
   const btn = ev.target.closest('[data-open-loja]');

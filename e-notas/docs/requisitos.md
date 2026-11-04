@@ -277,19 +277,29 @@ Curadoria: [`../marca/benchmarking-solucoes/README.md`](../marca/benchmarking-so
 - Antes: vitrine só abria o detalhe do produto; EAN só por fluxos antigos (itens/nota). Depois: cadastro/vínculo a partir do item da loja.
 - Rollback: remover `data-vincular-ean` / `.btn-ean` / `.produto-card-hit` na vitrine; remover `.scan-alt` do modal EAN e `decodeEanFromFile` em `lista.js`.
 
-## REQ-032 — Busca automática de fotos ao cadastrar EAN (2026-11-04) — *planejado*
+## REQ-032 — Busca automática de fotos ao cadastrar EAN (2026-11-04)
 
-- Ao **cadastrar/vincular** um código de barras (`POST /api/codigos-barras`), o sistema deve **buscar imagens** desse EAN e persistir **até ~5 candidatas**.
-- Fontes: preferir APIs de produto (Open Food Facts / Beauty / Products, UPCitemdb, catálogos BR); **busca genérica por imagens (ex. Google)** só como **fallback** se as APIs falharem — com chave/ToS/rate documentados.
-- Nova tabela (ex. `enotas.ean_imagens`): EAN, URL origem, fonte, path local, ordem, flag/seleção da representativa, criado_em.
-- **Uma** imagem selecionada alimenta o feed (`foto_url` ou join equivalente) — aba Produtos, vitrine, detalhe.
-- Escolha (não voto): auto-seleção na 1ª importação + UI para trocar entre candidatas.
-- Busca idempotente; preferir job assíncrono para não travar o modal EAN.
-- Card: [0fVZ8eBE](https://trello.com/c/0fVZ8eBE) (Backlog).
+- Ao **cadastrar/vincular** um código de barras (`POST /api/codigos-barras`), dispara busca **assíncrona** de imagens desse EAN (até ~5 candidatas).
+- Fontes: Open Food Facts → Open Beauty → Open Products → UPCitemdb; **Google Custom Search** só com `GOOGLE_CSE_API_KEY` + `GOOGLE_CSE_CX` (fallback).
+- Tabela `enotas.ean_imagens`: EAN, `url_origem`, `fonte`, `path_local`, `ordem`, `selecionada`, `sha1`, `criado_em`. Arquivos em `ean-fotos/{ean}/NN.ext`.
+- **Uma** imagem `selecionada` propaga `codigos_barras.foto_url` (todos os vínculos daquele EAN) — feed / vitrine / detalhe.
+- Escolha (não voto): auto-seleção na 1ª importação; UI **Fotos** no detalhe do produto (+ **Buscar fotos** / force).
+- APIs: `GET /api/ean-imagens`, `POST /api/ean-imagens/buscar`, `POST /api/ean-imagens/:id/selecionar`.
+- Idempotente sem `force`; legado `{ean}.jpg` vira candidata `local` se ainda não houver linhas.
+- Card: [0fVZ8eBE](https://trello.com/c/0fVZ8eBE).
 - Antes: foto só se existir arquivo manual em `ean-fotos/` (REQ-026). Depois: busca automática de candidatas + seleção da do feed.
-- Rollback (quando implementado): `DROP TABLE enotas.ean_imagens;` + remover job/APIs/UI de seleção; manter `foto_url` legado se houver.
+- Rollback: `DROP TABLE enotas.ean_imagens;` + remover `ean-imagens.js` / rotas / seção Fotos no detalhe; manter `foto_url` legado.
 
 ---
+
+## REQ-033 — Seção Protótipo no app (2026-11-04)
+
+- Aba **Protótipo** na home (`#prototipo`) com card + botão **Abrir protótipo**.
+- Página estática `app/public/prototipos.html` (cópia do `beta-docs/prototipos/index.html`) servida no mesmo site.
+- Links também no header e no rodapé.
+- Contabo: arquivo em `/opt/e-notas/public/prototipos.html` (+ `index.html` / `lista.js` / `styles.css`).
+- Antes: protótipo só em `beta-docs/` local. Depois: acessível em notinhas.shop / `/enotas/` no mobile web.
+- Rollback: remover aba/painel/links; apagar `prototipos.html` do `public/` e do Contabo.
 
 ## Próximos passos
 

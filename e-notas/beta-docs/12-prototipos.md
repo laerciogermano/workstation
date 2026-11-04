@@ -1,6 +1,6 @@
 # notinhas.shop Beta — Protótipos
 
-**Protótipo navegável:** [`prototipos/index.html`](prototipos/index.html) · PDF: [`prototipos/prototipos-notinhas-beta.pdf`](prototipos/prototipos-notinhas-beta.pdf). Abra no navegador, sem build.
+**Protótipo navegável:** [`prototipos/index.html`](prototipos/index.html) · no app: [notinhas.shop/#prototipo](https://notinhas.shop/#prototipo) → `prototipos.html` · PDF: [`prototipos/prototipos-notinhas-beta.pdf`](prototipos/prototipos-notinhas-beta.pdf). Abra no navegador, sem build.
 
 - **Galeria:** telas agrupadas por fluxo (E01–E04 + ADM), celulares com contorno azul/verde e setas entre passos.
 - **Modo navegável:** clique em qualquer tela ou em “▶ Navegar”. Elementos com `data-go` avançam. Atalhos: `←/→`, `Backspace`, `H` (áreas clicáveis), `Esc`. Deep-link: `index.html#T-12`.

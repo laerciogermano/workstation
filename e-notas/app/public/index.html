@@ -75,7 +75,10 @@
             </a>
             <p class="app-header-tag">Menor preço a partir da nota.</p>
           </div>
-          <a class="app-header-cta" href="apresentacao.html">O que somos</a>
+          <div class="app-header-actions">
+            <a class="app-header-cta" href="./#prototipo">Protótipo</a>
+            <a class="app-header-cta" href="apresentacao.html">O que somos</a>
+          </div>
         </div>
       </div>
     </header>
@@ -88,6 +91,9 @@
         </button>
         <button type="button" class="tab" role="tab" id="tab-empresas" data-tab="empresas" aria-controls="panel-empresas" aria-selected="false">
           Estabelecimentos <span id="count-empresas" class="count"></span>
+        </button>
+        <button type="button" class="tab" role="tab" id="tab-prototipo" data-tab="prototipo" aria-controls="panel-prototipo" aria-selected="false">
+          Protótipo
         </button>
       </div>
 
@@ -134,6 +140,16 @@
         <div id="produto-detalhe" hidden>
           <button type="button" class="back-link" id="produto-voltar">← Produtos</button>
           <article class="produto-hero" id="produto-info"></article>
+          <section id="produto-fotos" class="produto-fotos" hidden>
+            <header class="home-section-head" style="margin-top: 1.25rem">
+              <h2 class="home-section-title">Fotos</h2>
+              <button type="button" class="btn-ghost btn-sm" id="produto-fotos-buscar">
+                Buscar fotos
+              </button>
+            </header>
+            <p id="produto-fotos-status" class="hint" hidden></p>
+            <div id="produto-fotos-grid" class="ean-fotos-grid" aria-live="polite"></div>
+          </section>
           <header class="home-section-head" style="margin-top: 1.25rem">
             <h2 class="home-section-title">Preços</h2>
             <span id="count-produto-precos" class="count"></span>
@@ -142,8 +158,23 @@
         </div>
       </section>
 
+      <section class="block tab-panel" id="panel-prototipo" role="tabpanel" aria-labelledby="tab-prototipo" hidden>
+        <article class="prototipo-card">
+          <p class="prototipo-eyebrow">Beta 1.0</p>
+          <h2 class="home-section-title">Protótipo navegável</h2>
+          <p class="prototipo-lead">
+            Telas do Beta (conta, depósito de nota, comparação, perto de mim, cesta e extrato)
+            no design system notinhas.shop — galeria e modo navegável no celular.
+          </p>
+          <a class="btn prototipo-cta" href="prototipos.html">Abrir protótipo</a>
+          <p class="hint prototipo-hint">Funciona no mobile web. Toque em uma tela ou em “Navegar no protótipo”.</p>
+        </article>
+      </section>
+
       <footer class="site-footer">
         <span class="brand" aria-hidden="true"><span class="n">notinhas</span><span class="o">.shop</span></span>
+        <span aria-hidden="true">·</span>
+        <a href="./#prototipo">Protótipo</a>
         <span aria-hidden="true">·</span>
         <a href="apresentacao.html">Quem somos</a>
         <span aria-hidden="true">·</span>

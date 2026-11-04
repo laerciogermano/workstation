@@ -11,7 +11,7 @@ export function IconSprite(): JSX.Element {
     <svg width="0" height="0" style={{ position: 'absolute' }} aria-hidden="true">
       <defs>
         <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
-        <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20.5s-7.5-4.6-9.5-9C1 8 3.2 4.5 6.7 4.5c2.1 0 3.6 1.1 4.3 2.6.7-1.5 2.2-2.6 4.3-2.6 3.5 0 5.7 3.5 4.2 7-2 4.4-9.5 9-9.5 9z"/></symbol>
+        <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20.2l-1.05-.96C6.4 15.1 3.5 12.5 3.5 9.4 3.5 6.9 5.45 5 7.95 5c1.45 0 2.85.7 3.75 1.8C12.6 5.7 14 5 15.45 5 17.95 5 19.9 6.9 19.9 9.4c0 3.1-2.9 5.7-7.45 9.84L12 20.2z"/></symbol>
         <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
         <symbol id="i-undo" viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 010 11H11"/></symbol>
         <symbol id="i-filter" viewBox="0 0 24 24"><path d="M3 7h18M3 17h18"/><circle cx="9" cy="7" r="2.4" style={{ fill: 'var(--rg-screen)' }}/><circle cx="15" cy="17" r="2.4" style={{ fill: 'var(--rg-screen)' }}/></symbol>

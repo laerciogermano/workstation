@@ -67,7 +67,7 @@
 /* ===== Campos ===== */
 .field { margin-bottom: 14px; display: block; }
 .label { display: block; font-size: 12px; font-weight: 600; color: var(--rg-muted); margin-bottom: 6px; }
-.input { width: 100%; min-height: 48px; border-radius: var(--rg-radius-2); border: 1px solid var(--rg-line); background: var(--rg-surface-2); padding: 0 14px; color: var(--rg-text); font-size: 15px; outline: none; }
+.input { width: 100%; min-height: 48px; border-radius: var(--rg-radius-2); border: 1px solid var(--rg-line); background: var(--rg-surface-2); padding: 0 14px; color: var(--rg-text); font-size: 16px; outline: none; }
 .input::placeholder { color: var(--rg-faint); }
 .input:focus { border-color: var(--rg-cyan); box-shadow: 0 0 0 3px rgba(0, 229, 229, 0.13); }
 .inputErr { border-color: var(--rg-magenta); }

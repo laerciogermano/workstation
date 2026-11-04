@@ -21,6 +21,15 @@ Stack Docker (`api` + `worker` + PostGIS + `web` + Mailpit) a partir de [`../bet
 
 **Antes → depois (2026-11-04):** protótipo HTML estático em `/opt/rolego/web` → PWA + API Docker (proxy nginx `:8090`).
 
+### PWA / viewport (app instalável)
+
+- Manifest: `/manifest.webmanifest` · ícones em `/icon-192.png`, `/icon-512.png`, `/icon-maskable-512.png`, `/apple-touch-icon.png`
+- Viewport: `maximum-scale=1, user-scalable=no, viewport-fit=cover` + metas `apple-mobile-web-app-*` (standalone, status bar translúcida)
+- Inputs em **16px** (evita zoom do iOS ao focar)
+- Instalar: Safari “Adicionar à Tela de Início” / Chrome “Instalar app”
+
+**Antes → depois:** viewport só `initial-scale=1` (zoom livre) + apple-touch 192 → viewport travado + ícone 180 + maskable com safe zone. Rollback: reverter `apps/web/index.html`, `global.css`, `vite.config.ts` e `public/apple-touch-icon.png` / `icon-maskable-512.png`.
+
 ### Subir / atualizar
 
 ```bash

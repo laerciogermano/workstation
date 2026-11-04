@@ -28,6 +28,7 @@ flowchart TD
 
 | Pasta / Card ID | Card |
 |-----------------|------|
+| [`6aeb0dad292b4e546bc380ff/`](6aeb0dad292b4e546bc380ff/README.md) | [Protótipo Beta — PDF da galeria (E01·E02·E03)](https://trello.com/c/XIzwn6JC) |
 | [`6ae6554556166729dd901311/`](6ae6554556166729dd901311/README.md) | [Identidade visual RoleGo v2 — criativos](https://trello.com/c/Taaxly1i) |
 | [`6ae65639578c6aad88e9d94f/`](6ae65639578c6aad88e9d94f/README.md) | [Benchmarking identidade visual (apps e marcas)](https://trello.com/c/pXPmdI7g) |
 | [`6ae6509b737fd1dd9ba517e7/`](6ae6509b737fd1dd9ba517e7/README.md) | [v0.1 — Autenticação e onboarding (criar + publicar)](https://trello.com/c/qRWb8Gxn) |

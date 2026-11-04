@@ -1,0 +1,1341 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RoleGo Beta — Protótipo navegável (E01 · E02 · E03)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;1,700;1,800;1,900&display=swap" rel="stylesheet">
+<style>
+/* ===== Tokens (identidade-visual.md) ===== */
+:root{
+  --bg:#04050B; --screen:#000; --s2:#0F0F13; --s3:#1A1A20; --line:#1E1E25; --line2:#34384A;
+  --text:#fff; --soft:#C9CDD8; --muted:#9CA3AF; --faint:#6B7286;
+  --violet:#8749FF; --violet-t:#B79BFF; --blue:#452EFF;
+  --cyan:#00E5E5; --magenta:#FF1F7A; --green:#00FF00; --yellow:#FFCC00;
+  --g-brand:linear-gradient(135deg,#8749FF,#452EFF);
+  --g-cta:linear-gradient(90deg,#00E5E5,#8749FF);
+  --g-go:linear-gradient(90deg,#00E5E5,#8749FF 55%,#FF1F7A);
+  --g-bar:linear-gradient(180deg,#B13CFF,#452EFF);
+  --pill:999px; --r:16px; --r2:12px;
+  --f:'Poppins',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--f);color:var(--text);background:var(--bg);-webkit-font-smoothing:antialiased;min-height:100vh;
+  background:
+   radial-gradient(1.5px 1.5px at 7% 12%,rgba(255,204,0,.8),transparent),
+   radial-gradient(1.2px 1.2px at 21% 64%,rgba(255,255,255,.5),transparent),
+   radial-gradient(1.4px 1.4px at 38% 8%,rgba(0,229,229,.7),transparent),
+   radial-gradient(1.2px 1.2px at 55% 81%,rgba(255,255,255,.4),transparent),
+   radial-gradient(1.6px 1.6px at 72% 19%,rgba(255,204,0,.6),transparent),
+   radial-gradient(1.2px 1.2px at 86% 58%,rgba(135,73,255,.9),transparent),
+   radial-gradient(1.4px 1.4px at 95% 33%,rgba(255,255,255,.5),transparent),
+   radial-gradient(1.2px 1.2px at 3% 88%,rgba(255,31,122,.7),transparent),
+   radial-gradient(45% 35% at 0% 0%,rgba(101,57,203,.32),transparent 70%),
+   radial-gradient(40% 30% at 100% 100%,rgba(0,184,196,.16),transparent 70%),
+   var(--bg);background-attachment:fixed}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+input{font:inherit;color:inherit}
+svg.i{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex:none;vertical-align:middle}
+svg.i.s{width:14px;height:14px} svg.i.l{width:24px;height:24px} svg.i.xl{width:30px;height:30px}
+svg.i.f{fill:currentColor;stroke:none}
+
+/* ===== Wordmark: "Role" branco + "Go" neon, o "o" é um pin de localização ===== */
+.wm{display:inline-flex;align-items:baseline;font-weight:800;font-style:italic;letter-spacing:-.04em;line-height:1;white-space:nowrap}
+.wm .go{background:var(--g-go);-webkit-background-clip:text;background-clip:text;color:transparent;display:inline-flex;align-items:baseline}
+.wm .pin{position:relative;display:inline-block;width:.56em;height:.56em;margin-left:.04em;transform:translateY(-.02em) skewX(-10deg)}
+.wm .pin::before{content:"";position:absolute;inset:0;border-radius:50% 50% 50% 0;transform:rotate(-45deg);
+  background:linear-gradient(135deg,#8749FF,#FF1F7A);
+  -webkit-mask:radial-gradient(circle at 50% 50%,transparent 30%,#000 31%);mask:radial-gradient(circle at 50% 50%,transparent 30%,#000 31%)}
+.wm .pin::after{content:"";position:absolute;left:50%;top:50%;width:.15em;height:.15em;border-radius:50%;background:var(--cyan);transform:translate(-50%,-50%);box-shadow:0 0 .2em var(--cyan)}
+.wm.glow{filter:drop-shadow(0 0 16px rgba(135,73,255,.55)) drop-shadow(0 0 4px rgba(0,229,229,.35))}
+
+/* ===== Página do protótipo ===== */
+.wrap{max-width:1500px;margin:0 auto;padding:0 40px}
+.hero{position:relative;padding:56px 0 34px;overflow:hidden}
+.hero .wm{position:absolute;right:24px;top:56px;font-size:54px}
+.chipnum{display:inline-block;padding:6px 16px;border:2px solid var(--violet);border-radius:14px;font-weight:800;font-size:22px;box-shadow:0 0 14px rgba(135,73,255,.5),inset 0 0 8px rgba(135,73,255,.35);margin-bottom:18px}
+.htitle{font-weight:800;font-size:clamp(40px,6vw,84px);line-height:.98;text-transform:uppercase;letter-spacing:-.01em;padding-left:28px;position:relative}
+.htitle::before,.stitle::before{content:"";position:absolute;left:0;top:6%;bottom:6%;width:8px;border-radius:4px;background:var(--g-bar);box-shadow:0 0 18px rgba(135,73,255,.6)}
+.hsub{color:var(--soft);margin:18px 0 0 28px;max-width:760px;font-size:15px;line-height:1.6}
+.hsub b{color:var(--cyan)}
+.hactions{margin:26px 0 0 28px;display:flex;gap:12px;flex-wrap:wrap}
+.waves{position:absolute;left:-5%;right:-5%;bottom:-20px;height:120px;opacity:.55;pointer-events:none}
+.nav{position:sticky;top:0;z-index:20;background:rgba(4,5,11,.86);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;gap:6px;overflow-x:auto;padding-top:12px;padding-bottom:12px;scrollbar-width:none}
+.nav a{white-space:nowrap;padding:8px 16px;border-radius:var(--pill);border:1px solid var(--line2);color:var(--soft);text-decoration:none;font-size:13px;font-weight:600}
+.nav a:hover{border-color:var(--cyan);color:#fff}
+.nav a b{color:var(--cyan);margin-right:6px}
+.flow{padding:56px 0 20px}
+.stitle{position:relative;padding-left:24px;font-weight:800;font-size:36px;text-transform:uppercase;line-height:1.05}
+.sdesc{color:var(--soft);margin:10px 0 0 24px;max-width:900px;font-size:14px;line-height:1.6}
+.sdesc code{color:var(--violet-t);font-size:12.5px}
+.row{display:flex;gap:0;align-items:flex-start;overflow-x:auto;padding:30px 4px 30px;scrollbar-width:thin;scrollbar-color:#333 transparent}
+.step{display:flex;flex-direction:column;align-items:center;gap:12px;flex:none}
+.step .lbl{font-weight:700;font-size:17px}
+.step .meta{font-size:11.5px;color:var(--muted);text-align:center;max-width:300px;line-height:1.45}
+.step .meta b{color:#fff;font-weight:600}
+.arrow{flex:none;align-self:center;width:46px;height:2px;margin:0 6px;margin-top:-30px;background:currentColor;position:relative;box-shadow:0 0 8px currentColor}
+.arrow::after{content:"";position:absolute;right:-1px;top:-5px;width:10px;height:10px;border-top:2px solid currentColor;border-right:2px solid currentColor;transform:rotate(45deg)}
+.c-cyan{color:var(--cyan)} .c-violet{color:var(--violet-t)} .c-magenta{color:var(--magenta)} .c-yellow{color:var(--yellow)} .c-green{color:var(--green)}
+.legend{display:flex;gap:18px;flex-wrap:wrap;margin:22px 0 0 28px;font-size:12px;color:var(--muted)}
+.legend span{display:flex;align-items:center;gap:6px}
+.legend i{width:12px;height:12px;border-radius:50%;border:2px solid currentColor;box-shadow:0 0 6px currentColor}
+footer{padding:60px 0 80px;color:var(--faint);font-size:12px;text-align:center}
+
+/* ===== Celular ===== */
+.phone{--pc:var(--violet);width:320px;height:680px;border-radius:46px;padding:7px;background:#000;border:2px solid var(--pc);flex:none;position:relative;
+  box-shadow:0 0 6px var(--pc),0 0 34px -6px var(--pc),inset 0 0 6px var(--pc),0 30px 70px rgba(0,0,0,.6);cursor:pointer;transition:transform .2s}
+.row .phone:hover{transform:translateY(-4px)}
+.phone.cyan{--pc:var(--cyan)} .phone.magenta{--pc:var(--magenta)} .phone.yellow{--pc:var(--yellow)} .phone.green{--pc:var(--green)}
+.scr{position:relative;width:100%;height:100%;border-radius:39px;overflow:hidden;background:var(--screen);display:flex;flex-direction:column;font-size:12.5px;line-height:1.45}
+.row .scr *{pointer-events:none}
+.notch{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:92px;height:25px;border-radius:14px;background:#000;z-index:30;border:1px solid #0c0c10}
+.sb{height:36px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:4px 24px 0;font-size:11px;font-weight:600;z-index:25;position:relative}
+.sb .ic{display:flex;gap:4px;align-items:center}
+.sb .ic i{display:block;background:#fff;border-radius:1px}
+.body{flex:1;overflow-y:auto;overflow-x:hidden;padding:6px 16px 18px;scrollbar-width:none;position:relative}
+.body::-webkit-scrollbar{display:none}
+.body.tb{padding-bottom:84px}
+.body.ft{padding-bottom:104px}
+.body.flush{padding:0}
+
+/* ===== Componentes do app ===== */
+.top{display:flex;align-items:center;gap:10px;min-height:38px;margin-bottom:8px}
+.top .t{font-weight:700;font-size:14px}
+.top .sp{flex:1}
+.ibtn{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--s2);border:1px solid var(--line);color:#fff;flex:none}
+.ibtn.glass{background:rgba(0,0,0,.55);border-color:rgba(255,255,255,.12);backdrop-filter:blur(6px)}
+.h1{position:relative;padding-left:13px;font-weight:800;font-style:italic;font-size:23px;line-height:1.05;text-transform:uppercase;letter-spacing:-.01em;margin:6px 0 8px}
+.h1::before{content:"";position:absolute;left:0;top:3px;bottom:3px;width:4px;border-radius:2px;background:var(--g-bar);box-shadow:0 0 10px rgba(135,73,255,.7)}
+.h1.c::before{background:var(--cyan);box-shadow:0 0 10px var(--cyan)}
+.h1.m::before{background:var(--magenta);box-shadow:0 0 10px var(--magenta)}
+.h1.y::before{background:var(--yellow);box-shadow:0 0 10px var(--yellow)}
+.sub{color:var(--soft);font-size:12.5px;margin-bottom:14px}
+.sub .hl{color:var(--cyan);font-weight:600}
+.sec{display:flex;align-items:center;gap:8px;font-weight:800;font-style:italic;font-size:12px;text-transform:uppercase;letter-spacing:.04em;margin:18px 0 10px}
+.sec::before{content:"";width:3px;height:14px;border-radius:2px;background:var(--bar,var(--magenta));box-shadow:0 0 8px var(--bar,var(--magenta))}
+.sec .r{margin-left:auto;font-style:normal;font-weight:600;text-transform:none;letter-spacing:0;color:var(--cyan);font-size:11.5px}
+.sec.c{--bar:var(--cyan)} .sec.y{--bar:var(--yellow)} .sec.g{--bar:var(--green)} .sec.v{--bar:var(--violet)}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:46px;border-radius:var(--pill);font-weight:700;font-size:13.5px;color:#fff}
+.btn.p{background:var(--g-cta);box-shadow:0 8px 24px -6px rgba(0,229,229,.45),0 8px 24px -8px rgba(135,73,255,.6)}
+.btn.s{border:1.5px solid var(--cyan);background:rgba(0,229,229,.06)}
+.btn.s.m{border-color:var(--magenta);background:rgba(255,31,122,.06)}
+.btn.gh{color:var(--cyan);height:38px}
+.btn.dis{background:var(--s3);color:var(--faint);box-shadow:none}
+.btn.danger{background:rgba(255,31,122,.12);border:1.5px solid var(--magenta);color:#fff}
+.btn.sm{height:34px;font-size:12px;width:auto;padding:0 14px}
+.stack{display:flex;flex-direction:column;gap:10px}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:11px;font-weight:600;color:var(--muted);margin-bottom:6px}
+.inp{height:44px;border-radius:var(--r2);border:1px solid var(--line);background:var(--s2);display:flex;align-items:center;gap:10px;padding:0 14px;color:var(--faint);font-size:12.5px}
+.inp.f{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(0,229,229,.13);color:#fff}
+.inp.v{color:#fff}
+.inp.err{border-color:var(--magenta)}
+.inp .sp{flex:1}
+.hint{font-size:10.5px;color:var(--faint);margin-top:5px}
+.hint.e{color:var(--magenta)}
+.ta{min-height:76px;align-items:flex-start;padding-top:12px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{height:34px;padding:0 14px;border-radius:var(--pill);border:1px solid var(--line2);color:var(--soft);font-size:12px;font-weight:600;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.chip.on{background:var(--violet);border-color:var(--violet);color:#fff;box-shadow:0 0 14px -2px rgba(135,73,255,.7)}
+.chip.sm{height:28px;padding:0 11px;font-size:11px}
+.chip.x::after{content:"×";margin-left:2px;opacity:.8}
+.hscroll{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:0 -16px;padding:0 16px}
+.badge{display:inline-flex;align-items:center;gap:5px;height:22px;padding:0 9px;border-radius:var(--pill);font-size:10px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;white-space:nowrap}
+.b-c{background:rgba(0,229,229,.12);color:var(--cyan)} .b-m{background:rgba(255,31,122,.14);color:#FF6AA6} .b-y{background:rgba(255,204,0,.14);color:var(--yellow)}
+.b-g{background:rgba(0,255,0,.1);color:var(--green)} .b-v{background:rgba(135,73,255,.2);color:var(--violet-t)} .b-n{background:rgba(255,255,255,.1);color:#fff}
+.b-dark{background:rgba(0,0,0,.6);color:#fff;backdrop-filter:blur(4px)}
+.live{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px rgba(0,255,0,.2),0 0 8px var(--green)}
+.card{border-radius:var(--r);background:#000;border:1px solid var(--line)}
+.ncard{border-radius:var(--r);background:#000;border:1px solid var(--pc,var(--violet));box-shadow:0 0 14px -4px var(--pc,var(--violet)),inset 0 0 10px -6px var(--pc,var(--violet));padding:14px}
+.ncard.c{--pc:var(--cyan)} .ncard.m{--pc:var(--magenta)} .ncard.y{--pc:var(--yellow)} .ncard.g{--pc:var(--green)}
+.acc{position:relative;padding-left:16px}
+.acc::before{content:"";position:absolute;left:0;top:12px;bottom:12px;width:3px;border-radius:2px;background:var(--pc,var(--cyan));box-shadow:0 0 8px var(--pc,var(--cyan))}
+.muted{color:var(--muted)} .soft{color:var(--soft)} .faint{color:var(--faint)} .cy{color:var(--cyan)} .mg{color:#FF6AA6} .yl{color:var(--yellow)} .gr{color:var(--green)} .vt{color:var(--violet-t)}
+.b{font-weight:700} .xb{font-weight:800} .it{font-style:italic} .up{text-transform:uppercase}
+.sm{font-size:11px} .xs{font-size:10px} .lg{font-size:15px}
+.flex{display:flex;align-items:center;gap:8px} .between{justify-content:space-between} .col{display:flex;flex-direction:column} .grow{flex:1;min-width:0}
+.mt4{margin-top:4px}.mt8{margin-top:8px}.mt12{margin-top:12px}.mt16{margin-top:16px}.mt20{margin-top:20px}.mb8{margin-bottom:8px}.mb12{margin-bottom:12px}
+.ell{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.divider{display:flex;align-items:center;gap:10px;color:var(--faint);font-size:11px;margin:14px 0}
+.divider::before,.divider::after{content:"";flex:1;height:1px;background:var(--line)}
+.hr{height:1px;background:var(--line);margin:14px 0}
+.check{display:flex;gap:10px;align-items:flex-start;font-size:11.5px;color:var(--soft);margin-bottom:10px}
+.check i{width:18px;height:18px;border-radius:6px;border:1.5px solid var(--line2);flex:none;display:grid;place-items:center;margin-top:1px}
+.check.on i{background:var(--violet);border-color:var(--violet)}
+.check.on i::after{content:"";width:8px;height:4px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg) translate(1px,-1px)}
+.check a{color:var(--cyan);text-decoration:none}
+.toggle{width:40px;height:23px;border-radius:12px;background:var(--s3);position:relative;flex:none;border:1px solid var(--line2)}
+.toggle::after{content:"";position:absolute;top:2px;left:2px;width:17px;height:17px;border-radius:50%;background:#888;transition:.2s}
+.toggle.on{background:var(--violet);border-color:var(--violet);box-shadow:0 0 10px -2px var(--violet)}
+.toggle.on::after{left:19px;background:#fff}
+.lrow{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.lrow:last-child{border-bottom:0}
+.lrow .ico{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:var(--s2);flex:none}
+.av{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:12px;flex:none;border:2px solid #000;color:#fff}
+.av.lg{width:76px;height:76px;font-size:26px;border:2px solid var(--violet);box-shadow:0 0 18px -2px rgba(135,73,255,.7)}
+.av.md{width:42px;height:42px;font-size:15px;border-width:0}
+.avs{display:flex}.avs .av{margin-left:-9px}.avs .av:first-child{margin-left:0}
+.a1{background:linear-gradient(135deg,#FF1F7A,#8749FF)} .a2{background:linear-gradient(135deg,#00B8C4,#452EFF)} .a3{background:linear-gradient(135deg,#FFCC00,#FF1F7A)}
+.a4{background:linear-gradient(135deg,#8749FF,#00E5E5)} .a5{background:linear-gradient(135deg,#21C47B,#00808A)} .a6{background:linear-gradient(135deg,#6539CB,#FF6AA6)} .a7{background:#2A2D3A}
+.prog{display:flex;gap:5px;margin:2px 0 14px}
+.prog i{flex:1;height:4px;border-radius:2px;background:var(--s3)}
+.prog i.on{background:var(--g-cta);box-shadow:0 0 8px rgba(0,229,229,.5)}
+.seg{display:flex;padding:3px;border-radius:var(--pill);background:var(--s2);border:1px solid var(--line)}
+.seg span{flex:1;height:30px;border-radius:var(--pill);display:flex;align-items:center;justify-content:center;gap:5px;font-size:11.5px;font-weight:600;color:var(--muted)}
+.seg span.on{background:var(--violet);color:#fff;box-shadow:0 0 12px -2px rgba(135,73,255,.8)}
+.range{position:relative;height:6px;border-radius:3px;background:var(--s3);margin:16px 0 8px}
+.range .fill{position:absolute;left:0;top:0;bottom:0;border-radius:3px;background:var(--g-cta);box-shadow:0 0 10px rgba(0,229,229,.6)}
+.range .knob{position:absolute;top:50%;width:22px;height:22px;border-radius:50%;background:#fff;transform:translate(-50%,-50%);box-shadow:0 0 0 4px rgba(0,229,229,.25),0 0 14px var(--cyan)}
+.scale{display:flex;justify-content:space-between;font-size:10px;color:var(--faint)}
+
+/* tab bar */
+.tabbar{position:absolute;left:0;right:0;bottom:0;height:70px;padding:8px 6px 16px;background:rgba(0,0,0,.94);border-top:1px solid var(--line);display:flex;justify-content:space-around;z-index:20}
+.tab{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:9.5px;font-weight:600;color:var(--faint);width:70px}
+.tab.on{color:#fff}.tab.on svg{color:var(--cyan);filter:drop-shadow(0 0 6px var(--cyan))}
+.tab .dot{position:absolute;margin-left:16px;margin-top:-2px;width:7px;height:7px;border-radius:50%;background:var(--magenta);box-shadow:0 0 6px var(--magenta)}
+/* rodapé fixo de ações */
+.foot{position:absolute;left:0;right:0;bottom:0;padding:16px 16px 22px;background:linear-gradient(180deg,transparent,#000 26%);z-index:20;display:flex;gap:10px;align-items:center}
+/* sheet */
+.dim{position:absolute;inset:0;background:rgba(0,0,0,.66);z-index:40;backdrop-filter:blur(2px)}
+.sheet{position:absolute;left:0;right:0;bottom:0;z-index:41;background:#07080F;border-top:1.5px solid var(--pc,var(--violet));border-radius:26px 26px 0 0;padding:10px 16px 22px;box-shadow:0 -10px 40px -10px var(--pc,var(--violet));max-height:92%;overflow-y:auto;scrollbar-width:none}
+.sheet.c{--pc:var(--cyan)} .sheet.m{--pc:var(--magenta)}
+.grab{width:40px;height:4px;border-radius:2px;background:var(--line2);margin:0 auto 12px}
+.under{position:absolute;inset:36px 0 0 0;padding:6px 16px;opacity:.9}
+
+/* ===== Capas (pôsteres gerados em CSS) ===== */
+.cv{position:relative;overflow:hidden;background:#111;border-radius:var(--r)}
+.cv .art{position:absolute;inset:0}
+.cv .pt{position:absolute;left:12px;right:12px;bottom:12px;font-weight:900;font-style:italic;text-transform:uppercase;line-height:.92;letter-spacing:-.02em;text-shadow:0 2px 14px rgba(0,0,0,.6)}
+.cv .tl{position:absolute;top:10px;left:10px;display:flex;gap:6px;flex-wrap:wrap;right:10px}
+.cv .tr{position:absolute;top:10px;right:10px}
+.p-neon .art{background:
+  repeating-linear-gradient(90deg,transparent 0 22px,rgba(0,229,229,.12) 22px 23px),
+  repeating-linear-gradient(0deg,transparent 0 22px,rgba(0,229,229,.08) 22px 23px),
+  radial-gradient(60% 45% at 50% 38%,rgba(255,31,122,.9),transparent 70%),
+  radial-gradient(70% 50% at 30% 70%,rgba(135,73,255,.85),transparent 70%),
+  linear-gradient(180deg,#0a0420,#12002a 60%,#000)}
+.p-neon .art::after{content:"";position:absolute;left:50%;top:34%;width:120px;height:120px;border-radius:50%;transform:translate(-50%,-50%);border:3px solid rgba(255,255,255,.8);box-shadow:0 0 30px #FF1F7A,inset 0 0 30px #00E5E5}
+.p-samba .art{background:
+  radial-gradient(circle at 75% 25%,#FFCC00 0 16%,transparent 17%),
+  radial-gradient(circle at 75% 25%,rgba(255,204,0,.35) 0 30%,transparent 31%),
+  repeating-linear-gradient(135deg,rgba(255,31,122,.85) 0 14px,rgba(255,90,40,.85) 14px 28px),#200}
+.p-sunset .art{background:
+  linear-gradient(180deg,transparent 58%,rgba(0,0,0,.8) 58.5%),
+  repeating-linear-gradient(0deg,transparent 0 6px,rgba(0,0,0,.35) 6px 9px),
+  radial-gradient(circle at 50% 58%,#FFCC00 0 22%,#FF1F7A 23% 34%,transparent 35%),
+  linear-gradient(180deg,#452EFF,#8749FF 45%,#FF1F7A 80%)}
+.p-priv .art{background:
+  radial-gradient(40% 30% at 30% 30%,rgba(255,204,0,.55),transparent 70%),
+  radial-gradient(35% 30% at 72% 62%,rgba(255,31,122,.5),transparent 70%),
+  radial-gradient(circle at 20% 80%,rgba(255,255,255,.6) 0 1.5px,transparent 2px),
+  radial-gradient(circle at 60% 20%,rgba(255,255,255,.6) 0 1.5px,transparent 2px),
+  linear-gradient(160deg,#1c1206,#0b0617)}
+.p-indie .art{background:
+  linear-gradient(115deg,transparent 40%,rgba(0,229,229,.85) 40% 46%,transparent 46%),
+  linear-gradient(65deg,transparent 52%,rgba(255,31,122,.85) 52% 57%,transparent 57%),
+  radial-gradient(circle at 50% 45%,#222 0 30%,transparent 31%),
+  radial-gradient(circle at 50% 45%,#000 0 35%,#1d1d1d 36% 52%,transparent 53%),
+  #0d0d10}
+.p-indie .art::after{content:"";position:absolute;left:50%;top:45%;width:16px;height:16px;border-radius:50%;background:var(--yellow);transform:translate(-50%,-50%)}
+.p-sert .art{background:
+  radial-gradient(50% 40% at 50% 100%,rgba(255,204,0,.75),transparent 70%),
+  repeating-conic-gradient(from 0deg at 50% 100%,rgba(255,204,0,.22) 0 6deg,transparent 6deg 14deg),
+  linear-gradient(180deg,#05062a,#3a0b3e)}
+
+/* ===== Telas específicas ===== */
+.splash{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px 24px}
+.splash .bgw{position:absolute;inset:0;background:radial-gradient(60% 40% at 50% 38%,rgba(135,73,255,.35),transparent 70%),radial-gradient(50% 30% at 50% 100%,rgba(0,229,229,.18),transparent 70%)}
+.splash svg.w{position:absolute;left:-20px;right:-20px;bottom:150px;width:360px;height:140px;opacity:.8}
+.slogan{font-weight:800;font-style:italic;letter-spacing:.2em;font-size:11px;color:var(--cyan);text-transform:uppercase}
+.radar{position:relative;width:200px;height:200px;margin:4px auto 10px}
+.radar i{position:absolute;left:50%;top:50%;border-radius:50%;border:1.5px solid rgba(0,229,229,.5);transform:translate(-50%,-50%);box-shadow:0 0 12px -3px rgba(0,229,229,.6)}
+.radar i:nth-child(1){width:200px;height:200px;border-color:rgba(0,229,229,.18)}
+.radar i:nth-child(2){width:140px;height:140px;border-color:rgba(0,229,229,.32)}
+.radar i:nth-child(3){width:80px;height:80px}
+.radar .sweep{position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 20deg,rgba(0,229,229,.35),transparent 60deg)}
+.radar .me{position:absolute;left:50%;top:50%;width:16px;height:16px;border-radius:50%;background:var(--cyan);transform:translate(-50%,-50%);box-shadow:0 0 0 6px rgba(0,229,229,.2),0 0 20px var(--cyan)}
+.radar .ev{position:absolute;color:var(--magenta);filter:drop-shadow(0 0 6px currentColor)}
+.big{font-weight:900;font-style:italic;font-size:54px;line-height:1;letter-spacing:-.03em}
+.big small{font-size:20px;color:var(--cyan);margin-left:4px}
+.tile{border-radius:14px;border:1px solid var(--line2);padding:12px;display:flex;flex-direction:column;gap:6px;min-height:76px;justify-content:space-between;font-weight:600;font-size:12px;color:var(--soft)}
+.tile.on{border-color:var(--violet);background:rgba(135,73,255,.14);color:#fff;box-shadow:0 0 14px -4px var(--violet)}
+.tile.on svg{color:var(--cyan)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+/* feed */
+.ehead{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.locbtn{display:flex;align-items:center;gap:6px;font-weight:700;font-size:13px}
+.locbtn small{display:block;color:var(--muted);font-weight:500;font-size:10.5px}
+.ecard{margin-bottom:14px}
+.ecard .cv{height:168px}
+.ecard .info{padding:10px 2px 0}
+.ecard .tt{font-weight:800;font-size:15px;line-height:1.2}
+.ecard .ln{display:flex;align-items:center;gap:6px;color:var(--soft);font-size:11.5px;margin-top:4px}
+.ecard .ln svg{color:var(--cyan)}
+.ecard .soc{display:flex;align-items:center;justify-content:space-between;margin-top:8px}
+.heartbtn{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;border:1.5px solid var(--line2);color:#fff}
+.heartbtn.on{border-color:var(--magenta);color:var(--magenta);background:rgba(255,31,122,.12);box-shadow:0 0 12px -2px var(--magenta)}
+.heartbtn.on svg{fill:currentColor}
+.counts{display:flex;gap:10px;font-size:11px;color:var(--muted)}
+.counts b{color:#fff}
+.mini{display:flex;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.mini .cv{width:62px;height:76px;border-radius:12px;flex:none}
+/* swipe */
+.deck{position:relative;height:420px;margin-top:6px}
+.scard{position:absolute;inset:0;border-radius:22px;overflow:hidden;border:1.5px solid var(--violet);box-shadow:0 0 22px -4px var(--violet);background:#000}
+.scard.back1{transform:translateY(10px) scale(.95);opacity:.55;border-color:var(--line2);box-shadow:none}
+.scard.back2{transform:translateY(20px) scale(.9);opacity:.3;border-color:var(--line2);box-shadow:none}
+.scard.front{transform:rotate(-3deg) translateX(-6px)}
+.scard .cv{position:absolute;inset:0;border-radius:0}
+.scard .shade{position:absolute;inset:0;background:linear-gradient(180deg,transparent 35%,rgba(0,0,0,.92) 72%)}
+.scard .txt{position:absolute;left:16px;right:16px;bottom:16px}
+.stamp{position:absolute;top:24px;left:18px;border:3px solid var(--cyan);color:var(--cyan);font-weight:900;font-style:italic;font-size:22px;padding:2px 12px;border-radius:10px;transform:rotate(-14deg);text-shadow:0 0 10px var(--cyan);box-shadow:0 0 14px -2px var(--cyan)}
+.sactions{display:flex;justify-content:center;align-items:center;gap:22px;margin-top:22px}
+.round{width:62px;height:62px;border-radius:50%;display:grid;place-items:center}
+.round.x{border:2px solid var(--magenta);color:var(--magenta);box-shadow:0 0 16px -3px var(--magenta)}
+.round.h{background:var(--g-cta);box-shadow:0 0 22px -2px rgba(0,229,229,.7)}
+.round.h svg{fill:#fff;stroke:#fff}
+.round.u{width:42px;height:42px;border:1.5px solid var(--line2);color:var(--yellow)}
+/* página do evento */
+.hero-cv{position:relative;height:300px}
+.hero-cv .cv{position:absolute;inset:0;border-radius:0}
+.hero-cv .fade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.35),transparent 30%,transparent 55%,#000)}
+.hero-cv .nav2{position:absolute;top:44px;left:14px;right:14px;display:flex;gap:8px;z-index:3}
+.evpad{padding:0 16px;margin-top:-56px;position:relative;z-index:2}
+.irow{display:flex;gap:12px;align-items:flex-start;padding:10px 0}
+.irow .ic{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;background:var(--s2);border:1px solid var(--line);flex:none;color:var(--cyan)}
+.price{display:flex;gap:8px;flex-wrap:wrap}
+.price span{border:1px solid var(--line2);border-radius:12px;padding:7px 11px;font-size:11px;color:var(--soft)}
+.price b{display:block;color:#fff;font-size:13px}
+.lockbox{border:1.5px dashed rgba(255,204,0,.55);border-radius:14px;padding:12px;display:flex;gap:10px;align-items:center;background:rgba(255,204,0,.05)}
+.stars{display:flex;gap:4px;color:var(--yellow)}
+.stars svg{fill:currentColor;stroke:none;filter:drop-shadow(0 0 6px rgba(255,204,0,.6))}
+.stars.big svg{width:38px;height:38px}
+.stars .off{color:#2b2b33;filter:none}
+.thumbs{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
+.thumbs .cv{height:78px;border-radius:10px}
+/* celebração */
+.celebrate{text-align:center;padding-top:6px}
+.bigcheck{width:96px;height:96px;margin:6px auto 14px;border-radius:50%;display:grid;place-items:center;border:3px solid var(--cyan);box-shadow:0 0 30px -2px var(--cyan),inset 0 0 20px -4px var(--cyan);color:var(--cyan)}
+.bigcheck svg{width:46px;height:46px;stroke-width:2.6}
+.confetti{position:absolute;inset:0;pointer-events:none;background:
+  radial-gradient(circle at 12% 18%,var(--yellow) 0 3px,transparent 4px),radial-gradient(circle at 85% 12%,var(--magenta) 0 3px,transparent 4px),
+  radial-gradient(circle at 70% 30%,var(--cyan) 0 2.5px,transparent 3.5px),radial-gradient(circle at 25% 40%,var(--violet) 0 3px,transparent 4px),
+  radial-gradient(circle at 92% 46%,var(--yellow) 0 2px,transparent 3px),radial-gradient(circle at 6% 52%,var(--cyan) 0 2px,transparent 3px)}
+.share-ico{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:10.5px;color:var(--soft)}
+.share-ico i{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;border:1.5px solid var(--pc);box-shadow:0 0 12px -3px var(--pc);color:var(--pc)}
+.og{border-radius:14px;overflow:hidden;border:1px solid var(--line2);background:#0c1a12}
+.og .cv{height:120px;border-radius:0}
+.og .ot{padding:8px 10px;font-size:11px}
+/* organizador */
+.mcard{border-radius:16px;border:1px solid var(--line);overflow:hidden;margin-bottom:12px}
+.mcard .top2{display:flex;gap:10px;padding:10px}
+.mcard .cv{width:56px;height:70px;border-radius:10px;flex:none}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line)}
+.metrics div{padding:8px 4px;text-align:center;font-size:9.5px;color:var(--muted);border-right:1px solid var(--line)}
+.metrics div:last-child{border-right:0}
+.metrics b{display:block;color:#fff;font-size:14px;font-weight:800}
+.upl{border:1.5px dashed var(--line2);border-radius:16px;height:150px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:var(--muted);font-size:11.5px;background:rgba(255,255,255,.02)}
+.upl svg{color:var(--cyan)}
+.radio{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--line2);border-radius:14px;padding:12px;margin-bottom:10px}
+.radio.on{border-color:var(--cyan);background:rgba(0,229,229,.05);box-shadow:0 0 14px -6px var(--cyan)}
+.radio .o{width:18px;height:18px;border-radius:50%;border:2px solid var(--line2);flex:none;margin-top:2px}
+.radio.on .o{border-color:var(--cyan);box-shadow:inset 0 0 0 4px #000;background:var(--cyan)}
+.code{font-family:ui-monospace,Menlo,monospace;font-weight:800;font-size:22px;letter-spacing:.2em;color:var(--yellow);text-shadow:0 0 12px rgba(255,204,0,.5)}
+.stepper{display:flex;align-items:center;gap:0;border:1px solid var(--line2);border-radius:12px;overflow:hidden}
+.stepper span{width:38px;height:38px;display:grid;place-items:center;font-size:16px}
+.stepper b{width:56px;text-align:center;font-size:15px}
+.pitem{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.pitem .inp{height:40px}
+.okline{display:flex;gap:8px;align-items:center;font-size:11.5px;color:var(--soft);padding:5px 0}
+.okline svg{color:var(--green)}
+.capbar{height:8px;border-radius:4px;background:var(--s3);overflow:hidden;margin:8px 0 4px}
+.capbar i{display:block;height:100%;background:var(--g-cta);box-shadow:0 0 8px var(--cyan)}
+.reqbtn{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;border:1.5px solid}
+.reqbtn.ok{border-color:var(--cyan);color:var(--cyan)} .reqbtn.no{border-color:var(--line2);color:var(--muted)}
+/* desktop admin */
+.desk{width:980px;height:600px;border-radius:18px;border:2px solid var(--violet);box-shadow:0 0 6px var(--violet),0 0 34px -6px var(--violet);background:#000;overflow:hidden;flex:none;display:flex;font-size:12.5px;cursor:pointer}
+.desk .side{width:200px;border-right:1px solid var(--line);padding:22px 16px;display:flex;flex-direction:column;gap:6px}
+.desk .side a{padding:9px 12px;border-radius:10px;color:var(--soft);font-weight:600;display:flex;gap:8px;align-items:center}
+.desk .side a.on{background:rgba(135,73,255,.16);color:#fff}
+.desk .main{flex:1;padding:24px 28px;overflow:hidden}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-size:10.5px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.05em;padding:10px 8px;border-bottom:1px solid var(--line)}
+td{padding:12px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0 20px}
+
+/* ===== Player (modo navegável) ===== */
+.player{position:fixed;inset:0;z-index:100;background:rgba(2,3,8,.94);backdrop-filter:blur(8px);display:none;grid-template-columns:270px 1fr 330px;gap:0}
+.player.open{display:grid}
+.player .list{border-right:1px solid var(--line);overflow-y:auto;padding:20px 14px}
+.player .list h4{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:16px 6px 6px}
+.player .list a{display:flex;gap:8px;padding:7px 10px;border-radius:9px;color:var(--soft);text-decoration:none;font-size:12.5px;cursor:pointer}
+.player .list a span{color:var(--faint);font-size:11px;width:42px;flex:none;font-weight:600}
+.player .list a.on{background:rgba(135,73,255,.18);color:#fff}
+.player .list a.on span{color:var(--cyan)}
+.player .stage{display:flex;align-items:center;justify-content:center;overflow:auto;position:relative}
+.player .stage .phone{transform:scale(1.08);cursor:default}
+.player .stage .scr *{cursor:default}
+.player .stage [data-go]{cursor:pointer}
+.player .notes{border-left:1px solid var(--line);padding:26px 22px;overflow-y:auto}
+.player .notes .id{color:var(--cyan);font-weight:800;font-size:13px}
+.player .notes h3{font-size:22px;font-weight:800;font-style:italic;text-transform:uppercase;margin:4px 0 12px;line-height:1.1}
+.player .notes .us{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.player .notes .us span{font-size:11px;padding:4px 9px;border-radius:999px;background:rgba(135,73,255,.18);color:var(--violet-t);font-weight:600}
+.player .notes p,.player .notes li{color:var(--soft);font-size:13px;line-height:1.6}
+.player .notes ul{padding-left:18px;margin-top:6px}
+.player .notes .kbd{margin-top:22px;font-size:11.5px;color:var(--faint);line-height:1.7}
+.player .close{position:absolute;top:18px;right:18px;z-index:5}
+.player .navbtns{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);display:flex;gap:10px}
+.hl-go{outline:2px dashed rgba(0,229,229,.0);outline-offset:2px;transition:outline-color .2s}
+.player.hints [data-go]{outline:2px dashed rgba(0,229,229,.55);outline-offset:2px;border-radius:12px}
+@media (max-width:1100px){.player{grid-template-columns:1fr}.player .list,.player .notes{display:none}.hero .wm{position:static;margin-bottom:20px;font-size:40px}}
+
+/* ===== PDF / impressão: galeria completa sem corte horizontal ===== */
+@media print{
+  @page{size:A4 landscape;margin:10mm}
+  html,body{-webkit-print-color-adjust:exact;print-color-adjust:exact;background:#04050B!important}
+  .player,.hactions,.nav{display:none!important}
+  .wrap{max-width:none;padding:0 12px}
+  .hero{padding:24px 0 12px}
+  .hero .wm{position:static;font-size:36px;margin-bottom:12px}
+  .htitle{font-size:42px}
+  .flow{padding:28px 0 8px;break-inside:avoid-page}
+  .stitle{font-size:28px}
+  .row{flex-wrap:wrap;overflow:visible!important;gap:18px 8px;padding:18px 0;justify-content:flex-start}
+  .arrow{display:none}
+  .step{break-inside:avoid;page-break-inside:avoid}
+  .phone{width:240px;height:510px;box-shadow:0 0 6px var(--pc),0 0 18px -6px var(--pc),inset 0 0 6px var(--pc)!important;transform:none!important}
+  .desk{width:720px;height:440px;transform:none!important}
+  footer{padding:24px 0}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== Ícones (outline, cor da categoria) ===== -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <symbol id="back" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
+    <symbol id="heart" viewBox="0 0 24 24"><path d="M12 20.5s-7.5-4.6-9.5-9C1 8 3.2 4.5 6.7 4.5c2.1 0 3.6 1.1 4.3 2.6.7-1.5 2.2-2.6 4.3-2.6 3.5 0 5.7 3.5 4.2 7-2 4.4-9.5 9-9.5 9z"/></symbol>
+    <symbol id="x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+    <symbol id="undo" viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 010 11H11"/></symbol>
+    <symbol id="filter" viewBox="0 0 24 24"><path d="M3 7h18M3 17h18"/><circle cx="9" cy="7" r="2.4" fill="#000"/><circle cx="15" cy="17" r="2.4" fill="#000"/></symbol>
+    <symbol id="pin" viewBox="0 0 24 24"><path d="M12 21s-6.5-6.2-6.5-11.2a6.5 6.5 0 0113 0C18.5 14.8 12 21 12 21z"/><circle cx="12" cy="9.8" r="2.3"/></symbol>
+    <symbol id="cal" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></symbol>
+    <symbol id="calok" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4M9 15.5l2 2 4-4"/></symbol>
+    <symbol id="clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c.5-3.5 3-5.5 6-5.5s5.5 2 6 5.5"/><circle cx="17" cy="9" r="2.5"/><path d="M16.5 14.5c2.6.2 4 2 4.5 4.5"/></symbol>
+    <symbol id="share" viewBox="0 0 24 24"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 002 2h10a2 2 0 002-2v-6"/></symbol>
+    <symbol id="search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></symbol>
+    <symbol id="compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></symbol>
+    <symbol id="plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c.8-4 4-6 8-6s7.2 2 8 6"/></symbol>
+    <symbol id="check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7"/></symbol>
+    <symbol id="lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 018 0v3"/></symbol>
+    <symbol id="star" viewBox="0 0 24 24"><path d="M12 3l2.8 6 6.2.6-4.7 4.2 1.4 6.2L12 16.8 6.3 20l1.4-6.2L3 9.6 9.2 9z"/></symbol>
+    <symbol id="flag" viewBox="0 0 24 24"><path d="M5 21V4M5 4h11l-2 4 2 4H5"/></symbol>
+    <symbol id="gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/></symbol>
+    <symbol id="camera" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="3"/><path d="M8 7l1.5-3h5L16 7"/><circle cx="12" cy="13.5" r="3.5"/></symbol>
+    <symbol id="chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+    <symbol id="chevd" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+    <symbol id="bolt" viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></symbol>
+    <symbol id="link" viewBox="0 0 24 24"><path d="M10 14a4 4 0 005.7 0l3-3a4 4 0 00-5.7-5.7l-1 1M14 10a4 4 0 00-5.7 0l-3 3a4 4 0 005.7 5.7l1-1"/></symbol>
+    <symbol id="copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 00-2-2H6a2 2 0 00-2 2v8a2 2 0 002 2h2"/></symbol>
+    <symbol id="grid" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="7" rx="1.8"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.8"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.8"/><path d="M17 14v6M14 17h6"/></symbol>
+    <symbol id="list" viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11M4.5 6h.01M4.5 12h.01M4.5 18h.01"/></symbol>
+    <symbol id="cards" viewBox="0 0 24 24"><rect x="6" y="3.5" width="12" height="17" rx="2.5"/><path d="M3 7.5v9M21 7.5v9"/></symbol>
+    <symbol id="feed" viewBox="0 0 24 24"><rect x="4" y="3.5" width="16" height="9" rx="2"/><path d="M4 16.5h16M4 20.5h10"/></symbol>
+    <symbol id="mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3.5 7l8.5 6 8.5-6"/></symbol>
+    <symbol id="eye" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="19" cy="12" r="1.6" fill="currentColor"/></symbol>
+    <symbol id="nav" viewBox="0 0 24 24"><path d="M3 11l18-8-8 18-2-8z"/></symbol>
+    <symbol id="trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></symbol>
+    <symbol id="edit" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/></symbol>
+    <symbol id="image" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="8.5" cy="9.5" r="1.8"/><path d="M21 16l-5-5-9 9"/></symbol>
+    <symbol id="wa" viewBox="0 0 24 24"><path d="M4 20l1.3-4A8 8 0 1112 20a8 8 0 01-4-1z"/><path d="M9 9.5c0 2.8 2.7 5.5 5.5 5.5l1-1.5-2-1-1 1c-1-.5-1.5-1-2-2l1-1-1-2z"/></symbol>
+    <symbol id="ig" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="5"/><circle cx="12" cy="12" r="3.6"/><circle cx="17" cy="7" r=".8" fill="currentColor"/></symbol>
+    <symbol id="shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 4.5-3.4 8-8 9-4.6-1-8-4.5-8-9V6z"/></symbol>
+    <symbol id="logout" viewBox="0 0 24 24"><path d="M15 4h3a2 2 0 012 2v12a2 2 0 01-2 2h-3M10 8l-4 4 4 4M6 12h10"/></symbol>
+    <symbol id="music" viewBox="0 0 24 24"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></symbol>
+    <symbol id="glass" viewBox="0 0 24 24"><path d="M5 4h14l-7 8zM12 12v8M8 20h8"/></symbol>
+    <symbol id="party" viewBox="0 0 24 24"><path d="M4 20l5-14 9 9z"/><path d="M14 4l1 2M19 6l-2 1M20 11h-2M11 3v2"/></symbol>
+    <symbol id="home" viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v9a1 1 0 01-1 1h-5v-6h-4v6H5a1 1 0 01-1-1z"/></symbol>
+    <symbol id="mask" viewBox="0 0 24 24"><path d="M4 6c3 1 13 1 16 0 0 7-3 12-8 12S4 13 4 6z"/><path d="M8.5 10.5h2M13.5 10.5h2"/></symbol>
+    <symbol id="key" viewBox="0 0 24 24"><circle cx="8" cy="12" r="4"/><path d="M12 12h9M18 12v3M21 12v2"/></symbol>
+    <symbol id="face" viewBox="0 0 24 24"><path d="M4 8V6a2 2 0 012-2h2M16 4h2a2 2 0 012 2v2M20 16v2a2 2 0 01-2 2h-2M8 20H6a2 2 0 01-2-2v-2M9 9v1.5M15 9v1.5M12 9v4h-1M9.5 16c1.5 1 3.5 1 5 0"/></symbol>
+    <symbol id="google" viewBox="0 0 24 24"><path d="M21 12.2c0-.7-.1-1.3-.2-1.9H12v3.6h5.1a4.4 4.4 0 01-1.9 2.9v2.4h3c1.8-1.6 2.8-4 2.8-7z" fill="#4285F4" stroke="none"/><path d="M12 21.5c2.6 0 4.7-.9 6.2-2.3l-3-2.4c-.8.6-1.9 1-3.2 1-2.5 0-4.6-1.7-5.3-3.9H3.6v2.4A9.4 9.4 0 0012 21.5z" fill="#34A853" stroke="none"/><path d="M6.7 13.9a5.6 5.6 0 010-3.8V7.7H3.6a9.4 9.4 0 000 8.6z" fill="#FBBC05" stroke="none"/><path d="M12 6.2c1.4 0 2.6.5 3.6 1.4l2.7-2.7A9.4 9.4 0 003.6 7.7l3.1 2.4C7.4 7.9 9.5 6.2 12 6.2z" fill="#EA4335" stroke="none"/></symbol>
+    <symbol id="apple" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M16.4 12.6c0-2.3 1.9-3.4 2-3.5-1.1-1.6-2.8-1.8-3.4-1.8-1.4-.1-2.8.9-3.5.9-.7 0-1.8-.9-3-.8-1.5 0-3 .9-3.8 2.3-1.6 2.8-.4 7 1.2 9.3.8 1.1 1.7 2.4 2.9 2.3 1.2 0 1.6-.7 3-.7s1.8.7 3 .7c1.3 0 2.1-1.1 2.8-2.3.9-1.3 1.3-2.6 1.3-2.6s-2.5-1-2.5-3.8zM14.2 5.8c.6-.8 1.1-1.9 1-3-1 0-2.1.7-2.8 1.4-.6.7-1.1 1.8-1 2.9 1.1.1 2.1-.6 2.8-1.3z"/></symbol>
+  </defs>
+</svg>
+
+<header class="hero">
+  <div class="wrap" style="position:relative">
+    <span class="wm glow"><span>Role</span><span class="go">G<span class="pin"></span></span></span>
+    <div class="chipnum">BETA 1.0</div>
+    <h1 class="htitle">Protótipo<br>do beta</h1>
+    <p class="hsub">Telas navegáveis dos épicos <b>E01</b> Conta e onboarding, <b>E02</b> Publicação e descoberta e <b>E03</b> Ciclo de vida do evento, criadas do zero a partir do <a href="../01-prd.md" style="color:var(--cyan)">PRD</a>, das <a href="../02-historias/README.md" style="color:var(--cyan)">histórias</a>, dos wireframes MVP, dos slides e da identidade visual. Cada tela tem o código <b>T-xx</b> citado nos documentos. Clique numa tela para navegar como no app.</p>
+    <div class="hactions">
+      <button class="btn p" style="width:auto;padding:0 26px" onclick="openPlayer('T-01')">▶ Navegar no protótipo</button>
+      <button class="btn s" style="width:auto;padding:0 22px" onclick="openPlayer('T-10')">Ir direto para Explorar</button>
+    </div>
+    <div class="legend">
+      <span class="c-cyan"><i></i>Conta, descoberta, ações</span>
+      <span class="c-violet"><i></i>Marca, navegação</span>
+      <span class="c-magenta"><i></i>Social, prova social</span>
+      <span class="c-yellow"><i></i>Privado, avaliação</span>
+      <span class="c-green"><i></i>Ao vivo</span>
+    </div>
+  </div>
+  <svg class="waves" viewBox="0 0 1600 120" preserveAspectRatio="none" fill="none">
+    <path d="M0 80 C 200 20, 400 120, 600 70 S 1000 10, 1200 60 S 1500 100, 1600 50" stroke="#8749FF" stroke-width="2" opacity=".7"/>
+    <path d="M0 95 C 250 50, 450 130, 700 85 S 1100 30, 1300 80 S 1550 110, 1600 70" stroke="#00E5E5" stroke-width="1.5" opacity=".6"/>
+    <path d="M0 105 C 300 80, 500 120, 800 100 S 1200 60, 1600 95" stroke="#FF1F7A" stroke-width="1.2" opacity=".5"/>
+  </svg>
+</header>
+
+<nav class="nav"><div class="wrap" id="navlinks"></div></nav>
+<main class="wrap" id="gallery"></main>
+<footer>RoleGo Beta · protótipo de média/alta fidelidade · conteúdo fictício · 2026-11-03 · documento: <a href="../12-prototipos.md" style="color:var(--cyan)">12-prototipos.md</a></footer>
+
+<!-- ===== Player ===== -->
+<div class="player" id="player">
+  <div class="list" id="plist"></div>
+  <div class="stage" id="pstage">
+    <button class="ibtn close" onclick="closePlayer()" title="Fechar (Esc)"><svg class="i"><use href="#x"/></svg></button>
+    <div id="pphone"></div>
+    <div class="navbtns">
+      <button class="btn s sm" onclick="step(-1)">← anterior</button>
+      <button class="btn s sm" onclick="goBack()">voltar</button>
+      <button class="btn s sm" onclick="toggleHints()">mostrar cliques</button>
+      <button class="btn s sm" onclick="step(1)">próxima →</button>
+    </div>
+  </div>
+  <div class="notes" id="pnotes"></div>
+</div>
+
+<!-- =====================================================================
+     TELAS — cada <template> é uma tela. data-id = código citado nos docs.
+     data-go="T-xx" torna o elemento clicável no modo navegável.
+     ===================================================================== -->
+
+<!-- ============ E01 ============ -->
+<template data-id="T-01" data-name="Splash" data-accent="violet" data-us="US-01.01,US-01.04" data-notes="Primeira tela. A proposta de valor vem dos slides ('Chega de sofrer para decidir onde sair.'). 'Começar' leva ao cadastro e 'Já tenho conta' ao login. Se já houver sessão válida, pula direto para Explorar (ou para o passo pendente do onboarding).">
+  <div class="splash">
+    <div class="bgw"></div>
+    <svg class="w" viewBox="0 0 360 140" fill="none"><path d="M0 90 C 60 40, 120 130, 180 80 S 300 20, 360 70" stroke="#8749FF" stroke-width="2"/><path d="M0 105 C 80 70, 140 140, 200 100 S 310 50, 360 95" stroke="#00E5E5" stroke-width="1.5" opacity=".8"/><path d="M0 120 C 90 100, 160 135, 230 115 S 330 90, 360 115" stroke="#FF1F7A" stroke-width="1.2" opacity=".7"/></svg>
+    <div style="position:relative;margin-top:-40px">
+      <span class="wm glow" style="font-size:58px"><span>Role</span><span class="go">G<span class="pin"></span></span></span>
+      <div class="slogan mt8">Viva o Rolê</div>
+    </div>
+    <div style="position:absolute;bottom:34px;left:22px;right:22px">
+      <p style="font-weight:800;font-style:italic;font-size:21px;line-height:1.1;text-transform:uppercase;text-align:left;margin-bottom:6px">Chega de sofrer para decidir onde sair.</p>
+      <p class="soft" style="text-align:left;font-size:12px;margin-bottom:18px">Festas, shows e rolês perto de você em <span class="cy b">segundos</span>.</p>
+      <div class="stack">
+        <button class="btn p" data-go="T-02">Começar</button>
+        <button class="btn gh" data-go="T-03">Já tenho conta · <span style="color:#fff">Entrar</span></button>
+      </div>
+    </div>
+  </div>
+</template>
+
+<template data-id="T-02" data-name="Criar conta" data-accent="cyan" data-us="US-01.01,US-01.02,US-01.03,US-01.14" data-notes="Sem nome nem telefone no cadastro (decisão do E01). Os botões Google/Apple só aparecem se o provedor estiver configurado (GET /auth/providers). O botão fica desabilitado até senha e confirmação conferirem e os dois aceites estarem marcados. Entrando via OAuth pela primeira vez, aparece a etapa curta 'Só mais uma coisa' (termos + 18+).">
+  <div class="body">
+    <div class="top"><button class="ibtn" data-go="back"><svg class="i"><use href="#back"/></svg></button></div>
+    <h2 class="h1 c">Crie sua conta</h2>
+    <p class="sub">Leva <span class="hl">30 segundos</span>. Depois é só deslizar.</p>
+    <div class="stack">
+      <button class="btn s" data-go="T-05"><svg class="i"><use href="#google"/></svg>Continuar com Google</button>
+      <button class="btn s m" data-go="T-05"><svg class="i"><use href="#apple"/></svg>Continuar com Apple</button>
+    </div>
+    <div class="divider">ou com e-mail</div>
+    <div class="field"><label>E-mail</label><div class="inp v"><svg class="i s"><use href="#mail"/></svg>ana@exemplo.com</div></div>
+    <div class="field"><label>Senha</label><div class="inp v">••••••••••<span class="sp"></span><svg class="i s"><use href="#eye"/></svg></div><div class="hint">Mínimo 8 caracteres, com letras e números.</div></div>
+    <div class="field"><label>Confirmar senha</label><div class="inp f">••••••••••<span class="sp"></span><svg class="i s cy"><use href="#check"/></svg></div></div>
+    <div class="check on"><i></i><span>Li e aceito os <a>Termos de Uso</a> e a <a>Política de Privacidade</a></span></div>
+    <div class="check on"><i></i><span>Tenho 18 anos ou mais</span></div>
+    <button class="btn p mt8" data-go="T-05">Criar conta</button>
+    <p class="sm muted mt12" style="text-align:center">Já tem conta? <a class="cy b" data-go="T-03">Entrar</a></p>
+  </div>
+</template>
+
+<template data-id="T-03" data-name="Entrar" data-accent="cyan" data-us="US-01.04,US-01.02,US-01.03,US-01.15" data-notes="'Entrar com passkey' (Face ID/digital) aparece se o navegador suporta WebAuthn; a passkey também é sugerida no autofill do campo de e-mail. A autenticação devolve JWT de 10 min + refresh rotativo em cookies httpOnly. O erro é sempre genérico ('E-mail ou senha incorretos.'). Rate limit de 10/min por IP. Conta bloqueada mostra a mensagem de suspensão. Depois do login: onboarding pendente vai para o passo certo; caso contrário, Explorar.">
+  <div class="body">
+    <div class="top"><button class="ibtn" data-go="back"><svg class="i"><use href="#back"/></svg></button></div>
+    <div style="text-align:center;margin:14px 0 18px"><span class="wm glow" style="font-size:40px"><span>Role</span><span class="go">G<span class="pin"></span></span></span></div>
+    <h2 class="h1 c">Bora entrar</h2>
+    <p class="sub">Seu próximo rolê está a um swipe.</p>
+    <button class="btn s mb12" data-go="T-10" style="border-color:var(--violet);background:rgba(135,73,255,.08)"><svg class="i"><use href="#face"/></svg>Entrar com passkey</button>
+    <div class="field"><label>E-mail</label><div class="inp v"><svg class="i s"><use href="#mail"/></svg>ana@exemplo.com</div></div>
+    <div class="field"><label>Senha</label><div class="inp err v">••••••<span class="sp"></span><svg class="i s"><use href="#eye"/></svg></div><div class="hint e">E-mail ou senha incorretos.</div></div>
+    <div style="text-align:right;margin:-4px 0 14px"><a class="sm cy b" data-go="T-04">Esqueci minha senha</a></div>
+    <button class="btn p" data-go="T-10">Entrar</button>
+    <div class="divider">ou</div>
+    <div class="stack">
+      <button class="btn s" data-go="T-10"><svg class="i"><use href="#google"/></svg>Entrar com Google</button>
+      <button class="btn s m" data-go="T-10"><svg class="i"><use href="#apple"/></svg>Entrar com Apple</button>
+    </div>
+    <p class="sm muted mt16" style="text-align:center">Novo aqui? <a class="cy b" data-go="T-02">Criar conta</a></p>
+  </div>
+</template>
+
+<template data-id="T-04" data-name="Recuperar senha" data-accent="cyan" data-us="US-01.05" data-notes="A resposta é a mesma com ou sem conta (evita enumeração). O link vale 1 hora e só pode ser usado uma vez; ao redefinir, as sessões antigas caem. A tela de redefinir (nova senha + confirmação) usa o mesmo layout.">
+  <div class="body">
+    <div class="top"><button class="ibtn" data-go="back"><svg class="i"><use href="#back"/></svg></button></div>
+    <h2 class="h1 c">Esqueceu a senha?</h2>
+    <p class="sub">Acontece nas melhores famílias. Mandamos um link para você criar outra.</p>
+    <div class="field"><label>E-mail da conta</label><div class="inp f"><svg class="i s"><use href="#mail"/></svg>ana@exemplo.com</div></div>
+    <button class="btn p">Enviar link</button>
+    <div class="ncard c mt20 flex" style="align-items:flex-start;gap:12px">
+      <svg class="i l cy"><use href="#mail"/></svg>
+      <div><p class="b">Confira seu e-mail</p><p class="sm soft mt4">Se existir uma conta com esse e-mail, o link chega em instantes. Ele vale por 1 hora.</p><a class="sm cy b mt8" style="display:block">Reenviar em 0:42</a></div>
+    </div>
+    <p class="sm muted mt20" style="text-align:center"><a class="cy b" data-go="T-03">Voltar para o login</a></p>
+  </div>
+</template>
+
+<template data-id="T-05" data-name="Onboarding · O que você curte?" data-accent="violet" data-us="US-01.07" data-notes="Passo 1 de 4. Precisa de pelo menos 1 tipo. O catálogo do beta tem 10 tipos (seed configurável). As preferências são gravadas ao avançar (PATCH /me/preferences). Os tipos marcados sobem no ranking do swipe.">
+  <div class="body ft">
+    <div class="prog"><i class="on"></i><i></i><i></i><i></i></div>
+    <h2 class="h1">O que você curte?</h2>
+    <p class="sub">Escolha quantos quiser. A gente usa isso para montar seu feed.</p>
+    <div class="grid2">
+      <div class="tile on" data-toggle><svg class="i l"><use href="#party"/></svg>Festas</div>
+      <div class="tile on" data-toggle><svg class="i l"><use href="#bolt"/></svg>Eletrônica</div>
+      <div class="tile" data-toggle><svg class="i l"><use href="#music"/></svg>Shows</div>
+      <div class="tile" data-toggle><svg class="i l"><use href="#glass"/></svg>Bares</div>
+      <div class="tile on" data-toggle><svg class="i l"><use href="#music"/></svg>Pagode / Samba</div>
+      <div class="tile" data-toggle><svg class="i l"><use href="#music"/></svg>Sertanejo</div>
+      <div class="tile" data-toggle><svg class="i l"><use href="#bolt"/></svg>Rock / Indie</div>
+      <div class="tile" data-toggle><svg class="i l"><use href="#mask"/></svg>Cultural</div>
+      <div class="tile" data-toggle><svg class="i l"><use href="#star"/></svg>Festivais</div>
+      <div class="tile" data-toggle><svg class="i l"><use href="#home"/></svg>Eventos privados</div>
+    </div>
+  </div>
+  <div class="foot"><button class="btn p" data-go="T-06">Continuar · 3 escolhidos</button></div>
+</template>
+
+<template data-id="T-06" data-name="Onboarding · Cidade" data-accent="violet" data-us="US-01.08" data-notes="Passo 2 de 4. Curitiba é a cidade piloto (live). As outras aparecem com o selo 'em breve' (launch_status=soon) e podem ser escolhidas para explorar quando lançarem. A busca funciona sem acento.">
+  <div class="body ft">
+    <div class="prog"><i class="on"></i><i class="on"></i><i></i><i></i></div>
+    <h2 class="h1">Onde você sai?</h2>
+    <p class="sub">Sua cidade base. Dá para trocar a qualquer hora, inclusive viajando.</p>
+    <div class="inp mb12"><svg class="i s"><use href="#search"/></svg>Buscar cidade</div>
+    <div class="ncard c flex" style="padding:12px 14px" data-go="T-07">
+      <svg class="i l cy"><use href="#pin"/></svg>
+      <div class="grow"><p class="b">Curitiba <span class="faint" style="font-weight:500">· PR</span></p><p class="xs cy">128 rolês nos próximos 7 dias</p></div>
+      <svg class="i cy"><use href="#check"/></svg>
+    </div>
+    <div class="sec v">Em breve</div>
+    <div class="lrow"><div class="grow"><p class="b">Florianópolis <span class="faint" style="font-weight:500">· SC</span></p></div><span class="badge b-v">em breve</span></div>
+    <div class="lrow"><div class="grow"><p class="b">Porto Seguro <span class="faint" style="font-weight:500">· BA</span></p></div><span class="badge b-v">em breve</span></div>
+    <div class="lrow"><div class="grow"><p class="b">Maringá <span class="faint" style="font-weight:500">· PR</span></p></div><span class="badge b-v">em breve</span></div>
+  </div>
+  <div class="foot"><button class="btn p" data-go="T-07">Continuar</button></div>
+</template>
+
+<template data-id="T-07" data-name="Onboarding · Localização" data-accent="cyan" data-us="US-01.09" data-notes="Explica o porquê ANTES do prompt nativo do navegador. Guardamos só a última posição, com 3 casas decimais (~100 m). Se o usuário negar ou tocar em 'Agora não', usamos o centro da cidade base. A localização do usuário nunca aparece para outras pessoas.">
+  <div class="body ft">
+    <div class="prog"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></div>
+    <div class="radar mt8"><i></i><i></i><i></i><div class="sweep"></div><div class="me"></div>
+      <svg class="i l ev" style="left:28%;top:18%"><use href="#pin"/></svg><svg class="i ev" style="left:70%;top:30%;color:var(--cyan)"><use href="#pin"/></svg><svg class="i ev" style="left:62%;top:70%;color:var(--yellow)"><use href="#pin"/></svg></div>
+    <h2 class="h1 c">Rolês perto de você</h2>
+    <p class="sub">Com a sua localização, mostramos a <span class="hl">distância</span> de cada evento e o que está rolando no seu raio.</p>
+    <div class="okline"><svg class="i s"><use href="#check"/></svg>Ninguém vê onde você está</div>
+    <div class="okline"><svg class="i s"><use href="#check"/></svg>Guardamos só uma posição aproximada</div>
+    <div class="okline"><svg class="i s"><use href="#check"/></svg>Dá para desligar no perfil</div>
+  </div>
+  <div class="foot" style="flex-direction:column;gap:4px"><button class="btn p" data-go="T-08">Usar minha localização</button><button class="btn gh" data-go="T-08">Agora não · usar centro de Curitiba</button></div>
+</template>
+
+<template data-id="T-08" data-name="Onboarding · Raio" data-accent="cyan" data-us="US-01.10" data-notes="Slider contínuo de 1 a 100 km (padrão 20). A prévia '~48 rolês' vem de GET /discovery/count com debounce de 300 ms. 'Bora explorar' grava o raio, conclui o onboarding (POST /me/onboarding/complete); se o aparelho suporta passkey, mostra a T-09 uma vez; senão abre Explorar já filtrado.">
+  <div class="body ft">
+    <div class="prog"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div>
+    <h2 class="h1 c">Até onde você vai?</h2>
+    <p class="sub">Defina o raio de busca. Viajando? Aumente.</p>
+    <div style="text-align:center;margin:26px 0 8px"><div class="big">20<small>km</small></div></div>
+    <div class="range"><div class="fill" style="width:19%"></div><div class="knob" style="left:19%"></div></div>
+    <div class="scale"><span>1 km</span><span>25</span><span>50</span><span>75</span><span>100 km</span></div>
+    <div class="ncard c mt20 flex">
+      <svg class="i l cy"><use href="#compass"/></svg>
+      <div><p class="b lg">~ 48 rolês</p><p class="sm soft">nos próximos 7 dias nessa área</p></div>
+    </div>
+    <div class="chips mt16"><span class="chip sm">5 km</span><span class="chip sm on">20 km</span><span class="chip sm">50 km</span><span class="chip sm">100 km</span></div>
+  </div>
+  <div class="foot"><button class="btn p" data-go="T-09">Bora explorar</button></div>
+</template>
+
+<template data-id="T-09" data-name="Entrar mais rápido (passkey)" data-accent="violet" data-us="US-01.15" data-notes="Aparece uma vez, ao fim do onboarding, só em aparelhos com WebAuthn. Cria uma passkey (Face ID/digital) e dispensa a senha nos próximos logins. 'Agora não' leva ao Explorar; dá para ativar depois em Preferências e privacidade. A chave privada nunca sai do aparelho.">
+  <div class="body ft">
+    <div class="top"><span class="sp"></span><a class="sm muted b" data-go="T-10">Pular</a></div>
+    <div style="display:grid;place-items:center;margin:26px 0 22px">
+      <div style="width:120px;height:120px;border-radius:34px;display:grid;place-items:center;border:2px solid var(--violet);box-shadow:0 0 34px -4px var(--violet),inset 0 0 22px -6px var(--cyan);color:var(--cyan)"><svg class="i" style="width:62px;height:62px;stroke-width:1.5"><use href="#face"/></svg></div>
+    </div>
+    <h2 class="h1">Entre num piscar</h2>
+    <p class="sub">Ative a <span class="hl">passkey</span> e entre com Face ID ou digital, sem senha.</p>
+    <div class="okline"><svg class="i s"><use href="#check"/></svg>Mais rápido que digitar senha</div>
+    <div class="okline"><svg class="i s"><use href="#check"/></svg>À prova de phishing: só funciona no rolego.com.br</div>
+    <div class="okline"><svg class="i s"><use href="#check"/></svg>Sua biometria nunca sai do celular</div>
+  </div>
+  <div class="foot" style="flex-direction:column;gap:2px"><button class="btn p" data-go="T-10"><svg class="i"><use href="#face"/></svg>Ativar Face ID</button><button class="btn gh" data-go="T-10">Agora não</button></div>
+</template>
+
+<!-- ============ E02 Descoberta ============ -->
+<template data-id="T-10" data-name="Explorar · Feed" data-accent="violet" data-us="US-02.11,US-03.03,US-03.10" data-notes="Home do app. No topo: a origem da busca (toque abre T-14), busca (T-15) e filtros (T-13). O seletor Feed/Swipe/Lista fica logo abaixo. O card 'Como foi?' aparece quando há avaliação pendente. Seções: Hoje, Amanhã, Este fim de semana, Próximos (só as que têm eventos). O ♥ no card é otimista. Sem patrocinados no beta.">
+  <div class="body tb">
+    <div class="ehead">
+      <div class="locbtn" data-go="T-14"><svg class="i cy"><use href="#pin"/></svg><div>Curitiba <svg class="i s" style="margin-left:-2px"><use href="#chevd"/></svg><small>Minha localização · 20 km</small></div></div>
+      <span style="flex:1"></span>
+      <button class="ibtn" data-go="T-15"><svg class="i"><use href="#search"/></svg></button>
+      <button class="ibtn" data-go="T-13" style="position:relative"><svg class="i"><use href="#filter"/></svg><span style="position:absolute;top:-2px;right:-2px;width:14px;height:14px;border-radius:50%;background:var(--magenta);font-size:8px;font-weight:800;display:grid;place-items:center">2</span></button>
+    </div>
+    <div class="seg mb12"><span class="on"><svg class="i s"><use href="#feed"/></svg>Feed</span><span data-go="T-11"><svg class="i s"><use href="#cards"/></svg>Swipe</span><span data-go="T-12"><svg class="i s"><use href="#list"/></svg>Lista</span></div>
+    <div class="hscroll mb8"><span class="chip sm on x">Festas</span><span class="chip sm on x">Eletrônica</span><span class="chip sm">Hoje</span><span class="chip sm">Sáb</span><span class="chip sm">Grátis</span></div>
+
+    <div class="ncard y flex" style="padding:10px 12px;margin:8px 0 4px" data-go="T-25">
+      <div class="cv p-indie" style="width:40px;height:48px;border-radius:9px;flex:none"><div class="art"></div></div>
+      <div class="grow"><p class="b sm">Como foi o Indie na Garagem?</p><div class="stars"><svg class="i s"><use href="#star"/></svg><svg class="i s off"><use href="#star"/></svg><svg class="i s off"><use href="#star"/></svg><svg class="i s off"><use href="#star"/></svg><svg class="i s off"><use href="#star"/></svg></div></div>
+      <svg class="i yl"><use href="#chev"/></svg>
+    </div>
+
+    <div class="sec g">Hoje <span class="r">2 rolês</span></div>
+    <div class="ecard" data-go="T-20b">
+      <div class="cv p-samba"><div class="art"></div><div class="tl"><span class="badge b-dark"><span class="live"></span>Ao vivo</span><span class="badge b-dark">Grátis</span></div><div class="pt" style="font-size:26px">Samba<br>da Feira</div></div>
+      <div class="info"><p class="tt">Samba da Feira</p>
+        <div class="ln"><svg class="i s"><use href="#clock"/></svg>Hoje · 16:00–22:00 · termina em 4 h</div>
+        <div class="ln"><svg class="i s"><use href="#pin"/></svg>Largo da Ordem · 1,1 km</div>
+        <div class="soc"><div class="flex"><div class="avs"><span class="av a1">M</span><span class="av a2">J</span><span class="av a3">L</span></div><div class="counts"><span><b>212</b> vão</span><span><b>540</b> ♥</span></div></div><button class="heartbtn"><svg class="i"><use href="#heart"/></svg></button></div>
+      </div>
+    </div>
+    <div class="sec">Este fim de semana <span class="r">ver todos</span></div>
+    <div class="ecard" data-go="T-20">
+      <div class="cv p-neon"><div class="art"></div><div class="tl"><span class="badge b-dark">Eletrônica</span><span class="badge b-dark">18+</span></div><div class="pt" style="font-size:24px">Neon Pulse<br>Festival</div></div>
+      <div class="info"><p class="tt">Neon Pulse Festival</p>
+        <div class="ln"><svg class="i s"><use href="#cal"/></svg>Sáb, 15 nov · 22:00–06:00</div>
+        <div class="ln"><svg class="i s"><use href="#pin"/></svg>Club Central · 2,3 km · <span class="b" style="color:#fff">a partir de R$ 89</span></div>
+        <div class="soc"><div class="flex"><div class="avs"><span class="av a4">B</span><span class="av a5">T</span><span class="av a6">R</span></div><div class="counts"><span><b>48</b> vão</span><span><b>134</b> ♥</span></div></div><button class="heartbtn on" data-toggle-on><svg class="i"><use href="#heart"/></svg></button></div>
+      </div>
+    </div>
+    <div class="ecard" data-go="T-23">
+      <div class="cv p-priv"><div class="art"></div><div class="tl"><span class="badge b-dark yl"><svg class="i s"><use href="#lock"/></svg>Privado</span></div><div class="pt" style="font-size:22px">Social do<br>Laércio</div></div>
+      <div class="info"><p class="tt">Social do Laércio</p>
+        <div class="ln"><svg class="i s"><use href="#cal"/></svg>Sáb, 22 nov · 20:00</div>
+        <div class="ln"><svg class="i s"><use href="#pin"/></svg>Água Verde · ~3 km</div>
+      </div>
+    </div>
+  </div>
+  <div class="tabbar"><div class="tab on"><svg class="i l"><use href="#compass"/></svg>Explorar</div><div class="tab" data-go="T-30"><svg class="i l"><use href="#calok"/></svg>Meus rolês</div><div class="tab" data-go="T-46"><svg class="i l"><use href="#grid"/></svg>Organizar</div><div class="tab" data-go="T-31"><svg class="i l"><use href="#user"/></svg>Perfil</div></div>
+</template>
+
+<template data-id="T-11" data-name="Explorar · Swipe" data-accent="magenta" data-us="US-02.12" data-notes="'Tinder de eventos': direita/♥ = interesse, esquerda/✕ = passar (o evento some só do swipe), ↺ desfaz o último. Os botões e o teclado (← → Enter) são alternativas obrigatórias ao gesto (a11y). Faz prefetch quando restam 3 cards ou menos. Tocar no card abre a página do evento. O carimbo 'BORA' aparece enquanto o card é arrastado para a direita.">
+  <div class="body tb">
+    <div class="ehead">
+      <div class="locbtn" data-go="T-14"><svg class="i cy"><use href="#pin"/></svg><div>Curitiba <svg class="i s"><use href="#chevd"/></svg><small>20 km · 12 rolês para ver</small></div></div>
+      <span style="flex:1"></span><button class="ibtn" data-go="T-13"><svg class="i"><use href="#filter"/></svg></button>
+    </div>
+    <div class="seg"><span data-go="T-10"><svg class="i s"><use href="#feed"/></svg>Feed</span><span class="on"><svg class="i s"><use href="#cards"/></svg>Swipe</span><span data-go="T-12"><svg class="i s"><use href="#list"/></svg>Lista</span></div>
+    <div class="deck">
+      <div class="scard back2"><div class="cv p-sert"><div class="art"></div></div></div>
+      <div class="scard back1"><div class="cv p-sunset"><div class="art"></div></div></div>
+      <div class="scard front" data-go="T-20">
+        <div class="cv p-neon"><div class="art"></div></div><div class="shade"></div>
+        <div class="stamp">BORA!</div>
+        <div class="txt">
+          <div class="flex mb8"><span class="badge b-c">Eletrônica</span><span class="badge b-n">R$ 89</span><span class="badge b-n">18+</span></div>
+          <p style="font-weight:900;font-style:italic;font-size:24px;line-height:1;text-transform:uppercase">Neon Pulse Festival</p>
+          <p class="sm soft mt4">Sáb, 15 nov · 22:00 · Club Central · 2,3 km</p>
+          <p class="sm soft mt4">3 DJs internacionais. Open bar até 00h.</p>
+          <div class="flex mt8"><div class="avs"><span class="av a4">B</span><span class="av a5">T</span><span class="av a6">R</span></div><span class="sm"><b class="mg">48 vão</b> · 134 com interesse</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="sactions">
+      <button class="round x"><svg class="i xl"><use href="#x"/></svg></button>
+      <button class="round u"><svg class="i"><use href="#undo"/></svg></button>
+      <button class="round h"><svg class="i xl"><use href="#heart"/></svg></button>
+    </div>
+  </div>
+  <div class="tabbar"><div class="tab on"><svg class="i l"><use href="#compass"/></svg>Explorar</div><div class="tab" data-go="T-30"><svg class="i l"><use href="#calok"/></svg>Meus rolês</div><div class="tab" data-go="T-46"><svg class="i l"><use href="#grid"/></svg>Organizar</div><div class="tab" data-go="T-31"><svg class="i l"><use href="#user"/></svg>Perfil</div></div>
+</template>
+
+<template data-id="T-12" data-name="Explorar · Lista" data-accent="violet" data-us="US-02.13" data-notes="Visão compacta para quem quer comparar rápido. Ordenação: 'Mais cedo' (padrão) ou 'Mais perto'. Usa os mesmos filtros do feed. Paginação infinita por cursor.">
+  <div class="body tb">
+    <div class="ehead"><div class="locbtn" data-go="T-14"><svg class="i cy"><use href="#pin"/></svg><div>Curitiba <svg class="i s"><use href="#chevd"/></svg><small>20 km · 48 rolês</small></div></div><span style="flex:1"></span><button class="ibtn" data-go="T-13"><svg class="i"><use href="#filter"/></svg></button></div>
+    <div class="seg mb12"><span data-go="T-10"><svg class="i s"><use href="#feed"/></svg>Feed</span><span data-go="T-11"><svg class="i s"><use href="#cards"/></svg>Swipe</span><span class="on"><svg class="i s"><use href="#list"/></svg>Lista</span></div>
+    <div class="flex between sm"><span class="muted">48 rolês</span><span class="chip sm"><svg class="i s"><use href="#chevd"/></svg>Mais cedo</span></div>
+    <div class="mini" data-go="T-20b"><div class="cv p-samba"><div class="art"></div></div><div class="grow"><p class="xs gr b up flex" style="gap:5px"><span class="live"></span>Ao vivo</p><p class="b ell">Samba da Feira</p><p class="xs soft">Hoje 16:00 · Largo da Ordem</p><p class="xs muted">1,1 km · Grátis · 212 vão</p></div><svg class="i mg"><use href="#heart"/></svg></div>
+    <div class="mini" data-go="T-20"><div class="cv p-neon"><div class="art"></div></div><div class="grow"><p class="xs cy b up">Sáb 15 nov</p><p class="b ell">Neon Pulse Festival</p><p class="xs soft">22:00 · Club Central</p><p class="xs muted">2,3 km · R$ 89 · 48 vão</p></div><svg class="i mg" style="fill:currentColor"><use href="#heart"/></svg></div>
+    <div class="mini"><div class="cv p-sunset"><div class="art"></div></div><div class="grow"><p class="xs cy b up">Sex 21 nov</p><p class="b ell">Rooftop Sunset Sessions</p><p class="xs soft">17:00 · Terraço 47 · Batel</p><p class="xs muted">3,4 km · R$ 40 · 31 vão</p></div><svg class="i faint"><use href="#heart"/></svg></div>
+    <div class="mini"><div class="cv p-sert"><div class="art"></div></div><div class="grow"><p class="xs cy b up">Sex 21 nov</p><p class="b ell">Sertanejo na Arena</p><p class="xs soft">21:00 · Arena Norte</p><p class="xs muted">6,8 km · R$ 120 · 96 vão</p></div><svg class="i faint"><use href="#heart"/></svg></div>
+    <div class="mini" data-go="T-23"><div class="cv p-priv"><div class="art"></div></div><div class="grow"><p class="xs yl b up">Sáb 22 nov · Privado</p><p class="b ell">Social do Laércio</p><p class="xs soft">20:00 · Água Verde</p><p class="xs muted">~3 km · pedir para entrar</p></div><svg class="i yl"><use href="#lock"/></svg></div>
+  </div>
+  <div class="tabbar"><div class="tab on"><svg class="i l"><use href="#compass"/></svg>Explorar</div><div class="tab" data-go="T-30"><svg class="i l"><use href="#calok"/></svg>Meus rolês</div><div class="tab" data-go="T-46"><svg class="i l"><use href="#grid"/></svg>Organizar</div><div class="tab" data-go="T-31"><svg class="i l"><use href="#user"/></svg>Perfil</div></div>
+</template>
+
+<template data-id="T-13" data-name="Filtros" data-accent="violet" data-us="US-02.14" data-notes="Bottom sheet sobre o Explorar. Tipo (multi), Quando (Hoje, Amanhã, Sex, Sáb, Dom, Escolher datas) e Distância (1–100 km). O botão mostra a contagem ao vivo (GET /discovery/count). Os filtros ficam salvos no perfil e aparecem como chips removíveis no topo do feed.">
+  <div class="under"><div class="seg"><span class="on">Feed</span><span>Swipe</span><span>Lista</span></div><div class="cv p-neon mt12" style="height:170px"><div class="art"></div></div></div>
+  <div class="dim" data-go="back"></div>
+  <div class="sheet">
+    <div class="grab"></div>
+    <div class="flex between"><h3 class="h1" style="font-size:20px;margin:0">Filtros</h3><a class="sm cy b">Limpar</a></div>
+    <div class="sec">Tipo de rolê</div>
+    <div class="chips"><span class="chip on" data-toggle>Festas</span><span class="chip on" data-toggle>Eletrônica</span><span class="chip" data-toggle>Shows</span><span class="chip" data-toggle>Bares</span><span class="chip" data-toggle>Pagode</span><span class="chip" data-toggle>Sertanejo</span><span class="chip" data-toggle>Cultural</span><span class="chip" data-toggle>Privados</span></div>
+    <div class="sec c">Quando</div>
+    <div class="chips"><span class="chip" data-toggle>Hoje</span><span class="chip" data-toggle>Amanhã</span><span class="chip" data-toggle>Sex</span><span class="chip on" data-toggle>Sáb</span><span class="chip" data-toggle>Dom</span><span class="chip" data-toggle><svg class="i s"><use href="#cal"/></svg>Datas</span></div>
+    <div class="sec c">Distância <span class="r" style="color:#fff;font-weight:800">30 km</span></div>
+    <div class="range" style="margin-top:8px"><div class="fill" style="width:29%"></div><div class="knob" style="left:29%"></div></div>
+    <div class="scale"><span>1 km</span><span>100 km</span></div>
+    <button class="btn p mt20" data-go="T-10">Ver 23 rolês</button>
+  </div>
+</template>
+
+<template data-id="T-14" data-name="Explorar onde?" data-accent="cyan" data-us="US-02.15" data-notes="Troca a origem da busca sem mudar a cidade base. A ordem de resolução no servidor é: cidade escolhida aqui (override), depois GPS, depois cidade base. Com um override ativo, o Explorar mostra 'Explorando Florianópolis' com atalho para voltar.">
+  <div class="body">
+    <div class="top"><button class="ibtn" data-go="back"><svg class="i"><use href="#x"/></svg></button></div>
+    <h2 class="h1 c">Explorar onde?</h2>
+    <p class="sub">Viajando ou planejando? Escolha onde procurar rolês.</p>
+    <div class="radio on" data-go="T-10"><span class="o"></span><div><p class="b flex" style="gap:6px"><svg class="i s cy"><use href="#nav"/></svg>Minha localização</p><p class="xs soft">Centro, Curitiba · atualizada há 2 min</p></div></div>
+    <div class="radio" data-go="T-10"><span class="o"></span><div><p class="b">Curitiba (cidade base)</p><p class="xs soft">Centro da cidade</p></div></div>
+    <div class="inp mt8 mb12"><svg class="i s"><use href="#search"/></svg>Buscar outra cidade</div>
+    <div class="lrow"><svg class="i muted"><use href="#pin"/></svg><div class="grow"><p class="b">Florianópolis</p><p class="xs muted">SC · em breve</p></div></div>
+    <div class="lrow"><svg class="i muted"><use href="#pin"/></svg><div class="grow"><p class="b">Porto Seguro</p><p class="xs muted">BA · em breve</p></div></div>
+  </div>
+</template>
+
+<template data-id="T-15" data-name="Busca" data-accent="cyan" data-us="US-02.16" data-notes="Busca o título do evento ou o nome do local, sem diferenciar acentos (unaccent + trigram). Por padrão fica restrita ao raio; o toggle 'Toda a cidade' amplia. Só eventos futuros.">
+  <div class="body">
+    <div class="flex mb12"><button class="ibtn" data-go="back"><svg class="i"><use href="#back"/></svg></button><div class="inp f grow">samba<span class="sp"></span><svg class="i s"><use href="#x"/></svg></div></div>
+    <div class="seg mb12"><span class="on">No meu raio</span><span>Toda a cidade</span></div>
+    <p class="xs muted mb8">3 resultados</p>
+    <div class="mini" data-go="T-20b"><div class="cv p-samba"><div class="art"></div></div><div class="grow"><p class="b"><span class="cy">Samba</span> da Feira</p><p class="xs soft">Hoje 16:00 · Largo da Ordem · 1,1 km</p></div></div>
+    <div class="mini"><div class="cv p-sunset"><div class="art"></div></div><div class="grow"><p class="b">Roda de <span class="cy">Samba</span> do Terraço</p><p class="xs soft">Dom 23 nov · Terraço 47 · 3,4 km</p></div></div>
+    <div class="mini"><div class="cv p-samba"><div class="art"></div></div><div class="grow"><p class="b"><span class="cy">Samba</span>-Rock Night</p><p class="xs soft">Sex 28 nov · Bar Mercês · 4,0 km</p></div></div>
+  </div>
+</template>
+
+<!-- ============ E03 Evento ============ -->
+<template data-id="T-20" data-name="Página do evento" data-accent="violet" data-us="US-03.01,US-03.02,US-03.03,US-03.04,US-03.11,US-03.12" data-notes="Tudo para decidir: data com contagem regressiva, local + distância + 'Como chegar' (só se o endereço estiver liberado), valores informativos, link externo opcional ('Comprar no site do organizador', sem venda in-app no beta), prova social (vão / interesse), organizador com nota, descrição, edições anteriores com fotos. Rodapé fixo: ♥ interesse + Confirmar presença. Visitante sem login vê a página e, ao tocar no CTA, vai para o cadastro e volta para cá.">
+  <div class="body flush ft">
+    <div class="hero-cv"><div class="cv p-neon"><div class="art"></div></div><div class="fade"></div>
+      <div class="nav2"><button class="ibtn glass" data-go="back"><svg class="i"><use href="#back"/></svg></button><span style="flex:1"></span><button class="ibtn glass" data-go="T-24"><svg class="i"><use href="#share"/></svg></button><button class="ibtn glass" data-go="T-27"><svg class="i"><use href="#more"/></svg></button></div></div>
+    <div class="evpad">
+      <div class="flex mb8"><span class="badge b-c">Eletrônica</span><span class="badge b-n">18+</span><span class="badge b-m">em 2 dias</span></div>
+      <h2 style="font-weight:900;font-style:italic;font-size:27px;line-height:1;text-transform:uppercase">Neon Pulse Festival</h2>
+      <div class="flex mt12" data-go="T-26"><span class="av md a2">CC</span><div class="grow"><p class="b sm">Club Central</p><p class="xs muted">Casa de eventos · <span class="yl">★ 4,6</span> (38)</p></div><svg class="i muted"><use href="#chev"/></svg></div>
+      <div class="hr"></div>
+      <div class="irow"><span class="ic"><svg class="i"><use href="#cal"/></svg></span><div><p class="b">Sáb, 15 nov · 22:00–06:00</p><p class="xs soft">Termina no dia seguinte · <a class="cy b">Adicionar ao calendário</a></p></div></div>
+      <div class="irow"><span class="ic"><svg class="i"><use href="#pin"/></svg></span><div class="grow"><p class="b">Club Central · 2,3 km</p><p class="xs soft">R. XV de Novembro, 1200 — Centro</p></div><button class="btn s sm"><svg class="i s"><use href="#nav"/></svg>Ir</button></div>
+      <div class="sec y">Valores</div>
+      <div class="price"><span>Pista<b>R$ 89</b></span><span>VIP<b>R$ 189</b></span><span>Open bar<b>até 00h</b></span></div>
+      <a class="flex sm cy b mt8"><svg class="i s"><use href="#link"/></svg>Comprar no site do organizador</a>
+      <div class="sec m">Quem vai <span class="r" data-go="T-21">ver todos</span></div>
+      <div class="flex" data-go="T-21"><div class="avs"><span class="av a1">M</span><span class="av a2">J</span><span class="av a3">A</span><span class="av a4">B</span><span class="av a5">T</span><span class="av a7 xs">+43</span></div></div>
+      <p class="sm soft mt8"><b class="mg">48 vão</b> · 134 têm interesse</p>
+      <div class="sec v">Sobre</div>
+      <p class="sm soft">Três DJs internacionais, palco 360° e projeções. Open bar até meia-noite no lote VIP. Proibida a entrada de menores de 18 anos.</p>
+      <div class="sec y">Edições anteriores <span class="r">★ 4,7 · #3</span></div>
+      <div class="thumbs"><div class="cv p-neon"><div class="art"></div></div><div class="cv p-sunset"><div class="art"></div></div><div class="cv p-indie"><div class="art"></div></div></div>
+      <div style="height:20px"></div>
+    </div>
+  </div>
+  <div class="foot"><button class="heartbtn on" style="width:46px;height:46px;flex:none"><svg class="i l"><use href="#heart"/></svg></button><button class="btn p" data-go="T-22">Confirmar presença</button></div>
+</template>
+
+<template data-id="T-20b" data-name="Evento ao vivo" data-accent="green" data-us="US-03.08" data-notes="Durante a fase LIVE (calculada pelo horário): selo verde 'AO VIVO' pulsando no card e na página. Para quem confirmou, o CTA vira 'Estou aqui', que alimenta o 'Rolês que fui'. Evento gratuito mostra o selo 'Grátis' e não tem lista de valores.">
+  <div class="body flush ft">
+    <div class="hero-cv"><div class="cv p-samba"><div class="art"></div></div><div class="fade"></div>
+      <div class="nav2"><button class="ibtn glass" data-go="back"><svg class="i"><use href="#back"/></svg></button><span style="flex:1"></span><button class="ibtn glass" data-go="T-24"><svg class="i"><use href="#share"/></svg></button></div></div>
+    <div class="evpad">
+      <div class="flex mb8"><span class="badge b-g"><span class="live"></span>Ao vivo agora</span><span class="badge b-n">Grátis</span></div>
+      <h2 style="font-weight:900;font-style:italic;font-size:27px;line-height:1;text-transform:uppercase">Samba da Feira</h2>
+      <div class="ncard g mt12 flex"><svg class="i l gr"><use href="#bolt"/></svg><div><p class="b">Rolando agora</p><p class="xs soft">Começou às 16:00 · termina às 22:00</p></div></div>
+      <div class="irow mt8"><span class="ic"><svg class="i"><use href="#pin"/></svg></span><div class="grow"><p class="b">Largo da Ordem · 1,1 km</p><p class="xs soft">Praça Garibaldi — São Francisco</p></div><button class="btn s sm"><svg class="i s"><use href="#nav"/></svg>Ir</button></div>
+      <div class="sec m">Quem está lá</div>
+      <div class="avs"><span class="av a3">L</span><span class="av a1">M</span><span class="av a6">C</span><span class="av a2">J</span><span class="av a7 xs">+208</span></div>
+      <p class="sm soft mt8"><b class="gr">37 marcaram "estou aqui"</b> · 212 vão</p>
+    </div>
+  </div>
+  <div class="foot"><button class="btn p" style="background:linear-gradient(90deg,#00FF00,#00E5E5);color:#000"><svg class="i"><use href="#pin"/></svg>Estou aqui</button></div>
+</template>
+
+<template data-id="T-21" data-name="Quem vai" data-accent="magenta" data-us="US-03.02,US-01.12" data-notes="Duas abas: Vão (RSVP confirmado/aprovado) e Interesse (♥). Mostra só quem deixou 'Mostrar minha presença' ligado; quem desligou entra apenas na contagem ('+3 com presença privada'). Sem botão de seguir ou mensagem no beta (social chega na 1.1).">
+  <div class="body">
+    <div class="top"><button class="ibtn" data-go="back"><svg class="i"><use href="#back"/></svg></button><span class="t">Neon Pulse Festival</span></div>
+    <div class="seg mb12"><span class="on">Vão · 48</span><span>Interesse · 134</span></div>
+    <div class="lrow"><span class="av md a1">M</span><div class="grow"><p class="b">Mariana</p><p class="xs muted">Curitiba · 14 rolês</p></div><span class="badge b-m">vai</span></div>
+    <div class="lrow"><span class="av md a2">J</span><div class="grow"><p class="b">João Pedro</p><p class="xs muted">Curitiba · 6 rolês</p></div><span class="badge b-m">vai</span></div>
+    <div class="lrow"><span class="av md a3">A</span><div class="grow"><p class="b">Ana</p><p class="xs muted">Florianópolis · 22 rolês</p></div><span class="badge b-m">vai</span></div>
+    <div class="lrow"><span class="av md a4">B</span><div class="grow"><p class="b">Bruno</p><p class="xs muted">Curitiba · 3 rolês</p></div><span class="badge b-m">vai</span></div>
+    <div class="lrow"><span class="av md a5">T</span><div class="grow"><p class="b">Tati</p><p class="xs muted">Curitiba · 9 rolês</p></div><span class="badge b-m">vai</span></div>
+    <div class="lrow"><span class="av md a7"><svg class="i s"><use href="#lock"/></svg></span><div class="grow"><p class="b muted">+3 pessoas</p><p class="xs faint">com presença privada</p></div></div>
+  </div>
+</template>
+
+<template data-id="T-22" data-name="Você vai!" data-accent="cyan" data-us="US-03.04" data-notes="Confirmação de presença (RSVP gratuito). Em evento público com vaga é imediato; lotado mostra 'Lotado' e não deixa confirmar (sem lista de espera no beta). Oferece calendário (.ics) e compartilhamento. Também sai um e-mail de confirmação. O botão da página vira '✓ Vou · cancelar'.">
+  <div class="under"><div class="cv p-neon" style="height:280px"><div class="art"></div></div></div>
+  <div class="dim"></div>
+  <div class="sheet c" style="min-height:76%">
+    <div class="confetti"></div>
+    <div class="grab"></div>
+    <div class="celebrate">
+      <div class="bigcheck"><svg class="i"><use href="#check"/></svg></div>
+      <h2 style="font-weight:900;font-style:italic;font-size:32px;text-transform:uppercase;line-height:1">Você vai!</h2>
+      <p class="soft mt8">Neon Pulse Festival<br><span class="cy b">Sáb, 15 nov · 22:00</span> · Club Central</p>
+      <p class="xs muted mt8">Mandamos os detalhes para ana@exemplo.com</p>
+    </div>
+    <div class="stack mt20">
+      <button class="btn p" data-go="T-24"><svg class="i"><use href="#users"/></svg>Chamar a galera</button>
+      <button class="btn s"><svg class="i"><use href="#cal"/></svg>Adicionar ao calendário</button>
+      <button class="btn gh" data-go="T-20">Fechar</button>
+    </div>
+  </div>
+</template>
+
+<template data-id="T-23" data-name="Evento privado (bloqueado)" data-accent="yellow" data-us="US-03.05,US-02.05" data-notes="Aberto por link com ?c=CÓDIGO ou pelo campo 'Tenho um código'. Sem aprovação, a API NÃO devolve rua, número, CEP nem coordenadas; a distância vem arredondada para 1 km e só o bairro aparece. Com aprovação manual, 'Pedir para entrar' cria um RSVP pendente ('Pedido enviado'). Aprovado: endereço completo + 'Como chegar' + e-mail. O código errado tem limite de 5 tentativas a cada 10 min.">
+  <div class="body flush ft">
+    <div class="hero-cv" style="height:250px"><div class="cv p-priv"><div class="art"></div></div><div class="fade"></div>
+      <div class="nav2"><button class="ibtn glass" data-go="back"><svg class="i"><use href="#back"/></svg></button><span style="flex:1"></span><button class="ibtn glass" data-go="T-27"><svg class="i"><use href="#more"/></svg></button></div></div>
+    <div class="evpad">
+      <div class="flex mb8"><span class="badge b-y"><svg class="i s"><use href="#lock"/></svg>Evento privado</span><span class="badge b-n">Social</span></div>
+      <h2 style="font-weight:900;font-style:italic;font-size:26px;line-height:1;text-transform:uppercase">Social do Laércio</h2>
+      <div class="flex mt12"><span class="av md a3">L</span><div class="grow"><p class="b sm">Laércio · anfitrião</p><p class="xs muted"><span class="yl">★ 4,9</span> · 7 rolês organizados</p></div></div>
+      <div class="irow mt8"><span class="ic" style="color:var(--yellow)"><svg class="i"><use href="#cal"/></svg></span><div><p class="b">Sáb, 22 nov · 20:00–02:00</p></div></div>
+      <div class="irow"><span class="ic" style="color:var(--yellow)"><svg class="i"><use href="#pin"/></svg></span><div><p class="b">Água Verde · ~3 km</p><p class="xs soft">Bairro aproximado</p></div></div>
+      <div class="lockbox mt8"><svg class="i l yl"><use href="#lock"/></svg><div><p class="b sm">Endereço liberado após aprovação</p><p class="xs soft">O anfitrião aprova cada pedido. Você recebe um e-mail quando entrar na lista.</p></div></div>
+      <div class="sec y">Sobre</div>
+      <p class="sm soft">Churrasco + som na laje. Traga sua bebida. Capacidade: 40 pessoas.</p>
+      <p class="sm soft mt8"><b class="yl">18 vão</b> · 40 vagas</p>
+    </div>
+  </div>
+  <div class="foot"><button class="btn p" style="background:linear-gradient(90deg,#FFCC00,#FF1F7A)" data-go="T-30">Pedir para entrar</button></div>
+</template>
+
+<template data-id="T-24" data-name="Compartilhar" data-accent="cyan" data-us="US-03.07" data-notes="Folha de compartilhamento: Web Share API quando disponível, com atalhos WhatsApp, Instagram Story (imagem 9:16 gerada) e Copiar link. O link rolego.com.br/e/{slug}?s=wa é servido pela API com Open Graph (capa 1200×630 + 'Sáb 15/11 · 22h · Club Central'). Evento privado não mostra endereço no preview.">
+  <div class="under"><div class="cv p-neon" style="height:240px"><div class="art"></div></div></div>
+  <div class="dim" data-go="back"></div>
+  <div class="sheet c">
+    <div class="grab"></div>
+    <h3 class="h1 c" style="font-size:19px">Chamar a galera</h3>
+    <p class="xs muted mb12">Prévia no WhatsApp</p>
+    <div class="og"><div class="cv p-neon"><div class="art"></div><div class="pt" style="font-size:20px">Neon Pulse Festival</div></div><div class="ot"><p class="b">Neon Pulse Festival · RoleGo</p><p class="soft">Sáb 15/11 · 22h · Club Central · 48 vão</p><p class="xs muted">rolego.com.br</p></div></div>
+    <div class="flex between mt20" style="padding:0 6px">
+      <div class="share-ico" style="--pc:#25D366"><i><svg class="i l"><use href="#wa"/></svg></i>WhatsApp</div>
+      <div class="share-ico" style="--pc:var(--magenta)"><i><svg class="i l"><use href="#ig"/></svg></i>Story</div>
+      <div class="share-ico" style="--pc:var(--cyan)"><i><svg class="i l"><use href="#copy"/></svg></i>Copiar</div>
+      <div class="share-ico" style="--pc:var(--violet)"><i><svg class="i l"><use href="#more"/></svg></i>Mais</div>
+    </div>
+    <div class="inp v mt20"><svg class="i s cy"><use href="#link"/></svg><span class="sm ell">rolego.com.br/e/neon-pulse-festival-x7k2</span></div>
+  </div>
+</template>
+
+<template data-id="T-25" data-name="Como foi?" data-accent="yellow" data-us="US-03.10" data-notes="Disponível só para quem confirmou presença, entre o fim do evento e 7 dias depois. Convite pelo card no feed e por e-mail (cron 30 min). Nota de 1 a 5 obrigatória e comentário opcional (500 caracteres, filtro de palavrões e links). Dá para editar dentro da janela. Selos pós-evento ficam fora do beta (E06).">
+  <div class="body ft">
+    <div class="top"><button class="ibtn" data-go="back"><svg class="i"><use href="#x"/></svg></button></div>
+    <div class="cv p-indie" style="height:150px"><div class="art"></div><div class="pt" style="font-size:22px">Indie na<br>Garagem</div></div>
+    <h2 class="h1 y mt16">Como foi?</h2>
+    <p class="sub">Indie na Garagem · Dom, 16 nov · Garagem 41</p>
+    <div class="stars big" style="justify-content:center;margin:14px 0 6px"><svg class="i"><use href="#star"/></svg><svg class="i"><use href="#star"/></svg><svg class="i"><use href="#star"/></svg><svg class="i"><use href="#star"/></svg><svg class="i off"><use href="#star"/></svg></div>
+    <p style="text-align:center" class="b yl">Muito bom!</p>
+    <div class="inp ta v mt16" style="height:96px">Som absurdo, só a fila do bar que demorou…</div>
+    <p class="xs faint mt4" style="text-align:right">46/500</p>
+  </div>
+  <div class="foot"><button class="btn p" data-go="T-10">Enviar avaliação</button></div>
+</template>
+
+<template data-id="T-26" data-name="Organizador (público)" data-accent="violet" data-us="US-03.13,US-03.11" data-notes="/o/{slug}, também com OG. Nota média ponderada dos eventos (só aparece com 3 avaliações ou mais). Próximos e passados com nota. Instagram como link externo.">
+  <div class="body">
+    <div class="top"><button class="ibtn" data-go="back"><svg class="i"><use href="#back"/></svg></button><span class="sp"></span><button class="ibtn"><svg class="i"><use href="#share"/></svg></button></div>
+    <div style="text-align:center"><span class="av lg a2" style="margin:0 auto">CC</span>
+      <h2 style="font-weight:900;font-style:italic;font-size:24px;text-transform:uppercase;margin-top:10px">Club Central</h2>
+      <p class="sm muted">Casa de eventos · Curitiba</p>
+      <div class="flex" style="justify-content:center;gap:18px;margin-top:12px"><div><p class="b lg yl">★ 4,6</p><p class="xs muted">38 avaliações</p></div><div><p class="b lg">24</p><p class="xs muted">rolês</p></div><div><p class="b lg cy">@clubcentral</p><p class="xs muted">Instagram</p></div></div>
+    </div>
+    <p class="sm soft mt16">Casa de música eletrônica no Centro. Line-ups nacionais e internacionais toda sexta e sábado.</p>
+    <div class="sec">Próximos</div>
+    <div class="mini" data-go="T-20"><div class="cv p-neon"><div class="art"></div></div><div class="grow"><p class="b">Neon Pulse Festival</p><p class="xs soft">Sáb 15 nov · 22:00 · 48 vão</p></div></div>
+    <div class="sec y">Passados</div>
+    <div class="mini"><div class="cv p-indie"><div class="art"></div></div><div class="grow"><p class="b">Techno Night #12</p><p class="xs soft">08 nov · <span class="yl">★ 4,5</span> (21)</p></div></div>
+  </div>
+</template>
+
+<template data-id="T-27" data-name="Denunciar" data-accent="magenta" data-us="US-03.14" data-notes="Disponível em evento, comentário e perfil (menu ⋯). Um usuário só denuncia o mesmo item uma vez. Entra na fila do admin (SLA de 24 h no beta). Limite de 20 denúncias por dia por usuário.">
+  <div class="under"><div class="cv p-neon" style="height:260px"><div class="art"></div></div></div>
+  <div class="dim" data-go="back"></div>
+  <div class="sheet m">
+    <div class="grab"></div>
+    <h3 class="h1 m" style="font-size:19px">Denunciar evento</h3>
+    <p class="sm soft mb12">Por que este rolê não deveria estar aqui?</p>
+    <div class="radio"><span class="o"></span><p class="b sm">Conteúdo impróprio</p></div>
+    <div class="radio on"><span class="o"></span><p class="b sm">Golpe ou evento falso</p></div>
+    <div class="radio"><span class="o"></span><p class="b sm">Assédio ou discurso de ódio</p></div>
+    <div class="radio"><span class="o"></span><p class="b sm">Outro motivo</p></div>
+    <div class="inp ta" style="height:64px">Conte mais (opcional)</div>
+    <button class="btn danger mt12" data-go="back">Enviar denúncia</button>
+  </div>
+</template>
+
+<!-- ============ Meus rolês & Perfil ============ -->
+<template data-id="T-30" data-name="Meus rolês" data-accent="violet" data-us="US-01.17,US-03.04,US-03.05,US-03.10" data-notes="Aba própria na navegação. Próximos: confirmados e pedidos pendentes de eventos privados (badge amarelo). Passados: 'Rolês que fui' com atalho para avaliar. Cancelados pelo organizador aparecem com a faixa 'Cancelado'.">
+  <div class="body tb">
+    <h2 class="h1 mt8">Meus rolês</h2>
+    <div class="seg mb12 mt12"><span class="on">Próximos · 3</span><span>Passados · 12</span></div>
+    <div class="mini" data-go="T-20"><div class="cv p-neon"><div class="art"></div></div><div class="grow"><p class="xs cy b up">Sáb 15 nov · em 2 dias</p><p class="b">Neon Pulse Festival</p><p class="xs soft">22:00 · Club Central</p></div><span class="badge b-c"><svg class="i s"><use href="#check"/></svg>vou</span></div>
+    <div class="mini" data-go="T-23"><div class="cv p-priv"><div class="art"></div></div><div class="grow"><p class="xs yl b up">Sáb 22 nov</p><p class="b">Social do Laércio</p><p class="xs soft">20:00 · Água Verde</p></div><span class="badge b-y">pendente</span></div>
+    <div class="mini"><div class="cv p-sert" style="filter:grayscale(.8)"><div class="art"></div></div><div class="grow"><p class="xs mg b up">Cancelado · Chuva</p><p class="b muted">Sertanejo na Arena</p><p class="xs faint">Sex 21 nov</p></div></div>
+    <div class="sec y">Para avaliar</div>
+    <div class="ncard y flex" data-go="T-25"><div class="cv p-indie" style="width:44px;height:54px;border-radius:9px;flex:none"><div class="art"></div></div><div class="grow"><p class="b sm">Indie na Garagem</p><p class="xs soft">Dom 16 nov · faltam 5 dias</p></div><button class="btn sm" style="background:rgba(255,204,0,.12);border:1px solid var(--yellow)">Avaliar</button></div>
+  </div>
+  <div class="tabbar"><div class="tab" data-go="T-10"><svg class="i l"><use href="#compass"/></svg>Explorar</div><div class="tab on"><svg class="i l"><use href="#calok"/></svg>Meus rolês</div><div class="tab" data-go="T-46"><svg class="i l"><use href="#grid"/></svg>Organizar</div><div class="tab" data-go="T-31"><svg class="i l"><use href="#user"/></svg>Perfil</div></div>
+</template>
+
+<template data-id="T-31" data-name="Perfil" data-accent="violet" data-us="US-01.06,US-01.11,US-01.12,US-02.01" data-notes="Perfil básico do beta: foto, nome, cidade, números de rolês e avaliações. Atalhos: editar, preferências e privacidade, ativar o modo organizador (se ainda não tiver), feedback, sair. Sem amigos ou selos no beta (1.1 / E06).">
+  <div class="body tb">
+    <div class="top"><span class="t" style="font-size:16px;font-weight:800;font-style:italic;text-transform:uppercase">Perfil</span><span class="sp"></span><button class="ibtn" data-go="T-33"><svg class="i"><use href="#gear"/></svg></button></div>
+    <div style="text-align:center"><span class="av lg a1" style="margin:0 auto">A</span><p class="b lg mt8">Ana Souza</p><p class="sm muted">Curitiba · desde nov 2026</p></div>
+    <div class="grid3 mt16"><div class="card" style="padding:10px;text-align:center"><p class="xb lg">12</p><p class="xs muted">rolês</p></div><div class="card" style="padding:10px;text-align:center"><p class="xb lg">3</p><p class="xs muted">próximos</p></div><div class="card" style="padding:10px;text-align:center"><p class="xb lg yl">9</p><p class="xs muted">avaliações</p></div></div>
+    <div class="ncard c mt16 flex" data-go="T-40"><svg class="i l cy"><use href="#grid"/></svg><div class="grow"><p class="b">Quero publicar rolês</p><p class="xs soft">Para anfitriões, bares e produtores</p></div><svg class="i cy"><use href="#chev"/></svg></div>
+    <div class="mt12">
+      <div class="lrow" data-go="T-32"><span class="ico"><svg class="i"><use href="#edit"/></svg></span><span class="grow b sm">Editar perfil</span><svg class="i muted"><use href="#chev"/></svg></div>
+      <div class="lrow" data-go="T-33"><span class="ico"><svg class="i"><use href="#compass"/></svg></span><span class="grow b sm">Preferências de descoberta</span><svg class="i muted"><use href="#chev"/></svg></div>
+      <div class="lrow" data-go="T-33"><span class="ico"><svg class="i"><use href="#shield"/></svg></span><span class="grow b sm">Privacidade</span><svg class="i muted"><use href="#chev"/></svg></div>
+      <div class="lrow"><span class="ico"><svg class="i"><use href="#mail"/></svg></span><span class="grow b sm">Mandar feedback</span><svg class="i muted"><use href="#chev"/></svg></div>
+      <div class="lrow" data-go="T-01"><span class="ico" style="color:var(--magenta)"><svg class="i"><use href="#logout"/></svg></span><span class="grow b sm mg">Sair</span></div>
+    </div>
+  </div>
+  <div class="tabbar"><div class="tab" data-go="T-10"><svg class="i l"><use href="#compass"/></svg>Explorar</div><div class="tab" data-go="T-30"><svg class="i l"><use href="#calok"/></svg>Meus rolês</div><div class="tab" data-go="T-46"><svg class="i l"><use href="#grid"/></svg>Organizar</div><div class="tab on"><svg class="i l"><use href="#user"/></svg>Perfil</div></div>
+</template>
+
+<template data-id="T-32" data-name="Editar perfil" data-accent="violet" data-us="US-01.11" data-notes="Foto em JPG/PNG/WebP até 5 MB, validada pelos bytes, recortada em quadrado e convertida para WebP 512 px (EXIF removido). E-mail duplicado mostra 'Este e-mail já está em uso.'. Trocar o e-mail reinicia a verificação.">
+  <div class="body ft">
+    <div class="top"><button class="ibtn" data-go="back"><svg class="i"><use href="#back"/></svg></button><span class="t">Editar perfil</span></div>
+    <div style="text-align:center;margin:10px 0 18px;position:relative"><span class="av lg a1" style="margin:0 auto">A</span><span class="ibtn" style="position:absolute;left:calc(50% + 18px);bottom:-4px;background:var(--violet);border:2px solid #000"><svg class="i s"><use href="#camera"/></svg></span><p class="xs cy b mt12">Trocar foto</p></div>
+    <div class="field"><label>Nome</label><div class="inp v">Ana Souza</div></div>
+    <div class="field"><label>E-mail</label><div class="inp v">ana@exemplo.com<span class="sp"></span><span class="badge b-g">verificado</span></div></div>
+  </div>
+  <div class="foot"><button class="btn p" data-go="back">Salvar</button></div>
+</template>
+
+<template data-id="T-33" data-name="Preferências e privacidade" data-accent="violet" data-us="US-01.12,US-01.13,US-02.14" data-notes="Edita o que foi definido no onboarding. 'Mostrar minha presença' vem ligado por padrão, com aviso no onboarding (decisão Q4 do PRD); desligado, o avatar some de 'Quem vai', mas a pessoa continua na contagem. Excluir conta pede que se digite EXCLUIR, anonimiza os dados, apaga as fotos e cancela os eventos futuros que a pessoa organiza.">
+  <div class="body">
+    <div class="top"><button class="ibtn" data-go="back"><svg class="i"><use href="#back"/></svg></button><span class="t">Preferências e privacidade</span></div>
+    <div class="sec">Tipos de rolê</div>
+    <div class="chips"><span class="chip sm on">Festas</span><span class="chip sm on">Eletrônica</span><span class="chip sm on">Pagode</span><span class="chip sm">Shows</span><span class="chip sm">Bares</span><span class="chip sm">+5</span></div>
+    <div class="sec c">Cidade e raio</div>
+    <div class="lrow"><svg class="i cy"><use href="#pin"/></svg><span class="grow b sm">Curitiba</span><span class="sm cy b">trocar</span></div>
+    <div class="flex between sm mt8"><span class="soft">Raio padrão</span><b>20 km</b></div>
+    <div class="range" style="margin-top:10px"><div class="fill" style="width:19%"></div><div class="knob" style="left:19%"></div></div>
+    <div class="sec g">Privacidade</div>
+    <div class="lrow"><div class="grow"><p class="b sm">Usar minha localização</p><p class="xs muted">Distância a partir de onde você está</p></div><span class="toggle on" data-toggle></span></div>
+    <div class="lrow"><div class="grow"><p class="b sm">Mostrar minha presença nos eventos</p><p class="xs muted">Sua foto em "Quem vai". Desligado, você só entra na contagem.</p></div><span class="toggle on" data-toggle></span></div>
+    <div class="lrow"><div class="grow"><p class="b sm">Passkeys</p><p class="xs muted">iPhone de Ana · usada hoje</p></div><svg class="i muted"><use href="#chev"/></svg></div>
+    <div class="lrow"><div class="grow"><p class="b sm">Sair de todos os aparelhos</p><p class="xs muted">Revoga os acessos em outros celulares</p></div><svg class="i muted"><use href="#chev"/></svg></div>
+    <div class="lrow"><div class="grow"><p class="b sm">Baixar meus dados</p><p class="xs muted">Arquivo JSON por e-mail</p></div><svg class="i muted"><use href="#chev"/></svg></div>
+    <button class="btn danger mt20"><svg class="i s"><use href="#trash"/></svg>Excluir minha conta</button>
+  </div>
+</template>
+
+<!-- ============ E02 Oferta (organizador) ============ -->
+<template data-id="T-40" data-name="Ativar modo organizador" data-accent="cyan" data-us="US-02.01" data-notes="Qualquer usuário pode virar organizador (sem CNPJ no beta, porque não há repasse financeiro). O tipo define os padrões: pessoa física vem com eventos Privados por padrão. Publicar exige e-mail verificado.">
+  <div class="body ft">
+    <div class="top"><button class="ibtn" data-go="back"><svg class="i"><use href="#back"/></svg></button></div>
+    <h2 class="h1 c">Publique seus rolês</h2>
+    <p class="sub">Divulgue para quem está <span class="hl">perto</span> e acompanhe quem vai.</p>
+    <p class="xs muted mb8 b up">Você é</p>
+    <div class="grid2 mb12">
+      <div class="tile"><svg class="i l"><use href="#home"/></svg>Pessoa física<span class="xs faint">social, churrasco</span></div>
+      <div class="tile on"><svg class="i l"><use href="#glass"/></svg>Bar<span class="xs faint">happy hour, shows</span></div>
+      <div class="tile"><svg class="i l"><use href="#music"/></svg>Casa de eventos</div>
+      <div class="tile"><svg class="i l"><use href="#party"/></svg>Produtor</div>
+    </div>
+    <div class="field"><label>Nome público</label><div class="inp v">Bar do Zé</div></div>
+    <div class="field"><label>Instagram (opcional)</label><div class="inp v"><svg class="i s"><use href="#ig"/></svg>@bardoze</div></div>
+  </div>
+  <div class="foot"><button class="btn p" data-go="T-46">Ativar e ir para Organizar</button></div>
+</template>
+
+<template data-id="T-41" data-name="Novo rolê · 1 Básico" data-accent="cyan" data-us="US-02.02" data-notes="O rascunho é criado ao avançar o passo 1 e salvo automaticamente a cada passo. Capa obrigatória para publicar (4:5, até 8 MB, gera 1080×1350, thumb e OG 1200×630). Título com 3 a 80 caracteres. Faixa etária Livre / 16+ / 18+.">
+  <div class="body ft">
+    <div class="top"><button class="ibtn" data-go="back"><svg class="i"><use href="#x"/></svg></button><span class="t">Novo rolê</span><span class="sp"></span><span class="xs muted">Rascunho salvo</span></div>
+    <div class="prog"><i class="on"></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2 class="h1 c" style="font-size:20px">O básico</h2>
+    <div class="upl mb12"><svg class="i xl"><use href="#image"/></svg><b style="color:#fff">Adicionar capa</b><span class="xs">vertical 4:5 · JPG, PNG ou WebP</span></div>
+    <div class="field"><label>Nome do rolê</label><div class="inp f">Neon Pulse Festival</div><div class="hint" style="text-align:right">19/80</div></div>
+    <div class="field"><label>Tipo</label><div class="chips"><span class="chip sm">Festas</span><span class="chip sm on">Eletrônica</span><span class="chip sm">Shows</span><span class="chip sm">Bares</span><span class="chip sm">+6</span></div></div>
+    <div class="field"><label>Faixa etária</label><div class="seg"><span>Livre</span><span>16+</span><span class="on">18+</span></div></div>
+    <div class="field"><label>Descrição</label><div class="inp ta v">3 DJs internacionais, palco 360°…</div></div>
+  </div>
+  <div class="foot"><button class="btn p" data-go="T-42">Continuar</button></div>
+</template>
+
+<template data-id="T-42" data-name="Novo rolê · 2 Quando" data-accent="cyan" data-us="US-02.03" data-notes="Início no futuro; fim depois do início; duração de até 48 h. Fim de madrugada é interpretado como o dia seguinte e mostrado como 'termina no dia seguinte'. Fuso do evento: America/Sao_Paulo.">
+  <div class="body ft">
+    <div class="top"><button class="ibtn" data-go="back"><svg class="i"><use href="#back"/></svg></button><span class="t">Novo rolê</span></div>
+    <div class="prog"><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i></div>
+    <h2 class="h1 c" style="font-size:20px">Quando?</h2>
+    <div class="field"><label>Começa</label><div class="grid2"><div class="inp v"><svg class="i s cy"><use href="#cal"/></svg>Sáb, 15 nov</div><div class="inp v"><svg class="i s cy"><use href="#clock"/></svg>22:00</div></div></div>
+    <div class="field"><label>Termina</label><div class="grid2"><div class="inp v"><svg class="i s cy"><use href="#cal"/></svg>Dom, 16 nov</div><div class="inp f"><svg class="i s cy"><use href="#clock"/></svg>06:00</div></div><div class="hint" style="color:var(--cyan)">Termina no dia seguinte · 8 h de rolê</div></div>
+    <div class="ncard c mt12 flex"><svg class="i l cy"><use href="#calok"/></svg><p class="sm soft">Quem confirmar presença recebe e-mail se você mudar a data ou o horário.</p></div>
+  </div>
+  <div class="foot"><button class="btn p" data-go="T-42B">Continuar</button></div>
+</template>
+
+<template data-id="T-42B" data-name="Novo rolê · 3 Onde" data-accent="cyan" data-us="US-02.03" data-notes="O CEP preenche rua, bairro e cidade (ViaCEP); com o número, o geocoding (Nominatim, atrás de GeocodingPort) gera as coordenadas e o organizador confirma o endereço formatado. Se falhar: 'Usar minha localização atual como local'.">
+  <div class="body ft">
+    <div class="top"><button class="ibtn" data-go="back"><svg class="i"><use href="#back"/></svg></button><span class="t">Novo rolê</span></div>
+    <div class="prog"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i></div>
+    <h2 class="h1 c" style="font-size:20px">Onde?</h2>
+    <div class="field"><label>Nome do local</label><div class="inp v">Club Central</div></div>
+    <div class="grid2"><div class="field"><label>CEP</label><div class="inp v">80020-310</div></div><div class="field"><label>Número</label><div class="inp f">1200</div></div></div>
+    <div class="field"><label>Complemento (opcional)</label><div class="inp">ex.: 2º andar</div></div>
+    <div class="ncard g flex" style="align-items:flex-start"><svg class="i l gr"><use href="#pin"/></svg><div class="grow"><p class="b sm">Confere?</p><p class="sm soft">R. XV de Novembro, 1200 — Centro, Curitiba — PR</p><p class="xs cy b mt4">Corrigir endereço</p></div></div>
+    <a class="flex sm cy b mt12"><svg class="i s"><use href="#nav"/></svg>Usar minha localização atual como local</a>
+  </div>
+  <div class="foot"><button class="btn p" data-go="T-43">Continuar</button></div>
+</template>
+
+<template data-id="T-43" data-name="Novo rolê · 4 Acesso" data-accent="yellow" data-us="US-02.04,US-02.05" data-notes="Público: aparece na descoberta com endereço. Privado: só quem tem link ou código; o endereço é revelado aos aprovados. Aprovação manual ou automática. 'Aparecer na descoberta (sem endereço)' é opcional. Código de 6 caracteres sem letras ambíguas. Capacidade opcional (sem lista de espera).">
+  <div class="body ft">
+    <div class="top"><button class="ibtn" data-go="back"><svg class="i"><use href="#back"/></svg></button><span class="t">Novo rolê</span></div>
+    <div class="prog"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></div>
+    <h2 class="h1 y" style="font-size:20px">Quem pode ir?</h2>
+    <div class="radio"><span class="o"></span><div><p class="b sm">Público</p><p class="xs soft">Aparece para todo mundo no raio, com endereço</p></div></div>
+    <div class="radio on" style="border-color:var(--yellow);box-shadow:0 0 14px -6px var(--yellow)"><span class="o" style="border-color:var(--yellow);background:var(--yellow)"></span><div class="grow"><p class="b sm flex" style="gap:5px"><svg class="i s yl"><use href="#lock"/></svg>Privado</p><p class="xs soft">Só quem tem o link. O endereço aparece para os aprovados.</p>
+      <div class="hr" style="margin:10px 0"></div>
+      <div class="flex between"><span class="xs b">Eu aprovo cada pedido</span><span class="toggle on"></span></div>
+      <div class="flex between mt8"><span class="xs b">Aparecer na descoberta (sem endereço)</span><span class="toggle"></span></div>
+      <div class="flex between mt12"><span class="xs muted">Código de acesso</span><span class="code" style="font-size:17px">RG7K2Q</span></div>
+    </div></div>
+    <div class="flex between mt8"><div><p class="b sm">Capacidade</p><p class="xs muted">Deixe vazio para ilimitado</p></div><div class="stepper"><span>−</span><b>40</b><span>+</span></div></div>
+  </div>
+  <div class="foot"><button class="btn p" data-go="T-44">Continuar</button></div>
+</template>
+
+<template data-id="T-44" data-name="Novo rolê · 5 Valores" data-accent="yellow" data-us="US-02.05" data-notes="Valores INFORMATIVOS (sem venda no beta, ADR-014): de 0 a 10 itens com rótulo, preço ou 'sem preço' e observação. O link externo de ingresso é opcional (só https). Sem itens, o evento ganha o selo 'Grátis'.">
+  <div class="body ft">
+    <div class="top"><button class="ibtn" data-go="back"><svg class="i"><use href="#back"/></svg></button><span class="t">Novo rolê</span></div>
+    <div class="prog"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></div>
+    <h2 class="h1 y" style="font-size:20px">Quanto custa?</h2>
+    <div class="flex between mb12"><span class="b sm">É gratuito</span><span class="toggle"></span></div>
+    <div class="pitem"><div class="inp v grow">Pista</div><div class="inp v" style="width:100px">R$ 89</div><svg class="i muted"><use href="#trash"/></svg></div>
+    <div class="pitem"><div class="inp v grow">VIP</div><div class="inp v" style="width:100px">R$ 189</div><svg class="i muted"><use href="#trash"/></svg></div>
+    <div class="pitem"><div class="inp v grow">Open bar até 00h</div><div class="inp" style="width:100px">—</div><svg class="i muted"><use href="#trash"/></svg></div>
+    <a class="flex sm cy b mt4"><svg class="i s"><use href="#plus"/></svg>Adicionar valor</a>
+    <div class="field mt20"><label>Link de venda externo (opcional)</label><div class="inp v"><svg class="i s cy"><use href="#link"/></svg><span class="ell">https://ingressos.exemplo.com/neon</span></div><div class="hint">Mostrado como "Comprar no site do organizador". A venda dentro do RoleGo chega em breve.</div></div>
+  </div>
+  <div class="foot"><button class="btn p" data-go="T-45">Revisar</button></div>
+</template>
+
+<template data-id="T-45" data-name="Novo rolê · 6 Revisão" data-accent="cyan" data-us="US-02.06,US-01.14" data-notes="Prévia do card como aparecerá no feed + checklist do publishCheck. Com pendências, o CTA mostra 'Falta: capa' e leva ao passo certo. E-mail não verificado bloqueia a publicação com 'Reenviar link'. Ao publicar, abre a folha de compartilhamento (T-24).">
+  <div class="body ft">
+    <div class="top"><button class="ibtn" data-go="back"><svg class="i"><use href="#back"/></svg></button><span class="t">Revisão</span></div>
+    <div class="prog"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div>
+    <p class="xs muted b up mb8">Assim aparece no feed</p>
+    <div class="ecard">
+      <div class="cv p-neon" style="height:150px"><div class="art"></div><div class="tl"><span class="badge b-dark">Eletrônica</span><span class="badge b-dark">18+</span></div><div class="pt" style="font-size:22px">Neon Pulse<br>Festival</div></div>
+      <div class="info"><p class="tt">Neon Pulse Festival</p><div class="ln"><svg class="i s"><use href="#cal"/></svg>Sáb, 15 nov · 22:00–06:00</div><div class="ln"><svg class="i s"><use href="#pin"/></svg>Club Central · Centro · a partir de R$ 89</div></div>
+    </div>
+    <div class="card" style="padding:10px 12px">
+      <div class="okline"><svg class="i s"><use href="#check"/></svg>Capa, nome e tipo</div>
+      <div class="okline"><svg class="i s"><use href="#check"/></svg>Data e horário</div>
+      <div class="okline"><svg class="i s"><use href="#check"/></svg>Endereço confirmado</div>
+      <div class="okline"><svg class="i s"><use href="#check"/></svg>Público · sem limite</div>
+      <div class="okline"><svg class="i s"><use href="#check"/></svg>3 valores + link externo</div>
+    </div>
+  </div>
+  <div class="foot" style="flex-direction:column;gap:2px"><button class="btn p" data-go="T-24">Publicar rolê</button><button class="btn gh" data-go="T-46">Salvar rascunho</button></div>
+</template>
+
+<template data-id="T-46" data-name="Organizar · Meus eventos" data-accent="cyan" data-us="US-02.08,US-02.07,US-02.10,US-03.06,US-03.09" data-notes="Aba Organizar (aparece para organizadores; para os demais, leva à T-40). Abas: Próximos, Rascunhos, Passados. Métricas por evento: interesse, vão, pedidos pendentes (privado), visualizações. Ações: editar, lista, compartilhar, nova edição (passados), cancelar.">
+  <div class="body tb">
+    <div class="flex between mt8"><h2 class="h1" style="margin:0">Organizar</h2><button class="btn p sm" data-go="T-41"><svg class="i s"><use href="#plus"/></svg>Novo rolê</button></div>
+    <p class="xs muted mt4">Bar do Zé · organizador</p>
+    <div class="seg mb12 mt12"><span class="on">Próximos · 2</span><span>Rascunhos · 1</span><span>Passados · 9</span></div>
+    <div class="mcard">
+      <div class="top2"><div class="cv p-neon"><div class="art"></div></div><div class="grow"><p class="xs cy b up">Sáb 15 nov · publicado</p><p class="b">Neon Pulse Festival</p><p class="xs soft">Público · sem limite</p><div class="flex mt8" style="gap:6px"><button class="btn s sm" style="height:28px" data-go="T-41"><svg class="i s"><use href="#edit"/></svg>Editar</button><button class="btn s sm" style="height:28px" data-go="T-24"><svg class="i s"><use href="#share"/></svg></button><button class="btn s sm m" style="height:28px" data-go="T-49"><svg class="i s"><use href="#more"/></svg></button></div></div></div>
+      <div class="metrics"><div><b class="mg">134</b>interesse</div><div><b class="cy">48</b>vão</div><div><b>—</b>pedidos</div><div><b>1,2 mil</b>views</div></div>
+    </div>
+    <div class="mcard" data-go="T-48">
+      <div class="top2"><div class="cv p-priv"><div class="art"></div></div><div class="grow"><p class="xs yl b up">Sáb 22 nov · privado</p><p class="b">Social do Laércio</p><p class="xs soft">Aprovação manual · 40 vagas</p><div class="ncard y mt8" style="padding:6px 10px"><p class="xs b yl">5 pedidos esperando você →</p></div></div></div>
+      <div class="metrics"><div><b class="mg">26</b>interesse</div><div><b class="cy">18</b>vão</div><div><b class="yl">5</b>pedidos</div><div><b>140</b>views</div></div>
+    </div>
+  </div>
+  <div class="tabbar"><div class="tab" data-go="T-10"><svg class="i l"><use href="#compass"/></svg>Explorar</div><div class="tab" data-go="T-30"><svg class="i l"><use href="#calok"/></svg>Meus rolês</div><div class="tab on"><svg class="i l"><use href="#grid"/></svg>Organizar<span class="dot"></span></div><div class="tab" data-go="T-31"><svg class="i l"><use href="#user"/></svg>Perfil</div></div>
+</template>
+
+<template data-id="T-47" data-name="Galeria do evento" data-accent="cyan" data-us="US-02.09,US-03.12" data-notes="Até 20 fotos enviadas pelo organizador, antes ou depois do evento. Elas aparecem em 'Edições anteriores' nas próximas edições da série. Fotos enviadas por participantes ficam para a 1.1.">
+  <div class="body">
+    <div class="top"><button class="ibtn" data-go="back"><svg class="i"><use href="#back"/></svg></button><span class="t">Fotos · Neon Pulse #3</span><span class="sp"></span><span class="xs muted">8/20</span></div>
+    <div class="thumbs" style="grid-template-columns:repeat(3,1fr)">
+      <div class="upl" style="height:94px;border-radius:10px"><svg class="i l"><use href="#plus"/></svg></div>
+      <div class="cv p-neon" style="height:94px"><div class="art"></div></div><div class="cv p-sunset" style="height:94px"><div class="art"></div></div>
+      <div class="cv p-indie" style="height:94px"><div class="art"></div></div><div class="cv p-samba" style="height:94px"><div class="art"></div></div><div class="cv p-sert" style="height:94px"><div class="art"></div></div>
+      <div class="cv p-priv" style="height:94px"><div class="art"></div></div><div class="cv p-neon" style="height:94px"><div class="art"></div></div><div class="cv p-sunset" style="height:94px"><div class="art"></div></div>
+    </div>
+    <div class="ncard c mt16 flex"><svg class="i l cy"><use href="#image"/></svg><p class="sm soft">Essas fotos aparecem em <b style="color:#fff">"Edições anteriores"</b> quando você criar a próxima edição.</p></div>
+    <button class="btn s mt12"><svg class="i s"><use href="#plus"/></svg>Criar nova edição</button>
+  </div>
+</template>
+
+<template data-id="T-48" data-name="Lista de convidados" data-accent="yellow" data-us="US-03.06" data-notes="Para eventos privados com aprovação manual. Cada pedido mostra foto, nome, cidade e número de rolês no RoleGo, como sinal de confiança (a reputação completa é E11). 'Aprovar todos' respeita a capacidade; o excedente fica pendente com aviso. Aprovar e recusar enviam e-mail.">
+  <div class="body">
+    <div class="top"><button class="ibtn" data-go="back"><svg class="i"><use href="#back"/></svg></button><span class="t">Social do Laércio</span></div>
+    <div class="flex between sm"><span class="soft">Lotação</span><b>18 / 40</b></div>
+    <div class="capbar"><i style="width:45%"></i></div>
+    <div class="seg mb12 mt12"><span class="on">Pedidos · 5</span><span>Vão · 18</span></div>
+    <div class="lrow"><span class="av md a1">M</span><div class="grow"><p class="b sm">Mariana</p><p class="xs muted">Curitiba · 14 rolês</p></div><button class="reqbtn no"><svg class="i s"><use href="#x"/></svg></button><button class="reqbtn ok"><svg class="i s"><use href="#check"/></svg></button></div>
+    <div class="lrow"><span class="av md a5">T</span><div class="grow"><p class="b sm">Tati</p><p class="xs muted">Curitiba · 9 rolês</p></div><button class="reqbtn no"><svg class="i s"><use href="#x"/></svg></button><button class="reqbtn ok"><svg class="i s"><use href="#check"/></svg></button></div>
+    <div class="lrow"><span class="av md a6">R</span><div class="grow"><p class="b sm">Rafael</p><p class="xs muted">São Paulo · 1 rolê</p></div><button class="reqbtn no"><svg class="i s"><use href="#x"/></svg></button><button class="reqbtn ok"><svg class="i s"><use href="#check"/></svg></button></div>
+    <div class="lrow"><span class="av md a4">C</span><div class="grow"><p class="b sm">Camila</p><p class="xs muted">Curitiba · 31 rolês</p></div><button class="reqbtn no"><svg class="i s"><use href="#x"/></svg></button><button class="reqbtn ok"><svg class="i s"><use href="#check"/></svg></button></div>
+    <button class="btn s mt16">Aprovar todos (5)</button>
+    <div class="flex between mt16 card" style="padding:10px 12px"><div><p class="xs muted">Código de acesso</p><p class="code" style="font-size:16px">RG7K2Q</p></div><button class="btn s sm" data-go="T-24"><svg class="i s"><use href="#share"/></svg>Enviar convite</button></div>
+  </div>
+</template>
+
+<template data-id="T-49" data-name="Cancelar evento" data-accent="magenta" data-us="US-03.09" data-notes="Exige o motivo. Os RSVPs viram cancelled_by_event e todos os confirmados recebem e-mail. O evento sai da descoberta, mas o link continua mostrando a faixa 'Cancelado — motivo'. Não dá para desfazer (é preciso criar outro evento).">
+  <div class="under"><div class="cv p-neon" style="height:260px"><div class="art"></div></div></div>
+  <div class="dim" data-go="back"></div>
+  <div class="sheet m">
+    <div class="grab"></div>
+    <h3 class="h1 m" style="font-size:19px">Cancelar rolê?</h3>
+    <p class="sm soft mb12">Neon Pulse Festival · Sáb 15 nov</p>
+    <div class="ncard m flex mb12"><svg class="i l mg"><use href="#mail"/></svg><p class="sm soft"><b style="color:#fff">48 pessoas confirmadas</b> vão receber um e-mail com o motivo.</p></div>
+    <p class="xs muted b up mb8">Motivo</p>
+    <div class="chips mb12"><span class="chip sm">Chuva / clima</span><span class="chip sm on">Problema no local</span><span class="chip sm">Artista cancelou</span><span class="chip sm">Outro</span></div>
+    <div class="inp ta v" style="height:60px">O ar-condicionado do Club quebrou, nova data em breve.</div>
+    <button class="btn danger mt16">Cancelar evento</button>
+    <button class="btn gh" data-go="back">Manter evento</button>
+  </div>
+</template>
+
+<!-- ============ Admin ============ -->
+<template data-id="T-61" data-name="Admin · Denúncias" data-accent="violet" data-kind="desk" data-us="US-ADM.01,US-ADM.02,US-ADM.03,US-ADM.04" data-notes="Backoffice desktop em /admin (papel admin atribuído só via CLI). Fila de denúncias agrupada por alvo, com ações: remover evento, ocultar comentário, bloquear usuário, descartar. Tudo grava audit_log. Também cria organizadores para parceiros e publica eventos em nome deles (curadoria de lançamento).">
+  <div class="side">
+    <span class="wm" style="font-size:24px;margin-bottom:18px"><span>Role</span><span class="go">G<span class="pin"></span></span></span>
+    <a class="on"><svg class="i s"><use href="#flag"/></svg>Denúncias <span class="badge b-m" style="margin-left:auto">7</span></a>
+    <a><svg class="i s"><use href="#grid"/></svg>Parceiros</a>
+    <a><svg class="i s"><use href="#cal"/></svg>Eventos</a>
+    <a><svg class="i s"><use href="#users"/></svg>Usuários</a>
+    <a><svg class="i s"><use href="#eye"/></svg>Métricas do beta</a>
+  </div>
+  <div class="main">
+    <h2 class="h1" style="font-size:26px">Denúncias</h2>
+    <div class="kpis">
+      <div class="ncard m"><p class="xs muted">Abertas</p><p class="xb" style="font-size:24px">7</p></div>
+      <div class="ncard c"><p class="xs muted">Eventos publicados (7d)</p><p class="xb" style="font-size:24px">41</p></div>
+      <div class="ncard"><p class="xs muted">Usuários ativos (30d)</p><p class="xb" style="font-size:24px">512</p></div>
+      <div class="ncard y"><p class="xs muted">Presenças (semana)</p><p class="xb" style="font-size:24px">286</p></div>
+    </div>
+    <table>
+      <tr><th>Alvo</th><th>Motivo</th><th>Denúncias</th><th>Organizador</th><th>Aberta há</th><th style="text-align:right">Ação</th></tr>
+      <tr><td><b>Festa Open Tudo Free</b><br><span class="xs muted">evento · 23 nov</span></td><td><span class="badge b-m">golpe / falso</span></td><td>3</td><td>Produções XYZ</td><td>2 h</td><td style="text-align:right"><button class="btn danger sm" style="display:inline-flex">Remover</button> <button class="btn gh sm" style="display:inline-flex">Descartar</button></td></tr>
+      <tr><td><b>"Lugar horrível, …"</b><br><span class="xs muted">comentário · Techno Night</span></td><td><span class="badge b-y">impróprio</span></td><td>1</td><td>Club Central</td><td>5 h</td><td style="text-align:right"><button class="btn s sm m" style="display:inline-flex">Ocultar</button> <button class="btn gh sm" style="display:inline-flex">Descartar</button></td></tr>
+      <tr><td><b>user_8812</b><br><span class="xs muted">perfil</span></td><td><span class="badge b-m">assédio</span></td><td>2</td><td>—</td><td>1 d</td><td style="text-align:right"><button class="btn danger sm" style="display:inline-flex">Bloquear</button> <button class="btn gh sm" style="display:inline-flex">Descartar</button></td></tr>
+    </table>
+  </div>
+</template>
+
+<script>
+/* ===== Fluxos: ordem das telas na galeria e no modo navegável ===== */
+const FLOWS = [
+  { id:'e01', n:'E01', title:'Conta e onboarding', color:'c-cyan',
+    desc:'Do Splash ao feed em menos de 60 s: cadastro por e-mail ou Google/Apple, quatro passos de onboarding (tipos, cidade, localização, raio), convite para passkey (Face ID/digital) e preferências aplicadas na descoberta. Histórias <code>US-01.01 → 01.10</code>, <code>US-01.15</code>.',
+    steps:[['T-01','Abrir'],['T-02','Criar conta'],['T-03','Entrar'],['T-04','Recuperar'],['T-05','Curte'],['T-06','Cidade'],['T-07','Localização'],['T-08','Raio'],['T-09','Passkey']] },
+  { id:'e02d', n:'E02', title:'Descoberta de eventos', color:'c-violet',
+    desc:'O que está rolando perto: Feed agrupado por quando acontece, Swipe ("Tinder de eventos") e Lista, com filtros (tipo, dia, raio 1–100 km), troca de cidade e busca. Sem mapa e sem patrocinados no beta. Histórias <code>US-02.11 → 02.16</code>.',
+    steps:[['T-10','Feed'],['T-11','Swipe'],['T-12','Lista'],['T-13','Filtros'],['T-14','Trocar cidade'],['T-15','Busca']] },
+  { id:'e03', n:'E03', title:'Evento, presença e pós-evento', color:'c-magenta',
+    desc:'A página do evento dá informação para decidir; depois vêm interesse, confirmação de presença (RSVP gratuito), evento privado com pedido e aprovação, compartilhamento com preview, ao vivo, avaliação e denúncia. Histórias <code>US-03.01 → 03.14</code>.',
+    steps:[['T-20','Página'],['T-21','Quem vai'],['T-22','Confirmou'],['T-24','Compartilhar'],['T-23','Privado'],['T-20b','Ao vivo'],['T-25','Avaliar'],['T-26','Organizador'],['T-27','Denunciar']] },
+  { id:'perfil', n:'E01', title:'Meus rolês e perfil', color:'c-violet',
+    desc:'Agenda pessoal (próximos, pendentes, para avaliar), perfil básico, edição, preferências, privacidade da presença e exclusão de conta (LGPD). Histórias <code>US-01.11 → 01.17</code>.',
+    steps:[['T-30','Meus rolês'],['T-31','Perfil'],['T-32','Editar'],['T-33','Privacidade']] },
+  { id:'e02o', n:'E02', title:'Organizador: publicar o rolê', color:'c-yellow',
+    desc:'O lado da oferta: ativar o modo organizador, wizard de 6 passos com rascunho automático, publicação, painel de métricas, galeria e nova edição, lista de convidados do evento privado e cancelamento. Histórias <code>US-02.01 → 02.10</code>, <code>US-03.06</code>, <code>US-03.09</code>.',
+    steps:[['T-40','Ativar'],['T-41','1 Básico'],['T-42','2 Quando'],['T-42B','3 Onde'],['T-43','4 Acesso'],['T-44','5 Valores'],['T-45','6 Revisão'],['T-46','Painel'],['T-48','Convidados'],['T-47','Galeria'],['T-49','Cancelar']] },
+  { id:'adm', n:'ADM', title:'Backoffice mínimo', color:'c-violet',
+    desc:'Moderação de denúncias, bloqueio de usuário e cadastro de parceiros pela curadoria de lançamento. Desktop. Histórias <code>US-ADM.01 → 04</code>.',
+    steps:[['T-61','Denúncias']] },
+];
+
+const TPL = {};
+document.querySelectorAll('template[data-id]').forEach(t => TPL[t.dataset.id] = t);
+const ORDER = FLOWS.flatMap(f => f.steps.map(s => s[0]));
+const STATUS = '<div class="notch"></div><div class="sb"><span>9:41</span><span class="ic"><i style="width:3px;height:5px"></i><i style="width:3px;height:7px"></i><i style="width:3px;height:9px"></i><i style="width:3px;height:11px;opacity:.5"></i><i style="width:20px;height:10px;border-radius:3px;margin-left:5px;background:linear-gradient(90deg,#fff 70%,#444 70%)"></i></span></div>';
+
+function build(id){
+  const t = TPL[id]; if(!t) return document.createElement('div');
+  if(t.dataset.kind === 'desk'){
+    const d = document.createElement('div'); d.className='desk'; d.appendChild(t.content.cloneNode(true)); return d;
+  }
+  const ph = document.createElement('div'); ph.className = 'phone ' + (t.dataset.accent || 'violet');
+  const scr = document.createElement('div'); scr.className='scr'; scr.innerHTML = STATUS;
+  scr.appendChild(t.content.cloneNode(true)); ph.appendChild(scr); return ph;
+}
+
+/* ===== Galeria ===== */
+const gal = document.getElementById('gallery'), nav = document.getElementById('navlinks');
+FLOWS.forEach(f => {
+  nav.insertAdjacentHTML('beforeend', `<a href="#${f.id}"><b>${f.n}</b>${f.title}</a>`);
+  const sec = document.createElement('section'); sec.className='flow'; sec.id=f.id;
+  sec.innerHTML = `<div class="chipnum" style="font-size:16px;padding:4px 12px;margin-bottom:12px">${f.n}</div><h2 class="stitle">${f.title}</h2><p class="sdesc">${f.desc}</p>`;
+  const row = document.createElement('div'); row.className='row';
+  f.steps.forEach(([id,label],i) => {
+    if(i) row.insertAdjacentHTML('beforeend', `<span class="arrow ${f.color}"></span>`);
+    const st = document.createElement('div'); st.className='step';
+    st.innerHTML = `<span class="lbl ${f.color}">${label}</span>`;
+    const p = build(id); p.addEventListener('click', () => openPlayer(id)); st.appendChild(p);
+    const t = TPL[id];
+    st.insertAdjacentHTML('beforeend', `<span class="meta"><b>${id} · ${t.dataset.name}</b><br>${t.dataset.us.replaceAll(',', ' · ')}</span>`);
+    row.appendChild(st);
+  });
+  sec.appendChild(row); gal.appendChild(sec);
+});
+
+/* ===== Player navegável ===== */
+const player = document.getElementById('player'), pphone = document.getElementById('pphone');
+const plist = document.getElementById('plist'), pnotes = document.getElementById('pnotes');
+let cur = null; const hist = [];
+FLOWS.forEach(f => {
+  plist.insertAdjacentHTML('beforeend', `<h4>${f.n} · ${f.title}</h4>`);
+  f.steps.forEach(([id]) => plist.insertAdjacentHTML('beforeend', `<a data-id="${id}"><span>${id}</span>${TPL[id].dataset.name}</a>`));
+});
+plist.addEventListener('click', e => { const a = e.target.closest('a[data-id]'); if(a) show(a.dataset.id, true); });
+
+function show(id, push){
+  if(!TPL[id]) return;
+  if(push && cur && cur !== id) hist.push(cur);
+  cur = id; pphone.innerHTML = ''; pphone.appendChild(build(id));
+  plist.querySelectorAll('a').forEach(a => a.classList.toggle('on', a.dataset.id === id));
+  const t = TPL[id];
+  pnotes.innerHTML = `<div class="id">${id}</div><h3>${t.dataset.name}</h3><div class="us">${t.dataset.us.split(',').map(u=>`<span>${u}</span>`).join('')}</div><p>${t.dataset.notes}</p>
+   <div class="kbd">Clique nos elementos da tela para navegar · <b>←/→</b> anterior/próxima · <b>Backspace</b> voltar · <b>H</b> mostrar áreas clicáveis · <b>Esc</b> fechar</div>`;
+  history.replaceState(null,'','#'+id);
+}
+function openPlayer(id){ hist.length=0; player.classList.add('open'); document.body.style.overflow='hidden'; show(id,false); }
+function closePlayer(){ player.classList.remove('open'); document.body.style.overflow=''; history.replaceState(null,'',location.pathname); }
+function goBack(){ const p = hist.pop(); if(p) show(p,false); }
+function step(d){ const i = ORDER.indexOf(cur); const n = ORDER[(i + d + ORDER.length) % ORDER.length]; show(n,true); }
+function toggleHints(){ player.classList.toggle('hints'); }
+pphone.addEventListener('click', e => {
+  const tg = e.target.closest('[data-toggle]');
+  if(tg){ tg.classList.toggle('on'); e.stopPropagation(); return; }
+  const hb = e.target.closest('.heartbtn'); if(hb){ hb.classList.toggle('on'); return; }
+  const g = e.target.closest('[data-go]'); if(!g) return;
+  const to = g.dataset.go; if(to === 'back') goBack(); else show(to,true);
+});
+document.addEventListener('keydown', e => {
+  if(!player.classList.contains('open')) return;
+  if(e.key==='Escape') closePlayer();
+  else if(e.key==='ArrowRight') step(1);
+  else if(e.key==='ArrowLeft') step(-1);
+  else if(e.key==='Backspace'){ e.preventDefault(); goBack(); }
+  else if(e.key.toLowerCase()==='h') toggleHints();
+});
+if(location.hash && TPL[location.hash.slice(1)]) openPlayer(location.hash.slice(1));
+</script>
+</body>
+</html>

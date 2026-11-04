@@ -14,7 +14,7 @@ npm run dev
 
 Abre em http://localhost:5173 — menu lateral para pular entre telas.
 
-Produção Contabo: https://rolego.com.br — build (`npm run build`) → rsync `dist/` em `/opt/rolego/web`. Passos: [`../deploy/README.md`](../deploy/README.md).
+Produção Contabo: https://rolego.com.br serve o **protótipo Beta HTML** ([`../beta-docs/prototipos/index.html`](../beta-docs/prototipos/index.html)), não este SPA. O build Vite E01 ficou em backup `/opt/rolego/web-e01-vite-bak`. Passos: [`../deploy/README.md`](../deploy/README.md).
 
 ## Telas
 

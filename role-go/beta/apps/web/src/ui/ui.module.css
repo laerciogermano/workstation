@@ -1,10 +1,29 @@
 /* ===== Shell ===== */
-.app { position: relative; max-width: 480px; min-height: 100dvh; margin: 0 auto; background: var(--rg-screen); display: flex; flex-direction: column; }
+.app {
+  position: relative;
+  max-width: 480px;
+  height: 100%;
+  height: 100dvh;
+  margin: 0 auto;
+  background: var(--rg-screen);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
 @media (min-width: 520px) { .app { border-left: 1px solid var(--rg-line); border-right: 1px solid var(--rg-line); } }
-.body { flex: 1; padding: 12px 16px 24px; }
+.body {
+  flex: 1;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  padding: max(12px, env(safe-area-inset-top)) 16px calc(24px + env(safe-area-inset-bottom));
+}
+/* tabbar/foot já embutem safe-area-inset-bottom — não somar de novo */
 .body.tb { padding-bottom: 96px; }
 .body.ft { padding-bottom: 116px; }
-.body.flush { padding: 0 0 116px; }
+.body.flush { padding: env(safe-area-inset-top) 0 116px; }
 
 /* ===== Wordmark ===== */
 .wm { display: inline-flex; align-items: baseline; font-weight: 800; font-style: italic; letter-spacing: -0.04em; line-height: 1; white-space: nowrap; }
@@ -128,7 +147,7 @@ select.input { appearance: none; }
 .toastErr { border-left-color: var(--rg-magenta); }
 
 /* ===== Barras ===== */
-.top { display: flex; align-items: center; gap: 10px; min-height: 48px; margin-bottom: 8px; }
+.top { display: flex; align-items: center; gap: 10px; min-height: 48px; margin-bottom: 8px; /* safe-area já no .body */ }
 .topTitle { font-weight: 700; font-size: 16px; }
 .grow { flex: 1; min-width: 0; }
 .tabbar { position: fixed; left: 50%; transform: translateX(-50%); bottom: 0; width: 100%; max-width: 480px; padding: 8px 6px calc(10px + env(safe-area-inset-bottom)); background: var(--rg-black-a94); border-top: 1px solid var(--rg-line); display: flex; justify-content: space-around; z-index: 20; backdrop-filter: blur(8px); }

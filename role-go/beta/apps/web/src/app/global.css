@@ -7,6 +7,8 @@ html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
   height: 100%;
+  height: 100dvh;
+  overflow: hidden;
   overscroll-behavior: none;
   touch-action: manipulation;
 }
@@ -17,18 +19,24 @@ body {
   -webkit-font-smoothing: antialiased;
   font-size: 14px;
   line-height: 1.45;
-  min-height: 100%;
-  min-height: 100dvh;
+  height: 100%;
+  height: 100dvh;
+  overflow: hidden;
   overscroll-behavior: none;
   -webkit-tap-highlight-color: transparent;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   user-select: none;
   touch-action: manipulation;
-  /* notch / home indicator */
-  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  /* safe-area fica no chrome (.top / splash / tabbar) — no body evita 100dvh+padding = scroll na PWA */
+  padding: 0;
+  margin: 0;
 }
-#root { min-height: 100dvh; }
+#root {
+  height: 100%;
+  height: 100dvh;
+  overflow: hidden;
+}
 button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; touch-action: manipulation; }
 /* ≥16px evita zoom do iOS; manipulation mata double-tap zoom; sem seleção “web” */
 input, textarea, select {

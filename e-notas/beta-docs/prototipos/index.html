@@ -169,6 +169,14 @@ footer{padding:48px 0 72px;color:var(--muted);font-size:12px;text-align:center}
 .menu a.danger{color:var(--err)}
 .sec{font-weight:800;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin:14px 0 6px}
 .link{color:var(--blue);font-weight:700}
+.banner{display:flex;align-items:flex-start;gap:8px;padding:10px 12px;border-radius:12px;background:var(--blue-soft);border:1px solid #b6d8f0;margin-bottom:10px}
+.banner p{font-size:11.5px;line-height:1.4;color:var(--blue-deep)}
+.banner .btn{width:auto;height:28px;padding:0 10px;font-size:11px;flex:none}
+.avg{font-size:10px;color:var(--muted);margin-top:2px}
+.avg b{color:var(--green-deep)}
+.sec-block{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+.cesta-card{border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px;background:#fff}
+.cesta-card.on{border-color:var(--blue);background:var(--blue-soft)}
 .desk{display:grid;grid-template-columns:200px 1fr;width:920px;height:560px;background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:var(--shadow);font-size:13px}
 .side{background:var(--bg);padding:18px 14px;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:6px}
 .side a{padding:10px 12px;border-radius:8px;font-weight:600;color:var(--muted)}
@@ -204,8 +212,8 @@ th{color:var(--muted);font-weight:600}
   <h1 class="htitle">Protótipos notinhas.shop</h1>
   <p class="hsub">Galeria navegável das telas do Beta (E01–E04 + ADM). Identidade light: CTA azul <b>#0069B4</b>, verde só para <b>menor preço</b>. Abra no navegador — sem build.</p>
   <div class="hactions">
-    <button class="btn p" style="width:auto;padding:0 20px" onclick="openPlayer('T-10')">▶ Navegar no protótipo</button>
-    <button class="btn s" style="width:auto;padding:0 20px" onclick="openPlayer('T-01')">Começar do splash</button>
+    <button class="btn p" style="width:auto;padding:0 20px" onclick="openPlayer('T-10')">▶ Navegar (home anônima)</button>
+    <button class="btn s" style="width:auto;padding:0 20px" onclick="openPlayer('T-01')">Splash / conta</button>
   </div>
   <div class="legend">
     <span class="c-blue"><i></i> Conta / contribuição</span>
@@ -223,20 +231,21 @@ th{color:var(--muted);font-weight:600}
   <div id="pnotes"></div>
 </div>
 
-<template data-id="T-01" data-name="Splash" data-accent="blue" data-us="US-01.01" data-notes="Abertura com gradiente de marca. CTA único azul. Sem “e-notas” na UI.">
+<template data-id="T-01" data-name="Splash" data-accent="blue" data-us="US-01.01" data-notes="CTA principal entra na home sem cadastro. Conta é opcional (avaliação etc.).">
 <div class="body flush splash">
   <div class="splash-inner">
     <span class="wm xl"><b>notinhas</b><i>.shop</i></span>
     <p class="splash-sub">Sua nota vira menor preço</p>
-    <button class="btn p" data-go="T-02">Começar</button>
+    <button class="btn p" data-go="T-10">Explorar preços</button>
+    <button class="btn gh" data-go="T-02">Criar conta</button>
     <button class="btn gh" data-go="T-03">Já tenho conta</button>
   </div>
 </div></template>
-<template data-id="T-02" data-name="Criar conta" data-accent="blue" data-us="US-01.01,US-01.02" data-notes="E-mail + senha ≥8. Aceite Termos e Privacidade. Google opcional. Conta não é obrigatória para buscar/depositar (Q1).">
+<template data-id="T-02" data-name="Criar conta" data-accent="blue" data-us="US-01.01,US-01.02" data-notes="Opcional. Conta libera avaliação e recursos autenticados; busca/nota/listagem funcionam sem login.">
 <div class="body ft">
   <div class="top"><button class="ibtn" data-go="back">‹</button><span class="t">Criar conta</span></div>
   <h1 class="h1">Bem-vindo</h1>
-  <p class="sub">Salve cestas e veja seu extrato de compras.</p>
+  <p class="sub">Opcional: avaliações, várias cestas salvas e extrato.</p>
   <div class="field"><label>E-mail</label><div class="inp f">ana@email.com</div></div>
   <div class="field"><label>Senha</label><div class="inp">••••••••</div></div>
   <div class="field"><label>Confirmar senha</label><div class="inp">••••••••</div></div>
@@ -266,44 +275,60 @@ th{color:var(--muted);font-weight:600}
   <div class="field"><label>E-mail</label><div class="inp f">ana@email.com</div></div>
   <button class="btn p" data-go="T-03">Enviar link</button>
 </div></template>
-<template data-id="T-05" data-name="Onboarding · Local" data-accent="blue" data-us="US-01.06,US-01.07" data-notes="Cidade lab SJP/PR + permissão GPS. Sem GPS usa centro da cidade.">
+<template data-id="T-05" data-name="Onboarding · Local" data-accent="blue" data-us="US-01.06,US-01.07" data-notes="Opcional: cidade + GPS. Não bloqueia uso — home também tem banner de localização.">
 <div class="body ft">
-  <div class="top"><span class="t">Quase lá</span><span class="sp"></span><span class="xs muted">1/1</span></div>
+  <div class="top"><button class="ibtn" data-go="T-10">‹</button><span class="t">Localização</span><span class="sp"></span><span class="xs muted">opcional</span></div>
   <h1 class="h1">Onde você compra?</h1>
-  <p class="sub">Usamos a região para ranking e “perto de mim”.</p>
+  <p class="sub">Melhora ranking e “perto de mim”. Pode pular.</p>
   <div class="field"><label>Cidade</label><div class="inp f">São José dos Pinhais, PR</div></div>
   <div class="card pad flex between">
     <div><p class="b sm">Usar minha localização</p><p class="xs muted">Melhora distância nas lojas</p></div>
-    <span class="toggle on" data-toggle></span>
+    <span class="toggle" data-toggle></span>
   </div>
   <div class="chiprow mt12"><span class="chip on">Centro</span><span class="chip">Afonso Pena</span><span class="chip">Colônia</span></div>
 </div>
-<div class="foot"><button class="btn p" data-go="T-10">Ver menores preços</button></div></template>
-<template data-id="T-10" data-name="Home · Destaques" data-accent="green" data-us="US-02.01,US-02.02" data-notes="Feed de menores preços e destaques (≥5% abaixo da mediana). Tab Destaques ativa. FAB Nota.">
+<div class="foot">
+  <button class="btn p" data-go="T-10">Salvar</button>
+  <button class="btn gh" data-go="T-10">Agora não</button>
+</div></template>
+<template data-id="T-10" data-name="Home · Destaques" data-accent="green" data-us="US-02.01,US-02.02" data-notes="Entrada anônima. Destaque = preço bem abaixo da mediana. Busca + filtros/categorias na home. Banner GPS opcional (não bloqueia).">
 <div class="body tb">
-  <div class="top brand"><span class="wm sm"><b>notinhas</b><i>.shop</i></span><span class="sp"></span><button class="ibtn" data-go="T-11">⌕</button></div>
-  <div class="seg"><span class="on">Destaques</span><span>Menores</span><span>Recentes</span></div>
-  <p class="xs muted mt8 mb8">SJP · atualizado há 12 min</p>
+  <div class="top brand"><span class="wm sm"><b>notinhas</b><i>.shop</i></span><span class="sp"></span><button class="ibtn" data-go="T-51">○</button></div>
+  <div class="banner">
+    <div class="grow"><p><b>Melhor experiência:</b> ative a localização para ver itens perto de você.</p></div>
+    <button class="btn p sm" data-go="T-05">Ativar</button>
+  </div>
+  <div class="inp mb8" data-go="T-11">⌕ Buscar produto ou EAN</div>
+  <div class="chiprow mb12">
+    <span class="chip on">Todas</span>
+    <span class="chip">Mercearia</span>
+    <span class="chip">Bebidas</span>
+    <span class="chip">Limpeza</span>
+    <span class="chip">Filtros</span>
+  </div>
+  <p class="sec">Destaques</p>
+  <p class="xs muted mb8">Preço bem abaixo da média · SJP · há 12 min</p>
   <div class="pgrid">
-    <div class="pcard" data-go="T-14"><div class="ph"></div><p class="pn">Leite Integral 1L</p><p class="pp">R$ 4,29</p><p class="pm">Condor · hoje</p><span class="badge g">menor</span></div>
-    <div class="pcard" data-go="T-14"><div class="ph g2"></div><p class="pn">Arroz Tipo 1 5kg</p><p class="pp">R$ 22,90</p><p class="pm">Muffato · ontem</p><span class="badge g">−8%</span></div>
-    <div class="pcard" data-go="T-14"><div class="ph g3"></div><p class="pn">Café Torrado 500g</p><p class="pp">R$ 18,49</p><p class="pm">Mercadorama · 2d</p><span class="badge g">destaque</span></div>
-    <div class="pcard" data-go="T-14"><div class="ph g4"></div><p class="pn">Sabão em Pó 1,6kg</p><p class="pp">R$ 21,99</p><p class="pm">Condor · hoje</p><span class="badge g">menor</span></div>
+    <div class="pcard" data-go="T-14"><div class="ph"></div><p class="pn">Leite Integral 1L</p><p class="pp">R$ 4,29</p><p class="avg">média R$ 4,85 · <b>−12%</b></p><p class="pm">Condor · hoje</p><span class="badge g">destaque</span></div>
+    <div class="pcard" data-go="T-14"><div class="ph g2"></div><p class="pn">Arroz Tipo 1 5kg</p><p class="pp">R$ 22,90</p><p class="avg">média R$ 26,40 · <b>−13%</b></p><p class="pm">Muffato · ontem</p><span class="badge g">destaque</span></div>
+    <div class="pcard" data-go="T-14"><div class="ph g3"></div><p class="pn">Café Torrado 500g</p><p class="pp">R$ 18,49</p><p class="avg">média R$ 22,10 · <b>−16%</b></p><p class="pm">Mercadorama · 2d</p><span class="badge g">destaque</span></div>
+    <div class="pcard" data-go="T-14"><div class="ph g4"></div><p class="pn">Sabão em Pó 1,6kg</p><p class="pp">R$ 21,99</p><p class="avg">média R$ 25,80 · <b>−15%</b></p><p class="pm">Condor · hoje</p><span class="badge g">destaque</span></div>
   </div>
 </div>
 <div class="tabbar">
   <div class="tab on" data-go="T-10"><span>✦</span>Destaques</div>
   <div class="tab" data-go="T-30"><span>◎</span>Perto</div>
   <div class="tab fab" data-go="T-20"><span class="fabbtn">+</span>Nota</div>
-  <div class="tab" data-go="T-40"><span>□</span>Cesta</div>
+  <div class="tab" data-go="T-40"><span>□</span>Cestas</div>
   <div class="tab" data-go="T-51"><span>○</span>Perfil</div>
 </div></template>
-<template data-id="T-11" data-name="Busca" data-accent="blue" data-us="US-02.03,US-02.04" data-notes="Busca por EAN ou nome. Sem EAN: confiança menor.">
+<template data-id="T-11" data-name="Busca" data-accent="blue" data-us="US-02.03,US-02.04" data-notes="Busca por EAN ou nome + filtros/categorias. Sem EAN: confiança menor. Anônimo ok.">
 <div class="body">
   <div class="top"><button class="ibtn" data-go="back">‹</button><div class="inp f grow">leite integral</div></div>
+  <div class="chiprow mb8"><span class="chip on">Todas</span><span class="chip">Mercearia</span><span class="chip">Bebidas</span><span class="chip">Filtros</span></div>
   <p class="xs muted mb8">3 resultados · SJP</p>
-  <div class="lrow" data-go="T-12"><div class="ph sm"></div><div class="grow"><p class="b sm">Leite Integral 1L</p><p class="xs muted">EAN 7891000100103</p></div><div class="col end"><p class="pp">R$ 4,29</p><p class="xs muted">Condor</p></div></div>
-  <div class="lrow" data-go="T-12"><div class="ph sm g2"></div><div class="grow"><p class="b sm">Leite Desnatado 1L</p><p class="xs muted">EAN 7891000100202</p></div><div class="col end"><p class="pp">R$ 4,09</p><p class="xs muted">Muffato</p></div></div>
+  <div class="lrow" data-go="T-14"><div class="ph sm"></div><div class="grow"><p class="b sm">Leite Integral 1L</p><p class="xs muted">EAN 7891000100103</p></div><div class="col end"><p class="pp">R$ 4,29</p><p class="xs muted">Condor</p></div></div>
+  <div class="lrow" data-go="T-14"><div class="ph sm g2"></div><div class="grow"><p class="b sm">Leite Desnatado 1L</p><p class="xs muted">EAN 7891000100202</p></div><div class="col end"><p class="pp">R$ 4,09</p><p class="xs muted">Muffato</p></div></div>
   <div class="lrow"><div class="ph sm g3"></div><div class="grow"><p class="b sm">Leite zero lactose</p><p class="xs muted">sem EAN · baixa confiança</p></div><div class="col end"><p class="pp">R$ 5,49</p><p class="xs muted">—</p></div></div>
 </div></template>
 <template data-id="T-12" data-name="Comparação" data-accent="green" data-us="US-02.05" data-notes="Mesmo EAN entre lojas. Menor preço verde + loja + data. RN-03.">
@@ -334,16 +359,49 @@ th{color:var(--muted);font-weight:600}
   <div class="card pad mt16"><p class="xs muted">Menor no período</p><p class="pp">R$ 4,19 · Condor · 12 out</p></div>
   <div class="card pad mt8"><p class="xs muted">Mediana 14d</p><p class="b">R$ 4,55</p></div>
 </div></template>
-<template data-id="T-14" data-name="Detalhe produto" data-accent="green" data-us="US-02.07" data-notes="Foto EAN, menor preço, atalhos comparação/histórico/perto/cesta.">
+<template data-id="T-14" data-name="Detalhe produto" data-accent="green" data-us="US-02.07" data-notes="Tudo expandido na página: comparação, histórico e perto — sem accordion. Conta só se for avaliar.">
 <div class="body tb">
   <div class="top"><button class="ibtn" data-go="back">‹</button><span class="sp"></span><button class="ibtn" data-go="T-40">+</button></div>
   <div class="ph hero"></div>
   <h1 class="h1" style="font-size:20px">Leite Integral 1L</h1>
   <p class="xs muted">EAN 7891000100103</p>
-  <div class="ncard g pad mt12 flex between"><div><p class="xs">Menor agora</p><p class="pp">R$ 4,29</p><p class="xs muted">Condor · hoje</p></div><button class="btn p sm" data-go="T-12">Comparar</button></div>
-  <div class="stack mt12">
-    <button class="btn s" data-go="T-13">Histórico de preços</button>
-    <button class="btn s" data-go="T-30">Onde comprar perto</button>
+  <div class="ncard g pad mt12">
+    <div class="flex between"><div><p class="xs">Menor agora</p><p class="pp">R$ 4,29</p><p class="xs muted">Condor · hoje</p></div><span class="badge g">−12% vs média</span></div>
+    <p class="avg mt4">média região R$ 4,85</p>
+  </div>
+
+  <div class="sec-block">
+    <p class="sec" style="margin-top:0">Comparação entre lojas</p>
+    <div class="ncard g pad mb8">
+      <div class="flex between"><span class="badge g">menor</span><span class="pp">R$ 4,29</span></div>
+      <p class="sm mt4">Condor Centro · hoje 08:12 · 650 m</p>
+    </div>
+    <div class="card pad mb8 flex between"><div><p class="b sm">Super Muffato</p><p class="xs muted">ontem · 1,2 km</p></div><p class="b">R$ 4,59</p></div>
+    <div class="card pad mb8 flex between"><div><p class="b sm">Mercadorama</p><p class="xs muted">há 3 dias · 2,1 km</p></div><p class="b">R$ 4,79</p></div>
+  </div>
+
+  <div class="sec-block">
+    <p class="sec" style="margin-top:0">Histórico de preços</p>
+    <p class="xs muted mb8">Últimos 30 dias · SJP</p>
+    <div class="chart">
+      <i style="height:40%"></i><i style="height:55%"></i><i style="height:48%"></i><i style="height:70%"></i><i style="height:62%"></i><i style="height:35%" class="low"></i><i style="height:42%"></i>
+    </div>
+    <div class="flex between xs muted"><span>04 out</span><span>hoje</span></div>
+    <div class="card pad mt8"><p class="xs muted">Menor no período</p><p class="pp">R$ 4,19 · Condor · 12 out</p></div>
+    <div class="card pad mt8"><p class="xs muted">Mediana 14d</p><p class="b">R$ 4,55</p></div>
+  </div>
+
+  <div class="sec-block">
+    <p class="sec" style="margin-top:0">Onde comprar perto</p>
+    <div class="chiprow mb8"><span class="chip on">2 km</span><span class="chip">5 km</span><span class="chip">10 km</span></div>
+    <div class="lrow" data-go="T-33"><div class="av">C</div><div class="grow"><p class="b sm">Condor Centro</p><p class="xs muted">650 m · hoje</p></div><p class="pp">R$ 4,29</p></div>
+    <div class="lrow" data-go="T-33"><div class="av g">M</div><div class="grow"><p class="b sm">Super Muffato</p><p class="xs muted">1,2 km · ontem</p></div><p class="b">R$ 4,59</p></div>
+    <div class="lrow"><div class="av">R</div><div class="grow"><p class="b sm">Mercadorama</p><p class="xs muted">2,1 km · 3d</p></div><p class="b">R$ 4,79</p></div>
+    <button class="btn s sm mt8" data-go="T-32">Ver no mapa</button>
+  </div>
+
+  <div class="stack mt16 mb8">
+    <button class="btn p" data-go="T-40">Adicionar à cesta</button>
     <button class="btn s" data-go="T-23">Vincular / corrigir EAN</button>
   </div>
 </div>
@@ -351,7 +409,7 @@ th{color:var(--muted);font-weight:600}
   <div class="tab" data-go="T-10"><span>✦</span>Destaques</div>
   <div class="tab" data-go="T-30"><span>◎</span>Perto</div>
   <div class="tab fab" data-go="T-20"><span class="fabbtn">+</span>Nota</div>
-  <div class="tab" data-go="T-40"><span>□</span>Cesta</div>
+  <div class="tab" data-go="T-40"><span>□</span>Cestas</div>
   <div class="tab" data-go="T-51"><span>○</span>Perfil</div>
 </div></template>
 <template data-id="T-20" data-name="Scan QR · câmera" data-accent="blue" data-us="US-01.08" data-notes="Viewport dark. URL fazenda.pr.gov.br. HTTPS obrigatório.">
@@ -386,16 +444,16 @@ th{color:var(--muted);font-weight:600}
   <button class="btn p mt16" data-go="T-23">Vincular códigos de barras</button>
   <button class="btn s mt8" data-go="T-10">Ir para destaques</button>
 </div></template>
-<template data-id="T-23" data-name="Vincular EAN" data-accent="blue" data-us="US-01.11" data-notes="Câmera / foto / digitar. UNIQUE (empresa, codigo_unidade).">
-<div class="body">
-  <div class="top"><button class="ibtn" data-go="back">‹</button><span class="t">Vincular EAN</span></div>
-  <p class="b sm">Item da nota</p>
-  <p class="xs muted mb12">Cód. loja 004812 · Leite Int. 1L</p>
-  <div class="stack">
-    <button class="btn p">Abrir câmera do código</button>
-    <button class="btn s" data-go="T-24">Foto / galeria</button>
-    <div class="field"><label>Ou digitar EAN</label><div class="inp f">7891000100103</div></div>
-    <button class="btn p" data-go="T-24">Salvar vínculo</button>
+<template data-id="T-23" data-name="Vincular EAN" data-accent="blue" data-us="US-01.11" data-notes="Câmera já aberta ao entrar. Clique só para foto/galeria ou digitar. UNIQUE (empresa, codigo_unidade).">
+<div class="body flush scan">
+  <div class="top glass"><button class="ibtn glass" data-go="back">‹</button><span class="t light">Vincular EAN</span></div>
+  <p class="xs hint-light" style="padding:0 14px;opacity:.85">Cód. loja 004812 · Leite Int. 1L</p>
+  <div class="viewfinder"><div class="vf"></div><p class="hint-light">Aponte para o código de barras</p></div>
+  <div class="scan-actions">
+    <button class="btn p" data-go="T-24">Simular leitura</button>
+    <button class="btn s light" data-go="T-24">Foto / galeria</button>
+    <div class="field" style="margin:0"><label style="color:rgba(255,255,255,.7)">Ou digitar EAN</label><div class="inp f">7891000100103</div></div>
+    <button class="btn s light" data-go="T-24">Salvar digitado</button>
   </div>
 </div></template>
 <template data-id="T-24" data-name="Escolher foto EAN" data-accent="blue" data-us="US-01.12" data-notes="Candidatas de APIs/fallback; usuário escolhe foto do feed.">
@@ -422,7 +480,7 @@ th{color:var(--muted);font-weight:600}
   <div class="tab" data-go="T-10"><span>✦</span>Destaques</div>
   <div class="tab on" data-go="T-30"><span>◎</span>Perto</div>
   <div class="tab fab" data-go="T-20"><span class="fabbtn">+</span>Nota</div>
-  <div class="tab" data-go="T-40"><span>□</span>Cesta</div>
+  <div class="tab" data-go="T-40"><span>□</span>Cestas</div>
   <div class="tab" data-go="T-51"><span>○</span>Perfil</div>
 </div></template>
 <template data-id="T-31" data-name="Ranking lojas" data-accent="green" data-us="US-03.02" data-notes="Agregado mediana vs região. Toggle baratas/caras. ADR-011.">
@@ -438,7 +496,7 @@ th{color:var(--muted);font-weight:600}
   <div class="tab" data-go="T-10"><span>✦</span>Destaques</div>
   <div class="tab on" data-go="T-30"><span>◎</span>Perto</div>
   <div class="tab fab" data-go="T-20"><span class="fabbtn">+</span>Nota</div>
-  <div class="tab" data-go="T-40"><span>□</span>Cesta</div>
+  <div class="tab" data-go="T-40"><span>□</span>Cestas</div>
   <div class="tab" data-go="T-51"><span>○</span>Perfil</div>
 </div></template>
 <template data-id="T-32" data-name="Mapa" data-accent="blue" data-us="US-03.03" data-notes="Pins Leaflet/OSM. Link externo para rotas. Sem turn-by-turn.">
@@ -468,9 +526,22 @@ th{color:var(--muted);font-weight:600}
     <div class="pcard"><div class="ph g4"></div><p class="pn">Óleo 900ml</p><p class="pp">R$ 7,49</p></div>
   </div>
 </div></template>
-<template data-id="T-40" data-name="Cesta" data-accent="green" data-us="US-04.01,US-04.02" data-notes="Cesta cotada por mercado. Sem preço não inventa valor.">
+<template data-id="T-40" data-name="Cestas" data-accent="green" data-us="US-04.01,US-04.02" data-notes="Várias cestas (não só uma). Cotação por mercado; sem preço não inventa valor.">
 <div class="body tb">
-  <div class="top"><span class="t">Cesta</span><span class="sp"></span><span class="xs muted">4 itens</span></div>
+  <div class="top"><span class="t">Minhas cestas</span><span class="sp"></span><button class="btn sm p">+ Nova</button></div>
+  <div class="cesta-card on">
+    <div class="flex between"><p class="b sm">Mercado da semana</p><span class="badge g">ativa</span></div>
+    <p class="xs muted">4 itens · Condor R$ 48,40</p>
+  </div>
+  <div class="cesta-card">
+    <div class="flex between"><p class="b sm">Churrasco sábado</p></div>
+    <p class="xs muted">6 itens · Muffato R$ 112,00</p>
+  </div>
+  <div class="cesta-card">
+    <div class="flex between"><p class="b sm">Limpeza mensal</p></div>
+    <p class="xs muted">3 itens · 1 sem preço</p>
+  </div>
+  <p class="sec">Mercado da semana</p>
   <div class="lrow"><div class="ph sm"></div><div class="grow"><p class="b sm">Leite 1L</p><p class="xs muted">×2</p></div><p class="b">R$ 8,58</p></div>
   <div class="lrow"><div class="ph sm g2"></div><div class="grow"><p class="b sm">Arroz 5kg</p><p class="xs muted">×1</p></div><p class="b">R$ 22,90</p></div>
   <div class="lrow"><div class="ph sm g3"></div><div class="grow"><p class="b sm">Café 500g</p><p class="xs muted">sem preço em 1 loja</p></div><p class="muted xs">—</p></div>
@@ -485,7 +556,7 @@ th{color:var(--muted);font-weight:600}
   <div class="tab" data-go="T-10"><span>✦</span>Destaques</div>
   <div class="tab" data-go="T-30"><span>◎</span>Perto</div>
   <div class="tab fab" data-go="T-20"><span class="fabbtn">+</span>Nota</div>
-  <div class="tab on" data-go="T-40"><span>□</span>Cesta</div>
+  <div class="tab on" data-go="T-40"><span>□</span>Cestas</div>
   <div class="tab" data-go="T-51"><span>○</span>Perfil</div>
 </div></template>
 <template data-id="T-41" data-name="Split · economia" data-accent="green" data-us="US-04.03" data-notes="Sugestão 2+ lojas quando reduz custo total.">
@@ -511,23 +582,26 @@ th{color:var(--muted);font-weight:600}
   <div class="lrow"><div class="grow"><p class="b sm">Muffato</p></div><p class="b">R$ 410</p></div>
   <div class="lrow"><div class="grow"><p class="b sm">Mercadorama</p></div><p class="b">R$ 254</p></div>
 </div></template>
-<template data-id="T-51" data-name="Perfil" data-accent="blue" data-us="US-01.13,US-01.14" data-notes="Preferências, extrato, logout, excluir conta LGPD.">
+<template data-id="T-51" data-name="Perfil" data-accent="blue" data-us="US-01.13,US-01.14" data-notes="Anônimo: CTA criar conta. Logado: gastos, local, logout, excluir LGPD.">
 <div class="body tb">
   <div class="top brand"><span class="wm sm"><b>notinhas</b><i>.shop</i></span></div>
-  <div class="flex gap8 mt8 mb16"><div class="av lg">A</div><div><p class="b">Ana Silva</p><p class="xs muted">ana@email.com</p></div></div>
+  <div class="ncard pad mt8 mb12">
+    <p class="b sm">Você está explorando sem conta</p>
+    <p class="xs muted mt4">Cadastro só para avaliação e recursos autenticados.</p>
+    <button class="btn p sm mt8" data-go="T-02">Criar conta</button>
+  </div>
   <div class="menu">
+    <a data-go="T-03">Entrar</a>
     <a data-go="T-50">Meus gastos</a>
     <a data-go="T-05">Cidade e localização</a>
     <a>Termos e privacidade</a>
-    <a class="danger">Excluir conta</a>
-    <a>Sair</a>
   </div>
 </div>
 <div class="tabbar">
   <div class="tab" data-go="T-10"><span>✦</span>Destaques</div>
   <div class="tab" data-go="T-30"><span>◎</span>Perto</div>
   <div class="tab fab" data-go="T-20"><span class="fabbtn">+</span>Nota</div>
-  <div class="tab" data-go="T-40"><span>□</span>Cesta</div>
+  <div class="tab" data-go="T-40"><span>□</span>Cestas</div>
   <div class="tab on" data-go="T-51"><span>○</span>Perfil</div>
 </div></template>
 <template data-id="T-61" data-name="Admin · Métricas" data-accent="blue" data-us="US-ADM.01,US-ADM.02,US-ADM.03" data-notes="Desktop /admin. Fila notas falhas, ocultar spam, KPIs beta." data-kind="desk">
@@ -561,7 +635,7 @@ const FLOWS = [
     "n": "E01",
     "title": "Conta e onboarding",
     "color": "c-blue",
-    "desc": "Splash → conta → local. Busca e depósito funcionam sem conta (Q1).",
+    "desc": "Splash → home anônima. Conta e local opcionais (GPS via banner).",
     "steps": [
       [
         "T-01",
@@ -619,7 +693,7 @@ const FLOWS = [
     "n": "E02",
     "title": "Descoberta de preços",
     "color": "c-green",
-    "desc": "Destaques, busca, comparação com menor preço, histórico e detalhe.",
+    "desc": "Home com destaques (abaixo da média), busca/filtros, detalhe expandido.",
     "steps": [
       [
         "T-10",
@@ -630,16 +704,16 @@ const FLOWS = [
         "Busca"
       ],
       [
+        "T-14",
+        "Detalhe"
+      ],
+      [
         "T-12",
         "Comparar"
       ],
       [
         "T-13",
         "Histórico"
-      ],
-      [
-        "T-14",
-        "Detalhe"
       ]
     ]
   },
@@ -671,13 +745,13 @@ const FLOWS = [
   {
     "id": "e04",
     "n": "E04",
-    "title": "Cesta e gastos",
+    "title": "Cestas e gastos",
     "color": "c-blue",
-    "desc": "Cesta cotada, split entre lojas, extrato pessoal e perfil.",
+    "desc": "Várias cestas, split entre lojas, extrato pessoal e perfil.",
     "steps": [
       [
         "T-40",
-        "Cesta"
+        "Cestas"
       ],
       [
         "T-41",

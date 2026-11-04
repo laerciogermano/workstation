@@ -2,6 +2,7 @@
 
 | Pasta | Card |
 |-------|------|
+| [`6aeb1f3689e452ff0c3883af/`](6aeb1f3689e452ff0c3883af/README.md) | [Ajustes do protótipo Notinhas (home anônima, destaques, detalhe, EAN, cestas)](https://trello.com/c/BXKZ55Wb) |
 | [`6aeb15499b331fc5cfe8a447/`](6aeb15499b331fc5cfe8a447/README.md) | [Notinhas Beta — pacote de documentação + protótipos (padrão RoleGo)](https://trello.com/c/jhxFUqLz) |
 | [`6aeb14ff912c47963559ce9e/`](6aeb14ff912c47963559ce9e/README.md) | [Buscar fotos ao cadastrar EAN (candidatas + escolher a do feed)](https://trello.com/c/0fVZ8eBE) |
 | [`6ae9ef9986843a128d23308a/`](6ae9ef9986843a128d23308a/README.md) | [EAN na vitrine da loja: câmera, foto e digitação](https://trello.com/c/JllifNBV) |

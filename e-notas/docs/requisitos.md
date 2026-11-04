@@ -301,6 +301,20 @@ Curadoria: [`../marca/benchmarking-solucoes/README.md`](../marca/benchmarking-so
 - Antes: protótipo só em `beta-docs/` local. Depois: acessível em notinhas.shop / `/enotas/` no mobile web.
 - Rollback: remover aba/painel/links; apagar `prototipos.html` do `public/` e do Contabo.
 
+## REQ-034 — UX protótipo: anônimo, destaques, detalhe expandido (2026-11-04)
+
+Card: [BXKZ55Wb](https://trello.com/c/BXKZ55Wb).
+
+- Entrada na **home sem login**; busca, listagem, detalhe e depósito de nota funcionam anônimo.
+- Conta só para recursos autenticados (ex.: avaliação).
+- **Destaques** = preço bem abaixo da média/mediana do produto; home com busca + filtros/categorias.
+- **Localização**: banner opcional (“ative a localização”); não bloquear o app na entrada.
+- **Detalhe do produto**: comparação, histórico e “perto” já visíveis (sem accordion).
+- **Vincular EAN**: câmera aberta de cara; clique só para foto/galeria ou digitar.
+- **Várias cestas** (não uma única).
+- Fonte canônica do protótipo: `beta-docs/prototipos/index.html` → copiar para `app/public/prototipos.html` e Contabo.
+- Rollback: restaurar HTML anterior do protótipo + `scp` para Contabo.
+
 ## Próximos passos
 
 → Manter este arquivo alinhado a cada pedido novo · esteira de docs em [`README.md`](README.md) quando avançar funcionalidades/BDD.

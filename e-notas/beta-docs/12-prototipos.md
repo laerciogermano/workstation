@@ -24,7 +24,6 @@
 
 | Código | Tela | Épico | Histórias | Contorno |
 |---|---|---|---|---|
-| T-01 | Splash (só Explorar → home) | E01 | US-01.01 | azul |
 | T-02 | Criar conta (fora do onboarding; via Perfil) | E01 | US-01.01, 01.02 | azul |
 | T-03 | Entrar (fora do onboarding; via Perfil) | E01 | US-01.03, 01.04 | azul |
 | T-04 | Recuperar senha | E01 | US-01.05 | azul |
@@ -63,8 +62,12 @@ Tab bar: **Destaques** (T-10) · **Lojas** (T-31) · **Nota** FAB (T-20) · **Ce
 
 ### Onboarding sem conta (2026-11-04)
 
-- Splash só **Explorar preços**; conta (T-02/03/04) fora do onboarding, só pelo Perfil neste momento
+- Conta (T-02/03/04) fora do onboarding, só pelo Perfil neste momento
 - Galeria sem fluxo “Conta e onboarding” / ADM
+
+### Sem splash (2026-11-04)
+
+- Sem tela `T-01`; entrada = home anônima (`T-10`)
 
 ### Épicos na galeria (2026-11-04)
 
@@ -81,7 +84,7 @@ Tab bar: **Destaques** (T-10) · **Lojas** (T-31) · **Nota** FAB (T-20) · **Ce
 
 | Componente | Variações | Telas |
 |---|---|---|
-| `Wordmark` | sm / md / xl | T-01, T-03, T-10, T-51, T-61 |
+| `Wordmark` | sm / md / xl | T-03, T-10, T-51, T-61 |
 | `Button` | `primary` (azul), `secondary`, `ghost`, `sm` | todas |
 | `Chip` / `Badge` | default, on, `menor`/destaque verde | T-05, T-10, T-12 |
 | `ProductCard` | grade 2 colunas, foto, preço, loja+data | T-10, T-33 |

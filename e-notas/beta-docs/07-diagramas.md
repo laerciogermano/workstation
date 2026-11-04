@@ -242,18 +242,19 @@ stateDiagram-v2
 
 ```mermaid
 flowchart TD
-  %% Telas de Acesso e Conta
-  SPL[T-01 Splash / Início] --> CAD[T-02 Criar Conta]
-  SPL --> LOG[T-03 Entrar / Login]
+  %% Entrada direta na home; conta só via Perfil
+  HOME[T-10 Home Destaques]
+  HOME --> CAD[T-02 Criar Conta]
+  HOME --> LOG[T-03 Entrar / Login]
   LOG --> REC[T-04 Recuperar Senha]
   CAD --> ONB[T-05 Onboarding Local]
   LOG --> ONB
-  ONB --> HOME[T-10 Home Destaques]
+  ONB --> HOME
   LOG --> HOME
 
   %% Abas e Descoberta Principal
   subgraph Principais [Navegação e Descoberta]
-    HOME[T-10 Home Destaques]
+    HOME
     BUS[T-11 Busca Produtos]
     PER[T-30 Perto de Mim]
     RNK[T-31 Mais baratas]

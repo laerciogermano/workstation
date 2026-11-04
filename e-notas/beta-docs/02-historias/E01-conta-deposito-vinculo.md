@@ -107,7 +107,7 @@ Funcionalidade: Login com e-mail e senha
 **Regras de negócio:**
 - Logout individual invalida o refresh token atual no banco e apaga cookies do cliente.
 - Logout global invalida toda a família de refresh tokens do usuário.
-- Redirecionamento obrigatório para a tela Splash (`T-01`).
+- Redirecionamento obrigatório para a home anônima (`T-10`).
 
 ```gherkin
 # language: pt
@@ -118,7 +118,7 @@ Funcionalidade: Logout e revogação de sessão
     Quando toco em "Sair da conta" e confirmo a ação
     Então meu refresh token atual é marcado como revogado no banco
     E meus cookies de autenticação são destruídos
-    E sou redirecionado para a tela "Splash" (T-01)
+    E sou redirecionado para a tela "Home · Destaques" (T-10)
 
   Cenário: Logout de todos os dispositivos
     Dado que estou logado no meu celular
@@ -403,5 +403,5 @@ Funcionalidade: Excluir conta e dados pessoais (LGPD)
     Então meus dados pessoais e credenciais são anonimizados no banco
     E minhas notas fiscais perdem o vínculo com meu usuário
     E minhas sessões ativas são revogadas
-    E sou deslogado e redirecionado para a tela "Splash" (T-01) com a confirmação da exclusão
+    E sou deslogado e redirecionado para a tela "Home · Destaques" (T-10) com a confirmação da exclusão
 ```

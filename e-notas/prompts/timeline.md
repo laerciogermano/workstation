@@ -43,3 +43,4 @@ Como registrar: [`README.md`](README.md).
 | 033 | 2026-11-04 | Galeria E01/E02 sem conta/ADM | [033-2026-11-04-galeria-e01-e02-sem-adm.md](033-2026-11-04-galeria-e01-e02-sem-adm.md) | Splash sem conta; E01 descoberta; E02 contribuir; sem backoffice na galeria. |
 | 034 | 2026-11-04 | Cards nova logo + benchmarking | [034-2026-11-04-cards-nova-logo-e-benchmarking.md](034-2026-11-04-cards-nova-logo-e-benchmarking.md) | Cards Backlog: benchmarking logos apps/delivery (AP6ffjv8) + nova logo v2 dependente (VSnkOlXy). |
 | 035 | 2026-11-04 | Card ícones + km na busca | [035-2026-11-04-card-ajustes-icones-distancia-busca.md](035-2026-11-04-card-ajustes-icones-distancia-busca.md) | Card Backlog: ícones do protótipo + distância na busca; nota T-12 órfão vs T-14. |
+| 036 | 2026-11-04 | Protótipo sem splash | [036-2026-11-04-prototipo-sem-splash.md](036-2026-11-04-prototipo-sem-splash.md) | Remove T-01; entrada direta na home anônima; Contabo. |

@@ -318,10 +318,18 @@ Card: [BXKZ55Wb](https://trello.com/c/BXKZ55Wb).
 ## REQ-036 — Onboarding sem conta (2026-11-04)
 
 - No protótipo, o onboarding **não** inclui criar conta, entrar nem recuperar senha.
-- Splash (`T-01`): só CTA **Explorar preços** → home anônima.
+- ~~Splash (`T-01`): só CTA **Explorar preços** → home anônima.~~ *Superseded por REQ-038 (sem splash).*
 - Telas de conta (`T-02`/`T-03`/`T-04`) só pelo **Perfil**; fora da galeria de entrada.
 - Antes: splash com Criar conta / Já tenho conta e galeria “Conta e onboarding”. Depois: entrada anônima.
 - Rollback: restaurar botões no splash e fluxo de conta na galeria.
+
+## REQ-038 — Protótipo sem splash (2026-11-04)
+
+- Sem tela Splash (`T-01`) no protótipo; entrada = **home anônima** (`T-10`).
+- Botão “Splash” removido da galeria; CSS/template `T-01` removidos.
+- Fonte: `beta-docs/prototipos/index.html` → `app/public/prototipos.html` + Contabo.
+- Antes: `T-01` com CTA Explorar → home. Depois: abre direto em `T-10`.
+- Rollback: restaurar template/CSS `T-01` e botão da galeria; `scp` Contabo.
 
 ## REQ-037 — Galeria: E01 descoberta, E02 contribuição, sem backoffice (2026-11-04)
 

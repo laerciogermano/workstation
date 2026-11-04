@@ -23,7 +23,6 @@ Cada história segue o formato **Como / Quero / Para** e traz critérios de acei
 
 | Código | Nome da Tela | Escopo Principal |
 |---|---|---|
-| `T-01` | Splash / Abertura | Boas-vindas, identificação do app e atalhos de autenticação |
 | `T-02` | Criar conta | Cadastro com e-mail, senha e aceite de termos |
 | `T-03` | Entrar | Login por e-mail e senha com tratamento de bloqueio e rate-limit |
 | `T-04` | Recuperar senha | Solicitação e redefinição de credenciais |

@@ -15,6 +15,9 @@ coverage/
 # Certificados locais (e-notas HTTPS)
 e-notas/app/certs/
 
+# Candidatas baixadas em runtime (ean-fotos/{ean}/NN.ext)
+e-notas/app/public/ean-fotos/*/
+
 # Banco local e-notas (legado SQLite, se existir)
 e-notas/app/data/
 

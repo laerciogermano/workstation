@@ -5,7 +5,7 @@ Front **notinhas.shop** ([`notinhas.shop.DESIGN.md`](../marca/notinhas.shop.DESI
 Tema: [`../design-system.md`](../design-system.md) · tokens em `public/styles.css`.  
 Share/WhatsApp: metas OG em `index.html` / `scan.html` + `public/og-image.png`.
 
-Persistência: **Postgres Contabo** (`connectmax`), schema `enotas` (via `.env`) — tabelas `empresas`, `notas`, `itens`, `codigos_barras`.
+Persistência: **Postgres Contabo** (`connectmax`), schema `enotas` (via `.env`) — tabelas `empresas`, `notas`, `itens`, `codigos_barras`, `ean_imagens`.
 
 HTTPS autoassinado em `certs/`.
 
@@ -32,6 +32,8 @@ Produção Contabo (HTTPS, convive com conect tec): `https://144.126.154.90/enot
 | `DB_PASSWORD` | (ver `credenciais.md`) |
 | `DB_NAME` | `connectmax` |
 | `DB_SCHEMA` | `enotas` |
+| `GOOGLE_CSE_API_KEY` | (opcional) Custom Search — fallback de imagens |
+| `GOOGLE_CSE_CX` | (opcional) ID do Search Engine |
 
 Credenciais não vão no git (`.env` ignorado).
 
@@ -63,12 +65,15 @@ Resposta: `{ ok, created, empresaCriada, url, empresa, nota, itens }`.
 | `GET` | `/api/notas` | `{ ok, notas }` (com `empresa_nome` / `empresa_cnpj`; ordem emissão DESC) |
 | `GET` | `/api/itens` | `{ ok, itens }` (com `empresa_nome`, `nota_numero`, `nota_emissao`, `chave_acesso`, `codigo_barras`, `foto_url` se mapeado) |
 | `GET` | `/api/codigos-barras` | `{ ok, codigosBarras }` (inclui `foto_url`) |
-| `POST` | `/api/codigos-barras` | body `{ empresa_id, codigo_unidade, codigo_barras, foto_url? }` → upsert; auto `ean-fotos/{ean}.*` se arquivo existir |
+| `POST` | `/api/codigos-barras` | body `{ empresa_id, codigo_unidade, codigo_barras, foto_url? }` → upsert; dispara busca async de fotos (REQ-032); auto `foto_url` se já houver selecionada/arquivo |
+| `GET` | `/api/ean-imagens?codigo_barras=` | `{ ok, imagens }` candidatas do EAN |
+| `POST` | `/api/ean-imagens/buscar` | body `{ codigo_barras, force? }` → busca síncrona (idempotente sem `force`) |
+| `POST` | `/api/ean-imagens/:id/selecionar` | marca a foto do feed e atualiza `codigos_barras.foto_url` |
 
-UI: na **vitrine do estabelecimento**, botão **Código de barras** / **Editar EAN** no item (câmera, tirar foto / escolher imagem, digitação) → modal `#modal-ean` → `POST` acima (REQ-031).
+UI: na **vitrine do estabelecimento**, botão **Código de barras** / **Editar EAN** no item (câmera, tirar foto / escolher imagem, digitação) → modal `#modal-ean` → `POST` acima (REQ-031). No **detalhe do produto**, grade **Fotos** para escolher a representativa.
 
-Fotos: `public/ean-fotos/{ean}.jpg` · ver [`public/ean-fotos/README.md`](public/ean-fotos/README.md).
+Fotos: `public/ean-fotos/{ean}.jpg` (legado) e `public/ean-fotos/{ean}/NN.ext` (candidatas) · ver [`public/ean-fotos/README.md`](public/ean-fotos/README.md).
 
 ## Reverter
 
-Parar `:4173`. Remover UI/rotas de códigos de barras (voltar ao commit anterior). Schema: `DROP TABLE enotas.codigos_barras;` se quiser apagar só o mapeamento. `DROP SCHEMA enotas CASCADE;` apaga tudo.
+Parar `:4173`. `DROP TABLE enotas.ean_imagens;` + remover `ean-imagens.js` / rotas / UI de Fotos. Schema: `DROP TABLE enotas.codigos_barras;` se quiser apagar só o mapeamento. `DROP SCHEMA enotas CASCADE;` apaga tudo.

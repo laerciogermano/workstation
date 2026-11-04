@@ -12,14 +12,18 @@ import {
   parseDanfeHtml,
 } from './fazenda-pr.js';
 import {
+  buscarImagensEan,
   cadastrarNotaCompleta,
   dbInfo,
+  enqueueBuscarImagensEan,
   geocodeEmpresasPendentes,
   initDb,
   listCodigosBarras,
+  listEanImagens,
   listEmpresas,
   listItens,
   listNotas,
+  selecionarEanImagem,
   upsertCodigoBarras,
 } from './db.js';
 
@@ -156,13 +160,55 @@ app.post('/api/codigos-barras', async (req, res) => {
       codigoBarras: req.body?.codigo_barras,
       fotoUrl: req.body?.foto_url,
     });
+    enqueueBuscarImagensEan(row.codigo_barras);
     console.log(
       `[codigo-barras] empresa=${row.empresa_id} unidade=${row.codigo_unidade} ean=${row.codigo_barras} foto=${row.foto_url || '-'}`,
     );
-    return res.json({ ok: true, codigoBarras: row });
+    return res.json({ ok: true, codigoBarras: row, imagensPendentes: true });
   } catch (err) {
     const status = err.status || 500;
     console.error('[codigos-barras:erro]', err.message);
+    return res.status(status).json({ ok: false, error: err.message });
+  }
+});
+
+app.get('/api/ean-imagens', async (req, res) => {
+  try {
+    const ean = String(req.query?.codigo_barras || '').trim();
+    if (!ean) {
+      return res.status(400).json({ ok: false, error: 'codigo_barras obrigatório' });
+    }
+    const imagens = await listEanImagens(ean);
+    return res.json({ ok: true, codigo_barras: ean, imagens });
+  } catch (err) {
+    console.error('[ean-imagens:erro]', err.message);
+    return res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
+app.post('/api/ean-imagens/buscar', async (req, res) => {
+  try {
+    const ean = String(req.body?.codigo_barras || '').trim();
+    const force = Boolean(req.body?.force);
+    if (!ean) {
+      return res.status(400).json({ ok: false, error: 'codigo_barras obrigatório' });
+    }
+    const result = await buscarImagensEan(ean, { force });
+    return res.json({ ok: true, ...result });
+  } catch (err) {
+    const status = err.status || 500;
+    console.error('[ean-imagens:buscar]', err.message);
+    return res.status(status).json({ ok: false, error: err.message });
+  }
+});
+
+app.post('/api/ean-imagens/:id/selecionar', async (req, res) => {
+  try {
+    const row = await selecionarEanImagem(req.params.id);
+    return res.json({ ok: true, imagem: row });
+  } catch (err) {
+    const status = err.status || 500;
+    console.error('[ean-imagens:selecionar]', err.message);
     return res.status(status).json({ ok: false, error: err.message });
   }
 });

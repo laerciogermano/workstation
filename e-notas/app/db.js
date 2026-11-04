@@ -3,6 +3,11 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import pg from 'pg';
 import { geocodeEndereco } from './geocode.js';
+import {
+  collectImageCandidates,
+  downloadEanImage,
+  withEanSearchLock,
+} from './ean-imagens.js';
 
 const { Pool } = pg;
 
@@ -120,12 +125,32 @@ export async function initDb() {
       ON ${t('codigos_barras')}(codigo_barras);
     CREATE INDEX IF NOT EXISTS codigos_barras_empresa_idx
       ON ${t('codigos_barras')}(empresa_id);
+
+    CREATE TABLE IF NOT EXISTS ${t('ean_imagens')} (
+      id SERIAL PRIMARY KEY,
+      codigo_barras TEXT NOT NULL,
+      url_origem TEXT,
+      fonte TEXT,
+      path_local TEXT NOT NULL,
+      ordem INTEGER NOT NULL DEFAULT 0,
+      selecionada BOOLEAN NOT NULL DEFAULT false,
+      sha1 TEXT,
+      criado_em TIMESTAMPTZ NOT NULL DEFAULT now()
+    );
+
+    CREATE INDEX IF NOT EXISTS ean_imagens_ean_idx
+      ON ${t('ean_imagens')}(codigo_barras);
   `);
 
   await p.query(`
     ALTER TABLE ${t('empresas')} ADD COLUMN IF NOT EXISTS lat DOUBLE PRECISION;
     ALTER TABLE ${t('empresas')} ADD COLUMN IF NOT EXISTS lng DOUBLE PRECISION;
     ALTER TABLE ${t('codigos_barras')} ADD COLUMN IF NOT EXISTS foto_url TEXT;
+  `);
+
+  await p.query(`
+    CREATE UNIQUE INDEX IF NOT EXISTS ean_imagens_ean_path_uidx
+      ON ${t('ean_imagens')}(codigo_barras, path_local);
   `);
 
   await syncFotosCodigosBarras(p);
@@ -397,8 +422,10 @@ export async function upsertCodigoBarras(
     throw Object.assign(new Error('empresa não encontrada'), { status: 404 });
   }
 
+  const selecionada = await getImagemSelecionada(ean, client);
   const foto =
     (typeof fotoUrl === 'string' && fotoUrl.trim()) ||
+    selecionada?.path_local ||
     resolveFotoUrlForEan(ean) ||
     null;
 
@@ -414,6 +441,187 @@ export async function upsertCodigoBarras(
     [empresa, unidade, ean, foto],
   );
   return r.rows[0];
+}
+
+export async function listEanImagens(codigoBarras, client = getPool()) {
+  const ean = String(codigoBarras ?? '').trim();
+  if (!ean) return [];
+  const r = await client.query(
+    `SELECT * FROM ${t('ean_imagens')}
+     WHERE codigo_barras = $1
+     ORDER BY selecionada DESC, ordem ASC, id ASC`,
+    [ean],
+  );
+  return r.rows;
+}
+
+export async function getImagemSelecionada(codigoBarras, client = getPool()) {
+  const ean = String(codigoBarras ?? '').trim();
+  if (!ean) return null;
+  const r = await client.query(
+    `SELECT * FROM ${t('ean_imagens')}
+     WHERE codigo_barras = $1 AND selecionada = true
+     ORDER BY id ASC LIMIT 1`,
+    [ean],
+  );
+  return r.rows[0] || null;
+}
+
+async function setFotoUrlForEan(ean, pathLocal, client = getPool()) {
+  const code = String(ean).trim();
+  const foto = String(pathLocal || '').trim() || null;
+  if (!code || !foto) return 0;
+  const r = await client.query(
+    `UPDATE ${t('codigos_barras')}
+     SET foto_url = $1, updated_at = now()
+     WHERE codigo_barras = $2`,
+    [foto, code],
+  );
+  return r.rowCount || 0;
+}
+
+/** Marca candidata como representativa do feed e propaga `foto_url`. */
+export async function selecionarEanImagem(id, client = getPool()) {
+  const imgId = Number(id);
+  if (!Number.isFinite(imgId) || imgId <= 0) {
+    throw Object.assign(new Error('id inválido'), { status: 400 });
+  }
+  const found = await client.query(
+    `SELECT * FROM ${t('ean_imagens')} WHERE id = $1`,
+    [imgId],
+  );
+  const row = found.rows[0];
+  if (!row) {
+    throw Object.assign(new Error('imagem não encontrada'), { status: 404 });
+  }
+  await client.query(
+    `UPDATE ${t('ean_imagens')} SET selecionada = false
+     WHERE codigo_barras = $1 AND selecionada = true`,
+    [row.codigo_barras],
+  );
+  const updated = await client.query(
+    `UPDATE ${t('ean_imagens')} SET selecionada = true WHERE id = $1 RETURNING *`,
+    [imgId],
+  );
+  await setFotoUrlForEan(row.codigo_barras, row.path_local, client);
+  return updated.rows[0];
+}
+
+/**
+ * Importa arquivo legado `ean-fotos/{ean}.ext` como candidata se ainda não houver linhas.
+ */
+async function ensureLegacyFotoAsCandidate(ean, client = getPool()) {
+  const code = String(ean).trim();
+  const existing = await listEanImagens(code, client);
+  if (existing.length) return existing;
+  const legacy = resolveFotoUrlForEan(code);
+  if (!legacy) return [];
+  const r = await client.query(
+    `INSERT INTO ${t('ean_imagens')}
+       (codigo_barras, url_origem, fonte, path_local, ordem, selecionada)
+     VALUES ($1, NULL, 'local', $2, 0, true)
+     ON CONFLICT (codigo_barras, path_local) DO UPDATE SET fonte = EXCLUDED.fonte
+     RETURNING *`,
+    [code, legacy],
+  );
+  await setFotoUrlForEan(code, legacy, client);
+  return r.rows;
+}
+
+/**
+ * Busca e persiste até 5 candidatas. Idempotente (sem force não rebaixa).
+ * @returns {{ ean: string, skipped?: boolean, imagens: object[], baixadas: number }}
+ */
+export async function buscarImagensEan(codigoBarras, { force = false } = {}) {
+  const ean = String(codigoBarras ?? '').trim();
+  if (!ean) {
+    throw Object.assign(new Error('codigo_barras obrigatório'), { status: 400 });
+  }
+
+  return withEanSearchLock(ean, async () => {
+    const client = getPool();
+    let imagens;
+
+    if (!force) {
+      imagens = await ensureLegacyFotoAsCandidate(ean, client);
+      if (imagens.length > 0) {
+        return { ean, skipped: true, imagens, baixadas: 0 };
+      }
+      imagens = await listEanImagens(ean, client);
+      if (imagens.length > 0) {
+        return { ean, skipped: true, imagens, baixadas: 0 };
+      }
+    } else {
+      await client.query(
+        `DELETE FROM ${t('ean_imagens')} WHERE codigo_barras = $1`,
+        [ean],
+      );
+    }
+
+    const candidates = await collectImageCandidates(ean);
+    let baixadas = 0;
+    let ordem = 1;
+    const seenSha = new Set();
+
+    for (const c of candidates) {
+      try {
+        const dl = await downloadEanImage(ean, c.url, ordem);
+        if (!dl) continue;
+        if (seenSha.has(dl.sha1)) {
+          try {
+            fs.unlinkSync(
+              path.join(__dirname, 'public', ...dl.pathLocal.split('/')),
+            );
+          } catch {
+            /* ignore */
+          }
+          continue;
+        }
+        seenSha.add(dl.sha1);
+        await client.query(
+          `INSERT INTO ${t('ean_imagens')}
+             (codigo_barras, url_origem, fonte, path_local, ordem, selecionada, sha1)
+           VALUES ($1, $2, $3, $4, $5, false, $6)
+           ON CONFLICT (codigo_barras, path_local) DO NOTHING`,
+          [ean, c.url, c.fonte, dl.pathLocal, ordem, dl.sha1],
+        );
+        baixadas += 1;
+        ordem += 1;
+      } catch (err) {
+        console.warn(`[ean-imagens] download ${c.fonte}:`, err.message);
+      }
+    }
+
+    // Legado flat ainda útil se a busca falhou
+    if (baixadas === 0) {
+      imagens = await ensureLegacyFotoAsCandidate(ean, client);
+      return { ean, skipped: false, imagens, baixadas: 0 };
+    }
+
+    imagens = await listEanImagens(ean, client);
+    const temSelecionada = imagens.some((i) => i.selecionada);
+    if (!temSelecionada && imagens[0]) {
+      await selecionarEanImagem(imagens[0].id, client);
+      imagens = await listEanImagens(ean, client);
+    }
+
+    return { ean, skipped: false, imagens, baixadas };
+  });
+}
+
+/** Dispara busca em background (não bloqueia o caller). */
+export function enqueueBuscarImagensEan(codigoBarras, opts = {}) {
+  const ean = String(codigoBarras ?? '').trim();
+  if (!ean) return;
+  setImmediate(() => {
+    buscarImagensEan(ean, opts)
+      .then((r) => {
+        console.log(
+          `[ean-imagens] ${ean} skipped=${Boolean(r.skipped)} baixadas=${r.baixadas} total=${r.imagens.length}`,
+        );
+      })
+      .catch((err) => console.error(`[ean-imagens] ${ean}:`, err.message));
+  });
 }
 
 /** Cadastra empresa (se faltar), nota e no máx. um item por código na nota (histórico entre notas). */

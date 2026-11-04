@@ -2,6 +2,7 @@
 
 | Pasta | Card |
 |-------|------|
+| [`6aeb25e8975016bbe7d13d6e/`](6aeb25e8975016bbe7d13d6e/README.md) | [Ajustes protótipo: ícones + distância (km) na busca](https://trello.com/c/xwTPpIUZ) |
 | [`6aeb24a79a12f4189d7690d7/`](6aeb24a79a12f4189d7690d7/README.md) | [Criar nova logo Notinhas (v2)](https://trello.com/c/VSnkOlXy) — depende de AP6ffjv8 |
 | [`6aeb249b8083ec05b0744697/`](6aeb249b8083ec05b0744697/README.md) | [Benchmarking logos (apps + comida/delivery)](https://trello.com/c/AP6ffjv8) |
 | [`6aeb1f3689e452ff0c3883af/`](6aeb1f3689e452ff0c3883af/README.md) | [Ajustes do protótipo Notinhas (home anônima, destaques, detalhe, EAN, cestas)](https://trello.com/c/BXKZ55Wb) |

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cupido — Benchmarking de concorrentes</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#1A1520;--card:#241E2A;--line:#3A3342;--text:#F6F5F8;--muted:#9A93A3;--coral:#D6456A;--teal:#2A9D8F;--ok:#2DD4A8;--mid:#F5D27A;--no:#F07178}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Manrope,system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.55;padding:40px 24px}
+.wrap{max-width:1080px;margin:0 auto}
+h1{font-size:28px;letter-spacing:-.02em;margin-bottom:8px}
+.lead{color:var(--muted);margin-bottom:16px;max-width:880px}
+.meta{font-size:12px;color:var(--muted);margin-bottom:28px}
+h2{font-size:18px;margin:32px 0 12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:12px 0}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th,td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.04em}
+td.num{font-weight:800;color:var(--coral);width:28px}
+.y{color:var(--ok);font-weight:700}.p{color:var(--mid);font-weight:700}.n{color:var(--no);font-weight:700}
+ul{margin:8px 0 8px 18px;color:#C9C2D0}
+li{margin-bottom:6px}
+.req{border-left:3px solid var(--coral);padding-left:12px;margin:8px 0}
+.tag{display:inline-block;padding:2px 8px;border-radius:999px;background:#2E2735;color:#C9C2D0;font-size:11px;margin:0 4px 4px 0}
+.tag.ai{background:#123028;color:#6EE7B7}.tag.date{background:#3A1C28;color:#F9A8BC}
+.foot{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Benchmarking — concorrentes do Cupido</h1>
+  <p class="lead">Proposta Cupido: <strong>agente de IA</strong> que te conhece pelo <em>histórico de chats</em>, conversa com candidatos <em>sem revelar identidade</em>, e nas combinações com mais matches <strong>revela com contexto</strong> e/ou <strong>marca o encontro</strong>.</p>
+  <p class="meta">Board local · <code>Trello/Cupido/</code> · Visão · <code>cupido/README.md</code> · v1.0 · 2026-11-04</p>
+
+  <h2>1. Capacidades sob análise</h2>
+  <div class="card">
+    <div class="req"><strong>Histórico real</strong> — ingestão de chats com consentimento.</div>
+    <div class="req"><strong>Agente opera</strong> — conversa pelo usuário, não só sugere frases.</div>
+    <div class="req"><strong>Anonimato intermediário</strong> — lados não se conhecem até o fit.</div>
+    <div class="req"><strong>Score / match com contexto</strong> — porquê do fit, não só “é match”.</div>
+    <div class="req"><strong>Encontro</strong> — agenda / proposta como feature de produto.</div>
+  </div>
+
+  <h2>2. Matriz (mais → menos relevantes)</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>#</th><th>Produto</th><th>Tipo</th><th>Histórico</th><th>Agente opera</th><th>Anon. até fit</th><th>Contexto no match</th><th>Agenda encontro</th><th>Gap vs Cupido</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td class="num">1</td><td><strong>Tinder</strong> <span class="tag date">dating</span></td><td>Swipe</td><td class="n">Não</td><td class="n">Não</td><td class="n">Não</td><td class="n">Fraco</td><td class="p">Manual</td><td>Volume foto-first; zero agente</td></tr>
+      <tr><td class="num">2</td><td><strong>Bumble</strong> <span class="tag date">dating</span></td><td>Swipe + regras</td><td class="n">Não</td><td class="n">Não</td><td class="n">Não</td><td class="p">Perfil</td><td class="p">Manual</td><td>Chat humano cedo</td></tr>
+      <tr><td class="num">3</td><td><strong>Hinge</strong> <span class="tag date">dating</span></td><td>Prompts</td><td class="n">Não</td><td class="n">Não</td><td class="n">Não</td><td class="y">Prompts</td><td class="p">Manual</td><td>Contexto estático de perfil</td></tr>
+      <tr><td class="num">4</td><td><strong>Rizz / wingmans</strong> <span class="tag ai">IA</span></td><td>Sugestão de msg</td><td class="p">Parcial</td><td class="n">Só sugere</td><td class="n">N/A</td><td class="n">N/A</td><td class="n">Não</td><td>Pickup lines; não fecha funil</td></tr>
+      <tr><td class="num">5</td><td><strong>YourMove / coaches IA</strong> <span class="tag ai">IA</span></td><td>Coach</td><td class="p">Screenshot</td><td class="p">Assiste</td><td class="n">Não</td><td class="p">Advice</td><td class="n">Não</td><td>Você continua no chat</td></tr>
+      <tr><td class="num">6</td><td><strong>Teaser / slow dating</strong> <span class="tag date">dating</span></td><td>Revelação lenta</td><td class="n">Não</td><td class="n">Não</td><td class="y">Parcial</td><td class="p">Gradual</td><td class="p">Manual</td><td>Sem histórico + agente</td></tr>
+      <tr><td class="num">7</td><td><strong>Blind dating apps</strong> <span class="tag date">dating</span></td><td>Match cego</td><td class="n">Não</td><td class="n">Não</td><td class="y">Sim</td><td class="p">Variável</td><td class="p">Às vezes</td><td>Sem ingestão de chats</td></tr>
+      <tr><td class="num">8</td><td><strong>Match / eHarmony</strong> <span class="tag date">dating</span></td><td>Questionário</td><td class="n">Survey</td><td class="n">Algoritmo</td><td class="n">Não</td><td class="y">Compat.</td><td class="p">Manual</td><td>Formulário ≠ histórico vivo</td></tr>
+      <tr><td class="num">9</td><td><strong>Hurble</strong> <span class="tag">lab</span></td><td>Roulette social</td><td class="n">Não</td><td class="n">Não</td><td class="p">Acaso</td><td class="n">—</td><td class="n">Não</td><td>Outro job-to-be-done</td></tr>
+      <tr><td class="num">—</td><td><strong>Cupido</strong> <span class="tag ai">alvo</span></td><td>Agente matchmaker</td><td class="y">Sim</td><td class="y">Sim</td><td class="y">Sim</td><td class="y">Sim</td><td class="y">Sim</td><td>—</td></tr>
+    </tbody>
+  </table>
+
+  <h2>3. Levar / evitar (marca & produto)</h2>
+  <div class="card">
+    <ul>
+      <li><strong>Levar:</strong> clareza de “agente falando” (Hinge-level honesty); revelação como momento (Teaser); calendário como CTA (não só chat).</li>
+      <li><strong>Evitar:</strong> purple dark dating clichê; copy de “rizz”; foto-grid como home; glow cyberpunk RoleGo-like.</li>
+      <li><strong>Posição Cupido:</strong> coral (conexão) + teal (agente) em canvas light; anonimato até limiar.</li>
+    </ul>
+  </div>
+
+  <h2>4. Ranking priorizado p/ próximos prints</h2>
+  <div class="card">
+    <ol style="margin-left:18px;color:#C9C2D0">
+      <li>Hinge — prompts / contexto</li>
+      <li>Teaser — revelação</li>
+      <li>Rizz / YourMove — o que <em>não</em> ser</li>
+      <li>Bumble — onboarding intenção</li>
+      <li>Blind dating — UI anônima</li>
+    </ol>
+  </div>
+
+  <p class="foot">Cupido · benchmarking v1 · 2026-11-04 · rollback: apagar esta pasta</p>
+</div>
+</body>
+</html>

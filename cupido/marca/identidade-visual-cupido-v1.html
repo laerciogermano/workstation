@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cupido | Identidade visual v1</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --coral:#D6456A;--coral-deep:#A82E4F;--coral-soft:#FCE8EE;
+  --teal:#2A9D8F;--teal-deep:#1F756B;--teal-soft:#E4F5F2;
+  --ink:#1A1520;--muted:#6B6572;--line:#E4DFE6;--bg:#F6F5F8;--white:#fff;--gold:#C4A35A;
+  --grad:linear-gradient(135deg,#A82E4F 0%,#D6456A 48%,#2A9D8F 100%);
+  --font:"Manrope",system-ui,sans-serif;--display:"Sora",system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#C9C3D0;color:var(--ink);font-family:var(--font);font-size:13px;line-height:1.55;
+  -webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{padding:24px 0}
+@page{size:297mm 210mm;margin:0}
+.page{width:297mm;height:210mm;margin:0 auto 24px;padding:14mm 16mm 11mm;position:relative;overflow:hidden;
+  background:var(--white);box-shadow:0 8px 30px rgba(26,21,32,.16);display:flex;flex-direction:column}
+.page.mist{background:var(--bg)}
+.page.cover{background:var(--grad);color:#fff;padding:0}
+@media print{html,body{background:none;padding:0}.page{margin:0;box-shadow:none;break-after:page}.no-print{display:none!important}}
+.eyebrow{font-size:12px;font-weight:700;color:var(--coral);display:flex;align-items:center;gap:10px}
+.eyebrow b{display:inline-flex;align-items:center;justify-content:center;min-width:28px;height:22px;padding:0 8px;border-radius:8px;background:var(--coral);color:#fff;font-size:12px}
+.cover .eyebrow{color:rgba(255,255,255,.85)}.cover .eyebrow b{background:rgba(255,255,255,.2)}
+h2{font-family:var(--display);font-weight:800;font-size:30px;line-height:1.12;margin:6px 0 14px;letter-spacing:-.02em}
+h3{font-family:var(--display);font-size:15px;margin-bottom:4px}
+.lead{font-size:14.5px;color:var(--muted);max-width:640px}
+.cover .lead{color:rgba(255,255,255,.88)}
+.foot{margin-top:auto;padding-top:9px;border-top:1px solid var(--line);display:flex;justify-content:space-between;font-size:10px;color:var(--muted)}
+.cover .foot{border-color:rgba(255,255,255,.25);color:rgba(255,255,255,.75)}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+.card{border-radius:14px;padding:16px;background:var(--bg);border:1px solid var(--line)}
+.mist .card{background:var(--white)}
+.wm{font-family:var(--display);font-weight:800;letter-spacing:-.03em;line-height:1}
+.wm .a{color:var(--ink)}.wm .b{color:var(--coral)}
+.wm.on-dark .a,.wm.on-dark .b{color:#fff}
+.sym{width:72px;height:72px;border-radius:20px;background:var(--grad);display:grid;place-items:center;box-shadow:0 8px 22px rgba(168,46,79,.28)}
+.sym svg{width:58%;height:58%}
+.sw{border-radius:14px;overflow:hidden;border:1px solid var(--line);background:#fff}
+.sw .c{height:56px}.sw .t{padding:8px 10px 10px}.sw b{display:block;font-size:12.5px}.sw code{font-size:11px;color:var(--muted)}
+.btn{display:inline-flex;align-items:center;justify-content:center;height:40px;padding:0 20px;border-radius:999px;font-weight:700;font-size:13px}
+.btn.pri{background:var(--coral);color:#fff}.btn.sec{border:1.5px solid var(--teal);color:var(--teal-deep);background:#fff}
+.chip{display:inline-flex;align-items:center;height:26px;padding:0 12px;border-radius:999px;font-size:11px;font-weight:700;background:var(--coral-soft);color:var(--coral-deep)}
+.chip.teal{background:var(--teal-soft);color:var(--teal-deep)}
+ul.dots{list-style:none;display:grid;gap:6px}ul.dots li{position:relative;padding-left:16px}
+ul.dots li::before{content:"";position:absolute;left:0;top:.55em;width:6px;height:6px;border-radius:50%;background:var(--coral)}
+.cover-inner{padding:18mm 16mm;height:100%;display:flex;flex-direction:column}
+.cover h1{font-family:var(--display);font-size:64px;font-weight:800;letter-spacing:-.04em;line-height:1;margin:24px 0 12px}
+.label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}
+.phone{width:190px;height:390px;border-radius:28px;padding:8px;background:var(--ink);flex:none}
+.phone .scr{height:100%;border-radius:22px;background:var(--bg);padding:14px 12px;display:flex;flex-direction:column}
+</style>
+</head>
+<body>
+
+<section class="page cover">
+  <div class="cover-inner">
+    <div class="eyebrow"><b>01</b> Identidade visual v1</div>
+    <h1>Cupido</h1>
+    <p class="lead">O agente que te conhece pelo histórico, conversa no escuro e só revela quando o fit é real.</p>
+    <div class="foot"><span>cupido · marca</span><span>2026-11-04</span></div>
+  </div>
+</section>
+
+<section class="page">
+  <div class="eyebrow"><b>02</b> Essência</div>
+  <h2>Agente íntimo, não swipe barulhento</h2>
+  <div class="grid g2">
+    <div>
+      <p class="lead">Cupido trabalha por você: importa chats, calibra na conversa, fala com candidatos anônimos e entrega match com contexto — ou marca o encontro.</p>
+      <ul class="dots" style="margin-top:16px">
+        <li>Confiança > hype</li>
+        <li>Anonimato até o limiar</li>
+        <li>Teal = agente · Coral = conexão</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="label">Tom de voz</div>
+      <h3>Calmo, direto, íntimo</h3>
+      <p style="color:var(--muted);margin-top:8px">“Seu agente está conversando” em vez de “Achamos seu crush!!!”. Sem jargão de LLM na UI.</p>
+    </div>
+  </div>
+  <div class="foot"><span>Cupido</span><span>02 / essência</span></div>
+</section>
+
+<section class="page mist">
+  <div class="eyebrow"><b>03</b> Logo</div>
+  <h2>Wordmark + nó de conexão</h2>
+  <div class="grid g2" style="align-items:center">
+    <div>
+      <div class="wm" style="font-size:56px"><span class="a">Cup</span><span class="b">ido</span></div>
+      <p class="lead" style="margin-top:16px">Símbolo: dois arcos que se encontram — não coração candy, não cupido barroco.</p>
+      <div style="display:flex;gap:12px;margin-top:18px;align-items:center">
+        <div class="sym"><svg viewBox="0 0 64 64" fill="none"><path d="M12 40c8-18 32-18 40 0" stroke="#fff" stroke-width="5" stroke-linecap="round"/><path d="M12 24c8 18 32 18 40 0" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".85"/></svg></div>
+        <span class="chip">símbolo app</span>
+      </div>
+    </div>
+    <div class="card">
+      <ul class="dots">
+        <li>Não esticar / não outline neon</li>
+        <li>Respiro = altura do C</li>
+        <li>Mínimo: wordmark 120px · símbolo 24px</li>
+        <li>Kit SVG/PNG: card Criar logo</li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot"><span>Cupido</span><span>03 / logo</span></div>
+</section>
+
+<section class="page">
+  <div class="eyebrow"><b>04</b> Cores</div>
+  <h2>Coral · teal · ink</h2>
+  <div class="grid g4">
+    <div class="sw"><div class="c" style="background:#D6456A"></div><div class="t"><b>Coral</b><code>#D6456A</code><small>CTA / match</small></div></div>
+    <div class="sw"><div class="c" style="background:#2A9D8F"></div><div class="t"><b>Teal</b><code>#2A9D8F</code><small>Agente</small></div></div>
+    <div class="sw"><div class="c" style="background:#1A1520"></div><div class="t"><b>Ink</b><code>#1A1520</code><small>Texto</small></div></div>
+    <div class="sw"><div class="c" style="background:#F6F5F8"></div><div class="t"><b>Mist</b><code>#F6F5F8</code><small>Fundo</small></div></div>
+    <div class="sw"><div class="c" style="background:#A82E4F"></div><div class="t"><b>Coral deep</b><code>#A82E4F</code></div></div>
+    <div class="sw"><div class="c" style="background:#1F756B"></div><div class="t"><b>Teal deep</b><code>#1F756B</code></div></div>
+    <div class="sw"><div class="c" style="background:#C4A35A"></div><div class="t"><b>Gold</b><code>#C4A35A</code><small>Encontro</small></div></div>
+    <div class="sw"><div class="c" style="background:var(--grad)"></div><div class="t"><b>Gradiente</b><code>135°</code></div></div>
+  </div>
+  <div class="foot"><span>Cupido</span><span>04 / cores</span></div>
+</section>
+
+<section class="page mist">
+  <div class="eyebrow"><b>05</b> Tipografia</div>
+  <h2>Sora + Manrope</h2>
+  <div class="grid g2">
+    <div class="card">
+      <div class="label">Display</div>
+      <div style="font-family:var(--display);font-weight:800;font-size:36px;letter-spacing:-.03em">Sora ExtraBold</div>
+      <p style="color:var(--muted);margin-top:8px">Títulos, wordmark, momentos de match.</p>
+    </div>
+    <div class="card">
+      <div class="label">UI</div>
+      <div style="font-weight:600;font-size:22px">Manrope Medium</div>
+      <p style="color:var(--muted);margin-top:8px">Corpo, chats, formulários. 400–700.</p>
+    </div>
+  </div>
+  <div class="foot"><span>Cupido</span><span>05 / tipo</span></div>
+</section>
+
+<section class="page">
+  <div class="eyebrow"><b>06</b> Componentes</div>
+  <h2>CTA coral · status teal</h2>
+  <div class="grid g2">
+    <div class="card">
+      <div class="label">Botões</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px">
+        <span class="btn pri">Marcar encontro</span>
+        <span class="btn sec">Ver contexto</span>
+      </div>
+      <div style="margin-top:14px;display:flex;gap:8px">
+        <span class="chip">Match 92%</span>
+        <span class="chip teal">Agente ativo</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="label">Regras</div>
+      <ul class="dots">
+        <li>Um CTA coral por tela</li>
+        <li>Teal só para o agente / progresso</li>
+        <li>Gold sparing no card de encontro</li>
+        <li>Anônimo = avatar geométrico</li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot"><span>Cupido</span><span>06 / UI</span></div>
+</section>
+
+<section class="page mist">
+  <div class="eyebrow"><b>07</b> App</div>
+  <h2>Momentos-chave</h2>
+  <div style="display:flex;gap:24px;align-items:flex-start;justify-content:center;margin-top:8px">
+    <div>
+      <div class="phone"><div class="scr">
+        <div class="wm" style="font-size:18px"><span class="a">Cup</span><span class="b">ido</span></div>
+        <p style="font-size:11px;color:var(--muted);margin:10px 0">Seu agente está conversando com 3 candidatos.</p>
+        <div style="background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px;margin-bottom:8px">
+          <span class="chip teal" style="margin-bottom:6px">anon</span>
+          <div style="font-weight:700;font-size:12px">Candidato ···</div>
+          <div style="font-size:11px;color:var(--muted)">Fit 78% · conversando</div>
+        </div>
+        <div style="margin-top:auto" class="btn pri" style="width:100%;height:36px;font-size:12px">Abrir Cupido</div>
+      </div></div>
+      <div style="text-align:center;margin-top:8px;font-weight:700;font-size:12px">Home agente</div>
+    </div>
+    <div>
+      <div class="phone"><div class="scr">
+        <div style="font-family:var(--display);font-weight:800;font-size:22px;color:var(--coral);margin-top:20px">É match</div>
+        <p style="font-size:11px;color:var(--muted);margin:8px 0 12px">Vocês compartilham humor seco e planos de viagem curtos.</p>
+        <div class="btn pri" style="width:100%;height:36px;font-size:12px;margin-bottom:8px">Marcar encontro</div>
+        <div class="btn sec" style="width:100%;height:36px;font-size:12px">Conversar agora</div>
+      </div></div>
+      <div style="text-align:center;margin-top:8px;font-weight:700;font-size:12px">Revelação</div>
+    </div>
+  </div>
+  <div class="foot"><span>Cupido</span><span>07 / app</span></div>
+</section>
+
+<section class="page cover">
+  <div class="cover-inner">
+    <div class="eyebrow"><b>08</b> Contracapa</div>
+    <h1 style="font-size:48px;margin-top:40px">Encontre.<br>Sem barulho.</h1>
+    <p class="lead">Tokens: <code>identidade-visual.md</code> · Protótipo: <code>docs/prototipos/</code></p>
+    <div class="foot"><span>Cupido v1</span><span>fim</span></div>
+  </div>
+</section>
+
+</body>
+</html>

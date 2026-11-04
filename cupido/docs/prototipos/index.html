@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cupido — Protótipo alta fidelidade</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --coral:#D6456A;--coral-deep:#A82E4F;--coral-soft:#FCE8EE;
+  --teal:#2A9D8F;--teal-deep:#1F756B;--teal-soft:#E4F5F2;
+  --ink:#1A1520;--muted:#6B6572;--line:#E4DFE6;--bg:#F6F5F8;--white:#fff;--gold:#C4A35A;
+  --grad:linear-gradient(135deg,#A82E4F 0%,#D6456A 48%,#2A9D8F 100%);
+  --f:'Manrope',system-ui,sans-serif;--d:'Sora',system-ui,sans-serif;
+  --r:14px;--pill:999px;
+  --shadow:0 1px 2px rgba(26,21,32,.06),0 8px 24px rgba(26,21,32,.06);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--f);color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased;min-height:100vh}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+a{color:var(--coral);text-decoration:none;cursor:pointer}
+.wrap{max-width:1500px;margin:0 auto;padding:0 40px}
+.hero{padding:48px 0 28px}
+.chipnum{display:inline-block;padding:6px 14px;border:1.5px solid var(--coral);border-radius:12px;font-weight:800;font-size:14px;color:var(--coral-deep);background:var(--coral-soft);margin-bottom:14px}
+.htitle{font-family:var(--d);font-weight:800;font-size:clamp(32px,5vw,52px);letter-spacing:-.03em;line-height:1.05}
+.hsub{color:var(--muted);margin-top:14px;max-width:720px;font-size:15px;line-height:1.6}
+.hactions{margin-top:22px;display:flex;gap:10px;flex-wrap:wrap}
+.habtn{padding:10px 18px;border-radius:var(--pill);font-weight:700;font-size:13px;border:1px solid var(--line);background:var(--white)}
+.habtn.p{background:var(--coral);color:#fff;border-color:var(--coral)}
+.nav{position:sticky;top:0;z-index:20;background:rgba(246,245,248,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;gap:6px;overflow-x:auto;padding:12px 40px}
+.nav a{white-space:nowrap;padding:8px 14px;border-radius:var(--pill);border:1px solid var(--line);color:var(--muted);font-size:13px;font-weight:600;background:var(--white)}
+.nav a b{color:var(--coral);margin-right:6px}
+.flow{padding:48px 0 12px}
+.stitle{font-family:var(--d);font-weight:800;font-size:28px;letter-spacing:-.02em}
+.sdesc{color:var(--muted);margin-top:8px;max-width:880px;font-size:14px;line-height:1.55}
+.row{display:flex;gap:0;align-items:flex-start;overflow-x:auto;padding:28px 4px 24px}
+.step{display:flex;flex-direction:column;align-items:center;gap:10px;flex:none}
+.step .lbl{font-weight:700;font-size:15px}
+.step .meta{font-size:11px;color:var(--muted);text-align:center;max-width:280px;line-height:1.4}
+.arrow{flex:none;align-self:center;width:40px;height:2px;margin:0 6px;margin-top:-36px;background:currentColor;position:relative;color:var(--coral)}
+.arrow.teal{color:var(--teal)}
+.arrow::after{content:"";position:absolute;right:-1px;top:-5px;width:10px;height:10px;border-top:2px solid currentColor;border-right:2px solid currentColor;transform:rotate(45deg)}
+.phone{--pc:var(--coral);width:300px;height:640px;border-radius:40px;padding:6px;background:var(--ink);border:2px solid var(--pc);flex:none;position:relative;box-shadow:var(--shadow);cursor:pointer;transition:transform .2s}
+.row .phone:hover{transform:translateY(-3px)}
+.phone.teal{--pc:var(--teal)}
+.scr{position:relative;width:100%;height:100%;border-radius:34px;overflow:hidden;background:var(--white);display:flex;flex-direction:column;font-size:12.5px;line-height:1.45}
+.row .scr *{pointer-events:none}
+.notch{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:88px;height:22px;border-radius:12px;background:var(--ink);z-index:30}
+.sb{height:34px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:6px 22px 0;font-size:11px;font-weight:700;z-index:25}
+.body{flex:1;overflow-y:auto;padding:8px 14px 16px;scrollbar-width:none}
+.body::-webkit-scrollbar{display:none}
+.body.tb{padding-bottom:78px}.body.ft{padding-bottom:90px}
+.top{display:flex;align-items:center;gap:8px;min-height:36px;margin-bottom:6px}
+.top .t{font-weight:700;font-size:13px}.top .sp{flex:1}
+.wm{font-family:var(--d);font-weight:800;letter-spacing:-.03em;display:inline-flex}
+.wm b{color:var(--ink)}.wm i{color:var(--coral);font-style:normal}
+.h1{font-family:var(--d);font-weight:800;font-size:22px;letter-spacing:-.02em;margin:4px 0 6px}
+.sub{color:var(--muted);font-size:12.5px;margin-bottom:12px}
+.btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;height:44px;border-radius:var(--pill);font-weight:700;font-size:13px}
+.btn.p{background:var(--coral);color:#fff;box-shadow:0 6px 16px rgba(214,69,106,.25)}
+.btn.s{border:1.5px solid var(--line);background:var(--white)}
+.btn.t{border:1.5px solid var(--teal);color:var(--teal-deep);background:var(--white)}
+.btn.gh{color:var(--coral);height:36px}
+.stack{display:flex;flex-direction:column;gap:8px}
+.field{margin-bottom:10px}
+.field label{display:block;font-size:11px;font-weight:600;color:var(--muted);margin-bottom:5px}
+.inp{height:42px;border-radius:8px;border:1px solid var(--line);background:var(--bg);display:flex;align-items:center;padding:0 12px;color:var(--muted);font-size:12.5px}
+.inp.f{border-color:var(--coral);box-shadow:0 0 0 3px rgba(214,69,106,.12);color:var(--ink);background:#fff}
+.card{border-radius:var(--r);background:var(--white);border:1px solid var(--line);box-shadow:var(--shadow);padding:12px}
+.badge{display:inline-flex;align-items:center;height:20px;padding:0 8px;border-radius:var(--pill);font-size:10px;font-weight:700;text-transform:uppercase}
+.badge.c{background:var(--coral-soft);color:var(--coral-deep)}
+.badge.t{background:var(--teal-soft);color:var(--teal-deep)}
+.badge.g{background:#F7EFDA;color:#8A6E2F}
+.av{width:40px;height:40px;border-radius:14px;background:var(--grad);flex:none;display:grid;place-items:center;color:#fff;font-weight:800}
+.av.anon{background:conic-gradient(from 120deg,#2A9D8F,#D6456A,#C4A35A,#2A9D8F);border-radius:50%}
+.av.lg{width:72px;height:72px;border-radius:50%;font-size:28px}
+.muted{color:var(--muted)}.b{font-weight:700}.xs{font-size:10.5px}.sm{font-size:12px}
+.flex{display:flex;align-items:center}.between{justify-content:space-between}.gap8{gap:8px}.gap10{gap:10px}
+.col{display:flex;flex-direction:column}.grow{flex:1;min-width:0}
+.mt4{margin-top:4px}.mt8{margin-top:8px}.mt12{margin-top:12px}.mt16{margin-top:16px}.mb8{margin-bottom:8px}.mb12{margin-bottom:12px}
+.chiprow{display:flex;gap:6px;flex-wrap:wrap}
+.chip{height:28px;padding:0 12px;border-radius:var(--pill);border:1px solid var(--line);font-size:11px;font-weight:600;color:var(--muted);display:inline-flex;align-items:center;background:#fff}
+.chip.on{background:var(--coral-soft);border-color:var(--coral);color:var(--coral-deep)}
+.chip.ton{background:var(--teal-soft);border-color:var(--teal);color:var(--teal-deep)}
+.tabbar{position:absolute;left:0;right:0;bottom:0;height:66px;padding:6px 4px 12px;background:rgba(255,255,255,.96);border-top:1px solid var(--line);display:flex;justify-content:space-around;align-items:flex-end;z-index:20}
+.tab{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:9px;font-weight:600;color:var(--muted);width:56px}
+.tab.on{color:var(--coral-deep)}
+.foot{position:absolute;left:0;right:0;bottom:0;padding:10px 14px 18px;background:linear-gradient(transparent,#fff 28%);z-index:15}
+.splash{background:var(--grad);color:#fff;display:flex;align-items:center;justify-content:center}
+.splash-inner{padding:28px;text-align:center;width:100%}
+.splash .wm b,.splash .wm i{color:#fff}
+.msg{max-width:85%;padding:10px 12px;border-radius:14px;font-size:12px;margin-bottom:8px;line-height:1.4}
+.msg.bot{background:var(--teal-soft);color:var(--teal-deep);border-bottom-left-radius:4px}
+.msg.me{background:var(--coral-soft);color:var(--coral-deep);margin-left:auto;border-bottom-right-radius:4px}
+.msg.sys{background:var(--bg);color:var(--muted);margin:0 auto;font-size:11px;text-align:center;max-width:95%}
+.progress{height:6px;border-radius:99px;background:var(--line);overflow:hidden}
+.progress i{display:block;height:100%;background:var(--teal);border-radius:99px}
+.ctx{background:var(--bg);border-left:3px solid var(--coral);padding:10px 12px;border-radius:0 10px 10px 0;font-size:12px;color:var(--muted)}
+footer.page{padding:48px 0 72px;color:var(--muted);font-size:12px;text-align:center}
+/* player */
+#player{display:none;position:fixed;inset:0;z-index:100;background:rgba(26,21,32,.55);align-items:center;justify-content:center;padding:20px}
+#player.on{display:flex}
+#player .stage{display:flex;gap:20px;align-items:stretch;max-width:920px;width:100%}
+#player .device{flex:none}
+#player .notes{flex:1;background:var(--white);border-radius:16px;padding:20px;border:1px solid var(--line);max-height:640px;overflow:auto}
+#player .notes h3{font-family:var(--d);font-size:18px;margin-bottom:8px}
+#player .notes p{color:var(--muted);font-size:13px;margin-bottom:10px}
+#player .controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+#player .controls button{padding:8px 14px;border-radius:var(--pill);border:1px solid var(--line);font-weight:700;font-size:12px;background:var(--bg)}
+#player .hint{font-size:11px;color:var(--muted);margin-top:12px}
+#player .device .scr *{pointer-events:auto}
+#player .device .phone{cursor:default}
+.hl[data-go]{outline:2px dashed transparent}
+#player.show-hot .hl[data-go]{outline-color:var(--coral);outline-offset:2px}
+</style>
+</head>
+<body>
+
+<header class="hero wrap">
+  <div class="chipnum">Cupido · protótipo HF</div>
+  <h1 class="htitle">Agente encontra.<br>Você só aparece no fit.</h1>
+  <p class="hsub">Alta fidelidade a partir do <b>PRD</b> e da <b>identidade v1</b>. Histórico → Cupido conversa anônimo → match com contexto → encontro. Sem implementação de app.</p>
+  <div class="hactions">
+    <button class="habtn p" id="btnNav">▶ Navegar no protótipo</button>
+    <a class="habtn" href="../prd.md">PRD</a>
+    <a class="habtn" href="../../marca/identidade-visual-cupido-v1.html">Identidade</a>
+  </div>
+</header>
+
+<nav class="nav"><div class="wrap">
+  <a href="#f-conta"><b>01</b> Conta</a>
+  <a href="#f-onb"><b>02</b> Onboarding</a>
+  <a href="#f-agente"><b>03</b> Agente</a>
+  <a href="#f-match"><b>04</b> Match</a>
+  <a href="#f-enc"><b>05</b> Encontro</a>
+  <a href="#f-perfil"><b>06</b> Perfil</a>
+</div></nav>
+
+<!-- CONTAS -->
+<section class="flow wrap" id="f-conta">
+  <h2 class="stitle">01 · Conta</h2>
+  <p class="sdesc">Entrada no produto. Consentimento de Termos e Privacidade obrigatório antes de histórico.</p>
+  <div class="row">
+    <div class="step">
+      <div class="phone" data-open="T-01"><div class="scr" id="T-01">
+        <div class="notch"></div>
+        <div class="splash" style="flex:1">
+          <div class="splash-inner">
+            <div class="wm xl" style="font-size:36px;justify-content:center"><b>Cup</b><i>ido</i></div>
+            <p class="splash-sub" style="opacity:.9;margin:14px 0 28px;font-size:14px">Seu agente encontra a pessoa certa.</p>
+            <button class="btn p hl" data-go="T-02" style="background:#fff;color:var(--coral-deep)">Começar</button>
+            <button class="btn gh hl" data-go="T-03" style="color:#fff;margin-top:8px">Já tenho conta</button>
+          </div>
+        </div>
+      </div></div>
+      <div class="lbl">T-01 Splash</div>
+      <div class="meta">Entrada · CTA único</div>
+    </div>
+    <div class="arrow"></div>
+    <div class="step">
+      <div class="phone" data-open="T-02"><div class="scr" id="T-02">
+        <div class="notch"></div><div class="sb"><span>9:41</span><span>●●</span></div>
+        <div class="body ft">
+          <div class="wm" style="font-size:18px"><b>Cup</b><i>ido</i></div>
+          <div class="h1">Criar conta</div>
+          <p class="sub">E-mail e senha. Sem revelar quem você é aos candidatos ainda.</p>
+          <div class="field"><label>E-mail</label><div class="inp f">ana@email.com</div></div>
+          <div class="field"><label>Senha</label><div class="inp">••••••••</div></div>
+          <div class="flex gap8 mb12" style="font-size:11.5px;color:var(--muted)"><span style="width:16px;height:16px;border-radius:5px;background:var(--coral);flex:none"></span> Aceito Termos e Privacidade</div>
+          <div class="foot"><button class="btn p hl" data-go="T-04">Continuar</button></div>
+        </div>
+      </div></div>
+      <div class="lbl">T-02 Criar conta</div>
+      <div class="meta">RF-01</div>
+    </div>
+    <div class="arrow"></div>
+    <div class="step">
+      <div class="phone" data-open="T-03"><div class="scr" id="T-03">
+        <div class="notch"></div><div class="sb"><span>9:41</span><span>●●</span></div>
+        <div class="body ft">
+          <div class="h1">Entrar</div>
+          <p class="sub">Volte a falar com o seu agente.</p>
+          <div class="field"><label>E-mail</label><div class="inp f">ana@email.com</div></div>
+          <div class="field"><label>Senha</label><div class="inp">••••••••</div></div>
+          <div class="foot">
+            <button class="btn p hl" data-go="T-08">Entrar</button>
+            <button class="btn gh hl" data-go="T-02">Criar conta</button>
+          </div>
+        </div>
+      </div></div>
+      <div class="lbl">T-03 Entrar</div>
+      <div class="meta">RF-01</div>
+    </div>
+  </div>
+</section>
+
+<!-- ONBOARDING -->
+<section class="flow wrap" id="f-onb">
+  <h2 class="stitle">02 · Onboarding + histórico</h2>
+  <p class="sdesc">Intenção + opt-in do histórico de chats. O Cupido só opera depois disso.</p>
+  <div class="row">
+    <div class="step">
+      <div class="phone teal" data-open="T-04"><div class="scr" id="T-04">
+        <div class="notch"></div><div class="sb"><span>9:41</span><span>●●</span></div>
+        <div class="body ft">
+          <div class="h1">O que você busca?</div>
+          <p class="sub">Calibra o agente. Pode mudar depois.</p>
+          <div class="chiprow mb12">
+            <span class="chip on">Relação séria</span>
+            <span class="chip">Algo leve</span>
+            <span class="chip">Ainda não sei</span>
+          </div>
+          <div class="label" style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:6px">Limites</div>
+          <div class="chiprow">
+            <span class="chip ton">Sem foto cedo</span>
+            <span class="chip ton">Só 18+</span>
+            <span class="chip">Curitiba</span>
+          </div>
+          <div class="foot"><button class="btn p hl" data-go="T-05">Continuar</button></div>
+        </div>
+      </div></div>
+      <div class="lbl">T-04 Busca</div>
+      <div class="meta">RF-02</div>
+    </div>
+    <div class="arrow teal"></div>
+    <div class="step">
+      <div class="phone teal" data-open="T-05"><div class="scr" id="T-05">
+        <div class="notch"></div><div class="sb"><span>9:41</span><span>●●</span></div>
+        <div class="body ft">
+          <div class="h1">Conectar histórico</div>
+          <p class="sub">Com consentimento. O agente usa isso pra te conhecer — não publica chats.</p>
+          <div class="card mb8 hl" data-go="T-06"><div class="flex gap10"><div class="av" style="background:#25D366">W</div><div class="grow"><div class="b">WhatsApp export</div><div class="xs muted">.zip / .txt</div></div></div></div>
+          <div class="card mb8"><div class="flex gap10"><div class="av" style="background:#E1306C">Ig</div><div class="grow"><div class="b">Instagram (cola)</div><div class="xs muted">depois</div></div></div></div>
+          <div class="card mb8"><div class="flex gap10"><div class="av" style="background:#FE3C72">T</div><div class="grow"><div class="b">Tinder / dating</div><div class="xs muted">depois</div></div></div></div>
+          <p class="xs muted mt8">Você pode revogar e apagar a qualquer momento (T-15).</p>
+          <div class="foot"><button class="btn t hl" data-go="T-07">Pular por agora</button></div>
+        </div>
+      </div></div>
+      <div class="lbl">T-05 Histórico</div>
+      <div class="meta">RF-03 · RN-02</div>
+    </div>
+    <div class="arrow teal"></div>
+    <div class="step">
+      <div class="phone teal" data-open="T-06"><div class="scr" id="T-06">
+        <div class="notch"></div><div class="sb"><span>9:41</span><span>●●</span></div>
+        <div class="body" style="display:flex;flex-direction:column;justify-content:center;text-align:center">
+          <div class="av lg" style="margin:0 auto 16px">✦</div>
+          <div class="h1">Te conhecendo…</div>
+          <p class="sub">Lendo padrões de humor, ritmos e valores. Nada vai pro outro lado cru.</p>
+          <div class="progress mb8"><i style="width:68%"></i></div>
+          <div class="xs muted">1.2k msgs · 3 conversas longas</div>
+          <button class="btn p hl mt16" data-go="T-07">Falar com o Cupido</button>
+        </div>
+      </div></div>
+      <div class="lbl">T-06 Análise</div>
+      <div class="meta">RF-04</div>
+    </div>
+  </div>
+</section>
+
+<!-- AGENTE -->
+<section class="flow wrap" id="f-agente">
+  <h2 class="stitle">03 · Agente em ação</h2>
+  <p class="sdesc">Você conversa com o Cupido; ele conversa com candidatos anônimos. Identidades ocultas (RN-01).</p>
+  <div class="row">
+    <div class="step">
+      <div class="phone teal" data-open="T-07"><div class="scr" id="T-07">
+        <div class="notch"></div><div class="sb"><span>9:41</span><span>●●</span></div>
+        <div class="body tb">
+          <div class="top"><span class="badge t">agente</span><div class="t">Cupido</div><div class="sp"></div></div>
+          <div class="msg bot">Li seu histórico. Você valoriza humor seco e planos espontâneos — confirmo?</div>
+          <div class="msg me">Isso. Sem papo furado de academia.</div>
+          <div class="msg bot">Beleza. Já estou falando com 3 pessoas compatíveis. Nenhuma sabe quem você é.</div>
+          <div class="msg sys">Agente ativo · 3 conversas</div>
+          <div class="inp f" style="margin-top:8px">Perguntar ao Cupido…</div>
+        </div>
+        <div class="tabbar">
+          <div class="tab hl" data-go="T-08">Home</div>
+          <div class="tab on">Cupido</div>
+          <div class="tab hl" data-go="T-13">Encontros</div>
+          <div class="tab hl" data-go="T-15">Perfil</div>
+        </div>
+      </div></div>
+      <div class="lbl">T-07 Chat Cupido</div>
+      <div class="meta">RF-05</div>
+    </div>
+    <div class="arrow teal"></div>
+    <div class="step">
+      <div class="phone" data-open="T-08"><div class="scr" id="T-08">
+        <div class="notch"></div><div class="sb"><span>9:41</span><span>●●</span></div>
+        <div class="body tb">
+          <div class="top brand"><div class="wm" style="font-size:18px"><b>Cup</b><i>ido</i></div><div class="sp"></div><span class="badge t">3 ativos</span></div>
+          <p class="sub">Candidatos anônimos em andamento</p>
+          <div class="card mb8 hl" data-go="T-09">
+            <div class="flex gap10">
+              <div class="av anon"></div>
+              <div class="grow"><div class="b">Candidato ···</div><div class="xs muted">Fit 78% · conversando</div>
+                <div class="progress mt8"><i style="width:78%"></i></div>
+              </div>
+            </div>
+          </div>
+          <div class="card mb8">
+            <div class="flex gap10">
+              <div class="av anon"></div>
+              <div class="grow"><div class="b">Candidato ···</div><div class="xs muted">Fit 61% · calibrando</div>
+                <div class="progress mt8"><i style="width:61%;background:var(--coral)"></i></div>
+              </div>
+            </div>
+          </div>
+          <div class="card mb8 hl" data-go="T-11" style="border-color:#f3b7c6;background:var(--coral-soft)">
+            <div class="flex gap10">
+              <div class="av anon"></div>
+              <div class="grow"><div class="b">Limiar atingido</div><div class="xs" style="color:var(--coral-deep)">Fit 92% · pronto p/ match</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="tabbar">
+          <div class="tab on">Home</div>
+          <div class="tab hl" data-go="T-07">Cupido</div>
+          <div class="tab hl" data-go="T-13">Encontros</div>
+          <div class="tab hl" data-go="T-15">Perfil</div>
+        </div>
+      </div></div>
+      <div class="lbl">T-08 Home</div>
+      <div class="meta">RF-06 · RF-08</div>
+    </div>
+    <div class="arrow teal"></div>
+    <div class="step">
+      <div class="phone teal" data-open="T-09"><div class="scr" id="T-09">
+        <div class="notch"></div><div class="sb"><span>9:41</span><span>●●</span></div>
+        <div class="body ft">
+          <div class="top"><button class="xs muted hl" data-go="T-08">←</button><div class="t">Candidato ···</div><div class="sp"></div><span class="badge t">anon</span></div>
+          <div style="text-align:center;padding:12px 0">
+            <div class="av lg anon" style="margin:0 auto"></div>
+            <div class="h1 mt8" style="font-size:18px">Fit 78%</div>
+            <p class="sub">Identidade oculta até o limiar. Sinais: humor, valores, ritmo de resposta.</p>
+          </div>
+          <div class="card mb8"><div class="b mb8">Sinais</div>
+            <div class="xs muted">Humor seco · ✓</div>
+            <div class="xs muted">Viagens curtas · ✓</div>
+            <div class="xs muted">Agenda noite · ~</div>
+          </div>
+          <div class="foot">
+            <button class="btn t hl" data-go="T-10">Ver o que o agente fala</button>
+          </div>
+        </div>
+      </div></div>
+      <div class="lbl">T-09 Anônimo</div>
+      <div class="meta">RF-06 · RN-01</div>
+    </div>
+    <div class="arrow teal"></div>
+    <div class="step">
+      <div class="phone teal" data-open="T-10"><div class="scr" id="T-10">
+        <div class="notch"></div><div class="sb"><span>9:41</span><span>●●</span></div>
+        <div class="body ft">
+          <div class="top"><button class="xs muted hl" data-go="T-09">←</button><div class="t">Conversa do agente</div><div class="sp"></div></div>
+          <div class="msg sys">Preview · nomes ocultos · RF-07</div>
+          <div class="msg bot">Cupido (por você): Prefere sábado espontâneo ou plano com 2 dias?</div>
+          <div class="msg" style="background:var(--bg)">Eles: Sábado do nada. Odeio roteiro rígido.</div>
+          <div class="msg bot">Cupido (por você): Perfeito. E viagem de fim de semana?</div>
+          <div class="msg" style="background:var(--bg)">Eles: Sim — praia perto ou serra.</div>
+          <div class="foot"><button class="btn s hl" data-go="T-08">Voltar à home</button></div>
+        </div>
+      </div></div>
+      <div class="lbl">T-10 Preview</div>
+      <div class="meta">RF-07 · RNF-03</div>
+    </div>
+  </div>
+</section>
+
+<!-- MATCH -->
+<section class="flow wrap" id="f-match">
+  <h2 class="stitle">04 · Match + contexto</h2>
+  <p class="sdesc">Limiar dos dois lados → revelação + resumo do porquê (RN-04, RN-05).</p>
+  <div class="row">
+    <div class="step">
+      <div class="phone" data-open="T-11"><div class="scr" id="T-11">
+        <div class="notch"></div><div class="sb"><span>9:41</span><span>●●</span></div>
+        <div class="body ft" style="text-align:center">
+          <div class="badge c" style="margin:12px auto">match 92%</div>
+          <div class="h1" style="color:var(--coral)">É match</div>
+          <div class="flex gap10" style="justify-content:center;margin:16px 0">
+            <div class="av lg">A</div>
+            <div class="av lg" style="background:linear-gradient(135deg,#2A9D8F,#C4A35A)">L</div>
+          </div>
+          <div class="b">Ana ↔ Lia</div>
+          <p class="sub">Agora vocês podem se ver. Contexto abaixo — sem dump do histórico.</p>
+          <div class="ctx" style="text-align:left">
+            Vocês compartilham humor seco, preferem planos espontâneos e falaram de viagens curtas com o mesmo entusiasmo. O agente mediu ritmo de resposta alto dos dois lados.
+          </div>
+          <div class="foot stack">
+            <button class="btn p hl" data-go="T-12">Marcar encontro</button>
+            <button class="btn s hl" data-go="T-14">Conversar agora</button>
+          </div>
+        </div>
+      </div></div>
+      <div class="lbl">T-11 Match</div>
+      <div class="meta">RF-09</div>
+    </div>
+  </div>
+</section>
+
+<!-- ENCONTRO -->
+<section class="flow wrap" id="f-enc">
+  <h2 class="stitle">05 · Encontro + chat humano</h2>
+  <p class="sdesc">Agenda com aceite mútuo (RN-06). Chat humano opcional pós-match.</p>
+  <div class="row">
+    <div class="step">
+      <div class="phone" data-open="T-12"><div class="scr" id="T-12">
+        <div class="notch"></div><div class="sb"><span>9:41</span><span>●●</span></div>
+        <div class="body ft">
+          <div class="h1">Marcar encontro</div>
+          <p class="sub">Proposta enviada aos dois. Só agenda com aceite explícito.</p>
+          <div class="field"><label>Quando</label><div class="inp f">Sáb 15 · 18:30</div></div>
+          <div class="field"><label>Onde / modo</label><div class="inp">Café Batel · presencial</div></div>
+          <div class="chiprow mb12">
+            <span class="chip on">Presencial</span>
+            <span class="chip">Video</span>
+          </div>
+          <div class="foot"><button class="btn p hl" data-go="T-13">Enviar proposta</button></div>
+        </div>
+      </div></div>
+      <div class="lbl">T-12 Agenda</div>
+      <div class="meta">RF-10</div>
+    </div>
+    <div class="arrow"></div>
+    <div class="step">
+      <div class="phone" data-open="T-13"><div class="scr" id="T-13">
+        <div class="notch"></div><div class="sb"><span>9:41</span><span>●●</span></div>
+        <div class="body tb">
+          <div class="h1">Encontros</div>
+          <div class="card mb8" style="border-color:#e6d7a8;background:#FBF6EA">
+            <span class="badge g">confirmado</span>
+            <div class="b mt8">Ana ↔ Lia</div>
+            <div class="sm muted">Sáb 15 · 18:30 · Café Batel</div>
+            <div class="xs muted mt4">Contexto salvo no match</div>
+          </div>
+          <div class="card"><div class="muted xs">Nenhum pendente</div></div>
+        </div>
+        <div class="tabbar">
+          <div class="tab hl" data-go="T-08">Home</div>
+          <div class="tab hl" data-go="T-07">Cupido</div>
+          <div class="tab on">Encontros</div>
+          <div class="tab hl" data-go="T-15">Perfil</div>
+        </div>
+      </div></div>
+      <div class="lbl">T-13 Confirmado</div>
+      <div class="meta">RF-10 · RN-06</div>
+    </div>
+    <div class="arrow"></div>
+    <div class="step">
+      <div class="phone" data-open="T-14"><div class="scr" id="T-14">
+        <div class="notch"></div><div class="sb"><span>9:41</span><span>●●</span></div>
+        <div class="body ft">
+          <div class="top"><div class="av" style="width:32px;height:32px;border-radius:50%;font-size:12px">L</div><div class="t">Lia</div><div class="sp"></div><span class="badge c">humano</span></div>
+          <div class="msg sys">Chat humano · pós-match · agente saiu</div>
+          <div class="msg me">Oi! O Cupido acertou o humor seco haha</div>
+          <div class="msg" style="background:var(--bg)">Oi Ana — sábado no Batel tá ótimo.</div>
+          <div class="inp f" style="margin-top:8px">Mensagem…</div>
+          <div class="foot"><button class="btn s hl" data-go="T-12">Propor horário</button></div>
+        </div>
+      </div></div>
+      <div class="lbl">T-14 Chat humano</div>
+      <div class="meta">RF-11</div>
+    </div>
+  </div>
+</section>
+
+<!-- PERFIL -->
+<section class="flow wrap" id="f-perfil">
+  <h2 class="stitle">06 · Perfil e privacidade</h2>
+  <p class="sdesc">Pausar agente, revogar histórico, excluir conta (RF-12).</p>
+  <div class="row">
+    <div class="step">
+      <div class="phone teal" data-open="T-15"><div class="scr" id="T-15">
+        <div class="notch"></div><div class="sb"><span>9:41</span><span>●●</span></div>
+        <div class="body tb">
+          <div class="h1">Perfil</div>
+          <div class="card mb8 flex between"><div><div class="b">Agente</div><div class="xs muted">Conversando por você</div></div><div style="width:38px;height:22px;border-radius:12px;background:var(--teal);position:relative"><i style="position:absolute;top:2px;right:2px;width:16px;height:16px;border-radius:50%;background:#fff;display:block"></i></div></div>
+          <div class="card mb8"><div class="b">Histórico conectado</div><div class="xs muted mt4">WhatsApp · revogar</div></div>
+          <div class="card mb8"><div class="b">Preferências de busca</div><div class="xs muted mt4">Relação séria · Curitiba</div></div>
+          <div class="card" style="border-color:#f3b7b7"><div class="b" style="color:var(--coral-deep)">Excluir conta</div><div class="xs muted mt4">LGPD · apaga histórico e matches</div></div>
+        </div>
+        <div class="tabbar">
+          <div class="tab hl" data-go="T-08">Home</div>
+          <div class="tab hl" data-go="T-07">Cupido</div>
+          <div class="tab hl" data-go="T-13">Encontros</div>
+          <div class="tab on">Perfil</div>
+        </div>
+      </div></div>
+      <div class="lbl">T-15 Perfil</div>
+      <div class="meta">RF-12</div>
+    </div>
+  </div>
+</section>
+
+<footer class="page wrap">Cupido · protótipo HF · 2026-11-04 · <a href="../12-prototipos.md">inventário</a></footer>
+
+<div id="player">
+  <div class="stage">
+    <div class="device"><div class="phone" id="pPhone"><div class="scr" id="pScr"></div></div></div>
+    <div class="notes">
+      <h3 id="pTitle">Tela</h3>
+      <p id="pDesc"></p>
+      <div class="controls">
+        <button type="button" id="pPrev">← Anterior</button>
+        <button type="button" id="pNext">Próxima →</button>
+        <button type="button" id="pHot">H · hotspots</button>
+        <button type="button" id="pClose">Esc · fechar</button>
+      </div>
+      <p class="hint">Clique nas áreas com ação. Deep-link: #T-11</p>
+    </div>
+  </div>
+</div>
+
+<script>
+const NOTES={
+  'T-01':['Splash','Entrada. CTA Começar → conta; Já tenho conta → login.'],
+  'T-02':['Criar conta','RF-01. Termos obrigatórios antes do histórico.'],
+  'T-03':['Entrar','RF-01. Volta à home se já passou onboarding.'],
+  'T-04':['O que busca','RF-02. Intenção + limites para o agente.'],
+  'T-05':['Conectar histórico','RF-03 · RN-02. Opt-in WhatsApp primeiro.'],
+  'T-06':['Analisando','RF-04. Feedback de ingestão sem vazar dados.'],
+  'T-07':['Chat Cupido','RF-05. Calibração contínua com o agente.'],
+  'T-08':['Home','RF-06/08. Fila anônima + limiar de match.'],
+  'T-09':['Candidato anônimo','RN-01. Sem nome/foto até o fit.'],
+  'T-10':['Preview agente','RF-07 · RNF-03. Transparência do que o agente fala.'],
+  'T-11':['É match','RF-09. Revelação + contexto resumido.'],
+  'T-12':['Marcar encontro','RF-10 · RN-06. Proposta mútua.'],
+  'T-13':['Encontros','Lista de confirmados / pendentes.'],
+  'T-14':['Chat humano','RF-11. Pós-match; agente sai.'],
+  'T-15':['Perfil','RF-12. Pausar, revogar histórico, excluir.']
+};
+const ORDER=Object.keys(NOTES);
+let cur='T-01';
+const player=document.getElementById('player');
+const pScr=document.getElementById('pScr');
+const pPhone=document.getElementById('pPhone');
+
+function openScreen(id){
+  const src=document.getElementById(id);
+  if(!src) return;
+  cur=id;
+  pScr.innerHTML=src.innerHTML;
+  pPhone.className='phone'+(src.closest('.phone')?.classList.contains('teal')?' teal':'');
+  document.getElementById('pTitle').textContent=id+' · '+(NOTES[id]?.[0]||'');
+  document.getElementById('pDesc').textContent=NOTES[id]?.[1]||'';
+  player.classList.add('on');
+  history.replaceState(null,'','#'+id);
+  pScr.querySelectorAll('[data-go]').forEach(el=>{
+    el.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();openScreen(el.getAttribute('data-go'));});
+  });
+}
+function closePlayer(){player.classList.remove('on');history.replaceState(null,'',location.pathname+location.search);}
+function nav(d){const i=ORDER.indexOf(cur);openScreen(ORDER[(i+d+ORDER.length)%ORDER.length]);}
+
+document.getElementById('btnNav').onclick=()=>openScreen(cur);
+document.querySelectorAll('.phone[data-open]').forEach(p=>p.addEventListener('click',()=>openScreen(p.getAttribute('data-open'))));
+document.getElementById('pClose').onclick=closePlayer;
+document.getElementById('pPrev').onclick=()=>nav(-1);
+document.getElementById('pNext').onclick=()=>nav(1);
+document.getElementById('pHot').onclick=()=>player.classList.toggle('show-hot');
+document.addEventListener('keydown',e=>{
+  if(!player.classList.contains('on')) return;
+  if(e.key==='Escape') closePlayer();
+  if(e.key==='ArrowLeft'||e.key==='Backspace'){e.preventDefault();nav(-1);}
+  if(e.key==='ArrowRight') nav(1);
+  if(e.key==='h'||e.key==='H') player.classList.toggle('show-hot');
+});
+if(location.hash && NOTES[location.hash.slice(1)]) openScreen(location.hash.slice(1));
+</script>
+</body>
+</html>

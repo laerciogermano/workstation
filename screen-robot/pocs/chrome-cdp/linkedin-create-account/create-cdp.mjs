@@ -281,6 +281,7 @@ export function createLinkedInCdp(opts = {}) {
       created: false,
       existed: false,
       fingerprint,
+      debug,
     };
   }
 
@@ -292,6 +293,7 @@ export function createLinkedInCdp(opts = {}) {
       port: existing.preferredPort || existing.port,
       created: false,
       existed: true,
+      debug: existing.debug === true || debug,
     };
   }
 
@@ -313,6 +315,7 @@ export function createLinkedInCdp(opts = {}) {
     created: true,
     existed: false,
     fingerprint,
+    debug,
     profile: `~/chrome-profiles/${id}`,
   };
 }

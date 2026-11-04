@@ -9,7 +9,7 @@
  *     --job "Especialista em suprimentos e itens corporativos" \
  *     --company ConectMax
  *
- * Flags: --dry-run · --write-credenciais · --no-browser
+ * Flags: --dry-run · --write-credenciais · --no-browser · --debug
  */
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -45,7 +45,7 @@ function usage(msg) {
   console.error(`uso: node create-mailbox.mjs --first NOME --last SOBRENOME
        node create-mailbox.mjs --email LOCAL@${DOMAIN} --name "Nome Completo"
   opcional: --location · --job/--cargo · --company/--empresa · --password
-  flags: --dry-run · --write-credenciais · --no-browser`);
+  flags: --dry-run · --write-credenciais · --no-browser · --debug`);
   process.exit(msg ? 1 : 0);
 }
 
@@ -63,6 +63,7 @@ async function main() {
   const dryRun = hasFlag('--dry-run');
   const writeCredenciais = hasFlag('--write-credenciais');
   const noBrowser = hasFlag('--no-browser');
+  const debug = hasFlag('--debug');
 
   if (!email && (!first || !last)) usage('informe --first/--last ou --email');
   if (email && !name && !(first && last)) {
@@ -74,6 +75,7 @@ async function main() {
     last: last || undefined,
     name: name || undefined,
     dryRun,
+    debug,
   };
 
   log(

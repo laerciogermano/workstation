@@ -30,6 +30,7 @@ export const LI_HEADER = [
   'company',
   'cdp',
   'cdp_port',
+  'cdp_debug',
   'fp_ua',
   'fp_platform',
   'fp_lang',
@@ -207,6 +208,8 @@ export function ensureLinkedinCsvHeader() {
   const next = rows.map((r) => {
     const o = {};
     for (const h of LI_HEADER) o[h] = r[h] ?? '';
+    // Histórico: execuções anteriores eram com debug true.
+    if (!o.cdp_debug) o.cdp_debug = 'true';
     return o;
   });
   writeCsv(LI_CSV, LI_HEADER, next);
@@ -276,6 +279,7 @@ export function backfillFingerprintFromMeta() {
  *   senhaLi?: string,
  *   cidade?: string,
  *   company?: string,
+ *   cdpDebug?: boolean|string,
  *   liCriado?: 'sim'|'nao',
  *   dryRun?: boolean,
  *   writeChromeCsv?: boolean,
@@ -300,6 +304,10 @@ export function saveAccountCsv(opts = {}) {
   const cdpPort = cdpRes.port != null ? String(cdpRes.port) : '';
   const cidade = String(opts.cidade || opts.location || '').trim();
   const company = String(opts.company || opts.empresa || '').trim();
+  const debugRaw =
+    opts.cdpDebug != null ? opts.cdpDebug : cdpRes.debug != null ? cdpRes.debug : false;
+  const cdpDebug =
+    debugRaw === true || debugRaw === 'true' || debugRaw === 'sim' ? 'true' : 'false';
   const fpCols = fingerprintToCsvCols(fp);
   const observacoes = [
     `conta LI via CDP (perfil ${cdpId} :${cdpPort})`,
@@ -326,6 +334,7 @@ export function saveAccountCsv(opts = {}) {
     company,
     cdp: cdpId,
     cdp_port: cdpPort,
+    cdp_debug: cdpDebug,
     ...fpCols,
   };
 

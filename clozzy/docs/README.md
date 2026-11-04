@@ -6,7 +6,8 @@
 
 Derivados do [documento de visão](../README.md).  
 Regras para a IA na esteira: [`../config/config-ia.md`](../config/config-ia.md).  
-Timeline de prompts: [`../prompts/timeline.md`](../prompts/timeline.md).
+Timeline de prompts: [`../prompts/timeline.md`](../prompts/timeline.md).  
+Marca / benchmarking: [`../marca/README.md`](../marca/README.md) · [concorrentes](../marca/benchmarking-concorrentes/README.md).
 
 | Artefato | Arquivo | Papel no fluxo | Status |
 |----------|---------|----------------|--------|

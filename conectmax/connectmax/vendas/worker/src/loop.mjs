@@ -191,6 +191,8 @@ async function main() {
           apiUrl: API_URL,
           apiKey: API_KEY,
           dry: DRY,
+          runtime: CDP ? 'cdp' : 'avd',
+          shouldStop: () => shuttingDown,
           onClaimed: (id) => {
             currentJobId = id;
           },

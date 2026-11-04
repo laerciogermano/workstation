@@ -1,13 +1,18 @@
 /**
- * Guarda o último IP de egress do host e bloqueia nova execução se for igual.
+ * Guarda o último IP de egress do host. Worker só claima/executa quando o IP
+ * atual for diferente do último — se igual, fica em espera (poll), sem fail.
+ *
  * Estado compartilhado entre workers (AVD/CDP) no mesmo Mac.
  *
  * Env:
- *   LAST_EGRESS_IP_FILE — path do arquivo (default ~/.connectmax/last-egress-ip)
+ *   LAST_EGRESS_IP_FILE — path (default ~/.connectmax/last-egress-ip)
+ *   EGRESS_IP_TIMELINE_FILE — JSONL (default ~/.connectmax/egress-ip-timeline.jsonl)
  *   SKIP_EGRESS_IP_GUARD=1 — desliga a guarda
- *   EGRESS_IP_URL — override do endpoint (default https://api.ipify.org)
+ *   EGRESS_IP_URL — default https://api.ipify.org
+ *   EGRESS_IP_POLL_MS — intervalo do poll enquanto espera mudar (default 10000)
  */
 import {
+  appendFileSync,
   closeSync,
   existsSync,
   mkdirSync,
@@ -20,6 +25,7 @@ import { homedir } from 'node:os';
 import { dirname, join } from 'node:path';
 
 const DEFAULT_FILE = join(homedir(), '.connectmax', 'last-egress-ip');
+const DEFAULT_TIMELINE = join(homedir(), '.connectmax', 'egress-ip-timeline.jsonl');
 const DEFAULT_URL = 'https://api.ipify.org';
 const LOCK_WAIT_MS = 30_000;
 const LOCK_POLL_MS = 50;
@@ -27,6 +33,16 @@ const LOCK_POLL_MS = 50;
 export function egressIpFilePath() {
   const fromEnv = String(process.env.LAST_EGRESS_IP_FILE || '').trim();
   return fromEnv || DEFAULT_FILE;
+}
+
+export function egressIpTimelinePath() {
+  const fromEnv = String(process.env.EGRESS_IP_TIMELINE_FILE || '').trim();
+  return fromEnv || DEFAULT_TIMELINE;
+}
+
+export function egressIpPollMs() {
+  const n = Number(process.env.EGRESS_IP_POLL_MS || 10_000);
+  return Number.isFinite(n) && n >= 1000 ? n : 10_000;
 }
 
 export function isEgressIpGuardEnabled() {
@@ -59,7 +75,9 @@ export function clearLastEgressIp(filePath = egressIpFilePath()) {
   }
 }
 
-export async function fetchCurrentEgressIp(url = process.env.EGRESS_IP_URL || DEFAULT_URL) {
+export async function fetchCurrentEgressIp(
+  url = process.env.EGRESS_IP_URL || DEFAULT_URL,
+) {
   const res = await fetch(String(url), {
     signal: AbortSignal.timeout(15_000),
   });
@@ -113,26 +131,114 @@ async function withFileLock(filePath, fn) {
 }
 
 /**
- * Obtém IP atual; se igual ao último gravado, lança erro.
- * Se diferente (ou sem último), grava o atual e retorna { ip, previous }.
+ * @returns {{ ready: boolean, ip: string, previous: string|null }}
  */
-export async function assertEgressIpChanged(opts = {}) {
+export async function peekEgressIpStatus(opts = {}) {
   const filePath = opts.filePath || egressIpFilePath();
   const fetchIp = opts.fetchIp || fetchCurrentEgressIp;
+  const ip = String(await fetchIp()).trim();
+  if (!ip) throw new Error('egress IP vazio');
+  const previous = readLastEgressIp(filePath);
+  const ready = !previous || previous !== ip;
+  return { ready, ip, previous };
+}
 
-  const current = String(await fetchIp()).trim();
-  if (!current) throw new Error('egress IP vazio');
+/**
+ * Poll até o IP atual ser diferente do último (ou não haver último).
+ * Não grava o arquivo — só libera o worker para claimar.
+ *
+ * @param {{ filePath?: string, fetchIp?: Function, pollMs?: number, shouldStop?: () => boolean, onWait?: (s: object) => void, logTag?: string }} opts
+ */
+export async function waitUntilEgressIpReady(opts = {}) {
+  const filePath = opts.filePath || egressIpFilePath();
+  const fetchIp = opts.fetchIp || fetchCurrentEgressIp;
+  const pollMs = opts.pollMs || egressIpPollMs();
+  const shouldStop = opts.shouldStop || (() => false);
+  let lastLog = '';
 
+  for (;;) {
+    if (shouldStop()) {
+      const err = new Error('egress IP wait cancelado (shutdown)');
+      err.code = 'EGRESS_IP_WAIT_CANCELLED';
+      throw err;
+    }
+    let status;
+    try {
+      status = await peekEgressIpStatus({ filePath, fetchIp });
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      if (opts.onWait) {
+        opts.onWait({ ready: false, error: msg });
+      } else if (opts.logTag) {
+        console.warn(`[${opts.logTag}] egress IP lookup: ${msg} — retry ${pollMs}ms`);
+      }
+      await sleep(pollMs);
+      continue;
+    }
+    if (status.ready) {
+      if (opts.onWait) opts.onWait({ ...status, ready: true });
+      return status;
+    }
+    const line = `last=${status.previous} current=${status.ip}`;
+    if (line !== lastLog) {
+      lastLog = line;
+      if (opts.onWait) {
+        opts.onWait({ ...status, ready: false });
+      } else if (opts.logTag) {
+        console.log(
+          `[${opts.logTag}] aguardando IP mudar (${line}) — poll ${pollMs}ms`,
+        );
+      }
+    }
+    await sleep(pollMs);
+  }
+}
+
+/**
+ * Append na timeline JSONL (uma linha por operação).
+ * @param {{ ip: string, at?: string, agentId?: string, jobId?: string, jobType?: string, previous?: string|null, runtime?: string }} entry
+ */
+export function appendEgressIpTimeline(entry, timelinePath = egressIpTimelinePath()) {
+  const at = entry.at || new Date().toISOString();
+  const row = {
+    at,
+    ip: String(entry.ip || '').trim(),
+    previous: entry.previous ?? null,
+    agentId: entry.agentId || null,
+    jobId: entry.jobId || null,
+    jobType: entry.jobType || null,
+    runtime: entry.runtime || null,
+  };
+  mkdirSync(dirname(timelinePath), { recursive: true });
+  appendFileSync(timelinePath, `${JSON.stringify(row)}\n`, 'utf8');
+  return row;
+}
+
+/**
+ * Após claimar um job: grava o IP atual como último (sob lock) + timeline.
+ * Se outro processo já gravou o mesmo IP, retorna committed=false (caller deve esperar de novo).
+ */
+export async function commitEgressIp(ip, opts = {}) {
+  const filePath = opts.filePath || egressIpFilePath();
+  const timelinePath = opts.timelinePath || egressIpTimelinePath();
+  const current = String(ip).trim();
   return withFileLock(filePath, () => {
     const previous = readLastEgressIp(filePath);
     if (previous && previous === current) {
-      const err = new Error(`falha: IP igual ao último IP (${current})`);
-      err.code = 'EGRESS_IP_SAME_AS_LAST';
-      err.ip = current;
-      err.previous = previous;
-      throw err;
+      return { committed: false, ip: current, previous };
     }
     writeLastEgressIp(current, filePath);
-    return { ip: current, previous };
+    const timeline = appendEgressIpTimeline(
+      {
+        ip: current,
+        previous,
+        agentId: opts.agentId,
+        jobId: opts.jobId,
+        jobType: opts.jobType,
+        runtime: opts.runtime,
+      },
+      timelinePath,
+    );
+    return { committed: true, ip: current, previous, timeline };
   });
 }

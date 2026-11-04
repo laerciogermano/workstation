@@ -14,7 +14,7 @@
 
 **Antes → depois (lifecycle Chrome por job):** CDP ficava aberto logado entre jobs → `withLinkedInPage` sobe o Chrome e chama `stopCdp` no fim de cada operação. Escape: `CDP_KEEP_BROWSER=1`. **Rollback:** `CDP_KEEP_BROWSER=1` ou reverta o `finally` em `screen-robot/src/lib/cdp/session.js`.
 
-**Antes → depois (IP ≠ último):** jobs podiam rodar no mesmo egress seguido → no start de cada job (após claim, antes do handler) o worker consulta o IP uma vez, compara com `~/.connectmax/last-egress-ip` (compartilhado no host) e, se igual, **fail** sem executar: `falha: IP igual ao último IP (<ip>)`. Se diferente, grava o atual e segue. Sem poll contínuo. Escape: `SKIP_EGRESS_IP_GUARD=1` ou `DRY=1`. Reset: `rm ~/.connectmax/last-egress-ip`. **Rollback:** remova o bloco em `agent-cycle.mjs` / apague `src/last-egress-ip.mjs`.
+**Antes → depois (IP ≠ último):** jobs no mesmo egress seguido → worker **fica ligado** e faz poll do IP (`EGRESS_IP_POLL_MS`, default 10s). Se atual == `~/.connectmax/last-egress-ip`, **não claima** (espera mudar). Quando muda, claima/executa, grava o último IP e append em `~/.connectmax/egress-ip-timeline.jsonl` (`at`, `ip`, `previous`, `agentId`, `jobId`, `jobType`). Escape: `SKIP_EGRESS_IP_GUARD=1` / `DRY=1`. Reset último: `rm ~/.connectmax/last-egress-ip` (timeline permanece). **Rollback:** remova o wait/commit em `agent-cycle.mjs` / apague `src/last-egress-ip.mjs`.
 
 ## Modos
 
@@ -103,7 +103,9 @@ Use **chave global** no supervisor.
 | `CDP_ID` / `CDP_URL` | Perfil/porta human-cdp (obrigatório no runtime CDP) |
 | `DRY` / `ONCE` / `ALLOW_STUB` | Smoke / stubs |
 | `SKIP_EGRESS_IP_GUARD=1` | Desliga a guarda de IP repetido |
-| `LAST_EGRESS_IP_FILE` | Path do último IP (default `~/.connectmax/last-egress-ip`) |
+| `LAST_EGRESS_IP_FILE` | Último IP (default `~/.connectmax/last-egress-ip`) |
+| `EGRESS_IP_TIMELINE_FILE` | JSONL da timeline (default `~/.connectmax/egress-ip-timeline.jsonl`) |
+| `EGRESS_IP_POLL_MS` | Poll enquanto espera IP mudar (default `10000`) |
 | `EGRESS_IP_URL` | Override do lookup (default `https://api.ipify.org`) |
 
 ## Handlers

@@ -1,6 +1,7 @@
 import { spawn } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { ts } from '../../log.mjs';
 
 /** screen-robot/src a partir de vendas/worker. */
 export function resolveScreenRobotSrc() {
@@ -45,7 +46,6 @@ export function spawnNpm(cwd, args, env) {
       0,
   );
   const label = `npm ${args.join(' ')}`;
-  const ts = () => new Date().toISOString().slice(11, 19);
   console.log(
     `${ts()} [spawn] iniciando robô: ${label}${
       Number.isFinite(timeoutMs) && timeoutMs >= 30_000

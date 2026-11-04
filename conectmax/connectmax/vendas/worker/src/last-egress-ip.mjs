@@ -147,7 +147,8 @@ export async function peekEgressIpStatus(opts = {}) {
  * Poll até o IP atual ser diferente do último (ou não haver último).
  * Não grava o arquivo — só libera o worker para claimar.
  *
- * Log: 1ª espera + a cada EGRESS_IP_LOG_EVERY polls (default 6 ≈ 1 min com poll 10s).
+ * Log: cada consulta (antes + depois). EGRESS_IP_LOG_EVERY>1 só reduz o “ainda igual”
+ * (default 1 = loga todas).
  *
  * @param {{ filePath?: string, fetchIp?: Function, pollMs?: number, shouldStop?: () => boolean, onWait?: (s: object) => void, logTag?: string, log?: { info: Function, warn: Function, debug: Function } }} opts
  */
@@ -158,11 +159,11 @@ export async function waitUntilEgressIpReady(opts = {}) {
   const shouldStop = opts.shouldStop || (() => false);
   const logEvery = Math.max(
     1,
-    Number(process.env.EGRESS_IP_LOG_EVERY || 6) || 6,
+    Number(process.env.EGRESS_IP_LOG_EVERY || 1) || 1,
   );
+  const ipUrl = String(process.env.EGRESS_IP_URL || DEFAULT_URL);
   const startedAt = Date.now();
   let attempt = 0;
-  let lastPair = '';
 
   const say = (level, msg) => {
     if (opts.log?.[level]) {
@@ -182,51 +183,50 @@ export async function waitUntilEgressIpReady(opts = {}) {
       throw err;
     }
     attempt += 1;
+    const elapsedSec = Math.round((Date.now() - startedAt) / 1000);
+    say(
+      'info',
+      `consultando IP público #${attempt} → ${ipUrl} (já esperei ${elapsedSec}s)…`,
+    );
+    const t0 = Date.now();
     let status;
     try {
       status = await peekEgressIpStatus({ filePath, fetchIp });
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
+      const ms = Date.now() - t0;
       if (opts.onWait) {
         opts.onWait({ ready: false, error: msg });
       } else {
         say(
           'warn',
-          `não consegui ler o IP público (${msg}) — nova tentativa em ${Math.round(pollMs / 1000)}s`,
+          `consulta IP #${attempt} falhou em ${ms}ms (${msg}) — nova em ${Math.round(pollMs / 1000)}s`,
         );
       }
       await sleep(pollMs);
       continue;
     }
+    const ms = Date.now() - t0;
     if (status.ready) {
       const waited = Date.now() - startedAt;
       if (opts.onWait) opts.onWait({ ...status, ready: true });
-      else if (attempt > 1 || status.previous) {
+      else {
         say(
           'info',
           status.previous
-            ? `IP mudou: ${status.previous} → ${status.ip} (esperei ${Math.round(waited / 1000)}s) — liberado pra pegar job`
-            : `IP público ${status.ip} (primeiro nesta máquina) — liberado pra pegar job`,
+            ? `IP mudou: ${status.previous} → ${status.ip} (consulta ${ms}ms, esperei ${Math.round(waited / 1000)}s) — liberado pra pegar job`
+            : `IP público ${status.ip} (consulta ${ms}ms${status.previous ? '' : ', primeiro nesta máquina'}) — liberado pra pegar job`,
         );
-      } else {
-        say('info', `IP público ${status.ip} — liberado pra pegar job`);
       }
       return status;
     }
-    const pair = `${status.previous}|${status.ip}`;
-    const elapsedSec = Math.round((Date.now() - startedAt) / 1000);
-    const shouldAnnounce =
-      pair !== lastPair || attempt === 1 || attempt % logEvery === 0;
-    if (shouldAnnounce) {
-      lastPair = pair;
-      if (opts.onWait) {
-        opts.onWait({ ...status, ready: false, attempt, elapsedSec });
-      } else {
-        say(
-          'info',
-          `aguardando troca de IP (VPN/proxy) — atual=${status.ip} último_job=${status.previous} · tentativa ${attempt} · ${elapsedSec}s · poll ${Math.round(pollMs / 1000)}s`,
-        );
-      }
+    if (opts.onWait) {
+      opts.onWait({ ...status, ready: false, attempt, elapsedSec });
+    } else if (attempt === 1 || attempt % logEvery === 0) {
+      say(
+        'info',
+        `IP ainda igual ao último job — atual=${status.ip} último=${status.previous} (consulta ${ms}ms) · #${attempt} · ${elapsedSec}s · próxima em ${Math.round(pollMs / 1000)}s`,
+      );
     }
     await sleep(pollMs);
   }

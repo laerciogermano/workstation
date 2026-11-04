@@ -1,10 +1,33 @@
 /**
- * Logs legíveis no terminal (HH:MM:SS + tag curta + mensagem em PT).
- * Env: WORKER_LOG_VERBOSE=0 silencia linhas "debug" (heartbeat ok, poll repetido).
+ * Logs legíveis no terminal (data+hora local + tag curta + mensagem em PT).
+ * Env: WORKER_LOG_VERBOSE=0 silencia linhas "debug" (heartbeat ok).
+ * Fuso: WORKER_LOG_TZ (default America/Sao_Paulo) — não usa UTC do ISO.
  */
 
-function ts() {
-  return new Date().toISOString().slice(11, 19);
+const LOG_TZ =
+  String(process.env.WORKER_LOG_TZ || 'America/Sao_Paulo').trim() ||
+  'America/Sao_Paulo';
+
+/** Data+hora local legível (ex.: 04/11/2026 09:14:10). */
+export function ts(date = new Date()) {
+  const d = date instanceof Date ? date : new Date();
+  try {
+    const parts = new Intl.DateTimeFormat('pt-BR', {
+      timeZone: LOG_TZ,
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false,
+    }).formatToParts(d);
+    const get = (type) => parts.find((p) => p.type === type)?.value || '';
+    return `${get('day')}/${get('month')}/${get('year')} ${get('hour')}:${get('minute')}:${get('second')}`;
+  } catch {
+    const pad = (n) => String(n).padStart(2, '0');
+    return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+  }
 }
 
 function shortTag(tag) {

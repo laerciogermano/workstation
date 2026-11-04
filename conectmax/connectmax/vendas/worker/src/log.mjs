@@ -2,7 +2,10 @@
  * Logs legíveis no terminal (data+hora local + tag curta + mensagem em PT).
  * Env: WORKER_LOG_VERBOSE=0 silencia linhas "debug" (heartbeat ok).
  * Fuso: WORKER_LOG_TZ (default America/Sao_Paulo) — não usa UTC do ISO.
+ * Escrita sync no fd — evita buffer do Node quando stdout vai pro tee/arquivo.
  */
+import { writeSync } from 'node:fs';
+import { format } from 'node:util';
 
 const LOG_TZ =
   String(process.env.WORKER_LOG_TZ || 'America/Sao_Paulo').trim() ||
@@ -27,6 +30,14 @@ export function ts(date = new Date()) {
   } catch {
     const pad = (n) => String(n).padStart(2, '0');
     return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+  }
+}
+
+function writeLine(fd, line) {
+  try {
+    writeSync(fd, `${line}\n`);
+  } catch {
+    // fd fechado no shutdown
   }
 }
 
@@ -60,21 +71,27 @@ export function createLogger(tag) {
   const t = shortTag(tag);
   const prefix = () => `${ts()} [${t}]`;
 
+  const line = (fd, mark, msg, rest) => {
+    const body =
+      rest.length > 0 ? format(`${prefix()}${mark} ${msg}`, ...rest) : `${prefix()}${mark} ${msg}`;
+    writeLine(fd, body);
+  };
+
   return {
     tag: t,
     info(msg, ...rest) {
-      console.log(`${prefix()} ${msg}`, ...rest);
+      line(1, '', msg, rest);
     },
     warn(msg, ...rest) {
-      console.warn(`${prefix()} ⚠ ${msg}`, ...rest);
+      line(2, ' ⚠', msg, rest);
     },
     error(msg, ...rest) {
-      console.error(`${prefix()} ✖ ${msg}`, ...rest);
+      line(2, ' ✖', msg, rest);
     },
     /** Só imprime se WORKER_LOG_VERBOSE ≠ 0 (default ligado). */
     debug(msg, ...rest) {
       if (!isVerboseLog()) return;
-      console.log(`${prefix()} · ${msg}`, ...rest);
+      line(1, ' ·', msg, rest);
     },
     /** Troca o tag (ex.: após enroll com uuid canônico). */
     withTag(next) {

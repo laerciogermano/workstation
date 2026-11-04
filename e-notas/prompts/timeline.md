@@ -34,3 +34,4 @@ Como registrar: [`README.md`](README.md).
 | 025 | 2026-11-03 | Card QR também por foto | [025-2026-11-03-card-qr-por-foto.md](025-2026-11-03-card-qr-por-foto.md) | Card Trello Backlog: escanear QR da nota também tirando foto / imagem. |
 | 026 | 2026-11-03 | Implementar QR por foto | [026-2026-11-03-implementar-qr-por-foto.md](026-2026-11-03-implementar-qr-por-foto.md) | Tirar foto / escolher imagem no scan; Contabo; card Concluído. |
 | 027 | 2026-11-03 | Card + implementar EAN na vitrine | [027-2026-11-03-ean-vitrine-loja.md](027-2026-11-03-ean-vitrine-loja.md) | Botão leitor EAN no item da loja (câmera/foto/digitar); Contabo; card Done. |
+| 028 | 2026-11-04 | Card buscar fotos ao cadastrar EAN | [028-2026-11-04-card-buscar-fotos-ean.md](028-2026-11-04-card-buscar-fotos-ean.md) | Card Backlog: ao vincular EAN, buscar candidatas (APIs + fallback), tabela de imagens, escolher a do feed. |

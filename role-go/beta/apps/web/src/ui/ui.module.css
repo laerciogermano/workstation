@@ -134,7 +134,7 @@ select.input { appearance: none; }
 .avs { display: flex; }
 .avs > * { margin-left: -9px; }
 .avs > *:first-child { margin-left: 0; }
-.avsBlur { filter: blur(6px) saturate(0.7); opacity: 0.85; user-select: none; }
+.avsBlur { filter: blur(2.5px); opacity: 0.72; user-select: none; }
 .avMore { background: var(--rg-surface-3); font-size: 10px; }
 
 /* ===== Sheet / toast ===== */

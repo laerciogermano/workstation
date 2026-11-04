@@ -540,7 +540,7 @@ function Search(): JSX.Element {
   return (
     <Screen title="Buscar">
       <TopBar title="Buscar" />
-      <TextInput autoFocus type="search" placeholder="Nome do rolê ou do local" aria-label="Buscar rolês" value={q} onChange={(e) => setQ(e.target.value)} />
+      <TextInput autoFocus type="text" inputMode="search" enterKeyHint="search" placeholder="Nome do rolê ou do local" aria-label="Buscar rolês" value={q} onChange={(e) => setQ(e.target.value)} />
       <div className={cx(ui.row, ui.between)}>
         <span className={cx(ui.small, ui.soft)}>Toda a cidade</span>
         <Toggle label="Buscar em toda a cidade" checked={wide} onChange={setWide} />

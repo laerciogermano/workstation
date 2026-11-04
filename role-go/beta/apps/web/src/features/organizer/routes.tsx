@@ -804,13 +804,14 @@ function Guests(): JSX.Element {
   );
 }
 
-/** T-47 · Galeria (até 20 fotos do organizador). */
+/** T-47 · Galeria (até 20 fotos do organizador) com editor de recorte por foto. */
 function Gallery(): JSX.Element {
   const { id } = useParams();
   const q = useOwnedEvent(id);
   const qc = useQueryClient();
   const toast = useToast();
   const fileRef = useRef<HTMLInputElement>(null);
+  const [queue, setQueue] = useState<File[]>([]);
   const refresh = () => void qc.invalidateQueries({ queryKey: ['organizer', 'event', id] });
   const up = useMutation({
     mutationFn: (files: File[]) => {
@@ -823,6 +824,11 @@ function Gallery(): JSX.Element {
   });
   const del = useMutation({ mutationFn: (assetId: string) => api(`/events/${id}/gallery/${assetId}`, { method: 'DELETE' }), onSuccess: refresh });
   const gallery = q.data?.gallery ?? [];
+  const cropFile = queue[0] ?? null;
+  const pushCropped = (cropped: File) => {
+    setQueue((q0) => q0.slice(1));
+    up.mutate([cropped]);
+  };
   return (
     <Screen title="Galeria">
       <TopBar title="Galeria do evento" />
@@ -849,11 +855,21 @@ function Gallery(): JSX.Element {
         accept="image/jpeg,image/png,image/webp"
         hidden
         onChange={(ev) => {
-          const files = [...(ev.target.files ?? [])].slice(0, MAX_GALLERY - gallery.length);
-          if (files.length) up.mutate(files);
+          const room = MAX_GALLERY - gallery.length;
+          const files = [...(ev.target.files ?? [])].filter((f) => f.size <= 8 * 1024 * 1024).slice(0, room);
+          if ((ev.target.files?.length ?? 0) > files.length) toast.error('Algumas fotos passaram de 8 MB e foram ignoradas.');
+          if (files.length) setQueue((q0) => [...q0, ...files]);
           ev.target.value = '';
         }}
       />
+      {cropFile ? (
+        <ImageCropDialog
+          file={cropFile}
+          kind="gallery"
+          onCancel={() => setQueue((q0) => q0.slice(1))}
+          onConfirm={pushCropped}
+        />
+      ) : null}
     </Screen>
   );
 }

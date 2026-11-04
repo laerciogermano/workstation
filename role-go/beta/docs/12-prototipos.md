@@ -86,7 +86,7 @@ Tab bar com 4 abas: **Explorar** (T-10/11/12) · **Meus rolês** (T-30) · **Org
 | `NeonCard` | cores por categoria | T-08, T-10, T-45 |
 | `EventCard` | `feed`, `mini` (lista), `swipe`, `manage` (organizador com métricas) | T-10, T-12, T-11, T-46 |
 | `EventCover` | imagem real com `srcset`; o protótipo usa pôsteres CSS como placeholder | — |
-| `ImageCrop` | editor fullscreen após escolher arquivo: moldura 1:1 (foto) ou 4:5 (capa), arrastar, zoom, girar 90°, cancelar/usar | T-32, T-41 |
+| `ImageCrop` | editor fullscreen após escolher arquivo: moldura 1:1 (foto/galeria) ou 4:5 (capa), arrastar, zoom, girar 90°, cancelar/usar | T-32, T-41, T-47 |
 | `Badge` | ciano, magenta, amarelo, verde (com `live`), violeta, neutro, `dark` (sobre imagem) | várias |
 | `AvatarStack` | até 5 + contador | T-10, T-20 |
 | `Sheet` | bottom sheet com borda neon por categoria | T-13, T-24, T-27, T-49 |

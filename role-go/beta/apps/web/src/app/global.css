@@ -8,6 +8,7 @@ html {
   text-size-adjust: 100%;
   height: 100%;
   overscroll-behavior: none;
+  touch-action: manipulation;
 }
 body {
   font-family: var(--rg-font);
@@ -21,16 +22,37 @@ body {
   overscroll-behavior: none;
   -webkit-tap-highlight-color: transparent;
   -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
   touch-action: manipulation;
   /* notch / home indicator */
   padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
 }
 #root { min-height: 100dvh; }
 button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; touch-action: manipulation; }
-/* ≥16px evita zoom automático do iOS ao focar campos */
-input, textarea, select { font: inherit; color: inherit; font-size: 16px; touch-action: manipulation; }
+/* ≥16px evita zoom do iOS; manipulation mata double-tap zoom; sem seleção “web” */
+input, textarea, select {
+  font: inherit;
+  color: inherit;
+  font-size: 16px;
+  touch-action: manipulation;
+  -webkit-user-select: text;
+  user-select: text;
+}
+input::-webkit-calendar-picker-indicator { opacity: 0.7; }
+/* some browsers pintam autofill — some como o app */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+  -webkit-text-fill-color: var(--rg-text);
+  caret-color: var(--rg-text);
+  transition: background-color 99999s ease-out;
+  box-shadow: 0 0 0 1000px var(--rg-surface-2) inset;
+}
 a { color: inherit; text-decoration: none; -webkit-tap-highlight-color: transparent; }
-img { display: block; max-width: 100%; }
+img { display: block; max-width: 100%; -webkit-user-drag: none; user-select: none; }
 :focus-visible { outline: 2px solid var(--rg-cyan); outline-offset: 2px; border-radius: 6px; }
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 @media (prefers-reduced-motion: reduce) {

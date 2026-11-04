@@ -104,19 +104,59 @@ export function Field({ label, hint, error, children }: { label?: string; hint?:
   );
 }
 
+/** Defaults estilo app: sem autofill/sugestões do browser (override com props). */
+const APP_INPUT = {
+  autoComplete: 'off',
+  autoCorrect: 'off',
+  autoCapitalize: 'off',
+  spellCheck: false,
+} as const;
+
 export function TextInput({ label, hint, error, className, ...rest }: InputHTMLAttributes<HTMLInputElement> & { label?: string; hint?: string | undefined; error?: string | undefined }): JSX.Element {
-  return <Field label={label} hint={hint} error={error}>{(id) => <input id={id} {...rest} className={cx(s.input, error && s.inputErr, className)} aria-invalid={!!error} />}</Field>;
+  return (
+    <Field label={label} hint={hint} error={error}>
+      {(id) => (
+        <input
+          id={id}
+          {...APP_INPUT}
+          {...rest}
+          className={cx(s.input, error && s.inputErr, className)}
+          aria-invalid={!!error}
+          onDoubleClick={(e) => {
+            e.preventDefault();
+            rest.onDoubleClick?.(e);
+          }}
+        />
+      )}
+    </Field>
+  );
 }
 
 export function TextArea({ label, hint, error, className, ...rest }: TextareaHTMLAttributes<HTMLTextAreaElement> & { label?: string; hint?: string | undefined; error?: string | undefined }): JSX.Element {
-  return <Field label={label} hint={hint} error={error}>{(id) => <textarea id={id} {...rest} className={cx(s.input, error && s.inputErr, className)} aria-invalid={!!error} />}</Field>;
+  return (
+    <Field label={label} hint={hint} error={error}>
+      {(id) => (
+        <textarea
+          id={id}
+          {...APP_INPUT}
+          {...rest}
+          className={cx(s.input, error && s.inputErr, className)}
+          aria-invalid={!!error}
+          onDoubleClick={(e) => {
+            e.preventDefault();
+            rest.onDoubleClick?.(e);
+          }}
+        />
+      )}
+    </Field>
+  );
 }
 
 export function Select({ label, children, ...rest }: SelectHTMLAttributes<HTMLSelectElement> & { label?: string }): JSX.Element {
   return (
     <Field label={label}>
       {(id) => (
-        <select id={id} className={s.input} {...rest}>
+        <select id={id} className={s.input} autoComplete="off" {...rest}>
           {children}
         </select>
       )}

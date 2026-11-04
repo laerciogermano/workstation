@@ -129,6 +129,7 @@ Objetivo: fechar o loop **oferta → demanda**. O organizador publica em menos d
 ```
 
 ### US-02.09 — Galeria (S)
+**Regras:** até 20 fotos; ao escolher cada arquivo abre o editor de recorte (1:1, zoom, arrastar, girar) antes do upload.
 Até 20 fotos por evento, enviadas pelo organizador antes ou depois do evento. Fotos de usuários ficam para a 1.1.
 
 ### US-02.10 — Nova edição (S)

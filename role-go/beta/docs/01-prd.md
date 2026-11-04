@@ -102,7 +102,7 @@ O detalhamento com histórias e critérios de aceite em Gherkin fica em [`02-his
 | RF-E02-06 | Controle de lista: aprovação manual ou automática de pedidos de presença em evento privado | M |
 | RF-E02-07 | Editar evento publicado. Mudar data ou local dispara e-mail para os confirmados | M |
 | RF-E02-08 | Painel "Meus eventos": rascunhos, próximos e passados, com contagem de interessados e confirmados | M |
-| RF-E02-09 | Galeria de fotos do evento (até 20 fotos, enviadas pelo organizador) | S |
+| RF-E02-09 | Galeria de fotos do evento (até 20 fotos). Cada foto passa pelo **editor de recorte** (moldura 1:1, arrastar, zoom, girar) antes do envio | S |
 | RF-E02-10 | **Série/edições**: marcar o evento como nova edição de um anterior (copia os dados e agrupa a galeria) | S |
 | RF-E02-11 | Duplicar evento | C |
 

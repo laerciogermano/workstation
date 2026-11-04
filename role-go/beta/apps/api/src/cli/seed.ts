@@ -106,7 +106,41 @@ const PRIVATE_TEMPLATES = [
 ];
 
 const PEOPLE = ['Ana Souza', 'Marina Lopes', 'João Pedro', 'Lucas Martins', 'Beatriz Alves', 'Thiago Rocha', 'Rafaela Lima', 'Bruno Costa', 'Juliana Prado', 'Felipe Ramos', 'Camila Duarte', 'Gustavo Reis', 'Larissa Melo', 'Pedro Henrique', 'Isabela Nunes', 'Mateus Silva', 'Carolina Dias', 'Diego Fernandes', 'Letícia Moura', 'Vinícius Teixeira'];
+/** Retratos Unsplash (crop faces 512) — seed realista; índices em NO_PHOTO ficam só com iniciais. */
+const PORTRAIT_URLS = [
+  'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=512&h=512&fit=crop&crop=faces',
+  'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=512&h=512&fit=crop&crop=faces',
+  'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=512&h=512&fit=crop&crop=faces',
+  'https://images.unsplash.com/photo-1524504388940-b1c17226555e?w=512&h=512&fit=crop&crop=faces',
+  'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=512&h=512&fit=crop&crop=faces',
+  'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=512&h=512&fit=crop&crop=faces',
+  'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=512&h=512&fit=crop&crop=faces',
+  'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=512&h=512&fit=crop&crop=faces',
+  'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=512&h=512&fit=crop&crop=faces',
+  'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=512&h=512&fit=crop&crop=faces',
+  'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=512&h=512&fit=crop&crop=faces',
+  'https://images.unsplash.com/photo-1488161628813-04466f872be2?w=512&h=512&fit=crop&crop=faces',
+  'https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=512&h=512&fit=crop&crop=faces',
+  'https://images.unsplash.com/photo-1463453091185-61582044d556?w=512&h=512&fit=crop&crop=faces',
+  'https://images.unsplash.com/photo-1521119989659-a83eee48852d?w=512&h=512&fit=crop&crop=faces',
+  'https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?w=512&h=512&fit=crop&crop=faces',
+] as const;
+/** Pessoas do seed sem foto (só iniciais na UI). */
+const NO_PHOTO = new Set(['João Pedro', 'Thiago Rocha', 'Juliana Prado', 'Larissa Melo', 'Mateus Silva', 'Letícia Moura']);
 const COMMENTS = ['Rolê incrível, já quero a próxima!', 'Som muito bom e galera animada.', 'Fila grande na entrada, mas valeu.', 'Melhor festa do mês.', 'Ambiente top, drinks caros.', null, 'Voltaria com certeza.', null];
+
+async function fetchPortrait(i: number): Promise<Buffer | null> {
+  const url = PORTRAIT_URLS[i % PORTRAIT_URLS.length];
+  if (!url) return null;
+  try {
+    const res = await fetch(url, { headers: { 'User-Agent': 'RoleGoSeed/1.0' }, signal: AbortSignal.timeout(15_000) });
+    if (!res.ok) return null;
+    const buf = Buffer.from(await res.arrayBuffer());
+    return buf.length > 1_000 ? buf : null;
+  } catch {
+    return null;
+  }
+}
 
 const GRADIENTS = [
   ['#0a0420', '#FF1F7A', '#8749FF'],
@@ -170,13 +204,19 @@ async function main(): Promise<void> {
   const ctb = cityId['curitiba'] ?? '';
 
   const passwordHash = await hash(SEED_PASSWORD, { memoryCost: 19456, timeCost: 2, parallelism: 1 });
-  const mkUser = async (email: string, name: string, i: number, role: 'user' | 'admin' = 'user', onboarded = true) => {
+  const mkUser = async (email: string, name: string, i: number, role: 'user' | 'admin' = 'user', onboarded = true, opts?: { photo?: boolean }) => {
     const id = newId();
-    const photo = await media.upload('avatar', null, await png(avatarSvg(name.charAt(0), i)));
+    const wantPhoto = opts?.photo ?? !NO_PHOTO.has(name);
+    let photoAssetId: string | null = null;
+    if (wantPhoto) {
+      const portrait = await fetchPortrait(i);
+      const up = await media.upload('avatar', null, portrait ?? (await png(avatarSvg(name.charAt(0), i))));
+      photoAssetId = up.ok ? up.value.id : null;
+    }
     await db.insert(users).values({
       id, email, name, passwordHash, role, status: 'active', showPresence: i % 7 !== 3,
       emailVerifiedAt: now, adultDeclaredAt: now, termsAcceptedAt: now, termsVersion: '2026-11-beta',
-      photoAssetId: photo.ok ? photo.value.id : null, createdAt: new Date(now.getTime() - (30 + i) * day),
+      photoAssetId, createdAt: new Date(now.getTime() - (30 + i) * day),
     });
     await db.insert(discoveryPreferences).values({
       userId: id, eventTypeSlugs: [pick(EVENT_TYPES).slug, pick(EVENT_TYPES).slug], cityId: ctb, originMode: 'city', radiusKm: 20, filters: {},
@@ -364,6 +404,7 @@ async function main(): Promise<void> {
   await pool.end();
   console.log(`seed ok: ${n} eventos, ${people.length + ORGS.length} usuários. Senha de todos: ${SEED_PASSWORD}`);
   console.log(`  ana@rolego.dev (usuária) · admin@rolego.dev (admin) · club@rolego.dev / laercio@rolego.dev (organizadores)`);
+  console.log(`  avatares: retratos Unsplash; sem foto (só iniciais): ${[...NO_PHOTO].join(', ')}`);
   console.log(`  códigos privados: ${privateIds.slice(0, 3).map((p) => `${p.title}=${p.code}`).join(' · ')}`);
   void adminId;
 }

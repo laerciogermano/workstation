@@ -125,7 +125,7 @@ function Register(): JSX.Element {
       <p className={ui.sub}>Leva menos de um minuto.</p>
       <GoogleButton />
       <form className={s.form} onSubmit={submit} noValidate>
-        <TextInput label={t.email} type="email" autoComplete="email" inputMode="email" value={f.email} onChange={(e) => setF({ ...f, email: e.target.value })} error={errors['email'] ?? apiErrors['email'] ?? (m.error instanceof ApiError && m.error.code === 'EMAIL_TAKEN' ? errorMessage(m.error) : undefined)} />
+        <TextInput label={t.email} type="email" autoComplete="off" inputMode="email" value={f.email} onChange={(e) => setF({ ...f, email: e.target.value })} error={errors['email'] ?? apiErrors['email'] ?? (m.error instanceof ApiError && m.error.code === 'EMAIL_TAKEN' ? errorMessage(m.error) : undefined)} />
         <TextInput label={t.password} type="password" autoComplete="new-password" value={f.password} onChange={(e) => setF({ ...f, password: e.target.value })} hint="Mínimo de 8 caracteres" error={errors['password'] ?? apiErrors['password']} />
         <TextInput label={t.passwordConfirm} type="password" autoComplete="new-password" value={f.passwordConfirm} onChange={(e) => setF({ ...f, passwordConfirm: e.target.value })} error={errors['passwordConfirm'] ?? (f.passwordConfirm && f.password !== f.passwordConfirm ? 'As senhas não conferem' : undefined)} />
         <Checkbox checked={f.acceptTerms} onChange={(v) => setF({ ...f, acceptTerms: v })}>
@@ -200,7 +200,7 @@ function Forgot(): JSX.Element {
           }}
         >
           <p className={ui.sub}>Digite o e-mail da sua conta e enviamos um link para criar uma senha nova.</p>
-          <TextInput label={t.email} type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <TextInput label={t.email} type="email" autoComplete="off" value={email} onChange={(e) => setEmail(e.target.value)} />
           {m.error ? <p className={`${ui.hint} ${ui.hintErr} ${ui.mb12}`}>{errorMessage(m.error)}</p> : null}
           <Button type="submit" disabled={!email} loading={m.isPending}>
             Enviar link

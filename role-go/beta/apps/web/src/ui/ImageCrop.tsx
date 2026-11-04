@@ -2,11 +2,12 @@ import { type JSX, type PointerEvent as ReactPointerEvent, useCallback, useEffec
 import { Button, IconButton, RangeSlider, cx } from './primitives';
 import s from './ImageCrop.module.css';
 
-export type CropKind = 'avatar' | 'cover';
+export type CropKind = 'avatar' | 'cover' | 'gallery';
 
 const PRESETS: Record<CropKind, { aspect: number; outW: number; outH: number; label: string; fileName: string }> = {
   avatar: { aspect: 1, outW: 1024, outH: 1024, label: 'Foto de perfil', fileName: 'avatar.jpg' },
   cover: { aspect: 4 / 5, outW: 1080, outH: 1350, label: 'Capa do evento', fileName: 'cover.jpg' },
+  gallery: { aspect: 1, outW: 1600, outH: 1600, label: 'Foto da galeria', fileName: 'gallery.jpg' },
 };
 
 type Pt = { x: number; y: number };
@@ -187,6 +188,7 @@ export function ImageCropDialog({
           onPointerMove={onPointerMove}
           onPointerUp={onPointerUp}
           onPointerCancel={onPointerUp}
+          onDoubleClick={(e) => e.preventDefault()}
         >
           {src ? (
             <div

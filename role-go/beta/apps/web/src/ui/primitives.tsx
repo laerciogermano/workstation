@@ -244,23 +244,28 @@ export function NeonCard({ accent = 'violet', children, className, onClick }: { 
 const AV_GRADIENTS = ['var(--rg-g-avatar-1)', 'var(--rg-g-avatar-2)', 'var(--rg-g-avatar-3)', 'var(--rg-g-avatar-4)', 'var(--rg-g-avatar-5)', 'var(--rg-g-avatar-6)'];
 const hashName = (n: string) => [...n].reduce((a, c) => (a * 31 + c.charCodeAt(0)) >>> 0, 7);
 
-export function Avatar({ name, url, size }: { name: string; url: string | null; size?: 'md' | 'lg' }): JSX.Element {
+export function Avatar({ name, url, size, quiet }: { name: string; url: string | null; size?: 'md' | 'lg'; quiet?: boolean }): JSX.Element {
   const src = url?.trim() || null;
   const [failedSrc, setFailedSrc] = useState<string | null>(null);
   const showImg = !!src && failedSrc !== src;
   return (
-    <span className={cx(s.av, size === 'md' && s.avMd, size === 'lg' && s.avLg)} style={{ background: AV_GRADIENTS[hashName(name) % AV_GRADIENTS.length] }} title={name} aria-label={name}>
+    <span
+      className={cx(s.av, size === 'md' && s.avMd, size === 'lg' && s.avLg)}
+      style={{ background: AV_GRADIENTS[hashName(name) % AV_GRADIENTS.length] }}
+      title={quiet ? undefined : name}
+      aria-label={quiet ? undefined : name}
+    >
       {showImg ? <img src={src} alt="" width={88} height={88} loading="lazy" onError={() => setFailedSrc(src)} /> : initials(name)}
     </span>
   );
 }
 
-/** `blurred`: mantém as fotos, só esmaece (visitante). */
+/** `blurred`: blur leve sobre o original (foto ou iniciais). */
 export function AvatarStack({ people, extra, blurred }: { people: PersonRef[]; extra?: number; blurred?: boolean }): JSX.Element {
   return (
     <span className={cx(s.avs, blurred && s.avsBlur)} aria-hidden={blurred || undefined} title={blurred ? 'Cadastre-se para ver quem vai' : undefined}>
       {people.map((p) => (
-        <Avatar key={p.id} name={p.name} url={p.photoUrl} />
+        <Avatar key={p.id} name={p.name} url={p.photoUrl} quiet={blurred} />
       ))}
       {extra && extra > 0 ? <span className={cx(s.av, s.avMore)}>+{extra}</span> : null}
     </span>

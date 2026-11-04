@@ -106,6 +106,8 @@ const PRIVATE_TEMPLATES = [
 ];
 
 const PEOPLE = ['Ana Souza', 'Marina Lopes', 'João Pedro', 'Lucas Martins', 'Beatriz Alves', 'Thiago Rocha', 'Rafaela Lima', 'Bruno Costa', 'Juliana Prado', 'Felipe Ramos', 'Camila Duarte', 'Gustavo Reis', 'Larissa Melo', 'Pedro Henrique', 'Isabela Nunes', 'Mateus Silva', 'Carolina Dias', 'Diego Fernandes', 'Letícia Moura', 'Vinícius Teixeira'];
+/** Sem photoAssetId → UI mostra iniciais (não um PNG genérico). */
+const NO_PHOTO = new Set(['João Pedro', 'Thiago Rocha', 'Juliana Prado', 'Larissa Melo', 'Mateus Silva', 'Letícia Moura', 'Diego Fernandes', 'Vinícius Teixeira']);
 const COMMENTS = ['Rolê incrível, já quero a próxima!', 'Som muito bom e galera animada.', 'Fila grande na entrada, mas valeu.', 'Melhor festa do mês.', 'Ambiente top, drinks caros.', null, 'Voltaria com certeza.', null];
 
 const GRADIENTS = [
@@ -171,9 +173,10 @@ async function main(): Promise<void> {
   const passwordHash = await hash(SEED_PASSWORD, { memoryCost: 19456, timeCost: 2, parallelism: 1 });
   const mkUser = async (email: string, name: string, i: number, role: 'user' | 'admin' = 'user', onboarded = true, opts?: { photo?: boolean }) => {
     const id = newId();
-    // Sem fotos baixadas da internet: iniciais (SVG) ou sem foto.
+    // Foto = avatar SVG; sem foto = iniciais nativas na UI (NO_PHOTO / opts.photo=false).
     let photoAssetId: string | null = null;
-    if (opts?.photo !== false) {
+    const wantPhoto = opts?.photo ?? !NO_PHOTO.has(name);
+    if (wantPhoto) {
       const up = await media.upload('avatar', null, await png(avatarSvg(name.charAt(0), i)));
       photoAssetId = up.ok ? up.value.id : null;
     }
@@ -368,7 +371,7 @@ async function main(): Promise<void> {
   await pool.end();
   console.log(`seed ok: ${n} eventos, ${people.length + ORGS.length} usuários. Senha de todos: ${SEED_PASSWORD}`);
   console.log(`  ana@rolego.dev (usuária) · admin@rolego.dev (admin) · club@rolego.dev / laercio@rolego.dev (organizadores)`);
-  console.log('  capas: degradê sem círculos; avatares: só iniciais (sem fotos da internet)');
+  console.log(`  capas: degradê sem círculos; sem foto (iniciais UI): ${[...NO_PHOTO].join(', ')}`);
   console.log(`  códigos privados: ${privateIds.slice(0, 3).map((p) => `${p.title}=${p.code}`).join(' · ')}`);
   void adminId;
 }

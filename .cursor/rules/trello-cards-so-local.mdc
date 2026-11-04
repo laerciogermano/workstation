@@ -1,0 +1,37 @@
+---
+description: Criar card sempre no Trello local (pasta), nunca no serviço Trello
+alwaysApply: true
+---
+
+# Cards: só Trello local
+
+Sempre que o pedido for **criar um card** (novo card, card no board X, item no backlog, etc.), gravar **apenas** na pasta local [`Trello/`](Trello/) — **nunca** no serviço Trello (API, `trello` CLI, site).
+
+## Critérios
+
+1. Destino: `Trello/<board>/<lista>/<titulo-do-card>/`
+2. Criar no mínimo: `titulo.txt`, `descricao.md`, `comentarios.md`, `meta.json` (mesmo padrão dos cards já dumpados)
+3. Board e lista = pastas existentes sob `Trello/`; se a lista não existir, criar a pasta da lista no board certo
+4. Proibido para criação: `trello card:create`, `POST /1/cards`, UI/API do trello.com, ou qualquer sync que publique o card remoto
+5. Escape só se o usuário pedir **explicitamente** criar no Trello online/serviço
+
+## Formato do card local
+
+```text
+Trello/<board>/<lista>/<titulo>/
+  titulo.txt      # título em uma linha
+  descricao.md    # corpo / checklist
+  comentarios.md  # vazio ou notas
+  meta.json       # id local ou stub; list = nome da lista; sem url remota obrigatória
+```
+
+Para card **novo** (não veio de dump): `meta.json` pode ter `id` local (slug/uuid), `list`, `dateLastActivity` ISO, `labels: []`, `due: null`, `url: null`.
+
+## Exemplos
+
+```text
+✅ Criar pasta Trello/Geral/A fazer/Novo card/ + titulo.txt + descricao.md + …
+✅ Pediu card no Robô Prospecção / Backlog → Trello/Robô Prospecção/Backlog/…
+❌ trello card:create / API POST /1/cards / abrir trello.com pra criar
+❌ Dump/sync que publique o card novo no serviço
+```

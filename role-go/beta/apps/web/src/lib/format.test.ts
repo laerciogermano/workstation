@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { dayLabel, distanceLabel, endsNextDay, feedGroup, fromLocalInput, priceLabel, toLocalInput, whenLabel } from './format';
+import { dayLabel, distanceLabel, endsNextDay, feedGroup, fromLocalInput, initials, priceLabel, toLocalInput, whenLabel } from './format';
 
 // quarta, 4 nov 2026, 23:30 em São Paulo = 2026-11-05T02:30Z
 const now = new Date('2026-11-05T02:30:00Z');
@@ -24,5 +24,11 @@ describe('rótulos', () => {
   it('datetime-local ⇄ ISO em SP', () => {
     expect(toLocalInput('2026-11-08T01:00:00.000Z')).toBe('2026-11-07T22:00');
     expect(fromLocalInput('2026-11-07T22:00')).toBe('2026-11-08T01:00:00.000Z');
+  });
+  it('iniciais do nome', () => {
+    expect(initials('Ana Souza')).toBe('AS');
+    expect(initials('Mariana')).toBe('M');
+    expect(initials('João Pedro Silva')).toBe('JS');
+    expect(initials('')).toBe('?');
   });
 });

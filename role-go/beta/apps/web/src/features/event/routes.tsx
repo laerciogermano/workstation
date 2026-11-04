@@ -3,14 +3,15 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Fragment, type JSX, type ReactNode, useState } from 'react';
 import { Link, Navigate, Route, Routes, useLocation, useNavigate, useParams, useSearchParams } from 'react-router';
 import { ApiError, errorMessage } from '../../lib/http';
+import { directionLinks } from '../../lib/directions';
 import { dayLabel, distanceLabel, endsIn, endsNextDay, hhmm, money, relativeStart, whenLabel } from '../../lib/format';
 import { t } from '../../lib/i18n/pt-BR';
 import { keys, useMe, useToggleInterest } from '../../lib/queries';
 import { EventCover } from '../../ui/EventCover';
 import { EventCardMini, HeartButton } from '../../ui/EventCard';
-import { Icon } from '../../ui/Icon';
+import { Icon, type IconName } from '../../ui/Icon';
 import { Footer, Screen, Sheet, TopBar } from '../../ui/layout';
-import { Avatar, AvatarStack, Badge, Button, cx, EmptyState, ErrorState, IconButton, Loading, NeonCard, Section, Segmented, Stars, TextArea, TextInput, Title, ui } from '../../ui/primitives';
+import { Avatar, AvatarStack, Badge, Button, cx, EmptyState, ErrorState, IconButton, ListRow, Loading, NeonCard, Section, Segmented, Stars, TextArea, TextInput, Title, ui } from '../../ui/primitives';
 import { useToast } from '../../ui/toast';
 import * as A from './api';
 import s from './event.module.css';
@@ -66,6 +67,7 @@ function EventPage(): JSX.Element {
   const toggle = useToggleInterest();
   const [shareOpen, setShareOpen] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
+  const [directionsOpen, setDirectionsOpen] = useState(false);
   const [confirmCancel, setConfirmCancel] = useState(false);
   const reviewsQ = useQuery({ queryKey: ['event', slug, 'reviews'], queryFn: () => A.reviews(e?.id ?? ''), enabled: !!e && (e.rating?.count ?? 0) > 0 });
   const editionsQ = useQuery({ queryKey: ['event', slug, 'editions'], queryFn: () => A.editions(e?.id ?? ''), enabled: !!e?.seriesId });
@@ -115,7 +117,7 @@ function EventPage(): JSX.Element {
   const going = e.viewer.rsvp === 'confirmed' || e.viewer.rsvp === 'approved';
   const pending = e.viewer.rsvp === 'pending';
   const requireLogin = () => nav(`/cadastro?next=${encodeURIComponent(loc.pathname + loc.search)}`);
-  const mapsUrl = e.venue.location ? `https://www.google.com/maps/dir/?api=1&destination=${e.venue.location.lat},${e.venue.location.lng}` : null;
+  const canGo = !!e.venue.location && !e.venue.addressLocked;
 
   let cta: ReactNode;
   if (e.status === 'cancelled') cta = <Button disabled className={ui.disabledLook}>{t.cancelled}</Button>;
@@ -213,10 +215,10 @@ function EventPage(): JSX.Element {
                   : `${[e.venue.street, e.venue.number].filter(Boolean).join(', ')}${e.venue.complement ? ` — ${e.venue.complement}` : ''} — ${e.venue.neighborhood}, ${e.venue.city}`}
               </p>
             </div>
-            {mapsUrl ? (
-              <a className={cx(ui.btn, ui.secondary, ui.sm)} href={mapsUrl} target="_blank" rel="noopener noreferrer">
+            {canGo ? (
+              <button type="button" className={cx(ui.btn, ui.secondary, ui.sm)} onClick={() => setDirectionsOpen(true)}>
                 <Icon name="nav" size="s" /> Ir
-              </a>
+              </button>
             ) : null}
           </div>
           {e.venue.addressLocked ? (
@@ -330,6 +332,14 @@ function EventPage(): JSX.Element {
       </Footer>
       <ShareSheet open={shareOpen} onClose={() => setShareOpen(false)} e={e} />
       <ReportSheet open={reportOpen} onClose={() => setReportOpen(false)} targetId={e.id} />
+      <DirectionsSheet
+        open={directionsOpen}
+        onClose={() => setDirectionsOpen(false)}
+        lat={e.venue.location?.lat ?? 0}
+        lng={e.venue.location?.lng ?? 0}
+        label={e.venue.name}
+        address={[e.venue.street, e.venue.number].filter(Boolean).join(', ')}
+      />
       <Sheet open={confirmCancel} onClose={() => setConfirmCancel(false)} accent="magenta" label="Cancelar presença">
         <Title accent="magenta">{pending ? 'Cancelar pedido?' : 'Cancelar presença?'}</Title>
         <p className={ui.sub}>{isPrivate && !pending ? 'Se cancelar, vai precisar pedir de novo e esperar aprovação.' : 'Você pode confirmar de novo enquanto houver vaga.'}</p>
@@ -343,6 +353,57 @@ function EventPage(): JSX.Element {
         </div>
       </Sheet>
     </>
+  );
+}
+
+const DIR_ICONS: Record<string, IconName> = { uber: 'nav', '99': 'nav', google: 'pin', apple: 'apple', waze: 'compass' };
+
+/** T-28 · Como chegar: Uber, 99, Google Maps, Apple Mapas, Waze (+ copiar endereço). */
+function DirectionsSheet({
+  open,
+  onClose,
+  lat,
+  lng,
+  label,
+  address,
+}: {
+  open: boolean;
+  onClose: () => void;
+  lat: number;
+  lng: number;
+  label: string;
+  address: string;
+}): JSX.Element {
+  const toast = useToast();
+  const apps = directionLinks({ lat, lng, label, address });
+  const copyAddr = async () => {
+    const text = [label, address].filter(Boolean).join(' · ') || `${lat}, ${lng}`;
+    await navigator.clipboard.writeText(text);
+    toast.show('Endereço copiado');
+    onClose();
+  };
+  return (
+    <Sheet open={open} onClose={onClose} accent="cyan" label="Como chegar">
+      <Title accent="cyan">Como chegar</Title>
+      <p className={cx(ui.xs, ui.soft, ui.mb8)}>{[label, address].filter(Boolean).join(' · ')}</p>
+      <div>
+        {apps.map((a) => (
+          <ListRow
+            key={a.id}
+            icon={DIR_ICONS[a.id] ?? 'nav'}
+            onClick={() => {
+              window.open(a.href, '_blank', 'noopener,noreferrer');
+              onClose();
+            }}
+          >
+            {a.name}
+          </ListRow>
+        ))}
+        <ListRow icon="copy" onClick={() => void copyAddr()}>
+          Copiar endereço
+        </ListRow>
+      </div>
+    </Sheet>
   );
 }
 

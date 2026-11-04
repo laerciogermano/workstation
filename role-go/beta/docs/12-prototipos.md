@@ -47,6 +47,7 @@
 | T-25 | Como foi? (avaliação) | E03 | US-03.10 | amarelo |
 | T-26 | Organizador (público) | E03 | US-03.13, 03.11 | violeta |
 | T-27 | Denunciar (sheet) | E03 | US-03.14 | magenta |
+| T-28 | Como chegar (sheet) | E03 | US-03.01 | ciano |
 | T-30 | Meus rolês | E01/E03 | US-01.17, 03.04, 03.05, 03.10 | violeta |
 | T-31 | Perfil | E01 | US-01.06, 01.11, 01.12, 02.01 | violeta |
 | T-32 | Editar perfil | E01 | US-01.11 | violeta |

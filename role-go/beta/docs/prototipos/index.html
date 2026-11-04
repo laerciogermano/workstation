@@ -828,7 +828,7 @@ td{padding:12px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
       <div class="flex mt12" data-go="T-26"><span class="av md a2">CC</span><div class="grow"><p class="b sm">Club Central</p><p class="xs muted">Casa de eventos · <span class="yl">★ 4,6</span> (38)</p></div><svg class="i muted"><use href="#chev"/></svg></div>
       <div class="hr"></div>
       <div class="irow"><span class="ic"><svg class="i"><use href="#cal"/></svg></span><div><p class="b">Sáb, 15 nov · 22:00–06:00</p><p class="xs soft">Termina no dia seguinte · <a class="cy b">Adicionar ao calendário</a></p></div></div>
-      <div class="irow"><span class="ic"><svg class="i"><use href="#pin"/></svg></span><div class="grow"><p class="b">Club Central · 2,3 km</p><p class="xs soft">R. XV de Novembro, 1200 — Centro</p></div><button class="btn s sm"><svg class="i s"><use href="#nav"/></svg>Ir</button></div>
+      <div class="irow"><span class="ic"><svg class="i"><use href="#pin"/></svg></span><div class="grow"><p class="b">Club Central · 2,3 km</p><p class="xs soft">R. XV de Novembro, 1200 — Centro</p></div><button class="btn s sm" data-go="T-28"><svg class="i s"><use href="#nav"/></svg>Ir</button></div>
       <div class="sec y">Valores</div>
       <div class="price"><span>Pista<b>R$ 89</b></span><span>VIP<b>R$ 189</b></span><span>Open bar<b>até 00h</b></span></div>
       <a class="flex sm cy b mt8"><svg class="i s"><use href="#link"/></svg>Comprar no site do organizador</a>
@@ -853,7 +853,7 @@ td{padding:12px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
       <div class="flex mb8"><span class="badge b-g"><span class="live"></span>Ao vivo agora</span><span class="badge b-n">Grátis</span></div>
       <h2 style="font-weight:900;font-style:italic;font-size:27px;line-height:1;text-transform:uppercase">Samba da Feira</h2>
       <div class="ncard g mt12 flex"><svg class="i l gr"><use href="#bolt"/></svg><div><p class="b">Rolando agora</p><p class="xs soft">Começou às 16:00 · termina às 22:00</p></div></div>
-      <div class="irow mt8"><span class="ic"><svg class="i"><use href="#pin"/></svg></span><div class="grow"><p class="b">Largo da Ordem · 1,1 km</p><p class="xs soft">Praça Garibaldi — São Francisco</p></div><button class="btn s sm"><svg class="i s"><use href="#nav"/></svg>Ir</button></div>
+      <div class="irow mt8"><span class="ic"><svg class="i"><use href="#pin"/></svg></span><div class="grow"><p class="b">Largo da Ordem · 1,1 km</p><p class="xs soft">Praça Garibaldi — São Francisco</p></div><button class="btn s sm" data-go="T-28"><svg class="i s"><use href="#nav"/></svg>Ir</button></div>
       <div class="sec m">Quem está lá</div>
       <div class="avs"><span class="av a3">L</span><span class="av a1">M</span><span class="av a6">C</span><span class="av a2">J</span><span class="av a7 xs">+208</span></div>
       <p class="sm soft mt8"><b class="gr">37 marcaram "estou aqui"</b> · 212 vão</p>
@@ -978,6 +978,22 @@ td{padding:12px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
   </div>
 </template>
 
+<template data-id="T-28" data-name="Como chegar" data-accent="cyan" data-us="US-03.01" data-notes="Abre a partir do botão Ir na página do evento, só com endereço liberado. Opções: Uber, 99, Google Maps, Apple Mapas, Waze e copiar endereço. Deep links HTTPS abrem o app se instalado.">
+  <div class="under"><div class="cv p-neon" style="height:260px"><div class="art"></div></div></div>
+  <div class="dim" data-go="back"></div>
+  <div class="sheet c">
+    <div class="grab"></div>
+    <h3 class="h1 c" style="font-size:19px">Como chegar</h3>
+    <p class="sm soft mb12">Club Central · R. XV de Novembro, 1200</p>
+    <div class="lrow"><span class="ico"><svg class="i"><use href="#nav"/></svg></span><span class="grow b sm">Uber</span><svg class="i muted"><use href="#chev"/></svg></div>
+    <div class="lrow"><span class="ico"><svg class="i"><use href="#nav"/></svg></span><span class="grow b sm">99</span><svg class="i muted"><use href="#chev"/></svg></div>
+    <div class="lrow"><span class="ico"><svg class="i"><use href="#pin"/></svg></span><span class="grow b sm">Google Maps</span><svg class="i muted"><use href="#chev"/></svg></div>
+    <div class="lrow"><span class="ico"><svg class="i"><use href="#pin"/></svg></span><span class="grow b sm">Apple Mapas</span><svg class="i muted"><use href="#chev"/></svg></div>
+    <div class="lrow"><span class="ico"><svg class="i"><use href="#compass"/></svg></span><span class="grow b sm">Waze</span><svg class="i muted"><use href="#chev"/></svg></div>
+    <div class="lrow"><span class="ico"><svg class="i"><use href="#copy"/></svg></span><span class="grow b sm">Copiar endereço</span><svg class="i muted"><use href="#chev"/></svg></div>
+  </div>
+</template>
+
 <!-- ============ Meus rolês & Perfil ============ -->
 <template data-id="T-30" data-name="Meus rolês" data-accent="violet" data-us="US-01.17,US-03.04,US-03.05,US-03.10" data-notes="Aba própria na navegação. Próximos: confirmados e pedidos pendentes de eventos privados (badge amarelo). Passados: 'Rolês que fui' com atalho para avaliar. Cancelados pelo organizador aparecem com a faixa 'Cancelado'.">
   <div class="body tb">
@@ -995,13 +1011,12 @@ td{padding:12px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
 <template data-id="T-31" data-name="Perfil" data-accent="violet" data-us="US-01.06,US-01.11,US-01.12,US-02.01" data-notes="Perfil básico do beta: foto, nome, cidade, números de rolês e avaliações. Atalhos: editar, preferências e privacidade, ativar o modo organizador (se ainda não tiver), feedback, sair. Sem amigos ou selos no beta (1.1 / E06).">
   <div class="body tb">
     <div class="top"><span class="t" style="font-size:16px;font-weight:800;font-style:italic;text-transform:uppercase">Perfil</span><span class="sp"></span><button class="ibtn" data-go="T-33"><svg class="i"><use href="#gear"/></svg></button></div>
-    <div style="text-align:center"><span class="av lg a1" style="margin:0 auto">A</span><p class="b lg mt8">Ana Souza</p><p class="sm muted">Curitiba · desde nov 2026</p></div>
+    <div style="text-align:center"><span class="av lg a1" style="margin:0 auto">AS</span><p class="b lg mt8">Ana Souza</p><p class="sm muted">Curitiba · desde nov 2026</p></div>
     <div class="grid3 mt16"><div class="card" style="padding:10px;text-align:center"><p class="xb lg">12</p><p class="xs muted">rolês</p></div><div class="card" style="padding:10px;text-align:center"><p class="xb lg">3</p><p class="xs muted">próximos</p></div><div class="card" style="padding:10px;text-align:center"><p class="xb lg yl">9</p><p class="xs muted">avaliações</p></div></div>
     <div class="ncard c mt16 flex" data-go="T-40"><svg class="i l cy"><use href="#grid"/></svg><div class="grow"><p class="b">Quero publicar rolês</p><p class="xs soft">Para anfitriões, bares e produtores</p></div><svg class="i cy"><use href="#chev"/></svg></div>
     <div class="mt12">
       <div class="lrow" data-go="T-32"><span class="ico"><svg class="i"><use href="#edit"/></svg></span><span class="grow b sm">Editar perfil</span><svg class="i muted"><use href="#chev"/></svg></div>
-      <div class="lrow" data-go="T-33"><span class="ico"><svg class="i"><use href="#compass"/></svg></span><span class="grow b sm">Preferências de descoberta</span><svg class="i muted"><use href="#chev"/></svg></div>
-      <div class="lrow" data-go="T-33"><span class="ico"><svg class="i"><use href="#shield"/></svg></span><span class="grow b sm">Privacidade</span><svg class="i muted"><use href="#chev"/></svg></div>
+      <div class="lrow" data-go="T-33"><span class="ico"><svg class="i"><use href="#gear"/></svg></span><span class="grow b sm">Preferências e privacidade</span><svg class="i muted"><use href="#chev"/></svg></div>
       <div class="lrow"><span class="ico"><svg class="i"><use href="#mail"/></svg></span><span class="grow b sm">Mandar feedback</span><svg class="i muted"><use href="#chev"/></svg></div>
       <div class="lrow" data-go="T-01"><span class="ico" style="color:var(--magenta)"><svg class="i"><use href="#logout"/></svg></span><span class="grow b sm mg">Sair</span></div>
     </div>
@@ -1012,7 +1027,7 @@ td{padding:12px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
 <template data-id="T-32" data-name="Editar perfil" data-accent="violet" data-us="US-01.11" data-notes="Foto em JPG/PNG/WebP até 5 MB, validada pelos bytes, recortada em quadrado e convertida para WebP 512 px (EXIF removido). E-mail duplicado mostra 'Este e-mail já está em uso.'. Trocar o e-mail reinicia a verificação.">
   <div class="body ft">
     <div class="top"><button class="ibtn" data-go="back"><svg class="i"><use href="#back"/></svg></button><span class="t">Editar perfil</span></div>
-    <div style="text-align:center;margin:10px 0 18px;position:relative"><span class="av lg a1" style="margin:0 auto">A</span><span class="ibtn" style="position:absolute;left:calc(50% + 18px);bottom:-4px;background:var(--violet);border:2px solid #000"><svg class="i s"><use href="#camera"/></svg></span><p class="xs cy b mt12">Trocar foto</p></div>
+    <div style="text-align:center;margin:10px 0 18px;position:relative"><span class="av lg a1" style="margin:0 auto">AS</span><span class="ibtn" style="position:absolute;left:calc(50% + 18px);bottom:-4px;background:var(--violet);border:2px solid #000"><svg class="i s"><use href="#camera"/></svg></span><p class="xs cy b mt12">Trocar foto</p></div>
     <div class="field"><label>Nome</label><div class="inp v">Ana Souza</div></div>
     <div class="field"><label>E-mail</label><div class="inp v">ana@exemplo.com<span class="sp"></span><span class="badge b-g">verificado</span></div></div>
   </div>
@@ -1249,10 +1264,10 @@ const FLOWS = [
     steps:[['T-10','Feed'],['T-11','Swipe'],['T-12','Lista'],['T-13','Filtros'],['T-14','Trocar cidade'],['T-15','Busca']] },
   { id:'e03', n:'E03', title:'Evento, presença e pós-evento', color:'c-magenta',
     desc:'A página do evento dá informação para decidir; depois vêm interesse, confirmação de presença (RSVP gratuito), evento privado com pedido e aprovação, compartilhamento com preview, ao vivo, avaliação e denúncia. Histórias <code>US-03.01 → 03.14</code>.',
-    steps:[['T-20','Página'],['T-21','Quem vai'],['T-22','Confirmou'],['T-24','Compartilhar'],['T-23','Privado'],['T-20b','Ao vivo'],['T-25','Avaliar'],['T-26','Organizador'],['T-27','Denunciar']] },
+    steps:[['T-20','Página'],['T-28','Como chegar'],['T-21','Quem vai'],['T-22','Confirmou'],['T-24','Compartilhar'],['T-23','Privado'],['T-20b','Ao vivo'],['T-25','Avaliar'],['T-26','Organizador'],['T-27','Denunciar']] },
   { id:'perfil', n:'E01', title:'Meus rolês e perfil', color:'c-violet',
     desc:'Agenda pessoal (próximos, pendentes, para avaliar), perfil básico, edição, preferências, privacidade da presença e exclusão de conta (LGPD). Histórias <code>US-01.11 → 01.17</code>.',
-    steps:[['T-30','Meus rolês'],['T-31','Perfil'],['T-32','Editar'],['T-33','Privacidade']] },
+    steps:[['T-30','Meus rolês'],['T-31','Perfil'],['T-32','Editar'],['T-33','Preferências e privacidade']] },
   { id:'e02o', n:'E02', title:'Organizador: publicar o rolê', color:'c-yellow',
     desc:'O lado da oferta: ativar o modo organizador, wizard de 6 passos com rascunho automático, publicação, painel de métricas, galeria e nova edição, lista de convidados do evento privado e cancelamento. Histórias <code>US-02.01 → 02.10</code>, <code>US-03.06</code>, <code>US-03.09</code>.',
     steps:[['T-40','Ativar'],['T-41','1 Básico'],['T-42','2 Quando'],['T-42B','3 Onde'],['T-43','4 Acesso'],['T-44','5 Valores'],['T-45','6 Revisão'],['T-46','Painel'],['T-48','Convidados'],['T-47','Galeria'],['T-49','Cancelar']] },

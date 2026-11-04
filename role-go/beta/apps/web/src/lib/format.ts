@@ -92,4 +92,12 @@ export function fromLocalInput(v: string): string | null {
   return Number.isNaN(d.getTime()) ? null : d.toISOString();
 }
 
-export const initials = (name: string): string => name.trim().charAt(0).toUpperCase() || '?';
+/** Até 2 letras: primeira do primeiro nome + primeira do último; um nome só → 1 letra. */
+export function initials(name: string): string {
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  if (!parts.length) return '?';
+  const first = [...parts[0]!][0] ?? '';
+  if (parts.length === 1) return first.toLocaleUpperCase('pt-BR') || '?';
+  const last = [...parts[parts.length - 1]!][0] ?? '';
+  return `${first}${last}`.toLocaleUpperCase('pt-BR') || '?';
+}

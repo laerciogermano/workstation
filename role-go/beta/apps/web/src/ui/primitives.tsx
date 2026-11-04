@@ -1,5 +1,5 @@
 import type { Accent, PersonRef } from '@rolego/contracts';
-import { type ButtonHTMLAttributes, type InputHTMLAttributes, type JSX, type ReactNode, type SelectHTMLAttributes, type TextareaHTMLAttributes, useId } from 'react';
+import { type ButtonHTMLAttributes, type InputHTMLAttributes, type JSX, type ReactNode, type SelectHTMLAttributes, type TextareaHTMLAttributes, useId, useState } from 'react';
 import { initials } from '../lib/format';
 import { Icon, type IconName } from './Icon';
 import s from './ui.module.css';
@@ -201,9 +201,12 @@ const AV_GRADIENTS = ['var(--rg-g-avatar-1)', 'var(--rg-g-avatar-2)', 'var(--rg-
 const hashName = (n: string) => [...n].reduce((a, c) => (a * 31 + c.charCodeAt(0)) >>> 0, 7);
 
 export function Avatar({ name, url, size }: { name: string; url: string | null; size?: 'md' | 'lg' }): JSX.Element {
+  const src = url?.trim() || null;
+  const [failedSrc, setFailedSrc] = useState<string | null>(null);
+  const showImg = !!src && failedSrc !== src;
   return (
-    <span className={cx(s.av, size === 'md' && s.avMd, size === 'lg' && s.avLg)} style={{ background: AV_GRADIENTS[hashName(name) % AV_GRADIENTS.length] }} title={name}>
-      {url ? <img src={url} alt="" width={88} height={88} loading="lazy" /> : initials(name)}
+    <span className={cx(s.av, size === 'md' && s.avMd, size === 'lg' && s.avLg)} style={{ background: AV_GRADIENTS[hashName(name) % AV_GRADIENTS.length] }} title={name} aria-label={name}>
+      {showImg ? <img src={src} alt="" width={88} height={88} loading="lazy" onError={() => setFailedSrc(src)} /> : initials(name)}
     </span>
   );
 }

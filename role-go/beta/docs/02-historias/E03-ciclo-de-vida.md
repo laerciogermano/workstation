@@ -64,7 +64,7 @@ stateDiagram-v2
 ## US-03.01 — Página do evento
 **Como** explorador, **quero** ver tudo sobre o evento numa página **para** decidir se vou.
 
-Conteúdo: capa (4:5) com o selo do tipo; título; organizador (avatar, nome, nota); data/hora com "começa em 2 h"; local + distância; botão "Como chegar" (abre Google Maps/Waze, **só** se o endereço estiver liberado); descrição; valores; classificação etária; link externo; interessados/confirmados; avaliações (se ENDED); galeria e edições anteriores; ações fixas no rodapé: **♥ Interesse** e **Confirmar presença**.
+Conteúdo: capa (4:5) com o selo do tipo; título; organizador (avatar, nome, nota); data/hora com "começa em 2 h"; local + distância; botão "Ir" abre folha **Como chegar** (Uber, 99, Google Maps, Apple Mapas, Waze, copiar endereço — **só** se o endereço estiver liberado); descrição; valores; classificação etária; link externo; interessados/confirmados; avaliações (se ENDED); galeria e edições anteriores; ações fixas no rodapé: **♥ Interesse** e **Confirmar presença**.
 
 ```gherkin
   Cenário: Evento público futuro

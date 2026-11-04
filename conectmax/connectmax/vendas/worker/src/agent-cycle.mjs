@@ -1,4 +1,8 @@
 import { getHandler } from './handlers/index.mjs';
+import {
+  assertEgressIpChanged,
+  isEgressIpGuardEnabled,
+} from './last-egress-ip.mjs';
 
 /**
  * Um ciclo claim→handler→complete/fail para um agentId.
@@ -40,6 +44,13 @@ export async function runAgentCycle(api, opts) {
     }
 
     try {
+      if (isEgressIpGuardEnabled()) {
+        const { ip, previous } = await assertEgressIpChanged();
+        console.log(
+          `[${agentId}] egress IP=${ip}${previous ? ` (prev=${previous})` : ' (primeiro)'}`,
+        );
+      }
+
       const handler = getHandler(j.type);
       const result = await handler(j, {
         apiUrl,

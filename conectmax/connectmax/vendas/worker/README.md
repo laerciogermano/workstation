@@ -14,6 +14,8 @@
 
 **Antes → depois (lifecycle Chrome por job):** CDP ficava aberto logado entre jobs → `withLinkedInPage` sobe o Chrome e chama `stopCdp` no fim de cada operação. Escape: `CDP_KEEP_BROWSER=1`. **Rollback:** `CDP_KEEP_BROWSER=1` ou reverta o `finally` em `screen-robot/src/lib/cdp/session.js`.
 
+**Antes → depois (IP ≠ último):** jobs podiam rodar no mesmo egress seguido → no start de cada job (após claim, antes do handler) o worker consulta o IP uma vez, compara com `~/.connectmax/last-egress-ip` (compartilhado no host) e, se igual, **fail** sem executar: `falha: IP igual ao último IP (<ip>)`. Se diferente, grava o atual e segue. Sem poll contínuo. Escape: `SKIP_EGRESS_IP_GUARD=1` ou `DRY=1`. Reset: `rm ~/.connectmax/last-egress-ip`. **Rollback:** remova o bloco em `agent-cycle.mjs` / apague `src/last-egress-ip.mjs`.
+
 ## Modos
 
 ### Single — 1 agente / 1 AVD
@@ -100,6 +102,9 @@ Use **chave global** no supervisor.
 | `WORKER_RUNTIME` | `cdp` → handlers Chrome; omit/`avd` → AVD |
 | `CDP_ID` / `CDP_URL` | Perfil/porta human-cdp (obrigatório no runtime CDP) |
 | `DRY` / `ONCE` / `ALLOW_STUB` | Smoke / stubs |
+| `SKIP_EGRESS_IP_GUARD=1` | Desliga a guarda de IP repetido |
+| `LAST_EGRESS_IP_FILE` | Path do último IP (default `~/.connectmax/last-egress-ip`) |
+| `EGRESS_IP_URL` | Override do lookup (default `https://api.ipify.org`) |
 
 ## Handlers
 

@@ -24,6 +24,7 @@ Relacionados: **ConnectMax** (agente LinkedIn / vendas) neste repo em [`connectm
 |------|-----------|
 | [**Processos**](processos/README.md) | Operação, fluxos e padrões internos |
 | [**Financeiro**](financeiro/README.md) | Contas, crédito, faturamento e indicadores |
+| [**Extratos**](extratos/README.md) | Extratos bancários (Inter CSV) |
 | [**Comercial**](comercial/README.md) | Vendas, carteira e relacionamento B2B |
 | [**Produtos**](produtos/README.md) | Portfólio e categorias de oferta |
 

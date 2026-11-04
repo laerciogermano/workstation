@@ -134,7 +134,8 @@ select.input { appearance: none; }
 .avs { display: flex; }
 .avs > * { margin-left: -9px; }
 .avs > *:first-child { margin-left: 0; }
-.avsBlur { filter: blur(1.6px); opacity: 0.88; user-select: none; }
+.avsBlur { filter: blur(1.2px); opacity: 0.9; user-select: none; }
+.avsBlur .av { /* iniciais/fotos continuam legíveis sob o blur leve */ }
 .avMore { background: var(--rg-surface-3); font-size: 10px; }
 
 /* ===== Sheet / toast ===== */

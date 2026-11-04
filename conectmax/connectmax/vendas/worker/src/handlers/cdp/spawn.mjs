@@ -44,6 +44,15 @@ export function spawnNpm(cwd, args, env) {
       process.env.WORKER_SCRIPT_TIMEOUT_MS ||
       0,
   );
+  const label = `npm ${args.join(' ')}`;
+  const ts = () => new Date().toISOString().slice(11, 19);
+  console.log(
+    `${ts()} [spawn] iniciando robô: ${label}${
+      Number.isFinite(timeoutMs) && timeoutMs >= 30_000
+        ? ` (timeout ${Math.round(timeoutMs / 1000)}s)`
+        : ''
+    }`,
+  );
   return new Promise((resolvePromise, reject) => {
     const child = spawn('npm', args, {
       cwd,
@@ -57,6 +66,9 @@ export function spawnNpm(cwd, args, env) {
     };
     if (Number.isFinite(timeoutMs) && timeoutMs >= 30_000) {
       timer = setTimeout(() => {
+        console.warn(
+          `${ts()} [spawn] timeout — matando ${label} após ${Math.round(timeoutMs / 1000)}s`,
+        );
         try {
           child.kill('SIGTERM');
         } catch {
@@ -71,18 +83,25 @@ export function spawnNpm(cwd, args, env) {
         }, 5_000);
         reject(
           new Error(
-            `script timeout ${Math.round(timeoutMs / 1000)}s: npm ${args.join(' ')}`,
+            `script timeout ${Math.round(timeoutMs / 1000)}s: ${label}`,
           ),
         );
       }, timeoutMs);
     }
     child.on('error', (err) => {
       clear();
+      console.error(`${ts()} [spawn] falha ao subir processo: ${err.message}`);
       reject(err);
     });
     child.on('close', (code) => {
       clear();
-      resolvePromise(code ?? 1);
+      const c = code ?? 1;
+      if (c === 0) {
+        console.log(`${ts()} [spawn] robô terminou OK: ${label}`);
+      } else {
+        console.warn(`${ts()} [spawn] robô saiu com código ${c}: ${label}`);
+      }
+      resolvePromise(c);
     });
   });
 }

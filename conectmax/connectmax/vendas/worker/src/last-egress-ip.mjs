@@ -147,21 +147,41 @@ export async function peekEgressIpStatus(opts = {}) {
  * Poll até o IP atual ser diferente do último (ou não haver último).
  * Não grava o arquivo — só libera o worker para claimar.
  *
- * @param {{ filePath?: string, fetchIp?: Function, pollMs?: number, shouldStop?: () => boolean, onWait?: (s: object) => void, logTag?: string }} opts
+ * Log: 1ª espera + a cada EGRESS_IP_LOG_EVERY polls (default 6 ≈ 1 min com poll 10s).
+ *
+ * @param {{ filePath?: string, fetchIp?: Function, pollMs?: number, shouldStop?: () => boolean, onWait?: (s: object) => void, logTag?: string, log?: { info: Function, warn: Function, debug: Function } }} opts
  */
 export async function waitUntilEgressIpReady(opts = {}) {
   const filePath = opts.filePath || egressIpFilePath();
   const fetchIp = opts.fetchIp || fetchCurrentEgressIp;
   const pollMs = opts.pollMs || egressIpPollMs();
   const shouldStop = opts.shouldStop || (() => false);
-  let lastLog = '';
+  const logEvery = Math.max(
+    1,
+    Number(process.env.EGRESS_IP_LOG_EVERY || 6) || 6,
+  );
+  const startedAt = Date.now();
+  let attempt = 0;
+  let lastPair = '';
+
+  const say = (level, msg) => {
+    if (opts.log?.[level]) {
+      opts.log[level](msg);
+      return;
+    }
+    const tag = opts.logTag || 'egress';
+    const line = `[${tag}] ${msg}`;
+    if (level === 'warn') console.warn(line);
+    else console.log(line);
+  };
 
   for (;;) {
     if (shouldStop()) {
-      const err = new Error('egress IP wait cancelado (shutdown)');
+      const err = new Error('espera de IP cancelada (shutdown)');
       err.code = 'EGRESS_IP_WAIT_CANCELLED';
       throw err;
     }
+    attempt += 1;
     let status;
     try {
       status = await peekEgressIpStatus({ filePath, fetchIp });
@@ -169,24 +189,42 @@ export async function waitUntilEgressIpReady(opts = {}) {
       const msg = e instanceof Error ? e.message : String(e);
       if (opts.onWait) {
         opts.onWait({ ready: false, error: msg });
-      } else if (opts.logTag) {
-        console.warn(`[${opts.logTag}] egress IP lookup: ${msg} — retry ${pollMs}ms`);
+      } else {
+        say(
+          'warn',
+          `não consegui ler o IP público (${msg}) — nova tentativa em ${Math.round(pollMs / 1000)}s`,
+        );
       }
       await sleep(pollMs);
       continue;
     }
     if (status.ready) {
+      const waited = Date.now() - startedAt;
       if (opts.onWait) opts.onWait({ ...status, ready: true });
+      else if (attempt > 1 || status.previous) {
+        say(
+          'info',
+          status.previous
+            ? `IP mudou: ${status.previous} → ${status.ip} (esperei ${Math.round(waited / 1000)}s) — liberado pra pegar job`
+            : `IP público ${status.ip} (primeiro nesta máquina) — liberado pra pegar job`,
+        );
+      } else {
+        say('info', `IP público ${status.ip} — liberado pra pegar job`);
+      }
       return status;
     }
-    const line = `last=${status.previous} current=${status.ip}`;
-    if (line !== lastLog) {
-      lastLog = line;
+    const pair = `${status.previous}|${status.ip}`;
+    const elapsedSec = Math.round((Date.now() - startedAt) / 1000);
+    const shouldAnnounce =
+      pair !== lastPair || attempt === 1 || attempt % logEvery === 0;
+    if (shouldAnnounce) {
+      lastPair = pair;
       if (opts.onWait) {
-        opts.onWait({ ...status, ready: false });
-      } else if (opts.logTag) {
-        console.log(
-          `[${opts.logTag}] aguardando IP mudar (${line}) — poll ${pollMs}ms`,
+        opts.onWait({ ...status, ready: false, attempt, elapsedSec });
+      } else {
+        say(
+          'info',
+          `aguardando troca de IP (VPN/proxy) — atual=${status.ip} último_job=${status.previous} · tentativa ${attempt} · ${elapsedSec}s · poll ${Math.round(pollMs / 1000)}s`,
         );
       }
     }

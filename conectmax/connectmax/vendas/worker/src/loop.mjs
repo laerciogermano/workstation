@@ -19,6 +19,7 @@ import { hostname, totalmem } from 'node:os';
 import { createApiClient } from './api.mjs';
 import { runAgentCycle } from './agent-cycle.mjs';
 import { isCdpRuntime } from './handlers/index.mjs';
+import { createLogger, fmtDuration } from './log.mjs';
 
 function hostRamGb() {
   const fromEnv = Number(process.env.HOST_RAM_GB);
@@ -82,6 +83,7 @@ const HOST_KIND = (process.env.HOST_KIND || 'localhost').toLowerCase();
 const HOST_NOME = process.env.HOST_NOME || process.env.HOST_KEY || '';
 
 const api = createApiClient({ apiUrl: API_URL, apiKey: API_KEY });
+let log = createLogger(AGENT_ID_ENV);
 
 async function enroll() {
   try {
@@ -103,24 +105,27 @@ async function enroll() {
     body.ramGb = hostRamGb();
     const diskGb = hostDiskGb();
     if (diskGb) body.diskGb = diskGb;
+    log.info('cadastrando/atualizando agente na API (enroll)…');
     const res = await api.enroll(AGENT_ID_ENV, body);
     if (res?.agentId) AGENT_ID = res.agentId;
-    console.log(
-      `[${AGENT_ID}] enroll created=${res.created ? 1 : 0} needsLinkedin=${res.needsLinkedin ? 1 : 0} online=${res.online ? 1 : 0}`,
-    );
+    log = createLogger(AGENT_ID);
+    const created = res.created ? 'conta nova' : 'já existia';
+    const li = res.needsLinkedin
+      ? 'faltam dados LinkedIn no painel'
+      : 'LinkedIn ok';
+    const on = res.online ? 'online' : 'offline';
+    log.info(`enroll OK (${created}) · ${li} · ${on}`);
     if (res.apiKey) {
-      console.warn(
-        `[${AGENT_ID}] API key scoped (salve uma vez; depois use como AGENT_API_KEY):\n${res.apiKey}`,
+      log.warn(
+        `API key do agente (salve uma vez; depois use como AGENT_API_KEY):\n${res.apiKey}`,
       );
     }
     if (res.needsLinkedin) {
-      console.warn(
-        `[${AGENT_ID}] falta LinkedIn — complete no painel /agentes`,
-      );
+      log.warn('complete o LinkedIn em /agentes antes de rodar jobs de verdade');
     }
     return res;
   } catch (e) {
-    console.error(`[${AGENT_ID}] enroll:`, e.message || e);
+    log.error(`enroll falhou: ${e.message || e}`);
     return null;
   }
 }
@@ -131,8 +136,11 @@ async function heartbeat() {
       hostInstanceId: HOST_INSTANCE_ID,
       workerVersion: WORKER_VERSION,
     });
+    log.debug(
+      `heartbeat OK (próximo em ${fmtDuration(HEARTBEAT_MS)}; diz à API que estou vivo)`,
+    );
   } catch (e) {
-    console.error(`[${AGENT_ID}] heartbeat:`, e.message || e);
+    log.error(`heartbeat falhou: ${e.message || e}`);
   }
 }
 
@@ -146,32 +154,39 @@ async function failCurrentJob(reason) {
   currentJobId = null;
   try {
     await api.fail(AGENT_ID, id, reason);
-    console.warn(`[${AGENT_ID}] fail no shutdown job=${id}: ${reason}`);
+    log.warn(`job ${id} marcado como falha no encerramento: ${reason}`);
   } catch (e) {
-    console.error(
-      `[${AGENT_ID}] fail shutdown job=${id}:`,
-      e.message || e,
-    );
+    log.error(`não consegui falhar job ${id} no shutdown: ${e.message || e}`);
   }
 }
 
 async function main() {
   if (!API_KEY) {
-    console.warn(
-      '[agent-worker] AGENT_API_KEY vazio — use chave do agente ou AGENT_API_KEY global',
+    log.warn(
+      'AGENT_API_KEY vazio — use a chave do agente ou a AGENT_API_KEY global',
     );
   }
-  console.log(
-    `agent-worker API=${API_URL} AGENT=${AGENT_ID_ENV} DRY=${DRY ? 1 : 0} runtime=${CDP ? 'cdp' : 'avd'} SERIAL=${SERIAL || '(env)'} CDP_ID=${CDP_ID || '-'} CDP_URL=${CDP_URL || '-'}`,
+  const runtimeLabel = CDP
+    ? `Chrome CDP · perfil=${CDP_ID || '-'} · ${CDP_URL || '(sem CDP_URL)'}`
+    : `AVD · serial=${SERIAL || '(env)'}`;
+  log.info('——— worker iniciado ———');
+  log.info(`API ${API_URL}`);
+  log.info(`agente ${AGENT_ID_ENV} · ${runtimeLabel}`);
+  log.info(
+    `DRY=${DRY ? 'sim' : 'não'} · ONCE=${ONCE ? 'sim' : 'não'} · pausa ociosa ${fmtDuration(SLEEP_MS)} · heartbeat ${fmtDuration(HEARTBEAT_MS)}`,
   );
   await enroll();
-  console.log(`agent-worker agentId canônico=${AGENT_ID}`);
+  if (AGENT_ID !== AGENT_ID_ENV) {
+    log.info(`id canônico na API: ${AGENT_ID}`);
+  }
   const hb = setInterval(heartbeat, HEARTBEAT_MS);
+  // primeiro heartbeat logo após enroll
+  void heartbeat();
 
   const onSignal = async (sig) => {
     if (shuttingDown) return;
     shuttingDown = true;
-    console.warn(`[${AGENT_ID}] ${sig} — encerrando…`);
+    log.warn(`recebi ${sig} — encerrando com segurança…`);
     clearInterval(hb);
     await failCurrentJob(`worker ${sig} — job interrompido`);
     process.exit(0);
@@ -179,11 +194,13 @@ async function main() {
   process.on('SIGTERM', () => void onSignal('SIGTERM'));
   process.on('SIGINT', () => void onSignal('SIGINT'));
 
+  let cycle = 0;
   try {
     for (;;) {
       if (shuttingDown) break;
+      cycle += 1;
       try {
-        await runAgentCycle(api, {
+        const didWork = await runAgentCycle(api, {
           agentId: AGENT_ID,
           serial: SERIAL,
           cdpId: CDP_ID,
@@ -192,6 +209,8 @@ async function main() {
           apiKey: API_KEY,
           dry: DRY,
           runtime: CDP ? 'cdp' : 'avd',
+          cycle,
+          log,
           shouldStop: () => shuttingDown,
           onClaimed: (id) => {
             currentJobId = id;
@@ -200,15 +219,26 @@ async function main() {
             currentJobId = null;
           },
         });
+        if (!ONCE && !shuttingDown) {
+          log.info(
+            didWork
+              ? `ciclo #${cycle} ok — pausa ${fmtDuration(SLEEP_MS)} e volto a puxar fila`
+              : `sem job — pausa ${fmtDuration(SLEEP_MS)} e consulto a fila de novo`,
+          );
+        }
       } catch (e) {
         currentJobId = null;
-        console.error(`[${AGENT_ID}] erro:`, e.message || e);
+        log.error(`erro no ciclo #${cycle}: ${e.message || e}`);
+        if (!ONCE && !shuttingDown) {
+          log.info(`pausa ${fmtDuration(SLEEP_MS)} antes de tentar de novo`);
+        }
       }
       if (ONCE || shuttingDown) break;
       await new Promise((r) => setTimeout(r, SLEEP_MS));
     }
   } finally {
     clearInterval(hb);
+    log.info('——— worker parado ———');
   }
 }
 

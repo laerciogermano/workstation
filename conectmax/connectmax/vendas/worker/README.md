@@ -16,6 +16,8 @@
 
 **Antes → depois (IP ≠ último):** jobs no mesmo egress seguido → worker **fica ligado** e faz poll do IP (`EGRESS_IP_POLL_MS`, default 10s). Se atual == `~/.connectmax/last-egress-ip`, **não claima** (espera mudar). Quando muda, claima/executa, grava o último IP e append em `~/.connectmax/egress-ip-timeline.jsonl` (`at`, `ip`, `previous`, `agentId`, `jobId`, `jobType`). Escape: `SKIP_EGRESS_IP_GUARD=1` / `DRY=1`. Reset último: `rm ~/.connectmax/last-egress-ip` (timeline permanece). **Rollback:** remova o wait/commit em `agent-cycle.mjs` / apague `src/last-egress-ip.mjs`.
 
+**Antes → depois (logs legíveis):** stdout só no arquivo `logs/worker-*.out` (terminal do `keep-worker` quase mudo; espera de IP logava 1× e ficava quieto) → `src/log.mjs` com HH:MM:SS + mensagens em PT (ciclo, claim, IP, spawn do robô); espera de IP repete a cada `EGRESS_IP_LOG_EVERY` polls (default 6 ≈ 1 min); scripts CDP fazem `tee -a` (terminal **e** arquivo, PID do npm preservado). Escape: `WORKER_LOG_VERBOSE=0` (some heartbeats/debug). **Rollback:** volte `>>"$LOG"` nos `start-worker-*-cdp.sh`; remova imports de `log.mjs` / logs periódicos em `last-egress-ip.mjs`.
+
 ## Modos
 
 ### Single — 1 agente / 1 AVD
@@ -106,7 +108,9 @@ Use **chave global** no supervisor.
 | `LAST_EGRESS_IP_FILE` | Último IP (default `~/.connectmax/last-egress-ip`) |
 | `EGRESS_IP_TIMELINE_FILE` | JSONL da timeline (default `~/.connectmax/egress-ip-timeline.jsonl`) |
 | `EGRESS_IP_POLL_MS` | Poll enquanto espera IP mudar (default `10000`) |
+| `EGRESS_IP_LOG_EVERY` | A cada N polls loga de novo a espera de IP (default `6`) |
 | `EGRESS_IP_URL` | Override do lookup (default `https://api.ipify.org`) |
+| `WORKER_LOG_VERBOSE` | `0` silencia debug (heartbeat OK etc.); default ligado |
 
 ## Handlers
 

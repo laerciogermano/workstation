@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>notinhas.shop Beta — Protótipo navegável</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F5F7FA; --surface:#fff; --ink:#0B1F33; --muted:#5A6B7D; --line:#D5DEE8;
+  --blue:#0069B4; --blue-deep:#014380; --blue-soft:#E3F2FB;
+  --green:#00984B; --green-deep:#007A3D; --green-soft:#E6F6EE;
+  --err:#C62828; --warn:#D97706;
+  --g-brand:linear-gradient(135deg,#014380 0%,#0069B4 48%,#00984B 100%);
+  --r:14px; --r2:8px; --pill:999px;
+  --f:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;
+  --shadow:0 1px 2px rgba(11,31,51,.06),0 8px 24px rgba(11,31,51,.06);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--f);color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased;min-height:100vh}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+a{color:var(--blue);cursor:pointer;text-decoration:none}
+.wrap{max-width:1500px;margin:0 auto;padding:0 40px}
+.hero{padding:48px 0 28px;position:relative}
+.chipnum{display:inline-block;padding:6px 14px;border:1.5px solid var(--blue);border-radius:12px;font-weight:800;font-size:14px;color:var(--blue-deep);background:var(--blue-soft);margin-bottom:14px}
+.htitle{font-weight:800;font-size:clamp(32px,5vw,56px);letter-spacing:-.02em;line-height:1.05;color:var(--blue-deep)}
+.hsub{color:var(--muted);margin-top:14px;max-width:720px;font-size:15px;line-height:1.6}
+.hsub b{color:var(--ink)}
+.hactions{margin-top:22px;display:flex;gap:10px;flex-wrap:wrap}
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:18px;font-size:12px;color:var(--muted)}
+.legend span{display:flex;align-items:center;gap:6px}
+.legend i{width:10px;height:10px;border-radius:50%;background:currentColor}
+.nav{position:sticky;top:0;z-index:20;background:rgba(245,247,250,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;gap:6px;overflow-x:auto;padding:12px 40px;scrollbar-width:none}
+.nav a{white-space:nowrap;padding:8px 14px;border-radius:var(--pill);border:1px solid var(--line);color:var(--muted);font-size:13px;font-weight:600;background:var(--surface)}
+.nav a:hover{border-color:var(--blue);color:var(--blue-deep)}
+.nav a b{color:var(--blue);margin-right:6px}
+.flow{padding:48px 0 12px}
+.stitle{font-weight:800;font-size:28px;color:var(--blue-deep);letter-spacing:-.02em}
+.sdesc{color:var(--muted);margin-top:8px;max-width:880px;font-size:14px;line-height:1.55}
+.row{display:flex;gap:0;align-items:flex-start;overflow-x:auto;padding:28px 4px 24px;scrollbar-width:thin}
+.step{display:flex;flex-direction:column;align-items:center;gap:10px;flex:none}
+.step .lbl{font-weight:700;font-size:15px}
+.step .meta{font-size:11px;color:var(--muted);text-align:center;max-width:280px;line-height:1.4}
+.step .meta b{color:var(--ink)}
+.arrow{flex:none;align-self:center;width:40px;height:2px;margin:0 6px;margin-top:-36px;background:currentColor;position:relative}
+.arrow::after{content:"";position:absolute;right:-1px;top:-5px;width:10px;height:10px;border-top:2px solid currentColor;border-right:2px solid currentColor;transform:rotate(45deg)}
+.c-blue{color:var(--blue)} .c-green{color:var(--green)}
+footer{padding:48px 0 72px;color:var(--muted);font-size:12px;text-align:center}
+.wm{display:inline-flex;align-items:baseline;font-weight:800;letter-spacing:-.03em;line-height:1}
+.wm b{color:var(--blue-deep)} .wm i{color:var(--green);font-style:normal}
+.wm.xl{font-size:36px} .wm.md{font-size:22px} .wm.sm{font-size:16px}
+.phone{--pc:var(--blue);width:300px;height:640px;border-radius:40px;padding:6px;background:#0B1F33;border:2px solid var(--pc);flex:none;position:relative;box-shadow:var(--shadow);cursor:pointer;transition:transform .2s}
+.row .phone:hover{transform:translateY(-3px)}
+.phone.green{--pc:var(--green)} .phone.blue{--pc:var(--blue)}
+.scr{position:relative;width:100%;height:100%;border-radius:34px;overflow:hidden;background:var(--surface);display:flex;flex-direction:column;font-size:12.5px;line-height:1.45;color:var(--ink)}
+.row .scr *{pointer-events:none}
+.notch{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:88px;height:22px;border-radius:12px;background:#0B1F33;z-index:30}
+.sb{height:34px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:6px 22px 0;font-size:11px;font-weight:700;z-index:25}
+.body{flex:1;overflow-y:auto;padding:8px 14px 16px;scrollbar-width:none}
+.body::-webkit-scrollbar{display:none}
+.body.tb{padding-bottom:78px} .body.ft{padding-bottom:90px} .body.flush{padding:0}
+.top{display:flex;align-items:center;gap:8px;min-height:36px;margin-bottom:6px}
+.top .t{font-weight:700;font-size:13px} .top .sp{flex:1}
+.top.brand{margin-top:4px}
+.ibtn{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:var(--bg);border:1px solid var(--line);font-weight:700;flex:none}
+.ibtn.glass{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.2);color:#fff}
+.h1{font-weight:800;font-size:22px;letter-spacing:-.02em;color:var(--blue-deep);margin:4px 0 6px}
+.sub{color:var(--muted);font-size:12.5px;margin-bottom:12px}
+.btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;height:44px;border-radius:var(--pill);font-weight:700;font-size:13px}
+.btn.p{background:var(--blue);color:#fff;box-shadow:0 6px 16px rgba(0,105,180,.25)}
+.btn.s{border:1.5px solid var(--line);background:var(--surface);color:var(--ink)}
+.btn.gh{color:var(--blue);height:36px}
+.btn.sm{height:32px;font-size:11.5px;width:auto;padding:0 12px;display:inline-flex}
+.btn.light{border-color:rgba(255,255,255,.35);color:#fff;background:rgba(255,255,255,.08)}
+.stack{display:flex;flex-direction:column;gap:8px}
+.field{margin-bottom:10px}
+.field label{display:block;font-size:11px;font-weight:600;color:var(--muted);margin-bottom:5px}
+.inp{height:42px;border-radius:var(--r2);border:1px solid var(--line);background:var(--bg);display:flex;align-items:center;padding:0 12px;color:var(--muted);font-size:12.5px}
+.inp.f{border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,105,180,.12);color:var(--ink);background:#fff}
+.inp.grow{flex:1}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:11.5px;color:var(--muted);margin:8px 0}
+.check i{width:16px;height:16px;border-radius:5px;border:1.5px solid var(--line);flex:none}
+.check.on i{background:var(--blue);border-color:var(--blue)}
+.divider{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:11px;margin:12px 0}
+.divider::before,.divider::after{content:"";flex:1;height:1px;background:var(--line)}
+.card{border-radius:var(--r);background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow)}
+.card.pad,.ncard.pad{padding:12px}
+.ncard{border-radius:var(--r);background:var(--surface);border:1px solid var(--line)}
+.ncard.g{border-color:#b7e4cb;background:var(--green-soft)}
+.badge{display:inline-flex;align-items:center;height:20px;padding:0 8px;border-radius:var(--pill);font-size:10px;font-weight:700;text-transform:uppercase}
+.badge.g{background:var(--green-soft);color:var(--green-deep)}
+.pp{font-weight:800;font-variant-numeric:tabular-nums;color:var(--green-deep);font-size:15px}
+.b{font-weight:700} .sm{font-size:12px} .xs{font-size:10.5px} .muted{color:var(--muted)}
+.flex{display:flex;align-items:center} .between{justify-content:space-between} .gap8{gap:8px}
+.col{display:flex;flex-direction:column} .end{align-items:flex-end} .grow{flex:1;min-width:0}
+.mt4{margin-top:4px}.mt8{margin-top:8px}.mt12{margin-top:12px}.mt16{margin-top:16px}.mt20{margin-top:20px}
+.mb4{margin-bottom:4px}.mb8{margin-bottom:8px}.mb12{margin-bottom:12px}.mb16{margin-bottom:16px}
+.center{text-align:center}
+.seg{display:flex;padding:3px;border-radius:var(--pill);background:var(--bg);border:1px solid var(--line)}
+.seg span{flex:1;height:28px;border-radius:var(--pill);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--muted)}
+.seg span.on{background:var(--blue);color:#fff}
+.chiprow{display:flex;gap:6px;flex-wrap:wrap}
+.chip{height:28px;padding:0 12px;border-radius:var(--pill);border:1px solid var(--line);font-size:11px;font-weight:600;color:var(--muted);display:inline-flex;align-items:center;background:#fff}
+.chip.on{background:var(--blue-soft);border-color:var(--blue);color:var(--blue-deep)}
+.toggle{width:38px;height:22px;border-radius:12px;background:var(--line);position:relative;flex:none}
+.toggle::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff}
+.toggle.on{background:var(--blue)} .toggle.on::after{left:18px}
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pcard{border:1px solid var(--line);border-radius:12px;padding:8px;background:#fff;position:relative;box-shadow:var(--shadow)}
+.pcard .pn{font-weight:700;font-size:11.5px;margin-top:6px;line-height:1.25}
+.pcard .pm{font-size:10px;color:var(--muted);margin-top:2px}
+.pcard .badge{position:absolute;top:10px;left:10px}
+.ph{height:72px;border-radius:8px;background:linear-gradient(135deg,#dbeaf7,#e8f6ef)}
+.ph.sm{width:40px;height:40px;flex:none}
+.ph.md{width:52px;height:52px;flex:none}
+.ph.hero{height:140px;margin:0 -14px 10px;border-radius:0}
+.ph.g2{background:linear-gradient(135deg,#fde68a,#bbf7d0)}
+.ph.g3{background:linear-gradient(135deg,#fecaca,#bfdbfe)}
+.ph.g4{background:linear-gradient(135deg,#e9d5ff,#a7f3d0)}
+.lrow{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.av{width:34px;height:34px;border-radius:10px;background:var(--blue-soft);color:var(--blue-deep);display:grid;place-items:center;font-weight:800;flex:none}
+.av.g{background:var(--green-soft);color:var(--green-deep)}
+.av.lg{width:56px;height:56px;border-radius:50%;font-size:20px}
+.chart{display:flex;align-items:flex-end;gap:6px;height:100px;padding:8px 4px;background:var(--bg);border-radius:12px;border:1px solid var(--line)}
+.chart i{flex:1;background:var(--blue-soft);border-radius:4px 4px 0 0}
+.chart i.low{background:var(--green)}
+.tabbar{position:absolute;left:0;right:0;bottom:0;height:66px;padding:6px 4px 12px;background:rgba(255,255,255,.96);border-top:1px solid var(--line);display:flex;justify-content:space-around;align-items:flex-end;z-index:20}
+.tab{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:9px;font-weight:600;color:var(--muted);width:56px}
+.tab.on{color:var(--blue-deep)}
+.tab.fab{position:relative;top:-10px}
+.fabbtn{width:46px;height:46px;border-radius:50%;background:var(--blue);color:#fff;display:grid;place-items:center;font-size:22px;font-weight:700;box-shadow:0 8px 18px rgba(0,105,180,.35)}
+.foot{position:absolute;left:0;right:0;bottom:0;padding:10px 14px 18px;background:linear-gradient(transparent, #fff 30%);z-index:15}
+.splash{background:var(--g-brand);color:#fff;display:flex;align-items:center;justify-content:center}
+.splash-inner{padding:28px;text-align:center;width:100%}
+.splash .wm b,.splash .wm i{color:#fff}
+.splash-sub{opacity:.9;margin:14px 0 28px;font-size:14px}
+.splash .btn.p{background:#fff;color:var(--blue-deep)}
+.splash .btn.gh{color:#fff}
+.scan{background:#0B1F33;color:#fff;min-height:100%}
+.scan .t.light,.hint-light{color:#fff}
+.viewfinder{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px;min-height:320px}
+.vf{width:200px;height:200px;border:2px solid rgba(255,255,255,.55);border-radius:16px;box-shadow:0 0 0 999px rgba(0,0,0,.35)}
+.scan-actions{padding:16px;display:flex;flex-direction:column;gap:8px}
+.top.glass{position:relative;z-index:2;padding:8px 14px}
+.ok-hero{text-align:center;padding:20px 0}
+.ok-circle{width:56px;height:56px;border-radius:50%;background:var(--green-soft);color:var(--green-deep);display:grid;place-items:center;font-size:24px;font-weight:800;margin:0 auto 10px}
+.upload-box{border:2px dashed var(--line);border-radius:16px;padding:48px 16px;text-align:center;background:var(--bg)}
+.thumbs{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.th{height:100px;border-radius:12px;border:2px solid var(--line);background:linear-gradient(135deg,#dbeaf7,#e8f6ef)}
+.th.on{border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,105,180,.2)}
+.th.g2{background:linear-gradient(135deg,#fde68a,#bbf7d0)}
+.th.g3{background:linear-gradient(135deg,#fecaca,#bfdbfe)}
+.th.g4{background:linear-gradient(135deg,#e9d5ff,#a7f3d0)}
+.rank{display:flex;align-items:center;gap:10px;padding:12px;border:1px solid var(--line);border-radius:12px;margin-bottom:8px;background:#fff}
+.rk{width:28px;height:28px;border-radius:50%;background:var(--blue-soft);color:var(--blue-deep);display:grid;place-items:center;font-weight:800}
+.fmap{height:100%;background:linear-gradient(180deg,#e8f0e4,#d5e4f0);position:relative}
+.fmap .pin{position:absolute;width:28px;height:28px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:var(--blue);color:#fff;display:grid;place-items:center;font-size:11px;font-weight:800;box-shadow:var(--shadow)}
+.fmap .pin > * , .fmap .pin{ /* letter upright via */ }
+.fmap .pin{line-height:28px;text-align:center;transform:rotate(-45deg)}
+.fmap .pin.g{background:var(--green)}
+.fmap .you{position:absolute;width:14px;height:14px;border-radius:50%;background:#fff;border:3px solid var(--blue);box-shadow:0 0 0 6px rgba(0,105,180,.2)}
+.sheet-mini{position:absolute;left:12px;right:12px;bottom:16px;background:#fff;border-radius:16px;padding:12px;box-shadow:var(--shadow)}
+.top.abs{position:absolute;top:28px;left:12px;right:12px;z-index:2}
+.menu a{display:block;padding:14px 0;border-bottom:1px solid var(--line);font-weight:600;font-size:13px;color:var(--ink)}
+.menu a.danger{color:var(--err)}
+.sec{font-weight:800;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin:14px 0 6px}
+.link{color:var(--blue);font-weight:700}
+.desk{display:grid;grid-template-columns:200px 1fr;width:920px;height:560px;background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:var(--shadow);font-size:13px}
+.side{background:var(--bg);padding:18px 14px;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:6px}
+.side a{padding:10px 12px;border-radius:8px;font-weight:600;color:var(--muted)}
+.side a.on{background:var(--blue-soft);color:var(--blue-deep)}
+.main{padding:20px;overflow:auto}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0 18px}
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);font-size:12px}
+th{color:var(--muted);font-weight:600}
+#player{position:fixed;inset:0;background:rgba(11,31,51,.55);display:none;z-index:100;backdrop-filter:blur(4px)}
+#player.open{display:grid;grid-template-columns:240px 1fr 300px;gap:20px;padding:28px;align-items:center}
+#plist{background:#fff;border-radius:16px;padding:12px;height:min(680px,90vh);overflow:auto;box-shadow:var(--shadow)}
+#plist h4{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin:12px 8px 6px}
+#plist a{display:flex;gap:8px;padding:8px 10px;border-radius:8px;font-size:12px;font-weight:600;color:var(--ink)}
+#plist a span{color:var(--blue);font-variant-numeric:tabular-nums;width:36px}
+#plist a.on{background:var(--blue-soft)}
+#pphone{display:flex;justify-content:center}
+#pnotes{background:#fff;border-radius:16px;padding:18px;height:min(680px,90vh);overflow:auto;box-shadow:var(--shadow)}
+#pnotes .id{font-size:11px;font-weight:800;color:var(--blue)}
+#pnotes h3{font-size:18px;margin:4px 0 10px;color:var(--blue-deep)}
+#pnotes .us{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px}
+#pnotes .us span{background:var(--blue-soft);color:var(--blue-deep);font-size:10px;font-weight:700;padding:3px 8px;border-radius:999px}
+#pnotes p{font-size:13px;line-height:1.55;color:var(--muted)}
+#pnotes .kbd{margin-top:16px;font-size:11px;color:var(--muted);padding-top:12px;border-top:1px solid var(--line)}
+#player.hints [data-go]{outline:2px dashed var(--blue);outline-offset:2px}
+.close-x{position:fixed;top:16px;right:20px;z-index:110;width:40px;height:40px;border-radius:50%;background:#fff;border:1px solid var(--line);font-size:18px;font-weight:700;box-shadow:var(--shadow)}
+@media (max-width:1100px){#player.open{grid-template-columns:1fr;justify-items:center}#plist,#pnotes{display:none}}
+</style>
+</head>
+<body>
+<header class="hero wrap">
+  <div class="chipnum">BETA 1.0</div>
+  <h1 class="htitle">Protótipos notinhas.shop</h1>
+  <p class="hsub">Galeria navegável das telas do Beta (E01–E04 + ADM). Identidade light: CTA azul <b>#0069B4</b>, verde só para <b>menor preço</b>. Abra no navegador — sem build.</p>
+  <div class="hactions">
+    <button class="btn p" style="width:auto;padding:0 20px" onclick="openPlayer('T-10')">▶ Navegar no protótipo</button>
+    <button class="btn s" style="width:auto;padding:0 20px" onclick="openPlayer('T-01')">Começar do splash</button>
+  </div>
+  <div class="legend">
+    <span class="c-blue"><i></i> Conta / contribuição</span>
+    <span class="c-green"><i></i> Preço / economia</span>
+  </div>
+</header>
+<nav class="nav"><div class="wrap" id="navlinks"></div></nav>
+<main class="wrap" id="gallery"></main>
+<footer class="wrap">notinhas.shop Beta · ver <a href="../12-prototipos.md">12-prototipos.md</a> · nunca “e-notas” na UI</footer>
+
+<button class="close-x" id="pclose" style="display:none" onclick="closePlayer()">✕</button>
+<div id="player">
+  <div id="plist"></div>
+  <div id="pphone"></div>
+  <div id="pnotes"></div>
+</div>
+
+<template data-id="T-01" data-name="Splash" data-accent="blue" data-us="US-01.01" data-notes="Abertura com gradiente de marca. CTA único azul. Sem “e-notas” na UI.">
+<div class="body flush splash">
+  <div class="splash-inner">
+    <span class="wm xl"><b>notinhas</b><i>.shop</i></span>
+    <p class="splash-sub">Sua nota vira menor preço</p>
+    <button class="btn p" data-go="T-02">Começar</button>
+    <button class="btn gh" data-go="T-03">Já tenho conta</button>
+  </div>
+</div></template>
+<template data-id="T-02" data-name="Criar conta" data-accent="blue" data-us="US-01.01,US-01.02" data-notes="E-mail + senha ≥8. Aceite Termos e Privacidade. Google opcional. Conta não é obrigatória para buscar/depositar (Q1).">
+<div class="body ft">
+  <div class="top"><button class="ibtn" data-go="back">‹</button><span class="t">Criar conta</span></div>
+  <h1 class="h1">Bem-vindo</h1>
+  <p class="sub">Salve cestas e veja seu extrato de compras.</p>
+  <div class="field"><label>E-mail</label><div class="inp f">ana@email.com</div></div>
+  <div class="field"><label>Senha</label><div class="inp">••••••••</div></div>
+  <div class="field"><label>Confirmar senha</label><div class="inp">••••••••</div></div>
+  <label class="check on"><i></i><span>Aceito os <a>Termos</a> e a <a>Privacidade</a></span></label>
+  <button class="btn p mt16" data-go="T-05">Criar conta</button>
+  <div class="divider">ou</div>
+  <button class="btn s">Continuar com Google</button>
+  <p class="center sm muted mt12">Já tem conta? <a data-go="T-03">Entrar</a></p>
+</div>
+<div class="foot"><button class="btn gh" data-go="T-10">Continuar sem conta</button></div></template>
+<template data-id="T-03" data-name="Entrar" data-accent="blue" data-us="US-01.03,US-01.04" data-notes="Login e-mail/senha. Erro genérico. Link recuperar.">
+<div class="body">
+  <div class="top"><button class="ibtn" data-go="back">‹</button><span class="t">Entrar</span></div>
+  <span class="wm md mt16"><b>notinhas</b><i>.shop</i></span>
+  <div class="field mt20"><label>E-mail</label><div class="inp f">ana@email.com</div></div>
+  <div class="field"><label>Senha</label><div class="inp">••••••••</div></div>
+  <a class="sm" data-go="T-04" style="color:var(--blue)">Esqueci a senha</a>
+  <button class="btn p mt16" data-go="T-10">Entrar</button>
+  <div class="divider">ou</div>
+  <button class="btn s">Continuar com Google</button>
+</div></template>
+<template data-id="T-04" data-name="Recuperar senha" data-accent="blue" data-us="US-01.05" data-notes="Token e-mail uso único 1h via Mailcow.">
+<div class="body">
+  <div class="top"><button class="ibtn" data-go="back">‹</button><span class="t">Recuperar senha</span></div>
+  <h1 class="h1">Redefinir</h1>
+  <p class="sub">Enviaremos um link para o seu e-mail.</p>
+  <div class="field"><label>E-mail</label><div class="inp f">ana@email.com</div></div>
+  <button class="btn p" data-go="T-03">Enviar link</button>
+</div></template>
+<template data-id="T-05" data-name="Onboarding · Local" data-accent="blue" data-us="US-01.06,US-01.07" data-notes="Cidade lab SJP/PR + permissão GPS. Sem GPS usa centro da cidade.">
+<div class="body ft">
+  <div class="top"><span class="t">Quase lá</span><span class="sp"></span><span class="xs muted">1/1</span></div>
+  <h1 class="h1">Onde você compra?</h1>
+  <p class="sub">Usamos a região para ranking e “perto de mim”.</p>
+  <div class="field"><label>Cidade</label><div class="inp f">São José dos Pinhais, PR</div></div>
+  <div class="card pad flex between">
+    <div><p class="b sm">Usar minha localização</p><p class="xs muted">Melhora distância nas lojas</p></div>
+    <span class="toggle on" data-toggle></span>
+  </div>
+  <div class="chiprow mt12"><span class="chip on">Centro</span><span class="chip">Afonso Pena</span><span class="chip">Colônia</span></div>
+</div>
+<div class="foot"><button class="btn p" data-go="T-10">Ver menores preços</button></div></template>
+<template data-id="T-10" data-name="Home · Destaques" data-accent="green" data-us="US-02.01,US-02.02" data-notes="Feed de menores preços e destaques (≥5% abaixo da mediana). Tab Destaques ativa. FAB Nota.">
+<div class="body tb">
+  <div class="top brand"><span class="wm sm"><b>notinhas</b><i>.shop</i></span><span class="sp"></span><button class="ibtn" data-go="T-11">⌕</button></div>
+  <div class="seg"><span class="on">Destaques</span><span>Menores</span><span>Recentes</span></div>
+  <p class="xs muted mt8 mb8">SJP · atualizado há 12 min</p>
+  <div class="pgrid">
+    <div class="pcard" data-go="T-14"><div class="ph"></div><p class="pn">Leite Integral 1L</p><p class="pp">R$ 4,29</p><p class="pm">Condor · hoje</p><span class="badge g">menor</span></div>
+    <div class="pcard" data-go="T-14"><div class="ph g2"></div><p class="pn">Arroz Tipo 1 5kg</p><p class="pp">R$ 22,90</p><p class="pm">Muffato · ontem</p><span class="badge g">−8%</span></div>
+    <div class="pcard" data-go="T-14"><div class="ph g3"></div><p class="pn">Café Torrado 500g</p><p class="pp">R$ 18,49</p><p class="pm">Mercadorama · 2d</p><span class="badge g">destaque</span></div>
+    <div class="pcard" data-go="T-14"><div class="ph g4"></div><p class="pn">Sabão em Pó 1,6kg</p><p class="pp">R$ 21,99</p><p class="pm">Condor · hoje</p><span class="badge g">menor</span></div>
+  </div>
+</div>
+<div class="tabbar">
+  <div class="tab on" data-go="T-10"><span>✦</span>Destaques</div>
+  <div class="tab" data-go="T-30"><span>◎</span>Perto</div>
+  <div class="tab fab" data-go="T-20"><span class="fabbtn">+</span>Nota</div>
+  <div class="tab" data-go="T-40"><span>□</span>Cesta</div>
+  <div class="tab" data-go="T-51"><span>○</span>Perfil</div>
+</div></template>
+<template data-id="T-11" data-name="Busca" data-accent="blue" data-us="US-02.03,US-02.04" data-notes="Busca por EAN ou nome. Sem EAN: confiança menor.">
+<div class="body">
+  <div class="top"><button class="ibtn" data-go="back">‹</button><div class="inp f grow">leite integral</div></div>
+  <p class="xs muted mb8">3 resultados · SJP</p>
+  <div class="lrow" data-go="T-12"><div class="ph sm"></div><div class="grow"><p class="b sm">Leite Integral 1L</p><p class="xs muted">EAN 7891000100103</p></div><div class="col end"><p class="pp">R$ 4,29</p><p class="xs muted">Condor</p></div></div>
+  <div class="lrow" data-go="T-12"><div class="ph sm g2"></div><div class="grow"><p class="b sm">Leite Desnatado 1L</p><p class="xs muted">EAN 7891000100202</p></div><div class="col end"><p class="pp">R$ 4,09</p><p class="xs muted">Muffato</p></div></div>
+  <div class="lrow"><div class="ph sm g3"></div><div class="grow"><p class="b sm">Leite zero lactose</p><p class="xs muted">sem EAN · baixa confiança</p></div><div class="col end"><p class="pp">R$ 5,49</p><p class="xs muted">—</p></div></div>
+</div></template>
+<template data-id="T-12" data-name="Comparação" data-accent="green" data-us="US-02.05" data-notes="Mesmo EAN entre lojas. Menor preço verde + loja + data. RN-03.">
+<div class="body">
+  <div class="top"><button class="ibtn" data-go="back">‹</button><span class="t">Comparar</span></div>
+  <div class="flex gap8 mb12"><div class="ph md"></div><div><p class="b">Leite Integral 1L</p><p class="xs muted">7891000100103</p></div></div>
+  <div class="ncard g pad mb8">
+    <div class="flex between"><span class="badge g">menor preço</span><span class="pp">R$ 4,29</span></div>
+    <p class="sm mt4">Condor Centro · hoje 08:12</p>
+    <button class="btn s sm mt8" data-go="T-30">Como chegar</button>
+  </div>
+  <div class="card pad mb8 flex between"><div><p class="b sm">Super Muffato</p><p class="xs muted">ontem</p></div><p class="b">R$ 4,59</p></div>
+  <div class="card pad mb8 flex between"><div><p class="b sm">Mercadorama</p><p class="xs muted">há 3 dias</p></div><p class="b">R$ 4,79</p></div>
+  <div class="stack mt12">
+    <button class="btn s" data-go="T-13">Ver histórico</button>
+    <button class="btn s" data-go="T-40">Adicionar à cesta</button>
+  </div>
+</div></template>
+<template data-id="T-13" data-name="Histórico" data-accent="green" data-us="US-02.06" data-notes="Série temporal por EAN (e por loja). Pontos = observações de nota.">
+<div class="body">
+  <div class="top"><button class="ibtn" data-go="back">‹</button><span class="t">Histórico</span></div>
+  <p class="b mb4">Leite Integral 1L</p>
+  <p class="xs muted mb12">Últimos 30 dias · SJP</p>
+  <div class="chart">
+    <i style="height:40%"></i><i style="height:55%"></i><i style="height:48%"></i><i style="height:70%"></i><i style="height:62%"></i><i style="height:35%" class="low"></i><i style="height:42%"></i>
+  </div>
+  <div class="flex between xs muted"><span>04 out</span><span>hoje</span></div>
+  <div class="card pad mt16"><p class="xs muted">Menor no período</p><p class="pp">R$ 4,19 · Condor · 12 out</p></div>
+  <div class="card pad mt8"><p class="xs muted">Mediana 14d</p><p class="b">R$ 4,55</p></div>
+</div></template>
+<template data-id="T-14" data-name="Detalhe produto" data-accent="green" data-us="US-02.07" data-notes="Foto EAN, menor preço, atalhos comparação/histórico/perto/cesta.">
+<div class="body tb">
+  <div class="top"><button class="ibtn" data-go="back">‹</button><span class="sp"></span><button class="ibtn" data-go="T-40">+</button></div>
+  <div class="ph hero"></div>
+  <h1 class="h1" style="font-size:20px">Leite Integral 1L</h1>
+  <p class="xs muted">EAN 7891000100103</p>
+  <div class="ncard g pad mt12 flex between"><div><p class="xs">Menor agora</p><p class="pp">R$ 4,29</p><p class="xs muted">Condor · hoje</p></div><button class="btn p sm" data-go="T-12">Comparar</button></div>
+  <div class="stack mt12">
+    <button class="btn s" data-go="T-13">Histórico de preços</button>
+    <button class="btn s" data-go="T-30">Onde comprar perto</button>
+    <button class="btn s" data-go="T-23">Vincular / corrigir EAN</button>
+  </div>
+</div>
+<div class="tabbar">
+  <div class="tab" data-go="T-10"><span>✦</span>Destaques</div>
+  <div class="tab" data-go="T-30"><span>◎</span>Perto</div>
+  <div class="tab fab" data-go="T-20"><span class="fabbtn">+</span>Nota</div>
+  <div class="tab" data-go="T-40"><span>□</span>Cesta</div>
+  <div class="tab" data-go="T-51"><span>○</span>Perfil</div>
+</div></template>
+<template data-id="T-20" data-name="Scan QR · câmera" data-accent="blue" data-us="US-01.08" data-notes="Viewport dark. URL fazenda.pr.gov.br. HTTPS obrigatório.">
+<div class="body flush scan">
+  <div class="top glass"><button class="ibtn glass" data-go="back">‹</button><span class="t light">Escanear nota</span><span class="sp"></span><button class="ibtn glass" data-go="T-21">🖼</button></div>
+  <div class="viewfinder"><div class="vf"></div><p class="hint-light">Aponte para o QR da NFC-e</p></div>
+  <div class="scan-actions">
+    <button class="btn p" data-go="T-22">Simular leitura</button>
+    <button class="btn s light" data-go="T-21">Tirar foto / galeria</button>
+  </div>
+</div></template>
+<template data-id="T-21" data-name="Scan QR · foto" data-accent="blue" data-us="US-01.09" data-notes="decode de imagem estática além do ao vivo.">
+<div class="body">
+  <div class="top"><button class="ibtn" data-go="back">‹</button><span class="t">QR por foto</span></div>
+  <div class="upload-box">
+    <p class="b">Tirar foto</p>
+    <p class="xs muted">ou escolher da galeria</p>
+  </div>
+  <button class="btn p mt16" data-go="T-22">Usar esta imagem</button>
+  <button class="btn gh" data-go="T-20">Voltar à câmera</button>
+</div></template>
+<template data-id="T-22" data-name="Nota ingerida" data-accent="green" data-us="US-01.08,US-01.10" data-notes="Sucesso: empresa + N itens. Dedupe por chave_acesso. CTA vincular EAN pendentes.">
+<div class="body">
+  <div class="top"><button class="ibtn" data-go="T-10">✕</button></div>
+  <div class="ok-hero"><div class="ok-circle">✓</div><h1 class="h1">Nota salva</h1></div>
+  <div class="card pad">
+    <p class="b">Condor Centro</p>
+    <p class="xs muted">CNPJ 79.xxx · 03/11/2026</p>
+    <p class="sm mt8">18 itens · R$ 246,70</p>
+  </div>
+  <div class="ncard pad mt12"><p class="sm"><b>12 itens</b> ainda sem EAN. Vincular melhora a comparação.</p></div>
+  <button class="btn p mt16" data-go="T-23">Vincular códigos de barras</button>
+  <button class="btn s mt8" data-go="T-10">Ir para destaques</button>
+</div></template>
+<template data-id="T-23" data-name="Vincular EAN" data-accent="blue" data-us="US-01.11" data-notes="Câmera / foto / digitar. UNIQUE (empresa, codigo_unidade).">
+<div class="body">
+  <div class="top"><button class="ibtn" data-go="back">‹</button><span class="t">Vincular EAN</span></div>
+  <p class="b sm">Item da nota</p>
+  <p class="xs muted mb12">Cód. loja 004812 · Leite Int. 1L</p>
+  <div class="stack">
+    <button class="btn p">Abrir câmera do código</button>
+    <button class="btn s" data-go="T-24">Foto / galeria</button>
+    <div class="field"><label>Ou digitar EAN</label><div class="inp f">7891000100103</div></div>
+    <button class="btn p" data-go="T-24">Salvar vínculo</button>
+  </div>
+</div></template>
+<template data-id="T-24" data-name="Escolher foto EAN" data-accent="blue" data-us="US-01.12" data-notes="Candidatas de APIs/fallback; usuário escolhe foto do feed.">
+<div class="body">
+  <div class="top"><button class="ibtn" data-go="back">‹</button><span class="t">Foto do produto</span></div>
+  <p class="sub">Escolha a imagem que aparece no feed.</p>
+  <div class="thumbs">
+    <div class="th on"></div><div class="th g2"></div><div class="th g3"></div><div class="th g4"></div>
+  </div>
+  <button class="btn p mt16" data-go="T-14">Usar esta foto</button>
+  <button class="btn gh">Pular</button>
+</div></template>
+<template data-id="T-30" data-name="Onde comprar perto" data-accent="green" data-us="US-03.01" data-notes="Item → lojas no raio com distância + preço + frescor.">
+<div class="body tb">
+  <div class="top"><button class="ibtn" data-go="back">‹</button><span class="t">Perto de mim</span></div>
+  <div class="inp mb8">Leite Integral 1L</div>
+  <div class="chiprow mb12"><span class="chip on">2 km</span><span class="chip">5 km</span><span class="chip">10 km</span><span class="chip">Preço</span></div>
+  <div class="lrow" data-go="T-33"><div class="av">C</div><div class="grow"><p class="b sm">Condor Centro</p><p class="xs muted">650 m · hoje</p></div><p class="pp">R$ 4,29</p></div>
+  <div class="lrow" data-go="T-33"><div class="av g">M</div><div class="grow"><p class="b sm">Super Muffato</p><p class="xs muted">1,2 km · ontem</p></div><p class="b">R$ 4,59</p></div>
+  <div class="lrow"><div class="av">R</div><div class="grow"><p class="b sm">Mercadorama</p><p class="xs muted">2,1 km · 3d</p></div><p class="b">R$ 4,79</p></div>
+  <button class="btn s mt12" data-go="T-32">Ver no mapa</button>
+</div>
+<div class="tabbar">
+  <div class="tab" data-go="T-10"><span>✦</span>Destaques</div>
+  <div class="tab on" data-go="T-30"><span>◎</span>Perto</div>
+  <div class="tab fab" data-go="T-20"><span class="fabbtn">+</span>Nota</div>
+  <div class="tab" data-go="T-40"><span>□</span>Cesta</div>
+  <div class="tab" data-go="T-51"><span>○</span>Perfil</div>
+</div></template>
+<template data-id="T-31" data-name="Ranking lojas" data-accent="green" data-us="US-03.02" data-notes="Agregado mediana vs região. Toggle baratas/caras. ADR-011.">
+<div class="body tb">
+  <div class="top"><span class="t">Ranking perto</span><span class="sp"></span><button class="ibtn" data-go="T-32">🗺️</button></div>
+  <div class="seg mb12"><span class="on">Mais baratas</span><span>Mais caras</span></div>
+  <p class="xs muted mb8">Raio 5 km · mediana 14d · ≥20 EANs</p>
+  <div class="rank" data-go="T-33"><span class="rk">1</span><div class="grow"><p class="b sm">Condor Centro</p><p class="xs muted">−6% vs região · 1,2 km</p></div><span class="badge g">barata</span></div>
+  <div class="rank" data-go="T-33"><span class="rk">2</span><div class="grow"><p class="b sm">Super Muffato</p><p class="xs muted">−2% · 1,8 km</p></div></div>
+  <div class="rank"><span class="rk">3</span><div class="grow"><p class="b sm">Mercadorama</p><p class="xs muted">+4% · 2,4 km</p></div></div>
+</div>
+<div class="tabbar">
+  <div class="tab" data-go="T-10"><span>✦</span>Destaques</div>
+  <div class="tab on" data-go="T-30"><span>◎</span>Perto</div>
+  <div class="tab fab" data-go="T-20"><span class="fabbtn">+</span>Nota</div>
+  <div class="tab" data-go="T-40"><span>□</span>Cesta</div>
+  <div class="tab" data-go="T-51"><span>○</span>Perfil</div>
+</div></template>
+<template data-id="T-32" data-name="Mapa" data-accent="blue" data-us="US-03.03" data-notes="Pins Leaflet/OSM. Link externo para rotas. Sem turn-by-turn.">
+<div class="body flush">
+  <div class="top abs"><button class="ibtn" data-go="back">‹</button><span class="t">Mapa</span></div>
+  <div class="fmap">
+    <span class="pin" style="left:42%;top:38%">C</span>
+    <span class="pin g" style="left:58%;top:52%">M</span>
+    <span class="pin" style="left:35%;top:60%">R</span>
+    <span class="you" style="left:48%;top:48%"></span>
+  </div>
+  <div class="sheet-mini">
+    <p class="b sm">Condor Centro</p>
+    <p class="xs muted">650 m · menor no leite</p>
+    <button class="btn p sm mt8" data-go="T-33">Abrir vitrine</button>
+  </div>
+</div></template>
+<template data-id="T-33" data-name="Vitrine da loja" data-accent="green" data-us="US-03.04,US-03.05,US-03.06" data-notes="Catálogo inferido das notas, sem checkout. Botão EAN no item.">
+<div class="body">
+  <div class="top"><button class="ibtn" data-go="back">‹</button><span class="t">Condor Centro</span></div>
+  <p class="xs muted mb8">Av. Rui Barbosa · 650 m · score barata</p>
+  <div class="inp mb12">Buscar na loja</div>
+  <div class="pgrid">
+    <div class="pcard" data-go="T-14"><div class="ph"></div><p class="pn">Leite 1L</p><p class="pp">R$ 4,29</p><button class="link xs" data-go="T-23">+ EAN</button></div>
+    <div class="pcard"><div class="ph g2"></div><p class="pn">Arroz 5kg</p><p class="pp">R$ 23,90</p></div>
+    <div class="pcard"><div class="ph g3"></div><p class="pn">Café 500g</p><p class="pp">R$ 19,90</p></div>
+    <div class="pcard"><div class="ph g4"></div><p class="pn">Óleo 900ml</p><p class="pp">R$ 7,49</p></div>
+  </div>
+</div></template>
+<template data-id="T-40" data-name="Cesta" data-accent="green" data-us="US-04.01,US-04.02" data-notes="Cesta cotada por mercado. Sem preço não inventa valor.">
+<div class="body tb">
+  <div class="top"><span class="t">Cesta</span><span class="sp"></span><span class="xs muted">4 itens</span></div>
+  <div class="lrow"><div class="ph sm"></div><div class="grow"><p class="b sm">Leite 1L</p><p class="xs muted">×2</p></div><p class="b">R$ 8,58</p></div>
+  <div class="lrow"><div class="ph sm g2"></div><div class="grow"><p class="b sm">Arroz 5kg</p><p class="xs muted">×1</p></div><p class="b">R$ 22,90</p></div>
+  <div class="lrow"><div class="ph sm g3"></div><div class="grow"><p class="b sm">Café 500g</p><p class="xs muted">sem preço em 1 loja</p></div><p class="muted xs">—</p></div>
+  <div class="card pad mt12">
+    <p class="xs muted">Melhor mercado único</p>
+    <p class="b">Condor · R$ 48,40</p>
+    <p class="xs muted">cobertura 3/4 itens</p>
+  </div>
+  <button class="btn p mt12" data-go="T-41">Ver split entre lojas</button>
+</div>
+<div class="tabbar">
+  <div class="tab" data-go="T-10"><span>✦</span>Destaques</div>
+  <div class="tab" data-go="T-30"><span>◎</span>Perto</div>
+  <div class="tab fab" data-go="T-20"><span class="fabbtn">+</span>Nota</div>
+  <div class="tab on" data-go="T-40"><span>□</span>Cesta</div>
+  <div class="tab" data-go="T-51"><span>○</span>Perfil</div>
+</div></template>
+<template data-id="T-41" data-name="Split · economia" data-accent="green" data-us="US-04.03" data-notes="Sugestão 2+ lojas quando reduz custo total.">
+<div class="body">
+  <div class="top"><button class="ibtn" data-go="back">‹</button><span class="t">Montagem apartada</span></div>
+  <div class="ncard g pad mb12">
+    <p class="xs">Você economiza</p>
+    <p class="pp" style="font-size:28px">R$ 6,20</p>
+    <p class="xs muted">vs melhor mercado único</p>
+  </div>
+  <div class="card pad mb8"><p class="b sm">Condor</p><p class="xs muted">Leite, Café · R$ 27,07</p></div>
+  <div class="card pad mb8"><p class="b sm">Muffato</p><p class="xs muted">Arroz · R$ 22,90</p></div>
+  <p class="xs muted">Deslocamento não incluso (link mapa).</p>
+  <button class="btn p mt16" data-go="T-32">Ver lojas no mapa</button>
+</div></template>
+<template data-id="T-50" data-name="Extrato · gastos" data-accent="blue" data-us="US-04.04,US-04.05,US-04.06" data-notes="Só dono da conta. Distinto do índice público.">
+<div class="body">
+  <div class="top"><button class="ibtn" data-go="back">‹</button><span class="t">Meus gastos</span></div>
+  <div class="seg mb12"><span class="on">Nov</span><span>Out</span><span>Set</span></div>
+  <div class="ncard pad mb12"><p class="xs muted">Total novembro</p><p class="pp" style="font-size:26px">R$ 1.284,50</p><p class="xs muted">12 notas · ticket médio R$ 107</p></div>
+  <p class="sec">Por loja</p>
+  <div class="lrow"><div class="grow"><p class="b sm">Condor</p></div><p class="b">R$ 620</p></div>
+  <div class="lrow"><div class="grow"><p class="b sm">Muffato</p></div><p class="b">R$ 410</p></div>
+  <div class="lrow"><div class="grow"><p class="b sm">Mercadorama</p></div><p class="b">R$ 254</p></div>
+</div></template>
+<template data-id="T-51" data-name="Perfil" data-accent="blue" data-us="US-01.13,US-01.14" data-notes="Preferências, extrato, logout, excluir conta LGPD.">
+<div class="body tb">
+  <div class="top brand"><span class="wm sm"><b>notinhas</b><i>.shop</i></span></div>
+  <div class="flex gap8 mt8 mb16"><div class="av lg">A</div><div><p class="b">Ana Silva</p><p class="xs muted">ana@email.com</p></div></div>
+  <div class="menu">
+    <a data-go="T-50">Meus gastos</a>
+    <a data-go="T-05">Cidade e localização</a>
+    <a>Termos e privacidade</a>
+    <a class="danger">Excluir conta</a>
+    <a>Sair</a>
+  </div>
+</div>
+<div class="tabbar">
+  <div class="tab" data-go="T-10"><span>✦</span>Destaques</div>
+  <div class="tab" data-go="T-30"><span>◎</span>Perto</div>
+  <div class="tab fab" data-go="T-20"><span class="fabbtn">+</span>Nota</div>
+  <div class="tab" data-go="T-40"><span>□</span>Cesta</div>
+  <div class="tab on" data-go="T-51"><span>○</span>Perfil</div>
+</div></template>
+<template data-id="T-61" data-name="Admin · Métricas" data-accent="blue" data-us="US-ADM.01,US-ADM.02,US-ADM.03" data-notes="Desktop /admin. Fila notas falhas, ocultar spam, KPIs beta." data-kind="desk">
+<div class="side">
+  <span class="wm sm"><b>notinhas</b><i>.shop</i></span>
+  <a class="on">Métricas</a>
+  <a>Notas falhas</a>
+  <a>Vínculos EAN</a>
+  <a>Observações</a>
+</div>
+<div class="main">
+  <h2 class="h1" style="font-size:24px">Beta · SJP</h2>
+  <div class="kpis">
+    <div class="card pad"><p class="xs muted">Notas / 7d</p><p class="pp" style="font-size:22px">186</p></div>
+    <div class="card pad"><p class="xs muted">EANs vinculados</p><p class="pp" style="font-size:22px">412</p></div>
+    <div class="card pad"><p class="xs muted">Buscas com hit</p><p class="pp" style="font-size:22px">71%</p></div>
+    <div class="card pad"><p class="xs muted">Falhas ingestão</p><p class="pp" style="font-size:22px;color:var(--err)">7</p></div>
+  </div>
+  <table>
+    <tr><th>Chave</th><th>Erro</th><th>Quando</th><th></th></tr>
+    <tr><td>3526…91</td><td>timeout Fazenda</td><td>2 h</td><td><button class="btn s sm">Reprocessar</button></td></tr>
+    <tr><td>3526…44</td><td>HTML sem itens</td><td>5 h</td><td><button class="btn s sm">Abrir</button></td></tr>
+  </table>
+</div></template>
+
+
+<script>
+const FLOWS = [
+  {
+    "id": "e01a",
+    "n": "E01",
+    "title": "Conta e onboarding",
+    "color": "c-blue",
+    "desc": "Splash → conta → local. Busca e depósito funcionam sem conta (Q1).",
+    "steps": [
+      [
+        "T-01",
+        "Abrir"
+      ],
+      [
+        "T-02",
+        "Criar"
+      ],
+      [
+        "T-03",
+        "Entrar"
+      ],
+      [
+        "T-04",
+        "Recuperar"
+      ],
+      [
+        "T-05",
+        "Local"
+      ]
+    ]
+  },
+  {
+    "id": "e01c",
+    "n": "E01",
+    "title": "Contribuir nota e EAN",
+    "color": "c-blue",
+    "desc": "QR ao vivo ou foto → ingestão → vínculo EAN → foto do produto.",
+    "steps": [
+      [
+        "T-20",
+        "QR câmera"
+      ],
+      [
+        "T-21",
+        "QR foto"
+      ],
+      [
+        "T-22",
+        "Nota ok"
+      ],
+      [
+        "T-23",
+        "EAN"
+      ],
+      [
+        "T-24",
+        "Foto"
+      ]
+    ]
+  },
+  {
+    "id": "e02",
+    "n": "E02",
+    "title": "Descoberta de preços",
+    "color": "c-green",
+    "desc": "Destaques, busca, comparação com menor preço, histórico e detalhe.",
+    "steps": [
+      [
+        "T-10",
+        "Home"
+      ],
+      [
+        "T-11",
+        "Busca"
+      ],
+      [
+        "T-12",
+        "Comparar"
+      ],
+      [
+        "T-13",
+        "Histórico"
+      ],
+      [
+        "T-14",
+        "Detalhe"
+      ]
+    ]
+  },
+  {
+    "id": "e03",
+    "n": "E03",
+    "title": "Geo, ranking e vitrine",
+    "color": "c-green",
+    "desc": "Onde comprar perto, ranking baratas/caras, mapa e vitrine da loja.",
+    "steps": [
+      [
+        "T-30",
+        "Perto"
+      ],
+      [
+        "T-31",
+        "Ranking"
+      ],
+      [
+        "T-32",
+        "Mapa"
+      ],
+      [
+        "T-33",
+        "Vitrine"
+      ]
+    ]
+  },
+  {
+    "id": "e04",
+    "n": "E04",
+    "title": "Cesta e gastos",
+    "color": "c-blue",
+    "desc": "Cesta cotada, split entre lojas, extrato pessoal e perfil.",
+    "steps": [
+      [
+        "T-40",
+        "Cesta"
+      ],
+      [
+        "T-41",
+        "Split"
+      ],
+      [
+        "T-50",
+        "Extrato"
+      ],
+      [
+        "T-51",
+        "Perfil"
+      ]
+    ]
+  },
+  {
+    "id": "adm",
+    "n": "ADM",
+    "title": "Backoffice",
+    "color": "c-blue",
+    "desc": "Métricas do beta e fila de ingestão.",
+    "steps": [
+      [
+        "T-61",
+        "Admin"
+      ]
+    ]
+  }
+];
+const TPL = {};
+document.querySelectorAll('template[data-id]').forEach(t => TPL[t.dataset.id] = t);
+const ORDER = FLOWS.flatMap(f => f.steps.map(s => s[0]));
+const STATUS = '<div class="notch"></div><div class="sb"><span>9:41</span><span>LTE ▮▮▮</span></div>';
+
+function build(id){
+  const t = TPL[id]; if(!t) return document.createElement('div');
+  if(t.dataset.kind === 'desk'){
+    const d = document.createElement('div'); d.className='desk'; d.appendChild(t.content.cloneNode(true)); return d;
+  }
+  const ph = document.createElement('div'); ph.className = 'phone ' + (t.dataset.accent || 'blue');
+  const scr = document.createElement('div'); scr.className='scr'; scr.innerHTML = STATUS;
+  scr.appendChild(t.content.cloneNode(true)); ph.appendChild(scr); return ph;
+}
+
+const gal = document.getElementById('gallery'), nav = document.getElementById('navlinks');
+FLOWS.forEach(f => {
+  nav.insertAdjacentHTML('beforeend', `<a href="#${f.id}"><b>${f.n}</b>${f.title}</a>`);
+  const sec = document.createElement('section'); sec.className='flow'; sec.id=f.id;
+  sec.innerHTML = `<div class="chipnum">${f.n}</div><h2 class="stitle">${f.title}</h2><p class="sdesc">${f.desc}</p>`;
+  const row = document.createElement('div'); row.className='row';
+  f.steps.forEach(([id,label],i) => {
+    if(i) row.insertAdjacentHTML('beforeend', `<span class="arrow ${f.color}"></span>`);
+    const st = document.createElement('div'); st.className='step';
+    st.innerHTML = `<span class="lbl ${f.color}">${label}</span>`;
+    const p = build(id); p.addEventListener('click', () => openPlayer(id)); st.appendChild(p);
+    const t = TPL[id];
+    st.insertAdjacentHTML('beforeend', `<span class="meta"><b>${id} · ${t.dataset.name}</b><br>${t.dataset.us.replaceAll(',', ' · ')}</span>`);
+    row.appendChild(st);
+  });
+  sec.appendChild(row); gal.appendChild(sec);
+});
+
+const player = document.getElementById('player'), pphone = document.getElementById('pphone');
+const plist = document.getElementById('plist'), pnotes = document.getElementById('pnotes'), pclose = document.getElementById('pclose');
+let cur = null; const hist = [];
+FLOWS.forEach(f => {
+  plist.insertAdjacentHTML('beforeend', `<h4>${f.n} · ${f.title}</h4>`);
+  f.steps.forEach(([id]) => plist.insertAdjacentHTML('beforeend', `<a data-id="${id}"><span>${id}</span>${TPL[id].dataset.name}</a>`));
+});
+plist.addEventListener('click', e => { const a = e.target.closest('a[data-id]'); if(a) show(a.dataset.id, true); });
+
+function show(id, push){
+  if(!TPL[id]) return;
+  if(push && cur && cur !== id) hist.push(cur);
+  cur = id; pphone.innerHTML = ''; pphone.appendChild(build(id));
+  plist.querySelectorAll('a').forEach(a => a.classList.toggle('on', a.dataset.id === id));
+  const t = TPL[id];
+  pnotes.innerHTML = `<div class="id">${id}</div><h3>${t.dataset.name}</h3><div class="us">${t.dataset.us.split(',').map(u=>`<span>${u}</span>`).join('')}</div><p>${t.dataset.notes}</p>
+   <div class="kbd">Clique nos elementos · <b>←/→</b> · <b>Backspace</b> voltar · <b>H</b> áreas · <b>Esc</b> fechar</div>`;
+  history.replaceState(null,'','#'+id);
+}
+function openPlayer(id){ hist.length=0; player.classList.add('open'); pclose.style.display='block'; document.body.style.overflow='hidden'; show(id,false); }
+function closePlayer(){ player.classList.remove('open'); pclose.style.display='none'; document.body.style.overflow=''; history.replaceState(null,'',location.pathname); }
+function goBack(){ const p = hist.pop(); if(p) show(p,false); }
+function step(d){ const i = ORDER.indexOf(cur); const n = ORDER[(i + d + ORDER.length) % ORDER.length]; show(n,true); }
+pphone.addEventListener('click', e => {
+  const tg = e.target.closest('[data-toggle]');
+  if(tg){ tg.classList.toggle('on'); e.stopPropagation(); return; }
+  const g = e.target.closest('[data-go]'); if(!g) return;
+  const to = g.dataset.go; if(to === 'back') goBack(); else show(to,true);
+});
+document.addEventListener('keydown', e => {
+  if(!player.classList.contains('open')) return;
+  if(e.key==='Escape') closePlayer();
+  else if(e.key==='ArrowRight') step(1);
+  else if(e.key==='ArrowLeft') step(-1);
+  else if(e.key==='Backspace'){ e.preventDefault(); goBack(); }
+  else if(e.key.toLowerCase()==='h') player.classList.toggle('hints');
+});
+if(location.hash && TPL[location.hash.slice(1)]) openPlayer(location.hash.slice(1));
+</script>
+</body>
+</html>

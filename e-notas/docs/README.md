@@ -2,26 +2,22 @@
 
 **Por quê:** índice e ponto de entrada dos artefatos derivados da visão.  
 **Importante:** mostra a ordem da esteira e evita abrir um documento fora de contexto.  
-**No fluxo:** [`visão`](../README.md) → **este índice** → funcionalidades → histórias → BDD → telas → componentes → protótipo.
+**No fluxo:** [`visão`](../README.md) → **este índice** → pacote Beta → app.
 
 Derivados do [documento de visão](../README.md).  
+**Pacote Beta (canônico para construir):** [`../beta-docs/README.md`](../beta-docs/README.md) · [protótipos](../beta-docs/prototipos/index.html).  
 Regras para a IA na esteira: [`../config/config-ia.md`](../config/config-ia.md).  
 Timeline de prompts: [`../prompts/timeline.md`](../prompts/timeline.md).
 
 | Artefato | Arquivo | Papel no fluxo | Status |
 |----------|---------|----------------|--------|
-| PRD (notinhas.shop) | [`prd.md`](prd.md) | Capacidades-alvo: comparação, histórico, cesta, vitrine, geo, gestão financeira, API | Ativo |
+| **Beta docs (01–15)** | [`../beta-docs/README.md`](../beta-docs/README.md) | PRD MoSCoW, histórias Gherkin, arquitetura, ADRs, dados, API, diagramas, testes, LGPD, plano BETA-nnn, protótipos, guia IA, ops, glossário | Ativo |
+| Protótipos T-xx | [`../beta-docs/prototipos/index.html`](../beta-docs/prototipos/index.html) | Galeria + modo navegável + design system light | Ativo |
+| PRD (legado / visão ampla) | [`prd.md`](prd.md) | Capacidades-alvo amplas; escopo Beta formalizado em `beta-docs/01-prd.md` | Ativo |
 | Requisitos / regras | [`requisitos.md`](requisitos.md) | Regras canônicas pedidas (REQ-NNN); atualizar a cada requisito novo | Ativo |
 | Identidade visual | [`../marca/identidade-visual-notinhas-v1.html`](../marca/identidade-visual-notinhas-v1.html) | Manual marca notinhas.shop (REQ-015) | Ativo |
 | Design system | [`../marca/design-system-notinhas-v1.html`](../marca/design-system-notinhas-v1.html) | Tokens + componentes UI (REQ-016) | Ativo |
-| Funcionalidades | `functionalities.md` | Capacidades de cada seção e página em bullets | A produzir |
-| Histórias de usuário | `user-stories.md` | O *quê* desejado pelo usuário (Como… quero… para…) | A produzir |
-| Cenários BDD | `bdd.md` | Critérios de aceite por história (Dado / Quando / Então) | A produzir |
-| Telas | `screens.md` | Superfícies de UI e o que cada uma faz | A produzir |
-| Screens BDD | `screens-bdd.md` | Mesmos critérios, agrupados por tela | A produzir |
-| Componentes | `components.md` | Inventário de UI para implementar | A produzir |
-| Protótipo | `prototype.html` | Validação visual/interativa do que foi especificado | A produzir |
 
 ## Próximos passos
 
-→ `functionalities.md` (ainda não criado) — inventariar capacidades a partir da [visão](../README.md)
+→ M0 do [plano Beta](../beta-docs/11-plano-de-implementacao.md) · validar [`prototipos/index.html`](../beta-docs/prototipos/index.html)

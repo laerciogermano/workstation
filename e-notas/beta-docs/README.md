@@ -17,16 +17,16 @@ Pacote canônico de documentos de produto, engenharia e arquitetura para impleme
 | 02 | [`02-historias/`](02-historias/README.md) | 34 histórias de usuário com critérios de aceite executáveis em formato Gherkin (BDD) cobrindo E01 a E04 e ADM | Produto, dev, QA |
 | 03 | [03-arquitetura.md](03-arquitetura.md) | C4 Mermaid (contexto C1, containers C2, componentes C3), stack modular Express/Postgres, fronteiras de módulos e decisões transversais | Dev, arquitetura |
 | 04 | [04-adrs.md](04-adrs.md) | 14 Architecture Decision Records registrando justificativas, trade-offs e alternativas descartadas | Dev, arquitetura |
-| 05 | [`05-modelo-de-dados.md`](05-modelo-de-dados.md) *(planejado)* | Diagrama ERD físico, schemas PostgreSQL `enotas`, DDL, índices de busca e queries SQL críticas | Dev, DBA |
-| 06 | [`06-contratos-api.md`](06-contratos-api.md) *(planejado)* | Endpoints REST, schemas JSON Request/Response, DTOs tipados e catálogo de erros padronizados | Dev, QA |
-| 07 | [`07-diagramas.md`](07-diagramas.md) *(planejado)* | Diagramas de sequência (ingestão QR, vínculo EAN, ranking geo, busca), estados e fluxo de dados | Dev |
-| 08 | [08-boas-praticas-codigo.md](08-boas-praticas-codigo.md) | Padrões de código em Node.js ESM, convenções de nomenclatura, checklist de Pull Requests | Dev, IA |
-| 09 | [09-estrategia-de-testes.md](09-estrategia-de-testes.md) | Pirâmide de testes (unitário, integração, SEFAZ mock parser, E2E de scan) e esteira de qualidade | Dev, QA |
-| 10 | [`10-seguranca-privacidade-lgpd.md`](10-seguranca-privacidade-lgpd.md) *(planejado)* | Inventário de dados pessoais, anonimização estrita do índice público de preços, análise STRIDE e LGPD | Dev, segurança, jurídico |
-| 11 | [`11-plano-de-implementacao.md`](11-plano-de-implementacao.md) *(planejado)* | Roteiro de marcos M0 a M6 com tarefas sequenciadas, dependências e critérios de Definition of Done | Todos |
-| 12 | [`12-prototipos.md`](12-prototipos.md) *(planejado)* | Catálogo de telas navegáveis mobile-first, design system em tokens CSS e componentes de interface | Produto, design, dev |
-| 13 | [`13-guia-desenvolvimento-com-ia.md`](13-guia-desenvolvimento-com-ia.md) *(planejado)* | Orientações e prompts canônicos para aceleração do ciclo de desenvolvimento assistido por agentes de IA | Dev |
-| 14 | [`14-operacao-deploy.md`](14-operacao-deploy.md) *(planejado)* | Guia de operação na VPS Contabo, Nginx HTTPS, systemd, automação de backups e integração com Mailcow | Dev, DevOps |
+| 05 | [05-modelo-de-dados.md](05-modelo-de-dados.md) | ERD, schema PostgreSQL `enotas`, DDL, índices e SQL críticas | Dev, DBA |
+| 06 | [06-contratos-api.md](06-contratos-api.md) | Endpoints REST, DTOs e catálogo de erros | Dev, QA |
+| 07 | [07-diagramas.md](07-diagramas.md) | Sequência (ingestão, EAN, ranking, busca), estados e mapa de navegação | Dev |
+| 08 | [08-boas-praticas-codigo.md](08-boas-praticas-codigo.md) | Padrões Node.js ESM, nomenclatura, checklist de PR | Dev, IA |
+| 09 | [09-estrategia-de-testes.md](09-estrategia-de-testes.md) | Pirâmide, riscos críticos, gates e analytics | Dev, QA |
+| 10 | [10-seguranca-privacidade-lgpd.md](10-seguranca-privacidade-lgpd.md) | Inventário de dados, STRIDE, anonimização do índice, LGPD | Dev, segurança, jurídico |
+| 11 | [11-plano-de-implementacao.md](11-plano-de-implementacao.md) | Marcos M0–M6, tasks `BETA-nnn`, caminho crítico, DoD | Todos |
+| 12 | [12-prototipos.md](12-prototipos.md) → [**abrir**](prototipos/index.html) · [PDF](prototipos/prototipos-notinhas-beta.pdf) | Telas T-xx navegáveis + design system | Produto, design, dev |
+| 13 | [13-guia-desenvolvimento-com-ia.md](13-guia-desenvolvimento-com-ia.md) · [CLAUDE.md](ia/CLAUDE.md) · [prompts](ia/prompts.md) | Fluxo por task, antipadrões, docs vivos | Dev |
+| 14 | [14-operacao-deploy.md](14-operacao-deploy.md) | Contabo, nginx, Mailcow, backup e caminho inverso | Dev, DevOps |
 | 15 | [15-glossario.md](15-glossario.md) | Dicionário de equivalência formal entre termos de domínio tributário/comercial (pt-BR) e identificadores de código (inglês) | Todos |
 
 ---
@@ -88,6 +88,4 @@ As decisões operacionais detalhadas no [PRD §8](01-prd.md#8-perguntas-em-abert
 
 ## Próximos passos
 
-1. **Consolidar os contratos e schemas:** Desenvolver [`05-modelo-de-dados.md`](05-modelo-de-dados.md) e [`06-contratos-api.md`](06-contratos-api.md) a partir das especificações do PRD e da Arquitetura.
-2. **Implementar a esteira M0/M1:** Estruturar as pastas modulares da API Express no repositório `e-notas/app/` e configurar a suíte de testes com mocks da Fazenda PR.
-3. **Validar a ingestão no piloto:** Expandir a coleta de notas fiscais reais do comércio de São José dos Pinhais / PR para aferir a robustez dos cálculos de ranking agregado e destaques.
+Começar o **M0 (Fundação)** do [plano](11-plano-de-implementacao.md): `BETA-001` em diante. Em paralelo, validar as telas em [`prototipos/index.html`](prototipos/index.html) contra as histórias Gherkin.

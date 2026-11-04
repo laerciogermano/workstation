@@ -2,9 +2,10 @@
 
 **Por quê:** fixar o *quê* e o *porquê* do produto antes de qualquer história, tela ou código.  
 **Importante:** é a fonte de verdade do produto — sem ela, derivados divergem e o time perde o norte.  
-**No fluxo:** **este documento** → [`docs/`](docs/README.md) (`functionalities` → `user-stories` → `bdd` → `screens` → `screens-bdd` → `components` → `prototype`). Orienta toda a esteira; não substitui BDD nem UI.
+**No fluxo:** **este documento** → [`docs/`](docs/README.md) → pacote **[`beta-docs/`](beta-docs/README.md)** (PRD MoSCoW, histórias Gherkin, protótipos T-xx, plano BETA-nnn). Orienta toda a esteira; não substitui BDD nem UI.
 
 Derivados: [`docs/`](docs/README.md).  
+**Beta 1.0 (construir do zero):** [`beta-docs/README.md`](beta-docs/README.md) · [protótipos](beta-docs/prototipos/index.html) · card [jhxFUqLz](https://trello.com/c/jhxFUqLz).  
 Requisitos / regras: [`docs/requisitos.md`](docs/requisitos.md).  
 Timeline de prompts: [`prompts/`](prompts/README.md).  
 Regras para a IA: [`config/config-ia.md`](config/config-ia.md).  

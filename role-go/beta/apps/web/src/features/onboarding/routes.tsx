@@ -114,21 +114,34 @@ function City(): JSX.Element {
   );
 }
 
-/** T-07 · Localização: explica ANTES do prompt nativo; negado → centro da cidade. */
+/** T-07 · Localização: explica ANTES do prompt nativo; negado → centro da cidade (com feedback). */
 function Location(): JSX.Element {
   const save = useSavePrefs();
   const nav = useNavigate();
+  const toast = useToast();
   const [busy, setBusy] = useState(false);
-  const skip = () => save.mutate({ originMode: 'city', location: null }, { onSuccess: () => nav('/onboarding/raio') });
+  const goRadius = () => nav('/onboarding/raio');
+  const skip = (reason?: 'denied' | 'unavailable') => {
+    if (reason === 'denied') toast.show('Sem permissão — vamos usar o centro da cidade.');
+    else if (reason === 'unavailable') toast.show('Não pegamos o GPS — vamos usar o centro da cidade.');
+    save.mutate({ originMode: 'city', location: null }, { onSuccess: goRadius, onSettled: () => setBusy(false) });
+  };
   const allow = () => {
-    if (!('geolocation' in navigator)) return skip();
+    if (!('geolocation' in navigator)) return skip('unavailable');
     setBusy(true);
     navigator.geolocation.getCurrentPosition(
-      (pos) => save.mutate({ originMode: 'gps', location: { lat: pos.coords.latitude, lng: pos.coords.longitude } }, { onSuccess: () => nav('/onboarding/raio'), onSettled: () => setBusy(false) }),
-      () => {
-        setBusy(false);
-        skip();
-      },
+      (pos) =>
+        save.mutate(
+          { originMode: 'gps', location: { lat: pos.coords.latitude, lng: pos.coords.longitude } },
+          {
+            onSuccess: () => {
+              toast.show('Localização ativada.');
+              goRadius();
+            },
+            onSettled: () => setBusy(false),
+          },
+        ),
+      (err) => skip(err.code === err.PERMISSION_DENIED ? 'denied' : 'unavailable'),
       { enableHighAccuracy: false, timeout: 10_000, maximumAge: 300_000 },
     );
   };
@@ -148,11 +161,14 @@ function Location(): JSX.Element {
         Usamos sua localização só para calcular a <span className={ui.cy}>distância até os rolês</span>. Guardamos apenas a última posição, aproximada (~100 m), e ela
         nunca aparece para outras pessoas.
       </p>
+      <p className={`${ui.xs} ${ui.faint}`}>
+        Ao tocar em permitir, o navegador mostra o pedido de permissão (às vezes no topo ou na barra de endereço).
+      </p>
       <Footer column>
         <Button loading={busy || save.isPending} onClick={allow}>
           Permitir localização
         </Button>
-        <Button variant="ghost" onClick={skip}>
+        <Button variant="ghost" disabled={busy || save.isPending} onClick={() => skip()}>
           Agora não (usar o centro da cidade)
         </Button>
       </Footer>

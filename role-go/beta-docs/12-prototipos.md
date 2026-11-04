@@ -1,6 +1,6 @@
 # RoleGo Beta — Protótipos
 
-**Protótipo navegável:** [`prototipos/index.html`](prototipos/index.html) · **publicado:** https://rolego.com.br · PDF: [`prototipos/prototipos-rolego-beta.pdf`](prototipos/prototipos-rolego-beta.pdf). Abra no navegador, sem build nem servidor.
+**Protótipo navegável:** [`prototipos/index.html`](prototipos/index.html). Abra no navegador, sem build nem servidor.
 
 - **Galeria:** todas as telas agrupadas por fluxo, no estilo dos banners de épico (fundo preto, celulares com contorno neon, setas entre os passos).
 - **Modo navegável:** clique em qualquer tela (ou em "▶ Navegar no protótipo"). Os elementos com `data-go` levam à próxima tela. Atalhos: `←/→` anterior/próxima, `Backspace` voltar, `H` mostra as áreas clicáveis, `Esc` fecha. Dá para abrir uma tela direto pela URL: `index.html#T-20`.
@@ -85,6 +85,7 @@ Tab bar com 4 abas: **Explorar** (T-10/11/12) · **Meus rolês** (T-30) · **Org
 | `NeonCard` | cores por categoria | T-08, T-10, T-45 |
 | `EventCard` | `feed`, `mini` (lista), `swipe`, `manage` (organizador com métricas) | T-10, T-12, T-11, T-46 |
 | `EventCover` | imagem real com `srcset`; o protótipo usa pôsteres CSS como placeholder | — |
+| `ImageCrop` | editor fullscreen após escolher arquivo: moldura 1:1 (foto) ou 4:5 (capa), arrastar, zoom, girar 90°, cancelar/usar | T-32, T-41 |
 | `Badge` | ciano, magenta, amarelo, verde (com `live`), violeta, neutro, `dark` (sobre imagem) | várias |
 | `AvatarStack` | até 5 + contador | T-10, T-20 |
 | `Sheet` | bottom sheet com borda neon por categoria | T-13, T-24, T-27, T-49 |

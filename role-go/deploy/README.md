@@ -30,13 +30,17 @@ Stack Docker (`api` + `worker` + PostGIS + `web` + Mailpit) a partir de [`../bet
 
 O script: rsync do monorepo → build das imagens → `compose up` → migrate → seed → nginx proxy → smoke HTTPS.
 
-Re-seed manual (MEDIA_DIR em subpasta — o seed dá `rm` no path):
+Re-seed manual (MEDIA_DIR em subpasta — o seed dá `rm` no path; **depois promover** para `/media`, senão capas 404):
 
 ```bash
 ssh root@144.126.154.90 'cd /opt/rolego/beta && \
   ENV_FILE=/srv/rolego/prod/.env docker compose -f infra/docker-compose.vps.yml \
-  exec -T -e MEDIA_DIR=/media/seed api node dist/cli/seed.js'
+  exec -T -e MEDIA_DIR=/media/seed api node dist/cli/seed.js && \
+  ENV_FILE=/srv/rolego/prod/.env docker compose -f infra/docker-compose.vps.yml \
+  exec -T -u root api sh -c "for d in cover avatar gallery; do mkdir -p /media/\$d; cp -a /media/seed/\$d/. /media/\$d/; done; chown -R node:node /media/cover /media/avatar /media/gallery"'
 ```
+
+**Antes → depois (bug fotos 2026-11-04):** seed gravava em `/media/seed/{cover,avatar,gallery}` e a API/nginx serviam `/media/{cover,…}` → 404. Deploy e re-seed agora promovem os arquivos para a raiz do volume. Rollback do conteúdo: apagar `/media/{cover,avatar,gallery}` no volume (as URLs voltam a 404 até novo seed+promote).
 
 ### Rollback
 

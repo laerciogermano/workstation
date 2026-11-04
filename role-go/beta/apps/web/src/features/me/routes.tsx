@@ -7,6 +7,7 @@ import { t } from '../../lib/i18n/pt-BR';
 import { keys, setMe, useEventTypes, useMe } from '../../lib/queries';
 import { EventCardMini, eventPath } from '../../ui/EventCard';
 import { Icon } from '../../ui/Icon';
+import { ImageCropDialog } from '../../ui/ImageCrop';
 import { Screen, Sheet, TabBar, TopBar } from '../../ui/layout';
 import { Avatar, Button, Chip, cx, EmptyState, ErrorState, ListRow, NeonCard, RangeSlider, Section, Segmented, Skeleton, TextInput, Title, Toggle, ui } from '../../ui/primitives';
 import { useToast } from '../../ui/toast';
@@ -150,11 +151,8 @@ function Profile(): JSX.Element {
           <ListRow icon="edit" onClick={() => nav('/perfil/editar')}>
             Editar perfil
           </ListRow>
-          <ListRow icon="compass" onClick={() => nav('/perfil/preferencias')}>
-            Preferências de descoberta
-          </ListRow>
-          <ListRow icon="shield" onClick={() => nav('/perfil/preferencias#privacidade')}>
-            Privacidade
+          <ListRow icon="gear" onClick={() => nav('/perfil/preferencias')}>
+            Preferências e privacidade
           </ListRow>
           <ListRow icon="key" onClick={() => nav('/codigo')}>
             Tenho um código de evento
@@ -183,13 +181,14 @@ function Profile(): JSX.Element {
   );
 }
 
-/** T-32 · Editar perfil: foto (JPG/PNG/WebP ≤ 5 MB → WebP 512), nome, e-mail. */
+/** T-32 · Editar perfil: foto (JPG/PNG/WebP ≤ 5 MB → editor 1:1 → WebP 512), nome, e-mail. */
 function EditProfile(): JSX.Element {
   const { data: me } = useMe();
   const qc = useQueryClient();
   const toast = useToast();
   const nav = useNavigate();
   const file = useRef<HTMLInputElement>(null);
+  const [cropFile, setCropFile] = useState<File | null>(null);
   const [f, setF] = useState({ name: me?.name ?? '', email: me?.email ?? '' });
   useEffect(() => {
     if (me) setF({ name: me.name, email: me.email });
@@ -208,7 +207,11 @@ function EditProfile(): JSX.Element {
       fd.append('file', fl);
       return api<Me>('/me/photo', { method: 'PUT', form: fd });
     },
-    onSuccess: (m) => setMe(qc, m),
+    onSuccess: (m) => {
+      setMe(qc, m);
+      setCropFile(null);
+      toast.show('Foto atualizada.');
+    },
     onError: (e) => toast.error(errorMessage(e)),
   });
   const removePhoto = useMutation({ mutationFn: () => api<Me>('/me/photo', { method: 'DELETE' }), onSuccess: (m) => setMe(qc, m) });
@@ -232,7 +235,7 @@ function EditProfile(): JSX.Element {
             const fl = e.target.files?.[0];
             if (!fl) return;
             if (fl.size > 5 * 1024 * 1024) toast.error('A foto pode ter até 5 MB.');
-            else photo.mutate(fl);
+            else setCropFile(fl);
             e.target.value = '';
           }}
         />
@@ -241,7 +244,7 @@ function EditProfile(): JSX.Element {
             Remover foto
           </Button>
         ) : (
-          <p className={cx(ui.xs, ui.faint, ui.mt8)}>JPG, PNG ou WebP até 5 MB</p>
+          <p className={cx(ui.xs, ui.faint, ui.mt8)}>JPG, PNG ou WebP até 5 MB · você ajusta o recorte</p>
         )}
       </div>
       <TextInput label="Nome" value={f.name} maxLength={60} onChange={(e) => setF({ ...f, name: e.target.value })} />
@@ -249,6 +252,14 @@ function EditProfile(): JSX.Element {
       <Button loading={save.isPending} disabled={!f.name.trim() || !f.email} onClick={() => save.mutate()}>
         {t.save}
       </Button>
+      {cropFile ? (
+        <ImageCropDialog
+          file={cropFile}
+          kind="avatar"
+          onCancel={() => setCropFile(null)}
+          onConfirm={(cropped) => photo.mutate(cropped)}
+        />
+      ) : null}
     </Screen>
   );
 }

@@ -191,10 +191,18 @@ Catálogo do Beta: **Festas, Shows, Bares, Eletrônica, Sertanejo, Pagode/Samba,
 
 ## US-01.11 — Editar perfil e foto
 ```gherkin
-  Cenário: Trocar foto
-    Quando envio um PNG de 3 MB
-    Então a foto é recortada em quadrado, convertida para WebP 512px e exibida
+  Cenário: Trocar foto com editor de recorte
+    Quando escolho um PNG de 3 MB
+    Então vejo o editor de recorte com moldura quadrada
+    E posso arrastar, ajustar o zoom e girar 90°
+    Quando confirmo o recorte
+    Então a foto é convertida para WebP 512px e exibida
     E a foto antiga é apagada
+
+  Cenário: Cancelar recorte
+    Dado que o editor de recorte está aberto
+    Quando cancelo
+    Então a foto do perfil não muda
 
   Cenário: Arquivo inválido
     Quando envio um PDF renomeado para .jpg

@@ -24,6 +24,7 @@ import { keys, setMe, useEventTypes, useMe } from '../../lib/queries';
 import { EventCover } from '../../ui/EventCover';
 import { EventCardFeed, eventPath } from '../../ui/EventCard';
 import { Icon, type IconName } from '../../ui/Icon';
+import { ImageCropDialog } from '../../ui/ImageCrop';
 import { Footer, Screen, Sheet, TabBar, TopBar } from '../../ui/layout';
 import { Avatar, Badge, Button, Chip, cx, EmptyState, ErrorState, IconButton, Loading, NeonCard, ProgressSteps, Section, Segmented, Skeleton, TextArea, TextInput, Title, Toggle, ui } from '../../ui/primitives';
 import { useToast } from '../../ui/toast';
@@ -344,7 +345,7 @@ function WizardFooter({ children }: { children: ReactNode }): JSX.Element {
   return <Footer>{children}</Footer>;
 }
 
-/** T-41 · Básico: título, tipo, descrição, faixa etária, capa 4:5. */
+/** T-41 · Básico: título, tipo, descrição, faixa etária, capa 4:5 com editor de recorte. */
 function StepBasic({ e, next }: StepProps<EventDetail | null>): JSX.Element {
   const { data: types } = useEventTypes();
   const qc = useQueryClient();
@@ -352,6 +353,7 @@ function StepBasic({ e, next }: StepProps<EventDetail | null>): JSX.Element {
   const fileRef = useRef<HTMLInputElement>(null);
   const [f, setF] = useState({ title: e?.title ?? '', typeSlug: e?.type.slug ?? '', description: e?.description ?? '', ageRating: e?.ageRating ?? 'free' });
   const [cover, setCover] = useState<File | null>(null);
+  const [cropFile, setCropFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(e?.coverUrl ?? null);
   const save = useMutation({
     mutationFn: async () => {
@@ -374,8 +376,13 @@ function StepBasic({ e, next }: StepProps<EventDetail | null>): JSX.Element {
   const pick = (fl: File | undefined) => {
     if (!fl) return;
     if (fl.size > 8 * 1024 * 1024) return toast.error('A capa pode ter até 8 MB.');
-    setCover(fl);
-    setPreview(URL.createObjectURL(fl));
+    setCropFile(fl);
+  };
+  const applyCrop = (cropped: File) => {
+    if (preview?.startsWith('blob:')) URL.revokeObjectURL(preview);
+    setCover(cropped);
+    setPreview(URL.createObjectURL(cropped));
+    setCropFile(null);
   };
   return (
     <>
@@ -385,11 +392,12 @@ function StepBasic({ e, next }: StepProps<EventDetail | null>): JSX.Element {
         ) : (
           <>
             <Icon name="image" size="l" className={ui.cy} />
-            <span>Capa vertical 4:5 · JPG, PNG ou WebP até 8 MB</span>
+            <span>Capa vertical 4:5 · JPG, PNG ou WebP até 8 MB · ajuste o recorte</span>
           </>
         )}
       </button>
       <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp" hidden onChange={(ev) => pick(ev.target.files?.[0])} />
+      {cropFile ? <ImageCropDialog file={cropFile} kind="cover" onCancel={() => setCropFile(null)} onConfirm={applyCrop} /> : null}
       <TextInput label="Nome do rolê" maxLength={80} value={f.title} onChange={(ev) => setF({ ...f, title: ev.target.value })} hint={`${f.title.length}/80`} />
       <p className={ui.label}>Tipo</p>
       <div className={cx(ui.chips, ui.mb12)}>

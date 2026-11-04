@@ -83,6 +83,20 @@ for i in \$(seq 1 90); do
 done
 echo "==> seed (MEDIA_DIR em subdir — seed dá rm no path)"
 ENV_FILE=\$ENV docker compose -f infra/docker-compose.vps.yml exec -T -e MEDIA_DIR=/media/seed api node dist/cli/seed.js
+# Seed grava em /media/seed/{cover,avatar,gallery}; nginx/API servem /media/<kind>/…
+# Promove para a raiz do volume (sem isso as capas 404 e o feed fica sem foto).
+echo "==> promover mídia do seed → /media"
+ENV_FILE=\$ENV docker compose -f infra/docker-compose.vps.yml exec -T -u root api sh -c '
+  set -e
+  for d in cover avatar gallery; do
+    if [ -d /media/seed/\$d ]; then
+      mkdir -p /media/\$d
+      cp -a /media/seed/\$d/. /media/\$d/
+    fi
+  done
+  chown -R node:node /media/cover /media/avatar /media/gallery 2>/dev/null || true
+  echo "covers=\$(ls /media/cover 2>/dev/null | wc -l)"
+'
 if [[ ! -d /opt/rolego/web-proto-bak ]]; then
   cp -a /opt/rolego/web /opt/rolego/web-proto-bak
   echo "backup protótipo → /opt/rolego/web-proto-bak"

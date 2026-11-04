@@ -42,11 +42,18 @@ Objetivo: fechar o loop **oferta → demanda**. O organizador publica em menos d
 ```
 
 ### US-02.02 — Dados básicos e capa
-**Regras:** título com 3–80 caracteres; tipo do catálogo; descrição até 2.000 caracteres; capa obrigatória para publicar (JPG/PNG/WebP até 8 MB, recorte 4:5, gera WebP 1080×1350 + thumb 360×450); classificação etária: Livre / 16+ / 18+.
+**Regras:** título com 3–80 caracteres; tipo do catálogo; descrição até 2.000 caracteres; capa obrigatória para publicar (JPG/PNG/WebP até 8 MB; ao escolher, abre o editor de recorte com moldura **4:5**, zoom, arrastar e girar; gera WebP 1080×1350 + thumb 360×450); classificação etária: Livre / 16+ / 18+.
 ```gherkin
   Cenário: Rascunho criado no primeiro passo
     Quando preencho título "Neon Pulse Festival" e tipo "Eletrônica" e avanço
     Então um rascunho é criado e o progresso fica salvo automaticamente
+
+  Cenário: Recortar capa
+    Quando escolho uma foto para a capa
+    Então vejo o editor de recorte com moldura 4:5
+    E posso arrastar, ajustar o zoom e girar 90°
+    Quando confirmo
+    Então a prévia mostra só o recorte escolhido
 ```
 
 ### US-02.03 — Quando e onde

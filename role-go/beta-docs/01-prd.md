@@ -80,7 +80,7 @@ O detalhamento com histórias e critérios de aceite em Gherkin fica em [`02-his
 | RF-E01-09 | Onboarding: permissão de localização (grava lat/lng; se negada, usa o centro da cidade) | M |
 | RF-E01-10 | Onboarding: raio contínuo de 1 a 100 km (padrão 20 km) | M |
 | RF-E01-11 | Concluir onboarding e cair na descoberta com as preferências aplicadas | M |
-| RF-E01-12 | Perfil: foto (JPG/PNG/WebP até 5 MB, convertida para WebP), nome, e-mail | M |
+| RF-E01-12 | Perfil: foto (JPG/PNG/WebP até 5 MB). Ao escolher o arquivo, abre o **editor de recorte** (arrastar, zoom e girar 90°) com moldura quadrada; ao confirmar, envia o recorte e a API gera WebP 512. Nome e e-mail | M |
 | RF-E01-13 | Editar preferências de descoberta depois do onboarding (tipos, cidade, raio) | M |
 | RF-E01-14 | Privacidade: "Mostrar minha presença nos eventos" (padrão ligado, explicado no onboarding) | M |
 | RF-E01-15 | Excluir conta (LGPD): anonimiza o perfil e remove fotos | M |
@@ -95,7 +95,7 @@ O detalhamento com histórias e critérios de aceite em Gherkin fica em [`02-his
 | ID | Requisito | Prio |
 |---|---|---|
 | RF-E02-01 | Ativar o **Modo organizador** a partir do perfil: nome público, tipo (Pessoa física / Bar / Casa de eventos / Produtor), bio, Instagram | M |
-| RF-E02-02 | Criar evento em passos: básico (título, tipo, descrição, capa) → quando (início/fim) → onde (local, CEP/endereço → coordenadas) → acesso (público/privado, capacidade) → valores (lista informativa + link externo opcional) → revisão | M |
+| RF-E02-02 | Criar evento em passos: básico (título, tipo, descrição, capa) → quando (início/fim) → onde (local, CEP/endereço → coordenadas) → acesso (público/privado, capacidade) → valores (lista informativa + link externo opcional) → revisão. A **capa** passa pelo mesmo editor de recorte da foto de perfil, com moldura **4:5** (arrastar, zoom, girar); a API gera WebP 1080×1350 + thumb 360×450 | M |
 | RF-E02-03 | Salvar rascunho e retomar depois | M |
 | RF-E02-04 | Publicar evento (validação completa; o início precisa estar no futuro) | M |
 | RF-E02-05 | Evento **privado**: acesso por link/código; o endereço exato só aparece para quem foi aprovado; na descoberta aparece só o bairro e a distância aproximada | M |

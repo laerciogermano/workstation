@@ -13,20 +13,28 @@ export const eventPath = (e: { slug: string }): string => `/app/e/${e.slug}`;
 export const peoplePath = (e: { slug: string }, tab: 'going' | 'interested' = 'going'): string =>
   `/app/e/${e.slug}/quem-vai?tab=${tab}`;
 
-/** Contador clicável: abre a lista (não o evento). Para de propagar clique/gesto do card. */
+/** Contador clicável: abre a lista (ou pede cadastro se `locked`). */
 function PeopleCount({
   to,
   children,
   label,
+  locked,
+  onUnlock,
 }: {
   to: string;
   children: ReactNode;
   label: string;
+  locked?: boolean;
+  onUnlock?: () => void;
 }): JSX.Element {
   const nav = useNavigate();
   const go = (ev: MouseEvent | PointerEvent) => {
     ev.preventDefault();
     ev.stopPropagation();
+    if (locked) {
+      onUnlock?.();
+      return;
+    }
     nav(to);
   };
   return (
@@ -77,8 +85,16 @@ function CardBadges({ e }: { e: Card }): JSX.Element {
   );
 }
 
+type PeopleLock = { locked?: boolean; onUnlock?: () => void };
+
 /** Card do feed (T-10): data, distância, preço e prova social visíveis sem abrir o evento. */
-export function EventCardFeed({ e, onToggleInterest, eager }: { e: Card; onToggleInterest?: (on: boolean) => void; eager?: boolean }): JSX.Element {
+export function EventCardFeed({
+  e,
+  onToggleInterest,
+  eager,
+  locked,
+  onUnlock,
+}: { e: Card; onToggleInterest?: (on: boolean) => void; eager?: boolean } & PeopleLock): JSX.Element {
   const price = priceLabel(e);
   const live = e.phase === 'live';
   return (
@@ -111,15 +127,15 @@ export function EventCardFeed({ e, onToggleInterest, eager }: { e: Card; onToggl
         <div className={s.soc}>
           <div className={u.row}>
             {e.peoplePreview.length ? (
-              <PeopleCount to={peoplePath(e, 'going')} label={`Quem vai em ${e.title}`}>
-                <AvatarStack people={e.peoplePreview} />
+              <PeopleCount to={peoplePath(e, 'going')} label={`Quem vai em ${e.title}`} locked={locked} onUnlock={onUnlock}>
+                <AvatarStack people={e.peoplePreview} blurred={locked} />
               </PeopleCount>
             ) : null}
             <div className={s.counts}>
-              <PeopleCount to={peoplePath(e, 'going')} label={`${e.counts.going} ${t.going}`}>
+              <PeopleCount to={peoplePath(e, 'going')} label={`${e.counts.going} ${t.going}`} locked={locked} onUnlock={onUnlock}>
                 <b>{e.counts.going}</b> {t.going}
               </PeopleCount>
-              <PeopleCount to={peoplePath(e, 'interested')} label={`${e.counts.interested} com interesse`}>
+              <PeopleCount to={peoplePath(e, 'interested')} label={`${e.counts.interested} com interesse`} locked={locked} onUnlock={onUnlock}>
                 <b>{e.counts.interested}</b> ♥
               </PeopleCount>
             </div>
@@ -139,7 +155,14 @@ const RSVP_BADGE: Partial<Record<RsvpStatus, { tone: 'cyan' | 'yellow' | 'magent
 };
 
 /** Card compacto (lista T-12, Meus rolês T-30, busca T-15). */
-export function EventCardMini({ e, rsvp, right, to }: { e: Card; rsvp?: RsvpStatus | null; right?: JSX.Element; to?: string }): JSX.Element {
+export function EventCardMini({
+  e,
+  rsvp,
+  right,
+  to,
+  locked,
+  onUnlock,
+}: { e: Card; rsvp?: RsvpStatus | null; right?: JSX.Element; to?: string } & PeopleLock): JSX.Element {
   const badge = rsvp ? RSVP_BADGE[rsvp] : undefined;
   return (
     <Link to={to ?? eventPath(e)} className={s.mini}>
@@ -156,10 +179,10 @@ export function EventCardMini({ e, rsvp, right, to }: { e: Card; rsvp?: RsvpStat
           {priceLabel(e) ? ` · ${priceLabel(e)}` : ''}
         </p>
         <div className={cx(s.counts, u.mt4)}>
-          <PeopleCount to={peoplePath(e, 'going')} label={`${e.counts.going} ${t.going}`}>
+          <PeopleCount to={peoplePath(e, 'going')} label={`${e.counts.going} ${t.going}`} locked={locked} onUnlock={onUnlock}>
             <b>{e.counts.going}</b> {t.going}
           </PeopleCount>
-          <PeopleCount to={peoplePath(e, 'interested')} label={`${e.counts.interested} com interesse`}>
+          <PeopleCount to={peoplePath(e, 'interested')} label={`${e.counts.interested} com interesse`} locked={locked} onUnlock={onUnlock}>
             <b>{e.counts.interested}</b> ♥
           </PeopleCount>
         </div>

@@ -1,7 +1,8 @@
 import { type EventDetail, REPORT_REASONS } from '@rolego/contracts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Fragment, type JSX, type ReactNode, useState } from 'react';
+import { Fragment, type JSX, type ReactNode, useEffect, useState } from 'react';
 import { Link, Navigate, Route, Routes, useLocation, useNavigate, useParams, useSearchParams } from 'react-router';
+import { useGuestAuthPrompt } from '../auth/GuestAuthSheet';
 import { ApiError, errorMessage } from '../../lib/http';
 import { directionLinks } from '../../lib/directions';
 import { dayLabel, distanceLabel, endsIn, endsNextDay, hhmm, money, relativeStart, whenLabel } from '../../lib/format';
@@ -65,6 +66,7 @@ function EventPage(): JSX.Element {
   const qc = useQueryClient();
   const toast = useToast();
   const toggle = useToggleInterest();
+  const authPrompt = useGuestAuthPrompt();
   const [shareOpen, setShareOpen] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
   const [directionsOpen, setDirectionsOpen] = useState(false);
@@ -116,13 +118,12 @@ function EventPage(): JSX.Element {
   const isPrivate = e.visibility === 'private';
   const going = e.viewer.rsvp === 'confirmed' || e.viewer.rsvp === 'approved';
   const pending = e.viewer.rsvp === 'pending';
-  const requireLogin = () => nav(`/entrar?next=${encodeURIComponent(loc.pathname + loc.search)}`);
   const canGo = !!e.venue.location && !e.venue.addressLocked;
 
   let cta: ReactNode;
   if (e.status === 'cancelled') cta = <Button disabled className={ui.disabledLook}>{t.cancelled}</Button>;
   else if (e.phase === 'ended') cta = e.viewer.canReview ? <Button onClick={() => nav(`/app/e/${slug}/avaliar`)}>Avaliar o rolê</Button> : <Button disabled className={ui.disabledLook}>Encerrado</Button>;
-  else if (!me) cta = <Button variant={isPrivate ? 'private' : 'primary'} onClick={requireLogin}>{isPrivate ? t.requestJoin : t.confirm}</Button>;
+  else if (!me) cta = <Button variant={isPrivate ? 'private' : 'primary'} onClick={() => authPrompt.prompt('rsvp')}>{isPrivate ? t.requestJoin : t.confirm}</Button>;
   else if (e.viewer.isOrganizer) cta = <Button variant="secondary" onClick={() => nav(`/organizar/eventos/${e.id}`)}>Gerenciar evento</Button>;
   else if (going && e.phase === 'live') cta = e.viewer.hereAt ? <Button variant="secondary" disabled>Você está aqui ✓</Button> : <Button loading={hereM.isPending} onClick={() => hereM.mutate()}>{t.here}</Button>;
   else if (going) cta = <Button variant="secondary" onClick={() => setConfirmCancel(true)}>{t.goingCancel}</Button>;
@@ -252,13 +253,32 @@ function EventPage(): JSX.Element {
             </a>
           ) : null}
 
-          <Section accent="magenta" right={e.counts.going + e.counts.interested > 0 ? <Link to={`/app/e/${slug}/quem-vai`}>ver todos</Link> : undefined}>
+          <Section
+            accent="magenta"
+            right={
+              e.counts.going + e.counts.interested > 0 ? (
+                me ? (
+                  <Link to={`/app/e/${slug}/quem-vai`}>ver todos</Link>
+                ) : (
+                  <button type="button" className={ui.link} onClick={() => authPrompt.prompt('people')}>
+                    ver todos
+                  </button>
+                )
+              ) : undefined
+            }
+          >
             Quem vai
           </Section>
           {e.people.going.length ? (
-            <Link to={`/app/e/${slug}/quem-vai`} className={ui.row}>
-              <AvatarStack people={e.people.going} extra={e.counts.going - e.people.going.length} />
-            </Link>
+            me ? (
+              <Link to={`/app/e/${slug}/quem-vai`} className={ui.row}>
+                <AvatarStack people={e.people.going} extra={e.counts.going - e.people.going.length} />
+              </Link>
+            ) : (
+              <button type="button" className={ui.row} style={{ background: 'none', border: 0, padding: 0 }} onClick={() => authPrompt.prompt('people')}>
+                <AvatarStack people={e.people.going} extra={e.counts.going - e.people.going.length} blurred />
+              </button>
+            )
           ) : null}
           <p className={cx(ui.small, ui.soft, ui.mt8)}>
             <b className={isPrivate ? ui.yl : ui.mg}>
@@ -325,14 +345,14 @@ function EventPage(): JSX.Element {
         </div>
       </Screen>
       <Footer>
-        {me && e.status === 'published' && e.phase !== 'ended' ? (
+        {e.status === 'published' && e.phase !== 'ended' ? (
           <HeartButton
             on={e.viewer.interested}
             size={50}
             title={e.title}
             onToggle={() => {
               if (!me) {
-                requireLogin();
+                authPrompt.prompt('interest');
                 return;
               }
               toggle.mutate({ id: e.id, on: !e.viewer.interested }, { onSettled: refresh });
@@ -341,6 +361,7 @@ function EventPage(): JSX.Element {
         ) : null}
         {cta}
       </Footer>
+      {authPrompt.sheet}
       <ShareSheet open={shareOpen} onClose={() => setShareOpen(false)} e={e} />
       <ReportSheet open={reportOpen} onClose={() => setReportOpen(false)} targetId={e.id} />
       <DirectionsSheet
@@ -514,6 +535,8 @@ function ReportSheet({ open, onClose, targetId, targetType = 'event' }: { open: 
 /** T-21 · Quem vai: só quem deixou a presença visível; o resto entra na contagem. */
 function PeoplePage(): JSX.Element {
   const { data: e } = useEvent();
+  const { data: me, isLoading: meLoading } = useMe();
+  const authPrompt = useGuestAuthPrompt();
   const [params, setParams] = useSearchParams();
   const kind = params.get('tab') === 'interested' ? 'interested' : 'going';
   const setKind = (v: 'going' | 'interested') => {
@@ -521,30 +544,41 @@ function PeoplePage(): JSX.Element {
     next.set('tab', v);
     setParams(next, { replace: true });
   };
-  const q = useQuery({ queryKey: ['event', e?.slug, 'people', kind], queryFn: () => A.people(e?.id ?? '', kind), enabled: !!e });
+  useEffect(() => {
+    if (!meLoading && !me) authPrompt.prompt('people');
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- abre uma vez ao entrar sem sessão
+  }, [meLoading, me]);
+  const q = useQuery({ queryKey: ['event', e?.slug, 'people', kind], queryFn: () => A.people(e?.id ?? '', kind), enabled: !!e && !!me });
   return (
     <Screen title="Quem vai">
       <TopBar title={e?.title ?? 'Quem vai'} />
-      <Segmented
-        label="Lista"
-        value={kind}
-        onChange={setKind}
-        options={[
-          { value: 'going', label: `Vão (${e?.counts.going ?? 0})` },
-          { value: 'interested', label: `Interesse (${e?.counts.interested ?? 0})` },
-        ]}
-      />
-      <div className={ui.mt12}>
-        {q.data?.items.map((p) => (
-          <div key={p.id} className={ui.lrow}>
-            <Avatar name={p.name} url={p.photoUrl} size="md" />
-            <span className={cx(ui.grow, ui.b)}>{p.name}</span>
+      {!me && !meLoading ? (
+        <EmptyState icon="users" title="Cadastre-se para ver quem vai" hint="É rápido — aí você vê fotos e nomes de quem curtiu e confirmou." action={<Button onClick={() => authPrompt.prompt('people')}>Criar conta</Button>} />
+      ) : (
+        <>
+          <Segmented
+            label="Lista"
+            value={kind}
+            onChange={setKind}
+            options={[
+              { value: 'going', label: `Vão (${e?.counts.going ?? 0})` },
+              { value: 'interested', label: `Interesse (${e?.counts.interested ?? 0})` },
+            ]}
+          />
+          <div className={ui.mt12}>
+            {q.data?.items.map((p) => (
+              <div key={p.id} className={ui.lrow}>
+                <Avatar name={p.name} url={p.photoUrl} size="md" />
+                <span className={cx(ui.grow, ui.b)}>{p.name}</span>
+              </div>
+            ))}
+            {q.data && q.data.hiddenCount > 0 ? <p className={cx(ui.small, ui.muted, ui.mt12)}>+{q.data.hiddenCount} com presença privada</p> : null}
+            {q.data && !q.data.total ? <EmptyState icon="users" title="Ninguém por aqui ainda" hint="Seja a primeira pessoa!" /> : null}
+            {q.isError ? <ErrorState message={errorMessage(q.error)} /> : null}
           </div>
-        ))}
-        {q.data && q.data.hiddenCount > 0 ? <p className={cx(ui.small, ui.muted, ui.mt12)}>+{q.data.hiddenCount} com presença privada</p> : null}
-        {q.data && !q.data.total ? <EmptyState icon="users" title="Ninguém por aqui ainda" hint="Seja a primeira pessoa!" /> : null}
-        {q.isError ? <ErrorState message={errorMessage(q.error)} /> : null}
-      </div>
+        </>
+      )}
+      {authPrompt.sheet}
     </Screen>
   );
 }

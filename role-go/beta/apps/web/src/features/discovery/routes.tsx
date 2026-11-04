@@ -1,8 +1,9 @@
 import { DAY_FILTERS, type DayFilter, type EventCard, type Me, RADIUS_MAX_KM, RADIUS_MIN_KM } from '@rolego/contracts';
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { type JSX, type PointerEvent as RPointerEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { type JSX, type PointerEvent as RPointerEvent, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Link, Navigate, Route, Routes, useNavigate } from 'react-router';
 import { useLoginGate } from '../../app/guards';
+import { useGuestAuthPrompt } from '../auth/GuestAuthSheet';
 import { api, errorMessage } from '../../lib/http';
 import { feedGroup, type FeedGroup, distanceLabel, whenLabel, priceLabel } from '../../lib/format';
 import { t } from '../../lib/i18n/pt-BR';
@@ -55,6 +56,7 @@ function Explore({ view }: { view: View }): JSX.Element {
   const nav = useNavigate();
   const { data: me } = useMe();
   const { guest, bump } = useGuestTick();
+  const authPrompt = useGuestAuthPrompt();
   const [filtersOpen, setFiltersOpen] = useState(false);
   const save = useSavePrefs();
   const f = me ? me.preferences.filters : guest.filters;
@@ -172,11 +174,33 @@ function Explore({ view }: { view: View }): JSX.Element {
             ) : null}
           </div>
         ) : null}
-        {view === 'feed' ? <Feed onWiden={onWiden} radiusKm={radiusKm} guest={me ? null : guest} guestKey={me ? 'me' : JSON.stringify(guest)} /> : null}
-        {view === 'swipe' ? <SwipeDeck guest={me ? null : guest} guestKey={me ? 'me' : JSON.stringify(guest)} /> : null}
-        {view === 'list' ? <ListView guest={me ? null : guest} guestKey={me ? 'me' : JSON.stringify(guest)} /> : null}
+        {view === 'feed' ? (
+          <Feed
+            onWiden={onWiden}
+            radiusKm={radiusKm}
+            guest={me ? null : guest}
+            guestKey={me ? 'me' : JSON.stringify(guest)}
+            onNeedAuth={(reason) => authPrompt.prompt(reason)}
+          />
+        ) : null}
+        {view === 'swipe' ? (
+          <SwipeDeck
+            guest={me ? null : guest}
+            guestKey={me ? 'me' : JSON.stringify(guest)}
+            onNeedAuth={(reason = 'interest') => authPrompt.prompt(reason)}
+          />
+        ) : null}
+        {view === 'list' ? (
+          <ListView
+            guest={me ? null : guest}
+            guestKey={me ? 'me' : JSON.stringify(guest)}
+            locked={!me}
+            onUnlock={() => authPrompt.prompt('people')}
+          />
+        ) : null}
       </Screen>
       <FiltersSheet open={filtersOpen} onClose={() => setFiltersOpen(false)} guest={guest} onGuestChange={bump} />
+      {authPrompt.sheet}
       <TabBar />
     </>
   );
@@ -190,11 +214,13 @@ function Feed({
   radiusKm,
   guest,
   guestKey,
+  onNeedAuth,
 }: {
   onWiden: (km: number) => void;
   radiusKm: number;
   guest: GuestDiscovery | null;
   guestKey: string;
+  onNeedAuth: (reason: 'interest' | 'people') => void;
 }): JSX.Element {
   const gate = useLoginGate();
   const q = useInfiniteQuery({
@@ -248,9 +274,11 @@ function Feed({
                 key={e.id}
                 e={e}
                 eager={k === 'today' && i < 2}
+                locked={!gate.me}
+                onUnlock={() => onNeedAuth('people')}
                 onToggleInterest={(on) => {
                   if (!gate.me) {
-                    gate.requireLogin();
+                    onNeedAuth('interest');
                     return;
                   }
                   toggle.mutate({ id: e.id, on });
@@ -302,8 +330,10 @@ function PendingReviewCard(): JSX.Element | null {
   );
 }
 
+const SWIPE_FLY_MS = 320;
+
 /** T-11 · Swipe: direita/♥ = interesse, esquerda/✕ = passar, ↺ desfaz. Botões e teclado como alternativa (a11y). */
-function SwipeDeck({ guest, guestKey }: { guest: GuestDiscovery | null; guestKey: string }): JSX.Element {
+function SwipeDeck({ guest, guestKey, onNeedAuth }: { guest: GuestDiscovery | null; guestKey: string; onNeedAuth: (reason?: 'interest' | 'people') => void }): JSX.Element {
   const qc = useQueryClient();
   const nav = useNavigate();
   const toast = useToast();
@@ -311,14 +341,20 @@ function SwipeDeck({ guest, guestKey }: { guest: GuestDiscovery | null; guestKey
   const [deck, setDeck] = useState<EventCard[]>([]);
   const [history, setHistory] = useState<{ e: EventCard; action: 'like' | 'pass' }[]>([]);
   const [drag, setDrag] = useState({ x: 0, active: false });
+  /** Card voando pra fora; o deck já avançou e o próximo sobe na frente. */
+  const [fly, setFly] = useState<{ e: EventCard; dir: 'left' | 'right'; x: number; gone: boolean } | null>(null);
+  const busy = useRef(false);
   const start = useRef<{ x: number; y: number } | null>(null);
   const seen = useRef(new Set<string>());
+  const dragX = useRef(0);
   const q = useQuery({ queryKey: [...keys.discovery, 'swipe', guestKey], queryFn: () => D.swipe(guest), staleTime: 0 });
 
   useEffect(() => {
     seen.current = new Set();
     setDeck([]);
     setHistory([]);
+    setFly(null);
+    busy.current = false;
   }, [guestKey]);
 
   useEffect(() => {
@@ -333,34 +369,52 @@ function SwipeDeck({ guest, guestKey }: { guest: GuestDiscovery | null; guestKey
   }, [deck.length, q]);
 
   const act = useCallback(
-    async (action: 'like' | 'pass') => {
+    (action: 'like' | 'pass') => {
       const top = deck[0];
-      if (!top) return;
+      if (!top || busy.current || fly) return;
       if (!gate.me) {
-        gate.requireLogin();
-        return;
+        if (action === 'like') {
+          onNeedAuth();
+          return;
+        }
       }
+      busy.current = true;
+      const dir = action === 'like' ? 'right' : 'left';
+      const x = dragX.current;
+      setFly({ e: top, dir, x, gone: false });
       setDeck((d) => d.slice(1));
-      setHistory((h) => [...h.slice(-9), { e: top, action }]);
       setDrag({ x: 0, active: false });
-      try {
-        if (action === 'like') await D.setInterest(top.id, true);
-        else await D.setPass(top.id, true);
-        void qc.invalidateQueries({ queryKey: [...keys.discovery, 'feed'] });
-      } catch (e) {
-        toast.error(errorMessage(e));
-      }
+      dragX.current = 0;
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => setFly((f) => (f ? { ...f, gone: true } : null)));
+      });
+
+      const persist = gate.me;
+      if (persist) setHistory((h) => [...h.slice(-9), { e: top, action }]);
+
+      window.setTimeout(() => {
+        setFly(null);
+        busy.current = false;
+      }, SWIPE_FLY_MS);
+
+      if (!persist) return;
+      void (async () => {
+        try {
+          if (action === 'like') await D.setInterest(top.id, true);
+          else await D.setPass(top.id, true);
+          void qc.invalidateQueries({ queryKey: [...keys.discovery, 'feed'] });
+        } catch (e) {
+          toast.error(errorMessage(e));
+        }
+      })();
     },
-    [deck, qc, toast, gate],
+    [deck, fly, qc, toast, gate, onNeedAuth],
   );
 
   const undo = useCallback(async () => {
     const last = history[history.length - 1];
-    if (!last) return;
-    if (!gate.me) {
-      gate.requireLogin();
-      return;
-    }
+    if (!last || busy.current || fly) return;
+    if (!gate.me) return;
     setHistory((h) => h.slice(0, -1));
     setDeck((d) => [last.e, ...d]);
     try {
@@ -369,34 +423,41 @@ function SwipeDeck({ guest, guestKey }: { guest: GuestDiscovery | null; guestKey
     } catch (e) {
       toast.error(errorMessage(e));
     }
-  }, [history, toast, gate]);
+  }, [history, toast, gate, fly]);
 
   useEffect(() => {
     const onKey = (ev: KeyboardEvent) => {
       if (ev.target instanceof HTMLInputElement || ev.target instanceof HTMLTextAreaElement) return;
-      if (ev.key === 'ArrowRight') void act('like');
-      else if (ev.key === 'ArrowLeft') void act('pass');
-      else if (ev.key === 'Enter' && deck[0]) nav(eventPath(deck[0]));
+      if (ev.key === 'ArrowRight') act('like');
+      else if (ev.key === 'ArrowLeft') act('pass');
+      else if (ev.key === 'Enter' && deck[0] && !fly) nav(eventPath(deck[0]));
       else if (ev.key === 'Backspace' || (ev.key === 'z' && (ev.metaKey || ev.ctrlKey))) void undo();
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [act, undo, deck, nav]);
+  }, [act, undo, deck, nav, fly]);
 
   const onDown = (ev: RPointerEvent) => {
+    if (busy.current || fly) return;
     start.current = { x: ev.clientX, y: ev.clientY };
     (ev.currentTarget as HTMLElement).setPointerCapture(ev.pointerId);
     setDrag({ x: 0, active: true });
   };
-  const onMove = (ev: RPointerEvent) => start.current && setDrag({ x: ev.clientX - start.current.x, active: true });
+  const onMove = (ev: RPointerEvent) => {
+    if (!start.current) return;
+    const x = ev.clientX - start.current.x;
+    dragX.current = x;
+    setDrag({ x, active: true });
+  };
   const onUp = () => {
     const dx = drag.x;
     const moved = Math.abs(dx) > 8;
     start.current = null;
-    if (dx > 110) void act('like');
-    else if (dx < -110) void act('pass');
+    if (dx > 110) act('like');
+    else if (dx < -110) act('pass');
     else {
       setDrag({ x: 0, active: false });
+      dragX.current = 0;
       if (!moved && deck[0]) nav(eventPath(deck[0]));
     }
   };
@@ -407,28 +468,45 @@ function SwipeDeck({ guest, guestKey }: { guest: GuestDiscovery | null; guestKey
   return (
     <>
       <div className={s.deck}>
-        {!top ? (
+        {!top && !fly ? (
           <EmptyState icon="cards" title="Você viu tudo por aqui" hint="Amplie o raio ou troque os filtros para ver mais rolês." action={<Button variant="secondary" small onClick={() => nav('/explorar')}>Ver o feed</Button>} />
         ) : null}
-        {third ? <SwipeCard e={third} className={s.back2} /> : null}
-        {second ? <SwipeCard e={second} className={s.back1} /> : null}
+        {third ? <SwipeCard e={third} className={s.back2} locked={!gate.me} onUnlock={() => onNeedAuth('people')} /> : null}
+        {second ? <SwipeCard e={second} className={s.back1} locked={!gate.me} onUnlock={() => onNeedAuth('people')} /> : null}
         {top ? (
           <SwipeCard
+            key={top.id}
             e={top}
+            className={fly ? s.frontIn : undefined}
             style={{ transform: `translateX(${drag.x}px) rotate(${drag.x / 18}deg)`, transition: drag.active ? 'none' : 'transform .25s' }}
             stamp={drag.x > 40 ? 'yes' : drag.x < -40 ? 'no' : null}
-            handlers={{ onPointerDown: onDown, onPointerMove: onMove, onPointerUp: onUp, onPointerCancel: onUp }}
+            handlers={fly ? undefined : { onPointerDown: onDown, onPointerMove: onMove, onPointerUp: onUp, onPointerCancel: onUp }}
+            locked={!gate.me}
+            onUnlock={() => onNeedAuth('people')}
+          />
+        ) : null}
+        {fly ? (
+          <SwipeCard
+            e={fly.e}
+            className={cx(s.fly, fly.gone && (fly.dir === 'right' ? s.flyGoneR : s.flyGoneL))}
+            style={
+              fly.gone
+                ? undefined
+                : { transform: `translateX(${fly.x}px) rotate(${fly.x / 18}deg)`, transition: 'none' }
+            }
+            stamp={fly.dir === 'right' ? 'yes' : 'no'}
+            locked={!gate.me}
           />
         ) : null}
       </div>
       <div className={s.sactions}>
-        <button type="button" className={cx(s.round, s.roundX)} aria-label="Passar (←)" onClick={() => void act('pass')} disabled={!top}>
+        <button type="button" className={cx(s.round, s.roundX)} aria-label="Passar (←)" onClick={() => act('pass')} disabled={!top || !!fly}>
           <Icon name="x" size="xl" />
         </button>
-        <button type="button" className={cx(s.round, s.roundU)} aria-label="Desfazer" onClick={() => void undo()} disabled={!history.length}>
+        <button type="button" className={cx(s.round, s.roundU)} aria-label="Desfazer" onClick={() => void undo()} disabled={!history.length || !!fly}>
           <Icon name="undo" />
         </button>
-        <button type="button" className={cx(s.round, s.roundH)} aria-label="Tenho interesse (→)" onClick={() => void act('like')} disabled={!top}>
+        <button type="button" className={cx(s.round, s.roundH)} aria-label="Tenho interesse (→)" onClick={() => act('like')} disabled={!top || !!fly}>
           <Icon name="heart" size="xl" />
         </button>
       </div>
@@ -436,12 +514,32 @@ function SwipeDeck({ guest, guestKey }: { guest: GuestDiscovery | null; guestKey
   );
 }
 
-function SwipeCard({ e, className, style, stamp, handlers }: { e: EventCard; className?: string; style?: React.CSSProperties; stamp?: 'yes' | 'no' | null; handlers?: Record<string, (ev: RPointerEvent) => void> }): JSX.Element {
+function SwipeCard({
+  e,
+  className,
+  style,
+  stamp,
+  handlers,
+  locked,
+  onUnlock,
+}: {
+  e: EventCard;
+  className?: string;
+  style?: React.CSSProperties;
+  stamp?: 'yes' | 'no' | null;
+  handlers?: Record<string, (ev: RPointerEvent) => void>;
+  locked?: boolean;
+  onUnlock?: () => void;
+}): JSX.Element {
   const nav = useNavigate();
   const price = priceLabel(e);
   const openPeople = (tab: 'going' | 'interested') => (ev: React.MouseEvent | RPointerEvent) => {
     ev.preventDefault();
     ev.stopPropagation();
+    if (locked) {
+      onUnlock?.();
+      return;
+    }
     nav(peoplePath(e, tab));
   };
   return (
@@ -465,7 +563,7 @@ function SwipeCard({ e, className, style, stamp, handlers }: { e: EventCard; cla
         <div className={cx(ui.row, ui.mt8, ui.wrap)} style={{ gap: 10 }}>
           {e.peoplePreview.length ? (
             <button type="button" className={ui.row} style={{ gap: 6, background: 'none', border: 0, padding: 0, color: 'inherit' }} aria-label={`Quem vai em ${e.title}`} onClick={openPeople('going')} onPointerDown={(ev) => ev.stopPropagation()}>
-              <AvatarStack people={e.peoplePreview} />
+              <AvatarStack people={e.peoplePreview} blurred={locked} />
             </button>
           ) : null}
           <span className={ui.small}>
@@ -484,7 +582,17 @@ function SwipeCard({ e, className, style, stamp, handlers }: { e: EventCard; cla
 }
 
 /** T-12 · Lista compacta, ordenável. */
-function ListView({ guest, guestKey }: { guest: GuestDiscovery | null; guestKey: string }): JSX.Element {
+function ListView({
+  guest,
+  guestKey,
+  locked,
+  onUnlock,
+}: {
+  guest: GuestDiscovery | null;
+  guestKey: string;
+  locked?: boolean;
+  onUnlock?: () => void;
+}): JSX.Element {
   const [sort, setSort] = useState<'soonest' | 'nearest'>('soonest');
   const q = useInfiniteQuery({
     queryKey: [...keys.discovery, 'list', sort, guestKey],
@@ -510,7 +618,7 @@ function ListView({ guest, guestKey }: { guest: GuestDiscovery | null; guestKey:
       {q.isSuccess && !items.length ? <EmptyState title="Nenhum rolê com esses filtros" hint={t.emptyFeedHint} /> : null}
       <div className={ui.mt8}>
         {items.map((e) => (
-          <EventCardMini key={e.id} e={e} rsvp={e.viewer.rsvp} />
+          <EventCardMini key={e.id} e={e} rsvp={e.viewer.rsvp} locked={locked} onUnlock={onUnlock} />
         ))}
       </div>
       <div ref={sentinel} />
@@ -718,15 +826,23 @@ function Where(): JSX.Element {
 /** T-15 · Busca sem acento por título ou local; raio por padrão, "Toda a cidade" amplia. */
 function Search(): JSX.Element {
   const { data: me } = useMe();
+  const authPrompt = useGuestAuthPrompt();
   const guest = me ? null : readGuest();
   const guestKey = me ? 'me' : JSON.stringify(guest);
   const [q, setQ] = useState('');
   const [debounced, setDebounced] = useState('');
   const [wide, setWide] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
     const h = setTimeout(() => setDebounced(q.trim()), 300);
     return () => clearTimeout(h);
   }, [q]);
+  useLayoutEffect(() => {
+    const el = inputRef.current;
+    if (!el) return;
+    el.focus({ preventScroll: true });
+    el.select();
+  }, []);
   const r = useQuery({
     queryKey: [...keys.discovery, 'search', debounced, wide, guestKey],
     queryFn: () => D.search(debounced, wide ? 'city' : 'radius', undefined, guest),
@@ -735,7 +851,17 @@ function Search(): JSX.Element {
   return (
     <Screen title="Buscar">
       <TopBar title="Buscar" />
-      <TextInput autoFocus type="text" inputMode="search" enterKeyHint="search" placeholder="Nome do rolê ou do local" aria-label="Buscar rolês" value={q} onChange={(e) => setQ(e.target.value)} />
+      <TextInput
+        ref={inputRef}
+        autoFocus
+        type="text"
+        inputMode="search"
+        enterKeyHint="search"
+        placeholder="Nome do rolê ou do local"
+        aria-label="Buscar rolês"
+        value={q}
+        onChange={(e) => setQ(e.target.value)}
+      />
       <div className={cx(ui.row, ui.between)}>
         <span className={cx(ui.small, ui.soft)}>Toda a cidade</span>
         <Toggle label="Buscar em toda a cidade" checked={wide} onChange={setWide} />
@@ -744,7 +870,7 @@ function Search(): JSX.Element {
       {r.isSuccess && !r.data.items.length ? <EmptyState icon="search" title="Nada encontrado" hint={wide ? 'Tente outro termo.' : 'Tente buscar em toda a cidade.'} /> : null}
       <div className={ui.mt8}>
         {r.data?.items.map((e) => (
-          <EventCardMini key={e.id} e={e} rsvp={e.viewer.rsvp} />
+          <EventCardMini key={e.id} e={e} rsvp={e.viewer.rsvp} locked={!me} onUnlock={() => authPrompt.prompt('people')} />
         ))}
       </div>
       {debounced.length < 2 ? (
@@ -752,6 +878,7 @@ function Search(): JSX.Element {
           Digite pelo menos 2 letras. <Link className={ui.link} to="/explorar">Voltar ao feed</Link>
         </p>
       ) : null}
+      {authPrompt.sheet}
     </Screen>
   );
 }

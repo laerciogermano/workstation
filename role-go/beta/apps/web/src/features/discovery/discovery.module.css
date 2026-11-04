@@ -5,11 +5,20 @@
 .review { display: flex; align-items: center; gap: 12px; padding: 10px 12px; margin: 10px 0 4px; }
 .review .thumb { width: 44px; height: 54px; border-radius: 9px; flex: none; }
 /* swipe */
-.deck { position: relative; height: min(62dvh, 520px); margin-top: 12px; touch-action: pan-y; user-select: none; }
-.scard { position: absolute; inset: 0; border-radius: 22px; overflow: hidden; border: 1.5px solid var(--rg-violet); box-shadow: 0 0 22px -4px var(--rg-violet); background: var(--rg-screen); cursor: grab; will-change: transform; }
+.deck { position: relative; height: min(62dvh, 520px); margin-top: 12px; touch-action: pan-y; user-select: none; overflow: visible; }
+.scard { position: absolute; inset: 0; border-radius: 22px; overflow: hidden; border: 1.5px solid var(--rg-violet); box-shadow: 0 0 22px -4px var(--rg-violet); background: var(--rg-screen); cursor: grab; will-change: transform, opacity; }
 .scard:active { cursor: grabbing; }
-.back1 { transform: translateY(10px) scale(0.95); opacity: 0.55; border-color: var(--rg-line-2); box-shadow: none; pointer-events: none; }
-.back2 { transform: translateY(20px) scale(0.9); opacity: 0.3; border-color: var(--rg-line-2); box-shadow: none; pointer-events: none; }
+.back1, .back2 { border-color: var(--rg-line-2); box-shadow: none; pointer-events: none; transition: transform 0.32s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.32s ease; }
+.back1 { transform: translateY(10px) scale(0.95); opacity: 0.55; }
+.back2 { transform: translateY(20px) scale(0.9); opacity: 0.3; }
+.frontIn { animation: rgFrontIn 0.32s cubic-bezier(0.2, 0.8, 0.2, 1); }
+@keyframes rgFrontIn {
+  from { transform: translateY(10px) scale(0.95); opacity: 0.55; }
+  to { transform: none; opacity: 1; }
+}
+.fly { z-index: 4; pointer-events: none; transition: transform 0.32s cubic-bezier(0.15, 0.85, 0.25, 1), opacity 0.28s ease; }
+.flyGoneL { transform: translateX(-130vw) rotate(-28deg) !important; opacity: 0; }
+.flyGoneR { transform: translateX(130vw) rotate(28deg) !important; opacity: 0; }
 .scard .cover { position: absolute; inset: 0; border-radius: 0; height: 100% !important; }
 .shade { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 35%, rgba(0, 0, 0, 0.92) 72%); pointer-events: none; }
 .stxt { position: absolute; left: 16px; right: 16px; bottom: 16px; }

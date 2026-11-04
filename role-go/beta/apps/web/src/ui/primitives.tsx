@@ -1,5 +1,5 @@
 import type { Accent, PersonRef } from '@rolego/contracts';
-import { type ButtonHTMLAttributes, type InputHTMLAttributes, type JSX, type ReactNode, type SelectHTMLAttributes, type TextareaHTMLAttributes, useId, useState } from 'react';
+import { forwardRef, type ButtonHTMLAttributes, type InputHTMLAttributes, type JSX, type ReactNode, type SelectHTMLAttributes, type TextareaHTMLAttributes, useId, useState } from 'react';
 import { initials } from '../lib/format';
 import { Icon, type IconName } from './Icon';
 import s from './ui.module.css';
@@ -112,12 +112,16 @@ const APP_INPUT = {
   spellCheck: false,
 } as const;
 
-export function TextInput({ label, hint, error, className, ...rest }: InputHTMLAttributes<HTMLInputElement> & { label?: string; hint?: string | undefined; error?: string | undefined }): JSX.Element {
+export const TextInput = forwardRef<
+  HTMLInputElement,
+  InputHTMLAttributes<HTMLInputElement> & { label?: string; hint?: string | undefined; error?: string | undefined }
+>(function TextInput({ label, hint, error, className, ...rest }, ref): JSX.Element {
   return (
     <Field label={label} hint={hint} error={error}>
       {(id) => (
         <input
           id={id}
+          ref={ref}
           {...APP_INPUT}
           {...rest}
           className={cx(s.input, error && s.inputErr, className)}
@@ -130,7 +134,7 @@ export function TextInput({ label, hint, error, className, ...rest }: InputHTMLA
       )}
     </Field>
   );
-}
+});
 
 export function TextArea({ label, hint, error, className, ...rest }: TextareaHTMLAttributes<HTMLTextAreaElement> & { label?: string; hint?: string | undefined; error?: string | undefined }): JSX.Element {
   return (
@@ -251,11 +255,12 @@ export function Avatar({ name, url, size }: { name: string; url: string | null; 
   );
 }
 
-export function AvatarStack({ people, extra }: { people: PersonRef[]; extra?: number }): JSX.Element {
+/** `blurred`: fotos ilegíveis (visitante) — não revela quem vai. */
+export function AvatarStack({ people, extra, blurred }: { people: PersonRef[]; extra?: number; blurred?: boolean }): JSX.Element {
   return (
-    <span className={s.avs}>
+    <span className={cx(s.avs, blurred && s.avsBlur)} aria-hidden={blurred || undefined} title={blurred ? 'Cadastre-se para ver quem vai' : undefined}>
       {people.map((p) => (
-        <Avatar key={p.id} name={p.name} url={p.photoUrl} />
+        <Avatar key={p.id} name={blurred ? '·' : p.name} url={blurred ? null : p.photoUrl} />
       ))}
       {extra && extra > 0 ? <span className={cx(s.av, s.avMore)}>+{extra}</span> : null}
     </span>

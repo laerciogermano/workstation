@@ -28,14 +28,19 @@ export function PublicOnly({ children }: { children: ReactNode }): JSX.Element {
   const loc = useLocation();
   if (isLoading) return <Loading />;
   if (me) {
-    const next = new URLSearchParams(loc.search).get('next');
-    const safe = next && next.startsWith('/') && !next.startsWith('//') ? next : '/explorar';
-    return <Navigate to={me.needsConsent ? '/consentimento' : me.onboarded ? safe : '/onboarding/tipos'} replace />;
+    return <Navigate to={me.needsConsent ? '/consentimento' : me.onboarded ? safeNext(loc.search) : '/onboarding/tipos'} replace />;
   }
   return <>{children}</>;
 }
 
+/**
+ * Destino pós-login. Home é sempre Explorar.
+ * Só honra `?next=` para deep link de evento/código (ex.: confirmar presença).
+ * Ignora /meus-roles, /perfil, /organizar etc.
+ */
 export const safeNext = (search: string, fallback = '/explorar'): string => {
   const next = new URLSearchParams(search).get('next');
-  return next && next.startsWith('/') && !next.startsWith('//') ? next : fallback;
+  if (!next || !next.startsWith('/') || next.startsWith('//')) return fallback;
+  if (next.startsWith('/app/') || next === '/codigo' || next.startsWith('/codigo?')) return next;
+  return fallback;
 };

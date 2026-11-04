@@ -2,6 +2,8 @@
 
 | Pasta | Card |
 |-------|------|
+| [`6aeb24a79a12f4189d7690d7/`](6aeb24a79a12f4189d7690d7/README.md) | [Criar nova logo Notinhas (v2)](https://trello.com/c/VSnkOlXy) — depende de AP6ffjv8 |
+| [`6aeb249b8083ec05b0744697/`](6aeb249b8083ec05b0744697/README.md) | [Benchmarking logos (apps + comida/delivery)](https://trello.com/c/AP6ffjv8) |
 | [`6aeb1f3689e452ff0c3883af/`](6aeb1f3689e452ff0c3883af/README.md) | [Ajustes do protótipo Notinhas (home anônima, destaques, detalhe, EAN, cestas)](https://trello.com/c/BXKZ55Wb) |
 | [`6aeb15499b331fc5cfe8a447/`](6aeb15499b331fc5cfe8a447/README.md) | [Notinhas Beta — pacote de documentação + protótipos (padrão RoleGo)](https://trello.com/c/jhxFUqLz) |
 | [`6aeb14ff912c47963559ce9e/`](6aeb14ff912c47963559ce9e/README.md) | [Buscar fotos ao cadastrar EAN (candidatas + escolher a do feed)](https://trello.com/c/0fVZ8eBE) |

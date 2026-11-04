@@ -103,3 +103,4 @@ tasks/
 | [`6ae9def02d6e0ab7a0ab0737/`](6ae9def02d6e0ab7a0ab0737/README.md) | [Escolhidos: nova lista com fotos Unsplash diferentes](https://trello.com/c/DV55oGU2) |
 | [`6ae9def6a28b279ac20b6ffc/`](6ae9def6a28b279ac20b6ffc/README.md) | [Enriquecer Sobre e Experiências dos escolhidos](https://trello.com/c/VMn5CsD0) |
 | [`6ae9df3a523bb9ffbc3ab31e/`](6ae9df3a523bb9ffbc3ab31e/README.md) | [Daniela + Aline: banner 03 → BR Supply com logo](https://trello.com/c/r21j4TO0) |
+| [`6aeb15c1ae14cb2c2a7e3889/`](6aeb15c1ae14cb2c2a7e3889/README.md) | [Bloquear execução se IP atual = último IP](https://trello.com/c/InSl0Em6) |

@@ -71,7 +71,7 @@ WORKER_RUNTIME=cdp CDP_ID=daniela-hoffmann \
 Allowlist via `PATCH /agentes/:id` `{ "procedimentos": ["extrair_leads","conectar",…] }`.  
 Daniela/Thiago/Juliana/Roberto/Gabriel: `extrair_leads` + `conectar`. **Antes → depois:** só extract → + conectar. Rollback: `procedimentos: ["extrair_leads"]`.
 
-**Antes → depois (Gabriel Rocha 2026-11-05):** sem script → `start-worker-gabriel-cdp.sh` (`CDP_ID=gabriel-rocha` :9260; `AGENT_ID` slug `gabriel-rocha` → enroll devolve uuid). Rollback: apague o script; remova a linha do keep/one-shot neste README.
+**Antes → depois (Gabriel Rocha 2026-11-05):** sem script → `start-worker-gabriel-cdp.sh` (`CDP_ID=gabriel-rocha` :9260; `AGENT_ID=75f78c88-58bd-4207-b1d3-ae7a2aabb771`). Cadastro via `POST /agentes` + enroll CDP (`serial=cdp:gabriel-rocha`). Rollback: apague o script/agente; remova a linha do keep/one-shot neste README.
 
 ### Host — N slots, troca on-empty
 

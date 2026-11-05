@@ -7,7 +7,7 @@ LOG=logs/worker-gabriel-cdp.out
 PIDF=logs/worker-gabriel-cdp.pid
 echo "——— $(date '+%H:%M:%S') start-worker-gabriel-cdp (log também em $LOG) ———"
 env API_URL=http://144.126.154.90 \
-  AGENT_ID="${AGENT_ID:-gabriel-rocha}" \
+  AGENT_ID="${AGENT_ID:-75f78c88-58bd-4207-b1d3-ae7a2aabb771}" \
   AGENT_API_KEY=dev-local-agent-key \
   WORKER_RUNTIME=cdp \
   CDP_ID=gabriel-rocha \

@@ -1,14 +1,15 @@
 import { getHandler } from './handlers/index.mjs';
 import {
+  checkEgressIpOnce,
   commitEgressIp,
   isEgressIpGuardEnabled,
-  waitUntilEgressIpReady,
 } from './last-egress-ip.mjs';
 import { createLogger, fmtDuration, jobTypeLabel } from './log.mjs';
 
 /**
  * Um ciclo claim→handler→complete/fail para um agentId.
- * Com guarda de IP: espera o egress mudar antes de claimar; se igual, não claima.
+ * Com guarda de IP: se o egress atual já foi usado → não claima / falha o job.
+ * Se novo → claima, grava na lista e executa.
  * @returns {Promise<boolean>} true se processou job
  */
 export async function runAgentCycle(api, opts) {
@@ -33,20 +34,17 @@ export async function runAgentCycle(api, opts) {
 
   if (!dry && isEgressIpGuardEnabled()) {
     log.info(`${cycleLabel}: checando se o IP público pode ser usado…`);
-    try {
-      const status = await waitUntilEgressIpReady({
-        logTag: agentId,
-        log,
-        shouldStop,
-      });
-      reservedIp = status.ip;
-    } catch (e) {
-      if (e && e.code === 'EGRESS_IP_WAIT_CANCELLED') {
-        log.warn(e.message);
-        return false;
-      }
-      throw e;
+    const status = await checkEgressIpOnce({
+      logTag: agentId,
+      log,
+    });
+    if (!status.ready) {
+      log.warn(
+        `${cycleLabel}: abortado — IP ${status.ip} já utilizado anteriormente`,
+      );
+      return false;
     }
+    reservedIp = status.ip;
   } else if (dry) {
     log.debug(`${cycleLabel}: guarda de IP desligada (DRY)`);
   } else {
@@ -89,55 +87,36 @@ export async function runAgentCycle(api, opts) {
 
     try {
       if (isEgressIpGuardEnabled()) {
-        // Revalida + grava último IP + timeline; se IP voltou a ser o último, espera de novo sem executar.
-        for (;;) {
-          if (shouldStop?.()) {
-            await api.fail(
-              agentId,
-              j.id,
-              'worker shutdown — job interrompido antes da execução (IP)',
-            );
-            log.warn(
-              `job «${label}» falhou no shutdown (ainda esperava IP liberar)`,
-            );
-            return true;
-          }
-          const ip =
-            reservedIp ||
-            (
-              await waitUntilEgressIpReady({
-                logTag: agentId,
-                log,
-                shouldStop,
-              })
-            ).ip;
-          const commit = await commitEgressIp(ip, {
+        if (shouldStop?.()) {
+          await api.fail(
             agentId,
-            jobId: j.id,
-            jobType: j.type,
-            runtime:
-              runtime ||
-              (cdpId || cdpUrl ? 'cdp' : serial ? 'avd' : undefined),
-          });
-          if (commit.committed) {
-            log.info(
-              `registreí IP ${commit.ip} como último usado (job ${j.id})`,
-            );
-            reservedIp = commit.ip;
-            break;
-          }
-          log.info(
-            `IP ${ip} ainda é o do job anterior — job «${label}» em espera até mudar`,
+            j.id,
+            'worker shutdown — job interrompido antes da execução (IP)',
           );
-          reservedIp = null;
-          await waitUntilEgressIpReady({
-            logTag: agentId,
-            log,
-            shouldStop,
-          }).then((s) => {
-            reservedIp = s.ip;
-          });
+          log.warn(`job «${label}» falhou no shutdown (antes de gravar IP)`);
+          return true;
         }
+        const ip =
+          reservedIp ||
+          (await checkEgressIpOnce({ logTag: agentId, log })).ip;
+        const commit = await commitEgressIp(ip, {
+          agentId,
+          jobId: j.id,
+          jobType: j.type,
+          runtime:
+            runtime ||
+            (cdpId || cdpUrl ? 'cdp' : serial ? 'avd' : undefined),
+        });
+        if (!commit.committed) {
+          const msg = `IP ${ip} já utilizado anteriormente — execução abortada`;
+          await api.fail(agentId, j.id, msg);
+          log.warn(`job «${label}» falhou: ${msg}`);
+          return true;
+        }
+        log.info(
+          `registreí IP ${commit.ip} na lista de usados (${commit.used.length} no total; job ${j.id})`,
+        );
+        reservedIp = commit.ip;
       }
 
       const where =

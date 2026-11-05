@@ -1,15 +1,16 @@
 /**
- * Guarda o último IP de egress do host. Worker só claima/executa quando o IP
- * atual for diferente do último — se igual, fica em espera (poll), sem fail.
+ * Guarda a lista de IPs de egress já usados no host. Antes de claimar/executar,
+ * se o IP atual já estiver na lista → aborta (não claima / falha o job).
+ * Se for novo → executa e acrescenta na lista + timeline.
  *
  * Estado compartilhado entre workers (AVD/CDP) no mesmo Mac.
  *
  * Env:
- *   LAST_EGRESS_IP_FILE — path (default ~/.connectmax/last-egress-ip)
+ *   USED_EGRESS_IPS_FILE — lista (default ~/.connectmax/used-egress-ips), 1 IP/linha
+ *   LAST_EGRESS_IP_FILE — legado (lido só na migração; default ~/.connectmax/last-egress-ip)
  *   EGRESS_IP_TIMELINE_FILE — JSONL (default ~/.connectmax/egress-ip-timeline.jsonl)
  *   SKIP_EGRESS_IP_GUARD=1 — desliga a guarda
  *   EGRESS_IP_URL — default https://api.ipify.org
- *   EGRESS_IP_POLL_MS — intervalo do poll enquanto espera mudar (default 10000)
  */
 import {
   appendFileSync,
@@ -24,25 +25,27 @@ import {
 import { homedir } from 'node:os';
 import { dirname, join } from 'node:path';
 
-const DEFAULT_FILE = join(homedir(), '.connectmax', 'last-egress-ip');
+const DEFAULT_USED = join(homedir(), '.connectmax', 'used-egress-ips');
+const DEFAULT_LAST = join(homedir(), '.connectmax', 'last-egress-ip');
 const DEFAULT_TIMELINE = join(homedir(), '.connectmax', 'egress-ip-timeline.jsonl');
 const DEFAULT_URL = 'https://api.ipify.org';
 const LOCK_WAIT_MS = 30_000;
 const LOCK_POLL_MS = 50;
 
+export function usedEgressIpsFilePath() {
+  const fromEnv = String(process.env.USED_EGRESS_IPS_FILE || '').trim();
+  return fromEnv || DEFAULT_USED;
+}
+
+/** @deprecated use usedEgressIpsFilePath — mantido p/ migração / envs antigos */
 export function egressIpFilePath() {
   const fromEnv = String(process.env.LAST_EGRESS_IP_FILE || '').trim();
-  return fromEnv || DEFAULT_FILE;
+  return fromEnv || DEFAULT_LAST;
 }
 
 export function egressIpTimelinePath() {
   const fromEnv = String(process.env.EGRESS_IP_TIMELINE_FILE || '').trim();
   return fromEnv || DEFAULT_TIMELINE;
-}
-
-export function egressIpPollMs() {
-  const n = Number(process.env.EGRESS_IP_POLL_MS || 10_000);
-  return Number.isFinite(n) && n >= 1000 ? n : 10_000;
 }
 
 export function isEgressIpGuardEnabled() {
@@ -51,28 +54,154 @@ export function isEgressIpGuardEnabled() {
   return true;
 }
 
-export function readLastEgressIp(filePath = egressIpFilePath()) {
-  try {
-    if (!existsSync(filePath)) return null;
-    const raw = readFileSync(filePath, 'utf8').trim();
-    return raw || null;
-  } catch {
-    return null;
+function isIpLike(s) {
+  return /^\d{1,3}(?:\.\d{1,3}){3}$/.test(s) || s.includes(':');
+}
+
+function parseIpLines(raw) {
+  const out = [];
+  const seen = new Set();
+  for (const line of String(raw || '').split(/\r?\n/)) {
+    const ip = line.trim();
+    if (!ip || ip.startsWith('#')) continue;
+    if (!isIpLike(ip)) continue;
+    if (seen.has(ip)) continue;
+    seen.add(ip);
+    out.push(ip);
   }
+  return out;
 }
 
-export function writeLastEgressIp(ip, filePath = egressIpFilePath()) {
-  const dir = dirname(filePath);
-  mkdirSync(dir, { recursive: true });
-  writeFileSync(filePath, `${String(ip).trim()}\n`, 'utf8');
-}
-
-export function clearLastEgressIp(filePath = egressIpFilePath()) {
+function ipsFromTimeline(timelinePath) {
+  const out = [];
+  const seen = new Set();
   try {
-    if (existsSync(filePath)) unlinkSync(filePath);
+    if (!existsSync(timelinePath)) return out;
+    const raw = readFileSync(timelinePath, 'utf8');
+    for (const line of raw.split(/\r?\n/)) {
+      const t = line.trim();
+      if (!t) continue;
+      try {
+        const row = JSON.parse(t);
+        const ip = String(row?.ip || '').trim();
+        if (!ip || !isIpLike(ip) || seen.has(ip)) continue;
+        seen.add(ip);
+        out.push(ip);
+      } catch {
+        /* ignore linha inválida */
+      }
+    }
   } catch {
     /* ignore */
   }
+  return out;
+}
+
+/**
+ * Lista de IPs já usados (ordem estável). Migra legado last-egress-ip + timeline
+ * para used-egress-ips na primeira leitura se a lista ainda não existir.
+ */
+export function readUsedEgressIps(opts = {}) {
+  const usedPath = opts.usedPath || usedEgressIpsFilePath();
+  const lastPath = opts.lastPath || egressIpFilePath();
+  const timelinePath = opts.timelinePath || egressIpTimelinePath();
+  const seen = new Set();
+  const list = [];
+
+  const add = (ip) => {
+    const v = String(ip || '').trim();
+    if (!v || !isIpLike(v) || seen.has(v)) return;
+    seen.add(v);
+    list.push(v);
+  };
+
+  try {
+    if (existsSync(usedPath)) {
+      for (const ip of parseIpLines(readFileSync(usedPath, 'utf8'))) add(ip);
+    }
+  } catch {
+    /* ignore */
+  }
+
+  // Migração: legado single-file + IPs da timeline
+  try {
+    if (existsSync(lastPath)) {
+      const last = readFileSync(lastPath, 'utf8').trim();
+      if (last) add(last);
+    }
+  } catch {
+    /* ignore */
+  }
+  for (const ip of ipsFromTimeline(timelinePath)) add(ip);
+
+  if (list.length && !existsSync(usedPath)) {
+    writeUsedEgressIps(list, usedPath);
+  }
+
+  return list;
+}
+
+export function writeUsedEgressIps(ips, filePath = usedEgressIpsFilePath()) {
+  const dir = dirname(filePath);
+  mkdirSync(dir, { recursive: true });
+  const unique = [];
+  const seen = new Set();
+  for (const raw of ips) {
+    const ip = String(raw || '').trim();
+    if (!ip || !isIpLike(ip) || seen.has(ip)) continue;
+    seen.add(ip);
+    unique.push(ip);
+  }
+  writeFileSync(filePath, unique.length ? `${unique.join('\n')}\n` : '', 'utf8');
+  return unique;
+}
+
+export function clearUsedEgressIps(opts = {}) {
+  const usedPath = opts.usedPath || usedEgressIpsFilePath();
+  const lastPath = opts.lastPath || egressIpFilePath();
+  for (const p of [usedPath, lastPath]) {
+    try {
+      if (existsSync(p)) unlinkSync(p);
+    } catch {
+      /* ignore */
+    }
+  }
+}
+
+/** @deprecated alias — limpa lista (e legado) */
+export function clearLastEgressIp(filePath) {
+  if (filePath) {
+    try {
+      if (existsSync(filePath)) unlinkSync(filePath);
+    } catch {
+      /* ignore */
+    }
+    return;
+  }
+  clearUsedEgressIps();
+}
+
+/** @deprecated lê só o último da lista (compat) */
+export function readLastEgressIp(filePath) {
+  if (filePath) {
+    try {
+      if (!existsSync(filePath)) return null;
+      const raw = readFileSync(filePath, 'utf8').trim();
+      return raw || null;
+    } catch {
+      return null;
+    }
+  }
+  const list = readUsedEgressIps();
+  return list.length ? list[list.length - 1] : null;
+}
+
+/** @deprecated grava como append na lista */
+export function writeLastEgressIp(ip, filePath = usedEgressIpsFilePath()) {
+  const list = readUsedEgressIps({ usedPath: filePath });
+  const current = String(ip).trim();
+  if (current && !list.includes(current)) list.push(current);
+  writeUsedEgressIps(list, filePath);
 }
 
 export async function fetchCurrentEgressIp(
@@ -85,7 +214,7 @@ export async function fetchCurrentEgressIp(
     throw new Error(`egress IP → HTTP ${res.status}`);
   }
   const ip = (await res.text()).trim();
-  if (!/^\d{1,3}(?:\.\d{1,3}){3}$/.test(ip) && !ip.includes(':')) {
+  if (!isIpLike(ip)) {
     throw new Error(`egress IP inválido: ${JSON.stringify(ip.slice(0, 80))}`);
   }
   return ip;
@@ -131,39 +260,32 @@ async function withFileLock(filePath, fn) {
 }
 
 /**
- * @returns {{ ready: boolean, ip: string, previous: string|null }}
+ * @returns {{ ready: boolean, ip: string, used: string[] }}
  */
 export async function peekEgressIpStatus(opts = {}) {
-  const filePath = opts.filePath || egressIpFilePath();
+  const usedPath = opts.usedPath || opts.filePath || usedEgressIpsFilePath();
   const fetchIp = opts.fetchIp || fetchCurrentEgressIp;
   const ip = String(await fetchIp()).trim();
   if (!ip) throw new Error('egress IP vazio');
-  const previous = readLastEgressIp(filePath);
-  const ready = !previous || previous !== ip;
-  return { ready, ip, previous };
+  const used = readUsedEgressIps({
+    usedPath,
+    lastPath: opts.lastPath,
+    timelinePath: opts.timelinePath,
+  });
+  const ready = !used.includes(ip);
+  return { ready, ip, used, previous: used.length ? used[used.length - 1] : null };
 }
 
 /**
- * Poll até o IP atual ser diferente do último (ou não haver último).
- * Não grava o arquivo — só libera o worker para claimar.
+ * Consulta o IP atual **uma vez**. Se já foi usado → ready=false (caller aborta).
+ * Não grava e não faz poll.
  *
- * Log: cada consulta (antes + depois). EGRESS_IP_LOG_EVERY>1 só reduz o “ainda igual”
- * (default 1 = loga todas).
- *
- * @param {{ filePath?: string, fetchIp?: Function, pollMs?: number, shouldStop?: () => boolean, onWait?: (s: object) => void, logTag?: string, log?: { info: Function, warn: Function, debug: Function } }} opts
+ * @param {{ usedPath?: string, filePath?: string, fetchIp?: Function, logTag?: string, log?: { info: Function, warn: Function, debug: Function } }} opts
  */
-export async function waitUntilEgressIpReady(opts = {}) {
-  const filePath = opts.filePath || egressIpFilePath();
+export async function checkEgressIpOnce(opts = {}) {
+  const usedPath = opts.usedPath || opts.filePath || usedEgressIpsFilePath();
   const fetchIp = opts.fetchIp || fetchCurrentEgressIp;
-  const pollMs = opts.pollMs || egressIpPollMs();
-  const shouldStop = opts.shouldStop || (() => false);
-  const logEvery = Math.max(
-    1,
-    Number(process.env.EGRESS_IP_LOG_EVERY || 1) || 1,
-  );
   const ipUrl = String(process.env.EGRESS_IP_URL || DEFAULT_URL);
-  const startedAt = Date.now();
-  let attempt = 0;
 
   const say = (level, msg) => {
     if (opts.log?.[level]) {
@@ -176,60 +298,31 @@ export async function waitUntilEgressIpReady(opts = {}) {
     else console.log(line);
   };
 
-  for (;;) {
-    if (shouldStop()) {
-      const err = new Error('espera de IP cancelada (shutdown)');
-      err.code = 'EGRESS_IP_WAIT_CANCELLED';
-      throw err;
-    }
-    attempt += 1;
-    const elapsedSec = Math.round((Date.now() - startedAt) / 1000);
+  say('info', `consultando IP público → ${ipUrl}…`);
+  const t0 = Date.now();
+  const status = await peekEgressIpStatus({ usedPath, fetchIp, ...opts });
+  const ms = Date.now() - t0;
+  if (status.ready) {
     say(
       'info',
-      `consultando IP público #${attempt} → ${ipUrl} (já esperei ${elapsedSec}s)…`,
+      status.used.length
+        ? `IP ${status.ip} ainda não usado (consulta ${ms}ms; ${status.used.length} na lista) — liberado`
+        : `IP público ${status.ip} (consulta ${ms}ms, primeiro nesta máquina) — liberado`,
     );
-    const t0 = Date.now();
-    let status;
-    try {
-      status = await peekEgressIpStatus({ filePath, fetchIp });
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : String(e);
-      const ms = Date.now() - t0;
-      if (opts.onWait) {
-        opts.onWait({ ready: false, error: msg });
-      } else {
-        say(
-          'warn',
-          `consulta IP #${attempt} falhou em ${ms}ms (${msg}) — nova em ${Math.round(pollMs / 1000)}s`,
-        );
-      }
-      await sleep(pollMs);
-      continue;
-    }
-    const ms = Date.now() - t0;
-    if (status.ready) {
-      const waited = Date.now() - startedAt;
-      if (opts.onWait) opts.onWait({ ...status, ready: true });
-      else {
-        say(
-          'info',
-          status.previous
-            ? `IP mudou: ${status.previous} → ${status.ip} (consulta ${ms}ms, esperei ${Math.round(waited / 1000)}s) — liberado pra pegar job`
-            : `IP público ${status.ip} (consulta ${ms}ms${status.previous ? '' : ', primeiro nesta máquina'}) — liberado pra pegar job`,
-        );
-      }
-      return status;
-    }
-    if (opts.onWait) {
-      opts.onWait({ ...status, ready: false, attempt, elapsedSec });
-    } else if (attempt === 1 || attempt % logEvery === 0) {
-      say(
-        'info',
-        `IP ainda igual ao último job — atual=${status.ip} último=${status.previous} (consulta ${ms}ms) · #${attempt} · ${elapsedSec}s · próxima em ${Math.round(pollMs / 1000)}s`,
-      );
-    }
-    await sleep(pollMs);
+  } else {
+    say(
+      'warn',
+      `IP ${status.ip} já foi usado anteriormente (consulta ${ms}ms; lista=${status.used.length}) — abortar`,
+    );
   }
+  return status;
+}
+
+/**
+ * @deprecated use checkEgressIpOnce — não faz mais poll; uma consulta e retorna.
+ */
+export async function waitUntilEgressIpReady(opts = {}) {
+  return checkEgressIpOnce(opts);
 }
 
 /**
@@ -253,19 +346,25 @@ export function appendEgressIpTimeline(entry, timelinePath = egressIpTimelinePat
 }
 
 /**
- * Após claimar um job: grava o IP atual como último (sob lock) + timeline.
- * Se outro processo já gravou o mesmo IP, retorna committed=false (caller deve esperar de novo).
+ * Após claimar: se IP já está na lista → committed=false.
+ * Se novo → append na lista + timeline.
  */
 export async function commitEgressIp(ip, opts = {}) {
-  const filePath = opts.filePath || egressIpFilePath();
+  const usedPath = opts.usedPath || opts.filePath || usedEgressIpsFilePath();
   const timelinePath = opts.timelinePath || egressIpTimelinePath();
   const current = String(ip).trim();
-  return withFileLock(filePath, () => {
-    const previous = readLastEgressIp(filePath);
-    if (previous && previous === current) {
-      return { committed: false, ip: current, previous };
+  return withFileLock(usedPath, () => {
+    const used = readUsedEgressIps({
+      usedPath,
+      lastPath: opts.lastPath || egressIpFilePath(),
+      timelinePath,
+    });
+    const previous = used.length ? used[used.length - 1] : null;
+    if (used.includes(current)) {
+      return { committed: false, ip: current, previous, used };
     }
-    writeLastEgressIp(current, filePath);
+    const next = [...used, current];
+    writeUsedEgressIps(next, usedPath);
     const timeline = appendEgressIpTimeline(
       {
         ip: current,
@@ -277,6 +376,6 @@ export async function commitEgressIp(ip, opts = {}) {
       },
       timelinePath,
     );
-    return { committed: true, ip: current, previous, timeline };
+    return { committed: true, ip: current, previous, used: next, timeline };
   });
 }

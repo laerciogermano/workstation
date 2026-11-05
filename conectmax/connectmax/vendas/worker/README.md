@@ -14,9 +14,9 @@
 
 **Antes → depois (lifecycle Chrome por job):** CDP ficava aberto logado entre jobs → `withLinkedInPage` sobe o Chrome e chama `stopCdp` no fim de cada operação. Escape: `CDP_KEEP_BROWSER=1`. **Rollback:** `CDP_KEEP_BROWSER=1` ou reverta o `finally` em `screen-robot/src/lib/cdp/session.js`.
 
-**Antes → depois (IP ≠ último):** jobs no mesmo egress seguido → worker **fica ligado** e faz poll do IP (`EGRESS_IP_POLL_MS`, default 10s). Se atual == `~/.connectmax/last-egress-ip`, **não claima** (espera mudar). Quando muda, claima/executa, grava o último IP e append em `~/.connectmax/egress-ip-timeline.jsonl` (`at`, `ip`, `previous`, `agentId`, `jobId`, `jobType`). Escape: `SKIP_EGRESS_IP_GUARD=1` / `DRY=1`. Reset último: `rm ~/.connectmax/last-egress-ip` (timeline permanece). **Rollback:** remova o wait/commit em `agent-cycle.mjs` / apague `src/last-egress-ip.mjs`.
+**Antes → depois (IP nunca reutilizado):** comparava só com o **último** IP e fazia poll até mudar → agora mantém a **lista** de todos os IPs já usados (`~/.connectmax/used-egress-ips`, 1/linha; migra `last-egress-ip` + timeline na 1ª leitura). **Antes de cada operação:** consulta o egress (`ipify`); se já está na lista → **aborta** (não claima; se já claimou → `fail` com motivo). Se é novo → executa, append na lista + `~/.connectmax/egress-ip-timeline.jsonl`. Escape: `SKIP_EGRESS_IP_GUARD=1` / `DRY=1`. Reset lista: `rm ~/.connectmax/used-egress-ips` (e opcionalmente o legado `last-egress-ip`). **Rollback:** reverta `agent-cycle.mjs` + `last-egress-ip.mjs` / volte ao arquivo único `last-egress-ip`.
 
-**Antes → depois (logs legíveis):** stdout só no arquivo `logs/worker-*.out` (terminal do `keep-worker` quase mudo; espera de IP logava 1× e ficava quieto) → `src/log.mjs` com **data+hora local** (`DD/MM/YYYY HH:MM:SS`, fuso `America/Sao_Paulo` / `WORKER_LOG_TZ`) + mensagens em PT (ciclo, claim, IP, spawn); cada poll de IP loga `consultando IP público #N → url…` e o resultado; scripts CDP fazem `tee -a` (terminal **e** arquivo). Escape: `WORKER_LOG_VERBOSE=0`; `EGRESS_IP_LOG_EVERY` (default `1`) rarefaz só a linha “ainda igual”. **Rollback:** volte `>>"$LOG"` nos `start-worker-*-cdp.sh`; remova imports de `log.mjs` / logs por poll em `last-egress-ip.mjs`.
+**Antes → depois (logs legíveis):** stdout só no arquivo `logs/worker-*.out` (terminal do `keep-worker` quase mudo) → `src/log.mjs` com **data+hora local** (`DD/MM/YYYY HH:MM:SS`, fuso `America/Sao_Paulo` / `WORKER_LOG_TZ`) + mensagens em PT (ciclo, claim, IP, spawn); checagem de IP loga a consulta ao ipify e o resultado; scripts CDP fazem `tee -a` (terminal **e** arquivo). Escape: `WORKER_LOG_VERBOSE=0`. **Rollback:** volte `>>"$LOG"` nos `start-worker-*-cdp.sh`; remova imports de `log.mjs`.
 
 ## Modos
 
@@ -106,11 +106,10 @@ Use **chave global** no supervisor.
 | `WORKER_RUNTIME` | `cdp` → handlers Chrome; omit/`avd` → AVD |
 | `CDP_ID` / `CDP_URL` | Perfil/porta human-cdp (obrigatório no runtime CDP) |
 | `DRY` / `ONCE` / `ALLOW_STUB` | Smoke / stubs |
-| `SKIP_EGRESS_IP_GUARD=1` | Desliga a guarda de IP repetido |
-| `LAST_EGRESS_IP_FILE` | Último IP (default `~/.connectmax/last-egress-ip`) |
+| `SKIP_EGRESS_IP_GUARD=1` | Desliga a guarda de IP já usado |
+| `USED_EGRESS_IPS_FILE` | Lista de IPs usados (default `~/.connectmax/used-egress-ips`) |
+| `LAST_EGRESS_IP_FILE` | Legado — só migração (default `~/.connectmax/last-egress-ip`) |
 | `EGRESS_IP_TIMELINE_FILE` | JSONL da timeline (default `~/.connectmax/egress-ip-timeline.jsonl`) |
-| `EGRESS_IP_POLL_MS` | Poll enquanto espera IP mudar (default `10000`) |
-| `EGRESS_IP_LOG_EVERY` | A cada N polls loga “IP ainda igual” (default `1` = todas; a linha `consultando IP…` sempre aparece) |
 | `EGRESS_IP_URL` | Override do lookup (default `https://api.ipify.org`) |
 | `WORKER_LOG_VERBOSE` | `0` silencia debug (heartbeat OK etc.); default ligado |
 | `WORKER_LOG_TZ` | Fuso do timestamp (default `America/Sao_Paulo`) |

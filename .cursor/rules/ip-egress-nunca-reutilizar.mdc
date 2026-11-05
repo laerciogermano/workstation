@@ -1,0 +1,25 @@
+---
+description: Antes de qualquer operação LinkedIn/worker, abortar se o IP de egress já foi usado
+alwaysApply: true
+---
+
+# IP de egress: nunca reutilizar
+
+Antes de **qualquer operação** (worker, signup, CDP, AVD) neste lab, o IP público de egress **não pode** ter sido usado antes. Lista acumulativa — não só o último.
+
+## Critérios
+
+1. **Antes** de executar: `curl -sS https://api.ipify.org` (IPv4)
+2. Comparar com a lista em `~/.connectmax/used-egress-ips` (1 IP por linha; worker também migra legado `last-egress-ip` + timeline)
+3. Se o IP **já está** na lista → **abortar** a operação (não claimar / não rodar; se job já claimado → fail com motivo de IP já usado)
+4. Se **nunca** foi usado → executar e **append** o IP na lista (+ timeline JSONL no worker)
+5. Escape só com pedido explícito / `SKIP_EGRESS_IP_GUARD=1`
+6. Conta LinkedIn nova: manter também a coluna `ip` no CSV da conta ([`ip-ao-criar-conta`](ip-ao-criar-conta.mdc))
+
+## Exemplos
+
+```text
+✅ IP novo → opera → append em used-egress-ips
+❌ IP já na lista → aborta (não “espera mudar” nem sobrescreve só o último)
+❌ Guardar apenas o último IP e liberar se for diferente do imediatamente anterior
+```

@@ -1,19 +1,19 @@
 ## Objetivo
-Antes de **qualquer execução** de worker/operação, comparar o IP de egress atual com o **último IP** gravado da execução anterior. Se for **igual**, **não executar**: matar/abortar na hora e marcar falha com motivo explícito de IP repetido.
+Antes de **qualquer execução** de worker/operação, obter o IP de egress atual e verificar se **já foi usado** em alguma operação anterior (lista acumulativa). Se **já foi**, **não executar**: abortar na hora e marcar falha com motivo explícito. Se **nunca** foi, executar e **salvar na lista**.
 
 ## Problema
-Operações consecutivas no mesmo egress aumentam risco (LinkedIn/anti-bot). Hoje não há guarda central que impeça job novo no mesmo IP do job anterior.
+Reusar qualquer IP já visto (não só o imediatamente anterior) aumenta risco (LinkedIn/anti-bot). Guardar só o “último” liberava IPs antigos quando o egress oscilava.
 
 ## Comportamento
-1. Worker **fica ligado** e **polla** o IP de egress (`EGRESS_IP_POLL_MS`).
-2. Compara com o **último IP** gravado (`~/.connectmax/last-egress-ip`).
-3. Se `IP atual == último` → **não claima** / não executa; só espera o IP mudar.
-4. Se diferente → claima e executa; grava o atual como último + append na **timeline** JSONL (data/hora + IP + job).
-5. Timeline: `~/.connectmax/egress-ip-timeline.jsonl` (`at`, `ip`, `previous`, `agentId`, `jobId`, `jobType`).
+1. Persistência: lista em `~/.connectmax/used-egress-ips` (1 IP/linha). Migração: `last-egress-ip` + IPs da timeline.
+2. No **início** de cada ciclo: obter IP atual **uma vez** (`ipify`).
+3. Se `IP atual ∈ lista` → **abortar** (não claima; se já claimou → `fail` com “IP já utilizado anteriormente”).
+4. Se novo → claima/executa; append na lista + timeline JSONL (`at`, `ip`, `previous`, `agentId`, `jobId`, `jobType`).
+5. Sem poll contínuo à espera de mudança — só checagem pontual antes da operação.
 
 ## Escopo
-1. Persistência do último IP (host compartilhado)
-2. Poll contínuo enquanto IP não muda (sem fail de job por IP)
+1. Lista acumulativa de IPs (host compartilhado)
+2. Abort (não wait) quando IP já usado
 3. Timeline com data/hora por operação
 4. Docs + reset / `SKIP_EGRESS_IP_GUARD`
 
@@ -22,6 +22,7 @@ Operações consecutivas no mesmo egress aumentam risco (LinkedIn/anti-bot). Hoj
 - Bloquear por IP já usado em contas CSV (outra regra)
 
 ## Aceite
-- Job A com IP X → grava X + linha na timeline
-- Com IP ainda X e job na fila → worker idle/espera (não claima, não fail)
-- IP muda para Y → worker claima e executa; timeline ganha linha Y
+- Job A com IP X → X entra na lista + timeline
+- Job B ainda com X → aborta (não executa)
+- Job C com IP Y novo → executa; Y entra na lista
+- Voltar a X no futuro → aborta de novo (X continua na lista)

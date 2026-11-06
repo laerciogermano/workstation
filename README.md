@@ -2,6 +2,8 @@
 
 Hub de projetos, board, tasks e processo de desenvolvimento.
 
+**Índice visual:** abra [`index.html`](index.html) na raiz — cards com ícone, título e descrição de cada projeto.
+
 ---
 
 ## Atalhos

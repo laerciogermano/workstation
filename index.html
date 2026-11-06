@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Workstation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0f1419;
+      --bg-elev: #171e26;
+      --bg-card: #1c252f;
+      --line: rgba(232, 220, 196, 0.12);
+      --text: #ebe4d6;
+      --muted: #9a9180;
+      --accent: #3ecf8e;
+      --accent-dim: rgba(62, 207, 142, 0.14);
+      --icon: #d4c4a8;
+      --radius: 14px;
+      --shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      font-family: "DM Sans", system-ui, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(1200px 600px at 12% -10%, rgba(62, 207, 142, 0.12), transparent 55%),
+        radial-gradient(900px 500px at 90% 0%, rgba(212, 196, 168, 0.08), transparent 50%),
+        linear-gradient(180deg, #121820 0%, var(--bg) 40%, #0c1014 100%);
+      background-attachment: fixed;
+    }
+
+    .wrap {
+      width: min(1120px, calc(100% - 2.5rem));
+      margin: 0 auto;
+      padding: 3.5rem 0 5rem;
+    }
+
+    header {
+      margin-bottom: 2.75rem;
+      animation: rise 0.7s ease both;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.85rem;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 1.25rem;
+      height: 2px;
+      background: var(--accent);
+      border-radius: 2px;
+    }
+
+    h1 {
+      font-family: "Instrument Serif", Georgia, serif;
+      font-size: clamp(2.6rem, 6vw, 4rem);
+      font-weight: 400;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.75rem;
+    }
+
+    h1 em {
+      font-style: italic;
+      color: var(--icon);
+    }
+
+    .lede {
+      max-width: 36rem;
+      color: var(--muted);
+      font-size: 1.05rem;
+      line-height: 1.55;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 1rem;
+    }
+
+    .card {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      padding: 1.25rem 1.2rem 1.35rem;
+      background: linear-gradient(165deg, rgba(255,255,255,0.03), transparent 40%), var(--bg-card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      text-decoration: none;
+      color: inherit;
+      box-shadow: var(--shadow);
+      transition: transform 0.22s ease, border-color 0.22s ease, background 0.22s ease;
+      animation: rise 0.6s ease both;
+    }
+
+    .card:nth-child(1) { animation-delay: 0.04s; }
+    .card:nth-child(2) { animation-delay: 0.07s; }
+    .card:nth-child(3) { animation-delay: 0.1s; }
+    .card:nth-child(4) { animation-delay: 0.13s; }
+    .card:nth-child(5) { animation-delay: 0.16s; }
+    .card:nth-child(6) { animation-delay: 0.19s; }
+    .card:nth-child(7) { animation-delay: 0.22s; }
+    .card:nth-child(8) { animation-delay: 0.25s; }
+
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(62, 207, 142, 0.35);
+      background: linear-gradient(165deg, var(--accent-dim), transparent 55%), var(--bg-elev);
+    }
+
+    .icon {
+      width: 2.5rem;
+      height: 2.5rem;
+      display: grid;
+      place-items: center;
+      border-radius: 10px;
+      background: rgba(212, 196, 168, 0.08);
+      border: 1px solid var(--line);
+      color: var(--icon);
+      flex-shrink: 0;
+    }
+
+    .icon svg {
+      width: 1.35rem;
+      height: 1.35rem;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.7;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .card h2 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      margin-bottom: 0.35rem;
+    }
+
+    .card p {
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.45;
+    }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 560px) {
+      .wrap { width: min(100%, calc(100% - 1.5rem)); padding-top: 2.25rem; }
+      .grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="eyebrow">Hub local</div>
+      <h1>Work<em>station</em></h1>
+      <p class="lede">Todos os projetos do workspace — abra o README de cada um.</p>
+    </header>
+
+    <main class="grid">
+
+      <a class="card" href="core/processo/README.md">
+        <span class="icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M2 12h3M19 12h3M4.9 19.1 7 17M17 7l2.1-2.1"/></svg>
+        </span>
+        <div>
+          <h2>Core</h2>
+          <p>Processo, tasks e núcleo da workstation.</p>
+        </div>
+      </a>
+
+      <a class="card" href="board/README.md">
+        <span class="icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><rect x="3" y="4" width="5" height="16" rx="1"/><rect x="10" y="4" width="5" height="10" rx="1"/><rect x="17" y="4" width="4" height="13" rx="1"/></svg>
+        </span>
+        <div>
+          <h2>Board</h2>
+          <p>Kanban próprio — substituto do Trello.</p>
+        </div>
+      </a>
+
+      <a class="card" href="Trello/">
+        <span class="icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 7v8M16 7v5"/></svg>
+        </span>
+        <div>
+          <h2>Trello</h2>
+          <p>Dump local dos boards e cards.</p>
+        </div>
+      </a>
+
+      <a class="card" href="flow-language/README.md">
+        <span class="icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M4 7h6v4H4zM14 13h6v4h-6z"/><path d="M10 9h4M14 9v4"/></svg>
+        </span>
+        <div>
+          <h2>Flow Language</h2>
+          <p>Código visual em fluxo, exportável para JS/Python.</p>
+        </div>
+      </a>
+
+      <a class="card" href="flow/README.md">
+        <span class="icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M3 12c3-6 6-6 9 0s6 6 9 0"/><path d="M3 18c3-6 6-6 9 0s6 6 9 0"/></svg>
+        </span>
+        <div>
+          <h2>Flow</h2>
+          <p>Fundamentos de fluxo — base do Plans.</p>
+        </div>
+      </a>
+
+      <a class="card" href="plans/README.md">
+        <span class="icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9h4M7 13h10M7 17h7"/></svg>
+        </span>
+        <div>
+          <h2>Plans</h2>
+          <p>Planejamento com board, Gantt e árvore de execução.</p>
+        </div>
+      </a>
+
+      <a class="card" href="screen-robot/README.md">
+        <span class="icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="2"/><circle cx="12" cy="18" r="1"/><path d="M10 5h4"/></svg>
+        </span>
+        <div>
+          <h2>screen-robot</h2>
+          <p>Robô de tela Android via Node/ADB e CDP.</p>
+        </div>
+      </a>
+
+      <a class="card" href="connectmax/README.md">
+        <span class="icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M16 8a4 4 0 1 1-8 0 4 4 0 0 1 8 0z"/><path d="M4 20a8 8 0 0 1 16 0"/><path d="M19 8v4M21 10h-4"/></svg>
+        </span>
+        <div>
+          <h2>ConnectMax</h2>
+          <p>Agente LinkedIn + vendas sobre o screen-robot.</p>
+        </div>
+      </a>
+
+      <a class="card" href="conectmax/README.md">
+        <span class="icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M3 10h18M6 6h12v12H6z"/><path d="M9 14h6"/></svg>
+        </span>
+        <div>
+          <h2>ConectMax</h2>
+          <p>Hub B2B da empresa: cotação, franquias e vendas.</p>
+        </div>
+      </a>
+
+      <a class="card" href="connect-tech/README.md">
+        <span class="icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M8 4h8l2 4H6l2-4z"/><rect x="5" y="8" width="14" height="10" rx="1"/><path d="M9 18v2h6v-2"/></svg>
+        </span>
+        <div>
+          <h2>Connect Tech</h2>
+          <p>Consultoria e desenvolvimento de software.</p>
+        </div>
+      </a>
+
+      <a class="card" href="agent-shop/README.md">
+        <span class="icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><circle cx="9" cy="20" r="1"/><circle cx="17" cy="20" r="1"/><path d="M3 4h2l2.5 11h9.5l2-7H7"/><path d="M12 8v4M10 10h4"/></svg>
+        </span>
+        <div>
+          <h2>Agent Shop</h2>
+          <p>Comprar, nomear e agendar agentes autônomos.</p>
+        </div>
+      </a>
+
+      <a class="card" href="low-chat/README.md">
+        <span class="icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M4 5h16v11H8l-4 3V5z"/><path d="M8 9h8M8 13h5"/></svg>
+        </span>
+        <div>
+          <h2>low-chat</h2>
+          <p>Persona + contexto + LLM barato para vários canais.</p>
+        </div>
+      </a>
+
+      <a class="card" href="context-recorder/README.md">
+        <span class="icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2a10 10 0 0 1 10 10"/><path d="M12 6a6 6 0 0 1 6 6"/><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"/></svg>
+        </span>
+        <div>
+          <h2>Context Recorder</h2>
+          <p>Memória contínua de mic, desktop e tela/OCR.</p>
+        </div>
+      </a>
+
+      <a class="card" href="cupido/README.md">
+        <span class="icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M12 21s-7-4.5-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 11c0 5.5-7 10-7 10z"/></svg>
+        </span>
+        <div>
+          <h2>Cupido</h2>
+          <p>Agente de match anônimo com contexto e encontro.</p>
+        </div>
+      </a>
+
+      <a class="card" href="clozzy/README.md">
+        <span class="icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M4 8l8-4 8 4v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8z"/><path d="M12 12v7M8 10.5 12 12l4-1.5"/></svg>
+        </span>
+        <div>
+          <h2>Clozzy</h2>
+          <p>Conteúdo exclusivo de influencers para fãs.</p>
+        </div>
+      </a>
+
+      <a class="card" href="hurble/README.md">
+        <span class="icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg>
+        </span>
+        <div>
+          <h2>Hurble</h2>
+          <p>Roulette social + perfil, amigos, DM e stories.</p>
+        </div>
+      </a>
+
+      <a class="card" href="role-go/README.md">
+        <span class="icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M4 19V7l8-3 8 3v12l-8 3-8-3z"/><path d="M12 4v18M4 7l8 3 8-3"/></svg>
+        </span>
+        <div>
+          <h2>RoleGo</h2>
+          <p>Descoberta de festas, shows e eventos próximos.</p>
+        </div>
+      </a>
+
+      <a class="card" href="e-notas/README.md">
+        <span class="icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+        </span>
+        <div>
+          <h2>e-notas</h2>
+          <p>Índice de preços via QR de nota fiscal.</p>
+        </div>
+      </a>
+
+      <a class="card" href="caronas/README.md">
+        <span class="icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M3 14h18l-2-5H5l-2 5z"/><circle cx="7.5" cy="16.5" r="1.5"/><circle cx="16.5" cy="16.5" r="1.5"/><path d="M5 14V9l2-3h10l2 3v5"/></svg>
+        </span>
+        <div>
+          <h2>Caronas</h2>
+          <p>Caronas recorrentes casa–trabalho.</p>
+        </div>
+      </a>
+
+      <a class="card" href="fitness/README.md">
+        <span class="icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M6 8v8M18 8v8M6 10h3v4H6M15 10h3v4h-3M9 12h6"/></svg>
+        </span>
+        <div>
+          <h2>Fitness</h2>
+          <p>Treino, dieta e métricas com gamificação.</p>
+        </div>
+      </a>
+
+      <a class="card" href="jiu-jitsu/README.md">
+        <span class="icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><circle cx="8" cy="7" r="2.5"/><circle cx="16" cy="7" r="2.5"/><path d="M6 20c1-4 3-6 6-6s5 2 6 6"/><path d="M10 12l2 2 2-2"/></svg>
+        </span>
+        <div>
+          <h2>Jiu-jitsu</h2>
+          <p>Grafo de posições, transições e finalizações.</p>
+        </div>
+      </a>
+
+      <a class="card" href="chines/docs/README.md">
+        <span class="icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M4 6h16M8 6v14M4 20h8"/><path d="M14 10h6M17 10v10"/></svg>
+        </span>
+        <div>
+          <h2>Chines</h2>
+          <p>App e material de aprendizado de chinês.</p>
+        </div>
+      </a>
+
+      <a class="card" href="aulas/README.md">
+        <span class="icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M4 19V6l8-3 8 3v13l-8 3-8-3z"/><path d="M12 3v16"/></svg>
+        </span>
+        <div>
+          <h2>Aulas</h2>
+          <p>Árvore de seções e conteúdo didático.</p>
+        </div>
+      </a>
+
+      <a class="card" href="eternos-mutaveis/README.md">
+        <span class="icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M5 4h9a3 3 0 0 1 3 3v13H8a3 3 0 0 0-3 3V4z"/><path d="M17 4h2a2 2 0 0 1 2 2v14h-4"/></svg>
+        </span>
+        <div>
+          <h2>Eternos Mutáveis</h2>
+          <p>Manuscrito / tese filosófica.</p>
+        </div>
+      </a>
+
+      <a class="card" href="filme-metafisico/README.md">
+        <span class="icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M10 9.5v5l5-2.5-5-2.5z"/></svg>
+        </span>
+        <div>
+          <h2>Filme Metafísico</h2>
+          <p>Filme *O Metafísico* — visão e roteiro.</p>
+        </div>
+      </a>
+
+      <a class="card" href="google-drive-cli/README.md">
+        <span class="icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M12 3 4 17h5l3-5 3 5h5L12 3z"/><path d="M9 17h6"/></svg>
+        </span>
+        <div>
+          <h2>google-drive-cli</h2>
+          <p>CLI da Drive API com OAuth do usuário.</p>
+        </div>
+      </a>
+
+      <a class="card" href="provas-ufpr/README.md">
+        <span class="icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M8 4h8v16H8z"/><path d="M10 8h4M10 12h4M10 16h3"/></svg>
+        </span>
+        <div>
+          <h2>Provas UFPR</h2>
+          <p>Acervo de provas e gabaritos do vestibular.</p>
+        </div>
+      </a>
+
+      <a class="card" href="OV/README.md">
+        <span class="icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="10" r="4"/><path d="M4 20c1.5-3.5 4-5 8-5s6.5 1.5 8 5"/><path d="M19 4v4M17 6h4"/></svg>
+        </span>
+        <div>
+          <h2>OV</h2>
+          <p>Contas OmeTV via Chrome CDP.</p>
+        </div>
+      </a>
+
+      <a class="card" href="finacneiro/">
+        <span class="icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M2 10h20"/><circle cx="16" cy="14" r="1.5"/></svg>
+        </span>
+        <div>
+          <h2>Financeiro</h2>
+          <p>Cartões e controle financeiro pessoal.</p>
+        </div>
+      </a>
+
+      <a class="card" href="linkedin/">
+        <span class="icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 10v7M7 7v.01M11 17v-4a2 2 0 0 1 4 0v4"/></svg>
+        </span>
+        <div>
+          <h2>LinkedIn</h2>
+          <p>Export e dados da conta LinkedIn.</p>
+        </div>
+      </a>
+
+    </main>
+  </div>
+</body>
+</html>

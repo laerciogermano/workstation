@@ -655,8 +655,8 @@
     }
 
     (function init() {
-      const to = new Date(2026, 10, 6);
-      const from = new Date(2026, 9, 1);
+      const to = new Date();
+      const from = new Date(2024, 0, 1);
       document.getElementById('from').value = toInputDate(from);
       document.getElementById('to').value = toInputDate(to);
       document.getElementById('filters').addEventListener('submit', (e) => {

@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ConectMax — Dashboard financeiro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0f1419;
+      --bg-2: #171e26;
+      --bg-3: #1e2732;
+      --line: #2a3542;
+      --text: #e8eef4;
+      --muted: #8b9aab;
+      --accent: #3dd6c6;
+      --accent-dim: rgba(61, 214, 198, 0.14);
+      --warn: #f0b429;
+      --danger: #f07178;
+      --ok: #7fd99a;
+      --orc: #6cb6ff;
+      --ped: #3dd6c6;
+      --nf: #c9a0ff;
+      --fat: #f0b429;
+      radius: 10px;
+      font: "IBM Plex Sans", system-ui, sans-serif;
+      mono: "IBM Plex Mono", ui-monospace, monospace;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: var(--font);
+      color: var(--text);
+      background:
+        radial-gradient(900px 420px at 8% -10%, rgba(61, 214, 198, 0.12), transparent 60%),
+        radial-gradient(700px 360px at 100% 0%, rgba(108, 182, 255, 0.1), transparent 55%),
+        var(--bg);
+    }
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem 1.5rem;
+      align-items: end;
+      justify-content: space-between;
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--line);
+      background: rgba(15, 20, 25, 0.85);
+      backdrop-filter: blur(8px);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .brand h1 {
+      margin: 0;
+      font-size: 1.15rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+    .brand p {
+      margin: 0.2rem 0 0;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      align-items: end;
+    }
+    label {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      font-size: 0.7rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    input, select, button {
+      font: inherit;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: var(--bg-2);
+      color: var(--text);
+      padding: 0.45rem 0.65rem;
+      height: 36px;
+    }
+    input:focus, select:focus, button:focus {
+      outline: 2px solid var(--accent);
+      outline-offset: 1px;
+    }
+    button {
+      cursor: pointer;
+      background: var(--accent);
+      color: #062a26;
+      border-color: transparent;
+      font-weight: 600;
+      padding-inline: 1rem;
+    }
+    button.ghost {
+      background: transparent;
+      color: var(--text);
+      border-color: var(--line);
+      font-weight: 500;
+    }
+    button:disabled { opacity: 0.55; cursor: wait; }
+    main { padding: 1.25rem 1.5rem 2.5rem; max-width: 1400px; margin: 0 auto; }
+    .status-bar {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 1rem;
+      color: var(--muted);
+      font-size: 0.85rem;
+      font-family: var(--mono);
+    }
+    .status-bar .dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--ok); display: inline-block; margin-right: 0.35rem;
+    }
+    .status-bar.loading .dot { background: var(--warn); animation: pulse 1s infinite; }
+    .status-bar.error .dot { background: var(--danger); }
+    @keyframes pulse { 50% { opacity: 0.35; } }
+    .funnel {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+    @media (max-width: 980px) {
+      .funnel { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 560px) {
+      .funnel { grid-template-columns: 1fr; }
+    }
+    .stage {
+      position: relative;
+      background: var(--bg-2);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 1rem;
+      cursor: pointer;
+      transition: border-color 0.15s, transform 0.15s, background 0.15s;
+      text-align: left;
+      width: 100%;
+      color: inherit;
+      font: inherit;
+      height: auto;
+    }
+    .stage:hover { border-color: #3d4d60; background: var(--bg-3); }
+    .stage.active {
+      border-color: var(--stage);
+      box-shadow: 0 0 0 1px var(--stage);
+      background: color-mix(in srgb, var(--stage) 10%, var(--bg-2));
+    }
+    .stage .step {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--muted);
+      margin-bottom: 0.35rem;
+    }
+    .stage .name {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--stage);
+      margin-bottom: 0.75rem;
+    }
+    .stage .kpi {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 0.5rem;
+    }
+    .stage .count {
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      font-family: var(--mono);
+    }
+    .stage .valor {
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    .stage .bars {
+      margin-top: 0.85rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+    .bar-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 0.35rem;
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+    .bar-track {
+      grid-column: 1 / -1;
+      height: 4px;
+      background: var(--bg);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%;
+      background: var(--stage);
+      opacity: 0.75;
+      border-radius: 2px;
+    }
+    .panel {
+      background: var(--bg-2);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .panel-head {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid var(--line);
+    }
+    .panel-head h2 {
+      margin: 0;
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+    .panel-head .meta { color: var(--muted); font-size: 0.8rem; font-family: var(--mono); }
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      padding: 0.65rem 1rem;
+      border-bottom: 1px solid var(--line);
+    }
+    .chip {
+      border: 1px solid var(--line);
+      background: var(--bg);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 0.25rem 0.65rem;
+      font-size: 0.75rem;
+      cursor: pointer;
+      height: auto;
+      font-weight: 500;
+    }
+    .chip.on {
+      background: var(--accent-dim);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .table-wrap { overflow: auto; max-height: min(62vh, 680px); }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+    th, td {
+      padding: 0.55rem 0.85rem;
+      text-align: left;
+      border-bottom: 1px solid var(--line);
+      white-space: nowrap;
+    }
+    th {
+      position: sticky;
+      top: 0;
+      background: var(--bg-3);
+      color: var(--muted);
+      font-weight: 500;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      z-index: 1;
+    }
+    td.num, th.num { text-align: right; font-family: var(--mono); }
+    tr:hover td { background: rgba(255,255,255,0.02); }
+    .badge {
+      display: inline-block;
+      padding: 0.12rem 0.45rem;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      font-weight: 500;
+      background: var(--bg);
+      border: 1px solid var(--line);
+    }
+    .badge.warn { color: var(--warn); border-color: color-mix(in srgb, var(--warn) 40%, var(--line)); }
+    .badge.danger { color: var(--danger); border-color: color-mix(in srgb, var(--danger) 40%, var(--line)); }
+    .badge.ok { color: var(--ok); border-color: color-mix(in srgb, var(--ok) 40%, var(--line)); }
+    .empty {
+      padding: 2rem;
+      text-align: center;
+      color: var(--muted);
+    }
+    .arrow {
+      display: none;
+    }
+    @media (min-width: 981px) {
+      .funnel { gap: 0; }
+      .stage { margin-right: 0.75rem; }
+      .stage:not(:last-child)::after {
+        content: "→";
+        position: absolute;
+        right: -0.55rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--muted);
+        font-size: 0.9rem;
+        z-index: 2;
+        pointer-events: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <h1>ConectMax · Dashboard financeiro</h1>
+      <p>Funil: Orçamento → Pedido → NF → Contas a receber · API local</p>
+    </div>
+    <form class="filters" id="filters">
+      <label>De
+        <input type="date" id="from" required />
+      </label>
+      <label>Até
+        <input type="date" id="to" required />
+      </label>
+      <label>Páginas
+        <select id="all">
+          <option value="0" selected>1ª página (rápido)</option>
+          <option value="1">Todas</option>
+        </select>
+      </label>
+      <button type="submit" id="btnLoad">Atualizar</button>
+      <button type="button" class="ghost" id="btnDocs">/docs</button>
+    </form>
+  </header>
+
+  <main>
+    <div class="status-bar" id="statusBar">
+      <span><span class="dot"></span><span id="statusText">Carregando…</span></span>
+    </div>
+
+    <div class="funnel" id="funnel"></div>
+
+    <section class="panel">
+      <div class="panel-head">
+        <h2 id="listTitle">Lista</h2>
+        <div class="meta" id="listMeta"></div>
+      </div>
+      <div class="chips" id="chips"></div>
+      <div class="table-wrap">
+        <table>
+          <thead id="thead"></thead>
+          <tbody id="tbody"></tbody>
+        </table>
+        <div class="empty" id="empty" hidden>Nenhum registro neste filtro.</div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const STAGES = [
+      {
+        key: 'orcamentos',
+        step: '01',
+        name: 'Orçamentos',
+        color: 'var(--orc)',
+        endpoint: '/orcamentos',
+        listKey: 'orcamentos',
+        valueField: 'total',
+        columns: [
+          { k: 'numero', h: 'Nº' },
+          { k: 'data', h: 'Data' },
+          { k: 'status', h: 'Status', badge: true },
+          { k: 'cliente', h: 'Cliente' },
+          { k: 'vendedor', h: 'Vendedor' },
+          { k: 'total', h: 'Total', money: true },
+        ],
+      },
+      {
+        key: 'pedidos',
+        step: '02',
+        name: 'Pedidos',
+        color: 'var(--ped)',
+        endpoint: '/pedidos',
+        listKey: 'pedidos',
+        valueField: 'total',
+        columns: [
+          { k: 'numero', h: 'Pedido' },
+          { k: 'data', h: 'Data' },
+          { k: 'orcamento', h: 'Orç.' },
+          { k: 'status', h: 'Status', badge: true },
+          { k: 'cliente', h: 'Cliente' },
+          { k: 'vendedor', h: 'Vendedor' },
+          { k: 'total', h: 'Total', money: true },
+        ],
+      },
+      {
+        key: 'notas',
+        step: '03',
+        name: 'Notas fiscais',
+        color: 'var(--nf)',
+        endpoint: '/notas-fiscais',
+        listKey: 'notasFiscais',
+        valueField: 'total',
+        columns: [
+          { k: 'numero', h: 'NF' },
+          { k: 'data', h: 'Data' },
+          { k: 'status', h: 'Status', badge: true },
+          { k: 'cliente', h: 'Cliente' },
+          { k: 'transportadora', h: 'Transportadora' },
+          { k: 'total', h: 'Total', money: true },
+        ],
+      },
+      {
+        key: 'faturas',
+        step: '04',
+        name: 'Contas a receber',
+        color: 'var(--fat)',
+        endpoint: '/faturas',
+        listKey: 'faturas',
+        valueField: 'valor',
+        columns: [
+          { k: 'vencimento', h: 'Vencimento' },
+          { k: 'status', h: 'Status', badge: true },
+          { k: 'nfNumero', h: 'NF' },
+          { k: 'pedido', h: 'Pedido' },
+          { k: 'cliente', h: 'Cliente' },
+          { k: 'titulo', h: 'Título' },
+          { k: 'valor', h: 'Valor', money: true },
+        ],
+      },
+    ];
+
+    const state = {
+      active: 'orcamentos',
+      statusFilter: null,
+      data: {},
+    };
+
+    function pad(n) { return String(n).padStart(2, '0'); }
+    function toInputDate(d) {
+      return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+    }
+    function toBrDate(iso) {
+      const [y, m, d] = iso.split('-');
+      return `${d}/${m}/${y}`;
+    }
+    function money(n) {
+      const v = Number(n) || 0;
+      return v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+    function badgeClass(status) {
+      const s = String(status || '').toLowerCase();
+      if (/vencida|rejeitado|reprovado|cancelado|falta/.test(s)) return 'danger';
+      if (/aberto|análise|aguardando|próxima|enviado|rascunho|em aberto/.test(s)) return 'warn';
+      if (/quitada|aprovado|faturado|enviado/.test(s) && !/rejeitado/.test(s)) return 'ok';
+      return '';
+    }
+    function qs() {
+      const from = document.getElementById('from').value;
+      const to = document.getElementById('to').value;
+      const all = document.getElementById('all').value;
+      const p = new URLSearchParams({
+        data_inicial: toBrDate(from),
+        data_final: toBrDate(to),
+        all,
+      });
+      return p.toString();
+    }
+
+    async function fetchStage(stage) {
+      const url = `${stage.endpoint}?${qs()}`;
+      const res = await fetch(url);
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || `${stage.name}: HTTP ${res.status}`);
+      }
+      return res.json();
+    }
+
+    function topStatuses(porStatus, limit = 4) {
+      return Object.entries(porStatus || {})
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, limit);
+    }
+
+    function renderFunnel() {
+      const el = document.getElementById('funnel');
+      el.innerHTML = STAGES.map((s) => {
+        const d = state.data[s.key];
+        const total = d?.total ?? '—';
+        const valor = d ? money(d.totalValor) : '—';
+        const bars = topStatuses(d?.porStatus).map(([name, n]) => {
+          const pct = d.total ? Math.round((n / d.total) * 100) : 0;
+          return `<div class="bar-row">
+            <span>${esc(name)}</span><span>${n}</span>
+            <div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>
+          </div>`;
+        }).join('');
+        return `<button type="button" class="stage ${state.active === s.key ? 'active' : ''}"
+          style="--stage:${s.color}" data-key="${s.key}">
+          <div class="step">${s.step}</div>
+          <div class="name">${s.name}</div>
+          <div class="kpi">
+            <div class="count">${total}</div>
+            <div class="valor">${valor}</div>
+          </div>
+          <div class="bars">${bars || '<div class="bar-row"><span>sem dados</span></div>'}</div>
+        </button>`;
+      }).join('');
+      el.querySelectorAll('.stage').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          state.active = btn.dataset.key;
+          state.statusFilter = null;
+          renderFunnel();
+          renderList();
+        });
+      });
+    }
+
+    function esc(s) {
+      return String(s ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function activeStage() {
+      return STAGES.find((s) => s.key === state.active);
+    }
+
+    function filteredItems() {
+      const s = activeStage();
+      const d = state.data[s.key];
+      const items = d?.[s.listKey] || [];
+      if (!state.statusFilter) return items;
+      return items.filter((x) => String(x.status) === state.statusFilter);
+    }
+
+    function renderList() {
+      const s = activeStage();
+      const d = state.data[s.key];
+      const items = filteredItems();
+      document.getElementById('listTitle').textContent = s.name;
+      document.getElementById('listMeta').textContent = d
+        ? `${items.length} de ${d.total} · ${money(items.reduce((a, x) => a + (Number(x[s.valueField]) || 0), 0))}`
+        : '';
+
+      const chips = document.getElementById('chips');
+      const statuses = Object.keys(d?.porStatus || {});
+      chips.innerHTML = [
+        `<button type="button" class="chip ${!state.statusFilter ? 'on' : ''}" data-st="">Todos</button>`,
+        ...statuses.map((st) =>
+          `<button type="button" class="chip ${state.statusFilter === st ? 'on' : ''}" data-st="${esc(st)}">${esc(st)} (${d.porStatus[st]})</button>`
+        ),
+      ].join('');
+      chips.querySelectorAll('.chip').forEach((c) => {
+        c.addEventListener('click', () => {
+          state.statusFilter = c.dataset.st || null;
+          renderList();
+        });
+      });
+
+      const thead = document.getElementById('thead');
+      thead.innerHTML = `<tr>${s.columns.map((c) =>
+        `<th class="${c.money ? 'num' : ''}">${c.h}</th>`
+      ).join('')}</tr>`;
+
+      const tbody = document.getElementById('tbody');
+      const empty = document.getElementById('empty');
+      if (!items.length) {
+        tbody.innerHTML = '';
+        empty.hidden = false;
+        return;
+      }
+      empty.hidden = true;
+      tbody.innerHTML = items.map((row) => `<tr>${s.columns.map((c) => {
+        let v = row[c.k];
+        if (c.money) return `<td class="num">${esc(money(v))}</td>`;
+        if (c.badge) {
+          const cls = badgeClass(v);
+          return `<td><span class="badge ${cls}">${esc(v ?? '—')}</span></td>`;
+        }
+        return `<td>${esc(v ?? '—')}</td>`;
+      }).join('')}</tr>`).join('');
+    }
+
+    function setStatus(kind, text) {
+      const bar = document.getElementById('statusBar');
+      bar.className = `status-bar ${kind || ''}`;
+      document.getElementById('statusText').textContent = text;
+    }
+
+    async function load() {
+      const btn = document.getElementById('btnLoad');
+      btn.disabled = true;
+      setStatus('loading', 'Buscando orçamentos, pedidos, NFs e faturas…');
+      try {
+        const results = await Promise.all(STAGES.map(async (s) => {
+          const json = await fetchStage(s);
+          return [s.key, json];
+        }));
+        state.data = Object.fromEntries(results);
+        const t = results.reduce((a, [, j]) => a + (j.total || 0), 0);
+        setStatus('', `OK · ${t} registros · ${toBrDate(document.getElementById('from').value)} → ${toBrDate(document.getElementById('to').value)}`);
+        renderFunnel();
+        renderList();
+      } catch (err) {
+        setStatus('error', String(err.message || err));
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    (function init() {
+      const to = new Date(2026, 10, 6);
+      const from = new Date(2026, 9, 1);
+      document.getElementById('from').value = toInputDate(from);
+      document.getElementById('to').value = toInputDate(to);
+      document.getElementById('filters').addEventListener('submit', (e) => {
+        e.preventDefault();
+        load();
+      });
+      document.getElementById('btnDocs').addEventListener('click', () => {
+        window.open('/docs', '_blank');
+      });
+      renderFunnel();
+      load();
+    })();
+  </script>
+</body>
+</html>

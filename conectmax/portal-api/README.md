@@ -2,6 +2,7 @@
 
 API local: login no [Portal do Franqueado](https://franqueado.conectmax.com/) + GETs de busca.
 
+- **Dashboard financeiro (funil):** `http://127.0.0.1:4175/dashboard` — Orçamento → Pedido → NF → Contas a receber
 - **Swagger / OpenAPI:** [`openapi.yaml`](openapi.yaml) · UI `http://127.0.0.1:4175/docs` · JSON `/openapi.json`
 - Mapa portal: [`GETS.md`](GETS.md)
 - Segurança / isolamento franquias: [`SEGURANCA-ISOLAMENTO-FRANQUIAS.md`](SEGURANCA-ISOLAMENTO-FRANQUIAS.md)
@@ -23,6 +24,7 @@ npm start
 
 | GET | Fonte portal |
 |-----|----------------|
+| `/dashboard` (`/financeiro`) | UI funil financeiro (consome GETs abaixo) |
 | `/docs` | Swagger UI |
 | `/openapi.json` / `/openapi.yaml` | spec OpenAPI 3 |
 | `/catalog` | catálogo |
@@ -71,9 +73,14 @@ curl -sS 'http://127.0.0.1:4175/chamados'
 curl -sS 'http://127.0.0.1:4175/notificacoes'
 ```
 
+## Dashboard financeiro
+
+UI estática [`dashboard.html`](dashboard.html) servida em `/dashboard`. Carrega em paralelo `/orcamentos`, `/pedidos`, `/notas-fiscais` e `/faturas` no período escolhido; clique no estágio do funil filtra a lista.
+
 ## Caminho inverso
 
 - Parar: matar processo `:4175`
+- Remover dashboard: apagar `dashboard.html` + rotas `/dashboard` `/financeiro` em `src/index.js` + linhas neste README
 - Sessão: `rm ~/.config/conectmax-franqueado/cookies.txt`
-- Remover: apagar `conectmax/portal-api/` + linha em [`../README.md`](../README.md)
+- Remover API: apagar `conectmax/portal-api/` + linha em [`../README.md`](../README.md)
 - Antes: só `/faturas`; demais telas só no HTML do portal

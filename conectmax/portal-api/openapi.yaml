@@ -5,6 +5,9 @@ info:
     API local que autentica no Portal do Franqueado
     (`https://franqueado.conectmax.com/`) e expõe GETs de busca.
 
+    Dashboard financeiro (funil): `GET /dashboard`
+    Orçamento → Pedido → NF → Contas a receber.
+
     Credenciais: `~/.config/conectmax-franqueado/credentials.env`
   version: 1.0.0
   contact:

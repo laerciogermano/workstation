@@ -28,6 +28,7 @@ const IMPLEMENTED = [
   'GET /catalog',
   'GET /health',
   'GET /docs',
+  'GET /dashboard',
   'GET /openapi.json',
   'GET /openapi.yaml',
   'GET /faturas',
@@ -248,6 +249,11 @@ const server = createServer(async (req, res) => {
       return sendRaw(res, 200, 'text/html; charset=utf-8', html);
     }
 
+    if (req.method === 'GET' && (path === '/dashboard' || path === '/financeiro')) {
+      const html = await readFile(join(ROOT, 'dashboard.html'), 'utf8');
+      return sendRaw(res, 200, 'text/html; charset=utf-8', html);
+    }
+
     if (req.method === 'GET' && path === '/openapi.json') {
       const raw = await readFile(join(ROOT, 'openapi.json'), 'utf8');
       return sendRaw(res, 200, 'application/json; charset=utf-8', raw);
@@ -264,6 +270,7 @@ const server = createServer(async (req, res) => {
         service: 'conectmax-portal-api',
         implementados: IMPLEMENTED,
         docs: '/docs',
+        dashboard: '/dashboard',
         openapi: '/openapi.json',
         ...CATALOG,
       });

@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "ConectMax Portal API",
-    "description": "API local que autentica no Portal do Franqueado\n(`https://franqueado.conectmax.com/`) e expõe GETs de busca.\n\nCredenciais: `~/.config/conectmax-franqueado/credentials.env`\n",
+    "description": "API local que autentica no Portal do Franqueado\n(`https://franqueado.conectmax.com/`) e expõe GETs de busca.\n\nDashboard financeiro (funil): `GET /dashboard`\nOrçamento → Pedido → NF → Contas a receber.\n\nCredenciais: `~/.config/conectmax-franqueado/credentials.env`\n",
     "version": "1.0.0",
     "contact": {
       "name": "ConectMax lab"

@@ -266,15 +266,29 @@ async function mapPool(items, concurrency, fn) {
 }
 
 async function syncOnlyItens(pool) {
+  const resume = hasFlag('resume') || hasFlag('only-itens');
+  // --resume / only-itens: não apaga itens já gravados; completa o que falta
   const { rows: pedidos } = await pool.query(
-    `SELECT id FROM portal_franqueado.pedido WHERE franquia_id=$1 ORDER BY id`,
+    resume
+      ? `SELECT p.id FROM portal_franqueado.pedido p
+         WHERE p.franquia_id=$1
+           AND NOT EXISTS (
+             SELECT 1 FROM portal_franqueado.pedido_item i
+             WHERE i.pedido_id=p.id AND i.franquia_id=$1
+           )
+         ORDER BY p.id`
+      : `SELECT id FROM portal_franqueado.pedido WHERE franquia_id=$1 ORDER BY id`,
     [FRANQUIA_ID],
   );
-  console.log(`only-itens · ${pedidos.length} pedidos · concurrency=${CONCURRENCY}`);
-  await pool.query(
-    `DELETE FROM portal_franqueado.pedido_item WHERE franquia_id=$1`,
-    [FRANQUIA_ID],
+  console.log(
+    `only-itens · ${pedidos.length} pedidos · concurrency=${CONCURRENCY} · resume=${resume}`,
   );
+  if (!resume) {
+    await pool.query(
+      `DELETE FROM portal_franqueado.pedido_item WHERE franquia_id=$1`,
+      [FRANQUIA_ID],
+    );
+  }
   let itensCount = 0;
   let done = 0;
   await mapPool(pedidos, CONCURRENCY, async (p) => {

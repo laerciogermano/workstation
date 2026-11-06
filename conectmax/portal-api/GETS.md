@@ -11,7 +11,8 @@ Base: `GET /franqueado/?page=<tela>&…`
 
 | Tela UI | `page` | O que retorna | Filtros GET | Paginação | Export GET (ajax) | API local |
 |---|---|---|---|---|---|---|
-| Contas a receber | `contasareceber` | Faturas / títulos (status, vencimento, NF, pedido, cliente, CNPJ, valor) | `data_inicial`, `data_final`, `status`, `id_franqueado_rel` | 1 página (lista grande no HTML) | `ajax/contasareceber/relatorio_excel.php` | **`GET /faturas`** |
+| Contas a receber | `contasareceber` | Faturas / títulos (status, vencimento, NF, pedido, cliente, CNPJ, valor) | `data_inicial`, `data_final`, `status`, `id_franqueado_rel`, `contato` | 1 página (lista grande no HTML) | `ajax/contasareceber/relatorio_excel.php` | **`GET /faturas`** (`contato=1` → email/tel) |
+| Pedido detalhe | `pedidos_edicao` | Contato da venda (`email`, `telefone`) | `id_pedido`, `action=visualizar` | — | — | **`GET /pedidos/:id`** |
 | Orçamentos | `orcamentos` | Orçamentos (status, cliente, vendedor, total) | `data_inicial`, `data_final`, `status`, `id_vendedor`, `cliente`, `cnpj_cpf`, `orcamento`, `nome`, `valor` | `current_page` / `all` | — | **`GET /orcamentos`** |
 | Pedidos | `pedidos` | Pedidos (status, cliente, vendedor, total) | `data_inicial`, `data_final`, `status`, `id_vendedor`, `id_pedido`, `cliente`, `cnpj`, `ordem_compra`, `valor`, `id_franqueado_rel` | `current_page` / `all` | — | **`GET /pedidos`** |
 | Notas fiscais | `notas_fiscais` | NFs (status, nº, cliente, data, transportadora, total) | `data_inicial`, `data_final`, `status`, `tipo`, `id_vendedor`, `id_transportadora`, `cfop[]`, `uf`, `entrada_saida`, `natureza`, `finalidade`, `id_franqueado_rel` | `current_page` / `all` | `ajax/notas_fiscais/pdf.php`, `xml.php`, `exportar_pdf.php`, `exportar_xml.php`, `relatorio.php` | **`GET /notas-fiscais`** |

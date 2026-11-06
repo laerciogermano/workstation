@@ -15,6 +15,8 @@ import {
 import { parseFluxoPrevistoHtml } from './parse-fluxo.js';
 import { parseChamadosHtml } from './parse-chamados.js';
 import { parseNotificacoesHtml } from './parse-notificacoes.js';
+import { parsePedidoDetalheHtml } from './parse-pedido-detalhe.js';
+import { getContatoCached, setContatoCached } from './contato-cache.js';
 
 const PORT = Number(process.env.PORT || 4175);
 const HOST = process.env.HOST || '127.0.0.1';
@@ -30,6 +32,7 @@ const IMPLEMENTED = [
   'GET /faturas',
   'GET /orcamentos',
   'GET /pedidos',
+  'GET /pedidos/:id',
   'GET /notas-fiscais',
   'GET /faturamento',
   'GET /fluxo-previsto',
@@ -114,6 +117,68 @@ async function listPaginated(page, q, extraQuery, parse) {
   };
 }
 
+async function fetchPedidoDetalhe(id, opts = {}) {
+  const pedidoId = Number(id);
+  if (!Number.isFinite(pedidoId) || pedidoId <= 0) {
+    throw new Error('id de pedido inválido');
+  }
+  if (!opts.skipCache) {
+    const cached = getContatoCached(pedidoId);
+    if (cached) return { ...cached, _cache: true };
+  }
+  const { html } = await fetchPageHtml(
+    'pedidos_edicao',
+    { id_pedido: pedidoId, action: 'visualizar' },
+    { forceLogin: opts.forceLogin },
+  );
+  const detalhe = parsePedidoDetalheHtml(html, pedidoId);
+  setContatoCached(pedidoId, detalhe);
+  return { ...detalhe, _cache: false };
+}
+
+async function enrichFaturasComContato(items, opts = {}) {
+  const ids = [
+    ...new Set(
+      items.map((f) => f.pedido).filter((n) => Number.isFinite(Number(n))),
+    ),
+  ];
+  const byPedido = new Map();
+  let fetched = 0;
+  let cacheHits = 0;
+  for (const id of ids) {
+    try {
+      const d = await fetchPedidoDetalhe(id, opts);
+      if (d._cache) cacheHits += 1;
+      else fetched += 1;
+      byPedido.set(Number(id), d);
+    } catch (err) {
+      byPedido.set(Number(id), { error: String(err?.message || err) });
+    }
+  }
+  const enriched = items.map((f) => {
+    const d = f.pedido ? byPedido.get(Number(f.pedido)) : null;
+    if (!d || d.error) {
+      return {
+        ...f,
+        email: null,
+        telefone: null,
+        whatsapp: null,
+        contatoErro: d?.error || (f.pedido ? null : 'sem pedido'),
+      };
+    }
+    return {
+      ...f,
+      email: d.email ?? null,
+      telefone: d.telefone ?? null,
+      whatsapp: d.whatsapp ?? null,
+    };
+  });
+  return {
+    items: enriched,
+    contatos: { pedidosUnicos: ids.length, fetched, cacheHits },
+  };
+}
+
 const server = createServer(async (req, res) => {
   try {
     const path = (req.url || '/').split('?')[0];
@@ -157,6 +222,14 @@ const server = createServer(async (req, res) => {
         { forceLogin: forceLogin(q) },
       );
       let items = filterStatus(parseFaturasHtml(html), q.status);
+      let contatos = undefined;
+      if (q.contato === '1' || q.contato === 'true') {
+        const enriched = await enrichFaturasComContato(items, {
+          forceLogin: forceLogin(q),
+        });
+        items = enriched.items;
+        contatos = enriched.contatos;
+      }
       return sendJson(res, 200, {
         fonte: 'portal franqueado · contasareceber',
         dataInicial: range.data_inicial,
@@ -164,7 +237,22 @@ const server = createServer(async (req, res) => {
         total: items.length,
         totalValor: sumField(items, 'valor'),
         porStatus: porStatus(items),
+        ...(contatos ? { contatos } : {}),
         faturas: items,
+      });
+    }
+
+    const pedidoDetalheMatch = path.match(/^\/pedidos\/(\d+)$/);
+    if (req.method === 'GET' && pedidoDetalheMatch) {
+      const detalhe = await fetchPedidoDetalhe(pedidoDetalheMatch[1], {
+        forceLogin: forceLogin(q),
+        skipCache: q.refresh === '1' || q.refresh === 'true',
+      });
+      const { _cache, ...pedido } = detalhe;
+      return sendJson(res, 200, {
+        fonte: 'portal franqueado · pedidos_edicao',
+        cache: Boolean(_cache),
+        pedido,
       });
     }
 

@@ -112,6 +112,12 @@ paths:
           schema:
             type: string
           description: Filtro enviado ao portal
+        - name: contato
+          in: query
+          schema:
+            type: string
+            enum: ['0', '1', 'true', 'false']
+          description: "1 = enriquece cada fatura com email/telefone/whatsapp via GET pedido (cache)"
         - $ref: '#/components/parameters/refresh'
       responses:
         '200':
@@ -143,6 +149,44 @@ paths:
                     descricao: null
                     valor: 89
                     valorTexto: R$ 89,00
+        '500':
+          $ref: '#/components/responses/Error'
+
+  /pedidos/{id}:
+    get:
+      tags: [comercial]
+      summary: Detalhe do pedido (email e telefone)
+      description: |
+        Fonte portal `?page=pedidos_edicao&id_pedido={id}&action=visualizar`.
+        Contato da venda para cobrança / WhatsApp.
+      operationId: getPedidoById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 6375
+        - $ref: '#/components/parameters/refresh'
+      responses:
+        '200':
+          description: Detalhe com contato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PedidoDetalheResponse'
+              example:
+                fonte: portal franqueado · pedidos_edicao
+                cache: false
+                pedido:
+                  id: 6375
+                  status: Faturado
+                  cliente: PAFIL CONSTRUTORA E EMPREENDIMENTOS LTDA
+                  cnpj: 27.865.522/0001-02
+                  email: gabriel.porto@pafil.com.br
+                  telefone: (16) 9766.5428
+                  whatsapp: '1697665428'
+                  vendedor: Marcello
         '500':
           $ref: '#/components/responses/Error'
 
@@ -571,6 +615,10 @@ components:
         descricao: { type: string, nullable: true }
         valor: { type: number, nullable: true }
         valorTexto: { type: string, nullable: true }
+        email: { type: string, nullable: true }
+        telefone: { type: string, nullable: true }
+        whatsapp: { type: string, nullable: true }
+        contatoErro: { type: string, nullable: true }
 
     FaturasResponse:
       type: object
@@ -581,9 +629,36 @@ components:
         total: { type: integer }
         totalValor: { type: number }
         porStatus: { $ref: '#/components/schemas/PorStatus' }
+        contatos:
+          type: object
+          nullable: true
+          properties:
+            pedidosUnicos: { type: integer }
+            fetched: { type: integer }
+            cacheHits: { type: integer }
         faturas:
           type: array
           items: { $ref: '#/components/schemas/Fatura' }
+
+    PedidoDetalhe:
+      type: object
+      properties:
+        id: { type: integer }
+        status: { type: string, nullable: true }
+        cliente: { type: string, nullable: true }
+        cnpj: { type: string, nullable: true }
+        email: { type: string, nullable: true }
+        telefone: { type: string, nullable: true }
+        whatsapp: { type: string, nullable: true }
+        vendedor: { type: string, nullable: true }
+        vendedorId: { type: string, nullable: true }
+
+    PedidoDetalheResponse:
+      type: object
+      properties:
+        fonte: { type: string }
+        cache: { type: boolean }
+        pedido: { $ref: '#/components/schemas/PedidoDetalhe' }
 
     Orcamento:
       type: object

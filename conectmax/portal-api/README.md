@@ -26,9 +26,10 @@ npm start
 | `/openapi.json` / `/openapi.yaml` | spec OpenAPI 3 |
 | `/catalog` | catálogo |
 | `/health` | liveness |
-| `/faturas` | `contasareceber` |
+| `/faturas` | `contasareceber` (`contato=1` → email/telefone) |
 | `/orcamentos` | `orcamentos` |
-| `/pedidos` | `pedidos` |
+| `/pedidos` | `pedidos` (lista) |
+| `/pedidos/:id` | `pedidos_edicao` (email, telefone, whatsapp) |
 | `/notas-fiscais` | `notas_fiscais` |
 | `/faturamento` | `faturamento` + Excel detalhe |
 | `/fluxo-previsto` | `fluxo_previsto` |
@@ -46,12 +47,15 @@ npm start
 | `current_page` | — | só aquela página |
 | `all` | `1` (se sem `current_page`) | varre paginação |
 | `refresh` | — | `1` força login |
+| `contato` | — | só `/faturas`: `1` busca email/telefone no pedido |
 
 `/fluxo-previsto`: `data=YYYY-MM`.
 
 ### Exemplos
 
 ```bash
+curl -sS 'http://127.0.0.1:4175/pedidos/6375'
+curl -sS 'http://127.0.0.1:4175/faturas?status=Vencida&contato=1'
 curl -sS 'http://127.0.0.1:4175/catalog'
 curl -sS 'http://127.0.0.1:4175/faturas?status=Aberta'
 curl -sS 'http://127.0.0.1:4175/orcamentos?data_inicial=01/11/2026&data_final=06/11/2026&all=0'

@@ -7,7 +7,13 @@ export const CATALOG = {
       page: 'contasareceber',
       nome: 'Contas a receber / faturas',
       portalGet: '/franqueado/?page=contasareceber',
-      filtros: ['data_inicial', 'data_final', 'status', 'id_franqueado_rel'],
+      filtros: [
+        'data_inicial',
+        'data_final',
+        'status',
+        'id_franqueado_rel',
+        'contato',
+      ],
       status: [
         'Aberta',
         'Quitada',
@@ -17,7 +23,18 @@ export const CATALOG = {
         'Falta arquivo',
       ],
       exportGet: ['/franqueado/ajax/contasareceber/relatorio_excel.php'],
+      nota: 'contato=1 enriquece email/telefone/whatsapp via pedidos_edicao (cache por pedido)',
       apiLocal: { method: 'GET', path: '/faturas', status: 'ok' },
+    },
+    {
+      page: 'pedidos_edicao',
+      nome: 'Pedido (detalhe / contato)',
+      portalGet: '/franqueado/?page=pedidos_edicao&id_pedido=&action=visualizar',
+      filtros: ['id_pedido', 'action'],
+      status: [],
+      exportGet: [],
+      nota: 'Fonte de email e telefone (WhatsApp) do cadastro da venda',
+      apiLocal: { method: 'GET', path: '/pedidos/:id', status: 'ok' },
     },
     {
       page: 'orcamentos',

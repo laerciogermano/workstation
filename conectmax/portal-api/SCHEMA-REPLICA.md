@@ -2,7 +2,8 @@
 
 Fonte: HTML/ajax de `franqueado.conectmax.com`.  
 Postgres Contabo: schema **`portal_franqueado`**.  
-Sync Campinas: `node scripts/sync-campinas-postgres.mjs`  
+Sync: `node scripts/sync-campinas-postgres.mjs [--franquia=9]`  
+Ex.: segunda maior (JV): `--franquia=2`  
 DDL: [`sql/schema-normalizado.sql`](sql/schema-normalizado.sql)  
 Credenciais: `../connectmax/vendas/api/.env`
 

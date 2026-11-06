@@ -1,10 +1,14 @@
 #!/usr/bin/env node
 /**
- * Sync Campinas (franquia 9) → schema normalizado portal_franqueado (Contabo).
+ * Sync franquia → schema normalizado portal_franqueado (Contabo).
  *
  *   node scripts/sync-campinas-postgres.mjs
- *   node scripts/sync-campinas-postgres.mjs --skip-itens
+ *   node scripts/sync-campinas-postgres.mjs --franquia=2
+ *   node scripts/sync-campinas-postgres.mjs --franquia=2 --skip-itens
+ *   node scripts/sync-campinas-postgres.mjs --franquia=2 --only-itens
  *   node scripts/sync-campinas-postgres.mjs --contato --itens-concurrency=8
+ *
+ * Listagens de outras franquias usam id_franqueado_rel / id_franqueado (IDOR do portal).
  */
 import { readFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
@@ -24,12 +28,53 @@ import { parseNotificacoesHtml } from '../src/parse-notificacoes.js';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const API_ENV = join(ROOT, '../connectmax/vendas/api/.env');
 const DDL_PATH = join(ROOT, 'sql/schema-normalizado.sql');
-const FRANQUIA_ID = 9;
-const FRANQUIA = {
-  id: 9,
-  razao: 'CONECT X CAMPINAS SOLUCOES EMPRESARIAIS LTDA',
-  cnpj: '62248210000150',
-  nome: 'Campinas',
+
+const FRANQUIAS = {
+  1: {
+    razao: 'CONECT MAX RS SOLUCOES EM TECNOLOGIA E COMERCIO LTDA',
+    cnpj: '51687136000152',
+    nome: 'RS',
+  },
+  2: {
+    razao: 'CONECT X JV SOLUCOES EMPRESARIAIS LTDA',
+    cnpj: '61571397000166',
+    nome: 'JV',
+  },
+  3: {
+    razao: 'CONECTX CURITIBA SOLUCOES EMPRESARIAIS LTDA',
+    cnpj: '60169241000190',
+    nome: 'Curitiba',
+  },
+  4: {
+    razao: 'CONECTMAX TECH SOLUCOES CORPORATIVAS LTDA',
+    cnpj: '59642703000166',
+    nome: 'Tech',
+  },
+  5: {
+    razao: 'CONECT PG SOLUCOES EM TECNOLOGIA LTDA',
+    cnpj: '48713160000104',
+    nome: 'PG',
+  },
+  8: {
+    razao: 'CONECT X CRUZEIRO SOLUCOES EMPRESARIAIS LTDA',
+    cnpj: '62184037000174',
+    nome: 'Cruzeiro',
+  },
+  9: {
+    razao: 'CONECT X CAMPINAS SOLUCOES EMPRESARIAIS LTDA',
+    cnpj: '62248210000150',
+    nome: 'Campinas',
+  },
+  12: {
+    razao: 'CONECTX CURITIBA TSF SERVICOS LTDA',
+    cnpj: '59859764000180',
+    nome: 'Curitiba TSF',
+  },
+  13: {
+    razao: 'CONECTX CURITIBA MG SERVICOS LTDA',
+    cnpj: '66763041000148',
+    nome: 'Curitiba MG',
+  },
 };
 
 const require = createRequire(
@@ -51,6 +96,15 @@ const WITH_CONTATO = hasFlag('contato');
 const SKIP_ITENS = hasFlag('skip-itens');
 const ONLY_ITENS = hasFlag('only-itens');
 const CONCURRENCY = Math.max(1, Number(arg('itens-concurrency', '6')) || 6);
+const FRANQUIA_ID = Number(arg('franquia', '9')) || 9;
+const meta = FRANQUIAS[FRANQUIA_ID];
+if (!meta) {
+  console.error(
+    `franquia ${FRANQUIA_ID} desconhecida. Ids: ${Object.keys(FRANQUIAS).join(', ')}`,
+  );
+  process.exit(1);
+}
+const FRANQUIA = { id: FRANQUIA_ID, ...meta };
 
 async function loadDbEnv() {
   const text = await readFile(API_ENV, 'utf8');
@@ -176,7 +230,14 @@ function vendedorId(cache, nome) {
   return n ? cache.get(n.toLowerCase()) || null : null;
 }
 
-async function insertChunks(client, sqlPrefix, rows, rowToParams, chunkSize = 100) {
+async function insertChunks(
+  client,
+  sqlPrefix,
+  rows,
+  rowToParams,
+  chunkSize = 100,
+  onConflict = '',
+) {
   for (let i = 0; i < rows.length; i += chunkSize) {
     const part = rows.slice(i, i + chunkSize);
     const params = [];
@@ -186,7 +247,10 @@ async function insertChunks(client, sqlPrefix, rows, rowToParams, chunkSize = 10
       params.push(...vals);
       return `(${vals.map((_, j) => `$${base + j + 1}`).join(',')})`;
     });
-    await client.query(`${sqlPrefix} VALUES ${tuples.join(',')}`, params);
+    await client.query(
+      `${sqlPrefix} VALUES ${tuples.join(',')} ${onConflict}`,
+      params,
+    );
   }
 }
 
@@ -288,7 +352,7 @@ async function syncOnlyItens(pool) {
 async function main() {
   const range = { data_inicial: FROM, data_final: TO };
   console.log(
-    `Campinas ${FRANQUIA_ID} · ${FROM} → ${TO} · itens=${!SKIP_ITENS} · onlyItens=${ONLY_ITENS}`,
+    `${FRANQUIA.nome} id=${FRANQUIA_ID} · ${FROM} → ${TO} · itens=${!SKIP_ITENS} · onlyItens=${ONLY_ITENS}`,
   );
 
   if (ONLY_ITENS) {
@@ -303,27 +367,52 @@ async function main() {
     return;
   }
 
-  console.log('fetch orcamentos…');
-  const orcamentos = parseOrcamentosHtml(
-    (await fetchPageHtmlPaginated('orcamentos', range, { all: true })).html,
-  );
-  console.log(' ', orcamentos.length);
+  // filtro cross-franquia (portal honra id_franqueado_rel)
+  const fq = { ...range, id_franqueado_rel: FRANQUIA_ID };
 
   console.log('fetch pedidos…');
   const pedidos = parsePedidosHtml(
-    (await fetchPageHtmlPaginated('pedidos', range, { all: true })).html,
+    (await fetchPageHtmlPaginated('pedidos', fq, { all: true })).html,
   );
   console.log(' ', pedidos.length);
 
+  // orcamentos: portal ignora id_franqueado_rel — pega só ids ligados aos pedidos da franquia
+  console.log('fetch orcamentos (via pedidos)…');
+  let orcamentos = parseOrcamentosHtml(
+    (await fetchPageHtmlPaginated('orcamentos', fq, { all: true })).html,
+  );
+  const orcFromPed = new Set(
+    pedidos.map((p) => p.orcamento).filter((n) => Number.isFinite(Number(n))),
+  );
+  const beforeOrc = orcamentos.length;
+  orcamentos = orcamentos.filter((o) => orcFromPed.has(o.id) || orcFromPed.has(o.numero));
+  // se filtro zerar (lista é de outra franquia), monta stub a partir dos pedidos
+  if (!orcamentos.length && orcFromPed.size) {
+    orcamentos = [...orcFromPed].map((id) => {
+      const p = pedidos.find((x) => x.orcamento === id);
+      return {
+        id,
+        numero: id,
+        data: p?.data || null,
+        status: null,
+        cliente: p?.cliente || null,
+        vendedor: p?.vendedor || null,
+        total: null,
+        totalTexto: null,
+      };
+    });
+  }
+  console.log(' ', orcamentos.length, `(lista bruta ${beforeOrc}, refs pedido ${orcFromPed.size})`);
+
   console.log('fetch notas…');
   const notas = parseNotasFiscaisHtml(
-    (await fetchPageHtmlPaginated('notas_fiscais', range, { all: true })).html,
+    (await fetchPageHtmlPaginated('notas_fiscais', fq, { all: true })).html,
   );
   console.log(' ', notas.length);
 
   console.log('fetch faturas…');
   let faturas = parseFaturasHtml(
-    (await fetchPageHtml('contasareceber', range)).html,
+    (await fetchPageHtml('contasareceber', fq)).html,
   );
   console.log(' ', faturas.length);
 
@@ -459,7 +548,6 @@ async function main() {
     ]);
     console.log('  vendedores', vendCache.size, 'clientes', cliCache.size);
 
-    const orcIds = new Set(orcamentos.map((o) => o.id));
     await insertChunks(
       client,
       `INSERT INTO portal_franqueado.orcamento
@@ -478,8 +566,16 @@ async function main() {
         r.total,
         r.totalTexto ?? null,
       ],
+      100,
+      'ON CONFLICT (id) DO NOTHING',
     );
-    console.log('orcamento ok', orcamentos.length);
+    const orcWanted = orcamentos.map((o) => o.id).filter(Boolean);
+    const { rows: orcExisting } = await client.query(
+      `SELECT id FROM portal_franqueado.orcamento WHERE id = ANY($1::bigint[])`,
+      [orcWanted],
+    );
+    const orcIds = new Set(orcExisting.map((r) => Number(r.id)));
+    console.log('orcamento ok', orcamentos.length, 'fk-ready', orcIds.size);
 
     await insertChunks(
       client,
@@ -500,6 +596,8 @@ async function main() {
         r.total,
         r.totalTexto ?? null,
       ],
+      100,
+      'ON CONFLICT (id) DO NOTHING',
     );
     console.log('pedido ok', pedidos.length);
 

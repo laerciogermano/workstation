@@ -18,6 +18,14 @@ import { parseNotificacoesHtml } from './parse-notificacoes.js';
 import { parsePedidoDetalheHtml } from './parse-pedido-detalhe.js';
 import { parsePedidoItensHtml } from './parse-pedido-itens.js';
 import { getContatoCached, setContatoCached } from './contato-cache.js';
+import {
+  dbAtrasados,
+  dbFaturas,
+  dbHealth,
+  dbNotasFiscais,
+  dbOrcamentos,
+  dbPedidos,
+} from './db-dashboard.js';
 
 const PORT = Number(process.env.PORT || 4175);
 const HOST = process.env.HOST || '127.0.0.1';
@@ -31,6 +39,12 @@ const IMPLEMENTED = [
   'GET /dashboard',
   'GET /openapi.json',
   'GET /openapi.yaml',
+  'GET /db/health',
+  'GET /db/orcamentos',
+  'GET /db/pedidos',
+  'GET /db/notas-fiscais',
+  'GET /db/faturas',
+  'GET /db/atrasados',
   'GET /faturas',
   'GET /orcamentos',
   'GET /pedidos',
@@ -242,6 +256,30 @@ const server = createServer(async (req, res) => {
 
     if (req.method === 'GET' && path === '/health') {
       return sendJson(res, 200, { ok: true, service: 'conectmax-portal-api' });
+    }
+
+    if (req.method === 'GET' && path === '/db/health') {
+      return sendJson(res, 200, await dbHealth());
+    }
+
+    if (req.method === 'GET' && path === '/db/orcamentos') {
+      return sendJson(res, 200, await dbOrcamentos(q, dateRange(q)));
+    }
+
+    if (req.method === 'GET' && path === '/db/pedidos') {
+      return sendJson(res, 200, await dbPedidos(q, dateRange(q)));
+    }
+
+    if (req.method === 'GET' && path === '/db/notas-fiscais') {
+      return sendJson(res, 200, await dbNotasFiscais(q, dateRange(q)));
+    }
+
+    if (req.method === 'GET' && path === '/db/faturas') {
+      return sendJson(res, 200, await dbFaturas(q, dateRange(q)));
+    }
+
+    if (req.method === 'GET' && path === '/db/atrasados') {
+      return sendJson(res, 200, await dbAtrasados(q, dateRange(q)));
     }
 
     if (req.method === 'GET' && path === '/docs') {

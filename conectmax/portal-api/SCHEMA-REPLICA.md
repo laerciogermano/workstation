@@ -5,6 +5,19 @@ Fonte: HTML/ajax de `franqueado.conectmax.com` (não há dump SQL oficial).
 `node scripts/sync-campinas-postgres.mjs` (credenciais `../connectmax/vendas/api/.env`).  
 Colunas + `payload jsonb` = mesmo objeto dos GETs do [`dashboard.html`](dashboard.html).  
 Views: `v_dashboard_orcamentos|pedidos|notas|faturas|atrasados`.  
+
+**APIs do dashboard** (portal-api → Contabo, mesmo shape das listas live):
+
+| GET | Tabela | listKey |
+|---|---|---|
+| `/db/health` | meta franquias | — |
+| `/db/orcamentos` | `orcamentos` | `orcamentos` |
+| `/db/pedidos` | `pedidos` | `pedidos` |
+| `/db/notas-fiscais` | `notas_fiscais` | `notasFiscais` |
+| `/db/faturas` | `faturas` | `faturas` |
+| `/db/atrasados` | `faturas` (Vencida) | `faturas` |
+
+Query: `data_inicial`, `data_final` (ou `from`/`to`), `status`, `franquia_id` (default **9** Campinas).  
 Dump JSONL local (opcional): `scripts/dump-replica.mjs`  
 Segurança: [`SEGURANCA-ISOLAMENTO-FRANQUIAS.md`](SEGURANCA-ISOLAMENTO-FRANQUIAS.md)
 

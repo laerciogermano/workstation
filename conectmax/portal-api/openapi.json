@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "ConectMax Portal API",
-    "description": "API local que autentica no Portal do Franqueado\n(`https://franqueado.conectmax.com/`) e expõe GETs de busca.\n\nDashboard financeiro (funil): `GET /dashboard`\nOrçamento → Pedido → NF → Contas a receber.\n\nCredenciais: `~/.config/conectmax-franqueado/credentials.env`\n",
+    "description": "API local que autentica no Portal do Franqueado\n(`https://franqueado.conectmax.com/`) e expõe GETs de busca.\n\nDashboard financeiro (funil): `GET /dashboard` — dados via Postgres Contabo\n(`GET /db/orcamentos|pedidos|notas-fiscais|faturas|atrasados`).\nOrçamento → Pedido → NF → Contas a receber.\nGETs sem `/db` continuam batendo no portal HTML ao vivo.\n\nCredenciais: `~/.config/conectmax-franqueado/credentials.env`\n",
     "version": "1.0.0",
     "contact": {
       "name": "ConectMax lab"
@@ -134,6 +134,265 @@
               "text/html": {
                 "schema": {
                   "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/db/health": {
+      "get": {
+        "tags": [
+          "meta"
+        ],
+        "summary": "Estado da réplica Postgres (Contabo)",
+        "operationId": "getDbHealth",
+        "responses": {
+          "200": {
+            "description": "Contagens por franquia",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/db/orcamentos": {
+      "get": {
+        "tags": [
+          "comercial"
+        ],
+        "summary": "Orçamentos (Postgres Contabo)",
+        "description": "Mesmo shape de `/orcamentos` · tabela `portal_franqueado.orcamentos`",
+        "operationId": "getDbOrcamentos",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/dataInicial"
+          },
+          {
+            "$ref": "#/components/parameters/dataFinal"
+          },
+          {
+            "$ref": "#/components/parameters/from"
+          },
+          {
+            "$ref": "#/components/parameters/to"
+          },
+          {
+            "name": "franquia_id",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 9
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrcamentosResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/db/pedidos": {
+      "get": {
+        "tags": [
+          "comercial"
+        ],
+        "summary": "Pedidos (Postgres Contabo)",
+        "operationId": "getDbPedidos",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/dataInicial"
+          },
+          {
+            "$ref": "#/components/parameters/dataFinal"
+          },
+          {
+            "$ref": "#/components/parameters/from"
+          },
+          {
+            "$ref": "#/components/parameters/to"
+          },
+          {
+            "name": "franquia_id",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 9
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PedidosResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/db/notas-fiscais": {
+      "get": {
+        "tags": [
+          "fiscal"
+        ],
+        "summary": "Notas fiscais (Postgres Contabo)",
+        "operationId": "getDbNotasFiscais",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/dataInicial"
+          },
+          {
+            "$ref": "#/components/parameters/dataFinal"
+          },
+          {
+            "$ref": "#/components/parameters/from"
+          },
+          {
+            "$ref": "#/components/parameters/to"
+          },
+          {
+            "name": "franquia_id",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 9
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotasFiscaisResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/db/faturas": {
+      "get": {
+        "tags": [
+          "financeiro"
+        ],
+        "summary": "Contas a receber (Postgres Contabo)",
+        "operationId": "getDbFaturas",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/dataInicial"
+          },
+          {
+            "$ref": "#/components/parameters/dataFinal"
+          },
+          {
+            "$ref": "#/components/parameters/from"
+          },
+          {
+            "$ref": "#/components/parameters/to"
+          },
+          {
+            "name": "franquia_id",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 9
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FaturasResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/db/atrasados": {
+      "get": {
+        "tags": [
+          "financeiro"
+        ],
+        "summary": "Faturas vencidas (Postgres Contabo)",
+        "operationId": "getDbAtrasados",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/dataInicial"
+          },
+          {
+            "$ref": "#/components/parameters/dataFinal"
+          },
+          {
+            "name": "franquia_id",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 9
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FaturasResponse"
                 }
               }
             }

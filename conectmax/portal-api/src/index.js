@@ -1,4 +1,5 @@
 import { createServer } from 'node:http';
+import { CATALOG } from './catalog.js';
 import { fetchContasAReceber } from './portal.js';
 
 const PORT = Number(process.env.PORT || 4175);
@@ -18,11 +19,22 @@ function parseQuery(url) {
   return Object.fromEntries(u.searchParams.entries());
 }
 
+const IMPLEMENTED = ['GET /', 'GET /health', 'GET /catalog', 'GET /faturas'];
+
 const server = createServer(async (req, res) => {
   try {
     const path = (req.url || '/').split('?')[0];
-    if (req.method === 'GET' && (path === '/' || path === '/health')) {
+    if (req.method === 'GET' && path === '/health') {
       return sendJson(res, 200, { ok: true, service: 'conectmax-portal-api' });
+    }
+
+    if (req.method === 'GET' && (path === '/' || path === '/catalog')) {
+      return sendJson(res, 200, {
+        ok: true,
+        service: 'conectmax-portal-api',
+        implementados: IMPLEMENTED,
+        ...CATALOG,
+      });
     }
 
     if (req.method === 'GET' && path === '/faturas') {
@@ -62,7 +74,7 @@ const server = createServer(async (req, res) => {
       });
     }
 
-    sendJson(res, 404, { error: 'not found', routes: ['GET /health', 'GET /faturas'] });
+    sendJson(res, 404, { error: 'not found', routes: IMPLEMENTED });
   } catch (err) {
     console.error(err);
     sendJson(res, 500, { error: String(err?.message || err) });
@@ -71,5 +83,5 @@ const server = createServer(async (req, res) => {
 
 server.listen(PORT, HOST, () => {
   console.log(`conectmax-portal-api http://${HOST}:${PORT}`);
-  console.log('GET /faturas  GET /health');
+  console.log('GET /  GET /catalog  GET /faturas  GET /health');
 });

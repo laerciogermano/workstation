@@ -7,7 +7,8 @@
 
 Credenciais **não** ficam neste repositório. Uso local: `~/.config/conectmax-franqueado/credentials.env` (e cookies em `cookies.txt`). Fonte humana: Doc [Centralizador](https://docs.google.com/document/d/1hAptxxK7232o-ZEGUeTAU7AVwNpXsVvX0cd5zQ0RtJU) (seção Portal do Franqueado).
 
-**API automatizada (faturas / contas a receber):** [`../../portal-api/README.md`](../../portal-api/README.md) — `npm start` → `GET http://127.0.0.1:4175/faturas`.
+**API automatizada:** [`../../portal-api/README.md`](../../portal-api/README.md) — `npm start` → `GET /faturas`.  
+**Mapa de todos os GETs de busca do portal:** [`../../portal-api/GETS.md`](../../portal-api/GETS.md) (também `GET http://127.0.0.1:4175/catalog`).
 
 ## Autenticação
 

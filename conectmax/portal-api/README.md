@@ -1,8 +1,9 @@
 # Portal API — faturas ConectMax
 
-API local que autentica no [Portal do Franqueado](https://franqueado.conectmax.com/) e expõe as **faturas** (tela Contas a receber) via `GET`.
+API local que autentica no [Portal do Franqueado](https://franqueado.conectmax.com/) e expõe dados via `GET`.
 
-Mapa do portal: [`../connectmax/docs/portal-franqueado.md`](../connectmax/docs/portal-franqueado.md)
+- Mapa de **todos os GETs de busca** do portal: [`GETS.md`](GETS.md)
+- Mapa geral do painel: [`../connectmax/docs/portal-franqueado.md`](../connectmax/docs/portal-franqueado.md)
 
 ## Pré-requisito
 
@@ -27,8 +28,10 @@ npm start
 
 | Método | Rota | Descrição |
 |--------|------|-----------|
+| `GET` | `/` ou `/catalog` | Catálogo de GETs do portal + status da API local |
 | `GET` | `/health` | Liveness |
-| `GET` | `/faturas` | Lista faturas (contas a receber) do portal |
+| `GET` | `/faturas` | Lista faturas (contas a receber) — implementado |
+| — | `/orcamentos` `/pedidos` `/notas-fiscais` `/faturamento` … | Planejados — ver [`GETS.md`](GETS.md) |
 
 ### Query `GET /faturas`
 

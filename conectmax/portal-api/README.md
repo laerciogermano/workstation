@@ -29,8 +29,8 @@ npm start
 | `/health` | liveness |
 | `/faturas` | `contasareceber` (`contato=1` → email/telefone) |
 | `/orcamentos` | `orcamentos` |
-| `/pedidos` | `pedidos` (lista) |
-| `/pedidos/:id` | `pedidos_edicao` (email, telefone, whatsapp) |
+| `/pedidos` | `pedidos` (lista; `itens=1` carrega linhas) |
+| `/pedidos/:id` | detalhe + contato + **itens** (`produtos.php`) |
 | `/notas-fiscais` | `notas_fiscais` |
 | `/faturamento` | `faturamento` + Excel detalhe |
 | `/fluxo-previsto` | `fluxo_previsto` |
@@ -49,13 +49,16 @@ npm start
 | `all` | `1` (se sem `current_page`) | varre paginação |
 | `refresh` | — | `1` força login |
 | `contato` | — | só `/faturas`: `1` busca email/telefone no pedido |
+| `itens` | — | só `/pedidos`: `1` inclui linhas de produto |
+| `limit` | — | com `itens=1`: máx. de pedidos a enriquecer |
 
 `/fluxo-previsto`: `data=YYYY-MM`.
 
 ### Exemplos
 
 ```bash
-curl -sS 'http://127.0.0.1:4175/pedidos/6375'
+curl -sS 'http://127.0.0.1:4175/pedidos/17050'
+curl -sS 'http://127.0.0.1:4175/pedidos?data_inicial=01/11/2026&data_final=06/11/2026&itens=1&limit=5&all=0'
 curl -sS 'http://127.0.0.1:4175/faturas?status=Vencida&contato=1'
 curl -sS 'http://127.0.0.1:4175/catalog'
 curl -sS 'http://127.0.0.1:4175/faturas?status=Aberta'

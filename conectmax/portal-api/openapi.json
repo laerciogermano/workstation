@@ -254,8 +254,8 @@
         "tags": [
           "comercial"
         ],
-        "summary": "Detalhe do pedido (email e telefone)",
-        "description": "Fonte portal `?page=pedidos_edicao&id_pedido={id}&action=visualizar`.\nContato da venda para cobrança / WhatsApp.\n",
+        "summary": "Detalhe do pedido (contato + itens)",
+        "description": "Cabeçalho/contato: `?page=pedidos_edicao&id_pedido={id}&action=visualizar`.\nItens: `POST /franqueado/ajax/pedidos/produtos.php`.\n",
         "operationId": "getPedidoById",
         "parameters": [
           {
@@ -265,7 +265,7 @@
             "schema": {
               "type": "integer"
             },
-            "example": 6375
+            "example": 17050
           },
           {
             "$ref": "#/components/parameters/refresh"
@@ -273,7 +273,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Detalhe com contato",
+            "description": "Detalhe com contato e itens",
             "content": {
               "application/json": {
                 "schema": {
@@ -283,14 +283,25 @@
                   "fonte": "portal franqueado · pedidos_edicao",
                   "cache": false,
                   "pedido": {
-                    "id": 6375,
-                    "status": "Faturado",
-                    "cliente": "PAFIL CONSTRUTORA E EMPREENDIMENTOS LTDA",
-                    "cnpj": "27.865.522/0001-02",
-                    "email": "gabriel.porto@pafil.com.br",
-                    "telefone": "(16) 9766.5428",
-                    "whatsapp": "1697665428",
-                    "vendedor": "Marcello"
+                    "id": 17050,
+                    "status": "Aprovado",
+                    "cliente": "INDUSTRIA DRYKO LTDA",
+                    "email": "Wesley.araujo@dryko.com.br",
+                    "telefone": "(11) 98503.5628",
+                    "whatsapp": "11985035628",
+                    "itensTotal": 3,
+                    "itens": [
+                      {
+                        "idProduto": 36154,
+                        "produto": "UBIQUITI USW-24-POE-BR UNIFI SWITCH 24P GIGABIT 2P SFP 95W",
+                        "ncm": "85176234",
+                        "quantidade": 1,
+                        "valorUnitario": 2600,
+                        "lucroPercentual": 28,
+                        "valorExtra": 272,
+                        "total": 3600
+                      }
+                    ]
                   }
                 }
               }
@@ -437,6 +448,29 @@
           },
           {
             "$ref": "#/components/parameters/all"
+          },
+          {
+            "name": "itens",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "0",
+                "1",
+                "true",
+                "false"
+              ]
+            },
+            "description": "1 = inclui linhas de produto (POST produtos.php) por pedido"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "description": "Com itens=1, quantos pedidos enriquecer (do início da lista)"
           },
           {
             "$ref": "#/components/parameters/refresh"
@@ -1118,6 +1152,46 @@
           }
         }
       },
+      "PedidoItem": {
+        "type": "object",
+        "properties": {
+          "idProduto": {
+            "type": "integer",
+            "nullable": true
+          },
+          "produto": {
+            "type": "string"
+          },
+          "ncm": {
+            "type": "string",
+            "nullable": true
+          },
+          "quantidade": {
+            "type": "number",
+            "nullable": true
+          },
+          "valorUnitario": {
+            "type": "number",
+            "nullable": true
+          },
+          "lucroPercentual": {
+            "type": "number",
+            "nullable": true
+          },
+          "valorExtra": {
+            "type": "number",
+            "nullable": true
+          },
+          "total": {
+            "type": "number",
+            "nullable": true
+          },
+          "totalUnidade": {
+            "type": "number",
+            "nullable": true
+          }
+        }
+      },
       "PedidoDetalhe": {
         "type": "object",
         "properties": {
@@ -1155,6 +1229,15 @@
           "vendedorId": {
             "type": "string",
             "nullable": true
+          },
+          "itensTotal": {
+            "type": "integer"
+          },
+          "itens": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PedidoItem"
+            }
           }
         }
       },

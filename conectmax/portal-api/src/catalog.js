@@ -33,7 +33,7 @@ export const CATALOG = {
       filtros: ['id_pedido', 'action'],
       status: [],
       exportGet: [],
-      nota: 'Fonte de email e telefone (WhatsApp) do cadastro da venda',
+      nota: 'Contato + itens (POST ajax/pedidos/produtos.php). Lista: GET /pedidos?itens=1&limit=N',
       apiLocal: { method: 'GET', path: '/pedidos/:id', status: 'ok' },
     },
     {

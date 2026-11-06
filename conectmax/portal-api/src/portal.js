@@ -156,16 +156,36 @@ export async function fetchPageHtmlPaginated(page, query = {}, opts = {}) {
  */
 export async function fetchAjax(pathRel, query = {}, opts = {}) {
   let cookie = await ensureCookie(opts.forceLogin);
+  const method = (opts.method || 'GET').toUpperCase();
   const url = new URL(pathRel.startsWith('http') ? pathRel : `${BASE}${pathRel}`);
-  for (const [k, v] of Object.entries(query)) {
-    if (v === undefined || v === null || v === '') continue;
-    url.searchParams.set(k, String(v));
+  /** @type {RequestInit} */
+  const init = { headers: { Cookie: cookie }, redirect: 'follow', method };
+  if (method === 'GET') {
+    for (const [k, v] of Object.entries(query)) {
+      if (v === undefined || v === null || v === '') continue;
+      url.searchParams.set(k, String(v));
+    }
+  } else {
+    const body = new URLSearchParams();
+    for (const [k, v] of Object.entries(query)) {
+      if (v === undefined || v === null || v === '') continue;
+      body.set(k, String(v));
+    }
+    init.headers = {
+      Cookie: cookie,
+      'Content-Type': 'application/x-www-form-urlencoded',
+    };
+    init.body = body;
   }
-  let res = await fetch(url, { headers: { Cookie: cookie }, redirect: 'follow' });
+  let res = await fetch(url, init);
   let body = await readHtml(res);
   if (isLoginPage(body)) {
     cookie = await login();
-    res = await fetch(url, { headers: { Cookie: cookie }, redirect: 'follow' });
+    init.headers = {
+      ...(init.headers || {}),
+      Cookie: cookie,
+    };
+    res = await fetch(url, init);
     body = await readHtml(res);
   }
   return { body, cookie, url: url.toString(), contentType: res.headers.get('content-type') };

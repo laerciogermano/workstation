@@ -1,0 +1,1487 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "ConectMax Portal API",
+    "description": "API local que autentica no Portal do Franqueado\n(`https://franqueado.conectmax.com/`) e expõe GETs de busca.\n\nCredenciais: `~/.config/conectmax-franqueado/credentials.env`\n",
+    "version": "1.0.0",
+    "contact": {
+      "name": "ConectMax lab"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:4175",
+      "description": "Local"
+    }
+  ],
+  "tags": [
+    {
+      "name": "meta"
+    },
+    {
+      "name": "financeiro"
+    },
+    {
+      "name": "comercial"
+    },
+    {
+      "name": "fiscal"
+    },
+    {
+      "name": "suporte"
+    }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": [
+          "meta"
+        ],
+        "summary": "Liveness",
+        "operationId": "getHealth",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                },
+                "example": {
+                  "ok": true,
+                  "service": "conectmax-portal-api"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/catalog": {
+      "get": {
+        "tags": [
+          "meta"
+        ],
+        "summary": "Catálogo de GETs do portal + status da API",
+        "operationId": "getCatalog",
+        "responses": {
+          "200": {
+            "description": "Catálogo",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CatalogResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/": {
+      "get": {
+        "tags": [
+          "meta"
+        ],
+        "summary": "Alias de /catalog",
+        "operationId": "getRoot",
+        "responses": {
+          "200": {
+            "description": "Catálogo",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CatalogResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/openapi.json": {
+      "get": {
+        "tags": [
+          "meta"
+        ],
+        "summary": "Spec OpenAPI (JSON)",
+        "operationId": "getOpenApi",
+        "responses": {
+          "200": {
+            "description": "OpenAPI 3",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/docs": {
+      "get": {
+        "tags": [
+          "meta"
+        ],
+        "summary": "UI Swagger",
+        "operationId": "getDocs",
+        "responses": {
+          "200": {
+            "description": "HTML Swagger UI",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/faturas": {
+      "get": {
+        "tags": [
+          "financeiro"
+        ],
+        "summary": "Lista faturas (contas a receber)",
+        "description": "Fonte portal `?page=contasareceber`",
+        "operationId": "getFaturas",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/dataInicial"
+          },
+          {
+            "$ref": "#/components/parameters/dataFinal"
+          },
+          {
+            "$ref": "#/components/parameters/from"
+          },
+          {
+            "$ref": "#/components/parameters/to"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "Aberta",
+                "Quitada",
+                "Vencida",
+                "Próxima ao vencimento",
+                "Estornada",
+                "Falta arquivo"
+              ]
+            },
+            "description": "Filtro local no JSON"
+          },
+          {
+            "name": "status_portal",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filtro enviado ao portal"
+          },
+          {
+            "$ref": "#/components/parameters/refresh"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de faturas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FaturasResponse"
+                },
+                "example": {
+                  "fonte": "portal franqueado · contasareceber",
+                  "dataInicial": "01/11/2026",
+                  "dataFinal": "06/11/2026",
+                  "total": 10,
+                  "totalValor": 21198.5,
+                  "porStatus": {
+                    "Quitada": 7,
+                    "Vencida": 3
+                  },
+                  "faturas": [
+                    {
+                      "id": 20897,
+                      "status": "Quitada",
+                      "vencimento": "02/11/2026",
+                      "titulo": "Fatura 3 da nota fiscal nº 288",
+                      "faturaN": 3,
+                      "nfNumero": 288,
+                      "idNota": 17158,
+                      "pedido": 16620,
+                      "cliente": "INDUSTRIA DRYKO LTDA",
+                      "cnpj": "03.081.895/0005-58",
+                      "descricao": null,
+                      "valor": 89,
+                      "valorTexto": "R$ 89,00"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/orcamentos": {
+      "get": {
+        "tags": [
+          "comercial"
+        ],
+        "summary": "Lista orçamentos",
+        "description": "Fonte portal `?page=orcamentos`",
+        "operationId": "getOrcamentos",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/dataInicial"
+          },
+          {
+            "$ref": "#/components/parameters/dataFinal"
+          },
+          {
+            "$ref": "#/components/parameters/from"
+          },
+          {
+            "$ref": "#/components/parameters/to"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "Em aberto",
+                "Aprovado",
+                "Reprovado",
+                "Contra proposta",
+                "Cancelado",
+                "Enviado"
+              ]
+            }
+          },
+          {
+            "$ref": "#/components/parameters/idVendedor"
+          },
+          {
+            "$ref": "#/components/parameters/currentPage"
+          },
+          {
+            "$ref": "#/components/parameters/all"
+          },
+          {
+            "$ref": "#/components/parameters/refresh"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de orçamentos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrcamentosResponse"
+                },
+                "example": {
+                  "fonte": "portal franqueado · orcamentos",
+                  "dataInicial": "01/11/2026",
+                  "dataFinal": "06/11/2026",
+                  "pagesFetched": 1,
+                  "total": 23,
+                  "totalValor": 109473.08,
+                  "porStatus": {
+                    "Em aberto": 12,
+                    "Enviado": 10,
+                    "Aprovado": 1
+                  },
+                  "orcamentos": [
+                    {
+                      "id": 65690,
+                      "numero": 3612,
+                      "data": "05/11/2026",
+                      "status": "Em aberto",
+                      "cliente": "INSTITUTO CYRELA",
+                      "vendedor": "Bruno Toyo",
+                      "total": 57773.82,
+                      "totalTexto": "R$ 57.773,82"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/pedidos": {
+      "get": {
+        "tags": [
+          "comercial"
+        ],
+        "summary": "Lista pedidos",
+        "description": "Fonte portal `?page=pedidos`",
+        "operationId": "getPedidos",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/dataInicial"
+          },
+          {
+            "$ref": "#/components/parameters/dataFinal"
+          },
+          {
+            "$ref": "#/components/parameters/from"
+          },
+          {
+            "$ref": "#/components/parameters/to"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "Rascunho",
+                "Em análise",
+                "Aprovado",
+                "Reprovado",
+                "Cancelado",
+                "Faturado"
+              ]
+            }
+          },
+          {
+            "$ref": "#/components/parameters/idVendedor"
+          },
+          {
+            "$ref": "#/components/parameters/currentPage"
+          },
+          {
+            "$ref": "#/components/parameters/all"
+          },
+          {
+            "$ref": "#/components/parameters/refresh"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de pedidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PedidosResponse"
+                },
+                "example": {
+                  "fonte": "portal franqueado · pedidos",
+                  "pagesFetched": 1,
+                  "total": 2,
+                  "totalValor": 9699,
+                  "pedidos": [
+                    {
+                      "id": 17050,
+                      "numero": 17050,
+                      "data": "05/11/2026",
+                      "orcamento": 3589,
+                      "status": "Aprovado",
+                      "cliente": "INDUSTRIA DRYKO LTDA",
+                      "vendedor": "Olívia",
+                      "total": 6599,
+                      "totalTexto": "R$ 6.599,00"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/notas-fiscais": {
+      "get": {
+        "tags": [
+          "fiscal"
+        ],
+        "summary": "Lista notas fiscais",
+        "description": "Fonte portal `?page=notas_fiscais`",
+        "operationId": "getNotasFiscais",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/dataInicial"
+          },
+          {
+            "$ref": "#/components/parameters/dataFinal"
+          },
+          {
+            "$ref": "#/components/parameters/from"
+          },
+          {
+            "$ref": "#/components/parameters/to"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Ex. Enviado (filtro local); portal usa aguardando/cancelado/rejeitado/enviado via status_portal"
+          },
+          {
+            "name": "tipo",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "manual",
+                "pedido"
+              ]
+            }
+          },
+          {
+            "name": "uf",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "example": "SP"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/idVendedor"
+          },
+          {
+            "$ref": "#/components/parameters/currentPage"
+          },
+          {
+            "$ref": "#/components/parameters/all"
+          },
+          {
+            "$ref": "#/components/parameters/refresh"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de NFs",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotasFiscaisResponse"
+                },
+                "example": {
+                  "fonte": "portal franqueado · notas_fiscais",
+                  "total": 4,
+                  "totalValor": 6474.4,
+                  "notasFiscais": [
+                    {
+                      "id": 17529,
+                      "status": "Enviado",
+                      "tipo": null,
+                      "numero": 333,
+                      "cliente": "VALID SOLUCOES S A",
+                      "data": "04/11/2026 às 14:45:39",
+                      "transportadora": "AGENCIA DE CORREIO",
+                      "total": 344.4,
+                      "totalTexto": "R$ 344,40",
+                      "pdf": "/franqueado/ajax/notas_fiscais/pdf.php?id_nota=17529",
+                      "xml": "/franqueado/ajax/notas_fiscais/xml.php?id_nota=17529"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/faturamento": {
+      "get": {
+        "tags": [
+          "financeiro"
+        ],
+        "summary": "Faturamento (totais por vendedor + detalhe)",
+        "description": "HTML `?page=faturamento` + Excel\n`/franqueado/ajax/faturamento/relatorio_excel.php`\n",
+        "operationId": "getFaturamento",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/dataInicial"
+          },
+          {
+            "$ref": "#/components/parameters/dataFinal"
+          },
+          {
+            "$ref": "#/components/parameters/from"
+          },
+          {
+            "$ref": "#/components/parameters/to"
+          },
+          {
+            "$ref": "#/components/parameters/idVendedor"
+          },
+          {
+            "$ref": "#/components/parameters/refresh"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Totais e detalhe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FaturamentoResponse"
+                },
+                "example": {
+                  "fonte": "portal franqueado · faturamento",
+                  "totalVendedores": 7,
+                  "totalDetalhe": 4,
+                  "totalValor": 6474.4,
+                  "porVendedor": [
+                    {
+                      "vendedor": "Olívia",
+                      "total": 605794.37,
+                      "totalTexto": "R$ 605.794,37"
+                    }
+                  ],
+                  "detalhe": [
+                    {
+                      "vendedor": "Olívia",
+                      "nota": 330,
+                      "pedido": 16968,
+                      "data": "03/11/2026 12:44",
+                      "total": 3780,
+                      "totalTexto": "R$ 3.780,00"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/fluxo-previsto": {
+      "get": {
+        "tags": [
+          "financeiro"
+        ],
+        "summary": "Fluxo previsto × real (gráfico)",
+        "description": "Fonte portal `?page=fluxo_previsto`",
+        "operationId": "getFluxoPrevisto",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}$",
+              "example": "2026-11"
+            },
+            "description": "Mês de referência (YYYY-MM)"
+          },
+          {
+            "name": "mes",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}$"
+            },
+            "description": "Alias de data"
+          },
+          {
+            "$ref": "#/components/parameters/refresh"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Séries mensais",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FluxoPrevistoResponse"
+                },
+                "example": {
+                  "fonte": "portal franqueado · fluxo_previsto",
+                  "dataRef": "2026-11",
+                  "labels": [
+                    "Janeiro",
+                    "Fevereiro",
+                    "Março"
+                  ],
+                  "series": [
+                    {
+                      "label": "Faturamento previsto",
+                      "data": [
+                        438336.28,
+                        649692.75,
+                        null
+                      ]
+                    },
+                    {
+                      "label": "Faturamento real",
+                      "data": [
+                        512988.78,
+                        570006.75,
+                        null
+                      ]
+                    }
+                  ],
+                  "meses": [
+                    {
+                      "mes": "Janeiro",
+                      "indice": 1,
+                      "faturamento_previsto": 438336.28,
+                      "faturamento_real": 512988.78
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/chamados": {
+      "get": {
+        "tags": [
+          "suporte"
+        ],
+        "summary": "Lista chamados",
+        "description": "Fonte portal `?page=chamados`",
+        "operationId": "getChamados",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/dataInicial"
+          },
+          {
+            "$ref": "#/components/parameters/dataFinal"
+          },
+          {
+            "$ref": "#/components/parameters/from"
+          },
+          {
+            "$ref": "#/components/parameters/to"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "iniciado",
+                "em andamento",
+                "finalizado"
+              ]
+            }
+          },
+          {
+            "$ref": "#/components/parameters/refresh"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista (pode ser vazia)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChamadosResponse"
+                },
+                "example": {
+                  "fonte": "portal franqueado · chamados",
+                  "total": 0,
+                  "porStatus": {},
+                  "chamados": []
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/notificacoes": {
+      "get": {
+        "tags": [
+          "suporte"
+        ],
+        "summary": "Lista notificações",
+        "description": "Fonte portal `?page=notificacoes`",
+        "operationId": "getNotificacoes",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/dataInicial"
+          },
+          {
+            "$ref": "#/components/parameters/dataFinal"
+          },
+          {
+            "$ref": "#/components/parameters/from"
+          },
+          {
+            "$ref": "#/components/parameters/to"
+          },
+          {
+            "$ref": "#/components/parameters/refresh"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista (pode ser vazia)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotificacoesResponse"
+                },
+                "example": {
+                  "fonte": "portal franqueado · notificacoes",
+                  "total": 0,
+                  "notificacoes": []
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "parameters": {
+      "dataInicial": {
+        "name": "data_inicial",
+        "in": "query",
+        "schema": {
+          "type": "string",
+          "example": "01/01/2025"
+        },
+        "description": "Início (dd/mm/yyyy). Default `01/01/2025`"
+      },
+      "dataFinal": {
+        "name": "data_final",
+        "in": "query",
+        "schema": {
+          "type": "string",
+          "example": "31/12/2026"
+        },
+        "description": "Fim (dd/mm/yyyy). Default `31/12/2026`"
+      },
+      "from": {
+        "name": "from",
+        "in": "query",
+        "schema": {
+          "type": "string"
+        },
+        "description": "Alias de data_inicial"
+      },
+      "to": {
+        "name": "to",
+        "in": "query",
+        "schema": {
+          "type": "string"
+        },
+        "description": "Alias de data_final"
+      },
+      "idVendedor": {
+        "name": "id_vendedor",
+        "in": "query",
+        "schema": {
+          "type": "string",
+          "example": "75"
+        },
+        "description": "ID do vendedor no portal"
+      },
+      "currentPage": {
+        "name": "current_page",
+        "in": "query",
+        "schema": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "description": "Só essa página (desliga varredura all)"
+      },
+      "all": {
+        "name": "all",
+        "in": "query",
+        "schema": {
+          "type": "string",
+          "enum": [
+            "0",
+            "1",
+            "true",
+            "false"
+          ]
+        },
+        "description": "1 = varre todas as páginas (default se sem current_page)"
+      },
+      "refresh": {
+        "name": "refresh",
+        "in": "query",
+        "schema": {
+          "type": "string",
+          "enum": [
+            "0",
+            "1",
+            "true",
+            "false"
+          ]
+        },
+        "description": "1 = força novo login no portal"
+      }
+    },
+    "responses": {
+      "Error": {
+        "description": "Erro",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "HealthResponse": {
+        "type": "object",
+        "required": [
+          "ok",
+          "service"
+        ],
+        "properties": {
+          "ok": {
+            "type": "boolean"
+          },
+          "service": {
+            "type": "string"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string"
+          },
+          "routes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "CatalogResponse": {
+        "type": "object",
+        "properties": {
+          "ok": {
+            "type": "boolean"
+          },
+          "service": {
+            "type": "string"
+          },
+          "implementados": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "fonte": {
+            "type": "string"
+          },
+          "doc": {
+            "type": "string"
+          },
+          "gets": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "detalhesGet": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "PorStatus": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "integer"
+        }
+      },
+      "Fatura": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          },
+          "vencimento": {
+            "type": "string",
+            "nullable": true
+          },
+          "titulo": {
+            "type": "string",
+            "nullable": true
+          },
+          "faturaN": {
+            "type": "integer",
+            "nullable": true
+          },
+          "nfNumero": {
+            "type": "integer",
+            "nullable": true
+          },
+          "idNota": {
+            "type": "integer",
+            "nullable": true
+          },
+          "pedido": {
+            "type": "integer",
+            "nullable": true
+          },
+          "cliente": {
+            "type": "string",
+            "nullable": true
+          },
+          "cnpj": {
+            "type": "string",
+            "nullable": true
+          },
+          "descricao": {
+            "type": "string",
+            "nullable": true
+          },
+          "valor": {
+            "type": "number",
+            "nullable": true
+          },
+          "valorTexto": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "FaturasResponse": {
+        "type": "object",
+        "properties": {
+          "fonte": {
+            "type": "string"
+          },
+          "dataInicial": {
+            "type": "string"
+          },
+          "dataFinal": {
+            "type": "string"
+          },
+          "total": {
+            "type": "integer"
+          },
+          "totalValor": {
+            "type": "number"
+          },
+          "porStatus": {
+            "$ref": "#/components/schemas/PorStatus"
+          },
+          "faturas": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Fatura"
+            }
+          }
+        }
+      },
+      "Orcamento": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "numero": {
+            "type": "integer",
+            "nullable": true
+          },
+          "data": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          },
+          "cliente": {
+            "type": "string",
+            "nullable": true
+          },
+          "vendedor": {
+            "type": "string",
+            "nullable": true
+          },
+          "total": {
+            "type": "number",
+            "nullable": true
+          },
+          "totalTexto": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "OrcamentosResponse": {
+        "type": "object",
+        "properties": {
+          "fonte": {
+            "type": "string"
+          },
+          "dataInicial": {
+            "type": "string"
+          },
+          "dataFinal": {
+            "type": "string"
+          },
+          "pagesFetched": {
+            "type": "integer"
+          },
+          "total": {
+            "type": "integer"
+          },
+          "totalValor": {
+            "type": "number"
+          },
+          "porStatus": {
+            "$ref": "#/components/schemas/PorStatus"
+          },
+          "orcamentos": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Orcamento"
+            }
+          }
+        }
+      },
+      "Pedido": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "numero": {
+            "type": "integer",
+            "nullable": true
+          },
+          "data": {
+            "type": "string",
+            "nullable": true
+          },
+          "orcamento": {
+            "type": "integer",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          },
+          "cliente": {
+            "type": "string",
+            "nullable": true
+          },
+          "vendedor": {
+            "type": "string",
+            "nullable": true
+          },
+          "total": {
+            "type": "number",
+            "nullable": true
+          },
+          "totalTexto": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "PedidosResponse": {
+        "type": "object",
+        "properties": {
+          "fonte": {
+            "type": "string"
+          },
+          "dataInicial": {
+            "type": "string"
+          },
+          "dataFinal": {
+            "type": "string"
+          },
+          "pagesFetched": {
+            "type": "integer"
+          },
+          "total": {
+            "type": "integer"
+          },
+          "totalValor": {
+            "type": "number"
+          },
+          "porStatus": {
+            "$ref": "#/components/schemas/PorStatus"
+          },
+          "pedidos": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Pedido"
+            }
+          }
+        }
+      },
+      "NotaFiscal": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          },
+          "tipo": {
+            "type": "string",
+            "nullable": true
+          },
+          "numero": {
+            "type": "integer",
+            "nullable": true
+          },
+          "cliente": {
+            "type": "string",
+            "nullable": true
+          },
+          "data": {
+            "type": "string",
+            "nullable": true
+          },
+          "transportadora": {
+            "type": "string",
+            "nullable": true
+          },
+          "total": {
+            "type": "number",
+            "nullable": true
+          },
+          "totalTexto": {
+            "type": "string",
+            "nullable": true
+          },
+          "pdf": {
+            "type": "string"
+          },
+          "xml": {
+            "type": "string"
+          }
+        }
+      },
+      "NotasFiscaisResponse": {
+        "type": "object",
+        "properties": {
+          "fonte": {
+            "type": "string"
+          },
+          "dataInicial": {
+            "type": "string"
+          },
+          "dataFinal": {
+            "type": "string"
+          },
+          "pagesFetched": {
+            "type": "integer"
+          },
+          "total": {
+            "type": "integer"
+          },
+          "totalValor": {
+            "type": "number"
+          },
+          "porStatus": {
+            "$ref": "#/components/schemas/PorStatus"
+          },
+          "notasFiscais": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NotaFiscal"
+            }
+          }
+        }
+      },
+      "FaturamentoVendedor": {
+        "type": "object",
+        "properties": {
+          "vendedorId": {
+            "type": "integer",
+            "nullable": true
+          },
+          "vendedor": {
+            "type": "string"
+          },
+          "total": {
+            "type": "number",
+            "nullable": true
+          },
+          "totalTexto": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "FaturamentoDetalhe": {
+        "type": "object",
+        "properties": {
+          "vendedor": {
+            "type": "string",
+            "nullable": true
+          },
+          "nota": {
+            "type": "integer"
+          },
+          "pedido": {
+            "type": "integer",
+            "nullable": true
+          },
+          "data": {
+            "type": "string",
+            "nullable": true
+          },
+          "total": {
+            "type": "number",
+            "nullable": true
+          },
+          "totalTexto": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "FaturamentoResponse": {
+        "type": "object",
+        "properties": {
+          "fonte": {
+            "type": "string"
+          },
+          "dataInicial": {
+            "type": "string"
+          },
+          "dataFinal": {
+            "type": "string"
+          },
+          "totalVendedores": {
+            "type": "integer"
+          },
+          "totalDetalhe": {
+            "type": "integer"
+          },
+          "totalValor": {
+            "type": "number"
+          },
+          "porVendedor": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FaturamentoVendedor"
+            }
+          },
+          "detalhe": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FaturamentoDetalhe"
+            }
+          }
+        }
+      },
+      "FluxoSerie": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "nullable": true
+            }
+          }
+        }
+      },
+      "FluxoMes": {
+        "type": "object",
+        "properties": {
+          "mes": {
+            "type": "string"
+          },
+          "indice": {
+            "type": "integer"
+          },
+          "faturamento_previsto": {
+            "type": "number",
+            "nullable": true
+          },
+          "faturamento_real": {
+            "type": "number",
+            "nullable": true
+          }
+        }
+      },
+      "FluxoPrevistoResponse": {
+        "type": "object",
+        "properties": {
+          "fonte": {
+            "type": "string"
+          },
+          "dataRef": {
+            "type": "string",
+            "nullable": true
+          },
+          "labels": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "series": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FluxoSerie"
+            }
+          },
+          "meses": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FluxoMes"
+            }
+          },
+          "texto": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "Chamado": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string"
+          },
+          "assunto": {
+            "type": "string",
+            "nullable": true
+          },
+          "envolvidos": {
+            "type": "string",
+            "nullable": true
+          },
+          "criadoEm": {
+            "type": "string",
+            "nullable": true
+          },
+          "editadoPor": {
+            "type": "string",
+            "nullable": true
+          },
+          "ultimaInteracao": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "ChamadosResponse": {
+        "type": "object",
+        "properties": {
+          "fonte": {
+            "type": "string"
+          },
+          "dataInicial": {
+            "type": "string"
+          },
+          "dataFinal": {
+            "type": "string"
+          },
+          "total": {
+            "type": "integer"
+          },
+          "porStatus": {
+            "$ref": "#/components/schemas/PorStatus"
+          },
+          "chamados": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Chamado"
+            }
+          }
+        }
+      },
+      "Notificacao": {
+        "type": "object",
+        "properties": {
+          "assunto": {
+            "type": "string"
+          },
+          "enviadoPor": {
+            "type": "string",
+            "nullable": true
+          },
+          "data": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "NotificacoesResponse": {
+        "type": "object",
+        "properties": {
+          "fonte": {
+            "type": "string"
+          },
+          "dataInicial": {
+            "type": "string"
+          },
+          "dataFinal": {
+            "type": "string"
+          },
+          "total": {
+            "type": "integer"
+          },
+          "notificacoes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Notificacao"
+            }
+          }
+        }
+      }
+    }
+  }
+}

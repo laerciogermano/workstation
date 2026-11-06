@@ -1,5 +1,7 @@
 # GETs de busca de dados — Portal Franqueado
 
+**Contrato OpenAPI (entradas/saídas):** [`openapi.yaml`](openapi.yaml) · UI [`/docs`](http://127.0.0.1:4175/docs) · [`openapi.json`](openapi.json)
+
 Fonte viva: `https://franqueado.conectmax.com/franqueado/?page=…` (HTML + sessão `PHPSESSID`).  
 Não há REST JSON oficial; a “API” prática é **GET na página** (ou export ajax). Mutações (status, quitar, duplicar) ficam de fora deste mapa.
 

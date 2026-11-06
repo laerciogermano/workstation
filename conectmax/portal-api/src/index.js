@@ -1,4 +1,7 @@
 import { createServer } from 'node:http';
+import { readFile } from 'node:fs/promises';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { CATALOG } from './catalog.js';
 import { fetchAjax, fetchPageHtml, fetchPageHtmlPaginated } from './portal.js';
 import { parseFaturasHtml } from './parse-faturas.js';
@@ -15,11 +18,15 @@ import { parseNotificacoesHtml } from './parse-notificacoes.js';
 
 const PORT = Number(process.env.PORT || 4175);
 const HOST = process.env.HOST || '127.0.0.1';
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 const IMPLEMENTED = [
   'GET /',
   'GET /catalog',
   'GET /health',
+  'GET /docs',
+  'GET /openapi.json',
+  'GET /openapi.yaml',
   'GET /faturas',
   'GET /orcamentos',
   'GET /pedidos',
@@ -36,6 +43,14 @@ function sendJson(res, status, body) {
     'Cache-Control': 'no-store',
   });
   res.end(JSON.stringify(body, null, 2));
+}
+
+function sendRaw(res, status, contentType, body) {
+  res.writeHead(status, {
+    'Content-Type': contentType,
+    'Cache-Control': 'no-store',
+  });
+  res.end(body);
 }
 
 function parseQuery(url) {
@@ -108,11 +123,28 @@ const server = createServer(async (req, res) => {
       return sendJson(res, 200, { ok: true, service: 'conectmax-portal-api' });
     }
 
+    if (req.method === 'GET' && path === '/docs') {
+      const html = await readFile(join(ROOT, 'docs.html'), 'utf8');
+      return sendRaw(res, 200, 'text/html; charset=utf-8', html);
+    }
+
+    if (req.method === 'GET' && path === '/openapi.json') {
+      const raw = await readFile(join(ROOT, 'openapi.json'), 'utf8');
+      return sendRaw(res, 200, 'application/json; charset=utf-8', raw);
+    }
+
+    if (req.method === 'GET' && path === '/openapi.yaml') {
+      const raw = await readFile(join(ROOT, 'openapi.yaml'), 'utf8');
+      return sendRaw(res, 200, 'text/yaml; charset=utf-8', raw);
+    }
+
     if (req.method === 'GET' && (path === '/' || path === '/catalog')) {
       return sendJson(res, 200, {
         ok: true,
         service: 'conectmax-portal-api',
         implementados: IMPLEMENTED,
+        docs: '/docs',
+        openapi: '/openapi.json',
         ...CATALOG,
       });
     }

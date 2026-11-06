@@ -2,7 +2,8 @@
 
 API local: login no [Portal do Franqueado](https://franqueado.conectmax.com/) + GETs de busca.
 
-- Mapa completo: [`GETS.md`](GETS.md)
+- **Swagger / OpenAPI:** [`openapi.yaml`](openapi.yaml) · UI `http://127.0.0.1:4175/docs` · JSON `/openapi.json`
+- Mapa portal: [`GETS.md`](GETS.md)
 - Painel: [`../connectmax/docs/portal-franqueado.md`](../connectmax/docs/portal-franqueado.md)
 
 ## Pré-requisito
@@ -21,6 +22,8 @@ npm start
 
 | GET | Fonte portal |
 |-----|----------------|
+| `/docs` | Swagger UI |
+| `/openapi.json` / `/openapi.yaml` | spec OpenAPI 3 |
 | `/catalog` | catálogo |
 | `/health` | liveness |
 | `/faturas` | `contasareceber` |

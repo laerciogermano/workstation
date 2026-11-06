@@ -102,8 +102,8 @@ const PROSPECCAO_VAR_GROUPS = [
 ];
 
 /** Janela de funcionamento do worker (America/Sao_Paulo); fim exclusivo. */
-const DEFAULT_PROSPECCAO_HORA_INICIO = '08:00';
-const DEFAULT_PROSPECCAO_HORA_FIM = '21:00';
+const DEFAULT_PROSPECCAO_HORA_INICIO = '07:00';
+const DEFAULT_PROSPECCAO_HORA_FIM = '19:00';
 
 const EMPTY_FORM = {
   nome: '',
@@ -879,8 +879,8 @@ export default function Agentes() {
                 <p className="muted agt-proc-hint">
                   Worker só materializa/claima jobs nesta janela
                   (America/Sao_Paulo): conectar, extrair, mensagens, prospecção.
-                  Fora dela cancela pending e fica parado. Fim exclusivo (21:00 =
-                  até 20:59).
+                  Fora dela cancela pending e fica parado. Fim exclusivo (19:00 =
+                  até 18:59).
                 </p>
                 <div className="agt-proc-hours">
                   <label>

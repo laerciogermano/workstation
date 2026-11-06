@@ -494,9 +494,9 @@ export class AgenteService implements OnModuleInit, OnModuleDestroy {
    */
   private static readonly PROSPECCAO_TZ = 'America/Sao_Paulo';
   /** Default início da janela (minutos desde 00:00 SP). */
-  private static readonly OPERATING_WINDOW_START_DEFAULT_MIN = 8 * 60;
-  /** Default fim exclusivo (21:00 SP = até 20:59). */
-  private static readonly OPERATING_WINDOW_END_DEFAULT_MIN = 21 * 60;
+  private static readonly OPERATING_WINDOW_START_DEFAULT_MIN = 7 * 60;
+  /** Default fim exclusivo (19:00 SP = até 18:59). */
+  private static readonly OPERATING_WINDOW_END_DEFAULT_MIN = 19 * 60;
 
   private saoPauloParts(date: Date): {
     year: number;
@@ -587,7 +587,7 @@ export class AgenteService implements OnModuleInit, OnModuleDestroy {
   /**
    * Janela de funcionamento do worker (todos os jobs).
    * Colunas `prospeccao_hora_*` = horário do agente (legado do nome).
-   * Default 08:00–21:00, fim exclusivo. America/Sao_Paulo.
+   * Default 07:00–19:00, fim exclusivo. America/Sao_Paulo.
    */
   private resolveOperatingWindow(agente: {
     prospeccaoHoraInicio?: string | null;

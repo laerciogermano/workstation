@@ -197,7 +197,7 @@ export class Agente {
 
   /**
    * Início da janela de funcionamento do worker (todos os jobs).
-   * HH:MM, America/Sao_Paulo. `null` → default `08:00`. Inclusivo.
+   * HH:MM, America/Sao_Paulo. `null` → default `07:00`. Inclusivo.
    * Nome da coluna legado (`prospeccao_hora_*`).
    */
   @Column({
@@ -210,7 +210,7 @@ export class Agente {
 
   /**
    * Fim da janela de funcionamento do worker (todos os jobs).
-   * HH:MM, America/Sao_Paulo. `null` → default `21:00`. Exclusivo (21:00 = até 20:59).
+   * HH:MM, America/Sao_Paulo. `null` → default `19:00`. Exclusivo (19:00 = até 18:59).
    * Nome da coluna legado (`prospeccao_hora_*`).
    */
   @Column({

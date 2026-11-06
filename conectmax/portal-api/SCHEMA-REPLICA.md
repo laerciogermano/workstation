@@ -1,78 +1,72 @@
-# Schema inferido — réplica da base do Portal Franqueado
+# Schema — réplica normalizada Portal Franqueado
 
-Fonte: HTML/ajax de `franqueado.conectmax.com` (não há dump SQL oficial).  
-**Postgres Contabo (visualizações):** schema `portal_franqueado` — sync Campinas:  
-`node scripts/sync-campinas-postgres.mjs` (credenciais `../connectmax/vendas/api/.env`).  
-Colunas + `payload jsonb` = mesmo objeto dos GETs do [`dashboard.html`](dashboard.html).  
-Views: `v_dashboard_orcamentos|pedidos|notas|faturas|atrasados`.  
+Fonte: HTML/ajax de `franqueado.conectmax.com`.  
+Postgres Contabo: schema **`portal_franqueado`**.  
+Sync Campinas: `node scripts/sync-campinas-postgres.mjs`  
+DDL: [`sql/schema-normalizado.sql`](sql/schema-normalizado.sql)  
+Credenciais: `../connectmax/vendas/api/.env`
 
-**APIs do dashboard** (portal-api → Contabo, mesmo shape das listas live):
-
-| GET | Tabela | listKey |
-|---|---|---|
-| `/db/health` | meta franquias | — |
-| `/db/orcamentos` | `orcamentos` | `orcamentos` |
-| `/db/pedidos` | `pedidos` | `pedidos` |
-| `/db/notas-fiscais` | `notas_fiscais` | `notasFiscais` |
-| `/db/faturas` | `faturas` | `faturas` |
-| `/db/atrasados` | `faturas` (Vencida) | `faturas` |
-
-Query: `data_inicial`, `data_final` (ou `from`/`to`), `status`, `franquia_id` (default **9** Campinas).  
-Dump JSONL local (opcional): `scripts/dump-replica.mjs`  
-Segurança: [`SEGURANCA-ISOLAMENTO-FRANQUIAS.md`](SEGURANCA-ISOLAMENTO-FRANQUIAS.md)
-
-## Funil (domínio)
+## Funil
 
 ```text
 franquia ─┬─ vendedor
-          ├─ cliente (CNPJ/CPF)
+          ├─ cliente (CNPJ/nome)
           │
-          └─ orcamento ──► pedido ─┬─ pedido_item (produto)
-                                   ├─ nota_fiscal (+ XML/PDF)
-                                   └─ conta_receber ──► boleto
+          └─ orcamento ──► pedido ─┬─ pedido_item
+                                   ├─ nota_fiscal (+ nota_fiscal_xml opcional)
+                                   └─ conta_receber
+          └─ faturamento_linha
+          └─ chamado / notificacao
 ```
 
 ## Tabelas
 
-| Tabela | PK | FK / ligação | Campos principais | Fonte |
-|---|---|---|---|---|
-| `franquia` | `id` | — | razao_social, cnpj | NF XML emitente + id |
-| `vendedor` | `id` (portal) | `franquia_id` | nome | select / faturamento / pedido |
-| `cliente` | `cnpj` (natural) | — | nome, email, telefone | pedido detalhe / listagens |
-| `orcamento` | `id` | franquia?, vendedor, cliente | numero, data, status, total | `page=orcamentos` |
-| `pedido` | `id` | `orcamento`, vendedor, cliente, franquia | data, status, total, email, tel | lista + `pedidos_edicao` |
-| `pedido_item` | (pedido_id, seq) | `pedido`, `id_produto?` | produto, ncm, qtd, valores, lucro | POST `ajax/pedidos/produtos.php` |
-| `nota_fiscal` | `id` | pedido? (via título/faturamento) | numero, status, cliente, data, total, transportadora | `page=notas_fiscais` |
-| `nota_fiscal_xml` | `nota_id` | `nota_fiscal` | xml (NF-e) | `ajax/notas_fiscais/xml.php` |
-| `conta_receber` | `id` | nota, pedido, cliente | status, vencimento, valor, fatura_n | `page=contasareceber` |
-| `faturamento_linha` | — | franquia, vendedor, nota, pedido | data, total | excel faturamento |
-| `chamado` | `id` | — | status, assunto… | `page=chamados` (só sessão) |
-| `notificacao` | `id` | — | — | inbox sessão |
+| Tabela | PK | FKs | Conteúdo |
+|---|---|---|---|
+| `franquia` | `id` | — | razao_social, cnpj, nome |
+| `vendedor` | `id` serial | `franquia_id` | nome, `portal_id` |
+| `cliente` | `id` serial | `franquia_id` | cnpj, nome, email, tel, whatsapp |
+| `orcamento` | `id` portal | franquia, vendedor, cliente | numero, data, status, total |
+| `pedido` | `id` portal | franquia, **orcamento_id**, vendedor, cliente | data, status, total, contato |
+| `pedido_item` | `(pedido_id, seq)` | pedido | produto, ncm, qtd, valores |
+| `nota_fiscal` | `id` portal | franquia, cliente | numero, status, transportadora, total |
+| `nota_fiscal_xml` | `nota_id` | nota_fiscal | xml (só se populado) |
+| `conta_receber` | `id` portal | franquia, **nota_id**, **pedido_id**, cliente | vencimento, valor, status |
+| `faturamento_linha` | serial | franquia | vendedor, nota, pedido, data, total |
+| `chamado` | serial | franquia | suporte |
+| `notificacao` | serial | franquia | inbox |
 
-## Status (enums observados)
+## APIs (`/db/*`) — dashboard + modelo
 
-- orcamento: Em aberto, Aprovado, Reprovado, Contra proposta, Cancelado, Enviado  
-- pedido: Rascunho, Em análise, Aprovado, Reprovado, Cancelado, Faturado  
-- nota: aguardando, cancelado, rejeitado, enviado  
-- conta: Aberta, Quitada, Vencida, Próxima ao vencimento, Estornada, Falta arquivo  
+| GET | Origem | Shape |
+|---|---|---|
+| `/db/health` | contagens | meta |
+| `/db/orcamentos` | `orcamento` | igual dashboard (`orcamentos[]`) |
+| `/db/pedidos` | `pedido` | `pedidos[]` |
+| `/db/notas-fiscais` | `nota_fiscal` | `notasFiscais[]` |
+| `/db/faturas` | `conta_receber` | `faturas[]` |
+| `/db/atrasados` | `conta_receber` Vencida | `faturas[]` |
+| `/db/vendedores` | `vendedor` | `vendedores[]` |
+| `/db/clientes` | `cliente` | `clientes[]` |
+| `/db/pedido-itens?pedido_id=` | `pedido_item` | `itens[]` |
+| `/db/faturamento-linhas` | `faturamento_linha` | `detalhe[]` |
 
-## O que dá para replicar bem
+Query comum: `data_inicial`/`data_final`, `status`, `franquia_id` (default **9**).
 
-- Listagens comerciais/financeiras por franquia (`id_franqueado` / `id_franqueado_rel`)
-- Detalhe de pedido (contato) + itens
-- Totais de faturamento por vendedor/NF×pedido
-- Emitente (franquia) via XML
+## Sync
 
-## Lacunas (não vêm do portal franqueado)
+```bash
+# completo (listas + itens de pedido — demora)
+node scripts/sync-campinas-postgres.mjs
 
-- Cadastro mestre de produtos/estoque/preço de tabela completo  
-- Usuários, senhas, permissões, funcionários  
-- Bancos / planos de conta / conciliação além do título  
-- Histórico completo de status / auditoria  
-- Orçamento itens (formulário `orcamentos_edicao` — não parseado ainda)  
-- Transportadoras / CFOPs como tabelas mestre  
-- Anexos além de PDF/XML/boleto pontuais  
+# só listas / FKs (rápido)
+node scripts/sync-campinas-postgres.mjs --skip-itens
+
+# atrasados com email/whatsapp
+node scripts/sync-campinas-postgres.mjs --contato --skip-itens
+```
 
 ## Caminho inverso
 
-- Remover réplica: apagar `SCHEMA-REPLICA.md`, `scripts/dump-replica.mjs`, link no README e pasta `~/.config/conectmax-franqueado/replica-base/`
+- Remover schema: `DROP SCHEMA portal_franqueado CASCADE;`
+- Remover código: `sql/schema-normalizado.sql`, `scripts/sync-campinas-postgres.mjs`, `src/db*.js`, rotas `/db` em `src/index.js`

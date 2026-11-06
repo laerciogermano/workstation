@@ -1,33 +1,36 @@
 #!/usr/bin/env node
 /**
- * Sincroniza Campinas (franquia 9) → Postgres Contabo (schema portal_franqueado).
- * Formato das linhas = mesmo objeto JSON dos GETs usados pelo dashboard.html
- * (/orcamentos, /pedidos, /notas-fiscais, /faturas).
+ * Sync Campinas (franquia 9) → schema normalizado portal_franqueado (Contabo).
  *
- * Credenciais DB: conectmax/connectmax/vendas/api/.env (DB_HOST/USER/PASSWORD/NAME)
- *
- * Uso:
  *   node scripts/sync-campinas-postgres.mjs
- *   node scripts/sync-campinas-postgres.mjs --from=01/01/2020 --to=31/12/2026
- *   node scripts/sync-campinas-postgres.mjs --contato
- *
- * Default: 01/01/2015 → 31/12/2026 (todos os anos disponíveis no portal).
+ *   node scripts/sync-campinas-postgres.mjs --skip-itens
+ *   node scripts/sync-campinas-postgres.mjs --contato --itens-concurrency=8
  */
 import { readFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { fetchPageHtml, fetchPageHtmlPaginated } from '../src/portal.js';
+import { fetchAjax, fetchPageHtml, fetchPageHtmlPaginated } from '../src/portal.js';
 import { parseOrcamentosHtml } from '../src/parse-orcamentos.js';
 import { parsePedidosHtml } from '../src/parse-pedidos.js';
 import { parseNotasFiscaisHtml } from '../src/parse-notas.js';
 import { parseFaturasHtml } from '../src/parse-faturas.js';
+import { parseFaturamentoExcel } from '../src/parse-faturamento.js';
 import { parsePedidoDetalheHtml } from '../src/parse-pedido-detalhe.js';
+import { parsePedidoItensHtml } from '../src/parse-pedido-itens.js';
+import { parseChamadosHtml } from '../src/parse-chamados.js';
+import { parseNotificacoesHtml } from '../src/parse-notificacoes.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const API_ENV = join(ROOT, '../connectmax/vendas/api/.env');
+const DDL_PATH = join(ROOT, 'sql/schema-normalizado.sql');
 const FRANQUIA_ID = 9;
-const FRANQUIA_NOME = 'CONECT X CAMPINAS SOLUCOES EMPRESARIAIS LTDA';
+const FRANQUIA = {
+  id: 9,
+  razao: 'CONECT X CAMPINAS SOLUCOES EMPRESARIAIS LTDA',
+  cnpj: '62248210000150',
+  nome: 'Campinas',
+};
 
 const require = createRequire(
   join(ROOT, '../connectmax/vendas/api/package.json'),
@@ -45,6 +48,9 @@ function hasFlag(name) {
 const FROM = arg('from', '01/01/2015');
 const TO = arg('to', '31/12/2026');
 const WITH_CONTATO = hasFlag('contato');
+const SKIP_ITENS = hasFlag('skip-itens');
+const ONLY_ITENS = hasFlag('only-itens');
+const CONCURRENCY = Math.max(1, Number(arg('itens-concurrency', '6')) || 6);
 
 async function loadDbEnv() {
   const text = await readFile(API_ENV, 'utf8');
@@ -63,280 +69,407 @@ async function loadDbEnv() {
   };
 }
 
-const DDL = `
-CREATE SCHEMA IF NOT EXISTS portal_franqueado;
+function digitsCnpj(s) {
+  const d = String(s || '').replace(/\D/g, '');
+  return d || null;
+}
 
-CREATE TABLE IF NOT EXISTS portal_franqueado.franquia (
-  id INTEGER PRIMARY KEY,
-  nome TEXT NOT NULL,
-  synced_at TIMESTAMPTZ
-);
+function normNome(s) {
+  return String(s || '').trim().replace(/\s+/g, ' ') || null;
+}
 
--- payload = objeto idêntico ao item do GET da portal-api / dashboard
-CREATE TABLE IF NOT EXISTS portal_franqueado.orcamentos (
-  franquia_id INTEGER NOT NULL REFERENCES portal_franqueado.franquia(id),
-  id BIGINT NOT NULL,
-  numero INTEGER,
-  data TEXT,
-  status TEXT,
-  cliente TEXT,
-  vendedor TEXT,
-  total DOUBLE PRECISION,
-  total_texto TEXT,
-  payload JSONB NOT NULL,
-  synced_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  PRIMARY KEY (franquia_id, id)
-);
-
-CREATE TABLE IF NOT EXISTS portal_franqueado.pedidos (
-  franquia_id INTEGER NOT NULL REFERENCES portal_franqueado.franquia(id),
-  id BIGINT NOT NULL,
-  numero INTEGER,
-  data TEXT,
-  orcamento INTEGER,
-  status TEXT,
-  cliente TEXT,
-  vendedor TEXT,
-  total DOUBLE PRECISION,
-  total_texto TEXT,
-  payload JSONB NOT NULL,
-  synced_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  PRIMARY KEY (franquia_id, id)
-);
-
-CREATE TABLE IF NOT EXISTS portal_franqueado.notas_fiscais (
-  franquia_id INTEGER NOT NULL REFERENCES portal_franqueado.franquia(id),
-  id BIGINT NOT NULL,
-  numero INTEGER,
-  data TEXT,
-  status TEXT,
-  tipo TEXT,
-  cliente TEXT,
-  transportadora TEXT,
-  total DOUBLE PRECISION,
-  total_texto TEXT,
-  pdf TEXT,
-  xml TEXT,
-  payload JSONB NOT NULL,
-  synced_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  PRIMARY KEY (franquia_id, id)
-);
-
-CREATE TABLE IF NOT EXISTS portal_franqueado.faturas (
-  franquia_id INTEGER NOT NULL REFERENCES portal_franqueado.franquia(id),
-  id BIGINT NOT NULL,
-  status TEXT,
-  vencimento TEXT,
-  titulo TEXT,
-  fatura_n INTEGER,
-  nf_numero INTEGER,
-  id_nota BIGINT,
-  pedido BIGINT,
-  cliente TEXT,
-  cnpj TEXT,
-  descricao TEXT,
-  valor DOUBLE PRECISION,
-  valor_texto TEXT,
-  email TEXT,
-  telefone TEXT,
-  whatsapp TEXT,
-  payload JSONB NOT NULL,
-  synced_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  PRIMARY KEY (franquia_id, id)
-);
-
-CREATE INDEX IF NOT EXISTS idx_portal_orc_status ON portal_franqueado.orcamentos (franquia_id, status);
-CREATE INDEX IF NOT EXISTS idx_portal_ped_status ON portal_franqueado.pedidos (franquia_id, status);
-CREATE INDEX IF NOT EXISTS idx_portal_nf_status ON portal_franqueado.notas_fiscais (franquia_id, status);
-CREATE INDEX IF NOT EXISTS idx_portal_fat_status ON portal_franqueado.faturas (franquia_id, status);
-CREATE INDEX IF NOT EXISTS idx_portal_fat_venc ON portal_franqueado.faturas (franquia_id, vencimento);
-
--- Visões no formato agregado do dashboard (listKey)
-CREATE OR REPLACE VIEW portal_franqueado.v_dashboard_orcamentos AS
-SELECT franquia_id,
-       jsonb_agg(payload ORDER BY id DESC) AS orcamentos,
-       count(*)::int AS total,
-       coalesce(sum(total),0) AS "totalValor"
-FROM portal_franqueado.orcamentos
-GROUP BY franquia_id;
-
-CREATE OR REPLACE VIEW portal_franqueado.v_dashboard_pedidos AS
-SELECT franquia_id,
-       jsonb_agg(payload ORDER BY id DESC) AS pedidos,
-       count(*)::int AS total,
-       coalesce(sum(total),0) AS "totalValor"
-FROM portal_franqueado.pedidos
-GROUP BY franquia_id;
-
-CREATE OR REPLACE VIEW portal_franqueado.v_dashboard_notas AS
-SELECT franquia_id,
-       jsonb_agg(payload ORDER BY id DESC) AS "notasFiscais",
-       count(*)::int AS total,
-       coalesce(sum(total),0) AS "totalValor"
-FROM portal_franqueado.notas_fiscais
-GROUP BY franquia_id;
-
-CREATE OR REPLACE VIEW portal_franqueado.v_dashboard_faturas AS
-SELECT franquia_id,
-       jsonb_agg(payload ORDER BY id DESC) AS faturas,
-       count(*)::int AS total,
-       coalesce(sum(valor),0) AS "totalValor"
-FROM portal_franqueado.faturas
-GROUP BY franquia_id;
-
-CREATE OR REPLACE VIEW portal_franqueado.v_dashboard_atrasados AS
-SELECT franquia_id,
-       jsonb_agg(payload ORDER BY id DESC) AS faturas,
-       count(*)::int AS total,
-       coalesce(sum(valor),0) AS "totalValor"
-FROM portal_franqueado.faturas
-WHERE status = 'Vencida'
-GROUP BY franquia_id;
-`;
-
-async function upsertBatch(client, table, cols, rows, valuesFn) {
-  if (!rows.length) return 0;
-  const chunk = 80;
-  let n = 0;
-  for (let i = 0; i < rows.length; i += chunk) {
-    const part = rows.slice(i, i + chunk);
+async function seedVendedores(client, nomes) {
+  const uniq = [...new Set([...nomes].map(normNome).filter(Boolean))];
+  for (let i = 0; i < uniq.length; i += 80) {
+    const part = uniq.slice(i, i + 80);
     const params = [];
-    const tuples = part.map((row, ri) => {
-      const vals = valuesFn(row);
+    const vals = part.map((n, j) => {
+      const b = params.length;
+      params.push(FRANQUIA_ID, n);
+      return `($${b + 1},$${b + 2})`;
+    });
+    await client.query(
+      `INSERT INTO portal_franqueado.vendedor (franquia_id, nome)
+       VALUES ${vals.join(',')}
+       ON CONFLICT (franquia_id, nome) DO NOTHING`,
+      params,
+    );
+  }
+  const { rows } = await client.query(
+    `SELECT id, nome FROM portal_franqueado.vendedor WHERE franquia_id=$1`,
+    [FRANQUIA_ID],
+  );
+  const cache = new Map();
+  for (const r of rows) cache.set(String(r.nome).toLowerCase(), r.id);
+  return cache;
+}
+
+async function seedClientes(client, list) {
+  /** @type {Map<string,{nome:string,cnpj?:string|null,email?:string|null,telefone?:string|null,whatsapp?:string|null}>} */
+  const byKey = new Map();
+  for (const raw of list) {
+    const n = normNome(raw.nome);
+    if (!n) continue;
+    const c = digitsCnpj(raw.cnpj);
+    const key = c ? `c:${c}` : `n:${n.toLowerCase()}`;
+    const prev = byKey.get(key) || { nome: n, cnpj: c };
+    byKey.set(key, {
+      nome: n,
+      cnpj: c || prev.cnpj || null,
+      email: raw.email || prev.email || null,
+      telefone: raw.telefone || prev.telefone || null,
+      whatsapp: raw.whatsapp || prev.whatsapp || null,
+    });
+  }
+  const all = [...byKey.values()];
+  for (let i = 0; i < all.length; i += 50) {
+    const part = all.slice(i, i + 50);
+    for (const r of part) {
+      if (r.cnpj) {
+        await client.query(
+          `INSERT INTO portal_franqueado.cliente (franquia_id, cnpj, nome, email, telefone, whatsapp)
+           VALUES ($1,$2,$3,$4,$5,$6)
+           ON CONFLICT (franquia_id, cnpj) WHERE cnpj IS NOT NULL AND cnpj <> ''
+           DO UPDATE SET
+             nome = EXCLUDED.nome,
+             email = COALESCE(EXCLUDED.email, portal_franqueado.cliente.email),
+             telefone = COALESCE(EXCLUDED.telefone, portal_franqueado.cliente.telefone),
+             whatsapp = COALESCE(EXCLUDED.whatsapp, portal_franqueado.cliente.whatsapp)`,
+          [FRANQUIA_ID, r.cnpj, r.nome, r.email, r.telefone, r.whatsapp],
+        );
+      } else {
+        await client.query(
+          `INSERT INTO portal_franqueado.cliente (franquia_id, cnpj, nome, email, telefone, whatsapp)
+           VALUES ($1,NULL,$2,$3,$4,$5)
+           ON CONFLICT (franquia_id, nome) WHERE cnpj IS NULL OR cnpj = ''
+           DO UPDATE SET
+             email = COALESCE(EXCLUDED.email, portal_franqueado.cliente.email),
+             telefone = COALESCE(EXCLUDED.telefone, portal_franqueado.cliente.telefone),
+             whatsapp = COALESCE(EXCLUDED.whatsapp, portal_franqueado.cliente.whatsapp)`,
+          [FRANQUIA_ID, r.nome, r.email, r.telefone, r.whatsapp],
+        );
+      }
+    }
+  }
+  const { rows } = await client.query(
+    `SELECT id, cnpj, nome FROM portal_franqueado.cliente WHERE franquia_id=$1`,
+    [FRANQUIA_ID],
+  );
+  const cache = new Map();
+  for (const r of rows) {
+    if (r.cnpj) cache.set(`c:${r.cnpj}`, r.id);
+    cache.set(`n:${String(r.nome).toLowerCase()}`, r.id);
+  }
+  return cache;
+}
+
+function clienteId(cache, nome, cnpj) {
+  const c = digitsCnpj(cnpj);
+  if (c && cache.has(`c:${c}`)) return cache.get(`c:${c}`);
+  const n = normNome(nome);
+  if (n && cache.has(`n:${n.toLowerCase()}`)) return cache.get(`n:${n.toLowerCase()}`);
+  return null;
+}
+
+function vendedorId(cache, nome) {
+  const n = normNome(nome);
+  return n ? cache.get(n.toLowerCase()) || null : null;
+}
+
+async function insertChunks(client, sqlPrefix, rows, rowToParams, chunkSize = 100) {
+  for (let i = 0; i < rows.length; i += chunkSize) {
+    const part = rows.slice(i, i + chunkSize);
+    const params = [];
+    const tuples = part.map((row) => {
+      const vals = rowToParams(row);
       const base = params.length;
       params.push(...vals);
       return `(${vals.map((_, j) => `$${base + j + 1}`).join(',')})`;
     });
-    const updates = cols
-      .filter((c) => c !== 'franquia_id' && c !== 'id')
-      .map((c) => `${c}=EXCLUDED.${c}`)
-      .join(', ');
-    await client.query(
-      `INSERT INTO portal_franqueado.${table} (${cols.join(',')})
-       VALUES ${tuples.join(',')}
-       ON CONFLICT (franquia_id, id) DO UPDATE SET ${updates}`,
-      params,
-    );
-    n += part.length;
+    await client.query(`${sqlPrefix} VALUES ${tuples.join(',')}`, params);
   }
-  return n;
 }
 
-async function enrichContato(faturas) {
-  const pedidoIds = [
-    ...new Set(
-      faturas
-        .filter((f) => f.status === 'Vencida' && f.pedido)
-        .map((f) => f.pedido),
-    ),
-  ];
-  const cache = new Map();
-  for (const id of pedidoIds) {
+async function mapPool(items, concurrency, fn) {
+  let i = 0;
+  const workers = Array.from({ length: concurrency }, async () => {
+    while (i < items.length) {
+      const idx = i++;
+      await fn(items[idx], idx);
+    }
+  });
+  await Promise.all(workers);
+}
+
+async function syncOnlyItens(pool) {
+  const { rows: pedidos } = await pool.query(
+    `SELECT id FROM portal_franqueado.pedido WHERE franquia_id=$1 ORDER BY id`,
+    [FRANQUIA_ID],
+  );
+  console.log(`only-itens · ${pedidos.length} pedidos · concurrency=${CONCURRENCY}`);
+  await pool.query(
+    `DELETE FROM portal_franqueado.pedido_item WHERE franquia_id=$1`,
+    [FRANQUIA_ID],
+  );
+  let itensCount = 0;
+  let done = 0;
+  await mapPool(pedidos, CONCURRENCY, async (p) => {
+    const client = await pool.connect();
     try {
       const { html } = await fetchPageHtml('pedidos_edicao', {
-        id_pedido: id,
+        id_pedido: p.id,
         action: 'visualizar',
       });
-      cache.set(id, parsePedidoDetalheHtml(html, id));
-      process.stdout.write('.');
+      const d = parsePedidoDetalheHtml(html, Number(p.id));
+      await client.query(
+        `UPDATE portal_franqueado.pedido SET
+           cnpj=COALESCE($2,cnpj),
+           email=COALESCE($3,email),
+           telefone=COALESCE($4,telefone),
+           whatsapp=COALESCE($5,whatsapp),
+           cliente_nome=COALESCE($6,cliente_nome),
+           vendedor_nome=COALESCE($7,vendedor_nome)
+         WHERE id=$1`,
+        [
+          p.id,
+          digitsCnpj(d.cnpj),
+          d.email,
+          d.telefone,
+          d.whatsapp,
+          d.cliente,
+          d.vendedor,
+        ],
+      );
+      const prod = await fetchAjax(
+        '/franqueado/ajax/pedidos/produtos.php',
+        { id_pedido: p.id },
+        { method: 'POST' },
+      );
+      const lines = parsePedidoItensHtml(prod.body);
+      for (let seq = 0; seq < lines.length; seq++) {
+        const it = lines[seq];
+        await client.query(
+          `INSERT INTO portal_franqueado.pedido_item
+           (pedido_id,seq,franquia_id,id_produto,produto,ncm,quantidade,valor_unitario,
+            lucro_percentual,valor_extra,total,total_unidade)
+           VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
+           ON CONFLICT (pedido_id, seq) DO UPDATE SET
+             produto=EXCLUDED.produto, total=EXCLUDED.total`,
+          [
+            p.id,
+            seq + 1,
+            FRANQUIA_ID,
+            it.idProduto,
+            it.produto,
+            it.ncm,
+            it.quantidade,
+            it.valorUnitario,
+            it.lucroPercentual,
+            it.valorExtra,
+            it.total,
+            it.totalUnidade,
+          ],
+        );
+        itensCount += 1;
+      }
     } catch (e) {
-      cache.set(id, { erro: e.message });
+      console.warn(`\npedido ${p.id}: ${e.message}`);
+    } finally {
+      client.release();
     }
-  }
-  if (pedidoIds.length) process.stdout.write('\n');
-  return faturas.map((f) => {
-    const d = f.pedido ? cache.get(f.pedido) : null;
-    if (!d || d.erro) return f;
-    return {
-      ...f,
-      email: d.email ?? null,
-      telefone: d.telefone ?? null,
-      whatsapp: d.whatsapp ?? null,
-    };
+    done += 1;
+    if (done % 25 === 0 || done === pedidos.length) {
+      process.stdout.write(`  itens progress ${done}/${pedidos.length} (rows=${itensCount})\n`);
+    }
   });
+  console.log('pedido_item ok', itensCount);
 }
 
 async function main() {
   const range = { data_inicial: FROM, data_final: TO };
-  console.log(`Campinas id=${FRANQUIA_ID} · ${FROM} → ${TO}`);
+  console.log(
+    `Campinas ${FRANQUIA_ID} · ${FROM} → ${TO} · itens=${!SKIP_ITENS} · onlyItens=${ONLY_ITENS}`,
+  );
+
+  if (ONLY_ITENS) {
+    const db = await loadDbEnv();
+    const { Pool } = require('pg');
+    const pool = new Pool({ ...db, max: CONCURRENCY + 1 });
+    try {
+      await syncOnlyItens(pool);
+    } finally {
+      await pool.end();
+    }
+    return;
+  }
 
   console.log('fetch orcamentos…');
-  const orcHtml = await fetchPageHtmlPaginated('orcamentos', range, { all: true });
-  const orcamentos = parseOrcamentosHtml(orcHtml.html);
+  const orcamentos = parseOrcamentosHtml(
+    (await fetchPageHtmlPaginated('orcamentos', range, { all: true })).html,
+  );
   console.log(' ', orcamentos.length);
 
   console.log('fetch pedidos…');
-  const pedHtml = await fetchPageHtmlPaginated('pedidos', range, { all: true });
-  const pedidos = parsePedidosHtml(pedHtml.html);
+  const pedidos = parsePedidosHtml(
+    (await fetchPageHtmlPaginated('pedidos', range, { all: true })).html,
+  );
   console.log(' ', pedidos.length);
 
   console.log('fetch notas…');
-  const nfHtml = await fetchPageHtmlPaginated('notas_fiscais', range, { all: true });
-  const notas = parseNotasFiscaisHtml(nfHtml.html);
+  const notas = parseNotasFiscaisHtml(
+    (await fetchPageHtmlPaginated('notas_fiscais', range, { all: true })).html,
+  );
   console.log(' ', notas.length);
 
   console.log('fetch faturas…');
-  const crHtml = await fetchPageHtml('contasareceber', range);
-  let faturas = parseFaturasHtml(crHtml.html);
+  let faturas = parseFaturasHtml(
+    (await fetchPageHtml('contasareceber', range)).html,
+  );
   console.log(' ', faturas.length);
 
+  console.log('fetch faturamento excel…');
+  const excel = await fetchAjax('/franqueado/ajax/faturamento/relatorio_excel.php', {
+    id_franqueado: FRANQUIA_ID,
+    page: 'faturamento',
+    data_inicial: FROM,
+    data_final: TO,
+  });
+  const fatLinhas = parseFaturamentoExcel(excel.body).detalhe || [];
+  console.log(' ', fatLinhas.length);
+
+  console.log('fetch chamados / notificacoes…');
+  const chamados = parseChamadosHtml(
+    (await fetchPageHtml('chamados', range)).html,
+  );
+  const notificacoes = parseNotificacoesHtml(
+    (await fetchPageHtml('notificacoes', range)).html,
+  );
+  console.log(' ', chamados.length, notificacoes.length);
+
   if (WITH_CONTATO) {
-    console.log('enrich contato (vencidas)…');
-    faturas = await enrichContato(faturas);
+    console.log('enrich contato vencidas…');
+    const ids = [
+      ...new Set(
+        faturas.filter((f) => f.status === 'Vencida' && f.pedido).map((f) => f.pedido),
+      ),
+    ];
+    const cache = new Map();
+    await mapPool(ids, CONCURRENCY, async (id) => {
+      try {
+        const { html } = await fetchPageHtml('pedidos_edicao', {
+          id_pedido: id,
+          action: 'visualizar',
+        });
+        cache.set(id, parsePedidoDetalheHtml(html, id));
+      } catch (e) {
+        cache.set(id, { erro: e.message });
+      }
+    });
+    faturas = faturas.map((f) => {
+      const d = f.pedido ? cache.get(f.pedido) : null;
+      if (!d || d.erro) return f;
+      return {
+        ...f,
+        email: d.email ?? null,
+        telefone: d.telefone ?? null,
+        whatsapp: d.whatsapp ?? null,
+        cnpj: d.cnpj || f.cnpj,
+        cliente: d.cliente || f.cliente,
+      };
+    });
   }
 
   const db = await loadDbEnv();
-  console.log(`postgres ${db.user}@${db.host}:${db.port}/${db.database}`);
+  const ddl = await readFile(DDL_PATH, 'utf8');
+  console.log(`postgres ${db.user}@${db.host}/${db.database}`);
   const client = new Client(db);
   await client.connect();
+
   try {
-    await client.query(DDL);
+    await client.query(ddl);
     await client.query(
-      `INSERT INTO portal_franqueado.franquia (id, nome, synced_at)
-       VALUES ($1,$2,now())
-       ON CONFLICT (id) DO UPDATE SET nome=EXCLUDED.nome, synced_at=now()`,
-      [FRANQUIA_ID, FRANQUIA_NOME],
+      `INSERT INTO portal_franqueado.franquia (id, razao_social, cnpj, nome, synced_at)
+       VALUES ($1,$2,$3,$4,now())
+       ON CONFLICT (id) DO UPDATE SET
+         razao_social=EXCLUDED.razao_social,
+         cnpj=EXCLUDED.cnpj,
+         nome=EXCLUDED.nome,
+         synced_at=now()`,
+      [FRANQUIA.id, FRANQUIA.razao, FRANQUIA.cnpj, FRANQUIA.nome],
     );
 
-    // replace snapshot da franquia (evita órfãos fora do período)
     await client.query('BEGIN');
+
+    // limpa filhos da franquia (ordem FK)
     await client.query(
-      'DELETE FROM portal_franqueado.orcamentos WHERE franquia_id=$1',
+      `DELETE FROM portal_franqueado.pedido_item WHERE franquia_id=$1`,
       [FRANQUIA_ID],
     );
     await client.query(
-      'DELETE FROM portal_franqueado.pedidos WHERE franquia_id=$1',
+      `DELETE FROM portal_franqueado.nota_fiscal_xml nf USING portal_franqueado.nota_fiscal n
+       WHERE nf.nota_id=n.id AND n.franquia_id=$1`,
       [FRANQUIA_ID],
     );
     await client.query(
-      'DELETE FROM portal_franqueado.notas_fiscais WHERE franquia_id=$1',
+      `DELETE FROM portal_franqueado.conta_receber WHERE franquia_id=$1`,
       [FRANQUIA_ID],
     );
     await client.query(
-      'DELETE FROM portal_franqueado.faturas WHERE franquia_id=$1',
+      `DELETE FROM portal_franqueado.pedido WHERE franquia_id=$1`,
+      [FRANQUIA_ID],
+    );
+    await client.query(
+      `DELETE FROM portal_franqueado.nota_fiscal WHERE franquia_id=$1`,
+      [FRANQUIA_ID],
+    );
+    await client.query(
+      `DELETE FROM portal_franqueado.orcamento WHERE franquia_id=$1`,
+      [FRANQUIA_ID],
+    );
+    await client.query(
+      `DELETE FROM portal_franqueado.faturamento_linha WHERE franquia_id=$1`,
+      [FRANQUIA_ID],
+    );
+    await client.query(
+      `DELETE FROM portal_franqueado.chamado WHERE franquia_id=$1`,
+      [FRANQUIA_ID],
+    );
+    await client.query(
+      `DELETE FROM portal_franqueado.notificacao WHERE franquia_id=$1`,
       [FRANQUIA_ID],
     );
 
-    const nOrc = await upsertBatch(
+    console.log('seed vendedor/cliente…');
+    const vendCache = await seedVendedores(client, [
+      ...orcamentos.map((r) => r.vendedor),
+      ...pedidos.map((r) => r.vendedor),
+      ...fatLinhas.map((r) => r.vendedor),
+    ]);
+    const cliCache = await seedClientes(client, [
+      ...orcamentos.map((r) => ({ nome: r.cliente })),
+      ...pedidos.map((r) => ({ nome: r.cliente })),
+      ...notas.map((r) => ({ nome: r.cliente })),
+      ...faturas.map((r) => ({
+        nome: r.cliente,
+        cnpj: r.cnpj,
+        email: r.email,
+        telefone: r.telefone,
+        whatsapp: r.whatsapp,
+      })),
+    ]);
+    console.log('  vendedores', vendCache.size, 'clientes', cliCache.size);
+
+    const orcIds = new Set(orcamentos.map((o) => o.id));
+    await insertChunks(
       client,
-      'orcamentos',
-      [
-        'franquia_id',
-        'id',
-        'numero',
-        'data',
-        'status',
-        'cliente',
-        'vendedor',
-        'total',
-        'total_texto',
-        'payload',
-        'synced_at',
-      ],
+      `INSERT INTO portal_franqueado.orcamento
+       (id,franquia_id,vendedor_id,cliente_id,numero,data,status,cliente_nome,vendedor_nome,total,total_texto)`,
       orcamentos,
       (r) => [
-        FRANQUIA_ID,
         r.id,
+        FRANQUIA_ID,
+        vendedorId(vendCache, r.vendedor),
+        clienteId(cliCache, r.cliente),
         r.numero,
         r.data,
         r.status,
@@ -344,143 +477,243 @@ async function main() {
         r.vendedor,
         r.total,
         r.totalTexto ?? null,
-        JSON.stringify(r),
-        new Date(),
       ],
     );
+    console.log('orcamento ok', orcamentos.length);
 
-    const nPed = await upsertBatch(
+    await insertChunks(
       client,
-      'pedidos',
-      [
-        'franquia_id',
-        'id',
-        'numero',
-        'data',
-        'orcamento',
-        'status',
-        'cliente',
-        'vendedor',
-        'total',
-        'total_texto',
-        'payload',
-        'synced_at',
-      ],
+      `INSERT INTO portal_franqueado.pedido
+       (id,franquia_id,orcamento_id,vendedor_id,cliente_id,numero,data,status,cliente_nome,vendedor_nome,total,total_texto)`,
       pedidos,
       (r) => [
-        FRANQUIA_ID,
         r.id,
-        r.numero,
+        FRANQUIA_ID,
+        r.orcamento && orcIds.has(r.orcamento) ? r.orcamento : null,
+        vendedorId(vendCache, r.vendedor),
+        clienteId(cliCache, r.cliente),
+        r.numero ?? r.id,
         r.data,
-        r.orcamento,
         r.status,
         r.cliente,
         r.vendedor,
         r.total,
         r.totalTexto ?? null,
-        JSON.stringify(r),
-        new Date(),
       ],
     );
+    console.log('pedido ok', pedidos.length);
 
-    const nNf = await upsertBatch(
+    await insertChunks(
       client,
-      'notas_fiscais',
-      [
-        'franquia_id',
-        'id',
-        'numero',
-        'data',
-        'status',
-        'tipo',
-        'cliente',
-        'transportadora',
-        'total',
-        'total_texto',
-        'pdf',
-        'xml',
-        'payload',
-        'synced_at',
-      ],
+      `INSERT INTO portal_franqueado.nota_fiscal
+       (id,franquia_id,cliente_id,numero,status,tipo,cliente_nome,data,transportadora,total,total_texto,pdf,xml_url)`,
       notas,
       (r) => [
-        FRANQUIA_ID,
         r.id,
+        FRANQUIA_ID,
+        clienteId(cliCache, r.cliente),
         r.numero,
-        r.data,
         r.status,
         r.tipo,
         r.cliente,
+        r.data,
         r.transportadora,
         r.total,
         r.totalTexto ?? null,
-        r.pdf,
-        r.xml,
-        JSON.stringify(r),
-        new Date(),
+        r.pdf ?? null,
+        r.xml ?? null,
       ],
     );
+    console.log('nota_fiscal ok', notas.length);
 
-    const nFat = await upsertBatch(
+    const pedIds = new Set(pedidos.map((p) => p.id));
+    const nfIds = new Set(notas.map((n) => n.id));
+    await insertChunks(
       client,
-      'faturas',
-      [
-        'franquia_id',
-        'id',
-        'status',
-        'vencimento',
-        'titulo',
-        'fatura_n',
-        'nf_numero',
-        'id_nota',
-        'pedido',
-        'cliente',
-        'cnpj',
-        'descricao',
-        'valor',
-        'valor_texto',
-        'email',
-        'telefone',
-        'whatsapp',
-        'payload',
-        'synced_at',
-      ],
+      `INSERT INTO portal_franqueado.conta_receber
+       (id,franquia_id,nota_id,pedido_id,cliente_id,status,vencimento,titulo,fatura_n,nf_numero,
+        cliente_nome,cnpj,descricao,valor,valor_texto,email,telefone,whatsapp)`,
       faturas,
       (r) => [
-        FRANQUIA_ID,
         r.id,
+        FRANQUIA_ID,
+        r.idNota && nfIds.has(r.idNota) ? r.idNota : null,
+        r.pedido && pedIds.has(r.pedido) ? r.pedido : null,
+        clienteId(cliCache, r.cliente, r.cnpj),
         r.status,
         r.vencimento,
         r.titulo,
         r.faturaN,
         r.nfNumero,
-        r.idNota,
-        r.pedido,
         r.cliente,
-        r.cnpj,
+        digitsCnpj(r.cnpj),
         r.descricao,
         r.valor,
         r.valorTexto ?? null,
         r.email ?? null,
         r.telefone ?? null,
         r.whatsapp ?? null,
-        JSON.stringify(r),
-        new Date(),
       ],
     );
+    console.log('conta_receber ok', faturas.length);
+
+    await insertChunks(
+      client,
+      `INSERT INTO portal_franqueado.faturamento_linha
+       (franquia_id,vendedor_nome,nota,pedido,data,total)`,
+      fatLinhas,
+      (r) => [
+        FRANQUIA_ID,
+        r.vendedor ?? null,
+        r.nota != null ? String(r.nota) : null,
+        r.pedido != null ? String(r.pedido) : null,
+        r.data ?? null,
+        r.total ?? null,
+      ],
+    );
+    console.log('faturamento_linha ok', fatLinhas.length);
+
+    for (const r of chamados) {
+      await client.query(
+        `INSERT INTO portal_franqueado.chamado
+         (franquia_id,status,assunto,envolvidos,criado_em,editado_por,ultima_interacao,payload)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`,
+        [
+          FRANQUIA_ID,
+          r.status ?? null,
+          r.assunto ?? null,
+          r.envolvidos ?? null,
+          r.criadoEm ?? null,
+          r.editadoPor ?? null,
+          r.ultimaInteracao ?? null,
+          JSON.stringify(r),
+        ],
+      );
+    }
+    for (const r of notificacoes) {
+      await client.query(
+        `INSERT INTO portal_franqueado.notificacao
+         (franquia_id,assunto,enviado_por,data,payload)
+         VALUES ($1,$2,$3,$4,$5)`,
+        [
+          FRANQUIA_ID,
+          r.assunto ?? null,
+          r.enviadoPor ?? null,
+          r.data ?? null,
+          JSON.stringify(r),
+        ],
+      );
+    }
 
     await client.query('COMMIT');
 
-    const check = await client.query(`
-      SELECT 'orcamentos' t, count(*)::int c FROM portal_franqueado.orcamentos WHERE franquia_id=$1
-      UNION ALL SELECT 'pedidos', count(*)::int FROM portal_franqueado.pedidos WHERE franquia_id=$1
-      UNION ALL SELECT 'notas_fiscais', count(*)::int FROM portal_franqueado.notas_fiscais WHERE franquia_id=$1
-      UNION ALL SELECT 'faturas', count(*)::int FROM portal_franqueado.faturas WHERE franquia_id=$1
-      UNION ALL SELECT 'atrasados', count(*)::int FROM portal_franqueado.faturas WHERE franquia_id=$1 AND status='Vencida'
-    `, [FRANQUIA_ID]);
+    let itensCount = 0;
+    if (!SKIP_ITENS) {
+      console.log(`pedido_item · ${pedidos.length} pedidos · concurrency=${CONCURRENCY}`);
+      let done = 0;
+      await mapPool(pedidos, CONCURRENCY, async (p) => {
+        try {
+          const { html } = await fetchPageHtml('pedidos_edicao', {
+            id_pedido: p.id,
+            action: 'visualizar',
+          });
+          const d = parsePedidoDetalheHtml(html, p.id);
+          await client.query(
+            `UPDATE portal_franqueado.pedido SET
+               cnpj=COALESCE($2,cnpj),
+               email=COALESCE($3,email),
+               telefone=COALESCE($4,telefone),
+               whatsapp=COALESCE($5,whatsapp),
+               cliente_nome=COALESCE($6,cliente_nome),
+               vendedor_nome=COALESCE($7,vendedor_nome)
+             WHERE id=$1`,
+            [
+              p.id,
+              digitsCnpj(d.cnpj),
+              d.email,
+              d.telefone,
+              d.whatsapp,
+              d.cliente,
+              d.vendedor,
+            ],
+          );
+          if (d.cliente || d.cnpj) {
+            await seedClientes(client, [
+              {
+                nome: d.cliente || p.cliente,
+                cnpj: d.cnpj,
+                email: d.email,
+                telefone: d.telefone,
+                whatsapp: d.whatsapp,
+              },
+            ]);
+          }
+          if (d.vendedor) {
+            await seedVendedores(client, [d.vendedor]);
+            if (d.vendedorId) {
+              await client.query(
+                `UPDATE portal_franqueado.vendedor SET portal_id=$3
+                 WHERE franquia_id=$1 AND lower(nome)=lower($2)`,
+                [FRANQUIA_ID, d.vendedor, Number(d.vendedorId)],
+              );
+            }
+          }
+          const prod = await fetchAjax(
+            '/franqueado/ajax/pedidos/produtos.php',
+            { id_pedido: p.id },
+            { method: 'POST' },
+          );
+          const lines = parsePedidoItensHtml(prod.body);
+          for (let seq = 0; seq < lines.length; seq++) {
+            const it = lines[seq];
+            await client.query(
+              `INSERT INTO portal_franqueado.pedido_item
+               (pedido_id,seq,franquia_id,id_produto,produto,ncm,quantidade,valor_unitario,
+                lucro_percentual,valor_extra,total,total_unidade)
+               VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
+               ON CONFLICT (pedido_id, seq) DO UPDATE SET
+                 produto=EXCLUDED.produto, total=EXCLUDED.total`,
+              [
+                p.id,
+                seq + 1,
+                FRANQUIA_ID,
+                it.idProduto,
+                it.produto,
+                it.ncm,
+                it.quantidade,
+                it.valorUnitario,
+                it.lucroPercentual,
+                it.valorExtra,
+                it.total,
+                it.totalUnidade,
+              ],
+            );
+            itensCount += 1;
+          }
+        } catch (e) {
+          console.warn(`\npedido ${p.id}: ${e.message}`);
+        }
+        done += 1;
+        if (done % 25 === 0 || done === pedidos.length) {
+          process.stdout.write(`  itens progress ${done}/${pedidos.length}\n`);
+        }
+      });
+      console.log('pedido_item ok', itensCount);
+    }
 
-    console.log('inserted', { nOrc, nPed, nNf, nFat });
-    console.log('counts', Object.fromEntries(check.rows.map((r) => [r.t, r.c])));
+    const counts = await client.query(`
+      SELECT 'vendedor' t, count(*)::int c FROM portal_franqueado.vendedor WHERE franquia_id=$1
+      UNION ALL SELECT 'cliente', count(*)::int FROM portal_franqueado.cliente WHERE franquia_id=$1
+      UNION ALL SELECT 'orcamento', count(*)::int FROM portal_franqueado.orcamento WHERE franquia_id=$1
+      UNION ALL SELECT 'pedido', count(*)::int FROM portal_franqueado.pedido WHERE franquia_id=$1
+      UNION ALL SELECT 'pedido_item', count(*)::int FROM portal_franqueado.pedido_item WHERE franquia_id=$1
+      UNION ALL SELECT 'nota_fiscal', count(*)::int FROM portal_franqueado.nota_fiscal WHERE franquia_id=$1
+      UNION ALL SELECT 'conta_receber', count(*)::int FROM portal_franqueado.conta_receber WHERE franquia_id=$1
+      UNION ALL SELECT 'faturamento_linha', count(*)::int FROM portal_franqueado.faturamento_linha WHERE franquia_id=$1
+      UNION ALL SELECT 'chamado', count(*)::int FROM portal_franqueado.chamado WHERE franquia_id=$1
+      UNION ALL SELECT 'notificacao', count(*)::int FROM portal_franqueado.notificacao WHERE franquia_id=$1
+    `, [FRANQUIA_ID]);
+    console.log('counts', Object.fromEntries(counts.rows.map((r) => [r.t, r.c])));
   } catch (e) {
     await client.query('ROLLBACK').catch(() => {});
     throw e;

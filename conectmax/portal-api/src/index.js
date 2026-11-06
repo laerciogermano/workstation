@@ -20,11 +20,15 @@ import { parsePedidoItensHtml } from './parse-pedido-itens.js';
 import { getContatoCached, setContatoCached } from './contato-cache.js';
 import {
   dbAtrasados,
+  dbClientes,
+  dbFaturamentoLinhas,
   dbFaturas,
   dbHealth,
   dbNotasFiscais,
   dbOrcamentos,
+  dbPedidoItens,
   dbPedidos,
+  dbVendedores,
 } from './db-dashboard.js';
 
 const PORT = Number(process.env.PORT || 4175);
@@ -45,6 +49,10 @@ const IMPLEMENTED = [
   'GET /db/notas-fiscais',
   'GET /db/faturas',
   'GET /db/atrasados',
+  'GET /db/vendedores',
+  'GET /db/clientes',
+  'GET /db/pedido-itens',
+  'GET /db/faturamento-linhas',
   'GET /faturas',
   'GET /orcamentos',
   'GET /pedidos',
@@ -280,6 +288,22 @@ const server = createServer(async (req, res) => {
 
     if (req.method === 'GET' && path === '/db/atrasados') {
       return sendJson(res, 200, await dbAtrasados(q, dateRange(q)));
+    }
+
+    if (req.method === 'GET' && path === '/db/vendedores') {
+      return sendJson(res, 200, await dbVendedores(q));
+    }
+
+    if (req.method === 'GET' && path === '/db/clientes') {
+      return sendJson(res, 200, await dbClientes(q));
+    }
+
+    if (req.method === 'GET' && path === '/db/pedido-itens') {
+      return sendJson(res, 200, await dbPedidoItens(q));
+    }
+
+    if (req.method === 'GET' && path === '/db/faturamento-linhas') {
+      return sendJson(res, 200, await dbFaturamentoLinhas(q, dateRange(q)));
     }
 
     if (req.method === 'GET' && path === '/docs') {

@@ -7,7 +7,7 @@ API local: login no [Portal do Franqueado](https://franqueado.conectmax.com/) + 
 - Mapa portal: [`GETS.md`](GETS.md)
 - Segurança / isolamento franquias: [`SEGURANCA-ISOLAMENTO-FRANQUIAS.md`](SEGURANCA-ISOLAMENTO-FRANQUIAS.md)
 - Réplica Postgres (Campinas → Contabo): [`SCHEMA-REPLICA.md`](SCHEMA-REPLICA.md) · `node scripts/sync-campinas-postgres.mjs`
-- Dashboard lê Contabo: `GET /db/orcamentos|pedidos|notas-fiscais|faturas|atrasados` (+ `GET /db/health`)
+- Dashboard + modelo normalizado Contabo: `GET /db/*` — ver [`SCHEMA-REPLICA.md`](SCHEMA-REPLICA.md)
 - Painel: [`../connectmax/docs/portal-franqueado.md`](../connectmax/docs/portal-franqueado.md)
 
 ## Pré-requisito

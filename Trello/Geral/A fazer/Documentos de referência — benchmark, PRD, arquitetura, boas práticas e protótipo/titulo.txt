@@ -1,0 +1,1 @@
+Documentos de referência — benchmark, PRD, arquitetura, boas práticas e protótipo

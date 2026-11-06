@@ -8,8 +8,10 @@
  *
  * Uso:
  *   node scripts/sync-campinas-postgres.mjs
- *   node scripts/sync-campinas-postgres.mjs --from=01/01/2025 --to=06/11/2026
+ *   node scripts/sync-campinas-postgres.mjs --from=01/01/2020 --to=31/12/2026
  *   node scripts/sync-campinas-postgres.mjs --contato
+ *
+ * Default: 01/01/2015 → 31/12/2026 (todos os anos disponíveis no portal).
  */
 import { readFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
@@ -40,8 +42,8 @@ function hasFlag(name) {
   return process.argv.includes(`--${name}`);
 }
 
-const FROM = arg('from', '01/01/2025');
-const TO = arg('to', '06/11/2026');
+const FROM = arg('from', '01/01/2015');
+const TO = arg('to', '31/12/2026');
 const WITH_CONTATO = hasFlag('contato');
 
 async function loadDbEnv() {

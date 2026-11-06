@@ -1,0 +1,14 @@
+{
+  "name": "conectmax-portal-api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "API local: login no portal franqueado + GET /faturas (contas a receber)",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

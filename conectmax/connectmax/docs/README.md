@@ -10,4 +10,5 @@
 | Arquitetura API perfis | [`arquitetura.md`](arquitetura.md) | C4, diagramas de classe e sequência (extract → Nest → Postgres) | Feito |
 | Arquitetura prospecção CDP | [`arquitetura-prospeccao-cdp.md`](arquitetura-prospeccao-cdp.md) | Desenho alvo: front + API + worker + CDP + roteador 4G (sem AVD) | Feito |
 | Portal do Franqueado | [`portal-franqueado.md`](portal-franqueado.md) | Menu, auth PHP/sessão e endpoints ajax do painel oficial | Feito |
+| Portal API (faturas) | [`../../portal-api/README.md`](../../portal-api/README.md) | `GET /faturas` com login automático no portal | Feito |
 | Planilhas funil (xlsx) | [`planilhas-funil/`](planilhas-funil/README.md) | Snapshot local Orçamentos / Pedidos / Faturamento 2025–2026 | Feito |

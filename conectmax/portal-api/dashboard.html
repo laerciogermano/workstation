@@ -451,8 +451,7 @@
         name: 'Atrasados',
         color: 'var(--atr)',
         alert: true,
-        endpoint: '/faturas',
-        extraQuery: { status: 'Vencida', contato: '1' },
+        derived: true,
         listKey: 'faturas',
         valueField: 'valor',
         columns: [
@@ -468,10 +467,12 @@
       },
     ];
 
+    const FETCH_TIMEOUT_MS = 90000;
     const state = {
       active: 'orcamentos',
       statusFilter: null,
       data: {},
+      loadGen: 0,
     };
 
     function pad(n) { return String(n).padStart(2, '0'); }
@@ -511,12 +512,62 @@
         for (const [k, v] of Object.entries(stage.extraQuery)) p.set(k, v);
       }
       const url = `${stage.endpoint}?${p}`;
-      const res = await fetch(url);
+      const res = await fetch(url, { signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) });
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         throw new Error(err.error || `${stage.name}: HTTP ${res.status}`);
       }
       return res.json();
+    }
+
+    function buildAtrasados(faturasPayload) {
+      const items = (faturasPayload?.faturas || []).filter(
+        (f) => String(f.status || '').toLowerCase() === 'vencida',
+      );
+      const totalValor =
+        Math.round(items.reduce((s, x) => s + (Number(x.valor) || 0), 0) * 100) / 100;
+      return {
+        fonte: 'derivado de /faturas · status=Vencida',
+        total: items.length,
+        totalValor,
+        porStatus: items.length ? { Vencida: items.length } : {},
+        faturas: items,
+      };
+    }
+
+    async function enrichAtrasadosContato(gen) {
+      const atr = state.data.atrasados;
+      if (!atr?.faturas?.length) return;
+      const ids = [...new Set(
+        atr.faturas.map((f) => f.pedido).filter((n) => Number.isFinite(Number(n))),
+      )].slice(0, 40);
+      const byPedido = new Map();
+      for (const id of ids) {
+        if (gen !== state.loadGen) return;
+        try {
+          const res = await fetch(`/pedidos/${id}`, {
+            signal: AbortSignal.timeout(30000),
+          });
+          if (!res.ok) continue;
+          const json = await res.json();
+          byPedido.set(Number(id), json.pedido || {});
+        } catch {
+          /* ignore single contact failure */
+        }
+      }
+      if (gen !== state.loadGen) return;
+      atr.faturas = atr.faturas.map((f) => {
+        const d = f.pedido ? byPedido.get(Number(f.pedido)) : null;
+        if (!d) return f;
+        return {
+          ...f,
+          email: d.email ?? f.email ?? null,
+          telefone: d.telefone ?? f.telefone ?? null,
+          whatsapp: d.whatsapp ?? f.whatsapp ?? null,
+        };
+      });
+      if (state.active === 'atrasados') renderList();
+      setStatus('', document.getElementById('statusText').textContent.replace(/ · contato…$/, '') + ' · contato ok');
     }
 
     function topStatuses(porStatus, limit = 4) {
@@ -635,23 +686,63 @@
 
     async function load() {
       const btn = document.getElementById('btnLoad');
+      const gen = ++state.loadGen;
       btn.disabled = true;
-      setStatus('loading', 'Buscando orçamentos, pedidos, NFs, faturas e atrasados…');
-      try {
-        const results = await Promise.all(STAGES.map(async (s) => {
+      state.data = {};
+      state.statusFilter = null;
+      renderFunnel();
+      renderList();
+      setStatus('loading', 'Carregando funil…');
+
+      const core = STAGES.filter((s) => !s.derived);
+      const errors = [];
+      let done = 0;
+
+      await Promise.all(core.map(async (s) => {
+        try {
           const json = await fetchStage(s);
-          return [s.key, json];
-        }));
-        state.data = Object.fromEntries(results);
-        const t = results.reduce((a, [, j]) => a + (j.total || 0), 0);
-        setStatus('', `OK · ${t} registros · ${toBrDate(document.getElementById('from').value)} → ${toBrDate(document.getElementById('to').value)}`);
-        renderFunnel();
-        renderList();
-      } catch (err) {
-        setStatus('error', String(err.message || err));
-      } finally {
-        btn.disabled = false;
+          if (gen !== state.loadGen) return;
+          state.data[s.key] = json;
+          if (s.key === 'faturas') {
+            state.data.atrasados = buildAtrasados(json);
+          }
+        } catch (err) {
+          if (gen !== state.loadGen) return;
+          errors.push(`${s.name}: ${err.message || err}`);
+          state.data[s.key] = {
+            total: 0,
+            totalValor: 0,
+            porStatus: {},
+            [s.listKey]: [],
+            error: String(err.message || err),
+          };
+          if (s.key === 'faturas') {
+            state.data.atrasados = buildAtrasados(state.data[s.key]);
+          }
+        } finally {
+          if (gen !== state.loadGen) return;
+          done += 1;
+          renderFunnel();
+          renderList();
+          setStatus(
+            'loading',
+            `Carregando funil… ${done}/${core.length}${errors.length ? ` · ${errors.length} erro(s)` : ''}`,
+          );
+        }
+      }));
+
+      if (gen !== state.loadGen) return;
+      const t = STAGES.reduce((a, s) => a + (state.data[s.key]?.total || 0), 0);
+      const range = `${toBrDate(document.getElementById('from').value)} → ${toBrDate(document.getElementById('to').value)}`;
+      if (errors.length && t === 0) {
+        setStatus('error', errors.join(' · '));
+      } else if (errors.length) {
+        setStatus('error', `Parcial · ${t} reg. · ${range} · ${errors.join(' · ')}`);
+      } else {
+        setStatus('', `OK · ${t} registros · ${range} · contato…`);
+        enrichAtrasadosContato(gen).catch(() => {});
       }
+      btn.disabled = false;
     }
 
     (function init() {

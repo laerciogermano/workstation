@@ -75,7 +75,7 @@ curl -sS 'http://127.0.0.1:4175/notificacoes'
 
 ## Dashboard financeiro
 
-UI estática [`dashboard.html`](dashboard.html) servida em `/dashboard`. Carrega em paralelo `/orcamentos`, `/pedidos`, `/notas-fiscais`, `/faturas` e atrasados (`/faturas?status=Vencida&contato=1`) no período escolhido; clique no estágio do funil filtra a lista.
+UI estática [`dashboard.html`](dashboard.html) servida em `/dashboard`. Carrega em paralelo `/orcamentos`, `/pedidos`, `/notas-fiscais` e `/faturas` (progressivo); **Atrasados** = faturas `Vencida` derivadas + contato enriquecido depois. Clique no estágio filtra a lista.
 
 ## Caminho inverso
 

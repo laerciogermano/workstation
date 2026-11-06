@@ -10,13 +10,13 @@ Base: `GET /franqueado/?page=<tela>&…`
 | Tela UI | `page` | O que retorna | Filtros GET | Paginação | Export GET (ajax) | API local |
 |---|---|---|---|---|---|---|
 | Contas a receber | `contasareceber` | Faturas / títulos (status, vencimento, NF, pedido, cliente, CNPJ, valor) | `data_inicial`, `data_final`, `status`, `id_franqueado_rel` | 1 página (lista grande no HTML) | `ajax/contasareceber/relatorio_excel.php` | **`GET /faturas`** |
-| Orçamentos | `orcamentos` | Orçamentos (status, cliente, vendedor, total) | `data_inicial`, `data_final`, `status`, `id_vendedor`, `cliente`, `cnpj_cpf`, `orcamento`, `nome`, `valor` | `current_page` | — | planejado `/orcamentos` |
-| Pedidos | `pedidos` | Pedidos (status, cliente, vendedor, total) | `data_inicial`, `data_final`, `status`, `id_vendedor`, `id_pedido`, `cliente`, `cnpj`, `ordem_compra`, `valor`, `id_franqueado_rel` | `current_page` | — | planejado `/pedidos` |
-| Notas fiscais | `notas_fiscais` | NFs (status, nº, cliente, data, transportadora, total) | `data_inicial`, `data_final`, `status`, `tipo`, `id_vendedor`, `id_transportadora`, `cfop[]`, `uf`, `entrada_saida`, `natureza`, `finalidade`, `id_franqueado_rel` | `current_page` | `ajax/notas_fiscais/pdf.php`, `xml.php`, `exportar_pdf.php`, `exportar_xml.php`, `relatorio.php` | planejado `/notas-fiscais` |
-| Faturamento | `faturamento` | Totais por vendedor (HTML); detalhe NF×pedido no Excel | `data_inicial`, `data_final`, `id_vendedor`, `id_franqueado_rel` | — | `ajax/faturamento/relatorio_excel.php`, `relatorio_pdf.php` | planejado `/faturamento` |
-| Fluxo previsto | `fluxo_previsto` | Projeção do mês | `data` (`YYYY-MM`) | — | — | planejado `/fluxo-previsto` |
-| Chamados | `chamados` | Chamados de suporte | `data_inicial`, `data_final`, `status`, `assunto`, `chamado`, `envolvidos` | — | — | planejado `/chamados` |
-| Notificações | `notificacoes` | Inbox | `data_inicial`, `data_final` | — | `painel/ajax/notificacao.php` (poll) | planejado `/notificacoes` |
+| Orçamentos | `orcamentos` | Orçamentos (status, cliente, vendedor, total) | `data_inicial`, `data_final`, `status`, `id_vendedor`, `cliente`, `cnpj_cpf`, `orcamento`, `nome`, `valor` | `current_page` / `all` | — | **`GET /orcamentos`** |
+| Pedidos | `pedidos` | Pedidos (status, cliente, vendedor, total) | `data_inicial`, `data_final`, `status`, `id_vendedor`, `id_pedido`, `cliente`, `cnpj`, `ordem_compra`, `valor`, `id_franqueado_rel` | `current_page` / `all` | — | **`GET /pedidos`** |
+| Notas fiscais | `notas_fiscais` | NFs (status, nº, cliente, data, transportadora, total) | `data_inicial`, `data_final`, `status`, `tipo`, `id_vendedor`, `id_transportadora`, `cfop[]`, `uf`, `entrada_saida`, `natureza`, `finalidade`, `id_franqueado_rel` | `current_page` / `all` | `ajax/notas_fiscais/pdf.php`, `xml.php`, `exportar_pdf.php`, `exportar_xml.php`, `relatorio.php` | **`GET /notas-fiscais`** |
+| Faturamento | `faturamento` | Totais por vendedor (HTML); detalhe NF×pedido no Excel | `data_inicial`, `data_final`, `id_vendedor`, `id_franqueado_rel` | — | `ajax/faturamento/relatorio_excel.php`, `relatorio_pdf.php` | **`GET /faturamento`** |
+| Fluxo previsto | `fluxo_previsto` | Projeção do mês | `data` (`YYYY-MM`) | — | — | **`GET /fluxo-previsto`** |
+| Chamados | `chamados` | Chamados de suporte | `data_inicial`, `data_final`, `status`, `assunto`, `chamado`, `envolvidos` | — | — | **`GET /chamados`** |
+| Notificações | `notificacoes` | Inbox | `data_inicial`, `data_final` | — | `painel/ajax/notificacao.php` (poll) | **`GET /notificacoes`** |
 | Dashboard | `dashboard` | Home / shell (sem grid de dados) | — | — | — | só navegação |
 
 ## Valores de `status` (quando aplicável)
@@ -79,4 +79,4 @@ curl -b ~/.config/conectmax-franqueado/cookies.txt -G \
 ## Caminho inverso
 
 - Remover este mapa: apagar `GETS.md` e links no README / `portal-franqueado.md`
-- API local só `/faturas` permanece até as demais rotas serem implementadas
+- Remover só um GET: tire a rota em `src/index.js` + linha neste mapa / `catalog.js`

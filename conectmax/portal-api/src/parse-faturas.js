@@ -1,48 +1,18 @@
-/**
- * Parse HTML da página ?page=contasareceber do portal franqueado.
- * Cada <tr data-value valor> = uma fatura (título a receber).
- */
+import {
+  dataValueRows,
+  parseMoney,
+  parseStatus,
+  stripTags,
+  tdHtmls,
+} from './html-utils.js';
 
-const ROW_RE =
-  /<tr[^>]*data-value=["'](\d+)["'][^>]*valor=["']([^"']+)["'][^>]*>([\s\S]*?)<\/tr>/gi;
-
-function stripTags(s) {
-  return String(s || '')
-    .replace(/<[^>]+>/g, ' ')
-    .replace(/&nbsp;/gi, ' ')
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&#(\d+);/g, (_, n) => String.fromCharCode(Number(n)))
-    .replace(/\s+/g, ' ')
-    .trim();
-}
-
-function parseStatus(inner) {
-  const visible = [
-    ...inner.matchAll(/<div class="status[^"]*"[^>]*>([\s\S]*?)<\/div>/gi),
-  ];
-  for (const m of visible) {
-    if (/\bd-none\b/.test(m[0])) continue;
-    if (/\bd-block\b/.test(m[0]) || !/\bd-none\b/.test(m[0])) {
-      const t = stripTags(m[1]);
-      if (t) return t;
-    }
-  }
-  return null;
-}
-
-/**
- * @param {string} html
- * @returns {Array<Record<string, unknown>>}
- */
+/** Contas a receber — cada <tr data-value valor>. */
 export function parseFaturasHtml(html) {
   const out = [];
-  for (const m of html.matchAll(ROW_RE)) {
-    const id = Number(m[1]);
-    const valor = Number(m[2]);
-    const inner = m[3];
-    const tds = [...inner.matchAll(/<td[^>]*>([\s\S]*?)<\/td>/gi)].map((x) => x[1]);
+  for (const row of dataValueRows(html)) {
+    const valorAttr = row.attrs.match(/valor=["']([^"']+)["']/i);
+    const valor = valorAttr ? Number(valorAttr[1]) : null;
+    const tds = tdHtmls(row.inner);
     const vencimento = tds[2] ? stripTags(tds[2]) : null;
     const tituloHtml = tds[3] || '';
     const descricaoRaw = tds[4] ? stripTags(tds[4]) : '';
@@ -62,8 +32,8 @@ export function parseFaturasHtml(html) {
     );
 
     out.push({
-      id,
-      status: parseStatus(inner),
+      id: row.id,
+      status: parseStatus(row.inner),
       vencimento,
       titulo: titulo || null,
       faturaN: faturaM ? Number(faturaM[1]) : null,
@@ -73,7 +43,7 @@ export function parseFaturasHtml(html) {
       cliente: clienteM ? stripTags(clienteM[1]) : null,
       cnpj: cnpjM ? cnpjM[1].trim() : null,
       descricao: descricaoRaw || null,
-      valor,
+      valor: valor ?? parseMoney(valorTexto),
       valorTexto,
     });
   }

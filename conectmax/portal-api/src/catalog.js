@@ -34,6 +34,7 @@ export const CATALOG = {
         'nome',
         'valor',
         'current_page',
+        'all',
       ],
       status: [
         'Em aberto',
@@ -44,7 +45,7 @@ export const CATALOG = {
         'Enviado',
       ],
       exportGet: [],
-      apiLocal: { method: 'GET', path: '/orcamentos', status: 'planejado' },
+      apiLocal: { method: 'GET', path: '/orcamentos', status: 'ok' },
     },
     {
       page: 'pedidos',
@@ -62,6 +63,7 @@ export const CATALOG = {
         'valor',
         'id_franqueado_rel',
         'current_page',
+        'all',
       ],
       status: [
         'Rascunho',
@@ -72,7 +74,7 @@ export const CATALOG = {
         'Faturado',
       ],
       exportGet: [],
-      apiLocal: { method: 'GET', path: '/pedidos', status: 'planejado' },
+      apiLocal: { method: 'GET', path: '/pedidos', status: 'ok' },
     },
     {
       page: 'notas_fiscais',
@@ -92,6 +94,7 @@ export const CATALOG = {
         'finalidade',
         'id_franqueado_rel',
         'current_page',
+        'all',
       ],
       status: ['aguardando', 'cancelado', 'rejeitado', 'enviado'],
       exportGet: [
@@ -101,7 +104,7 @@ export const CATALOG = {
         '/franqueado/ajax/notas_fiscais/exportar_xml.php',
         '/franqueado/ajax/notas_fiscais/relatorio.php',
       ],
-      apiLocal: { method: 'GET', path: '/notas-fiscais', status: 'planejado' },
+      apiLocal: { method: 'GET', path: '/notas-fiscais', status: 'ok' },
     },
     {
       page: 'faturamento',
@@ -119,7 +122,7 @@ export const CATALOG = {
         '/franqueado/ajax/faturamento/relatorio_pdf.php',
       ],
       nota: 'HTML = totais por vendedor; Excel = detalhe Nota/Pedido/Data/Total',
-      apiLocal: { method: 'GET', path: '/faturamento', status: 'planejado' },
+      apiLocal: { method: 'GET', path: '/faturamento', status: 'ok' },
     },
     {
       page: 'fluxo_previsto',
@@ -128,7 +131,7 @@ export const CATALOG = {
       filtros: ['data'],
       status: [],
       exportGet: [],
-      apiLocal: { method: 'GET', path: '/fluxo-previsto', status: 'planejado' },
+      apiLocal: { method: 'GET', path: '/fluxo-previsto', status: 'ok' },
     },
     {
       page: 'chamados',
@@ -144,7 +147,7 @@ export const CATALOG = {
       ],
       status: ['iniciado', 'em andamento', 'finalizado'],
       exportGet: [],
-      apiLocal: { method: 'GET', path: '/chamados', status: 'planejado' },
+      apiLocal: { method: 'GET', path: '/chamados', status: 'ok' },
     },
     {
       page: 'notificacoes',
@@ -153,7 +156,7 @@ export const CATALOG = {
       filtros: ['data_inicial', 'data_final'],
       status: [],
       exportGet: ['/painel/ajax/notificacao.php'],
-      apiLocal: { method: 'GET', path: '/notificacoes', status: 'planejado' },
+      apiLocal: { method: 'GET', path: '/notificacoes', status: 'ok' },
     },
     {
       page: 'dashboard',

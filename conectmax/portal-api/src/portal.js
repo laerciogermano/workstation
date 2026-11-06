@@ -1,7 +1,7 @@
 import { homedir } from 'node:os';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { parseFaturasHtml } from './parse-faturas.js';
+import { isLoginPage, maxCurrentPage } from './html-utils.js';
 
 const BASE = 'https://franqueado.conectmax.com';
 const CONFIG_DIR = join(homedir(), '.config/conectmax-franqueado');
@@ -51,7 +51,6 @@ async function saveCookie(cookie) {
   });
 }
 
-/** Aceita Cookie header cru ou jar Netscape (curl -c). */
 async function readSavedCookie() {
   try {
     const text = await readFile(COOKIE_PATH, 'utf8');
@@ -90,57 +89,99 @@ export async function login() {
   return cookie;
 }
 
-async function ensureCookie() {
+async function ensureCookie(forceLogin = false) {
+  if (forceLogin) return login();
   const saved = await readSavedCookie();
-  if (saved && !saved.includes('\t')) {
-    // raw Cookie header from this API
-    return saved;
-  }
+  if (saved) return saved;
   return login();
 }
 
+async function readHtml(res) {
+  const buf = Buffer.from(await res.arrayBuffer());
+  return buf.toString('latin1');
+}
+
 /**
- * @param {{ dataInicial?: string, dataFinal?: string, forceLogin?: boolean }} opts
+ * @param {string} page
+ * @param {Record<string, string|number|undefined|null>} query
+ * @param {{ forceLogin?: boolean }} [opts]
  */
+export async function fetchPageHtml(page, query = {}, opts = {}) {
+  let cookie = await ensureCookie(opts.forceLogin);
+  const url = new URL(`${BASE}/franqueado/`);
+  url.searchParams.set('page', page);
+  for (const [k, v] of Object.entries(query)) {
+    if (v === undefined || v === null || v === '') continue;
+    url.searchParams.set(k, String(v));
+  }
+
+  let res = await fetch(url, { headers: { Cookie: cookie }, redirect: 'follow' });
+  let html = await readHtml(res);
+
+  if (isLoginPage(html)) {
+    cookie = await login();
+    res = await fetch(url, { headers: { Cookie: cookie }, redirect: 'follow' });
+    html = await readHtml(res);
+  }
+  if (isLoginPage(html)) throw new Error('sessão inválida após re-login');
+  return { html, cookie, url: url.toString() };
+}
+
+/**
+ * Busca 1 página ou todas (`all`).
+ * @param {string} page
+ * @param {Record<string, string|number|undefined|null>} query
+ * @param {{ forceLogin?: boolean, all?: boolean, currentPage?: number }} [opts]
+ */
+export async function fetchPageHtmlPaginated(page, query = {}, opts = {}) {
+  const q = { ...query };
+  if (opts.currentPage) q.current_page = opts.currentPage;
+  const first = await fetchPageHtml(page, q, opts);
+  if (!opts.all) return { pages: [first.html], ...first };
+
+  const last = maxCurrentPage(first.html);
+  const pages = [first.html];
+  for (let p = 2; p <= last; p++) {
+    const next = await fetchPageHtml(page, { ...query, current_page: p }, {
+      forceLogin: false,
+    });
+    pages.push(next.html);
+  }
+  return { pages, html: pages.join('\n'), cookie: first.cookie };
+}
+
+/**
+ * @param {string} pathRel ex: /franqueado/ajax/faturamento/relatorio_excel.php
+ * @param {Record<string, string|number|undefined|null>} query
+ */
+export async function fetchAjax(pathRel, query = {}, opts = {}) {
+  let cookie = await ensureCookie(opts.forceLogin);
+  const url = new URL(pathRel.startsWith('http') ? pathRel : `${BASE}${pathRel}`);
+  for (const [k, v] of Object.entries(query)) {
+    if (v === undefined || v === null || v === '') continue;
+    url.searchParams.set(k, String(v));
+  }
+  let res = await fetch(url, { headers: { Cookie: cookie }, redirect: 'follow' });
+  let body = await readHtml(res);
+  if (isLoginPage(body)) {
+    cookie = await login();
+    res = await fetch(url, { headers: { Cookie: cookie }, redirect: 'follow' });
+    body = await readHtml(res);
+  }
+  return { body, cookie, url: url.toString(), contentType: res.headers.get('content-type') };
+}
+
+/** @deprecated use fetchPageHtml — mantido p/ compat */
 export async function fetchContasAReceber(opts = {}) {
   const dataInicial = opts.dataInicial || '01/01/2025';
   const dataFinal = opts.dataFinal || '31/12/2026';
-  let cookie = opts.forceLogin ? await login() : await ensureCookie();
-
-  const url = new URL(`${BASE}/franqueado/`);
-  url.searchParams.set('page', 'contasareceber');
-  url.searchParams.set('data_inicial', dataInicial);
-  url.searchParams.set('data_final', dataFinal);
-
-  async function readHtml(res) {
-    // Portal responde ISO-8859-1; text() UTF-8 corrompe "nº" e quebra o parse.
-    const buf = Buffer.from(await res.arrayBuffer());
-    return buf.toString('latin1');
-  }
-
-  let res = await fetch(url, {
-    headers: { Cookie: cookie },
-    redirect: 'follow',
-  });
-  let html = await readHtml(res);
-
-  if (/name=["']usuario["']/i.test(html) || (/login\.php/i.test(html) && /senha/i.test(html))) {
-    cookie = await login();
-    res = await fetch(url, {
-      headers: { Cookie: cookie },
-      redirect: 'follow',
-    });
-    html = await readHtml(res);
-  }
-
-  if (/name=["']usuario["']/i.test(html)) {
-    throw new Error('sessão inválida após re-login');
-  }
-
-  return {
-    dataInicial,
-    dataFinal,
-    html,
-    faturas: parseFaturasHtml(html),
-  };
+  const { html } = await fetchPageHtml(
+    'contasareceber',
+    { data_inicial: dataInicial, data_final: dataFinal },
+    opts,
+  );
+  const { parseFaturasHtml } = await import('./parse-faturas.js');
+  return { dataInicial, dataFinal, html, faturas: parseFaturasHtml(html) };
 }
+
+export { BASE };

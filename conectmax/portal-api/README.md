@@ -1,59 +1,68 @@
-# Portal API — faturas ConectMax
+# Portal API — ConectMax
 
-API local que autentica no [Portal do Franqueado](https://franqueado.conectmax.com/) e expõe dados via `GET`.
+API local: login no [Portal do Franqueado](https://franqueado.conectmax.com/) + GETs de busca.
 
-- Mapa de **todos os GETs de busca** do portal: [`GETS.md`](GETS.md)
-- Mapa geral do painel: [`../connectmax/docs/portal-franqueado.md`](../connectmax/docs/portal-franqueado.md)
+- Mapa completo: [`GETS.md`](GETS.md)
+- Painel: [`../connectmax/docs/portal-franqueado.md`](../connectmax/docs/portal-franqueado.md)
 
 ## Pré-requisito
 
-Credenciais em `~/.config/conectmax-franqueado/credentials.env`:
-
-```env
-CONECTMAX_FRANQUEADO_USER=...
-CONECTMAX_FRANQUEADO_PASS=...
-```
+`~/.config/conectmax-franqueado/credentials.env` com `CONECTMAX_FRANQUEADO_USER` / `PASS`.
 
 ## Subir
 
 ```bash
-cd conectmax/portal-api
+cd /Users/laerciogermano/Documents/works/conectmax/portal-api
 npm start
 # http://127.0.0.1:4175
 ```
 
-`PORT` / `HOST` opcionais.
-
 ## Endpoints
 
-| Método | Rota | Descrição |
-|--------|------|-----------|
-| `GET` | `/` ou `/catalog` | Catálogo de GETs do portal + status da API local |
-| `GET` | `/health` | Liveness |
-| `GET` | `/faturas` | Lista faturas (contas a receber) — implementado |
-| — | `/orcamentos` `/pedidos` `/notas-fiscais` `/faturamento` … | Planejados — ver [`GETS.md`](GETS.md) |
+| GET | Fonte portal |
+|-----|----------------|
+| `/catalog` | catálogo |
+| `/health` | liveness |
+| `/faturas` | `contasareceber` |
+| `/orcamentos` | `orcamentos` |
+| `/pedidos` | `pedidos` |
+| `/notas-fiscais` | `notas_fiscais` |
+| `/faturamento` | `faturamento` + Excel detalhe |
+| `/fluxo-previsto` | `fluxo_previsto` |
+| `/chamados` | `chamados` |
+| `/notificacoes` | `notificacoes` |
 
-### Query `GET /faturas`
+### Query comum
 
 | Param | Default | Nota |
 |-------|---------|------|
-| `data_inicial` / `from` | `01/01/2025` | filtro do portal |
-| `data_final` / `to` | `31/12/2026` | filtro do portal |
-| `status` | — | ex.: `Quitada`, `Aberta`, `Vencida` |
-| `refresh` | — | `1` força novo login |
+| `data_inicial` / `from` | `01/01/2025` | |
+| `data_final` / `to` | `31/12/2026` | |
+| `status` | — | filtro local no JSON |
+| `id_vendedor` | — | filtro do portal |
+| `current_page` | — | só aquela página |
+| `all` | `1` (se sem `current_page`) | varre paginação |
+| `refresh` | — | `1` força login |
 
-### Exemplo
+`/fluxo-previsto`: `data=YYYY-MM`.
+
+### Exemplos
 
 ```bash
-curl -sS 'http://127.0.0.1:4175/faturas' | head
-curl -sS 'http://127.0.0.1:4175/faturas?status=Aberta&data_inicial=01/10/2026&data_final=06/11/2026'
+curl -sS 'http://127.0.0.1:4175/catalog'
+curl -sS 'http://127.0.0.1:4175/faturas?status=Aberta'
+curl -sS 'http://127.0.0.1:4175/orcamentos?data_inicial=01/11/2026&data_final=06/11/2026&all=0'
+curl -sS 'http://127.0.0.1:4175/pedidos?current_page=1'
+curl -sS 'http://127.0.0.1:4175/notas-fiscais?all=0'
+curl -sS 'http://127.0.0.1:4175/faturamento?data_inicial=01/01/2026&data_final=06/11/2026'
+curl -sS 'http://127.0.0.1:4175/fluxo-previsto?data=2026-11'
+curl -sS 'http://127.0.0.1:4175/chamados'
+curl -sS 'http://127.0.0.1:4175/notificacoes'
 ```
-
-Resposta: `{ total, totalValor, porStatus, faturas: [{ id, status, vencimento, titulo, faturaN, nfNumero, idNota, pedido, cliente, cnpj, descricao, valor, valorTexto }] }`.
 
 ## Caminho inverso
 
-- Parar: `Ctrl+C` / matar processo na porta `4175`
-- Invalidar sessão: `rm ~/.config/conectmax-franqueado/cookies.txt`
-- Remover API: apagar `conectmax/portal-api/` e a linha em [`../README.md`](../README.md)
-- Antes: só scripts pontuais (`build-empresas.py --fetch-portal`); sem HTTP
+- Parar: matar processo `:4175`
+- Sessão: `rm ~/.config/conectmax-franqueado/cookies.txt`
+- Remover: apagar `conectmax/portal-api/` + linha em [`../README.md`](../README.md)
+- Antes: só `/faturas`; demais telas só no HTML do portal

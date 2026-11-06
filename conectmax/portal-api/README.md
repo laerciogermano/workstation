@@ -6,6 +6,7 @@ API local: login no [Portal do Franqueado](https://franqueado.conectmax.com/) + 
 - **Swagger / OpenAPI:** [`openapi.yaml`](openapi.yaml) · UI `http://127.0.0.1:4175/docs` · JSON `/openapi.json`
 - Mapa portal: [`GETS.md`](GETS.md)
 - Segurança / isolamento franquias: [`SEGURANCA-ISOLAMENTO-FRANQUIAS.md`](SEGURANCA-ISOLAMENTO-FRANQUIAS.md)
+- Réplica Postgres (Campinas → Contabo): [`SCHEMA-REPLICA.md`](SCHEMA-REPLICA.md) · `node scripts/sync-campinas-postgres.mjs`
 - Painel: [`../connectmax/docs/portal-franqueado.md`](../connectmax/docs/portal-franqueado.md)
 
 ## Pré-requisito

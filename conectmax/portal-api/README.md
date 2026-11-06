@@ -2,7 +2,7 @@
 
 API local: login no [Portal do Franqueado](https://franqueado.conectmax.com/) + GETs de busca.
 
-- **Dashboard financeiro (funil):** `http://127.0.0.1:4175/dashboard` — Orçamento → Pedido → NF → Contas a receber
+- **Dashboard financeiro (funil):** `http://127.0.0.1:4175/dashboard` — Orçamento → Pedido → NF → Contas a receber → Atrasados
 - **Swagger / OpenAPI:** [`openapi.yaml`](openapi.yaml) · UI `http://127.0.0.1:4175/docs` · JSON `/openapi.json`
 - Mapa portal: [`GETS.md`](GETS.md)
 - Segurança / isolamento franquias: [`SEGURANCA-ISOLAMENTO-FRANQUIAS.md`](SEGURANCA-ISOLAMENTO-FRANQUIAS.md)
@@ -75,7 +75,7 @@ curl -sS 'http://127.0.0.1:4175/notificacoes'
 
 ## Dashboard financeiro
 
-UI estática [`dashboard.html`](dashboard.html) servida em `/dashboard`. Carrega em paralelo `/orcamentos`, `/pedidos`, `/notas-fiscais` e `/faturas` no período escolhido; clique no estágio do funil filtra a lista.
+UI estática [`dashboard.html`](dashboard.html) servida em `/dashboard`. Carrega em paralelo `/orcamentos`, `/pedidos`, `/notas-fiscais`, `/faturas` e atrasados (`/faturas?status=Vencida&contato=1`) no período escolhido; clique no estágio do funil filtra a lista.
 
 ## Caminho inverso
 

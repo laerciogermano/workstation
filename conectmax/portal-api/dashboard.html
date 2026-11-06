@@ -334,6 +334,11 @@
       <p>Funil via Postgres Contabo · <code>/db/*</code> · Orçamento → Pedido → NF → Contas → Atrasados</p>
     </div>
     <form class="filters" id="filters">
+      <label>Franquia
+        <select id="franquia" required>
+          <option value="">Carregando…</option>
+        </select>
+      </label>
       <label>De
         <input type="date" id="from" required />
       </label>
@@ -469,11 +474,13 @@
     ];
 
     const FETCH_TIMEOUT_MS = 90000;
+    const DEFAULT_FRANQUIA = 9;
     const state = {
       active: 'orcamentos',
       statusFilter: null,
       data: {},
       loadGen: 0,
+      franquias: [],
     };
 
     function pad(n) { return String(n).padStart(2, '0'); }
@@ -495,6 +502,22 @@
       if (/quitada|aprovado|faturado|enviado/.test(s) && !/rejeitado/.test(s)) return 'ok';
       return '';
     }
+    function selectedFranquiaId() {
+      return document.getElementById('franquia').value || String(DEFAULT_FRANQUIA);
+    }
+
+    function selectedFranquiaLabel() {
+      const sel = document.getElementById('franquia');
+      const opt = sel.selectedOptions[0];
+      return opt ? opt.textContent : `Franquia ${selectedFranquiaId()}`;
+    }
+
+    function syncUrlFranquia() {
+      const url = new URL(window.location.href);
+      url.searchParams.set('franquia_id', selectedFranquiaId());
+      history.replaceState(null, '', url);
+    }
+
     function qs() {
       const from = document.getElementById('from').value;
       const to = document.getElementById('to').value;
@@ -503,8 +526,35 @@
         data_inicial: toBrDate(from),
         data_final: toBrDate(to),
         all,
+        franquia_id: selectedFranquiaId(),
       });
       return p.toString();
+    }
+
+    async function loadFranquias() {
+      const sel = document.getElementById('franquia');
+      const urlFranquia = new URLSearchParams(window.location.search).get('franquia_id');
+      const res = await fetch('/db/health', { signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) });
+      if (!res.ok) throw new Error(`Franquias: HTTP ${res.status}`);
+      const json = await res.json();
+      const rows = json.franquias || [];
+      state.franquias = rows;
+      if (!rows.length) {
+        sel.innerHTML = `<option value="${DEFAULT_FRANQUIA}">#${DEFAULT_FRANQUIA} (sem sync)</option>`;
+        return;
+      }
+      sel.innerHTML = rows.map((f) => {
+        const nome = f.nome || f.razao_social || 'sem nome';
+        const extra = f.pedidos != null ? ` · ${f.pedidos} ped.` : '';
+        return `<option value="${f.id}">#${f.id} · ${esc(nome)}${extra}</option>`;
+      }).join('');
+      const preferred = Number(urlFranquia) || DEFAULT_FRANQUIA;
+      if (rows.some((f) => Number(f.id) === preferred)) {
+        sel.value = String(preferred);
+      } else {
+        sel.value = String(rows[0].id);
+      }
+      syncUrlFranquia();
     }
 
     async function fetchStage(stage) {
@@ -680,30 +730,43 @@
       const t = STAGES.reduce((a, s) => a + (state.data[s.key]?.total || 0), 0);
       const range = `${toBrDate(document.getElementById('from').value)} → ${toBrDate(document.getElementById('to').value)}`;
       const fonte = state.data.orcamentos?.fonte || 'postgres';
+      const fr = selectedFranquiaLabel();
       if (errors.length && t === 0) {
         setStatus('error', errors.join(' · '));
       } else if (errors.length) {
-        setStatus('error', `Parcial · ${t} reg. · ${range} · ${errors.join(' · ')}`);
+        setStatus('error', `Parcial · ${fr} · ${t} reg. · ${range} · ${errors.join(' · ')}`);
       } else {
-        setStatus('', `OK · ${t} registros · ${range} · ${fonte}`);
+        setStatus('', `OK · ${fr} · ${t} registros · ${range} · ${fonte}`);
       }
       btn.disabled = false;
     }
 
-    (function init() {
+    (async function init() {
       const to = new Date();
       const from = new Date(2024, 0, 1);
       document.getElementById('from').value = toInputDate(from);
       document.getElementById('to').value = toInputDate(to);
       document.getElementById('filters').addEventListener('submit', (e) => {
         e.preventDefault();
+        syncUrlFranquia();
+        load();
+      });
+      document.getElementById('franquia').addEventListener('change', () => {
+        syncUrlFranquia();
         load();
       });
       document.getElementById('btnDocs').addEventListener('click', () => {
         window.open('/docs', '_blank');
       });
       renderFunnel();
-      load();
+      try {
+        setStatus('loading', 'Carregando franquias…');
+        await loadFranquias();
+        await load();
+      } catch (err) {
+        setStatus('error', String(err.message || err));
+        document.getElementById('btnLoad').disabled = false;
+      }
     })();
   </script>
 </body>

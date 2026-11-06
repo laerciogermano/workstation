@@ -77,11 +77,12 @@ curl -sS 'http://127.0.0.1:4175/notificacoes'
 
 ## Dashboard financeiro
 
-UI estática [`dashboard.html`](dashboard.html) servida em `/dashboard`. Carrega em paralelo `/orcamentos`, `/pedidos`, `/notas-fiscais` e `/faturas` (progressivo); **Atrasados** = faturas `Vencida` derivadas + contato enriquecido depois. Clique no estágio filtra a lista.
+UI estática [`dashboard.html`](dashboard.html) servida em `/dashboard`. Lista franquias via `/db/health` e filtra com `franquia_id` (default **9**; também `?franquia_id=` na URL). Carrega em paralelo `/db/orcamentos`, `/db/pedidos`, `/db/notas-fiscais`, `/db/faturas` e `/db/atrasados`. Clique no estágio filtra a lista.
 
 ## Caminho inverso
 
 - Parar: matar processo `:4175`
+- Remover seletor de franquia: tirar `#franquia` + `loadFranquias` / `franquia_id` em `qs()` no `dashboard.html` (volta ao default fixo 9 no backend)
 - Remover dashboard: apagar `dashboard.html` + rotas `/dashboard` `/financeiro` em `src/index.js` + linhas neste README
 - Sessão: `rm ~/.config/conectmax-franqueado/cookies.txt`
 - Remover API: apagar `conectmax/portal-api/` + linha em [`../README.md`](../README.md)

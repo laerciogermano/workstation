@@ -359,7 +359,7 @@ Card: [BXKZ55Wb](https://trello.com/c/BXKZ55Wb).
 - Card workstation: `e-notas-t-desc-ean`.
 - Implementação: `GET|POST /api/enrichment/ean` (`?descricao=` ou body `{ descricao }`, `force?`) → candidatos `{ ean, score, fonte, nome_canonico, image_url }` (sem auto-vínculo).
 - Normalização: abreviações NFC-e (`ABS`→`ABSORVENTE`, etc.).
-- Fontes: cache `ean_sugestoes` → local → Open*Facts → **Google** (CDP) se vazio; `ean_resolve_buscas` evita re-scrape.
+- Fontes: cache `ean_sugestoes` → local → Open*Facts (**sem Google** para EAN); `ean_resolve_buscas` evita re-scrape. UI chama `GET|POST /api/enrichment/ean?descricao=…`.
 - UI: vitrine + **detalhe do produto** + modal EAN; toque vincula (`origem=sugestao`).
 - Antes: só scan/digitação. Depois: sugestão pelo descritivo + confirmação humana.
 - Rollback: remover rotas `/api/enrichment/*`, `enrichment.js`, UI suggest, `DROP TABLE enotas.ean_sugestoes;` / `ean_resolve_buscas`.

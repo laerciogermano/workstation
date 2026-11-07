@@ -283,6 +283,16 @@
       line-height: 1.35;
     }
 
+    .card__task::before {
+      content: "Próxima atividade";
+      display: block;
+      margin-bottom: 0.3rem;
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      color: var(--body);
+    }
+
     .card:hover .card__task {
       border-color: var(--ink);
     }
@@ -292,7 +302,7 @@
       font-weight: 500;
     }
 
-    .card__task.is-empty::before {
+    .card__task.is-empty::after {
       content: "—";
     }
 

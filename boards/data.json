@@ -10,11 +10,12 @@
           {
             "id": "connect-t-0",
             "title": "Automatizar processo de cobrança",
-            "cover": "boards/banners/automacao-cobranca.jpg"
+            "cover": "boards/banners/projects/connect.jpg"
           },
           {
             "id": "connect-t-1",
-            "title": "Automatizar processo de orçamento"
+            "title": "Automatizar processo de orçamento",
+            "cover": "boards/banners/cards/connect-t-1.jpg"
           }
         ]
       },
@@ -40,7 +41,8 @@
         "cards": [
           {
             "id": "connect-tech-t-0",
-            "title": "Criar PDF de apresentação"
+            "title": "Criar PDF de apresentação",
+            "cover": "boards/banners/projects/connect-tech.jpg"
           }
         ]
       },
@@ -66,7 +68,8 @@
         "cards": [
           {
             "id": "clozzy-t-0",
-            "title": "Benchmarking"
+            "title": "Benchmarking",
+            "cover": "boards/banners/projects/clozzy.jpg"
           }
         ]
       },
@@ -92,7 +95,8 @@
         "cards": [
           {
             "id": "e-notas-t-0",
-            "title": "Criar protótipo"
+            "title": "Criar protótipo",
+            "cover": "boards/banners/projects/e-notas.jpg"
           }
         ]
       },
@@ -118,7 +122,8 @@
         "cards": [
           {
             "id": "role-go-t-0",
-            "title": "gerar primeira versao"
+            "title": "gerar primeira versao",
+            "cover": "boards/banners/projects/role-go.jpg"
           }
         ]
       },
@@ -144,7 +149,8 @@
         "cards": [
           {
             "id": "board-t-0",
-            "title": "Criar o protótipo"
+            "title": "Criar o protótipo",
+            "cover": "boards/banners/projects/board.jpg"
           }
         ]
       },
@@ -170,7 +176,8 @@
         "cards": [
           {
             "id": "plans-t-0",
-            "title": "Criar o protótipo"
+            "title": "Criar o protótipo",
+            "cover": "boards/banners/projects/plans.jpg"
           }
         ]
       },
@@ -185,7 +192,8 @@
         "cards": [
           {
             "id": "plans-d-0",
-            "title": "Princípio: dividir atividades (mesmo por IA) em partes para validação parcial"
+            "title": "Princípio: dividir atividades (mesmo por IA) em partes para validação parcial",
+            "cover": "boards/banners/cards/plans-d-0.jpg"
           }
         ]
       }
@@ -201,7 +209,8 @@
         "cards": [
           {
             "id": "context-recorder-t-0",
-            "title": "Definir PRD"
+            "title": "Definir PRD",
+            "cover": "boards/banners/projects/context-recorder.jpg"
           }
         ]
       },
@@ -227,7 +236,8 @@
         "cards": [
           {
             "id": "cupido-t-0",
-            "title": "Definir PRD"
+            "title": "Definir PRD",
+            "cover": "boards/banners/projects/cupido.jpg"
           }
         ]
       },
@@ -295,7 +305,8 @@
         "cards": [
           {
             "id": "caronas-t-0",
-            "title": "Criar documento de épicos"
+            "title": "Criar documento de épicos",
+            "cover": "boards/banners/projects/caronas.jpg"
           }
         ]
       },
@@ -321,7 +332,8 @@
         "cards": [
           {
             "id": "fitness-t-0",
-            "title": "Definir documento de épicos"
+            "title": "Definir documento de épicos",
+            "cover": "boards/banners/projects/fitness.jpg"
           }
         ]
       },
@@ -347,7 +359,8 @@
         "cards": [
           {
             "id": "jiu-jitsu-t-0",
-            "title": "Definir documento de visão"
+            "title": "Definir documento de visão",
+            "cover": "boards/banners/projects/jiu-jitsu.jpg"
           }
         ]
       },
@@ -373,11 +386,13 @@
         "cards": [
           {
             "id": "flow-t-0",
-            "title": "Definir Épicos"
+            "title": "Definir Épicos",
+            "cover": "boards/banners/projects/flow.jpg"
           },
           {
             "id": "flow-t-1",
-            "title": "Criar roadmap"
+            "title": "Criar roadmap",
+            "cover": "boards/banners/cards/flow-t-1.jpg"
           }
         ]
       },
@@ -403,27 +418,33 @@
         "cards": [
           {
             "id": "eternos-mutaveis-t-0",
-            "title": "Escrever capítulo 1"
+            "title": "Escrever capítulo 1",
+            "cover": "boards/banners/projects/eternos-mutaveis.jpg"
           },
           {
             "id": "eternos-mutaveis-t-1",
-            "title": "Referncias de modelo de escrita"
+            "title": "Referncias de modelo de escrita",
+            "cover": "boards/banners/cards/eternos-mutaveis-t-1.jpg"
           },
           {
             "id": "eternos-mutaveis-t-2",
-            "title": "Referncias externas bsucar na net para cada capitulo"
+            "title": "Referncias externas bsucar na net para cada capitulo",
+            "cover": "boards/banners/cards/eternos-mutaveis-t-2.jpg"
           },
           {
             "id": "eternos-mutaveis-t-3",
-            "title": "Reunir todos os áudios e transcricoes do iphone que nao estao aqui"
+            "title": "Reunir todos os áudios e transcricoes do iphone que nao estao aqui",
+            "cover": "boards/banners/cards/eternos-mutaveis-t-3.jpg"
           },
           {
             "id": "eternos-mutaveis-t-4",
-            "title": "baixar os posts dos threads"
+            "title": "baixar os posts dos threads",
+            "cover": "boards/banners/cards/eternos-mutaveis-t-4.jpg"
           },
           {
             "id": "eternos-mutaveis-t-5",
-            "title": "Definir roadmap"
+            "title": "Definir roadmap",
+            "cover": "boards/banners/cards/eternos-mutaveis-t-5.jpg"
           }
         ]
       },
@@ -449,7 +470,8 @@
         "cards": [
           {
             "id": "aulas-t-0",
-            "title": "Criar roadmap"
+            "title": "Criar roadmap",
+            "cover": "boards/banners/projects/aulas.jpg"
           }
         ]
       },
@@ -475,7 +497,8 @@
         "cards": [
           {
             "id": "filme-metafisico-t-0",
-            "title": "Definir Roteiro"
+            "title": "Definir Roteiro",
+            "cover": "boards/banners/projects/filme-metafisico.jpg"
           }
         ]
       },
@@ -522,11 +545,13 @@
         "cards": [
           {
             "id": "financeiro-t-0",
-            "title": "Extrair faturas cartão"
+            "title": "Extrair faturas cartão",
+            "cover": "boards/banners/projects/financeiro.jpg"
           },
           {
             "id": "financeiro-t-1",
-            "title": "Gerar relatório"
+            "title": "Gerar relatório",
+            "cover": "boards/banners/cards/financeiro-t-1.jpg"
           }
         ]
       },
@@ -552,23 +577,28 @@
         "cards": [
           {
             "id": "ov-t-0",
-            "title": "Criar novo lgermeno"
+            "title": "Criar novo lgermeno",
+            "cover": "boards/banners/projects/ov.jpg"
           },
           {
             "id": "ov-t-1",
-            "title": "Criar novo marcelo"
+            "title": "Criar novo marcelo",
+            "cover": "boards/banners/cards/ov-t-1.jpg"
           },
           {
             "id": "ov-t-2",
-            "title": "Criar Germano"
+            "title": "Criar Germano",
+            "cover": "boards/banners/cards/ov-t-2.jpg"
           },
           {
             "id": "ov-t-3",
-            "title": "projeto x8 e x$"
+            "title": "projeto x8 e x$",
+            "cover": "boards/banners/cards/ov-t-3.jpg"
           },
           {
             "id": "ov-t-4",
-            "title": "projeto Germano"
+            "title": "projeto Germano",
+            "cover": "boards/banners/cards/ov-t-4.jpg"
           }
         ]
       },

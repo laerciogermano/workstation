@@ -350,6 +350,22 @@ Card: [BXKZ55Wb](https://trello.com/c/BXKZ55Wb).
 - Antes: entrada em Perto (T-30) + toggle baratas/caras no ranking. Depois: entrada em Mais baratas com ranking duplo na lista.
 - Rollback: restaurar HTML/docs anteriores do fluxo E03.
 
+## REQ-039 — Identificar EAN a partir da descrição (2026-11-07)
+
+- Dada a **descrição** textual do produto (nota / busca), o sistema deve **identificar o código de barras** (EAN/GTIN) correspondente.
+- Card workstation: `e-notas-t-desc-ean`.
+
+## REQ-040 — Identificar imagens a partir do EAN (2026-11-07)
+
+- Dado um **código de barras**, o sistema deve **identificar/buscar as imagens** do produto.
+- Relacionado a REQ-032 (busca ao cadastrar EAN); este REQ cobre a capacidade genérica descrição↔mídia por EAN.
+- Card workstation: `e-notas-t-ean-imgs`.
+
+## REQ-041 — Identificar imagens a partir da descrição (2026-11-07)
+
+- Dada a **descrição** do produto, o sistema deve **identificar/buscar as imagens** correspondentes (sem exigir EAN prévio).
+- Card workstation: `e-notas-t-desc-imgs`.
+
 ## Próximos passos
 
 → Manter este arquivo alinhado a cada pedido novo · esteira de docs em [`README.md`](README.md) quando avançar funcionalidades/BDD.

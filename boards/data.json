@@ -176,6 +176,21 @@
             "id": "e-notas-t-0",
             "title": "Criar protótipo",
             "cover": "boards/banners/projects/e-notas.jpg"
+          },
+          {
+            "id": "e-notas-t-desc-ean",
+            "title": "Identificar código de barras a partir da descrição",
+            "description": "Dada a descrição do produto (texto da nota / busca), identificar o código de barras (EAN/GTIN) correspondente."
+          },
+          {
+            "id": "e-notas-t-ean-imgs",
+            "title": "Identificar imagens a partir do código de barras",
+            "description": "Dado um código de barras (EAN), identificar/buscar as imagens do produto."
+          },
+          {
+            "id": "e-notas-t-desc-imgs",
+            "title": "Identificar imagens a partir da descrição",
+            "description": "Dada a descrição do produto, identificar/buscar as imagens correspondentes."
           }
         ]
       },

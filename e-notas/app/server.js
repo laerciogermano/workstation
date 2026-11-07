@@ -184,10 +184,21 @@ app.post('/api/codigos-barras', async (req, res) => {
   }
 });
 
-/** REQ-039 — descrição → candidatos EAN (sem auto-vínculo). */
-app.post('/api/enrichment/ean', async (req, res) => {
+function enrichmentInput(req, key) {
+  const q = req.query?.[key];
+  const b = req.body?.[key];
+  return String(q ?? b ?? '').trim();
+}
+
+function enrichmentForce(req) {
+  const raw = req.query?.force ?? req.body?.force;
+  return raw === true || raw === '1' || raw === 'true';
+}
+
+/** REQ-039 — descrição → candidatos EAN (GET query ou POST body; sem auto-vínculo). */
+async function handleEnrichmentEan(req, res) {
   try {
-    const descricao = String(req.body?.descricao || '').trim();
+    const descricao = enrichmentInput(req, 'descricao');
     const result = await resolveEanFromDescricao(descricao);
     return res.json({ ok: true, ...result });
   } catch (err) {
@@ -195,13 +206,14 @@ app.post('/api/enrichment/ean', async (req, res) => {
     console.error('[enrichment:ean]', err.message);
     return res.status(status).json({ ok: false, error: err.message });
   }
-});
+}
 
 /** REQ-040 — EAN → imagens (wrapper estável sobre buscarImagensEan). */
-app.post('/api/enrichment/imagens', async (req, res) => {
+async function handleEnrichmentImagens(req, res) {
   try {
-    const ean = String(req.body?.ean || req.body?.codigo_barras || '').trim();
-    const force = Boolean(req.body?.force);
+    const ean =
+      enrichmentInput(req, 'ean') || enrichmentInput(req, 'codigo_barras');
+    const force = enrichmentForce(req);
     if (!ean) {
       return res.status(400).json({ ok: false, error: 'ean obrigatório' });
     }
@@ -212,13 +224,13 @@ app.post('/api/enrichment/imagens', async (req, res) => {
     console.error('[enrichment:imagens]', err.message);
     return res.status(status).json({ ok: false, error: err.message });
   }
-});
+}
 
 /** REQ-041 — descrição → imagens (orquestra EAN confiável ou busca textual). */
-app.post('/api/enrichment/imagens-por-descricao', async (req, res) => {
+async function handleEnrichmentImagensPorDescricao(req, res) {
   try {
-    const descricao = String(req.body?.descricao || '').trim();
-    const force = Boolean(req.body?.force);
+    const descricao = enrichmentInput(req, 'descricao');
+    const force = enrichmentForce(req);
     if (!descricao) {
       return res.status(400).json({ ok: false, error: 'descricao obrigatória' });
     }
@@ -229,7 +241,14 @@ app.post('/api/enrichment/imagens-por-descricao', async (req, res) => {
     console.error('[enrichment:imagens-por-descricao]', err.message);
     return res.status(status).json({ ok: false, error: err.message });
   }
-});
+}
+
+app.get('/api/enrichment/ean', handleEnrichmentEan);
+app.post('/api/enrichment/ean', handleEnrichmentEan);
+app.get('/api/enrichment/imagens', handleEnrichmentImagens);
+app.post('/api/enrichment/imagens', handleEnrichmentImagens);
+app.get('/api/enrichment/imagens-por-descricao', handleEnrichmentImagensPorDescricao);
+app.post('/api/enrichment/imagens-por-descricao', handleEnrichmentImagensPorDescricao);
 
 app.get('/api/ean-imagens', async (req, res) => {
   try {

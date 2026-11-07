@@ -69,9 +69,11 @@ Resposta: `{ ok, created, empresaCriada, url, empresa, nota, itens }`.
 | `GET` | `/api/ean-imagens?codigo_barras=` | `{ ok, imagens }` candidatas do EAN |
 | `POST` | `/api/ean-imagens/buscar` | body `{ codigo_barras, force? }` → busca síncrona (idempotente sem `force`) |
 | `POST` | `/api/ean-imagens/:id/selecionar` | marca a foto do feed e atualiza `codigos_barras.foto_url` |
-| `POST` | `/api/enrichment/ean` | body `{ descricao }` → candidatos EAN (REQ-039; sem auto-vínculo) |
-| `POST` | `/api/enrichment/imagens` | body `{ ean\|codigo_barras, force? }` → imagens do EAN (REQ-040; wrapper REQ-032) |
-| `POST` | `/api/enrichment/imagens-por-descricao` | body `{ descricao, force? }` → `modo: ean\|texto` + imagens (REQ-041) |
+| `GET`/`POST` | `/api/enrichment/ean` | query/body `descricao` → candidatos EAN (REQ-039; sem auto-vínculo) |
+| `GET`/`POST` | `/api/enrichment/imagens` | query/body `ean` ou `codigo_barras`, `force?` → imagens (REQ-040) |
+| `GET`/`POST` | `/api/enrichment/imagens-por-descricao` | query/body `descricao`, `force?` → `modo: ean\|texto` + imagens (REQ-041) |
+
+Abrir no browser (GET): `https://127.0.0.1:4173/api/enrichment/ean?descricao=COCA%20COLA%202L%20PET`
 
 UI: na **vitrine do estabelecimento**, botão **Código de barras** / **Editar EAN** no item (câmera, tirar foto / escolher imagem, digitação, **Sugerir EAN pela descrição**) → modal `#modal-ean` → `POST` acima (REQ-031/039). No **detalhe do produto**, grade **Fotos** para escolher a representativa.
 

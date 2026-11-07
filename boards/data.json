@@ -9,7 +9,8 @@
         "cards": [
           {
             "id": "connect-t-0",
-            "title": "Automatizar processo de cobrança"
+            "title": "Automatizar processo de cobrança",
+            "cover": "boards/banners/automacao-cobranca.jpg"
           },
           {
             "id": "connect-t-1",

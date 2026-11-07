@@ -227,12 +227,26 @@
       padding: 0.85rem 0.95rem;
       cursor: grab;
       transition: border-color 140ms var(--ease);
+      overflow: hidden;
+    }
+
+    .card.has-cover {
+      padding-top: 0;
     }
 
     .card:hover { border-color: var(--ink); }
     .card:active { cursor: grabbing; }
     .card.is-dragging { opacity: 0.45; }
     .card.is-hidden { display: none; }
+
+    .card__cover {
+      display: block;
+      width: calc(100% + 1.9rem);
+      margin: 0 -0.95rem 0.7rem;
+      height: 5.5rem;
+      object-fit: cover;
+      background: var(--paper-2);
+    }
 
     .card__project {
       display: block;
@@ -323,6 +337,23 @@
       border: 1px solid var(--ink);
       border-radius: var(--radius);
       overflow: hidden;
+    }
+
+    .detail__cover-wrap {
+      position: relative;
+      background: var(--paper-2);
+      border-bottom: 1px solid var(--line);
+      min-height: 0;
+    }
+
+    .detail__cover-wrap.is-empty { display: none; }
+
+    .detail__cover {
+      display: block;
+      width: 100%;
+      max-height: 12rem;
+      object-fit: cover;
+      cursor: zoom-in;
     }
 
     .detail__head {
@@ -646,6 +677,9 @@
   <div class="detail-root" id="detail-root" hidden>
     <div class="detail-scrim" data-detail-close></div>
     <div class="detail" role="dialog" aria-modal="true" aria-labelledby="detail-title">
+      <div class="detail__cover-wrap is-empty" id="detail-cover-wrap">
+        <img class="detail__cover" id="detail-cover" alt="" />
+      </div>
       <div class="detail__head">
         <div style="min-width:0;flex:1">
           <p class="detail__meta" id="detail-meta"></p>
@@ -656,6 +690,21 @@
         </button>
       </div>
       <div class="detail__body">
+        <section>
+          <h3 class="detail__section-title">Banner</h3>
+          <div class="detail__actions" style="margin-top:0">
+            <button type="button" class="detail__btn" id="detail-cover-file">
+              <i data-lucide="image"></i>
+              Foto
+            </button>
+            <button type="button" class="detail__btn" id="detail-cover-url">
+              <i data-lucide="link"></i>
+              URL
+            </button>
+            <button type="button" class="detail__btn" id="detail-cover-clear">Remover</button>
+            <input id="detail-cover-input" type="file" accept="image/*" hidden />
+          </div>
+        </section>
         <section>
           <h3 class="detail__section-title">Descrição</h3>
           <textarea class="detail__desc" id="detail-desc" placeholder="Notas do card"></textarea>
@@ -747,12 +796,28 @@
       localStorage.setItem(storageKey(s), JSON.stringify(board));
     }
 
+    function seedCoverById(seed) {
+      const map = new Map();
+      for (const col of seed?.columns || []) {
+        for (const card of col.cards || []) {
+          if (card?.id && card.cover) map.set(card.id, card.cover);
+        }
+      }
+      return map;
+    }
+
     function hydrate(s, seed) {
       const raw = localStorage.getItem(storageKey(s));
       if (!raw) return structuredClone(seed);
       try {
         const saved = JSON.parse(raw);
         if (!saved?.columns?.length) return structuredClone(seed);
+        const covers = seedCoverById(seed);
+        for (const col of saved.columns || []) {
+          for (const card of col.cards || []) {
+            if (card && !card.cover && covers.has(card.id)) card.cover = covers.get(card.id);
+          }
+        }
         return saved;
       } catch {
         return structuredClone(seed);
@@ -790,6 +855,7 @@
     function normalizeCard(card) {
       if (!card || typeof card !== "object") return card;
       if (typeof card.description !== "string") card.description = "";
+      if (typeof card.cover !== "string") card.cover = card.cover ? String(card.cover) : "";
       if (!Array.isArray(card.comments)) card.comments = [];
       if (!Array.isArray(card.attachments)) card.attachments = [];
       return card;
@@ -1046,12 +1112,21 @@
       const found = findCard(item.slug, item.id);
       const card = found?.card || { title: item.title };
       const li = document.createElement("li");
-      li.className = "card" + (isArchived(item.slug) ? " is-archived" : "");
+      const cover = (card.cover || "").trim();
+      li.className =
+        "card" +
+        (isArchived(item.slug) ? " is-archived" : "") +
+        (cover ? " has-cover" : "");
       li.draggable = true;
       li.dataset.id = item.id;
       li.dataset.slug = item.slug;
       const archMark = isArchived(item.slug) ? `<span class="card__arch">Arquivado</span>` : "";
       li.innerHTML = `
+        ${
+          cover
+            ? `<img class="card__cover" src="${escapeHtml(cover)}" alt="" loading="lazy" draggable="false" />`
+            : ""
+        }
         ${
           showProject
             ? `<a class="card__project" href="board.html?p=${encodeURIComponent(item.slug)}">${escapeHtml(item.projectName)}${archMark}</a>`
@@ -1108,9 +1183,23 @@
       const meta = document.getElementById("detail-meta");
       const titleEl = document.getElementById("detail-title");
       const descEl = document.getElementById("detail-desc");
+      const coverWrap = document.getElementById("detail-cover-wrap");
+      const coverImg = document.getElementById("detail-cover");
       if (meta) meta.textContent = `${board.name} · ${colTitle(col.id)}`;
       if (titleEl && document.activeElement !== titleEl) titleEl.value = card.title || "";
       if (descEl && document.activeElement !== descEl) descEl.value = card.description || "";
+      const cover = (card.cover || "").trim();
+      if (coverWrap && coverImg) {
+        if (cover) {
+          coverWrap.classList.remove("is-empty");
+          coverImg.src = cover;
+          coverImg.alt = card.title || "Banner";
+        } else {
+          coverWrap.classList.add("is-empty");
+          coverImg.removeAttribute("src");
+          coverImg.alt = "";
+        }
+      }
 
       const comments = document.getElementById("detail-comments");
       if (comments) {
@@ -1194,6 +1283,15 @@
       img.alt = "";
     }
 
+    function setCardCover(url) {
+      if (!detailCtx) return;
+      const found = findCard(detailCtx.slug, detailCtx.id);
+      if (!found) return;
+      found.card.cover = url || "";
+      persist(detailCtx.slug, found.board);
+      refreshBoardView();
+    }
+
     function addComment() {
       if (!detailCtx) return;
       const input = document.getElementById("detail-comment");
@@ -1273,6 +1371,28 @@
       document.getElementById("detail-desc")?.addEventListener("change", saveDetailFields);
       document.getElementById("detail-desc")?.addEventListener("blur", saveDetailFields);
       document.getElementById("detail-comment-add")?.addEventListener("click", addComment);
+      document.getElementById("detail-cover")?.addEventListener("click", () => {
+        const src = document.getElementById("detail-cover")?.getAttribute("src");
+        if (src) openLightbox(src, document.getElementById("detail-cover")?.alt || "");
+      });
+      document.getElementById("detail-cover-clear")?.addEventListener("click", () => setCardCover(""));
+      document.getElementById("detail-cover-url")?.addEventListener("click", () => {
+        const raw = prompt("URL do banner:");
+        if (!raw) return;
+        const url = raw.trim();
+        if (url) setCardCover(url);
+      });
+      document.getElementById("detail-cover-file")?.addEventListener("click", () => {
+        document.getElementById("detail-cover-input")?.click();
+      });
+      document.getElementById("detail-cover-input")?.addEventListener("change", (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => setCardCover(String(reader.result || ""));
+        reader.readAsDataURL(file);
+        e.target.value = "";
+      });
       document.getElementById("detail-att-url")?.addEventListener("click", addAttachmentFromUrl);
       document.getElementById("detail-att-file")?.addEventListener("click", () => {
         document.getElementById("detail-att-input")?.click();
@@ -1482,7 +1602,7 @@
   </script>
   <script>
     // inline seed for file://
-    window.__BOARDS__ = {"connect":{"name":"Connect","blurb":"Automação LinkedIn e vendas","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"connect-t-0","title":"Automatizar processo de cobrança"},{"id":"connect-t-1","title":"Automatizar processo de orçamento"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"connect-tech":{"name":"Connect Tech","blurb":"Consultoria e desenvolvimento de software","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"connect-tech-t-0","title":"Criar PDF de apresentação"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"clozzy":{"name":"Clozzy","blurb":"Conteúdo exclusivo","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"clozzy-t-0","title":"Benchmarking"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"e-notas":{"name":"e-notas","blurb":"Índice de preços via QR","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"e-notas-t-0","title":"Criar protótipo"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"role-go":{"name":"RoleGo","blurb":"Festas e eventos","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"role-go-t-0","title":"gerar primeira versao"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"board":{"name":"Board","blurb":"Kanban próprio","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"board-t-0","title":"Criar o protótipo"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"plans":{"name":"Plans","blurb":"Orquestrador","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"plans-t-0","title":"Criar o protótipo"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[{"id":"plans-d-0","title":"Princípio: dividir atividades (mesmo por IA) em partes para validação parcial"}]}]},"context-recorder":{"name":"Context Recorder","blurb":"Memória contínua","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"context-recorder-t-0","title":"Definir PRD"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"cupido":{"name":"Cupido","blurb":"Match anônimo","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"cupido-t-0","title":"Definir PRD"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"hurble":{"name":"Hurble","blurb":"Roulette social","columns":[{"id":"todo","title":"A fazer","cards":[]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"agent-shop":{"name":"Agent Shop","blurb":"Agentes autônomos","columns":[{"id":"todo","title":"A fazer","cards":[]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"caronas":{"name":"Caronas","blurb":"Caronas recorrentes","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"caronas-t-0","title":"Criar documento de épicos"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"fitness":{"name":"Fitness","blurb":"Treino e dieta","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"fitness-t-0","title":"Definir documento de épicos"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"jiu-jitsu":{"name":"Jiu-jitsu","blurb":"Grafo de posições","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"jiu-jitsu-t-0","title":"Definir documento de visão"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"flow":{"name":"Flow","blurb":"Linguagem e fundamentos de fluxo","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"flow-t-0","title":"Definir Épicos"},{"id":"flow-t-1","title":"Criar roadmap"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"eternos-mutaveis":{"name":"Eternos Mutáveis","blurb":"Manuscrito","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"eternos-mutaveis-t-0","title":"Escrever capítulo 1"},{"id":"eternos-mutaveis-t-1","title":"Referncias de modelo de escrita"},{"id":"eternos-mutaveis-t-2","title":"Referncias externas bsucar na net para cada capitulo"},{"id":"eternos-mutaveis-t-3","title":"Reunir todos os áudios e transcricoes do iphone que nao estao aqui"},{"id":"eternos-mutaveis-t-4","title":"baixar os posts dos threads"},{"id":"eternos-mutaveis-t-5","title":"Definir roadmap"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"aulas":{"name":"Aulas","blurb":"Conteúdo didático","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"aulas-t-0","title":"Criar roadmap"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"filme-metafisico":{"name":"Filme Metafísico","blurb":"Roteiro","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"filme-metafisico-t-0","title":"Definir Roteiro"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"provas-ufpr":{"name":"Provas UFPR","blurb":"Acervo de provas","columns":[{"id":"todo","title":"A fazer","cards":[]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"financeiro":{"name":"Financeiro","blurb":"Gastos e cartões","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"financeiro-t-0","title":"Extrair faturas cartão"},{"id":"financeiro-t-1","title":"Gerar relatório"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"ov":{"name":"OV","blurb":"Contas OmeTV","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"ov-t-0","title":"Criar novo lgermeno"},{"id":"ov-t-1","title":"Criar novo marcelo"},{"id":"ov-t-2","title":"Criar Germano"},{"id":"ov-t-3","title":"projeto x8 e x$"},{"id":"ov-t-4","title":"projeto Germano"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"mauricio":{"name":"Mauricio","blurb":"Tinder via Chrome CDP","columns":[{"id":"todo","title":"A fazer","cards":[]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"low-chat":{"name":"low-chat","blurb":"LLM barato multi-canal","columns":[{"id":"todo","title":"A fazer","cards":[]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]}};
+    window.__BOARDS__ = {"connect":{"name":"Connect","blurb":"Automação LinkedIn e vendas","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"connect-t-0","title":"Automatizar processo de cobrança","cover":"boards/banners/automacao-cobranca.jpg"},{"id":"connect-t-1","title":"Automatizar processo de orçamento"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"connect-tech":{"name":"Connect Tech","blurb":"Consultoria e desenvolvimento de software","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"connect-tech-t-0","title":"Criar PDF de apresentação"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"clozzy":{"name":"Clozzy","blurb":"Conteúdo exclusivo","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"clozzy-t-0","title":"Benchmarking"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"e-notas":{"name":"e-notas","blurb":"Índice de preços via QR","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"e-notas-t-0","title":"Criar protótipo"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"role-go":{"name":"RoleGo","blurb":"Festas e eventos","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"role-go-t-0","title":"gerar primeira versao"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"board":{"name":"Board","blurb":"Kanban próprio","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"board-t-0","title":"Criar o protótipo"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"plans":{"name":"Plans","blurb":"Orquestrador","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"plans-t-0","title":"Criar o protótipo"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[{"id":"plans-d-0","title":"Princípio: dividir atividades (mesmo por IA) em partes para validação parcial"}]}]},"context-recorder":{"name":"Context Recorder","blurb":"Memória contínua","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"context-recorder-t-0","title":"Definir PRD"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"cupido":{"name":"Cupido","blurb":"Match anônimo","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"cupido-t-0","title":"Definir PRD"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"hurble":{"name":"Hurble","blurb":"Roulette social","columns":[{"id":"todo","title":"A fazer","cards":[]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"agent-shop":{"name":"Agent Shop","blurb":"Agentes autônomos","columns":[{"id":"todo","title":"A fazer","cards":[]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"caronas":{"name":"Caronas","blurb":"Caronas recorrentes","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"caronas-t-0","title":"Criar documento de épicos"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"fitness":{"name":"Fitness","blurb":"Treino e dieta","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"fitness-t-0","title":"Definir documento de épicos"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"jiu-jitsu":{"name":"Jiu-jitsu","blurb":"Grafo de posições","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"jiu-jitsu-t-0","title":"Definir documento de visão"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"flow":{"name":"Flow","blurb":"Linguagem e fundamentos de fluxo","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"flow-t-0","title":"Definir Épicos"},{"id":"flow-t-1","title":"Criar roadmap"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"eternos-mutaveis":{"name":"Eternos Mutáveis","blurb":"Manuscrito","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"eternos-mutaveis-t-0","title":"Escrever capítulo 1"},{"id":"eternos-mutaveis-t-1","title":"Referncias de modelo de escrita"},{"id":"eternos-mutaveis-t-2","title":"Referncias externas bsucar na net para cada capitulo"},{"id":"eternos-mutaveis-t-3","title":"Reunir todos os áudios e transcricoes do iphone que nao estao aqui"},{"id":"eternos-mutaveis-t-4","title":"baixar os posts dos threads"},{"id":"eternos-mutaveis-t-5","title":"Definir roadmap"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"aulas":{"name":"Aulas","blurb":"Conteúdo didático","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"aulas-t-0","title":"Criar roadmap"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"filme-metafisico":{"name":"Filme Metafísico","blurb":"Roteiro","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"filme-metafisico-t-0","title":"Definir Roteiro"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"provas-ufpr":{"name":"Provas UFPR","blurb":"Acervo de provas","columns":[{"id":"todo","title":"A fazer","cards":[]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"financeiro":{"name":"Financeiro","blurb":"Gastos e cartões","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"financeiro-t-0","title":"Extrair faturas cartão"},{"id":"financeiro-t-1","title":"Gerar relatório"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"ov":{"name":"OV","blurb":"Contas OmeTV","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"ov-t-0","title":"Criar novo lgermeno"},{"id":"ov-t-1","title":"Criar novo marcelo"},{"id":"ov-t-2","title":"Criar Germano"},{"id":"ov-t-3","title":"projeto x8 e x$"},{"id":"ov-t-4","title":"projeto Germano"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"mauricio":{"name":"Mauricio","blurb":"Tinder via Chrome CDP","columns":[{"id":"todo","title":"A fazer","cards":[]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"low-chat":{"name":"low-chat","blurb":"LLM barato multi-canal","columns":[{"id":"todo","title":"A fazer","cards":[]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]}};
   </script>
 </body>
 </html>

@@ -1,33 +1,31 @@
 ---
-description: Proíbe textos de UI que só a IA colocaria (narração, meta, óbvio)
+description: Proíbe só narração de UI que explica o óbvio (não labels úteis)
 alwaysApply: true
 ---
 
 # Copy: sem narração de IA
 
-Em HTML/UI/docs de produto neste workspace, **não** escrever textos que um humano não colocaria no próprio software.
+Não escrever textos que **explicam como a página funciona** em vez de nomear conteúdo.
 
-## Proibido
+## Remover só este tipo
 
-- Explicar o layout na tela (“agrupados por categoria”, “cada card abre o README”)
-- Meta de design/stack no rodapé (“Editorial Bold · Lucide”, “Categorias · …”)
-- Contagens decorativas sem função (“22 projetos · 6 categorias”)
-- Subtítulos de seção que só repetem o óbvio (“apps e experiências”, “finanças e vida”)
-- CTA genérico em todo card clicável (“Abrir”, “Saiba mais”, “Clique aqui”, “Get Started”)
-- Lede/helper que ensina a usar a página em vez de conteúdo real
-- Filler: seamless, unlock, elevate, transform your, “simples e poderoso”
+- Lede/helper que ensina a UI: “Projetos agrupados por categoria. Cada card abre o README ou a pasta.”
+- Frases do tipo “clique no card para abrir”, “organize por seções abaixo”, “esta página lista…”
 
-## Permitido
+## Pode manter
 
-- Nome do produto / seção
-- Descrição curta **específica** do que o projeto é (não de como a UI funciona)
-- Labels de ação concretas só quando a ação não é óbvia pelo controle
+- Contagem no topo (`22 projetos · 6 categorias`)
+- Título do header (`Projetos do workspace`)
+- Notas curtas de seção (`apps e experiências`)
+- CTA `Abrir` no card
+- Descrição específica do projeto
+- Footer discreto de contexto
 
 ## Exemplos
 
 ```text
-✅ h1 Projetos · seções Empresa / Produtos · card “e-notas” + uma linha do produto
-❌ “Projetos agrupados por categoria. Cada card abre o README ou a pasta.”
-❌ footer “Categorias · Editorial Bold · Lucide”
-❌ em todo card: “Abrir”
+✅ Workstation. · 22 projetos · 6 categorias
+✅ h1 Projetos do workspace
+✅ nota de seção: automação e software
+❌ Projetos agrupados por categoria. Cada card abre o README ou a pasta.
 ```

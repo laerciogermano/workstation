@@ -280,6 +280,7 @@ Curadoria: [`../marca/benchmarking-solucoes/README.md`](../marca/benchmarking-so
 ## REQ-032 — Busca automática de fotos ao cadastrar EAN (2026-11-04)
 
 - Ao **cadastrar/vincular** um código de barras (`POST /api/codigos-barras`), dispara busca **assíncrona** de imagens desse EAN (até ~50 candidatas).
+- **Regra:** toda imagem de terceiro é **baixada** para disco e gravada com `path_local` no banco (`ean_imagens` / `desc_imagens` / cache Google). Feed e APIs só servem path estático nosso — nunca hotlink.
 - Fontes: Open Food Facts → Open Beauty → Open Products → UPCitemdb; **Google Imagens sempre** (REQ-042 CDP, sem API key) — query `EAN + descricao` quando houver nome do item; **default n=50** (máx 100).
 - `POST /api/ean-imagens/buscar` e enrichment `/imagens` aceitam `descricao` opcional (UI do detalhe envia o nome do produto).
 - Tabela `enotas.ean_imagens`: EAN, `url_origem`, `fonte`, `path_local`, `ordem`, `selecionada`, `sha1`, `criado_em`. Arquivos em `ean-fotos/{ean}/NN.ext`.

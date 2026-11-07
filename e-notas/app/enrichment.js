@@ -5,14 +5,15 @@
  */
 import {
   buscarImagensEan,
+  ensureDescImageLocal,
+  ensureEanImageLocal,
   getEanResolveBusca,
-  getImagemSelecionada,
   listLinkedNomeEan,
   listEanSugestoes,
-  resolveFotoUrlForEan,
   saveEanResolveBusca,
   upsertEanSugestoes,
 } from './db.js';
+import { isRemoteImageUrl } from './ean-imagens.js';
 import { searchGoogleImages } from './google-imagens.js';
 
 const UA =
@@ -163,32 +164,35 @@ function pushEan(map, { ean, score, fonte, nome_canonico, image_url }) {
   });
 }
 
-/** Preenche image_url faltante: disco/DB local → Open Food Facts por EAN. */
+/**
+ * Garante image_url local (baixa terceiros → ean-fotos + ean_imagens).
+ * Nunca deixa URL http(s) externa na resposta.
+ */
 async function attachImagesToCandidatos(candidatos) {
   for (const c of candidatos) {
-    if (c.image_url) continue;
-    try {
-      const sel = await getImagemSelecionada(c.ean);
-      const local = sel?.path_local || resolveFotoUrlForEan(c.ean);
-      if (local) {
-        c.image_url = local.startsWith('http') ? local : `/${local.replace(/^\//, '')}`;
-        continue;
+    let remote = isRemoteImageUrl(c.image_url) ? c.image_url : null;
+    if (!remote) {
+      try {
+        const data = await fetchJson(
+          `https://world.openfoodfacts.org/api/v2/product/${encodeURIComponent(c.ean)}.json`,
+        );
+        if (data?.status === 1 && data.product) {
+          remote = productImage(data.product);
+        }
+      } catch {
+        /* ignore */
       }
-    } catch {
-      /* ignore */
+      await sleep(80);
     }
     try {
-      const data = await fetchJson(
-        `https://world.openfoodfacts.org/api/v2/product/${encodeURIComponent(c.ean)}.json`,
-      );
-      if (data?.status === 1 && data.product) {
-        const img = productImage(data.product);
-        if (img) c.image_url = img;
-      }
-    } catch {
-      /* ignore */
+      const pathLocal = await ensureEanImageLocal(c.ean, remote, {
+        fonte: remote ? 'openfoodfacts' : 'local',
+      });
+      c.image_url = pathLocal ? `/${pathLocal.replace(/^\//, '')}` : null;
+    } catch (err) {
+      console.warn('[enrichment] localize imagem:', err.message);
+      c.image_url = null;
     }
-    await sleep(80);
   }
   return candidatos;
 }
@@ -439,7 +443,28 @@ export async function collectImageUrlsByDescricao(descricao) {
   }
 
   out.sort((a, b) => b.score - a.score);
-  return out.slice(0, 5);
+  const localized = [];
+  let ordem = 1;
+  for (const it of out.slice(0, 5)) {
+    let pathLocal = null;
+    if (it.ean) {
+      pathLocal = await ensureEanImageLocal(it.ean, it.url, { fonte: it.fonte });
+    } else {
+      pathLocal = await ensureDescImageLocal(descricao_norm, it.url, {
+        fonte: it.fonte,
+        ordem,
+      });
+    }
+    ordem += 1;
+    if (!pathLocal) continue;
+    localized.push({
+      ...it,
+      url_origem: isRemoteImageUrl(it.url) ? it.url : null,
+      url: `/${pathLocal.replace(/^\//, '')}`,
+      path_local: pathLocal,
+    });
+  }
+  return localized;
 }
 
 /**

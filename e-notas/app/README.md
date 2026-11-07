@@ -80,7 +80,7 @@ UI: na **vitrine do estabelecimento**, botão **Código de barras** / **Editar E
 
 Módulo: [`enrichment.js`](enrichment.js) (normalização + match local/OFF + orquestração). Cache: `ean_sugestoes`.
 
-Fotos: `public/ean-fotos/{ean}.jpg` (legado) e `public/ean-fotos/{ean}/NN.ext` (candidatas) · ver [`public/ean-fotos/README.md`](public/ean-fotos/README.md).
+Fotos: sempre **locais** — `public/ean-fotos/{ean}/NN.ext`, `public/desc-fotos/{slug}/NN.ext`, `public/google-imagens/{slug}/NN.ext`. URLs de terceiros só em `url_origem`; resposta/`foto_url` usam `path_local`. Ver [`public/ean-fotos/README.md`](public/ean-fotos/README.md).
 
 ## Reverter
 

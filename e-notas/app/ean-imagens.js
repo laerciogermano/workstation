@@ -21,6 +21,7 @@ try {
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export const EAN_FOTOS_DIR = path.join(__dirname, 'public', 'ean-fotos');
+export const DESC_FOTOS_DIR = path.join(__dirname, 'public', 'desc-fotos');
 
 const UA =
   'notinhas.shop/0.1 (ean image lookup; +https://notinhas.shop; contato@notinhas.shop)';
@@ -269,28 +270,69 @@ function httpGetBuffer(url, { timeoutMs = 20_000, redirects = 5 } = {}) {
   });
 }
 
+function writeImageBuffer(dir, relPrefix, url, ordem) {
+  return httpGetBuffer(url, { timeoutMs: 20_000 }).then(({ buf, contentType }) => {
+    if (buf.length < 200) return null;
+    fs.mkdirSync(dir, { recursive: true });
+    const ext = extFromContentType(contentType, url);
+    const nn = String(ordem).padStart(2, '0');
+    const file = `${nn}.${ext}`;
+    const abs = path.join(dir, file);
+    fs.writeFileSync(abs, buf);
+    const sha1 = crypto.createHash('sha1').update(buf).digest('hex');
+    return {
+      pathLocal: `${relPrefix}/${file}`,
+      bytes: buf.length,
+      sha1,
+    };
+  });
+}
+
 /**
  * Baixa imagem para ean-fotos/{ean}/{nn}.{ext}.
  * @returns {{ pathLocal: string, bytes: number, sha1: string } | null}
  */
 export async function downloadEanImage(ean, url, ordem) {
   const code = String(ean).trim();
-  const dir = path.join(EAN_FOTOS_DIR, code);
-  fs.mkdirSync(dir, { recursive: true });
+  if (!code || !url) return null;
+  return writeImageBuffer(
+    path.join(EAN_FOTOS_DIR, code),
+    `ean-fotos/${code}`,
+    url,
+    ordem,
+  );
+}
 
-  const { buf, contentType } = await httpGetBuffer(url, { timeoutMs: 20_000 });
-  if (buf.length < 200) return null;
-  const ext = extFromContentType(contentType, url);
-  const nn = String(ordem).padStart(2, '0');
-  const file = `${nn}.${ext}`;
-  const abs = path.join(dir, file);
-  fs.writeFileSync(abs, buf);
-  const sha1 = crypto.createHash('sha1').update(buf).digest('hex');
-  return {
-    pathLocal: `ean-fotos/${code}/${file}`,
-    bytes: buf.length,
-    sha1,
-  };
+/**
+ * Baixa imagem sem EAN para desc-fotos/{slug}/{nn}.{ext}.
+ * @returns {{ pathLocal: string, bytes: number, sha1: string } | null}
+ */
+export async function downloadDescImage(slug, url, ordem) {
+  const key = String(slug || 'q')
+    .toLowerCase()
+    .replace(/[^a-z0-9_-]+/g, '-')
+    .replace(/^-|-$/g, '')
+    .slice(0, 64) || 'q';
+  if (!url) return null;
+  return writeImageBuffer(
+    path.join(DESC_FOTOS_DIR, key),
+    `desc-fotos/${key}`,
+    url,
+    ordem,
+  );
+}
+
+/** True se a URL ainda aponta para terceiros. */
+export function isRemoteImageUrl(url) {
+  return /^https?:\/\//i.test(String(url || '').trim());
+}
+
+/** Normaliza path público local (sem host). */
+export function toPublicImagePath(pathLocal) {
+  const p = String(pathLocal || '')
+    .trim()
+    .replace(/^\/+/, '');
+  return p || null;
 }
 
 /** Evita buscas paralelas duplicadas do mesmo EAN. */

@@ -5,7 +5,10 @@ import pg from 'pg';
 import { geocodeEndereco } from './geocode.js';
 import {
   collectImageCandidates,
+  downloadDescImage,
   downloadEanImage,
+  isRemoteImageUrl,
+  toPublicImagePath,
   withEanSearchLock,
 } from './ean-imagens.js';
 
@@ -185,6 +188,20 @@ export async function initDb() {
       candidatos INTEGER NOT NULL DEFAULT 0,
       buscado_em TIMESTAMPTZ NOT NULL DEFAULT now()
     );
+
+    CREATE TABLE IF NOT EXISTS ${t('desc_imagens')} (
+      id SERIAL PRIMARY KEY,
+      descricao_norm TEXT NOT NULL,
+      url_origem TEXT,
+      path_local TEXT NOT NULL,
+      fonte TEXT,
+      ordem INTEGER NOT NULL DEFAULT 0,
+      sha1 TEXT,
+      criado_em TIMESTAMPTZ NOT NULL DEFAULT now()
+    );
+
+    CREATE INDEX IF NOT EXISTS desc_imagens_norm_idx
+      ON ${t('desc_imagens')}(descricao_norm);
   `);
 
   await p.query(`
@@ -199,6 +216,8 @@ export async function initDb() {
       ON ${t('ean_imagens')}(codigo_barras, path_local);
     CREATE UNIQUE INDEX IF NOT EXISTS google_imagens_cache_q_ordem_uidx
       ON ${t('google_imagens_cache')}(query_norm, ordem);
+    CREATE UNIQUE INDEX IF NOT EXISTS desc_imagens_norm_path_uidx
+      ON ${t('desc_imagens')}(descricao_norm, path_local);
   `);
 
   await syncFotosCodigosBarras(p);
@@ -717,6 +736,109 @@ export async function listEanImagens(codigoBarras, client = getPool()) {
   return r.rows;
 }
 
+/**
+ * Garante imagem local no disco + `ean_imagens`. Nunca devolve URL de terceiro.
+ * @returns {string|null} path relativo tipo `ean-fotos/789…/01.jpg`
+ */
+export async function ensureEanImageLocal(
+  codigoBarras,
+  remoteUrl,
+  { fonte = 'remote' } = {},
+) {
+  const ean = String(codigoBarras ?? '').replace(/\D/g, '');
+  if (!ean) return null;
+
+  const existing = await listEanImagens(ean);
+  const prefer =
+    existing.find((i) => i.selecionada)?.path_local ||
+    existing[0]?.path_local ||
+    null;
+  if (prefer) return toPublicImagePath(prefer);
+
+  const legacy = resolveFotoUrlForEan(ean);
+  if (legacy) {
+    await ensureLegacyFotoAsCandidate(ean);
+    return toPublicImagePath(legacy);
+  }
+
+  let url = String(remoteUrl || '').trim();
+  if (url && !isRemoteImageUrl(url)) {
+    return toPublicImagePath(url);
+  }
+  if (!isRemoteImageUrl(url)) return null;
+
+  const ordem = existing.length + 1;
+  let dl;
+  try {
+    dl = await downloadEanImage(ean, url, ordem);
+  } catch (err) {
+    console.warn(`[ean-imagens] localize ${ean}:`, err.message);
+    return null;
+  }
+  if (!dl) return null;
+
+  const client = getPool();
+  await client.query(
+    `INSERT INTO ${t('ean_imagens')}
+       (codigo_barras, url_origem, fonte, path_local, ordem, selecionada, sha1)
+     VALUES ($1, $2, $3, $4, $5, false, $6)
+     ON CONFLICT (codigo_barras, path_local) DO NOTHING`,
+    [ean, url, String(fonte).slice(0, 64), dl.pathLocal, ordem, dl.sha1],
+  );
+
+  const imgs = await listEanImagens(ean, client);
+  if (imgs.length && !imgs.some((i) => i.selecionada)) {
+    await selecionarEanImagem(imgs[0].id, client);
+  }
+  return toPublicImagePath(dl.pathLocal);
+}
+
+/**
+ * Baixa imagem de descritivo (sem EAN) para `desc-fotos/` + tabela `desc_imagens`.
+ * @returns {string|null} path local
+ */
+export async function ensureDescImageLocal(
+  descricaoNorm,
+  remoteUrl,
+  { fonte = 'remote', ordem = 1 } = {},
+) {
+  const norm = String(descricaoNorm ?? '').trim();
+  const url = String(remoteUrl || '').trim();
+  if (!norm) return null;
+  if (url && !isRemoteImageUrl(url)) return toPublicImagePath(url);
+  if (!isRemoteImageUrl(url)) return null;
+
+  const client = getPool();
+  const cached = await client.query(
+    `SELECT path_local FROM ${t('desc_imagens')}
+     WHERE descricao_norm = $1 AND url_origem = $2
+     LIMIT 1`,
+    [norm, url],
+  );
+  if (cached.rows[0]?.path_local) {
+    return toPublicImagePath(cached.rows[0].path_local);
+  }
+
+  const slug = norm.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 48);
+  let dl;
+  try {
+    dl = await downloadDescImage(slug || 'q', url, ordem);
+  } catch (err) {
+    console.warn('[desc-imagens] download:', err.message);
+    return null;
+  }
+  if (!dl) return null;
+
+  await client.query(
+    `INSERT INTO ${t('desc_imagens')}
+       (descricao_norm, url_origem, path_local, fonte, ordem, sha1)
+     VALUES ($1, $2, $3, $4, $5, $6)
+     ON CONFLICT (descricao_norm, path_local) DO NOTHING`,
+    [norm, url, dl.pathLocal, String(fonte).slice(0, 64), ordem, dl.sha1],
+  );
+  return toPublicImagePath(dl.pathLocal);
+}
+
 export async function getImagemSelecionada(codigoBarras, client = getPool()) {
   const ean = String(codigoBarras ?? '').trim();
   if (!ean) return null;
@@ -731,8 +853,13 @@ export async function getImagemSelecionada(codigoBarras, client = getPool()) {
 
 async function setFotoUrlForEan(ean, pathLocal, client = getPool()) {
   const code = String(ean).trim();
-  const foto = String(pathLocal || '').trim() || null;
+  let foto = String(pathLocal || '').trim() || null;
   if (!code || !foto) return 0;
+  if (isRemoteImageUrl(foto)) {
+    console.warn(`[ean-imagens] recusando foto_url remota para ${code}`);
+    return 0;
+  }
+  foto = toPublicImagePath(foto);
   const r = await client.query(
     `UPDATE ${t('codigos_barras')}
      SET foto_url = $1, updated_at = now()

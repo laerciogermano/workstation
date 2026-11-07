@@ -27,7 +27,9 @@
 - Exigir título para criar uma unidade.
 - Permitir contexto opcional para orientar a execução humana ou por IA.
 - Impedir ciclos na hierarquia.
-- Favorecer decomposição de atividades em partes (incl. quando o responsável é IA), para validação parcial entre etapas e menor chance de erro em cascata.
+- Favorecer decomposição de atividades em partes (incl. quando o responsável é IA), para validação parcial, encadeamento saída→entrada entre etapas e menor chance de erro em cascata frente a um único lote monolítico.
+- Orquestrar no mesmo plano etapas com agentes pessoa, IA e máquina/biblioteca, sem redesenhar o roteiro ao trocar o agente.
+- Tratar planos como roteiros de sistema (fluxos de execução), não só como listas de tarefas.
 
 ### Navegação entre visões
 

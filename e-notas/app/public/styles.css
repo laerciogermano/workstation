@@ -542,6 +542,69 @@ body.modal-open {
   cursor: zoom-in;
 }
 
+.ean-suggest {
+  display: grid;
+  gap: 0.45rem;
+  margin: 0.65rem 0 0;
+}
+
+.ean-suggest-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.35rem;
+  max-height: 11rem;
+  overflow: auto;
+}
+
+.ean-suggest-list li {
+  margin: 0;
+}
+
+.ean-suggest-btn {
+  width: 100%;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.15rem 0.65rem;
+  text-align: left;
+  padding: 0.55rem 0.7rem;
+  border: 1.5px solid var(--nt-line);
+  border-radius: var(--nt-radius-sm);
+  background: var(--nt-white);
+  color: var(--nt-ink);
+  font: inherit;
+  cursor: pointer;
+}
+
+.ean-suggest-btn:hover {
+  border-color: var(--nt-accent, #2563eb);
+}
+
+.ean-suggest-ean {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  align-self: center;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.9rem;
+}
+
+.ean-suggest-nome {
+  grid-column: 2;
+  font-size: 0.82rem;
+  color: var(--nt-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ean-suggest-meta {
+  grid-column: 2;
+  font-size: 0.72rem;
+  color: var(--nt-muted);
+}
+
 .ean-reader {
   overflow: hidden;
   border-radius: var(--nt-radius-sm);

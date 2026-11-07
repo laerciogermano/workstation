@@ -140,6 +140,22 @@ export async function initDb() {
 
     CREATE INDEX IF NOT EXISTS ean_imagens_ean_idx
       ON ${t('ean_imagens')}(codigo_barras);
+
+    CREATE TABLE IF NOT EXISTS ${t('ean_sugestoes')} (
+      id SERIAL PRIMARY KEY,
+      descricao_norm TEXT NOT NULL,
+      ean TEXT NOT NULL,
+      score DOUBLE PRECISION NOT NULL DEFAULT 0,
+      fonte TEXT,
+      nome_canonico TEXT,
+      confirmacoes INTEGER NOT NULL DEFAULT 0,
+      rejeicoes INTEGER NOT NULL DEFAULT 0,
+      atualizado_em TIMESTAMPTZ NOT NULL DEFAULT now(),
+      UNIQUE (descricao_norm, ean)
+    );
+
+    CREATE INDEX IF NOT EXISTS ean_sugestoes_desc_idx
+      ON ${t('ean_sugestoes')}(descricao_norm);
   `);
 
   await p.query(`
@@ -395,6 +411,81 @@ export async function listCodigosBarras(client = getPool()) {
      ORDER BY cb.id DESC`,
   );
   return r.rows;
+}
+
+/** Pares (nome do item, EAN) já vinculados — sinal comunitário para enrichment. */
+export async function listLinkedNomeEan(client = getPool()) {
+  const r = await client.query(
+    `SELECT i.nome, cb.codigo_barras, COUNT(*)::int AS usos
+     FROM ${t('itens')} i
+     JOIN ${t('codigos_barras')} cb
+       ON cb.empresa_id = i.empresa_id AND cb.codigo_unidade = i.codigo
+     WHERE i.nome IS NOT NULL AND TRIM(i.nome) <> ''
+       AND cb.codigo_barras IS NOT NULL AND TRIM(cb.codigo_barras) <> ''
+     GROUP BY i.nome, cb.codigo_barras`,
+  );
+  return r.rows;
+}
+
+export async function listEanSugestoes(descricaoNorm, client = getPool()) {
+  const norm = String(descricaoNorm ?? '').trim();
+  if (!norm) return [];
+  const r = await client.query(
+    `SELECT * FROM ${t('ean_sugestoes')}
+     WHERE descricao_norm = $1
+     ORDER BY confirmacoes DESC, score DESC, id ASC`,
+    [norm],
+  );
+  return r.rows;
+}
+
+/** Upsert em lote de sugestões (cache de resolução descrição→EAN). */
+export async function upsertEanSugestoes(rows, client = getPool()) {
+  if (!Array.isArray(rows) || !rows.length) return 0;
+  let n = 0;
+  for (const row of rows) {
+    const descricao_norm = String(row.descricao_norm ?? '').trim();
+    const ean = String(row.ean ?? '').replace(/\D/g, '');
+    if (!descricao_norm || !ean) continue;
+    const score = Number(row.score) || 0;
+    const fonte = row.fonte ? String(row.fonte).slice(0, 64) : null;
+    const nome_canonico = row.nome_canonico
+      ? String(row.nome_canonico).slice(0, 512)
+      : null;
+    await client.query(
+      `INSERT INTO ${t('ean_sugestoes')}
+         (descricao_norm, ean, score, fonte, nome_canonico)
+       VALUES ($1, $2, $3, $4, $5)
+       ON CONFLICT (descricao_norm, ean)
+       DO UPDATE SET
+         score = GREATEST(${t('ean_sugestoes')}.score, EXCLUDED.score),
+         fonte = COALESCE(EXCLUDED.fonte, ${t('ean_sugestoes')}.fonte),
+         nome_canonico = COALESCE(EXCLUDED.nome_canonico, ${t('ean_sugestoes')}.nome_canonico),
+         atualizado_em = now()`,
+      [descricao_norm, ean, score, fonte, nome_canonico],
+    );
+    n += 1;
+  }
+  return n;
+}
+
+/** Incrementa confirmação quando o usuário vincula o EAN sugerido. */
+export async function confirmarEanSugestao(
+  descricaoNorm,
+  ean,
+  client = getPool(),
+) {
+  const norm = String(descricaoNorm ?? '').trim();
+  const code = String(ean ?? '').replace(/\D/g, '');
+  if (!norm || !code) return null;
+  const r = await client.query(
+    `UPDATE ${t('ean_sugestoes')}
+     SET confirmacoes = confirmacoes + 1, atualizado_em = now()
+     WHERE descricao_norm = $1 AND ean = $2
+     RETURNING *`,
+    [norm, code],
+  );
+  return r.rows[0] || null;
 }
 
 /** Upsert: (empresa, código da unidade) → código de barras (EAN) + foto_url se houver arquivo. */

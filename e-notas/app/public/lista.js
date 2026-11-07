@@ -21,6 +21,9 @@ const eanCaptureEl = document.getElementById('ean-capture');
 const eanFileEl = document.getElementById('ean-file');
 const btnEanTirarFotoEl = document.getElementById('btn-ean-tirar-foto');
 const btnEanEscolherImagemEl = document.getElementById('btn-ean-escolher-imagem');
+const btnEanSugerirEl = document.getElementById('btn-ean-sugerir');
+const eanSuggestListEl = document.getElementById('ean-suggest-list');
+const eanSuggestStatusEl = document.getElementById('ean-suggest-status');
 const vitrineListaEl = document.getElementById('vitrine-lista');
 const vitrineDetalheEl = document.getElementById('vitrine-detalhe');
 const produtosListaEl = document.getElementById('produtos-lista');
@@ -1080,6 +1083,70 @@ async function decodeEanFromFile(file) {
   }
 }
 
+function setEanSuggestStatus(msg, kind) {
+  if (!eanSuggestStatusEl) return;
+  eanSuggestStatusEl.textContent = msg || '';
+  eanSuggestStatusEl.classList.toggle('ok', kind === 'ok');
+  eanSuggestStatusEl.classList.toggle('err', kind === 'err');
+}
+
+function clearEanSuggestList() {
+  if (!eanSuggestListEl) return;
+  eanSuggestListEl.innerHTML = '';
+  eanSuggestListEl.hidden = true;
+}
+
+function renderEanSuggestList(candidatos) {
+  if (!eanSuggestListEl) return;
+  eanSuggestListEl.innerHTML = '';
+  if (!candidatos?.length) {
+    eanSuggestListEl.hidden = true;
+    return;
+  }
+  for (const c of candidatos) {
+    const li = document.createElement('li');
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'ean-suggest-btn';
+    btn.dataset.ean = c.ean;
+    const pct = Math.round((Number(c.score) || 0) * 100);
+    btn.innerHTML = `
+      <span class="ean-suggest-ean">${esc(c.ean)}</span>
+      <span class="ean-suggest-nome">${esc(c.nome_canonico || '—')}</span>
+      <span class="ean-suggest-meta">${pct}% · ${esc(c.fonte || '')}</span>
+    `;
+    li.appendChild(btn);
+    eanSuggestListEl.appendChild(li);
+  }
+  eanSuggestListEl.hidden = false;
+}
+
+async function sugerirEanPorDescricao() {
+  const nome = modalContext?.itemNome || '';
+  if (!nome.trim()) {
+    setEanSuggestStatus('Sem descrição do item para sugerir.', 'err');
+    return;
+  }
+  setEanSuggestStatus('Buscando candidatos…');
+  clearEanSuggestList();
+  try {
+    const data = await fetchJson('api/enrichment/ean', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ descricao: nome }),
+    });
+    const list = data.candidatos || [];
+    if (!list.length) {
+      setEanSuggestStatus('Nenhum EAN encontrado. Digite ou escaneie.', 'err');
+      return;
+    }
+    renderEanSuggestList(list);
+    setEanSuggestStatus(`${list.length} candidato(s). Toque para preencher.`, 'ok');
+  } catch (err) {
+    setEanSuggestStatus(`Falha: ${err.message}`, 'err');
+  }
+}
+
 async function openCadastroEan({
   empresaId,
   empresaNome,
@@ -1095,6 +1162,8 @@ async function openCadastroEan({
   eanUnidadeEl.value = codigo || '';
   eanBarrasEl.value = ean || '';
   setEanFormStatus('');
+  setEanSuggestStatus('');
+  clearEanSuggestList();
   document.getElementById('modal-ean-title').textContent = ean
     ? 'Editar código de barras'
     : 'Cadastrar código de barras';
@@ -1116,6 +1185,8 @@ async function closeCadastroEan() {
   document.body.classList.remove('modal-open');
   setEanCamStatus('');
   setEanFormStatus('');
+  setEanSuggestStatus('');
+  clearEanSuggestList();
   await stopEanScanner();
 }
 
@@ -1136,6 +1207,7 @@ async function saveEan() {
         empresa_id: empresaId,
         codigo_unidade: codigoUnidade,
         codigo_barras: codigoBarras,
+        descricao: modalContext?.itemNome || '',
       }),
     });
     setEanFormStatus('Salvo.', 'ok');
@@ -1297,6 +1369,16 @@ formEanEl.addEventListener('submit', async (ev) => {
 
 btnEanTirarFotoEl?.addEventListener('click', () => eanCaptureEl?.click());
 btnEanEscolherImagemEl?.addEventListener('click', () => eanFileEl?.click());
+btnEanSugerirEl?.addEventListener('click', () => {
+  void sugerirEanPorDescricao();
+});
+eanSuggestListEl?.addEventListener('click', (ev) => {
+  const btn = ev.target.closest('[data-ean]');
+  if (!btn) return;
+  eanBarrasEl.value = btn.dataset.ean || '';
+  setEanSuggestStatus(`Preenchido: ${btn.dataset.ean}. Confira e salve.`, 'ok');
+  eanBarrasEl.focus();
+});
 eanCaptureEl?.addEventListener('change', () => {
   const file = eanCaptureEl.files?.[0];
   if (file) decodeEanFromFile(file);

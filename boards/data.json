@@ -171,7 +171,18 @@
           {
             "id": "e-notas-t-0",
             "title": "Criar protótipo"
-          },
+          }
+        ]
+      },
+      {
+        "id": "doing",
+        "title": "Fazendo",
+        "cards": []
+      },
+      {
+        "id": "done",
+        "title": "Feito",
+        "cards": [
           {
             "id": "e-notas-t-desc-ean",
             "title": "Identificar código de barras a partir da descrição",
@@ -188,16 +199,6 @@
             "description": "Dada a descrição do produto, identificar/buscar as imagens correspondentes."
           }
         ]
-      },
-      {
-        "id": "doing",
-        "title": "Fazendo",
-        "cards": []
-      },
-      {
-        "id": "done",
-        "title": "Feito",
-        "cards": []
       }
     ],
     "description": "Índice de preços via QR de nota fiscal para comparar e decidir compra.",

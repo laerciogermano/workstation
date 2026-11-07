@@ -354,17 +354,27 @@ Card: [BXKZ55Wb](https://trello.com/c/BXKZ55Wb).
 
 - Dada a **descrição** textual do produto (nota / busca), o sistema deve **identificar o código de barras** (EAN/GTIN) correspondente.
 - Card workstation: `e-notas-t-desc-ean`.
+- Implementação: `POST /api/enrichment/ean` `{ descricao }` → candidatos ranqueados `{ ean, score, fonte, nome_canonico }` (sem auto-vínculo).
+- Fontes: cache `ean_sugestoes` → pares locais `itens.nome`+`codigos_barras` → Open Food/Beauty/Products Facts (search).
+- UI: modal EAN → **Sugerir EAN pela descrição** → toque preenche o campo; **Salvar** confirma (`descricao` no POST de vínculo incrementa `confirmacoes`).
+- Antes: só scan/digitação. Depois: sugestão + confirmação humana.
+- Rollback: remover rotas `/api/enrichment/*`, `enrichment.js`, UI suggest, `DROP TABLE enotas.ean_sugestoes;`.
 
 ## REQ-040 — Identificar imagens a partir do EAN (2026-11-07)
 
 - Dado um **código de barras**, o sistema deve **identificar/buscar as imagens** do produto.
 - Relacionado a REQ-032 (busca ao cadastrar EAN); este REQ cobre a capacidade genérica descrição↔mídia por EAN.
 - Card workstation: `e-notas-t-ean-imgs`.
+- Implementação: `POST /api/enrichment/imagens` `{ ean|codigo_barras, force? }` — wrapper estável sobre `buscarImagensEan` (REQ-032).
+- Antes: só `/api/ean-imagens/buscar`. Depois: superfície `enrichment` + legado.
 
 ## REQ-041 — Identificar imagens a partir da descrição (2026-11-07)
 
 - Dada a **descrição** do produto, o sistema deve **identificar/buscar as imagens** correspondentes (sem exigir EAN prévio).
 - Card workstation: `e-notas-t-desc-imgs`.
+- Implementação: `POST /api/enrichment/imagens-por-descricao` `{ descricao, force? }`.
+- Se top EAN com score ≥ 0,72 → pipeline EAN→imagens (`modo: ean`); senão URLs textuais OFF em `imagens_texto` sem gravar vínculo (`modo: texto`).
+- Antes: imagens só com EAN conhecido. Depois: orquestração descrição→(EAN?)→imagens.
 
 ## Próximos passos
 

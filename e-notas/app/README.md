@@ -5,7 +5,7 @@ Front **notinhas.shop** ([`notinhas.shop.DESIGN.md`](../marca/notinhas.shop.DESI
 Tema: [`../design-system.md`](../design-system.md) · tokens em `public/styles.css`.  
 Share/WhatsApp: metas OG em `index.html` / `scan.html` + `public/og-image.png`.
 
-Persistência: **Postgres Contabo** (`connectmax`), schema `enotas` (via `.env`) — tabelas `empresas`, `notas`, `itens`, `codigos_barras`, `ean_imagens`.
+Persistência: **Postgres Contabo** (`connectmax`), schema `enotas` (via `.env`) — tabelas `empresas`, `notas`, `itens`, `codigos_barras`, `ean_imagens`, `ean_sugestoes`.
 
 HTTPS autoassinado em `certs/`.
 
@@ -69,11 +69,16 @@ Resposta: `{ ok, created, empresaCriada, url, empresa, nota, itens }`.
 | `GET` | `/api/ean-imagens?codigo_barras=` | `{ ok, imagens }` candidatas do EAN |
 | `POST` | `/api/ean-imagens/buscar` | body `{ codigo_barras, force? }` → busca síncrona (idempotente sem `force`) |
 | `POST` | `/api/ean-imagens/:id/selecionar` | marca a foto do feed e atualiza `codigos_barras.foto_url` |
+| `POST` | `/api/enrichment/ean` | body `{ descricao }` → candidatos EAN (REQ-039; sem auto-vínculo) |
+| `POST` | `/api/enrichment/imagens` | body `{ ean\|codigo_barras, force? }` → imagens do EAN (REQ-040; wrapper REQ-032) |
+| `POST` | `/api/enrichment/imagens-por-descricao` | body `{ descricao, force? }` → `modo: ean\|texto` + imagens (REQ-041) |
 
-UI: na **vitrine do estabelecimento**, botão **Código de barras** / **Editar EAN** no item (câmera, tirar foto / escolher imagem, digitação) → modal `#modal-ean` → `POST` acima (REQ-031). No **detalhe do produto**, grade **Fotos** para escolher a representativa.
+UI: na **vitrine do estabelecimento**, botão **Código de barras** / **Editar EAN** no item (câmera, tirar foto / escolher imagem, digitação, **Sugerir EAN pela descrição**) → modal `#modal-ean` → `POST` acima (REQ-031/039). No **detalhe do produto**, grade **Fotos** para escolher a representativa.
+
+Módulo: [`enrichment.js`](enrichment.js) (normalização + match local/OFF + orquestração). Cache: `ean_sugestoes`.
 
 Fotos: `public/ean-fotos/{ean}.jpg` (legado) e `public/ean-fotos/{ean}/NN.ext` (candidatas) · ver [`public/ean-fotos/README.md`](public/ean-fotos/README.md).
 
 ## Reverter
 
-Parar `:4173`. `DROP TABLE enotas.ean_imagens;` + remover `ean-imagens.js` / rotas / UI de Fotos. Schema: `DROP TABLE enotas.codigos_barras;` se quiser apagar só o mapeamento. `DROP SCHEMA enotas CASCADE;` apaga tudo.
+Parar `:4173`. Enrichment: `DROP TABLE enotas.ean_sugestoes;` + remover `enrichment.js` / rotas `/api/enrichment/*` / bloco `.ean-suggest` no modal. Fotos: `DROP TABLE enotas.ean_imagens;` + remover `ean-imagens.js` / rotas / UI de Fotos. Schema: `DROP TABLE enotas.codigos_barras;` se quiser apagar só o mapeamento. `DROP SCHEMA enotas CASCADE;` apaga tudo.

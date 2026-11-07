@@ -14,6 +14,7 @@ import {
 import {
   buscarImagensEan,
   cadastrarNotaCompleta,
+  confirmarEanSugestao,
   dbInfo,
   enqueueBuscarImagensEan,
   geocodeEmpresasPendentes,
@@ -26,6 +27,11 @@ import {
   selecionarEanImagem,
   upsertCodigoBarras,
 } from './db.js';
+import {
+  imagensPorDescricao,
+  normalizeDescricao,
+  resolveEanFromDescricao,
+} from './enrichment.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PORT = Number(process.env.PORT) || 4173;
@@ -161,6 +167,12 @@ app.post('/api/codigos-barras', async (req, res) => {
       fotoUrl: req.body?.foto_url,
     });
     enqueueBuscarImagensEan(row.codigo_barras);
+    const descSugestao = String(req.body?.descricao || '').trim();
+    if (descSugestao) {
+      confirmarEanSugestao(normalizeDescricao(descSugestao), row.codigo_barras).catch(
+        (err) => console.warn('[ean-sugestao:confirm]', err.message),
+      );
+    }
     console.log(
       `[codigo-barras] empresa=${row.empresa_id} unidade=${row.codigo_unidade} ean=${row.codigo_barras} foto=${row.foto_url || '-'}`,
     );
@@ -168,6 +180,53 @@ app.post('/api/codigos-barras', async (req, res) => {
   } catch (err) {
     const status = err.status || 500;
     console.error('[codigos-barras:erro]', err.message);
+    return res.status(status).json({ ok: false, error: err.message });
+  }
+});
+
+/** REQ-039 — descrição → candidatos EAN (sem auto-vínculo). */
+app.post('/api/enrichment/ean', async (req, res) => {
+  try {
+    const descricao = String(req.body?.descricao || '').trim();
+    const result = await resolveEanFromDescricao(descricao);
+    return res.json({ ok: true, ...result });
+  } catch (err) {
+    const status = err.status || 500;
+    console.error('[enrichment:ean]', err.message);
+    return res.status(status).json({ ok: false, error: err.message });
+  }
+});
+
+/** REQ-040 — EAN → imagens (wrapper estável sobre buscarImagensEan). */
+app.post('/api/enrichment/imagens', async (req, res) => {
+  try {
+    const ean = String(req.body?.ean || req.body?.codigo_barras || '').trim();
+    const force = Boolean(req.body?.force);
+    if (!ean) {
+      return res.status(400).json({ ok: false, error: 'ean obrigatório' });
+    }
+    const result = await buscarImagensEan(ean, { force });
+    return res.json({ ok: true, ...result });
+  } catch (err) {
+    const status = err.status || 500;
+    console.error('[enrichment:imagens]', err.message);
+    return res.status(status).json({ ok: false, error: err.message });
+  }
+});
+
+/** REQ-041 — descrição → imagens (orquestra EAN confiável ou busca textual). */
+app.post('/api/enrichment/imagens-por-descricao', async (req, res) => {
+  try {
+    const descricao = String(req.body?.descricao || '').trim();
+    const force = Boolean(req.body?.force);
+    if (!descricao) {
+      return res.status(400).json({ ok: false, error: 'descricao obrigatória' });
+    }
+    const result = await imagensPorDescricao(descricao, { force });
+    return res.json({ ok: true, ...result });
+  } catch (err) {
+    const status = err.status || 500;
+    console.error('[enrichment:imagens-por-descricao]', err.message);
     return res.status(status).json({ ok: false, error: err.message });
   }
 });

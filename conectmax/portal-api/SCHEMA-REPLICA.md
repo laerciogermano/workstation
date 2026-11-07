@@ -57,17 +57,26 @@ Query comum: `data_inicial`/`data_final`, `status`, `franquia_id` (default **9**
 ## Sync
 
 ```bash
-# completo (listas + itens de pedido — demora)
+# completo (listas + itens de pedido — demora; apaga e regrava a franquia)
 node scripts/sync-campinas-postgres.mjs
 
 # só listas / FKs (rápido)
 node scripts/sync-campinas-postgres.mjs --skip-itens
 
+# incremental: não apaga pedidos/itens; INSERT ON CONFLICT + itens faltantes
+node scripts/sync-campinas-postgres.mjs --franquia=3 --delta
+
+# só completar itens de pedidos sem linha
+node scripts/sync-campinas-postgres.mjs --franquia=1 --only-itens
+
 # atrasados com email/whatsapp
 node scripts/sync-campinas-postgres.mjs --contato --skip-itens
 ```
+
+Antes → depois: sync full limpava tudo da franquia (incluindo itens). Com `--delta`, pedidos/itens existentes ficam; só entram registros novos e itens que faltavam.
 
 ## Caminho inverso
 
 - Remover schema: `DROP SCHEMA portal_franqueado CASCADE;`
 - Remover código: `sql/schema-normalizado.sql`, `scripts/sync-campinas-postgres.mjs`, `src/db*.js`, rotas `/db` em `src/index.js`
+- Voltar sync só full: omitir `--delta` (comportamento antigo)

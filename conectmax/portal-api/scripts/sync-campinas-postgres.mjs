@@ -6,9 +6,11 @@
  *   node scripts/sync-campinas-postgres.mjs --franquia=2
  *   node scripts/sync-campinas-postgres.mjs --franquia=2 --skip-itens
  *   node scripts/sync-campinas-postgres.mjs --franquia=2 --only-itens
+ *   node scripts/sync-campinas-postgres.mjs --franquia=3 --delta
  *   node scripts/sync-campinas-postgres.mjs --contato --itens-concurrency=8
  *
  * Listagens de outras franquias usam id_franqueado_rel / id_franqueado (IDOR do portal).
+ * --delta: não apaga pedidos/itens; só INSERT ON CONFLICT + completa itens faltantes.
  */
 import { readFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
@@ -95,6 +97,7 @@ const TO = arg('to', '31/12/2026');
 const WITH_CONTATO = hasFlag('contato');
 const SKIP_ITENS = hasFlag('skip-itens');
 const ONLY_ITENS = hasFlag('only-itens');
+const DELTA = hasFlag('delta');
 const CONCURRENCY = Math.max(1, Number(arg('itens-concurrency', '6')) || 6);
 const FRANQUIA_ID = Number(arg('franquia', '9')) || 9;
 const meta = FRANQUIAS[FRANQUIA_ID];
@@ -366,7 +369,7 @@ async function syncOnlyItens(pool) {
 async function main() {
   const range = { data_inicial: FROM, data_final: TO };
   console.log(
-    `${FRANQUIA.nome} id=${FRANQUIA_ID} · ${FROM} → ${TO} · itens=${!SKIP_ITENS} · onlyItens=${ONLY_ITENS}`,
+    `${FRANQUIA.nome} id=${FRANQUIA_ID} · ${FROM} → ${TO} · itens=${!SKIP_ITENS} · onlyItens=${ONLY_ITENS} · delta=${DELTA}`,
   );
 
   if (ONLY_ITENS) {
@@ -503,44 +506,60 @@ async function main() {
 
     await client.query('BEGIN');
 
-    // limpa filhos da franquia (ordem FK)
-    await client.query(
-      `DELETE FROM portal_franqueado.pedido_item WHERE franquia_id=$1`,
-      [FRANQUIA_ID],
-    );
-    await client.query(
-      `DELETE FROM portal_franqueado.nota_fiscal_xml nf USING portal_franqueado.nota_fiscal n
-       WHERE nf.nota_id=n.id AND n.franquia_id=$1`,
-      [FRANQUIA_ID],
-    );
-    await client.query(
-      `DELETE FROM portal_franqueado.conta_receber WHERE franquia_id=$1`,
-      [FRANQUIA_ID],
-    );
-    await client.query(
-      `DELETE FROM portal_franqueado.pedido WHERE franquia_id=$1`,
-      [FRANQUIA_ID],
-    );
-    await client.query(
-      `DELETE FROM portal_franqueado.nota_fiscal WHERE franquia_id=$1`,
-      [FRANQUIA_ID],
-    );
-    await client.query(
-      `DELETE FROM portal_franqueado.orcamento WHERE franquia_id=$1`,
-      [FRANQUIA_ID],
-    );
-    await client.query(
-      `DELETE FROM portal_franqueado.faturamento_linha WHERE franquia_id=$1`,
-      [FRANQUIA_ID],
-    );
-    await client.query(
-      `DELETE FROM portal_franqueado.chamado WHERE franquia_id=$1`,
-      [FRANQUIA_ID],
-    );
-    await client.query(
-      `DELETE FROM portal_franqueado.notificacao WHERE franquia_id=$1`,
-      [FRANQUIA_ID],
-    );
+    if (DELTA) {
+      // mantém pedidos/itens; só refresca tabelas sem PK estável / espelho completo barato
+      await client.query(
+        `DELETE FROM portal_franqueado.faturamento_linha WHERE franquia_id=$1`,
+        [FRANQUIA_ID],
+      );
+      await client.query(
+        `DELETE FROM portal_franqueado.chamado WHERE franquia_id=$1`,
+        [FRANQUIA_ID],
+      );
+      await client.query(
+        `DELETE FROM portal_franqueado.notificacao WHERE franquia_id=$1`,
+        [FRANQUIA_ID],
+      );
+    } else {
+      // limpa filhos da franquia (ordem FK)
+      await client.query(
+        `DELETE FROM portal_franqueado.pedido_item WHERE franquia_id=$1`,
+        [FRANQUIA_ID],
+      );
+      await client.query(
+        `DELETE FROM portal_franqueado.nota_fiscal_xml nf USING portal_franqueado.nota_fiscal n
+         WHERE nf.nota_id=n.id AND n.franquia_id=$1`,
+        [FRANQUIA_ID],
+      );
+      await client.query(
+        `DELETE FROM portal_franqueado.conta_receber WHERE franquia_id=$1`,
+        [FRANQUIA_ID],
+      );
+      await client.query(
+        `DELETE FROM portal_franqueado.pedido WHERE franquia_id=$1`,
+        [FRANQUIA_ID],
+      );
+      await client.query(
+        `DELETE FROM portal_franqueado.nota_fiscal WHERE franquia_id=$1`,
+        [FRANQUIA_ID],
+      );
+      await client.query(
+        `DELETE FROM portal_franqueado.orcamento WHERE franquia_id=$1`,
+        [FRANQUIA_ID],
+      );
+      await client.query(
+        `DELETE FROM portal_franqueado.faturamento_linha WHERE franquia_id=$1`,
+        [FRANQUIA_ID],
+      );
+      await client.query(
+        `DELETE FROM portal_franqueado.chamado WHERE franquia_id=$1`,
+        [FRANQUIA_ID],
+      );
+      await client.query(
+        `DELETE FROM portal_franqueado.notificacao WHERE franquia_id=$1`,
+        [FRANQUIA_ID],
+      );
+    }
 
     console.log('seed vendedor/cliente…');
     const vendCache = await seedVendedores(client, [
@@ -635,6 +654,8 @@ async function main() {
         r.pdf ?? null,
         r.xml ?? null,
       ],
+      100,
+      DELTA ? 'ON CONFLICT (id) DO NOTHING' : '',
     );
     console.log('nota_fiscal ok', notas.length);
 
@@ -666,6 +687,8 @@ async function main() {
         r.telefone ?? null,
         r.whatsapp ?? null,
       ],
+      100,
+      DELTA ? 'ON CONFLICT (id) DO NOTHING' : '',
     );
     console.log('conta_receber ok', faturas.length);
 
@@ -721,9 +744,30 @@ async function main() {
 
     let itensCount = 0;
     if (!SKIP_ITENS) {
-      console.log(`pedido_item · ${pedidos.length} pedidos · concurrency=${CONCURRENCY}`);
+      let alvo = pedidos;
+      if (DELTA) {
+        const { rows: missing } = await client.query(
+          `SELECT p.id FROM portal_franqueado.pedido p
+           WHERE p.franquia_id=$1
+             AND NOT EXISTS (
+               SELECT 1 FROM portal_franqueado.pedido_item i
+               WHERE i.pedido_id=p.id AND i.franquia_id=$1
+             )
+           ORDER BY p.id`,
+          [FRANQUIA_ID],
+        );
+        const miss = new Set(missing.map((r) => Number(r.id)));
+        alvo = pedidos.filter((p) => miss.has(Number(p.id)));
+        console.log(
+          `pedido_item delta · ${alvo.length}/${pedidos.length} sem item · concurrency=${CONCURRENCY}`,
+        );
+      } else {
+        console.log(
+          `pedido_item · ${pedidos.length} pedidos · concurrency=${CONCURRENCY}`,
+        );
+      }
       let done = 0;
-      await mapPool(pedidos, CONCURRENCY, async (p) => {
+      await mapPool(alvo, CONCURRENCY, async (p) => {
         try {
           const { html } = await fetchPageHtml('pedidos_edicao', {
             id_pedido: p.id,
@@ -806,8 +850,8 @@ async function main() {
           console.warn(`\npedido ${p.id}: ${e.message}`);
         }
         done += 1;
-        if (done % 25 === 0 || done === pedidos.length) {
-          process.stdout.write(`  itens progress ${done}/${pedidos.length}\n`);
+        if (done % 25 === 0 || done === alvo.length) {
+          process.stdout.write(`  itens progress ${done}/${alvo.length}\n`);
         }
       });
       console.log('pedido_item ok', itensCount);

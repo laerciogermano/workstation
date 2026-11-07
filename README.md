@@ -2,7 +2,7 @@
 
 Hub de projetos, board, tasks e processo de desenvolvimento.
 
-**Índice:** abra [`index.html`](index.html) na raiz — cards por categoria; cada card abre o quadro em [`board.html`](board.html) (`?p=slug`).
+**Índice:** abra [`index.html`](index.html) na raiz — menu lateral **Projetos** / **Board** ([`shell.css`](shell.css)); cards por categoria; cada card abre o quadro em [`board.html`](board.html) (`?p=slug`). **Board** no menu → `board.html?p=board`.
 
 **Design system (padrão):** [DESIGN-SYSTEM.md](.cursor/design-refs/DESIGN-SYSTEM.md) · showcase [design-system.html](.cursor/design-refs/design-system.html) · refs [SOURCES.md](.cursor/design-refs/SOURCES.md) · regra [design-anti-slop.mdc](.cursor/rules/design-anti-slop.mdc).
 

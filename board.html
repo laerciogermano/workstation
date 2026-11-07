@@ -55,17 +55,34 @@
     .top__left { display: flex; flex-direction: column; gap: 0.55rem; min-width: 0; }
 
     .back {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      align-self: flex-start;
+      padding: 0.45rem 0.7rem 0.45rem 0.5rem;
       font-family: var(--font-display);
       font-size: 0.78rem;
       font-weight: 600;
-      color: var(--body);
+      color: var(--ink);
       text-decoration: none;
-      border-bottom: 1.5px solid var(--accent);
-      align-self: flex-start;
-      padding-bottom: 1px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--paper);
+      transition: border-color 140ms var(--ease), background-color 140ms var(--ease), color 140ms var(--ease);
     }
 
-    .back:hover { color: var(--accent); }
+    .back:hover {
+      border-color: var(--ink);
+      background: var(--paper-2);
+      color: var(--accent);
+    }
+
+    .back svg {
+      width: 1.1rem;
+      height: 1.1rem;
+      stroke-width: 1.75;
+      flex-shrink: 0;
+    }
 
     h1 {
       font-family: var(--font-display);
@@ -184,6 +201,7 @@
     <p class="blurb">Carregando quadro…</p>
   </div>
 
+  <script src="https://unpkg.com/lucide@0.468.0"></script>
   <script>
     const params = new URLSearchParams(location.search);
     const slug = params.get("p") || "";
@@ -229,7 +247,10 @@
       app.innerHTML = `
         <div class="top">
           <div class="top__left">
-            <a class="back" href="index.html">Workstation</a>
+            <a class="back" href="index.html" aria-label="Voltar aos projetos">
+              <i data-lucide="arrow-left"></i>
+              Projetos
+            </a>
             <h1>${escapeHtml(board.name)}</h1>
             <p class="blurb">${escapeHtml(board.blurb || "")}</p>
           </div>
@@ -237,6 +258,8 @@
         </div>
         <div class="board" id="board"></div>
       `;
+
+      if (window.lucide) lucide.createIcons();
 
       const root = document.getElementById("board");
       board.columns.forEach((col) => {
@@ -313,10 +336,14 @@
     function missing(slug) {
       document.getElementById("app").innerHTML = `
         <div class="empty">
-          <a class="back" href="index.html">Workstation</a>
+          <a class="back" href="index.html" aria-label="Voltar aos projetos">
+            <i data-lucide="arrow-left"></i>
+            Projetos
+          </a>
           <h1>Quadro não encontrado</h1>
           <p>Não há quadro para <strong>${escapeHtml(slug || "(vazio)")}</strong>.</p>
         </div>`;
+      if (window.lucide) lucide.createIcons();
     }
 
     (async () => {
@@ -329,10 +356,14 @@
       } catch (err) {
         document.getElementById("app").innerHTML = `
           <div class="empty">
-            <a class="back" href="index.html">Workstation</a>
+            <a class="back" href="index.html" aria-label="Voltar aos projetos">
+              <i data-lucide="arrow-left"></i>
+              Projetos
+            </a>
             <h1>Falha ao carregar</h1>
             <p>${escapeHtml(err.message)}</p>
           </div>`;
+        if (window.lucide) lucide.createIcons();
       }
     })();
   </script>

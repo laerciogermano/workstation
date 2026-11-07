@@ -25,6 +25,8 @@ description: >-
 
 Dark mint `#3ecf8e`, Instrument Serif italic, Inter/Geist default, purple gradient, cream+#D97757 por reflexo, pill/eyebrow, ícone em caixa arredondada, fade-up em tudo, em-dash retórico.
 
+Copy: sem narração de IA (lede que explica a página, “cada card abre…”, footer de design system, CTA “Abrir” genérico) — regra `copy-sem-narracao-ia`.
+
 ## 4. Escape
 
 Direção alternativa só com justificativa (DS §7) ou marca em `*/marca/`.

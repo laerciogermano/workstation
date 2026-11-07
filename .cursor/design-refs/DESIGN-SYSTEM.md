@@ -147,7 +147,8 @@ Google Fonts:
 
 - PT-BR sentence case; hífen espaçado ou ponto — sem em-dash retórico
 - Sem filler: seamless, unlock, elevate, transform your…
-- Números reais quando existirem (`tabular-nums`)
+- **Sem narração de UI:** não explicar o layout na tela, não meta de design no rodapé, não “Abrir” em todo card clicável, não lede que ensina a página — ver regra [`../rules/copy-sem-narracao-ia.mdc`](../rules/copy-sem-narracao-ia.mdc)
+- Números reais quando existirem (`tabular-nums`) e só se forem úteis
 - Ícones de biblioteca; nunca SVG “inventado” pelo modelo como marca
 
 ---

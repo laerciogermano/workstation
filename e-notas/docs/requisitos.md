@@ -354,7 +354,8 @@ Card: [BXKZ55Wb](https://trello.com/c/BXKZ55Wb).
 
 - Dada a **descrição** textual do produto (nota / busca), o sistema deve **identificar o código de barras** (EAN/GTIN) correspondente.
 - Card workstation: `e-notas-t-desc-ean`.
-- Implementação: `GET|POST /api/enrichment/ean` (`?descricao=` ou body `{ descricao }`) → candidatos ranqueados `{ ean, score, fonte, nome_canonico }` (sem auto-vínculo).
+- Implementação: `GET|POST /api/enrichment/ean` (`?descricao=` ou body `{ descricao }`) → candidatos ranqueados `{ ean, score, fonte, nome_canonico, image_url }` (sem auto-vínculo).
+- `image_url`: foto local (`ean-fotos` / `ean_imagens`) ou Open Food Facts por EAN quando faltar.
 - Fontes: cache `ean_sugestoes` → pares locais `itens.nome`+`codigos_barras` → Open Food/Beauty/Products Facts (search).
 - UI: modal EAN → **Sugerir EAN pela descrição** → toque preenche o campo; **Salvar** confirma (`descricao` no POST de vínculo incrementa `confirmacoes`).
 - Antes: só scan/digitação. Depois: sugestão + confirmação humana.

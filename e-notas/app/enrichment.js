@@ -4,8 +4,10 @@
  */
 import {
   buscarImagensEan,
+  getImagemSelecionada,
   listLinkedNomeEan,
   listEanSugestoes,
+  resolveFotoUrlForEan,
   upsertEanSugestoes,
 } from './db.js';
 
@@ -120,14 +122,48 @@ function pushEan(map, { ean, score, fonte, nome_canonico, image_url }) {
   const code = String(ean ?? '').replace(/\D/g, '');
   if (code.length < 8 || code.length > 14) return;
   const prev = map.get(code);
-  if (prev && prev.score >= score) return;
+  if (prev && prev.score >= score) {
+    if (!prev.image_url && image_url) prev.image_url = image_url;
+    if (!prev.nome_canonico && nome_canonico) prev.nome_canonico = nome_canonico;
+    return;
+  }
   map.set(code, {
     ean: code,
     score: Number(score.toFixed(4)),
     fonte,
-    nome_canonico: nome_canonico || null,
-    image_url: image_url || null,
+    nome_canonico: nome_canonico || prev?.nome_canonico || null,
+    image_url: image_url || prev?.image_url || null,
   });
+}
+
+/** Preenche image_url faltante: disco/DB local → Open Food Facts por EAN. */
+async function attachImagesToCandidatos(candidatos) {
+  for (const c of candidatos) {
+    if (c.image_url) continue;
+    try {
+      const sel = await getImagemSelecionada(c.ean);
+      const local = sel?.path_local || resolveFotoUrlForEan(c.ean);
+      if (local) {
+        c.image_url = local.startsWith('http') ? local : `/${local.replace(/^\//, '')}`;
+        continue;
+      }
+    } catch {
+      /* ignore */
+    }
+    try {
+      const data = await fetchJson(
+        `https://world.openfoodfacts.org/api/v2/product/${encodeURIComponent(c.ean)}.json`,
+      );
+      if (data?.status === 1 && data.product) {
+        const img = productImage(data.product);
+        if (img) c.image_url = img;
+      }
+    } catch {
+      /* ignore */
+    }
+    await sleep(80);
+  }
+  return candidatos;
 }
 
 async function fromLocalBase(queryNorm, map) {
@@ -255,9 +291,11 @@ export async function resolveEanFromDescricao(descricao, { skipRemote = false } 
     }
   }
 
-  const candidatos = [...map.values()]
+  let candidatos = [...map.values()]
     .sort((a, b) => b.score - a.score)
     .slice(0, MAX_CANDIDATOS);
+
+  await attachImagesToCandidatos(candidatos);
 
   try {
     await upsertEanSugestoes(

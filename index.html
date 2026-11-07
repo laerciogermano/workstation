@@ -342,6 +342,14 @@
       <h1>Projetos do workspace</h1>
     </div>
 
+    <section class="section" aria-labelledby="cat-favoritos" id="sec-favoritos" hidden>
+      <div class="section__head">
+        <h2 class="section__title" id="cat-favoritos">Favoritos</h2>
+        <p class="section__note">primeiro lugar</p>
+      </div>
+      <div class="grid" id="grid-favoritos"></div>
+    </section>
+
     <section class="section" aria-labelledby="cat-empresa">
       <div class="section__head">
         <h2 class="section__title" id="cat-empresa">Empresa</h2>
@@ -869,25 +877,49 @@
   <script>
     (function () {
       const FAV_KEY = "works-favs:v1";
+      const favSection = document.getElementById("sec-favoritos");
+      const favGrid = document.getElementById("grid-favoritos");
 
-      function loadFavs() {
+      function loadFavList() {
         try {
           const raw = localStorage.getItem(FAV_KEY);
           const arr = raw ? JSON.parse(raw) : [];
-          return new Set(Array.isArray(arr) ? arr : []);
+          return Array.isArray(arr) ? arr.filter((s) => typeof s === "string") : [];
         } catch (_) {
-          return new Set();
+          return [];
         }
       }
 
-      function saveFavs(set) {
-        localStorage.setItem(FAV_KEY, JSON.stringify([...set]));
+      function saveFavList(list) {
+        localStorage.setItem(FAV_KEY, JSON.stringify(list));
       }
 
+      function homeGrid(card) {
+        const id = card.dataset.home;
+        if (!id) return null;
+        const sec = document.getElementById(id);
+        return sec ? sec.querySelector(".grid") : null;
+      }
+
+      document.querySelectorAll(".section .grid").forEach((grid) => {
+        if (grid.id === "grid-favoritos") return;
+        const sec = grid.closest(".section");
+        if (!sec) return;
+        if (!sec.id) {
+          const label = sec.getAttribute("aria-labelledby") || "";
+          sec.id = label ? `sec-${label.replace(/^cat-/, "")}` : `sec-${Math.random().toString(36).slice(2, 8)}`;
+        }
+        grid.querySelectorAll(":scope > .card[data-slug]").forEach((card) => {
+          if (!card.dataset.home) card.dataset.home = sec.id;
+        });
+      });
+
       function applyFavOrder() {
-        const favs = loadFavs();
+        const list = loadFavList();
+        const favSet = new Set(list);
+
         document.querySelectorAll(".card[data-slug]").forEach((card) => {
-          const on = favs.has(card.dataset.slug);
+          const on = favSet.has(card.dataset.slug);
           card.classList.toggle("is-fav", on);
           const btn = card.querySelector(".card__fav");
           if (!btn) return;
@@ -895,12 +927,26 @@
           btn.setAttribute("aria-label", on ? "Remover dos favoritos" : "Favoritar");
         });
 
-        document.querySelectorAll(".grid").forEach((grid) => {
+        // Favoritos no topo: move cards marcados para a 1ª seção, na ordem salva
+        list.forEach((slug) => {
+          const card = document.querySelector(`.card[data-slug="${CSS.escape(slug)}"]`);
+          if (card && favGrid) favGrid.appendChild(card);
+        });
+
+        // Não favoritos voltam para a seção de origem
+        document.querySelectorAll(".card[data-slug]").forEach((card) => {
+          if (favSet.has(card.dataset.slug)) return;
+          const home = homeGrid(card);
+          if (home && card.parentElement !== home) home.appendChild(card);
+        });
+
+        if (favSection) favSection.hidden = list.length === 0;
+
+        // Dentro de cada seção restante, mantém ordem estável
+        document.querySelectorAll(".section .grid").forEach((grid) => {
+          if (grid.id === "grid-favoritos") return;
           const cards = [...grid.querySelectorAll(":scope > .card")];
-          cards
-            .map((el, i) => ({ el, i, fav: favs.has(el.dataset.slug) ? 0 : 1 }))
-            .sort((a, b) => a.fav - b.fav || a.i - b.i)
-            .forEach(({ el }) => grid.appendChild(el));
+          cards.forEach((el) => grid.appendChild(el));
         });
 
         if (window.lucide) lucide.createIcons();
@@ -913,10 +959,10 @@
           const card = btn.closest(".card");
           if (!card) return;
           const slug = card.dataset.slug;
-          const favs = loadFavs();
-          if (favs.has(slug)) favs.delete(slug);
-          else favs.add(slug);
-          saveFavs(favs);
+          let list = loadFavList();
+          if (list.includes(slug)) list = list.filter((s) => s !== slug);
+          else list.push(slug);
+          saveFavList(list);
           applyFavOrder();
         });
       });

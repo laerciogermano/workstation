@@ -144,10 +144,69 @@
       border-color: var(--ink);
     }
 
-    .card:focus-visible {
+
+    .card__tools {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .card__fav {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.15rem;
+      margin: 0;
+      border: 0;
+      background: transparent;
+      color: var(--body);
+      cursor: pointer;
+      border-radius: var(--radius);
+      line-height: 0;
+    }
+
+    .card__fav svg {
+      width: 1.05rem;
+      height: 1.05rem;
+      stroke-width: 1.75;
+    }
+
+    .card__fav:hover,
+    .card__fav:focus-visible {
+      color: var(--accent);
+    }
+
+    .card__fav:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .card.is-fav .card__fav,
+    .card__fav[aria-pressed="true"] {
+      color: var(--accent);
+    }
+
+    .card.is-fav .card__fav svg,
+    .card__fav[aria-pressed="true"] svg {
+      fill: var(--accent);
+    }
+
+    .card__link {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-height: 0;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .card__link:focus-visible {
       outline: 2px solid var(--accent);
       outline-offset: 3px;
     }
+
+    .card__link .card__task { margin-top: auto; }
+    .card__link .card__go { margin-top: 1.15rem; }
 
     .card__meta {
       display: flex;
@@ -289,27 +348,41 @@
         <p class="section__note">automação e software</p>
       </div>
       <div class="grid">
-      <a class="card" href="board.html?p=connect">
+      <article class="card" data-slug="connect">
         <div class="card__meta">
           <span class="card__icon" aria-hidden="true"><i data-lucide="bot"></i></span>
+          <div class="card__tools">
+            <button type="button" class="card__fav" aria-label="Favoritar connect" aria-pressed="false">
+              <i data-lucide="star"></i>
+            </button>
           <span class="card__num">01</span>
+          </div>
         </div>
+        <a class="card__link" href="board.html?p=connect">
         <h2>Connect</h2>
         <p class="card__desc">Automação LinkedIn e vendas sobre o screen-robot.</p>
         <div class="card__task" data-board="connect">Automatizar processo de cobrança</div>
         <span class="card__go">Abrir</span>
-      </a>
+        </a>
+      </article>
 
-      <a class="card" href="board.html?p=connect-tech">
+      <article class="card" data-slug="connect-tech">
         <div class="card__meta">
           <span class="card__icon" aria-hidden="true"><i data-lucide="monitor"></i></span>
+          <div class="card__tools">
+            <button type="button" class="card__fav" aria-label="Favoritar connect-tech" aria-pressed="false">
+              <i data-lucide="star"></i>
+            </button>
           <span class="card__num">02</span>
+          </div>
         </div>
+        <a class="card__link" href="board.html?p=connect-tech">
         <h2>Connect Tech</h2>
         <p class="card__desc">Consultoria e desenvolvimento de software.</p>
         <div class="card__task" data-board="connect-tech">Criar PDF de apresentação</div>
         <span class="card__go">Abrir</span>
-      </a>
+        </a>
+      </article>
       </div>
     </section>
 
@@ -319,71 +392,113 @@
         <p class="section__note">apps e experiências</p>
       </div>
       <div class="grid">
-      <a class="card" href="board.html?p=clozzy">
+      <article class="card" data-slug="clozzy">
         <div class="card__meta">
           <span class="card__icon" aria-hidden="true"><i data-lucide="package"></i></span>
+          <div class="card__tools">
+            <button type="button" class="card__fav" aria-label="Favoritar clozzy" aria-pressed="false">
+              <i data-lucide="star"></i>
+            </button>
           <span class="card__num">03</span>
+          </div>
         </div>
+        <a class="card__link" href="board.html?p=clozzy">
         <h2>Clozzy</h2>
         <p class="card__desc">Conteúdo exclusivo de influencers para fãs.</p>
         <div class="card__task" data-board="clozzy">Benchmarking</div>
         <span class="card__go">Abrir</span>
-      </a>
+        </a>
+      </article>
 
-      <a class="card" href="board.html?p=e-notas">
+      <article class="card" data-slug="e-notas">
         <div class="card__meta">
           <span class="card__icon" aria-hidden="true"><i data-lucide="qr-code"></i></span>
+          <div class="card__tools">
+            <button type="button" class="card__fav" aria-label="Favoritar e-notas" aria-pressed="false">
+              <i data-lucide="star"></i>
+            </button>
           <span class="card__num">04</span>
+          </div>
         </div>
+        <a class="card__link" href="board.html?p=e-notas">
         <h2>e-notas</h2>
         <p class="card__desc">Índice de preços via QR de nota fiscal.</p>
         <div class="card__task" data-board="e-notas">Criar protótipo</div>
         <span class="card__go">Abrir</span>
-      </a>
+        </a>
+      </article>
 
-      <a class="card" href="board.html?p=role-go">
+      <article class="card" data-slug="role-go">
         <div class="card__meta">
           <span class="card__icon" aria-hidden="true"><i data-lucide="map-pin"></i></span>
+          <div class="card__tools">
+            <button type="button" class="card__fav" aria-label="Favoritar role-go" aria-pressed="false">
+              <i data-lucide="star"></i>
+            </button>
           <span class="card__num">05</span>
+          </div>
         </div>
+        <a class="card__link" href="board.html?p=role-go">
         <h2>RoleGo</h2>
         <p class="card__desc">Descoberta de festas, shows e eventos próximos.</p>
         <div class="card__task" data-board="role-go">gerar primeira versao</div>
         <span class="card__go">Abrir</span>
-      </a>
+        </a>
+      </article>
 
-      <a class="card" href="board.html?p=board">
+      <article class="card" data-slug="board">
         <div class="card__meta">
           <span class="card__icon" aria-hidden="true"><i data-lucide="columns-3"></i></span>
+          <div class="card__tools">
+            <button type="button" class="card__fav" aria-label="Favoritar board" aria-pressed="false">
+              <i data-lucide="star"></i>
+            </button>
           <span class="card__num">06</span>
+          </div>
         </div>
+        <a class="card__link" href="board.html?p=board">
         <h2>Board</h2>
         <p class="card__desc">Kanban próprio - substituto do Trello.</p>
         <div class="card__task" data-board="board">Criar o protótipo</div>
         <span class="card__go">Abrir</span>
-      </a>
+        </a>
+      </article>
 
-      <a class="card" href="board.html?p=plans">
+      <article class="card" data-slug="plans">
         <div class="card__meta">
           <span class="card__icon" aria-hidden="true"><i data-lucide="clipboard-list"></i></span>
+          <div class="card__tools">
+            <button type="button" class="card__fav" aria-label="Favoritar plans" aria-pressed="false">
+              <i data-lucide="star"></i>
+            </button>
           <span class="card__num">07</span>
+          </div>
         </div>
+        <a class="card__link" href="board.html?p=plans">
         <h2>Plans</h2>
         <p class="card__desc">Orquestrador - board, Gantt e árvore de execução.</p>
         <div class="card__task" data-board="plans">Criar o protótipo</div>
         <span class="card__go">Abrir</span>
-      </a>
+        </a>
+      </article>
 
-      <a class="card" href="board.html?p=context-recorder">
+      <article class="card" data-slug="context-recorder">
         <div class="card__meta">
           <span class="card__icon" aria-hidden="true"><i data-lucide="mic"></i></span>
+          <div class="card__tools">
+            <button type="button" class="card__fav" aria-label="Favoritar context-recorder" aria-pressed="false">
+              <i data-lucide="star"></i>
+            </button>
           <span class="card__num">08</span>
+          </div>
         </div>
+        <a class="card__link" href="board.html?p=context-recorder">
         <h2>Context Recorder</h2>
         <p class="card__desc">Memória contínua de mic, desktop e tela/OCR.</p>
         <div class="card__task" data-board="context-recorder">Definir PRD</div>
         <span class="card__go">Abrir</span>
-      </a>
+        </a>
+      </article>
 
       </div>
     </section>
@@ -394,49 +509,77 @@
         <p class="section__note">aprendizado e acervo</p>
       </div>
       <div class="grid">
-      <a class="card" href="board.html?p=flow">
+      <article class="card" data-slug="flow">
         <div class="card__meta">
           <span class="card__icon" aria-hidden="true"><i data-lucide="git-branch"></i></span>
+          <div class="card__tools">
+            <button type="button" class="card__fav" aria-label="Favoritar flow" aria-pressed="false">
+              <i data-lucide="star"></i>
+            </button>
           <span class="card__num">09</span>
+          </div>
         </div>
+        <a class="card__link" href="board.html?p=flow">
         <h2>Flow</h2>
         <p class="card__desc">Linguagem e fundamentos de fluxo (Flow + Flow Language).</p>
         <div class="card__task" data-board="flow">Definir Épicos</div>
         <span class="card__go">Abrir</span>
-      </a>
+        </a>
+      </article>
 
-      <a class="card" href="board.html?p=eternos-mutaveis">
+      <article class="card" data-slug="eternos-mutaveis">
         <div class="card__meta">
           <span class="card__icon" aria-hidden="true"><i data-lucide="book-open"></i></span>
+          <div class="card__tools">
+            <button type="button" class="card__fav" aria-label="Favoritar eternos-mutaveis" aria-pressed="false">
+              <i data-lucide="star"></i>
+            </button>
           <span class="card__num">10</span>
+          </div>
         </div>
+        <a class="card__link" href="board.html?p=eternos-mutaveis">
         <h2>Eternos Mutáveis</h2>
         <p class="card__desc">Manuscrito / tese filosófica.</p>
         <div class="card__task" data-board="eternos-mutaveis">Escrever capítulo 1</div>
         <span class="card__go">Abrir</span>
-      </a>
+        </a>
+      </article>
 
-      <a class="card" href="board.html?p=aulas">
+      <article class="card" data-slug="aulas">
         <div class="card__meta">
           <span class="card__icon" aria-hidden="true"><i data-lucide="graduation-cap"></i></span>
+          <div class="card__tools">
+            <button type="button" class="card__fav" aria-label="Favoritar aulas" aria-pressed="false">
+              <i data-lucide="star"></i>
+            </button>
           <span class="card__num">11</span>
+          </div>
         </div>
+        <a class="card__link" href="board.html?p=aulas">
         <h2>Aulas</h2>
         <p class="card__desc">Árvore de seções e conteúdo didático.</p>
         <div class="card__task" data-board="aulas">Criar roadmap</div>
         <span class="card__go">Abrir</span>
-      </a>
+        </a>
+      </article>
 
-      <a class="card" href="board.html?p=filme-metafisico">
+      <article class="card" data-slug="filme-metafisico">
         <div class="card__meta">
           <span class="card__icon" aria-hidden="true"><i data-lucide="clapperboard"></i></span>
+          <div class="card__tools">
+            <button type="button" class="card__fav" aria-label="Favoritar filme-metafisico" aria-pressed="false">
+              <i data-lucide="star"></i>
+            </button>
           <span class="card__num">12</span>
+          </div>
         </div>
+        <a class="card__link" href="board.html?p=filme-metafisico">
         <h2>Filme Metafísico</h2>
         <p class="card__desc">Filme O Metafísico - visão e roteiro.</p>
         <div class="card__task" data-board="filme-metafisico">Definir Roteiro</div>
         <span class="card__go">Abrir</span>
-      </a>
+        </a>
+      </article>
 
       </div>
     </section>
@@ -447,36 +590,57 @@
         <p class="section__note">finanças e contas</p>
       </div>
       <div class="grid">
-      <a class="card" href="board.html?p=financeiro">
+      <article class="card" data-slug="financeiro">
         <div class="card__meta">
           <span class="card__icon" aria-hidden="true"><i data-lucide="credit-card"></i></span>
+          <div class="card__tools">
+            <button type="button" class="card__fav" aria-label="Favoritar financeiro" aria-pressed="false">
+              <i data-lucide="star"></i>
+            </button>
           <span class="card__num">13</span>
+          </div>
         </div>
+        <a class="card__link" href="board.html?p=financeiro">
         <h2>Financeiro</h2>
         <p class="card__desc">Controle de gastos, cartões e finanças pessoais.</p>
         <div class="card__task" data-board="financeiro">ajustar</div>
         <span class="card__go">Abrir</span>
-      </a>
-      <a class="card" href="board.html?p=ov">
+        </a>
+      </article>
+      <article class="card" data-slug="ov">
         <div class="card__meta">
           <span class="card__icon" aria-hidden="true"><i data-lucide="video"></i></span>
+          <div class="card__tools">
+            <button type="button" class="card__fav" aria-label="Favoritar ov" aria-pressed="false">
+              <i data-lucide="star"></i>
+            </button>
           <span class="card__num">14</span>
+          </div>
         </div>
+        <a class="card__link" href="board.html?p=ov">
         <h2>OV</h2>
         <p class="card__desc">Contas OmeTV via Chrome CDP.</p>
         <div class="card__task" data-board="ov">Criar novo lgermeno</div>
         <span class="card__go">Abrir</span>
-      </a>
-      <a class="card" href="board.html?p=mauricio">
+        </a>
+      </article>
+      <article class="card" data-slug="mauricio">
         <div class="card__meta">
           <span class="card__icon" aria-hidden="true"><i data-lucide="flame"></i></span>
+          <div class="card__tools">
+            <button type="button" class="card__fav" aria-label="Favoritar mauricio" aria-pressed="false">
+              <i data-lucide="star"></i>
+            </button>
           <span class="card__num">15</span>
+          </div>
         </div>
+        <a class="card__link" href="board.html?p=mauricio">
         <h2>Mauricio</h2>
         <p class="card__desc">Projeto Mauricio — Tinder via Chrome CDP.</p>
         <div class="card__task is-empty" data-board="mauricio"></div>
         <span class="card__go">Abrir</span>
-      </a>
+        </a>
+      </article>
       </div>
     </section>
 
@@ -486,16 +650,23 @@
         <p class="section__note">CLIs, chat e dados</p>
       </div>
       <div class="grid">
-      <a class="card" href="board.html?p=low-chat">
+      <article class="card" data-slug="low-chat">
         <div class="card__meta">
           <span class="card__icon" aria-hidden="true"><i data-lucide="message-square"></i></span>
+          <div class="card__tools">
+            <button type="button" class="card__fav" aria-label="Favoritar low-chat" aria-pressed="false">
+              <i data-lucide="star"></i>
+            </button>
           <span class="card__num">16</span>
+          </div>
         </div>
+        <a class="card__link" href="board.html?p=low-chat">
         <h2>low-chat</h2>
         <p class="card__desc">Persona + contexto + LLM barato para vários canais.</p>
         <div class="card__task is-empty" data-board="low-chat"></div>
         <span class="card__go">Abrir</span>
-      </a>
+        </a>
+      </article>
 
       </div>
     </section>
@@ -506,82 +677,131 @@
         <p class="section__note">pausados</p>
       </div>
       <div class="grid">
-<a class="card" href="board.html?p=agent-shop">
+      <article class="card" data-slug="agent-shop">
         <div class="card__meta">
           <span class="card__icon" aria-hidden="true"><i data-lucide="shopping-bag"></i></span>
+          <div class="card__tools">
+            <button type="button" class="card__fav" aria-label="Favoritar" aria-pressed="false">
+              <i data-lucide="star"></i>
+            </button>
           <span class="card__num">A1</span>
+          </div>
         </div>
+        <a class="card__link" href="board.html?p=agent-shop">
         <h2>Agent Shop</h2>
         <p class="card__desc">Comprar, nomear e agendar agentes autônomos.</p>
         <div class="card__task is-empty" data-board="agent-shop"></div>
         <span class="card__go">Abrir</span>
-      </a>
+        </a>
+      </article>
 
-<a class="card" href="board.html?p=cupido">
+      <article class="card" data-slug="cupido">
         <div class="card__meta">
           <span class="card__icon" aria-hidden="true"><i data-lucide="heart"></i></span>
+          <div class="card__tools">
+            <button type="button" class="card__fav" aria-label="Favoritar" aria-pressed="false">
+              <i data-lucide="star"></i>
+            </button>
           <span class="card__num">A2</span>
+          </div>
         </div>
+        <a class="card__link" href="board.html?p=cupido">
         <h2>Cupido</h2>
         <p class="card__desc">Agente de match anônimo com contexto e encontro.</p>
         <div class="card__task" data-board="cupido">Definir PRD</div>
         <span class="card__go">Abrir</span>
-      </a>
+        </a>
+      </article>
 
-<a class="card" href="board.html?p=hurble">
+      <article class="card" data-slug="hurble">
         <div class="card__meta">
           <span class="card__icon" aria-hidden="true"><i data-lucide="refresh-cw"></i></span>
+          <div class="card__tools">
+            <button type="button" class="card__fav" aria-label="Favoritar" aria-pressed="false">
+              <i data-lucide="star"></i>
+            </button>
           <span class="card__num">A3</span>
+          </div>
         </div>
+        <a class="card__link" href="board.html?p=hurble">
         <h2>Hurble</h2>
         <p class="card__desc">Roulette social + perfil, amigos, DM e stories.</p>
         <div class="card__task is-empty" data-board="hurble"></div>
         <span class="card__go">Abrir</span>
-      </a>
+        </a>
+      </article>
 
-<a class="card" href="board.html?p=fitness">
+      <article class="card" data-slug="fitness">
         <div class="card__meta">
           <span class="card__icon" aria-hidden="true"><i data-lucide="dumbbell"></i></span>
+          <div class="card__tools">
+            <button type="button" class="card__fav" aria-label="Favoritar" aria-pressed="false">
+              <i data-lucide="star"></i>
+            </button>
           <span class="card__num">A4</span>
+          </div>
         </div>
+        <a class="card__link" href="board.html?p=fitness">
         <h2>Fitness</h2>
         <p class="card__desc">Treino, dieta e métricas com gamificação.</p>
         <div class="card__task" data-board="fitness">Definir documento de épicos</div>
         <span class="card__go">Abrir</span>
-      </a>
+        </a>
+      </article>
 
-<a class="card" href="board.html?p=caronas">
+      <article class="card" data-slug="caronas">
         <div class="card__meta">
           <span class="card__icon" aria-hidden="true"><i data-lucide="car"></i></span>
+          <div class="card__tools">
+            <button type="button" class="card__fav" aria-label="Favoritar" aria-pressed="false">
+              <i data-lucide="star"></i>
+            </button>
           <span class="card__num">A5</span>
+          </div>
         </div>
+        <a class="card__link" href="board.html?p=caronas">
         <h2>Caronas</h2>
         <p class="card__desc">Caronas recorrentes casa-trabalho.</p>
         <div class="card__task" data-board="caronas">Criar documento de épicos</div>
         <span class="card__go">Abrir</span>
-      </a>
+        </a>
+      </article>
 
-<a class="card" href="board.html?p=jiu-jitsu">
+      <article class="card" data-slug="jiu-jitsu">
         <div class="card__meta">
           <span class="card__icon" aria-hidden="true"><i data-lucide="swords"></i></span>
+          <div class="card__tools">
+            <button type="button" class="card__fav" aria-label="Favoritar" aria-pressed="false">
+              <i data-lucide="star"></i>
+            </button>
           <span class="card__num">A6</span>
+          </div>
         </div>
+        <a class="card__link" href="board.html?p=jiu-jitsu">
         <h2>Jiu-jitsu</h2>
         <p class="card__desc">Grafo de posições, transições e finalizações.</p>
         <div class="card__task" data-board="jiu-jitsu">Definir documento de visão</div>
         <span class="card__go">Abrir</span>
-      </a>
+        </a>
+      </article>
 
-<a class="card" href="board.html?p=provas-ufpr">
+      <article class="card" data-slug="provas-ufpr">
         <div class="card__meta">
           <span class="card__icon" aria-hidden="true"><i data-lucide="file-text"></i></span>
+          <div class="card__tools">
+            <button type="button" class="card__fav" aria-label="Favoritar" aria-pressed="false">
+              <i data-lucide="star"></i>
+            </button>
           <span class="card__num">A7</span>
+          </div>
         </div>
+        <a class="card__link" href="board.html?p=provas-ufpr">
         <h2>Provas UFPR</h2>
         <p class="card__desc">Acervo de provas e gabaritos do vestibular.</p>
         <div class="card__task is-empty" data-board="provas-ufpr"></div>
         <span class="card__go">Abrir</span>
-      </a>
+        </a>
+      </article>
       </div>
     </section>
 
@@ -642,6 +862,66 @@
           apply(slug, nextFromBoard(board));
         }
       })();
+    })();
+  </script>
+
+
+  <script>
+    (function () {
+      const FAV_KEY = "works-favs:v1";
+
+      function loadFavs() {
+        try {
+          const raw = localStorage.getItem(FAV_KEY);
+          const arr = raw ? JSON.parse(raw) : [];
+          return new Set(Array.isArray(arr) ? arr : []);
+        } catch (_) {
+          return new Set();
+        }
+      }
+
+      function saveFavs(set) {
+        localStorage.setItem(FAV_KEY, JSON.stringify([...set]));
+      }
+
+      function applyFavOrder() {
+        const favs = loadFavs();
+        document.querySelectorAll(".card[data-slug]").forEach((card) => {
+          const on = favs.has(card.dataset.slug);
+          card.classList.toggle("is-fav", on);
+          const btn = card.querySelector(".card__fav");
+          if (!btn) return;
+          btn.setAttribute("aria-pressed", on ? "true" : "false");
+          btn.setAttribute("aria-label", on ? "Remover dos favoritos" : "Favoritar");
+        });
+
+        document.querySelectorAll(".grid").forEach((grid) => {
+          const cards = [...grid.querySelectorAll(":scope > .card")];
+          cards
+            .map((el, i) => ({ el, i, fav: favs.has(el.dataset.slug) ? 0 : 1 }))
+            .sort((a, b) => a.fav - b.fav || a.i - b.i)
+            .forEach(({ el }) => grid.appendChild(el));
+        });
+
+        if (window.lucide) lucide.createIcons();
+      }
+
+      document.querySelectorAll(".card__fav").forEach((btn) => {
+        btn.addEventListener("click", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const card = btn.closest(".card");
+          if (!card) return;
+          const slug = card.dataset.slug;
+          const favs = loadFavs();
+          if (favs.has(slug)) favs.delete(slug);
+          else favs.add(slug);
+          saveFavs(favs);
+          applyFavOrder();
+        });
+      });
+
+      applyFavOrder();
     })();
   </script>
 

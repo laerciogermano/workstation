@@ -136,7 +136,12 @@
       {
         "id": "todo",
         "title": "A fazer",
-        "cards": []
+        "cards": [
+          {
+            "id": "board-t-0",
+            "title": "Criar o protótipo"
+          }
+        ]
       },
       {
         "id": "doing",

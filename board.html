@@ -272,6 +272,25 @@
       color: var(--ink);
     }
 
+    .card__marks {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-top: 0.55rem;
+    }
+
+    .card__mark {
+      font-family: var(--font-display);
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      color: var(--body);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 0.12rem 0.4rem;
+    }
+
     .empty {
       margin: 2.5rem auto;
       max-width: 28rem;
@@ -281,10 +300,322 @@
     .empty h1 { margin-bottom: 0.75rem; }
     .empty p { color: var(--body); margin-bottom: 1rem; }
 
+    .detail-root[hidden] { display: none !important; }
+
+    .detail-scrim {
+      position: fixed;
+      inset: 0;
+      z-index: 40;
+      background: rgba(20, 18, 15, 0.42);
+    }
+
+    .detail {
+      position: fixed;
+      z-index: 41;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: min(44rem, calc(100% - 1.5rem));
+      max-height: min(88vh, 52rem);
+      display: flex;
+      flex-direction: column;
+      background: var(--paper);
+      border: 1px solid var(--ink);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .detail__head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1.15rem 1.25rem 0.9rem;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .detail__meta {
+      font-family: var(--font-display);
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.45rem;
+    }
+
+    .detail__title {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: clamp(1.2rem, 3vw, 1.55rem);
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      color: var(--ink);
+      resize: none;
+      field-sizing: content;
+      min-height: 1.4em;
+    }
+
+    .detail__title:focus { outline: none; }
+
+    .detail__close {
+      flex-shrink: 0;
+      width: 2.2rem;
+      height: 2.2rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--paper);
+      color: var(--ink);
+      cursor: pointer;
+    }
+
+    .detail__close:hover { border-color: var(--ink); color: var(--accent); }
+    .detail__close svg { width: 1.1rem; height: 1.1rem; stroke-width: 1.75; }
+
+    .detail__body {
+      overflow: auto;
+      padding: 1.1rem 1.25rem 1.4rem;
+      display: grid;
+      gap: 1.35rem;
+    }
+
+    .detail__section-title {
+      font-family: var(--font-display);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--body);
+      margin-bottom: 0.55rem;
+    }
+
+    .detail__desc,
+    .detail__comment-input {
+      width: 100%;
+      min-height: 7rem;
+      padding: 0.75rem 0.85rem;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--paper);
+      color: var(--ink);
+      font-family: var(--font-body);
+      font-size: 1rem;
+      line-height: 1.5;
+      resize: vertical;
+    }
+
+    .detail__comment-input { min-height: 4.2rem; }
+
+    .detail__desc:focus,
+    .detail__comment-input:focus {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+      border-color: var(--ink);
+    }
+
+    .detail__actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.55rem;
+    }
+
+    .detail__btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.45rem 0.75rem;
+      font-family: var(--font-display);
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--ink);
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      cursor: pointer;
+    }
+
+    .detail__btn:hover { border-color: var(--ink); }
+    .detail__btn--accent {
+      background: var(--ink);
+      color: var(--paper);
+      border-color: var(--ink);
+    }
+    .detail__btn--accent:hover { background: var(--accent); border-color: var(--accent); }
+    .detail__btn svg { width: 0.95rem; height: 0.95rem; stroke-width: 1.75; }
+
+    .detail__empty {
+      color: var(--body);
+      font-size: 0.95rem;
+    }
+
+    .detail__comments {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .detail__comment {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 0.7rem 0.85rem;
+      background: var(--paper-2);
+    }
+
+    .detail__comment-time {
+      font-family: var(--font-display);
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: var(--body);
+      margin-bottom: 0.3rem;
+    }
+
+    .detail__comment-text {
+      white-space: pre-wrap;
+      color: var(--ink);
+      font-size: 0.98rem;
+      line-height: 1.45;
+    }
+
+    .detail__atts {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr));
+      gap: 0.55rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .detail__att-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+      min-width: 0;
+    }
+
+    .detail__att {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: var(--paper);
+      text-decoration: none;
+      color: inherit;
+      cursor: pointer;
+      padding: 0;
+      font: inherit;
+      text-align: left;
+      width: 100%;
+    }
+
+    .detail__att:hover { border-color: var(--ink); }
+
+    .detail__att-thumb {
+      aspect-ratio: 4 / 3;
+      width: 100%;
+      object-fit: cover;
+      background: var(--paper-2);
+      display: block;
+    }
+
+    .detail__att-file {
+      aspect-ratio: 4 / 3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--paper-2);
+      color: var(--body);
+    }
+
+    .detail__att-file svg { width: 1.6rem; height: 1.6rem; stroke-width: 1.5; }
+
+    .detail__att-name {
+      font-family: var(--font-display);
+      font-size: 0.68rem;
+      font-weight: 600;
+      padding: 0 0.45rem 0.5rem;
+      color: var(--ink);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .detail__att-remove {
+      font-family: var(--font-display);
+      font-size: 0.62rem;
+      font-weight: 600;
+      color: var(--accent);
+      background: none;
+      border: 0;
+      cursor: pointer;
+      padding: 0 0.45rem 0.55rem;
+      align-self: flex-start;
+    }
+
+    .lightbox[hidden] { display: none !important; }
+
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      background: rgba(20, 18, 15, 0.88);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .lightbox img {
+      max-width: min(96vw, 1100px);
+      max-height: 90vh;
+      object-fit: contain;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--ink);
+    }
+
+    .lightbox__close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      width: 2.4rem;
+      height: 2.4rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--paper);
+      color: var(--ink);
+      cursor: pointer;
+    }
+
+    .lightbox__close svg { width: 1.2rem; height: 1.2rem; }
+
+    body.is-detail-open { overflow: hidden; }
+
     @media (max-width: 900px) {
       .board { grid-template-columns: 1fr; }
       .board.is-filtered-cols { max-width: none; }
       .filters { grid-template-columns: 1fr 1fr; }
+      .detail {
+        top: auto;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        transform: none;
+        width: 100%;
+        max-height: 92vh;
+        border-radius: var(--radius) var(--radius) 0 0;
+      }
     }
 
     @media (max-width: 560px) {
@@ -310,6 +641,57 @@
     <p class="blurb">Carregando quadro…</p>
   </div>
     </main>
+  </div>
+
+  <div class="detail-root" id="detail-root" hidden>
+    <div class="detail-scrim" data-detail-close></div>
+    <div class="detail" role="dialog" aria-modal="true" aria-labelledby="detail-title">
+      <div class="detail__head">
+        <div style="min-width:0;flex:1">
+          <p class="detail__meta" id="detail-meta"></p>
+          <textarea class="detail__title" id="detail-title" rows="1" aria-label="Título"></textarea>
+        </div>
+        <button type="button" class="detail__close" data-detail-close aria-label="Fechar">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <div class="detail__body">
+        <section>
+          <h3 class="detail__section-title">Descrição</h3>
+          <textarea class="detail__desc" id="detail-desc" placeholder="Notas do card"></textarea>
+        </section>
+        <section>
+          <h3 class="detail__section-title">Anexos</h3>
+          <div class="detail__atts" id="detail-atts"></div>
+          <div class="detail__actions">
+            <button type="button" class="detail__btn" id="detail-att-file">
+              <i data-lucide="image"></i>
+              Foto / arquivo
+            </button>
+            <button type="button" class="detail__btn" id="detail-att-url">
+              <i data-lucide="link"></i>
+              URL
+            </button>
+            <input id="detail-att-input" type="file" accept="image/*,.pdf,.txt,.md,.json" hidden />
+          </div>
+        </section>
+        <section>
+          <h3 class="detail__section-title">Comentários</h3>
+          <ul class="detail__comments" id="detail-comments"></ul>
+          <textarea class="detail__comment-input" id="detail-comment" placeholder="Novo comentário"></textarea>
+          <div class="detail__actions">
+            <button type="button" class="detail__btn detail__btn--accent" id="detail-comment-add">Comentar</button>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <div class="lightbox" id="lightbox" hidden>
+    <button type="button" class="lightbox__close" id="lightbox-close" aria-label="Fechar foto">
+      <i data-lucide="x"></i>
+    </button>
+    <img id="lightbox-img" alt="" />
   </div>
 
   <script src="https://unpkg.com/lucide@0.468.0"></script>
@@ -401,9 +783,63 @@
         .replaceAll('"', "&quot;");
     }
 
+    function uid(prefix) {
+      return `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`;
+    }
+
+    function normalizeCard(card) {
+      if (!card || typeof card !== "object") return card;
+      if (typeof card.description !== "string") card.description = "";
+      if (!Array.isArray(card.comments)) card.comments = [];
+      if (!Array.isArray(card.attachments)) card.attachments = [];
+      return card;
+    }
+
+    function findCard(slug, cardId) {
+      const board = liveBoards()[slug];
+      if (!board) return null;
+      for (const col of board.columns || []) {
+        const card = (col.cards || []).find((c) => c.id === cardId);
+        if (card) return { board, col, card: normalizeCard(card) };
+      }
+      return null;
+    }
+
+    function colTitle(colId) {
+      return COL_META.find((c) => c.id === colId)?.title || colId;
+    }
+
+    function formatWhen(iso) {
+      try {
+        return new Intl.DateTimeFormat("pt-BR", {
+          dateStyle: "short",
+          timeStyle: "short",
+        }).format(new Date(iso));
+      } catch {
+        return iso || "";
+      }
+    }
+
+    function isImageAtt(att) {
+      if (!att) return false;
+      if (att.kind === "image") return true;
+      const name = String(att.name || "").toLowerCase();
+      const url = String(att.url || "").toLowerCase();
+      return /\.(png|jpe?g|gif|webp|avif|bmp|svg)(\?|$)/.test(name) ||
+        /\.(png|jpe?g|gif|webp|avif|bmp|svg)(\?|$)/.test(url) ||
+        url.startsWith("data:image/");
+    }
+
+    let detailCtx = null;
+
     function matchesFilters(item) {
       const q = filters.q.trim().toLowerCase();
-      if (q && !item.title.toLowerCase().includes(q) && !item.projectName.toLowerCase().includes(q)) {
+      if (
+        q &&
+        !item.title.toLowerCase().includes(q) &&
+        !item.projectName.toLowerCase().includes(q) &&
+        !(item.description || "").toLowerCase().includes(q)
+      ) {
         return false;
       }
       if (filters.category) {
@@ -463,9 +899,11 @@
       for (const [s, board] of Object.entries(boards)) {
         for (const col of board.columns || []) {
           for (const card of col.cards || []) {
+            const c = normalizeCard({ ...card });
             items.push({
-              id: card.id,
-              title: card.title,
+              id: c.id,
+              title: c.title,
+              description: c.description || "",
               slug: s,
               projectName: board.name || s,
               colId: col.id,
@@ -593,7 +1031,20 @@
       if (countEl) countEl.textContent = `${visible} atividades`;
     }
 
+    function cardMarksHtml(card) {
+      const marks = [];
+      if (card?.description?.trim()) marks.push("Desc");
+      if (card?.comments?.length) marks.push(`${card.comments.length} com.`);
+      if (card?.attachments?.length) marks.push(`${card.attachments.length} anx.`);
+      if (!marks.length) return "";
+      return `<div class="card__marks">${marks
+        .map((m) => `<span class="card__mark">${escapeHtml(m)}</span>`)
+        .join("")}</div>`;
+    }
+
     function cardEl(item, { showProject }) {
+      const found = findCard(item.slug, item.id);
+      const card = found?.card || { title: item.title };
       const li = document.createElement("li");
       li.className = "card" + (isArchived(item.slug) ? " is-archived" : "");
       li.draggable = true;
@@ -606,15 +1057,256 @@
             ? `<a class="card__project" href="board.html?p=${encodeURIComponent(item.slug)}">${escapeHtml(item.projectName)}${archMark}</a>`
             : ""
         }
-        <p class="card__title">${escapeHtml(item.title)}</p>
+        <p class="card__title">${escapeHtml(card.title || item.title)}</p>
+        ${cardMarksHtml(card)}
       `;
+      let dragMoved = false;
       li.addEventListener("dragstart", (e) => {
+        dragMoved = true;
         li.classList.add("is-dragging");
         e.dataTransfer.setData("text/plain", JSON.stringify({ id: item.id, slug: item.slug }));
         e.dataTransfer.effectAllowed = "move";
       });
-      li.addEventListener("dragend", () => li.classList.remove("is-dragging"));
+      li.addEventListener("dragend", () => {
+        li.classList.remove("is-dragging");
+        setTimeout(() => {
+          dragMoved = false;
+        }, 0);
+      });
+      li.addEventListener("click", (e) => {
+        if (e.target.closest("a.card__project")) return;
+        if (dragMoved) return;
+        openDetail(item.slug, item.id);
+      });
       return li;
+    }
+
+    function saveDetailFields() {
+      if (!detailCtx) return;
+      const found = findCard(detailCtx.slug, detailCtx.id);
+      if (!found) return;
+      const titleEl = document.getElementById("detail-title");
+      const descEl = document.getElementById("detail-desc");
+      const title = (titleEl?.value || "").trim() || found.card.title;
+      found.card.title = title;
+      found.card.description = descEl?.value || "";
+      persist(detailCtx.slug, found.board);
+      refreshBoardView();
+    }
+
+    function refreshBoardView() {
+      if (mode === "global") renderGlobal();
+      else if (singleSlug) renderSingle(singleSlug);
+      if (detailCtx) {
+        const found = findCard(detailCtx.slug, detailCtx.id);
+        if (found) paintDetail(found);
+      }
+    }
+
+    function paintDetail(found) {
+      const { board, col, card } = found;
+      const meta = document.getElementById("detail-meta");
+      const titleEl = document.getElementById("detail-title");
+      const descEl = document.getElementById("detail-desc");
+      if (meta) meta.textContent = `${board.name} · ${colTitle(col.id)}`;
+      if (titleEl && document.activeElement !== titleEl) titleEl.value = card.title || "";
+      if (descEl && document.activeElement !== descEl) descEl.value = card.description || "";
+
+      const comments = document.getElementById("detail-comments");
+      if (comments) {
+        if (!card.comments.length) {
+          comments.innerHTML = `<li class="detail__empty">Nenhum comentário</li>`;
+        } else {
+          comments.innerHTML = card.comments
+            .map(
+              (c) => `
+              <li class="detail__comment">
+                <p class="detail__comment-time">${escapeHtml(formatWhen(c.at))}</p>
+                <p class="detail__comment-text">${escapeHtml(c.text)}</p>
+              </li>`
+            )
+            .join("");
+        }
+      }
+
+      const atts = document.getElementById("detail-atts");
+      if (atts) {
+        if (!card.attachments.length) {
+          atts.innerHTML = `<p class="detail__empty">Nenhum anexo</p>`;
+        } else {
+          atts.innerHTML = card.attachments
+            .map((a) => {
+              const img = isImageAtt(a);
+              return `
+                <div class="detail__att-wrap" data-att-id="${escapeHtml(a.id)}">
+                  <button type="button" class="detail__att" data-att-open="${escapeHtml(a.id)}" title="${escapeHtml(a.name || "anexo")}">
+                    ${
+                      img
+                        ? `<img class="detail__att-thumb" src="${escapeHtml(a.url)}" alt="${escapeHtml(a.name || "")}" />`
+                        : `<span class="detail__att-file"><i data-lucide="file"></i></span>`
+                    }
+                    <span class="detail__att-name">${escapeHtml(a.name || "anexo")}</span>
+                  </button>
+                  <button type="button" class="detail__att-remove" data-att-remove="${escapeHtml(a.id)}">Remover</button>
+                </div>`;
+            })
+            .join("");
+        }
+      }
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function openDetail(slug, cardId) {
+      const found = findCard(slug, cardId);
+      if (!found) return;
+      detailCtx = { slug, id: cardId };
+      const root = document.getElementById("detail-root");
+      root.hidden = false;
+      document.body.classList.add("is-detail-open");
+      paintDetail(found);
+      const titleEl = document.getElementById("detail-title");
+      titleEl?.focus();
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function closeDetail() {
+      if (detailCtx) saveDetailFields();
+      detailCtx = null;
+      document.getElementById("detail-root").hidden = true;
+      document.body.classList.remove("is-detail-open");
+      closeLightbox();
+    }
+
+    function openLightbox(src, alt) {
+      const box = document.getElementById("lightbox");
+      const img = document.getElementById("lightbox-img");
+      img.src = src;
+      img.alt = alt || "";
+      box.hidden = false;
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function closeLightbox() {
+      const box = document.getElementById("lightbox");
+      const img = document.getElementById("lightbox-img");
+      box.hidden = true;
+      img.removeAttribute("src");
+      img.alt = "";
+    }
+
+    function addComment() {
+      if (!detailCtx) return;
+      const input = document.getElementById("detail-comment");
+      const text = (input?.value || "").trim();
+      if (!text) return;
+      const found = findCard(detailCtx.slug, detailCtx.id);
+      if (!found) return;
+      found.card.comments.push({ id: uid("c"), text, at: new Date().toISOString() });
+      persist(detailCtx.slug, found.board);
+      input.value = "";
+      refreshBoardView();
+    }
+
+    function addAttachmentFromUrl() {
+      if (!detailCtx) return;
+      const raw = prompt("URL do anexo (imagem ou arquivo):");
+      if (!raw) return;
+      const url = raw.trim();
+      if (!url) return;
+      const found = findCard(detailCtx.slug, detailCtx.id);
+      if (!found) return;
+      let name = url.split("/").pop() || "anexo";
+      try {
+        name = decodeURIComponent(name.split("?")[0]) || name;
+      } catch (_) {}
+      const kind = isImageAtt({ url, name }) ? "image" : "file";
+      found.card.attachments.push({ id: uid("a"), name, url, kind });
+      persist(detailCtx.slug, found.board);
+      refreshBoardView();
+    }
+
+    function addAttachmentFromFile(file) {
+      if (!detailCtx || !file) return;
+      const found = findCard(detailCtx.slug, detailCtx.id);
+      if (!found) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        const url = String(reader.result || "");
+        const kind = file.type.startsWith("image/") ? "image" : "file";
+        found.card.attachments.push({
+          id: uid("a"),
+          name: file.name,
+          url,
+          kind,
+        });
+        persist(detailCtx.slug, found.board);
+        refreshBoardView();
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function removeAttachment(attId) {
+      if (!detailCtx) return;
+      const found = findCard(detailCtx.slug, detailCtx.id);
+      if (!found) return;
+      found.card.attachments = found.card.attachments.filter((a) => a.id !== attId);
+      persist(detailCtx.slug, found.board);
+      refreshBoardView();
+    }
+
+    function openAttachment(attId) {
+      if (!detailCtx) return;
+      const found = findCard(detailCtx.slug, detailCtx.id);
+      if (!found) return;
+      const att = found.card.attachments.find((a) => a.id === attId);
+      if (!att) return;
+      if (isImageAtt(att)) openLightbox(att.url, att.name);
+      else window.open(att.url, "_blank", "noopener,noreferrer");
+    }
+
+    function wireDetailUi() {
+      document.querySelectorAll("[data-detail-close]").forEach((el) => {
+        el.addEventListener("click", closeDetail);
+      });
+      document.getElementById("detail-title")?.addEventListener("change", saveDetailFields);
+      document.getElementById("detail-title")?.addEventListener("blur", saveDetailFields);
+      document.getElementById("detail-desc")?.addEventListener("change", saveDetailFields);
+      document.getElementById("detail-desc")?.addEventListener("blur", saveDetailFields);
+      document.getElementById("detail-comment-add")?.addEventListener("click", addComment);
+      document.getElementById("detail-att-url")?.addEventListener("click", addAttachmentFromUrl);
+      document.getElementById("detail-att-file")?.addEventListener("click", () => {
+        document.getElementById("detail-att-input")?.click();
+      });
+      document.getElementById("detail-att-input")?.addEventListener("change", (e) => {
+        const file = e.target.files?.[0];
+        if (file) addAttachmentFromFile(file);
+        e.target.value = "";
+      });
+      document.getElementById("detail-root")?.addEventListener("click", (e) => {
+        const openId = e.target.closest("[data-att-open]")?.getAttribute("data-att-open");
+        if (openId) {
+          e.preventDefault();
+          openAttachment(openId);
+          return;
+        }
+        const remId = e.target.closest("[data-att-remove]")?.getAttribute("data-att-remove");
+        if (remId) {
+          e.preventDefault();
+          removeAttachment(remId);
+        }
+      });
+      document.getElementById("lightbox-close")?.addEventListener("click", closeLightbox);
+      document.getElementById("lightbox")?.addEventListener("click", (e) => {
+        if (e.target.id === "lightbox") closeLightbox();
+      });
+      document.addEventListener("keydown", (e) => {
+        if (e.key !== "Escape") return;
+        if (!document.getElementById("lightbox").hidden) {
+          closeLightbox();
+          return;
+        }
+        if (!document.getElementById("detail-root").hidden) closeDetail();
+      });
     }
 
     function wireColumn(list) {
@@ -765,6 +1457,8 @@
         </div>`;
       if (window.lucide) lucide.createIcons();
     }
+
+    wireDetailUi();
 
     (async () => {
       try {

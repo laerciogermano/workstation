@@ -565,6 +565,27 @@
       }
     ]
   },
+  "mauricio": {
+    "name": "Mauricio",
+    "blurb": "Tinder via Chrome CDP",
+    "columns": [
+      {
+        "id": "todo",
+        "title": "A fazer",
+        "cards": []
+      },
+      {
+        "id": "doing",
+        "title": "Fazendo",
+        "cards": []
+      },
+      {
+        "id": "done",
+        "title": "Feito",
+        "cards": []
+      }
+    ]
+  },
   "low-chat": {
     "name": "low-chat",
     "blurb": "LLM barato multi-canal",

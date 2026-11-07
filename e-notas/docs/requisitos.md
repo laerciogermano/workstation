@@ -377,6 +377,17 @@ Card: [BXKZ55Wb](https://trello.com/c/BXKZ55Wb).
 - Se top EAN com score ≥ 0,72 → pipeline EAN→imagens (`modo: ean`); senão URLs textuais OFF em `imagens_texto` sem gravar vínculo (`modo: texto`).
 - Antes: imagens só com EAN conhecido. Depois: orquestração descrição→(EAN?)→imagens.
 
+## REQ-043 — Sugestões EAN na vitrine + origem do vínculo (2026-11-07)
+
+- Todo produto **sem EAN** na vitrine do estabelecimento mostra sugestões (enrichment/ean) com foto quando houver; toque **vincula** na hora (`origem=sugestao`).
+- Modal EAN: ao abrir sem EAN, busca sugestões automaticamente; toque na sugestão vincula com `origem=sugestao`.
+- Scan câmera / foto / imagem → vínculo com `origem=barcode_scan`.
+- Digitação manual no campo + Salvar → `origem=manual`.
+- Coluna `enotas.codigos_barras.origem` (`sugestao` | `barcode_scan` | `manual`); exposta em `GET /api/itens` como `ean_origem`.
+- Chip na vitrine: scan / sugestão / manual.
+- Antes: sugestão só no modal e sem gravar origem. Depois: sugestões inline + origem persistida.
+- Rollback: `ALTER TABLE enotas.codigos_barras DROP COLUMN origem;` + remover UI suggest-inline / campo origem no POST.
+
 ## REQ-042 — Google Imagens: descrição ou EAN + N (2026-11-07)
 
 - Um serviço: enviar **descrição** ou **EAN** e **N**; ir ao Google Imagens (web) e baixar as N primeiras.

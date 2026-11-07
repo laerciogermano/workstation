@@ -162,6 +162,7 @@ export async function initDb() {
     ALTER TABLE ${t('empresas')} ADD COLUMN IF NOT EXISTS lat DOUBLE PRECISION;
     ALTER TABLE ${t('empresas')} ADD COLUMN IF NOT EXISTS lng DOUBLE PRECISION;
     ALTER TABLE ${t('codigos_barras')} ADD COLUMN IF NOT EXISTS foto_url TEXT;
+    ALTER TABLE ${t('codigos_barras')} ADD COLUMN IF NOT EXISTS origem TEXT;
   `);
 
   await p.query(`
@@ -392,7 +393,7 @@ export async function listNotas(client = getPool()) {
 export async function listItens(client = getPool()) {
   const r = await client.query(
     `SELECT i.*, e.nome AS empresa_nome, n.numero AS nota_numero, n.chave_acesso,
-            n.emissao AS nota_emissao, cb.codigo_barras, cb.foto_url
+            n.emissao AS nota_emissao, cb.codigo_barras, cb.foto_url, cb.origem AS ean_origem
      FROM ${t('itens')} i
      JOIN ${t('empresas')} e ON e.id = i.empresa_id
      JOIN ${t('notas')} n ON n.id = i.nota_id
@@ -488,14 +489,25 @@ export async function confirmarEanSugestao(
   return r.rows[0] || null;
 }
 
-/** Upsert: (empresa, código da unidade) → código de barras (EAN) + foto_url se houver arquivo. */
+const ORIGENS_EAN = new Set(['sugestao', 'barcode_scan', 'manual']);
+
+function normalizeOrigemEan(raw) {
+  const v = String(raw ?? '')
+    .trim()
+    .toLowerCase();
+  if (ORIGENS_EAN.has(v)) return v;
+  return 'manual';
+}
+
+/** Upsert: (empresa, código da unidade) → EAN + foto + origem do vínculo. */
 export async function upsertCodigoBarras(
-  { empresaId, codigoUnidade, codigoBarras, fotoUrl },
+  { empresaId, codigoUnidade, codigoBarras, fotoUrl, origem },
   client = getPool(),
 ) {
   const empresa = Number(empresaId);
   const unidade = String(codigoUnidade ?? '').trim();
   const ean = String(codigoBarras ?? '').trim();
+  const origemNorm = normalizeOrigemEan(origem);
   if (!Number.isFinite(empresa) || empresa <= 0) {
     throw Object.assign(new Error('empresa_id inválido'), { status: 400 });
   }
@@ -521,15 +533,17 @@ export async function upsertCodigoBarras(
     null;
 
   const r = await client.query(
-    `INSERT INTO ${t('codigos_barras')} (empresa_id, codigo_unidade, codigo_barras, foto_url)
-     VALUES ($1, $2, $3, $4)
+    `INSERT INTO ${t('codigos_barras')}
+       (empresa_id, codigo_unidade, codigo_barras, foto_url, origem)
+     VALUES ($1, $2, $3, $4, $5)
      ON CONFLICT (empresa_id, codigo_unidade)
      DO UPDATE SET
        codigo_barras = EXCLUDED.codigo_barras,
        foto_url = COALESCE(EXCLUDED.foto_url, ${t('codigos_barras')}.foto_url),
+       origem = EXCLUDED.origem,
        updated_at = now()
      RETURNING *`,
-    [empresa, unidade, ean, foto],
+    [empresa, unidade, ean, foto, origemNorm],
   );
   return r.rows[0];
 }

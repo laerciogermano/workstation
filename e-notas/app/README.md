@@ -63,7 +63,7 @@ Resposta: `{ ok, created, empresaCriada, url, empresa, nota, itens }`.
 | `GET` | `/api/notas` | `{ ok, notas }` (com `empresa_nome` / `empresa_cnpj`; ordem emissão DESC) |
 | `GET` | `/api/itens` | `{ ok, itens }` (com `empresa_nome`, `nota_numero`, `nota_emissao`, `chave_acesso`, `codigo_barras`, `foto_url` se mapeado) |
 | `GET` | `/api/codigos-barras` | `{ ok, codigosBarras }` (inclui `foto_url`) |
-| `POST` | `/api/codigos-barras` | body `{ empresa_id, codigo_unidade, codigo_barras, foto_url? }` → upsert; dispara busca async de fotos (REQ-032); auto `foto_url` se já houver selecionada/arquivo |
+| `POST` | `/api/codigos-barras` | body `{ empresa_id, codigo_unidade, codigo_barras, foto_url?, origem?, descricao? }` → upsert; `origem`: `sugestao` \| `barcode_scan` \| `manual` (REQ-043); dispara fotos (REQ-032) |
 | `GET` | `/api/ean-imagens?codigo_barras=` | `{ ok, imagens }` candidatas do EAN |
 | `POST` | `/api/ean-imagens/buscar` | body `{ codigo_barras, force? }` → busca síncrona (idempotente sem `force`) |
 | `POST` | `/api/ean-imagens/:id/selecionar` | marca a foto do feed e atualiza `codigos_barras.foto_url` |
@@ -84,4 +84,4 @@ Fotos: `public/ean-fotos/{ean}.jpg` (legado) e `public/ean-fotos/{ean}/NN.ext` (
 
 ## Reverter
 
-Parar `:4173`. Enrichment: `DROP TABLE enotas.ean_sugestoes;` + remover `enrichment.js` / rotas `/api/enrichment/*` / bloco `.ean-suggest` no modal. Fotos: `DROP TABLE enotas.ean_imagens;` + remover `ean-imagens.js` / rotas / UI de Fotos. Schema: `DROP TABLE enotas.codigos_barras;` se quiser apagar só o mapeamento. `DROP SCHEMA enotas CASCADE;` apaga tudo.
+Parar `:4173`. Origem EAN (REQ-043): `ALTER TABLE enotas.codigos_barras DROP COLUMN origem;` + UI suggest-inline. Enrichment: `DROP TABLE enotas.ean_sugestoes;` + remover `enrichment.js` / rotas `/api/enrichment/*` / bloco `.ean-suggest`. Fotos: `DROP TABLE enotas.ean_imagens;` + `ean-imagens.js`. `DROP SCHEMA enotas CASCADE;` apaga tudo.

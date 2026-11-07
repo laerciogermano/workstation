@@ -24,6 +24,8 @@ const btnEanEscolherImagemEl = document.getElementById('btn-ean-escolher-imagem'
 const btnEanSugerirEl = document.getElementById('btn-ean-sugerir');
 const eanSuggestListEl = document.getElementById('ean-suggest-list');
 const eanSuggestStatusEl = document.getElementById('ean-suggest-status');
+/** Cache descrição → candidatos enrichment. */
+const eanSuggestCache = new Map();
 const vitrineListaEl = document.getElementById('vitrine-lista');
 const vitrineDetalheEl = document.getElementById('vitrine-detalhe');
 const produtosListaEl = document.getElementById('produtos-lista');
@@ -66,7 +68,7 @@ let produtoAbertaKey = null;
 let notaAbertaId = null;
 let eanScanner = null;
 let eanScanBusy = false;
-let modalContext = { empresaNome: '', itemNome: '' };
+let modalContext = { empresaNome: '', itemNome: '', origem: 'manual' };
 let empresasMap = null;
 let empresasMarkers = null;
 let empresasMarkerById = new Map();
@@ -797,6 +799,12 @@ function renderVitrineDetalhe(empresaId) {
             Number.isFinite(r._preco) && menores.get(r._key) === r._preco;
           const codigo = String(r.codigo || '').trim();
           const ean = String(r.codigo_barras || '').trim();
+          const origem = String(r.ean_origem || '').trim();
+          const origemChip = ean
+            ? `<span class="chip ean-origem" title="Origem do vínculo">${esc(
+                labelOrigemEan(origem),
+              )}</span>`
+            : '';
           const eanBtn = codigo
             ? `<button type="button" class="btn btn-ghost btn-ean" data-vincular-ean
                 data-empresa-id="${esc(loja.id)}"
@@ -806,6 +814,17 @@ function renderVitrineDetalhe(empresaId) {
                 data-ean="${esc(ean)}"
               >${ean ? 'Editar EAN' : 'Código de barras'}</button>`
             : '';
+          const suggestBox =
+            !ean && codigo && r.nome
+              ? `<div class="ean-suggest-inline"
+                   data-suggest-for="${esc(codigo)}"
+                   data-empresa-id="${esc(loja.id)}"
+                   data-empresa-nome="${esc(empresaNome)}"
+                   data-codigo="${esc(codigo)}"
+                   data-nome="${esc(r.nome || '')}">
+                   <p class="hint ean-suggest-loading">Buscando sugestões…</p>
+                 </div>`
+              : '';
           return `<article class="produto-card produto-card-loja">
             <button type="button" class="produto-card-hit" data-open-produto="${esc(
               r._key,
@@ -816,17 +835,20 @@ function renderVitrineDetalhe(empresaId) {
                 <p class="produto-preco">
                   <span class="price-cell">${esc(formatPreco(r.valor_unitario))}</span>
                   ${isMenor ? '<span class="chip ok">menor</span>' : ''}
+                  ${origemChip}
                 </p>
                 <p class="produto-meta">${data ? esc(data) : ''}${
-                  ean ? ` · EAN ${esc(ean)}` : ''
+                  ean ? ` · EAN ${esc(ean)}` : ' · sem EAN'
                 }</p>
               </div>
             </button>
             ${eanBtn}
+            ${suggestBox}
           </article>`;
         })
         .join('')
     : `<p class="hint">${catalogo.length ? 'Nenhum produto nesta busca.' : 'Sem produtos nesta loja.'}</p>`;
+  void hydrateEanSuggestions(vitrineItensEl);
 }
 
 function openVitrineLoja(empresaId) {
@@ -1050,9 +1072,10 @@ async function onBarcodeScanned(decodedText) {
   if (!code) return;
   eanScanBusy = true;
   eanBarrasEl.value = code;
+  modalContext = { ...modalContext, origem: 'barcode_scan' };
   setEanCamStatus(`Lido: ${code}`, 'ok');
   try {
-    await saveEan();
+    await saveEan({ origem: 'barcode_scan' });
   } finally {
     setTimeout(() => {
       eanScanBusy = false;
@@ -1083,6 +1106,107 @@ async function decodeEanFromFile(file) {
   }
 }
 
+function labelOrigemEan(origem) {
+  const o = String(origem || '').trim();
+  if (o === 'barcode_scan') return 'scan';
+  if (o === 'sugestao') return 'sugestão';
+  if (o === 'manual') return 'manual';
+  return o || '—';
+}
+
+async function fetchEanSugestoes(descricao) {
+  const key = String(descricao || '')
+    .trim()
+    .toLowerCase();
+  if (!key) return [];
+  if (eanSuggestCache.has(key)) return eanSuggestCache.get(key);
+  const p = fetchJson('api/enrichment/ean', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ descricao }),
+  })
+    .then((data) => data.candidatos || [])
+    .catch(() => []);
+  eanSuggestCache.set(key, p);
+  return p;
+}
+
+async function hydrateEanSuggestions(root) {
+  const nodes = [...(root || document).querySelectorAll('[data-suggest-for]')];
+  const concurrency = 3;
+  let i = 0;
+  async function worker() {
+    while (i < nodes.length) {
+      const el = nodes[i++];
+      const nome = el.dataset.nome || '';
+      if (!nome.trim()) {
+        el.innerHTML = `<p class="hint">Sem descrição.</p>`;
+        continue;
+      }
+      const list = await fetchEanSugestoes(nome);
+      if (!list.length) {
+        el.innerHTML = `<p class="hint">Sem sugestão de EAN.</p>`;
+        continue;
+      }
+      el.innerHTML = `
+        <p class="ean-suggest-inline-label">Sugestões — toque para vincular</p>
+        <ul class="ean-suggest-list ean-suggest-list-inline">
+          ${list
+            .slice(0, 4)
+            .map((c) => {
+              const pct = Math.round((Number(c.score) || 0) * 100);
+              const thumb = c.image_url
+                ? `<img class="ean-suggest-thumb" src="${esc(c.image_url)}" alt="" loading="lazy" width="36" height="36" />`
+                : '';
+              return `<li><button type="button" class="ean-suggest-btn"
+                data-aplicar-sugestao
+                data-ean="${esc(c.ean)}"
+                data-empresa-id="${esc(el.dataset.empresaId || '')}"
+                data-empresa-nome="${esc(el.dataset.empresaNome || '')}"
+                data-codigo="${esc(el.dataset.codigo || '')}"
+                data-nome="${esc(el.dataset.nome || '')}">
+                ${thumb}
+                <span class="ean-suggest-ean">${esc(c.ean)}</span>
+                <span class="ean-suggest-nome">${esc(c.nome_canonico || '—')}</span>
+                <span class="ean-suggest-meta">${pct}% · ${esc(c.fonte || '')}</span>
+              </button></li>`;
+            })
+            .join('')}
+        </ul>`;
+    }
+  }
+  await Promise.all(
+    Array.from({ length: Math.min(concurrency, nodes.length) }, () => worker()),
+  );
+}
+
+async function aplicarSugestaoEan({
+  empresaId,
+  codigo,
+  nome,
+  ean,
+}) {
+  const empresa = Number(empresaId);
+  const unidade = String(codigo || '').trim();
+  const codigoBarras = String(ean || '').trim();
+  if (!empresa || !unidade || !codigoBarras) {
+    throw new Error('Dados incompletos para vincular');
+  }
+  await fetchJson('api/codigos-barras', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      empresa_id: empresa,
+      codigo_unidade: unidade,
+      codigo_barras: codigoBarras,
+      descricao: nome || '',
+      origem: 'sugestao',
+    }),
+  });
+  await reloadCodigosBarras();
+  await reloadItens();
+}
+
 function setEanSuggestStatus(msg, kind) {
   if (!eanSuggestStatusEl) return;
   eanSuggestStatusEl.textContent = msg || '';
@@ -1109,11 +1233,16 @@ function renderEanSuggestList(candidatos) {
     btn.type = 'button';
     btn.className = 'ean-suggest-btn';
     btn.dataset.ean = c.ean;
+    btn.dataset.origem = 'sugestao';
     const pct = Math.round((Number(c.score) || 0) * 100);
+    const thumb = c.image_url
+      ? `<img class="ean-suggest-thumb" src="${esc(c.image_url)}" alt="" loading="lazy" width="36" height="36" />`
+      : '';
     btn.innerHTML = `
+      ${thumb}
       <span class="ean-suggest-ean">${esc(c.ean)}</span>
       <span class="ean-suggest-nome">${esc(c.nome_canonico || '—')}</span>
-      <span class="ean-suggest-meta">${pct}% · ${esc(c.fonte || '')}</span>
+      <span class="ean-suggest-meta">${pct}% · ${esc(c.fonte || '')} · vincular</span>
     `;
     li.appendChild(btn);
     eanSuggestListEl.appendChild(li);
@@ -1157,6 +1286,7 @@ async function openCadastroEan({
   modalContext = {
     empresaNome: empresaNome || '',
     itemNome: nome || '',
+    origem: 'manual',
   };
   eanEmpresaEl.value = String(empresaId || '');
   eanUnidadeEl.value = codigo || '';
@@ -1178,6 +1308,9 @@ async function openCadastroEan({
   document.body.classList.add('modal-open');
   await startEanScanner();
   eanBarrasEl.focus();
+  if (!ean && nome) {
+    void sugerirEanPorDescricao();
+  }
 }
 
 async function closeCadastroEan() {
@@ -1190,10 +1323,12 @@ async function closeCadastroEan() {
   await stopEanScanner();
 }
 
-async function saveEan() {
+async function saveEan({ origem } = {}) {
   const empresaId = Number(eanEmpresaEl.value);
   const codigoUnidade = eanUnidadeEl.value.trim();
   const codigoBarras = eanBarrasEl.value.trim();
+  const origemFinal =
+    origem || modalContext?.origem || 'manual';
   if (!empresaId || !codigoUnidade || !codigoBarras) {
     setEanFormStatus('Informe o código de barras.', 'err');
     return;
@@ -1208,9 +1343,10 @@ async function saveEan() {
         codigo_unidade: codigoUnidade,
         codigo_barras: codigoBarras,
         descricao: modalContext?.itemNome || '',
+        origem: origemFinal,
       }),
     });
-    setEanFormStatus('Salvo.', 'ok');
+    setEanFormStatus(`Salvo (${labelOrigemEan(origemFinal)}).`, 'ok');
     await reloadCodigosBarras();
     await reloadItens();
     await closeCadastroEan();
@@ -1294,6 +1430,30 @@ produtosGridEl?.addEventListener('click', (ev) => {
   openProduto(btn.dataset.openProduto);
 });
 vitrineItensEl?.addEventListener('click', (ev) => {
+  const sug = ev.target.closest('[data-aplicar-sugestao]');
+  if (sug) {
+    ev.preventDefault();
+    ev.stopPropagation();
+    const label =
+      sug.querySelector('.ean-suggest-ean')?.textContent || sug.dataset.ean;
+    sug.disabled = true;
+    sug.classList.add('is-busy');
+    void aplicarSugestaoEan({
+      empresaId: sug.dataset.empresaId,
+      codigo: sug.dataset.codigo,
+      nome: sug.dataset.nome,
+      ean: sug.dataset.ean,
+    })
+      .then(() => {
+        if (lojaAbertaId != null) renderVitrineDetalhe(lojaAbertaId);
+      })
+      .catch((err) => {
+        sug.disabled = false;
+        sug.classList.remove('is-busy');
+        alert(`Falha ao vincular ${label}: ${err.message}`);
+      });
+    return;
+  }
   if (ev.target.closest('[data-vincular-ean]')) {
     onVincularEanClick(ev);
     return;
@@ -1376,8 +1536,13 @@ eanSuggestListEl?.addEventListener('click', (ev) => {
   const btn = ev.target.closest('[data-ean]');
   if (!btn) return;
   eanBarrasEl.value = btn.dataset.ean || '';
-  setEanSuggestStatus(`Preenchido: ${btn.dataset.ean}. Confira e salve.`, 'ok');
-  eanBarrasEl.focus();
+  modalContext = { ...modalContext, origem: 'sugestao' };
+  setEanSuggestStatus(`Vinculando ${btn.dataset.ean}…`, 'ok');
+  void saveEan({ origem: 'sugestao' });
+});
+
+eanBarrasEl?.addEventListener('input', () => {
+  modalContext = { ...modalContext, origem: 'manual' };
 });
 eanCaptureEl?.addEventListener('change', () => {
   const file = eanCaptureEl.files?.[0];

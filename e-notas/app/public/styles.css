@@ -542,6 +542,55 @@ body.modal-open {
   cursor: zoom-in;
 }
 
+.ean-suggest-inline {
+  display: grid;
+  gap: 0.35rem;
+  padding: 0 0.75rem 0.75rem;
+  width: 100%;
+}
+
+.ean-suggest-inline-label,
+.ean-suggest-loading {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--nt-muted);
+}
+
+.ean-suggest-list-inline {
+  max-height: none;
+}
+
+.ean-suggest-thumb {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  border-radius: 6px;
+  background: #f3f4f6;
+  align-self: center;
+}
+
+.ean-suggest-btn:has(.ean-suggest-thumb) {
+  grid-template-columns: 36px 1fr;
+}
+
+.ean-suggest-btn:has(.ean-suggest-thumb) .ean-suggest-ean,
+.ean-suggest-btn:has(.ean-suggest-thumb) .ean-suggest-nome,
+.ean-suggest-btn:has(.ean-suggest-thumb) .ean-suggest-meta {
+  grid-column: 2;
+}
+
+.ean-suggest-btn.is-busy {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.chip.ean-origem {
+  font-size: 0.7rem;
+  text-transform: lowercase;
+}
+
 .ean-suggest {
   display: grid;
   gap: 0.45rem;

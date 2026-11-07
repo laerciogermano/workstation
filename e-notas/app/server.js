@@ -161,21 +161,23 @@ app.get('/api/codigos-barras', async (_req, res) => {
 
 app.post('/api/codigos-barras', async (req, res) => {
   try {
+    const origem = String(req.body?.origem || '').trim() || 'manual';
     const row = await upsertCodigoBarras({
       empresaId: req.body?.empresa_id,
       codigoUnidade: req.body?.codigo_unidade,
       codigoBarras: req.body?.codigo_barras,
       fotoUrl: req.body?.foto_url,
+      origem,
     });
     enqueueBuscarImagensEan(row.codigo_barras);
     const descSugestao = String(req.body?.descricao || '').trim();
-    if (descSugestao) {
+    if (descSugestao && origem === 'sugestao') {
       confirmarEanSugestao(normalizeDescricao(descSugestao), row.codigo_barras).catch(
         (err) => console.warn('[ean-sugestao:confirm]', err.message),
       );
     }
     console.log(
-      `[codigo-barras] empresa=${row.empresa_id} unidade=${row.codigo_unidade} ean=${row.codigo_barras} foto=${row.foto_url || '-'}`,
+      `[codigo-barras] empresa=${row.empresa_id} unidade=${row.codigo_unidade} ean=${row.codigo_barras} origem=${row.origem || origem} foto=${row.foto_url || '-'}`,
     );
     return res.json({ ok: true, codigoBarras: row, imagensPendentes: true });
   } catch (err) {

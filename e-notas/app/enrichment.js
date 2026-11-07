@@ -10,6 +10,7 @@ import {
   resolveFotoUrlForEan,
   upsertEanSugestoes,
 } from './db.js';
+import { searchGoogleImages } from './google-imagens.js';
 
 const UA =
   'notinhas.shop/0.1 (product enrichment; +https://notinhas.shop; contato@notinhas.shop)';
@@ -358,6 +359,29 @@ export async function collectImageUrlsByDescricao(descricao) {
     await sleep(150);
   }
 
+  // Google Imagens (CDP) completa o pool textual.
+  if (out.length < 5) {
+    try {
+      const { items } = await searchGoogleImages(descricao_norm, {
+        n: 5 - out.length,
+      });
+      for (const it of items) {
+        if (!it.url || seen.has(it.url)) continue;
+        seen.add(it.url);
+        out.push({
+          url: it.url,
+          fonte: 'google-imagens',
+          ean: null,
+          nome_canonico: null,
+          score: 0.55,
+        });
+        if (out.length >= 5) break;
+      }
+    } catch (err) {
+      console.warn('[enrichment] google-imagens texto:', err.message);
+    }
+  }
+
   out.sort((a, b) => b.score - a.score);
   return out.slice(0, 5);
 }
@@ -370,7 +394,10 @@ export async function imagensPorDescricao(descricao, { force = false } = {}) {
   const { descricao_norm, candidatos } = await resolveEanFromDescricao(descricao);
   const top = candidatos[0] || null;
   if (top && top.score >= SCORE_IMAGENS_AUTO) {
-    const result = await buscarImagensEan(top.ean, { force });
+    const result = await buscarImagensEan(top.ean, {
+      force,
+      descricao: descricao_norm || descricao,
+    });
     return {
       descricao_norm,
       modo: 'ean',

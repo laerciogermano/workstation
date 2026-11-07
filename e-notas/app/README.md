@@ -65,10 +65,10 @@ Resposta: `{ ok, created, empresaCriada, url, empresa, nota, itens }`.
 | `GET` | `/api/codigos-barras` | `{ ok, codigosBarras }` (inclui `foto_url`) |
 | `POST` | `/api/codigos-barras` | body `{ empresa_id, codigo_unidade, codigo_barras, foto_url?, origem?, descricao? }` → upsert; `origem`: `sugestao` \| `barcode_scan` \| `manual` (REQ-043); dispara fotos (REQ-032) |
 | `GET` | `/api/ean-imagens?codigo_barras=` | `{ ok, imagens }` candidatas do EAN |
-| `POST` | `/api/ean-imagens/buscar` | body `{ codigo_barras, force? }` → busca síncrona (idempotente sem `force`) |
+| `POST` | `/api/ean-imagens/buscar` | body `{ codigo_barras, force?, descricao? }` → APIs + **Google Imagens** (query EAN+nome); idempotente sem `force` |
 | `POST` | `/api/ean-imagens/:id/selecionar` | marca a foto do feed e atualiza `codigos_barras.foto_url` |
 | `GET`/`POST` | `/api/enrichment/ean` | query/body `descricao` → candidatos EAN (REQ-039; sem auto-vínculo) |
-| `GET`/`POST` | `/api/enrichment/imagens` | query/body `ean` ou `codigo_barras`, `force?` → imagens (REQ-040) |
+| `GET`/`POST` | `/api/enrichment/imagens` | query/body `ean` ou `codigo_barras`, `descricao?`, `force?` → APIs + Google (REQ-040/032) |
 | `GET`/`POST` | `/api/enrichment/imagens-por-descricao` | query/body `descricao`, `force?` → `modo: ean\|texto` + imagens (REQ-041) |
 | `GET`/`POST` | `/api/enrichment/google-imagens` | `descricao` **ou** `ean` + `n` (1–100) → scraping Google Imagens + download (REQ-042); `download=0` só lista URLs |
 

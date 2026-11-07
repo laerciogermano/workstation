@@ -169,8 +169,8 @@ app.post('/api/codigos-barras', async (req, res) => {
       fotoUrl: req.body?.foto_url,
       origem,
     });
-    enqueueBuscarImagensEan(row.codigo_barras);
     const descSugestao = String(req.body?.descricao || '').trim();
+    enqueueBuscarImagensEan(row.codigo_barras, { descricao: descSugestao });
     if (descSugestao && origem === 'sugestao') {
       confirmarEanSugestao(normalizeDescricao(descSugestao), row.codigo_barras).catch(
         (err) => console.warn('[ean-sugestao:confirm]', err.message),
@@ -216,11 +216,12 @@ async function handleEnrichmentImagens(req, res) {
   try {
     const ean =
       enrichmentInput(req, 'ean') || enrichmentInput(req, 'codigo_barras');
+    const descricao = enrichmentInput(req, 'descricao');
     const force = enrichmentForce(req);
     if (!ean) {
       return res.status(400).json({ ok: false, error: 'ean obrigatório' });
     }
-    const result = await buscarImagensEan(ean, { force });
+    const result = await buscarImagensEan(ean, { force, descricao });
     return res.json({ ok: true, ...result });
   } catch (err) {
     const status = err.status || 500;
@@ -302,10 +303,11 @@ app.post('/api/ean-imagens/buscar', async (req, res) => {
   try {
     const ean = String(req.body?.codigo_barras || '').trim();
     const force = Boolean(req.body?.force);
+    const descricao = String(req.body?.descricao || '').trim();
     if (!ean) {
       return res.status(400).json({ ok: false, error: 'codigo_barras obrigatório' });
     }
-    const result = await buscarImagensEan(ean, { force });
+    const result = await buscarImagensEan(ean, { force, descricao });
     return res.json({ ok: true, ...result });
   } catch (err) {
     const status = err.status || 500;

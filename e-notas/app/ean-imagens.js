@@ -1,5 +1,5 @@
 /**
- * Busca candidatas de foto por EAN (APIs de produto; Google CSE opcional).
+ * Busca candidatas de foto por EAN (APIs de produto + Google Imagens CDP).
  * Persistência e seleção ficam em db.js.
  */
 import dns from 'dns';
@@ -24,7 +24,8 @@ export const EAN_FOTOS_DIR = path.join(__dirname, 'public', 'ean-fotos');
 
 const UA =
   'notinhas.shop/0.1 (ean image lookup; +https://notinhas.shop; contato@notinhas.shop)';
-const MAX_CANDIDATAS = 5;
+const MAX_CANDIDATAS = 8;
+const MAX_GOOGLE = 5;
 const FETCH_MS = 12_000;
 
 /** @type {Map<string, Promise<unknown>>} */
@@ -129,20 +130,36 @@ async function fromUpcitemdb(ean, list) {
   }
 }
 
-/** Fallback: scraping Google Imagens (sem API key). */
-async function fromGoogleCse(ean, list) {
-  try {
-    const { items } = await searchGoogleImages(ean, { n: 5 });
-    for (const item of items) {
-      pushCandidate(list, item.url, 'google-imagens', 90);
-    }
-  } catch (err) {
-    console.warn('[ean-imagens] google-imagens:', err.message);
+/** Query Google: EAN + descrição do item (melhor recall que só dígitos). */
+export function googleQueryForEan(ean, descricao) {
+  const code = String(ean ?? '').trim();
+  const nome = String(descricao ?? '')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (code && nome) return `${code} ${nome}`;
+  return code || nome;
+}
+
+/** Sempre consulta Google Imagens (CDP, sem API key) e mistura no pool. */
+async function fromGoogleImagens(ean, descricao, list) {
+  const q = googleQueryForEan(ean, descricao);
+  if (!q) return;
+  const { items } = await searchGoogleImages(q, { n: MAX_GOOGLE });
+  let i = 0;
+  for (const item of items) {
+    // prioridade atrás das APIs de produto, mas acima de “lixo”
+    pushCandidate(list, item.url, 'google-imagens', 40 + i);
+    i += 1;
   }
 }
 
-export async function collectImageCandidates(ean) {
+/**
+ * @param {string} ean
+ * @param {{ descricao?: string }} [opts]
+ */
+export async function collectImageCandidates(ean, opts = {}) {
   const code = String(ean ?? '').trim();
+  const descricao = String(opts.descricao ?? '').trim();
   const list = [];
   if (!code) return list;
 
@@ -173,12 +190,12 @@ export async function collectImageCandidates(ean) {
       console.warn('[ean-imagens] upcitemdb:', err.message);
     }
   }
-  if (list.length < MAX_CANDIDATAS) {
-    try {
-      await fromGoogleCse(code, list);
-    } catch (err) {
-      console.warn('[ean-imagens] google-cse:', err.message);
-    }
+
+  // Google sempre entra no pool (não só quando as APIs falham).
+  try {
+    await fromGoogleImagens(code, descricao, list);
+  } catch (err) {
+    console.warn('[ean-imagens] google-imagens:', err.message);
   }
 
   list.sort((a, b) => a.prioridade - b.prioridade);

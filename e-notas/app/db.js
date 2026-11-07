@@ -634,14 +634,20 @@ async function ensureLegacyFotoAsCandidate(ean, client = getPool()) {
 }
 
 /**
- * Busca e persiste até 5 candidatas. Idempotente (sem force não rebaixa).
+ * Busca e persiste até 8 candidatas (APIs + Google Imagens). Idempotente sem force.
+ * @param {string} codigoBarras
+ * @param {{ force?: boolean, descricao?: string }} [opts]
  * @returns {{ ean: string, skipped?: boolean, imagens: object[], baixadas: number }}
  */
-export async function buscarImagensEan(codigoBarras, { force = false } = {}) {
+export async function buscarImagensEan(
+  codigoBarras,
+  { force = false, descricao = '' } = {},
+) {
   const ean = String(codigoBarras ?? '').trim();
   if (!ean) {
     throw Object.assign(new Error('codigo_barras obrigatório'), { status: 400 });
   }
+  const nome = String(descricao ?? '').trim();
 
   return withEanSearchLock(ean, async () => {
     const client = getPool();
@@ -663,7 +669,7 @@ export async function buscarImagensEan(codigoBarras, { force = false } = {}) {
       );
     }
 
-    const candidates = await collectImageCandidates(ean);
+    const candidates = await collectImageCandidates(ean, { descricao: nome });
     let baixadas = 0;
     let ordem = 1;
     const seenSha = new Set();

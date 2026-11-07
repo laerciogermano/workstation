@@ -279,15 +279,16 @@ Curadoria: [`../marca/benchmarking-solucoes/README.md`](../marca/benchmarking-so
 
 ## REQ-032 — Busca automática de fotos ao cadastrar EAN (2026-11-04)
 
-- Ao **cadastrar/vincular** um código de barras (`POST /api/codigos-barras`), dispara busca **assíncrona** de imagens desse EAN (até ~5 candidatas).
-- Fontes: Open Food Facts → Open Beauty → Open Products → UPCitemdb; **Google Imagens** via scraping (REQ-042, sem API key).
+- Ao **cadastrar/vincular** um código de barras (`POST /api/codigos-barras`), dispara busca **assíncrona** de imagens desse EAN (até ~8 candidatas).
+- Fontes: Open Food Facts → Open Beauty → Open Products → UPCitemdb; **Google Imagens sempre** (REQ-042 CDP, sem API key) — query `EAN + descricao` quando houver nome do item.
+- `POST /api/ean-imagens/buscar` e enrichment `/imagens` aceitam `descricao` opcional (UI do detalhe envia o nome do produto).
 - Tabela `enotas.ean_imagens`: EAN, `url_origem`, `fonte`, `path_local`, `ordem`, `selecionada`, `sha1`, `criado_em`. Arquivos em `ean-fotos/{ean}/NN.ext`.
 - **Uma** imagem `selecionada` propaga `codigos_barras.foto_url` (todos os vínculos daquele EAN) — feed / vitrine / detalhe.
 - Escolha (não voto): auto-seleção na 1ª importação; UI **Fotos** no detalhe do produto (+ **Buscar fotos** / force).
 - APIs: `GET /api/ean-imagens`, `POST /api/ean-imagens/buscar`, `POST /api/ean-imagens/:id/selecionar`.
-- Idempotente sem `force`; legado `{ean}.jpg` vira candidata `local` se ainda não houver linhas.
+- Idempotente sem `force`; legado `{ean}.jpg` vira candidata `local` se ainda não houver linhas. Sem fotos novas → **buscar de novo** (`force`) para misturar Google.
 - Card: [0fVZ8eBE](https://trello.com/c/0fVZ8eBE).
-- Antes: foto só se existir arquivo manual em `ean-fotos/` (REQ-026). Depois: busca automática de candidatas + seleção da do feed.
+- Antes: foto só se existir arquivo manual em `ean-fotos/` (REQ-026); Google só se as APIs não enchiam o pool. Depois: Google sempre no pool + query com descrição.
 - Rollback: `DROP TABLE enotas.ean_imagens;` + remover `ean-imagens.js` / rotas / seção Fotos no detalhe; manter `foto_url` legado.
 
 ---

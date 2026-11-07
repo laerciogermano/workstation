@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Projeto</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="shell.css" />
+  <style>
+    :root {
+      --paper: #ffffff;
+      --paper-2: #f4f1ea;
+      --ink: #14120f;
+      --body: #44423d;
+      --accent: #e0402b;
+      --line: #e7e3db;
+      --radius: 6px;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      --font-display: "Archivo", system-ui, sans-serif;
+      --font-body: "Newsreader", Georgia, serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; }
+
+    body {
+      min-height: 100vh;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: var(--font-body);
+      font-size: 1.05rem;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    ::selection { background: var(--accent); color: var(--paper); }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+    .shell {
+      width: min(860px, calc(100% - 2rem));
+      margin: 0 auto;
+      padding: 1.75rem 0 3.5rem;
+    }
+
+    .shell .top__left .back { display: none; }
+
+    .back {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      align-self: flex-start;
+      padding: 0.45rem 0.7rem 0.45rem 0.5rem;
+      font-family: var(--font-display);
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--ink);
+      text-decoration: none;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--paper);
+    }
+
+    .back:hover {
+      border-color: var(--ink);
+      color: var(--accent);
+    }
+
+    .back svg {
+      width: 1.1rem;
+      height: 1.1rem;
+      stroke-width: 1.75;
+      flex-shrink: 0;
+    }
+
+    .hero {
+      margin: 1rem 0 1.75rem;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: var(--paper-2);
+    }
+
+    .hero__cover {
+      display: block;
+      width: 100%;
+      height: clamp(9rem, 28vw, 14rem);
+      object-fit: cover;
+    }
+
+    .hero__body {
+      padding: 1.25rem 1.35rem 1.4rem;
+      border-top: 1px solid var(--line);
+      background: var(--paper);
+    }
+
+    .hero__actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.5rem 0.85rem;
+      font-family: var(--font-display);
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-decoration: none;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--paper);
+      color: var(--ink);
+    }
+
+    .btn:hover { border-color: var(--ink); }
+    .btn--accent {
+      background: var(--ink);
+      color: var(--paper);
+      border-color: var(--ink);
+    }
+    .btn--accent:hover {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+    .btn svg { width: 1rem; height: 1rem; stroke-width: 1.75; }
+
+    h1 {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: clamp(1.9rem, 4vw, 2.6rem);
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+      margin-bottom: 0.55rem;
+    }
+
+    .blurb {
+      color: var(--body);
+      font-size: 1.05rem;
+      max-width: 40rem;
+    }
+
+    .section {
+      margin-bottom: 2rem;
+    }
+
+    .section__head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 0.85rem;
+      padding-bottom: 0.55rem;
+      border-bottom: 2px solid var(--ink);
+    }
+
+    .section__title {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 1.02rem;
+      letter-spacing: -0.02em;
+    }
+
+    .section__note {
+      font-family: var(--font-display);
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--body);
+    }
+
+    .desc {
+      color: var(--ink);
+      font-size: 1.08rem;
+      line-height: 1.6;
+      max-width: 42rem;
+    }
+
+    .desc[contenteditable="true"]:focus {
+      outline: 2px solid var(--accent);
+      outline-offset: 4px;
+    }
+
+    .pipeline {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+    }
+
+    .step {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 0.85rem;
+      align-items: center;
+      padding: 0.85rem 1rem;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--paper);
+    }
+
+    .step:hover { border-color: var(--ink); }
+
+    .step__n {
+      font-family: var(--font-display);
+      font-size: 0.72rem;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      color: var(--accent);
+      min-width: 1.5rem;
+    }
+
+    .step__title {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.95rem;
+      letter-spacing: -0.01em;
+    }
+
+    .step__status {
+      font-family: var(--font-display);
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 0.25rem 0.45rem;
+      background: var(--paper);
+      color: var(--body);
+      cursor: pointer;
+    }
+
+    .step__status[data-status="doing"] {
+      border-color: var(--ink);
+      color: var(--ink);
+    }
+
+    .step__status[data-status="done"] {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .empty {
+      margin: 2.5rem auto;
+      max-width: 28rem;
+    }
+
+    .empty h1 { margin-bottom: 0.75rem; }
+    .empty p { color: var(--body); margin-bottom: 1rem; }
+
+    @media (max-width: 560px) {
+      .step {
+        grid-template-columns: auto 1fr;
+        grid-template-rows: auto auto;
+      }
+      .step__status { grid-column: 2; justify-self: start; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="side" aria-label="Menu">
+      <a class="side__brand" href="index.html">Workstation<span>.</span></a>
+      <nav class="side__nav">
+        <a class="side__link" href="index.html">Projetos</a>
+        <a class="side__link" href="board.html">Board</a>
+      </nav>
+    </aside>
+    <main class="main">
+      <div class="shell" id="app">
+        <p class="blurb">Carregando projeto…</p>
+      </div>
+    </main>
+  </div>
+
+  <script src="https://unpkg.com/lucide@0.468.0"></script>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const slug = params.get("p") || "";
+    const storageKey = (s) => `works-project:v1:${s}`;
+    const boardStorageKey = (s) => `works-board:v9:${s}`;
+
+    const STATUS_CYCLE = ["todo", "doing", "done"];
+    const STATUS_LABEL = { todo: "A fazer", doing: "Fazendo", done: "Feito" };
+
+    function escapeHtml(s) {
+      return String(s)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;");
+    }
+
+    async function loadSeed() {
+      try {
+        const res = await fetch("boards/data.json", { cache: "no-store" });
+        if (!res.ok) throw new Error("fetch failed");
+        return await res.json();
+      } catch (_) {
+        if (window.__BOARDS__) return window.__BOARDS__;
+        throw new Error("Sem dados do projeto");
+      }
+    }
+
+    function normalizeProject(seed) {
+      const p = structuredClone(seed || {});
+      if (typeof p.description !== "string") p.description = p.blurb || "";
+      if (!Array.isArray(p.sections)) p.sections = [];
+      p.sections = p.sections.map((s, i) => ({
+        id: s.id || `s-${i}`,
+        title: s.title || `Seção ${i + 1}`,
+        status: STATUS_CYCLE.includes(s.status) ? s.status : "todo",
+      }));
+      return p;
+    }
+
+    function hydrate(slug, seed) {
+      const base = normalizeProject(seed);
+      const raw = localStorage.getItem(storageKey(slug));
+      if (!raw) return base;
+      try {
+        const saved = JSON.parse(raw);
+        if (typeof saved.description === "string") base.description = saved.description;
+        if (Array.isArray(saved.sections) && saved.sections.length) {
+          const byId = new Map(saved.sections.map((s) => [s.id, s]));
+          base.sections = base.sections.map((s) => {
+            const hit = byId.get(s.id);
+            return hit
+              ? {
+                  ...s,
+                  title: hit.title || s.title,
+                  status: STATUS_CYCLE.includes(hit.status) ? hit.status : s.status,
+                }
+              : s;
+          });
+          for (const s of saved.sections) {
+            if (!base.sections.some((x) => x.id === s.id)) {
+              base.sections.push({
+                id: s.id,
+                title: s.title || s.id,
+                status: STATUS_CYCLE.includes(s.status) ? s.status : "todo",
+              });
+            }
+          }
+        }
+        return base;
+      } catch {
+        return base;
+      }
+    }
+
+    function persist(slug, project) {
+      localStorage.setItem(
+        storageKey(slug),
+        JSON.stringify({
+          description: project.description || "",
+          sections: project.sections || [],
+        })
+      );
+    }
+
+    function coverOf(slug, project) {
+      return `boards/banners/projects/${slug}.jpg`;
+    }
+
+    function nextTaskTitle(slug, seedBoard) {
+      let board = null;
+      try {
+        const raw = localStorage.getItem(boardStorageKey(slug));
+        if (raw) board = JSON.parse(raw);
+      } catch (_) {}
+      if (!board) board = seedBoard;
+      for (const id of ["todo", "doing"]) {
+        const col = board?.columns?.find((c) => c.id === id);
+        if (col?.cards?.length) return col.cards[0].title;
+      }
+      return null;
+    }
+
+    function missing(s) {
+      document.getElementById("app").innerHTML = `
+        <div class="empty">
+          <a class="back" href="index.html" aria-label="Voltar aos projetos">
+            <i data-lucide="arrow-left"></i>
+            Projetos
+          </a>
+          <h1>Projeto não encontrado</h1>
+          <p>Não há projeto para <strong>${escapeHtml(s || "(vazio)")}</strong>.</p>
+        </div>`;
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function render(slug, seed) {
+      const project = hydrate(slug, seed);
+      const next = nextTaskTitle(slug, seed);
+      document.title = `${project.name} · Projeto`;
+      const cover = coverOf(slug, project);
+      const done = project.sections.filter((s) => s.status === "done").length;
+
+      document.getElementById("app").innerHTML = `
+        <a class="back" href="index.html" aria-label="Voltar aos projetos">
+          <i data-lucide="arrow-left"></i>
+          Projetos
+        </a>
+        <div class="hero">
+          <img class="hero__cover" src="${escapeHtml(cover)}" alt="" />
+          <div class="hero__body">
+            <h1>${escapeHtml(project.name || slug)}</h1>
+            <p class="blurb">${escapeHtml(project.blurb || "")}</p>
+            <div class="hero__actions">
+              <a class="btn btn--accent" href="board.html?p=${encodeURIComponent(slug)}">
+                <i data-lucide="columns-3"></i>
+                Abrir board
+              </a>
+              ${
+                next
+                  ? `<span class="btn" style="cursor:default">Próximo: ${escapeHtml(next)}</span>`
+                  : ""
+              }
+            </div>
+          </div>
+        </div>
+
+        <section class="section" aria-labelledby="sec-desc">
+          <div class="section__head">
+            <h2 class="section__title" id="sec-desc">Descrição</h2>
+          </div>
+          <p class="desc" id="project-desc" contenteditable="true" spellcheck="true">${escapeHtml(
+            project.description || ""
+          )}</p>
+        </section>
+
+        <section class="section" aria-labelledby="sec-pipe">
+          <div class="section__head">
+            <h2 class="section__title" id="sec-pipe">Partes do projeto</h2>
+            <p class="section__note">${done}/${project.sections.length} feitas</p>
+          </div>
+          <ol class="pipeline" id="pipeline">
+            ${project.sections
+              .map(
+                (s, i) => `
+              <li class="step" data-id="${escapeHtml(s.id)}">
+                <span class="step__n">${String(i + 1).padStart(2, "0")}</span>
+                <p class="step__title">${escapeHtml(s.title)}</p>
+                <button type="button" class="step__status" data-status="${escapeHtml(
+                  s.status
+                )}" aria-label="Status de ${escapeHtml(s.title)}">${STATUS_LABEL[s.status]}</button>
+              </li>`
+              )
+              .join("")}
+          </ol>
+        </section>
+      `;
+
+      if (window.lucide) lucide.createIcons();
+
+      const desc = document.getElementById("project-desc");
+      const saveDesc = () => {
+        project.description = (desc?.innerText || "").trim();
+        persist(slug, project);
+      };
+      desc?.addEventListener("blur", saveDesc);
+
+      document.getElementById("pipeline")?.addEventListener("click", (e) => {
+        const btn = e.target.closest(".step__status");
+        if (!btn) return;
+        const step = btn.closest(".step");
+        const id = step?.dataset.id;
+        const sec = project.sections.find((s) => s.id === id);
+        if (!sec) return;
+        const i = STATUS_CYCLE.indexOf(sec.status);
+        sec.status = STATUS_CYCLE[(i + 1) % STATUS_CYCLE.length];
+        persist(slug, project);
+        render(slug, seed);
+      });
+    }
+
+    (async () => {
+      try {
+        if (!slug) return missing("");
+        const all = await loadSeed();
+        if (!all[slug]) return missing(slug);
+        render(slug, all[slug]);
+      } catch (err) {
+        document.getElementById("app").innerHTML = `
+          <div class="empty">
+            <a class="back" href="index.html"><i data-lucide="arrow-left"></i> Projetos</a>
+            <h1>Falha ao carregar</h1>
+            <p>${escapeHtml(err.message)}</p>
+          </div>`;
+        if (window.lucide) lucide.createIcons();
+      }
+    })();
+  </script>
+  <script>
+    // inline seed for file:// — filled by sync script
+    window.__BOARDS__ = {"connect":{"name":"Connect","blurb":"Automação LinkedIn e vendas","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"connect-t-0","title":"Automatizar processo de cobrança","cover":"boards/banners/projects/connect.jpg"},{"id":"connect-t-1","title":"Automatizar processo de orçamento","cover":"boards/banners/cards/connect-t-1.jpg"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}],"description":"Automação LinkedIn e vendas sobre o screen-robot: prospecção, cobrança, orçamento e cadência operacional.","sections":[{"id":"visao","title":"Visão / escopo","status":"todo"},{"id":"processos","title":"Processos","status":"todo"},{"id":"automacao","title":"Automação","status":"todo"},{"id":"operacao","title":"Operação","status":"todo"}]},"connect-tech":{"name":"Connect Tech","blurb":"Consultoria e desenvolvimento de software","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"connect-tech-t-0","title":"Criar PDF de apresentação","cover":"boards/banners/projects/connect-tech.jpg"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}],"description":"Oferta de consultoria e desenvolvimento de software da ConectMax.","sections":[{"id":"oferta","title":"Oferta / posicionamento","status":"doing"},{"id":"materiais","title":"Materiais (PDF, site)","status":"todo"},{"id":"pipeline","title":"Pipeline comercial","status":"todo"},{"id":"entrega","title":"Entrega de projetos","status":"todo"}]},"clozzy":{"name":"Clozzy","blurb":"Conteúdo exclusivo","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"clozzy-t-0","title":"Benchmarking","cover":"boards/banners/projects/clozzy.jpg"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}],"description":"Site onde influencers vendem conteúdo exclusivo direto para fãs — catálogo pago e acesso claro.","sections":[{"id":"prd","title":"PRD","status":"todo"},{"id":"benchmarking","title":"Benchmarking","status":"doing"},{"id":"identidade","title":"Identidade visual","status":"todo"},{"id":"prototipo","title":"Protótipo alta fidelidade","status":"todo"},{"id":"discovery","title":"Discovery","status":"todo"},{"id":"implementacao","title":"Implementação","status":"todo"}]},"e-notas":{"name":"e-notas","blurb":"Índice de preços via QR","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"e-notas-t-0","title":"Criar protótipo","cover":"boards/banners/projects/e-notas.jpg"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}],"description":"Índice de preços via QR de nota fiscal para comparar e decidir compra.","sections":[{"id":"prd","title":"PRD","status":"todo"},{"id":"benchmarking","title":"Benchmarking","status":"todo"},{"id":"identidade","title":"Identidade visual","status":"todo"},{"id":"prototipo","title":"Protótipo alta fidelidade","status":"todo"},{"id":"discovery","title":"Discovery","status":"todo"},{"id":"implementacao","title":"Implementação","status":"todo"}]},"role-go":{"name":"RoleGo","blurb":"Festas e eventos","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"role-go-t-0","title":"gerar primeira versao","cover":"boards/banners/projects/role-go.jpg"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}],"description":"App de festas e eventos — descoberta, mapa e presença.","sections":[{"id":"prd","title":"PRD","status":"todo"},{"id":"benchmarking","title":"Benchmarking","status":"todo"},{"id":"identidade","title":"Identidade visual","status":"doing"},{"id":"prototipo","title":"Protótipo alta fidelidade","status":"todo"},{"id":"discovery","title":"Discovery","status":"todo"},{"id":"implementacao","title":"Implementação","status":"todo"}]},"board":{"name":"Board","blurb":"Kanban próprio","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"board-t-0","title":"Criar o protótipo","cover":"boards/banners/projects/board.jpg"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}],"description":"Kanban próprio — substituto do Trello para gestão da workstation.","sections":[{"id":"prd","title":"PRD","status":"done"},{"id":"benchmarking","title":"Benchmarking","status":"todo"},{"id":"identidade","title":"Identidade visual","status":"todo"},{"id":"prototipo","title":"Protótipo alta fidelidade","status":"todo"},{"id":"discovery","title":"Discovery","status":"doing"},{"id":"implementacao","title":"Implementação","status":"todo"}]},"plans":{"name":"Plans","blurb":"Orquestrador","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"plans-t-0","title":"Criar o protótipo","cover":"boards/banners/projects/plans.jpg"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[{"id":"plans-d-0","title":"Princípio: dividir atividades (mesmo por IA) em partes para validação parcial","cover":"boards/banners/cards/plans-d-0.jpg"}]}],"description":"Orquestrador de atividades (humano, IA e máquina) com board, Gantt, árvore e FOP.","sections":[{"id":"prd","title":"PRD","status":"doing"},{"id":"benchmarking","title":"Benchmarking","status":"todo"},{"id":"identidade","title":"Identidade visual","status":"todo"},{"id":"prototipo","title":"Protótipo alta fidelidade","status":"todo"},{"id":"discovery","title":"Discovery","status":"todo"},{"id":"implementacao","title":"Implementação","status":"todo"}]},"context-recorder":{"name":"Context Recorder","blurb":"Memória contínua","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"context-recorder-t-0","title":"Definir PRD","cover":"boards/banners/projects/context-recorder.jpg"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}],"description":"Memória contínua: mic + desktop + screenshot/OCR → busca → contexto para IA.","sections":[{"id":"prd","title":"PRD","status":"done"},{"id":"benchmarking","title":"Benchmarking","status":"todo"},{"id":"identidade","title":"Identidade visual","status":"todo"},{"id":"prototipo","title":"Protótipo alta fidelidade","status":"todo"},{"id":"discovery","title":"Discovery","status":"todo"},{"id":"implementacao","title":"Implementação","status":"todo"}]},"cupido":{"name":"Cupido","blurb":"Match anônimo","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"cupido-t-0","title":"Definir PRD","cover":"boards/banners/projects/cupido.jpg"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}],"description":"Agente de IA que calibra pelo histórico, conversa anônima e só revela match com contexto.","sections":[{"id":"prd","title":"PRD","status":"done"},{"id":"benchmarking","title":"Benchmarking","status":"done"},{"id":"identidade","title":"Identidade visual","status":"done"},{"id":"prototipo","title":"Protótipo alta fidelidade","status":"done"},{"id":"discovery","title":"Discovery","status":"todo"},{"id":"implementacao","title":"Implementação","status":"todo"}]},"hurble":{"name":"Hurble","blurb":"Roulette social","columns":[{"id":"todo","title":"A fazer","cards":[]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}],"description":"Rede social para conhecer pessoas (roulette + perfil, amigos, DM, posts, stories).","sections":[{"id":"prd","title":"PRD","status":"todo"},{"id":"benchmarking","title":"Benchmarking","status":"todo"},{"id":"identidade","title":"Identidade visual","status":"todo"},{"id":"prototipo","title":"Protótipo alta fidelidade","status":"todo"},{"id":"discovery","title":"Discovery","status":"todo"},{"id":"implementacao","title":"Implementação","status":"todo"}]},"agent-shop":{"name":"Agent Shop","blurb":"Agentes autônomos","columns":[{"id":"todo","title":"A fazer","cards":[]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}],"description":"Comprar agente, dar nome/vida, pedir e agendar (chat + CDP/screen-robot).","sections":[{"id":"prd","title":"PRD","status":"todo"},{"id":"benchmarking","title":"Benchmarking","status":"todo"},{"id":"identidade","title":"Identidade visual","status":"todo"},{"id":"prototipo","title":"Protótipo alta fidelidade","status":"todo"},{"id":"discovery","title":"Discovery","status":"todo"},{"id":"implementacao","title":"Implementação","status":"todo"}]},"caronas":{"name":"Caronas","blurb":"Caronas recorrentes","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"caronas-t-0","title":"Criar documento de épicos","cover":"boards/banners/projects/caronas.jpg"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}],"description":"Caronas recorrentes casa–trabalho.","sections":[{"id":"prd","title":"PRD","status":"todo"},{"id":"benchmarking","title":"Benchmarking","status":"todo"},{"id":"identidade","title":"Identidade visual","status":"todo"},{"id":"prototipo","title":"Protótipo alta fidelidade","status":"todo"},{"id":"discovery","title":"Discovery","status":"todo"},{"id":"implementacao","title":"Implementação","status":"todo"}]},"fitness":{"name":"Fitness","blurb":"Treino e dieta","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"fitness-t-0","title":"Definir documento de épicos","cover":"boards/banners/projects/fitness.jpg"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}],"description":"Treino e dieta com acompanhamento.","sections":[{"id":"prd","title":"PRD","status":"todo"},{"id":"benchmarking","title":"Benchmarking","status":"todo"},{"id":"identidade","title":"Identidade visual","status":"todo"},{"id":"prototipo","title":"Protótipo alta fidelidade","status":"todo"},{"id":"discovery","title":"Discovery","status":"todo"},{"id":"implementacao","title":"Implementação","status":"todo"}]},"jiu-jitsu":{"name":"Jiu-jitsu","blurb":"Grafo de posições","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"jiu-jitsu-t-0","title":"Definir documento de visão","cover":"boards/banners/projects/jiu-jitsu.jpg"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}],"description":"App com grafo de posições, transições e finalizações.","sections":[{"id":"prd","title":"PRD","status":"todo"},{"id":"benchmarking","title":"Benchmarking","status":"todo"},{"id":"identidade","title":"Identidade visual","status":"todo"},{"id":"prototipo","title":"Protótipo alta fidelidade","status":"todo"},{"id":"discovery","title":"Discovery","status":"todo"},{"id":"implementacao","title":"Implementação","status":"todo"}]},"flow":{"name":"Flow","blurb":"Linguagem e fundamentos de fluxo","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"flow-t-0","title":"Definir Épicos","cover":"boards/banners/projects/flow.jpg"},{"id":"flow-t-1","title":"Criar roadmap","cover":"boards/banners/cards/flow-t-1.jpg"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}],"description":"Fundamentos de fluxo — pré-requisito do Plans (linguagem e visualização).","sections":[{"id":"visao","title":"Visão","status":"doing"},{"id":"pesquisa","title":"Pesquisa / referências","status":"todo"},{"id":"rascunhos","title":"Rascunhos","status":"todo"},{"id":"entrega","title":"Entrega","status":"todo"}]},"eternos-mutaveis":{"name":"Eternos Mutáveis","blurb":"Manuscrito","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"eternos-mutaveis-t-0","title":"Escrever capítulo 1","cover":"boards/banners/projects/eternos-mutaveis.jpg"},{"id":"eternos-mutaveis-t-1","title":"Referncias de modelo de escrita","cover":"boards/banners/cards/eternos-mutaveis-t-1.jpg"},{"id":"eternos-mutaveis-t-2","title":"Referncias externas bsucar na net para cada capitulo","cover":"boards/banners/cards/eternos-mutaveis-t-2.jpg"},{"id":"eternos-mutaveis-t-3","title":"Reunir todos os áudios e transcricoes do iphone que nao estao aqui","cover":"boards/banners/cards/eternos-mutaveis-t-3.jpg"},{"id":"eternos-mutaveis-t-4","title":"baixar os posts dos threads","cover":"boards/banners/cards/eternos-mutaveis-t-4.jpg"},{"id":"eternos-mutaveis-t-5","title":"Definir roadmap","cover":"boards/banners/cards/eternos-mutaveis-t-5.jpg"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}],"description":"Manuscrito / tese — capítulos, referências e áudios.","sections":[{"id":"visao","title":"Visão","status":"todo"},{"id":"pesquisa","title":"Pesquisa / referências","status":"todo"},{"id":"rascunhos","title":"Rascunhos","status":"doing"},{"id":"entrega","title":"Entrega","status":"todo"}]},"aulas":{"name":"Aulas","blurb":"Conteúdo didático","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"aulas-t-0","title":"Criar roadmap","cover":"boards/banners/projects/aulas.jpg"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}],"description":"Árvore de seções e conteúdo didático.","sections":[{"id":"visao","title":"Visão","status":"todo"},{"id":"pesquisa","title":"Pesquisa / referências","status":"todo"},{"id":"rascunhos","title":"Rascunhos","status":"todo"},{"id":"entrega","title":"Entrega","status":"todo"}]},"filme-metafisico":{"name":"Filme Metafísico","blurb":"Roteiro","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"filme-metafisico-t-0","title":"Definir Roteiro","cover":"boards/banners/projects/filme-metafisico.jpg"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}],"description":"Roteiro do filme O Metafísico.","sections":[{"id":"visao","title":"Visão","status":"doing"},{"id":"pesquisa","title":"Pesquisa / referências","status":"todo"},{"id":"rascunhos","title":"Rascunhos","status":"todo"},{"id":"entrega","title":"Entrega","status":"todo"}]},"provas-ufpr":{"name":"Provas UFPR","blurb":"Acervo de provas","columns":[{"id":"todo","title":"A fazer","cards":[]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}],"description":"Acervo de provas e gabaritos do vestibular UFPR.","sections":[{"id":"visao","title":"Visão","status":"todo"},{"id":"pesquisa","title":"Pesquisa / referências","status":"todo"},{"id":"rascunhos","title":"Rascunhos","status":"todo"},{"id":"entrega","title":"Entrega","status":"todo"}]},"financeiro":{"name":"Financeiro","blurb":"Gastos e cartões","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"financeiro-t-0","title":"Extrair faturas cartão","cover":"boards/banners/projects/financeiro.jpg"},{"id":"financeiro-t-1","title":"Gerar relatório","cover":"boards/banners/cards/financeiro-t-1.jpg"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}],"description":"Controle de gastos, cartões, extratos e relatórios.","sections":[{"id":"extratos","title":"Extratos","status":"doing"},{"id":"faturas","title":"Faturas","status":"todo"},{"id":"relatorios","title":"Relatórios","status":"todo"},{"id":"metas","title":"Metas","status":"todo"}]},"ov":{"name":"OV","blurb":"Contas OmeTV","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"ov-t-0","title":"Criar novo lgermeno","cover":"boards/banners/projects/ov.jpg"},{"id":"ov-t-1","title":"Criar novo marcelo","cover":"boards/banners/cards/ov-t-1.jpg"},{"id":"ov-t-2","title":"Criar Germano","cover":"boards/banners/cards/ov-t-2.jpg"},{"id":"ov-t-3","title":"projeto x8 e x$","cover":"boards/banners/cards/ov-t-3.jpg"},{"id":"ov-t-4","title":"projeto Germano","cover":"boards/banners/cards/ov-t-4.jpg"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}],"description":"Contas OmeTV via Chrome CDP.","sections":[{"id":"visao","title":"Visão","status":"todo"},{"id":"setup","title":"Setup","status":"todo"},{"id":"uso","title":"Uso / operação","status":"todo"}]},"mauricio":{"name":"Mauricio","blurb":"Tinder via Chrome CDP","columns":[{"id":"todo","title":"A fazer","cards":[]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}],"description":"Projeto Mauricio — Tinder via Chrome CDP.","sections":[{"id":"visao","title":"Visão","status":"todo"},{"id":"setup","title":"Setup","status":"todo"},{"id":"uso","title":"Uso / operação","status":"todo"}]},"low-chat":{"name":"low-chat","blurb":"LLM barato multi-canal","columns":[{"id":"todo","title":"A fazer","cards":[]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}],"description":"Persona + contexto + LLM barato (LinkedIn / Tinder / WhatsApp / CRM).","sections":[{"id":"prd","title":"PRD","status":"todo"},{"id":"benchmarking","title":"Benchmarking","status":"todo"},{"id":"identidade","title":"Identidade visual","status":"todo"},{"id":"prototipo","title":"Protótipo alta fidelidade","status":"todo"},{"id":"discovery","title":"Discovery","status":"todo"},{"id":"implementacao","title":"Implementação","status":"todo"}]}};
+  </script>
+</body>
+</html>

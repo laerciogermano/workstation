@@ -29,6 +29,29 @@
         "title": "Feito",
         "cards": []
       }
+    ],
+    "description": "Automação LinkedIn e vendas sobre o screen-robot: prospecção, cobrança, orçamento e cadência operacional.",
+    "sections": [
+      {
+        "id": "visao",
+        "title": "Visão / escopo",
+        "status": "todo"
+      },
+      {
+        "id": "processos",
+        "title": "Processos",
+        "status": "todo"
+      },
+      {
+        "id": "automacao",
+        "title": "Automação",
+        "status": "todo"
+      },
+      {
+        "id": "operacao",
+        "title": "Operação",
+        "status": "todo"
+      }
     ]
   },
   "connect-tech": {
@@ -55,6 +78,29 @@
         "id": "done",
         "title": "Feito",
         "cards": []
+      }
+    ],
+    "description": "Oferta de consultoria e desenvolvimento de software da ConectMax.",
+    "sections": [
+      {
+        "id": "oferta",
+        "title": "Oferta / posicionamento",
+        "status": "doing"
+      },
+      {
+        "id": "materiais",
+        "title": "Materiais (PDF, site)",
+        "status": "todo"
+      },
+      {
+        "id": "pipeline",
+        "title": "Pipeline comercial",
+        "status": "todo"
+      },
+      {
+        "id": "entrega",
+        "title": "Entrega de projetos",
+        "status": "todo"
       }
     ]
   },
@@ -83,6 +129,39 @@
         "title": "Feito",
         "cards": []
       }
+    ],
+    "description": "Site onde influencers vendem conteúdo exclusivo direto para fãs — catálogo pago e acesso claro.",
+    "sections": [
+      {
+        "id": "prd",
+        "title": "PRD",
+        "status": "todo"
+      },
+      {
+        "id": "benchmarking",
+        "title": "Benchmarking",
+        "status": "doing"
+      },
+      {
+        "id": "identidade",
+        "title": "Identidade visual",
+        "status": "todo"
+      },
+      {
+        "id": "prototipo",
+        "title": "Protótipo alta fidelidade",
+        "status": "todo"
+      },
+      {
+        "id": "discovery",
+        "title": "Discovery",
+        "status": "todo"
+      },
+      {
+        "id": "implementacao",
+        "title": "Implementação",
+        "status": "todo"
+      }
     ]
   },
   "e-notas": {
@@ -109,6 +188,39 @@
         "id": "done",
         "title": "Feito",
         "cards": []
+      }
+    ],
+    "description": "Índice de preços via QR de nota fiscal para comparar e decidir compra.",
+    "sections": [
+      {
+        "id": "prd",
+        "title": "PRD",
+        "status": "todo"
+      },
+      {
+        "id": "benchmarking",
+        "title": "Benchmarking",
+        "status": "todo"
+      },
+      {
+        "id": "identidade",
+        "title": "Identidade visual",
+        "status": "todo"
+      },
+      {
+        "id": "prototipo",
+        "title": "Protótipo alta fidelidade",
+        "status": "todo"
+      },
+      {
+        "id": "discovery",
+        "title": "Discovery",
+        "status": "todo"
+      },
+      {
+        "id": "implementacao",
+        "title": "Implementação",
+        "status": "todo"
       }
     ]
   },
@@ -137,6 +249,39 @@
         "title": "Feito",
         "cards": []
       }
+    ],
+    "description": "App de festas e eventos — descoberta, mapa e presença.",
+    "sections": [
+      {
+        "id": "prd",
+        "title": "PRD",
+        "status": "todo"
+      },
+      {
+        "id": "benchmarking",
+        "title": "Benchmarking",
+        "status": "todo"
+      },
+      {
+        "id": "identidade",
+        "title": "Identidade visual",
+        "status": "doing"
+      },
+      {
+        "id": "prototipo",
+        "title": "Protótipo alta fidelidade",
+        "status": "todo"
+      },
+      {
+        "id": "discovery",
+        "title": "Discovery",
+        "status": "todo"
+      },
+      {
+        "id": "implementacao",
+        "title": "Implementação",
+        "status": "todo"
+      }
     ]
   },
   "board": {
@@ -163,6 +308,39 @@
         "id": "done",
         "title": "Feito",
         "cards": []
+      }
+    ],
+    "description": "Kanban próprio — substituto do Trello para gestão da workstation.",
+    "sections": [
+      {
+        "id": "prd",
+        "title": "PRD",
+        "status": "done"
+      },
+      {
+        "id": "benchmarking",
+        "title": "Benchmarking",
+        "status": "todo"
+      },
+      {
+        "id": "identidade",
+        "title": "Identidade visual",
+        "status": "todo"
+      },
+      {
+        "id": "prototipo",
+        "title": "Protótipo alta fidelidade",
+        "status": "todo"
+      },
+      {
+        "id": "discovery",
+        "title": "Discovery",
+        "status": "doing"
+      },
+      {
+        "id": "implementacao",
+        "title": "Implementação",
+        "status": "todo"
       }
     ]
   },
@@ -197,6 +375,39 @@
           }
         ]
       }
+    ],
+    "description": "Orquestrador de atividades (humano, IA e máquina) com board, Gantt, árvore e FOP.",
+    "sections": [
+      {
+        "id": "prd",
+        "title": "PRD",
+        "status": "doing"
+      },
+      {
+        "id": "benchmarking",
+        "title": "Benchmarking",
+        "status": "todo"
+      },
+      {
+        "id": "identidade",
+        "title": "Identidade visual",
+        "status": "todo"
+      },
+      {
+        "id": "prototipo",
+        "title": "Protótipo alta fidelidade",
+        "status": "todo"
+      },
+      {
+        "id": "discovery",
+        "title": "Discovery",
+        "status": "todo"
+      },
+      {
+        "id": "implementacao",
+        "title": "Implementação",
+        "status": "todo"
+      }
     ]
   },
   "context-recorder": {
@@ -223,6 +434,39 @@
         "id": "done",
         "title": "Feito",
         "cards": []
+      }
+    ],
+    "description": "Memória contínua: mic + desktop + screenshot/OCR → busca → contexto para IA.",
+    "sections": [
+      {
+        "id": "prd",
+        "title": "PRD",
+        "status": "done"
+      },
+      {
+        "id": "benchmarking",
+        "title": "Benchmarking",
+        "status": "todo"
+      },
+      {
+        "id": "identidade",
+        "title": "Identidade visual",
+        "status": "todo"
+      },
+      {
+        "id": "prototipo",
+        "title": "Protótipo alta fidelidade",
+        "status": "todo"
+      },
+      {
+        "id": "discovery",
+        "title": "Discovery",
+        "status": "todo"
+      },
+      {
+        "id": "implementacao",
+        "title": "Implementação",
+        "status": "todo"
       }
     ]
   },
@@ -251,6 +495,39 @@
         "title": "Feito",
         "cards": []
       }
+    ],
+    "description": "Agente de IA que calibra pelo histórico, conversa anônima e só revela match com contexto.",
+    "sections": [
+      {
+        "id": "prd",
+        "title": "PRD",
+        "status": "done"
+      },
+      {
+        "id": "benchmarking",
+        "title": "Benchmarking",
+        "status": "done"
+      },
+      {
+        "id": "identidade",
+        "title": "Identidade visual",
+        "status": "done"
+      },
+      {
+        "id": "prototipo",
+        "title": "Protótipo alta fidelidade",
+        "status": "done"
+      },
+      {
+        "id": "discovery",
+        "title": "Discovery",
+        "status": "todo"
+      },
+      {
+        "id": "implementacao",
+        "title": "Implementação",
+        "status": "todo"
+      }
     ]
   },
   "hurble": {
@@ -272,6 +549,39 @@
         "title": "Feito",
         "cards": []
       }
+    ],
+    "description": "Rede social para conhecer pessoas (roulette + perfil, amigos, DM, posts, stories).",
+    "sections": [
+      {
+        "id": "prd",
+        "title": "PRD",
+        "status": "todo"
+      },
+      {
+        "id": "benchmarking",
+        "title": "Benchmarking",
+        "status": "todo"
+      },
+      {
+        "id": "identidade",
+        "title": "Identidade visual",
+        "status": "todo"
+      },
+      {
+        "id": "prototipo",
+        "title": "Protótipo alta fidelidade",
+        "status": "todo"
+      },
+      {
+        "id": "discovery",
+        "title": "Discovery",
+        "status": "todo"
+      },
+      {
+        "id": "implementacao",
+        "title": "Implementação",
+        "status": "todo"
+      }
     ]
   },
   "agent-shop": {
@@ -292,6 +602,39 @@
         "id": "done",
         "title": "Feito",
         "cards": []
+      }
+    ],
+    "description": "Comprar agente, dar nome/vida, pedir e agendar (chat + CDP/screen-robot).",
+    "sections": [
+      {
+        "id": "prd",
+        "title": "PRD",
+        "status": "todo"
+      },
+      {
+        "id": "benchmarking",
+        "title": "Benchmarking",
+        "status": "todo"
+      },
+      {
+        "id": "identidade",
+        "title": "Identidade visual",
+        "status": "todo"
+      },
+      {
+        "id": "prototipo",
+        "title": "Protótipo alta fidelidade",
+        "status": "todo"
+      },
+      {
+        "id": "discovery",
+        "title": "Discovery",
+        "status": "todo"
+      },
+      {
+        "id": "implementacao",
+        "title": "Implementação",
+        "status": "todo"
       }
     ]
   },
@@ -320,6 +663,39 @@
         "title": "Feito",
         "cards": []
       }
+    ],
+    "description": "Caronas recorrentes casa–trabalho.",
+    "sections": [
+      {
+        "id": "prd",
+        "title": "PRD",
+        "status": "todo"
+      },
+      {
+        "id": "benchmarking",
+        "title": "Benchmarking",
+        "status": "todo"
+      },
+      {
+        "id": "identidade",
+        "title": "Identidade visual",
+        "status": "todo"
+      },
+      {
+        "id": "prototipo",
+        "title": "Protótipo alta fidelidade",
+        "status": "todo"
+      },
+      {
+        "id": "discovery",
+        "title": "Discovery",
+        "status": "todo"
+      },
+      {
+        "id": "implementacao",
+        "title": "Implementação",
+        "status": "todo"
+      }
     ]
   },
   "fitness": {
@@ -347,6 +723,39 @@
         "title": "Feito",
         "cards": []
       }
+    ],
+    "description": "Treino e dieta com acompanhamento.",
+    "sections": [
+      {
+        "id": "prd",
+        "title": "PRD",
+        "status": "todo"
+      },
+      {
+        "id": "benchmarking",
+        "title": "Benchmarking",
+        "status": "todo"
+      },
+      {
+        "id": "identidade",
+        "title": "Identidade visual",
+        "status": "todo"
+      },
+      {
+        "id": "prototipo",
+        "title": "Protótipo alta fidelidade",
+        "status": "todo"
+      },
+      {
+        "id": "discovery",
+        "title": "Discovery",
+        "status": "todo"
+      },
+      {
+        "id": "implementacao",
+        "title": "Implementação",
+        "status": "todo"
+      }
     ]
   },
   "jiu-jitsu": {
@@ -373,6 +782,39 @@
         "id": "done",
         "title": "Feito",
         "cards": []
+      }
+    ],
+    "description": "App com grafo de posições, transições e finalizações.",
+    "sections": [
+      {
+        "id": "prd",
+        "title": "PRD",
+        "status": "todo"
+      },
+      {
+        "id": "benchmarking",
+        "title": "Benchmarking",
+        "status": "todo"
+      },
+      {
+        "id": "identidade",
+        "title": "Identidade visual",
+        "status": "todo"
+      },
+      {
+        "id": "prototipo",
+        "title": "Protótipo alta fidelidade",
+        "status": "todo"
+      },
+      {
+        "id": "discovery",
+        "title": "Discovery",
+        "status": "todo"
+      },
+      {
+        "id": "implementacao",
+        "title": "Implementação",
+        "status": "todo"
       }
     ]
   },
@@ -405,6 +847,29 @@
         "id": "done",
         "title": "Feito",
         "cards": []
+      }
+    ],
+    "description": "Fundamentos de fluxo — pré-requisito do Plans (linguagem e visualização).",
+    "sections": [
+      {
+        "id": "visao",
+        "title": "Visão",
+        "status": "doing"
+      },
+      {
+        "id": "pesquisa",
+        "title": "Pesquisa / referências",
+        "status": "todo"
+      },
+      {
+        "id": "rascunhos",
+        "title": "Rascunhos",
+        "status": "todo"
+      },
+      {
+        "id": "entrega",
+        "title": "Entrega",
+        "status": "todo"
       }
     ]
   },
@@ -458,6 +923,29 @@
         "title": "Feito",
         "cards": []
       }
+    ],
+    "description": "Manuscrito / tese — capítulos, referências e áudios.",
+    "sections": [
+      {
+        "id": "visao",
+        "title": "Visão",
+        "status": "todo"
+      },
+      {
+        "id": "pesquisa",
+        "title": "Pesquisa / referências",
+        "status": "todo"
+      },
+      {
+        "id": "rascunhos",
+        "title": "Rascunhos",
+        "status": "doing"
+      },
+      {
+        "id": "entrega",
+        "title": "Entrega",
+        "status": "todo"
+      }
     ]
   },
   "aulas": {
@@ -484,6 +972,29 @@
         "id": "done",
         "title": "Feito",
         "cards": []
+      }
+    ],
+    "description": "Árvore de seções e conteúdo didático.",
+    "sections": [
+      {
+        "id": "visao",
+        "title": "Visão",
+        "status": "todo"
+      },
+      {
+        "id": "pesquisa",
+        "title": "Pesquisa / referências",
+        "status": "todo"
+      },
+      {
+        "id": "rascunhos",
+        "title": "Rascunhos",
+        "status": "todo"
+      },
+      {
+        "id": "entrega",
+        "title": "Entrega",
+        "status": "todo"
       }
     ]
   },
@@ -512,6 +1023,29 @@
         "title": "Feito",
         "cards": []
       }
+    ],
+    "description": "Roteiro do filme O Metafísico.",
+    "sections": [
+      {
+        "id": "visao",
+        "title": "Visão",
+        "status": "doing"
+      },
+      {
+        "id": "pesquisa",
+        "title": "Pesquisa / referências",
+        "status": "todo"
+      },
+      {
+        "id": "rascunhos",
+        "title": "Rascunhos",
+        "status": "todo"
+      },
+      {
+        "id": "entrega",
+        "title": "Entrega",
+        "status": "todo"
+      }
     ]
   },
   "provas-ufpr": {
@@ -532,6 +1066,29 @@
         "id": "done",
         "title": "Feito",
         "cards": []
+      }
+    ],
+    "description": "Acervo de provas e gabaritos do vestibular UFPR.",
+    "sections": [
+      {
+        "id": "visao",
+        "title": "Visão",
+        "status": "todo"
+      },
+      {
+        "id": "pesquisa",
+        "title": "Pesquisa / referências",
+        "status": "todo"
+      },
+      {
+        "id": "rascunhos",
+        "title": "Rascunhos",
+        "status": "todo"
+      },
+      {
+        "id": "entrega",
+        "title": "Entrega",
+        "status": "todo"
       }
     ]
   },
@@ -564,6 +1121,29 @@
         "id": "done",
         "title": "Feito",
         "cards": []
+      }
+    ],
+    "description": "Controle de gastos, cartões, extratos e relatórios.",
+    "sections": [
+      {
+        "id": "extratos",
+        "title": "Extratos",
+        "status": "doing"
+      },
+      {
+        "id": "faturas",
+        "title": "Faturas",
+        "status": "todo"
+      },
+      {
+        "id": "relatorios",
+        "title": "Relatórios",
+        "status": "todo"
+      },
+      {
+        "id": "metas",
+        "title": "Metas",
+        "status": "todo"
       }
     ]
   },
@@ -612,6 +1192,24 @@
         "title": "Feito",
         "cards": []
       }
+    ],
+    "description": "Contas OmeTV via Chrome CDP.",
+    "sections": [
+      {
+        "id": "visao",
+        "title": "Visão",
+        "status": "todo"
+      },
+      {
+        "id": "setup",
+        "title": "Setup",
+        "status": "todo"
+      },
+      {
+        "id": "uso",
+        "title": "Uso / operação",
+        "status": "todo"
+      }
     ]
   },
   "mauricio": {
@@ -633,6 +1231,24 @@
         "title": "Feito",
         "cards": []
       }
+    ],
+    "description": "Projeto Mauricio — Tinder via Chrome CDP.",
+    "sections": [
+      {
+        "id": "visao",
+        "title": "Visão",
+        "status": "todo"
+      },
+      {
+        "id": "setup",
+        "title": "Setup",
+        "status": "todo"
+      },
+      {
+        "id": "uso",
+        "title": "Uso / operação",
+        "status": "todo"
+      }
     ]
   },
   "low-chat": {
@@ -653,6 +1269,39 @@
         "id": "done",
         "title": "Feito",
         "cards": []
+      }
+    ],
+    "description": "Persona + contexto + LLM barato (LinkedIn / Tinder / WhatsApp / CRM).",
+    "sections": [
+      {
+        "id": "prd",
+        "title": "PRD",
+        "status": "todo"
+      },
+      {
+        "id": "benchmarking",
+        "title": "Benchmarking",
+        "status": "todo"
+      },
+      {
+        "id": "identidade",
+        "title": "Identidade visual",
+        "status": "todo"
+      },
+      {
+        "id": "prototipo",
+        "title": "Protótipo alta fidelidade",
+        "status": "todo"
+      },
+      {
+        "id": "discovery",
+        "title": "Discovery",
+        "status": "todo"
+      },
+      {
+        "id": "implementacao",
+        "title": "Implementação",
+        "status": "todo"
       }
     ]
   }

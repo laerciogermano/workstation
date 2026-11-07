@@ -521,7 +521,11 @@
         "cards": [
           {
             "id": "financeiro-t-0",
-            "title": "ajustar"
+            "title": "Extrair faturas cartão"
+          },
+          {
+            "id": "financeiro-t-1",
+            "title": "Gerar relatório"
           }
         ]
       },

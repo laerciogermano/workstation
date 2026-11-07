@@ -398,22 +398,26 @@
         "cards": [
           {
             "id": "eternos-mutaveis-t-0",
-            "title": "Referncias de modelo de escrita"
+            "title": "Escrever capítulo 1"
           },
           {
             "id": "eternos-mutaveis-t-1",
-            "title": "Referncias externas bsucar na net para cada capitulo"
+            "title": "Referncias de modelo de escrita"
           },
           {
             "id": "eternos-mutaveis-t-2",
-            "title": "Reunir todos os áudios e transcricoes do iphone que nao estao aqui"
+            "title": "Referncias externas bsucar na net para cada capitulo"
           },
           {
             "id": "eternos-mutaveis-t-3",
-            "title": "baixar os posts dos threads"
+            "title": "Reunir todos os áudios e transcricoes do iphone que nao estao aqui"
           },
           {
             "id": "eternos-mutaveis-t-4",
+            "title": "baixar os posts dos threads"
+          },
+          {
+            "id": "eternos-mutaveis-t-5",
             "title": "Definir roadmap"
           }
         ]

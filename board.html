@@ -118,6 +118,10 @@
       min-width: 0;
     }
 
+    .filters__field--project {
+      min-width: 12rem;
+    }
+
     .filters__label {
       font-family: var(--font-display);
       font-size: 0.68rem;
@@ -383,13 +387,54 @@
       if (q && !item.title.toLowerCase().includes(q) && !item.projectName.toLowerCase().includes(q)) {
         return false;
       }
-      if (filters.project && item.slug !== filters.project) return false;
       if (filters.category) {
         const cat = categoryOf(item.slug);
         if (!cat || cat.id !== filters.category) return false;
       }
       if (filters.status && item.colId !== filters.status) return false;
       return true;
+    }
+
+    function projectList() {
+      const boards = liveBoards();
+      return Object.entries(boards)
+        .map(([s, b]) => ({ slug: s, name: b.name || s }))
+        .sort((a, b) => a.name.localeCompare(b.name, "pt-BR"));
+    }
+
+    function projectFilterHtml(selected) {
+      const projects = projectList();
+      const byCat = new Map(CATEGORIES.map((c) => [c.id, []]));
+      const orphan = [];
+      for (const p of projects) {
+        const cat = categoryOf(p.slug);
+        if (cat) byCat.get(cat.id).push(p);
+        else orphan.push(p);
+      }
+      const groups = CATEGORIES.map((c) => {
+        const opts = (byCat.get(c.id) || [])
+          .map(
+            (p) =>
+              `<option value="${escapeHtml(p.slug)}"${selected === p.slug ? " selected" : ""}>${escapeHtml(p.name)}</option>`
+          )
+          .join("");
+        return opts ? `<optgroup label="${escapeHtml(c.title)}">${opts}</optgroup>` : "";
+      }).join("");
+      const extra = orphan
+        .map(
+          (p) =>
+            `<option value="${escapeHtml(p.slug)}"${selected === p.slug ? " selected" : ""}>${escapeHtml(p.name)}</option>`
+        )
+        .join("");
+      return `
+        <label class="filters__field filters__field--project">
+          <span class="filters__label">Projeto</span>
+          <select id="f-project">
+            <option value=""${selected ? "" : " selected"}>Todos</option>
+            ${groups}${extra}
+          </select>
+        </label>
+      `;
     }
 
     function collectItems(boards) {
@@ -412,25 +457,15 @@
 
     function readFiltersFromDom() {
       const q = document.getElementById("f-q");
-      const project = document.getElementById("f-project");
       const category = document.getElementById("f-category");
       const status = document.getElementById("f-status");
       if (q) filters.q = q.value;
-      if (project) filters.project = project.value;
       if (category) filters.category = category.value;
       if (status) filters.status = status.value;
     }
 
     function filtersHtml(opts) {
-      const { projects, showProject, showCategory } = opts;
-      const projectOpts = [`<option value="">Todos</option>`]
-        .concat(
-          projects.map(
-            (p) =>
-              `<option value="${escapeHtml(p.slug)}"${filters.project === p.slug ? " selected" : ""}>${escapeHtml(p.name)}</option>`
-          )
-        )
-        .join("");
+      const { showCategory, selectedProject } = opts;
       const catOpts = [`<option value="">Todas</option>`]
         .concat(
           CATEGORIES.map(
@@ -450,18 +485,11 @@
 
       return `
         <div class="filters" role="search">
+          ${projectFilterHtml(selectedProject || "")}
           <label class="filters__field">
             <span class="filters__label">Busca</span>
-            <input id="f-q" type="search" value="${escapeHtml(filters.q)}" placeholder="Atividade ou projeto" autocomplete="off" />
+            <input id="f-q" type="search" value="${escapeHtml(filters.q)}" placeholder="Atividade" autocomplete="off" />
           </label>
-          ${
-            showProject
-              ? `<label class="filters__field">
-            <span class="filters__label">Projeto</span>
-            <select id="f-project">${projectOpts}</select>
-          </label>`
-              : ""
-          }
           ${
             showCategory
               ? `<label class="filters__field">
@@ -479,7 +507,15 @@
     }
 
     function wireFilters(onChange) {
-      ["f-q", "f-project", "f-category", "f-status"].forEach((id) => {
+      const project = document.getElementById("f-project");
+      if (project) {
+        project.addEventListener("change", () => {
+          const next = project.value;
+          if (!next) location.href = "board.html";
+          else location.href = `board.html?p=${encodeURIComponent(next)}`;
+        });
+      }
+      ["f-q", "f-category", "f-status"].forEach((id) => {
         const el = document.getElementById(id);
         if (!el) return;
         const evt = id === "f-q" ? "input" : "change";
@@ -583,10 +619,6 @@
       document.title = "Board";
       const boards = liveBoards();
       const items = collectItems(boards);
-      const projects = Object.entries(boards)
-        .map(([s, b]) => ({ slug: s, name: b.name || s }))
-        .sort((a, b) => a.name.localeCompare(b.name, "pt-BR"));
-
       const app = document.getElementById("app");
       app.innerHTML = `
         <div class="top">
@@ -596,7 +628,7 @@
           </div>
           <p class="count" id="board-count">${items.length} atividades</p>
         </div>
-        ${filtersHtml({ projects, showProject: true, showCategory: true })}
+        ${filtersHtml({ showCategory: true, selectedProject: "" })}
         <div class="board" id="board"></div>
       `;
 
@@ -644,7 +676,7 @@
           </div>
           <p class="count" id="board-count">${items.length} atividades</p>
         </div>
-        ${filtersHtml({ projects: [], showProject: false, showCategory: false })}
+        ${filtersHtml({ showCategory: false, selectedProject: s })}
         <div class="board" id="board"></div>
       `;
       if (window.lucide) lucide.createIcons();

@@ -253,7 +253,7 @@ async function handleGoogleImagens(req, res) {
     const descricao = enrichmentInput(req, 'descricao');
     const ean =
       enrichmentInput(req, 'ean') || enrichmentInput(req, 'codigo_barras');
-    const nRaw = enrichmentInput(req, 'n') || req.body?.n || 10;
+    const nRaw = enrichmentInput(req, 'n') || req.body?.n || 50;
     const dl = req.query?.download ?? req.body?.download;
     const download = !(dl === '0' || dl === 'false' || dl === false);
     if (!descricao && !ean) {

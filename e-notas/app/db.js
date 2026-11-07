@@ -634,7 +634,7 @@ async function ensureLegacyFotoAsCandidate(ean, client = getPool()) {
 }
 
 /**
- * Busca e persiste até 8 candidatas (APIs + Google Imagens). Idempotente sem force.
+ * Busca e persiste até 50 candidatas (APIs + Google Imagens, default n=50). Idempotente sem force.
  * @param {string} codigoBarras
  * @param {{ force?: boolean, descricao?: string }} [opts]
  * @returns {{ ean: string, skipped?: boolean, imagens: object[], baixadas: number }}

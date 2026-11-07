@@ -27,7 +27,7 @@ function sleep(ms) {
   return new Promise((r) => setTimeout(r, ms));
 }
 
-function clampN(n, fallback = 10) {
+function clampN(n, fallback = 50) {
   const v = Number(n);
   if (!Number.isFinite(v) || v <= 0) return fallback;
   return Math.min(SCRAPE_HARD_MAX, Math.floor(v));
@@ -192,14 +192,14 @@ async function withCdpPage(url, fn) {
 /**
  * Scraping Google Imagens via Chrome (JS renderizado).
  */
-export async function searchGoogleImages(query, { n = 10 } = {}) {
+export async function searchGoogleImages(query, { n = 50 } = {}) {
   const q = String(query ?? '').trim();
   if (!q) {
     throw Object.assign(new Error('query obrigatória (descricao ou ean)'), {
       status: 400,
     });
   }
-  const want = clampN(n, 10);
+  const want = clampN(n, 50);
   const searchUrl =
     `https://www.google.com/search?tbm=isch` +
     `&q=${encodeURIComponent(q)}` +
@@ -342,7 +342,7 @@ function slugFor({ ean, descricao, query }) {
 export async function baixarGoogleImagens({
   descricao,
   ean,
-  n = 10,
+  n = 50,
   download = true,
 } = {}) {
   const query = String(ean || descricao || '').trim();

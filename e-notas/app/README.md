@@ -70,7 +70,7 @@ Resposta: `{ ok, created, empresaCriada, url, empresa, nota, itens }`.
 | `GET`/`POST` | `/api/enrichment/ean` | query/body `descricao` → candidatos EAN (REQ-039; sem auto-vínculo) |
 | `GET`/`POST` | `/api/enrichment/imagens` | query/body `ean` ou `codigo_barras`, `descricao?`, `force?` → APIs + Google (REQ-040/032) |
 | `GET`/`POST` | `/api/enrichment/imagens-por-descricao` | query/body `descricao`, `force?` → `modo: ean\|texto` + imagens (REQ-041) |
-| `GET`/`POST` | `/api/enrichment/google-imagens` | `descricao` **ou** `ean` + `n` (1–100) → scraping Google Imagens + download (REQ-042); `download=0` só lista URLs |
+| `GET`/`POST` | `/api/enrichment/google-imagens` | `descricao` **ou** `ean` + `n` (default **50**, máx 100) → scraping Google Imagens + download (REQ-042); `download=0` só lista URLs |
 
 Abrir no browser (GET): `https://127.0.0.1:4173/api/enrichment/ean?descricao=COCA%20COLA%202L%20PET`  
 Google Imagens (CDP): `https://127.0.0.1:4173/api/enrichment/google-imagens?descricao=COCA%20COLA%202L&n=20`  

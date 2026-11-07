@@ -279,8 +279,8 @@ Curadoria: [`../marca/benchmarking-solucoes/README.md`](../marca/benchmarking-so
 
 ## REQ-032 — Busca automática de fotos ao cadastrar EAN (2026-11-04)
 
-- Ao **cadastrar/vincular** um código de barras (`POST /api/codigos-barras`), dispara busca **assíncrona** de imagens desse EAN (até ~8 candidatas).
-- Fontes: Open Food Facts → Open Beauty → Open Products → UPCitemdb; **Google Imagens sempre** (REQ-042 CDP, sem API key) — query `EAN + descricao` quando houver nome do item.
+- Ao **cadastrar/vincular** um código de barras (`POST /api/codigos-barras`), dispara busca **assíncrona** de imagens desse EAN (até ~50 candidatas).
+- Fontes: Open Food Facts → Open Beauty → Open Products → UPCitemdb; **Google Imagens sempre** (REQ-042 CDP, sem API key) — query `EAN + descricao` quando houver nome do item; **default n=50** (máx 100).
 - `POST /api/ean-imagens/buscar` e enrichment `/imagens` aceitam `descricao` opcional (UI do detalhe envia o nome do produto).
 - Tabela `enotas.ean_imagens`: EAN, `url_origem`, `fonte`, `path_local`, `ordem`, `selecionada`, `sha1`, `criado_em`. Arquivos em `ean-fotos/{ean}/NN.ext`.
 - **Uma** imagem `selecionada` propaga `codigos_barras.foto_url` (todos os vínculos daquele EAN) — feed / vitrine / detalhe.
@@ -394,7 +394,7 @@ Card: [BXKZ55Wb](https://trello.com/c/BXKZ55Wb).
 - Um serviço: enviar **descrição** ou **EAN** e **N**; ir ao Google Imagens (web) e baixar as N primeiras.
 - **Sem API key** — Chrome CDP abre `google.com/search?tbm=isch&q=…`, lê thumbs/URLs e baixa N.
 - Pré-req: Chrome com `--remote-debugging-port` (`CDP_URL`, default `http://127.0.0.1:9223`).
-- `GET|POST /api/enrichment/google-imagens` — `descricao` **ou** `ean`, `n` (default 10, máx 100), `download=0` só lista URLs.
+- `GET|POST /api/enrichment/google-imagens` — `descricao` **ou** `ean`, `n` (default **50**, máx 100), `download=0` só lista URLs.
 - Persistência: `public/google-imagens/{slug}/NN.ext`.
 - Também fallback do pipeline EAN→fotos (N=5).
 - Antes: Custom Search / fetch HTML (Google bloqueia sem JS). Depois: scrape via CDP.

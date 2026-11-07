@@ -24,8 +24,8 @@ export const EAN_FOTOS_DIR = path.join(__dirname, 'public', 'ean-fotos');
 
 const UA =
   'notinhas.shop/0.1 (ean image lookup; +https://notinhas.shop; contato@notinhas.shop)';
-const MAX_CANDIDATAS = 8;
-const MAX_GOOGLE = 5;
+const MAX_CANDIDATAS = 50;
+const MAX_GOOGLE = 50;
 const FETCH_MS = 12_000;
 
 /** @type {Map<string, Promise<unknown>>} */

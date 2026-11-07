@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Quadro</title>
+  <title>Board</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap" rel="stylesheet" />
@@ -51,7 +51,7 @@
       justify-content: space-between;
       gap: 1rem;
       padding-bottom: 1.1rem;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.1rem;
       border-bottom: 1px solid var(--line);
     }
 
@@ -71,12 +71,10 @@
       border: 1px solid var(--line);
       border-radius: var(--radius);
       background: var(--paper);
-      transition: border-color 140ms var(--ease), background-color 140ms var(--ease), color 140ms var(--ease);
     }
 
     .back:hover {
       border-color: var(--ink);
-      background: var(--paper-2);
       color: var(--accent);
     }
 
@@ -106,12 +104,70 @@
       white-space: nowrap;
     }
 
+    .filters {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+      gap: 0.65rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .filters__field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+      min-width: 0;
+    }
+
+    .filters__label {
+      font-family: var(--font-display);
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--body);
+    }
+
+    .filters__field input,
+    .filters__field select {
+      width: 100%;
+      padding: 0.55rem 0.7rem;
+      font-family: var(--font-display);
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--ink);
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      appearance: none;
+    }
+
+    .filters__field input:focus,
+    .filters__field select:focus {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+      border-color: var(--ink);
+    }
+
+    .filters__field select {
+      background-image: linear-gradient(45deg, transparent 50%, var(--body) 50%),
+        linear-gradient(135deg, var(--body) 50%, transparent 50%);
+      background-position: calc(100% - 14px) 55%, calc(100% - 9px) 55%;
+      background-size: 5px 5px, 5px 5px;
+      background-repeat: no-repeat;
+      padding-right: 1.6rem;
+    }
+
     .board {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 0.85rem;
       align-items: start;
       min-height: 60vh;
+    }
+
+    .board.is-filtered-cols {
+      grid-template-columns: minmax(0, 1fr);
+      max-width: 28rem;
     }
 
     .col {
@@ -123,6 +179,7 @@
       flex-direction: column;
     }
 
+    .col.is-hidden { display: none; }
     .col.is-over { border-color: var(--ink); }
 
     .col__head {
@@ -165,12 +222,27 @@
       border-radius: var(--radius);
       padding: 0.85rem 0.95rem;
       cursor: grab;
-      transition: border-color 140ms var(--ease), background-color 140ms var(--ease);
+      transition: border-color 140ms var(--ease);
     }
 
     .card:hover { border-color: var(--ink); }
     .card:active { cursor: grabbing; }
     .card.is-dragging { opacity: 0.45; }
+    .card.is-hidden { display: none; }
+
+    .card__project {
+      display: block;
+      margin-bottom: 0.35rem;
+      font-family: var(--font-display);
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .card__project:hover { color: var(--ink); }
 
     .card__title {
       font-family: var(--font-display);
@@ -192,6 +264,12 @@
 
     @media (max-width: 900px) {
       .board { grid-template-columns: 1fr; }
+      .board.is-filtered-cols { max-width: none; }
+      .filters { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 560px) {
+      .filters { grid-template-columns: 1fr; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -205,7 +283,7 @@
       <a class="side__brand" href="index.html">Workstation<span>.</span></a>
       <nav class="side__nav">
         <a class="side__link" href="index.html">Projetos</a>
-        <a class="side__link is-active" href="board.html?p=board" aria-current="page">Board</a>
+        <a class="side__link is-active" href="board.html" aria-current="page">Board</a>
       </nav>
     </aside>
     <main class="main">
@@ -221,28 +299,55 @@
     const slug = params.get("p") || "";
     const storageKey = (s) => `works-board:v6:${s}`;
 
+    const CATEGORIES = [
+      { id: "empresa", title: "Empresa", slugs: ["connect", "connect-tech"] },
+      {
+        id: "produtos",
+        title: "Produtos",
+        slugs: ["clozzy", "e-notas", "role-go", "board", "plans", "context-recorder"],
+      },
+      {
+        id: "estudos",
+        title: "Estudos e conteúdo",
+        slugs: ["flow", "eternos-mutaveis", "aulas", "filme-metafisico"],
+      },
+      { id: "pessoal", title: "Pessoal", slugs: ["financeiro", "ov", "mauricio"] },
+      { id: "ferramentas", title: "Ferramentas e contas", slugs: ["low-chat"] },
+      {
+        id: "arquivados",
+        title: "Arquivados",
+        slugs: ["agent-shop", "cupido", "hurble", "fitness", "caronas", "jiu-jitsu", "provas-ufpr"],
+      },
+    ];
+
+    const COL_META = [
+      { id: "todo", title: "A fazer" },
+      { id: "doing", title: "Fazendo" },
+      { id: "done", title: "Feito" },
+    ];
+
+    const filters = { q: "", project: "", category: "", status: "" };
+    let allBoards = {};
+    let mode = "global"; // global | single
+    let singleSlug = "";
+
     async function loadSeed() {
       try {
         const res = await fetch("boards/data.json", { cache: "no-store" });
         if (!res.ok) throw new Error("fetch failed");
         return await res.json();
       } catch (_) {
-        // file:// fallback: data was inlined below by build — if missing, empty
         if (window.__BOARDS__) return window.__BOARDS__;
         throw new Error("Sem dados do quadro");
       }
     }
 
-    function countCards(board) {
-      return board.columns.reduce((n, c) => n + c.cards.length, 0);
+    function persist(s, board) {
+      localStorage.setItem(storageKey(s), JSON.stringify(board));
     }
 
-    function persist(slug, board) {
-      localStorage.setItem(storageKey(slug), JSON.stringify(board));
-    }
-
-    function hydrate(slug, seed) {
-      const raw = localStorage.getItem(storageKey(slug));
+    function hydrate(s, seed) {
+      const raw = localStorage.getItem(storageKey(s));
       if (!raw) return structuredClone(seed);
       try {
         const saved = JSON.parse(raw);
@@ -253,90 +358,16 @@
       }
     }
 
-    function render(slug, board) {
-      document.title = board.name + " · Quadro";
-      const app = document.getElementById("app");
-      const total = countCards(board);
-
-      app.innerHTML = `
-        <div class="top">
-          <div class="top__left">
-            <a class="back" href="index.html" aria-label="Voltar aos projetos">
-              <i data-lucide="arrow-left"></i>
-              Projetos
-            </a>
-            <h1>${escapeHtml(board.name)}</h1>
-            <p class="blurb">${escapeHtml(board.blurb || "")}</p>
-          </div>
-          <p class="count">${total} atividades</p>
-        </div>
-        <div class="board" id="board"></div>
-      `;
-
-      if (window.lucide) lucide.createIcons();
-
-      const root = document.getElementById("board");
-      board.columns.forEach((col) => {
-        const el = document.createElement("section");
-        el.className = "col";
-        el.dataset.col = col.id;
-        el.innerHTML = `
-          <div class="col__head">
-            <h2 class="col__title">${escapeHtml(col.title)}</h2>
-            <span class="col__n">${col.cards.length}</span>
-          </div>
-          <ul class="col__list" data-col="${col.id}"></ul>
-        `;
-        const list = el.querySelector(".col__list");
-        col.cards.forEach((card) => list.appendChild(cardEl(card)));
-        wireColumn(list, slug, board);
-        root.appendChild(el);
-      });
+    function categoryOf(s) {
+      return CATEGORIES.find((c) => c.slugs.includes(s)) || null;
     }
 
-    function cardEl(card) {
-      const li = document.createElement("li");
-      li.className = "card";
-      li.draggable = true;
-      li.dataset.id = card.id;
-      li.innerHTML = `<p class="card__title">${escapeHtml(card.title)}</p>`;
-      li.addEventListener("dragstart", (e) => {
-        li.classList.add("is-dragging");
-        e.dataTransfer.setData("text/plain", card.id);
-        e.dataTransfer.effectAllowed = "move";
-      });
-      li.addEventListener("dragend", () => li.classList.remove("is-dragging"));
-      return li;
-    }
-
-    function wireColumn(list, slug, board) {
-      list.addEventListener("dragover", (e) => {
-        e.preventDefault();
-        list.parentElement.classList.add("is-over");
-        e.dataTransfer.dropEffect = "move";
-      });
-      list.addEventListener("dragleave", () => list.parentElement.classList.remove("is-over"));
-      list.addEventListener("drop", (e) => {
-        e.preventDefault();
-        list.parentElement.classList.remove("is-over");
-        const id = e.dataTransfer.getData("text/plain");
-        if (!id) return;
-        moveCard(slug, board, id, list.dataset.col);
-      });
-    }
-
-    function moveCard(slug, board, cardId, toColId) {
-      let moving = null;
-      board.columns.forEach((col) => {
-        const i = col.cards.findIndex((c) => c.id === cardId);
-        if (i >= 0) moving = col.cards.splice(i, 1)[0];
-      });
-      if (!moving) return;
-      const dest = board.columns.find((c) => c.id === toColId);
-      if (!dest) return;
-      dest.cards.push(moving);
-      persist(slug, board);
-      render(slug, board);
+    function liveBoards() {
+      const out = {};
+      for (const [s, seed] of Object.entries(allBoards)) {
+        out[s] = hydrate(s, seed);
+      }
+      return out;
     }
 
     function escapeHtml(s) {
@@ -347,7 +378,308 @@
         .replaceAll('"', "&quot;");
     }
 
-    function missing(slug) {
+    function matchesFilters(item) {
+      const q = filters.q.trim().toLowerCase();
+      if (q && !item.title.toLowerCase().includes(q) && !item.projectName.toLowerCase().includes(q)) {
+        return false;
+      }
+      if (filters.project && item.slug !== filters.project) return false;
+      if (filters.category) {
+        const cat = categoryOf(item.slug);
+        if (!cat || cat.id !== filters.category) return false;
+      }
+      if (filters.status && item.colId !== filters.status) return false;
+      return true;
+    }
+
+    function collectItems(boards) {
+      const items = [];
+      for (const [s, board] of Object.entries(boards)) {
+        for (const col of board.columns || []) {
+          for (const card of col.cards || []) {
+            items.push({
+              id: card.id,
+              title: card.title,
+              slug: s,
+              projectName: board.name || s,
+              colId: col.id,
+            });
+          }
+        }
+      }
+      return items;
+    }
+
+    function readFiltersFromDom() {
+      const q = document.getElementById("f-q");
+      const project = document.getElementById("f-project");
+      const category = document.getElementById("f-category");
+      const status = document.getElementById("f-status");
+      if (q) filters.q = q.value;
+      if (project) filters.project = project.value;
+      if (category) filters.category = category.value;
+      if (status) filters.status = status.value;
+    }
+
+    function filtersHtml(opts) {
+      const { projects, showProject, showCategory } = opts;
+      const projectOpts = [`<option value="">Todos</option>`]
+        .concat(
+          projects.map(
+            (p) =>
+              `<option value="${escapeHtml(p.slug)}"${filters.project === p.slug ? " selected" : ""}>${escapeHtml(p.name)}</option>`
+          )
+        )
+        .join("");
+      const catOpts = [`<option value="">Todas</option>`]
+        .concat(
+          CATEGORIES.map(
+            (c) =>
+              `<option value="${escapeHtml(c.id)}"${filters.category === c.id ? " selected" : ""}>${escapeHtml(c.title)}</option>`
+          )
+        )
+        .join("");
+      const statusOpts = [`<option value="">Todos</option>`]
+        .concat(
+          COL_META.map(
+            (c) =>
+              `<option value="${escapeHtml(c.id)}"${filters.status === c.id ? " selected" : ""}>${escapeHtml(c.title)}</option>`
+          )
+        )
+        .join("");
+
+      return `
+        <div class="filters" role="search">
+          <label class="filters__field">
+            <span class="filters__label">Busca</span>
+            <input id="f-q" type="search" value="${escapeHtml(filters.q)}" placeholder="Atividade ou projeto" autocomplete="off" />
+          </label>
+          ${
+            showProject
+              ? `<label class="filters__field">
+            <span class="filters__label">Projeto</span>
+            <select id="f-project">${projectOpts}</select>
+          </label>`
+              : ""
+          }
+          ${
+            showCategory
+              ? `<label class="filters__field">
+            <span class="filters__label">Categoria</span>
+            <select id="f-category">${catOpts}</select>
+          </label>`
+              : ""
+          }
+          <label class="filters__field">
+            <span class="filters__label">Status</span>
+            <select id="f-status">${statusOpts}</select>
+          </label>
+        </div>
+      `;
+    }
+
+    function wireFilters(onChange) {
+      ["f-q", "f-project", "f-category", "f-status"].forEach((id) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const evt = id === "f-q" ? "input" : "change";
+        el.addEventListener(evt, () => {
+          readFiltersFromDom();
+          onChange();
+        });
+      });
+    }
+
+    function applyVisibility(root, items) {
+      const visibleIds = new Set(items.filter(matchesFilters).map((i) => `${i.slug}:${i.id}`));
+      let visible = 0;
+      root.querySelectorAll(".card").forEach((el) => {
+        const key = `${el.dataset.slug}:${el.dataset.id}`;
+        const ok = visibleIds.has(key);
+        el.classList.toggle("is-hidden", !ok);
+        if (ok) visible += 1;
+      });
+
+      COL_META.forEach((col) => {
+        const section = root.querySelector(`.col[data-col="${col.id}"]`);
+        if (!section) return;
+        const n = [...section.querySelectorAll(".card:not(.is-hidden)")].length;
+        const badge = section.querySelector(".col__n");
+        if (badge) badge.textContent = String(n);
+        const hideCol = Boolean(filters.status) && filters.status !== col.id;
+        section.classList.toggle("is-hidden", hideCol);
+      });
+
+      root.classList.toggle("is-filtered-cols", Boolean(filters.status));
+
+      const countEl = document.getElementById("board-count");
+      if (countEl) countEl.textContent = `${visible} atividades`;
+    }
+
+    function cardEl(item, { showProject }) {
+      const li = document.createElement("li");
+      li.className = "card";
+      li.draggable = true;
+      li.dataset.id = item.id;
+      li.dataset.slug = item.slug;
+      li.innerHTML = `
+        ${
+          showProject
+            ? `<a class="card__project" href="board.html?p=${encodeURIComponent(item.slug)}">${escapeHtml(item.projectName)}</a>`
+            : ""
+        }
+        <p class="card__title">${escapeHtml(item.title)}</p>
+      `;
+      li.addEventListener("dragstart", (e) => {
+        li.classList.add("is-dragging");
+        e.dataTransfer.setData("text/plain", JSON.stringify({ id: item.id, slug: item.slug }));
+        e.dataTransfer.effectAllowed = "move";
+      });
+      li.addEventListener("dragend", () => li.classList.remove("is-dragging"));
+      return li;
+    }
+
+    function wireColumn(list) {
+      list.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        list.parentElement.classList.add("is-over");
+        e.dataTransfer.dropEffect = "move";
+      });
+      list.addEventListener("dragleave", () => list.parentElement.classList.remove("is-over"));
+      list.addEventListener("drop", (e) => {
+        e.preventDefault();
+        list.parentElement.classList.remove("is-over");
+        let payload;
+        try {
+          payload = JSON.parse(e.dataTransfer.getData("text/plain"));
+        } catch {
+          return;
+        }
+        if (!payload?.id || !payload?.slug) return;
+        moveCard(payload.slug, payload.id, list.dataset.col);
+      });
+    }
+
+    function moveCard(fromSlug, cardId, toColId) {
+      const boards = liveBoards();
+      const board = boards[fromSlug];
+      if (!board) return;
+      let moving = null;
+      board.columns.forEach((col) => {
+        const i = col.cards.findIndex((c) => c.id === cardId);
+        if (i >= 0) moving = col.cards.splice(i, 1)[0];
+      });
+      if (!moving) return;
+      const dest = board.columns.find((c) => c.id === toColId);
+      if (!dest) return;
+      dest.cards.push(moving);
+      persist(fromSlug, board);
+      if (mode === "global") renderGlobal();
+      else renderSingle(fromSlug);
+    }
+
+    function renderGlobal() {
+      mode = "global";
+      document.title = "Board";
+      const boards = liveBoards();
+      const items = collectItems(boards);
+      const projects = Object.entries(boards)
+        .map(([s, b]) => ({ slug: s, name: b.name || s }))
+        .sort((a, b) => a.name.localeCompare(b.name, "pt-BR"));
+
+      const app = document.getElementById("app");
+      app.innerHTML = `
+        <div class="top">
+          <div class="top__left">
+            <h1>Board</h1>
+            <p class="blurb">Todas as atividades dos projetos</p>
+          </div>
+          <p class="count" id="board-count">${items.length} atividades</p>
+        </div>
+        ${filtersHtml({ projects, showProject: true, showCategory: true })}
+        <div class="board" id="board"></div>
+      `;
+
+      const root = document.getElementById("board");
+      COL_META.forEach((col) => {
+        const el = document.createElement("section");
+        el.className = "col";
+        el.dataset.col = col.id;
+        el.innerHTML = `
+          <div class="col__head">
+            <h2 class="col__title">${escapeHtml(col.title)}</h2>
+            <span class="col__n">0</span>
+          </div>
+          <ul class="col__list" data-col="${col.id}"></ul>
+        `;
+        const list = el.querySelector(".col__list");
+        items
+          .filter((i) => i.colId === col.id)
+          .forEach((item) => list.appendChild(cardEl(item, { showProject: true })));
+        wireColumn(list);
+        root.appendChild(el);
+      });
+
+      wireFilters(() => applyVisibility(root, items));
+      applyVisibility(root, items);
+    }
+
+    function renderSingle(s) {
+      mode = "single";
+      singleSlug = s;
+      const board = liveBoards()[s];
+      if (!board) return missing(s);
+      document.title = board.name + " · Quadro";
+      const items = collectItems({ [s]: board });
+      const app = document.getElementById("app");
+      app.innerHTML = `
+        <div class="top">
+          <div class="top__left">
+            <a class="back" href="index.html" aria-label="Voltar aos projetos">
+              <i data-lucide="arrow-left"></i>
+              Projetos
+            </a>
+            <h1>${escapeHtml(board.name)}</h1>
+            <p class="blurb">${escapeHtml(board.blurb || "")}</p>
+          </div>
+          <p class="count" id="board-count">${items.length} atividades</p>
+        </div>
+        ${filtersHtml({ projects: [], showProject: false, showCategory: false })}
+        <div class="board" id="board"></div>
+      `;
+      if (window.lucide) lucide.createIcons();
+
+      const root = document.getElementById("board");
+      COL_META.forEach((meta) => {
+        const col = board.columns.find((c) => c.id === meta.id) || { id: meta.id, cards: [] };
+        const el = document.createElement("section");
+        el.className = "col";
+        el.dataset.col = meta.id;
+        el.innerHTML = `
+          <div class="col__head">
+            <h2 class="col__title">${escapeHtml(meta.title)}</h2>
+            <span class="col__n">${col.cards.length}</span>
+          </div>
+          <ul class="col__list" data-col="${meta.id}"></ul>
+        `;
+        const list = el.querySelector(".col__list");
+        (col.cards || []).forEach((card) =>
+          list.appendChild(
+            cardEl(
+              { id: card.id, title: card.title, slug: s, projectName: board.name, colId: meta.id },
+              { showProject: false }
+            )
+          )
+        );
+        wireColumn(list);
+        root.appendChild(el);
+      });
+
+      wireFilters(() => applyVisibility(root, items));
+      applyVisibility(root, items);
+    }
+
+    function missing(s) {
       document.getElementById("app").innerHTML = `
         <div class="empty">
           <a class="back" href="index.html" aria-label="Voltar aos projetos">
@@ -355,18 +687,17 @@
             Projetos
           </a>
           <h1>Quadro não encontrado</h1>
-          <p>Não há quadro para <strong>${escapeHtml(slug || "(vazio)")}</strong>.</p>
+          <p>Não há quadro para <strong>${escapeHtml(s || "(vazio)")}</strong>.</p>
         </div>`;
       if (window.lucide) lucide.createIcons();
     }
 
     (async () => {
-      if (!slug) return missing("");
       try {
-        const all = await loadSeed();
-        const seed = all[slug];
-        if (!seed) return missing(slug);
-        render(slug, hydrate(slug, seed));
+        allBoards = await loadSeed();
+        if (!slug) renderGlobal();
+        else if (!allBoards[slug]) missing(slug);
+        else renderSingle(slug);
       } catch (err) {
         document.getElementById("app").innerHTML = `
           <div class="empty">

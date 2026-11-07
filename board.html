@@ -205,7 +205,7 @@
   <script>
     const params = new URLSearchParams(location.search);
     const slug = params.get("p") || "";
-    const storageKey = (s) => `works-board:${s}`;
+    const storageKey = (s) => `works-board:v2:${s}`;
 
     async function loadSeed() {
       try {

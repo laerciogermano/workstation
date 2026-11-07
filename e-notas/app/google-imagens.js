@@ -130,7 +130,7 @@ const EXTRACT_JS = `(() => {
   return out;
 })()`;
 
-async function withCdpPage(url, fn) {
+export async function withCdpPage(url, fn) {
   const base = cdpBase();
   try {
     await getJson(base, '/json/version');

@@ -357,12 +357,12 @@ Card: [BXKZ55Wb](https://trello.com/c/BXKZ55Wb).
 
 - Dada a **descrição** textual do produto (nota / busca), o sistema deve **identificar o código de barras** (EAN/GTIN) correspondente.
 - Card workstation: `e-notas-t-desc-ean`.
-- Implementação: `GET|POST /api/enrichment/ean` (`?descricao=` ou body `{ descricao }`) → candidatos ranqueados `{ ean, score, fonte, nome_canonico, image_url }` (sem auto-vínculo).
-- `image_url`: foto local (`ean-fotos` / `ean_imagens`) ou Open Food Facts por EAN quando faltar.
-- Fontes: cache `ean_sugestoes` → pares locais `itens.nome`+`codigos_barras` → Open Food/Beauty/Products Facts (search).
-- UI: modal EAN → **Sugerir EAN pela descrição** → toque preenche o campo; **Salvar** confirma (`descricao` no POST de vínculo incrementa `confirmacoes`).
-- Antes: só scan/digitação. Depois: sugestão + confirmação humana.
-- Rollback: remover rotas `/api/enrichment/*`, `enrichment.js`, UI suggest, `DROP TABLE enotas.ean_sugestoes;`.
+- Implementação: `GET|POST /api/enrichment/ean` (`?descricao=` ou body `{ descricao }`, `force?`) → candidatos `{ ean, score, fonte, nome_canonico, image_url }` (sem auto-vínculo).
+- Normalização: abreviações NFC-e (`ABS`→`ABSORVENTE`, etc.).
+- Fontes: cache `ean_sugestoes` → local → Open*Facts → **Google** (CDP) se vazio; `ean_resolve_buscas` evita re-scrape.
+- UI: vitrine + **detalhe do produto** + modal EAN; toque vincula (`origem=sugestao`).
+- Antes: só scan/digitação. Depois: sugestão pelo descritivo + confirmação humana.
+- Rollback: remover rotas `/api/enrichment/*`, `enrichment.js`, UI suggest, `DROP TABLE enotas.ean_sugestoes;` / `ean_resolve_buscas`.
 
 ## REQ-040 — Identificar imagens a partir do EAN (2026-11-07)
 
@@ -382,14 +382,14 @@ Card: [BXKZ55Wb](https://trello.com/c/BXKZ55Wb).
 
 ## REQ-043 — Sugestões EAN na vitrine + origem do vínculo (2026-11-07)
 
-- Todo produto **sem EAN** na vitrine do estabelecimento mostra sugestões (enrichment/ean) com foto quando houver; toque **vincula** na hora (`origem=sugestao`).
+- Todo produto **sem EAN** (vitrine + detalhe `#produto-ean-suggest`) mostra sugestões pelo descritivo; toque **vincula** (`origem=sugestao`).
 - Modal EAN: ao abrir sem EAN, busca sugestões automaticamente; toque na sugestão vincula com `origem=sugestao`.
 - Scan câmera / foto / imagem → vínculo com `origem=barcode_scan`.
 - Digitação manual no campo + Salvar → `origem=manual`.
 - Coluna `enotas.codigos_barras.origem` (`sugestao` | `barcode_scan` | `manual`); exposta em `GET /api/itens` como `ean_origem`.
 - Chip na vitrine: scan / sugestão / manual.
-- Antes: sugestão só no modal e sem gravar origem. Depois: sugestões inline + origem persistida.
-- Rollback: `ALTER TABLE enotas.codigos_barras DROP COLUMN origem;` + remover UI suggest-inline / campo origem no POST.
+- Antes: sugestão só no modal e sem gravar origem. Depois: sugestões inline/detalhe + origem persistida.
+- Rollback: `ALTER TABLE enotas.codigos_barras DROP COLUMN origem;` + remover UI suggest-inline / `#produto-ean-suggest` / campo origem no POST.
 
 ## REQ-042 — Google Imagens: descrição ou EAN + N (2026-11-07)
 

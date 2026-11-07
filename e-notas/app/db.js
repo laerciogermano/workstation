@@ -179,6 +179,12 @@ export async function initDb() {
 
     CREATE INDEX IF NOT EXISTS google_imagens_cache_q_idx
       ON ${t('google_imagens_cache')}(query_norm);
+
+    CREATE TABLE IF NOT EXISTS ${t('ean_resolve_buscas')} (
+      descricao_norm TEXT PRIMARY KEY,
+      candidatos INTEGER NOT NULL DEFAULT 0,
+      buscado_em TIMESTAMPTZ NOT NULL DEFAULT now()
+    );
   `);
 
   await p.query(`
@@ -512,6 +518,35 @@ export async function confirmarEanSugestao(
     [norm, code],
   );
   return r.rows[0] || null;
+}
+
+export async function getEanResolveBusca(descricaoNorm, client = getPool()) {
+  const norm = String(descricaoNorm ?? '').trim();
+  if (!norm) return null;
+  const r = await client.query(
+    `SELECT * FROM ${t('ean_resolve_buscas')} WHERE descricao_norm = $1`,
+    [norm],
+  );
+  return r.rows[0] || null;
+}
+
+export async function saveEanResolveBusca(
+  descricaoNorm,
+  candidatos,
+  client = getPool(),
+) {
+  const norm = String(descricaoNorm ?? '').trim();
+  if (!norm) return;
+  const n = Number(candidatos) || 0;
+  await client.query(
+    `INSERT INTO ${t('ean_resolve_buscas')}
+       (descricao_norm, candidatos, buscado_em)
+     VALUES ($1, $2, now())
+     ON CONFLICT (descricao_norm) DO UPDATE SET
+       candidatos = EXCLUDED.candidatos,
+       buscado_em = now()`,
+    [norm, n],
+  );
 }
 
 const ORIGENS_EAN = new Set(['sugestao', 'barcode_scan', 'manual']);

@@ -202,7 +202,8 @@ function enrichmentForce(req) {
 async function handleEnrichmentEan(req, res) {
   try {
     const descricao = enrichmentInput(req, 'descricao');
-    const result = await resolveEanFromDescricao(descricao);
+    const force = enrichmentForce(req);
+    const result = await resolveEanFromDescricao(descricao, { force });
     return res.json({ ok: true, ...result });
   } catch (err) {
     const status = err.status || 500;

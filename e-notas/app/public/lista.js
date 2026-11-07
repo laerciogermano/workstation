@@ -38,6 +38,10 @@ const produtoFotosBuscarEl = document.getElementById('produto-fotos-buscar');
 const produtoFotosAtualizarEl = document.getElementById(
   'produto-fotos-atualizar',
 );
+const produtoEanSuggestEl = document.getElementById('produto-ean-suggest');
+const produtoEanSuggestBodyEl = document.getElementById(
+  'produto-ean-suggest-body',
+);
 const produtoTimelineEl = document.getElementById('produto-timeline');
 const countProdutoPrecosEl = document.getElementById('count-produto-precos');
 let produtoFotosEan = '';
@@ -607,6 +611,33 @@ function renderProdutoDetalhe(key) {
   }
 
   void loadProdutoFotos(ean, head.nome || '');
+  void loadProdutoEanSuggestions(head);
+}
+
+async function loadProdutoEanSuggestions(head) {
+  if (!produtoEanSuggestEl || !produtoEanSuggestBodyEl) return;
+  const ean = String(head?.codigo_barras || '').trim();
+  const codigo = String(head?.codigo || '').trim();
+  const nome = String(head?.nome || '').trim();
+  const empresaId = head?.empresa_id;
+  if (ean || !codigo || !nome || !empresaId) {
+    produtoEanSuggestEl.hidden = true;
+    produtoEanSuggestBodyEl.innerHTML = '';
+    return;
+  }
+  const empresaNome =
+    head.empresa_nome ||
+    allEmpresas.find((e) => Number(e.id) === Number(empresaId))?.nome ||
+    '';
+  produtoEanSuggestEl.hidden = false;
+  produtoEanSuggestBodyEl.dataset.suggestFor = codigo;
+  produtoEanSuggestBodyEl.dataset.empresaId = String(empresaId);
+  produtoEanSuggestBodyEl.dataset.empresaNome = empresaNome;
+  produtoEanSuggestBodyEl.dataset.codigo = codigo;
+  produtoEanSuggestBodyEl.dataset.nome = nome;
+  produtoEanSuggestBodyEl.innerHTML =
+    '<p class="hint ean-suggest-loading">Buscando sugestões pelo descritivo…</p>';
+  await hydrateEanSuggestions(produtoEanSuggestEl);
 }
 
 function setProdutoFotosStatus(msg, kind) {
@@ -1461,6 +1492,7 @@ vitrineItensEl?.addEventListener('click', (ev) => {
     })
       .then(() => {
         if (lojaAbertaId != null) renderVitrineDetalhe(lojaAbertaId);
+        if (produtoAbertaKey != null) renderProdutoDetalhe(produtoAbertaKey);
       })
       .catch((err) => {
         sug.disabled = false;
@@ -1476,6 +1508,30 @@ vitrineItensEl?.addEventListener('click', (ev) => {
   const btn = ev.target.closest('[data-open-produto]');
   if (!btn) return;
   openProduto(btn.dataset.openProduto);
+});
+produtoEanSuggestEl?.addEventListener('click', (ev) => {
+  const sug = ev.target.closest('[data-aplicar-sugestao]');
+  if (!sug) return;
+  ev.preventDefault();
+  const label =
+    sug.querySelector('.ean-suggest-ean')?.textContent || sug.dataset.ean;
+  sug.disabled = true;
+  sug.classList.add('is-busy');
+  void aplicarSugestaoEan({
+    empresaId: sug.dataset.empresaId,
+    codigo: sug.dataset.codigo,
+    nome: sug.dataset.nome,
+    ean: sug.dataset.ean,
+  })
+    .then(() => {
+      if (produtoAbertaKey != null) renderProdutoDetalhe(produtoAbertaKey);
+      if (lojaAbertaId != null) renderVitrineDetalhe(lojaAbertaId);
+    })
+    .catch((err) => {
+      sug.disabled = false;
+      sug.classList.remove('is-busy');
+      alert(`Falha ao vincular ${label}: ${err.message}`);
+    });
 });
 produtoInfoEl?.addEventListener('click', (ev) => {
   handleOpenFotoClick(ev);

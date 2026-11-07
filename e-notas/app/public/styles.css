@@ -1051,6 +1051,11 @@ td.mono {
   gap: 0.4rem;
 }
 
+.produto-ean-suggest .ean-suggest-inline {
+  padding: 0;
+  margin-top: 0.35rem;
+}
+
 .produto-fotos .home-section-head {
   align-items: center;
   gap: var(--nt-space-3);

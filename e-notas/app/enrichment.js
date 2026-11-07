@@ -1,16 +1,18 @@
 /**
  * Enrichment: descrição → EAN → imagens (composição; sem auto-vínculo).
- * Fontes: base local (codigos_barras+itens) e Open Food/Beauty/Products Facts.
+ * Fontes: local, Open Food/Beauty/Products Facts, Google (CDP) por descritivo.
  */
 import {
   buscarImagensEan,
+  getEanResolveBusca,
   getImagemSelecionada,
   listLinkedNomeEan,
   listEanSugestoes,
   resolveFotoUrlForEan,
+  saveEanResolveBusca,
   upsertEanSugestoes,
 } from './db.js';
-import { searchGoogleImages } from './google-imagens.js';
+import { searchGoogleImages, withCdpPage } from './google-imagens.js';
 
 const UA =
   'notinhas.shop/0.1 (product enrichment; +https://notinhas.shop; contato@notinhas.shop)';
@@ -81,9 +83,32 @@ async function fetchJson(url) {
   }
 }
 
+/** Expande abreviações comuns de NFC-e / atacado. */
+export function expandAbreviacoes(raw) {
+  let s = String(raw ?? '');
+  const rules = [
+    [/\bABS\.?\b/gi, 'ABSORVENTE '],
+    [/\bABSORV\.?\b/gi, 'ABSORVENTE '],
+    [/\bREFRIG\.?\b/gi, 'REFRIGERANTE '],
+    [/\bREFRI\.?\b/gi, 'REFRIGERANTE '],
+    [/\bSAB\.?\b/gi, 'SABONETE '],
+    [/\bDET\.?\b/gi, 'DETERGENTE '],
+    [/\bAMAC\.?\b/gi, 'AMACIANTE '],
+    [/\bDESOD\.?\b/gi, 'DESODORANTE '],
+    [/\bSHAMP\.?\b/gi, 'SHAMPOO '],
+    [/\bCOND\.?\b/gi, 'CONDICIONADOR '],
+    [/\bBISN\.?\b/gi, 'BISNAGA '],
+    [/\bLIMP\.?\b/gi, 'LIMPADOR '],
+    [/\bPAP\.?\b/gi, 'PAPEL '],
+    [/\bTOALH\.?\b/gi, 'TOALHA '],
+  ];
+  for (const [re, rep] of rules) s = s.replace(re, rep);
+  return s.replace(/\s+/g, ' ').trim();
+}
+
 /** Normaliza texto de NFC-e / busca para matching. */
 export function normalizeDescricao(raw) {
-  return String(raw ?? '')
+  return expandAbreviacoes(raw)
     .normalize('NFD')
     .replace(/\p{M}/gu, '')
     .toUpperCase()
@@ -215,43 +240,118 @@ function productImage(product) {
 }
 
 async function searchOpenFacts(queryNorm, host, fonte, map) {
-  const q = encodeURIComponent(queryNorm.toLowerCase());
-  const url =
-    `https://${host}/cgi/search.pl?search_terms=${q}` +
-    `&search_simple=1&action=process&json=1&page_size=12`;
-  const data = await fetchJson(url);
-  const products = data?.products;
-  if (!Array.isArray(products)) return;
-  for (const p of products) {
-    const code = String(p.code || p._id || '').replace(/\D/g, '');
-    if (!code) continue;
-    const name =
-      p.product_name_pt ||
-      p.product_name ||
-      p.generic_name_pt ||
-      p.generic_name ||
-      '';
-    const nameNorm = normalizeDescricao(name) || normalizeDescricao(p.brands || '');
-    const s = Math.max(
-      scoreDescricao(queryNorm, nameNorm),
-      scoreDescricao(queryNorm, normalizeDescricao(`${p.brands || ''} ${name}`)),
-    );
-    if (s < 0.35) continue;
-    pushEan(map, {
-      ean: code,
-      score: s,
-      fonte,
-      nome_canonico: name || null,
-      image_url: productImage(p),
+  try {
+    const q = encodeURIComponent(queryNorm.toLowerCase());
+    const url =
+      `https://${host}/cgi/search.pl?search_terms=${q}` +
+      `&search_simple=1&action=process&json=1&page_size=12`;
+    const data = await fetchJson(url);
+    const products = data?.products;
+    if (!Array.isArray(products)) return;
+    for (const p of products) {
+      const code = String(p.code || p._id || '').replace(/\D/g, '');
+      if (!code) continue;
+      const name =
+        p.product_name_pt ||
+        p.product_name ||
+        p.generic_name_pt ||
+        p.generic_name ||
+        '';
+      const nameNorm =
+        normalizeDescricao(name) || normalizeDescricao(p.brands || '');
+      const s = Math.max(
+        scoreDescricao(queryNorm, nameNorm),
+        scoreDescricao(
+          queryNorm,
+          normalizeDescricao(`${p.brands || ''} ${name}`),
+        ),
+      );
+      if (s < 0.35) continue;
+      pushEan(map, {
+        ean: code,
+        score: s,
+        fonte,
+        nome_canonico: name || null,
+        image_url: productImage(p),
+      });
+    }
+  } catch (err) {
+    console.warn(`[enrichment] ${fonte}:`, err.message);
+  }
+}
+
+/**
+ * Google web (CDP): busca pelo descritivo e coleta EANs BR (789…).
+ */
+async function fromGoogleEanSearch(queryNorm, map) {
+  const q = String(queryNorm || '').trim();
+  if (!q) return;
+  const searchUrl =
+    `https://www.google.com/search?hl=pt-BR&gl=br` +
+    `&q=${encodeURIComponent(`${q} EAN OR GTIN OR "codigo de barras"`)}`;
+  try {
+    const hits = await withCdpPage(searchUrl, async (session) => {
+      await session.send('Runtime.evaluate', {
+        expression: 'window.scrollBy(0, 1200)',
+        returnByValue: true,
+      });
+      await sleep(800);
+      const evaled = await session.send('Runtime.evaluate', {
+        expression: `(() => {
+          const text = document.body?.innerText || '';
+          const html = document.documentElement?.innerHTML || '';
+          if (/tr[aá]fego incomum|unusual traffic|captcha|systems have detected/i.test(text)) {
+            return { blocked: true, eans: [] };
+          }
+          const out = [];
+          const seen = new Set();
+          const push = (raw) => {
+            const d = String(raw || '').replace(/\\D/g, '');
+            if (d.length < 8 || d.length > 14) return;
+            if (seen.has(d)) return;
+            seen.add(d);
+            out.push(d);
+          };
+          for (const m of text.matchAll(/\\b(789\\d{10})\\b/g)) push(m[1]);
+          for (const m of html.matchAll(/\\b(789\\d{10})\\b/g)) push(m[1]);
+          for (const m of text.matchAll(/(?:EAN|GTIN|UPC)[^\\d]{0,24}(\\d{8,14})/gi)) {
+            push(m[1]);
+          }
+          return { blocked: false, eans: out.slice(0, 12) };
+        })()`,
+        returnByValue: true,
+      });
+      const val = evaled?.result?.value;
+      if (val?.blocked) {
+        console.warn('[enrichment] google-ean: captcha/bloqueio');
+        return [];
+      }
+      return Array.isArray(val?.eans) ? val.eans : [];
     });
+    let i = 0;
+    for (const ean of hits) {
+      const score = Math.max(0.42, 0.62 - i * 0.03);
+      pushEan(map, {
+        ean,
+        score,
+        fonte: 'google',
+        nome_canonico: q,
+      });
+      i += 1;
+    }
+  } catch (err) {
+    console.warn('[enrichment] google-ean:', err.message);
   }
 }
 
 /**
  * Resolve candidatos EAN a partir da descrição.
- * @returns {{ descricao_norm: string, candidatos: object[] }}
+ * @returns {{ descricao_norm: string, candidatos: object[], cached?: boolean }}
  */
-export async function resolveEanFromDescricao(descricao, { skipRemote = false } = {}) {
+export async function resolveEanFromDescricao(
+  descricao,
+  { skipRemote = false, force = false } = {},
+) {
   const raw = String(descricao ?? '').trim();
   if (!raw) {
     throw Object.assign(new Error('descricao obrigatória'), { status: 400 });
@@ -265,7 +365,17 @@ export async function resolveEanFromDescricao(descricao, { skipRemote = false } 
   await fromCacheSugestoes(descricao_norm, map);
   await fromLocalBase(descricao_norm, map);
 
-  if (!skipRemote) {
+  let usedCacheBusca = false;
+  if (!skipRemote && !force) {
+    try {
+      const busca = await getEanResolveBusca(descricao_norm);
+      if (busca) usedCacheBusca = true;
+    } catch {
+      /* ignore */
+    }
+  }
+
+  if (!skipRemote && !usedCacheBusca) {
     await searchOpenFacts(
       descricao_norm,
       'world.openfoodfacts.org',
@@ -290,6 +400,14 @@ export async function resolveEanFromDescricao(descricao, { skipRemote = false } 
         map,
       );
     }
+    if (map.size === 0) {
+      await fromGoogleEanSearch(descricao_norm, map);
+    }
+    try {
+      await saveEanResolveBusca(descricao_norm, map.size);
+    } catch (err) {
+      console.warn('[enrichment] busca marker:', err.message);
+    }
   }
 
   let candidatos = [...map.values()]
@@ -312,7 +430,11 @@ export async function resolveEanFromDescricao(descricao, { skipRemote = false } 
     console.warn('[enrichment] cache sugestões:', err.message);
   }
 
-  return { descricao_norm, candidatos };
+  return {
+    descricao_norm,
+    candidatos,
+    cached: usedCacheBusca,
+  };
 }
 
 /**

@@ -345,7 +345,7 @@
       { id: "done", title: "Feito" },
     ];
 
-    const filters = { q: "", project: "", category: "", status: "", archived: "all" };
+    const filters = { q: "", project: "", category: "", status: "", archived: "hide" };
     let allBoards = {};
     let mode = "global"; // global | single
     let singleSlug = "";
@@ -484,7 +484,7 @@
       if (q) filters.q = q.value;
       if (category) filters.category = category.value;
       if (status) filters.status = status.value;
-      if (archived) filters.archived = archived.value || "all";
+      if (archived) filters.archived = archived.value || "hide";
     }
 
     function filtersHtml(opts) {
@@ -506,8 +506,8 @@
         )
         .join("");
       const archOpts = [
-        ["all", "Incluir"],
         ["hide", "Ocultar"],
+        ["all", "Incluir"],
         ["only", "Só arquivados"],
       ]
         .map(
@@ -666,7 +666,7 @@
         <div class="top">
           <div class="top__left">
             <h1>Board</h1>
-            <p class="blurb">Atividades dos projetos — inclusive arquivados</p>
+            <p class="blurb">Atividades dos projetos ativos</p>
           </div>
           <p class="count" id="board-count">${items.length} atividades</p>
         </div>

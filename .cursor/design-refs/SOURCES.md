@@ -1,7 +1,10 @@
 # Fontes baixadas (2026-11-07)
 
+**Padrão operacional:** [DESIGN-SYSTEM.md](DESIGN-SYSTEM.md) (Editorial Bold + componentes).
+
 | Pacote | Origem | Uso |
 |--------|--------|-----|
+| `DESIGN-SYSTEM.md` | sintetizado das refs abaixo | Design system canônico da workstation |
 | `unslop-ui/` | https://github.com/claudiusararu/unslop-ui-skill | Catálogo ~100 tells + skill `no-ai-slop` |
 | `anthropic-frontend-design/` | https://github.com/anthropics/skills (`skills/frontend-design`) | Skill oficial Anthropic de frontend |
 | `anti-ai-slop/` | https://github.com/Krirox/anti-ai-slop-skills | Checklist + direções estéticas + rubric |

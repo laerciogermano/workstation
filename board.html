@@ -248,6 +248,21 @@
 
     .card__project:hover { color: var(--ink); }
 
+    .card__arch {
+      display: inline-block;
+      margin-left: 0.35rem;
+      font-family: var(--font-display);
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--body);
+    }
+
+    .card.is-archived {
+      border-style: dashed;
+    }
+
     .card__title {
       font-family: var(--font-display);
       font-weight: 600;
@@ -330,7 +345,7 @@
       { id: "done", title: "Feito" },
     ];
 
-    const filters = { q: "", project: "", category: "", status: "" };
+    const filters = { q: "", project: "", category: "", status: "", archived: "all" };
     let allBoards = {};
     let mode = "global"; // global | single
     let singleSlug = "";
@@ -366,6 +381,10 @@
       return CATEGORIES.find((c) => c.slugs.includes(s)) || null;
     }
 
+    function isArchived(s) {
+      return categoryOf(s)?.id === "arquivados";
+    }
+
     function liveBoards() {
       const out = {};
       for (const [s, seed] of Object.entries(allBoards)) {
@@ -391,6 +410,8 @@
         const cat = categoryOf(item.slug);
         if (!cat || cat.id !== filters.category) return false;
       }
+      if (filters.archived === "hide" && isArchived(item.slug)) return false;
+      if (filters.archived === "only" && !isArchived(item.slug)) return false;
       if (filters.status && item.colId !== filters.status) return false;
       return true;
     }
@@ -459,9 +480,11 @@
       const q = document.getElementById("f-q");
       const category = document.getElementById("f-category");
       const status = document.getElementById("f-status");
+      const archived = document.getElementById("f-archived");
       if (q) filters.q = q.value;
       if (category) filters.category = category.value;
       if (status) filters.status = status.value;
+      if (archived) filters.archived = archived.value || "all";
     }
 
     function filtersHtml(opts) {
@@ -482,6 +505,16 @@
           )
         )
         .join("");
+      const archOpts = [
+        ["all", "Incluir"],
+        ["hide", "Ocultar"],
+        ["only", "Só arquivados"],
+      ]
+        .map(
+          ([v, label]) =>
+            `<option value="${v}"${filters.archived === v ? " selected" : ""}>${label}</option>`
+        )
+        .join("");
 
       return `
         <div class="filters" role="search">
@@ -495,6 +528,14 @@
               ? `<label class="filters__field">
             <span class="filters__label">Categoria</span>
             <select id="f-category">${catOpts}</select>
+          </label>`
+              : ""
+          }
+          ${
+            showCategory
+              ? `<label class="filters__field">
+            <span class="filters__label">Arquivados</span>
+            <select id="f-archived">${archOpts}</select>
           </label>`
               : ""
           }
@@ -515,7 +556,7 @@
           else location.href = `board.html?p=${encodeURIComponent(next)}`;
         });
       }
-      ["f-q", "f-category", "f-status"].forEach((id) => {
+      ["f-q", "f-category", "f-archived", "f-status"].forEach((id) => {
         const el = document.getElementById(id);
         if (!el) return;
         const evt = id === "f-q" ? "input" : "change";
@@ -554,14 +595,15 @@
 
     function cardEl(item, { showProject }) {
       const li = document.createElement("li");
-      li.className = "card";
+      li.className = "card" + (isArchived(item.slug) ? " is-archived" : "");
       li.draggable = true;
       li.dataset.id = item.id;
       li.dataset.slug = item.slug;
+      const archMark = isArchived(item.slug) ? `<span class="card__arch">Arquivado</span>` : "";
       li.innerHTML = `
         ${
           showProject
-            ? `<a class="card__project" href="board.html?p=${encodeURIComponent(item.slug)}">${escapeHtml(item.projectName)}</a>`
+            ? `<a class="card__project" href="board.html?p=${encodeURIComponent(item.slug)}">${escapeHtml(item.projectName)}${archMark}</a>`
             : ""
         }
         <p class="card__title">${escapeHtml(item.title)}</p>
@@ -624,7 +666,7 @@
         <div class="top">
           <div class="top__left">
             <h1>Board</h1>
-            <p class="blurb">Todas as atividades dos projetos</p>
+            <p class="blurb">Atividades dos projetos — inclusive arquivados</p>
           </div>
           <p class="count" id="board-count">${items.length} atividades</p>
         </div>

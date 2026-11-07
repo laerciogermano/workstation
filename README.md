@@ -2,7 +2,7 @@
 
 Hub de projetos, board, tasks e processo de desenvolvimento.
 
-**Índice:** abra [`index.html`](index.html) na raiz — menu lateral **Projetos** / **Board** ([`shell.css`](shell.css)); cards por categoria (estrela → seção **Favoritos** no topo, `works-favs:v1`); cada card abre o quadro em [`board.html`](board.html) (`?p=slug`). **Board** no menu → [`board.html`](board.html) (quadro global). Filtro **Projeto** (optgroups por categoria) troca entre Todos e o quadro do projeto; demais filtros: busca, categoria, status.
+**Índice:** abra [`index.html`](index.html) na raiz — menu lateral **Projetos** / **Board** ([`shell.css`](shell.css)); cards por categoria (estrela → seção **Favoritos** no topo, `works-favs:v1`); cada card abre o quadro em [`board.html`](board.html) (`?p=slug`). **Board** no menu → [`board.html`](board.html) (quadro global). Filtro **Projeto** (optgroups por categoria) troca entre Todos e o quadro do projeto; demais filtros: busca, categoria, arquivados (incluir/ocultar/só), status. Cards de projetos arquivados aparecem no Board global (marcados).
 
 **Design system (padrão):** [DESIGN-SYSTEM.md](.cursor/design-refs/DESIGN-SYSTEM.md) · showcase [design-system.html](.cursor/design-refs/design-system.html) · refs [SOURCES.md](.cursor/design-refs/SOURCES.md) · regra [design-anti-slop.mdc](.cursor/rules/design-anti-slop.mdc).
 

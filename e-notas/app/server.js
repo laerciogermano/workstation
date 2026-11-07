@@ -256,6 +256,7 @@ async function handleGoogleImagens(req, res) {
     const nRaw = enrichmentInput(req, 'n') || req.body?.n || 50;
     const dl = req.query?.download ?? req.body?.download;
     const download = !(dl === '0' || dl === 'false' || dl === false);
+    const force = enrichmentForce(req);
     if (!descricao && !ean) {
       return res.status(400).json({
         ok: false,
@@ -267,6 +268,7 @@ async function handleGoogleImagens(req, res) {
       ean: ean || undefined,
       n: nRaw,
       download,
+      force,
     });
     return res.json(result);
   } catch (err) {

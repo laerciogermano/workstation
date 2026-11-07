@@ -286,10 +286,12 @@ Curadoria: [`../marca/benchmarking-solucoes/README.md`](../marca/benchmarking-so
 - **Uma** imagem `selecionada` propaga `codigos_barras.foto_url` (todos os vínculos daquele EAN) — feed / vitrine / detalhe.
 - Escolha (não voto): auto-seleção na 1ª importação; UI **Fotos** no detalhe do produto (+ **Buscar fotos** / force).
 - APIs: `GET /api/ean-imagens`, `POST /api/ean-imagens/buscar`, `POST /api/ean-imagens/:id/selecionar`.
-- Idempotente sem `force`; legado `{ean}.jpg` vira candidata `local` se ainda não houver linhas. Sem fotos novas → **buscar de novo** (`force`) para misturar Google.
+- Idempotente sem `force` → devolve **cache** (`ean_imagens` / `cached:true`). UI: **Buscar fotos** = cache; **Atualizar** = `force`.
+- Google Imagens também grava `google_imagens_buscas` + `google_imagens_cache` (URLs/paths); 2ª chamada não reabre CDP.
+- Legado `{ean}.jpg` vira candidata `local` se ainda não houver linhas.
 - Card: [0fVZ8eBE](https://trello.com/c/0fVZ8eBE).
-- Antes: foto só se existir arquivo manual em `ean-fotos/` (REQ-026); Google só se as APIs não enchiam o pool. Depois: Google sempre no pool + query com descrição.
-- Rollback: `DROP TABLE enotas.ean_imagens;` + remover `ean-imagens.js` / rotas / seção Fotos no detalhe; manter `foto_url` legado.
+- Antes: foto só se existir arquivo manual em `ean-fotos/` (REQ-026); Google só se as APIs não enchiam o pool; botão Buscar forçava rebusca. Depois: Google sempre no pool + cache em banco + Buscar idempotente.
+- Rollback: `DROP TABLE enotas.ean_imagens;` / `google_imagens_cache` / `google_imagens_buscas` + remover `ean-imagens.js` / rotas / seção Fotos; manter `foto_url` legado.
 
 ---
 
@@ -394,11 +396,11 @@ Card: [BXKZ55Wb](https://trello.com/c/BXKZ55Wb).
 - Um serviço: enviar **descrição** ou **EAN** e **N**; ir ao Google Imagens (web) e baixar as N primeiras.
 - **Sem API key** — Chrome CDP abre `google.com/search?tbm=isch&q=…`, lê thumbs/URLs e baixa N.
 - Pré-req: Chrome com `--remote-debugging-port` (`CDP_URL`, default `http://127.0.0.1:9223`).
-- `GET|POST /api/enrichment/google-imagens` — `descricao` **ou** `ean`, `n` (default **50**, máx 100), `download=0` só lista URLs.
-- Persistência: `public/google-imagens/{slug}/NN.ext`.
-- Também fallback do pipeline EAN→fotos (N=5).
-- Antes: Custom Search / fetch HTML (Google bloqueia sem JS). Depois: scrape via CDP.
-- Rollback: remover rota/módulo `google-imagens.js`; tirar fallback em `ean-imagens.js`; apagar `public/google-imagens/`.
+- `GET|POST /api/enrichment/google-imagens` — `descricao` **ou** `ean`, `n` (default **50**, máx 100), `download=0` só lista URLs, `force` ignora cache.
+- Persistência disco: `public/google-imagens/{slug}/NN.ext`. DB: `google_imagens_buscas` + `google_imagens_cache` (`cached`/`skipped` se já buscou).
+- Também fonte do pipeline EAN→fotos (default n=50).
+- Antes: Custom Search / fetch HTML (Google bloqueia sem JS); sem cache em banco. Depois: scrape via CDP + cache.
+- Rollback: remover rota/módulo `google-imagens.js`; tirar fallback em `ean-imagens.js`; `DROP TABLE` cache/buscas; apagar `public/google-imagens/`.
 
 ## Próximos passos
 

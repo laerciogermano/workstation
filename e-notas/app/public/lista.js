@@ -35,6 +35,9 @@ const produtoFotosEl = document.getElementById('produto-fotos');
 const produtoFotosGridEl = document.getElementById('produto-fotos-grid');
 const produtoFotosStatusEl = document.getElementById('produto-fotos-status');
 const produtoFotosBuscarEl = document.getElementById('produto-fotos-buscar');
+const produtoFotosAtualizarEl = document.getElementById(
+  'produto-fotos-atualizar',
+);
 const produtoTimelineEl = document.getElementById('produto-timeline');
 const countProdutoPrecosEl = document.getElementById('count-produto-precos');
 let produtoFotosEan = '';
@@ -693,8 +696,8 @@ async function buscarProdutoFotos(force) {
       ...new Set((data.imagens || []).map((i) => i.fonte).filter(Boolean)),
     ];
     setProdutoFotosStatus(
-      data.skipped
-        ? 'Já havia fotos (idempotente). Use buscar de novo p/ incluir Google.'
+      data.cached || data.skipped
+        ? `Cache: ${(data.imagens || []).length} foto(s). Use Atualizar p/ buscar de novo.`
         : `Baixadas: ${data.baixadas || 0}${
             fontes.length ? ` · ${fontes.join(', ')}` : ''
           }. Toque para escolher a do feed.`,
@@ -1391,10 +1394,10 @@ document.getElementById('produto-voltar')?.addEventListener('click', () => {
   closeProdutoDetalhe();
 });
 produtoFotosBuscarEl?.addEventListener('click', () => {
-  const force = Boolean(
-    produtoFotosGridEl?.querySelector('.ean-foto-card'),
-  );
-  void buscarProdutoFotos(force);
+  void buscarProdutoFotos(false);
+});
+produtoFotosAtualizarEl?.addEventListener('click', () => {
+  void buscarProdutoFotos(true);
 });
 produtoFotosGridEl?.addEventListener('click', (ev) => {
   const btn = ev.target.closest('[data-ean-img-id]');

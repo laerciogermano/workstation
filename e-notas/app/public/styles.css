@@ -1056,6 +1056,13 @@ td.mono {
   gap: var(--nt-space-3);
 }
 
+.produto-fotos-actions {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  align-items: center;
+}
+
 .btn-sm {
   font-size: 0.8rem;
   padding: 0.35rem 0.7rem;

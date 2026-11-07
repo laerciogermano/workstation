@@ -189,10 +189,15 @@ async function withCdpPage(url, fn) {
   }
 }
 
+async function googleCacheDb() {
+  return import('./db.js');
+}
+
 /**
  * Scraping Google Imagens via Chrome (JS renderizado).
+ * Sem `force`, devolve URLs já cacheadas no banco (não reabre CDP).
  */
-export async function searchGoogleImages(query, { n = 50 } = {}) {
+export async function searchGoogleImages(query, { n = 50, force = false } = {}) {
   const q = String(query ?? '').trim();
   if (!q) {
     throw Object.assign(new Error('query obrigatória (descricao ou ean)'), {
@@ -200,6 +205,38 @@ export async function searchGoogleImages(query, { n = 50 } = {}) {
     });
   }
   const want = clampN(n, 50);
+  const {
+    normalizeGoogleQuery,
+    getGoogleImagensBusca,
+    listGoogleImagensCache,
+    saveGoogleImagensCache,
+  } = await googleCacheDb();
+  const queryNorm = normalizeGoogleQuery(q);
+  const slug = slugFor({ query: q });
+
+  if (!force) {
+    const busca = await getGoogleImagensBusca(queryNorm);
+    if (busca) {
+      const rows = await listGoogleImagensCache(queryNorm);
+      const items = rows
+        .map((r) => ({
+          url: r.url_origem,
+          title: '',
+          fonte: r.fonte || 'google-imagens',
+          path_local: r.path_local || null,
+        }))
+        .filter((it) => it.url)
+        .slice(0, want);
+      return {
+        query: q,
+        n: want,
+        items,
+        cached: true,
+        query_norm: queryNorm,
+      };
+    }
+  }
+
   const searchUrl =
     `https://www.google.com/search?tbm=isch` +
     `&q=${encodeURIComponent(q)}` +
@@ -243,7 +280,30 @@ export async function searchGoogleImages(query, { n = 50 } = {}) {
     items.push({ url, title: '', fonte: 'google-imagens' });
     if (items.length >= want) break;
   }
-  return { query: q, n: want, items };
+
+  try {
+    await saveGoogleImagensCache({
+      queryNorm,
+      slug,
+      n: want,
+      imagens: items.map((it, i) => ({
+        ordem: i + 1,
+        url_origem: it.url,
+        path_local: null,
+        fonte: it.fonte,
+      })),
+    });
+  } catch (err) {
+    console.warn('[google-imagens] cache urls:', err.message);
+  }
+
+  return {
+    query: q,
+    n: want,
+    items,
+    cached: false,
+    query_norm: queryNorm,
+  };
 }
 
 /** Compat: scraping CDP não precisa de chave. */
@@ -344,23 +404,121 @@ export async function baixarGoogleImagens({
   ean,
   n = 50,
   download = true,
+  force = false,
 } = {}) {
   const query = String(ean || descricao || '').trim();
   if (!query) {
     throw Object.assign(new Error('informe descricao ou ean'), { status: 400 });
   }
   const modo = ean ? 'ean' : 'descricao';
-  const searched = await searchGoogleImages(query, { n });
+  const {
+    normalizeGoogleQuery,
+    getGoogleImagensBusca,
+    listGoogleImagensCache,
+    clearGoogleImagensCache,
+    saveGoogleImagensCache,
+  } = await googleCacheDb();
+  const queryNorm = normalizeGoogleQuery(query);
   const slug = slugFor({ ean, descricao, query });
+
+  if (force) {
+    await clearGoogleImagensCache(queryNorm);
+  } else {
+    const busca = await getGoogleImagensBusca(queryNorm);
+    if (busca) {
+      const rows = await listGoogleImagensCache(queryNorm);
+      const withPath = rows.filter((r) => r.path_local);
+      if (!download) {
+        return {
+          ok: true,
+          modo,
+          fonte: 'google-imagens-cdp',
+          query,
+          query_norm: queryNorm,
+          n: Number(busca.n_solicitado) || clampN(n, 50),
+          encontradas: rows.length,
+          baixadas: 0,
+          slug: busca.slug || slug,
+          cached: true,
+          skipped: true,
+          imagens: rows.map((r, i) => ({
+            ordem: r.ordem || i + 1,
+            url_origem: r.url_origem,
+            title: '',
+            fonte: r.fonte || 'google-imagens',
+            path_local: r.path_local,
+          })),
+        };
+      }
+      if (withPath.length > 0 || rows.length === 0) {
+        return {
+          ok: true,
+          modo,
+          fonte: 'google-imagens-cdp',
+          query,
+          query_norm: queryNorm,
+          n: Number(busca.n_solicitado) || clampN(n, 50),
+          encontradas: rows.length,
+          baixadas: 0,
+          slug: busca.slug || slug,
+          cached: true,
+          skipped: true,
+          imagens: withPath.map((r, i) => ({
+            ordem: r.ordem || i + 1,
+            url_origem: r.url_origem,
+            title: '',
+            fonte: r.fonte || 'google-imagens',
+            path_local: r.path_local,
+          })),
+        };
+      }
+      // Cache só com URL: baixa arquivo sem reabrir o Google.
+      const fromUrls = await downloadGoogleItems(
+        rows
+          .filter((r) => r.url_origem)
+          .map((r) => ({
+            url: r.url_origem,
+            title: '',
+            fonte: r.fonte || 'google-imagens',
+          })),
+        slug,
+      );
+      await saveGoogleImagensCache({
+        queryNorm,
+        slug: busca.slug || slug,
+        n: Number(busca.n_solicitado) || clampN(n, 50),
+        imagens: fromUrls.imagens,
+      });
+      return {
+        ok: true,
+        modo,
+        fonte: 'google-imagens-cdp',
+        query,
+        query_norm: queryNorm,
+        n: Number(busca.n_solicitado) || clampN(n, 50),
+        encontradas: fromUrls.imagens.length,
+        baixadas: fromUrls.baixadas,
+        slug: busca.slug || slug,
+        cached: true,
+        skipped: false,
+        imagens: fromUrls.imagens,
+      };
+    }
+  }
+
+  const searched = await searchGoogleImages(query, { n, force: true });
   const out = {
     ok: true,
     modo,
     fonte: 'google-imagens-cdp',
     query: searched.query,
+    query_norm: queryNorm,
     n: searched.n,
     encontradas: searched.items.length,
     baixadas: 0,
     slug,
+    cached: false,
+    skipped: false,
     imagens: [],
   };
 
@@ -375,29 +533,59 @@ export async function baixarGoogleImagens({
     return out;
   }
 
+  const dl = await downloadGoogleItems(searched.items, slug);
+  out.imagens = dl.imagens;
+  out.baixadas = dl.baixadas;
+
+  try {
+    await saveGoogleImagensCache({
+      queryNorm,
+      slug,
+      n: out.n,
+      imagens: out.imagens.length
+        ? out.imagens
+        : searched.items.map((it, i) => ({
+            ordem: i + 1,
+            url_origem: it.url,
+            path_local: null,
+            fonte: it.fonte,
+          })),
+    });
+  } catch (err) {
+    console.warn('[google-imagens] cache download:', err.message);
+  }
+
+  return out;
+}
+
+async function downloadGoogleItems(items, slug) {
   const dir = path.join(GOOGLE_IMAGENS_DIR, slug);
   fs.mkdirSync(dir, { recursive: true });
+  const imagens = [];
+  let baixadas = 0;
   let ordem = 1;
-  for (const it of searched.items) {
+  for (const it of items) {
     try {
       const { buf, contentType } = await httpGetBuffer(it.url);
       if (buf.length < 200) continue;
       const ext = extFromContentType(contentType, it.url);
       const file = `${String(ordem).padStart(2, '0')}.${ext}`;
       fs.writeFileSync(path.join(dir, file), buf);
-      out.imagens.push({
+      const sha1 = crypto.createHash('sha1').update(buf).digest('hex');
+      imagens.push({
         ordem,
         url_origem: it.url,
-        title: it.title,
-        fonte: it.fonte,
+        title: it.title || '',
+        fonte: it.fonte || 'google-imagens',
         path_local: `google-imagens/${slug}/${file}`,
         bytes: buf.length,
+        sha1,
       });
-      out.baixadas += 1;
+      baixadas += 1;
       ordem += 1;
     } catch (err) {
       console.warn('[google-imagens] download:', err.message);
     }
   }
-  return out;
+  return { imagens, baixadas };
 }

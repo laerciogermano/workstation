@@ -156,6 +156,29 @@ export async function initDb() {
 
     CREATE INDEX IF NOT EXISTS ean_sugestoes_desc_idx
       ON ${t('ean_sugestoes')}(descricao_norm);
+
+    CREATE TABLE IF NOT EXISTS ${t('google_imagens_buscas')} (
+      query_norm TEXT PRIMARY KEY,
+      slug TEXT NOT NULL,
+      n_solicitado INTEGER NOT NULL DEFAULT 50,
+      encontradas INTEGER NOT NULL DEFAULT 0,
+      buscado_em TIMESTAMPTZ NOT NULL DEFAULT now()
+    );
+
+    CREATE TABLE IF NOT EXISTS ${t('google_imagens_cache')} (
+      id SERIAL PRIMARY KEY,
+      query_norm TEXT NOT NULL,
+      slug TEXT NOT NULL,
+      url_origem TEXT,
+      path_local TEXT,
+      ordem INTEGER NOT NULL DEFAULT 0,
+      fonte TEXT NOT NULL DEFAULT 'google-imagens',
+      sha1 TEXT,
+      criado_em TIMESTAMPTZ NOT NULL DEFAULT now()
+    );
+
+    CREATE INDEX IF NOT EXISTS google_imagens_cache_q_idx
+      ON ${t('google_imagens_cache')}(query_norm);
   `);
 
   await p.query(`
@@ -168,6 +191,8 @@ export async function initDb() {
   await p.query(`
     CREATE UNIQUE INDEX IF NOT EXISTS ean_imagens_ean_path_uidx
       ON ${t('ean_imagens')}(codigo_barras, path_local);
+    CREATE UNIQUE INDEX IF NOT EXISTS google_imagens_cache_q_ordem_uidx
+      ON ${t('google_imagens_cache')}(query_norm, ordem);
   `);
 
   await syncFotosCodigosBarras(p);
@@ -548,6 +573,103 @@ export async function upsertCodigoBarras(
   return r.rows[0];
 }
 
+/** Chave estável p/ cache Google Imagens. */
+export function normalizeGoogleQuery(raw) {
+  return String(raw ?? '')
+    .normalize('NFD')
+    .replace(/\p{M}/gu, '')
+    .toUpperCase()
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+export async function getGoogleImagensBusca(queryNorm, client = getPool()) {
+  const q = normalizeGoogleQuery(queryNorm);
+  if (!q) return null;
+  const r = await client.query(
+    `SELECT * FROM ${t('google_imagens_buscas')} WHERE query_norm = $1`,
+    [q],
+  );
+  return r.rows[0] || null;
+}
+
+export async function listGoogleImagensCache(queryNorm, client = getPool()) {
+  const q = normalizeGoogleQuery(queryNorm);
+  if (!q) return [];
+  const r = await client.query(
+    `SELECT * FROM ${t('google_imagens_cache')}
+     WHERE query_norm = $1
+     ORDER BY ordem ASC, id ASC`,
+    [q],
+  );
+  return r.rows;
+}
+
+export async function clearGoogleImagensCache(queryNorm, client = getPool()) {
+  const q = normalizeGoogleQuery(queryNorm);
+  if (!q) return;
+  await client.query(
+    `DELETE FROM ${t('google_imagens_cache')} WHERE query_norm = $1`,
+    [q],
+  );
+  await client.query(
+    `DELETE FROM ${t('google_imagens_buscas')} WHERE query_norm = $1`,
+    [q],
+  );
+}
+
+/**
+ * Grava resultado de uma busca Google (mesmo com 0 itens) p/ não re-scrapear.
+ * @param {{ queryNorm: string, slug: string, n?: number, imagens: object[] }} payload
+ */
+export async function saveGoogleImagensCache(
+  { queryNorm, slug, n = 50, imagens },
+  client = getPool(),
+) {
+  const q = normalizeGoogleQuery(queryNorm);
+  const s = String(slug || q || 'q').trim();
+  if (!q) return [];
+  await client.query(
+    `DELETE FROM ${t('google_imagens_cache')} WHERE query_norm = $1`,
+    [q],
+  );
+  const rows = Array.isArray(imagens) ? imagens : [];
+  for (const img of rows) {
+    await client.query(
+      `INSERT INTO ${t('google_imagens_cache')}
+         (query_norm, slug, url_origem, path_local, ordem, fonte, sha1)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)
+       ON CONFLICT (query_norm, ordem) DO UPDATE SET
+         url_origem = EXCLUDED.url_origem,
+         path_local = COALESCE(EXCLUDED.path_local, ${t('google_imagens_cache')}.path_local),
+         fonte = EXCLUDED.fonte,
+         sha1 = COALESCE(EXCLUDED.sha1, ${t('google_imagens_cache')}.sha1),
+         slug = EXCLUDED.slug`,
+      [
+        q,
+        s,
+        img.url_origem || img.url || null,
+        img.path_local || null,
+        Number(img.ordem) || 0,
+        img.fonte || 'google-imagens',
+        img.sha1 || null,
+      ],
+    );
+  }
+  await client.query(
+    `INSERT INTO ${t('google_imagens_buscas')}
+       (query_norm, slug, n_solicitado, encontradas, buscado_em)
+     VALUES ($1, $2, $3, $4, now())
+     ON CONFLICT (query_norm) DO UPDATE SET
+       slug = EXCLUDED.slug,
+       n_solicitado = EXCLUDED.n_solicitado,
+       encontradas = EXCLUDED.encontradas,
+       buscado_em = now()`,
+    [q, s, Number(n) || 50, rows.length],
+  );
+  return listGoogleImagensCache(q, client);
+}
+
 export async function listEanImagens(codigoBarras, client = getPool()) {
   const ean = String(codigoBarras ?? '').trim();
   if (!ean) return [];
@@ -656,11 +778,11 @@ export async function buscarImagensEan(
     if (!force) {
       imagens = await ensureLegacyFotoAsCandidate(ean, client);
       if (imagens.length > 0) {
-        return { ean, skipped: true, imagens, baixadas: 0 };
+        return { ean, skipped: true, cached: true, imagens, baixadas: 0 };
       }
       imagens = await listEanImagens(ean, client);
       if (imagens.length > 0) {
-        return { ean, skipped: true, imagens, baixadas: 0 };
+        return { ean, skipped: true, cached: true, imagens, baixadas: 0 };
       }
     } else {
       await client.query(
@@ -706,7 +828,7 @@ export async function buscarImagensEan(
     // Legado flat ainda útil se a busca falhou
     if (baixadas === 0) {
       imagens = await ensureLegacyFotoAsCandidate(ean, client);
-      return { ean, skipped: false, imagens, baixadas: 0 };
+      return { ean, skipped: false, cached: false, imagens, baixadas: 0 };
     }
 
     imagens = await listEanImagens(ean, client);
@@ -716,7 +838,7 @@ export async function buscarImagensEan(
       imagens = await listEanImagens(ean, client);
     }
 
-    return { ean, skipped: false, imagens, baixadas };
+    return { ean, skipped: false, cached: false, imagens, baixadas };
   });
 }
 

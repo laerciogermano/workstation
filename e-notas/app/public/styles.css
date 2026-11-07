@@ -271,14 +271,20 @@ h2 {
 }
 
 .produto-img {
+  position: absolute;
+  inset: 0;
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  box-sizing: border-box;
+  padding: 0.55rem;
+  object-fit: contain;
   object-position: center;
 }
 
 .produto-img-empty {
+  position: absolute;
+  inset: 0;
   display: block;
   width: 100%;
   height: 100%;
@@ -996,17 +1002,17 @@ td.mono {
 }
 
 .produto-hero-media {
+  position: relative;
   aspect-ratio: 1;
   border-radius: var(--nt-radius-sm);
   background: #f3f6f9;
   border: 1px solid var(--nt-line);
-  display: grid;
-  place-items: center;
   overflow: hidden;
 }
 
 .produto-hero-media .produto-img {
-  padding: var(--nt-space-2);
+  padding: var(--nt-space-3);
+  object-fit: contain;
 }
 
 .produto-hero-body {

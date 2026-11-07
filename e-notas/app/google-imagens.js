@@ -1,7 +1,7 @@
 /**
- * Google Imagens via Custom Search (Programmable Search).
- * Um serviço: query = descrição OU EAN; baixa até N imagens (máx. 100 — limite da API).
- * Env: GOOGLE_CSE_API_KEY + GOOGLE_CSE_CX (+ opcional GOOGLE_CSE_CX_2).
+ * Google Imagens por scraping no Chrome CDP (sem API key).
+ * Query = descrição OU EAN → abre tbm=isch, lê as N primeiras e baixa.
+ * Requer Chrome com --remote-debugging-port (CDP_URL, default :9223).
  */
 import fs from 'fs';
 import https from 'https';
@@ -10,61 +10,187 @@ import path from 'path';
 import crypto from 'crypto';
 import { fileURLToPath } from 'url';
 import { URL } from 'url';
+import {
+  createCdpSession,
+  getJson,
+  openPage,
+} from '../../screen-robot/pocs/chrome-cdp/human-cdp/src/cdp.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export const GOOGLE_IMAGENS_DIR = path.join(__dirname, 'public', 'google-imagens');
-export const CSE_HARD_MAX = 100; // start + num ≤ 100 na JSON API
-const PAGE_SIZE = 10;
+export const SCRAPE_HARD_MAX = 100;
+
 const UA =
-  'notinhas.shop/0.1 (google image search; +https://notinhas.shop; contato@notinhas.shop)';
+  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36';
 
 function sleep(ms) {
   return new Promise((r) => setTimeout(r, ms));
 }
 
-export function cseCredentials() {
-  const key = String(process.env.GOOGLE_CSE_API_KEY || '').trim();
-  const cx1 = String(process.env.GOOGLE_CSE_CX || '').trim();
-  const cx2 = String(process.env.GOOGLE_CSE_CX_2 || '').trim();
-  const cxs = [...new Set([cx1, cx2].filter(Boolean))];
-  return { key, cxs };
-}
-
-export function cseConfigured() {
-  const { key, cxs } = cseCredentials();
-  return Boolean(key && cxs.length);
-}
-
 function clampN(n, fallback = 10) {
   const v = Number(n);
   if (!Number.isFinite(v) || v <= 0) return fallback;
-  return Math.min(CSE_HARD_MAX, Math.floor(v));
+  return Math.min(SCRAPE_HARD_MAX, Math.floor(v));
 }
 
-async function fetchJson(url) {
-  const ctrl = new AbortController();
-  const t = setTimeout(() => ctrl.abort(), 15_000);
+function cdpBase() {
+  return String(process.env.CDP_URL || 'http://127.0.0.1:9223').replace(/\/$/, '');
+}
+
+function decodeUrl(raw) {
+  let s = String(raw || '');
   try {
-    const res = await fetch(url, {
-      signal: ctrl.signal,
-      headers: { 'User-Agent': UA, Accept: 'application/json' },
-    });
-    if (!res.ok) {
-      const body = await res.text().catch(() => '');
-      throw Object.assign(
-        new Error(`Google CSE HTTP ${res.status}: ${body.slice(0, 200)}`),
-        { status: res.status === 403 || res.status === 429 ? 502 : 502 },
-      );
+    s = s
+      .replace(/\\u003d/g, '=')
+      .replace(/\\u0026/g, '&')
+      .replace(/\\u002F/gi, '/')
+      .replace(/\\\//g, '/');
+  } catch {
+    /* ignore */
+  }
+  return s.trim();
+}
+
+function isUsableImageUrl(u) {
+  if (!/^https?:\/\//i.test(u)) return false;
+  if (/encrypted-tbn\d*\.gstatic\.com/i.test(u)) return false;
+  if (/gstatic\.com\/(images\?|gb\/|og\/)/i.test(u)) return false;
+  if (/google\.[a-z.]+\/(tia\/|logos|images\/branding|\/xjs\/)/i.test(u)) return false;
+  if (/\/tia\/tia\.png/i.test(u)) return false;
+  if (/logo|sprite|favicon|data:image|al-icon/i.test(u)) return false;
+  if (u.length > 2500) return false;
+  // thumbs muito pequenas / UI chrome
+  if (/\b(w|h|width|height)=([1-9]|[1-4]\d)\b/i.test(u) && /gstatic|google/i.test(u)) {
+    return false;
+  }
+  return true;
+}
+
+export function extractImageUrlsFromHtml(html) {
+  const text = String(html || '');
+  const seen = new Set();
+  const out = [];
+  const push = (raw) => {
+    const u = decodeUrl(raw);
+    if (!isUsableImageUrl(u) || seen.has(u)) return;
+    seen.add(u);
+    out.push(u);
+  };
+  for (const m of text.matchAll(/"ou"\s*:\s*"(https?:[^"]+)"/g)) push(m[1]);
+  for (const m of text.matchAll(/"ou"\s*:\s*"(https?:\\\/\\\/[^"]+)"/g)) push(m[1]);
+  for (const m of text.matchAll(
+    /\["(https?:\/\/[^"]+\.(?:jpg|jpeg|png|webp|gif)[^"]*)",\s*\d+,\s*\d+\]/gi,
+  )) {
+    push(m[1]);
+  }
+  for (const m of text.matchAll(
+    /"(https?:\/\/[^"]+\.(?:jpg|jpeg|png|webp|gif)(?:\?[^"]*)?)"/gi,
+  )) {
+    push(m[1]);
+  }
+  for (const m of text.matchAll(/[?&]imgurl=(https?[^&"']+)/gi)) {
+    try {
+      push(decodeURIComponent(m[1]));
+    } catch {
+      push(m[1]);
     }
-    return await res.json();
+  }
+  return out;
+}
+
+const EXTRACT_JS = `(() => {
+  const seen = new Set();
+  const out = [];
+  const push = (u) => {
+    if (!u || typeof u !== 'string') return;
+    let s = u.trim();
+    if (!/^https?:\\/\\//i.test(s)) return;
+    if (/encrypted-tbn|gstatic\\.com\\/(images\\?|gb\\/)|google\\.[a-z.]+\\/tia\\/|logo|favicon|data:image|al-icon/i.test(s)) return;
+    if (seen.has(s)) return;
+    seen.add(s);
+    out.push(s);
+  };
+  for (const img of document.querySelectorAll('img')) {
+    push(img.currentSrc || img.src);
+    push(img.getAttribute('data-src'));
+    push(img.getAttribute('data-iurl'));
+  };
+  for (const a of document.querySelectorAll('a[href*="imgurl="]')) {
+    try {
+      const href = a.href || '';
+      const m = href.match(/[?&]imgurl=([^&]+)/);
+      if (m) push(decodeURIComponent(m[1]));
+    } catch (_) {}
+  }
+  const html = document.documentElement.innerHTML;
+  for (const m of html.matchAll(/"ou"\\s*:\\s*"(https?:[^"]+)"/g)) push(m[1]);
+  for (const m of html.matchAll(/"(https?:\\/\\/[^"]+\\.(?:jpg|jpeg|png|webp|gif)(?:\\?[^"]*)?)"/gi)) {
+    push(m[1]);
+  }
+  return out;
+})()`;
+
+async function withCdpPage(url, fn) {
+  const base = cdpBase();
+  try {
+    await getJson(base, '/json/version');
+  } catch {
+    throw Object.assign(
+      new Error(
+        `Chrome CDP indisponível em ${base}. Suba com --remote-debugging-port (ex.: start-laercio-germano.sh)`,
+      ),
+      { status: 503 },
+    );
+  }
+
+  const target = await openPage(base, url);
+  const ws = target.webSocketDebuggerUrl;
+  if (!ws) throw Object.assign(new Error('aba CDP sem WebSocket'), { status: 502 });
+  const session = createCdpSession(ws);
+  await session.ready;
+  try {
+    await session.send('Page.enable');
+    await session.send('Runtime.enable');
+    await session.send('Network.enable').catch(() => {});
+    // openPage já navega; garante reload se about:blank
+    const cur = await session.send('Runtime.evaluate', {
+      expression: 'location.href',
+      returnByValue: true,
+    });
+    const href = cur?.result?.value || '';
+    if (!String(href).includes('tbm=isch')) {
+      await session.send('Page.navigate', { url });
+      await sleep(2500);
+    } else {
+      await sleep(1800);
+    }
+    // scroll para carregar mais thumbs
+    await session.send('Runtime.evaluate', {
+      expression:
+        `(() => { window.scrollBy(0, Math.min(document.body.scrollHeight, 2400)); return true; })()`,
+      returnByValue: true,
+    });
+    await sleep(1200);
+    return await fn(session, target);
   } finally {
-    clearTimeout(t);
+    try {
+      const browserVer = await getJson(base, '/json/version');
+      const browser = createCdpSession(browserVer.webSocketDebuggerUrl);
+      await browser.ready;
+      const tid = target.id || target.targetId;
+      if (tid) {
+        await browser.send('Target.closeTarget', { targetId: tid }).catch(() => {});
+      }
+      browser.close();
+    } catch {
+      /* ignore */
+    }
+    session.close();
   }
 }
 
 /**
- * Lista URLs de imagem no Google (paginado). Usa até 2 CX se configurados.
- * @returns {Promise<{ query: string, n: number, items: { url: string, title: string, cx: string }[] }>}
+ * Scraping Google Imagens via Chrome (JS renderizado).
  */
 export async function searchGoogleImages(query, { n = 10 } = {}) {
   const q = String(query ?? '').trim();
@@ -73,56 +199,56 @@ export async function searchGoogleImages(query, { n = 10 } = {}) {
       status: 400,
     });
   }
-  const { key, cxs } = cseCredentials();
-  if (!key || !cxs.length) {
-    throw Object.assign(
-      new Error(
-        'Google CSE não configurado: defina GOOGLE_CSE_API_KEY e GOOGLE_CSE_CX (opcional GOOGLE_CSE_CX_2)',
-      ),
-      { status: 503 },
-    );
-  }
-
   const want = clampN(n, 10);
-  const seen = new Set();
-  const items = [];
+  const searchUrl =
+    `https://www.google.com/search?tbm=isch` +
+    `&q=${encodeURIComponent(q)}` +
+    `&hl=pt-BR&gl=br&safe=active`;
 
-  for (const cx of cxs) {
-    if (items.length >= want) break;
-    for (let start = 1; items.length < want && start <= 91; start += PAGE_SIZE) {
-      const num = Math.min(PAGE_SIZE, want - items.length);
-      const url =
-        `https://www.googleapis.com/customsearch/v1?key=${encodeURIComponent(key)}` +
-        `&cx=${encodeURIComponent(cx)}` +
-        `&q=${encodeURIComponent(q)}` +
-        `&searchType=image&safe=active` +
-        `&num=${num}&start=${start}`;
-      let data;
-      try {
-        data = await fetchJson(url);
-      } catch (err) {
-        console.warn(`[google-imagens] cx=${cx} start=${start}:`, err.message);
-        break;
-      }
-      const page = data?.items;
-      if (!Array.isArray(page) || !page.length) break;
-      for (const it of page) {
-        const link = String(it.link || '').trim();
-        if (!link || seen.has(link)) continue;
-        seen.add(link);
-        items.push({
-          url: link,
-          title: String(it.title || '').slice(0, 200),
-          cx,
-        });
-        if (items.length >= want) break;
-      }
-      if (page.length < num) break;
-      await sleep(120);
+  const urls = await withCdpPage(searchUrl, async (session) => {
+    // mais scroll se pedir muitas imagens
+    const scrolls = Math.min(6, Math.ceil(want / 20));
+    for (let i = 0; i < scrolls; i += 1) {
+      await session.send('Runtime.evaluate', {
+        expression: `window.scrollBy(0, 1600)`,
+        returnByValue: true,
+      });
+      await sleep(700);
     }
-  }
+    const evaled = await session.send('Runtime.evaluate', {
+      expression: EXTRACT_JS,
+      returnByValue: true,
+      awaitPromise: false,
+    });
+    let list = evaled?.result?.value;
+    if (!Array.isArray(list) || list.length < Math.min(5, want)) {
+      const htmlEval = await session.send('Runtime.evaluate', {
+        expression: 'document.documentElement.outerHTML',
+        returnByValue: true,
+      });
+      const html = htmlEval?.result?.value || '';
+      const fromHtml = extractImageUrlsFromHtml(html);
+      const merged = [...new Set([...(list || []), ...fromHtml])];
+      list = merged;
+    }
+    return Array.isArray(list) ? list : [];
+  });
 
+  const items = [];
+  const seen = new Set();
+  for (const u of urls) {
+    const url = decodeUrl(u);
+    if (!isUsableImageUrl(url) || seen.has(url)) continue;
+    seen.add(url);
+    items.push({ url, title: '', fonte: 'google-imagens' });
+    if (items.length >= want) break;
+  }
   return { query: q, n: want, items };
+}
+
+/** Compat: scraping CDP não precisa de chave. */
+export function cseConfigured() {
+  return true;
 }
 
 function extFromContentType(ct, url) {
@@ -149,7 +275,11 @@ function httpGetBuffer(url, { timeoutMs = 20_000, redirects = 5 } = {}) {
       url,
       {
         family: 4,
-        headers: { 'User-Agent': UA, Accept: 'image/*,*/*' },
+        headers: {
+          'User-Agent': UA,
+          Accept: 'image/avif,image/webp,image/*,*/*',
+          Referer: 'https://www.google.com/',
+        },
         timeout: timeoutMs,
       },
       (res) => {
@@ -209,10 +339,6 @@ function slugFor({ ean, descricao, query }) {
   return `q-${raw || 'busca'}-${hash}`;
 }
 
-/**
- * Busca no Google Imagens e opcionalmente baixa N arquivos.
- * @param {{ descricao?: string, ean?: string, n?: number|string, download?: boolean }} opts
- */
 export async function baixarGoogleImagens({
   descricao,
   ean,
@@ -221,10 +347,7 @@ export async function baixarGoogleImagens({
 } = {}) {
   const query = String(ean || descricao || '').trim();
   if (!query) {
-    throw Object.assign(
-      new Error('informe descricao ou ean'),
-      { status: 400 },
-    );
+    throw Object.assign(new Error('informe descricao ou ean'), { status: 400 });
   }
   const modo = ean ? 'ean' : 'descricao';
   const searched = await searchGoogleImages(query, { n });
@@ -232,6 +355,7 @@ export async function baixarGoogleImagens({
   const out = {
     ok: true,
     modo,
+    fonte: 'google-imagens-cdp',
     query: searched.query,
     n: searched.n,
     encontradas: searched.items.length,
@@ -245,7 +369,7 @@ export async function baixarGoogleImagens({
       ordem: i + 1,
       url_origem: it.url,
       title: it.title,
-      cx: it.cx,
+      fonte: it.fonte,
       path_local: null,
     }));
     return out;
@@ -261,13 +385,12 @@ export async function baixarGoogleImagens({
       const ext = extFromContentType(contentType, it.url);
       const file = `${String(ordem).padStart(2, '0')}.${ext}`;
       fs.writeFileSync(path.join(dir, file), buf);
-      const pathLocal = `google-imagens/${slug}/${file}`;
       out.imagens.push({
         ordem,
         url_origem: it.url,
         title: it.title,
-        cx: it.cx,
-        path_local: pathLocal,
+        fonte: it.fonte,
+        path_local: `google-imagens/${slug}/${file}`,
         bytes: buf.length,
       });
       out.baixadas += 1;

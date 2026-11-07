@@ -10,7 +10,7 @@ Ordem de fontes:
 2. Open Beauty Facts  
 3. Open Products Facts  
 4. UPCitemdb  
-5. Google Custom Search (imagens) — **só se** `GOOGLE_CSE_API_KEY` + `GOOGLE_CSE_CX` no `.env`
+5. Google Imagens (scraping `tbm=isch`, sem API key)
 
 A candidata selecionada alimenta `codigos_barras.foto_url` (feed). Troca na UI do detalhe do produto.
 

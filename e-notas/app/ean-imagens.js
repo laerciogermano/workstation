@@ -10,7 +10,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import crypto from 'crypto';
 import { URL } from 'url';
-import { searchGoogleImages, cseConfigured } from './google-imagens.js';
+import { searchGoogleImages } from './google-imagens.js';
 
 // images.openfoodfacts.org às vezes resolve IPv6 inacessível neste lab
 try {
@@ -129,16 +129,15 @@ async function fromUpcitemdb(ean, list) {
   }
 }
 
-/** Fallback opcional: Google Custom Search (imagens). */
+/** Fallback: scraping Google Imagens (sem API key). */
 async function fromGoogleCse(ean, list) {
-  if (!cseConfigured()) return;
   try {
     const { items } = await searchGoogleImages(ean, { n: 5 });
     for (const item of items) {
-      pushCandidate(list, item.url, 'google-cse', 90);
+      pushCandidate(list, item.url, 'google-imagens', 90);
     }
   } catch (err) {
-    console.warn('[ean-imagens] google-cse:', err.message);
+    console.warn('[ean-imagens] google-imagens:', err.message);
   }
 }
 

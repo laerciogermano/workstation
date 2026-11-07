@@ -280,7 +280,7 @@ Curadoria: [`../marca/benchmarking-solucoes/README.md`](../marca/benchmarking-so
 ## REQ-032 — Busca automática de fotos ao cadastrar EAN (2026-11-04)
 
 - Ao **cadastrar/vincular** um código de barras (`POST /api/codigos-barras`), dispara busca **assíncrona** de imagens desse EAN (até ~5 candidatas).
-- Fontes: Open Food Facts → Open Beauty → Open Products → UPCitemdb; **Google Custom Search** só com `GOOGLE_CSE_API_KEY` + `GOOGLE_CSE_CX` (fallback).
+- Fontes: Open Food Facts → Open Beauty → Open Products → UPCitemdb; **Google Imagens** via scraping (REQ-042, sem API key).
 - Tabela `enotas.ean_imagens`: EAN, `url_origem`, `fonte`, `path_local`, `ordem`, `selecionada`, `sha1`, `criado_em`. Arquivos em `ean-fotos/{ean}/NN.ext`.
 - **Uma** imagem `selecionada` propaga `codigos_barras.foto_url` (todos os vínculos daquele EAN) — feed / vitrine / detalhe.
 - Escolha (não voto): auto-seleção na 1ª importação; UI **Fotos** no detalhe do produto (+ **Buscar fotos** / force).
@@ -378,13 +378,14 @@ Card: [BXKZ55Wb](https://trello.com/c/BXKZ55Wb).
 
 ## REQ-042 — Google Imagens: descrição ou EAN + N (2026-11-07)
 
-- Um serviço: enviar **descrição** ou **EAN** e **N**; buscar as N primeiras imagens do Google Imagens e baixar.
-- `GET|POST /api/enrichment/google-imagens` — query/body: `descricao` **ou** `ean` (`codigo_barras`), `n` (default 10, máx **100** — teto da Custom Search JSON API), `download=0` para só listar URLs.
-- Credenciais: `GOOGLE_CSE_API_KEY` + `GOOGLE_CSE_CX` (+ opcional `GOOGLE_CSE_CX_2` para segundo Programmable Search Engine).
-- Persistência local: `public/google-imagens/{slug}/NN.ext` (`slug` = `ean-…` ou `q-…`).
-- Reusa a mesma busca no fallback de `ean-imagens` (N=5).
-- Antes: CSE só fallback fixo de 5 no pipeline EAN. Depois: endpoint dedicado com N variável.
-- Rollback: remover rota/módulo `google-imagens.js`; reverter `fromGoogleCse` inline; apagar pasta `public/google-imagens/`.
+- Um serviço: enviar **descrição** ou **EAN** e **N**; ir ao Google Imagens (web) e baixar as N primeiras.
+- **Sem API key** — Chrome CDP abre `google.com/search?tbm=isch&q=…`, lê thumbs/URLs e baixa N.
+- Pré-req: Chrome com `--remote-debugging-port` (`CDP_URL`, default `http://127.0.0.1:9223`).
+- `GET|POST /api/enrichment/google-imagens` — `descricao` **ou** `ean`, `n` (default 10, máx 100), `download=0` só lista URLs.
+- Persistência: `public/google-imagens/{slug}/NN.ext`.
+- Também fallback do pipeline EAN→fotos (N=5).
+- Antes: Custom Search / fetch HTML (Google bloqueia sem JS). Depois: scrape via CDP.
+- Rollback: remover rota/módulo `google-imagens.js`; tirar fallback em `ean-imagens.js`; apagar `public/google-imagens/`.
 
 ## Próximos passos
 

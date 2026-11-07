@@ -10,6 +10,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import crypto from 'crypto';
 import { URL } from 'url';
+import { searchGoogleImages, cseConfigured } from './google-imagens.js';
 
 // images.openfoodfacts.org às vezes resolve IPv6 inacessível neste lab
 try {
@@ -128,18 +129,16 @@ async function fromUpcitemdb(ean, list) {
   }
 }
 
-/** Fallback opcional: Google Custom Search (imagens). Requer GOOGLE_CSE_API_KEY + GOOGLE_CSE_CX. */
+/** Fallback opcional: Google Custom Search (imagens). */
 async function fromGoogleCse(ean, list) {
-  const key = String(process.env.GOOGLE_CSE_API_KEY || '').trim();
-  const cx = String(process.env.GOOGLE_CSE_CX || '').trim();
-  if (!key || !cx) return;
-  const q = encodeURIComponent(ean);
-  const url =
-    `https://www.googleapis.com/customsearch/v1?key=${encodeURIComponent(key)}` +
-    `&cx=${encodeURIComponent(cx)}&q=${q}&searchType=image&num=5&safe=active`;
-  const data = await fetchJson(url);
-  for (const item of data?.items || []) {
-    pushCandidate(list, item.link, 'google-cse', 90);
+  if (!cseConfigured()) return;
+  try {
+    const { items } = await searchGoogleImages(ean, { n: 5 });
+    for (const item of items) {
+      pushCandidate(list, item.url, 'google-cse', 90);
+    }
+  } catch (err) {
+    console.warn('[ean-imagens] google-cse:', err.message);
   }
 }
 

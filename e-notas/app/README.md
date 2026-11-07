@@ -32,8 +32,9 @@ Produção Contabo (HTTPS, convive com conect tec): `https://144.126.154.90/enot
 | `DB_PASSWORD` | (ver `credenciais.md`) |
 | `DB_NAME` | `connectmax` |
 | `DB_SCHEMA` | `enotas` |
-| `GOOGLE_CSE_API_KEY` | (opcional) Custom Search — fallback de imagens |
-| `GOOGLE_CSE_CX` | (opcional) ID do Search Engine |
+| `GOOGLE_CSE_API_KEY` | (opcional) Custom Search / Google Imagens |
+| `GOOGLE_CSE_CX` | (opcional) ID do Search Engine 1 |
+| `GOOGLE_CSE_CX_2` | (opcional) ID do Search Engine 2 |
 
 Credenciais não vão no git (`.env` ignorado).
 
@@ -72,8 +73,11 @@ Resposta: `{ ok, created, empresaCriada, url, empresa, nota, itens }`.
 | `GET`/`POST` | `/api/enrichment/ean` | query/body `descricao` → candidatos EAN (REQ-039; sem auto-vínculo) |
 | `GET`/`POST` | `/api/enrichment/imagens` | query/body `ean` ou `codigo_barras`, `force?` → imagens (REQ-040) |
 | `GET`/`POST` | `/api/enrichment/imagens-por-descricao` | query/body `descricao`, `force?` → `modo: ean\|texto` + imagens (REQ-041) |
+| `GET`/`POST` | `/api/enrichment/google-imagens` | `descricao` **ou** `ean` + `n` (1–100) → Google Imagens e baixa (REQ-042); `download=0` só lista URLs |
 
-Abrir no browser (GET): `https://127.0.0.1:4173/api/enrichment/ean?descricao=COCA%20COLA%202L%20PET`
+Abrir no browser (GET): `https://127.0.0.1:4173/api/enrichment/ean?descricao=COCA%20COLA%202L%20PET`  
+Google Imagens: `https://127.0.0.1:4173/api/enrichment/google-imagens?descricao=COCA%20COLA%202L&n=20`  
+Limite da API Google: **máx. 100** resultados por query (páginas de 10). Arquivos em `public/google-imagens/`.
 
 UI: na **vitrine do estabelecimento**, botão **Código de barras** / **Editar EAN** no item (câmera, tirar foto / escolher imagem, digitação, **Sugerir EAN pela descrição**) → modal `#modal-ean` → `POST` acima (REQ-031/039). No **detalhe do produto**, grade **Fotos** para escolher a representativa.
 

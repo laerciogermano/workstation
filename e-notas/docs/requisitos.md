@@ -376,6 +376,16 @@ Card: [BXKZ55Wb](https://trello.com/c/BXKZ55Wb).
 - Se top EAN com score ≥ 0,72 → pipeline EAN→imagens (`modo: ean`); senão URLs textuais OFF em `imagens_texto` sem gravar vínculo (`modo: texto`).
 - Antes: imagens só com EAN conhecido. Depois: orquestração descrição→(EAN?)→imagens.
 
+## REQ-042 — Google Imagens: descrição ou EAN + N (2026-11-07)
+
+- Um serviço: enviar **descrição** ou **EAN** e **N**; buscar as N primeiras imagens do Google Imagens e baixar.
+- `GET|POST /api/enrichment/google-imagens` — query/body: `descricao` **ou** `ean` (`codigo_barras`), `n` (default 10, máx **100** — teto da Custom Search JSON API), `download=0` para só listar URLs.
+- Credenciais: `GOOGLE_CSE_API_KEY` + `GOOGLE_CSE_CX` (+ opcional `GOOGLE_CSE_CX_2` para segundo Programmable Search Engine).
+- Persistência local: `public/google-imagens/{slug}/NN.ext` (`slug` = `ean-…` ou `q-…`).
+- Reusa a mesma busca no fallback de `ean-imagens` (N=5).
+- Antes: CSE só fallback fixo de 5 no pipeline EAN. Depois: endpoint dedicado com N variável.
+- Rollback: remover rota/módulo `google-imagens.js`; reverter `fromGoogleCse` inline; apagar pasta `public/google-imagens/`.
+
 ## Próximos passos
 
 → Manter este arquivo alinhado a cada pedido novo · esteira de docs em [`README.md`](README.md) quando avançar funcionalidades/BDD.

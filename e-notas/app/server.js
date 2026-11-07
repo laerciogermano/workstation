@@ -32,6 +32,7 @@ import {
   normalizeDescricao,
   resolveEanFromDescricao,
 } from './enrichment.js';
+import { baixarGoogleImagens } from './google-imagens.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PORT = Number(process.env.PORT) || 4173;
@@ -243,12 +244,43 @@ async function handleEnrichmentImagensPorDescricao(req, res) {
   }
 }
 
+/** REQ-042 — Google Imagens: descrição|ean + n (baixa as N primeiras). */
+async function handleGoogleImagens(req, res) {
+  try {
+    const descricao = enrichmentInput(req, 'descricao');
+    const ean =
+      enrichmentInput(req, 'ean') || enrichmentInput(req, 'codigo_barras');
+    const nRaw = enrichmentInput(req, 'n') || req.body?.n || 10;
+    const dl = req.query?.download ?? req.body?.download;
+    const download = !(dl === '0' || dl === 'false' || dl === false);
+    if (!descricao && !ean) {
+      return res.status(400).json({
+        ok: false,
+        error: 'informe descricao ou ean (+ n opcional, máx 100)',
+      });
+    }
+    const result = await baixarGoogleImagens({
+      descricao: ean ? undefined : descricao,
+      ean: ean || undefined,
+      n: nRaw,
+      download,
+    });
+    return res.json(result);
+  } catch (err) {
+    const status = err.status || 500;
+    console.error('[enrichment:google-imagens]', err.message);
+    return res.status(status).json({ ok: false, error: err.message });
+  }
+}
+
 app.get('/api/enrichment/ean', handleEnrichmentEan);
 app.post('/api/enrichment/ean', handleEnrichmentEan);
 app.get('/api/enrichment/imagens', handleEnrichmentImagens);
 app.post('/api/enrichment/imagens', handleEnrichmentImagens);
 app.get('/api/enrichment/imagens-por-descricao', handleEnrichmentImagensPorDescricao);
 app.post('/api/enrichment/imagens-por-descricao', handleEnrichmentImagensPorDescricao);
+app.get('/api/enrichment/google-imagens', handleGoogleImagens);
+app.post('/api/enrichment/google-imagens', handleGoogleImagens);
 
 app.get('/api/ean-imagens', async (req, res) => {
   try {

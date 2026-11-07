@@ -206,6 +206,19 @@
       flex: 1;
     }
 
+    .card__next {
+      color: var(--ink);
+      font-family: "Newsreader", Georgia, serif;
+      font-size: 0.98rem;
+      line-height: 1.45;
+      flex: 1;
+    }
+
+    .card__next.is-empty::before {
+      content: "—";
+      color: var(--body);
+    }
+
     .card__go {
       margin-top: 1.15rem;
       font-family: "Archivo", system-ui, sans-serif;
@@ -270,7 +283,7 @@
           <span class="card__num">01</span>
         </div>
         <h2>Connect</h2>
-        <p>Automação LinkedIn e vendas sobre o screen-robot.</p>
+        <p class="card__next" data-board="connect">Automatizar processo de cobrança</p>
         <span class="card__go">Abrir</span>
       </a>
 
@@ -280,7 +293,7 @@
           <span class="card__num">02</span>
         </div>
         <h2>Connect Tech</h2>
-        <p>Consultoria e desenvolvimento de software.</p>
+        <p class="card__next" data-board="connect-tech">Criar PDF de apresentação</p>
         <span class="card__go">Abrir</span>
       </a>
       </div>
@@ -298,7 +311,7 @@
           <span class="card__num">03</span>
         </div>
         <h2>Clozzy</h2>
-        <p>Conteúdo exclusivo de influencers para fãs.</p>
+        <p class="card__next" data-board="clozzy">Benchmarking</p>
         <span class="card__go">Abrir</span>
       </a>
 
@@ -308,7 +321,7 @@
           <span class="card__num">04</span>
         </div>
         <h2>e-notas</h2>
-        <p>Índice de preços via QR de nota fiscal.</p>
+        <p class="card__next" data-board="e-notas">Criar listas</p>
         <span class="card__go">Abrir</span>
       </a>
 
@@ -318,7 +331,7 @@
           <span class="card__num">05</span>
         </div>
         <h2>RoleGo</h2>
-        <p>Descoberta de festas, shows e eventos próximos.</p>
+        <p class="card__next" data-board="role-go">gerar primeira versao</p>
         <span class="card__go">Abrir</span>
       </a>
 
@@ -328,7 +341,7 @@
           <span class="card__num">06</span>
         </div>
         <h2>Board</h2>
-        <p>Kanban próprio - substituto do Trello.</p>
+        <p class="card__next is-empty" data-board="board"></p>
         <span class="card__go">Abrir</span>
       </a>
 
@@ -338,7 +351,7 @@
           <span class="card__num">07</span>
         </div>
         <h2>Plans</h2>
-        <p>Orquestrador - board, Gantt e árvore de execução.</p>
+        <p class="card__next" data-board="plans">Enfatizar que deve ser criado um orquestrador de ias urgentemente</p>
         <span class="card__go">Abrir</span>
       </a>
 
@@ -348,7 +361,7 @@
           <span class="card__num">08</span>
         </div>
         <h2>Context Recorder</h2>
-        <p>Memória contínua de mic, desktop e tela/OCR.</p>
+        <p class="card__next is-empty" data-board="context-recorder"></p>
         <span class="card__go">Abrir</span>
       </a>
 
@@ -358,7 +371,7 @@
           <span class="card__num">09</span>
         </div>
         <h2>Cupido</h2>
-        <p>Agente de match anônimo com contexto e encontro.</p>
+        <p class="card__next is-empty" data-board="cupido"></p>
         <span class="card__go">Abrir</span>
       </a>
 
@@ -368,7 +381,7 @@
           <span class="card__num">10</span>
         </div>
         <h2>Hurble</h2>
-        <p>Roulette social + perfil, amigos, DM e stories.</p>
+        <p class="card__next is-empty" data-board="hurble"></p>
         <span class="card__go">Abrir</span>
       </a>
 
@@ -378,7 +391,7 @@
           <span class="card__num">11</span>
         </div>
         <h2>Agent Shop</h2>
-        <p>Comprar, nomear e agendar agentes autônomos.</p>
+        <p class="card__next is-empty" data-board="agent-shop"></p>
         <span class="card__go">Abrir</span>
       </a>
 
@@ -388,7 +401,7 @@
           <span class="card__num">12</span>
         </div>
         <h2>Caronas</h2>
-        <p>Caronas recorrentes casa-trabalho.</p>
+        <p class="card__next" data-board="caronas">Criar documento de épicos</p>
         <span class="card__go">Abrir</span>
       </a>
 
@@ -398,7 +411,7 @@
           <span class="card__num">13</span>
         </div>
         <h2>Fitness</h2>
-        <p>Treino, dieta e métricas com gamificação.</p>
+        <p class="card__next" data-board="fitness">Definir documento de épicos</p>
         <span class="card__go">Abrir</span>
       </a>
 
@@ -408,7 +421,7 @@
           <span class="card__num">14</span>
         </div>
         <h2>Jiu-jitsu</h2>
-        <p>Grafo de posições, transições e finalizações.</p>
+        <p class="card__next" data-board="jiu-jitsu">Definir documento de visão</p>
         <span class="card__go">Abrir</span>
       </a>
       </div>
@@ -426,7 +439,7 @@
           <span class="card__num">15</span>
         </div>
         <h2>Flow</h2>
-        <p>Linguagem e fundamentos de fluxo (Flow + Flow Language).</p>
+        <p class="card__next" data-board="flow">Definir Épicos</p>
         <span class="card__go">Abrir</span>
       </a>
 
@@ -445,7 +458,7 @@
           <span class="card__num">16</span>
         </div>
         <h2>Eternos Mutáveis</h2>
-        <p>Manuscrito / tese filosófica.</p>
+        <p class="card__next" data-board="eternos-mutaveis">Referncias de modelo de escrita</p>
         <span class="card__go">Abrir</span>
       </a>
 
@@ -455,7 +468,7 @@
           <span class="card__num">17</span>
         </div>
         <h2>Aulas</h2>
-        <p>Árvore de seções e conteúdo didático.</p>
+        <p class="card__next" data-board="aulas">Criar roadmap</p>
         <span class="card__go">Abrir</span>
       </a>
 
@@ -465,7 +478,7 @@
           <span class="card__num">18</span>
         </div>
         <h2>Filme Metafísico</h2>
-        <p>Filme O Metafísico - visão e roteiro.</p>
+        <p class="card__next" data-board="filme-metafisico">Definir Roteiro</p>
         <span class="card__go">Abrir</span>
       </a>
 
@@ -476,7 +489,7 @@
           <span class="card__num">19</span>
         </div>
         <h2>Provas UFPR</h2>
-        <p>Acervo de provas e gabaritos do vestibular.</p>
+        <p class="card__next is-empty" data-board="provas-ufpr"></p>
         <span class="card__go">Abrir</span>
       </a>
       </div>
@@ -494,7 +507,7 @@
           <span class="card__num">20</span>
         </div>
         <h2>Financeiro</h2>
-        <p>Controle de gastos, cartões e finanças pessoais.</p>
+        <p class="card__next" data-board="financeiro">ajustar</p>
         <span class="card__go">Abrir</span>
       </a>
       <a class="card" href="board.html?p=ov">
@@ -503,7 +516,7 @@
           <span class="card__num">21</span>
         </div>
         <h2>OV</h2>
-        <p>Contas OmeTV via Chrome CDP.</p>
+        <p class="card__next" data-board="ov">Criar novo lgermeno</p>
         <span class="card__go">Abrir</span>
       </a>
       </div>
@@ -521,7 +534,7 @@
           <span class="card__num">22</span>
         </div>
         <h2>low-chat</h2>
-        <p>Persona + contexto + LLM barato para vários canais.</p>
+        <p class="card__next is-empty" data-board="low-chat"></p>
         <span class="card__go">Abrir</span>
       </a>
 
@@ -533,7 +546,60 @@
     <footer>Categorias · Editorial Bold · Lucide</footer>
   </div>
 
+  <script>window.__BOARDS__ = {"connect":{"name":"Connect","blurb":"Automação LinkedIn e vendas","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"connect-t-0","title":"Automatizar processo de cobrança"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"connect-tech":{"name":"Connect Tech","blurb":"Consultoria e desenvolvimento de software","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"connect-tech-t-0","title":"Criar PDF de apresentação"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"clozzy":{"name":"Clozzy","blurb":"Conteúdo exclusivo","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"clozzy-t-0","title":"Benchmarking"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"e-notas":{"name":"e-notas","blurb":"Índice de preços via QR","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"e-notas-t-0","title":"Criar listas"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"role-go":{"name":"RoleGo","blurb":"Festas e eventos","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"role-go-t-0","title":"gerar primeira versao"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"board":{"name":"Board","blurb":"Kanban próprio","columns":[{"id":"todo","title":"A fazer","cards":[]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"plans":{"name":"Plans","blurb":"Orquestrador","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"plans-t-0","title":"Enfatizar que deve ser criado um orquestrador de ias urgentemente"},{"id":"plans-t-1","title":"Definir documento de visão"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[{"id":"plans-d-0","title":"Princípio: dividir atividades (mesmo por IA) em partes para validação parcial"}]}]},"context-recorder":{"name":"Context Recorder","blurb":"Memória contínua","columns":[{"id":"todo","title":"A fazer","cards":[]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"cupido":{"name":"Cupido","blurb":"Match anônimo","columns":[{"id":"todo","title":"A fazer","cards":[]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"hurble":{"name":"Hurble","blurb":"Roulette social","columns":[{"id":"todo","title":"A fazer","cards":[]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"agent-shop":{"name":"Agent Shop","blurb":"Agentes autônomos","columns":[{"id":"todo","title":"A fazer","cards":[]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"caronas":{"name":"Caronas","blurb":"Caronas recorrentes","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"caronas-t-0","title":"Criar documento de épicos"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"fitness":{"name":"Fitness","blurb":"Treino e dieta","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"fitness-t-0","title":"Definir documento de épicos"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"jiu-jitsu":{"name":"Jiu-jitsu","blurb":"Grafo de posições","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"jiu-jitsu-t-0","title":"Definir documento de visão"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"flow":{"name":"Flow","blurb":"Linguagem e fundamentos de fluxo","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"flow-t-0","title":"Definir Épicos"},{"id":"flow-t-1","title":"Criar roadmap"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"eternos-mutaveis":{"name":"Eternos Mutáveis","blurb":"Manuscrito","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"eternos-mutaveis-t-0","title":"Referncias de modelo de escrita"},{"id":"eternos-mutaveis-t-1","title":"Referncias externas bsucar na net para cada capitulo"},{"id":"eternos-mutaveis-t-2","title":"Reunir todos os áudios e transcricoes do iphone que nao estao aqui"},{"id":"eternos-mutaveis-t-3","title":"baixar os posts dos threads"},{"id":"eternos-mutaveis-t-4","title":"Definir roadmap"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"aulas":{"name":"Aulas","blurb":"Conteúdo didático","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"aulas-t-0","title":"Criar roadmap"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"filme-metafisico":{"name":"Filme Metafísico","blurb":"Roteiro","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"filme-metafisico-t-0","title":"Definir Roteiro"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"provas-ufpr":{"name":"Provas UFPR","blurb":"Acervo de provas","columns":[{"id":"todo","title":"A fazer","cards":[]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"financeiro":{"name":"Financeiro","blurb":"Gastos e cartões","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"financeiro-t-0","title":"ajustar"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"ov":{"name":"OV","blurb":"Contas OmeTV","columns":[{"id":"todo","title":"A fazer","cards":[{"id":"ov-t-0","title":"Criar novo lgermeno"},{"id":"ov-t-1","title":"Criar novo marcelo"},{"id":"ov-t-2","title":"Criar Germano"},{"id":"ov-t-3","title":"projeto x8 e x$"},{"id":"ov-t-4","title":"projeto Germano"}]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]},"low-chat":{"name":"low-chat","blurb":"LLM barato multi-canal","columns":[{"id":"todo","title":"A fazer","cards":[]},{"id":"doing","title":"Fazendo","cards":[]},{"id":"done","title":"Feito","cards":[]}]}};</script>
   <script src="https://unpkg.com/lucide@0.468.0"></script>
   <script>lucide.createIcons();</script>
+
+  <script>
+    (function () {
+      const key = (s) => `works-board:v4:${s}`;
+
+      function nextFromBoard(board) {
+        if (!board?.columns) return null;
+        for (const id of ["todo", "doing"]) {
+          const col = board.columns.find((c) => c.id === id);
+          if (col?.cards?.length) return col.cards[0].title;
+        }
+        return null;
+      }
+
+      function apply(slug, title) {
+        document.querySelectorAll(`.card__next[data-board="${slug}"]`).forEach((el) => {
+          if (title) {
+            el.textContent = title;
+            el.classList.remove("is-empty");
+          } else {
+            el.textContent = "";
+            el.classList.add("is-empty");
+          }
+        });
+      }
+
+      async function loadSeed() {
+        try {
+          const res = await fetch("boards/data.json", { cache: "no-store" });
+          if (res.ok) return await res.json();
+        } catch (_) {}
+        return window.__BOARDS__ || {};
+      }
+
+      (async () => {
+        const seed = await loadSeed();
+        const slugs = new Set(
+          [...document.querySelectorAll(".card__next[data-board]")].map((el) => el.dataset.board)
+        );
+        for (const slug of slugs) {
+          let board = null;
+          try {
+            const raw = localStorage.getItem(key(slug));
+            if (raw) board = JSON.parse(raw);
+          } catch (_) {}
+          if (!board) board = seed[slug];
+          apply(slug, nextFromBoard(board));
+        }
+      })();
+    })();
+  </script>
+
 </body>
 </html>

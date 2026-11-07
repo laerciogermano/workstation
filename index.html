@@ -141,6 +141,19 @@
         transform 160ms var(--ease);
     }
 
+    .card.has-banner {
+      padding-top: 0;
+    }
+
+    .card__banner {
+      display: block;
+      width: calc(100% + 2.4rem);
+      margin: 0 -1.2rem 1rem;
+      height: 7.5rem;
+      object-fit: cover;
+      background: var(--paper-2);
+    }
+
     .card:hover {
       border-color: var(--ink);
     }
@@ -349,8 +362,9 @@
         <p class="section__note">automação e software</p>
       </div>
       <div class="grid">
-      <article class="card" data-slug="connect">
-<div class="card__meta">
+      <article class="card has-banner" data-slug="connect">
+        <img class="card__banner" src="boards/banners/projects/connect.jpg" alt="" loading="lazy" />
+        <div class="card__meta">
           <span class="card__icon" aria-hidden="true"><i data-lucide="bot"></i></span>
           <div class="card__tools">
             <button type="button" class="card__fav" aria-label="Favoritar connect" aria-pressed="false">
@@ -367,8 +381,9 @@
         </a>
       </article>
 
-      <article class="card" data-slug="connect-tech">
-<div class="card__meta">
+      <article class="card has-banner" data-slug="connect-tech">
+        <img class="card__banner" src="boards/banners/projects/connect-tech.jpg" alt="" loading="lazy" />
+        <div class="card__meta">
           <span class="card__icon" aria-hidden="true"><i data-lucide="monitor"></i></span>
           <div class="card__tools">
             <button type="button" class="card__fav" aria-label="Favoritar connect-tech" aria-pressed="false">
@@ -411,8 +426,9 @@
         </a>
       </article>
 
-      <article class="card" data-slug="e-notas">
-<div class="card__meta">
+      <article class="card has-banner" data-slug="e-notas">
+        <img class="card__banner" src="boards/banners/projects/e-notas.jpg" alt="" loading="lazy" />
+        <div class="card__meta">
           <span class="card__icon" aria-hidden="true"><i data-lucide="qr-code"></i></span>
           <div class="card__tools">
             <button type="button" class="card__fav" aria-label="Favoritar e-notas" aria-pressed="false">
@@ -429,8 +445,9 @@
         </a>
       </article>
 
-      <article class="card" data-slug="role-go">
-<div class="card__meta">
+      <article class="card has-banner" data-slug="role-go">
+        <img class="card__banner" src="boards/banners/projects/role-go.jpg" alt="" loading="lazy" />
+        <div class="card__meta">
           <span class="card__icon" aria-hidden="true"><i data-lucide="map-pin"></i></span>
           <div class="card__tools">
             <button type="button" class="card__fav" aria-label="Favoritar role-go" aria-pressed="false">
@@ -645,8 +662,9 @@
         </a>
       </article>
 
-      <article class="card" data-slug="cupido">
-<div class="card__meta">
+      <article class="card has-banner" data-slug="cupido">
+        <img class="card__banner" src="boards/banners/projects/cupido.jpg" alt="" loading="lazy" />
+        <div class="card__meta">
           <span class="card__icon" aria-hidden="true"><i data-lucide="heart"></i></span>
           <div class="card__tools">
             <button type="button" class="card__fav" aria-label="Favoritar" aria-pressed="false">

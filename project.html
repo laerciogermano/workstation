@@ -81,8 +81,24 @@
       background: var(--paper);
     }
 
+    .hero.has-cover {
+      background: var(--paper-2);
+    }
+
+    .hero__cover {
+      display: block;
+      width: 100%;
+      height: clamp(9rem, 28vw, 14rem);
+      object-fit: cover;
+    }
+
     .hero__body {
       padding: 1.25rem 1.35rem 1.4rem;
+    }
+
+    .hero.has-cover .hero__body {
+      border-top: 1px solid var(--line);
+      background: var(--paper);
     }
 
     .hero__actions {
@@ -380,18 +396,33 @@
       if (window.lucide) lucide.createIcons();
     }
 
+    const MARCA_BANNERS = new Set([
+      "connect",
+      "connect-tech",
+      "e-notas",
+      "role-go",
+      "cupido",
+    ]);
+
+    function coverOf(slug) {
+      if (!MARCA_BANNERS.has(slug)) return "";
+      return `boards/banners/projects/${slug}.jpg`;
+    }
+
     function render(slug, seed) {
       const project = hydrate(slug, seed);
       const next = nextTaskTitle(slug, seed);
       document.title = `${project.name} · Projeto`;
       const done = project.sections.filter((s) => s.status === "done").length;
+      const cover = coverOf(slug);
 
       document.getElementById("app").innerHTML = `
         <a class="back" href="index.html" aria-label="Voltar aos projetos">
           <i data-lucide="arrow-left"></i>
           Projetos
         </a>
-        <div class="hero">
+        <div class="hero${cover ? " has-cover" : ""}">
+          ${cover ? `<img class="hero__cover" src="${escapeHtml(cover)}" alt="" />` : ""}
           <div class="hero__body">
             <h1>${escapeHtml(project.name || slug)}</h1>
             <p class="blurb">${escapeHtml(project.blurb || "")}</p>

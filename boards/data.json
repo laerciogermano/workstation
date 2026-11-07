@@ -165,11 +165,7 @@
         "cards": [
           {
             "id": "plans-t-0",
-            "title": "Enfatizar que deve ser criado um orquestrador de ias urgentemente"
-          },
-          {
-            "id": "plans-t-1",
-            "title": "Definir documento de visão"
+            "title": "Criar o protótipo"
           }
         ]
       },
@@ -197,7 +193,12 @@
       {
         "id": "todo",
         "title": "A fazer",
-        "cards": []
+        "cards": [
+          {
+            "id": "context-recorder-t-0",
+            "title": "Definir PRD"
+          }
+        ]
       },
       {
         "id": "doing",
@@ -218,7 +219,12 @@
       {
         "id": "todo",
         "title": "A fazer",
-        "cards": []
+        "cards": [
+          {
+            "id": "cupido-t-0",
+            "title": "Definir PRD"
+          }
+        ]
       },
       {
         "id": "doing",

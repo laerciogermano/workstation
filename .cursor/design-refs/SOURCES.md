@@ -1,6 +1,6 @@
 # Fontes baixadas (2026-11-07)
 
-**Padrão operacional:** [DESIGN-SYSTEM.md](DESIGN-SYSTEM.md) (Editorial Bold + componentes).
+**Padrão operacional:** [DESIGN-SYSTEM.md](DESIGN-SYSTEM.md) · showcase [design-system.html](design-system.html)
 
 | Pacote | Origem | Uso |
 |--------|--------|-----|

@@ -1,6 +1,7 @@
 # Design system — padrão workstation
 
 **Status:** canônico (2026-11-07)  
+**Showcase visual:** [`design-system.html`](design-system.html)  
 **Uso:** todo HTML/CSS/UI/landing/dashboard/protótipo neste workspace, salvo marca de produto já documentada (`*/marca/`).  
 **Base:** refs em [SOURCES.md](SOURCES.md) (unslop, Anthropic frontend-design, anti-ai-slop, templates Editorial/Suede, cookbook).
 

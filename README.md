@@ -4,7 +4,7 @@ Hub de projetos, board, tasks e processo de desenvolvimento.
 
 **Índice:** abra [`index.html`](index.html) na raiz — cards Editorial Bold (título + descrição).
 
-**Design system (padrão):** [`.cursor/design-refs/DESIGN-SYSTEM.md`](.cursor/design-refs/DESIGN-SYSTEM.md) · refs [SOURCES.md](.cursor/design-refs/SOURCES.md) · regra [design-anti-slop.mdc](.cursor/rules/design-anti-slop.mdc) · skill [frontend-anti-slop](.cursor/skills/frontend-anti-slop/SKILL.md).
+**Design system (padrão):** [DESIGN-SYSTEM.md](.cursor/design-refs/DESIGN-SYSTEM.md) · showcase [design-system.html](.cursor/design-refs/design-system.html) · refs [SOURCES.md](.cursor/design-refs/SOURCES.md) · regra [design-anti-slop.mdc](.cursor/rules/design-anti-slop.mdc).
 
 ---
 

@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Design system — Editorial Bold</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --paper: #ffffff;
+      --paper-2: #f4f1ea;
+      --ink: #14120f;
+      --body: #44423d;
+      --accent: #e0402b;
+      --line: #e7e3db;
+      --radius: 6px;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      --font-display: "Archivo", system-ui, sans-serif;
+      --font-body: "Newsreader", Georgia, serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      min-height: 100vh;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: var(--font-body);
+      font-size: 1.05rem;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    ::selection { background: var(--accent); color: var(--paper); }
+
+    :focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+    }
+
+    .page {
+      width: min(1120px, calc(100% - 2.5rem));
+      margin: 0 auto;
+      padding: 2.5rem 0 5rem;
+    }
+
+    /* shell */
+    .top {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 1rem;
+      padding-bottom: 1.25rem;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .wordmark {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 1.1rem;
+      letter-spacing: -0.02em;
+    }
+
+    .wordmark span { color: var(--accent); }
+
+    .top nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.85rem 1.25rem;
+      font-family: var(--font-display);
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+
+    .top nav a {
+      color: var(--body);
+      text-decoration: none;
+    }
+
+    .top nav a:hover { color: var(--accent); }
+
+    .intro {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+      gap: 1.5rem 3rem;
+      align-items: end;
+      margin-bottom: 3rem;
+    }
+
+    h1 {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: clamp(2.2rem, 5vw, 3.2rem);
+      line-height: 1.02;
+      letter-spacing: -0.03em;
+    }
+
+    .lede {
+      color: var(--body);
+      font-size: 1.12rem;
+      max-width: 34rem;
+    }
+
+    .lede a {
+      color: var(--ink);
+      font-weight: 500;
+      text-underline-offset: 0.2em;
+    }
+
+    /* sections */
+    .block {
+      margin-bottom: 3rem;
+      scroll-margin-top: 1.5rem;
+    }
+
+    .block__head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.65rem;
+      border-bottom: 2px solid var(--ink);
+    }
+
+    .block__title {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 1.05rem;
+      letter-spacing: -0.02em;
+    }
+
+    .block__id {
+      font-family: var(--font-display);
+      font-size: 0.72rem;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      color: var(--accent);
+    }
+
+    /* color swatches */
+    .swatches {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.85rem;
+    }
+
+    .swatch {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .swatch__chip {
+      height: 4.5rem;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .swatch__meta {
+      padding: 0.85rem 1rem 1rem;
+      font-family: var(--font-display);
+    }
+
+    .swatch__name {
+      font-weight: 700;
+      font-size: 0.9rem;
+      letter-spacing: -0.02em;
+    }
+
+    .swatch__hex {
+      margin-top: 0.25rem;
+      font-size: 0.72rem;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      color: var(--body);
+    }
+
+    .swatch__use {
+      margin-top: 0.45rem;
+      font-family: var(--font-body);
+      font-size: 0.92rem;
+      color: var(--body);
+      line-height: 1.4;
+    }
+
+    /* type */
+    .type-stack > * + * { margin-top: 1.25rem; }
+
+    .type-row {
+      display: grid;
+      grid-template-columns: 8rem 1fr;
+      gap: 1rem;
+      align-items: baseline;
+      padding-bottom: 1.1rem;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .type-label {
+      font-family: var(--font-display);
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--body);
+    }
+
+    .t-display {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: clamp(2rem, 4vw, 2.75rem);
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+    }
+
+    .t-h2 {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.35rem;
+      letter-spacing: -0.02em;
+    }
+
+    .t-body { color: var(--body); max-width: 40rem; }
+
+    .t-meta {
+      font-family: var(--font-display);
+      font-size: 0.78rem;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      color: var(--accent);
+    }
+
+    /* buttons / links */
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.85rem 1.1rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.72em 1.25em;
+      font-family: var(--font-display);
+      font-size: 0.88rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      border-radius: var(--radius);
+      border: 1px solid transparent;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background-color 140ms var(--ease), color 140ms var(--ease), border-color 140ms var(--ease);
+    }
+
+    .btn--primary {
+      background: var(--ink);
+      color: var(--paper);
+      border-color: var(--ink);
+    }
+
+    .btn--primary:hover { background: var(--accent); border-color: var(--accent); }
+
+    .btn--secondary {
+      background: transparent;
+      color: var(--ink);
+      border-color: var(--ink);
+    }
+
+    .btn--secondary:hover { background: var(--paper-2); }
+
+    .btn--ghost {
+      background: transparent;
+      color: var(--ink);
+      border-color: var(--line);
+    }
+
+    .btn--ghost:hover { border-color: var(--ink); background: var(--paper-2); }
+
+    .link {
+      font-family: var(--font-display);
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--ink);
+      text-decoration: none;
+      border-bottom: 1.5px solid var(--accent);
+      padding-bottom: 1px;
+    }
+
+    .link:hover { color: var(--accent); }
+
+    /* cards */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.85rem;
+    }
+
+    .card {
+      display: flex;
+      flex-direction: column;
+      min-height: 11.5rem;
+      padding: 1.15rem 1.2rem 1.2rem;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      text-decoration: none;
+      color: inherit;
+      transition: border-color 160ms var(--ease), background-color 160ms var(--ease), transform 160ms var(--ease);
+    }
+
+    .card:hover {
+      border-color: var(--ink);
+      background: var(--paper-2);
+      transform: translateY(-1px);
+    }
+
+    .card__meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+
+    .card__icon { display: inline-flex; color: var(--ink); }
+    .card__icon svg { width: 1.35rem; height: 1.35rem; stroke-width: 1.5; }
+    .card:hover .card__icon { color: var(--accent); }
+
+    .card__num {
+      font-family: var(--font-display);
+      font-size: 0.72rem;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      color: var(--accent);
+    }
+
+    .card h3 {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.05rem;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.4rem;
+    }
+
+    .card p {
+      color: var(--body);
+      font-size: 0.98rem;
+      flex: 1;
+    }
+
+    .card__go {
+      margin-top: 1.1rem;
+      font-family: var(--font-display);
+      font-size: 0.78rem;
+      font-weight: 600;
+      border-bottom: 1.5px solid var(--accent);
+      align-self: flex-start;
+    }
+
+    /* form */
+    .form {
+      display: grid;
+      gap: 1rem;
+      max-width: 28rem;
+    }
+
+    .field label {
+      display: block;
+      font-family: var(--font-display);
+      font-size: 0.72rem;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+      color: var(--body);
+    }
+
+    .field input,
+    .field textarea,
+    .field select {
+      width: 100%;
+      padding: 0.7rem 0.85rem;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--paper);
+      color: var(--ink);
+      font: inherit;
+    }
+
+    .field input:focus,
+    .field textarea:focus,
+    .field select:focus {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+      border-color: var(--ink);
+    }
+
+    .field__hint {
+      margin-top: 0.35rem;
+      font-size: 0.9rem;
+      color: var(--body);
+    }
+
+    .field__error {
+      margin-top: 0.35rem;
+      font-family: var(--font-display);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    /* rules / spacing */
+    .rules {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .rule-demo {
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--line);
+      font-family: var(--font-display);
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--body);
+    }
+
+    .rule-demo--strong {
+      border-bottom-width: 2px;
+      border-bottom-color: var(--ink);
+    }
+
+    .rule-demo--accent {
+      border-bottom: 2px solid var(--accent);
+    }
+
+    .space-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .space-box {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      background: var(--paper-2);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      font-family: var(--font-display);
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: var(--body);
+      padding-bottom: 0.35rem;
+    }
+
+    /* icons */
+    .icon-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.25rem;
+    }
+
+    .icon-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.45rem;
+      min-width: 4.5rem;
+      font-family: var(--font-display);
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: var(--body);
+    }
+
+    .icon-item i, .icon-item svg {
+      width: 1.5rem;
+      height: 1.5rem;
+      color: var(--ink);
+      stroke-width: 1.5;
+    }
+
+    /* states */
+    .state-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.85rem;
+    }
+
+    .state {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 1.15rem 1.2rem;
+    }
+
+    .state h3 {
+      font-family: var(--font-display);
+      font-size: 0.9rem;
+      font-weight: 700;
+      margin-bottom: 0.35rem;
+    }
+
+    .state p { color: var(--body); font-size: 0.95rem; }
+
+    .badge {
+      display: inline-block;
+      margin-bottom: 0.5rem;
+      font-family: var(--font-display);
+      font-size: 0.68rem;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      color: var(--accent);
+    }
+
+    footer {
+      margin-top: 1rem;
+      padding-top: 1.1rem;
+      border-top: 1px solid var(--line);
+      font-family: var(--font-display);
+      font-size: 0.75rem;
+      color: var(--body);
+    }
+
+    footer a { color: var(--ink); }
+
+    @media (max-width: 900px) {
+      .intro, .swatches, .grid, .state-grid { grid-template-columns: 1fr 1fr; }
+      .type-row { grid-template-columns: 1fr; gap: 0.35rem; }
+    }
+
+    @media (max-width: 560px) {
+      .page { width: min(100%, calc(100% - 1.5rem)); }
+      .intro, .swatches, .grid, .state-grid { grid-template-columns: 1fr; }
+      .top { flex-direction: column; align-items: flex-start; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .card, .btn { transition: none; }
+      .card:hover { transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="top">
+      <div class="wordmark">Workstation DS<span>.</span></div>
+      <nav aria-label="Seções">
+        <a href="#cores">Cores</a>
+        <a href="#tipo">Tipo</a>
+        <a href="#botoes">Botões</a>
+        <a href="#cards">Cards</a>
+        <a href="#form">Form</a>
+        <a href="#estrutura">Estrutura</a>
+        <a href="#icones">Ícones</a>
+        <a href="#estados">Estados</a>
+      </nav>
+    </div>
+
+    <div class="intro">
+      <h1>Design system</h1>
+      <p class="lede">
+        Editorial Bold — elementos visíveis do padrão.
+        Spec em <a href="DESIGN-SYSTEM.md">DESIGN-SYSTEM.md</a>.
+        Hub em <a href="../../index.html">index.html</a>.
+      </p>
+    </div>
+
+    <!-- CORES -->
+    <section class="block" id="cores">
+      <div class="block__head">
+        <h2 class="block__title">Cores</h2>
+        <span class="block__id">02</span>
+      </div>
+      <div class="swatches">
+        <article class="swatch">
+          <div class="swatch__chip" style="background:#ffffff; border-bottom:1px solid var(--line)"></div>
+          <div class="swatch__meta">
+            <div class="swatch__name">paper</div>
+            <div class="swatch__hex">#ffffff</div>
+            <p class="swatch__use">Fundo da página e cards.</p>
+          </div>
+        </article>
+        <article class="swatch">
+          <div class="swatch__chip" style="background:#f4f1ea"></div>
+          <div class="swatch__meta">
+            <div class="swatch__name">paper-2</div>
+            <div class="swatch__hex">#f4f1ea</div>
+            <p class="swatch__use">Hover e superfície leve.</p>
+          </div>
+        </article>
+        <article class="swatch">
+          <div class="swatch__chip" style="background:#14120f"></div>
+          <div class="swatch__meta">
+            <div class="swatch__name">ink</div>
+            <div class="swatch__hex">#14120f</div>
+            <p class="swatch__use">Texto primário e bordas fortes.</p>
+          </div>
+        </article>
+        <article class="swatch">
+          <div class="swatch__chip" style="background:#44423d"></div>
+          <div class="swatch__meta">
+            <div class="swatch__name">body</div>
+            <div class="swatch__hex">#44423d</div>
+            <p class="swatch__use">Texto secundário (alto contraste).</p>
+          </div>
+        </article>
+        <article class="swatch">
+          <div class="swatch__chip" style="background:#e0402b"></div>
+          <div class="swatch__meta">
+            <div class="swatch__name">accent</div>
+            <div class="swatch__hex">#e0402b</div>
+            <p class="swatch__use">CTA, números, underline.</p>
+          </div>
+        </article>
+        <article class="swatch">
+          <div class="swatch__chip" style="background:#e7e3db"></div>
+          <div class="swatch__meta">
+            <div class="swatch__name">line</div>
+            <div class="swatch__hex">#e7e3db</div>
+            <p class="swatch__use">Hairlines e divisores.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- TIPO -->
+    <section class="block" id="tipo">
+      <div class="block__head">
+        <h2 class="block__title">Tipografia</h2>
+        <span class="block__id">03</span>
+      </div>
+      <div class="type-stack">
+        <div class="type-row">
+          <div class="type-label">Display · Archivo 800</div>
+          <div class="t-display">Projetos do workspace</div>
+        </div>
+        <div class="type-row">
+          <div class="type-label">Título · Archivo 700</div>
+          <div class="t-h2">ConectMax</div>
+        </div>
+        <div class="type-row">
+          <div class="type-label">Corpo · Newsreader</div>
+          <p class="t-body">Hub B2B da empresa: cotação, franquias e vendas. Texto de leitura com contraste alto em --body.</p>
+        </div>
+        <div class="type-row">
+          <div class="type-label">Meta · Archivo 600</div>
+          <div class="t-meta">15 favoritos · 01</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BOTÕES -->
+    <section class="block" id="botoes">
+      <div class="block__head">
+        <h2 class="block__title">Botões e links</h2>
+        <span class="block__id">04</span>
+      </div>
+      <div class="row">
+        <button type="button" class="btn btn--primary">Salvar alterações</button>
+        <button type="button" class="btn btn--secondary">Cancelar</button>
+        <button type="button" class="btn btn--ghost">Ver detalhes</button>
+        <a class="link" href="#cards">Abrir seção</a>
+      </div>
+    </section>
+
+    <!-- CARDS -->
+    <section class="block" id="cards">
+      <div class="block__head">
+        <h2 class="block__title">Cards</h2>
+        <span class="block__id">05</span>
+      </div>
+      <div class="grid">
+        <a class="card" href="../../conectmax/README.md">
+          <div class="card__meta">
+            <span class="card__icon" aria-hidden="true"><i data-lucide="building-2"></i></span>
+            <span class="card__num">01</span>
+          </div>
+          <h3>ConectMax</h3>
+          <p>Hub B2B da empresa: cotação, franquias e vendas.</p>
+          <span class="card__go">Abrir</span>
+        </a>
+        <a class="card" href="../../board/README.md">
+          <div class="card__meta">
+            <span class="card__icon" aria-hidden="true"><i data-lucide="columns-3"></i></span>
+            <span class="card__num">02</span>
+          </div>
+          <h3>Board</h3>
+          <p>Kanban próprio - substituto do Trello.</p>
+          <span class="card__go">Abrir</span>
+        </a>
+        <a class="card" href="../../e-notas/README.md">
+          <div class="card__meta">
+            <span class="card__icon" aria-hidden="true"><i data-lucide="qr-code"></i></span>
+            <span class="card__num">03</span>
+          </div>
+          <h3>e-notas</h3>
+          <p>Índice de preços via QR de nota fiscal.</p>
+          <span class="card__go">Abrir</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- FORM -->
+    <section class="block" id="form">
+      <div class="block__head">
+        <h2 class="block__title">Formulário</h2>
+        <span class="block__id">06</span>
+      </div>
+      <form class="form" onsubmit="return false">
+        <div class="field">
+          <label for="nome">Nome do projeto</label>
+          <input id="nome" type="text" value="ConectMax" />
+          <p class="field__hint">Sentence case; sem placeholder genérico.</p>
+        </div>
+        <div class="field">
+          <label for="tipo">Tipo</label>
+          <select id="tipo">
+            <option>Produto</option>
+            <option selected>Empresa</option>
+            <option>Ferramenta</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="nota">Observação</label>
+          <textarea id="nota" rows="3">Prioridade no hub.</textarea>
+        </div>
+        <div class="field">
+          <label for="erro">E-mail</label>
+          <input id="erro" type="email" value="nao-email" aria-invalid="true" />
+          <p class="field__error">Informe um e-mail válido (ex.: nome@empresa.com).</p>
+        </div>
+        <div class="row">
+          <button type="submit" class="btn btn--primary">Salvar</button>
+          <button type="reset" class="btn btn--ghost">Limpar</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- ESTRUTURA -->
+    <section class="block" id="estrutura">
+      <div class="block__head">
+        <h2 class="block__title">Estrutura e espaço</h2>
+        <span class="block__id">07</span>
+      </div>
+      <div class="rules">
+        <div class="rule-demo">Hairline --line (1px)</div>
+        <div class="rule-demo rule-demo--strong">Seção forte --ink (2px)</div>
+        <div class="rule-demo rule-demo--accent">Acento --accent (2px)</div>
+      </div>
+      <p class="t-body" style="margin: 1.25rem 0 0.75rem">Radius 6px · gap 0.85rem · container 1120px</p>
+      <div class="space-row">
+        <div class="space-box" style="width:2rem;height:2rem">8</div>
+        <div class="space-box" style="width:3rem;height:3rem">12</div>
+        <div class="space-box" style="width:4rem;height:4rem">16</div>
+        <div class="space-box" style="width:5.5rem;height:5.5rem">22</div>
+        <div class="space-box" style="width:7rem;height:7rem">28</div>
+      </div>
+    </section>
+
+    <!-- ÍCONES -->
+    <section class="block" id="icones">
+      <div class="block__head">
+        <h2 class="block__title">Ícones (Lucide)</h2>
+        <span class="block__id">08</span>
+      </div>
+      <div class="icon-row">
+        <div class="icon-item"><i data-lucide="building-2"></i>building</div>
+        <div class="icon-item"><i data-lucide="columns-3"></i>board</div>
+        <div class="icon-item"><i data-lucide="credit-card"></i>card</div>
+        <div class="icon-item"><i data-lucide="qr-code"></i>qr</div>
+        <div class="icon-item"><i data-lucide="map-pin"></i>pin</div>
+        <div class="icon-item"><i data-lucide="heart"></i>heart</div>
+        <div class="icon-item"><i data-lucide="mic"></i>mic</div>
+        <div class="icon-item"><i data-lucide="cloud"></i>cloud</div>
+      </div>
+    </section>
+
+    <!-- ESTADOS -->
+    <section class="block" id="estados">
+      <div class="block__head">
+        <h2 class="block__title">Estados</h2>
+        <span class="block__id">09</span>
+      </div>
+      <div class="state-grid">
+        <div class="state">
+          <div class="badge">vazio</div>
+          <h3>Nenhum projeto ainda</h3>
+          <p>Crie a pasta do projeto e aponte o card para o README.</p>
+          <div class="row" style="margin-top:0.85rem">
+            <button type="button" class="btn btn--primary">Criar projeto</button>
+          </div>
+        </div>
+        <div class="state">
+          <div class="badge">erro</div>
+          <h3>Falha ao abrir o README</h3>
+          <p>O caminho não existe ou o arquivo foi movido. Confira o href do card.</p>
+        </div>
+        <div class="state">
+          <div class="badge">foco</div>
+          <h3>Tab até um botão</h3>
+          <p>Focus ring = 2px accent com offset. Teste com teclado.</p>
+          <div class="row" style="margin-top:0.85rem">
+            <button type="button" class="btn btn--secondary">Focar aqui</button>
+          </div>
+        </div>
+        <div class="state">
+          <div class="badge">seleção</div>
+          <h3>Selecione este texto</h3>
+          <p>Selection usa fundo accent e texto paper.</p>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      Editorial Bold ·
+      <a href="DESIGN-SYSTEM.md">spec</a> ·
+      <a href="SOURCES.md">refs</a> ·
+      <a href="../../index.html">hub</a>
+    </footer>
+  </div>
+
+  <script src="https://unpkg.com/lucide@0.468.0"></script>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

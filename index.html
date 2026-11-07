@@ -199,24 +199,40 @@
       margin-bottom: 0.45rem;
     }
 
-    .card p {
+    .card__desc {
       color: var(--body);
       font-size: 0.98rem;
       line-height: 1.45;
-      flex: 1;
+      margin-bottom: 0.85rem;
     }
 
-    .card__next {
+    .card__task {
+      display: block;
+      margin-top: auto;
+      padding: 0.7rem 0.8rem;
+      background: var(--paper-2);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
       color: var(--ink);
-      font-family: "Newsreader", Georgia, serif;
-      font-size: 0.98rem;
-      line-height: 1.45;
-      flex: 1;
+      font-family: "Archivo", system-ui, sans-serif;
+      font-size: 0.84rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      line-height: 1.35;
     }
 
-    .card__next.is-empty::before {
-      content: "—";
+    .card:hover .card__task {
+      border-color: var(--ink);
+      background: #efe8dc;
+    }
+
+    .card__task.is-empty {
       color: var(--body);
+      font-weight: 500;
+    }
+
+    .card__task.is-empty::before {
+      content: "—";
     }
 
     .card__go {
@@ -283,7 +299,8 @@
           <span class="card__num">01</span>
         </div>
         <h2>Connect</h2>
-        <p class="card__next" data-board="connect">Automatizar processo de cobrança</p>
+        <p class="card__desc">Automação LinkedIn e vendas sobre o screen-robot.</p>
+        <div class="card__task" data-board="connect">Automatizar processo de cobrança</div>
         <span class="card__go">Abrir</span>
       </a>
 
@@ -293,7 +310,8 @@
           <span class="card__num">02</span>
         </div>
         <h2>Connect Tech</h2>
-        <p class="card__next" data-board="connect-tech">Criar PDF de apresentação</p>
+        <p class="card__desc">Consultoria e desenvolvimento de software.</p>
+        <div class="card__task" data-board="connect-tech">Criar PDF de apresentação</div>
         <span class="card__go">Abrir</span>
       </a>
       </div>
@@ -311,7 +329,8 @@
           <span class="card__num">03</span>
         </div>
         <h2>Clozzy</h2>
-        <p class="card__next" data-board="clozzy">Benchmarking</p>
+        <p class="card__desc">Conteúdo exclusivo de influencers para fãs.</p>
+        <div class="card__task" data-board="clozzy">Benchmarking</div>
         <span class="card__go">Abrir</span>
       </a>
 
@@ -321,7 +340,8 @@
           <span class="card__num">04</span>
         </div>
         <h2>e-notas</h2>
-        <p class="card__next" data-board="e-notas">Criar listas</p>
+        <p class="card__desc">Índice de preços via QR de nota fiscal.</p>
+        <div class="card__task" data-board="e-notas">Criar listas</div>
         <span class="card__go">Abrir</span>
       </a>
 
@@ -331,7 +351,8 @@
           <span class="card__num">05</span>
         </div>
         <h2>RoleGo</h2>
-        <p class="card__next" data-board="role-go">gerar primeira versao</p>
+        <p class="card__desc">Descoberta de festas, shows e eventos próximos.</p>
+        <div class="card__task" data-board="role-go">gerar primeira versao</div>
         <span class="card__go">Abrir</span>
       </a>
 
@@ -351,7 +372,8 @@
           <span class="card__num">07</span>
         </div>
         <h2>Plans</h2>
-        <p class="card__next" data-board="plans">Enfatizar que deve ser criado um orquestrador de ias urgentemente</p>
+        <p class="card__desc">Orquestrador - board, Gantt e árvore de execução.</p>
+        <div class="card__task" data-board="plans">Enfatizar que deve ser criado um orquestrador de ias urgentemente</div>
         <span class="card__go">Abrir</span>
       </a>
 
@@ -401,7 +423,8 @@
           <span class="card__num">12</span>
         </div>
         <h2>Caronas</h2>
-        <p class="card__next" data-board="caronas">Criar documento de épicos</p>
+        <p class="card__desc">Caronas recorrentes casa-trabalho.</p>
+        <div class="card__task" data-board="caronas">Criar documento de épicos</div>
         <span class="card__go">Abrir</span>
       </a>
 
@@ -411,7 +434,8 @@
           <span class="card__num">13</span>
         </div>
         <h2>Fitness</h2>
-        <p class="card__next" data-board="fitness">Definir documento de épicos</p>
+        <p class="card__desc">Treino, dieta e métricas com gamificação.</p>
+        <div class="card__task" data-board="fitness">Definir documento de épicos</div>
         <span class="card__go">Abrir</span>
       </a>
 
@@ -421,7 +445,8 @@
           <span class="card__num">14</span>
         </div>
         <h2>Jiu-jitsu</h2>
-        <p class="card__next" data-board="jiu-jitsu">Definir documento de visão</p>
+        <p class="card__desc">Grafo de posições, transições e finalizações.</p>
+        <div class="card__task" data-board="jiu-jitsu">Definir documento de visão</div>
         <span class="card__go">Abrir</span>
       </a>
       </div>
@@ -439,7 +464,8 @@
           <span class="card__num">15</span>
         </div>
         <h2>Flow</h2>
-        <p class="card__next" data-board="flow">Definir Épicos</p>
+        <p class="card__desc">Linguagem e fundamentos de fluxo (Flow + Flow Language).</p>
+        <div class="card__task" data-board="flow">Definir Épicos</div>
         <span class="card__go">Abrir</span>
       </a>
 
@@ -458,7 +484,8 @@
           <span class="card__num">16</span>
         </div>
         <h2>Eternos Mutáveis</h2>
-        <p class="card__next" data-board="eternos-mutaveis">Referncias de modelo de escrita</p>
+        <p class="card__desc">Manuscrito / tese filosófica.</p>
+        <div class="card__task" data-board="eternos-mutaveis">Referncias de modelo de escrita</div>
         <span class="card__go">Abrir</span>
       </a>
 
@@ -468,7 +495,8 @@
           <span class="card__num">17</span>
         </div>
         <h2>Aulas</h2>
-        <p class="card__next" data-board="aulas">Criar roadmap</p>
+        <p class="card__desc">Árvore de seções e conteúdo didático.</p>
+        <div class="card__task" data-board="aulas">Criar roadmap</div>
         <span class="card__go">Abrir</span>
       </a>
 
@@ -478,7 +506,8 @@
           <span class="card__num">18</span>
         </div>
         <h2>Filme Metafísico</h2>
-        <p class="card__next" data-board="filme-metafisico">Definir Roteiro</p>
+        <p class="card__desc">Filme O Metafísico - visão e roteiro.</p>
+        <div class="card__task" data-board="filme-metafisico">Definir Roteiro</div>
         <span class="card__go">Abrir</span>
       </a>
 
@@ -507,7 +536,8 @@
           <span class="card__num">20</span>
         </div>
         <h2>Financeiro</h2>
-        <p class="card__next" data-board="financeiro">ajustar</p>
+        <p class="card__desc">Controle de gastos, cartões e finanças pessoais.</p>
+        <div class="card__task" data-board="financeiro">ajustar</div>
         <span class="card__go">Abrir</span>
       </a>
       <a class="card" href="board.html?p=ov">
@@ -516,7 +546,8 @@
           <span class="card__num">21</span>
         </div>
         <h2>OV</h2>
-        <p class="card__next" data-board="ov">Criar novo lgermeno</p>
+        <p class="card__desc">Contas OmeTV via Chrome CDP.</p>
+        <div class="card__task" data-board="ov">Criar novo lgermeno</div>
         <span class="card__go">Abrir</span>
       </a>
       </div>
@@ -564,7 +595,7 @@
       }
 
       function apply(slug, title) {
-        document.querySelectorAll(`.card__next[data-board="${slug}"]`).forEach((el) => {
+        document.querySelectorAll(`.card__task[data-board="${slug}"]`).forEach((el) => {
           if (title) {
             el.textContent = title;
             el.classList.remove("is-empty");
@@ -586,7 +617,7 @@
       (async () => {
         const seed = await loadSeed();
         const slugs = new Set(
-          [...document.querySelectorAll(".card__next[data-board]")].map((el) => el.dataset.board)
+          [...document.querySelectorAll(".card__task[data-board]")].map((el) => el.dataset.board)
         );
         for (const slug of slugs) {
           let board = null;

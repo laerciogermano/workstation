@@ -2,7 +2,9 @@
 
 Hub de projetos, board, tasks e processo de desenvolvimento.
 
-**Índice visual:** abra [`index.html`](index.html) na raiz — cards com ícone, título e descrição de cada projeto.
+**Índice:** abra [`index.html`](index.html) na raiz — lista tipográfica dos projetos.
+
+**Design anti-slop:** refs baixadas em [`.cursor/design-refs/SOURCES.md`](.cursor/design-refs/SOURCES.md); regra always-on [`.cursor/rules/design-anti-slop.mdc`](.cursor/rules/design-anti-slop.mdc); skill [`.cursor/skills/frontend-anti-slop/SKILL.md`](.cursor/skills/frontend-anti-slop/SKILL.md).
 
 ---
 

@@ -1,0 +1,29 @@
+---
+description: Proíbe UI genérica de IA; obriga skill + refs anti-slop em todo design frontend
+alwaysApply: true
+---
+
+# Design: nunca o padrão de IA
+
+Em **qualquer** HTML/CSS/UI/landing/dashboard/protótipo visual neste workspace:
+
+1. **Antes de codar**, ler e seguir [`.cursor/skills/frontend-anti-slop/SKILL.md`](../skills/frontend-anti-slop/SKILL.md)
+2. Usar como referência os arquivos em [`.cursor/design-refs/`](../design-refs/SOURCES.md) (unslop TELLS, Anthropic frontend-design, anti-ai-slop, templates Editorial/Suede, prompt do cookbook)
+3. **Proibido** reusar o visual “default do modelo” que o usuário rejeitou: dark teal/slate + verde menta, Instrument Serif com palavra em itálico, eyebrow/pill, grid de cards com ícone SVG + borda suave + fade-up, Inter/Geist, gradiente roxo/azul, cream+#D97757 “editorial calmo” por reflexo
+
+## Critérios mínimos
+
+- Declarar direção estética **específica ao assunto** (1 frase) antes do CSS
+- Tipografia com ponto de vista (não Inter/Roboto/Arial/system como única face)
+- Layout assimétrico ou lista/editorial quando couber — sem grid de 3 cards-ícone por default
+- Uma accent deliberada; contraste AA; motion só se intencional
+- Se o design puder pertencer a qualquer SaaS genérico após remover o logo → **refazer**
+
+## Exemplos
+
+```text
+✅ Lista tipográfica com hairline, paper/ink, um vermelho pontual (estilo unslop Editorial Bold)
+✅ Commitir a Suede / terminal / Swiss / photo-led conforme o produto
+❌ index.html antigo: cards escuros, accent #3ecf8e, Instrument Serif italic, ícones em caixas
+❌ Purple gradient / glass / rounded-2xl em tudo / fade-up em tudo
+```

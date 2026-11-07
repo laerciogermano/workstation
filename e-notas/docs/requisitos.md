@@ -392,6 +392,16 @@ Card: [BXKZ55Wb](https://trello.com/c/BXKZ55Wb).
 - Antes: sugestão só no modal e sem gravar origem. Depois: sugestões inline/detalhe + origem persistida.
 - Rollback: `ALTER TABLE enotas.codigos_barras DROP COLUMN origem;` + remover UI suggest-inline / `#produto-ean-suggest` / campo origem no POST.
 
+## REQ-044 — Serviço ean-serp: EAN via descritivo (SERP + catálogos) (2026-11-07)
+
+- Serviço **à parte** do app (`e-notas/ean-serp`, porta **4180**): dada a **descrição**, sugerir EAN buscando `EAN` + nome na web e em catálogos BR.
+- Fontes: SI5 HTML (e API opcional `SI5_TOKEN`) → DuckDuckGo HTML (`EAN {descricao}`) → Google CDP opcional (`GOOGLE_CDP` / `google_cdp`).
+- Enrich das top fichas SI5: `nome_canonico` + `image_url`.
+- API: `GET|POST /ean` (`descricao`, `limit`, `enrich`, `google_cdp`) → `{ candidatos: [{ ean, score, fonte, fontes, nome_canonico, image_url, url }] }`.
+- Sem persistência no schema `enotas`; não substitui REQ-039 (local/OFF no app).
+- Antes: só enrichment in-process sem SERP. Depois: microserviço dedicado para a pista Google/SERP.
+- Rollback: parar `:4180` e apagar `e-notas/ean-serp/`.
+
 ## REQ-042 — Google Imagens: descrição ou EAN + N (2026-11-07)
 
 - Um serviço: enviar **descrição** ou **EAN** e **N**; ir ao Google Imagens (web) e baixar as N primeiras.

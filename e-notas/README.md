@@ -10,6 +10,7 @@ Requisitos / regras: [`docs/requisitos.md`](docs/requisitos.md).
 Timeline de prompts: [`prompts/`](prompts/README.md).  
 Regras para a IA: [`config/config-ia.md`](config/config-ia.md).  
 App (scan QR + cadastro Postgres Contabo / schema `enotas`): [`app/`](app/README.md).  
+Serviço EAN via descritivo (SERP + SI5, porta 4180): [`ean-serp/`](ean-serp/README.md).  
 Deploy Contabo (`/enotas/`): [`deploy/`](deploy/README.md).  
 Marca **notinhas.shop**: [`marca/README.md`](marca/README.md) · **DESIGN.md v2** [`marca/notinhas.shop.DESIGN.md`](marca/notinhas.shop.DESIGN.md) · print [`marca/marca-notinhas-shop-v2.html`](marca/marca-notinhas-shop-v2.html) · identidade [`marca/identidade-visual-notinhas-v1.html`](marca/identidade-visual-notinhas-v1.html) · DS [`marca/design-system-notinhas-v1.html`](marca/design-system-notinhas-v1.html) · tokens [`identidade-visual.md`](identidade-visual.md) · [`design-system.md`](design-system.md) · refs [`../core/shadcn-design/README.md`](../core/shadcn-design/README.md) · [identidade](https://trello.com/c/qUI3Rb9a) · [DS](https://trello.com/c/qdH95gZX).  
 Refs identidade: [`marca/referencias-identidade/README.md`](marca/referencias-identidade/README.md).  

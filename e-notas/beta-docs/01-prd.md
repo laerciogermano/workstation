@@ -166,18 +166,18 @@ Recursos avançados para maximizar a economia do consumidor, permitindo cotar li
 
 | ID | Descrição do Requisito Funcional | Prio |
 |---|---|---|
-| **RF-E04-01** | **Montagem da cesta de compras:** O usuário adiciona múltiplos produtos (com suas quantidades desejadas) a uma cesta virtual de simulação. | **S** |
-| **RF-E04-02** | **Cotação total da cesta por estabelecimento:** O sistema calcula o custo total da lista completa em cada supermercado da região que possua observações recentes de preços para aqueles itens. | **S** |
-| **RF-E04-03** | **Indicador de cobertura da cesta:** Mostrar claramente quantos itens da lista foram encontrados no preço de cada mercado (ex.: "12 de 15 itens encontrados — Total R$ 142,30"). | **S** |
-| **RF-E04-04** | **Simulação de montagem apartada (Split inteligente):** Algoritmo que calcula a combinação ideal dividindo a cesta entre 2 ou mais estabelecimentos próximos para obter o menor valor financeiro global. | **S** |
-| **RF-E04-05** | **Cálculo da economia estimada com split:** Apresentação clara do valor economizado ao dividir a compra: "Economia de R$ 38,40 (18%) comprando itens A, B no Mercado X e itens C, D no Mercado Y". | **S** |
-| **RF-E04-06** | **Tratamento de itens sem preço na cesta:** Regra estrita de não inventar ou interpolar valores para itens não observados em determinado mercado, alertando o usuário sobre a ausência de cotação. | **S** |
-| **RF-E04-07** | **Extrato pessoal de compras (Minhas Notas):** Área logada exclusiva onde o contribuinte visualiza a listagem cronológica de todas as notas fiscais que depositou no sistema. | **S** |
-| **RF-E04-08** | **Detalhamento de gastos por nota e por produto:** O usuário clica na nota do seu histórico e vê o cupom integral com todos os itens, quantidades e valores pagos na época. | **S** |
-| **RF-E04-09** | **Painel de gasto mensal consolidado:** Gráfico de despesas do usuário exibindo o valor total gasto por mês em compras de supermercado e farmácia a partir das suas notas registradas. | **S** |
-| **RF-E04-10** | **Ranking de lojas onde o usuário mais gasta:** Relatório pessoal indicando a distribuição percentual das suas despesas entre os diferentes estabelecimentos visitados. | **S** |
-| **RF-E04-11** | **Exportação do extrato pessoal:** Exportação simples dos dados de compras do usuário em formatos CSV ou JSON para uso pessoal em planilhas financeiras. | **C** |
-| **RF-E04-12** | **Isolamento de dados da gestão financeira:** Os dados consolidados de consumo individual do usuário são acessíveis unicamente pelo próprio titular autenticado, com criptografia em trânsito e repouso. | **S** |
+| **RF-E04-01** | **Minhas listas (várias):** O usuário cria e mantém **múltiplas** listas de compras; em cada uma adiciona produtos com quantidades. Persistência no servidor (fingerprint se anônimo; conta após merge — REQ-050). | **S** |
+| **RF-E04-02** | **Cotação sem split (por loja):** Para a lista ativa, calcular o total em cada estabelecimento com cobertura; comparar lojas lado a lado (totais e ranking do mais barato ao mais caro levando tudo numa só loja). | **S** |
+| **RF-E04-03** | **Indicador de cobertura da lista:** Mostrar quantos itens foram encontrados em cada mercado (ex.: "12 de 15 — Total R$ 142,30"). | **S** |
+| **RF-E04-04** | **Cotação com split:** Algoritmo de montagem apartada dividindo a lista entre 2+ estabelecimentos para o menor custo global. | **S** |
+| **RF-E04-05** | **Redução com split:** Exibir o cenário mais barato com split e a **redução** (R$ e %) vs melhor loja única sem split; deixar explícito o que vai em cada loja. | **S** |
+| **RF-E04-06** | **Itens sem preço:** Não inventar valores; alertar ausência de cotação e total parcial com cobertura real. | **S** |
+| **RF-E04-07** | **Minhas notas / minhas compras:** Toda nota lida/depositada fica no histórico pessoal (fingerprint ou `usuario_id`); listagem cronológica acessível na seção Minhas notas — login **não** obrigatório. | **S** |
+| **RF-E04-08** | **Detalhe da nota:** Abrir o cupom com itens, quantidades e valores da época. | **S** |
+| **RF-E04-09** | **Gasto mensal consolidado:** Totais por mês a partir das notas registradas para aquele visitante/usuário. | **S** |
+| **RF-E04-10** | **Ranking de lojas onde mais gasta:** Distribuição percentual das despesas entre estabelecimentos visitados. | **S** |
+| **RF-E04-11** | **Exportação do extrato:** CSV/JSON das compras pessoais. | **C** |
+| **RF-E04-12** | **Isolamento:** Extrato e listas só do titular (fingerprint ou sessão); índice público sem identidade do contribuinte. | **S** |
 
 ---
 
@@ -241,8 +241,8 @@ As regras abaixo são de cumprimento mandatório em todas as camadas da aplicaç
 - **RN-13 — Não-Interpolação de Valores na Cesta de Compras:**  
   Ao cotar uma cesta de compras com múltiplos itens, o sistema jamais infere, inventa ou estima preços para produtos que não foram observados recentemente em um determinado mercado. Caso a loja não tenha registro daquele EAN, a interface deve indicar explicitamente "Item não cotado nesta loja", exibindo o total parcial com a cobertura real.
 
-- **RN-14 — Privacidade Estrita do Extrato Financeiro:**  
-  O extrato de gastos e o histórico de compras de um contribuinte só podem ser acessados mediante autenticação válida do próprio titular da conta. Nenhuma API pública ou perfil de outro usuário tem permissão de visualizar o volume financeiro ou os itens individuais adquiridos por terceiros.
+- **RN-14 — Privacidade Estrita do Extrato e das Listas:**  
+  Extrato (**Minhas notas**), gasto pessoal e **Minhas listas** só são acessíveis ao titular: sessão autenticada **ou** o mesmo fingerprint que criou os registros. Nenhuma API pública nem outro usuário vê o volume financeiro ou os itens privados de terceiros.
 
 - **RN-15 — Tolerância a Falhas e Timeouts da SEFAZ:**  
   Requisições de consulta pública ao portal da Fazenda PR devem respeitar limite de tempo estrito (timeout de 10 segundos). Se a SEFAZ responder com lentidão excessiva, erro 500 ou tela de captcha inesperada, o sistema deve fornecer resposta clara ao usuário e disponibilizar a opção de tentar novamente sem travar a navegação.
@@ -266,7 +266,7 @@ As regras abaixo são de cumprimento mandatório em todas as camadas da aplicaç
 
 | ID | Tema | Pergunta Central | Proposta Padrão Adotada no Beta 1.0 |
 |---|---|---|---|
-| **Q1** | **Exigência de Login** | O usuário deve ser obrigado a criar conta para escanear notas ou consultar preços? | **Não.** Busca, consulta de vitrines, comparação de preços e depósito de notas via QR Code são 100% livres de login no Beta para minimizar a fricção de entrada. A conta é solicitada apenas para salvar cestas de compras e manter o extrato financeiro pessoal. |
+| **Q1** | **Exigência de Login** | O usuário deve ser obrigado a criar conta para escanear notas, consultar preços, ver Minhas notas ou Minhas listas? | **Não.** Tudo isso funciona anônimo com **fingerprint** como id (REQ-050 / REQ-051). Conta opcional: ao criar, merge dos dados do fingerprint para o `usuario_id`. |
 | **Q2** | **Governança de Vínculo EAN** | O que fazer quando dois usuários informarem EANs distintos para o mesmo produto da mesma loja? | **Prevalência do último com flag de divergência.** O sistema aceita a nova vinculação e dispara um registro no painel de administração para que o curador avalie qual código corresponde de fato ao produto físico. |
 | **Q3** | **Janela Temporal do Índice** | Qual é o prazo de validade de um preço registrado na nota antes de ser considerado "frio"? | **Janela ativa de 14 dias.** Itens registrados há mais de 14 dias continuam visíveis no histórico da loja, mas recebem etiqueta visual de "Preço não confirmado recentemente" nas buscas principais. |
 | **Q4** | **Extensão Espacial no Banco** | É indispensável instalar e operar o PostGIS completo na VPS do Beta? | **Não para o Beta 1.0.** Para as poucas dezenas de estabelecimentos do laboratório de São José dos Pinhais, a fórmula matemática de Haversine executada em SQL ou no código Node.js atende com excelência e menor complexidade operacional. O PostGIS é planejado para a escala nacional. |

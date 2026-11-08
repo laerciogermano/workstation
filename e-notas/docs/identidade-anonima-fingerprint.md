@@ -23,7 +23,7 @@ localStorage pode cachear UX (preferências, UI); **não** é o inventário de n
 
 1. Rotas de uso anônimo aceitam fingerprint válido (formato/tamanho); sem login obrigatório.
 2. Persistência: colunas/`visitante_id` derivadas do fingerprint (hash do fingerprint no server, se não quiser guardar o valor cru).
-3. Operações do visitante: depósito de nota, cestas, preferências, etc. associadas a esse id anônimo.
+3. Operações do visitante: depósito de nota (**Minhas notas**), **Minhas listas**, preferências, etc. associadas a esse id anônimo (REQ-051).
 4. Índice público de preços continua anonimizado (ADR / LGPD); fingerprint identifica o **titular privado** do extrato/cestas, não vaza no catálogo público.
 
 ## Criar conta → merge

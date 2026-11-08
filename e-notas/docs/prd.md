@@ -63,10 +63,13 @@ Ler o QR/URL da NFC-e (preço, estabelecimento, data, cód. interno), vincular E
 - Série temporal por produto (e por loja quando houver dados).
 - Cada ponto = observação de nota (valor, estabelecimento, data).
 
-### 5.3 Montagem apartada — *should*
-- Cesta cotada **por mercado** (total + cobertura “com preço”).
-- Sugestão de **divisão entre 2+ estabelecimentos** quando reduzir o custo total.
+### 5.3 Minhas listas + montagem apartada — *should*
+- Seção **Minha lista** / **Minhas listas**: o usuário mantém **várias** listas de compras (não uma única cesta).
+- Cada lista serve para **comparar preços** da cesta completa.
+- **Sem split:** para cada loja candidata, mostrar total, cobertura e comparação lado a lado entre estabelecimentos (qual loja fica mais barata levando tudo nela).
+- **Com split:** sugerir a divisão ótima entre lojas; destacar o **mais barato** e a **redução** (R$ e %) vs melhor loja única (sem split).
 - “Sem preço” não inventa valor.
+- Listas persistem no servidor (fingerprint se anônimo; `usuario_id` após conta — REQ-050).
 - Opcional: custo/rota de deslocamento.
 
 ### 5.4 Tela da loja (vitrine e-commerce) — *should*
@@ -111,18 +114,13 @@ Ler o QR/URL da NFC-e (preço, estabelecimento, data, cód. interno), vincular E
 - Pré-requisitos: vitrine estável, API empresas, acordo com estabelecimentos (estoque/preço oficial — não só observação de NFC-e).
 - **Diferencial vs delivery apps:** o índice NFC-e é **preço de balcão**; iFood / 99Food / Rappi / Keeta vendem preço de canal (tipicamente ~+8% a +22% mercearia; ~+17% a +30% restaurante). Conclusão e evidências: [`../marca/comparacao-precos-apps/`](../marca/comparacao-precos-apps/README.md). Não misturar séries sem rótulo de canal; o contraste de marca é contra esses apps — não contra índices NFC-e peers.
 
-### 5.10 Gestão de compras e análise financeira — *should*
-- A partir das **notas que o usuário depositou** (conta / sessão autenticada), expor o **extrato pessoal** de compras — distinto do índice público de preços.
-- **O que comprou:** lista de itens (nome, EAN se houver, quantidade, valor) agrupáveis por nota ou por produto.
-- **Quando comprou:** data/hora da nota (emissão NFC-e); filtros por período (dia, semana, mês, intervalo).
-- **Onde comprou:** estabelecimento (nome, CNPJ) por nota/item.
-- **Gasto por mês:** total mensal (e opcionalmente por semana); comparação mês a mês (variação %).
-- **Análise financeira (MVP):**
-  - total no período; ticket médio por nota; nº de notas / itens;
-  - ranking de estabelecimentos por gasto;
-  - ranking de produtos / categorias (quando houver classificação; senão por descrição/EAN);
-  - tendência simples (últimos N meses) — sem assessoria de investimento.
-- Privacidade: só o dono da conta vê o extrato; notas no índice público continuam sem vincular identidade do contribuinte nas buscas de preço.
+### 5.10 Minhas notas / minhas compras e análise financeira — *should*
+- Seção **Minhas notas** (também “minhas compras”): **toda nota lida/depositada** fica registrada para aquele visitante/usuário — distinto do índice público de preços.
+- Sem conta: posse pelo **fingerprint** (REQ-050); com conta: merge para `usuario_id`.
+- Listagem cronológica das notas lidas: data, loja, qtd. itens, valor; detalhe abre o cupom (itens, quantidades, valores).
+- **O que / quando / onde comprou** a partir dessas notas (agrupável por nota ou produto).
+- **Gasto por mês** e análise financeira (MVP): total no período; ticket médio; ranking de lojas e produtos/categorias; tendência simples.
+- Privacidade: só o dono (fingerprint ou conta) vê o extrato; o índice público não expõe identidade do contribuinte.
 - **Não é:** open banking completo, orçamento prescritivo, nem cartão de crédito — o insumo canônico é a NFC-e depositada.
 
 ## 6. Fora de escopo (PRD v1)
@@ -229,3 +227,4 @@ Comp=comparar · Hist=histórico · Apart=split/economia · Vitr=vitrine + itens
 - §5.6 ranking / §5.7 destaques: remover seções e correlatos em §1–§3, prioridade, matriz e slides.
 - Visibilidade comércio local / itens fora da web: reverter bullets §1, §5.4 e cards da apresentação.
 - §5.9 CD: reverter nomenclatura “centro de distribuição” / loja = estoque online.
+- §5.3 / §5.10 (Minhas listas / Minhas notas + fingerprint): reverter bullets; REQ-051 / REQ-050.

@@ -116,7 +116,7 @@ Funcionalidade: Sugerir split inteligente da cesta entre lojas
 
 **Regras de negócio:**
 - Tela `T-50`.
-- O extrato pessoal é derivado das notas fiscais vinculadas ao `usuario_id` logado.
+- O extrato (**Minhas notas**) é derivado das notas vinculadas ao fingerprint ou ao `usuario_id` (REQ-050 / REQ-051); login não é obrigatório.
 - Permite filtrar por período: mês corrente, mês anterior ou intervalo customizado.
 - Lista cronológica das compras contendo: data da compra, nome e CNPJ do mercado, quantidade de produtos e valor total pago.
 - Ao clicar em uma compra, exibe o espelho da nota fiscal com todos os itens, valores unitários e formas de pagamento.

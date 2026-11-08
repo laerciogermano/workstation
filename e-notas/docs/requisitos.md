@@ -130,7 +130,8 @@ Insumos do card [Benchmarking soluções similares](https://trello.com/c/1fMjqGd
 - **Destaques / concorrência de preços** — observação ou publicação **abaixo** do preço de referência do item → entra no feed de destaques (selo na vitrine / home / perto).
 - **Integrações via API para empresas** — API B2B para estabelecimentos/parceiros consultarem ou alimentarem o índice.
 - **Centro de distribuição** — cada estabelecimento vira **estoque de vendas online** (CD local) a partir da vitrine/cesta; sem margem de marketplace (ver [PRD](prd.md) §5.9).
-- **Gestão de compras e análise financeira** — extrato das notas do usuário: o que / quando / onde comprou; gasto por mês; rankings e tendência (ver [PRD](prd.md) §5.10).
+- **Minhas notas / gestão de compras** — histórico das notas lidas (fingerprint ou conta): o que / quando / onde; gasto por mês (ver [PRD](prd.md) §5.10 · REQ-051).
+- **Minhas listas** — várias listas; cotação sem split (por loja) e com split (mais barato + redução) (ver [PRD](prd.md) §5.3 · REQ-051).
 - **Fonte do preço** — observações do índice são NFC-e (balcão). Preços de apps/marketplaces, se exibidos no futuro, devem vir com **rótulo de canal** e não misturar na mesma série histórica sem aviso.
 - **Posicionamento vs delivery** — o diferencial “preço de balcão” contrasta com **iFood / 99Food / Rappi / Keeta** (e similares); não usar o mesmo argumento como diferencial vs índices NFC-e peers (insumo: [`../marca/comparacao-precos-apps/`](../marca/comparacao-precos-apps/README.md)).
 
@@ -474,6 +475,17 @@ Card: [BXKZ55Wb](https://trello.com/c/BXKZ55Wb).
 - Doc canônico: [`identidade-anonima-fingerprint.md`](identidade-anonima-fingerprint.md). Schema detalhado na implementação (beta-docs modelo de dados / auth).
 - Antes: anônimo só na UX / eventual localStorage. Depois: id de visitante no server + merge na conta.
 - Rollback: remover este REQ e o doc; reverter posse anônima no server.
+
+## REQ-051 — Minhas notas + Minhas listas (várias) com split (2026-11-08)
+
+- Seções de produto: **Minhas notas** (minhas compras) e **Minha(s) lista(s)**.
+- **Minhas notas:** toda nota lida/depositada fica no histórico pessoal (fingerprint ou `usuario_id`); listagem + detalhe do cupom.
+- **Minhas listas:** várias listas para comparar preços da cesta.
+  - **Sem split:** totais por loja, cobertura e comparação entre estabelecimentos.
+  - **Com split:** cenário mais barato + **redução** (R$ / %) vs melhor loja única; itens por loja.
+- PRD: [`prd.md`](prd.md) §5.3 / §5.10 · Beta: [`../beta-docs/01-prd.md`](../beta-docs/01-prd.md) RF-E04-01..12 · identidade: REQ-050.
+- Antes: extrato só logado / cesta única implícita. Depois: histórico e listas multiplas sem login obrigatório + UX split vs sem split.
+- Rollback: reverter bullets do PRD e este REQ.
 
 ## Próximos passos
 

@@ -28,7 +28,8 @@
 | T-03 | Entrar (fora do onboarding; via Perfil) | E01 | US-01.03, 01.04 | azul |
 | T-04 | Recuperar senha | E01 | US-01.05 | azul |
 | T-05 | Localização (opcional / banner) | E01 | US-01.06, 01.07 | azul |
-| T-10 | Home · Produtos + busca/filtros | E01 | US-02.01, 02.02 | verde |
+| T-10 | Home · Produtos (banner-mapa de produtos) | E01 | US-02.01, 02.02 | verde |
+| T-15 | Mapa · produtos (vários pins/local) | E01 | US-02.01, 03.01 | verde |
 | T-11 | Busca + categorias | E01 | US-02.03, 02.04 | azul |
 | T-12 | Comparação | E01 | US-02.05 | verde |
 | T-13 | Histórico | E01 | US-02.06 | verde |

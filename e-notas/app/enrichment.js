@@ -1,6 +1,7 @@
 /**
  * Enrichment: descrição → EAN → imagens (composição; sem auto-vínculo).
- * Fontes EAN: local, Open*Facts, serviço **ean-serp** (SI5 + SERP `EAN`+nome).
+ * Fontes EAN: local, Open*Facts, serviço **ean-serp** (SI5 + SERP `EAN`+nome;
+ * Google CDP no ean-serp se `EAN_SERP_GOOGLE_CDP=1` ou fallback sem unidade).
  * Google Imagens só no pipeline de fotos (não substitui o ean-serp).
  */
 import {
@@ -270,26 +271,27 @@ function hasSerpFonte(map) {
   return false;
 }
 
-/**
- * Microserviço ean-serp (REQ-044): SI5 + DuckDuckGo `EAN {descricao}`.
- * Falha soft se :4180 estiver down.
- */
-async function fromEanSerp(descricao, map) {
+async function pullEanSerpRoute(path, descricao, map, { timeoutMs = 25_000, tag } = {}) {
   const base = eanSerpBase();
   const ctrl = new AbortController();
-  const t = setTimeout(() => ctrl.abort(), 20_000);
+  const t = setTimeout(() => ctrl.abort(), timeoutMs);
   try {
-    const res = await fetch(`${base}/ean`, {
+    const res = await fetch(`${base}${path}`, {
       method: 'POST',
       signal: ctrl.signal,
       headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',
       },
-      body: JSON.stringify({ descricao, limit: MAX_CANDIDATOS, enrich: true }),
+      body: JSON.stringify({
+        descricao,
+        limit: MAX_CANDIDATOS,
+        n: MAX_CANDIDATOS,
+        enrich: true,
+      }),
     });
     if (!res.ok) {
-      console.warn(`[enrichment] ean-serp HTTP ${res.status}`);
+      console.warn(`[enrichment] ean-serp ${path} HTTP ${res.status}`);
       return;
     }
     const data = await res.json();
@@ -299,15 +301,32 @@ async function fromEanSerp(descricao, map) {
       pushEan(map, {
         ean: c.ean,
         score: Math.min(1, score + 0.04),
-        fonte: `ean-serp:${c.fonte || 'serp'}`,
+        fonte: `ean-serp:${c.fonte || tag || 'serp'}`,
         nome_canonico: c.nome_canonico,
         image_url: c.image_url,
       });
     }
   } catch (err) {
-    console.warn('[enrichment] ean-serp:', err.message);
+    console.warn(`[enrichment] ean-serp ${path}:`, err.message);
   } finally {
     clearTimeout(t);
+  }
+}
+
+/**
+ * Microserviço ean-serp (REQ-044): APIs separadas SI5 e Google CDP.
+ * Falha soft se :4180 estiver down.
+ */
+async function fromEanSerp(descricao, map) {
+  await pullEanSerpRoute('/ean/si5', descricao, map, { tag: 'si5' });
+  const googleCdp = ['1', 'true', 'yes'].includes(
+    String(process.env.EAN_SERP_GOOGLE_CDP || '').toLowerCase(),
+  );
+  if (googleCdp) {
+    await pullEanSerpRoute('/ean/google-cdp', descricao, map, {
+      timeoutMs: 45_000,
+      tag: 'google-cdp',
+    });
   }
 }
 

@@ -64,12 +64,20 @@ function parseSi5SearchHtml(text, queryNorm) {
   return map;
 }
 
+function looksMultipack(nome) {
+  const n = String(nome || '');
+  return /\b\d+\s*x\b/i.test(n) || /\b\d+\s*latas?\b/i.test(n) || /\bcombo\b/i.test(n);
+}
+
 /**
  * Busca por nome no HTML público do SI5 (sem token).
- * Tenta variantes da query (ex.: sem TRAD) se a primeira zerar.
+ * Roda **todas** as variantes, mergeia e devolve top `n` por score.
+ * @param {string} descricaoNorm
+ * @param {{ n?: number }} [opts]
  * @returns {Promise<Array<{ean, nome_canonico, image_url, url, fonte, score}>>}
  */
-export async function searchSi5Html(descricaoNorm) {
+export async function searchSi5Html(descricaoNorm, opts = {}) {
+  const n = Math.min(50, Math.max(1, Number(opts.n) || 20));
   const variants = queryVariants(descricaoNorm);
   const merged = new Map();
 
@@ -79,13 +87,18 @@ export async function searchSi5Html(descricaoNorm) {
     if (!ok || !text) continue;
     const map = parseSi5SearchHtml(text, String(descricaoNorm || q));
     for (const [ean, c] of map) {
+      let score = c.score;
+      if (looksMultipack(c.nome_canonico)) score *= 0.55;
+      if (ean.length === 14) score *= 0.7;
+      const next = { ...c, score: Math.max(0.35, score) };
       const prev = merged.get(ean);
-      if (!prev || c.score > prev.score) merged.set(ean, c);
+      if (!prev || next.score > prev.score) merged.set(ean, next);
     }
-    if (merged.size) break;
   }
 
-  return [...merged.values()].sort((a, b) => b.score - a.score);
+  return [...merged.values()]
+    .sort((a, b) => b.score - a.score)
+    .slice(0, n);
 }
 
 /** Detalhe do produto: nome canônico + foto (og:image). */

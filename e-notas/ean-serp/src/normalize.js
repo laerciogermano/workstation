@@ -145,6 +145,7 @@ export function queryVariants(descricaoNorm) {
     /^\d+([.,]\d+)?(G|GR|KG|ML|L|UN|UND)?$/i.test(t) || /^\d+$/.test(t);
 
   const toks = base.split(/\s+/);
+  const weights = toks.filter((t) => isWeight(t));
   const noWeak = toks.filter((t) => !weak.has(t) && !isWeight(t));
   push(noWeak.join(' '));
 
@@ -154,6 +155,13 @@ export function queryVariants(descricaoNorm) {
     if (noWeak.length >= 3) {
       push(noWeak.slice(-2).join(' '));
       push(noWeak.slice(0, 2).join(' '));
+      // marca + peso + sabor (ex.: PRINGLES 109G QUEIJO) — SI5 indexa assim
+      const brand = noWeak[1] || noWeak[0];
+      const flavor = noWeak[noWeak.length - 1];
+      if (weights[0] && brand !== flavor) {
+        push(`${brand} ${weights[0]} ${flavor}`);
+        push(`${brand} ${flavor} ${weights[0]}`);
+      }
     }
   }
 

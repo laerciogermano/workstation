@@ -927,41 +927,31 @@ function renderProdutoFotosGrid(imagens) {
     'upcitemdb',
     'local',
   ];
-  const groups = new Map();
-  for (const img of imagens) {
-    const key = String(img.fonte || 'outras').trim() || 'outras';
-    if (!groups.has(key)) groups.set(key, []);
-    groups.get(key).push(img);
-  }
-  const keys = [
-    ...order.filter((k) => groups.has(k)),
-    ...[...groups.keys()].filter((k) => !order.includes(k)),
-  ];
-  produtoFotosGridEl.innerHTML = keys
-    .map((key) => {
-      const list = groups.get(key) || [];
-      const cards = list
-        .map((img) => {
-          const src = String(img.path_local || '').trim();
-          const sel = Boolean(img.selecionada);
-          return `<button type="button" class="ean-foto-card${
-            sel ? ' is-selected' : ''
-          }" data-ean-img-id="${esc(img.id)}" aria-pressed="${
-            sel ? 'true' : 'false'
-          }" title="${esc(img.fonte || 'fonte')}">
-        <img src="${esc(src)}" alt="" loading="lazy" width="96" height="96" />
+  const rank = (fonte) => {
+    const i = order.indexOf(String(fonte || '').trim());
+    return i === -1 ? order.length : i;
+  };
+  const sorted = [...imagens].sort(
+    (a, b) =>
+      rank(a.fonte) - rank(b.fonte) ||
+      (Number(a.ordem) || 0) - (Number(b.ordem) || 0),
+  );
+  produtoFotosGridEl.innerHTML = `<div class="ean-fotos-grid">${sorted
+    .map((img) => {
+      const src = String(img.path_local || '').trim();
+      const sel = Boolean(img.selecionada);
+      const fonte = labelFonteFoto(img.fonte);
+      return `<button type="button" class="ean-foto-card${
+        sel ? ' is-selected' : ''
+      }" data-ean-img-id="${esc(img.id)}" aria-pressed="${
+        sel ? 'true' : 'false'
+      }" title="${esc(fonte)}">
+        <img src="${esc(src)}" alt="" loading="lazy" width="112" height="112" />
         ${sel ? '<span class="chip ok">feed</span>' : ''}
+        <span class="ean-foto-fonte">${esc(fonte)}</span>
       </button>`;
-        })
-        .join('');
-      return `<section class="ean-fotos-fonte" data-fonte="${esc(key)}">
-        <h3 class="ean-fotos-fonte-title">${esc(labelFonteFoto(key))}
-          <span class="count">${list.length}</span>
-        </h3>
-        <div class="ean-fotos-grid">${cards}</div>
-      </section>`;
     })
-    .join('');
+    .join('')}</div>`;
 }
 
 async function loadProdutoFotos(ean, nome) {

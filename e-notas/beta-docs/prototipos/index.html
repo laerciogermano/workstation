@@ -301,34 +301,32 @@ th{color:var(--muted);font-weight:600}
   <button class="btn p" data-go="T-10">Salvar</button>
   <button class="btn gh" data-go="T-10">Agora não</button>
 </div></template>
-<template data-id="T-10" data-name="Home · Produtos" data-accent="green" data-us="US-02.01,US-02.02" data-notes="Banner-mapa no topo com pins de todos os produtos (vários pins no mesmo local). Busca/filtros/destaques + catálogo.">
+<template data-id="T-10" data-name="Home · Produtos" data-accent="green" data-us="US-02.01,US-02.02" data-notes="Busca/filtros acima; mapa abaixo com pins do resultado (vários por local). Destaques + catálogo.">
 <div class="body tb">
   <div class="top brand"><span class="wm sm"><b>notinhas</b><i>.shop</i></span><span class="sp"></span><button class="ibtn" data-go="T-51" aria-label="Perfil e configurações"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></button></div>
-  <div class="map-banner" data-go="T-15" aria-label="Mapa de produtos">
-    <div class="fmap">
-      <span class="you" style="left:48%;top:52%"></span>
-      <!-- Condor: vários produtos = vários pins próximos -->
-      <span class="pin sm g" style="left:38%;top:34%"></span>
-      <span class="pin sm g" style="left:41%;top:30%"></span>
-      <span class="pin sm" style="left:44%;top:36%"></span>
-      <!-- Muffato -->
-      <span class="pin sm g" style="left:58%;top:48%"></span>
-      <span class="pin sm" style="left:62%;top:44%"></span>
-      <span class="pin sm" style="left:60%;top:52%"></span>
-      <!-- Mercadorama -->
-      <span class="pin sm" style="left:28%;top:58%"></span>
-      <span class="pin sm g" style="left:32%;top:62%"></span>
-    </div>
-    <span class="cap">8 produtos no mapa · tocar p/ ampliar</span>
-  </div>
   <div class="inp mb8" data-go="T-11">⌕ Buscar produto ou EAN</div>
-  <div class="chiprow mb12">
+  <div class="chiprow mb8">
     <span class="chip on">Todas</span>
     <span class="chip">Mercearia</span>
     <span class="chip">Bebidas</span>
     <span class="chip">Limpeza</span>
     <span class="chip">Higiene</span>
     <span class="chip">Filtros</span>
+  </div>
+  <div class="map-banner" data-go="T-15" aria-label="Mapa de produtos">
+    <div class="fmap">
+      <span class="you" style="left:48%;top:52%"></span>
+      <!-- pins refletem o resultado da busca/filtros (vários por local) -->
+      <span class="pin sm g" style="left:38%;top:34%"></span>
+      <span class="pin sm g" style="left:41%;top:30%"></span>
+      <span class="pin sm" style="left:44%;top:36%"></span>
+      <span class="pin sm g" style="left:58%;top:48%"></span>
+      <span class="pin sm" style="left:62%;top:44%"></span>
+      <span class="pin sm" style="left:60%;top:52%"></span>
+      <span class="pin sm" style="left:28%;top:58%"></span>
+      <span class="pin sm g" style="left:32%;top:62%"></span>
+    </div>
+    <span class="cap">Pins = resultado da busca · 8 produtos</span>
   </div>
   <p class="sec">Destaques</p>
   <p class="xs muted mb8">Preço bem abaixo da média · SJP · há 12 min</p>
@@ -523,6 +521,8 @@ th{color:var(--muted);font-weight:600}
 <template data-id="T-31" data-name="Mais baratas" data-accent="green" data-us="US-03.02" data-notes="Banner-mapa no topo: 1 pin por loja. Lista + progresso EAN. ADR-011 / REQ-046.">
 <div class="body tb">
   <div class="top"><span class="t">Mais baratas</span><span class="sp"></span><button class="ibtn" data-go="T-51" aria-label="Perfil"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></button></div>
+  <div class="inp mb8">Buscar estabelecimento</div>
+  <div class="chiprow mb8"><span class="chip on">5 km</span><span class="chip">2 km</span><span class="chip">10 km</span></div>
   <div class="map-banner" data-go="T-32" aria-label="Mapa de lojas">
     <div class="fmap">
       <span class="you" style="left:48%;top:48%"></span>
@@ -530,10 +530,8 @@ th{color:var(--muted);font-weight:600}
       <span class="pin" style="left:58%;top:50%">2</span>
       <span class="pin" style="left:32%;top:60%">3</span>
     </div>
-    <span class="cap">3 lojas · 1 pin cada · tocar p/ ampliar</span>
+    <span class="cap">Pins = resultado da busca · 3 lojas</span>
   </div>
-  <div class="inp mb8">Buscar estabelecimento</div>
-  <div class="chiprow mb8"><span class="chip on">5 km</span><span class="chip">2 km</span><span class="chip">10 km</span></div>
   <p class="xs muted mb8">Perto de você · mediana 14d · progresso de contribuição</p>
   <div class="rank" data-go="T-33"><span class="rk">1</span><div class="grow"><p class="b sm">Condor Centro</p><p class="xs muted">1ª mais barata · −6% · 1,2 km</p><div class="prog"><div class="prog-bar"><i class="ok" style="width:72%"></i><i class="miss" style="width:28%"></i></div><div class="prog-meta"><span><b>151</b> com EAN</span><span><b>58</b> faltam</span></div></div></div><span class="badge g">1ª</span></div>
   <div class="rank" data-go="T-33"><span class="rk">2</span><div class="grow"><p class="b sm">Super Muffato</p><p class="xs muted">2ª mais barata · −2% · 1,8 km</p><div class="prog"><div class="prog-bar"><i class="ok" style="width:54%"></i><i class="miss" style="width:46%"></i></div><div class="prog-meta"><span><b>98</b> com EAN</span><span><b>84</b> faltam</span></div></div></div></div>

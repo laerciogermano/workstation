@@ -4,7 +4,7 @@ import { cdpAvailable, searchGoogleCdpEan } from './providers/google-cdp.js';
 import { enrichSi5Product, searchSi5Api, searchSi5Html } from './providers/si5.js';
 
 const MAX_DEFAULT = 8;
-const MAX_LIMIT = 50;
+const MAX_LIMIT = 100;
 const ENRICH_TOP = 5;
 
 function requireDescricao(descricao) {

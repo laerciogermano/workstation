@@ -638,7 +638,6 @@ function renderProdutoEanSuggestList(list, { empresaId, empresaNome, codigo, nom
     <p class="ean-suggest-inline-label">Sugestões — toque para vincular</p>
     <ul class="ean-suggest-list ean-suggest-list-inline">
       ${list
-        .slice(0, 8)
         .map((c) => {
           const pct = Math.round((Number(c.score) || 0) * 100);
           const thumb = c.image_url
@@ -1317,7 +1316,7 @@ async function fetchEanSugestoes(descricao, { force = false } = {}) {
   const p = fetchJson('api/enrichment/ean/si5', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ descricao, force: Boolean(force) }),
+    body: JSON.stringify({ descricao, n: 100, force: Boolean(force) }),
   }).then((data) => {
     const list = data.candidatos || [];
     if (!list.length) eanSuggestCache.delete(key);
@@ -1464,7 +1463,7 @@ async function sugerirEanPorDescricao() {
     const data = await fetchJson('api/enrichment/ean/si5', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ descricao: nome }),
+      body: JSON.stringify({ descricao: nome, n: 100 }),
     });
     const list = data.candidatos || [];
     if (!list.length) {

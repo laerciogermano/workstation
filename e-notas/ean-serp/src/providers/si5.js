@@ -110,7 +110,7 @@ function boostBrandFlavor(queryNorm, nome, ean, score) {
  * @returns {Promise<Array<{ean, nome_canonico, image_url, url, fonte, score}>>}
  */
 export async function searchSi5Html(descricaoNorm, opts = {}) {
-  const n = Math.min(80, Math.max(1, Number(opts.n) || 40));
+  const n = Math.min(100, Math.max(1, Number(opts.n) || 100));
   const variants = queryVariants(descricaoNorm);
   const merged = new Map();
   const qNorm = String(descricaoNorm || '');

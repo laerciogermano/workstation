@@ -22,7 +22,7 @@ const UA =
 const FETCH_MS = 12_000;
 const MAX_CANDIDATOS = 8;
 /** Sugestões SI5 no front — precisa de mais slots (unidade costuma ficar atrás de kits). */
-const MAX_SI5_SUGESTOES = 40;
+const MAX_SI5_SUGESTOES = 100;
 /** Score mínimo para disparar busca de imagens por EAN sem confirmação. */
 export const SCORE_IMAGENS_AUTO = 0.72;
 

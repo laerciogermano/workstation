@@ -8,7 +8,7 @@ Não grava no Postgres do e-notas; só resolve e devolve JSON.
 
 | Método | Rota | O que faz |
 |--------|------|-----------|
-| `GET`/`POST` | `/ean/si5` | **Só SI5** (HTML + API opcional). Todas as variantes; top `n`/`limit` por score (máx 50; app usa 40) |
+| `GET`/`POST` | `/ean/si5` | **Só SI5** (HTML + API opcional). Todas as variantes; top `n`/`limit` por score (máx 100; front usa 100) |
 | `GET`/`POST` | `/ean/google-cdp` | **Só Google** via Chrome CDP (`EAN {descricao}`). Precisa `CDP_URL` (default `:9223`) |
 | `GET`/`POST` | `/ean` | Orquestra SI5 + DDG (+ Google se `google_cdp=1`) — legado |
 

@@ -142,9 +142,14 @@
           <article class="produto-hero" id="produto-info"></article>
           <section id="produto-ean-suggest" class="produto-ean-suggest" hidden>
             <header class="home-section-head" style="margin-top: 1.25rem">
-              <h2 class="home-section-title">Sugestões de código de barras</h2>
+              <h2 class="home-section-title" id="produto-ean-suggest-title">
+                Pesquisar código de barras
+              </h2>
+              <button type="button" class="btn-ghost btn-sm" id="produto-ean-suggest-fechar" hidden>
+                Fechar
+              </button>
             </header>
-            <p class="ean-suggest-why">
+            <p class="ean-suggest-why" id="produto-ean-suggest-why">
               Vincular o produto ao código de barras é o que permite comparar o
               mesmo item entre mercados, acompanhar o preço ao longo do tempo e
               reconhecer a embalagem nas próximas notas — sem o vínculo, cada
@@ -152,13 +157,13 @@
             </p>
             <form id="produto-ean-suggest-form" class="ean-suggest-search" action="#">
               <label class="ean-suggest-search-label">
-                Pesquisar sugestões
+                Pesquisar
                 <span class="manual-row">
                   <input
                     id="produto-ean-suggest-q"
                     type="search"
                     autocomplete="off"
-                    placeholder="Ex.: pringles queijo 100g"
+                    placeholder="Ex.: pringles queijo 109g"
                   />
                   <button type="submit" class="btn btn-ghost" id="produto-ean-suggest-buscar">
                     Buscar

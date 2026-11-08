@@ -49,6 +49,15 @@ const produtoEanSuggestQEl = document.getElementById('produto-ean-suggest-q');
 const produtoEanSuggestBuscarEl = document.getElementById(
   'produto-ean-suggest-buscar',
 );
+const produtoEanSuggestTitleEl = document.getElementById(
+  'produto-ean-suggest-title',
+);
+const produtoEanSuggestWhyEl = document.getElementById(
+  'produto-ean-suggest-why',
+);
+const produtoEanSuggestFecharEl = document.getElementById(
+  'produto-ean-suggest-fechar',
+);
 const produtoTimelineEl = document.getElementById('produto-timeline');
 const countProdutoPrecosEl = document.getElementById('count-produto-precos');
 let produtoFotosEan = '';
@@ -574,6 +583,7 @@ function renderProdutoDetalhe(key) {
     }`,
   );
 
+  const eanEditLabel = ean ? 'Editar código de barras' : 'Vincular código de barras';
   if (produtoInfoEl) {
     produtoInfoEl.innerHTML = `
     <div${heroMediaAttrs}>${img}</div>
@@ -589,6 +599,11 @@ function renderProdutoDetalhe(key) {
           ? ` · ${esc(formatDataNota(menor.nota_emissao))}`
           : ''
       }</p>
+      <p class="produto-hero-actions">
+        <button type="button" class="btn btn-ghost btn-sm" data-edit-ean>
+          ${esc(eanEditLabel)}
+        </button>
+      </p>
     </div>`;
   }
 
@@ -626,7 +641,24 @@ function renderProdutoDetalhe(key) {
   }
 
   void loadProdutoFotos(ean, head.nome || '');
-  void loadProdutoEanSuggestions(head);
+  if (!ean) void openProdutoEanSearch(head);
+  else hideProdutoEanSearch();
+}
+
+function hideProdutoEanSearch() {
+  stopProdutoEanSuggestStream();
+  if (produtoEanSuggestEl) produtoEanSuggestEl.hidden = true;
+  if (produtoEanSuggestFecharEl) produtoEanSuggestFecharEl.hidden = true;
+  setProdutoEanSuggestBuscarLoading(false);
+}
+
+function openProdutoEanSearch(head, queryOverride) {
+  void loadProdutoEanSuggestions(head, queryOverride, { edit: true });
+  if (produtoEanSuggestEl) {
+    produtoEanSuggestEl.hidden = false;
+    produtoEanSuggestEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  produtoEanSuggestQEl?.focus();
 }
 
 function renderProdutoEanSuggestList(list, { empresaId, empresaNome, codigo, nome }) {
@@ -637,15 +669,15 @@ function renderProdutoEanSuggestList(list, { empresaId, empresaNome, codigo, nom
     return;
   }
   produtoEanSuggestBodyEl.innerHTML = `
-    <p class="ean-suggest-inline-label">Sugestões — toque para vincular</p>
-    <ul class="ean-suggest-list ean-suggest-list-inline">
+    <p class="ean-suggest-inline-label">Resultados — toque para vincular</p>
+    <ul class="ean-suggest-list ean-suggest-list-cards">
       ${list
         .map((c) => {
           const pct = Math.round((Number(c.score) || 0) * 100);
           const thumb = c.image_url
-            ? `<img class="ean-suggest-thumb" src="${esc(c.image_url)}" alt="" loading="lazy" width="36" height="36" />`
-            : '';
-          return `<li><button type="button" class="ean-suggest-btn"
+            ? `<img class="ean-suggest-card-img" src="${esc(c.image_url)}" alt="" loading="lazy" width="72" height="72" />`
+            : `<span class="ean-suggest-card-img ean-suggest-card-img-empty" aria-hidden="true"></span>`;
+          return `<li><button type="button" class="ean-suggest-card"
             data-aplicar-sugestao
             data-ean="${esc(c.ean)}"
             data-empresa-id="${esc(String(empresaId))}"
@@ -653,9 +685,11 @@ function renderProdutoEanSuggestList(list, { empresaId, empresaNome, codigo, nom
             data-codigo="${esc(codigo)}"
             data-nome="${esc(nome)}">
             ${thumb}
-            <span class="ean-suggest-ean">${esc(c.ean)}</span>
-            <span class="ean-suggest-nome">${esc(c.nome_canonico || '—')}</span>
-            <span class="ean-suggest-meta">${pct}% · ${esc(c.fonte || '')}</span>
+            <span class="ean-suggest-card-body">
+              <span class="ean-suggest-card-title">${esc(c.nome_canonico || '—')}</span>
+              <span class="ean-suggest-card-ean mono">${esc(c.ean)}</span>
+              <span class="ean-suggest-card-meta">${pct}% · ${esc(c.fonte || '')}</span>
+            </span>
           </button></li>`;
         })
         .join('')}
@@ -676,7 +710,7 @@ function runProdutoEanSuggestSearch() {
   const head = hist[0];
   if (!head) return;
   const q = String(produtoEanSuggestQEl?.value || '').trim();
-  void loadProdutoEanSuggestions(head, q || head.nome);
+  void loadProdutoEanSuggestions(head, q || head.nome, { edit: true });
 }
 
 let produtoEanSuggestSearchTimer = 0;
@@ -705,7 +739,7 @@ function tagSi5Candidatos(list) {
   }));
 }
 
-function loadProdutoEanSuggestions(head, queryOverride) {
+function loadProdutoEanSuggestions(head, queryOverride, { edit = false } = {}) {
   if (!produtoEanSuggestEl || !produtoEanSuggestBodyEl) return;
   const ean = String(head?.codigo_barras || '').trim();
   const codigo = String(head?.codigo || '').trim();
@@ -713,10 +747,13 @@ function loadProdutoEanSuggestions(head, queryOverride) {
   const empresaId = head?.empresa_id;
   const gen = ++produtoEanSuggestGen;
   stopProdutoEanSuggestStream();
-  if (ean || !codigo || !nome || !empresaId) {
-    produtoEanSuggestEl.hidden = true;
+  if (!codigo || !nome || !empresaId) {
+    hideProdutoEanSearch();
     produtoEanSuggestBodyEl.innerHTML = '';
-    setProdutoEanSuggestBuscarLoading(false);
+    return;
+  }
+  if (ean && !edit) {
+    hideProdutoEanSearch();
     return;
   }
   const empresaNome =
@@ -724,6 +761,17 @@ function loadProdutoEanSuggestions(head, queryOverride) {
     allEmpresas.find((e) => Number(e.id) === Number(empresaId))?.nome ||
     '';
   const query = String(queryOverride ?? nome).trim() || nome;
+  if (produtoEanSuggestTitleEl) {
+    produtoEanSuggestTitleEl.textContent = ean
+      ? 'Editar código de barras'
+      : 'Pesquisar código de barras';
+  }
+  if (produtoEanSuggestWhyEl) {
+    produtoEanSuggestWhyEl.hidden = Boolean(ean);
+  }
+  if (produtoEanSuggestFecharEl) {
+    produtoEanSuggestFecharEl.hidden = !ean;
+  }
   produtoEanSuggestEl.hidden = false;
   produtoEanSuggestBodyEl.dataset.suggestFor = codigo;
   produtoEanSuggestBodyEl.dataset.empresaId = String(empresaId);
@@ -1787,7 +1835,8 @@ produtoEanSuggestEl?.addEventListener('click', (ev) => {
   if (!sug) return;
   ev.preventDefault();
   const label =
-    sug.querySelector('.ean-suggest-ean')?.textContent || sug.dataset.ean;
+    sug.querySelector('.ean-suggest-card-ean, .ean-suggest-ean')?.textContent ||
+    sug.dataset.ean;
   sug.disabled = true;
   sug.classList.add('is-busy');
   void aplicarSugestaoEan({
@@ -1797,6 +1846,7 @@ produtoEanSuggestEl?.addEventListener('click', (ev) => {
     ean: sug.dataset.ean,
   })
     .then(() => {
+      hideProdutoEanSearch();
       if (produtoAbertaKey != null) renderProdutoDetalhe(produtoAbertaKey);
       if (lojaAbertaId != null) renderVitrineDetalhe(lojaAbertaId);
     })
@@ -1806,8 +1856,16 @@ produtoEanSuggestEl?.addEventListener('click', (ev) => {
       alert(`Falha ao vincular ${label}: ${err.message}`);
     });
 });
+produtoEanSuggestFecharEl?.addEventListener('click', () => {
+  hideProdutoEanSearch();
+});
 produtoInfoEl?.addEventListener('click', (ev) => {
-  handleOpenFotoClick(ev);
+  if (handleOpenFotoClick(ev)) return;
+  const editBtn = ev.target.closest('[data-edit-ean]');
+  if (!editBtn || produtoAbertaKey == null) return;
+  const head = historicoProduto(produtoAbertaKey)[0];
+  if (!head) return;
+  openProdutoEanSearch(head);
 });
 produtoInfoEl?.addEventListener('keydown', (ev) => {
   if (ev.key !== 'Enter' && ev.key !== ' ') return;

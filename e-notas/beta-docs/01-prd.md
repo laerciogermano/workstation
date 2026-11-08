@@ -161,6 +161,7 @@ Responsável pela dimensão territorial do consumo: visualização espacial dos 
 | **RF-E03-14** | **Rota no mapa externo:** Botão "Como chegar" na vitrine que abre a localização da loja diretamente no Google Maps, Apple Maps ou Waze instalado no dispositivo do usuário. | **M** |
 | **RF-E03-15** | **Horário e status de funcionamento (quando disponível):** Exibição de dados operacionais básicos obtidos via cadastro da empresa. | **C** |
 | **RF-E03-16** | **Badge de verificação de empresa parceira:** Selo diferenciado para estabelecimentos que validaram seu cadastro institucional com o suporte do notinhas.shop. | **S** |
+| **RF-E03-17** | **Progresso da loja (notas / itens / EAN):** Em cards da lista, popup do mapa e cabeçalho da vitrine: barra e contagens do que já foi concluído (notas ingeridas, itens com EAN) e do que falta (itens sem código de barras). REQ-046. | **M** |
 
 ---
 

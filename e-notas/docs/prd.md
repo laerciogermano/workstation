@@ -77,7 +77,12 @@ Ler o QR/URL da NFC-e (preço, estabelecimento, data, cód. interno), vincular E
 ### 5.4 Tela da loja (vitrine e-commerce) — *should*
 - Página do estabelecimento com **grade/lista de itens** observados naquela loja (catálogo/e-commerce, **sem checkout**).
 - **Visibilidade do comércio local:** expor ao público o sortimento de balcão — inclusive itens que **não estão anunciados na internet** / marketplaces — a partir das notas (e, no futuro, catálogo oficial via API).
-- Por item: nome, EAN (se houver), último preço, data, link para histórico/comparação.
+- **Progresso da loja** (REQ-046): barra e métricas do que já foi concluído vs o que falta —
+  - notas fiscais ingeridas;
+  - itens distintos observados;
+  - códigos de barras (EAN) vinculados vs pendentes.
+- Na lista de estabelecimentos e no mapa: resumo do progresso (com EAN / faltam).
+- Por item: nome, EAN (se houver), último preço, data, link para histórico/comparação; CTA para vincular EAN nos pendentes.
 - Filtro/busca na loja; ordenação preço / frescor / nome.
 - Entrada: pin no mapa, resultado de busca geo, comparação ou nota ingerida.
 - Não é marketplace: sortimento **inferido das notas** (vitrine de descoberta, não checkout).
@@ -92,7 +97,7 @@ Ler o QR/URL da NFC-e (preço, estabelecimento, data, cód. interno), vincular E
 ### 5.6 Ranking de estabelecimentos perto — *must*
 - Listar **lojas no raio** (GPS ou região: centro, bairro, endereço) ordenadas pelas que **menos cobram** ou **mais cobram**.
 - Nível de preço **agregado da loja** (não um único item): índice derivado das observações NFC-e no período (ex. mediana / desvio vs média da região nos EANs com cobertura).
-- Resultado por loja: posição no ranking, score/nível (“mais barata” ↔ “mais cara”), distância, nº de itens observados / frescor, link para vitrine.
+- Resultado por loja: posição no ranking, score/nível (“mais barata” ↔ “mais cara”), distância, **progresso EAN** (feitos / faltam), frescor, link para vitrine.
 - Filtros: raio (km), ordenar por **mais baratas** ou **mais caras**, frescor máximo, cobertura mínima (ex. ≥N EANs no período).
 - Distinto da §5.5: aqui a pergunta é “**quais mercados perto de mim são mais baratos / caros?**”, não “onde acho este item”.
 - Transparência: mostrar janela de dados e que o score é observação de nota (não tabela oficial da loja).

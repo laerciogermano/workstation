@@ -178,6 +178,14 @@ footer{padding:48px 0 72px;color:var(--muted);font-size:12px;text-align:center}
 .cesta-card.on{border-color:var(--blue);background:var(--blue-soft)}
 .quota{height:8px;border-radius:999px;background:var(--bg);overflow:hidden;margin:6px 0}
 .quota>i{display:block;height:100%;background:var(--blue);border-radius:999px}
+.prog{margin-top:6px}
+.prog-bar{display:flex;height:6px;border-radius:999px;overflow:hidden;background:var(--bg);border:1px solid var(--line)}
+.prog-bar i{display:block;height:100%;min-width:0}
+.prog-bar .ok{background:var(--green)}
+.prog-bar .miss{background:#e57373}
+.prog-meta{display:flex;justify-content:space-between;gap:8px;margin-top:4px;font-size:10px;color:var(--muted)}
+.prog-meta b{color:var(--ink);font-weight:700}
+.prog-card{border:1px solid var(--line);border-radius:10px;padding:10px;background:#fff;margin-bottom:10px}
 .meta-fp{font-size:10px;color:var(--muted);font-family:ui-monospace,Menlo,monospace;word-break:break-all}
 .compare-row{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
 .compare-row .pp{font-size:15px}
@@ -492,15 +500,15 @@ th{color:var(--muted);font-weight:600}
   <div class="tab" data-go="T-40"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h.01"/><path d="M3 18h.01"/><path d="M3 6h.01"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M8 6h13"/></svg></span>Listas</div>
   <div class="tab" data-go="T-50"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M14 8H8"/><path d="M16 12H8"/><path d="M13 16H8"/></svg></span>Notas</div>
 </div></template>
-<template data-id="T-31" data-name="Mais baratas" data-accent="green" data-us="US-03.02" data-notes="Entrada de Estabelecimentos. Lista ordenada das mais baratas no raio; cada linha mostra posição barata e cara. Busca sem tabs baratas/caras. ADR-011.">
+<template data-id="T-31" data-name="Mais baratas" data-accent="green" data-us="US-03.02" data-notes="Lista de lojas + progresso EAN/notas (REQ-046). Ranking baratas/caras. ADR-011.">
 <div class="body tb">
   <div class="top"><span class="t">Mais baratas</span><span class="sp"></span><button class="ibtn" data-go="T-32" aria-label="Mapa">🗺️</button><button class="ibtn" data-go="T-51" aria-label="Perfil"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></button></div>
   <div class="inp mb8">Buscar estabelecimento</div>
   <div class="chiprow mb8"><span class="chip on">5 km</span><span class="chip">2 km</span><span class="chip">10 km</span></div>
-  <p class="xs muted mb8">Perto de você · mediana 14d · ≥20 EANs</p>
-  <div class="rank" data-go="T-33"><span class="rk">1</span><div class="grow"><p class="b sm">Condor Centro</p><p class="xs muted">1ª mais barata · 3ª mais cara da região</p><p class="xs muted">−6% vs mediana · 1,2 km</p></div><span class="badge g">1ª</span></div>
-  <div class="rank" data-go="T-33"><span class="rk">2</span><div class="grow"><p class="b sm">Super Muffato</p><p class="xs muted">2ª mais barata · 2ª mais cara da região</p><p class="xs muted">−2% · 1,8 km</p></div></div>
-  <div class="rank" data-go="T-33"><span class="rk">3</span><div class="grow"><p class="b sm">Mercadorama</p><p class="xs muted">3ª mais barata · 1ª mais cara da região</p><p class="xs muted">+4% · 2,4 km</p></div></div>
+  <p class="xs muted mb8">Perto de você · mediana 14d · progresso de contribuição</p>
+  <div class="rank" data-go="T-33"><span class="rk">1</span><div class="grow"><p class="b sm">Condor Centro</p><p class="xs muted">1ª mais barata · −6% · 1,2 km</p><div class="prog"><div class="prog-bar"><i class="ok" style="width:72%"></i><i class="miss" style="width:28%"></i></div><div class="prog-meta"><span><b>151</b> com EAN</span><span><b>58</b> faltam</span></div></div></div><span class="badge g">1ª</span></div>
+  <div class="rank" data-go="T-33"><span class="rk">2</span><div class="grow"><p class="b sm">Super Muffato</p><p class="xs muted">2ª mais barata · −2% · 1,8 km</p><div class="prog"><div class="prog-bar"><i class="ok" style="width:54%"></i><i class="miss" style="width:46%"></i></div><div class="prog-meta"><span><b>98</b> com EAN</span><span><b>84</b> faltam</span></div></div></div></div>
+  <div class="rank" data-go="T-33"><span class="rk">3</span><div class="grow"><p class="b sm">Mercadorama</p><p class="xs muted">3ª mais barata · +4% · 2,4 km</p><div class="prog"><div class="prog-bar"><i class="ok" style="width:31%"></i><i class="miss" style="width:69%"></i></div><div class="prog-meta"><span><b>44</b> com EAN</span><span><b>98</b> faltam</span></div></div></div></div>
 </div>
 <div class="tabbar">
   <div class="tab" data-go="T-10"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg></span>Produtos</div>
@@ -520,20 +528,36 @@ th{color:var(--muted);font-weight:600}
   </div>
   <div class="sheet-mini">
     <p class="b sm">Condor Centro</p>
-    <p class="xs muted">650 m · menor no leite</p>
+    <p class="xs muted">650 m · 151/209 EAN (72%)</p>
+    <div class="prog mt8"><div class="prog-bar"><i class="ok" style="width:72%"></i><i class="miss" style="width:28%"></i></div></div>
     <button class="btn p sm mt8" data-go="T-33">Abrir vitrine</button>
   </div>
 </div></template>
-<template data-id="T-33" data-name="Vitrine da loja" data-accent="green" data-us="US-03.04,US-03.05,US-03.06" data-notes="Catálogo inferido das notas, sem checkout. Botão EAN no item.">
+<template data-id="T-33" data-name="Vitrine da loja" data-accent="green" data-us="US-03.04,US-03.05,US-03.06" data-notes="Vitrine + progresso: notas, itens e EAN feitos vs faltando (REQ-046).">
 <div class="body">
   <div class="top"><button class="ibtn" data-go="back">‹</button><span class="t">Condor Centro</span></div>
   <p class="xs muted mb8">Av. Rui Barbosa · 650 m · score barata</p>
+  <div class="prog-card">
+    <p class="b sm">Progresso da loja</p>
+    <p class="xs muted mt4">Itens das notas com código de barras vinculado</p>
+    <div class="prog mt8"><div class="prog-bar"><i class="ok" style="width:72%"></i><i class="miss" style="width:28%"></i></div>
+      <div class="prog-meta"><span><b>151</b> com EAN (72%)</span><span><b>58</b> sem EAN</span></div>
+    </div>
+    <div class="flex between mt12" style="gap:8px">
+      <div class="grow"><p class="xs muted">Notas ingeridas</p><p class="b sm">86</p></div>
+      <div class="grow"><p class="xs muted">Itens distintos</p><p class="b sm">209</p></div>
+      <div class="grow"><p class="xs muted">Faltam EAN</p><p class="b sm" style="color:var(--err)">58</p></div>
+    </div>
+    <button class="btn s sm mt12" data-go="T-23">Vincular próximos EANs</button>
+  </div>
   <div class="inp mb12">Buscar na loja</div>
+  <p class="sec">Pendentes de EAN</p>
+  <div class="lrow"><div class="ph sm g3"></div><div class="grow"><p class="b sm">Café Torrado 500g</p><p class="xs muted">cód. interno 88421</p></div><button class="btn s sm" data-go="T-23">+ EAN</button></div>
+  <div class="lrow"><div class="ph sm g4"></div><div class="grow"><p class="b sm">Óleo 900ml</p><p class="xs muted">cód. interno 12004</p></div><button class="btn s sm" data-go="T-23">+ EAN</button></div>
+  <p class="sec">Com EAN</p>
   <div class="pgrid">
-    <div class="pcard" data-go="T-14"><div class="ph"></div><p class="pn">Leite 1L</p><p class="pp">R$ 4,29</p><button class="link xs" data-go="T-23">+ EAN</button></div>
-    <div class="pcard"><div class="ph g2"></div><p class="pn">Arroz 5kg</p><p class="pp">R$ 23,90</p></div>
-    <div class="pcard"><div class="ph g3"></div><p class="pn">Café 500g</p><p class="pp">R$ 19,90</p></div>
-    <div class="pcard"><div class="ph g4"></div><p class="pn">Óleo 900ml</p><p class="pp">R$ 7,49</p></div>
+    <div class="pcard" data-go="T-14"><div class="ph"></div><p class="pn">Leite 1L</p><p class="pp">R$ 4,29</p></div>
+    <div class="pcard" data-go="T-14"><div class="ph g2"></div><p class="pn">Arroz 5kg</p><p class="pp">R$ 23,90</p></div>
   </div>
 </div></template>
 <template data-id="T-40" data-name="Minhas listas" data-accent="green" data-us="US-04.01,US-04.02" data-notes="Várias listas (REQ-051). Cotação sem split: totais por loja. Persistência fingerprint.">

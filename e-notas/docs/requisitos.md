@@ -426,14 +426,15 @@ Card: [BXKZ55Wb](https://trello.com/c/BXKZ55Wb).
 - Antes: catálogo agrupava também por nome/código sem EAN. Depois: só chave `ean:…`.
 - Rollback: remover o filtro `codigo_barras` em `catalogoProdutos()` (`lista.js`).
 
-## REQ-046 — Progresso de EAN no estabelecimento (2026-11-08)
+## REQ-046 — Progresso da loja: notas, itens e EAN (2026-11-08)
 
-- Em cada **card** da lista de estabelecimentos e no **cabeçalho** do detalhe da loja: barra de progresso do vínculo de código de barras.
+- Em cada **card** da lista de estabelecimentos, **popup do mapa** e **cabeçalho/vitrine** da loja: progresso do que já foi concluído vs o que falta.
+- Métricas: **notas** ingeridas; **itens** distintos; **EAN** vinculados vs pendentes (SKU interno sem código de barras).
 - Contagem por SKU interno (`codigo`) da loja: total, com EAN, sem EAN.
-- **Verde** = % / qtd. com EAN; **vermelho** = % / qtd. sem EAN; texto com `N com EAN (X%) · M sem (Y%) · T itens`.
-- Popup do mapa mostra resumo `com/total EAN (%)`.
-- Antes: só chip “N itens”. Depois: barra bicolor + métricas.
-- Rollback: remover `eanProgressLoja` / `htmlEanProgress` e CSS `.ean-progress*`.
+- **Verde** = com EAN; **vermelho** = faltam EAN; texto `N com EAN (X%) · M faltam · T itens · N notas`.
+- Protótipo: T-31 / T-32 / T-33. PRD §5.4 · RF-E03-17.
+- Antes: só chip “N itens” / progresso só de EAN implícito. Depois: barra + notas/itens/faltantes na UI e no PRD.
+- Rollback: remover `eanProgressLoja` / `htmlEanProgress` / blocos do protótipo e bullets do PRD.
 
 ## REQ-047 — Catálogo canônico `produtos_ean` (2026-11-08)
 

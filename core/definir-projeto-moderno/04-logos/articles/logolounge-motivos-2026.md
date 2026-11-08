@@ -31,3 +31,5 @@ Fonte: [2026 Logo Trend Report](https://www.logolounge.com/trend/2026-logo-trend
 
 Se o conceito proposto parecer um dos motivos acima **sem** relação específica ao brief → regenerar.  
 Se usar o motivo com intenção explícita (história da marca) → documentar o porquê no checkpoint.
+
+Pacote logo: [`../LOGO.md`](../LOGO.md).

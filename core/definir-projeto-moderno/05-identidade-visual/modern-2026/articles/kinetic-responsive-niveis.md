@@ -40,4 +40,5 @@ Nunca entregar só MP4 flatten.
 ## Skill local
 
 - Regras de marca: [`../../skills/brand-motion-guidelines/SKILL.md`](../../skills/brand-motion-guidelines/SKILL.md)  
-- Animar logo já aprovado com guardrails: [`../../skills/brand-motion-agent-skill/SKILL.md`](../../skills/brand-motion-agent-skill/SKILL.md)
+- Animar logo já aprovado: [`../../skills/brand-motion-agent-skill/SKILL.md`](../../skills/brand-motion-agent-skill/SKILL.md)  
+- Veredito: [`../../IDENTIDADE-VISUAL.md`](../../IDENTIDADE-VISUAL.md)

@@ -45,3 +45,6 @@ TL;DR Envato: polish chama atenção; **substância + POV humano** prendem.
 
 Conhecer → decidir se o brief pede tendência ou atemporalidade.  
 Master SVG monocromático e 16px **sempre** vencem o efeito da moda.
+
+Sistema além do logo: [`../../05-identidade-visual/IDENTIDADE-VISUAL.md`](../../05-identidade-visual/IDENTIDADE-VISUAL.md).  
+Motivos LogoLounge: [`logolounge-motivos-2026.md`](logolounge-motivos-2026.md).

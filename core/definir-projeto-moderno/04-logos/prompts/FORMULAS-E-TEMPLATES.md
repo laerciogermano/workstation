@@ -48,7 +48,8 @@ Crie logo para [NOME], [o que faz], audiência [quem], adjetivos [3–5],
 concorrentes a evitar [lista]. Explore 3 conceitos em tipos de marca diferentes.
 Checkpoint antes do kit. Master em SVG com viewBox, paths, sem raster.
 Passar: 16px, monocromático, reversed, blur/squint. Entregar icon + lockups + mono + favicon.
-Usar referências de core/definir-projeto-moderno/04-logos-identidade-visual/ (LOGO-IDENTIDADE + skill logo-design).
+Usar referências de core/definir-projeto-moderno/04-logos/ (LOGO.md + skill logo-design).
+Identidade completa: core/definir-projeto-moderno/05-identidade-visual/.
 ```
 
 ## C. Fórmula SVG Genie (negócio → produção)

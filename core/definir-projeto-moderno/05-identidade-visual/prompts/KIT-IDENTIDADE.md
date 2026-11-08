@@ -22,7 +22,7 @@ para preview em UM HTML self-contained (CSS + SVG inline).
 Direções: (A) wordmark-led · (B) symbol+text · (C) abstract/conceptual.
 Para cada: nome da direção, ideia em 1 frase, racional estratégico, feeling tipográfico, cor primary, SVG flat legível grande e pequeno.
 Sem raster, sem glow, sem mockup. Depois: recomendação de 1 direção e por quê.
-Usar core/definir-projeto-moderno/04-logos-identidade-visual/ (LOGO-IDENTIDADE + modern-2026/IDENTIDADE-MODERNA).
+Usar core/definir-projeto-moderno/04-logos/LOGO.md + 05-identidade-visual/IDENTIDADE-VISUAL.md.
 ```
 
 ---
@@ -95,8 +95,8 @@ Skill: visual-identity. Não começar implementação sem esse doc.
 
 ```text
 Criar identidade visual para [PROJETO] seguindo
-core/definir-projeto-moderno/04-logos-identidade-visual/modern-2026/IDENTIDADE-MODERNA.md
-e LOGO-IDENTIDADE.md.
+core/definir-projeto-moderno/05-identidade-visual/IDENTIDADE-VISUAL.md
+e 04-logos/LOGO.md.
 
 Ordem: brief → 3 conceitos (checkpoint) → SVG kit → cor/tipo → art direction 1p →
 motion L1+L2 → BRAND.md + tokens CSS.

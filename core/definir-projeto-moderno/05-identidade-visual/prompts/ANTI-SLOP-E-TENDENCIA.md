@@ -30,4 +30,4 @@ Justificativa em 1 frase ligada ao brief.
 - [ ] Não parece template Midjourney “AI brand”  
 - [ ] Cor tem pares AA documentados  
 - [ ] Motion (se houver) tem reduced-motion  
-- [ ] BRAND.md / tokens versionados com o projeto
+- [ ] BRAND.md / tokens versionados com o projeto (pacote `05-identidade-visual`)

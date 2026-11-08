@@ -43,4 +43,4 @@ Sem seções 8 e 11, o kit está **desatualizado** para 2026.
 ## Implicação operacional
 
 Entregar identidade = entregar **documento machine-readable** + assets, não só moodboard.  
-Template fill-in: [`../templates/BRAND.md`](../templates/BRAND.md).
+Template fill-in: [`../../templates/BRAND.md`](../../templates/BRAND.md).

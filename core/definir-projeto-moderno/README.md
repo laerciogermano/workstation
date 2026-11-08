@@ -1,28 +1,31 @@
 # Definir projeto moderno
 
-Pacote unificado das pesquisas de **2026-11-08** (arquitetura, stack e design/motion) para IA iniciar e desenvolver sistema.
+Pacote unificado das pesquisas de **2026-11-08** (arquitetura, stack, design/motion, logo, identidade) para IA iniciar e desenvolver sistema.
 
 ## Pastas
 
-| Pasta | Origem | Conteúdo |
-|---|---|---|
-| [`01-arquitetura/`](01-arquitetura/README.md) | ADR, arc42, C4 lean, prompts, AGENTS.md, ADR agent-first | Definição de arquitetura |
-| [`02-boas-praticas-stack/`](02-boas-praticas-stack/referencias/README.md) | Node/TS, React, Postgres, filas, 12-Factor, OWASP, IA specs | Espelhos + síntese de mercado |
-| [`03-design-ui-motion/`](03-design-ui-motion/modern-2026/MODERN-UI-MOTION.md) | UI 2026, motion, skills, anti-slop | Design/front futurista de bom gosto |
-| [`04-logos-identidade-visual/`](04-logos-identidade-visual/LOGO-IDENTIDADE.md) | Paul Rand, princípios, prompts IA, skills logo/brand + [`modern-2026/`](04-logos-identidade-visual/modern-2026/IDENTIDADE-MODERNA.md) | Logos e sistema de marca (tendências 2026, motion, guidelines) |
+| Pasta | Conteúdo |
+|---|---|
+| [`01-arquitetura/`](01-arquitetura/README.md) | ADR, arc42, C4 lean, prompts, AGENTS.md |
+| [`02-boas-praticas-stack/`](02-boas-praticas-stack/referencias/README.md) | Node/TS, React, Postgres, filas, 12-Factor, OWASP |
+| [`03-design-ui-motion/`](03-design-ui-motion/modern-2026/MODERN-UI-MOTION.md) | UI 2026, motion, anti-slop |
+| [`04-logos/`](04-logos/LOGO.md) | Logos: princípios, prompts, skills SVG |
+| [`05-identidade-visual/`](05-identidade-visual/IDENTIDADE-VISUAL.md) | Sistema de marca: cor, tipo, motion, BRAND/tokens |
 
 ## Começar
 
-1. Arquitetura viva: [`01-arquitetura/03-c4-e-lean/architecture-lean-template.md`](01-arquitetura/03-c4-e-lean/architecture-lean-template.md)
+1. Arquitetura: [`01-arquitetura/03-c4-e-lean/architecture-lean-template.md`](01-arquitetura/03-c4-e-lean/architecture-lean-template.md)
 2. Stack: [`02-boas-praticas-stack/indices/Boas praticas stack moderna.md`](02-boas-praticas-stack/indices/Boas%20praticas%20stack%20moderna.md)
 3. UI/motion: [`03-design-ui-motion/modern-2026/MODERN-UI-MOTION.md`](03-design-ui-motion/modern-2026/MODERN-UI-MOTION.md)
-4. Logo/identidade: [`04-logos-identidade-visual/LOGO-IDENTIDADE.md`](04-logos-identidade-visual/LOGO-IDENTIDADE.md) · moderno: [`04-…/modern-2026/IDENTIDADE-MODERNA.md`](04-logos-identidade-visual/modern-2026/IDENTIDADE-MODERNA.md)
+4. Logo: [`04-logos/LOGO.md`](04-logos/LOGO.md)
+5. Identidade: [`05-identidade-visual/IDENTIDADE-VISUAL.md`](05-identidade-visual/IDENTIDADE-VISUAL.md)
 
 ## Cópias no workspace
 
-- `02` também vive em `e-notas/beta-docs/referencias/` (uso do Beta)
-- `03` também vive em `.cursor/design-refs/modern-2026/` + skill `.cursor/skills/modern-ui-motion/`
-- `04` skill espelhada em `.cursor/skills/logo-identidade/`
+- `02` → `e-notas/beta-docs/referencias/`
+- `03` → `.cursor/design-refs/modern-2026/` + skill `.cursor/skills/modern-ui-motion/`
+- `04` → skill `.cursor/skills/logo-identidade/`
+- `05` → skill `.cursor/skills/identidade-visual/`
 
 ## Rollback
 

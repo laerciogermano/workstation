@@ -5,12 +5,12 @@ alwaysApply: true
 
 # IP na criação de conta
 
-Sempre que **criar** uma conta LinkedIn (signup AVD ou Chrome/CDP) neste lab, **buscar o IP público de egress** no mesmo momento e **gravar na planilha**. A guarda global de não reutilizar IP está em [`ip-egress-nunca-reutilizar`](ip-egress-nunca-reutilizar.mdc) — signup também conta como operação.
+Sempre que **criar** uma conta LinkedIn (signup AVD ou Chrome/CDP) neste lab, **buscar o IP público de egress** no mesmo momento e **gravar na planilha**.
 
 ## Critérios
 
-1. **Antes** do signup: obter o IP (`curl -sS https://api.ipify.org`); se já estiver em `~/.connectmax/used-egress-ips` → **abortar** (não criar)
-2. Após signup bem-sucedido: preencher a coluna `ip` em [`screen-robot/pocs/android-studio/contas-linkedin-clozzy.csv`](screen-robot/pocs/android-studio/contas-linkedin-clozzy.csv) e **append** o IP em `~/.connectmax/used-egress-ips` se ainda não estiver
+1. No momento do signup: obter o IP (`curl -sS https://api.ipify.org`)
+2. Após signup bem-sucedido: preencher a coluna `ip` em [`screen-robot/pocs/android-studio/contas-linkedin-clozzy.csv`](screen-robot/pocs/android-studio/contas-linkedin-clozzy.csv)
 3. Se o egress mudar no meio do fluxo (VPN/proxy), gravar o IP **efetivo no momento do submit** do cadastro; anotar troca em `observacoes` se houver
 4. Contas antigas sem `ip` não inventar — só preencher quando houver evidência da criação
 

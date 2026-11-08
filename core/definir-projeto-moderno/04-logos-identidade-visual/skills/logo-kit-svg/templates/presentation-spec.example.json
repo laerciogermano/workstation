@@ -1,0 +1,15 @@
+{
+  "title": "Acme Repo — brand presentation",
+  "sections": [
+    {
+      "heading": "Primary mark",
+      "body": "512px squircle icon with semantic diff story.",
+      "assets": ["assets/icon.svg"]
+    },
+    {
+      "heading": "README hero",
+      "body": "904×256 banner with terminal preview column.",
+      "assets": ["assets/logo.svg", "assets/logo-animated.svg"]
+    }
+  ]
+}

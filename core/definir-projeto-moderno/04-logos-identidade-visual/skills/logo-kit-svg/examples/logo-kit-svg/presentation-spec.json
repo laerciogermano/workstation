@@ -1,0 +1,55 @@
+{
+  "title": "Logo Kit SVG — self-example",
+  "theme_bg": "#12181f",
+  "sections": [
+    {
+      "heading": "Primary icon",
+      "body": "512px squircle: concentric circles (mauve / sage / core). Static + animated pulse.",
+      "assets": ["icon.svg", "icon-animated.svg"]
+    },
+    {
+      "heading": "README hero",
+      "body": "904×256 banner: Logo Kit SVG wordmark, still/motion pills, product-card column 3.",
+      "assets": ["logo.svg", "logo-animated.svg"]
+    },
+    {
+      "heading": "Concept directions",
+      "body": "Three explore marks on the concept sheet and tiles board (shipped direction highlighted).",
+      "assets": [
+        "kit/concept-sheet.svg",
+        "kit/tiles-board-directions.svg",
+        "kit/concepts/a-orbit-shipped.svg",
+        "kit/concepts/b-orbit-classic.svg",
+        "kit/concepts/c-four-states.svg"
+      ]
+    },
+    {
+      "heading": "Final kit boards",
+      "body": "Wordmark + final tiles ladder from shipped icon and banner.",
+      "assets": ["kit/tiles-board.svg", "kit/wordmark.svg"]
+    },
+    {
+      "heading": "Platform (iOS + Android contracts)",
+      "body": "iOS AppIcon.appiconset (1024 + system sizes). Android adaptive mipmap layers + play-store 512. Open platform-shape-preview.html for mask variance.",
+      "assets": [
+        "kit/platform/web/favicon.ico",
+        "kit/platform/web/favicon-32x32.png",
+        "kit/platform/ios/AppIcon.appiconset/icon-1024.png",
+        "kit/platform/ios/apple-touch-icon.png",
+        "kit/platform/android/android-chrome-192x192.png",
+        "kit/platform/android/mipmap-xxxhdpi/ic_launcher.png",
+        "kit/platform/platform-shape-preview.html"
+      ]
+    },
+    {
+      "heading": "Social cards (SVG + PNG)",
+      "body": "OG, GitHub social preview, X card, square — vector source plus raster export.",
+      "assets": [
+        "kit/social/og-image.svg",
+        "kit/social/og-image.png",
+        "kit/social/github-social-preview.svg",
+        "kit/social/github-social-preview.png"
+      ]
+    }
+  ]
+}

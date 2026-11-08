@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 640" width="1200" height="640" fill="none" role="img" aria-label="Four cuts that turned a busy animation into a readable logo">
+  <defs>
+    <style>
+      .strike {
+        stroke-dasharray: 520;
+        stroke-dashoffset: 520;
+        animation: draw-strike 7s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+      }
+      .kept-mark {
+        transform-origin: 1048px 118px;
+        animation: pop-kept 7s cubic-bezier(0.34, 1.56, 0.64, 1) infinite;
+      }
+      @keyframes draw-strike {
+        0%, 8% { stroke-dashoffset: 520; }
+        28%, 82% { stroke-dashoffset: 0; }
+        94%, 100% { stroke-dashoffset: 520; }
+      }
+      @keyframes pop-kept {
+        0%, 22% { transform: scale(0.7); opacity: 0; }
+        36%, 82% { transform: scale(1); opacity: 1; }
+        94%, 100% { transform: scale(0.7); opacity: 0; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .strike, .kept-mark {
+          animation: none !important;
+          stroke-dashoffset: 0 !important;
+          opacity: 1 !important;
+          transform: none !important;
+        }
+      }
+    </style>
+  </defs>
+
+  <rect width="1200" height="640" fill="#fbfaf7"/>
+  <text x="56" y="52" font-family="IBM Plex Mono, ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" font-weight="600" fill="#b86b11" letter-spacing="1.1">APPLYDIFF / LOGO SESSION</text>
+  <text x="56" y="98" font-family="IBM Plex Sans, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="32" font-weight="700" fill="#1c1f25">Four cuts. Then the logo could be read.</text>
+  <text x="56" y="132" font-family="IBM Plex Sans, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="16" fill="#606772">Same product, same canvas size. The left column is what failed review. The right column is what shipped.</text>
+
+  <text x="56" y="184" font-family="IBM Plex Mono, ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12" font-weight="600" fill="#e5644e">THROWN OUT</text>
+  <text x="640" y="184" font-family="IBM Plex Mono, ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12" font-weight="600" fill="#3d7a32">SHIPPED</text>
+  <line x1="56" y1="198" x2="560" y2="198" stroke="#e6e3db" stroke-width="1.5"/>
+  <line x1="640" y1="198" x2="1144" y2="198" stroke="#e6e3db" stroke-width="1.5"/>
+
+  <g font-family="IBM Plex Sans, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="18" fill="#1c1f25">
+    <text x="88" y="246">Scanline stripes on the background</text>
+    <text x="88" y="318">Pill too narrow. The W in Web was cut off.</text>
+    <text x="88" y="390">Hunks painted only in amber</text>
+    <text x="88" y="462">Banner reduced to a wordmark</text>
+  </g>
+  <g font-family="IBM Plex Sans, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="18" fill="#1c1f25">
+    <text x="688" y="246">Flat fill from the app background token</text>
+    <text x="688" y="318">Pill width from character count. Web stays whole.</text>
+    <text x="688" y="390">Red for the removed line. Green for the added line.</text>
+    <text x="688" y="462">Mark, name, and a live diff, side by side</text>
+  </g>
+
+  <g font-family="IBM Plex Mono, ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" fill="#606772">
+    <text x="88" y="270">Looks like a terminal screensaver</text>
+    <text x="88" y="342">CLI, TUI, then a clipped W</text>
+    <text x="88" y="414">Before and after look the same</text>
+    <text x="88" y="486">The product story disappears</text>
+    <text x="688" y="270">#12100c, no moving bars</text>
+    <text x="688" y="342">width = chars x 7.2 + padding</text>
+    <text x="688" y="414">#e5644e on #2a1712, #9ccb5a on #1d2412</text>
+    <text x="688" y="486">icon 512, banner 904 x 256</text>
+  </g>
+
+  <line class="strike" x1="72" y1="240" x2="540" y2="240" stroke="#e5644e" stroke-width="2"/>
+  <line class="strike" x1="72" y1="312" x2="540" y2="312" stroke="#e5644e" stroke-width="2"/>
+  <line class="strike" x1="72" y1="384" x2="540" y2="384" stroke="#e5644e" stroke-width="2"/>
+  <line class="strike" x1="72" y1="456" x2="540" y2="456" stroke="#e5644e" stroke-width="2"/>
+
+  <g class="kept-mark">
+    <circle cx="1144" cy="118" r="22" fill="#1d2412" stroke="#9ccb5a" stroke-width="2"/>
+    <path d="M1134 118 L1141 125 L1155 110" stroke="#9ccb5a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  </g>
+
+  <text x="56" y="560" font-family="IBM Plex Sans, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="15" fill="#606772">Source: the ApplyDiff logo session, 17 Oct 2026. Colors are the app tokens in web/assets/tokens-root.css.</text>
+  <text x="56" y="592" font-family="IBM Plex Mono, ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" fill="#1c1f25">assets/icon.svg &#183; assets/icon-animated.svg &#183; assets/logo.svg &#183; assets/logo-animated.svg</text>
+</svg>

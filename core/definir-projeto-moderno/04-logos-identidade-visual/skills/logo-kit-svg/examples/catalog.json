@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "examples": [
+    {
+      "id": "applydiff",
+      "title": "ApplyDiff",
+      "industry": "developer-tools",
+      "product_story": "git diff for CVs — scan, diff, approve pipeline",
+      "category": "readme_hero_suite",
+      "has_animation": true,
+      "paths": {
+        "icon": "examples/applydiff/icon.svg",
+        "icon_animated": "examples/applydiff/icon-animated.svg",
+        "logo": "examples/applydiff/logo.svg",
+        "logo_animated": "examples/applydiff/logo-animated.svg",
+        "brief": "examples/applydiff/brief.md"
+      },
+      "tags": ["diff", "cli", "tui", "semantic-red-green"]
+    },
+    {
+      "id": "logo-kit-svg",
+      "title": "Logo Kit SVG",
+      "industry": "developer-tools",
+      "product_story": "meta rebrand for the skill — four-file README suite + full kit under examples/",
+      "category": "readme_hero_suite",
+      "has_animation": true,
+      "paths": {
+        "icon": "examples/logo-kit-svg/icon.svg",
+        "icon_animated": "examples/logo-kit-svg/icon-animated.svg",
+        "logo": "examples/logo-kit-svg/logo.svg",
+        "logo_animated": "examples/logo-kit-svg/logo-animated.svg",
+        "brief": "examples/logo-kit-svg/brief.md"
+      },
+      "tags": ["skill-meta", "vector-kit", "workshop-teal", "script-qa"]
+    }
+  ]
+}

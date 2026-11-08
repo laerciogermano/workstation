@@ -1,0 +1,24 @@
+{
+  "name": "logo-kit-svg",
+  "displayName": "Logo Kit SVG",
+  "description": "Ship icon + README banner SVGs (plain and animated) and an optional tiered brand kit from real application color tokens — GitHub-safe CSS loops and script QA.",
+  "version": "1.1.0",
+  "author": {
+    "name": "pahlevikun"
+  },
+  "homepage": "https://github.com/pahlevikun/logo-kit-svg",
+  "repository": "https://github.com/pahlevikun/logo-kit-svg",
+  "license": "MIT",
+  "logo": "./examples/logo-kit-svg/profile.svg",
+  "keywords": [
+    "svg",
+    "logo",
+    "readme",
+    "branding",
+    "animation",
+    "github",
+    "brand-kit"
+  ],
+  "category": "productivity",
+  "skills": "./"
+}

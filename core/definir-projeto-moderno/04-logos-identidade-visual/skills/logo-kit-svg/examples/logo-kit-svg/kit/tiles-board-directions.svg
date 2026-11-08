@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 708 320">
+<rect width="708" height="320" fill="#12100c"/>
+<text x="24" y="32" fill="#f0e6d2" font-family="system-ui,sans-serif" font-size="16" font-weight="600">Directions</text>
+<svg x="24" y="56" width="180" height="180" viewBox="0.0 0.0 512.0 512.0" overflow="hidden"><rect x="48" y="48" width="416" height="416" rx="96" fill="#12181f" stroke="#2d3844" stroke-width="4"/><circle cx="256" cy="256" r="120" fill="#1c242c" stroke="#b8a4b0" stroke-width="8"/><circle cx="256" cy="256" r="68" fill="#151c24" stroke="#7eb8b0" stroke-width="7"/><circle cx="256" cy="256" r="12" fill="#eef2f6"/></svg>
+<text x="24" y="256" fill="#f0e6d2" font-size="12" font-weight="600">A shipped ★</text>
+<svg x="244" y="56" width="180" height="180" viewBox="0.0 0.0 512.0 512.0" overflow="hidden"><rect x="48" y="48" width="416" height="416" rx="96" fill="#12181f" stroke="#2d3844" stroke-width="4"/><circle cx="256" cy="256" r="118" fill="#1c242c" stroke="#b8a4b0" stroke-width="8"/><circle cx="256" cy="256" r="52" fill="#151c24" stroke="#7eb8b0" stroke-width="7"/><circle cx="256" cy="256" r="10" fill="#eef2f6"/></svg>
+<text x="244" y="256" fill="#f0e6d2" font-size="12" font-weight="600">B classic</text>
+<svg x="464" y="56" width="180" height="180" viewBox="0.0 0.0 512.0 512.0" overflow="hidden"><rect x="48" y="48" width="416" height="416" rx="96" fill="#12181f" stroke="#2d3844" stroke-width="4"/><circle cx="256" cy="256" r="92" fill="none" stroke="#2d3844" stroke-width="2"/><circle cx="256" cy="164" r="26" fill="#1c242c" stroke="#b8a4b0" stroke-width="3.5"/><circle cx="348" cy="256" r="26" fill="#151c24" stroke="#7eb8b0" stroke-width="3.5"/><circle cx="256" cy="348" r="26" fill="#1a2229" stroke="#9eb3d4" stroke-width="3.5"/><circle cx="164" cy="256" r="26" fill="#1a2229" stroke="#8b99a8" stroke-width="3.5"/><circle cx="256" cy="256" r="9" fill="#eef2f6"/></svg>
+<text x="464" y="256" fill="#f0e6d2" font-size="12" font-weight="600">C four states</text>
+</svg>

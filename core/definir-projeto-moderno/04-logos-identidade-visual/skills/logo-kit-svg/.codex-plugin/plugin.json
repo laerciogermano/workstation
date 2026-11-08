@@ -1,0 +1,33 @@
+{
+  "name": "logo-kit-svg",
+  "version": "1.1.0",
+  "description": "Ship static and animated SVG icon + banner brand system from real app color tokens, with README embeds, optional kit artifacts, and PNG visual QA.",
+  "author": {
+    "name": "pahlevikun"
+  },
+  "homepage": "https://github.com/pahlevikun/logo-kit-svg",
+  "repository": "https://github.com/pahlevikun/logo-kit-svg",
+  "license": "MIT",
+  "keywords": [
+    "svg",
+    "logo",
+    "readme",
+    "branding",
+    "animation",
+    "brand-kit"
+  ],
+  "skills": "./",
+  "interface": {
+    "displayName": "Logo Kit SVG",
+    "shortDescription": "4-file SVG brand suite + optional kit from theme tokens.",
+    "longDescription": "Agent skill that reads your real CSS/Tailwind/TUI palette, builds icon and 3-column banner SVGs (plain + CSS-animated), optional tiered kit artifacts, validates XML, rasterizes for visual QA, and embeds assets in README.md.",
+    "developerName": "pahlevikun",
+    "category": "Productivity",
+    "brandColor": "#12100c",
+    "composerIcon": "./examples/logo-kit-svg/profile.svg",
+    "logo": "./examples/logo-kit-svg/profile.svg",
+    "screenshots": [
+      "./examples/logo-kit-svg/logo-animated.svg"
+    ]
+  }
+}

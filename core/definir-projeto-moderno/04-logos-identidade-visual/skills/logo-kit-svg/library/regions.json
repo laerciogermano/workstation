@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "notes": "Market tags for library search and briefs — not legal geography or tax residency.",
+  "macro_regions": {
+    "emea": ["eu", "uk", "me", "za", "de", "fr", "it", "es", "nl"],
+    "apj": ["jp", "cn", "kr", "id", "sg", "my", "au", "nz", "in", "th", "vn", "ph", "tw", "hk"],
+    "apac": ["jp", "cn", "kr", "id", "sg", "my", "au", "nz", "in", "th", "vn", "ph", "tw", "hk"],
+    "amer": ["us", "ca"],
+    "na": ["us", "ca"],
+    "latam": ["br", "mx"],
+    "mena": ["me"],
+    "asean": ["id", "my", "sg", "th", "vn", "ph"],
+    "anz": ["au", "nz"],
+    "dach": ["de"],
+    "nordics": ["se", "no", "fi", "dk"]
+  }
+}

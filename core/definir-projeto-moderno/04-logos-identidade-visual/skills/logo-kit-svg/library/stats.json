@@ -1,0 +1,142 @@
+{
+  "version": 1,
+  "generated": true,
+  "built_at": "2026-10-18T06:28:28Z",
+  "last_sync_at": "2026-10-18T05:43:30Z",
+  "count": 1636,
+  "svg_files": 1636,
+  "by_category": {
+    "nonprofit": {
+      "count": 25,
+      "label": "Foundations and .org brands"
+    },
+    "oss_repo_mark": {
+      "count": 20,
+      "label": "GitHub-style OSS project marks"
+    },
+    "sports_brand": {
+      "count": 9,
+      "label": "Athletic apparel, equipment, and lifestyle sports brands"
+    },
+    "sports_league": {
+      "count": 8,
+      "label": "Leagues, federations, and motorsport series marks"
+    },
+    "tech_company": {
+      "count": 1574,
+      "label": "Commercial dev/SaaS brands (Simple Icons study set)"
+    }
+  },
+  "by_mark_type": {
+    "combo": 270,
+    "emblem": 57,
+    "monogram": 257,
+    "symbol": 654,
+    "wordmark": 398
+  },
+  "by_geometry": {
+    "angular": 792,
+    "grid": 50,
+    "letterform": 14,
+    "organic": 358,
+    "rounded": 422
+  },
+  "by_color_family": {
+    "brand-single": 1608,
+    "mono": 20,
+    "multicolor": 8
+  },
+  "by_region": {
+    "cn": 18,
+    "eu": 49,
+    "id": 6,
+    "jp": 24,
+    "kr": 4,
+    "my": 2,
+    "sg": 3,
+    "us": 45
+  },
+  "by_macro_region": {
+    "amer": 45,
+    "anz": 0,
+    "apac": 57,
+    "apj": 57,
+    "asean": 11,
+    "dach": 0,
+    "emea": 49,
+    "latam": 0,
+    "mena": 0,
+    "na": 45,
+    "nordics": 0
+  },
+  "by_industry": {
+    "aerospace": 2,
+    "agency": 1,
+    "automotive": 46,
+    "aviation": 9,
+    "beverage": 1,
+    "cloud": 1,
+    "delivery": 5,
+    "ecommerce": 8,
+    "electronics": 14,
+    "energy": 1,
+    "enterprise": 1,
+    "finance": 5,
+    "fintech": 6,
+    "gaming": 4,
+    "hardware": 1,
+    "industrial": 11,
+    "logistics": 2,
+    "luxury": 1,
+    "media": 2,
+    "messaging": 2,
+    "mobility": 4,
+    "pharma": 2,
+    "retail": 6,
+    "security": 2,
+    "semiconductor": 4,
+    "tech": 5,
+    "telecom": 5
+  },
+  "manual_study_gaps": {
+    "persijajakarta": {
+      "display_name": "Persija Jakarta",
+      "category": "sports_club",
+      "simple_icons_slug": null,
+      "notes": "Not on Simple Icons. For study only: add library/svg/persijajakarta.svg yourself with license documented in TRADEMARKS.md \u2014 never ship in deliverables."
+    },
+    "chelseafc": {
+      "display_name": "Chelsea FC",
+      "category": "sports_club",
+      "simple_icons_slug": null,
+      "notes": "Not on Simple Icons. Same manual study workflow as persijajakarta."
+    },
+    "arsenalfc": {
+      "display_name": "Arsenal FC",
+      "category": "sports_club",
+      "simple_icons_slug": null,
+      "notes": "Not on Simple Icons."
+    },
+    "liverpoolfc": {
+      "display_name": "Liverpool FC",
+      "category": "sports_club",
+      "simple_icons_slug": null,
+      "notes": "Not on Simple Icons."
+    },
+    "persibbandung": {
+      "display_name": "Persib Bandung",
+      "category": "sports_club",
+      "simple_icons_slug": null,
+      "notes": "Not on Simple Icons (Indonesian Liga 1)."
+    },
+    "astroindonesia": {
+      "display_name": "Astro (Indonesia)",
+      "category": "tech_company",
+      "region": "id",
+      "industry": "ecommerce",
+      "simple_icons_slug": null,
+      "notes": "Not on Simple Icons. SI slug `astro` is Astro (astro.build), not Astro quick-commerce \u2014 manual study only per TRADEMARKS.md."
+    }
+  },
+  "manual_study_gap_count": 6
+}

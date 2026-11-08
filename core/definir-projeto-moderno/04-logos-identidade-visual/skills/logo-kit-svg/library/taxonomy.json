@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "categories": {
+    "readme_hero_suite": "Full banner-style README heroes (mostly examples/)",
+    "oss_repo_mark": "GitHub-style OSS project marks",
+    "tech_company": "Commercial dev/SaaS brands (Simple Icons study set)",
+    "nonprofit": "Foundations and .org brands",
+    "community_event": "Conferences and meetups",
+    "sports_brand": "Athletic apparel, equipment, and lifestyle sports brands",
+    "sports_league": "Leagues, federations, and motorsport series marks",
+    "sports_club": "Club crests and supporter marks (manual study SVGs when not on Simple Icons)"
+  },
+  "mark_types": ["wordmark", "symbol", "combo", "monogram", "emblem"],
+  "geometry": ["rounded", "angular", "organic", "grid", "letterform"],
+  "color_families": ["mono", "duotone", "multicolor", "brand-single"],
+  "optional_entry_fields": {
+    "region": "Market tag for search and briefs (see library/REGIONS.md and library/regions.json). Not legal geography.",
+    "industry": "Vertical tag for search (e.g. automotive, fintech); set in taxonomy-overrides.json."
+  },
+  "defaults": {
+    "tech_company": {
+      "category": "tech_company",
+      "mark_type": "wordmark",
+      "geometry": "angular",
+      "color_family": "brand-single"
+    },
+    "oss_repo_mark": {
+      "category": "oss_repo_mark",
+      "mark_type": "symbol",
+      "geometry": "rounded",
+      "color_family": "mono"
+    },
+    "sports_brand": {
+      "category": "sports_brand",
+      "mark_type": "symbol",
+      "geometry": "angular",
+      "color_family": "brand-single"
+    },
+    "sports_league": {
+      "category": "sports_league",
+      "mark_type": "emblem",
+      "geometry": "organic",
+      "color_family": "multicolor"
+    }
+  }
+}

@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 904 256" width="904" height="256" fill="none" role="img" aria-label="Logo Kit SVG — plain, then it moves">
+  <rect x="2" y="2" width="900" height="252" rx="18" fill="#12181f" stroke="#2d3844" stroke-width="2"/>
+  <g transform="translate(28, 60)">
+    <rect x="0" y="0" width="136" height="136" rx="32" fill="#1a2229" stroke="#2d3844" stroke-width="2"/>
+    <circle cx="68" cy="68" r="38" fill="#1c242c" stroke="#b8a4b0" stroke-width="4.5"/>
+    <circle cx="68" cy="68" r="22" fill="#151c24" stroke="#7eb8b0" stroke-width="4"/>
+    <circle cx="68" cy="68" r="5.5" fill="#eef2f6"/>
+  </g>
+  <text x="184" y="102" font-family="IBM Plex Sans, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="32" font-weight="700" letter-spacing="-0.4">
+    <tspan fill="#eef2f6">Logo </tspan><tspan fill="#eef2f6">Kit </tspan><tspan fill="#9eb3d4">SVG</tspan>
+  </text>
+  <rect x="400" y="72" width="8" height="28" rx="2" fill="#9eb3d4" opacity="0.85"/>
+  <text x="186" y="128" font-family="IBM Plex Mono, ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13.5" font-weight="500" fill="#8b99a8">
+    plain, then it moves.
+  </text>
+  <g transform="translate(186, 144)" font-family="IBM Plex Mono, ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" font-weight="600">
+    <rect x="0" y="0" width="84" height="26" rx="6" fill="#1c242c" stroke="#b8a4b0" stroke-opacity="0.55" stroke-width="1.2"/>
+    <text x="18" y="17" fill="#c4b4bc">still</text>
+    <rect x="92" y="0" width="96" height="26" rx="6" fill="#151c24" stroke="#7eb8b0" stroke-opacity="0.55" stroke-width="1.2"/>
+    <text x="108" y="17" fill="#9ecec6">motion</text>
+  </g>
+  <text x="186" y="196" font-family="IBM Plex Sans, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="11.5" fill="#5c6b7a">
+    Four-file README brand system.
+  </text>
+  <g transform="translate(456, 22)">
+    <rect x="0" y="0" width="424" height="212" rx="12" fill="#1a2229" stroke="#2d3844" stroke-width="1.5"/>
+    <path d="M 0 12 A 12 12 0 0 1 12 0 H 412 A 12 12 0 0 1 424 12 V 36 H 0 Z" fill="#1e262e"/>
+    <line x1="0" y1="36" x2="424" y2="36" stroke="#2d3844" stroke-width="1.2"/>
+    <text x="16" y="23" font-family="IBM Plex Mono, ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11.5" font-weight="600" fill="#eef2f6">one mark, two states</text>
+    <circle cx="118" cy="104" r="32" fill="#1c242c" stroke="#b8a4b0" stroke-width="4"/>
+    <circle cx="118" cy="104" r="18" fill="#151c24" stroke="#b8a4b0" stroke-opacity="0.45" stroke-width="3"/>
+    <text x="88" y="158" font-family="IBM Plex Mono, ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11.5" font-weight="600" fill="#c4b4bc">sketch</text>
+    <circle cx="292" cy="104" r="32" fill="#151c24" stroke="#7eb8b0" stroke-width="4"/>
+    <circle cx="292" cy="104" r="10" fill="#eef2f6"/>
+    <text x="268" y="158" font-family="IBM Plex Mono, ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11.5" font-weight="600" fill="#9ecec6">mark</text>
+    <line x1="16" y1="172" x2="408" y2="172" stroke="#2d3844" stroke-width="1.2"/>
+    <text x="16" y="192" font-family="IBM Plex Mono, ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10.5" font-weight="600" fill="#8b99a8">still &#8594; motion</text>
+    <text x="16" y="208" font-family="IBM Plex Mono, ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10.5" font-weight="600" fill="#5c6b7a">icon &#183; banner &#183; kit &#183; QA</text>
+  </g>
+</svg>

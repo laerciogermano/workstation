@@ -1,0 +1,15 @@
+{
+  "name": "logo-kit-svg",
+  "description": "Icon + README banner SVG brand kit (plain and animated) for products, brands, and repos — wired from real theme tokens.",
+  "owner": {
+    "name": "pahlevikun"
+  },
+  "plugins": [
+    {
+      "name": "logo-kit-svg",
+      "source": "./",
+      "version": "1.1.0",
+      "description": "Ship icon.svg, logo banner, animated variants, optional kit artifacts, and README embeds with a visual QA gate."
+    }
+  ]
+}

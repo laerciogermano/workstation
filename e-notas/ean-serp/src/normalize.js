@@ -116,18 +116,50 @@ export function normalizeEan(raw) {
   return digits;
 }
 
-/** Queries alternativas quando o catálogo zera (ex.: TRAD no SI5). */
+/** Queries alternativas quando o catálogo zera (ex.: TRAD / MOLHO / 100G no SI5). */
 export function queryVariants(descricaoNorm) {
   const base = String(descricaoNorm || '').trim();
   if (!base) return [];
-  const out = [base];
-  const weak = new Set(['TRAD', 'TRADICIONAL', 'ORIG', 'ORIGINAL', 'PCT', 'PACOTE']);
+  const out = [];
+  const push = (q) => {
+    const s = String(q || '')
+      .replace(/\s+/g, ' ')
+      .trim();
+    if (s && !out.includes(s)) out.push(s);
+  };
+  push(base);
+
+  const weak = new Set([
+    'TRAD',
+    'TRADICIONAL',
+    'ORIG',
+    'ORIGINAL',
+    'PCT',
+    'PACOTE',
+    'MOLHO',
+    'SABOR',
+    'EDICAO',
+    'LIMITADA',
+  ]);
+  const isWeight = (t) =>
+    /^\d+([.,]\d+)?(G|GR|KG|ML|L|UN|UND)?$/i.test(t) || /^\d+$/.test(t);
+
   const toks = base.split(/\s+/);
-  const stripped = toks.filter((t) => !weak.has(t)).join(' ');
-  if (stripped && stripped !== base) out.push(stripped);
+  const noWeak = toks.filter((t) => !weak.has(t) && !isWeight(t));
+  push(noWeak.join(' '));
+
+  // marca + último sabor significativo (ex.: PRINGLES QUEIJO)
+  if (noWeak.length >= 2) {
+    push(`${noWeak[0]} ${noWeak[noWeak.length - 1]}`);
+    if (noWeak.length >= 3) {
+      push(noWeak.slice(-2).join(' '));
+      push(noWeak.slice(0, 2).join(' '));
+    }
+  }
+
   if (toks.length > 3) {
-    const dropLast = toks.slice(0, -1).join(' ');
-    if (dropLast && !out.includes(dropLast)) out.push(dropLast);
+    push(toks.slice(0, -1).join(' '));
+    push(toks.slice(0, -2).join(' '));
   }
   return out;
 }

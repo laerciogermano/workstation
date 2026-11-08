@@ -402,7 +402,8 @@ export async function resolveEanFromDescricao(
   if (dbOk() && !skipRemote && !force) {
     try {
       const busca = await getEanResolveBusca(descricao_norm);
-      if (busca) usedCacheBusca = true;
+      // busca vazia não trava retry (SI5/variantes podem passar a achar)
+      if (busca && Number(busca.candidatos) > 0) usedCacheBusca = true;
     } catch (err) {
       markDbDown(err);
     }

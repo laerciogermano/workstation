@@ -1,0 +1,40 @@
+name: Design rule proposal
+description: Add, change, or remove a rule in the reference documents
+labels: ["design-rule"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Every rule in `references/` exists because something broke without it.
+        A rule that cannot name its failure mode is taste, not a rule.
+
+  - type: input
+    id: document
+    attributes:
+      label: Which reference document?
+      placeholder: "references/svg-craft.md"
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: The proposed rule
+    validations:
+      required: true
+
+  - type: textarea
+    id: failure
+    attributes:
+      label: What real failure does this prevent?
+      description: >
+        Describe a logo that broke, and how this rule would have caught it.
+        "It looks better" is not a failure mode.
+    validations:
+      required: true
+
+  - type: textarea
+    id: cost
+    attributes:
+      label: What does it cost?
+      description: What good designs would this rule wrongly reject?

@@ -1,0 +1,8 @@
+# Normalise line endings so contributors on Windows and Unix produce identical
+# diffs. CI compares generated example output byte-for-byte, so this matters.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.pdf binary
+*.eps binary

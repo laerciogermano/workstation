@@ -1,0 +1,51 @@
+name: Bug report
+description: Something in the scripts or the skill behaves incorrectly
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report. For validator issues, the SVG that triggered it is
+        worth more than any description — please paste it if you can.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Which part?
+      options:
+        - validate_svg.py
+        - build_contact_sheet.py
+        - The skill pipeline (SKILL.md / references)
+        - Documentation
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What did you expect instead?
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Reproduction
+      description: The exact command, and the SVG if one is involved.
+      render: shell
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Version / commit
+      placeholder: "v1.0.0 or a commit SHA"
+
+  - type: input
+    id: python
+    attributes:
+      label: Python version and OS
+      placeholder: "3.12 on Windows 11"

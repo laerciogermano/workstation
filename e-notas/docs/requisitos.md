@@ -397,10 +397,10 @@ Card: [BXKZ55Wb](https://trello.com/c/BXKZ55Wb).
 ## REQ-044 — Serviço ean-serp: EAN via descritivo (SERP + catálogos) (2026-11-07)
 
 - Serviço **à parte** do app (`e-notas/ean-serp`, porta **4180**): dada a **descrição**, sugerir EAN buscando `EAN` + nome na web e em catálogos BR.
-- APIs **separadas**: `GET|POST /ean/si5` (só SI5; todas as variantes; top `n`/`limit` por score) e `GET|POST /ean/google-cdp` (só Google CDP). `/ean` legado orquestra SI5+DDG(+Google se `google_cdp`).
-- Enrich das top fichas SI5: `nome_canonico` + `image_url`.
-- Resposta: `{ candidatos: [{ ean, score, fonte, fontes, nome_canonico, image_url, url }] }`.
-- **Integração app:** `enrichment.js` → `/ean/si5` (+ `/ean/google-cdp` se `EAN_SERP_GOOGLE_CDP=1`); UI de produto **sem EAN** mostra sugestões.
+- APIs **separadas**: `GET|POST /ean/si5` (JSON) e `GET /ean/si5/stream` (SSE: batch por variante); `GET|POST /ean/google-cdp`; `/ean` legado.
+- Enrich das top fichas SI5: `nome_canonico` + `image_url` (no stream só com `enrich=1`).
+- Resposta JSON: `{ candidatos: […] }`. SSE: eventos `meta` / `batch` / `done` / `fail`.
+- **Integração app:** front sugestões → `/api/enrichment/ean/si5/stream`; JSON em `/api/enrichment/ean/si5`.
 - Demo local sem Postgres: `ALLOW_OFFLINE=1` + `USE_HTTP=1` + ean-serp `:4180` → `/demo-ean-suggest.html`.
 - Antes: só enrichment in-process sem SERP. Depois: microserviço + consumo no fluxo de sugestão.
 - Rollback: parar `:4180`; no app remover `fromEanSerp` / `EAN_SERP_URL`; apagar `e-notas/ean-serp/` se descontinuar.

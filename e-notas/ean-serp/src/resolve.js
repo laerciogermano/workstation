@@ -1,7 +1,12 @@
 import { normalizeDescricao } from './normalize.js';
 import { searchDdgEan } from './providers/ddg.js';
 import { cdpAvailable, searchGoogleCdpEan } from './providers/google-cdp.js';
-import { enrichSi5Product, searchSi5Api, searchSi5Html } from './providers/si5.js';
+import {
+  enrichSi5Product,
+  iterateSi5Html,
+  searchSi5Api,
+  searchSi5Html,
+} from './providers/si5.js';
 
 const MAX_DEFAULT = 8;
 const MAX_LIMIT = 100;
@@ -109,6 +114,81 @@ function finalize(map, limit, enrich) {
     candidatos = sortPreferUnit(candidatos);
     return formatCandidatos(candidatos);
   });
+}
+
+function formatOne(c) {
+  return {
+    ean: c.ean,
+    score: Number((c.score || 0).toFixed(3)),
+    fonte: c.fonte,
+    fontes: c.fontes || [c.fonte],
+    nome_canonico: c.nome_canonico || null,
+    image_url: c.image_url || null,
+    url: c.url || null,
+  };
+}
+
+/**
+ * SSE SI5: emite batch por variante (sem enrich pesado no meio).
+ * @param {string} descricao
+ * @param {{ limit?: number, n?: number, signal?: AbortSignal }} [opts]
+ * @yields {{ event: string, data: object }}
+ */
+export async function* resolveEanSi5Stream(descricao, opts = {}) {
+  const raw = requireDescricao(descricao);
+  const descricao_norm = normalizeDescricao(raw);
+  const limit = parseLimit(opts);
+
+  yield {
+    event: 'meta',
+    data: {
+      ok: true,
+      fonte: 'si5',
+      descricao: raw,
+      descricao_norm,
+      limit,
+    },
+  };
+
+  let last = [];
+  for await (const batch of iterateSi5Html(descricao_norm, {
+    n: limit,
+    signal: opts.signal,
+  })) {
+    last = (batch.candidatos || []).map(formatOne);
+    yield {
+      event: 'batch',
+      data: {
+        i: batch.i,
+        total: batch.total,
+        query: batch.query,
+        novos: (batch.novos || []).map(formatOne),
+        candidatos: last,
+      },
+    };
+  }
+
+  // enrich leve só do top (após stream) — opcional via opts.enrich
+  if (opts.enrich !== false && last.length) {
+    const map = new Map(last.map((c) => [c.ean, { ...c }]));
+    const enriched = await finalize(map, limit, true);
+    last = enriched;
+    yield {
+      event: 'enrich',
+      data: { candidatos: last },
+    };
+  }
+
+  yield {
+    event: 'done',
+    data: {
+      ok: true,
+      fonte: 'si5',
+      descricao: raw,
+      descricao_norm,
+      candidatos: last,
+    },
+  };
 }
 
 /**

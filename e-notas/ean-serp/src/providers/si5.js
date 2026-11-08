@@ -114,6 +114,64 @@ function boostBrandFlavor(queryNorm, nome, ean, score) {
   return Math.min(1, Math.max(score, 0.88));
 }
 
+function rescoreCandidate(qNorm, ean, c) {
+  let score = c.score;
+  if (looksMultipack(c.nome_canonico)) score *= 0.45;
+  if (ean.length === 14) score *= 0.7;
+  score = boostBrandFlavor(qNorm, c.nome_canonico, ean, score);
+  return { ...c, score: Math.max(0.35, score) };
+}
+
+/**
+ * Stream SI5: uma yield por variante (para SSE).
+ * @param {string} descricaoNorm
+ * @param {{ n?: number, signal?: AbortSignal }} [opts]
+ * @yields {{ i: number, total: number, query: string, novos: object[], candidatos: object[] }}
+ */
+export async function* iterateSi5Html(descricaoNorm, opts = {}) {
+  const n = Math.min(100, Math.max(1, Number(opts.n) || 100));
+  const variants = queryVariants(descricaoNorm);
+  const merged = new Map();
+  const qNorm = String(descricaoNorm || '');
+  const total = variants.length || 1;
+
+  if (!variants.length) {
+    yield { i: 0, total: 0, query: '', novos: [], candidatos: [] };
+    return;
+  }
+
+  for (let i = 0; i < variants.length; i += 1) {
+    if (opts.signal?.aborted) {
+      throw Object.assign(new Error('aborted'), { status: 499 });
+    }
+    const q = variants[i];
+    const url = `${BASE}/?q=${encodeURIComponent(q)}`;
+    const { ok, text } = await fetchText(url);
+    const novos = [];
+    if (ok && text) {
+      const map = parseSi5SearchHtml(text, qNorm || q);
+      for (const [ean, c] of map) {
+        const next = rescoreCandidate(qNorm, ean, c);
+        const prev = merged.get(ean);
+        if (!prev || next.score > prev.score) {
+          merged.set(ean, next);
+          novos.push(next);
+        }
+      }
+    }
+    const candidatos = [...merged.values()]
+      .sort((a, b) => b.score - a.score)
+      .slice(0, n);
+    yield {
+      i: i + 1,
+      total,
+      query: q,
+      novos,
+      candidatos,
+    };
+  }
+}
+
 /**
  * Busca por nome no HTML público do SI5 (sem token).
  * Roda **todas** as variantes, mergeia e devolve top `n` por score.
@@ -122,30 +180,11 @@ function boostBrandFlavor(queryNorm, nome, ean, score) {
  * @returns {Promise<Array<{ean, nome_canonico, image_url, url, fonte, score}>>}
  */
 export async function searchSi5Html(descricaoNorm, opts = {}) {
-  const n = Math.min(100, Math.max(1, Number(opts.n) || 100));
-  const variants = queryVariants(descricaoNorm);
-  const merged = new Map();
-  const qNorm = String(descricaoNorm || '');
-
-  for (const q of variants) {
-    const url = `${BASE}/?q=${encodeURIComponent(q)}`;
-    const { ok, text } = await fetchText(url);
-    if (!ok || !text) continue;
-    const map = parseSi5SearchHtml(text, qNorm || q);
-    for (const [ean, c] of map) {
-      let score = c.score;
-      if (looksMultipack(c.nome_canonico)) score *= 0.45;
-      if (ean.length === 14) score *= 0.7;
-      score = boostBrandFlavor(qNorm, c.nome_canonico, ean, score);
-      const next = { ...c, score: Math.max(0.35, score) };
-      const prev = merged.get(ean);
-      if (!prev || next.score > prev.score) merged.set(ean, next);
-    }
+  let last = [];
+  for await (const batch of iterateSi5Html(descricaoNorm, opts)) {
+    last = batch.candidatos;
   }
-
-  return [...merged.values()]
-    .sort((a, b) => b.score - a.score)
-    .slice(0, n);
+  return last;
 }
 
 /** Detalhe do produto: nome canônico + foto (og:image). */

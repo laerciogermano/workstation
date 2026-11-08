@@ -81,6 +81,8 @@ let itensSub = 'lista';
 let lojaAbertaId = null;
 let produtoAbertaKey = null;
 let produtoEanSuggestGen = 0;
+/** @type {EventSource | null} */
+let produtoEanSuggestEs = null;
 let notaAbertaId = null;
 let eanScanner = null;
 let eanScanBusy = false;
@@ -683,13 +685,34 @@ function scheduleProdutoEanSuggestSearch() {
   produtoEanSuggestSearchTimer = setTimeout(runProdutoEanSuggestSearch, 400);
 }
 
-async function loadProdutoEanSuggestions(head, queryOverride) {
+function stopProdutoEanSuggestStream() {
+  if (produtoEanSuggestEs) {
+    try {
+      produtoEanSuggestEs.close();
+    } catch {
+      /* ignore */
+    }
+    produtoEanSuggestEs = null;
+  }
+}
+
+function tagSi5Candidatos(list) {
+  return (list || []).map((c) => ({
+    ...c,
+    fonte: c.fonte?.startsWith?.('ean-serp:')
+      ? c.fonte
+      : `ean-serp:${c.fonte || 'si5'}`,
+  }));
+}
+
+function loadProdutoEanSuggestions(head, queryOverride) {
   if (!produtoEanSuggestEl || !produtoEanSuggestBodyEl) return;
   const ean = String(head?.codigo_barras || '').trim();
   const codigo = String(head?.codigo || '').trim();
   const nome = String(head?.nome || '').trim();
   const empresaId = head?.empresa_id;
   const gen = ++produtoEanSuggestGen;
+  stopProdutoEanSuggestStream();
   if (ean || !codigo || !nome || !empresaId) {
     produtoEanSuggestEl.hidden = true;
     produtoEanSuggestBodyEl.innerHTML = '';
@@ -710,26 +733,84 @@ async function loadProdutoEanSuggestions(head, queryOverride) {
   if (produtoEanSuggestQEl && queryOverride == null) {
     produtoEanSuggestQEl.value = nome.replace(/#/g, ' ').replace(/\s+/g, ' ').trim();
   }
+  const ctx = { empresaId, empresaNome, codigo, nome };
   setProdutoEanSuggestBuscarLoading(true);
   produtoEanSuggestBodyEl.innerHTML =
     '<p class="hint ean-suggest-loading">Buscando sugestões de código de barras…</p>';
-  try {
-    const list = await fetchEanSugestoes(query, { force: true });
+
+  const qs = new URLSearchParams({
+    descricao: query,
+    n: '100',
+  });
+  const es = new EventSource(`api/enrichment/ean/si5/stream?${qs}`);
+  produtoEanSuggestEs = es;
+  let sawBatch = false;
+
+  const finish = (errMsg) => {
     if (gen !== produtoEanSuggestGen) return;
-    renderProdutoEanSuggestList(list, {
-      empresaId,
-      empresaNome,
-      codigo,
-      nome,
-    });
-  } catch (err) {
+    stopProdutoEanSuggestStream();
+    setProdutoEanSuggestBuscarLoading(false);
+    if (errMsg && !sawBatch) {
+      produtoEanSuggestBodyEl.innerHTML = `<p class="hint status err">Falha ao sugerir: ${esc(
+        errMsg,
+      )}</p>`;
+    } else if (!sawBatch) {
+      produtoEanSuggestBodyEl.innerHTML =
+        '<p class="hint">Sem sugestão de código de barras para esta pesquisa.</p>';
+    }
+  };
+
+  const onPayload = (list) => {
     if (gen !== produtoEanSuggestGen) return;
-    produtoEanSuggestBodyEl.innerHTML = `<p class="hint status err">Falha ao sugerir: ${esc(
-      err.message || 'erro',
-    )}</p>`;
-  } finally {
-    if (gen === produtoEanSuggestGen) setProdutoEanSuggestBuscarLoading(false);
-  }
+    const tagged = tagSi5Candidatos(list).filter(
+      (c) => c.ean && (Number(c.score) || 0) >= 0.35,
+    );
+    if (!tagged.length) return;
+    sawBatch = true;
+    renderProdutoEanSuggestList(tagged, ctx);
+  };
+
+  es.addEventListener('batch', (ev) => {
+    try {
+      const data = JSON.parse(ev.data || '{}');
+      onPayload(data.candidatos || []);
+    } catch {
+      /* ignore */
+    }
+  });
+  es.addEventListener('enrich', (ev) => {
+    try {
+      const data = JSON.parse(ev.data || '{}');
+      onPayload(data.candidatos || []);
+    } catch {
+      /* ignore */
+    }
+  });
+  es.addEventListener('done', (ev) => {
+    try {
+      const data = JSON.parse(ev.data || '{}');
+      onPayload(data.candidatos || []);
+    } catch {
+      /* ignore */
+    }
+    finish();
+  });
+  es.addEventListener('fail', (ev) => {
+    let msg = 'stream falhou';
+    try {
+      if (ev?.data) msg = JSON.parse(ev.data).error || msg;
+    } catch {
+      /* ignore */
+    }
+    finish(msg);
+  });
+  es.onerror = () => {
+    if (gen !== produtoEanSuggestGen) return;
+    // EventSource dispara onerror em reconnect; só finaliza se fechou de vez
+    if (es.readyState === EventSource.CLOSED) {
+      finish(sawBatch ? '' : 'conexão SSE fechada');
+    }
+  };
 }
 
 function setProdutoFotosStatus(msg, kind) {

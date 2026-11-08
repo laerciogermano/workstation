@@ -227,6 +227,86 @@ async function handleEnrichmentEanSi5(req, res) {
   }
 }
 
+/** SSE SI5 — proxy do ean-serp `/ean/si5/stream`. */
+async function handleEnrichmentEanSi5Stream(req, res) {
+  const descricao = enrichmentInput(req, 'descricao');
+  if (!descricao) {
+    return res.status(400).json({ ok: false, error: 'descricao obrigatória' });
+  }
+  const n =
+    enrichmentInput(req, 'n') || enrichmentInput(req, 'limit') || '100';
+  const enrich = enrichmentInput(req, 'enrich');
+  const base = String(
+    process.env.EAN_SERP_URL || 'http://127.0.0.1:4180',
+  ).replace(/\/$/, '');
+  const qs = new URLSearchParams({
+    descricao,
+    n: String(n),
+  });
+  if (enrich) qs.set('enrich', enrich);
+  const upstreamUrl = `${base}/ean/si5/stream?${qs}`;
+
+  const ac = new AbortController();
+  const onReqClose = () => ac.abort();
+  req.on('close', onReqClose);
+  let upstream;
+  try {
+    upstream = await fetch(upstreamUrl, {
+      headers: { Accept: 'text/event-stream' },
+      signal: ac.signal,
+    });
+  } catch (err) {
+    req.off('close', onReqClose);
+    console.error('[enrichment:ean:si5:stream]', err.message);
+    return res.status(502).json({ ok: false, error: err.message });
+  }
+  if (!upstream.ok || !upstream.body) {
+    const t = await upstream.text().catch(() => '');
+    return res.status(upstream.status || 502).json({
+      ok: false,
+      error: t.slice(0, 200) || `ean-serp stream HTTP ${upstream.status}`,
+    });
+  }
+
+  res.status(200);
+  res.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
+  res.setHeader('Cache-Control', 'no-cache, no-transform');
+  res.setHeader('Connection', 'keep-alive');
+  res.setHeader('X-Accel-Buffering', 'no');
+  if (typeof res.flushHeaders === 'function') res.flushHeaders();
+
+  const reader = upstream.body.getReader();
+  const abort = () => {
+    ac.abort();
+    try {
+      reader.cancel();
+    } catch {
+      /* ignore */
+    }
+  };
+  req.on('close', abort);
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      res.write(Buffer.from(value));
+    }
+  } catch (err) {
+    if (!res.writableEnded && !ac.signal.aborted) {
+      res.write(
+        `event: fail\ndata: ${JSON.stringify({
+          ok: false,
+          error: err.message || String(err),
+        })}\n\n`,
+      );
+    }
+  } finally {
+    req.off('close', onReqClose);
+    req.off('close', abort);
+    if (!res.writableEnded) res.end();
+  }
+}
+
 /** REQ-040 — EAN → imagens (wrapper estável sobre buscarImagensEan). */
 async function handleEnrichmentImagens(req, res) {
   try {
@@ -294,6 +374,7 @@ async function handleGoogleImagens(req, res) {
   }
 }
 
+app.get('/api/enrichment/ean/si5/stream', handleEnrichmentEanSi5Stream);
 app.get('/api/enrichment/ean/si5', handleEnrichmentEanSi5);
 app.post('/api/enrichment/ean/si5', handleEnrichmentEanSi5);
 app.get('/api/enrichment/ean', handleEnrichmentEan);

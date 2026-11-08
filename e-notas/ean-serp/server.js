@@ -4,6 +4,7 @@ import {
   resolveEanByDescricao,
   resolveEanGoogleCdp,
   resolveEanSi5,
+  resolveEanSi5Stream,
 } from './src/resolve.js';
 
 const app = express();
@@ -26,6 +27,51 @@ function parseCommon(req) {
       ? true
       : !['0', 'false', 'no'].includes(String(enrichRaw).toLowerCase());
   return { descricao, limit, enrich, body };
+}
+
+function writeSse(res, event, data) {
+  res.write(`event: ${event}\n`);
+  res.write(`data: ${JSON.stringify(data)}\n\n`);
+}
+
+async function handleSi5Stream(req, res) {
+  const { descricao, limit } = parseCommon(req);
+  // stream: enrich só se pedido (senão batches chegam cedo)
+  const enrich = ['1', 'true', 'yes'].includes(
+    String(req.query.enrich || '').toLowerCase(),
+  );
+  const ac = new AbortController();
+  const onClose = () => ac.abort();
+  req.on('close', onClose);
+
+  res.status(200);
+  res.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
+  res.setHeader('Cache-Control', 'no-cache, no-transform');
+  res.setHeader('Connection', 'keep-alive');
+  res.setHeader('X-Accel-Buffering', 'no');
+  if (typeof res.flushHeaders === 'function') res.flushHeaders();
+
+  try {
+    writeSse(res, 'open', { ok: true });
+    for await (const msg of resolveEanSi5Stream(descricao, {
+      limit: limit ? Number(limit) : undefined,
+      enrich,
+      signal: ac.signal,
+    })) {
+      if (ac.signal.aborted) break;
+      writeSse(res, msg.event, msg.data);
+    }
+  } catch (err) {
+    if (!ac.signal.aborted) {
+      writeSse(res, 'fail', {
+        ok: false,
+        error: err.message || String(err),
+      });
+    }
+  } finally {
+    req.off('close', onClose);
+    res.end();
+  }
 }
 
 async function handleSi5(req, res) {
@@ -71,6 +117,9 @@ async function handleResolve(req, res) {
   }
 }
 
+app.get('/ean/si5/stream', handleSi5Stream);
+app.get('/api/ean/si5/stream', handleSi5Stream);
+
 app.get('/ean/si5', handleSi5);
 app.post('/ean/si5', handleSi5);
 app.get('/api/ean/si5', handleSi5);
@@ -88,5 +137,6 @@ app.post('/api/ean', handleResolve);
 
 app.listen(PORT, () => {
   console.log(`[ean-serp] SI5  http://127.0.0.1:${PORT}/ean/si5?descricao=…`);
+  console.log(`[ean-serp] SI5 SSE http://127.0.0.1:${PORT}/ean/si5/stream?descricao=…`);
   console.log(`[ean-serp] Google CDP http://127.0.0.1:${PORT}/ean/google-cdp?descricao=…`);
 });

@@ -263,6 +263,38 @@ app.post('/api/produtos-ean/:ean/enrich', handleEnrichProdutoEan);
 app.get('/api/enrichment/produto-ean', handleEnrichProdutoEan);
 app.post('/api/enrichment/produto-ean', handleEnrichProdutoEan);
 
+/** Enrich em lote de todos os EANs já vinculados. */
+app.post('/api/produtos-ean/enrich-all', async (req, res) => {
+  try {
+    const force = enrichmentForce(req);
+    const cbs = await listCodigosBarras();
+    const eans = [
+      ...new Set(
+        (cbs || [])
+          .map((r) => String(r.codigo_barras || '').replace(/\D/g, ''))
+          .filter((e) => e.length >= 8),
+      ),
+    ];
+    res.json({ ok: true, started: true, total: eans.length, force });
+    setImmediate(async () => {
+      for (const ean of eans) {
+        try {
+          const r = await enrichProdutoEan(ean, { force });
+          console.log(
+            `[produto-ean-enrich:all] ${ean} found=${Boolean(r.found)} skipped=${Boolean(r.skipped)}`,
+          );
+        } catch (err) {
+          console.warn(`[produto-ean-enrich:all] ${ean}:`, err.message);
+        }
+      }
+      console.log(`[produto-ean-enrich:all] fim total=${eans.length}`);
+    });
+  } catch (err) {
+    console.error('[produtos-ean:enrich-all]', err.message);
+    return res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
 function enrichmentInput(req, key) {
   const q = req.query?.[key];
   const b = req.body?.[key];

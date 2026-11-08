@@ -447,7 +447,8 @@ Card: [BXKZ55Wb](https://trello.com/c/BXKZ55Wb).
 
 - Dado um **código de barras**, serviço consulta fontes abertas/grátis e atualiza `produtos_ean` com o que for útil: título, marca, descrição, categorias, NCM, CEST, quantidade, nutriscore, foto local, `fontes[]`, `extras` JSON.
 - Ordem: **PreçoMelhor** → Open Food/Beauty/Products Facts → UPCitemdb. Foto remota baixada para `ean-fotos/`.
-- APIs: `GET|POST /api/produtos-ean/:ean/enrich` e `/api/enrichment/produto-ean` (`force` ignora cache de 7 dias).
+- APIs: `GET|POST /api/produtos-ean/:ean/enrich` e `/api/enrichment/produto-ean` (`force` ignora cache de 7 dias); `POST /api/produtos-ean/enrich-all` processa todos os EANs vinculados.
+- Feed (Produtos), vitrine e detalhe exibem **título/marca/categorias/foto** da ficha canônica (`displayProduto`), não o texto cru da nota.
 - Ao vincular EAN (`POST /api/codigos-barras`), dispara enrich em background.
 - Módulo: `produto-ean-enrich.js`. Colunas extras: `descricao`, `ncm`, `cest`, `quantidade`, `quantidade_unidade`, `nutriscore`, `fontes`, `extras`, `enriquecido_em`.
 - Antes: ficha só com backfill/sugestão local. Depois: enriquecimento multi-fonte sob demanda e no vínculo.

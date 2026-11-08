@@ -376,6 +376,36 @@ function produtoKey(r) {
   return `cod:${String(r.codigo || '').trim()}`;
 }
 
+/** Campos de exibição: preferem ficha canônica `produtos_ean` (REQ-047/048). */
+function displayProduto(r) {
+  const titulo = String(r.ean_titulo || r.nome || '')
+    .replace(/#/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  const foto = String(r.foto_url || '').trim();
+  const marca = String(r.ean_marca || '')
+    .replace(/\s+/g, ' ')
+    .trim();
+  const cats = Array.isArray(r.ean_categorias)
+    ? r.ean_categorias.map((c) => String(c || '').trim()).filter(Boolean)
+    : [];
+  return {
+    titulo: titulo || 'Produto',
+    foto,
+    marca,
+    cats: cats.slice(0, 3),
+    nota: String(r.nome_nota || '').trim(),
+  };
+}
+
+function htmlProdutoCats(cats, marca) {
+  const bits = [];
+  if (marca) bits.push(esc(marca));
+  for (const c of cats || []) bits.push(esc(c));
+  if (!bits.length) return '';
+  return `<p class="produto-cats">${bits.join(' · ')}</p>`;
+}
+
 /** Catálogo home: 1 card por produto com menor preço (loja + data + foto). Só com EAN (REQ-045). */
 function catalogoProdutos() {
   const byKey = new Map();
@@ -516,8 +546,12 @@ function renderProdutosTab() {
   const terms = searchTermsFrom(buscaProdutosEl);
   const rows = terms.length
     ? catalogo.filter((r) => {
+        const d = displayProduto(r);
         const hay = [
-          r.nome,
+          d.titulo,
+          d.marca,
+          ...(d.cats || []),
+          r.nome_nota,
           r.codigo_barras,
           r.codigo,
           r.empresa_nome,
@@ -537,9 +571,9 @@ function renderProdutosTab() {
   produtosGridEl.innerHTML = rows.length
     ? rows
         .map((r) => {
-          const foto = String(r.foto_url || '').trim();
-          const img = foto
-            ? `<img class="produto-img" src="${esc(foto)}" alt="" loading="lazy" width="160" height="160" />`
+          const d = displayProduto(r);
+          const img = d.foto
+            ? `<img class="produto-img" src="${esc(d.foto)}" alt="" loading="lazy" width="160" height="160" />`
             : `<span class="produto-img produto-img-empty" aria-hidden="true"></span>`;
           const loja =
             r.empresa_nome ||
@@ -547,19 +581,13 @@ function renderProdutosTab() {
               ?.nome ||
             'Mercado';
           const data = formatDataNota(r.nota_emissao) || '';
-          const cats = Array.isArray(r.ean_categorias)
-            ? r.ean_categorias.filter(Boolean).slice(0, 3)
-            : [];
-          const catsHtml = cats.length
-            ? `<p class="produto-cats">${cats.map((c) => esc(c)).join(' · ')}</p>`
-            : '';
           return `<button type="button" class="produto-card" data-open-produto="${esc(
             r._key,
           )}">
             <div class="produto-media">${img}</div>
             <div class="produto-body">
-              <h3 class="produto-nome">${esc(r.nome || 'Produto')}</h3>
-              ${catsHtml}
+              <h3 class="produto-nome">${esc(d.titulo)}</h3>
+              ${htmlProdutoCats(d.cats, d.marca)}
               <p class="produto-preco">
                 <span class="price-cell">${esc(formatPreco(r.valor_unitario))}</span>
                 <span class="chip ok">menor</span>
@@ -611,8 +639,12 @@ function renderProdutoDetalhe(key) {
   const menor = hist.reduce((best, r) =>
     !best || r._preco < best._preco ? r : best,
   );
-  const head = hist.find((r) => String(r.foto_url || '').trim()) || hist[0];
-  const foto = String(head.foto_url || '').trim();
+  const head =
+    hist.find((r) => String(r.ean_titulo || '').trim()) ||
+    hist.find((r) => String(r.foto_url || '').trim()) ||
+    hist[0];
+  const disp = displayProduto(head);
+  const foto = disp.foto;
   const img = foto
     ? `<img class="produto-img" src="${esc(foto)}" alt="" width="160" height="160" />`
     : `<span class="produto-img produto-img-empty" aria-hidden="true"></span>`;
@@ -629,6 +661,8 @@ function renderProdutoDetalhe(key) {
     hist.map((r) => String(r.empresa_id || '')).filter(Boolean),
   ).size;
   const metaParts = [];
+  if (disp.marca) metaParts.push(esc(disp.marca));
+  if (disp.cats.length) metaParts.push(disp.cats.map((c) => esc(c)).join(' · '));
   if (ean) {
     metaParts.push(`Código de barras <span class="mono">${esc(ean)}</span>`);
   }
@@ -651,7 +685,7 @@ function renderProdutoDetalhe(key) {
     produtoInfoEl.innerHTML = `
     <div${heroMediaAttrs}>${img}</div>
     <div class="produto-hero-body">
-      <h3 class="produto-hero-nome">${esc(head.nome || 'Produto')}</h3>
+      <h3 class="produto-hero-nome">${esc(disp.titulo)}</h3>
       <p class="produto-hero-meta">${metaParts.join('<br>')}</p>
       <p class="produto-hero-preco">
         <span class="price-cell">${esc(formatPreco(menor.valor_unitario))}</span>
@@ -1160,7 +1194,16 @@ function renderVitrineDetalhe(empresaId) {
   const terms = q ? q.split(/\s+/).filter(Boolean) : [];
   const rows = terms.length
     ? catalogo.filter((r) => {
-        const hay = [r.nome, r.codigo, r.codigo_barras, r.valor_unitario]
+        const d = displayProduto(r);
+        const hay = [
+          d.titulo,
+          d.marca,
+          ...(d.cats || []),
+          r.nome_nota,
+          r.codigo,
+          r.codigo_barras,
+          r.valor_unitario,
+        ]
           .map((v) => String(v ?? '').toLowerCase())
           .join(' ');
         return terms.every((t) => hay.includes(t));
@@ -1185,9 +1228,9 @@ function renderVitrineDetalhe(empresaId) {
   vitrineItensEl.innerHTML = rows.length
     ? rows
         .map((r) => {
-          const foto = String(r.foto_url || '').trim();
-          const img = foto
-            ? `<img class="produto-img" src="${esc(foto)}" alt="" loading="lazy" width="160" height="160" />`
+          const d = displayProduto(r);
+          const img = d.foto
+            ? `<img class="produto-img" src="${esc(d.foto)}" alt="" loading="lazy" width="160" height="160" />`
             : `<span class="produto-img produto-img-empty" aria-hidden="true"></span>`;
           const data = formatDataNota(r.nota_emissao) || '';
           const isMenor =
@@ -1205,18 +1248,18 @@ function renderVitrineDetalhe(empresaId) {
                 data-empresa-id="${esc(loja.id)}"
                 data-empresa-nome="${esc(empresaNome)}"
                 data-codigo="${esc(codigo)}"
-                data-nome="${esc(r.nome || '')}"
+                data-nome="${esc(r.nome_nota || r.nome || '')}"
                 data-ean="${esc(ean)}"
               >${ean ? 'Editar código de barras' : 'Código de barras'}</button>`
             : '';
           const suggestBox =
-            !ean && codigo && r.nome
+            !ean && codigo && (r.nome_nota || r.nome)
               ? `<div class="ean-suggest-inline"
                    data-suggest-for="${esc(codigo)}"
                    data-empresa-id="${esc(loja.id)}"
                    data-empresa-nome="${esc(empresaNome)}"
                    data-codigo="${esc(codigo)}"
-                   data-nome="${esc(r.nome || '')}">
+                   data-nome="${esc(r.nome_nota || r.nome || '')}">
                    <p class="hint ean-suggest-loading">Buscando sugestões de código de barras…</p>
                  </div>`
               : '';
@@ -1226,7 +1269,8 @@ function renderVitrineDetalhe(empresaId) {
             )}">
               <div class="produto-media">${img}</div>
               <div class="produto-body">
-                <h3 class="produto-nome">${esc(r.nome || 'Produto')}</h3>
+                <h3 class="produto-nome">${esc(d.titulo)}</h3>
+                ${htmlProdutoCats(d.cats, d.marca)}
                 <p class="produto-preco">
                   <span class="price-cell">${esc(formatPreco(r.valor_unitario))}</span>
                   ${isMenor ? '<span class="chip ok">menor</span>' : ''}

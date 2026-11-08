@@ -499,6 +499,13 @@ Card: [BXKZ55Wb](https://trello.com/c/BXKZ55Wb).
 - Antes: contribuição só altruísta / sem gate de uso. Depois: economia de contribuição + gamificação loja.
 - Rollback: remover §5.11 / RFs / este REQ.
 
+## REQ-053 — Protótipo alinhado ao PRD (listas, notas, pontos) (2026-11-08)
+
+- Galeria [`beta-docs/prototipos/index.html`](../beta-docs/prototipos/index.html) (+ `app/public/prototipos.html`) contempla REQ-050..052: Minhas listas (T-40/42/41), Minhas notas (T-50/55), gastos (T-52), pontos/gate (T-53/54), perfil fingerprint+IP (T-51), merge na criar conta (T-02).
+- Tab **Listas**; inventário em [`12-prototipos.md`](../beta-docs/12-prototipos.md).
+- Antes: cestas/extrato genéricos. Depois: telas acima na galeria E04.
+- Rollback: restaurar HTML anterior do protótipo + inventário.
+
 ## Próximos passos
 
 → Manter este arquivo alinhado a cada pedido novo · esteira de docs em [`README.md`](README.md) quando avançar funcionalidades/BDD.

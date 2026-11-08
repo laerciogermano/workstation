@@ -42,15 +42,20 @@
 | T-31 | Mais baratas (entrada Estabelecimentos) | E03 | US-03.02 | verde |
 | T-32 | Mapa | E03 | US-03.03 | azul |
 | T-33 | Vitrine da loja | E03 | US-03.04–06 | verde |
-| T-40 | Cestas (várias) | E04 | US-04.01, 04.02 | verde |
-| T-41 | Split · economia | E04 | US-04.03 | verde |
-| T-50 | Extrato · gastos | E04 | US-04.04–06 | azul |
-| T-51 | Perfil | E01 | US-01.13, 01.14 | azul |
+| T-40 | Minhas listas (várias) | E04 | US-04.01 · REQ-051 | verde |
+| T-42 | Lista · sem split (por loja) | E04 | US-04.02 · REQ-051 | verde |
+| T-41 | Lista · com split + redução | E04 | US-04.03 · REQ-051 | verde |
+| T-50 | Minhas notas | E04 | US-04.04 · REQ-051 | azul |
+| T-55 | Detalhe da nota | E04 | US-04.04 | azul |
+| T-52 | Gastos do mês | E04 | US-04.05–06 | azul |
+| T-53 | Pontos e contribuição | E01 | RF-E01-19..21 · REQ-052 | azul |
+| T-54 | Gate · contribuir | E01 | RF-E01-20 · REQ-052 | azul |
+| T-51 | Perfil (fingerprint + IP) | E01 | US-01.13 · REQ-050 | azul |
 | T-61 | Admin · Métricas | — (fora da galeria neste momento) | US-ADM.01–03 | azul (desktop) |
 
 ## 3. Navegação
 
-Tab bar: **Destaques** (T-10) · **Lojas** (T-31) · **Nota** FAB (T-20) · **Cestas** (T-40) · **Perfil** (T-51). Entrada default = home anônima. Mapa em [07-diagramas](07-diagramas.md).
+Tab bar: **Destaques** (T-10) · **Lojas** (T-31) · **Nota** FAB (T-20) · **Listas** (T-40) · **Perfil** (T-51). Minhas notas / pontos via Perfil (e pós-scan). Entrada = home anônima. Mapa em [07-diagramas](07-diagramas.md).
 
 ### Ajustes UX (2026-11-04) — card [BXKZ55Wb](https://trello.com/c/BXKZ55Wb)
 
@@ -71,8 +76,15 @@ Tab bar: **Destaques** (T-10) · **Lojas** (T-31) · **Nota** FAB (T-20) · **Ce
 
 ### Épicos na galeria (2026-11-04)
 
-- **E01** Descoberta de preços · **E02** Contribuir nota e EAN · **E03** Estabelecimentos · **E04** Cestas e gastos
+- **E01** Descoberta de preços · **E02** Contribuir nota e EAN · **E03** Estabelecimentos · **E04** Listas, notas e pontos
 - Backoffice (T-61) fora da galeria neste momento
+
+### PRD 2026-11-08 (REQ-050..052)
+
+- Fingerprint + IP no Perfil / Minhas notas; merge na Criar conta
+- Minhas listas com toggle sem split / com split (redução R$/%)
+- Minhas notas + detalhe; gastos derivados
+- Pontos/contribuição (NFC-e + EAN) e gate de crédito de uso
 
 ### Estabelecimentos (2026-11-04)
 

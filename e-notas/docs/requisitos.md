@@ -455,6 +455,15 @@ Card: [BXKZ55Wb](https://trello.com/c/BXKZ55Wb).
 - Antes: ficha só com backfill/sugestão local. Depois: enriquecimento multi-fonte sob demanda e no vínculo.
 - Rollback: remover rotas/módulo; `ALTER TABLE … DROP COLUMN` das novas colunas (ficha básica REQ-047 permanece).
 
+## REQ-049 — Categorias canônicas de produto (2026-11-08)
+
+- Lista fechada de **~18 categorias nível 1** (afinidade de uso / árvore mercadológica BR) + subcategorias opcionais nível 2.
+- Doc canônico: [`categorias-produtos.md`](categorias-produtos.md). Constantes + normalização: `app/categorias-produtos.js`.
+- Enrich (`produto-ean-enrich`) mapeia PreçoMelhor/OFF/heurística → nomes canônicos antes de gravar `produtos_ean.categorias`.
+- Não usar tags OFF cruas nem NCM/CEST como categoria de UI.
+- Antes: categorias livres/heurísticas soltas (“Bebidas energéticas”). Depois: taxonomia única documentada + normalização no enrich.
+- Rollback: remover doc/módulo; voltar categorias texto livre no enrich.
+
 ## Próximos passos
 
 → Manter este arquivo alinhado a cada pedido novo · esteira de docs em [`README.md`](README.md) quando avançar funcionalidades/BDD.

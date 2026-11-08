@@ -3,6 +3,7 @@
  * Fontes abertas/grátis: PreçoMelhor → Open*Facts → UPCitemdb.
  */
 import { downloadEanImage } from './ean-imagens.js';
+import { normalizeCategoriasCanonicas } from './categorias-produtos.js';
 
 const UA =
   'notinhas.shop/0.1 (produto-ean-enrich; +https://notinhas.shop)';
@@ -102,25 +103,12 @@ export function humanizeDanfeTitulo(raw) {
 function inferMarcaCategoria(titulo) {
   const t = String(titulo || '').toLowerCase();
   let marca = null;
-  let categorias = [];
-  if (/monster/.test(t)) {
-    marca = 'Monster';
-    categorias = ['Bebidas energéticas', 'Bebidas'];
-  } else if (/red\s*bull/.test(t)) {
-    marca = 'Red Bull';
-    categorias = ['Bebidas energéticas', 'Bebidas'];
-  } else if (/pringles/.test(t)) {
-    marca = 'Pringles';
-    categorias = ['Salgadinhos', 'Snacks'];
-  } else if (/mentos/.test(t)) {
-    marca = 'Mentos';
-    categorias = ['Balas e pirulitos', 'Doces'];
-  } else if (/eisenbahn/.test(t)) {
-    marca = 'Eisenbahn';
-    categorias = ['Cervejas', 'Bebidas'];
-  } else if (/energ[eé]tico/.test(t)) {
-    categorias = ['Bebidas energéticas', 'Bebidas'];
-  }
+  if (/monster/.test(t)) marca = 'Monster';
+  else if (/red\s*bull/.test(t)) marca = 'Red Bull';
+  else if (/pringles/.test(t)) marca = 'Pringles';
+  else if (/mentos/.test(t)) marca = 'Mentos';
+  else if (/eisenbahn/.test(t)) marca = 'Eisenbahn';
+  const categorias = normalizeCategoriasCanonicas([], titulo);
   return { marca, categorias };
 }
 
@@ -417,11 +405,13 @@ export async function enrichProdutoEan(codigoBarras, { force = false } = {}) {
       merged.titulo = humanizeDanfeTitulo(merged.titulo) || merged.titulo;
     }
 
-    const inferred = inferMarcaCategoria(merged.titulo || cur?.titulo || '');
+    const tituloHint = merged.titulo || cur?.titulo || '';
+    const inferred = inferMarcaCategoria(tituloHint);
     if (!merged.marca && inferred.marca) merged.marca = inferred.marca;
-    if ((!merged.categorias || !merged.categorias.length) && inferred.categorias.length) {
-      merged.categorias = inferred.categorias;
-    }
+    merged.categorias = normalizeCategoriasCanonicas(
+      merged.categorias?.length ? merged.categorias : inferred.categorias,
+      tituloHint,
+    );
 
     if (!merged.titulo && !merged.marca && !merged.ncm && !merged.image_url) {
       return {

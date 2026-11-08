@@ -15,6 +15,7 @@ Timeline de prompts: [`../prompts/timeline.md`](../prompts/timeline.md).
 | Protótipos T-xx | [`../beta-docs/prototipos/index.html`](../beta-docs/prototipos/index.html) | Galeria + modo navegável + design system light | Ativo |
 | PRD (legado / visão ampla) | [`prd.md`](prd.md) | Capacidades-alvo amplas; escopo Beta formalizado em `beta-docs/01-prd.md` | Ativo |
 | Requisitos / regras | [`requisitos.md`](requisitos.md) | Regras canônicas pedidas (REQ-NNN); atualizar a cada requisito novo | Ativo |
+| Categorias de produto | [`categorias-produtos.md`](categorias-produtos.md) | Taxonomia L1/L2 canônica (REQ-049); espelho em `app/categorias-produtos.js` | Ativo |
 | Identidade visual | [`../marca/identidade-visual-notinhas-v1.html`](../marca/identidade-visual-notinhas-v1.html) | Manual marca notinhas.shop (REQ-015) | Ativo |
 | Design system | [`../marca/design-system-notinhas-v1.html`](../marca/design-system-notinhas-v1.html) | Tokens + componentes UI (REQ-016) | Ativo |
 

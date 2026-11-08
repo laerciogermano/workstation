@@ -28,7 +28,7 @@
 | T-03 | Entrar (fora do onboarding; via Perfil) | E01 | US-01.03, 01.04 | azul |
 | T-04 | Recuperar senha | E01 | US-01.05 | azul |
 | T-05 | Localização (opcional / banner) | E01 | US-01.06, 01.07 | azul |
-| T-10 | Home · Destaques + busca/filtros | E01 | US-02.01, 02.02 | verde |
+| T-10 | Home · Produtos + busca/filtros | E01 | US-02.01, 02.02 | verde |
 | T-11 | Busca + categorias | E01 | US-02.03, 02.04 | azul |
 | T-12 | Comparação | E01 | US-02.05 | verde |
 | T-13 | Histórico | E01 | US-02.06 | verde |
@@ -55,7 +55,7 @@
 
 ## 3. Navegação
 
-Tab bar: **Destaques** (T-10) · **Lojas** (T-31) · **Nota** FAB (T-20) · **Listas** (T-40) · **Perfil** (T-51). Minhas notas / pontos via Perfil (e pós-scan). Entrada = home anônima. Mapa em [07-diagramas](07-diagramas.md).
+Tab bar: **Produtos** (T-10) · **Lojas** (T-31) · **Nota** FAB (T-20) · **Listas** (T-40) · **Perfil** (T-51). Minhas notas / pontos via Perfil (e pós-scan). Entrada = home anônima. Mapa em [07-diagramas](07-diagramas.md).
 
 ### Ajustes UX (2026-11-04) — card [BXKZ55Wb](https://trello.com/c/BXKZ55Wb)
 
@@ -76,7 +76,7 @@ Tab bar: **Destaques** (T-10) · **Lojas** (T-31) · **Nota** FAB (T-20) · **Li
 
 ### Épicos na galeria (2026-11-04)
 
-- **E01** Descoberta de preços · **E02** Contribuir nota e EAN · **E03** Estabelecimentos · **E04** Listas, notas e pontos
+- **E01** Produtos e preços · **E02** Contribuir nota e EAN · **E03** Estabelecimentos · **E04** Listas, notas e pontos
 - Backoffice (T-61) fora da galeria neste momento
 
 ### PRD 2026-11-08 (REQ-050..052)

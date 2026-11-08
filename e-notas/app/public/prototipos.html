@@ -290,9 +290,9 @@ th{color:var(--muted);font-weight:600}
   <button class="btn p" data-go="T-10">Salvar</button>
   <button class="btn gh" data-go="T-10">Agora não</button>
 </div></template>
-<template data-id="T-10" data-name="Home · Destaques" data-accent="green" data-us="US-02.01,US-02.02" data-notes="Entrada anônima. Destaque = preço bem abaixo da mediana. Busca + filtros/categorias na home. Banner GPS opcional (não bloqueia).">
+<template data-id="T-10" data-name="Home · Produtos" data-accent="green" data-us="US-02.01,US-02.02" data-notes="Tab Produtos: busca, filtros, categorias; seção Destaques (preço abaixo da mediana) + catálogo. Entrada anônima. Banner GPS opcional.">
 <div class="body tb">
-  <div class="top brand"><span class="wm sm"><b>notinhas</b><i>.shop</i></span><span class="sp"></span><button class="ibtn" data-go="T-51">○</button></div>
+  <div class="top brand"><span class="wm sm"><b>notinhas</b><i>.shop</i></span><span class="sp"></span><button class="ibtn" data-go="T-51" aria-label="Config">⚙</button></div>
   <div class="banner">
     <div class="grow"><p><b>Melhor experiência:</b> ative a localização para ver itens perto de você.</p></div>
     <button class="btn p sm" data-go="T-05">Ativar</button>
@@ -303,6 +303,7 @@ th{color:var(--muted);font-weight:600}
     <span class="chip">Mercearia</span>
     <span class="chip">Bebidas</span>
     <span class="chip">Limpeza</span>
+    <span class="chip">Higiene</span>
     <span class="chip">Filtros</span>
   </div>
   <p class="sec">Destaques</p>
@@ -310,12 +311,18 @@ th{color:var(--muted);font-weight:600}
   <div class="pgrid">
     <div class="pcard" data-go="T-14"><div class="ph"></div><p class="pn">Leite Integral 1L</p><p class="pp">R$ 4,29</p><p class="avg">média R$ 4,85 · <b>−12%</b></p><p class="pm">Condor · hoje</p><span class="badge g">destaque</span></div>
     <div class="pcard" data-go="T-14"><div class="ph g2"></div><p class="pn">Arroz Tipo 1 5kg</p><p class="pp">R$ 22,90</p><p class="avg">média R$ 26,40 · <b>−13%</b></p><p class="pm">Muffato · ontem</p><span class="badge g">destaque</span></div>
-    <div class="pcard" data-go="T-14"><div class="ph g3"></div><p class="pn">Café Torrado 500g</p><p class="pp">R$ 18,49</p><p class="avg">média R$ 22,10 · <b>−16%</b></p><p class="pm">Mercadorama · 2d</p><span class="badge g">destaque</span></div>
-    <div class="pcard" data-go="T-14"><div class="ph g4"></div><p class="pn">Sabão em Pó 1,6kg</p><p class="pp">R$ 21,99</p><p class="avg">média R$ 25,80 · <b>−15%</b></p><p class="pm">Condor · hoje</p><span class="badge g">destaque</span></div>
+  </div>
+  <p class="sec">Produtos</p>
+  <p class="xs muted mb8">Catálogo com EAN · ordenar por menor preço</p>
+  <div class="pgrid">
+    <div class="pcard" data-go="T-14"><div class="ph g3"></div><p class="pn">Café Torrado 500g</p><p class="pp">R$ 18,49</p><p class="pm">Mercadorama · 2d</p></div>
+    <div class="pcard" data-go="T-14"><div class="ph g4"></div><p class="pn">Sabão em Pó 1,6kg</p><p class="pp">R$ 21,99</p><p class="pm">Condor · hoje</p></div>
+    <div class="pcard" data-go="T-14"><div class="ph"></div><p class="pn">Óleo de Soja 900ml</p><p class="pp">R$ 6,89</p><p class="pm">Muffato · hoje</p></div>
+    <div class="pcard" data-go="T-14"><div class="ph g2"></div><p class="pn">Feijão Carioca 1kg</p><p class="pp">R$ 7,49</p><p class="pm">Condor · ontem</p></div>
   </div>
 </div>
 <div class="tabbar">
-  <div class="tab on" data-go="T-10"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/></svg></span>Destaques</div>
+  <div class="tab on" data-go="T-10"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg></span>Produtos</div>
   <div class="tab" data-go="T-31"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/><path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/><path d="M12 3v6"/></svg></span>Lojas</div>
   <div class="tab fab" data-go="T-20"><span class="fabbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg></span>Nota</div>
   <div class="tab" data-go="T-40"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h.01"/><path d="M3 18h.01"/><path d="M3 6h.01"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M8 6h13"/></svg></span>Listas</div>
@@ -405,7 +412,7 @@ th{color:var(--muted);font-weight:600}
   </div>
 </div>
 <div class="tabbar">
-  <div class="tab" data-go="T-10"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/></svg></span>Destaques</div>
+  <div class="tab" data-go="T-10"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg></span>Produtos</div>
   <div class="tab" data-go="T-31"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/><path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/><path d="M12 3v6"/></svg></span>Lojas</div>
   <div class="tab fab" data-go="T-20"><span class="fabbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg></span>Nota</div>
   <div class="tab" data-go="T-40"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h.01"/><path d="M3 18h.01"/><path d="M3 6h.01"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M8 6h13"/></svg></span>Listas</div>
@@ -478,7 +485,7 @@ th{color:var(--muted);font-weight:600}
   <button class="btn s mt12" data-go="T-32">Ver no mapa</button>
 </div>
 <div class="tabbar">
-  <div class="tab" data-go="T-10"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/></svg></span>Destaques</div>
+  <div class="tab" data-go="T-10"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg></span>Produtos</div>
   <div class="tab" data-go="T-31"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/><path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/><path d="M12 3v6"/></svg></span>Lojas</div>
   <div class="tab fab" data-go="T-20"><span class="fabbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg></span>Nota</div>
   <div class="tab" data-go="T-40"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h.01"/><path d="M3 18h.01"/><path d="M3 6h.01"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M8 6h13"/></svg></span>Listas</div>
@@ -495,7 +502,7 @@ th{color:var(--muted);font-weight:600}
   <div class="rank" data-go="T-33"><span class="rk">3</span><div class="grow"><p class="b sm">Mercadorama</p><p class="xs muted">3ª mais barata · 1ª mais cara da região</p><p class="xs muted">+4% · 2,4 km</p></div></div>
 </div>
 <div class="tabbar">
-  <div class="tab" data-go="T-10"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/></svg></span>Destaques</div>
+  <div class="tab" data-go="T-10"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg></span>Produtos</div>
   <div class="tab on" data-go="T-31"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/><path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/><path d="M12 3v6"/></svg></span>Lojas</div>
   <div class="tab fab" data-go="T-20"><span class="fabbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg></span>Nota</div>
   <div class="tab" data-go="T-40"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h.01"/><path d="M3 18h.01"/><path d="M3 6h.01"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M8 6h13"/></svg></span>Listas</div>
@@ -546,7 +553,7 @@ th{color:var(--muted);font-weight:600}
   <p class="xs muted mt8">Listas no servidor · fingerprint anônimo</p>
 </div>
 <div class="tabbar">
-  <div class="tab" data-go="T-10"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/></svg></span>Destaques</div>
+  <div class="tab" data-go="T-10"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg></span>Produtos</div>
   <div class="tab" data-go="T-31"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/><path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/><path d="M12 3v6"/></svg></span>Lojas</div>
   <div class="tab fab" data-go="T-20"><span class="fabbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg></span>Nota</div>
   <div class="tab on" data-go="T-40"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h.01"/><path d="M3 18h.01"/><path d="M3 6h.01"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M8 6h13"/></svg></span>Listas</div>
@@ -569,7 +576,7 @@ th{color:var(--muted);font-weight:600}
   <button class="btn s mt8" data-go="T-54">Continuar cotando…</button>
 </div>
 <div class="tabbar">
-  <div class="tab" data-go="T-10"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/></svg></span>Destaques</div>
+  <div class="tab" data-go="T-10"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg></span>Produtos</div>
   <div class="tab" data-go="T-31"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/><path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/><path d="M12 3v6"/></svg></span>Lojas</div>
   <div class="tab fab" data-go="T-20"><span class="fabbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg></span>Nota</div>
   <div class="tab on" data-go="T-40"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h.01"/><path d="M3 18h.01"/><path d="M3 6h.01"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M8 6h13"/></svg></span>Listas</div>
@@ -610,7 +617,7 @@ th{color:var(--muted);font-weight:600}
   <p class="meta-fp mt12">fp · a3f9…c21 · IP 191.36.x.x</p>
 </div>
 <div class="tabbar">
-  <div class="tab" data-go="T-10"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/></svg></span>Destaques</div>
+  <div class="tab" data-go="T-10"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg></span>Produtos</div>
   <div class="tab" data-go="T-31"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/><path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/><path d="M12 3v6"/></svg></span>Lojas</div>
   <div class="tab fab" data-go="T-20"><span class="fabbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg></span>Nota</div>
   <div class="tab" data-go="T-40"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h.01"/><path d="M3 18h.01"/><path d="M3 6h.01"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M8 6h13"/></svg></span>Listas</div>
@@ -689,7 +696,7 @@ th{color:var(--muted);font-weight:600}
   </div>
 </div>
 <div class="tabbar">
-  <div class="tab" data-go="T-10"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/></svg></span>Destaques</div>
+  <div class="tab" data-go="T-10"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg></span>Produtos</div>
   <div class="tab" data-go="T-31"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/><path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/><path d="M12 3v6"/></svg></span>Lojas</div>
   <div class="tab fab" data-go="T-20"><span class="fabbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg></span>Nota</div>
   <div class="tab" data-go="T-40"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h.01"/><path d="M3 18h.01"/><path d="M3 6h.01"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M8 6h13"/></svg></span>Listas</div>
@@ -724,9 +731,9 @@ const FLOWS = [
   {
     "id": "e01",
     "n": "E01",
-    "title": "Descoberta de preços",
+    "title": "Produtos e preços",
     "color": "c-green",
-    "desc": "Home com destaques (abaixo da média), busca/filtros, detalhe expandido. Entrada direta na home anônima (sem splash).",
+    "desc": "Tab Produtos: busca, filtros, categorias, seção Destaques + catálogo. Detalhe expandido. Home anônima.",
     "steps": [
       [
         "T-10",

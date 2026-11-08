@@ -39,7 +39,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS uq_cliente_nome_sem_cnpj
   WHERE cnpj IS NULL OR cnpj = '';
 
 CREATE TABLE IF NOT EXISTS portal_franqueado.orcamento (
-  id BIGINT PRIMARY KEY,
+  id BIGINT NOT NULL,
   franquia_id INTEGER NOT NULL REFERENCES portal_franqueado.franquia(id),
   vendedor_id BIGINT REFERENCES portal_franqueado.vendedor(id),
   cliente_id BIGINT REFERENCES portal_franqueado.cliente(id),
@@ -50,7 +50,8 @@ CREATE TABLE IF NOT EXISTS portal_franqueado.orcamento (
   vendedor_nome TEXT,
   total DOUBLE PRECISION,
   total_texto TEXT,
-  synced_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  synced_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (franquia_id, id)
 );
 CREATE INDEX IF NOT EXISTS idx_orcamento_franquia ON portal_franqueado.orcamento (franquia_id);
 CREATE INDEX IF NOT EXISTS idx_orcamento_status ON portal_franqueado.orcamento (franquia_id, status);
@@ -58,7 +59,7 @@ CREATE INDEX IF NOT EXISTS idx_orcamento_status ON portal_franqueado.orcamento (
 CREATE TABLE IF NOT EXISTS portal_franqueado.pedido (
   id BIGINT PRIMARY KEY,
   franquia_id INTEGER NOT NULL REFERENCES portal_franqueado.franquia(id),
-  orcamento_id BIGINT REFERENCES portal_franqueado.orcamento(id),
+  orcamento_id BIGINT,
   vendedor_id BIGINT REFERENCES portal_franqueado.vendedor(id),
   cliente_id BIGINT REFERENCES portal_franqueado.cliente(id),
   numero INTEGER,
@@ -76,7 +77,67 @@ CREATE TABLE IF NOT EXISTS portal_franqueado.pedido (
 );
 CREATE INDEX IF NOT EXISTS idx_pedido_franquia ON portal_franqueado.pedido (franquia_id);
 CREATE INDEX IF NOT EXISTS idx_pedido_status ON portal_franqueado.pedido (franquia_id, status);
-CREATE INDEX IF NOT EXISTS idx_pedido_orcamento ON portal_franqueado.pedido (orcamento_id);
+CREATE INDEX IF NOT EXISTS idx_pedido_orcamento ON portal_franqueado.pedido (franquia_id, orcamento_id);
+
+-- Migração: PK antiga era só id (colisões entre franquias). FK composta (franquia_id, orcamento_id).
+DO $$
+DECLARE
+  pk_cols text;
+BEGIN
+  SELECT string_agg(a.attname, ',' ORDER BY u.ord)
+  INTO pk_cols
+  FROM pg_index i
+  JOIN pg_class c ON c.oid = i.indrelid
+  JOIN pg_namespace n ON n.oid = c.relnamespace
+  JOIN LATERAL unnest(i.indkey) WITH ORDINALITY AS u(attnum, ord) ON true
+  JOIN pg_attribute a ON a.attrelid = c.oid AND a.attnum = u.attnum
+  WHERE n.nspname = 'portal_franqueado'
+    AND c.relname = 'orcamento'
+    AND i.indisprimary;
+
+  IF pk_cols IS DISTINCT FROM 'franquia_id,id' THEN
+    ALTER TABLE portal_franqueado.pedido
+      DROP CONSTRAINT IF EXISTS pedido_orcamento_id_fkey;
+    ALTER TABLE portal_franqueado.pedido
+      DROP CONSTRAINT IF EXISTS pedido_orcamento_fkey;
+
+    UPDATE portal_franqueado.pedido p
+    SET orcamento_id = NULL
+    WHERE p.orcamento_id IS NOT NULL
+      AND NOT EXISTS (
+        SELECT 1
+        FROM portal_franqueado.orcamento o
+        WHERE o.id = p.orcamento_id
+          AND o.franquia_id = p.franquia_id
+      );
+
+    ALTER TABLE portal_franqueado.orcamento DROP CONSTRAINT IF EXISTS orcamento_pkey;
+    ALTER TABLE portal_franqueado.orcamento
+      ADD PRIMARY KEY (franquia_id, id);
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_constraint
+    WHERE conname = 'pedido_orcamento_fkey'
+      AND conrelid = 'portal_franqueado.pedido'::regclass
+  ) THEN
+    UPDATE portal_franqueado.pedido p
+    SET orcamento_id = NULL
+    WHERE p.orcamento_id IS NOT NULL
+      AND NOT EXISTS (
+        SELECT 1
+        FROM portal_franqueado.orcamento o
+        WHERE o.id = p.orcamento_id
+          AND o.franquia_id = p.franquia_id
+      );
+
+    ALTER TABLE portal_franqueado.pedido
+      ADD CONSTRAINT pedido_orcamento_fkey
+      FOREIGN KEY (franquia_id, orcamento_id)
+      REFERENCES portal_franqueado.orcamento (franquia_id, id);
+  END IF;
+END $$;
 
 CREATE TABLE IF NOT EXISTS portal_franqueado.pedido_item (
   pedido_id BIGINT NOT NULL REFERENCES portal_franqueado.pedido(id) ON DELETE CASCADE,

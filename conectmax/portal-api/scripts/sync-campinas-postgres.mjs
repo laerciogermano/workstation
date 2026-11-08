@@ -7,10 +7,12 @@
  *   node scripts/sync-campinas-postgres.mjs --franquia=2 --skip-itens
  *   node scripts/sync-campinas-postgres.mjs --franquia=2 --only-itens
  *   node scripts/sync-campinas-postgres.mjs --franquia=3 --delta
+ *   node scripts/sync-campinas-postgres.mjs --franquia=2 --only-orcamentos
  *   node scripts/sync-campinas-postgres.mjs --contato --itens-concurrency=8
  *
  * Listagens de outras franquias usam id_franqueado_rel / id_franqueado (IDOR do portal).
  * --delta: não apaga pedidos/itens; só INSERT ON CONFLICT + completa itens faltantes.
+ * --only-orcamentos: stubs a partir dos pedidos + liga pedido.orcamento_id (PK composta).
  */
 import { readFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
@@ -97,6 +99,7 @@ const TO = arg('to', '31/12/2026');
 const WITH_CONTATO = hasFlag('contato');
 const SKIP_ITENS = hasFlag('skip-itens');
 const ONLY_ITENS = hasFlag('only-itens');
+const ONLY_ORCAMENTOS = hasFlag('only-orcamentos');
 const DELTA = hasFlag('delta');
 const CONCURRENCY = Math.max(1, Number(arg('itens-concurrency', '6')) || 6);
 const FRANQUIA_ID = Number(arg('franquia', '9')) || 9;
@@ -123,6 +126,9 @@ async function loadDbEnv() {
     user: map.DB_USER,
     password: map.DB_PASSWORD,
     database: map.DB_NAME,
+    keepAlive: true,
+    connectionTimeoutMillis: 30_000,
+    statement_timeout: 120_000,
   };
 }
 
@@ -366,10 +372,107 @@ async function syncOnlyItens(pool) {
   console.log('pedido_item ok', itensCount);
 }
 
+/** Sessão do login em credentials.env (lista /orcamentos é dessa franquia). */
+const SESSION_FRANQUIA_ID = Number(arg('session-franquia', '9')) || 9;
+
+function stubsFromPedidos(pedidos, orcFromPed) {
+  return [...orcFromPed].map((id) => {
+    const p = pedidos.find((x) => x.orcamento === id);
+    return {
+      id,
+      numero: id,
+      data: p?.data || null,
+      status: null,
+      cliente: p?.cliente || null,
+      vendedor: p?.vendedor || null,
+      total: null,
+      totalTexto: null,
+    };
+  });
+}
+
+async function upsertOrcamentosAndLink(client, pedidos, orcamentos) {
+  const vendCache = await seedVendedores(client, [
+    ...orcamentos.map((r) => r.vendedor),
+    ...pedidos.map((r) => r.vendedor),
+  ]);
+  const cliCache = await seedClientes(client, [
+    ...orcamentos.map((r) => ({ nome: r.cliente })),
+    ...pedidos.map((r) => ({ nome: r.cliente })),
+  ]);
+
+  await insertChunks(
+    client,
+    `INSERT INTO portal_franqueado.orcamento
+     (id,franquia_id,vendedor_id,cliente_id,numero,data,status,cliente_nome,vendedor_nome,total,total_texto)`,
+    orcamentos,
+    (r) => [
+      r.id,
+      FRANQUIA_ID,
+      vendedorId(vendCache, r.vendedor),
+      clienteId(cliCache, r.cliente),
+      r.numero,
+      r.data,
+      r.status,
+      r.cliente,
+      r.vendedor,
+      r.total,
+      r.totalTexto ?? null,
+    ],
+    100,
+    `ON CONFLICT (franquia_id, id) DO UPDATE SET
+       vendedor_id=COALESCE(EXCLUDED.vendedor_id, portal_franqueado.orcamento.vendedor_id),
+       cliente_id=COALESCE(EXCLUDED.cliente_id, portal_franqueado.orcamento.cliente_id),
+       numero=COALESCE(EXCLUDED.numero, portal_franqueado.orcamento.numero),
+       data=COALESCE(EXCLUDED.data, portal_franqueado.orcamento.data),
+       status=COALESCE(EXCLUDED.status, portal_franqueado.orcamento.status),
+       cliente_nome=COALESCE(EXCLUDED.cliente_nome, portal_franqueado.orcamento.cliente_nome),
+       vendedor_nome=COALESCE(EXCLUDED.vendedor_nome, portal_franqueado.orcamento.vendedor_nome),
+       total=COALESCE(EXCLUDED.total, portal_franqueado.orcamento.total),
+       total_texto=COALESCE(EXCLUDED.total_texto, portal_franqueado.orcamento.total_texto),
+       synced_at=now()`,
+  );
+
+  const orcWanted = orcamentos.map((o) => o.id).filter(Boolean);
+  const { rows: orcExisting } = await client.query(
+    `SELECT id FROM portal_franqueado.orcamento
+     WHERE franquia_id=$1 AND id = ANY($2::bigint[])`,
+    [FRANQUIA_ID, orcWanted],
+  );
+  const orcIds = new Set(orcExisting.map((r) => Number(r.id)));
+  console.log('orcamento ok', orcamentos.length, 'fk-ready', orcIds.size);
+
+  const linkIds = [];
+  const linkOrcs = [];
+  for (const p of pedidos) {
+    if (!p.orcamento || !orcIds.has(Number(p.orcamento))) continue;
+    linkIds.push(p.id);
+    linkOrcs.push(Number(p.orcamento));
+  }
+  let linked = 0;
+  const LINK_CHUNK = 500;
+  for (let i = 0; i < linkIds.length; i += LINK_CHUNK) {
+    const ids = linkIds.slice(i, i + LINK_CHUNK);
+    const orcs = linkOrcs.slice(i, i + LINK_CHUNK);
+    const r = await client.query(
+      `UPDATE portal_franqueado.pedido p
+       SET orcamento_id = x.orc
+       FROM unnest($1::bigint[], $2::bigint[]) AS x(id, orc)
+       WHERE p.id = x.id
+         AND p.franquia_id = $3
+         AND (p.orcamento_id IS DISTINCT FROM x.orc)`,
+      [ids, orcs, FRANQUIA_ID],
+    );
+    linked += r.rowCount || 0;
+  }
+  console.log('pedido.orcamento_id linked', linked);
+  return { vendCache, cliCache, orcIds };
+}
+
 async function main() {
   const range = { data_inicial: FROM, data_final: TO };
   console.log(
-    `${FRANQUIA.nome} id=${FRANQUIA_ID} · ${FROM} → ${TO} · itens=${!SKIP_ITENS} · onlyItens=${ONLY_ITENS} · delta=${DELTA}`,
+    `${FRANQUIA.nome} id=${FRANQUIA_ID} · ${FROM} → ${TO} · itens=${!SKIP_ITENS} · onlyItens=${ONLY_ITENS} · onlyOrcs=${ONLY_ORCAMENTOS} · delta=${DELTA}`,
   );
 
   if (ONLY_ITENS) {
@@ -393,33 +496,76 @@ async function main() {
   );
   console.log(' ', pedidos.length);
 
-  // orcamentos: portal ignora id_franqueado_rel — pega só ids ligados aos pedidos da franquia
-  console.log('fetch orcamentos (via pedidos)…');
-  let orcamentos = parseOrcamentosHtml(
-    (await fetchPageHtmlPaginated('orcamentos', fq, { all: true })).html,
-  );
+  // orcamentos: portal ignora id_franqueado_rel (lista = sessão).
+  // Outras franquias → só stubs dos pedidos. Sessão (default 9) → lista completa + stubs faltantes.
   const orcFromPed = new Set(
-    pedidos.map((p) => p.orcamento).filter((n) => Number.isFinite(Number(n))),
+    pedidos
+      .map((p) => p.orcamento)
+      .filter((n) => n != null && Number.isFinite(Number(n)) && Number(n) > 0)
+      .map((n) => Number(n)),
   );
-  const beforeOrc = orcamentos.length;
-  orcamentos = orcamentos.filter((o) => orcFromPed.has(o.id) || orcFromPed.has(o.numero));
-  // se filtro zerar (lista é de outra franquia), monta stub a partir dos pedidos
-  if (!orcamentos.length && orcFromPed.size) {
-    orcamentos = [...orcFromPed].map((id) => {
-      const p = pedidos.find((x) => x.orcamento === id);
-      return {
-        id,
-        numero: id,
-        data: p?.data || null,
-        status: null,
-        cliente: p?.cliente || null,
-        vendedor: p?.vendedor || null,
-        total: null,
-        totalTexto: null,
-      };
-    });
+  let orcamentos;
+  let beforeOrc = 0;
+  if (FRANQUIA_ID === SESSION_FRANQUIA_ID) {
+    console.log('fetch orcamentos (lista da sessão)…');
+    orcamentos = parseOrcamentosHtml(
+      (await fetchPageHtmlPaginated('orcamentos', fq, { all: true })).html,
+    );
+    beforeOrc = orcamentos.length;
+    const have = new Set(orcamentos.map((o) => o.id));
+    for (const stub of stubsFromPedidos(pedidos, orcFromPed)) {
+      if (!have.has(stub.id)) {
+        orcamentos.push(stub);
+        have.add(stub.id);
+      }
+    }
+  } else {
+    console.log('orcamentos stubs (via pedidos; lista portal é de outra franquia)…');
+    orcamentos = stubsFromPedidos(pedidos, orcFromPed);
   }
-  console.log(' ', orcamentos.length, `(lista bruta ${beforeOrc}, refs pedido ${orcFromPed.size})`);
+  console.log(
+    ' ',
+    orcamentos.length,
+    `(lista sessão ${beforeOrc}, refs pedido ${orcFromPed.size})`,
+  );
+
+  if (ONLY_ORCAMENTOS) {
+    const db = await loadDbEnv();
+    console.log(`postgres ${db.user}@${db.host}/${db.database}`);
+    const client = new Client(db);
+    await client.connect();
+    try {
+      const ddl = await readFile(DDL_PATH, 'utf8');
+      await client.query(ddl);
+      await client.query(
+        `INSERT INTO portal_franqueado.franquia (id, razao_social, cnpj, nome, synced_at)
+         VALUES ($1,$2,$3,$4,now())
+         ON CONFLICT (id) DO UPDATE SET
+           razao_social=EXCLUDED.razao_social,
+           cnpj=EXCLUDED.cnpj,
+           nome=EXCLUDED.nome,
+           synced_at=now()`,
+        [FRANQUIA.id, FRANQUIA.razao, FRANQUIA.cnpj, FRANQUIA.nome],
+      );
+      await client.query('BEGIN');
+      await upsertOrcamentosAndLink(client, pedidos, orcamentos);
+      await client.query('COMMIT');
+      const { rows } = await client.query(
+        `SELECT
+           (SELECT count(*)::int FROM portal_franqueado.orcamento WHERE franquia_id=$1) orcs,
+           (SELECT count(*)::int FROM portal_franqueado.pedido
+            WHERE franquia_id=$1 AND orcamento_id IS NOT NULL) ped_com_orc`,
+        [FRANQUIA_ID],
+      );
+      console.log('counts', rows[0]);
+    } catch (e) {
+      await client.query('ROLLBACK').catch(() => {});
+      throw e;
+    } finally {
+      await client.end();
+    }
+    return;
+  }
 
   console.log('fetch notas…');
   const notas = parseNotasFiscaisHtml(
@@ -600,12 +746,23 @@ async function main() {
         r.totalTexto ?? null,
       ],
       100,
-      'ON CONFLICT (id) DO NOTHING',
+      `ON CONFLICT (franquia_id, id) DO UPDATE SET
+         vendedor_id=COALESCE(EXCLUDED.vendedor_id, portal_franqueado.orcamento.vendedor_id),
+         cliente_id=COALESCE(EXCLUDED.cliente_id, portal_franqueado.orcamento.cliente_id),
+         numero=COALESCE(EXCLUDED.numero, portal_franqueado.orcamento.numero),
+         data=COALESCE(EXCLUDED.data, portal_franqueado.orcamento.data),
+         status=COALESCE(EXCLUDED.status, portal_franqueado.orcamento.status),
+         cliente_nome=COALESCE(EXCLUDED.cliente_nome, portal_franqueado.orcamento.cliente_nome),
+         vendedor_nome=COALESCE(EXCLUDED.vendedor_nome, portal_franqueado.orcamento.vendedor_nome),
+         total=COALESCE(EXCLUDED.total, portal_franqueado.orcamento.total),
+         total_texto=COALESCE(EXCLUDED.total_texto, portal_franqueado.orcamento.total_texto),
+         synced_at=now()`,
     );
     const orcWanted = orcamentos.map((o) => o.id).filter(Boolean);
     const { rows: orcExisting } = await client.query(
-      `SELECT id FROM portal_franqueado.orcamento WHERE id = ANY($1::bigint[])`,
-      [orcWanted],
+      `SELECT id FROM portal_franqueado.orcamento
+       WHERE franquia_id=$1 AND id = ANY($2::bigint[])`,
+      [FRANQUIA_ID, orcWanted],
     );
     const orcIds = new Set(orcExisting.map((r) => Number(r.id)));
     console.log('orcamento ok', orcamentos.length, 'fk-ready', orcIds.size);
@@ -630,7 +787,16 @@ async function main() {
         r.totalTexto ?? null,
       ],
       100,
-      'ON CONFLICT (id) DO NOTHING',
+      DELTA
+        ? `ON CONFLICT (id) DO UPDATE SET
+             orcamento_id=COALESCE(EXCLUDED.orcamento_id, portal_franqueado.pedido.orcamento_id),
+             status=COALESCE(EXCLUDED.status, portal_franqueado.pedido.status),
+             total=COALESCE(EXCLUDED.total, portal_franqueado.pedido.total),
+             total_texto=COALESCE(EXCLUDED.total_texto, portal_franqueado.pedido.total_texto),
+             cliente_nome=COALESCE(EXCLUDED.cliente_nome, portal_franqueado.pedido.cliente_nome),
+             vendedor_nome=COALESCE(EXCLUDED.vendedor_nome, portal_franqueado.pedido.vendedor_nome),
+             synced_at=now()`
+        : 'ON CONFLICT (id) DO NOTHING',
     );
     console.log('pedido ok', pedidos.length);
 

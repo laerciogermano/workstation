@@ -27,8 +27,8 @@ franquia ─┬─ vendedor
 | `franquia` | `id` | — | razao_social, cnpj, nome |
 | `vendedor` | `id` serial | `franquia_id` | nome, `portal_id` |
 | `cliente` | `id` serial | `franquia_id` | cnpj, nome, email, tel, whatsapp |
-| `orcamento` | `id` portal | franquia, vendedor, cliente | numero, data, status, total |
-| `pedido` | `id` portal | franquia, **orcamento_id**, vendedor, cliente | data, status, total, contato |
+| `orcamento` | `(franquia_id, id)` portal | franquia, vendedor, cliente | numero, data, status, total |
+| `pedido` | `id` portal | franquia, **(franquia_id, orcamento_id)→orcamento**, vendedor, cliente | data, status, total, contato |
 | `pedido_item` | `(pedido_id, seq)` | pedido | produto, ncm, qtd, valores |
 | `nota_fiscal` | `id` portal | franquia, cliente | numero, status, transportadora, total |
 | `nota_fiscal_xml` | `nota_id` | nota_fiscal | xml (só se populado) |
@@ -69,11 +69,16 @@ node scripts/sync-campinas-postgres.mjs --franquia=3 --delta
 # só completar itens de pedidos sem linha
 node scripts/sync-campinas-postgres.mjs --franquia=1 --only-itens
 
+# orçamentos por franquia (stubs via pedidos; PK composta evita colisão de id)
+node scripts/sync-campinas-postgres.mjs --franquia=2 --only-orcamentos
+
 # atrasados com email/whatsapp
 node scripts/sync-campinas-postgres.mjs --contato --skip-itens
 ```
 
-Antes → depois: sync full limpava tudo da franquia (incluindo itens). Com `--delta`, pedidos/itens existentes ficam; só entram registros novos e itens que faltavam.
+Antes → depois:
+- Sync full limpava tudo da franquia (incluindo itens). Com `--delta`, pedidos/itens existentes ficam; só entram registros novos e itens que faltavam.
+- `orcamento.id` era PK global → colisão entre franquias (`ON CONFLICT DO NOTHING` deixava orçamentos=0). Agora PK `(franquia_id, id)` + FK composta em `pedido`. Rollback: restaurar PK só em `id` e FK `pedido.orcamento_id → orcamento(id)` (quebra inserts cross-franquia de novo).
 
 ## Caminho inverso
 

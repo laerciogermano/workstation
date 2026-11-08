@@ -119,6 +119,7 @@ Ler o QR/URL da NFC-e (preço, estabelecimento, data, cód. interno), vincular E
 ### 5.10 Minhas notas / minhas compras e análise financeira — *should*
 - Seção **Minhas notas** (também “minhas compras”): **toda nota lida/depositada** fica registrada para aquele visitante/usuário — distinto do índice público de preços.
 - Sem conta: posse pelo **fingerprint** (REQ-050); com conta: merge para `usuario_id`.
+- Em toda operação, **cadastrar o IP público** do cliente no servidor (auditoria / anti-abuso; REQ-050).
 - Listagem cronológica das notas lidas: data, loja, qtd. itens, valor; detalhe abre o cupom (itens, quantidades, valores).
 - **O que / quando / onde comprou** a partir dessas notas (agrupável por nota ou produto).
 - **Gasto por mês** e análise financeira (MVP): total no período; ticket médio; ranking de lojas e produtos/categorias; tendência simples.

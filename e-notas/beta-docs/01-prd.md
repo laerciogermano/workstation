@@ -109,6 +109,7 @@ Responsável pela entrada de dados no sistema: recebimento do cupom fiscal da SE
 | **RF-E01-17** | **Feedback em tempo real do processamento:** Indicador de progresso ("Baixando dados da SEFAZ...", "Extraindo itens...", "Nota salva!") na interface durante o depósito. | **M** |
 | **RF-E01-18** | **Tratamento de indisponibilidade da SEFAZ:** Notificação clara e amigável em caso de instabilidade, timeout ou bloqueio temporário do portal da Fazenda PR, com opção de enfileirar para reprocessamento. | **S** |
 | **RF-E01-19** | **Pontos por contribuição:** Conta cadastrada acumula pontos ao depositar NFC-e e ao vincular EAN (duas contribuições principais; demais ações de retenção conforme regras). | **S** |
+| **RF-E01-22** | **Cadastro de IP público:** Em toda operação (depósito, vínculo EAN, listas, auth, etc.), persistir o IP público visto pelo servidor; não confiar em IP informado pelo cliente. | **M** |
 | **RF-E01-20** | **Contribuição como crédito de uso:** Saldo/quota de contribuição limita o uso sustentado de listas, cotação, split e menor preço — quem não contribui é pedido a depositar notas e/ou vincular códigos de barras para continuar. | **S** |
 | **RF-E01-21** | **Visibilidade e bonificação no estabelecimento:** Com opt-in, a loja vê o que o cliente com conta já comprou ali (via notas) e o saldo de pontos, habilitando bonificação/fidelidade acordada com o estabelecimento. | **S** |
 

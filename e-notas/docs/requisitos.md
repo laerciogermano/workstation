@@ -470,9 +470,10 @@ Card: [BXKZ55Wb](https://trello.com/c/BXKZ55Wb).
 
 - Uso do notinhas **sem login**: a pessoa entra e opera (busca, depósito, cestas etc. no escopo anônimo já previsto em REQ-034 / REQ-036).
 - Em **toda operação** que grave dado do visitante, o cliente envia o **fingerprint do navegador** como identificador temporário (contrato único de transporte, ex. header `X-Client-Fingerprint`).
+- Em **toda operação** (anônima ou autenticada), o servidor **cadastra o IP público** do cliente (proxy confiável / remoto); não confiar em IP enviado pelo front.
 - Fonte de verdade dos dados do visitante é a **base** (associados ao fingerprint / `visitante_id`), não o localStorage.
 - Ao **criar conta** (ou login no mesmo browser com dados anônimos pendentes): **vincular** no banco tudo que estava sob aquele fingerprint ao `usuario_id`; daí em diante a posse é da conta.
-- Índice público de preços permanece anonimizado; fingerprint não vaza no catálogo.
+- Índice público de preços permanece anonimizado; fingerprint e IP não vazam no catálogo.
 - Doc canônico: [`identidade-anonima-fingerprint.md`](identidade-anonima-fingerprint.md). Schema detalhado na implementação (beta-docs modelo de dados / auth).
 - Antes: anônimo só na UX / eventual localStorage. Depois: id de visitante no server + merge na conta.
 - Rollback: remover este REQ e o doc; reverter posse anônima no server.

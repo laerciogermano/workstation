@@ -24,7 +24,8 @@ localStorage pode cachear UX (preferências, UI); **não** é o inventário de n
 1. Rotas de uso anônimo aceitam fingerprint válido (formato/tamanho); sem login obrigatório.
 2. Persistência: colunas/`visitante_id` derivadas do fingerprint (hash do fingerprint no server, se não quiser guardar o valor cru).
 3. Operações do visitante: depósito de nota (**Minhas notas**), **Minhas listas**, preferências, etc. associadas a esse id anônimo (REQ-051).
-4. Índice público de preços continua anonimizado (ADR / LGPD); fingerprint identifica o **titular privado** do extrato/cestas, não vaza no catálogo público.
+4. Em **toda** operação relevante (anônima ou autenticada), **cadastrar o IP público** do cliente (visto pelo server: `X-Forwarded-For` confiável / socket remoto). Guardar no evento/auditoria e no visitante/usuário (último IP + histórico se necessário). Não depender do cliente informar o IP.
+5. Índice público de preços continua anonimizado (ADR / LGPD); fingerprint identifica o **titular privado** do extrato/cestas, não vaza no catálogo público. IP fica no escopo privado/auditoria, não no índice de preços.
 
 ## Criar conta → merge
 
@@ -42,10 +43,15 @@ localStorage pode cachear UX (preferências, UI); **não** é o inventário de n
 ```text
 visitantes (ou coluna fingerprint_hash em tabelas de posse)
   id | fingerprint_hash | created_at | merged_usuario_id | merged_at
+  | ip_ultimo | …
+
+auditoria_ops / eventos
+  id | visitante_id? | usuario_id? | fingerprint_hash? | ip_publico | acao | created_at
 
 notas / cestas / preferencias / …
   usuario_id NULL
   visitante_id NULL   -- um dos dois preenchido enquanto “dono” privado
+  | ip_publico?     -- IP no momento do registro (quando fizer sentido por linha)
 ```
 
 Detalhe de schema fica em `beta-docs/05-modelo-de-dados.md` na implementação (BETA auth).

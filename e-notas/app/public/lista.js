@@ -42,6 +42,10 @@ const produtoEanSuggestEl = document.getElementById('produto-ean-suggest');
 const produtoEanSuggestBodyEl = document.getElementById(
   'produto-ean-suggest-body',
 );
+const produtoEanSuggestFormEl = document.getElementById(
+  'produto-ean-suggest-form',
+);
+const produtoEanSuggestQEl = document.getElementById('produto-ean-suggest-q');
 const produtoTimelineEl = document.getElementById('produto-timeline');
 const countProdutoPrecosEl = document.getElementById('count-produto-precos');
 let produtoFotosEan = '';
@@ -548,7 +552,9 @@ function renderProdutoDetalhe(key) {
     hist.map((r) => String(r.empresa_id || '')).filter(Boolean),
   ).size;
   const metaParts = [];
-  if (ean) metaParts.push(`EAN <span class="mono">${esc(ean)}</span>`);
+  if (ean) {
+    metaParts.push(`Código de barras <span class="mono">${esc(ean)}</span>`);
+  }
   if (codigos.length) {
     metaParts.push(
       `Cód. ${codigos
@@ -618,7 +624,41 @@ function renderProdutoDetalhe(key) {
   void loadProdutoEanSuggestions(head);
 }
 
-async function loadProdutoEanSuggestions(head) {
+function renderProdutoEanSuggestList(list, { empresaId, empresaNome, codigo, nome }) {
+  if (!produtoEanSuggestBodyEl) return;
+  if (!list.length) {
+    produtoEanSuggestBodyEl.innerHTML =
+      '<p class="hint">Sem sugestão de código de barras para esta pesquisa.</p>';
+    return;
+  }
+  produtoEanSuggestBodyEl.innerHTML = `
+    <p class="ean-suggest-inline-label">Sugestões — toque para vincular</p>
+    <ul class="ean-suggest-list ean-suggest-list-inline">
+      ${list
+        .slice(0, 8)
+        .map((c) => {
+          const pct = Math.round((Number(c.score) || 0) * 100);
+          const thumb = c.image_url
+            ? `<img class="ean-suggest-thumb" src="${esc(c.image_url)}" alt="" loading="lazy" width="36" height="36" />`
+            : '';
+          return `<li><button type="button" class="ean-suggest-btn"
+            data-aplicar-sugestao
+            data-ean="${esc(c.ean)}"
+            data-empresa-id="${esc(String(empresaId))}"
+            data-empresa-nome="${esc(empresaNome)}"
+            data-codigo="${esc(codigo)}"
+            data-nome="${esc(nome)}">
+            ${thumb}
+            <span class="ean-suggest-ean">${esc(c.ean)}</span>
+            <span class="ean-suggest-nome">${esc(c.nome_canonico || '—')}</span>
+            <span class="ean-suggest-meta">${pct}% · ${esc(c.fonte || '')}</span>
+          </button></li>`;
+        })
+        .join('')}
+    </ul>`;
+}
+
+async function loadProdutoEanSuggestions(head, queryOverride) {
   if (!produtoEanSuggestEl || !produtoEanSuggestBodyEl) return;
   const ean = String(head?.codigo_barras || '').trim();
   const codigo = String(head?.codigo || '').trim();
@@ -634,50 +674,30 @@ async function loadProdutoEanSuggestions(head) {
     head.empresa_nome ||
     allEmpresas.find((e) => Number(e.id) === Number(empresaId))?.nome ||
     '';
+  const query = String(queryOverride ?? nome).trim() || nome;
   produtoEanSuggestEl.hidden = false;
   produtoEanSuggestBodyEl.dataset.suggestFor = codigo;
   produtoEanSuggestBodyEl.dataset.empresaId = String(empresaId);
   produtoEanSuggestBodyEl.dataset.empresaNome = empresaNome;
   produtoEanSuggestBodyEl.dataset.codigo = codigo;
   produtoEanSuggestBodyEl.dataset.nome = nome;
+  if (produtoEanSuggestQEl && queryOverride == null) {
+    produtoEanSuggestQEl.value = nome.replace(/#/g, ' ').replace(/\s+/g, ' ').trim();
+  }
   produtoEanSuggestBodyEl.innerHTML =
-    '<p class="hint ean-suggest-loading">Buscando sugestões pelo descritivo…</p>';
+    '<p class="hint ean-suggest-loading">Buscando sugestões de código de barras…</p>';
   try {
-    const list = await fetchEanSugestoes(nome, { force: true });
+    const list = await fetchEanSugestoes(query, { force: true });
     if (gen !== produtoEanSuggestGen) return;
-    if (!list.length) {
-      produtoEanSuggestBodyEl.innerHTML =
-        '<p class="hint">Sem sugestão de EAN para este descritivo.</p>';
-      return;
-    }
-    produtoEanSuggestBodyEl.innerHTML = `
-      <p class="ean-suggest-inline-label">Sugestões — toque para vincular</p>
-      <ul class="ean-suggest-list ean-suggest-list-inline">
-        ${list
-          .slice(0, 6)
-          .map((c) => {
-            const pct = Math.round((Number(c.score) || 0) * 100);
-            const thumb = c.image_url
-              ? `<img class="ean-suggest-thumb" src="${esc(c.image_url)}" alt="" loading="lazy" width="36" height="36" />`
-              : '';
-            return `<li><button type="button" class="ean-suggest-btn"
-              data-aplicar-sugestao
-              data-ean="${esc(c.ean)}"
-              data-empresa-id="${esc(String(empresaId))}"
-              data-empresa-nome="${esc(empresaNome)}"
-              data-codigo="${esc(codigo)}"
-              data-nome="${esc(nome)}">
-              ${thumb}
-              <span class="ean-suggest-ean">${esc(c.ean)}</span>
-              <span class="ean-suggest-nome">${esc(c.nome_canonico || '—')}</span>
-              <span class="ean-suggest-meta">${pct}% · ${esc(c.fonte || '')}</span>
-            </button></li>`;
-          })
-          .join('')}
-      </ul>`;
+    renderProdutoEanSuggestList(list, {
+      empresaId,
+      empresaNome,
+      codigo,
+      nome,
+    });
   } catch (err) {
     if (gen !== produtoEanSuggestGen) return;
-    produtoEanSuggestBodyEl.innerHTML = `<p class="hint err">Falha ao sugerir: ${esc(
+    produtoEanSuggestBodyEl.innerHTML = `<p class="hint status err">Falha ao sugerir: ${esc(
       err.message || 'erro',
     )}</p>`;
   }
@@ -901,7 +921,7 @@ function renderVitrineDetalhe(empresaId) {
                 data-codigo="${esc(codigo)}"
                 data-nome="${esc(r.nome || '')}"
                 data-ean="${esc(ean)}"
-              >${ean ? 'Editar EAN' : 'Código de barras'}</button>`
+              >${ean ? 'Editar código de barras' : 'Código de barras'}</button>`
             : '';
           const suggestBox =
             !ean && codigo && r.nome
@@ -911,7 +931,7 @@ function renderVitrineDetalhe(empresaId) {
                    data-empresa-nome="${esc(empresaNome)}"
                    data-codigo="${esc(codigo)}"
                    data-nome="${esc(r.nome || '')}">
-                   <p class="hint ean-suggest-loading">Buscando sugestões…</p>
+                   <p class="hint ean-suggest-loading">Buscando sugestões de código de barras…</p>
                  </div>`
               : '';
           return `<article class="produto-card produto-card-loja">
@@ -927,7 +947,9 @@ function renderVitrineDetalhe(empresaId) {
                   ${origemChip}
                 </p>
                 <p class="produto-meta">${data ? esc(data) : ''}${
-                  ean ? ` · EAN ${esc(ean)}` : ' · sem EAN'
+                  ean
+                    ? ` · cód. barras ${esc(ean)}`
+                    : ' · sem código de barras'
                 }</p>
               </div>
             </button>
@@ -1246,7 +1268,7 @@ async function hydrateEanSuggestions(root) {
       }
       const list = await fetchEanSugestoes(nome);
       if (!list.length) {
-        el.innerHTML = `<p class="hint">Sem sugestão de EAN.</p>`;
+        el.innerHTML = `<p class="hint">Sem sugestão de código de barras.</p>`;
         continue;
       }
       el.innerHTML = `
@@ -1367,7 +1389,10 @@ async function sugerirEanPorDescricao() {
     });
     const list = data.candidatos || [];
     if (!list.length) {
-      setEanSuggestStatus('Nenhum EAN encontrado. Digite ou escaneie.', 'err');
+      setEanSuggestStatus(
+        'Nenhum código de barras encontrado. Digite ou escaneie.',
+        'err',
+      );
       return;
     }
     renderEanSuggestList(list);
@@ -1564,6 +1589,16 @@ vitrineItensEl?.addEventListener('click', (ev) => {
   if (!btn) return;
   openProduto(btn.dataset.openProduto);
 });
+produtoEanSuggestFormEl?.addEventListener('submit', (ev) => {
+  ev.preventDefault();
+  if (produtoAbertaKey == null) return;
+  const hist = historicoProduto(produtoAbertaKey);
+  const head = hist[0];
+  if (!head) return;
+  const q = String(produtoEanSuggestQEl?.value || '').trim();
+  void loadProdutoEanSuggestions(head, q || head.nome);
+});
+
 produtoEanSuggestEl?.addEventListener('click', (ev) => {
   const sug = ev.target.closest('[data-aplicar-sugestao]');
   if (!sug) return;

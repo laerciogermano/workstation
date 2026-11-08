@@ -142,8 +142,30 @@
           <article class="produto-hero" id="produto-info"></article>
           <section id="produto-ean-suggest" class="produto-ean-suggest" hidden>
             <header class="home-section-head" style="margin-top: 1.25rem">
-              <h2 class="home-section-title">Sugestões de EAN</h2>
+              <h2 class="home-section-title">Sugestões de código de barras</h2>
             </header>
+            <p class="ean-suggest-why">
+              Vincular o produto ao código de barras é o que permite comparar o
+              mesmo item entre mercados, acompanhar o preço ao longo do tempo e
+              reconhecer a embalagem nas próximas notas — sem o vínculo, cada
+              loja fica com um código interno isolado.
+            </p>
+            <form id="produto-ean-suggest-form" class="ean-suggest-search" action="#">
+              <label class="ean-suggest-search-label">
+                Pesquisar sugestões
+                <span class="manual-row">
+                  <input
+                    id="produto-ean-suggest-q"
+                    type="search"
+                    autocomplete="off"
+                    placeholder="Ex.: pringles queijo 100g"
+                  />
+                  <button type="submit" class="btn btn-ghost" id="produto-ean-suggest-buscar">
+                    Buscar
+                  </button>
+                </span>
+              </label>
+            </form>
             <div id="produto-ean-suggest-body" class="ean-suggest-inline"
               data-suggest-for=""
               data-empresa-id=""
@@ -220,7 +242,7 @@
       <div class="modal-backdrop" data-close-ean></div>
       <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-ean-title">
         <header class="modal-head">
-          <h2 id="modal-ean-title">EAN</h2>
+          <h2 id="modal-ean-title">Código de barras</h2>
           <button type="button" class="modal-close" data-close-ean aria-label="Fechar">×</button>
         </header>
         <p id="modal-ean-meta" class="hint modal-meta"></p>
@@ -241,9 +263,9 @@
           <input id="ean-file" type="file" accept="image/*" hidden aria-hidden="true" />
         </div>
         <p id="ean-cam-status" class="status" aria-live="polite"></p>
-        <div class="ean-suggest" aria-label="Sugerir EAN pela descrição">
+        <div class="ean-suggest" aria-label="Sugerir código de barras pela descrição">
           <button type="button" class="btn btn-ghost" id="btn-ean-sugerir">
-            Sugerir EAN pela descrição
+            Sugerir código de barras pela descrição
           </button>
           <p id="ean-suggest-status" class="status" aria-live="polite"></p>
           <ul id="ean-suggest-list" class="ean-suggest-list" hidden></ul>

@@ -59,7 +59,7 @@ Resposta: `{ ok, created, empresaCriada, url, empresa, nota, itens }`.
 | Método | Rota | Resposta |
 |--------|------|----------|
 | `GET` | `/api/empresas` | `{ ok, empresas }` (inclui `lat`/`lng` quando geocodificado) |
-| `POST` | `/api/empresas/geocode` | dispara geocode Nominatim das pendentes; `{ ok, started, empresas }` (endereço normalizado: remove `, 0,` / segmentos vazios da DANFE) |
+| `POST` | `/api/empresas/geocode` | dispara geocode Nominatim das pendentes; `{ ok, started, empresas }`. Normaliza DANFE: remove `, 0,` / vazios / `LOJA|SALA`, deduplica nº (`1434, 1434`) e tenta variantes (`Rua …`) se a query cheia falhar |
 | `GET` | `/api/notas` | `{ ok, notas }` (com `empresa_nome` / `empresa_cnpj`; ordem emissão DESC) |
 | `GET` | `/api/itens` | `{ ok, itens }` (com `empresa_nome`, `nota_numero`, `nota_emissao`, `chave_acesso`, `codigo_barras`, `foto_url` se mapeado) |
 | `GET` | `/api/codigos-barras` | `{ ok, codigosBarras }` (inclui `foto_url`) |

@@ -124,6 +124,7 @@ Insumos do card [Benchmarking soluções similares](https://trello.com/c/1fMjqGd
 - **Comparação de preços** — mesmo produto (EAN) entre estabelecimentos; menor preço com loja e data.
 - **Histórico de preços** — evolução do preço por produto e por mercado ao longo do tempo.
 - **Montagem apartada** — cesta/lista cotada por mercado e sugestão de divisão entre 2+ estabelecimentos para reduzir o custo total.
+- **Pontos / contribuição** — conta acumula pontos; NFC-e + vínculo EAN são as contribuições principais e “pagam” o uso contínuo; opt-in de visibilidade/bonificação na loja (ver [PRD](prd.md) §5.11 · REQ-052).
 - **Tela da loja (vitrine e-commerce)** — página do estabelecimento com itens observados (catálogo read-only, sem checkout); **visibilidade pública** do sortimento local, inclusive itens que **não estão na internet**.
 - **Busca geo / onde comprar perto** — pesquisar um item e ver lojas físicas próximas (GPS ou região, ex. centro), com distância, preço e data.
 - **Ranking de estabelecimentos perto** — listar lojas no raio ordenadas pelas que **menos cobram** ou **mais cobram** (nível de preço agregado da loja a partir das notas; distinto da busca por item).
@@ -486,6 +487,16 @@ Card: [BXKZ55Wb](https://trello.com/c/BXKZ55Wb).
 - PRD: [`prd.md`](prd.md) §5.3 / §5.10 · Beta: [`../beta-docs/01-prd.md`](../beta-docs/01-prd.md) RF-E04-01..12 · identidade: REQ-050.
 - Antes: extrato só logado / cesta única implícita. Depois: histórico e listas multiplas sem login obrigatório + UX split vs sem split.
 - Rollback: reverter bullets do PRD e este REQ.
+
+## REQ-052 — Pontos, gamificação e contribuição (NFC-e + EAN) (2026-11-08)
+
+- Conta cadastrada **acumula pontos** por contribuir.
+- Contribuições principais: (1) **depositar/ler NFC-e**, (2) **vincular EAN** — o restante o sistema faz.
+- Pontos/crédito = **pagamento cooperativo**: uso sustentado de listas, cotação, split e menor preço depende de ter contribuído (quota/saldo); quem não contribui é solicitado a cadastrar notas e códigos de barras.
+- Com opt-in: estabelecimento vê compras do cliente na loja + pontos → base para **bonificação**/fidelidade (acordo B2B; não é dinheiro fiduciário).
+- PRD: [`prd.md`](prd.md) §5.11 · Beta: [`../beta-docs/01-prd.md`](../beta-docs/01-prd.md) RF-E01-19..21.
+- Antes: contribuição só altruísta / sem gate de uso. Depois: economia de contribuição + gamificação loja.
+- Rollback: remover §5.11 / RFs / este REQ.
 
 ## Próximos passos
 

@@ -108,6 +108,9 @@ Responsável pela entrada de dados no sistema: recebimento do cupom fiscal da SE
 | **RF-E01-16** | **Envio de foto de produto pelo usuário:** Permitir ao usuário enviar uma fotografia da embalagem do produto para compor o acervo do EAN quando não houver foto prévia cadastrada. | **S** |
 | **RF-E01-17** | **Feedback em tempo real do processamento:** Indicador de progresso ("Baixando dados da SEFAZ...", "Extraindo itens...", "Nota salva!") na interface durante o depósito. | **M** |
 | **RF-E01-18** | **Tratamento de indisponibilidade da SEFAZ:** Notificação clara e amigável em caso de instabilidade, timeout ou bloqueio temporário do portal da Fazenda PR, com opção de enfileirar para reprocessamento. | **S** |
+| **RF-E01-19** | **Pontos por contribuição:** Conta cadastrada acumula pontos ao depositar NFC-e e ao vincular EAN (duas contribuições principais; demais ações de retenção conforme regras). | **S** |
+| **RF-E01-20** | **Contribuição como crédito de uso:** Saldo/quota de contribuição limita o uso sustentado de listas, cotação, split e menor preço — quem não contribui é pedido a depositar notas e/ou vincular códigos de barras para continuar. | **S** |
+| **RF-E01-21** | **Visibilidade e bonificação no estabelecimento:** Com opt-in, a loja vê o que o cliente com conta já comprou ali (via notas) e o saldo de pontos, habilitando bonificação/fidelidade acordada com o estabelecimento. | **S** |
 
 ---
 
@@ -266,7 +269,7 @@ As regras abaixo são de cumprimento mandatório em todas as camadas da aplicaç
 
 | ID | Tema | Pergunta Central | Proposta Padrão Adotada no Beta 1.0 |
 |---|---|---|---|
-| **Q1** | **Exigência de Login** | O usuário deve ser obrigado a criar conta para escanear notas, consultar preços, ver Minhas notas ou Minhas listas? | **Não.** Tudo isso funciona anônimo com **fingerprint** como id (REQ-050 / REQ-051). Conta opcional: ao criar, merge dos dados do fingerprint para o `usuario_id`. |
+| **Q1** | **Exigência de Login** | O usuário deve ser obrigado a criar conta para escanear notas, consultar preços, ver Minhas notas ou Minhas listas? | **Não no primeiro uso.** Fingerprint cobre posse anônima (REQ-050 / REQ-051). Conta habilita **pontos**, visibilidade na loja e merge. Uso sustentado de listas/menor preço exige **contribuir** (NFC-e + EAN) — REQ-052 / RF-E01-19..21. |
 | **Q2** | **Governança de Vínculo EAN** | O que fazer quando dois usuários informarem EANs distintos para o mesmo produto da mesma loja? | **Prevalência do último com flag de divergência.** O sistema aceita a nova vinculação e dispara um registro no painel de administração para que o curador avalie qual código corresponde de fato ao produto físico. |
 | **Q3** | **Janela Temporal do Índice** | Qual é o prazo de validade de um preço registrado na nota antes de ser considerado "frio"? | **Janela ativa de 14 dias.** Itens registrados há mais de 14 dias continuam visíveis no histórico da loja, mas recebem etiqueta visual de "Preço não confirmado recentemente" nas buscas principais. |
 | **Q4** | **Extensão Espacial no Banco** | É indispensável instalar e operar o PostGIS completo na VPS do Beta? | **Não para o Beta 1.0.** Para as poucas dezenas de estabelecimentos do laboratório de São José dos Pinhais, a fórmula matemática de Haversine executada em SQL ou no código Node.js atende com excelência e menor complexidade operacional. O PostGIS é planejado para a escala nacional. |

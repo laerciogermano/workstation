@@ -20,9 +20,11 @@ O **notinhas.shop** é um **sistema cooperativo de notinhas** para:
 - **dar visibilidade ao comércio local** — exposição ao público do sortimento de balcão (descoberta → loja física);
 - **comprar produtos sem a margem** típica de apps de e-commerce / delivery (ex.: iFood, 99) — preço do balcão/NFC-e, não do marketplace;
 - **separar compras** entre lojas para **menor custo total**;
-- **transformar cada estabelecimento em centro de distribuição** — a loja física vira estoque de vendas online (CD local) a partir da vitrine/cesta.
+- **transformar cada estabelecimento em centro de distribuição** — a loja física vira estoque de vendas online (CD local) a partir da vitrine/cesta;
+- **gamificação / pontos** para quem tem conta — contribuição vira crédito de uso e, com o estabelecimento, base para bonificação;
+- **economia de contribuição** — as duas contribuições principais (**depositar NFC-e** e **vincular EAN**) “pagam” o uso contínuo das funções de lista, comparação e menor preço; o resto o sistema faz.
 
-Cooperativo: quem contribui deposita a NFC-e; quem consulta usa o índice coletivo. Marca pública **notinhas.shop** · código/repo **e-notas**.
+Cooperativo: quem contribui deposita a NFC-e e vincula EAN; quem consulta usa o índice coletivo, sustentado por essa contribuição. Marca pública **notinhas.shop** · código/repo **e-notas**.
 
 ## 2. Problema
 
@@ -123,6 +125,19 @@ Ler o QR/URL da NFC-e (preço, estabelecimento, data, cód. interno), vincular E
 - Privacidade: só o dono (fingerprint ou conta) vê o extrato; o índice público não expõe identidade do contribuinte.
 - **Não é:** open banking completo, orçamento prescritivo, nem cartão de crédito — o insumo canônico é a NFC-e depositada.
 
+### 5.11 Pontos, gamificação e contribuição como “pagamento” — *should*
+- Contas cadastradas **acumulam pontos** pelas contribuições (e ações de retenção definidas na implementação).
+- **Duas contribuições principais** (o resto o sistema faz):
+  1. **Depositar / ler NFC-e**
+  2. **Vincular código de barras (EAN)** ao item da loja
+- Pontos (ou créditos equivalentes) funcionam como **economia de contribuição**: para **continuar usando** de forma plena recursos caros ao índice — em especial **Minhas listas**, cotação, split e descoberta de menor preço — a pessoa precisa ter contribuído (notas e/ou EANs) conforme regras de saldo/quota.
+- Visita anônima (fingerprint) pode explorar com fricção baixa no início; uso sustentado sem contribuir é limitado (throttle / bloqueio suave / pedido de contribuição) — detalhe de limiares na implementação.
+- **Visibilidade no estabelecimento:** com conta, o histórico do que a pessoa já comprou naquela loja (a partir das notas vinculadas) pode ficar **visível para o estabelecimento** (opt-in / consentimento), alimentando:
+  - gamificação e ranking de clientes contribuintes;
+  - **bonificação** da loja (desconto, brinde, cashback interno — acordo B2B; o notinhas não emite NF de benefício).
+- Pontos **não** são dinheiro fiduciário nem open banking; são crédito interno de contribuição + gancho de fidelidade loja↔cliente.
+- Privacidade: opt-in claro para compartilhar compras/pontos com a loja; índice público de preços continua sem identidade.
+
 ## 6. Fora de escopo (PRD v1)
 
 - Emissão de NF-e/NFS-e
@@ -144,6 +159,8 @@ Ler o QR/URL da NFC-e (preço, estabelecimento, data, cód. interno), vincular E
 | Usuários com extrato / gasto mensal visto | Ativação da gestão financeira pessoal |
 | Parceiros API ativos | Trilha B2B |
 | Pedidos via CD da loja | Ativação do centro de distribuição |
+| Notas + vínculos EAN / usuário ativo | Saúde da economia de contribuição |
+| Pontos creditados / resgates loja | Gamificação e bonificação B2B |
 
 ## 8. Prioridade sugerida
 
@@ -155,8 +172,9 @@ Ler o QR/URL da NFC-e (preço, estabelecimento, data, cód. interno), vincular E
 6. Vitrine do estabelecimento (e-commerce read-only)  
 7. **Gestão de compras + gasto mensal / análise financeira** (extrato das notas do usuário)  
 8. Montagem apartada (cesta + split)  
-9. API empresas (MVP: leitura + vínculo EAN)  
-10. **Centro de distribuição** — cada estabelecimento = estoque de vendas online (após vitrine + API + parceria)
+9. **Pontos / contribuição como pagamento** (NFC-e + EAN → crédito de uso; gancho loja)  
+10. API empresas (MVP: leitura + vínculo EAN)  
+11. **Centro de distribuição** — cada estabelecimento = estoque de vendas online (após vitrine + API + parceria)
 
 ## 9. Concorrência (síntese)
 
@@ -228,3 +246,4 @@ Comp=comparar · Hist=histórico · Apart=split/economia · Vitr=vitrine + itens
 - Visibilidade comércio local / itens fora da web: reverter bullets §1, §5.4 e cards da apresentação.
 - §5.9 CD: reverter nomenclatura “centro de distribuição” / loja = estoque online.
 - §5.3 / §5.10 (Minhas listas / Minhas notas + fingerprint): reverter bullets; REQ-051 / REQ-050.
+- §5.11 pontos / contribuição: reverter seção e correlatos em §1 / métricas / prioridade; REQ-052.

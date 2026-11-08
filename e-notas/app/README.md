@@ -26,7 +26,7 @@ Produção Contabo (HTTPS, convive com conect tec): `https://144.126.154.90/enot
 
 | Var | Exemplo |
 |-----|---------|
-| `DB_HOST` | `144.126.154.90` |
+| `DB_HOST` | `127.0.0.1` (local Docker/Colima) ou IP Contabo |
 | `DB_PORT` | `5432` |
 | `DB_USER` | `connectmax` |
 | `DB_PASSWORD` | (ver `credenciais.md`) |

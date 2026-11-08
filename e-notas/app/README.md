@@ -78,7 +78,7 @@ Abrir no browser (GET): `https://127.0.0.1:4173/api/enrichment/ean?descricao=COC
 Google Imagens (CDP): `https://127.0.0.1:4173/api/enrichment/google-imagens?descricao=COCA%20COLA%202L&n=20`  
 Sem API key: Chrome CDP (`CDP_URL`, default `:9223`) abre `tbm=isch` e baixa. Arquivos em `public/google-imagens/`.
 
-UI: na **vitrine do estabelecimento**, botão **Código de barras** / **Editar EAN** no item (câmera, tirar foto / escolher imagem, digitação, **Sugerir EAN pela descrição**) → modal `#modal-ean` → `POST` acima (REQ-031/039). No **detalhe do produto**, grade **Fotos** para escolher a representativa.
+UI: na **vitrine do estabelecimento**, botão **Código de barras** / **Editar EAN** no item (câmera, tirar foto / escolher imagem, digitação, **Sugerir EAN pela descrição**) → modal `#modal-ean` → `POST` acima (REQ-031/039). No **detalhe do produto**: **Vincular/Editar código de barras** abre `#produto-ean-suggest` (busca SI5 SSE com cards foto+título+EAN; toque vincula); grade **Fotos** para a representativa.
 
 Módulo: [`enrichment.js`](enrichment.js) (normalização + match local/OFF + **ean-serp** + orquestração). Cache: `ean_sugestoes`.  
 Pré-req sugestões SERP: subir [`../ean-serp/`](../ean-serp/README.md) (`:4180`) ou `EAN_SERP_URL`. Google CDP: `EAN_SERP_GOOGLE_CDP=1` + Chrome em `CDP_URL`.

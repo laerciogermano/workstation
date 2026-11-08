@@ -189,7 +189,9 @@ Curadoria: [`../marca/benchmarking-solucoes/README.md`](../marca/benchmarking-so
 
 ## REQ-022 — Domínio notinhas.shop → Contabo (2026-11-01)
 
-- Domínio **notinhas.shop** (Hostinger) aponta para a Contabo `144.126.154.90` (registro A `@`; `www` via CNAME).
+- Domínio **notinhas.shop** (Hostinger) aponta para a Contabo (registro A `@`; `www` via CNAME ou A).
+- **Atual (2026-11-08):** A `@` / `www` / `mail` → **`185.250.37.82`** (VDS `vmi3645369`). Legado `144.126.154.90` offline.
+- Site: protótipo v2 em `/opt/notinhas-v2` (nginx `:80`); app lab em `/enotas/` → `enotas.service` `:4174`.
 - nginx site `notinhas` faz proxy de `/` para o app Node `127.0.0.1:4174` (mesmo processo de `/enotas/`).
 - HTTPS no domínio via Certbot quando o DNS público propagar (ver [`../deploy/README.md`](../deploy/README.md)).
 - Rollback: desabilitar site `notinhas`; DNS A `@` → parking Hostinger `2.57.91.91`.
@@ -512,3 +514,34 @@ Card: [BXKZ55Wb](https://trello.com/c/BXKZ55Wb).
 ## Próximos passos
 
 → Manter este arquivo alinhado a cada pedido novo · esteira de docs em [`README.md`](README.md) quando avançar funcionalidades/BDD.
+
+## REQ-054 — Protótipo v2.0 com estado e rastreio (2026-11-08)
+
+- Novo protótipo em [`beta-docs/prototipos/v2/`](../beta-docs/prototipos/v2/index.html), sem build (HTML + CSS + JS clássico), consolidando app do lab, docs do Beta e protótipo v1.
+- Estado único: busca, filtros, listas (stepper/remoção), split, vínculo de EAN, pontos e merge de conta recalculam a partir das observações (RN-10, RN-11, RN-13 aplicadas no cálculo, não desenhadas).
+- Cobertura: 40 telas — E01–E04 do v1 + E02 processando/duplicada/falha (T-25/26/27), item de vitrine sem EAN (T-34), excluir conta LGPD (T-56), E06 estados (T-70..73) e ADM desktop (T-61..63).
+- Cada tela declara `us` / `rn` / `req`; a página calcula a cobertura (34/34 US, 15/15 RN) e gera a matriz de rastreabilidade. IDs de história seguem `beta-docs/02-historias/`.
+- Cenários no painel: visitante/conta, resultado do scan (sucesso, duplicada, SEFAZ lenta, link inválido), câmera negada, offline, sem GPS, crédito esgotado, movimento reduzido.
+- Design: tokens `--nt-*` da marca; motion conforme `core/definir-projeto-moderno/03-design-ui-motion` (View Transitions entre telas com elemento compartilhado na foto do produto, spring só em feedback, sheet/toast, skeleton, `prefers-reduced-motion`). Logo V9 no wordmark e favicon.
+- Dados: lojas, descrições de DANFE e fotos da base `enotas` (2026-11-08); preços cruzados entre lojas e EANs marcados “exemplo” são conteúdo de protótipo.
+- v1 permanece em `beta-docs/prototipos/index.html` e `app/public/prototipos.html`.
+- Rollback: remover `beta-docs/prototipos/v2/` e os links em `12-prototipos.md`, `beta-docs/README.md` e `README.md`.
+
+## REQ-055 — Temas de cor para escolha da paleta (2026-11-08)
+
+- Protótipo v2.0 oferece **6 temas** comparáveis: Institucional (DESIGN.md v2, atual), Escuro, Petróleo + lima, Grafite + esmeralda, Feira (laranja + verde) e Papel de nota.
+- Todos mantêm a gramática da marca: **uma** cor de ação (`--nt-blue*`), **uma** cor só para menor preço (`--nt-green*`), texto, fundo e hairline; câmera continua escura.
+- Tema aplicado por `data-theme` (no `html` ou em qualquer bloco), então a seção “Temas para escolher” renderiza as mesmas telas em cada paleta lado a lado.
+- Seletor no topo da página, nos cenários e **ao lado do celular no modo navegável** (atalho `T`, troca com fade); escolha salva no `localStorage` do navegador (só conveniência).
+- **Escuro:** fundo sempre preto (`#000`), superfícies em cinza neutro; **azul nunca como fundo** (só ação, texto e ícone); estados ativos em branco/preto.
+- Decisão de paleta final fica com produto; até lá o DESIGN.md v2 (Institucional) segue canônico.
+- Rollback: remover o bloco “temas” de `styles.css`, a seção `#temas` do `index.html` e o bloco “temas” de `js/app.js`.
+
+## REQ-056 — Home em seções da altura da tela com rolagem horizontal (2026-11-08)
+
+- Home (T-10) é uma sequência vertical de seções, **cada uma com a altura da tela**, encaixando uma por vez ao arrastar para baixo.
+- Ordem: **Promoções** (destaques = menores preços / maior queda vs mediana 14 d — RN-11) → **Mais comprados** (frequência nas notas) → **uma seção por categoria** canônica com produtos (REQ-049).
+- Dentro de cada seção, cards no tamanho normal de produto em **grade de 2 linhas com rolagem horizontal** (mais cards na tela). Mais comprados carrega mais cards ao chegar no fim da lateral (infinite scroll).
+- Cabeçalho fixo (logo, mapa, perfil, busca) + chips das seções: tocar pula para a seção; rolar atualiza o chip ativo.
+- Card: foto, % vs mediana, nome, preço menor (verde), loja · data · distância e botão “+” para adicionar à lista. Só produtos com EAN (REQ-045).
+- Rollback: restaurar a T-10 anterior (carrossel de destaques + grade de menores preços) em `beta-docs/prototipos/v2/js/screens.js`.

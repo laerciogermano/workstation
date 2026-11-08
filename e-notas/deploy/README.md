@@ -4,23 +4,22 @@ Convive com **conect tec** (HTTP `:80`) e **mailcow** (HTTPS `:443`).
 
 | App | URL |
 |-----|-----|
-| conect tec | http://144.126.154.90/ |
-| e-notas (domínio) | **http://notinhas.shop/** (HTTPS após Certbot) |
-| e-notas (HTTPS path) | **https://144.126.154.90/enotas/** |
-| e-notas (HTTPS porta) | **https://144.126.154.90:4173/** |
+| VDS atual (2026-11-08) | `185.250.37.82` (`vmi3645369`) |
+| Protótipo v2 (HTTP) | **http://185.250.37.82/** (Host `notinhas.shop`) · DNS ainda pode apontar ao legado |
+| App lab | **http://185.250.37.82/enotas/** |
+| Legado offline | `144.126.154.90` (`vmi3645318`) |
 
 HTTP `http://…/enotas/` redireciona para HTTPS. Certificado em `:4173` é autoassinado (aceitar aviso no browser — necessário p/ câmera). Em `/enotas/` no `:443` usa o cert do mailcow (também pode avisar no IP).
 
 | Item | Valor |
 |------|--------|
-| Código | `/opt/e-notas` |
+| Código app | `/opt/e-notas` |
+| Protótipo v2 | `/opt/notinhas-v2` (root do site `notinhas`) |
 | Unit | `enotas.service` |
 | Node | `127.0.0.1:4174` (`USE_HTTP=1`) |
-| nginx `:4173` SSL | [`nginx-enotas.conf`](nginx-enotas.conf) |
-| nginx `:443` path | snippet no mailcow ([`nginx-enotas.snippet.conf`](nginx-enotas.snippet.conf)) |
-| nginx domínio | [`nginx-notinhas.conf`](nginx-notinhas.conf) → `/etc/nginx/sites-available/notinhas` |
-| Certs `:4173` | `/opt/e-notas/certs/` |
-| DNS | Hostinger: A `@` → `144.126.154.90` (TTL 300); CNAME `www` → `notinhas.shop` |
+| nginx domínio | `/etc/nginx/sites-available/notinhas` — `/` → v2; `/enotas/` → Node |
+| DNS alvo | Hostinger: A `@` / `www` / `mail` → **`185.250.37.82`** (TTL 300) |
+| DNS legado | A `@` → `144.126.154.90` (offline) |
 | E-mail | 1 Mailcow (`/opt/mailcow-dockerized`); domínios `clozzy.com.br` + `notinhas.shop` + `conectmax.email` + `brsupply.email`; hostnames `mail.clozzy.com.br` + `mail.notinhas.shop` + `mail.conectmax.email` + `mail.brsupply.email` |
 
 ## Mailcow (clozzy + notinhas + conectmax no mesmo servidor)

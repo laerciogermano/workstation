@@ -73,21 +73,55 @@ function tokens(norm) {
   return norm ? norm.split(/\s+/).filter(Boolean) : [];
 }
 
-/** Jaccard + cobertura; 0..1. */
+/**
+ * Extrai pesos em gramas (aproximado): 109G, 43GR, 1KG → [109], [43], [1000].
+ * @param {string} text
+ * @returns {number[]}
+ */
+export function extractWeightsGrams(text) {
+  const s = String(text || '').toUpperCase();
+  const grams = new Set();
+  const push = (n, u) => {
+    let v = Number(String(n).replace(',', '.'));
+    if (!Number.isFinite(v) || v <= 0) return;
+    if (u === 'KG') v *= 1000;
+    else if (u === 'L') v *= 1000;
+    grams.add(Math.round(v));
+  };
+  for (const m of s.matchAll(/(\d+[.,]?\d*)\s*(KG|GR|G|ML|L)\b/g)) {
+    push(m[1], m[2]);
+  }
+  for (const t of s.split(/[^A-Z0-9]+/)) {
+    const m = t.match(/^(\d+)(KG|GR|G|ML|L)$/);
+    if (m) push(m[1], m[2]);
+  }
+  return [...grams];
+}
+
+/** Jaccard + cobertura; 0..1. Peso da query, se houver, pesa forte. */
 export function scoreDescricao(queryNorm, candidateNorm) {
   const a = new Set(tokens(queryNorm));
-  const b = new Set(tokens(normalizeDescricao(candidateNorm)));
+  const cand = normalizeDescricao(candidateNorm);
+  const b = new Set(tokens(cand));
   if (!a.size || !b.size) return 0;
   let inter = 0;
   for (const t of a) if (b.has(t)) inter += 1;
   const union = a.size + b.size - inter;
   let j = union ? inter / union : 0;
-  const cand = normalizeDescricao(candidateNorm);
   if (cand.includes(queryNorm) || queryNorm.includes(cand)) {
     j = Math.max(j, 0.85);
   }
   const cover = inter / a.size;
-  return Math.min(1, Math.max(j, cover * 0.95));
+  let score = Math.min(1, Math.max(j, cover * 0.95));
+
+  const qW = extractWeightsGrams(queryNorm);
+  const cW = extractWeightsGrams(cand);
+  if (qW.length && cW.length) {
+    const weightHit = qW.some((w) => cW.includes(w));
+    if (weightHit) score = Math.min(1, score + 0.18);
+    else score *= 0.72;
+  }
+  return Math.min(1, Math.max(0, score));
 }
 
 function gtinCheckOk(digits) {

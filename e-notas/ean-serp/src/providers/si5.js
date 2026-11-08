@@ -2,6 +2,7 @@ import * as cheerio from 'cheerio';
 import { fetchJson, fetchText } from '../fetch.js';
 import {
   extractEansFromText,
+  extractWeightsGrams,
   normalizeEan,
   queryVariants,
   scoreDescricao,
@@ -84,7 +85,10 @@ const GENERIC_FOOD = new Set([
   'MARCA',
 ]);
 
-/** Marca + sabor da query presentes no nome → sobe unidade (ex.: PRINGLES QUEIJO). */
+/**
+ * Marca + sabor (+ peso se a query tiver) → prioriza unidade certa
+ * (ex.: BATATA PRINGLES QUEIJO 109G → PRINGLES 109G QUEIJO).
+ */
 function boostBrandFlavor(queryNorm, nome, ean, score) {
   const qToks = String(queryNorm || '')
     .split(/\s+/)
@@ -93,13 +97,21 @@ function boostBrandFlavor(queryNorm, nome, ean, score) {
   const cand = String(nome || '').toUpperCase();
   const hit = qToks.filter((t) => cand.includes(t));
   if (hit.length < 2) return score;
+
   const unit =
     String(ean || '').length === 13 &&
     (ean.startsWith('789') || ean.startsWith('790'));
-  if (unit && !looksMultipack(nome)) {
-    return Math.min(1, Math.max(score, 0.92));
-  }
-  return score;
+  if (!unit || looksMultipack(nome)) return score;
+
+  const qW = extractWeightsGrams(queryNorm);
+  const cW = extractWeightsGrams(nome);
+  const weightHit = qW.length > 0 && cW.some((w) => qW.includes(w));
+  const weightMiss = qW.length > 0 && cW.length > 0 && !weightHit;
+
+  if (weightHit) return Math.min(1, Math.max(score, 0.99));
+  if (weightMiss) return Math.min(score, 0.8) * 0.85;
+  // sem peso na query: sobe um pouco a unidade marca+sabor, sem empatar todas
+  return Math.min(1, Math.max(score, 0.88));
 }
 
 /**

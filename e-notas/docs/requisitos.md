@@ -416,6 +416,14 @@ Card: [BXKZ55Wb](https://trello.com/c/BXKZ55Wb).
 - Antes: Custom Search / fetch HTML (Google bloqueia sem JS); sem cache em banco. Depois: scrape via CDP + cache.
 - Rollback: remover rota/módulo `google-imagens.js`; tirar fallback em `ean-imagens.js`; `DROP TABLE` cache/buscas; apagar `public/google-imagens/`.
 
+## REQ-045 — Listagem de produtos só com código de barras (2026-11-08)
+
+- Na aba **Produtos** (catálogo home), listar **apenas** itens que já tenham `codigo_barras` (EAN) vinculado.
+- Itens só com código interno da loja / nome **não** entram no grid de produtos.
+- Vitrine do estabelecimento continua mostrando itens sem EAN (vínculo / sugestão — REQ-043).
+- Antes: catálogo agrupava também por nome/código sem EAN. Depois: só chave `ean:…`.
+- Rollback: remover o filtro `codigo_barras` em `catalogoProdutos()` (`lista.js`).
+
 ## Próximos passos
 
 → Manter este arquivo alinhado a cada pedido novo · esteira de docs em [`README.md`](README.md) quando avançar funcionalidades/BDD.

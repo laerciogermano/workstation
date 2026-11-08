@@ -372,12 +372,14 @@ function produtoKey(r) {
   return `cod:${String(r.codigo || '').trim()}`;
 }
 
-/** Catálogo home: 1 card por produto com menor preço (loja + data + foto). */
+/** Catálogo home: 1 card por produto com menor preço (loja + data + foto). Só com EAN (REQ-045). */
 function catalogoProdutos() {
   const byKey = new Map();
   for (const r of allItens) {
+    const ean = String(r.codigo_barras || '').trim();
+    if (!ean) continue;
     const key = produtoKey(r);
-    if (key === 'cod:' || key === 'nome:') continue;
+    if (!key.startsWith('ean:')) continue;
     const preco = parseValor(r.valor_unitario);
     if (!Number.isFinite(preco) || preco <= 0) continue;
     const sk = emissaoSortKey(r.nota_emissao);
@@ -510,7 +512,11 @@ function renderProdutosTab() {
           </button>`;
         })
         .join('')
-    : `<p class="hint">${catalogo.length ? 'Nenhum produto nesta busca.' : 'Sem produtos no índice.'}</p>`;
+    : `<p class="hint">${
+        catalogo.length
+          ? 'Nenhum produto nesta busca.'
+          : 'Sem produtos com código de barras. Vincule o EAN na vitrine do estabelecimento.'
+      }</p>`;
 }
 
 function historicoProduto(key) {

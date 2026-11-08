@@ -30,21 +30,36 @@ function parseSi5SearchHtml(text, queryNorm) {
     const abs = href.startsWith('http')
       ? href
       : `${BASE}${href.startsWith('/') ? '' : '/'}${href}`;
-    const nome = $(el).text().replace(/\s+/g, ' ').trim() || '';
+    const $a = $(el);
+    const nome =
+      $a.find('.apc-title, .apc-name, h2, h3').first().text().replace(/\s+/g, ' ').trim() ||
+      $a.find('img[alt]').attr('alt')?.replace(/\s+/g, ' ').trim() ||
+      $a.text().replace(/\s+/g, ' ').trim() ||
+      '';
+    let image_url =
+      $a.find('img[src*="cdn"]').attr('src') ||
+      $a.find('img[src*="/img/"]').attr('src') ||
+      null;
+    if (image_url && image_url.startsWith('/')) {
+      image_url = `${BASE}${image_url}`;
+    }
+    if (image_url && /produto-em-breve|placeholder|si5-icon/i.test(image_url)) {
+      image_url = null;
+    }
     let score = nome ? scoreDescricao(queryNorm, nome) : 0.55;
     if (ean.length === 13 && (ean.startsWith('789') || ean.startsWith('790'))) {
       score = Math.min(1, score + 0.05);
     }
     if (ean.length === 14) score *= 0.85;
     const prev = map.get(ean);
-    if (prev && prev.score >= score) return;
+    if (prev && prev.score >= score && prev.image_url) return;
     map.set(ean, {
       ean,
-      nome_canonico: nome || null,
-      image_url: null,
+      nome_canonico: nome || prev?.nome_canonico || null,
+      image_url: image_url || prev?.image_url || null,
       url: abs.split('?')[0],
       fonte: 'si5-html',
-      score: Math.max(score, 0.5),
+      score: Math.max(score, prev?.score || 0.5),
     });
   });
 

@@ -131,13 +131,12 @@ footer{padding:48px 0 72px;color:var(--muted);font-size:12px;text-align:center}
 .chart i.low{background:var(--green)}
 .tabbar{position:absolute;left:0;right:0;bottom:0;height:66px;padding:6px 4px 12px;background:rgba(255,255,255,.96);border-top:1px solid var(--line);display:flex;justify-content:space-around;align-items:flex-end;z-index:20}
 .tab{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:9px;font-weight:600;color:var(--muted);width:56px}
-.tab>span,.tab .ico{font-size:16px;line-height:1;height:18px;display:grid;place-items:center}
+.tab>span{height:20px;display:grid;place-items:center}
+.tab svg.ico{width:20px;height:20px;display:block}
 .tab.on{color:var(--blue-deep)}
 .tab.fab{position:relative;top:-10px}
-.fabbtn{width:46px;height:46px;border-radius:50%;background:var(--blue);color:#fff;display:grid;place-items:center;font-size:22px;font-weight:700;box-shadow:0 8px 18px rgba(0,105,180,.35)}
-/* ícone lista: Plus Jakarta não tem ☰ — desenho CSS */
-.ico-list{width:16px;height:12px;display:flex;flex-direction:column;justify-content:space-between}
-.ico-list i{display:block;height:2px;border-radius:1px;background:currentColor}
+.fabbtn{width:46px;height:46px;border-radius:50%;background:var(--blue);color:#fff;display:grid;place-items:center;box-shadow:0 8px 18px rgba(0,105,180,.35)}
+.fabbtn svg{width:22px;height:22px;display:block}
 .foot{position:absolute;left:0;right:0;bottom:0;padding:10px 14px 18px;background:linear-gradient(transparent, #fff 30%);z-index:15}
 .scan{background:#0B1F33;color:#fff;min-height:100%}
 .scan .t.light,.hint-light{color:#fff}
@@ -316,11 +315,11 @@ th{color:var(--muted);font-weight:600}
   </div>
 </div>
 <div class="tabbar">
-  <div class="tab on" data-go="T-10"><span>✦</span>Destaques</div>
-  <div class="tab" data-go="T-31"><span>◎</span>Lojas</div>
-  <div class="tab fab" data-go="T-20"><span class="fabbtn">+</span>Nota</div>
-  <div class="tab" data-go="T-40"><span class="ico ico-list" aria-hidden="true"><i></i><i></i><i></i></span>Listas</div>
-  <div class="tab" data-go="T-51"><span>○</span>Perfil</div>
+  <div class="tab on" data-go="T-10"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/></svg></span>Destaques</div>
+  <div class="tab" data-go="T-31"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/><path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/><path d="M12 3v6"/></svg></span>Lojas</div>
+  <div class="tab fab" data-go="T-20"><span class="fabbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg></span>Nota</div>
+  <div class="tab" data-go="T-40"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h.01"/><path d="M3 18h.01"/><path d="M3 6h.01"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M8 6h13"/></svg></span>Listas</div>
+  <div class="tab" data-go="T-51"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>Perfil</div>
 </div></template>
 <template data-id="T-11" data-name="Busca" data-accent="blue" data-us="US-02.03,US-02.04" data-notes="Busca por EAN ou nome + filtros/categorias. Sem EAN: confiança menor. Anônimo ok.">
 <div class="body">
@@ -406,11 +405,11 @@ th{color:var(--muted);font-weight:600}
   </div>
 </div>
 <div class="tabbar">
-  <div class="tab" data-go="T-10"><span>✦</span>Destaques</div>
-  <div class="tab" data-go="T-31"><span>◎</span>Lojas</div>
-  <div class="tab fab" data-go="T-20"><span class="fabbtn">+</span>Nota</div>
-  <div class="tab" data-go="T-40"><span class="ico ico-list" aria-hidden="true"><i></i><i></i><i></i></span>Listas</div>
-  <div class="tab" data-go="T-51"><span>○</span>Perfil</div>
+  <div class="tab" data-go="T-10"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/></svg></span>Destaques</div>
+  <div class="tab" data-go="T-31"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/><path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/><path d="M12 3v6"/></svg></span>Lojas</div>
+  <div class="tab fab" data-go="T-20"><span class="fabbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg></span>Nota</div>
+  <div class="tab" data-go="T-40"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h.01"/><path d="M3 18h.01"/><path d="M3 6h.01"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M8 6h13"/></svg></span>Listas</div>
+  <div class="tab" data-go="T-51"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>Perfil</div>
 </div></template>
 <template data-id="T-20" data-name="Scan QR · câmera" data-accent="blue" data-us="US-01.08" data-notes="Viewport dark. URL fazenda.pr.gov.br. HTTPS obrigatório.">
 <div class="body flush scan">
@@ -479,11 +478,11 @@ th{color:var(--muted);font-weight:600}
   <button class="btn s mt12" data-go="T-32">Ver no mapa</button>
 </div>
 <div class="tabbar">
-  <div class="tab" data-go="T-10"><span>✦</span>Destaques</div>
-  <div class="tab" data-go="T-31"><span>◎</span>Lojas</div>
-  <div class="tab fab" data-go="T-20"><span class="fabbtn">+</span>Nota</div>
-  <div class="tab" data-go="T-40"><span class="ico ico-list" aria-hidden="true"><i></i><i></i><i></i></span>Listas</div>
-  <div class="tab" data-go="T-51"><span>○</span>Perfil</div>
+  <div class="tab" data-go="T-10"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/></svg></span>Destaques</div>
+  <div class="tab" data-go="T-31"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/><path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/><path d="M12 3v6"/></svg></span>Lojas</div>
+  <div class="tab fab" data-go="T-20"><span class="fabbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg></span>Nota</div>
+  <div class="tab" data-go="T-40"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h.01"/><path d="M3 18h.01"/><path d="M3 6h.01"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M8 6h13"/></svg></span>Listas</div>
+  <div class="tab" data-go="T-51"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>Perfil</div>
 </div></template>
 <template data-id="T-31" data-name="Mais baratas" data-accent="green" data-us="US-03.02" data-notes="Entrada de Estabelecimentos. Lista ordenada das mais baratas no raio; cada linha mostra posição barata e cara. Busca sem tabs baratas/caras. ADR-011.">
 <div class="body tb">
@@ -496,11 +495,11 @@ th{color:var(--muted);font-weight:600}
   <div class="rank" data-go="T-33"><span class="rk">3</span><div class="grow"><p class="b sm">Mercadorama</p><p class="xs muted">3ª mais barata · 1ª mais cara da região</p><p class="xs muted">+4% · 2,4 km</p></div></div>
 </div>
 <div class="tabbar">
-  <div class="tab" data-go="T-10"><span>✦</span>Destaques</div>
-  <div class="tab on" data-go="T-31"><span>◎</span>Lojas</div>
-  <div class="tab fab" data-go="T-20"><span class="fabbtn">+</span>Nota</div>
-  <div class="tab" data-go="T-40"><span class="ico ico-list" aria-hidden="true"><i></i><i></i><i></i></span>Listas</div>
-  <div class="tab" data-go="T-51"><span>○</span>Perfil</div>
+  <div class="tab" data-go="T-10"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/></svg></span>Destaques</div>
+  <div class="tab on" data-go="T-31"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/><path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/><path d="M12 3v6"/></svg></span>Lojas</div>
+  <div class="tab fab" data-go="T-20"><span class="fabbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg></span>Nota</div>
+  <div class="tab" data-go="T-40"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h.01"/><path d="M3 18h.01"/><path d="M3 6h.01"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M8 6h13"/></svg></span>Listas</div>
+  <div class="tab" data-go="T-51"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>Perfil</div>
 </div></template>
 <template data-id="T-32" data-name="Mapa" data-accent="blue" data-us="US-03.03" data-notes="Pins Leaflet/OSM. Link externo para rotas. Sem turn-by-turn.">
 <div class="body flush">
@@ -547,11 +546,11 @@ th{color:var(--muted);font-weight:600}
   <p class="xs muted mt8">Listas no servidor · fingerprint anônimo</p>
 </div>
 <div class="tabbar">
-  <div class="tab" data-go="T-10"><span>✦</span>Destaques</div>
-  <div class="tab" data-go="T-31"><span>◎</span>Lojas</div>
-  <div class="tab fab" data-go="T-20"><span class="fabbtn">+</span>Nota</div>
-  <div class="tab on" data-go="T-40"><span class="ico ico-list" aria-hidden="true"><i></i><i></i><i></i></span>Listas</div>
-  <div class="tab" data-go="T-51"><span>○</span>Perfil</div>
+  <div class="tab" data-go="T-10"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/></svg></span>Destaques</div>
+  <div class="tab" data-go="T-31"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/><path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/><path d="M12 3v6"/></svg></span>Lojas</div>
+  <div class="tab fab" data-go="T-20"><span class="fabbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg></span>Nota</div>
+  <div class="tab on" data-go="T-40"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h.01"/><path d="M3 18h.01"/><path d="M3 6h.01"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M8 6h13"/></svg></span>Listas</div>
+  <div class="tab" data-go="T-51"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>Perfil</div>
 </div></template>
 <template data-id="T-42" data-name="Lista · sem split" data-accent="green" data-us="US-04.02" data-notes="Comparação por loja (tudo numa só). Cobertura; sem inventar preço. REQ-051.">
 <div class="body tb">
@@ -570,11 +569,11 @@ th{color:var(--muted);font-weight:600}
   <button class="btn s mt8" data-go="T-54">Continuar cotando…</button>
 </div>
 <div class="tabbar">
-  <div class="tab" data-go="T-10"><span>✦</span>Destaques</div>
-  <div class="tab" data-go="T-31"><span>◎</span>Lojas</div>
-  <div class="tab fab" data-go="T-20"><span class="fabbtn">+</span>Nota</div>
-  <div class="tab on" data-go="T-40"><span class="ico ico-list" aria-hidden="true"><i></i><i></i><i></i></span>Listas</div>
-  <div class="tab" data-go="T-51"><span>○</span>Perfil</div>
+  <div class="tab" data-go="T-10"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/></svg></span>Destaques</div>
+  <div class="tab" data-go="T-31"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/><path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/><path d="M12 3v6"/></svg></span>Lojas</div>
+  <div class="tab fab" data-go="T-20"><span class="fabbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg></span>Nota</div>
+  <div class="tab on" data-go="T-40"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h.01"/><path d="M3 18h.01"/><path d="M3 6h.01"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M8 6h13"/></svg></span>Listas</div>
+  <div class="tab" data-go="T-51"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>Perfil</div>
 </div></template>
 <template data-id="T-41" data-name="Lista · com split" data-accent="green" data-us="US-04.03" data-notes="Mais barato com split + redução R$/% vs melhor loja única. REQ-051.">
 <div class="body">
@@ -611,11 +610,11 @@ th{color:var(--muted);font-weight:600}
   <p class="meta-fp mt12">fp · a3f9…c21 · IP 191.36.x.x</p>
 </div>
 <div class="tabbar">
-  <div class="tab" data-go="T-10"><span>✦</span>Destaques</div>
-  <div class="tab" data-go="T-31"><span>◎</span>Lojas</div>
-  <div class="tab fab" data-go="T-20"><span class="fabbtn">+</span>Nota</div>
-  <div class="tab" data-go="T-40"><span class="ico ico-list" aria-hidden="true"><i></i><i></i><i></i></span>Listas</div>
-  <div class="tab" data-go="T-51"><span>○</span>Perfil</div>
+  <div class="tab" data-go="T-10"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/></svg></span>Destaques</div>
+  <div class="tab" data-go="T-31"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/><path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/><path d="M12 3v6"/></svg></span>Lojas</div>
+  <div class="tab fab" data-go="T-20"><span class="fabbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg></span>Nota</div>
+  <div class="tab" data-go="T-40"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h.01"/><path d="M3 18h.01"/><path d="M3 6h.01"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M8 6h13"/></svg></span>Listas</div>
+  <div class="tab" data-go="T-51"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>Perfil</div>
 </div></template>
 <template data-id="T-55" data-name="Detalhe da nota" data-accent="blue" data-us="US-04.04" data-notes="Cupom da nota do histórico pessoal.">
 <div class="body">
@@ -690,11 +689,11 @@ th{color:var(--muted);font-weight:600}
   </div>
 </div>
 <div class="tabbar">
-  <div class="tab" data-go="T-10"><span>✦</span>Destaques</div>
-  <div class="tab" data-go="T-31"><span>◎</span>Lojas</div>
-  <div class="tab fab" data-go="T-20"><span class="fabbtn">+</span>Nota</div>
-  <div class="tab" data-go="T-40"><span class="ico ico-list" aria-hidden="true"><i></i><i></i><i></i></span>Listas</div>
-  <div class="tab on" data-go="T-51"><span>○</span>Perfil</div>
+  <div class="tab" data-go="T-10"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/></svg></span>Destaques</div>
+  <div class="tab" data-go="T-31"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/><path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/><path d="M12 3v6"/></svg></span>Lojas</div>
+  <div class="tab fab" data-go="T-20"><span class="fabbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg></span>Nota</div>
+  <div class="tab" data-go="T-40"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h.01"/><path d="M3 18h.01"/><path d="M3 6h.01"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M8 6h13"/></svg></span>Listas</div>
+  <div class="tab on" data-go="T-51"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>Perfil</div>
 </div></template>
 <template data-id="T-61" data-name="Admin · Métricas" data-accent="blue" data-us="US-ADM.01,US-ADM.02,US-ADM.03" data-notes="Fora da galeria neste momento. Desktop /admin. Fila notas falhas, ocultar spam, KPIs beta." data-kind="desk">
 <div class="side">

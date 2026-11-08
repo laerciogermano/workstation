@@ -55,7 +55,7 @@
 
 ## 3. Navegação
 
-Tab bar: **Produtos** (T-10) · **Lojas** (T-31) · **Nota** FAB (T-20) · **Listas** (T-40) · **Perfil** (T-51). Minhas notas / pontos via Perfil (e pós-scan). Entrada = home anônima. Mapa em [07-diagramas](07-diagramas.md).
+Tab bar: **Produtos** (T-10) · **Lojas** (T-31) · **Nota** FAB (T-20) · **Listas** (T-40) · **Notas** (T-50). **Perfil / configurações** no topo (T-51). Entrada = home anônima. Mapa em [07-diagramas](07-diagramas.md).
 
 ### Ajustes UX (2026-11-04) — card [BXKZ55Wb](https://trello.com/c/BXKZ55Wb)
 

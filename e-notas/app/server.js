@@ -227,6 +227,14 @@ async function handleEnrichmentEanSi5(req, res) {
   }
 }
 
+function isAbortErr(err) {
+  return (
+    err?.name === 'AbortError' ||
+    err?.code === 'ABORT_ERR' ||
+    /aborted/i.test(String(err?.message || err || ''))
+  );
+}
+
 /** SSE SI5 — proxy do ean-serp `/ean/si5/stream`. */
 async function handleEnrichmentEanSi5Stream(req, res) {
   const descricao = enrichmentInput(req, 'descricao');
@@ -247,52 +255,55 @@ async function handleEnrichmentEanSi5Stream(req, res) {
   const upstreamUrl = `${base}/ean/si5/stream?${qs}`;
 
   const ac = new AbortController();
-  const onReqClose = () => ac.abort();
-  req.on('close', onReqClose);
-  let upstream;
-  try {
-    upstream = await fetch(upstreamUrl, {
-      headers: { Accept: 'text/event-stream' },
-      signal: ac.signal,
-    });
-  } catch (err) {
-    req.off('close', onReqClose);
-    console.error('[enrichment:ean:si5:stream]', err.message);
-    return res.status(502).json({ ok: false, error: err.message });
-  }
-  if (!upstream.ok || !upstream.body) {
-    const t = await upstream.text().catch(() => '');
-    return res.status(upstream.status || 502).json({
-      ok: false,
-      error: t.slice(0, 200) || `ean-serp stream HTTP ${upstream.status}`,
-    });
-  }
-
-  res.status(200);
-  res.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
-  res.setHeader('Cache-Control', 'no-cache, no-transform');
-  res.setHeader('Connection', 'keep-alive');
-  res.setHeader('X-Accel-Buffering', 'no');
-  if (typeof res.flushHeaders === 'function') res.flushHeaders();
-
-  const reader = upstream.body.getReader();
-  const abort = () => {
-    ac.abort();
+  /** @type {ReadableStreamDefaultReader | null} */
+  let reader = null;
+  const onReqClose = () => {
     try {
-      reader.cancel();
+      ac.abort();
     } catch {
       /* ignore */
     }
+    if (reader) void reader.cancel().catch(() => {});
   };
-  req.on('close', abort);
+  req.on('close', onReqClose);
+
   try {
+    const upstream = await fetch(upstreamUrl, {
+      headers: { Accept: 'text/event-stream' },
+      signal: ac.signal,
+    });
+    if (!upstream.ok || !upstream.body) {
+      const t = await upstream.text().catch(() => '');
+      if (!res.headersSent) {
+        return res.status(upstream.status || 502).json({
+          ok: false,
+          error: t.slice(0, 200) || `ean-serp stream HTTP ${upstream.status}`,
+        });
+      }
+      return;
+    }
+
+    res.status(200);
+    res.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
+    res.setHeader('Cache-Control', 'no-cache, no-transform');
+    res.setHeader('Connection', 'keep-alive');
+    res.setHeader('X-Accel-Buffering', 'no');
+    if (typeof res.flushHeaders === 'function') res.flushHeaders();
+
+    reader = upstream.body.getReader();
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
+      if (res.writableEnded || ac.signal.aborted) break;
       res.write(Buffer.from(value));
     }
   } catch (err) {
-    if (!res.writableEnded && !ac.signal.aborted) {
+    if (isAbortErr(err)) return;
+    console.error('[enrichment:ean:si5:stream]', err.message);
+    if (!res.headersSent) {
+      return res.status(502).json({ ok: false, error: err.message });
+    }
+    if (!res.writableEnded) {
       res.write(
         `event: fail\ndata: ${JSON.stringify({
           ok: false,
@@ -302,7 +313,6 @@ async function handleEnrichmentEanSi5Stream(req, res) {
     }
   } finally {
     req.off('close', onReqClose);
-    req.off('close', abort);
     if (!res.writableEnded) res.end();
   }
 }

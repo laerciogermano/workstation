@@ -1,16 +1,17 @@
 # Definir projeto moderno
 
-Pacote unificado das pesquisas de **2026-11-08** (arquitetura, stack, design/motion, logo, identidade) para IA iniciar e desenvolver sistema.
+Pacote unificado das pesquisas de **2026-11-08** (arquitetura, stack, design/motion, logo, identidade, banco PostgreSQL) para IA iniciar e desenvolver sistema.
 
 ## Pastas
 
 | Pasta | Conteúdo |
 |---|---|
 | [`01-arquitetura/`](01-arquitetura/README.md) | ADR, arc42, C4 lean, prompts, AGENTS.md |
-| [`02-boas-praticas-stack/`](02-boas-praticas-stack/referencias/README.md) | Node/TS, React, Postgres, filas, 12-Factor, OWASP |
+| [`02-boas-praticas-stack/`](02-boas-praticas-stack/referencias/README.md) | Node/TS, React, Postgres ops, filas, 12-Factor, OWASP |
 | [`03-design-ui-motion/`](03-design-ui-motion/modern-2026/MODERN-UI-MOTION.md) | UI 2026, motion, anti-slop |
 | [`04-logos/`](04-logos/LOGO.md) | Logos: princípios, prompts, skills SVG |
 | [`05-identidade-visual/`](05-identidade-visual/IDENTIDADE-VISUAL.md) | Sistema de marca: cor, tipo, motion, BRAND/tokens |
+| [`06-banco-postgresql/`](06-banco-postgresql/README.md) | Definir schema PG: defaults, prompts, skills, refs |
 
 ## Começar
 
@@ -19,6 +20,7 @@ Pacote unificado das pesquisas de **2026-11-08** (arquitetura, stack, design/mot
 3. UI/motion: [`03-design-ui-motion/modern-2026/MODERN-UI-MOTION.md`](03-design-ui-motion/modern-2026/MODERN-UI-MOTION.md)
 4. Logo: [`04-logos/LOGO.md`](04-logos/LOGO.md)
 5. Identidade: [`05-identidade-visual/IDENTIDADE-VISUAL.md`](05-identidade-visual/IDENTIDADE-VISUAL.md)
+6. Banco: [`06-banco-postgresql/POSTGRES.md`](06-banco-postgresql/POSTGRES.md)
 
 ## Cópias no workspace
 

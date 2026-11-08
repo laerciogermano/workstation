@@ -191,10 +191,10 @@ Curadoria: [`../marca/benchmarking-solucoes/README.md`](../marca/benchmarking-so
 
 - Domínio **notinhas.shop** (Hostinger) aponta para a Contabo (registro A `@`; `www` via CNAME ou A).
 - **Atual (2026-11-08):** A `@` / `www` / `mail` → **`185.250.37.82`** (VDS `vmi3645369`). Legado `144.126.154.90` offline.
-- Site: protótipo v2 em `/opt/notinhas-v2` (nginx `:80`); app lab em `/enotas/` → `enotas.service` `:4174`.
-- nginx site `notinhas` faz proxy de `/` para o app Node `127.0.0.1:4174` (mesmo processo de `/enotas/`).
-- HTTPS no domínio via Certbot quando o DNS público propagar (ver [`../deploy/README.md`](../deploy/README.md)).
-- Rollback: desabilitar site `notinhas`; DNS A `@` → parking Hostinger `2.57.91.91`.
+- Site: protótipo v2 em `/opt/notinhas-v2` (nginx `:443` + redirect `:80`→HTTPS); app lab em `/enotas/` → `enotas.service` `:4174`.
+- nginx site `notinhas`: `/` → arquivos v2; `/enotas/` → proxy Node `127.0.0.1:4174`.
+- HTTPS: Certbot LE `notinhas.shop` + `www` (emitido 2026-11-08; renew `certbot.timer`) — ver [`../deploy/README.md`](../deploy/README.md).
+- Rollback: desabilitar site `notinhas`; DNS A `@` → parking Hostinger `2.57.91.91`; `certbot delete --cert-name notinhas.shop`.
 
 ## REQ-023 — Marca v2 DESIGN.md notinhas.shop (2026-11-01)
 

@@ -5,19 +5,18 @@ Convive com **conect tec** (HTTP `:80`) e **mailcow** (HTTPS `:443`).
 | App | URL |
 |-----|-----|
 | VDS atual (2026-11-08) | `185.250.37.82` (`vmi3645369`) |
-| Protótipo v2 (HTTP) | **http://185.250.37.82/** (Host `notinhas.shop`) · DNS ainda pode apontar ao legado |
-| App lab | **http://185.250.37.82/enotas/** |
+| Protótipo v2 | **https://notinhas.shop/** · **https://www.notinhas.shop/** (LE `notinhas.shop`, redirect HTTP→HTTPS) |
+| App lab | **https://notinhas.shop/enotas/** (proxy → `:4174`) |
 | Legado offline | `144.126.154.90` (`vmi3645318`) |
-
-HTTP `http://…/enotas/` redireciona para HTTPS. Certificado em `:4173` é autoassinado (aceitar aviso no browser — necessário p/ câmera). Em `/enotas/` no `:443` usa o cert do mailcow (também pode avisar no IP).
 
 | Item | Valor |
 |------|--------|
 | Código app | `/opt/e-notas` |
-| Protótipo v2 | `/opt/notinhas-v2` (root do site `notinhas`) |
+| Protótipo v2 | `/opt/notinhas-v2` ← sync de `beta-docs/prototipos/v2/` |
 | Unit | `enotas.service` |
 | Node | `127.0.0.1:4174` (`USE_HTTP=1`) |
-| nginx domínio | `/etc/nginx/sites-available/notinhas` — `/` → v2; `/enotas/` → Node |
+| nginx domínio | `/etc/nginx/sites-available/notinhas` — `/` → v2; `/enotas/` → Node; `:443` Certbot |
+| Cert LE | `/etc/letsencrypt/live/notinhas.shop/` · renew via `certbot.timer` |
 | DNS alvo | Hostinger: A `@` / `www` / `mail` → **`185.250.37.82`** (TTL 300) |
 | DNS legado | A `@` → `144.126.154.90` (offline) |
 | E-mail | 1 Mailcow (`/opt/mailcow-dockerized`); domínios `clozzy.com.br` + `notinhas.shop` + `conectmax.email` + `brsupply.email`; hostnames `mail.clozzy.com.br` + `mail.notinhas.shop` + `mail.conectmax.email` + `mail.brsupply.email` |
@@ -64,36 +63,35 @@ Não dá para rodar **dois** stacks Mailcow no mesmo IP (portas 25/465/587/993).
 
 ## Domínio `notinhas.shop`
 
-1. DNS no hPanel Hostinger (zona do domínio): A `@` = Contabo `144.126.154.90`
-2. Site nginx: `sites-available/notinhas` (proxy para `:4174`) + `sites-enabled`
-3. **HTTPS (Let's Encrypt / Certbot)** — mesmo padrão do RoleGo (nginx na Contabo já usa `:443` com mailcow/rolego; Caddy/Traefik brigariam pela porta).
-4. **Mail** — domínio + DKIM no Mailcow; DNS Hostinger:
-   - A `mail` → `144.126.154.90`
+1. DNS Hostinger: A `@` / `www` / `mail` → Contabo **`185.250.37.82`**
+2. Site nginx: `sites-available/notinhas` — `root /opt/notinhas-v2`; `/enotas/` → `:4174`
+3. **HTTPS (feito 2026-11-08):** Certbot LE `notinhas.shop` + `www`; HTTP→HTTPS; renew `certbot.timer`
+4. **Mail** — domínio + DKIM no Mailcow (legado `144…` ou reapontar); DNS:
+   - A `mail` → `185.250.37.82` (web) — MX/SPF do mail ainda podem apontar ao host Mailcow ativo
    - MX `@` → `mail.notinhas.shop` (prio 10)
-   - TXT `@` → `v=spf1 mx a:mail.notinhas.shop ip4:144.126.154.90 ~all`
-   - TXT `dkim._domainkey` → valor DKIM do Mailcow (`GET /api/v1/get/dkim/notinhas.shop`)
-   - TXT `_dmarc` → `v=DMARC1; p=none; rua=mailto:contato@notinhas.shop`
+   - TXT `@` → `v=spf1 mx a:mail.notinhas.shop ip4:185.250.37.82 ~all` (ajustar se Mailcow permanecer no IP legado)
+   - TXT `dkim._domainkey` / `_dmarc` conforme Mailcow
    - Webmail: https://mail.notinhas.shop/SOGo/
 
-**Antes → depois (mail domínio):** sem e-mail → domínio `notinhas.shop` + `contato@` + MX/SPF/DKIM/DMARC.
-**Rollback mail domínio:** apagar mailbox/domínio no Mailcow; remover MX/SPF/DKIM/DMARC na Hostinger.
-
-Enquanto o registro `.shop` ainda der **NXDOMAIN** nos resolvers públicos, o ACME falha. Quando `dig +short A notinhas.shop @1.1.1.1` = `144.126.154.90`:
+### Deploy / refresh do protótipo v2
 
 ```bash
-# one-shot
-ssh root@144.126.154.90 'certbot --nginx -d notinhas.shop -d www.notinhas.shop --non-interactive --agree-tos -m laerciogermanoo@gmail.com --redirect'
-
-# ou waiter (já em /opt/e-notas/deploy/):
-ssh root@144.126.154.90 'bash /opt/e-notas/deploy/issue-ssl-notinhas.sh'
-# log: /var/log/issue-ssl-notinhas.log
+# local → Contabo
+rsync -az --delete e-notas/beta-docs/prototipos/v2/ root@185.250.37.82:/opt/notinhas-v2/
+ssh root@185.250.37.82 'chown -R www-data:www-data /opt/notinhas-v2 && nginx -t && systemctl reload nginx'
 ```
 
-Script canônico: [`issue-ssl-notinhas.sh`](issue-ssl-notinhas.sh).
+### Emitir / renovar SSL (VDS atual)
 
-**Antes → depois (domínio):** só `/enotas/` no IP → também `notinhas.shop` (HTTP) apontando ao mesmo Node; HTTPS via Certbot no site `notinhas`.
+```bash
+ssh root@185.250.37.82 'certbot --nginx -d notinhas.shop -d www.notinhas.shop --non-interactive --agree-tos -m laerciogermanoo@gmail.com --redirect'
+# dry-renew: certbot renew --dry-run
+```
 
-**Rollback domínio:** `rm /etc/nginx/sites-enabled/notinhas` + `nginx -t && systemctl reload nginx`; DNS A `@` voltar a `2.57.91.91` (parking Hostinger) se quiser. SSL: `certbot delete --cert-name notinhas.shop`.
+Script legado (IP antigo): [`issue-ssl-notinhas.sh`](issue-ssl-notinhas.sh).
+
+**Antes → depois (domínio):** HTTP só no IP → `https://notinhas.shop/` com LE + redirect; root = protótipo v2.
+**Rollback domínio:** `rm /etc/nginx/sites-enabled/notinhas` + `nginx -t && systemctl reload nginx`; DNS A `@` → parking Hostinger. SSL: `certbot delete --cert-name notinhas.shop`.
 
 ## Rollback
 

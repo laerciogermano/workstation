@@ -3,7 +3,8 @@
 **Status:** canônico (2026-11-07)  
 **Showcase visual:** [`design-system.html`](design-system.html)  
 **Uso:** todo HTML/CSS/UI/landing/dashboard/protótipo neste workspace, salvo marca de produto já documentada (`*/marca/`).  
-**Base:** refs em [SOURCES.md](SOURCES.md) (unslop, Anthropic frontend-design, anti-ai-slop, templates Editorial/Suede, cookbook).
+**Base:** refs em [SOURCES.md](SOURCES.md) (unslop, Anthropic frontend-design, anti-ai-slop, templates Editorial/Suede, cookbook).  
+**Motion / UI tendência 2026:** [modern-2026/MODERN-UI-MOTION.md](modern-2026/MODERN-UI-MOTION.md) (complementa; não troca Editorial Bold).
 
 ---
 
@@ -166,14 +167,16 @@ Só se o produto pedir. Declarar em 1 frase antes do CSS.
 
 Marcas de produto (`conectmax/marca`, `e-notas/marca`, …) **vencem** este default quando o brief da marca existir.
 
+**Motion:** para web apps React com animações/transições modernas, seguir [modern-2026/](modern-2026/MODERN-UI-MOTION.md) + skill `modern-ui-motion`. Futurista = springs + shared transitions + micro-feedback — não neon cyberpunk default.
+
 ---
 
 ## 8. Processo obrigatório
 
-1. Ler este DS + [../skills/frontend-anti-slop/SKILL.md](../skills/frontend-anti-slop/SKILL.md)
-2. Plano: assunto → audiência → job → direção → tokens
+1. Ler este DS + [../skills/frontend-anti-slop/SKILL.md](../skills/frontend-anti-slop/SKILL.md) (+ `modern-ui-motion` se houver animação)
+2. Plano: assunto → audiência → job → direção → tokens → (opcional) motion scheme
 3. Codificar com classes/tokens únicos (sem utility solta inconsistente)
-4. Self-check (qualquer sim = corrigir): Inter/Geist? Roxo/gradiente? Cream default? Body cinza? Pill? Icon-box grid? Soft-shadow everything? Em-dash? Fade-up all? Sem menu mobile?
+4. Self-check (qualquer sim = corrigir): Inter/Geist? Roxo/gradiente? Cream default? Body cinza? Pill? Icon-box grid? Soft-shadow everything? Em-dash? Fade-up all? Sem menu mobile? Motion sem `prefers-reduced-motion`?
 
 Catálogo longo: [unslop-ui/TELLS.md](unslop-ui/TELLS.md).
 

@@ -13,7 +13,8 @@ description: >-
 
 1. **[DESIGN-SYSTEM.md](../../design-refs/DESIGN-SYSTEM.md)** — padrão (tokens, componentes, checklist)
 2. Este arquivo
-3. Refs brutas se precisar aprofundar: [SOURCES.md](../../design-refs/SOURCES.md) → unslop / Anthropic / anti-ai-slop / templates / cookbook
+3. Refs brutas: [SOURCES.md](../../design-refs/SOURCES.md) → unslop / Anthropic / anti-ai-slop / templates / cookbook
+4. Motion / tendência moderna (React): [modern-ui-motion](../modern-ui-motion/SKILL.md) → [MODERN-UI-MOTION.md](../../design-refs/modern-2026/MODERN-UI-MOTION.md)
 
 ## 2. Processo
 

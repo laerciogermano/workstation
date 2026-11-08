@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>notinhas.shop Beta — Protótipo navegável</title>
+<link rel="icon" type="image/png" href="../../app/public/icon-512.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -314,7 +315,7 @@ th{color:var(--muted);font-weight:600}
   <div class="tab on" data-go="T-10"><span>✦</span>Destaques</div>
   <div class="tab" data-go="T-31"><span>◎</span>Lojas</div>
   <div class="tab fab" data-go="T-20"><span class="fabbtn">+</span>Nota</div>
-  <div class="tab" data-go="T-40"><span>□</span>Listas</div>
+  <div class="tab" data-go="T-40"><span>☰</span>Listas</div>
   <div class="tab" data-go="T-51"><span>○</span>Perfil</div>
 </div></template>
 <template data-id="T-11" data-name="Busca" data-accent="blue" data-us="US-02.03,US-02.04" data-notes="Busca por EAN ou nome + filtros/categorias. Sem EAN: confiança menor. Anônimo ok.">
@@ -404,7 +405,7 @@ th{color:var(--muted);font-weight:600}
   <div class="tab" data-go="T-10"><span>✦</span>Destaques</div>
   <div class="tab" data-go="T-31"><span>◎</span>Lojas</div>
   <div class="tab fab" data-go="T-20"><span class="fabbtn">+</span>Nota</div>
-  <div class="tab" data-go="T-40"><span>□</span>Listas</div>
+  <div class="tab" data-go="T-40"><span>☰</span>Listas</div>
   <div class="tab" data-go="T-51"><span>○</span>Perfil</div>
 </div></template>
 <template data-id="T-20" data-name="Scan QR · câmera" data-accent="blue" data-us="US-01.08" data-notes="Viewport dark. URL fazenda.pr.gov.br. HTTPS obrigatório.">
@@ -477,7 +478,7 @@ th{color:var(--muted);font-weight:600}
   <div class="tab" data-go="T-10"><span>✦</span>Destaques</div>
   <div class="tab" data-go="T-31"><span>◎</span>Lojas</div>
   <div class="tab fab" data-go="T-20"><span class="fabbtn">+</span>Nota</div>
-  <div class="tab" data-go="T-40"><span>□</span>Listas</div>
+  <div class="tab" data-go="T-40"><span>☰</span>Listas</div>
   <div class="tab" data-go="T-51"><span>○</span>Perfil</div>
 </div></template>
 <template data-id="T-31" data-name="Mais baratas" data-accent="green" data-us="US-03.02" data-notes="Entrada de Estabelecimentos. Lista ordenada das mais baratas no raio; cada linha mostra posição barata e cara. Busca sem tabs baratas/caras. ADR-011.">
@@ -494,7 +495,7 @@ th{color:var(--muted);font-weight:600}
   <div class="tab" data-go="T-10"><span>✦</span>Destaques</div>
   <div class="tab on" data-go="T-31"><span>◎</span>Lojas</div>
   <div class="tab fab" data-go="T-20"><span class="fabbtn">+</span>Nota</div>
-  <div class="tab" data-go="T-40"><span>□</span>Listas</div>
+  <div class="tab" data-go="T-40"><span>☰</span>Listas</div>
   <div class="tab" data-go="T-51"><span>○</span>Perfil</div>
 </div></template>
 <template data-id="T-32" data-name="Mapa" data-accent="blue" data-us="US-03.03" data-notes="Pins Leaflet/OSM. Link externo para rotas. Sem turn-by-turn.">
@@ -545,7 +546,7 @@ th{color:var(--muted);font-weight:600}
   <div class="tab" data-go="T-10"><span>✦</span>Destaques</div>
   <div class="tab" data-go="T-31"><span>◎</span>Lojas</div>
   <div class="tab fab" data-go="T-20"><span class="fabbtn">+</span>Nota</div>
-  <div class="tab on" data-go="T-40"><span>□</span>Listas</div>
+  <div class="tab on" data-go="T-40"><span>☰</span>Listas</div>
   <div class="tab" data-go="T-51"><span>○</span>Perfil</div>
 </div></template>
 <template data-id="T-42" data-name="Lista · sem split" data-accent="green" data-us="US-04.02" data-notes="Comparação por loja (tudo numa só). Cobertura; sem inventar preço. REQ-051.">
@@ -568,7 +569,7 @@ th{color:var(--muted);font-weight:600}
   <div class="tab" data-go="T-10"><span>✦</span>Destaques</div>
   <div class="tab" data-go="T-31"><span>◎</span>Lojas</div>
   <div class="tab fab" data-go="T-20"><span class="fabbtn">+</span>Nota</div>
-  <div class="tab on" data-go="T-40"><span>□</span>Listas</div>
+  <div class="tab on" data-go="T-40"><span>☰</span>Listas</div>
   <div class="tab" data-go="T-51"><span>○</span>Perfil</div>
 </div></template>
 <template data-id="T-41" data-name="Lista · com split" data-accent="green" data-us="US-04.03" data-notes="Mais barato com split + redução R$/% vs melhor loja única. REQ-051.">
@@ -609,7 +610,7 @@ th{color:var(--muted);font-weight:600}
   <div class="tab" data-go="T-10"><span>✦</span>Destaques</div>
   <div class="tab" data-go="T-31"><span>◎</span>Lojas</div>
   <div class="tab fab" data-go="T-20"><span class="fabbtn">+</span>Nota</div>
-  <div class="tab" data-go="T-40"><span>□</span>Listas</div>
+  <div class="tab" data-go="T-40"><span>☰</span>Listas</div>
   <div class="tab" data-go="T-51"><span>○</span>Perfil</div>
 </div></template>
 <template data-id="T-55" data-name="Detalhe da nota" data-accent="blue" data-us="US-04.04" data-notes="Cupom da nota do histórico pessoal.">
@@ -688,7 +689,7 @@ th{color:var(--muted);font-weight:600}
   <div class="tab" data-go="T-10"><span>✦</span>Destaques</div>
   <div class="tab" data-go="T-31"><span>◎</span>Lojas</div>
   <div class="tab fab" data-go="T-20"><span class="fabbtn">+</span>Nota</div>
-  <div class="tab" data-go="T-40"><span>□</span>Listas</div>
+  <div class="tab" data-go="T-40"><span>☰</span>Listas</div>
   <div class="tab on" data-go="T-51"><span>○</span>Perfil</div>
 </div></template>
 <template data-id="T-61" data-name="Admin · Métricas" data-accent="blue" data-us="US-ADM.01,US-ADM.02,US-ADM.03" data-notes="Fora da galeria neste momento. Desktop /admin. Fila notas falhas, ocultar spam, KPIs beta." data-kind="desk">

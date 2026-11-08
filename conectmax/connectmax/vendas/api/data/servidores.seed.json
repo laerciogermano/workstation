@@ -16,19 +16,19 @@
       "notas": "API+web+Postgres /opt/postgres + Mailcow /opt/mailcow-dockerized (web 127.0.0.1:8080/8443 via nginx mail.clozzy.com.br). Dump pré-install: conectmax/backups/20261026-144353."
     },
     {
-      "nome": "Contabo VDS 24GB (removida)",
+      "nome": "Contabo VDS 24GB — Postgres",
       "provedor": "Contabo",
       "produto": "Cloud VDS / Max Performance",
       "hostname": "vmi3645369",
       "ipPublico": "185.250.37.82",
-      "ipPrivado": "100.97.81.69",
+      "ipPrivado": null,
       "sshUser": "root",
       "sshPort": 22,
       "sshPassword": null,
       "ramGb": 24,
       "nestedKvm": true,
-      "status": "terminated",
-      "notas": "Não aparece mais no painel Contabo (só VPS vmi3645318). Hospedava docker-avd + tentativa Mailcow. Disco/IP perdidos sem snapshot."
+      "status": "active",
+      "notas": "Recriada 2026-11-08. Postgres Docker /opt/postgres:17 (connectmax). Dump app 20261026 + sync portal_franqueado."
     }
   ]
 }

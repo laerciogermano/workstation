@@ -1,11 +1,12 @@
 # Schema — réplica normalizada Portal Franqueado
 
 Fonte: HTML/ajax de `franqueado.conectmax.com`.  
-Postgres Contabo: schema **`portal_franqueado`**.  
+Postgres: schema **`portal_franqueado`** — host atual `185.250.37.82` (`DB_HOST` em `../connectmax/vendas/api/.env`; legado `144.126.154.90` offline).  
 Sync: `node scripts/sync-campinas-postgres.mjs [--franquia=9]`  
-Ex.: segunda maior (JV): `--franquia=2`  
+Ordem por volume de faturamento (maior→menor): **3 → 2 → 8 → 1 → 5 → 9 → 4 → 12 → 13**.  
+Ex.: maior (Curitiba): `--franquia=3` · segunda (JV): `--franquia=2`  
 DDL: [`sql/schema-normalizado.sql`](sql/schema-normalizado.sql)  
-Credenciais: `../connectmax/vendas/api/.env`
+Credenciais: `../connectmax/vendas/api/.env` + `credenciais.md`
 
 ## Funil
 

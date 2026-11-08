@@ -746,6 +746,8 @@ function loadProdutoEanSuggestions(head, queryOverride) {
   const es = new EventSource(`api/enrichment/ean/si5/stream?${qs}`);
   produtoEanSuggestEs = es;
   let sawBatch = false;
+  /** @type {Map<string, object>} */
+  const mergedByEan = new Map();
 
   const finish = (errMsg) => {
     if (gen !== produtoEanSuggestGen) return;
@@ -763,8 +765,30 @@ function loadProdutoEanSuggestions(head, queryOverride) {
 
   const onPayload = (list) => {
     if (gen !== produtoEanSuggestGen) return;
-    const tagged = tagSi5Candidatos(list).filter(
-      (c) => c.ean && (Number(c.score) || 0) >= 0.35,
+    for (const c of list || []) {
+      if (!c?.ean || (Number(c.score) || 0) < 0.35) continue;
+      const prev = mergedByEan.get(c.ean);
+      const next = {
+        ...(prev || {}),
+        ...c,
+        image_url: c.image_url || prev?.image_url || null,
+        nome_canonico: c.nome_canonico || prev?.nome_canonico || null,
+        fonte: c.fonte?.startsWith?.('ean-serp:')
+          ? c.fonte
+          : `ean-serp:${c.fonte || 'si5'}`,
+      };
+      if (!prev || (Number(next.score) || 0) >= (Number(prev.score) || 0)) {
+        mergedByEan.set(c.ean, next);
+      } else {
+        mergedByEan.set(c.ean, {
+          ...next,
+          score: prev.score,
+          image_url: next.image_url || prev.image_url,
+        });
+      }
+    }
+    const tagged = [...mergedByEan.values()].sort(
+      (a, b) => (Number(b.score) || 0) - (Number(a.score) || 0),
     );
     if (!tagged.length) return;
     sawBatch = true;

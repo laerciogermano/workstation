@@ -128,24 +128,50 @@ function formatOne(c) {
   };
 }
 
-/** Preenche foto/nome SI5 nos que ainda não têm image_url. */
-async function enrichMissingPhotos(list, { max = 12, signal } = {}) {
-  const need = (list || []).filter((c) => c?.ean && !c.image_url).slice(0, max);
-  await Promise.all(
-    need.map(async (c) => {
-      if (signal?.aborted) return;
-      try {
-        const det = await enrichSi5Product(c.ean);
-        if (!det) return;
-        if (det.image_url) c.image_url = det.image_url;
-        if (det.nome_canonico) c.nome_canonico = c.nome_canonico || det.nome_canonico;
-        if (det.url) c.url = c.url || det.url;
-        c.fontes = [...new Set([...(c.fontes || [c.fonte]), 'si5-produto'])];
-      } catch {
-        /* ignore */
-      }
-    }),
-  );
+/**
+ * Preenche foto/nome SI5. `cache` (Map ean→det) evita perder thumb entre batches
+ * e não martela o SI5 de novo.
+ */
+async function enrichMissingPhotos(list, { max = 12, signal, cache } = {}) {
+  const store = cache || new Map();
+  for (const c of list || []) {
+    if (!c?.ean) continue;
+    const hit = store.get(c.ean);
+    if (hit) {
+      if (!c.image_url && hit.image_url) c.image_url = hit.image_url;
+      if (!c.nome_canonico && hit.nome_canonico) c.nome_canonico = hit.nome_canonico;
+      if (!c.url && hit.url) c.url = hit.url;
+    } else if (c.image_url) {
+      store.set(c.ean, {
+        image_url: c.image_url,
+        nome_canonico: c.nome_canonico,
+        url: c.url,
+      });
+    }
+  }
+  const need = (list || [])
+    .filter((c) => c?.ean && !c.image_url && !store.has(c.ean))
+    .slice(0, max);
+
+  // sequencial: SI5 costuma falhar / esvaziar sob Promise.all em rajada
+  for (const c of need) {
+    if (signal?.aborted) break;
+    try {
+      const det = await enrichSi5Product(c.ean);
+      if (!det) continue;
+      if (det.image_url) c.image_url = det.image_url;
+      if (det.nome_canonico) c.nome_canonico = c.nome_canonico || det.nome_canonico;
+      if (det.url) c.url = c.url || det.url;
+      c.fontes = [...new Set([...(c.fontes || [c.fonte]), 'si5-produto'])];
+      store.set(c.ean, {
+        image_url: c.image_url,
+        nome_canonico: c.nome_canonico,
+        url: c.url,
+      });
+    } catch {
+      /* ignore */
+    }
+  }
 }
 
 /**
@@ -159,6 +185,7 @@ export async function* resolveEanSi5Stream(descricao, opts = {}) {
   const descricao_norm = normalizeDescricao(raw);
   const limit = parseLimit(opts);
   const enrich = opts.enrich !== false;
+  const photoCache = new Map();
 
   yield {
     event: 'meta',
@@ -179,7 +206,11 @@ export async function* resolveEanSi5Stream(descricao, opts = {}) {
   })) {
     last = (batch.candidatos || []).map(formatOne);
     if (enrich) {
-      await enrichMissingPhotos(last, { max: 12, signal: opts.signal });
+      await enrichMissingPhotos(last, {
+        max: 12,
+        signal: opts.signal,
+        cache: photoCache,
+      });
     }
     yield {
       event: 'batch',
@@ -188,16 +219,20 @@ export async function* resolveEanSi5Stream(descricao, opts = {}) {
         total: batch.total,
         query: batch.query,
         novos: (batch.novos || []).map(formatOne),
-        candidatos: last,
+        candidatos: last.map((c) => ({ ...c })),
       },
     };
   }
 
   if (enrich && last.length) {
-    await enrichMissingPhotos(last, { max: Math.min(20, last.length), signal: opts.signal });
+    await enrichMissingPhotos(last, {
+      max: Math.min(20, last.length),
+      signal: opts.signal,
+      cache: photoCache,
+    });
     yield {
       event: 'enrich',
-      data: { candidatos: last },
+      data: { candidatos: last.map((c) => ({ ...c })) },
     };
   }
 
@@ -208,7 +243,7 @@ export async function* resolveEanSi5Stream(descricao, opts = {}) {
       fonte: 'si5',
       descricao: raw,
       descricao_norm,
-      candidatos: last,
+      candidatos: last.map((c) => ({ ...c })),
     },
   };
 }

@@ -73,6 +73,7 @@ let filtroNotaLabel = '';
 let itensSub = 'lista';
 let lojaAbertaId = null;
 let produtoAbertaKey = null;
+let produtoEanSuggestGen = 0;
 let notaAbertaId = null;
 let eanScanner = null;
 let eanScanBusy = false;
@@ -343,7 +344,10 @@ function parseValor(v) {
 function produtoKey(r) {
   const ean = String(r.codigo_barras || '').trim();
   if (ean) return `ean:${ean}`;
+  // remove # e ruído de NFC-e p/ URL/hash estáveis
   const nome = String(r.nome || '')
+    .replace(/#/g, ' ')
+    .replace(/\s+/g, ' ')
     .trim()
     .toLowerCase();
   if (nome) return `nome:${nome}`;
@@ -620,6 +624,7 @@ async function loadProdutoEanSuggestions(head) {
   const codigo = String(head?.codigo || '').trim();
   const nome = String(head?.nome || '').trim();
   const empresaId = head?.empresa_id;
+  const gen = ++produtoEanSuggestGen;
   if (ean || !codigo || !nome || !empresaId) {
     produtoEanSuggestEl.hidden = true;
     produtoEanSuggestBodyEl.innerHTML = '';
@@ -637,7 +642,45 @@ async function loadProdutoEanSuggestions(head) {
   produtoEanSuggestBodyEl.dataset.nome = nome;
   produtoEanSuggestBodyEl.innerHTML =
     '<p class="hint ean-suggest-loading">Buscando sugestões pelo descritivo…</p>';
-  await hydrateEanSuggestions(produtoEanSuggestEl);
+  try {
+    const list = await fetchEanSugestoes(nome, { force: true });
+    if (gen !== produtoEanSuggestGen) return;
+    if (!list.length) {
+      produtoEanSuggestBodyEl.innerHTML =
+        '<p class="hint">Sem sugestão de EAN para este descritivo.</p>';
+      return;
+    }
+    produtoEanSuggestBodyEl.innerHTML = `
+      <p class="ean-suggest-inline-label">Sugestões — toque para vincular</p>
+      <ul class="ean-suggest-list ean-suggest-list-inline">
+        ${list
+          .slice(0, 6)
+          .map((c) => {
+            const pct = Math.round((Number(c.score) || 0) * 100);
+            const thumb = c.image_url
+              ? `<img class="ean-suggest-thumb" src="${esc(c.image_url)}" alt="" loading="lazy" width="36" height="36" />`
+              : '';
+            return `<li><button type="button" class="ean-suggest-btn"
+              data-aplicar-sugestao
+              data-ean="${esc(c.ean)}"
+              data-empresa-id="${esc(String(empresaId))}"
+              data-empresa-nome="${esc(empresaNome)}"
+              data-codigo="${esc(codigo)}"
+              data-nome="${esc(nome)}">
+              ${thumb}
+              <span class="ean-suggest-ean">${esc(c.ean)}</span>
+              <span class="ean-suggest-nome">${esc(c.nome_canonico || '—')}</span>
+              <span class="ean-suggest-meta">${pct}% · ${esc(c.fonte || '')}</span>
+            </button></li>`;
+          })
+          .join('')}
+      </ul>`;
+  } catch (err) {
+    if (gen !== produtoEanSuggestGen) return;
+    produtoEanSuggestBodyEl.innerHTML = `<p class="hint err">Falha ao sugerir: ${esc(
+      err.message || 'erro',
+    )}</p>`;
+  }
 }
 
 function setProdutoFotosStatus(msg, kind) {
@@ -754,7 +797,7 @@ async function selecionarProdutoFoto(id) {
 }
 
 function openProduto(key) {
-  renderProdutoDetalhe(key);
+  produtoAbertaKey = key;
   setTab('produtos');
 }
 
@@ -1160,21 +1203,33 @@ function labelOrigemEan(origem) {
   return o || '—';
 }
 
-async function fetchEanSugestoes(descricao) {
+async function fetchEanSugestoes(descricao, { force = false } = {}) {
   const key = String(descricao || '')
     .trim()
     .toLowerCase();
   if (!key) return [];
-  if (eanSuggestCache.has(key)) return eanSuggestCache.get(key);
+  if (!force && eanSuggestCache.has(key)) {
+    const cached = await eanSuggestCache.get(key);
+    if (Array.isArray(cached) && cached.length) return cached;
+    eanSuggestCache.delete(key);
+  }
   const p = fetchJson('api/enrichment/ean', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ descricao }),
-  })
-    .then((data) => data.candidatos || [])
-    .catch(() => []);
-  eanSuggestCache.set(key, p);
-  return p;
+    body: JSON.stringify({ descricao, force: Boolean(force) }),
+  }).then((data) => {
+    const list = data.candidatos || [];
+    if (!list.length) eanSuggestCache.delete(key);
+    return list;
+  });
+  eanSuggestCache.set(
+    key,
+    p.catch((err) => {
+      eanSuggestCache.delete(key);
+      throw err;
+    }),
+  );
+  return eanSuggestCache.get(key);
 }
 
 async function hydrateEanSuggestions(root) {

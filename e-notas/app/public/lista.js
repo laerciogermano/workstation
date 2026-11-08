@@ -770,7 +770,7 @@ function loadProdutoEanSuggestions(head, queryOverride, { edit = false } = {}) {
     produtoEanSuggestWhyEl.hidden = Boolean(ean);
   }
   if (produtoEanSuggestFecharEl) {
-    produtoEanSuggestFecharEl.hidden = !ean;
+    produtoEanSuggestFecharEl.hidden = false;
   }
   produtoEanSuggestEl.hidden = false;
   produtoEanSuggestBodyEl.dataset.suggestFor = codigo;

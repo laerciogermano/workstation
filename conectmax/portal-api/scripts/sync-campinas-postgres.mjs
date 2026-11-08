@@ -128,7 +128,7 @@ async function loadDbEnv() {
     database: map.DB_NAME,
     keepAlive: true,
     connectionTimeoutMillis: 30_000,
-    statement_timeout: 120_000,
+    options: '-c statement_timeout=120000',
   };
 }
 

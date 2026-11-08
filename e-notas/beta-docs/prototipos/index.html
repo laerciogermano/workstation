@@ -130,9 +130,12 @@ footer{padding:48px 0 72px;color:var(--muted);font-size:12px;text-align:center}
 .av{width:34px;height:34px;border-radius:10px;background:var(--blue-soft);color:var(--blue-deep);display:grid;place-items:center;font-weight:800;flex:none}
 .av.g{background:var(--green-soft);color:var(--green-deep)}
 .av.lg{width:56px;height:56px;border-radius:50%;font-size:20px}
-.chart{display:flex;align-items:flex-end;gap:6px;height:100px;padding:8px 4px;background:var(--bg);border-radius:12px;border:1px solid var(--line)}
-.chart i{flex:1;background:var(--blue-soft);border-radius:4px 4px 0 0}
-.chart i.low{background:var(--green)}
+.chart{height:120px;padding:10px 8px 6px;background:var(--bg);border-radius:12px;border:1px solid var(--line)}
+.chart svg{display:block;width:100%;height:100%}
+.chart .line{fill:none;stroke:var(--blue);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.chart .pt{fill:#fff;stroke:var(--blue);stroke-width:2}
+.chart .pt.low{stroke:var(--green);fill:var(--green-soft)}
+.chart .axis{fill:var(--muted);font-size:9px;font-family:inherit}
 .tabbar{position:absolute;left:0;right:0;bottom:0;height:66px;padding:6px 4px 12px;background:rgba(255,255,255,.96);border-top:1px solid var(--line);display:flex;justify-content:space-around;align-items:flex-end;z-index:20}
 .tab{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:9px;font-weight:600;color:var(--muted);width:56px}
 .tab>span:not(.fabbtn){height:14px;display:grid;place-items:center}
@@ -400,17 +403,25 @@ th{color:var(--muted);font-weight:600}
     <button class="btn s" data-go="T-40">Adicionar à lista</button>
   </div>
 </div></template>
-<template data-id="T-13" data-name="Histórico" data-accent="green" data-us="US-02.06" data-notes="Série temporal por EAN (e por loja). Pontos = observações de nota.">
+<template data-id="T-13" data-name="Histórico" data-accent="green" data-us="US-02.06" data-notes="Linha: cada mudança de preço = ponto (observação NFC-e).">
 <div class="body">
   <div class="top"><button class="ibtn" data-go="back">‹</button><span class="t">Histórico</span></div>
   <p class="b mb4">Monster Ultra Fiesta Mango Zero</p>
-  <p class="xs muted mb12">Últimos 30 dias · SJP</p>
+  <p class="xs muted mb12">Cada ponto = mudança de preço · 7 registros</p>
   <div class="chart">
-    <i style="height:40%"></i><i style="height:55%"></i><i style="height:48%"></i><i style="height:70%"></i><i style="height:62%"></i><i style="height:35%" class="low"></i><i style="height:42%"></i>
+    <svg viewBox="0 0 280 100" preserveAspectRatio="none" aria-hidden="true">
+      <polyline class="line" points="16,18 56,28 96,38 136,58 176,68 216,58 256,82"/>
+      <circle class="pt" cx="16" cy="18" r="4"/><circle class="pt" cx="56" cy="28" r="4"/><circle class="pt" cx="96" cy="38" r="4"/><circle class="pt" cx="136" cy="58" r="4"/><circle class="pt" cx="176" cy="68" r="4"/><circle class="pt" cx="216" cy="58" r="4"/><circle class="pt low" cx="256" cy="82" r="4.5"/>
+    </svg>
   </div>
-  <div class="flex between xs muted"><span>04 out</span><span>hoje</span></div>
-  <div class="card pad mt16"><p class="xs muted">Menor no período</p><p class="pp">R$ 4,19 · Condor · 12 out</p></div>
-  <div class="card pad mt8"><p class="xs muted">Mediana 14d</p><p class="b">R$ 4,55</p></div>
+  <div class="flex between xs muted mt4"><span>04 out · R$ 15,40</span><span>hoje · R$ 13,99</span></div>
+  <div class="card pad mt16"><p class="xs muted">Menor no período</p><p class="pp">R$ 13,99 · Dimed · hoje</p></div>
+  <div class="card pad mt8"><p class="xs muted">Mediana 14d</p><p class="b">R$ 14,49</p></div>
+  <p class="sec mt16">Registros</p>
+  <div class="lrow"><div class="grow"><p class="b sm">Dimed</p><p class="xs muted">hoje · NFC-e</p></div><p class="pp">R$ 13,99</p></div>
+  <div class="lrow"><div class="grow"><p class="b sm">Formosa</p><p class="xs muted">ontem · NFC-e</p></div><p class="b">R$ 14,49</p></div>
+  <div class="lrow"><div class="grow"><p class="b sm">Dimed</p><p class="xs muted">há 5 dias</p></div><p class="b">R$ 14,29</p></div>
+  <div class="lrow"><div class="grow"><p class="b sm">Formosa</p><p class="xs muted">há 12 dias</p></div><p class="b">R$ 15,40</p></div>
 </div></template>
 <template data-id="T-14" data-name="Detalhe produto" data-accent="green" data-us="US-02.07" data-notes="Produto real da base (foto ean-fotos). Comparação/histórico/perto expandidos.">
 <div class="body tb">
@@ -430,8 +441,14 @@ th{color:var(--muted);font-weight:600}
   </div>
   <div class="sec-block">
     <p class="sec">Histórico</p>
-    <p class="xs muted mb8">Série dos últimos registros no tempo</p>
-    <div class="chart"><i style="height:40%"></i><i class="low" style="height:55%"></i><i style="height:48%"></i><i class="low" style="height:62%"></i><i class="low" style="height:70%"></i></div>
+    <p class="xs muted mb8">Linha no tempo · ponto = mudança de preço</p>
+    <div class="chart">
+      <svg viewBox="0 0 280 100" preserveAspectRatio="none" aria-hidden="true">
+        <polyline class="line" points="20,22 80,38 140,58 200,68 260,82"/>
+        <circle class="pt" cx="20" cy="22" r="4"/><circle class="pt" cx="80" cy="38" r="4"/><circle class="pt" cx="140" cy="58" r="4"/><circle class="pt" cx="200" cy="68" r="4"/><circle class="pt low" cx="260" cy="82" r="4.5"/>
+      </svg>
+    </div>
+    <div class="flex between xs muted mt4"><span>R$ 15,40</span><span>R$ 13,99</span></div>
     <button class="btn s sm mt8" data-go="T-13">Abrir série</button>
   </div>
   <div class="sec-block">

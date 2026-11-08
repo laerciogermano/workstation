@@ -64,8 +64,10 @@ Resposta: `{ ok, created, empresaCriada, url, empresa, nota, itens }`.
 | `GET` | `/api/itens` | `{ ok, itens }` (com `empresa_nome`, `nota_numero`, `nota_emissao`, `chave_acesso`, `codigo_barras`, `foto_url` se mapeado) |
 | `GET` | `/api/codigos-barras` | `{ ok, codigosBarras }` (inclui `foto_url`) |
 | `POST` | `/api/codigos-barras` | body `{ empresa_id, codigo_unidade, codigo_barras, foto_url?, origem?, descricao?, titulo?, categorias?, marca? }` → upsert vínculo + ficha `produtos_ean` (REQ-047); `origem`: `sugestao` \| `barcode_scan` \| `manual` (REQ-043); dispara fotos (REQ-032) |
-| `GET` | `/api/produtos-ean` | `{ ok, produtos }` catálogo canônico por EAN (titulo, categorias, foto) |
-| `POST` | `/api/produtos-ean` | body `{ codigo_barras\|ean, titulo?, categorias?, foto_url?, marca?, fonte? }` → upsert ficha (REQ-047) |
+| `GET` | `/api/produtos-ean` | `{ ok, produtos }` catálogo canônico por EAN (titulo, categorias, foto, NCM…) |
+| `POST` | `/api/produtos-ean` | body `{ codigo_barras\|ean, titulo?, categorias?, foto_url?, marca?, … }` → upsert ficha (REQ-047) |
+| `GET`/`POST` | `/api/produtos-ean/:ean/enrich` | consulta PreçoMelhor + Open*Facts + UPCitemdb e grava ficha (REQ-048); `force` |
+| `GET`/`POST` | `/api/enrichment/produto-ean` | mesmo enrich (`ean`/`codigo_barras`, `force?`) |
 | `GET` | `/api/ean-imagens?codigo_barras=` | `{ ok, imagens }` candidatas do EAN |
 | `POST` | `/api/ean-imagens/buscar` | body `{ codigo_barras, force?, descricao? }` → APIs + **Google Imagens** (query EAN+nome). Sem `force`: reusa cache só se já houver Google; senão completa Google. `force` refaz tudo. Downloads em paralelo (UA browser, timeout 8s). Resposta pode trazer `google_error` se CDP `:9223` falhar |
 | `POST` | `/api/ean-imagens/:id/selecionar` | marca a foto do feed e atualiza `codigos_barras.foto_url` |

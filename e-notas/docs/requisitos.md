@@ -443,6 +443,16 @@ Card: [BXKZ55Wb](https://trello.com/c/BXKZ55Wb).
 - Antes: só vínculo empresa/unidade→EAN + `foto_url` em `codigos_barras`. Depois: ficha normalizada reutilizada em todas as lojas do mesmo EAN.
 - Rollback: `DROP TABLE enotas.produtos_ean;` + remover JOIN/overlay em `listItens` e rotas `/api/produtos-ean`.
 
+## REQ-048 — Enrich automático da ficha EAN (2026-11-08)
+
+- Dado um **código de barras**, serviço consulta fontes abertas/grátis e atualiza `produtos_ean` com o que for útil: título, marca, descrição, categorias, NCM, CEST, quantidade, nutriscore, foto local, `fontes[]`, `extras` JSON.
+- Ordem: **PreçoMelhor** → Open Food/Beauty/Products Facts → UPCitemdb. Foto remota baixada para `ean-fotos/`.
+- APIs: `GET|POST /api/produtos-ean/:ean/enrich` e `/api/enrichment/produto-ean` (`force` ignora cache de 7 dias).
+- Ao vincular EAN (`POST /api/codigos-barras`), dispara enrich em background.
+- Módulo: `produto-ean-enrich.js`. Colunas extras: `descricao`, `ncm`, `cest`, `quantidade`, `quantidade_unidade`, `nutriscore`, `fontes`, `extras`, `enriquecido_em`.
+- Antes: ficha só com backfill/sugestão local. Depois: enriquecimento multi-fonte sob demanda e no vínculo.
+- Rollback: remover rotas/módulo; `ALTER TABLE … DROP COLUMN` das novas colunas (ficha básica REQ-047 permanece).
+
 ## Próximos passos
 
 → Manter este arquivo alinhado a cada pedido novo · esteira de docs em [`README.md`](README.md) quando avançar funcionalidades/BDD.

@@ -36,6 +36,10 @@ import {
   resolveEanSi5Only,
 } from './enrichment.js';
 import { baixarGoogleImagens } from './google-imagens.js';
+import {
+  enrichProdutoEan,
+  enqueueEnrichProdutoEan,
+} from './produto-ean-enrich.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PORT = Number(process.env.PORT) || 4173;
@@ -181,6 +185,7 @@ app.post('/api/codigos-barras', async (req, res) => {
     enqueueBuscarImagensEan(row.codigo_barras, {
       descricao: titulo || descSugestao,
     });
+    enqueueEnrichProdutoEan(row.codigo_barras);
     if (descSugestao && origem === 'sugestao') {
       confirmarEanSugestao(normalizeDescricao(descSugestao), row.codigo_barras).catch(
         (err) => console.warn('[ean-sugestao:confirm]', err.message),
@@ -215,6 +220,12 @@ app.post('/api/produtos-ean', async (req, res) => {
       categorias: req.body?.categorias,
       fotoUrl: req.body?.foto_url,
       marca: req.body?.marca,
+      descricao: req.body?.descricao,
+      ncm: req.body?.ncm,
+      cest: req.body?.cest,
+      quantidade: req.body?.quantidade,
+      quantidadeUnidade: req.body?.quantidade_unidade,
+      nutriscore: req.body?.nutriscore,
       fonte: req.body?.fonte || 'manual',
       forceTitulo: true,
     });
@@ -225,6 +236,32 @@ app.post('/api/produtos-ean', async (req, res) => {
     return res.status(status).json({ ok: false, error: err.message });
   }
 });
+
+/** REQ-048 — dado o EAN, consulta fontes abertas e atualiza `produtos_ean`. */
+async function handleEnrichProdutoEan(req, res) {
+  try {
+    const ean = String(
+      req.params?.ean ||
+        req.query?.codigo_barras ||
+        req.query?.ean ||
+        req.body?.codigo_barras ||
+        req.body?.ean ||
+        '',
+    ).trim();
+    const force = enrichmentForce(req);
+    const result = await enrichProdutoEan(ean, { force });
+    return res.json({ ok: true, ...result });
+  } catch (err) {
+    const status = err.status || 500;
+    console.error('[produtos-ean:enrich]', err.message);
+    return res.status(status).json({ ok: false, error: err.message });
+  }
+}
+
+app.get('/api/produtos-ean/:ean/enrich', handleEnrichProdutoEan);
+app.post('/api/produtos-ean/:ean/enrich', handleEnrichProdutoEan);
+app.get('/api/enrichment/produto-ean', handleEnrichProdutoEan);
+app.post('/api/enrichment/produto-ean', handleEnrichProdutoEan);
 
 function enrichmentInput(req, key) {
   const q = req.query?.[key];

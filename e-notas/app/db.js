@@ -226,6 +226,15 @@ export async function initDb() {
     ALTER TABLE ${t('empresas')} ADD COLUMN IF NOT EXISTS lng DOUBLE PRECISION;
     ALTER TABLE ${t('codigos_barras')} ADD COLUMN IF NOT EXISTS foto_url TEXT;
     ALTER TABLE ${t('codigos_barras')} ADD COLUMN IF NOT EXISTS origem TEXT;
+    ALTER TABLE ${t('produtos_ean')} ADD COLUMN IF NOT EXISTS descricao TEXT;
+    ALTER TABLE ${t('produtos_ean')} ADD COLUMN IF NOT EXISTS ncm TEXT;
+    ALTER TABLE ${t('produtos_ean')} ADD COLUMN IF NOT EXISTS cest TEXT;
+    ALTER TABLE ${t('produtos_ean')} ADD COLUMN IF NOT EXISTS quantidade DOUBLE PRECISION;
+    ALTER TABLE ${t('produtos_ean')} ADD COLUMN IF NOT EXISTS quantidade_unidade TEXT;
+    ALTER TABLE ${t('produtos_ean')} ADD COLUMN IF NOT EXISTS nutriscore TEXT;
+    ALTER TABLE ${t('produtos_ean')} ADD COLUMN IF NOT EXISTS fontes TEXT[] NOT NULL DEFAULT '{}';
+    ALTER TABLE ${t('produtos_ean')} ADD COLUMN IF NOT EXISTS extras JSONB NOT NULL DEFAULT '{}'::jsonb;
+    ALTER TABLE ${t('produtos_ean')} ADD COLUMN IF NOT EXISTS enriquecido_em TIMESTAMPTZ;
   `);
 
   await p.query(`
@@ -466,6 +475,13 @@ export async function listItens(client = getPool()) {
             pe.titulo AS ean_titulo,
             pe.categorias AS ean_categorias,
             pe.marca AS ean_marca,
+            pe.descricao AS ean_descricao,
+            pe.ncm AS ean_ncm,
+            pe.cest AS ean_cest,
+            pe.quantidade AS ean_quantidade,
+            pe.quantidade_unidade AS ean_quantidade_unidade,
+            pe.nutriscore AS ean_nutriscore,
+            pe.fontes AS ean_fontes,
             e.nome AS empresa_nome, n.numero AS nota_numero, n.chave_acesso,
             n.emissao AS nota_emissao, cb.codigo_barras,
             COALESCE(pe.foto_url, cb.foto_url) AS foto_url,
@@ -517,8 +533,17 @@ export async function upsertProdutoEan(
     categorias,
     fotoUrl,
     marca,
+    descricao,
+    ncm,
+    cest,
+    quantidade,
+    quantidadeUnidade,
+    nutriscore,
+    fontes,
+    extras,
     fonte,
     forceTitulo = false,
+    marcarEnriquecido = false,
   } = {},
   client = getPool(),
 ) {
@@ -539,20 +564,47 @@ export async function upsertProdutoEan(
     .slice(0, 128) || null;
   const fonteNorm = fonte ? String(fonte).slice(0, 64) : null;
   const fallbackTitulo = tituloNorm || ean;
+  const descNorm = normalizeTituloEan(descricao)?.slice(0, 2000) || null;
+  const ncmNorm = ncm ? String(ncm).replace(/\s/g, '').slice(0, 16) : null;
+  const cestNorm = cest ? String(cest).replace(/\D/g, '').slice(0, 16) : null;
+  const qtd =
+    Number.isFinite(Number(quantidade)) && Number(quantidade) > 0
+      ? Number(quantidade)
+      : null;
+  const qtdUn = quantidadeUnidade
+    ? String(quantidadeUnidade).slice(0, 16)
+    : null;
+  const nutri = nutriscore ? String(nutriscore).slice(0, 8) : null;
+  const fontesArr = normalizeCategoriasEan(fontes);
+  const extrasJson =
+    extras && typeof extras === 'object' && !Array.isArray(extras)
+      ? extras
+      : {};
 
   const r = await client.query(
     `INSERT INTO ${t('produtos_ean')}
-       (codigo_barras, titulo, categorias, foto_url, marca, fonte)
-     VALUES ($1, $2, $3::text[], $4, $5, $6)
+       (codigo_barras, titulo, categorias, foto_url, marca, fonte,
+        descricao, ncm, cest, quantidade, quantidade_unidade, nutriscore,
+        fontes, extras, enriquecido_em)
+     VALUES (
+       $1, $2, $3::text[], $4, $5, $6,
+       $8, $9, $10, $11, $12, $13,
+       $14::text[], $15::jsonb,
+       CASE WHEN $16::boolean THEN now() ELSE NULL END
+     )
      ON CONFLICT (codigo_barras) DO UPDATE SET
        titulo = CASE
          WHEN $7::boolean AND NULLIF(TRIM(EXCLUDED.titulo), '') IS NOT NULL
+           AND (${t('produtos_ean')}.fonte IS DISTINCT FROM 'manual' OR $7::boolean)
            THEN EXCLUDED.titulo
          WHEN NULLIF(TRIM(${t('produtos_ean')}.titulo), '') IS NULL
            THEN COALESCE(NULLIF(TRIM(EXCLUDED.titulo), ''), ${t('produtos_ean')}.titulo)
          WHEN NULLIF(TRIM(EXCLUDED.titulo), '') IS NOT NULL
            AND ${t('produtos_ean')}.fonte IS DISTINCT FROM 'manual'
-           AND EXCLUDED.fonte IN ('sugestao', 'si5', 'manual')
+           AND EXCLUDED.fonte IN (
+             'sugestao', 'si5', 'manual', 'precomelhor', 'openfoodfacts',
+             'openbeautyfacts', 'openproductsfacts', 'upcitemdb', 'enrich'
+           )
            THEN EXCLUDED.titulo
          ELSE ${t('produtos_ean')}.titulo
        END,
@@ -562,10 +614,51 @@ export async function upsertProdutoEan(
        END,
        foto_url = COALESCE(EXCLUDED.foto_url, ${t('produtos_ean')}.foto_url),
        marca = COALESCE(EXCLUDED.marca, ${t('produtos_ean')}.marca),
+       descricao = COALESCE(EXCLUDED.descricao, ${t('produtos_ean')}.descricao),
+       ncm = COALESCE(EXCLUDED.ncm, ${t('produtos_ean')}.ncm),
+       cest = COALESCE(EXCLUDED.cest, ${t('produtos_ean')}.cest),
+       quantidade = COALESCE(EXCLUDED.quantidade, ${t('produtos_ean')}.quantidade),
+       quantidade_unidade = COALESCE(
+         EXCLUDED.quantidade_unidade,
+         ${t('produtos_ean')}.quantidade_unidade
+       ),
+       nutriscore = COALESCE(EXCLUDED.nutriscore, ${t('produtos_ean')}.nutriscore),
+       fontes = CASE
+         WHEN cardinality(EXCLUDED.fontes) > 0 THEN (
+           SELECT ARRAY(
+             SELECT DISTINCT x FROM unnest(
+               COALESCE(${t('produtos_ean')}.fontes, '{}'::text[]) || EXCLUDED.fontes
+             ) AS x
+           )
+         )
+         ELSE ${t('produtos_ean')}.fontes
+       END,
+       extras = COALESCE(${t('produtos_ean')}.extras, '{}'::jsonb) || COALESCE(EXCLUDED.extras, '{}'::jsonb),
        fonte = COALESCE(EXCLUDED.fonte, ${t('produtos_ean')}.fonte),
+       enriquecido_em = CASE
+         WHEN $16::boolean THEN now()
+         ELSE ${t('produtos_ean')}.enriquecido_em
+       END,
        updated_at = now()
      RETURNING *`,
-    [ean, fallbackTitulo, cats, foto, marcaNorm, fonteNorm, Boolean(forceTitulo)],
+    [
+      ean,
+      fallbackTitulo,
+      cats,
+      foto,
+      marcaNorm,
+      fonteNorm,
+      Boolean(forceTitulo),
+      descNorm,
+      ncmNorm,
+      cestNorm,
+      qtd,
+      qtdUn,
+      nutri,
+      fontesArr,
+      JSON.stringify(extrasJson),
+      Boolean(marcarEnriquecido),
+    ],
   );
   return r.rows[0];
 }

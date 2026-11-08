@@ -667,7 +667,21 @@ function setProdutoEanSuggestBuscarLoading(on) {
   produtoEanSuggestBuscarEl.classList.toggle('is-busy', Boolean(on));
   produtoEanSuggestBuscarEl.setAttribute('aria-busy', on ? 'true' : 'false');
   produtoEanSuggestBuscarEl.textContent = on ? 'Buscando…' : 'Buscar';
-  if (produtoEanSuggestQEl) produtoEanSuggestQEl.disabled = Boolean(on);
+}
+
+function runProdutoEanSuggestSearch() {
+  if (produtoAbertaKey == null) return;
+  const hist = historicoProduto(produtoAbertaKey);
+  const head = hist[0];
+  if (!head) return;
+  const q = String(produtoEanSuggestQEl?.value || '').trim();
+  void loadProdutoEanSuggestions(head, q || head.nome);
+}
+
+let produtoEanSuggestSearchTimer = 0;
+function scheduleProdutoEanSuggestSearch() {
+  clearTimeout(produtoEanSuggestSearchTimer);
+  produtoEanSuggestSearchTimer = setTimeout(runProdutoEanSuggestSearch, 400);
 }
 
 async function loadProdutoEanSuggestions(head, queryOverride) {
@@ -1607,12 +1621,11 @@ vitrineItensEl?.addEventListener('click', (ev) => {
 });
 produtoEanSuggestFormEl?.addEventListener('submit', (ev) => {
   ev.preventDefault();
-  if (produtoAbertaKey == null) return;
-  const hist = historicoProduto(produtoAbertaKey);
-  const head = hist[0];
-  if (!head) return;
-  const q = String(produtoEanSuggestQEl?.value || '').trim();
-  void loadProdutoEanSuggestions(head, q || head.nome);
+  clearTimeout(produtoEanSuggestSearchTimer);
+  runProdutoEanSuggestSearch();
+});
+produtoEanSuggestQEl?.addEventListener('input', () => {
+  scheduleProdutoEanSuggestSearch();
 });
 
 produtoEanSuggestEl?.addEventListener('click', (ev) => {

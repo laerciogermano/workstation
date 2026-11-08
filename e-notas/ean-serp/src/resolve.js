@@ -4,6 +4,7 @@ import { cdpAvailable, searchGoogleCdpEan } from './providers/google-cdp.js';
 import { enrichSi5Product, searchSi5Api, searchSi5Html } from './providers/si5.js';
 
 const MAX_DEFAULT = 8;
+const MAX_LIMIT = 50;
 const ENRICH_TOP = 5;
 
 function requireDescricao(descricao) {
@@ -15,7 +16,7 @@ function requireDescricao(descricao) {
 }
 
 function parseLimit(opts) {
-  return Math.min(20, Math.max(1, Number(opts.limit ?? opts.n) || MAX_DEFAULT));
+  return Math.min(MAX_LIMIT, Math.max(1, Number(opts.limit ?? opts.n) || MAX_DEFAULT));
 }
 
 function mergeCandidates(list, map) {
@@ -136,7 +137,9 @@ export async function resolveEanSi5(descricao, opts = {}) {
   }
 
   try {
-    const si5 = await searchSi5Html(descricao_norm, { n: Math.max(limit, 12) });
+    const si5 = await searchSi5Html(descricao_norm, {
+      n: Math.max(limit, Math.min(MAX_LIMIT, limit * 2)),
+    });
     mergeCandidates(si5, map);
     providers.push({ id: 'si5-html', n: si5.length });
   } catch (err) {

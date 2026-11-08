@@ -66,7 +66,40 @@ function parseSi5SearchHtml(text, queryNorm) {
 
 function looksMultipack(nome) {
   const n = String(nome || '');
-  return /\b\d+\s*x\b/i.test(n) || /\b\d+\s*latas?\b/i.test(n) || /\bcombo\b/i.test(n);
+  return (
+    /\b\d+\s*x\b/i.test(n) ||
+    /\b\d+\s*latas?\b/i.test(n) ||
+    /\bcombo\b/i.test(n) ||
+    /\bkit\b/i.test(n) ||
+    /\bunidades?\b/i.test(n)
+  );
+}
+
+const GENERIC_FOOD = new Set([
+  'BATATA',
+  'SALGADINHO',
+  'SNACK',
+  'BISCOITO',
+  'PRODUTO',
+  'MARCA',
+]);
+
+/** Marca + sabor da query presentes no nome → sobe unidade (ex.: PRINGLES QUEIJO). */
+function boostBrandFlavor(queryNorm, nome, ean, score) {
+  const qToks = String(queryNorm || '')
+    .split(/\s+/)
+    .filter((t) => t && !GENERIC_FOOD.has(t) && !/^\d/.test(t));
+  if (qToks.length < 2) return score;
+  const cand = String(nome || '').toUpperCase();
+  const hit = qToks.filter((t) => cand.includes(t));
+  if (hit.length < 2) return score;
+  const unit =
+    String(ean || '').length === 13 &&
+    (ean.startsWith('789') || ean.startsWith('790'));
+  if (unit && !looksMultipack(nome)) {
+    return Math.min(1, Math.max(score, 0.92));
+  }
+  return score;
 }
 
 /**
@@ -77,19 +110,21 @@ function looksMultipack(nome) {
  * @returns {Promise<Array<{ean, nome_canonico, image_url, url, fonte, score}>>}
  */
 export async function searchSi5Html(descricaoNorm, opts = {}) {
-  const n = Math.min(50, Math.max(1, Number(opts.n) || 20));
+  const n = Math.min(80, Math.max(1, Number(opts.n) || 40));
   const variants = queryVariants(descricaoNorm);
   const merged = new Map();
+  const qNorm = String(descricaoNorm || '');
 
   for (const q of variants) {
     const url = `${BASE}/?q=${encodeURIComponent(q)}`;
     const { ok, text } = await fetchText(url);
     if (!ok || !text) continue;
-    const map = parseSi5SearchHtml(text, String(descricaoNorm || q));
+    const map = parseSi5SearchHtml(text, qNorm || q);
     for (const [ean, c] of map) {
       let score = c.score;
-      if (looksMultipack(c.nome_canonico)) score *= 0.55;
+      if (looksMultipack(c.nome_canonico)) score *= 0.45;
       if (ean.length === 14) score *= 0.7;
+      score = boostBrandFlavor(qNorm, c.nome_canonico, ean, score);
       const next = { ...c, score: Math.max(0.35, score) };
       const prev = merged.get(ean);
       if (!prev || next.score > prev.score) merged.set(ean, next);

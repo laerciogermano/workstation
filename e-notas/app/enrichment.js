@@ -21,6 +21,8 @@ const UA =
   'notinhas.shop/0.1 (product enrichment; +https://notinhas.shop; contato@notinhas.shop)';
 const FETCH_MS = 12_000;
 const MAX_CANDIDATOS = 8;
+/** Sugestões SI5 no front — precisa de mais slots (unidade costuma ficar atrás de kits). */
+const MAX_SI5_SUGESTOES = 40;
 /** Score mínimo para disparar busca de imagens por EAN sem confirmação. */
 export const SCORE_IMAGENS_AUTO = 0.72;
 
@@ -338,8 +340,8 @@ export async function resolveEanSi5Only(descricao, { n } = {}) {
   }
   const descricao_norm = normalizeDescricao(raw);
   const limit = Math.min(
-    MAX_CANDIDATOS,
-    Math.max(1, Number(n) || MAX_CANDIDATOS),
+    MAX_SI5_SUGESTOES,
+    Math.max(1, Number(n) || MAX_SI5_SUGESTOES),
   );
   const base = eanSerpBase();
   const ctrl = new AbortController();

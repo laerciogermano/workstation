@@ -918,11 +918,20 @@ async function ensureLegacyFotoAsCandidate(ean, client = getPool()) {
   return r.rows;
 }
 
+function temFonteGoogle(imagens) {
+  return (imagens || []).some((i) =>
+    String(i.fonte || '')
+      .toLowerCase()
+      .includes('google'),
+  );
+}
+
 /**
- * Busca e persiste até 50 candidatas (APIs + Google Imagens, default n=50). Idempotente sem force.
+ * Busca e persiste até 50 candidatas (APIs + Google Imagens, default n=50).
+ * Sem force: reusa cache só se já houver Google; senão completa com Google (e APIs se vazio).
  * @param {string} codigoBarras
  * @param {{ force?: boolean, descricao?: string }} [opts]
- * @returns {{ ean: string, skipped?: boolean, imagens: object[], baixadas: number }}
+ * @returns {{ ean: string, skipped?: boolean, imagens: object[], baixadas: number, google_error?: string }}
  */
 export async function buscarImagensEan(
   codigoBarras,
@@ -936,30 +945,48 @@ export async function buscarImagensEan(
 
   return withEanSearchLock(ean, async () => {
     const client = getPool();
-    let imagens;
+    let imagens = [];
+    let onlyGoogle = false;
 
     if (!force) {
       imagens = await ensureLegacyFotoAsCandidate(ean, client);
-      if (imagens.length > 0) {
+      if (!imagens.length) imagens = await listEanImagens(ean, client);
+      if (imagens.length > 0 && temFonteGoogle(imagens)) {
         return { ean, skipped: true, cached: true, imagens, baixadas: 0 };
       }
-      imagens = await listEanImagens(ean, client);
-      if (imagens.length > 0) {
-        return { ean, skipped: true, cached: true, imagens, baixadas: 0 };
-      }
+      // Já tem OFF/etc sem Google → só completa Google (não apaga as existentes).
+      if (imagens.length > 0) onlyGoogle = true;
     } else {
       await client.query(
         `DELETE FROM ${t('ean_imagens')} WHERE codigo_barras = $1`,
         [ean],
       );
+      imagens = [];
     }
 
-    const candidates = await collectImageCandidates(ean, { descricao: nome });
+    const collected = await collectImageCandidates(ean, {
+      descricao: nome,
+      forceGoogle: Boolean(force) || onlyGoogle,
+      apis: !onlyGoogle,
+    });
+    const candidates = Array.isArray(collected)
+      ? collected
+      : collected.candidates || [];
+    const googleError = Array.isArray(collected)
+      ? undefined
+      : collected.googleError;
+
     let baixadas = 0;
-    let ordem = 1;
-    const seenSha = new Set();
+    let ordem =
+      onlyGoogle && imagens.length
+        ? Math.max(...imagens.map((i) => Number(i.ordem) || 0), 0) + 1
+        : 1;
+    const seenSha = new Set(
+      (imagens || []).map((i) => i.sha1).filter(Boolean),
+    );
 
     for (const c of candidates) {
+      if (onlyGoogle && !String(c.fonte || '').includes('google')) continue;
       try {
         const dl = await downloadEanImage(ean, c.url, ordem);
         if (!dl) continue;
@@ -989,9 +1016,16 @@ export async function buscarImagensEan(
     }
 
     // Legado flat ainda útil se a busca falhou
-    if (baixadas === 0) {
+    if (baixadas === 0 && !imagens.length) {
       imagens = await ensureLegacyFotoAsCandidate(ean, client);
-      return { ean, skipped: false, cached: false, imagens, baixadas: 0 };
+      return {
+        ean,
+        skipped: false,
+        cached: false,
+        imagens,
+        baixadas: 0,
+        ...(googleError ? { google_error: googleError } : {}),
+      };
     }
 
     imagens = await listEanImagens(ean, client);
@@ -1001,7 +1035,14 @@ export async function buscarImagensEan(
       imagens = await listEanImagens(ean, client);
     }
 
-    return { ean, skipped: false, cached: false, imagens, baixadas };
+    return {
+      ean,
+      skipped: false,
+      cached: false,
+      imagens,
+      baixadas,
+      ...(googleError ? { google_error: googleError } : {}),
+    };
   });
 }
 

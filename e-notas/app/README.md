@@ -65,7 +65,7 @@ Resposta: `{ ok, created, empresaCriada, url, empresa, nota, itens }`.
 | `GET` | `/api/codigos-barras` | `{ ok, codigosBarras }` (inclui `foto_url`) |
 | `POST` | `/api/codigos-barras` | body `{ empresa_id, codigo_unidade, codigo_barras, foto_url?, origem?, descricao? }` → upsert; `origem`: `sugestao` \| `barcode_scan` \| `manual` (REQ-043); dispara fotos (REQ-032) |
 | `GET` | `/api/ean-imagens?codigo_barras=` | `{ ok, imagens }` candidatas do EAN |
-| `POST` | `/api/ean-imagens/buscar` | body `{ codigo_barras, force?, descricao? }` → APIs + **Google Imagens** (query EAN+nome); idempotente sem `force` |
+| `POST` | `/api/ean-imagens/buscar` | body `{ codigo_barras, force?, descricao? }` → APIs + **Google Imagens** (query EAN+nome). Sem `force`: reusa cache só se já houver Google; senão completa Google. `force` refaz tudo. Resposta pode trazer `google_error` se CDP `:9223` falhar |
 | `POST` | `/api/ean-imagens/:id/selecionar` | marca a foto do feed e atualiza `codigos_barras.foto_url` |
 | `GET` | `/api/enrichment/ean/si5/stream` | SSE SI5 (`descricao`, `n`); front das sugestões |
 | `GET`/`POST` | `/api/enrichment/ean/si5` | JSON final só SI5 (`descricao`, `n?`) |

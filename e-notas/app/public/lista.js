@@ -1019,14 +1019,18 @@ async function buscarProdutoFotos(force) {
     const fonteResumo = [...byFonte.entries()]
       .map(([k, n]) => `${k} ${n}`)
       .join(' · ');
+    const googleHint = data.google_error
+      ? ` Google: ${data.google_error}`
+      : '';
     setProdutoFotosStatus(
       data.cached || data.skipped
         ? `Cache: ${imgs.length} foto(s)${
             fonteResumo ? ` · ${fonteResumo}` : ''
-          }. Use Atualizar p/ buscar de novo.`
+          }. Use Atualizar p/ buscar de novo.${googleHint}`
         : `Baixadas: ${data.baixadas || 0}${
             fonteResumo ? ` · ${fonteResumo}` : ''
-          }. Toque para escolher a do feed.`,
+          }. Toque para escolher a do feed.${googleHint}`,
+      data.google_error ? 'err' : '',
     );
     await reloadItens();
     if (produtoAbertaKey) renderProdutoDetalhe(produtoAbertaKey);

@@ -142,65 +142,81 @@ export function googleQueryForEan(ean, descricao) {
 }
 
 /** Sempre consulta Google Imagens (CDP, sem API key) e mistura no pool. */
-async function fromGoogleImagens(ean, descricao, list) {
+async function fromGoogleImagens(ean, descricao, list, { force = false } = {}) {
   const q = googleQueryForEan(ean, descricao);
-  if (!q) return;
-  const { items } = await searchGoogleImages(q, { n: MAX_GOOGLE });
+  if (!q) return { added: 0 };
+  const { items } = await searchGoogleImages(q, { n: MAX_GOOGLE, force });
   let i = 0;
+  const before = list.length;
   for (const item of items) {
     // prioridade atrás das APIs de produto, mas acima de “lixo”
     pushCandidate(list, item.url, 'google-imagens', 40 + i);
     i += 1;
   }
+  return { added: list.length - before, query: q };
 }
 
 /**
  * @param {string} ean
- * @param {{ descricao?: string }} [opts]
+ * @param {{ descricao?: string, forceGoogle?: boolean, apis?: boolean }} [opts]
+ * @returns {Promise<{ candidates: object[], googleError?: string, googleAdded: number }>}
  */
 export async function collectImageCandidates(ean, opts = {}) {
   const code = String(ean ?? '').trim();
   const descricao = String(opts.descricao ?? '').trim();
+  const wantApis = opts.apis !== false;
   const list = [];
-  if (!code) return list;
+  let googleError;
+  let googleAdded = 0;
+  if (!code) return { candidates: list, googleAdded: 0 };
 
-  await fromOpenFacts(code, 'world.openfoodfacts.org', 'openfoodfacts', list);
-  await sleep(200);
-  if (list.length < MAX_CANDIDATAS) {
-    await fromOpenFacts(
-      code,
-      'world.openbeautyfacts.org',
-      'openbeautyfacts',
-      list,
-    );
+  if (wantApis) {
+    await fromOpenFacts(code, 'world.openfoodfacts.org', 'openfoodfacts', list);
     await sleep(200);
-  }
-  if (list.length < MAX_CANDIDATAS) {
-    await fromOpenFacts(
-      code,
-      'world.openproductsfacts.org',
-      'openproductsfacts',
-      list,
-    );
-    await sleep(200);
-  }
-  if (list.length < MAX_CANDIDATAS) {
-    try {
-      await fromUpcitemdb(code, list);
-    } catch (err) {
-      console.warn('[ean-imagens] upcitemdb:', err.message);
+    if (list.length < MAX_CANDIDATAS) {
+      await fromOpenFacts(
+        code,
+        'world.openbeautyfacts.org',
+        'openbeautyfacts',
+        list,
+      );
+      await sleep(200);
+    }
+    if (list.length < MAX_CANDIDATAS) {
+      await fromOpenFacts(
+        code,
+        'world.openproductsfacts.org',
+        'openproductsfacts',
+        list,
+      );
+      await sleep(200);
+    }
+    if (list.length < MAX_CANDIDATAS) {
+      try {
+        await fromUpcitemdb(code, list);
+      } catch (err) {
+        console.warn('[ean-imagens] upcitemdb:', err.message);
+      }
     }
   }
 
   // Google sempre entra no pool (não só quando as APIs falham).
   try {
-    await fromGoogleImagens(code, descricao, list);
+    const g = await fromGoogleImagens(code, descricao, list, {
+      force: Boolean(opts.forceGoogle),
+    });
+    googleAdded = g?.added || 0;
   } catch (err) {
-    console.warn('[ean-imagens] google-imagens:', err.message);
+    googleError = err.message || String(err);
+    console.warn('[ean-imagens] google-imagens:', googleError);
   }
 
   list.sort((a, b) => a.prioridade - b.prioridade);
-  return list.slice(0, MAX_CANDIDATAS);
+  return {
+    candidates: list.slice(0, MAX_CANDIDATAS),
+    googleError,
+    googleAdded,
+  };
 }
 
 function extFromContentType(ct, url) {

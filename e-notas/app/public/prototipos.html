@@ -382,17 +382,19 @@ th{color:var(--muted);font-weight:600}
   <div class="lrow" data-go="T-14" data-ean="7898367984018"><div class="ph sm"><img src="media/7898367984018.jpg" alt=""></div><div class="grow"><p class="b sm">Eisenbahn Pilsen 350ml</p><p class="xs muted">EAN 7898367984018</p></div><div class="col end"><p class="pp">R$ 3,99</p><p class="xs muted">Formosa</p></div></div>
   <div class="lrow" data-go="T-14" data-ean="3000054355283"><div class="ph sm"><img src="media/3000054355283.webp" alt=""></div><div class="grow"><p class="b sm">Monster Zero Açúcar 473ml</p><p class="xs muted">EAN 3000054355283</p></div><div class="col end"><p class="pp">R$ 13,99</p><p class="xs muted">Dimed</p></div></div>
 </div></template>
-<template data-id="T-12" data-name="Comparação" data-accent="green" data-us="US-02.05" data-notes="Mesmo EAN entre lojas. Menor preço verde + loja + data. RN-03.">
+<template data-id="T-12" data-name="Últimos registros" data-accent="green" data-us="US-02.05" data-notes="Últimos preços/registros do EAN por loja e data (observações de NFC-e). RN-03.">
 <div class="body">
-  <div class="top"><button class="ibtn" data-go="back">‹</button><span class="t">Comparar</span></div>
-  <div class="flex gap8 mb12"><div class="ph md"></div><div><p class="b">Monster Ultra Fiesta Mango Zero</p><p class="xs muted">7891000100103</p></div></div>
+  <div class="top"><button class="ibtn" data-go="back">‹</button><span class="t">Últimos preços</span></div>
+  <div class="flex gap8 mb12"><div class="ph md"><img src="media/3000054721644.jpg" alt=""></div><div><p class="b">Monster Ultra Fiesta Mango Zero</p><p class="xs muted">EAN 3000054721644</p></div></div>
+  <p class="xs muted mb8">4 registros recentes · ordenados por data</p>
   <div class="ncard g pad mb8">
-    <div class="flex between"><span class="badge g">menor preço</span><span class="pp">R$ 4,29</span></div>
-    <p class="sm mt4">Condor Centro · hoje 08:12</p>
+    <div class="flex between"><span class="badge g">mais recente · menor</span><span class="pp">R$ 13,99</span></div>
+    <p class="sm mt4">Dimed · hoje 09:14 · NFC-e</p>
     <button class="btn s sm mt8" data-go="T-30">Como chegar</button>
   </div>
-  <div class="card pad mb8 flex between"><div><p class="b sm">Super Muffato</p><p class="xs muted">ontem</p></div><p class="b">R$ 4,59</p></div>
-  <div class="card pad mb8 flex between"><div><p class="b sm">Mercadorama</p><p class="xs muted">há 3 dias</p></div><p class="b">R$ 4,79</p></div>
+  <div class="card pad mb8 flex between"><div><p class="b sm">Formosa</p><p class="xs muted">ontem 18:40 · NFC-e</p></div><p class="b">R$ 14,49</p></div>
+  <div class="card pad mb8 flex between"><div><p class="b sm">Dimed</p><p class="xs muted">há 5 dias · NFC-e</p></div><p class="b">R$ 14,29</p></div>
+  <div class="card pad mb8 flex between"><div><p class="b sm">Formosa</p><p class="xs muted">há 12 dias · NFC-e</p></div><p class="b">R$ 15,40</p></div>
   <div class="stack mt12">
     <button class="btn s" data-go="T-13">Ver histórico</button>
     <button class="btn s" data-go="T-40">Adicionar à lista</button>
@@ -419,13 +421,16 @@ th{color:var(--muted);font-weight:600}
   <p class="pp" style="font-size:22px;margin-top:6px">R$ 13,99</p>
   <p class="xs muted">Dimed · hoje · da base notinhas</p>
   <div class="sec-block">
-    <p class="sec">Comparação</p>
-    <div class="lrow"><div class="av">D</div><div class="grow"><p class="b sm">Dimed</p><p class="xs muted">hoje</p></div><p class="pp">R$ 13,99</p></div>
-    <div class="lrow"><div class="av g">F</div><div class="grow"><p class="b sm">Formosa</p><p class="xs muted">ontem</p></div><p class="b">R$ 14,49</p></div>
-    <button class="btn s sm mt8" data-go="T-12">Ver todas as lojas</button>
+    <p class="sec">Últimos preços</p>
+    <p class="xs muted mb8">Registros recentes deste EAN nas notas</p>
+    <div class="lrow" data-go="T-12"><div class="av">D</div><div class="grow"><p class="b sm">Dimed</p><p class="xs muted">hoje · NFC-e · 1 registro</p></div><p class="pp">R$ 13,99</p></div>
+    <div class="lrow" data-go="T-12"><div class="av g">F</div><div class="grow"><p class="b sm">Formosa</p><p class="xs muted">ontem · NFC-e · 1 registro</p></div><p class="b">R$ 14,49</p></div>
+    <div class="lrow" data-go="T-12"><div class="av">D</div><div class="grow"><p class="b sm">Dimed</p><p class="xs muted">há 5 dias · NFC-e</p></div><p class="b">R$ 14,29</p></div>
+    <button class="btn s sm mt8" data-go="T-12">Ver todos os registros</button>
   </div>
   <div class="sec-block">
     <p class="sec">Histórico</p>
+    <p class="xs muted mb8">Série dos últimos registros no tempo</p>
     <div class="chart"><i style="height:40%"></i><i class="low" style="height:55%"></i><i style="height:48%"></i><i class="low" style="height:62%"></i><i class="low" style="height:70%"></i></div>
     <button class="btn s sm mt8" data-go="T-13">Abrir série</button>
   </div>
@@ -836,7 +841,7 @@ const FLOWS = [
       ["T-15", "Mapa produtos"],
       ["T-11", "Busca"],
       ["T-14", "Detalhe"],
-      ["T-12", "Comparar"],
+      ["T-12", "Últimos preços"],
       ["T-13", "Histórico"]
     ]
   },

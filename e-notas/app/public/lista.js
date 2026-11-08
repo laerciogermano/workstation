@@ -254,8 +254,12 @@ function renderEmpresasMap(rows) {
     const lat = Number(r.lat);
     const lng = Number(r.lng);
     const marker = L.marker([lat, lng]);
+    const prog = eanProgressLoja(r.id);
+    const progLine = prog.total
+      ? `<span class="ean-progress-ok-txt">${prog.comEan}/${prog.total} EAN (${prog.pctOk}%)</span>`
+      : '0 itens';
     marker.bindPopup(
-      `<strong>${esc(r.nome || r.cnpj || `#${r.id}`)}</strong><br>${esc(r.endereco || '')}<br><button type="button" class="linkish" data-open-loja="${esc(r.id)}">Abrir</button>`,
+      `<strong>${esc(r.nome || r.cnpj || `#${r.id}`)}</strong><br>${esc(r.endereco || '')}<br>${progLine}<br><button type="button" class="linkish" data-open-loja="${esc(r.id)}">Abrir</button>`,
     );
     marker.on('popupopen', () => {
       const btn = document.querySelector(`[data-open-loja="${String(r.id)}"]`);
@@ -456,6 +460,52 @@ function lojaHaystack(r) {
   return [r.id, r.nome, r.cnpj, r.endereco]
     .map((v) => String(v ?? '').toLowerCase())
     .join(' ');
+}
+
+/** Progresso de vínculo EAN por estabelecimento (SKU interno únicos). */
+function eanProgressLoja(empresaId) {
+  const rows = allItens.filter(
+    (i) => Number(i.empresa_id) === Number(empresaId),
+  );
+  const bySku = new Map();
+  for (const r of rows) {
+    const cod = String(r.codigo || '').trim();
+    const key = cod || produtoKey(r);
+    if (!key || key === 'cod:' || key === 'nome:') continue;
+    const hasEan = Boolean(String(r.codigo_barras || '').trim());
+    const prev = bySku.get(key);
+    if (!prev) bySku.set(key, { hasEan });
+    else if (hasEan) prev.hasEan = true;
+  }
+  const total = bySku.size;
+  const comEan = [...bySku.values()].filter((x) => x.hasEan).length;
+  const semEan = Math.max(0, total - comEan);
+  const pctOk = total ? Math.round((comEan / total) * 100) : 0;
+  const pctFalta = total ? 100 - pctOk : 0;
+  return { total, comEan, semEan, pctOk, pctFalta };
+}
+
+function htmlEanProgress(empresaId) {
+  const p = eanProgressLoja(empresaId);
+  if (!p.total) {
+    return `<div class="ean-progress ean-progress-empty">
+      <p class="ean-progress-meta">0 itens</p>
+    </div>`;
+  }
+  const label = `${p.comEan} de ${p.total} com código de barras (${p.pctOk}%)`;
+  return `<div class="ean-progress" role="img" aria-label="${esc(label)}">
+    <div class="ean-progress-bar" aria-hidden="true">
+      <span class="ean-progress-ok" style="width:${p.pctOk}%"></span>
+      <span class="ean-progress-miss" style="width:${p.pctFalta}%"></span>
+    </div>
+    <p class="ean-progress-meta">
+      <span class="ean-progress-ok-txt">${p.comEan} com EAN (${p.pctOk}%)</span>
+      <span class="ean-progress-sep">·</span>
+      <span class="ean-progress-miss-txt">${p.semEan} sem (${p.pctFalta}%)</span>
+      <span class="ean-progress-sep">·</span>
+      <span>${p.total} item${p.total === 1 ? '' : 's'}</span>
+    </p>
+  </div>`;
 }
 
 function renderProdutosTab() {
@@ -1075,16 +1125,13 @@ function renderVitrineLista() {
   if (countEl) countEl.textContent = `(${allEmpresas.length})`;
   vitrineGridEl.innerHTML = rows.length
     ? rows
-        .map((r) => {
-          const n = catalogoLoja(r.id).length;
-          return `<button type="button" class="loja-card" data-open-loja="${esc(r.id)}">
+        .map(
+          (r) => `<button type="button" class="loja-card" data-open-loja="${esc(r.id)}">
             <h3 class="loja-nome">${esc(r.nome || r.cnpj || `Estabelecimento #${r.id}`)}</h3>
             <p class="loja-meta">${esc(r.endereco || '')}</p>
-            <div class="loja-stats">
-              <span class="chip">${n} item${n === 1 ? '' : 's'}</span>
-            </div>
-          </button>`;
-        })
+            ${htmlEanProgress(r.id)}
+          </button>`,
+        )
         .join('')
     : `<p class="hint">${allEmpresas.length ? 'Nada encontrado.' : 'Sem estabelecimentos.'}</p>`;
 }
@@ -1116,9 +1163,7 @@ function renderVitrineDetalhe(empresaId) {
     <h3 class="loja-nome">${esc(loja.nome || loja.cnpj || `Estabelecimento #${loja.id}`)}</h3>
     <p class="loja-meta">${esc(loja.endereco || '')}</p>
     <p class="loja-meta mono">${esc(loja.cnpj || '')}</p>
-    <div class="loja-stats">
-      <span class="chip">${catalogo.length} produto${catalogo.length === 1 ? '' : 's'}</span>
-    </div>`;
+    ${htmlEanProgress(loja.id)}`;
 
   const countVitrine = document.getElementById('count-vitrine-itens');
   if (countVitrine) countVitrine.textContent = `(${rows.length})`;

@@ -424,6 +424,15 @@ Card: [BXKZ55Wb](https://trello.com/c/BXKZ55Wb).
 - Antes: catálogo agrupava também por nome/código sem EAN. Depois: só chave `ean:…`.
 - Rollback: remover o filtro `codigo_barras` em `catalogoProdutos()` (`lista.js`).
 
+## REQ-046 — Progresso de EAN no estabelecimento (2026-11-08)
+
+- Em cada **card** da lista de estabelecimentos e no **cabeçalho** do detalhe da loja: barra de progresso do vínculo de código de barras.
+- Contagem por SKU interno (`codigo`) da loja: total, com EAN, sem EAN.
+- **Verde** = % / qtd. com EAN; **vermelho** = % / qtd. sem EAN; texto com `N com EAN (X%) · M sem (Y%) · T itens`.
+- Popup do mapa mostra resumo `com/total EAN (%)`.
+- Antes: só chip “N itens”. Depois: barra bicolor + métricas.
+- Rollback: remover `eanProgressLoja` / `htmlEanProgress` e CSS `.ean-progress*`.
+
 ## Próximos passos
 
 → Manter este arquivo alinhado a cada pedido novo · esteira de docs em [`README.md`](README.md) quando avançar funcionalidades/BDD.

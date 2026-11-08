@@ -1423,6 +1423,64 @@ td.mono {
   gap: 0.4rem;
 }
 
+.ean-progress {
+  margin-top: 0.75rem;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.ean-progress-bar {
+  display: flex;
+  height: 8px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: #eee;
+}
+
+.ean-progress-ok {
+  display: block;
+  height: 100%;
+  background: var(--nt-green);
+  min-width: 0;
+}
+
+.ean-progress-miss {
+  display: block;
+  height: 100%;
+  background: var(--nt-err);
+  min-width: 0;
+}
+
+.ean-progress-meta {
+  margin: 0;
+  font-size: 0.75rem;
+  line-height: 1.35;
+  color: var(--nt-muted);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.35rem;
+  align-items: baseline;
+}
+
+.ean-progress-ok-txt {
+  color: var(--nt-green-deep);
+  font-weight: 650;
+}
+
+.ean-progress-miss-txt {
+  color: var(--nt-err);
+  font-weight: 650;
+}
+
+.ean-progress-sep {
+  color: var(--nt-muted);
+  font-weight: 400;
+}
+
+.ean-progress-empty .ean-progress-meta {
+  color: var(--nt-muted);
+}
+
 .chip {
   display: inline-flex;
   align-items: center;

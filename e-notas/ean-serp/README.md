@@ -9,11 +9,11 @@ Não grava no Postgres do e-notas; só resolve e devolve JSON.
 | Método | Rota | O que faz |
 |--------|------|-----------|
 | `GET`/`POST` | `/ean/si5` | **Só SI5** JSON final. Todas as variantes; top `n`/`limit` (máx 100) |
-| `GET` | `/ean/si5/stream` | **SSE** SI5: `meta` → `batch` (por variante) → `done` (+ `enrich` se `enrich=1`) |
+| `GET` | `/ean/si5/stream` | **SSE** SI5: `meta` → `batch` (com foto SI5 no top) → `done` (`enrich=0` desliga fotos) |
 | `GET`/`POST` | `/ean/google-cdp` | **Só Google** via Chrome CDP (`EAN {descricao}`). Precisa `CDP_URL` (default `:9223`) |
 | `GET`/`POST` | `/ean` | Orquestra SI5 + DDG (+ Google se `google_cdp=1`) — legado |
 
-Params comuns: `descricao` (ou `q`), `n` / `limit` (default 8). JSON: `enrich` default 1. Stream: `enrich` default 0.
+Params comuns: `descricao` (ou `q`), `n` / `limit` (default 8). `enrich` default 1 (JSON e stream).
 
 ```bash
 curl -sS 'http://127.0.0.1:4180/ean/si5?descricao=BATATA%20PRINGLES%20QUEIJO%20109G&n=8'

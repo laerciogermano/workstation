@@ -36,10 +36,12 @@ function writeSse(res, event, data) {
 
 async function handleSi5Stream(req, res) {
   const { descricao, limit } = parseCommon(req);
-  // stream: enrich só se pedido (senão batches chegam cedo)
-  const enrich = ['1', 'true', 'yes'].includes(
-    String(req.query.enrich || '').toLowerCase(),
-  );
+  // stream: fotos SI5 on por default; enrich=0 desliga
+  const enrichRaw = req.query.enrich;
+  const enrich =
+    enrichRaw === undefined || enrichRaw === ''
+      ? true
+      : !['0', 'false', 'no'].includes(String(enrichRaw).toLowerCase());
   const ac = new AbortController();
   const onClose = () => ac.abort();
   req.on('close', onClose);

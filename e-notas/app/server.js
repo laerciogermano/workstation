@@ -243,15 +243,15 @@ async function handleEnrichmentEanSi5Stream(req, res) {
   }
   const n =
     enrichmentInput(req, 'n') || enrichmentInput(req, 'limit') || '100';
-  const enrich = enrichmentInput(req, 'enrich');
+  const enrich = enrichmentInput(req, 'enrich') || '1';
   const base = String(
     process.env.EAN_SERP_URL || 'http://127.0.0.1:4180',
   ).replace(/\/$/, '');
   const qs = new URLSearchParams({
     descricao,
     n: String(n),
+    enrich: String(enrich),
   });
-  if (enrich) qs.set('enrich', enrich);
   const upstreamUrl = `${base}/ean/si5/stream?${qs}`;
 
   const ac = new AbortController();

@@ -128,16 +128,37 @@ function formatOne(c) {
   };
 }
 
+/** Preenche foto/nome SI5 nos que ainda não têm image_url. */
+async function enrichMissingPhotos(list, { max = 12, signal } = {}) {
+  const need = (list || []).filter((c) => c?.ean && !c.image_url).slice(0, max);
+  await Promise.all(
+    need.map(async (c) => {
+      if (signal?.aborted) return;
+      try {
+        const det = await enrichSi5Product(c.ean);
+        if (!det) return;
+        if (det.image_url) c.image_url = det.image_url;
+        if (det.nome_canonico) c.nome_canonico = c.nome_canonico || det.nome_canonico;
+        if (det.url) c.url = c.url || det.url;
+        c.fontes = [...new Set([...(c.fontes || [c.fonte]), 'si5-produto'])];
+      } catch {
+        /* ignore */
+      }
+    }),
+  );
+}
+
 /**
- * SSE SI5: emite batch por variante (sem enrich pesado no meio).
+ * SSE SI5: batch por variante; com enrich preenche fotos no top a cada batch.
  * @param {string} descricao
- * @param {{ limit?: number, n?: number, signal?: AbortSignal }} [opts]
+ * @param {{ limit?: number, n?: number, enrich?: boolean, signal?: AbortSignal }} [opts]
  * @yields {{ event: string, data: object }}
  */
 export async function* resolveEanSi5Stream(descricao, opts = {}) {
   const raw = requireDescricao(descricao);
   const descricao_norm = normalizeDescricao(raw);
   const limit = parseLimit(opts);
+  const enrich = opts.enrich !== false;
 
   yield {
     event: 'meta',
@@ -147,6 +168,7 @@ export async function* resolveEanSi5Stream(descricao, opts = {}) {
       descricao: raw,
       descricao_norm,
       limit,
+      enrich,
     },
   };
 
@@ -156,6 +178,9 @@ export async function* resolveEanSi5Stream(descricao, opts = {}) {
     signal: opts.signal,
   })) {
     last = (batch.candidatos || []).map(formatOne);
+    if (enrich) {
+      await enrichMissingPhotos(last, { max: 12, signal: opts.signal });
+    }
     yield {
       event: 'batch',
       data: {
@@ -168,11 +193,8 @@ export async function* resolveEanSi5Stream(descricao, opts = {}) {
     };
   }
 
-  // enrich leve só do top (após stream) — opcional via opts.enrich
-  if (opts.enrich !== false && last.length) {
-    const map = new Map(last.map((c) => [c.ean, { ...c }]));
-    const enriched = await finalize(map, limit, true);
-    last = enriched;
+  if (enrich && last.length) {
+    await enrichMissingPhotos(last, { max: Math.min(20, last.length), signal: opts.signal });
     yield {
       event: 'enrich',
       data: { candidatos: last },

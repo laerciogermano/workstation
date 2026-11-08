@@ -741,6 +741,7 @@ function loadProdutoEanSuggestions(head, queryOverride) {
   const qs = new URLSearchParams({
     descricao: query,
     n: '100',
+    enrich: '1',
   });
   const es = new EventSource(`api/enrichment/ean/si5/stream?${qs}`);
   produtoEanSuggestEs = es;

@@ -12,7 +12,7 @@
  *
  * Listagens de outras franquias usam id_franqueado_rel / id_franqueado (IDOR do portal).
  * --delta: não apaga pedidos/itens; só INSERT ON CONFLICT + completa itens faltantes.
- * --only-orcamentos: stubs a partir dos pedidos + liga pedido.orcamento_id (PK composta).
+ * --only-orcamentos: stubs a partir dos pedidos (total/status do pedido) + liga pedido.orcamento_id.
  */
 import { readFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
@@ -375,6 +375,8 @@ async function syncOnlyItens(pool) {
 /** Sessão do login em credentials.env (lista /orcamentos é dessa franquia). */
 const SESSION_FRANQUIA_ID = Number(arg('session-franquia', '9')) || 9;
 
+/** Stubs p/ franquias ≠ sessão: lista /orcamentos não honra id_franqueado_rel.
+ *  Preenche total/status a partir do pedido ligado (evita dashboard “desconhecido”/R$ 0). */
 function stubsFromPedidos(pedidos, orcFromPed) {
   return [...orcFromPed].map((id) => {
     const p = pedidos.find((x) => x.orcamento === id);
@@ -382,11 +384,11 @@ function stubsFromPedidos(pedidos, orcFromPed) {
       id,
       numero: id,
       data: p?.data || null,
-      status: null,
+      status: p ? 'Aprovado' : null,
       cliente: p?.cliente || null,
       vendedor: p?.vendedor || null,
-      total: null,
-      totalTexto: null,
+      total: p?.total ?? null,
+      totalTexto: p?.totalTexto ?? null,
     };
   });
 }

@@ -77,9 +77,12 @@ node scripts/sync-campinas-postgres.mjs --franquia=2 --only-orcamentos
 node scripts/sync-campinas-postgres.mjs --contato --skip-itens
 ```
 
+**Orçamentos cross-franquia:** a lista HTML `page=orcamentos` ignora `id_franqueado_rel` (só a franquia da sessão — default Campinas/`9`). Nas outras, o sync grava stubs a partir dos pedidos (cliente/vendedor/data + **total/status do pedido**, status default `Aprovado`). Detalhe real via IDOR: `page=orcamentos_edicao&id_orcamento=`.
+
 Antes → depois:
 - Sync full limpava tudo da franquia (incluindo itens). Com `--delta`, pedidos/itens existentes ficam; só entram registros novos e itens que faltavam.
 - `orcamento.id` era PK global → colisão entre franquias (`ON CONFLICT DO NOTHING` deixava orçamentos=0). Agora PK `(franquia_id, id)` + FK composta em `pedido`. Rollback: restaurar PK só em `id` e FK `pedido.orcamento_id → orcamento(id)` (quebra inserts cross-franquia de novo).
+- Stubs de orçamento vinham com `total`/`status` null → dashboard “desconhecido” e R$ 0. Agora herdam do pedido ligado. Rollback: `stubsFromPedidos` com `status/total` null de novo.
 
 ## Caminho inverso
 

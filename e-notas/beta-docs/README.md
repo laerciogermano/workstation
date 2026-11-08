@@ -28,6 +28,7 @@ Pacote canônico de documentos de produto, engenharia e arquitetura para impleme
 | 13 | [13-guia-desenvolvimento-com-ia.md](13-guia-desenvolvimento-com-ia.md) · [CLAUDE.md](ia/CLAUDE.md) · [prompts](ia/prompts.md) | Fluxo por task, antipadrões, docs vivos | Dev |
 | 14 | [14-operacao-deploy.md](14-operacao-deploy.md) | Contabo, nginx, Mailcow, backup e caminho inverso | Dev, DevOps |
 | 15 | [15-glossario.md](15-glossario.md) | Dicionário de equivalência formal entre termos de domínio tributário/comercial (pt-BR) e identificadores de código (inglês) | Todos |
+| 16 | [16-referencias-mercado.md](16-referencias-mercado.md) → [`referencias/`](referencias/README.md) · [relatório](reports/Boas%20praticas%20stack%20moderna.md) | Espelhos oficiais Node/TS, React, Postgres, arquitetura, filas, AGENTS.md/SDD e OWASP para leitura on-demand por IA | Dev, IA |
 
 ---
 

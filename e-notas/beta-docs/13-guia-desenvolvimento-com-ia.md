@@ -23,6 +23,7 @@ Diretrizes práticas para utilização de agentes autônomos de inteligência ar
 | **`10-seguranca-privacidade-lgpd.md`** | `beta-docs/10-seguranca-privacidade-lgpd.md` | Diretrizes de anonimização, isolamento de extrato e descarte de CPF. |
 | **`12-prototipos.md`** | `beta-docs/12-prototipos.md` | Inventário de telas `T-xx` para conferência visual de fidelidade da interface. |
 | **`prompts.md`** | `beta-docs/ia/prompts.md` | Comandos reutilizáveis padronizados (`/task`, `/new-endpoint`, `/review-privacy`, `/gherkin-to-tests`, `/docs-drift`). |
+| **`referencias/`** | [`16-referencias-mercado.md`](16-referencias-mercado.md) · [`referencias/README.md`](referencias/README.md) | Espelhos oficiais de mercado (Node/TS, React, Postgres, arquitetura, filas, OWASP, AGENTS.md). Abrir **on-demand**; não substituem `01`–`15`. |
 
 ## 3. Fluxo operacional por tarefa (`BETA-nnn`)
 

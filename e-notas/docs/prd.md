@@ -88,6 +88,9 @@ Ler o QR/URL da NFC-e (preço, estabelecimento, data, cód. interno), vincular E
 - Não é marketplace: sortimento **inferido das notas** (vitrine de descoberta, não checkout).
 
 ### 5.5 Busca geo — “onde comprar perto” — *must*
+- Em **Produtos**: banner-mapa no topo com **pins dos produtos** (todos); o mesmo local pode ter **vários pins**.
+- Em **Lojas**: banner-mapa no topo com **1 pin por estabelecimento**.
+- Tocar no banner abre o mapa ampliado.
 - Pesquisar um **item** (nome ou EAN) e ver **estabelecimentos físicos** que o têm no índice, ordenados por **proximidade** e/ou preço.
 - Âncora geográfica: GPS do usuário **ou** ponto/região escolhida (ex.: **centro** da cidade, bairro, endereço).
 - Resultado por loja: distância, preço observado, data, link para vitrine da loja e para o mapa.

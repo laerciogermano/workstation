@@ -1265,7 +1265,7 @@ async function fetchEanSugestoes(descricao, { force = false } = {}) {
     if (Array.isArray(cached) && cached.length) return cached;
     eanSuggestCache.delete(key);
   }
-  const p = fetchJson('api/enrichment/ean', {
+  const p = fetchJson('api/enrichment/ean/si5', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ descricao, force: Boolean(force) }),
@@ -1412,7 +1412,7 @@ async function sugerirEanPorDescricao() {
   setEanSuggestStatus('Buscando candidatos…');
   clearEanSuggestList();
   try {
-    const data = await fetchJson('api/enrichment/ean', {
+    const data = await fetchJson('api/enrichment/ean/si5', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ descricao: nome }),

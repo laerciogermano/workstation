@@ -31,6 +31,7 @@ import {
   imagensPorDescricao,
   normalizeDescricao,
   resolveEanFromDescricao,
+  resolveEanSi5Only,
 } from './enrichment.js';
 import { baixarGoogleImagens } from './google-imagens.js';
 
@@ -212,6 +213,20 @@ async function handleEnrichmentEan(req, res) {
   }
 }
 
+/** Só SI5 — front das sugestões (por enquanto). */
+async function handleEnrichmentEanSi5(req, res) {
+  try {
+    const descricao = enrichmentInput(req, 'descricao');
+    const n = enrichmentInput(req, 'n') || enrichmentInput(req, 'limit') || req.body?.n;
+    const result = await resolveEanSi5Only(descricao, { n });
+    return res.json({ ok: true, ...result });
+  } catch (err) {
+    const status = err.status || 500;
+    console.error('[enrichment:ean:si5]', err.message);
+    return res.status(status).json({ ok: false, error: err.message });
+  }
+}
+
 /** REQ-040 — EAN → imagens (wrapper estável sobre buscarImagensEan). */
 async function handleEnrichmentImagens(req, res) {
   try {
@@ -279,6 +294,8 @@ async function handleGoogleImagens(req, res) {
   }
 }
 
+app.get('/api/enrichment/ean/si5', handleEnrichmentEanSi5);
+app.post('/api/enrichment/ean/si5', handleEnrichmentEanSi5);
 app.get('/api/enrichment/ean', handleEnrichmentEan);
 app.post('/api/enrichment/ean', handleEnrichmentEan);
 app.get('/api/enrichment/imagens', handleEnrichmentImagens);

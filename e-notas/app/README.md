@@ -67,7 +67,8 @@ Resposta: `{ ok, created, empresaCriada, url, empresa, nota, itens }`.
 | `GET` | `/api/ean-imagens?codigo_barras=` | `{ ok, imagens }` candidatas do EAN |
 | `POST` | `/api/ean-imagens/buscar` | body `{ codigo_barras, force?, descricao? }` → APIs + **Google Imagens** (query EAN+nome); idempotente sem `force` |
 | `POST` | `/api/ean-imagens/:id/selecionar` | marca a foto do feed e atualiza `codigos_barras.foto_url` |
-| `GET`/`POST` | `/api/enrichment/ean` | `descricao` (+ `force?`) → candidatos (local/OFF + ean-serp `/ean/si5` e opcional `/ean/google-cdp`; REQ-039/043/044) |
+| `GET`/`POST` | `/api/enrichment/ean/si5` | `descricao` (+ `n?`) → **só SI5** (front das sugestões, por enquanto) |
+| `GET`/`POST` | `/api/enrichment/ean` | `descricao` (+ `force?`) → candidatos completos (local/OFF + SI5 + opcional Google CDP) |
 | `GET`/`POST` | `/api/enrichment/imagens` | query/body `ean` ou `codigo_barras`, `descricao?`, `force?` → APIs + Google (REQ-040/032) |
 | `GET`/`POST` | `/api/enrichment/imagens-por-descricao` | query/body `descricao`, `force?` → `modo: ean\|texto` + imagens (REQ-041) |
 | `GET`/`POST` | `/api/enrichment/google-imagens` | `descricao` **ou** `ean` + `n` (default **50**, máx 100) → cache DB ou scrape CDP; `force` / `download=0` |

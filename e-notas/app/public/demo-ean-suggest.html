@@ -32,7 +32,7 @@
           .replace(/"/g, '&quot;');
       }
       try {
-        const res = await fetch('api/enrichment/ean', {
+        const res = await fetch('api/enrichment/ean/si5', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ descricao: NOME, force: true }),

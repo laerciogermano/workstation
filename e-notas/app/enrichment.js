@@ -330,6 +330,62 @@ async function fromEanSerp(descricao, map) {
   }
 }
 
+/** Só SI5 (proxy `/ean/si5`) — sem OFF/local/Google. Usado pelo front das sugestões. */
+export async function resolveEanSi5Only(descricao, { n } = {}) {
+  const raw = String(descricao ?? '').trim();
+  if (!raw) {
+    throw Object.assign(new Error('descricao obrigatória'), { status: 400 });
+  }
+  const descricao_norm = normalizeDescricao(raw);
+  const limit = Math.min(
+    MAX_CANDIDATOS,
+    Math.max(1, Number(n) || MAX_CANDIDATOS),
+  );
+  const base = eanSerpBase();
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), 45_000);
+  try {
+    const res = await fetch(`${base}/ean/si5`, {
+      method: 'POST',
+      signal: ctrl.signal,
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: JSON.stringify({ descricao: raw, limit, n: limit, enrich: true }),
+    });
+    if (!res.ok) {
+      const err = await res.text().catch(() => '');
+      throw Object.assign(
+        new Error(`ean-serp/si5 HTTP ${res.status}${err ? `: ${err.slice(0, 120)}` : ''}`),
+        { status: res.status >= 400 && res.status < 600 ? res.status : 502 },
+      );
+    }
+    const data = await res.json();
+    const candidatos = (data?.candidatos || [])
+      .map((c) => ({
+        ean: c.ean,
+        score: Number(c.score) || 0,
+        fonte: `ean-serp:${c.fonte || 'si5'}`,
+        nome_canonico: c.nome_canonico || null,
+        image_url: c.image_url || null,
+        url: c.url || null,
+      }))
+      .filter((c) => c.ean && c.score >= 0.35)
+      .slice(0, limit);
+    await attachImagesToCandidatos(candidatos);
+    return {
+      descricao: raw,
+      descricao_norm,
+      candidatos,
+      providers: data?.providers,
+      fonte: 'si5',
+    };
+  } finally {
+    clearTimeout(t);
+  }
+}
+
 function productImage(product) {
   if (!product || typeof product !== 'object') return null;
   return (

@@ -2,6 +2,8 @@
 
 Pacote canônico para criar logos de projetos. Preferir SVG hand-authored / auditado; modelos de imagem geram **conceito**, não master de produção.
 
+**Sistema moderno 2026** (responsive + motion + guidelines AI-ready): [`modern-2026/IDENTIDADE-MODERNA.md`](modern-2026/IDENTIDADE-MODERNA.md).
+
 ## 1. O que uma logo é (e não é)
 
 Síntese de Paul Rand + prática contemporânea (Adobe, Figma, skills):
@@ -71,9 +73,9 @@ Brief → pesquisa categoria/clichês → word map → 3 conceitos (tipos difere
 | 1 | [`skills/logo-design/`](skills/logo-design/SKILL.md) | Processo completo + lib SVG + audit/test sheets |
 | 2 | [`skills/logo-creation/`](skills/logo-creation/SKILL.md) | Pipeline 8 fases + validação 16px/grayscale/blur/recall |
 | 3 | [`skills/brand-identity/`](skills/brand-identity/SKILL.md) | Logo + tipo + cor como um sistema medido |
-| 4 | [`skills/logo-kit-svg/`](skills/logo-kit-svg/SKILL.md) | Kit SVG README/banner + QA |
-| 5 | [`skills/svg-logo-system/`](skills/svg-logo-system/SKILL.md) | 25 conceitos + golden ratio |
-| 6 | [`skills/logo-generator/`](skills/logo-generator/SKILL.md) · rampstack | Alternativas / variantes |
+| 4 | [`skills/visual-identity/`](skills/visual-identity/SKILL.md) | Vocabulário visual + motion antes do código |
+| 5 | [`skills/brand-motion-guidelines/`](skills/brand-motion-guidelines/SKILL.md) | Tokens e regras de motion da marca |
+| 6 | [`skills/logo-kit-svg/`](skills/logo-kit-svg/SKILL.md) · svg-logo-system · brand-motion-agent | Kit SVG / φ / animar mark aprovado |
 
 Índice: [`skills/README.md`](skills/README.md)
 

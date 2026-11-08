@@ -1,0 +1,61 @@
+/* Brand tokens skeleton — preencher hex/fonts após aprovação */
+:root {
+  /* Color — light */
+  --color-primary: #000000;
+  --color-secondary: #444444;
+  --color-accent: #e0402b;
+  --color-ink: #141414;
+  --color-ink-2: #3a3a3a;
+  --color-muted: #6e6e6e;
+  --color-paper: #fafafa;
+  --color-surface: #ffffff;
+  --color-border: #e2e2e2;
+  --color-success: #1b7f4a;
+  --color-warning: #b86e00;
+  --color-danger: #b42318;
+
+  /* Type */
+  --font-display: "Font Display", Georgia, serif;
+  --font-body: "Font Body", system-ui, sans-serif;
+  --font-mono: ui-monospace, monospace;
+
+  --text-display: 3.5rem;
+  --text-h1: 2.5rem;
+  --text-h2: 1.875rem;
+  --text-h3: 1.375rem;
+  --text-body: 1rem;
+  --text-small: 0.875rem;
+  --text-caption: 0.75rem;
+  --leading-tight: 1.1;
+  --leading-body: 1.55;
+
+  /* Motion */
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-emphasized: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-exit: cubic-bezier(0.7, 0, 0.84, 0);
+  --dur-instant: 100ms;
+  --dur-fast: 140ms;
+  --dur-default: 220ms;
+  --dur-slow: 400ms;
+}
+
+[data-theme="dark"] {
+  --color-primary: #ffffff;
+  --color-secondary: #c8c8c8;
+  --color-accent: #ff6a52;
+  --color-ink: #f5f5f5;
+  --color-ink-2: #d0d0d0;
+  --color-muted: #9a9a9a;
+  --color-paper: #121212;
+  --color-surface: #1c1c1c;
+  --color-border: #333333;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-instant: 0ms;
+    --dur-fast: 0ms;
+    --dur-default: 0ms;
+    --dur-slow: 0ms;
+  }
+}

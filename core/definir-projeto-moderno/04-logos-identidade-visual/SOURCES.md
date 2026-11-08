@@ -1,7 +1,7 @@
 # Fontes baixadas — logos / identidade
 
-**Data:** 2026-11-08  
-**Entrada:** [LOGO-IDENTIDADE.md](LOGO-IDENTIDADE.md)
+**Data:** 2026-11-08 (refresh tendências + skills motion no mesmo dia)  
+**Entrada:** [LOGO-IDENTIDADE.md](LOGO-IDENTIDADE.md) · tendência: [modern-2026/IDENTIDADE-MODERNA.md](modern-2026/IDENTIDADE-MODERNA.md)
 
 ## Skills (Agent Skills)
 
@@ -15,6 +15,10 @@
 | `skills/logo-generator/` | https://github.com/sacredvoid/logo-generator | SVG logos + brand asset kit |
 | `skills/logo-design-rampstack/` | https://github.com/rampstackco/claude-skills (`logo-design`) | Variantes por arquitetura de mark |
 | `skills/brand-identity-rampstack/` | https://github.com/rampstackco/claude-skills (`brand-identity`) | Sistema de marca completo (rampstack) |
+| `skills/brand-motion-guidelines/` | https://github.com/iart-ai/freelance-motion-skills | Motion system: tokens, logo rules, a11y, do/don't |
+| `skills/brand-motion-agent-skill/` | https://github.com/poudelaman4/brand-motion-agent-skill | Animar logo aprovado com guardrails (Lottie/Rive/…) |
+| `skills/visual-identity/` | https://github.com/motionharvest/agent-skills (`visual-identity`) | Personalidade → tipo → cor → motion vocab pré-código |
+| `skills/creative-brief-motion/` | https://github.com/iart-ai/freelance-motion-skills (`creative-brief`) | Brief de motion sign-off-ready |
 
 ## Teoria / guias (sínteses em `articles/` e `referencias/`)
 
@@ -31,7 +35,21 @@
 | Evoke — Vectorize DALL·E logos | https://madebyevoke.com/blog/how-to-vectorize-dall-e-logo | Raster → vetor production |
 | NoBoringDesign — Best practices 2025 | https://www.noboringdesign.com/blog/logo-design-best-practices-trends-challenges | Escalabilidade + storytelling |
 
+## Tendências identidade 2026 (sínteses em `modern-2026/articles/`)
+
+| Fonte | URL | Uso |
+|-------|-----|-----|
+| LogoLounge — 2026 Logo Trend Report | https://www.logolounge.com/trend/2026-logo-trend-report | Motivos formais / saturação (>30k logos) |
+| Creative Bloq — logo trends 2026 | https://www.creativebloq.com/design/logos-icons/these-logo-design-trends-will-define-2026 | Unfixed, responsive, earthmarks, 3D, belonging |
+| Envato — logo & branding trends 2026 | https://elements.envato.com/learn/logo-and-branding-trends | Kinetic, authenticity, sensory, AI slop |
+| Threerooms — 8 brand identity shifts | https://www.threerooms.com/blog/8-design-trends-shaping-brand-identity-in-2026 | Motion-first, type, a11y, soft-glow, sonic |
+| Malbar — Kinetic logo design | https://malbardesign.com/kinetic-logo-design/ | Níveis 1–3 + quando pular |
+| MarqOps — Brand guidelines template 2026 | https://www.marqops.com/blog/brand-guidelines-template | 12 seções + AI content rules |
+| Techpresso — 50 Claude brand-kit prompts | https://academy.techpresso.co/prompts/claude-prompts-brand-kits | Fórmulas HTML/SVG de kit |
+| Logofai — design.md example | https://logofai.com/design-md-example/ | Tokens cor/tipo/motion em arquivo |
+
 ## Notas
 
 - Skills com `library/` / `assets/library/` são **referência de construção e convenção de categoria** — nunca copiar marcas de terceiros.
 - Modelos de imagem: conceito → redesenhar SVG; não shippar PNG como master.
+- Tendências LogoLounge = mapa de saturação, não menu de cópia.

@@ -11,12 +11,14 @@ description: >-
 ## 1. Ler primeiro
 
 1. [LOGO-IDENTIDADE.md](LOGO-IDENTIDADE.md) — veredito + fluxo
-2. [prompts/FORMULAS-E-TEMPLATES.md](prompts/FORMULAS-E-TEMPLATES.md) — se for gerar conceito
-3. [sintese/checklist-producao.md](sintese/checklist-producao.md) — antes de entregar
+2. [modern-2026/IDENTIDADE-MODERNA.md](modern-2026/IDENTIDADE-MODERNA.md) — tendência / sistema 2026
+3. [prompts/FORMULAS-E-TEMPLATES.md](prompts/FORMULAS-E-TEMPLATES.md) · [modern-2026/prompts/KIT-IDENTIDADE.md](modern-2026/prompts/KIT-IDENTIDADE.md)
+4. [sintese/checklist-producao.md](sintese/checklist-producao.md) — antes de entregar
 
 ## 2. Skill de execução
 
 Seguir [`skills/logo-design/SKILL.md`](skills/logo-design/SKILL.md) (preferida).  
+Sistema moderno: `visual-identity` + `brand-motion-guidelines`.  
 Alternativas: `logo-creation`, `brand-identity`, `logo-kit-svg` — ver [`skills/README.md`](skills/README.md).
 
 ## 3. Não negociáveis

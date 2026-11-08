@@ -1,6 +1,6 @@
 # Skills baixadas
 
-Copiar/usar a pasta com `SKILL.md` no agente. Neste pacote a **preferida** é `logo-design/`.
+Copiar/usar a pasta com `SKILL.md` no agente. Neste pacote a **preferida para logo** é `logo-design/`. Para identidade moderna 2026, somar `visual-identity` + `brand-motion-guidelines`.
 
 | Pasta | Origem | Quando |
 |---|---|---|
@@ -12,5 +12,9 @@ Copiar/usar a pasta com `SKILL.md` no agente. Neste pacote a **preferida** é `l
 | [`logo-generator/`](logo-generator/SKILL.md) | sacredvoid/logo-generator | Kit SVG rápido |
 | [`logo-design-rampstack/`](logo-design-rampstack/SKILL.md) | rampstackco | Variantes por arquitetura |
 | [`brand-identity-rampstack/`](brand-identity-rampstack/SKILL.md) | rampstackco | Sistema de marca (alt.) |
+| [`visual-identity/`](visual-identity/SKILL.md) | motionharvest/agent-skills | Personalidade → tipo → cor → 4 signature moves pré-código |
+| [`brand-motion-guidelines/`](brand-motion-guidelines/SKILL.md) | iart-ai/freelance-motion-skills | Guidelines de motion da marca |
+| [`brand-motion-agent-skill/`](brand-motion-agent-skill/SKILL.md) | poudelaman4 | Animar logo aprovado sem redesenhar |
+| [`creative-brief-motion/`](creative-brief-motion/SKILL.md) | iart-ai | Brief de motion |
 
 Bibliotecas SVG internas = estudo de construção / clichês de categoria — **não copiar**.

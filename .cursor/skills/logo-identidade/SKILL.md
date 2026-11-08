@@ -11,8 +11,9 @@ description: >-
 ## 1. Ler primeiro
 
 1. [LOGO-IDENTIDADE.md](../../../core/definir-projeto-moderno/04-logos-identidade-visual/LOGO-IDENTIDADE.md)
-2. [prompts/FORMULAS-E-TEMPLATES.md](../../../core/definir-projeto-moderno/04-logos-identidade-visual/prompts/FORMULAS-E-TEMPLATES.md)
-3. [checklist-producao.md](../../../core/definir-projeto-moderno/04-logos-identidade-visual/sintese/checklist-producao.md)
+2. [IDENTIDADE-MODERNA.md](../../../core/definir-projeto-moderno/04-logos-identidade-visual/modern-2026/IDENTIDADE-MODERNA.md) (tendências 2026 + sistema)
+3. [prompts/FORMULAS-E-TEMPLATES.md](../../../core/definir-projeto-moderno/04-logos-identidade-visual/prompts/FORMULAS-E-TEMPLATES.md) · kit: [KIT-IDENTIDADE.md](../../../core/definir-projeto-moderno/04-logos-identidade-visual/modern-2026/prompts/KIT-IDENTIDADE.md)
+4. [checklist-producao.md](../../../core/definir-projeto-moderno/04-logos-identidade-visual/sintese/checklist-producao.md)
 
 ## 2. Skill de execução
 

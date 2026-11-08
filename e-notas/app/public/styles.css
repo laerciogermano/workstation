@@ -592,6 +592,12 @@ body.modal-open {
   pointer-events: none;
 }
 
+#produto-ean-suggest-buscar.is-busy {
+  opacity: 0.7;
+  cursor: wait;
+  pointer-events: none;
+}
+
 .chip.ean-origem {
   font-size: 0.7rem;
   text-transform: lowercase;

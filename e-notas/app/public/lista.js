@@ -46,6 +46,9 @@ const produtoEanSuggestFormEl = document.getElementById(
   'produto-ean-suggest-form',
 );
 const produtoEanSuggestQEl = document.getElementById('produto-ean-suggest-q');
+const produtoEanSuggestBuscarEl = document.getElementById(
+  'produto-ean-suggest-buscar',
+);
 const produtoTimelineEl = document.getElementById('produto-timeline');
 const countProdutoPrecosEl = document.getElementById('count-produto-precos');
 let produtoFotosEan = '';
@@ -658,6 +661,15 @@ function renderProdutoEanSuggestList(list, { empresaId, empresaNome, codigo, nom
     </ul>`;
 }
 
+function setProdutoEanSuggestBuscarLoading(on) {
+  if (!produtoEanSuggestBuscarEl) return;
+  produtoEanSuggestBuscarEl.disabled = Boolean(on);
+  produtoEanSuggestBuscarEl.classList.toggle('is-busy', Boolean(on));
+  produtoEanSuggestBuscarEl.setAttribute('aria-busy', on ? 'true' : 'false');
+  produtoEanSuggestBuscarEl.textContent = on ? 'Buscando…' : 'Buscar';
+  if (produtoEanSuggestQEl) produtoEanSuggestQEl.disabled = Boolean(on);
+}
+
 async function loadProdutoEanSuggestions(head, queryOverride) {
   if (!produtoEanSuggestEl || !produtoEanSuggestBodyEl) return;
   const ean = String(head?.codigo_barras || '').trim();
@@ -668,6 +680,7 @@ async function loadProdutoEanSuggestions(head, queryOverride) {
   if (ean || !codigo || !nome || !empresaId) {
     produtoEanSuggestEl.hidden = true;
     produtoEanSuggestBodyEl.innerHTML = '';
+    setProdutoEanSuggestBuscarLoading(false);
     return;
   }
   const empresaNome =
@@ -684,6 +697,7 @@ async function loadProdutoEanSuggestions(head, queryOverride) {
   if (produtoEanSuggestQEl && queryOverride == null) {
     produtoEanSuggestQEl.value = nome.replace(/#/g, ' ').replace(/\s+/g, ' ').trim();
   }
+  setProdutoEanSuggestBuscarLoading(true);
   produtoEanSuggestBodyEl.innerHTML =
     '<p class="hint ean-suggest-loading">Buscando sugestões de código de barras…</p>';
   try {
@@ -700,6 +714,8 @@ async function loadProdutoEanSuggestions(head, queryOverride) {
     produtoEanSuggestBodyEl.innerHTML = `<p class="hint status err">Falha ao sugerir: ${esc(
       err.message || 'erro',
     )}</p>`;
+  } finally {
+    if (gen === produtoEanSuggestGen) setProdutoEanSuggestBuscarLoading(false);
   }
 }
 

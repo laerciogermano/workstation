@@ -24,10 +24,14 @@ export const EAN_FOTOS_DIR = path.join(__dirname, 'public', 'ean-fotos');
 export const DESC_FOTOS_DIR = path.join(__dirname, 'public', 'desc-fotos');
 
 const UA =
+  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36';
+const UA_API =
   'notinhas.shop/0.1 (ean image lookup; +https://notinhas.shop; contato@notinhas.shop)';
 const MAX_CANDIDATAS = 50;
 const MAX_GOOGLE = 50;
 const FETCH_MS = 12_000;
+const DOWNLOAD_MS = 8_000;
+const DOWNLOAD_CONCURRENCY = 6;
 
 /** @type {Map<string, Promise<unknown>>} */
 const inflight = new Map();
@@ -44,7 +48,7 @@ async function fetchWithTimeout(url, opts = {}) {
       ...opts,
       signal: ctrl.signal,
       headers: {
-        'User-Agent': UA,
+        'User-Agent': UA_API,
         Accept: opts.accept || '*/*',
         ...(opts.headers || {}),
       },
@@ -52,6 +56,26 @@ async function fetchWithTimeout(url, opts = {}) {
   } finally {
     clearTimeout(t);
   }
+}
+
+/** Pool simples: até `concurrency` promessas ao mesmo tempo. */
+export async function mapPool(items, concurrency, fn) {
+  const list = Array.isArray(items) ? items : [];
+  const limit = Math.max(1, Number(concurrency) || 1);
+  const out = new Array(list.length);
+  let next = 0;
+  async function worker() {
+    for (;;) {
+      const i = next;
+      next += 1;
+      if (i >= list.length) return;
+      out[i] = await fn(list[i], i);
+    }
+  }
+  await Promise.all(
+    Array.from({ length: Math.min(limit, list.length) }, () => worker()),
+  );
+  return out;
 }
 
 async function fetchJson(url) {
@@ -230,7 +254,7 @@ function extFromContentType(ct, url) {
 }
 
 /** GET binário com family IPv4 (evita timeout no CDN OFF). */
-function httpGetBuffer(url, { timeoutMs = 20_000, redirects = 5 } = {}) {
+function httpGetBuffer(url, { timeoutMs = DOWNLOAD_MS, redirects = 5 } = {}) {
   return new Promise((resolve, reject) => {
     let parsed;
     try {
@@ -244,7 +268,12 @@ function httpGetBuffer(url, { timeoutMs = 20_000, redirects = 5 } = {}) {
       url,
       {
         family: 4,
-        headers: { 'User-Agent': UA, Accept: 'image/*,*/*' },
+        headers: {
+          'User-Agent': UA,
+          Accept: 'image/avif,image/webp,image/apng,image/*,*/*;q=0.8',
+          'Accept-Language': 'pt-BR,pt;q=0.9,en;q=0.8',
+          Referer: 'https://www.google.com/',
+        },
         timeout: timeoutMs,
       },
       (res) => {
@@ -287,7 +316,7 @@ function httpGetBuffer(url, { timeoutMs = 20_000, redirects = 5 } = {}) {
 }
 
 function writeImageBuffer(dir, relPrefix, url, ordem) {
-  return httpGetBuffer(url, { timeoutMs: 20_000 }).then(({ buf, contentType }) => {
+  return httpGetBuffer(url, { timeoutMs: DOWNLOAD_MS }).then(({ buf, contentType }) => {
     if (buf.length < 200) return null;
     fs.mkdirSync(dir, { recursive: true });
     const ext = extFromContentType(contentType, url);

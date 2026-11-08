@@ -8,6 +8,7 @@ import {
   downloadDescImage,
   downloadEanImage,
   isRemoteImageUrl,
+  mapPool,
   toPublicImagePath,
   withEanSearchLock,
 } from './ean-imagens.js';
@@ -976,43 +977,51 @@ export async function buscarImagensEan(
       ? undefined
       : collected.googleError;
 
-    let baixadas = 0;
-    let ordem =
+    const baseOrdem =
       onlyGoogle && imagens.length
         ? Math.max(...imagens.map((i) => Number(i.ordem) || 0), 0) + 1
         : 1;
     const seenSha = new Set(
       (imagens || []).map((i) => i.sha1).filter(Boolean),
     );
-
-    for (const c of candidates) {
-      if (onlyGoogle && !String(c.fonte || '').includes('google')) continue;
+    const toFetch = candidates.filter(
+      (c) => !onlyGoogle || String(c.fonte || '').includes('google'),
+    );
+    const settled = await mapPool(toFetch, 6, async (c, idx) => {
+      const ordem = baseOrdem + idx;
       try {
         const dl = await downloadEanImage(ean, c.url, ordem);
-        if (!dl) continue;
-        if (seenSha.has(dl.sha1)) {
-          try {
-            fs.unlinkSync(
-              path.join(__dirname, 'public', ...dl.pathLocal.split('/')),
-            );
-          } catch {
-            /* ignore */
-          }
-          continue;
-        }
-        seenSha.add(dl.sha1);
-        await client.query(
-          `INSERT INTO ${t('ean_imagens')}
-             (codigo_barras, url_origem, fonte, path_local, ordem, selecionada, sha1)
-           VALUES ($1, $2, $3, $4, $5, false, $6)
-           ON CONFLICT (codigo_barras, path_local) DO NOTHING`,
-          [ean, c.url, c.fonte, dl.pathLocal, ordem, dl.sha1],
-        );
-        baixadas += 1;
-        ordem += 1;
+        if (!dl) return null;
+        return { c, dl, ordem };
       } catch (err) {
         console.warn(`[ean-imagens] download ${c.fonte}:`, err.message);
+        return null;
       }
+    });
+
+    let baixadas = 0;
+    for (const row of settled) {
+      if (!row) continue;
+      const { c, dl, ordem } = row;
+      if (seenSha.has(dl.sha1)) {
+        try {
+          fs.unlinkSync(
+            path.join(__dirname, 'public', ...dl.pathLocal.split('/')),
+          );
+        } catch {
+          /* ignore */
+        }
+        continue;
+      }
+      seenSha.add(dl.sha1);
+      await client.query(
+        `INSERT INTO ${t('ean_imagens')}
+           (codigo_barras, url_origem, fonte, path_local, ordem, selecionada, sha1)
+         VALUES ($1, $2, $3, $4, $5, false, $6)
+         ON CONFLICT (codigo_barras, path_local) DO NOTHING`,
+        [ean, c.url, c.fonte, dl.pathLocal, ordem, dl.sha1],
+      );
+      baixadas += 1;
     }
 
     // Legado flat ainda útil se a busca falhou

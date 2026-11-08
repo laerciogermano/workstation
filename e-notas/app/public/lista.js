@@ -998,6 +998,7 @@ async function buscarProdutoFotos(force) {
         descricao: produtoFotosNome || '',
         force: Boolean(force),
       }),
+      signal: AbortSignal.timeout(120_000),
     });
     const imgs = data.imagens || [];
     renderProdutoFotosGrid(imgs);

@@ -26,7 +26,7 @@ Objetivo: permitir que o comprador monte listas de compras (cesta), cote o valor
   - Excluir itens da lista.
   - Limpar toda a cesta.
 - Os itens da cesta são referenciados pelo código universal `EAN`.
-- Para usuários logados, a cesta é sincronizada no backend (`tabela cestas` e `cesta_itens`); para visitantes, mantida em `localStorage`.
+- Cesta sincroniza no backend (`cestas` / `cesta_itens`) também para visitante: posse por **fingerprint** até criar conta; depois merge para `usuario_id` ([REQ-050](../../docs/requisitos.md), [identidade-anonima-fingerprint.md](../../docs/identidade-anonima-fingerprint.md)). localStorage só como cache de UX, não fonte de verdade.
 
 ```gherkin
 # language: pt

@@ -8,6 +8,7 @@ Derivados: [`docs/`](docs/README.md).
 **Beta 1.0 (construir do zero):** [`beta-docs/README.md`](beta-docs/README.md) · [protótipos](beta-docs/prototipos/index.html) · card [jhxFUqLz](https://trello.com/c/jhxFUqLz).  
 Requisitos / regras: [`docs/requisitos.md`](docs/requisitos.md).  
 Categorias canônicas: [`docs/categorias-produtos.md`](docs/categorias-produtos.md).  
+Identidade anônima (fingerprint → conta): [`docs/identidade-anonima-fingerprint.md`](docs/identidade-anonima-fingerprint.md).  
 Timeline de prompts: [`prompts/`](prompts/README.md).  
 Regras para a IA: [`config/config-ia.md`](config/config-ia.md).  
 App (scan QR + cadastro Postgres Contabo / schema `enotas`): [`app/`](app/README.md).  

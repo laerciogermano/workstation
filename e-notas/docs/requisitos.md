@@ -464,6 +464,17 @@ Card: [BXKZ55Wb](https://trello.com/c/BXKZ55Wb).
 - Antes: categorias livres/heurísticas soltas (“Bebidas energéticas”). Depois: taxonomia única documentada + normalização no enrich.
 - Rollback: remover doc/módulo; voltar categorias texto livre no enrich.
 
+## REQ-050 — Identidade anônima por fingerprint (2026-11-08)
+
+- Uso do notinhas **sem login**: a pessoa entra e opera (busca, depósito, cestas etc. no escopo anônimo já previsto em REQ-034 / REQ-036).
+- Em **toda operação** que grave dado do visitante, o cliente envia o **fingerprint do navegador** como identificador temporário (contrato único de transporte, ex. header `X-Client-Fingerprint`).
+- Fonte de verdade dos dados do visitante é a **base** (associados ao fingerprint / `visitante_id`), não o localStorage.
+- Ao **criar conta** (ou login no mesmo browser com dados anônimos pendentes): **vincular** no banco tudo que estava sob aquele fingerprint ao `usuario_id`; daí em diante a posse é da conta.
+- Índice público de preços permanece anonimizado; fingerprint não vaza no catálogo.
+- Doc canônico: [`identidade-anonima-fingerprint.md`](identidade-anonima-fingerprint.md). Schema detalhado na implementação (beta-docs modelo de dados / auth).
+- Antes: anônimo só na UX / eventual localStorage. Depois: id de visitante no server + merge na conta.
+- Rollback: remover este REQ e o doc; reverter posse anônima no server.
+
 ## Próximos passos
 
 → Manter este arquivo alinhado a cada pedido novo · esteira de docs em [`README.md`](README.md) quando avançar funcionalidades/BDD.

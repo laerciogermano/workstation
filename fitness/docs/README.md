@@ -2,14 +2,16 @@
 
 **Por quê:** índice e ponto de entrada dos artefatos derivados da visão.  
 **Importante:** mostra a ordem da esteira e evita abrir um documento fora de contexto.  
-**No fluxo:** [`visão`](../README.md) → **este índice** → funcionalidades → histórias → BDD → telas → componentes → protótipo.
+**No fluxo:** [`visão`](../README.md) → **este índice** → PRD → funcionalidades → histórias → BDD → telas → componentes → protótipo.
 
 Derivados do [documento de visão](../README.md).  
+PRD canônico: [`prd.md`](prd.md).  
 Regras para a IA na esteira: [`../config/config-ia.md`](../config/config-ia.md).  
 Timeline de prompts: [`../prompts/timeline.md`](../prompts/timeline.md).
 
 | Artefato | Arquivo | Papel no fluxo | Status |
 |----------|---------|----------------|--------|
+| PRD | [`prd.md`](prd.md) | Requisitos, regras de negócio e jornadas | v1.1 |
 | Funcionalidades | `functionalities.md` | Capacidades de cada seção e página em bullets | A produzir |
 | Histórias de usuário | `user-stories.md` | O *quê* desejado pelo usuário (Como… quero… para…) | A produzir |
 | Cenários BDD | `bdd.md` | Critérios de aceite por história (Dado / Quando / Então) | A produzir |
@@ -20,4 +22,4 @@ Timeline de prompts: [`../prompts/timeline.md`](../prompts/timeline.md).
 
 ## Próximos passos
 
-→ `functionalities.md` (ainda não criado) — inventariar capacidades a partir da [visão](../README.md)
+→ `functionalities.md` (ainda não criado) — inventariar capacidades a partir do [`prd.md`](prd.md) e da [visão](../README.md)

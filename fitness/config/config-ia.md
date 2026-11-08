@@ -45,23 +45,25 @@ Isso significa:
 ```text
 README.md (visão)
 └── docs/README.md
-    └── functionalities.md
-        └── user-stories.md
-            └── bdd.md
-                └── screens.md
-                    └── screens-bdd.md
-                        └── components.md
-                            └── prototype.html
+    └── docs/prd.md
+        └── functionalities.md
+            └── user-stories.md
+                └── bdd.md
+                    └── screens.md
+                        └── screens-bdd.md
+                            └── components.md
+                                └── prototype.html
 ```
 
 | Ordem | Artefato | Próximo |
 |-------|----------|---------|
 | 0 | [`../README.md`](../README.md) (visão) | [`../docs/README.md`](../docs/README.md) |
-| 1 | [`../docs/README.md`](../docs/README.md) | `../docs/functionalities.md` |
-| 2 | `functionalities.md` | `user-stories.md` |
-| 3 | `user-stories.md` | `bdd.md` |
-| 4 | `bdd.md` | `screens.md` |
-| 5 | `screens.md` | `screens-bdd.md` |
-| 6 | `screens-bdd.md` | `components.md` |
-| 7 | `components.md` | `prototype.html` |
-| 8 | `prototype.html` | *(fim da árvore)* |
+| 1 | [`../docs/README.md`](../docs/README.md) | [`../docs/prd.md`](../docs/prd.md) |
+| 2 | [`../docs/prd.md`](../docs/prd.md) | `../docs/functionalities.md` |
+| 3 | `functionalities.md` | `user-stories.md` |
+| 4 | `user-stories.md` | `bdd.md` |
+| 5 | `bdd.md` | `screens.md` |
+| 6 | `screens.md` | `screens-bdd.md` |
+| 7 | `screens-bdd.md` | `components.md` |
+| 8 | `components.md` | `prototype.html` |
+| 9 | `prototype.html` | *(fim da árvore)* |

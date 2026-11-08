@@ -87,26 +87,29 @@ O Fitness trata saúde e performance como um **sistema integrado**: o que você 
 
 | Área | Em escopo |
 |------|-----------|
-| **Conta e perfil** | Cadastro; dados para basal (idade, sexo, peso, altura, atividade); objetivo |
+| **Identidade** | Sem conta clássica; **fingerprint** vincula dados privados; **personagem público** opcional (apelido) |
+| **Onboarding / perfil** | Cadastro metabólico na 1ª entrada (idade, sexo, peso, altura, atividade); objetivo |
 | **Basal e energia** | Cálculo de TMB / gasto estimado; estratégia de **déficit** ou **superávit**; meta calórica diária |
 | **Métricas** | Registrar peso, medidas e outras métricas; dashboards e gráficos de evolução |
 | **Fotos / timeline** | Upload de fotos de progresso; comparar ao longo do tempo |
 | **Dieta por estoque** | Informar alimentos disponíveis; montar plano alimentar a partir disso |
 | **Dieta por macros** | Definir alvos de proteína, carbo e gordura; montar refeições alinhadas |
 | **Registro e cumprimento da dieta** | Marcar o que comeu (refeições do plano e ajustes); ver se cumpriu a meta do dia (kcal e/ou macros) |
-| **Treinos** | Montar treinos de musculação, calistenia e outras modalidades; biblioteca de exercícios |
+| **Treinos** | Montar treinos de musculação, calistenia e outras modalidades; biblioteca de exercícios; detalhe + visualização do movimento |
 | **Calorias no treino** | Estimar calorias por exercício e por sessão; somar ao balanço do dia |
-| **Gamificação** | Streaks, conquistas, desafios, feed/atividade no espírito Strava |
-| **Acompanhamento diário** | Visão do dia: meta calórica, treino previsto, refeições marcadas, status de cumprimento da dieta, progresso gamificado |
+| **Vitrine / gamificação** | “Strava de academia”: feed opt-in de atividades, streaks, conquistas, desafios e resultados |
+| **Personagens** | Buscar personagens; ver valores e resultados públicos compartilhados |
+| **Academias próximas** | Descobrir academias por GPS/busca; vincular personagem; ver atividade local |
+| **Acompanhamento diário** | Visão do dia: meta calórica, treino, refeições, progresso e atalhos para vitrine/academias |
 
 ### Fora de escopo (v1)
 
 - Consulta médica ou prescrição profissional automatizada
 - Wearables / sync profundo com Apple Health, Google Fit, Garmin (pode entrar depois)
-- Marketplace de personal trainers ou nutricionistas
-- Pagamento de planos premium (modelo de negócio fica aberto)
+- Marketplace de personal trainers ou nutricionistas (matrícula/pagamento)
+- Conta com e-mail/senha / sync multi-dispositivo completo
+- Rede social genérica (DM, stories) além da vitrine e busca de personagens
 - Receitas com IA generativa sem vínculo a estoque/macros
-- Rede social completa além do feed de progresso e desafios
 
 ## Modelo conceitual
 
@@ -146,9 +149,17 @@ Comparação entre o **consumido marcado** e a **meta do dia** (kcal e/ou macros
 
 **Treino** é uma sessão (ou ficha) com modalidade (musculação, calistenia, etc.). Cada **exercício** tem séries/reps/carga ou duração e uma **estimativa calórica**.
 
-### Progresso gamificado
+### Progresso gamificado / vitrine
 
-Streaks, conquistas, desafios e atividade compartilhada que recompensam constância — inspirados no Strava, aplicados ao hub treino–dieta–métricas.
+Streaks, conquistas, desafios e **vitrine** (feed estilo Strava de academia) que recompensam constância. Publicação é opt-in via **personagem** público.
+
+### Personagem
+
+Identidade pública opcional (apelido) para aparecer na busca e na vitrine, com **valores e resultados** que o usuário escolheu compartilhar.
+
+### Academia
+
+Local de treino descobribile por proximidade ou busca; vínculo social (“treino aqui”) sem matrícula/pagamento no v1.
 
 ## Critérios de sucesso
 
@@ -175,6 +186,10 @@ Streaks, conquistas, desafios e atividade compartilhada que recompensam constân
 | **Timeline** | Linha do tempo de fotos (e opcionalmente métricas) para comparar evolução |
 | **Streak** | Sequência de dias com atividade registrada (treino, dieta ou métrica) |
 | **Desafio** | Meta gamificada (ex.: 4 treinos na semana) no espírito Strava |
+| **Fingerprint** | ID do dispositivo que vincula dados privados sem conta |
+| **Personagem** | Perfil público opcional (apelido) para vitrine e busca |
+| **Vitrine** | Feed estilo Strava de academia (atividades e resultados opt-in) |
+| **Academia** | Local de treino na descoberta por proximidade/busca |
 
 ## Regras de negócio (v1)
 
@@ -187,8 +202,10 @@ Streaks, conquistas, desafios e atividade compartilhada que recompensam constân
 - Todo exercício em um treino deve poder exibir estimativa calórica; a sessão agrega o total.
 - Métricas e fotos são datadas; dashboards e timeline respeitam a ordem cronológica.
 - Gamificação recompensa ações reais (treino feito, métrica registrada, meta do dia), não só abertura do app.
+- Vitrine e perfil público exigem opt-in; dados sensíveis (peso, medidas, fotos, TMB) não saem por default.
+- Academias próximas: descoberta e vínculo social — sem marketplace de matrícula no v1.
 - O app **não** substitui orientação médica ou nutricional profissional; valores são estimativas de apoio.
 
 ## Próximos passos
 
-→ [`docs/README.md`](docs/README.md) → inventário de funcionalidades (a produzir)
+→ [`docs/prd.md`](docs/prd.md) (PRD) → [`docs/README.md`](docs/README.md) → inventário de funcionalidades

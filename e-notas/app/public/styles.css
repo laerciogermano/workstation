@@ -1122,11 +1122,32 @@ td.mono {
   padding: 0.35rem 0.7rem;
 }
 
+.ean-fotos-fonte {
+  margin-top: var(--nt-space-3);
+  display: grid;
+  gap: 0.5rem;
+}
+
+.ean-fotos-fonte-title {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 650;
+  color: var(--nt-ink);
+  display: flex;
+  align-items: baseline;
+  gap: 0.45rem;
+}
+
+.ean-fotos-fonte-title .count {
+  font-weight: 500;
+  color: var(--nt-muted);
+  font-size: 0.75rem;
+}
+
 .ean-fotos-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
   gap: var(--nt-space-3);
-  margin-top: var(--nt-space-3);
 }
 
 .ean-foto-card {
@@ -1157,15 +1178,6 @@ td.mono {
   position: absolute;
   top: 0.35rem;
   left: 0.35rem;
-}
-
-.ean-foto-fonte {
-  font-size: 0.65rem;
-  color: var(--nt-muted);
-  padding: 0 0.35rem 0.35rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .ean-foto-card.is-selected {

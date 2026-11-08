@@ -746,6 +746,19 @@ function setProdutoFotosStatus(msg, kind) {
   produtoFotosStatusEl.className = `hint${kind ? ` ${kind}` : ''}`;
 }
 
+function labelFonteFoto(fonte) {
+  const f = String(fonte || '').trim().toLowerCase();
+  if (!f) return 'Outras';
+  if (f === 'google-imagens' || f.startsWith('google')) return 'Google';
+  if (f === 'openfoodfacts') return 'Open Food Facts';
+  if (f === 'openbeautyfacts') return 'Open Beauty Facts';
+  if (f === 'openproductsfacts') return 'Open Products Facts';
+  if (f === 'upcitemdb') return 'UPCitemdb';
+  if (f === 'local') return 'Local';
+  if (f.includes('si5')) return 'SI5';
+  return fonte;
+}
+
 function renderProdutoFotosGrid(imagens) {
   if (!produtoFotosGridEl) return;
   if (!imagens.length) {
@@ -753,19 +766,47 @@ function renderProdutoFotosGrid(imagens) {
       '<p class="hint">Nenhuma foto ainda. Use Buscar fotos.</p>';
     return;
   }
-  produtoFotosGridEl.innerHTML = imagens
-    .map((img) => {
-      const src = String(img.path_local || '').trim();
-      const sel = Boolean(img.selecionada);
-      return `<button type="button" class="ean-foto-card${
-        sel ? ' is-selected' : ''
-      }" data-ean-img-id="${esc(img.id)}" aria-pressed="${sel ? 'true' : 'false'}" title="${esc(
-        img.fonte || 'fonte',
-      )}">
+  const order = [
+    'google-imagens',
+    'openfoodfacts',
+    'openbeautyfacts',
+    'openproductsfacts',
+    'upcitemdb',
+    'local',
+  ];
+  const groups = new Map();
+  for (const img of imagens) {
+    const key = String(img.fonte || 'outras').trim() || 'outras';
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(img);
+  }
+  const keys = [
+    ...order.filter((k) => groups.has(k)),
+    ...[...groups.keys()].filter((k) => !order.includes(k)),
+  ];
+  produtoFotosGridEl.innerHTML = keys
+    .map((key) => {
+      const list = groups.get(key) || [];
+      const cards = list
+        .map((img) => {
+          const src = String(img.path_local || '').trim();
+          const sel = Boolean(img.selecionada);
+          return `<button type="button" class="ean-foto-card${
+            sel ? ' is-selected' : ''
+          }" data-ean-img-id="${esc(img.id)}" aria-pressed="${
+            sel ? 'true' : 'false'
+          }" title="${esc(img.fonte || 'fonte')}">
         <img src="${esc(src)}" alt="" loading="lazy" width="96" height="96" />
         ${sel ? '<span class="chip ok">feed</span>' : ''}
-        <span class="ean-foto-fonte">${esc(img.fonte || '')}</span>
       </button>`;
+        })
+        .join('');
+      return `<section class="ean-fotos-fonte" data-fonte="${esc(key)}">
+        <h3 class="ean-fotos-fonte-title">${esc(labelFonteFoto(key))}
+          <span class="count">${list.length}</span>
+        </h3>
+        <div class="ean-fotos-grid">${cards}</div>
+      </section>`;
     })
     .join('');
 }
@@ -802,8 +843,8 @@ async function buscarProdutoFotos(force) {
   if (!produtoFotosEan) return;
   setProdutoFotosStatus(
     force
-      ? 'Buscando de novo (APIs + Google)…'
-      : 'Buscando fotos (APIs + Google)…',
+      ? 'Buscando de novo (APIs + Google Imagens)…'
+      : 'Buscando fotos (APIs + Google Imagens)…',
   );
   try {
     const data = await fetchJson('api/ean-imagens/buscar', {
@@ -815,15 +856,23 @@ async function buscarProdutoFotos(force) {
         force: Boolean(force),
       }),
     });
-    renderProdutoFotosGrid(data.imagens || []);
-    const fontes = [
-      ...new Set((data.imagens || []).map((i) => i.fonte).filter(Boolean)),
-    ];
+    const imgs = data.imagens || [];
+    renderProdutoFotosGrid(imgs);
+    const byFonte = new Map();
+    for (const i of imgs) {
+      const k = labelFonteFoto(i.fonte);
+      byFonte.set(k, (byFonte.get(k) || 0) + 1);
+    }
+    const fonteResumo = [...byFonte.entries()]
+      .map(([k, n]) => `${k} ${n}`)
+      .join(' · ');
     setProdutoFotosStatus(
       data.cached || data.skipped
-        ? `Cache: ${(data.imagens || []).length} foto(s). Use Atualizar p/ buscar de novo.`
+        ? `Cache: ${imgs.length} foto(s)${
+            fonteResumo ? ` · ${fonteResumo}` : ''
+          }. Use Atualizar p/ buscar de novo.`
         : `Baixadas: ${data.baixadas || 0}${
-            fontes.length ? ` · ${fontes.join(', ')}` : ''
+            fonteResumo ? ` · ${fonteResumo}` : ''
           }. Toque para escolher a do feed.`,
     );
     await reloadItens();

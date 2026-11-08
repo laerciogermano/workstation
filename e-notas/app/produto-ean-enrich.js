@@ -51,6 +51,79 @@ function pickTitulo(...vals) {
   return null;
 }
 
+/** Título DANFE em CAPS → forma legível; remove ruído # / * / +. */
+export function humanizeDanfeTitulo(raw) {
+  let s = String(raw || '')
+    .replace(/[#*+]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (!s) return null;
+  const letters = s.replace(/[^A-Za-zÀ-ÿ]/g, '');
+  const upperRatio =
+    letters.length > 0
+      ? [...letters].filter((c) => c === c.toUpperCase() && c !== c.toLowerCase())
+          .length / letters.length
+      : 0;
+  if (upperRatio < 0.6) return s.slice(0, 512);
+  const small = new Set([
+    'de',
+    'da',
+    'do',
+    'das',
+    'dos',
+    'e',
+    'em',
+    'com',
+    'sem',
+    'ml',
+    'g',
+    'kg',
+    'lt',
+  ]);
+  s = s
+    .toLowerCase()
+    .split(' ')
+    .filter(Boolean)
+    .map((w, i) => {
+      if (/^\d+([.,]\d+)?(ml|g|kg|l|un)?$/i.test(w)) return w.toLowerCase();
+      if (i > 0 && small.has(w)) return w;
+      return w.charAt(0).toUpperCase() + w.slice(1);
+    })
+    .join(' ');
+  // ajustes comuns BR
+  s = s
+    .replace(/\bEnergetico\b/g, 'Energético')
+    .replace(/\bAcucar\b/g, 'Açúcar')
+    .replace(/\bQueijo\b/g, 'Queijo')
+    .replace(/\bLt\b/g, 'Lata');
+  return s.slice(0, 512);
+}
+
+function inferMarcaCategoria(titulo) {
+  const t = String(titulo || '').toLowerCase();
+  let marca = null;
+  let categorias = [];
+  if (/monster/.test(t)) {
+    marca = 'Monster';
+    categorias = ['Bebidas energéticas', 'Bebidas'];
+  } else if (/red\s*bull/.test(t)) {
+    marca = 'Red Bull';
+    categorias = ['Bebidas energéticas', 'Bebidas'];
+  } else if (/pringles/.test(t)) {
+    marca = 'Pringles';
+    categorias = ['Salgadinhos', 'Snacks'];
+  } else if (/mentos/.test(t)) {
+    marca = 'Mentos';
+    categorias = ['Balas e pirulitos', 'Doces'];
+  } else if (/eisenbahn/.test(t)) {
+    marca = 'Eisenbahn';
+    categorias = ['Cervejas', 'Bebidas'];
+  } else if (/energ[eé]tico/.test(t)) {
+    categorias = ['Bebidas energéticas', 'Bebidas'];
+  }
+  return { marca, categorias };
+}
+
 function uniqCats(list) {
   const out = [];
   const seen = new Set();
@@ -262,10 +335,18 @@ export async function enrichProdutoEan(codigoBarras, { force = false } = {}) {
 
     if (!force) {
       const cur = await getProdutoEan(ean);
+      const fontesOk = Array.isArray(cur?.fontes) && cur.fontes.length > 0;
+      const fonteFraca =
+        !cur?.fonte ||
+        cur.fonte === 'backfill' ||
+        cur.fonte === 'danfe-norm' ||
+        cur.fonte === 'vinculo';
       if (
         cur?.enriquecido_em &&
         cur.titulo &&
         cur.titulo !== ean &&
+        fontesOk &&
+        !fonteFraca &&
         Date.now() - new Date(cur.enriquecido_em).getTime() < 7 * 24 * 3600 * 1000
       ) {
         return {
@@ -323,12 +404,31 @@ export async function enrichProdutoEan(codigoBarras, { force = false } = {}) {
     }
 
     const merged = mergeProdutoHits(hits);
+    const cur = await getProdutoEan(ean);
+
+    // Sem hit externo: humaniza título DANFE já conhecido (backfill / nota).
+    if (!merged.titulo) {
+      const seed = humanizeDanfeTitulo(cur?.titulo || '');
+      if (seed) {
+        merged.titulo = seed;
+        merged.fontes = [...new Set([...(merged.fontes || []), 'danfe-norm'])];
+      }
+    } else if (merged.titulo === merged.titulo.toUpperCase()) {
+      merged.titulo = humanizeDanfeTitulo(merged.titulo) || merged.titulo;
+    }
+
+    const inferred = inferMarcaCategoria(merged.titulo || cur?.titulo || '');
+    if (!merged.marca && inferred.marca) merged.marca = inferred.marca;
+    if ((!merged.categorias || !merged.categorias.length) && inferred.categorias.length) {
+      merged.categorias = inferred.categorias;
+    }
+
     if (!merged.titulo && !merged.marca && !merged.ncm && !merged.image_url) {
       return {
         ean,
         skipped: false,
         cached: false,
-        produto: await getProdutoEan(ean),
+        produto: cur,
         fontes: [],
         found: false,
       };

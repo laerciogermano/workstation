@@ -374,11 +374,33 @@ app.post('/api/nota', async (req, res) => {
   }
 });
 
-await initDb();
+let dbReady = false;
+try {
+  await initDb();
+  dbReady = true;
+  geocodeEmpresasPendentes().catch((err) =>
+    console.warn('[geo:boot]', err.message),
+  );
+} catch (err) {
+  const allow =
+    /^(1|true|yes)$/i.test(String(process.env.ALLOW_OFFLINE || '')) ||
+    /timeout|ECONNREFUSED|ENOTFOUND|Connection terminated/i.test(
+      String(err.message || ''),
+    );
+  if (!allow) throw err;
+  process.env.ENOTAS_DB = '0';
+  console.warn(
+    `[boot] Postgres indisponível (${err.message}). Modo offline: enrichment/ean-serp ok; listagens vazias.`,
+  );
+}
 
-geocodeEmpresasPendentes().catch((err) =>
-  console.warn('[geo:boot]', err.message),
-);
+app.get('/api/health', (_req, res) => {
+  res.json({
+    ok: true,
+    db: dbReady,
+    ean_serp: process.env.EAN_SERP_URL || 'http://127.0.0.1:4180',
+  });
+});
 
 const useHttp = /^(1|true|yes)$/i.test(String(process.env.USE_HTTP || ''));
 const host = process.env.HOST || (useHttp ? '127.0.0.1' : '0.0.0.0');

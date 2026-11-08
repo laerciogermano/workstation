@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Demo — sugestões EAN (sem código)</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="page" style="max-width: 42rem; margin: 0 auto; padding: 1.25rem">
+      <p class="hint"><a href="/">← e-notas</a> · demo produto sem EAN</p>
+      <article class="produto-hero" id="produto-info">
+        <h1>PAO DE FORMA VISCONTI TRAD.400G</h1>
+        <p class="hint">Condor · cód. 1687136 · <strong>sem código de barras</strong></p>
+      </article>
+      <section class="produto-ean-suggest">
+        <header class="home-section-head" style="margin-top: 1.25rem">
+          <h2 class="home-section-title">Sugestões de EAN</h2>
+        </header>
+        <div id="body" class="ean-suggest-inline">
+          <p class="hint ean-suggest-loading">Buscando sugestões pelo descritivo…</p>
+        </div>
+      </section>
+    </main>
+    <script type="module">
+      const NOME = 'PAO DE FORMA VISCONTI TRAD.400G';
+      const body = document.getElementById('body');
+      function esc(s) {
+        return String(s ?? '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/"/g, '&quot;');
+      }
+      try {
+        const res = await fetch('api/enrichment/ean', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ descricao: NOME, force: true }),
+        });
+        const data = await res.json();
+        const list = data.candidatos || [];
+        if (!list.length) {
+          body.innerHTML = `<p class="hint">Sem sugestão. (${esc(data.error || 'vazio')})</p>`;
+        } else {
+          body.innerHTML = `
+            <p class="ean-suggest-inline-label">Sugestões — via enrichment + ean-serp</p>
+            <ul class="ean-suggest-list ean-suggest-list-inline">
+              ${list
+                .slice(0, 5)
+                .map((c) => {
+                  const pct = Math.round((Number(c.score) || 0) * 100);
+                  const thumb = c.image_url
+                    ? `<img class="ean-suggest-thumb" src="${esc(c.image_url)}" alt="" width="36" height="36" />`
+                    : '';
+                  return `<li><button type="button" class="ean-suggest-btn" disabled>
+                    ${thumb}
+                    <span class="ean-suggest-ean">${esc(c.ean)}</span>
+                    <span class="ean-suggest-nome">${esc(c.nome_canonico || '—')}</span>
+                    <span class="ean-suggest-meta">${pct}% · ${esc(c.fonte || '')}</span>
+                  </button></li>`;
+                })
+                .join('')}
+            </ul>`;
+        }
+      } catch (err) {
+        body.innerHTML = `<p class="hint">Erro: ${esc(err.message)}</p>`;
+      }
+    </script>
+  </body>
+</html>

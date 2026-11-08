@@ -68,7 +68,7 @@ npm run resolve -- "PAO DE FORMA VISCONTI TRAD.400G"
 
 ## Integração com o app
 
-O enrichment do app (`/api/enrichment/ean`) continua em local + Open Food Facts. Este serviço é independente — o app pode chamar `http://127.0.0.1:4180/ean` depois (proxy/fonte extra), sem misturar scrape SERP no processo `:4173`.
+O app chama este serviço em `enrichment.js` (`EAN_SERP_URL`, default `http://127.0.0.1:4180`) ao resolver `/api/enrichment/ean`. Produto **sem EAN** (vitrine / detalhe) mostra as sugestões; toque vincula com `origem=sugestao`.
 
 ## Reverter
 

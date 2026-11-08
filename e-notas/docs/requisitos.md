@@ -360,10 +360,12 @@ Card: [BXKZ55Wb](https://trello.com/c/BXKZ55Wb).
 - Card workstation: `e-notas-t-desc-ean`.
 - Implementação: `GET|POST /api/enrichment/ean` (`?descricao=` ou body `{ descricao }`, `force?`) → candidatos `{ ean, score, fonte, nome_canonico, image_url }` (sem auto-vínculo).
 - Normalização: abreviações NFC-e (`ABS`→`ABSORVENTE`, etc.).
-- Fontes: cache `ean_sugestoes` → local → Open*Facts (**sem Google** para EAN); `ean_resolve_buscas` evita re-scrape. UI chama `GET|POST /api/enrichment/ean?descricao=…`.
+- Fontes: cache `ean_sugestoes` → local → Open*Facts → **ean-serp** (SI5 + SERP; REQ-044). Google Imagens não sugere EAN.
+- `ean_resolve_buscas` evita re-scrape OFF; ean-serp roda se ainda não há fonte SI5/SERP no cache (ou `force`).
+- UI chama `GET|POST /api/enrichment/ean?descricao=…` (vitrine / detalhe sem EAN / modal).
 - UI: vitrine + **detalhe do produto** + modal EAN; toque vincula (`origem=sugestao`).
 - Antes: só scan/digitação. Depois: sugestão pelo descritivo + confirmação humana.
-- Rollback: remover rotas `/api/enrichment/*`, `enrichment.js`, UI suggest, `DROP TABLE enotas.ean_sugestoes;` / `ean_resolve_buscas`.
+- Rollback: `EAN_SERP_URL=` vazio + remover `fromEanSerp`; ou remover rotas/`enrichment.js`/UI + `DROP TABLE enotas.ean_sugestoes;` / `ean_resolve_buscas`.
 
 ## REQ-040 — Identificar imagens a partir do EAN (2026-11-07)
 
@@ -398,9 +400,10 @@ Card: [BXKZ55Wb](https://trello.com/c/BXKZ55Wb).
 - Fontes: SI5 HTML (e API opcional `SI5_TOKEN`) → DuckDuckGo HTML (`EAN {descricao}`) → Google CDP opcional (`GOOGLE_CDP` / `google_cdp`).
 - Enrich das top fichas SI5: `nome_canonico` + `image_url`.
 - API: `GET|POST /ean` (`descricao`, `limit`, `enrich`, `google_cdp`) → `{ candidatos: [{ ean, score, fonte, fontes, nome_canonico, image_url, url }] }`.
-- Sem persistência no schema `enotas`; não substitui REQ-039 (local/OFF no app).
-- Antes: só enrichment in-process sem SERP. Depois: microserviço dedicado para a pista Google/SERP.
-- Rollback: parar `:4180` e apagar `e-notas/ean-serp/`.
+- **Integração app:** `enrichment.js` → `fromEanSerp` (`EAN_SERP_URL`, default `http://127.0.0.1:4180`) alimenta `/api/enrichment/ean`; UI de produto **sem EAN** (vitrine + detalhe) mostra as sugestões. Fotos remotas → `ean-fotos/` (se DB down, thumb remota).
+- Demo local sem Postgres: `ALLOW_OFFLINE=1` + `USE_HTTP=1` + ean-serp `:4180` → `/demo-ean-suggest.html`.
+- Antes: só enrichment in-process sem SERP. Depois: microserviço + consumo no fluxo de sugestão.
+- Rollback: parar `:4180`; no app remover `fromEanSerp` / `EAN_SERP_URL`; apagar `e-notas/ean-serp/` se descontinuar.
 
 ## REQ-042 — Google Imagens: descrição ou EAN + N (2026-11-07)
 

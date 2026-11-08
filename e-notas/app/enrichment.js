@@ -1,7 +1,7 @@
 /**
  * Enrichment: descrição → EAN → imagens (composição; sem auto-vínculo).
- * Fontes EAN: local, Open Food/Beauty/Products Facts (via /api/enrichment/ean).
- * Google Imagens só no pipeline de fotos, não na sugestão de EAN.
+ * Fontes EAN: local, Open*Facts, serviço **ean-serp** (SI5 + SERP `EAN`+nome).
+ * Google Imagens só no pipeline de fotos (não substitui o ean-serp).
  */
 import {
   buscarImagensEan,
@@ -22,6 +22,20 @@ const FETCH_MS = 12_000;
 const MAX_CANDIDATOS = 8;
 /** Score mínimo para disparar busca de imagens por EAN sem confirmação. */
 export const SCORE_IMAGENS_AUTO = 0.72;
+
+/** Após 1º timeout/recusa do Postgres, evita N×8s no mesmo processo. */
+let dbReachableMemo = true;
+function dbOk() {
+  if (process.env.ENOTAS_DB === '0') return false;
+  return dbReachableMemo;
+}
+function markDbDown(err) {
+  const msg = String(err?.message || err || '');
+  if (/timeout|ECONNREFUSED|ENOTFOUND|Connection terminated|connect ETIMEDOUT/i.test(msg)) {
+    dbReachableMemo = false;
+    process.env.ENOTAS_DB = '0';
+  }
+}
 
 const STOP = new Set([
   'LT',
@@ -166,7 +180,7 @@ function pushEan(map, { ean, score, fonte, nome_canonico, image_url }) {
 
 /**
  * Garante image_url local (baixa terceiros → ean-fotos + ean_imagens).
- * Nunca deixa URL http(s) externa na resposta.
+ * Com DB down, mantém URL remota (SI5 etc.) para a UI não ficar sem thumb.
  */
 async function attachImagesToCandidatos(candidatos) {
   for (const c of candidatos) {
@@ -184,14 +198,21 @@ async function attachImagesToCandidatos(candidatos) {
       }
       await sleep(80);
     }
+    if (!dbOk()) {
+      c.image_url = remote || c.image_url || null;
+      continue;
+    }
     try {
       const pathLocal = await ensureEanImageLocal(c.ean, remote, {
-        fonte: remote ? 'openfoodfacts' : 'local',
+        fonte: remote ? 'ean-serp' : 'local',
       });
-      c.image_url = pathLocal ? `/${pathLocal.replace(/^\//, '')}` : null;
+      c.image_url = pathLocal
+        ? `/${pathLocal.replace(/^\//, '')}`
+        : remote || null;
     } catch (err) {
+      markDbDown(err);
       console.warn('[enrichment] localize imagem:', err.message);
-      c.image_url = null;
+      c.image_url = remote || null;
     }
   }
   return candidatos;
@@ -230,6 +251,63 @@ async function fromCacheSugestoes(queryNorm, map) {
       fonte: `cache:${row.fonte || 'sugestao'}`,
       nome_canonico: row.nome_canonico,
     });
+  }
+}
+
+function eanSerpBase() {
+  return String(process.env.EAN_SERP_URL || 'http://127.0.0.1:4180').replace(
+    /\/$/,
+    '',
+  );
+}
+
+function hasSerpFonte(map) {
+  for (const c of map.values()) {
+    if (/si5|ddg|ean-serp|cosmos|systax|precomelhor|consultaprodutos/i.test(c.fonte || '')) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Microserviço ean-serp (REQ-044): SI5 + DuckDuckGo `EAN {descricao}`.
+ * Falha soft se :4180 estiver down.
+ */
+async function fromEanSerp(descricao, map) {
+  const base = eanSerpBase();
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), 20_000);
+  try {
+    const res = await fetch(`${base}/ean`, {
+      method: 'POST',
+      signal: ctrl.signal,
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: JSON.stringify({ descricao, limit: MAX_CANDIDATOS, enrich: true }),
+    });
+    if (!res.ok) {
+      console.warn(`[enrichment] ean-serp HTTP ${res.status}`);
+      return;
+    }
+    const data = await res.json();
+    for (const c of data?.candidatos || []) {
+      const score = Number(c.score) || 0;
+      if (score < 0.35) continue;
+      pushEan(map, {
+        ean: c.ean,
+        score: Math.min(1, score + 0.04),
+        fonte: `ean-serp:${c.fonte || 'serp'}`,
+        nome_canonico: c.nome_canonico,
+        image_url: c.image_url,
+      });
+    }
+  } catch (err) {
+    console.warn('[enrichment] ean-serp:', err.message);
+  } finally {
+    clearTimeout(t);
   }
 }
 
@@ -303,16 +381,30 @@ export async function resolveEanFromDescricao(
   }
 
   const map = new Map();
-  await fromCacheSugestoes(descricao_norm, map);
-  await fromLocalBase(descricao_norm, map);
+  if (dbOk()) {
+    try {
+      await fromCacheSugestoes(descricao_norm, map);
+    } catch (err) {
+      markDbDown(err);
+      console.warn('[enrichment] cache sugestões:', err.message);
+    }
+  }
+  if (dbOk()) {
+    try {
+      await fromLocalBase(descricao_norm, map);
+    } catch (err) {
+      markDbDown(err);
+      console.warn('[enrichment] base local:', err.message);
+    }
+  }
 
   let usedCacheBusca = false;
-  if (!skipRemote && !force) {
+  if (dbOk() && !skipRemote && !force) {
     try {
       const busca = await getEanResolveBusca(descricao_norm);
       if (busca) usedCacheBusca = true;
-    } catch {
-      /* ignore */
+    } catch (err) {
+      markDbDown(err);
     }
   }
 
@@ -341,31 +433,49 @@ export async function resolveEanFromDescricao(
         map,
       );
     }
+  }
+
+  // ean-serp: independente do marker OFF — roda se ainda não há fonte SERP/SI5
+  if (!skipRemote && (force || !hasSerpFonte(map))) {
+    await fromEanSerp(raw, map);
+  }
+
+  if (dbOk() && !skipRemote && !usedCacheBusca) {
     try {
       await saveEanResolveBusca(descricao_norm, map.size);
     } catch (err) {
+      markDbDown(err);
       console.warn('[enrichment] busca marker:', err.message);
     }
   }
 
   let candidatos = [...map.values()]
-    .sort((a, b) => b.score - a.score)
+    .sort((a, b) => {
+      const rank = (c) =>
+        (c.image_url ? 0.08 : 0) +
+        (String(c.ean).length === 13 ? 0.03 : 0) +
+        (c.score || 0);
+      return rank(b) - rank(a);
+    })
     .slice(0, MAX_CANDIDATOS);
 
   await attachImagesToCandidatos(candidatos);
 
-  try {
-    await upsertEanSugestoes(
-      candidatos.map((c) => ({
-        descricao_norm,
-        ean: c.ean,
-        score: c.score,
-        fonte: String(c.fonte).replace(/^cache:/, ''),
-        nome_canonico: c.nome_canonico,
-      })),
-    );
-  } catch (err) {
-    console.warn('[enrichment] cache sugestões:', err.message);
+  if (dbOk()) {
+    try {
+      await upsertEanSugestoes(
+        candidatos.map((c) => ({
+          descricao_norm,
+          ean: c.ean,
+          score: c.score,
+          fonte: String(c.fonte).replace(/^cache:/, ''),
+          nome_canonico: c.nome_canonico,
+        })),
+      );
+    } catch (err) {
+      markDbDown(err);
+      console.warn('[enrichment] cache sugestões:', err.message);
+    }
   }
 
   return {

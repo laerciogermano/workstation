@@ -67,7 +67,7 @@ Resposta: `{ ok, created, empresaCriada, url, empresa, nota, itens }`.
 | `GET` | `/api/ean-imagens?codigo_barras=` | `{ ok, imagens }` candidatas do EAN |
 | `POST` | `/api/ean-imagens/buscar` | body `{ codigo_barras, force?, descricao? }` → APIs + **Google Imagens** (query EAN+nome); idempotente sem `force` |
 | `POST` | `/api/ean-imagens/:id/selecionar` | marca a foto do feed e atualiza `codigos_barras.foto_url` |
-| `GET`/`POST` | `/api/enrichment/ean` | `descricao` (+ `force?`) → candidatos pelo descritivo (local/OFF; **sem Google**; REQ-039/043) |
+| `GET`/`POST` | `/api/enrichment/ean` | `descricao` (+ `force?`) → candidatos (local/OFF + **ean-serp** SI5/SERP; REQ-039/043/044) |
 | `GET`/`POST` | `/api/enrichment/imagens` | query/body `ean` ou `codigo_barras`, `descricao?`, `force?` → APIs + Google (REQ-040/032) |
 | `GET`/`POST` | `/api/enrichment/imagens-por-descricao` | query/body `descricao`, `force?` → `modo: ean\|texto` + imagens (REQ-041) |
 | `GET`/`POST` | `/api/enrichment/google-imagens` | `descricao` **ou** `ean` + `n` (default **50**, máx 100) → cache DB ou scrape CDP; `force` / `download=0` |
@@ -78,7 +78,8 @@ Sem API key: Chrome CDP (`CDP_URL`, default `:9223`) abre `tbm=isch` e baixa. Ar
 
 UI: na **vitrine do estabelecimento**, botão **Código de barras** / **Editar EAN** no item (câmera, tirar foto / escolher imagem, digitação, **Sugerir EAN pela descrição**) → modal `#modal-ean` → `POST` acima (REQ-031/039). No **detalhe do produto**, grade **Fotos** para escolher a representativa.
 
-Módulo: [`enrichment.js`](enrichment.js) (normalização + match local/OFF + orquestração). Cache: `ean_sugestoes`.
+Módulo: [`enrichment.js`](enrichment.js) (normalização + match local/OFF + **ean-serp** + orquestração). Cache: `ean_sugestoes`.  
+Pré-req sugestões SERP: subir [`../ean-serp/`](../ean-serp/README.md) (`:4180`) ou `EAN_SERP_URL`.
 
 Fotos: sempre **locais** — `public/ean-fotos/{ean}/NN.ext`, `public/desc-fotos/{slug}/NN.ext`, `public/google-imagens/{slug}/NN.ext`. URLs de terceiros só em `url_origem`; resposta/`foto_url` usam `path_local`. Ver [`public/ean-fotos/README.md`](public/ean-fotos/README.md).
 

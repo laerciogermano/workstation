@@ -57,6 +57,7 @@ function cfg() {
     user: process.env.DB_USER || 'connectmax',
     password: process.env.DB_PASSWORD || '',
     database: process.env.DB_NAME || 'connectmax',
+    connectionTimeoutMillis: Number(process.env.DB_CONNECT_TIMEOUT_MS || 8000),
   };
 }
 

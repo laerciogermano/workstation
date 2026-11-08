@@ -24,8 +24,10 @@ import {
   listEmpresas,
   listItens,
   listNotas,
+  listProdutosEan,
   selecionarEanImagem,
   upsertCodigoBarras,
+  upsertProdutoEan,
 } from './db.js';
 import {
   imagensPorDescricao,
@@ -163,15 +165,22 @@ app.get('/api/codigos-barras', async (_req, res) => {
 app.post('/api/codigos-barras', async (req, res) => {
   try {
     const origem = String(req.body?.origem || '').trim() || 'manual';
+    const titulo = String(req.body?.titulo || req.body?.nome_canonico || '').trim();
+    const descSugestao = String(req.body?.descricao || '').trim();
     const row = await upsertCodigoBarras({
       empresaId: req.body?.empresa_id,
       codigoUnidade: req.body?.codigo_unidade,
       codigoBarras: req.body?.codigo_barras,
       fotoUrl: req.body?.foto_url,
       origem,
+      titulo,
+      categorias: req.body?.categorias,
+      marca: req.body?.marca,
+      descricao: descSugestao,
     });
-    const descSugestao = String(req.body?.descricao || '').trim();
-    enqueueBuscarImagensEan(row.codigo_barras, { descricao: descSugestao });
+    enqueueBuscarImagensEan(row.codigo_barras, {
+      descricao: titulo || descSugestao,
+    });
     if (descSugestao && origem === 'sugestao') {
       confirmarEanSugestao(normalizeDescricao(descSugestao), row.codigo_barras).catch(
         (err) => console.warn('[ean-sugestao:confirm]', err.message),
@@ -184,6 +193,35 @@ app.post('/api/codigos-barras', async (req, res) => {
   } catch (err) {
     const status = err.status || 500;
     console.error('[codigos-barras:erro]', err.message);
+    return res.status(status).json({ ok: false, error: err.message });
+  }
+});
+
+app.get('/api/produtos-ean', async (_req, res) => {
+  try {
+    const produtos = await listProdutosEan();
+    return res.json({ ok: true, produtos });
+  } catch (err) {
+    console.error('[produtos-ean:erro]', err.message);
+    return res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
+app.post('/api/produtos-ean', async (req, res) => {
+  try {
+    const row = await upsertProdutoEan({
+      codigoBarras: req.body?.codigo_barras || req.body?.ean,
+      titulo: req.body?.titulo,
+      categorias: req.body?.categorias,
+      fotoUrl: req.body?.foto_url,
+      marca: req.body?.marca,
+      fonte: req.body?.fonte || 'manual',
+      forceTitulo: true,
+    });
+    return res.json({ ok: true, produto: row });
+  } catch (err) {
+    const status = err.status || 500;
+    console.error('[produtos-ean:erro]', err.message);
     return res.status(status).json({ ok: false, error: err.message });
   }
 });

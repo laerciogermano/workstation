@@ -547,12 +547,19 @@ function renderProdutosTab() {
               ?.nome ||
             'Mercado';
           const data = formatDataNota(r.nota_emissao) || '';
+          const cats = Array.isArray(r.ean_categorias)
+            ? r.ean_categorias.filter(Boolean).slice(0, 3)
+            : [];
+          const catsHtml = cats.length
+            ? `<p class="produto-cats">${cats.map((c) => esc(c)).join(' · ')}</p>`
+            : '';
           return `<button type="button" class="produto-card" data-open-produto="${esc(
             r._key,
           )}">
             <div class="produto-media">${img}</div>
             <div class="produto-body">
               <h3 class="produto-nome">${esc(r.nome || 'Produto')}</h3>
+              ${catsHtml}
               <p class="produto-preco">
                 <span class="price-cell">${esc(formatPreco(r.valor_unitario))}</span>
                 <span class="chip ok">menor</span>
@@ -739,7 +746,8 @@ function renderProdutoEanSuggestList(list, { empresaId, empresaNome, codigo, nom
             data-empresa-id="${esc(String(empresaId))}"
             data-empresa-nome="${esc(empresaNome)}"
             data-codigo="${esc(codigo)}"
-            data-nome="${esc(nome)}">
+            data-nome="${esc(nome)}"
+            data-titulo="${esc(c.nome_canonico || '')}">
             ${thumb}
             <span class="ean-suggest-card-body">
               <span class="ean-suggest-card-title">${esc(c.nome_canonico || '—')}</span>
@@ -1565,7 +1573,8 @@ async function hydrateEanSuggestions(root) {
                 data-empresa-id="${esc(el.dataset.empresaId || '')}"
                 data-empresa-nome="${esc(el.dataset.empresaNome || '')}"
                 data-codigo="${esc(el.dataset.codigo || '')}"
-                data-nome="${esc(el.dataset.nome || '')}">
+                data-nome="${esc(el.dataset.nome || '')}"
+                data-titulo="${esc(c.nome_canonico || '')}">
                 ${thumb}
                 <span class="ean-suggest-ean">${esc(c.ean)}</span>
                 <span class="ean-suggest-nome">${esc(c.nome_canonico || '—')}</span>
@@ -1586,6 +1595,7 @@ async function aplicarSugestaoEan({
   codigo,
   nome,
   ean,
+  titulo,
 }) {
   const empresa = Number(empresaId);
   const unidade = String(codigo || '').trim();
@@ -1601,6 +1611,7 @@ async function aplicarSugestaoEan({
       codigo_unidade: unidade,
       codigo_barras: codigoBarras,
       descricao: nome || '',
+      titulo: titulo || '',
       origem: 'sugestao',
     }),
   });
@@ -1635,6 +1646,7 @@ function renderEanSuggestList(candidatos) {
     btn.className = 'ean-suggest-btn';
     btn.dataset.ean = c.ean;
     btn.dataset.origem = 'sugestao';
+    btn.dataset.titulo = c.nome_canonico || '';
     const pct = Math.round((Number(c.score) || 0) * 100);
     const thumb = c.image_url
       ? `<img class="ean-suggest-thumb" src="${esc(c.image_url)}" alt="" loading="lazy" width="36" height="36" />`
@@ -1747,6 +1759,7 @@ async function saveEan({ origem } = {}) {
         codigo_unidade: codigoUnidade,
         codigo_barras: codigoBarras,
         descricao: modalContext?.itemNome || '',
+        titulo: modalContext?.tituloCanonico || '',
         origem: origemFinal,
       }),
     });
@@ -1847,6 +1860,7 @@ vitrineItensEl?.addEventListener('click', (ev) => {
       codigo: sug.dataset.codigo,
       nome: sug.dataset.nome,
       ean: sug.dataset.ean,
+      titulo: sug.dataset.titulo,
     })
       .then(() => {
         if (lojaAbertaId != null) renderVitrineDetalhe(lojaAbertaId);
@@ -1890,6 +1904,7 @@ produtoEanSuggestEl?.addEventListener('click', (ev) => {
     codigo: sug.dataset.codigo,
     nome: sug.dataset.nome,
     ean: sug.dataset.ean,
+    titulo: sug.dataset.titulo,
   })
     .then(() => {
       hideProdutoEanSearch();
@@ -1984,7 +1999,11 @@ eanSuggestListEl?.addEventListener('click', (ev) => {
   const btn = ev.target.closest('[data-ean]');
   if (!btn) return;
   eanBarrasEl.value = btn.dataset.ean || '';
-  modalContext = { ...modalContext, origem: 'sugestao' };
+  modalContext = {
+    ...modalContext,
+    origem: 'sugestao',
+    tituloCanonico: btn.dataset.titulo || '',
+  };
   setEanSuggestStatus(`Vinculando ${btn.dataset.ean}…`, 'ok');
   void saveEan({ origem: 'sugestao' });
 });

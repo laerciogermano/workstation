@@ -433,6 +433,16 @@ Card: [BXKZ55Wb](https://trello.com/c/BXKZ55Wb).
 - Antes: só chip “N itens”. Depois: barra bicolor + métricas.
 - Rollback: remover `eanProgressLoja` / `htmlEanProgress` e CSS `.ean-progress*`.
 
+## REQ-047 — Catálogo canônico `produtos_ean` (2026-11-08)
+
+- Tabela `enotas.produtos_ean` = **fonte da verdade** por EAN: `codigo_barras` (PK), `titulo`, `categorias` (text[]), `foto_url`, `marca`, `fonte`.
+- Com EAN vinculado, listagens/detalhe usam **título e foto canônicos** (`COALESCE(produtos_ean.*, …)`), não o texto cru da DANFE (`nome_nota` permanece disponível).
+- Ao vincular EAN (`POST /api/codigos-barras`), upsert em `produtos_ean` com `titulo`/`nome_canonico` (sugestão SI5) ou descrição; foto selecionada propaga para a ficha.
+- APIs: `GET` / `POST` `/api/produtos-ean` (edição manual da ficha; `forceTitulo` no POST).
+- Backfill inicial a partir dos vínculos `codigos_barras` + nome do item.
+- Antes: só vínculo empresa/unidade→EAN + `foto_url` em `codigos_barras`. Depois: ficha normalizada reutilizada em todas as lojas do mesmo EAN.
+- Rollback: `DROP TABLE enotas.produtos_ean;` + remover JOIN/overlay em `listItens` e rotas `/api/produtos-ean`.
+
 ## Próximos passos
 
 → Manter este arquivo alinhado a cada pedido novo · esteira de docs em [`README.md`](README.md) quando avançar funcionalidades/BDD.

@@ -204,6 +204,21 @@ export async function initDb() {
 
     CREATE INDEX IF NOT EXISTS desc_imagens_norm_idx
       ON ${t('desc_imagens')}(descricao_norm);
+
+    -- Catálogo canônico por EAN (fonte da verdade: título, categorias, foto)
+    CREATE TABLE IF NOT EXISTS ${t('produtos_ean')} (
+      codigo_barras TEXT PRIMARY KEY,
+      titulo TEXT NOT NULL,
+      categorias TEXT[] NOT NULL DEFAULT '{}',
+      foto_url TEXT,
+      marca TEXT,
+      fonte TEXT,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    );
+
+    CREATE INDEX IF NOT EXISTS produtos_ean_titulo_idx
+      ON ${t('produtos_ean')}(titulo);
   `);
 
   await p.query(`
@@ -223,6 +238,7 @@ export async function initDb() {
   `);
 
   await syncFotosCodigosBarras(p);
+  await backfillProdutosEan(p);
 
   // Migração: unicidade (nota_id, codigo) — remove duplicatas e aplica UNIQUE se faltar
   await p.query(`
@@ -444,16 +460,153 @@ export async function listNotas(client = getPool()) {
 
 export async function listItens(client = getPool()) {
   const r = await client.query(
-    `SELECT i.*, e.nome AS empresa_nome, n.numero AS nota_numero, n.chave_acesso,
-            n.emissao AS nota_emissao, cb.codigo_barras, cb.foto_url, cb.origem AS ean_origem
+    `SELECT i.*,
+            i.nome AS nome_nota,
+            COALESCE(NULLIF(TRIM(pe.titulo), ''), i.nome) AS nome,
+            pe.titulo AS ean_titulo,
+            pe.categorias AS ean_categorias,
+            pe.marca AS ean_marca,
+            e.nome AS empresa_nome, n.numero AS nota_numero, n.chave_acesso,
+            n.emissao AS nota_emissao, cb.codigo_barras,
+            COALESCE(pe.foto_url, cb.foto_url) AS foto_url,
+            cb.origem AS ean_origem
      FROM ${t('itens')} i
      JOIN ${t('empresas')} e ON e.id = i.empresa_id
      JOIN ${t('notas')} n ON n.id = i.nota_id
      LEFT JOIN ${t('codigos_barras')} cb
        ON cb.empresa_id = i.empresa_id AND cb.codigo_unidade = i.codigo
+     LEFT JOIN ${t('produtos_ean')} pe
+       ON pe.codigo_barras = cb.codigo_barras
      ORDER BY i.id DESC`,
   );
   return r.rows;
+}
+
+/** Normaliza título canônico (sem # NFC-e / espaços). */
+export function normalizeTituloEan(raw) {
+  return String(raw || '')
+    .replace(/#/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function normalizeCategoriasEan(raw) {
+  if (Array.isArray(raw)) {
+    return [
+      ...new Set(
+        raw
+          .map((c) => String(c || '').trim())
+          .filter(Boolean)
+          .map((c) => c.slice(0, 64)),
+      ),
+    ].slice(0, 20);
+  }
+  const s = String(raw || '').trim();
+  if (!s) return [];
+  return normalizeCategoriasEan(s.split(/[;,|/]/));
+}
+
+/**
+ * Upsert da ficha canônica do EAN (fonte da verdade).
+ * Não apaga título/foto existentes com valores vazios.
+ */
+export async function upsertProdutoEan(
+  {
+    codigoBarras,
+    titulo,
+    categorias,
+    fotoUrl,
+    marca,
+    fonte,
+    forceTitulo = false,
+  } = {},
+  client = getPool(),
+) {
+  const ean = String(codigoBarras ?? '').replace(/\D/g, '');
+  if (!ean) {
+    throw Object.assign(new Error('codigo_barras obrigatório'), { status: 400 });
+  }
+  const tituloNorm = normalizeTituloEan(titulo);
+  const cats = normalizeCategoriasEan(categorias);
+  let foto =
+    typeof fotoUrl === 'string' && fotoUrl.trim()
+      ? toPublicImagePath(fotoUrl.trim())
+      : null;
+  if (foto && isRemoteImageUrl(foto)) foto = null;
+  const marcaNorm = String(marca || '')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, 128) || null;
+  const fonteNorm = fonte ? String(fonte).slice(0, 64) : null;
+  const fallbackTitulo = tituloNorm || ean;
+
+  const r = await client.query(
+    `INSERT INTO ${t('produtos_ean')}
+       (codigo_barras, titulo, categorias, foto_url, marca, fonte)
+     VALUES ($1, $2, $3::text[], $4, $5, $6)
+     ON CONFLICT (codigo_barras) DO UPDATE SET
+       titulo = CASE
+         WHEN $7::boolean AND NULLIF(TRIM(EXCLUDED.titulo), '') IS NOT NULL
+           THEN EXCLUDED.titulo
+         WHEN NULLIF(TRIM(${t('produtos_ean')}.titulo), '') IS NULL
+           THEN COALESCE(NULLIF(TRIM(EXCLUDED.titulo), ''), ${t('produtos_ean')}.titulo)
+         WHEN NULLIF(TRIM(EXCLUDED.titulo), '') IS NOT NULL
+           AND ${t('produtos_ean')}.fonte IS DISTINCT FROM 'manual'
+           AND EXCLUDED.fonte IN ('sugestao', 'si5', 'manual')
+           THEN EXCLUDED.titulo
+         ELSE ${t('produtos_ean')}.titulo
+       END,
+       categorias = CASE
+         WHEN cardinality(EXCLUDED.categorias) > 0 THEN EXCLUDED.categorias
+         ELSE ${t('produtos_ean')}.categorias
+       END,
+       foto_url = COALESCE(EXCLUDED.foto_url, ${t('produtos_ean')}.foto_url),
+       marca = COALESCE(EXCLUDED.marca, ${t('produtos_ean')}.marca),
+       fonte = COALESCE(EXCLUDED.fonte, ${t('produtos_ean')}.fonte),
+       updated_at = now()
+     RETURNING *`,
+    [ean, fallbackTitulo, cats, foto, marcaNorm, fonteNorm, Boolean(forceTitulo)],
+  );
+  return r.rows[0];
+}
+
+export async function getProdutoEan(codigoBarras, client = getPool()) {
+  const ean = String(codigoBarras ?? '').replace(/\D/g, '');
+  if (!ean) return null;
+  const r = await client.query(
+    `SELECT * FROM ${t('produtos_ean')} WHERE codigo_barras = $1`,
+    [ean],
+  );
+  return r.rows[0] || null;
+}
+
+export async function listProdutosEan(client = getPool()) {
+  const r = await client.query(
+    `SELECT * FROM ${t('produtos_ean')} ORDER BY updated_at DESC, codigo_barras`,
+  );
+  return r.rows;
+}
+
+/** Seed inicial a partir dos vínculos já existentes. */
+async function backfillProdutosEan(client = getPool()) {
+  await client.query(
+    `INSERT INTO ${t('produtos_ean')}
+       (codigo_barras, titulo, foto_url, fonte)
+     SELECT DISTINCT ON (cb.codigo_barras)
+       cb.codigo_barras,
+       COALESCE(
+         NULLIF(TRIM(regexp_replace(i.nome, '#', ' ', 'g')), ''),
+         cb.codigo_barras
+       ),
+       cb.foto_url,
+       'backfill'
+     FROM ${t('codigos_barras')} cb
+     LEFT JOIN ${t('itens')} i
+       ON i.empresa_id = cb.empresa_id AND i.codigo = cb.codigo_unidade
+     WHERE cb.codigo_barras IS NOT NULL AND TRIM(cb.codigo_barras) <> ''
+     ORDER BY cb.codigo_barras, i.id DESC NULLS LAST
+     ON CONFLICT (codigo_barras) DO NOTHING`,
+  );
 }
 
 export async function listCodigosBarras(client = getPool()) {
@@ -582,7 +735,17 @@ function normalizeOrigemEan(raw) {
 
 /** Upsert: (empresa, código da unidade) → EAN + foto + origem do vínculo. */
 export async function upsertCodigoBarras(
-  { empresaId, codigoUnidade, codigoBarras, fotoUrl, origem },
+  {
+    empresaId,
+    codigoUnidade,
+    codigoBarras,
+    fotoUrl,
+    origem,
+    titulo,
+    categorias,
+    marca,
+    descricao,
+  },
   client = getPool(),
 ) {
   const empresa = Number(empresaId);
@@ -626,6 +789,29 @@ export async function upsertCodigoBarras(
      RETURNING *`,
     [empresa, unidade, ean, foto, origemNorm],
   );
+
+  const tituloCanon =
+    normalizeTituloEan(titulo) ||
+    normalizeTituloEan(descricao) ||
+    null;
+  await upsertProdutoEan(
+    {
+      codigoBarras: ean,
+      titulo: tituloCanon,
+      categorias,
+      fotoUrl: foto,
+      marca,
+      fonte:
+        origemNorm === 'sugestao'
+          ? 'sugestao'
+          : origemNorm === 'manual'
+            ? 'manual'
+            : origemNorm || 'vinculo',
+      forceTitulo: Boolean(normalizeTituloEan(titulo)),
+    },
+    client,
+  );
+
   return r.rows[0];
 }
 
@@ -867,6 +1053,14 @@ async function setFotoUrlForEan(ean, pathLocal, client = getPool()) {
      SET foto_url = $1, updated_at = now()
      WHERE codigo_barras = $2`,
     [foto, code],
+  );
+  await client.query(
+    `INSERT INTO ${t('produtos_ean')} (codigo_barras, titulo, foto_url, fonte)
+     VALUES ($1, $1, $2, 'foto')
+     ON CONFLICT (codigo_barras) DO UPDATE SET
+       foto_url = EXCLUDED.foto_url,
+       updated_at = now()`,
+    [code, foto],
   );
   return r.rowCount || 0;
 }

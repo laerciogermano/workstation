@@ -9,8 +9,9 @@ Em **qualquer** HTML/CSS/UI/landing/dashboard/protótipo visual neste workspace:
 
 1. **Padrão:** [`.cursor/design-refs/DESIGN-SYSTEM.md`](../design-refs/DESIGN-SYSTEM.md) (Editorial Bold)
 2. Skill: [`.cursor/skills/frontend-anti-slop/SKILL.md`](../skills/frontend-anti-slop/SKILL.md)
-3. Refs brutas: [`.cursor/design-refs/SOURCES.md`](../design-refs/SOURCES.md)
-4. Marca de produto em `*/marca/` vence o default quando existir
+3. Motion / tendência 2026 (React): [`.cursor/skills/modern-ui-motion/SKILL.md`](../skills/modern-ui-motion/SKILL.md) → [`modern-2026/`](../design-refs/modern-2026/MODERN-UI-MOTION.md)
+4. Refs brutas: [`.cursor/design-refs/SOURCES.md`](../design-refs/SOURCES.md)
+5. Marca de produto em `*/marca/` vence o default quando existir
 
 ## Critérios
 

@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+  <!-- Manually setup SEO for better results and smoother local dev experience  -->
+  <!-- Much better than the Jekyll SEO plugin -->
+
+  <title>
+    
+    Documenting Architecture Decisions
+    
+  </title>
+
+  <link rel="canonical" href="https://www.cognitect.com/blog/2011/11/15/documenting-architecture-decisions">
+
+  <meta content="width=device-width, initial-scale=1" name="viewport">
+  <meta itemprop="description" name="description"
+    content="" />
+  <meta property="og:locale" content="en_US">
+  <meta charset="utf-8">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Documenting Architecture Decisions">
+  <meta property="og:url" content="https://www.cognitect.com/blog/2011/11/15/documenting-architecture-decisions">
+  <!-- Re-add if page thumbs become a thing <meta property="og:image" content="https://www.cognitect.com/thumbs/" /> -->
+  <meta property="og:site_name" content="Cognitect.com">
+  <meta property="article:publisher" content="https://www.cognitect.com" />
+  
+  <meta property="article:author" content="Michael Nygard" />
+  
+  <meta property="article:published_time" content="2011-11-15 00:00:00 -0500" />
+  <meta property="og:description"
+    content="">
+  <meta name="twitter:title" content="Documenting Architecture Decisions">
+  <meta name="twitter:description" content="Context">
+  
+
+  <meta name="twitter:site" content="@cognitect" />
+  <meta name="twitter:card" content="summary">
+  
+  <meta name="twitter:image" content="https://www.cognitect.com/assets/images/logo_large.png" />
+  
+
+  
+  
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="/assets/css/style.css?v=1.14">
+  <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Open+Sans" />
+  <link href="/assets/css/normalize.css" rel="stylesheet" type="text/css">
+  <link href="/assets/css/webflow.css" rel="stylesheet" type="text/css">
+  <link href="/assets/css/stripped-down.webflow.css" rel="stylesheet" type="text/css">
+  <!--[if lt IE 9]>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <![endif]-->
+
+  <link rel="apple-touch-icon" sizes="57x57" href="/apple-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="/apple-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="/apple-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="/apple-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="/apple-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="/apple-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="/apple-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="/apple-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/android-icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+  <meta name="theme-color" content="#ffffff">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <link rel="shortcut icon" href="/favicon.ico?v=rMq4O6n057">
+  <style type="text/css">
+    @font-face {
+      font-family: proxima-nova;
+      src: url(https://use.typekit.net/af/c47696/00000000000000003b9b305e/27/l?subset_id=2&fvd=n1&v=3) format("woff2"), url(https://use.typekit.net/af/c47696/00000000000000003b9b305e/27/d?subset_id=2&fvd=n1&v=3) format("woff"), url(https://use.typekit.net/af/c47696/00000000000000003b9b305e/27/a?subset_id=2&fvd=n1&v=3) format("opentype");
+      font-weight: 100;
+      font-style: normal;
+    }
+
+    @font-face {
+      font-family: proxima-nova;
+      src: url(https://use.typekit.net/af/c31dbb/00000000000000003b9b305f/27/l?subset_id=2&fvd=i1&v=3) format("woff2"), url(https://use.typekit.net/af/c31dbb/00000000000000003b9b305f/27/d?subset_id=2&fvd=i1&v=3) format("woff"), url(https://use.typekit.net/af/c31dbb/00000000000000003b9b305f/27/a?subset_id=2&fvd=i1&v=3) format("opentype");
+      font-weight: 100;
+      font-style: italic;
+    }
+
+    @font-face {
+      font-family: proxima-nova;
+      src: url(https://use.typekit.net/af/cebe0e/00000000000000003b9b3060/27/l?subset_id=2&fvd=n3&v=3) format("woff2"), url(https://use.typekit.net/af/cebe0e/00000000000000003b9b3060/27/d?subset_id=2&fvd=n3&v=3) format("woff"), url(https://use.typekit.net/af/cebe0e/00000000000000003b9b3060/27/a?subset_id=2&fvd=n3&v=3) format("opentype");
+      font-weight: 300;
+      font-style: normal;
+    }
+
+    @font-face {
+      font-family: proxima-nova;
+      src: url(https://use.typekit.net/af/40ff7f/00000000000000003b9b3061/27/l?subset_id=2&fvd=i3&v=3) format("woff2"), url(https://use.typekit.net/af/40ff7f/00000000000000003b9b3061/27/d?subset_id=2&fvd=i3&v=3) format("woff"), url(https://use.typekit.net/af/40ff7f/00000000000000003b9b3061/27/a?subset_id=2&fvd=i3&v=3) format("opentype");
+      font-weight: 300;
+      font-style: italic;
+    }
+
+    @font-face {
+      font-family: proxima-nova;
+      src: url(https://use.typekit.net/af/705e94/00000000000000003b9b3062/27/l?subset_id=2&fvd=n4&v=3) format("woff2"), url(https://use.typekit.net/af/705e94/00000000000000003b9b3062/27/d?subset_id=2&fvd=n4&v=3) format("woff"), url(https://use.typekit.net/af/705e94/00000000000000003b9b3062/27/a?subset_id=2&fvd=n4&v=3) format("opentype");
+      font-weight: 400;
+      font-style: normal;
+    }
+
+    @font-face {
+      font-family: proxima-nova;
+      src: url(https://use.typekit.net/af/5c70f2/00000000000000003b9b3063/27/l?subset_id=2&fvd=i4&v=3) format("woff2"), url(https://use.typekit.net/af/5c70f2/00000000000000003b9b3063/27/d?subset_id=2&fvd=i4&v=3) format("woff"), url(https://use.typekit.net/af/5c70f2/00000000000000003b9b3063/27/a?subset_id=2&fvd=i4&v=3) format("opentype");
+      font-weight: 400;
+      font-style: italic;
+    }
+
+    @font-face {
+      font-family: proxima-nova;
+      src: url(https://use.typekit.net/af/6e816b/00000000000000003b9b3064/27/l?subset_id=2&fvd=n5&v=3) format("woff2"), url(https://use.typekit.net/af/6e816b/00000000000000003b9b3064/27/d?subset_id=2&fvd=n5&v=3) format("woff"), url(https://use.typekit.net/af/6e816b/00000000000000003b9b3064/27/a?subset_id=2&fvd=n5&v=3) format("opentype");
+      font-weight: 500;
+      font-style: normal;
+    }
+
+    @font-face {
+      font-family: proxima-nova;
+      src: url(https://use.typekit.net/af/5b5251/00000000000000003b9b3065/27/l?subset_id=2&fvd=i5&v=3) format("woff2"), url(https://use.typekit.net/af/5b5251/00000000000000003b9b3065/27/d?subset_id=2&fvd=i5&v=3) format("woff"), url(https://use.typekit.net/af/5b5251/00000000000000003b9b3065/27/a?subset_id=2&fvd=i5&v=3) format("opentype");
+      font-weight: 500;
+      font-style: italic;
+    }
+
+    @font-face {
+      font-family: proxima-nova;
+      src: url(https://use.typekit.net/af/576d53/00000000000000003b9b3066/27/l?subset_id=2&fvd=n6&v=3) format("woff2"), url(https://use.typekit.net/af/576d53/00000000000000003b9b3066/27/d?subset_id=2&fvd=n6&v=3) format("woff"), url(https://use.typekit.net/af/576d53/00000000000000003b9b3066/27/a?subset_id=2&fvd=n6&v=3) format("opentype");
+      font-weight: 600;
+      font-style: normal;
+    }
+
+    @font-face {
+      font-family: proxima-nova;
+      src: url(https://use.typekit.net/af/f7d492/00000000000000003b9b3067/27/l?subset_id=2&fvd=i6&v=3) format("woff2"), url(https://use.typekit.net/af/f7d492/00000000000000003b9b3067/27/d?subset_id=2&fvd=i6&v=3) format("woff"), url(https://use.typekit.net/af/f7d492/00000000000000003b9b3067/27/a?subset_id=2&fvd=i6&v=3) format("opentype");
+      font-weight: 600;
+      font-style: italic;
+    }
+
+    @font-face {
+      font-family: proxima-nova;
+      src: url(https://use.typekit.net/af/949f99/00000000000000003b9b3068/27/l?subset_id=2&fvd=n7&v=3) format("woff2"), url(https://use.typekit.net/af/949f99/00000000000000003b9b3068/27/d?subset_id=2&fvd=n7&v=3) format("woff"), url(https://use.typekit.net/af/949f99/00000000000000003b9b3068/27/a?subset_id=2&fvd=n7&v=3) format("opentype");
+      font-weight: 700;
+      font-style: normal;
+    }
+
+    @font-face {
+      font-family: proxima-nova;
+      src: url(https://use.typekit.net/af/4c4052/00000000000000003b9b3069/27/l?subset_id=2&fvd=i7&v=3) format("woff2"), url(https://use.typekit.net/af/4c4052/00000000000000003b9b3069/27/d?subset_id=2&fvd=i7&v=3) format("woff"), url(https://use.typekit.net/af/4c4052/00000000000000003b9b3069/27/a?subset_id=2&fvd=i7&v=3) format("opentype");
+      font-weight: 700;
+      font-style: italic;
+    }
+
+    @font-face {
+      font-family: proxima-nova;
+      src: url(https://use.typekit.net/af/d82519/00000000000000003b9b306a/27/l?subset_id=2&fvd=n8&v=3) format("woff2"), url(https://use.typekit.net/af/d82519/00000000000000003b9b306a/27/d?subset_id=2&fvd=n8&v=3) format("woff"), url(https://use.typekit.net/af/d82519/00000000000000003b9b306a/27/a?subset_id=2&fvd=n8&v=3) format("opentype");
+      font-weight: 800;
+      font-style: normal;
+    }
+
+    @font-face {
+      font-family: proxima-nova;
+      src: url(https://use.typekit.net/af/3e6df8/00000000000000003b9b306b/27/l?subset_id=2&fvd=i8&v=3) format("woff2"), url(https://use.typekit.net/af/3e6df8/00000000000000003b9b306b/27/d?subset_id=2&fvd=i8&v=3) format("woff"), url(https://use.typekit.net/af/3e6df8/00000000000000003b9b306b/27/a?subset_id=2&fvd=i8&v=3) format("opentype");
+      font-weight: 800;
+      font-style: italic;
+    }
+
+    @font-face {
+      font-family: proxima-nova;
+      src: url(https://use.typekit.net/af/b683e3/00000000000000003b9b306c/27/l?subset_id=2&fvd=n9&v=3) format("woff2"), url(https://use.typekit.net/af/b683e3/00000000000000003b9b306c/27/d?subset_id=2&fvd=n9&v=3) format("woff"), url(https://use.typekit.net/af/b683e3/00000000000000003b9b306c/27/a?subset_id=2&fvd=n9&v=3) format("opentype");
+      font-weight: 900;
+      font-style: normal;
+    }
+
+    @font-face {
+      font-family: proxima-nova;
+      src: url(https://use.typekit.net/af/d32834/00000000000000003b9b306d/27/l?subset_id=2&fvd=i9&v=3) format("woff2"), url(https://use.typekit.net/af/d32834/00000000000000003b9b306d/27/d?subset_id=2&fvd=i9&v=3) format("woff"), url(https://use.typekit.net/af/d32834/00000000000000003b9b306d/27/a?subset_id=2&fvd=i9&v=3) format("opentype");
+      font-weight: 900;
+      font-style: italic;
+    }
+
+    @font-face {
+      font-family: adobe-garamond-pro;
+      src: url(https://use.typekit.net/af/2011b6/00000000000000003b9b00c1/27/l?subset_id=2&fvd=n4&v=3) format("woff2"), url(https://use.typekit.net/af/2011b6/00000000000000003b9b00c1/27/d?subset_id=2&fvd=n4&v=3) format("woff"), url(https://use.typekit.net/af/2011b6/00000000000000003b9b00c1/27/a?subset_id=2&fvd=n4&v=3) format("opentype");
+      font-weight: 400;
+      font-style: normal;
+    }
+
+    @font-face {
+      font-family: adobe-garamond-pro;
+      src: url(https://use.typekit.net/af/5cace6/00000000000000003b9b00c2/27/l?subset_id=2&fvd=i4&v=3) format("woff2"), url(https://use.typekit.net/af/5cace6/00000000000000003b9b00c2/27/d?subset_id=2&fvd=i4&v=3) format("woff"), url(https://use.typekit.net/af/5cace6/00000000000000003b9b00c2/27/a?subset_id=2&fvd=i4&v=3) format("opentype");
+      font-weight: 400;
+      font-style: italic;
+    }
+
+    @font-face {
+      font-family: adobe-garamond-pro;
+      src: url(https://use.typekit.net/af/fb3638/00000000000000003b9b00c3/27/l?subset_id=2&fvd=n6&v=3) format("woff2"), url(https://use.typekit.net/af/fb3638/00000000000000003b9b00c3/27/d?subset_id=2&fvd=n6&v=3) format("woff"), url(https://use.typekit.net/af/fb3638/00000000000000003b9b00c3/27/a?subset_id=2&fvd=n6&v=3) format("opentype");
+      font-weight: 600;
+      font-style: normal;
+    }
+
+    @font-face {
+      font-family: adobe-garamond-pro;
+      src: url(https://use.typekit.net/af/d68363/00000000000000003b9b00c4/27/l?subset_id=2&fvd=i6&v=3) format("woff2"), url(https://use.typekit.net/af/d68363/00000000000000003b9b00c4/27/d?subset_id=2&fvd=i6&v=3) format("woff"), url(https://use.typekit.net/af/d68363/00000000000000003b9b00c4/27/a?subset_id=2&fvd=i6&v=3) format("opentype");
+      font-weight: 600;
+      font-style: italic;
+    }
+
+    @font-face {
+      font-family: adobe-garamond-pro;
+      src: url(https://use.typekit.net/af/af619f/00000000000000003b9b00c5/27/l?subset_id=2&fvd=n7&v=3) format("woff2"), url(https://use.typekit.net/af/af619f/00000000000000003b9b00c5/27/d?subset_id=2&fvd=n7&v=3) format("woff"), url(https://use.typekit.net/af/af619f/00000000000000003b9b00c5/27/a?subset_id=2&fvd=n7&v=3) format("opentype");
+      font-weight: 700;
+      font-style: normal;
+    }
+
+    @font-face {
+      font-family: adobe-garamond-pro;
+      src: url(https://use.typekit.net/af/6c275f/00000000000000003b9b00c6/27/l?subset_id=2&fvd=i7&v=3) format("woff2"), url(https://use.typekit.net/af/6c275f/00000000000000003b9b00c6/27/d?subset_id=2&fvd=i7&v=3) format("woff"), url(https://use.typekit.net/af/6c275f/00000000000000003b9b00c6/27/a?subset_id=2&fvd=i7&v=3) format("opentype");
+      font-weight: 700;
+      font-style: italic;
+    }
+  </style>
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="theme-color" content="#ffffff">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js" type="text/javascript"></script>
+  <script src="/assets/js/jquery-3.5.1.min.js" type="text/javascript"></script>
+  <script
+    type="text/javascript">WebFont.load({ google: { families: ["Open Sans:300,300italic,400,400italic,600,600italic,700,700italic,800,800italic", "Roboto:300,regular,500"] } });</script>
+  <!-- Matomo -->
+<script>
+  var _paq = window._paq = window._paq || [];
+  /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="https://cognitect.matomo.cloud/";
+    _paq.push(['setTrackerUrl', u+'matomo.php']);
+    _paq.push(['setSiteId', '1']);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.async=true; g.src='//cdn.matomo.cloud/cognitect.matomo.cloud/matomo.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+<!-- End Matomo Code -->
+
+
+<body>
+  <header>
+  <div class="header-inner">
+    <div id="logoWrapper" class="wrapper" data-content-field="site-title">
+      <div id="logoImage">
+        <a href="/">
+          <img src="/assets/images/cognitect-nubank-logo.svg" alt="Cognitect Blog">
+        </a>
+      </div>
+    </div>
+    <nav role="navigation" class="nav-clear">
+      <a href="/technologies.html">Technologies</a>
+      <a href="/blog/">Blog</a>
+      <a href="/cognicast">Cognicast</a>
+      <a href="/contact.html">Contact</a>
+      <a href="/archive.html">Archive</a>
+    </nav>
+  </div>
+</header>
+
+  <div class="wrapper">
+    <section>
+      <div id="articles-list">
+  <div id="categories">
+  <a href="/blog/index.html">All Topics</a>
+  <span class="cat-separator"> - </span>
+  
+  <a href="/blog/how-we-work.html">How We Work</a>
+  <span class="cat-separator"> - </span>
+  
+  <a href="/blog/events.html">Events</a>
+  <span class="cat-separator"> - </span>
+  
+  <a href="/blog/customer-stories.html">Customer Stories</a>
+  <span class="cat-separator"> - </span>
+  
+  <a href="/blog/technology.html">Technology</a>
+  <span class="cat-separator"> - </span>
+  
+  <a href="/blog/testing.html">Testing</a>
+  <span class="cat-separator"> - </span>
+  
+  <a href="/blog/the-new-normal.html">The New Normal</a>
+  <span class="cat-separator"> - </span>
+  
+  <a href="/blog/open-source.html">Open Source</a>
+  <span class="cat-separator"> - </span>
+  
+  <span class="cat-separator"> - </span>
+  <a href="/feed.xml">RSS Feed</a>
+  </div>
+</div>
+
+      <div id="post-page">
+        <div id="post-wrapper">
+
+          <div class="gradient-box">
+            <div id="post-header">
+              <div class="post-author-header">
+                <div class="post-author-large">
+                  <a href="/authors/MichaelNygard.html">
+                    <img src="/assets/Authors/MichaelNygard.jpg">
+                  </a>
+                </div>
+              </div>
+              <div id="post-title-container">
+                <div id="post-title">Documenting Architecture Decisions</div>
+
+                <div id="post-meta">
+                  <span class="post-author">
+                    <span class="post-author-name">
+                      <a
+                        href="/authors/MichaelNygard.html">Michael Nygard</a>
+                      - November 15, 2011
+                    </span>
+                  </span>
+                  <div class="tags">
+                    
+                    <a class="tag" href="/blog/tags?tag=agility">agility</a>
+                    
+                    <a class="tag" href="/blog/tags?tag=architecture">architecture</a>
+                    
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="post-content">
+            
+            <h1 id="context">Context</h1>
+
+<p>Architecture for agile projects has to be described and defined
+differently. Not all decisions will be made at once, nor will all of
+them be done when the project begins.</p>
+
+<p>Agile methods are not opposed to documentation, only to valueless
+documentation. Documents that assist the team itself can have value,
+but only if they are kept up to date. Large documents are never kept
+up to date. Small, modular documents have at least a chance at being
+updated.</p>
+
+<p>Nobody ever reads large documents, either. Most developers have been
+on at least one project where the specification document was larger
+(in bytes) than the total source code size. Those documents are too
+large to open, read, or update. Bite sized pieces are easier for for
+all stakeholders to consume.</p>
+
+<p>One of the hardest things to track during the life of a project is the
+motivation behind certain decisions. A new person coming on to a
+project may be perplexed, baffled, delighted, or infuriated by some
+past decision. Without understanding the rationale or consequences,
+this person has only two choices:</p>
+
+<ol>
+  <li>
+    <p><strong>Blindly accept the decision.</strong></p>
+
+    <p>This response may be OK, if the decision is still valid. It may
+ not be good, however, if the context has changed and the decision
+ should really be revisited. If the project accumulates too many
+ decisions accepted without understanding, then the development
+ team becomes afraid to change anything and the project collapses
+ under its own weight.</p>
+  </li>
+  <li>
+    <p><strong>Blindly change it.</strong></p>
+
+    <p>Again, this may be OK if the decision needs to be reversed. On the
+ other hand, changing the decision without understanding its
+ motivation or consequences could mean damaging the project's
+ overall value without realizing it. (E.g., the decision supported
+ a non-functional requirement that hasn't been tested yet.)</p>
+  </li>
+</ol>
+
+<p>It's better to avoid either blind acceptance or blind reversal.</p>
+
+<h1 id="decision">Decision</h1>
+
+<p>We will keep a collection of records for "architecturally significant"
+decisions: those that affect the structure, non-functional
+characteristics, dependencies, interfaces, or construction techniques.</p>
+
+<p>An architecture decision record is a short text file in a format
+similar to an Alexandrian pattern. (Though the decisions themselves
+are not necessarily patterns, they share the characteristic balancing
+of forces.) Each record describes a set of forces and a single
+decision in response to those forces. Note that the decision is the
+central piece here, so specific forces may appear in multiple ADRs.</p>
+
+<p>We will keep ADRs in the project repository under doc/arch/adr-NNN.md</p>
+
+<p>We should use a lightweight text formatting language like Markdown or
+Textile.</p>
+
+<p>ADRs will be numbered sequentially and monotonically. Numbers will not
+be reused.</p>
+
+<p>If a decision is reversed, we will keep the old one around, but mark
+it as superseded. (It's still relevant to know that it <em>was</em> the
+decision, but is <em>no longer</em> the decision.)</p>
+
+<p>We will use a format with just a few parts, so each document is easy
+to digest. The format has just a few parts.</p>
+
+<p><strong>Title</strong> These documents have names that are short noun phrases. For
+example, "ADR 1: Deployment on Ruby on Rails 3.0.10" or "ADR 9: LDAP
+for Multitenant Integration"</p>
+
+<p><strong>Context</strong> This section describes the forces at play, including
+technological, political, social, and project local. These forces are
+probably in tension, and should be called out as such. The language in
+this section is value-neutral. It is simply describing facts.</p>
+
+<p><strong>Decision</strong> This section describes our response to these forces. It
+is stated in full sentences, with active voice. "We will …"</p>
+
+<p><strong>Status</strong> A decision may be "proposed" if the project stakeholders
+haven't agreed with it yet, or "accepted" once it is agreed. If a
+later ADR changes or reverses a decision, it may be marked as
+"deprecated" or "superseded" with a reference to its replacement.</p>
+
+<p><strong>Consequences</strong> This section describes the resulting context, after
+applying the decision.  All consequences should be listed here, not
+just the "positive" ones. A particular decision may have positive,
+negative, and neutral consequences, but all of them affect the team
+and project in the future.</p>
+
+<p>The whole document should be one or two pages long. We will write each
+ADR as if it is a conversation with a future developer. This requires
+good writing style, with full sentences organized into
+paragraphs. Bullets are acceptable only for visual style, not as an
+excuse for writing sentence fragments. (Bullets kill people, even
+PowerPoint bullets.)</p>
+
+<h1 id="status">Status</h1>
+
+<p>Accepted.</p>
+
+<h1 id="consequences">Consequences</h1>
+
+<p>One ADR describes one significant decision for a specific project. It
+should be something that has an effect on how the rest of the project
+will run.</p>
+
+<p>The consequences of one ADR are very likely to become the context for
+subsequent ADRs. This is also similar to Alexander's idea of a pattern
+language: the large-scale responses create spaces for the smaller
+scale to fit into.</p>
+
+<p>Developers and project stakeholders can see the ADRs, even as the team
+composition changes over time.</p>
+
+<p>The motivation behind previous decisions is visible for everyone,
+present and future. Nobody is left scratching their heads to
+understand, "What were they thinking?" and the time to change old
+decisions will be clear from changes in the project's context.</p>
+
+<hr />
+
+<h1 id="experience-report">Experience Report</h1>
+
+<p>You may have noticed that this post is formatted like an ADR
+itself. We've been using this format on a few of our projects since
+early August. That's not a very long time in the global sense, but
+early feedback from both clients and developers has been quite
+positive. In that time, we've had six to ten developers rotate through
+projects using ADRs. All of them have stated that they appreciate the
+degree of context they received by reading them.</p>
+
+<p>ADRs have been especially useful for capturing longer-term
+intentions. We have several clients who are stabilizing their current
+systems, but looking toward a larger rearchitecture in the
+not-too-distant future. By writing these intentions down, we don't
+inadvertently make those future changes harder.</p>
+
+<p>One potential objection is that keeping these in version control with
+the code makes them less accessible for project managers, client
+stakeholders, and others who don't live in version control like the
+development team does. In practice, our projects almost all live in
+GitHub private repositories, so we can exchange links to the latest
+version in master. Since GitHub does markdown processing
+automatically, it looks just as friendly as any wiki page would.</p>
+
+<p>So far, ADRs are proving to be a useful tool, so we'll keep using
+them.</p>
+
+<h1 id="more-reading">More Reading</h1>
+
+<p>Thanks to Philipe Kruchten for discussing the <a href="http://www.computer.org/portal/web/csdl/doi/10.1109/MS.2009.52">importance of
+architecture decisions</a>. I'm
+told there is more about them in
+<a href="http://www.sei.cmu.edu/library/abstracts/books/0321552687.cfm">Documenting Software Architectures</a>
+which is near the top of my reading queue.</p>
+
+          </div>
+
+          
+          <br />
+          <br />
+          <p xmlns:dct="http://purl.org/dc/terms/" xmlns:vcard="http://www.w3.org/2001/vcard-rdf/3.0#">
+            <a rel="license" href="http://creativecommons.org/publicdomain/zero/1.0/">
+              <img src="http://i.creativecommons.org/p/zero/1.0/88x31.png" style="border-style: none;" alt="CC0" />
+            </a>
+            <br />
+            To the extent possible under law,
+            <a rel="dct:publisher" href="/blog/2011/11/15/documenting-architecture-decisions">
+              <span property="dct:title">Cognitect, a Nu Holdings, Ltd. company.</span></a>
+            has waived all copyright and related or neighboring rights to
+            <span property="dct:title">"Documenting Architecture Decisions"</span>.
+            This work is published from:
+            <span property="vcard:Country" datatype="dct:ISO3166" content="US" about="https://www.cognitect.com/blog/2011/11/15/documenting-architecture-decisions">
+              United States</span>.
+          </p>
+          
+          
+<div class="related">
+    
+  <span class="classifier">
+    <span class="content-cell related-title">
+    
+      <p>random</p>
+    
+    </span>
+    <span class="content-cell"><p class="recent-title">recent</p></span>
+  </span>
+  <div class="links left">
+    
+    
+     
+    <a href="/blog/2013/06/04/clojure-workflow-reloaded">
+      My Clojure Workflow, Reloaded<span class="dash">—</span>
+    </a>
+     
+    <a href="/blog/2005/4/4/secret-service-and-personalized-cracking">
+      Secret Service and Personalized Cracking<span class="dash">—</span>
+    </a>
+     
+    <a href="/blog/2016/11/28/a-major-datomic-update">
+      A Major Datomic Update<span class="dash">—</span>
+    </a>
+     
+    <a href="/blog/2009/7/7/relevance-agile-bibliography">
+      Relevance Agile Bibliography<span class="dash">—</span>
+    </a>
+     
+    <a href="/blog/2014/01/31/where-to-find-cognitects-february-edition">
+      Where to Find Cognitects- February Edition<span class="dash">—</span>
+    </a>
+    
+    
+  </div>
+  <div class="links right">
+     
+    <a href="/blog/2020/12/15/sponsoring-open-source-developers">
+      <span class="dash">—</span>Sponsoring Open Source Developers
+    </a>
+     
+    <a href="/blog/2020/08/20/Cognitect-dev-tools">
+      <span class="dash">—</span>Cognitect dev-tools
+    </a>
+     
+    <a href="/blog/2020/07/23/Cognitect-Joins-Nubank">
+      <span class="dash">—</span>Cognitect Joins Nubank
+    </a>
+     
+    <a href="/blog/2020/06/30/cognitect-and-pici">
+      <span class="dash">—</span>Cognitect and PICI
+    </a>
+     
+    <a href="/blog/supporting-open-source-developers">
+      <span class="dash">—</span>Supporting Open Source Developers
+    </a>
+    
+  </div>
+</div>
+</div>
+
+          <div id="post-sidebar">
+
+            <div id="post-sidebar-container">
+              <!-- <div class="post-search right-block"></div> -->
+              <div class="post-email">
+                <a href="/contact.html">Get In Touch</a>
+              </div>
+              <div class="post-authors right-block">
+                <ul>
+                  
+                  <li>
+                    <h2><a href="/authors/AlessandraSierra.html">Alessandra Sierra</a></h2>
+                  </li>
+                  
+                  <li>
+                    <h2><a href="/authors/AlexMiller.html">Alex Miller</a></h2>
+                  </li>
+                  
+                  <li>
+                    <h2><a href="/authors/CarinMeier.html">Carin Meier</a></h2>
+                  </li>
+                  
+                  <li>
+                    <h2><a href="/authors/DavidChelimsky.html">David Chelimsky</a></h2>
+                  </li>
+                  
+                  <li>
+                    <h2><a href="/authors/DavidNolen.html">David Nolen</a></h2>
+                  </li>
+                  
+                  <li>
+                    <h2><a href="/authors/GhadiShayban.html">Ghadi Shayban</a></h2>
+                  </li>
+                  
+                  <li>
+                    <h2><a href="/authors/JebBeich.html">Jeb Beich</a></h2>
+                  </li>
+                  
+                  <li>
+                    <h2><a href="/authors/JustinGehtland.html">Justin Gehtland</a></h2>
+                  </li>
+                  
+                  <li>
+                    <h2><a href="/authors/LynnGrogan.html">Lynn Grogan</a></h2>
+                  </li>
+                  
+                  <li>
+                    <h2><a href="/authors/MarcPhillips.html">Marc Phillips</a></h2>
+                  </li>
+                  
+                  <li>
+                    <h2><a href="/authors/MichaelNygard.html">Michael Nygard</a></h2>
+                  </li>
+                  
+                  <li>
+                    <h2><a href="/authors/NaokoHigashide.html">Naoko Higashide</a></h2>
+                  </li>
+                  
+                  <li>
+                    <h2><a href="/authors/PauldeGrandis.html">Paul de Grandis</a></h2>
+                  </li>
+                  
+                  <li>
+                    <h2><a href="/authors/RichHickey.html">Rich Hickey</a></h2>
+                  </li>
+                  
+                  <li>
+                    <h2><a href="/authors/RussOlsen.html">Russ Olsen</a></h2>
+                  </li>
+                  
+                  <li>
+                    <h2><a href="/authors/StuartHalloway.html">Stuart Halloway</a></h2>
+                  </li>
+                  
+                  <li>
+                    <h2><a href="/authors/TimBaldridge.html">Tim Baldridge</a></h2>
+                  </li>
+                  
+                  <li>
+                    <h2><a href="/authors/AaronBedra.html">Aaron Bedra</a></h2>
+                  </li>
+                  
+                  <li>
+                    <h2><a href="/authors/ChrisRedinger.html">Chris Redinger</a></h2>
+                  </li>
+                  
+                  <li>
+                    <h2><a href="/authors/CraigAndera.html">Craig Andera</a></h2>
+                  </li>
+                  
+                  <li>
+                    <h2><a href="/authors/DonMullen.html">Don Mullen</a></h2>
+                  </li>
+                  
+                  <li>
+                    <h2><a href="/authors/GlennVanderburg.html">Glenn Vanderburg</a></h2>
+                  </li>
+                  
+                  <li>
+                    <h2><a href="/authors/JaredPace.html">Jared Pace</a></h2>
+                  </li>
+                  
+                  <li>
+                    <h2><a href="/authors/JasonRudolph.html">Jason Rudolph</a></h2>
+                  </li>
+                  
+                  <li>
+                    <h2><a href="/authors/JonDistad.html">Jon Distad</a></h2>
+                  </li>
+                  
+                  <li>
+                    <h2><a href="/authors/LarryKarnowski.html">Larry Karnowski</a></h2>
+                  </li>
+                  
+                  <li>
+                    <h2><a href="/authors/MichaelParenteau.html">Michael Parenteau</a></h2>
+                  </li>
+                  
+                  <li>
+                    <h2><a href="/authors/MunessAlrubaie.html">Muness Alrubaie</a></h2>
+                  </li>
+                  
+                  <li>
+                    <h2><a href="/authors/RobSanheim.html">Rob Sanheim</a></h2>
+                  </li>
+                  
+                  <li>
+                    <h2><a href="/authors/SamUmbach.html">Sam Umbach</a></h2>
+                  </li>
+                  
+                  <li>
+                    <h2><a href="/authors/KimFoster.html">Kim Foster</a></h2>
+                  </li>
+                  
+                  <li>
+                    <h2><a href="/authors/JaretBinford.html">Jaret Binford</a></h2>
+                  </li>
+                  
+                  <li>
+                    <h2><a href="/authors/JoeSmith.html">Joe Smith</a></h2>
+                  </li>
+                  
+                  <li>
+                    <h2><a href="/authors/ClintonDreisbach.html">Clinton Dreisbach</a></h2>
+                  </li>
+                  
+                  <li>
+                    <h2><a href="/authors/TimEwald.html">Tim Ewald</a></h2>
+                  </li>
+                  
+                  <li>
+                    <h2><a href="/authors/RobertRandolph.html">Robert Randolph</a></h2>
+                  </li>
+                  
+                  <li>
+                    <h2><a href="/authors/AlexRedington.html">Alex Redington</a></h2>
+                  </li>
+                  
+                  <li>
+                    <h2><a href="/authors/JoeLane.html">Joe Lane</a></h2>
+                  </li>
+                  
+                  <li>
+                    <h2><a href="/authors/ChristianRomney.html">Christian Romney</a></h2>
+                  </li>
+                  
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+    </section>
+  </div>
+  <div class="footer left">
+  <div class="w-container">
+    <ul class="menu-footer-menu">
+      <li>
+        <a class="footer-head" aria-current="page">Nu International</a>
+        <ul class="sub-menu">
+          <li><a href="https://international.nubank.com.br/about" target="_blank">About Nu <span
+                class="external-arrow"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" clip-rule="evenodd"
+                    d="M3.03697 0.285645H10.9532C11.1552 0.285645 11.349 0.365916 11.4919 0.508801C11.6348 0.651686 11.7151 0.84548 11.7151 1.04755V8.96298H10.1913V2.88679L1.8103 11.2677L0.731445 10.1904L9.1124 1.80945H3.03621V0.285645H3.03697Z"
+                    fill="white"></path>
+                </svg></span></a></li>
+          <li><a href="https://international.nubank.com.br/careers" target="_blank">Careers <span
+                class="external-arrow"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" clip-rule="evenodd"
+                    d="M3.03697 0.285645H10.9532C11.1552 0.285645 11.349 0.365916 11.4919 0.508801C11.6348 0.651686 11.7151 0.84548 11.7151 1.04755V8.96298H10.1913V2.88679L1.8103 11.2677L0.731445 10.1904L9.1124 1.80945H3.03621V0.285645H3.03697Z"
+                    fill="white"></path>
+                </svg></span></a></li>
+          <li><a href="https://international.nubank.com.br/newsroom" target="_blank">Newsroom <span
+                class="external-arrow"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" clip-rule="evenodd"
+                    d="M3.03697 0.285645H10.9532C11.1552 0.285645 11.349 0.365916 11.4919 0.508801C11.6348 0.651686 11.7151 0.84548 11.7151 1.04755V8.96298H10.1913V2.88679L1.8103 11.2677L0.731445 10.1904L9.1124 1.80945H3.03621V0.285645H3.03697Z"
+                    fill="white"></path>
+                </svg></span></a></li>
+          <li><a href="https://www.investidores.nu/en/" target="_blank">Investor Relations <span
+                class="external-arrow"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" clip-rule="evenodd"
+                    d="M3.03697 0.285645H10.9532C11.1552 0.285645 11.349 0.365916 11.4919 0.508801C11.6348 0.651686 11.7151 0.84548 11.7151 1.04755V8.96298H10.1913V2.88679L1.8103 11.2677L0.731445 10.1904L9.1124 1.80945H3.03621V0.285645H3.03697Z"
+                    fill="white"></path>
+                </svg></span></a></li>
+        </ul>
+      </li>
+      <li><a class="footer-head">Nu Impact</a>
+        <ul class="sub-menu">
+          <li><a href="https://international.nubank.com.br/impact/environmental" target="_blank">Enviromental <svg width="12" height="12" viewBox="0 0 12 12" fill="none"
+            xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" clip-rule="evenodd"
+              d="M3.03697 0.285645H10.9532C11.1552 0.285645 11.349 0.365916 11.4919 0.508801C11.6348 0.651686 11.7151 0.84548 11.7151 1.04755V8.96298H10.1913V2.88679L1.8103 11.2677L0.731445 10.1904L9.1124 1.80945H3.03621V0.285645H3.03697Z"
+              fill="white"></path>
+          </svg></a></li>
+          <li><a href="https://international.nubank.com.br/impact/social" target="_blank">Social <svg width="12" height="12" viewBox="0 0 12 12" fill="none"
+            xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" clip-rule="evenodd"
+              d="M3.03697 0.285645H10.9532C11.1552 0.285645 11.349 0.365916 11.4919 0.508801C11.6348 0.651686 11.7151 0.84548 11.7151 1.04755V8.96298H10.1913V2.88679L1.8103 11.2677L0.731445 10.1904L9.1124 1.80945H3.03621V0.285645H3.03697Z"
+              fill="white"></path>
+          </svg></a></li>
+          <li><a href="https://international.nubank.com.br/impact/governance/" target="_blank">Governance <svg width="12" height="12" viewBox="0 0 12 12" fill="none"
+            xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" clip-rule="evenodd"
+              d="M3.03697 0.285645H10.9532C11.1552 0.285645 11.349 0.365916 11.4919 0.508801C11.6348 0.651686 11.7151 0.84548 11.7151 1.04755V8.96298H10.1913V2.88679L1.8103 11.2677L0.731445 10.1904L9.1124 1.80945H3.03621V0.285645H3.03697Z"
+              fill="white"></path>
+          </svg></a></li>
+        </ul>
+      </li>
+      <li><a class="footer-head">Global
+          Presence</a>
+        <ul class="sub-menu">
+          <li><a href="https://nubank.com.br" target="_blank">Brazil <span class="external-arrow"><svg width="12"
+                  height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" clip-rule="evenodd"
+                    d="M3.03697 0.285645H10.9532C11.1552 0.285645 11.349 0.365916 11.4919 0.508801C11.6348 0.651686 11.7151 0.84548 11.7151 1.04755V8.96298H10.1913V2.88679L1.8103 11.2677L0.731445 10.1904L9.1124 1.80945H3.03621V0.285645H3.03697Z"
+                    fill="white"></path>
+                </svg></span></a></li>
+          <li><a href="https://nu.com.mx" target="_blank">Mexico <span class="external-arrow"><svg width="12"
+                  height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" clip-rule="evenodd"
+                    d="M3.03697 0.285645H10.9532C11.1552 0.285645 11.349 0.365916 11.4919 0.508801C11.6348 0.651686 11.7151 0.84548 11.7151 1.04755V8.96298H10.1913V2.88679L1.8103 11.2677L0.731445 10.1904L9.1124 1.80945H3.03621V0.285645H3.03697Z"
+                    fill="white"></path>
+                </svg></span></a></li>
+          <li><a href="https://nu.com.co" target="_blank">Colombia <span class="external-arrow"><svg width="12"
+                  height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" clip-rule="evenodd"
+                    d="M3.03697 0.285645H10.9532C11.1552 0.285645 11.349 0.365916 11.4919 0.508801C11.6348 0.651686 11.7151 0.84548 11.7151 1.04755V8.96298H10.1913V2.88679L1.8103 11.2677L0.731445 10.1904L9.1124 1.80945H3.03621V0.285645H3.03697Z"
+                    fill="white"></path>
+                </svg></span></a></li>
+          <li><a href="https://nu.com.ar" target="_blank">Argentina <span class="external-arrow"><svg width="12"
+                  height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" clip-rule="evenodd"
+                    d="M3.03697 0.285645H10.9532C11.1552 0.285645 11.349 0.365916 11.4919 0.508801C11.6348 0.651686 11.7151 0.84548 11.7151 1.04755V8.96298H10.1913V2.88679L1.8103 11.2677L0.731445 10.1904L9.1124 1.80945H3.03621V0.285645H3.03697Z"
+                    fill="white"></path>
+                </svg></span></a></li>
+        </ul>
+      </li>
+      <li><a class="footer-head">Blogs</a>
+        <ul class="sub-menu">
+          <li><a href="https://building.nubank.com.br/" target="_blank">Building Nubank <span
+                class="external-arrow"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" clip-rule="evenodd"
+                    d="M3.03697 0.285645H10.9532C11.1552 0.285645 11.349 0.365916 11.4919 0.508801C11.6348 0.651686 11.7151 0.84548 11.7151 1.04755V8.96298H10.1913V2.88679L1.8103 11.2677L0.731445 10.1904L9.1124 1.80945H3.03621V0.285645H3.03697Z"
+                    fill="white"></path>
+                </svg></span></a></li>
+          <li><a href="https://blog.nubank.com.br/" target="_blank">Brazil <span class="external-arrow"><svg width="12"
+                  height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" clip-rule="evenodd"
+                    d="M3.03697 0.285645H10.9532C11.1552 0.285645 11.349 0.365916 11.4919 0.508801C11.6348 0.651686 11.7151 0.84548 11.7151 1.04755V8.96298H10.1913V2.88679L1.8103 11.2677L0.731445 10.1904L9.1124 1.80945H3.03621V0.285645H3.03697Z"
+                    fill="white"></path>
+                </svg></span></a></li>
+          <li><a href="https://blog.nu.com.mx/" target="_blank">Mexico <span class="external-arrow"><svg width="12"
+                  height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" clip-rule="evenodd"
+                    d="M3.03697 0.285645H10.9532C11.1552 0.285645 11.349 0.365916 11.4919 0.508801C11.6348 0.651686 11.7151 0.84548 11.7151 1.04755V8.96298H10.1913V2.88679L1.8103 11.2677L0.731445 10.1904L9.1124 1.80945H3.03621V0.285645H3.03697Z"
+                    fill="white"></path>
+                </svg></span></a></li>
+          <li><a href="https://blog.nu.com.co/" target="_blank">Colombia <span class="external-arrow"><svg width="12"
+                  height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" clip-rule="evenodd"
+                    d="M3.03697 0.285645H10.9532C11.1552 0.285645 11.349 0.365916 11.4919 0.508801C11.6348 0.651686 11.7151 0.84548 11.7151 1.04755V8.96298H10.1913V2.88679L1.8103 11.2677L0.731445 10.1904L9.1124 1.80945H3.03621V0.285645H3.03697Z"
+                    fill="white"></path>
+                </svg></span></a></li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+  <div class="w-container">
+    <div class="footer-text">Copyright 2025, Cognitect, a Nu Holdings, Ltd. company
+      | <a class="footer-link-s" href="/privacy-policy.html">privacy-policy</a>
+      | <a class="footer-link-icon" href="https://github.com/cognitect" target="_blank"><i class="fa fa-github"
+          aria-hidden="true"></i> Github</a></div>
+  </div>
+</div>
+<script src="https://d3e54v103j8qbb.cloudfront.net/js/jquery-3.4.1.min.220afd743d.js?site=58dee1dd9c1826ba43796eb4"
+  type="text/javascript" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+  crossorigin="anonymous"></script>
+<script src="/assets/js/webflow.js" type="text/javascript"></script>
+<!-- [if lte IE 9]><script src="https://cdnjs.cloudflare.com/ajax/libs/placeholders/3.0.2/placeholders.min.js"></script><![endif] -->
+  <!-- <script src="/assets/js/scale.fix.js"></script> -->
+  
+  <script>
+    (function () {
+      // This is the ugliest hack.
+      // Rouge highlighter puts a span element for the final white space (\n)
+      // This script splits on \n, so rouge coloured elements will end up with an extra line.
+      // So we process one fewer line if the pre element has more than one child.
+      var subtractor = 0;
+      var pre = document.getElementsByTagName('pre'),
+        pl = pre.length;
+      for (var i = 0; i < pl; i++) {
+        // detect if rouge
+        if (pre[i].childNodes[0].childNodes.length > 1)
+          subtractor = 1;
+
+        pre[i].innerHTML = '<span class="line-number"></span>' + pre[i].innerHTML + '<span class="cl"></span>';
+        var num = pre[i].innerHTML.split(/\n/).length;
+        for (var j = 0; j < num - subtractor; j++) { // num - subtractor = process one less if rouge
+          var line_num = pre[i].getElementsByTagName('span')[0];
+          line_num.innerHTML += '<span>' + (j + 1) + '</span>';
+        }
+      }
+    })(); 
+  </script>
+</body>
+
+</html>
